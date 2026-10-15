@@ -53,11 +53,13 @@ function scriptsIn(page, root = ROOT){
   return scripts;
 }
 
-// Starts the game. Pass {save} to start with that saved game already in the browser.
-// {root} and {page} load a different copy of the game (used to compare versions).
-function loadGame({save, root = ROOT, page = ENTRY} = {}){
-  const elements = {}, storage = new Map(), frames = [];
-  if (save) storage.set(SAVE_KEY, JSON.stringify(save));
+// Starts the game. Pass {save} to start with that saved game already in the browser
+// (an object, or a string for the exact text, such as a broken save), and {storage} for
+// anything else already in the browser's storage. {root} and {page} load a different copy
+// of the game (used to compare versions).
+function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY} = {}){
+  const elements = {}, storage = new Map(Object.entries(stored)), frames = [];
+  if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
   const document = {
     hidden: false,
     activeElement: null,

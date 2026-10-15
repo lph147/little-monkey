@@ -21,9 +21,6 @@ npm start
 ```
 
 Then open http://127.0.0.1:8000 in a browser. Press Ctrl+C in the terminal to stop. In Claude Code, the preview pane's "game" setting does the same.
-
-Until the split is finished, http://127.0.0.1:8000/little-monkey.html is the original version 8, for comparison. Both use the same save.
-
 ## Playing on your phone
 
 Open https://lph147.github.io/little-monkey/ on your phone. GitHub Pages updates it a minute or two after each upload to GitHub. Your phone may keep showing the previous version for up to 10 minutes; if a change hasn't appeared, wait a little and reload.
@@ -97,6 +94,9 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 ## Saved games
 
 - [ ] On your phone, with your real save: Continue works, and your words, peaches, friends and tasks are all as they were.
+- [ ] After an update that changes the save format: the same, plus Menu, Tasks and progress shows the same ticks as before.
+
+When the save format changes, the game keeps a copy of your old save in the browser before converting it, so it can be recovered if anything goes wrong.
 
 ## Phone checks
 

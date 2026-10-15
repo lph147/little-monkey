@@ -151,6 +151,14 @@ test('story questions offer different collectible pictures, one of them the answ
   });
 });
 
+test('the area says what it remembers in the save, with starting values', () => {
+  assert.ok(AREA.progress && Object.keys(AREA.progress).length, 'the area needs a progress list');
+  for (const [k, v] of Object.entries(AREA.progress)){
+    assert.ok(['number', 'boolean'].includes(typeof v), `progress ${k} should start as a number or true/false`);
+    assert.notEqual(k, 'done', 'progress can\'t be called done; the game adds that itself');
+  }
+});
+
 test('intro captions are in time order, with Chinese, pinyin and English', () => {
   AREA.intro.forEach((c, i) => {
     assert.ok(c.zh && c.py && c.en, `intro caption ${i + 1} needs zh, py and en`);

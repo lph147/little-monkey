@@ -5,12 +5,12 @@ const EDGE = {look:'cliff'};   // what lies beyond the edge of the map
 function tileAt(x, y){         // the legend entry for the map letter at x, y
   if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return EDGE;
   const t = LEGEND[MAP[y][x]];
-  return S.gate && t.whenGateOpens ? LEGEND[t.whenGateOpens] : t;
+  return here().gate && t.whenGateOpens ? LEGEND[t.whenGateOpens] : t;
 }
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y);
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
-const wants = item => (item === '水' ? S.q.thirsty === 1 : S.q.hungry === 1);              // has a monkey asked for this?
+const wants = item => (item === '水' ? here().thirsty === 1 : here().hungry === 1);      // has a monkey asked for this?
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
 
@@ -18,9 +18,9 @@ const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
 const ELDER_NEED = 4;
 const elderReady = () => learnedCount() - 1 >= ELDER_NEED;
 const metCount = () => Math.min(S.met.length, ANIMALS.length);
-const areaDone = () => S.q.elder >= 2 && S.q.hungry === 3 && S.q.thirsty === 3 && metCount() >= ANIMALS.length && S.story;
+const areaDone = () => here().elder >= 2 && here().hungry === 3 && here().thirsty === 3 && metCount() >= ANIMALS.length && here().story;
 function getTasks(){
-  const q = S.q, t = [];
+  const q = here(), t = [];
   if (q.elder === 0) t.push({id:'elder', text:'Talk to the old monkey on the path', target:[10,5], npc:true});
   if (q.elder === 1) t.push(elderReady()
     ? {id:'elder2', text:'Talk to the old monkey again', target:[10,5], npc:true}
@@ -30,14 +30,14 @@ function getTasks(){
   if (q.hungry === 1 && S.carry) t.push({id:'h2' + S.carry, text:`Give the ${wz(S.carry)} to the hungry monkey`, target:[13,5], npc:true});
   if (q.thirsty === 1) t.push({id:'t1', text:'Collect water from the river or the pond', target:[11,9]});
   if (q.thirsty === 2) t.push({id:'t2', text:`Give the ${wz('水')} to the thirsty monkey`, target:[2,12], npc:true});
-  if (S.gate && !S.story) t.push({id:'fall', text:'Climb up beside the river to the waterfall', target:[18,1]});
-  if (areaDone() && !S.area1Done) t.push({id:'door', text:`Pass the word test at the ${wz('洞')} door`, target:[3,3]});
+  if (here().gate && !here().story) t.push({id:'fall', text:'Climb up beside the river to the waterfall', target:[18,1]});
+  if (areaDone() && !here().done) t.push({id:'door', text:`Pass the word test at the ${wz('洞')} door`, target:[3,3]});
   return t;
 }
 function tasksHint(){
-  const q = S.q;
+  const q = here();
   if (q.elder > 0 && (q.hungry === 0 || q.thirsty === 0)) return 'Monkeys with a ! above them need help. Walk up to one and press A.';
-  if (S.area1Done) return `Flower Fruit Mountain is complete. Practise in the ${wz('草')} or visit your friends.`;
+  if (here().done) return `Flower Fruit Mountain is complete. Practise in the ${wz('草')} or visit your friends.`;
   return '';
 }
 function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).join('. ') + '.' : tasksHint(); }
@@ -53,13 +53,13 @@ function promptFor(x, y){
   return w && lvl(w) === 0 ? 'Look' : '';
 }
 function checkGate(){
-  if (!S.gate && S.q.hungry === 3 && S.q.thirsty === 3){
-    S.gate = true; save(); buildMap(); SFX.rumble(); shakeT = performance.now();
+  if (!here().gate && here().hungry === 3 && here().thirsty === 3){
+    here().gate = true; save(); buildMap(); SFX.rumble(); shakeT = performance.now();
     toast(`A rumble from the ${wz('山')}! The rocks north of the meadow have rolled away.`);
   }
 }
 async function talk(n){
-  const q = S.q;
+  const q = here();
   n.dir = OPP[pl.dir];
   if (n.kind === 'bird'){ await showNotice('鸟', {note:'A little bird hops about, singing.'}); return; }
   const face = speaker(n.kind);
@@ -124,7 +124,7 @@ async function gather(t){   // pick fruit or collect water for a monkey who aske
   const {item, note} = t.gather;
   // the task comes first: collecting water is where 水 is introduced
   if (lvl(item) === 0) await showNotice(item, {note});
-  if (item === '水'){ S.q.thirsty = 2; save(); SFX.right(); toast(`You collected some ${wz('水')}. Take it to the thirsty monkey.`); }
+  if (item === '水'){ here().thirsty = 2; save(); SFX.right(); toast(`You collected some ${wz('水')}. Take it to the thirsty monkey.`); }
   else { S.carry = item; save(); SFX.right(); toast(`You picked a ${wz(item)}. Take it to the hungry monkey.`); }
 }
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)

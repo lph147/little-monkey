@@ -1,12 +1,46 @@
 // The saved game: what you have learned and done, kept in the browser, and when each word is next due for review.
 
 /* ================= STATE ================= */
-const KEY = 'xiaohouzi-v2';
-function fresh(){ return {w:{}, gloss:{}, peaches:0, q:{elder:0,hungry:0,thirsty:0}, gate:false, story:false, friends:[], pos:{x:START.x,y:START.y,dir:'down'}, started:false, sound:true, music:true, tasksSeen:{}, area1Done:false, pinyin:true, lines:{}, howto:false, carry:null, met:[], encounters:0, today:{d:'',ids:[]}}; }
-let S = fresh();
-try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(fresh(), JSON.parse(raw)); } catch(e) {}
-if (S.q.hungry === 2){ S.q.hungry = 1; S.carry = '桃子'; }   // older saves carried the peach as a quest step
-if (!Array.isArray(S.met)) S.met = [];
+const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
+const SAVE_VERSION = 3;
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:{...AREA.progress, done:false}}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, lines:{}, howto:false, carry:null, met:[], encounters:0, today:{d:'',ids:[]}}; }
+
+// Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
+function upgradeSave(s){
+  if (!s.version){   // version 2 (Little Monkey 8 until now): Flower Fruit Mountain's progress was loose at the top
+    const q = s.q || {};
+    if (q.hungry === 2){ q.hungry = 1; s.carry = '桃子'; }   // even older saves carried the peach as a task step
+    s.areas = {1:{elder:q.elder || 0, hungry:q.hungry || 0, thirsty:q.thirsty || 0, gate:!!s.gate, story:!!s.story, done:!!s.area1Done}};
+    s.area = 1;
+    delete s.q; delete s.gate; delete s.story; delete s.area1Done;
+    s.version = 3;
+  }
+  const f = fresh(), start = f.areas[AREA.number];
+  s = Object.assign(f, s);
+  s.areas = Object.assign({}, s.areas);
+  s.areas[AREA.number] = Object.assign({}, start, s.areas[AREA.number]);
+  if (!Array.isArray(s.met)) s.met = [];
+  return s;
+}
+// Keeps a copy of an old or unreadable save in the browser, in case anything goes wrong. Never overwritten.
+function keepBackup(label, raw){
+  try { const k = KEY + '-backup-' + label; if (localStorage.getItem(k) === null) localStorage.setItem(k, raw); } catch(e) {}
+}
+function loadSave(){
+  let raw = null;
+  try { raw = localStorage.getItem(KEY); } catch(e) {}
+  if (!raw) return fresh();
+  let data = null;
+  try { data = JSON.parse(raw); } catch(e) {}
+  if (!data || typeof data !== 'object' || Array.isArray(data)){ keepBackup('unreadable', raw); return fresh(); }
+  if (data.version === SAVE_VERSION) return upgradeSave(data);
+  keepBackup('v' + (data.version || 2), raw);   // the old save, exactly as it was, before converting it
+  const s = upgradeSave(data);
+  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e) {}
+  return s;
+}
+let S = loadSave();
+const here = () => S.areas[AREA.number];   // your progress in the area you're in
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} updateHUD(); }
 const lvl = w => (S.w[w] && S.w[w].lv) || 0;
 function rec(w){ if (!S.w[w]) S.w[w] = {lv:0,due:0,ok:0}; return S.w[w]; }

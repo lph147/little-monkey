@@ -11,6 +11,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // at the top left of the map.
   start: {x:9, y:2},
 
+  // What this area remembers in your save, and the values a new game starts with.
+  //   elder            0 not spoken to yet, 1 said hello, 2 told you about the animals
+  //   hungry, thirsty  0 not asked yet, 1 asked, 2 water collected (thirsty only), 3 done
+  //   gate             true once the rocks have rolled away
+  //   story            true once you've read the story at the waterfall
+  // The game adds done: true once you've passed the word test at the cave door.
+  progress: {elder:0, hungry:0, thirsty:0, gate:false, story:false},
+
   // The map, one letter per tile. The legend below says what each letter is.
   map: [
     "MMMMMMMMMMMMMMMMMMXXMMMM",

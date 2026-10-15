@@ -29,8 +29,8 @@ function storyScroll(){
         const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>', options:q.opts, answerIdx:q.a});
         if (ok) right++;
       }
-      const first = !S.story;
-      S.story = true; if (first) S.peaches += 5; save(); buildMap();
+      const first = !here().story;
+      here().story = true; if (first) S.peaches += 5; save(); buildMap();
       SFX.fanfare();
       openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">First slice complete</p>
         <p>You got ${right} of 3 story questions.${first ? ' +5 🍑' : ''}</p>
@@ -43,13 +43,13 @@ function storyScroll(){
 }
 function areaChecklist(){
   return [
-    ['Say hello to the old monkey', S.q.elder >= 1],
-    ['Learn about animals from the old monkey', S.q.elder >= 2],
+    ['Say hello to the old monkey', here().elder >= 1],
+    ['Learn about animals from the old monkey', here().elder >= 2],
     [`Find the hidden animals in the grass (${metCount()}/${ANIMALS.length})`, metCount() >= ANIMALS.length],
-    ['Bring the hungry monkey the fruit it wants', S.q.hungry === 3],
-    ['Bring water to the thirsty monkey', S.q.thirsty === 3],
-    ['Read the story at the waterfall', S.story],
-    ['Pass the word test at the cave door', !!S.area1Done]
+    ['Bring the hungry monkey the fruit it wants', here().hungry === 3],
+    ['Bring water to the thirsty monkey', here().thirsty === 3],
+    ['Read the story at the waterfall', here().story],
+    ['Pass the word test at the cave door', !!here().done]
   ];
 }
 function checklistHTML(onlyLeft){
@@ -119,7 +119,7 @@ function wordTest(){
   });
 }
 async function nextArea(){
-  S.area1Done = true; save(); SFX.fanfare(); fadeT = performance.now();
+  here().done = true; save(); SFX.fanfare(); fadeT = performance.now();
   await sleep(700);
   await infoBox('⛰️', `<p class="label">Flower Fruit Mountain complete!</p>
     <div class="stats"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${S.friends.length} friends</span><span>🍑 ${S.peaches}</span></div>

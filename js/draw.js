@@ -66,10 +66,10 @@ function drawWorld(now){
   const fp = (now % 5200) / 900;
   if (fp < 1){ const fx = 11*T - cx + 2 + fp*10, fy = 10*T - cy + 6 - Math.sin(fp*Math.PI)*8; R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx)-1, Math.round(fy), 1, 2, '#D96A1E'); }
   // sparkles on things whose word is not yet known
-  if (areaDone() && !S.area1Done) sparkle(3*T - cx + 8, 3*T - cy + 6, now, 1);
+  if (areaDone() && !here().done) sparkle(3*T - cx + 8, 3*T - cy + 6, now, 1);
   for (const [w,[x,y]] of Object.entries(HOT)){
     if (lvl(w) > 0) continue;
-    if (w === '瀑布' && !S.gate) continue;
+    if (w === '瀑布' && !here().gate) continue;
     const t = tileAt(x, y);
     if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
     sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
@@ -96,11 +96,11 @@ function drawWorld(now){
     }
     const idle = Math.floor(now/700 + n.x) % 2;
     drawEntityMonkey(n.kind, X, Y, n.dir, now, idle, 0, n.x + n.y);
-    const q = S.q[n.id];
+    const q = here()[n.id];
     if (n.kind === 'elder' && q === 0) bubble(X+10, Y-8, '!');
     if (n.kind === 'elder' && q === 1 && elderReady()) bubble(X+10, Y-8, '!');
-    if (S.q.elder >= 1 && n.kind === 'hungry' && (q === 0 || (q === 1 && S.carry))) bubble(X+10, Y-8, q === 0 ? '!' : '?');
-    if (S.q.elder >= 1 && n.kind === 'thirsty' && (q === 0 || q === 2)) bubble(X+10, Y-8, q === 0 ? '!' : '?');
+    if (here().elder >= 1 && n.kind === 'hungry' && (q === 0 || (q === 1 && S.carry))) bubble(X+10, Y-8, q === 0 ? '!' : '?');
+    if (here().elder >= 1 && n.kind === 'thirsty' && (q === 0 || q === 2)) bubble(X+10, Y-8, q === 0 ? '!' : '?');
   }
   drawMarkers(cx, cy, now);
   const fk = (now - fadeT) / 700;
