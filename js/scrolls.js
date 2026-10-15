@@ -1,6 +1,14 @@
 // The Story Scroll at the waterfall, the area checklist, the word test at the cave door, Today's words and the Word Scroll.
 
 /* ================= STORY, SLEEP, SCROLL ================= */
+// The story questions to ask now. Quizzes only use words you've caught: a question is left out
+// if you haven't caught its answer, and its wrong answers are the first 2 you have caught.
+function storyQuestions(){
+  return AREA.storyQuestions.filter(q => lvl(q.answer) >= 1).map(q => {
+    const wrong = q.options.filter(w => w !== q.answer && lvl(w) >= 1).slice(0, 2);
+    return {t:toks(q.zh), options:shuffle([q.answer, ...wrong]), answer:q.answer};
+  }).filter(q => q.options.length > 1);
+}
 function storyScroll(){
   return new Promise(res => {
     openCard(`<p class="label">Story Scroll · reading challenge</p><p class="small">Try reading it yourself before you look at the English. Tap any word you're unsure of.</p>
@@ -23,17 +31,18 @@ function storyScroll(){
     on('[data-a=ok]', async () => {
       stopSpeech();
       let right = 0;
-      const qs = AREA.storyQuestions.map(q => ({t:toks(q.zh), opts:q.options.map(w => WORDS[w].pic), a:q.options.indexOf(q.answer)}));
+      const qs = storyQuestions();
       for (const q of qs){
         say(q.t.join(''));
-        const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>', options:q.opts, answerIdx:q.a});
+        const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>',
+          options:q.options.map(w => `<span class="ico">${WORDS[w].pic}</span><span class="cap">${w}</span>`), answerIdx:q.options.indexOf(q.answer)});
         if (ok) right++;
       }
       const first = !here().story, end = AREA.storyEnd;
       here().story = true; if (first) S.peaches += end.reward; save(); buildMap();
       SFX.fanfare();
       openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">${end.title}</p>
-        <p>You got ${right} of ${qs.length} story questions.${first ? ` +${end.reward} 🍑` : ''}</p>
+        <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${first ? ` +${end.reward} 🍑` : ''}</p>
         ${end.text.map(p => `<p>${p}</p>`).join('\n        ')}
         <div class="actions"><button class="btn primary" data-a="done">Keep playing</button></div>`);
       on('[data-a=done]', () => { closeCard(); if (first && end.rumble){ SFX.rumble(); shakeT = performance.now(); } res(); });

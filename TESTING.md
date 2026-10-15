@@ -78,7 +78,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 **The waterfall**
 - [ ] The rocks at the top of the right-hand path have gone. Walk up through the gap to the top right, stand just left of the waterfall, face it and press A.
 - [ ] A card teaches 瀑布 (waterfall), then the Story Scroll opens. Read it to me highlights each sentence as it's spoken; English shows the translation.
-- [ ] Questions asks 3 picture questions, then shows "First slice complete" with +5 🍑 and a rumble.
+- [ ] Questions asks up to 3 picture questions, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). Then it shows "First slice complete" with +5 🍑 and a rumble.
 
 **The cave door**
 - [ ] The cave door is at the top of the short path on the far left. Stand below it, face up and press A. It teaches 洞 (cave).
@@ -108,5 +108,4 @@ When the save format changes, the game keeps a copy of your old save in the brow
 ## Known issues (not fixed yet)
 
 - On a computer, Space and Enter don't press Start on the title screen or Next in the intro; you have to click. (They work once you're walking around and on cards.)
-- The story questions at the waterfall break two learning rules: they can show pictures of words you haven't caught yet (🐐 goat, 🐦 bird), and the pictures have no Chinese underneath.
 - If meeting the last hidden animal is the final thing you do, the cave door still looks closed until you reload. It works anyway: it sparkles and opens when you press A.
