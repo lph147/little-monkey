@@ -11,8 +11,17 @@ const game = loadGame();
 const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
 const BANK = get('WORD_BANK'), SPRITES = get('SPRITES'), AREA = get('AREA'), PUNCT = get('[...PUNCT]');
 const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), STEPS = get('Object.keys(STEPS)');   // what the engine can draw and do
+const STEP_OPTIONS = get('STEP_OPTIONS'), COUNTS = get('Object.keys(COUNTS)');
 const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests), 'done'];   // what the area keeps in the save
 const placeholders = text => [...String(text).matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+const allSteps = () => [
+  ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.map(s => [`${who}'s talk, part ${i + 1}`, s, who]))),
+  ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null]))
+];
+const allIfs = () => [
+  ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
+  ...AREA.events.map((e, i) => [`event ${i + 1}`, e.if])
+];
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
 const where = `content/ (area ${AREA.number})`;
 const onMap = ([x, y]) => y >= 0 && y < AREA.map.length && x >= 0 && x < AREA.map[0].length;
@@ -188,19 +197,59 @@ test('everything you can gather is for a request, and the wrong thing has a line
   }
 });
 
-test('events only check and set what the area remembers, using steps the engine has', () => {
-  AREA.events.forEach((e, i) => {
-    for (const k of Object.keys(e.if)) assert.ok(remembered.includes(k), `event ${i + 1} checks "${k}", which the area doesn't remember`);
-    for (const step of e.do){
-      for (const k of Object.keys(step)) assert.ok(STEPS.includes(k), `event ${i + 1} has a step "${k}"; the steps are ${STEPS.join(', ')}`);
-      if (step.set) for (const k of Object.keys(step.set)) assert.ok(remembered.includes(k), `event ${i + 1} sets "${k}", which the area doesn't remember`);
-    }
-  });
+test('every character has a talk script, and every script is for a character', () => {
+  for (const c of AREA.characters) assert.ok(AREA.talk[c.id] && AREA.talk[c.id].length, `${c.id} has nothing in talk`);
+  for (const who of Object.keys(AREA.talk)) assert.ok(AREA.characters.some(c => c.id === who), `talk has a script for "${who}", who isn't a character`);
 });
 
-test('every {word} in a message is in the word bank', () => {
-  const texts = [...AREA.events.flatMap(e => e.do.map(s => s.message)), ...Object.values(AREA.legend).map(t => t.gather && t.gather.message)].filter(Boolean);
-  for (const t of texts) for (const w of placeholders(t)) assert.ok(BANK[w], `"${t}" has {${w}}, which isn't in the word bank`);
+test('every if only checks things the game knows about', () => {
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows'];
+  for (const [where, cond] of allIfs()){
+    for (const [k, v] of Object.entries(cond)){
+      assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
+      if (k === 'new' || k === 'knows') assert.ok(collectible.includes(v), `${where}: ${v} isn't a word you can collect in ${where}`);
+    }
+  }
+});
+
+test('every step does one thing, with settings that exist, using real lines and words', () => {
+  for (const [where, s, who] of allSteps()){
+    const actions = Object.keys(s).filter(k => STEPS.includes(k));
+    assert.equal(actions.length, 1, `${where}: each step needs exactly one of ${STEPS.join(', ')}, not ${JSON.stringify(s)}`);
+    const a = actions[0];
+    for (const k of Object.keys(s)) if (k !== a) assert.ok((STEP_OPTIONS[a] || []).includes(k), `${where}: "${k}" isn't a setting for ${a}`);
+    if (a === 'say'){
+      assert.ok(AREA.lines[s.say], `${where}: "${s.say}" isn't one of the lines`);
+      if (s.teach) assert.ok(AREA.lines[s.say].zh.split(' ').includes(s.teach), `${where}: line "${s.say}" doesn't contain ${s.teach}, so it can't be taught there`);
+    }
+    if (a === 'newWord' || a === 'card') assert.ok(collectible.includes(s[a]), `${where}: ${s[a]} isn't a word you can collect in ${where}`);
+    if (a === 'set') for (const k of Object.keys(s.set)) assert.ok(remembered.includes(k), `${where} sets "${k}", which the area doesn't remember`);
+    if (a === 'request') assert.ok(AREA.requests[s.request] && AREA.requests[s.request].from === who, `${where}: "${s.request}" isn't a request from ${who}`);
+    if (a === 'wordGame') assert.ok(s.wordGame.ask && s.wordGame.notYet && collectible.includes(s.wordGame.word), `${where}: wordGame needs ask, notYet and a word`);
+  }
+});
+
+test('every line is said somewhere', () => {
+  const said = new Set([
+    ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
+    ...Object.values(AREA.requests).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong])
+  ]);
+  for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
+});
+
+test('counters count things the engine can count', () => {
+  for (const [name, c] of Object.entries(AREA.counters)){
+    assert.ok(COUNTS.includes(c.count), `counter ${name} counts "${c.count}"; it can count ${COUNTS.join(', ')}`);
+    assert.ok(!BANK[name], `counter ${name} has the same name as a word`);
+  }
+});
+
+test('every {word} or {counter} in content text is real', () => {
+  const texts = [
+    ...allSteps().flatMap(([, s]) => [s.message, s.hint, s.note]),
+    ...Object.values(AREA.legend).map(t => t.gather && t.gather.message)
+  ].filter(Boolean);
+  for (const t of texts) for (const w of placeholders(t)) assert.ok(BANK[w] || AREA.counters[w], `"${t}" has {${w}}, which isn't a word in the word bank or a counter`);
 });
 
 test('intro captions are in time order, with Chinese, pinyin and English', () => {

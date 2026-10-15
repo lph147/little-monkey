@@ -19,6 +19,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // for each request, and done: true once you've passed the word test at the cave door.
   progress: {elder:0, gate:false, story:false},
 
+  // Numbers that text can show as {name}, and that an if can check. count is one of:
+  // wordsLearned, animalsFound, animals (how many hide in the grass) or animalsLeft.
+  // minus takes some away; max is the most it can be.
+  counters: {
+    newWords: {count:'wordsLearned', minus:1, max:4},   // words learned apart from one (you're born knowing 石头), up to 4
+    animals: {count:'animals'}
+  },
+
   // Characters who ask you to bring them something. The game handles each one the same way:
   // they ask (teaching the verb), you find the thing (see gather in the legend), then you
   // build the sentence to give it to them, and get the reward.
@@ -108,6 +116,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Characters standing on the map. A character's name shows Chinese, pinyin and English
   // together, because names aren't vocabulary.
   // palette: a monkey's colours. o outline, f fur, s face and tummy, m mouth, e eyes, w beard.
+  // label: what the A button says beside them (Talk if not given).
   characters: [
     {id:'elder', x:10, y:5, facing:'down', name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
@@ -117,7 +126,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
     {id:'playful', x:11, y:12, facing:'down', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
-    {id:'bird', x:22, y:13, facing:'down'}
+    {id:'bird', x:22, y:13, facing:'down', label:'Look'}
   ],
 
   // The sign by the stone: its name, what it says, and a hint underneath.
@@ -147,16 +156,62 @@ const FLOWER_FRUIT_MOUNTAIN = {
     thirsty: {zh:'我 渴 了 。 我 要 喝 水 ！', en:"I'm thirsty. I want to drink some water!"},
     havePeach: {zh:'你 有 桃子 吗 ？', en:'Do you have a peach?'},
     haveWater: {zh:'你 有 水 吗 ？', en:'Do you have water?'},
-    friends: {zh:'谢谢 ！ 我们 是 朋友 ！', en:'Thank you! We are friends!'},
     thanks: {zh:'谢谢 你 ！', en:'Thank you!'},
-    river: {zh:'河 里 有 水 。', en:'There is water in the river.'},
-    pond: {zh:'水 里 有 鱼 。', en:'There are fish in the water.'},
     play: {zh:'我们 玩 吧 ！', en:"Let's play!"},
     weFriends: {zh:'我们 是 朋友 ！', en:'We are friends!'},
     animals: {zh:'草 里 有 动物 。 去 找 动物 吧 ！', en:'There are animals in the grass. Go and find them!'},
     findElder: {zh:'你好 ！ 去 找 老 猴子 吧 ！', en:'Hello! Go and find the old monkey!'},
-    notThis: {zh:'这 是 苹果 。 我 要 吃 桃子 ！', en:'This is an apple. I want to eat a peach!'},
-    notPeachYet: {zh:'你 有 桃子 吗 ？', en:'Do you have a peach?'}
+    notThis: {zh:'这 是 苹果 。 我 要 吃 桃子 ！', en:'This is an apple. I want to eat a peach!'}
+  },
+
+  // What happens when you press A beside each character. The game goes down their list and
+  // does the first part whose if matches your progress (a part with no if always matches).
+  // Steps in a do list:
+  //   say       one of the lines above. teach makes that word bold; hint adds a note underneath;
+  //             showTasks puts your current tasks in the note instead (the hint if there are none)
+  //   newWord   a word's new-word card, only if you don't know the word yet (note: a line on it)
+  //   card      a word's card, every time (note: a line on it)
+  //   set       change what the area remembers, such as {elder:1}
+  //   request   the character's request (see requests)
+  //   wordGame  offer a word game. ask: the question; word: who you're playing with;
+  //             notYet: the message if you don't know enough words yet
+  // In an if: elder:0 checks what the area remembers; new:'猴子' is true while you don't know
+  // a word yet, knows:'朋友' once you do; a counter, such as newWords:{below:4} or {atLeast:4}.
+  talk: {
+    elder: [
+      {if:{elder:0}, do:[
+        {say:'hi', teach:'你好'},
+        {newWord:'你好'},
+        {say:'go', hint:'Things that sparkle have a word to learn. Face them and press A. Learn 4 words, then come back and talk to me again.'},
+        {set:{elder:1}}
+      ]},
+      {if:{elder:1, newWords:{below:4}}, do:[
+        {say:'go', hint:'Learn 4 words first, then come back. ({newWords}/4)'}
+      ]},
+      {if:{elder:1}, do:[
+        {say:'animals', teach:'动物', hint:'Walk through the tall grass to find the hidden animals. Answer their questions to make friends.'},
+        {newWord:'动物', note:'There are {animals} different animals hiding in the tall grass. Can you find them all?'},
+        {set:{elder:2}}
+      ]},
+      {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}]}
+    ],
+    playful: [
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
+      {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'}]},
+      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
+    ],
+    hungry: [
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {do:[{request:'hungry'}]}
+    ],
+    thirsty: [
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {do:[{request:'thirsty'}]}
+    ],
+    bird: [
+      {do:[{card:'鸟', note:'A little bird hops about, singing.'}]}
+    ]
   },
 
   // The Story Scroll at the waterfall: a short reading challenge.

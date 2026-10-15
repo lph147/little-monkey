@@ -45,55 +45,58 @@ const newTaskUntil = {};
 function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
   const n = npcAt(x, y);
-  if (n) return n.kind === 'bird' ? 'Look' : 'Talk';
+  if (n) return n.label || 'Talk';
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return t.gather.label;
   if (t.landmark) return 'Look';
   const w = lookWord(t);
   return w && lvl(w) === 0 ? 'Look' : '';
 }
-const matches = cond => Object.entries(cond).every(([k, v]) => here()[k] === v);   // does your progress match all of these?
-const STEPS = {   // what each step in the content's do-lists does
-  set: v => { Object.assign(here(), v); save(); },
-  rumble: () => { buildMap(); SFX.rumble(); shakeT = performance.now(); },
-  message: v => toast(fill(v))
+const COUNTS = {   // what a counter in the content can count
+  wordsLearned: () => learnedCount(),
+  animalsFound: () => metCount(),
+  animals: () => ANIMALS.length,
+  animalsLeft: () => ANIMALS.length - metCount()
 };
-async function runSteps(steps){ for (const step of steps) for (const [k, v] of Object.entries(step)) await STEPS[k](v); }
+function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count]() - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
+const compare = (have, want) => (want !== null && typeof want === 'object'
+  ? (want.atLeast === undefined || have >= want.atLeast) && (want.below === undefined || have < want.below)
+  : have === want);
+function matches(cond){   // does the game match everything in an if?
+  return Object.entries(cond).every(([k, v]) => {
+    if (k === 'new') return lvl(v) === 0;
+    if (k === 'knows') return lvl(v) >= 1;
+    if (AREA.counters[k]) return compare(counter(k), v);
+    return compare(here()[k], v);
+  });
+}
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok'], newWord:['note'], card:['note']};   // extra settings a step can have
+const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
+  async say(s, who){
+    const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
+    if (s.teach) opts.teach = s.teach;
+    if (hint) opts.hint = hint;
+    if (s.ok) opts.ok = s.ok;
+    await showDialog(speaker(who), L[s.say], opts);
+  },
+  async newWord(s){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, s.note ? {note:fill(s.note)} : {}); },
+  async card(s){ await showNotice(s.card, s.note ? {note:fill(s.note)} : {}); },
+  set(s){ Object.assign(here(), s.set); save(); },
+  async request(s, who){ await request(REQUESTS.find(r => r.id === s.request), speaker(who)); },
+  async wordGame(s, who){
+    const g = s.wordGame;
+    if (!canEncounter()){ toast(g.notYet); return; }
+    if (await confirmBox(speaker(who), g.ask, 'Play', 'Not now')){ SFX.encounter(); await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}); }
+  },
+  rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
+  message(s){ toast(fill(s.message)); }
+};
+async function runSteps(steps, who){ for (const s of steps) await STEPS[Object.keys(s).find(k => STEPS[k])](s, who); }
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); }
 async function talk(n){
-  const q = here();
   n.dir = OPP[pl.dir];
-  if (n.kind === 'bird'){ await showNotice('鸟', {note:'A little bird hops about, singing.'}); return; }
-  const face = speaker(n.kind);
-  if (n.kind === 'elder'){
-    if (q.elder === 0){
-      await showDialog(face, L.hi, {teach:'你好'});
-      if (lvl('你好') === 0) await showNotice('你好');
-      await showDialog(face, L.go, {hint:`Things that sparkle have a word to learn. Face them and press A. Learn ${ELDER_NEED} words, then come back and talk to me again.`});
-      q.elder = 1; save();
-    } else if (q.elder === 1 && !elderReady()){
-      await showDialog(face, L.go, {hint:`Learn ${ELDER_NEED} words first, then come back. (${Math.min(learnedCount() - 1, ELDER_NEED)}/${ELDER_NEED})`});
-    } else if (q.elder === 1){
-      await showDialog(face, L.animals, {teach:'动物', hint:'Walk through the tall grass to find the hidden animals. Answer their questions to make friends.'});
-      if (lvl('动物') === 0) await showNotice('动物', {note:`There are ${ANIMALS.length} different animals hiding in the tall grass. Can you find them all?`});
-      q.elder = 2; save();
-    } else await showDialog(face, L.hi, {hint: goalText() || 'Keep exploring, little monkey.'});
-    return;
-  }
-  if (q.elder === 0){
-    await showDialog(face, L.findElder, {hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'});
-    return;
-  }
-  if (n.kind === 'playful'){
-    if (lvl('猴子') === 0){ await showDialog(face, L.iam, {teach:'猴子'}); await showNotice('猴子'); return; }
-    if (lvl('朋友') === 0){ await showDialog(face, L.weFriends, {teach:'朋友'}); await showNotice('朋友', {note:'Come back and play a word game with me any time.'}); return; }
-    await showDialog(face, L.play);
-    if (canEncounter()){ if (await confirmBox(face, 'Play a word game with this little monkey?', 'Play', 'Not now')){ SFX.encounter(); await encounter({id:'playful', hz:'猴子', img: portrait('playful'), wild:false, name: NAMES.playful}); } }
-    else toast('Learn a few more words first, then come back to play.');
-    return;
-  }
-  const r = requestFrom(n.id);
-  if (r) await request(r, face);
+  const part = (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
+  if (part) await runSteps(part.do, n.id);
 }
 async function request(r, face){   // a character asking you to bring something (the area's requests)
   const p = here(), has = p.holding[r.id];
