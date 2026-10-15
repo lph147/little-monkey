@@ -66,10 +66,15 @@ document.addEventListener('keydown', e => {
   }
   if (isB){ e.preventDefault(); pressB(); return; }
   if (isMenu){ e.preventDefault(); pressMenu(); return; }
-  if (mode !== 'play') return;
+  const isA = e.key === ' ' || e.key === 'Enter';
+  if (mode !== 'play'){
+    // The title screen and the intro: A presses Start, Next or Begin, unless you've moved to another button with Tab.
+    if (isA && !e.target.matches('button:focus-visible')){ e.preventDefault(); if (!e.repeat) pressA(); }
+    return;
+  }
   const d = KEYS[e.key];
   if (d){ e.preventDefault(); if (!e.repeat) queued = d; held = d; return; }
-  if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); pressA(); }
+  if (isA){ e.preventDefault(); pressA(); }
 });
 document.addEventListener('keyup', e => { const d = KEYS[e.key]; if (d && held === d) held = null; });
 window.addEventListener('blur', () => { held = null; });

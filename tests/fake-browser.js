@@ -58,7 +58,7 @@ function scriptsIn(page, root = ROOT){
 // anything else already in the browser's storage. {root} and {page} load a different copy
 // of the game (used to compare versions).
 function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY} = {}){
-  const elements = {}, storage = new Map(Object.entries(stored)), frames = [];
+  const elements = {}, storage = new Map(Object.entries(stored)), frames = [], listeners = {};
   if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
   const document = {
     hidden: false,
@@ -66,7 +66,7 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY} = {}){
     querySelector: sel => elements[sel] || (elements[sel] = stub(sel)),
     querySelectorAll: () => [],
     createElement: tag => stub(`<${tag}>`),
-    addEventListener(){}
+    addEventListener(type, fn){ (listeners[type] = listeners[type] || []).push(fn); }
   };
   const win = vm.createContext({
     document,
@@ -88,7 +88,14 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY} = {}){
     el: sel => elements[sel],                     // a page element, by the same selector the game uses
     storage,                                      // the browser's saved data
     runFrame(now = 1000){ const fn = frames.shift(); if (fn) fn(now); },   // draw one frame
-    run: code => vm.runInContext(code, win)      // run code inside the game, e.g. run('ORDER.length')
+    run: code => vm.runInContext(code, win),     // run code inside the game, e.g. run('ORDER.length')
+    // Press a key, such as ' ' or 'Enter'. repeat: the key is being held down. tabbedTo: a button
+    // has been chosen with the Tab key. Returns the key press, to check if the game used it.
+    key(key, {repeat = false, tabbedTo = false} = {}){
+      const e = {key, repeat, target: {matches: () => tabbedTo}, defaultPrevented: false, preventDefault(){ e.defaultPrevented = true; }};
+      for (const fn of listeners.keydown || []) fn(e);
+      return e;
+    }
   };
 }
 
