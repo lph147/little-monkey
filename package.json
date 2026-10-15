@@ -1,0 +1,9 @@
+{
+  "name": "little-monkey",
+  "private": true,
+  "description": "小猴子 Little Monkey, a retro game for learning Mandarin. The game is plain HTML, CSS and JavaScript; Node is only used for the tests and a local preview server. There are no packages to install.",
+  "scripts": {
+    "start": "node tools/serve.js",
+    "test": "node --test"
+  }
+}

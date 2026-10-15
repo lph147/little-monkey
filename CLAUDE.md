@@ -21,6 +21,11 @@ I'm new to coding. Please:
 - No build tools or frameworks unless we agree. Plain HTML, CSS and JavaScript, loadable from a static web host (GitHub Pages).
 - Keep DESIGN.md's "Next steps" checklist up to date when a step is finished.
 
+## Tools
+- `npm test` runs the automated tests (Node's built-in test runner; there are no packages to install).
+- `npm start` serves the game at http://127.0.0.1:8000. The preview pane's "game" configuration does the same.
+- TESTING.md has the checks to do by hand: a quick check after every change and a full playthrough of Area 1.
+
 ## Learning design rules (decided through playtesting; keep these)
 - **One new word at a time.** No conversation, action or encounter teaches two new words back to back.
 - **New-word cards** show the picture, characters, pinyin, sound and English. English is shown by default on the first card only; after that it is behind an English button.
