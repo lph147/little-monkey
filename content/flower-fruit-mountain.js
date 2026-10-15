@@ -121,7 +121,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     "MMMMMMMgF.gNMMgggFWWYYYY",
     "MMMCMMMgg.ggMMggggWWYYYY",
     "MMg.gMMMg.gMMMMRRMWWYYYY",
-    "YTg.ggggg.ggggg.ggWWYYYY",
+    "YTg.ggKgg.ggggg.ggWWYYYY",
     "YPg.............ggWWYYYY",
     "YQggGGGGgggFggg.ggWWgggY",
     "YPggGGGGggggTgg.ggWWgGgY",
@@ -146,7 +146,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   learnOnStep    true to learn its word the first time you step on it, with stepNote on the card
   //   animals        true if animals hide here
   //   gather         something you can pick up here for a request (for), with a message afterwards
-  //   action         something special that happens: 'caveDoor', 'story' or 'sign'
+  //   action         something special that happens: 'caveDoor', 'story', 'sign' or 'training'
+  //   label          what the A button says when you face it (Look if not given)
   //   whenGateOpens  the letter it becomes once the rocks have rolled away
   legend: {
     'g': {look:'grass', walk:true},
@@ -160,6 +161,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'Q': {look:'appleTree', word:'苹果', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'}},
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
+    'K': {look:'post', landmark:true, label:'Train', action:'training'},   // the training ground
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', whenGateOpens:'.'},
     'M': {look:'cliff', word:'山'},
     'C': {look:'caveDoor', word:'洞', note:'A cave in the cliff, closed by a heavy stone door.', landmark:true, action:'caveDoor'},

@@ -23,6 +23,7 @@ const ROCK_PAL = {o:'#4A463F',l:'#D6D2C5',m:'#A9A598',d:'#7C786D',k:'#3A352E',g:
 const CRACK = [[8,3],[8,4],[7,5],[8,6],[9,7],[8,8],[7,9],[8,10],[9,5],[10,4],[6,7],[5,8],[10,8],[11,9]];
 const STONE = ROCK.map(r => [...r]); CRACK.forEach(([x,y]) => { if (STONE[y][x] !== '.') STONE[y][x] = 'k'; });
 const SIGN = ["................","................","................","..oooooooooooo..","..owwwwwwwwwwo..","..owWWWwwWWWwo..","..owwwwwwwwwwo..","..owWWwwWWWwwo..","..oooooooooooo..","......oWWo......","......oWWo......","......oWWo......","......oWWo......",".....oooooo.....","................","................"];
+const POST = ["......oooo......",".....owwwwo.....",".....owWWwo.....","..ooooowwooooo..","..owwwwwwwwwwo..","..ooooowwooooo..",".....owWWwo.....",".....owwwwo.....","...ooowWWwooo...","...owwwwwwwwo...","...ooowwwwooo...",".....owWWwo.....",".....owwwwo.....",".....owWWwo.....","....oooooooo....","................"];   // a wooden practice post
 const MONKEY = ["................",".....oooooo.....","....offffffo....","...offffffffo...",".ooofssssssfooo.","osssfssssssfssso","osssfssssssfssso",".ooofssmmssfooo.","...offssssffo...","...offffffffo...","..offfssssfffo..",".offffssssffffo.",".of.ffssssff.fo.","...offffffffo...","...offo..offo...","...ooo....ooo..."];
 const BIRD = ["...ooo..","..obbbo.","yobebbbo",".obbwwbo","..obwwwo","...oooo.","....o.o."];
 const PALS = {
@@ -82,13 +83,14 @@ const SPR = {
   tree: sprite(TREE, TREE_PAL), peach: sprite(PEACH_TREE.map(r => r.join('')), TREE_PAL), apple: sprite(APPLE_TREE.map(r => r.join('')), TREE_PAL),
   rock: sprite(ROCK, ROCK_PAL), stone: sprite(STONE.map(r => r.join('')), ROCK_PAL),
   sign: sprite(SIGN, {o:'#4A2C17',w:'#D2A46A',W:'#9E6F3C'}),
+  post: sprite(POST, {o:'#4A2C17',w:'#B98A55',W:'#8A5A32'}),
   bird: sprite(BIRD, {o:'#2B3F66',b:'#5AA0E6',w:'#9CCBF5',e:'#111111',y:'#F2A33A'})
 };
 
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
-const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign'];   // looks with grass underneath
+const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign','post'];   // looks with grass underneath
 const CLIFFS = ['cliff','caveDoor'];
 const WATERY = ['water','waterfall','bridge'];
 function grass(g, X, Y, x, y){
@@ -151,6 +153,7 @@ const LOOKS = {
   rocks:     (g,X,Y,x,y) => { path(g,X,Y,x,y); g.drawImage(SPR.rock,X,Y+2); },
   stone:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+2,Y+13,12,2,'#5DA651'); g.drawImage(SPR.stone,X,Y+1); },
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
+  post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
   caveDoor:  (g,X,Y,x,y) => {   // a cave in the cliff; its stone door rolls open once the area is done
     cliff(g,X,Y,x,y);

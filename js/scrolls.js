@@ -61,21 +61,22 @@ function infoBox(who, html){
   });
 }
 const PASS = 0.8;
-function wordTest(){
+// Matching words to their pictures, in rounds of about 4 (the cave door test and the training ground).
+// Gives the words you missed first time, or null if you stop.
+function matchWords(words, title, stopLabel){
   return new Promise(res => {
-    const words = shuffle(ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));
     const rounds = []; for (let i = 0; i < words.length; i += 4) rounds.push(words.slice(i, i + 4));
     if (rounds.length > 1 && rounds[rounds.length - 1].length < 3){ const last = rounds.pop(); rounds[rounds.length - 1].push(...last); }
     const missed = new Set();
     let r = 0, picked = null;
     function render(){
       const set = rounds[r], left = shuffle(set), right = shuffle(set);
-      openCard(`<p class="label">Word test · ${r + 1} of ${rounds.length}</p>
+      openCard(`<p class="label">${title} · ${r + 1} of ${rounds.length}</p>
         <p class="small">Tap a word, then tap its picture.</p>
         <div class="match"><div class="col">${left.map(w => `<button class="mw" data-w="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${WORDS[w].py}</rt></ruby></button>`).join('')}</div>
         <div class="col">${right.map(w => `<button class="mp" data-w="${w}">${WORDS[w].pic}</button>`).join('')}</div></div>
         <div class="feedback" aria-live="polite"></div>
-        <div class="actions"><button class="btn" data-a="quit" data-b>Stop test</button></div>`);
+        <div class="actions"><button class="btn" data-a="quit" data-b>${stopLabel}</button></div>`);
       picked = null;
       const fb = sheet.querySelector('.feedback');
       sheet.querySelectorAll('.mw').forEach(bt => bt.onclick = () => {
@@ -90,30 +91,80 @@ function wordTest(){
         if (bt.dataset.w === picked){
           SFX.right(); bt.classList.add('done'); wbtn.classList.remove('sel'); wbtn.classList.add('done'); picked = null;
           if (![...sheet.querySelectorAll('.mw')].some(x => !x.classList.contains('done'))){
-            setTimeout(() => { r++; if (r < rounds.length) render(); else finish(); }, 450);
+            setTimeout(() => { r++; if (r < rounds.length) render(); else res(missed); }, 450);
           }
         } else {
           SFX.wrong(); missed.add(picked); bt.classList.add('shake'); setTimeout(() => bt.classList.remove('shake'), 400);
           fb.textContent = 'Not that one. Try again.';
         }
       });
-      on('[data-a=quit]', () => { closeCard(); res(false); });
-    }
-    function finish(){
-      const right = words.length - missed.size, need = Math.ceil(words.length * PASS), pass = right >= need;
-      missed.forEach(w => { const rr = rec(w); rr.due = Date.now(); });
-      save();
-      if (pass) SFX.fanfare(); else SFX.wrong();
-      openCard(`<div class="who" aria-hidden="true">${pass ? '🎉' : '📜'}</div>
-        <p class="label">${pass ? 'Test passed!' : 'Not quite yet'}</p>
-        <p>You matched <b>${right} of ${words.length}</b> words right first time. You needed ${need}.</p>
-        ${missed.size ? `<p class="small">Words to practise:</p><div class="chips">${[...missed].map(w => `<button class="chip" data-w="${w}">${w}</button>`).join('')}</div><div class="gloss">Tap a word to hear it.</div>` : ''}
-        ${pass ? '' : `<p>${AREA.exit.tryAgain}</p>`}
-        <div class="actions"><button class="btn primary" data-a="ok">${pass ? AREA.exit.passButton : AREA.exit.failButton}</button></div>`);
-      sheet.querySelectorAll('.chip').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; say(w); sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${WORDS[w].py} · ${esc(WORDS[w].en)}`; });
-      on('[data-a=ok]', () => { closeCard(); res(pass); });
+      on('[data-a=quit]', () => { closeCard(); res(null); });
     }
     render();
+  });
+}
+// The words you missed, as chips you can tap to hear.
+const missedHTML = missed => missed.size ? `<p class="small">Words to practise:</p><div class="chips">${[...missed].map(w => `<button class="chip" data-w="${w}">${w}</button>`).join('')}</div><div class="gloss">Tap a word to hear it.</div>` : '';
+const bindMissed = () => sheet.querySelectorAll('.chip').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; say(w); sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${WORDS[w].py} · ${esc(WORDS[w].en)}`; });
+async function wordTest(){   // the exit test at the cave door: every word with a picture you've caught
+  const words = shuffle(ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));
+  const missed = await matchWords(words, 'Word test', 'Stop test');
+  if (!missed) return false;
+  const right = words.length - missed.size, need = Math.ceil(words.length * PASS), pass = right >= need;
+  missed.forEach(w => { const rr = rec(w); rr.due = Date.now(); });
+  save();
+  if (pass) SFX.fanfare(); else SFX.wrong();
+  return new Promise(res => {
+    openCard(`<div class="who" aria-hidden="true">${pass ? '🎉' : '📜'}</div>
+      <p class="label">${pass ? 'Test passed!' : 'Not quite yet'}</p>
+      <p>You matched <b>${right} of ${words.length}</b> words right first time. You needed ${need}.</p>
+      ${missedHTML(missed)}
+      ${pass ? '' : `<p>${AREA.exit.tryAgain}</p>`}
+      <div class="actions"><button class="btn primary" data-a="ok">${pass ? AREA.exit.passButton : AREA.exit.failButton}</button></div>`);
+    bindMissed();
+    on('[data-a=ok]', () => { closeCard(); res(pass); });
+  });
+}
+
+/* ================= TRAINING GROUND ================= */
+const TRAINING_WORDS = 8, TRAINING_MIN = 4;   // words per session, and how many you need to start
+const trainable = () => ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1);   // caught words with a picture
+const isDue = w => rec(w).due <= Date.now();   // a newly caught word is due straight away
+// The words to practise: the ones due for review first, then the ones due soonest, in a random order.
+const trainingWords = () => shuffle(shuffle(trainable()).sort((a, b) => rec(a).due - rec(b).due).slice(0, TRAINING_WORDS));
+// After a session: a word matched first time comes back later, a missed one straight away (the gold
+// squares stay the same). Each due word matched first time earns a peach. Gives how many peaches.
+function trained(words, missed){
+  let peaches = 0;
+  for (const w of words){
+    const r = rec(w), ok = !missed.has(w);
+    if (ok && isDue(w)) peaches++;
+    if (ok){ r.ok = (r.ok || 0) + 1; r.due = Date.now() + INTERVALS[Math.min(r.ok - 1, 3)] * DAY; }
+    else { r.ok = 0; r.due = Date.now(); }
+    addToday(w);
+  }
+  S.peaches += peaches; save();
+  return peaches;
+}
+async function trainingGround(){
+  const who = `<img class="portrait" alt="" src="${SPR.post.toDataURL()}">`, have = trainable().length;
+  if (have < TRAINING_MIN){ await infoBox(who, `<p>A practice post. Come back once you've learned ${TRAINING_MIN} words with pictures (${have}/${TRAINING_MIN}).</p>`); return; }
+  const words = trainingWords(), due = words.filter(isDue).length;
+  const ask = 'Practise matching words to their pictures. ' + (due
+    ? `${due} of them ${due === 1 ? 'is' : 'are'} due for review: each one you match right first time earns a 🍑.`
+    : 'None of your words are due for review right now, so there are no 🍑 this time.');
+  if (!await confirmBox(who, ask, 'Start', 'Not now')) return;
+  const missed = await matchWords(words, 'Training', 'Stop');
+  if (!missed) return;
+  const right = words.length - missed.size, peaches = trained(words, missed);
+  SFX.fanfare();
+  await new Promise(res => {
+    openCard(`<div class="who" aria-hidden="true">${who}</div><p class="label">Training done</p>
+      <p>You matched <b>${right} of ${words.length}</b> words right first time.${peaches ? ` +${peaches} 🍑` : ''}</p>
+      ${missedHTML(missed)}
+      <div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
+    bindMissed();
+    on('[data-a=ok]', () => { closeCard(); res(); });
   });
 }
 async function nextArea(){

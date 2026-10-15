@@ -33,7 +33,7 @@ function promptFor(x, y){
   if (n) return n.label || 'Talk';
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return t.gather.label;
-  if (t.landmark) return 'Look';
+  if (t.landmark) return t.label || 'Look';
   const w = lookWord(t);
   return w && lvl(w) === 0 ? 'Look' : '';
 }
@@ -128,6 +128,7 @@ const ACTIONS = {   // special things that happen when you press A at some tiles
     else if (await confirmBox('🚪', `${AREA.exit.ready} You need ${Math.round(PASS*100)}% right first time.`, 'Start the test', 'Not yet')){ if (await wordTest()) await nextArea(); }
   },
   async story(t){ await lookAt(t); await storyScroll(); },
+  training(){ return trainingGround(); },
   async sign(){
     SFX.blip();
     await showDialog(speaker('sign'), {t:toks(AREA.sign.says.zh), en:AREA.sign.says.en}, {hint:AREA.sign.hint});
