@@ -159,11 +159,11 @@ The current game is one hand-built map in one file. Adding areas that way would 
 | Chinese accuracy | Unnatural lines as grammar gets harder | Native-speaker review of each area's lines |
 | Lost progress | A cleared browser wipes the save | Save export and import |
 
-**Open questions**
+**Decided** (these were the open questions)
 
-- How many new words per area feels right: about 20, or nearer 30?
-- Should demons and harder battles start at Area 4, or earlier?
-- Which grammar matters most to you first, if the order in the grammar table should change?
+- **Words per area:** about 25 new words to collect, like Area 1 (27), so about 20 new sprites per area. Words you only hear in sentences don't count towards this.
+- **Demons:** harder battles start at Area 4, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
+- **Grammar:** the order in the grammar table stays as it is. Patterns can be heard in sentences in earlier areas before they are taught.
 
 ## Next steps
 
