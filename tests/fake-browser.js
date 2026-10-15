@@ -34,8 +34,8 @@ function stub(name){
 }
 
 // The game's scripts, in the order the page loads them.
-function scriptsIn(page){
-  const pageFile = path.join(ROOT, page);
+function scriptsIn(page, root = ROOT){
+  const pageFile = path.join(root, page);
   const html = fs.readFileSync(pageFile, 'utf8');
   const scripts = [];
   for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){
@@ -54,7 +54,8 @@ function scriptsIn(page){
 }
 
 // Starts the game. Pass {save} to start with that saved game already in the browser.
-function loadGame({save} = {}){
+// {root} and {page} load a different copy of the game (used to compare versions).
+function loadGame({save, root = ROOT, page = ENTRY} = {}){
   const elements = {}, storage = new Map(), frames = [];
   if (save) storage.set(SAVE_KEY, JSON.stringify(save));
   const document = {
@@ -80,11 +81,12 @@ function loadGame({save} = {}){
     console
   });
   vm.runInContext('globalThis.window = globalThis;', win);
-  for (const s of scriptsIn(ENTRY)) vm.runInContext(s.code, win, {filename: s.file, lineOffset: s.lineOffset});
+  for (const s of scriptsIn(page, root)) vm.runInContext(s.code, win, {filename: s.file, lineOffset: s.lineOffset});
   return {
     el: sel => elements[sel],                     // a page element, by the same selector the game uses
     storage,                                      // the browser's saved data
-    runFrame(now = 1000){ const fn = frames.shift(); if (fn) fn(now); }   // draw one frame
+    runFrame(now = 1000){ const fn = frames.shift(); if (fn) fn(now); },   // draw one frame
+    run: code => vm.runInContext(code, win)      // run code inside the game, e.g. run('ORDER.length')
   };
 }
 

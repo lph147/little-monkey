@@ -48,7 +48,11 @@
   </div>
 </div>
 
-<!-- The game's scripts. They load in this order, and each one can use what the ones above it define. -->
+<!-- The game's scripts. They load in this order, and each one can use what the ones above it define.
+     First the content (words and areas), then the engine that runs it. -->
+<script src="content/words.js"></script>
+<script src="content/sprites.js"></script>
+<script src="content/flower-fruit-mountain.js"></script>
 <script src="js/data.js"></script>
 <script src="js/state.js"></script>
 <script src="js/helpers.js"></script>

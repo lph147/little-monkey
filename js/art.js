@@ -26,12 +26,9 @@ const SIGN = ["................","................","................","..oooooo
 const MONKEY = ["................",".....oooooo.....","....offffffo....","...offffffffo...",".ooofssssssfooo.","osssfssssssfssso","osssfssssssfssso",".ooofssmmssfooo.","...offssssffo...","...offffffffo...","..offfssssfffo..",".offffssssffffo.",".of.ffssssff.fo.","...offffffffo...","...offo..offo...","...ooo....ooo..."];
 const BIRD = ["...ooo..","..obbbo.","yobebbbo",".obbwwbo","..obwwwo","...oooo.","....o.o."];
 const PALS = {
-  player:{o:'#4A2C17',f:'#D49A3A',s:'#F6D2A8',m:'#C98E6A',e:'#24160C',w:'#F4F1EA',b:'#C0392B'},
-  elder:{o:'#3A3A36',f:'#A9A79F',s:'#EADCC8',m:'#B89E86',e:'#222222',w:'#FAFAF5'},
-  hungry:{o:'#4A2C17',f:'#B8743E',s:'#F2C9A0',m:'#C68A64',e:'#24160C'},
-  thirsty:{o:'#40250F',f:'#94592E',s:'#F0C59A',m:'#C08060',e:'#24160C'},
-  playful:{o:'#4A2C17',f:'#CC8D45',s:'#F6D2A8',m:'#C98E6A',e:'#24160C'}
+  player:{o:'#4A2C17',f:'#D49A3A',s:'#F6D2A8',m:'#C98E6A',e:'#24160C',w:'#F4F1EA',b:'#C0392B'}
 };
+AREA.characters.forEach(c => { if (c.palette) PALS[c.id] = c.palette; });   // the other monkeys' colours come from the area
 const spriteCache = {};
 const BACK = ["................",".....oooooo.....","....offffffo....","...offffffffo...",".oooffffffffooo.","offoffffffffoffo","offoffffffffoffo",".oooffffffffooo.","...offffffffo...","...offffffffo...","..offffffffffo..",".offffffffffffo.",".of.ffffffff.fo.","...offffffffo...","...offo..offo...","...ooo....ooo..."];
 const SIDE = ["................",".....ooooo......","....offfffo.....","...offfffffo....","..osfffssssso...","..osffssesssso..","..ooffssssssmo..","...offsssssoo...","....offfffo.....","...offfffffo....",".o.offsssffo....","ofooffsssfffo...","offfffssffffo...",".oo.offffffo....","....offo.ofo....","....ooo..oo....."];
@@ -58,27 +55,16 @@ function monkeySprite(kind, dir, blink, step = 0){
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return spriteCache[k] = sprite(out, PALS[kind]);
 }
-const ANIMAL_ART = {
-  rabbit:{name:'rabbit', hz:'兔子', rows:["...oo....oo.....","..owpo..owpo....","..owpo..owpo....","..owpo..owpo....","..owwoooowwo....",".owwwwwwwwwwo...",".owwewwwwewwo...",".owwwwppwwwwo...","..owwwwwwwwo....","..owwwwwwwwwo...",".owwwwwwwwwwwo..",".owgwwwwwwgwwoo.",".owgwwwwwwgwwwwo","..owwwwwwwwwwwo.","..oggo..ogggo...","...oo....ooo...."],
-    pal:{o:'#4A3B33',w:'#F2EEE6',g:'#CFC7BA',p:'#F4A6B0',e:'#1E1E1E'}},
-  fox:{name:'fox', hz:'狐狸', rows:[".oo........oo...",".oko......oko...",".orro....orro...",".orrroooorrro...",".orrrrrrrrrro...",".orerrrrrrero...","..orrwwwwrro....","...owwkkwwo.....","....owwwwo......","...orrwwrro.....","..orrrwwrrro.oo.","..orrrwwrrrooddo","..orrrrrrrrodwwo","...orrrrrrro.oo.","...okko.okko....","................"],
-    pal:{o:'#3B2416',r:'#E07B39',d:'#B85A22',w:'#F7F1E8',e:'#1E1E1E',k:'#2B1A10'}},
-  squirrel:{name:'squirrel', hz:'松鼠', rows:[".........oooo...","........ollllo..",".oo....ollllllo.","obbo...olllbllo.","obbbo..ollbbllo.","obebbo.olbblllo.","obbbbbo.ollllo..",".occbbbo.olllo..","..occbbbooolo...","..occcbbbbllo...","..occcbbbblo....","..occcbbbbo.....","..ocbbbbbbo.....","...obbobbo......","...ooo.ooo......","................"],
-    pal:{o:'#3A2414',b:'#A0612E',l:'#C98A4E',c:'#F2DDBF',e:'#1E1E1E'}},
-  goat:{name:'goat', hz:'山羊', rows:["..oo......oo....","..oho....oho....","...oho..oho.....","..ooowwwwooo....",".ogwwwwwwwwgo...","..owewwwwewo....","..owwwwwwwwo....","...owwppwwo.....","....owwwwo......","....oggggo......","..oowwwwwwoo....",".owwwwwwwwwwo...",".owwwwwwwwwwo...",".owgwwwwwwgwo...","..oho....oho....","..oo......oo...."],
-    pal:{o:'#3E3A33',w:'#EDE8DD',g:'#C9C2B3',h:'#8C7A5B',e:'#1E1E1E',p:'#E8A7A0'}}
-};
-const ANIMALS = Object.entries(ANIMAL_ART).map(([id, a]) => ({id, name:a.name, hz:a.hz, spr:sprite(a.rows, a.pal)}));
-const FRIEND_NAMES = {rabbit:'兔子', fox:'狐狸', squirrel:'松鼠', goat:'山羊', playful:'小猴子'};
+// The animals in this area's tall grass, with their sprites from content/sprites.js.
+const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, spr:sprite(SPRITES[a.word].rows, SPRITES[a.word].palette)}));
+const FRIEND_NAMES = {};   // what each friend is called in the Friends list
+ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
+AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
 
 const portraitCache = {};
-const NAMES = {
-  elder:   {zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
-  hungry:  {zh:'饿猴子', py:'è hóuzi',   en:'Hungry monkey'},
-  thirsty: {zh:'渴猴子', py:'kě hóuzi',  en:'Thirsty monkey'},
-  playful: {zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
-  sign:    {zh:'牌子',   py:'páizi',     en:'Sign'}
-};
+const NAMES = {};   // the names shown above what characters say
+AREA.characters.forEach(c => { if (c.name) NAMES[c.id] = c.name; });
+NAMES.sign = AREA.sign;
 function speaker(id){
   const n = NAMES[id];
   return `<div class="speaker">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div><div class="spk-en">${n.en}</div></div>` : ''}</div>`;

@@ -23,11 +23,7 @@ function storyScroll(){
     on('[data-a=ok]', async () => {
       stopSpeech();
       let right = 0;
-      const qs = [
-        {t:['谁','在','石头','里','？'], opts:['🐒','🐦','🌸'], a:0},
-        {t:['猴子','吃','什么','？'], opts:['🪨','🍑','🌿'], a:1},
-        {t:['河','里','有','什么','？'], opts:['🌳','🐐','🐟'], a:2}
-      ];
+      const qs = AREA.storyQuestions.map(q => ({t:toks(q.zh), opts:q.options.map(w => WORDS[w].pic), a:q.options.indexOf(q.answer)}));
       for (const q of qs){
         say(q.t.join(''));
         const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>', options:q.opts, answerIdx:q.a});
