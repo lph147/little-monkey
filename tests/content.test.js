@@ -10,7 +10,9 @@ const {loadGame, ROOT} = require('./fake-browser');
 const game = loadGame();
 const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
 const BANK = get('WORD_BANK'), SPRITES = get('SPRITES'), AREA = get('AREA'), PUNCT = get('[...PUNCT]');
-const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)');   // what the engine can draw and do
+const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), STEPS = get('Object.keys(STEPS)');   // what the engine can draw and do
+const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests), 'done'];   // what the area keeps in the save
+const placeholders = text => [...String(text).matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
 const where = `content/ (area ${AREA.number})`;
 const onMap = ([x, y]) => y >= 0 && y < AREA.map.length && x >= 0 && x < AREA.map[0].length;
@@ -157,6 +159,48 @@ test('the area says what it remembers in the save, with starting values', () => 
     assert.ok(['number', 'boolean'].includes(typeof v), `progress ${k} should start as a number or true/false`);
     assert.notEqual(k, 'done', 'progress can\'t be called done; the game adds that itself');
   }
+  for (const id of Object.keys(AREA.requests)){
+    assert.ok(!(id in AREA.progress) && !['done', 'holding'].includes(id), `request ${id} has the same name as something in progress`);
+  }
+});
+
+test('requests use real characters, lines and words', () => {
+  for (const [id, r] of Object.entries(AREA.requests)){
+    assert.ok(AREA.characters.some(c => c.id === r.from), `request ${id}: from "${r.from}" isn't a character`);
+    for (const w of [r.wants, r.verb]) assert.ok(collectible.includes(w), `request ${id}: ${w} isn't a word you can collect in ${where}`);
+    for (const k of ['ask', 'offer', 'thanks']) assert.ok(AREA.lines[r[k]], `request ${id}: ${k} "${r[k]}" isn't one of the lines`);
+    if (r.wrong) assert.ok(AREA.lines[r.wrong], `request ${id}: wrong "${r.wrong}" isn't one of the lines`);
+    const build = r.build.split(' ');
+    assert.ok(build.includes(r.wants) && build.includes(r.verb), `request ${id}: the sentence "${r.build}" should use ${r.wants} and ${r.verb}`);
+    for (const w of [...build, r.extraTile]) assert.ok(BANK[w], `request ${id}: ${w} isn't in the word bank`);
+    for (const f of r.firstTeach) assert.ok(BANK[f.word] && f.note, `request ${id}: firstTeach needs words from the bank, each with a note`);
+    assert.ok(r.asked && r.buildPrompt && r.reward > 0, `request ${id} needs asked, buildPrompt and a reward`);
+  }
+});
+
+test('everything you can gather is for a request, and the wrong thing has a line', () => {
+  for (const [ch, t] of Object.entries(AREA.legend)){
+    if (!t.gather) continue;
+    const r = AREA.requests[t.gather.for];
+    assert.ok(r, `legend "${ch}" gathers for "${t.gather.for}", which isn't a request`);
+    assert.ok(t.gather.message, `legend "${ch}": gather needs a message`);
+    if (t.gather.item !== r.wants) assert.ok(r.wrong && r.wrongMessage, `request ${t.gather.for} needs wrong and wrongMessage, because legend "${ch}" gives ${t.gather.item}`);
+  }
+});
+
+test('events only check and set what the area remembers, using steps the engine has', () => {
+  AREA.events.forEach((e, i) => {
+    for (const k of Object.keys(e.if)) assert.ok(remembered.includes(k), `event ${i + 1} checks "${k}", which the area doesn't remember`);
+    for (const step of e.do){
+      for (const k of Object.keys(step)) assert.ok(STEPS.includes(k), `event ${i + 1} has a step "${k}"; the steps are ${STEPS.join(', ')}`);
+      if (step.set) for (const k of Object.keys(step.set)) assert.ok(remembered.includes(k), `event ${i + 1} sets "${k}", which the area doesn't remember`);
+    }
+  });
+});
+
+test('every {word} in a message is in the word bank', () => {
+  const texts = [...AREA.events.flatMap(e => e.do.map(s => s.message)), ...Object.values(AREA.legend).map(t => t.gather && t.gather.message)].filter(Boolean);
+  for (const t of texts) for (const w of placeholders(t)) assert.ok(BANK[w], `"${t}" has {${w}}, which isn't in the word bank`);
 });
 
 test('intro captions are in time order, with Chinese, pinyin and English', () => {

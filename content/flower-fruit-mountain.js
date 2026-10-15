@@ -12,12 +12,44 @@ const FLOWER_FRUIT_MOUNTAIN = {
   start: {x:9, y:2},
 
   // What this area remembers in your save, and the values a new game starts with.
-  //   elder            0 not spoken to yet, 1 said hello, 2 told you about the animals
-  //   hungry, thirsty  0 not asked yet, 1 asked, 2 water collected (thirsty only), 3 done
-  //   gate             true once the rocks have rolled away
-  //   story            true once you've read the story at the waterfall
-  // The game adds done: true once you've passed the word test at the cave door.
-  progress: {elder:0, hungry:0, thirsty:0, gate:false, story:false},
+  //   elder   0 not spoken to yet, 1 said hello, 2 told you about the animals
+  //   gate    true once the rocks have rolled away
+  //   story   true once you've read the story at the waterfall
+  // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
+  // for each request, and done: true once you've passed the word test at the cave door.
+  progress: {elder:0, gate:false, story:false},
+
+  // Characters who ask you to bring them something. The game handles each one the same way:
+  // they ask (teaching the verb), you find the thing (see gather in the legend), then you
+  // build the sentence to give it to them, and get the reward.
+  //   from         the character who asks
+  //   wants        the word for what they want
+  //   verb         taught when they ask, and used in the sentence you build
+  //   ask          their line when asking, and asked: a message afterwards
+  //   wrong        their line if you bring something else, and wrongMessage afterwards
+  //   offer        their line when you bring the right thing
+  //   firstTeach   new words to teach before you build the sentence, one at a time, each with a note
+  //   build        the sentence you build from word tiles; extraTile is a wrong tile mixed in
+  //   reward       peaches you get; thanks is their line afterwards
+  requests: {
+    hungry: {from:'hungry', wants:'桃子', verb:'吃', ask:'hungry', asked:'The hungry monkey wants something to eat. Check your tasks.',
+      wrong:'notThis', wrongMessage:'The monkey gives the fruit back. Listen to what it wants, then try another tree.',
+      offer:'havePeach', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
+      build:'我 要 吃 桃子', extraTile:'喝', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'},
+    thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
+      offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
+      build:'我 要 喝 水', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'}
+  },
+
+  // Things that happen by themselves when the time comes (checked whenever a request is done).
+  // A word in {curly brackets} in a message is shown as 汉字 (English).
+  events: [
+    {if:{hungry:'done', thirsty:'done', gate:false}, do:[
+      {set:{gate:true}},
+      {rumble:true},   // the ground shakes and the map is redrawn
+      {message:'A rumble from the {山}! The rocks north of the meadow have rolled away.'}
+    ]}
+  ],
 
   // The map, one letter per tile. The legend below says what each letter is.
   map: [
@@ -50,7 +82,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   message        a message shown after its card
   //   learnOnStep    true to learn its word the first time you step on it, with stepNote on the card
   //   animals        true if animals hide here
-  //   gather         something you can pick up here when a monkey has asked for it
+  //   gather         something you can pick up here for a request (for), with a message afterwards
   //   action         something special that happens: 'caveDoor', 'story' or 'sign'
   //   whenGateOpens  the letter it becomes once the rocks have rolled away
   legend: {
@@ -61,15 +93,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
     'Y': {look:'tree', word:'森林', learnFirst:'树', note:'So many trees together.'},
-    'P': {look:'peachTree', word:'桃子', landmark:true, gather:{item:'桃子', label:'Pick', note:'You pick one from the tree.'}},
-    'Q': {look:'appleTree', word:'苹果', landmark:true, gather:{item:'苹果', label:'Pick', note:'You pick one from the tree.'}},
+    'P': {look:'peachTree', word:'桃子', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'}},
+    'Q': {look:'appleTree', word:'苹果', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'}},
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', whenGateOpens:'.'},
     'M': {look:'cliff', word:'山'},
     'C': {look:'caveDoor', word:'洞', note:'A cave in the cliff, closed by a heavy stone door.', landmark:true, action:'caveDoor'},
-    'W': {look:'water', word:'河', gather:{item:'水', label:'Collect', note:'You scoop up some water from the river.'}},
-    'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', label:'Collect', note:'You scoop up some water from the pond.'}},
+    'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
+    'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story'}
   },
 

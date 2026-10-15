@@ -2,8 +2,13 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 3;
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:{...AREA.progress, done:false}}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, lines:{}, howto:false, carry:null, met:[], encounters:0, today:{d:'',ids:[]}}; }
+const SAVE_VERSION = 4;
+function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
+  const p = {...AREA.progress};
+  for (const r of REQUESTS) p[r.id] = 'not asked';
+  return Object.assign(p, {holding:{}, done:false});
+}
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, lines:{}, howto:false, met:[], encounters:0, today:{d:'',ids:[]}}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -15,10 +20,24 @@ function upgradeSave(s){
     delete s.q; delete s.gate; delete s.story; delete s.area1Done;
     s.version = 3;
   }
+  if (s.version === 3){   // version 3: the monkeys' tasks were numbers, the fruit you carried was loose at the top,
+                          // and having the water was task step 2
+    const a = (s.areas || {})[1];
+    if (a){
+      const state = n => (n === 3 ? 'done' : n >= 1 ? 'asked' : 'not asked');
+      a.holding = {};
+      if (a.thirsty === 2) a.holding.thirsty = '水';
+      if (s.carry) a.holding.hungry = s.carry;
+      a.hungry = state(a.hungry); a.thirsty = state(a.thirsty);
+    }
+    delete s.carry;
+    s.version = 4;
+  }
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
   s.areas = Object.assign({}, s.areas);
   s.areas[AREA.number] = Object.assign({}, start, s.areas[AREA.number]);
+  s.areas[AREA.number].holding = Object.assign({}, s.areas[AREA.number].holding);
   if (!Array.isArray(s.met)) s.met = [];
   return s;
 }

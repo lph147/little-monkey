@@ -24,6 +24,8 @@ const DAY = 86400000, INTERVALS = [1,3,7,21];
 const MAP = AREA.map;
 const COLS = MAP[0].length, ROWS = MAP.length;
 const LEGEND = AREA.legend;           // what each map letter is
+const REQUESTS = Object.entries(AREA.requests).map(([id, r]) => ({id, ...r}));   // characters asking you to bring something
+const requestFrom = who => REQUESTS.find(r => r.from === who);
 const NPCS = AREA.characters.map(c => ({id:c.id, x:c.x, y:c.y, dir:c.facing, kind:c.id}));
 const HOT = AREA.sparkles;
 const START = AREA.start;

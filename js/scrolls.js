@@ -46,8 +46,8 @@ function areaChecklist(){
     ['Say hello to the old monkey', here().elder >= 1],
     ['Learn about animals from the old monkey', here().elder >= 2],
     [`Find the hidden animals in the grass (${metCount()}/${ANIMALS.length})`, metCount() >= ANIMALS.length],
-    ['Bring the hungry monkey the fruit it wants', here().hungry === 3],
-    ['Bring water to the thirsty monkey', here().thirsty === 3],
+    ['Bring the hungry monkey the fruit it wants', here().hungry === 'done'],
+    ['Bring water to the thirsty monkey', here().thirsty === 'done'],
     ['Read the story at the waterfall', here().story],
     ['Pass the word test at the cave door', !!here().done]
   ];

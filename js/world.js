@@ -10,7 +10,7 @@ function tileAt(x, y){         // the legend entry for the map letter at x, y
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y);
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
-const wants = item => (item === '水' ? here().thirsty === 1 : here().hungry === 1);      // has a monkey asked for this?
+const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
 
@@ -18,7 +18,7 @@ const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
 const ELDER_NEED = 4;
 const elderReady = () => learnedCount() - 1 >= ELDER_NEED;
 const metCount = () => Math.min(S.met.length, ANIMALS.length);
-const areaDone = () => here().elder >= 2 && here().hungry === 3 && here().thirsty === 3 && metCount() >= ANIMALS.length && here().story;
+const areaDone = () => here().elder >= 2 && here().hungry === 'done' && here().thirsty === 'done' && metCount() >= ANIMALS.length && here().story;
 function getTasks(){
   const q = here(), t = [];
   if (q.elder === 0) t.push({id:'elder', text:'Talk to the old monkey on the path', target:[10,5], npc:true});
@@ -26,17 +26,17 @@ function getTasks(){
     ? {id:'elder2', text:'Talk to the old monkey again', target:[10,5], npc:true}
     : {id:'learn4', text:`Learn ${ELDER_NEED} words, then talk to the old monkey again (${Math.min(learnedCount() - 1, ELDER_NEED)}/${ELDER_NEED})`, target:null});
   if (q.elder >= 2 && metCount() < ANIMALS.length) t.push({id:'animals', text:`Find the hidden animals in the tall grass (${metCount()}/${ANIMALS.length})`, target:null});
-  if (q.hungry === 1 && !S.carry) t.push({id:'h1', text:'Find the fruit the hungry monkey asked for', target:[2,7]});
-  if (q.hungry === 1 && S.carry) t.push({id:'h2' + S.carry, text:`Give the ${wz(S.carry)} to the hungry monkey`, target:[13,5], npc:true});
-  if (q.thirsty === 1) t.push({id:'t1', text:'Collect water from the river or the pond', target:[11,9]});
-  if (q.thirsty === 2) t.push({id:'t2', text:`Give the ${wz('水')} to the thirsty monkey`, target:[2,12], npc:true});
+  if (q.hungry === 'asked' && !q.holding.hungry) t.push({id:'h1', text:'Find the fruit the hungry monkey asked for', target:[2,7]});
+  if (q.hungry === 'asked' && q.holding.hungry) t.push({id:'h2' + q.holding.hungry, text:`Give the ${wz(q.holding.hungry)} to the hungry monkey`, target:[13,5], npc:true});
+  if (q.thirsty === 'asked' && !q.holding.thirsty) t.push({id:'t1', text:'Collect water from the river or the pond', target:[11,9]});
+  if (q.thirsty === 'asked' && q.holding.thirsty) t.push({id:'t2', text:`Give the ${wz('水')} to the thirsty monkey`, target:[2,12], npc:true});
   if (here().gate && !here().story) t.push({id:'fall', text:'Climb up beside the river to the waterfall', target:[18,1]});
   if (areaDone() && !here().done) t.push({id:'door', text:`Pass the word test at the ${wz('洞')} door`, target:[3,3]});
   return t;
 }
 function tasksHint(){
   const q = here();
-  if (q.elder > 0 && (q.hungry === 0 || q.thirsty === 0)) return 'Monkeys with a ! above them need help. Walk up to one and press A.';
+  if (q.elder > 0 && (q.hungry === 'not asked' || q.thirsty === 'not asked')) return 'Monkeys with a ! above them need help. Walk up to one and press A.';
   if (here().done) return `Flower Fruit Mountain is complete. Practise in the ${wz('草')} or visit your friends.`;
   return '';
 }
@@ -47,17 +47,19 @@ function promptFor(x, y){
   const n = npcAt(x, y);
   if (n) return n.kind === 'bird' ? 'Look' : 'Talk';
   const t = tileAt(x, y);
-  if (t.gather && wants(t.gather.item)) return t.gather.label;
+  if (t.gather && canGather(t.gather)) return t.gather.label;
   if (t.landmark) return 'Look';
   const w = lookWord(t);
   return w && lvl(w) === 0 ? 'Look' : '';
 }
-function checkGate(){
-  if (!here().gate && here().hungry === 3 && here().thirsty === 3){
-    here().gate = true; save(); buildMap(); SFX.rumble(); shakeT = performance.now();
-    toast(`A rumble from the ${wz('山')}! The rocks north of the meadow have rolled away.`);
-  }
-}
+const matches = cond => Object.entries(cond).every(([k, v]) => here()[k] === v);   // does your progress match all of these?
+const STEPS = {   // what each step in the content's do-lists does
+  set: v => { Object.assign(here(), v); save(); },
+  rumble: () => { buildMap(); SFX.rumble(); shakeT = performance.now(); },
+  message: v => toast(fill(v))
+};
+async function runSteps(steps){ for (const step of steps) for (const [k, v] of Object.entries(step)) await STEPS[k](v); }
+async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); }
 async function talk(n){
   const q = here();
   n.dir = OPP[pl.dir];
@@ -90,29 +92,32 @@ async function talk(n){
     else toast('Learn a few more words first, then come back to play.');
     return;
   }
-  const isH = n.kind === 'hungry', key = n.kind;
-  const ask = isH ? L.hungry : L.thirsty, verb = isH ? '吃' : '喝', thing = isH ? '桃子' : '水';
-  const ready = isH ? (q.hungry === 1 && S.carry === '桃子') : q.thirsty === 2;
-  if (isH && q.hungry === 1 && S.carry && S.carry !== '桃子'){
-    await showDialog(face, L.notThis);
-    S.carry = null; save(); toast('The monkey gives the fruit back. Listen to what it wants, then try another tree.');
+  const r = requestFrom(n.id);
+  if (r) await request(r, face);
+}
+async function request(r, face){   // a character asking you to bring something (the area's requests)
+  const p = here(), has = p.holding[r.id];
+  if (p[r.id] === 'asked' && has && has !== r.wants){   // you brought the wrong thing
+    await showDialog(face, L[r.wrong]);
+    delete p.holding[r.id]; save(); toast(r.wrongMessage);
     return;
   }
-  if (q[key] <= 1 && !ready){
-    await showDialog(face, ask, {teach: lvl(verb) === 0 ? verb : null});
-    if (lvl(verb) === 0) await showNotice(verb);
-    if (q[key] === 0){ q[key] = 1; save(); toast(isH ? 'The hungry monkey wants something to eat. Check your tasks.' : 'The thirsty monkey wants something to drink. Check your tasks.'); }
-  } else if (ready){
-    await showDialog(face, isH ? L.havePeach : L.haveWater, {ok:'Give it'});
-    const nw = ['要','我'].find(w => lvl(w) === 0);
-    if (nw) await showNotice(nw, {note: nw === '要' ? 'Use 要 to say what you want.' : '我 means I or me.'});
-    await tiles(face, ['我','要',verb,thing], [isH ? '喝' : '吃'], 'Say what the monkey wants. Put the words in order.');
-    ['我','要',verb,thing].filter(w => lvl(w) >= 1).forEach(w => setLevel(w, 4));
-    q[key] = 3; if (isH) S.carry = null; S.peaches += 3; save(); SFX.fanfare();
-    await showDialog(face, L.thanks);
-    toast('+3 🍑. Task complete!');
-    checkGate();
-  } else await showDialog(face, L.thanks);
+  if (p[r.id] === 'asked' && has === r.wants){          // you brought what they asked for
+    await showDialog(face, L[r.offer], {ok:'Give it'});
+    const nw = r.firstTeach.find(f => lvl(f.word) === 0);
+    if (nw) await showNotice(nw.word, {note:nw.note});
+    const build = toks(r.build);
+    await tiles(face, build, [r.extraTile], r.buildPrompt);
+    build.filter(w => lvl(w) >= 1).forEach(w => setLevel(w, 4));
+    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; save(); SFX.fanfare();
+    await showDialog(face, L[r.thanks]);
+    toast(`+${r.reward} 🍑. Task complete!`);
+    await runEvents();
+  } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
+    await showDialog(face, L[r.ask], {teach: lvl(r.verb) === 0 ? r.verb : null});
+    if (lvl(r.verb) === 0) await showNotice(r.verb);
+    if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(r.asked); }
+  } else await showDialog(face, L[r.thanks]);
 }
 async function lookAt(t){   // the card for the word you learn by looking at a tile
   const w = lookWord(t);
@@ -120,12 +125,11 @@ async function lookAt(t){   // the card for the word you learn by looking at a t
   await showNotice(w, note ? {note} : {});
   if (t.message) toast(t.message);
 }
-async function gather(t){   // pick fruit or collect water for a monkey who asked for it
-  const {item, note} = t.gather;
-  // the task comes first: collecting water is where 水 is introduced
-  if (lvl(item) === 0) await showNotice(item, {note});
-  if (item === '水'){ here().thirsty = 2; save(); SFX.right(); toast(`You collected some ${wz('水')}. Take it to the thirsty monkey.`); }
-  else { S.carry = item; save(); SFX.right(); toast(`You picked a ${wz(item)}. Take it to the hungry monkey.`); }
+async function gather(t){   // pick up something for a request, such as fruit or water
+  const g = t.gather;
+  // the request comes first: collecting water is where 水 is introduced
+  if (lvl(g.item) === 0) await showNotice(g.item, {note:g.note});
+  here().holding[g.for] = g.item; save(); SFX.right(); toast(fill(g.message));
 }
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
   async caveDoor(t){
@@ -143,7 +147,7 @@ async function interact(x, y){
   const n = npcAt(x, y);
   if (n) return talk(n);
   const t = tileAt(x, y);
-  if (t.gather && wants(t.gather.item)) return gather(t);
+  if (t.gather && canGather(t.gather)) return gather(t);
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
