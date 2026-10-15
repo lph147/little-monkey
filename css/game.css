@@ -6,6 +6,9 @@
   --btnA:#B8323A; --btnB:#3D6A93;
   --pixel:"Pixelify Sans", "Noto Sans SC", system-ui, sans-serif;
   --text:"Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  /* English text. The Chinese font draws ‘ ’ “ ” as wide as a character ("device’ s"), so these
+     four marks come from Source Sans 3 (index.html loads only them). Chinese sentences use --text. */
+  --en:"Source Sans 3", var(--text);
   color-scheme: light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -29,7 +32,7 @@
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--en);line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .app{max-width:520px;margin:0 auto;padding:8px 10px 14px}
@@ -53,7 +56,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .textbox{margin-top:12px;background:var(--paper);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 3px var(--paper),inset 0 0 0 5px var(--line);padding:10px 12px;min-height:96px}
 #goal{margin:0;font-size:.98rem}
 .cap .cpy{color:var(--muted);font-size:.9rem}
-.cap .czh{font-size:1.45rem;font-weight:500;line-height:1.3}
+.cap .czh{font-family:var(--text);font-size:1.45rem;font-weight:500;line-height:1.3}
 .cap .cen{font-size:.92rem}
 .caprow{display:flex;align-items:center;gap:8px;margin-top:8px}
 .caprow .spacer{flex:1}
@@ -96,7 +99,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .spk-en{font-family:var(--pixel);color:var(--jade);font-size:.95rem}
 .engbtn{font-family:var(--pixel);font-size:.8rem;border:1px solid var(--line);background:var(--paper);border-radius:4px;padding:1px 6px;margin-left:4px;vertical-align:middle}
 .label{font-family:var(--pixel);font-size:.95rem;color:var(--jade);margin:0 0 4px}
-.line{display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px 2px;margin:4px 0 6px}
+.line{font-family:var(--text);display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px 2px;margin:4px 0 6px}
 .tok{display:inline-flex;flex-direction:column;align-items:center;background:none;border:none;border-bottom:2px dotted var(--line);padding:2px 3px 1px;font-size:1.55rem;line-height:1.2;font-family:var(--text);color:var(--ink);border-radius:3px}
 .tok:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}
 .tok.on{background:color-mix(in srgb,var(--gold) 28%,transparent)}

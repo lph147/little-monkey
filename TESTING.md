@@ -108,6 +108,5 @@ When the save format changes, the game keeps a copy of your old save in the brow
 ## Known issues (not fixed yet)
 
 - On a computer, Space and Enter don't press Start on the title screen or Next in the intro; you have to click. (They work once you're walking around and on cards.)
-- Curly apostrophes show a gap, as in "device’ s", because the Chinese font draws them extra wide.
 - The story questions at the waterfall break two learning rules: they can show pictures of words you haven't caught yet (🐐 goat, 🐦 bird), and the pictures have no Chinese underneath.
 - If meeting the last hidden animal is the final thing you do, the cave door still looks closed until you reload. It works anyway: it sparkles and opens when you press A.
