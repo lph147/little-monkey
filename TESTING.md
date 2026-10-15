@@ -18,6 +18,8 @@ npm start
 
 Then open http://127.0.0.1:8000 in a browser. Press Ctrl+C in the terminal to stop. In Claude Code, the preview pane's "game" setting does the same.
 
+Until the split is finished, http://127.0.0.1:8000/little-monkey.html is the original version 8, for comparison. Both use the same save.
+
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.
@@ -95,6 +97,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 ## Known issues (not fixed yet)
 
+- On a computer, Space and Enter don't press Start on the title screen or Next in the intro; you have to click. (They work once you're walking around and on cards.)
 - Curly apostrophes show a gap, as in "device’ s", because the Chinese font draws them extra wide.
 - The story questions at the waterfall break two learning rules: they can show pictures of words you haven't caught yet (🐐 goat, 🐦 bird), and the pictures have no Chinese underneath.
 - If meeting the last hidden animal is the final thing you do, the cave door still looks closed until you reload. It works anyway: it sparkles and opens when you press A.

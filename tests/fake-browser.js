@@ -14,7 +14,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const ROOT = path.resolve(__dirname, '..');
-const ENTRY = 'little-monkey.html';   // the page that loads the game
+const ENTRY = 'index.html';           // the page that loads the game
 const SAVE_KEY = 'xiaohouzi-v2';      // where the game keeps its save in the browser
 
 function stub(name){
@@ -88,4 +88,4 @@ function loadGame({save} = {}){
   };
 }
 
-module.exports = {loadGame, SAVE_KEY};
+module.exports = {loadGame, scriptsIn, ROOT, ENTRY, SAVE_KEY};

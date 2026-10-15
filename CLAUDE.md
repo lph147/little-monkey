@@ -4,7 +4,8 @@
 A retro, Pokémon-style web game for learning Mandarin Chinese, themed on *Journey to the West*. The player is a baby monkey (Sun Wukong) who collects Chinese words like creatures, learns grammar from the story's characters, and earns progress by practising.
 
 - **DESIGN.md** is the plan and the source of truth for design decisions. Follow it. If a request conflicts with it, point that out before building.
-- **little-monkey.html** is the starting point: version 8 of the game, built in a Claude chat. It is a single self-contained HTML file (about 2,000 lines) with all code, pixel art and sound generated in code.
+- **index.html** is the game. It loads `css/game.css` and then the scripts in `js/`, in the order listed in index.html; each script can use what the ones before it define. All pixel art and sound are generated in code.
+- **little-monkey.html** is version 8, the single-file original built in a Claude chat. It is kept for comparison while the engine is split from the content, then it will be deleted (git keeps it).
 
 ## About me
 I'm new to coding. Please:

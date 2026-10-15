@@ -2,13 +2,65 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>小猴子 Little Monkey</title>
-<!-- Temporary: for now this page just forwards to little-monkey.html.
-     When the engine is split from the content, this page becomes the game itself. -->
-<meta http-equiv="refresh" content="0; url=little-monkey.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/game.css">
 </head>
 <body>
-<p><a href="little-monkey.html">Open 小猴子 Little Monkey</a></p>
+<div class="app">
+  <header>
+    <h1>小猴子</h1>
+    <span class="stat" id="peaches" title="Peaches">🍑 0</span>
+    <span class="stat" id="count">0/26</span>
+    <span class="spacer"></span>
+    <button class="menubtn" id="menuBtn" aria-label="Open menu">☰ Menu</button>
+  </header>
+  <div class="console">
+    <div class="display">
+    <div class="screen" id="screenWrap">
+      <canvas id="screen" aria-label="Game screen"></canvas>
+      <div class="titlecard" id="titlecard">
+        <div><h2>小猴子</h2><p>Flower Fruit Mountain</p></div>
+        <div class="row" id="titleButtons"></div>
+      </div>
+      <div class="saybox" id="saybox" hidden role="status"></div>
+    </div>
+    <div class="textbox" id="textbox" aria-live="polite"></div>
+    <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+    </div>
+    <div class="controls">
+      <div class="dpad" aria-label="Direction pad">
+        <button class="u" data-dir="up" aria-label="Walk up">▲</button>
+        <button class="l" data-dir="left" aria-label="Walk left">◀</button>
+        <span class="c"></span>
+        <button class="r" data-dir="right" aria-label="Walk right">▶</button>
+        <button class="d" data-dir="down" aria-label="Walk down">▼</button>
+      </div>
+      <div class="ab">
+        <div class="abwrap"><button class="round" id="btnB" aria-label="Back or menu">B</button><span class="ablabel" id="bLabel"></span></div>
+        <div class="abwrap"><button class="round" id="btnA" aria-label="Talk or look">A</button><span class="ablabel" id="aLabel"></span></div>
+      </div>
+    </div>
+    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for the menu</p>
+  </div>
+</div>
+
+<!-- The game's scripts. They load in this order, and each one can use what the ones above it define. -->
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/helpers.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/scrolls.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/world.js"></script>
+<script src="js/input.js"></script>
+<script src="js/art.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

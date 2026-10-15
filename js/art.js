@@ -1,0 +1,182 @@
+// Pixel art: sprites drawn from letter grids, character portraits, and painting the map's tiles.
+
+/* ================= PIXEL ART ================= */
+const cv = $('#screen'), sc = cv.getContext('2d');
+const buf = document.createElement('canvas'); buf.width = VW*T; buf.height = VH*T;
+const b = buf.getContext('2d'); b.imageSmoothingEnabled = false;
+const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+function sprite(rows, pal){
+  const c = document.createElement('canvas'); c.width = rows[0].length; c.height = rows.length;
+  const g = c.getContext('2d');
+  rows.forEach((r, y) => [...r].forEach((ch, x) => { if (pal[ch]) R(g, x, y, 1, 1, pal[ch]); }));
+  return c;
+}
+const TREE = ["....oooooooo....","..oolllhhhlloo..",".olllhhhhlllldo.","olllhhhllllllddo","ollhhllllllllddo","ollllllllllldddo","odlllllllllddddo","oddllllllldddddo",".oddddlldddddo..","..oodddddddoo...","....ooottooo....","......otko......","......otko......","......otko......",".....ootkoo.....","................"];
+const TREE_PAL = {o:'#1F4D2A',d:'#2F7A3E',l:'#3F9A4C',h:'#6CC066',t:'#8A5A32',k:'#5E3B1F',p:'#F7A08F',q:'#D9665B',r:'#FFE0CF'};
+const PEACH_TREE = TREE.map(r => [...r]);
+const APPLE_TREE = TREE.map(r => [...r]);
+[[3,3],[9,2],[11,5],[6,6],[7,3]].forEach(([x,y]) => { APPLE_TREE[y][x] = 'a'; APPLE_TREE[y][x+1] = 'a'; APPLE_TREE[y+1][x] = 'A'; APPLE_TREE[y+1][x+1] = 'A'; });
+TREE_PAL.a = '#E8343C'; TREE_PAL.A = '#A8161E';
+[[4,3],[10,2],[11,6],[5,6],[8,4]].forEach(([x,y]) => { PEACH_TREE[y][x] = 'r'; PEACH_TREE[y][x+1] = 'p'; PEACH_TREE[y+1][x] = 'p'; PEACH_TREE[y+1][x+1] = 'q'; });
+const ROCK = ["................","................",".....ooooo......","...oolllmmoo....","..ollllmmmmdo...",".olllmmmmmmddo..",".ollmmmmmmmddo..","olmmmmmmmmmdddo.","ommmmmmmmmddddo.","ommmmmmmmdddddo.",".ommmmmmdddddo..","..ooddddddddo...","....oooooooo....","................","................","................"];
+const ROCK_PAL = {o:'#4A463F',l:'#D6D2C5',m:'#A9A598',d:'#7C786D',k:'#3A352E',g:'#FFE27A'};
+const CRACK = [[8,3],[8,4],[7,5],[8,6],[9,7],[8,8],[7,9],[8,10],[9,5],[10,4],[6,7],[5,8],[10,8],[11,9]];
+const STONE = ROCK.map(r => [...r]); CRACK.forEach(([x,y]) => { if (STONE[y][x] !== '.') STONE[y][x] = 'k'; });
+const SIGN = ["................","................","................","..oooooooooooo..","..owwwwwwwwwwo..","..owWWWwwWWWwo..","..owwwwwwwwwwo..","..owWWwwWWWwwo..","..oooooooooooo..","......oWWo......","......oWWo......","......oWWo......","......oWWo......",".....oooooo.....","................","................"];
+const MONKEY = ["................",".....oooooo.....","....offffffo....","...offffffffo...",".ooofssssssfooo.","osssfssssssfssso","osssfssssssfssso",".ooofssmmssfooo.","...offssssffo...","...offffffffo...","..offfssssfffo..",".offffssssffffo.",".of.ffssssff.fo.","...offffffffo...","...offo..offo...","...ooo....ooo..."];
+const BIRD = ["...ooo..","..obbbo.","yobebbbo",".obbwwbo","..obwwwo","...oooo.","....o.o."];
+const PALS = {
+  player:{o:'#4A2C17',f:'#D49A3A',s:'#F6D2A8',m:'#C98E6A',e:'#24160C',w:'#F4F1EA',b:'#C0392B'},
+  elder:{o:'#3A3A36',f:'#A9A79F',s:'#EADCC8',m:'#B89E86',e:'#222222',w:'#FAFAF5'},
+  hungry:{o:'#4A2C17',f:'#B8743E',s:'#F2C9A0',m:'#C68A64',e:'#24160C'},
+  thirsty:{o:'#40250F',f:'#94592E',s:'#F0C59A',m:'#C08060',e:'#24160C'},
+  playful:{o:'#4A2C17',f:'#CC8D45',s:'#F6D2A8',m:'#C98E6A',e:'#24160C'}
+};
+const spriteCache = {};
+const BACK = ["................",".....oooooo.....","....offffffo....","...offffffffo...",".oooffffffffooo.","offoffffffffoffo","offoffffffffoffo",".oooffffffffooo.","...offffffffo...","...offffffffo...","..offffffffffo..",".offffffffffffo.",".of.ffffffff.fo.","...offffffffo...","...offo..offo...","...ooo....ooo..."];
+const SIDE = ["................",".....ooooo......","....offfffo.....","...offfffffo....","..osfffssssso...","..osffssesssso..","..ooffssssssmo..","...offsssssoo...","....offfffo.....","...offfffffo....",".o.offsssffo....","ofooffsssfffo...","offfffssffffo...",".oo.offffffo....","....offo.ofo....","....ooo..oo....."];
+const LEGS = {
+  front:[["...offo..offo...","...ooo....ooo..."],["...ooo...offo...",".........ooo...."],["...offo...ooo...","...ooo.........."]],
+  side:[["....offo.ofo....","....ooo..oo....."],["...ofo....ofo...","..oo.......oo..."],["...ofo....ofo...","..oo.......oo..."]]
+};
+function monkeySprite(kind, dir, blink, step = 0){
+  const k = kind + dir + (blink ? 'b' : '') + step; if (spriteCache[k]) return spriteCache[k];
+  const side = dir === 'left' || dir === 'right';
+  const rows = (dir === 'up' ? BACK : side ? SIDE : MONKEY).map(r => [...r]);
+  const legs = (side ? LEGS.side : LEGS.front)[step];
+  rows[14] = [...legs[0]]; rows[15] = [...legs[1]];
+  if (dir === 'down'){
+    if (!blink){ rows[5][6] = 'e'; rows[5][9] = 'e'; }
+    if (kind === 'elder'){ [6,7,8,9].forEach(x => rows[8][x] = 'w'); rows[9][7] = 'w'; rows[9][8] = 'w'; }
+  }
+  if (side){
+    if (blink) rows[5][8] = 's';
+    if (kind === 'elder'){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
+  }
+  if (kind === 'player'){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }
+  let out = rows.map(r => r.join(''));
+  if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
+  return spriteCache[k] = sprite(out, PALS[kind]);
+}
+const ANIMAL_ART = {
+  rabbit:{name:'rabbit', hz:'兔子', rows:["...oo....oo.....","..owpo..owpo....","..owpo..owpo....","..owpo..owpo....","..owwoooowwo....",".owwwwwwwwwwo...",".owwewwwwewwo...",".owwwwppwwwwo...","..owwwwwwwwo....","..owwwwwwwwwo...",".owwwwwwwwwwwo..",".owgwwwwwwgwwoo.",".owgwwwwwwgwwwwo","..owwwwwwwwwwwo.","..oggo..ogggo...","...oo....ooo...."],
+    pal:{o:'#4A3B33',w:'#F2EEE6',g:'#CFC7BA',p:'#F4A6B0',e:'#1E1E1E'}},
+  fox:{name:'fox', hz:'狐狸', rows:[".oo........oo...",".oko......oko...",".orro....orro...",".orrroooorrro...",".orrrrrrrrrro...",".orerrrrrrero...","..orrwwwwrro....","...owwkkwwo.....","....owwwwo......","...orrwwrro.....","..orrrwwrrro.oo.","..orrrwwrrrooddo","..orrrrrrrrodwwo","...orrrrrrro.oo.","...okko.okko....","................"],
+    pal:{o:'#3B2416',r:'#E07B39',d:'#B85A22',w:'#F7F1E8',e:'#1E1E1E',k:'#2B1A10'}},
+  squirrel:{name:'squirrel', hz:'松鼠', rows:[".........oooo...","........ollllo..",".oo....ollllllo.","obbo...olllbllo.","obbbo..ollbbllo.","obebbo.olbblllo.","obbbbbo.ollllo..",".occbbbo.olllo..","..occbbbooolo...","..occcbbbbllo...","..occcbbbblo....","..occcbbbbo.....","..ocbbbbbbo.....","...obbobbo......","...ooo.ooo......","................"],
+    pal:{o:'#3A2414',b:'#A0612E',l:'#C98A4E',c:'#F2DDBF',e:'#1E1E1E'}},
+  goat:{name:'goat', hz:'山羊', rows:["..oo......oo....","..oho....oho....","...oho..oho.....","..ooowwwwooo....",".ogwwwwwwwwgo...","..owewwwwewo....","..owwwwwwwwo....","...owwppwwo.....","....owwwwo......","....oggggo......","..oowwwwwwoo....",".owwwwwwwwwwo...",".owwwwwwwwwwo...",".owgwwwwwwgwo...","..oho....oho....","..oo......oo...."],
+    pal:{o:'#3E3A33',w:'#EDE8DD',g:'#C9C2B3',h:'#8C7A5B',e:'#1E1E1E',p:'#E8A7A0'}}
+};
+const ANIMALS = Object.entries(ANIMAL_ART).map(([id, a]) => ({id, name:a.name, hz:a.hz, spr:sprite(a.rows, a.pal)}));
+const FRIEND_NAMES = {rabbit:'兔子', fox:'狐狸', squirrel:'松鼠', goat:'山羊', playful:'小猴子'};
+
+const portraitCache = {};
+const NAMES = {
+  elder:   {zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
+  hungry:  {zh:'饿猴子', py:'è hóuzi',   en:'Hungry monkey'},
+  thirsty: {zh:'渴猴子', py:'kě hóuzi',  en:'Thirsty monkey'},
+  playful: {zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+  sign:    {zh:'牌子',   py:'páizi',     en:'Sign'}
+};
+function speaker(id){
+  const n = NAMES[id];
+  return `<div class="speaker">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div><div class="spk-en">${n.en}</div></div>` : ''}</div>`;
+}
+function portrait(id){
+  if (portraitCache[id]) return portraitCache[id];
+  let c;
+  if (PALS[id]) c = monkeySprite(id, 'down', false, 0);
+  else if (id === 'sign') c = SPR.sign;
+  else { const a = ANIMALS.find(x => x.id === id); c = a ? a.spr : SPR.rock; }
+  return portraitCache[id] = `<img class="portrait" alt="" src="${c.toDataURL()}">`;
+}
+const SPR = {
+  tree: sprite(TREE, TREE_PAL), peach: sprite(PEACH_TREE.map(r => r.join('')), TREE_PAL), apple: sprite(APPLE_TREE.map(r => r.join('')), TREE_PAL),
+  rock: sprite(ROCK, ROCK_PAL), stone: sprite(STONE.map(r => r.join('')), ROCK_PAL),
+  sign: sprite(SIGN, {o:'#4A2C17',w:'#D2A46A',W:'#9E6F3C'}),
+  bird: sprite(BIRD, {o:'#2B3F66',b:'#5AA0E6',w:'#9CCBF5',e:'#111111',y:'#F2A33A'})
+};
+
+/* ---- terrain tiles, pre-rendered once into a map canvas ---- */
+const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
+const mg = mapCanvas.getContext('2d');
+const isWater = c => 'WOXB'.includes(c);
+function grass(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#7CC46B');
+  for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i)*16), py = Math.floor(rnd(x,y,i+20)*16); R(g, X+px, Y+py, 1, 1, i % 3 ? '#6CB35C' : '#93D67F'); }
+  if (rnd(x,y,99) < .45){ const px = 2 + Math.floor(rnd(x,y,98)*11), py = 3 + Math.floor(rnd(x,y,97)*10); R(g, X+px, Y+py, 1, 2, '#559E4B'); R(g, X+px+2, Y+py+1, 1, 1, '#559E4B'); }
+}
+function path(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#D9BB8A');
+  for (let i = 0; i < 9; i++){ const px = Math.floor(rnd(x,y,i+40)*16), py = Math.floor(rnd(x,y,i+60)*16); R(g, X+px, Y+py, 1, 1, i % 2 ? '#C6A473' : '#E8D2A6'); }
+  const sides = [[0,-1],[0,1],[-1,0],[1,0]];
+  sides.forEach(([dx,dy], s) => {
+    const n = tileAt(x+dx, y+dy); if (!'gGFTPQSN'.includes(n)) return;
+    for (let i = 0; i < 16; i++){
+      if (rnd(x*3+s, y*5, i) < .55){
+        const px = dx === 0 ? i : (dx < 0 ? 0 : 15), py = dy === 0 ? i : (dy < 0 ? 0 : 15);
+        R(g, X+px, Y+py, 1, 1, '#7CC46B');
+      }
+    }
+  });
+}
+function tall(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#5BA552');
+  const tuft = (ox, oy) => {
+    [[0,3],[1,2],[2,3],[3,1],[4,3],[5,2],[6,3]].forEach(([a,c]) => R(g, X+ox+a, Y+oy+c, 1, 1, '#2F6E38'));
+    [[1,1],[3,0],[5,1]].forEach(([a,c]) => R(g, X+ox+a, Y+oy+c, 1, 1, '#94D883'));
+    R(g, X+ox, Y+oy+4, 7, 1, '#2F6E38');
+  };
+  tuft(0,1); tuft(8,0); tuft(4,6); tuft(9,9); tuft(0,10);
+}
+function cliff(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#8E8A7E');
+  for (let i = 0; i < 10; i++){ const px = Math.floor(rnd(x,y,i+80)*16), py = Math.floor(rnd(x,y,i+90)*16); R(g, X+px, Y+py, 2, 1, i % 2 ? '#7E7A6F' : '#A3A094'); }
+  if (rnd(x,y,7) < .5){ const px = 3 + Math.floor(rnd(x,y,8)*10); R(g, X+px, Y+4, 1, 6, '#6F6B61'); R(g, X+px+1, Y+9, 1, 3, '#6F6B61'); }
+  const up = tileAt(x, y-1), dn = tileAt(x, y+1);
+  if (!'MC'.includes(up) && y > 0){ R(g, X, Y, T, 3, '#B5B1A4'); R(g, X, Y, T, 1, '#7CC46B'); }
+  if (!'MC'.includes(dn)){ R(g, X, Y+12, T, 3, '#6A665C'); R(g, X, Y+15, T, 1, '#4A463F'); }
+}
+function waterBase(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#3F8FCB');
+  for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x,y,i+120)*14), py = Math.floor(rnd(x,y,i+130)*16); R(g, X+px, Y+py, 2, 1, '#367FB8'); }
+  [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy]) => {
+    const n = tileAt(x+dx, y+dy); if (isWater(n) || (x+dx < 0 || x+dx >= COLS || y+dy < 0 || y+dy >= ROWS)) return;
+    if (dy === -1){ R(g, X, Y, T, 2, '#2C6B9E'); R(g, X, Y+2, T, 1, '#8ACFF0'); }
+    if (dy === 1){ R(g, X, Y+14, T, 2, '#2C6B9E'); }
+    if (dx === -1){ R(g, X, Y, 2, T, '#2C6B9E'); R(g, X+2, Y, 1, T, '#8ACFF0'); }
+    if (dx === 1){ R(g, X+14, Y, 2, T, '#2C6B9E'); }
+  });
+}
+function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
+function buildMap(){
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
+    const X = x*T, Y = y*T, c = tileAt(x, y);
+    switch (c){
+      case 'g': grass(mg,X,Y,x,y); break;
+      case '.': path(mg,X,Y,x,y); break;
+      case 'G': tall(mg,X,Y,x,y); break;
+      case 'F': grass(mg,X,Y,x,y); flower(mg,X+4,Y+4,'#F48FB1'); flower(mg,X+11,Y+7,'#FFFFFF'); flower(mg,X+6,Y+11,'#F48FB1'); break;
+      case 'T': grass(mg,X,Y,x,y); R(mg,X+3,Y+14,10,2,'#5DA651'); mg.drawImage(SPR.tree,X,Y); break;
+      case 'P': grass(mg,X,Y,x,y); R(mg,X+3,Y+14,10,2,'#5DA651'); mg.drawImage(SPR.peach,X,Y); break;
+      case 'Q': grass(mg,X,Y,x,y); R(mg,X+3,Y+14,10,2,'#5DA651'); mg.drawImage(SPR.apple,X,Y); break;
+      case 'R': path(mg,X,Y,x,y); mg.drawImage(SPR.rock,X,Y+2); break;
+      case 'S': grass(mg,X,Y,x,y); R(mg,X+2,Y+13,12,2,'#5DA651'); mg.drawImage(SPR.stone,X,Y+1); break;
+      case 'N': grass(mg,X,Y,x,y); mg.drawImage(SPR.sign,X,Y); break;
+      case 'M': cliff(mg,X,Y,x,y); break;
+      case 'C': cliff(mg,X,Y,x,y);
+        R(mg,X+3,Y+5,10,11,'#2A2622'); R(mg,X+4,Y+3,8,2,'#2A2622'); R(mg,X+5,Y+2,6,1,'#2A2622');
+        R(mg,X+3,Y+5,1,11,'#5E5A50'); R(mg,X+12,Y+5,1,11,'#5E5A50');
+        if (!areaDone()){
+          R(mg,X+4,Y+4,8,12,'#8A8478'); R(mg,X+5,Y+3,6,1,'#8A8478'); R(mg,X+4,Y+9,8,1,'#6C675C'); R(mg,X+7,Y+4,1,12,'#6C675C');
+          R(mg,X+9,Y+11,2,2,'#4A463F');
+        } else { R(mg,X+5,Y+14,6,2,'#3A342E'); R(mg,X+6,Y+6,4,8,'#3E3830'); }
+        break;
+      case 'W': case 'O': case 'X': waterBase(mg,X,Y,x,y); break;
+      case 'B': waterBase(mg,X,Y,x,y);
+        for (let i = 0; i < 16; i += 4){ R(mg,X+i,Y+1,3,14,(i/4) % 2 ? '#A0743F' : '#B98A55'); R(mg,X+i+3,Y+1,1,14,'#6B4A2A'); }
+        R(mg,X,Y,T,2,'#6B4A2A'); R(mg,X,Y+14,T,2,'#6B4A2A'); break;
+    }
+  }
+}
