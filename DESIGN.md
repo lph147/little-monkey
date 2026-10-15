@@ -171,7 +171,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 
 - [x] Agree this design and answer the open questions
 - [x] Split the engine from the content and move Area 1 into data
-- [ ] Turn the Word Scroll into a collection with heard and caught words and categories
+- [x] Turn the Word Scroll into a collection with heard and caught words and categories
 - [ ] Add the scheduler to animal appearances, quests and shop stock
 - [ ] Add XP, peaches as money, an Area 1 shop and the training ground
 - [ ] Replace emoji with pixel sprites for Area 1's collectibles

@@ -202,6 +202,38 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {word:'瀑布', at:[18, 1], if:{gate:true}}   // the waterfall is out of reach until the rocks roll away
   ],
 
+  // Where you found each word, shown on its page in the Word Scroll. Every word you can collect
+  // here needs one (the tests check). A word in {curly brackets} is shown as 汉字 (English).
+  found: {
+    '石头': 'The stone you were born from, at the top of the path.',
+    '路': 'The path down the mountain from your stone.',
+    '你好': 'The old monkey said it when you first met.',
+    '猴子': 'The little monkey at the bottom of the meadow.',
+    '山': 'The cliffs all around the mountain.',
+    '花': 'The flowers growing in the grass.',
+    '草': 'The tall grass, where animals hide.',
+    '树': 'The trees on the mountain.',
+    '桃子': 'The peach trees at the far left end of the long path.',
+    '苹果': 'The apple tree at the far left end of the long path.',
+    '河': 'The river that runs down the right of the mountain.',
+    '水': 'You collected it for the thirsty monkey.',
+    '鱼': 'Little fish in the pond in the middle of the meadow.',
+    '鸟': 'A bird across the wooden bridge, at the bottom right.',
+    '动物': 'The old monkey told you about the hidden animals.',
+    '兔子': 'It jumped out of the tall grass.',
+    '狐狸': 'It jumped out of the tall grass.',
+    '松鼠': 'It jumped out of the tall grass.',
+    '山羊': 'It jumped out of the tall grass.',
+    '森林': 'The forest along the edges of the mountain.',
+    '洞': 'The cave door at the top of the short path on the far left.',
+    '吃': 'The hungry monkey wanted something to eat.',
+    '喝': 'The thirsty monkey wanted something to drink.',
+    '朋友': 'The little monkey became your friend.',
+    '我': 'You learned it to say what a monkey wanted.',
+    '要': 'You learned it to say what a monkey wanted.',
+    '瀑布': 'The waterfall at the top right of the mountain.'
+  },
+
   // Where a fish jumps out of the water now and then.
   fish: [[11, 10]],
 

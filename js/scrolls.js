@@ -144,7 +144,28 @@ function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow 
   if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic || '？'}</div><div class="p">heard ${S.heard[w]}×</div>${pips(w)}</div>`;
   return `<div class="card unseen"><div class="c">？</div><div class="p"></div>${pips(w)}</div>`;
 }
-function openScroll(back){
+const MASTERY = ['Caught', 'Recognised', 'Read', 'Used'];   // what each gold square means
+// An example sentence with the word in it: the first line, then story sentence, that has it, preferring one you've seen.
+function exampleFor(w){
+  const all = [...Object.values(L).map(l => [l, !!S.lines[l.t.join('')]]), ...STORY.map(s => [s, !!here().story])].filter(([s]) => s.t.includes(w));
+  const pick = all.find(([, seen]) => seen) || all[0];
+  return pick && pick[0];
+}
+function wordPage(w, back){   // a caught word's page in the Word Scroll
+  const d = WORDS[w], ex = exampleFor(w);
+  say(w);
+  openCard(`<p class="label">Word Scroll · ${CATEGORIES[d.category]}</p>
+    <div class="word"><div class="pic" aria-hidden="true">${d.pic || ''}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en" hidden>${esc(d.en)}</div></div>
+    <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p>
+    <p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
+    ${ex ? `<p class="label examplehead">Example</p>${lineHTML(ex.t, w)}<div class="sentence-en" hidden>${esc(ex.en)}</div><div class="gloss">Tap any word to see what it means.</div>` : ''}
+    <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn" data-a="en">English</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  bindTokens(sheet);
+  on('[data-a=say]', () => say(w));
+  on('[data-a=en]', e => { sheet.querySelectorAll('.word .en, .sentence-en').forEach(x => x.hidden = false); e.currentTarget.remove(); const p = sheet.querySelector('.primary'); if (p) p.focus(); });
+  on('[data-a=ok]', back);
+}
+function openScroll(back, top){   // top: where to scroll to, to come back to the same place
   const seen = ORDER.filter(w => lvl(w) > 0).length;
   const cats = Object.entries(CATEGORIES).map(([id, name]) => [name, ORDER.filter(w => WORDS[w].category === id)]).filter(([, ws]) => ws.length);
   const heard = Object.keys(GLOSS).filter(w => S.heard[w]).sort((a, b) => S.heard[b] - S.heard[a]);   // words this area doesn't teach, most heard first
@@ -154,12 +175,12 @@ function openScroll(back){
     <div class="grid">${ws.map(scrollCard).join('')}</div>`).join('')}
     ${heard.length ? `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
     <div class="chips">${heard.map(w => `<button class="chip" data-h="${w}">${w} <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>` : ''}
-    <div class="gloss" style="margin-top:10px">Tap a word to hear it and see its meaning.</div>
+    <div class="gloss" style="margin-top:10px">Tap a word to hear it and see more.</div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>${back ? 'Back' : 'Close'}</button></div>`);
+  if (top) sheet.scrollTop = top;
   sheet.querySelectorAll('.card[data-w]').forEach(b => b.onclick = () => {
-    const w = b.dataset.w; say(w);
-    sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${WORDS[w].py} · ${esc(WORDS[w].en)}`;
-    b.querySelector('.p').textContent = WORDS[w].py;
+    const at = sheet.scrollTop;
+    SFX.blip(); wordPage(b.dataset.w, () => openScroll(back, at));
   });
   sheet.querySelectorAll('.chip[data-h]').forEach(b => b.onclick = () => {
     const w = b.dataset.h, [py, en] = info(w); say(w);

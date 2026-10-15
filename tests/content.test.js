@@ -57,6 +57,11 @@ test('every word you can collect has a Word Scroll category', () => {
   }
 });
 
+test('every word you can collect here says where you found it', () => {
+  for (const w of collectible) assert.ok(AREA.found[w], `${w} needs a note in found, in ${where}`);
+  for (const w of Object.keys(AREA.found)) assert.ok(collectible.includes(w), `found has a note for ${w}, which you can't collect here`);
+});
+
 test('the word bank lists each word only once', () => {
   const text = fs.readFileSync(path.join(ROOT, 'content', 'words.js'), 'utf8');
   const seen = new Set();
@@ -297,7 +302,8 @@ test('every {word} or {counter} in content text is real', () => {
   const texts = [
     ...allSteps().flatMap(([, s]) => [s.message, s.hint, s.note]),
     ...Object.values(AREA.legend).map(t => t.gather && t.gather.message),
-    ...AREA.tasks.flatMap(t => [t.id, t.text]), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)
+    ...AREA.tasks.flatMap(t => [t.id, t.text]), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text),
+    ...Object.values(AREA.found)
   ].filter(Boolean);
   for (const t of texts) for (const w of placeholders(t)) assert.ok(okPlaceholder(w), `"${t}" has {${w}}, which isn't a word in the word bank, a counter or holding:<a request>`);
 });

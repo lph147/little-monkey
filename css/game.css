@@ -157,6 +157,8 @@ rt.hid{visibility:hidden}
 .cathead{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 0}
 .cathead .catn{color:var(--muted)}
 .cathead + .grid{margin-top:6px}
+.mastery{text-align:center;color:var(--muted);margin:6px 0 0}
+.examplehead{margin-top:14px}
 .card .sil{filter:var(--sil);opacity:.55;white-space:nowrap}
 .sent{margin:4px 0;border-radius:4px;padding:0 4px}
 .sent .tok{font-size:1.45rem}

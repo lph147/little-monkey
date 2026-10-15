@@ -62,3 +62,24 @@ test('the Heard list shows words this area doesn\'t teach, most heard first', ()
   fresh.run('openScroll()');
   assert.ok(!fresh.el('#sheet').innerHTML.includes('>Heard<'), 'no Heard list until you have heard something');
 });
+
+test('a caught word has a page: picture, pinyin, level, where you found it and an example', () => {
+  const game = loadGame({save: {version: 5, started: true, w: {'猴子': {lv: 2, due: 0, ok: 1}}, lines: {'你好！去找老猴子吧！': 1}}});
+  game.run("wordPage('猴子', () => {})");
+  const html = game.el('#sheet').innerHTML;
+  for (const part of ['>🐒<', '<div class="big">猴子</div>', '<div class="py">hóuzi</div>', '<div class="en" hidden>monkey</div>',
+    'Recognised', 'Found: The little monkey at the bottom of the meadow.'])
+    assert.ok(html.includes(part), `the page should include ${part}`);
+  // the example is the line you've seen, with this word in bold and its English behind the English button
+  assert.match(html, /class="tok learn teach" data-t="猴子"/);
+  assert.ok(html.includes('data-t="老"') && html.includes('<div class="sentence-en" hidden>Hello! Go and find the old monkey!</div>'));
+});
+
+test('a word\'s example is the first line with it if you haven\'t seen one, and some words have none', () => {
+  const game = loadGame({save: {version: 5, started: true, w: {'猴子': {lv: 1, due: 0, ok: 0}, '兔子': {lv: 1, due: 0, ok: 0}}}});
+  game.run("wordPage('猴子', () => {})");
+  assert.ok(game.el('#sheet').innerHTML.includes('I am a monkey. You are a monkey too!'));
+  assert.ok(game.el('#sheet').innerHTML.includes('Caught'));
+  game.run("wordPage('兔子', () => {})");
+  assert.ok(!game.el('#sheet').innerHTML.includes('Example'), 'no sentence in the area has 兔子');
+});
