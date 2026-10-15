@@ -154,6 +154,9 @@ rt.hid{visibility:hidden}
 .card .p{font-size:.85rem;color:var(--muted);min-height:1.3em}
 .card.unseen{opacity:.5}
 .card.heard{border-style:dashed}
+.cathead{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 0}
+.cathead .catn{color:var(--muted)}
+.cathead + .grid{margin-top:6px}
 .card .sil{filter:var(--sil);opacity:.55;white-space:nowrap}
 .sent{margin:4px 0;border-radius:4px;padding:0 4px}
 .sent .tok{font-size:1.45rem}

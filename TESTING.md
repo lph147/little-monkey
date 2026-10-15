@@ -36,7 +36,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] Talking to the old monkey: the line is spoken, pinyin shows over every word, and tapping a word shows its meaning underneath.
 - [ ] Menu opens with the Menu button (or M); B closes it.
-- [ ] The Word Scroll shows your words with gold squares; tapping one says it. Words you've heard in sentences but not caught yet show as a shadow of their picture, marked "heard 2×" and so on.
+- [ ] The Word Scroll is grouped into categories with counts, such as "Animals 1/8", and shows your words with gold squares; tapping one says it. Words you've heard in sentences but not caught yet show as a shadow of their picture, marked "heard 2×" and so on. At the end, the Heard list shows words like 有 with how often you've heard them; tapping one says it and shows its meaning.
 
 ## Full playthrough of Flower Fruit Mountain (about 20 minutes)
 

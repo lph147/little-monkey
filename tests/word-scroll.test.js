@@ -36,3 +36,29 @@ test('the Word Scroll shows caught words, shadows of heard words, and ？ for th
   assert.ok(!html.includes('🐟'), 'a word you have not heard shows no picture');
   assert.equal(count(html, 'class="card unseen"'), total - 2, 'every other word shows ？');
 });
+
+test('the Word Scroll groups words by category, with how many of each you have caught', () => {
+  const game = loadGame({save: {version: 5, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}, '猴子': {lv: 2, due: 0, ok: 1}}}});
+  const CATEGORIES = JSON.parse(game.run('JSON.stringify(CATEGORIES)')), WORDS = JSON.parse(game.run('JSON.stringify(WORDS)'));
+  game.run('openScroll()');
+  const sections = game.el('#sheet').innerHTML.split('<p class="label cathead">').slice(1);
+  const used = Object.entries(CATEGORIES).filter(([id]) => Object.values(WORDS).some(d => d.category === id));
+  assert.equal(sections.length, used.length, 'one heading for each category the area has words in (and no Heard list yet)');
+  used.forEach(([id, name], i) => {
+    const words = Object.keys(WORDS).filter(w => WORDS[w].category === id), caught = words.filter(w => ['石头', '猴子'].includes(w));
+    assert.ok(sections[i].startsWith(`${name} <span class="catn">${caught.length}/${words.length}</span>`), `heading ${i + 1} should be ${name} ${caught.length}/${words.length}`);
+    assert.equal(count(sections[i], 'class="card'), words.length, `${name} should show all its words`);
+    for (const w of caught) assert.ok(sections[i].includes(`data-w="${w}"`), `${w} should be under ${name}`);
+  });
+});
+
+test('the Heard list shows words this area doesn\'t teach, most heard first', () => {
+  const game = loadGame({save: {version: 5, started: true, heard: {'是': 4, '有': 9, '猴子': 3, '里': 5}}});
+  game.run('openScroll()');
+  const html = game.el('#sheet').innerHTML, list = html.slice(html.indexOf('>Heard<'));
+  assert.deepEqual([...list.matchAll(/data-h="([^"]+)">\1 <span class="small">(\d+)×/g)].map(m => m[1] + m[2]), ['有9', '里5', '是4']);
+  assert.ok(!list.includes('猴子'), 'a word you can collect here goes in its category, not the Heard list');
+  const fresh = loadGame();
+  fresh.run('openScroll()');
+  assert.ok(!fresh.el('#sheet').innerHTML.includes('>Heard<'), 'no Heard list until you have heard something');
+});

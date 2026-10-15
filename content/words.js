@@ -5,38 +5,52 @@
 //   pic   the picture on new-word cards and in quizzes (emoji for now; pixel sprites later)
 //   area  the area where you can collect the word. Words without an area are only heard:
 //         they appear in sentences and can be tapped, but can't be collected yet.
+//   category  where the word goes in the Word Scroll: one of the CATEGORIES below
 //
-// Each area's words appear in the Word Scroll in the order they are listed here.
+// In the Word Scroll, each category's words appear in the order they are listed here.
 // Sentences in the content files may only use words from this bank (the tests check).
+
+// The Word Scroll's categories, in the order it shows them, with their names. A category only
+// appears once the area has words in it.
+const CATEGORIES = {
+  animals: 'Animals',
+  food: 'Food and drink',
+  nature: 'Nature',
+  places: 'Places',
+  items: 'Items',
+  actions: 'Actions',
+  people: 'People and phrases'
+};
+
 const WORD_BANK = {
   // Collected on Flower Fruit Mountain (area 1)
-  '石头': {py:'shítou', en:'stone, rock', pic:'🪨', area:1},
-  '路': {py:'lù', en:'path, road', pic:'🛣️', area:1},
-  '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1},
-  '猴子': {py:'hóuzi', en:'monkey', pic:'🐒', area:1},
-  '山': {py:'shān', en:'mountain', pic:'⛰️', area:1},
-  '花': {py:'huā', en:'flower', pic:'🌸', area:1},
-  '草': {py:'cǎo', en:'grass', pic:'🌿', area:1},
-  '树': {py:'shù', en:'tree', pic:'🌳', area:1},
-  '桃子': {py:'táozi', en:'peach', pic:'🍑', area:1},
-  '苹果': {py:'píngguǒ', en:'apple', pic:'🍎', area:1},
-  '河': {py:'hé', en:'river', pic:'🏞️', area:1},
-  '水': {py:'shuǐ', en:'water', pic:'💧', area:1},
-  '鱼': {py:'yú', en:'fish', pic:'🐟', area:1},
-  '鸟': {py:'niǎo', en:'bird', pic:'🐦', area:1},
-  '动物': {py:'dòngwù', en:'animal', pic:'🐾', area:1},
-  '兔子': {py:'tùzi', en:'rabbit', pic:'🐇', area:1},
-  '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1},
-  '松鼠': {py:'sōngshǔ', en:'squirrel', pic:'🐿️', area:1},
-  '山羊': {py:'shānyáng', en:'goat', pic:'🐐', area:1},
-  '森林': {py:'sēnlín', en:'forest', pic:'🌲🌳🌲', area:1},
-  '洞': {py:'dòng', en:'cave', pic:'🕳️', area:1},
-  '吃': {py:'chī', en:'to eat', pic:'😋', area:1},
-  '喝': {py:'hē', en:'to drink', pic:'🥤', area:1},
-  '朋友': {py:'péngyou', en:'friend', pic:'🧑‍🤝‍🧑', area:1},
-  '我': {py:'wǒ', en:'I, me', area:1},
-  '要': {py:'yào', en:'to want', area:1},
-  '瀑布': {py:'pùbù', en:'waterfall', area:1},
+  '石头': {py:'shítou', en:'stone, rock', pic:'🪨', area:1, category:'nature'},
+  '路': {py:'lù', en:'path, road', pic:'🛣️', area:1, category:'places'},
+  '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'people'},
+  '猴子': {py:'hóuzi', en:'monkey', pic:'🐒', area:1, category:'animals'},
+  '山': {py:'shān', en:'mountain', pic:'⛰️', area:1, category:'nature'},
+  '花': {py:'huā', en:'flower', pic:'🌸', area:1, category:'nature'},
+  '草': {py:'cǎo', en:'grass', pic:'🌿', area:1, category:'nature'},
+  '树': {py:'shù', en:'tree', pic:'🌳', area:1, category:'nature'},
+  '桃子': {py:'táozi', en:'peach', pic:'🍑', area:1, category:'food'},
+  '苹果': {py:'píngguǒ', en:'apple', pic:'🍎', area:1, category:'food'},
+  '河': {py:'hé', en:'river', pic:'🏞️', area:1, category:'nature'},
+  '水': {py:'shuǐ', en:'water', pic:'💧', area:1, category:'food'},
+  '鱼': {py:'yú', en:'fish', pic:'🐟', area:1, category:'animals'},
+  '鸟': {py:'niǎo', en:'bird', pic:'🐦', area:1, category:'animals'},
+  '动物': {py:'dòngwù', en:'animal', pic:'🐾', area:1, category:'animals'},
+  '兔子': {py:'tùzi', en:'rabbit', pic:'🐇', area:1, category:'animals'},
+  '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},
+  '松鼠': {py:'sōngshǔ', en:'squirrel', pic:'🐿️', area:1, category:'animals'},
+  '山羊': {py:'shānyáng', en:'goat', pic:'🐐', area:1, category:'animals'},
+  '森林': {py:'sēnlín', en:'forest', pic:'🌲🌳🌲', area:1, category:'nature'},
+  '洞': {py:'dòng', en:'cave', pic:'🕳️', area:1, category:'places'},
+  '吃': {py:'chī', en:'to eat', pic:'😋', area:1, category:'actions'},
+  '喝': {py:'hē', en:'to drink', pic:'🥤', area:1, category:'actions'},
+  '朋友': {py:'péngyou', en:'friend', pic:'🧑‍🤝‍🧑', area:1, category:'people'},
+  '我': {py:'wǒ', en:'I, me', area:1, category:'people'},
+  '要': {py:'yào', en:'to want', area:1, category:'actions'},
+  '瀑布': {py:'pùbù', en:'waterfall', area:1, category:'nature'},
 
   // Heard in sentences
   '是': {py:'shì', en:'am, is, are'},

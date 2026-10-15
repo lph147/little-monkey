@@ -49,6 +49,14 @@ test('every word in the word bank has pinyin and English', () => {
   }
 });
 
+test('every word you can collect has a Word Scroll category', () => {
+  const CATEGORIES = get('CATEGORIES');
+  for (const [w, d] of Object.entries(BANK)){
+    if (d.area !== undefined) assert.ok(CATEGORIES[d.category], `${w} needs a category in content/words.js, one of: ${Object.keys(CATEGORIES).join(', ')}`);
+    else assert.equal(d.category, undefined, `${w} can't be collected yet, so it goes in the Heard list, not a category`);
+  }
+});
+
 test('the word bank lists each word only once', () => {
   const text = fs.readFileSync(path.join(ROOT, 'content', 'words.js'), 'utf8');
   const seen = new Set();

@@ -139,21 +139,31 @@ function todaysWords(back){
     on('[data-a=ok]', () => { if (back) back(); else closeCard(); res(); });
   });
 }
+function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow of its picture, not giving it away) or not met yet
+  if (lvl(w) > 0) return `<button class="card" data-w="${w}"><div class="c">${w}</div><div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
+  if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic || '？'}</div><div class="p">heard ${S.heard[w]}×</div>${pips(w)}</div>`;
+  return `<div class="card unseen"><div class="c">？</div><div class="p"></div>${pips(w)}</div>`;
+}
 function openScroll(back){
   const seen = ORDER.filter(w => lvl(w) > 0).length;
+  const cats = Object.entries(CATEGORIES).map(([id, name]) => [name, ORDER.filter(w => WORDS[w].category === id)]).filter(([, ws]) => ws.length);
+  const heard = Object.keys(GLOSS).filter(w => S.heard[w]).sort((a, b) => S.heard[b] - S.heard[a]);   // words this area doesn't teach, most heard first
   openCard(`<p class="label">Word Scroll · ${seen} of ${ORDER.length}</p>
     <p class="small">Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you've heard but not caught yet.${S.friends.length ? '<br>Friends: ' + S.friends.map(id => FRIEND_NAMES[id] || id).join(', ') : ''}</p>
-    <div class="grid">${ORDER.map(w => lvl(w) > 0
-      ? `<button class="card" data-w="${w}"><div class="c">${w}</div><div class="p">${WORDS[w].py}</div>${pips(w)}</button>`
-      : S.heard[w]
-      ? `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic || '？'}</div><div class="p">heard ${S.heard[w]}×</div>${pips(w)}</div>`
-      : `<div class="card unseen"><div class="c">？</div><div class="p"></div>${pips(w)}</div>`).join('')}</div>
+    ${cats.map(([name, ws]) => `<p class="label cathead">${name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>
+    <div class="grid">${ws.map(scrollCard).join('')}</div>`).join('')}
+    ${heard.length ? `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
+    <div class="chips">${heard.map(w => `<button class="chip" data-h="${w}">${w} <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>` : ''}
     <div class="gloss" style="margin-top:10px">Tap a word to hear it and see its meaning.</div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>${back ? 'Back' : 'Close'}</button></div>`);
   sheet.querySelectorAll('.card[data-w]').forEach(b => b.onclick = () => {
     const w = b.dataset.w; say(w);
     sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${WORDS[w].py} · ${esc(WORDS[w].en)}`;
     b.querySelector('.p').textContent = WORDS[w].py;
+  });
+  sheet.querySelectorAll('.chip[data-h]').forEach(b => b.onclick = () => {
+    const w = b.dataset.h, [py, en] = info(w); say(w);
+    sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${py} · ${esc(en)}`;
   });
   on('[data-a=ok]', () => { if (typeof back === 'function') back(); else closeCard(); });
 }
