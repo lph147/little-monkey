@@ -169,6 +169,8 @@ const LOOKS = {
     R(g,X,Y,T,2,'#6B4A2A'); R(g,X,Y+14,T,2,'#6B4A2A');
   }
 };
+let mapReady = null;   // whether the area was ready (the cave door open) when the map was last drawn
 function buildMap(){
+  mapReady = areaDone();
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
 }
