@@ -41,19 +41,8 @@ function storyScroll(){
     });
   });
 }
-function areaChecklist(){
-  return [
-    ['Say hello to the old monkey', here().elder >= 1],
-    ['Learn about animals from the old monkey', here().elder >= 2],
-    [`Find the hidden animals in the grass (${metCount()}/${ANIMALS.length})`, metCount() >= ANIMALS.length],
-    ['Bring the hungry monkey the fruit it wants', here().hungry === 'done'],
-    ['Bring water to the thirsty monkey', here().thirsty === 'done'],
-    ['Read the story at the waterfall', here().story],
-    ['Pass the word test at the cave door', !!here().done]
-  ];
-}
-function checklistHTML(onlyLeft){
-  const items = areaChecklist().filter(([t, done]) => !onlyLeft || (!done && !t.startsWith('Pass the word test')));
+function checklistHTML(onlyLeft){   // the area's checklist (areaChecklist() in js/world.js); onlyLeft: just what's left before the exit test
+  const items = areaChecklist().filter(([t, done, exitTest]) => !onlyLeft || (!done && !exitTest));
   return `<ul class="checklist">${items.map(([t, done]) => `<li class="${done ? 'done' : ''}">${esc(t)}</li>`).join('')}</ul>`;
 }
 function infoBox(who, html){

@@ -15,31 +15,16 @@ const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
 
 const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
-const ELDER_NEED = 4;
-const elderReady = () => learnedCount() - 1 >= ELDER_NEED;
 const metCount = () => Math.min(S.met.length, ANIMALS.length);
-const areaDone = () => here().elder >= 2 && here().hungry === 'done' && here().thirsty === 'done' && metCount() >= ANIMALS.length && here().story;
-function getTasks(){
-  const q = here(), t = [];
-  if (q.elder === 0) t.push({id:'elder', text:'Talk to the old monkey on the path', target:[10,5], npc:true});
-  if (q.elder === 1) t.push(elderReady()
-    ? {id:'elder2', text:'Talk to the old monkey again', target:[10,5], npc:true}
-    : {id:'learn4', text:`Learn ${ELDER_NEED} words, then talk to the old monkey again (${Math.min(learnedCount() - 1, ELDER_NEED)}/${ELDER_NEED})`, target:null});
-  if (q.elder >= 2 && metCount() < ANIMALS.length) t.push({id:'animals', text:`Find the hidden animals in the tall grass (${metCount()}/${ANIMALS.length})`, target:null});
-  if (q.hungry === 'asked' && !q.holding.hungry) t.push({id:'h1', text:'Find the fruit the hungry monkey asked for', target:[2,7]});
-  if (q.hungry === 'asked' && q.holding.hungry) t.push({id:'h2' + q.holding.hungry, text:`Give the ${wz(q.holding.hungry)} to the hungry monkey`, target:[13,5], npc:true});
-  if (q.thirsty === 'asked' && !q.holding.thirsty) t.push({id:'t1', text:'Collect water from the river or the pond', target:[11,9]});
-  if (q.thirsty === 'asked' && q.holding.thirsty) t.push({id:'t2', text:`Give the ${wz('水')} to the thirsty monkey`, target:[2,12], npc:true});
-  if (here().gate && !here().story) t.push({id:'fall', text:'Climb up beside the river to the waterfall', target:[18,1]});
-  if (areaDone() && !here().done) t.push({id:'door', text:`Pass the word test at the ${wz('洞')} door`, target:[3,3]});
-  return t;
+const areaChecklist = () => AREA.checklist.map(c => [fill(c.text), matches(c.done), !!c.exitTest]);   // [text, done, is it the exit test]
+const areaDone = () => AREA.checklist.filter(c => !c.exitTest).every(c => matches(c.done));       // ready for the exit test
+function getTasks(){   // the tasks to show now: the area's tasks whose if matches
+  return AREA.tasks.filter(t => matches(t.if)).map(t => {
+    const c = typeof t.arrow === 'string' && NPCS.find(n => n.id === t.arrow);   // an arrow to a character
+    return {id:fill(t.id, true), text:fill(t.text), target:c ? [c.x, c.y] : t.arrow || null, ...(c ? {npc:true} : {})};
+  });
 }
-function tasksHint(){
-  const q = here();
-  if (q.elder > 0 && (q.hungry === 'not asked' || q.thirsty === 'not asked')) return 'Monkeys with a ! above them need help. Walk up to one and press A.';
-  if (here().done) return `Flower Fruit Mountain is complete. Practise in the ${wz('草')} or visit your friends.`;
-  return '';
-}
+function tasksHint(){ const h = AREA.hints.find(h => matches(h.if)); return h ? fill(h.text) : ''; }
 function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).join('. ') + '.' : tasksHint(); }
 const newTaskUntil = {};
 function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
@@ -66,6 +51,8 @@ function matches(cond){   // does the game match everything in an if?
   return Object.entries(cond).every(([k, v]) => {
     if (k === 'new') return lvl(v) === 0;
     if (k === 'knows') return lvl(v) >= 1;
+    if (k === 'holding') return Object.entries(v).every(([id, want]) => { const h = here().holding[id]; return want === true ? !!h : want === false ? !h : h === want; });
+    if (k === 'ready') return areaDone() === v;
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });

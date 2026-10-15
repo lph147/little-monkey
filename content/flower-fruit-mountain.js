@@ -24,7 +24,55 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // minus takes some away; max is the most it can be.
   counters: {
     newWords: {count:'wordsLearned', minus:1, max:4},   // words learned apart from one (you're born knowing 石头), up to 4
-    animals: {count:'animals'}
+    animals: {count:'animals'},
+    found: {count:'animalsFound'},
+    animalsLeft: {count:'animalsLeft'}
+  },
+
+  // The task box under the game screen. Every task whose if matches is shown, in this order.
+  //   id     a name for the task; the game remembers which tasks you've seen, to mark new ones
+  //   text   what it says. {holding:hungry} is the word for what you're holding for that request
+  //   arrow  where the yellow arrow points: a character, or [x, y] on the map (no arrow if left out)
+  // Besides what the area remembers, words and counters, an if can check holding:{hungry:true}
+  // (true if you're holding something for that request, false if not), and ready:true (everything
+  // on the checklist is done apart from the exit test).
+  tasks: [
+    {id:'elder', if:{elder:0}, text:'Talk to the old monkey on the path', arrow:'elder'},
+    {id:'elder2', if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
+    {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words, then talk to the old monkey again ({newWords}/4)'},
+    {id:'animals', if:{elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the hidden animals in the tall grass ({found}/{animals})'},
+    {id:'h1', if:{hungry:'asked', holding:{hungry:false}}, text:'Find the fruit the hungry monkey asked for', arrow:[2, 7]},
+    {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
+    {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect water from the river or the pond', arrow:[11, 9]},
+    {id:'t2', if:{thirsty:'asked', holding:{thirsty:true}}, text:'Give the {水} to the thirsty monkey', arrow:'thirsty'},
+    {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
+    {id:'door', if:{ready:true, done:false}, text:'Pass the word test at the {洞} door', arrow:[3, 3]}
+  ],
+
+  // What the task box says when there are no tasks: the first whose if matches.
+  hints: [
+    {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! above them need help. Walk up to one and press A.'},
+    {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! above them need help. Walk up to one and press A.'},
+    {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
+  ],
+
+  // The area's checklist, shown in Menu, Tasks and progress, and at the cave door. Once everything
+  // apart from the exit test is done, the area is ready and the cave door opens.
+  checklist: [
+    {text:'Say hello to the old monkey', done:{elder:{atLeast:1}}},
+    {text:'Learn about animals from the old monkey', done:{elder:{atLeast:2}}},
+    {text:'Find the hidden animals in the grass ({found}/{animals})', done:{animalsLeft:0}},
+    {text:'Bring the hungry monkey the fruit it wants', done:{hungry:'done'}},
+    {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
+    {text:'Read the story at the waterfall', done:{story:true}},
+    {text:'Pass the word test at the cave door', done:{done:true}, exitTest:true}
+  ],
+
+  // A ! or ? over a character's head: the first whose if matches.
+  bubbles: {
+    elder: [{if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}],
+    hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
+    thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}]
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:

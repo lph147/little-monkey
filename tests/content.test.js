@@ -20,8 +20,13 @@ const allSteps = () => [
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
-  ...AREA.events.map((e, i) => [`event ${i + 1}`, e.if])
+  ...AREA.events.map((e, i) => [`event ${i + 1}`, e.if]),
+  ...AREA.tasks.map(t => [`task ${t.id}`, t.if]),
+  ...AREA.hints.map((h, i) => [`hint ${i + 1}`, h.if]),
+  ...AREA.checklist.map((c, i) => [`checklist item ${i + 1}`, c.done]),
+  ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if]))
 ];
+const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]);
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
 const where = `content/ (area ${AREA.number})`;
 const onMap = ([x, y]) => y >= 0 && y < AREA.map.length && x >= 0 && x < AREA.map[0].length;
@@ -203,11 +208,12 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'ready'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
       if (k === 'new' || k === 'knows') assert.ok(collectible.includes(v), `${where}: ${v} isn't a word you can collect in ${where}`);
+      if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id], `${where} checks holding for "${id}", which isn't a request`);
     }
   }
 });
@@ -247,9 +253,33 @@ test('counters count things the engine can count', () => {
 test('every {word} or {counter} in content text is real', () => {
   const texts = [
     ...allSteps().flatMap(([, s]) => [s.message, s.hint, s.note]),
-    ...Object.values(AREA.legend).map(t => t.gather && t.gather.message)
+    ...Object.values(AREA.legend).map(t => t.gather && t.gather.message),
+    ...AREA.tasks.flatMap(t => [t.id, t.text]), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)
   ].filter(Boolean);
-  for (const t of texts) for (const w of placeholders(t)) assert.ok(BANK[w] || AREA.counters[w], `"${t}" has {${w}}, which isn't a word in the word bank or a counter`);
+  for (const t of texts) for (const w of placeholders(t)) assert.ok(okPlaceholder(w), `"${t}" has {${w}}, which isn't a word in the word bank, a counter or holding:<a request>`);
+});
+
+test('tasks have different ids, and their arrows point at a character or a place on the map', () => {
+  const ids = AREA.tasks.map(t => t.id);
+  assert.equal(new Set(ids).size, ids.length, 'two tasks have the same id');
+  for (const t of AREA.tasks){
+    assert.ok(t.text, `task ${t.id} needs text`);
+    if (typeof t.arrow === 'string') assert.ok(AREA.characters.some(c => c.id === t.arrow), `task ${t.id} points at "${t.arrow}", who isn't a character`);
+    else if (t.arrow) assert.ok(onMap(t.arrow), `task ${t.id} points at ${t.arrow}, which is off the map`);
+  }
+});
+
+test('the checklist ends with the exit test, and every hint has text', () => {
+  assert.equal(AREA.checklist.filter(c => c.exitTest).length, 1, 'the checklist needs exactly one exitTest item');
+  assert.ok(AREA.checklist[AREA.checklist.length - 1].exitTest, 'the exit test should be the last item on the checklist');
+  for (const h of AREA.hints) assert.ok(h.text && h.if, 'each hint needs if and text');
+});
+
+test('bubbles are for characters, and show ! or ?', () => {
+  for (const [who, list] of Object.entries(AREA.bubbles)){
+    assert.ok(AREA.characters.some(c => c.id === who), `bubbles for "${who}", who isn't a character`);
+    for (const b of list) assert.ok(['!', '?'].includes(b.show), `${who}'s bubble shows "${b.show}"; it can show ! or ?`);
+  }
 });
 
 test('intro captions are in time order, with Chinese, pinyin and English', () => {

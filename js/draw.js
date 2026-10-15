@@ -96,11 +96,8 @@ function drawWorld(now){
     }
     const idle = Math.floor(now/700 + n.x) % 2;
     drawEntityMonkey(n.kind, X, Y, n.dir, now, idle, 0, n.x + n.y);
-    const q = here()[n.id];
-    if (n.kind === 'elder' && q === 0) bubble(X+10, Y-8, '!');
-    if (n.kind === 'elder' && q === 1 && elderReady()) bubble(X+10, Y-8, '!');
-    const r = requestFrom(n.id), rq = r && here()[r.id];   // ! when they have a request for you, ? when you're holding something for it
-    if (r && here().elder >= 1 && (rq === 'not asked' || (rq === 'asked' && here().holding[r.id]))) bubble(X+10, Y-8, rq === 'not asked' ? '!' : '?');
+    const bub = (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // a ! or ? from the area's bubbles
+    if (bub) bubble(X+10, Y-8, bub.show);
   }
   drawMarkers(cx, cy, now);
   const fk = (now - fadeT) / 700;
