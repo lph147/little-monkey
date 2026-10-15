@@ -31,9 +31,9 @@ Catching is the heart of it, and the review scheduler feeds old words back into 
 
 The Word Scroll becomes the game's Pokédex: a collection you want to complete, split into categories, where every entry is a word you have met.
 
-**Heard, then caught.** A word you have only heard in conversation shows as a silhouette marked "heard", with a count. Once you've heard it a few times, or a character teaches it, you can catch it with a new-word card. This turns the grey "just listen" words into a pipeline instead of a dead end.
+**Heard, then caught.** A word you have only heard in conversation shows as a silhouette marked "heard", with a count, until you catch it with its new-word card. Words the area doesn't teach go in a Heard list at the end of the scroll, with their counts, and are caught in the area that teaches them: 有, heard nine times on Flower Fruit Mountain, is caught in the Water Curtain Cave. This turns the grey "just listen" words into a pipeline instead of a dead end.
 
-**Categories:** animals, food, items, places, actions (verbs) and phrases. Each shows a completion count, such as "Animals 6/10".
+**Categories:** animals, food, nature, places, items, actions (verbs), and people and phrases. Each shows a completion count, such as "Animals 6/10". A category only appears once there are words in it (Flower Fruit Mountain has no items).
 
 **Each entry holds:** its pixel sprite, the word with pinyin and sound, an example sentence from the game, where you found it, and a mastery level.
 
