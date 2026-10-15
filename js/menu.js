@@ -45,7 +45,28 @@ function openMenu(focusId){
     howto: () => howToPlay().then(() => openMenu('howto')),
     save: () => {
       save(); const t = new Date();
-      infoBox('💾', `<p>Game saved at ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}.</p><p class="small">Your progress also saves automatically after every step, on this device.</p>`).then(() => openMenu('save'));
+      openCard(`<div class="who" aria-hidden="true">💾</div><p>Game saved at ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}.</p>
+        <p class="small">Your progress also saves automatically after every step, on this device. To keep a copy somewhere safe, or to carry on on another device, download your save as a file, then load it here.</p>
+        <input type="file" accept=".json,application/json" hidden>
+        <div class="actions"><button class="btn" data-a="load">Load a save file</button><button class="btn" data-a="download">Download</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+      on('[data-a=ok]', () => openMenu('save'));
+      on('[data-a=download]', () => {
+        const f = saveFile(), a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([f.text], {type:'application/json'})); a.download = f.name;
+        document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        toast(`Downloaded ${f.name}`);
+      });
+      const pick = sheet.querySelector('input[type=file]');
+      on('[data-a=load]', () => pick.click());
+      pick.onchange = async () => {
+        const file = pick.files[0]; if (!file) return;
+        const r = readSaveFile(await file.text());
+        if (r.error){ infoBox('💾', `<p>${esc(r.error)}</p>`).then(() => openMenu('save')); return; }
+        const words = s => Object.values(s.w).filter(x => x && x.lv > 0).length;
+        const yes = await confirmBox('💾', `Load this save? It has ${words(r.save)} words and ${r.save.peaches} 🍑. It replaces the game you're playing now (${words(S)} words); a copy of that is kept in this browser.`, 'Load it', 'Cancel');
+        if (!yes) return openMenu('save');
+        useSave(r.save); closeCard(); buildMap(); placePlayer(); toTitle();
+      };
     },
     title: () => { closeCard(); toTitle(); },
     reset: () => {

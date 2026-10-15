@@ -66,6 +66,24 @@ function loadSave(){
   try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e) {}
   return s;
 }
+// Your save as a file to download (Menu, Save game), so a cleared browser can't lose it.
+function saveFile(){
+  const d = new Date(), two = n => String(n).padStart(2, '0');
+  return {name:`little-monkey-save-${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}.json`, text:JSON.stringify(S)};
+}
+// A downloaded save, brought up to date: {save}, or {error} saying what's wrong with the file.
+function readSaveFile(text){
+  let data = null;
+  try { data = JSON.parse(text); } catch(e) {}
+  if (!data || typeof data !== 'object' || Array.isArray(data) || !data.w || typeof data.w !== 'object') return {error:"That file isn't a Little Monkey save."};
+  if ((data.version || 2) > SAVE_VERSION) return {error:'That save is from a newer version of the game. Reload the page to get the newest version, then try again.'};
+  return {save:upgradeSave(data)};
+}
+// Plays on from a loaded save, keeping a copy of the game it replaces in the browser.
+function useSave(s){
+  try { const raw = localStorage.getItem(KEY); if (raw) keepBackup('before-load-' + Date.now(), raw); } catch(e) {}
+  S = s; save();
+}
 let S = loadSave();
 const here = () => S.areas[AREA.number];   // your progress in the area you're in
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} updateHUD(); }

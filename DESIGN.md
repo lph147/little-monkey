@@ -175,5 +175,5 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [ ] Add the scheduler to animal appearances, quests and shop stock
 - [ ] Add XP, peaches as money, an Area 1 shop and the training ground
 - [ ] Replace emoji with pixel sprites for Area 1's collectibles
-- [ ] Add save export and import
+- [x] Add save export and import
 - [ ] Playtest Area 1 for a week, then build Area 2, the Water Curtain Cave

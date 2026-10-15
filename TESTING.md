@@ -98,6 +98,9 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 - [ ] On your phone, with your real save: Continue works, and your words, peaches, friends and tasks are all as they were.
 - [ ] After an update that changes the save format: the same, plus Menu, Tasks and progress shows the same ticks as before.
+- [ ] Menu, Save game, Download saves a file called little-monkey-save- and the date. On a phone it goes to your downloads (Files on an iPhone).
+- [ ] In a private or incognito window: Menu, Save game, Load a save file, and pick that file. It shows how many words and peaches the save has; Load it puts you on the title screen, and Continue carries on from that save.
+- [ ] Loading something that isn't a save (any other file) says so and changes nothing.
 
 When the save format changes, the game keeps a copy of your old save in the browser before converting it, so it can be recovered if anything goes wrong.
 
