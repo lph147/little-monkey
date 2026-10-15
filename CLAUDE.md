@@ -16,6 +16,7 @@ I'm new to coding. Please:
 
 ## How we work
 - Commit to git after every change that works, with a clear message. Never leave the game broken at the end of a task.
+- Ask me before each upload (push) to GitHub, because uploading publishes to the live site.
 - Run the automated tests before every commit, once they exist. Add or update a test when you add a feature.
 - Keep saved games working. If the save format changes, migrate old saves instead of wiping them.
 - The game must work on a phone browser (portrait, touch) and on desktop (keyboard).
