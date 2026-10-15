@@ -64,7 +64,7 @@ AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
 const portraitCache = {};
 const NAMES = {};   // the names shown above what characters say
 AREA.characters.forEach(c => { if (c.name) NAMES[c.id] = c.name; });
-NAMES.sign = AREA.sign;
+NAMES.sign = AREA.sign.name;
 function speaker(id){
   const n = NAMES[id];
   return `<div class="speaker">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div><div class="spk-en">${n.en}</div></div>` : ''}</div>`;
@@ -87,7 +87,9 @@ const SPR = {
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
-const isWater = c => 'WOXB'.includes(c);
+const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign'];   // looks with grass underneath
+const CLIFFS = ['cliff','caveDoor'];
+const WATERY = ['water','waterfall','bridge'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
   for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i)*16), py = Math.floor(rnd(x,y,i+20)*16); R(g, X+px, Y+py, 1, 1, i % 3 ? '#6CB35C' : '#93D67F'); }
@@ -98,7 +100,7 @@ function path(g, X, Y, x, y){
   for (let i = 0; i < 9; i++){ const px = Math.floor(rnd(x,y,i+40)*16), py = Math.floor(rnd(x,y,i+60)*16); R(g, X+px, Y+py, 1, 1, i % 2 ? '#C6A473' : '#E8D2A6'); }
   const sides = [[0,-1],[0,1],[-1,0],[1,0]];
   sides.forEach(([dx,dy], s) => {
-    const n = tileAt(x+dx, y+dy); if (!'gGFTPQSN'.includes(n)) return;
+    if (!GRASSY.includes(tileAt(x+dx, y+dy).look)) return;
     for (let i = 0; i < 16; i++){
       if (rnd(x*3+s, y*5, i) < .55){
         const px = dx === 0 ? i : (dx < 0 ? 0 : 15), py = dy === 0 ? i : (dy < 0 ? 0 : 15);
@@ -120,15 +122,15 @@ function cliff(g, X, Y, x, y){
   R(g, X, Y, T, T, '#8E8A7E');
   for (let i = 0; i < 10; i++){ const px = Math.floor(rnd(x,y,i+80)*16), py = Math.floor(rnd(x,y,i+90)*16); R(g, X+px, Y+py, 2, 1, i % 2 ? '#7E7A6F' : '#A3A094'); }
   if (rnd(x,y,7) < .5){ const px = 3 + Math.floor(rnd(x,y,8)*10); R(g, X+px, Y+4, 1, 6, '#6F6B61'); R(g, X+px+1, Y+9, 1, 3, '#6F6B61'); }
-  const up = tileAt(x, y-1), dn = tileAt(x, y+1);
-  if (!'MC'.includes(up) && y > 0){ R(g, X, Y, T, 3, '#B5B1A4'); R(g, X, Y, T, 1, '#7CC46B'); }
-  if (!'MC'.includes(dn)){ R(g, X, Y+12, T, 3, '#6A665C'); R(g, X, Y+15, T, 1, '#4A463F'); }
+  const up = tileAt(x, y-1).look, dn = tileAt(x, y+1).look;
+  if (!CLIFFS.includes(up) && y > 0){ R(g, X, Y, T, 3, '#B5B1A4'); R(g, X, Y, T, 1, '#7CC46B'); }
+  if (!CLIFFS.includes(dn)){ R(g, X, Y+12, T, 3, '#6A665C'); R(g, X, Y+15, T, 1, '#4A463F'); }
 }
 function waterBase(g, X, Y, x, y){
   R(g, X, Y, T, T, '#3F8FCB');
   for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x,y,i+120)*14), py = Math.floor(rnd(x,y,i+130)*16); R(g, X+px, Y+py, 2, 1, '#367FB8'); }
   [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy]) => {
-    const n = tileAt(x+dx, y+dy); if (isWater(n) || (x+dx < 0 || x+dx >= COLS || y+dy < 0 || y+dy >= ROWS)) return;
+    if (WATERY.includes(tileAt(x+dx, y+dy).look) || (x+dx < 0 || x+dx >= COLS || y+dy < 0 || y+dy >= ROWS)) return;
     if (dy === -1){ R(g, X, Y, T, 2, '#2C6B9E'); R(g, X, Y+2, T, 1, '#8ACFF0'); }
     if (dy === 1){ R(g, X, Y+14, T, 2, '#2C6B9E'); }
     if (dx === -1){ R(g, X, Y, 2, T, '#2C6B9E'); R(g, X+2, Y, 1, T, '#8ACFF0'); }
@@ -136,33 +138,36 @@ function waterBase(g, X, Y, x, y){
   });
 }
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
-function buildMap(){
-  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
-    const X = x*T, Y = y*T, c = tileAt(x, y);
-    switch (c){
-      case 'g': grass(mg,X,Y,x,y); break;
-      case '.': path(mg,X,Y,x,y); break;
-      case 'G': tall(mg,X,Y,x,y); break;
-      case 'F': grass(mg,X,Y,x,y); flower(mg,X+4,Y+4,'#F48FB1'); flower(mg,X+11,Y+7,'#FFFFFF'); flower(mg,X+6,Y+11,'#F48FB1'); break;
-      case 'T': grass(mg,X,Y,x,y); R(mg,X+3,Y+14,10,2,'#5DA651'); mg.drawImage(SPR.tree,X,Y); break;
-      case 'P': grass(mg,X,Y,x,y); R(mg,X+3,Y+14,10,2,'#5DA651'); mg.drawImage(SPR.peach,X,Y); break;
-      case 'Q': grass(mg,X,Y,x,y); R(mg,X+3,Y+14,10,2,'#5DA651'); mg.drawImage(SPR.apple,X,Y); break;
-      case 'R': path(mg,X,Y,x,y); mg.drawImage(SPR.rock,X,Y+2); break;
-      case 'S': grass(mg,X,Y,x,y); R(mg,X+2,Y+13,12,2,'#5DA651'); mg.drawImage(SPR.stone,X,Y+1); break;
-      case 'N': grass(mg,X,Y,x,y); mg.drawImage(SPR.sign,X,Y); break;
-      case 'M': cliff(mg,X,Y,x,y); break;
-      case 'C': cliff(mg,X,Y,x,y);
-        R(mg,X+3,Y+5,10,11,'#2A2622'); R(mg,X+4,Y+3,8,2,'#2A2622'); R(mg,X+5,Y+2,6,1,'#2A2622');
-        R(mg,X+3,Y+5,1,11,'#5E5A50'); R(mg,X+12,Y+5,1,11,'#5E5A50');
-        if (!areaDone()){
-          R(mg,X+4,Y+4,8,12,'#8A8478'); R(mg,X+5,Y+3,6,1,'#8A8478'); R(mg,X+4,Y+9,8,1,'#6C675C'); R(mg,X+7,Y+4,1,12,'#6C675C');
-          R(mg,X+9,Y+11,2,2,'#4A463F');
-        } else { R(mg,X+5,Y+14,6,2,'#3A342E'); R(mg,X+6,Y+6,4,8,'#3E3830'); }
-        break;
-      case 'W': case 'O': case 'X': waterBase(mg,X,Y,x,y); break;
-      case 'B': waterBase(mg,X,Y,x,y);
-        for (let i = 0; i < 16; i += 4){ R(mg,X+i,Y+1,3,14,(i/4) % 2 ? '#A0743F' : '#B98A55'); R(mg,X+i+3,Y+1,1,14,'#6B4A2A'); }
-        R(mg,X,Y,T,2,'#6B4A2A'); R(mg,X,Y+14,T,2,'#6B4A2A'); break;
-    }
+// How each look is painted. Each area's legend picks a look for each map letter.
+const LOOKS = {
+  grass:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  path:      (g,X,Y,x,y) => path(g,X,Y,x,y),
+  tallGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y),
+  flowers:   (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F48FB1'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#F48FB1'); },
+  tree:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.tree,X,Y); },
+  peachTree: (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.peach,X,Y); },
+  appleTree: (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.apple,X,Y); },
+  rocks:     (g,X,Y,x,y) => { path(g,X,Y,x,y); g.drawImage(SPR.rock,X,Y+2); },
+  stone:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+2,Y+13,12,2,'#5DA651'); g.drawImage(SPR.stone,X,Y+1); },
+  sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
+  cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
+  caveDoor:  (g,X,Y,x,y) => {   // a cave in the cliff; its stone door rolls open once the area is done
+    cliff(g,X,Y,x,y);
+    R(g,X+3,Y+5,10,11,'#2A2622'); R(g,X+4,Y+3,8,2,'#2A2622'); R(g,X+5,Y+2,6,1,'#2A2622');
+    R(g,X+3,Y+5,1,11,'#5E5A50'); R(g,X+12,Y+5,1,11,'#5E5A50');
+    if (!areaDone()){
+      R(g,X+4,Y+4,8,12,'#8A8478'); R(g,X+5,Y+3,6,1,'#8A8478'); R(g,X+4,Y+9,8,1,'#6C675C'); R(g,X+7,Y+4,1,12,'#6C675C');
+      R(g,X+9,Y+11,2,2,'#4A463F');
+    } else { R(g,X+5,Y+14,6,2,'#3A342E'); R(g,X+6,Y+6,4,8,'#3E3830'); }
+  },
+  water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
+  waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js
+  bridge:    (g,X,Y,x,y) => {
+    waterBase(g,X,Y,x,y);
+    for (let i = 0; i < 16; i += 4){ R(g,X+i,Y+1,3,14,(i/4) % 2 ? '#A0743F' : '#B98A55'); R(g,X+i+3,Y+1,1,14,'#6B4A2A'); }
+    R(g,X,Y,T,2,'#6B4A2A'); R(g,X,Y+14,T,2,'#6B4A2A');
   }
+};
+function buildMap(){
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
 }

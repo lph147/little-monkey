@@ -13,14 +13,14 @@ function bubble(X, Y, ch){
   else { R(b, X+2, Y+2, 3, 1, '#2E7A57'); R(b, X+4, Y+3, 1, 1, '#2E7A57'); R(b, X+3, Y+4, 1, 1, '#2E7A57'); R(b, X+3, Y+6, 1, 1, '#2E7A57'); }
 }
 function animTile(x, y, X, Y, now){
-  const c = tileAt(x, y);
-  if (c === 'W' || c === 'O'){
+  const look = tileAt(x, y).look;
+  if (look === 'water'){
     for (let k = 0; k < 2; k++){
       const ph = rnd(x, y, k+200) * 6.28, s = Math.sin(now/500 + ph);
       if (s > .55){ const px = 2 + Math.floor(rnd(x,y,k+210)*10), py = 3 + Math.floor(rnd(x,y,k+220)*10); R(b, X+px, Y+py, 3, 1, '#BFE8FA'); }
     }
-    if (c === 'W' && tileAt(x, y-1) === 'X'){ for (let i = 0; i < 6; i++){ const px = Math.floor(rnd(x, i, Math.floor(now/120))*15); R(b, X+px, Y+1+(i%3), 2, 1, '#FFFFFF'); } }
-  } else if (c === 'X'){
+    if (tileAt(x, y-1).look === 'waterfall'){ for (let i = 0; i < 6; i++){ const px = Math.floor(rnd(x, i, Math.floor(now/120))*15); R(b, X+px, Y+1+(i%3), 2, 1, '#FFFFFF'); } }
+  } else if (look === 'waterfall'){
     R(b, X, Y, T, T, '#8FD0EE');
     for (let i = 0; i < 5; i++){ const xx = X + 1 + i*3, off = (now/18 + i*7) % 22 - 6; R(b, xx, Y + Math.max(0, off), 1, Math.min(7, 16 - Math.max(0, off)), '#FFFFFF'); R(b, xx+1, Y, 1, T, '#B9E4F7'); }
   }
@@ -38,7 +38,7 @@ function drawFoe(cx, cy, now){
     const k = clamp(e / 280, 0, 1), h = Math.max(1, Math.round(16 * k)), jump = e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
     R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)');
     b.drawImage(spr, 0, 0, 16, h, X, Y + 16 - h - jump, 16, h);
-    if (e < 600 && tileAt(foe.x, foe.y) === 'G'){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
+    if (e < 600 && tileAt(foe.x, foe.y).look === 'tallGrass'){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
   } else {
     const e1 = now - foe.t1;
     if (foe.state === 'happy'){
@@ -70,9 +70,9 @@ function drawWorld(now){
   for (const [w,[x,y]] of Object.entries(HOT)){
     if (lvl(w) > 0) continue;
     if (w === '瀑布' && !S.gate) continue;
-    if (w === '森林' && lvl('树') === 0) continue;
-    const walk = '.GF'.includes(tileAt(x,y));
-    sparkle(x*T - cx + (walk ? 8 : 12), y*T - cy + (walk ? 8 : 3), now, x + y);
+    const t = tileAt(x, y);
+    if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
+    sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
   }
   // entities sorted by row
   const ents = NPCS.map(n => ({n, y:n.y*T})).concat([{p:true, y:pl.py}]).concat(foe ? [{f:true, y:foe.y*T}] : []).sort((a,c) => a.y - c.y);

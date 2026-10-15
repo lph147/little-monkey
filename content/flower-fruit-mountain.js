@@ -11,29 +11,59 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // at the top left of the map.
   start: {x:9, y:2},
 
-  // The map, one letter per tile:
-  //   g grass   G tall grass (animals hide here)   F flowers   . path   B bridge
-  //   T tree    P peach tree   Q apple tree   S the stone you were born from   N sign
-  //   M cliff   C cave door    R rocks (they roll away once both monkeys are helped)
-  //   W river   O pond         X waterfall
+  // The map, one letter per tile. The legend below says what each letter is.
   map: [
     "MMMMMMMMMMMMMMMMMMXXMMMM",
-    "MMMMMMMggSggMMggggXXTTTT",
-    "MMMMMMMgF.gNMMgggFWWTTTT",
-    "MMMCMMMgg.ggMMggggWWTTTT",
-    "MMg.gMMMg.gMMMMRRMWWTTTT",
-    "TTg.ggggg.ggggg.ggWWTTTT",
-    "TPg.............ggWWTTTT",
-    "TQggGGGGgggFggg.ggWWgggT",
-    "TPggGGGGggggTgg.ggWWgGgT",
-    "TTggGGGgggOOOgg.gFWWGGgT",
-    "TFgggggggOOOOgg.ggWWGGgT",
-    "TTgggGGGggggggg.ggWWgggT",
-    "TggFgGGGggggggg...BBgggT",
-    "TgggggggggggggggggWWgGgT",
-    "TTgGGGggggggggFgggWWGGgT",
-    "TTTTTTTTTTTTTTTTTTWWTTTT"
+    "MMMMMMMggSggMMggggXXYYYY",
+    "MMMMMMMgF.gNMMgggFWWYYYY",
+    "MMMCMMMgg.ggMMggggWWYYYY",
+    "MMg.gMMMg.gMMMMRRMWWYYYY",
+    "YTg.ggggg.ggggg.ggWWYYYY",
+    "YPg.............ggWWYYYY",
+    "YQggGGGGgggFggg.ggWWgggY",
+    "YPggGGGGggggTgg.ggWWgGgY",
+    "YTggGGGgggOOOgg.gFWWGGgY",
+    "YFgggggggOOOOgg.ggWWGGgY",
+    "YTgggGGGggggggg.ggWWgggY",
+    "YggFgGGGggggggg...BBgggY",
+    "YgggggggggggggggggWWgGgY",
+    "YTgGGGggggggggFgggWWGGgY",
+    "YYYYYYYYYYYYYYYYYYWWYYYY"
   ],
+
+  // What each map letter is. Every letter on the map must be here (the tests check).
+  //   look           how it's drawn: one of the looks in js/art.js
+  //   walk           true if you can walk on it
+  //   word           the word you learn by facing it and pressing A
+  //   note           a line on that word's card
+  //   newNote        a line on the card only while the word is new
+  //   learnFirst     a word it teaches instead, until you know that one
+  //   landmark       true if A always looks at it (otherwise only while its word is new)
+  //   message        a message shown after its card
+  //   learnOnStep    true to learn its word the first time you step on it, with stepNote on the card
+  //   animals        true if animals hide here
+  //   gather         something you can pick up here when a monkey has asked for it
+  //   action         something special that happens: 'caveDoor', 'story' or 'sign'
+  //   whenGateOpens  the letter it becomes once the rocks have rolled away
+  legend: {
+    'g': {look:'grass', walk:true},
+    'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
+    'F': {look:'flowers', walk:true, word:'花', learnOnStep:true},
+    '.': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'You are walking along a path.'},
+    'B': {look:'bridge', walk:true},
+    'T': {look:'tree', word:'树'},
+    'Y': {look:'tree', word:'森林', learnFirst:'树', note:'So many trees together.'},
+    'P': {look:'peachTree', word:'桃子', landmark:true, gather:{item:'桃子', label:'Pick', note:'You pick one from the tree.'}},
+    'Q': {look:'appleTree', word:'苹果', landmark:true, gather:{item:'苹果', label:'Pick', note:'You pick one from the tree.'}},
+    'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
+    'N': {look:'sign', landmark:true, action:'sign'},
+    'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', whenGateOpens:'.'},
+    'M': {look:'cliff', word:'山'},
+    'C': {look:'caveDoor', word:'洞', note:'A cave in the cliff, closed by a heavy stone door.', landmark:true, action:'caveDoor'},
+    'W': {look:'water', word:'河', gather:{item:'水', label:'Collect', note:'You scoop up some water from the river.'}},
+    'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', label:'Collect', note:'You scoop up some water from the pond.'}},
+    'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story'}
+  },
 
   // Characters standing on the map. A character's name shows Chinese, pinyin and English
   // together, because names aren't vocabulary.
@@ -50,8 +80,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'bird', x:22, y:13, facing:'down'}
   ],
 
-  // The name shown when you read the sign by the stone.
-  sign: {zh:'牌子', py:'páizi', en:'Sign'},
+  // The sign by the stone: its name, what it says, and a hint underneath.
+  sign: {
+    name: {zh:'牌子', py:'páizi', en:'Sign'},
+    says: {zh:'花果山', en:'Flower Fruit Mountain'},
+    hint: 'The name of your home. You will see it often in the book.'
+  },
 
   // Things that sparkle until you learn their word: word, then [x, y] on the map.
   sparkles: {'石头':[9, 1], '山':[12, 3], '路':[9, 4], '花':[8, 2], '草':[5, 7], '树':[12, 8], '桃子':[1, 6], '苹果':[1, 7], '河':[18, 7], '鱼':[11, 9], '洞':[3, 3], '森林':[21, 6], '瀑布':[18, 1]},

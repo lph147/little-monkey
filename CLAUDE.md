@@ -5,7 +5,7 @@ A retro, Pokémon-style web game for learning Mandarin Chinese, themed on *Journ
 
 - **DESIGN.md** is the plan and the source of truth for design decisions. Follow it. If a request conflicts with it, point that out before building.
 - **index.html** is the game. It loads `css/game.css`, then the content in `content/`, then the engine in `js/`, in the order listed in index.html; each script can use what the ones before it define. All pixel art and sound are generated in code.
-- **content/** is the game's content, as data: `words.js` (the word bank: every word once, with pinyin, English, picture and the area it's collected in), `sprites.js` (pixel art for collectible words) and one file per area, such as `flower-fruit-mountain.js`. Chinese sentences are written with a space between words (`'我 饿 了 。'`), and every word must be in the word bank; `npm test` checks this and more.
+- **content/** is the game's content, as data: `words.js` (the word bank: every word once, with pinyin, English, picture and the area it's collected in), `sprites.js` (pixel art for collectible words) and one file per area, such as `flower-fruit-mountain.js`. An area's `legend` says what each map letter is (how it looks, whether you can walk on it, the word it teaches, what A does); the looks are in `js/art.js` and the special actions in `js/world.js`. Chinese sentences are written with a space between words (`'我 饿 了 。'`), and every word must be in the word bank; `npm test` checks this and more.
 - **little-monkey.html** is version 8, the single-file original built in a Claude chat. It is kept for comparison while the engine is split from the content, then it will be deleted (git keeps it).
 
 ## About me

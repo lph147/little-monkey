@@ -10,15 +10,17 @@ const {loadGame, ROOT} = require('./fake-browser');
 const game = loadGame();
 const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
 const BANK = get('WORD_BANK'), SPRITES = get('SPRITES'), AREA = get('AREA'), PUNCT = get('[...PUNCT]');
-const WALKABLE = 'gGF.B';   // map letters you can stand on (see walkable() in js/world.js)
+const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)');   // what the engine can draw and do
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
 const where = `content/ (area ${AREA.number})`;
 const onMap = ([x, y]) => y >= 0 && y < AREA.map.length && x >= 0 && x < AREA.map[0].length;
 const tile = ([x, y]) => AREA.map[y][x];
+const canWalk = at => !!(AREA.legend[tile(at)] || {}).walk;
 const sentences = [
   ...Object.entries(AREA.lines).map(([k, l]) => [`line "${k}"`, l]),
   ...AREA.story.map((s, i) => [`story sentence ${i + 1}`, s]),
-  ...AREA.storyQuestions.map((q, i) => [`story question ${i + 1}`, q])
+  ...AREA.storyQuestions.map((q, i) => [`story question ${i + 1}`, q]),
+  ['the sign', AREA.sign.says]
 ];
 
 test('every word in the word bank has pinyin and English', () => {
@@ -64,9 +66,34 @@ test('the map is a rectangle', () => {
   AREA.map.forEach((row, y) => assert.equal(row.length, width, `map row ${y} is ${row.length} tiles wide, not ${width}`));
 });
 
+test('every letter on the map is in the legend', () => {
+  AREA.map.forEach((row, y) => [...row].forEach((ch, x) => {
+    assert.ok(AREA.legend[ch], `the map has "${ch}" at ${x},${y}, but the legend doesn't say what "${ch}" is`);
+  }));
+});
+
+test('the legend only uses looks and actions the engine has', () => {
+  for (const [ch, t] of Object.entries(AREA.legend)){
+    assert.equal(ch.length, 1, `legend entry "${ch}" should be a single letter`);
+    assert.ok(LOOKS.includes(t.look), `legend "${ch}" has look "${t.look}"; the looks are ${LOOKS.join(', ')}`);
+    if (t.action) assert.ok(ACTIONS.includes(t.action), `legend "${ch}" has action "${t.action}"; the actions are ${ACTIONS.join(', ')}`);
+  }
+});
+
+test('the legend only teaches collectible words', () => {
+  for (const [ch, t] of Object.entries(AREA.legend)){
+    for (const w of [t.word, t.learnFirst, t.gather && t.gather.item].filter(Boolean)){
+      assert.ok(collectible.includes(w), `legend "${ch}" teaches ${w}, which isn't a word you can collect in ${where}`);
+    }
+    if (t.learnOnStep || t.newNote || t.learnFirst) assert.ok(t.word, `legend "${ch}" needs a word`);
+    if (t.gather) assert.ok(t.gather.label && t.gather.note, `legend "${ch}": gather needs a label and a note`);
+    if (t.whenGateOpens) assert.ok(AREA.legend[t.whenGateOpens], `legend "${ch}" turns into "${t.whenGateOpens}", which isn't in the legend`);
+  }
+});
+
 test('you start on a tile you can walk on', () => {
   const at = [AREA.start.x, AREA.start.y];
-  assert.ok(onMap(at) && WALKABLE.includes(tile(at)), `the start ${at} isn't a walkable tile`);
+  assert.ok(onMap(at) && canWalk(at), `the start ${at} isn't a walkable tile`);
 });
 
 test('characters stand on the map, on walkable tiles, one per tile', () => {
@@ -74,7 +101,7 @@ test('characters stand on the map, on walkable tiles, one per tile', () => {
   for (const c of AREA.characters){
     const at = [c.x, c.y];
     assert.ok(onMap(at), `${c.id} at ${at} is off the map`);
-    assert.ok(WALKABLE.includes(tile(at)), `${c.id} stands on "${tile(at)}" at ${at}, which isn't walkable`);
+    assert.ok(canWalk(at), `${c.id} stands on "${tile(at)}" at ${at}, which isn't walkable`);
     assert.ok(!taken.has(String(at)), `${c.id} at ${at} shares a tile with someone else or the start`);
     taken.add(String(at));
     assert.ok(['up', 'down', 'left', 'right'].includes(c.facing), `${c.id} faces "${c.facing}"`);
@@ -85,7 +112,8 @@ test('character names show Chinese, pinyin and English', () => {
   for (const c of AREA.characters.filter(c => c.name || c.palette)){
     assert.ok(c.name && c.name.zh && c.name.py && c.name.en, `${c.id} needs a name with zh, py and en`);
   }
-  assert.ok(AREA.sign.zh && AREA.sign.py && AREA.sign.en, 'the sign needs a name with zh, py and en');
+  const n = AREA.sign.name;
+  assert.ok(n && n.zh && n.py && n.en, 'the sign needs a name with zh, py and en');
 });
 
 test('sparkles are on collectible words, on the map', () => {

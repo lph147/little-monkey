@@ -1,9 +1,16 @@
 // What happens in the world: where you can walk, tasks, talking to characters, looking at things and wild animals.
 
 /* ================= WORLD LOGIC ================= */
-function tileAt(x, y){ if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return 'M'; let c = MAP[y][x]; if (c === 'R' && S.gate) c = '.'; return c; }
+const EDGE = {look:'cliff'};   // what lies beyond the edge of the map
+function tileAt(x, y){         // the legend entry for the map letter at x, y
+  if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return EDGE;
+  const t = LEGEND[MAP[y][x]];
+  return S.gate && t.whenGateOpens ? LEGEND[t.whenGateOpens] : t;
+}
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
-const walkable = (x, y) => 'gGF.B'.includes(tileAt(x, y)) && !npcAt(x, y);
+const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y);
+const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
+const wants = item => (item === '水' ? S.q.thirsty === 1 : S.q.hungry === 1);              // has a monkey asked for this?
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
 
@@ -39,14 +46,11 @@ function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
   const n = npcAt(x, y);
   if (n) return n.kind === 'bird' ? 'Look' : 'Talk';
-  const c = tileAt(x, y);
-  if ((c === 'P' || c === 'Q') && S.q.hungry === 1) return 'Pick';
-  if ('PQXNCSR'.includes(c)) return 'Look';
-  if (c === 'W' || c === 'O') return S.q.thirsty === 1 ? 'Collect' : (lvl(c === 'W' ? '河' : '鱼') === 0 ? 'Look' : '');
-  const w = {M:'山', T:'树', '.':'路', G:'草', F:'花'}[c];
-  if (w && lvl(w) === 0) return 'Look';
-  if (c === 'T' && x >= 20 && lvl('森林') === 0) return 'Look';
-  return '';
+  const t = tileAt(x, y);
+  if (t.gather && wants(t.gather.item)) return t.gather.label;
+  if (t.landmark) return 'Look';
+  const w = lookWord(t);
+  return w && lvl(w) === 0 ? 'Look' : '';
 }
 function checkGate(){
   if (!S.gate && S.q.hungry === 3 && S.q.thirsty === 3){
@@ -110,69 +114,53 @@ async function talk(n){
     checkGate();
   } else await showDialog(face, L.thanks);
 }
+async function lookAt(t){   // the card for the word you learn by looking at a tile
+  const w = lookWord(t);
+  const note = w === t.word ? t.note || (lvl(w) === 0 ? t.newNote : '') : '';
+  await showNotice(w, note ? {note} : {});
+  if (t.message) toast(t.message);
+}
+async function gather(t){   // pick fruit or collect water for a monkey who asked for it
+  const {item, note} = t.gather;
+  // the task comes first: collecting water is where 水 is introduced
+  if (lvl(item) === 0) await showNotice(item, {note});
+  if (item === '水'){ S.q.thirsty = 2; save(); SFX.right(); toast(`You collected some ${wz('水')}. Take it to the thirsty monkey.`); }
+  else { S.carry = item; save(); SFX.right(); toast(`You picked a ${wz(item)}. Take it to the hungry monkey.`); }
+}
+const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
+  async caveDoor(t){
+    if (lvl(t.word) === 0) await showNotice(t.word, {note:t.note});
+    if (!areaDone()) await infoBox('🚪', '<p>The door won’t move. Finish everything on Flower Fruit Mountain first:</p>' + checklistHTML(true));
+    else if (await confirmBox('🚪', `The door has rolled open. To go through, pass a short word test: match each word you learned here to its picture. You need ${Math.round(PASS*100)}% right first time.`, 'Start the test', 'Not yet')){ if (await wordTest()) await nextArea(); }
+  },
+  async story(t){ await lookAt(t); await storyScroll(); },
+  async sign(){
+    SFX.blip();
+    await showDialog(speaker('sign'), {t:toks(AREA.sign.says.zh), en:AREA.sign.says.en}, {hint:AREA.sign.hint});
+  }
+};
 async function interact(x, y){
   const n = npcAt(x, y);
   if (n) return talk(n);
-  const c = tileAt(x, y), q = S.q;
-  switch (c){
-    case 'S': await showNotice('石头', {note:'You were born from this stone.'}); break;
-    case 'R': await showNotice('石头'); toast('Big rocks block the way up. Maybe they will move once the monkeys are happy.'); break;
-    case 'M': await showNotice('山'); break;
-    case '.': await showNotice('路'); break;
-    case 'G': await showNotice('草'); break;
-    case 'F': await showNotice('花'); break;
-    case 'T':
-      if (lvl('树') > 0 && (x >= 20 || x === 0 || y === ROWS - 1 || (x === HOT['森林'][0] && y === HOT['森林'][1]))) await showNotice('森林', {note:'So many trees together.'});
-      else await showNotice('树');
-      break;
-    case 'P': case 'Q': {
-      const fruit = c === 'P' ? '桃子' : '苹果';
-      if (q.hungry === 1){
-        if (lvl(fruit) === 0) await showNotice(fruit, {note:'You pick one from the tree.'});
-        S.carry = fruit; save(); SFX.right(); toast(`You picked a ${wz(fruit)}. Take it to the hungry monkey.`);
-      } else await showNotice(fruit);
-      break; }
-    case 'W': case 'O':
-      if (q.thirsty === 1){
-        // the quest comes first: collecting water is where 水 is introduced
-        if (lvl('水') === 0) await showNotice('水', {note: c === 'W' ? 'You scoop up some water from the river.' : 'You scoop up some water from the pond.'});
-        q.thirsty = 2; save(); SFX.right(); toast(`You collected some ${wz('水')}. Take it to the thirsty monkey.`);
-      } else if (c === 'W') await showNotice('河');
-      else await showNotice('鱼', {note: lvl('鱼') === 0 ? 'Little fish dart about in the pond.' : ''});
-      break;
-    case 'C':
-      if (lvl('洞') === 0) await showNotice('洞', {note:'A cave in the cliff, closed by a heavy stone door.'});
-      if (!areaDone()) await infoBox('🚪', '<p>The door won’t move. Finish everything on Flower Fruit Mountain first:</p>' + checklistHTML(true));
-      else if (await confirmBox('🚪', `The door has rolled open. To go through, pass a short word test: match each word you learned here to its picture. You need ${Math.round(PASS*100)}% right first time.`, 'Start the test', 'Not yet')){ if (await wordTest()) await nextArea(); }
-      break;
-    case 'X':
-      await showNotice('瀑布', {note:`Water crashes down the ${wz('山')}. What could be behind it?`});
-      await storyScroll();
-      break;
-    case 'N':
-      SFX.blip();
-      await showDialog(speaker('sign'), {t:['花果山'], en:'Flower Fruit Mountain'}, {hint:'The name of your home. You will see it often in the book.'});
-      break;
-    default: SFX.bump();
-  }
+  const t = tileAt(x, y);
+  if (t.gather && wants(t.gather.item)) return gather(t);
+  if (t.action) return ACTIONS[t.action](t);
+  if (t.word) return lookAt(t);
+  SFX.bump();
 }
 let stepsSince = 0;
 async function arrive(x, y){
   S.pos = {x, y, dir:pl.dir}; save();
-  const c = tileAt(x, y);
-  if (c === '.' && lvl('路') === 0) return showNotice('路', {note:'You are walking along a path.'});
-  if (c === 'F' && lvl('花') === 0) return showNotice('花');
-  if (c === 'G'){
-    stepsSince++;
-    if (lvl('草') === 0) return showNotice('草', {note:'Tall grass. Animals hide in here.'});
-    if (canWild() && stepsSince >= 3 && Math.random() < 0.22){ stepsSince = 0; held = null; queued = null; return wildAppears(); }
-  }
+  const t = tileAt(x, y);
+  if (t.animals) stepsSince++;
+  if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
+  if (t.animals && canWild() && stepsSince >= 3 && Math.random() < 0.22){ stepsSince = 0; held = null; queued = null; return wildAppears(); }
 }
 
 let foe = null, alertUntil = 0;
 function findSpot(){
   const order = [pl.dir].concat(['down','left','right','up'].filter(d => d !== pl.dir));
-  for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy; if ('gGF.'.includes(tileAt(x,y)) && !npcAt(x,y)) return {x, y, d}; }
+  for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy, t = tileAt(x,y); if (t.walk && t.look !== 'bridge' && !npcAt(x,y)) return {x, y, d}; }
   const [dx,dy] = DV[pl.dir]; return {x:pl.x + dx, y:pl.y + dy, d:pl.dir};
 }
 async function wildAppears(){
