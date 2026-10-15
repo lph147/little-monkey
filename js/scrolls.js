@@ -29,15 +29,14 @@ function storyScroll(){
         const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>', options:q.opts, answerIdx:q.a});
         if (ok) right++;
       }
-      const first = !here().story;
-      here().story = true; if (first) S.peaches += 5; save(); buildMap();
+      const first = !here().story, end = AREA.storyEnd;
+      here().story = true; if (first) S.peaches += end.reward; save(); buildMap();
       SFX.fanfare();
-      openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">First slice complete</p>
-        <p>You got ${right} of 3 story questions.${first ? ' +5 🍑' : ''}</p>
-        <p>Every word here comes from the opening of <i>The Rise of the Monkey King</i>. Open your book at page 8 and read to page 18. Count how many words you now recognise without the footnotes.</p>
-        <p>You hear a heavy door roll open somewhere in the cliffs. That’s the way onward.</p>
+      openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">${end.title}</p>
+        <p>You got ${right} of ${qs.length} story questions.${first ? ` +${end.reward} 🍑` : ''}</p>
+        ${end.text.map(p => `<p>${p}</p>`).join('\n        ')}
         <div class="actions"><button class="btn primary" data-a="done">Keep playing</button></div>`);
-      on('[data-a=done]', () => { closeCard(); if (first){ SFX.rumble(); shakeT = performance.now(); } res(); });
+      on('[data-a=done]', () => { closeCard(); if (first && end.rumble){ SFX.rumble(); shakeT = performance.now(); } res(); });
     });
   });
 }
@@ -99,8 +98,8 @@ function wordTest(){
         <p class="label">${pass ? 'Test passed!' : 'Not quite yet'}</p>
         <p>You matched <b>${right} of ${words.length}</b> words right first time. You needed ${need}.</p>
         ${missed.size ? `<p class="small">Words to practise:</p><div class="chips">${[...missed].map(w => `<button class="chip" data-w="${w}">${w}</button>`).join('')}</div><div class="gloss">Tap a word to hear it.</div>` : ''}
-        ${pass ? '' : '<p>Walk around the mountain, look at things again and meet animals in the tall grass. Then come back to the door and try again.</p>'}
-        <div class="actions"><button class="btn primary" data-a="ok">${pass ? 'Go through the door' : 'Back to the mountain'}</button></div>`);
+        ${pass ? '' : `<p>${AREA.exit.tryAgain}</p>`}
+        <div class="actions"><button class="btn primary" data-a="ok">${pass ? AREA.exit.passButton : AREA.exit.failButton}</button></div>`);
       sheet.querySelectorAll('.chip').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; say(w); sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${WORDS[w].py} · ${esc(WORDS[w].en)}`; });
       on('[data-a=ok]', () => { closeCard(); res(pass); });
     }
@@ -110,11 +109,12 @@ function wordTest(){
 async function nextArea(){
   here().done = true; save(); SFX.fanfare(); fadeT = performance.now();
   await sleep(700);
-  await infoBox('⛰️', `<p class="label">Flower Fruit Mountain complete!</p>
+  await infoBox('⛰️', `<p class="label">${AREA.name.en} complete!</p>
     <div class="stats"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${S.friends.length} friends</span><span>🍑 ${S.peaches}</span></div>
-    <p>The tunnel leads behind the waterfall to <b>水帘洞</b> (Water Curtain Cave), which is where the story goes next in your book.</p>
-    <p class="small">That area isn’t built yet, so you’re back on the mountain for now. Your progress is saved.</p>`);
-  pl.x = 3; pl.y = 4; pl.dir = 'down'; pl.px = pl.x*T; pl.py = pl.y*T; S.pos = {x:3, y:4, dir:'down'}; save();
+    <p>${AREA.exit.done}</p>
+    <p class="small">${AREA.exit.notBuilt}</p>`);
+  const back = AREA.exit.returnTo;   // until the next area is built, you're put back here
+  pl.x = back.x; pl.y = back.y; pl.dir = back.facing; pl.px = pl.x*T; pl.py = pl.y*T; S.pos = {x:back.x, y:back.y, dir:back.facing}; save();
 }
 function todaysWords(back){
   return new Promise(res => {

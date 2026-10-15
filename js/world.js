@@ -124,8 +124,8 @@ async function gather(t){   // pick up something for a request, such as fruit or
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
   async caveDoor(t){
     if (lvl(t.word) === 0) await showNotice(t.word, {note:t.note});
-    if (!areaDone()) await infoBox('🚪', '<p>The door won’t move. Finish everything on Flower Fruit Mountain first:</p>' + checklistHTML(true));
-    else if (await confirmBox('🚪', `The door has rolled open. To go through, pass a short word test: match each word you learned here to its picture. You need ${Math.round(PASS*100)}% right first time.`, 'Start the test', 'Not yet')){ if (await wordTest()) await nextArea(); }
+    if (!areaDone()) await infoBox('🚪', `<p>${AREA.exit.notReady}</p>` + checklistHTML(true));
+    else if (await confirmBox('🚪', `${AREA.exit.ready} You need ${Math.round(PASS*100)}% right first time.`, 'Start the test', 'Not yet')){ if (await wordTest()) await nextArea(); }
   },
   async story(t){ await lookAt(t); await storyScroll(); },
   async sign(){
@@ -170,9 +170,9 @@ async function wildAppears(){
   const firstMeet = !S.met.includes(a.id);
   if (firstMeet){ S.met.push(a.id); save(); }
   const justTaught = lvl(a.hz) === 0;
-  if (justTaught) await showNotice(a.hz, {note:`A wild ${a.name} jumped out of the ${wz('草')}! Answer its questions to make friends.`});
+  if (justTaught) await showNotice(a.hz, {note:`A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
   else { say(a.hz); await sleep(900); }
-  if (firstMeet) toast(`Hidden animals found: ${Math.min(S.met.length, 4)}/4`);
+  if (firstMeet) toast(`Hidden animals found: ${metCount()}/${ANIMALS.length}`);
   const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught});
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
   await sleep(won ? 1000 : 650);

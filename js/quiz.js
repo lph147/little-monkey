@@ -27,7 +27,7 @@ function pictureQ({head, body, options, answerIdx, word, type, text, onShow}){
 }
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 3;
-const canWild = () => lvl('动物') >= 1 && canEncounter();
+const canWild = () => matches(AREA.animalsAppear) && canEncounter();   // can animals jump out of their hiding place yet?
 async function encounter(foe){
   const an = foe.hz, img = foe.img;
   let showEn = false;
@@ -64,7 +64,7 @@ async function encounter(foe){
     if (!S.friends.includes(foe.id)) S.friends.push(foe.id);
     SFX.fanfare();
     msg = `You got ${score} of 3. The ${wz(an)} is now your ${wz('朋友')}! +${score} 🍑`;
-  } else msg = `You got ${score} of 3. The ${wz(an)} ${foe.wild ? `ran back into the ${wz('草')}` : 'wants to play again later'}. Those words will come back soon.`;
+  } else msg = `You got ${score} of 3. The ${wz(an)} ${foe.wild ? `ran back into the ${wz(HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.`;
   save();
   await infoBox(img, `<p>${msg}</p>`);
   return won;

@@ -25,7 +25,7 @@ function openMenu(focusId){
     resume: () => closeCard(),
     tasks: () => {
       const tasks = getTasks();
-      openCard(`<p class="label">Flower Fruit Mountain</p>${checklistHTML(false)}
+      openCard(`<p class="label">${AREA.name.en}</p>${checklistHTML(false)}
         <p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
         <div class="stats" style="margin-top:10px"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${ORDER.filter(w => lvl(w) >= 3).length} can read</span><span>${S.friends.length} friends</span></div>
         <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
@@ -33,7 +33,7 @@ function openMenu(focusId){
     },
     words: () => openScroll(() => openMenu('words')),
     friends: () => {
-      openCard(`<p class="label">Friends</p>${S.friends.length ? `<div class="friends">${S.friends.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}">${portrait(id)}<span style="font-size:1.2rem">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : 'xiǎo hóuzi'}</span></button>`; }).join('')}</div>` : '<p class="hint">No friends yet. Answer the questions of animals in the tall grass to make friends.</p>'}
+      openCard(`<p class="label">Friends</p>${S.friends.length ? `<div class="friends">${S.friends.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}">${portrait(id)}<span style="font-size:1.2rem">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : '<p class="hint">No friends yet. Answer the questions of animals in the tall grass to make friends.</p>'}
         <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
       sheet.querySelectorAll('.friends button').forEach(bt => bt.onclick = () => say(bt.dataset.w));
       on('[data-a=ok]', () => openMenu('friends'));

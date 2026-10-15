@@ -36,6 +36,7 @@ const LEGS = {
   front:[["...offo..offo...","...ooo....ooo..."],["...ooo...offo...",".........ooo...."],["...offo...ooo...","...ooo.........."]],
   side:[["....offo.ofo....","....ooo..oo....."],["...ofo....ofo...","..oo.......oo..."],["...ofo....ofo...","..oo.......oo..."]]
 };
+const BEARDED = new Set(AREA.characters.filter(c => c.beard).map(c => c.id));   // characters drawn with a white beard
 function monkeySprite(kind, dir, blink, step = 0){
   const k = kind + dir + (blink ? 'b' : '') + step; if (spriteCache[k]) return spriteCache[k];
   const side = dir === 'left' || dir === 'right';
@@ -44,11 +45,11 @@ function monkeySprite(kind, dir, blink, step = 0){
   rows[14] = [...legs[0]]; rows[15] = [...legs[1]];
   if (dir === 'down'){
     if (!blink){ rows[5][6] = 'e'; rows[5][9] = 'e'; }
-    if (kind === 'elder'){ [6,7,8,9].forEach(x => rows[8][x] = 'w'); rows[9][7] = 'w'; rows[9][8] = 'w'; }
+    if (BEARDED.has(kind)){ [6,7,8,9].forEach(x => rows[8][x] = 'w'); rows[9][7] = 'w'; rows[9][8] = 'w'; }
   }
   if (side){
     if (blink) rows[5][8] = 's';
-    if (kind === 'elder'){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
+    if (BEARDED.has(kind)){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
   }
   if (kind === 'player'){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }
   let out = rows.map(r => r.join(''));

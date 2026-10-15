@@ -62,14 +62,15 @@ function drawWorld(now){
   b.drawImage(mapCanvas, cx, cy, VW*T, VH*T, 0, 0, VW*T, VH*T);
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
-  // fish jumping in the pond
+  // fish jumping out of the water (the area's fish)
   const fp = (now % 5200) / 900;
-  if (fp < 1){ const fx = 11*T - cx + 2 + fp*10, fy = 10*T - cy + 6 - Math.sin(fp*Math.PI)*8; R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx)-1, Math.round(fy), 1, 2, '#D96A1E'); }
-  // sparkles on things whose word is not yet known
-  if (areaDone() && !here().done) sparkle(3*T - cx + 8, 3*T - cy + 6, now, 1);
-  for (const [w,[x,y]] of Object.entries(HOT)){
-    if (lvl(w) > 0) continue;
-    if (w === '瀑布' && !here().gate) continue;
+  if (fp < 1) for (const [fx0, fy0] of AREA.fish){ const fx = fx0*T - cx + 2 + fp*10, fy = fy0*T - cy + 6 - Math.sin(fp*Math.PI)*8; R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx)-1, Math.round(fy), 1, 2, '#D96A1E'); }
+  // the way out sparkles once it's ready; other sparkles are on things whose word is not yet known
+  if (areaDone() && !here().done) for (const [x, y] of EXIT_TILES) sparkle(x*T - cx + 8, y*T - cy + 6, now, 1);
+  for (const s of SPARKLES){
+    const [x, y] = s.at;
+    if (lvl(s.word) > 0) continue;
+    if (s.if && !matches(s.if)) continue;
     const t = tileAt(x, y);
     if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
     sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
@@ -88,10 +89,10 @@ function drawWorld(now){
     }
     const n = e.n, X = n.x*T - cx, Y = n.y*T - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    if (n.kind === 'bird'){
+    if (n.look === 'bird'){
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
       R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(SPR.bird, X+4, Y+6 - hop);
-      if (lvl('鸟') === 0) sparkle(X+13, Y+3, now, 3);
+      if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
       continue;
     }
     const idle = Math.floor(now/700 + n.x) % 2;

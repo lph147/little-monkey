@@ -6,10 +6,17 @@
 // Every word must be in the word bank (content/words.js); the tests check.
 const FLOWER_FRUIT_MOUNTAIN = {
   number: 1,
+  name: {zh:'花果山', py:'Huāguǒ Shān', en:'Flower Fruit Mountain'},
 
-  // Where you start the first time you play. x is the column and y the row, counting from 0
-  // at the top left of the map.
-  start: {x:9, y:2},
+  // Where you start the first time you play, and which way you face. x is the column and y the
+  // row, counting from 0 at the top left of the map.
+  start: {x:9, y:2, facing:'up'},
+
+  // What happens the very first time you play, after How to play (steps, as in talk below).
+  begin: [
+    {card:'石头', note:'You were just born from this stone!'},
+    {message:'Walk down the path and say hello to the old monkey.'}
+  ],
 
   // What this area remembers in your save, and the values a new game starts with.
   //   elder   0 not spoken to yet, 1 said hello, 2 told you about the animals
@@ -165,8 +172,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // together, because names aren't vocabulary.
   // palette: a monkey's colours. o outline, f fur, s face and tummy, m mouth, e eyes, w beard.
   // label: what the A button says beside them (Talk if not given).
+  // look: 'bird' draws a little bird instead of a monkey. word: it sparkles until you know this word.
+  // beard: draws a white beard.
   characters: [
-    {id:'elder', x:10, y:5, facing:'down', name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
+    {id:'elder', x:10, y:5, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
@@ -174,7 +183,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
     {id:'playful', x:11, y:12, facing:'down', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
-    {id:'bird', x:22, y:13, facing:'down', label:'Look'}
+    {id:'bird', x:22, y:13, facing:'down', label:'Look', look:'bird', word:'鸟'}
   ],
 
   // The sign by the stone: its name, what it says, and a hint underneath.
@@ -184,8 +193,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hint: 'The name of your home. You will see it often in the book.'
   },
 
-  // Things that sparkle until you learn their word: word, then [x, y] on the map.
-  sparkles: {'石头':[9, 1], '山':[12, 3], '路':[9, 4], '花':[8, 2], '草':[5, 7], '树':[12, 8], '桃子':[1, 6], '苹果':[1, 7], '河':[18, 7], '鱼':[11, 9], '洞':[3, 3], '森林':[21, 6], '瀑布':[18, 1]},
+  // Things that sparkle until you learn their word: the word, where it is on the map, and
+  // (optionally) an if that must match before it starts sparkling.
+  sparkles: [
+    {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'路', at:[9, 4]}, {word:'花', at:[8, 2]},
+    {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[1, 7]},
+    {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]}, {word:'洞', at:[3, 3]}, {word:'森林', at:[21, 6]},
+    {word:'瀑布', at:[18, 1], if:{gate:true}}   // the waterfall is out of reach until the rocks roll away
+  ],
+
+  // Where a fish jumps out of the water now and then.
+  fish: [[11, 10]],
 
   // Animals hiding in the tall grass. The id is kept in saved games, so never change it.
   animals: [
@@ -194,6 +212,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'squirrel', word:'松鼠'},
     {id:'goat', word:'山羊'}
   ],
+  // Animals only start jumping out of the tall grass once this matches.
+  animalsAppear: {knows:'动物'},
 
   // What the characters say. The English shows under a sentence the first time you see it.
   lines: {
@@ -279,6 +299,34 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {zh:'猴子 吃 什么 ？', options:['石头', '桃子', '草'], answer:'桃子'},
     {zh:'河 里 有 什么 ？', options:['树', '山羊', '鱼'], answer:'鱼'}
   ],
+
+  // The card after the story questions. reward: peaches, the first time only; rumble: the ground
+  // shakes as you close it (first time only). Text may use <i>…</i> for a book title.
+  storyEnd: {
+    title: 'First slice complete',
+    reward: 5,
+    rumble: true,
+    text: [
+      'Every word here comes from the opening of <i>The Rise of the Monkey King</i>. Open your book at page 8 and read to page 18. Count how many words you now recognise without the footnotes.',
+      'You hear a heavy door roll open somewhere in the cliffs. That’s the way onward.'
+    ]
+  },
+
+  // The way out of the area: the word test at the cave door, and what happens when you pass.
+  //   notReady    shown above what's left to do, while the door won't open
+  //   ready       when it opens (the game adds the pass mark)
+  //   tryAgain    if you don't pass the test, with failButton; passButton if you do
+  //   done        after passing, with notBuilt underneath, then you're put back at returnTo
+  exit: {
+    notReady: 'The door won’t move. Finish everything on Flower Fruit Mountain first:',
+    ready: 'The door has rolled open. To go through, pass a short word test: match each word you learned here to its picture.',
+    tryAgain: 'Walk around the mountain, look at things again and meet animals in the tall grass. Then come back to the door and try again.',
+    passButton: 'Go through the door',
+    failButton: 'Back to the mountain',
+    done: 'The tunnel leads behind the waterfall to <b>水帘洞</b> (Water Curtain Cave), which is where the story goes next in your book.',
+    notBuilt: 'That area isn’t built yet, so you’re back on the mountain for now. Your progress is saved.',
+    returnTo: {x:3, y:4, facing:'down'}
+  },
 
   // The opening scene. Each caption appears this many seconds in, then waits for Next.
   // The pictures (night, dawn, the stone cracking) are drawn by js/draw.js to match these times.

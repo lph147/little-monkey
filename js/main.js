@@ -90,6 +90,7 @@ function updateHUD(){
 function toTitle(){
   mode = 'title'; musicStop();
   $('#titlecard').hidden = false;
+  $('#areaName').textContent = AREA.name.en;
   const tbn = $('#titleButtons');
   tbn.innerHTML = S.started
     ? '<button class="btn primary" id="contBtn">Continue</button><button class="btn" id="watchBtn">Watch the opening</button>'
@@ -140,14 +141,13 @@ async function startGame(){
   stopSpeech();
   const firstTime = !S.started;
   $('#titlecard').hidden = true;
-  if (firstTime){ S.started = true; S.pos = {x:START.x, y:START.y, dir:'up'}; }
+  if (firstTime){ S.started = true; S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'}; }
   placePlayer(); mode = 'play'; lastTB = ''; save(); musicStart();
   if (firstTime){
     busy = true;
     try {
       await howToPlay();
-      await showNotice('石头', {note:'You were just born from this stone!'});
-      toast('Walk down the path and say hello to the old monkey.');
+      await runSteps(AREA.begin);   // the area's first steps, such as being born from the stone
     } finally { busy = false; updateHUD(); }
   }
 }

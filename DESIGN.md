@@ -170,7 +170,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 Rebuild Area 1 on the new foundations first, then play it for a week before starting Area 2.
 
 - [ ] Agree this design and answer the open questions
-- [ ] Split the engine from the content and move Area 1 into data
+- [x] Split the engine from the content and move Area 1 into data
 - [ ] Turn the Word Scroll into a collection with heard and caught words and categories
 - [ ] Add the scheduler to animal appearances, quests and shop stock
 - [ ] Add XP, peaches as money, an Area 1 shop and the training ground

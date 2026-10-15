@@ -16,7 +16,8 @@ const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests)
 const placeholders = text => [...String(text).matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
 const allSteps = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.map(s => [`${who}'s talk, part ${i + 1}`, s, who]))),
-  ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null]))
+  ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
+  ...AREA.begin.map(s => ['begin', s, null])
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
@@ -24,7 +25,9 @@ const allIfs = () => [
   ...AREA.tasks.map(t => [`task ${t.id}`, t.if]),
   ...AREA.hints.map((h, i) => [`hint ${i + 1}`, h.if]),
   ...AREA.checklist.map((c, i) => [`checklist item ${i + 1}`, c.done]),
-  ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if]))
+  ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if])),
+  ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word}`, s.if]),
+  ['animalsAppear', AREA.animalsAppear]
 ];
 const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]);
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
@@ -133,9 +136,41 @@ test('character names show Chinese, pinyin and English', () => {
 });
 
 test('sparkles are on collectible words, on the map', () => {
-  for (const [w, at] of Object.entries(AREA.sparkles)){
+  for (const {word: w, at} of AREA.sparkles){
     assert.ok(collectible.includes(w), `${w} sparkles, but it isn't a word you can collect in ${where}`);
     assert.ok(onMap(at), `the sparkle for ${w} at ${at} is off the map`);
+  }
+});
+
+test('the area has a name, a way out, and somewhere for animals to hide', () => {
+  const n = AREA.name;
+  assert.ok(n && n.zh && n.py && n.en, 'the area needs a name with zh, py and en');
+  assert.ok(AREA.map.some(row => [...row].some(ch => (AREA.legend[ch] || {}).action === 'caveDoor')), 'the map needs a tile whose action is caveDoor (the way out)');
+  const hiding = Object.values(AREA.legend).filter(t => t.animals);
+  assert.ok(hiding.length && hiding.every(t => collectible.includes(t.word)), 'some legend tile needs animals:true and a word, such as 草');
+  for (const k of ['notReady', 'ready', 'tryAgain', 'passButton', 'failButton', 'done', 'notBuilt']) assert.ok(AREA.exit[k], `exit needs ${k}`);
+  const back = AREA.exit.returnTo;
+  assert.ok(onMap([back.x, back.y]) && canWalk([back.x, back.y]), `exit.returnTo ${back.x},${back.y} isn't a walkable tile`);
+  assert.ok(['up', 'down', 'left', 'right'].includes(back.facing), 'exit.returnTo needs facing');
+  assert.ok(['up', 'down', 'left', 'right'].includes(AREA.start.facing), 'start needs facing');
+});
+
+test('the story ending has a title, a reward and text', () => {
+  const e = AREA.storyEnd;
+  assert.ok(e.title && e.reward >= 0 && e.text.length, 'storyEnd needs title, reward and text');
+});
+
+test('fish jump out of water', () => {
+  for (const at of AREA.fish){
+    assert.ok(onMap(at) && (AREA.legend[tile(at)] || {}).look === 'water', `the fish at ${at} isn't in water`);
+  }
+});
+
+test('characters are drawn as monkeys (with colours) or birds, and sparkle on real words', () => {
+  for (const c of AREA.characters){
+    assert.ok(c.look === undefined || ['monkey', 'bird'].includes(c.look), `${c.id} has look "${c.look}"; it can be monkey or bird`);
+    if (!c.look || c.look === 'monkey') assert.ok(c.palette, `${c.id} is a monkey, so it needs a palette`);
+    if (c.word) assert.ok(collectible.includes(c.word), `${c.id}'s word ${c.word} isn't a word you can collect in ${where}`);
   }
 });
 
