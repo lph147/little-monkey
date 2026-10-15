@@ -20,6 +20,12 @@ Then open http://127.0.0.1:8000 in a browser. Press Ctrl+C in the terminal to st
 
 Until the split is finished, http://127.0.0.1:8000/little-monkey.html is the original version 8, for comparison. Both use the same save.
 
+## Playing on your phone
+
+Open https://lph147.github.io/little-monkey/ on your phone. GitHub Pages updates it a minute or two after each upload to GitHub. Your phone may keep showing the previous version for up to 10 minutes; if a change hasn't appeared, wait a little and reload.
+
+The save on your phone belongs to this address, so it is separate from saves anywhere else.
+
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.

@@ -26,6 +26,7 @@ I'm new to coding. Please:
 - `npm test` runs the automated tests (Node's built-in test runner; there are no packages to install).
 - `npm start` serves the game at http://127.0.0.1:8000. The preview pane's "game" configuration does the same.
 - TESTING.md has the checks to do by hand: a quick check after every change and a full playthrough of Area 1.
+- The game is published at https://lph147.github.io/little-monkey/ by GitHub Pages, from the `main` branch of github.com/lph147/little-monkey. Pushing to GitHub updates it within a few minutes. Commits use the GitHub private email, never a personal one.
 
 ## Learning design rules (decided through playtesting; keep these)
 - **One new word at a time.** No conversation, action or encounter teaches two new words back to back.
