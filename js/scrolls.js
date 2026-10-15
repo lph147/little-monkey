@@ -11,6 +11,7 @@ function storyQuestions(){
 }
 function storyScroll(){
   return new Promise(res => {
+    STORY.forEach(s => hear(s.t)); save();
     openCard(`<p class="label">Story Scroll · reading challenge</p><p class="small">Try reading it yourself before you look at the English. Tap any word you're unsure of.</p>
       ${STORY.map((s,i) => `<div class="sent" data-i="${i}">${lineHTML(s.t)}</div>`).join('')}
       <div class="gloss">Tap a word for its meaning.</div><div class="en" hidden>${STORY.map(s => esc(s.en)).join(' ')}</div>
@@ -33,7 +34,7 @@ function storyScroll(){
       let right = 0;
       const qs = storyQuestions();
       for (const q of qs){
-        say(q.t.join(''));
+        hear(q.t); say(q.t.join(''));
         const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>',
           options:q.options.map(w => `<span class="ico">${WORDS[w].pic}</span><span class="cap">${w}</span>`), answerIdx:q.options.indexOf(q.answer)});
         if (ok) right++;
@@ -141,9 +142,11 @@ function todaysWords(back){
 function openScroll(back){
   const seen = ORDER.filter(w => lvl(w) > 0).length;
   openCard(`<p class="label">Word Scroll · ${seen} of ${ORDER.length}</p>
-    <p class="small">Gold squares show how well you know a word: seen, heard, read, used.${S.friends.length ? '<br>Friends: ' + S.friends.map(id => FRIEND_NAMES[id] || id).join(', ') : ''}</p>
+    <p class="small">Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you've heard but not caught yet.${S.friends.length ? '<br>Friends: ' + S.friends.map(id => FRIEND_NAMES[id] || id).join(', ') : ''}</p>
     <div class="grid">${ORDER.map(w => lvl(w) > 0
       ? `<button class="card" data-w="${w}"><div class="c">${w}</div><div class="p">${WORDS[w].py}</div>${pips(w)}</button>`
+      : S.heard[w]
+      ? `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic || '？'}</div><div class="p">heard ${S.heard[w]}×</div>${pips(w)}</div>`
       : `<div class="card unseen"><div class="c">？</div><div class="p"></div>${pips(w)}</div>`).join('')}</div>
     <div class="gloss" style="margin-top:10px">Tap a word to hear it and see its meaning.</div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>${back ? 'Back' : 'Close'}</button></div>`);

@@ -4,6 +4,7 @@
   --ok:#2E8B57; --bad:#C2453D; --scrim:rgba(20,35,28,.45);
   --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA;
   --btnA:#B8323A; --btnB:#3D6A93;
+  --sil:brightness(0);   /* the shadow of a word you have heard but not caught */
   --pixel:"Pixelify Sans", "Noto Sans SC", system-ui, sans-serif;
   --text:"Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
   /* English text. The Chinese font draws ‘ ’ “ ” as wide as a character ("device’ s"), so these
@@ -20,7 +21,7 @@
     --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
     --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
     --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4;
-    --btnA:#C9454C; --btnB:#4F82B0; color-scheme:dark;
+    --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
@@ -28,7 +29,7 @@
   --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
   --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
   --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4;
-  --btnA:#C9454C; --btnB:#4F82B0; color-scheme:dark;
+  --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -152,6 +153,8 @@ rt.hid{visibility:hidden}
 .card .c{font-size:1.7rem;font-weight:500;line-height:1.2}
 .card .p{font-size:.85rem;color:var(--muted);min-height:1.3em}
 .card.unseen{opacity:.5}
+.card.heard{border-style:dashed}
+.card .sil{filter:var(--sil);opacity:.55;white-space:nowrap}
 .sent{margin:4px 0;border-radius:4px;padding:0 4px}
 .sent .tok{font-size:1.45rem}
 .sent .punct{font-size:1.45rem}

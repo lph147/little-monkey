@@ -58,7 +58,7 @@ const on = (sel, fn) => { const el = sheet.querySelector(sel); if (el) el.onclic
 function showDialog(who, line, opts = {}){
   return new Promise(res => {
     const key = line.t.join(''), firstTime = !S.lines[key];
-    S.lines[key] = 1;
+    S.lines[key] = 1; hear(line.t); save();
     openCard(`<div class="who" aria-hidden="true">${who}</div>${lineHTML(line.t, opts.teach)}<div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div><div class="gloss">Tap any word to see what it means.</div>${opts.hint ? `<p class="small">${esc(opts.hint)}</p>` : ''}
       <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${firstTime ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${opts.ok || 'OK'}</button></div>`);
     bindTokens(sheet);

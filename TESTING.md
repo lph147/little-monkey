@@ -36,7 +36,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] Talking to the old monkey: the line is spoken, pinyin shows over every word, and tapping a word shows its meaning underneath.
 - [ ] Menu opens with the Menu button (or M); B closes it.
-- [ ] The Word Scroll shows your words with gold squares; tapping one says it.
+- [ ] The Word Scroll shows your words with gold squares; tapping one says it. Words you've heard in sentences but not caught yet show as a shadow of their picture, marked "heard 2×" and so on.
 
 ## Full playthrough of Flower Fruit Mountain (about 20 minutes)
 
@@ -58,6 +58,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **The hungry monkey**
 - [ ] The monkey to the right of the old monkey has a !. It says it's hungry and teaches 吃 (eat). A task asks you to find the fruit it wants.
+- [ ] Open Menu, Word Scroll: 桃子 isn't caught yet, so it shows as a shadow of a peach marked "heard 1×" (the monkey just said it). It turns into 桃子 once you pick one.
 - [ ] Walk to the far left end of the long path. The middle tree has apples. Face it and press A to learn 苹果 (apple) and pick one.
 - [ ] Give the apple to the hungry monkey. It says 这是苹果。我要吃桃子！ and gives the apple back.
 - [ ] Pick from the tree above or below the apple tree to learn 桃子 (peach). Take it back. The button says Give it.
