@@ -1,7 +1,11 @@
 // Screen size, then the game's data, built from the content files in content/ (they load first).
 
 const $ = s => document.querySelector(s);
-const T = 16, VW = 11, VH = 10, STEP = 270, TURN_DELAY = 130;
+const T = 16, VW = 11, STEP = 270, TURN_DELAY = 130;
+// How many rows of the map the screen shows. On a phone held upright there's room for more, so
+// fit() in js/main.js raises it, up to VH_MAX.
+const VH_MIN = 10, VH_MAX = 14;
+let VH = VH_MIN;
 
 /* ================= DATA ================= */
 // The rest of the engine uses these names. They are filled in from the content files.

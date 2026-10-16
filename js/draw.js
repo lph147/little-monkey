@@ -167,6 +167,8 @@ function drawScene(t, now){
       b.globalAlpha = 1;
     }
   }
+  // The scene is drawn for a screen VH_MIN rows tall; a taller screen has more sky above it.
+  b.save(); b.translate(0, (VH - VH_MIN) * T);
   if (dawn > 0){ disc(b, 34, Math.round(116 - dawn*28), 9, '#FFD27A'); }
   for (let x = 0; x < W; x += 2){ const h = Math.round(98 - Math.abs(Math.sin(x/23))*14 - rnd(x>>2,7)*4); R(b, x, h, 2, 126 - h, mix('#22334F','#7FA79A',dawn)); }
   R(b, 0, 124, W, H - 124, mix('#13284A','#3F8FCB',dawn));
@@ -196,10 +198,11 @@ function drawScene(t, now){
       const k = clamp((t - 10.6) / .4, 0, 1) * (t > 12.5 ? (13 - t) / .5 : 1);
       b.globalAlpha = k;
       for (const [ex, dir] of [[85,-1],[91,1]]){
-        for (let y = 0; y < 49; y++){ const xx = ex + Math.round(dir * (49 - y) * .18); R(b, xx, y, 2, 1, '#FFE27A'); if (y % 3 === 0) R(b, xx - 1, y, 4, 1, 'rgba(255,246,216,.7)'); }
+        for (let y = -(VH - VH_MIN) * T; y < 49; y++){ const xx = ex + Math.round(dir * (49 - y) * .18); R(b, xx, y, 2, 1, '#FFE27A'); if (y % 3 === 0) R(b, xx - 1, y, 4, 1, 'rgba(255,246,216,.7)'); }
       }
       b.globalAlpha = 1;
     }
   }
+  b.restore();
   if (t > 8.6 && t < 9.4){ b.globalAlpha = clamp(1 - Math.abs(t - 8.8) / .6, 0, 1); R(b, 0, 0, W, H, '#FFFDF0'); b.globalAlpha = 1; }
 }

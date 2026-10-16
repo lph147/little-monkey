@@ -219,11 +219,11 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] The 老板 sells 苹果 (我要苹果); eating one in an encounter takes away a wrong answer
   - [x] A test that plays Area 1 from start to finish
   - [x] Remove 和 from the word bank (no sentence uses it)
-- [ ] Lighter talk and menus:
+- [x] Lighter talk and menus:
   - [x] Talk in a speech box over the map
   - [x] The Word Scroll as a grid of sprites, with category tabs and a Today tab
   - [x] A menu of big tiles, and a Settings page (three tiles until the wardrobe adds 衣服)
-  - [ ] A bigger game screen on phones, and a task box showing the current task with "more"
+  - [x] A bigger game screen on phones (up to 14 rows of the map), and a task box showing the current task with "more"
 - [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary
 - [ ] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version

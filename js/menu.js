@@ -19,14 +19,7 @@ function openMenu(focusId){
   const f = sheet.querySelector(`[data-m="${focusId || MENU_TILES[0].m}"]`); if (f) f.focus();
   on('[data-a=close]', () => closeCard());
   const act = {
-    tasks: () => {
-      const tasks = getTasks();
-      openCard(`<p class="label">${AREA.name.en}</p>${checklistHTML(false)}
-        <p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
-        <div class="stats" style="margin-top:10px"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${ORDER.filter(w => lvl(w) >= 3).length} can read</span><span>${S.friends.length} friends</span></div>
-        <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
-      on('[data-a=ok]', () => openMenu('tasks'));
-    },
+    tasks: () => tasksPage(() => openMenu('tasks')),
     words: () => openScroll(() => openMenu('words')),
     friends: () => {
       openCard(`<p class="label">Friends</p>${S.friends.length ? `<div class="friends">${S.friends.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}">${portrait(id)}<span style="font-size:1.2rem">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : '<p class="hint">No friends yet. Answer the questions of animals in the tall grass to make friends.</p>'}
@@ -37,6 +30,16 @@ function openMenu(focusId){
     settings: () => openSettings()
   };
   sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](); });
+}
+
+// 任务 Tasks: the area's checklist and all your tasks now (from the menu, or "more" in the task box). back: what Back does.
+function tasksPage(back){
+  const tasks = getTasks();
+  openCard(`<p class="label">${AREA.name.en}</p>${checklistHTML(false)}
+    <p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
+    <div class="stats" style="margin-top:10px"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${ORDER.filter(w => lvl(w) >= 3).length} can read</span><span>${S.friends.length} friends</span></div>
+    <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  on('[data-a=ok]', back);
 }
 
 /* ================= SETTINGS ================= */

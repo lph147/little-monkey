@@ -1,12 +1,20 @@
 // The screen size, the main loop, the text box, the title screen, the intro, How to play, and starting the game.
 
 /* ================= SCREEN, LOOP, MODES ================= */
+const TEXTBOX_H = 92;   // the text box's height while you play (css/game.css), counted when sizing the screen
 function fit(){
   const shell = $('.console');
   const innerW = shell.clientWidth - 24 - 16;
-  const reserve = 365;
-  const byH = (window.innerHeight - reserve) * (VW / VH);
-  const w = Math.floor(clamp(Math.min(innerW, byH), 220, 640));
+  // The height left for the screen: the window, less everything else on the page (with the text box
+  // at its usual height, whatever it shows right now) and the phone's safe areas.
+  const root = window.getComputedStyle ? getComputedStyle(document.documentElement) : null;
+  const safe = root ? (parseFloat(root.paddingTop) || 0) + (parseFloat(root.paddingBottom) || 0) : 0;
+  const rest = $('.app').offsetHeight - cv.offsetHeight - tb.offsetHeight + TEXTBOX_H + safe;
+  const room = window.innerHeight - rest;
+  const w = Math.floor(clamp(Math.min(innerW, room * VW / VH_MIN), 220, 640));
+  // Upright, the screen shows as many rows as fit (a phone has room for more); otherwise the usual number.
+  const rows = window.innerHeight > window.innerWidth ? clamp(Math.floor(room / (w / VW)), VH_MIN, VH_MAX) : VH_MIN;
+  if (rows !== VH){ VH = rows; buf.height = VH*T; b.imageSmoothingEnabled = false; }
   const h = Math.round(w * VH / VW);
   const dpr = window.devicePixelRatio || 1;
   cv.style.width = w + 'px'; cv.style.height = h + 'px';
@@ -83,11 +91,17 @@ function updateHUD(){
       if (S.started) setTimeout(() => SFX.chime(), 200);
     }
   });
-  const hint = tasksHint();
-  const html = `<p class="tbhead">${tasks.length ? 'Tasks' : 'Explore'}</p>` +
-    (tasks.length ? `<ul class="tasks">${tasks.map(t => `<li class="${newTaskUntil[t.id] > now ? 'new' : ''}">${esc(t.text)}</li>`).join('')}</ul>` : '') +
+  // The task box shows one task (a new one first), and "more" opens them all.
+  const hint = tasksHint(), isNew = t => newTaskUntil[t.id] > now;
+  const first = tasks.find(isNew) || tasks[0];
+  const html = `<div class="tbrow"><p class="tbhead">${tasks.length ? 'Tasks' : 'Explore'}</p>${tasks.length > 1 ? `<button class="morebtn" id="moreTasks">+${tasks.length - 1} more</button>` : ''}</div>` +
+    (first ? `<ul class="tasks"><li class="${isNew(first) ? 'new' : ''}">${esc(first.text)}</li></ul>` : '') +
     (!tasks.length && hint ? `<p class="hint">${esc(hint)}</p>` : '');
-  if (html !== lastTB || !tb.querySelector('.tbhead')){ lastTB = html; tb.innerHTML = html; }
+  if (html !== lastTB || !tb.querySelector('.tbhead')){
+    lastTB = html; tb.innerHTML = html;
+    const more = tb.querySelector('#moreTasks');
+    if (more) more.onclick = () => { if (canAct()){ SFX.blip(); tasksPage(() => closeCard()); } };
+  }
 }
 function titleText(){   // the text box on the title screen, with a warning if there's no Chinese voice
   const problem = voiceProblem();
