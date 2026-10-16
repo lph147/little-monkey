@@ -44,7 +44,7 @@ test('after converting, the game shows the same progress', () => {
   const game = loadGame({save: V2});
   game.runFrame();
   assert.match(game.el('#titleButtons').innerHTML, />Continue</);
-  assert.equal(game.el('#peaches').textContent, '🍑 7');
+  assert.equal(game.el('#peachCount').textContent, 7);
   assert.equal(game.el('#count').textContent, '2/28');
   // Said hello, learned about animals, 1 of 4 animals found, hungry monkey helped, thirsty not yet, no story, no headband, no test
   assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false, false]);

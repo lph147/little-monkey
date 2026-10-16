@@ -44,7 +44,6 @@ shown where the word list has them.
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
-| 我戴花 | wǒ dài huā | I wear a flower. | You, in the wardrobe |  |
 
 ### The sign
 
@@ -207,4 +206,3 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! | The new, shorter story at the waterfall (in the game) |  |
 | 我要花！ | wǒ yào huā! | I want flowers! | The big monkey (大猴子 dà hóuzi: please check this name too, in Names) asking for flowers |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | The big monkey, when you bring the flowers |  |
-| 我戴花。 | wǒ dài huā. | I wear a flower. | Said when you put on the flower in your wardrobe (in the game, not uploaded yet). Would 我戴着花 be more natural? |  |

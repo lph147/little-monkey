@@ -10,7 +10,7 @@ test('a new player sees the title screen with a Start button', () => {
   assert.equal(game.el('#titlecard').hidden, false);
   assert.match(game.el('#titleButtons').innerHTML, />Start</);
   assert.equal(game.el('#aLabel').textContent, 'Start');
-  assert.equal(game.el('#peaches').textContent, '🍑 0');
+  assert.equal(game.el('#peachCount').textContent, 0);
   assert.equal(game.el('#count').textContent, '0/28');
 });
 
@@ -19,6 +19,6 @@ test('a returning player sees Continue, with their peaches and words', () => {
   game.runFrame();
   assert.match(game.el('#titleButtons').innerHTML, />Continue</);
   assert.equal(game.el('#aLabel').textContent, 'Continue');
-  assert.equal(game.el('#peaches').textContent, '🍑 5');
+  assert.equal(game.el('#peachCount').textContent, 5);
   assert.equal(game.el('#count').textContent, '1/28');
 });

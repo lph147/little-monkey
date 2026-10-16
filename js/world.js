@@ -2,7 +2,7 @@
 
 /* ================= WORLD LOGIC ================= */
 const EDGE = {look:'cliff'};   // what lies beyond the edge of the map
-const BIRD_WORD = (AREA.characters.find(c => c.look === 'bird') || {}).word;   // the word for the birds that land near you
+const BIRD_WORD = (AREA.birds || {}).word;   // the word for the birds that land near you
 function tileAt(x, y){         // the legend entry for the map letter at x, y
   if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return EDGE;
   const t = LEGEND[MAP[y][x]];
@@ -143,9 +143,13 @@ async function shop(face){   // the area's shop: what it sells, and buying it by
   await showDialog(face, L[sh.ask]);
   if (!items.length){ toast(fill(sh.soldOut)); return; }
   const food = sh.items.filter(i => i.eat && S.bag[i.item]).map(i => `${S.bag[i.item]} ${esc(wz(i.item))}`);
-  const i = await new Promise(res => {   // labels in Chinese only, so browsing is reading practice
-    openCard(`${face}<p class="prompt">You have ${S.peaches} 🍑${food.length ? ' and ' + food.join(', ') : ''}.</p>
-      <div class="actions"><button class="btn" data-a="no" data-b data-label="${sh.no || 'Not now'}">${sh.no ? sh.no + (S.replyEn ? ' · ' + esc(WORDS[sh.no].en.split(',')[0]) : '') : 'Not now'}</button>${items.map((it, n) => `<button class="btn ${n ? '' : 'primary'}" data-n="${n}" data-label="Choose">${it.item} · 🍑 ${it.price}</button>`).join('')}</div>`);
+  const i = await new Promise(res => {   // a card for each thing for sale: its picture, Chinese, pinyin, English and price
+    openCard(`${face}<p class="prompt">You have 🍑 ${S.peaches}${food.length ? ' and ' + food.join(', ') : ''}.</p>
+      <div class="menu shopgrid">${items.map((it, n) => `<button class="shopitem${S.peaches < it.price ? ' dear' : ''}" data-n="${n}" data-label="Choose">
+        <span class="spic" aria-hidden="true">${picHTML(it.item)}</span><span class="szh">${it.item}</span><span class="spy">${WORDS[it.item].py}</span>
+        <span class="sen">${esc(WORDS[it.item].en)}</span><span class="sprice">🍑 ${it.price}</span></button>`).join('')}</div>
+      <div class="actions"><button class="btn" data-a="no" data-b data-label="${sh.no || 'Not now'}">${sh.no ? sh.no + (S.replyEn ? ' · ' + esc(WORDS[sh.no].en.split(',')[0]) : '') : 'Not now'}</button></div>`);
+    const first = sheet.querySelector('.shopitem'); if (first) first.focus();
     on('[data-a=no]', () => { closeCard(); res(null); });
     sheet.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { closeCard(); res(items[+b.dataset.n]); });
   });
@@ -211,7 +215,7 @@ async function interact(x, y){
   const a = animalAt(x, y);
   if (a) return wildAppears(a, {x, y, d:pl.dir});
   const bd = birdAt(x, y);
-  if (bd && BIRD_WORD){ await showNotice(BIRD_WORD); shooBird(bd); return; }
+  if (bd && BIRD_WORD){ await showNotice(BIRD_WORD, AREA.birds.note ? {note:fill(AREA.birds.note)} : {}); shooBird(bd); return; }
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return gather(t, x, y);
   if (t.action) return ACTIONS[t.action](t);

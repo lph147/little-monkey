@@ -162,6 +162,7 @@ function drawBirds(cx, cy, now){
     const X = Math.round(bd.x - cx + bd.from * k * 60), Y = Math.round(bd.y - cy - k * 70 - (k ? Math.abs(Math.sin(now/60)) * 2 : Math.floor(Math.abs(Math.sin(now/300 + i)) * 2)));
     if (!k) R(b, X+1, Y+7, 6, 1, 'rgba(0,0,0,.2)');
     b.drawImage(SPR.bird, X, Y);
+    if (!k && BIRD_WORD && lvl(BIRD_WORD) === 0) sparkle(X + 9, Y - 2, now, i);   // it sparkles until you know its word
   }
 }
 const ARROW = ["ooooooo","oyyyyyo",".oyyyo.","..oyo..","...o..."];

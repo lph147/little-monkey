@@ -112,3 +112,23 @@ test('a version 7 save is converted with an empty bag', () => {
   assert.deepEqual(s.areas[1].bought, ['头带']);
   assert.ok(game.storage.get('xiaohouzi-v2-backup-v7'), 'a copy of the version 7 save is kept');
 });
+
+test('the shop shows a card for each thing: its picture, Chinese, pinyin, English and price', async () => {
+  const game = loadGame({dom: true, save: {version: VERSION, started: true, peaches: 5, areas: {1: area()}, w: {'老板': {lv: 1, due: 0, ok: 0}}}});
+  game.run("mode = 'play'; showDialog = async () => {}; shop(speaker('boss'))");
+  await new Promise(r => setImmediate(r));
+  const sheet = game.el('#sheet'), cards = sheet.querySelectorAll('.shopitem');
+  assert.equal(cards.length, get(game, 'forSale().length'));
+  const apple = cards.find(c => c.querySelector('.szh').textContent === '苹果');
+  assert.ok(apple.querySelector('.spic .pix'), 'its pixel picture');
+  assert.equal(apple.querySelector('.spy').textContent, 'píngguǒ');
+  assert.equal(apple.querySelector('.sen').textContent, 'apple', 'and its English');
+  assert.match(apple.querySelector('.sprice').innerHTML, /<img class="pch"[^>]*> 2/, 'its price, with the pixel peach');
+  assert.ok(!sheet.innerHTML.includes('🍑'), 'no peach emoji anywhere on the card');
+});
+
+test('the peach money symbol is the pixel peach, in cards and messages', () => {
+  const game = loadGame({dom: true});
+  game.run("openCard('<p>+3 🍑</p>')");
+  assert.match(game.el('#sheet').innerHTML, /<p>\+3 <img class="pch"/);
+});

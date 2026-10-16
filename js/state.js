@@ -108,7 +108,8 @@ function upgradeSave(s){
   s.areas[AREA.number].picked = Object.assign({}, s.areas[AREA.number].picked);
   if (!Array.isArray(s.met)) s.met = [];
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};
-  s.wardrobe = {owned:[...((s.wardrobe || {}).owned || [])], wearing:[...((s.wardrobe || {}).wearing || [])]};
+  const clothes = w => [...(w || [])].filter(i => (AREA.wardrobe || []).some(c => c.item === i));   // only what the wardrobe has now
+  s.wardrobe = {owned:clothes((s.wardrobe || {}).owned), wearing:clothes((s.wardrobe || {}).wearing)};
   return s;
 }
 // Keeps a copy of an old or unreadable save in the browser, in case anything goes wrong. Never overwritten.

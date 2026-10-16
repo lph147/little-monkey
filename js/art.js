@@ -28,7 +28,7 @@ const STALL = ["rwrwrwrwrwrwrwrw","rwrwrwrwrwrwrwrw","oooooooooooooooo",".k.....
 const MONKEY = ["................",".....oooooo.....","....offffffo....","...offffffffo...",".ooofssssssfooo.","osssfssssssfssso","osssfssssssfssso",".ooofssmmssfooo.","...offssssffo...","...offffffffo...","..offfssssfffo..",".offffssssffffo.",".of.ffssssff.fo.","...offffffffo...","...offo..offo...","...ooo....ooo..."];
 const BIRD = ["...ooo..","..obbbo.","yobebbbo",".obbwwbo","..obwwwo","...oooo.","....o.o."];
 const PALS = {
-  player:{o:'#4A2C17',f:'#D49A3A',s:'#F6D2A8',m:'#C98E6A',e:'#24160C',w:'#F4F1EA',b:'#C0392B',p:'#F48FB1',y:'#FFE07A'}
+  player:{o:'#4A2C17',f:'#D49A3A',s:'#F6D2A8',m:'#C98E6A',e:'#24160C',w:'#F4F1EA',b:'#C0392B'}
 };
 AREA.characters.forEach(c => { if (c.palette) PALS[c.id] = c.palette; });   // the other monkeys' colours come from the area
 const spriteCache = {};
@@ -56,7 +56,6 @@ function monkeySprite(kind, dir, blink, step = 0){
     if (BEARDED.has(kind)){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
   }
   if (kind === 'player' && wearing('头带')){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the red headband
-  if (kind === 'player' && wearing('花') && dir !== 'up'){ const fx = dir === 'left' ? 4 : 11; [[fx, 1], [fx - 1, 2], [fx + 1, 2], [fx, 3]].forEach(([x, y]) => rows[y][x] = 'p'); rows[2][fx] = 'y'; }   // a flower behind your ear
   let out = rows.map(r => r.join(''));
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return spriteCache[k] = sprite(out, PALS[kind]);
@@ -70,6 +69,9 @@ const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
 
+// The peach money symbol: the 桃子 sprite, small, wherever the text says 🍑.
+let peachImg = null;
+const peachy = html => String(html).replace(/🍑/g, () => peachImg || (peachImg = SPRITES['桃子'] ? `<img class="pch" alt="peaches" src="${sprite(SPRITES['桃子'].rows, SPRITES['桃子'].palette).toDataURL()}">` : '🍑'));
 // A word's picture: its pixel sprite from content/sprites.js, or its emoji until it has one.
 const picCache = {};
 function picHTML(w){

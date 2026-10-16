@@ -79,7 +79,7 @@ function updateCtx(now){
 }
 function updateHUD(){
   $('#level').textContent = 'Lv ' + level();
-  $('#peaches').textContent = '🍑 ' + S.peaches;
+  $('#peachCount').textContent = S.peaches;
   $('#count').textContent = ORDER.filter(w => lvl(w) > 0).length + '/' + ORDER.length;
   if (mode !== 'play') return;
   const now = performance.now(), tasks = getTasks();
@@ -98,7 +98,7 @@ function updateHUD(){
     (first ? `<ul class="tasks"><li class="${isNew(first) ? 'new' : ''}">${esc(first.text)}</li></ul>` : '') +
     (!tasks.length && hint ? `<p class="hint">${esc(hint)}</p>` : '');
   if (html !== lastTB || !tb.querySelector('.tbhead')){
-    lastTB = html; tb.innerHTML = html;
+    lastTB = html; tb.innerHTML = peachy(html);
     const more = tb.querySelector('#moreTasks');
     if (more) more.onclick = () => { if (canAct()){ SFX.blip(); tasksPage(() => closeCard()); } };
   }
@@ -180,5 +180,6 @@ async function startGame(){
 
 window.addEventListener('resize', fit);
 if (!walkable(S.pos.x, S.pos.y)) S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
+$('#peachIcon').src = (peachy('🍑').match(/src="([^"]+)"/) || [])[1] || '';
 buildMap(); placePlayer(); fit(); updateHUD(); toTitle();
 requestAnimationFrame(frame);

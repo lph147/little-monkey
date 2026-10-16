@@ -237,8 +237,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
-      palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}},
-    {id:'bird', x:22, y:13, facing:'down', label:'Look', look:'bird', word:'鸟'}
+      palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
 
   // The sign by the stone: its name, what it says, and a hint underneath.
@@ -273,7 +272,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '河': 'The river that runs down the right of the mountain.',
     '水': 'You collected it for the thirsty monkey.',
     '鱼': 'Little fish in the pond in the middle of the meadow.',
-    '鸟': 'A bird across the wooden bridge, at the bottom right.',
+    '鸟': 'Little birds that land on the grass near you.',
     '动物': 'The old monkey told you about the hidden animals.',
     '兔子': 'It jumped out of the tall grass.',
     '狐狸': 'It jumped out of the tall grass.',
@@ -322,6 +321,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
     {id:'goat', word:'山羊', at:[4, 18], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'}
   ],
+  // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
+  birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
   // The kinds of question animals ask, easiest first: 'listen' (hear a word, pick its picture), 'read'
@@ -336,8 +337,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // word it teaches the first time (teach, with a note on its card). You get them from the shop
   // (wear: true there) or with a give step.
   wardrobe: [
-    {item:'头带', sentence:'我 戴 头带', sentenceEn:'I wear my headband.', teach:'戴', note:'Use 戴 for things you wear on your head.'},
-    {item:'花', sentence:'我 戴 花', sentenceEn:'I wear a flower.', teach:'戴', note:'Use 戴 for things you wear on your head.'}
+    {item:'头带', sentence:'我 戴 头带', sentenceEn:'I wear my headband.', teach:'戴', note:'Use 戴 for things you wear on your head.'}
   ],
 
   // What the characters say. The English shows under a sentence the first time you see it.
@@ -405,8 +405,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     playful: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
-      {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'},
-        {give:'花', note:'The little monkey tucks a {花} behind your ear. Put it on or take it off in Menu, 衣服 (wardrobe).'}]},
+      {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [
@@ -425,9 +424,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     big: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
       {do:[{request:'flowers'}]}
-    ],
-    bird: [
-      {do:[{card:'鸟', note:'A little bird hops about, singing.'}]}
     ]
   },
 

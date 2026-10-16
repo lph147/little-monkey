@@ -120,11 +120,11 @@ XP and money come mainly from learning, so progress in the game and progress in 
 
 **Money.** Peaches are the money on Flower Fruit Mountain and in the Water Curtain Cave. From the human world onward, coins (钱) take over, which teaches the word naturally.
 
-**Shops.** Every area has a shopkeeper who sells that area's items. Labels are in Chinese only, so browsing is reading practice. Buying means filling the gap in a sentence, such as 我要＿ (I want an apple), with the word for what you want. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in Area 2, buying uses Area 1's pattern: 我要 + thing.
+**Shops.** Every area has a shopkeeper who sells that area's items. Each item has a card with its picture, its Chinese with pinyin, its English and its price, so it's always clear what's for sale (decided 16 October 2026, replacing Chinese-only labels). Buying means filling the gap in a sentence, such as 我要＿ (I want an apple), with the word for what you want. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in Area 2, buying uses Area 1's pattern: 我要 + thing.
 
 **Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 peaches. Buying it is on the area's checklist, so you need it before the cave door test, and every player can afford it by then. Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
 
-**Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband and a flower behind your ear, and opens fully in Area 3, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops, request rewards and levels, so each area's shop has clothes to sell as well as food and cave decorations.
+**Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 3, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops, request rewards and levels, so each area's shop has clothes to sell as well as food and cave decorations.
 
 **Training ground.** A place in every area where you can do a rolling word-matching test at any time. It always includes your newest words and anything due for review.
 
@@ -198,7 +198,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **Phrases** are their own collection, outside the budget of about 25 words per area.
 - **我不要** is taught in Area 1 as a fixed phrase; 不 on its own waits for Area 3.
 - **Talk** moves into a speech box over the map; full cards only for the big moments.
-- **The wardrobe** starts in Area 1 with the headband and a flower, and opens fully in Area 3.
+- **The wardrobe** starts in Area 1 with the headband, and opens fully in Area 3. (A flower behind your ear was tried and taken out.)
 - **The map** stays compact and gets livelier now; it splits into small places with the multi-map work. (Later the same day: it grew to the south, 24 × 22 tiles, to give the squirrel and goat their homes, and the 老板's market stall and the little monkey moved down there so the top isn't crowded.)
 - **Day and night:** a day ends with sleep in the cave and a summary. (Tried, then taken out on 16 October 2026: see below.)
 - **Native speaker check:** 再见, 不客气, 对不起, 没关系, 我不要, 早上好, 晚安, 我戴头带, 我穿衣服 and 这是山 are all fine as written.
@@ -250,7 +250,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] 我不要 at the shop, and sentence-building questions in animal encounters
 - [x] The first-day story: the old monkey's purpose for the baby (a nest, days, good night and good morning, and a book of firsts were tried and taken out)
 - [x] 大猴子 Big monkey, in the middle meadow, wants 3 flowers and pays you peaches: you pick one from each of 3 patches (no mother: Sun Wukong is born from the stone)
-- [x] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version (the little monkey gives you the flower when it becomes your friend)
+- [x] Wardrobe: a 衣服 page with the 头带 (戴), with a new save version (a flower from the little monkey was tried and taken out)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
 - [ ] Playtest Area 1 for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):

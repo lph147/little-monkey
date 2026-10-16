@@ -100,7 +100,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The first time you meet each animal, a new-word card teaches its name and the encounter doesn't show the English. Meeting it again shows the Chinese name with an English button.
 - [ ] Animals' questions always have pictures to choose from. A new word is asked by sound ("Listen. Which picture is it?"); after two right answers in a row it's asked by its characters ("Read it."). On Flower Fruit Mountain you're never asked to pick characters by sound.
 - [ ] Keep going until you've found all 4 (rabbit and fox in the grass, the squirrel and the goat at their homes).
-- [ ] Optional words: cross the wooden bridge (bottom right) and face the bird (鸟).
+- [ ] Little birds land on the grass near you; until you know 鸟 (bird), one sparkles. Face it and press A to learn 鸟.
 
 **The training ground**
 - [ ] A wooden practice post stands just right of the pond, in the middle of the meadow. Face it: A says Train.
@@ -114,7 +114,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **The shop**
 - [ ] In the south meadow (down the path through the trees), beside a striped market stall, stands the 老板 (shop owner), with a ! once you've said hello to the old monkey. Talking says 你好！我是老板。 and teaches 老板 on a new-word card.
-- [ ] Talk again: 你要什么？, then the stall shows 头带 · 🍑 10, in Chinese only, with your peaches above. Choosing it teaches 头带 (headband). Not now closes it.
+- [ ] Talk again: 你要什么？, then the stall shows a card for each thing for sale: its pixel picture, Chinese, pinyin, English and price (the price is red if you can't afford it yet), with your peaches above. Choosing the 头带 teaches it (headband). 我不要 · no thanks closes it.
 - [ ] With fewer than 10 🍑, it says how many you have and how to earn more. The task box shows "Buy the 头带 (headband) from the 老板 (shop owner)" with your peaches out of 10, and the 老板 shows a ? once you have 10.
 - [ ] With 10 🍑: fill the gap in 我要＿。 (I want the headband.). Your peaches go down by 10, the 老板 says 谢谢你！, and your monkey wears a red headband on the map from then on (a new monkey starts without one).
 
@@ -124,7 +124,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). The sentence's English, with the gap, is shown underneath. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🍑 and a rumble.
 
 **The wardrobe**
-- [ ] When the little monkey teaches you 朋友, it tucks a 花 (flower) behind your ear (a message says so). Buying the 头带 puts it on.
+- [ ] Buying the 头带 puts it on. It's the wardrobe's only item for now.
 - [ ] Menu, 衣服 Wardrobe shows what you own, with "Wearing" on what's on. Tapping something you're not wearing closes the menu: the first time, a card teaches 戴 (wear); then your monkey says 我戴花 (or 我戴头带) and is wearing it on the map. Tapping something you're wearing takes it off.
 
 **The old monkey**

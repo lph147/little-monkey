@@ -16,7 +16,6 @@ const DRAFTS = [
     .map(([zh, en]) => ({zh, en, where:'The new, shorter story at the waterfall (in the game)'})),
   {zh:'我 要 花 ！', en:'I want flowers!', where:'The big monkey (大猴子 dà hóuzi: please check this name too, in Names) asking for flowers'},
   {zh:'你 有 花 吗 ？', en:'Do you have flowers?', where:'The big monkey, when you bring the flowers'},
-  {zh:'我 戴 花 。', en:'I wear a flower.', where:'Said when you put on the flower in your wardrobe (in the game, not uploaded yet). Would 我戴着花 be more natural?'}
 ];
 
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?'};
