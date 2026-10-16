@@ -77,7 +77,7 @@ test('filling the gap right moves a word without a picture up, and earns a peach
   game.run('gapQ = async () => true');   // chose right
   const round = async () => JSON.parse(await game.run("gapRound({t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '要'}, '').then(r => JSON.stringify(r))"));
   assert.deepEqual(await round(), {right: true, peaches: 1}, 'a peach for 要, which was due');
-  game.run("answer('要', true, 'build')");   // what gapQ does for a right choice
+  game.run("answer('要', true, 'fill')");   // what gapQ does for a right choice
   assert.deepEqual(await round(), {right: true, peaches: 0}, 'straight away again earns nothing: it isn\'t due any more');
   game.run('gapQ = async () => false');
   assert.deepEqual(await round(), {right: false, peaches: 0});

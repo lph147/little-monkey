@@ -150,10 +150,6 @@ rt.hid{visibility:hidden}
 .center{text-align:center}
 .feedback{text-align:center;font-size:1.05rem;min-height:1.6em;margin-top:6px}
 .feedback .hz{font-size:1.5rem;font-weight:500;margin:0 6px}
-.slots{display:flex;flex-wrap:wrap;gap:6px;min-height:72px;padding:8px;border:2px dashed var(--line);border-radius:6px;margin:10px 0}
-.bank{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
-.tile{font-family:var(--text);font-size:1.5rem;padding:4px 10px 6px;border:2px solid var(--ink);background:var(--bg);border-radius:5px;box-shadow:0 3px 0 var(--ink);line-height:1.2}
-.tile rt{font-size:.5em}
 .shake{animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 /* the Word Scroll: tabs across the top, and a grid of word pictures */

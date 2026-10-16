@@ -113,6 +113,6 @@ async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, option
     text:!pics, answerIdx:opts.indexOf(gap),
     onAnswer:() => { sheet.querySelector('.line').outerHTML = lineHTML(shown, gap); bindTokens(sheet); say(t.join('')); }});
   closeCard();
-  if (ok) answer(gap, true, !WORDS[gap].pic ? 'build' : pics ? 'gap' : 'read');
+  if (ok) answer(gap, true, !WORDS[gap].pic ? 'fill' : pics ? 'gap' : 'read');
   return ok;
 }

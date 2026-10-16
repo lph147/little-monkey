@@ -128,7 +128,7 @@ async function wordTest(){   // the exit test at the cave door: every word with 
 /* ================= TRAINING GROUND ================= */
 const TRAINING_WORDS = 8, TRAINING_MIN = 4;   // words to match per session, and how many you need to start
 const trainable = () => ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1);   // caught words with a picture
-const unpictured = () => ORDER.filter(w => !WORDS[w].pic && lvl(w) >= 1);   // caught words without a picture (我 要), practised by building sentences
+const unpictured = () => ORDER.filter(w => !WORDS[w].pic && lvl(w) >= 1);   // caught words without a picture (我 要), practised by filling gaps in sentences sentences
 const isDue = w => rec(w).due <= Date.now();   // a newly caught word is due straight away
 const dueWords = () => [...trainable(), ...unpictured()].filter(isDue);   // words due for review that you can practise
 const trainingCalls = () => trainable().length >= TRAINING_MIN && dueWords().length > 0;   // the practice post shows a !
@@ -205,7 +205,7 @@ function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow 
 }
 const MASTERY = ['Caught', 'Recognised', 'Read', 'Used'];   // what each gold square means
 // An example sentence with the word in it: the first line, then story sentence, that has it, preferring one you've seen.
-// If none has it: the example written for it in the area, then a sentence you build (such as 我要头带).
+// If none has it: the example written for it in the area, then a sentence you complete (such as 我要头带).
 function exampleFor(w){
   const all = [...Object.values(L).map(l => [l, !!S.lines[l.t.join('')]]), ...STORY.map(s => [s, !!here().story])].filter(([s]) => s.t.includes(w));
   const pick = all.find(([, seen]) => seen) || all[0];

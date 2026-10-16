@@ -145,7 +145,7 @@ function howToPlay(){
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
          <li><span class="kbd menu">☰</span><span><b>Menu</b> at the top: your tasks, Word Scroll, friends and settings.</span></li>
        </ul>
-       <p class="small">Answers, word tiles and words in sentences are simply tapped.</p>`,
+       <p class="small">Answers and words in sentences are simply tapped.</p>`,
       `<p class="label">How to play · 2 of 2</p>
        <p>You’ll hear lots of Chinese, like a baby monkey listening to the forest. <b>You don’t need to understand or remember all of it.</b></p>
        <div class="example"><div class="line">${[['我','learn'],['渴','listen'],['了','listen'],['。',''],['我','learn'],['要','learn'],['喝','learn teach'],['水','listen'],['！','']].map(([t,c]) => c ? `<button class="tok ${c}" data-t="${t}"><ruby>${t}<rt class="${S.pinyin ? '' : 'hid'}">${info(t)[0]}</rt></ruby></button>` : `<span class="punct">${t}</span>`).join('')}</div></div>

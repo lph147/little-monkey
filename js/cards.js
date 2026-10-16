@@ -57,7 +57,6 @@ function btnLabel(f){
   if (!f) return '';
   if (f.dataset.label) return f.dataset.label;
   if (f.classList.contains('opt')) return 'Choose';
-  if (f.classList.contains('tile')) return 'Pick';
   if (f.classList.contains('card') || f.classList.contains('chip')) return 'Hear';
   return f.textContent.replace(/[^\p{L}\p{N}' ]/gu, '').trim().slice(0, 12);
 }
