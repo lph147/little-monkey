@@ -40,7 +40,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] Talking to the old monkey: the line appears in a speech box across the bottom of the game screen, and the map slides up so you and the old monkey stay in sight above it. The line is spoken, pinyin shows over every word, and tapping a word shows its meaning at the bottom of the box (without moving on). 🔊 says it again. A, B or the green ▼ moves on; the arrows and Menu do nothing until the talk is over.
 - [ ] A line you've seen before hides its English behind an English button. "Tap any word to see what it means" only shows under your first few lines.
-- [ ] Menu opens with the Menu button (or M); B closes it.
+- [ ] Menu opens with the Menu button (or M): three big tiles, 词 Word Scroll, 任务 Tasks and 朋友 Friends, each with pinyin and English, then Settings. The first tile has the gold outline and A badge; the D-pad moves between them. B, Close or the Menu button closes it.
 - [ ] The Word Scroll has tabs across the top: one per category (Animals, Food, Nature and so on), then Today, then Heard. On a phone they fit in two rows. Tapping a tab (or pressing left or right on the D-pad) switches to it, and the scroll opens at the same tab next time.
 - [ ] A category's tab shows its count, such as "Animals 1/8", and a grid of its words, four across on a phone: caught words show their pixel picture, characters, pinyin and gold squares (words without a picture, like 我, show just the characters). Words you've heard but not caught show as a shadow of their picture, marked "heard 2×" and so on; the rest show ？.
 - [ ] Tapping a caught word opens its page: its picture, pinyin and sound, its level (Caught, Recognised, Read or Used), where you found it, and an example sentence with the word in bold. English shows the meanings; Back returns to the same tab and place in the scroll.
@@ -48,7 +48,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 
 ## Full playthrough of Flower Fruit Mountain (about 20 minutes)
 
-Do this in a **private or incognito window**, so your real save isn't touched. To start again from scratch there: Menu, Reset progress, Erase everything.
+Do this in a **private or incognito window**, so your real save isn't touched. To start again from scratch there: Menu, Settings, Reset progress, Erase everything.
 
 **Start**
 - [ ] Press Start. The opening plays: each caption is spoken, Next moves on, the stone cracks and the monkey is born. The last caption has Begin. (Skip intro also works. On a computer, Space or Enter presses Start, Next and Begin.)
@@ -112,17 +112,17 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Passing shows "Flower Fruit Mountain complete!" and puts you back on the path below the door.
 
 **Menu**
-- [ ] Tasks and progress shows the area checklist, all ticked.
-- [ ] Word Scroll, Friends and Today's words open, and Back returns to the menu.
-- [ ] Music, Sound effects and Pinyin switch on and off. With pinyin off, it's hidden over words in sentences.
-- [ ] Title screen, then Continue, puts you back where you were.
+- [ ] 任务 Tasks shows the area checklist, all ticked.
+- [ ] 词 Word Scroll and 朋友 Friends open, and Back returns to the menu, on the same tile.
+- [ ] Settings: Music, Sound effects and Pinyin switch on and off. With pinyin off, it's hidden over words in sentences. Back returns to the menu.
+- [ ] Settings, Title screen, then Continue, puts you back where you were.
 
 ## Saved games
 
 - [ ] On your phone, with your real save: Continue works, and your words, peaches, friends and tasks are all as they were.
-- [ ] After an update that changes the save format: the same, plus Menu, Tasks and progress shows the same ticks as before.
-- [ ] Menu, Save game, Download saves a file called little-monkey-save- and the date. On a phone it goes to your downloads (Files on an iPhone).
-- [ ] In a private or incognito window: Menu, Save game, Load a save file, and pick that file. It shows how many words and peaches the save has; Load it puts you on the title screen, and Continue carries on from that save.
+- [ ] After an update that changes the save format: the same, plus Menu, 任务 Tasks shows the same ticks as before.
+- [ ] Menu, Settings, Save file, Download saves a file called little-monkey-save- and the date. On a phone it goes to your downloads (Files on an iPhone).
+- [ ] In a private or incognito window: Menu, Settings, Save file, Load a save file, and pick that file. It shows how many words and peaches the save has; Load it puts you on the title screen, and Continue carries on from that save.
 - [ ] Loading something that isn't a save (any other file) says so and changes nothing.
 
 When the save format changes, the game keeps a copy of your old save in the browser before converting it, so it can be recovered if anything goes wrong.

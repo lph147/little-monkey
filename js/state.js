@@ -82,7 +82,7 @@ function loadSave(){
   try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e) {}
   return s;
 }
-// Your save as a file to download (Menu, Save game), so a cleared browser can't lose it.
+// Your save as a file to download (Menu, Settings, Save file), so a cleared browser can't lose it.
 function saveFile(){
   const d = new Date(), two = n => String(n).padStart(2, '0');
   return {name:`little-monkey-save-${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}.json`, text:JSON.stringify(S)};

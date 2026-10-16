@@ -218,6 +218,13 @@ rt.hid{visibility:hidden}
 .sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.titlecard .btn.primary::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-9px;left:-9px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .sheet [data-b]::after,#skipBtn::after{content:"B";position:absolute;top:-9px;right:-9px;width:20px;height:20px;border-radius:50%;background:var(--btnB);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
+.mtile{display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink)}
+.mtile:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.micon{font-size:1.7rem;line-height:1.15}
+.mzh{font-family:var(--text);font-size:1.6rem;font-weight:500;line-height:1.25}
+.mpy{font-size:.8rem;color:var(--muted)}
+.men{font-family:var(--pixel);font-size:.85rem;color:var(--jade);line-height:1.2;text-align:center}
 .howto{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:10px}
 .howto li{display:flex;gap:10px;align-items:flex-start}
 .kbd{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;color:#FFF;font-family:var(--pixel);font-size:1rem}

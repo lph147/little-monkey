@@ -1,4 +1,4 @@
-// Menu, Save game: your save can be downloaded as a file and loaded again, on this device or another.
+// Menu, Settings, Save file: your save can be downloaded as a file and loaded again, on this device or another.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');

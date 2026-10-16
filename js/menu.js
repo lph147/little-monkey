@@ -1,28 +1,24 @@
-// The pause menu and its pages.
+// The menu: big tiles for your words, tasks and friends, and a Settings page.
 
-/* ================= PAUSE MENU ================= */
+/* ================= MENU ================= */
+// The menu's tiles, with Chinese, pinyin and English (the Chinese is on the review sheet, CHINESE.md).
+const MENU_TILES = [
+  {m:'words', icon:'📜', zh:'词', py:'cí', en:'Word Scroll'},
+  {m:'tasks', icon:'📋', zh:'任务', py:'rènwu', en:'Tasks'},
+  {m:'friends', icon:'🐾', zh:'朋友', py:'péngyou', en:'Friends'}
+];
 function openMenu(focusId){
   const done = areaChecklist().filter(([, d]) => d).length, total = areaChecklist().length;
-  openCard(`<p class="label">Paused</p>
+  openCard(`<p class="label">Menu</p>
     <div class="stats"><span>Level ${level()} · ${S.xp % XP_PER_LEVEL}/${XP_PER_LEVEL} XP</span><span>Area ${done}/${total}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>🍑 ${S.peaches}</span></div>
     <div class="menu">
-      <button class="btn" data-m="resume" data-b>Resume</button>
-      <button class="btn" data-m="tasks">Tasks and progress</button>
-      <button class="btn" data-m="words">Word Scroll</button>
-      <button class="btn" data-m="friends">Friends <span class="val">${S.friends.length}</span></button>
-      <button class="btn" data-m="today">Today’s words</button>
-      <button class="btn" data-m="music" data-label="Music">Music <span class="val">${S.music ? 'On' : 'Off'}</span></button>
-      <button class="btn" data-m="sound" data-label="Sound">Sound effects <span class="val">${S.sound ? 'On' : 'Off'}</span></button>
-      <button class="btn" data-m="pinyin" data-label="Pinyin">Pinyin over words <span class="val">${S.pinyin ? 'On' : 'Off'}</span></button>
-      <button class="btn" data-m="howto">How to play</button>
-      <button class="btn" data-m="save">Save game</button>
-      <button class="btn" data-m="title">Title screen</button>
-      <button class="btn" data-m="reset">Reset progress</button>
-    </div>`);
-  if (focusId){ const f = sheet.querySelector(`[data-m="${focusId}"]`); if (f) f.focus(); }
-  const back = () => openMenu();
+      <div class="tiles">${MENU_TILES.map(t => `<button class="mtile" data-m="${t.m}" data-label="${t.en}"><span class="micon" aria-hidden="true">${t.icon}</span><span class="mzh">${t.zh}</span><span class="mpy">${t.py}</span><span class="men">${t.en}</span></button>`).join('')}</div>
+      <button class="btn" data-m="settings">⚙ Settings</button>
+    </div>
+    <div class="actions"><button class="btn" data-a="close" data-b>Close</button></div>`);
+  const f = sheet.querySelector(`[data-m="${focusId || MENU_TILES[0].m}"]`); if (f) f.focus();
+  on('[data-a=close]', () => closeCard());
   const act = {
-    resume: () => closeCard(),
     tasks: () => {
       const tasks = getTasks();
       openCard(`<p class="label">${AREA.name.en}</p>${checklistHTML(false)}
@@ -38,18 +34,39 @@ function openMenu(focusId){
       sheet.querySelectorAll('.friends button').forEach(bt => bt.onclick = () => say(bt.dataset.w));
       on('[data-a=ok]', () => openMenu('friends'));
     },
-    today: () => openScroll(() => openMenu('today'), 0, 'today'),
-    music: () => { S.music = !S.music; save(); if (S.music) musicStart(); else musicStop(); openMenu('music'); },
-    sound: () => { S.sound = !S.sound; save(); if (S.sound) SFX.blip(); openMenu('sound'); },
-    pinyin: () => { S.pinyin = !S.pinyin; save(); openMenu('pinyin'); },
-    howto: () => howToPlay().then(() => openMenu('howto')),
+    settings: () => openSettings()
+  };
+  sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](); });
+}
+
+/* ================= SETTINGS ================= */
+// Sound, pinyin, How to play, your save file, the title screen and starting again. The game saves by itself.
+function openSettings(focusId){
+  openCard(`<p class="label">Settings</p>
+    <div class="menu">
+      <button class="btn" data-m="music" data-label="Music">Music <span class="val">${S.music ? 'On' : 'Off'}</span></button>
+      <button class="btn" data-m="sound" data-label="Sound">Sound effects <span class="val">${S.sound ? 'On' : 'Off'}</span></button>
+      <button class="btn" data-m="pinyin" data-label="Pinyin">Pinyin over words <span class="val">${S.pinyin ? 'On' : 'Off'}</span></button>
+      <button class="btn" data-m="howto">How to play</button>
+      <button class="btn" data-m="save">Save file</button>
+      <button class="btn" data-m="title">Title screen</button>
+      <button class="btn" data-m="reset">Reset progress</button>
+    </div>
+    <div class="actions"><button class="btn" data-a="back" data-b>Back</button></div>`);
+  const f = sheet.querySelector(`[data-m="${focusId || 'music'}"]`); if (f) f.focus();
+  on('[data-a=back]', () => openMenu('settings'));
+  const act = {
+    music: () => { S.music = !S.music; save(); if (S.music) musicStart(); else musicStop(); openSettings('music'); },
+    sound: () => { S.sound = !S.sound; save(); if (S.sound) SFX.blip(); openSettings('sound'); },
+    pinyin: () => { S.pinyin = !S.pinyin; save(); openSettings('pinyin'); },
+    howto: () => howToPlay().then(() => openSettings('howto')),
     save: () => {
-      save(); const t = new Date();
-      openCard(`<div class="who" aria-hidden="true">💾</div><p>Game saved at ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}.</p>
-        <p class="small">Your progress also saves automatically after every step, on this device. To keep a copy somewhere safe, or to carry on on another device, download your save as a file, then load it here.</p>
+      save();
+      openCard(`<div class="who" aria-hidden="true">💾</div><p class="label">Save file</p><p>Your progress saves by itself after every step, on this device.</p>
+        <p class="small">To keep a copy somewhere safe, or to carry on on another device, download your save as a file, then load it here.</p>
         <input type="file" accept=".json,application/json" hidden>
         <div class="actions"><button class="btn" data-a="load">Load a save file</button><button class="btn" data-a="download">Download</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
-      on('[data-a=ok]', () => openMenu('save'));
+      on('[data-a=ok]', () => openSettings('save'));
       on('[data-a=download]', () => {
         const f = saveFile(), a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([f.text], {type:'application/json'})); a.download = f.name;
@@ -61,10 +78,10 @@ function openMenu(focusId){
       pick.onchange = async () => {
         const file = pick.files[0]; if (!file) return;
         const r = readSaveFile(await file.text());
-        if (r.error){ infoBox('💾', `<p>${esc(r.error)}</p>`).then(() => openMenu('save')); return; }
+        if (r.error){ infoBox('💾', `<p>${esc(r.error)}</p>`).then(() => openSettings('save')); return; }
         const words = s => Object.values(s.w).filter(x => x && x.lv > 0).length;
         const yes = await confirmBox('💾', `Load this save? It has ${words(r.save)} words and ${r.save.peaches} 🍑. It replaces the game you're playing now (${words(S)} words); a copy of that is kept in this browser.`, 'Load it', 'Cancel');
-        if (!yes) return openMenu('save');
+        if (!yes) return openSettings('save');
         useSave(r.save); closeCard(); buildMap(); placePlayer(); toTitle();
       };
     },
@@ -72,7 +89,7 @@ function openMenu(focusId){
     reset: () => {
       openCard(`<p class="label">Reset progress?</p><p>This erases every word, friend and task on this device. It can’t be undone.</p>
         <div class="actions"><button class="btn primary" data-a="no" data-b>Keep my progress</button><button class="btn" data-a="yes">Erase everything</button></div>`);
-      on('[data-a=no]', () => openMenu('reset'));
+      on('[data-a=no]', () => openSettings('reset'));
       on('[data-a=yes]', () => { const snd = S.sound, mus = S.music; S = fresh(); S.sound = snd; S.music = mus; save(); closeCard(); buildMap(); placePlayer(); toTitle(); });
     }
   };

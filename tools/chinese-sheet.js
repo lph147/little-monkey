@@ -14,7 +14,7 @@ const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?'};
 function sheet(){
   const game = loadGame();
   const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
-  const AREA = get('AREA'), BANK = get('WORD_BANK');
+  const AREA = get('AREA'), BANK = get('WORD_BANK'), MENU = get('MENU_TILES');
   // Pinyin for a sentence written with spaces between words, from the word bank.
   const py = zh => zh.split(' ').reduce((out, t) => PUNCT[t] ? out + PUNCT[t] : (out ? out + ' ' : '') + ((BANK[t] || {}).py || '??'), '');
   const chars = zh => zh.split(' ').join('');
@@ -87,6 +87,12 @@ ${table(['Chinese', 'Pinyin', 'English', 'Notes'], collect.map(w => [w, BANK[w].
 ### Words only heard in sentences
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], heard.map(w => [w, BANK[w].py, BANK[w].en, notes]))}
+
+## The menu
+
+The names of the menu's tiles, shown with pinyin and English.
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], MENU.map(t => [t.zh, t.py, t.en, notes]))}
 
 ## New sentences, not in the game yet
 

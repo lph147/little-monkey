@@ -171,6 +171,16 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 找 | zhǎo | to look for |  |
 | 这 | zhè | this |  |
 
+## The menu
+
+The names of the menu's tiles, shown with pinyin and English.
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 词 | cí | Word Scroll |  |
+| 任务 | rènwu | Tasks |  |
+| 朋友 | péngyou | Friends |  |
+
 ## New sentences, not in the game yet
 
 Sentences waiting to be checked. They'll go into the game once checked.

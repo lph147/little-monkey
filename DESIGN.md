@@ -221,8 +221,8 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Remove 和 from the word bank (no sentence uses it)
 - [ ] Lighter talk and menus:
   - [x] Talk in a speech box over the map
-  - [ ] The Word Scroll as a grid of sprites, with category tabs and a Today tab
-  - [ ] A menu of big tiles, and a Settings page
+  - [x] The Word Scroll as a grid of sprites, with category tabs and a Today tab
+  - [x] A menu of big tiles, and a Settings page (three tiles until the wardrobe adds 衣服)
   - [ ] A bigger game screen on phones, and a task box showing the current task with "more"
 - [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary
