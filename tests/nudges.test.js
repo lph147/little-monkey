@@ -22,7 +22,7 @@ test('the title screen warns when the device has no Chinese voice', () => {
 test('a returning player is told how many words are due', () => {
   const w = {'山': {lv: 1, due: 0, ok: 0}, '花': {lv: 2, due: 0, ok: 1}, '草': {lv: 1, due: LATER, ok: 1}, '我': {lv: 4, due: 0, ok: 0}};
   const game = loadGame({save: {started: true, w}});
-  assert.match(title(game), /2 words are due for review/, '山 and 花 (我 has no picture, so it can\'t be practised yet)');
+  assert.match(title(game), /3 words are due for review/, '山, 花 and 我 (我 has no picture, so it\'s practised by listening)');
   const none = loadGame({save: {started: true, w: {'草': {lv: 1, due: LATER, ok: 1}}}});
   assert.doesNotMatch(title(none), /due for review/);
 });

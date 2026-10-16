@@ -215,7 +215,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Show how many words are due, on the title screen and as a ! on the practice post
   - [x] A Chinese review sheet for the native speaker: every line, with pinyin and English (CHINESE.md)
   - [x] Example sentences for the 7 words met in no sentence (路 花 兔子 狐狸 松鼠 山羊 洞), checked first
-  - [ ] Practise words without pictures (我 要 瀑布 老板 头带) by listening: hear it, pick its characters
+  - [x] Practise words without pictures (我 要 瀑布 老板 头带) by listening: hear it, pick its characters
   - [ ] The 老板 sells 苹果 (我要苹果); eating one in an encounter takes away a wrong answer
   - [ ] A test that plays Area 1 from start to finish
   - [x] Remove 和 from the word bank (no sentence uses it)
