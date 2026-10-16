@@ -57,6 +57,7 @@ function buttonLabels(now){
     const bb = sheet.querySelector('[data-b]');
     return [btnLabel(focused), bb && bb.offsetParent !== null ? btnLabel(bb) : ''];
   }
+  if (talkNext) return [btnLabel(talkBox.querySelector('[data-a=ok]')), ''];
   if (mode === 'title') return [S.started ? 'Continue' : 'Start', ''];
   if (mode === 'intro') return [$('#beginBtn') ? 'Begin' : 'Next', 'Skip'];
   return [currentPrompt(now), !$('#saybox').hidden ? 'Close' : ''];
@@ -66,7 +67,7 @@ function updateCtx(now){
   const [a, bl] = buttonLabels(now), key = a + '|' + bl;
   if (key === lastLabels) return;
   lastLabels = key; $('#aLabel').textContent = a; $('#bLabel').textContent = bl;
-  $('#btnA').classList.toggle('ready', mode === 'play' && modal.hidden && !!a);
+  $('#btnA').classList.toggle('ready', mode === 'play' && modal.hidden && !talkNext && !!a);
 }
 function updateHUD(){
   $('#level').textContent = 'Lv ' + level();
@@ -119,7 +120,7 @@ function howToPlay(){
       `<p class="label">How to play · 1 of 2</p>
        <ul class="howto">
          <li><span class="kbd pad">✚</span><span><b>Walk</b> by holding a direction. Tap it to turn on the spot. You can slide your thumb between directions.</span></li>
-         <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> On cards, A presses the button with the red A badge.</span></li>
+         <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> When someone talks, A moves on. On cards, A presses the button with the red A badge.</span></li>
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
          <li><span class="kbd menu">☰</span><span><b>Menu</b> at the top: your tasks, Word Scroll, friends and settings.</span></li>
        </ul>

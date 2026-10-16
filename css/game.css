@@ -183,10 +183,30 @@ rt.hid{visibility:hidden}
 .warn{color:var(--bad);margin:6px 0 0}
 .saybox{position:absolute;left:14px;right:14px;bottom:14px;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:8px 12px;font-size:.95rem;line-height:1.4;animation:rise .16s ease-out;pointer-events:auto}
 .saybox[hidden]{display:none}
+/* the speech box: what characters say, across the bottom of the map (the view moves up so you stay in sight) */
+.talk{position:absolute;left:8px;right:8px;bottom:8px;max-height:calc(100% - 64px);overflow:auto;overscroll-behavior:contain;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:6px 10px 8px;z-index:5;animation:rise .16s ease-out}
+.talk[hidden]{display:none}
+.talk.again{animation:none}
+@media (prefers-reduced-motion: reduce){.talk{animation:none}}
+.talkhead{display:flex;align-items:center;gap:6px}
+.talkhead .speaker{gap:8px;font-size:.9rem}
+.talkhead .portrait{width:28px;height:28px}
+.talkhead .spk{display:flex;flex-wrap:wrap;column-gap:8px;align-items:baseline}
+.talkhead .spk-zh{font-size:1rem}
+.talkhead .spk-en{font-size:.85rem}
+.talkhead .spacer{flex:1}
+.tbtn{font-family:var(--pixel);font-size:.85rem;border:2px solid var(--line);background:var(--paper);border-radius:4px;padding:2px 8px;min-height:32px;min-width:38px}
+.talk .line{margin:2px 0 4px}
+.talk .tok,.talk .punct{font-size:1.4rem}
+.talk .sentence-en{font-size:.92rem;margin:2px 0 4px;padding:2px 8px}
+.talk .hintline{margin:2px 0 0}
+.talkfoot{display:flex;align-items:center;gap:8px;margin-top:4px}
+.talkfoot .gloss{flex:1;min-height:0;margin:0;font-size:.9rem}
+.talk .next{min-height:34px;padding:3px 14px;position:relative}
 .round.ready{box-shadow:0 4px 0 rgba(0,0,0,.3),0 0 0 4px var(--gold)}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}
 .sheet .menu button.navsel{outline:3px solid var(--gold);outline-offset:2px}
-.sheet .actions .btn.primary:not([disabled])::before,.sheet .menu button.navsel::before,.titlecard .btn.primary::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-9px;left:-9px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
+.sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.titlecard .btn.primary::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-9px;left:-9px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .sheet [data-b]::after,#skipBtn::after{content:"B";position:absolute;top:-9px;right:-9px;width:20px;height:20px;border-radius:50%;background:var(--btnB);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .howto{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:10px}

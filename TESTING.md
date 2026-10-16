@@ -38,7 +38,8 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Continue puts you back where you left off, with the same level, peaches and word count in the header.
 - [ ] The header shows your level (Lv 1 to start). The menu shows it with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
-- [ ] Talking to the old monkey: the line is spoken, pinyin shows over every word, and tapping a word shows its meaning underneath.
+- [ ] Talking to the old monkey: the line appears in a speech box across the bottom of the game screen, and the map slides up so you and the old monkey stay in sight above it. The line is spoken, pinyin shows over every word, and tapping a word shows its meaning at the bottom of the box (without moving on). 🔊 says it again. A, B or the green ▼ moves on; the arrows and Menu do nothing until the talk is over.
+- [ ] A line you've seen before hides its English behind an English button. "Tap any word to see what it means" only shows under your first few lines.
 - [ ] Menu opens with the Menu button (or M); B closes it.
 - [ ] The Word Scroll is grouped into categories with counts, such as "Animals 1/8", and shows your words with gold squares. Tapping one opens its page: its picture, pinyin and sound, its level (Caught, Recognised, Read or Used), where you found it, and an example sentence with the word in bold. English shows the meanings; Back returns to the same place in the scroll. Words you've heard in sentences but not caught yet show as a shadow of their picture, marked "heard 2×" and so on. At the end, the Heard list shows words like 有 with how often you've heard them; tapping one says it and shows its meaning.
 
@@ -65,6 +66,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Open Menu, Word Scroll: 桃子 isn't caught yet, so it shows as a shadow of a peach marked "heard 1×" (the monkey just said it). It turns into 桃子 once you pick one.
 - [ ] Walk to the far left end of the long path. The middle tree has apples. Face it and press A to learn 苹果 (apple) and pick one.
 - [ ] Give the apple to the hungry monkey. It says 这是苹果。我要吃桃子！ and gives the apple back.
+- [ ] The thirsty monkey stands near the bottom of the map: when it talks, you both still show above the speech box.
 - [ ] Pick from the tree above or below the apple tree to learn 桃子 (peach). Take it back. The button says Give it.
 - [ ] A new-word card for 要 (want) appears. Then build 我 要 吃 桃子 from word tiles (喝 is an extra tile). A wrong order shakes and resets; the right order completes the task with +3 🍑.
 

@@ -1,4 +1,5 @@
-// Pop-up cards: sentences with pinyin and tappable words, new-word cards and yes/no questions.
+// Sentences with pinyin and tappable words, the speech box characters talk in, and pop-up cards:
+// new-word cards and yes/no questions.
 
 /* ================= TOKENS (English on first sight, tap after) ================= */
 let markGloss = [];
@@ -55,20 +56,36 @@ function btnLabel(f){
 function closeCard(){ modal.hidden = true; sheet.innerHTML = ''; }
 const on = (sel, fn) => { const el = sheet.querySelector(sel); if (el) el.onclick = fn; };
 
+/* ================= SPEECH BOX (what characters say, over the bottom of the map) ================= */
+const talkBox = $('#talk');
+let talkNext = null;          // moves on to what comes after the line, while the speech box is showing one
+const TAP_TIP_LINES = 5;      // "Tap any word" shows under your first few lines, then only a word's meaning when you tap it
 function showDialog(who, line, opts = {}){
   return new Promise(res => {
     const key = line.t.join(''), firstTime = !S.lines[key];
     S.lines[key] = 1; hear(line.t); save();
-    openCard(`<div class="who" aria-hidden="true">${who}</div>${lineHTML(line.t, opts.teach)}<div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div><div class="gloss">Tap any word to see what it means.</div>${opts.hint ? `<p class="small">${esc(opts.hint)}</p>` : ''}
-      <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${firstTime ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${opts.ok || 'OK'}</button></div>`);
-    bindTokens(sheet);
-    const text = line.t.join('');
+    const tip = Object.keys(S.lines).length <= TAP_TIP_LINES, again = !talkBox.hidden;   // again: the box is still up from the last line
+    talkBox.innerHTML = `<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
+      ${lineHTML(line.t, opts.teach)}<div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
+      <div class="talkfoot"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || 'Next')}">${opts.ok ? esc(opts.ok) + ' ' : ''}▼</button></div>`;
+    talkBox.classList.toggle('again', again);
+    talkBox.hidden = false; talkBox.scrollTop = 0;
+    $('#saybox').hidden = true;   // the box covers the message spot
+    held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
+    bindTokens(talkBox);
+    const text = line.t.join(''), q = sel => talkBox.querySelector(sel);
     say(text);
-    on('[data-a=say]', () => say(text));
-    on('[data-a=en]', e => { sheet.querySelector('.sentence-en').hidden = false; e.currentTarget.remove(); const p = sheet.querySelector('.primary'); if (p) p.focus(); });
-    on('[data-a=ok]', () => { SFX.blip(); closeCard(); res(); });
+    q('[data-a=say]').onclick = () => say(text);
+    const en = q('[data-a=en]');
+    if (en) en.onclick = () => { q('.sentence-en').hidden = false; en.remove(); };
+    const next = () => { talkNext = null; SFX.blip(); closeTalk(); res(); };
+    q('[data-a=ok]').onclick = next;
+    talkNext = next;
   });
 }
+// The box stays up for a moment, so lines one after another change in place instead of closing and opening again.
+function closeTalk(){ setTimeout(() => { if (!talkNext){ talkBox.hidden = true; talkBox.innerHTML = ''; } }, 0); }
+talkBox.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('button')) e.preventDefault(); });   // tapping its buttons doesn't take the keyboard's focus
 function showNotice(w, opts = {}){
   return new Promise(res => {
     const d = WORDS[w], isNew = lvl(w) === 0;

@@ -153,7 +153,7 @@ The question type follows the word's mastery level, so new words start easy and 
 
 Every screen should take as few presses as possible, so time goes on Chinese rather than menus.
 
-- **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; A moves on. Full cards are kept for new words, quizzes, the shop and the story.
+- **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story.
 - **The menu** has four big tiles, each with an icon, Chinese and English: 词 Word Scroll, 任务 Tasks, 朋友 Friends, 衣服 Wardrobe. A Settings page holds music, sound effects, pinyin, How to play, export and import, the title screen and reset. The game saves itself, so there's no Save button.
 - **The Word Scroll** is a grid of sprites, with shadows for words you haven't caught and category tabs across the top. Today's words is a filter in it.
 - **On phones** the game screen uses the full height available, and the task box shows the current task with the rest behind "more".
@@ -219,7 +219,11 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] The 老板 sells 苹果 (我要苹果); eating one in an encounter takes away a wrong answer
   - [x] A test that plays Area 1 from start to finish
   - [x] Remove 和 from the word bank (no sentence uses it)
-- [ ] Lighter talk and menus: a speech box over the map, a four-tile menu with Settings, the Word Scroll as a grid of sprites, a bigger game screen on phones
+- [ ] Lighter talk and menus:
+  - [x] Talk in a speech box over the map
+  - [ ] The Word Scroll as a grid of sprites, with category tabs and a Today tab
+  - [ ] A menu of big tiles, and a Settings page
+  - [ ] A bigger game screen on phones, and a task box showing the current task with "more"
 - [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary
 - [ ] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version

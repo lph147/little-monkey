@@ -4,7 +4,7 @@
 const pl = {x:START.x, y:START.y, px:START.x*T, py:START.y*T, dir:'down', mv:null, parity:0, turnT:0};
 function placePlayer(){ pl.x = S.pos.x; pl.y = S.pos.y; pl.dir = S.pos.dir || 'down'; pl.px = pl.x*T; pl.py = pl.y*T; pl.mv = null; }
 let held = null, queued = null, busy = false, mode = 'title', lastBump = 0, shakeT = -9999, lastMoveEnd = 0, fadeT = -9999;
-const canAct = () => mode === 'play' && !busy && modal.hidden && !pl.mv;
+const canAct = () => mode === 'play' && !busy && modal.hidden && !talkNext && !pl.mv;
 function tryStep(d, now){
   if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); return; }   // first turn to face the new way
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
@@ -38,6 +38,7 @@ async function pressA(){
     else { const p = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled); if (p) p.click(); else if (inMenu){ const first = navItems()[0]; if (first) first.click(); } }
     return;
   }
+  if (talkNext){ talkNext(); return; }   // the speech box: on to what comes next
   if (!canAct()) return;
   const [fx, fy] = facing();
   busy = true;
@@ -45,6 +46,7 @@ async function pressA(){
 }
 function pressB(){
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null) b.click(); return; }
+  if (talkNext){ talkNext(); return; }   // B moves talk on too
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
   const sb = $('#saybox'); if (!sb.hidden){ sb.hidden = true; return; }
 }
@@ -55,8 +57,8 @@ function pressMenu(){
 $('#menuBtn').addEventListener('click', () => { getAC(); pressMenu(); });
 const KEYS = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right',W:'up',S:'down',A:'left',D:'right'};
 document.addEventListener('keydown', e => {
-  const isB = e.key === 'x' || e.key === 'X' || (e.key === 'Escape' && !modal.hidden);
-  const isMenu = e.key === 'm' || e.key === 'M' || (e.key === 'Escape' && modal.hidden);
+  const isB = e.key === 'x' || e.key === 'X' || (e.key === 'Escape' && (!modal.hidden || !!talkNext));
+  const isMenu = e.key === 'm' || e.key === 'M' || (e.key === 'Escape' && modal.hidden && !talkNext);
   if (!modal.hidden){
     const d = KEYS[e.key];
     if (d && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); navFocus(d); }
@@ -72,6 +74,7 @@ document.addEventListener('keydown', e => {
     if (isA && !e.target.matches('button:focus-visible')){ e.preventDefault(); if (!e.repeat) pressA(); }
     return;
   }
+  if (talkNext){ if (isA){ e.preventDefault(); if (!e.repeat) pressA(); } return; }   // while someone's talking, only A and B do anything
   const d = KEYS[e.key];
   if (d){ e.preventDefault(); if (!e.repeat) queued = d; held = d; return; }
   if (isA){ e.preventDefault(); pressA(); }
@@ -90,6 +93,7 @@ function setPad(d){
   padDir = d;
   document.querySelectorAll('.dpad button').forEach(b => b.classList.toggle('held', b.dataset.dir === d));
   if (!modal.hidden){ held = null; if (d) navFocus(d); return; }
+  if (talkNext){ held = null; return; }   // no walking off while someone's talking
   held = d; if (d) queued = d;
 }
 dpad.addEventListener('pointerdown', e => { e.preventDefault(); getAC(); dpadPointer = e.pointerId; try { dpad.setPointerCapture(e.pointerId); } catch(_) {} setPad(dirFromPoint(e)); });

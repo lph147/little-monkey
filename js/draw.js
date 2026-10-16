@@ -55,11 +55,28 @@ function drawFoe(cx, cy, now){
     }
   }
 }
+// While the speech box covers the bottom of the screen, the view slides up so that you and whoever
+// you're talking to are in the part still showing. Below the map's bottom edge is hidden by the box.
+let talkK = 0, talkCover = 0;   // how far the view has slid (0 to 1), and how much of the screen the box covers, in map pixels
+function talkCamera(cy){
+  if (!talkBox.hidden){
+    const h = +cv.clientHeight || 0, bh = +talkBox.offsetHeight || 0;
+    if (h > 0) talkCover = Math.min(VH*T - T, bh * VH*T / h);
+  }
+  talkK = clamp(talkK + (talkBox.hidden ? -.2 : .2), 0, 1);
+  if (!talkK) return cy;
+  const [, fy] = facing(), mid = (pl.py + fy*T) / 2 + 8;   // halfway between you and the tile you face
+  const want = clamp(mid - (VH*T - talkCover) / 2, 0, ROWS*T - VH*T + talkCover);
+  const k = talkK * talkK * (3 - 2 * talkK);   // eased
+  return Math.round(cy + (want - cy) * k);
+}
 function drawWorld(now){
   let cx = Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));
-  let cy = Math.round(clamp(pl.py + 8 - VH*T/2, 0, ROWS*T - VH*T));
+  let cy = talkCamera(Math.round(clamp(pl.py + 8 - VH*T/2, 0, ROWS*T - VH*T)));
   if (now - shakeT < 600){ cx += Math.round((Math.random()-.5)*3); cy += Math.round((Math.random()-.5)*3); }
-  b.drawImage(mapCanvas, cx, cy, VW*T, VH*T, 0, 0, VW*T, VH*T);
+  const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to
+  if (sh < VH*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');
+  b.drawImage(mapCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
   // fish jumping out of the water (the area's fish)

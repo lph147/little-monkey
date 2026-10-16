@@ -1,6 +1,6 @@
 // Plays Flower Fruit Mountain from a new game to passing the word test at the cave door, the way a
 // player would: standing in front of things and pressing A, stepping into flowers and tall grass,
-// and answering every card. It catches a change that makes the area impossible to finish, such as a
+// pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
 'use strict';
 const test = require('node:test');
@@ -11,9 +11,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   const game = loadGame({dom: true});
   const run = code => game.run(code);
   const get = expr => JSON.parse(run(`JSON.stringify(${expr})`));
-  const sheet = game.el('#sheet');
-  const open = () => !run('modal.hidden');
-  const cardText = () => sheet.textContent.replace(/\s+/g, ' ').trim();
+  const sheet = game.el('#sheet'), talkBox = game.el('#talk');
+  const talking = () => run('!!talkNext');   // someone is saying a line in the speech box
+  const open = () => !run('modal.hidden') || talking();
+  const cardText = () => (talking() ? talkBox : sheet).textContent.replace(/\s+/g, ' ').trim();
   const knows = w => run(`lvl(${JSON.stringify(w)})`) >= 1;
   const area = () => get('here()');
 
@@ -36,6 +37,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   const plan = {buy: null, eat: false};   // what to choose in the shop, and whether to eat an apple
   function answer(){   // do what a player would on the card that's open
+    if (talking()){ run('pressA()'); return; }   // a line in the speech box: A moves on
     const opts = sheet.querySelectorAll('.opt').filter(o => !o.hidden && !o.disabled);
     if (opts.length){
       const eat = sheet.querySelector('[data-a=eat]');
