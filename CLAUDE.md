@@ -34,7 +34,7 @@ I'm new to coding. Please:
 
 ## Learning design rules (decided through playtesting; keep these)
 - **One new word at a time.** No conversation, action or encounter teaches two new words back to back.
-- **New-word cards** show the picture, characters, pinyin, sound and English. English is shown by default on the first card only; after that it is behind an English button.
+- **New-word cards** show the picture, characters, pinyin, sound and English. English is shown by default on the first card only; after that it is behind an English button. A card in a conversation (a character teaching the word, a reply, the shop) doesn't say the word again, so the conversation flows; 🔊 Hear it is there. A word you discover yourself (looking, stepping on something, picking it, meeting an animal) is said straight away.
 - **Sentences:** pinyin over every word (a global setting can turn it off). Words the player has learned are green. The word being taught right now is bold green. Everything else is grey and "just for listening". Tapping any word shows its pinyin and meaning.
 - **A sentence's English** is shown underneath the first time it appears; after that it is behind an English button.
 - **Never test grammar.** A task involving a sentence always shows the whole sentence in Chinese (with pinyin) and English, with one word missing, and you choose the missing word. Never ask players to put words in order. The choices follow the word's level: its picture with the Chinese while it's new (Caught), Chinese and pinyin once recognised. A wrong choice shows the right one and play carries on.

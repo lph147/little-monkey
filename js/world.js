@@ -72,8 +72,8 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (s.ok) opts.ok = s.ok;
     await showDialog(speaker(who), L[s.say], opts);
   },
-  async newWord(s){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, s.note ? {note:fill(s.note)} : {}); },
-  async card(s){ await showNotice(s.card, s.note ? {note:fill(s.note)} : {}); },
+  async newWord(s, who){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },   // quiet when a character teaches it
+  async card(s, who){ await showNotice(s.card, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },
   set(s){ Object.assign(here(), s.set); save(); },
   async request(s, who){ await request(REQUESTS.find(r => r.id === s.request), speaker(who)); },
   async shop(s, who){ await shop(speaker(who)); },
@@ -91,7 +91,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
 // own card the first time). Any choice is fine: you say it, and if another fits better the game says
 // so. Replying with the one that fits counts as using it. A phrase you don't know yet isn't offered.
 async function replyWith(best){
-  if (lvl(best) === 0) await showNotice(best);
+  if (lvl(best) === 0) await showNotice(best, {quiet:true});
   const choices = shuffle([best, ...shuffle(PHRASES.filter(p => p !== best && lvl(p) >= 1)).slice(0, 2)]);
   await iSay(await chooseReply(speaker('player'), choices), best);
 }
@@ -121,7 +121,7 @@ async function request(r, face){   // a character asking you to bring something 
   if (p[r.id] === 'asked' && has === r.wants){          // you brought what they asked for
     await showDialog(face, L[r.offer], {ok:'Give it'});
     const nw = (r.firstTeach || []).find(f => lvl(f.word) === 0);
-    if (nw) await showNotice(nw.word, {note:nw.note});
+    if (nw) await showNotice(nw.word, {note:nw.note, quiet:true});
     const sentence = toks(r.sentence);
     await gapQ({who:face, t:sentence, en:r.sentenceEn, gap:r.gap || r.wants});
     sentence.filter(w => lvl(w) >= 1).forEach(useWord);
@@ -133,7 +133,7 @@ async function request(r, face){   // a character asking you to bring something 
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
     const verb = r.verb && lvl(r.verb) === 0 ? r.verb : null;   // a new verb to teach, if there is one
     await showDialog(face, L[r.ask], {teach:verb});
-    if (verb) await showNotice(verb);
+    if (verb) await showNotice(verb, {quiet:true});
     if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(r.asked); }
   } else await showDialog(face, L[r.thanks]);
 }
@@ -154,11 +154,11 @@ async function shop(face){   // the area's shop: what it sells, and buying it by
     sheet.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { closeCard(); res(items[+b.dataset.n]); });
   });
   if (i) await buy(i, face);
-  else if (sh.no){ if (lvl(sh.no) === 0) await showNotice(sh.no); await iSay(sh.no); }   // you say 我不要
+  else if (sh.no){ if (lvl(sh.no) === 0) await showNotice(sh.no, {quiet:true}); await iSay(sh.no); }   // you say 我不要
 }
 async function buy(i, face){   // buying something from the shop by asking for it. Gives true if you bought it.
   const sh = AREA.shop;
-  if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note)});
+  if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note), quiet:true});
   if (i.eat && (S.bag[i.item] || 0) >= i.carry){ await infoBox(face, `<p>You can carry ${i.carry} ${esc(wz(i.item))}, and your bag is full. Eat one in an animal encounter first.</p>`); return false; }
   if (S.shells < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🐚, and you have ${S.shells}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const sentence = toks(i.sentence);

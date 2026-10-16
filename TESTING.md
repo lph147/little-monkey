@@ -65,7 +65,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 **The old monkey**
 - [ ] The first step onto the path teaches 路 (path).
 - [ ] The old monkey stands just left of your stone, with a ! above him. Walk two steps left (below him), face up and press A.
-- [ ] He says 你好！ with 你好 in bold green and the English underneath, then a new-word card for 你好, then 去看看！
+- [ ] He says 你好！ with 你好 in bold green and the English underneath, then a new-word card for 你好 that stays quiet (he has just said it; 🔊 Hear it says it), then 去看看！ Cards for words you discover yourself, such as looking at a tree, say the word straight away.
 - [ ] The task asks you to learn 4 words, with a counter.
 - [ ] Learn words from things that sparkle: face a cliff (山), a tree (树) or the river (河) and press A; walk into flowers (花) or tall grass (草). The counter goes up.
 - [ ] The sign next to the stone shows 花果山 with its name, and the note "The name of your home." (nothing about a book).

@@ -115,6 +115,8 @@ function chooseReply(who, choices){
 // The box stays up for a moment, so lines one after another change in place instead of closing and opening again.
 function closeTalk(){ setTimeout(() => { if (!talkNext){ talkBox.hidden = true; talkBox.innerHTML = ''; } }, 0); }
 talkBox.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('button')) e.preventDefault(); });   // tapping its buttons doesn't take the keyboard's focus
+// A word's card. It says the word straight away when you discover it yourself; in a conversation
+// (opts.quiet) it doesn't, so the conversation isn't broken up by the word again: 🔊 Hear it is there.
 function showNotice(w, opts = {}){
   return new Promise(res => {
     const d = WORDS[w], isNew = lvl(w) === 0;
@@ -124,7 +126,7 @@ function showNotice(w, opts = {}){
       <div class="word"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
       <div class="en" ${isNew ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}</div>
       <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${isNew ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${isNew ? 'Got it' : 'OK'}</button></div>`);
-    say(w);
+    if (!opts.quiet) say(w);
     on('[data-a=say]', () => say(w));
     on('[data-a=en]', () => { sheet.querySelector('.word .en').hidden = false; });
     on('[data-a=ok]', () => { closeCard(); if (isNew){ setSeen(w); toast(`${wz(w)} added to your Word Scroll`); } res(); });
