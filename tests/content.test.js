@@ -363,3 +363,12 @@ test('every word you can collect has an example sentence for its page', () => {
   }
   for (const w of collectible) assert.ok(inSentence(w) || AREA.examples[w] || built(w), `${w} has no example: add one to examples in the area file (checked first)`);
 });
+
+test('every word you only hear is used in a sentence somewhere', () => {
+  const used = new Set([
+    ...sentences.flatMap(([, s]) => s.zh.split(' ')),
+    ...Object.values(AREA.requests).flatMap(r => r.build.split(' ')),
+    ...(AREA.shop ? AREA.shop.items.flatMap(i => i.build.split(' ')) : [])
+  ]);
+  for (const w of Object.keys(BANK).filter(w => !BANK[w].area)) assert.ok(used.has(w), `${w} is in the word bank, but no sentence uses it: use it or remove it`);
+});

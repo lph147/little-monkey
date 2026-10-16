@@ -169,7 +169,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 老 | lǎo | old |  |
 | 找 | zhǎo | to look for |  |
 | 这 | zhè | this |  |
-| 和 | hé | and |  |
 
 ## New sentences, not in the game yet
 

@@ -218,7 +218,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [ ] Practise words without pictures (我 要 瀑布 老板 头带) by listening: hear it, pick its characters
   - [ ] The 老板 sells 苹果 (我要苹果); eating one in an encounter takes away a wrong answer
   - [ ] A test that plays Area 1 from start to finish
-  - [ ] Remove 和 from the word bank (no sentence uses it)
+  - [x] Remove 和 from the word bank (no sentence uses it)
 - [ ] Lighter talk and menus: a speech box over the map, a four-tile menu with Settings, the Word Scroll as a grid of sprites, a bigger game screen on phones
 - [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary

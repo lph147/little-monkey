@@ -84,6 +84,5 @@ const WORD_BANK = {
   '吧': {py:'ba', en:'(let’s…)'},
   '老': {py:'lǎo', en:'old'},
   '找': {py:'zhǎo', en:'to look for'},
-  '这': {py:'zhè', en:'this'},
-  '和': {py:'hé', en:'and'}
+  '这': {py:'zhè', en:'this'}
 };
