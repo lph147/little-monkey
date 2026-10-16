@@ -9,7 +9,7 @@ function fit(){
   // at its usual height, whatever it shows right now) and the phone's safe areas.
   const root = window.getComputedStyle ? getComputedStyle(document.documentElement) : null;
   const safe = root ? (parseFloat(root.paddingTop) || 0) + (parseFloat(root.paddingBottom) || 0) : 0;
-  const rest = $('.app').offsetHeight - cv.offsetHeight - tb.offsetHeight + TEXTBOX_H + safe;
+  const rest = (+$('.app').offsetHeight || 0) - (+cv.offsetHeight || 0) - (+tb.offsetHeight || 0) + TEXTBOX_H + safe;   // (a missing height counts as 0)
   const room = window.innerHeight - rest;
   const w = Math.floor(clamp(Math.min(innerW, room * VW / VH_MIN), 220, 640));
   // Upright, the screen shows as many rows as fit (a phone has room for more); otherwise the usual number.

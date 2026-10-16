@@ -56,15 +56,20 @@ function drawFoe(cx, cy, now){
   }
 }
 // While the speech box covers the bottom of the screen, the view slides up so that you and whoever
-// you're talking to are in the part still showing. Below the map's bottom edge is hidden by the box.
-let talkK = 0, talkCover = 0;   // how far the view has slid (0 to 1), and how much of the screen the box covers, in map pixels
+// you're talking to are in the part still showing (below the map's bottom edge is hidden by the box).
+// It only moves if one of you would be covered, and it stays put for the whole conversation, through
+// every line, card and reply, sliding back only once it's over, so the map doesn't shift about.
+let talkK = 0, talkCover = 0, talkMoves = false;   // how far the view has slid (0 to 1); how much the box covers, in map pixels; whether it needs to move
 function talkCamera(cy){
-  if (!talkBox.hidden){
+  const open = !talkBox.hidden, talking = open || (busy && talkK > 0);   // still in the conversation (a card may be open)
+  if (open){
     const h = +cv.clientHeight || 0, bh = +talkBox.offsetHeight || 0;
-    if (h > 0) talkCover = Math.min(VH*T - T, bh * VH*T / h);
+    if (h > 0) talkCover = Math.max(talkCover, Math.min(VH*T - T, bh * VH*T / h));   // the tallest box so far, so it never slides back mid-conversation
+    const [, fy] = facing(), low = Math.max(pl.py, fy*T) + T - cy;   // the lower of you and the tile you face, on screen
+    if (low > VH*T - talkCover) talkMoves = true;                    // one of you would be covered
   }
-  talkK = clamp(talkK + (talkBox.hidden ? -.2 : .2), 0, 1);
-  if (!talkK) return cy;
+  talkK = clamp(talkK + (talking && talkMoves ? .2 : -.2), 0, 1);
+  if (!talkK){ if (!talking){ talkCover = 0; talkMoves = false; } return cy; }
   const [, fy] = facing(), mid = (pl.py + fy*T) / 2 + 8;   // halfway between you and the tile you face
   const want = clamp(mid - (VH*T - talkCover) / 2, 0, ROWS*T - VH*T + talkCover);
   const k = talkK * talkK * (3 - 2 * talkK);   // eased
