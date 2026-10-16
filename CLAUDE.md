@@ -37,6 +37,7 @@ I'm new to coding. Please:
 - **New-word cards** show the picture, characters, pinyin, sound and English. English is shown by default on the first card only; after that it is behind an English button.
 - **Sentences:** pinyin over every word (a global setting can turn it off). Words the player has learned are green. The word being taught right now is bold green. Everything else is grey and "just for listening". Tapping any word shows its pinyin and meaning.
 - **A sentence's English** is shown underneath the first time it appears; after that it is behind an English button.
+- **Reply choices** show Chinese, pinyin and English every time, so replying is input, not a test. Settings, English on replies, turns the English off for players who know some Chinese. Any choice is fine; the game says which fits best.
 - **In English UI text** (tasks, messages, notes), a Chinese word is always written as 汉字 (English), e.g. "Give the 水 (water) to the thirsty monkey". Tasks for words not yet learned are written in plain English.
 - **Quizzes only use words the player has already caught**, including all wrong-answer options. Every picture must be unique and unambiguous. Answers show Chinese under the picture (characters when listening, pinyin when reading).
 - **Names of characters** (e.g. 老猴子 lǎo hóuzi · Old monkey) show Chinese, pinyin and English together, because names aren't vocabulary. Use plain descriptions, never invented nicknames.

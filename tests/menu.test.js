@@ -34,11 +34,11 @@ test('the tiles open their pages, and Back comes back to the same tile', () => {
   }
 });
 
-test('Settings has the sound, pinyin, How to play, save file, title screen and reset', () => {
+test('Settings has the sound, pinyin, English on replies, How to play, save file, title screen and reset', () => {
   const {sheet, run, items} = menuGame();
   run('openMenu()');
   sheet.querySelector('[data-m="settings"]').click();
-  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'howto', 'save', 'title', 'reset']);
+  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'howto', 'save', 'title', 'reset']);
   const pinyin = run('S.pinyin');
   sheet.querySelector('[data-m="pinyin"]').click();
   assert.equal(run('S.pinyin'), !pinyin, 'Pinyin switches');

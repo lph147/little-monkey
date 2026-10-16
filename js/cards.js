@@ -67,6 +67,7 @@ const on = (sel, fn) => { const el = sheet.querySelector(sel); if (el) el.onclic
 /* ================= SPEECH BOX (what characters say, over the bottom of the map) ================= */
 const talkBox = $('#talk');
 let talkNext = null;          // moves on to what comes after the line, while the speech box is showing one
+let talkMove = null;          // moves between reply choices with the D-pad, while the box shows them
 const TAP_TIP_LINES = 5;      // "Tap any word" shows under your first few lines, then only a word's meaning when you tap it
 function showDialog(who, line, opts = {}){
   return new Promise(res => {
@@ -86,9 +87,30 @@ function showDialog(who, line, opts = {}){
     q('[data-a=say]').onclick = () => say(text);
     const en = q('[data-a=en]');
     if (en) en.onclick = () => { q('.sentence-en').hidden = false; en.remove(); };
-    const next = () => { talkNext = null; SFX.blip(); closeTalk(); res(); };
+    const next = () => { talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };
     q('[data-a=ok]').onclick = next;
     talkNext = next;
+  });
+}
+// Your reply: the phrases you could say, each with pinyin, and English unless it's switched off in
+// Settings. Tapping one says it; on a keyboard or the D-pad, move between them and press A. Gives the
+// phrase you chose. The box stays up for your line, which comes next.
+function chooseReply(who, choices){
+  return new Promise(res => {
+    let sel = 0;
+    talkBox.innerHTML = `<div class="talkhead">${who}</div><p class="label">Your reply</p>
+      <div class="replies">${choices.map((p, i) => `<button class="reply" data-i="${i}"><span class="rzh">${p}</span><span class="rpy">${WORDS[p].py}</span>${S.replyEn ? `<span class="ren">${esc(WORDS[p].en)}</span>` : ''}</button>`).join('')}</div>`;
+    talkBox.classList.toggle('again', !talkBox.hidden);
+    talkBox.hidden = false; talkBox.scrollTop = 0;
+    $('#saybox').hidden = true;
+    held = null; queued = null;
+    const btns = [...talkBox.querySelectorAll('.reply')];
+    const mark = () => btns.forEach((b, i) => b.classList.toggle('sel', i === sel));
+    const pick = i => { talkNext = null; talkMove = null; SFX.blip(); res(choices[i]); };
+    btns.forEach((b, i) => b.onclick = () => pick(i));
+    mark();
+    talkNext = () => pick(sel);
+    talkMove = d => { sel = (sel + (d === 'left' || d === 'up' ? -1 : 1) + choices.length) % choices.length; mark(); SFX.turn(); };
   });
 }
 // The box stays up for a moment, so lines one after another change in place instead of closing and opening again.

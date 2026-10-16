@@ -78,9 +78,21 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (!canEncounter()){ toast(g.notYet); return; }
     if (await confirmBox(speaker(who), g.ask, 'Play', 'Not now')){ SFX.encounter(); await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}); }
   },
+  async reply(s){ await replyWith(s.reply); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
   message(s){ toast(fill(s.message)); }
 };
+// You reply: choose what to say from the phrases you know, with best the one that fits (taught on its
+// own card the first time). Any choice is fine: you say it, and if another fits better the game says
+// so. Replying with the one that fits counts as using it. A phrase you don't know yet isn't offered.
+async function replyWith(best){
+  if (lvl(best) === 0) await showNotice(best);
+  const choices = shuffle([best, ...shuffle(PHRASES.filter(p => p !== best && lvl(p) >= 1)).slice(0, 2)]);
+  const me = speaker('player'), said = await chooseReply(me, choices), fits = said === best;
+  if (fits){ const r = rec(best); r.used = 1; r.lv = 4; gainXP(XP.right); addToday(best); save(); }
+  const en = WORDS[said].en.split(',')[0];
+  await showDialog(me, {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
+}
 async function runSteps(steps, who){ for (const s of steps) await STEPS[Object.keys(s).find(k => STEPS[k])](s, who); }
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); }
 async function talk(n){
@@ -92,6 +104,8 @@ async function request(r, face){   // a character asking you to bring something 
   const p = here(), has = p.holding[r.id];
   if (p[r.id] === 'asked' && has && has !== r.wants){   // you brought the wrong thing
     await showDialog(face, L[r.wrong]);
+    if (r.wrongReply) await replyWith(r.wrongReply);
+    if (r.wrongAnswer) await showDialog(face, L[r.wrongAnswer]);
     delete p.holding[r.id]; save(); toast(r.wrongMessage);
     return;
   }
@@ -104,6 +118,7 @@ async function request(r, face){   // a character asking you to bring something 
     build.filter(w => lvl(w) >= 1).forEach(useWord);
     p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
+    if (r.thanksReply) await replyWith(r.thanksReply);
     toast(`+${r.reward} 🍑. Task complete!`);
     await runEvents();
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
@@ -140,6 +155,7 @@ async function buy(i, face){   // buying something from the shop by asking for i
   save(); SFX.fanfare();
   if (i.wear){ for (const k in spriteCache) delete spriteCache[k]; }   // redraw your monkey wearing it
   await showDialog(face, L[sh.thanks]);
+  if (sh.thanksReply) await replyWith(sh.thanksReply);
   toast(fill(i.bought));
   await runEvents();
   return true;

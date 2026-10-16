@@ -29,6 +29,8 @@ shown where the word list has them.
 | 这是苹果。我要吃桃子！ | zhè shì píngguǒ. wǒ yào chī táozi! | This is an apple. I want to eat a peach! | 饿猴子 (Hungry monkey) |  |
 | 你好！我是老板。 | nǐ hǎo! wǒ shì lǎobǎn. | Hello! I'm the shop owner. | 老板 (Shop owner) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
+| 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey) |  |
+| 没关系！ | méi guānxi! | That’s OK! |  |  |
 
 ### Sentences the player builds from word tiles
 
@@ -110,7 +112,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- |
 | 石头 | shítou | stone, rock |  |
 | 路 | lù | path, road |  |
-| 你好 | nǐ hǎo | hello |  |
 | 猴子 | hóuzi | monkey |  |
 | 山 | shān | mountain |  |
 | 花 | huā | flower |  |
@@ -136,6 +137,13 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 瀑布 | pùbù | waterfall |  |
 | 老板 | lǎobǎn | shop owner, boss |  |
 | 头带 | tóudài | headband |  |
+| 你好 | nǐ hǎo | hello |  |
+| 谢谢 | xièxie | thank you |  |
+| 不客气 | bú kèqi | you’re welcome |  |
+| 对不起 | duìbuqǐ | sorry |  |
+| 没关系 | méi guānxi | that’s OK |  |
+| 再见 | zàijiàn | goodbye |  |
+| 我不要 | wǒ bú yào | I don’t want it, no thanks |  |
 
 ### Words only heard in sentences
 
@@ -149,7 +157,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 饿 | è | hungry |  |
 | 了 | le | (shows a change) |  |
 | 渴 | kě | thirsty |  |
-| 谢谢 | xièxie | thank you |  |
 | 我们 | wǒmen | we, us |  |
 | 里 | lǐ | inside, in |  |
 | 有 | yǒu | to have; there is |  |

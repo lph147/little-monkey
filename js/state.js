@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 9;
+const SAVE_VERSION = 10;
 // XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
 const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
@@ -10,7 +10,7 @@ function areaStart(){   // a new game's progress in the area: the area's own lis
   for (const r of REQUESTS) p[r.id] = 'not asked';
   return Object.assign(p, {holding:{}, bought:[], done:false});
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -59,6 +59,9 @@ function upgradeSave(s){
                           // you've used it and can read it, so words already at Used are marked as used (and stay Used).
     for (const r of Object.values(s.w || {})) if (r && r.lv === 4) r.used = 1;
     s.version = 9;
+  }
+  if (s.version === 9){   // version 9: there was no setting for English on reply choices. It starts on (filled in below).
+    s.version = 10;
   }
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);

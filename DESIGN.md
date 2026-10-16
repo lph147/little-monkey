@@ -85,7 +85,7 @@ Each main character introduces one or two sentence patterns, and you practise th
 
 Patterns are practised by building sentences from word tiles, ordering in shops, and answering characters' questions. Area 1's phrases were checked by a native speaker on 16 October 2026; the rest of this table still needs a check before it goes into the game.
 
-**Replying.** Characters' lines invite a reply: you choose what to say from two or three phrases you've caught, each with pinyin and its sound. 你好 starts a conversation and 再见 ends it, 谢谢 and 不客气 follow gifts and help, and 对不起 and 没关系 follow mistakes. Because every conversation has them, the core phrases are heard and used dozens of times a session. The first time a phrase is needed it's taught on its own card. 我不要 is taught in Area 1 as a fixed phrase; 不 on its own is still taught in Area 3.
+**Replying.** Characters' lines invite a reply: you choose what to say from two or three phrases you've caught, each with pinyin, its sound and its English. In the first areas replies are input, not a test: the English is always shown (players who know some Chinese can turn it off in Settings), any choice is accepted, and the game says which phrase fits best. 你好 starts a conversation and 再见 ends it, 谢谢 and 不客气 follow gifts and help, and 对不起 and 没关系 follow mistakes. Because every conversation has them, the core phrases are heard and used dozens of times a session. The first time a phrase is needed it's taught on its own card. 我不要 is taught in Area 1 as a fixed phrase; 不 on its own is still taught in Area 3.
 
 ## Story and areas
 
@@ -238,6 +238,10 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Pictures for 瀑布, 老板 and 头带; 我 and 要 practised by building 我要 sentences at the practice post
   - [x] A short story at the waterfall from sentences you've met, with gap-filling picture questions
 - [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
+  - [x] Reply choices in the speech box (你好, 谢谢, 不客气, 对不起 and 没关系, 再见), with Chinese, pinyin and English
+  - [x] Settings, English on replies (on to start with)
+  - [x] Phrases as their own collection, with a Phrases tab in the Word Scroll
+  - [ ] 我不要 at the shop, and sentence-building questions in animal encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary
 - [ ] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version
 - [ ] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides

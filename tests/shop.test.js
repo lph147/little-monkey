@@ -57,7 +57,7 @@ test('a version 6 save is converted with nothing bought yet', () => {
 // animal encounter to take away a wrong answer.
 const APPLE = () => 'AREA.shop.items.find(i => i.item === "苹果")';
 const buyIt = async (game, what) => {   // buy something, answering every card as a player would
-  game.run('showDialog = showNotice = infoBox = async () => {}; toast = () => {}; tiles = async () => true;');
+  game.run('showDialog = showNotice = infoBox = replyWith = async () => {}; toast = () => {}; tiles = async () => true;');
   return game.run(`buy(${what}, '')`);
 };
 

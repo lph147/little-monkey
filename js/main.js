@@ -65,7 +65,7 @@ function buttonLabels(now){
     const bb = sheet.querySelector('[data-b]');
     return [btnLabel(focused), bb && bb.offsetParent !== null ? btnLabel(bb) : ''];
   }
-  if (talkNext) return [btnLabel(talkBox.querySelector('[data-a=ok]')), ''];
+  if (talkNext){ const ok = talkBox.querySelector('[data-a=ok]'); return [ok ? btnLabel(ok) : 'Say it', '']; }
   if (mode === 'title') return [S.started ? 'Continue' : 'Start', ''];
   if (mode === 'intro') return [$('#beginBtn') ? 'Begin' : 'Next', 'Skip'];
   return [currentPrompt(now), !$('#saybox').hidden ? 'Close' : ''];
@@ -148,7 +148,8 @@ function howToPlay(){
          <li><span class="dot listen"></span><span><b>Grey words</b> are just for listening. Tap one if you’re curious, then let it go.</span></li>
          <li><span class="dot star">⭐</span><span>Only words on a <b>New word to learn</b> card go into your Word Scroll.</span></li>
        </ul>
-       <p class="small">The first time you see a sentence, its English is shown underneath. After that, tap English if you need it.</p>`
+       <p class="small">The first time you see a sentence, its English is shown underneath. After that, tap English if you need it.</p>
+       <p class="small">When someone talks to you, you can reply in Chinese. Each choice shows its English too; if you know some Chinese already, turn that off in Settings, English on replies.</p>`
     ];
     let i = 0;
     const show = () => {

@@ -46,7 +46,7 @@ async function pressA(){
 }
 function pressB(){
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null) b.click(); return; }
-  if (talkNext){ talkNext(); return; }   // B moves talk on too
+  if (talkNext && !talkMove){ talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
   const sb = $('#saybox'); if (!sb.hidden){ sb.hidden = true; return; }
 }
@@ -74,7 +74,12 @@ document.addEventListener('keydown', e => {
     if (isA && !e.target.matches('button:focus-visible')){ e.preventDefault(); if (!e.repeat) pressA(); }
     return;
   }
-  if (talkNext){ if (isA){ e.preventDefault(); if (!e.repeat) pressA(); } return; }   // while someone's talking, only A and B do anything
+  if (talkNext){   // while someone's talking, only A and B do anything, and the arrows move between replies
+    const d = KEYS[e.key];
+    if (isA){ e.preventDefault(); if (!e.repeat) pressA(); }
+    else if (d && talkMove){ e.preventDefault(); if (!e.repeat) talkMove(d); }
+    return;
+  }
   const d = KEYS[e.key];
   if (d){ e.preventDefault(); if (!e.repeat) queued = d; held = d; return; }
   if (isA){ e.preventDefault(); pressA(); }
@@ -93,7 +98,7 @@ function setPad(d){
   padDir = d;
   document.querySelectorAll('.dpad button').forEach(b => b.classList.toggle('held', b.dataset.dir === d));
   if (!modal.hidden){ held = null; if (d) navFocus(d); return; }
-  if (talkNext){ held = null; return; }   // no walking off while someone's talking
+  if (talkNext){ held = null; if (d && talkMove) talkMove(d); return; }   // no walking off while someone's talking
   held = d; if (d) queued = d;
 }
 dpad.addEventListener('pointerdown', e => { e.preventDefault(); getAC(); dpadPointer = e.pointerId; try { dpad.setPointerCapture(e.pointerId); } catch(_) {} setPad(dirFromPoint(e)); });

@@ -220,6 +220,14 @@ rt.hid{visibility:hidden}
 .talk .hintline{margin:2px 0 0}
 .talkfoot{display:flex;align-items:center;gap:8px;margin-top:4px}
 .talkfoot .gloss{flex:1;min-height:0;margin:0;font-size:.9rem}
+.talk .label{margin:4px 0 2px}
+.replies{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:6px;margin:2px 0 2px}
+.reply{display:flex;flex-direction:column;align-items:center;padding:6px 4px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);line-height:1.2}
+.reply:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.reply.sel{outline:3px solid var(--gold);outline-offset:1px}
+.rzh{font-family:var(--text);font-size:1.4rem;font-weight:500}
+.rpy{font-size:.8rem;color:var(--muted)}
+.ren{font-size:.82rem;color:var(--jade);text-align:center}
 .talk .next{min-height:34px;padding:3px 14px;position:relative}
 .round.ready{box-shadow:0 4px 0 rgba(0,0,0,.3),0 0 0 4px var(--gold)}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}

@@ -31,7 +31,7 @@ const allCategories = game => game.run("scrollTabs().filter(([id]) => CATEGORIES
 
 test('the Word Scroll shows caught words, shadows of heard words, and ？ for the rest', () => {
   const game = loadGame({save: {version: 5, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}}, heard: {'猴子': 3, '石头': 2, '有': 9}}});
-  const html = allCategories(game), total = game.run('ORDER.length');
+  const html = allCategories(game), total = game.run('ORDER.length + PHRASES.length');   // words and phrases
   const stone = game.run("picHTML('石头')"), monkey = game.run("picHTML('猴子')");   // their pixel sprites
   assert.ok(html.includes(`<button class="card" data-w="石头"><div class="c" aria-hidden="true">${stone}</div><div class="hz">石头</div><div class="p">shítou</div>`), 'a caught word shows its picture, characters and pinyin');
   assert.ok(html.includes(`<div class="card heard" aria-label="Heard 3 times, not caught yet"><div class="c sil" aria-hidden="true">${monkey}</div><div class="p">heard 3×</div>`), 'a heard word shows its shadow and count');

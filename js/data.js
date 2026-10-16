@@ -11,13 +11,14 @@ let VH = VH_MIN;
 // The rest of the engine uses these names. They are filled in from the content files.
 const AREA = FLOWER_FRUIT_MOUNTAIN;   // the area being played (the only one so far)
 const toks = zh => zh.split(' ');     // '我 饿 了 。' becomes ['我','饿','了','。']
-const WORDS = {};                     // the words you can collect here, in Word Scroll order
+const WORDS = {};                     // the words and phrases you can collect here
 const GLOSS = {};                     // every other word, as [pinyin, English], for tapping on
 for (const [w, d] of Object.entries(WORD_BANK)){
   if (d.area === AREA.number){ const {area, ...word} = d; WORDS[w] = word; }
   else GLOSS[w] = [d.py, d.en];
 }
-const ORDER = Object.keys(WORDS);
+const ORDER = Object.keys(WORDS).filter(w => !WORDS[w].phrase);    // the area's words, in Word Scroll order
+const PHRASES = Object.keys(WORDS).filter(w => WORDS[w].phrase);  // its phrases (你好, 谢谢…), a collection of their own
 const PUNCT = new Set(['！','。','，','？']);
 const L = {};                         // what the characters say
 for (const [k, line] of Object.entries(AREA.lines)) L[k] = {t:toks(line.zh), en:line.en};

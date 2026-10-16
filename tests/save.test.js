@@ -45,7 +45,7 @@ test('after converting, the game shows the same progress', () => {
   game.runFrame();
   assert.match(game.el('#titleButtons').innerHTML, />Continue</);
   assert.equal(game.el('#peaches').textContent, '🍑 7');
-  assert.equal(game.el('#count').textContent, '3/28');
+  assert.equal(game.el('#count').textContent, '2/27');
   // Said hello, learned about animals, 1 of 4 animals found, hungry monkey helped, thirsty not yet, no story, no headband, no test
   assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false]);
 });
@@ -154,4 +154,13 @@ test('a version 8 save is converted: words at Used are marked as used, and every
   assert.equal(s.peaches, 4);
   assert.deepEqual(s.bag, {'苹果': 1});
   assert.ok(game.storage.get(SAVE_KEY + '-backup-v8'), 'the version 8 save is kept as a backup');
+});
+
+test('a version 9 save is converted: English on reply choices starts on', () => {
+  const game = loadGame({save: {version: 9, started: true, w: {'山': {lv: 2, due: 0, ok: 1, n: 1}}, pinyin: false}});
+  const s = saveOf(game);
+  assert.equal(s.version, VERSION);
+  assert.equal(s.replyEn, true);
+  assert.equal(s.pinyin, false, 'other settings are kept');
+  assert.deepEqual(s.w['山'], {lv: 2, due: 0, ok: 1, n: 1});
 });

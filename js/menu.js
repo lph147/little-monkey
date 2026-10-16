@@ -43,13 +43,14 @@ function tasksPage(back){
 }
 
 /* ================= SETTINGS ================= */
-// Sound, pinyin, How to play, your save file, the title screen and starting again. The game saves by itself.
+// Sound, pinyin, English on reply choices (for players who know some Chinese already), How to play, your save file, the title screen and starting again. The game saves by itself.
 function openSettings(focusId){
   openCard(`<p class="label">Settings</p>
     <div class="menu">
       <button class="btn" data-m="music" data-label="Music">Music <span class="val">${S.music ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="sound" data-label="Sound">Sound effects <span class="val">${S.sound ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="pinyin" data-label="Pinyin">Pinyin over words <span class="val">${S.pinyin ? 'On' : 'Off'}</span></button>
+      <button class="btn" data-m="replyEn" data-label="English">English on replies <span class="val">${S.replyEn ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="howto">How to play</button>
       <button class="btn" data-m="save">Save file</button>
       <button class="btn" data-m="title">Title screen</button>
@@ -62,6 +63,7 @@ function openSettings(focusId){
     music: () => { S.music = !S.music; save(); if (S.music) musicStart(); else musicStop(); openSettings('music'); },
     sound: () => { S.sound = !S.sound; save(); if (S.sound) SFX.blip(); openSettings('sound'); },
     pinyin: () => { S.pinyin = !S.pinyin; save(); openSettings('pinyin'); },
+    replyEn: () => { S.replyEn = !S.replyEn; save(); openSettings('replyEn'); },
     howto: () => howToPlay().then(() => openSettings('howto')),
     save: () => {
       save();

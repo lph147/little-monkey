@@ -76,6 +76,7 @@ const portraitCache = {};
 const NAMES = {};   // the names shown above what characters say
 AREA.characters.forEach(c => { if (c.name) NAMES[c.id] = c.name; });
 NAMES.sign = AREA.sign.name;
+NAMES.player = {zh:'小猴子', py:'xiǎo hóuzi', en:'You'};   // you, when you reply
 function speaker(id){
   const n = NAMES[id];
   return `<div class="speaker">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div><div class="spk-en">${n.en}</div></div>` : ''}</div>`;

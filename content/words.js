@@ -7,6 +7,8 @@
 //   area  the area where you can collect the word. Words without an area are only heard:
 //         they appear in sentences and can be tapped, but can't be collected yet.
 //   category  where the word goes in the Word Scroll: one of the CATEGORIES below
+//   phrase  true for a phrase such as 你好 or 谢谢. Phrases are a collection of their own: they don't
+//         count towards the area's words, and you use them by choosing them as replies.
 //
 // In the Word Scroll, each category's words appear in the order they are listed here.
 // Sentences in the content files may only use words from this bank (the tests check).
@@ -20,14 +22,14 @@ const CATEGORIES = {
   places: {tab:'Places', name:'Places'},
   items: {tab:'Items', name:'Items'},
   actions: {tab:'Actions', name:'Actions'},
-  people: {tab:'People', name:'People and phrases'}
+  people: {tab:'People', name:'People'},
+  phrases: {tab:'Phrases', name:'Phrases'}
 };
 
 const WORD_BANK = {
   // Collected on Flower Fruit Mountain (area 1)
   '石头': {py:'shítou', en:'stone, rock', pic:'🪨', area:1, category:'nature'},
   '路': {py:'lù', en:'path, road', pic:'🛣️', area:1, category:'places'},
-  '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'people'},
   '猴子': {py:'hóuzi', en:'monkey', pic:'🐒', area:1, category:'animals'},
   '山': {py:'shān', en:'mountain', pic:'⛰️', area:1, category:'nature'},
   '花': {py:'huā', en:'flower', pic:'🌸', area:1, category:'nature'},
@@ -54,6 +56,15 @@ const WORD_BANK = {
   '老板': {py:'lǎobǎn', en:'shop owner, boss', pic:'🏪', area:1, category:'people'},
   '头带': {py:'tóudài', en:'headband', pic:'🎀', area:1, category:'items'},
 
+  // Phrases you learn on Flower Fruit Mountain, and reply with
+  '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true},
+  '谢谢': {py:'xièxie', en:'thank you', area:1, category:'phrases', phrase:true},
+  '不客气': {py:'bú kèqi', en:'you’re welcome', area:1, category:'phrases', phrase:true},
+  '对不起': {py:'duìbuqǐ', en:'sorry', area:1, category:'phrases', phrase:true},
+  '没关系': {py:'méi guānxi', en:'that’s OK', area:1, category:'phrases', phrase:true},
+  '再见': {py:'zàijiàn', en:'goodbye', area:1, category:'phrases', phrase:true},
+  '我不要': {py:'wǒ bú yào', en:'I don’t want it, no thanks', area:1, category:'phrases', phrase:true},
+
   // Heard in sentences
   '是': {py:'shì', en:'am, is, are'},
   '你': {py:'nǐ', en:'you'},
@@ -63,7 +74,6 @@ const WORD_BANK = {
   '饿': {py:'è', en:'hungry'},
   '了': {py:'le', en:'(shows a change)'},
   '渴': {py:'kě', en:'thirsty'},
-  '谢谢': {py:'xièxie', en:'thank you'},
   '我们': {py:'wǒmen', en:'we, us'},
   '里': {py:'lǐ', en:'inside, in'},
   '有': {py:'yǒu', en:'to have; there is'},

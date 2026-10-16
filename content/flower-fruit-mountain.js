@@ -97,22 +97,24 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   wants        the word for what they want
   //   verb         taught when they ask, and used in the sentence you build
   //   ask          their line when asking, and asked: a message afterwards
-  //   wrong        their line if you bring something else, and wrongMessage afterwards
+  //   wrong        their line if you bring something else, and wrongMessage afterwards; wrongReply is the
+  //                phrase that fits as your reply, and wrongAnswer their line after it
   //   offer        their line when you bring the right thing
   //   firstTeach   new words to teach before you build the sentence, one at a time, each with a note
   //   build        the sentence you build from word tiles, with its English (buildEn); extraTile is a wrong tile mixed in
-  //   reward       peaches you get; thanks is their line afterwards
+  //   reward       peaches you get; thanks is their line afterwards, and thanksReply the phrase that fits as your reply
   requests: {
     hungry: {from:'hungry', wants:'桃子', verb:'吃', ask:'hungry', asked:'The hungry monkey wants something to eat. Check your tasks.',
-      wrong:'notThis', wrongMessage:'The monkey gives the fruit back. Listen to what it wants, then try another tree.',
+      wrong:'notThis', wrongReply:'对不起', wrongAnswer:'noProblem', wrongMessage:'The monkey gives the fruit back. Listen to what it wants, then try another tree.',
       offer:'havePeach', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      build:'我 要 吃 桃子', buildEn:'I want to eat a peach.', extraTile:'喝', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'},
+      build:'我 要 吃 桃子', buildEn:'I want to eat a peach.', extraTile:'喝', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'},
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      build:'我 要 喝 水', buildEn:'I want to drink water.', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'}
+      build:'我 要 喝 水', buildEn:'I want to drink water.', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
-  // The shop. who runs it, their line when you visit (ask) and after you buy (thanks), what they say
+  // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
+  // the phrase that fits as your reply), the phrase you say when you don't want anything (no), what they say
   // if you can't afford something yet (earnMore, after how many peaches you need), and when you've
   // bought everything (soldOut). Each item: its word and price in peaches, the sentence you build to
   // ask for it (extraTile is a wrong tile mixed in), a line on its new-word card (note), a message
@@ -120,7 +122,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // eat: true for food you can buy again and eat in an animal encounter to take away a wrong answer,
   // with carry: the most you can carry.
   shop: {
-    who:'boss', ask:'whatWant', thanks:'thanks',
+    who:'boss', ask:'whatWant', thanks:'thanks', thanksReply:'谢谢', no:'我不要',
     earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and training at the practice post.',
     soldOut:'You have everything the {老板} sells. Come back another time.',
     items: [
@@ -264,7 +266,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '要': 'You learned it to say what a monkey wanted.',
     '瀑布': 'The waterfall at the top right of the mountain.',
     '老板': 'The shop owner at the stall by the pond.',
-    '头带': 'You bought it from the {老板} at the stall by the pond.'
+    '头带': 'You bought it from the {老板} at the stall by the pond.',
+    '谢谢': 'You said it to the {老板} after buying from the stall.',
+    '不客气': 'You said it when a monkey thanked you for your help.',
+    '对不起': 'You said it when you brought the hungry monkey the wrong fruit.',
+    '没关系': 'The hungry monkey said it when you said sorry.',
+    '再见': 'You said it to the old monkey after he told you about the animals.',
+    '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.'
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -314,7 +322,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     findElder: {zh:'你好 ！ 去 找 老 猴子 吧 ！', en:'Hello! Go and find the old monkey!'},
     notThis: {zh:'这 是 苹果 。 我 要 吃 桃子 ！', en:'This is an apple. I want to eat a peach!'},
     boss: {zh:'你好 ！ 我 是 老板 。', en:"Hello! I'm the shop owner."},
-    whatWant: {zh:'你 要 什么 ？', en:'What do you want?'}
+    whatWant: {zh:'你 要 什么 ？', en:'What do you want?'},
+    bye: {zh:'再见 ！', en:'Goodbye!'},
+    noProblem: {zh:'没关系 ！', en:'That’s OK!'}
   },
 
   // What happens when you press A beside each character. The game goes down their list and
@@ -327,6 +337,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   set       change what the area remembers, such as {elder:1}
   //   request   the character's request (see requests)
   //   shop      open the area's shop (see shop below)
+  //   reply     your reply: you choose what to say from phrases you know, and this is the one that fits
+  //             (taught on its own card the first time). Any choice is fine; the game says which fits best.
   //   wordGame  offer a word game. ask: the question; word: who you're playing with;
   //             notYet: the message if you don't know enough words yet
   // In an if: elder:0 checks what the area remembers; new:'猴子' is true while you don't know
@@ -336,6 +348,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{elder:0}, do:[
         {say:'hi', teach:'你好'},
         {newWord:'你好'},
+        {reply:'你好'},
         {say:'go', hint:'Things that sparkle have a word to learn. Face them and press A. Learn 4 words, then come back and talk to me again.'},
         {set:{elder:1}}
       ]},
@@ -345,9 +358,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{elder:1}, do:[
         {say:'animals', teach:'动物', hint:'Walk through the tall grass to find the hidden animals. Answer their questions to make friends.'},
         {newWord:'动物', note:'There are {animals} different animals hiding in the tall grass. Can you find them all?'},
-        {set:{elder:2}}
+        {set:{elder:2}},
+        {reply:'再见'},
+        {say:'bye'}
       ]},
-      {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}]}
+      {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
@@ -357,7 +372,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ],
     boss: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
-      {if:{new:'老板'}, do:[{say:'boss', teach:'老板'}, {newWord:'老板', note:'The {老板} owns the shop. Come back to see what they sell.'}]},
+      {if:{new:'老板'}, do:[{say:'boss', teach:'老板'}, {newWord:'老板', note:'The {老板} owns the shop. Come back to see what they sell.'}, {reply:'你好'}]},
       {do:[{shop:true}]}
     ],
     hungry: [

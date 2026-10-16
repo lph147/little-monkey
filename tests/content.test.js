@@ -292,6 +292,7 @@ test('every step does one thing, with settings that exist, using real lines and 
     if (a === 'set') for (const k of Object.keys(s.set)) assert.ok(remembered.includes(k), `${where} sets "${k}", which the area doesn't remember`);
     if (a === 'shop') assert.ok(AREA.shop && AREA.shop.who === who, `${where}: ${who} doesn't run the shop`);
     if (a === 'request') assert.ok(AREA.requests[s.request] && AREA.requests[s.request].from === who, `${where}: "${s.request}" isn't a request from ${who}`);
+    if (a === 'reply') assert.ok(BANK[s.reply] && BANK[s.reply].phrase && collectible.includes(s.reply), `${where}: ${s.reply} isn't a phrase you can learn here`);
     if (a === 'wordGame') assert.ok(s.wordGame.ask && s.wordGame.notYet && collectible.includes(s.wordGame.word), `${where}: wordGame needs ask, notYet and a word`);
   }
 });
@@ -299,7 +300,7 @@ test('every step does one thing, with settings that exist, using real lines and 
 test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
-    ...Object.values(AREA.requests).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong]),
+    ...Object.values(AREA.requests).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
     ...(AREA.shop ? [AREA.shop.ask, AREA.shop.thanks] : [])
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
@@ -361,7 +362,7 @@ test('every word you can collect has an example sentence for its page', () => {
     assert.ok(e.en, `the example for ${w} has no English`);
     assert.ok(!inSentence(w), `${w} is already in a line or the story, so it doesn't need an example`);
   }
-  for (const w of collectible) assert.ok(inSentence(w) || AREA.examples[w] || built(w), `${w} has no example: add one to examples in the area file (checked first)`);
+  for (const w of collectible.filter(w => !BANK[w].phrase)) assert.ok(inSentence(w) || AREA.examples[w] || built(w), `${w} has no example: add one to examples in the area file (checked first)`);   // phrases are used by replying
 });
 
 test('every word you only hear is used in a sentence somewhere', () => {
@@ -371,4 +372,10 @@ test('every word you only hear is used in a sentence somewhere', () => {
     ...(AREA.shop ? AREA.shop.items.flatMap(i => i.build.split(' ')) : [])
   ]);
   for (const w of Object.keys(BANK).filter(w => !BANK[w].area)) assert.ok(used.has(w), `${w} is in the word bank, but no sentence uses it: use it or remove it`);
+});
+
+test('replies after requests and the shop are phrases you can learn here', () => {
+  const isPhrase = p => BANK[p] && BANK[p].phrase && collectible.includes(p);
+  for (const [id, r] of Object.entries(AREA.requests)) for (const k of ['thanksReply', 'wrongReply']) if (r[k]) assert.ok(isPhrase(r[k]), `request ${id}: ${k} ${r[k]} isn't a phrase you can learn here`);
+  if (AREA.shop) for (const k of ['thanksReply', 'no']) if (AREA.shop[k]) assert.ok(isPhrase(AREA.shop[k]), `shop: ${k} ${AREA.shop[k]} isn't a phrase you can learn here`);
 });

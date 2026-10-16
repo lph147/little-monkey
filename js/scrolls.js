@@ -244,10 +244,11 @@ function wordPage(w, back){   // a caught word's page in the Word Scroll
   on('[data-a=ok]', back);
 }
 const heardWords = () => Object.keys(GLOSS).filter(w => S.heard[w]).sort((a, b) => S.heard[b] - S.heard[a]);   // words this area doesn't teach, most heard first
-// The Word Scroll's tabs, as [id, name]: a tab for each category the area has words in, then Today,
+const SCROLL_WORDS = () => [...ORDER, ...PHRASES];   // everything in the Word Scroll: the area's words, then its phrases
+// The Word Scroll's tabs, as [id, name]: a tab for each category the area has words in (Phrases among them), then Today,
 // then Heard once you've heard a word this area doesn't teach.
 const scrollTabs = () => [
-  ...Object.entries(CATEGORIES).filter(([id]) => ORDER.some(w => WORDS[w].category === id)).map(([id, c]) => [id, c.tab]),
+  ...Object.entries(CATEGORIES).filter(([id]) => SCROLL_WORDS().some(w => WORDS[w].category === id)).map(([id, c]) => [id, c.tab]),
   ['today', 'Today'], ...(heardWords().length ? [['heard', 'Heard']] : [])
 ];
 let scrollTab = null;   // the tab the Word Scroll is open at; it opens there again next time
@@ -263,7 +264,7 @@ function scrollPage(tab){   // what a tab of the Word Scroll shows
     return `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
       <div class="chips">${heard.map(w => `<button class="chip" data-h="${w}">${w} <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
   }
-  const ws = ORDER.filter(w => WORDS[w].category === tab);
+  const ws = SCROLL_WORDS().filter(w => WORDS[w].category === tab);
   return `<p class="label cathead">${CATEGORIES[tab].name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>
     <div class="grid">${ws.map(scrollCard).join('')}</div>`;
 }
