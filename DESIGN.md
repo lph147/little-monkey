@@ -104,11 +104,13 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 XP and money come mainly from learning, so progress in the game and progress in Chinese move together.
 
-**XP and levels.** You earn XP for catching words, answering correctly, completing quests and passing tests. Levels unlock things like extra bag space or new training challenges. Walking around earns nothing on its own.
+**XP and levels.** You earn XP for catching words, answering correctly, completing quests and passing tests. Levels unlock things like extra bag space or new training challenges. Walking around earns nothing on its own. For now a level is just shown in the header; rewards for levels come once there is more to unlock.
 
 **Money.** Peaches are the money on Flower Fruit Mountain and in the Water Curtain Cave. From the human world onward, coins (钱) take over, which teaches the word naturally.
 
-**Shops.** Every area has a shopkeeper who sells that area's items. Labels are in Chinese only, so browsing is reading practice. Buying means building a sentence, such as 我要一个苹果. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind.
+**Shops.** Every area has a shopkeeper who sells that area's items. Labels are in Chinese only, so browsing is reading practice. Buying means building a sentence, such as 我要一个苹果. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in Area 2, buying uses Area 1's pattern: 我要 + thing.
+
+**Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 peaches. Buying it is on the area's checklist, so you need it before the cave door test, and every player can afford it by then. Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
 
 **Training ground.** A place in every area where you can do a rolling word-matching test at any time. It always includes your newest words and anything due for review.
 
@@ -161,7 +163,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 **Decided** (these were the open questions)
 
-- **Words per area:** about 25 new words to collect, like Area 1 (27), so about 20 new sprites per area. Words you only hear in sentences don't count towards this.
+- **Words per area:** about 25 new words to collect, like Area 1 (28 once the shop adds 老板 and 头带 and 森林 is dropped), so about 20 new sprites per area. Words you only hear in sentences don't count towards this.
 - **Demons:** harder battles start at Area 4, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
 - **Grammar:** the order in the grammar table stays as it is. Patterns can be heard in sentences in earlier areas before they are taught.
 
