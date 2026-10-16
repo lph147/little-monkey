@@ -1,7 +1,7 @@
 # Little Monkey (小猴子): project notes for Claude Code
 
 ## About this project
-A retro, Pokémon-style web game for learning Mandarin Chinese, themed on *Journey to the West*. The player is a baby monkey (Sun Wukong) who collects Chinese words like creatures, learns grammar from the story's characters, and earns progress by practising.
+A retro, Pokémon-style web game for learning Mandarin Chinese, themed on *Journey to the West*. The player is a baby monkey (Sun Wukong) who collects Chinese words like creatures, hears them again and again in simple sentences from the story's characters, and earns progress by practising. It's a vocabulary game: it never tests grammar.
 
 - **DESIGN.md** is the plan and the source of truth for design decisions. Follow it. If a request conflicts with it, point that out before building.
 - **index.html** is the game. It loads `css/game.css`, then the content in `content/`, then the engine in `js/`, in the order listed in index.html; each script can use what the ones before it define. All pixel art and sound are generated in code.
@@ -37,6 +37,7 @@ I'm new to coding. Please:
 - **New-word cards** show the picture, characters, pinyin, sound and English. English is shown by default on the first card only; after that it is behind an English button.
 - **Sentences:** pinyin over every word (a global setting can turn it off). Words the player has learned are green. The word being taught right now is bold green. Everything else is grey and "just for listening". Tapping any word shows its pinyin and meaning.
 - **A sentence's English** is shown underneath the first time it appears; after that it is behind an English button.
+- **Never test grammar.** A task involving a sentence always shows the whole sentence in Chinese (with pinyin) and English, with one word missing, and you choose the missing word. Never ask players to put words in order. The choices follow the word's level: its picture with the Chinese while it's new (Caught), Chinese and pinyin once recognised. A wrong choice shows the right one and play carries on.
 - **Reply choices** show Chinese, pinyin and English every time, so replying is input, not a test. Settings, English on replies, turns the English off for players who know some Chinese. Any choice is fine; the game says which fits best.
 - **In English UI text** (tasks, messages, notes), a Chinese word is always written as 汉字 (English), e.g. "Give the 水 (water) to the thirsty monkey". Tasks for words not yet learned are written in plain English.
 - **Quizzes only use words the player has already caught**, including all wrong-answer options. Every picture must be unique and unambiguous. Answers show Chinese under the picture (characters when listening, pinyin when reading).
@@ -49,7 +50,7 @@ I'm new to coding. Please:
 - **A** = talk, look, choose. On cards, A always presses the main (green) button, marked with a red A badge.
 - **B** = back or dismiss only (blue B badge on the button it presses). B never opens the menu.
 - **Menu** is its own button at the top (keyboard: M or Esc).
-- A/B badges appear only on a card's bottom action buttons and in the menu, never on things you tap directly (answers, word tiles, words in sentences).
+- A/B badges appear only on a card's bottom action buttons and in the menu, never on things you tap directly (answers, words in sentences).
 - Messages appear in a box at the bottom of the game screen; tasks live in the text box below the screen.
 
 ## Chinese accuracy

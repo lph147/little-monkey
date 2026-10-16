@@ -2,11 +2,11 @@
 
 Last updated 16 October 2026
 
-Little Monkey is a vocabulary-collecting adventure through *Journey to the West*: you catch Chinese words the way Pokémon players catch creatures, learn grammar from the story's characters, and earn progress by practising.
+Little Monkey is a vocabulary-collecting adventure through *Journey to the West*: you catch Chinese words the way Pokémon players catch creatures, hear them again and again in simple sentences from the story's characters, and earn progress by practising.
 
 ## Vision
 
-The game's job in its early areas is to build a large, well-remembered vocabulary and a first layer of grammar, wrapped in a story worth following. Reading the Jeff Pepper books is a longer-term benefit, not what the first areas are measured against.
+The game's job is to build a large, well-remembered vocabulary, with lots of repeated input of simple Chinese sentences, wrapped in a story worth following. It's a relaxed game: it never tests grammar. Sentence patterns are absorbed by hearing and reading them, not taught or tested. Reading the Jeff Pepper books is a longer-term benefit, not what the first areas are measured against.
 
 It is not a translation tool, a flashcard app with a skin, or a game where walking around counts as learning. Every system should either put a word in front of you, ask you to recognise it, or ask you to use it.
 
@@ -15,7 +15,7 @@ It is not a translation tool, a flashcard app with a skin, or a game where walki
 | Pillar | What it means | Where you see it |
 | --- | --- | --- |
 | Collect | Catch words like creatures and complete a collection | Word Scroll, animals in the grass, new items in each area |
-| Speak | Learn grammar from the story's characters, one pattern at a time | Conversations, sentence building, shops |
+| Hear | Meet your words again and again in simple sentences, from the story's characters | Conversations, filling gaps in sentences, shops |
 | Journey | Follow Sun Wukong's story from stone to pilgrim | Areas, quests, cutscenes |
 | Grow | Learning pays for progress | XP, peaches and coins, shops, abilities |
 
@@ -68,9 +68,11 @@ A spaced-repetition scheduler sits behind everything and decides which words com
 
 Review gaps follow 1, 3, 7 and 21 days. A wrong answer brings a word back sooner. Words from earlier areas keep appearing in later ones, so nothing is learned once and then dropped.
 
-## Grammar through characters
+## Sentences through characters
 
-Each main character introduces one or two sentence patterns, and you practise them with words from your own collection. Learn 我要 once, then use it with every food you've caught.
+Each area's characters use one or two simple sentence patterns again and again, with words from your own collection: hear 我要… once, then with every food you've caught. Patterns are never taught as grammar or tested. The table is a guide to which patterns each area's sentences use, so they repeat and grow gradually.
+
+**Sentence tasks fill a gap, never build a sentence.** Wherever a task involves a sentence (asking for something, buying, practising, some animal questions, the story's questions), you're given the whole sentence in Chinese, with pinyin, and in English, with one word missing, and you choose the missing word. The choices follow the word's level: its picture with the Chinese while the word is new, then Chinese and pinyin once you've recognised it. Choosing the word reads the whole sentence aloud. A wrong choice shows the right one and you carry on: it's practice, not a test.
 
 | Area | Character | Patterns | Example |
 | --- | --- | --- | --- |
@@ -83,13 +85,13 @@ Each main character introduces one or two sentence patterns, and you practise th
 | 7 Under the mountain | 唐僧 the monk | 因为…所以…, time words | 因为我很饿，所以我吃桃子。 |
 | 8 onward | 猪八戒 the pig, 沙僧 Sandy | Longer sentences and story telling |  |
 
-Patterns are practised by building sentences from word tiles, ordering in shops, and answering characters' questions. Area 1's phrases were checked by a native speaker on 16 October 2026; the rest of this table still needs a check before it goes into the game.
+Patterns are met in characters' lines, gap sentences, shops and replies. Area 1's phrases were checked by a native speaker on 16 October 2026; the rest of this table still needs a check before it goes into the game.
 
 **Replying.** Characters' lines invite a reply: you choose what to say from two or three phrases you've caught, each with pinyin, its sound and its English. In the first areas replies are input, not a test: the English is always shown (players who know some Chinese can turn it off in Settings), any choice is accepted, and the game says which phrase fits best. 你好 starts a conversation and 再见 ends it, 谢谢 and 不客气 follow gifts and help, and 对不起 and 没关系 follow mistakes. Because every conversation has them, the core phrases are heard and used dozens of times a session. The first time a phrase is needed it's taught on its own card. 我不要 is taught in Area 1 as a fixed phrase; 不 on its own is still taught in Area 3.
 
 ## Story and areas
 
-Each area is one chapter of Sun Wukong's story, with its own collection of new words, a grammar pattern, a new ability and a test to move on.
+Each area is one chapter of Sun Wukong's story, with its own collection of new words, a sentence pattern or two to hear, a new ability and a word test to move on.
 
 | Area | Story | New collections (samples) | New ability |
 | --- | --- | --- | --- |
@@ -118,7 +120,7 @@ XP and money come mainly from learning, so progress in the game and progress in 
 
 **Money.** Peaches are the money on Flower Fruit Mountain and in the Water Curtain Cave. From the human world onward, coins (钱) take over, which teaches the word naturally.
 
-**Shops.** Every area has a shopkeeper who sells that area's items. Labels are in Chinese only, so browsing is reading practice. Buying means building a sentence, such as 我要一个苹果. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in Area 2, buying uses Area 1's pattern: 我要 + thing.
+**Shops.** Every area has a shopkeeper who sells that area's items. Labels are in Chinese only, so browsing is reading practice. Buying means filling the gap in a sentence, such as 我要＿ (I want an apple), with the word for what you want. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in Area 2, buying uses Area 1's pattern: 我要 + thing.
 
 **Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 peaches. Buying it is on the area's checklist, so you need it before the cave door test, and every player can afford it by then. Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
 
@@ -146,7 +148,7 @@ Encounters are the game's battles: you win by answering, and every answer is a c
 | Listen | The word spoken | A picture, with its characters underneath | Sound to meaning |
 | Read | The characters | A picture, with its pinyin underneath | Characters to meaning and sound |
 | Hear and read | The word spoken | Characters only | Sound to characters |
-| Build | A request or a picture scene | Word tiles in order | Grammar |
+| Fill the gap | A sentence in Chinese and English, one word missing | The missing word: a picture with its Chinese while it's new, then Chinese and pinyin | Words in context |
 | Tones (later) | Two similar words spoken | Which one you heard | Tones |
 
 The question type follows the word's mastery level, so new words start easy and get harder as you know them better. A word needs two right answers in a row before its questions get harder, and each area says which kinds it asks: Flower Fruit Mountain asks only Listen and Read, so a beginner always has a picture to go on. Hear and read starts in a later area, for words you can already read. From Area 4, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters.
@@ -189,7 +191,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **Pinyin** stays over every word (the menu setting turns it off); it doesn't fade as you learn words.
 - **Peaches after the headband:** the 老板 also sells 苹果, bought with 我要苹果; eating one in an animal encounter takes away a wrong answer.
 - **Native speaker:** someone can check the game's Chinese, from a review sheet listing every line with pinyin and English.
-- **Grammar:** the order in the grammar table stays as it is. Patterns can be heard in sentences in earlier areas before they are taught.
+- **Grammar:** the order in the table of sentence patterns stays as it is. Patterns can be heard in earlier areas before an area uses them a lot.
 
 **Decided on 16 October 2026** (from the [second review](https://claude.ai/code/artifact/a02dc745-404f-4605-9b78-00d70691112e))
 
@@ -200,6 +202,8 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **The map** stays compact and gets livelier now; it splits into small places with the multi-map work. (Later the same day: it grew to the south, 24 × 22 tiles, to give the squirrel and goat their homes, and the 老板's market stall and the little monkey moved down there so the top isn't crowded.)
 - **Day and night:** a day ends with sleep in the cave and a summary.
 - **Native speaker check:** 再见, 不客气, 对不起, 没关系, 我不要, 早上好, 晚安, 我戴头带, 我穿衣服 and 这是山 are all fine as written.
+
+**Decided on 16 October 2026: a vocabulary game, never a grammar test.** Sentence tasks always give the whole sentence in Chinese and English with one word missing, and you choose the word; word tiles in order are gone. The choices follow the word's level (pictures while new, then Chinese and pinyin). This makes the game more relaxed while still giving lots of repeated input of simple sentence structures.
 
 **Decided after playtesting stage 2** (16 October 2026): Flower Fruit Mountain must suit someone who speaks no Chinese yet, so they can spend longer there getting to know its words.
 
@@ -247,5 +251,10 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [x] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version (the little monkey gives you the flower when it becomes your friend)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
 - [ ] Playtest Area 1 for a week
+- [ ] A vocabulary game, never a grammar test (decided 16 October 2026):
+  - [x] Record the decision here and in CLAUDE.md
+  - [ ] One fill-the-gap question: the sentence in Chinese and English, choices following the word's level
+  - [ ] Replace word tiles everywhere: requests, the shop, the practice post and animals' questions
+  - [ ] The story's questions show their English all the time
 - [ ] Let the engine run more than one area, so the cave door leads on, and split Flower Fruit Mountain into small connected places
 - [ ] Build Area 2, the Water Curtain Cave
