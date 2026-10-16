@@ -11,7 +11,7 @@ const MENU_TILES = [
 function openMenu(focusId){
   const done = areaChecklist().filter(([, d]) => d).length, total = areaChecklist().length;
   openCard(`<p class="label">Menu</p>
-    <div class="stats"><span>Level ${level()} · ${S.xp % XP_PER_LEVEL}/${XP_PER_LEVEL} XP</span><span>Area ${done}/${total}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>🍑 ${S.peaches}</span></div>
+    <div class="stats"><span>Level ${level()} · ${S.xp % XP_PER_LEVEL}/${XP_PER_LEVEL} XP</span><span>Area ${done}/${total}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>🐚 ${S.shells}</span></div>
     <div class="menu">
       <div class="tiles">${MENU_TILES.map(t => `<button class="mtile" data-m="${t.m}" data-label="${t.en}"><span class="micon" aria-hidden="true">${t.icon}</span><span class="mzh">${t.zh}</span><span class="mpy">${t.py}</span><span class="men">${t.en}</span></button>`).join('')}</div>
       <button class="btn" data-m="settings">⚙ Settings</button>
@@ -108,7 +108,7 @@ function openSettings(focusId){
         const r = readSaveFile(await file.text());
         if (r.error){ infoBox('💾', `<p>${esc(r.error)}</p>`).then(() => openSettings('save')); return; }
         const words = s => Object.values(s.w).filter(x => x && x.lv > 0).length;
-        const yes = await confirmBox('💾', `Load this save? It has ${words(r.save)} words and ${r.save.peaches} 🍑. It replaces the game you're playing now (${words(S)} words); a copy of that is kept in this browser.`, 'Load it', 'Cancel');
+        const yes = await confirmBox('💾', `Load this save? It has ${words(r.save)} words and ${r.save.shells} 🐚. It replaces the game you're playing now (${words(S)} words); a copy of that is kept in this browser.`, 'Load it', 'Cancel');
         if (!yes) return openSettings('save');
         useSave(r.save); closeCard(); buildMap(); placePlayer(); toTitle();
       };

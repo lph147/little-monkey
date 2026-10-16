@@ -8,7 +8,7 @@ const {loadGame} = require('./fake-browser');
 const DAY = 86400000, LATER = Date.now() + 5 * DAY;
 const DUE = ['石头', '路', '花'];                                   // due for review now
 const NOT_DUE = ['山', '草', '树', '桃子', '苹果', '河', '水'];    // not due for days
-const save = () => ({version: 5, started: true, peaches: 0, w: {
+const save = () => ({version: 5, started: true, shells: 0, w: {
   ...Object.fromEntries(DUE.map(w => [w, {lv: 2, due: 0, ok: 1}])),
   ...Object.fromEntries(NOT_DUE.map(w => [w, {lv: 3, due: LATER, ok: 2}])),
   '我': {lv: 4, due: 0, ok: 0}   // caught, but has no picture, so it can't be matched
@@ -24,13 +24,13 @@ test('training picks 8 words, every due one first, and never one without a pictu
   }
 });
 
-test('a due word matched first time earns a peach and comes back later; a missed one comes back now', () => {
+test('a due word matched first time earns a shell and comes back later; a missed one comes back now', () => {
   const game = loadGame({save: save()});
   const words = ['石头', '路', '花', '山'];   // three due, one not
   const peaches = game.run(`trained(${JSON.stringify(words)}, new Set(['路']))`);
   assert.equal(peaches, 2, 'one peach each for 石头 and 花; 路 was missed and 山 wasn\'t due');
   const s = get(game, 'S');
-  assert.equal(s.peaches, 2);
+  assert.equal(s.shells, 2);
   assert.ok(s.w['石头'].due > Date.now() + 2 * DAY, '石头 comes back in a few days');
   assert.equal(s.w['路'].ok, 0);
   assert.ok(s.w['路'].due <= Date.now(), '路 comes back straight away');
@@ -55,7 +55,7 @@ test('the practice post stands on the map, and needs 4 words with pictures', () 
 });
 
 // Words without pictures (我 要) are practised by filling the gap in a sentence you know, such as 我＿吃桃子.
-const gapSave = () => ({version: 9, started: true, peaches: 0, w: {
+const gapSave = () => ({version: 9, started: true, shells: 0, w: {
   ...save().w,
   '我': {lv: 1, due: LATER, ok: 1},      // not due
   '要': {lv: 1, due: 0, ok: 0},          // due now
@@ -72,15 +72,15 @@ test('the practice sentence is one you know, with a word without a picture missi
   assert.equal(get(loadGame({save: save()}), 'practiceSentence()'), null, 'nothing to practise until you know a whole sentence');
 });
 
-test('filling the gap right moves a word without a picture up, and earns a peach if it was due', async () => {
+test('filling the gap right moves a word without a picture up, and earns a shell if it was due', async () => {
   const game = loadGame({save: gapSave()});
   game.run('gapQ = async () => true');   // chose right
   const round = async () => JSON.parse(await game.run("gapRound({t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '要'}, '').then(r => JSON.stringify(r))"));
-  assert.deepEqual(await round(), {right: true, peaches: 1}, 'a peach for 要, which was due');
+  assert.deepEqual(await round(), {right: true, shells: 1}, 'a peach for 要, which was due');
   game.run("answer('要', true, 'fill')");   // what gapQ does for a right choice
-  assert.deepEqual(await round(), {right: true, peaches: 0}, 'straight away again earns nothing: it isn\'t due any more');
+  assert.deepEqual(await round(), {right: true, shells: 0}, 'straight away again earns nothing: it isn\'t due any more');
   game.run('gapQ = async () => false');
-  assert.deepEqual(await round(), {right: false, peaches: 0});
+  assert.deepEqual(await round(), {right: false, shells: 0});
 });
 
 test('a gap question: Chinese and English, pictures while the word is new, Chinese and pinyin once recognised', async () => {

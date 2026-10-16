@@ -45,7 +45,7 @@ const COUNTS = {   // what a counter in the content can count
   animalsFound: () => metCount(),
   animals: () => ANIMALS.length,
   animalsLeft: () => ANIMALS.length - metCount(),
-  peaches: () => S.peaches,
+  shells: () => S.shells,
   picked: c => (here().picked[c.request] || []).length
 };
 function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count](c) - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
@@ -125,10 +125,10 @@ async function request(r, face){   // a character asking you to bring something 
     const sentence = toks(r.sentence);
     await gapQ({who:face, t:sentence, en:r.sentenceEn, gap:r.gap || r.wants});
     sentence.filter(w => lvl(w) >= 1).forEach(useWord);
-    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); save(); SFX.fanfare();
+    p[r.id] = 'done'; delete p.holding[r.id]; S.shells += r.reward; gainXP(XP.task); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
-    toast(`+${r.reward} 🍑. Task complete!`);
+    toast(`+${r.reward} 🐚. Task complete!`);
     await runEvents();
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
     const verb = r.verb && lvl(r.verb) === 0 ? r.verb : null;   // a new verb to teach, if there is one
@@ -144,10 +144,10 @@ async function shop(face){   // the area's shop: what it sells, and buying it by
   if (!items.length){ toast(fill(sh.soldOut)); return; }
   const food = sh.items.filter(i => i.eat && S.bag[i.item]).map(i => `${S.bag[i.item]} ${esc(wz(i.item))}`);
   const i = await new Promise(res => {   // a card for each thing for sale: its picture, Chinese, pinyin, English and price
-    openCard(`${face}<p class="prompt">You have 🍑 ${S.peaches}${food.length ? ' and ' + food.join(', ') : ''}.</p>
-      <div class="menu shopgrid">${items.map((it, n) => `<button class="shopitem${S.peaches < it.price ? ' dear' : ''}" data-n="${n}" data-label="Choose">
+    openCard(`${face}<p class="prompt">You have 🐚 ${S.shells}${food.length ? ' and ' + food.join(', ') : ''}.</p>
+      <div class="menu shopgrid">${items.map((it, n) => `<button class="shopitem${S.shells < it.price ? ' dear' : ''}" data-n="${n}" data-label="Choose">
         <span class="spic" aria-hidden="true">${picHTML(it.item)}</span><span class="szh">${it.item}</span><span class="spy">${WORDS[it.item].py}</span>
-        <span class="sen">${esc(WORDS[it.item].en)}</span><span class="sprice">🍑 ${it.price}</span></button>`).join('')}</div>
+        <span class="sen">${esc(WORDS[it.item].en)}</span><span class="sprice">🐚 ${it.price}</span></button>`).join('')}</div>
       <div class="actions"><button class="btn" data-a="no" data-b data-label="${sh.no || 'Not now'}">${sh.no ? sh.no + (S.replyEn ? ' · ' + esc(WORDS[sh.no].en.split(',')[0]) : '') : 'Not now'}</button></div>`);
     const first = sheet.querySelector('.shopitem'); if (first) first.focus();
     on('[data-a=no]', () => { closeCard(); res(null); });
@@ -160,11 +160,11 @@ async function buy(i, face){   // buying something from the shop by asking for i
   const sh = AREA.shop;
   if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note)});
   if (i.eat && (S.bag[i.item] || 0) >= i.carry){ await infoBox(face, `<p>You can carry ${i.carry} ${esc(wz(i.item))}, and your bag is full. Eat one in an animal encounter first.</p>`); return false; }
-  if (S.peaches < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🍑, and you have ${S.peaches}. ${esc(fill(sh.earnMore))}</p>`); return false; }
+  if (S.shells < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🐚, and you have ${S.shells}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const sentence = toks(i.sentence);
   await gapQ({who:face, t:sentence, en:i.sentenceEn, gap:i.gap || i.item});
   sentence.filter(w => lvl(w) >= 1).forEach(useWord);
-  S.peaches -= i.price;
+  S.shells -= i.price;
   if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag (no XP: you can buy it again and again)
   else { here().bought.push(i.item); gainXP(XP.task); }
   if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); S.wardrobe.wearing.push(i.item); }   // you put it on

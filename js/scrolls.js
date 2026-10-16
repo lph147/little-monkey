@@ -37,10 +37,10 @@ function storyScroll(){
       const qs = storyQuestions();
       for (const q of qs) if (await gapQ({label:'Story question', t:q.t, en:q.en, gap:q.answer, options:q.options})) right++;
       const firstTime = !here().story, end = AREA.storyEnd;
-      here().story = true; if (firstTime){ S.peaches += end.reward; gainXP(XP.story); } save(); buildMap();
+      here().story = true; if (firstTime){ S.shells += end.reward; gainXP(XP.story); } save(); buildMap();
       SFX.fanfare();
       openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">${end.title}</p>
-        <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${firstTime ? ` +${end.reward} 🍑` : ''}</p>
+        <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${firstTime ? ` +${end.reward} 🐚` : ''}</p>
         ${end.text.map(p => `<p>${p}</p>`).join('\n        ')}
         <div class="actions"><button class="btn primary" data-a="done">Keep playing</button></div>`);
       on('[data-a=done]', () => { closeCard(); if (firstTime && end.rumble){ SFX.rumble(); shakeT = performance.now(); } res(); });
@@ -142,27 +142,27 @@ function practiceSentence(){
   const due = all.filter(b => isDue(b.gap));
   return shuffle(due.length ? due : all)[0] || null;
 }
-// Fill the gap in a sentence (from practiceSentence). A right choice earns a peach if the word was due.
-// Gives {right, peaches}.
+// Fill the gap in a sentence (from practiceSentence). A right choice earns a shell if the word was due.
+// Gives {right, shells}.
 async function gapRound(b, who){
   const due = isDue(b.gap), right = await gapQ({who, t:b.t, en:b.en, gap:b.gap});
-  const peaches = right && due ? 1 : 0;
-  S.peaches += peaches; save();
-  return {right, peaches};
+  const shells = right && due ? 1 : 0;
+  S.shells += shells; save();
+  return {right, shells};
 }
 // After a session: a word matched first time comes back later, a missed one straight away (the gold
-// squares stay the same). Each due word matched first time earns a peach. Gives how many peaches.
+// squares stay the same). Each due word matched first time earns a shell. Gives how many shells.
 function trained(words, missed){
-  let peaches = 0;
+  let shells = 0;
   for (const w of words){
     const r = rec(w), ok = !missed.has(w);
-    if (ok){ gainXP(isDue(w) ? XP.rightDue : XP.right); if (isDue(w)) peaches++; }
+    if (ok){ gainXP(isDue(w) ? XP.rightDue : XP.right); if (isDue(w)) shells++; }
     if (ok){ r.ok = (r.ok || 0) + 1; r.due = Date.now() + INTERVALS[Math.min(r.ok - 1, 3)] * DAY; }
     else { r.ok = 0; r.due = Date.now(); }
     addToday(w);
   }
-  S.peaches += peaches; save();
-  return peaches;
+  S.shells += shells; save();
+  return shells;
 }
 async function trainingGround(){
   const who = `<img class="portrait" alt="" src="${SPR.post.toDataURL()}">`, have = trainable().length;
@@ -170,16 +170,16 @@ async function trainingGround(){
   const words = trainingWords(), sentence = practiceSentence();
   const due = [...words, ...(sentence ? [sentence.gap] : [])].filter(isDue).length;
   const ask = 'Practise matching words to their pictures' + (sentence ? `, then fill the gap in a sentence with ${wz(sentence.gap)}. ` : '. ') + (due
-    ? `${due} of them ${due === 1 ? 'is' : 'are'} due for review: each one you get right first time earns a 🍑.`
-    : 'None of your words are due for review right now, so there are no 🍑 this time.');
+    ? `${due} of them ${due === 1 ? 'is' : 'are'} due for review: each one you get right first time earns a 🐚.`
+    : 'None of your words are due for review right now, so there are no 🐚 shells this time.');
   if (!await confirmBox(who, ask, 'Start', 'Not now')) return;
   const missed = await matchWords(words, 'Training', 'Stop');
   if (!missed) return;
-  const right = words.length - missed.size, filled = sentence ? await gapRound(sentence, who) : null, peaches = trained(words, missed) + (filled ? filled.peaches : 0);
+  const right = words.length - missed.size, filled = sentence ? await gapRound(sentence, who) : null, shells = trained(words, missed) + (filled ? filled.shells : 0);
   SFX.fanfare();
   await new Promise(res => {
     openCard(`<div class="who" aria-hidden="true">${who}</div><p class="label">Training done</p>
-      <p>You matched <b>${right} of ${words.length}</b> words right first time.${filled ? (filled.right ? ' You filled the gap right.' : ' You filled the gap.') : ''}${peaches ? ` +${peaches} 🍑` : ''}</p>
+      <p>You matched <b>${right} of ${words.length}</b> words right first time.${filled ? (filled.right ? ' You filled the gap right.' : ' You filled the gap.') : ''}${shells ? ` +${shells} 🐚` : ''}</p>
       ${missedHTML(missed)}
       <div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
     bindMissed();
@@ -190,7 +190,7 @@ async function nextArea(){
   here().done = true; save(); SFX.fanfare(); fadeT = performance.now();
   await sleep(700);
   await infoBox('⛰️', `<p class="label">${AREA.name.en} complete!</p>
-    <div class="stats"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${S.friends.length} friends</span><span>🍑 ${S.peaches}</span></div>
+    <div class="stats"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${S.friends.length} friends</span><span>🐚 ${S.shells}</span></div>
     <p>${AREA.exit.done}</p>
     <p class="small">${AREA.exit.notBuilt}</p>`);
   const back = AREA.exit.returnTo;   // until the next area is built, you're put back here

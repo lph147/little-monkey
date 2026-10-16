@@ -35,7 +35,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.
 - [ ] If words are due for review, the title screen says how many (after "Welcome back"). If your device has no Chinese voice, a red note under it explains how to add one.
-- [ ] Continue puts you back where you left off, with the same level, peaches and word count in the header.
+- [ ] Continue puts you back where you left off, with the same level, shells (a pixel shell) and word count in the header.
 - [ ] The header shows your level (Lv 1 to start). The menu shows it with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] On a phone held upright, the game screen is taller than it is wide (it shows up to 14 rows of the map instead of 10), and while you play the whole console fits without scrolling. On a computer it shows 10 rows.
@@ -78,22 +78,22 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Give the apple to the hungry monkey. It says 这是苹果。我要吃桃子！ and gives the apple back.
 - [ ] The thirsty monkey stands near the bottom of the map: when it talks, you both still show above the speech box.
 - [ ] Pick from the tree above or below the apple tree to learn 桃子 (peach). Take it back. The button says Give it.
-- [ ] A new-word card for 要 (want) appears. Then "Fill the gap": 我要吃＿。 with "I want to eat a peach." underneath, and 3 choices. While 桃子 is new they're pictures with the Chinese; once you've recognised it, Chinese and pinyin only. Choosing fills the gap and reads the sentence aloud; a wrong choice shows the right one, and either way the task completes with +3 🍑. There are no word tiles to put in order anywhere.
+- [ ] A new-word card for 要 (want) appears. Then "Fill the gap": 我要吃＿。 with "I want to eat a peach." underneath, and 3 choices. While 桃子 is new they're pictures with the Chinese; once you've recognised it, Chinese and pinyin only. Choosing fills the gap and reads the sentence aloud; a wrong choice shows the right one, and either way the task completes with +3 🐚. There are no word tiles to put in order anywhere.
 
 **The big monkey**
-- [ ] The big monkey (大猴子) stands in the middle meadow, between the two patches of tall grass on the left, with a ! once you've said hello to the old monkey. It says 我要花！ and wants 3 flowers, and will give you peaches for them.
+- [ ] The big monkey (大猴子) stands in the middle meadow, between the two patches of tall grass on the left, with a ! once you've said hello to the old monkey. It says 我要花！ and wants 3 flowers, and will give you shells for them.
 - [ ] Face a patch of flowers and press A (it says Pick): "You picked a 花 (flower) (1/3)". The same patch again says you've picked it already. The task box counts up to 3.
-- [ ] Take them back (it shows a ?): 你有花吗？, then fill the gap in 我要＿。 (I want flowers.), +3 🍑, and reply 不客气 when it says thank you.
+- [ ] Take them back (it shows a ?): 你有花吗？, then fill the gap in 我要＿。 (I want flowers.), +3 🐚, and reply 不客气 when it says thank you.
 
 **The thirsty monkey**
 - [ ] The thirsty monkey (bottom left) teaches 喝 (drink). A task asks you to collect water.
 - [ ] Face the pond (middle of the meadow, where the yellow arrow points) and press A to learn 水 (water).
-- [ ] Take it back. A new-word card for 我 (I) appears, then fill the gap in 我要喝＿。 (I want to drink water.). +3 🍑.
+- [ ] Take it back. A new-word card for 我 (I) appears, then fill the gap in 我要喝＿。 (I want to drink water.). +3 🐚.
 - [ ] With both monkeys helped, the screen shakes and a message says the rocks north of the meadow have rolled away.
 
 **Friends and animals**
 - [ ] The little monkey (in the south meadow, on the path near the bottom right, below the 老板's stall) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.
-- [ ] In the word game, the questions use only words you've learned (pictures and wrong answers too). 2 or more right makes a friend; you get a 🍑 per right answer.
+- [ ] In the word game, the questions use only words you've learned (pictures and wrong answers too). 2 or more right makes a friend; you get a 🐚 per right answer.
 - [ ] Once the old monkey has told you about animals, a patch of tall grass rustles now and then: an animal is hiding there. Step onto it and the animal jumps out with a ! over your head. A few steps after meeting one, another hides.
 - [ ] South of the meadow (down the path through the gap in the trees), the squirrel sits up a big tree and the goat stands on the cliffs. Face one: A says Meet.
 - [ ] Little birds land on the grass near you now and then and hop about for most of a minute. Walk up and face one: A says Look and shows 鸟 (bird), then it flies off. Stepping right onto one also makes it fly off.
@@ -107,21 +107,21 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Before you have 4 words with pictures, it says to come back later (with a count).
 - [ ] After that, it asks if you want to practise and says how many words are due for review. Start matches about 8 words to their pictures in 2 rounds. Stop ends it without changing anything.
 - [ ] Once you know 我 (I) and 要 (want), the practice ends with a sentence you know with one of them missing, such as 我＿吃桃子。 with its English, and Chinese and pinyin to choose from. There is no listening round where you pick characters by sound.
-- [ ] At the end it says how many you matched right first time and whether you built the sentence right first time, and gives 1 🍑 for each due word you got right first time.
+- [ ] At the end it says how many you matched right first time and whether you built the sentence right first time, and gives 1 🐚 for each due word you got right first time.
 - [ ] 瀑布 (waterfall), 老板 (shop owner) and 头带 (headband) have pixel pictures: on their new-word cards, in the Word Scroll, at the practice post and in the cave door test.
 - [ ] When words are due for review, the post has a ! over it.
-- [ ] Words you got right first time aren't due again for a day or more, so training again straight away gives no peaches for them (only for words you missed, or due words that didn't fit in the first go).
+- [ ] Words you got right first time aren't due again for a day or more, so training again straight away gives no shells for them (only for words you missed, or due words that didn't fit in the first go).
 
 **The shop**
 - [ ] In the south meadow (down the path through the trees), beside a striped market stall, stands the 老板 (shop owner), with a ! once you've said hello to the old monkey. Talking says 你好！我是老板。 and teaches 老板 on a new-word card.
-- [ ] Talk again: 你要什么？, then the stall shows a card for each thing for sale: its pixel picture, Chinese, pinyin, English and price (the price is red if you can't afford it yet), with your peaches above. Choosing the 头带 teaches it (headband). 我不要 · no thanks closes it.
-- [ ] With fewer than 10 🍑, it says how many you have and how to earn more. The task box shows "Buy the 头带 (headband) from the 老板 (shop owner)" with your peaches out of 10, and the 老板 shows a ? once you have 10.
-- [ ] With 10 🍑: fill the gap in 我要＿。 (I want the headband.). Your peaches go down by 10, the 老板 says 谢谢你！, and your monkey wears a red headband on the map from then on (a new monkey starts without one).
+- [ ] Talk again: 你要什么？, then the stall shows a card for each thing for sale: its pixel picture, Chinese, pinyin, English and price (the price is red if you can't afford it yet), with your shells above. Choosing the 头带 teaches it (headband). 我不要 · no thanks closes it.
+- [ ] With fewer than 10 🐚, it says how many you have and how to earn more. The task box shows "Buy the 头带 (headband) from the 老板 (shop owner)" with your shells out of 10, and the 老板 shows a ? once you have 10.
+- [ ] With 10 🐚: fill the gap in 我要＿。 (I want the headband.). Your shells go down by 10, the 老板 says 谢谢你！, and your monkey wears a red headband on the map from then on (a new monkey starts without one).
 
 **The waterfall**
 - [ ] The rocks at the top of the right-hand path have gone. Walk up through the gap to the top right, stand just left of the waterfall, face it and press A.
 - [ ] A card teaches 瀑布 (waterfall), with its picture, then the Story Scroll opens: 8 short sentences about your first day (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
-- [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). The sentence's English, with the gap, is shown underneath. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🍑 and a rumble.
+- [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). The sentence's English, with the gap, is shown underneath. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🐚 and a rumble.
 
 **The wardrobe**
 - [ ] Buying the 头带 puts it on. It's the wardrobe's only item for now.
@@ -143,10 +143,10 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 ## Saved games
 
-- [ ] On your phone, with your real save: Continue works, and your words, peaches, friends and tasks are all as they were.
+- [ ] On your phone, with your real save: Continue works, and your words, shells, friends and tasks are all as they were. (After the update from peaches to shells, you have the same number of shells as you had peaches.)
 - [ ] After an update that changes the save format: the same, plus Menu, 任务 Tasks shows the same ticks as before.
 - [ ] Menu, Settings, Save file, Download saves a file called little-monkey-save- and the date. On a phone it goes to your downloads (Files on an iPhone).
-- [ ] In a private or incognito window: Menu, Settings, Save file, Load a save file, and pick that file. It shows how many words and peaches the save has; Load it puts you on the title screen, and Continue carries on from that save.
+- [ ] In a private or incognito window: Menu, Settings, Save file, Load a save file, and pick that file. It shows how many words and shells the save has; Load it puts you on the title screen, and Continue carries on from that save.
 - [ ] Loading something that isn't a save (any other file) says so and changes nothing.
 
 When the save format changes, the game keeps a copy of your old save in the browser before converting it, so it can be recovered if anything goes wrong.

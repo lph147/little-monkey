@@ -119,10 +119,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(16, 9, 'right', 'picking a second flower');
   await pressAt(2, 10, 'left', 'picking a third flower');
   assert.equal(area().holding.flowers, '花', 'you should be holding 3 flowers');
-  const peaches = get('S.peaches');
+  const peaches = get('S.shells');
   await pressAt(4, 10, 'right', 'giving the big monkey the flowers');
   assert.equal(area().flowers, 'done', 'the big monkey should take the flowers');
-  assert.ok(get('S.peaches') > peaches, 'and give you peaches for them');
+  assert.ok(get('S.shells') > peaches, 'and give you peaches for them');
 
   // The shop owner, and the animals in the tall grass
   await pressAt(11, 15, 'down', 'meeting the shop owner');

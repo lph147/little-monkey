@@ -69,9 +69,10 @@ const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
 
-// The peach money symbol: the 桃子 sprite, small, wherever the text says 🍑.
-let peachImg = null;
-const peachy = html => String(html).replace(/🍑/g, () => peachImg || (peachImg = SPRITES['桃子'] ? `<img class="pch" alt="peaches" src="${sprite(SPRITES['桃子'].rows, SPRITES['桃子'].palette).toDataURL()}">` : '🍑'));
+// The money symbol: a shell (the troop trades in shells from the shore), small, wherever the text says 🐚.
+const SHELL = ["................","......oooo......","....oowrrwoo....","...owrwrrwrwo...","..owrwwrrwwrwo..",".owrwwwrrwwwrwo.",".orwwwwrrwwwwro.",".owrwwwrrwwwrwo.","..owrwwrrwwrwo..","...owrwrrwrwo...","....owrrrrwo....",".....owrrwo.....","....ooowwooo....","....owwoowwo....","....oooooooo....","................"];   // a scallop shell
+let shellImg = null;
+const money = html => String(html).replace(/🐚/g, () => shellImg || (shellImg = `<img class="money" alt="shells" src="${sprite(SHELL, {o:'#8A5A3A', w:'#F7E7CF', r:'#D9A77C'}).toDataURL()}">`));
 // A word's picture: its pixel sprite from content/sprites.js, or its emoji until it has one.
 const picCache = {};
 function picHTML(w){

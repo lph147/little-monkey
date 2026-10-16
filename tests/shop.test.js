@@ -33,13 +33,13 @@ test('the 老板 shows ! with something to teach, and ? once you can afford the 
   assert.equal(bubble({areas: {1: area({elder: 0})}}), '', 'not before you have met the old monkey');
   assert.equal(bubble({areas: {1: area()}}), '!', '老板 to teach');
   assert.equal(bubble({areas: {1: area()}, w: {'老板': seen()}}), '!', '头带 to teach');
-  assert.equal(bubble({areas: {1: area()}, w: {'老板': seen(), '头带': seen()}, peaches: 4}), '', 'not enough peaches yet');
-  assert.equal(bubble({areas: {1: area()}, w: {'老板': seen(), '头带': seen()}, peaches: 10}), '?', 'you can afford it');
-  assert.equal(bubble({areas: {1: area({bought: ['头带']})}, w: {'老板': seen(), '头带': seen()}, peaches: 10}), '', 'already bought');
+  assert.equal(bubble({areas: {1: area()}, w: {'老板': seen(), '头带': seen()}, shells: 4}), '', 'not enough peaches yet');
+  assert.equal(bubble({areas: {1: area()}, w: {'老板': seen(), '头带': seen()}, shells: 10}), '?', 'you can afford it');
+  assert.equal(bubble({areas: {1: area({bought: ['头带']})}, w: {'老板': seen(), '头带': seen()}, shells: 10}), '', 'already bought');
 });
 
 test('buying the headband puts it on, and it stays in your wardrobe', async () => {
-  const game = play({areas: {1: area()}, peaches: 10, w: {'头带': {lv: 1, due: 0, ok: 0}}});
+  const game = play({areas: {1: area()}, shells: 10, w: {'头带': {lv: 1, due: 0, ok: 0}}});
   assert.equal(game.run("wearing('头带')"), false);
   assert.equal(await buyIt(game, 'AREA.shop.items.find(i => i.item === "头带")'), true);
   assert.equal(game.run("wearing('头带')"), true);
@@ -73,11 +73,11 @@ test('the 老板 sells 苹果 as food, and keeps selling it after the headband',
   assert.deepEqual(get(game, 'forSale().map(i => i.item)'), ['苹果']);
 });
 
-test('buying a 苹果 costs 2 peaches, puts it in your bag, and earns no XP', async () => {
-  const game = play({areas: {1: area()}, peaches: 5, xp: 30, w: {'苹果': {lv: 1, due: 0, ok: 0}}});
+test('buying a 苹果 costs 2 shells, puts it in your bag, and earns no XP', async () => {
+  const game = play({areas: {1: area()}, shells: 5, xp: 30, w: {'苹果': {lv: 1, due: 0, ok: 0}}});
   assert.equal(await buyIt(game, APPLE()), true);
   const s = get(game, 'S');
-  assert.equal(s.peaches, 3);
+  assert.equal(s.shells, 3);
   assert.deepEqual(s.bag, {'苹果': 1});
   assert.equal(s.xp, 30);
   assert.deepEqual(s.areas[1].bought, [], 'food isn\'t "bought" for good, so it stays for sale');
@@ -85,11 +85,11 @@ test('buying a 苹果 costs 2 peaches, puts it in your bag, and earns no XP', as
   assert.equal(s.w['苹果'].lv, 1, 'it reaches Used once you can read it too');
 });
 
-test('you can carry 3 苹果, and need 2 peaches for each', async () => {
-  const full = play({areas: {1: area()}, peaches: 9, bag: {'苹果': 3}});
+test('you can carry 3 苹果, and need 2 shells for each', async () => {
+  const full = play({areas: {1: area()}, shells: 9, bag: {'苹果': 3}});
   assert.equal(await buyIt(full, APPLE()), false);
-  assert.equal(get(full, 'S').peaches, 9);
-  const poor = play({areas: {1: area()}, peaches: 1});
+  assert.equal(get(full, 'S').shells, 9);
+  const poor = play({areas: {1: area()}, shells: 1});
   assert.equal(await buyIt(poor, APPLE()), false);
   assert.deepEqual(get(poor, 'S').bag, {});
 });
@@ -105,7 +105,7 @@ test('eating takes away one wrong answer, never the right one', () => {
 });
 
 test('a version 7 save is converted with an empty bag', () => {
-  const game = loadGame({save: {version: 7, started: true, peaches: 4, areas: {1: area({bought: ['头带']})}}});
+  const game = loadGame({save: {version: 7, started: true, shells: 4, areas: {1: area({bought: ['头带']})}}});
   const s = get(game, 'S');
   assert.equal(s.version, VERSION);
   assert.deepEqual(s.bag, {});
@@ -114,7 +114,7 @@ test('a version 7 save is converted with an empty bag', () => {
 });
 
 test('the shop shows a card for each thing: its picture, Chinese, pinyin, English and price', async () => {
-  const game = loadGame({dom: true, save: {version: VERSION, started: true, peaches: 5, areas: {1: area()}, w: {'老板': {lv: 1, due: 0, ok: 0}}}});
+  const game = loadGame({dom: true, save: {version: VERSION, started: true, shells: 5, areas: {1: area()}, w: {'老板': {lv: 1, due: 0, ok: 0}}}});
   game.run("mode = 'play'; showDialog = async () => {}; shop(speaker('boss'))");
   await new Promise(r => setImmediate(r));
   const sheet = game.el('#sheet'), cards = sheet.querySelectorAll('.shopitem');
@@ -123,12 +123,12 @@ test('the shop shows a card for each thing: its picture, Chinese, pinyin, Englis
   assert.ok(apple.querySelector('.spic .pix'), 'its pixel picture');
   assert.equal(apple.querySelector('.spy').textContent, 'píngguǒ');
   assert.equal(apple.querySelector('.sen').textContent, 'apple', 'and its English');
-  assert.match(apple.querySelector('.sprice').innerHTML, /<img class="pch"[^>]*> 2/, 'its price, with the pixel peach');
-  assert.ok(!sheet.innerHTML.includes('🍑'), 'no peach emoji anywhere on the card');
+  assert.match(apple.querySelector('.sprice').innerHTML, /<img class="money"[^>]*> 2/, 'its price, with the pixel shell');
+  assert.ok(!sheet.innerHTML.includes('🐚'), 'no emoji anywhere on the card');
 });
 
-test('the peach money symbol is the pixel peach, in cards and messages', () => {
+test('the money symbol is a pixel shell, in cards and messages', () => {
   const game = loadGame({dom: true});
-  game.run("openCard('<p>+3 🍑</p>')");
-  assert.match(game.el('#sheet').innerHTML, /<p>\+3 <img class="pch"/);
+  game.run("openCard('<p>+3 🐚</p>')");
+  assert.match(game.el('#sheet').innerHTML, /<p>\+3 <img class="money"/);
 });

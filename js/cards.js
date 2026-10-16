@@ -29,7 +29,7 @@ const pips = w => `<span class="pips" aria-label="Level ${lvl(w)} of 4">${[1,2,3
 /* ================= MODAL ================= */
 const modal = $('#modal'), sheet = $('#sheet');
 function openCard(html){
-  sheet.innerHTML = peachy(html); modal.hidden = false; sheet.scrollTop = 0;
+  sheet.innerHTML = money(html); modal.hidden = false; sheet.scrollTop = 0;
   if (markGloss.length){ markGloss.forEach(t => S.gloss[t] = 1); markGloss = []; save(); }
   held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
   // A always starts on the card's main button. If a card has none (a quiz waiting for an answer), A does nothing until you tap.

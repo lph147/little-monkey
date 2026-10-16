@@ -27,7 +27,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   progress: {elder:0, gate:false, story:false},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
-  // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, peaches, or picked
+  // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
   // (how many you've picked for a request, given as request).
   // minus takes some away; max is the most it can be.
   counters: {
@@ -35,7 +35,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     animals: {count:'animals'},
     found: {count:'animalsFound'},
     animalsLeft: {count:'animalsLeft'},
-    peaches: {count:'peaches', max:10},   // your peaches, up to the headband's price
+    shells: {count:'shells', max:10},   // your shells, up to the headband's price
     flowersPicked: {count:'picked', request:'flowers'}   // flowers picked for the big monkey
   },
 
@@ -60,7 +60,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to the big monkey', arrow:'big'},
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
-    {id:'shop2', if:{knows:'头带', bought:{'头带':false}}, text:'Buy the {头带} from the {老板} ({peaches}/10 🍑)', arrow:'boss'},
+    {id:'shop2', if:{knows:'头带', bought:{'头带':false}}, text:'Buy the {头带} from the {老板} ({shells}/10 🐚)', arrow:'boss'},
     {id:'door', if:{ready:true, done:false}, text:'Pass the word test at the {洞} door', arrow:[3, 3]}
   ],
 
@@ -90,7 +90,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   bubbles: {
     elder: [{if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
-      {if:{bought:{'头带':false}, peaches:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
+      {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
@@ -110,7 +110,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   firstTeach   new words to teach before the sentence, one at a time, each with a note (if any)
   //   sentence     the sentence you complete to give it to them, with its English (sentenceEn): it's shown
   //                with one word missing (gap; what they want if not given), and you choose the word
-  //   reward       peaches you get; thanks is their line afterwards, and thanksReply the phrase that fits as your reply
+  //   reward       shells you get; thanks is their line afterwards, and thanksReply the phrase that fits as your reply
   requests: {
     hungry: {from:'hungry', wants:'桃子', verb:'吃', ask:'hungry', asked:'The hungry monkey wants something to eat. Check your tasks.',
       wrong:'notThis', wrongReply:'对不起', wrongAnswer:'noProblem', wrongMessage:'The monkey gives the fruit back. Listen to what it wants, then try another tree.',
@@ -119,14 +119,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
       sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
-    flowers: {from:'big', wants:'花', ask:'wantFlowers', asked:'The big monkey wants 3 {花}, and will give you peaches for them. Check your tasks.',
+    flowers: {from:'big', wants:'花', ask:'wantFlowers', asked:'The big monkey wants 3 {花}, and will give you shells for them. Check your tasks.',
       offer:'haveFlowers', sentence:'我 要 花', sentenceEn:'I want flowers.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
   // the phrase that fits as your reply), the phrase you say when you don't want anything (no), what they say
-  // if you can't afford something yet (earnMore, after how many peaches you need), and when you've
-  // bought everything (soldOut). Each item: its word and price in peaches, the sentence you complete
+  // if you can't afford something yet (earnMore, after how many shells you need), and when you've
+  // bought everything (soldOut). Each item: its word and price in shells, the sentence you complete
   // to ask for it (sentence, with sentenceEn; the item is the missing word), a line on its new-word card (note), a message
   // after you buy it (bought), and wear: true if your monkey wears it from then on (bought once), or
   // eat: true for food you can buy again and eat in an animal encounter to take away a wrong answer,
@@ -454,7 +454,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {zh:'河 里 有 鱼 。', en:'There are … in the river.', options:['鱼', '树', '山羊', '花'], answer:'鱼'}
   ],
 
-  // The card after the story questions. reward: peaches, the first time only; rumble: the ground
+  // The card after the story questions. reward: shells, the first time only; rumble: the ground
   // shakes as you close it (first time only). Text may use <i>…</i> for a book title.
   storyEnd: {
     title: 'Your first story',

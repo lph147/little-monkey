@@ -17,13 +17,13 @@ It is not a translation tool, a flashcard app with a skin, or a game where walki
 | Collect | Catch words like creatures and complete a collection | Word Scroll, animals in the grass, new items in each area |
 | Hear | Meet your words again and again in simple sentences, from the story's characters | Conversations, filling gaps in sentences, shops |
 | Journey | Follow Sun Wukong's story from stone to pilgrim | Areas, quests, cutscenes |
-| Grow | Learning pays for progress | XP, peaches and coins, shops, abilities |
+| Grow | Learning pays for progress | XP, shells and coins, shops, abilities |
 
 ## Core loop
 
 Every area runs the same loop: you meet new words in the world, catch them, use them, train them, and the rewards unlock the next part of the journey.
 
-Explore (a new area of the story) → Meet (grass, people, shops) → Catch (a new word card) → Use (quests, shops, sentences) → Train (the rolling word test) → Grow (XP, peaches, abilities) → back to Explore. The review scheduler decides which words come back at each step.
+Explore (a new area of the story) → Meet (grass, people, shops) → Catch (a new word card) → Use (quests, shops, sentences) → Train (the rolling word test) → Grow (XP, shells, abilities) → back to Explore. The review scheduler decides which words come back at each step.
 
 Catching is the heart of it, and the review scheduler feeds old words back into every other step.
 
@@ -118,11 +118,11 @@ XP and money come mainly from learning, so progress in the game and progress in 
 
 **XP and levels.** You earn XP for catching words, answering correctly, completing quests and passing tests. Levels unlock things like extra bag space or new training challenges. Walking around earns nothing on its own. For now a level is just shown in the header; rewards for levels come once there is more to unlock.
 
-**Money.** Peaches are the money on Flower Fruit Mountain and in the Water Curtain Cave. From the human world onward, coins (钱) take over, which teaches the word naturally.
+**Money.** Shells are the money on Flower Fruit Mountain and in the Water Curtain Cave: the troop trades cowrie shells from the shore, as China did before coins (which is why 贝 is inside money words like 买, 卖 and 贵). From the human world onward, coins (钱) take over, which teaches the word naturally. (Peaches were the money at first, but you could pick them from the trees, so they became shells on 17 October 2026. Peaches are just food. 贝壳 isn't a word to catch for now.)
 
 **Shops.** Every area has a shopkeeper who sells that area's items. Each item has a card with its picture, its Chinese with pinyin, its English and its price, so it's always clear what's for sale (decided 16 October 2026, replacing Chinese-only labels). Buying means filling the gap in a sentence, such as 我要＿ (I want an apple), with the word for what you want. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in Area 2, buying uses Area 1's pattern: 我要 + thing.
 
-**Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 peaches. Buying it is on the area's checklist, so you need it before the cave door test, and every player can afford it by then. Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
+**Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 shells. Buying it is on the area's checklist, so you need it before the cave door test, and every player can afford it by then. Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
 
 **Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 3, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops, request rewards and levels, so each area's shop has clothes to sell as well as food and cave decorations.
 
@@ -189,7 +189,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **Words per area:** about 25 new words to collect, like Area 1 (28 once the shop adds 老板 and 头带 and 森林 is dropped), so about 20 new sprites per area. Words you only hear in sentences don't count towards this.
 - **Demons:** harder battles start at Area 4, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
 - **Pinyin** stays over every word (the menu setting turns it off); it doesn't fade as you learn words.
-- **Peaches after the headband:** the 老板 also sells 苹果, bought with 我要苹果; eating one in an animal encounter takes away a wrong answer.
+- **After the headband:** the 老板 also sells 苹果, bought with 我要苹果; eating one in an animal encounter takes away a wrong answer.
 - **Native speaker:** someone can check the game's Chinese, from a review sheet listing every line with pinyin and English.
 - **Grammar:** the order in the table of sentence patterns stays as it is. Patterns can be heard in earlier areas before an area uses them a lot.
 
@@ -222,7 +222,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [x] Split the engine from the content and move Area 1 into data
 - [x] Turn the Word Scroll into a collection with heard and caught words and categories
 - [ ] Add the scheduler to animal appearances, quests and shop stock
-- [x] Add XP, peaches as money, an Area 1 shop and the training ground
+- [x] Add XP, peaches (now shells) as money, an Area 1 shop and the training ground
 - [x] Replace emoji with pixel sprites for Area 1's collectibles
 - [x] Add save export and import
 - [x] Improve Area 1, from the review on 2026-10-16:
@@ -249,7 +249,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Phrases as their own collection, with a Phrases tab in the Word Scroll
   - [x] 我不要 at the shop, and sentence-building questions in animal encounters
 - [x] The first-day story: the old monkey's purpose for the baby (a nest, days, good night and good morning, and a book of firsts were tried and taken out)
-- [x] 大猴子 Big monkey, in the middle meadow, wants 3 flowers and pays you peaches: you pick one from each of 3 patches (no mother: Sun Wukong is born from the stone)
+- [x] 大猴子 Big monkey, in the middle meadow, wants 3 flowers and pays you shells: you pick one from each of 3 patches (no mother: Sun Wukong is born from the stone)
 - [x] Wardrobe: a 衣服 page with the 头带 (戴), with a new save version (a flower from the little monkey was tried and taken out)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
 - [ ] Playtest Area 1 for a week

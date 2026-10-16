@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const {loadGame, SAVE_KEY} = require('./fake-browser');
 
 const saveOf = game => JSON.parse(game.run('JSON.stringify(S)'));
-const PLAYED = {version: 5, started: true, peaches: 12, w: {'石头': {lv: 3, due: 0, ok: 2}, '猴子': {lv: 1, due: 0, ok: 0}},
+const PLAYED = {version: 5, started: true, shells: 12, w: {'石头': {lv: 3, due: 0, ok: 2}, '猴子': {lv: 1, due: 0, ok: 0}},
   heard: {'有': 4}, friends: ['fox'], met: ['fox'], areas: {1: {elder: 2, hungry: 'done', thirsty: 'asked', gate: false, story: false, holding: {}, done: false}}};
 
 test('a downloaded save loads back exactly as it was', () => {
@@ -19,13 +19,13 @@ test('a downloaded save loads back exactly as it was', () => {
 });
 
 test('loading a save keeps a copy of the game it replaces', () => {
-  const game = loadGame({save: {...PLAYED, peaches: 3}});
+  const game = loadGame({save: {...PLAYED, shells: 3}});
   const before = game.storage.get(SAVE_KEY);
   game.run(`useSave(readSaveFile(${JSON.stringify(JSON.stringify(PLAYED))}).save)`);
   const backups = [...game.storage.keys()].filter(k => k.startsWith(SAVE_KEY + '-backup-before-load-'));
   assert.equal(backups.length, 1);
   assert.equal(game.storage.get(backups[0]), before);
-  assert.equal(saveOf(game).peaches, 12);
+  assert.equal(saveOf(game).shells, 12);
 });
 
 test('a file that isn\'t a save, or is from a newer version, is refused', () => {
@@ -36,11 +36,11 @@ test('a file that isn\'t a save, or is from a newer version, is refused', () => 
 });
 
 test('an old save file is converted, like an old save in the browser', () => {
-  const old = {w: {'石头': {lv: 1, due: 0, ok: 0}}, q: {elder: 1, hungry: 3, thirsty: 0}, lines: {'你好！': 1}, started: true, peaches: 4};
+  const old = {w: {'石头': {lv: 1, due: 0, ok: 0}}, q: {elder: 1, hungry: 3, thirsty: 0}, lines: {'你好！': 1}, started: true, shells: 4};
   const game = loadGame();
   const s = JSON.parse(game.run(`JSON.stringify(readSaveFile(${JSON.stringify(JSON.stringify(old))}).save)`));
   assert.equal(s.version, game.run('SAVE_VERSION'));
   assert.equal(s.areas[1].hungry, 'done');
   assert.deepEqual(s.heard, {'你好': 1});
-  assert.equal(s.peaches, 4);
+  assert.equal(s.shells, 4);
 });

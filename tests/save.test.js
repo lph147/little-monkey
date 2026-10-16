@@ -15,7 +15,7 @@ const START = {elder: 0, gate: false, story: false, hungry: 'not asked', thirsty
 // A save as Little Monkey 8 (and the versions since, up to the map legend) wrote it: version 2.
 const V2 = {
   w: {'石头': {lv: 2, due: 1760000000000, ok: 1}, '路': {lv: 1, due: 0, ok: 0}, '你好': {lv: 4, due: 0, ok: 3}},
-  gloss: {}, peaches: 7, q: {elder: 2, hungry: 3, thirsty: 1}, gate: false, story: false,
+  gloss: {}, shells: 7, q: {elder: 2, hungry: 3, thirsty: 1}, gate: false, story: false,
   friends: ['playful', 'fox'], pos: {x: 12, y: 12, dir: 'left'}, started: true, sound: false, music: true,
   tasksSeen: {elder: 1, h1: 1}, area1Done: false, pinyin: false, lines: {'你好！': 1}, howto: true,
   carry: null, met: ['fox'], encounters: 3, today: {d: '2026-10-15', ids: ['石头']}
@@ -44,7 +44,7 @@ test('after converting, the game shows the same progress', () => {
   const game = loadGame({save: V2});
   game.runFrame();
   assert.match(game.el('#titleButtons').innerHTML, />Continue</);
-  assert.equal(game.el('#peachCount').textContent, 7);
+  assert.equal(game.el('#shellCount').textContent, 7);
   assert.equal(game.el('#count').textContent, '2/28');
   // Said hello, learned about animals, 1 of 4 animals found, hungry monkey helped, thirsty not yet, no story, no headband, no test
   assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false, false]);
@@ -71,7 +71,7 @@ test('a current save loads unchanged, and no backup is made', () => {
 });
 
 test('an existing backup is never overwritten', () => {
-  const first = JSON.stringify({...V2, peaches: 1});
+  const first = JSON.stringify({...V2, shells: 1});
   const game = loadGame({save: V2, storage: {[SAVE_KEY + '-backup-v2']: first}});
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v2'), first);
 });
@@ -81,9 +81,9 @@ test('missing parts of a save get their starting values', () => {
   assert.deepEqual(s.areas[1], START);
   assert.deepEqual(s.met, []);
   assert.equal(s.sound, true);
-  const t = saveOf(loadGame({save: {version: 3, started: true, peaches: 2}}));
+  const t = saveOf(loadGame({save: {version: 3, started: true, shells: 2}}));
   assert.deepEqual(t.areas[1], START);
-  assert.equal(t.peaches, 2);
+  assert.equal(t.shells, 2);
 });
 
 test('an unreadable save is kept as a backup, and the game starts fresh', () => {
@@ -149,11 +149,11 @@ test('converting a version 4 save where the story was read counts the story too'
 
 test('a version 8 save is converted: words at Used are marked as used, and every word keeps its level', () => {
   const w = {'桃子': {lv: 4, due: 0, ok: 0}, '水': {lv: 1, due: 0, ok: 0}, '山': {lv: 3, due: 5, ok: 2}};
-  const game = loadGame({save: {version: 8, started: true, w, peaches: 4, bag: {'苹果': 1}}});
+  const game = loadGame({save: {version: 8, started: true, w, shells: 4, bag: {'苹果': 1}}});
   const s = saveOf(game);
   assert.equal(s.version, VERSION);
   assert.deepEqual(s.w, {'桃子': {lv: 4, due: 0, ok: 0, used: 1}, '水': {lv: 1, due: 0, ok: 0}, '山': {lv: 3, due: 5, ok: 2}});
-  assert.equal(s.peaches, 4);
+  assert.equal(s.shells, 4);
   assert.deepEqual(s.bag, {'苹果': 1});
   assert.ok(game.storage.get(SAVE_KEY + '-backup-v8'), 'the version 8 save is kept as a backup');
 });
@@ -165,4 +165,12 @@ test('a version 9 save is converted: English on reply choices starts on', () => 
   assert.equal(s.replyEn, true);
   assert.equal(s.pinyin, false, 'other settings are kept');
   assert.deepEqual(s.w['山'], {lv: 2, due: 0, ok: 1, n: 1});
+});
+
+test('a save from before version 16 had peaches for money: they become the same number of shells', () => {
+  const s = saveOf(loadGame({save: {version: 15, started: true, peaches: 12, w: {'山': {lv: 1, due: 0, ok: 0}}}}));
+  assert.equal(s.version, VERSION);
+  assert.equal(s.shells, 12);
+  assert.ok(!('peaches' in s));
+  assert.equal(saveOf(loadGame({save: {version: 4, started: true, peaches: 3, w: {}}})).shells, 3, 'from a very old save too');
 });

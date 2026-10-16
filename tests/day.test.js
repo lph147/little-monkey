@@ -17,12 +17,12 @@ test('there is no nest, sleeping, day count or book of firsts any more', () => {
 });
 
 test('a version 13 save is converted: the day count and the book of firsts go, and everything else stays', () => {
-  const game = loadGame({save: {version: 13, started: true, day: 5, lastDay: '2026-10-16', peaches: 9, firsts: {word: {day: 1, w: '石头'}},
+  const game = loadGame({save: {version: 13, started: true, day: 5, lastDay: '2026-10-16', shells: 9, firsts: {word: {day: 1, w: '石头'}},
     w: {'山': {lv: 2, due: 0, ok: 1}}, wardrobe: {owned: ['头带'], wearing: ['头带']}}});
   const s = get(game, 'S');
   assert.equal(s.version, get(game, 'SAVE_VERSION'));
   assert.ok(!('day' in s) && !('lastDay' in s) && !('firsts' in s));
-  assert.equal(s.peaches, 9);
+  assert.equal(s.shells, 9);
   assert.deepEqual(s.w['山'], {lv: 2, due: 0, ok: 1});
   assert.deepEqual(s.wardrobe, {owned: ['头带'], wearing: ['头带']});
   assert.ok(game.storage.get('xiaohouzi-v2-backup-v13'), 'the old save is kept as a backup');

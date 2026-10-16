@@ -56,7 +56,7 @@ async function encounter(foe){
     const w = targets[i], type = questionType(w);
     const others = shuffle(picWords().filter(x => x !== w && lvl(x) >= 1));   // only words you have already met
     const opts = shuffle([w].concat(others.slice(0, 2)));
-    const hearts = `<div class="hearts" aria-label="${score} of 3 friendship">${[0,1,2].map(k => `<span style="${k < score ? '' : 'opacity:.22;filter:grayscale(1)'}">🍑</span>`).join('')}</div>`;
+    const hearts = `<div class="hearts" aria-label="${score} of 3 friendship">${[0,1,2].map(k => `<span style="${k < score ? '' : 'opacity:.22;filter:grayscale(1)'}">🐚</span>`).join('')}</div>`;
     const head = `<div class="arena"><div><div class="name">${nameHTML()}</div>${hearts}</div>${img}</div>`;
     let body;
     if (type === 'listen') body = `<p class="prompt">Listen. Which picture is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
@@ -80,13 +80,13 @@ async function encounter(foe){
     if (ok) score++;
   }
   closeCard();
-  S.peaches += score; S.encounters = (S.encounters || 0) + 1;
+  S.shells += score; S.encounters = (S.encounters || 0) + 1;
   const won = score >= 2;
   let msg;
   if (won){
     if (!S.friends.includes(foe.id)) S.friends.push(foe.id);
     SFX.fanfare();
-    msg = `You got ${score} of 3. The ${wz(an)} is now your ${wz('朋友')}! +${score} 🍑`;
+    msg = `You got ${score} of 3. The ${wz(an)} is now your ${wz('朋友')}! +${score} 🐚`;
   } else msg = `You got ${score} of 3. The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.`;
   save();
   await infoBox(img, `<p>${msg}</p>`);
