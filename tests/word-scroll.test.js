@@ -105,7 +105,7 @@ test('a caught word has a page: picture, pinyin, level, where you found it and a
   game.run("wordPage('猴子', () => {})");
   const html = game.el('#sheet').innerHTML;
   for (const part of [game.run("picHTML('猴子')"), '<div class="big">猴子</div>', '<div class="py">hóuzi</div>', '<div class="en" hidden>monkey</div>',
-    'Recognised', 'Found: The little monkey at the bottom of the meadow.'])
+    'Recognised', 'Found: The little monkey, playing in the south meadow.'])
     assert.ok(html.includes(part), `the page should include ${part}`);
   // the example is the line you've seen, with this word in bold and its English behind the English button
   assert.match(html, /class="tok learn teach" data-t="猴子"/);

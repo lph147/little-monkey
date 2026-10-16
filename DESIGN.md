@@ -197,7 +197,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **我不要** is taught in Area 1 as a fixed phrase; 不 on its own waits for Area 3.
 - **Talk** moves into a speech box over the map; full cards only for the big moments.
 - **The wardrobe** starts in Area 1 with the headband and a flower, and opens fully in Area 3.
-- **The map** stays compact and gets livelier now; it splits into small places with the multi-map work. (Later the same day: it grew to the south, 24 × 22 tiles, to give the squirrel and goat their homes.)
+- **The map** stays compact and gets livelier now; it splits into small places with the multi-map work. (Later the same day: it grew to the south, 24 × 22 tiles, to give the squirrel and goat their homes, and the 老板's market stall and the little monkey moved down there so the top isn't crowded.)
 - **Day and night:** a day ends with sleep in the cave and a summary.
 - **Native speaker check:** 再见, 不客气, 对不起, 没关系, 我不要, 早上好, 晚安, 我戴头带, 我穿衣服 and 这是山 are all fine as written.
 

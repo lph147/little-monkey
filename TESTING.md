@@ -68,7 +68,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] He says 你好！ with 你好 in bold green and the English underneath, then a new-word card for 你好, then 去看看！
 - [ ] The task asks you to learn 4 words, with a counter.
 - [ ] Learn words from things that sparkle: face a cliff (山), a tree (树) or the river (河) and press A; walk into flowers (花) or tall grass (草). The counter goes up.
-- [ ] The sign next to the stone shows 花果山 with its name.
+- [ ] The sign next to the stone shows 花果山 with its name, and the note "The name of your home." (nothing about a book).
 - [ ] Talk to the old monkey again: he teaches 动物 (animal). A new task asks you to find the hidden animals (0/4).
 
 **The hungry monkey**
@@ -87,18 +87,18 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] With both monkeys helped, the screen shakes and a message says the rocks north of the meadow have rolled away.
 
 **Friends and animals**
-- [ ] The little monkey (bottom middle) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.
+- [ ] The little monkey (in the south meadow, on the path near the bottom right, below the 老板's stall) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.
 - [ ] In the word game, the questions use only words you've learned (pictures and wrong answers too). 2 or more right makes a friend; you get a 🍑 per right answer.
 - [ ] Once the old monkey has told you about animals, a patch of tall grass rustles now and then: an animal is hiding there. Step onto it and the animal jumps out with a ! over your head. A few steps after meeting one, another hides.
 - [ ] South of the meadow (down the path through the gap in the trees), the squirrel sits up a big tree and the goat stands on the cliffs. Face one: A says Meet.
-- [ ] Little birds land on the grass near you now and then, hop about, and fly off when you walk close.
+- [ ] Little birds land on the grass near you now and then and hop about for most of a minute. Walk up and face one: A says Look and shows 鸟 (bird), then it flies off. Stepping right onto one also makes it fly off.
 - [ ] The first time you meet each animal, a new-word card teaches its name and the encounter doesn't show the English. Meeting it again shows the Chinese name with an English button.
 - [ ] Animals' questions always have pictures to choose from. A new word is asked by sound ("Listen. Which picture is it?"); after two right answers in a row it's asked by its characters ("Read it."). On Flower Fruit Mountain you're never asked to pick characters by sound.
 - [ ] Keep going until you've found all 4 (rabbit and fox in the grass, the squirrel and the goat at their homes).
 - [ ] Optional words: cross the wooden bridge (bottom right) and face the bird (鸟).
 
 **The training ground**
-- [ ] A wooden practice post stands on the grass just above the long path, between the short path on the left and the old monkey. Face it: A says Train.
+- [ ] A wooden practice post stands just right of the pond, in the middle of the meadow. Face it: A says Train.
 - [ ] Before you have 4 words with pictures, it says to come back later (with a count).
 - [ ] After that, it asks if you want to practise and says how many words are due for review. Start matches about 8 words to their pictures in 2 rounds. Stop ends it without changing anything.
 - [ ] Once you know 我 (I) and 要 (want), the practice ends with building a sentence you've built before, such as 我要吃桃子, from word tiles, with its English shown. There is no listening round where you pick characters by sound.
@@ -108,7 +108,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Words you got right first time aren't due again for a day or more, so training again straight away gives no peaches for them (only for words you missed, or due words that didn't fit in the first go).
 
 **The shop**
-- [ ] Beside a striped market stall next to the pond stands the 老板 (shop owner), with a ! once you've said hello to the old monkey. Talking says 你好！我是老板。 and teaches 老板 on a new-word card.
+- [ ] In the south meadow (down the path through the trees), beside a striped market stall, stands the 老板 (shop owner), with a ! once you've said hello to the old monkey. Talking says 你好！我是老板。 and teaches 老板 on a new-word card.
 - [ ] Talk again: 你要什么？, then the stall shows 头带 · 🍑 10, in Chinese only, with your peaches above. Choosing it teaches 头带 (headband). Not now closes it.
 - [ ] With fewer than 10 🍑, it says how many you have and how to earn more. The task box shows "Buy the 头带 (headband) from the 老板 (shop owner)" with your peaches out of 10, and the 老板 shows a ? once you have 10.
 - [ ] With 10 🍑: build 我 要 头带 from tiles (吃 is an extra one). Your peaches go down by 10, the 老板 says 谢谢你！, and your monkey wears a red headband on the map from then on (a new monkey starts without one).

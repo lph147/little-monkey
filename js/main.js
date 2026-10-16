@@ -184,5 +184,6 @@ async function startGame(){
 }
 
 window.addEventListener('resize', fit);
+if (!walkable(S.pos.x, S.pos.y)) S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
 buildMap(); placePlayer(); fit(); updateHUD(); toTitle();
 requestAnimationFrame(frame);

@@ -138,8 +138,11 @@ function drawWorld(now){
   const fk = (now - fadeT) / 700;
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
 }
-// Little birds that land near you now and then, hop about, and fly off when you come close.
+// Little birds that land near you now and then and hop about for most of a minute. Walk up and face
+// one to look at it (A); it flies off then, or if you step right onto it.
 const birds = [];
+const birdAt = (x, y) => birds.find(bd => !bd.off && bd.tx === x && bd.ty === y);
+function shooBird(bd){ if (bd && !bd.off) bd.off = performance.now(); }
 let nextBird = 0;
 function drawBirds(cx, cy, now){
   if (now > nextBird && birds.length < 2){
@@ -149,10 +152,10 @@ function drawBirds(cx, cy, now){
       const t = tileAt(x, y);
       if (t.look === 'grass' && !npcAt(x, y) && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3) spots.push([x, y]);
     }
-    if (spots.length){ const [x, y] = spots[Math.floor(Math.random() * spots.length)]; birds.push({x:x*T + 4, y:y*T + 6, t0:now, until:now + 5000 + Math.random() * 5000, from:Math.random() < .5 ? -1 : 1}); }
+    if (spots.length){ const [x, y] = spots[Math.floor(Math.random() * spots.length)]; birds.push({tx:x, ty:y, x:x*T + 4, y:y*T + 6, t0:now, until:now + 40000 + Math.random() * 30000, from:Math.random() < .5 ? -1 : 1}); }
   }
   for (let i = birds.length - 1; i >= 0; i--){
-    const bd = birds[i], near = Math.abs(bd.x - pl.px) < 24 && Math.abs(bd.y - pl.py) < 24;
+    const bd = birds[i], near = pl.x === bd.tx && pl.y === bd.ty;   // you stepped right onto it
     if (!bd.off && (near || now > bd.until)) bd.off = now;
     const k = bd.off ? (now - bd.off) / 900 : 1 - Math.min(1, (now - bd.t0) / 1200);   // 0 on the ground, up to 1 in the air
     if (bd.off && k > 1){ birds.splice(i, 1); continue; }

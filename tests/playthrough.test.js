@@ -97,8 +97,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('动物'), 'the old monkey should teach 动物');
 
   // The little monkey
-  await pressAt(12, 12, 'left', 'meeting the little monkey');
-  await pressAt(12, 12, 'left', 'talking to the little monkey again');
+  await pressAt(15, 19, 'down', 'meeting the little monkey');
+  await pressAt(15, 19, 'down', 'talking to the little monkey again');
   assert.ok(knows('猴子') && knows('朋友'), 'the little monkey should teach 猴子, then 朋友');
 
   // The hungry monkey: the wrong fruit first, then the right one
@@ -120,7 +120,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().gate, true, 'the rocks should have rolled away');
 
   // The shop owner, and the animals in the tall grass
-  await pressAt(14, 8, 'down', 'meeting the shop owner');
+  await pressAt(11, 15, 'down', 'meeting the shop owner');
   assert.ok(knows('老板'), 'the shop owner should teach 老板');
   await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
   await pressAt(5, 18, 'left', 'meeting the goat on the cliff');
@@ -132,15 +132,15 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(['rabbit', 'fox', 'squirrel', 'goat'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
 
   // The practice post: matching pictures, then listening for words without pictures
-  await pressAt(6, 6, 'up', 'training at the practice post');
+  await pressAt(13, 10, 'up', 'training at the practice post');
   assert.ok(get("S.w['要'].n || S.w['我'].n"), 'a word without a picture was heard right');
 
   // The headband, then an apple to eat in an animal encounter
   plan.buy = '头带';
-  await pressAt(14, 8, 'down', 'buying the headband');
+  await pressAt(11, 15, 'down', 'buying the headband');
   assert.deepEqual(area().bought, ['头带'], 'you should have bought the headband');
   plan.buy = '苹果';
-  await pressAt(14, 8, 'down', 'buying an apple');
+  await pressAt(11, 15, 'down', 'buying an apple');
   plan.buy = null;
   assert.equal(get('S.bag')['苹果'], 1, 'you should have an apple in your bag');
   plan.eat = true;

@@ -43,3 +43,21 @@ test('an animal hides in tall grass at least 3 steps away, and stepping there me
   await game.run('arrive(9, 7)');
   assert.ok(get(game, 'rustle'), 'then another hides');
 });
+
+test('a bird that lands stays for most of a minute; face it and A shows 鸟, then it flies off', async () => {
+  const game = ready();
+  game.run("birds.push({tx: 9, ty: 8, x: 9*T + 4, y: 8*T + 6, t0: 0, until: 50000, from: 1}); S.pos = {x: 9, y: 7, dir: 'down'}; placePlayer(); globalThis.__shown = null; showNotice = async w => { __shown = w; }");
+  assert.equal(get(game, 'promptFor(9, 8)'), 'Look');
+  assert.ok(get(game, 'birds[0].until') >= 40000, 'it stays at least 40 seconds');
+  await game.run('interact(9, 8)');
+  assert.equal(get(game, '__shown'), '鸟');
+  assert.ok(get(game, 'birds[0].off'), 'then it flies off');
+});
+
+test('if the map changed under your saved spot, you start at the stone', () => {
+  const game = loadGame({save: {version: 12, started: true, pos: {x: 10, y: 16, dir: 'down'}}});   // where the stall stands now
+  const start = get(game, 'START');
+  assert.deepEqual(get(game, '[S.pos.x, S.pos.y]'), [start.x, start.y]);
+  const fine = loadGame({save: {version: 12, started: true, pos: {x: 9, y: 7, dir: 'left'}}});
+  assert.deepEqual(get(fine, '[S.pos.x, S.pos.y]'), [9, 7], 'a spot you can still stand on is kept');
+});

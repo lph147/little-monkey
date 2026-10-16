@@ -2,6 +2,7 @@
 
 /* ================= WORLD LOGIC ================= */
 const EDGE = {look:'cliff'};   // what lies beyond the edge of the map
+const BIRD_WORD = (AREA.characters.find(c => c.look === 'bird') || {}).word;   // the word for the birds that land near you
 function tileAt(x, y){         // the legend entry for the map letter at x, y
   if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return EDGE;
   const t = LEGEND[MAP[y][x]];
@@ -32,6 +33,7 @@ function promptFor(x, y){
   const n = npcAt(x, y);
   if (n) return n.label || 'Talk';
   if (animalAt(x, y)) return 'Meet';
+  if (BIRD_WORD && birdAt(x, y)) return 'Look';
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return t.gather.label;
   if (t.landmark) return t.label || 'Look';
@@ -232,6 +234,8 @@ async function interact(x, y){
   if (n) return talk(n);
   const a = animalAt(x, y);
   if (a) return wildAppears(a, {x, y, d:pl.dir});
+  const bd = birdAt(x, y);
+  if (bd && BIRD_WORD){ await showNotice(BIRD_WORD); shooBird(bd); return; }
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return gather(t);
   if (t.action) return ACTIONS[t.action](t);
