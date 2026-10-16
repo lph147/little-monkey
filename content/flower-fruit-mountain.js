@@ -99,34 +99,35 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // Characters who ask you to bring them something. The game handles each one the same way:
   // they ask (teaching the verb), you find the thing (see gather in the legend), then you
-  // build the sentence to give it to them, and get the reward.
+  // fill the gap in a sentence to give it to them, and get the reward.
   //   from         the character who asks
   //   wants        the word for what they want
-  //   verb         taught when they ask, and used in the sentence you build (if there's a new verb to teach)
+  //   verb         taught when they ask, and used in the sentence (if there's a new verb to teach)
   //   ask          their line when asking, and asked: a message afterwards
   //   wrong        their line if you bring something else, and wrongMessage afterwards; wrongReply is the
   //                phrase that fits as your reply, and wrongAnswer their line after it
   //   offer        their line when you bring the right thing
-  //   firstTeach   new words to teach before you build the sentence, one at a time, each with a note (if any)
-  //   build        the sentence you build from word tiles, with its English (buildEn); extraTile is a wrong tile mixed in
+  //   firstTeach   new words to teach before the sentence, one at a time, each with a note (if any)
+  //   sentence     the sentence you complete to give it to them, with its English (sentenceEn): it's shown
+  //                with one word missing (gap; what they want if not given), and you choose the word
   //   reward       peaches you get; thanks is their line afterwards, and thanksReply the phrase that fits as your reply
   requests: {
     hungry: {from:'hungry', wants:'桃子', verb:'吃', ask:'hungry', asked:'The hungry monkey wants something to eat. Check your tasks.',
       wrong:'notThis', wrongReply:'对不起', wrongAnswer:'noProblem', wrongMessage:'The monkey gives the fruit back. Listen to what it wants, then try another tree.',
       offer:'havePeach', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      build:'我 要 吃 桃子', buildEn:'I want to eat a peach.', extraTile:'喝', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'},
+      sentence:'我 要 吃 桃子', sentenceEn:'I want to eat a peach.', reward:3, thanks:'thanks', thanksReply:'不客气'},
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      build:'我 要 喝 水', buildEn:'I want to drink water.', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'},
+      sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
     flowers: {from:'big', wants:'花', ask:'wantFlowers', asked:'The big monkey wants 3 {花}, and will give you peaches for them. Check your tasks.',
-      offer:'haveFlowers', build:'我 要 花', buildEn:'I want flowers.', extraTile:'水', buildPrompt:'Say what the big monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'}
+      offer:'haveFlowers', sentence:'我 要 花', sentenceEn:'I want flowers.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
   // the phrase that fits as your reply), the phrase you say when you don't want anything (no), what they say
   // if you can't afford something yet (earnMore, after how many peaches you need), and when you've
-  // bought everything (soldOut). Each item: its word and price in peaches, the sentence you build to
-  // ask for it (extraTile is a wrong tile mixed in), a line on its new-word card (note), a message
+  // bought everything (soldOut). Each item: its word and price in peaches, the sentence you complete
+  // to ask for it (sentence, with sentenceEn; the item is the missing word), a line on its new-word card (note), a message
   // after you buy it (bought), and wear: true if your monkey wears it from then on (bought once), or
   // eat: true for food you can buy again and eat in an animal encounter to take away a wrong answer,
   // with carry: the most you can carry.
@@ -135,9 +136,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and training at the practice post.',
     soldOut:'You have everything the {老板} sells. Come back another time.',
     items: [
-      {item:'头带', price:10, build:'我 要 头带', buildEn:'I want the headband.', extraTile:'吃', buildPrompt:'Ask for the {头带}. Put the words in order.',
+      {item:'头带', price:10, sentence:'我 要 头带', sentenceEn:'I want the headband.',
         note:'A red cloth headband.', bought:'You tie on the red {头带}. It suits you!', wear:true},
-      {item:'苹果', price:2, build:'我 要 苹果', buildEn:'I want an apple.', extraTile:'喝', buildPrompt:'Ask for a {苹果}. Put the words in order.',
+      {item:'苹果', price:2, sentence:'我 要 苹果', sentenceEn:'I want an apple.',
         note:'A crunchy apple.', bought:'You put the {苹果} in your bag. In an animal encounter, eat it to take away a wrong answer.', eat:true, carry:3}
     ]
   },
@@ -300,7 +301,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
-  // the Word Scroll. (A word that only appears in a sentence you build, such as 头带, shows that.)
+  // the Word Scroll. (A word that only appears in a sentence you complete, such as 头带, shows that.)
   // Checked by a native speaker on 16 October 2026.
   examples: {
     '路': {zh:'小 猴子 在 路 上 。', en:'The little monkey is on the path.'},
@@ -330,16 +331,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // (see its characters, pick its picture) and 'hear' (hear a word, pick its characters, with no
   // pictures). A word's questions get harder as you know it better, but only up to the kinds listed
   // here. Picking characters by sound is too hard for a first day, so 'hear' waits for a later area.
-  // 'build' means an animal's last question is sometimes building a sentence you've built before.
-  questions: ['listen', 'read', 'build'],
+  // 'gap' means an animal's last question is sometimes a sentence you know with a word missing.
+  questions: ['listen', 'read', 'gap'],
 
   // Clothes for your wardrobe (Menu, 衣服). Each: the word, the sentence your monkey says putting it on
-  // (build, with buildEn; it's practised at the practice post too, with extraTile mixed in), and the
+  // (sentence, with sentenceEn; it's practised at the practice post too, with a word missing), and the
   // word it teaches the first time (teach, with a note on its card). You get them from the shop
   // (wear: true there) or with a give step.
   wardrobe: [
-    {item:'头带', build:'我 戴 头带', buildEn:'I wear my headband.', extraTile:'吃', teach:'戴', note:'Use 戴 for things you wear on your head.'},
-    {item:'花', build:'我 戴 花', buildEn:'I wear a flower.', extraTile:'喝', teach:'戴', note:'Use 戴 for things you wear on your head.'}
+    {item:'头带', sentence:'我 戴 头带', sentenceEn:'I wear my headband.', teach:'戴', note:'Use 戴 for things you wear on your head.'},
+    {item:'花', sentence:'我 戴 花', sentenceEn:'I wear a flower.', teach:'戴', note:'Use 戴 for things you wear on your head.'}
   ],
 
   // Your day. Sleeping in your nest ends it: a summary of what you learned, then the night steps.

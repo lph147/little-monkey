@@ -109,15 +109,15 @@ test('at the shop, 我不要 turns everything down: taught the first time, then 
   assert.equal(t.run('__done'), true);
 });
 
-test('an animal\'s last question is sometimes building a sentence you know', async () => {
+test('an animal\'s last question is sometimes a sentence you know with a word missing', async () => {
   const w = Object.fromEntries(['石头', '山', '树', '花', '我', '要', '吃', '桃子'].map(x => [x, {lv: 1, due: 0, ok: 0}]));
   const t = replyGame(w);
-  t.run(`Math.random = () => 0; globalThis.__built = []; tiles = async (who, target) => { __built.push(target.join('')); return true; };
+  t.run(`Math.random = () => 0; globalThis.__built = []; gapQ = async ({t}) => { __built.push(t.join('')); return true; };
     pictureQ = async () => true; infoBox = async () => {};
     encounter({id:'fox', hz:'狐狸', img:'', wild:true}).then(won => { globalThis.__won = won; __done = true; })`);
   for (let i = 0; i < 5; i++) await tick();
   const built = JSON.parse(t.run('JSON.stringify(__built)'));
-  assert.equal(built.length, 1, 'the last question was building a sentence');
+  assert.equal(built.length, 1, 'the last question was a sentence with a gap');
   assert.ok(['我要吃桃子', '我要花'].includes(built[0]), `${built[0]} should be a sentence you know`);
-  assert.equal(t.run('__won'), true, 'built right first time, it counts as a right answer');
+  assert.equal(t.run('__won'), true, 'filled right, it counts as a right answer');
 });

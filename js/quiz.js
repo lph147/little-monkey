@@ -1,4 +1,4 @@
-// Picture questions, word games with animals and monkeys, and building sentences from word tiles.
+// Picture questions, word games with animals and monkeys, and sentences with a word to fill in.
 
 /* ================= QUESTIONS & ENCOUNTERS ================= */
 function pictureQ({head, body, options, answerIdx, word, type, text, onShow, onAnswer}){
@@ -31,7 +31,7 @@ const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 3;
 const canWild = () => matches(AREA.animalsAppear) && canEncounter();   // can animals jump out of their hiding place yet?
 // The kind of picture question to ask about w: harder as you know it better, but only the kinds this area asks
 // (its questions list). Caught: listen. Recognised: read. Read or Used: hear and read, or a mix of read and listen.
-const BUILD_CHANCE = 0.3;   // how often an animal's last question is building a sentence
+const GAP_CHANCE = 0.3;   // how often an animal's last question is a sentence with a word missing
 function questionType(w){
   const L0 = lvl(w), asks = t => AREA.questions.includes(t);
   const want = L0 <= 1 ? 'listen' : L0 === 2 ? 'read'
@@ -50,9 +50,9 @@ async function encounter(foe){
   const targets = shuffle(pool.slice(0, 5)).slice(0, 3);
   let score = 0;
   for (let i = 0; i < targets.length; i++){
-    // Sometimes, in an area that asks them, the last question is building a sentence you've built before.
-    const b = AREA.questions.includes('build') && i === targets.length - 1 && Math.random() < BUILD_CHANCE ? practiceSentence() : null;
-    if (b){ if ((await buildRound(b, img)).first) score++; continue; }
+    // Sometimes, in an area that asks them, the last question is a sentence you know with a word missing.
+    const b = AREA.questions.includes('gap') && i === targets.length - 1 && Math.random() < GAP_CHANCE ? practiceSentence() : null;
+    if (b){ if ((await gapRound(b, img)).right) score++; continue; }
     const w = targets[i], type = questionType(w);
     const others = shuffle(picWords().filter(x => x !== w && lvl(x) >= 1));   // only words you have already met
     const opts = shuffle([w].concat(others.slice(0, 2)));
@@ -93,31 +93,26 @@ async function encounter(foe){
   return won;
 }
 
-/* ================= SENTENCE TILES ================= */
-function tiles(who, target, extras, prompt){   // gives true if the sentence was built right first time
-  return new Promise(res => {
-    const bank = shuffle(target.concat(extras)).map((t,i) => ({t, i}));
-    let picked = [], misses = 0;
-    const tileBtn = (o, where) => { const [py] = info(o.t); const show = S.pinyin;
-      return `<button class="tile" data-w="${where}" data-i="${o.i}"><ruby>${o.t}<rt class="${show ? '' : 'hid'}">${py}</rt></ruby></button>`; };
-    function render(msg){
-      openCard(`<div class="who" aria-hidden="true">${who}</div><p class="prompt">${prompt}</p>
-        <div class="slots" aria-label="Your sentence">${picked.map(o => tileBtn(o,'s')).join('') || '<span class="small">Tap the words below in order.</span>'}</div>
-        <div class="bank">${bank.filter(o => !picked.includes(o)).map(o => tileBtn(o,'b')).join('')}</div>
-        <div class="feedback" aria-live="polite">${msg || ''}</div>
-        <div class="actions"><button class="btn grow" data-a="say">🔊 Hear the monkey</button><button class="btn primary" data-a="check" ${picked.length === target.length ? '' : 'disabled'}>Say it</button></div>`);
-      sheet.querySelectorAll('.tile').forEach(b => b.onclick = () => {
-        const o = bank.find(x => x.i === +b.dataset.i);
-        say(o.t); SFX.blip();
-        if (b.dataset.w === 'b') picked.push(o); else picked = picked.filter(x => x !== o);
-        render();
-      });
-      on('[data-a=say]', () => say(target.join('')));
-      on('[data-a=check]', () => {
-        if (picked.map(o => o.t).join('') === target.join('')){ SFX.right(); say(target.join('')); closeCard(); res(misses === 0); }
-        else { misses++; picked = []; SFX.wrong(); render('Not quite. Listen again and try once more.'); sheet.querySelector('.slots').classList.add('shake'); say(target.join('')); }
-      });
-    }
-    render();
-  });
+/* ================= FILL THE GAP ================= */
+// A sentence with one word missing (gap), in Chinese with pinyin and in English (en): choose the missing
+// word. It's never a grammar test. The choices follow the word's level: its picture with the Chinese
+// while it's new (Caught), Chinese and pinyin once you've recognised it, and always for a word without a
+// picture. Only words you've caught are offered: the gap and up to 2 others (from wrong, best first, or
+// any not in the sentence), unless options gives them all. Choosing fills the gap and reads the sentence
+// aloud. A right choice counts for the word; a wrong one shows the right word and play carries on.
+// Gives true if you chose right.
+async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, options}){
+  const pics = !!WORDS[gap].pic && lvl(gap) <= 1;
+  const fits = w => w !== gap && WORDS[w] && !WORDS[w].phrase && lvl(w) >= 1 && !t.includes(w) && (!pics || WORDS[w].pic);
+  const opts = options || shuffle([gap, ...(wrong ? wrong.filter(fits) : shuffle(ORDER.filter(fits))).slice(0, 2)]);
+  const shown = PUNCT.has(t.at(-1)) ? t : [...t, '。'];
+  hear(t);
+  const ok = await pictureQ({head:`${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<p class="label">${label}</p><p class="prompt">Choose the missing word.</p>`,
+    body:lineHTML(shown.map(w => w === gap ? GAP : w)) + `<div class="sentence-en">${esc(en)}</div><div class="gloss">Tap a word for its meaning.</div>`,
+    options:opts.map(w => pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>` : `${w}<span class="cap">${WORDS[w].py}</span>`),
+    text:!pics, answerIdx:opts.indexOf(gap),
+    onAnswer:() => { sheet.querySelector('.line').outerHTML = lineHTML(shown, gap); bindTokens(sheet); say(t.join('')); }});
+  closeCard();
+  if (ok) answer(gap, true, !WORDS[gap].pic ? 'build' : pics ? 'gap' : 'read');
+  return ok;
 }

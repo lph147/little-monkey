@@ -36,7 +36,7 @@ shown where the word list has them.
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
 
-### Sentences the player builds from word tiles
+### Sentences the player completes (one word missing)
 
 | Chinese | Pinyin | English | Said to | Notes |
 | --- | --- | --- | --- | --- |
@@ -45,6 +45,8 @@ shown where the word list has them.
 | 我要花 | wǒ yào huā | I want flowers. | 大猴子 (Big monkey) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
+| 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
+| 我戴花 | wǒ dài huā | I wear a flower. | You, in the wardrobe |  |
 
 ### The sign
 

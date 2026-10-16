@@ -35,19 +35,7 @@ function storyScroll(){
       stopSpeech();
       let right = 0;
       const qs = storyQuestions();
-      for (const q of qs){
-        hear(q.t);
-        const gapped = q.t.map(w => w === q.answer ? GAP : w);
-        const ok = await pictureQ({head:'<p class="label">Story question</p><p class="prompt">Which picture fills the gap?</p>',
-          body: lineHTML(gapped) + `<div class="sentence-en" hidden>${esc(q.en)}</div><div class="gloss">Tap a word for its meaning. <button class="engbtn" data-a="qen">English</button></div>`,
-          options:q.options.map(w => `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>`), answerIdx:q.options.indexOf(q.answer),
-          onShow:() => on('[data-a=qen]', e => { sheet.querySelector('.sentence-en').hidden = false; e.currentTarget.remove(); }),
-          onAnswer:() => {   // fill the gap and say the whole sentence
-            sheet.querySelector('.line').outerHTML = lineHTML(q.t, q.answer); bindTokens(sheet);
-            say(q.t.join(''));
-          }});
-        if (ok){ right++; gainXP(XP.right); }
-      }
+      for (const q of qs) if (await gapQ({label:'Story question', t:q.t, en:q.en, gap:q.answer, options:q.options})) right++;
       const firstTime = !here().story, end = AREA.storyEnd;
       here().story = true; if (firstTime){ S.peaches += end.reward; gainXP(XP.story); } save(); buildMap();
       first('story');
@@ -146,25 +134,22 @@ const dueWords = () => [...trainable(), ...unpictured()].filter(isDue);   // wor
 const trainingCalls = () => trainable().length >= TRAINING_MIN && dueWords().length > 0;   // the practice post shows a !
 // The words to practise: the ones due for review first, then the ones due soonest, in a random order.
 const trainingWords = () => shuffle(shuffle(trainable()).sort((a, b) => rec(a).due - rec(b).due).slice(0, TRAINING_WORDS));
-// A sentence to build at the practice post, for words without a picture: one you've built for a character
-// (the area's requests and shop), with every word caught, preferring one with a word that's due.
+const SENTENCES = () => [...REQUESTS, ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];   // the area's sentences you complete
+// A sentence for practising a word without a picture (such as 我 or 要): one you've met in a request, the
+// shop or the wardrobe, with every word caught, and that word missing (gap), preferring a word that's due.
 function practiceSentence(){
-  const all = [...REQUESTS, ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].map(b => ({...b, t:toks(b.build)}))
-    .filter(b => b.t.every(w => lvl(w) >= 1) && b.t.some(w => !WORDS[w].pic));
-  const due = all.filter(b => b.t.some(w => !WORDS[w].pic && isDue(w)));
+  const all = SENTENCES().map(b => ({t:toks(b.sentence), en:b.sentenceEn})).filter(b => b.t.every(w => lvl(w) >= 1) && b.t.some(w => !WORDS[w].pic))
+    .map(b => { const bare = shuffle(b.t.filter(w => !WORDS[w].pic)); return {...b, gap:bare.find(isDue) || bare[0]}; });
+  const due = all.filter(b => isDue(b.gap));
   return shuffle(due.length ? due : all)[0] || null;
 }
-// Build the sentence from word tiles, with its English to go on. Built right first time, its words without
-// a picture count as answered right, and each one that was due earns a peach. All its words count as used.
-// Gives {first, peaches}.
-async function buildRound(b, who){
-  const bare = b.t.filter(w => !WORDS[w].pic), due = bare.filter(isDue);
-  const rightFirst = await tiles(who, b.t, lvl(b.extraTile) >= 1 ? [b.extraTile] : [], `Build the sentence: “${esc(b.buildEn)}” Put the words in order.`);
-  if (rightFirst) bare.forEach(w => answer(w, true, 'build'));
-  b.t.forEach(useWord);
-  const peaches = rightFirst ? due.length : 0;
+// Fill the gap in a sentence (from practiceSentence). A right choice earns a peach if the word was due.
+// Gives {right, peaches}.
+async function gapRound(b, who){
+  const due = isDue(b.gap), right = await gapQ({who, t:b.t, en:b.en, gap:b.gap});
+  const peaches = right && due ? 1 : 0;
   S.peaches += peaches; save();
-  return {first:rightFirst, peaches};
+  return {right, peaches};
 }
 // After a session: a word matched first time comes back later, a missed one straight away (the gold
 // squares stay the same). Each due word matched first time earns a peach. Gives how many peaches.
@@ -183,19 +168,19 @@ function trained(words, missed){
 async function trainingGround(){
   const who = `<img class="portrait" alt="" src="${SPR.post.toDataURL()}">`, have = trainable().length;
   if (have < TRAINING_MIN){ await infoBox(who, `<p>A practice post. Come back once you've learned ${TRAINING_MIN} words with pictures (${have}/${TRAINING_MIN}).</p>`); return; }
-  const words = trainingWords(), sentence = practiceSentence(), bare = sentence ? sentence.t.filter(w => !WORDS[w].pic) : [];
-  const due = [...words, ...bare].filter(isDue).length;
-  const ask = 'Practise matching words to their pictures' + (sentence ? `, then build a sentence with ${bare.map(wz).join(' and ')}. ` : '. ') + (due
+  const words = trainingWords(), sentence = practiceSentence();
+  const due = [...words, ...(sentence ? [sentence.gap] : [])].filter(isDue).length;
+  const ask = 'Practise matching words to their pictures' + (sentence ? `, then fill the gap in a sentence with ${wz(sentence.gap)}. ` : '. ') + (due
     ? `${due} of them ${due === 1 ? 'is' : 'are'} due for review: each one you get right first time earns a 🍑.`
     : 'None of your words are due for review right now, so there are no 🍑 this time.');
   if (!await confirmBox(who, ask, 'Start', 'Not now')) return;
   const missed = await matchWords(words, 'Training', 'Stop');
   if (!missed) return;
-  const right = words.length - missed.size, built = sentence ? await buildRound(sentence, who) : null, peaches = trained(words, missed) + (built ? built.peaches : 0);
+  const right = words.length - missed.size, filled = sentence ? await gapRound(sentence, who) : null, peaches = trained(words, missed) + (filled ? filled.peaches : 0);
   SFX.fanfare();
   await new Promise(res => {
     openCard(`<div class="who" aria-hidden="true">${who}</div><p class="label">Training done</p>
-      <p>You matched <b>${right} of ${words.length}</b> words right first time.${built ? (built.first ? ' You built the sentence right first time.' : ' You built the sentence.') : ''}${peaches ? ` +${peaches} 🍑` : ''}</p>
+      <p>You matched <b>${right} of ${words.length}</b> words right first time.${filled ? (filled.right ? ' You filled the gap right.' : ' You filled the gap.') : ''}${peaches ? ` +${peaches} 🍑` : ''}</p>
       ${missedHTML(missed)}
       <div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
     bindMissed();
@@ -227,8 +212,8 @@ function exampleFor(w){
   if (pick) return pick[0];
   const ex = AREA.examples[w];
   if (ex) return {t:toks(ex.zh), en:ex.en};
-  const built = [...REQUESTS, ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].find(b => toks(b.build).includes(w));
-  return built && {t:[...toks(built.build), '。'], en:built.buildEn};
+  const done = SENTENCES().find(b => toks(b.sentence).includes(w));
+  return done && {t:[...toks(done.sentence), '。'], en:done.sentenceEn};
 }
 function wordPage(w, back){   // a caught word's page in the Word Scroll
   const d = WORDS[w], ex = exampleFor(w);

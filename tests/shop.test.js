@@ -15,11 +15,10 @@ test('the shop is run by a character, and sells words you can collect, asked for
   assert.ok(AREA.lines[AREA.shop.ask] && AREA.lines[AREA.shop.thanks]);
   for (const i of AREA.shop.items){
     assert.equal(BANK[i.item] && BANK[i.item].area, AREA.number, `${i.item} should be a word you can collect here`);
-    assert.ok(i.price > 0 && i.note && i.bought && i.buildPrompt, `${i.item} needs a price, note, bought and buildPrompt`);
-    const build = i.build.split(' ');
-    assert.ok(build.includes(i.item), `you ask for ${i.item} by saying it`);
-    for (const w of [...build, i.extraTile]) assert.ok(BANK[w], `${w} isn't in the word bank`);
-    assert.ok(!build.includes(i.extraTile), 'the extra tile should be a wrong one');
+    assert.ok(i.price > 0 && i.note && i.bought && i.sentenceEn, `${i.item} needs a price, note, bought and sentenceEn`);
+    const sentence = i.sentence.split(' ');
+    assert.ok(sentence.includes(i.item), `you ask for ${i.item} by saying it`);
+    for (const w of sentence) assert.ok(BANK[w], `${w} isn't in the word bank`);
   }
 });
 
@@ -62,14 +61,14 @@ test('a version 6 save is converted with nothing bought yet', () => {
 // animal encounter to take away a wrong answer.
 const APPLE = () => 'AREA.shop.items.find(i => i.item === "苹果")';
 const buyIt = async (game, what) => {   // buy something, answering every card as a player would
-  game.run('showDialog = showNotice = infoBox = replyWith = async () => {}; toast = () => {}; tiles = async () => true;');
+  game.run('showDialog = showNotice = infoBox = replyWith = async () => {}; toast = () => {}; gapQ = async () => true;');
   return game.run(`buy(${what}, '')`);
 };
 
 test('the 老板 sells 苹果 as food, and keeps selling it after the headband', () => {
   const apple = get(base, APPLE());
   assert.ok(apple && apple.eat && apple.carry === 3 && apple.price === 2, '苹果 should be food that costs 2 and you can carry 3 of');
-  assert.equal(apple.build, '我 要 苹果');
+  assert.equal(apple.sentence, '我 要 苹果');
   const game = play({areas: {1: area({bought: ['头带']})}});
   assert.deepEqual(get(game, 'forSale().map(i => i.item)'), ['苹果']);
 });

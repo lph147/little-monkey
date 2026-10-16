@@ -12,8 +12,8 @@ const AREA = get(loadGame(), 'AREA'), BANK = get(loadGame(), 'WORD_BANK');
 test('the wardrobe\'s clothes are words with pictures, each with a sentence that uses it', () => {
   for (const c of AREA.wardrobe){
     assert.ok(BANK[c.item] && BANK[c.item].area === AREA.number && BANK[c.item].pic, `${c.item} should be a word with a picture you can collect here`);
-    assert.ok(c.build.split(' ').includes(c.item) && c.buildEn, `${c.item}'s sentence should use it, with English`);
-    for (const w of [...c.build.split(' '), c.extraTile]) assert.ok(BANK[w], `${w} isn't in the word bank`);
+    assert.ok(c.sentence.split(' ').includes(c.item) && c.sentenceEn, `${c.item}'s sentence should use it, with English`);
+    for (const w of c.sentence.split(' ')) assert.ok(BANK[w], `${w} isn't in the word bank`);
   }
   const gives = Object.values(AREA.talk).flat().flatMap(p => p.do).filter(s => s.give).map(s => s.give);
   for (const g of gives) assert.ok(AREA.wardrobe.some(c => c.item === g), `${g} is given but isn't in the wardrobe`);

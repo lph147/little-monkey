@@ -42,7 +42,7 @@ function sheet(){
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name];
-  const builds = [...Object.values(AREA.requests).map(r => [r.build, r.buildEn, name(r.from)]), ...(AREA.shop ? AREA.shop.items.map(i => [i.build, i.buildEn, name(AREA.shop.who)]) : [])];
+  const builds = [...Object.values(AREA.requests).map(r => [r.sentence, r.sentenceEn, name(r.from)]), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe'])];
   const notes = '';
 
   return `# Chinese in Little Monkey: for checking
@@ -61,7 +61,7 @@ shown where the word list has them.
 
 ${table(['Chinese', 'Pinyin', 'English', 'Said by', 'Notes'], Object.entries(AREA.lines).map(([k, l]) => [chars(l.zh), py(l.zh), l.en, [...(saidBy[k] || [])].join(', '), notes]))}
 
-### Sentences the player builds from word tiles
+### Sentences the player completes (one word missing)
 
 ${table(['Chinese', 'Pinyin', 'English', 'Said to', 'Notes'], builds.map(([b, en, who]) => [chars(b), py(b), en || '', who, notes]))}
 

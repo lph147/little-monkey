@@ -33,7 +33,7 @@ test('a wrong answer starts the count again and moves the word down a level', ()
 test('using a word in a sentence marks it used; it is Used once you can read it too', () => {
   const game = caught({'山': {lv: 2, due: 0, ok: 0, n: 1}});
   game.run("useWord('山')");
-  assert.equal(word(game, '山').lv, 2, 'building a sentence does not skip the questions');
+  assert.equal(word(game, '山').lv, 2, 'using it in a sentence does not skip the questions');
   assert.equal(word(game, '山').used, 1);
   game.run("answer('山', true, 'read')");
   assert.equal(word(game, '山').lv, 4, 'reading it right a second time makes it Read, and so Used');
@@ -43,7 +43,7 @@ test('using a word in a sentence marks it used; it is Used once you can read it 
 
 test('Flower Fruit Mountain never asks you to pick characters by sound', () => {
   const game = loadGame();
-  assert.deepEqual(JSON.parse(game.run('JSON.stringify(AREA.questions)')), ['listen', 'read', 'build']);
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(AREA.questions)')), ['listen', 'read', 'gap']);
   const kinds = level => {
     const seen = new Set();
     for (let i = 0; i < 200; i++) seen.add(game.run(`rec('山').lv = ${level}; questionType('山')`));
@@ -53,7 +53,7 @@ test('Flower Fruit Mountain never asks you to pick characters by sound', () => {
   assert.deepEqual(kinds(2), ['read'], 'Recognised: read');
   assert.deepEqual(kinds(3), ['listen', 'read'], 'Read: a mix of read and listen, no characters without pictures');
   assert.deepEqual(kinds(4), ['listen', 'read'], 'Used: the same');
-  game.run("AREA.questions = ['listen', 'read', 'hear', 'build']");   // a later area that asks them
+  game.run("AREA.questions = ['listen', 'read', 'hear', 'gap']");   // a later area that asks them
   assert.deepEqual(kinds(3), ['hear', 'read']);
   assert.deepEqual(kinds(1), ['listen'], 'but still only for words you can read');
 });
@@ -62,5 +62,5 @@ test('the area\'s questions list only has kinds the game knows, starting with li
   const game = loadGame();
   const kinds = JSON.parse(game.run('JSON.stringify(AREA.questions)'));
   assert.equal(kinds[0], 'listen', 'new words are always asked by sound first');
-  for (const k of kinds) assert.ok(['listen', 'read', 'hear', 'build'].includes(k), `"${k}" isn't a kind of question: use listen, read, hear or build`);
+  for (const k of kinds) assert.ok(['listen', 'read', 'hear', 'gap'].includes(k), `"${k}" isn't a kind of question: use listen, read, hear or gap`);
 });

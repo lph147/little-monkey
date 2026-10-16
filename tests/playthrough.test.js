@@ -19,10 +19,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   const area = () => get('here()');
 
   run('Math.random = () => 0');   // the same every time: e.g. the first animal you haven't met jumps out, on your third step in the grass
-  // Notice what the game asks, as a player hears and reads it: the word in a question, the sentence to build.
-  run(`(() => { const pq = pictureQ, tl = tiles;
-    pictureQ = q => { globalThis.__q = q; return pq(q); };
-    tiles = (who, target, extras, prompt) => { globalThis.__tiles = target; return tl(who, target, extras, prompt); }; })()`);
+  // Notice what the game asks, as a player hears and reads it: the word in a question or the gap.
+  run(`(() => { const pq = pictureQ; pictureQ = q => { globalThis.__q = q; return pq(q); }; })()`);
 
   const tick = () => new Promise(r => setImmediate(r));
   async function settle(){   // let the game finish what it's doing, including anything it waits for (timers)
@@ -43,13 +41,6 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
       const eat = sheet.querySelector('[data-a=eat]');
       if (eat && plan.eat){ eat.click(); plan.eat = false; return; }
       sheet.querySelector(`.opt[data-i="${run('__q.answerIdx')}"]`).click(); return;
-    }
-    if (sheet.querySelector('.slots')){   // word tiles: tap the next word of the sentence
-      const target = get('__tiles'), placed = sheet.querySelectorAll('.slots .tile').length;
-      if (placed < target.length){
-        sheet.querySelectorAll('.bank .tile').find(b => b.querySelector('ruby').firstChild.textContent === target.at(placed)).click();
-        return;
-      }
     }
     const word = sheet.querySelectorAll('.mw').find(b => !b.classList.contains('done'));
     if (word){ word.click(); sheet.querySelector(`.mp[data-w="${word.dataset.w}"]`).click(); return; }   // matching: a word, then its picture

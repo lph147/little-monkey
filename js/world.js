@@ -122,10 +122,10 @@ async function request(r, face){   // a character asking you to bring something 
     await showDialog(face, L[r.offer], {ok:'Give it'});
     const nw = (r.firstTeach || []).find(f => lvl(f.word) === 0);
     if (nw) await showNotice(nw.word, {note:nw.note});
-    const build = toks(r.build);
-    await tiles(face, build, [r.extraTile], r.buildPrompt);
-    build.filter(w => lvl(w) >= 1).forEach(useWord);
-    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); first('want', build.join('')); save(); SFX.fanfare();
+    const sentence = toks(r.sentence);
+    await gapQ({who:face, t:sentence, en:r.sentenceEn, gap:r.gap || r.wants});
+    sentence.filter(w => lvl(w) >= 1).forEach(useWord);
+    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); first('want', sentence.join('')); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
     toast(`+${r.reward} 🍑. Task complete!`);
@@ -157,9 +157,9 @@ async function buy(i, face){   // buying something from the shop by asking for i
   if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note)});
   if (i.eat && (S.bag[i.item] || 0) >= i.carry){ await infoBox(face, `<p>You can carry ${i.carry} ${esc(wz(i.item))}, and your bag is full. Eat one in an animal encounter first.</p>`); return false; }
   if (S.peaches < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🍑, and you have ${S.peaches}. ${esc(fill(sh.earnMore))}</p>`); return false; }
-  const build = toks(i.build);
-  await tiles(face, build, [i.extraTile], fill(i.buildPrompt));
-  build.filter(w => lvl(w) >= 1).forEach(useWord);
+  const sentence = toks(i.sentence);
+  await gapQ({who:face, t:sentence, en:i.sentenceEn, gap:i.gap || i.item});
+  sentence.filter(w => lvl(w) >= 1).forEach(useWord);
   S.peaches -= i.price;
   if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag (no XP: you can buy it again and again)
   else { here().bought.push(i.item); gainXP(XP.task); }

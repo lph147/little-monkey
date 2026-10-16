@@ -245,11 +245,13 @@ test('requests use real characters, lines and words', () => {
     for (const w of [r.wants, r.verb].filter(Boolean)) assert.ok(collectible.includes(w), `request ${id}: ${w} isn't a word you can collect in ${where}`);
     for (const k of ['ask', 'offer', 'thanks']) assert.ok(AREA.lines[r[k]], `request ${id}: ${k} "${r[k]}" isn't one of the lines`);
     if (r.wrong) assert.ok(AREA.lines[r.wrong], `request ${id}: wrong "${r.wrong}" isn't one of the lines`);
-    const build = r.build.split(' ');
-    assert.ok(build.includes(r.wants) && (!r.verb || build.includes(r.verb)), `request ${id}: the sentence "${r.build}" should use ${r.wants} and ${r.verb}`);
-    for (const w of [...build, r.extraTile]) assert.ok(BANK[w], `request ${id}: ${w} isn't in the word bank`);
+    const sentence = r.sentence.split(' ');
+    assert.ok(sentence.includes(r.wants) && (!r.verb || sentence.includes(r.verb)), `request ${id}: the sentence "${r.sentence}" should use ${r.wants} and ${r.verb}`);
+    assert.ok(r.sentenceEn, `request ${id}: the sentence needs its English (sentenceEn)`);
+    assert.ok(sentence.includes(r.gap || r.wants), `request ${id}: the missing word ${r.gap || r.wants} should be in the sentence`);
+    for (const w of sentence) assert.ok(BANK[w], `request ${id}: ${w} isn't in the word bank`);
     for (const f of r.firstTeach || []) assert.ok(BANK[f.word] && f.note, `request ${id}: firstTeach needs words from the bank, each with a note`);
-    assert.ok(r.asked && r.buildPrompt && r.reward > 0, `request ${id} needs asked, buildPrompt and a reward`);
+    assert.ok(r.asked && r.reward > 0, `request ${id} needs asked and a reward`);
   }
 });
 
@@ -357,7 +359,7 @@ test('intro captions are in time order, with Chinese, pinyin and English', () =>
 
 test('every word you can collect has an example sentence for its page', () => {
   const inSentence = w => [...Object.values(AREA.lines), ...AREA.story].some(s => s.zh.split(' ').includes(w));
-  const built = w => [...Object.values(AREA.requests), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].some(b => b.build.split(' ').includes(w));
+  const built = w => [...Object.values(AREA.requests), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].some(b => b.sentence.split(' ').includes(w));
   for (const [w, e] of Object.entries(AREA.examples)){
     assert.ok(collectible.includes(w), `there's an example for ${w}, which isn't a word you can collect in ${where}`);
     assert.ok(e.zh.split(' ').includes(w), `the example for ${w} doesn't use ${w}: "${e.zh}"`);
@@ -370,9 +372,9 @@ test('every word you can collect has an example sentence for its page', () => {
 test('every word you only hear is used in a sentence somewhere', () => {
   const used = new Set([
     ...sentences.flatMap(([, s]) => s.zh.split(' ')),
-    ...Object.values(AREA.requests).flatMap(r => r.build.split(' ')),
-    ...(AREA.shop ? AREA.shop.items.flatMap(i => i.build.split(' ')) : []),
-    ...(AREA.wardrobe || []).flatMap(c => c.build.split(' '))
+    ...Object.values(AREA.requests).flatMap(r => r.sentence.split(' ')),
+    ...(AREA.shop ? AREA.shop.items.flatMap(i => i.sentence.split(' ')) : []),
+    ...(AREA.wardrobe || []).flatMap(c => c.sentence.split(' '))
   ]);
   for (const w of Object.keys(BANK).filter(w => !BANK[w].area)) assert.ok(used.has(w), `${w} is in the word bank, but no sentence uses it: use it or remove it`);
 });
@@ -389,4 +391,9 @@ test('the day has night and morning steps, someone to say them, and a place to w
   assert.ok(AREA.characters.some(c => c.id === d.who), `day.who "${d.who}" isn't a character`);
   assert.ok(LEGEND_WALK(d.wakeAt.x, d.wakeAt.y), 'you wake up somewhere you can stand');
   assert.ok(AREA.map.join('').includes(Object.keys(AREA.legend).find(k => AREA.legend[k].action === 'sleep')), 'there is a nest to sleep in');
+});
+
+test('no word tiles anywhere: sentences are completed by filling a gap, never put in order', () => {
+  const things = [...Object.values(AREA.requests), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];
+  for (const b of things) for (const old of ['build', 'buildEn', 'extraTile', 'buildPrompt']) assert.ok(!(old in b), `"${old}" is from word tiles: use sentence, sentenceEn and gap`);
 });

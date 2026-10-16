@@ -251,10 +251,10 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [x] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version (the little monkey gives you the flower when it becomes your friend)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
 - [ ] Playtest Area 1 for a week
-- [ ] A vocabulary game, never a grammar test (decided 16 October 2026):
+- [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md
-  - [ ] One fill-the-gap question: the sentence in Chinese and English, choices following the word's level
-  - [ ] Replace word tiles everywhere: requests, the shop, the practice post and animals' questions
-  - [ ] The story's questions show their English all the time
+  - [x] One fill-the-gap question: the sentence in Chinese and English, choices following the word's level
+  - [x] Replace word tiles everywhere: requests, the shop, the practice post and animals' questions
+  - [x] The story's questions show their English all the time
 - [ ] Let the engine run more than one area, so the cave door leads on, and split Flower Fruit Mountain into small connected places
 - [ ] Build Area 2, the Water Curtain Cave

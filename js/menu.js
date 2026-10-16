@@ -51,9 +51,9 @@ function wardrobePage(back, focus){
     if (wearing(c.item)){ w.splice(w.indexOf(c.item), 1); save(); redress(); SFX.blip(); wardrobePage(back, c.item); return; }
     w.push(c.item); save(); redress(); closeCard();
     if (c.teach && lvl(c.teach) === 0) await showNotice(c.teach, c.note ? {note:fill(c.note)} : {});   // such as 戴, the first time
-    toks(c.build).forEach(t => { if (WORDS[t]) useWord(t); });
+    toks(c.sentence).forEach(t => { if (WORDS[t]) useWord(t); });
     first('wear', c.item);
-    await showDialog(speaker('player'), {t:[...toks(c.build), '。'], en:c.buildEn}, {teach:c.teach || c.item});
+    await showDialog(speaker('player'), {t:[...toks(c.sentence), '。'], en:c.sentenceEn}, {teach:c.teach || c.item});
   });
 }
 function firstsHTML(){   // the book of firsts: each one you've had, with the day

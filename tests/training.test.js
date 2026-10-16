@@ -1,5 +1,5 @@
-// The training ground: practise matching words to pictures, then build a sentence for the words without
-// pictures. Words due for review come first, and only due words earn peaches, so easy words can't be farmed.
+// The training ground: practise matching words to pictures, then fill the gap in a sentence for a word
+// without a picture. Words due for review come first, and only due words earn peaches, so easy words can't be farmed.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -54,56 +54,60 @@ test('the practice post stands on the map, and needs 4 words with pictures', () 
   assert.equal(game.run('trainable().length'), 0);
 });
 
-// Words without pictures (我 要) are practised by building a sentence you've built before, such as 我要吃桃子.
-const buildSave = () => ({version: 9, started: true, peaches: 0, w: {
+// Words without pictures (我 要) are practised by filling the gap in a sentence you know, such as 我＿吃桃子.
+const gapSave = () => ({version: 9, started: true, peaches: 0, w: {
   ...save().w,
-  '我': {lv: 1, due: 0, ok: 0},          // both due now
-  '要': {lv: 1, due: 0, ok: 0},
-  '吃': {lv: 1, due: LATER, ok: 1}       // so 我要吃桃子 can be built; 喝 isn't caught, so 我要喝水 can't
+  '我': {lv: 1, due: LATER, ok: 1},      // not due
+  '要': {lv: 1, due: 0, ok: 0},          // due now
+  '吃': {lv: 1, due: LATER, ok: 1}       // so 我要吃桃子 is known; 喝 isn't caught, so 我要喝水 isn't
 }});
 
-test('the sentence to build is one you know, with every word caught and a word without a picture in it', () => {
+test('the practice sentence is one you know, with a word without a picture missing, a due one first', () => {
   for (let i = 0; i < 20; i++){
-    const b = get(loadGame({save: buildSave()}), 'practiceSentence()');
-    assert.ok(['我 要 吃 桃子', '我 要 苹果', '我 要 花'].includes(b.build), `${b.build} has a word you haven't caught`);
+    const b = get(loadGame({save: gapSave()}), 'practiceSentence()');
+    assert.ok(['我要吃桃子', '我要苹果', '我要花'].includes(b.t.join('')), `${b.t.join('')} has a word you haven't caught`);
+    assert.equal(b.gap, '要', '要 is due, so it is the missing word');
+    assert.ok(b.en, 'with its English');
   }
-  assert.equal(get(loadGame({save: save()}), 'practiceSentence()'), null, 'nothing to build until you know a whole sentence');
+  assert.equal(get(loadGame({save: save()}), 'practiceSentence()'), null, 'nothing to practise until you know a whole sentence');
 });
 
-test('built right first time, 我 and 要 count as right answers and each due one earns a peach; every word counts as used', async () => {
-  const game = loadGame({save: buildSave()});
-  game.run('tiles = async () => true');   // built right first time
-  const round = async () => JSON.parse(await game.run("buildRound({...practiceSentence(), t: toks('我 要 吃 桃子')}, '').then(r => JSON.stringify(r))"));
-  assert.deepEqual(await round(), {first: true, peaches: 2}, 'a peach each for 我 and 要, which were due');
-  let s = get(game, 'S');
-  assert.equal(s.w['我'].lv, 1, 'one sentence is not enough to move 我 up');
-  assert.equal(s.w['吃'].used, 1, '吃 was used');
-  assert.equal(s.w['吃'].lv, 1, 'a word with a picture moves up by its own questions, not by building');
-  assert.equal(s.w['桃子'].lv, 4, '桃子 could already be read, so using it makes it Used');
-  assert.deepEqual(await round(), {first: true, peaches: 0}, 'straight away again earns nothing: neither word is due any more');
-  s = get(game, 'S');
-  assert.equal(s.w['我'].lv, 2, 'a second sentence makes 我 Recognised');
-  game.run('tiles = async () => false');   // took more than one try
-  assert.deepEqual(await round(), {first: false, peaches: 0});
-  assert.equal(get(game, 'S').w['我'].lv, 2, 'no change, and no penalty either');
+test('filling the gap right moves a word without a picture up, and earns a peach if it was due', async () => {
+  const game = loadGame({save: gapSave()});
+  game.run('gapQ = async () => true');   // chose right
+  const round = async () => JSON.parse(await game.run("gapRound({t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '要'}, '').then(r => JSON.stringify(r))"));
+  assert.deepEqual(await round(), {right: true, peaches: 1}, 'a peach for 要, which was due');
+  game.run("answer('要', true, 'build')");   // what gapQ does for a right choice
+  assert.deepEqual(await round(), {right: true, peaches: 0}, 'straight away again earns nothing: it isn\'t due any more');
+  game.run('gapQ = async () => false');
+  assert.deepEqual(await round(), {right: false, peaches: 0});
 });
 
-test('word tiles say whether the sentence was built right first time', async () => {
-  const game = loadGame({dom: true, save: buildSave()});
-  const sheet = game.el('#sheet');
-  const tap = w => sheet.querySelectorAll('.bank .tile').find(b => b.querySelector('ruby').firstChild.textContent === w).click();
-  const build = async order => {
-    game.run("globalThis.__first = null; tiles('', ['我', '要', '苹果'], ['喝'], 'Build it.').then(f => { globalThis.__first = f; })");
-    for (const attempt of order){ attempt.forEach(tap); sheet.querySelector('[data-a=check]').click(); }
-    await new Promise(r => setImmediate(r));
-    return game.run('__first');
+test('a gap question: Chinese and English, pictures while the word is new, Chinese and pinyin once recognised', async () => {
+  const ask = async (lv) => {
+    const game = loadGame({dom: true, save: {version: 9, started: true, w: {'桃子': {lv, due: 0, ok: 0}, '石头': {lv: 1, due: 0, ok: 0}, '水': {lv: 2, due: 0, ok: 0}, '我': {lv: 1, due: 0, ok: 0}, '要': {lv: 1, due: 0, ok: 0}, '吃': {lv: 1, due: 0, ok: 0}}}});
+    game.run("globalThis.__ok = null; gapQ({t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '桃子'}).then(ok => { __ok = ok; })");
+    return game;
   };
-  assert.equal(await build([['我', '要', '苹果']]), true);
-  assert.equal(await build([['要', '我', '苹果'], ['我', '要', '苹果']]), false, 'a wrong order first');
+  const fresh = await ask(1), sheet = fresh.el('#sheet');
+  assert.ok(sheet.querySelector('.line .gap'), 'the sentence has a gap');
+  assert.equal(sheet.querySelector('.sentence-en').textContent, 'I want to eat a peach.', 'with its English, shown');
+  assert.ok(sheet.querySelectorAll('.opt .pix').length >= 2, 'a new word: pictures to choose from');
+  for (const o of sheet.querySelectorAll('.opt')) assert.ok(!['我', '要', '吃'].includes(o.querySelector('.cap').textContent), 'never a word that is already in the sentence');
+  sheet.querySelectorAll('.opt').find(o => o.textContent.includes('桃子')).click();
+  await new Promise(r => setImmediate(r));
+  assert.ok(sheet.querySelector('.line .tok.teach[data-t="桃子"]'), 'choosing fills the gap');
+  const known = await ask(2), ks = known.el('#sheet');
+  assert.equal(ks.querySelectorAll('.opt .pix').length, 0, 'recognised: Chinese and pinyin only');
+  assert.ok(ks.querySelector('.opt.hz .cap').textContent, 'with pinyin');
+  ks.querySelectorAll('.opt').find(o => !o.textContent.includes('桃子')).click();
+  await new Promise(r => setImmediate(r));
+  assert.ok(ks.querySelector('.opt.right'), 'a wrong choice shows the right one');
+  assert.equal(known.run("rec('桃子').lv"), 2, 'and nothing is taken away');
 });
 
 test('words without pictures that are due count on the title screen', () => {
-  const game = loadGame({save: buildSave()});
+  const game = loadGame({save: gapSave()});
   assert.ok(get(game, 'dueWords()').includes('要'));
   assert.ok(!get(game, 'dueWords()').includes('吃'));
 });
