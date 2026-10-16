@@ -112,27 +112,37 @@ async function request(r, face){   // a character asking you to bring something 
     if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(r.asked); }
   } else await showDialog(face, L[r.thanks]);
 }
+const forSale = () => AREA.shop.items.filter(i => i.eat || !here().bought.includes(i.item));   // food can be bought again; other things once
 async function shop(face){   // the area's shop: what it sells, and buying it by asking for it with 我要…
-  const sh = AREA.shop, items = sh.items.filter(i => !here().bought.includes(i.item));
+  const sh = AREA.shop, items = forSale();
   await showDialog(face, L[sh.ask]);
   if (!items.length){ toast(fill(sh.soldOut)); return; }
+  const food = sh.items.filter(i => i.eat && S.bag[i.item]).map(i => `${S.bag[i.item]} ${esc(wz(i.item))}`);
   const i = await new Promise(res => {   // labels in Chinese only, so browsing is reading practice
-    openCard(`${face}<p class="prompt">You have ${S.peaches} 🍑.</p>
+    openCard(`${face}<p class="prompt">You have ${S.peaches} 🍑${food.length ? ' and ' + food.join(', ') : ''}.</p>
       <div class="actions"><button class="btn" data-a="no" data-b>Not now</button>${items.map((it, n) => `<button class="btn ${n ? '' : 'primary'}" data-n="${n}" data-label="Choose">${it.item} · 🍑 ${it.price}</button>`).join('')}</div>`);
     on('[data-a=no]', () => { closeCard(); res(null); });
     sheet.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { closeCard(); res(items[+b.dataset.n]); });
   });
-  if (!i) return;
+  if (i) await buy(i, face);
+}
+async function buy(i, face){   // buying something from the shop by asking for it. Gives true if you bought it.
+  const sh = AREA.shop;
   if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note)});
-  if (S.peaches < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🍑, and you have ${S.peaches}. ${esc(fill(sh.earnMore))}</p>`); return; }
+  if (i.eat && (S.bag[i.item] || 0) >= i.carry){ await infoBox(face, `<p>You can carry ${i.carry} ${esc(wz(i.item))}, and your bag is full. Eat one in an animal encounter first.</p>`); return false; }
+  if (S.peaches < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🍑, and you have ${S.peaches}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const build = toks(i.build);
   await tiles(face, build, [i.extraTile], fill(i.buildPrompt));
   build.filter(w => lvl(w) >= 1).forEach(w => setLevel(w, 4));
-  S.peaches -= i.price; here().bought.push(i.item); gainXP(XP.task); save(); SFX.fanfare();
+  S.peaches -= i.price;
+  if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag (no XP: you can buy it again and again)
+  else { here().bought.push(i.item); gainXP(XP.task); }
+  save(); SFX.fanfare();
   if (i.wear){ for (const k in spriteCache) delete spriteCache[k]; }   // redraw your monkey wearing it
   await showDialog(face, L[sh.thanks]);
   toast(fill(i.bought));
   await runEvents();
+  return true;
 }
 async function lookAt(t){   // the card for the word you learn by looking at a tile
   const w = lookWord(t);

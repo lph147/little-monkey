@@ -28,6 +28,8 @@ function pictureQ({head, body, options, answerIdx, word, type, text, onShow}){
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 3;
 const canWild = () => matches(AREA.animalsAppear) && canEncounter();   // can animals jump out of their hiding place yet?
+const snack = () => (AREA.shop ? AREA.shop.items : []).find(i => i.eat && (S.bag[i.item] || 0) > 0);   // food in your bag to eat in an encounter
+const wrongToEat = (n, answerIdx) => shuffle([...Array(n).keys()].filter(i => i !== answerIdx))[0];   // which wrong answer eating takes away
 async function encounter(foe){
   const an = foe.hz, img = foe.img;
   let showEn = false;
@@ -48,11 +50,20 @@ async function encounter(foe){
     if (type === 'listen') body = `<p class="prompt">Listen. Which picture is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
     else if (type === 'read') body = `<p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div></div>`;
     else body = `<p class="prompt">Listen. Which characters is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
+    const food = foe.wild && snack();   // in an animal encounter, food from the shop takes away a wrong answer
+    if (food) body += `<div class="center"><button class="btn" data-a="eat">Eat a ${esc(wz(food.item))} · ${S.bag[food.item]} left</button></div>`;
     const ok = await pictureQ({head, body, word: w, type,
       options: opts.map(o => type === 'hear' ? o : `<span class="ico">${picHTML(o)}</span><span class="cap">${type === 'read' ? WORDS[o].py : o}</span>`), text: type === 'hear',
       answerIdx: opts.indexOf(w), onShow: () => {
         if (type !== 'read') setTimeout(() => say(w), 300);
         on('[data-a=foeen]', e => { showEn = true; e.currentTarget.outerHTML = ` <span class="small">${esc(WORDS[an].en)}</span>`; });
+        on('[data-a=eat]', e => {
+          if (sheet.querySelector('.opt[disabled]')) return;   // already answered
+          sheet.querySelector(`.opt[data-i="${wrongToEat(opts.length, opts.indexOf(w))}"]`).hidden = true;
+          S.bag[food.item]--; save(); SFX.blip();
+          e.currentTarget.remove();
+          sheet.querySelector('.feedback').textContent = 'Crunch! One wrong answer is gone.';
+        });
       }});
     if (ok) score++;
   }

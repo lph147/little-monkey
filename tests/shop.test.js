@@ -52,3 +52,58 @@ test('a version 6 save is converted with nothing bought yet', () => {
   assert.equal(s.xp, 40);
   assert.ok(game.storage.get('xiaohouzi-v2-backup-v6'), 'a copy of the version 6 save is kept');
 });
+
+// The 老板 also sells 苹果: you can buy them again and again (up to 3 in your bag), and eat one in an
+// animal encounter to take away a wrong answer.
+const APPLE = () => 'AREA.shop.items.find(i => i.item === "苹果")';
+const buyIt = async (game, what) => {   // buy something, answering every card as a player would
+  game.run('showDialog = showNotice = infoBox = async () => {}; toast = () => {}; tiles = async () => true;');
+  return game.run(`buy(${what}, '')`);
+};
+
+test('the 老板 sells 苹果 as food, and keeps selling it after the headband', () => {
+  const apple = get(base, APPLE());
+  assert.ok(apple && apple.eat && apple.carry === 3 && apple.price === 2, '苹果 should be food that costs 2 and you can carry 3 of');
+  assert.equal(apple.build, '我 要 苹果');
+  const game = play({areas: {1: area({bought: ['头带']})}});
+  assert.deepEqual(get(game, 'forSale().map(i => i.item)'), ['苹果']);
+});
+
+test('buying a 苹果 costs 2 peaches, puts it in your bag, and earns no XP', async () => {
+  const game = play({areas: {1: area()}, peaches: 5, xp: 30, w: {'苹果': {lv: 1, due: 0, ok: 0}}});
+  assert.equal(await buyIt(game, APPLE()), true);
+  const s = get(game, 'S');
+  assert.equal(s.peaches, 3);
+  assert.deepEqual(s.bag, {'苹果': 1});
+  assert.equal(s.xp, 30);
+  assert.deepEqual(s.areas[1].bought, [], 'food isn\'t "bought" for good, so it stays for sale');
+  assert.equal(s.w['苹果'].lv, 4, 'asking for it with 我要苹果 counts as using the word');
+});
+
+test('you can carry 3 苹果, and need 2 peaches for each', async () => {
+  const full = play({areas: {1: area()}, peaches: 9, bag: {'苹果': 3}});
+  assert.equal(await buyIt(full, APPLE()), false);
+  assert.equal(get(full, 'S').peaches, 9);
+  const poor = play({areas: {1: area()}, peaches: 1});
+  assert.equal(await buyIt(poor, APPLE()), false);
+  assert.deepEqual(get(poor, 'S').bag, {});
+});
+
+test('eating takes away one wrong answer, never the right one', () => {
+  const game = play({bag: {'苹果': 2}});
+  assert.equal(get(game, 'snack()').item, '苹果');
+  assert.equal(get(play({bag: {}}), 'snack() || null'), null, 'nothing to eat with an empty bag');
+  for (let i = 0; i < 50; i++){
+    const gone = game.run('wrongToEat(3, 1)');
+    assert.ok(gone === 0 || gone === 2, `took away option ${gone}`);
+  }
+});
+
+test('a version 7 save is converted with an empty bag', () => {
+  const game = loadGame({save: {version: 7, started: true, peaches: 4, areas: {1: area({bought: ['头带']})}}});
+  const s = get(game, 'S');
+  assert.equal(s.version, VERSION);
+  assert.deepEqual(s.bag, {});
+  assert.deepEqual(s.areas[1].bought, ['头带']);
+  assert.ok(game.storage.get('xiaohouzi-v2-backup-v7'), 'a copy of the version 7 save is kept');
+});

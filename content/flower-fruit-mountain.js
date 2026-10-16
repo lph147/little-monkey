@@ -116,14 +116,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // if you can't afford something yet (earnMore, after how many peaches you need), and when you've
   // bought everything (soldOut). Each item: its word and price in peaches, the sentence you build to
   // ask for it (extraTile is a wrong tile mixed in), a line on its new-word card (note), a message
-  // after you buy it (bought), and wear: true if your monkey wears it from then on.
+  // after you buy it (bought), and wear: true if your monkey wears it from then on (bought once), or
+  // eat: true for food you can buy again and eat in an animal encounter to take away a wrong answer,
+  // with carry: the most you can carry.
   shop: {
     who:'boss', ask:'whatWant', thanks:'thanks',
     earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and training at the practice post.',
     soldOut:'You have everything the {老板} sells. Come back another time.',
     items: [
       {item:'头带', price:10, build:'我 要 头带', buildEn:'I want the headband.', extraTile:'吃', buildPrompt:'Ask for the {头带}. Put the words in order.',
-        note:'A red cloth headband.', bought:'You tie on the red {头带}. It suits you!', wear:true}
+        note:'A red cloth headband.', bought:'You tie on the red {头带}. It suits you!', wear:true},
+      {item:'苹果', price:2, build:'我 要 苹果', buildEn:'I want an apple.', extraTile:'喝', buildPrompt:'Ask for a {苹果}. Put the words in order.',
+        note:'A crunchy apple.', bought:'You put the {苹果} in your bag. In an animal encounter, eat it to take away a wrong answer.', eat:true, carry:3}
     ]
   },
 

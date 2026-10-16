@@ -7,6 +7,7 @@ const {loadGame, SAVE_KEY} = require('./fake-browser');
 
 const json = x => JSON.parse(JSON.stringify(x));
 const saveOf = game => JSON.parse(game.run('JSON.stringify(S)'));
+const VERSION = loadGame().run('SAVE_VERSION');   // the current save version
 const START = {elder: 0, gate: false, story: false, hungry: 'not asked', thirsty: 'not asked', holding: {}, bought: [], done: false};
 
 // A save as Little Monkey 8 (and the versions since, up to the map legend) wrote it: version 2.
@@ -21,7 +22,7 @@ const V2 = {
 test('a version 2 save is converted, keeping everything', () => {
   const game = loadGame({save: V2});
   const s = saveOf(game);
-  assert.equal(s.version, 7);
+  assert.equal(s.version, VERSION);
   assert.equal(s.area, 1);
   assert.deepEqual(s.areas[1], {elder: 2, hungry: 'done', thirsty: 'asked', gate: false, story: false, holding: {}, bought: [], done: false});
   for (const old of ['q', 'gate', 'story', 'area1Done', 'carry']) assert.ok(!(old in s), `the old field ${old} should have moved`);
@@ -89,13 +90,13 @@ test('an unreadable save is kept as a backup, and the game starts fresh', () => 
   game.runFrame();
   assert.equal(game.storage.get(SAVE_KEY + '-backup-unreadable'), broken);
   assert.match(game.el('#titleButtons').innerHTML, />Start</);
-  assert.equal(saveOf(game).version, 7);
+  assert.equal(saveOf(game).version, VERSION);
 });
 
 test('a new player starts in the current format, and nothing is saved until they play', () => {
   const game = loadGame();
   const s = saveOf(game);
-  assert.equal(s.version, 7);
+  assert.equal(s.version, VERSION);
   assert.deepEqual(s.areas[1], START);
   assert.equal(game.storage.size, 0);
 });
@@ -108,7 +109,7 @@ for (const k of ['q', 'gate', 'story', 'area1Done']) delete V3[k];
 test('a version 3 save is converted: tasks become words, and what you carry moves to the task', () => {
   const game = loadGame({save: V3});
   const s = saveOf(game);
-  assert.equal(s.version, 7);
+  assert.equal(s.version, VERSION);
   assert.deepEqual(s.areas[1], {elder: 2, gate: false, story: false, hungry: 'asked', thirsty: 'asked', holding: {hungry: '苹果', thirsty: '水'}, bought: [], done: false});
   assert.ok(!('carry' in s));
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v3'), JSON.stringify(V3));
@@ -129,7 +130,7 @@ delete V4.carry;
 test('a version 4 save is converted: the words in lines you have seen count as heard', () => {
   const game = loadGame({save: V4});
   const s = saveOf(game);
-  assert.equal(s.version, 7);
+  assert.equal(s.version, VERSION);
   assert.deepEqual(s.heard, {'你好': 1, '我': 2, '饿': 1, '了': 1, '要': 1, '吃': 1, '桃子': 1});
   for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(s[k], v, `${k} should be unchanged`);
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v4'), JSON.stringify(V4));

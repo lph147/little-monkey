@@ -37,6 +37,7 @@ shown where the word list has them.
 | 我要吃桃子 | wǒ yào chī táozi | I want to eat a peach. | 饿猴子 (Hungry monkey) |  |
 | 我要喝水 | wǒ yào hē shuǐ | I want to drink water. | 渴猴子 (Thirsty monkey) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
+| 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 
 ### The sign
 
