@@ -38,7 +38,7 @@ function openMenu(focusId){
       sheet.querySelectorAll('.friends button').forEach(bt => bt.onclick = () => say(bt.dataset.w));
       on('[data-a=ok]', () => openMenu('friends'));
     },
-    today: () => todaysWords(() => openMenu('today')),
+    today: () => openScroll(() => openMenu('today'), 0, 'today'),
     music: () => { S.music = !S.music; save(); if (S.music) musicStart(); else musicStop(); openMenu('music'); },
     sound: () => { S.sound = !S.sound; save(); if (S.sound) SFX.blip(); openMenu('sound'); },
     pinyin: () => { S.pinyin = !S.pinyin; save(); openMenu('pinyin'); },

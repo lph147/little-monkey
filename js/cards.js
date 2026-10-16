@@ -38,7 +38,13 @@ const NAV_SEL = '.actions button, .menu button';
 function navItems(){ return [...sheet.querySelectorAll(NAV_SEL)].filter(b => !b.disabled && !b.hidden && b.offsetParent !== null); }
 sheet.addEventListener('focusin', e => { sheet.querySelectorAll('.navsel').forEach(x => x.classList.remove('navsel')); if (e.target.matches(NAV_SEL)) e.target.classList.add('navsel'); });
 function navFocus(d){
-  if (!sheet.querySelector('.menu')) return;          // the D-pad only moves through menus; on cards A is always the main button
+  const tabs = [...sheet.querySelectorAll('.scrolltabs .tab')];
+  if (tabs.length && (d === 'left' || d === 'right')){   // left and right switch the Word Scroll's tabs
+    const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+    tabs[(i + (d === 'left' ? -1 : 1) + tabs.length) % tabs.length].click();
+    return;
+  }
+  if (!sheet.querySelector('.menu')) return;          // otherwise the D-pad only moves through menus; on cards A is always the main button
   const items = navItems(); if (!items.length) return;
   let i = items.indexOf(document.activeElement);
   if (i < 0) i = Math.max(0, items.findIndex(b => b.classList.contains('primary')));

@@ -199,23 +199,11 @@ async function nextArea(){
   const back = AREA.exit.returnTo;   // until the next area is built, you're put back here
   pl.x = back.x; pl.y = back.y; pl.dir = back.facing; pl.px = pl.x*T; pl.py = pl.y*T; S.pos = {x:back.x, y:back.y, dir:back.facing}; save();
 }
-function todaysWords(back){
-  return new Promise(res => {
-    const k = todayKey(), ids = S.today.d === k ? S.today.ids.filter(w => WORDS[w]) : [];   // not words since removed from the game
-    const due = ORDER.filter(w => lvl(w) >= 1 && rec(w).due <= Date.now() + DAY).length;
-    openCard(`<p class="label">Today’s words</p>
-      ${ids.length ? `<div class="chips">${ids.map(w => `<button class="chip" data-w="${w}">${w}</button>`).join('')}</div>` : '<p>You haven’t met any words yet today.</p>'}
-      <div class="gloss">Tap a word to hear it.</div>
-      <p>${due} ${due === 1 ? 'word is' : 'words are'} due for review in the tall grass within a day.</p>
-      <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
-    sheet.querySelectorAll('.chip').forEach(b => b.onclick = () => { const w = b.dataset.w; say(w); sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${WORDS[w].py} · ${esc(WORDS[w].en)}`; });
-    on('[data-a=ok]', () => { if (back) back(); else closeCard(); res(); });
-  });
-}
+const todaysWords = () => S.today.d === todayKey() ? S.today.ids.filter(w => WORDS[w] && lvl(w) > 0) : [];   // not words since removed from the game
 function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow of its picture, not giving it away) or not met yet
-  if (lvl(w) > 0) return `<button class="card" data-w="${w}"><div class="c">${w}</div><div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
-  if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : '？'}</div><div class="p">heard ${S.heard[w]}×</div>${pips(w)}</div>`;
-  return `<div class="card unseen"><div class="c">？</div><div class="p"></div>${pips(w)}</div>`;
+  if (lvl(w) > 0) return `<button class="card" data-w="${w}">${WORDS[w].pic ? `<div class="c" aria-hidden="true">${picHTML(w)}</div><div class="hz">${w}</div>` : `<div class="c hz">${w}</div>`}<div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
+  if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : '？'}</div><div class="p">heard ${S.heard[w]}×</div></div>`;
+  return `<div class="card unseen"><div class="c">？</div><div class="p"></div></div>`;
 }
 const MASTERY = ['Caught', 'Recognised', 'Read', 'Used'];   // what each gold square means
 // An example sentence with the word in it: the first line, then story sentence, that has it, preferring one you've seen.
@@ -232,7 +220,7 @@ function exampleFor(w){
 function wordPage(w, back){   // a caught word's page in the Word Scroll
   const d = WORDS[w], ex = exampleFor(w);
   say(w);
-  openCard(`<p class="label">Word Scroll · ${CATEGORIES[d.category]}</p>
+  openCard(`<p class="label">Word Scroll · ${CATEGORIES[d.category].name}</p>
     <div class="word"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en" hidden>${esc(d.en)}</div></div>
     <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p>
     <p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
@@ -243,19 +231,43 @@ function wordPage(w, back){   // a caught word's page in the Word Scroll
   on('[data-a=en]', e => { sheet.querySelectorAll('.word .en, .sentence-en').forEach(x => x.hidden = false); e.currentTarget.remove(); const p = sheet.querySelector('.primary'); if (p) p.focus(); });
   on('[data-a=ok]', back);
 }
-function openScroll(back, top){   // top: where to scroll to, to come back to the same place
+const heardWords = () => Object.keys(GLOSS).filter(w => S.heard[w]).sort((a, b) => S.heard[b] - S.heard[a]);   // words this area doesn't teach, most heard first
+// The Word Scroll's tabs, as [id, name]: a tab for each category the area has words in, then Today,
+// then Heard once you've heard a word this area doesn't teach.
+const scrollTabs = () => [
+  ...Object.entries(CATEGORIES).filter(([id]) => ORDER.some(w => WORDS[w].category === id)).map(([id, c]) => [id, c.tab]),
+  ['today', 'Today'], ...(heardWords().length ? [['heard', 'Heard']] : [])
+];
+let scrollTab = null;   // the tab the Word Scroll is open at; it opens there again next time
+function scrollPage(tab){   // what a tab of the Word Scroll shows
+  if (tab === 'today'){
+    const ids = todaysWords(), due = ORDER.filter(w => lvl(w) >= 1 && rec(w).due <= Date.now() + DAY).length;
+    return `<p class="label cathead">Today’s words <span class="catn">${ids.length}</span></p>
+      ${ids.length ? `<div class="grid">${ids.map(scrollCard).join('')}</div>` : '<p>You haven’t met any words yet today.</p>'}
+      <p class="small">${due} ${due === 1 ? 'word is' : 'words are'} due for review within a day: practise at the practice post, or meet animals in the tall grass.</p>`;
+  }
+  if (tab === 'heard'){
+    const heard = heardWords();
+    return `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
+      <div class="chips">${heard.map(w => `<button class="chip" data-h="${w}">${w} <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
+  }
+  const ws = ORDER.filter(w => WORDS[w].category === tab);
+  return `<p class="label cathead">${CATEGORIES[tab].name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>
+    <div class="grid">${ws.map(scrollCard).join('')}</div>`;
+}
+function openScroll(back, top, tab){   // top: where to scroll to, to come back to the same place. tab: the tab to open at
+  const tabs = scrollTabs();
+  if (tab) scrollTab = tab;
+  if (!tabs.some(([id]) => id === scrollTab)) scrollTab = tabs[0][0];
   const seen = ORDER.filter(w => lvl(w) > 0).length;
-  const cats = Object.entries(CATEGORIES).map(([id, name]) => [name, ORDER.filter(w => WORDS[w].category === id)]).filter(([, ws]) => ws.length);
-  const heard = Object.keys(GLOSS).filter(w => S.heard[w]).sort((a, b) => S.heard[b] - S.heard[a]);   // words this area doesn't teach, most heard first
   openCard(`<p class="label">Word Scroll · ${seen} of ${ORDER.length}</p>
-    <p class="small">Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you've heard but not caught yet.${S.friends.length ? '<br>Friends: ' + S.friends.map(id => FRIEND_NAMES[id] || id).join(', ') : ''}</p>
-    ${cats.map(([name, ws]) => `<p class="label cathead">${name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>
-    <div class="grid">${ws.map(scrollCard).join('')}</div>`).join('')}
-    ${heard.length ? `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
-    <div class="chips">${heard.map(w => `<button class="chip" data-h="${w}">${w} <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>` : ''}
-    <div class="gloss" style="margin-top:10px">Tap a word to hear it and see more.</div>
+    <div class="scrolltabs" role="tablist">${tabs.map(([id, name]) => `<button class="tab" role="tab" data-tab="${id}" aria-selected="${id === scrollTab}">${name}</button>`).join('')}</div>
+    ${scrollPage(scrollTab)}
+    <div class="gloss">${scrollTab === 'heard' ? 'Tap a word to hear it.' : 'Tap a word to see its page.'}</div>
+    <p class="small">Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you've heard but not caught yet.</p>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>${back ? 'Back' : 'Close'}</button></div>`);
   if (top) sheet.scrollTop = top;
+  sheet.querySelectorAll('.tab').forEach(b => b.onclick = () => { if (b.dataset.tab !== scrollTab){ SFX.turn(); openScroll(back, 0, b.dataset.tab); } });
   sheet.querySelectorAll('.card[data-w]').forEach(b => b.onclick = () => {
     const at = sheet.scrollTop;
     SFX.blip(); wordPage(b.dataset.w, () => openScroll(back, at));

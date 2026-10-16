@@ -11,16 +11,16 @@
 // In the Word Scroll, each category's words appear in the order they are listed here.
 // Sentences in the content files may only use words from this bank (the tests check).
 
-// The Word Scroll's categories, in the order it shows them, with their names. A category only
-// appears once the area has words in it.
+// The Word Scroll's categories, in the order its tabs show them: the short name on the tab, and the
+// full name. A category only appears once the area has words in it.
 const CATEGORIES = {
-  animals: 'Animals',
-  food: 'Food and drink',
-  nature: 'Nature',
-  places: 'Places',
-  items: 'Items',
-  actions: 'Actions',
-  people: 'People and phrases'
+  animals: {tab:'Animals', name:'Animals'},
+  food: {tab:'Food', name:'Food and drink'},
+  nature: {tab:'Nature', name:'Nature'},
+  places: {tab:'Places', name:'Places'},
+  items: {tab:'Items', name:'Items'},
+  actions: {tab:'Actions', name:'Actions'},
+  people: {tab:'People', name:'People and phrases'}
 };
 
 const WORD_BANK = {

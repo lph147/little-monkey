@@ -26,42 +26,78 @@ test('opening the Story Scroll counts every word in the story once', () => {
   assert.deepEqual(heardIn(game), want);
 });
 
+// Every category's page of the Word Scroll, one after another.
+const allCategories = game => game.run("scrollTabs().filter(([id]) => CATEGORIES[id]).map(([id]) => scrollPage(id)).join('')");
+
 test('the Word Scroll shows caught words, shadows of heard words, and ？ for the rest', () => {
   const game = loadGame({save: {version: 5, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}}, heard: {'猴子': 3, '石头': 2, '有': 9}}});
-  game.run('openScroll()');
-  const html = game.el('#sheet').innerHTML, total = game.run('ORDER.length');
-  assert.match(html, /<button class="card" data-w="石头"><div class="c">石头<\/div><div class="p">shítou<\/div>/, 'a caught word shows its characters and pinyin');
-  const monkey = game.run("picHTML('猴子')");   // its pixel sprite
+  const html = allCategories(game), total = game.run('ORDER.length');
+  const stone = game.run("picHTML('石头')"), monkey = game.run("picHTML('猴子')");   // their pixel sprites
+  assert.ok(html.includes(`<button class="card" data-w="石头"><div class="c" aria-hidden="true">${stone}</div><div class="hz">石头</div><div class="p">shítou</div>`), 'a caught word shows its picture, characters and pinyin');
   assert.ok(html.includes(`<div class="card heard" aria-label="Heard 3 times, not caught yet"><div class="c sil" aria-hidden="true">${monkey}</div><div class="p">heard 3×</div>`), 'a heard word shows its shadow and count');
   assert.ok(!html.includes('猴子') && !html.includes('hóuzi'), 'a heard word is not given away');
-  assert.equal(count(html, 'class="pix"'), 1, 'only the heard word shows a picture (its shadow)');
+  assert.equal(count(html, 'class="pix"'), 2, 'only the caught word and the heard word (its shadow) show a picture');
   assert.equal(count(html, 'class="card unseen"'), total - 2, 'every other word shows ？');
 });
 
-test('the Word Scroll groups words by category, with how many of each you have caught', () => {
-  const game = loadGame({save: {version: 5, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}, '猴子': {lv: 2, due: 0, ok: 1}}}});
-  const CATEGORIES = JSON.parse(game.run('JSON.stringify(CATEGORIES)')), WORDS = JSON.parse(game.run('JSON.stringify(WORDS)'));
-  game.run('openScroll()');
-  const sections = game.el('#sheet').innerHTML.split('<p class="label cathead">').slice(1);
-  const used = Object.entries(CATEGORIES).filter(([id]) => Object.values(WORDS).some(d => d.category === id));
-  assert.equal(sections.length, used.length, 'one heading for each category the area has words in (and no Heard list yet)');
-  used.forEach(([id, name], i) => {
-    const words = Object.keys(WORDS).filter(w => WORDS[w].category === id), caught = words.filter(w => ['石头', '猴子'].includes(w));
-    assert.ok(sections[i].startsWith(`${name} <span class="catn">${caught.length}/${words.length}</span>`), `heading ${i + 1} should be ${name} ${caught.length}/${words.length}`);
-    assert.equal(count(sections[i], 'class="card'), words.length, `${name} should show all its words`);
-    for (const w of caught) assert.ok(sections[i].includes(`data-w="${w}"`), `${w} should be under ${name}`);
-  });
+test('a caught word without a picture shows its characters in the grid', () => {
+  const game = loadGame({save: {version: 8, started: true, w: {'我': {lv: 1, due: 0, ok: 0}}}});
+  assert.ok(allCategories(game).includes('<button class="card" data-w="我"><div class="c hz">我</div><div class="p">wǒ</div>'));
 });
 
-test('the Heard list shows words this area doesn\'t teach, most heard first', () => {
-  const game = loadGame({save: {version: 5, started: true, heard: {'是': 4, '有': 9, '猴子': 3, '里': 5}}});
+test('the Word Scroll has a tab for each category, with how many of its words you have caught', () => {
+  const game = loadGame({save: {version: 5, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}, '猴子': {lv: 2, due: 0, ok: 1}}}});
+  const CATEGORIES = JSON.parse(game.run('JSON.stringify(CATEGORIES)')), WORDS = JSON.parse(game.run('JSON.stringify(WORDS)'));
+  const used = Object.entries(CATEGORIES).filter(([id]) => Object.values(WORDS).some(d => d.category === id));
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(scrollTabs())')), [...used.map(([id, c]) => [id, c.tab]), ['today', 'Today']],
+    'one tab for each category the area has words in, then Today (and no Heard tab yet)');
   game.run('openScroll()');
+  assert.ok(game.el('#sheet').innerHTML.includes(`data-tab="${used[0][0]}" aria-selected="true"`), 'it opens at the first tab');
+  for (const [id, c] of used){
+    game.run(`openScroll(null, 0, '${id}')`);
+    const html = game.el('#sheet').innerHTML, page = html.slice(html.indexOf('<p class="label cathead">'));
+    const words = Object.keys(WORDS).filter(w => WORDS[w].category === id), caught = words.filter(w => ['石头', '猴子'].includes(w));
+    assert.ok(html.includes(`data-tab="${id}" aria-selected="true"`), `the ${c.tab} tab is chosen`);
+    assert.ok(page.startsWith(`<p class="label cathead">${c.name} <span class="catn">${caught.length}/${words.length}</span>`), `${c.tab} should be headed ${c.name} ${caught.length}/${words.length}`);
+    assert.equal(count(page, 'class="card'), words.length, `${c.tab} should show all its words`);
+  }
+});
+
+test('the Word Scroll opens again at the tab you left it on; left and right switch tabs', () => {
+  const game = loadGame({dom: true, save: {version: 8, started: true}});
+  const sheet = game.el('#sheet'), chosen = () => sheet.querySelector('.tab[aria-selected="true"]').dataset.tab;
+  game.run("openScroll(null, 0, 'food')");
+  game.run('closeCard(); openScroll()');
+  assert.equal(chosen(), 'food');
+  game.run("navFocus('right')");
+  assert.equal(chosen(), 'nature');
+  game.run("navFocus('left'); navFocus('left')");
+  assert.equal(chosen(), 'animals');
+  sheet.querySelector('.tab[data-tab="today"]').click();
+  assert.equal(chosen(), 'today', 'tapping a tab opens it');
+});
+
+test('the Today tab shows the words you met today, and how many are due', () => {
+  const game = loadGame({save: {version: 8, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}, '我': {lv: 2, due: 9e15, ok: 1}}}});
+  game.run("S.today = {d: todayKey(), ids: ['石头', '我']}");
+  game.run("openScroll(null, 0, 'today')");
+  const html = game.el('#sheet').innerHTML;
+  assert.ok(html.includes('Today’s words <span class="catn">2</span>'));
+  assert.ok(html.includes('data-w="石头"') && html.includes('data-w="我"'), 'both words are shown');
+  assert.ok(html.includes('1 word is due for review within a day'), '石头 is due; 我 is not');
+  game.run("S.today = {d: 'long ago', ids: ['石头']}; openScroll(null, 0, 'today')");
+  assert.ok(game.el('#sheet').innerHTML.includes('You haven’t met any words yet today.'));
+});
+
+test('the Heard tab shows words this area doesn\'t teach, most heard first', () => {
+  const game = loadGame({save: {version: 5, started: true, heard: {'是': 4, '有': 9, '猴子': 3, '里': 5}}});
+  game.run("openScroll(null, 0, 'heard')");
   const html = game.el('#sheet').innerHTML, list = html.slice(html.indexOf('>Heard<'));
   assert.deepEqual([...list.matchAll(/data-h="([^"]+)">\1 <span class="small">(\d+)×/g)].map(m => m[1] + m[2]), ['有9', '里5', '是4']);
   assert.ok(!list.includes('猴子'), 'a word you can collect here goes in its category, not the Heard list');
   const fresh = loadGame();
   fresh.run('openScroll()');
-  assert.ok(!fresh.el('#sheet').innerHTML.includes('>Heard<'), 'no Heard list until you have heard something');
+  assert.ok(!fresh.el('#sheet').innerHTML.includes('data-tab="heard"'), 'no Heard tab until you have heard something');
 });
 
 test('a caught word has a page: picture, pinyin, level, where you found it and an example', () => {

@@ -152,10 +152,19 @@ rt.hid{visibility:hidden}
 .tile rt{font-size:.5em}
 .shake{animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.card{border:2px solid var(--line);border-radius:6px;padding:8px 4px;text-align:center;background:var(--bg)}
-.card .c{font-size:1.7rem;font-weight:500;line-height:1.2}
-.card .p{font-size:.85rem;color:var(--muted);min-height:1.3em}
+/* the Word Scroll: tabs across the top, and a grid of word pictures */
+.scrolltabs{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0 2px}
+.tab{font-family:var(--pixel);font-size:.82rem;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:4px;padding:1px 5px;min-height:32px}
+.tab[aria-selected="true"]{background:var(--jade);border-color:var(--jade);color:var(--jade-ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px;margin-top:6px}
+.card{border:2px solid var(--line);border-radius:6px;padding:6px 2px 5px;text-align:center;background:var(--bg);display:flex;flex-direction:column;align-items:center;font-family:var(--text)}
+.card .c{font-size:1.7rem;font-weight:500;line-height:1.2;height:48px;display:flex;align-items:center;justify-content:center}
+.card .pix{width:48px;height:48px}
+.card .hz{font-size:1.15rem;font-weight:500;line-height:1.25}
+.card .c.hz{font-size:1.5rem}
+.card .p{font-size:.8rem;color:var(--muted);min-height:1.3em;line-height:1.3}
+.card .pips{margin-top:3px}
+.card .pips i{width:8px;height:8px}
 .card.unseen{opacity:.5}
 .card.heard{border-style:dashed}
 .cathead{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 0}
