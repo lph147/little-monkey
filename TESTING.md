@@ -12,6 +12,8 @@ They start the game in a pretend browser (no window opens) and check that it loa
 
 They also check the content files: every word in a sentence is in the word bank, no word is listed twice, every picture is different, characters stand where you can walk, names have Chinese, pinyin and English, sprites are complete, and so on. If a test fails, its message says what's wrong and where.
 
+One test plays the whole of Flower Fruit Mountain, from a new game to passing the word test at the cave door, pressing the game's own buttons the way a player would (tests/playthrough.test.js). If a change makes the area impossible to finish, it says where it got stuck.
+
 And they try out a few things the game does: the story questions only show words you've caught, the cave door opens as soon as everything else is done, and Space and Enter work as A on the title screen and in the intro.
 
 They can't tell whether the game *feels* right, so the checks below are still needed.

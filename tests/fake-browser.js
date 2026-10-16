@@ -12,6 +12,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const {makeElement} = require('./mini-dom');
 
 const ROOT = path.resolve(__dirname, '..');
 const ENTRY = 'index.html';           // the page that loads the game
@@ -57,8 +58,11 @@ function scriptsIn(page, root = ROOT){
 // (an object, or a string for the exact text, such as a broken save), and {storage} for
 // anything else already in the browser's storage. {root} and {page} load a different copy
 // of the game (used to compare versions).
-function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY} = {}){
+// {dom: true} is for tests that play the game: the card (#sheet) becomes a working copy whose
+// buttons can be found and pressed (see mini-dom.js), and timers wait until the test calls flush().
+function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = false} = {}){
   const elements = {}, storage = new Map(Object.entries(stored)), frames = [], listeners = {};
+  const timers = new Map(); let nextTimer = 1;
   if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
   const document = {
     hidden: false,
@@ -68,6 +72,7 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY} = {}){
     createElement: tag => stub(`<${tag}>`),
     addEventListener(type, fn){ (listeners[type] = listeners[type] || []).push(fn); }
   };
+  if (dom) elements['#sheet'] = makeElement('div', {id: 'sheet', class: 'sheet', role: 'dialog'}, document);
   const win = vm.createContext({
     document,
     innerWidth: 400, innerHeight: 860, devicePixelRatio: 2,
@@ -78,7 +83,9 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY} = {}){
     },
     performance: {now: () => 1000},
     requestAnimationFrame: fn => { frames.push(fn); return frames.length; },
-    setTimeout: () => 0, clearTimeout(){}, setInterval: () => 0, clearInterval(){},
+    setTimeout: dom ? fn => { const id = nextTimer++; timers.set(id, fn); return id; } : () => 0,
+    clearTimeout: id => { timers.delete(id); },
+    setInterval: () => 0, clearInterval(){},
     addEventListener(){},
     console
   });
@@ -88,6 +95,7 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY} = {}){
     el: sel => elements[sel],                     // a page element, by the same selector the game uses
     storage,                                      // the browser's saved data
     runFrame(now = 1000){ const fn = frames.shift(); if (fn) fn(now); },   // draw one frame
+    flush(){ const due = [...timers.values()]; timers.clear(); due.forEach(fn => fn()); return due.length; },   // run waiting timers (with dom: true)
     run: code => vm.runInContext(code, win),     // run code inside the game, e.g. run('ORDER.length')
     // Press a key, such as ' ' or 'Enter'. repeat: the key is being held down. tabbedTo: a button
     // has been chosen with the Tab key. Returns the key press, to check if the game used it.

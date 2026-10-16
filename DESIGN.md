@@ -210,14 +210,14 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [x] Add XP, peaches as money, an Area 1 shop and the training ground
 - [x] Replace emoji with pixel sprites for Area 1's collectibles
 - [x] Add save export and import
-- [ ] Improve Area 1, from the review on 2026-10-16:
+- [x] Improve Area 1, from the review on 2026-10-16:
   - [x] Say so on the title screen if the device has no Chinese voice, and how to add one
   - [x] Show how many words are due, on the title screen and as a ! on the practice post
   - [x] A Chinese review sheet for the native speaker: every line, with pinyin and English (CHINESE.md)
   - [x] Example sentences for the 7 words met in no sentence (路 花 兔子 狐狸 松鼠 山羊 洞), checked first
   - [x] Practise words without pictures (我 要 瀑布 老板 头带) by listening: hear it, pick its characters
   - [x] The 老板 sells 苹果 (我要苹果); eating one in an encounter takes away a wrong answer
-  - [ ] A test that plays Area 1 from start to finish
+  - [x] A test that plays Area 1 from start to finish
   - [x] Remove 和 from the word bank (no sentence uses it)
 - [ ] Lighter talk and menus: a speech box over the map, a four-tile menu with Settings, the Word Scroll as a grid of sprites, a bigger game screen on phones
 - [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
