@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 13;
+const SAVE_VERSION = 14;
 // XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
 const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
@@ -10,7 +10,7 @@ function areaStart(){   // a new game's progress in the area: the area's own lis
   for (const r of REQUESTS) p[r.id] = 'not asked';
   return Object.assign(p, {holding:{}, picked:{}, bought:[], done:false});
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, day:1, lastDay:'', firsts:{}, wardrobe:{owned:[], wearing:[]}}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, firsts:{}, wardrobe:{owned:[], wearing:[]}}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -88,8 +88,12 @@ function upgradeSave(s){
     }
     s.version = 12;
   }
-  if (s.version === 12){   // version 12: there was no picking things one by one, such as flowers for Mother monkey.
-    s.version = 13;        // Nothing picked yet, and her request not asked yet (filled in below).
+  if (s.version === 12){   // version 12: there was no picking things one by one, such as flowers for the big monkey.
+    s.version = 13;        // Nothing picked yet, and its request not asked yet (filled in below).
+  }
+  if (s.version === 13){   // version 13: there were days and sleeping in a nest. They've gone, so the day count goes
+    delete s.day; delete s.lastDay;   // (your words, firsts and everything else stay)
+    s.version = 14;
   }
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
@@ -153,12 +157,12 @@ function gainXP(n){   // a new level is announced just after whatever message ea
   if (level() > before) setTimeout(() => { SFX.chime(); toast(`Level up! You're now level ${level()}.`); }, 1400);
 }
 function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.due = Date.now(); gainXP(XP.word); first('word', w); } addToday(w); save(); }
-// The book of firsts: each first, the day it happened and what it was (w), shown on the 任务 page and at the end of the day.
+// The book of firsts: each first and what it was (w), shown on the 任务 page.
 const FIRSTS = {word:'First word', reply:'First reply in Chinese', animal:'First animal met', friend:'First friend',
-  want:'First 我要 sentence', buy:'First thing bought', story:'First story read', sleep:'First night in your nest', wear:'First time dressing up'};
+  want:'First 我要 sentence', buy:'First thing bought', story:'First story read', wear:'First time dressing up'};
 function first(id, w){
   if (S.firsts[id]) return;
-  S.firsts[id] = {day:S.day, ...(w ? {w} : {})}; save();
+  S.firsts[id] = w ? {w} : {}; save();
   setTimeout(() => { SFX.chime(); toast(`📖 ${FIRSTS[id]}! It's in your book of firsts.`); }, 2500);
 }
 // You used w in a sentence (a request or a shop order). It's Used once you can read it as well.

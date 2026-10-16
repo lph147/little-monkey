@@ -106,7 +106,7 @@ const SPR = {
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
-const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign','post','stall','nest'];   // looks with grass underneath
+const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign','post','stall'];   // looks with grass underneath
 const CLIFFS = ['cliff','caveDoor'];
 const WATERY = ['water','waterfall','bridge'];
 function grass(g, X, Y, x, y){
@@ -170,12 +170,6 @@ const LOOKS = {
   stone:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+2,Y+13,12,2,'#5DA651'); g.drawImage(SPR.stone,X,Y+1); },
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
   stall:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.stall,X,Y); },
-  nest:      (g,X,Y,x,y) => {   // your nest: a ring of twigs with a soft lining
-    grass(g,X,Y,x,y); R(g,X+2,Y+13,12,2,'#5DA651');
-    R(g,X+2,Y+7,12,7,'#7A5230'); R(g,X+1,Y+8,14,5,'#7A5230'); R(g,X+4,Y+8,8,3,'#D9B98A'); R(g,X+5,Y+9,6,1,'#EAD4AE');
-    [[2,9],[4,12],[7,13],[10,12],[13,9],[12,11],[3,11],[8,7]].forEach(([a,c]) => R(g,X+a,Y+c,2,1,'#5A3A20'));
-    [[1,7],[14,8],[6,6]].forEach(([a,c]) => R(g,X+a,Y+c,1,1,'#4E8C3E'));
-  },
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
   caveDoor:  (g,X,Y,x,y) => {   // a cave in the cliff; its stone door rolls open once the area is done

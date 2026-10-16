@@ -156,7 +156,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // The map, one letter per tile. The legend below says what each letter is.
   map: [
     "MMMMMMMMMMMMMMMMMMXXMMMM",
-    "MMMMMMMgZSggMMggggXXYYYY",
+    "MMMMMMMggSggMMggggXXYYYY",
     "MMMMMMMgg.gNMMgggFWWYYYY",
     "MMMCMMMgg.ggMMggggWWYYYY",
     "MMg.gMMMg.gMMMMRRMWWYYYY",
@@ -193,7 +193,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   gather         something you can pick up here for a request (for), with a message afterwards. With
   //                  count, you pick one at each patch until you have that many (full is the message then,
   //                  and again the message at a patch you've picked already)
-  //   action         something special that happens: 'caveDoor', 'story', 'sign', 'training' or 'sleep'
+  //   action         something special that happens: 'caveDoor', 'story', 'sign' or 'training'
   //   label          what the A button says when you face it (Look if not given)
   //   whenGateOpens  the letter it becomes once the rocks have rolled away
   legend: {
@@ -216,7 +216,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'C': {look:'caveDoor', word:'洞', note:'A cave in the cliff, closed by a heavy stone door.', landmark:true, action:'caveDoor'},
     'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
-    'Z': {look:'nest', landmark:true, label:'Sleep', action:'sleep'},   // your nest, beside your stone: sleep to end the day
     'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story'}
   },
 
@@ -295,9 +294,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '没关系': 'The hungry monkey said it when you said sorry.',
     '再见': 'You said it to the old monkey after he told you about the animals.',
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
-    '早上好': 'The old monkey said it when you woke up.',
     '戴': 'You said it when you put something on from your wardrobe.',
-    '晚安': 'You said it to the old monkey before you slept in your nest.'
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -343,17 +340,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {item:'花', sentence:'我 戴 花', sentenceEn:'I wear a flower.', teach:'戴', note:'Use 戴 for things you wear on your head.'}
   ],
 
-  // Your day. Sleeping in your nest ends it: a summary of what you learned, then the night steps.
-  // You wake next to the nest (wakeAt) with the morning steps, which also greet you when you come
-  // back to play on a new day. who says good morning and good night; stand them beside wakeAt, and
-  // face them from it, so it's clear who you're talking to.
-  day: {
-    who:'elder',
-    night:[{say:'night'}, {reply:'晚安'}],
-    morning:[{say:'morning'}, {reply:'早上好'}],
-    wakeAt:{x:7, y:2, facing:'up'}
-  },
-
   // What the characters say. The English shows under a sentence the first time you see it.
   lines: {
     hi: {zh:'你好 ！', en:'Hello!'},
@@ -372,8 +358,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     boss: {zh:'你好 ！ 我 是 老板 。', en:"Hello! I'm the shop owner."},
     whatWant: {zh:'你 要 什么 ？', en:'What do you want?'},
     bye: {zh:'再见 ！', en:'Goodbye!'},
-    morning: {zh:'早上好 ！', en:'Good morning!'},
-    night: {zh:'晚安 ！', en:'Good night!'},
     wantFlowers: {zh:'我 要 花 ！', en:'I want flowers!'},
     haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'}

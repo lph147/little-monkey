@@ -76,7 +76,7 @@ Each area's characters use one or two simple sentence patterns again and again, 
 
 | Area | Character | Patterns | Example |
 | --- | --- | --- | --- |
-| 1 Flower Fruit Mountain | 老猴子 Old monkey and the troop | Phrases 你好, 再见, 谢谢, 不客气, 对不起, 没关系, 早上好, 晚安; 我要 / 我不要 + thing | 我要桃子。 |
+| 1 Flower Fruit Mountain | 老猴子 Old monkey and the troop | Phrases 你好, 再见, 谢谢, 不客气, 对不起, 没关系; 我要 / 我不要 + thing | 我要桃子。 |
 | 2 Water Curtain Cave | The monkey troop | 这是…, 有 / 没有, numbers with 一只 / 一个 | 洞里有三只猴子。 |
 | 3 Across the sea | Villagers and a market seller | Questions with 吗, 什么, 哪里; 不 | 这是什么？ |
 | 4 The teacher's mountain | 菩提祖师 Master Subhuti | 会 / 能 (can), 想 (want to), 变成 (turn into) | 我会变成鸟。 |
@@ -108,7 +108,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 **Saved for the Water Curtain Cave:** the story from the book's opening that was at the waterfall, checked by the native speaker: 山上有一个大石头。石头里有一只小猴子。小猴子有很多朋友。猴子吃桃子，喝水。鸟在树上玩。河里有鱼，山上有瀑布。小猴子很快乐！ It needs 一个, 一只, 很 and 大, which come with Area 2 (大, 很, 快乐 and 谁 left the word bank with it). Its questions used 谁 and 什么, so they wait for Area 3's questions, or become gap questions like Flower Fruit Mountain's.
 
-**Flower Fruit Mountain is a baby's first day.** The old monkey, like a grandparent, teaches the newborn the names of everything (这是山。), and each monkey shows the baby something: food, water, play, trading. Firsts (first word, first friend, first 我要) are celebrated in a book of firsts. The day starts with 早上好 and ends with sleep in a nest by the cave (晚安), with a summary of what you learned today and what's due tomorrow. Early on the loud waterfall scares the baby; by the end the troop wonders what's behind it, which leads into Area 2. The story is told through short lines, not long cutscenes.
+**Flower Fruit Mountain is a baby's first day.** The old monkey, like a grandparent, teaches the newborn the names of everything (这是山。), and each monkey shows the baby something: food, water, play, trading. Firsts (first word, first friend, first 我要) are celebrated in a book of firsts. Early on the loud waterfall scares the baby; by the end the troop wonders what's behind it, which leads into Area 2. The story is told through short lines, not long cutscenes.
 
 **Compact, lively places.** Areas stay small so walking doesn't crowd out learning. Flower Fruit Mountain grew a little to the south (decided 16 October 2026), only to make room for its animals' homes, and got livelier: animals at their own spots (the squirrel in a tree, the goat on the cliffs), birds that come and go, and grass that rustles where an animal is hiding. Once the engine can move between maps, it splits into a few small connected places: the meadow, the orchard, the riverbank and the cliffs with the waterfall.
 
@@ -200,8 +200,10 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **Talk** moves into a speech box over the map; full cards only for the big moments.
 - **The wardrobe** starts in Area 1 with the headband and a flower, and opens fully in Area 3.
 - **The map** stays compact and gets livelier now; it splits into small places with the multi-map work. (Later the same day: it grew to the south, 24 × 22 tiles, to give the squirrel and goat their homes, and the 老板's market stall and the little monkey moved down there so the top isn't crowded.)
-- **Day and night:** a day ends with sleep in the cave and a summary.
+- **Day and night:** a day ends with sleep in the cave and a summary. (Tried, then taken out on 16 October 2026: see below.)
 - **Native speaker check:** 再见, 不客气, 对不起, 没关系, 我不要, 早上好, 晚安, 我戴头带, 我穿衣服 and 这是山 are all fine as written.
+
+**Decided on 16 October 2026: no days or sleeping.** A nest, a day count, an end-of-day summary and good night and good morning scenes were built and then taken out: people play at any time and for any length, so a day rhythm gave no real reason to sleep. Reviews still follow real time (1, 3, 7 and 21 days), whenever you next play. 早上好 and 晚安 left the phrases with it; they're checked, and can come back if a good place for them turns up. The book of firsts stays, without days. The repetition target above (8 times in a word's first week) assumed daily play and needs rethinking with the scheduler.
 
 **Decided on 16 October 2026: a vocabulary game, never a grammar test.** Sentence tasks always give the whole sentence in Chinese and English with one word missing, and you choose the word; word tiles in order are gone. The choices follow the word's level (pictures while new, then Chinese and pinyin). This makes the game more relaxed while still giving lots of repeated input of simple sentence structures.
 
@@ -246,7 +248,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Settings, English on replies (on to start with)
   - [x] Phrases as their own collection, with a Phrases tab in the Word Scroll
   - [x] 我不要 at the shop, and sentence-building questions in animal encounters
-- [x] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary (a nest beside your stone, where the old monkey, who stands there watching over you, says 晚安 and 早上好, and you reply; a new morning when you come back on a new date. Every area needs a place to sleep: a map letter with the sleep action and a day section in the area's file. In Area 2 it would be in the Water Curtain Cave.)
+- [x] The first-day story: the old monkey's purpose for the baby and a book of firsts (a nest, days, and good night and good morning were tried and taken out)
 - [x] 大猴子 Big monkey, in the middle meadow, wants 3 flowers and pays you peaches: you pick one from each of 3 patches (no mother: Sun Wukong is born from the stone)
 - [x] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version (the little monkey gives you the flower when it becomes your friend)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)

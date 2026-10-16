@@ -124,11 +124,6 @@ function toTitle(){
   if ($('#watchBtn')) $('#watchBtn').onclick = go(playIntro);
   if ($('#contBtn')) $('#contBtn').onclick = go(() => {
     $('#titlecard').hidden = true; placePlayer(); mode = 'play'; lastTB = ''; updateHUD();
-    if (S.lastDay !== todayKey()){   // back on a new date: a new morning (the first time after an update, just today's date)
-      const newDay = !!S.lastDay && here().elder >= 1;
-      S.lastDay = todayKey(); save();
-      if (newDay){ busy = true; wakeUp().finally(() => { busy = false; updateHUD(); }); }
-    }
   });
 }
 function playIntro(){
@@ -172,7 +167,7 @@ async function startGame(){
   stopSpeech();
   const firstTime = !S.started;
   $('#titlecard').hidden = true;
-  if (firstTime){ S.started = true; S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'}; S.lastDay = todayKey(); }
+  if (firstTime){ S.started = true; S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'}; }
   placePlayer(); mode = 'play'; lastTB = ''; save(); musicStart();
   if (firstTime){
     busy = true;

@@ -56,9 +56,9 @@ function wardrobePage(back, focus){
     await showDialog(speaker('player'), {t:[...toks(c.sentence), '。'], en:c.sentenceEn}, {teach:c.teach || c.item});
   });
 }
-function firstsHTML(){   // the book of firsts: each one you've had, with the day
+function firstsHTML(){   // the book of firsts: each one you've had
   const got = Object.entries(FIRSTS).filter(([id]) => S.firsts[id]), left = Object.keys(FIRSTS).length - got.length;
-  return `<p class="label examplehead">📖 Book of firsts</p>${got.length ? `<ul class="firsts">${got.map(([id, label]) => `<li><span>${label}${S.firsts[id].w ? ` · <b>${esc(S.firsts[id].w)}</b>` : ''}</span><span class="small">Day ${S.firsts[id].day}</span></li>`).join('')}</ul>` : '<p class="hint">Your firsts will be written here.</p>'}
+  return `<p class="label examplehead">📖 Book of firsts</p>${got.length ? `<ul class="firsts">${got.map(([id, label]) => `<li><span>${label}${S.firsts[id].w ? ` · <b>${esc(S.firsts[id].w)}</b>` : ''}</span></li>`).join('')}</ul>` : '<p class="hint">Your firsts will be written here.</p>'}
     ${left ? `<p class="small">${left} more ${left === 1 ? 'first' : 'firsts'} to find.</p>` : ''}`;
 }
 // 任务 Tasks: the area's checklist and all your tasks now (from the menu, or "more" in the task box). back: what Back does.
@@ -67,7 +67,7 @@ function tasksPage(back){
   openCard(`<p class="label">${AREA.name.en}</p>${checklistHTML(false)}
     <p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
     ${firstsHTML()}
-    <div class="stats" style="margin-top:10px"><span>Day ${S.day}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${ORDER.filter(w => lvl(w) >= 3).length} can read</span><span>${S.friends.length} friends</span></div>
+    <div class="stats" style="margin-top:10px"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${ORDER.filter(w => lvl(w) >= 3).length} can read</span><span>${S.friends.length} friends</span></div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=ok]', back);
 }

@@ -64,7 +64,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **The old monkey**
 - [ ] The first step onto the path teaches 路 (path).
-- [ ] The old monkey stands just left of your stone, beside your nest, with a ! above him. Walk two steps left (below him), face up and press A.
+- [ ] The old monkey stands just left of your stone, with a ! above him. Walk two steps left (below him), face up and press A.
 - [ ] He says 你好！ with 你好 in bold green and the English underneath, then a new-word card for 你好, then 去看看！
 - [ ] The task asks you to learn 4 words, with a counter.
 - [ ] Learn words from things that sparkle: face a cliff (山), a tree (树) or the river (河) and press A; walk into flowers (花) or tall grass (草). The counter goes up.
@@ -127,11 +127,9 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] When the little monkey teaches you 朋友, it tucks a 花 (flower) behind your ear (a message says so). Buying the 头带 puts it on.
 - [ ] Menu, 衣服 Wardrobe shows what you own, with "Wearing" on what's on. Tapping something you're not wearing closes the menu: the first time, a card teaches 戴 (wear); then your monkey says 我戴花 (or 我戴头带) and is wearing it on the map. Tapping something you're wearing takes it off.
 
-**Your day**
+**The old monkey and your firsts**
 - [ ] After the old monkey's first 你好, a message says he teaches every baby monkey the names of everything on the mountain.
-- [ ] Your nest is right beside your stone, at the top of the mountain, with the old monkey standing next to it. Face the nest: A says Sleep. Sleep shows "The end of day 1": the words you met today (tap one to hear it), your firsts today and how many words are due tomorrow. Good night: you stand beside the nest facing the old monkey, he says 晚安, and you reply (晚安 is taught on a card the first time). The screen fades, and in the morning he says 早上好; you reply.
-- [ ] Coming back to play on a later date: Continue puts you beside your nest, and the old monkey says 早上好; you reply. The same day, it doesn't.
-- [ ] Your first word, reply, animal, friend, 我要 sentence, purchase, story and night each show "📖 First …!" a moment later. Menu, 任务 Tasks shows them in the Book of firsts with their day, and the day number.
+- [ ] Your first word, reply, animal, friend, 我要 sentence, purchase, story and first time dressing up each show "📖 First …!" a moment later. Menu, 任务 Tasks shows them in the Book of firsts. There's no nest, sleeping or day count.
 
 **The cave door**
 - [ ] The cave door is at the top of the short path on the far left. Stand below it, face up and press A. It teaches 洞 (cave).
