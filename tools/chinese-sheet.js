@@ -14,6 +14,8 @@ const DRAFTS = [
     ['树 上 有 鸟 。', 'There are birds in the trees.'], ['河 里 有 鱼 。', 'There are fish in the river.'],
     ['山 上 有 瀑布 ！', 'There is a waterfall on the mountain!']]
     .map(([zh, en]) => ({zh, en, where:'The new, shorter story at the waterfall (in the game)'})),
+  {zh:'我 要 花 ！', en:'I want flowers!', where:'Mother monkey (猴妈妈 hóu māma: please check this name too, in Names) asking for flowers'},
+  {zh:'你 有 花 吗 ？', en:'Do you have flowers?', where:'Mother monkey, when you bring the flowers'},
   {zh:'我 戴 花 。', en:'I wear a flower.', where:'Said when you put on the flower in your wardrobe (in the game, not uploaded yet). Would 我戴着花 be more natural?'}
 ];
 

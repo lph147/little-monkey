@@ -242,13 +242,13 @@ test('the area says what it remembers in the save, with starting values', () => 
 test('requests use real characters, lines and words', () => {
   for (const [id, r] of Object.entries(AREA.requests)){
     assert.ok(AREA.characters.some(c => c.id === r.from), `request ${id}: from "${r.from}" isn't a character`);
-    for (const w of [r.wants, r.verb]) assert.ok(collectible.includes(w), `request ${id}: ${w} isn't a word you can collect in ${where}`);
+    for (const w of [r.wants, r.verb].filter(Boolean)) assert.ok(collectible.includes(w), `request ${id}: ${w} isn't a word you can collect in ${where}`);
     for (const k of ['ask', 'offer', 'thanks']) assert.ok(AREA.lines[r[k]], `request ${id}: ${k} "${r[k]}" isn't one of the lines`);
     if (r.wrong) assert.ok(AREA.lines[r.wrong], `request ${id}: wrong "${r.wrong}" isn't one of the lines`);
     const build = r.build.split(' ');
-    assert.ok(build.includes(r.wants) && build.includes(r.verb), `request ${id}: the sentence "${r.build}" should use ${r.wants} and ${r.verb}`);
+    assert.ok(build.includes(r.wants) && (!r.verb || build.includes(r.verb)), `request ${id}: the sentence "${r.build}" should use ${r.wants} and ${r.verb}`);
     for (const w of [...build, r.extraTile]) assert.ok(BANK[w], `request ${id}: ${w} isn't in the word bank`);
-    for (const f of r.firstTeach) assert.ok(BANK[f.word] && f.note, `request ${id}: firstTeach needs words from the bank, each with a note`);
+    for (const f of r.firstTeach || []) assert.ok(BANK[f.word] && f.note, `request ${id}: firstTeach needs words from the bank, each with a note`);
     assert.ok(r.asked && r.buildPrompt && r.reward > 0, `request ${id} needs asked, buildPrompt and a reward`);
   }
 });

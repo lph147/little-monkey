@@ -45,9 +45,10 @@ const COUNTS = {   // what a counter in the content can count
   animalsFound: () => metCount(),
   animals: () => ANIMALS.length,
   animalsLeft: () => ANIMALS.length - metCount(),
-  peaches: () => S.peaches
+  peaches: () => S.peaches,
+  picked: c => (here().picked[c.request] || []).length
 };
-function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count]() - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
+function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count](c) - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
 const compare = (have, want) => (want !== null && typeof want === 'object'
   ? (want.atLeast === undefined || have >= want.atLeast) && (want.below === undefined || have < want.below)
   : have === want);
@@ -119,7 +120,7 @@ async function request(r, face){   // a character asking you to bring something 
   }
   if (p[r.id] === 'asked' && has === r.wants){          // you brought what they asked for
     await showDialog(face, L[r.offer], {ok:'Give it'});
-    const nw = r.firstTeach.find(f => lvl(f.word) === 0);
+    const nw = (r.firstTeach || []).find(f => lvl(f.word) === 0);
     if (nw) await showNotice(nw.word, {note:nw.note});
     const build = toks(r.build);
     await tiles(face, build, [r.extraTile], r.buildPrompt);
@@ -130,8 +131,9 @@ async function request(r, face){   // a character asking you to bring something 
     toast(`+${r.reward} 🍑. Task complete!`);
     await runEvents();
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
-    await showDialog(face, L[r.ask], {teach: lvl(r.verb) === 0 ? r.verb : null});
-    if (lvl(r.verb) === 0) await showNotice(r.verb);
+    const verb = r.verb && lvl(r.verb) === 0 ? r.verb : null;   // a new verb to teach, if there is one
+    await showDialog(face, L[r.ask], {teach:verb});
+    if (verb) await showNotice(verb);
     if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(r.asked); }
   } else await showDialog(face, L[r.thanks]);
 }
@@ -177,10 +179,18 @@ async function lookAt(t){   // the card for the word you learn by looking at a t
   await showNotice(w, note ? {note} : {});
   if (t.message) toast(t.message);
 }
-async function gather(t){   // pick up something for a request, such as fruit or water
+async function gather(t, x, y){   // pick up something for a request, such as fruit or water
   const g = t.gather;
   // the request comes first: collecting water is where 水 is introduced
   if (lvl(g.item) === 0) await showNotice(g.item, {note:g.note});
+  if (g.count){   // one at each patch, until you have enough
+    const p = here().picked[g.for] = here().picked[g.for] || [];
+    if (p.some(([a, b]) => a === x && b === y)){ SFX.bump(); toast(fill(g.again)); return; }
+    p.push([x, y]); SFX.right();
+    if (p.length >= g.count) here().holding[g.for] = g.item;
+    save(); toast(fill(p.length >= g.count ? g.full : g.message));
+    return;
+  }
   here().holding[g.for] = g.item; save(); SFX.right(); toast(fill(g.message));
 }
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
@@ -217,16 +227,17 @@ function daySummary(){
 async function goToSleep(){
   if (!await confirmBox('🌙', 'Sleep in your nest? The day ends with a look at what you learned, and a new day starts in the morning.', 'Sleep', 'Not yet')) return;
   await daySummary();
+  toNest();   // beside your nest, facing whoever says good night
   await runSteps(AREA.day.night, AREA.day.who);
   first('sleep');
-  fadeT = performance.now(); await sleep(800);
-  const w = AREA.day.wakeAt; S.pos = {x:w.x, y:w.y, dir:w.facing}; placePlayer(); save();
-  await sleep(700);
+  fadeT = performance.now(); await sleep(1500);
   await wakeUp();
 }
-// A new day: day plus one, and good morning (the area's morning steps). Also when you come back on a new date.
+function toNest(){ const w = AREA.day.wakeAt; S.pos = {x:w.x, y:w.y, dir:w.facing}; placePlayer(); save(); }
+// A new day: you wake beside your nest, day plus one, and good morning (the area's morning steps).
+// Also when you come back to play on a new date.
 async function wakeUp(){
-  S.day = (S.day || 1) + 1; S.lastDay = todayKey(); save();
+  S.day = (S.day || 1) + 1; S.lastDay = todayKey(); toNest();
   await runSteps(AREA.day.morning, AREA.day.who);
 }
 async function interact(x, y){
@@ -237,7 +248,7 @@ async function interact(x, y){
   const bd = birdAt(x, y);
   if (bd && BIRD_WORD){ await showNotice(BIRD_WORD); shooBird(bd); return; }
   const t = tileAt(x, y);
-  if (t.gather && canGather(t.gather)) return gather(t);
+  if (t.gather && canGather(t.gather)) return gather(t, x, y);
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();

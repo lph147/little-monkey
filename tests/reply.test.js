@@ -116,6 +116,8 @@ test('an animal\'s last question is sometimes building a sentence you know', asy
     pictureQ = async () => true; infoBox = async () => {};
     encounter({id:'fox', hz:'狐狸', img:'', wild:true}).then(won => { globalThis.__won = won; __done = true; })`);
   for (let i = 0; i < 5; i++) await tick();
-  assert.deepEqual(JSON.parse(t.run('JSON.stringify(__built)')), ['我要吃桃子'], 'the last question built 我要吃桃子');
+  const built = JSON.parse(t.run('JSON.stringify(__built)'));
+  assert.equal(built.length, 1, 'the last question was building a sentence');
+  assert.ok(['我要吃桃子', '我要花'].includes(built[0]), `${built[0]} should be a sentence you know`);
   assert.equal(t.run('__won'), true, 'built right first time, it counts as a right answer');
 });

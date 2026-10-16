@@ -119,6 +119,18 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
   assert.equal(area().gate, true, 'the rocks should have rolled away');
 
+  // Mother monkey, by your nest: 3 flowers from 3 different patches
+  await pressAt(8, 2, 'left', 'meeting Mother monkey');
+  assert.equal(area().flowers, 'asked', 'Mother monkey should ask for flowers');
+  await pressAt(8, 3, 'up', 'picking a flower');
+  await pressAt(8, 3, 'up', 'trying the same patch again');
+  assert.equal(get('here().picked.flowers.length'), 1, 'a patch gives one flower');
+  await pressAt(11, 6, 'down', 'picking a second flower');
+  await pressAt(16, 9, 'right', 'picking a third flower');
+  assert.equal(area().holding.flowers, '花', 'you should be holding 3 flowers');
+  await pressAt(8, 2, 'left', 'giving Mother monkey the flowers');
+  assert.equal(area().flowers, 'done', 'Mother monkey should take the flowers');
+
   // The shop owner, and the animals in the tall grass
   await pressAt(11, 15, 'down', 'meeting the shop owner');
   assert.ok(knows('老板'), 'the shop owner should teach 老板');

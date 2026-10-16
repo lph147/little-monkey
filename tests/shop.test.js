@@ -7,7 +7,7 @@ const {loadGame} = require('./fake-browser');
 const base = loadGame();
 const get = (game, expr) => JSON.parse(game.run(`JSON.stringify(${expr})`));
 const AREA = get(base, 'AREA'), BANK = get(base, 'WORD_BANK'), VERSION = base.run('SAVE_VERSION');
-const area = more => ({elder: 2, hungry: 'done', thirsty: 'done', gate: true, story: true, holding: {}, bought: [], done: false, ...more});
+const area = more => ({elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, story: true, holding: {}, bought: [], done: false, ...more});
 const play = (save = {}) => loadGame({save: {version: VERSION, started: true, ...save}});
 
 test('the shop is run by a character, and sells words you can collect, asked for with a sentence', () => {

@@ -9,14 +9,14 @@ const get = (game, expr) => JSON.parse(game.run(`JSON.stringify(${expr})`));
 const tick = () => new Promise(r => setImmediate(r));
 const save = extra => ({version: 11, started: true, areas: {1: {elder: 1}}, ...extra});
 
-test('sleeping: the summary, good night, then you wake by your nest on the next day to good morning', async () => {
+test('sleeping: the summary, then Mother monkey says good night and good morning beside your nest, on the next day', async () => {
   const game = loadGame({dom: true, save: save({day: 3})});
   game.run(`mode = 'play'; globalThis.__steps = []; confirmBox = async () => true; daySummary = async () => { __steps.push('summary'); };
     runSteps = async (steps, who) => { __steps.push(who + ':' + steps.map(s => s.say || s.reply).join(',')); };
     globalThis.__done = false; goToSleep().then(() => { __done = true; })`);
   for (let i = 0; i < 10; i++){ await tick(); game.flush(); }   // the fade waits on timers
   assert.equal(game.run('__done'), true);
-  assert.deepEqual(get(game, '__steps'), ['summary', 'elder:night,晚安', 'elder:morning,早上好']);
+  assert.deepEqual(get(game, '__steps'), ['summary', 'mother:night,晚安', 'mother:morning,早上好']);
   assert.equal(game.run('S.day'), 4, 'a new day');
   const wake = get(game, 'AREA.day.wakeAt');
   assert.deepEqual(get(game, '[S.pos.x, S.pos.y]'), [wake.x, wake.y], 'you wake by your nest');

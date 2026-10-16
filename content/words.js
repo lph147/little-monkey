@@ -84,7 +84,6 @@ const WORD_BANK = {
   '一个': {py:'yí gè', en:'a, one'},
   '一只': {py:'yì zhī', en:'a, one (animal)'},
   '小': {py:'xiǎo', en:'little, small'},
-  '很多': {py:'hěn duō', en:'lots of'},
   '在': {py:'zài', en:'at, in, on'},
   '玩': {py:'wán', en:'to play'},
   '什么': {py:'shénme', en:'what'},

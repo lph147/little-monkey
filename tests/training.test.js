@@ -65,7 +65,7 @@ const buildSave = () => ({version: 9, started: true, peaches: 0, w: {
 test('the sentence to build is one you know, with every word caught and a word without a picture in it', () => {
   for (let i = 0; i < 20; i++){
     const b = get(loadGame({save: buildSave()}), 'practiceSentence()');
-    assert.ok(['我 要 吃 桃子', '我 要 苹果'].includes(b.build), `${b.build} has a word you haven't caught`);
+    assert.ok(['我 要 吃 桃子', '我 要 苹果', '我 要 花'].includes(b.build), `${b.build} has a word you haven't caught`);
   }
   assert.equal(get(loadGame({save: save()}), 'practiceSentence()'), null, 'nothing to build until you know a whole sentence');
 });

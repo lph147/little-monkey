@@ -80,6 +80,11 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Pick from the tree above or below the apple tree to learn 桃子 (peach). Take it back. The button says Give it.
 - [ ] A new-word card for 要 (want) appears. Then build 我 要 吃 桃子 from word tiles (喝 is an extra tile). A wrong order shakes and resets; the right order completes the task with +3 🍑.
 
+**Mother monkey**
+- [ ] Mother monkey stands beside your nest, by the stone, with a ! once you've said hello to the old monkey. She says 我要花！ and wants 3 flowers to make your nest soft.
+- [ ] Face a patch of flowers and press A (it says Pick): "You picked a 花 (flower) (1/3)". The same patch again says you've picked it already. The task box counts up to 3.
+- [ ] Take them back (she shows a ?): 你有花吗？, then build 我要花 from tiles, +3 🍑, and reply 不客气 when she says thank you.
+
 **The thirsty monkey**
 - [ ] The thirsty monkey (bottom left) teaches 喝 (drink). A task asks you to collect water.
 - [ ] Face the pond (middle of the meadow, where the yellow arrow points) and press A to learn 水 (water).
@@ -124,8 +129,8 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **Your day**
 - [ ] After the old monkey's first 你好, a message says he teaches every baby monkey the names of everything on the mountain.
-- [ ] Your nest is beside the cave door, at the top of the short path on the far left. Face it: A says Sleep. Sleep shows "The end of day 1": the words you met today (tap one to hear it), your firsts today and how many words are due tomorrow. Good night, then the old monkey says 晚安 and you reply (晚安 is taught on a card the first time). The screen fades, you wake beside the nest, and he says 早上好; you reply.
-- [ ] Coming back to play on a later date: Continue starts with 早上好 and your reply. The same day, it doesn't.
+- [ ] Your nest is right beside your stone, at the top of the mountain, with Mother monkey (猴妈妈) next to it. Face the nest: A says Sleep. Sleep shows "The end of day 1": the words you met today (tap one to hear it), your firsts today and how many words are due tomorrow. Good night: you stand beside the nest facing Mother monkey, she says 晚安, and you reply (晚安 is taught on a card the first time). The screen fades, and in the morning she says 早上好; you reply.
+- [ ] Coming back to play on a later date: Continue puts you beside your nest, and Mother monkey says 早上好; you reply. The same day, it doesn't.
 - [ ] Your first word, reply, animal, friend, 我要 sentence, purchase, story and night each show "📖 First …!" a moment later. Menu, 任务 Tasks shows them in the Book of firsts with their day, and the day number.
 
 **The cave door**

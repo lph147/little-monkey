@@ -27,14 +27,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
   progress: {elder:0, gate:false, story:false},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
-  // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft or peaches.
+  // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, peaches, or picked
+  // (how many you've picked for a request, given as request).
   // minus takes some away; max is the most it can be.
   counters: {
     newWords: {count:'wordsLearned', minus:1, max:4},   // words learned apart from one (you're born knowing 石头), up to 4
     animals: {count:'animals'},
     found: {count:'animalsFound'},
     animalsLeft: {count:'animalsLeft'},
-    peaches: {count:'peaches', max:10}   // your peaches, up to the headband's price
+    peaches: {count:'peaches', max:10},   // your peaches, up to the headband's price
+    flowersPicked: {count:'picked', request:'flowers'}   // flowers picked for Mother monkey
   },
 
   // The task box under the game screen. Every task whose if matches is shown, in this order.
@@ -54,6 +56,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
     {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect water from the river or the pond', arrow:[11, 9]},
     {id:'t2', if:{thirsty:'asked', holding:{thirsty:true}}, text:'Give the {水} to the thirsty monkey', arrow:'thirsty'},
+    {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick 3 {花} for Mother monkey: face a patch of flowers and press A ({flowersPicked}/3)'},
+    {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to Mother monkey', arrow:'mother'},
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
     {id:'shop2', if:{knows:'头带', bought:{'头带':false}}, text:'Buy the {头带} from the {老板} ({peaches}/10 🍑)', arrow:'boss'},
@@ -64,6 +68,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   hints: [
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! above them need help. Walk up to one and press A.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! above them need help. Walk up to one and press A.'},
+    {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! above them need help. Walk up to one and press A.'},
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
   ],
 
@@ -75,6 +80,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Find the animals ({found}/{animals})', done:{animalsLeft:0}},
     {text:'Bring the hungry monkey the fruit it wants', done:{hungry:'done'}},
     {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
+    {text:'Bring Mother monkey 3 flowers', done:{flowers:'done'}},
     {text:'Read the story at the waterfall', done:{story:true}},
     {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}},
     {text:'Pass the word test at the cave door', done:{done:true}, exitTest:true}
@@ -87,7 +93,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{bought:{'头带':false}, peaches:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
-    thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}]
+    thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
+    mother: [{if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:
@@ -95,12 +102,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // build the sentence to give it to them, and get the reward.
   //   from         the character who asks
   //   wants        the word for what they want
-  //   verb         taught when they ask, and used in the sentence you build
+  //   verb         taught when they ask, and used in the sentence you build (if there's a new verb to teach)
   //   ask          their line when asking, and asked: a message afterwards
   //   wrong        their line if you bring something else, and wrongMessage afterwards; wrongReply is the
   //                phrase that fits as your reply, and wrongAnswer their line after it
   //   offer        their line when you bring the right thing
-  //   firstTeach   new words to teach before you build the sentence, one at a time, each with a note
+  //   firstTeach   new words to teach before you build the sentence, one at a time, each with a note (if any)
   //   build        the sentence you build from word tiles, with its English (buildEn); extraTile is a wrong tile mixed in
   //   reward       peaches you get; thanks is their line afterwards, and thanksReply the phrase that fits as your reply
   requests: {
@@ -110,7 +117,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       build:'我 要 吃 桃子', buildEn:'I want to eat a peach.', extraTile:'喝', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'},
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      build:'我 要 喝 水', buildEn:'I want to drink water.', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'}
+      build:'我 要 喝 水', buildEn:'I want to drink water.', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'},
+    flowers: {from:'mother', wants:'花', ask:'wantFlowers', asked:'Mother monkey wants 3 {花} to make your nest soft. Check your tasks.',
+      offer:'haveFlowers', build:'我 要 花', buildEn:'I want flowers.', extraTile:'水', buildPrompt:'Say what Mother monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
@@ -146,10 +155,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // The map, one letter per tile. The legend below says what each letter is.
   map: [
     "MMMMMMMMMMMMMMMMMMXXMMMM",
-    "MMMMMMMggSggMMggggXXYYYY",
+    "MMMMMMMgZSggMMggggXXYYYY",
     "MMMMMMMgF.gNMMgggFWWYYYY",
     "MMMCMMMgg.ggMMggggWWYYYY",
-    "MMg.ZMMMg.gMMMMRRMWWYYYY",
+    "MMg.gMMMg.gMMMMRRMWWYYYY",
     "YTg.ggggg.ggggg.ggWWYYYY",
     "YPg.............ggWWYYYY",
     "YQggGGGGgggFggg.ggWWgggY",
@@ -180,14 +189,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   message        a message shown after its card
   //   learnOnStep    true to learn its word the first time you step on it, with stepNote on the card
   //   animals        true if animals hide here
-  //   gather         something you can pick up here for a request (for), with a message afterwards
+  //   gather         something you can pick up here for a request (for), with a message afterwards. With
+  //                  count, you pick one at each patch until you have that many (full is the message then,
+  //                  and again the message at a patch you've picked already)
   //   action         something special that happens: 'caveDoor', 'story', 'sign', 'training' or 'sleep'
   //   label          what the A button says when you face it (Look if not given)
   //   whenGateOpens  the letter it becomes once the rocks have rolled away
   legend: {
     'g': {look:'grass', walk:true},
     'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
-    'F': {look:'flowers', walk:true, word:'花', learnOnStep:true},
+    'F': {look:'flowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', count:3, label:'Pick', note:'You pick a flower.',
+      message:'You picked a {花} ({flowersPicked}/3). Find another patch.', full:'You have 3 {花}. Take them to Mother monkey.', again:'You picked this patch already. Find another patch of {花}.'}},
     '.': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'You are walking along a path.'},
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
@@ -203,7 +215,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'C': {look:'caveDoor', word:'洞', note:'A cave in the cliff, closed by a heavy stone door.', landmark:true, action:'caveDoor'},
     'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
-    'Z': {look:'nest', landmark:true, label:'Sleep', action:'sleep'},   // your nest, by the cave: sleep to end the day
+    'Z': {look:'nest', landmark:true, label:'Sleep', action:'sleep'},   // your nest, beside your stone: sleep to end the day
     'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story'}
   },
 
@@ -216,6 +228,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   characters: [
     {id:'elder', x:10, y:5, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
+    {id:'mother', x:7, y:2, facing:'right', name:{zh:'猴妈妈', py:'hóu māma', en:'Mother monkey'},
+      palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
@@ -280,9 +294,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '没关系': 'The hungry monkey said it when you said sorry.',
     '再见': 'You said it to the old monkey after he told you about the animals.',
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
-    '早上好': 'The old monkey said it when you woke up.',
+    '早上好': 'Mother monkey said it when you woke up.',
     '戴': 'You said it when you put something on from your wardrobe.',
-    '晚安': 'You said it to the old monkey before you slept in your nest.'
+    '晚安': 'You said it to Mother monkey before you slept in your nest.'
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -290,7 +304,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Checked by a native speaker on 16 October 2026.
   examples: {
     '路': {zh:'小 猴子 在 路 上 。', en:'The little monkey is on the path.'},
-    '花': {zh:'山 上 有 很多 花 。', en:'There are lots of flowers on the mountain.'},
     '兔子': {zh:'草 里 有 一只 兔子 。', en:'There is a rabbit in the grass.'},
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
@@ -331,12 +344,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // Your day. Sleeping in your nest ends it: a summary of what you learned, then the night steps.
   // You wake next to the nest (wakeAt) with the morning steps, which also greet you when you come
-  // back to play on a new day. who is the character who says good morning and good night.
+  // back to play on a new day. who says good morning and good night; stand them beside wakeAt, and
+  // face them from it, so it's clear who you're talking to.
   day: {
-    who:'elder',
+    who:'mother',
     night:[{say:'night'}, {reply:'晚安'}],
     morning:[{say:'morning'}, {reply:'早上好'}],
-    wakeAt:{x:3, y:4, facing:'down'}
+    wakeAt:{x:8, y:2, facing:'left'}
   },
 
   // What the characters say. The English shows under a sentence the first time you see it.
@@ -359,6 +373,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     bye: {zh:'再见 ！', en:'Goodbye!'},
     morning: {zh:'早上好 ！', en:'Good morning!'},
     night: {zh:'晚安 ！', en:'Good night!'},
+    wantFlowers: {zh:'我 要 花 ！', en:'I want flowers!'},
+    haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'}
   },
 
@@ -420,6 +436,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     thirsty: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
       {do:[{request:'thirsty'}]}
+    ],
+    mother: [
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {do:[{request:'flowers'}]}
     ],
     bird: [
       {do:[{card:'鸟', note:'A little bird hops about, singing.'}]}
