@@ -476,7 +476,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     tryAgain: 'Walk around the mountain, look at things again and meet animals in the tall grass. Then come back to the door and try again.',
     passButton: 'Go through the door',
     failButton: 'Back to the mountain',
-    done: 'The tunnel leads behind the waterfall to <b>水帘洞</b> (Water Curtain Cave), which is where the story goes next in your book.',
+    done: 'The tunnel leads behind the waterfall to <b>水帘洞</b> (Water Curtain Cave), where the story goes next.',
     notBuilt: 'That area isn’t built yet, so you’re back on the mountain for now. Your progress is saved.',
     returnTo: {x:3, y:4, facing:'down'}
   },
