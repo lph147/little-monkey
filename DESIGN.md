@@ -104,6 +104,8 @@ Each area is one chapter of Sun Wukong's story, with its own collection of new w
 
 The first areas follow the opening of the Jeff Pepper series closely, so by the time you finish them, the start of the books will feel familiar.
 
+**Saved for the Water Curtain Cave:** the story from the book's opening that was at the waterfall, checked by the native speaker: 山上有一个大石头。石头里有一只小猴子。小猴子有很多朋友。猴子吃桃子，喝水。鸟在树上玩。河里有鱼，山上有瀑布。小猴子很快乐！ It needs 一个, 一只, 很 and 大, which come with Area 2 (大, 很, 快乐 and 谁 left the word bank with it). Its questions used 谁 and 什么, so they wait for Area 3's questions, or become gap questions like Flower Fruit Mountain's.
+
 **Flower Fruit Mountain is a baby's first day.** The old monkey, like a grandparent, teaches the newborn the names of everything (这是山。), and each monkey shows the baby something: food, water, play, trading. Firsts (first word, first friend, first 我要) are celebrated in a book of firsts. The day starts with 早上好 and ends with sleep in a nest by the cave (晚安), with a summary of what you learned today and what's due tomorrow. Early on the loud waterfall scares the baby; by the end the troop wonders what's behind it, which leads into Area 2. The story is told through short lines, not long cutscenes.
 
 **Compact, lively places.** Areas stay small so walking doesn't crowd out learning. Flower Fruit Mountain stays about its current size and gets livelier: animals at their own spots (the squirrel in a tree, the goat on the cliffs), birds that come and go, and grass that rustles where an animal is hiding. Once the engine can move between maps, it splits into a few small connected places: the meadow, the orchard, the riverbank and the cliffs with the waterfall.
@@ -231,10 +233,10 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] The Word Scroll as a grid of sprites, with category tabs and a Today tab
   - [x] A menu of big tiles, and a Settings page (three tiles until the wardrobe adds 衣服)
   - [x] A bigger game screen on phones (up to 14 rows of the map), and a task box showing the current task with "more"
-- [ ] Gentler pacing for beginners (decided after playtesting stage 2):
+- [x] Gentler pacing for beginners (decided after playtesting stage 2):
   - [x] Questions get harder after two right answers in a row; no characters-only questions on Flower Fruit Mountain
   - [x] Pictures for 瀑布, 老板 and 头带; 我 and 要 practised by building 我要 sentences at the practice post
-  - [ ] A short story at the waterfall from sentences you've met, with gap-filling picture questions
+  - [x] A short story at the waterfall from sentences you've met, with gap-filling picture questions
 - [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary
 - [ ] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version

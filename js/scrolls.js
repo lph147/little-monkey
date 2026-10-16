@@ -1,23 +1,25 @@
 // The Story Scroll at the waterfall, the area checklist, the word test at the cave door, Today's words and the Word Scroll.
 
 /* ================= STORY, SLEEP, SCROLL ================= */
-// The story questions to ask now. Quizzes only use words you've caught: a question is left out
-// if you haven't caught its answer, and its wrong answers are the first 2 you have caught.
+// The story questions to ask now: a story sentence with a word missing, and pictures to fill the gap.
+// Quizzes only use words you've caught: a question is left out if you haven't caught its answer, and
+// its wrong answers are the first 2 you have caught.
 function storyQuestions(){
   return AREA.storyQuestions.filter(q => lvl(q.answer) >= 1).map(q => {
     const wrong = q.options.filter(w => w !== q.answer && lvl(w) >= 1).slice(0, 2);
-    return {t:toks(q.zh), options:shuffle([q.answer, ...wrong]), answer:q.answer};
+    return {t:toks(q.zh), en:q.en, options:shuffle([q.answer, ...wrong]), answer:q.answer};
   }).filter(q => q.options.length > 1);
 }
 function storyScroll(){
   return new Promise(res => {
+    const first = !here().story;   // the English shows under each sentence the first time; after that, behind English
     STORY.forEach(s => hear(s.t)); save();
-    openCard(`<p class="label">Story Scroll · reading challenge</p><p class="small">Try reading it yourself before you look at the English. Tap any word you're unsure of.</p>
-      ${STORY.map((s,i) => `<div class="sent" data-i="${i}">${lineHTML(s.t)}</div>`).join('')}
-      <div class="gloss">Tap a word for its meaning.</div><div class="en" hidden>${STORY.map(s => esc(s.en)).join(' ')}</div>
-      <div class="actions"><button class="btn grow" data-a="read">🔊 Read it to me</button><button class="btn" data-a="en">English</button><button class="btn primary" data-a="ok">Questions</button></div>`);
+    openCard(`<p class="label">Story Scroll</p><p class="small">The story of your first day, in words you've met. Tap any word you're unsure of.</p>
+      ${STORY.map((s,i) => `<div class="sent" data-i="${i}">${s.pic ? `<span class="spic" aria-hidden="true">${picHTML(s.pic)}</span>` : ''}<div>${lineHTML(s.t)}<div class="sentence-en" ${first ? '' : 'hidden'}>${esc(s.en)}</div></div></div>`).join('')}
+      <div class="gloss">Tap a word for its meaning.</div>
+      <div class="actions"><button class="btn grow" data-a="read">🔊 Read it to me</button>${first ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">Questions</button></div>`);
     bindTokens(sheet);
-    on('[data-a=en]', () => { sheet.querySelector('.en').hidden = false; });
+    on('[data-a=en]', e => { sheet.querySelectorAll('.sent .sentence-en').forEach(x => x.hidden = false); e.currentTarget.remove(); });
     on('[data-a=read]', () => {
       let i = 0;
       const next = () => {
@@ -34,9 +36,16 @@ function storyScroll(){
       let right = 0;
       const qs = storyQuestions();
       for (const q of qs){
-        hear(q.t); say(q.t.join(''));
-        const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>',
-          options:q.options.map(w => `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>`), answerIdx:q.options.indexOf(q.answer)});
+        hear(q.t);
+        const gapped = q.t.map(w => w === q.answer ? GAP : w);
+        const ok = await pictureQ({head:'<p class="label">Story question</p><p class="prompt">Which picture fills the gap?</p>',
+          body: lineHTML(gapped) + `<div class="sentence-en" hidden>${esc(q.en)}</div><div class="gloss">Tap a word for its meaning. <button class="engbtn" data-a="qen">English</button></div>`,
+          options:q.options.map(w => `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>`), answerIdx:q.options.indexOf(q.answer),
+          onShow:() => on('[data-a=qen]', e => { sheet.querySelector('.sentence-en').hidden = false; e.currentTarget.remove(); }),
+          onAnswer:() => {   // fill the gap and say the whole sentence
+            sheet.querySelector('.line').outerHTML = lineHTML(q.t, q.answer); bindTokens(sheet);
+            say(q.t.join(''));
+          }});
         if (ok){ right++; gainXP(XP.right); }
       }
       const first = !here().story, end = AREA.storyEnd;

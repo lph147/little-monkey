@@ -5,8 +5,10 @@
 let markGloss = [];
 function info(t){ if (WORDS[t]) return [WORDS[t].py, WORDS[t].en]; if (GLOSS[t]) return GLOSS[t]; return ['','']; }
 let teachWord = null;
+const GAP = '＿';   // the missing word in a story question
 function tokHTML(t){
   if (PUNCT.has(t)) return `<span class="punct">${t}</span>`;
+  if (t === GAP) return '<span class="gap" aria-label="missing word">？</span>';
   const [py] = info(t);
   const cls = t === teachWord ? 'learn teach' : (WORDS[t] && lvl(t) >= 1 ? 'learn' : 'listen');
   return `<button class="tok ${cls}" data-t="${esc(t)}"><ruby>${esc(t)}<rt class="${S.pinyin ? '' : 'hid'}">${esc(py)}</rt></ruby></button>`;

@@ -177,7 +177,12 @@ rt.hid{visibility:hidden}
 .mastery{text-align:center;color:var(--muted);margin:6px 0 0}
 .examplehead{margin-top:14px}
 .card .sil{filter:var(--sil);opacity:.55;white-space:nowrap}
-.sent{margin:4px 0;border-radius:4px;padding:0 4px}
+.sent{margin:4px 0;border-radius:4px;padding:0 4px;display:flex;align-items:center;gap:8px}
+.spic{flex:none}
+.spic .pix{width:32px;height:32px}
+.sent .line{margin:2px 0}
+.sent .sentence-en{font-size:.9rem;margin:0 0 4px;padding:2px 6px}
+.gap{display:inline-block;min-width:2.4em;border-bottom:3px solid var(--gold);color:var(--gold);text-align:center;font-size:1.55rem;line-height:1.2;padding:0 4px;align-self:flex-end}
 .sent .tok{font-size:1.45rem}
 .sent .punct{font-size:1.45rem}
 .sent.reading{background:color-mix(in srgb,var(--gold) 22%,transparent)}

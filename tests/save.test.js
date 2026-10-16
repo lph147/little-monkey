@@ -141,7 +141,7 @@ test('a version 4 save is converted: the words in lines you have seen count as h
 test('converting a version 4 save where the story was read counts the story too', () => {
   const s = saveOf(loadGame({save: {...V4, areas: {1: {...V4.areas[1], gate: true, story: true}}}}));
   assert.equal(s.heard['瀑布'], 1, 'heard once, in the story');
-  assert.equal(s.heard['谁'], 1, 'heard once, in a story question');
+  assert.equal(s.heard['鱼'], 2, 'heard twice: in the story, and in a story question');
   assert.equal(s.heard['你好'], 1, 'heard once, in a line you have seen');
 });
 

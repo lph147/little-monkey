@@ -48,3 +48,41 @@ test('whatever words you have, story questions only show words you have caught',
     }
   }
 });
+
+test('each story question is a story sentence with its answer as the missing word', () => {
+  const story = AREA.story.map(s => s.zh);
+  AREA.storyQuestions.forEach((q, i) => {
+    assert.ok(story.includes(q.zh), `story question ${i + 1} should be a sentence from the story: ${q.zh}`);
+    assert.equal(q.zh.split(' ').filter(w => w === q.answer).length, 1, `story question ${i + 1}: ${q.answer} should be in the sentence once`);
+    assert.ok(q.en && q.en.includes('…'), `story question ${i + 1} needs its English with … for the gap`);
+  });
+  for (const s of AREA.story) if (s.pic) assert.ok(collectible.includes(s.pic) && BANK[s.pic].pic, `the story's picture ${s.pic} should be a word with a picture`);
+});
+
+test('a story question shows a gap; answering fills it in', async () => {
+  const w = Object.fromEntries(collectible.map(x => [x, {lv: 1, due: 0, ok: 0}]));
+  const game = loadGame({dom: true, save: {version: 9, started: true, w}});
+  const sheet = game.el('#sheet');
+  game.run("globalThis.__q = null; const pq = pictureQ; pictureQ = q => { __q = q; return pq(q); }; storyScroll()");
+  sheet.querySelector('[data-a=ok]').click();   // Questions
+  await new Promise(r => setImmediate(r));
+  const answer = AREA.storyQuestions[0].answer;
+  assert.ok(sheet.querySelector('.line .gap'), 'the sentence has a gap');
+  assert.ok(!sheet.querySelector(`.line .tok[data-t="${answer}"]`), 'and the missing word is not shown');
+  sheet.querySelector(`.opt[data-i="${game.run('__q.answerIdx')}"]`).click();
+  assert.ok(!sheet.querySelector('.line .gap'), 'the gap is filled');
+  assert.ok(sheet.querySelector(`.line .tok.teach[data-t="${answer}"]`), `with ${answer}, in bold`);
+});
+
+test('the story shows each sentence\'s English the first time, then behind the English button', () => {
+  const game = loadGame({dom: true, save: {version: 9, started: true}});
+  const sheet = game.el('#sheet');
+  game.run('storyScroll()');
+  assert.equal(sheet.querySelectorAll('.sent .sentence-en').filter(e => !e.hidden).length, AREA.story.length, 'all English shown the first time');
+  assert.equal(sheet.querySelector('[data-a=en]'), null);
+  assert.equal(sheet.querySelectorAll('.sent .spic').length, AREA.story.filter(s => s.pic).length, 'a picture beside each sentence');
+  game.run('closeCard(); here().story = true; storyScroll()');
+  assert.equal(sheet.querySelectorAll('.sent .sentence-en').filter(e => !e.hidden).length, 0, 'hidden after that');
+  sheet.querySelector('[data-a=en]').click();
+  assert.equal(sheet.querySelectorAll('.sent .sentence-en').filter(e => !e.hidden).length, AREA.story.length, 'English shows them all');
+});

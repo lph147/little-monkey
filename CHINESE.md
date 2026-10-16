@@ -49,13 +49,14 @@ shown where the word list has them.
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 山上有一个大石头。 | shān shàng yǒu yí gè dà shítou. | On the mountain there is a big stone. |  |
-| 石头里有一只小猴子。 | shítou lǐ yǒu yì zhī xiǎo hóuzi. | Inside the stone there is a little monkey. |  |
-| 小猴子有很多朋友。 | xiǎo hóuzi yǒu hěn duō péngyou. | The little monkey has lots of friends. |  |
-| 猴子吃桃子，喝水。 | hóuzi chī táozi, hē shuǐ. | Monkeys eat peaches and drink water. |  |
-| 鸟在树上玩。 | niǎo zài shù shàng wán. | Birds play in the trees. |  |
-| 河里有鱼，山上有瀑布。 | hé lǐ yǒu yú, shān shàng yǒu pùbù. | There are fish in the river, and a waterfall on the mountain. |  |
-| 小猴子很快乐！ | xiǎo hóuzi hěn kuàilè! | The little monkey is very happy! |  |
+| 石头里有猴子。 | shítou lǐ yǒu hóuzi. | There is a monkey inside the stone. |  |
+| 我是猴子。 | wǒ shì hóuzi. | I am a monkey. |  |
+| 我有朋友。 | wǒ yǒu péngyou. | I have friends. |  |
+| 我吃桃子，喝水。 | wǒ chī táozi, hē shuǐ. | I eat peaches and drink water. |  |
+| 草里有动物。 | cǎo lǐ yǒu dòngwù. | There are animals in the grass. |  |
+| 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. |  |
+| 河里有鱼。 | hé lǐ yǒu yú. | There are fish in the river. |  |
+| 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! |  |
 
 ### Example sentences on word pages
 
@@ -75,9 +76,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | Answer | Notes |
 | --- | --- | --- | --- | --- |
-| 谁在石头里？ | shéi zài shítou lǐ? | Who is inside the stone? | 猴子 |  |
-| 猴子吃什么？ | hóuzi chī shénme? | What do monkeys eat? | 桃子 |  |
-| 河里有什么？ | hé lǐ yǒu shénme? | What is in the river? | 鱼 |  |
+| 石头里有猴子。 | shítou lǐ yǒu hóuzi. | There is a … inside the stone. | 猴子 |  |
+| 我吃桃子，喝水。 | wǒ chī táozi, hē shuǐ. | I eat … and drink water. | 桃子 |  |
+| 河里有鱼。 | hé lǐ yǒu yú. | There are … in the river. | 鱼 |  |
 
 ### The opening scene
 
@@ -155,14 +156,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 上 | shàng | on top of |  |
 | 一个 | yí gè | a, one |  |
 | 一只 | yì zhī | a, one (animal) |  |
-| 大 | dà | big |  |
 | 小 | xiǎo | little, small |  |
 | 很多 | hěn duō | lots of |  |
 | 在 | zài | at, in, on |  |
 | 玩 | wán | to play |  |
-| 很 | hěn | very |  |
-| 快乐 | kuàilè | happy |  |
-| 谁 | shéi | who |  |
 | 什么 | shénme | what |  |
 | 吗 | ma | (yes/no question) |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
@@ -181,8 +178,17 @@ The names of the menu's tiles, shown with pinyin and English.
 | 任务 | rènwu | Tasks |  |
 | 朋友 | péngyou | Friends |  |
 
-## New sentences, not in the game yet
+## New sentences to check
 
-Sentences waiting to be checked. They'll go into the game once checked.
+Sentences that haven't been checked yet: new ones waiting to go into the game, and new ones already in it.
 
-None at the moment.
+| Chinese | Pinyin | English | Where | Notes |
+| --- | --- | --- | --- | --- |
+| 石头里有猴子。 | shítou lǐ yǒu hóuzi. | There is a monkey inside the stone. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
+| 我是猴子。 | wǒ shì hóuzi. | I am a monkey. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
+| 我有朋友。 | wǒ yǒu péngyou. | I have friends. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
+| 我吃桃子，喝水。 | wǒ chī táozi, hē shuǐ. | I eat peaches and drink water. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
+| 草里有动物。 | cǎo lǐ yǒu dòngwù. | There are animals in the grass. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
+| 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
+| 河里有鱼。 | hé lǐ yǒu yú. | There are fish in the river. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
+| 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |

@@ -6,9 +6,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {loadGame, ROOT} = require('../tests/fake-browser');
 
-// New sentences waiting to be checked before they go into the game, as {zh, en, word}. Once checked
-// (and corrected), move each one into the content and delete it from here.
-const DRAFTS = [];
+// New sentences waiting to be checked, as {zh, en, where}: ones not in the game yet, and new ones already
+// in it. Once checked (and corrected), put any corrections into the content and delete them from here.
+const DRAFTS = [
+  ...[['石头 里 有 猴子 。', 'There is a monkey inside the stone.'], ['我 是 猴子 。', 'I am a monkey.'], ['我 有 朋友 。', 'I have friends.'],
+    ['我 吃 桃子 ， 喝 水 。', 'I eat peaches and drink water.'], ['草 里 有 动物 。', 'There are animals in the grass.'],
+    ['树 上 有 鸟 。', 'There are birds in the trees.'], ['河 里 有 鱼 。', 'There are fish in the river.'],
+    ['山 上 有 瀑布 ！', 'There is a waterfall on the mountain!']]
+    .map(([zh, en]) => ({zh, en, where:'The new, shorter story at the waterfall (in the game, not uploaded yet)'}))
+];
 
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?'};
 function sheet(){
@@ -94,11 +100,11 @@ The names of the menu's tiles, shown with pinyin and English.
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], MENU.map(t => [t.zh, t.py, t.en, notes]))}
 
-## New sentences, not in the game yet
+## New sentences to check
 
-Sentences waiting to be checked. They'll go into the game once checked.
+Sentences that haven't been checked yet: new ones waiting to go into the game, and new ones already in it.
 
-${DRAFTS.length ? table(['Chinese', 'Pinyin', 'English', 'For the word', 'Notes'], DRAFTS.map(d => [chars(d.zh), py(d.zh), d.en, d.word, notes])) : 'None at the moment.'}
+${DRAFTS.length ? table(['Chinese', 'Pinyin', 'English', 'Where', 'Notes'], DRAFTS.map(d => [chars(d.zh), py(d.zh), d.en, d.where, notes])) : 'None at the moment.'}
 `;
 }
 

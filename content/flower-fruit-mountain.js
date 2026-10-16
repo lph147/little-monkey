@@ -373,36 +373,41 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]
   },
 
-  // The Story Scroll at the waterfall: a short reading challenge.
+  // The Story Scroll at the waterfall: your first day, told in short sentences made of words you've met.
+  // pic is the word whose picture is shown beside the sentence. Each sentence's English shows under it
+  // the first time you read the story. (The longer story from the book's opening, with 一只, 一个 and
+  // 很, waits for the Water Curtain Cave, which teaches them.)
   story: [
-    {zh:'山 上 有 一个 大 石头 。', en:'On the mountain there is a big stone.'},
-    {zh:'石头 里 有 一只 小 猴子 。', en:'Inside the stone there is a little monkey.'},
-    {zh:'小 猴子 有 很多 朋友 。', en:'The little monkey has lots of friends.'},
-    {zh:'猴子 吃 桃子 ， 喝 水 。', en:'Monkeys eat peaches and drink water.'},
-    {zh:'鸟 在 树 上 玩 。', en:'Birds play in the trees.'},
-    {zh:'河 里 有 鱼 ， 山 上 有 瀑布 。', en:'There are fish in the river, and a waterfall on the mountain.'},
-    {zh:'小 猴子 很 快乐 ！', en:'The little monkey is very happy!'}
+    {zh:'石头 里 有 猴子 。', en:'There is a monkey inside the stone.', pic:'石头'},
+    {zh:'我 是 猴子 。', en:'I am a monkey.', pic:'猴子'},
+    {zh:'我 有 朋友 。', en:'I have friends.', pic:'朋友'},
+    {zh:'我 吃 桃子 ， 喝 水 。', en:'I eat peaches and drink water.', pic:'桃子'},
+    {zh:'草 里 有 动物 。', en:'There are animals in the grass.', pic:'动物'},
+    {zh:'树 上 有 鸟 。', en:'There are birds in the trees.', pic:'鸟'},
+    {zh:'河 里 有 鱼 。', en:'There are fish in the river.', pic:'鱼'},
+    {zh:'山 上 有 瀑布 ！', en:'There is a waterfall on the mountain!', pic:'瀑布'}
   ],
 
-  // Questions after the story, with their English (for checking; it isn't shown). The options are words; their pictures are shown, with the Chinese
-  // underneath. Quizzes only use words you've caught, so the game shows the answer and the first
-  // 2 other options you've caught, in a random order, and skips a question if you haven't caught
-  // its answer. List the best wrong answers first, and make sure every one is clearly wrong.
+  // Questions after the story: a sentence from the story with one word missing, and pictures to fill
+  // the gap. zh is the whole sentence; answer is the missing word; en is the English with the gap.
+  // Quizzes only use words you've caught, so the game shows the answer and the first 2 other options
+  // you've caught, in a random order, and skips a question if you haven't caught its answer. List the
+  // best wrong answers first, and make sure every one is clearly wrong.
   // Players have always caught 石头, 桃子 and 水 by the time they reach the waterfall.
   storyQuestions: [
-    {zh:'谁 在 石头 里 ？', en:'Who is inside the stone?', options:['猴子', '鸟', '花', '桃子', '水'], answer:'猴子'},
-    {zh:'猴子 吃 什么 ？', en:'What do monkeys eat?', options:['石头', '桃子', '草', '水'], answer:'桃子'},
-    {zh:'河 里 有 什么 ？', en:'What is in the river?', options:['树', '山羊', '鱼', '鸟', '桃子'], answer:'鱼'}
+    {zh:'石头 里 有 猴子 。', en:'There is a … inside the stone.', options:['猴子', '鱼', '鸟', '水'], answer:'猴子'},
+    {zh:'我 吃 桃子 ， 喝 水 。', en:'I eat … and drink water.', options:['桃子', '石头', '树', '花'], answer:'桃子'},
+    {zh:'河 里 有 鱼 。', en:'There are … in the river.', options:['鱼', '树', '山羊', '花'], answer:'鱼'}
   ],
 
   // The card after the story questions. reward: peaches, the first time only; rumble: the ground
   // shakes as you close it (first time only). Text may use <i>…</i> for a book title.
   storyEnd: {
-    title: 'First slice complete',
+    title: 'Your first story',
     reward: 5,
     rumble: true,
     text: [
-      'Every word here comes from the opening of <i>The Rise of the Monkey King</i>. Open your book at page 8 and read to page 18. Count how many words you now recognise without the footnotes.',
+      'You read a whole story in Chinese: the story of your first day on Flower Fruit Mountain.',
       'You hear a heavy door roll open somewhere in the cliffs. That’s the way onward.'
     ]
   },

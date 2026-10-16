@@ -108,8 +108,8 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **The waterfall**
 - [ ] The rocks at the top of the right-hand path have gone. Walk up through the gap to the top right, stand just left of the waterfall, face it and press A.
-- [ ] A card teaches 瀑布 (waterfall), then the Story Scroll opens. Read it to me highlights each sentence as it's spoken; English shows the translation.
-- [ ] Questions asks up to 3 picture questions, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). Then it shows "First slice complete" with +5 🍑 and a rumble.
+- [ ] A card teaches 瀑布 (waterfall), with its picture, then the Story Scroll opens: 8 short sentences about your first day (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
+- [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). English shows the sentence's English with the gap. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🍑 and a rumble.
 
 **The cave door**
 - [ ] The cave door is at the top of the short path on the far left. Stand below it, face up and press A. It teaches 洞 (cave).

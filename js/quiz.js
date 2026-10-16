@@ -1,7 +1,7 @@
 // Picture questions, word games with animals and monkeys, and building sentences from word tiles.
 
 /* ================= QUESTIONS & ENCOUNTERS ================= */
-function pictureQ({head, body, options, answerIdx, word, type, text, onShow}){
+function pictureQ({head, body, options, answerIdx, word, type, text, onShow, onAnswer}){
   return new Promise(res => {
     openCard(`${head}${body}<div class="opts">${options.map((o,i) => `<button class="opt${text ? ' hz' : ''}" data-i="${i}" aria-label="Option ${i+1}">${o}</button>`).join('')}</div>
       <div class="feedback" aria-live="polite"></div><div class="actions"><button class="btn primary" data-a="next" hidden>Next</button></div>`);
@@ -20,6 +20,7 @@ function pictureQ({head, body, options, answerIdx, word, type, text, onShow}){
         fb.innerHTML = `${ok ? 'Yes!' : 'Not quite.'}<span class="hz">${word}</span>${WORDS[word].py}${ok ? '' : ' · ' + esc(WORDS[word].en)}`;
         setTimeout(() => say(word), 250); if (type) answer(word, ok, type);
       } else fb.textContent = ok ? 'Yes!' : 'Not quite.';
+      if (onAnswer) onAnswer(ok);
       const n = sheet.querySelector('[data-a=next]'); n.hidden = false; n.focus();
       n.onclick = () => res(ok);
     });
