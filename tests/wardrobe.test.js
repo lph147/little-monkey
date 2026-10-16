@@ -40,7 +40,6 @@ test('putting something on: 戴 is taught, your monkey says 我戴花, and it co
   assert.equal(get(game, '__said'), '我戴花。');
   assert.equal(game.run("wearing('花')"), true);
   assert.equal(get(game, "rec('戴').used"), 1);
-  assert.equal(get(game, 'S.firsts.wear.w'), '花');
 });
 
 test('taking something off', () => {

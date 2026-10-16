@@ -127,9 +127,8 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] When the little monkey teaches you 朋友, it tucks a 花 (flower) behind your ear (a message says so). Buying the 头带 puts it on.
 - [ ] Menu, 衣服 Wardrobe shows what you own, with "Wearing" on what's on. Tapping something you're not wearing closes the menu: the first time, a card teaches 戴 (wear); then your monkey says 我戴花 (or 我戴头带) and is wearing it on the map. Tapping something you're wearing takes it off.
 
-**The old monkey and your firsts**
+**The old monkey**
 - [ ] After the old monkey's first 你好, a message says he teaches every baby monkey the names of everything on the mountain.
-- [ ] Your first word, reply, animal, friend, 我要 sentence, purchase, story and first time dressing up each show "📖 First …!" a moment later. Menu, 任务 Tasks shows them in the Book of firsts. There's no nest, sleeping or day count.
 
 **The cave door**
 - [ ] The cave door is at the top of the short path on the far left. Stand below it, face up and press A. It teaches 洞 (cave).

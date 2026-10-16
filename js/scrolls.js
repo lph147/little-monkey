@@ -38,7 +38,6 @@ function storyScroll(){
       for (const q of qs) if (await gapQ({label:'Story question', t:q.t, en:q.en, gap:q.answer, options:q.options})) right++;
       const firstTime = !here().story, end = AREA.storyEnd;
       here().story = true; if (firstTime){ S.peaches += end.reward; gainXP(XP.story); } save(); buildMap();
-      first('story');
       SFX.fanfare();
       openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">${end.title}</p>
         <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${firstTime ? ` +${end.reward} 🍑` : ''}</p>

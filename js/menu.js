@@ -52,21 +52,14 @@ function wardrobePage(back, focus){
     w.push(c.item); save(); redress(); closeCard();
     if (c.teach && lvl(c.teach) === 0) await showNotice(c.teach, c.note ? {note:fill(c.note)} : {});   // such as 戴, the first time
     toks(c.sentence).forEach(t => { if (WORDS[t]) useWord(t); });
-    first('wear', c.item);
     await showDialog(speaker('player'), {t:[...toks(c.sentence), '。'], en:c.sentenceEn}, {teach:c.teach || c.item});
   });
-}
-function firstsHTML(){   // the book of firsts: each one you've had
-  const got = Object.entries(FIRSTS).filter(([id]) => S.firsts[id]), left = Object.keys(FIRSTS).length - got.length;
-  return `<p class="label examplehead">📖 Book of firsts</p>${got.length ? `<ul class="firsts">${got.map(([id, label]) => `<li><span>${label}${S.firsts[id].w ? ` · <b>${esc(S.firsts[id].w)}</b>` : ''}</span></li>`).join('')}</ul>` : '<p class="hint">Your firsts will be written here.</p>'}
-    ${left ? `<p class="small">${left} more ${left === 1 ? 'first' : 'firsts'} to find.</p>` : ''}`;
 }
 // 任务 Tasks: the area's checklist and all your tasks now (from the menu, or "more" in the task box). back: what Back does.
 function tasksPage(back){
   const tasks = getTasks();
   openCard(`<p class="label">${AREA.name.en}</p>${checklistHTML(false)}
     <p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
-    ${firstsHTML()}
     <div class="stats" style="margin-top:10px"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${ORDER.filter(w => lvl(w) >= 3).length} can read</span><span>${S.friends.length} friends</span></div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=ok]', back);

@@ -98,7 +98,7 @@ async function replyWith(best){
 // Your monkey says a phrase. If it's the one that fits (best), it counts as using it; if not, the game says which fits.
 async function iSay(said, best = said){
   const fits = said === best;
-  if (fits){ const r = rec(best); r.used = 1; r.lv = 4; gainXP(XP.right); addToday(best); first('reply', best); save(); }
+  if (fits){ const r = rec(best); r.used = 1; r.lv = 4; gainXP(XP.right); addToday(best); save(); }
   const en = WORDS[said].en.split(',')[0];
   await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
 }
@@ -125,7 +125,7 @@ async function request(r, face){   // a character asking you to bring something 
     const sentence = toks(r.sentence);
     await gapQ({who:face, t:sentence, en:r.sentenceEn, gap:r.gap || r.wants});
     sentence.filter(w => lvl(w) >= 1).forEach(useWord);
-    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); first('want', sentence.join('')); save(); SFX.fanfare();
+    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
     toast(`+${r.reward} 🍑. Task complete!`);
@@ -164,7 +164,6 @@ async function buy(i, face){   // buying something from the shop by asking for i
   if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag (no XP: you can buy it again and again)
   else { here().bought.push(i.item); gainXP(XP.task); }
   if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); S.wardrobe.wearing.push(i.item); }   // you put it on
-  first('buy', i.item);
   save(); SFX.fanfare();
   if (i.wear) redress();   // redraw your monkey wearing it
   await showDialog(face, L[sh.thanks]);
@@ -262,7 +261,7 @@ async function wildAppears(a, spot = findSpot()){
   SFX.encounter();
   await sleep(1100);
   const firstMeet = !S.met.includes(a.id);
-  if (firstMeet){ S.met.push(a.id); first('animal', a.hz); save(); }
+  if (firstMeet){ S.met.push(a.id); save(); }
   const justTaught = lvl(a.hz) === 0;
   if (justTaught) await showNotice(a.hz, {note:a.meetNote ? fill(a.meetNote) : `A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
   else { say(a.hz); await sleep(900); }
