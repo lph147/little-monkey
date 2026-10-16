@@ -24,6 +24,7 @@ const CRACK = [[8,3],[8,4],[7,5],[8,6],[9,7],[8,8],[7,9],[8,10],[9,5],[10,4],[6,
 const STONE = ROCK.map(r => [...r]); CRACK.forEach(([x,y]) => { if (STONE[y][x] !== '.') STONE[y][x] = 'k'; });
 const SIGN = ["................","................","................","..oooooooooooo..","..owwwwwwwwwwo..","..owWWWwwWWWwo..","..owwwwwwwwwwo..","..owWWwwWWWwwo..","..oooooooooooo..","......oWWo......","......oWWo......","......oWWo......","......oWWo......",".....oooooo.....","................","................"];
 const POST = ["......oooo......",".....owwwwo.....",".....owWWwo.....","..ooooowwooooo..","..owwwwwwwwwwo..","..ooooowwooooo..",".....owWWwo.....",".....owwwwo.....","...ooowWWwooo...","...owwwwwwwwo...","...ooowwwwooo...",".....owWWwo.....",".....owwwwo.....",".....owWWwo.....","....oooooooo....","................"];   // a wooden practice post
+const STALL = ["rwrwrwrwrwrwrwrw","rwrwrwrwrwrwrwrw","oooooooooooooooo",".k............k.",".k............k.",".k............k.",".k............k.",".k..pq...aA...k.",".kooooooooooooook",".kwwwwwwwwwwwwwk",".kWWWWWWWWWWWWWk",".kwwwwwwwwwwwwwk",".kWWWWWWWWWWWWWk",".kooooooooooooook",".k............k.","................"];   // a market stall with a striped awning
 const MONKEY = ["................",".....oooooo.....","....offffffo....","...offffffffo...",".ooofssssssfooo.","osssfssssssfssso","osssfssssssfssso",".ooofssmmssfooo.","...offssssffo...","...offffffffo...","..offfssssfffo..",".offffssssffffo.",".of.ffssssff.fo.","...offffffffo...","...offo..offo...","...ooo....ooo..."];
 const BIRD = ["...ooo..","..obbbo.","yobebbbo",".obbwwbo","..obwwwo","...oooo.","....o.o."];
 const PALS = {
@@ -38,6 +39,7 @@ const LEGS = {
   side:[["....offo.ofo....","....ooo..oo....."],["...ofo....ofo...","..oo.......oo..."],["...ofo....ofo...","..oo.......oo..."]]
 };
 const BEARDED = new Set(AREA.characters.filter(c => c.beard).map(c => c.id));   // characters drawn with a white beard
+const wearing = () => !!AREA.shop && AREA.shop.items.some(i => i.wear && here().bought.includes(i.item));   // your monkey wears what it bought
 function monkeySprite(kind, dir, blink, step = 0){
   const k = kind + dir + (blink ? 'b' : '') + step; if (spriteCache[k]) return spriteCache[k];
   const side = dir === 'left' || dir === 'right';
@@ -52,7 +54,7 @@ function monkeySprite(kind, dir, blink, step = 0){
     if (blink) rows[5][8] = 's';
     if (BEARDED.has(kind)){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
   }
-  if (kind === 'player'){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }
+  if (kind === 'player' && wearing()){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the red headband
   let out = rows.map(r => r.join(''));
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return spriteCache[k] = sprite(out, PALS[kind]);
@@ -84,13 +86,14 @@ const SPR = {
   rock: sprite(ROCK, ROCK_PAL), stone: sprite(STONE.map(r => r.join('')), ROCK_PAL),
   sign: sprite(SIGN, {o:'#4A2C17',w:'#D2A46A',W:'#9E6F3C'}),
   post: sprite(POST, {o:'#4A2C17',w:'#B98A55',W:'#8A5A32'}),
+  stall: sprite(STALL, {r:'#C0392B',w:'#F4F1EA',o:'#4A2C17',k:'#6B4A2A',W:'#8A5A32',p:'#F7A08F',q:'#D9665B',a:'#E8343C',A:'#A8161E'}),
   bird: sprite(BIRD, {o:'#2B3F66',b:'#5AA0E6',w:'#9CCBF5',e:'#111111',y:'#F2A33A'})
 };
 
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
-const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign','post'];   // looks with grass underneath
+const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign','post','stall'];   // looks with grass underneath
 const CLIFFS = ['cliff','caveDoor'];
 const WATERY = ['water','waterfall','bridge'];
 function grass(g, X, Y, x, y){
@@ -153,6 +156,7 @@ const LOOKS = {
   rocks:     (g,X,Y,x,y) => { path(g,X,Y,x,y); g.drawImage(SPR.rock,X,Y+2); },
   stone:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+2,Y+13,12,2,'#5DA651'); g.drawImage(SPR.stone,X,Y+1); },
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
+  stall:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.stall,X,Y); },
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
   caveDoor:  (g,X,Y,x,y) => {   // a cave in the cliff; its stone door rolls open once the area is done

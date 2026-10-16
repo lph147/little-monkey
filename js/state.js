@@ -2,13 +2,13 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 6;
+const SAVE_VERSION = 7;
 // XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
 const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
   for (const r of REQUESTS) p[r.id] = 'not asked';
-  return Object.assign(p, {holding:{}, done:false});
+  return Object.assign(p, {holding:{}, bought:[], done:false});
 }
 function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}}; }
 
@@ -49,11 +49,15 @@ function upgradeSave(s){
       + REQUESTS.filter(r => a[r.id] === 'done').length * XP.task + (a.story ? XP.story : 0) + (a.done ? XP.exitTest : 0);
     s.version = 6;
   }
+  if (s.version === 6){   // version 6: there was no shop. What you've bought starts empty (filled in below).
+    s.version = 7;
+  }
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
   s.areas = Object.assign({}, s.areas);
   s.areas[AREA.number] = Object.assign({}, start, s.areas[AREA.number]);
   s.areas[AREA.number].holding = Object.assign({}, s.areas[AREA.number].holding);
+  if (!Array.isArray(s.areas[AREA.number].bought)) s.areas[AREA.number].bought = [];
   if (!Array.isArray(s.met)) s.met = [];
   return s;
 }

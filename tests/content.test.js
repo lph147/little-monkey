@@ -256,12 +256,13 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'ready'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'bought', 'ready'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
       if (k === 'new' || k === 'knows') assert.ok(collectible.includes(v), `${where}: ${v} isn't a word you can collect in ${where}`);
       if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id], `${where} checks holding for "${id}", which isn't a request`);
+      if (k === 'bought') for (const w of Object.keys(v)) assert.ok(AREA.shop.items.some(i => i.item === w), `${where} checks bought for ${w}, which the shop doesn't sell`);
     }
   }
 });
@@ -278,6 +279,7 @@ test('every step does one thing, with settings that exist, using real lines and 
     }
     if (a === 'newWord' || a === 'card') assert.ok(collectible.includes(s[a]), `${where}: ${s[a]} isn't a word you can collect in ${where}`);
     if (a === 'set') for (const k of Object.keys(s.set)) assert.ok(remembered.includes(k), `${where} sets "${k}", which the area doesn't remember`);
+    if (a === 'shop') assert.ok(AREA.shop && AREA.shop.who === who, `${where}: ${who} doesn't run the shop`);
     if (a === 'request') assert.ok(AREA.requests[s.request] && AREA.requests[s.request].from === who, `${where}: "${s.request}" isn't a request from ${who}`);
     if (a === 'wordGame') assert.ok(s.wordGame.ask && s.wordGame.notYet && collectible.includes(s.wordGame.word), `${where}: wordGame needs ask, notYet and a word`);
   }
@@ -286,7 +288,8 @@ test('every step does one thing, with settings that exist, using real lines and 
 test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
-    ...Object.values(AREA.requests).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong])
+    ...Object.values(AREA.requests).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong]),
+    ...(AREA.shop ? [AREA.shop.ask, AREA.shop.thanks] : [])
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
 });

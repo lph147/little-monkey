@@ -43,7 +43,6 @@ const WORD_BANK = {
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},
   '松鼠': {py:'sōngshǔ', en:'squirrel', pic:'🐿️', area:1, category:'animals'},
   '山羊': {py:'shānyáng', en:'goat', pic:'🐐', area:1, category:'animals'},
-  '森林': {py:'sēnlín', en:'forest', pic:'🌲🌳🌲', area:1, category:'nature'},
   '洞': {py:'dòng', en:'cave', pic:'🕳️', area:1, category:'places'},
   '吃': {py:'chī', en:'to eat', pic:'😋', area:1, category:'actions'},
   '喝': {py:'hē', en:'to drink', pic:'🥤', area:1, category:'actions'},
@@ -51,6 +50,8 @@ const WORD_BANK = {
   '我': {py:'wǒ', en:'I, me', area:1, category:'people'},
   '要': {py:'yào', en:'to want', area:1, category:'actions'},
   '瀑布': {py:'pùbù', en:'waterfall', area:1, category:'nature'},
+  '老板': {py:'lǎobǎn', en:'shop owner, boss', area:1, category:'people'},
+  '头带': {py:'tóudài', en:'headband', area:1, category:'items'},
 
   // Heard in sentences
   '是': {py:'shì', en:'am, is, are'},

@@ -77,7 +77,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Walk around in tall grass. After a few steps an animal jumps out with a ! over your head.
 - [ ] The first time you meet each animal, a new-word card teaches its name and the encounter doesn't show the English. Meeting it again shows the Chinese name with an English button.
 - [ ] Keep going until you've found all 4 (rabbit, fox, squirrel, goat).
-- [ ] Optional words: cross the wooden bridge (bottom right) and face the bird (鸟). After learning 树, the trees on the far right teach 森林 (forest).
+- [ ] Optional words: cross the wooden bridge (bottom right) and face the bird (鸟).
 
 **The training ground**
 - [ ] A wooden practice post stands on the grass just above the long path, between the short path on the left and the old monkey. Face it: A says Train.
@@ -85,6 +85,12 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] After that, it asks if you want to practise and says how many words are due for review. Start matches about 8 words to their pictures in 2 rounds. Stop ends it without changing anything.
 - [ ] At the end it says how many you matched right first time, and gives 1 🍑 for each due word you got right first time.
 - [ ] Words you got right first time aren't due again for a day or more, so training again straight away gives no peaches for them (only for words you missed, or due words that didn't fit in the first go).
+
+**The shop**
+- [ ] Beside a striped market stall next to the pond stands the 老板 (shop owner), with a ! once you've said hello to the old monkey. Talking says 你好！我是老板。 and teaches 老板 on a new-word card.
+- [ ] Talk again: 你要什么？, then the stall shows 头带 · 🍑 10, in Chinese only, with your peaches above. Choosing it teaches 头带 (headband). Not now closes it.
+- [ ] With fewer than 10 🍑, it says how many you have and how to earn more. The task box shows "Buy the 头带 (headband) from the 老板 (shop owner)" with your peaches out of 10, and the 老板 shows a ? once you have 10.
+- [ ] With 10 🍑: build 我 要 头带 from tiles (吃 is an extra one). Your peaches go down by 10, the 老板 says 谢谢你！, and your monkey wears a red headband on the map from then on (a new monkey starts without one).
 
 **The waterfall**
 - [ ] The rocks at the top of the right-hand path have gone. Walk up through the gap to the top right, stand just left of the waterfall, face it and press A.

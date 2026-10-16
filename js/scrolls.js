@@ -180,7 +180,7 @@ async function nextArea(){
 }
 function todaysWords(back){
   return new Promise(res => {
-    const k = todayKey(), ids = S.today.d === k ? S.today.ids : [];
+    const k = todayKey(), ids = S.today.d === k ? S.today.ids.filter(w => WORDS[w]) : [];   // not words since removed from the game
     const due = ORDER.filter(w => lvl(w) >= 1 && rec(w).due <= Date.now() + DAY).length;
     openCard(`<p class="label">Today’s words</p>
       ${ids.length ? `<div class="chips">${ids.map(w => `<button class="chip" data-w="${w}">${w}</button>`).join('')}</div>` : '<p>You haven’t met any words yet today.</p>'}

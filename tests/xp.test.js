@@ -43,6 +43,6 @@ test('every 100 XP is a new level, shown in the header', () => {
 test('an older save gets XP for what you have already done', () => {
   const w = {'石头': {lv: 2, due: 0, ok: 1}, '路': {lv: 1, due: 0, ok: 0}, '你好': {lv: 0, due: 0, ok: 0}};
   const g = loadGame({save: {version: 5, started: true, w, areas: {1: {elder: 2, hungry: 'done', thirsty: 'asked', gate: false, story: true, holding: {}, done: false}}}});
-  assert.equal(g.run('S.version'), 6);
+  assert.equal(g.run('S.version'), g.run('SAVE_VERSION'));
   assert.equal(xp(g), 2 * 10 + 20 + 20, 'two words caught, one task done, the story read');
 });

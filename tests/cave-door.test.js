@@ -8,7 +8,7 @@ test('the cave door opens as soon as the area is ready, without a reload', () =>
   const version = loadGame().run('SAVE_VERSION');
   // Everything is done apart from meeting the last hidden animal.
   const game = loadGame({save: {version, started: true, met: ['rabbit', 'fox', 'squirrel'],
-    areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, story: true}}}});
+    areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, story: true, bought: ['头带']}}}});
   // Note how the door is drawn each time the map is drawn.
   game.run(`globalThis.doorDrawn = [];
     LOOKS.caveDoor = (draw => (...a) => { doorDrawn.push(areaDone() ? 'open' : 'closed'); return draw(...a); })(LOOKS.caveDoor);`);

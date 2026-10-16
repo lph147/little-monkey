@@ -41,7 +41,8 @@ const COUNTS = {   // what a counter in the content can count
   wordsLearned: () => learnedCount(),
   animalsFound: () => metCount(),
   animals: () => ANIMALS.length,
-  animalsLeft: () => ANIMALS.length - metCount()
+  animalsLeft: () => ANIMALS.length - metCount(),
+  peaches: () => S.peaches
 };
 function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count]() - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
 const compare = (have, want) => (want !== null && typeof want === 'object'
@@ -52,6 +53,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'new') return lvl(v) === 0;
     if (k === 'knows') return lvl(v) >= 1;
     if (k === 'holding') return Object.entries(v).every(([id, want]) => { const h = here().holding[id]; return want === true ? !!h : want === false ? !h : h === want; });
+    if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
     if (k === 'ready') return areaDone() === v;
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
@@ -70,6 +72,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async card(s){ await showNotice(s.card, s.note ? {note:fill(s.note)} : {}); },
   set(s){ Object.assign(here(), s.set); save(); },
   async request(s, who){ await request(REQUESTS.find(r => r.id === s.request), speaker(who)); },
+  async shop(s, who){ await shop(speaker(who)); },
   async wordGame(s, who){
     const g = s.wordGame;
     if (!canEncounter()){ toast(g.notYet); return; }
@@ -108,6 +111,28 @@ async function request(r, face){   // a character asking you to bring something 
     if (lvl(r.verb) === 0) await showNotice(r.verb);
     if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(r.asked); }
   } else await showDialog(face, L[r.thanks]);
+}
+async function shop(face){   // the area's shop: what it sells, and buying it by asking for it with 我要…
+  const sh = AREA.shop, items = sh.items.filter(i => !here().bought.includes(i.item));
+  await showDialog(face, L[sh.ask]);
+  if (!items.length){ toast(fill(sh.soldOut)); return; }
+  const i = await new Promise(res => {   // labels in Chinese only, so browsing is reading practice
+    openCard(`${face}<p class="prompt">You have ${S.peaches} 🍑.</p>
+      <div class="actions"><button class="btn" data-a="no" data-b>Not now</button>${items.map((it, n) => `<button class="btn ${n ? '' : 'primary'}" data-n="${n}" data-label="Choose">${it.item} · 🍑 ${it.price}</button>`).join('')}</div>`);
+    on('[data-a=no]', () => { closeCard(); res(null); });
+    sheet.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { closeCard(); res(items[+b.dataset.n]); });
+  });
+  if (!i) return;
+  if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note)});
+  if (S.peaches < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🍑, and you have ${S.peaches}. ${esc(fill(sh.earnMore))}</p>`); return; }
+  const build = toks(i.build);
+  await tiles(face, build, [i.extraTile], fill(i.buildPrompt));
+  build.filter(w => lvl(w) >= 1).forEach(w => setLevel(w, 4));
+  S.peaches -= i.price; here().bought.push(i.item); gainXP(XP.task); save(); SFX.fanfare();
+  if (i.wear){ for (const k in spriteCache) delete spriteCache[k]; }   // redraw your monkey wearing it
+  await showDialog(face, L[sh.thanks]);
+  toast(fill(i.bought));
+  await runEvents();
 }
 async function lookAt(t){   // the card for the word you learn by looking at a tile
   const w = lookWord(t);

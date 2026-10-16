@@ -27,13 +27,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
   progress: {elder:0, gate:false, story:false},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
-  // wordsLearned, animalsFound, animals (how many hide in the grass) or animalsLeft.
+  // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft or peaches.
   // minus takes some away; max is the most it can be.
   counters: {
     newWords: {count:'wordsLearned', minus:1, max:4},   // words learned apart from one (you're born knowing 石头), up to 4
     animals: {count:'animals'},
     found: {count:'animalsFound'},
-    animalsLeft: {count:'animalsLeft'}
+    animalsLeft: {count:'animalsLeft'},
+    peaches: {count:'peaches', max:10}   // your peaches, up to the headband's price
   },
 
   // The task box under the game screen. Every task whose if matches is shown, in this order.
@@ -41,7 +42,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   text   what it says. {holding:hungry} is the word for what you're holding for that request
   //   arrow  where the yellow arrow points: a character, or [x, y] on the map (no arrow if left out)
   // Besides what the area remembers, words and counters, an if can check holding:{hungry:true}
-  // (true if you're holding something for that request, false if not), and ready:true (everything
+  // (true if you're holding something for that request, false if not), bought:{'头带':true} (true if
+  // you've bought it from the shop, false if not), and ready:true (everything
   // on the checklist is done apart from the exit test).
   tasks: [
     {id:'elder', if:{elder:0}, text:'Talk to the old monkey on the path', arrow:'elder'},
@@ -53,6 +55,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect water from the river or the pond', arrow:[11, 9]},
     {id:'t2', if:{thirsty:'asked', holding:{thirsty:true}}, text:'Give the {水} to the thirsty monkey', arrow:'thirsty'},
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
+    {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
+    {id:'shop2', if:{knows:'头带', bought:{'头带':false}}, text:'Buy the {头带} from the {老板} ({peaches}/10 🍑)', arrow:'boss'},
     {id:'door', if:{ready:true, done:false}, text:'Pass the word test at the {洞} door', arrow:[3, 3]}
   ],
 
@@ -72,12 +76,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Bring the hungry monkey the fruit it wants', done:{hungry:'done'}},
     {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
     {text:'Read the story at the waterfall', done:{story:true}},
+    {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}},
     {text:'Pass the word test at the cave door', done:{done:true}, exitTest:true}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
     elder: [{if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}],
+    boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
+      {if:{bought:{'头带':false}, peaches:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}]
@@ -105,6 +112,21 @@ const FLOWER_FRUIT_MOUNTAIN = {
       build:'我 要 喝 水', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'}
   },
 
+  // The shop. who runs it, their line when you visit (ask) and after you buy (thanks), what they say
+  // if you can't afford something yet (earnMore, after how many peaches you need), and when you've
+  // bought everything (soldOut). Each item: its word and price in peaches, the sentence you build to
+  // ask for it (extraTile is a wrong tile mixed in), a line on its new-word card (note), a message
+  // after you buy it (bought), and wear: true if your monkey wears it from then on.
+  shop: {
+    who:'boss', ask:'whatWant', thanks:'thanks',
+    earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and training at the practice post.',
+    soldOut:'You have everything the {老板} sells. Come back another time.',
+    items: [
+      {item:'头带', price:10, build:'我 要 头带', extraTile:'吃', buildPrompt:'Ask for the {头带}. Put the words in order.',
+        note:'A red cloth headband.', bought:'You tie on the red {头带}. It suits you!', wear:true}
+    ]
+  },
+
   // Things that happen by themselves when the time comes (checked whenever a request is done).
   // A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
@@ -126,7 +148,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     "YPg.............ggWWYYYY",
     "YQggGGGGgggFggg.ggWWgggY",
     "YPggGGGGggggTgg.ggWWgGgY",
-    "YTggGGGgggOOOgg.gFWWGGgY",
+    "YTggGGGgggOOOHg.gFWWGGgY",
     "YFgggggggOOOOgg.ggWWGGgY",
     "YTgggGGGggggggg.ggWWgggY",
     "YggFgGGGggggggg...BBgggY",
@@ -157,12 +179,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '.': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'You are walking along a path.'},
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
-    'Y': {look:'tree', word:'森林', learnFirst:'树', note:'So many trees together.'},
+    'Y': {look:'tree', word:'树'},   // the forest round the edge of the map
     'P': {look:'peachTree', word:'桃子', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'}},
     'Q': {look:'appleTree', word:'苹果', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'}},
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
     'K': {look:'post', landmark:true, label:'Train', action:'training'},   // the training ground
+    'H': {look:'stall'},   // the shop owner's stall
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', whenGateOpens:'.'},
     'M': {look:'cliff', word:'山'},
     'C': {look:'caveDoor', word:'洞', note:'A cave in the cliff, closed by a heavy stone door.', landmark:true, action:'caveDoor'},
@@ -186,6 +209,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
     {id:'playful', x:11, y:12, facing:'down', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
+    {id:'boss', x:14, y:9, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
+      palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}},
     {id:'bird', x:22, y:13, facing:'down', label:'Look', look:'bird', word:'鸟'}
   ],
 
@@ -201,7 +226,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   sparkles: [
     {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'路', at:[9, 4]}, {word:'花', at:[8, 2]},
     {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[1, 7]},
-    {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]}, {word:'洞', at:[3, 3]}, {word:'森林', at:[21, 6]},
+    {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]}, {word:'洞', at:[3, 3]},
     {word:'瀑布', at:[18, 1], if:{gate:true}}   // the waterfall is out of reach until the rocks roll away
   ],
 
@@ -227,14 +252,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '狐狸': 'It jumped out of the tall grass.',
     '松鼠': 'It jumped out of the tall grass.',
     '山羊': 'It jumped out of the tall grass.',
-    '森林': 'The forest along the edges of the mountain.',
     '洞': 'The cave door at the top of the short path on the far left.',
     '吃': 'The hungry monkey wanted something to eat.',
     '喝': 'The thirsty monkey wanted something to drink.',
     '朋友': 'The little monkey became your friend.',
     '我': 'You learned it to say what a monkey wanted.',
     '要': 'You learned it to say what a monkey wanted.',
-    '瀑布': 'The waterfall at the top right of the mountain.'
+    '瀑布': 'The waterfall at the top right of the mountain.',
+    '老板': 'The shop owner at the stall by the pond.',
+    '头带': 'You bought it from the {老板} at the stall by the pond.'
   },
 
   // Where a fish jumps out of the water now and then.
@@ -264,7 +290,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     weFriends: {zh:'我们 是 朋友 ！', en:'We are friends!'},
     animals: {zh:'草 里 有 动物 。 去 找 动物 吧 ！', en:'There are animals in the grass. Go and find them!'},
     findElder: {zh:'你好 ！ 去 找 老 猴子 吧 ！', en:'Hello! Go and find the old monkey!'},
-    notThis: {zh:'这 是 苹果 。 我 要 吃 桃子 ！', en:'This is an apple. I want to eat a peach!'}
+    notThis: {zh:'这 是 苹果 。 我 要 吃 桃子 ！', en:'This is an apple. I want to eat a peach!'},
+    boss: {zh:'你好 ！ 我 是 老板 。', en:"Hello! I'm the shop owner."},
+    whatWant: {zh:'你 要 什么 ？', en:'What do you want?'}
   },
 
   // What happens when you press A beside each character. The game goes down their list and
@@ -276,6 +304,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   card      a word's card, every time (note: a line on it)
   //   set       change what the area remembers, such as {elder:1}
   //   request   the character's request (see requests)
+  //   shop      open the area's shop (see shop below)
   //   wordGame  offer a word game. ask: the question; word: who you're playing with;
   //             notYet: the message if you don't know enough words yet
   // In an if: elder:0 checks what the area remembers; new:'猴子' is true while you don't know
@@ -303,6 +332,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
       {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
+    ],
+    boss: [
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {if:{new:'老板'}, do:[{say:'boss', teach:'老板'}, {newWord:'老板', note:'The {老板} owns the shop. Come back to see what they sell.'}]},
+      {do:[{shop:true}]}
     ],
     hungry: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
