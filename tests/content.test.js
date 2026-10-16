@@ -196,6 +196,16 @@ test('animals are collectible words, each with a 16 × 16 sprite', () => {
   }
 });
 
+test('every word with a picture has its own pixel sprite', () => {
+  const seen = {};
+  for (const w of collectible.filter(w => BANK[w].pic)){
+    assert.ok(SPRITES[w], `${w} has a picture (${BANK[w].pic}) but no sprite in content/sprites.js`);
+    const key = JSON.stringify([SPRITES[w].rows, SPRITES[w].palette]);
+    assert.ok(!seen[key], `${w} and ${seen[key]} have the same sprite; every picture must be unique`);
+    seen[key] = w;
+  }
+});
+
 test('sprites are 16 × 16 and every letter has a colour', () => {
   for (const [w, s] of Object.entries(SPRITES)){
     assert.ok(BANK[w], `content/sprites.js has a sprite for ${w}, which isn't in the word bank`);

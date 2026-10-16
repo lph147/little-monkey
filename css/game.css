@@ -119,6 +119,10 @@ rt.hid{visibility:hidden}
 .actions .grow{margin-right:auto}
 .word{text-align:center;padding:4px 0}
 .pic{font-size:2.8rem;line-height:1.1}
+/* a word's pixel sprite, at a whole number of screen pixels per sprite pixel so it stays crisp */
+.pix{width:32px;height:32px;image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:middle;display:inline-block}
+.pic .pix{width:64px;height:64px}
+.mp .pix,.opt .pix{width:48px;height:48px}
 .big{font-size:3.4rem;font-weight:500;line-height:1.15}
 .py{font-size:1.25rem;color:var(--muted)}
 .note{color:var(--muted);font-size:.95rem;margin:8px 0 0;text-align:center}

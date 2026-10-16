@@ -36,7 +36,7 @@ function storyScroll(){
       for (const q of qs){
         hear(q.t); say(q.t.join(''));
         const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>',
-          options:q.options.map(w => `<span class="ico">${WORDS[w].pic}</span><span class="cap">${w}</span>`), answerIdx:q.options.indexOf(q.answer)});
+          options:q.options.map(w => `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>`), answerIdx:q.options.indexOf(q.answer)});
         if (ok){ right++; gainXP(XP.right); }
       }
       const first = !here().story, end = AREA.storyEnd;
@@ -74,7 +74,7 @@ function matchWords(words, title, stopLabel){
       openCard(`<p class="label">${title} · ${r + 1} of ${rounds.length}</p>
         <p class="small">Tap a word, then tap its picture.</p>
         <div class="match"><div class="col">${left.map(w => `<button class="mw" data-w="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${WORDS[w].py}</rt></ruby></button>`).join('')}</div>
-        <div class="col">${right.map(w => `<button class="mp" data-w="${w}">${WORDS[w].pic}</button>`).join('')}</div></div>
+        <div class="col">${right.map(w => `<button class="mp" data-w="${w}">${picHTML(w)}</button>`).join('')}</div></div>
         <div class="feedback" aria-live="polite"></div>
         <div class="actions"><button class="btn" data-a="quit" data-b>${stopLabel}</button></div>`);
       picked = null;
@@ -193,7 +193,7 @@ function todaysWords(back){
 }
 function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow of its picture, not giving it away) or not met yet
   if (lvl(w) > 0) return `<button class="card" data-w="${w}"><div class="c">${w}</div><div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
-  if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic || '？'}</div><div class="p">heard ${S.heard[w]}×</div>${pips(w)}</div>`;
+  if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : '？'}</div><div class="p">heard ${S.heard[w]}×</div>${pips(w)}</div>`;
   return `<div class="card unseen"><div class="c">？</div><div class="p"></div>${pips(w)}</div>`;
 }
 const MASTERY = ['Caught', 'Recognised', 'Read', 'Used'];   // what each gold square means
@@ -207,7 +207,7 @@ function wordPage(w, back){   // a caught word's page in the Word Scroll
   const d = WORDS[w], ex = exampleFor(w);
   say(w);
   openCard(`<p class="label">Word Scroll · ${CATEGORIES[d.category]}</p>
-    <div class="word"><div class="pic" aria-hidden="true">${d.pic || ''}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en" hidden>${esc(d.en)}</div></div>
+    <div class="word"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en" hidden>${esc(d.en)}</div></div>
     <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p>
     <p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
     ${ex ? `<p class="label examplehead">Example</p>${lineHTML(ex.t, w)}<div class="sentence-en" hidden>${esc(ex.en)}</div><div class="gloss">Tap any word to see what it means.</div>` : ''}

@@ -49,7 +49,7 @@ async function encounter(foe){
     else if (type === 'read') body = `<p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div></div>`;
     else body = `<p class="prompt">Listen. Which characters is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
     const ok = await pictureQ({head, body, word: w, type,
-      options: opts.map(o => type === 'hear' ? o : `<span class="ico">${WORDS[o].pic}</span><span class="cap">${type === 'read' ? WORDS[o].py : o}</span>`), text: type === 'hear',
+      options: opts.map(o => type === 'hear' ? o : `<span class="ico">${picHTML(o)}</span><span class="cap">${type === 'read' ? WORDS[o].py : o}</span>`), text: type === 'hear',
       answerIdx: opts.indexOf(w), onShow: () => {
         if (type !== 'read') setTimeout(() => say(w), 300);
         on('[data-a=foeen]', e => { showEn = true; e.currentTarget.outerHTML = ` <span class="small">${esc(WORDS[an].en)}</span>`; });

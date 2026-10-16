@@ -124,6 +124,7 @@ When the save format changes, the game keeps a copy of your old save in the brow
 - [ ] Pressing and holding on text never selects it.
 - [ ] On cards, the main button has a red A badge and A presses it; the back button has a blue B badge.
 - [ ] The whole console fits on screen in portrait.
+- [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, and the Word Scroll (and its shadows). They look sharp, not blurry.
 
 ## Known issues (not fixed yet)
 

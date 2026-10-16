@@ -65,6 +65,13 @@ const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
 
+// A word's picture: its pixel sprite from content/sprites.js, or its emoji until it has one.
+const picCache = {};
+function picHTML(w){
+  const s = SPRITES[w];
+  if (!s) return WORDS[w].pic || '';
+  return picCache[w] || (picCache[w] = `<img class="pix" alt="" src="${sprite(s.rows, s.palette).toDataURL()}">`);
+}
 const portraitCache = {};
 const NAMES = {};   // the names shown above what characters say
 AREA.characters.forEach(c => { if (c.name) NAMES[c.id] = c.name; });

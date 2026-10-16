@@ -2,7 +2,8 @@
 //
 //   py    pinyin, with tone marks
 //   en    English meaning
-//   pic   the picture on new-word cards and in quizzes (emoji for now; pixel sprites later)
+//   pic   says the word has a picture (on new-word cards and in quizzes). The picture shown is its
+//         pixel sprite in content/sprites.js; this emoji is only a stand-in until it has one.
 //   area  the area where you can collect the word. Words without an area are only heard:
 //         they appear in sentences and can be tapped, but can't be collected yet.
 //   category  where the word goes in the Word Scroll: one of the CATEGORIES below

@@ -31,9 +31,10 @@ test('the Word Scroll shows caught words, shadows of heard words, and ？ for th
   game.run('openScroll()');
   const html = game.el('#sheet').innerHTML, total = game.run('ORDER.length');
   assert.match(html, /<button class="card" data-w="石头"><div class="c">石头<\/div><div class="p">shítou<\/div>/, 'a caught word shows its characters and pinyin');
-  assert.match(html, /<div class="card heard"[^>]*><div class="c sil" aria-hidden="true">🐒<\/div><div class="p">heard 3×<\/div>/, 'a heard word shows its shadow and count');
+  const monkey = game.run("picHTML('猴子')");   // its pixel sprite
+  assert.ok(html.includes(`<div class="card heard" aria-label="Heard 3 times, not caught yet"><div class="c sil" aria-hidden="true">${monkey}</div><div class="p">heard 3×</div>`), 'a heard word shows its shadow and count');
   assert.ok(!html.includes('猴子') && !html.includes('hóuzi'), 'a heard word is not given away');
-  assert.ok(!html.includes('🐟'), 'a word you have not heard shows no picture');
+  assert.equal(count(html, 'class="pix"'), 1, 'only the heard word shows a picture (its shadow)');
   assert.equal(count(html, 'class="card unseen"'), total - 2, 'every other word shows ？');
 });
 
@@ -67,7 +68,7 @@ test('a caught word has a page: picture, pinyin, level, where you found it and a
   const game = loadGame({save: {version: 5, started: true, w: {'猴子': {lv: 2, due: 0, ok: 1}}, lines: {'你好！去找老猴子吧！': 1}}});
   game.run("wordPage('猴子', () => {})");
   const html = game.el('#sheet').innerHTML;
-  for (const part of ['>🐒<', '<div class="big">猴子</div>', '<div class="py">hóuzi</div>', '<div class="en" hidden>monkey</div>',
+  for (const part of [game.run("picHTML('猴子')"), '<div class="big">猴子</div>', '<div class="py">hóuzi</div>', '<div class="en" hidden>monkey</div>',
     'Recognised', 'Found: The little monkey at the bottom of the meadow.'])
     assert.ok(html.includes(part), `the page should include ${part}`);
   // the example is the line you've seen, with this word in bold and its English behind the English button
