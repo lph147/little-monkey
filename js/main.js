@@ -122,7 +122,14 @@ function toTitle(){
   const go = fn => () => { getAC(); unlockSpeech(); musicStart(); fn(); };
   if ($('#newBtn')) $('#newBtn').onclick = go(playIntro);
   if ($('#watchBtn')) $('#watchBtn').onclick = go(playIntro);
-  if ($('#contBtn')) $('#contBtn').onclick = go(() => { $('#titlecard').hidden = true; placePlayer(); mode = 'play'; lastTB = ''; updateHUD(); });
+  if ($('#contBtn')) $('#contBtn').onclick = go(() => {
+    $('#titlecard').hidden = true; placePlayer(); mode = 'play'; lastTB = ''; updateHUD();
+    if (S.lastDay !== todayKey()){   // back on a new date: a new morning (the first time after an update, just today's date)
+      const newDay = !!S.lastDay && here().elder >= 1;
+      S.lastDay = todayKey(); save();
+      if (newDay){ busy = true; wakeUp().finally(() => { busy = false; updateHUD(); }); }
+    }
+  });
 }
 function playIntro(){
   $('#titlecard').hidden = true;
@@ -165,7 +172,7 @@ async function startGame(){
   stopSpeech();
   const firstTime = !S.started;
   $('#titlecard').hidden = true;
-  if (firstTime){ S.started = true; S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'}; }
+  if (firstTime){ S.started = true; S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'}; S.lastDay = todayKey(); }
   placePlayer(); mode = 'play'; lastTB = ''; save(); musicStart();
   if (firstTime){
     busy = true;

@@ -14,10 +14,12 @@ const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), 
 const STEP_OPTIONS = get('STEP_OPTIONS'), COUNTS = get('Object.keys(COUNTS)');
 const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests), 'done'];   // what the area keeps in the save
 const placeholders = text => [...String(text).matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+const LEGEND_WALK = (x, y) => !!(AREA.legend[AREA.map[y][x]] || {}).walk;
 const allSteps = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.map(s => [`${who}'s talk, part ${i + 1}`, s, who]))),
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
-  ...AREA.begin.map(s => ['begin', s, null])
+  ...AREA.begin.map(s => ['begin', s, null]),
+  ...['night', 'morning'].flatMap(k => AREA.day[k].map(s => [`the day's ${k}`, s, AREA.day.who]))
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
@@ -378,4 +380,12 @@ test('replies after requests and the shop are phrases you can learn here', () =>
   const isPhrase = p => BANK[p] && BANK[p].phrase && collectible.includes(p);
   for (const [id, r] of Object.entries(AREA.requests)) for (const k of ['thanksReply', 'wrongReply']) if (r[k]) assert.ok(isPhrase(r[k]), `request ${id}: ${k} ${r[k]} isn't a phrase you can learn here`);
   if (AREA.shop) for (const k of ['thanksReply', 'no']) if (AREA.shop[k]) assert.ok(isPhrase(AREA.shop[k]), `shop: ${k} ${AREA.shop[k]} isn't a phrase you can learn here`);
+});
+
+test('the day has night and morning steps, someone to say them, and a place to wake up', () => {
+  const d = AREA.day;
+  assert.ok(d.night.length && d.morning.length, 'day needs night and morning steps');
+  assert.ok(AREA.characters.some(c => c.id === d.who), `day.who "${d.who}" isn't a character`);
+  assert.ok(LEGEND_WALK(d.wakeAt.x, d.wakeAt.y), 'you wake up somewhere you can stand');
+  assert.ok(AREA.map.join('').includes(Object.keys(AREA.legend).find(k => AREA.legend[k].action === 'sleep')), 'there is a nest to sleep in');
 });

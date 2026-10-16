@@ -34,6 +34,8 @@ function sheet(){
   for (const [who, parts] of Object.entries(AREA.talk)) for (const p of parts) for (const s of p.do) if (s.say) add(s.say, name(who));
   for (const r of Object.values(AREA.requests)) for (const k of [r.ask, r.offer, r.thanks, r.wrong]) if (k) add(k, name(r.from));
   if (AREA.shop) for (const k of [AREA.shop.ask, AREA.shop.thanks]) add(k, name(AREA.shop.who));
+  for (const r of Object.values(AREA.requests)) if (r.wrongAnswer) add(r.wrongAnswer, name(r.from));
+  if (AREA.day) for (const s of [...AREA.day.night, ...AREA.day.morning]) if (s.say) add(s.say, name(AREA.day.who));
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name];

@@ -94,7 +94,7 @@ async function replyWith(best){
 // Your monkey says a phrase. If it's the one that fits (best), it counts as using it; if not, the game says which fits.
 async function iSay(said, best = said){
   const fits = said === best;
-  if (fits){ const r = rec(best); r.used = 1; r.lv = 4; gainXP(XP.right); addToday(best); save(); }
+  if (fits){ const r = rec(best); r.used = 1; r.lv = 4; gainXP(XP.right); addToday(best); first('reply', best); save(); }
   const en = WORDS[said].en.split(',')[0];
   await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
 }
@@ -121,7 +121,7 @@ async function request(r, face){   // a character asking you to bring something 
     const build = toks(r.build);
     await tiles(face, build, [r.extraTile], r.buildPrompt);
     build.filter(w => lvl(w) >= 1).forEach(useWord);
-    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); save(); SFX.fanfare();
+    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); first('want', build.join('')); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
     toast(`+${r.reward} 🍑. Task complete!`);
@@ -158,6 +158,7 @@ async function buy(i, face){   // buying something from the shop by asking for i
   S.peaches -= i.price;
   if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag (no XP: you can buy it again and again)
   else { here().bought.push(i.item); gainXP(XP.task); }
+  first('buy', i.item);
   save(); SFX.fanfare();
   if (i.wear){ for (const k in spriteCache) delete spriteCache[k]; }   // redraw your monkey wearing it
   await showDialog(face, L[sh.thanks]);
@@ -186,11 +187,44 @@ const ACTIONS = {   // special things that happen when you press A at some tiles
   },
   async story(t){ await lookAt(t); await storyScroll(); },
   training(){ return trainingGround(); },
+  sleep(){ return goToSleep(); },
   async sign(){
     SFX.blip();
     await showDialog(speaker('sign'), {t:toks(AREA.sign.says.zh), en:AREA.sign.says.en}, {hint:AREA.sign.hint});
   }
 };
+/* ---- the day: sleeping in your nest, and mornings ---- */
+// The end of the day: what you met today, your firsts today, and what's due tomorrow.
+function daySummary(){
+  return new Promise(res => {
+    const ids = todaysWords(), firsts = Object.entries(FIRSTS).filter(([id]) => S.firsts[id] && S.firsts[id].day === S.day);
+    const due = SCROLL_WORDS().filter(w => lvl(w) >= 1 && !WORDS[w].phrase && rec(w).due <= Date.now() + DAY).length;
+    openCard(`<div class="who" aria-hidden="true">🌙</div><p class="label">The end of day ${S.day}</p>
+      <p>${ids.length ? `Today you met ${ids.length} ${ids.length === 1 ? 'word' : 'words'}:` : 'A quiet day on the mountain.'}</p>
+      ${ids.length ? `<div class="grid">${ids.map(scrollCard).join('')}</div>` : ''}
+      ${firsts.length ? `<p class="label examplehead">Firsts today</p><ul class="checklist">${firsts.map(([id, label]) => `<li class="done-first">${label}${S.firsts[id].w ? ` · ${S.firsts[id].w}` : ''}</li>`).join('')}</ul>` : ''}
+      <p class="small">${due} ${due === 1 ? 'word is' : 'words are'} due for review tomorrow. Practise at the practice post or with the animals.</p>
+      <div class="gloss">Tap a word to hear it.</div>
+      <div class="actions"><button class="btn primary" data-a="ok">Good night</button></div>`);
+    sheet.querySelectorAll('.card[data-w]').forEach(b => b.onclick = () => say(b.dataset.w));
+    on('[data-a=ok]', () => { closeCard(); res(); });
+  });
+}
+async function goToSleep(){
+  if (!await confirmBox('🌙', 'Sleep in your nest? The day ends with a look at what you learned, and a new day starts in the morning.', 'Sleep', 'Not yet')) return;
+  await daySummary();
+  await runSteps(AREA.day.night, AREA.day.who);
+  first('sleep');
+  fadeT = performance.now(); await sleep(800);
+  const w = AREA.day.wakeAt; S.pos = {x:w.x, y:w.y, dir:w.facing}; placePlayer(); save();
+  await sleep(700);
+  await wakeUp();
+}
+// A new day: day plus one, and good morning (the area's morning steps). Also when you come back on a new date.
+async function wakeUp(){
+  S.day = (S.day || 1) + 1; S.lastDay = todayKey(); save();
+  await runSteps(AREA.day.morning, AREA.day.who);
+}
 async function interact(x, y){
   const n = npcAt(x, y);
   if (n) return talk(n);
@@ -245,7 +279,7 @@ async function wildAppears(a, spot = findSpot()){
   SFX.encounter();
   await sleep(1100);
   const firstMeet = !S.met.includes(a.id);
-  if (firstMeet){ S.met.push(a.id); save(); }
+  if (firstMeet){ S.met.push(a.id); first('animal', a.hz); save(); }
   const justTaught = lvl(a.hz) === 0;
   if (justTaught) await showNotice(a.hz, {note:a.meetNote ? fill(a.meetNote) : `A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
   else { say(a.hz); await sleep(900); }

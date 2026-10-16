@@ -149,7 +149,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     "MMMMMMMggSggMMggggXXYYYY",
     "MMMMMMMgF.gNMMgggFWWYYYY",
     "MMMCMMMgg.ggMMggggWWYYYY",
-    "MMg.gMMMg.gMMMMRRMWWYYYY",
+    "MMg.ZMMMg.gMMMMRRMWWYYYY",
     "YTg.ggKgg.ggggg.ggWWYYYY",
     "YPg.............ggWWYYYY",
     "YQggGGGGgggFggg.ggWWgggY",
@@ -181,7 +181,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   learnOnStep    true to learn its word the first time you step on it, with stepNote on the card
   //   animals        true if animals hide here
   //   gather         something you can pick up here for a request (for), with a message afterwards
-  //   action         something special that happens: 'caveDoor', 'story', 'sign' or 'training'
+  //   action         something special that happens: 'caveDoor', 'story', 'sign', 'training' or 'sleep'
   //   label          what the A button says when you face it (Look if not given)
   //   whenGateOpens  the letter it becomes once the rocks have rolled away
   legend: {
@@ -203,6 +203,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'C': {look:'caveDoor', word:'洞', note:'A cave in the cliff, closed by a heavy stone door.', landmark:true, action:'caveDoor'},
     'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
+    'Z': {look:'nest', landmark:true, label:'Sleep', action:'sleep'},   // your nest, by the cave: sleep to end the day
     'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story'}
   },
 
@@ -278,7 +279,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '对不起': 'You said it when you brought the hungry monkey the wrong fruit.',
     '没关系': 'The hungry monkey said it when you said sorry.',
     '再见': 'You said it to the old monkey after he told you about the animals.',
-    '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.'
+    '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
+    '早上好': 'The old monkey said it when you woke up.',
+    '晚安': 'You said it to the old monkey before you slept in your nest.'
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -316,6 +319,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // 'build' means an animal's last question is sometimes building a sentence you've built before.
   questions: ['listen', 'read', 'build'],
 
+  // Your day. Sleeping in your nest ends it: a summary of what you learned, then the night steps.
+  // You wake next to the nest (wakeAt) with the morning steps, which also greet you when you come
+  // back to play on a new day. who is the character who says good morning and good night.
+  day: {
+    who:'elder',
+    night:[{say:'night'}, {reply:'晚安'}],
+    morning:[{say:'morning'}, {reply:'早上好'}],
+    wakeAt:{x:3, y:4, facing:'down'}
+  },
+
   // What the characters say. The English shows under a sentence the first time you see it.
   lines: {
     hi: {zh:'你好 ！', en:'Hello!'},
@@ -334,6 +347,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     boss: {zh:'你好 ！ 我 是 老板 。', en:"Hello! I'm the shop owner."},
     whatWant: {zh:'你 要 什么 ？', en:'What do you want?'},
     bye: {zh:'再见 ！', en:'Goodbye!'},
+    morning: {zh:'早上好 ！', en:'Good morning!'},
+    night: {zh:'晚安 ！', en:'Good night!'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'}
   },
 
@@ -359,6 +374,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'hi', teach:'你好'},
         {newWord:'你好'},
         {reply:'你好'},
+        {message:'The old monkey is the oldest in the troop. He teaches every baby monkey the names of everything on the mountain, and today it’s your turn.'},
         {say:'go', hint:'Things that sparkle have a word to learn. Face them and press A. Learn 4 words, then come back and talk to me again.'},
         {set:{elder:1}}
       ]},

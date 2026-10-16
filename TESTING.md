@@ -118,6 +118,12 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] A card teaches 瀑布 (waterfall), with its picture, then the Story Scroll opens: 8 short sentences about your first day (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
 - [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). English shows the sentence's English with the gap. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🍑 and a rumble.
 
+**Your day**
+- [ ] After the old monkey's first 你好, a message says he teaches every baby monkey the names of everything on the mountain.
+- [ ] Your nest is beside the cave door, at the top of the short path on the far left. Face it: A says Sleep. Sleep shows "The end of day 1": the words you met today (tap one to hear it), your firsts today and how many words are due tomorrow. Good night, then the old monkey says 晚安 and you reply (晚安 is taught on a card the first time). The screen fades, you wake beside the nest, and he says 早上好; you reply.
+- [ ] Coming back to play on a later date: Continue starts with 早上好 and your reply. The same day, it doesn't.
+- [ ] Your first word, reply, animal, friend, 我要 sentence, purchase, story and night each show "📖 First …!" a moment later. Menu, 任务 Tasks shows them in the Book of firsts with their day, and the day number.
+
 **The cave door**
 - [ ] The cave door is at the top of the short path on the far left. Stand below it, face up and press A. It teaches 洞 (cave).
 - [ ] If anything is left to do, the door lists it. When everything is done, Start the test matches words to pictures in rounds of about 4. You need 80% right first time.

@@ -12,12 +12,12 @@ function storyQuestions(){
 }
 function storyScroll(){
   return new Promise(res => {
-    const first = !here().story;   // the English shows under each sentence the first time; after that, behind English
+    const firstRead = !here().story;   // the English shows under each sentence the first time; after that, behind English
     STORY.forEach(s => hear(s.t)); save();
     openCard(`<p class="label">Story Scroll</p><p class="small">The story of your first day, in words you've met. Tap any word you're unsure of.</p>
-      ${STORY.map((s,i) => `<div class="sent" data-i="${i}">${s.pic ? `<span class="spic" aria-hidden="true">${picHTML(s.pic)}</span>` : ''}<div>${lineHTML(s.t)}<div class="sentence-en" ${first ? '' : 'hidden'}>${esc(s.en)}</div></div></div>`).join('')}
+      ${STORY.map((s,i) => `<div class="sent" data-i="${i}">${s.pic ? `<span class="spic" aria-hidden="true">${picHTML(s.pic)}</span>` : ''}<div>${lineHTML(s.t)}<div class="sentence-en" ${firstRead ? '' : 'hidden'}>${esc(s.en)}</div></div></div>`).join('')}
       <div class="gloss">Tap a word for its meaning.</div>
-      <div class="actions"><button class="btn grow" data-a="read">🔊 Read it to me</button>${first ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">Questions</button></div>`);
+      <div class="actions"><button class="btn grow" data-a="read">🔊 Read it to me</button>${firstRead ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">Questions</button></div>`);
     bindTokens(sheet);
     on('[data-a=en]', e => { sheet.querySelectorAll('.sent .sentence-en').forEach(x => x.hidden = false); e.currentTarget.remove(); });
     on('[data-a=read]', () => {
@@ -48,14 +48,15 @@ function storyScroll(){
           }});
         if (ok){ right++; gainXP(XP.right); }
       }
-      const first = !here().story, end = AREA.storyEnd;
-      here().story = true; if (first){ S.peaches += end.reward; gainXP(XP.story); } save(); buildMap();
+      const firstTime = !here().story, end = AREA.storyEnd;
+      here().story = true; if (firstTime){ S.peaches += end.reward; gainXP(XP.story); } save(); buildMap();
+      first('story');
       SFX.fanfare();
       openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">${end.title}</p>
-        <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${first ? ` +${end.reward} 🍑` : ''}</p>
+        <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${firstTime ? ` +${end.reward} 🍑` : ''}</p>
         ${end.text.map(p => `<p>${p}</p>`).join('\n        ')}
         <div class="actions"><button class="btn primary" data-a="done">Keep playing</button></div>`);
-      on('[data-a=done]', () => { closeCard(); if (first && end.rumble){ SFX.rumble(); shakeT = performance.now(); } res(); });
+      on('[data-a=done]', () => { closeCard(); if (firstTime && end.rumble){ SFX.rumble(); shakeT = performance.now(); } res(); });
     });
   });
 }
@@ -158,12 +159,12 @@ function practiceSentence(){
 // Gives {first, peaches}.
 async function buildRound(b, who){
   const bare = b.t.filter(w => !WORDS[w].pic), due = bare.filter(isDue);
-  const first = await tiles(who, b.t, lvl(b.extraTile) >= 1 ? [b.extraTile] : [], `Build the sentence: “${esc(b.buildEn)}” Put the words in order.`);
-  if (first) bare.forEach(w => answer(w, true, 'build'));
+  const rightFirst = await tiles(who, b.t, lvl(b.extraTile) >= 1 ? [b.extraTile] : [], `Build the sentence: “${esc(b.buildEn)}” Put the words in order.`);
+  if (rightFirst) bare.forEach(w => answer(w, true, 'build'));
   b.t.forEach(useWord);
-  const peaches = first ? due.length : 0;
+  const peaches = rightFirst ? due.length : 0;
   S.peaches += peaches; save();
-  return {first, peaches};
+  return {first:rightFirst, peaches};
 }
 // After a session: a word matched first time comes back later, a missed one straight away (the gold
 // squares stay the same). Each due word matched first time earns a peach. Gives how many peaches.

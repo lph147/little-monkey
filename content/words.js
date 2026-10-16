@@ -63,6 +63,8 @@ const WORD_BANK = {
   '对不起': {py:'duìbuqǐ', en:'sorry', area:1, category:'phrases', phrase:true},
   '没关系': {py:'méi guānxi', en:'that’s OK', area:1, category:'phrases', phrase:true},
   '再见': {py:'zàijiàn', en:'goodbye', area:1, category:'phrases', phrase:true},
+  '早上好': {py:'zǎoshang hǎo', en:'good morning', area:1, category:'phrases', phrase:true},
+  '晚安': {py:'wǎn’ān', en:'good night', area:1, category:'phrases', phrase:true},
   '我不要': {py:'wǒ bú yào', en:'no thanks, I don’t want it', area:1, category:'phrases', phrase:true},
 
   // Heard in sentences

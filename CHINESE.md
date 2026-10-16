@@ -30,7 +30,9 @@ shown where the word list has them.
 | 你好！我是老板。 | nǐ hǎo! wǒ shì lǎobǎn. | Hello! I'm the shop owner. | 老板 (Shop owner) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey) |  |
-| 没关系！ | méi guānxi! | That’s OK! |  |  |
+| 早上好！ | zǎoshang hǎo! | Good morning! | 老猴子 (Old monkey) |  |
+| 晚安！ | wǎn’ān! | Good night! | 老猴子 (Old monkey) |  |
+| 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
 
 ### Sentences the player builds from word tiles
 
@@ -143,6 +145,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 对不起 | duìbuqǐ | sorry |  |
 | 没关系 | méi guānxi | that’s OK |  |
 | 再见 | zàijiàn | goodbye |  |
+| 早上好 | zǎoshang hǎo | good morning |  |
+| 晚安 | wǎn’ān | good night |  |
 | 我不要 | wǒ bú yào | no thanks, I don’t want it |  |
 
 ### Words only heard in sentences

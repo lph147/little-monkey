@@ -84,7 +84,7 @@ async function encounter(foe){
   const won = score >= 2;
   let msg;
   if (won){
-    if (!S.friends.includes(foe.id)) S.friends.push(foe.id);
+    if (!S.friends.includes(foe.id)){ S.friends.push(foe.id); first('friend', an); }
     SFX.fanfare();
     msg = `You got ${score} of 3. The ${wz(an)} is now your ${wz('朋友')}! +${score} 🍑`;
   } else msg = `You got ${score} of 3. The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.`;
