@@ -56,6 +56,20 @@ shown where the word list has them.
 | 河里有鱼，山上有瀑布。 | hé lǐ yǒu yú, shān shàng yǒu pùbù. | There are fish in the river, and a waterfall on the mountain. |  |
 | 小猴子很快乐！ | xiǎo hóuzi hěn kuàilè! | The little monkey is very happy! |  |
 
+### Example sentences on word pages
+
+For words that no line or story sentence uses, shown on the word's page in the Word Scroll.
+
+| Chinese | Pinyin | English | For the word | Notes |
+| --- | --- | --- | --- | --- |
+| 小猴子在路上。 | xiǎo hóuzi zài lù shàng. | The little monkey is on the path. | 路 |  |
+| 山上有很多花。 | shān shàng yǒu hěn duō huā. | There are lots of flowers on the mountain. | 花 |  |
+| 草里有一只兔子。 | cǎo lǐ yǒu yì zhī tùzi. | There is a rabbit in the grass. | 兔子 |  |
+| 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
+| 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
+| 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
+| 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
+
 ### Questions after the story
 
 | Chinese | Pinyin | English | Answer | Notes |
@@ -159,14 +173,6 @@ shown where the word list has them.
 
 ## New sentences, not in the game yet
 
-Example sentences for words that aren't in any sentence yet. They'll go into the game once checked.
+Sentences waiting to be checked. They'll go into the game once checked.
 
-| Chinese | Pinyin | English | For the word | Notes |
-| --- | --- | --- | --- | --- |
-| 小猴子在路上。 | xiǎo hóuzi zài lù shàng. | The little monkey is on the path. | 路 |  |
-| 山上有很多花。 | shān shàng yǒu hěn duō huā. | There are lots of flowers on the mountain. | 花 |  |
-| 草里有一只兔子。 | cǎo lǐ yǒu yì zhī tùzi. | There is a rabbit in the grass. | 兔子 |  |
-| 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
-| 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
-| 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
-| 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
+None at the moment.

@@ -6,17 +6,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {loadGame, ROOT} = require('../tests/fake-browser');
 
-// New sentences waiting to be checked before they go into the game. Once checked (and corrected),
-// move each one into the content and delete it from here.
-const DRAFTS = [
-  {zh:'小 猴子 在 路 上 。', en:'The little monkey is on the path.', word:'路'},
-  {zh:'山 上 有 很多 花 。', en:'There are lots of flowers on the mountain.', word:'花'},
-  {zh:'草 里 有 一只 兔子 。', en:'There is a rabbit in the grass.', word:'兔子'},
-  {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.', word:'狐狸'},
-  {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.', word:'松鼠'},
-  {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.', word:'山羊'},
-  {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.', word:'洞'}
-];
+// New sentences waiting to be checked before they go into the game, as {zh, en, word}. Once checked
+// (and corrected), move each one into the content and delete it from here.
+const DRAFTS = [];
 
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?'};
 function sheet(){
@@ -70,6 +62,12 @@ ${table(['Chinese', 'Pinyin', 'English', 'Notes'], [[chars(AREA.sign.says.zh), p
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], AREA.story.map(s => [chars(s.zh), py(s.zh), s.en, notes]))}
 
+### Example sentences on word pages
+
+For words that no line or story sentence uses, shown on the word's page in the Word Scroll.
+
+${table(['Chinese', 'Pinyin', 'English', 'For the word', 'Notes'], Object.entries(AREA.examples).map(([w, e]) => [chars(e.zh), py(e.zh), e.en, w, notes]))}
+
 ### Questions after the story
 
 ${table(['Chinese', 'Pinyin', 'English', 'Answer', 'Notes'], AREA.storyQuestions.map(q => [chars(q.zh), py(q.zh), q.en || '', q.answer, notes]))}
@@ -92,9 +90,9 @@ ${table(['Chinese', 'Pinyin', 'English', 'Notes'], heard.map(w => [w, BANK[w].py
 
 ## New sentences, not in the game yet
 
-Example sentences for words that aren't in any sentence yet. They'll go into the game once checked.
+Sentences waiting to be checked. They'll go into the game once checked.
 
-${table(['Chinese', 'Pinyin', 'English', 'For the word', 'Notes'], DRAFTS.map(d => [chars(d.zh), py(d.zh), d.en, d.word, notes]))}
+${DRAFTS.length ? table(['Chinese', 'Pinyin', 'English', 'For the word', 'Notes'], DRAFTS.map(d => [chars(d.zh), py(d.zh), d.en, d.word, notes])) : 'None at the moment.'}
 `;
 }
 

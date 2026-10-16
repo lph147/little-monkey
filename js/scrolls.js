@@ -200,10 +200,15 @@ function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow 
 }
 const MASTERY = ['Caught', 'Recognised', 'Read', 'Used'];   // what each gold square means
 // An example sentence with the word in it: the first line, then story sentence, that has it, preferring one you've seen.
+// If none has it: the example written for it in the area, then a sentence you build (such as 我要头带).
 function exampleFor(w){
   const all = [...Object.values(L).map(l => [l, !!S.lines[l.t.join('')]]), ...STORY.map(s => [s, !!here().story])].filter(([s]) => s.t.includes(w));
   const pick = all.find(([, seen]) => seen) || all[0];
-  return pick && pick[0];
+  if (pick) return pick[0];
+  const ex = AREA.examples[w];
+  if (ex) return {t:toks(ex.zh), en:ex.en};
+  const built = [...REQUESTS, ...(AREA.shop ? AREA.shop.items : [])].find(b => toks(b.build).includes(w));
+  return built && {t:[...toks(built.build), '。'], en:built.buildEn};
 }
 function wordPage(w, back){   // a caught word's page in the Word Scroll
   const d = WORDS[w], ex = exampleFor(w);

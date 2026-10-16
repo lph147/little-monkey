@@ -263,6 +263,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '头带': 'You bought it from the {老板} at the stall by the pond.'
   },
 
+  // Example sentences for words that no line or story sentence uses, shown on the word's page in
+  // the Word Scroll. (A word that only appears in a sentence you build, such as 头带, shows that.)
+  // Checked by a native speaker on 16 October 2026.
+  examples: {
+    '路': {zh:'小 猴子 在 路 上 。', en:'The little monkey is on the path.'},
+    '花': {zh:'山 上 有 很多 花 。', en:'There are lots of flowers on the mountain.'},
+    '兔子': {zh:'草 里 有 一只 兔子 。', en:'There is a rabbit in the grass.'},
+    '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
+    '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
+    '山羊': {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.'},
+    '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'}
+  },
+
   // Where a fish jumps out of the water now and then.
   fish: [[11, 10]],
 

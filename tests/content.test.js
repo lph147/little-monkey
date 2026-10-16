@@ -39,6 +39,7 @@ const sentences = [
   ...Object.entries(AREA.lines).map(([k, l]) => [`line "${k}"`, l]),
   ...AREA.story.map((s, i) => [`story sentence ${i + 1}`, s]),
   ...AREA.storyQuestions.map((q, i) => [`story question ${i + 1}`, q]),
+  ...Object.entries(AREA.examples).map(([w, e]) => [`the example for ${w}`, e]),
   ['the sign', AREA.sign.says]
 ];
 
@@ -349,4 +350,16 @@ test('intro captions are in time order, with Chinese, pinyin and English', () =>
     assert.ok(c.zh && c.py && c.en, `intro caption ${i + 1} needs zh, py and en`);
     if (i) assert.ok(c.at > AREA.intro[i - 1].at, `intro caption ${i + 1} comes before the one above it`);
   });
+});
+
+test('every word you can collect has an example sentence for its page', () => {
+  const inSentence = w => [...Object.values(AREA.lines), ...AREA.story].some(s => s.zh.split(' ').includes(w));
+  const built = w => [...Object.values(AREA.requests), ...(AREA.shop ? AREA.shop.items : [])].some(b => b.build.split(' ').includes(w));
+  for (const [w, e] of Object.entries(AREA.examples)){
+    assert.ok(collectible.includes(w), `there's an example for ${w}, which isn't a word you can collect in ${where}`);
+    assert.ok(e.zh.split(' ').includes(w), `the example for ${w} doesn't use ${w}: "${e.zh}"`);
+    assert.ok(e.en, `the example for ${w} has no English`);
+    assert.ok(!inSentence(w), `${w} is already in a line or the story, so it doesn't need an example`);
+  }
+  for (const w of collectible) assert.ok(inSentence(w) || AREA.examples[w] || built(w), `${w} has no example: add one to examples in the area file (checked first)`);
 });
