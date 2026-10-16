@@ -102,6 +102,7 @@ function drawWorld(now){
     const bub = (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // a ! or ? from the area's bubbles
     if (bub) bubble(X+10, Y-8, bub.show);
   }
+  if (trainingCalls()) for (const [x, y] of TRAINING_TILES) bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words are due for review
   drawMarkers(cx, cy, now);
   const fk = (now - fadeT) / 700;
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }

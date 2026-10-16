@@ -88,6 +88,13 @@ function updateHUD(){
     (!tasks.length && hint ? `<p class="hint">${esc(hint)}</p>` : '');
   if (html !== lastTB || !tb.querySelector('.tbhead')){ lastTB = html; tb.innerHTML = html; }
 }
+function titleText(){   // the text box on the title screen, with a warning if there's no Chinese voice
+  const problem = voiceProblem();
+  const due = dueWords().length;
+  tb.innerHTML = `<p id="goal">${S.started ? 'Welcome back, little monkey.' + (due ? ` ${due} ${due === 1 ? 'word is' : 'words are'} due for review: practise at the practice post, or meet animals in the tall grass.` : '') : 'Turn your sound on. Every word is spoken aloud using your device’s Chinese voice.'}</p>`
+    + (problem ? `<p class="small warn">${VOICE_HELP[problem]}</p>` : '');
+}
+try { speechSynthesis.addEventListener('voiceschanged', () => { if (mode === 'title') titleText(); }); } catch(e) {}   // voices can arrive late
 function toTitle(){
   mode = 'title'; musicStop();
   $('#titlecard').hidden = false;
@@ -96,7 +103,7 @@ function toTitle(){
   tbn.innerHTML = S.started
     ? '<button class="btn primary" id="contBtn">Continue</button><button class="btn" id="watchBtn">Watch the opening</button>'
     : '<button class="btn primary" id="newBtn">Start</button>';
-  tb.innerHTML = `<p id="goal">${S.started ? 'Welcome back, little monkey.' : 'Turn your sound on. Every word is spoken aloud using your device’s Chinese voice.'}</p>`;
+  titleText();
   const go = fn => () => { getAC(); unlockSpeech(); musicStart(); fn(); };
   if ($('#newBtn')) $('#newBtn').onclick = go(playIntro);
   if ($('#watchBtn')) $('#watchBtn').onclick = go(playIntro);

@@ -29,6 +29,10 @@ const requestFrom = who => REQUESTS.find(r => r.from === who);
 const NPCS = AREA.characters.map(c => ({id:c.id, x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word}));
 const SPARKLES = AREA.sparkles;
 const EXIT_TILES = [];                // where the way out is (map tiles whose action is the cave door)
-MAP.forEach((row, y) => [...row].forEach((ch, x) => { if (LEGEND[ch] && LEGEND[ch].action === 'caveDoor') EXIT_TILES.push([x, y]); }));
+const TRAINING_TILES = [];            // where the practice posts are (the training action)
+MAP.forEach((row, y) => [...row].forEach((ch, x) => {
+  if (LEGEND[ch] && LEGEND[ch].action === 'caveDoor') EXIT_TILES.push([x, y]);
+  if (LEGEND[ch] && LEGEND[ch].action === 'training') TRAINING_TILES.push([x, y]);
+}));
 const HIDING_WORD = (Object.values(LEGEND).find(t => t.animals) || {}).word;   // where animals hide, such as 草
 const START = AREA.start;

@@ -32,6 +32,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.
+- [ ] If words are due for review, the title screen says how many (after "Welcome back"). If your device has no Chinese voice, a red note under it explains how to add one.
 - [ ] Continue puts you back where you left off, with the same level, peaches and word count in the header.
 - [ ] The header shows your level (Lv 1 to start). The menu shows it with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
@@ -84,6 +85,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Before you have 4 words with pictures, it says to come back later (with a count).
 - [ ] After that, it asks if you want to practise and says how many words are due for review. Start matches about 8 words to their pictures in 2 rounds. Stop ends it without changing anything.
 - [ ] At the end it says how many you matched right first time, and gives 1 🍑 for each due word you got right first time.
+- [ ] When words are due for review, the post has a ! over it.
 - [ ] Words you got right first time aren't due again for a day or more, so training again straight away gives no peaches for them (only for words you missed, or due words that didn't fit in the first go).
 
 **The shop**

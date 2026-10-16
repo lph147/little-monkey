@@ -131,6 +131,8 @@ async function wordTest(){   // the exit test at the cave door: every word with 
 const TRAINING_WORDS = 8, TRAINING_MIN = 4;   // words per session, and how many you need to start
 const trainable = () => ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1);   // caught words with a picture
 const isDue = w => rec(w).due <= Date.now();   // a newly caught word is due straight away
+const dueWords = () => trainable().filter(isDue);   // words due for review that you can practise
+const trainingCalls = () => trainable().length >= TRAINING_MIN && dueWords().length > 0;   // the practice post shows a !
 // The words to practise: the ones due for review first, then the ones due soonest, in a random order.
 const trainingWords = () => shuffle(shuffle(trainable()).sort((a, b) => rec(a).due - rec(b).due).slice(0, TRAINING_WORDS));
 // After a session: a word matched first time comes back later, a missed one straight away (the gold

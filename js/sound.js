@@ -155,6 +155,18 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) music
 let zhVoice = null, speaking = false, speakSafety = 0, uttRef = null;
 function pickVoice(){ try { const vs = speechSynthesis.getVoices(); zhVoice = vs.find(v => /zh[-_]CN/i.test(v.lang)) || vs.find(v => /^zh/i.test(v.lang)) || null; } catch(e) {} }
 if ('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+// What's wrong with the Chinese voice, if anything: 'none' if this browser can't speak at all,
+// 'missing' if it has voices but no Chinese one, '' if all is well (or the voices haven't loaded yet).
+function voiceProblem(){
+  if (!('speechSynthesis' in window)) return 'none';
+  let vs = []; try { vs = speechSynthesis.getVoices() || []; } catch(e) {}
+  if (!vs.length) return '';
+  return vs.some(v => /^(zh|cmn)/i.test(v.lang)) ? '' : 'missing';
+}
+const VOICE_HELP = {
+  none: 'This browser can’t speak, so you won’t hear any Chinese. Try Safari on an iPhone, or Chrome on Android or a computer.',
+  missing: 'Your device has no Chinese voice yet, so you won’t hear the words. On an iPhone: Settings, Accessibility, Spoken Content, Voices, Chinese, then download a voice. On Android: in Settings, search for Text-to-speech, open Speech Services by Google, Install voice data, and add Chinese (Mandarin). Then reload the game.'
+};
 const speechBusy = () => speaking && performance.now() < speakSafety;
 function say(text, onend){
   try {
