@@ -21,19 +21,19 @@ shown where the word list has them.
 | 我渴了。我要喝水！ | wǒ kě le. wǒ yào hē shuǐ! | I'm thirsty. I want to drink some water! | 渴猴子 (Thirsty monkey) |  |
 | 你有桃子吗？ | nǐ yǒu táozi ma? | Do you have a peach? | 饿猴子 (Hungry monkey) |  |
 | 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
-| 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴妈妈 (Mother monkey), 老板 (Shop owner) |  |
+| 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 老板 (Shop owner) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
-| 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴妈妈 (Mother monkey) |  |
+| 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 这是苹果。我要吃桃子！ | zhè shì píngguǒ. wǒ yào chī táozi! | This is an apple. I want to eat a peach! | 饿猴子 (Hungry monkey) |  |
 | 你好！我是老板。 | nǐ hǎo! wǒ shì lǎobǎn. | Hello! I'm the shop owner. | 老板 (Shop owner) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey) |  |
-| 早上好！ | zǎoshang hǎo! | Good morning! | 猴妈妈 (Mother monkey) |  |
-| 晚安！ | wǎn’ān! | Good night! | 猴妈妈 (Mother monkey) |  |
-| 我要花！ | wǒ yào huā! | I want flowers! | 猴妈妈 (Mother monkey) |  |
-| 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 猴妈妈 (Mother monkey) |  |
+| 早上好！ | zǎoshang hǎo! | Good morning! | 老猴子 (Old monkey) |  |
+| 晚安！ | wǎn’ān! | Good night! | 老猴子 (Old monkey) |  |
+| 我要花！ | wǒ yào huā! | I want flowers! | 大猴子 (Big monkey) |  |
+| 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
 
 ### Sentences the player builds from word tiles
@@ -42,7 +42,7 @@ shown where the word list has them.
 | --- | --- | --- | --- | --- |
 | 我要吃桃子 | wǒ yào chī táozi | I want to eat a peach. | 饿猴子 (Hungry monkey) |  |
 | 我要喝水 | wǒ yào hē shuǐ | I want to drink water. | 渴猴子 (Thirsty monkey) |  |
-| 我要花 | wǒ yào huā | I want flowers. | 猴妈妈 (Mother monkey) |  |
+| 我要花 | wǒ yào huā | I want flowers. | 大猴子 (Big monkey) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 
@@ -103,7 +103,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 老猴子 | lǎo hóuzi | Old monkey |  |
-| 猴妈妈 | hóu māma | Mother monkey |  |
+| 大猴子 | dà hóuzi | Big monkey |  |
 | 饿猴子 | è hóuzi | Hungry monkey |  |
 | 渴猴子 | kě hóuzi | Thirsty monkey |  |
 | 小猴子 | xiǎo hóuzi | Little monkey |  |
@@ -207,6 +207,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | The new, shorter story at the waterfall (in the game) |  |
 | 河里有鱼。 | hé lǐ yǒu yú. | There are fish in the river. | The new, shorter story at the waterfall (in the game) |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! | The new, shorter story at the waterfall (in the game) |  |
-| 我要花！ | wǒ yào huā! | I want flowers! | Mother monkey (猴妈妈 hóu māma: please check this name too, in Names) asking for flowers |  |
-| 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | Mother monkey, when you bring the flowers |  |
+| 我要花！ | wǒ yào huā! | I want flowers! | The big monkey (大猴子 dà hóuzi: please check this name too, in Names) asking for flowers |  |
+| 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | The big monkey, when you bring the flowers |  |
 | 我戴花。 | wǒ dài huā. | I wear a flower. | Said when you put on the flower in your wardrobe (in the game, not uploaded yet). Would 我戴着花 be more natural? |  |

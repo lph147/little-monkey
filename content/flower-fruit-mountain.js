@@ -15,7 +15,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // What happens the very first time you play, after How to play (steps, as in talk below).
   begin: [
     {card:'石头', note:'You were just born from this stone!'},
-    {message:'Walk down the path and say hello to the old monkey.'}
+    {message:'The old monkey is standing by your stone. Face him and press A to say hello.'}
   ],
 
   // What this area remembers in your save, and the values a new game starts with.
@@ -36,7 +36,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     found: {count:'animalsFound'},
     animalsLeft: {count:'animalsLeft'},
     peaches: {count:'peaches', max:10},   // your peaches, up to the headband's price
-    flowersPicked: {count:'picked', request:'flowers'}   // flowers picked for Mother monkey
+    flowersPicked: {count:'picked', request:'flowers'}   // flowers picked for the big monkey
   },
 
   // The task box under the game screen. Every task whose if matches is shown, in this order.
@@ -48,7 +48,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // you've bought it from the shop, false if not), and ready:true (everything
   // on the checklist is done apart from the exit test).
   tasks: [
-    {id:'elder', if:{elder:0}, text:'Talk to the old monkey on the path', arrow:'elder'},
+    {id:'elder', if:{elder:0}, text:'Say hello to the old monkey, by your stone', arrow:'elder'},
     {id:'elder2', if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
     {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words, then talk to the old monkey again ({newWords}/4)'},
     {id:'animals', if:{elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the animals: in rustling grass, up a tree, on a cliff ({found}/{animals})'},
@@ -56,8 +56,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
     {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect water from the river or the pond', arrow:[11, 9]},
     {id:'t2', if:{thirsty:'asked', holding:{thirsty:true}}, text:'Give the {水} to the thirsty monkey', arrow:'thirsty'},
-    {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick 3 {花} for Mother monkey: face a patch of flowers and press A ({flowersPicked}/3)'},
-    {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to Mother monkey', arrow:'mother'},
+    {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick 3 {花} for the big monkey: face a patch of flowers and press A ({flowersPicked}/3)'},
+    {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to the big monkey', arrow:'big'},
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
     {id:'shop2', if:{knows:'头带', bought:{'头带':false}}, text:'Buy the {头带} from the {老板} ({peaches}/10 🍑)', arrow:'boss'},
@@ -80,7 +80,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Find the animals ({found}/{animals})', done:{animalsLeft:0}},
     {text:'Bring the hungry monkey the fruit it wants', done:{hungry:'done'}},
     {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
-    {text:'Bring Mother monkey 3 flowers', done:{flowers:'done'}},
+    {text:'Bring the big monkey 3 flowers', done:{flowers:'done'}},
     {text:'Read the story at the waterfall', done:{story:true}},
     {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}},
     {text:'Pass the word test at the cave door', done:{done:true}, exitTest:true}
@@ -94,7 +94,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
-    mother: [{if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
+    big: [{if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:
@@ -118,8 +118,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
       build:'我 要 喝 水', buildEn:'I want to drink water.', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'},
-    flowers: {from:'mother', wants:'花', ask:'wantFlowers', asked:'Mother monkey wants 3 {花} to make your nest soft. Check your tasks.',
-      offer:'haveFlowers', build:'我 要 花', buildEn:'I want flowers.', extraTile:'水', buildPrompt:'Say what Mother monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'}
+    flowers: {from:'big', wants:'花', ask:'wantFlowers', asked:'The big monkey wants 3 {花}, and will give you peaches for them. Check your tasks.',
+      offer:'haveFlowers', build:'我 要 花', buildEn:'I want flowers.', extraTile:'水', buildPrompt:'Say what the big monkey wants. Put the words in order.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
@@ -156,7 +156,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   map: [
     "MMMMMMMMMMMMMMMMMMXXMMMM",
     "MMMMMMMgZSggMMggggXXYYYY",
-    "MMMMMMMgF.gNMMgggFWWYYYY",
+    "MMMMMMMgg.gNMMgggFWWYYYY",
     "MMMCMMMgg.ggMMggggWWYYYY",
     "MMg.gMMMg.gMMMMRRMWWYYYY",
     "YTg.ggggg.ggggg.ggWWYYYY",
@@ -199,7 +199,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'g': {look:'grass', walk:true},
     'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
     'F': {look:'flowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', count:3, label:'Pick', note:'You pick a flower.',
-      message:'You picked a {花} ({flowersPicked}/3). Find another patch.', full:'You have 3 {花}. Take them to Mother monkey.', again:'You picked this patch already. Find another patch of {花}.'}},
+      message:'You picked a {花} ({flowersPicked}/3). Find another patch.', full:'You have 3 {花}. Take them to the big monkey.', again:'You picked this patch already. Find another patch of {花}.'}},
     '.': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'You are walking along a path.'},
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
@@ -226,9 +226,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // look: 'bird' draws a little bird instead of a monkey. word: it sparkles until you know this word.
   // beard: draws a white beard.
   characters: [
-    {id:'elder', x:10, y:5, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
+    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
-    {id:'mother', x:7, y:2, facing:'right', name:{zh:'猴妈妈', py:'hóu māma', en:'Mother monkey'},
+    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'},
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
@@ -251,7 +251,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Things that sparkle until you learn their word: the word, where it is on the map, and
   // (optionally) an if that must match before it starts sparkling.
   sparkles: [
-    {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'路', at:[9, 4]}, {word:'花', at:[8, 2]},
+    {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'路', at:[9, 4]}, {word:'花', at:[11, 7]},
     {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[1, 7]},
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]}, {word:'洞', at:[3, 3]},
     {word:'瀑布', at:[18, 1], if:{gate:true}}   // the waterfall is out of reach until the rocks roll away
@@ -294,9 +294,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '没关系': 'The hungry monkey said it when you said sorry.',
     '再见': 'You said it to the old monkey after he told you about the animals.',
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
-    '早上好': 'Mother monkey said it when you woke up.',
+    '早上好': 'The old monkey said it when you woke up.',
     '戴': 'You said it when you put something on from your wardrobe.',
-    '晚安': 'You said it to Mother monkey before you slept in your nest.'
+    '晚安': 'You said it to the old monkey before you slept in your nest.'
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -347,10 +347,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // back to play on a new day. who says good morning and good night; stand them beside wakeAt, and
   // face them from it, so it's clear who you're talking to.
   day: {
-    who:'mother',
+    who:'elder',
     night:[{say:'night'}, {reply:'晚安'}],
     morning:[{say:'morning'}, {reply:'早上好'}],
-    wakeAt:{x:8, y:2, facing:'left'}
+    wakeAt:{x:7, y:2, facing:'up'}
   },
 
   // What the characters say. The English shows under a sentence the first time you see it.
@@ -418,27 +418,27 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
       {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'},
         {give:'花', note:'The little monkey tucks a {花} behind your ear. Put it on or take it off in Menu, 衣服 (wardrobe).'}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
       {if:{new:'老板'}, do:[{say:'boss', teach:'老板'}, {newWord:'老板', note:'The {老板} owns the shop. Come back to see what they sell.'}, {reply:'你好'}]},
       {do:[{shop:true}]}
     ],
     hungry: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
       {do:[{request:'hungry'}]}
     ],
     thirsty: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
       {do:[{request:'thirsty'}]}
     ],
-    mother: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
+    big: [
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
       {do:[{request:'flowers'}]}
     ],
     bird: [

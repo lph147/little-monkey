@@ -84,15 +84,15 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // The old monkey, and the first words
   await stepOn(9, 3, 'taking the first step on the path');
   assert.ok(knows('路'), 'the first step on the path should teach 路');
-  await pressAt(9, 5, 'right', 'meeting the old monkey');
+  await pressAt(7, 2, 'up', 'meeting the old monkey');
   assert.equal(area().elder, 1, 'the old monkey should have said hello');
   assert.ok(knows('你好'), 'the old monkey should teach 你好');
   await pressAt(8, 4, 'left', 'looking at the cliff');
   await pressAt(12, 7, 'down', 'looking at the tree');
-  await stepOn(8, 2, 'walking into the flowers');
+  await stepOn(11, 7, 'walking into the flowers');
   await stepOn(4, 7, 'walking into the tall grass');
   for (const w of ['山', '树', '花', '草']) assert.ok(knows(w), `${w} should be learned`);
-  await pressAt(9, 5, 'right', 'talking to the old monkey again');
+  await pressAt(7, 2, 'up', 'talking to the old monkey again');
   assert.equal(area().elder, 2, 'once you know 4 words, the old monkey should tell you about the animals');
   assert.ok(knows('动物'), 'the old monkey should teach 动物');
 
@@ -119,17 +119,19 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
   assert.equal(area().gate, true, 'the rocks should have rolled away');
 
-  // Mother monkey, by your nest: 3 flowers from 3 different patches
-  await pressAt(8, 2, 'left', 'meeting Mother monkey');
-  assert.equal(area().flowers, 'asked', 'Mother monkey should ask for flowers');
-  await pressAt(8, 3, 'up', 'picking a flower');
-  await pressAt(8, 3, 'up', 'trying the same patch again');
+  // The big monkey, in the middle meadow: 3 flowers from 3 different patches, for peaches
+  await pressAt(4, 10, 'right', 'meeting the big monkey');
+  assert.equal(area().flowers, 'asked', 'the big monkey should ask for flowers');
+  await pressAt(11, 6, 'down', 'picking a flower');
+  await pressAt(11, 6, 'down', 'trying the same patch again');
   assert.equal(get('here().picked.flowers.length'), 1, 'a patch gives one flower');
-  await pressAt(11, 6, 'down', 'picking a second flower');
-  await pressAt(16, 9, 'right', 'picking a third flower');
+  await pressAt(16, 9, 'right', 'picking a second flower');
+  await pressAt(2, 10, 'left', 'picking a third flower');
   assert.equal(area().holding.flowers, '花', 'you should be holding 3 flowers');
-  await pressAt(8, 2, 'left', 'giving Mother monkey the flowers');
-  assert.equal(area().flowers, 'done', 'Mother monkey should take the flowers');
+  const peaches = get('S.peaches');
+  await pressAt(4, 10, 'right', 'giving the big monkey the flowers');
+  assert.equal(area().flowers, 'done', 'the big monkey should take the flowers');
+  assert.ok(get('S.peaches') > peaches, 'and give you peaches for them');
 
   // The shop owner, and the animals in the tall grass
   await pressAt(11, 15, 'down', 'meeting the shop owner');

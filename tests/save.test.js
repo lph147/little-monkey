@@ -134,7 +134,7 @@ test('a version 4 save is converted: the words in lines you have seen count as h
   const s = saveOf(game);
   assert.equal(s.version, VERSION);
   assert.deepEqual(s.heard, {'你好': 1, '我': 2, '饿': 1, '了': 1, '要': 1, '吃': 1, '桃子': 1});
-  // (Mother monkey's request, and the things you've picked for it, are new since then)
+  // (the big monkey's request, and the things you've picked for it, are new since then)
   const later = a => Object.fromEntries(Object.entries(a).map(([n, p]) => [n, {...p, flowers: 'not asked', picked: {}}]));
   for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : k === 'areas' ? later(v) : v, `${k} should be unchanged`);
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v4'), JSON.stringify(V4));

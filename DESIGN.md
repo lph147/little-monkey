@@ -242,8 +242,8 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Settings, English on replies (on to start with)
   - [x] Phrases as their own collection, with a Phrases tab in the Word Scroll
   - [x] 我不要 at the shop, and sentence-building questions in animal encounters
-- [x] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary (a nest beside your stone, where 猴妈妈 Mother monkey says 晚安 and 早上好, and you reply; a new morning when you come back on a new date. Every area needs a place to sleep: a map letter with the sleep action and a day section in the area's file. In Area 2 it would be in the Water Curtain Cave.)
-- [x] Mother monkey (猴妈妈), beside your nest, asks for 3 flowers: you pick one from each of 3 patches
+- [x] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary (a nest beside your stone, where the old monkey, who stands there watching over you, says 晚安 and 早上好, and you reply; a new morning when you come back on a new date. Every area needs a place to sleep: a map letter with the sleep action and a day section in the area's file. In Area 2 it would be in the Water Curtain Cave.)
+- [x] 大猴子 Big monkey, in the middle meadow, wants 3 flowers and pays you peaches: you pick one from each of 3 patches (no mother: Sun Wukong is born from the stone)
 - [x] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version (the little monkey gives you the flower when it becomes your friend)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
 - [ ] Playtest Area 1 for a week
