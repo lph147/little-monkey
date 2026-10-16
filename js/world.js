@@ -31,6 +31,7 @@ function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
   const n = npcAt(x, y);
   if (n) return n.label || 'Talk';
+  if (animalAt(x, y)) return 'Meet';
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return t.gather.label;
   if (t.landmark) return t.label || 'Look';
@@ -193,19 +194,34 @@ const ACTIONS = {   // special things that happen when you press A at some tiles
 async function interact(x, y){
   const n = npcAt(x, y);
   if (n) return talk(n);
+  const a = animalAt(x, y);
+  if (a) return wildAppears(a, {x, y, d:pl.dir});
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return gather(t);
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
 }
-let stepsSince = 0;
+// An animal hiding in the tall grass, which rustles there: step in to meet it. After you meet one,
+// another hides a few steps later.
+const HIDE_AFTER = 4;   // steps before another animal hides
+let rustle = null, stepsSince = HIDE_AFTER;
+const GRASS_TILES = [];   // where animals can hide
+for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).animals) GRASS_TILES.push([x, y]);
+function hideAnimal(){   // a grass animal hides in tall grass at least 3 steps from you
+  if (rustle || !canWild() || !GRASS_ANIMALS.length || stepsSince < HIDE_AFTER) return;
+  const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3);
+  if (!far.length) return;
+  const [x, y] = far[Math.floor(Math.random() * far.length)];
+  rustle = {x, y, a:pickAnimal(GRASS_ANIMALS)};
+}
 async function arrive(x, y){
   S.pos = {x, y, dir:pl.dir}; save();
   const t = tileAt(x, y);
-  if (t.animals) stepsSince++;
+  stepsSince++;
   if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
-  if (t.animals && canWild() && stepsSince >= 3 && Math.random() < 0.22){ stepsSince = 0; held = null; queued = null; return wildAppears(); }
+  if (rustle && rustle.x === x && rustle.y === y && canWild()){ const a = rustle.a; rustle = null; stepsSince = 0; held = null; queued = null; return wildAppears(a); }
+  hideAnimal();
 }
 
 let foe = null, alertUntil = 0;
@@ -214,16 +230,15 @@ function findSpot(){
   for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy, t = tileAt(x,y); if (t.walk && t.look !== 'bridge' && !npcAt(x,y)) return {x, y, d}; }
   const [dx,dy] = DV[pl.dir]; return {x:pl.x + dx, y:pl.y + dy, d:pl.dir};
 }
-// Which animal jumps out: usually one you haven't met yet; otherwise usually one whose name is due for review.
-function pickAnimal(){
-  const unmet = ANIMALS.filter(x => !S.met.includes(x.id));
-  const due = ANIMALS.filter(x => S.met.includes(x.id) && rec(x.hz).due <= Date.now());
-  const pool = unmet.length && Math.random() < .75 ? unmet : due.length && Math.random() < .75 ? due : ANIMALS;
+// Which animal hides: usually one you haven't met yet; otherwise usually one whose name is due for review.
+function pickAnimal(animals = ANIMALS){
+  const unmet = animals.filter(x => !S.met.includes(x.id));
+  const due = animals.filter(x => S.met.includes(x.id) && rec(x.hz).due <= Date.now());
+  const pool = unmet.length && Math.random() < .75 ? unmet : due.length && Math.random() < .75 ? due : animals;
   return pool[Math.floor(Math.random() * pool.length)];
 }
-async function wildAppears(){
-  const a = pickAnimal();
-  const spot = findSpot();
+// Meeting an animal: it jumps out next to you (from the grass), or at its own spot (spot).
+async function wildAppears(a, spot = findSpot()){
   pl.dir = spot.d;
   foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
   alertUntil = performance.now() + 1000;
@@ -232,10 +247,10 @@ async function wildAppears(){
   const firstMeet = !S.met.includes(a.id);
   if (firstMeet){ S.met.push(a.id); save(); }
   const justTaught = lvl(a.hz) === 0;
-  if (justTaught) await showNotice(a.hz, {note:`A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
+  if (justTaught) await showNotice(a.hz, {note:a.meetNote ? fill(a.meetNote) : `A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
   else { say(a.hz); await sleep(900); }
-  if (firstMeet) toast(`Hidden animals found: ${metCount()}/${ANIMALS.length}`);
-  const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught});
+  if (firstMeet) toast(`Animals found: ${metCount()}/${ANIMALS.length}`);
+  const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home});
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
   await sleep(won ? 1000 : 650);
   foe = null;

@@ -1,5 +1,5 @@
 // Plays Flower Fruit Mountain from a new game to passing the word test at the cave door, the way a
-// player would: standing in front of things and pressing A, stepping into flowers and tall grass,
+// player would: standing in front of things and pressing A, stepping into flowers and rustling grass,
 // pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
 'use strict';
@@ -122,7 +122,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // The shop owner, and the animals in the tall grass
   await pressAt(14, 8, 'down', 'meeting the shop owner');
   assert.ok(knows('老板'), 'the shop owner should teach 老板');
-  for (let i = 0; i < 40 && get('S.met').length < 4; i++) await stepOn(5 + (i % 3), 7, 'walking in the tall grass');
+  await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
+  await pressAt(5, 18, 'left', 'meeting the goat on the cliff');
+  for (let i = 0; i < 30 && get('S.met').length < 4; i++){   // walk about until the grass rustles, then step in
+    const r = get('rustle');
+    if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass'); else await stepOn(9, 7, 'walking about');
+  }
   assert.equal(get('S.met').length, 4, 'all four animals should be found');
   assert.ok(['rabbit', 'fox', 'squirrel', 'goat'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
 
@@ -139,7 +144,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   plan.buy = null;
   assert.equal(get('S.bag')['苹果'], 1, 'you should have an apple in your bag');
   plan.eat = true;
-  for (let i = 0; i < 12 && get('S.bag')['苹果'] === 1; i++) await stepOn(5 + (i % 3), 7, 'meeting an animal with an apple in your bag');
+  await pressAt(13, 19, 'up', 'meeting the squirrel with an apple in your bag');
   assert.equal(get('S.bag')['苹果'], 0, 'the apple should be eaten');
 
   // The story at the waterfall

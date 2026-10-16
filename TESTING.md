@@ -89,10 +89,12 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 **Friends and animals**
 - [ ] The little monkey (bottom middle) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.
 - [ ] In the word game, the questions use only words you've learned (pictures and wrong answers too). 2 or more right makes a friend; you get a 🍑 per right answer.
-- [ ] Walk around in tall grass. After a few steps an animal jumps out with a ! over your head.
+- [ ] Once the old monkey has told you about animals, a patch of tall grass rustles now and then: an animal is hiding there. Step onto it and the animal jumps out with a ! over your head. A few steps after meeting one, another hides.
+- [ ] South of the meadow (down the path through the gap in the trees), the squirrel sits up a big tree and the goat stands on the cliffs. Face one: A says Meet.
+- [ ] Little birds land on the grass near you now and then, hop about, and fly off when you walk close.
 - [ ] The first time you meet each animal, a new-word card teaches its name and the encounter doesn't show the English. Meeting it again shows the Chinese name with an English button.
 - [ ] Animals' questions always have pictures to choose from. A new word is asked by sound ("Listen. Which picture is it?"); after two right answers in a row it's asked by its characters ("Read it."). On Flower Fruit Mountain you're never asked to pick characters by sound.
-- [ ] Keep going until you've found all 4 (rabbit, fox, squirrel, goat).
+- [ ] Keep going until you've found all 4 (rabbit and fox in the grass, the squirrel and the goat at their homes).
 - [ ] Optional words: cross the wooden bridge (bottom right) and face the bird (鸟).
 
 **The training ground**

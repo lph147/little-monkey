@@ -87,7 +87,7 @@ async function encounter(foe){
     if (!S.friends.includes(foe.id)) S.friends.push(foe.id);
     SFX.fanfare();
     msg = `You got ${score} of 3. The ${wz(an)} is now your ${wz('朋友')}! +${score} 🍑`;
-  } else msg = `You got ${score} of 3. The ${wz(an)} ${foe.wild ? `ran back into the ${wz(HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.`;
+  } else msg = `You got ${score} of 3. The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.`;
   save();
   await infoBox(img, `<p>${msg}</p>`);
   return won;

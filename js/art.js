@@ -59,8 +59,11 @@ function monkeySprite(kind, dir, blink, step = 0){
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return spriteCache[k] = sprite(out, PALS[kind]);
 }
-// The animals in this area's tall grass, with their sprites from content/sprites.js.
-const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, spr:sprite(SPRITES[a.word].rows, SPRITES[a.word].palette)}));
+// The area's animals, with their sprites from content/sprites.js: at their own spot (at), or hiding in the tall grass.
+const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, home:a.home || HIDING_WORD, meetNote:a.meetNote,
+  spr:sprite(SPRITES[a.word].rows, SPRITES[a.word].palette)}));
+const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
+const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.at[0] === x && a.at[1] === y) : null;   // an animal living at this spot, once animals appear
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });

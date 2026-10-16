@@ -94,6 +94,20 @@ function drawWorld(now){
     if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
     sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
   }
+  // animals at their own spots (up a tree, on a cliff), once animals appear
+  if (canWild()) for (const a of ANIMALS){
+    if (!a.at || (foe && foe.a === a)) continue;
+    const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
+    if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    if (tileAt(a.at[0], a.at[1]).look === 'tree') b.drawImage(a.spr, 0, 0, 16, 16, X + 5, Y + 1 - bob, 10, 10);   // small, up in the branches
+    else { R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(a.spr, X, Y - 3 - bob); }
+  }
+  // tall grass rustling where an animal hides
+  if (rustle && canWild() && Math.floor(now / 160) % 6 < 3){
+    const X = rustle.x*T - cx, Y = rustle.y*T - cy;
+    for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(now/45 + i)*1.5); R(b, gx, Y + 9 - (i % 2), 1, 5, '#2F6E38'); R(b, gx, Y + 8 - (i % 2), 1, 1, '#94D883'); }
+  }
+  drawBirds(cx, cy, now);
   // entities sorted by row
   const ents = NPCS.map(n => ({n, y:n.y*T})).concat([{p:true, y:pl.py}]).concat(foe ? [{f:true, y:foe.y*T}] : []).sort((a,c) => a.y - c.y);
   for (const e of ents){
@@ -123,6 +137,29 @@ function drawWorld(now){
   drawMarkers(cx, cy, now);
   const fk = (now - fadeT) / 700;
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
+}
+// Little birds that land near you now and then, hop about, and fly off when you come close.
+const birds = [];
+let nextBird = 0;
+function drawBirds(cx, cy, now){
+  if (now > nextBird && birds.length < 2){
+    nextBird = now + 6000 + Math.random() * 6000;
+    const spots = [];
+    for (let y = Math.floor(cy/T); y < Math.floor(cy/T) + VH; y++) for (let x = Math.floor(cx/T); x < Math.floor(cx/T) + VW; x++){
+      const t = tileAt(x, y);
+      if (t.look === 'grass' && !npcAt(x, y) && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3) spots.push([x, y]);
+    }
+    if (spots.length){ const [x, y] = spots[Math.floor(Math.random() * spots.length)]; birds.push({x:x*T + 4, y:y*T + 6, t0:now, until:now + 5000 + Math.random() * 5000, from:Math.random() < .5 ? -1 : 1}); }
+  }
+  for (let i = birds.length - 1; i >= 0; i--){
+    const bd = birds[i], near = Math.abs(bd.x - pl.px) < 24 && Math.abs(bd.y - pl.py) < 24;
+    if (!bd.off && (near || now > bd.until)) bd.off = now;
+    const k = bd.off ? (now - bd.off) / 900 : 1 - Math.min(1, (now - bd.t0) / 1200);   // 0 on the ground, up to 1 in the air
+    if (bd.off && k > 1){ birds.splice(i, 1); continue; }
+    const X = Math.round(bd.x - cx + bd.from * k * 60), Y = Math.round(bd.y - cy - k * 70 - (k ? Math.abs(Math.sin(now/60)) * 2 : Math.floor(Math.abs(Math.sin(now/300 + i)) * 2)));
+    if (!k) R(b, X+1, Y+7, 6, 1, 'rgba(0,0,0,.2)');
+    b.drawImage(SPR.bird, X, Y);
+  }
 }
 const ARROW = ["ooooooo","oyyyyyo",".oyyyo.","..oyo..","...o..."];
 function pix(rows, X, Y, pal){ rows.forEach((r, y) => [...r].forEach((ch, x) => { if (pal[ch]) R(b, X + x, Y + y, 1, 1, pal[ch]); })); }

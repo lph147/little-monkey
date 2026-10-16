@@ -49,7 +49,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'elder', if:{elder:0}, text:'Talk to the old monkey on the path', arrow:'elder'},
     {id:'elder2', if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
     {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words, then talk to the old monkey again ({newWords}/4)'},
-    {id:'animals', if:{elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the hidden animals in the tall grass ({found}/{animals})'},
+    {id:'animals', if:{elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the animals: in rustling grass, up a tree, on a cliff ({found}/{animals})'},
     {id:'h1', if:{hungry:'asked', holding:{hungry:false}}, text:'Find the fruit the hungry monkey asked for', arrow:[2, 7]},
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
     {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect water from the river or the pond', arrow:[11, 9]},
@@ -72,7 +72,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   checklist: [
     {text:'Say hello to the old monkey', done:{elder:{atLeast:1}}},
     {text:'Learn about animals from the old monkey', done:{elder:{atLeast:2}}},
-    {text:'Find the hidden animals in the grass ({found}/{animals})', done:{animalsLeft:0}},
+    {text:'Find the animals ({found}/{animals})', done:{animalsLeft:0}},
     {text:'Bring the hungry monkey the fruit it wants', done:{hungry:'done'}},
     {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
     {text:'Read the story at the waterfall', done:{story:true}},
@@ -160,6 +160,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     "YggFgGGGggggggg...BBgggY",
     "YgggggggggggggggggWWgGgY",
     "YTgGGGggggggggFgggWWGGgY",
+    "YYYYYgg.gggYYYYYYYWWYYYY",
+    "YMMMMgg.ggggggggggWWgggY",
+    "YMMMMgg.GGGGggFgggWWgTgY",
+    "YMMMMgg.GGGGgTggggWWgggY",
+    "YMMMggg...........BBgFgY",
+    "YMMgFggGGGggggggggWWgggY",
     "YYYYYYYYYYYYYYYYYYWWYYYY"
   ],
 
@@ -256,8 +262,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '动物': 'The old monkey told you about the hidden animals.',
     '兔子': 'It jumped out of the tall grass.',
     '狐狸': 'It jumped out of the tall grass.',
-    '松鼠': 'It jumped out of the tall grass.',
-    '山羊': 'It jumped out of the tall grass.',
+    '松鼠': 'It lives in the big tree to the south.',
+    '山羊': 'It lives on the cliffs to the south.',
     '洞': 'The cave door at the top of the short path on the far left.',
     '吃': 'The hungry monkey wanted something to eat.',
     '喝': 'The thirsty monkey wanted something to drink.',
@@ -291,12 +297,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Where a fish jumps out of the water now and then.
   fish: [[11, 10]],
 
-  // Animals hiding in the tall grass. The id is kept in saved games, so never change it.
+  // The area's animals. The id is kept in saved games, so never change it. An animal with at lives
+  // at that spot (x, y) on the map, such as up a tree or on a cliff: face it and press A to meet it,
+  // and home is the word for where it lives. The others hide in the tall grass, which rustles where
+  // one is hiding: step in to meet it. meetNote is on its new-word card the first time.
   animals: [
     {id:'rabbit', word:'兔子'},
     {id:'fox', word:'狐狸'},
-    {id:'squirrel', word:'松鼠'},
-    {id:'goat', word:'山羊'}
+    {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
+    {id:'goat', word:'山羊', at:[4, 18], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'}
   ],
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
@@ -357,8 +366,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'go', hint:'Learn 4 words first, then come back. ({newWords}/4)'}
       ]},
       {if:{elder:1}, do:[
-        {say:'animals', teach:'动物', hint:'Walk through the tall grass to find the hidden animals. Answer their questions to make friends.'},
-        {newWord:'动物', note:'There are {animals} different animals hiding in the tall grass. Can you find them all?'},
+        {say:'animals', teach:'动物', hint:'Watch for tall grass that rustles: an animal is hiding there. Others live up a tree and on the cliffs to the south. Answer their questions to make friends.'},
+        {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
         {set:{elder:2}},
         {reply:'再见'},
         {say:'bye'}

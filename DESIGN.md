@@ -108,7 +108,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 **Flower Fruit Mountain is a baby's first day.** The old monkey, like a grandparent, teaches the newborn the names of everything (这是山。), and each monkey shows the baby something: food, water, play, trading. Firsts (first word, first friend, first 我要) are celebrated in a book of firsts. The day starts with 早上好 and ends with sleep in a nest by the cave (晚安), with a summary of what you learned today and what's due tomorrow. Early on the loud waterfall scares the baby; by the end the troop wonders what's behind it, which leads into Area 2. The story is told through short lines, not long cutscenes.
 
-**Compact, lively places.** Areas stay small so walking doesn't crowd out learning. Flower Fruit Mountain stays about its current size and gets livelier: animals at their own spots (the squirrel in a tree, the goat on the cliffs), birds that come and go, and grass that rustles where an animal is hiding. Once the engine can move between maps, it splits into a few small connected places: the meadow, the orchard, the riverbank and the cliffs with the waterfall.
+**Compact, lively places.** Areas stay small so walking doesn't crowd out learning. Flower Fruit Mountain grew a little to the south (decided 16 October 2026), only to make room for its animals' homes, and got livelier: animals at their own spots (the squirrel in a tree, the goat on the cliffs), birds that come and go, and grass that rustles where an animal is hiding. Once the engine can move between maps, it splits into a few small connected places: the meadow, the orchard, the riverbank and the cliffs with the waterfall.
 
 ## Progression and economy
 
@@ -197,7 +197,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **我不要** is taught in Area 1 as a fixed phrase; 不 on its own waits for Area 3.
 - **Talk** moves into a speech box over the map; full cards only for the big moments.
 - **The wardrobe** starts in Area 1 with the headband and a flower, and opens fully in Area 3.
-- **The map** stays compact and gets livelier now; it splits into small places with the multi-map work.
+- **The map** stays compact and gets livelier now; it splits into small places with the multi-map work. (Later the same day: it grew to the south, 24 × 22 tiles, to give the squirrel and goat their homes.)
 - **Day and night:** a day ends with sleep in the cave and a summary.
 - **Native speaker check:** 再见, 不客气, 对不起, 没关系, 我不要, 早上好, 晚安, 我戴头带, 我穿衣服 and 这是山 are all fine as written.
 
@@ -244,7 +244,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] 我不要 at the shop, and sentence-building questions in animal encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary
 - [ ] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version
-- [ ] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides
+- [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
 - [ ] Playtest Area 1 for a week
 - [ ] Let the engine run more than one area, so the cave door leads on, and split Flower Fruit Mountain into small connected places
 - [ ] Build Area 2, the Water Curtain Cave
