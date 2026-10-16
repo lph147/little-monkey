@@ -99,7 +99,7 @@ async function request(r, face){   // a character asking you to bring something 
     const build = toks(r.build);
     await tiles(face, build, [r.extraTile], r.buildPrompt);
     build.filter(w => lvl(w) >= 1).forEach(w => setLevel(w, 4));
-    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; save(); SFX.fanfare();
+    p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     toast(`+${r.reward} 🍑. Task complete!`);
     await runEvents();

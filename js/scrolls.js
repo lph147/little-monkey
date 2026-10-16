@@ -37,10 +37,10 @@ function storyScroll(){
         hear(q.t); say(q.t.join(''));
         const ok = await pictureQ({head:'<p class="label">Story question</p>', body: lineHTML(q.t) + '<div class="gloss">Tap a word for its meaning.</div>',
           options:q.options.map(w => `<span class="ico">${WORDS[w].pic}</span><span class="cap">${w}</span>`), answerIdx:q.options.indexOf(q.answer)});
-        if (ok) right++;
+        if (ok){ right++; gainXP(XP.right); }
       }
       const first = !here().story, end = AREA.storyEnd;
-      here().story = true; if (first) S.peaches += end.reward; save(); buildMap();
+      here().story = true; if (first){ S.peaches += end.reward; gainXP(XP.story); } save(); buildMap();
       SFX.fanfare();
       openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">${end.title}</p>
         <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${first ? ` +${end.reward} 🍑` : ''}</p>
@@ -112,6 +112,7 @@ async function wordTest(){   // the exit test at the cave door: every word with 
   if (!missed) return false;
   const right = words.length - missed.size, need = Math.ceil(words.length * PASS), pass = right >= need;
   missed.forEach(w => { const rr = rec(w); rr.due = Date.now(); });
+  if (pass && !here().done) gainXP(XP.exitTest);
   save();
   if (pass) SFX.fanfare(); else SFX.wrong();
   return new Promise(res => {
@@ -138,7 +139,7 @@ function trained(words, missed){
   let peaches = 0;
   for (const w of words){
     const r = rec(w), ok = !missed.has(w);
-    if (ok && isDue(w)) peaches++;
+    if (ok){ gainXP(isDue(w) ? XP.rightDue : XP.right); if (isDue(w)) peaches++; }
     if (ok){ r.ok = (r.ok || 0) + 1; r.due = Date.now() + INTERVALS[Math.min(r.ok - 1, 3)] * DAY; }
     else { r.ok = 0; r.due = Date.now(); }
     addToday(w);

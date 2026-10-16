@@ -69,6 +69,7 @@ function updateCtx(now){
   $('#btnA').classList.toggle('ready', mode === 'play' && modal.hidden && !!a);
 }
 function updateHUD(){
+  $('#level').textContent = 'Lv ' + level();
   $('#peaches').textContent = '🍑 ' + S.peaches;
   $('#count').textContent = ORDER.filter(w => lvl(w) > 0).length + '/' + ORDER.length;
   if (mode !== 'play') return;

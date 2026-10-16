@@ -32,7 +32,8 @@ The save on your phone belongs to this address, so it is separate from saves any
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.
-- [ ] Continue puts you back where you left off, with the same peaches and word count in the header.
+- [ ] Continue puts you back where you left off, with the same level, peaches and word count in the header.
+- [ ] The header shows your level (Lv 1 to start). The menu shows it with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] Talking to the old monkey: the line is spoken, pinyin shows over every word, and tapping a word shows its meaning underneath.
 - [ ] Menu opens with the Menu button (or M); B closes it.

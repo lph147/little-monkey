@@ -4,7 +4,7 @@
 function openMenu(focusId){
   const done = areaChecklist().filter(([, d]) => d).length, total = areaChecklist().length;
   openCard(`<p class="label">Paused</p>
-    <div class="stats"><span>Area ${done}/${total}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>🍑 ${S.peaches}</span></div>
+    <div class="stats"><span>Level ${level()} · ${S.xp % XP_PER_LEVEL}/${XP_PER_LEVEL} XP</span><span>Area ${done}/${total}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>🍑 ${S.peaches}</span></div>
     <div class="menu">
       <button class="btn" data-m="resume" data-b>Resume</button>
       <button class="btn" data-m="tasks">Tasks and progress</button>
