@@ -77,7 +77,8 @@ test('buying a 苹果 costs 2 peaches, puts it in your bag, and earns no XP', as
   assert.deepEqual(s.bag, {'苹果': 1});
   assert.equal(s.xp, 30);
   assert.deepEqual(s.areas[1].bought, [], 'food isn\'t "bought" for good, so it stays for sale');
-  assert.equal(s.w['苹果'].lv, 4, 'asking for it with 我要苹果 counts as using the word');
+  assert.equal(s.w['苹果'].used, 1, 'asking for it with 我要苹果 counts as using the word');
+  assert.equal(s.w['苹果'].lv, 1, 'it reaches Used once you can read it too');
 });
 
 test('you can carry 3 苹果, and need 2 peaches for each', async () => {

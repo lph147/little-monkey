@@ -86,6 +86,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] In the word game, the questions use only words you've learned (pictures and wrong answers too). 2 or more right makes a friend; you get a 🍑 per right answer.
 - [ ] Walk around in tall grass. After a few steps an animal jumps out with a ! over your head.
 - [ ] The first time you meet each animal, a new-word card teaches its name and the encounter doesn't show the English. Meeting it again shows the Chinese name with an English button.
+- [ ] Animals' questions always have pictures to choose from. A new word is asked by sound ("Listen. Which picture is it?"); after two right answers in a row it's asked by its characters ("Read it."). On Flower Fruit Mountain you're never asked to pick characters by sound.
 - [ ] Keep going until you've found all 4 (rabbit, fox, squirrel, goat).
 - [ ] Optional words: cross the wooden bridge (bottom right) and face the bird (鸟).
 

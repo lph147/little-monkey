@@ -28,6 +28,14 @@ function pictureQ({head, body, options, answerIdx, word, type, text, onShow}){
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 3;
 const canWild = () => matches(AREA.animalsAppear) && canEncounter();   // can animals jump out of their hiding place yet?
+// The kind of question to ask about w: harder as you know it better, but only the kinds this area asks
+// (its questions list). Caught: listen. Recognised: read. Read or Used: hear and read, or a mix of read and listen.
+function questionType(w){
+  const L0 = lvl(w), asks = t => AREA.questions.includes(t);
+  const want = L0 <= 1 ? 'listen' : L0 === 2 ? 'read'
+    : asks('hear') ? (Math.random() < .6 ? 'hear' : 'read') : (Math.random() < .6 ? 'read' : 'listen');
+  return asks(want) ? want : 'listen';
+}
 const snack = () => (AREA.shop ? AREA.shop.items : []).find(i => i.eat && (S.bag[i.item] || 0) > 0);   // food in your bag to eat in an encounter
 const wrongToEat = (n, answerIdx) => shuffle([...Array(n).keys()].filter(i => i !== answerIdx))[0];   // which wrong answer eating takes away
 async function encounter(foe){
@@ -40,8 +48,7 @@ async function encounter(foe){
   const targets = shuffle(pool.slice(0, 5)).slice(0, 3);
   let score = 0;
   for (let i = 0; i < targets.length; i++){
-    const w = targets[i], L0 = lvl(w);
-    const type = L0 <= 1 ? 'listen' : L0 === 2 ? 'read' : (Math.random() < .6 ? 'hear' : 'read');
+    const w = targets[i], type = questionType(w);
     const others = shuffle(picWords().filter(x => x !== w && lvl(x) >= 1));   // only words you have already met
     const opts = shuffle([w].concat(others.slice(0, 2)));
     const hearts = `<div class="hearts" aria-label="${score} of 3 friendship">${[0,1,2].map(k => `<span style="${k < score ? '' : 'opacity:.22;filter:grayscale(1)'}">🍑</span>`).join('')}</div>`;

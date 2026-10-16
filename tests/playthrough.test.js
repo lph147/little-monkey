@@ -128,7 +128,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // The practice post: matching pictures, then listening for words without pictures
   await pressAt(6, 6, 'up', 'training at the practice post');
-  assert.ok(get("lvl('要')") >= 2 || get("lvl('我')") >= 2, 'listening moved a word without a picture up');
+  assert.ok(get("S.w['要'].n || S.w['我'].n"), 'a word without a picture was heard right');
 
   // The headband, then an apple to eat in an animal encounter
   plan.buy = '头带';

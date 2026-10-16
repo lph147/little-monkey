@@ -292,6 +292,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   ],
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
+  // The kinds of question animals ask, easiest first: 'listen' (hear a word, pick its picture), 'read'
+  // (see its characters, pick its picture) and 'hear' (hear a word, pick its characters, with no
+  // pictures). A word's questions get harder as you know it better, but only up to the kinds listed
+  // here. Picking characters by sound is too hard for a first day, so 'hear' waits for a later area.
+  questions: ['listen', 'read'],
 
   // What the characters say. The English shows under a sentence the first time you see it.
   lines: {

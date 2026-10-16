@@ -8,6 +8,8 @@ const {loadGame, SAVE_KEY} = require('./fake-browser');
 const json = x => JSON.parse(JSON.stringify(x));
 const saveOf = game => JSON.parse(game.run('JSON.stringify(S)'));
 const VERSION = loadGame().run('SAVE_VERSION');   // the current save version
+// Words at Used (level 4) in an older save are marked as used when it's converted (version 9).
+const usedMarked = w => Object.fromEntries(Object.entries(w).map(([k, r]) => [k, r.lv === 4 ? {...r, used: 1} : r]));
 const START = {elder: 0, gate: false, story: false, hungry: 'not asked', thirsty: 'not asked', holding: {}, bought: [], done: false};
 
 // A save as Little Monkey 8 (and the versions since, up to the map legend) wrote it: version 2.
@@ -28,7 +30,7 @@ test('a version 2 save is converted, keeping everything', () => {
   for (const old of ['q', 'gate', 'story', 'area1Done', 'carry']) assert.ok(!(old in s), `the old field ${old} should have moved`);
   for (const [k, v] of Object.entries(V2)){
     if (['q', 'gate', 'story', 'area1Done', 'carry'].includes(k)) continue;
-    assert.deepEqual(s[k], v, `${k} should be unchanged`);
+    assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : v, `${k} should be unchanged`);
   }
 });
 
@@ -132,7 +134,7 @@ test('a version 4 save is converted: the words in lines you have seen count as h
   const s = saveOf(game);
   assert.equal(s.version, VERSION);
   assert.deepEqual(s.heard, {'你好': 1, '我': 2, '饿': 1, '了': 1, '要': 1, '吃': 1, '桃子': 1});
-  for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(s[k], v, `${k} should be unchanged`);
+  for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : v, `${k} should be unchanged`);
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v4'), JSON.stringify(V4));
 });
 
@@ -141,4 +143,15 @@ test('converting a version 4 save where the story was read counts the story too'
   assert.equal(s.heard['瀑布'], 1, 'heard once, in the story');
   assert.equal(s.heard['谁'], 1, 'heard once, in a story question');
   assert.equal(s.heard['你好'], 1, 'heard once, in a line you have seen');
+});
+
+test('a version 8 save is converted: words at Used are marked as used, and every word keeps its level', () => {
+  const w = {'桃子': {lv: 4, due: 0, ok: 0}, '水': {lv: 1, due: 0, ok: 0}, '山': {lv: 3, due: 5, ok: 2}};
+  const game = loadGame({save: {version: 8, started: true, w, peaches: 4, bag: {'苹果': 1}}});
+  const s = saveOf(game);
+  assert.equal(s.version, VERSION);
+  assert.deepEqual(s.w, {'桃子': {lv: 4, due: 0, ok: 0, used: 1}, '水': {lv: 1, due: 0, ok: 0}, '山': {lv: 3, due: 5, ok: 2}});
+  assert.equal(s.peaches, 4);
+  assert.deepEqual(s.bag, {'苹果': 1});
+  assert.ok(game.storage.get(SAVE_KEY + '-backup-v8'), 'the version 8 save is kept as a backup');
 });

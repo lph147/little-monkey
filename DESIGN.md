@@ -43,9 +43,9 @@ The Word Scroll becomes the game's Pokédex: a collection you want to complete, 
 | --- | --- |
 | Heard | Hearing it in a sentence |
 | Caught | Its new-word card |
-| Recognised | Picking it from sound alone |
-| Read | Picking it from the characters alone |
-| Used | Using it in a sentence, a shop order or a quest |
+| Recognised | Picking it from sound alone, twice in a row |
+| Read | Picking it from the characters alone, twice in a row |
+| Used | Using it in a sentence, a shop order or a quest, once you can read it |
 
 **Chinese only, once caught.** After the new-word card, the Chinese name is the only name shown in the world, with English a tap away. That is part of why Pokémon names stick: nobody thinks of them in translation.
 
@@ -147,7 +147,7 @@ Encounters are the game's battles: you win by answering, and every answer is a c
 | Build | A request or a picture scene | Word tiles in order | Grammar |
 | Tones (later) | Two similar words spoken | Which one you heard | Tones |
 
-The question type follows the word's mastery level, so new words start easy and get harder as you know them better. From Area 4, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters.
+The question type follows the word's mastery level, so new words start easy and get harder as you know them better. A word needs two right answers in a row before its questions get harder, and each area says which kinds it asks: Flower Fruit Mountain asks only Listen and Read, so a beginner always has a picture to go on. Hear and read starts in a later area, for words you can already read. From Area 4, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters.
 
 ## Screens
 
@@ -199,6 +199,13 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **Day and night:** a day ends with sleep in the cave and a summary.
 - **Native speaker check:** 再见, 不客气, 对不起, 没关系, 我不要, 早上好, 晚安, 我戴头带, 我穿衣服 and 这是山 are all fine as written.
 
+**Decided after playtesting stage 2** (16 October 2026): Flower Fruit Mountain must suit someone who speaks no Chinese yet, so they can spend longer there getting to know its words.
+
+- **Questions get harder slowly:** two right answers in a row at each step, and no picking characters by sound (without pictures) on Flower Fruit Mountain.
+- **Building a sentence** marks its words as used, but doesn't skip the questions: a word is Used once you can read it too.
+- **Every word you practise has a picture,** including 瀑布, 老板 and 头带. 我 and 要 are practised by building 我要 sentences at the practice post.
+- **The story at the waterfall** is a short one made of sentences you've already met, each with a picture, and its questions fill a gap with a picture. The longer story from the book's opening moves to the Water Curtain Cave, which teaches 有, 一只 and 一个.
+
 ## Next steps
 
 Rebuild Area 1 on the new foundations first, then play it for a week before starting Area 2.
@@ -224,6 +231,10 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] The Word Scroll as a grid of sprites, with category tabs and a Today tab
   - [x] A menu of big tiles, and a Settings page (three tiles until the wardrobe adds 衣服)
   - [x] A bigger game screen on phones (up to 14 rows of the map), and a task box showing the current task with "more"
+- [ ] Gentler pacing for beginners (decided after playtesting stage 2):
+  - [x] Questions get harder after two right answers in a row; no characters-only questions on Flower Fruit Mountain
+  - [ ] Pictures for 瀑布, 老板 and 头带; 我 and 要 practised by building 我要 sentences at the practice post
+  - [ ] A short story at the waterfall from sentences you've met, with gap-filling picture questions
 - [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary
 - [ ] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version

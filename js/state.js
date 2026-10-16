@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 8;
+const SAVE_VERSION = 9;
 // XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
 const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
@@ -54,6 +54,11 @@ function upgradeSave(s){
   }
   if (s.version === 7){   // version 7: there was no bag for food from the shop. It starts empty (filled in below).
     s.version = 8;
+  }
+  if (s.version === 8){   // version 8: building a sentence moved its words straight up to Used. Now a word is Used once
+                          // you've used it and can read it, so words already at Used are marked as used (and stay Used).
+    for (const r of Object.values(s.w || {})) if (r && r.lv === 4) r.used = 1;
+    s.version = 9;
   }
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
@@ -115,15 +120,22 @@ function gainXP(n){   // a new level is announced just after whatever message ea
   if (level() > before) setTimeout(() => { SFX.chime(); toast(`Level up! You're now level ${level()}.`); }, 1400);
 }
 function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.due = Date.now(); gainXP(XP.word); } addToday(w); save(); }
-function setLevel(w, n){ const r = rec(w); if (r.lv < n) r.lv = n; r.due = Date.now() + DAY; addToday(w); save(); }
+// You used w in a sentence (a request or a shop order). It's Used once you can read it as well.
+function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; r.due = Date.now() + DAY; addToday(w); save(); }
+// Questions get harder slowly. A word moves up from Caught to Recognised after STEP_UP right answers in a
+// row picking it by sound (listen), then to Read after STEP_UP more picking it from its characters (read).
+// A wrong answer moves it back down a level. In each word's record: lv its level, n right answers in a
+// row at that level, ok right answers in a row (for when it's due again), used once you've used it.
+const STEP_UP = 2;
 function answer(w, ok, type){
   const r = rec(w);
   if (ok) gainXP(r.due <= Date.now() ? XP.rightDue : XP.right);
   if (ok){
-    if (type === 'listen' && r.lv === 1) r.lv = 2;
-    if (type === 'read' && r.lv === 2) r.lv = 3;
+    r.n = (r.n || 0) + 1;
+    if (r.n >= STEP_UP && ((type === 'listen' && r.lv === 1) || (type === 'read' && r.lv === 2))){ r.lv++; r.n = 0; }
+    if (r.lv === 3 && r.used) r.lv = 4;
     r.ok = (r.ok || 0) + 1;
     r.due = Date.now() + INTERVALS[Math.min(r.ok - 1, 3)] * DAY;
-  } else { r.lv = Math.max(1, r.lv - 1); r.ok = 0; r.due = Date.now(); }
+  } else { r.lv = Math.max(1, r.lv - 1); r.n = 0; r.ok = 0; r.due = Date.now(); }
   addToday(w); save();
 }

@@ -82,7 +82,7 @@ test('when listening, the choices are the word and 2 other caught words, all dif
   }
 });
 
-test('a word heard right moves up to Recognised, and earns a peach only if it was due', async () => {
+test('a word heard right twice moves up to Recognised, and earns a peach only if it was due', async () => {
   const game = loadGame({save: listenSave()});
   // answer every question right (the real question card waits for a tap)
   game.run('globalThis.__asked = []; pictureQ = async q => { __asked.push(q); answer(q.word, true, q.type); return true; }');
@@ -91,9 +91,10 @@ test('a word heard right moves up to Recognised, and earns a peach only if it wa
   assert.deepEqual(get(game, '__asked.map(q => [q.word, q.type, q.text, q.options.includes(q.word)])'),
     [['要', 'listen', true, true], ['瀑布', 'listen', true, true]], 'heard, with the characters to choose from');
   const s = get(game, 'S');
-  assert.equal(s.w['要'].lv, 2, '要 is now Recognised');
+  assert.equal(s.w['要'].lv, 1, 'one right answer is not enough to move 要 up');
   assert.equal(s.peaches, 1);
   assert.deepEqual(await round(), {right: 2, peaches: 0}, 'straight away again earns nothing: neither word is due any more');
+  assert.equal(get(game, 'S').w['要'].lv, 2, 'a second right answer makes 要 Recognised');
 });
 
 test('words without pictures that are due count on the title screen', () => {

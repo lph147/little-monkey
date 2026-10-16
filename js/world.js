@@ -101,7 +101,7 @@ async function request(r, face){   // a character asking you to bring something 
     if (nw) await showNotice(nw.word, {note:nw.note});
     const build = toks(r.build);
     await tiles(face, build, [r.extraTile], r.buildPrompt);
-    build.filter(w => lvl(w) >= 1).forEach(w => setLevel(w, 4));
+    build.filter(w => lvl(w) >= 1).forEach(useWord);
     p[r.id] = 'done'; delete p.holding[r.id]; S.peaches += r.reward; gainXP(XP.task); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     toast(`+${r.reward} 🍑. Task complete!`);
@@ -133,7 +133,7 @@ async function buy(i, face){   // buying something from the shop by asking for i
   if (S.peaches < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🍑, and you have ${S.peaches}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const build = toks(i.build);
   await tiles(face, build, [i.extraTile], fill(i.buildPrompt));
-  build.filter(w => lvl(w) >= 1).forEach(w => setLevel(w, 4));
+  build.filter(w => lvl(w) >= 1).forEach(useWord);
   S.peaches -= i.price;
   if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag (no XP: you can buy it again and again)
   else { here().bought.push(i.item); gainXP(XP.task); }
