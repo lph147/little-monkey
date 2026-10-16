@@ -165,6 +165,9 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 - **Words per area:** about 25 new words to collect, like Area 1 (28 once the shop adds 老板 and 头带 and 森林 is dropped), so about 20 new sprites per area. Words you only hear in sentences don't count towards this.
 - **Demons:** harder battles start at Area 4, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
+- **Pinyin** stays over every word (the menu setting turns it off); it doesn't fade as you learn words.
+- **Peaches after the headband:** the 老板 also sells 苹果, bought with 我要苹果; eating one in an animal encounter takes away a wrong answer.
+- **Native speaker:** someone can check the game's Chinese, from a review sheet listing every line with pinyin and English.
 - **Grammar:** the order in the grammar table stays as it is. Patterns can be heard in sentences in earlier areas before they are taught.
 
 ## Next steps
@@ -178,4 +181,15 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [x] Add XP, peaches as money, an Area 1 shop and the training ground
 - [x] Replace emoji with pixel sprites for Area 1's collectibles
 - [x] Add save export and import
-- [ ] Playtest Area 1 for a week, then build Area 2, the Water Curtain Cave
+- [ ] Improve Area 1, from the review on 2026-10-16:
+  - [ ] Say so on the title screen if the device has no Chinese voice, and how to add one
+  - [ ] Show how many words are due, on the title screen and as a ! on the practice post
+  - [ ] A Chinese review sheet for the native speaker: every line, with pinyin and English
+  - [ ] Example sentences for the 7 words met in no sentence (路 花 兔子 狐狸 松鼠 山羊 洞), checked first
+  - [ ] Practise words without pictures (我 要 瀑布 老板 头带) by listening: hear it, pick its characters
+  - [ ] The 老板 sells 苹果 (我要苹果); eating one in an encounter takes away a wrong answer
+  - [ ] A test that plays Area 1 from start to finish
+  - [ ] Remove 和 from the word bank (no sentence uses it)
+- [ ] Playtest Area 1 for a week
+- [ ] Let the engine run more than one area, so the cave door leads on
+- [ ] Build Area 2, the Water Curtain Cave
