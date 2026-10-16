@@ -26,3 +26,16 @@ test('English text gets its curly quotes from a font that draws them narrow', ()
   assert.ok(link, `${ENTRY} should load ${font[1]}`);
   for (const q of '‘’“”') assert.ok(/text=([^&]*)/.exec(link)[1].includes(q), `${font[1]} should be loaded with ${q}`);
 });
+
+// CHINESE.md lists all the game's Chinese for a native speaker to check (tools/chinese-sheet.js).
+test('CHINESE.md is up to date with the content (if not, run: npm run chinese)', () => {
+  const {sheet, FILE} = require('../tools/chinese-sheet');
+  assert.equal(fs.readFileSync(FILE, 'utf8').replace(/\r\n/g, '\n'), sheet(), 'CHINESE.md is out of date: run npm run chinese');
+});
+
+test('draft sentences waiting to be checked only use words in the word bank', () => {
+  const {DRAFTS} = require('../tools/chinese-sheet');
+  const {loadGame} = require('./fake-browser');
+  const bank = JSON.parse(loadGame().run('JSON.stringify(WORD_BANK)'));
+  for (const d of DRAFTS) for (const w of d.zh.split(' ')) assert.ok(bank[w] || '。！，？'.includes(w), `the draft "${d.zh}" uses ${w}, which isn't in the word bank`);
+});

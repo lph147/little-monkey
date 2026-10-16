@@ -184,7 +184,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [ ] Improve Area 1, from the review on 2026-10-16:
   - [ ] Say so on the title screen if the device has no Chinese voice, and how to add one
   - [ ] Show how many words are due, on the title screen and as a ! on the practice post
-  - [ ] A Chinese review sheet for the native speaker: every line, with pinyin and English
+  - [x] A Chinese review sheet for the native speaker: every line, with pinyin and English (CHINESE.md)
   - [ ] Example sentences for the 7 words met in no sentence (路 花 兔子 狐狸 松鼠 山羊 洞), checked first
   - [ ] Practise words without pictures (我 要 瀑布 老板 头带) by listening: hear it, pick its characters
   - [ ] The 老板 sells 苹果 (我要苹果); eating one in an encounter takes away a wrong answer

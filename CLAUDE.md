@@ -28,6 +28,7 @@ I'm new to coding. Please:
 ## Tools
 - `npm test` runs the automated tests (Node's built-in test runner; there are no packages to install).
 - `npm start` serves the game at http://127.0.0.1:8000. The preview pane's "game" configuration does the same.
+- `npm run chinese` writes CHINESE.md: all the game's Chinese with pinyin and English, for a native speaker to check, plus new sentences waiting to be checked (DRAFTS in tools/chinese-sheet.js). Run it after changing any Chinese; a test checks it's up to date.
 - TESTING.md has the checks to do by hand: a quick check after every change and a full playthrough of Area 1.
 - The game is published at https://lph147.github.io/little-monkey/ by GitHub Pages, from the `main` branch of github.com/lph147/little-monkey. Pushing to GitHub updates it within a few minutes. Commits use the GitHub private email, never a personal one.
 

@@ -100,16 +100,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   wrong        their line if you bring something else, and wrongMessage afterwards
   //   offer        their line when you bring the right thing
   //   firstTeach   new words to teach before you build the sentence, one at a time, each with a note
-  //   build        the sentence you build from word tiles; extraTile is a wrong tile mixed in
+  //   build        the sentence you build from word tiles, with its English (buildEn); extraTile is a wrong tile mixed in
   //   reward       peaches you get; thanks is their line afterwards
   requests: {
     hungry: {from:'hungry', wants:'桃子', verb:'吃', ask:'hungry', asked:'The hungry monkey wants something to eat. Check your tasks.',
       wrong:'notThis', wrongMessage:'The monkey gives the fruit back. Listen to what it wants, then try another tree.',
       offer:'havePeach', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      build:'我 要 吃 桃子', extraTile:'喝', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'},
+      build:'我 要 吃 桃子', buildEn:'I want to eat a peach.', extraTile:'喝', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'},
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      build:'我 要 喝 水', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'}
+      build:'我 要 喝 水', buildEn:'I want to drink water.', extraTile:'吃', buildPrompt:'Say what the monkey wants. Put the words in order.', reward:3, thanks:'thanks'}
   },
 
   // The shop. who runs it, their line when you visit (ask) and after you buy (thanks), what they say
@@ -122,7 +122,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and training at the practice post.',
     soldOut:'You have everything the {老板} sells. Come back another time.',
     items: [
-      {item:'头带', price:10, build:'我 要 头带', extraTile:'吃', buildPrompt:'Ask for the {头带}. Put the words in order.',
+      {item:'头带', price:10, build:'我 要 头带', buildEn:'I want the headband.', extraTile:'吃', buildPrompt:'Ask for the {头带}. Put the words in order.',
         note:'A red cloth headband.', bought:'You tie on the red {头带}. It suits you!', wear:true}
     ]
   },
@@ -362,15 +362,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {zh:'小 猴子 很 快乐 ！', en:'The little monkey is very happy!'}
   ],
 
-  // Questions after the story. The options are words; their pictures are shown, with the Chinese
+  // Questions after the story, with their English (for checking; it isn't shown). The options are words; their pictures are shown, with the Chinese
   // underneath. Quizzes only use words you've caught, so the game shows the answer and the first
   // 2 other options you've caught, in a random order, and skips a question if you haven't caught
   // its answer. List the best wrong answers first, and make sure every one is clearly wrong.
   // Players have always caught 石头, 桃子 and 水 by the time they reach the waterfall.
   storyQuestions: [
-    {zh:'谁 在 石头 里 ？', options:['猴子', '鸟', '花', '桃子', '水'], answer:'猴子'},
-    {zh:'猴子 吃 什么 ？', options:['石头', '桃子', '草', '水'], answer:'桃子'},
-    {zh:'河 里 有 什么 ？', options:['树', '山羊', '鱼', '鸟', '桃子'], answer:'鱼'}
+    {zh:'谁 在 石头 里 ？', en:'Who is inside the stone?', options:['猴子', '鸟', '花', '桃子', '水'], answer:'猴子'},
+    {zh:'猴子 吃 什么 ？', en:'What do monkeys eat?', options:['石头', '桃子', '草', '水'], answer:'桃子'},
+    {zh:'河 里 有 什么 ？', en:'What is in the river?', options:['树', '山羊', '鱼', '鸟', '桃子'], answer:'鱼'}
   ],
 
   // The card after the story questions. reward: peaches, the first time only; rumble: the ground
