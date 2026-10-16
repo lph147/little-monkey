@@ -121,9 +121,10 @@ function gainXP(n){   // a new level is announced just after whatever message ea
 }
 function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.due = Date.now(); gainXP(XP.word); } addToday(w); save(); }
 // You used w in a sentence (a request or a shop order). It's Used once you can read it as well.
-function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; r.due = Date.now() + DAY; addToday(w); save(); }
+function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; addToday(w); save(); }
 // Questions get harder slowly. A word moves up from Caught to Recognised after STEP_UP right answers in a
 // row picking it by sound (listen), then to Read after STEP_UP more picking it from its characters (read).
+// A word without a picture (我 要) moves up the same way by building sentences with it right first time (build).
 // A wrong answer moves it back down a level. In each word's record: lv its level, n right answers in a
 // row at that level, ok right answers in a row (for when it's due again), used once you've used it.
 const STEP_UP = 2;
@@ -132,7 +133,8 @@ function answer(w, ok, type){
   if (ok) gainXP(r.due <= Date.now() ? XP.rightDue : XP.right);
   if (ok){
     r.n = (r.n || 0) + 1;
-    if (r.n >= STEP_UP && ((type === 'listen' && r.lv === 1) || (type === 'read' && r.lv === 2))){ r.lv++; r.n = 0; }
+    const up = type === 'build' ? !WORDS[w].pic && r.lv < 3 : (type === 'listen' && r.lv === 1) || (type === 'read' && r.lv === 2);
+    if (r.n >= STEP_UP && up){ r.lv++; r.n = 0; }
     if (r.lv === 3 && r.used) r.lv = 4;
     r.ok = (r.ok || 0) + 1;
     r.due = Date.now() + INTERVALS[Math.min(r.ok - 1, 3)] * DAY;

@@ -94,7 +94,9 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] A wooden practice post stands on the grass just above the long path, between the short path on the left and the old monkey. Face it: A says Train.
 - [ ] Before you have 4 words with pictures, it says to come back later (with a count).
 - [ ] After that, it asks if you want to practise and says how many words are due for review. Start matches about 8 words to their pictures in 2 rounds. Stop ends it without changing anything.
-- [ ] At the end it says how many you matched right first time, and gives 1 🍑 for each due word you got right first time.
+- [ ] Once you know 我 (I) and 要 (want), the practice ends with building a sentence you've built before, such as 我要吃桃子, from word tiles, with its English shown. There is no listening round where you pick characters by sound.
+- [ ] At the end it says how many you matched right first time and whether you built the sentence right first time, and gives 1 🍑 for each due word you got right first time.
+- [ ] 瀑布 (waterfall), 老板 (shop owner) and 头带 (headband) have pixel pictures: on their new-word cards, in the Word Scroll, at the practice post and in the cave door test.
 - [ ] When words are due for review, the post has a ! over it.
 - [ ] Words you got right first time aren't due again for a day or more, so training again straight away gives no peaches for them (only for words you missed, or due words that didn't fit in the first go).
 

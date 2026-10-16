@@ -50,9 +50,9 @@ const WORD_BANK = {
   '朋友': {py:'péngyou', en:'friend', pic:'🧑‍🤝‍🧑', area:1, category:'people'},
   '我': {py:'wǒ', en:'I, me', area:1, category:'people'},
   '要': {py:'yào', en:'to want', area:1, category:'actions'},
-  '瀑布': {py:'pùbù', en:'waterfall', area:1, category:'nature'},
-  '老板': {py:'lǎobǎn', en:'shop owner, boss', area:1, category:'people'},
-  '头带': {py:'tóudài', en:'headband', area:1, category:'items'},
+  '瀑布': {py:'pùbù', en:'waterfall', pic:'💦', area:1, category:'nature'},
+  '老板': {py:'lǎobǎn', en:'shop owner, boss', pic:'🏪', area:1, category:'people'},
+  '头带': {py:'tóudài', en:'headband', pic:'🎀', area:1, category:'items'},
 
   // Heard in sentences
   '是': {py:'shì', en:'am, is, are'},

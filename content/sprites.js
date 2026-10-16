@@ -485,5 +485,68 @@ const SPRITES = {
       "................",
       "................"
     ]
+  },
+  '瀑布': {   // waterfall: water falling between grey cliffs into a pool
+    palette: {g:'#7CC46B', r:'#9A968C', R:'#77736A', b:'#5FB3E6', l:'#B9E4F7', w:'#FFFFFF', p:'#3F8FCB', P:'#2C6B9E'},
+    rows: [
+      "gggggbbbbbbggggg",
+      "rrrrRlwbbwlRrrrr",
+      "rRrrRbwlbwbRrrRr",
+      "rrrRRlbwlbwRRrrr",
+      "rrRrRwlbwlbRrRrr",
+      "RrrrRbwlbwlRrrrR",
+      "rrrRRlbwlbwRrRrr",
+      "rRrrRwlbwlbRrrRr",
+      "rrrrRbwlbwlRrrrr",
+      "rRrrRlbwlbwRrrRr",
+      "rrrRwwlbwlbwRrrr",
+      "rRwwwwlwwlwwwwRr",
+      "pppwwlpppplwwppp",
+      "pPpplpppPpplppPp",
+      "ppPpppplpppPpppp",
+      "PpppPpppppPppPpp"
+    ]
+  },
+  '老板': {   // shop owner: a monkey behind its striped market stall
+    palette: {o:'#4A2C17', a:'#D94B3D', w:'#F7F1E8', f:'#C98A45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C', k:'#B07A45', K:'#7A5230', p:'#F4A07A', r:'#E8343C'},
+    rows: [
+      "oooooooooooooooo",
+      "oawawawawawawawo",
+      "oawawawawawawawo",
+      "oooooooooooooooo",
+      ".o....oooo....o.",
+      ".o...offffo...o.",
+      ".o.oofssssfoo.o.",
+      ".o.osfessefso.o.",
+      ".o..ofsmmsfo..o.",
+      "pp.offffffffo.rr",
+      "KKKKKKKKKKKKKKKK",
+      "kkkkkkkkkkkkkkkk",
+      "kkkKkkkkkkkKkkkk",
+      "kkkkkkkkkkkkkkkk",
+      "kkkkkkKkkkkkkkkk",
+      "KKKKKKKKKKKKKKKK"
+    ]
+  },
+  '头带': {   // headband: a red cloth band, tied, with its end hanging down
+    palette: {o:'#5A1414', r:'#D93A3A', d:'#A82424', h:'#F27C6E'},
+    rows: [
+      "................",
+      "................",
+      "................",
+      "...oooooooooo...",
+      ".oorrrrrrrrrroo.",
+      "orroooooooooorro",
+      "orro........orro",
+      "orro........orro",
+      "orhhoooooooohhro",
+      ".orhhhhhhhhhhroo",
+      "..oorrrrrrrrodro",
+      "....oooooooodrdo",
+      "...........odrro",
+      "...........odro.",
+      "............oro.",
+      ".............o.."
+    ]
   }
 };

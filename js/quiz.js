@@ -89,10 +89,10 @@ async function encounter(foe){
 }
 
 /* ================= SENTENCE TILES ================= */
-function tiles(who, target, extras, prompt){
+function tiles(who, target, extras, prompt){   // gives true if the sentence was built right first time
   return new Promise(res => {
     const bank = shuffle(target.concat(extras)).map((t,i) => ({t, i}));
-    let picked = [];
+    let picked = [], misses = 0;
     const tileBtn = (o, where) => { const [py] = info(o.t); const show = S.pinyin;
       return `<button class="tile" data-w="${where}" data-i="${o.i}"><ruby>${o.t}<rt class="${show ? '' : 'hid'}">${py}</rt></ruby></button>`; };
     function render(msg){
@@ -109,8 +109,8 @@ function tiles(who, target, extras, prompt){
       });
       on('[data-a=say]', () => say(target.join('')));
       on('[data-a=check]', () => {
-        if (picked.map(o => o.t).join('') === target.join('')){ SFX.right(); say(target.join('')); closeCard(); res(true); }
-        else { picked = []; SFX.wrong(); render('Not quite. Listen again and try once more.'); sheet.querySelector('.slots').classList.add('shake'); say(target.join('')); }
+        if (picked.map(o => o.t).join('') === target.join('')){ SFX.right(); say(target.join('')); closeCard(); res(misses === 0); }
+        else { misses++; picked = []; SFX.wrong(); render('Not quite. Listen again and try once more.'); sheet.querySelector('.slots').classList.add('shake'); say(target.join('')); }
       });
     }
     render();

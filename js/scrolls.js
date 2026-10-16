@@ -128,31 +128,33 @@ async function wordTest(){   // the exit test at the cave door: every word with 
 }
 
 /* ================= TRAINING GROUND ================= */
-const TRAINING_WORDS = 8, TRAINING_MIN = 4, TRAINING_LISTEN = 3;   // words to match per session, how many you need to start, and words to listen for
+const TRAINING_WORDS = 8, TRAINING_MIN = 4;   // words to match per session, and how many you need to start
 const trainable = () => ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1);   // caught words with a picture
-const listenable = () => ORDER.filter(w => !WORDS[w].pic && lvl(w) >= 1);   // caught words without a picture, practised by listening
+const unpictured = () => ORDER.filter(w => !WORDS[w].pic && lvl(w) >= 1);   // caught words without a picture (我 要), practised by building sentences
 const isDue = w => rec(w).due <= Date.now();   // a newly caught word is due straight away
-const dueWords = () => [...trainable(), ...listenable()].filter(isDue);   // words due for review that you can practise
+const dueWords = () => [...trainable(), ...unpictured()].filter(isDue);   // words due for review that you can practise
 const trainingCalls = () => trainable().length >= TRAINING_MIN && dueWords().length > 0;   // the practice post shows a !
 // The words to practise: the ones due for review first, then the ones due soonest, in a random order.
 const trainingWords = () => shuffle(shuffle(trainable()).sort((a, b) => rec(a).due - rec(b).due).slice(0, TRAINING_WORDS));
-const listenWords = () => shuffle(shuffle(listenable()).sort((a, b) => rec(a).due - rec(b).due).slice(0, TRAINING_LISTEN));
-// The characters to choose from when listening for w: w and 2 other words you've caught, words without pictures first.
-const listenOptions = w => shuffle([w, ...[...shuffle(listenable()), ...shuffle(trainable())].filter(x => x !== w).slice(0, 2)]);
-// Hear each word and pick its characters. A right answer moves the word up to Recognised; each due word
-// heard right earns a peach. Gives {right, peaches}.
-async function listenRound(words){
-  let right = 0, peaches = 0;
-  for (let i = 0; i < words.length; i++){
-    const w = words[i], due = isDue(w), opts = listenOptions(w);
-    const ok = await pictureQ({head:`<p class="label">Training · listen ${i + 1} of ${words.length}</p>`,
-      body:'<p class="prompt">Listen. Which characters is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>',
-      options:opts, text:true, answerIdx:opts.indexOf(w), word:w, type:'listen', onShow:() => setTimeout(() => say(w), 300)});
-    if (ok){ right++; if (due) peaches++; }
-  }
-  closeCard();
+// A sentence to build at the practice post, for words without a picture: one you've built for a character
+// (the area's requests and shop), with every word caught, preferring one with a word that's due.
+function practiceSentence(){
+  const all = [...REQUESTS, ...(AREA.shop ? AREA.shop.items : [])].map(b => ({...b, t:toks(b.build)}))
+    .filter(b => b.t.every(w => lvl(w) >= 1) && b.t.some(w => !WORDS[w].pic));
+  const due = all.filter(b => b.t.some(w => !WORDS[w].pic && isDue(w)));
+  return shuffle(due.length ? due : all)[0] || null;
+}
+// Build the sentence from word tiles, with its English to go on. Built right first time, its words without
+// a picture count as answered right, and each one that was due earns a peach. All its words count as used.
+// Gives {first, peaches}.
+async function buildRound(b, who){
+  const bare = b.t.filter(w => !WORDS[w].pic), due = bare.filter(isDue);
+  const first = await tiles(who, b.t, lvl(b.extraTile) >= 1 ? [b.extraTile] : [], `Build the sentence: “${esc(b.buildEn)}” Put the words in order.`);
+  if (first) bare.forEach(w => answer(w, true, 'build'));
+  b.t.forEach(useWord);
+  const peaches = first ? due.length : 0;
   S.peaches += peaches; save();
-  return {right, peaches};
+  return {first, peaches};
 }
 // After a session: a word matched first time comes back later, a missed one straight away (the gold
 // squares stay the same). Each due word matched first time earns a peach. Gives how many peaches.
@@ -171,18 +173,19 @@ function trained(words, missed){
 async function trainingGround(){
   const who = `<img class="portrait" alt="" src="${SPR.post.toDataURL()}">`, have = trainable().length;
   if (have < TRAINING_MIN){ await infoBox(who, `<p>A practice post. Come back once you've learned ${TRAINING_MIN} words with pictures (${have}/${TRAINING_MIN}).</p>`); return; }
-  const words = trainingWords(), heard = listenWords(), due = [...words, ...heard].filter(isDue).length;
-  const ask = 'Practise matching words to their pictures' + (heard.length ? ', then listen for words without pictures. ' : '. ') + (due
+  const words = trainingWords(), sentence = practiceSentence(), bare = sentence ? sentence.t.filter(w => !WORDS[w].pic) : [];
+  const due = [...words, ...bare].filter(isDue).length;
+  const ask = 'Practise matching words to their pictures' + (sentence ? `, then build a sentence with ${bare.map(wz).join(' and ')}. ` : '. ') + (due
     ? `${due} of them ${due === 1 ? 'is' : 'are'} due for review: each one you get right first time earns a 🍑.`
     : 'None of your words are due for review right now, so there are no 🍑 this time.');
   if (!await confirmBox(who, ask, 'Start', 'Not now')) return;
   const missed = await matchWords(words, 'Training', 'Stop');
   if (!missed) return;
-  const right = words.length - missed.size, listened = await listenRound(heard), peaches = trained(words, missed) + listened.peaches;
+  const right = words.length - missed.size, built = sentence ? await buildRound(sentence, who) : null, peaches = trained(words, missed) + (built ? built.peaches : 0);
   SFX.fanfare();
   await new Promise(res => {
     openCard(`<div class="who" aria-hidden="true">${who}</div><p class="label">Training done</p>
-      <p>You matched <b>${right} of ${words.length}</b> words right first time.${heard.length ? ` You heard <b>${listened.right} of ${heard.length}</b> right.` : ''}${peaches ? ` +${peaches} 🍑` : ''}</p>
+      <p>You matched <b>${right} of ${words.length}</b> words right first time.${built ? (built.first ? ' You built the sentence right first time.' : ' You built the sentence.') : ''}${peaches ? ` +${peaches} 🍑` : ''}</p>
       ${missedHTML(missed)}
       <div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
     bindMissed();
