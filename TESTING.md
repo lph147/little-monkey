@@ -71,7 +71,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] With both monkeys helped, the screen shakes and a message says the rocks north of the meadow have rolled away.
 
 **Friends and animals**
-- [ ] The little monkey (bottom middle) teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game.
+- [ ] The little monkey (bottom middle) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.
 - [ ] In the word game, the questions use only words you've learned (pictures and wrong answers too). 2 or more right makes a friend; you get a 🍑 per right answer.
 - [ ] Walk around in tall grass. After a few steps an animal jumps out with a ! over your head.
 - [ ] The first time you meet each animal, a new-word card teaches its name and the encounter doesn't show the English. Meeting it again shows the Chinese name with an English button.

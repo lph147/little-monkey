@@ -158,10 +158,15 @@ function findSpot(){
   for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy, t = tileAt(x,y); if (t.walk && t.look !== 'bridge' && !npcAt(x,y)) return {x, y, d}; }
   const [dx,dy] = DV[pl.dir]; return {x:pl.x + dx, y:pl.y + dy, d:pl.dir};
 }
-async function wildAppears(){
+// Which animal jumps out: usually one you haven't met yet; otherwise usually one whose name is due for review.
+function pickAnimal(){
   const unmet = ANIMALS.filter(x => !S.met.includes(x.id));
-  const pool = unmet.length && Math.random() < .75 ? unmet : ANIMALS;
-  const a = pool[Math.floor(Math.random() * pool.length)];
+  const due = ANIMALS.filter(x => S.met.includes(x.id) && rec(x.hz).due <= Date.now());
+  const pool = unmet.length && Math.random() < .75 ? unmet : due.length && Math.random() < .75 ? due : ANIMALS;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+async function wildAppears(){
+  const a = pickAnimal();
   const spot = findSpot();
   pl.dir = spot.d;
   foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
