@@ -281,6 +281,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '再见': 'You said it to the old monkey after he told you about the animals.',
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
     '早上好': 'The old monkey said it when you woke up.',
+    '戴': 'You said it when you put something on from your wardrobe.',
     '晚安': 'You said it to the old monkey before you slept in your nest.'
   },
 
@@ -318,6 +319,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // here. Picking characters by sound is too hard for a first day, so 'hear' waits for a later area.
   // 'build' means an animal's last question is sometimes building a sentence you've built before.
   questions: ['listen', 'read', 'build'],
+
+  // Clothes for your wardrobe (Menu, 衣服). Each: the word, the sentence your monkey says putting it on
+  // (build, with buildEn; it's practised at the practice post too, with extraTile mixed in), and the
+  // word it teaches the first time (teach, with a note on its card). You get them from the shop
+  // (wear: true there) or with a give step.
+  wardrobe: [
+    {item:'头带', build:'我 戴 头带', buildEn:'I wear my headband.', extraTile:'吃', teach:'戴', note:'Use 戴 for things you wear on your head.'},
+    {item:'花', build:'我 戴 花', buildEn:'I wear a flower.', extraTile:'喝', teach:'戴', note:'Use 戴 for things you wear on your head.'}
+  ],
 
   // Your day. Sleeping in your nest ends it: a summary of what you learned, then the night steps.
   // You wake next to the nest (wakeAt) with the morning steps, which also greet you when you come
@@ -362,6 +372,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   set       change what the area remembers, such as {elder:1}
   //   request   the character's request (see requests)
   //   shop      open the area's shop (see shop below)
+  //   give      put something in your wardrobe, such as {give:'花'}, with a message afterwards (note)
   //   reply     your reply: you choose what to say from phrases you know, and this is the one that fits
   //             (taught on its own card the first time). Any choice is fine; the game says which fits best.
   //   wordGame  offer a word game. ask: the question; word: who you're playing with;
@@ -393,7 +404,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     playful: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey on the path first. He’ll tell you what to do.'}]},
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
-      {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'}]},
+      {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'},
+        {give:'花', note:'The little monkey tucks a {花} behind your ear. Put it on or take it off in Menu, 衣服 (wardrobe).'}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [

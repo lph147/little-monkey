@@ -55,6 +55,7 @@ const WORD_BANK = {
   '瀑布': {py:'pùbù', en:'waterfall', pic:'💦', area:1, category:'nature'},
   '老板': {py:'lǎobǎn', en:'shop owner, boss', pic:'🏪', area:1, category:'people'},
   '头带': {py:'tóudài', en:'headband', pic:'🎀', area:1, category:'items'},
+  '戴': {py:'dài', en:'to wear (on your head)', area:1, category:'actions'},
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true},

@@ -149,7 +149,7 @@ const trainingWords = () => shuffle(shuffle(trainable()).sort((a, b) => rec(a).d
 // A sentence to build at the practice post, for words without a picture: one you've built for a character
 // (the area's requests and shop), with every word caught, preferring one with a word that's due.
 function practiceSentence(){
-  const all = [...REQUESTS, ...(AREA.shop ? AREA.shop.items : [])].map(b => ({...b, t:toks(b.build)}))
+  const all = [...REQUESTS, ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].map(b => ({...b, t:toks(b.build)}))
     .filter(b => b.t.every(w => lvl(w) >= 1) && b.t.some(w => !WORDS[w].pic));
   const due = all.filter(b => b.t.some(w => !WORDS[w].pic && isDue(w)));
   return shuffle(due.length ? due : all)[0] || null;
@@ -227,7 +227,7 @@ function exampleFor(w){
   if (pick) return pick[0];
   const ex = AREA.examples[w];
   if (ex) return {t:toks(ex.zh), en:ex.en};
-  const built = [...REQUESTS, ...(AREA.shop ? AREA.shop.items : [])].find(b => toks(b.build).includes(w));
+  const built = [...REQUESTS, ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].find(b => toks(b.build).includes(w));
   return built && {t:[...toks(built.build), '。'], en:built.buildEn};
 }
 function wordPage(w, back){   // a caught word's page in the Word Scroll

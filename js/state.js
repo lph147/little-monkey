@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 11;
+const SAVE_VERSION = 12;
 // XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
 const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
@@ -10,7 +10,7 @@ function areaStart(){   // a new game's progress in the area: the area's own lis
   for (const r of REQUESTS) p[r.id] = 'not asked';
   return Object.assign(p, {holding:{}, bought:[], done:false});
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, day:1, lastDay:'', firsts:{}}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, peaches:0, friends:[], area:AREA.number, pos:{x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, day:1, lastDay:'', firsts:{}, wardrobe:{owned:[], wearing:[]}}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -78,6 +78,16 @@ function upgradeSave(s){
     s.day = 1;
     s.version = 11;
   }
+  if (s.version === 11){   // version 11: there was no wardrobe. What you bought to wear is in it, and still on.
+                           // Something now given in talk you've already had (a part for a word you've learned) is there too.
+    const bought = (((s.areas || {})[AREA.number] || {}).bought || []).filter(i => AREA.wardrobe.some(c => c.item === i));
+    s.wardrobe = {owned:[...bought], wearing:[...bought]};
+    for (const parts of Object.values(AREA.talk)) for (const p of parts){
+      const had = p.if && p.if.new && ((s.w || {})[p.if.new] || {}).lv >= 1;
+      for (const st of p.do) if (st.give && had && !s.wardrobe.owned.includes(st.give)) s.wardrobe.owned.push(st.give);
+    }
+    s.version = 12;
+  }
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
   s.areas = Object.assign({}, s.areas);
@@ -86,6 +96,7 @@ function upgradeSave(s){
   if (!Array.isArray(s.areas[AREA.number].bought)) s.areas[AREA.number].bought = [];
   if (!Array.isArray(s.met)) s.met = [];
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};
+  s.wardrobe = {owned:[...((s.wardrobe || {}).owned || [])], wearing:[...((s.wardrobe || {}).wearing || [])]};
   return s;
 }
 // Keeps a copy of an old or unreadable save in the browser, in case anything goes wrong. Never overwritten.
@@ -140,7 +151,7 @@ function gainXP(n){   // a new level is announced just after whatever message ea
 function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.due = Date.now(); gainXP(XP.word); first('word', w); } addToday(w); save(); }
 // The book of firsts: each first, the day it happened and what it was (w), shown on the 任务 page and at the end of the day.
 const FIRSTS = {word:'First word', reply:'First reply in Chinese', animal:'First animal met', friend:'First friend',
-  want:'First 我要 sentence', buy:'First thing bought', story:'First story read', sleep:'First night in your nest'};
+  want:'First 我要 sentence', buy:'First thing bought', story:'First story read', sleep:'First night in your nest', wear:'First time dressing up'};
 function first(id, w){
   if (S.firsts[id]) return;
   S.firsts[id] = {day:S.day, ...(w ? {w} : {})}; save();

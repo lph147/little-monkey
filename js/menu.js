@@ -5,7 +5,8 @@
 const MENU_TILES = [
   {m:'words', icon:'📜', zh:'词', py:'cí', en:'Word Scroll'},
   {m:'tasks', icon:'📋', zh:'任务', py:'rènwu', en:'Tasks'},
-  {m:'friends', icon:'🐾', zh:'朋友', py:'péngyou', en:'Friends'}
+  {m:'friends', icon:'🐾', zh:'朋友', py:'péngyou', en:'Friends'},
+  {m:'wardrobe', icon:'👕', zh:'衣服', py:'yīfu', en:'Wardrobe'}
 ];
 function openMenu(focusId){
   const done = areaChecklist().filter(([, d]) => d).length, total = areaChecklist().length;
@@ -20,6 +21,7 @@ function openMenu(focusId){
   on('[data-a=close]', () => closeCard());
   const act = {
     tasks: () => tasksPage(() => openMenu('tasks')),
+    wardrobe: () => wardrobePage(() => openMenu('wardrobe')),
     words: () => openScroll(() => openMenu('words')),
     friends: () => {
       openCard(`<p class="label">Friends</p>${S.friends.length ? `<div class="friends">${S.friends.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}">${portrait(id)}<span style="font-size:1.2rem">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : '<p class="hint">No friends yet. Answer the questions of animals in the tall grass to make friends.</p>'}
@@ -32,6 +34,28 @@ function openMenu(focusId){
   sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](); });
 }
 
+// 衣服 Wardrobe: the clothes you own. Tap one to put it on (your monkey says so, such as 我戴头带, which
+// teaches 戴 the first time and counts as using the words) or to take it off.
+function wardrobePage(back, focus){
+  const own = (AREA.wardrobe || []).filter(c => S.wardrobe.owned.includes(c.item)), more = (AREA.wardrobe || []).length - own.length;
+  openCard(`<p class="label">衣服 yīfu · Wardrobe</p>
+    ${own.length ? `<p class="small">Tap something to put it on or take it off.</p><div class="menu grid">${own.map(c => { const on = wearing(c.item);
+      return `<button class="card wear${on ? ' on' : ''}" data-w="${c.item}" data-label="${on ? 'Take off' : 'Put on'}"><div class="c" aria-hidden="true">${picHTML(c.item)}</div><div class="hz">${c.item}</div><div class="p">${WORDS[c.item].py}</div><div class="small">${on ? 'Wearing' : 'Put on'}</div></button>`; }).join('')}</div>`
+      : '<p class="hint">Nothing to wear yet. Clothes come from the shop and from friends.</p>'}
+    ${more ? `<p class="small">${more} more to find.</p>` : ''}
+    <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  if (focus){ const f = sheet.querySelector(`.wear[data-w="${focus}"]`); if (f) f.focus(); }
+  on('[data-a=ok]', back);
+  sheet.querySelectorAll('.wear').forEach(b => b.onclick = async () => {
+    const c = AREA.wardrobe.find(x => x.item === b.dataset.w), w = S.wardrobe.wearing;
+    if (wearing(c.item)){ w.splice(w.indexOf(c.item), 1); save(); redress(); SFX.blip(); wardrobePage(back, c.item); return; }
+    w.push(c.item); save(); redress(); closeCard();
+    if (c.teach && lvl(c.teach) === 0) await showNotice(c.teach, c.note ? {note:fill(c.note)} : {});   // such as 戴, the first time
+    toks(c.build).forEach(t => { if (WORDS[t]) useWord(t); });
+    first('wear', c.item);
+    await showDialog(speaker('player'), {t:[...toks(c.build), '。'], en:c.buildEn}, {teach:c.teach || c.item});
+  });
+}
 function firstsHTML(){   // the book of firsts: each one you've had, with the day
   const got = Object.entries(FIRSTS).filter(([id]) => S.firsts[id]), left = Object.keys(FIRSTS).length - got.length;
   return `<p class="label examplehead">📖 Book of firsts</p>${got.length ? `<ul class="firsts">${got.map(([id, label]) => `<li><span>${label}${S.firsts[id].w ? ` · <b>${esc(S.firsts[id].w)}</b>` : ''}</span><span class="small">Day ${S.firsts[id].day}</span></li>`).join('')}</ul>` : '<p class="hint">Your firsts will be written here.</p>'}

@@ -357,7 +357,7 @@ test('intro captions are in time order, with Chinese, pinyin and English', () =>
 
 test('every word you can collect has an example sentence for its page', () => {
   const inSentence = w => [...Object.values(AREA.lines), ...AREA.story].some(s => s.zh.split(' ').includes(w));
-  const built = w => [...Object.values(AREA.requests), ...(AREA.shop ? AREA.shop.items : [])].some(b => b.build.split(' ').includes(w));
+  const built = w => [...Object.values(AREA.requests), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].some(b => b.build.split(' ').includes(w));
   for (const [w, e] of Object.entries(AREA.examples)){
     assert.ok(collectible.includes(w), `there's an example for ${w}, which isn't a word you can collect in ${where}`);
     assert.ok(e.zh.split(' ').includes(w), `the example for ${w} doesn't use ${w}: "${e.zh}"`);
@@ -371,7 +371,8 @@ test('every word you only hear is used in a sentence somewhere', () => {
   const used = new Set([
     ...sentences.flatMap(([, s]) => s.zh.split(' ')),
     ...Object.values(AREA.requests).flatMap(r => r.build.split(' ')),
-    ...(AREA.shop ? AREA.shop.items.flatMap(i => i.build.split(' ')) : [])
+    ...(AREA.shop ? AREA.shop.items.flatMap(i => i.build.split(' ')) : []),
+    ...(AREA.wardrobe || []).flatMap(c => c.build.split(' '))
   ]);
   for (const w of Object.keys(BANK).filter(w => !BANK[w].area)) assert.ok(used.has(w), `${w} is in the word bank, but no sentence uses it: use it or remove it`);
 });

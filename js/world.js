@@ -60,7 +60,7 @@ function matches(cond){   // does the game match everything in an if?
     return compare(here()[k], v);
   });
 }
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok'], newWord:['note'], card:['note']};   // extra settings a step can have
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok'], newWord:['note'], card:['note'], give:['note']};   // extra settings a step can have
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
     const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
@@ -80,6 +80,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (await confirmBox(speaker(who), g.ask, 'Play', 'Not now')){ SFX.encounter(); await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}); }
   },
   async reply(s){ await replyWith(s.reply); },
+  give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
   message(s){ toast(fill(s.message)); }
 };
@@ -158,9 +159,10 @@ async function buy(i, face){   // buying something from the shop by asking for i
   S.peaches -= i.price;
   if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag (no XP: you can buy it again and again)
   else { here().bought.push(i.item); gainXP(XP.task); }
+  if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); S.wardrobe.wearing.push(i.item); }   // you put it on
   first('buy', i.item);
   save(); SFX.fanfare();
-  if (i.wear){ for (const k in spriteCache) delete spriteCache[k]; }   // redraw your monkey wearing it
+  if (i.wear) redress();   // redraw your monkey wearing it
   await showDialog(face, L[sh.thanks]);
   if (sh.thanksReply) await replyWith(sh.thanksReply);
   toast(fill(i.bought));

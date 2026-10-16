@@ -47,7 +47,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Menu, Settings, English on replies Off: reply choices show only Chinese and pinyin.
 - [ ] The Word Scroll has a Phrases tab (你好, 谢谢, 不客气, 对不起, 没关系, 再见, 我不要). Phrases don't count in the word total in the header. A phrase you've replied with has all four gold squares.
 - [ ] A line you've seen before hides its English behind an English button. "Tap any word to see what it means" only shows under your first few lines.
-- [ ] Menu opens with the Menu button (or M): three big tiles, 词 Word Scroll, 任务 Tasks and 朋友 Friends, each with pinyin and English, then Settings. The first tile has the gold outline and A badge; the D-pad moves between them. B, Close or the Menu button closes it.
+- [ ] Menu opens with the Menu button (or M): four big tiles, two by two: 词 Word Scroll, 任务 Tasks, 朋友 Friends and 衣服 Wardrobe, each with pinyin and English, then Settings. The first tile has the gold outline and A badge; the D-pad moves between them. B, Close or the Menu button closes it.
 - [ ] The Word Scroll has tabs across the top: one per category (Animals, Food, Nature and so on), then Today, then Heard. On a phone they fit in two rows. Tapping a tab (or pressing left or right on the D-pad) switches to it, and the scroll opens at the same tab next time.
 - [ ] A category's tab shows its count, such as "Animals 1/8", and a grid of its words, four across on a phone: caught words show their pixel picture, characters, pinyin and gold squares (words without a picture, like 我, show just the characters). Words you've heard but not caught show as a shadow of their picture, marked "heard 2×" and so on; the rest show ？.
 - [ ] Tapping a caught word opens its page: its picture, pinyin and sound, its level (Caught, Recognised, Read or Used), where you found it, and an example sentence with the word in bold. English shows the meanings; Back returns to the same tab and place in the scroll.
@@ -117,6 +117,10 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The rocks at the top of the right-hand path have gone. Walk up through the gap to the top right, stand just left of the waterfall, face it and press A.
 - [ ] A card teaches 瀑布 (waterfall), with its picture, then the Story Scroll opens: 8 short sentences about your first day (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
 - [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). English shows the sentence's English with the gap. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🍑 and a rumble.
+
+**The wardrobe**
+- [ ] When the little monkey teaches you 朋友, it tucks a 花 (flower) behind your ear (a message says so). Buying the 头带 puts it on.
+- [ ] Menu, 衣服 Wardrobe shows what you own, with "Wearing" on what's on. Tapping something you're not wearing closes the menu: the first time, a card teaches 戴 (wear); then your monkey says 我戴花 (or 我戴头带) and is wearing it on the map. Tapping something you're wearing takes it off.
 
 **Your day**
 - [ ] After the old monkey's first 你好, a message says he teaches every baby monkey the names of everything on the mountain.

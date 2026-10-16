@@ -139,6 +139,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 瀑布 | pùbù | waterfall |  |
 | 老板 | lǎobǎn | shop owner, boss |  |
 | 头带 | tóudài | headband |  |
+| 戴 | dài | to wear (on your head) |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -188,6 +189,7 @@ The names of the menu's tiles, shown with pinyin and English.
 | 词 | cí | Word Scroll |  |
 | 任务 | rènwu | Tasks |  |
 | 朋友 | péngyou | Friends |  |
+| 衣服 | yīfu | Wardrobe |  |
 
 ## New sentences to check
 
@@ -195,11 +197,12 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
-| 石头里有猴子。 | shítou lǐ yǒu hóuzi. | There is a monkey inside the stone. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
-| 我是猴子。 | wǒ shì hóuzi. | I am a monkey. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
-| 我有朋友。 | wǒ yǒu péngyou. | I have friends. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
-| 我吃桃子，喝水。 | wǒ chī táozi, hē shuǐ. | I eat peaches and drink water. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
-| 草里有动物。 | cǎo lǐ yǒu dòngwù. | There are animals in the grass. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
-| 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
-| 河里有鱼。 | hé lǐ yǒu yú. | There are fish in the river. | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
-| 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! | The new, shorter story at the waterfall (in the game, not uploaded yet) |  |
+| 石头里有猴子。 | shítou lǐ yǒu hóuzi. | There is a monkey inside the stone. | The new, shorter story at the waterfall (in the game) |  |
+| 我是猴子。 | wǒ shì hóuzi. | I am a monkey. | The new, shorter story at the waterfall (in the game) |  |
+| 我有朋友。 | wǒ yǒu péngyou. | I have friends. | The new, shorter story at the waterfall (in the game) |  |
+| 我吃桃子，喝水。 | wǒ chī táozi, hē shuǐ. | I eat peaches and drink water. | The new, shorter story at the waterfall (in the game) |  |
+| 草里有动物。 | cǎo lǐ yǒu dòngwù. | There are animals in the grass. | The new, shorter story at the waterfall (in the game) |  |
+| 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | The new, shorter story at the waterfall (in the game) |  |
+| 河里有鱼。 | hé lǐ yǒu yú. | There are fish in the river. | The new, shorter story at the waterfall (in the game) |  |
+| 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! | The new, shorter story at the waterfall (in the game) |  |
+| 我戴花。 | wǒ dài huā. | I wear a flower. | Said when you put on the flower in your wardrobe (in the game, not uploaded yet). Would 我戴着花 be more natural? |  |

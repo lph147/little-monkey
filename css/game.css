@@ -279,3 +279,8 @@ rt.hid{visibility:hidden}
 .firsts li{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line)}
 .firsts b{font-family:var(--text);font-weight:500}
 .checklist li.done-first::before{background:var(--gold);border-color:var(--gold)}
+/* the menu's four tiles, two by two; the wardrobe */
+.tiles{grid-template-columns:repeat(2,1fr)}
+.menu.grid{display:grid}
+.card.wear.on{border-color:var(--jade);background:color-mix(in srgb,var(--jade) 14%,var(--bg))}
+.card.wear .small{margin-top:2px}

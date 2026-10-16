@@ -243,7 +243,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Phrases as their own collection, with a Phrases tab in the Word Scroll
   - [x] 我不要 at the shop, and sentence-building questions in animal encounters
 - [x] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary (a nest by the cave door; 早上好 and 晚安 as replies; a new morning when you come back on a new date)
-- [ ] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version
+- [x] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version (the little monkey gives you the flower when it becomes your friend)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
 - [ ] Playtest Area 1 for a week
 - [ ] Let the engine run more than one area, so the cave door leads on, and split Flower Fruit Mountain into small connected places

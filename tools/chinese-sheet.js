@@ -13,7 +13,8 @@ const DRAFTS = [
     ['我 吃 桃子 ， 喝 水 。', 'I eat peaches and drink water.'], ['草 里 有 动物 。', 'There are animals in the grass.'],
     ['树 上 有 鸟 。', 'There are birds in the trees.'], ['河 里 有 鱼 。', 'There are fish in the river.'],
     ['山 上 有 瀑布 ！', 'There is a waterfall on the mountain!']]
-    .map(([zh, en]) => ({zh, en, where:'The new, shorter story at the waterfall (in the game, not uploaded yet)'}))
+    .map(([zh, en]) => ({zh, en, where:'The new, shorter story at the waterfall (in the game)'})),
+  {zh:'我 戴 花 。', en:'I wear a flower.', where:'Said when you put on the flower in your wardrobe (in the game, not uploaded yet). Would 我戴着花 be more natural?'}
 ];
 
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?'};

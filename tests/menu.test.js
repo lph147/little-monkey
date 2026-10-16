@@ -11,10 +11,10 @@ function menuGame(){
   return {game, sheet, run: code => game.run(code), items: () => sheet.querySelectorAll('[data-m]').map(b => b.dataset.m)};
 }
 
-test('the menu has a tile each for the Word Scroll, tasks and friends, then Settings', () => {
+test('the menu has a tile each for the Word Scroll, tasks, friends and wardrobe, then Settings', () => {
   const {sheet, run, items} = menuGame();
   run('pressMenu()');
-  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'settings']);
+  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'wardrobe', 'settings']);
   const tile = sheet.querySelector('.mtile[data-m="tasks"]');
   assert.equal(tile.querySelector('.mzh').textContent, '任务');
   assert.equal(tile.querySelector('.mpy').textContent, 'rènwu');
@@ -48,7 +48,7 @@ test('Settings has the sound, pinyin, English on replies, How to play, save file
   run('pressB()');
   assert.equal(run('document.activeElement.dataset.m'), 'save', 'Back from the save file returns to Settings');
   run('pressB()');
-  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'settings'], 'B from Settings goes back to the menu');
+  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'wardrobe', 'settings'], 'B from Settings goes back to the menu');
   assert.equal(run('document.activeElement.dataset.m'), 'settings');
 });
 

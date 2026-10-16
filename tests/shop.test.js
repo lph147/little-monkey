@@ -39,9 +39,14 @@ test('the 老板 shows ! with something to teach, and ? once you can afford the 
   assert.equal(bubble({areas: {1: area({bought: ['头带']})}, w: {'老板': seen(), '头带': seen()}, peaches: 10}), '', 'already bought');
 });
 
-test('your monkey wears the headband once you have bought it', () => {
-  assert.equal(play({areas: {1: area()}}).run('wearing()'), false);
-  assert.equal(play({areas: {1: area({bought: ['头带']})}}).run('wearing()'), true);
+test('buying the headband puts it on, and it stays in your wardrobe', async () => {
+  const game = play({areas: {1: area()}, peaches: 10, w: {'头带': {lv: 1, due: 0, ok: 0}}});
+  assert.equal(game.run("wearing('头带')"), false);
+  assert.equal(await buyIt(game, 'AREA.shop.items.find(i => i.item === "头带")'), true);
+  assert.equal(game.run("wearing('头带')"), true);
+  assert.deepEqual(get(game, 'S.wardrobe.owned'), ['头带']);
+  const older = loadGame({save: {version: 11, started: true, areas: {1: area({bought: ['头带']})}}});
+  assert.equal(older.run("wearing('头带')"), true, 'a save from before the wardrobe still wears it');
 });
 
 test('a version 6 save is converted with nothing bought yet', () => {
