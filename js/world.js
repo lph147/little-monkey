@@ -88,10 +88,14 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
 async function replyWith(best){
   if (lvl(best) === 0) await showNotice(best);
   const choices = shuffle([best, ...shuffle(PHRASES.filter(p => p !== best && lvl(p) >= 1)).slice(0, 2)]);
-  const me = speaker('player'), said = await chooseReply(me, choices), fits = said === best;
+  await iSay(await chooseReply(speaker('player'), choices), best);
+}
+// Your monkey says a phrase. If it's the one that fits (best), it counts as using it; if not, the game says which fits.
+async function iSay(said, best = said){
+  const fits = said === best;
   if (fits){ const r = rec(best); r.used = 1; r.lv = 4; gainXP(XP.right); addToday(best); save(); }
   const en = WORDS[said].en.split(',')[0];
-  await showDialog(me, {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
+  await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
 }
 async function runSteps(steps, who){ for (const s of steps) await STEPS[Object.keys(s).find(k => STEPS[k])](s, who); }
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); }
@@ -135,11 +139,12 @@ async function shop(face){   // the area's shop: what it sells, and buying it by
   const food = sh.items.filter(i => i.eat && S.bag[i.item]).map(i => `${S.bag[i.item]} ${esc(wz(i.item))}`);
   const i = await new Promise(res => {   // labels in Chinese only, so browsing is reading practice
     openCard(`${face}<p class="prompt">You have ${S.peaches} 🍑${food.length ? ' and ' + food.join(', ') : ''}.</p>
-      <div class="actions"><button class="btn" data-a="no" data-b>Not now</button>${items.map((it, n) => `<button class="btn ${n ? '' : 'primary'}" data-n="${n}" data-label="Choose">${it.item} · 🍑 ${it.price}</button>`).join('')}</div>`);
+      <div class="actions"><button class="btn" data-a="no" data-b data-label="${sh.no || 'Not now'}">${sh.no ? sh.no + (S.replyEn ? ' · ' + esc(WORDS[sh.no].en.split(',')[0]) : '') : 'Not now'}</button>${items.map((it, n) => `<button class="btn ${n ? '' : 'primary'}" data-n="${n}" data-label="Choose">${it.item} · 🍑 ${it.price}</button>`).join('')}</div>`);
     on('[data-a=no]', () => { closeCard(); res(null); });
     sheet.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { closeCard(); res(items[+b.dataset.n]); });
   });
   if (i) await buy(i, face);
+  else if (sh.no){ if (lvl(sh.no) === 0) await showNotice(sh.no); await iSay(sh.no); }   // you say 我不要
 }
 async function buy(i, face){   // buying something from the shop by asking for it. Gives true if you bought it.
   const sh = AREA.shop;

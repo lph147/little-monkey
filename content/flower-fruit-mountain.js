@@ -304,7 +304,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // (see its characters, pick its picture) and 'hear' (hear a word, pick its characters, with no
   // pictures). A word's questions get harder as you know it better, but only up to the kinds listed
   // here. Picking characters by sound is too hard for a first day, so 'hear' waits for a later area.
-  questions: ['listen', 'read'],
+  // 'build' means an animal's last question is sometimes building a sentence you've built before.
+  questions: ['listen', 'read', 'build'],
 
   // What the characters say. The English shows under a sentence the first time you see it.
   lines: {

@@ -29,8 +29,9 @@ function pictureQ({head, body, options, answerIdx, word, type, text, onShow, onA
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 3;
 const canWild = () => matches(AREA.animalsAppear) && canEncounter();   // can animals jump out of their hiding place yet?
-// The kind of question to ask about w: harder as you know it better, but only the kinds this area asks
+// The kind of picture question to ask about w: harder as you know it better, but only the kinds this area asks
 // (its questions list). Caught: listen. Recognised: read. Read or Used: hear and read, or a mix of read and listen.
+const BUILD_CHANCE = 0.3;   // how often an animal's last question is building a sentence
 function questionType(w){
   const L0 = lvl(w), asks = t => AREA.questions.includes(t);
   const want = L0 <= 1 ? 'listen' : L0 === 2 ? 'read'
@@ -49,6 +50,9 @@ async function encounter(foe){
   const targets = shuffle(pool.slice(0, 5)).slice(0, 3);
   let score = 0;
   for (let i = 0; i < targets.length; i++){
+    // Sometimes, in an area that asks them, the last question is building a sentence you've built before.
+    const b = AREA.questions.includes('build') && i === targets.length - 1 && Math.random() < BUILD_CHANCE ? practiceSentence() : null;
+    if (b){ if ((await buildRound(b, img)).first) score++; continue; }
     const w = targets[i], type = questionType(w);
     const others = shuffle(picWords().filter(x => x !== w && lvl(x) >= 1));   // only words you have already met
     const opts = shuffle([w].concat(others.slice(0, 2)));

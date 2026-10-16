@@ -237,11 +237,11 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Questions get harder after two right answers in a row; no characters-only questions on Flower Fruit Mountain
   - [x] Pictures for 瀑布, 老板 and 头带; 我 and 要 practised by building 我要 sentences at the practice post
   - [x] A short story at the waterfall from sentences you've met, with gap-filling picture questions
-- [ ] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
+- [x] Reply in Chinese: reply moments with Area 1's phrases, a Phrases page, more 我要 and 我不要 building, and Build questions in encounters
   - [x] Reply choices in the speech box (你好, 谢谢, 不客气, 对不起 and 没关系, 再见), with Chinese, pinyin and English
   - [x] Settings, English on replies (on to start with)
   - [x] Phrases as their own collection, with a Phrases tab in the Word Scroll
-  - [ ] 我不要 at the shop, and sentence-building questions in animal encounters
+  - [x] 我不要 at the shop, and sentence-building questions in animal encounters
 - [ ] The first-day story: the old monkey's purpose for the baby, a book of firsts, morning and sleep in the cave with a summary
 - [ ] Wardrobe: a 衣服 page with the 头带 and a flower (戴), with a new save version
 - [ ] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides

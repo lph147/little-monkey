@@ -143,7 +143,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 对不起 | duìbuqǐ | sorry |  |
 | 没关系 | méi guānxi | that’s OK |  |
 | 再见 | zàijiàn | goodbye |  |
-| 我不要 | wǒ bú yào | I don’t want it, no thanks |  |
+| 我不要 | wǒ bú yào | no thanks, I don’t want it |  |
 
 ### Words only heard in sentences
 

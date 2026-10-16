@@ -93,3 +93,29 @@ test('the arrows move between choices and A chooses; B doesn\'t choose', async (
   await tick();
   assert.ok(t.box.querySelector(`.tok.teach[data-t="${picked}"]`), 'A said the chosen one');
 });
+
+test('at the shop, 我不要 turns everything down: taught the first time, then your monkey says it', async () => {
+  const t = replyGame({'老板': {lv: 1, due: 0, ok: 0}}, {areas: {1: {elder: 2}}});
+  t.run("showDialog = async () => {}; globalThis.__said = []; iSay = async p => { __said.push(p); }; shop(speaker('boss')).then(() => { __done = true; })");
+  await tick();
+  const no = t.sheet.querySelector('[data-a=no]');
+  assert.match(no.textContent, /我不要 · no thanks/);
+  no.click();
+  await tick();
+  assert.match(t.sheet.textContent, /我不要/, 'a new-word card for 我不要');
+  t.run('pressA()');
+  await tick();
+  assert.deepEqual(JSON.parse(t.run('JSON.stringify(__said)')), ['我不要']);
+  assert.equal(t.run('__done'), true);
+});
+
+test('an animal\'s last question is sometimes building a sentence you know', async () => {
+  const w = Object.fromEntries(['石头', '山', '树', '花', '我', '要', '吃', '桃子'].map(x => [x, {lv: 1, due: 0, ok: 0}]));
+  const t = replyGame(w);
+  t.run(`Math.random = () => 0; globalThis.__built = []; tiles = async (who, target) => { __built.push(target.join('')); return true; };
+    pictureQ = async () => true; infoBox = async () => {};
+    encounter({id:'fox', hz:'狐狸', img:'', wild:true}).then(won => { globalThis.__won = won; __done = true; })`);
+  for (let i = 0; i < 5; i++) await tick();
+  assert.deepEqual(JSON.parse(t.run('JSON.stringify(__built)')), ['我要吃桃子'], 'the last question built 我要吃桃子');
+  assert.equal(t.run('__won'), true, 'built right first time, it counts as a right answer');
+});
