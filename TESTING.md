@@ -41,14 +41,14 @@ The save on your phone belongs to this address, so it is separate from saves any
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.
-- [ ] If words are due for review, the title screen says how many (after "Welcome back"). If your device has no Chinese voice, a red note under it explains how to add one.
+- [ ] If words are due for review, the title screen says how many (after "Welcome back"). If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). Before you start, the header shows only 小猴子: no level, shells, word count or Menu.
 - [ ] Continue puts you back where you left off, with the same level, shells (a pixel shell) and word count in the header.
 - [ ] The header shows your level (Lv 1 to start). The menu shows it with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] On a phone held upright, the game screen is taller than it is wide (it shows up to 14 rows of the map instead of 10), and while you play the whole console fits without scrolling. On a computer it shows 10 rows.
 - [ ] The task box under the screen shows one task. With more than one, "+2 more" (and so on) opens all your tasks with the area checklist; B comes back to the game. A new task appears first, marked New.
 - [ ] Talking to the old monkey: the line appears in a speech box across the bottom of the game screen, and you and the old monkey stay in sight above it (the map only slides up if one of you would be covered). The line is spoken, pinyin shows over every word, and tapping a word shows its meaning at the bottom of the box (without moving on). 🔊 says it again. A, B or the green ▼ moves on; the arrows and Menu do nothing until the talk is over.
-- [ ] Replies: after the old monkey's 你好 (and in other places, such as after a monkey's 谢谢你), "Your reply" shows 2 or 3 phrases, each with Chinese, pinyin and English. Tapping one (or the arrows and A) makes your monkey, 小猴子 (You), say it. Choosing a phrase that doesn't fit is fine: a note says which fits best. B doesn't choose. A phrase you haven't learned yet is taught on its own card first.
+- [ ] Your very first reply, after the old monkey's 你好, says "Now you say it" with just 你好 to say. After that (such as after a monkey's 谢谢你), "Your reply" shows 2 or 3 phrases, each with Chinese, pinyin and English. Tapping one (or the arrows and A) makes your monkey, 小猴子 (You), say it. Choosing a phrase that doesn't fit is fine: a note says which fits best. B doesn't choose. A phrase you haven't learned yet is taught on its own card first.
 - [ ] At the 老板's stall, the button for not buying anything says 我不要 · no thanks. The first time, a card teaches 我不要; then your monkey says it.
 - [ ] Sometimes an animal's last question is a sentence you know with a word missing (such as 我＿吃桃子。). Choosing right counts as a right answer.
 - [ ] Menu, Settings, English on replies Off: reply choices show only Chinese and pinyin.
@@ -66,7 +66,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **Start**
 - [ ] Press Start. The opening plays: each caption is spoken, Next moves on, the stone cracks and the monkey is born. The last caption has Begin. (Skip intro also works. On a computer, Space or Enter presses Start, Next and Begin.)
-- [ ] How to play has two pages; Got it closes it.
+- [ ] How to play has two pages; Next, Back and Got it are always in sight at the bottom of the card, even on a small phone. Got it closes it.
 - [ ] A new-word card for 石头 (stone) appears, with the English showing. Then a message says the old monkey is standing by your stone.
 
 **The old monkey**
@@ -100,7 +100,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **Friends and animals**
 - [ ] The little monkey (in the south meadow, on the path near the bottom right, below the 老板's stall) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.
-- [ ] In the word game, the questions use only words you've learned (pictures and wrong answers too). 2 or more right makes a friend; you get a 🐚 per right answer.
+- [ ] In the word game, the questions use only words you've learned (pictures and wrong answers too). A question is never about the animal (or monkey) you're playing with. Each right answer fills a red heart; 2 or more makes a friend, and you get a 🐚 per right answer.
 - [ ] Once the old monkey has told you about animals, a patch of tall grass rustles now and then: an animal is hiding there. Step onto it and the animal jumps out with a ! over your head. A few steps after meeting one, another hides.
 - [ ] South of the meadow (down the path through the gap in the trees), the squirrel sits up a big tree and the goat stands on the cliffs. Face one: A says Meet.
 - [ ] Little birds land on the grass near you now and then and hop about for most of a minute. Walk up and face one: A says Look and shows 鸟 (bird), then it flies off. Stepping right onto one also makes it fly off.
@@ -136,7 +136,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Menu, 衣服 Wardrobe shows what you own, with "Wearing" on what's on. Tapping something you're not wearing closes the menu: the first time, a card teaches 戴 (wear); then your monkey says 我戴花 (or 我戴头带) and is wearing it on the map. Tapping something you're wearing takes it off.
 
 **The old monkey**
-- [ ] After the old monkey's first 你好, a message says he teaches every baby monkey the names of everything on the mountain.
+- [ ] After the old monkey's first 你好 and your reply, the speech box says (in italics) that he teaches every baby monkey the names of things on the mountain, and waits for A before his next line.
 
 **The cave door**
 - [ ] The cave door is at the top of the short path on the far left. Stand below it, face up and press A. It teaches 洞 (cave).

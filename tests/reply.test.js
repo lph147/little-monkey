@@ -121,3 +121,15 @@ test('an animal\'s last question is sometimes a sentence you know with a word mi
   assert.ok(['我要吃桃子', '我要花'].includes(built[0]), `${built[0]} should be a sentence you know`);
   assert.equal(t.run('__won'), true, 'filled right, it counts as a right answer');
 });
+
+test('your very first reply, with only one phrase to say, asks you to say it instead of offering a choice', async () => {
+  const t = replyGame(know('你好'));
+  t.start('你好');
+  await tick();
+  assert.deepEqual(t.choices(), ['你好']);
+  assert.equal(t.box.querySelector('.label').textContent, 'Now you say it');
+  const two = replyGame(know('你好', '再见'));
+  two.start('再见');
+  await tick();
+  assert.equal(two.box.querySelector('.label').textContent, 'Your reply');
+});

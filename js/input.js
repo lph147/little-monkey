@@ -30,7 +30,7 @@ function update(now){
   if (d) tryStep(d, now);
 }
 async function pressA(){
-  if (mode === 'title'){ const t = $('#titleButtons .primary'); if (t) t.click(); return; }
+  if (mode === 'title' && modal.hidden){ const t = $('#titleButtons .primary'); if (t) t.click(); return; }   // (a card on the title screen: its button)
   if (mode === 'intro'){ const bb = $('#beginBtn') || $('#nextBtn'); if (bb) bb.click(); return; }
   if (!modal.hidden){
     const f = document.activeElement, inMenu = !!sheet.querySelector('.menu');

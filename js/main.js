@@ -72,6 +72,7 @@ function buttonLabels(now){
 }
 let lastLabels = '';
 function updateCtx(now){
+  $('.app').classList.toggle('front', mode === 'title' || mode === 'intro');   // the header's stats and Menu wait until you play
   const [a, bl] = buttonLabels(now), key = a + '|' + bl;
   if (key === lastLabels) return;
   lastLabels = key; $('#aLabel').textContent = a; $('#bLabel').textContent = bl;
@@ -103,11 +104,13 @@ function updateHUD(){
     if (more) more.onclick = () => { if (canAct()){ SFX.blip(); tasksPage(() => closeCard()); } };
   }
 }
-function titleText(){   // the text box on the title screen, with a warning if there's no Chinese voice
+function titleText(){   // the text box on the title screen, with a short warning if there's no Chinese voice (and how to fix it on a card)
   const problem = voiceProblem();
   const due = dueWords().length;
   tb.innerHTML = `<p id="goal">${S.started ? 'Welcome back, little monkey.' + (due ? ` ${due} ${due === 1 ? 'word is' : 'words are'} due for review: practise at the practice post, or meet animals in the tall grass.` : '') : 'Turn your sound on. Every word is spoken aloud using your device’s Chinese voice.'}</p>`
-    + (problem ? `<p class="small warn">${VOICE_HELP[problem]}</p>` : '');
+    + (problem ? `<p class="small warn">${VOICE_SHORT[problem]} <button class="linkbtn" id="voiceHelp">How to fix it</button></p>` : '');
+  const vh = $('#voiceHelp');
+  if (vh) vh.onclick = () => { openCard(`<p class="label">Hearing Chinese</p><p>${VOICE_HELP[problem]}</p><div class="actions"><button class="btn primary" data-a="ok" data-b>OK</button></div>`); on('[data-a=ok]', closeCard); };
 }
 try { speechSynthesis.addEventListener('voiceschanged', () => { if (mode === 'title') titleText(); }); } catch(e) {}   // voices can arrive late
 function toTitle(){
@@ -143,7 +146,9 @@ function howToPlay(){
        <p class="small">Answers and words in sentences are simply tapped.</p>`,
       `<p class="label">How to play · 2 of 2</p>
        <p>You’ll hear lots of Chinese, like a baby monkey listening to the forest. <b>You don’t need to understand or remember all of it.</b></p>
-       <div class="example"><div class="line">${[['我','learn'],['渴','listen'],['了','listen'],['。',''],['我','learn'],['要','learn'],['喝','learn teach'],['水','listen'],['！','']].map(([t,c]) => c ? `<button class="tok ${c}" data-t="${t}"><ruby>${t}<rt class="${S.pinyin ? '' : 'hid'}">${info(t)[0]}</rt></ruby></button>` : `<span class="punct">${t}</span>`).join('')}</div></div>
+       <div class="example">${lineOf(['我','渴','了','。','我','要','喝','水','！'], t => {
+         const c = {'我':'learn', '要':'learn', '喝':'learn teach'}[t] || 'listen';
+         return PUNCT.has(t) ? `<span class="punct">${t}</span>` : `<button class="tok ${c}" data-t="${t}"><ruby>${t}<rt class="${S.pinyin ? '' : 'hid'}">${info(t)[0]}</rt></ruby></button>`; })}</div>
        <ul class="howto">
          <li><span class="dot learn"></span><span><b>Green words</b> are ones you’ve already learned.</span></li>
          <li><span class="dot teach"></span><span>A <b>bold green word</b> is the new one you’re learning right now.</span></li>

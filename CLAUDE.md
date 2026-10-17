@@ -52,7 +52,7 @@ I'm new to coding. Please:
 - **B** = back or dismiss only (blue B badge on the button it presses). B never opens the menu.
 - **Menu** is its own button at the top (keyboard: M or Esc).
 - A/B badges appear only on a card's bottom action buttons and in the menu, never on things you tap directly (answers, words in sentences). The A badge is always on a button's top-left corner and the B badge on its top-right, tucked in so they never overlap a neighbouring button.
-- Messages appear in a box at the bottom of the game screen; tasks live in the text box below the screen.
+- Messages appear in a box at the bottom of the game screen (in a conversation, they wait in the speech box until A); tasks live in the text box below the screen.
 
 ## Chinese accuracy
 Lines in the game should be natural, simple Mandarin. Flag anything you're unsure of so I can get it checked by a native speaker.

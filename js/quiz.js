@@ -27,7 +27,8 @@ function pictureQ({head, body, options, answerIdx, word, type, text, onShow, onA
   });
 }
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
-const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 3;
+// An animal asks about 3 words you've caught, never its own name (that's on the screen), so you need 4.
+const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 4;
 const canWild = () => matches(AREA.animalsAppear) && canEncounter();   // can animals jump out of their hiding place yet?
 // The kind of picture question to ask about w: harder as you know it better, but only the kinds this area asks
 // (its questions list). Caught: listen. Recognised: read. Read or Used: hear and read, or a mix of read and listen.
@@ -46,7 +47,7 @@ async function encounter(foe){
   const nameHTML = () => foe.name
     ? `<div class="spk-zh">${foe.name.zh} <span class="spk-py">${foe.name.py}</span></div><div class="spk-en">${foe.name.en}</div>`
     : `<div class="spk-zh">${an} <span class="spk-py">${WORDS[an].py}</span>${foe.justTaught ? '' : (showEn ? ` <span class="small">${esc(WORDS[an].en)}</span>` : ' <button class="engbtn" data-a="foeen">English</button>')}</div>`;
-  const pool = picWords().filter(w => lvl(w) >= 1).sort((a,b) => (rec(a).due - rec(b).due) || (lvl(a) - lvl(b)));
+  const pool = picWords().filter(w => w !== an && lvl(w) >= 1).sort((a,b) => (rec(a).due - rec(b).due) || (lvl(a) - lvl(b)));
   const targets = shuffle(pool.slice(0, 5)).slice(0, 3);
   let score = 0;
   for (let i = 0; i < targets.length; i++){
@@ -56,7 +57,7 @@ async function encounter(foe){
     const w = targets[i], type = questionType(w);
     const others = shuffle(picWords().filter(x => x !== w && lvl(x) >= 1));   // only words you have already met
     const opts = shuffle([w].concat(others.slice(0, 2)));
-    const hearts = `<div class="hearts" aria-label="${score} of 3 friendship">${[0,1,2].map(k => `<span style="${k < score ? '' : 'opacity:.22;filter:grayscale(1)'}">🐚</span>`).join('')}</div>`;
+    const hearts = `<div class="hearts" aria-label="Friendship: ${score} of 3">${[0,1,2].map(k => heartHTML(k < score)).join('')}</div>`;
     const head = `<div class="arena"><div><div class="name">${nameHTML()}</div>${hearts}</div>${img}</div>`;
     let body;
     if (type === 'listen') body = `<p class="prompt">Listen. Which picture is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;

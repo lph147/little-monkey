@@ -98,3 +98,29 @@ test('while someone is talking you can\'t walk off or open the menu', () => {
   t.game.key(' ');
   assert.equal(t.talking(), false, 'Space moves on');
 });
+
+test('a message in a conversation waits in the speech box, so the next line can\'t cover it', async () => {
+  const t = talkGame();
+  t.run("globalThis.__done = false; runSteps([{message: 'The old monkey teaches every baby monkey.'}, {say: 'go'}], 'elder').then(() => { __done = true; })");
+  assert.equal(t.box.hidden, false, 'it shows in the speech box');
+  assert.match(t.box.querySelector('.narration').textContent, /teaches every baby monkey/);
+  assert.equal(t.game.el('#saybox').hidden, true, 'not as a message that the next line would hide');
+  t.run('pressA()');
+  await tick();
+  assert.ok(t.box.querySelector('.tok'), 'A moves on to the next line');
+});
+
+test('a message outside a conversation is a message at the bottom of the screen', () => {
+  const t = talkGame();
+  t.run("runSteps([{message: 'A rumble from the mountain!'}])");
+  assert.equal(t.box.hidden, true);
+  assert.match(t.game.el('#saybox').innerHTML, /A rumble/);
+});
+
+test('punctuation stays on the same line as the word before it', () => {
+  const t = talkGame();
+  t.say('hungry');
+  const marks = t.box.querySelectorAll('.punct');
+  assert.ok(marks.length >= 2);
+  for (const p of marks) assert.ok(p.parentElement.classList.contains('nb'), `${p.textContent} is kept with its word`);
+});

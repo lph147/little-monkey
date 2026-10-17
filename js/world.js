@@ -85,7 +85,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
-  message(s){ toast(fill(s.message)); }
+  async message(s, who){ if (who) await showNarration(fill(s.message)); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
 };
 // You reply: choose what to say from the phrases you know, with best the one that fits (taught on its
 // own card the first time). Any choice is fine: you say it, and if another fits better the game says

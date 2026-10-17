@@ -73,6 +73,11 @@ AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
 const SHELL = ["................","......oooo......","....oowrrwoo....","...owrwrrwrwo...","..owrwwrrwwrwo..",".owrwwwrrwwwrwo.",".orwwwwrrwwwwro.",".owrwwwrrwwwrwo.","..owrwwrrwwrwo..","...owrwrrwrwo...","....owrrrrwo....",".....owrrwo.....","....ooowwooo....","....owwoowwo....","....oooooooo....","................"];   // a scallop shell
 let shellImg = null;
 const money = html => String(html).replace(/🐚/g, () => shellImg || (shellImg = `<img class="money" alt="shells" src="${sprite(SHELL, {o:'#8A5A3A', w:'#F7E7CF', r:'#D9A77C'}).toDataURL()}">`));
+// A pixel heart for an animal's friendship in an encounter: red once won, grey until then.
+const HEART = [".oo...oo.", "ohho.orro", "ohrrrrrro", "orrrrrrro", ".orrrrro.", "..orrro..", "...oro...", "....o...."];
+const heartImg = {};
+const heartHTML = on => heartImg[on] || (heartImg[on] = `<img class="heart${on ? ' on' : ''}" alt="" src="${sprite(HEART, on
+  ? {o:'#6A1C1C', r:'#E0443C', h:'#FFB3AB'} : {o:'#7C7470', r:'#CFC8C2', h:'#ECE7E2'}).toDataURL()}">`);
 // A word's picture: its pixel sprite from content/sprites.js, or its emoji until it has one.
 const picCache = {};
 function picHTML(w){

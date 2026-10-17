@@ -378,6 +378,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //             (taught on its own card the first time). Any choice is fine; the game says which fits best.
   //   wordGame  offer a word game. ask: the question; word: who you're playing with;
   //             notYet: the message if you don't know enough words yet
+  //   message   a line of English, such as what's happening: in a conversation it waits in the speech
+  //             box until you press A; anywhere else it's a message at the bottom of the screen
   // In an if: elder:0 checks what the area remembers; new:'猴子' is true while you don't know
   // a word yet, knows:'朋友' once you do; a counter, such as newWords:{below:4} or {atLeast:4}.
   talk: {
@@ -386,7 +388,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'hi', teach:'你好'},
         {newWord:'你好'},
         {reply:'你好'},
-        {message:'The old monkey is the oldest in the troop. He teaches every baby monkey the names of everything on the mountain, and today it’s your turn.'},
+        {message:'The old monkey teaches every baby monkey the names of things on the mountain. Today it’s your turn!'},
         {say:'go', hint:'Things that sparkle have a word to learn. Face them and press A. Learn 4 words, then come back and talk to me again.'},
         {set:{elder:1}}
       ]},

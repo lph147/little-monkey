@@ -141,7 +141,7 @@ This stops anyone farming easy words for XP, and keeps the reward pointed at wha
 
 ## Encounters and question types
 
-Encounters are the game's battles: you win by answering, and every answer is a chance to meet a word again. Questions only ever use words you've already caught.
+Encounters are the game's battles: you win by answering, and every answer is a chance to meet a word again. Questions only ever use words you've already caught. An animal never asks about its own name, which is on the screen, so animals wait until you've caught 4 words with pictures. Each right answer fills one of three hearts: two hearts make a friend.
 
 | Question | You get | You choose | Trains |
 | --- | --- | --- | --- |
@@ -157,7 +157,7 @@ The question type follows the word's mastery level, so new words start easy and 
 
 Every screen should take as few presses as possible, so time goes on Chinese rather than menus.
 
-- **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story.
+- **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story. A line of story in a conversation (such as what the old monkey does for baby monkeys) waits in the speech box too, so the next line can't cover it. A card's buttons always stay in sight at its bottom, however long the card.
 - **The menu** has four big tiles, each with an icon, Chinese and English: 词 Word Scroll, 任务 Tasks, 朋友 Friends, 衣服 Wardrobe. A Settings page holds music, sound effects, pinyin, How to play, export and import, the title screen and reset. The game saves itself, so there's no Save button.
 - **The Word Scroll** is a grid of sprites, with shadows for words you haven't caught and category tabs across the top. Today's words is a filter in it.
 - **On phones** the game screen uses the full height available, and the task box shows the current task with the rest behind "more".
@@ -252,6 +252,8 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [x] 大猴子 Big monkey, in the middle meadow, wants 3 flowers and pays you shells: you pick one from each of 3 patches (no mother: Sun Wukong is born from the stone)
 - [x] Wardrobe: a 衣服 page with the 头带 (戴), with a new save version (a flower from the little monkey was tried and taken out)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
+- [x] A quality review (17 October 2026): a screens gallery (tools/screens.html) and fixes for what a fresh playthrough found: the old monkey's welcome was hidden, an animal could ask about its own name, friendship showed as shells, a one-choice first reply, How to play's hidden buttons, a busy title screen and a long voice warning
+  - [ ] Show mockups of the three bigger changes (fewer words and tips instead of How to play, encounters as a scene, a gentler opening) and build the ones agreed
 - [ ] Playtest Area 1 for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md

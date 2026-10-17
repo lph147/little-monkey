@@ -13,7 +13,13 @@ function tokHTML(t){
   const cls = t === teachWord ? 'learn teach' : (WORDS[t] && lvl(t) >= 1 ? 'learn' : 'listen');
   return `<button class="tok ${cls}" data-t="${esc(t)}"><ruby>${esc(t)}<rt class="${S.pinyin ? '' : 'hid'}">${esc(py)}</rt></ruby></button>`;
 }
-const lineHTML = (toks, teach) => { teachWord = teach || null; const h = `<div class="line">${toks.map(tokHTML).join('')}</div>`; teachWord = null; return h; };
+// A sentence's words in a row that wraps, with each punctuation mark kept on the same line as the word before it.
+function lineOf(toks, html){
+  const out = [];
+  for (const t of toks){ const h = html(t); if (PUNCT.has(t) && out.length) out.push(`<span class="nb">${out.pop()}${h}</span>`); else out.push(h); }
+  return `<div class="line">${out.join('')}</div>`;
+}
+const lineHTML = (toks, teach) => { teachWord = teach || null; const h = lineOf(toks, tokHTML); teachWord = null; return h; };
 function bindTokens(root){
   const g = root.querySelector('.gloss');
   root.querySelectorAll('.tok').forEach(b => b.onclick = () => {
@@ -91,13 +97,29 @@ function showDialog(who, line, opts = {}){
     talkNext = next;
   });
 }
+// A line of the story in the speech box during a conversation, in English, said by no one: such as what
+// the old monkey does for baby monkeys. A moves on, so the next line can't cover it.
+function showNarration(text){
+  return new Promise(res => {
+    talkBox.innerHTML = `<p class="narration">${money(esc(text))}</p>
+      <div class="talkfoot"><span class="spacer"></span><button class="btn primary next" data-a="ok" data-label="Next">▼</button></div>`;
+    talkBox.classList.toggle('again', !talkBox.hidden);
+    talkBox.hidden = false; talkBox.scrollTop = 0;
+    $('#saybox').hidden = true;
+    held = null; queued = null;
+    const next = () => { talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };
+    talkBox.querySelector('[data-a=ok]').onclick = next;
+    talkNext = next;
+  });
+}
 // Your reply: the phrases you could say, each with pinyin, and English unless it's switched off in
 // Settings. Tapping one says it; on a keyboard or the D-pad, move between them and press A. Gives the
-// phrase you chose. The box stays up for your line, which comes next.
+// phrase you chose. The box stays up for your line, which comes next. With only one phrase to say (your
+// very first reply), it isn't a choice: you're asked to say it.
 function chooseReply(who, choices){
   return new Promise(res => {
     let sel = 0;
-    talkBox.innerHTML = `<div class="talkhead">${who}</div><p class="label">Your reply</p>
+    talkBox.innerHTML = `<div class="talkhead">${who}</div><p class="label">${choices.length > 1 ? 'Your reply' : 'Now you say it'}</p>
       <div class="replies">${choices.map((p, i) => `<button class="reply" data-i="${i}"><span class="rzh">${p}</span><span class="rpy">${WORDS[p].py}</span>${S.replyEn ? `<span class="ren">${esc(WORDS[p].en)}</span>` : ''}</button>`).join('')}</div>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
     talkBox.hidden = false; talkBox.scrollTop = 0;

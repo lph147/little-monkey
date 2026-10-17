@@ -13,6 +13,8 @@ test('the title screen warns when the device has no Chinese voice', () => {
   assert.match(title(game), /can’t speak/, 'no speech at all');
   game.run("globalThis.speechSynthesis = {getVoices: () => [{lang: 'en-GB'}, {lang: 'fr-FR'}]}");
   assert.match(title(game), /no Chinese voice/, 'voices, but none Chinese');
+  assert.ok(title(game).length < 400, 'the warning is short, so the controls stay on screen');
+  assert.match(title(game), /id="voiceHelp"/, 'with a button for how to fix it');
   game.run("globalThis.speechSynthesis = {getVoices: () => [{lang: 'en-GB'}, {lang: 'zh-CN'}]}");
   assert.doesNotMatch(title(game), /class="small warn"/, 'a Chinese voice: no warning');
   game.run("globalThis.speechSynthesis = {getVoices: () => []}");
