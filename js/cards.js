@@ -106,7 +106,7 @@ function showDialog(who, line, opts = {}){
     const tip = Object.keys(S.lines).length <= TAP_TIP_LINES, again = !talkBox.hidden;   // again: the box is still up from the last line
     talkBox.innerHTML = `<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       ${lineHTML(line.t, opts.teach)}<div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
-      <div class="talkfoot"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || 'Next')}">${opts.ok ? esc(opts.ok) + ' ' : ''}▼</button></div>`;
+      <div class="talkfoot${tip ? ' tip' : ''}"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || 'Next')}">${opts.ok ? esc(opts.ok) + ' ' : ''}▼</button></div>`;
     talkBox.classList.toggle('again', again);
     talkBox.hidden = false; talkBox.scrollTop = 0;
     $('#saybox').hidden = true;   // the box covers the message spot

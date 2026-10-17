@@ -16,17 +16,38 @@ function fit(){
   // the keyboard help (on a computer).
   const style = el => (window.getComputedStyle ? getComputedStyle(el) : {});
   const px = (s, ...sides) => sides.reduce((n, k) => n + (parseFloat(s[k]) || 0), 0);   // (a missing size counts as 0)
-  const page = style(document.documentElement), app = style($('.app')), con = style($('.console')), edge = style($('.screen')), keys = $('.keys');
-  const roomW = window.innerWidth - px(page, 'paddingLeft', 'paddingRight') - px(app, 'paddingLeft', 'paddingRight')
-    - px(con, 'paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth') - 2 * SIDE_WING - px(edge, 'paddingLeft', 'paddingRight');
-  const roomH = window.innerHeight - px(page, 'paddingTop', 'paddingBottom') - px(app, 'paddingTop', 'paddingBottom')
-    - px(con, 'paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth') - px(edge, 'paddingTop', 'paddingBottom')
-    - (+keys.offsetHeight || 0) - px(style(keys), 'marginTop', 'marginBottom');
-  const w = Math.floor(clamp(Math.min(roomW, roomH * VW / VH), 220, 720)), h = Math.round(w * VH / VW);
+  // Measured twice: the text follows the screen's size (sizeText), and on a computer the keyboard help under
+  // the console changes height with it.
+  let w = 0, h = 0;
+  for (let pass = 0; pass < 2; pass++){
+    const page = style(document.documentElement), app = style($('.app')), con = style($('.console')), edge = style($('.screen')), keys = $('.keys');
+    const roomW = window.innerWidth - px(page, 'paddingLeft', 'paddingRight') - px(app, 'paddingLeft', 'paddingRight')
+      - px(con, 'paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth') - 2 * SIDE_WING - px(edge, 'paddingLeft', 'paddingRight');
+    const roomH = window.innerHeight - px(page, 'paddingTop', 'paddingBottom') - px(app, 'paddingTop', 'paddingBottom')
+      - px(con, 'paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth') - px(edge, 'paddingTop', 'paddingBottom')
+      - (+keys.offsetHeight || 0) - px(style(keys), 'marginTop', 'marginBottom');
+    w = Math.floor(clamp(Math.min(roomW, roomH * VW / VH), 220, 720)); h = Math.round(w * VH / VW);
+    sizeText(h);
+  }
   const dpr = window.devicePixelRatio || 1;
   cv.style.width = w + 'px'; cv.style.height = h + 'px';
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   sc.imageSmoothingEnabled = false;
+}
+// Text and pictures follow the screen's height, so the same layout fits a small phone and a computer: the
+// page's text size (everything in css/game.css sized in rem), from 13px to 18px (16px on a typical Android
+// phone held sideways), and sizes for pictures (--pic-face and so on) that give each of their 16 art pixels
+// a whole number of the screen's real pixels, so they stay sharp.
+function screenSizes(h, dpr = 1){
+  const fs = clamp(h / 20, 13, 18);
+  const art = k => Math.max(16, Math.round(fs * k * dpr / 16) * 16) / dpr;
+  return {fs: +fs.toFixed(1), face: art(1.7), small: art(2), mid: art(3), scene: art(4), big: art(6)};
+}
+function sizeText(h){
+  const root = document.documentElement, s = screenSizes(h, window.devicePixelRatio || 1);
+  if (!root) return;   // (the tests' pretend page has none)
+  root.style.fontSize = s.fs + 'px';
+  for (const k of ['face', 'small', 'mid', 'scene', 'big']) root.style.setProperty('--pic-' + k, s[k] + 'px');
 }
 let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}, advancedTo = 0;
 function frame(now){

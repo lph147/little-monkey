@@ -23,6 +23,23 @@ test('held sideways, the screen is 15 columns by 10 rows, as big as fits between
   assert.ok(desk.w <= 720, 'in a big computer window the screen stops growing');
 });
 
+test('text and pictures follow the screen’s height, and pictures stay sharp', () => {
+  const game = loadGame();
+  const size = (h, dpr = 1) => JSON.parse(game.run(`JSON.stringify(screenSizes(${h}, ${dpr}))`));
+  assert.ok(Math.abs(size(317).fs - 16) < .2, 'an Android phone held sideways: about the usual 16px');
+  assert.ok(size(276).fs < size(317).fs, 'smaller on an iPhone, whose screen is smaller');
+  assert.equal(size(200).fs, 13, 'never smaller than 13px');
+  assert.equal(size(600).fs, 18, 'nor bigger than 18px');
+  for (const [h, dpr] of [[317, 1], [276, 3], [456, 2], [200, 2.625]]){
+    const s = size(h, dpr);
+    for (const k of ['face', 'small', 'mid', 'scene', 'big']){
+      const real = s[k] * dpr / 16;   // the screen's real pixels for each of a picture's 16 art pixels
+      assert.ok(Math.abs(real - Math.round(real)) < 1e-6 && real >= 1, `${k} on a ${h} screen: ${s[k]}px gives each art pixel a whole number of real pixels`);
+    }
+    assert.ok(s.face <= s.small && s.small <= s.mid && s.mid <= s.scene && s.scene <= s.big, 'from small to big');
+  }
+});
+
 test('held upright, a card asks you to turn the phone, and the game waits', () => {
   const game = loadGame({save: {version: 21, started: true}});
   game.run("mode = 'play'");

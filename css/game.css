@@ -2,6 +2,7 @@
   --bg:#DCE9E0; --paper:#F7FBF7; --ink:#1E2B26; --muted:#56655E;
   --jade:#2E7A57; --jade-ink:#FFFFFF; --gold:#D9A21E; --line:#C3D6C9;
   --ok:#2E8B57; --bad:#C2453D; --scrim:rgba(20,35,28,.45);
+  --pic-face:28px; --pic-small:32px; --pic-mid:48px; --pic-scene:64px; --pic-big:96px;   /* picture sizes: fit() sets them from the screen's height */
   --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA; --grille:#8AAA96; --led:#45D16A;
   --btnA:#B8323A; --btnB:#3D6A93;
   --tip:#FFF3B8; --tip-ink:#2A2215;   /* a tip bubble: the same in light and dark, like a sticky note */
@@ -204,34 +205,40 @@ rt.hid{visibility:hidden}
 .saybox{position:absolute;left:14px;right:14px;bottom:14px;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:8px 12px;font-size:.95rem;line-height:1.4;animation:rise .16s ease-out;pointer-events:auto}
 .saybox[hidden]{display:none}
 /* the speech box: what characters say, across the bottom of the map (the view moves up so you stay in sight) */
-.talk{position:absolute;left:8px;right:8px;bottom:8px;max-height:calc(100% - 64px);overflow:auto;overscroll-behavior:contain;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:6px 10px 8px;z-index:5;animation:rise .16s ease-out}
+/* The speech box: kept short, so the map and the characters stay in sight. The name on one line, then the
+   sentence, then its English with Next beside it (a grid: everything spans both columns but those two). */
+.talk{position:absolute;left:6px;right:6px;bottom:6px;max-height:calc(100% - 2.5rem);overflow:auto;overscroll-behavior:contain;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:.3rem .6rem .45rem;z-index:5;animation:rise .16s ease-out;
+  display:grid;grid-template-columns:1fr auto;column-gap:.6rem;align-items:end}
+.talk > *{grid-column:1 / -1}
 .talk[hidden]{display:none}
 .talk.again{animation:none}
 @media (prefers-reduced-motion: reduce){.talk{animation:none}}
 .talkhead{display:flex;align-items:center;gap:6px}
-.talkhead .speaker{gap:8px;font-size:.9rem}
-.talkhead .portrait{width:28px;height:28px}
-.talkhead .spk{display:flex;flex-wrap:wrap;column-gap:8px;align-items:baseline}
+.talkhead .speaker{gap:.4rem;font-size:.9rem}
+.talkhead .portrait{width:var(--pic-face);height:var(--pic-face)}
+.talkhead .spk{display:flex;flex-wrap:nowrap;column-gap:.5rem;align-items:baseline}
 .talkhead .spk-zh{font-size:1rem}
-.talkhead .spk-en{font-size:.85rem}
+.talkhead .spk-py{font-size:.8rem}
+.talkhead .spk-en{font-size:.8rem}
 .talkhead .spacer{flex:1}
-.tbtn{font-family:var(--pixel);font-size:.85rem;border:2px solid var(--line);background:var(--paper);border-radius:4px;padding:2px 8px;min-height:32px;min-width:38px}
-.talk .line{margin:2px 0 4px}
-.talk .tok,.talk .punct{font-size:1.4rem}
-.talk .sentence-en{font-size:.92rem;margin:2px 0 4px;padding:2px 8px}
-.talk .hintline{margin:2px 0 0}
-.talkfoot{display:flex;align-items:center;gap:8px;margin-top:4px}
-.talkfoot .gloss{flex:1;min-height:0;margin:0;font-size:.9rem}
-.talk .label{margin:4px 0 2px}
-.narration{margin:4px 2px 2px;font-size:1rem;line-height:1.45;font-style:italic}
+.tbtn{font-family:var(--pixel);font-size:.75rem;border:2px solid var(--line);background:var(--paper);border-radius:4px;padding:0 .5rem;min-height:2rem;min-width:2.4rem}
+.talk .line{margin:.05rem 0 .2rem}
+.talk .tok,.talk .punct{font-size:1.35rem}
+.talk .sentence-en{grid-column:1;font-size:.85rem;margin:0;padding:.15rem .6rem}
+.talk .hintline{margin:.2rem 0 0}
+.talkfoot{grid-column:2;display:flex;align-items:center;gap:8px}
+.talkfoot.tip{grid-column:1 / -1;margin-top:.2rem}   /* with "Tap any word…" (your first few lines), Next goes under the English */
+.talkfoot .gloss{flex:1;min-height:0;margin:0;font-size:.85rem}
+.talk .label{font-size:.8rem;margin:.2rem 0 .1rem}
+.narration{margin:.2rem 2px .1rem;font-size:.95rem;line-height:1.4;font-style:italic}
 .replies{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:6px;margin:2px 0 2px}
-.reply{display:flex;flex-direction:column;align-items:center;padding:6px 4px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);line-height:1.2}
+.reply{display:flex;flex-direction:column;align-items:center;padding:.3rem .2rem;border:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);line-height:1.2}
 .reply:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 .reply.sel{outline:3px solid var(--gold);outline-offset:1px}
-.rzh{font-family:var(--text);font-size:1.4rem;font-weight:500}
+.rzh{font-family:var(--text);font-size:1.25rem;font-weight:500}
 .rpy{font-size:.8rem;color:var(--muted)}
 .ren{font-size:.82rem;color:var(--jade);text-align:center}
-.talk .next{min-height:34px;padding:3px 14px;position:relative}
+.talk .next{min-height:2.1rem;padding:.1rem .9rem;font-size:.9rem;position:relative}
 .round.ready{box-shadow:0 4px 0 rgba(0,0,0,.3),0 0 0 4px var(--gold)}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}
 .sheet .menu button.navsel{outline:3px solid var(--gold);outline-offset:2px}

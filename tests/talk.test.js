@@ -71,12 +71,14 @@ test('tapping a word shows its meaning; the tip about it only shows for your fir
   const t = talkGame();
   t.say('go');
   assert.match(t.box.querySelector('.gloss').textContent, /Tap any word/);
+  assert.ok(t.box.querySelector('.talkfoot').classList.contains('tip'), 'with the tip, Next goes on its own row under the English');
   t.box.querySelector('.tok[data-t="去"]').click();
   assert.match(t.box.querySelector('.gloss').textContent, /去 qù · to go/);
   const lines = Object.fromEntries(['a', 'b', 'c', 'd', 'e'].map(k => [k, 1]));   // five lines seen already
   const later = talkGame({version: 8, started: true, lines});
   later.say('go');
   assert.equal(later.box.querySelector('.gloss').textContent, '', 'no tip once you\'ve seen a few lines');
+  assert.equal(later.box.querySelector('.talkfoot').classList.contains('tip'), false, 'and Next sits beside the English');
 });
 
 test('a hint shows in the box, and a different button text', () => {
