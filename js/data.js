@@ -23,7 +23,7 @@ const PUNCT = new Set(['！','。','，','？']);
 const L = {};                         // what the characters say
 for (const [k, line] of Object.entries(AREA.lines)) L[k] = {t:toks(line.zh), en:line.en};
 const STORY = AREA.story.map(s => ({t:toks(s.zh), en:s.en, pic:s.pic}));
-const CAPS = AREA.intro.map(c => ({t:c.at, zh:c.zh, py:c.py, en:c.en}));
+const CAPS = AREA.intro.map(c => ({t:c.at, en:c.en, word:c.word}));   // the opening's captions
 const DAY = 86400000, INTERVALS = [1,3,7,21];
 
 const MAP = AREA.map;

@@ -348,9 +348,11 @@ test('bubbles are for characters, and show ! or ?', () => {
   }
 });
 
-test('intro captions are in time order, with Chinese, pinyin and English', () => {
+test('intro captions are in time order, in English, each with at most one word, a word you can meet here', () => {
   AREA.intro.forEach((c, i) => {
-    assert.ok(c.zh && c.py && c.en, `intro caption ${i + 1} needs zh, py and en`);
+    assert.ok(c.en, `intro caption ${i + 1} needs its English (en)`);
+    assert.ok(!c.zh && !c.py, `intro caption ${i + 1}: the opening is told in English, with one word (word), not a Chinese sentence`);
+    if (c.word) assert.ok(BANK[c.word] && BANK[c.word].area === AREA.number, `intro caption ${i + 1}: ${c.word} isn't a word you can collect in this area`);
     if (i) assert.ok(c.at > AREA.intro[i - 1].at, `intro caption ${i + 1} comes before the one above it`);
   });
 });

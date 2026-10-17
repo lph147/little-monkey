@@ -157,6 +157,7 @@ The question type follows the word's mastery level, so new words start easy and 
 
 Every screen should take as few presses as possible, so time goes on Chinese rather than menus.
 
+- **The opening** is told in English, so a beginner can follow the story before learning any Chinese. Four captions each show one word you'll meet on the mountain (山, 石头, 猴子 and 你好), in Chinese, pinyin and English, said aloud; tap it to hear it again. The words aren't caught yet: that happens on the mountain. The caption sits over the sky at the top of the picture, so the page keeps its size.
 - **Tips, not instructions** (decided 17 October 2026). A new game starts straight away, with no page of How to play. Instead a bubble points at a control the first time you need it: the D-pad (walking), A (talking, then looking), a grey word in a sentence (just for listening), and the Menu once you have a few words. Each shows once. How to play stays in Settings. Hints are one line.
 
 - **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story. A line of story in a conversation (such as what the old monkey does for baby monkeys) waits in the speech box too, so the next line can't cover it. A card's buttons always stay in sight at its bottom, however long the card.
@@ -258,7 +259,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Mockups of the three bigger changes, all agreed (17 October 2026)
   - [x] Never characters alone in a question: Read questions show pinyin, with pictures as the answers
   - [x] Tips instead of How to play, and one-line hints
-  - [ ] A gentler opening: English tells the story, with one Chinese word per caption
+  - [x] A gentler opening: English tells the story, in a box over the sky, and some captions show one word you'll meet (山, 石头, 猴子, 你好), said aloud
   - [ ] Animals as a scene, with hearts to fill and a new-friend moment
 - [ ] Playtest Area 1 for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):

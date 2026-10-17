@@ -44,12 +44,15 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 const tb = $('#textbox');
+// A caption of the opening: its English, and its word (if it has one) in Chinese, pinyin and English, said aloud.
 function showCaption(c, last){
-  tb.innerHTML = `<div class="cap"><div class="cpy">${esc(c.py)}</div><div class="czh">${esc(c.zh)}</div><div class="cen">${esc(c.en)}</div></div>
-    <div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><span class="spacer"></span><button class="btn" id="againBtn">🔊 Again</button>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`;
-  say(c.zh);
+  const w = c.word, [py, en] = w ? info(w) : [];
+  const box = $('#capbox');   // over the sky in the picture, so the page keeps its size
+  box.innerHTML = `<div class="cap"><div class="cen">${esc(c.en)}</div>${w ? `<button class="wchip" id="capWord"><span class="wzh">${w}</span>${S.pinyin ? `<span class="wpy">${py}</span>` : ''}<span class="wen">${esc(en.split(',')[0])}</span> 🔊</button>` : ''}</div>`;
+  box.hidden = false;
+  tb.innerHTML = `<div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><span class="spacer"></span>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`;
+  if (w){ say(w); $('#capWord').onclick = () => say(w); }
   $('#skipBtn').onclick = startGame;
-  $('#againBtn').onclick = () => say(c.zh);
   const nx = $('#nextBtn'); if (nx) nx.onclick = () => { advancedTo = capIdx + 1; SFX.blip(); };
   const bb = $('#beginBtn'); if (bb) bb.onclick = startGame;
 }
@@ -114,7 +117,7 @@ function titleText(){   // the text box on the title screen, with a short warnin
 }
 try { speechSynthesis.addEventListener('voiceschanged', () => { if (mode === 'title') titleText(); }); } catch(e) {}   // voices can arrive late
 function toTitle(){
-  mode = 'title'; musicStop();
+  mode = 'title'; musicStop(); $('#capbox').hidden = true;
   $('#titlecard').hidden = false;
   $('#areaName').textContent = AREA.name.en;
   const tbn = $('#titleButtons');
@@ -171,7 +174,7 @@ function howToPlay(){
 async function startGame(){
   stopSpeech();
   const firstTime = !S.started;
-  $('#titlecard').hidden = true;
+  $('#titlecard').hidden = true; $('#capbox').hidden = true;
   if (firstTime){ S.started = true; S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'}; }
   placePlayer(); mode = 'play'; lastTB = ''; save(); musicStart();
   if (firstTime){

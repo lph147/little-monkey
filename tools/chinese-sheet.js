@@ -83,7 +83,9 @@ ${table(['Chinese', 'Pinyin', 'English', 'Answer', 'Notes'], AREA.storyQuestions
 
 ### The opening scene
 
-${table(['Chinese', 'Pinyin', 'English', 'Notes'], AREA.intro.map(c => [c.zh, c.py, c.en, notes]))}
+The opening is told in English. These captions each show one word, said aloud.
+
+${table(['Word', 'Pinyin', 'Caption', 'Notes'], AREA.intro.filter(c => c.word).map(c => [c.word, BANK[c.word].py, c.en, notes]))}
 
 ### Names
 

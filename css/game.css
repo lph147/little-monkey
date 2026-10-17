@@ -62,10 +62,18 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .morebtn{font-family:var(--pixel);font-size:.8rem;border:2px solid var(--line);background:var(--paper);color:var(--jade);border-radius:4px;padding:0 8px;min-height:22px;line-height:1.2}
 .textbox .tasks li{max-height:2.8em;overflow:hidden}
 #goal{margin:0;font-size:.98rem}
-.cap .cpy{color:var(--muted);font-size:.9rem}
-.cap .czh{font-family:var(--text);font-size:1.45rem;font-weight:500;line-height:1.3}
-.cap .cen{font-size:.92rem}
-.caprow{display:flex;align-items:center;gap:8px;margin-top:8px}
+/* the opening's caption, over the sky at the top of the picture (the stone, the mountain and the monkey are below) */
+.capbox{position:absolute;left:8px;right:8px;top:8px;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:8px 10px 10px;z-index:5}
+.capbox[hidden]{display:none}
+.cap{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.cap .cen{font-size:1.1rem;line-height:1.35}
+/* the opening's word: Chinese, pinyin and English, tap to hear it */
+.wchip{display:inline-flex;align-items:baseline;flex-wrap:wrap;justify-content:center;gap:4px 8px;border:2px solid var(--ink);border-radius:8px;background:var(--bg);color:var(--ink);padding:4px 14px;box-shadow:0 3px 0 var(--ink)}
+.wchip:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.wchip .wzh{font-family:var(--text);font-size:1.8rem;font-weight:700;color:var(--jade)}
+.wchip .wpy{font-size:1rem}
+.wchip .wen{color:var(--muted)}
+.caprow{display:flex;align-items:center;gap:8px;margin-top:4px}
 .caprow .spacer{flex:1}
 
 .controls{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:0 6px;user-select:none;-webkit-user-select:none}
