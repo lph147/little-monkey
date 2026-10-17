@@ -388,7 +388,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'hi', teach:'你好'},
         {newWord:'你好'},
         {reply:'你好'},
-        {message:'The old monkey teaches every baby monkey the names of things on the mountain. Today it’s your turn!'},
+        {message:'Every baby monkey explores the mountain to find out what things are called. Today it’s your turn!'},
         {say:'go', hint:'Things that sparkle have words. Learn 4, then come back.'},
         {set:{elder:1}}
       ]},

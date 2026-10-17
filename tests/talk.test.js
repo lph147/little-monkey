@@ -101,9 +101,9 @@ test('while someone is talking you can\'t walk off or open the menu', () => {
 
 test('a message in a conversation waits in the speech box, so the next line can\'t cover it', async () => {
   const t = talkGame();
-  t.run("globalThis.__done = false; runSteps([{message: 'The old monkey teaches every baby monkey.'}, {say: 'go'}], 'elder').then(() => { __done = true; })");
+  t.run("globalThis.__done = false; runSteps([{message: 'Every baby monkey explores the mountain.'}, {say: 'go'}], 'elder').then(() => { __done = true; })");
   assert.equal(t.box.hidden, false, 'it shows in the speech box');
-  assert.match(t.box.querySelector('.narration').textContent, /teaches every baby monkey/);
+  assert.match(t.box.querySelector('.narration').textContent, /Every baby monkey explores the mountain/);
   assert.equal(t.game.el('#saybox').hidden, true, 'not as a message that the next line would hide');
   t.run('pressA()');
   await tick();

@@ -113,7 +113,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 ### Area 1: Flower Fruit Mountain
 
-**Prologue: the first day (built).** The baby is born from the stone, and the old monkey, like a grandparent, teaches the newborn the names of everything, while each monkey shows the baby something: food, water, play, trading. The story is told through short lines, not long cutscenes. The waterfall is loud, and a little frightening; by the end of the day the troop wonders what's behind it. The prologue ends with the story of your first day, read at the waterfall.
+**Prologue: the first day (built).** The baby is born from the stone. The old monkey, like a grandparent, welcomes it and sends it off to explore: you learn the names of things by finding them yourself (anything that sparkles has a word), and the monkeys you meet teach a few more through what they need: food, water, play, trading. The story is told through short lines, not long cutscenes. The waterfall is loud, and a little frightening; by the end of the day the troop wonders what's behind it. The prologue ends with the story of your first day, read at the waterfall.
 
 **Chapter 1: the Water Curtain Cave.** As in the book:
 
@@ -184,7 +184,7 @@ Every screen should take as few presses as possible, so time goes on Chinese rat
 - **The opening** is told in English, so a beginner can follow the story before learning any Chinese. Four captions each show one word you'll meet on the mountain (山, 石头, 猴子 and 你好), in Chinese, pinyin and English, said aloud; tap it to hear it again. The words aren't caught yet: that happens on the mountain. The caption sits over the sky at the top of the picture, so the page keeps its size.
 - **Tips, not instructions** (decided 17 October 2026). A new game starts straight away, with no page of How to play. Instead a bubble points at a control the first time you need it: the D-pad (walking), A (talking, then looking), a grey word in a sentence (just for listening), and the Menu once you have a few words. Each shows once. How to play stays in Settings. Hints are one line.
 
-- **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story. A line of story in a conversation (such as what the old monkey does for baby monkeys) waits in the speech box too, so the next line can't cover it. A card's buttons always stay in sight at its bottom, however long the card.
+- **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story. A line of story in a conversation (such as the old monkey sending you off to explore) waits in the speech box too, so the next line can't cover it. A card's buttons always stay in sight at its bottom, however long the card.
 - **The menu** has four big tiles, each with an icon, Chinese and English: 词 Word Scroll, 任务 Tasks, 朋友 Friends, 衣服 Wardrobe. A Settings page holds music, sound effects, pinyin, How to play, export and import, the title screen and reset. The game saves itself, so there's no Save button.
 - **The Word Scroll** is a grid of sprites, with shadows for words you haven't caught and category tabs across the top. Today's words is a filter in it.
 - **On phones** the game screen uses the full height available, and the task box shows the current task with the rest behind "more".
@@ -276,7 +276,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
   - [x] Settings, English on replies (on to start with)
   - [x] Phrases as their own collection, with a Phrases tab in the Word Scroll
   - [x] 我不要 at the shop, and sentence-building questions in animal encounters
-- [x] The first-day story: the old monkey's purpose for the baby (a nest, days, good night and good morning, and a book of firsts were tried and taken out)
+- [x] The first-day story: the old monkey welcomes the baby and sends it off to explore (a nest, days, good night and good morning, and a book of firsts were tried and taken out)
 - [x] 大猴子 Big monkey, in the middle meadow, wants 3 flowers and pays you shells: you pick one from each of 3 patches (no mother: Sun Wukong is born from the stone)
 - [x] Wardrobe: a 衣服 page with the 头带 (戴), with a new save version (a flower from the little monkey was tried and taken out)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)

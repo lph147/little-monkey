@@ -138,7 +138,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Menu, 衣服 Wardrobe shows what you own, with "Wearing" on what's on. Tapping something you're not wearing closes the menu: the first time, a card teaches 戴 (wear); then your monkey says 我戴花 (or 我戴头带) and is wearing it on the map. Tapping something you're wearing takes it off.
 
 **The old monkey**
-- [ ] After the old monkey's first 你好 and your reply, the speech box says (in italics) that he teaches every baby monkey the names of things on the mountain, and waits for A before his next line.
+- [ ] After the old monkey's first 你好 and your reply, the speech box says (in italics) that every baby monkey explores the mountain to find out what things are called, and waits for A before his next line.
 
 **The cave door**
 - [ ] The cave door is at the top of the short path on the far left. Stand below it, face up and press A. It teaches 洞 (cave).
