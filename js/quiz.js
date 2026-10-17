@@ -126,8 +126,10 @@ async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, option
   const opts = options || shuffle([gap, ...(wrong ? wrong.filter(fits) : shuffle(ORDER.filter(fits))).slice(0, 2)]);
   const shown = PUNCT.has(t.at(-1)) ? t : [...t, '。'];
   hear(t);
-  const ok = await pictureQ({head:`${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<p class="label">${label}</p><p class="prompt">Choose the missing word.</p>`,
-    body:lineHTML(shown.map(w => w === gap ? GAP : w)) + `<div class="sentence-en">${esc(en)}</div><div class="gloss">Tap a word for its meaning.</div>`,
+  // The speaker beside what to do, then the sentence and its English (and, for your first few lines, how to see a word's meaning).
+  const tip = Object.keys(S.lines).length <= TAP_TIP_LINES;
+  const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">${label}</p><p class="prompt">Choose the missing word.</p></div></div>`,
+    body:lineHTML(shown.map(w => w === gap ? GAP : w)) + `<div class="sentence-en">${esc(en)}</div><div class="gloss">${tip ? 'Tap a word for its meaning.' : ''}</div>`,
     options:opts.map(w => pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>` : `${w}<span class="cap">${WORDS[w].py}</span>`),
     text:!pics, answerIdx:opts.indexOf(gap),
     onAnswer:() => { sheet.querySelector('.line').outerHTML = lineHTML(shown, gap); bindTokens(sheet); say(t.join('')); }});

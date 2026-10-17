@@ -137,7 +137,7 @@ rt.hid{visibility:hidden}
 /* a word's pixel sprite, at a whole number of screen pixels per sprite pixel so it stays crisp */
 .pix{width:32px;height:32px;image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:middle;display:inline-block}
 .pic .pix{width:64px;height:64px}
-.mp .pix,.opt .pix{width:48px;height:48px}
+.mp .pix,.opt .pix{width:var(--pic-mid);height:var(--pic-mid)}
 .big{font-size:3.4rem;font-weight:500;line-height:1.15}
 .py{font-size:1.25rem;color:var(--muted)}
 .note{color:var(--muted);font-size:.95rem;margin:8px 0 0;text-align:center}
@@ -164,18 +164,19 @@ rt.hid{visibility:hidden}
 .pips i.on{background:var(--gold)}
 .hearts{display:flex;gap:4px;margin-top:4px}
 .heart{width:18px;height:16px;image-rendering:pixelated;image-rendering:crisp-edges}
-.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 4px}
-.opt{font-size:2.5rem;line-height:1;padding:10px 0;background:var(--bg);border:2px solid var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink)}
-.opt.hz{font-size:2.1rem;font-family:var(--text);font-weight:500}
-.opt .ico{display:block;font-size:2.1rem;line-height:1.1;white-space:nowrap}
-.opt .cap{display:block;font-family:var(--text);font-size:1.05rem;margin-top:4px;color:var(--ink)}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.4rem 0 .2rem}
+.opt{font-size:2.5rem;line-height:1;padding:.35rem 0;background:var(--bg);border:2px solid var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink)}
+.opt.hz{font-size:1.7rem;font-family:var(--text);font-weight:500}
+.opt .ico{display:block;font-size:1.8rem;line-height:1.1;white-space:nowrap}
+.opt .cap{display:block;font-family:var(--text);font-size:1rem;margin-top:.15rem;color:var(--ink)}
+.opt.hz .cap{font-size:.85rem}
 .opt.right{background:color-mix(in srgb,var(--ok) 30%,var(--paper));border-color:var(--ok)}
 .opt.wrong{background:color-mix(in srgb,var(--bad) 25%,var(--paper));border-color:var(--bad)}
 .opt[disabled]{cursor:default}
-.prompt{font-size:1rem;margin:6px 0 0}
-.sayBig{font-size:2.2rem;border:2px solid var(--ink);background:var(--bg);border-radius:50%;width:80px;height:80px;box-shadow:0 3px 0 var(--ink)}
+.prompt{font-size:.95rem;margin:.2rem 0 0}
+.sayBig{font-size:1.6rem;border:2px solid var(--ink);background:var(--bg);border-radius:50%;width:3.4rem;height:3.4rem;box-shadow:0 3px 0 var(--ink)}
 .center{text-align:center}
-.feedback{text-align:center;font-size:1.05rem;min-height:1.6em;margin-top:6px}
+.feedback{text-align:center;font-size:.95rem;min-height:1.5em;margin-top:.2rem}
 .feedback .hz{font-size:1.5rem;font-weight:500;margin:0 6px}
 .shake{animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -286,10 +287,12 @@ rt.hid{visibility:hidden}
 .checklist li::before{content:"";flex:none;width:12px;height:12px;border:2px solid var(--jade);border-radius:2px;transform:translateY(2px)}
 .checklist li.done{color:var(--muted);text-decoration:line-through}
 .checklist li.done::before{background:var(--jade)}
-.match{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
-.match .col{display:flex;flex-direction:column;gap:8px}
-.mw,.mp{min-height:58px;border:2px solid var(--ink);border-radius:6px;background:var(--bg);box-shadow:0 3px 0 var(--ink)}
-.mw{font-family:var(--text);font-size:1.6rem}
+/* Matching words to pictures (the word test, the training ground): the words in a row, their pictures in a row under them. */
+.match{display:flex;flex-direction:column;gap:.6rem;margin:.5rem 0}
+.match .col{display:flex;gap:.5rem}
+.match .col > *{flex:1;min-width:0}
+.mw,.mp{min-height:3.4rem;border:2px solid var(--ink);border-radius:6px;background:var(--bg);box-shadow:0 3px 0 var(--ink)}
+.mw{font-family:var(--text);font-size:1.45rem}
 .mw rt{font-size:.5em;color:var(--muted)}
 .mp{font-size:1.8rem;white-space:nowrap}
 .mw.sel{background:color-mix(in srgb,var(--gold) 35%,var(--paper));border-color:var(--gold)}
@@ -351,6 +354,41 @@ rt.hid{visibility:hidden}
 .plate .heart{width:22px;height:20px}
 .plate .qn{font-family:var(--pixel);font-size:.8rem;color:var(--muted)}
 .scene .plus{position:absolute;right:42px;top:14px;font:700 1.25rem var(--pixel);color:#E0443C;text-shadow:0 2px 0 #fff}
+
+/* Fill the gap: the speaker beside what to do, then the sentence and the answers, in the middle of the card. */
+.sheet:has(> .qhead){display:flex;flex-direction:column}
+.sheet:has(> .qhead) > .qhead{margin-top:auto}
+.sheet:has(> .qhead) > .actions{margin-top:auto}
+.qhead{display:flex;align-items:center;gap:.8rem}
+.qhead .who{font-size:1rem;margin:0}
+.qhead .speaker{font-size:.9rem;gap:.5rem}
+.qhead .portrait{width:var(--pic-small);height:var(--pic-small)}
+.qhead .spk-zh{font-size:1.05rem}
+.qhead .spk-en{font-size:.8rem}
+.qhead .label,.qhead .prompt{margin:0}
+.sheet:has(> .qhead) .line{margin:.4rem 0 .2rem}
+.sheet:has(> .qhead) .sentence-en{margin:.1rem 0 .2rem;font-size:.9rem}
+.sheet:has(> .qhead) .gloss{min-height:0;margin:0;font-size:.85rem}
+
+/* An animal (or a monkey's word game): its scene down the left, the question beside it, in the middle. */
+.sheet:has(> .scene){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);grid-template-rows:1fr repeat(7,auto) 1fr;column-gap:.8rem}
+.sheet:has(> .scene)::before{content:"";grid-column:2;grid-row:1}   /* an empty first row, so the question sits in the middle */
+.sheet:has(> .scene) > *{grid-column:2}
+.sheet:has(> .scene) > .scene{grid-column:1;grid-row:1 / -1;height:auto;min-height:13rem;margin:0;background:linear-gradient(#9FD4F0 0 48%,#BDE6F7 48% 52%,#7DC15A 52%)}
+.sheet:has(> .scene) > .scene.cliff{background:linear-gradient(#9FD4F0 0 48%,#BDE6F7 48% 52%,#A49F8E 52%)}
+.sheet:has(> .scene) > .scene::before{inset:52% 0 0}
+.sheet:has(> .scene) .plate{left:5px;right:5px;top:5px;min-width:0;max-width:none;font-size:.85rem;padding:.2rem .5rem .3rem}
+.sheet:has(> .scene) .plate .spk-zh{font-size:1rem;white-space:normal}
+.sheet:has(> .scene) .plate .heart{width:1.2rem;height:1.1rem}
+.sheet:has(> .scene) .foe{right:8%;top:44%}
+.sheet:has(> .scene) .foe .portrait{width:var(--pic-scene);height:var(--pic-scene)}
+.sheet:has(> .scene) .foem{right:2%;top:calc(44% + var(--pic-scene) - 12px);width:58%;height:22px}
+.sheet:has(> .scene) .me{left:6%;bottom:-4px;width:var(--pic-scene);height:var(--pic-scene)}
+.sheet:has(> .scene) .mem{left:0;bottom:-12px;width:60%;height:28px}
+.sheet:has(> .scene) .plus{right:12%;top:36%}
+.sheet:has(> .scene) .word{padding:0}
+.sheet:has(> .scene) .big{font-size:2.6rem}
+.sheet:has(> .scene) > .actions{margin-top:.3rem}
 .endmsg{text-align:center;font-size:1.1rem}
 /* a short screen (a small phone): a smaller scene, 🔊 and answers, so the answers fit without scrolling */
 @media (max-height:680px){.scene{height:104px;margin-bottom:6px}.scene .foem{top:66px;width:96px;height:26px}.scene .foe{top:10px}.scene .foe .portrait{width:64px;height:64px}
