@@ -46,14 +46,30 @@ test('walking through a tree’s leaves makes it rustle; standing still or walki
   assert.equal(game.run(`${tree}.rustle`), -1e9, 'standing still, it doesn’t');
   game.run(`pl.px = 12.5*T; pl.py = 9*T; pl.mv = {fx: 13, fy: 9, tx: 12, ty: 9, t0: 3900}; touchLeaves(4000)`);
   assert.equal(game.run(`${tree}.rustle`), -1e9, 'walking past in front of it, it doesn’t');
-  assert.equal(game.run('OBJECT_PIECES.find(p => p.look === "stone").leaves'), null, 'stones don’t rustle');
+  assert.equal(game.run('OBJECT_PIECES.find(p => p.look === "stone").leafy'), null, 'stones don’t rustle');
 });
 
-test('brushing past a wide fruit tree’s branches makes it rustle too', () => {
+// Takes a step from one square to another, and checks for rustling just as you reach the next square's leaves.
+const step = (game, [fx, fy], [tx, ty], now) => game.run(`pl.px = ${(fx+tx)/2}*T; pl.py = ${(fy+ty)/2}*T; pl.mv = {fx: ${fx}, fy: ${fy}, tx: ${tx}, ty: ${ty}, t0: ${now - 120}}; touchLeaves(${now})`);
+const apple = 'OBJECT_PIECES.find(p => p.look === "appleTree")';   // the apple tree, at 21, 17
+
+test('walking past a wide fruit tree, it rustles once, as you step into its branches beside it', () => {
   const game = loadGame();
-  const peach = 'OBJECT_PIECES.find(p => p.x === 1 && p.y === 6)';   // the peach tree at the far left of the path
-  game.run('pl.px = 2*T; pl.py = 5.5*T; pl.mv = {fx: 2, fy: 5, tx: 2, ty: 6, t0: 900}; touchLeaves(1000)');   // walking down the column beside it
-  assert.equal(game.run(`${peach}.rustle`), 1000);
+  step(game, [22, 16], [22, 17], 1000);
+  assert.equal(game.run(`${apple}.rustle`), 1000, 'into the square beside it');
+  game.run('touchLeaves(1100)');
+  assert.equal(game.run(`${apple}.rustle`), 1000, 'once a step, not again');
+  game.run(`${apple}.rustle = -1e9`);
+  step(game, [22, 17], [22, 18], 2000);
+  assert.equal(game.run(`${apple}.rustle`), -1e9, 'walking on out of the branches, it doesn’t');
+});
+
+test('stepping into a corner by a fruit tree, or turning and walking away from it, doesn’t make it rustle', () => {
+  const game = loadGame();
+  step(game, [23, 16], [22, 16], 1000);
+  assert.equal(game.run(`${apple}.rustle`), -1e9, 'the square above and to the side is a corner, not its branches');
+  step(game, [22, 16], [22, 15], 2000);
+  assert.equal(game.run(`${apple}.rustle`), -1e9, 'nor walking away');
 });
 
 test('bigger pictures don’t change where you can walk: the square above a tree is still open', () => {

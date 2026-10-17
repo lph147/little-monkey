@@ -314,7 +314,7 @@ function mapObjects(){
 // pixels), base and top (its two pictures), leaves (where its leaves reach, if it rustles) and rustle (when it last did).
 let OBJECT_PIECES = [];
 const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its pictures above and beside an object's squares, for what reaches out of them
-const LEAFY = {tree: [0, 8], peachTree: [6, 13], appleTree: [6, 13]};   // what rustles: how far its leaves reach [beside, above] its squares
+const LEAFY = ['tree', 'peachTree', 'appleTree'];   // what has leaves: they go over the characters beside it too, and rustle
 function buildMap(){   // the place you're in: the ground, then the big objects' pictures
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
@@ -326,11 +326,12 @@ function buildMap(){   // the place you're in: the ground, then the big objects'
       shadows = !over; OBJECT_ART[o.look](g, o); shadows = true; g.restore();
       return c;
     };
-    const leafy = LEAFY[o.look], [side, up] = !leafy ? [0, 0] : o.w === 2 ? [0, 5] : leafy;
+    const leafy = LEAFY.includes(o.look);
     // Over the characters: what reaches up above its squares, and for a tree, its leaves reaching out beside them too (a
     // fruit tree's wide branches), so you go through them as you pass, not over them.
     const right = PIECE_SIDE + o.w*T, beside = [[0, PIECE_UP, PIECE_SIDE, h - PIECE_UP], [right, PIECE_UP, w - right, h - PIECE_UP]];
     return {...o, x0, y0, base: part([[0, PIECE_UP, w, h - PIECE_UP]], false), top: part([[0, 0, w, PIECE_UP], ...(leafy ? beside : [])], true), rustle: -1e9,
-      leaves: leafy ? {x: o.x*T - side, y: o.y*T - up, w: o.w*T + 2*side, h: up + o.h*T} : null};
+      // the squares its leaves cover, where walking in makes it rustle: above it, and beside a fruit tree (not its corners)
+      leafy: !leafy ? null : o.w === 2 ? [[o.x, o.y-1], [o.x+1, o.y-1]] : o.look === 'tree' ? [[o.x, o.y-1]] : [[o.x-1, o.y], [o.x+1, o.y], [o.x, o.y-1]]};
   });
 }

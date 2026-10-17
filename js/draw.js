@@ -38,17 +38,19 @@ function drawPiece(p, pic, cx, cy, now){
   const t = now - p.rustle, dx = t < RUSTLE ? Math.round(Math.sin(t / 40) * 1.5 * (1 - t / RUSTLE)) : 0;
   b.drawImage(pic, X + dx, Y);
 }
-// Walking through a tree's leaves (behind it, or past a fruit tree's branches) makes it rustle, and a few leaves
-// fall. Walking past in front of it doesn't, and nor does standing still.
+// Stepping into a square a tree's leaves cover (behind it, or beside a fruit tree's wide branches: its leafy squares,
+// js/art.js) makes it rustle once, as you reach them, and a few leaves fall. Stepping into a corner by it, walking out
+// of its leaves or along them, walking past in front of it, turning and standing still don't.
 const fallingLeaves = [];
 function touchLeaves(now){
-  if (!pl.mv) return;
-  const x0 = pl.px + 3, x1 = pl.px + 13, y0 = pl.py + 2, y1 = pl.py + 16;   // your monkey's body
+  const m = pl.mv;
+  if (!m || m.rustled || now - m.t0 < STEP * .35) return;   // once a step, as you reach the leaves
+  m.rustled = true;
+  const covers = (p, x, y) => p.leafy.some(([a, c]) => a === x && c === y);
   for (const p of OBJECT_PIECES){
-    const L = p.leaves;
-    if (!L || now - p.rustle < RUSTLE + 200 || x1 <= L.x || x0 >= L.x + L.w || y1 <= L.y || y0 >= L.y + L.h) continue;
+    if (!p.leafy || !covers(p, m.tx, m.ty) || covers(p, m.fx, m.fy)) continue;   // stepping into its leaves, not along or out of them
     p.rustle = now;
-    for (let i = 0; i < 4; i++) fallingLeaves.push({x: L.x + 2 + Math.random()*(L.w - 4), y: L.y + Math.random()*6, t0: now + i*90, s: Math.random() < .5 ? -1 : 1});
+    for (let i = 0; i < 4; i++) fallingLeaves.push({x: m.tx*T + 2 + Math.random()*12, y: m.ty*T - 4 + Math.random()*6, t0: now + i*90, s: Math.random() < .5 ? -1 : 1});
   }
 }
 function drawFallingLeaves(cx, cy, now){
