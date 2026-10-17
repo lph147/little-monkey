@@ -1,6 +1,6 @@
 # 小猴子 Little Monkey — Game design
 
-Last updated 16 October 2026
+Last updated 17 October 2026
 
 Little Monkey is a vocabulary-collecting adventure through *Journey to the West*: you catch Chinese words the way Pokémon players catch creatures, hear them again and again in simple sentences from the story's characters, and earn progress by practising.
 
@@ -31,11 +31,11 @@ Catching is the heart of it, and the review scheduler feeds old words back into 
 
 The Word Scroll becomes the game's Pokédex: a collection you want to complete, split into categories, where every entry is a word you have met.
 
-**Heard, then caught.** A word you have only heard in conversation shows as a silhouette marked "heard", with a count, until you catch it with its new-word card. Words the area doesn't teach go in a Heard list at the end of the scroll, with their counts, and are caught in the area that teaches them: 有, heard nine times on Flower Fruit Mountain, is caught in the Water Curtain Cave. This turns the grey "just listen" words into a pipeline instead of a dead end.
+**Heard, then caught.** A word you have only heard in conversation shows as a silhouette marked "heard", with a count, until you catch it with its new-word card. Words not taught yet go in a Heard list at the end of the scroll, with their counts, and are caught where they're taught: 有, heard nine times in the prologue, is caught in chapter 1, in the Water Curtain Cave. This turns the grey "just listen" words into a pipeline instead of a dead end.
 
 **Categories:** animals, food, nature, places, items, actions (verbs), and people and phrases. Each shows a completion count, such as "Animals 6/10". A category only appears once there are words in it (Flower Fruit Mountain has no items).
 
-**Phrases** (你好, 谢谢, 再见 and so on) are a collection of their own, on a Phrases page. They don't count towards an area's budget of about 25 words, and they earn their Used mastery when you reply with them (see Grammar through characters).
+**Phrases** (你好, 谢谢, 再见 and so on) are a collection of their own, on a Phrases page. They don't count towards a chapter's budget of about 25 words, and they earn their Used mastery when you reply with them (see Grammar through characters).
 
 **Each entry holds:** its pixel sprite, the word with pinyin and sound, an example sentence from the game, where you found it, and a mastery level.
 
@@ -76,41 +76,65 @@ Each area's characters use one or two simple sentence patterns again and again, 
 
 | Area | Character | Patterns | Example |
 | --- | --- | --- | --- |
-| 1 Flower Fruit Mountain | 老猴子 Old monkey and the troop | Phrases 你好, 再见, 谢谢, 不客气, 对不起, 没关系; 我要 / 我不要 + thing | 我要桃子。 |
-| 2 Water Curtain Cave | The monkey troop | 这是…, 有 / 没有, numbers with 一只 / 一个 | 洞里有三只猴子。 |
-| 3 Across the sea | Villagers and a market seller | Questions with 吗, 什么, 哪里; 不 | 这是什么？ |
-| 4 The teacher's mountain | 菩提祖师 Master Subhuti | 会 / 能 (can), 想 (want to), 变成 (turn into) | 我会变成鸟。 |
-| 5 Dragon King's palace | 龙王 the Dragon King | 在 + place, 给 (give), 几 / 多少 (how many) | 给我一个。 |
-| 6 Heaven | 玉皇大帝 the Jade Emperor | 了 for finished actions, 很 / 太, 比 (comparisons) | 我吃了桃子。 |
-| 7 Under the mountain | 唐僧 the monk | 因为…所以…, time words | 因为我很饿，所以我吃桃子。 |
-| 8 onward | 猪八戒 the pig, 沙僧 Sandy | Longer sentences and story telling |  |
+| 1 Flower Fruit Mountain, prologue | 老猴子 Old monkey and the troop | Phrases 你好, 再见, 谢谢, 不客气, 对不起, 没关系; 我要 / 我不要 + thing | 我要桃子。 |
+| 1 Flower Fruit Mountain, chapter 1 | The troop, and you as their king | 这是…, 有 / 没有, numbers with 一只 / 一个 | 洞里有三只猴子。 |
+| 2 Across the sea | Villagers and a market seller | Questions with 吗, 什么, 哪里; 不 | 这是什么？ |
+| 3 The teacher's mountain | 菩提祖师 Master Subhuti | 会 / 能 (can), 想 (want to), 变成 (turn into) | 我会变成鸟。 |
+| 4 Dragon King's palace | 龙王 the Dragon King | 在 + place, 给 (give), 几 / 多少 (how many) | 给我一个。 |
+| 5 Heaven | 玉皇大帝 the Jade Emperor | 了 for finished actions, 很 / 太, 比 (comparisons) | 我吃了桃子。 |
+| 6 Under the mountain | 唐僧 the monk | 因为…所以…, time words | 因为我很饿，所以我吃桃子。 |
+| 7 onward | 猪八戒 the pig, 沙僧 Sandy | Longer sentences and story telling |  |
 
-Patterns are met in characters' lines, gap sentences, shops and replies. Area 1's phrases were checked by a native speaker on 16 October 2026; the rest of this table still needs a check before it goes into the game.
+Patterns are met in characters' lines, gap sentences, shops and replies. The prologue's phrases were checked by a native speaker on 16 October 2026; the rest of this table still needs a check before it goes into the game.
 
-**Replying.** Characters' lines invite a reply: you choose what to say from two or three phrases you've caught, each with pinyin, its sound and its English. In the first areas replies are input, not a test: the English is always shown (players who know some Chinese can turn it off in Settings), any choice is accepted, and the game says which phrase fits best. 你好 starts a conversation and 再见 ends it, 谢谢 and 不客气 follow gifts and help, and 对不起 and 没关系 follow mistakes. Because every conversation has them, the core phrases are heard and used dozens of times a session. The first time a phrase is needed it's taught on its own card. 我不要 is taught in Area 1 as a fixed phrase; 不 on its own is still taught in Area 3.
+**Replying.** Characters' lines invite a reply: you choose what to say from two or three phrases you've caught, each with pinyin, its sound and its English. In the first areas replies are input, not a test: the English is always shown (players who know some Chinese can turn it off in Settings), any choice is accepted, and the game says which phrase fits best. 你好 starts a conversation and 再见 ends it, 谢谢 and 不客气 follow gifts and help, and 对不起 and 没关系 follow mistakes. Because every conversation has them, the core phrases are heard and used dozens of times a session. The first time a phrase is needed it's taught on its own card. 我不要 is taught in Area 1 as a fixed phrase; 不 on its own is still taught in Area 2.
 
 ## Story and areas
 
-Each area is one chapter of Sun Wukong's story, with its own collection of new words, a sentence pattern or two to hear, a new ability and a word test to move on.
+The game follows Sun Wukong's story in order, and stays true to it. Three words describe its shape:
+
+- An **area** is a part of the world where a stretch of the story happens, such as Flower Fruit Mountain. You leave it when the story does, after a word test.
+- A **chapter** is a part of the story within an area. Each brings about 25 new words, new requests and encounters, and reuses the words you already know.
+- A **place** is one small map within an area. New places unlock as the story goes on, so you keep coming back to familiar ground with new things to do.
 
 | Area | Story | New collections (samples) | New ability |
 | --- | --- | --- | --- |
-| 1 Flower Fruit Mountain | Born from a stone; a baby's first day, learning the names of its home from the troop | Animals 兔子 狐狸 松鼠 山羊; food 桃子 苹果; nature 山 树 花 河 | Walk, talk |
-| 2 Water Curtain Cave | Jumps through the waterfall; becomes king | Home items 床 碗 桌子 门; 王 家; numbers 1–10 | 跳 jump |
-| 3 Across the sea | Builds a raft; reaches the human world | Travel 海 船 风; people 人 孩子; clothes 衣服 帽子; 钱 money | 游 swim |
-| 4 The teacher's mountain | Learns from Master Subhuti and gets a name | Body 手 脚 眼睛; sky 云 风; actions 飞 爬 | 变成 transform, cloud somersault |
-| 5 Dragon King's palace | Finds his staff under the sea | Sea creatures 虾 蟹 乌龟 龙; treasure 金 | Staff |
-| 6 Heaven | Looks after the horses and guards the peach garden | Sky 太阳 月亮 星星; 马 horses; more fruit | Fly |
-| 7 Under the mountain | Trapped by the Buddha for 500 years; freed by the monk | Time 年 月 天; directions 东 南 西 北 | Joins the pilgrims |
-| 8 onward | The journey west with the pig and Sandy | Demons, towns, more food and items | Team members |
+| 1 Flower Fruit Mountain | The prologue: born from a stone, a baby's first day. Chapter 1: jumps through the waterfall, finds the Water Curtain Cave, becomes king; then leaves on a raft to find an immortal to learn from | Prologue: animals 兔子 狐狸 松鼠 山羊; food 桃子 苹果; nature 山 树 花 河. Chapter 1: home 床 碗 桌子 门 家; 王; numbers 1–10; 海 sea | Walk, talk, then 跳 jump |
+| 2 Across the sea | Sails the raft to the human world and dresses like a person | Travel 船 风; people 人 孩子; clothes 衣服 帽子; 钱 money | 游 swim |
+| 3 The teacher's mountain | Learns from Master Subhuti and gets his name; then flies home to Flower Fruit Mountain and defeats the demon bullying the troop | Body 手 脚 眼睛; sky 云; actions 飞 爬 | 变成 transform, cloud somersault |
+| 4 Dragon King's palace | Finds his staff under the sea | Sea creatures 虾 蟹 乌龟 龙; treasure 金 | Staff |
+| 5 Heaven | Looks after the horses and guards the peach garden | Sky 太阳 月亮 星星; 马 horses; more fruit | Fly |
+| 6 Under the mountain | Trapped by the Buddha for 500 years; freed by the monk | Time 年 月 天; directions 东 南 西 北 | Joins the pilgrims |
+| 7 onward | The journey west with the pig and Sandy | Demons, towns, more food and items | Team members |
 
 The first areas follow the opening of the Jeff Pepper series closely, so by the time you finish them, the start of the books will feel familiar.
 
-**Saved for the Water Curtain Cave:** the story from the book's opening that was at the waterfall, checked by the native speaker: 山上有一个大石头。石头里有一只小猴子。小猴子有很多朋友。猴子吃桃子，喝水。鸟在树上玩。河里有鱼，山上有瀑布。小猴子很快乐！ It needs 一个, 一只, 很 and 大, which come with Area 2 (大, 很, 快乐 and 谁 left the word bank with it). Its questions used 谁 and 什么, so they wait for Area 3's questions, or become gap questions like Flower Fruit Mountain's.
+**Renumbered on 17 October 2026.** The Water Curtain Cave was going to be Area 2. In the story it's the troop's home on Flower Fruit Mountain, not somewhere Sun Wukong goes, so it became chapter 1 of Area 1, and every later area moved up one. Area numbers everywhere in this document have been updated to match.
 
-**Flower Fruit Mountain is a baby's first day.** The old monkey, like a grandparent, teaches the newborn the names of everything (这是山。), and each monkey shows the baby something: food, water, play, trading. Early on the loud waterfall scares the baby; by the end the troop wonders what's behind it, which leads into Area 2. The story is told through short lines, not long cutscenes.
+### Area 1: Flower Fruit Mountain
 
-**Compact, lively places.** Areas stay small so walking doesn't crowd out learning. Flower Fruit Mountain grew a little to the south (decided 16 October 2026), only to make room for its animals' homes, and got livelier: animals at their own spots (the squirrel in a tree, the goat on the cliffs), birds that come and go, and grass that rustles where an animal is hiding. Once the engine can move between maps, it splits into a few small connected places: the meadow, the orchard, the riverbank and the cliffs with the waterfall.
+**Prologue: the first day (built).** The baby is born from the stone, and the old monkey, like a grandparent, teaches the newborn the names of everything, while each monkey shows the baby something: food, water, play, trading. The story is told through short lines, not long cutscenes. The waterfall is loud, and a little frightening; by the end of the day the troop wonders what's behind it. The prologue ends with the story of your first day, read at the waterfall.
+
+**Chapter 1: the Water Curtain Cave.** As in the book:
+
+1. The troop gathers at the waterfall, and agrees that whoever can jump through and come back unhurt will be their king.
+2. You jump (跳) through the water and find a cave behind it: an iron bridge (桥) and a stone home with stone beds (床), bowls (碗) and tables (桌子). A stone tablet names it 水帘洞 (Water Curtain Cave).
+3. You jump back and lead the troop in. The cave becomes their home (家), and they make you king (王): 美猴王 (Měi Hóuwáng · Handsome Monkey King).
+4. As the troop moves in, you count them: numbers 1–10, with 只 (三只猴子, three monkeys). The longer story from the book's opening, saved from the waterfall, is read here (see below).
+
+**Life as king.** New places unlock: the cave itself, the high slopes and the shore. The troop has new requests, the 老板 has new stock (food, and decorations for the cave), and new animals live in the new places. Most of what you hear uses words you already know, so this is where the prologue's words get their repetition, with new words arriving a few at a time.
+
+**Leaving.** At a feast, you grow sad that one day you'll die. An old gibbon tells you about immortals who never die, and you decide to find one and learn from them. The troop helps you build a raft from wood (木头) on the shore. Before you sail, the troop gives you a send-off: you name everything you've learned on the mountain (the area's word test, 80% to pass). Then you sail across the sea (海), and Area 2 begins.
+
+**Words.** The prologue has 28 words (and 7 phrases). Chapter 1 brings about 25 more, such as 跳 洞 桥 床 碗 桌子 门 家 王, the numbers 一 to 十, 有, 海 and 木头, and a fruit or two for the shop. The list is a draft; its Chinese, and the names 美猴王 and the old gibbon's, need the native speaker's check.
+
+**What changes in the prologue.** The cave door on the far left (洞) isn't in the story, so it goes: 洞 is caught at the Water Curtain Cave instead. The word test moves from that door to the send-off on the shore. The waterfall's fright and the troop's wondering aren't in the game yet: the rumble after the waterfall story becomes the troop wondering what's behind the water, which leads into chapter 1.
+
+**Saved for chapter 1:** the story from the book's opening that was at the waterfall, checked by the native speaker: 山上有一个大石头。石头里有一只小猴子。小猴子有很多朋友。猴子吃桃子，喝水。鸟在树上玩。河里有鱼，山上有瀑布。小猴子很快乐！ It needs 一个, 一只, 很 and 大, which come with chapter 1 (大, 很, 快乐 and 谁 left the word bank with it). Its questions used 谁 and 什么, so they wait for Area 2's questions, or become gap questions like the prologue's.
+
+**Compact, lively places.** Places stay small so walking doesn't crowd out learning. Today's map (grown a little to the south on 16 October 2026 to make room for its animals' homes) becomes the first place: the meadow, with animals at their own spots (the squirrel in a tree, the goat on the cliffs), birds that come and go, and grass that rustles where an animal is hiding. Once the engine can move between maps, Flower Fruit Mountain is a few small connected places: the meadow, the riverbank with the waterfall, the Water Curtain Cave behind it, the high slopes and the shore.
+
+**Coming home.** In Area 3, Sun Wukong flies home and finds a demon bullying the troop, so Flower Fruit Mountain's places come back then, with your old words and friends.
 
 ## Progression and economy
 
@@ -118,13 +142,13 @@ XP and money come mainly from learning, so progress in the game and progress in 
 
 **XP and levels.** You earn XP for catching words, answering correctly, completing quests and passing tests. Levels unlock things like extra bag space or new training challenges. Walking around earns nothing on its own. For now a level is just shown in the header; rewards for levels come once there is more to unlock.
 
-**Money.** Shells are the money on Flower Fruit Mountain and in the Water Curtain Cave: the troop trades cowrie shells from the shore, as China did before coins (which is why 贝 is inside money words like 买, 卖 and 贵). From the human world onward, coins (钱) take over, which teaches the word naturally. (Peaches were the money at first, but you could pick them from the trees, so they became shells on 17 October 2026. Peaches are just food. 贝壳 isn't a word to catch for now.)
+**Money.** Shells are the money on Flower Fruit Mountain: the troop trades cowrie shells from the shore, as China did before coins (which is why 贝 is inside money words like 买, 卖 and 贵). From the human world (Area 2) onward, coins (钱) take over, which teaches the word naturally. (Peaches were the money at first, but you could pick them from the trees, so they became shells on 17 October 2026. Peaches are just food. 贝壳 isn't a word to catch for now.)
 
-**Shops.** Every area has a shopkeeper who sells that area's items. Each item has a card with its picture, its Chinese with pinyin, its English and its price, so it's always clear what's for sale (decided 16 October 2026, replacing Chinese-only labels). Buying means filling the gap in a sentence, such as 我要＿ (I want an apple), with the word for what you want. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in Area 2, buying uses Area 1's pattern: 我要 + thing.
+**Shops.** Every area has a shopkeeper who sells that area's items. Each item has a card with its picture, its Chinese with pinyin, its English and its price, so it's always clear what's for sale (decided 16 October 2026, replacing Chinese-only labels). Buying means filling the gap in a sentence, such as 我要＿ (I want an apple), with the word for what you want. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in chapter 1, buying uses the prologue's pattern: 我要 + thing.
 
-**Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 shells. Buying it is on the area's checklist, so you need it before the cave door test, and every player can afford it by then. Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
+**Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 shells. Buying it is on the prologue's checklist, so you need it before chapter 1 begins, and every player can afford it by then. Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
 
-**Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 3, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops, request rewards and levels, so each area's shop has clothes to sell as well as food and cave decorations.
+**Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 2, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops, request rewards and levels, so each area's shop has clothes to sell as well as food and cave decorations.
 
 **Training ground.** A place in every area where you can do a rolling word-matching test at any time. It always includes your newest words and anything due for review.
 
@@ -137,7 +161,7 @@ XP and money come mainly from learning, so progress in the game and progress in 
 
 This stops anyone farming easy words for XP, and keeps the reward pointed at what actually needs practice.
 
-**Moving on.** Each area still ends with a word test at its exit, covering that area's words, with an 80% pass mark.
+**Moving on.** Each area ends with a word test covering that area's words, with an 80% pass mark, as part of the story: on Flower Fruit Mountain it's the troop's send-off on the shore, before you sail.
 
 ## Encounters and question types
 
@@ -151,7 +175,7 @@ Encounters are the game's battles: you win by answering, and every answer is a c
 | Fill the gap | A sentence in Chinese and English, one word missing | The missing word: a picture with its Chinese while it's new, then Chinese and pinyin | Words in context |
 | Tones (later) | Two similar words spoken | Which one you heard | Tones |
 
-The question type follows the word's mastery level, so new words start easy and get harder as you know them better. A word needs two right answers in a row before its questions get harder, and each area says which kinds it asks: Flower Fruit Mountain asks only Listen and Read, so a beginner always has a picture to go on. Hear and read starts in a later area, for words you can already read. From Area 4, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters.
+The question type follows the word's mastery level, so new words start easy and get harder as you know them better. A word needs two right answers in a row before its questions get harder, and each area says which kinds it asks: Flower Fruit Mountain asks only Listen and Read, so a beginner always has a picture to go on. Hear and read starts in a later area, for words you can already read. From Area 3, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters.
 
 ## Screens
 
@@ -180,7 +204,8 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 | Risk | What could go wrong | Plan |
 | --- | --- | --- |
-| Scope | A full RPG is a lot to build | Data-driven areas; finish Area 1 well before adding Area 2 |
+| Scope | A full RPG is a lot to build | Data-driven areas, built a chapter at a time; finish Area 1 well before adding Area 2 |
+| A long first area | Area 1 has two chapters, about 50 words | Chapter 1 mostly reuses the prologue's words, and new places keep it fresh; playtest the prologue first |
 | Art | Every collectible needs a sprite | Reuse palettes and shapes; aim for 15–20 new sprites per area |
 | Time per session | Walking and menus crowd out learning | Target at least half of play time hearing, reading or answering |
 | XP farming | Players repeat easy words for rewards | XP weighted to due words, as above |
@@ -189,8 +214,8 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 **Decided** (these were the open questions)
 
-- **Words per area:** about 25 new words to collect, like Area 1 (28 once the shop adds 老板 and 头带 and 森林 is dropped), so about 20 new sprites per area. Words you only hear in sentences don't count towards this.
-- **Demons:** harder battles start at Area 4, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
+- **Words per chapter:** about 25 new words to collect, like the prologue (28 once the shop adds 老板 and 头带 and 森林 is dropped), so about 20 new sprites per chapter. (Area 1 has two chapters, decided 17 October 2026.) Words you only hear in sentences don't count towards this.
+- **Demons:** harder battles start at Area 3, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
 - **Pinyin** stays over every word (the menu setting turns it off); it doesn't fade as you learn words.
 - **After the headband:** the 老板 also sells 苹果, bought with 我要苹果; eating one in an animal encounter takes away a wrong answer.
 - **Native speaker:** someone can check the game's Chinese, from a review sheet listing every line with pinyin and English.
@@ -199,9 +224,9 @@ The current game is one hand-built map in one file. Adding areas that way would 
 **Decided on 16 October 2026** (from the [second review](https://claude.ai/code/artifact/a02dc745-404f-4605-9b78-00d70691112e))
 
 - **Phrases** are their own collection, outside the budget of about 25 words per area.
-- **我不要** is taught in Area 1 as a fixed phrase; 不 on its own waits for Area 3.
+- **我不要** is taught in Area 1 as a fixed phrase; 不 on its own waits for Area 2.
 - **Talk** moves into a speech box over the map; full cards only for the big moments.
-- **The wardrobe** starts in Area 1 with the headband, and opens fully in Area 3. (A flower behind your ear was tried and taken out.)
+- **The wardrobe** starts in Area 1 with the headband, and opens fully in Area 2. (A flower behind your ear was tried and taken out.)
 - **The map** stays compact and gets livelier now; it splits into small places with the multi-map work. (Later the same day: it grew to the south, 24 × 22 tiles, to give the squirrel and goat their homes, and the 老板's market stall and the little monkey moved down there so the top isn't crowded.)
 - **Day and night:** a day ends with sleep in the cave and a summary. (Tried, then taken out on 16 October 2026: see below.)
 - **Native speaker check:** 再见, 不客气, 对不起, 没关系, 我不要, 早上好, 晚安, 我戴头带, 我穿衣服 and 这是山 are all fine as written.
@@ -219,7 +244,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 ## Next steps
 
-Rebuild Area 1 on the new foundations first, then play it for a week before starting Area 2.
+Build Area 1 a chapter at a time: play the prologue for a week, then build chapter 1, then Area 2.
 
 - [x] Agree this design and answer the open questions
 - [x] Split the engine from the content and move Area 1 into data
@@ -261,11 +286,16 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Tips instead of How to play, and one-line hints
   - [x] A gentler opening: English tells the story, in a box over the sky, and some captions show one word you'll meet (山, 石头, 猴子, 你好), said aloud
   - [x] Animals as a scene, with hearts to fill and a new-friend moment
-- [ ] Playtest Area 1 for a week
+- [ ] Playtest the prologue for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md
   - [x] One fill-the-gap question: the sentence in Chinese and English, choices following the word's level
   - [x] Replace word tiles everywhere: requests, the shop, the practice post and animals' questions
   - [x] The story's questions show their English all the time
-- [ ] Let the engine run more than one area, so the cave door leads on, and split Flower Fruit Mountain into small connected places
-- [ ] Build Area 2, the Water Curtain Cave
+- [x] Plan Area 1 as the prologue and chapter 1, true to the story: the cave behind the waterfall is home, and you leave on a raft (decided 17 October 2026)
+- [ ] Places: the engine moves between small connected maps within an area; today's map becomes the meadow, unchanged
+- [ ] Chapter 1, the Water Curtain Cave: the troop's dare at the waterfall, the jump (跳), the cave and becoming king; the cave door on the far left goes, and 洞 is caught in the cave
+- [ ] Chapter 1, life as king: the troop moving in (numbers 1–10), new places, requests, shop stock and animals
+- [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
+- [ ] Let the engine run more than one area, so sailing away leads into Area 2
+- [ ] Build Area 2, Across the sea
