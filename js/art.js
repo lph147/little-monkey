@@ -11,17 +11,10 @@ function sprite(rows, pal){
   rows.forEach((r, y) => [...r].forEach((ch, x) => { if (pal[ch]) R(g, x, y, 1, 1, pal[ch]); }));
   return c;
 }
-const TREE = ["....oooooooo....","..oolllhhhlloo..",".olllhhhhlllldo.","olllhhhllllllddo","ollhhllllllllddo","ollllllllllldddo","odlllllllllddddo","oddllllllldddddo",".oddddlldddddo..","..oodddddddoo...","....ooottooo....","......otko......","......otko......","......otko......",".....ootkoo.....","................"];
-const TREE_PAL = {o:'#1F4D2A',d:'#2F7A3E',l:'#3F9A4C',h:'#6CC066',t:'#8A5A32',k:'#5E3B1F',p:'#F7A08F',q:'#D9665B',r:'#FFE0CF'};
-const PEACH_TREE = TREE.map(r => [...r]);
-const APPLE_TREE = TREE.map(r => [...r]);
-[[3,3],[9,2],[11,5],[6,6],[7,3]].forEach(([x,y]) => { APPLE_TREE[y][x] = 'a'; APPLE_TREE[y][x+1] = 'a'; APPLE_TREE[y+1][x] = 'A'; APPLE_TREE[y+1][x+1] = 'A'; });
-TREE_PAL.a = '#E8343C'; TREE_PAL.A = '#A8161E';
-[[4,3],[10,2],[11,6],[5,6],[8,4]].forEach(([x,y]) => { PEACH_TREE[y][x] = 'r'; PEACH_TREE[y][x+1] = 'p'; PEACH_TREE[y+1][x] = 'p'; PEACH_TREE[y+1][x+1] = 'q'; });
+const TREE_PAL = {o:'#1F4D2A',d:'#2F7A3E',l:'#3F9A4C',h:'#6CC066'};   // the trees' leaves, darkest to lightest (big objects, below)
 const ROCK = ["................","................",".....ooooo......","...oolllmmoo....","..ollllmmmmdo...",".olllmmmmmmddo..",".ollmmmmmmmddo..","olmmmmmmmmmdddo.","ommmmmmmmmddddo.","ommmmmmmmdddddo.",".ommmmmmdddddo..","..ooddddddddo...","....oooooooo....","................","................","................"];
 const ROCK_PAL = {o:'#4A463F',l:'#D6D2C5',m:'#A9A598',d:'#7C786D',k:'#3A352E',g:'#FFE27A'};
-const CRACK = [[8,3],[8,4],[7,5],[8,6],[9,7],[8,8],[7,9],[8,10],[9,5],[10,4],[6,7],[5,8],[10,8],[11,9]];
-const STONE = ROCK.map(r => [...r]); CRACK.forEach(([x,y]) => { if (STONE[y][x] !== '.') STONE[y][x] = 'k'; });
+const CRACK = [[8,3],[8,4],[7,5],[8,6],[9,7],[8,8],[7,9],[8,10],[9,5],[10,4],[6,7],[5,8],[10,8],[11,9]];   // the stone cracking in the opening
 const SIGN = ["................","................","................","..oooooooooooo..","..owwwwwwwwwwo..","..owWWWwwWWWwo..","..owwwwwwwwwwo..","..owWWwwWWWwwo..","..oooooooooooo..","......oWWo......","......oWWo......","......oWWo......","......oWWo......",".....oooooo.....","................","................"];
 const POST = ["......oooo......",".....owwwwo.....",".....owWWwo.....","..ooooowwooooo..","..owwwwwwwwwwo..","..ooooowwooooo..",".....owWWwo.....",".....owwwwo.....","...ooowWWwooo...","...owwwwwwwwo...","...ooowwwwooo...",".....owWWwo.....",".....owwwwo.....",".....owWWwo.....","....oooooooo....","................"];   // a wooden practice post
 const STALL = ["rwrwrwrwrwrwrwrw","rwrwrwrwrwrwrwrw","oooooooooooooooo",".k............k.",".k............k.",".k............k.",".k............k.",".k..pq...aA...k.",".kooooooooooooook",".kwwwwwwwwwwwwwk",".kWWWWWWWWWWWWWk",".kwwwwwwwwwwwwwk",".kWWWWWWWWWWWWWk",".kooooooooooooook",".k............k.","................"];   // a market stall with a striped awning
@@ -109,8 +102,7 @@ function portrait(id){
   return portraitCache[id] = `<img class="portrait" alt="" src="${c.toDataURL()}">`;
 }
 const SPR = {
-  tree: sprite(TREE, TREE_PAL), peach: sprite(PEACH_TREE.map(r => r.join('')), TREE_PAL), apple: sprite(APPLE_TREE.map(r => r.join('')), TREE_PAL),
-  rock: sprite(ROCK, ROCK_PAL), stone: sprite(STONE.map(r => r.join('')), ROCK_PAL),
+  rock: sprite(ROCK, ROCK_PAL),
   sign: sprite(SIGN, {o:'#4A2C17',w:'#D2A46A',W:'#9E6F3C'}),
   post: sprite(POST, {o:'#4A2C17',w:'#B98A55',W:'#8A5A32'}),
   stall: sprite(STALL, {r:'#C0392B',w:'#F4F1EA',o:'#4A2C17',k:'#6B4A2A',W:'#8A5A32',p:'#F7A08F',q:'#D9665B',a:'#E8343C',A:'#A8161E'}),
@@ -199,14 +191,15 @@ const LOOKS = {
   redFlowers:    (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#E8343C'); flower(g,X+11,Y+7,'#E8343C'); flower(g,X+6,Y+11,'#E8343C'); },
   yellowFlowers: (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F7D23E'); flower(g,X+11,Y+7,'#F7D23E'); flower(g,X+6,Y+11,'#F7D23E'); },
   whiteFlowers:  (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#FFFFFF'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#FFFFFF'); },
-  tree:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.tree,X,Y); },
-  peachTree: (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.peach,X,Y); },
-  appleTree: (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.apple,X,Y); },
-  rocks:     (g,X,Y,x,y) => { path(g,X,Y,x,y); g.drawImage(SPR.rock,X,Y+2); },
-  stone:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+2,Y+13,12,2,'#5DA651'); g.drawImage(SPR.stone,X,Y+1); },
+  // trees, the fruit trees, your stone, the rocks and the practice post: just the ground here; they're big objects (OBJECT_ART, below)
+  tree:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  peachTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  appleTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  rocks:     (g,X,Y,x,y) => path(g,X,Y,x,y),
+  stone:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
   stall:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.stall,X,Y); },
-  post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },
+  post:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
   caveWall:  (g,X,Y,x,y) => caveWall(g,X,Y,x,y),
@@ -229,7 +222,89 @@ const LOOKS = {
     R(g,X,Y,T,2,'#6B4A2A'); R(g,X,Y+14,T,2,'#6B4A2A');
   }
 };
-function buildMap(){   // the place you're in
+
+/* ---- big objects: trees, the fruit trees, your stone, the rocks and the practice post ----
+   They're bigger than the squares they stand on: a tree's leaves reach up into the square above, and a block of
+   forest two squares by two is one big tree. They're drawn after the ground, from the top of the map down, so
+   nearer ones overlap. The part of each that reaches up above its squares is also drawn on the over-layer
+   (overCanvas), which js/draw.js puts over the characters: walk behind a tree and its leaves cover you. */
+const LEAF = [TREE_PAL.o, TREE_PAL.d, TREE_PAL.l, TREE_PAL.h, '#9BE08A'];   // darkest to lightest
+const GREY = [ROCK_PAL.o, ROCK_PAL.d, ROCK_PAL.m, ROCK_PAL.l, '#E6E2D6'];
+const WOOD = ['#4A2C17', '#6B4A2A', '#8A5A32', '#B98A55', '#D2A46A'];
+const PEACHES = ['#F7A08F', '#FFE0CF'], APPLES = ['#E8343C', '#FF8A80'];
+const dot = (g, x, y, c) => R(g, x, y, 1, 1, c);
+function disc(g, cx, cy, r, col){ for (let dy = -r; dy <= r; dy++){ const w = Math.floor(Math.sqrt(r*r - dy*dy)); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
+function oval(g, cx, cy, rx, ry, col){ for (let dy = -ry; dy <= ry; dy++){ const w = Math.round(rx * Math.sqrt(1 - dy*dy / (ry*ry))); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
+const groundShadow = (g, cx, cy, rx, ry) => oval(g, cx, cy, rx, ry, '#5DA651');
+function leaves(g, blobs, X, Y, seed){   // a tree's leaves, as round clumps [x, y, radius]: an outline, then dark, mid and light, lit from the top left
+  blobs.forEach(([cx, cy, r]) => disc(g, X+cx, Y+cy, r+1, LEAF[0]));
+  blobs.forEach(([cx, cy, r]) => disc(g, X+cx, Y+cy, r, LEAF[1]));
+  blobs.forEach(([cx, cy, r]) => disc(g, X+cx-1, Y+cy-1, r-2, LEAF[2]));
+  blobs.forEach(([cx, cy, r]) => disc(g, X+cx-2, Y+cy-3, Math.max(1, r-4), LEAF[3]));
+  blobs.forEach(([cx, cy, r], i) => {
+    dot(g, X+cx-3, Y+cy-4, LEAF[4]); dot(g, X+cx-2, Y+cy-5, LEAF[4]);
+    for (let k = 0; k < r; k++) dot(g, X+cx-r+2+Math.floor(rnd(seed,i,k)*(2*r-3)), Y+cy+Math.floor(rnd(seed,i,k+50)*r*.7), LEAF[0]);
+  });
+}
+function trunk(g, X, Y, w, h){ R(g, X, Y, w, h, WOOD[1]); R(g, X, Y, 1, h, WOOD[3]); R(g, X+w-1, Y, 1, h, WOOD[0]); R(g, X-1, Y+h-1, w+2, 1, WOOD[0]); }
+const fruit = (g, spots, X, Y, [col, shine]) => spots.forEach(([cx, cy]) => { R(g, X+cx, Y+cy, 2, 2, col); dot(g, X+cx, Y+cy, shine); });
+function boulder(g, cx, by, rx, ry, cracked){   // a rock sitting on the ground at by
+  groundShadow(g, cx, by, rx+1, 3);
+  oval(g, cx, by-ry, rx+1, ry+1, GREY[0]); oval(g, cx, by-ry, rx, ry, GREY[2]);
+  oval(g, cx-2, by-ry-2, rx-3, ry-3, GREY[3]); oval(g, cx-4, by-ry-4, Math.max(1, rx-8), Math.max(1, ry-7), GREY[4]);
+  R(g, cx-rx+2, by-3, rx*2-3, 2, GREY[1]);
+  if (cracked) [[0,0],[0,2],[-1,4],[0,6],[1,8],[2,5],[3,4],[-2,7],[-3,8]].forEach(([a, c]) => dot(g, cx+a, by-6-ry+c, GREY[0]));
+}
+function tallPost(g, X, Y){   // the practice post, a square and a half tall
+  const top = Y - 8;
+  groundShadow(g, X+8, Y+15, 6, 1); R(g, X+6, top, 4, 23, WOOD[0]); R(g, X+7, top+1, 2, 22, WOOD[3]); dot(g, X+7, top+1, WOOD[4]);
+  R(g, X+2, top+5, 12, 3, WOOD[0]); R(g, X+3, top+6, 10, 1, WOOD[3]);
+  R(g, X+3, top+17, 10, 3, WOOD[0]); R(g, X+4, top+18, 8, 1, WOOD[2]);
+}
+// How each big object is drawn, given where it stands {x, y, w, h} (in squares).
+const OBJECT_ART = {
+  tree: (g, o) => {
+    const X = o.x*T, Y = o.y*T, seed = o.x*31 + o.y;
+    if (o.w === 2){ groundShadow(g, X+16, Y+29, 13, 3); trunk(g, X+13, Y+21, 6, 9); leaves(g, [[16,6,10],[8,13,8],[24,13,8],[16,15,9]], X, Y, seed); }   // two squares by two
+    else { groundShadow(g, X+8, Y+14, 7, 2); trunk(g, X+7, Y+8, 3, 7); leaves(g, [[8,-1,6],[8,5,7]], X, Y, seed); }                                       // tall
+  },
+  peachTree: (g, o) => fruitTree(g, o, PEACHES),
+  appleTree: (g, o) => fruitTree(g, o, APPLES),
+  stone: (g, o) => boulder(g, o.x*T + 8, o.y*T + 15, 11, 9, true),
+  rocks: (g, o) => { for (let i = 0; i < o.w; i++) boulder(g, o.x*T + 8 + i*14, o.y*T + 15, 10 - i % 2, 8 - i % 2, false); },
+  post: (g, o) => tallPost(g, o.x*T, o.y*T)
+};
+function fruitTree(g, o, colours){   // a square and a half wide, reaching up, full of fruit
+  const X = o.x*T, Y = o.y*T;
+  groundShadow(g, X+8, Y+14, 10, 2); trunk(g, X+6, Y+6, 4, 9);
+  leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
+  fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
+}
+const ROW_OBJECTS = ['rocks'];   // side by side, these make one object as wide as the row
+// The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
+// stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile; anything
+// else stands on its own square. They come from the top of the map down, the order they're drawn in.
+function mapObjects(){
+  const out = [], taken = new Set(), key = (x, y) => x + ',' + y;
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
+    const t = tileAt(x, y);
+    if (!OBJECT_ART[t.look] || taken.has(key(x, y))) continue;
+    const same = (a, c) => tileAt(a, c) === t && !taken.has(key(a, c));
+    let w = 1, h = 1;
+    if (t.look === 'tree' && same(x+1, y) && same(x, y+1) && same(x+1, y+1)){ w = 2; h = 2; }
+    else if (ROW_OBJECTS.includes(t.look)) while (same(x+w, y)) w++;
+    for (let a = 0; a < w; a++) for (let c = 0; c < h; c++) taken.add(key(x+a, y+c));
+    out.push({look:t.look, x, y, w, h});
+  }
+  return out.sort((p, q) => (p.y + p.h) - (q.y + q.h));
+}
+const overCanvas = document.createElement('canvas'), og = overCanvas.getContext('2d');   // the over-layer: what reaches up above big objects
+function buildMap(){   // the place you're in: the ground, then the big objects
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
+  overCanvas.width = COLS*T; overCanvas.height = ROWS*T;   // (this also empties it)
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
+  for (const o of mapObjects()){
+    OBJECT_ART[o.look](mg, o);
+    og.save(); og.beginPath(); og.rect(0, 0, overCanvas.width, o.y*T); og.clip(); OBJECT_ART[o.look](og, o); og.restore();   // just the part above its squares
+  }
 }

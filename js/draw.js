@@ -96,13 +96,13 @@ function drawWorld(now){
     if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
     sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
   }
-  // animals at their own spots (up a tree, on a cliff), once animals appear
-  if (canWild()) for (const a of ANIMALS){
-    if (!a.at || a.place !== PLACE || (foe && foe.a === a)) continue;
+  // animals at their own spots on the ground (a cliff), once animals appear; those up a tree come after the leaves
+  const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE && !(foe && foe.a === a)) : [];
+  const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree';
+  for (const a of spotAnimals.filter(a => !inTree(a))){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    if (tileAt(a.at[0], a.at[1]).look === 'tree') b.drawImage(a.spr, 0, 0, 16, 16, X + 5, Y + 1 - bob, 10, 10);   // small, up in the branches
-    else { R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(a.spr, X, Y - 3 - bob); }
+    R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(a.spr, X, Y - 3 - bob);
   }
   // tall grass rustling where an animal hides
   if (rustle && canWild() && Math.floor(now / 160) % 6 < 3){
@@ -110,7 +110,8 @@ function drawWorld(now){
     for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(now/45 + i)*1.5); R(b, gx, Y + 9 - (i % 2), 1, 5, '#2F6E38'); R(b, gx, Y + 8 - (i % 2), 1, 1, '#94D883'); }
   }
   drawBirds(cx, cy, now);
-  // entities sorted by row
+  // entities sorted by row (their ! and ? bubbles wait until after the over-layer)
+  const bubbles = [];
   const ents = NPCS.map(n => ({n, y:n.y*T})).concat([{p:true, y:pl.py}]).concat(foe ? [{f:true, y:foe.y*T}] : []).sort((a,c) => a.y - c.y);
   for (const e of ents){
     if (e.f){ drawFoe(cx, cy, now); continue; }
@@ -119,7 +120,7 @@ function drawWorld(now){
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
-      if (now < alertUntil) bubble(PX + 5, PY - 10, '!');
+      if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
       continue;
     }
     const n = e.n, X = n.x*T - cx, Y = n.y*T - cy;
@@ -133,8 +134,16 @@ function drawWorld(now){
     const idle = Math.floor(now/700 + n.x) % 2;
     drawEntityMonkey(n.kind, X, Y, n.dir, now, idle, 0, n.x + n.y);
     const bub = (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // a ! or ? from the area's bubbles
-    if (bub) bubble(X+10, Y-8, bub.show);
+    if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
+  // the over-layer: leaves and tops of big objects, over anyone walking behind them
+  b.drawImage(overCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
+  for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
+    const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
+    if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - 5 - bob, 10, 10);
+  }
+  for (const [x, y, show] of bubbles) bubble(x, y, show);
   if (trainingCalls()) for (const [x, y] of TRAINING_TILES) bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words are due for review
   drawMarkers(cx, cy, now);
   const fk = (now - fadeT) / 700;
@@ -195,7 +204,6 @@ function drawMarkers(cx, cy, now){
 }
 
 /* ---- opening scene ---- */
-function disc(g, cx, cy, r, col){ for (let dy = -r; dy <= r; dy++){ const w = Math.floor(Math.sqrt(r*r - dy*dy)); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
 function drawScene(t, now){
   const W = VW*T, H = VH*T;
   const dawn = clamp((t - 2.8) / 2.6, 0, 1);
