@@ -234,7 +234,8 @@ const PEACHES = ['#F7A08F', '#FFE0CF'], APPLES = ['#E8343C', '#FF8A80'];
 const dot = (g, x, y, c) => R(g, x, y, 1, 1, c);
 function disc(g, cx, cy, r, col){ for (let dy = -r; dy <= r; dy++){ const w = Math.floor(Math.sqrt(r*r - dy*dy)); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
 function oval(g, cx, cy, rx, ry, col){ for (let dy = -ry; dy <= ry; dy++){ const w = Math.round(rx * Math.sqrt(1 - dy*dy / (ry*ry))); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
-const groundShadow = (g, cx, cy, rx, ry) => oval(g, cx, cy, rx, ry, '#5DA651');
+let shadows = true;   // (off while drawing what goes over the characters: shadows stay on the ground)
+const groundShadow = (g, cx, cy, rx, ry) => { if (shadows) oval(g, cx, cy, rx, ry, '#5DA651'); };
 function leaves(g, blobs, X, Y, seed){   // a tree's leaves, as round clumps [x, y, radius]: an outline, then dark, mid and light, lit from the top left
   blobs.forEach(([cx, cy, r]) => disc(g, X+cx, Y+cy, r+1, LEAF[0]));
   blobs.forEach(([cx, cy, r]) => disc(g, X+cx, Y+cy, r, LEAF[1]));
@@ -319,13 +320,17 @@ function buildMap(){   // the place you're in: the ground, then the big objects'
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
   OBJECT_PIECES = mapObjects().map(o => {
     const x0 = o.x*T - PIECE_SIDE, y0 = o.y*T - PIECE_UP, w = o.w*T + 2*PIECE_SIDE, h = PIECE_UP + o.h*T + 4;
-    const part = (from, to) => {   // the object drawn, just between these rows of its picture
+    const part = (rects, over) => {   // the object drawn, just inside these parts of its picture, each [x, y, w, h]
       const c = document.createElement('canvas'); c.width = w; c.height = h;
-      const g = c.getContext('2d'); g.save(); g.beginPath(); g.rect(0, from, w, to - from); g.clip(); g.translate(-x0, -y0); OBJECT_ART[o.look](g, o); g.restore();
+      const g = c.getContext('2d'); g.save(); g.beginPath(); rects.forEach(([rx, ry, rw, rh]) => g.rect(rx, ry, rw, rh)); g.clip(); g.translate(-x0, -y0);
+      shadows = !over; OBJECT_ART[o.look](g, o); shadows = true; g.restore();
       return c;
     };
     const leafy = LEAFY[o.look], [side, up] = !leafy ? [0, 0] : o.w === 2 ? [0, 5] : leafy;
-    return {...o, x0, y0, base: part(PIECE_UP, h), top: part(0, PIECE_UP), rustle: -1e9,
+    // Over the characters: what reaches up above its squares, and for a tree, its leaves reaching out beside them too (a
+    // fruit tree's wide branches), so you go through them as you pass, not over them.
+    const right = PIECE_SIDE + o.w*T, beside = [[0, PIECE_UP, PIECE_SIDE, h - PIECE_UP], [right, PIECE_UP, w - right, h - PIECE_UP]];
+    return {...o, x0, y0, base: part([[0, PIECE_UP, w, h - PIECE_UP]], false), top: part([[0, 0, w, PIECE_UP], ...(leafy ? beside : [])], true), rustle: -1e9,
       leaves: leafy ? {x: o.x*T - side, y: o.y*T - up, w: o.w*T + 2*side, h: up + o.h*T} : null};
   });
 }

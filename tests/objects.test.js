@@ -49,6 +49,13 @@ test('walking through a tree’s leaves makes it rustle; standing still or walki
   assert.equal(game.run('OBJECT_PIECES.find(p => p.look === "stone").leaves'), null, 'stones don’t rustle');
 });
 
+test('brushing past a wide fruit tree’s branches makes it rustle too', () => {
+  const game = loadGame();
+  const peach = 'OBJECT_PIECES.find(p => p.x === 1 && p.y === 6)';   // the peach tree at the far left of the path
+  game.run('pl.px = 2*T; pl.py = 5.5*T; pl.mv = {fx: 2, fy: 5, tx: 2, ty: 6, t0: 900}; touchLeaves(1000)');   // walking down the column beside it
+  assert.equal(game.run(`${peach}.rustle`), 1000);
+});
+
 test('bigger pictures don’t change where you can walk: the square above a tree is still open', () => {
   const game = loadGame();
   assert.equal(game.run('walkable(12, 7)'), true, 'above the tree by the pond');
