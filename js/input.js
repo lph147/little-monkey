@@ -67,6 +67,7 @@ $('#startBtn').addEventListener('click', () => { getAC(); pressMenu(); });
 $('#selectBtn').addEventListener('click', () => { getAC(); pressSelect(); });
 const KEYS = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right',W:'up',S:'down',A:'left',D:'right'};
 document.addEventListener('keydown', e => {
+  if (upright) return;   // the phone is upright: the game waits until it's turned
   const isB = e.key === 'x' || e.key === 'X' || (e.key === 'Escape' && (!modal.hidden || !!talkNext));
   const isMenu = e.key === 'm' || e.key === 'M' || (e.key === 'Escape' && modal.hidden && !talkNext);   // Start
   const isSelect = e.key === 't' || e.key === 'T';

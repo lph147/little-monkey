@@ -29,7 +29,7 @@
     <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
     </div>
     <div class="controls">
-      <div class="power" aria-hidden="true"><i></i>POWER</div>   <!-- just for looks, when sideways -->
+      <div class="power" aria-hidden="true"><i></i>POWER</div>   <!-- just for looks -->
       <div class="dpad" aria-label="Direction pad">
         <button class="u" data-dir="up" aria-label="Walk up">▲</button>
         <button class="l" data-dir="left" aria-label="Walk left">◀</button>
@@ -45,10 +45,16 @@
         <div class="abwrap"><button class="round" id="btnB" aria-label="Back or menu">B</button><span class="ablabel" id="bLabel"></span></div>
         <div class="abwrap"><button class="round" id="btnA" aria-label="Talk or look">A</button><span class="ablabel" id="aLabel"></span></div>
       </div>
-      <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>   <!-- the speaker, just for looks, when sideways -->
+      <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>   <!-- the speaker, just for looks -->
     </div>
     <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for Start (the menu) · T for Select (your tasks)</p>
   </div>
+</div>
+<div class="turn" id="turn" hidden role="status">   <!-- held upright: the game is played sideways (fit() in js/main.js) -->
+  <svg viewBox="0 0 120 120" aria-hidden="true"><g class="phone"><rect x="40" y="18" width="40" height="84" rx="7" fill="none" stroke="currentColor" stroke-width="5"/><rect x="47" y="29" width="26" height="58" rx="2" fill="currentColor" opacity=".25"/><circle cx="60" cy="94" r="3" fill="currentColor"/></g></svg>
+  <h2>小猴子</h2>
+  <p>Turn your phone sideways to play</p>
+  <p class="small">On a computer, make the window wider.</p>
 </div>
 
 <!-- The game's scripts. They load in this order, and each one can use what the ones above it define.

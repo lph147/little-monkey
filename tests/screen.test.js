@@ -1,42 +1,38 @@
-// The screen's size, and your tasks: on a phone held upright the screen shows more of the map, and held sideways the controls go either side of it; Select
-// shows your tasks, and a new task is announced with a message and a red dot on Select.
+// The screen's size, and your tasks: the game is played sideways, like a Game Boy Advance, and asks you to
+// turn the phone when it's held upright. Select shows your tasks, and a new task is announced with a
+// message and a red dot on Select.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
-// The page as a browser would lay it out: the window, how wide the console is, and the height of
-// everything on the page but the screen (the controls and the console's edges).
-function sized(game, {width, height, console: shell, rest}){
-  game.run(`innerWidth = ${width}; innerHeight = ${height}; $('.console').clientWidth = ${shell};
-    $('.app').offsetHeight = ${rest}; cv.offsetHeight = 0; fit();`);
-  return {rows: game.run('VH'), buffer: game.run('buf.height'), w: parseFloat(game.run('cv.style.width')), h: parseFloat(game.run('cv.style.height'))};
+// The window's size, as a browser would report it, then the game sizes its screen.
+function sized(game, width, height){
+  game.run(`innerWidth = ${width}; innerHeight = ${height}; fit();`);
+  return {w: parseFloat(game.run('cv.style.width')), h: parseFloat(game.run('cv.style.height')), turn: !game.el('#turn').hidden, game: !game.el('.app').hidden};
 }
 
-test('a phone held upright shows more rows of the map; a small phone the usual 10', () => {
+test('held sideways, the screen is 15 columns by 10 rows, as big as fits between the two sides of controls', () => {
   const game = loadGame();
-  const phone = sized(game, {width: 375, height: 812, console: 351, rest: 300});
-  assert.ok(phone.rows > 14 && phone.rows <= 18, `a tall phone should show 15 to 18 rows, now there's no header or task box, not ${phone.rows}`);
-  assert.equal(phone.buffer, phone.rows * 16, 'the picture is drawn that many rows tall');
-  assert.ok(phone.h <= 812 - 300, 'and the screen still fits on the page');
-  const small = sized(game, {width: 360, height: 640, console: 336, rest: 420});
-  assert.equal(small.rows, 10, 'a small phone has room for the usual 10');
+  const phone = sized(game, 812, 375);
+  assert.deepEqual([game.run('VW'), game.run('VH'), game.run('buf.width'), game.run('buf.height')], [15, 10, 240, 160], 'a Game Boy Advance’s shape');
+  assert.ok(phone.w <= 812 - 2 * 150 && phone.h <= 375, 'it fits between the D-pad side and the A and B side');
+  assert.ok(Math.abs(phone.w / phone.h - 1.5) < .01, 'half as wide again as it is tall');
+  assert.deepEqual([phone.turn, phone.game], [false, true], 'and the game shows');
+  const desk = sized(game, 1600, 1000);
+  assert.ok(desk.w <= 720, 'in a big computer window the screen stops growing');
 });
 
-test('held sideways, or on a computer, the controls go either side and the screen shows 15 columns by 10 rows', () => {
-  const game = loadGame();
-  const side = sized(game, {width: 812, height: 375, console: 800, rest: 0});
-  assert.equal(game.run('sideways'), true);
-  assert.deepEqual([game.run('VW'), side.rows, game.run('buf.width'), side.buffer], [15, 10, 240, 160], 'like a Game Boy Advance');
-  assert.ok(side.w <= 812 - 2 * 150 && side.h <= 375, 'the screen fits between the D-pad side and the A and B side');
-  assert.ok(Math.abs(side.w / side.h - 1.5) < .01, 'and is half as wide again as it is tall');
-  const up = sized(game, {width: 375, height: 812, console: 351, rest: 300});
-  assert.equal(game.run('sideways'), false, 'turned upright again');
-  assert.deepEqual([game.run('VW'), game.run('buf.width')], [11, 176]);
-  assert.ok(up.rows > 14, 'with more rows again');
-  const desk = sized(game, {width: 1600, height: 1000, console: 0, rest: 0});
-  assert.equal(game.run('sideways'), true, 'a computer window is wider than it is tall');
-  assert.ok(desk.w <= 720, 'and on a big one the screen stops growing');
+test('held upright, a card asks you to turn the phone, and the game waits', () => {
+  const game = loadGame({save: {version: 21, started: true}});
+  game.run("mode = 'play'");
+  const up = sized(game, 375, 812);
+  assert.deepEqual([up.turn, up.game], [true, false], 'the card shows, the game doesn’t');
+  const before = game.run('JSON.stringify([S.pos, mode])');
+  assert.equal(game.key('ArrowLeft').defaultPrevented, false, 'keys do nothing');
+  assert.equal(game.run('JSON.stringify([S.pos, mode])'), before);
+  const side = sized(game, 812, 375);
+  assert.deepEqual([side.turn, side.game], [false, true], 'turned sideways, the game is back');
 });
 
 function taskGame(extra = {}){

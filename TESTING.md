@@ -42,12 +42,12 @@ The save on your phone belongs to this address, so it is separate from saves any
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.
 - [ ] If words are due for review, the title screen says how many (after "Welcome back"). If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). The words sit under the title in the night sky, clear of the stone and the mountain.
-- [ ] There's no header above the screen and no task box under it. Between the D-pad and A/B are two small buttons, SELECT and START, like a Game Boy's.
+- [ ] There's no header or task box. Under the D-pad are two small buttons, SELECT and START, like a Game Boy's.
 - [ ] Continue puts you back where you left off. Start (or M) opens the menu and Select (or T) your tasks; both show your level, XP, shells (a pixel shell) and words at the top, and pressing the same button again (or B) closes them.
 - [ ] The menu shows your level with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
-- [ ] On a phone held upright, the game screen is taller than it is wide (it shows up to 18 rows of the map instead of 10), and while you play the whole console fits without scrolling.
-- [ ] Turn the phone on its side: the console becomes a Game Boy Advance, with the screen in the middle (15 columns, 10 rows), the D-pad, SELECT and START on the left with a green POWER light, and B and A on the right with a speaker's slanted slots. There's a gap between the D-pad and the screen, and nothing scrolls. Walk, talk and open the menu; then turn it back upright and the tall layout returns. A computer window wider than it is tall looks the same.
+- [ ] Held upright, the phone shows only a card: 小猴子, a phone turning, and "Turn your phone sideways to play". (If nothing happens when you turn it, the phone's rotation lock is on.)
+- [ ] Held sideways, the console is a Game Boy Advance: the screen in the middle (15 columns, 10 rows), the D-pad, SELECT and START on the left with a green POWER light, and B and A on the right with a speaker's slanted slots. There's a gap between the D-pad and the screen, and nothing scrolls. Turn it upright and back mid-game: you carry on where you were. A computer window looks the same.
 - [ ] Select shows what to do now, then the chapter's checklist. When a new task arrives, a message says "New task: ..." (after any message already showing), and a red dot sits on Select until you open your tasks. A tip points at Select the first time you have a task, and one at Start once you know 3 words.
 - [ ] Talking to the old monkey: the line appears in a speech box across the bottom of the game screen, and you and the old monkey stay in sight above it (the map only slides up if one of you would be covered). The line is spoken, pinyin shows over every word, and tapping a word shows its meaning at the bottom of the box (without moving on). 🔊 says it again. A, B or the green ▼ moves on; the arrows and Menu do nothing until the talk is over.
 - [ ] Your very first reply, after the old monkey's 你好, says "Now you say it" with just 你好 to say. After that (such as after a monkey's 谢谢你), "Your reply" shows 2 or 3 phrases, each with Chinese, pinyin and English. Tapping one (or the arrows and A) makes your monkey, 小猴子 (You), say it. Choosing a phrase that doesn't fit is fine: a note says which fits best. B doesn't choose. A phrase you haven't learned yet is taught on its own card first.
@@ -181,7 +181,7 @@ When the save format changes, the game keeps a copy of your old save in the brow
 - [ ] D-pad: hold to walk, tap to turn, and slide your thumb between directions without lifting.
 - [ ] Pressing and holding on text never selects it.
 - [ ] On cards, the main button has a red A badge and A presses it; the back button has a blue B badge.
-- [ ] The whole console fits on screen held upright, and held sideways.
+- [ ] Held sideways, the whole console fits on screen; held upright, you see only the card asking you to turn the phone.
 - [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, and the Word Scroll (and its shadows). They look sharp, not blurry.
 
 ## Known issues (not fixed yet)

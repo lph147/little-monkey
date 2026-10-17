@@ -80,7 +80,7 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = 
   }
   const win = vm.createContext({
     document,
-    innerWidth: 400, innerHeight: 860, devicePixelRatio: 2,
+    innerWidth: 812, innerHeight: 375, devicePixelRatio: 2,   // a phone held sideways
     localStorage: {
       getItem: k => (storage.has(k) ? storage.get(k) : null),
       setItem: (k, v) => { storage.set(k, String(v)); },

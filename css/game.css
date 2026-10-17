@@ -37,12 +37,19 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--en);line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-.app{max-width:520px;margin:0 auto;padding:8px 10px 14px}
+.app{padding:4px;display:flex;align-items:center;justify-content:center;min-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+.app[hidden]{display:none}
 h1{font-weight:700;font-size:1.35rem;margin:0;letter-spacing:.05em}
 .spacer{flex:1}
 .iconbtn{background:none;border:2px solid var(--line);border-radius:6px;padding:2px 8px;font-size:1rem;min-height:34px}
 
-.console{background:var(--shell);border:2px solid var(--shell-edge);border-radius:16px 16px 40px 16px;padding:12px 12px 16px}
+/* The console, like a Game Boy Advance: the screen in the middle, the D-pad, Select and Start on the left with
+   the power light, A and B on the right with the speaker. Each side is 150px (SIDE_WING in js/main.js), and
+   fit() makes the screen as big as fits between them. The power light and the speaker are just for looks. */
+.console{display:grid;grid-template-columns:150px auto 150px;grid-template-rows:auto 1fr auto auto;
+  grid-template-areas:"power screen ." "dpad screen ab" "ss screen grille" "keys keys keys";align-items:center;width:max-content;
+  background:var(--shell);border:2px solid var(--shell-edge);border-radius:46px;padding:6px max(6px, env(safe-area-inset-right,0px)) 6px max(6px, env(safe-area-inset-left,0px))}
+.display{grid-area:screen}
 .screen{position:relative;margin:0 auto;background:var(--bezel);padding:8px;border-radius:8px 8px 18px 8px;width:max-content;max-width:100%}
 canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:2px;touch-action:none}
 .titlecard{position:absolute;inset:8px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:3% 12px 9%;text-align:center;color:#FFF6E0;pointer-events:none}
@@ -66,8 +73,8 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .caprow{display:flex;align-items:center;gap:8px;margin-top:4px}
 .caprow .spacer{flex:1}
 
-.controls{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:0 6px;user-select:none;-webkit-user-select:none}
-.dpad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);touch-action:none}
+.controls{display:contents}   /* its buttons are placed by .console's grid */
+.dpad{grid-area:dpad;justify-self:start;margin-left:4px;display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);touch-action:none}
 .dpad button{background:var(--pad);color:var(--pad-ink);border:none;font-size:1.1rem;touch-action:none;display:flex;align-items:center;justify-content:center}
 .dpad .u{grid-column:2;grid-row:1;border-radius:8px 8px 0 0}
 .dpad .l{grid-column:1;grid-row:2;border-radius:8px 0 0 8px}
@@ -75,14 +82,14 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .dpad .r{grid-column:3;grid-row:2;border-radius:0 8px 8px 0}
 .dpad .d{grid-column:2;grid-row:3;border-radius:0 0 8px 8px}
 .dpad button.held{filter:brightness(1.35)}
-.ab{display:flex;gap:14px;align-items:flex-end;transform:rotate(-12deg)}
+.ab{grid-area:ab;justify-self:end;margin-right:6px;display:flex;gap:14px;align-items:flex-end;transform:rotate(-12deg)}
 .abwrap{display:flex;flex-direction:column;align-items:center;gap:4px}
 .round{width:62px;height:62px;border-radius:50%;border:none;color:#FFF;font-family:var(--pixel);font-size:1.4rem;box-shadow:0 4px 0 rgba(0,0,0,.3);touch-action:none}
 .round:active,.round.held{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
 #btnA{background:var(--btnA)}
 #btnB{background:var(--btnB);width:52px;height:52px;font-size:1.1rem;margin-bottom:18px}
 .ablabel{font-family:var(--pixel);font-size:.85rem;color:var(--muted);min-height:1.2em;transform:rotate(12deg)}
-.keys{display:none;margin:10px 0 0;font-size:.8rem;color:var(--muted);text-align:center}
+.keys{display:none;grid-area:keys;margin:6px 0 2px;font-size:.8rem;color:var(--muted);text-align:center}
 @media (hover:hover) and (pointer:fine){.keys{display:block}}
 
 .btn{font-family:var(--pixel);font-size:1rem;border:2px solid var(--ink);background:var(--paper);color:var(--ink);padding:7px 12px;border-radius:4px;box-shadow:0 3px 0 var(--ink);min-height:40px}
@@ -338,10 +345,9 @@ rt.hid{visibility:hidden}
 .chaptercard{text-align:center;padding:14px 0 6px}
 .chaptercard h2{font-family:var(--pixel);font-size:1.7rem;margin:6px 0 0;line-height:1.2}
 
-/* Select (your tasks) and Start (the menu): two small pills between the D-pad and A/B, like a Game Boy's.
+/* Select (your tasks) and Start (the menu): two small pills under the D-pad, like a Game Boy's.
    A red dot on Select while there's a task you haven't looked at. */
-.controls{position:relative;padding-bottom:40px}
-.ss{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);display:flex;gap:16px}
+.ss{grid-area:ss;justify-self:center;margin:0 8px 10px 0;display:flex;gap:16px}
 .sswrap{display:flex;flex-direction:column;align-items:center;gap:4px;transform:rotate(-22deg)}
 .pill{position:relative;width:50px;height:16px;border-radius:9px;background:var(--pad);border:none;box-shadow:0 2px 0 rgba(0,0,0,.35);touch-action:none}
 .pill:active{transform:translateY(2px);box-shadow:0 0 0 rgba(0,0,0,.35)}
@@ -355,23 +361,20 @@ rt.hid{visibility:hidden}
 .titletext .warn{color:#FFB4A8;margin-top:6px}
 .capbox .caprow{margin-top:8px}
 
-/* Sideways (a phone held on its side, or a computer), like a Game Boy Advance: the screen in the middle,
-   the D-pad, Select and Start on the left with the power light, A and B on the right with the speaker.
-   fit() in js/main.js adds .sideways and sizes the screen to the room between the two sides (SIDE_WING,
-   150px each). The power light and the speaker are just for looks. */
-.power,.grille{display:none}
-.app.sideways{max-width:none;padding:4px;display:flex;align-items:center;justify-content:center;min-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
-.sideways .console{display:grid;grid-template-columns:150px auto 150px;grid-template-rows:auto 1fr auto auto;
-  grid-template-areas:"power screen ." "dpad screen ab" "ss screen grille" "keys keys keys";align-items:center;
-  width:max-content;border-radius:46px;padding:6px max(6px, env(safe-area-inset-right,0px)) 6px max(6px, env(safe-area-inset-left,0px))}
-.sideways .controls{display:contents}
-.sideways .display{grid-area:screen}
-.sideways .dpad{grid-area:dpad;justify-self:start;margin-left:4px;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px)}
-.sideways .ss{grid-area:ss;position:static;transform:none;justify-self:center;margin:0 8px 10px 0}
-.sideways .ab{grid-area:ab;justify-self:end;margin-right:6px}
-.sideways .keys{grid-area:keys;margin:6px 0 2px}
-.sideways .power{display:flex;grid-area:power;justify-self:end;align-self:start;margin:10px 10px 0 0;align-items:center;gap:5px;font:600 .6rem var(--pixel);letter-spacing:.12em;color:var(--muted)}
+/* the power light, beside the screen's top-left corner, and the speaker's slots, under A and B */
+.power{grid-area:power;justify-self:end;align-self:start;margin:10px 10px 0 0;display:flex;align-items:center;gap:5px;font:600 .6rem var(--pixel);letter-spacing:.12em;color:var(--muted)}
 .power i{width:7px;height:7px;border-radius:50%;background:var(--led);box-shadow:0 0 6px var(--led)}
-.sideways .grille{display:flex;grid-area:grille;justify-self:end;gap:6px;margin:0 22px 18px 0;transform:rotate(28deg)}
+.grille{grid-area:grille;justify-self:end;display:flex;gap:6px;margin:0 22px 18px 0;transform:rotate(28deg)}
 .grille i{width:5px;height:30px;border-radius:3px;background:var(--grille);box-shadow:inset 0 2px 2px rgba(0,0,0,.3)}
 .grille i:first-child,.grille i:last-child{height:20px;margin-top:5px}
+
+/* Held upright: the game is played sideways, so a card asks you to turn the phone (fit() in js/main.js). */
+.turn{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;background:var(--bg);color:var(--ink)}
+.turn[hidden]{display:none}
+.turn svg{width:120px;height:120px;color:var(--jade)}
+.turn .phone{transform-origin:60px 60px;animation:turnphone 3s ease-in-out infinite}
+@keyframes turnphone{0%,25%{transform:rotate(0)}50%,85%{transform:rotate(90deg)}100%{transform:rotate(0)}}
+@media (prefers-reduced-motion: reduce){.turn .phone{animation:none;transform:rotate(90deg)}}
+.turn h2{margin:0;font-size:2.2rem;letter-spacing:.12em}
+.turn p{margin:0;font:600 1.15rem/1.4 var(--pixel);max-width:16rem}
+.turn .small{font:400 .9rem var(--en);color:var(--muted)}

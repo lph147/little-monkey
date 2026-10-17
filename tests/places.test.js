@@ -22,10 +22,10 @@ test('a saved place that no longer exists starts you in the first place', () => 
   assert.equal(get(game, 'S.pos.place'), 'meadow');
 });
 
-test('every place is at least as big as the screen held sideways (15 by 10), so the screen never shows past its edge', () => {
+test('every place is at least as big as the screen (15 by 10), so the screen never shows past its edge', () => {
   const game = loadGame();
   const sizes = get(game, 'Object.entries(AREA.places).map(([id, p]) => [id, p.map[0].length, p.map.length])');
-  for (const [id, w, h] of sizes) assert.ok(w >= game.run('VW_SIDEWAYS') && h >= game.run('VH_MIN'), `${id} is only ${w} by ${h}`);
+  for (const [id, w, h] of sizes) assert.ok(w >= game.run('VW') && h >= game.run('VH'), `${id} is only ${w} by ${h}`);
 });
 
 test('the area starts in its first place, the meadow', () => {

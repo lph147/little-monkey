@@ -45,6 +45,7 @@ SAVES.noMenuTip = {...SAVES.middle, tips: {...ALL_TIPS, menu: 0}};
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
 const SCREENS = [
+  {id: 'turn', title: 'Held upright', size: '375x812', why: 'The game is played sideways, so it asks you to turn the phone.'},
   {id: 'title', title: 'Title screen', why: 'A new game.'},
   {id: 'title-novoice', title: 'Title, no Chinese voice', voices: 'missing', why: 'The warning must not push the buttons off screen.'},
   {id: 'title-back', title: 'Title, coming back', save: 'middle'},
@@ -179,11 +180,12 @@ function build(){
   const grid = $('#grid');
   grid.replaceChildren();
   for (const s of shown){
+    const [fw, fh] = s.size ? s.size.split('x').map(Number) : [w, h];   // a screen can have its own size
     const fig = document.createElement('figure');
-    fig.style.width = w * zoom + 'px';
+    fig.style.width = fw * zoom + 'px';
     fig.innerHTML = `<div class="frame"></div><figcaption><b>${s.title}</b>${s.why ? `<span class="why">${s.why}</span> ` : ''}<span class="state"></span> <a href="?only=${s.id}">alone</a></figcaption>`;
     grid.append(fig);
-    load(fig, s, [w, h], zoom);
+    load(fig, s, [fw, fh], zoom);
   }
 }
 const $ = sel => document.querySelector(sel);
