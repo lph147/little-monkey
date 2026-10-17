@@ -36,27 +36,15 @@ test('the shop owner’s stall is three squares wide, and he stands beside it', 
   assert.equal(game.run('npcAt(11, 16).id'), 'boss', 'the shop owner stands just to its right, where he always has');
 });
 
-test('walking through a tree’s leaves makes it rustle; standing still or walking past in front doesn’t', () => {
-  const game = loadGame();
-  const tree = 'OBJECT_PIECES.find(p => p.x === 12 && p.y === 8)';   // the tree by the pond
-  game.run('pl.px = 12.5*T; pl.py = 7*T; pl.mv = {fx: 13, fy: 7, tx: 12, ty: 7, t0: 900}; touchLeaves(1000)');   // walking left along the row above it
-  assert.equal(game.run(`${tree}.rustle`), 1000, 'behind it, it rustles');
-  assert.ok(game.run('fallingLeaves.length') >= 3, 'and leaves fall');
-  game.run(`${tree}.rustle = -1e9; pl.mv = null; touchLeaves(3000)`);
-  assert.equal(game.run(`${tree}.rustle`), -1e9, 'standing still, it doesn’t');
-  game.run(`pl.px = 12.5*T; pl.py = 9*T; pl.mv = {fx: 13, fy: 9, tx: 12, ty: 9, t0: 3900}; touchLeaves(4000)`);
-  assert.equal(game.run(`${tree}.rustle`), -1e9, 'walking past in front of it, it doesn’t');
-  assert.equal(game.run('OBJECT_PIECES.find(p => p.look === "stone").leafy'), null, 'stones don’t rustle');
-});
-
 // Takes a step from one square to another, and checks for rustling just as you reach the next square's leaves.
 const step = (game, [fx, fy], [tx, ty], now) => game.run(`pl.px = ${(fx+tx)/2}*T; pl.py = ${(fy+ty)/2}*T; pl.mv = {fx: ${fx}, fy: ${fy}, tx: ${tx}, ty: ${ty}, t0: ${now - 120}}; touchLeaves(${now})`);
 const apple = 'OBJECT_PIECES.find(p => p.look === "appleTree")';   // the apple tree, at 21, 17
 
-test('walking past a wide fruit tree, it rustles once, as you step into its branches beside it', () => {
+test('walking past a wide fruit tree, it rustles once, as you step into its branches beside it, and two leaves fall', () => {
   const game = loadGame();
   step(game, [22, 16], [22, 17], 1000);
   assert.equal(game.run(`${apple}.rustle`), 1000, 'into the square beside it');
+  assert.equal(game.run('fallingLeaves.length'), 2);
   game.run('touchLeaves(1100)');
   assert.equal(game.run(`${apple}.rustle`), 1000, 'once a step, not again');
   game.run(`${apple}.rustle = -1e9`);
@@ -64,12 +52,27 @@ test('walking past a wide fruit tree, it rustles once, as you step into its bran
   assert.equal(game.run(`${apple}.rustle`), -1e9, 'walking on out of the branches, it doesn’t');
 });
 
-test('stepping into a corner by a fruit tree, or turning and walking away from it, doesn’t make it rustle', () => {
+test('stepping into a corner by a fruit tree, behind it, or turning and walking away from it, doesn’t make it rustle', () => {
   const game = loadGame();
   step(game, [23, 16], [22, 16], 1000);
   assert.equal(game.run(`${apple}.rustle`), -1e9, 'the square above and to the side is a corner, not its branches');
-  step(game, [22, 16], [22, 15], 2000);
+  step(game, [22, 16], [21, 16], 2000);
+  assert.equal(game.run(`${apple}.rustle`), -1e9, 'nor behind it');
+  step(game, [21, 16], [21, 15], 3000);
   assert.equal(game.run(`${apple}.rustle`), -1e9, 'nor walking away');
+});
+
+test('walking behind other trees, standing still or walking past in front doesn’t make them rustle', () => {
+  const game = loadGame();
+  const tree = 'OBJECT_PIECES.find(p => p.x === 12 && p.y === 8)';   // the tree by the pond
+  step(game, [13, 7], [12, 7], 1000);   // along the row behind it
+  assert.equal(game.run(`${tree}.rustle`), -1e9, 'behind it');
+  game.run('pl.mv = null; touchLeaves(3000)');
+  assert.equal(game.run(`${tree}.rustle`), -1e9, 'standing still');
+  step(game, [13, 9], [12, 9], 4000);
+  assert.equal(game.run(`${tree}.rustle`), -1e9, 'in front of it');
+  assert.equal(game.run('fallingLeaves.length'), 0, 'and no leaves fall');
+  assert.equal(game.run('OBJECT_PIECES.find(p => p.look === "stone").leafy'), null, 'stones never rustle');
 });
 
 test('bigger pictures don’t change where you can walk: the square above a tree is still open', () => {

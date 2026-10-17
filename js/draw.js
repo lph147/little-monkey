@@ -31,16 +31,16 @@ function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
   b.drawImage(monkeySprite(kind, dir, blink, step), X, Y - bob);
 }
 // A big object's picture (js/art.js), where it stands, with a little shake that settles while it's rustling.
-const RUSTLE = 450;   // how long a rustle lasts (ms)
+const RUSTLE = 320;   // how long a rustle lasts (ms)
 function drawPiece(p, pic, cx, cy, now){
   const X = p.x0 - cx, Y = p.y0 - cy;
   if (X > VW*T || Y > VH*T || X + pic.width < 0 || Y + pic.height < 0) return;
-  const t = now - p.rustle, dx = t < RUSTLE ? Math.round(Math.sin(t / 40) * 1.5 * (1 - t / RUSTLE)) : 0;
+  const t = now - p.rustle, dx = t < RUSTLE ? Math.round(Math.sin(t / 45) * (1 - t / RUSTLE)) : 0;   // a pixel at most
   b.drawImage(pic, X + dx, Y);
 }
-// Stepping into a square a tree's leaves cover (behind it, or beside a fruit tree's wide branches: its leafy squares,
-// js/art.js) makes it rustle once, as you reach them, and a few leaves fall. Stepping into a corner by it, walking out
-// of its leaves or along them, walking past in front of it, turning and standing still don't.
+// Walking through a peach or apple tree's wide branches, into a square right beside it (its leafy squares, js/art.js),
+// makes it rustle once, gently, as you reach them, and a couple of leaves fall. Walking behind a tree, into a corner by
+// it, out of its branches, turning and standing still don't.
 const fallingLeaves = [];
 function touchLeaves(now){
   const m = pl.mv;
@@ -50,16 +50,16 @@ function touchLeaves(now){
   for (const p of OBJECT_PIECES){
     if (!p.leafy || !covers(p, m.tx, m.ty) || covers(p, m.fx, m.fy)) continue;   // stepping into its leaves, not along or out of them
     p.rustle = now;
-    for (let i = 0; i < 4; i++) fallingLeaves.push({x: m.tx*T + 2 + Math.random()*12, y: m.ty*T - 4 + Math.random()*6, t0: now + i*90, s: Math.random() < .5 ? -1 : 1});
+    for (let i = 0; i < 2; i++) fallingLeaves.push({x: m.tx*T + 2 + Math.random()*12, y: m.ty*T - 4 + Math.random()*6, t0: now + i*90, s: Math.random() < .5 ? -1 : 1});
   }
 }
 function drawFallingLeaves(cx, cy, now){
   for (let i = fallingLeaves.length - 1; i >= 0; i--){
-    const f = fallingLeaves[i], t = (now - f.t0) / 1000;
+    const f = fallingLeaves[i], t = (now - f.t0) / 800;
     if (t > 1){ fallingLeaves.splice(i, 1); continue; }
     if (t < 0) continue;
-    const X = Math.round(f.x - cx + Math.sin(t*7) * 2 * f.s), Y = Math.round(f.y - cy + t*22);   // drifting from side to side as it falls
-    R(b, X, Y, 2, 2, '#B4DC6A'); R(b, X + (f.s > 0 ? 2 : -1), Y + 1, 1, 1, LEAF[0]);
+    const X = Math.round(f.x - cx + Math.sin(t*7) * 2 * f.s), Y = Math.round(f.y - cy + t*14);   // drifting from side to side as it falls
+    R(b, X, Y, 2, 1, '#8FC85A'); R(b, X + (f.s > 0 ? 1 : 0), Y + 1, 1, 1, LEAF[1]);
   }
 }
 function heart(X, Y){ [[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[2,3]].forEach(([a,c]) => R(b, X+a, Y+c, 1, 1, '#E0446A')); }

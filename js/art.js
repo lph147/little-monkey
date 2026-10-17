@@ -331,7 +331,7 @@ function buildMap(){   // the place you're in: the ground, then the big objects'
     // fruit tree's wide branches), so you go through them as you pass, not over them.
     const right = PIECE_SIDE + o.w*T, beside = [[0, PIECE_UP, PIECE_SIDE, h - PIECE_UP], [right, PIECE_UP, w - right, h - PIECE_UP]];
     return {...o, x0, y0, base: part([[0, PIECE_UP, w, h - PIECE_UP]], false), top: part([[0, 0, w, PIECE_UP], ...(leafy ? beside : [])], true), rustle: -1e9,
-      // the squares its leaves cover, where walking in makes it rustle: above it, and beside a fruit tree (not its corners)
-      leafy: !leafy ? null : o.w === 2 ? [[o.x, o.y-1], [o.x+1, o.y-1]] : o.look === 'tree' ? [[o.x, o.y-1]] : [[o.x-1, o.y], [o.x+1, o.y], [o.x, o.y-1]]};
+      // where walking in makes it rustle: through a wide fruit tree's branches, in the squares right beside it (not behind it, nor its corners)
+      leafy: leafy && o.look !== 'tree' ? [[o.x-1, o.y], [o.x+1, o.y]] : null};
   });
 }
