@@ -157,6 +157,8 @@ The question type follows the word's mastery level, so new words start easy and 
 
 Every screen should take as few presses as possible, so time goes on Chinese rather than menus.
 
+- **Tips, not instructions** (decided 17 October 2026). A new game starts straight away, with no page of How to play. Instead a bubble points at a control the first time you need it: the D-pad (walking), A (talking, then looking), a grey word in a sentence (just for listening), and the Menu once you have a few words. Each shows once. How to play stays in Settings. Hints are one line.
+
 - **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story. A line of story in a conversation (such as what the old monkey does for baby monkeys) waits in the speech box too, so the next line can't cover it. A card's buttons always stay in sight at its bottom, however long the card.
 - **The menu** has four big tiles, each with an icon, Chinese and English: 词 Word Scroll, 任务 Tasks, 朋友 Friends, 衣服 Wardrobe. A Settings page holds music, sound effects, pinyin, How to play, export and import, the title screen and reset. The game saves itself, so there's no Save button.
 - **The Word Scroll** is a grid of sprites, with shadows for words you haven't caught and category tabs across the top. Today's words is a filter in it.
@@ -253,7 +255,11 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
 - [x] Wardrobe: a 衣服 page with the 头带 (戴), with a new save version (a flower from the little monkey was tried and taken out)
 - [x] A livelier Flower Fruit Mountain: animals at their own spots, birds that come and go, grass that rustles where an animal hides (the map grew to the south for them)
 - [x] A quality review (17 October 2026): a screens gallery (tools/screens.html) and fixes for what a fresh playthrough found: the old monkey's welcome was hidden, an animal could ask about its own name, friendship showed as shells, a one-choice first reply, How to play's hidden buttons, a busy title screen and a long voice warning
-  - [ ] Show mockups of the three bigger changes (fewer words and tips instead of How to play, encounters as a scene, a gentler opening) and build the ones agreed
+  - [x] Mockups of the three bigger changes, all agreed (17 October 2026)
+  - [x] Never characters alone in a question: Read questions show pinyin, with pictures as the answers
+  - [x] Tips instead of How to play, and one-line hints
+  - [ ] A gentler opening: English tells the story, with one Chinese word per caption
+  - [ ] Animals as a scene, with hearts to fill and a new-friend moment
 - [ ] Playtest Area 1 for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md

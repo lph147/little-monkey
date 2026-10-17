@@ -28,7 +28,7 @@ Then open http://127.0.0.1:8000 in a browser. Press Ctrl+C in the terminal to st
 
 ## The screens gallery
 
-With `npm start` running, open http://127.0.0.1:8000/tools/screens.html. It shows every screen of the game side by side at phone size (the title, the opening, How to play, conversations, replies, word cards, fill the gap, the shop, animals, the menu pages, the story and the cave door), each the real game with its own pretend save. Your saved game isn't touched, and it's silent. Change the size to check a small phone or a computer, and "alone" shows one screen bigger.
+With `npm start` running, open http://127.0.0.1:8000/tools/screens.html. It shows every screen of the game side by side at phone size (the title, the opening, tips, How to play, conversations, replies, word cards, fill the gap, the shop, animals, the menu pages, the story and the cave door), each the real game with its own pretend save. Your saved game isn't touched, and it's silent. Change the size to check a small phone or a computer, and "alone" shows one screen bigger.
 
 After any change you can see, look through it for things that overlap, buttons you'd have to scroll to find, text that's too long, and screens that don't match the others. A red "Error" under a screen means it didn't load. The screens are listed in tools/screens.js; add one when the game gets a new screen.
 
@@ -66,8 +66,9 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **Start**
 - [ ] Press Start. The opening plays: each caption is spoken, Next moves on, the stone cracks and the monkey is born. The last caption has Begin. (Skip intro also works. On a computer, Space or Enter presses Start, Next and Begin.)
-- [ ] How to play has two pages; Next, Back and Got it are always in sight at the bottom of the card, even on a small phone. Got it closes it.
-- [ ] A new-word card for 石头 (stone) appears, with the English showing. Then a message says the old monkey is standing by your stone.
+- [ ] There's no How to play: a new-word card for 石头 (stone) appears straight away, with the English showing. Then a message says the old monkey is waiting by your stone.
+- [ ] Tips: a yellow bubble over the D-pad says "Hold an arrow to walk. Tap to turn." and goes once you take a step. Facing the old monkey, one over the A button says "Press A to talk"; facing something new, "Press A to look". In the old monkey's "去看看！" line, one points at a grey word: they're just for listening. Once you know 3 words, one points at the Menu for a few seconds. Each tip shows only once.
+- [ ] Menu, Settings, How to play still has its two pages; Next, Back and Got it are always in sight at the bottom of the card, even on a small phone.
 
 **The old monkey**
 - [ ] The first step onto the path teaches 路 (path).

@@ -38,7 +38,7 @@ function frame(now){
     const ev = (k, at, fn) => { if (t >= at && !introEvents[k]){ introEvents[k] = 1; fn(); } };
     ev('r', 7.2, SFX.rumble); ev('c', 8.7, SFX.chime); ev('s', 10.6, SFX.shimmer);
   } else { update(now); drawWorld(now); }
-  updateCtx(now);
+  updateCtx(now); updateTips(now);
   sc.imageSmoothingEnabled = false;
   sc.drawImage(buf, 0, 0, cv.width, cv.height);
   requestAnimationFrame(frame);
@@ -177,8 +177,7 @@ async function startGame(){
   if (firstTime){
     busy = true;
     try {
-      await howToPlay();
-      await runSteps(AREA.begin);   // the area's first steps, such as being born from the stone
+      await runSteps(AREA.begin);   // the area's first steps, such as being born from the stone (tips explain the controls as you need them: js/tips.js)
     } finally { busy = false; updateHUD(); }
   }
 }

@@ -30,6 +30,7 @@ function update(now){
   if (d) tryStep(d, now);
 }
 async function pressA(){
+  tipPressed('#btnA');
   if (mode === 'title' && modal.hidden){ const t = $('#titleButtons .primary'); if (t) t.click(); return; }   // (a card on the title screen: its button)
   if (mode === 'intro'){ const bb = $('#beginBtn') || $('#nextBtn'); if (bb) bb.click(); return; }
   if (!modal.hidden){
@@ -51,6 +52,7 @@ function pressB(){
   const sb = $('#saybox'); if (!sb.hidden){ sb.hidden = true; return; }
 }
 function pressMenu(){
+  tipPressed('#menuBtn');
   if (!modal.hidden){ if (sheet.querySelector('[data-m]')) closeCard(); return; }
   if (mode === 'play' && canAct()) openMenu();
 }

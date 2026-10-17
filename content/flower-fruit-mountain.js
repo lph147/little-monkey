@@ -12,10 +12,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // row, counting from 0 at the top left of the map.
   start: {x:9, y:2, facing:'up'},
 
-  // What happens the very first time you play, after How to play (steps, as in talk below).
+  // What happens the very first time you play (steps, as in talk below). Tips explain the controls as you need them.
   begin: [
     {card:'石头', note:'You were just born from this stone!'},
-    {message:'The old monkey is standing by your stone. Face him and press A to say hello.'}
+    {message:'The old monkey is waiting by your stone. Go and say hello!'}
   ],
 
   // What this area remembers in your save, and the values a new game starts with.
@@ -56,7 +56,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
     {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect water from the river or the pond', arrow:[11, 9]},
     {id:'t2', if:{thirsty:'asked', holding:{thirsty:true}}, text:'Give the {水} to the thirsty monkey', arrow:'thirsty'},
-    {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick 3 {花} for the big monkey: face a patch of flowers and press A ({flowersPicked}/3)'},
+    {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick 3 {花} for the big monkey, one from each patch ({flowersPicked}/3)'},
     {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to the big monkey', arrow:'big'},
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
@@ -66,9 +66,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // What the task box says when there are no tasks: the first whose if matches.
   hints: [
-    {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! above them need help. Walk up to one and press A.'},
-    {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! above them need help. Walk up to one and press A.'},
-    {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! above them need help. Walk up to one and press A.'},
+    {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
+    {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
+    {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
   ],
 
@@ -389,14 +389,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {newWord:'你好'},
         {reply:'你好'},
         {message:'The old monkey teaches every baby monkey the names of things on the mountain. Today it’s your turn!'},
-        {say:'go', hint:'Things that sparkle have a word to learn. Face them and press A. Learn 4 words, then come back and talk to me again.'},
+        {say:'go', hint:'Things that sparkle have words. Learn 4, then come back.'},
         {set:{elder:1}}
       ]},
       {if:{elder:1, newWords:{below:4}}, do:[
         {say:'go', hint:'Learn 4 words first, then come back. ({newWords}/4)'}
       ]},
       {if:{elder:1}, do:[
-        {say:'animals', teach:'动物', hint:'Watch for tall grass that rustles: an animal is hiding there. Others live up a tree and on the cliffs to the south. Answer their questions to make friends.'},
+        {say:'animals', teach:'动物', hint:'Animals hide in rustling grass, up a tree and on the cliffs to the south.'},
         {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
         {set:{elder:2}},
         {reply:'再见'},
@@ -405,26 +405,26 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
       {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'老板'}, do:[{say:'boss', teach:'老板'}, {newWord:'老板', note:'The {老板} owns the shop. Come back to see what they sell.'}, {reply:'你好'}]},
       {do:[{shop:true}]}
     ],
     hungry: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {do:[{request:'hungry'}]}
     ],
     thirsty: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {do:[{request:'thirsty'}]}
     ],
     big: [
-      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first. He’ll tell you what to do.'}]},
+      {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {do:[{request:'flowers'}]}
     ]
   },

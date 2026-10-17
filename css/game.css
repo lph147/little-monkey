@@ -4,6 +4,7 @@
   --ok:#2E8B57; --bad:#C2453D; --scrim:rgba(20,35,28,.45);
   --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA;
   --btnA:#B8323A; --btnB:#3D6A93;
+  --tip:#FFF3B8; --tip-ink:#2A2215;   /* a tip bubble: the same in light and dark, like a sticky note */
   --sil:brightness(0);   /* the shadow of a word you have heard but not caught */
   --pixel:"Pixelify Sans", "Noto Sans SC", system-ui, sans-serif;
   --text:"Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
@@ -294,3 +295,13 @@ rt.hid{visibility:hidden}
 .sen{font-size:.9rem}
 .sprice{font-family:var(--pixel);font-size:.95rem;margin-top:4px}
 .shopitem.dear .sprice{color:var(--bad)}
+
+/* tips: a bubble pointing at a control the first time you need it (js/tips.js); it doesn't catch taps */
+.tipb{position:fixed;z-index:60;pointer-events:none;background:var(--tip);color:var(--tip-ink);border:3px solid var(--tip-ink);border-radius:8px;padding:6px 10px;font:600 .95rem/1.3 var(--pixel);box-shadow:0 3px 0 var(--tip-ink);max-width:230px;text-align:center;animation:tipbob 1.2s ease-in-out infinite}
+.tipb[hidden]{display:none}
+.tipb::after{content:"";position:absolute;left:var(--ax,50%);margin-left:-9px;bottom:-12px;border:9px solid transparent;border-top-color:var(--tip-ink);border-bottom:0}
+.tipb.below::after{bottom:auto;top:-12px;border-top:0;border-bottom:9px solid var(--tip-ink)}
+.tipglow{box-shadow:0 0 0 4px var(--gold),0 0 14px 6px color-mix(in srgb,var(--gold) 70%,transparent)!important}
+.dpad.tipglow{border-radius:12px}
+@keyframes tipbob{50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion: reduce){.tipb{animation:none}}
