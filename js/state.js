@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 20;
+const SAVE_VERSION = 21;
 // XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
 const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
@@ -10,7 +10,7 @@ function areaStart(){   // a new game's progress in the area: the area's own lis
   for (const r of REQUESTS) p[r.id] = 'not asked';
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], done:false});
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -121,6 +121,10 @@ function upgradeSave(s){
       if (Array.isArray(fl)) a.picked.flowers = fl.length >= 3 ? ['红', '黄', '白'] : [];
     }
     s.version = 20;
+  }
+  if (s.version === 20){   // version 20: tasks were shown in a box under the screen. They're on Select now, and the
+    s.tasksRead = {...(s.tasksSeen || {})};   // ones you'd seen there count as looked at
+    s.version = 21;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];

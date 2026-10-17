@@ -20,7 +20,7 @@ function hex(c){ const n = parseInt(c.slice(1), 16); return [n >> 16, (n >> 8) &
 function mix(a, b, k){ const A = hex(a), B = hex(b); return '#' + A.map((v,i) => Math.round(v + (B[i] - v) * k).toString(16).padStart(2,'0')).join(''); }
 let msgT;
 function toast(msg){
-  const el = $('#saybox'); el.innerHTML = money(esc(msg)); el.hidden = false; el.onclick = () => { el.hidden = true; };
+  const el = $('#saybox'); el.innerHTML = money(esc(msg)); el.hidden = false; el.onclick = () => { el.hidden = true; updateHUD(); };
   el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
-  clearTimeout(msgT); msgT = setTimeout(() => el.hidden = true, Math.max(3200, msg.length * 70));
+  clearTimeout(msgT); msgT = setTimeout(() => { el.hidden = true; updateHUD(); }, Math.max(3200, msg.length * 70));   // (a new task waiting can be announced then)
 }

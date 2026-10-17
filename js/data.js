@@ -4,7 +4,7 @@ const $ = s => document.querySelector(s);
 const T = 16, VW = 11, STEP = 270, TURN_DELAY = 130;
 // How many rows of the map the screen shows. On a phone held upright there's room for more, so
 // fit() in js/main.js raises it, up to VH_MAX.
-const VH_MIN = 10, VH_MAX = 14;
+const VH_MIN = 10, VH_MAX = 18;
 let VH = VH_MIN;
 
 /* ================= DATA ================= */

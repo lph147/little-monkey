@@ -25,7 +25,7 @@ test('the menu has a tile each for the Word Scroll, tasks, friends and wardrobe,
 
 test('the tiles open their pages, and Back comes back to the same tile', () => {
   const {sheet, run} = menuGame();
-  for (const [m, title] of [['words', 'Word Scroll'], ['tasks', 'Flower Fruit Mountain'], ['friends', 'Friends']]){
+  for (const [m, title] of [['words', 'Word Scroll'], ['tasks', 'Tasks'], ['friends', 'Friends']]){
     run('openMenu()');
     sheet.querySelector(`[data-m="${m}"]`).click();
     assert.ok(sheet.querySelector('.label').textContent.startsWith(title), `${m} should open ${title}`);

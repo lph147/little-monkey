@@ -44,8 +44,9 @@ test('after converting, the game shows the same progress', () => {
   const game = loadGame({save: V2});
   game.runFrame();
   assert.match(game.el('#titleButtons').innerHTML, />Continue</);
-  assert.equal(game.el('#shellCount').textContent, 7);
-  assert.equal(game.el('#count').textContent, '1/40', 'just 石头: 路 is no longer one of the words');
+  const stats = game.run('statsHTML()');
+  assert.match(stats, /🐚 7/);
+  assert.match(stats, /1\/40 words/, 'just 石头: 路 is no longer one of the words');
   // Said hello, learned about animals, 1 of 4 animals found, hungry monkey helped, thirsty not yet, no story, no headband, no test
   assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false]);   // (the prologue's checklist: no word test there any more)
 });
@@ -178,7 +179,7 @@ test('a save from before version 16 had peaches for money: they become the same 
 test('a version 16 save is converted: a game already started has had all its tips (it had How to play instead)', () => {
   const s = saveOf(loadGame({save: {version: 16, started: true, shells: 5, w: {'山': {lv: 2, due: 0, ok: 1}}}}));
   assert.equal(s.version, VERSION);
-  assert.deepEqual(Object.keys(s.tips).sort(), ['grey', 'look', 'menu', 'talk', 'walk']);
+  assert.deepEqual(Object.keys(s.tips).sort(), ['grey', 'look', 'select', 'start', 'talk', 'walk']);
   assert.ok(Object.values(s.tips).every(v => v === 1));
   assert.equal(s.shells, 5, 'everything else stays');
   assert.deepEqual(saveOf(loadGame({save: {version: 16, started: false, w: {}}})).tips, {}, 'a game not started yet gets every tip');

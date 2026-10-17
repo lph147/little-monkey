@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
 const LATER = Date.now() + 5 * 86400000;
-const title = game => { game.run('titleText()'); return game.el('#textbox').innerHTML; };
+const title = game => { game.run('titleText()'); return game.el('#titleText').innerHTML; };
 
 test('the title screen warns when the device has no Chinese voice', () => {
   const game = loadGame();

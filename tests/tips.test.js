@@ -46,16 +46,20 @@ test('facing something to look at, the tip says to press A to look', () => {
   assert.equal(showing(game), 'look');
 });
 
-test('once you know 3 words, a tip points at the Menu for a few seconds', () => {
+test('with a task to do, a tip points at Select; once you know 3 words, one points at Start, each for a few seconds', () => {
   const w = Object.fromEntries(['石头', '山', '花'].map(hz => [hz, {lv: 1, due: 0, ok: 0}]));
-  const game = playing({version: 17, started: true, w, tips: {walk: 1, talk: 1, look: 1, grey: 1}, pos: {x: 9, y: 5, dir: 'down'}});
+  const game = playing({version: 21, started: true, w, tips: {walk: 1, talk: 1, look: 1, grey: 1}, pos: {x: 9, y: 5, dir: 'down'}});
   game.run('updateTips(1000)');
-  assert.equal(showing(game), 'menu');
-  game.run('updateTips(5000)');
-  assert.equal(showing(game), 'menu', 'still there after 4 seconds');
-  game.run('updateTips(9500)');
+  assert.equal(showing(game), 'select', 'there is a task: say hello to the old monkey');
+  game.run("tipPressed('#selectBtn')");
+  assert.equal(get(game, 'S.tips.select'), 1, 'pressing Select is enough');
+  game.run('updateTips(2000)');
+  assert.equal(showing(game), 'start');
+  game.run('updateTips(6000)');
+  assert.equal(showing(game), 'start', 'still there after 4 seconds');
+  game.run('updateTips(10500)');
   assert.equal(showing(game), null, 'gone after 8');
-  assert.equal(get(game, 'S.tips.menu'), 1);
+  assert.equal(get(game, 'S.tips.start'), 1);
 });
 
 test('the grey-words tip shows during a line, once', () => {

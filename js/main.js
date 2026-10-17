@@ -1,19 +1,17 @@
-// The screen size, the main loop, the text box, the title screen, the intro, How to play, and starting the game.
+// The screen size, the main loop, new tasks, the title screen, the intro, How to play, and starting the game.
 
 /* ================= SCREEN, LOOP, MODES ================= */
-const TEXTBOX_H = 92;   // the text box's height while you play (css/game.css), counted when sizing the screen
 function fit(){
   const shell = $('.console');
   const innerW = shell.clientWidth - 24 - 16;
-  // The height left for the screen: the window, less everything else on the page (with the text box
-  // at its usual height, whatever it shows right now) and the phone's safe areas.
+  // The height left for the screen: the window, less everything else on the page and the phone's safe areas.
   const root = window.getComputedStyle ? getComputedStyle(document.documentElement) : null;
   const safe = root ? (parseFloat(root.paddingTop) || 0) + (parseFloat(root.paddingBottom) || 0) : 0;
-  const rest = (+$('.app').offsetHeight || 0) - (+cv.offsetHeight || 0) - (+tb.offsetHeight || 0) + TEXTBOX_H + safe;   // (a missing height counts as 0)
+  const rest = (+$('.app').offsetHeight || 0) - (+cv.offsetHeight || 0) + safe;   // (a missing height counts as 0)
   const room = window.innerHeight - rest;
   const w = Math.floor(clamp(Math.min(innerW, room * VW / VH_MIN), 220, 640));
-  // Upright, the screen shows as many rows as fit (a phone has room for more); otherwise the usual number.
-  const rows = window.innerHeight > window.innerWidth ? clamp(Math.floor(room / (w / VW)), VH_MIN, VH_MAX) : VH_MIN;
+  // The screen shows as many rows of the map as fit (a phone held upright has room for more), 10 to 18.
+  const rows = clamp(Math.floor(room / (w / VW)), VH_MIN, VH_MAX);
   if (rows !== VH){ VH = rows; buf.height = VH*T; b.imageSmoothingEnabled = false; }
   const h = Math.round(w * VH / VW);
   const dpr = window.devicePixelRatio || 1;
@@ -43,20 +41,19 @@ function frame(now){
   sc.drawImage(buf, 0, 0, cv.width, cv.height);
   requestAnimationFrame(frame);
 }
-const tb = $('#textbox');
 // A caption of the opening: its English, and its word (if it has one) in Chinese, pinyin and English, said aloud.
 function showCaption(c, last){
   const w = c.word, [py, en] = w ? info(w) : [];
   const box = $('#capbox');   // over the sky in the picture, so the page keeps its size
-  box.innerHTML = `<div class="cap"><div class="cen">${esc(c.en)}</div>${w ? `<button class="wchip" id="capWord"><span class="wzh">${w}</span>${S.pinyin ? `<span class="wpy">${py}</span>` : ''}<span class="wen">${esc(en.split(',')[0])}</span> 🔊</button>` : ''}</div>`;
+  box.innerHTML = `<div class="cap"><div class="cen">${esc(c.en)}</div>${w ? `<button class="wchip" id="capWord"><span class="wzh">${w}</span>${S.pinyin ? `<span class="wpy">${py}</span>` : ''}<span class="wen">${esc(en.split(',')[0])}</span> 🔊</button>` : ''}</div>
+    <div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><span class="spacer"></span>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`;
   box.hidden = false;
-  tb.innerHTML = `<div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><span class="spacer"></span>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`;
   if (w){ say(w); $('#capWord').onclick = () => say(w); }
   $('#skipBtn').onclick = startGame;
   const nx = $('#nextBtn'); if (nx) nx.onclick = () => { advancedTo = capIdx + 1; SFX.blip(); };
   const bb = $('#beginBtn'); if (bb) bb.onclick = startGame;
 }
-let lastTB = '', lastCtx = null;
+let lastCtx = null;
 function currentPrompt(now){
   if (mode !== 'play' || !modal.hidden || busy || pl.mv || held || now - lastMoveEnd < 250) return '';
   const [fx, fy] = facing(); return promptFor(fx, fy);
@@ -75,42 +72,29 @@ function buttonLabels(now){
 }
 let lastLabels = '';
 function updateCtx(now){
-  $('.app').classList.toggle('front', mode === 'title' || mode === 'intro');   // the header's stats and Menu wait until you play
   const [a, bl] = buttonLabels(now), key = a + '|' + bl;
   if (key === lastLabels) return;
   lastLabels = key; $('#aLabel').textContent = a; $('#bLabel').textContent = bl;
   $('#btnA').classList.toggle('ready', mode === 'play' && modal.hidden && !talkNext && !!a);
 }
+// After anything happens. Select has a red dot while there's a task you haven't looked at in your task
+// list, and a new task is announced with a message once you're free and the last message has gone (this
+// runs again when it goes: see toast in js/helpers.js).
 function updateHUD(){
-  $('#level').textContent = 'Lv ' + level();
-  $('#shellCount').textContent = S.shells;
-  $('#count').textContent = ORDER.filter(w => lvl(w) > 0).length + '/' + ORDER.length;
   if (mode !== 'play') return;
-  const now = performance.now(), tasks = getTasks();
-  if (!S.tasksSeen) S.tasksSeen = {};
-  tasks.forEach(t => {
-    if (!S.tasksSeen[t.id]){
-      S.tasksSeen[t.id] = 1; newTaskUntil[t.id] = now + 7000; setTimeout(updateHUD, 7100);
-      try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {}
-      if (S.started) setTimeout(() => SFX.chime(), 200);
-    }
-  });
-  // The task box shows one task (a new one first), and "more" opens them all.
-  const hint = tasksHint(), isNew = t => newTaskUntil[t.id] > now;
-  const first = tasks.find(isNew) || tasks[0];
-  const html = `<div class="tbrow"><p class="tbhead">${tasks.length ? 'Tasks' : 'Explore'}</p>${tasks.length > 1 ? `<button class="morebtn" id="moreTasks">+${tasks.length - 1} more</button>` : ''}</div>` +
-    (first ? `<ul class="tasks"><li class="${isNew(first) ? 'new' : ''}">${esc(first.text)}</li></ul>` : '') +
-    (!tasks.length && hint ? `<p class="hint">${esc(hint)}</p>` : '');
-  if (html !== lastTB || !tb.querySelector('.tbhead')){
-    lastTB = html; tb.innerHTML = money(html);
-    const more = tb.querySelector('#moreTasks');
-    if (more) more.onclick = () => { if (canAct()){ SFX.blip(); tasksPage(() => closeCard()); } };
-  }
+  const tasks = getTasks();
+  $('#selectDot').hidden = !tasks.some(t => !S.tasksRead[t.id]);
+  const fresh = tasks.filter(t => !S.tasksSeen[t.id]);
+  if (!fresh.length) return;
+  if (!canAct() || !$('#saybox').hidden) return;
+  fresh.forEach(t => { S.tasksSeen[t.id] = 1; });
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {}
+  if (S.started){ SFX.chime(); toast('New task: ' + fresh[0].text + (fresh.length > 1 ? ` (and ${fresh.length - 1} more)` : '')); }
 }
-function titleText(){   // the text box on the title screen, with a short warning if there's no Chinese voice (and how to fix it on a card)
+function titleText(){   // the title screen's words, under its buttons, with a short warning if there's no Chinese voice (and how to fix it on a card)
   const problem = voiceProblem();
   const due = dueWords().length;
-  tb.innerHTML = `<p id="goal">${S.started ? 'Welcome back, little monkey.' + (due ? ` ${due} ${due === 1 ? 'word is' : 'words are'} due for review: practise at the practice post, or meet animals in the tall grass.` : '') : 'Turn your sound on. Every word is spoken aloud using your device’s Chinese voice.'}</p>`
+  $('#titleText').innerHTML = `<p id="goal">${S.started ? 'Welcome back, little monkey.' + (due ? ` ${due} ${due === 1 ? 'word is' : 'words are'} due for review: practise at the practice post, or meet animals in the tall grass.` : '') : 'Turn your sound on. Every word is spoken aloud using your device’s Chinese voice.'}</p>`
     + (problem ? `<p class="small warn">${VOICE_SHORT[problem]} <button class="linkbtn" id="voiceHelp">How to fix it</button></p>` : '');
   const vh = $('#voiceHelp');
   if (vh) vh.onclick = () => { openCard(`<p class="label">Hearing Chinese</p><p>${VOICE_HELP[problem]}</p><div class="actions"><button class="btn primary" data-a="ok" data-b>OK</button></div>`); on('[data-a=ok]', closeCard); };
@@ -129,7 +113,7 @@ function toTitle(){
   if ($('#newBtn')) $('#newBtn').onclick = go(playIntro);
   if ($('#watchBtn')) $('#watchBtn').onclick = go(playIntro);
   if ($('#contBtn')) $('#contBtn').onclick = go(() => {
-    $('#titlecard').hidden = true; placePlayer(); mode = 'play'; lastTB = ''; updateHUD();
+    $('#titlecard').hidden = true; placePlayer(); mode = 'play'; updateHUD();
   });
 }
 function playIntro(){
@@ -176,7 +160,7 @@ async function startGame(){
   const firstTime = !S.started;
   $('#titlecard').hidden = true; $('#capbox').hidden = true;
   if (firstTime){ S.started = true; S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'}; }
-  placePlayer(); mode = 'play'; lastTB = ''; save(); musicStart();
+  placePlayer(); mode = 'play'; save(); musicStart();
   if (firstTime){
     busy = true;
     try {
@@ -190,6 +174,5 @@ if (!PLACES[S.pos.place]) S.pos.place = FIRST_PLACE;   // a place that's gone
 placeCharacters();   // where the story has put everyone
 enterPlace(S.pos.place);
 if (!walkable(S.pos.x, S.pos.y)) S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
-$('#shellIcon').src = (money('🐚').match(/src="([^"]+)"/) || [])[1] || '';
 buildMap(); placePlayer(); fit(); updateHUD(); toTitle();
 requestAnimationFrame(frame);

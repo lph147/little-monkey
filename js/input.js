@@ -50,27 +50,37 @@ function pressB(){
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null) b.click(); return; }
   if (talkNext && !talkMove){ talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
-  const sb = $('#saybox'); if (!sb.hidden){ sb.hidden = true; return; }
+  const sb = $('#saybox'); if (!sb.hidden){ sb.hidden = true; updateHUD(); return; }
 }
+// Start: the menu (pressing it again closes it). Select: your tasks (again closes them).
 function pressMenu(){
-  tipPressed('#menuBtn');
+  tipPressed('#startBtn');
   if (!modal.hidden){ if (sheet.querySelector('[data-m]')) closeCard(); return; }
   if (mode === 'play' && canAct()) openMenu();
 }
-$('#menuBtn').addEventListener('click', () => { getAC(); pressMenu(); });
+function pressSelect(){
+  tipPressed('#selectBtn');
+  if (!modal.hidden){ if (sheet.querySelector('.taskslabel')) closeCard(); return; }
+  if (mode === 'play' && canAct()) tasksPage(() => closeCard());
+}
+$('#startBtn').addEventListener('click', () => { getAC(); pressMenu(); });
+$('#selectBtn').addEventListener('click', () => { getAC(); pressSelect(); });
 const KEYS = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right',W:'up',S:'down',A:'left',D:'right'};
 document.addEventListener('keydown', e => {
   const isB = e.key === 'x' || e.key === 'X' || (e.key === 'Escape' && (!modal.hidden || !!talkNext));
-  const isMenu = e.key === 'm' || e.key === 'M' || (e.key === 'Escape' && modal.hidden && !talkNext);
+  const isMenu = e.key === 'm' || e.key === 'M' || (e.key === 'Escape' && modal.hidden && !talkNext);   // Start
+  const isSelect = e.key === 't' || e.key === 'T';
   if (!modal.hidden){
     const d = KEYS[e.key];
     if (d && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); navFocus(d); }
     else if (isB){ e.preventDefault(); pressB(); }
     else if (isMenu){ e.preventDefault(); pressMenu(); }
+    else if (isSelect){ e.preventDefault(); pressSelect(); }
     return;
   }
   if (isB){ e.preventDefault(); pressB(); return; }
   if (isMenu){ e.preventDefault(); pressMenu(); return; }
+  if (isSelect){ e.preventDefault(); pressSelect(); return; }
   const isA = e.key === ' ' || e.key === 'Enter';
   if (mode !== 'play'){
     // The title screen and the intro: A presses Start, Next or Begin, unless you've moved to another button with Tab.

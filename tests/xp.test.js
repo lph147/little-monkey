@@ -32,12 +32,11 @@ test('training gives XP for each word right first time', () => {
   assert.equal(xp(g), 5 + 2);
 });
 
-test('every 100 XP is a new level, shown in the header', () => {
+test('every 100 XP is a new level, shown in the menu and your tasks', () => {
   const g = game({xp: 250});
   assert.deepEqual([0, 99, 100, 250].map(n => g.run(`level(${n})`)), [1, 1, 2, 3]);
   g.runFrame();
-  g.run('updateHUD()');
-  assert.equal(g.el('#level').textContent, 'Lv 3');
+  assert.match(g.run('statsHTML()'), /Level 3 · 50\/100 XP/);
 });
 
 test('an older save gets XP for what you have already done', () => {

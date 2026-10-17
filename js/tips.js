@@ -12,7 +12,8 @@ const TIPS = {
   talk: {at:'#btnA', text:'Press <b>A</b> to talk', when:() => canAct() && !!npcAt(...facing())},
   look: {at:'#btnA', text:'Press <b>A</b> to look', when:() => canAct() && !npcAt(...facing()) && promptFor(...facing()) === 'Look'},
   grey: {at:'#talk .tok.listen', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove},
-  menu: {at:'#menuBtn', text:'Your words are in the Menu', when:() => canAct() && learnedCount() >= 3, lasts:8000}
+  select: {at:'#selectBtn', text:'Press <b>Select</b> to see your tasks', when:() => canAct() && getTasks().length > 0, lasts:8000},
+  start: {at:'#startBtn', text:'Press <b>Start</b> for the menu: your words and more', when:() => canAct() && learnedCount() >= 3, lasts:8000}
 };
 let tip = null;   // the tip showing: {id, target, until}
 const tipBox = () => $('#tip') || document.body.appendChild(Object.assign(document.createElement('div'), {id:'tip', className:'tipb', hidden:true}));
@@ -21,7 +22,7 @@ function hideTip(){
   tip.target.classList.remove('tipglow'); tipBox().hidden = true; tip = null;
 }
 function tipDone(id){ if (!S.tips[id]){ S.tips[id] = 1; save(); } if (tip && tip.id === id) hideTip(); }
-// You pressed a control (sel: '#btnA' or '#menuBtn'): a tip pointing at it is done.
+// You pressed a control (sel: '#btnA', '#startBtn' or '#selectBtn'): a tip pointing at it is done.
 function tipPressed(sel){ if (tip && TIPS[tip.id].at === sel) tipDone(tip.id); }
 function placeTip(){   // the bubble above what it points at (below it, if there's no room above)
   const box = tipBox(), r = tip.target.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight;

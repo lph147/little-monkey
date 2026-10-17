@@ -13,28 +13,19 @@
 </head>
 <body>
 <div class="app">
-  <header>
-    <h1>小猴子</h1>
-    <span class="stat" id="level" title="Your level">Lv 1</span>
-    <span class="stat" id="shells" title="Shells"><img class="money" id="shellIcon" alt="Shells"> <span id="shellCount">0</span></span>
-    <span class="stat" id="count">0/26</span>
-    <span class="spacer"></span>
-    <button class="menubtn" id="menuBtn" aria-label="Open menu">☰ Menu</button>
-  </header>
   <div class="console">
     <div class="display">
     <div class="screen" id="screenWrap">
       <canvas id="screen" aria-label="Game screen"></canvas>
       <div class="titlecard" id="titlecard">
         <div><h2>小猴子</h2><p id="areaName">Flower Fruit Mountain</p></div>
-        <div class="row" id="titleButtons"></div>
+        <div class="titlefoot"><div class="row" id="titleButtons"></div><div class="titletext" id="titleText" aria-live="polite"></div></div>
       </div>
       <div class="capbox" id="capbox" hidden aria-live="polite"></div>
       <div class="placename" id="placeName" hidden role="status"></div>
       <div class="saybox" id="saybox" hidden role="status"></div>
       <div class="talk" id="talk" hidden aria-live="polite"></div>
     </div>
-    <div class="textbox" id="textbox" aria-live="polite"></div>
     <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
     </div>
     <div class="controls">
@@ -45,12 +36,16 @@
         <button class="r" data-dir="right" aria-label="Walk right">▶</button>
         <button class="d" data-dir="down" aria-label="Walk down">▼</button>
       </div>
+      <div class="ss">   <!-- Select (your tasks) and Start (the menu), like a Game Boy's -->
+        <div class="sswrap"><button class="pill" id="selectBtn" aria-label="Select: your tasks"><span class="dot" id="selectDot" hidden></span></button><span class="sslabel">SELECT</span></div>
+        <div class="sswrap"><button class="pill" id="startBtn" aria-label="Start: the menu"></button><span class="sslabel">START</span></div>
+      </div>
       <div class="ab">
         <div class="abwrap"><button class="round" id="btnB" aria-label="Back or menu">B</button><span class="ablabel" id="bLabel"></span></div>
         <div class="abwrap"><button class="round" id="btnA" aria-label="Talk or look">A</button><span class="ablabel" id="aLabel"></span></div>
       </div>
     </div>
-    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for the menu</p>
+    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for Start (the menu) · T for Select (your tasks)</p>
   </div>
 </div>
 

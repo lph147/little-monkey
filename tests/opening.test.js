@@ -13,7 +13,7 @@ test('a caption with a word shows its English, and the word in Chinese, pinyin a
   assert.match(html, /<span class="wzh">山<\/span><span class="wpy">shān<\/span><span class="wen">mountain<\/span>/);
   assert.deepEqual(JSON.parse(game.run('JSON.stringify(__said)')), ['山'], 'only the word is said');
   assert.equal(game.el('#capbox').hidden, false);
-  assert.match(game.el('#textbox').innerHTML, /id="nextBtn"/, 'the buttons are in the text box below');
+  assert.match(game.el('#capbox').innerHTML, /id="nextBtn"/, 'its buttons are in the caption box too');
 });
 
 test('a caption without a word is just English, and says nothing', () => {
@@ -26,7 +26,7 @@ test('a caption without a word is just English, and says nothing', () => {
 test('the last caption has Begin, and starting the game hides the caption', () => {
   const game = loadGame();
   game.run('playIntro(); showCaption(CAPS[CAPS.length - 1], true)');
-  assert.match(game.el('#textbox').innerHTML, /id="beginBtn"/);
+  assert.match(game.el('#capbox').innerHTML, /id="beginBtn"/);
   game.run('startGame()');
   assert.equal(game.el('#capbox').hidden, true);
 });

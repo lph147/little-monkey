@@ -48,7 +48,6 @@ function wayTo(place){
 }
 function tasksHint(){ const h = AREA.hints.find(h => matches(h.if)); return h ? fill(h.text) : ''; }
 function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).join('. ') + '.' : tasksHint(); }
-const newTaskUntil = {};
 function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
   const n = npcAt(x, y);
