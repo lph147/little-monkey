@@ -44,7 +44,9 @@ const sentences = [
   ...AREA.story.map((s, i) => [`story sentence ${i + 1}`, s]),
   ...AREA.storyQuestions.map((q, i) => [`story question ${i + 1}`, q]),
   ...Object.entries(AREA.examples).map(([w, e]) => [`the example for ${w}`, e]),
-  ['the sign', AREA.sign.says]
+  ['the sign', AREA.sign.says],
+  ...Object.entries(AREA.legend).filter(([, t]) => t.sign).map(([ch, t]) => [`the sign on "${ch}" tiles`, t.sign.says]),
+  ...Object.values(AREA.talk).flatMap(parts => parts.flatMap(p => p.do.filter(s => s.gap).map(s => [`the gap sentence "${s.gap.sentence}"`, {zh: s.gap.sentence, en: s.gap.en}])))
 ];
 
 test('every word in the word bank has pinyin and English', () => {
@@ -180,11 +182,12 @@ test('places have names, and every way between them lands on a walkable tile and
     assert.ok(p.name && p.name.zh && p.name.py && p.name.en, `the place ${id} needs a name with zh, py and en`);
     for (const e of p.exits || []){
       const what = `the way from ${id} at ${e.at}`;
-      assert.ok(onMap([...e.at, id]) && canWalk([...e.at, id]), `${what} isn't on a walkable tile`);
+      if (e.by === 'A') assert.ok(onMap([...e.at, id]), `${what} isn't on the map`);   // a way you go through by pressing A, facing it
+      else assert.ok(onMap([...e.at, id]) && canWalk([...e.at, id]), `${what} isn't on a walkable tile`);
       assert.ok(AREA.places[e.to], `${what} goes to ${e.to}, which isn't a place`);
       assert.ok(onMap([...e.arrive, e.to]) && canWalk([...e.arrive, e.to]), `${what} arrives at ${e.arrive} in ${e.to}, which isn't a walkable tile`);
       assert.ok(!e.facing || dirs.includes(e.facing), `${what} faces ${e.facing}`);
-      assert.ok(!e.if || e.closed, `${what} can be shut, so it needs a closed message`);
+      assert.ok(!e.if || e.by === 'A' || e.closed, `${what} can be shut, so it needs a closed message`);
       assert.ok((AREA.places[e.to].exits || []).some(b => b.to === id), `${what} goes to ${e.to}, which has no way back`);
       assert.ok(!(AREA.places[e.to].exits || []).some(b => b.to === id && String(b.at) === String(e.arrive)), `${what} arrives right on the way back, so you'd bounce straight back`);
     }
@@ -291,12 +294,13 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'bought', 'ready'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'bought', 'ready', 'place'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
       if (k === 'new' || k === 'knows') assert.ok(collectible.includes(v), `${where}: ${v} isn't a word you can collect in ${where}`);
       if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id], `${where} checks holding for "${id}", which isn't a request`);
+      if (k === 'place') assert.ok(AREA.places[v], `${where} checks place ${v}, which isn't a place`);
       if (k === 'bought') for (const w of Object.keys(v)) assert.ok(AREA.shop.items.some(i => i.item === w), `${where} checks bought for ${w}, which the shop doesn't sell`);
     }
   }

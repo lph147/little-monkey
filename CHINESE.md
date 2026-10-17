@@ -33,6 +33,11 @@ shown where the word list has them.
 | 我要花！ | wǒ yào huā! | I want flowers! | 大猴子 (Big monkey) |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
+| 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
+| 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | 老猴子 (Old monkey), 大猴子 (Big monkey) |  |
+| 我怕！ | wǒ pà! | I’m scared! | 老猴子 (Old monkey), 小猴子 (Little monkey) |  |
+| 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | 老猴子 (Old monkey) |  |
+| 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | 老猴子 (Old monkey) |  |
 
 ### Sentences the player completes (one word missing)
 
@@ -75,6 +80,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
 | 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
 | 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
+| 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | 桥 |  |
+| 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | 碗 |  |
+| 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | 桌子 |  |
+| 洞里有床。 | dòng lǐ yǒu chuáng. | There are beds in the cave. | 床 |  |
 
 ### Questions after the story
 
@@ -108,6 +117,7 @@ The opening is told in English. These captions each show one word, said aloud.
 | 牌子 | páizi | Sign |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
 | 草地 | cǎodì | The meadow |  |
+| 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 
 ### Words to collect
 
@@ -131,6 +141,11 @@ The opening is told in English. These captions each show one word, said aloud.
 | 松鼠 | sōngshǔ | squirrel |  |
 | 山羊 | shānyáng | goat |  |
 | 洞 | dòng | cave |  |
+| 跳 | tiào | to jump |  |
+| 桥 | qiáo | bridge |  |
+| 床 | chuáng | bed |  |
+| 碗 | wǎn | bowl |  |
+| 桌子 | zhuōzi | table |  |
 | 吃 | chī | to eat |  |
 | 喝 | hē | to drink |  |
 | 朋友 | péngyou | friend |  |
@@ -153,6 +168,16 @@ The opening is told in English. These captions each show one word, said aloud.
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 是 | shì | am, is, are |  |
+| 后面 | hòumiàn | behind |  |
+| 谁 | shéi | who, whoever |  |
+| 进去 | jìnqù | to go in |  |
+| 就 | jiù | then |  |
+| 王 | wáng | king |  |
+| 怕 | pà | to be scared |  |
+| 里面 | lǐmiàn | inside |  |
+| 太 | tài | too, very |  |
+| 好 | hǎo | good |  |
+| 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
 | 你 | nǐ | you |  |
 | 也 | yě | also, too |  |
 | 去 | qù | to go |  |
@@ -203,22 +228,28 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! | The new, shorter story at the waterfall (in the game) |  |
 | 我要花！ | wǒ yào huā! | I want flowers! | The big monkey (大猴子 dà hóuzi: please check this name too, in Names) asking for flowers |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | The big monkey, when you bring the flowers |  |
+| 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | Chapter 1, part A (in the game): The old monkey, as the troop gathers at the waterfall |  |
+| 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | Chapter 1, part A (in the game): The big monkey, daring the troop |  |
+| 我怕！ | wǒ pà! | I’m scared! | Chapter 1, part A (in the game): The little monkey |  |
+| 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | Chapter 1, part A (in the game): The old monkey, when you come back out of the cave |  |
+| 里面有床。 | lǐmiàn yǒu chuáng. | There are beds inside. | Chapter 1, part A (in the game): Your answer (you choose 床 to fill the gap) |  |
+| 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | Chapter 1, part A (in the game): The old monkey |  |
+| 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | Chapter 1, part A (in the game): The example on 桥 (bridge)’s page in the Word Scroll |  |
+| 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | Chapter 1, part A (in the game): The example on 碗 (bowl)’s page |  |
+| 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | Chapter 1, part A (in the game): The example on 桌子 (table)’s page |  |
+| 洞里有床。 | dòng lǐ yǒu chuáng. | There are beds in the cave. | Chapter 1, part A (in the game): The example on 床 (bed)’s page |  |
+| 水帘洞 | Shuǐlián Dòng | Water Curtain Cave | Chapter 1, part A (in the game): What the stone tablet (石碑 shíbēi: please check this name too) in the cave says |  |
 
-## Chapter 1, not built yet
+## Chapter 1, part B: not built yet
 
-The next part of the story: the troop's dare at the waterfall, the Water Curtain Cave behind it, and becoming king.
-Please check these before they go into the game.
+The next part of the story: the troop moves into the Water Curtain Cave and makes you king. (Part A, the
+dare and the cave, is in the game: its sentences are under New sentences to check, above.) Please check
+these before they go into the game.
 
 ### Lines
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
-| 瀑布后面有什么？ | Pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | The old monkey, as the troop gathers at the waterfall |  |
-| 谁跳进去，谁就是王！ | Shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | The big monkey, daring the troop |  |
-| 我怕！ | Wǒ pà! | I’m scared! | The little monkey |  |
-| 里面有什么？ | Lǐmiàn yǒu shénme? | What’s inside? | The old monkey, when you come back out of the cave |  |
-| 里面有床。 | Lǐmiàn yǒu chuáng. | There are beds inside. | Your answer (you choose 床 to fill the gap) |  |
-| 太好了！我们去看看！ | Tài hǎo le! Wǒmen qù kànkan! | Wonderful! Let’s go and see! | The old monkey |  |
 | 这是我们的家！ | Zhè shì wǒmen de jiā! | This is our home! | The old monkey, in the cave |  |
 | 你是我们的王！ | Nǐ shì wǒmen de wáng! | You are our king! | The troop |  |
 | 一只猴子，两只猴子，三只猴子 | yì zhī hóuzi, liǎng zhī hóuzi, sān zhī hóuzi | one monkey, two monkeys, three monkeys | The old monkey, counting the troop into the cave |  |
@@ -227,11 +258,6 @@ Please check these before they go into the game.
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 跳 | tiào | to jump |  |
-| 桥 | qiáo | bridge |  |
-| 床 | chuáng | bed |  |
-| 碗 | wǎn | bowl |  |
-| 桌子 | zhuōzi | table |  |
 | 家 | jiā | home |  |
 | 王 | wáng | king |  |
 | 一 | yī | one |  |
@@ -242,14 +268,6 @@ Please check these before they go into the game.
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 后面 | hòumiàn | behind |  |
-| 谁 | shéi | who |  |
-| 进去 | jìnqù | to go in |  |
-| 就 | jiù | then |  |
-| 怕 | pà | to be scared |  |
-| 里面 | lǐmiàn | inside |  |
-| 太 | tài | too, very |  |
-| 好 | hǎo | good |  |
 | 的 | de | (shows belonging) |  |
 | 只 | zhī | (counts animals) |  |
 | 两 | liǎng | two (of something) |  |
@@ -258,7 +276,6 @@ Please check these before they go into the game.
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King |  |
 
 ### A question

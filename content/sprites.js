@@ -528,5 +528,110 @@ const SPRITES = {
       "............oro.",
       ".............o.."
     ]
+  },
+  '跳': {   // jump: a little monkey leaping, with its arc behind it
+    palette: {o:'#4A2C17', f:'#D49A3A', s:'#F6D2A8', e:'#24160C', a:'#9CCBF5', g:'#7CC46B', G:'#5DA651'},
+    rows: [
+      "................",
+      ".........oooo...",
+      "........offffo..",
+      ".......offsefo..",
+      ".......ofsssfo..",
+      "..oo....offfo...",
+      ".offo.oofffffoo.",
+      "..ooooffffffffo.",
+      ".......offffo...",
+      "......offoofo...",
+      ".....ofo...ofo..",
+      "..a..oo.....oo..",
+      ".a..............",
+      "a...............",
+      "gggggggggggggggg",
+      "GGGGGGGGGGGGGGGG"
+    ]
+  },
+  '桥': {   // bridge: an arched bridge with railings, over water
+    palette: {o:'#2F3338', i:'#7A828C', I:'#5A616B', w:'#3F8FCB', W:'#8ACFF0'},
+    rows: [
+      "................",
+      "................",
+      "................",
+      "................",
+      "......oooo......",
+      "...ooo.oo.ooo...",
+      "..o..o.oo.o..o..",
+      ".o..oooooooo..o.",
+      ".oooiiiiiiiiooo.",
+      "oiiiIIIIIIIIiiio",
+      "oIIIooooooooIIIo",
+      "oIIo........oIIo",
+      "oIIowwwwwwwwoIIo",
+      "wwwwwWwwwwwWwwww",
+      "wwWwwwwwWwwwwwWw",
+      "wwwwwwwwwwwwwwww"
+    ]
+  },
+  '床': {   // bed: a wooden bed with a pillow and a blue blanket
+    palette: {o:'#3E2A14', w:'#9C6A3C', W:'#7A5230', p:'#FFFFFF', P:'#D8D4CA', b:'#5AA0E6', B:'#3D7CC0'},
+    rows: [
+      "................",
+      "................",
+      "................",
+      ".oo.............",
+      ".owo............",
+      ".owo............",
+      ".owo............",
+      ".owoooooooooooo.",
+      ".owoppPobbbbbbbo",
+      ".owopppobbBbbBbo",
+      ".owoooooBBBBBBBo",
+      ".owwwwwwwwwwwwwo",
+      ".oWWWWWWWWWWWWWo",
+      ".ooooooooooooooo",
+      ".owo.........owo",
+      ".ooo.........ooo"
+    ]
+  },
+  '碗': {   // bowl: a white rice bowl with a blue band
+    palette: {o:'#3A352E', w:'#F4F1EA', W:'#D9D4C8', b:'#3D7CC0', r:'#FFFFFF'},
+    rows: [
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "..oooooooooooo..",
+      ".orrrrrrrrrrrro.",
+      ".owwwwwwwwwwwwo.",
+      ".obbbbbbbbbbbbo.",
+      "..owwwwwwwwwwo..",
+      "..oWwwwwwwwwWo..",
+      "...oWwwwwwwWo...",
+      "....ooWWWWoo....",
+      ".....oooooo.....",
+      "......oWWo......",
+      ".....oooooo....."
+    ]
+  },
+  '桌子': {   // table: a wooden table on four legs
+    palette: {o:'#3E2A14', t:'#B98A55', T:'#9C6A3C', d:'#7A5230'},
+    rows: [
+      "................",
+      "................",
+      "................",
+      "................",
+      "oooooooooooooooo",
+      "otttttttttttttto",
+      "oTTTTTTTTTTTTTTo",
+      "oooooooooooooooo",
+      ".otdo......odto.",
+      ".otdo......odto.",
+      ".otdo......odto.",
+      ".otdo......odto.",
+      ".otdo......odto.",
+      ".otdo......odto.",
+      ".otdo......odto.",
+      ".oooo......oooo."
+    ]
   }
 };

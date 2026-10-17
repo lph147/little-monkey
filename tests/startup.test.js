@@ -11,7 +11,7 @@ test('a new player sees the title screen with a Start button', () => {
   assert.match(game.el('#titleButtons').innerHTML, />Start</);
   assert.equal(game.el('#aLabel').textContent, 'Start');
   assert.equal(game.el('#shellCount').textContent, 0);
-  assert.equal(game.el('#count').textContent, '0/27');
+  assert.equal(game.el('#count').textContent, '0/32');
 });
 
 test('a returning player sees Continue, with their shells and words', () => {
@@ -20,5 +20,5 @@ test('a returning player sees Continue, with their shells and words', () => {
   assert.match(game.el('#titleButtons').innerHTML, />Continue</);
   assert.equal(game.el('#aLabel').textContent, 'Continue');
   assert.equal(game.el('#shellCount').textContent, 5);
-  assert.equal(game.el('#count').textContent, '1/27');
+  assert.equal(game.el('#count').textContent, '1/32');
 });

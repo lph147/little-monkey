@@ -116,7 +116,7 @@ const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; ma
 const mg = mapCanvas.getContext('2d');
 const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign','post','stall'];   // looks with grass underneath
 const CLIFFS = ['cliff'];
-const WATERY = ['water','waterfall','bridge'];
+const WATERY = ['water','waterfall','bridge','ironBridge'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
   for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i)*16), py = Math.floor(rnd(x,y,i+20)*16); R(g, X+px, Y+py, 1, 1, i % 3 ? '#6CB35C' : '#93D67F'); }
@@ -164,6 +164,25 @@ function waterBase(g, X, Y, x, y){
     if (dx === 1){ R(g, X+14, Y, 2, T, '#2C6B9E'); }
   });
 }
+// The Water Curtain Cave: rock walls, a stone floor, and the troop's stone things.
+function caveFloor(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#7D7262');
+  for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i+300)*16), py = Math.floor(rnd(x,y,i+310)*16); R(g, X+px, Y+py, 1, 1, i % 2 ? '#8E836F' : '#6C6253'); }
+}
+function caveWall(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#4B4640'); R(g, X, Y+7, T, 1, '#3A3631'); R(g, X, Y+15, T, 1, '#3A3631');
+  R(g, X+(y%2 ? 4 : 11), Y, 1, 7, '#3A3631'); R(g, X+(y%2 ? 11 : 4), Y+8, 1, 7, '#3A3631');
+  R(g, X+1, Y+1, 5, 1, '#5E5850'); R(g, X+8, Y+9, 5, 1, '#5E5850');
+  if (y + 1 < ROWS && tileAt(x, y+1).look !== 'caveWall') R(g, X, Y+13, T, 3, '#2E2B27');   // a shadow where it meets the floor
+}
+function stoneTable(g, X, Y, x, y){   // a big stone table over several tiles: its edges where the next tile isn't table
+  caveFloor(g, X, Y, x, y);
+  const is = (dx, dy) => tileAt(x+dx, y+dy).look === 'stoneTable';
+  const x0 = is(-1,0) ? 0 : 2, x1 = is(1,0) ? 16 : 14, y0 = is(0,-1) ? 0 : 3, y1 = is(0,1) ? 16 : 11;
+  R(g, X+x0, Y+y0, x1-x0, y1-y0, '#B4AEA0');
+  if (!is(0,-1)) R(g, X+x0, Y+y0, x1-x0, 2, '#CFC9BC');
+  if (!is(0,1)) R(g, X+x0, Y+y1, x1-x0, 2, '#5E594F');
+}
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
 // How each look is painted. Each area's legend picks a look for each map letter.
 const LOOKS = {
@@ -180,9 +199,21 @@ const LOOKS = {
   stall:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.stall,X,Y); },
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
+  caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
+  caveWall:  (g,X,Y,x,y) => caveWall(g,X,Y,x,y),
+  stoneBed:  (g,X,Y,x,y) => { caveFloor(g,X,Y,x,y); R(g,X+1,Y+3,14,11,'#3E3A35'); R(g,X+2,Y+3,12,9,'#C2BCAE'); R(g,X+2,Y+3,12,2,'#D9D4C8'); R(g,X+3,Y+5,4,3,'#E8E3D8'); },
+  stoneTable:(g,X,Y,x,y) => stoneTable(g,X,Y,x,y),
+  stoneBowls:(g,X,Y,x,y) => { caveFloor(g,X,Y,x,y); R(g,X+1,Y+10,14,2,'#5E594F'); [[2,5],[9,5]].forEach(([a,c]) => { R(g,X+a,Y+c,5,5,'#3E3A35'); R(g,X+a+1,Y+c,3,4,'#D8D2C4'); R(g,X+a+1,Y+c,3,1,'#9C968A'); }); },
+  tablet:    (g,X,Y,x,y) => { caveFloor(g,X,Y,x,y); R(g,X+3,Y+1,10,14,'#3E3A35'); R(g,X+4,Y+2,8,12,'#A9A598'); [3,6,9].forEach(r => R(g,X+7,Y+2+r,2,2,'#3E3A35')); },
+  curtain:   (g,X,Y,x,y) => { R(g,X,Y,T,T,'#8FD0EE'); },   // the falling water is animated in js/draw.js
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
   waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js
+  ironBridge:(g,X,Y,x,y) => {   // an iron bridge across a stream
+    waterBase(g,X,Y,x,y);
+    R(g,X+2,Y,12,T,'#5A616B'); for (let i = 0; i < 16; i += 3) R(g,X+2,Y+i,12,1,'#454B54');
+    R(g,X+1,Y,1,T,'#2F3338'); R(g,X+14,Y,1,T,'#2F3338');
+  },
   bridge:    (g,X,Y,x,y) => {
     waterBase(g,X,Y,x,y);
     for (let i = 0; i < 16; i += 4){ R(g,X+i,Y+1,3,14,(i/4) % 2 ? '#A0743F' : '#B98A55'); R(g,X+i+3,Y+1,1,14,'#6B4A2A'); }

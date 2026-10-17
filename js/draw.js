@@ -20,7 +20,7 @@ function animTile(x, y, X, Y, now){
       if (s > .55){ const px = 2 + Math.floor(rnd(x,y,k+210)*10), py = 3 + Math.floor(rnd(x,y,k+220)*10); R(b, X+px, Y+py, 3, 1, '#BFE8FA'); }
     }
     if (tileAt(x, y-1).look === 'waterfall'){ for (let i = 0; i < 6; i++){ const px = Math.floor(rnd(x, i, Math.floor(now/120))*15); R(b, X+px, Y+1+(i%3), 2, 1, '#FFFFFF'); } }
-  } else if (look === 'waterfall'){
+  } else if (look === 'waterfall' || look === 'curtain'){
     R(b, X, Y, T, T, '#8FD0EE');
     for (let i = 0; i < 5; i++){ const xx = X + 1 + i*3, off = (now/18 + i*7) % 22 - 6; R(b, xx, Y + Math.max(0, off), 1, Math.min(7, 16 - Math.max(0, off)), '#FFFFFF'); R(b, xx+1, Y, 1, T, '#B9E4F7'); }
   }

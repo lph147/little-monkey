@@ -83,6 +83,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'holding') return Object.entries(v).every(([id, want]) => { const h = here().holding[id]; return want === true ? !!h : want === false ? !h : h === want; });
     if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
     if (k === 'ready') return chapterDone() === v;
+    if (k === 'place') return PLACE === v;   // the place you're in
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
@@ -250,9 +251,10 @@ async function gather(t, x, y){   // pick up something for a request, such as fr
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
   async story(t){ await lookAt(t); await storyScroll(); },
   training(){ return trainingGround(); },
-  async sign(){
+  async sign(t){   // the area's sign, or a tile's own (sign: its name, what it says and a hint)
     SFX.blip();
-    await showDialog(speaker('sign'), {t:toks(AREA.sign.says.zh), en:AREA.sign.says.en}, {hint:AREA.sign.hint});
+    const sg = t.sign || AREA.sign, face = t.sign ? `<div class="speaker"><div class="spk"><div class="spk-zh">${sg.name.zh} <span class="spk-py">${sg.name.py}</span></div><div class="spk-en">${esc(sg.name.en)}</div></div></div>` : speaker('sign');
+    await showDialog(face, {t:toks(sg.says.zh), en:sg.says.en}, sg.hint ? {hint:sg.hint} : {});
   }
 };
 async function interact(x, y){

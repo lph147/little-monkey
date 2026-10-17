@@ -16,14 +16,21 @@ const QUIET = {sound: false, music: false};
 const ALL_TIPS = {walk: 1, talk: 1, look: 1, grey: 1, menu: 1};   // tips already had (js/tips.js)
 const SAVES = {
   // just born, with the old monkey waiting: no tips had yet
-  born: {version: 17, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},
+  born: {version: 19, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},
   // halfway through Flower Fruit Mountain, holding a peach for the hungry monkey
-  middle: {version: 17, started: true, tips: ALL_TIPS, ...QUIET, shells: 6, xp: 260, w: knows(1, MIDDLE_WORDS),
+  middle: {version: 19, started: true, tips: ALL_TIPS, ...QUIET, shells: 6, xp: 260, w: knows(1, MIDDLE_WORDS),
     met: ['rabbit'], friends: ['rabbit'], pos: {x: 13, y: 6, dir: 'up'},
     wardrobe: {owned: ['头带'], wearing: []},
     areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false}}},
 };
 SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};   // every word Recognised: animals ask you to read
+// chapter 1 has begun: the prologue is done, and the troop is at the waterfall; you're beside the old monkey
+const PROLOGUE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, story: true, bought: ['头带'], cave: 0};
+SAVES.chapter1 = {...SAVES.middle, w: knows(1, [...MIDDLE_WORDS, '瀑布', '狐狸', '松鼠', '山羊', '朋友']), met: ['rabbit', 'fox', 'squirrel', 'goat'],
+  wardrobe: {owned: ['头带'], wearing: ['头带']}, areas: {1: PROLOGUE}, pos: {place: 'meadow', x: 16, y: 1, dir: 'left'}};
+SAVES.dared = {...SAVES.chapter1, w: {...SAVES.chapter1.w, ...knows(1, ['跳'])}, areas: {1: {...PROLOGUE, cave: 1}}, pos: {place: 'meadow', x: 17, y: 1, dir: 'right'}};
+SAVES.inCave = {...SAVES.dared, w: {...SAVES.dared.w, ...knows(1, ['洞'])}, areas: {1: {...PROLOGUE, cave: 2}}, pos: {place: 'cave', x: 7, y: 9, dir: 'up'}};
+SAVES.explored = {...SAVES.inCave, w: {...SAVES.inCave.w, ...knows(1, ['桥', '床', '碗', '桌子'])}, pos: {place: 'meadow', x: 16, y: 1, dir: 'left'}};
 SAVES.facing = {...SAVES.born, tips: {walk: 1}, pos: {x: 7, y: 2, dir: 'up'}};   // facing the old monkey, having walked
 SAVES.noMenuTip = {...SAVES.middle, tips: {...ALL_TIPS, menu: 0}};
 
@@ -79,6 +86,14 @@ const SCREENS = [
     play(); await wait(100); pictureQ = () => Promise.resolve(true); encounter({id: 'fox', hz: '狐狸', img: portrait('fox'), wild: true}); await wait(600); }},
   {id: 'animal-away', title: 'Not this time', save: 'middle', why: 'Fewer than 2 right: the animal goes back to the grass.', run: async () => {
     play(); await wait(100); let n = 0; pictureQ = () => Promise.resolve(n++ === 0); encounter({id: 'fox', hz: '狐狸', img: portrait('fox'), wild: true}); await wait(600); }},
+  {id: 'troop-gathers', title: 'Chapter 1: the troop gathers', save: 'chapter1', why: 'At the waterfall, with a ! over the old monkey.', run: async () => { play(); await wait(500); }},
+  {id: 'dare', title: 'The dare', save: 'chapter1', why: 'The big monkey speaks while you talk to the old monkey.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
+  {id: 'jump', title: 'Ready to jump', save: 'dared', why: 'Facing the waterfall, A says Jump.', run: async () => { play(); await wait(500); }},
+  {id: 'cave', title: 'The Water Curtain Cave', save: 'inCave', why: 'Four things sparkle: the bridge, the beds, the table and the bowls.', run: async () => { play(); await wait(500); }},
+  {id: 'tablet', title: 'The stone tablet', save: 'inCave', run: async () => { play(); await wait(100); ACTIONS.sign(LEGEND.L); await wait(400); }},
+  {id: 'tell', title: 'Telling the old monkey', save: 'explored', why: 'Your answer: fill the gap.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
   {id: 'menu', title: 'Menu', save: 'middle', run: async () => { play(); await wait(100); openMenu(); await wait(300); }},
   {id: 'tasks', title: 'Tasks', save: 'middle', run: async () => { play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'scroll', title: 'Word Scroll', save: 'middle', run: async () => { play(); await wait(100); openScroll(() => closeCard()); await wait(300); }},

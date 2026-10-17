@@ -30,9 +30,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   elder   0 not spoken to yet, 1 said hello, 2 told you about the animals
   //   gate    true once the rocks have rolled away
   //   story   true once you've read the story at the waterfall
+  //   cave    chapter 1: 0 not dared yet, 1 dared to jump, 2 been inside the cave, 3 told the old monkey
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, story:false},
+  progress: {chapter:0, elder:0, gate:false, story:false, cave:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
@@ -44,7 +45,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     found: {count:'animalsFound'},
     animalsLeft: {count:'animalsLeft'},
     shells: {count:'shells', max:10},   // your shells, up to the headband's price
-    flowersPicked: {count:'picked', request:'flowers'}   // flowers picked for the big monkey
+    flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey
+    caveThings: {count:'known', words:['桥', '床', '碗', '桌子']}   // things you've found in the Water Curtain Cave
   },
 
   // The task box under the game screen. Every task whose if matches is shown, in this order.
@@ -69,6 +71,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
     {id:'shop2', if:{knows:'头带', bought:{'头带':false}}, text:'Buy the {头带} from the {老板} ({shells}/10 🐚)', arrow:'boss'},
+    {id:'dare', if:{chapter:1, cave:0}, text:'Go to the {瀑布}: the troop is gathering', arrow:'elder'},
+    {id:'jump', if:{cave:1}, text:'Jump through the {瀑布}', arrow:[18, 1]},
+    {id:'explore', if:{cave:2, caveThings:{below:4}}, text:'Look around the {洞} ({caveThings}/4)'},
+    {id:'tell', if:{cave:2, caveThings:4}, text:'Tell the old monkey about the {洞}', arrow:'elder'},
   ],
 
   // What the task box says when there are no tasks: the first whose if matches.
@@ -76,6 +82,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
+    {if:{cave:3}, text:'The troop wants to see the cave. The rest of chapter 1 is coming soon.'},
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
   ],
 
@@ -90,12 +97,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
     {text:'Bring the big monkey 3 flowers', done:{flowers:'done'}},
     {text:'Read the story at the waterfall', done:{story:true}},
-    {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}}
+    {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}},
+    {chapter:1, text:'Jump through the waterfall', done:{cave:{atLeast:2}}},
+    {chapter:1, text:'Look around the cave', done:{caveThings:4}},
+    {chapter:1, text:'Tell the old monkey what’s inside', done:{cave:{atLeast:3}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
-    elder: [{if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}],
+    elder: [{if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{chapter:1, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
@@ -154,6 +164,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
     {if:{chapter:0, ready:true}, do:[{chapter:1}]},   // the prologue is done: chapter 1 begins
+    {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     {if:{hungry:'done', thirsty:'done', gate:false}, do:[
       {set:{gate:true}},
       {rumble:true},   // the ground shakes and the map is redrawn
@@ -171,7 +182,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   places: {
     meadow: {
       name: {zh:'草地', py:'cǎodì', en:'The meadow'},
-      exits: [],
+      exits: [
+        {at:[18, 1], by:'A', label:'Jump', to:'cave', arrive:[7, 12], facing:'up', if:{cave:{atLeast:1}}}   // jumping through the waterfall
+      ],
       map: [
         "MMMMMMMMMMMMMMMMMMXXMMMM",
         "MMMMMMMggSggMMggggXXYYYY",
@@ -195,6 +208,32 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YMMMggg...........BBgFgY",
         "YMMgFggGGGggggggggWWgggY",
         "YYYYYYYYYYYYYYYYYYWWYYYY"
+      ]
+    },
+    // Behind the waterfall (chapter 1). You jump in through the water curtain at the bottom, and walk out
+    // through it again.
+    cave: {
+      name: {zh:'水帘洞', py:'Shuǐlián Dòng', en:'Water Curtain Cave'},
+      exits: [
+        {at:[6, 13], to:'meadow', arrive:[17, 1], facing:'left'},
+        {at:[7, 13], to:'meadow', arrive:[17, 1], facing:'left'},
+        {at:[8, 13], to:'meadow', arrive:[17, 1], facing:'left'}
+      ],
+      map: [
+        "ZZZZZZZZZZZZZZZZ",
+        "ZDzDzDZZZZDzDzDZ",
+        "ZzzzzzzzzzzzzzzZ",
+        "ZzzAAzzzzVVzzzzZ",
+        "ZzzAAzzzzzzzLzzZ",
+        "ZzzzzzzzzzzzzzzZ",
+        "ZUUUUUUIUUUUUUUZ",
+        "ZzzzzzzzzzzzzzzZ",
+        "ZzzzzzzzzzzzzzzZ",
+        "ZzzzzzzzzzzzzzzZ",
+        "ZzzzzzzzzzzzzzzZ",
+        "ZzzzzzzzzzzzzzzZ",
+        "ZzzzzzzzzzzzzzzZ",
+        "ZZZZZZCCCZZZZZZZ"
       ]
     }
   },
@@ -235,7 +274,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'M': {look:'cliff', word:'山'},
     'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
-    'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story'}
+    'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story'},
+    // the Water Curtain Cave
+    'Z': {look:'caveWall'},
+    'z': {look:'caveFloor', walk:true},
+    'C': {look:'curtain', walk:true},   // the water curtain: the way back out
+    'U': {look:'water'},   // the stream through the cave
+    'I': {look:'ironBridge', walk:true, word:'桥', learnOnStep:true, stepNote:'An iron bridge over the stream.'},
+    'D': {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.'},
+    'A': {look:'stoneTable', word:'桌子', landmark:true, note:'A big table of stone.'},
+    'V': {look:'stoneBowls', word:'碗', landmark:true, note:'Bowls of stone, ready for the troop.'},
+    'L': {look:'tablet', landmark:true, action:'sign', sign:{name:{zh:'石碑', py:'shíbēi', en:'Stone tablet'}, says:{zh:'水帘洞', en:'Water Curtain Cave'}, hint:'The name of the cave.'}}
   },
 
   // Characters standing on the map. A character's name shows Chinese, pinyin and English
@@ -243,17 +292,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // palette: a monkey's colours. o outline, f fur, s face and tummy, m mouth, e eyes, w beard.
   // label: what the A button says beside them (Talk if not given).
   // look: 'bird' draws a little bird instead of a monkey. word: it sparkles until you know this word.
-  // beard: draws a white beard.
+  // beard: draws a white beard. moves: where they go as the story goes on: the first whose if matches
+  // (with x, y, facing, and place if it's another place), instead of where they start.
   characters: [
-    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
+    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{chapter:1}, x:15, y:1, facing:'right'}],
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
-    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'},
+    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{chapter:1}, x:16, y:2, facing:'right'}],
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
-    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{chapter:1}, x:14, y:2, facing:'right'}],
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
@@ -272,7 +322,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 7]},
     {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[1, 7]},
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
-    {word:'瀑布', at:[18, 1], if:{gate:true}}   // the waterfall is out of reach until the rocks roll away
+    {word:'瀑布', at:[18, 1], if:{gate:true}},   // the waterfall is out of reach until the rocks roll away
+    {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']}, {word:'桥', at:[7, 6, 'cave']}
   ],
 
   // Where you found each word, shown on its page in the Word Scroll. Every word you can collect
@@ -312,6 +363,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '再见': 'You said it to the old monkey after he told you about the animals.',
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
     '戴': 'You said it when you put something on from your wardrobe.',
+    '跳': 'The big monkey dared the troop to jump through the waterfall.',
+    '桥': 'The iron bridge over the stream in the Water Curtain Cave.',
+    '床': 'The stone beds in the Water Curtain Cave.',
+    '碗': 'The stone bowls in the Water Curtain Cave.',
+    '桌子': 'The stone table in the Water Curtain Cave.',
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -322,7 +378,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
     '山羊': {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.'},
-    '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'}
+    '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'},
+    // Chapter 1 (drafts, not checked yet: see CHINESE.md)
+    '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'},
+    '碗': {zh:'桌子 上 有 碗 。', en:'There are bowls on the table.'},
+    '桌子': {zh:'洞 里 有 桌子 。', en:'There is a table in the cave.'},
+    '床': {zh:'洞 里 有 床 。', en:'There are beds in the cave.'}
   },
 
   // Where a fish jumps out of the water now and then.
@@ -377,13 +438,20 @@ const FLOWER_FRUIT_MOUNTAIN = {
     bye: {zh:'再见 ！', en:'Goodbye!'},
     wantFlowers: {zh:'我 要 花 ！', en:'I want flowers!'},
     haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
-    noProblem: {zh:'没关系 ！', en:'That’s OK!'}
+    noProblem: {zh:'没关系 ！', en:'That’s OK!'},
+    // Chapter 1 (drafts, not checked yet: see CHINESE.md)
+    whatBehind: {zh:'瀑布 后面 有 什么 ？', en:'What’s behind the waterfall?'},
+    dare: {zh:'谁 跳 进去 ， 谁 就 是 王 ！', en:'Whoever jumps in will be king!'},
+    scared: {zh:'我 怕 ！', en:'I’m scared!'},
+    inside: {zh:'里面 有 什么 ？', en:'What’s inside?'},
+    letsGo: {zh:'太 好 了 ！ 我们 去 看看 ！', en:'Wonderful! Let’s go and see!'}
   },
 
   // What happens when you press A beside each character. The game goes down their list and
   // does the first part whose if matches your progress (a part with no if always matches).
   // Steps in a do list:
-  //   say       one of the lines above. teach makes that word bold; hint adds a note underneath;
+  //   say       one of the lines above, said by the one you're talking to (or by, another character
+  //             nearby). teach makes that word bold; hint adds a note underneath;
   //             showTasks puts your current tasks in the note instead (the hint if there are none)
   //   newWord   a word's new-word card, only if you don't know the word yet (note: a line on it)
   //   card      a word's card, every time (note: a line on it)
@@ -395,6 +463,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //             (taught on its own card the first time). Any choice is fine; the game says which fits best.
   //   wordGame  offer a word game. ask: the question; word: who you're playing with;
   //             notYet: the message if you don't know enough words yet
+  //   gap       a sentence to finish by filling the gap: {sentence, en, word}, word being the missing one
+  //   chapter   a new chapter begins: its title card, and its part of the checklist from then on
   //   message   a line of English, such as what's happening: in a conversation it waits in the speech
   //             box until you press A; anywhere else it's a message at the bottom of the screen
   // In an if: elder:0 checks what the area remembers; new:'猴子' is true while you don't know
@@ -419,12 +489,31 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {reply:'再见'},
         {say:'bye'}
       ]},
+      // chapter 1: the dare at the waterfall, then telling him what's inside
+      {if:{chapter:1, cave:0}, do:[
+        {say:'whatBehind'},
+        {say:'dare', by:'big', teach:'跳'},
+        {newWord:'跳'},
+        {say:'scared', by:'playful'},
+        {message:'Everyone looks at you.'},
+        {set:{cave:1}}
+      ]},
+      {if:{cave:1}, do:[{say:'dare', by:'big', hint:'Jump through the waterfall!'}]},
+      {if:{cave:2, caveThings:4}, do:[
+        {say:'inside'},
+        {gap:{sentence:'里面 有 床', en:'There are beds inside.', word:'床'}},
+        {say:'letsGo'},
+        {set:{cave:3}},
+        {message:'The rest of chapter 1 is coming soon: the troop moving into the cave.'}
+      ]},
+      {if:{cave:2}, do:[{say:'go', hint:'Look around the cave first.'}]},
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
       {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'}]},
+      {if:{chapter:1, cave:{below:3}}, do:[{say:'scared'}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [
@@ -442,6 +531,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ],
     big: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
+      {if:{chapter:1, cave:{below:3}}, do:[{say:'dare'}]},
       {do:[{request:'flowers'}]}
     ]
   },

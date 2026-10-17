@@ -12,9 +12,9 @@ They start the game in a pretend browser (no window opens) and check that it loa
 
 They also check the content files: every word in a sentence is in the word bank, no word is listed twice, every picture is different, characters stand where you can walk, names have Chinese, pinyin and English, sprites are complete, and so on. If a test fails, its message says what's wrong and where.
 
-One test plays the whole of Flower Fruit Mountain, from a new game to passing the word test at the cave door, pressing the game's own buttons the way a player would (tests/playthrough.test.js). If a change makes the area impossible to finish, it says where it got stuck.
+One test plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1, part A), pressing the game's own buttons the way a player would (tests/playthrough.test.js). If a change makes the area impossible to finish, it says where it got stuck.
 
-And they try out a few things the game does: the story questions only show words you've caught, the cave door opens as soon as everything else is done, and Space and Enter work as A on the title screen and in the intro.
+And they try out a few things the game does: the story questions only show words you've caught, chapter 1 begins as soon as the prologue is done, and Space and Enter work as A on the title screen and in the intro.
 
 They can't tell whether the game *feels* right, so the checks below are still needed.
 
@@ -131,7 +131,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 **The waterfall**
 - [ ] The rocks at the top of the right-hand path have gone. Walk up through the gap to the top right, stand just left of the waterfall, face it and press A.
 - [ ] A card teaches 瀑布 (waterfall), with its picture, then the Story Scroll opens: 8 short sentences about your first day (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
-- [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). The sentence's English, with the gap, is shown underneath. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🐚 and a rumble.
+- [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). The sentence's English, with the gap, is shown underneath. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🐚: "The troop stares at the roaring waterfall. What could be behind it?"
 
 **The wardrobe**
 - [ ] Buying the 头带 puts it on. It's the wardrobe's only item for now.
@@ -140,10 +140,17 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 **The old monkey**
 - [ ] After the old monkey's first 你好 and your reply, the speech box says (in italics) that every baby monkey explores the mountain to find out what things are called, and waits for A before his next line.
 
-**The cave door**
-- [ ] The cave door is at the top of the short path on the far left. Stand below it, face up and press A. It teaches 洞 (cave).
-- [ ] If anything is left to do, the door lists it. When everything is done, Start the test matches words to pictures in rounds of about 4. You need 80% right first time.
-- [ ] Passing shows "Flower Fruit Mountain complete!" and puts you back on the path below the door.
+**The end of the prologue**
+- [ ] There's no cave door on the far left any more (and no word test for now: it comes back as the troop's send-off at the end of Area 1).
+- [ ] Menu, Tasks shows "Prologue: The first day" and its checklist; the menu shows "Prologue" with how many are done.
+- [ ] As soon as the last thing on the prologue's checklist is done (whatever it is), a card says "Chapter 1: The Water Curtain Cave" with a Begin button.
+
+**Chapter 1, part A: the Water Curtain Cave**
+- [ ] The old monkey, the big monkey and the little monkey are by the waterfall, with a ! over the old monkey; the task says "Go to the 瀑布 (waterfall): the troop is gathering". Talk to the old monkey: 瀑布后面有什么？, then the big monkey says 谁跳进去，谁就是王！ (with its name over the speech box), then a card teaches 跳 (jump), the little monkey says 我怕！, and "Everyone looks at you."
+- [ ] Task: "Jump through the 瀑布 (waterfall)". Stand just left of the waterfall and face it: A says Jump. Press A: a fade, and you're in the Water Curtain Cave, with its name 水帘洞 Shuǐlián Dòng at the top. A card says 洞 (cave) aloud: "A big, dry cave, hidden behind the water!"
+- [ ] The cave has rock walls, stone beds along the top, a stone table, stone bowls, a stone tablet, a stream with an iron bridge, and the water curtain at the bottom. Four things sparkle. Stepping on the bridge teaches 桥 (bridge); facing the beds, the table and the bowls and pressing A teaches 床 (bed), 桌子 (table) and 碗 (bowl). The task counts them: "Look around the 洞 (cave) (2/4)". The tablet says 水帘洞 (Water Curtain Cave).
+- [ ] Walk down into the water curtain: you're back beside the waterfall. The task says to tell the old monkey, with the arrow on him (inside the cave, the arrow points to the curtain).
+- [ ] Talk to the old monkey: 里面有什么？, then fill the gap in 里面有＿。 (There are beds inside.) with 床, then 太好了！我们去看看！ and "The rest of chapter 1 is coming soon". Menu, Tasks shows chapter 1's three things ticked.
 
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.
