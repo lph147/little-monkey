@@ -137,7 +137,7 @@ function howToPlay(){
          <li><span class="kbd pad">✚</span><span><b>Walk</b> by holding a direction. Tap it to turn on the spot. You can slide your thumb between directions.</span></li>
          <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> When someone talks, A moves on. On cards, A presses the button with the red A badge.</span></li>
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
-         <li><span class="kbd menu">☰</span><span><b>Menu</b> at the top: your tasks, Word Scroll, friends and settings.</span></li>
+         <li><span class="kbd menu">☰</span><span><b>Start</b> opens the menu: the Word Scroll, friends and settings. <b>Select</b> shows your tasks.</span></li>
        </ul>
        <p class="small">Answers and words in sentences are simply tapped.</p>`,
       `<p class="label">How to play · 2 of 2</p>
