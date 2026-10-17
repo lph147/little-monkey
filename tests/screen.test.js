@@ -73,6 +73,21 @@ test('Select opens your tasks: your level, shells and words, what to do now, the
   assert.equal(run('modal.hidden'), true, 'and so does B');
 });
 
+test('your tasks only list what you’ve found: the flowers once the big monkey has asked for them', () => {
+  const {sheet, run} = taskGame();   // the hungry and thirsty monkeys have asked; the big monkey hasn't
+  run('pressSelect()');
+  let text = sheet.textContent;
+  assert.match(text, /hungry monkey the fruit/);
+  assert.match(text, /water to the thirsty monkey/);
+  assert.doesNotMatch(text, /flower/, 'not before the big monkey asks');
+  assert.doesNotMatch(text, /headband/, 'nor the headband before the shop owner shows it');
+  assert.match(text, /More to find as you play/, 'but it says there’s more');
+  run("pressB(); here().flowers = 'asked'; pressSelect()");
+  text = sheet.textContent;
+  assert.match(text, /a red, a yellow and a white flower/, 'once asked, it’s on the list');
+  assert.ok(JSON.parse(run('JSON.stringify(areaChecklist().map(c => c[1]))')).length === 8, 'the whole checklist still counts towards finishing the chapter');
+});
+
 test('Start opens the menu, with your level, shells and words at the top', () => {
   const {sheet, run} = taskGame({shells: 6});
   run('pressMenu()');

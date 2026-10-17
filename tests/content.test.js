@@ -25,6 +25,7 @@ const allIfs = () => [
   ...AREA.tasks.map(t => [`task ${t.id}`, t.if]),
   ...AREA.hints.map((h, i) => [`hint ${i + 1}`, h.if]),
   ...AREA.checklist.map((c, i) => [`checklist item ${i + 1}`, c.done]),
+  ...AREA.checklist.filter(c => c.show).map((c, i) => [`checklist item ${AREA.checklist.indexOf(c) + 1}'s show`, c.show]),
   ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if])),
   ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word}`, s.if]),
   ['animalsAppear', AREA.animalsAppear]

@@ -47,9 +47,12 @@ function storyScroll(){
     });
   });
 }
-function checklistHTML(onlyLeft){   // the area's checklist (areaChecklist() in js/world.js); onlyLeft: just what's left before the exit test
-  const items = areaChecklist().filter(([t, done, exitTest]) => !onlyLeft || (!done && !exitTest));
-  return `<ul class="checklist">${items.map(([t, done]) => `<li class="${done ? 'done' : ''}">${esc(t)}</li>`).join('')}</ul>`;
+// The area's checklist (areaChecklist() in js/world.js), just what you've found so far, and a line saying there's
+// more if some hasn't been found yet. onlyLeft: just what's left before the exit test.
+function checklistHTML(onlyLeft){
+  const all = areaChecklist(), items = all.filter(([t, done, exitTest, found]) => found && (!onlyLeft || (!done && !exitTest)));
+  const more = all.some(([, , , found]) => !found);
+  return `<ul class="checklist">${items.map(([t, done]) => `<li class="${done ? 'done' : ''}">${esc(t)}</li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
 }
 function infoBox(who, html){
   return new Promise(res => {

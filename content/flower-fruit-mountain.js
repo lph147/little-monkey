@@ -95,25 +95,27 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
   ],
 
-  // The area's checklist, shown in Menu, Tasks: the chapter you're in (chapter, 0 if not given). Once
+  // The area's checklist, shown in your tasks (Select): the chapter you're in (chapter, 0 if not given). Once
   // everything in a chapter is done, it's ready (ready:true in an if), and the next chapter can begin.
-  // exitTest marks the area's word test, which comes last.
+  // An item with show only appears once you've found it (show matches, such as the character having asked
+  // you), or it's done; until then the list says there's more to find. exitTest marks the area's word test,
+  // which comes last.
   checklist: [
     {text:'Say hello to the old monkey', done:{elder:{atLeast:1}}},
-    {text:'Learn about animals from the old monkey', done:{elder:{atLeast:2}}},
-    {text:'Find the animals ({found}/{animals})', done:{animalsLeft:0}},
-    {text:'Bring the hungry monkey the fruit it wants', done:{hungry:'done'}},
-    {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
-    {text:'Bring the big monkey a red, a yellow and a white flower', done:{flowers:'done'}},
-    {text:'Read the story at the waterfall', done:{story:true}},
-    {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}},
-    {chapter:1, text:'Jump through the waterfall', done:{cave:{atLeast:2}}},
-    {chapter:1, text:'Look around the cave', done:{caveThings:4}},
-    {chapter:1, text:'Tell the old monkey what’s inside', done:{cave:{atLeast:3}}},
-    {chapter:1, text:'Lead the troop into the cave', done:{cave:{atLeast:4}}},
-    {chapter:1, text:'Hear what the old monkey calls the cave', done:{cave:{atLeast:5}}},
-    {chapter:1, text:'Become the troop’s king', done:{cave:{atLeast:6}}},
-    {chapter:1, text:'Count the troop into the cave ({troopIn}/3)', done:{count:3}}
+    {text:'Learn about animals from the old monkey', show:{elder:{atLeast:1}}, done:{elder:{atLeast:2}}},
+    {text:'Find the animals ({found}/{animals})', show:{elder:{atLeast:2}}, done:{animalsLeft:0}},
+    {text:'Bring the hungry monkey the fruit it wants', show:{hungry:'asked'}, done:{hungry:'done'}},
+    {text:'Bring water to the thirsty monkey', show:{thirsty:'asked'}, done:{thirsty:'done'}},
+    {text:'Bring the big monkey a red, a yellow and a white flower', show:{flowers:'asked'}, done:{flowers:'done'}},
+    {text:'Read the story at the waterfall', show:{gate:true}, done:{story:true}},
+    {text:'Buy a headband from the shop owner', show:{knows:'头带'}, done:{bought:{'头带':true}}},
+    {chapter:1, text:'Jump through the waterfall', show:{cave:{atLeast:1}}, done:{cave:{atLeast:2}}},
+    {chapter:1, text:'Look around the cave', show:{cave:{atLeast:2}}, done:{caveThings:4}},
+    {chapter:1, text:'Tell the old monkey what’s inside', show:{caveThings:4}, done:{cave:{atLeast:3}}},
+    {chapter:1, text:'Lead the troop into the cave', show:{cave:{atLeast:3}}, done:{cave:{atLeast:4}}},
+    {chapter:1, text:'Hear what the old monkey calls the cave', show:{cave:{atLeast:4}}, done:{cave:{atLeast:5}}},
+    {chapter:1, text:'Become the troop’s king', show:{cave:{atLeast:5}}, done:{cave:{atLeast:6}}},
+    {chapter:1, text:'Count the troop into the cave ({troopIn}/3)', show:{cave:{atLeast:6}}, done:{count:3}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.

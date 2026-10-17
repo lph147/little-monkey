@@ -23,7 +23,8 @@ const metCount = () => Math.min(S.met.length, ANIMALS.length);
 // area's checklist belongs to a chapter (chapter, 0 if not given); the checklist shows the chapter you're in.
 const chapterNow = () => here().chapter || 0;
 const chapterItems = () => AREA.checklist.filter(c => (c.chapter || 0) === chapterNow());
-const areaChecklist = () => chapterItems().map(c => [fill(c.text), matches(c.done), !!c.exitTest]);   // [text, done, is it the exit test]
+// [text, done, is it the exit test, found yet]: an item with show is found once show matches, or it's done
+const areaChecklist = () => chapterItems().map(c => { const done = matches(c.done); return [fill(c.text), done, !!c.exitTest, !c.show || done || matches(c.show)]; });
 const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
