@@ -187,7 +187,7 @@ rt.hid{visibility:hidden}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px;margin-top:6px}
 .card{border:2px solid var(--line);border-radius:6px;padding:6px 2px 5px;text-align:center;background:var(--bg);display:flex;flex-direction:column;align-items:center;font-family:var(--text)}
 .card .c{font-size:1.7rem;font-weight:500;line-height:1.2;height:48px;display:flex;align-items:center;justify-content:center}
-.card .pix{width:48px;height:48px}
+.card .pix{width:var(--pic-mid);height:var(--pic-mid)}
 .card .hz{font-size:1.15rem;font-weight:500;line-height:1.25}
 .card .c.hz{font-size:1.5rem}
 .card .p{font-size:.8rem;color:var(--muted);min-height:1.3em;line-height:1.3}
@@ -314,7 +314,7 @@ rt.hid{visibility:hidden}
 .mw.done,.mp.done{opacity:.25;box-shadow:none;cursor:default}
 .friends{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
 .friends button{display:flex;flex-direction:column;align-items:center;background:var(--bg);border:2px solid var(--line);border-radius:6px;padding:8px 4px;font-family:var(--text)}
-.friends .portrait{width:48px;height:48px}
+.friends .portrait{width:var(--pic-mid);height:var(--pic-mid)}
 .stats{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--pixel);font-size:.85rem;color:var(--muted);margin:.1rem 0 .2rem}
 .portrait{width:56px;height:56px;image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 .toggles{display:flex;gap:6px}

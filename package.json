@@ -6,6 +6,7 @@
     "start": "node tools/serve.js",
     "test": "node --test",
     "chinese": "node tools/chinese-sheet.js",
-    "icons": "node tools/make-icons.js"
+    "icons": "node tools/make-icons.js",
+    "pictures": "node tools/draw-pictures.js"
   }
 }

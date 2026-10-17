@@ -33,8 +33,8 @@ test('text and pictures follow the screen’s height, and pictures stay sharp', 
   for (const [h, dpr] of [[317, 1], [276, 3], [456, 2], [200, 2.625]]){
     const s = size(h, dpr);
     for (const k of ['face', 'small', 'mid', 'scene', 'big']){
-      const real = s[k] * dpr / 16;   // the screen's real pixels for each of a picture's 16 art pixels
-      assert.ok(Math.abs(real - Math.round(real)) < 1e-6 && real >= 1, `${k} on a ${h} screen: ${s[k]}px gives each art pixel a whole number of real pixels`);
+      const real = s[k] * dpr / 32;   // the screen's real pixels for each of a picture's 32 pixels
+      assert.ok(Math.abs(real - Math.round(real)) < 1e-6 && real >= 1, `${k} on a ${h} screen: ${s[k]}px gives each picture pixel a whole number of real pixels`);
     }
     assert.ok(s.face <= s.small && s.small <= s.mid && s.mid <= s.scene && s.scene <= s.big, 'from small to big');
   }

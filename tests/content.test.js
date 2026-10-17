@@ -9,7 +9,7 @@ const {loadGame, ROOT} = require('./fake-browser');
 
 const game = loadGame();
 const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
-const BANK = get('WORD_BANK'), SPRITES = get('SPRITES'), AREA = get('AREA'), PUNCT = get('[...PUNCT]');
+const BANK = get('WORD_BANK'), PICTURES = get('PICTURES'), MAP_SPRITES = get('MAP_SPRITES'), AREA = get('AREA'), PUNCT = get('[...PUNCT]');
 const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), STEPS = get('Object.keys(STEPS)');   // what the engine can draw and do
 const STEP_OPTIONS = get('STEP_OPTIONS'), COUNTS = get('Object.keys(COUNTS)');
 const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests), 'done'];   // what the area keeps in the save
@@ -216,34 +216,43 @@ test('characters are drawn as monkeys (with colours) or birds, and sparkle on re
   }
 });
 
-test('animals are collectible words, each with a 16 × 16 sprite', () => {
+test('animals are collectible words, each with a sprite for the map', () => {
   const ids = new Set();
   for (const a of AREA.animals){
     assert.ok(!ids.has(a.id), `two animals have the id ${a.id}`); ids.add(a.id);
     assert.ok(collectible.includes(a.word), `the ${a.id}'s word ${a.word} isn't a word you can collect in ${where}`);
-    assert.ok(SPRITES[a.word], `${a.word} has no sprite in content/sprites.js`);
+    assert.ok(MAP_SPRITES[a.word], `${a.word} has no sprite for the map in content/sprites.js`);
   }
 });
 
-test('every word with a picture has its own pixel sprite', () => {
+test('every word with a picture has its own pixel picture', () => {
   const seen = {};
   for (const w of collectible.filter(w => BANK[w].pic)){
-    assert.ok(SPRITES[w], `${w} has a picture (${BANK[w].pic}) but no sprite in content/sprites.js`);
-    const key = JSON.stringify([SPRITES[w].rows, SPRITES[w].palette]);
-    assert.ok(!seen[key], `${w} and ${seen[key]} have the same sprite; every picture must be unique`);
+    assert.ok(PICTURES[w], `${w} has a picture (${BANK[w].pic}) but no pixel picture in content/pictures.js (draw it in tools/draw-pictures.js)`);
+    const key = JSON.stringify([PICTURES[w].rows, PICTURES[w].palette]);
+    assert.ok(!seen[key], `${w} and ${seen[key]} have the same picture; every picture must be unique`);
     seen[key] = w;
   }
 });
 
-test('sprites are 16 × 16 and every letter has a colour', () => {
-  for (const [w, s] of Object.entries(SPRITES)){
-    assert.ok(BANK[w], `content/sprites.js has a sprite for ${w}, which isn't in the word bank`);
-    assert.equal(s.rows.length, 16, `${w}'s sprite has ${s.rows.length} rows, not 16`);
+// Each picture's rows of letters: the right size, and every letter with a colour.
+const checkPixels = (file, pics, size) => {
+  for (const [w, s] of Object.entries(pics)){
+    assert.ok(BANK[w], `${file} has a picture for ${w}, which isn't in the word bank`);
+    assert.equal(s.rows.length, size, `${w}'s picture in ${file} has ${s.rows.length} rows, not ${size}`);
     s.rows.forEach((r, y) => {
-      assert.equal(r.length, 16, `${w}'s sprite row ${y} is ${r.length} pixels wide, not 16`);
-      for (const ch of r) assert.ok(ch === '.' || s.palette[ch], `${w}'s sprite uses "${ch}", which isn't in its palette`);
+      assert.equal(r.length, size, `${w}'s picture in ${file}: row ${y} is ${r.length} pixels wide, not ${size}`);
+      for (const ch of r) assert.ok(ch === '.' || s.palette[ch], `${w}'s picture in ${file} uses "${ch}", which isn't in its palette`);
     });
   }
+};
+test('word pictures are 32 × 32 and every letter has a colour', () => checkPixels('content/pictures.js', PICTURES, 32));
+test('animals on the map are 16 × 16 and every letter has a colour', () => checkPixels('content/sprites.js', MAP_SPRITES, 16));
+
+test('content/pictures.js is up to date with tools/draw-pictures.js', () => {
+  const made = require('../tools/draw-pictures.js').text();
+  assert.equal(fs.readFileSync(path.join(ROOT, 'content/pictures.js'), 'utf8').replace(/\r\n/g, '\n'), made,
+    'a drawing has changed: run  npm run pictures');
 });
 
 test('story questions offer different collectible pictures, one of them the answer', () => {

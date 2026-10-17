@@ -56,9 +56,10 @@ function monkeyRows(kind, dir, blink, step = 0){
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return out;
 }
-// The area's animals, with their sprites from content/sprites.js: at their own spot (at), or hiding in the tall grass.
+// The area's animals: at their own spot (at), or hiding in the tall grass. spr: how they look on the map (content/sprites.js,
+// a square's size); pic: their picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:placeOf(a.at), home:a.home || HIDING_WORD, meetNote:a.meetNote,
-  spr:sprite(SPRITES[a.word].rows, SPRITES[a.word].palette)}));
+  spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette)}));
 const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
 const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && a.at[0] === x && a.at[1] === y) : null;   // an animal living at this spot, once animals appear
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
@@ -74,10 +75,10 @@ const HEART = [".oo...oo.", "ohho.orro", "ohrrrrrro", "orrrrrrro", ".orrrrro.", 
 const heartImg = {};
 const heartHTML = on => heartImg[on] || (heartImg[on] = `<img class="heart${on ? ' on' : ''}" alt="" src="${sprite(HEART, on
   ? {o:'#6A1C1C', r:'#E0443C', h:'#FFB3AB'} : {o:'#7C7470', r:'#CFC8C2', h:'#ECE7E2'}).toDataURL()}">`);
-// A word's picture: its pixel sprite from content/sprites.js, or its emoji until it has one.
+// A word's picture: its pixel art from content/pictures.js, or its emoji until it has one.
 const picCache = {};
 function picHTML(w){
-  const s = SPRITES[w];
+  const s = PICTURES[w];
   if (!s) return WORDS[w].pic || '';
   return picCache[w] || (picCache[w] = `<img class="pix" alt="" src="${sprite(s.rows, s.palette).toDataURL()}">`);
 }
@@ -97,7 +98,7 @@ function portrait(id){
   let c;
   if (PALS[id]) c = monkeySprite(id, 'down', false, 0);
   else if (id === 'sign') c = SPR.sign;
-  else { const a = ANIMALS.find(x => x.id === id); c = a ? a.spr : SPR.rock; }
+  else { const a = ANIMALS.find(x => x.id === id); c = a ? a.pic : SPR.rock; }
   return portraitCache[id] = `<img class="portrait" alt="" src="${c.toDataURL()}">`;
 }
 const SPR = {

@@ -36,11 +36,11 @@ function fit(){
 }
 // Text and pictures follow the screen's height, so the same layout fits a small phone and a computer: the
 // page's text size (everything in css/game.css sized in rem), from 13px to 18px (16px on a typical Android
-// phone held sideways), and sizes for pictures (--pic-face and so on) that give each of their 16 art pixels
+// phone held sideways), and sizes for pictures (--pic-face and so on) that give each of their 32 pixels
 // a whole number of the screen's real pixels, so they stay sharp.
 function screenSizes(h, dpr = 1){
   const fs = clamp(h / 20, 13, 18);
-  const art = k => Math.max(16, Math.round(fs * k * dpr / 16) * 16) / dpr;
+  const art = k => Math.max(32, Math.round(fs * k * dpr / 32) * 32) / dpr;
   return {fs: +fs.toFixed(1), face: art(1.7), small: art(2), mid: art(3), scene: art(4), big: art(6)};
 }
 function sizeText(h){
