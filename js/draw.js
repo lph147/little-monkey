@@ -210,9 +210,10 @@ function drawScene(t, now){
       b.globalAlpha = 1;
     }
   }
-  // The mountain and the stone are drawn for a screen 176 pixels wide (11 columns), so they're moved to
-  // the middle; the hills and the sea go all the way across.
-  const dx = (W - 176) / 2;
+  // The mountain and the stone are drawn for a screen 176 pixels wide (11 columns). They're moved to the
+  // right, leaving the sky on the left for the title's words and the opening's story; the hills and the sea
+  // go all the way across.
+  const dx = Math.round(W * .68 - 88);
   b.save(); b.translate(dx, 0);
   if (dawn > 0){ disc(b, 34, Math.round(116 - dawn*28), 9, '#FFD27A'); }
   for (let x = -dx; x < W - dx; x += 2){ const h = Math.round(98 - Math.abs(Math.sin(x/23))*14 - rnd(x>>2,7)*4); R(b, x, h, 2, 126 - h, mix('#22334F','#7FA79A',dawn)); }
