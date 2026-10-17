@@ -43,6 +43,10 @@ const wearing = item => S.wardrobe.wearing.includes(item);   // is your monkey w
 function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (const k in portraitCache) delete portraitCache[k]; }   // draw your monkey again in what it wears
 function monkeySprite(kind, dir, blink, step = 0){
   const k = kind + dir + (blink ? 'b' : '') + step; if (spriteCache[k]) return spriteCache[k];
+  return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step), PALS[kind]);
+}
+// A monkey's pixel rows, as letters (PALS says each letter's colour). The app's icons use them too (tools/make-icons.js).
+function monkeyRows(kind, dir, blink, step = 0){
   const side = dir === 'left' || dir === 'right';
   const rows = (dir === 'up' ? BACK : side ? SIDE : MONKEY).map(r => [...r]);
   const legs = (side ? LEGS.side : LEGS.front)[step];
@@ -58,7 +62,7 @@ function monkeySprite(kind, dir, blink, step = 0){
   if (kind === 'player' && wearing('头带')){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the red headband
   let out = rows.map(r => r.join(''));
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
-  return spriteCache[k] = sprite(out, PALS[kind]);
+  return out;
 }
 // The area's animals, with their sprites from content/sprites.js: at their own spot (at), or hiding in the tall grass.
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:placeOf(a.at), home:a.home || HIDING_WORD, meetNote:a.meetNote,

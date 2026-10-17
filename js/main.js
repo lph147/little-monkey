@@ -185,3 +185,5 @@ enterPlace(S.pos.place);
 if (!walkable(S.pos.x, S.pos.y)) S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
 buildMap(); placePlayer(); fit(); updateHUD(); toTitle();
 requestAnimationFrame(frame);
+// The app (sw.js): lets the game be installed on a phone's home screen, full screen, and played offline.
+if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

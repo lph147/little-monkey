@@ -38,6 +38,16 @@ Open https://lph147.github.io/little-monkey/ on your phone. GitHub Pages updates
 
 The save on your phone belongs to this address, so it is separate from saves anywhere else.
 
+### Installing it as an app (full screen)
+
+- **Android (Chrome):** open the address, then menu ⋮ → **Install app** (or **Add to Home screen**). Open 小猴子 from the home screen: no address bar, status bar or navigation buttons, and it stays sideways even when the phone is upright. Your save is the same one as in Chrome.
+- **iPhone (Safari):** open the address, then Share → **Add to Home Screen** → Add. Open 小猴子 from the home screen and turn the phone sideways: no Safari bars and no status bar. iPhones don't let it stay sideways by itself, so upright you'll see the "turn your phone" card.
+- **iPhone saves:** the home-screen app has its own save, separate from Safari's. To bring your progress across: in Safari, Start → Settings → Save file → download it; then in the home-screen app, Start → Settings → Save file → load it.
+- [ ] The icon on the home screen is the monkey on grass under a blue sky, named 小猴子.
+- [ ] It opens full screen, sideways, and plays as in the browser.
+- [ ] After an upload to GitHub, closing and opening the app again shows the new version (it always loads the newest when there's a connection).
+- [ ] With no connection (flight mode), it still opens and plays, once it has been opened online before.
+
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.
