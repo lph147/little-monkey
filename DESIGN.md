@@ -126,7 +126,9 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 **Leaving.** At a feast, you grow sad that one day you'll die. An old gibbon tells you about immortals who never die, and you decide to find one and learn from them. The troop helps you build a raft from wood (木头) on the shore. Before you sail, the troop gives you a send-off: you name everything you've learned on the mountain (the area's word test, 80% to pass). Then you sail across the sea (海), and Area 2 begins.
 
-**Words.** The prologue has 28 words (and 7 phrases). Chapter 1 brings about 25 more, such as 跳 洞 桥 床 碗 桌子 门 家 王, the numbers 一 to 十, 有, 海 and 木头, and a fruit or two for the shop. The list is a draft; its Chinese, and the names 美猴王 and the old gibbon's, need the native speaker's check.
+**Words.** The prologue has 27 words (and 7 phrases). Chapter 1 brings about 25 more, such as 跳 洞 路 桥 床 碗 桌子 门 家 王, the numbers 一 to 十, 有, 海 and 木头, and a fruit or two for the shop. The list is a draft; its Chinese, and the names 美猴王 and the old gibbon's, need the native speaker's check.
+
+**路 (path) waits for chapter 1** (decided 17 October 2026): stepping off the stone onto the path taught it straight away, one word too soon. Chapter 1 can teach it on a path to a new place, such as up to the high slopes. Its word bank entry and sprite were removed meanwhile (the tests don't allow unused ones); they're in git history, in the commit before the one that took it out.
 
 **What changes in the prologue.** The cave door on the far left (洞) isn't in the story, so it goes: 洞 is caught at the Water Curtain Cave instead. The word test moves from that door to the send-off on the shore. The waterfall's fright and the troop's wondering aren't in the game yet: the rumble after the waterfall story becomes the troop wondering what's behind the water, which leads into chapter 1.
 
@@ -214,7 +216,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 **Decided** (these were the open questions)
 
-- **Words per chapter:** about 25 new words to collect, like the prologue (28 once the shop adds 老板 and 头带 and 森林 is dropped), so about 20 new sprites per chapter. (Area 1 has two chapters, decided 17 October 2026.) Words you only hear in sentences don't count towards this.
+- **Words per chapter:** about 25 new words to collect, like the prologue (27: 28 once the shop added 老板 and 头带 and 森林 was dropped, then 路 moved to chapter 1), so about 20 new sprites per chapter. (Area 1 has two chapters, decided 17 October 2026.) Words you only hear in sentences don't count towards this.
 - **Demons:** harder battles start at Area 3, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
 - **Pinyin** stays over every word (the menu setting turns it off); it doesn't fade as you learn words.
 - **After the headband:** the 老板 also sells 苹果, bought with 我要苹果; eating one in an animal encounter takes away a wrong answer.

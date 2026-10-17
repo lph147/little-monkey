@@ -11,7 +11,7 @@
 
 // Pretend saves. Words are {lv, due, ok}: lv 1 Caught, 2 Recognised, 3 Read, 4 Used.
 const knows = (lv, words) => Object.fromEntries(words.map(w => [w, {lv, due: 0, ok: 0}]));
-const MIDDLE_WORDS = ['石头', '你好', '山', '路', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
+const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
 const QUIET = {sound: false, music: false};
 const ALL_TIPS = {walk: 1, talk: 1, look: 1, grey: 1, menu: 1};   // tips already had (js/tips.js)
 const SAVES = {

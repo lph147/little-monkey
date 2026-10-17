@@ -71,7 +71,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Menu, Settings, How to play still has its two pages; Next, Back and Got it are always in sight at the bottom of the card, even on a small phone.
 
 **The old monkey**
-- [ ] The first step onto the path teaches 路 (path).
+- [ ] Stepping off the stone onto the path is just walking: no word card (路 waits for chapter 1).
 - [ ] The old monkey stands just left of your stone, with a ! above him. Walk two steps left (below him), face up and press A.
 - [ ] He says 你好！ with 你好 in bold green and the English underneath, then a new-word card for 你好 that stays quiet (he has just said it; 🔊 Hear it says it), then 去看看！ Cards for words you discover yourself, such as looking at a tree, say the word straight away.
 - [ ] The task asks you to learn 4 words, with a counter.

@@ -70,7 +70,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | For the word | Notes |
 | --- | --- | --- | --- | --- |
-| 小猴子在路上。 | xiǎo hóuzi zài lù shàng. | The little monkey is on the path. | 路 |  |
 | 草里有一只兔子。 | cǎo lǐ yǒu yì zhī tùzi. | There is a rabbit in the grass. | 兔子 |  |
 | 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
@@ -115,7 +114,6 @@ The opening is told in English. These captions each show one word, said aloud.
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 石头 | shítou | stone, rock |  |
-| 路 | lù | path, road |  |
 | 猴子 | hóuzi | monkey |  |
 | 山 | shān | mountain |  |
 | 花 | huā | flower |  |
@@ -168,7 +166,6 @@ The opening is told in English. These captions each show one word, said aloud.
 | 上 | shàng | on top of |  |
 | 一个 | yí gè | a, one |  |
 | 一只 | yì zhī | a, one (animal) |  |
-| 小 | xiǎo | little, small |  |
 | 在 | zài | at, in, on |  |
 | 玩 | wán | to play |  |
 | 什么 | shénme | what |  |

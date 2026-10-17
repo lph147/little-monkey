@@ -74,7 +74,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // The old monkey, and the first words
   await stepOn(9, 3, 'taking the first step on the path');
-  assert.ok(knows('路'), 'the first step on the path should teach 路');
+  assert.ok(!knows('路'), "the path doesn't teach 路 yet (it waits for chapter 1)");
   await pressAt(7, 2, 'up', 'meeting the old monkey');
   assert.equal(area().elder, 1, 'the old monkey should have said hello');
   assert.ok(knows('你好'), 'the old monkey should teach 你好');

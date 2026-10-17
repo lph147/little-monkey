@@ -29,7 +29,6 @@ const CATEGORIES = {
 const WORD_BANK = {
   // Collected on Flower Fruit Mountain (area 1)
   '石头': {py:'shítou', en:'stone, rock', pic:'🪨', area:1, category:'nature'},
-  '路': {py:'lù', en:'path, road', pic:'🛣️', area:1, category:'places'},
   '猴子': {py:'hóuzi', en:'monkey', pic:'🐒', area:1, category:'animals'},
   '山': {py:'shān', en:'mountain', pic:'⛰️', area:1, category:'nature'},
   '花': {py:'huā', en:'flower', pic:'🌸', area:1, category:'nature'},
@@ -81,7 +80,6 @@ const WORD_BANK = {
   '上': {py:'shàng', en:'on top of'},
   '一个': {py:'yí gè', en:'a, one'},
   '一只': {py:'yì zhī', en:'a, one (animal)'},
-  '小': {py:'xiǎo', en:'little, small'},
   '在': {py:'zài', en:'at, in, on'},
   '玩': {py:'wán', en:'to play'},
   '什么': {py:'shénme', en:'what'},

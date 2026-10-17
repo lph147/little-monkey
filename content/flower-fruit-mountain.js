@@ -213,7 +213,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
     'F': {look:'flowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', count:3, label:'Pick', note:'You pick a flower.',
       message:'You picked a {花} ({flowersPicked}/3). Find another patch.', full:'You have 3 {花}. Take them to the big monkey.', again:'You picked this patch already. Find another patch of {花}.'}},
-    '.': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'You are walking along a path.'},
+    '.': {look:'path', walk:true},   // (路 path waits for chapter 1: stepping off the stone was straight into a word)
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
     'Y': {look:'tree', word:'树'},   // the forest round the edge of the map
@@ -262,7 +262,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Things that sparkle until you learn their word: the word, where it is on the map, and
   // (optionally) an if that must match before it starts sparkling.
   sparkles: [
-    {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'路', at:[9, 4]}, {word:'花', at:[11, 7]},
+    {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 7]},
     {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[1, 7]},
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]}, {word:'洞', at:[3, 3]},
     {word:'瀑布', at:[18, 1], if:{gate:true}}   // the waterfall is out of reach until the rocks roll away
@@ -272,7 +272,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // here needs one (the tests check). A word in {curly brackets} is shown as 汉字 (English).
   found: {
     '石头': 'The stone you were born from, at the top of the path.',
-    '路': 'The path down the mountain from your stone.',
     '你好': 'The old monkey said it when you first met.',
     '猴子': 'The little monkey, playing in the south meadow.',
     '山': 'The cliffs all around the mountain.',
@@ -312,7 +311,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // the Word Scroll. (A word that only appears in a sentence you complete, such as 头带, shows that.)
   // Checked by a native speaker on 16 October 2026.
   examples: {
-    '路': {zh:'小 猴子 在 路 上 。', en:'The little monkey is on the path.'},
     '兔子': {zh:'草 里 有 一只 兔子 。', en:'There is a rabbit in the grass.'},
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},

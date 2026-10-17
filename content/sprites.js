@@ -108,27 +108,7 @@ const SPRITES = {
       "................"
     ]
   },
-  '路': {   // path, road: a dirt path through grass
-    palette: {g:'#7CC46B', G:'#5DA651', p:'#D9BB8A', d:'#B89566', e:'#E8D2A6'},
-    rows: [
-      "ggggggppgggggGgg",
-      "gGgggggppggggggg",
-      "ggggggpppggggggg",
-      "gggggpppdgggGggg",
-      "ggggpppppggggggg",
-      "gggppdpppggggggg",
-      "gggpppppeggggGgg",
-      "ggGpppppppgggggg",
-      "gggppppdpppggggg",
-      "ggggpppppppppggg",
-      "gGgggppeppppppgg",
-      "gggggppppppdpppg",
-      "ggggppppppppppgg",
-      "gggpppdpppppppgg",
-      "ggpppppppppepppg",
-      "gpppppppppppppGg"
-    ]
-  },
+
   '你好': {   // hello: a waving hand
     palette: {o:'#5A3A22', f:'#F2C9A0', s:'#D9A57E', b:'#7FB2E5'},
     rows: [
