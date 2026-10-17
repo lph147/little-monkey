@@ -633,5 +633,110 @@ const SPRITES = {
       ".otdo......odto.",
       ".oooo......oooo."
     ]
+  },
+  '家': {   // home: a little house with a red roof and a door
+    palette: {o:'#3E2A14', r:'#C0392B', R:'#8E2A20', w:'#F2E3C6', W:'#D9C2A0', d:'#7A5230', y:'#FFE27A', g:'#7CC46B', G:'#5DA651'},
+    rows: [
+      "................",
+      ".......oo.......",
+      "......orro......",
+      ".....orrrro.....",
+      "....orrrrrro....",
+      "...orrrrrrrro...",
+      "..orrrrrrrrrro..",
+      ".oRRRRRRRRRRRRo.",
+      "..owwwwwwwwwwo..",
+      "..owyywwwwdddo..",
+      "..owyywwwwdddo..",
+      "..owwwwwwwdddo..",
+      "..oWWWWWWWdddo..",
+      "..oooooooooooo..",
+      "gggggggggggggggg",
+      "GGGGGGGGGGGGGGGG"
+    ]
+  },
+  '王': {   // king: a golden crown with red jewels
+    palette: {o:'#5A3E0A', y:'#F2C14E', Y:'#D99A1E', r:'#C0392B', w:'#FFF3B8'},
+    rows: [
+      "................",
+      "................",
+      "................",
+      "..o....oo....o..",
+      ".oyo..oyyo..oyo.",
+      ".oyyo.oyyo.oyyo.",
+      ".oyyyooyyooyyyo.",
+      ".oyyyyyyyyyyyyo.",
+      ".oywyyyyyyyyyyo.",
+      ".oyyyryyyyyryyo.",
+      ".oyyrrryyyrrryo.",
+      ".oyyyryyyyyryyo.",
+      ".oYYYYYYYYYYYYo.",
+      ".oooooooooooooo.",
+      "................",
+      "................"
+    ]
+  },
+  '一': {   // one: a die showing one
+    palette: {o:'#3A352E', w:'#FFFFFF', W:'#D9D4C8', p:'#C0392B'},
+    rows: [
+      "................",
+      "................",
+      "..oooooooooooo..",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwppwwwwwo.",
+      ".owwwwwppwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".oWWWWWWWWWWWWo.",
+      "..oooooooooooo..",
+      "................"
+    ]
+  },
+  '二': {   // two: a die showing two
+    palette: {o:'#3A352E', w:'#FFFFFF', W:'#D9D4C8', p:'#C0392B'},
+    rows: [
+      "................",
+      "................",
+      "..oooooooooooo..",
+      ".owwwwwwwwwwwwo.",
+      ".owwppwwwwwwwwo.",
+      ".owwppwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwppwwo.",
+      ".owwwwwwwwppwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".oWWWWWWWWWWWWo.",
+      "..oooooooooooo..",
+      "................"
+    ]
+  },
+  '三': {   // three: a die showing three
+    palette: {o:'#3A352E', w:'#FFFFFF', W:'#D9D4C8', p:'#C0392B'},
+    rows: [
+      "................",
+      "................",
+      "..oooooooooooo..",
+      ".owwwwwwwwwwwwo.",
+      ".owwppwwwwwwwwo.",
+      ".owwppwwwwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwppwwwwwo.",
+      ".owwwwwppwwwwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".owwwwwwwwppwwo.",
+      ".owwwwwwwwppwwo.",
+      ".owwwwwwwwwwwwo.",
+      ".oWWWWWWWWWWWWo.",
+      "..oooooooooooo..",
+      "................"
+    ]
   }
 };

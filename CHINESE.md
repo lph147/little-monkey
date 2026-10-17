@@ -14,7 +14,7 @@ shown where the word list has them.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey) |  |
+| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 猴子 (Monkey) |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
 | 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey) |  |
 | 我饿了。我要吃桃子！ | wǒ è le. wǒ yào chī táozi! | I'm hungry. I want to eat a peach! | 饿猴子 (Hungry monkey) |  |
@@ -25,7 +25,7 @@ shown where the word list has them.
 | 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
-| 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
+| 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |
 | 这是苹果。我要吃桃子！ | zhè shì píngguǒ. wǒ yào chī táozi! | This is an apple. I want to eat a peach! | 饿猴子 (Hungry monkey) |  |
 | 你好！我是老板。 | nǐ hǎo! wǒ shì lǎobǎn. | Hello! I'm the shop owner. | 老板 (Shop owner) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
@@ -38,6 +38,11 @@ shown where the word list has them.
 | 我怕！ | wǒ pà! | I’m scared! | 老猴子 (Old monkey), 小猴子 (Little monkey) |  |
 | 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | 老猴子 (Old monkey) |  |
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | 老猴子 (Old monkey) |  |
+| 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
+| 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | 大猴子 (Big monkey) |  |
+| 一只猴子。 | yī zhī hóuzi. | One monkey. | 老猴子 (Old monkey) |  |
+| 两只猴子。 | liǎng zhī hóuzi. | Two monkeys. | 老猴子 (Old monkey) |  |
+| 三只猴子。 | sān zhī hóuzi. | Three monkeys. | 老猴子 (Old monkey) |  |
 
 ### Sentences the player completes (one word missing)
 
@@ -84,6 +89,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | 碗 |  |
 | 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | 桌子 |  |
 | 洞里有床。 | dòng lǐ yǒu chuáng. | There are beds in the cave. | 床 |  |
+| 一，二，三！ | yī, èr, sān! | One, two, three! | 二 |  |
 
 ### Questions after the story
 
@@ -113,6 +119,9 @@ The opening is told in English. These captions each show one word, said aloud.
 | 饿猴子 | è hóuzi | Hungry monkey |  |
 | 渴猴子 | kě hóuzi | Thirsty monkey |  |
 | 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
 | 老板 | lǎobǎn | Shop owner |  |
 | 牌子 | páizi | Sign |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
@@ -146,6 +155,11 @@ The opening is told in English. These captions each show one word, said aloud.
 | 床 | chuáng | bed |  |
 | 碗 | wǎn | bowl |  |
 | 桌子 | zhuōzi | table |  |
+| 家 | jiā | home |  |
+| 王 | wáng | king |  |
+| 一 | yī | one |  |
+| 二 | èr | two |  |
+| 三 | sān | three |  |
 | 吃 | chī | to eat |  |
 | 喝 | hē | to drink |  |
 | 朋友 | péngyou | friend |  |
@@ -172,11 +186,13 @@ The opening is told in English. These captions each show one word, said aloud.
 | 谁 | shéi | who, whoever |  |
 | 进去 | jìnqù | to go in |  |
 | 就 | jiù | then |  |
-| 王 | wáng | king |  |
 | 怕 | pà | to be scared |  |
 | 里面 | lǐmiàn | inside |  |
 | 太 | tài | too, very |  |
 | 好 | hǎo | good |  |
+| 的 | de | (shows belonging: 我们的, our) |  |
+| 只 | zhī | (counts animals: 三只猴子, three monkeys) |  |
+| 两 | liǎng | two (when counting things) |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
 | 你 | nǐ | you |  |
 | 也 | yě | also, too |  |
@@ -239,45 +255,13 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | Chapter 1, part A (in the game): The example on 桌子 (table)’s page |  |
 | 洞里有床。 | dòng lǐ yǒu chuáng. | There are beds in the cave. | Chapter 1, part A (in the game): The example on 床 (bed)’s page |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave | Chapter 1, part A (in the game): What the stone tablet (石碑 shíbēi: please check this name too) in the cave says |  |
+| 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | Chapter 1, part B (in the game): The old monkey, when the troop moves into the cave |  |
+| 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | Chapter 1, part B (in the game): The big monkey, for the troop (then you’re called 美猴王 Měi Hóuwáng: please check this name too) |  |
+| 一只猴子。 | yī zhī hóuzi. | One monkey. | Chapter 1, part B (in the game): The old monkey, counting the troop into the cave (teaching 一) |  |
+| 两只猴子。 | liǎng zhī hóuzi. | Two monkeys. | Chapter 1, part B (in the game): The old monkey, counting (the card teaches 二: see the question below) |  |
+| 三只猴子。 | sān zhī hóuzi. | Three monkeys. | Chapter 1, part B (in the game): The old monkey, counting (teaching 三) |  |
+| 一，二，三！ | yī, èr, sān! | One, two, three! | Chapter 1, part B (in the game): The example on 二 (two)’s page in the Word Scroll |  |
 
-## Chapter 1, part B: not built yet
+## Questions
 
-The next part of the story: the troop moves into the Water Curtain Cave and makes you king. (Part A, the
-dare and the cave, is in the game: its sentences are under New sentences to check, above.) Please check
-these before they go into the game.
-
-### Lines
-
-| Chinese | Pinyin | English | Where | Notes |
-| --- | --- | --- | --- | --- |
-| 这是我们的家！ | Zhè shì wǒmen de jiā! | This is our home! | The old monkey, in the cave |  |
-| 你是我们的王！ | Nǐ shì wǒmen de wáng! | You are our king! | The troop |  |
-| 一只猴子，两只猴子，三只猴子 | yì zhī hóuzi, liǎng zhī hóuzi, sān zhī hóuzi | one monkey, two monkeys, three monkeys | The old monkey, counting the troop into the cave |  |
-
-### New words to collect
-
-| Chinese | Pinyin | English | Notes |
-| --- | --- | --- | --- |
-| 家 | jiā | home |  |
-| 王 | wáng | king |  |
-| 一 | yī | one |  |
-| 二 | èr | two |  |
-| 三 | sān | three |  |
-
-### Words only heard in these lines
-
-| Chinese | Pinyin | English | Notes |
-| --- | --- | --- | --- |
-| 的 | de | (shows belonging) |  |
-| 只 | zhī | (counts animals) |  |
-| 两 | liǎng | two (of something) |  |
-
-### Names
-
-| Chinese | Pinyin | English | Notes |
-| --- | --- | --- | --- |
-| 美猴王 | Měi Hóuwáng | Handsome Monkey King |  |
-
-### A question
-
-- When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line?
+- When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line? (The card for 二 says: "When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).")

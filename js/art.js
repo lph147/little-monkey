@@ -90,8 +90,10 @@ const NAMES = {};   // the names shown above what characters say
 AREA.characters.forEach(c => { if (c.name) NAMES[c.id] = c.name; });
 NAMES.sign = AREA.sign.name;
 NAMES.player = {zh:'小猴子', py:'xiǎo hóuzi', en:'You'};   // you, when you reply
+// Your name: 小猴子 (You), or the first of the area's names for you (yourNames) whose if matches, such as 美猴王 once you're king.
+const yourName = () => (AREA.yourNames || []).find(n => matches(n.if)) || NAMES.player;
 function speaker(id){
-  const n = NAMES[id];
+  const n = id === 'player' ? yourName() : NAMES[id];
   return `<div class="speaker">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div><div class="spk-en">${n.en}</div></div>` : ''}</div>`;
 }
 function portrait(id){

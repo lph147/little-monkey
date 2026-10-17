@@ -30,10 +30,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   elder   0 not spoken to yet, 1 said hello, 2 told you about the animals
   //   gate    true once the rocks have rolled away
   //   story   true once you've read the story at the waterfall
-  //   cave    chapter 1: 0 not dared yet, 1 dared to jump, 2 been inside the cave, 3 told the old monkey
+  //   cave    chapter 1: 0 not dared yet, 1 dared to jump, 2 been inside the cave, 3 told the old monkey,
+  //           4 led the troop in, 5 heard it's home, 6 made king
+  //   count   how many of the troop you've counted into the cave (chapter 1)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, story:false, cave:0},
+  progress: {chapter:0, elder:0, gate:false, story:false, cave:0, count:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
@@ -46,7 +48,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     animalsLeft: {count:'animalsLeft'},
     shells: {count:'shells', max:10},   // your shells, up to the headband's price
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey
-    caveThings: {count:'known', words:['桥', '床', '碗', '桌子']}   // things you've found in the Water Curtain Cave
+    caveThings: {count:'known', words:['桥', '床', '碗', '桌子']},   // things you've found in the Water Curtain Cave
+    troopIn: {count:'known', words:['一', '二', '三']}   // the troop counted in (each count teaches its number)
   },
 
   // The task box under the game screen. Every task whose if matches is shown, in this order.
@@ -75,6 +78,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'jump', if:{cave:1}, text:'Jump through the {瀑布}', arrow:[18, 1]},
     {id:'explore', if:{cave:2, caveThings:{below:4}}, text:'Look around the {洞} ({caveThings}/4)'},
     {id:'tell', if:{cave:2, caveThings:4}, text:'Tell the old monkey about the {洞}', arrow:'elder'},
+    {id:'lead', if:{cave:3}, text:'Lead the troop into the {洞}: jump through the {瀑布}', arrow:[18, 1]},
+    {id:'home', if:{cave:4}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
+    {id:'king', if:{cave:5}, text:'Talk to the big monkey', arrow:'big'},
+    {id:'count', if:{cave:6, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
   ],
 
   // What the task box says when there are no tasks: the first whose if matches.
@@ -82,7 +89,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
-    {if:{cave:3}, text:'The troop wants to see the cave. The rest of chapter 1 is coming soon.'},
+    {if:{count:3}, text:'The whole troop is home in the {洞}. The rest of chapter 1 is coming soon.'},
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
   ],
 
@@ -100,18 +107,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}},
     {chapter:1, text:'Jump through the waterfall', done:{cave:{atLeast:2}}},
     {chapter:1, text:'Look around the cave', done:{caveThings:4}},
-    {chapter:1, text:'Tell the old monkey what’s inside', done:{cave:{atLeast:3}}}
+    {chapter:1, text:'Tell the old monkey what’s inside', done:{cave:{atLeast:3}}},
+    {chapter:1, text:'Lead the troop into the cave', done:{cave:{atLeast:4}}},
+    {chapter:1, text:'Hear what the old monkey calls the cave', done:{cave:{atLeast:5}}},
+    {chapter:1, text:'Become the troop’s king', done:{cave:{atLeast:6}}},
+    {chapter:1, text:'Count the troop into the cave ({troopIn}/3)', done:{count:3}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
-    elder: [{if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{chapter:1, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'}],
+    elder: [{if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{chapter:1, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'},
+      {if:{cave:4}, show:'!'}, {if:{cave:6, count:{below:3}}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
-    big: [{if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
+    big: [{if:{cave:5}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:
@@ -165,6 +177,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   events: [
     {if:{chapter:0, ready:true}, do:[{chapter:1}]},   // the prologue is done: chapter 1 begins
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
+    {if:{place:'cave', cave:3}, do:[{message:'The troop follows you through the water curtain!'}, {set:{cave:4}}]},   // you lead the troop in
     {if:{hungry:'done', thirsty:'done', gate:false}, do:[
       {set:{gate:true}},
       {rumble:true},   // the ground shakes and the map is redrawn
@@ -295,18 +308,30 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // beard: draws a white beard. moves: where they go as the story goes on: the first whose if matches
   // (with x, y, facing, and place if it's another place), instead of where they start.
   characters: [
-    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{chapter:1}, x:15, y:1, facing:'right'}],
+    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{chapter:1}, x:15, y:1, facing:'right'}],
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
-    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{chapter:1}, x:16, y:2, facing:'right'}],
+    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{chapter:1}, x:16, y:2, facing:'right'}],
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
-    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{chapter:1}, x:14, y:2, facing:'right'}],
+    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{chapter:1}, x:14, y:2, facing:'right'}],
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
+    // the rest of the troop, in the meadow until they're counted into the cave in chapter 1
+    {id:'troop1', x:21, y:7, facing:'left', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:1}}, place:'cave', x:10, y:11, facing:'up'}],
+      palette:{o:'#4A2C17', f:'#C27C3A', s:'#F4CDA5', m:'#C98E6A', e:'#24160C'}},
+    {id:'troop2', x:21, y:11, facing:'down', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:2}}, place:'cave', x:4, y:11, facing:'up'}],
+      palette:{o:'#40250F', f:'#A8673A', s:'#EFC79C', m:'#C08060', e:'#24160C'}},
+    {id:'troop3', x:20, y:13, facing:'right', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:3}}, place:'cave', x:12, y:8, facing:'left'}],
+      palette:{o:'#4A2C17', f:'#D9A050', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
+  ],
+
+  // Your name in the speech box when you reply: the first whose if matches (otherwise 小猴子, You).
+  yourNames: [
+    {if:{cave:{atLeast:6}}, zh:'美猴王', py:'Měi Hóuwáng', en:'You, the king'}
   ],
 
   // The sign by the stone: its name, what it says, and a hint underneath.
@@ -368,6 +393,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '床': 'The stone beds in the Water Curtain Cave.',
     '碗': 'The stone bowls in the Water Curtain Cave.',
     '桌子': 'The stone table in the Water Curtain Cave.',
+    '家': 'The old monkey, when the troop moved into the Water Curtain Cave.',
+    '王': 'The troop, when they made you their king.',
+    '一': 'Counting the troop into the Water Curtain Cave.',
+    '二': 'Counting the troop into the Water Curtain Cave.',
+    '三': 'Counting the troop into the Water Curtain Cave.',
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -383,7 +413,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'},
     '碗': {zh:'桌子 上 有 碗 。', en:'There are bowls on the table.'},
     '桌子': {zh:'洞 里 有 桌子 。', en:'There is a table in the cave.'},
-    '床': {zh:'洞 里 有 床 。', en:'There are beds in the cave.'}
+    '床': {zh:'洞 里 有 床 。', en:'There are beds in the cave.'},
+    '二': {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'}
   },
 
   // Where a fish jumps out of the water now and then.
@@ -444,7 +475,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     dare: {zh:'谁 跳 进去 ， 谁 就 是 王 ！', en:'Whoever jumps in will be king!'},
     scared: {zh:'我 怕 ！', en:'I’m scared!'},
     inside: {zh:'里面 有 什么 ？', en:'What’s inside?'},
-    letsGo: {zh:'太 好 了 ！ 我们 去 看看 ！', en:'Wonderful! Let’s go and see!'}
+    letsGo: {zh:'太 好 了 ！ 我们 去 看看 ！', en:'Wonderful! Let’s go and see!'},
+    home: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},
+    king: {zh:'你 是 我们 的 王 ！', en:'You are our king!'},
+    count1: {zh:'一 只 猴子 。', en:'One monkey.'},
+    count2: {zh:'两 只 猴子 。', en:'Two monkeys.'},
+    count3: {zh:'三 只 猴子 。', en:'Three monkeys.'}
   },
 
   // What happens when you press A beside each character. The game goes down their list and
@@ -503,10 +539,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'inside'},
         {gap:{sentence:'里面 有 床', en:'There are beds inside.', word:'床'}},
         {say:'letsGo'},
-        {set:{cave:3}},
-        {message:'The rest of chapter 1 is coming soon: the troop moving into the cave.'}
+        {set:{cave:3}}
       ]},
       {if:{cave:2}, do:[{say:'go', hint:'Look around the cave first.'}]},
+      {if:{cave:3}, do:[{say:'letsGo', hint:'Lead the way: jump through the waterfall.'}]},
+      // chapter 1, part B: the troop moves in. One new word each time you talk to him.
+      {if:{cave:4}, do:[{say:'home', teach:'家'}, {newWord:'家'}, {set:{cave:5}}]},
+      {if:{cave:6, count:0}, do:[{message:'A monkey comes in through the water curtain.'}, {say:'count1', teach:'一'}, {newWord:'一'}, {set:{count:1}}]},
+      {if:{cave:6, count:1}, do:[{message:'Another monkey comes in.'}, {say:'count2'}, {newWord:'二', note:'When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).'}, {set:{count:2}}]},
+      {if:{cave:6, count:2}, do:[{message:'And another!'}, {say:'count3', teach:'三'}, {newWord:'三'}, {set:{count:3}}, {message:'The whole troop is home.'}]},
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
@@ -529,8 +570,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {do:[{request:'thirsty'}]}
     ],
+    troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}]}],
+    troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}]}],
+    troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}]}],
     big: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
+      {if:{cave:5}, do:[{say:'king', teach:'王'}, {newWord:'王'}, {message:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}]},
       {if:{chapter:1, cave:{below:3}}, do:[{say:'dare'}]},
       {do:[{request:'flowers'}]}
     ]

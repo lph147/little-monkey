@@ -150,7 +150,14 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Task: "Jump through the 瀑布 (waterfall)". Stand just left of the waterfall and face it: A says Jump. Press A: a fade, and you're in the Water Curtain Cave, with its name 水帘洞 Shuǐlián Dòng at the top. A card says 洞 (cave) aloud: "A big, dry cave, hidden behind the water!"
 - [ ] The cave has rock walls, stone beds along the top, a stone table, stone bowls, a stone tablet, a stream with an iron bridge, and the water curtain at the bottom. Four things sparkle. Stepping on the bridge teaches 桥 (bridge); facing the beds, the table and the bowls and pressing A teaches 床 (bed), 桌子 (table) and 碗 (bowl). The task counts them: "Look around the 洞 (cave) (2/4)". The tablet says 水帘洞 (Water Curtain Cave).
 - [ ] Walk down into the water curtain: you're back beside the waterfall. The task says to tell the old monkey, with the arrow on him (inside the cave, the arrow points to the curtain).
-- [ ] Talk to the old monkey: 里面有什么？, then fill the gap in 里面有＿。 (There are beds inside.) with 床, then 太好了！我们去看看！ and "The rest of chapter 1 is coming soon". Menu, Tasks shows chapter 1's three things ticked.
+- [ ] Talk to the old monkey: 里面有什么？, then fill the gap in 里面有＿。 (There are beds inside.) with 床, then 太好了！我们去看看！ and "The rest of chapter 1 is coming soon". Menu, Tasks shows those three things ticked on chapter 1's checklist.
+
+**Chapter 1, part B: the troop moves in**
+- [ ] Task: "Lead the troop into the 洞 (cave): jump through the 瀑布 (waterfall)". Jump in: a message says the troop follows you, and the old monkey, the big monkey and the little monkey are in the cave.
+- [ ] Talk to the old monkey (he has a !): 这是我们的家！ and a card teaches 家 (home).
+- [ ] Talk to the big monkey (now he has the !): 你是我们的王！, a card teaches 王 (king), and "The troop names you 美猴王". From then on, your replies show 美猴王 Měi Hóuwáng as your name.
+- [ ] Talk to the old monkey three times. Each time a monkey comes in through the water curtain, he counts (一只猴子。, 两只猴子。, 三只猴子。) and a card teaches one number: 一 (one), 二 (two, with a note that you say 两 when counting things) and 三 (three). The task counts 1/3, 2/3, 3/3, and three more monkeys from the meadow are now in the cave.
+- [ ] Afterwards the task box says the whole troop is home, and that the rest of chapter 1 is coming soon.
 
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.

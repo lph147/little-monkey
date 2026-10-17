@@ -299,7 +299,8 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Chapter 1's script, agreed on 17 October 2026 (you come back out and tell the troop before they follow; numbers 1–3 as they move in, 4–10 in later requests; 门 waits). Its Chinese is on the native speaker's sheet, CHINESE.md, under "Chapter 1, not built yet"
 - [x] Chapters: the prologue, then chapter 1, each with its own checklist and a title card; events checked after anything you do; the cave door and its word test taken out (the test returns as the send-off) (17 October 2026)
 - [x] Chapter 1, part A: the troop's dare at the waterfall, the jump (跳), the Water Curtain Cave as a new place (洞 桥 床 碗 桌子), coming back out and telling the old monkey (里面有床), with the draft Chinese until it's checked (17 October 2026)
-- [ ] Chapter 1, part B: the troop moves in, you become king (家 王, 美猴王), counting them in (一 二 三), and the story from the book's opening
+- [x] Chapter 1, part B: the troop moves in, you become king (家 王; your name becomes 美猴王), and three more of the troop are counted in (一 二 三, with 两 explained on the card for 二), with the draft Chinese until it's checked (17 October 2026)
+- [ ] Chapter 1: the story from the book's opening, read in the cave (checked already; it needs 一个, 一只, 很, 大 and 快乐 back in the word bank)
 - [ ] Chapter 1, life as king: the troop moving in (numbers 1–10), new places, requests, shop stock and animals
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2

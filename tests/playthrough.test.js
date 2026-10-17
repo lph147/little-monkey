@@ -178,5 +178,23 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [17, 1]);
   await pressAt(16, 1, 'left', 'telling the old monkey about the cave');
   assert.equal(area().cave, 3, 'the old monkey should hear about the cave');
-  assert.ok(get('areaChecklist()').every(([, done]) => done), 'part A of chapter 1 should be ticked off');
+  assert.ok(get('areaChecklist()').slice(0, 3).every(([, done]) => done), 'part A of chapter 1 should be ticked off');
+
+  // Chapter 1, part B: leading the troop in, home, becoming king, and counting them in
+  await pressAt(17, 1, 'right', 'leading the troop into the cave');
+  assert.equal(run('PLACE'), 'cave');
+  assert.equal(area().cave, 4, 'the troop should follow you in');
+  assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => n.place)"), ['cave', 'cave', 'cave']);
+  await pressAt(6, 10, 'up', 'hearing what the old monkey calls the cave');
+  assert.ok(knows('家'), 'the old monkey should teach 家');
+  await pressAt(9, 9, 'up', 'being made king');
+  assert.ok(knows('王'), 'the big monkey should teach 王');
+  assert.equal(get('yourName().zh'), '美猴王', 'you should be called 美猴王 now');
+  for (const n of [1, 2, 3]){
+    await pressAt(6, 10, 'up', `counting monkey ${n} into the cave`);
+    assert.equal(area().count, n);
+  }
+  for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
+  assert.ok(get("['troop1', 'troop2', 'troop3'].every(id => ALL_NPCS.find(n => n.id === id).place === 'cave')"), 'the whole troop should be in the cave');
+  assert.ok(get('areaChecklist()').every(([, done]) => done), 'all of chapter 1 so far should be ticked off');
 });

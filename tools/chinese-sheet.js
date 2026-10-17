@@ -27,22 +27,20 @@ const DRAFTS = [
     ['洞 里 有 桌子 。', 'There is a table in the cave.', 'The example on 桌子 (table)’s page'],
     ['洞 里 有 床 。', 'There are beds in the cave.', 'The example on 床 (bed)’s page'],
     ['水帘洞', 'Water Curtain Cave', 'What the stone tablet (石碑 shíbēi: please check this name too) in the cave says']]
-    .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part A (in the game): ' + where}))
+    .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part A (in the game): ' + where})),
+  ...[['这 是 我们 的 家 ！', 'This is our home!', 'The old monkey, when the troop moves into the cave'],
+    ['你 是 我们 的 王 ！', 'You are our king!', 'The big monkey, for the troop (then you’re called 美猴王 Měi Hóuwáng: please check this name too)'],
+    ['一 只 猴子 。', 'One monkey.', 'The old monkey, counting the troop into the cave (teaching 一)'],
+    ['两 只 猴子 。', 'Two monkeys.', 'The old monkey, counting (the card teaches 二: see the question below)'],
+    ['三 只 猴子 。', 'Three monkeys.', 'The old monkey, counting (teaching 三)'],
+    ['一 ， 二 ， 三 ！', 'One, two, three!', 'The example on 二 (two)’s page in the Word Scroll']]
+    .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part B (in the game): ' + where}))
 ];
 
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the
 // word bank yet, so each line gives its own pinyin. When it's built, these move into the area file.
-const CHAPTER1 = {
-  lines: [
-    ['这 是 我们 的 家 ！', 'Zhè shì wǒmen de jiā!', 'This is our home!', 'The old monkey, in the cave'],
-    ['你 是 我们 的 王 ！', 'Nǐ shì wǒmen de wáng!', 'You are our king!', 'The troop'],
-    ['一 只 猴子 ， 两 只 猴子 ， 三 只 猴子', 'yì zhī hóuzi, liǎng zhī hóuzi, sān zhī hóuzi', 'one monkey, two monkeys, three monkeys', 'The old monkey, counting the troop into the cave']
-  ],
-  words: [['家', 'jiā', 'home'], ['王', 'wáng', 'king'], ['一', 'yī', 'one'], ['二', 'èr', 'two'], ['三', 'sān', 'three']],
-  heard: [['的', 'de', '(shows belonging)'], ['只', 'zhī', '(counts animals)'], ['两', 'liǎng', 'two (of something)']],
-  names: [['美猴王', 'Měi Hóuwáng', 'Handsome Monkey King']],
-  questions: ['When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line?']
-};
+// Questions for the native speaker about the game's Chinese.
+const QUESTIONS = ['When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line? (The card for 二 says: "When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).")'];
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?'};
 function sheet(){
   const game = loadGame();
@@ -136,35 +134,13 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 ${DRAFTS.length ? table(['Chinese', 'Pinyin', 'English', 'Where', 'Notes'], DRAFTS.map(d => [chars(d.zh), py(d.zh), d.en, d.where, notes])) : 'None at the moment.'}
 
-## Chapter 1, part B: not built yet
+## Questions
 
-The next part of the story: the troop moves into the Water Curtain Cave and makes you king. (Part A, the
-dare and the cave, is in the game: its sentences are under New sentences to check, above.) Please check
-these before they go into the game.
-
-### Lines
-
-${table(['Chinese', 'Pinyin', 'English', 'Where', 'Notes'], CHAPTER1.lines.map(([zh, p, en, where]) => [chars(zh), p, en, where, notes]))}
-
-### New words to collect
-
-${table(['Chinese', 'Pinyin', 'English', 'Notes'], CHAPTER1.words.map(([zh, p, en]) => [zh, p, en, notes]))}
-
-### Words only heard in these lines
-
-${table(['Chinese', 'Pinyin', 'English', 'Notes'], CHAPTER1.heard.map(([zh, p, en]) => [zh, p, en, notes]))}
-
-### Names
-
-${table(['Chinese', 'Pinyin', 'English', 'Notes'], CHAPTER1.names.map(([zh, p, en]) => [zh, p, en, notes]))}
-
-### A question
-
-${CHAPTER1.questions.map(q => '- ' + q).join('\n')}
+${QUESTIONS.map(q => '- ' + q).join('\n')}
 `;
 }
 
-module.exports = {sheet, DRAFTS, CHAPTER1, FILE: path.join(ROOT, 'CHINESE.md')};
+module.exports = {sheet, DRAFTS, QUESTIONS, FILE: path.join(ROOT, 'CHINESE.md')};
 if (require.main === module){
   fs.writeFileSync(module.exports.FILE, sheet());
   console.log('Wrote CHINESE.md');
