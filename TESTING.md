@@ -25,6 +25,13 @@ npm start
 ```
 
 Then open http://127.0.0.1:8000 in a browser. Press Ctrl+C in the terminal to stop. In Claude Code, the preview pane's "game" setting does the same.
+
+## The screens gallery
+
+With `npm start` running, open http://127.0.0.1:8000/tools/screens.html. It shows every screen of the game side by side at phone size (the title, the opening, How to play, conversations, replies, word cards, fill the gap, the shop, animals, the menu pages, the story and the cave door), each the real game with its own pretend save. Your saved game isn't touched, and it's silent. Change the size to check a small phone or a computer, and "alone" shows one screen bigger.
+
+After any change you can see, look through it for things that overlap, buttons you'd have to scroll to find, text that's too long, and screens that don't match the others. A red "Error" under a screen means it didn't load. The screens are listed in tools/screens.js; add one when the game gets a new screen.
+
 ## Playing on your phone
 
 Open https://lph147.github.io/little-monkey/ on your phone. GitHub Pages updates it a minute or two after each upload to GitHub. Your phone may keep showing the previous version for up to 10 minutes; if a change hasn't appeared, wait a little and reload.

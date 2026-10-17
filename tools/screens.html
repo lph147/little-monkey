@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screens gallery · Little Monkey</title>
+<!-- Every screen of the game side by side, at phone size, for checking them at a glance: overlaps,
+     hidden buttons, too much text, things that don't match. Open it at http://127.0.0.1:8000/tools/screens.html
+     (npm start). Each screen is the real game in a frame with its own pretend save, so nothing here
+     touches your saved game, and it's silent. The screens are listed in tools/screens.js. -->
+<style>
+:root{--bg:#E9F0EA;--paper:#FFFDF6;--ink:#1F2A24;--muted:#5B6A61;--line:#C9D6CC;--bad:#B23A32}
+@media (prefers-color-scheme: dark){:root{--bg:#121A16;--paper:#1C2822;--ink:#E7EFE9;--muted:#9FB0A6;--line:#33463B;--bad:#F08A80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif;padding:16px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-bottom:14px}
+h1{font-size:1.3rem;margin:0}
+header p{margin:0;color:var(--muted);flex:1 1 20rem}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+select,button{font:inherit;padding:3px 8px;border:2px solid var(--ink);border-radius:5px;background:var(--paper);color:var(--ink)}
+#grid{display:flex;flex-wrap:wrap;gap:18px 14px;align-items:flex-start}
+figure{margin:0;display:flex;flex-direction:column;gap:6px}
+.frame{position:relative;overflow:hidden;border:2px solid var(--ink);border-radius:10px;background:#000}
+.frame iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0}
+figcaption{font-size:.85rem;max-width:100%}
+figcaption b{display:block;font-size:.95rem}
+figcaption .why{color:var(--muted)}
+figcaption .err{color:var(--bad);font-weight:600}
+figcaption a{color:inherit}
+</style>
+</head>
+<body>
+<header>
+  <h1>Screens gallery</h1>
+  <p>Every screen of the game at phone size. Each is the real game with its own pretend save: nothing here touches your saved game, and it's silent.</p>
+  <div class="controls">
+    <label>Size <select id="size">
+      <option value="375x812">Phone (375 × 812)</option>
+      <option value="360x640">Small phone (360 × 640)</option>
+      <option value="414x896">Big phone (414 × 896)</option>
+      <option value="1024x768">Computer (1024 × 768)</option>
+    </select></label>
+    <label>Zoom <select id="zoom">
+      <option value="1">100%</option>
+      <option value="0.75">75%</option>
+      <option value="0.5" selected>50%</option>
+    </select></label>
+    <button id="reload">Reload all</button>
+  </div>
+</header>
+<main id="grid"></main>
+<script src="screens.js"></script>
+</body>
+</html>

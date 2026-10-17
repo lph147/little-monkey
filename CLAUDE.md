@@ -30,6 +30,7 @@ I'm new to coding. Please:
 - `npm start` serves the game at http://127.0.0.1:8000. The preview pane's "game" configuration does the same.
 - `npm run chinese` writes CHINESE.md: all the game's Chinese with pinyin and English, for a native speaker to check, plus new sentences waiting to be checked (DRAFTS in tools/chinese-sheet.js). Run it after changing any Chinese; a test checks it's up to date.
 - TESTING.md has the checks to do by hand: a quick check after every change and a full playthrough of Area 1.
+- The screens gallery, http://127.0.0.1:8000/tools/screens.html (with `npm start`), shows every screen side by side at phone size, each the real game with a pretend save. Look through it after every change you can see, and play the change at phone size in the preview pane before calling it done. Add a screen to tools/screens.js when the game gets a new one.
 - The game is published at https://lph147.github.io/little-monkey/ by GitHub Pages, from the `main` branch of github.com/lph147/little-monkey. Pushing to GitHub updates it within a few minutes. Commits use the GitHub private email, never a personal one.
 
 ## Learning design rules (decided through playtesting; keep these)
