@@ -141,7 +141,7 @@ This stops anyone farming easy words for XP, and keeps the reward pointed at wha
 
 ## Encounters and question types
 
-Encounters are the game's battles: you win by answering, and every answer is a chance to meet a word again. Questions only ever use words you've already caught. An animal never asks about its own name, which is on the screen, so animals wait until you've caught 4 words with pictures. Each right answer fills one of three hearts: two hearts make a friend.
+Encounters are the game's battles: you win by answering, and every answer is a chance to meet a word again. Questions only ever use words you've already caught. An animal never asks about its own name, which is on the screen, and its picture is never one of the answers, so animals wait until you've caught 4 words with pictures. An encounter is a scene, like a Pokémon battle: your monkey, from behind, facing the animal on the grass (or its cliff), whose name plate has three hearts to fill and says which question this is. A right answer makes it hop and fills a heart; two hearts make a friend, with a new-friend moment at the end.
 
 | Question | You get | You choose | Trains |
 | --- | --- | --- | --- |
@@ -260,7 +260,7 @@ Rebuild Area 1 on the new foundations first, then play it for a week before star
   - [x] Never characters alone in a question: Read questions show pinyin, with pictures as the answers
   - [x] Tips instead of How to play, and one-line hints
   - [x] A gentler opening: English tells the story, in a box over the sky, and some captions show one word you'll meet (山, 石头, 猴子, 你好), said aloud
-  - [ ] Animals as a scene, with hearts to fill and a new-friend moment
+  - [x] Animals as a scene, with hearts to fill and a new-friend moment
 - [ ] Playtest Area 1 for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md

@@ -65,9 +65,16 @@ const SCREENS = [
     play(); await wait(100); encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(500); }},
   {id: 'encounter-read', title: 'Animal: read', save: 'knowsWell', run: async () => {
     play(); await wait(100); encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(500); }},
-  {id: 'encounter-answered', title: 'Animal: answered', save: 'middle', why: 'After choosing an answer.', run: async () => {
-    play(); await wait(100); encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(300);
-    click('.opt'); await wait(400); }},
+  {id: 'encounter-answered', title: 'Animal: a right answer', save: 'middle', why: 'The animal hops and a heart fills.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); };
+    encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(300);
+    click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(400); }},
+  {id: 'goat-read', title: 'The goat: read', save: 'knowsWell', why: 'On its cliff. Characters with pinyin, and just pictures to choose from.', run: async () => {
+    play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
+  {id: 'new-friend', title: 'A new friend', save: 'middle', run: async () => {
+    play(); await wait(100); pictureQ = () => Promise.resolve(true); encounter({id: 'fox', hz: '狐狸', img: portrait('fox'), wild: true}); await wait(600); }},
+  {id: 'animal-away', title: 'Not this time', save: 'middle', why: 'Fewer than 2 right: the animal goes back to the grass.', run: async () => {
+    play(); await wait(100); let n = 0; pictureQ = () => Promise.resolve(n++ === 0); encounter({id: 'fox', hz: '狐狸', img: portrait('fox'), wild: true}); await wait(600); }},
   {id: 'menu', title: 'Menu', save: 'middle', run: async () => { play(); await wait(100); openMenu(); await wait(300); }},
   {id: 'tasks', title: 'Tasks', save: 'middle', run: async () => { play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'scroll', title: 'Word Scroll', save: 'middle', run: async () => { play(); await wait(100); openScroll(() => closeCard()); await wait(300); }},

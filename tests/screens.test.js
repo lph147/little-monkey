@@ -22,7 +22,8 @@ test('every game function the screens use still exists', () => {
   const game = loadGame();
   for (const s of SCREENS.filter(s => s.run)){
     const src = s.run.toString();
-    const names = [...src.matchAll(/(?<![\w$.])([A-Za-z_$][\w$]*)\s*\(/g)].map(m => m[1]).filter(n => !HELPERS.has(n) && !NOT_CALLS.has(n));
+    const own = new Set([...src.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)/g)].map(m => m[1]));   // names the screen makes itself
+    const names = [...src.matchAll(/(?<![\w$.])([A-Za-z_$][\w$]*)\s*\(/g)].map(m => m[1]).filter(n => !HELPERS.has(n) && !NOT_CALLS.has(n) && !own.has(n));
     for (const n of names) assert.equal(game.run(`typeof ${n}`), 'function', `${s.id}: the game has no function called ${n}`);
     for (const [, id] of src.matchAll(/npc\('(\w+)'\)/g)) assert.ok(game.run(`NPCS.some(n => n.id === ${JSON.stringify(id)})`), `${s.id}: there's no character ${id}`);
   }

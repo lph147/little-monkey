@@ -80,3 +80,45 @@ test('a Read question shows the word in characters with pinyin, never characters
     for (const o of q.options) assert.ok(!o.includes('class="cap"'), 'the answers are pictures, with nothing under them to match the pinyin to');
   }
 });
+
+const tick = () => new Promise(r => setImmediate(r));
+const knowsSome = () => Object.fromEntries(['兔子', '山', '花', '草', '树', '山羊'].map(hz => [hz, word(0)]));
+
+test('an encounter is a scene: your monkey facing the animal, its name plate with hearts, and which question it is', async () => {
+  const game = loadGame({dom: true, save: {version: 17, started: true, w: knowsSome()}});
+  game.run("globalThis.__q = null; const q = pictureQ; pictureQ = o => { __q = o; return q(o); }; encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true})");
+  await tick();
+  const sheet = game.el('#sheet');
+  assert.ok(sheet.querySelector('.scene .foe') && sheet.querySelector('.scene .me'), 'the animal and your monkey');
+  assert.match(sheet.querySelector('.plate').textContent, /兔子/);
+  assert.match(sheet.querySelector('.plate .qn').textContent, /Question 1 of 3/);
+  assert.equal(sheet.querySelectorAll('.plate .heart').length, 3);
+  assert.equal(sheet.querySelectorAll('.plate .heart.on').length, 0, 'no hearts filled yet');
+  assert.ok(!game.run('__q.options.some(o => o.includes(\'data-w="兔子"\') || o.includes(">兔子<"))'), 'the animal itself isn’t one of the answers');
+  sheet.querySelector(`.opt[data-i="${game.run('__q.answerIdx')}"]`).click();
+  assert.equal(sheet.querySelectorAll('.plate .heart.on').length, 1, 'a right answer fills a heart');
+  assert.ok(sheet.querySelector('.scene .foe').classList.contains('hop'), 'and the animal hops');
+  assert.equal(sheet.querySelector('.scene .plus').hidden, false);
+});
+
+test('an animal that lives on a cliff is met on a cliff', async () => {
+  const game = loadGame({dom: true, save: {version: 17, started: true, w: knowsSome()}});
+  game.run("encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'})");
+  await tick();
+  assert.ok(game.el('#sheet').querySelector('.scene').classList.contains('cliff'));
+});
+
+test('the end of an encounter: a new friend, an old friend, or the animal going away', async () => {
+  const end = async (friends, right) => {
+    const game = loadGame({save: {version: 17, started: true, w: knowsSome(), friends}});
+    game.run(`globalThis.__end = null; pictureQ = () => Promise.resolve(${right}); infoBox = (who, html) => { __end = who + html; return Promise.resolve(); };
+      globalThis.__run = encounter({id: 'rabbit', hz: '兔子', img: '', wild: true});`);
+    await game.run('__run');
+    return game.run('__end');
+  };
+  assert.match(await end([], true), /⭐ New friend[\s\S]*The 兔子 \(rabbit\) is now your 朋友 \(friend\)! \+3 🐚/);
+  assert.match(await end(['rabbit'], true), /♥ Friends[\s\S]*You played with your 朋友 \(friend\), the 兔子 \(rabbit\)!/);
+  const away = await end([], false);
+  assert.match(away, /0 of 3[\s\S]*went back to the 草 \(grass\)/);
+  assert.match(away, /class="foe gone"/, 'the animal fades away');
+});

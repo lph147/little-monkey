@@ -47,6 +47,13 @@ async function encounter(foe){
   const nameHTML = () => foe.name
     ? `<div class="spk-zh">${foe.name.zh} <span class="spk-py">${foe.name.py}</span></div><div class="spk-en">${foe.name.en}</div>`
     : `<div class="spk-zh">${an} <span class="spk-py">${WORDS[an].py}</span>${foe.justTaught ? '' : (showEn ? ` <span class="small">${esc(WORDS[an].en)}</span>` : ' <button class="engbtn" data-a="foeen">English</button>')}</div>`;
+  // The scene: your monkey, from behind, facing the animal on the grass (or a cliff, if that's its home), and its
+  // name plate with hearts for the friendship won so far (filled: how many) and which question this is (n of 3).
+  const me = monkeySprite('player', 'up', false, 0).toDataURL();
+  const scene = (filled, n, look = '') => `<div class="scene${foe.home === '山' ? ' cliff' : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
+    + `<div class="mound mem"></div><img class="me" alt="" src="${me}"><div class="plate"><div class="name">${nameHTML()}</div>`
+    + `<div class="hearts" aria-label="Friendship: ${filled} of 3">${[0, 1, 2].map(k => heartHTML(k < filled)).join('')}</div>${n ? `<div class="qn">Question ${n} of 3</div>` : ''}</div>`
+    + '<div class="plus" aria-hidden="true" hidden>+♥</div></div>';
   const pool = picWords().filter(w => w !== an && lvl(w) >= 1).sort((a,b) => (rec(a).due - rec(b).due) || (lvl(a) - lvl(b)));
   const targets = shuffle(pool.slice(0, 5)).slice(0, 3);
   let score = 0;
@@ -55,10 +62,9 @@ async function encounter(foe){
     const b = AREA.questions.includes('gap') && i === targets.length - 1 && Math.random() < GAP_CHANCE ? practiceSentence() : null;
     if (b){ if ((await gapRound(b, img)).right) score++; continue; }
     const w = targets[i], type = questionType(w);
-    const others = shuffle(picWords().filter(x => x !== w && lvl(x) >= 1));   // only words you have already met
+    const others = shuffle(picWords().filter(x => x !== w && x !== an && lvl(x) >= 1));   // only words you have already met (and not the animal, which is right there)
     const opts = shuffle([w].concat(others.slice(0, 2)));
-    const hearts = `<div class="hearts" aria-label="Friendship: ${score} of 3">${[0,1,2].map(k => heartHTML(k < score)).join('')}</div>`;
-    const head = `<div class="arena"><div><div class="name">${nameHTML()}</div>${hearts}</div>${img}</div>`;
+    const head = scene(score, i + 1);
     let body;
     if (type === 'listen') body = `<p class="prompt">Listen. Which picture is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
     else if (type === 'read') body = `<p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`;
@@ -69,7 +75,13 @@ async function encounter(foe){
       // The answers: when listening, pictures with their characters; when reading, just pictures (the word has its
       // pinyin, so pinyin here would match itself); when hearing, the words with their pinyin. Never characters alone.
       options: opts.map(o => type === 'hear' ? o + (S.pinyin ? `<span class="cap">${WORDS[o].py}</span>` : '') : `<span class="ico">${picHTML(o)}</span>${type === 'read' ? '' : `<span class="cap">${o}</span>`}`), text: type === 'hear',
-      answerIdx: opts.indexOf(w), onShow: () => {
+      answerIdx: opts.indexOf(w), onAnswer: ok => {   // right: the animal hops and a heart fills
+        if (!ok) return;
+        const sc = sheet.querySelector('.scene'); if (!sc) return;
+        sc.querySelector('.foe').classList.add('hop');
+        sc.querySelector('.hearts').innerHTML = [0, 1, 2].map(k => heartHTML(k < score + 1)).join('');
+        sc.querySelector('.plus').hidden = false;
+      }, onShow: () => {
         if (type !== 'read') setTimeout(() => say(w), 300);
         on('[data-a=foeen]', e => { showEn = true; e.currentTarget.outerHTML = ` <span class="small">${esc(WORDS[an].en)}</span>`; });
         on('[data-a=eat]', e => {
@@ -84,15 +96,19 @@ async function encounter(foe){
   }
   closeCard();
   S.shells += score; S.encounters = (S.encounters || 0) + 1;
-  const won = score >= 2;
-  let msg;
+  const won = score >= 2, already = S.friends.includes(foe.id), shells = score ? ` +${score} 🐚` : '';
+  let label, msg;
   if (won){
-    if (!S.friends.includes(foe.id)) S.friends.push(foe.id);
+    if (!already) S.friends.push(foe.id);
     SFX.fanfare();
-    msg = `You got ${score} of 3. The ${wz(an)} is now your ${wz('朋友')}! +${score} 🐚`;
-  } else msg = `You got ${score} of 3. The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.`;
-  save();
-  await infoBox(img, `<p>${msg}</p>`);
+    label = already ? '♥ Friends' : '⭐ New friend';
+    msg = already ? `You played with your ${wz('朋友')}, the ${wz(an)}!${shells}` : `The ${wz(an)} is now your ${wz('朋友')}!${shells}`;
+  } else {
+    label = `${score} of 3`;
+    msg = `The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.${shells}`;
+  }
+  save(); showEn = true;   // the English is in the message, so the name plate shows it too
+  await infoBox(scene(score, 0, won ? 'hop' : 'gone'), `<p class="label center">${label}</p><p class="endmsg">${msg}</p>`);
   return won;
 }
 
