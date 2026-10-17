@@ -61,8 +61,8 @@ function tasksPage(back){
   const tasks = getTasks();
   tasks.forEach(t => { S.tasksRead[t.id] = 1; }); save();
   openCard(`<p class="label taskslabel">Tasks</p>${statsHTML()}
-    <p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
-    <p class="label">${AREA.name.en} · ${esc(AREA.chapters[chapterNow()].name)}: ${esc(AREA.chapters[chapterNow()].title)}</p>${checklistHTML(false)}
+    <div class="twocol"><div><p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}</div>
+    <div><p class="label">${AREA.name.en} · ${esc(AREA.chapters[chapterNow()].name)}: ${esc(AREA.chapters[chapterNow()].title)}</p>${checklistHTML(false)}</div></div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=ok]', back);
 }
@@ -71,7 +71,7 @@ function tasksPage(back){
 // Sound, pinyin, English on reply choices (for players who know some Chinese already), How to play, your save file, the title screen and starting again. The game saves by itself.
 function openSettings(focusId){
   openCard(`<p class="label">Settings</p>
-    <div class="menu">
+    <div class="menu twocol">
       <button class="btn" data-m="music" data-label="Music">Music <span class="val">${S.music ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="sound" data-label="Sound">Sound effects <span class="val">${S.sound ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="pinyin" data-label="Pinyin">Pinyin over words <span class="val">${S.pinyin ? 'On' : 'Off'}</span></button>

@@ -202,7 +202,7 @@ async function shop(face){   // the area's shop: what it sells, and buying it by
   if (!items.length){ toast(fill(sh.soldOut)); return; }
   const food = sh.items.filter(i => i.eat && S.bag[i.item]).map(i => `${S.bag[i.item]} ${esc(wz(i.item))}`);
   const i = await new Promise(res => {   // a card for each thing for sale: its picture, Chinese, pinyin, English and price
-    openCard(`${face}<p class="prompt">You have 🐚 ${S.shells}${food.length ? ' and ' + food.join(', ') : ''}.</p>
+    openCard(`<div class="qhead">${face}<p class="prompt">You have 🐚 ${S.shells}${food.length ? ' and ' + food.join(', ') : ''}.</p></div>
       <div class="menu shopgrid">${items.map((it, n) => `<button class="shopitem${S.shells < it.price ? ' dear' : ''}" data-n="${n}" data-label="Choose">
         <span class="spic" aria-hidden="true">${picHTML(it.item)}</span><span class="szh">${it.item}</span><span class="spy">${WORDS[it.item].py}</span>
         <span class="sen">${esc(WORDS[it.item].en)}</span><span class="sprice">🐚 ${it.price}</span></button>`).join('')}</div>
