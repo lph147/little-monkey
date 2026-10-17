@@ -141,6 +141,24 @@ rt.hid{visibility:hidden}
 .big{font-size:3.4rem;font-weight:500;line-height:1.15}
 .py{font-size:1.25rem;color:var(--muted)}
 .note{color:var(--muted);font-size:.95rem;margin:8px 0 0;text-align:center}
+/* A word's card, and its page in the Word Scroll: the picture on the left, the word, pinyin, English and notes
+   beside it, in the middle of a card that fills the screen. */
+.sheet{min-height:100%}
+.sheet:has(> .word.side){display:flex;flex-direction:column}
+.sheet:has(> .word.side) > .actions{margin-top:auto}
+.word.side{flex:1;display:grid;grid-template-columns:auto 1fr;column-gap:1.3rem;align-content:center;align-items:center;justify-items:start;text-align:left;padding:.3rem .6rem}
+.word.side > *{grid-column:2}
+.word.side > .pic{grid-column:1;grid-row:1 / span 6}
+.word.side .pic .pix{width:var(--pic-big);height:var(--pic-big)}
+.word.side .big{font-size:3rem;line-height:1.05}
+.word.side .py{font-size:1.15rem}
+.word.side .en{margin:.35rem 0 0;font-size:.95rem}
+.word.side .note,.word.side .mastery{text-align:left;font-size:.85rem;margin:.35rem 0 0}
+.word.side .mastery + .note{margin-top:.1rem}
+.word.side .examplehead{margin:.5rem 0 0;font-size:.8rem}
+.word.side .line{margin:.1rem 0 0}
+.word.side .tok,.word.side .punct{font-size:1.3rem}
+.word.side .sentence-en,.word.side .gloss{margin:.2rem 0 0;font-size:.85rem}
 .pips{display:inline-flex;gap:4px;vertical-align:middle}
 .pips i{width:10px;height:10px;border-radius:2px;background:var(--line);display:block}
 .pips i.on{background:var(--gold)}
