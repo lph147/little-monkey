@@ -210,12 +210,14 @@ function drawScene(t, now){
       b.globalAlpha = 1;
     }
   }
-  // The scene is drawn for a screen VH_MIN rows tall; a taller screen has more sky above it.
-  b.save(); b.translate(0, (VH - VH_MIN) * T);
+  // The scene is drawn for a screen VW_UPRIGHT columns wide and VH_MIN rows tall: a taller screen has more
+  // sky above it, and a wider one (sideways) more hills and sea either side, with the mountain in the middle.
+  const dx = (VW - VW_UPRIGHT) * T / 2;
+  b.save(); b.translate(dx, (VH - VH_MIN) * T);
   if (dawn > 0){ disc(b, 34, Math.round(116 - dawn*28), 9, '#FFD27A'); }
-  for (let x = 0; x < W; x += 2){ const h = Math.round(98 - Math.abs(Math.sin(x/23))*14 - rnd(x>>2,7)*4); R(b, x, h, 2, 126 - h, mix('#22334F','#7FA79A',dawn)); }
-  R(b, 0, 124, W, H - 124, mix('#13284A','#3F8FCB',dawn));
-  for (let i = 0; i < 14; i++){ const sx = Math.floor(rnd(i,5)*W), sy = 128 + Math.floor(rnd(i,6)*30); if (Math.sin(now/500 + i) > .3) R(b, sx, sy, 3, 1, mix('#3C5A86','#BFE8FA',dawn)); }
+  for (let x = -dx; x < W - dx; x += 2){ const h = Math.round(98 - Math.abs(Math.sin(x/23))*14 - rnd(x>>2,7)*4); R(b, x, h, 2, 126 - h, mix('#22334F','#7FA79A',dawn)); }
+  R(b, -dx, 124, W, H - 124, mix('#13284A','#3F8FCB',dawn));
+  for (let i = 0; i < 14; i++){ const sx = Math.floor(rnd(i,5)*W) - dx, sy = 128 + Math.floor(rnd(i,6)*30); if (Math.sin(now/500 + i) > .3) R(b, sx, sy, 3, 1, mix('#3C5A86','#BFE8FA',dawn)); }
   for (let x = 24; x < 152; x += 2){
     const top = Math.round(70 + Math.pow(Math.abs(x - 88)/64, 1.25)*56 + Math.floor(rnd(x>>1,9)*3));
     R(b, x, top, 2, 126 - top, mix('#1D3A30','#3F7D55',dawn)); R(b, x, top, 2, 2, mix('#2B5242','#6CC066',dawn));

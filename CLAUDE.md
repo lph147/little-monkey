@@ -21,7 +21,7 @@ I'm new to coding. Please:
 - Ask me before each upload (push) to GitHub, because uploading publishes to the live site.
 - Run the automated tests before every commit, once they exist. Add or update a test when you add a feature.
 - Keep saved games working. If the save format changes, migrate old saves instead of wiping them.
-- The game must work on a phone browser (portrait, touch) and on desktop (keyboard).
+- The game must work on a phone browser (touch), held upright or sideways, and on desktop (keyboard).
 - No build tools or frameworks unless we agree. Plain HTML, CSS and JavaScript, loadable from a static web host (GitHub Pages).
 - Keep DESIGN.md's "Next steps" checklist up to date when a step is finished.
 
@@ -52,6 +52,7 @@ I'm new to coding. Please:
 - **A** = talk, look, choose. On cards, A always presses the main (green) button, marked with a red A badge.
 - **B** = back or dismiss only (blue B badge on the button it presses). B never opens the menu.
 - **Start** opens the menu and **Select** your tasks, like a Game Boy: two small buttons between the D-pad and A/B (keyboard: M or Esc for Start, T for Select). Pressing either again closes it. Both pages show your level, XP, shells and words at the top. There's no header or task box: the screen uses the room.
+- **Two layouts**, chosen by the screen's shape. Upright (a phone held normally): the screen on top, 11 columns and 10 to 18 rows, with the controls below. Sideways (a phone on its side, or a computer), like a Game Boy Advance: the screen in the middle, 15 columns by 10 rows, the D-pad with Select and Start on the left, A and B on the right, and a power light and a speaker just for looks. Turning the phone switches between them.
 - A/B badges appear only on a card's bottom action buttons and in the menu, never on things you tap directly (answers, words in sentences). The A badge is always on a button's top-left corner and the B badge on its top-right, tucked in so they never overlap a neighbouring button.
 - Messages appear in a box at the bottom of the game screen (in a conversation, they wait in the speech box until A). A new task is announced with a message, and a red dot stays on Select until you look at your tasks.
 

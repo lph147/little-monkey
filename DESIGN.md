@@ -191,6 +191,7 @@ Every screen should take as few presses as possible, so time goes on Chinese rat
 - **The menu** has four big tiles, each with an icon, Chinese and English: 词 Word Scroll, 任务 Tasks, 朋友 Friends, 衣服 Wardrobe. A Settings page holds music, sound effects, pinyin, How to play, export and import, the title screen and reset. The game saves itself, so there's no Save button.
 - **The Word Scroll** is a grid of sprites, with shadows for words you haven't caught and category tabs across the top. Today's words is a filter in it.
 - **On phones** the game screen uses the full height available: as many rows of the map as fit, 10 to 18.
+- **Sideways, like a Game Boy Advance** (decided 17 October 2026). When the screen is wider than it is tall (a phone turned on its side, or a computer), the console is laid out like a GBA: the screen in the middle, 15 columns by 10 rows (the GBA's shape, 3:2), as big as fits; the D-pad, Select and Start on the left with a power light; A and B on the right with a speaker. Held upright, the game keeps its tall layout. Every place must be at least 15 by 10 (a test checks). Cards still sit over the screen, so sideways they only have its height.
 
 ## Technical approach
 
@@ -291,6 +292,10 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
   - [x] Animals as a scene, with hearts to fill and a new-friend moment
 - [x] The prologue's requests made into finding things (17 October 2026): the hungry monkey wants fruit (水果, heard only) and, whichever you bring first, wants the other, with the peaches on the far left and the apple tree in the south-east; the big monkey wants a red, a yellow and a white flower, which grow in different parts of the meadow, and the first of each colour teaches its word (红 黄 白). No arrows for finding them. "He doesn't like it" is said as 这是苹果。我要吃桃子！, keeping 不 for Area 2. Save version 20
 - [x] Start and Select instead of the header and task box (17 October 2026; save version 21)
+- [ ] Sideways, like a Game Boy Advance (decided 17 October 2026):
+  - [x] The console: the screen 15 × 10 in the middle, the controls either side, a power light and a speaker; upright keeps the tall layout
+  - [ ] Cards and boxes that use the wide screen: the menu's tiles in a row, new-word cards with the picture beside the words, every card checked in the gallery at Phone sideways
+  - [ ] The title screen and the opening, laid out for the wide, short screen (the title's words over the stone, captions covering the mountain)
 - [ ] Playtest the prologue for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md

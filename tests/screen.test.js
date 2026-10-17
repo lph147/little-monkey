@@ -1,4 +1,4 @@
-// The screen's size, and your tasks: on a phone held upright the screen shows more of the map; Select
+// The screen's size, and your tasks: on a phone held upright the screen shows more of the map, and held sideways the controls go either side of it; Select
 // shows your tasks, and a new task is announced with a message and a red dot on Select.
 'use strict';
 const test = require('node:test');
@@ -13,7 +13,7 @@ function sized(game, {width, height, console: shell, rest}){
   return {rows: game.run('VH'), buffer: game.run('buf.height'), w: parseFloat(game.run('cv.style.width')), h: parseFloat(game.run('cv.style.height'))};
 }
 
-test('a phone held upright shows more rows of the map; a small phone or a computer the usual 10', () => {
+test('a phone held upright shows more rows of the map; a small phone the usual 10', () => {
   const game = loadGame();
   const phone = sized(game, {width: 375, height: 812, console: 351, rest: 300});
   assert.ok(phone.rows > 14 && phone.rows <= 18, `a tall phone should show 15 to 18 rows, now there's no header or task box, not ${phone.rows}`);
@@ -21,8 +21,22 @@ test('a phone held upright shows more rows of the map; a small phone or a comput
   assert.ok(phone.h <= 812 - 300, 'and the screen still fits on the page');
   const small = sized(game, {width: 360, height: 640, console: 336, rest: 420});
   assert.equal(small.rows, 10, 'a small phone has room for the usual 10');
-  const desk = sized(game, {width: 1280, height: 900, console: 496, rest: 460});
-  assert.equal(desk.rows, 10, 'a computer window this size shows 10');
+});
+
+test('held sideways, or on a computer, the controls go either side and the screen shows 15 columns by 10 rows', () => {
+  const game = loadGame();
+  const side = sized(game, {width: 812, height: 375, console: 800, rest: 0});
+  assert.equal(game.run('sideways'), true);
+  assert.deepEqual([game.run('VW'), side.rows, game.run('buf.width'), side.buffer], [15, 10, 240, 160], 'like a Game Boy Advance');
+  assert.ok(side.w <= 812 - 2 * 150 && side.h <= 375, 'the screen fits between the D-pad side and the A and B side');
+  assert.ok(Math.abs(side.w / side.h - 1.5) < .01, 'and is half as wide again as it is tall');
+  const up = sized(game, {width: 375, height: 812, console: 351, rest: 300});
+  assert.equal(game.run('sideways'), false, 'turned upright again');
+  assert.deepEqual([game.run('VW'), game.run('buf.width')], [11, 176]);
+  assert.ok(up.rows > 14, 'with more rows again');
+  const desk = sized(game, {width: 1600, height: 1000, console: 0, rest: 0});
+  assert.equal(game.run('sideways'), true, 'a computer window is wider than it is tall');
+  assert.ok(desk.w <= 720, 'and on a big one the screen stops growing');
 });
 
 function taskGame(extra = {}){

@@ -1,9 +1,14 @@
 // Screen size, then the game's data, built from the content files in content/ (they load first).
 
 const $ = s => document.querySelector(s);
-const T = 16, VW = 11, STEP = 270, TURN_DELAY = 130;
+const T = 16, STEP = 270, TURN_DELAY = 130;
+// How many columns of the map the screen shows: 11 on a phone held upright, and 15 when the screen
+// is wider than it is tall (a phone held sideways, or a computer), like a Game Boy Advance's.
+// fit() in js/main.js chooses.
+const VW_UPRIGHT = 11, VW_SIDEWAYS = 15;
+let VW = VW_UPRIGHT;
 // How many rows of the map the screen shows. On a phone held upright there's room for more, so
-// fit() in js/main.js raises it, up to VH_MAX.
+// fit() in js/main.js raises it, up to VH_MAX. Sideways, it's always VH_MIN.
 const VH_MIN = 10, VH_MAX = 18;
 let VH = VH_MIN;
 

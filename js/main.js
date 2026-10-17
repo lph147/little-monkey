@@ -1,18 +1,38 @@
 // The screen size, the main loop, new tasks, the title screen, the intro, How to play, and starting the game.
 
 /* ================= SCREEN, LOOP, MODES ================= */
+// Held sideways (a phone on its side, or a computer), the console is laid out like a Game Boy Advance:
+// the screen in the middle, the D-pad, Select and Start on the left, A and B on the right. Each side is
+// SIDE_WING wide (the same as .app.sideways in css/game.css), and the screen gets the room between.
+const SIDE_WING = 150;
+let sideways = false;
 function fit(){
   const shell = $('.console');
-  const innerW = shell.clientWidth - 24 - 16;
+  sideways = window.innerWidth > window.innerHeight;
+  $('.app').classList.toggle('sideways', sideways);
   // The height left for the screen: the window, less everything else on the page and the phone's safe areas.
-  const root = window.getComputedStyle ? getComputedStyle(document.documentElement) : null;
-  const safe = root ? (parseFloat(root.paddingTop) || 0) + (parseFloat(root.paddingBottom) || 0) : 0;
-  const rest = (+$('.app').offsetHeight || 0) - (+cv.offsetHeight || 0) + safe;   // (a missing height counts as 0)
-  const room = window.innerHeight - rest;
-  const w = Math.floor(clamp(Math.min(innerW, room * VW / VH_MIN), 220, 640));
-  // The screen shows as many rows of the map as fit (a phone held upright has room for more), 10 to 18.
-  const rows = clamp(Math.floor(room / (w / VW)), VH_MIN, VH_MAX);
-  if (rows !== VH){ VH = rows; buf.height = VH*T; b.imageSmoothingEnabled = false; }
+  const style = el => (window.getComputedStyle ? getComputedStyle(el) : {});
+  const px = (s, ...sides) => sides.reduce((n, k) => n + (parseFloat(s[k]) || 0), 0);   // (a missing size counts as 0)
+  const safe = px(style(document.documentElement), 'paddingTop', 'paddingBottom');
+  let w, rows;
+  if (sideways){
+    // 15 columns and 10 rows, as big as fits between the two sides and under the keyboard help (on a computer).
+    const app = style($('.app')), con = style(shell), edge = style($('.screen')), keys = $('.keys');
+    const roomW = window.innerWidth - px(app, 'paddingLeft', 'paddingRight') - px(con, 'paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth') - 2 * SIDE_WING - px(edge, 'paddingLeft', 'paddingRight');
+    const roomH = window.innerHeight - safe - px(app, 'paddingTop', 'paddingBottom') - px(con, 'paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth') - px(edge, 'paddingTop', 'paddingBottom')
+      - (+keys.offsetHeight || 0) - px(style(keys), 'marginTop', 'marginBottom');
+    w = Math.floor(clamp(Math.min(roomW, roomH * VW_SIDEWAYS / VH_MIN), 220, 720));
+    rows = VH_MIN;
+  } else {
+    const innerW = shell.clientWidth - 24 - 16;
+    const rest = (+$('.app').offsetHeight || 0) - (+cv.offsetHeight || 0) + safe;
+    const room = window.innerHeight - rest;
+    w = Math.floor(clamp(Math.min(innerW, room * VW_UPRIGHT / VH_MIN), 220, 640));
+    // The screen shows as many rows of the map as fit (a phone held upright has room for more), 10 to 18.
+    rows = clamp(Math.floor(room / (w / VW_UPRIGHT)), VH_MIN, VH_MAX);
+  }
+  const cols = sideways ? VW_SIDEWAYS : VW_UPRIGHT;
+  if (cols !== VW || rows !== VH){ VW = cols; VH = rows; buf.width = VW*T; buf.height = VH*T; b.imageSmoothingEnabled = false; }
   const h = Math.round(w * VH / VW);
   const dpr = window.devicePixelRatio || 1;
   cv.style.width = w + 'px'; cv.style.height = h + 'px';

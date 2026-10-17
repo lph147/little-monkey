@@ -2,7 +2,7 @@
   --bg:#DCE9E0; --paper:#F7FBF7; --ink:#1E2B26; --muted:#56655E;
   --jade:#2E7A57; --jade-ink:#FFFFFF; --gold:#D9A21E; --line:#C3D6C9;
   --ok:#2E8B57; --bad:#C2453D; --scrim:rgba(20,35,28,.45);
-  --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA;
+  --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA; --grille:#8AAA96; --led:#45D16A;
   --btnA:#B8323A; --btnB:#3D6A93;
   --tip:#FFF3B8; --tip-ink:#2A2215;   /* a tip bubble: the same in light and dark, like a sticky note */
   --sil:brightness(0);   /* the shadow of a word you have heard but not caught */
@@ -21,7 +21,7 @@
     --bg:#0F1D17; --paper:#1A3027; --ink:#E6F0EA; --muted:#A5B8AE;
     --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
     --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
-    --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4;
+    --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --grille:#0E1C16; --led:#5BE07E;
     --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); color-scheme:dark;
   }
 }
@@ -29,7 +29,7 @@
   --bg:#0F1D17; --paper:#1A3027; --ink:#E6F0EA; --muted:#A5B8AE;
   --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
   --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
-  --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4;
+  --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --grille:#0E1C16; --led:#5BE07E;
   --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
@@ -354,3 +354,24 @@ rt.hid{visibility:hidden}
 .titletext p{margin:0}
 .titletext .warn{color:#FFB4A8;margin-top:6px}
 .capbox .caprow{margin-top:8px}
+
+/* Sideways (a phone held on its side, or a computer), like a Game Boy Advance: the screen in the middle,
+   the D-pad, Select and Start on the left with the power light, A and B on the right with the speaker.
+   fit() in js/main.js adds .sideways and sizes the screen to the room between the two sides (SIDE_WING,
+   150px each). The power light and the speaker are just for looks. */
+.power,.grille{display:none}
+.app.sideways{max-width:none;padding:4px;display:flex;align-items:center;justify-content:center;min-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+.sideways .console{display:grid;grid-template-columns:150px auto 150px;grid-template-rows:auto 1fr auto auto;
+  grid-template-areas:"power screen ." "dpad screen ab" "ss screen grille" "keys keys keys";align-items:center;
+  width:max-content;border-radius:46px;padding:6px max(6px, env(safe-area-inset-right,0px)) 6px max(6px, env(safe-area-inset-left,0px))}
+.sideways .controls{display:contents}
+.sideways .display{grid-area:screen}
+.sideways .dpad{grid-area:dpad;justify-self:start;margin-left:4px;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px)}
+.sideways .ss{grid-area:ss;position:static;transform:none;justify-self:center;margin:0 8px 10px 0}
+.sideways .ab{grid-area:ab;justify-self:end;margin-right:6px}
+.sideways .keys{grid-area:keys;margin:6px 0 2px}
+.sideways .power{display:flex;grid-area:power;justify-self:end;align-self:start;margin:10px 10px 0 0;align-items:center;gap:5px;font:600 .6rem var(--pixel);letter-spacing:.12em;color:var(--muted)}
+.power i{width:7px;height:7px;border-radius:50%;background:var(--led);box-shadow:0 0 6px var(--led)}
+.sideways .grille{display:flex;grid-area:grille;justify-self:end;gap:6px;margin:0 22px 18px 0;transform:rotate(28deg)}
+.grille i{width:5px;height:30px;border-radius:3px;background:var(--grille);box-shadow:inset 0 2px 2px rgba(0,0,0,.3)}
+.grille i:first-child,.grille i:last-child{height:20px;margin-top:5px}
