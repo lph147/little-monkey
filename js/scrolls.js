@@ -101,7 +101,7 @@ function matchWords(words, title, stopLabel){
   });
 }
 // The words you missed, as chips you can tap to hear.
-const missedHTML = missed => missed.size ? `<p class="small">Words to practise:</p><div class="chips">${[...missed].map(w => `<button class="chip" data-w="${w}">${w}</button>`).join('')}</div><div class="gloss">Tap a word to hear it.</div>` : '';
+const missedHTML = missed => missed.size ? `<p class="small">Words to practise:</p><div class="chips">${[...missed].map(w => `<button class="chip" data-w="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${WORDS[w].py}</rt></ruby></button>`).join('')}</div><div class="gloss">Tap a word to hear it.</div>` : '';
 const bindMissed = () => sheet.querySelectorAll('.chip').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; say(w); sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${WORDS[w].py} · ${esc(WORDS[w].en)}`; });
 async function wordTest(){   // the exit test at the cave door: every word with a picture you've caught
   const words = shuffle(ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));
@@ -247,7 +247,7 @@ function scrollPage(tab){   // what a tab of the Word Scroll shows
   if (tab === 'heard'){
     const heard = heardWords();
     return `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
-      <div class="chips">${heard.map(w => `<button class="chip" data-h="${w}">${w} <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
+      <div class="chips">${heard.map(w => `<button class="chip" data-h="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${info(w)[0]}</rt></ruby> <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
   }
   const ws = SCROLL_WORDS().filter(w => WORDS[w].category === tab);
   return `<p class="label cathead">${CATEGORIES[tab].name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>

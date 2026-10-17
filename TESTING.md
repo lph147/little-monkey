@@ -105,7 +105,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] South of the meadow (down the path through the gap in the trees), the squirrel sits up a big tree and the goat stands on the cliffs. Face one: A says Meet.
 - [ ] Little birds land on the grass near you now and then and hop about for most of a minute. Walk up and face one: A says Look and shows 鸟 (bird), then it flies off. Stepping right onto one also makes it fly off.
 - [ ] The first time you meet each animal, a new-word card teaches its name and the encounter doesn't show the English. Meeting it again shows the Chinese name with an English button.
-- [ ] Animals' questions always have pictures to choose from. A new word is asked by sound ("Listen. Which picture is it?"); after two right answers in a row it's asked by its characters ("Read it."). On Flower Fruit Mountain you're never asked to pick characters by sound.
+- [ ] Animals' questions always have pictures to choose from. A new word is asked by sound ("Listen. Which picture is it?"); after two right answers in a row it's asked by its written form ("Read it."): its characters with pinyin underneath, and pictures to choose from, with nothing written under them. On Flower Fruit Mountain you're never asked to pick characters by sound.
 - [ ] Keep going until you've found all 4 (rabbit and fox in the grass, the squirrel and the goat at their homes).
 - [ ] Little birds land on the grass near you; until you know 鸟 (bird), one sparkles. Face it and press A to learn 鸟.
 

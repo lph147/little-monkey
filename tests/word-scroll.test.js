@@ -93,7 +93,8 @@ test('the Heard tab shows words this area doesn\'t teach, most heard first', () 
   const game = loadGame({save: {version: 5, started: true, heard: {'是': 4, '有': 9, '猴子': 3, '里': 5}}});
   game.run("openScroll(null, 0, 'heard')");
   const html = game.el('#sheet').innerHTML, list = html.slice(html.indexOf('>Heard<'));
-  assert.deepEqual([...list.matchAll(/data-h="([^"]+)">\1 <span class="small">(\d+)×/g)].map(m => m[1] + m[2]), ['有9', '里5', '是4']);
+  assert.deepEqual([...list.matchAll(/data-h="([^"]+)"><ruby>\1<rt[^>]*>([^<]+)<\/rt><\/ruby> <span class="small">(\d+)×/g)].map(m => m[1] + m[2] + m[3]),
+    ['有yǒu9', '里lǐ5', '是shì4'], 'with pinyin, most heard first');
   assert.ok(!list.includes('猴子'), 'a word you can collect here goes in its category, not the Heard list');
   const fresh = loadGame();
   fresh.run('openScroll()');

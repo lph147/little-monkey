@@ -63,3 +63,20 @@ test('animals wait until you know 4 words with pictures: 3 to ask about, besides
   assert.equal(know(['兔子', '山', '花']), false);
   assert.equal(know(['兔子', '山', '花', '草']), true);
 });
+
+test('a Read question shows the word in characters with pinyin, never characters alone, and the answers are just pictures', async () => {
+  const w = Object.fromEntries(['山羊', '山', '花', '草', '树'].map(hz => [hz, word(0, 2)]));   // Recognised: animals ask you to read
+  const game = loadGame({save: {version: 16, started: true, w}});
+  game.run(`globalThis.__qs = [];
+    pictureQ = o => { __qs.push({type: o.type, word: o.word, body: o.body, options: o.options}); return Promise.resolve(true); };
+    infoBox = () => Promise.resolve();
+    globalThis.__runs = (async () => { for (let i = 0; i < 10; i++) await encounter({id: 'goat', hz: '山羊', img: '', wild: true}); })();`);
+  await game.run('__runs');
+  const reads = JSON.parse(game.run('JSON.stringify(__qs)')).filter(q => q.type === 'read');
+  assert.ok(reads.length >= 10, 'it asked Read questions');
+  const py = JSON.parse(game.run('JSON.stringify(Object.fromEntries(Object.entries(WORDS).map(([k, v]) => [k, v.py])))'));
+  for (const q of reads){
+    assert.ok(q.body.includes(`<div class="big">${q.word}</div><div class="py">${py[q.word]}</div>`), `${q.word} is shown with its pinyin`);
+    for (const o of q.options) assert.ok(!o.includes('class="cap"'), 'the answers are pictures, with nothing under them to match the pinyin to');
+  }
+});

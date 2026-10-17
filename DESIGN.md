@@ -44,7 +44,7 @@ The Word Scroll becomes the game's Pokédex: a collection you want to complete, 
 | Heard | Hearing it in a sentence |
 | Caught | Its new-word card |
 | Recognised | Picking it from sound alone, twice in a row |
-| Read | Picking it from the characters alone, twice in a row |
+| Read | Picking it from its written form (characters with pinyin), twice in a row |
 | Used | Using it in a sentence, a shop order or a quest, once you can read it |
 
 **Chinese only, once caught.** After the new-word card, the Chinese name is the only name shown in the world, with English a tap away. That is part of why Pokémon names stick: nobody thinks of them in translation.
@@ -146,8 +146,8 @@ Encounters are the game's battles: you win by answering, and every answer is a c
 | Question | You get | You choose | Trains |
 | --- | --- | --- | --- |
 | Listen | The word spoken | A picture, with its characters underneath | Sound to meaning |
-| Read | The characters | A picture, with its pinyin underneath | Characters to meaning and sound |
-| Hear and read | The word spoken | Characters only | Sound to characters |
+| Read | The characters, with pinyin (never characters alone: decided 17 October 2026, as too hard for beginners) | A picture | Written word to meaning |
+| Hear and read | The word spoken | Words in characters with pinyin | Sound to the written word |
 | Fill the gap | A sentence in Chinese and English, one word missing | The missing word: a picture with its Chinese while it's new, then Chinese and pinyin | Words in context |
 | Tones (later) | Two similar words spoken | Which one you heard | Tones |
 
