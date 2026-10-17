@@ -54,10 +54,35 @@ function navFocus(d){
   }
   if (!sheet.querySelector('.menu')) return;          // otherwise the D-pad only moves through menus; on cards A is always the main button
   const items = navItems(); if (!items.length) return;
-  let i = items.indexOf(document.activeElement);
-  if (i < 0) i = Math.max(0, items.findIndex(b => b.classList.contains('primary')));
-  else i = (i + ((d === 'left' || d === 'up') ? -1 : 1) + items.length) % items.length;
-  items[i].focus({preventScroll:false}); SFX.turn();
+  const cur = items.indexOf(document.activeElement);
+  const go = i => { items[i].focus({preventScroll:false}); SFX.turn(); };
+  if (cur < 0) return go(Math.max(0, items.findIndex(b => b.classList.contains('primary'))));
+  const inOrder = () => go((cur + ((d === 'left' || d === 'up') ? -1 : 1) + items.length) % items.length);
+  if (!items.some(b => b.getBoundingClientRect().width)) return inOrder();   // no layout to go by: step through in order
+  const next = nearestIn(d, items[cur], items);
+  if (next) return go(items.indexOf(next));
+  // Nothing that way: left and right step through in reading order (to the next row, in a grid); up
+  // and down stay put at the top and bottom.
+  if (d === 'left' || d === 'right') inOrder();
+}
+// The button you'd reach by moving from b in direction d (up, down, left or right) on screen: the nearest
+// one that way, preferring one in line with b (overlapping its column for up and down, its row for left
+// and right, so a wide button such as Settings is in line with every tile above it). Null if there's none.
+function nearestIn(d, b, items){
+  const gap = (a0, a1, b0, b1) => Math.max(0, b0 - a1, a0 - b1);   // how far apart two spans are (0 if they overlap)
+  const r0 = b.getBoundingClientRect(), vertical = d === 'up' || d === 'down';
+  let best = null, bestScore = Infinity;
+  for (const o of items){
+    if (o === b) continue;
+    const r = o.getBoundingClientRect();
+    // how far beyond b's edge it starts, that way (only buttons wholly that way count)
+    const along = {up: r0.top - (r.top + r.height), down: r.top - (r0.top + r0.height), left: r0.left - (r.left + r.width), right: r.left - (r0.left + r0.width)}[d];
+    const across = vertical ? gap(r0.left, r0.left + r0.width, r.left, r.left + r.width) : gap(r0.top, r0.top + r0.height, r.top, r.top + r.height);
+    if (along < -2) continue;   // not that way
+    const score = along + across * 2;
+    if (score < bestScore){ bestScore = score; best = o; }
+  }
+  return best;
 }
 function btnLabel(f){
   if (!f) return '';

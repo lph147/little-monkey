@@ -62,3 +62,23 @@ test('B or the Menu button closes the menu, from the menu or Settings', () => {
   run('pressMenu()');
   assert.equal(run('modal.hidden'), true, 'the Menu button closes Settings');
 });
+
+test('the D-pad moves around the menu on screen: up and down between rows, left and right along them', () => {
+  const {sheet, run} = menuGame();
+  run('openMenu()');
+  // the menu as it looks: a 2 × 2 grid of tiles, then Settings across the width, then Close
+  const place = {words: [0, 0, 150, 100], tasks: [160, 0, 150, 100], friends: [0, 110, 150, 100], wardrobe: [160, 110, 150, 100], settings: [0, 220, 310, 40]};
+  for (const [m, [left, top, width, height]] of Object.entries(place)) sheet.querySelector(`[data-m="${m}"]`).rect = {left, top, width, height};
+  sheet.querySelector('[data-a=close]').rect = {left: 230, top: 280, width: 80, height: 40};
+  const on = () => run("document.activeElement.dataset.m || document.activeElement.dataset.a");
+  assert.equal(on(), 'words');
+  run("navFocus('down')"); assert.equal(on(), 'friends', 'down goes to the tile below, not the one beside');
+  run("navFocus('right')"); assert.equal(on(), 'wardrobe');
+  run("navFocus('up')"); assert.equal(on(), 'tasks', 'up goes to the tile above');
+  run("navFocus('up')"); assert.equal(on(), 'tasks', 'at the top, up stays put');
+  run("navFocus('left')"); assert.equal(on(), 'words');
+  run("navFocus('down'); navFocus('down')"); assert.equal(on(), 'settings', 'down from the grid goes to Settings');
+  run("navFocus('down')"); assert.equal(on(), 'close', 'then to Close');
+  run("navFocus('up'); navFocus('up')"); assert.equal(on(), 'friends', 'and back up to the grid');
+  run("navFocus('right'); navFocus('right')"); assert.equal(on(), 'settings', 'right at the end of a row carries on to the next');
+});

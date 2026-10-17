@@ -84,7 +84,7 @@ class El {
   scrollIntoView(){}
   addEventListener(){}
   removeEventListener(){}
-  getBoundingClientRect(){ return {left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0}; }
+  getBoundingClientRect(){ return this.rect || {left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0, x: 0, y: 0}; }   // a test can set rect to place it on the screen
 }
 
 // HTML into a list of nodes.
