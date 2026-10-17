@@ -28,6 +28,14 @@ test('the fruit trees, your stone, the post and the rocks are big objects; the r
   assert.deepEqual(bottoms, [...bottoms].sort((a, b) => a - b), 'drawn from the top of the map down, so nearer ones overlap');
 });
 
+test('the shop owner’s stall is three squares wide, and he stands beside it', () => {
+  const game = loadGame();
+  assert.deepEqual(at(objects(game), 8, 16), {look: 'stall', x: 8, y: 16, w: 3, h: 1});
+  for (const x of [8, 9, 10]) assert.equal(game.run(`walkable(${x}, 16)`), false, `you can't walk into the stall at ${x}, 16`);
+  assert.equal(game.run('walkable(9, 15)'), true, 'you can walk behind it');
+  assert.equal(game.run('npcAt(11, 16).id'), 'boss', 'the shop owner stands just to its right, where he always has');
+});
+
 test('bigger pictures don’t change where you can walk: the square above a tree is still open', () => {
   const game = loadGame();
   assert.equal(game.run('walkable(12, 7)'), true, 'above the tree by the pond');

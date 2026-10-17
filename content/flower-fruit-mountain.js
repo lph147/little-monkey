@@ -225,7 +225,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggggggggggggWWgGgY",
         "YTgGGGggggggggFgggWWGGgY",
         "YTggggg.ggggggTgggWWgggY",
-        "YMMMMgg.ggHgggggggWWgggY",
+        "YMMMMgg.HHHgggggggWWgggY",
         "YMMMMgg.gggEggggggWWgQgY",
         "YMMMMgg.GGGGgTggggWWgggY",
         "YMMMggg...........BBgEgY",
@@ -300,7 +300,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
     'K': {look:'post', landmark:true, label:'Train', action:'training'},   // the training ground
-    'H': {look:'stall'},   // the shop owner's stall
+    'H': {look:'stall'},   // the shop owner's stall: as wide as its row of H (three squares)
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', whenGateOpens:'.'},
     'M': {look:'cliff', word:'山'},
     'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},

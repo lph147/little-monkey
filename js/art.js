@@ -17,7 +17,6 @@ const ROCK_PAL = {o:'#4A463F',l:'#D6D2C5',m:'#A9A598',d:'#7C786D',k:'#3A352E',g:
 const CRACK = [[8,3],[8,4],[7,5],[8,6],[9,7],[8,8],[7,9],[8,10],[9,5],[10,4],[6,7],[5,8],[10,8],[11,9]];   // the stone cracking in the opening
 const SIGN = ["................","................","................","..oooooooooooo..","..owwwwwwwwwwo..","..owWWWwwWWWwo..","..owwwwwwwwwwo..","..owWWwwWWWwwo..","..oooooooooooo..","......oWWo......","......oWWo......","......oWWo......","......oWWo......",".....oooooo.....","................","................"];
 const POST = ["......oooo......",".....owwwwo.....",".....owWWwo.....","..ooooowwooooo..","..owwwwwwwwwwo..","..ooooowwooooo..",".....owWWwo.....",".....owwwwo.....","...ooowWWwooo...","...owwwwwwwwo...","...ooowwwwooo...",".....owWWwo.....",".....owwwwo.....",".....owWWwo.....","....oooooooo....","................"];   // a wooden practice post
-const STALL = ["rwrwrwrwrwrwrwrw","rwrwrwrwrwrwrwrw","oooooooooooooooo",".k............k.",".k............k.",".k............k.",".k............k.",".k..pq...aA...k.",".kooooooooooooook",".kwwwwwwwwwwwwwk",".kWWWWWWWWWWWWWk",".kwwwwwwwwwwwwwk",".kWWWWWWWWWWWWWk",".kooooooooooooook",".k............k.","................"];   // a market stall with a striped awning
 const MONKEY = ["................",".....oooooo.....","....offffffo....","...offffffffo...",".ooofssssssfooo.","osssfssssssfssso","osssfssssssfssso",".ooofssmmssfooo.","...offssssffo...","...offffffffo...","..offfssssfffo..",".offffssssffffo.",".of.ffssssff.fo.","...offffffffo...","...offo..offo...","...ooo....ooo..."];
 const BIRD = ["...ooo..","..obbbo.","yobebbbo",".obbwwbo","..obwwwo","...oooo.","....o.o."];
 const PALS = {
@@ -105,7 +104,6 @@ const SPR = {
   rock: sprite(ROCK, ROCK_PAL),
   sign: sprite(SIGN, {o:'#4A2C17',w:'#D2A46A',W:'#9E6F3C'}),
   post: sprite(POST, {o:'#4A2C17',w:'#B98A55',W:'#8A5A32'}),
-  stall: sprite(STALL, {r:'#C0392B',w:'#F4F1EA',o:'#4A2C17',k:'#6B4A2A',W:'#8A5A32',p:'#F7A08F',q:'#D9665B',a:'#E8343C',A:'#A8161E'}),
   bird: sprite(BIRD, {o:'#2B3F66',b:'#5AA0E6',w:'#9CCBF5',e:'#111111',y:'#F2A33A'})
 };
 
@@ -191,14 +189,14 @@ const LOOKS = {
   redFlowers:    (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#E8343C'); flower(g,X+11,Y+7,'#E8343C'); flower(g,X+6,Y+11,'#E8343C'); },
   yellowFlowers: (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F7D23E'); flower(g,X+11,Y+7,'#F7D23E'); flower(g,X+6,Y+11,'#F7D23E'); },
   whiteFlowers:  (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#FFFFFF'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#FFFFFF'); },
-  // trees, the fruit trees, your stone, the rocks and the practice post: just the ground here; they're big objects (OBJECT_ART, below)
+  // trees, the fruit trees, your stone, the rocks, the stall and the practice post: just the ground here; they're big objects (OBJECT_ART, below)
   tree:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
   peachTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
   appleTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
   rocks:     (g,X,Y,x,y) => path(g,X,Y,x,y),
   stone:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
-  stall:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.stall,X,Y); },
+  stall:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   post:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
@@ -223,7 +221,7 @@ const LOOKS = {
   }
 };
 
-/* ---- big objects: trees, the fruit trees, your stone, the rocks and the practice post ----
+/* ---- big objects: trees, the fruit trees, your stone, the rocks, the stall and the practice post ----
    They're bigger than the squares they stand on: a tree's leaves reach up into the square above, and a block of
    forest two squares by two is one big tree. They're drawn after the ground, from the top of the map down, so
    nearer ones overlap. The part of each that reaches up above its squares is also drawn on the over-layer
@@ -272,17 +270,29 @@ const OBJECT_ART = {
   appleTree: (g, o) => fruitTree(g, o, APPLES),
   stone: (g, o) => boulder(g, o.x*T + 8, o.y*T + 15, 11, 9, true),
   rocks: (g, o) => { for (let i = 0; i < o.w; i++) boulder(g, o.x*T + 8 + i*14, o.y*T + 15, 10 - i % 2, 8 - i % 2, false); },
-  post: (g, o) => tallPost(g, o.x*T, o.y*T)
+  post: (g, o) => tallPost(g, o.x*T, o.y*T),
+  stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4)
 };
+function stall(g, L, Y, w){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit
+  const top = Y + 16 - Math.round(w * .66), cy = Y + 16 - Math.round(w * .26);
+  groundShadow(g, L + w/2, Y+15, w/2, 2);
+  R(g, L+1, top+5, 2, Y+10-top, WOOD[1]); R(g, L+w-3, top+5, 2, Y+10-top, WOOD[1]);   // posts
+  for (let i = 0; i < w; i += 4){ const c = (i/4) % 2 ? '#F4F1EA' : '#C0392B'; R(g, L+i, top, Math.min(4, w-i), 5, c); R(g, L+i+1, top+5, 2, 1, c); }   // the awning's stripes and scalloped edge
+  R(g, L, top, w, 1, '#8E241D');
+  R(g, L+1, cy, w-2, Y+14-cy, WOOD[0]); R(g, L+2, cy+1, w-4, Y+12-cy, WOOD[3]); R(g, L+2, cy+1, w-4, 1, WOOD[4]);   // the counter
+  const a = Math.round(w*.25), b2 = Math.round(w*.6);
+  fruit(g, [[a,-3],[a+3,-3]], L, cy, PEACHES); fruit(g, [[b2,-3],[b2+3,-3]], L, cy, APPLES);
+}
 function fruitTree(g, o, colours){   // a square and a half wide, reaching up, full of fruit
   const X = o.x*T, Y = o.y*T;
   groundShadow(g, X+8, Y+14, 10, 2); trunk(g, X+6, Y+6, 4, 9);
   leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
-const ROW_OBJECTS = ['rocks'];   // side by side, these make one object as wide as the row
+const ROW_OBJECTS = ['rocks', 'stall'];   // side by side, these make one object as wide as the row
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
-// stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile; anything
+// stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
+// stall letters one stall; anything
 // else stands on its own square. They come from the top of the map down, the order they're drawn in.
 function mapObjects(){
   const out = [], taken = new Set(), key = (x, y) => x + ',' + y;
