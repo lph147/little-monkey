@@ -203,3 +203,64 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! | The new, shorter story at the waterfall (in the game) |  |
 | 我要花！ | wǒ yào huā! | I want flowers! | The big monkey (大猴子 dà hóuzi: please check this name too, in Names) asking for flowers |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | The big monkey, when you bring the flowers |  |
+
+## Chapter 1, not built yet
+
+The next part of the story: the troop's dare at the waterfall, the Water Curtain Cave behind it, and becoming king.
+Please check these before they go into the game.
+
+### Lines
+
+| Chinese | Pinyin | English | Where | Notes |
+| --- | --- | --- | --- | --- |
+| 瀑布后面有什么？ | Pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | The old monkey, as the troop gathers at the waterfall |  |
+| 谁跳进去，谁就是王！ | Shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | The big monkey, daring the troop |  |
+| 我怕！ | Wǒ pà! | I’m scared! | The little monkey |  |
+| 里面有什么？ | Lǐmiàn yǒu shénme? | What’s inside? | The old monkey, when you come back out of the cave |  |
+| 里面有床。 | Lǐmiàn yǒu chuáng. | There are beds inside. | Your answer (you choose 床 to fill the gap) |  |
+| 太好了！我们去看看！ | Tài hǎo le! Wǒmen qù kànkan! | Wonderful! Let’s go and see! | The old monkey |  |
+| 这是我们的家！ | Zhè shì wǒmen de jiā! | This is our home! | The old monkey, in the cave |  |
+| 你是我们的王！ | Nǐ shì wǒmen de wáng! | You are our king! | The troop |  |
+| 一只猴子，两只猴子，三只猴子 | yì zhī hóuzi, liǎng zhī hóuzi, sān zhī hóuzi | one monkey, two monkeys, three monkeys | The old monkey, counting the troop into the cave |  |
+
+### New words to collect
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 跳 | tiào | to jump |  |
+| 桥 | qiáo | bridge |  |
+| 床 | chuáng | bed |  |
+| 碗 | wǎn | bowl |  |
+| 桌子 | zhuōzi | table |  |
+| 家 | jiā | home |  |
+| 王 | wáng | king |  |
+| 一 | yī | one |  |
+| 二 | èr | two |  |
+| 三 | sān | three |  |
+
+### Words only heard in these lines
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 后面 | hòumiàn | behind |  |
+| 谁 | shéi | who |  |
+| 进去 | jìnqù | to go in |  |
+| 就 | jiù | then |  |
+| 怕 | pà | to be scared |  |
+| 里面 | lǐmiàn | inside |  |
+| 太 | tài | too, very |  |
+| 好 | hǎo | good |  |
+| 的 | de | (shows belonging) |  |
+| 只 | zhī | (counts animals) |  |
+| 两 | liǎng | two (of something) |  |
+
+### Names
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
+| 美猴王 | Měi Hóuwáng | Handsome Monkey King |  |
+
+### A question
+
+- When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line?

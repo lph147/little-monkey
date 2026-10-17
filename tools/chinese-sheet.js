@@ -18,6 +18,27 @@ const DRAFTS = [
   {zh:'你 有 花 吗 ？', en:'Do you have flowers?', where:'The big monkey, when you bring the flowers'},
 ];
 
+// Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the
+// word bank yet, so each line gives its own pinyin. When it's built, these move into the area file.
+const CHAPTER1 = {
+  lines: [
+    ['瀑布 后面 有 什么 ？', 'Pùbù hòumiàn yǒu shénme?', 'What’s behind the waterfall?', 'The old monkey, as the troop gathers at the waterfall'],
+    ['谁 跳 进去 ， 谁 就 是 王 ！', 'Shéi tiào jìnqù, shéi jiù shì wáng!', 'Whoever jumps in will be king!', 'The big monkey, daring the troop'],
+    ['我 怕 ！', 'Wǒ pà!', 'I’m scared!', 'The little monkey'],
+    ['里面 有 什么 ？', 'Lǐmiàn yǒu shénme?', 'What’s inside?', 'The old monkey, when you come back out of the cave'],
+    ['里面 有 床 。', 'Lǐmiàn yǒu chuáng.', 'There are beds inside.', 'Your answer (you choose 床 to fill the gap)'],
+    ['太 好 了 ！ 我们 去 看看 ！', 'Tài hǎo le! Wǒmen qù kànkan!', 'Wonderful! Let’s go and see!', 'The old monkey'],
+    ['这 是 我们 的 家 ！', 'Zhè shì wǒmen de jiā!', 'This is our home!', 'The old monkey, in the cave'],
+    ['你 是 我们 的 王 ！', 'Nǐ shì wǒmen de wáng!', 'You are our king!', 'The troop'],
+    ['一 只 猴子 ， 两 只 猴子 ， 三 只 猴子', 'yì zhī hóuzi, liǎng zhī hóuzi, sān zhī hóuzi', 'one monkey, two monkeys, three monkeys', 'The old monkey, counting the troop into the cave']
+  ],
+  words: [['跳', 'tiào', 'to jump'], ['桥', 'qiáo', 'bridge'], ['床', 'chuáng', 'bed'], ['碗', 'wǎn', 'bowl'], ['桌子', 'zhuōzi', 'table'],
+    ['家', 'jiā', 'home'], ['王', 'wáng', 'king'], ['一', 'yī', 'one'], ['二', 'èr', 'two'], ['三', 'sān', 'three']],
+  heard: [['后面', 'hòumiàn', 'behind'], ['谁', 'shéi', 'who'], ['进去', 'jìnqù', 'to go in'], ['就', 'jiù', 'then'], ['怕', 'pà', 'to be scared'],
+    ['里面', 'lǐmiàn', 'inside'], ['太', 'tài', 'too, very'], ['好', 'hǎo', 'good'], ['的', 'de', '(shows belonging)'], ['只', 'zhī', '(counts animals)'], ['两', 'liǎng', 'two (of something)']],
+  names: [['水帘洞', 'Shuǐlián Dòng', 'Water Curtain Cave'], ['美猴王', 'Měi Hóuwáng', 'Handsome Monkey King']],
+  questions: ['When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line?']
+};
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?'};
 function sheet(){
   const game = loadGame();
@@ -110,10 +131,35 @@ ${table(['Chinese', 'Pinyin', 'English', 'Notes'], MENU.map(t => [t.zh, t.py, t.
 Sentences that haven't been checked yet: new ones waiting to go into the game, and new ones already in it.
 
 ${DRAFTS.length ? table(['Chinese', 'Pinyin', 'English', 'Where', 'Notes'], DRAFTS.map(d => [chars(d.zh), py(d.zh), d.en, d.where, notes])) : 'None at the moment.'}
+
+## Chapter 1, not built yet
+
+The next part of the story: the troop's dare at the waterfall, the Water Curtain Cave behind it, and becoming king.
+Please check these before they go into the game.
+
+### Lines
+
+${table(['Chinese', 'Pinyin', 'English', 'Where', 'Notes'], CHAPTER1.lines.map(([zh, p, en, where]) => [chars(zh), p, en, where, notes]))}
+
+### New words to collect
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], CHAPTER1.words.map(([zh, p, en]) => [zh, p, en, notes]))}
+
+### Words only heard in these lines
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], CHAPTER1.heard.map(([zh, p, en]) => [zh, p, en, notes]))}
+
+### Names
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], CHAPTER1.names.map(([zh, p, en]) => [zh, p, en, notes]))}
+
+### A question
+
+${CHAPTER1.questions.map(q => '- ' + q).join('\n')}
 `;
 }
 
-module.exports = {sheet, DRAFTS, FILE: path.join(ROOT, 'CHINESE.md')};
+module.exports = {sheet, DRAFTS, CHAPTER1, FILE: path.join(ROOT, 'CHINESE.md')};
 if (require.main === module){
   fs.writeFileSync(module.exports.FILE, sheet());
   console.log('Wrote CHINESE.md');

@@ -296,6 +296,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
   - [x] The story's questions show their English all the time
 - [x] Plan Area 1 as the prologue and chapter 1, true to the story: the cave behind the waterfall is home, and you leave on a raft (decided 17 October 2026)
 - [x] Places: the engine moves between small connected maps within an area (a fade, and the place's name for a moment; ways can stay shut until the story opens them; task arrows point the way); today's map is the meadow, unchanged, with a new save version
+- [x] Chapter 1's script, agreed on 17 October 2026 (you come back out and tell the troop before they follow; numbers 1–3 as they move in, 4–10 in later requests; 门 waits). Its Chinese is on the native speaker's sheet, CHINESE.md, under "Chapter 1, not built yet"
 - [ ] Chapter 1, the Water Curtain Cave: the troop's dare at the waterfall, the jump (跳), the cave and becoming king; the cave door on the far left goes, and 洞 is caught in the cave
 - [ ] Chapter 1, life as king: the troop moving in (numbers 1–10), new places, requests, shop stock and animals
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
