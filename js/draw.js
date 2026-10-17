@@ -30,6 +30,36 @@ function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
   const blink = (now + seed*977) % 3600 < 130;
   b.drawImage(monkeySprite(kind, dir, blink, step), X, Y - bob);
 }
+// A big object's picture (js/art.js), where it stands, with a little shake that settles while it's rustling.
+const RUSTLE = 450;   // how long a rustle lasts (ms)
+function drawPiece(p, pic, cx, cy, now){
+  const X = p.x0 - cx, Y = p.y0 - cy;
+  if (X > VW*T || Y > VH*T || X + pic.width < 0 || Y + pic.height < 0) return;
+  const t = now - p.rustle, dx = t < RUSTLE ? Math.round(Math.sin(t / 40) * 1.5 * (1 - t / RUSTLE)) : 0;
+  b.drawImage(pic, X + dx, Y);
+}
+// Walking through a tree's leaves (behind it, or past a fruit tree's branches) makes it rustle, and a few leaves
+// fall. Walking past in front of it doesn't, and nor does standing still.
+const fallingLeaves = [];
+function touchLeaves(now){
+  if (!pl.mv) return;
+  const x0 = pl.px + 3, x1 = pl.px + 13, y0 = pl.py + 2, y1 = pl.py + 16;   // your monkey's body
+  for (const p of OBJECT_PIECES){
+    const L = p.leaves;
+    if (!L || now - p.rustle < RUSTLE + 200 || x1 <= L.x || x0 >= L.x + L.w || y1 <= L.y || y0 >= L.y + L.h) continue;
+    p.rustle = now;
+    for (let i = 0; i < 4; i++) fallingLeaves.push({x: L.x + 2 + Math.random()*(L.w - 4), y: L.y + Math.random()*6, t0: now + i*90, s: Math.random() < .5 ? -1 : 1});
+  }
+}
+function drawFallingLeaves(cx, cy, now){
+  for (let i = fallingLeaves.length - 1; i >= 0; i--){
+    const f = fallingLeaves[i], t = (now - f.t0) / 1000;
+    if (t > 1){ fallingLeaves.splice(i, 1); continue; }
+    if (t < 0) continue;
+    const X = Math.round(f.x - cx + Math.sin(t*7) * 2 * f.s), Y = Math.round(f.y - cy + t*22);   // drifting from side to side as it falls
+    R(b, X, Y, 2, 2, '#B4DC6A'); R(b, X + (f.s > 0 ? 2 : -1), Y + 1, 1, 1, LEAF[0]);
+  }
+}
 function heart(X, Y){ [[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[2,3]].forEach(([a,c]) => R(b, X+a, Y+c, 1, 1, '#E0446A')); }
 function drawFoe(cx, cy, now){
   if (!foe) return;
@@ -82,6 +112,8 @@ function drawWorld(now){
   const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to
   if (sh < VH*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');
   b.drawImage(mapCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
+  touchLeaves(now);
+  for (const p of OBJECT_PIECES) drawPiece(p, p.base, cx, cy, now);   // big objects, under the characters
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
   // fish jumping out of the water (the area's fish)
@@ -136,8 +168,9 @@ function drawWorld(now){
     const bub = (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // a ! or ? from the area's bubbles
     if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
-  // the over-layer: leaves and tops of big objects, over anyone walking behind them
-  b.drawImage(overCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
+  // the tops of big objects (a tree's leaves, the stall's awning), over anyone walking behind them
+  for (const p of OBJECT_PIECES) drawPiece(p, p.top, cx, cy, now);
+  drawFallingLeaves(cx, cy, now);
   for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;

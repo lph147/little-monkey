@@ -36,6 +36,19 @@ test('the shop owner’s stall is three squares wide, and he stands beside it', 
   assert.equal(game.run('npcAt(11, 16).id'), 'boss', 'the shop owner stands just to its right, where he always has');
 });
 
+test('walking through a tree’s leaves makes it rustle; standing still or walking past in front doesn’t', () => {
+  const game = loadGame();
+  const tree = 'OBJECT_PIECES.find(p => p.x === 12 && p.y === 8)';   // the tree by the pond
+  game.run('pl.px = 12.5*T; pl.py = 7*T; pl.mv = {fx: 13, fy: 7, tx: 12, ty: 7, t0: 900}; touchLeaves(1000)');   // walking left along the row above it
+  assert.equal(game.run(`${tree}.rustle`), 1000, 'behind it, it rustles');
+  assert.ok(game.run('fallingLeaves.length') >= 3, 'and leaves fall');
+  game.run(`${tree}.rustle = -1e9; pl.mv = null; touchLeaves(3000)`);
+  assert.equal(game.run(`${tree}.rustle`), -1e9, 'standing still, it doesn’t');
+  game.run(`pl.px = 12.5*T; pl.py = 9*T; pl.mv = {fx: 13, fy: 9, tx: 12, ty: 9, t0: 3900}; touchLeaves(4000)`);
+  assert.equal(game.run(`${tree}.rustle`), -1e9, 'walking past in front of it, it doesn’t');
+  assert.equal(game.run('OBJECT_PIECES.find(p => p.look === "stone").leaves'), null, 'stones don’t rustle');
+});
+
 test('bigger pictures don’t change where you can walk: the square above a tree is still open', () => {
   const game = loadGame();
   assert.equal(game.run('walkable(12, 7)'), true, 'above the tree by the pond');

@@ -223,9 +223,10 @@ const LOOKS = {
 
 /* ---- big objects: trees, the fruit trees, your stone, the rocks, the stall and the practice post ----
    They're bigger than the squares they stand on: a tree's leaves reach up into the square above, and a block of
-   forest two squares by two is one big tree. They're drawn after the ground, from the top of the map down, so
-   nearer ones overlap. The part of each that reaches up above its squares is also drawn on the over-layer
-   (overCanvas), which js/draw.js puts over the characters: walk behind a tree and its leaves cover you. */
+   forest two squares by two is one big tree. Each is drawn into two pictures of its own (OBJECT_PIECES, below),
+   which js/draw.js puts on the screen every frame, from the top of the map down so nearer ones overlap: its base
+   (its squares and below) under the characters, and its top (what reaches up above its squares) over them. Walk
+   behind a tree and its leaves cover you; walk through them and it rustles. */
 const LEAF = [TREE_PAL.o, TREE_PAL.d, TREE_PAL.l, TREE_PAL.h, '#9BE08A'];   // darkest to lightest
 const GREY = [ROCK_PAL.o, ROCK_PAL.d, ROCK_PAL.m, ROCK_PAL.l, '#E6E2D6'];
 const WOOD = ['#4A2C17', '#6B4A2A', '#8A5A32', '#B98A55', '#D2A46A'];
@@ -308,13 +309,23 @@ function mapObjects(){
   }
   return out.sort((p, q) => (p.y + p.h) - (q.y + q.h));
 }
-const overCanvas = document.createElement('canvas'), og = overCanvas.getContext('2d');   // the over-layer: what reaches up above big objects
-function buildMap(){   // the place you're in: the ground, then the big objects
+// The big objects in the place you're in, each {look, x, y, w, h} with: x0, y0 (where its pictures go on the map, in
+// pixels), base and top (its two pictures), leaves (where its leaves reach, if it rustles) and rustle (when it last did).
+let OBJECT_PIECES = [];
+const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its pictures above and beside an object's squares, for what reaches out of them
+const LEAFY = {tree: [0, 8], peachTree: [6, 13], appleTree: [6, 13]};   // what rustles: how far its leaves reach [beside, above] its squares
+function buildMap(){   // the place you're in: the ground, then the big objects' pictures
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
-  overCanvas.width = COLS*T; overCanvas.height = ROWS*T;   // (this also empties it)
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
-  for (const o of mapObjects()){
-    OBJECT_ART[o.look](mg, o);
-    og.save(); og.beginPath(); og.rect(0, 0, overCanvas.width, o.y*T); og.clip(); OBJECT_ART[o.look](og, o); og.restore();   // just the part above its squares
-  }
+  OBJECT_PIECES = mapObjects().map(o => {
+    const x0 = o.x*T - PIECE_SIDE, y0 = o.y*T - PIECE_UP, w = o.w*T + 2*PIECE_SIDE, h = PIECE_UP + o.h*T + 4;
+    const part = (from, to) => {   // the object drawn, just between these rows of its picture
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const g = c.getContext('2d'); g.save(); g.beginPath(); g.rect(0, from, w, to - from); g.clip(); g.translate(-x0, -y0); OBJECT_ART[o.look](g, o); g.restore();
+      return c;
+    };
+    const leafy = LEAFY[o.look], [side, up] = !leafy ? [0, 0] : o.w === 2 ? [0, 5] : leafy;
+    return {...o, x0, y0, base: part(PIECE_UP, h), top: part(0, PIECE_UP), rustle: -1e9,
+      leaves: leafy ? {x: o.x*T - side, y: o.y*T - up, w: o.w*T + 2*side, h: up + o.h*T} : null};
+  });
 }
