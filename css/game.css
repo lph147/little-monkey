@@ -346,3 +346,7 @@ rt.hid{visibility:hidden}
 .placename .ppy{color:var(--muted);font-size:.9rem}
 .placename .pen{display:block;font-family:var(--pixel);font-size:.85rem;color:var(--jade)}
 @media (prefers-reduced-motion: reduce){.placename{animation:none}}
+
+/* the card when a new chapter of the story begins */
+.chaptercard{text-align:center;padding:14px 0 6px}
+.chaptercard h2{font-family:var(--pixel);font-size:1.7rem;margin:6px 0 0;line-height:1.2}

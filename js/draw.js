@@ -87,10 +87,7 @@ function drawWorld(now){
   // fish jumping out of the water (the area's fish)
   const fp = (now % 5200) / 900;
   if (fp < 1) for (const [fx0, fy0] of AREA.fish.filter(f => placeOf(f) === PLACE)){ const fx = fx0*T - cx + 2 + fp*10, fy = fy0*T - cy + 6 - Math.sin(fp*Math.PI)*8; R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx)-1, Math.round(fy), 1, 2, '#D96A1E'); }
-  // the way out opens and sparkles once it's ready; other sparkles are on things whose word is not yet known
-  const ready = areaDone();
-  if (ready !== mapReady) buildMap();   // redrawn the moment that changes, however it happens (such as meeting the last animal)
-  if (ready && !here().done) for (const [x, y] of EXIT_TILES) sparkle(x*T - cx + 8, y*T - cy + 6, now, 1);
+  // sparkles on things whose word is not yet known
   for (const s of SPARKLES){
     const [x, y] = s.at;
     if (lvl(s.word) > 0) continue;

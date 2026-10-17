@@ -18,13 +18,21 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {message:'The old monkey is waiting by your stone. Go and say hello!'}
   ],
 
+  // The story's chapters here, in order: each has its name and title, shown on a card when it begins (the
+  // chapter step), and its own items on the checklist below.
+  chapters: [
+    {name:'Prologue', title:'The first day'},
+    {name:'Chapter 1', title:'The Water Curtain Cave'}
+  ],
+
   // What this area remembers in your save, and the values a new game starts with.
+  //   chapter the chapter you're in, counting from 0 (the prologue)
   //   elder   0 not spoken to yet, 1 said hello, 2 told you about the animals
   //   gate    true once the rocks have rolled away
   //   story   true once you've read the story at the waterfall
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
-  // for each request, and done: true once you've passed the word test at the cave door.
-  progress: {elder:0, gate:false, story:false},
+  // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
+  progress: {chapter:0, elder:0, gate:false, story:false},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
@@ -61,7 +69,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
     {id:'shop2', if:{knows:'头带', bought:{'头带':false}}, text:'Buy the {头带} from the {老板} ({shells}/10 🐚)', arrow:'boss'},
-    {id:'door', if:{ready:true, done:false}, text:'Pass the word test at the {洞} door', arrow:[3, 3]}
   ],
 
   // What the task box says when there are no tasks: the first whose if matches.
@@ -72,8 +79,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
   ],
 
-  // The area's checklist, shown in Menu, Tasks and progress, and at the cave door. Once everything
-  // apart from the exit test is done, the area is ready and the cave door opens.
+  // The area's checklist, shown in Menu, Tasks: the chapter you're in (chapter, 0 if not given). Once
+  // everything in a chapter is done, it's ready (ready:true in an if), and the next chapter can begin.
+  // exitTest marks the area's word test, which comes last.
   checklist: [
     {text:'Say hello to the old monkey', done:{elder:{atLeast:1}}},
     {text:'Learn about animals from the old monkey', done:{elder:{atLeast:2}}},
@@ -82,8 +90,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
     {text:'Bring the big monkey 3 flowers', done:{flowers:'done'}},
     {text:'Read the story at the waterfall', done:{story:true}},
-    {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}},
-    {text:'Pass the word test at the cave door', done:{done:true}, exitTest:true}
+    {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -146,6 +153,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Things that happen by themselves when the time comes (checked whenever a request is done).
   // A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
+    {if:{chapter:0, ready:true}, do:[{chapter:1}]},   // the prologue is done: chapter 1 begins
     {if:{hungry:'done', thirsty:'done', gate:false}, do:[
       {set:{gate:true}},
       {rumble:true},   // the ground shakes and the map is redrawn
@@ -168,9 +176,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "MMMMMMMMMMMMMMMMMMXXMMMM",
         "MMMMMMMggSggMMggggXXYYYY",
         "MMMMMMMgg.gNMMgggFWWYYYY",
-        "MMMCMMMgg.ggMMggggWWYYYY",
-        "MMg.gMMMg.gMMMMRRMWWYYYY",
-        "YTg.ggggg.ggggg.ggWWYYYY",
+        "MMMMMMMgg.ggMMggggWWYYYY",
+        "MMgggMMMg.gMMMMRRMWWYYYY",
+        "YTggggggg.ggggg.ggWWYYYY",
         "YPg.............ggWWYYYY",
         "YQggGGGGgggFggg.ggWWgggY",
         "YPggGGGGggggTgg.ggWWgGgY",
@@ -205,7 +213,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   gather         something you can pick up here for a request (for), with a message afterwards. With
   //                  count, you pick one at each patch until you have that many (full is the message then,
   //                  and again the message at a patch you've picked already)
-  //   action         something special that happens: 'caveDoor', 'story', 'sign' or 'training'
+  //   action         something special that happens: 'story', 'sign' or 'training'
   //   label          what the A button says when you face it (Look if not given)
   //   whenGateOpens  the letter it becomes once the rocks have rolled away
   legend: {
@@ -225,7 +233,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'H': {look:'stall'},   // the shop owner's stall
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', whenGateOpens:'.'},
     'M': {look:'cliff', word:'山'},
-    'C': {look:'caveDoor', word:'洞', note:'A cave in the cliff, closed by a heavy stone door.', landmark:true, action:'caveDoor'},
     'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story'}
@@ -264,7 +271,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   sparkles: [
     {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 7]},
     {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[1, 7]},
-    {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]}, {word:'洞', at:[3, 3]},
+    {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
     {word:'瀑布', at:[18, 1], if:{gate:true}}   // the waterfall is out of reach until the rocks roll away
   ],
 
@@ -289,7 +296,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '狐狸': 'It jumped out of the tall grass.',
     '松鼠': 'It lives in the big tree to the south.',
     '山羊': 'It lives on the cliffs to the south.',
-    '洞': 'The cave door at the top of the short path on the far left.',
+    '洞': 'The Water Curtain Cave, behind the waterfall.',
     '吃': 'The hungry monkey wanted something to eat.',
     '喝': 'The thirsty monkey wanted something to drink.',
     '朋友': 'The little monkey became your friend.',
@@ -466,15 +473,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {zh:'河 里 有 鱼 。', en:'There are … in the river.', options:['鱼', '树', '山羊', '花'], answer:'鱼'}
   ],
 
-  // The card after the story questions. reward: shells, the first time only; rumble: the ground
-  // shakes as you close it (first time only). Text may use <i>…</i> for a book title.
+  // The card after the story questions. reward: shells, the first time only; rumble: true to shake the
+  // ground as you close it (first time only). Text may use <i>…</i> for a book title.
   storyEnd: {
     title: 'Your first story',
     reward: 5,
-    rumble: true,
+    rumble: false,
     text: [
       'You read a whole story in Chinese: the story of your first day on Flower Fruit Mountain.',
-      'You hear a heavy door roll open somewhere in the cliffs. That’s the way onward.'
+      'The troop stares at the roaring waterfall. What could be behind it?'
     ]
   },
 

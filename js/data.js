@@ -34,19 +34,18 @@ let PLACE = null, MAP = [], COLS = 0, ROWS = 0;   // the place you're in, and it
 const LEGEND = AREA.legend;           // what each map letter is
 const REQUESTS = Object.entries(AREA.requests).map(([id, r]) => ({id, ...r}));   // characters asking you to bring something
 const requestFrom = who => REQUESTS.find(r => r.from === who);
-const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word}));
+const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word,
+  home:{place:placeOf(c), x:c.x, y:c.y, facing:c.facing}, moves:c.moves}));   // home: where the content puts them; moves: where they go as the story goes on (placeCharacters)
 let NPCS = [], SPARKLES = [];         // the characters and sparkles in the place you're in
-const EXIT_TILES = [];                // where the way out is (map tiles whose action is the cave door)
 const TRAINING_TILES = [];            // where the practice posts are (the training action)
-// Makes id the place you're in: its map, characters, sparkles, cave door and practice posts.
+// Makes id the place you're in: its map, characters, sparkles and practice posts.
 // (enterPlace in js/world.js does this and redraws the map.)
 function setPlace(id){
   PLACE = id; MAP = PLACES[id].map; COLS = MAP[0].length; ROWS = MAP.length;
   NPCS = ALL_NPCS.filter(n => n.place === id);
   SPARKLES = AREA.sparkles.filter(s => placeOf(s.at) === id);
-  EXIT_TILES.length = 0; TRAINING_TILES.length = 0;
+  TRAINING_TILES.length = 0;
   MAP.forEach((row, y) => [...row].forEach((ch, x) => {
-    if (LEGEND[ch] && LEGEND[ch].action === 'caveDoor') EXIT_TILES.push([x, y]);
     if (LEGEND[ch] && LEGEND[ch].action === 'training') TRAINING_TILES.push([x, y]);
   }));
 }

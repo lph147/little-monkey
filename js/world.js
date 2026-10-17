@@ -19,8 +19,12 @@ const OPP = {up:'down', down:'up', left:'right', right:'left'};
 
 const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
 const metCount = () => Math.min(S.met.length, ANIMALS.length);
-const areaChecklist = () => AREA.checklist.map(c => [fill(c.text), matches(c.done), !!c.exitTest]);   // [text, done, is it the exit test]
-const areaDone = () => AREA.checklist.filter(c => !c.exitTest).every(c => matches(c.done));       // ready for the exit test
+// The story's chapters in this area (AREA.chapters), and the one you're in (counting from 0). Each item on the
+// area's checklist belongs to a chapter (chapter, 0 if not given); the checklist shows the chapter you're in.
+const chapterNow = () => here().chapter || 0;
+const chapterItems = () => AREA.checklist.filter(c => (c.chapter || 0) === chapterNow());
+const areaChecklist = () => chapterItems().map(c => [fill(c.text), matches(c.done), !!c.exitTest]);   // [text, done, is it the exit test]
+const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
     const c = typeof t.arrow === 'string' && ALL_NPCS.find(n => n.id === t.arrow);   // an arrow to a character
@@ -51,6 +55,8 @@ function promptFor(x, y){
   if (n) return n.label || 'Talk';
   if (animalAt(x, y)) return 'Meet';
   if (BIRD_WORD && birdAt(x, y)) return 'Look';
+  const way = exitAt(x, y);
+  if (way && way.by === 'A' && isOpen(way)) return way.label || 'Go';   // a way you go through by pressing A, such as jumping through the waterfall
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return t.gather.label;
   if (t.landmark) return t.label || 'Look';
@@ -63,7 +69,8 @@ const COUNTS = {   // what a counter in the content can count
   animals: () => ANIMALS.length,
   animalsLeft: () => ANIMALS.length - metCount(),
   shells: () => S.shells,
-  picked: c => (here().picked[c.request] || []).length
+  picked: c => (here().picked[c.request] || []).length,
+  known: c => c.words.filter(w => lvl(w) >= 1).length   // how many of these words you've caught
 };
 function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count](c) - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
 const compare = (have, want) => (want !== null && typeof want === 'object'
@@ -75,23 +82,39 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'knows') return lvl(v) >= 1;
     if (k === 'holding') return Object.entries(v).every(([id, want]) => { const h = here().holding[id]; return want === true ? !!h : want === false ? !h : h === want; });
     if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
-    if (k === 'ready') return areaDone() === v;
+    if (k === 'ready') return chapterDone() === v;
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
 }
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok'], newWord:['note'], card:['note'], give:['note']};   // extra settings a step can have
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note']};   // extra settings a step can have
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
     const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
     if (s.teach) opts.teach = s.teach;
     if (hint) opts.hint = hint;
     if (s.ok) opts.ok = s.ok;
-    await showDialog(speaker(who), L[s.say], opts);
+    await showDialog(speaker(s.by || who), L[s.say], opts);   // by: someone else says it, during this conversation
+  },
+  // A sentence to finish by filling the gap, such as your answer to a question: sentence, its English (en),
+  // and the missing word (word). Its words you know count as used.
+  async gap(s, who){
+    const t = toks(s.gap.sentence);
+    await gapQ({who:speaker(who), t, en:s.gap.en, gap:s.gap.word});
+    t.filter(w => lvl(w) >= 1).forEach(useWord);
+  },
+  // A new chapter of the story begins: its title card, and its checklist from then on.
+  async chapter(s){
+    here().chapter = s.chapter; save(); SFX.fanfare();
+    const c = AREA.chapters[s.chapter];
+    await new Promise(res => {
+      openCard(`<div class="chaptercard"><p class="label">${esc(c.name)}</p><h2>${esc(c.title)}</h2></div><div class="actions"><button class="btn primary" data-a="ok">Begin</button></div>`);
+      on('[data-a=ok]', () => { closeCard(); res(); });
+    });
   },
   async newWord(s, who){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },   // quiet when a character teaches it
   async card(s, who){ await showNotice(s.card, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },
-  set(s){ Object.assign(here(), s.set); save(); },
+  set(s){ Object.assign(here(), s.set); save(); placeCharacters(); },
   async request(s, who){ await request(REQUESTS.find(r => r.id === s.request), speaker(who)); },
   async shop(s, who){ await shop(speaker(who)); },
   async wordGame(s, who){
@@ -120,7 +143,18 @@ async function iSay(said, best = said){
   await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
 }
 async function runSteps(steps, who){ for (const s of steps) await STEPS[Object.keys(s).find(k => STEPS[k])](s, who); }
-async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); }
+// The area's events: each happens by itself when its if matches (checked after anything you do).
+async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); }
+// Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
+// where the content first puts them.
+function placeCharacters(){
+  for (const n of ALL_NPCS){
+    const m = (n.moves || []).find(m => matches(m.if)) || n.home;
+    const place = placeOf(m);
+    if (n.place !== place || n.x !== m.x || n.y !== m.y){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; }
+  }
+  NPCS = ALL_NPCS.filter(n => n.place === PLACE);
+}
 async function talk(n){
   n.dir = OPP[pl.dir];
   const part = (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
@@ -214,11 +248,6 @@ async function gather(t, x, y){   // pick up something for a request, such as fr
   here().holding[g.for] = g.item; save(); SFX.right(); toast(fill(g.message));
 }
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
-  async caveDoor(t){
-    if (lvl(t.word) === 0) await showNotice(t.word, {note:t.note});
-    if (!areaDone()) await infoBox('🚪', `<p>${AREA.exit.notReady}</p>` + checklistHTML(true));
-    else if (await confirmBox('🚪', `${AREA.exit.ready} You need ${Math.round(PASS*100)}% right first time.`, 'Start the test', 'Not yet')){ if (await wordTest()) await nextArea(); }
-  },
   async story(t){ await lookAt(t); await storyScroll(); },
   training(){ return trainingGround(); },
   async sign(){
@@ -229,6 +258,8 @@ const ACTIONS = {   // special things that happen when you press A at some tiles
 async function interact(x, y){
   const n = npcAt(x, y);
   if (n) return talk(n);
+  const way = exitAt(x, y);
+  if (way && way.by === 'A' && isOpen(way)) return goThrough(way);
   const a = animalAt(x, y);
   if (a) return wildAppears(a, {x, y, d:pl.dir});
   const bd = birdAt(x, y);
@@ -250,7 +281,7 @@ findGrass();
 // hiding, birds, a meeting) is left behind.
 function enterPlace(id){
   if (id === PLACE) return;
-  setPlace(id); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; buildMap();
+  setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; buildMap();
 }
 // Through a way to another place: a quick fade, and you're there, with its name at the top of the screen.
 async function goThrough(e){
@@ -276,7 +307,7 @@ function hideAnimal(){   // a grass animal hides in tall grass at least 3 steps 
 async function arrive(x, y){
   S.pos = {place:PLACE, x, y, dir:pl.dir}; save();
   const way = exitAt(x, y);
-  if (way && isOpen(way)) return goThrough(way);
+  if (way && !way.by && isOpen(way)) return goThrough(way);   // a way you go through by stepping onto it
   const t = tileAt(x, y);
   stepsSince++;
   if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});

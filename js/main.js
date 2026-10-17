@@ -187,6 +187,7 @@ async function startGame(){
 
 window.addEventListener('resize', fit);
 if (!PLACES[S.pos.place]) S.pos.place = FIRST_PLACE;   // a place that's gone
+placeCharacters();   // where the story has put everyone
 enterPlace(S.pos.place);
 if (!walkable(S.pos.x, S.pos.y)) S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
 $('#shellIcon').src = (money('🐚').match(/src="([^"]+)"/) || [])[1] || '';

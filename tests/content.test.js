@@ -162,10 +162,9 @@ test('sparkles are on collectible words, on the map', () => {
   }
 });
 
-test('the area has a name, a way out, and somewhere for animals to hide', () => {
+test('the area has a name, and somewhere for animals to hide', () => {
   const n = AREA.name;
   assert.ok(n && n.zh && n.py && n.en, 'the area needs a name with zh, py and en');
-  assert.ok(allMaps.some(([, map]) => map.some(row => [...row].some(ch => (AREA.legend[ch] || {}).action === 'caveDoor'))), 'a map needs a tile whose action is caveDoor (the way out)');
   const hiding = Object.values(AREA.legend).filter(t => t.animals);
   assert.ok(hiding.length && hiding.every(t => collectible.includes(t.word)), 'some legend tile needs animals:true and a word, such as 草');
   for (const k of ['notReady', 'ready', 'tryAgain', 'passButton', 'failButton', 'done', 'notBuilt']) assert.ok(AREA.exit[k], `exit needs ${k}`);
@@ -358,9 +357,13 @@ test('tasks have different ids, and their arrows point at a character or a place
   }
 });
 
-test('the checklist ends with the exit test, and every hint has text', () => {
-  assert.equal(AREA.checklist.filter(c => c.exitTest).length, 1, 'the checklist needs exactly one exitTest item');
-  assert.ok(AREA.checklist[AREA.checklist.length - 1].exitTest, 'the exit test should be the last item on the checklist');
+test('chapters have names and titles, the checklist is in chapter order, any exit test is last, and every hint has text', () => {
+  assert.ok(AREA.chapters.length && AREA.chapters.every(c => c.name && c.title), 'each chapter needs a name and a title');
+  const ch = AREA.checklist.map(c => c.chapter || 0);
+  assert.deepEqual(ch, [...ch].sort((a, b) => a - b), 'the checklist goes chapter by chapter');
+  for (const c of ch) assert.ok(AREA.chapters[c], `the checklist has an item for chapter ${c}, which isn't in chapters`);
+  assert.ok(AREA.checklist.filter(c => c.exitTest).length <= 1, 'one exit test at most');
+  assert.ok(!AREA.checklist.some((c, i) => c.exitTest && i < AREA.checklist.length - 1), 'the exit test should be the last item on the checklist');
   for (const h of AREA.hints) assert.ok(h.text && h.if, 'each hint needs if and text');
 });
 

@@ -9,7 +9,7 @@ function tryStep(d, now){
   if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); return; }   // first turn to face the new way
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
   const [dx,dy] = DV[d], nx = pl.x + dx, ny = pl.y + dy, way = exitAt(nx, ny);
-  if (way && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
+  if (way && !way.by && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
   if (walkable(nx, ny)){ pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now}; pl.parity ^= 1; }
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
 }
@@ -20,7 +20,7 @@ function update(now){
     pl.px = (m.fx + (m.tx - m.fx) * p) * T; pl.py = (m.fy + (m.ty - m.fy) * p) * T;
     if (p >= 1){
       pl.x = m.tx; pl.y = m.ty; pl.mv = null; busy = true; lastMoveEnd = now;
-      Promise.resolve(arrive(pl.x, pl.y)).finally(() => { busy = false; updateHUD(); });
+      Promise.resolve(arrive(pl.x, pl.y)).then(runEvents).finally(() => { busy = false; updateHUD(); });
     }
     return;
   }
@@ -44,7 +44,7 @@ async function pressA(){
   if (!canAct()) return;
   const [fx, fy] = facing();
   busy = true;
-  try { await interact(fx, fy); } finally { busy = false; updateHUD(); }
+  try { await interact(fx, fy); await runEvents(); } finally { busy = false; updateHUD(); }
 }
 function pressB(){
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null) b.click(); return; }

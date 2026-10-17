@@ -22,9 +22,9 @@ test('the shop is run by a character, and sells words you can collect, asked for
   }
 });
 
-test('the cave door needs the headband', () => {
-  assert.equal(play({areas: {1: area()}, met: ['rabbit', 'fox', 'squirrel', 'goat']}).run('areaDone()'), false);
-  assert.equal(play({areas: {1: area({bought: ['头带']})}, met: ['rabbit', 'fox', 'squirrel', 'goat']}).run('areaDone()'), true);
+test('the prologue needs the headband before chapter 1 can begin', () => {
+  assert.equal(play({areas: {1: area()}, met: ['rabbit', 'fox', 'squirrel', 'goat']}).run('chapterDone()'), false);
+  assert.equal(play({areas: {1: area({bought: ['头带']})}, met: ['rabbit', 'fox', 'squirrel', 'goat']}).run('chapterDone()'), true);
 });
 
 test('the 老板 shows ! with something to teach, and ? once you can afford the headband', () => {

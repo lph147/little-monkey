@@ -156,11 +156,6 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(17, 1, 'right', 'reading the story at the waterfall');
   assert.equal(area().story, true, 'the story at the waterfall should be read');
 
-  // The cave door: the word test, and the end of the area
-  assert.equal(run('areaDone()'), true, 'everything before the test should be done');
-  await pressAt(3, 4, 'up', 'taking the word test at the cave door');
-  assert.equal(area().done, true, 'the word test should be passed');
-  assert.ok(get('areaChecklist()').every(([, done]) => done), 'the whole checklist should be ticked');
-  const back = get('AREA.exit.returnTo');
-  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [back.x, back.y], 'you are put back by the cave door');
+  // The prologue is done, so chapter 1 begins (its title card was answered along the way)
+  assert.equal(area().chapter, 1, 'chapter 1 should begin once the prologue is done');
 });

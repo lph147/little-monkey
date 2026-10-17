@@ -115,7 +115,7 @@ const SPR = {
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
 const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign','post','stall'];   // looks with grass underneath
-const CLIFFS = ['cliff','caveDoor'];
+const CLIFFS = ['cliff'];
 const WATERY = ['water','waterfall','bridge'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
@@ -180,15 +180,7 @@ const LOOKS = {
   stall:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.stall,X,Y); },
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
-  caveDoor:  (g,X,Y,x,y) => {   // a cave in the cliff; its stone door rolls open once the area is done
-    cliff(g,X,Y,x,y);
-    R(g,X+3,Y+5,10,11,'#2A2622'); R(g,X+4,Y+3,8,2,'#2A2622'); R(g,X+5,Y+2,6,1,'#2A2622');
-    R(g,X+3,Y+5,1,11,'#5E5A50'); R(g,X+12,Y+5,1,11,'#5E5A50');
-    if (!areaDone()){
-      R(g,X+4,Y+4,8,12,'#8A8478'); R(g,X+5,Y+3,6,1,'#8A8478'); R(g,X+4,Y+9,8,1,'#6C675C'); R(g,X+7,Y+4,1,12,'#6C675C');
-      R(g,X+9,Y+11,2,2,'#4A463F');
-    } else { R(g,X+5,Y+14,6,2,'#3A342E'); R(g,X+6,Y+6,4,8,'#3E3830'); }
-  },
+
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
   waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js
   bridge:    (g,X,Y,x,y) => {
@@ -197,9 +189,7 @@ const LOOKS = {
     R(g,X,Y,T,2,'#6B4A2A'); R(g,X,Y+14,T,2,'#6B4A2A');
   }
 };
-let mapReady = null;   // whether the area was ready (the cave door open) when the map was last drawn
 function buildMap(){   // the place you're in
-  mapReady = areaDone();
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
 }

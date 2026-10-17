@@ -11,7 +11,7 @@ const MENU_TILES = [
 function openMenu(focusId){
   const done = areaChecklist().filter(([, d]) => d).length, total = areaChecklist().length;
   openCard(`<p class="label">Menu</p>
-    <div class="stats"><span>Level ${level()} · ${S.xp % XP_PER_LEVEL}/${XP_PER_LEVEL} XP</span><span>Area ${done}/${total}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>🐚 ${S.shells}</span></div>
+    <div class="stats"><span>Level ${level()} · ${S.xp % XP_PER_LEVEL}/${XP_PER_LEVEL} XP</span><span>${esc(AREA.chapters[chapterNow()].name)} ${done}/${total}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>🐚 ${S.shells}</span></div>
     <div class="menu">
       <div class="tiles">${MENU_TILES.map(t => `<button class="mtile" data-m="${t.m}" data-label="${t.en}"><span class="micon" aria-hidden="true">${t.icon}</span><span class="mzh">${t.zh}</span><span class="mpy">${t.py}</span><span class="men">${t.en}</span></button>`).join('')}</div>
       <button class="btn" data-m="settings">⚙ Settings</button>
@@ -58,7 +58,7 @@ function wardrobePage(back, focus){
 // 任务 Tasks: the area's checklist and all your tasks now (from the menu, or "more" in the task box). back: what Back does.
 function tasksPage(back){
   const tasks = getTasks();
-  openCard(`<p class="label">${AREA.name.en}</p>${checklistHTML(false)}
+  openCard(`<p class="label">${AREA.name.en} · ${esc(AREA.chapters[chapterNow()].name)}: ${esc(AREA.chapters[chapterNow()].title)}</p>${checklistHTML(false)}
     <p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
     <div class="stats" style="margin-top:10px"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${ORDER.filter(w => lvl(w) >= 3).length} can read</span><span>${S.friends.length} friends</span></div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);

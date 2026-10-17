@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 18;
+const SAVE_VERSION = 19;
 // XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
 const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
@@ -109,6 +109,9 @@ function upgradeSave(s){
   if (s.version === 17){   // version 17: the area was one map. It's places now, and that map is the first (the meadow).
     if (s.pos) s.pos = {...s.pos, place:FIRST_PLACE};
     s.version = 18;
+  }
+  if (s.version === 18){   // version 18: there were no chapters. You're in the prologue (filled in below); if it's all done,
+    s.version = 19;        // chapter 1 begins the next time you do something.
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];
