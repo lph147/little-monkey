@@ -71,6 +71,8 @@ const SCREENS = [
     click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(400); }},
   {id: 'goat-read', title: 'The goat: read', save: 'knowsWell', why: 'On its cliff. Characters with pinyin, and just pictures to choose from.', run: async () => {
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
+  {id: 'word-game', title: 'The little monkey’s word game', save: 'middle', why: 'A monkey’s name plate: Chinese, pinyin and English.', run: async () => {
+    play(); await wait(100); encounter({id: 'playful', hz: '猴子', img: portrait('playful'), wild: false, name: NAMES.playful}); await wait(500); }},
   {id: 'new-friend', title: 'A new friend', save: 'middle', run: async () => {
     play(); await wait(100); pictureQ = () => Promise.resolve(true); encounter({id: 'fox', hz: '狐狸', img: portrait('fox'), wild: true}); await wait(600); }},
   {id: 'animal-away', title: 'Not this time', save: 'middle', why: 'Fewer than 2 right: the animal goes back to the grass.', run: async () => {
