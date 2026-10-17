@@ -10,7 +10,7 @@ npm test
 
 They start the game in a pretend browser (no window opens) and check that it loads without errors and shows the title screen, for a new player and for a saved game. They catch typos, missing files and files loaded in the wrong order.
 
-They also check the content files: every word in a sentence is in the word bank, no word is listed twice, every picture is different, characters stand where you can walk, names have Chinese, pinyin and English, sprites are complete, and so on. If a test fails, its message says what's wrong and where.
+They also check the content files: every word in a sentence is in the word bank, no word is listed twice, every picture is different, characters stand where you can walk, names have Chinese, pinyin and English, the word pictures are complete and up to date, and so on. If a test fails, its message says what's wrong and where.
 
 One test plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1, part A), pressing the game's own buttons the way a player would (tests/playthrough.test.js). If a change makes the area impossible to finish, it says where it got stuck.
 
@@ -193,7 +193,7 @@ When the save format changes, the game keeps a copy of your old save in the brow
 - [ ] Pressing and holding on text never selects it.
 - [ ] On cards, the main button has a red A badge and A presses it; the back button has a blue B badge.
 - [ ] Held sideways, the whole console fits on screen; held upright, you see only the card asking you to turn the phone.
-- [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, and the Word Scroll (and its shadows). They look sharp, not blurry.
+- [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, the shop, the Word Scroll (and its shadows), the Story Scroll, animal encounters and the Friends list. They look sharp, not blurry, with every pixel the same size.
 
 ## Known issues (not fixed yet)
 

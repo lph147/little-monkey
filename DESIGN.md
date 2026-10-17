@@ -200,7 +200,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 - **Data-driven areas.** Each area is a block of data: its map, words, characters, lines, quests, shop stock and exit test. The engine reads it, so adding an area is writing content, not new code.
 - **A shared word bank.** Every word is defined once, with its pinyin, meaning, category, sprite and the area it belongs to. The scheduler, the Word Scroll, shops and encounters all read from it.
-- **Pixel sprites for every collectible.** Emoji look different on every device and clash with the pixel style, so animals, food and items get their own 16 × 16 sprites. This is the biggest cost per area.
+- **Pixel pictures for every collectible.** Emoji look different on every device and clash with the pixel style, so animals, food and items get their own pixel pictures. They're 32 × 32 (decided 17 October 2026: at 16 × 16 they looked too rough on cards, and 你好 (hello) was hard to read), drawn from shapes in tools/draw-pictures.js, which shades and outlines them, so a new one is quick to make. They're shown at sizes that give each pixel a whole number of the screen's real pixels, so they stay sharp. The animals walking on the map stay 16 × 16, a square's size. This is the biggest cost per area.
 - **Saving.** Progress stays in the browser, plus a save export and import, so a cleared browser doesn't lose weeks of play.
 - **Audio.** The device's Chinese voice for now. Recorded native audio is a later upgrade, worth it once tones are taught.
 - **Format.** A web game that runs in a phone browser, hosted on GitHub Pages and built in Claude Code.
@@ -298,6 +298,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
   - [x] Layouts for the wide, short screen (17 October 2026), from mockups at Android and iPhone sizes: text and pictures follow the screen's height; a shorter speech box; word cards with the picture on the left; fill the gap with the answers in one row; animals with their scene down the left; matching with words across the top and pictures underneath; the menu's tiles in a row; Settings and Tasks in two columns; the title and the opening with the mountain on the right and the words on the left
 - [x] An app: added to a phone's home screen, the game opens full screen and sideways, with the monkey as its icon, and plays offline (17 October 2026). The service worker always loads the newest version when there's a connection. On an iPhone the home-screen app has its own save, moved across with the save file
 - [x] Bigger objects (17 October 2026): big trees, fruit trees, stone, rocks and post, walking behind them, and the stall three squares wide
+- [x] Sharper word pictures (17 October 2026): every word's picture redrawn at 32 × 32, on word cards, questions, the scrolls, the shop, animal encounters and the Friends list; the animals on the map unchanged
 - [ ] Playtest the prologue for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md
