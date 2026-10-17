@@ -32,8 +32,12 @@ const allIfs = () => [
 const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]);
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
 const where = `content/ (area ${AREA.number})`;
-const onMap = ([x, y]) => y >= 0 && y < AREA.map.length && x >= 0 && x < AREA.map[0].length;
-const tile = ([x, y]) => AREA.map[y][x];
+// Positions are [x, y] in the first place, or [x, y, 'place'] in another.
+const FIRST = Object.keys(AREA.places)[0];
+const mapOf = p => (AREA.places[p || FIRST] || {}).map;
+const onMap = ([x, y, p]) => { const m = mapOf(p); return !!m && y >= 0 && y < m.length && x >= 0 && x < m[0].length; };
+const tile = ([x, y, p]) => mapOf(p)[y][x];
+const allMaps = Object.entries(AREA.places).map(([id, p]) => [id, p.map]);
 const canWalk = at => !!(AREA.legend[tile(at)] || {}).walk;
 const sentences = [
   ...Object.entries(AREA.lines).map(([k, l]) => [`line "${k}"`, l]),
@@ -94,14 +98,16 @@ test('every collectible picture is different', () => {
   }
 });
 
-test('the map is a rectangle', () => {
-  const width = AREA.map[0].length;
-  AREA.map.forEach((row, y) => assert.equal(row.length, width, `map row ${y} is ${row.length} tiles wide, not ${width}`));
+test('the map of every place is a rectangle', () => {
+  for (const [id, map] of allMaps){
+    const width = map[0].length;
+    map.forEach((row, y) => assert.equal(row.length, width, `${id}: map row ${y} is ${row.length} tiles wide, not ${width}`));
+  }
 });
 
 test('every letter on the map is in the legend', () => {
-  AREA.map.forEach((row, y) => [...row].forEach((ch, x) => {
-    assert.ok(AREA.legend[ch], `the map has "${ch}" at ${x},${y}, but the legend doesn't say what "${ch}" is`);
+  for (const [id, map] of allMaps) map.forEach((row, y) => [...row].forEach((ch, x) => {
+    assert.ok(AREA.legend[ch], `${id}: the map has "${ch}" at ${x},${y}, but the legend doesn't say what "${ch}" is`);
   }));
 });
 
@@ -125,14 +131,14 @@ test('the legend only teaches collectible words', () => {
 });
 
 test('you start on a tile you can walk on', () => {
-  const at = [AREA.start.x, AREA.start.y];
+  const at = [AREA.start.x, AREA.start.y, AREA.start.place];
   assert.ok(onMap(at) && canWalk(at), `the start ${at} isn't a walkable tile`);
 });
 
 test('characters stand on the map, on walkable tiles, one per tile', () => {
-  const taken = new Set([`${AREA.start.x},${AREA.start.y}`]);
+  const taken = new Set([String([AREA.start.x, AREA.start.y, AREA.start.place || FIRST])]);
   for (const c of AREA.characters){
-    const at = [c.x, c.y];
+    const at = [c.x, c.y, c.place || FIRST];
     assert.ok(onMap(at), `${c.id} at ${at} is off the map`);
     assert.ok(canWalk(at), `${c.id} stands on "${tile(at)}" at ${at}, which isn't walkable`);
     assert.ok(!taken.has(String(at)), `${c.id} at ${at} shares a tile with someone else or the start`);
@@ -159,14 +165,31 @@ test('sparkles are on collectible words, on the map', () => {
 test('the area has a name, a way out, and somewhere for animals to hide', () => {
   const n = AREA.name;
   assert.ok(n && n.zh && n.py && n.en, 'the area needs a name with zh, py and en');
-  assert.ok(AREA.map.some(row => [...row].some(ch => (AREA.legend[ch] || {}).action === 'caveDoor')), 'the map needs a tile whose action is caveDoor (the way out)');
+  assert.ok(allMaps.some(([, map]) => map.some(row => [...row].some(ch => (AREA.legend[ch] || {}).action === 'caveDoor'))), 'a map needs a tile whose action is caveDoor (the way out)');
   const hiding = Object.values(AREA.legend).filter(t => t.animals);
   assert.ok(hiding.length && hiding.every(t => collectible.includes(t.word)), 'some legend tile needs animals:true and a word, such as 草');
   for (const k of ['notReady', 'ready', 'tryAgain', 'passButton', 'failButton', 'done', 'notBuilt']) assert.ok(AREA.exit[k], `exit needs ${k}`);
   const back = AREA.exit.returnTo;
-  assert.ok(onMap([back.x, back.y]) && canWalk([back.x, back.y]), `exit.returnTo ${back.x},${back.y} isn't a walkable tile`);
+  assert.ok(onMap([back.x, back.y, back.place]) && canWalk([back.x, back.y, back.place]), `exit.returnTo ${back.x},${back.y} isn't a walkable tile`);
   assert.ok(['up', 'down', 'left', 'right'].includes(back.facing), 'exit.returnTo needs facing');
   assert.ok(['up', 'down', 'left', 'right'].includes(AREA.start.facing), 'start needs facing');
+});
+
+test('places have names, and every way between them lands on a walkable tile and has a way back', () => {
+  const dirs = ['up', 'down', 'left', 'right'];
+  for (const [id, p] of Object.entries(AREA.places)){
+    assert.ok(p.name && p.name.zh && p.name.py && p.name.en, `the place ${id} needs a name with zh, py and en`);
+    for (const e of p.exits || []){
+      const what = `the way from ${id} at ${e.at}`;
+      assert.ok(onMap([...e.at, id]) && canWalk([...e.at, id]), `${what} isn't on a walkable tile`);
+      assert.ok(AREA.places[e.to], `${what} goes to ${e.to}, which isn't a place`);
+      assert.ok(onMap([...e.arrive, e.to]) && canWalk([...e.arrive, e.to]), `${what} arrives at ${e.arrive} in ${e.to}, which isn't a walkable tile`);
+      assert.ok(!e.facing || dirs.includes(e.facing), `${what} faces ${e.facing}`);
+      assert.ok(!e.if || e.closed, `${what} can be shut, so it needs a closed message`);
+      assert.ok((AREA.places[e.to].exits || []).some(b => b.to === id), `${what} goes to ${e.to}, which has no way back`);
+      assert.ok(!(AREA.places[e.to].exits || []).some(b => b.to === id && String(b.at) === String(e.arrive)), `${what} arrives right on the way back, so you'd bounce straight back`);
+    }
+  }
 });
 
 test('the story ending has a title, a reward and text', () => {

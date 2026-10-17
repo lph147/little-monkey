@@ -61,10 +61,10 @@ function monkeySprite(kind, dir, blink, step = 0){
   return spriteCache[k] = sprite(out, PALS[kind]);
 }
 // The area's animals, with their sprites from content/sprites.js: at their own spot (at), or hiding in the tall grass.
-const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, home:a.home || HIDING_WORD, meetNote:a.meetNote,
+const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:placeOf(a.at), home:a.home || HIDING_WORD, meetNote:a.meetNote,
   spr:sprite(SPRITES[a.word].rows, SPRITES[a.word].palette)}));
 const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
-const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.at[0] === x && a.at[1] === y) : null;   // an animal living at this spot, once animals appear
+const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && a.at[0] === x && a.at[1] === y) : null;   // an animal living at this spot, once animals appear
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
@@ -198,7 +198,8 @@ const LOOKS = {
   }
 };
 let mapReady = null;   // whether the area was ready (the cave door open) when the map was last drawn
-function buildMap(){
+function buildMap(){   // the place you're in
   mapReady = areaDone();
+  if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
 }

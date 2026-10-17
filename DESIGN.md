@@ -132,7 +132,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 **Saved for chapter 1:** the story from the book's opening that was at the waterfall, checked by the native speaker: 山上有一个大石头。石头里有一只小猴子。小猴子有很多朋友。猴子吃桃子，喝水。鸟在树上玩。河里有鱼，山上有瀑布。小猴子很快乐！ It needs 一个, 一只, 很 and 大, which come with chapter 1 (大, 很, 快乐 and 谁 left the word bank with it). Its questions used 谁 and 什么, so they wait for Area 2's questions, or become gap questions like the prologue's.
 
-**Compact, lively places.** Places stay small so walking doesn't crowd out learning. Today's map (grown a little to the south on 16 October 2026 to make room for its animals' homes) becomes the first place: the meadow, with animals at their own spots (the squirrel in a tree, the goat on the cliffs), birds that come and go, and grass that rustles where an animal is hiding. Once the engine can move between maps, Flower Fruit Mountain is a few small connected places: the meadow, the riverbank with the waterfall, the Water Curtain Cave behind it, the high slopes and the shore.
+**Compact, lively places.** Places stay small so walking doesn't crowd out learning. Today's map (grown a little to the south on 16 October 2026 to make room for its animals' homes) becomes the first place: the meadow, with animals at their own spots (the squirrel in a tree, the goat on the cliffs), birds that come and go, and grass that rustles where an animal is hiding. Once the engine can move between maps, Flower Fruit Mountain is a few small connected places: the meadow (with the river and the waterfall, as today), the Water Curtain Cave behind the waterfall, the high slopes and the shore.
 
 **Coming home.** In Area 3, Sun Wukong flies home and finds a demon bullying the troop, so Flower Fruit Mountain's places come back then, with your old words and friends.
 
@@ -293,7 +293,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
   - [x] Replace word tiles everywhere: requests, the shop, the practice post and animals' questions
   - [x] The story's questions show their English all the time
 - [x] Plan Area 1 as the prologue and chapter 1, true to the story: the cave behind the waterfall is home, and you leave on a raft (decided 17 October 2026)
-- [ ] Places: the engine moves between small connected maps within an area; today's map becomes the meadow, unchanged
+- [x] Places: the engine moves between small connected maps within an area (a fade, and the place's name for a moment; ways can stay shut until the story opens them; task arrows point the way); today's map is the meadow, unchanged, with a new save version
 - [ ] Chapter 1, the Water Curtain Cave: the troop's dare at the waterfall, the jump (跳), the cave and becoming king; the cave door on the far left goes, and 洞 is caught in the cave
 - [ ] Chapter 1, life as king: the troop moving in (numbers 1–10), new places, requests, shop stock and animals
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away

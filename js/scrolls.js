@@ -194,7 +194,7 @@ async function nextArea(){
     <p>${AREA.exit.done}</p>
     <p class="small">${AREA.exit.notBuilt}</p>`);
   const back = AREA.exit.returnTo;   // until the next area is built, you're put back here
-  pl.x = back.x; pl.y = back.y; pl.dir = back.facing; pl.px = pl.x*T; pl.py = pl.y*T; S.pos = {x:back.x, y:back.y, dir:back.facing}; save();
+  S.pos = {place:placeOf(back), x:back.x, y:back.y, dir:back.facing}; placePlayer(); save();
 }
 const todaysWords = () => S.today.d === todayKey() ? S.today.ids.filter(w => WORDS[w] && lvl(w) > 0) : [];   // not words since removed from the game
 function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow of its picture, not giving it away) or not met yet

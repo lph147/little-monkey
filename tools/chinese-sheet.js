@@ -39,7 +39,7 @@ function sheet(){
   for (const r of Object.values(AREA.requests)) if (r.wrongAnswer) add(r.wrongAnswer, name(r.from));
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
-  const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name];
+  const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name)];   // characters, the sign, the area and its places
   const builds = [...Object.values(AREA.requests).map(r => [r.sentence, r.sentenceEn, name(r.from)]), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe'])];
   const notes = '';
 

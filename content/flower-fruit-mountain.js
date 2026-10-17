@@ -9,7 +9,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   name: {zh:'花果山', py:'Huāguǒ Shān', en:'Flower Fruit Mountain'},
 
   // Where you start the first time you play, and which way you face. x is the column and y the
-  // row, counting from 0 at the top left of the map.
+  // row, counting from 0 at the top left of the map (of the first place, unless place says another).
   start: {x:9, y:2, facing:'up'},
 
   // What happens the very first time you play (steps, as in talk below). Tips explain the controls as you need them.
@@ -153,31 +153,43 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]}
   ],
 
-  // The map, one letter per tile. The legend below says what each letter is.
-  map: [
-    "MMMMMMMMMMMMMMMMMMXXMMMM",
-    "MMMMMMMggSggMMggggXXYYYY",
-    "MMMMMMMgg.gNMMgggFWWYYYY",
-    "MMMCMMMgg.ggMMggggWWYYYY",
-    "MMg.gMMMg.gMMMMRRMWWYYYY",
-    "YTg.ggggg.ggggg.ggWWYYYY",
-    "YPg.............ggWWYYYY",
-    "YQggGGGGgggFggg.ggWWgggY",
-    "YPggGGGGggggTgg.ggWWgGgY",
-    "YTggGGGgggOOOKg.gFWWGGgY",
-    "YFgggggggOOOOgg.ggWWGGgY",
-    "YTgggGGGggggggg.ggWWgggY",
-    "YggFgGGGggggggg...BBgggY",
-    "YgggggggggggggggggWWgGgY",
-    "YTgGGGggggggggFgggWWGGgY",
-    "YTggggg.ggggggTgggWWgggY",
-    "YMMMMgg.ggHgggggggWWgggY",
-    "YMMMMgg.gggFggggggWWgTgY",
-    "YMMMMgg.GGGGgTggggWWgggY",
-    "YMMMggg...........BBgFgY",
-    "YMMgFggGGGggggggggWWgggY",
-    "YYYYYYYYYYYYYYYYYYWWYYYY"
-  ],
+  // The area's places: small maps you move between. The first is where the game starts. Each has
+  //   name    Chinese, pinyin and English, shown when you arrive (names aren't vocabulary)
+  //   exits   ways to other places: step onto at and you go to the place to, arriving at arrive and
+  //           facing facing. An exit with an if stays shut until it matches, and says closed instead.
+  //   map     one letter per tile; the legend below says what each letter is
+  // Positions elsewhere in this file ([x, y], or x and y) are in the first place. Something in another
+  // place says which: [x, y, 'place'], or place:'id'.
+  places: {
+    meadow: {
+      name: {zh:'草地', py:'cǎodì', en:'The meadow'},
+      exits: [],
+      map: [
+        "MMMMMMMMMMMMMMMMMMXXMMMM",
+        "MMMMMMMggSggMMggggXXYYYY",
+        "MMMMMMMgg.gNMMgggFWWYYYY",
+        "MMMCMMMgg.ggMMggggWWYYYY",
+        "MMg.gMMMg.gMMMMRRMWWYYYY",
+        "YTg.ggggg.ggggg.ggWWYYYY",
+        "YPg.............ggWWYYYY",
+        "YQggGGGGgggFggg.ggWWgggY",
+        "YPggGGGGggggTgg.ggWWgGgY",
+        "YTggGGGgggOOOKg.gFWWGGgY",
+        "YFgggggggOOOOgg.ggWWGGgY",
+        "YTgggGGGggggggg.ggWWgggY",
+        "YggFgGGGggggggg...BBgggY",
+        "YgggggggggggggggggWWgGgY",
+        "YTgGGGggggggggFgggWWGGgY",
+        "YTggggg.ggggggTgggWWgggY",
+        "YMMMMgg.ggHgggggggWWgggY",
+        "YMMMMgg.gggFggggggWWgTgY",
+        "YMMMMgg.GGGGgTggggWWgggY",
+        "YMMMggg...........BBgFgY",
+        "YMMgFggGGGggggggggWWgggY",
+        "YYYYYYYYYYYYYYYYYYWWYYYY"
+      ]
+    }
+  },
 
   // What each map letter is. Every letter on the map must be here (the tests check).
   //   look           how it's drawn: one of the looks in js/art.js

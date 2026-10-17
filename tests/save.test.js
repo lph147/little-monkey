@@ -30,7 +30,7 @@ test('a version 2 save is converted, keeping everything', () => {
   for (const old of ['q', 'gate', 'story', 'area1Done', 'carry']) assert.ok(!(old in s), `the old field ${old} should have moved`);
   for (const [k, v] of Object.entries(V2)){
     if (['q', 'gate', 'story', 'area1Done', 'carry'].includes(k)) continue;
-    assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : v, `${k} should be unchanged`);
+    assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : k === 'pos' ? {...v, place: 'meadow'} : v, `${k} should be unchanged`);   // (your spot is in the meadow, the only place then)
   }
 });
 
@@ -136,7 +136,7 @@ test('a version 4 save is converted: the words in lines you have seen count as h
   assert.deepEqual(s.heard, {'你好': 1, '我': 2, '饿': 1, '了': 1, '要': 1, '吃': 1, '桃子': 1});
   // (the big monkey's request, and the things you've picked for it, are new since then)
   const later = a => Object.fromEntries(Object.entries(a).map(([n, p]) => [n, {...p, flowers: 'not asked', picked: {}}]));
-  for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : k === 'areas' ? later(v) : v, `${k} should be unchanged`);
+  for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : k === 'areas' ? later(v) : k === 'pos' ? {...v, place: 'meadow'} : v, `${k} should be unchanged`);
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v4'), JSON.stringify(V4));
 });
 
@@ -182,4 +182,12 @@ test('a version 16 save is converted: a game already started has had all its tip
   assert.ok(Object.values(s.tips).every(v => v === 1));
   assert.equal(s.shells, 5, 'everything else stays');
   assert.deepEqual(saveOf(loadGame({save: {version: 16, started: false, w: {}}})).tips, {}, 'a game not started yet gets every tip');
+});
+
+test('a version 17 save is converted: the area was one map, and your spot is in its first place, the meadow', () => {
+  const s = saveOf(loadGame({save: {version: 17, started: true, pos: {x: 13, y: 6, dir: 'up'}, shells: 4, w: {'山': {lv: 1, due: 0, ok: 0}}}}));
+  assert.equal(s.version, VERSION);
+  assert.deepEqual(s.pos, {x: 13, y: 6, dir: 'up', place: 'meadow'});
+  assert.equal(s.shells, 4, 'everything else stays');
+  assert.equal(saveOf(loadGame()).pos.place, 'meadow', 'a new game starts in the meadow');
 });

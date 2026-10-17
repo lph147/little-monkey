@@ -338,3 +338,11 @@ rt.hid{visibility:hidden}
   .scene .me{width:52px;height:52px}.scene .mem{width:96px;height:28px;bottom:-10px}.plate{padding:2px 8px 4px;top:6px;left:6px}.plate .qn{display:none}
   .sayBig{width:56px;height:56px;font-size:1.6rem}.opts{margin:6px 0 2px}.opt{padding:6px 0}}
 @media (prefers-reduced-motion: reduce){.scene .foe{transition:none}}
+
+/* the name of a place, at the top of the game screen for a moment when you arrive there */
+.placename{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:6;pointer-events:none;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);padding:4px 14px 6px;text-align:center;white-space:nowrap;animation:rise .2s ease-out}
+.placename[hidden]{display:none}
+.placename .pzh{font-family:var(--text);font-size:1.3rem;font-weight:700}
+.placename .ppy{color:var(--muted);font-size:.9rem}
+.placename .pen{display:block;font-family:var(--pixel);font-size:.85rem;color:var(--jade)}
+@media (prefers-reduced-motion: reduce){.placename{animation:none}}

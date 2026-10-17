@@ -2,13 +2,14 @@
 
 /* ================= PLAYER & INPUT ================= */
 const pl = {x:START.x, y:START.y, px:START.x*T, py:START.y*T, dir:'down', mv:null, parity:0, turnT:0};
-function placePlayer(){ pl.x = S.pos.x; pl.y = S.pos.y; pl.dir = S.pos.dir || 'down'; pl.px = pl.x*T; pl.py = pl.y*T; pl.mv = null; }
+function placePlayer(){ enterPlace(S.pos.place || FIRST_PLACE); pl.x = S.pos.x; pl.y = S.pos.y; pl.dir = S.pos.dir || 'down'; pl.px = pl.x*T; pl.py = pl.y*T; pl.mv = null; }
 let held = null, queued = null, busy = false, mode = 'title', lastBump = 0, shakeT = -9999, lastMoveEnd = 0, fadeT = -9999;
 const canAct = () => mode === 'play' && !busy && modal.hidden && !talkNext && !pl.mv;
 function tryStep(d, now){
   if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); return; }   // first turn to face the new way
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
-  const [dx,dy] = DV[d], nx = pl.x + dx, ny = pl.y + dy;
+  const [dx,dy] = DV[d], nx = pl.x + dx, ny = pl.y + dy, way = exitAt(nx, ny);
+  if (way && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
   if (walkable(nx, ny)){ pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now}; pl.parity ^= 1; }
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
 }

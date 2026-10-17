@@ -175,7 +175,7 @@ async function startGame(){
   stopSpeech();
   const firstTime = !S.started;
   $('#titlecard').hidden = true; $('#capbox').hidden = true;
-  if (firstTime){ S.started = true; S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'}; }
+  if (firstTime){ S.started = true; S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'}; }
   placePlayer(); mode = 'play'; lastTB = ''; save(); musicStart();
   if (firstTime){
     busy = true;
@@ -186,7 +186,9 @@ async function startGame(){
 }
 
 window.addEventListener('resize', fit);
-if (!walkable(S.pos.x, S.pos.y)) S.pos = {x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
+if (!PLACES[S.pos.place]) S.pos.place = FIRST_PLACE;   // a place that's gone
+enterPlace(S.pos.place);
+if (!walkable(S.pos.x, S.pos.y)) S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
 $('#shellIcon').src = (money('🐚').match(/src="([^"]+)"/) || [])[1] || '';
 buildMap(); placePlayer(); fit(); updateHUD(); toTitle();
 requestAnimationFrame(frame);

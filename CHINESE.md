@@ -108,6 +108,7 @@ The opening is told in English. These captions each show one word, said aloud.
 | 老板 | lǎobǎn | Shop owner |  |
 | 牌子 | páizi | Sign |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
+| 草地 | cǎodì | The meadow |  |
 
 ### Words to collect
 

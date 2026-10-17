@@ -9,6 +9,8 @@ function tileAt(x, y){         // the legend entry for the map letter at x, y
   return here().gate && t.whenGateOpens ? LEGEND[t.whenGateOpens] : t;
 }
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
+const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && e.at[1] === y);   // a way to another place
+const isOpen = e => !e.if || matches(e.if);
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y);
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
@@ -21,9 +23,24 @@ const areaChecklist = () => AREA.checklist.map(c => [fill(c.text), matches(c.don
 const areaDone = () => AREA.checklist.filter(c => !c.exitTest).every(c => matches(c.done));       // ready for the exit test
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
-    const c = typeof t.arrow === 'string' && NPCS.find(n => n.id === t.arrow);   // an arrow to a character
-    return {id:fill(t.id, true), text:fill(t.text), target:c ? [c.x, c.y] : t.arrow || null, ...(c ? {npc:true} : {})};
+    const c = typeof t.arrow === 'string' && ALL_NPCS.find(n => n.id === t.arrow);   // an arrow to a character
+    const at = c ? [c.x, c.y, c.place] : t.arrow || null, there = at && placeOf(at);
+    const target = !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
+    return {id:fill(t.id, true), text:fill(t.text), target, ...(c && there === PLACE ? {npc:true} : {})};
   });
+}
+// The way out of the place you're in towards another place: the exit to take first on the shortest
+// route (through ways that are open), or null if there's none.
+function wayTo(place){
+  const seen = new Set([PLACE]), queue = (PLACES[PLACE].exits || []).filter(isOpen).map(e => ({first:e, to:e.to}));
+  while (queue.length){
+    const {first, to} = queue.shift();
+    if (to === place) return [first.at[0], first.at[1]];
+    if (seen.has(to)) continue;
+    seen.add(to);
+    for (const e of (PLACES[to].exits || []).filter(isOpen)) queue.push({first, to:e.to});
+  }
+  return null;
 }
 function tasksHint(){ const h = AREA.hints.find(h => matches(h.if)); return h ? fill(h.text) : ''; }
 function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).join('. ') + '.' : tasksHint(); }
@@ -226,8 +243,29 @@ async function interact(x, y){
 // another hides a few steps later.
 const HIDE_AFTER = 4;   // steps before another animal hides
 let rustle = null, stepsSince = HIDE_AFTER;
-const GRASS_TILES = [];   // where animals can hide
-for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).animals) GRASS_TILES.push([x, y]);
+const GRASS_TILES = [];   // where animals can hide, in the place you're in
+function findGrass(){ GRASS_TILES.length = 0; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).animals) GRASS_TILES.push([x, y]); }
+findGrass();
+// Going into another place: its map is drawn, and whatever was happening in the last one (an animal
+// hiding, birds, a meeting) is left behind.
+function enterPlace(id){
+  if (id === PLACE) return;
+  setPlace(id); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; buildMap();
+}
+// Through a way to another place: a quick fade, and you're there, with its name at the top of the screen.
+async function goThrough(e){
+  held = null; queued = null; fadeT = performance.now(); SFX.blip();
+  await sleep(350);
+  enterPlace(e.to);
+  S.pos = {place:e.to, x:e.arrive[0], y:e.arrive[1], dir:e.facing || pl.dir}; placePlayer(); save();
+  showPlaceName();
+}
+let placeNameT;
+function showPlaceName(){
+  const n = PLACES[PLACE].name, el = $('#placeName');
+  el.innerHTML = `<span class="pzh">${n.zh}</span> <span class="ppy">${n.py}</span><span class="pen">${esc(n.en)}</span>`;
+  el.hidden = false; clearTimeout(placeNameT); placeNameT = setTimeout(() => { el.hidden = true; }, 2600);
+}
 function hideAnimal(){   // a grass animal hides in tall grass at least 3 steps from you
   if (rustle || !canWild() || !GRASS_ANIMALS.length || stepsSince < HIDE_AFTER) return;
   const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3);
@@ -236,7 +274,9 @@ function hideAnimal(){   // a grass animal hides in tall grass at least 3 steps 
   rustle = {x, y, a:pickAnimal(GRASS_ANIMALS)};
 }
 async function arrive(x, y){
-  S.pos = {x, y, dir:pl.dir}; save();
+  S.pos = {place:PLACE, x, y, dir:pl.dir}; save();
+  const way = exitAt(x, y);
+  if (way && isOpen(way)) return goThrough(way);
   const t = tileAt(x, y);
   stepsSince++;
   if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});

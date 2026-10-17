@@ -26,18 +26,30 @@ const STORY = AREA.story.map(s => ({t:toks(s.zh), en:s.en, pic:s.pic}));
 const CAPS = AREA.intro.map(c => ({t:c.at, en:c.en, word:c.word}));   // the opening's captions
 const DAY = 86400000, INTERVALS = [1,3,7,21];
 
-const MAP = AREA.map;
-const COLS = MAP[0].length, ROWS = MAP.length;
+// The area's places, small maps you move between, and the one you're in. A position in the content is
+// in the first place unless it says another: [x, y, 'place'], or place:'id' (placeOf gives which).
+const PLACES = AREA.places, FIRST_PLACE = Object.keys(PLACES)[0];
+const placeOf = p => (Array.isArray(p) ? p[2] : p && p.place) || FIRST_PLACE;
+let PLACE = null, MAP = [], COLS = 0, ROWS = 0;   // the place you're in, and its map (see setPlace)
 const LEGEND = AREA.legend;           // what each map letter is
 const REQUESTS = Object.entries(AREA.requests).map(([id, r]) => ({id, ...r}));   // characters asking you to bring something
 const requestFrom = who => REQUESTS.find(r => r.from === who);
-const NPCS = AREA.characters.map(c => ({id:c.id, x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word}));
-const SPARKLES = AREA.sparkles;
+const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word}));
+let NPCS = [], SPARKLES = [];         // the characters and sparkles in the place you're in
 const EXIT_TILES = [];                // where the way out is (map tiles whose action is the cave door)
 const TRAINING_TILES = [];            // where the practice posts are (the training action)
-MAP.forEach((row, y) => [...row].forEach((ch, x) => {
-  if (LEGEND[ch] && LEGEND[ch].action === 'caveDoor') EXIT_TILES.push([x, y]);
-  if (LEGEND[ch] && LEGEND[ch].action === 'training') TRAINING_TILES.push([x, y]);
-}));
+// Makes id the place you're in: its map, characters, sparkles, cave door and practice posts.
+// (enterPlace in js/world.js does this and redraws the map.)
+function setPlace(id){
+  PLACE = id; MAP = PLACES[id].map; COLS = MAP[0].length; ROWS = MAP.length;
+  NPCS = ALL_NPCS.filter(n => n.place === id);
+  SPARKLES = AREA.sparkles.filter(s => placeOf(s.at) === id);
+  EXIT_TILES.length = 0; TRAINING_TILES.length = 0;
+  MAP.forEach((row, y) => [...row].forEach((ch, x) => {
+    if (LEGEND[ch] && LEGEND[ch].action === 'caveDoor') EXIT_TILES.push([x, y]);
+    if (LEGEND[ch] && LEGEND[ch].action === 'training') TRAINING_TILES.push([x, y]);
+  }));
+}
 const HIDING_WORD = (Object.values(LEGEND).find(t => t.animals) || {}).word;   // where animals hide, such as 草
-const START = AREA.start;
+const START = {...AREA.start, place:placeOf(AREA.start)};
+setPlace(START.place);
