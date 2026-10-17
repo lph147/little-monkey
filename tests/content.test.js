@@ -29,7 +29,9 @@ const allIfs = () => [
   ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word}`, s.if]),
   ['animalsAppear', AREA.animalsAppear]
 ];
-const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]);
+const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]) || (w.startsWith('wanted:') && (AREA.requests[w.slice(7)] || {}).choices);
+// A request's sentences: its own, or each of its choices' (a fussy request, such as the hungry monkey's fruit).
+const asked = r => (r.choices ? Object.entries(r.choices).map(([wants, c]) => ({...r, ...c, wants})) : [r]);
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
 const where = `content/ (area ${AREA.number})`;
 // Positions are [x, y] in the first place, or [x, y, 'place'] in another.
@@ -263,7 +265,7 @@ test('the area says what it remembers in the save, with starting values', () => 
 });
 
 test('requests use real characters, lines and words', () => {
-  for (const [id, r] of Object.entries(AREA.requests)){
+  for (const [id, r] of Object.entries(AREA.requests).flatMap(([id, r]) => asked(r).map(a => [id, a]))){
     assert.ok(AREA.characters.some(c => c.id === r.from), `request ${id}: from "${r.from}" isn't a character`);
     for (const w of [r.wants, r.verb].filter(Boolean)) assert.ok(collectible.includes(w), `request ${id}: ${w} isn't a word you can collect in ${where}`);
     for (const k of ['ask', 'offer', 'thanks']) assert.ok(AREA.lines[r[k]], `request ${id}: ${k} "${r[k]}" isn't one of the lines`);
@@ -284,7 +286,7 @@ test('everything you can gather is for a request, and the wrong thing has a line
     const r = AREA.requests[t.gather.for];
     assert.ok(r, `legend "${ch}" gathers for "${t.gather.for}", which isn't a request`);
     assert.ok(t.gather.message, `legend "${ch}": gather needs a message`);
-    if (t.gather.item !== r.wants) assert.ok(r.wrong && r.wrongMessage, `request ${t.gather.for} needs wrong and wrongMessage, because legend "${ch}" gives ${t.gather.item}`);
+    if (!r.choices && t.gather.item !== r.wants) assert.ok(r.wrong && r.wrongMessage, `request ${t.gather.for} needs wrong and wrongMessage, because legend "${ch}" gives ${t.gather.item}`);
   }
 });
 
@@ -294,7 +296,7 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'bought', 'ready', 'place'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -328,7 +330,7 @@ test('every step does one thing, with settings that exist, using real lines and 
 test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
-    ...Object.values(AREA.requests).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
+    ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
     ...(AREA.shop ? [AREA.shop.ask, AREA.shop.thanks] : [])
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
@@ -389,7 +391,7 @@ test('intro captions are in time order, in English, each with at most one word, 
 
 test('every word you can collect has an example sentence for its page', () => {
   const inSentence = w => [...Object.values(AREA.lines), ...AREA.story].some(s => s.zh.split(' ').includes(w));
-  const built = w => [...Object.values(AREA.requests), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].some(b => b.sentence.split(' ').includes(w));
+  const built = w => [...Object.values(AREA.requests).flatMap(asked), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].some(b => b.sentence.split(' ').includes(w));
   for (const [w, e] of Object.entries(AREA.examples)){
     assert.ok(collectible.includes(w), `there's an example for ${w}, which isn't a word you can collect in ${where}`);
     assert.ok(e.zh.split(' ').includes(w), `the example for ${w} doesn't use ${w}: "${e.zh}"`);
@@ -402,7 +404,7 @@ test('every word you can collect has an example sentence for its page', () => {
 test('every word you only hear is used in a sentence somewhere', () => {
   const used = new Set([
     ...sentences.flatMap(([, s]) => s.zh.split(' ')),
-    ...Object.values(AREA.requests).flatMap(r => r.sentence.split(' ')),
+    ...Object.values(AREA.requests).flatMap(asked).flatMap(r => r.sentence.split(' ')),
     ...(AREA.shop ? AREA.shop.items.flatMap(i => i.sentence.split(' ')) : []),
     ...(AREA.wardrobe || []).flatMap(c => c.sentence.split(' '))
   ]);
@@ -417,6 +419,6 @@ test('replies after requests and the shop are phrases you can learn here', () =>
 
 
 test('no word tiles anywhere: sentences are completed by filling a gap, never put in order', () => {
-  const things = [...Object.values(AREA.requests), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];
+  const things = [...Object.values(AREA.requests).flatMap(asked), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];
   for (const b of things) for (const old of ['build', 'buildEn', 'extraTile', 'buildPrompt']) assert.ok(!(old in b), `"${old}" is from word tiles: use sentence, sentenceEn and gap`);
 });

@@ -116,7 +116,7 @@ const SPR = {
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
-const GRASSY = ['grass','tallGrass','flowers','tree','peachTree','appleTree','stone','sign','post','stall'];   // looks with grass underneath
+const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall'];   // looks with grass underneath
 const CLIFFS = ['cliff'];
 const WATERY = ['water','waterfall','bridge','ironBridge'];
 function grass(g, X, Y, x, y){
@@ -192,6 +192,9 @@ const LOOKS = {
   path:      (g,X,Y,x,y) => path(g,X,Y,x,y),
   tallGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y),
   flowers:   (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F48FB1'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#F48FB1'); },
+  redFlowers:    (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#E8343C'); flower(g,X+11,Y+7,'#E8343C'); flower(g,X+6,Y+11,'#E8343C'); },
+  yellowFlowers: (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F7D23E'); flower(g,X+11,Y+7,'#F7D23E'); flower(g,X+6,Y+11,'#F7D23E'); },
+  whiteFlowers:  (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#FFFFFF'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#FFFFFF'); },
   tree:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.tree,X,Y); },
   peachTree: (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.peach,X,Y); },
   appleTree: (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+3,Y+14,10,2,'#5DA651'); g.drawImage(SPR.apple,X,Y); },

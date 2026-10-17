@@ -47,14 +47,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     found: {count:'animalsFound'},
     animalsLeft: {count:'animalsLeft'},
     shells: {count:'shells', max:10},   // your shells, up to the headband's price
-    flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey
+    flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     caveThings: {count:'known', words:['桥', '床', '碗', '桌子']},   // things you've found in the Water Curtain Cave
     troopIn: {count:'known', words:['一', '二', '三']}   // the troop counted in (each count teaches its number)
   },
 
   // The task box under the game screen. Every task whose if matches is shown, in this order.
   //   id     a name for the task; the game remembers which tasks you've seen, to mark new ones
-  //   text   what it says. {holding:hungry} is the word for what you're holding for that request
+  //   text   what it says. {holding:hungry} is the word for what you're holding for that request, and
+  //          {wanted:hungry} the word for what a fussy request wants now (after you've brought the other)
   //   arrow  where the yellow arrow points: a character, or [x, y] on the map (no arrow if left out)
   // Besides what the area remembers, words and counters, an if can check holding:{hungry:true}
   // (true if you're holding something for that request, false if not), bought:{'头带':true} (true if
@@ -65,11 +66,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'elder2', if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
     {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words, then talk to the old monkey again ({newWords}/4)'},
     {id:'animals', if:{elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the animals: in rustling grass, up a tree, on a cliff ({found}/{animals})'},
-    {id:'h1', if:{hungry:'asked', holding:{hungry:false}}, text:'Find the fruit the hungry monkey asked for', arrow:[2, 7]},
+    {id:'h1', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, text:'Find some fruit for the hungry monkey'},
+    {id:'h1b', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:true}}, text:'Find the {wanted:hungry} the hungry monkey wants'},
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
     {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect water from the river or the pond', arrow:[11, 9]},
     {id:'t2', if:{thirsty:'asked', holding:{thirsty:true}}, text:'Give the {水} to the thirsty monkey', arrow:'thirsty'},
-    {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick 3 {花} for the big monkey, one from each patch ({flowersPicked}/3)'},
+    {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Find a red, a yellow and a white {花} for the big monkey ({flowersPicked}/3)'},
     {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to the big monkey', arrow:'big'},
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
@@ -102,7 +104,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Find the animals ({found}/{animals})', done:{animalsLeft:0}},
     {text:'Bring the hungry monkey the fruit it wants', done:{hungry:'done'}},
     {text:'Bring water to the thirsty monkey', done:{thirsty:'done'}},
-    {text:'Bring the big monkey 3 flowers', done:{flowers:'done'}},
+    {text:'Bring the big monkey a red, a yellow and a white flower', done:{flowers:'done'}},
     {text:'Read the story at the waterfall', done:{story:true}},
     {text:'Buy a headband from the shop owner', done:{bought:{'头带':true}}},
     {chapter:1, text:'Jump through the waterfall', done:{cave:{atLeast:2}}},
@@ -130,8 +132,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // they ask (teaching the verb), you find the thing (see gather in the legend), then you
   // fill the gap in a sentence to give it to them, and get the reward.
   //   from         the character who asks
-  //   wants        the word for what they want
-  //   verb         taught when they ask, and used in the sentence (if there's a new verb to teach)
+  //   wants        the word for what they want (or choices: see the hungry monkey)
+  //   verb         a word taught when they ask (if it's new), and used in the sentence, such as 吃 or 花
   //   ask          their line when asking, and asked: a message afterwards
   //   wrong        their line if you bring something else, and wrongMessage afterwards; wrongReply is the
   //                phrase that fits as your reply, and wrongAnswer their line after it
@@ -141,15 +143,21 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //                with one word missing (gap; what they want if not given), and you choose the word
   //   reward       shells you get; thanks is their line afterwards, and thanksReply the phrase that fits as your reply
   requests: {
-    hungry: {from:'hungry', wants:'桃子', verb:'吃', ask:'hungry', asked:'The hungry monkey wants something to eat. Check your tasks.',
-      wrong:'notThis', wrongReply:'对不起', wrongAnswer:'noProblem', wrongMessage:'The monkey gives the fruit back. Listen to what it wants, then try another tree.',
-      offer:'havePeach', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      sentence:'我 要 吃 桃子', sentenceEn:'I want to eat a peach.', reward:3, thanks:'thanks', thanksReply:'不客气'},
+    // He wants fruit (水果), and is fussy: whichever you bring first, he wants the other (choices: each fruit's
+    // lines and sentence, for when you bring it).
+    hungry: {from:'hungry', verb:'吃', ask:'hungry', asked:'The hungry monkey wants some fruit. Check your tasks.',
+      choices: {
+        '桃子': {wrong:'notPeach', offer:'havePeach', sentence:'我 要 吃 桃子', sentenceEn:'I want to eat a peach.'},
+        '苹果': {wrong:'notApple', offer:'haveApple', sentence:'我 要 吃 苹果', sentenceEn:'I want to eat an apple.'}
+      },
+      wrongReply:'对不起', wrongAnswer:'noProblem', wrongMessage:'The monkey gives the fruit back. It wants the {wanted:hungry}.',
+      firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
+      reward:3, thanks:'thanks', thanksReply:'不客气'},
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
       sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
-    flowers: {from:'big', wants:'花', ask:'wantFlowers', asked:'The big monkey wants 3 {花}, and will give you shells for them. Check your tasks.',
-      offer:'haveFlowers', sentence:'我 要 花', sentenceEn:'I want flowers.', reward:3, thanks:'thanks', thanksReply:'不客气'}
+    flowers: {from:'big', wants:'花', verb:'花', ask:'wantFlowers', asked:'The big monkey wants a red, a yellow and a white {花}, and will give you shells for them. Check your tasks.',
+      offer:'haveFlowers', sentence:'我 要 红 花', sentenceEn:'I want a red flower.', gap:'红', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
@@ -201,25 +209,25 @@ const FLOWER_FRUIT_MOUNTAIN = {
       map: [
         "MMMMMMMMMMMMMMMMMMXXMMMM",
         "MMMMMMMggSggMMggggXXYYYY",
-        "MMMMMMMgg.gNMMgggFWWYYYY",
+        "MMMMMMMgg.gNMMgggJWWYYYY",
         "MMMMMMMgg.ggMMggggWWYYYY",
         "MMgggMMMg.gMMMMRRMWWYYYY",
         "YTggggggg.ggggg.ggWWYYYY",
         "YPg.............ggWWYYYY",
-        "YQggGGGGgggFggg.ggWWgggY",
+        "YTggGGGGgggFggg.ggWWgggY",
         "YPggGGGGggggTgg.ggWWgGgY",
-        "YTggGGGgggOOOKg.gFWWGGgY",
-        "YFgggggggOOOOgg.ggWWGGgY",
+        "YTggGGGgggOOOKg.gJWWGGgY",
+        "YJgggggggOOOOgg.ggWWGGgY",
         "YTgggGGGggggggg.ggWWgggY",
-        "YggFgGGGggggggg...BBgggY",
+        "YggJgGGGggggggg...BBgggY",
         "YgggggggggggggggggWWgGgY",
         "YTgGGGggggggggFgggWWGGgY",
         "YTggggg.ggggggTgggWWgggY",
         "YMMMMgg.ggHgggggggWWgggY",
-        "YMMMMgg.gggFggggggWWgTgY",
+        "YMMMMgg.gggEggggggWWgQgY",
         "YMMMMgg.GGGGgTggggWWgggY",
-        "YMMMggg...........BBgFgY",
-        "YMMgFggGGGggggggggWWgggY",
+        "YMMMggg...........BBgEgY",
+        "YMMgEggGGGggggggggWWgggY",
         "YYYYYYYYYYYYYYYYYYWWYYYY"
       ]
     },
@@ -264,15 +272,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   animals        true if animals hide here
   //   gather         something you can pick up here for a request (for), with a message afterwards. With
   //                  count, you pick one at each patch until you have that many (full is the message then,
-  //                  and again the message at a patch you've picked already)
+  //                  and again the message at a patch you've picked already). With kind, it's one of each
+  //                  kind instead (such as a colour); if the kind is a word, the first one teaches it (kindNote)
   //   action         something special that happens: 'story', 'sign' or 'training'
   //   label          what the A button says when you face it (Look if not given)
   //   whenGateOpens  the letter it becomes once the rocks have rolled away
   legend: {
     'g': {look:'grass', walk:true},
     'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
-    'F': {look:'flowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', count:3, label:'Pick', note:'You pick a flower.',
-      message:'You picked a {花} ({flowersPicked}/3). Find another patch.', full:'You have 3 {花}. Take them to the big monkey.', again:'You picked this patch already. Find another patch of {花}.'}},
+    'F': {look:'redFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'红', count:3, label:'Pick', note:'You pick a flower.',
+      kindNote:'The colour of these flowers.', message:'You picked a red {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
+      again:'You have a red {花} already. Find another colour.'}},   // red flowers, in the middle of the meadow
+    'E': {look:'yellowFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'黄', count:3, label:'Pick', note:'You pick a flower.',
+      kindNote:'The colour of these flowers.', message:'You picked a yellow {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
+      again:'You have a yellow {花} already. Find another colour.'}},   // yellow flowers, in the south
+    'J': {look:'whiteFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'白', count:3, label:'Pick', note:'You pick a flower.',
+      kindNote:'The colour of these flowers.', message:'You picked a white {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
+      again:'You have a white {花} already. Find another colour.'}},   // white flowers, on the far left and by the river
     '.': {look:'path', walk:true},   // (路 path waits for chapter 1: stepping off the stone was straight into a word)
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
@@ -345,7 +361,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // (optionally) an if that must match before it starts sparkling.
   sparkles: [
     {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 7]},
-    {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[1, 7]},
+    {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[21, 17]},
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
     {word:'瀑布', at:[18, 1], if:{gate:true}},   // the waterfall is out of reach until the rocks roll away
     {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']}, {word:'桥', at:[7, 6, 'cave']}
@@ -359,10 +375,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '猴子': 'The little monkey, playing in the south meadow.',
     '山': 'The cliffs all around the mountain.',
     '花': 'The flowers growing in the grass.',
+    '红': 'The red flowers in the middle of the meadow.',
+    '黄': 'The yellow flowers in the south.',
+    '白': 'The white flowers on the far left and by the river.',
     '草': 'The tall grass, where animals hide.',
     '树': 'The trees on the mountain.',
     '桃子': 'The peach trees at the far left end of the long path.',
-    '苹果': 'The apple tree at the far left end of the long path.',
+    '苹果': 'The apple tree in the south-east, across the river.',
     '河': 'The river that runs down the right of the mountain.',
     '水': 'You collected it for the thirsty monkey.',
     '鱼': 'Little fish in the pond in the middle of the meadow.',
@@ -454,20 +473,22 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hi: {zh:'你好 ！', en:'Hello!'},
     iam: {zh:'我 是 猴子 。 你 也 是 猴子 ！', en:'I am a monkey. You are a monkey too!'},
     go: {zh:'去 看看 ！', en:'Go and take a look!'},
-    hungry: {zh:'我 饿 了 。 我 要 吃 桃子 ！', en:"I'm hungry. I want to eat a peach!"},
+    hungry: {zh:'我 饿 了 。 我 要 吃 水果 ！', en:"I'm hungry. I want to eat some fruit!"},
     thirsty: {zh:'我 渴 了 。 我 要 喝 水 ！', en:"I'm thirsty. I want to drink some water!"},
     havePeach: {zh:'你 有 桃子 吗 ？', en:'Do you have a peach?'},
     haveWater: {zh:'你 有 水 吗 ？', en:'Do you have water?'},
+    haveApple: {zh:'你 有 苹果 吗 ？', en:'Do you have an apple?'},
     thanks: {zh:'谢谢 你 ！', en:'Thank you!'},
     play: {zh:'我们 玩 吧 ！', en:"Let's play!"},
     weFriends: {zh:'我们 是 朋友 ！', en:'We are friends!'},
     animals: {zh:'草 里 有 动物 。 去 找 动物 吧 ！', en:'There are animals in the grass. Go and find them!'},
     findElder: {zh:'你好 ！ 去 找 老 猴子 吧 ！', en:'Hello! Go and find the old monkey!'},
-    notThis: {zh:'这 是 苹果 。 我 要 吃 桃子 ！', en:'This is an apple. I want to eat a peach!'},
+    notApple: {zh:'这 是 苹果 。 我 要 吃 桃子 ！', en:'This is an apple. I want to eat a peach!'},
+    notPeach: {zh:'这 是 桃子 。 我 要 吃 苹果 ！', en:'This is a peach. I want to eat an apple!'},
     boss: {zh:'你好 ！ 我 是 老板 。', en:"Hello! I'm the shop owner."},
     whatWant: {zh:'你 要 什么 ？', en:'What do you want?'},
     bye: {zh:'再见 ！', en:'Goodbye!'},
-    wantFlowers: {zh:'我 要 花 ！', en:'I want flowers!'},
+    wantFlowers: {zh:'我 要 红 花 、 黄 花 和 白 花 ！', en:'I want a red flower, a yellow flower and a white flower!'},
     haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)

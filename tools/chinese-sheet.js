@@ -34,14 +34,21 @@ const DRAFTS = [
     ['两 只 猴子 。', 'Two monkeys.', 'The old monkey, counting (the card teaches 二: see the question below)'],
     ['三 只 猴子 。', 'Three monkeys.', 'The old monkey, counting (teaching 三)'],
     ['一 ， 二 ， 三 ！', 'One, two, three!', 'The example on 二 (two)’s page in the Word Scroll']]
-    .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part B (in the game): ' + where}))
+    .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part B (in the game): ' + where})),
+  ...[['我 饿 了 。 我 要 吃 水果 ！', 'I’m hungry. I want to eat some fruit!', 'The hungry monkey now asks for fruit (水果), not a peach'],
+    ['这 是 桃子 。 我 要 吃 苹果 ！', 'This is a peach. I want to eat an apple!', 'The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring)'],
+    ['你 有 苹果 吗 ？', 'Do you have an apple?', 'The hungry monkey, when you bring the apple he wants'],
+    ['我 要 吃 苹果 。', 'I want to eat an apple.', 'The sentence you finish when you give him the apple'],
+    ['我 要 红 花 、 黄 花 和 白 花 ！', 'I want a red flower, a yellow flower and a white flower!', 'The big monkey asking for flowers (红, 黄 and 白 are each taught when you pick that colour)'],
+    ['我 要 红 花 。', 'I want a red flower.', 'The sentence you finish when you give the big monkey the flowers (filling in 红)']]
+    .map(([zh, en, where]) => ({zh, en, where:'The prologue, changed on 17 October 2026: ' + where}))
 ];
 
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the
 // word bank yet, so each line gives its own pinyin. When it's built, these move into the area file.
 // Questions for the native speaker about the game's Chinese.
 const QUESTIONS = ['When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line? (The card for 二 says: "When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).")'];
-const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?'};
+const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':','};
 function sheet(){
   const game = loadGame();
   const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
@@ -63,7 +70,7 @@ function sheet(){
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name)];   // characters, the sign, the area and its places
-  const builds = [...Object.values(AREA.requests).map(r => [r.sentence, r.sentenceEn, name(r.from)]), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe'])];
+  const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe'])];
   const notes = '';
 
   return `# Chinese in Little Monkey: for checking

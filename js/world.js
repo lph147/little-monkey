@@ -81,6 +81,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'new') return lvl(v) === 0;
     if (k === 'knows') return lvl(v) >= 1;
     if (k === 'holding') return Object.entries(v).every(([id, want]) => { const h = here().holding[id]; return want === true ? !!h : want === false ? !h : h === want; });
+    if (k === 'wanted') return Object.entries(v).every(([id, want]) => { const h = (here().wanted || {})[id]; return want === true ? !!h : want === false ? !h : h === want; });
     if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
@@ -161,32 +162,38 @@ async function talk(n){
   const part = (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
   if (part) await runSteps(part.do, n.id);
 }
-async function request(r, face){   // a character asking you to bring something (the area's requests)
+// A character asking you to bring something (the area's requests). A request with choices (such as the
+// hungry monkey's fruit) is fussy: whichever you bring first, they want the other (remembered in wanted),
+// and each choice has its own lines and sentence.
+async function request(r, face){
   const p = here(), has = p.holding[r.id];
-  if (p[r.id] === 'asked' && has && has !== r.wants){   // you brought the wrong thing
-    await showDialog(face, L[r.wrong]);
+  const want = r.choices ? (p.wanted || {})[r.id] : r.wants;
+  const c = has && r.choices ? r.choices[has] : r;   // the lines and sentence for what you've brought
+  if (p[r.id] === 'asked' && has && has !== want){   // you brought the wrong thing
+    if (r.choices && !want){ p.wanted = {...p.wanted, [r.id]: Object.keys(r.choices).find(x => x !== has)}; save(); }
+    await showDialog(face, L[c.wrong]);
     if (r.wrongReply) await replyWith(r.wrongReply);
     if (r.wrongAnswer) await showDialog(face, L[r.wrongAnswer]);
-    delete p.holding[r.id]; save(); toast(r.wrongMessage);
+    delete p.holding[r.id]; save(); toast(fill(r.wrongMessage));
     return;
   }
-  if (p[r.id] === 'asked' && has === r.wants){          // you brought what they asked for
-    await showDialog(face, L[r.offer], {ok:'Give it'});
+  if (p[r.id] === 'asked' && has === want){          // you brought what they wanted
+    await showDialog(face, L[c.offer], {ok:'Give it'});
     const nw = (r.firstTeach || []).find(f => lvl(f.word) === 0);
     if (nw) await showNotice(nw.word, {note:nw.note, quiet:true});
-    const sentence = toks(r.sentence);
-    await gapQ({who:face, t:sentence, en:r.sentenceEn, gap:r.gap || r.wants});
-    sentence.filter(w => lvl(w) >= 1).forEach(useWord);
+    const sentence = toks(c.sentence);
+    await gapQ({who:face, t:sentence, en:c.sentenceEn, gap:c.gap || has});
+    sentence.filter(x => lvl(x) >= 1).forEach(useWord);
     p[r.id] = 'done'; delete p.holding[r.id]; S.shells += r.reward; gainXP(XP.task); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
     toast(`+${r.reward} 🐚. Task complete!`);
     await runEvents();
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
-    const verb = r.verb && lvl(r.verb) === 0 ? r.verb : null;   // a new verb to teach, if there is one
+    const verb = r.verb && lvl(r.verb) === 0 ? r.verb : null;   // a new word to teach, if there is one
     await showDialog(face, L[r.ask], {teach:verb});
     if (verb) await showNotice(verb, {quiet:true});
-    if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(r.asked); }
+    if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(fill(r.asked)); }
   } else await showDialog(face, L[r.thanks]);
 }
 const forSale = () => AREA.shop.items.filter(i => i.eat || !here().bought.includes(i.item));   // food can be bought again; other things once
@@ -238,10 +245,12 @@ async function gather(t, x, y){   // pick up something for a request, such as fr
   const g = t.gather;
   // the request comes first: collecting water is where 水 is introduced
   if (lvl(g.item) === 0) await showNotice(g.item, {note:g.note});
-  if (g.count){   // one at each patch, until you have enough
+  if (g.count){   // one at each patch (or one of each kind, such as a colour), until you have enough
     const p = here().picked[g.for] = here().picked[g.for] || [];
-    if (p.some(([a, b]) => a === x && b === y)){ SFX.bump(); toast(fill(g.again)); return; }
-    p.push([x, y]); SFX.right();
+    const key = g.kind || `${x},${y}`;
+    if (p.includes(key)){ SFX.bump(); toast(fill(g.again)); return; }
+    if (g.kind && WORDS[g.kind] && lvl(g.kind) === 0) await showNotice(g.kind, g.kindNote ? {note:fill(g.kindNote)} : {});   // the first of its kind teaches its word, such as 红
+    p.push(key); SFX.right();
     if (p.length >= g.count) here().holding[g.for] = g.item;
     save(); toast(fill(p.length >= g.count ? g.full : g.message));
     return;

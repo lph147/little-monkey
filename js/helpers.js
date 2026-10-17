@@ -6,11 +6,12 @@ const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const wz = hz => `${hz} (${(WORDS[hz] || {en: (GLOSS[hz] || ['', ''])[1]}).en})`;
 // Fills in content text: a counter such as '{animals}' becomes its number, a word such as '{水}'
-// becomes '水 (water)', and '{holding:hungry}' the word for what you're holding for that request.
+// becomes '水 (water)', '{holding:hungry}' the word for what you're holding for that request, and
+// '{wanted:hungry}' the word for what a fussy request wants now.
 // With raw, words are left as they are (for task ids).
 const fill = (text, raw) => String(text).replace(/\{([^}]+)\}/g, (m, k) => {
   if (AREA.counters[k]) return counter(k);
-  const w = k.startsWith('holding:') ? here().holding[k.slice(8)] : k;
+  const w = k.startsWith('holding:') ? here().holding[k.slice(8)] : k.startsWith('wanted:') ? (here().wanted || {})[k.slice(7)] : k;
   return raw ? w : wz(w);
 });
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

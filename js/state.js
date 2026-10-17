@@ -2,13 +2,13 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 19;
+const SAVE_VERSION = 20;
 // XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
 const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
   for (const r of REQUESTS) p[r.id] = 'not asked';
-  return Object.assign(p, {holding:{}, picked:{}, bought:[], done:false});
+  return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], done:false});
 }
 function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}}; }
 
@@ -113,12 +113,22 @@ function upgradeSave(s){
   if (s.version === 18){   // version 18: there were no chapters. You're in the prologue (filled in below); if it's all done,
     s.version = 19;        // chapter 1 begins the next time you do something.
   }
+  if (s.version === 19){   // version 19: the hungry monkey asked for a peach, and flowers were picked one per patch.
+    const a = (s.areas || {})[AREA.number];
+    if (a){
+      if (a.hungry === 'asked') a.wanted = {...a.wanted, hungry:'桃子'};   // you were told he wants a peach, so he still does
+      const fl = (a.picked || {}).flowers;   // flowers are one of each colour now: if you had all 3, you have one of each
+      if (Array.isArray(fl)) a.picked.flowers = fl.length >= 3 ? ['红', '黄', '白'] : [];
+    }
+    s.version = 20;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
   s.areas = Object.assign({}, s.areas);
   s.areas[AREA.number] = Object.assign({}, start, s.areas[AREA.number]);
   s.areas[AREA.number].holding = Object.assign({}, s.areas[AREA.number].holding);
+  s.areas[AREA.number].wanted = Object.assign({}, s.areas[AREA.number].wanted);
   if (!Array.isArray(s.areas[AREA.number].bought)) s.areas[AREA.number].bought = [];
   s.areas[AREA.number].picked = Object.assign({}, s.areas[AREA.number].picked);
   if (!Array.isArray(s.met)) s.met = [];

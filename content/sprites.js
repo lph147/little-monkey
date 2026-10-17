@@ -738,5 +738,68 @@ const SPRITES = {
       "..oooooooooooo..",
       "................"
     ]
+  },
+  '红': {   // red: a splash of red paint
+    palette: {o:'#3A352E', c:'#E8343C', d:'#A8161E', l:'#FF8A8A'},
+    rows: [
+      "................",
+      "................",
+      "......oooo......",
+      "....oocccooo....",
+      "...occllcccco...",
+      "..occlllcccccoo.",
+      "..occllccccccdo.",
+      ".occcccccccccdo.",
+      ".occcccccccccdo.",
+      ".occccccccccddo.",
+      "..occccccccddo..",
+      "..oocccccdddoo..",
+      "...ooddddddoo...",
+      ".....oooooo.....",
+      "................",
+      "................"
+    ]
+  },
+  '黄': {   // yellow: a splash of yellow paint
+    palette: {o:'#3A352E', c:'#F7D23E', d:'#C99A10', l:'#FFF3A8'},
+    rows: [
+      "................",
+      "................",
+      "......oooo......",
+      "....oocccooo....",
+      "...occllcccco...",
+      "..occlllcccccoo.",
+      "..occllccccccdo.",
+      ".occcccccccccdo.",
+      ".occcccccccccdo.",
+      ".occccccccccddo.",
+      "..occccccccddo..",
+      "..oocccccdddoo..",
+      "...ooddddddoo...",
+      ".....oooooo.....",
+      "................",
+      "................"
+    ]
+  },
+  '白': {   // white: a splash of white paint
+    palette: {o:'#3A352E', c:'#FFFFFF', d:'#C9C4B8', l:'#FFFFFF'},
+    rows: [
+      "................",
+      "................",
+      "......oooo......",
+      "....oocccooo....",
+      "...occllcccco...",
+      "..occlllcccccoo.",
+      "..occllccccccdo.",
+      ".occcccccccccdo.",
+      ".occcccccccccdo.",
+      ".occccccccccddo.",
+      "..occccccccddo..",
+      "..oocccccdddoo..",
+      "...ooddddddoo...",
+      ".....oooooo.....",
+      "................",
+      "................"
+    ]
   }
 };

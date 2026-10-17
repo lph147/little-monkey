@@ -133,7 +133,7 @@ const dueWords = () => [...trainable(), ...unpictured()].filter(isDue);   // wor
 const trainingCalls = () => trainable().length >= TRAINING_MIN && dueWords().length > 0;   // the practice post shows a !
 // The words to practise: the ones due for review first, then the ones due soonest, in a random order.
 const trainingWords = () => shuffle(shuffle(trainable()).sort((a, b) => rec(a).due - rec(b).due).slice(0, TRAINING_WORDS));
-const SENTENCES = () => [...REQUESTS, ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];   // the area's sentences you complete
+const SENTENCES = () => [...REQUESTS.flatMap(r => r.choices ? Object.values(r.choices) : [r]), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];   // the area's sentences you complete
 // A sentence for practising a word without a picture (such as 我 or 要): one you've met in a request, the
 // shop or the wardrobe, with every word caught, and that word missing (gap), preferring a word that's due.
 function practiceSentence(){

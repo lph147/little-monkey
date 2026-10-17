@@ -126,7 +126,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 **Leaving.** At a feast, you grow sad that one day you'll die. An old gibbon tells you about immortals who never die, and you decide to find one and learn from them. The troop helps you build a raft from wood (木头) on the shore. Before you sail, the troop gives you a send-off: you name everything you've learned on the mountain (the area's word test, 80% to pass). Then you sail across the sea (海), and Area 2 begins.
 
-**Words.** The prologue has 27 words (and 7 phrases). Chapter 1 brings about 25 more, such as 跳 洞 路 桥 床 碗 桌子 门 家 王, the numbers 一 to 十, 有, 海 and 木头, and a fruit or two for the shop. The list is a draft; its Chinese, and the names 美猴王 and the old gibbon's, need the native speaker's check.
+**Words.** The prologue has 30 words (and 7 phrases), with the colours 红 黄 白. Chapter 1 brings about 25 more, such as 跳 洞 路 桥 床 碗 桌子 门 家 王, the numbers 一 to 十, 有, 海 and 木头, and a fruit or two for the shop. The list is a draft; its Chinese, and the names 美猴王 and the old gibbon's, need the native speaker's check.
 
 **路 (path) waits for chapter 1** (decided 17 October 2026): stepping off the stone onto the path taught it straight away, one word too soon. Chapter 1 can teach it on a path to a new place, such as up to the high slopes. Its word bank entry and sprite were removed meanwhile (the tests don't allow unused ones); they're in git history, in the commit before the one that took it out.
 
@@ -288,6 +288,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
   - [x] Tips instead of How to play, and one-line hints
   - [x] A gentler opening: English tells the story, in a box over the sky, and some captions show one word you'll meet (山, 石头, 猴子, 你好), said aloud
   - [x] Animals as a scene, with hearts to fill and a new-friend moment
+- [x] The prologue's requests made into finding things (17 October 2026): the hungry monkey wants fruit (水果, heard only) and, whichever you bring first, wants the other, with the peaches on the far left and the apple tree in the south-east; the big monkey wants a red, a yellow and a white flower, which grow in different parts of the meadow, and the first of each colour teaches its word (红 黄 白). No arrows for finding them. "He doesn't like it" is said as 这是苹果。我要吃桃子！, keeping 不 for Area 2. Save version 20
 - [ ] Playtest the prologue for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md

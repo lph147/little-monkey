@@ -17,20 +17,22 @@ shown where the word list has them.
 | 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 猴子 (Monkey) |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
 | 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey) |  |
-| 我饿了。我要吃桃子！ | wǒ è le. wǒ yào chī táozi! | I'm hungry. I want to eat a peach! | 饿猴子 (Hungry monkey) |  |
+| 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I'm hungry. I want to eat some fruit! | 饿猴子 (Hungry monkey) |  |
 | 我渴了。我要喝水！ | wǒ kě le. wǒ yào hē shuǐ! | I'm thirsty. I want to drink some water! | 渴猴子 (Thirsty monkey) |  |
-| 你有桃子吗？ | nǐ yǒu táozi ma? | Do you have a peach? | 饿猴子 (Hungry monkey) |  |
+| 你有桃子吗？ | nǐ yǒu táozi ma? | Do you have a peach? |  |  |
 | 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
+| 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 老板 (Shop owner) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
 | 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |
-| 这是苹果。我要吃桃子！ | zhè shì píngguǒ. wǒ yào chī táozi! | This is an apple. I want to eat a peach! | 饿猴子 (Hungry monkey) |  |
+| 这是苹果。我要吃桃子！ | zhè shì píngguǒ. wǒ yào chī táozi! | This is an apple. I want to eat a peach! |  |  |
+| 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! |  |  |
 | 你好！我是老板。 | nǐ hǎo! wǒ shì lǎobǎn. | Hello! I'm the shop owner. | 老板 (Shop owner) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey) |  |
-| 我要花！ | wǒ yào huā! | I want flowers! | 大猴子 (Big monkey) |  |
+| 我要红花、黄花和白花！ | wǒ yào hóng huā, huáng huā hé bái huā! | I want a red flower, a yellow flower and a white flower! | 大猴子 (Big monkey) |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
@@ -49,8 +51,9 @@ shown where the word list has them.
 | Chinese | Pinyin | English | Said to | Notes |
 | --- | --- | --- | --- | --- |
 | 我要吃桃子 | wǒ yào chī táozi | I want to eat a peach. | 饿猴子 (Hungry monkey) |  |
+| 我要吃苹果 | wǒ yào chī píngguǒ | I want to eat an apple. | 饿猴子 (Hungry monkey) |  |
 | 我要喝水 | wǒ yào hē shuǐ | I want to drink water. | 渴猴子 (Thirsty monkey) |  |
-| 我要花 | wǒ yào huā | I want flowers. | 大猴子 (Big monkey) |  |
+| 我要红花 | wǒ yào hóng huā | I want a red flower. | 大猴子 (Big monkey) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
@@ -150,6 +153,9 @@ The opening is told in English. These captions each show one word, said aloud.
 | 松鼠 | sōngshǔ | squirrel |  |
 | 山羊 | shānyáng | goat |  |
 | 洞 | dòng | cave |  |
+| 红 | hóng | red |  |
+| 黄 | huáng | yellow |  |
+| 白 | bái | white |  |
 | 跳 | tiào | to jump |  |
 | 桥 | qiáo | bridge |  |
 | 床 | chuáng | bed |  |
@@ -182,6 +188,8 @@ The opening is told in English. These captions each show one word, said aloud.
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 是 | shì | am, is, are |  |
+| 水果 | shuǐguǒ | fruit |  |
+| 和 | hé | and |  |
 | 后面 | hòumiàn | behind |  |
 | 谁 | shéi | who, whoever |  |
 | 进去 | jìnqù | to go in |  |
@@ -261,6 +269,12 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 两只猴子。 | liǎng zhī hóuzi. | Two monkeys. | Chapter 1, part B (in the game): The old monkey, counting (the card teaches 二: see the question below) |  |
 | 三只猴子。 | sān zhī hóuzi. | Three monkeys. | Chapter 1, part B (in the game): The old monkey, counting (teaching 三) |  |
 | 一，二，三！ | yī, èr, sān! | One, two, three! | Chapter 1, part B (in the game): The example on 二 (two)’s page in the Word Scroll |  |
+| 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I’m hungry. I want to eat some fruit! | The prologue, changed on 17 October 2026: The hungry monkey now asks for fruit (水果), not a peach |  |
+| 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! | The prologue, changed on 17 October 2026: The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring) |  |
+| 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants |  |
+| 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
+| 我要红花、黄花和白花！ | wǒ yào hóng huā, huáng huā hé bái huā! | I want a red flower, a yellow flower and a white flower! | The prologue, changed on 17 October 2026: The big monkey asking for flowers (红, 黄 and 白 are each taught when you pick that colour) |  |
+| 我要红花。 | wǒ yào hóng huā. | I want a red flower. | The prologue, changed on 17 October 2026: The sentence you finish when you give the big monkey the flowers (filling in 红) |  |
 
 ## Questions
 

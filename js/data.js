@@ -19,7 +19,7 @@ for (const [w, d] of Object.entries(WORD_BANK)){
 }
 const ORDER = Object.keys(WORDS).filter(w => !WORDS[w].phrase);    // the area's words, in Word Scroll order
 const PHRASES = Object.keys(WORDS).filter(w => WORDS[w].phrase);  // its phrases (你好, 谢谢…), a collection of their own
-const PUNCT = new Set(['！','。','，','？']);
+const PUNCT = new Set(['！','。','，','？','、']);
 const L = {};                         // what the characters say
 for (const [k, line] of Object.entries(AREA.lines)) L[k] = {t:toks(line.zh), en:line.en};
 const STORY = AREA.story.map(s => ({t:toks(s.zh), en:s.en, pic:s.pic}));

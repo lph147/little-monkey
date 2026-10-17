@@ -92,16 +92,17 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(15, 19, 'down', 'talking to the little monkey again');
   assert.ok(knows('猴子') && knows('朋友'), 'the little monkey should teach 猴子, then 朋友');
 
-  // The hungry monkey: the wrong fruit first, then the right one
+  // The hungry monkey wants fruit: whichever you bring first, he wants the other
   await pressAt(13, 6, 'up', 'meeting the hungry monkey');
-  assert.equal(area().hungry, 'asked', 'the hungry monkey should ask for something to eat');
-  await pressAt(2, 7, 'left', 'picking an apple');
-  assert.equal(area().holding.hungry, '苹果', 'you should be holding the apple');
-  await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
-  assert.equal(area().holding.hungry, undefined, 'the apple is given back');
+  assert.equal(area().hungry, 'asked', 'the hungry monkey should ask for some fruit');
   await pressAt(2, 6, 'left', 'picking a peach');
+  assert.equal(area().holding.hungry, '桃子', 'you should be holding the peach');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the peach');
-  assert.equal(area().hungry, 'done', 'the hungry monkey should take the peach');
+  assert.equal(area().holding.hungry, undefined, 'the peach is given back');
+  assert.deepEqual(area().wanted, {hungry: '苹果'}, 'he wants the apple instead');
+  await pressAt(20, 17, 'right', 'picking an apple from the tree across the river');
+  await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
+  assert.equal(area().hungry, 'done', 'the hungry monkey should take the apple');
 
   // The thirsty monkey, then the rocks roll away
   await pressAt(2, 11, 'down', 'meeting the thirsty monkey');
@@ -110,14 +111,16 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
   assert.equal(area().gate, true, 'the rocks should have rolled away');
 
-  // The big monkey, in the middle meadow: 3 flowers from 3 different patches, for peaches
+  // The big monkey, in the middle meadow: a red, a yellow and a white flower, for shells
   await pressAt(4, 10, 'right', 'meeting the big monkey');
   assert.equal(area().flowers, 'asked', 'the big monkey should ask for flowers');
-  await pressAt(11, 6, 'down', 'picking a flower');
-  await pressAt(11, 6, 'down', 'trying the same patch again');
-  assert.equal(get('here().picked.flowers.length'), 1, 'a patch gives one flower');
-  await pressAt(16, 9, 'right', 'picking a second flower');
-  await pressAt(2, 10, 'left', 'picking a third flower');
+  await pressAt(11, 6, 'down', 'picking a red flower');
+  assert.ok(knows('红'), 'the first red flower should teach 红');
+  await pressAt(11, 6, 'down', 'trying another red flower');
+  assert.equal(get('here().picked.flowers.length'), 1, 'one flower of each colour');
+  await pressAt(11, 16, 'down', 'picking a yellow flower in the south');
+  await pressAt(16, 9, 'right', 'picking a white flower by the river');
+  for (const w of ['黄', '白']) assert.ok(knows(w), `picking should teach ${w}`);
   assert.equal(area().holding.flowers, '花', 'you should be holding 3 flowers');
   const peaches = get('S.shells');
   await pressAt(4, 10, 'right', 'giving the big monkey the flowers');

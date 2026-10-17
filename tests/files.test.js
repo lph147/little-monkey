@@ -37,5 +37,5 @@ test('draft sentences waiting to be checked only use words in the word bank', ()
   const {DRAFTS} = require('../tools/chinese-sheet');
   const {loadGame} = require('./fake-browser');
   const bank = JSON.parse(loadGame().run('JSON.stringify(WORD_BANK)'));
-  for (const d of DRAFTS) for (const w of d.zh.split(' ')) assert.ok(bank[w] || '。！，？'.includes(w), `the draft "${d.zh}" uses ${w}, which isn't in the word bank`);
+  for (const d of DRAFTS) for (const w of d.zh.split(' ')) assert.ok(bank[w] || '。！，？、'.includes(w), `the draft "${d.zh}" uses ${w}, which isn't in the word bank`);
 });

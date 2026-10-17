@@ -80,18 +80,17 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Talk to the old monkey again: he teaches 动物 (animal). A new task asks you to find the hidden animals (0/4).
 
 **The hungry monkey**
-- [ ] The monkey to the right of the old monkey has a !. It says it's hungry and teaches 吃 (eat). A task asks you to find the fruit it wants.
-- [ ] Open Menu, Word Scroll: 桃子 isn't caught yet, so it shows as a shadow of a peach marked "heard 1×" (the monkey just said it). It turns into 桃子 once you pick one.
-- [ ] Walk to the far left end of the long path. The middle tree has apples. Face it and press A to learn 苹果 (apple) and pick one.
-- [ ] Give the apple to the hungry monkey. It says 这是苹果。我要吃桃子！ and gives the apple back.
+- [ ] The monkey to the right of the old monkey has a !. It says 我饿了。我要吃水果！ (I want to eat some fruit: 水果 is grey, just for listening) and teaches 吃 (eat). The task says "Find some fruit for the hungry monkey", with no arrow: finding it is the point.
+- [ ] Peach trees grow at the far left end of the long path; the apple tree is in the south-east, across the river. Face one and press A to learn its word (桃子 peach or 苹果 apple) and pick one.
+- [ ] Whichever you bring first, he gives it back: 这是桃子。我要吃苹果！ (or 这是苹果。我要吃桃子！). You reply 对不起 and he says 没关系. The task changes to "Find the 苹果 (apple) the hungry monkey wants" (or the 桃子).
 - [ ] The thirsty monkey stands near the bottom of the map: when it talks, you both still show above the speech box.
-- [ ] Pick from the tree above or below the apple tree to learn 桃子 (peach). Take it back. The button says Give it.
-- [ ] A new-word card for 要 (want) appears. Then "Fill the gap": 我要吃＿。 with "I want to eat a peach." underneath, and 3 choices. While 桃子 is new they're pictures with the Chinese; once you've recognised it, Chinese and pinyin only. Choosing fills the gap and reads the sentence aloud; a wrong choice shows the right one, and either way the task completes with +3 🐚. There are no word tiles to put in order anywhere.
+- [ ] Bring the other fruit: 你有苹果吗？ (or 你有桃子吗？). The button says Give it.
+- [ ] A new-word card for 要 (want) appears. Then "Fill the gap": 我要吃＿。 with the English underneath, and 3 choices. While the fruit is new they're pictures with the Chinese; once you've recognised it, Chinese and pinyin only. Choosing fills the gap and reads the sentence aloud; a wrong choice shows the right one, and either way the task completes with +3 🐚.
 
 **The big monkey**
-- [ ] The big monkey (大猴子) stands in the middle meadow, between the two patches of tall grass on the left, with a ! once you've said hello to the old monkey. It says 我要花！ and wants 3 flowers, and will give you shells for them.
-- [ ] Face a patch of flowers and press A (it says Pick): "You picked a 花 (flower) (1/3)". The same patch again says you've picked it already. The task box counts up to 3.
-- [ ] Take them back (it shows a ?): 你有花吗？, then fill the gap in 我要＿。 (I want flowers.), +3 🐚, and reply 不客气 when it says thank you.
+- [ ] The big monkey (大猴子) stands in the middle meadow, between the two patches of tall grass on the left, with a ! once you've said hello to the old monkey. It says 我要红花、黄花和白花！ (I want a red flower, a yellow flower and a white flower) and teaches 花 if you don't know it yet.
+- [ ] Red flowers grow in the middle of the meadow, yellow ones in the south and white ones on the far left and by the river. Face a patch and press A (it says Pick): the first of each colour teaches its word on a card (红 red, 黄 yellow, 白 white), then "You picked a red 花 (flower) (1/3)". Another patch of a colour you have says you have that colour already. The task box counts up to 3, with no arrow.
+- [ ] Take them back (it shows a ?): 你有花吗？, then fill the gap in 我要＿花。 (I want a red flower.), +3 🐚, and reply 不客气 when it says thank you.
 
 **The thirsty monkey**
 - [ ] The thirsty monkey (bottom left) teaches 喝 (drink). A task asks you to collect water.

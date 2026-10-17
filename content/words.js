@@ -23,6 +23,7 @@ const CATEGORIES = {
   items: {tab:'Items', name:'Items'},
   actions: {tab:'Actions', name:'Actions'},
   people: {tab:'People', name:'People'},
+  colours: {tab:'Colours', name:'Colours'},
   numbers: {tab:'Numbers', name:'Numbers'},
   phrases: {tab:'Phrases', name:'Phrases'}
 };
@@ -47,6 +48,9 @@ const WORD_BANK = {
   '松鼠': {py:'sōngshǔ', en:'squirrel', pic:'🐿️', area:1, category:'animals'},
   '山羊': {py:'shānyáng', en:'goat', pic:'🐐', area:1, category:'animals'},
   '洞': {py:'dòng', en:'cave', pic:'🕳️', area:1, category:'places'},
+  '红': {py:'hóng', en:'red', pic:'🟥', area:1, category:'colours'},
+  '黄': {py:'huáng', en:'yellow', pic:'🟨', area:1, category:'colours'},
+  '白': {py:'bái', en:'white', pic:'⬜', area:1, category:'colours'},
   // Chapter 1: the Water Curtain Cave
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
   '桥': {py:'qiáo', en:'bridge', pic:'🌉', area:1, category:'places'},
@@ -79,6 +83,8 @@ const WORD_BANK = {
 
   // Heard in sentences
   '是': {py:'shì', en:'am, is, are'},
+  '水果': {py:'shuǐguǒ', en:'fruit'},
+  '和': {py:'hé', en:'and'},
   '后面': {py:'hòumiàn', en:'behind'},
   '谁': {py:'shéi', en:'who, whoever'},
   '进去': {py:'jìnqù', en:'to go in'},
