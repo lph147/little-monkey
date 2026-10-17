@@ -348,9 +348,9 @@ rt.hid{visibility:hidden}
 .sslabel{font:600 .72rem var(--pixel);color:var(--muted);letter-spacing:.08em}
 .dot{position:absolute;top:-7px;right:-7px;width:13px;height:13px;border-radius:50%;background:#E0443C;border:2px solid var(--shell)}
 .dot[hidden]{display:none}
-/* the title screen's words, under its buttons, over the night sky */
-.titlefoot{display:flex;flex-direction:column;align-items:center;gap:10px}
-.titletext{max-width:20rem;font-size:.92rem;line-height:1.4;color:#FFF6E0;text-shadow:0 1px 2px #000;pointer-events:auto}
+/* the title screen's words, under its name, in the night sky above the mountain */
+.titlehead{display:flex;flex-direction:column;align-items:center}
+.titletext{max-width:20rem;margin-top:14px;font-size:.92rem;line-height:1.4;color:#FFF6E0;text-shadow:0 1px 2px #000;pointer-events:auto}
 .titletext p{margin:0}
 .titletext .warn{color:#FFB4A8;margin-top:6px}
 .capbox .caprow{margin-top:8px}

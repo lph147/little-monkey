@@ -41,20 +41,21 @@ The save on your phone belongs to this address, so it is separate from saves any
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky, the stone on the mountain and a Start (or Continue) button with a red A badge.
-- [ ] If words are due for review, the title screen says how many (after "Welcome back"). If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). Before you start, the header shows only 小猴子: no level, shells, word count or Menu.
-- [ ] Continue puts you back where you left off, with the same level, shells (a pixel shell) and word count in the header.
-- [ ] The header shows your level (Lv 1 to start). The menu shows it with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
+- [ ] If words are due for review, the title screen says how many (after "Welcome back"). If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). The words sit under the title in the night sky, clear of the stone and the mountain.
+- [ ] There's no header above the screen and no task box under it. Between the D-pad and A/B are two small buttons, SELECT and START, like a Game Boy's.
+- [ ] Continue puts you back where you left off. Start (or M) opens the menu and Select (or T) your tasks; both show your level, XP, shells (a pixel shell) and words at the top, and pressing the same button again (or B) closes them.
+- [ ] The menu shows your level with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
-- [ ] On a phone held upright, the game screen is taller than it is wide (it shows up to 14 rows of the map instead of 10), and while you play the whole console fits without scrolling. On a computer it shows 10 rows.
-- [ ] The task box under the screen shows one task. With more than one, "+2 more" (and so on) opens all your tasks with the area checklist; B comes back to the game. A new task appears first, marked New.
+- [ ] On a phone held upright, the game screen is taller than it is wide (it shows up to 18 rows of the map instead of 10), and while you play the whole console fits without scrolling. On a computer it shows 10 rows.
+- [ ] Select shows what to do now, then the chapter's checklist. When a new task arrives, a message says "New task: ..." (after any message already showing), and a red dot sits on Select until you open your tasks. A tip points at Select the first time you have a task, and one at Start once you know 3 words.
 - [ ] Talking to the old monkey: the line appears in a speech box across the bottom of the game screen, and you and the old monkey stay in sight above it (the map only slides up if one of you would be covered). The line is spoken, pinyin shows over every word, and tapping a word shows its meaning at the bottom of the box (without moving on). 🔊 says it again. A, B or the green ▼ moves on; the arrows and Menu do nothing until the talk is over.
 - [ ] Your very first reply, after the old monkey's 你好, says "Now you say it" with just 你好 to say. After that (such as after a monkey's 谢谢你), "Your reply" shows 2 or 3 phrases, each with Chinese, pinyin and English. Tapping one (or the arrows and A) makes your monkey, 小猴子 (You), say it. Choosing a phrase that doesn't fit is fine: a note says which fits best. B doesn't choose. A phrase you haven't learned yet is taught on its own card first.
 - [ ] At the 老板's stall, the button for not buying anything says 我不要 · no thanks. The first time, a card teaches 我不要; then your monkey says it.
 - [ ] Sometimes an animal's last question is a sentence you know with a word missing (such as 我＿吃桃子。). Choosing right counts as a right answer.
 - [ ] Menu, Settings, English on replies Off: reply choices show only Chinese and pinyin.
-- [ ] The Word Scroll has a Phrases tab (你好, 谢谢, 不客气, 对不起, 没关系, 再见, 我不要). Phrases don't count in the word total in the header. A phrase you've replied with has all four gold squares.
+- [ ] The Word Scroll has a Phrases tab (你好, 谢谢, 不客气, 对不起, 没关系, 再见, 我不要). Phrases don't count in the word total in the menu. A phrase you've replied with has all four gold squares.
 - [ ] A line you've seen before hides its English behind an English button. "Tap any word to see what it means" only shows under your first few lines.
-- [ ] Menu opens with the Menu button (or M): four big tiles, two by two: 词 Word Scroll, 任务 Tasks, 朋友 Friends and 衣服 Wardrobe, each with pinyin and English, then Settings. The first tile has the gold outline and A badge; the D-pad moves between them. B, Close or the Menu button closes it.
+- [ ] Start (or M) opens the menu: four big tiles, two by two: 词 Word Scroll, 任务 Tasks, 朋友 Friends and 衣服 Wardrobe, each with pinyin and English, then Settings. The first tile has the gold outline and A badge; the D-pad moves between them. B, Close or Start closes it.
 - [ ] The Word Scroll has tabs across the top: one per category (Animals, Food, Nature and so on), then Today, then Heard. On a phone they fit in two rows. Tapping a tab (or pressing left or right on the D-pad) switches to it, and the scroll opens at the same tab next time.
 - [ ] A category's tab shows its count, such as "Animals 1/8", and a grid of its words, four across on a phone: caught words show their pixel picture, characters, pinyin and gold squares (words without a picture, like 我, show just the characters). Words you've heard but not caught show as a shadow of their picture, marked "heard 2×" and so on; the rest show ？.
 - [ ] Tapping a caught word opens its page: its picture, pinyin and sound, its level (Caught, Recognised, Read or Used), where you found it, and an example sentence with the word in bold. English shows the meanings; Back returns to the same tab and place in the scroll.
@@ -124,7 +125,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] During a whole conversation (talking to the 老板, the shop, filling the gap, his thanks and your reply), the map stays still behind it: it may slide up once at the start, and slides back only when the conversation is over.
 - [ ] In the south meadow (down the path through the trees), beside a striped market stall, stands the 老板 (shop owner), with a ! once you've said hello to the old monkey. Talking says 你好！我是老板。 and teaches 老板 on a new-word card.
 - [ ] Talk again: 你要什么？, then the stall shows a card for each thing for sale: its pixel picture, Chinese, pinyin, English and price (the price is red if you can't afford it yet), with your shells above. Choosing the 头带 teaches it (headband). 我不要 · no thanks closes it.
-- [ ] With fewer than 10 🐚, it says how many you have and how to earn more. The task box shows "Buy the 头带 (headband) from the 老板 (shop owner)" with your shells out of 10, and the 老板 shows a ? once you have 10.
+- [ ] With fewer than 10 🐚, it says how many you have and how to earn more. Your tasks (Select) show "Buy the 头带 (headband) from the 老板 (shop owner)" with your shells out of 10, and the 老板 shows a ? once you have 10.
 - [ ] With 10 🐚: fill the gap in 我要＿。 (I want the headband.). Your shells go down by 10, the 老板 says 谢谢你！, and your monkey wears a red headband on the map from then on (a new monkey starts without one).
 
 **The waterfall**
@@ -156,7 +157,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Talk to the old monkey (he has a !): 这是我们的家！ and a card teaches 家 (home).
 - [ ] Talk to the big monkey (now he has the !): 你是我们的王！, a card teaches 王 (king), and "The troop names you 美猴王". From then on, your replies show 美猴王 Měi Hóuwáng as your name.
 - [ ] Talk to the old monkey three times. Each time a monkey comes in through the water curtain, he counts (一只猴子。, 两只猴子。, 三只猴子。) and a card teaches one number: 一 (one), 二 (two, with a note that you say 两 when counting things) and 三 (three). The task counts 1/3, 2/3, 3/3, and three more monkeys from the meadow are now in the cave.
-- [ ] Afterwards the task box says the whole troop is home, and that the rest of chapter 1 is coming soon.
+- [ ] Afterwards your tasks (Select) say the whole troop is home, and that the rest of chapter 1 is coming soon.
 
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.

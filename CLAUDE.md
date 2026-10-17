@@ -51,9 +51,9 @@ I'm new to coding. Please:
 - D-pad: hold to walk, tap to turn on the spot, slide between directions without lifting. Text on the page must never be selectable.
 - **A** = talk, look, choose. On cards, A always presses the main (green) button, marked with a red A badge.
 - **B** = back or dismiss only (blue B badge on the button it presses). B never opens the menu.
-- **Menu** is its own button at the top (keyboard: M or Esc).
+- **Start** opens the menu and **Select** your tasks, like a Game Boy: two small buttons between the D-pad and A/B (keyboard: M or Esc for Start, T for Select). Pressing either again closes it. Both pages show your level, XP, shells and words at the top. There's no header or task box: the screen uses the room.
 - A/B badges appear only on a card's bottom action buttons and in the menu, never on things you tap directly (answers, words in sentences). The A badge is always on a button's top-left corner and the B badge on its top-right, tucked in so they never overlap a neighbouring button.
-- Messages appear in a box at the bottom of the game screen (in a conversation, they wait in the speech box until A); tasks live in the text box below the screen.
+- Messages appear in a box at the bottom of the game screen (in a conversation, they wait in the speech box until A). A new task is announced with a message, and a red dot stays on Select until you look at your tasks.
 
 ## Chinese accuracy
 Lines in the game should be natural, simple Mandarin. Flag anything you're unsure of so I can get it checked by a native speaker.

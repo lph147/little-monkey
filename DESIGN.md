@@ -184,12 +184,13 @@ The question type follows the word's mastery level, so new words start easy and 
 Every screen should take as few presses as possible, so time goes on Chinese rather than menus.
 
 - **The opening** is told in English, so a beginner can follow the story before learning any Chinese. Four captions each show one word you'll meet on the mountain (山, 石头, 猴子 and 你好), in Chinese, pinyin and English, said aloud; tap it to hear it again. The words aren't caught yet: that happens on the mountain. The caption sits over the sky at the top of the picture, so the page keeps its size.
-- **Tips, not instructions** (decided 17 October 2026). A new game starts straight away, with no page of How to play. Instead a bubble points at a control the first time you need it: the D-pad (walking), A (talking, then looking), a grey word in a sentence (just for listening), and the Menu once you have a few words. Each shows once. How to play stays in Settings. Hints are one line.
+- **Tips, not instructions** (decided 17 October 2026). A new game starts straight away, with no page of How to play. Instead a bubble points at a control the first time you need it: the D-pad (walking), A (talking, then looking), a grey word in a sentence (just for listening), Select once you have a task, and Start once you have a few words. Each shows once. How to play stays in Settings. Hints are one line.
 
 - **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story. A line of story in a conversation (such as the old monkey sending you off to explore) waits in the speech box too, so the next line can't cover it. A card's buttons always stay in sight at its bottom, however long the card.
+- **Start and Select** (decided 17 October 2026), like a Game Boy, between the D-pad and A/B: Start opens the menu and Select your tasks, both with your level, XP, shells and words at the top. They replace the header (title, stats and a Menu button) and the task box under the screen, so the screen can be taller. A new task is announced with a message, and a red dot stays on Select until you've looked. The title screen's words and the opening's buttons are in the picture.
 - **The menu** has four big tiles, each with an icon, Chinese and English: 词 Word Scroll, 任务 Tasks, 朋友 Friends, 衣服 Wardrobe. A Settings page holds music, sound effects, pinyin, How to play, export and import, the title screen and reset. The game saves itself, so there's no Save button.
 - **The Word Scroll** is a grid of sprites, with shadows for words you haven't caught and category tabs across the top. Today's words is a filter in it.
-- **On phones** the game screen uses the full height available, and the task box shows the current task with the rest behind "more".
+- **On phones** the game screen uses the full height available: as many rows of the map as fit, 10 to 18.
 
 ## Technical approach
 
@@ -289,6 +290,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
   - [x] A gentler opening: English tells the story, in a box over the sky, and some captions show one word you'll meet (山, 石头, 猴子, 你好), said aloud
   - [x] Animals as a scene, with hearts to fill and a new-friend moment
 - [x] The prologue's requests made into finding things (17 October 2026): the hungry monkey wants fruit (水果, heard only) and, whichever you bring first, wants the other, with the peaches on the far left and the apple tree in the south-east; the big monkey wants a red, a yellow and a white flower, which grow in different parts of the meadow, and the first of each colour teaches its word (红 黄 白). No arrows for finding them. "He doesn't like it" is said as 这是苹果。我要吃桃子！, keeping 不 for Area 2. Save version 20
+- [x] Start and Select instead of the header and task box (17 October 2026; save version 21)
 - [ ] Playtest the prologue for a week
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md
