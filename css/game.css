@@ -407,6 +407,56 @@ rt.hid{visibility:hidden}
 .sheet:has(> .scene) .big{font-size:2.6rem}
 .sheet:has(> .scene) > .actions{margin-top:.3rem}
 .endmsg{text-align:center;font-size:1.1rem}
+/* A question (an animal's, or filling a gap): from the top down, with the bottom row (what happened, or a helper,
+   and Next) at the bottom, its space kept, so nothing moves when you answer. */
+.sheet:has(> .scene):has(> .opts){grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr);grid-template-rows:auto auto 1fr auto;row-gap:.4rem}
+.sheet:has(> .scene):has(> .opts)::before{display:none}
+.sheet:has(> .scene):has(> .opts) > .opts{grid-row:3;align-self:center}
+.sheet:has(> .scene):has(> .opts) > .qfoot{grid-row:4;align-self:end}
+.sheet:has(> .scene) .opt .pix{width:var(--pic-scene);height:var(--pic-scene)}
+.sheet:has(> .qhead):has(> .opts) > .qhead{margin-top:0}
+.askrow{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.askrow .prompt{margin:0;font-size:1rem}
+.askrow .sayBig{flex:none;width:3rem;height:3rem;font-size:1.4rem}
+.opts{margin:0}
+.opt .later{visibility:hidden;font-size:.85rem;line-height:1.2;color:var(--muted);margin-top:.1rem}
+.opts.answered .opt .later{visibility:visible}
+.sheet:has(> .qhead) .opt:not(.hz){font-size:1rem}
+.sheet:has(> .qhead) .opt:not(.hz) .cap{display:inline}   /* filling a gap with pictures: the answers are wide, so the pinyin goes beside the characters */
+.sheet:has(> .qhead) .opt:not(.hz) .later{margin-left:.35em}
+.sheet:has(> .qhead) .gloss{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qfoot{flex-wrap:nowrap;align-items:center;justify-content:space-between}
+.qfoot .feedback{flex:1;min-width:0;text-align:left;margin:0}
+.qfoot [data-a=next][hidden]{display:inline-block;visibility:hidden}
+.helper{display:inline-flex;align-items:center;gap:.5rem;font:inherit;font-size:.82rem;line-height:1.3;color:var(--muted);text-align:left;background:none;border:1px dashed var(--line);border-radius:6px;padding:.2rem .6rem .2rem .3rem}
+.helper .pix{width:var(--pic-small);height:var(--pic-small);flex:none}
+/* the smallest phones, where the game screen is only about 210px tall: smaller pictures, speaker and text */
+.modal{container-type:size}
+@container (max-height:260px){
+  .sheet{padding:8px 10px 8px}
+  .sheet:has(> .scene):has(> .opts){grid-template-columns:minmax(0,.7fr) minmax(0,1.4fr);row-gap:.25rem}
+  .sheet:has(> .scene) .opt .pix,.sheet:has(> .qhead) .opt .pix{width:var(--pic-small);height:var(--pic-small)}
+  .askrow .prompt{font-size:.85rem}
+  .askrow .sayBig{width:2.3rem;height:2.3rem;font-size:1rem}
+  .opt{padding:.2rem 0}
+  .opt .cap{font-size:.85rem;margin-top:0}
+  .opt.hz{font-size:1.3rem}
+  .opt .later{font-size:.7rem}
+  .feedback .hz{font-size:1.1rem}
+  .qfoot .btn{min-height:32px;padding:3px 10px}
+  .sheet:has(> .qhead) .tok{font-size:1.2rem}
+  .sheet:has(> .qhead) .line{margin:.1rem 0}
+  .sheet:has(> .qhead) .sentence-en{font-size:.8rem;margin:0 0 .1rem;padding-top:1px;padding-bottom:1px}
+  .opt .ico{line-height:1}
+  .sheet:has(> .qhead) .gloss{display:none}
+  .sheet:has(> .qhead):has(> .opts) .qhead .prompt{display:none}   /* "Choose the missing word": the gap says it */
+  .sheet:has(> .qhead):has(> .opts) .qhead .speaker{gap:.3rem}
+  .sheet:has(> .qhead):has(> .opts) .qhead{gap:.5rem}
+  .sheet:has(> .qhead) .line rt{font-size:.45em}
+  .sheet:has(> .qhead) > .opts{margin-top:.2rem}
+  .sheet > .qfoot{margin-top:.2rem;padding-top:4px;padding-bottom:6px}
+  .plate .hearts .heart{width:.9rem;height:.85rem}
+}
 /* a short screen (a small phone): a smaller scene, 🔊 and answers, so the answers fit without scrolling */
 @media (max-height:680px){.scene{height:104px;margin-bottom:6px}.scene .foem{top:66px;width:96px;height:26px}.scene .foe{top:10px}.scene .foe .portrait{width:64px;height:64px}
   .scene .me{width:52px;height:52px}.scene .mem{width:96px;height:28px;bottom:-10px}.plate{padding:2px 8px 4px;top:6px;left:6px}.plate .qn{display:none}

@@ -38,6 +38,7 @@ SAVES.toBeKing = {...SAVES.ledIn, w: {...SAVES.ledIn.w, ...knows(1, ['家'])}, a
 SAVES.king = {...SAVES.toBeKing, w: {...SAVES.toBeKing.w, ...knows(1, ['王', '一'])}, areas: {1: {...PROLOGUE, cave: 6, count: 1}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
 SAVES.home = {...SAVES.king, w: {...SAVES.king.w, ...knows(1, ['二', '三'])}, areas: {1: {...PROLOGUE, cave: 6, count: 3}}, pos: {place: 'cave', x: 7, y: 12, dir: 'up'}};
 SAVES.appleTree = {...SAVES.middle, pos: {place: 'meadow', x: 20, y: 17, dir: 'right'}};
+SAVES.withApple = {...SAVES.middle, bag: {'苹果': 1}};   // an apple from the shop, to eat in an encounter
 SAVES.allFriends = {...SAVES.chapter1, friends: ['rabbit', 'fox', 'squirrel', 'goat']};   // every animal won over
 SAVES.wantsApple = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], holding: {}, wanted: {hungry: '苹果'}}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
 SAVES.facing = {...SAVES.born, tips: {walk: 1}, pos: {x: 7, y: 2, dir: 'up'}};   // facing the old monkey, having walked
@@ -75,6 +76,10 @@ const SCREENS = [
   {id: 'place-name', title: 'Arriving in a place', save: 'middle', why: 'Its name for a moment, when you go from one place to another.', run: async () => { play(); await wait(100); showPlaceName(); clearTimeout(placeNameT); await wait(300); }},
   {id: 'gap-picture', title: 'Fill the gap (pictures)', save: 'middle', why: 'Giving the peach: the word is new, so the choices are pictures.', run: async () => {
     play(); await wait(100); gapQ({who: speaker('hungry'), t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '桃子'}); await wait(400); }},
+  {id: 'gap-answered', title: 'Fill the gap, answered', save: 'middle', why: 'The sentence filled in, each answer’s pinyin, and Next, without anything moving.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); };
+    gapQ({who: speaker('hungry'), t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '桃子'}); await wait(300);
+    click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(400); }},
   {id: 'gap-words', title: 'Fill the gap (words)', save: 'knowsWell', why: 'Once a word is recognised, the choices are Chinese and pinyin.', run: async () => {
     play(); await wait(100); gapQ({who: speaker('thirsty'), t: toks('我 要 喝 水'), en: 'I want to drink some water.', gap: '喝'}); await wait(400); }},
   {id: 'shop', title: 'The shop', save: 'middle', run: async () => { play(); await wait(100); shop(speaker('boss')); await wait(200); next(); await wait(400); }},
@@ -86,6 +91,8 @@ const SCREENS = [
   {id: 'animal-card', title: 'Meeting an animal', save: 'middle', why: 'The first time: its name on a new-word card.', run: async () => {
     play(); await wait(100); showNotice('狐狸', {note: 'A wild fox jumped out of the 草 (grass)! Answer its questions to make friends.'}); await wait(400); }},
   {id: 'encounter-listen', title: 'Animal: listen', save: 'middle', why: 'The question must never be about the animal itself.', run: async () => {
+    play(); await wait(100); encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(500); }},
+  {id: 'encounter-apple', title: 'Animal: with an apple to eat', save: 'withApple', why: 'Eating it takes away a wrong answer.', run: async () => {
     play(); await wait(100); encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(500); }},
   {id: 'encounter-read', title: 'Animal: read', save: 'knowsWell', run: async () => {
     play(); await wait(100); encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(500); }},

@@ -1,10 +1,13 @@
 // Picture questions, word games with animals and monkeys, and sentences with a word to fill in.
 
 /* ================= QUESTIONS & ENCOUNTERS ================= */
-function pictureQ({head, body, options, answerIdx, word, type, text, onShow, onAnswer}){
+// The bottom row: what happened (or a helper, such as food to eat, until you answer) on the left, and Next on the
+// right, its space kept while it's hidden, so nothing moves when it appears. Answers can have a part shown only
+// once you've answered (class later).
+function pictureQ({head, body, options, answerIdx, word, type, text, helper = '', onShow, onAnswer}){
   return new Promise(res => {
     openCard(`${head}${body}<div class="opts">${options.map((o,i) => `<button class="opt${text ? ' hz' : ''}" data-i="${i}" aria-label="Option ${i+1}">${o}</button>`).join('')}</div>
-      <div class="feedback" aria-live="polite"></div><div class="actions"><button class="btn primary" data-a="next" hidden>Next</button></div>`);
+      <div class="actions qfoot"><div class="feedback" aria-live="polite">${helper}</div><button class="btn primary" data-a="next" hidden>Next</button></div>`);
     bindTokens(sheet);
     if (onShow) onShow();
     on('[data-a=say]', () => say(word || ''));
@@ -12,6 +15,7 @@ function pictureQ({head, body, options, answerIdx, word, type, text, onShow, onA
     sheet.querySelectorAll('.opt').forEach(b => b.onclick = () => {
       const i = +b.dataset.i, ok = i === answerIdx;
       sheet.querySelectorAll('.opt').forEach(x => x.disabled = true);
+      sheet.querySelector('.opts').classList.add('answered');
       b.classList.add(ok ? 'right' : 'wrong');
       sheet.querySelector(`.opt[data-i="${answerIdx}"]`).classList.add('right');
       ok ? SFX.right() : SFX.wrong();
@@ -26,6 +30,7 @@ function pictureQ({head, body, options, answerIdx, word, type, text, onShow, onA
     });
   });
 }
+const laterPy = w => S.pinyin ? `<span class="cap py later">${WORDS[w].py}</span>` : '';   // an answer's pinyin, shown once you've answered
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 // An animal asks about 3 words you've caught, never its own name (that's on the screen), so you need 4.
 const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 4;
@@ -66,15 +71,16 @@ async function encounter(foe){
     const opts = shuffle([w].concat(others.slice(0, 2)));
     const head = scene(score, i + 1);
     let body;
-    if (type === 'listen') body = `<p class="prompt">Listen. Which picture is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
+    if (type === 'listen') body = `<div class="askrow"><p class="prompt">Listen. Which picture is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
     else if (type === 'read') body = `<p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`;
-    else body = `<p class="prompt">Listen. Which word is it?</p><div class="center"><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
+    else body = `<div class="askrow"><p class="prompt">Listen. Which word is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
     const food = foe.wild && snack();   // in an animal encounter, food from the shop takes away a wrong answer
-    if (food) body += `<div class="center"><button class="btn" data-a="eat">Eat a ${esc(wz(food.item))} · ${S.bag[food.item]} left</button></div>`;
-    const ok = await pictureQ({head, body, word: w, type,
+    const helper = food ? `<button class="helper" data-a="eat">${picHTML(food.item)}<span>Eat a ${esc(wz(food.item))}: one wrong answer goes · ${S.bag[food.item]} left</span></button>` : '';
+    const ok = await pictureQ({head, body, word: w, type, helper,
       // The answers: when listening, pictures with their characters; when reading, just pictures (the word has its
       // pinyin, so pinyin here would match itself); when hearing, the words with their pinyin. Never characters alone.
-      options: opts.map(o => type === 'hear' ? o + (S.pinyin ? `<span class="cap">${WORDS[o].py}</span>` : '') : `<span class="ico">${picHTML(o)}</span>${type === 'read' ? '' : `<span class="cap">${o}</span>`}`), text: type === 'hear',
+      // When listening, each one's pinyin shows once you've answered (before, you could match the sound to it).
+      options: opts.map(o => type === 'hear' ? o + (S.pinyin ? `<span class="cap">${WORDS[o].py}</span>` : '') : `<span class="ico">${picHTML(o)}</span>${type === 'read' ? '' : `<span class="cap">${o}</span>${laterPy(o)}`}`), text: type === 'hear',
       answerIdx: opts.indexOf(w), onAnswer: ok => {   // right: the animal hops and a heart fills
         if (!ok) return;
         const sc = sheet.querySelector('.scene'); if (!sc) return;
@@ -130,7 +136,7 @@ async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, option
   const tip = Object.keys(S.lines).length <= TAP_TIP_LINES;
   const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">${label}</p><p class="prompt">Choose the missing word.</p></div></div>`,
     body:lineHTML(shown.map(w => w === gap ? GAP : w)) + `<div class="sentence-en">${esc(en)}</div><div class="gloss">${tip ? 'Tap a word for its meaning.' : ''}</div>`,
-    options:opts.map(w => pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>` : `${w}<span class="cap">${WORDS[w].py}</span>`),
+    options:opts.map(w => pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>${laterPy(w)}` : `${w}<span class="cap">${WORDS[w].py}</span>`),
     text:!pics, answerIdx:opts.indexOf(gap),
     onAnswer:() => { sheet.querySelector('.line').outerHTML = lineHTML(shown, gap); bindTokens(sheet); say(t.join('')); }});
   closeCard();

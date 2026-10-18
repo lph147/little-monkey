@@ -101,6 +101,37 @@ test('an encounter is a scene: your monkey facing the animal, its name plate wit
   assert.equal(sheet.querySelector('.scene .plus').hidden, false);
 });
 
+test('listening: each answer’s pinyin shows once you’ve answered, and the result and Next share the bottom row', async () => {
+  const game = loadGame({dom: true, save: {version: 17, started: true, w: knowsSome()}});
+  game.run("globalThis.__q = null; const q = pictureQ; pictureQ = o => { __q = o; return q(o); }; encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true})");
+  await tick();
+  const sheet = game.el('#sheet'), opts = sheet.querySelector('.opts');
+  assert.match(sheet.querySelector('.prompt').textContent, /Listen/);
+  assert.ok(sheet.querySelector('.askrow [data-a=say]'), 'the speaker is beside the question');
+  assert.equal(sheet.querySelectorAll('.opt .later').length, 3, 'each answer has its pinyin, kept for later');
+  assert.ok(!opts.classList.contains('answered'), 'and hidden until you answer');
+  const next = sheet.querySelector('.qfoot [data-a=next]');
+  assert.ok(next && next.hidden, 'Next waits in the bottom row, hidden');
+  sheet.querySelector(`.opt[data-i="${game.run('__q.answerIdx')}"]`).click();
+  assert.ok(opts.classList.contains('answered'), 'answered: the pinyin shows');
+  assert.equal(next.hidden, false);
+  assert.match(sheet.querySelector('.qfoot .feedback').textContent, /Yes!/);
+});
+
+test('an apple from the shop is a small helper in the bottom row: eating it takes away a wrong answer', async () => {
+  const game = loadGame({dom: true, save: {version: 17, started: true, w: knowsSome(), bag: {'苹果': 1}}});
+  game.run("globalThis.__q = null; const q = pictureQ; pictureQ = o => { __q = o; return q(o); }; encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true})");
+  await tick();
+  const sheet = game.el('#sheet'), eat = sheet.querySelector('.qfoot .helper[data-a=eat]');
+  assert.ok(eat, 'the apple is in the bottom row');
+  assert.match(eat.textContent, /苹果 \(apple\): one wrong answer goes · 1 left/);
+  eat.click();
+  assert.equal(sheet.querySelectorAll('.opt[hidden]').length, 1, 'one answer is gone');
+  assert.ok(!sheet.querySelector(`.opt[data-i="${game.run('__q.answerIdx')}"]`).hidden, 'never the right one');
+  assert.equal(sheet.querySelector('[data-a=eat]'), null);
+  assert.equal(game.run("S.bag['苹果']"), 0);
+});
+
 test('an animal that lives on a cliff is met on a cliff', async () => {
   const game = loadGame({dom: true, save: {version: 17, started: true, w: knowsSome()}});
   game.run("encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'})");
