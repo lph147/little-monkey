@@ -1,6 +1,6 @@
 # 小猴子 Little Monkey — Game design
 
-Last updated 17 October 2026
+Last updated 18 October 2026
 
 Little Monkey is a vocabulary-collecting adventure through *Journey to the West*: you catch Chinese words the way Pokémon players catch creatures, hear them again and again in simple sentences from the story's characters, and earn progress by practising.
 
@@ -17,15 +17,29 @@ It is not a translation tool, a flashcard app with a skin, or a game where walki
 | Collect | Catch words like creatures and complete a collection | Word Scroll, animals in the grass, new items in each area |
 | Hear | Meet your words again and again in simple sentences, from the story's characters | Conversations, filling gaps in sentences, shops |
 | Journey | Follow Sun Wukong's story from stone to pilgrim | Areas, quests, cutscenes |
-| Grow | Learning pays for progress | XP, shells and coins, shops, abilities |
+| Grow | Learning pays for progress | The words you know, friends, shells and coins, shops, abilities |
 
 ## Core loop
 
 Every area runs the same loop: you meet new words in the world, catch them, use them, train them, and the rewards unlock the next part of the journey.
 
-Explore (a new area of the story) → Meet (grass, people, shops) → Catch (a new word card) → Use (quests, shops, sentences) → Train (the rolling word test) → Grow (XP, shells, abilities) → back to Explore. The review scheduler decides which words come back at each step.
+Explore (a new area of the story) → Meet (grass, people, shops) → Catch (a new word card) → Use (quests, shops, sentences) → Train (the rolling word test) → Grow (friends, shells, abilities) → back to Explore. The review scheduler decides which words come back at each step.
 
 Catching is the heart of it, and the review scheduler feeds old words back into every other step.
+
+## The game's mechanics (the long-term plan)
+
+Decided on 18 October 2026, so the first area can prepare you for what comes later. Every mechanic is about words, never grammar, and each has a gentle first version on Flower Fruit Mountain.
+
+| Mechanic | Later in the game | First on Flower Fruit Mountain |
+| --- | --- | --- |
+| Explore with abilities | Like Pokémon's Cut and Surf: each ability is a word you learn and then use to open the map, such as 游 swim (Area 2), and 变成 transform and the cloud somersault (Area 3) | Rocks that roll away, 跳 jump through the waterfall, and chopping trees (砍) to open a way to a new place |
+| Befriend, then battle | From Area 3, demons. You and the foe each have hearts. On your turn you choose a question, a friend's power or an item: a right answer hits, a wrong one costs you a heart. Harder kinds of question hit harder, so you choose your risk | Animal encounters, food that helps (the apple), and friend powers: each animal friend can help once in an encounter, such as the fox taking away a wrong answer. A friendly sparring match with the big monkey at the school shows your own hearts for the first time |
+| Build | Gather materials and build things for others: the raft that ends Area 1, and something in each area after | The troop's school: gather wood (木头) and stone to build it |
+| Learn at school | Lessons review the words that are due; each area's word test is its exam | The school replaces the practice post, with the old monkey as teacher (老师); hide and seek happens there, once you know enough places |
+| Grow | No levels: progress is the words you know (see Progression). A bigger collection means a bigger pool for every battle, game and lesson, and words you know better get harder questions | Shells, friends, and the Word Scroll filling up |
+
+**Guided by characters, not prompts** (decided 18 October 2026). Playtesters ignored the task prompts and tips, which stayed flashing for ages. What to do next comes from a character in the speech box, as part of the story: the old monkey is your guide and checks in after each step, and other monkeys mention where things are. The task list stays as a reminder, and its dot doesn't flash.
 
 ## The Word Scroll
 
@@ -113,6 +127,20 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 ### Area 1: Flower Fruit Mountain
 
+**A longer Area 1** (decided 18 October 2026). Playtesters became king in about 5 minutes, which is far too soon, and the headband and the crown came straight after each other. The prologue grows into three parts, and becoming king moves later in chapter 1. A play-time clock in each saved game will show how long each part really takes.
+
+| Part | What happens | Status |
+| --- | --- | --- |
+| Prologue 1: born, and naming things | Born from the stone; the old monkey explains more (the troop, the mountain, why every baby learns names) and sends you off to find things | Built; more dialogue to come |
+| Prologue 2: helping the troop | The hungry, thirsty and big monkeys' finding quests, the animals and the shop; the old monkey introduces the others and checks in after each | Built; more dialogue to come |
+| Prologue 3: up the stream | From the book: the monkeys follow the river up to where it starts. When the rocks roll away, a new place opens upstream, with obstacles, one or two new animals and a friend's power used for the first time. At the source is the waterfall, and the story of your first days | To build next |
+| Chapter 1 A: the dare and the cave | The dare, the jump, the Water Curtain Cave | Built |
+| Chapter 1 B: moving in, then king | The troop moves in and sets up home, with requests using 有 and 没有 (碗里没有水, 床上没有草); you count the rest of the troop in (four to ten); then you become king at the feast. In the book the monkeys scramble for beds and bowls, then he reminds them of their promise and they bow | Partly built (home, king, one to three) |
+| Chapter 1 C: a school for the troop | Now they have a home, the troop wants more. You chop trees for wood, which opens a path to a new place, and build a school (学校): the old monkey becomes the teacher (老师), there are books (书), its lessons replace the practice post, and hide and seek comes near the end | To plan |
+| The end of Area 1 | The old gibbon, building the raft (building again), the send-off word test as the school's exam, sailing away | To plan |
+
+The school isn't in the book: it fills the gap where the story skips hundreds of years of happy life on the mountain, and sets up what comes next, as the school can't teach him how to live forever, so he goes to find a real teacher (Area 3). The new words (砍 木头 学校 老师 书 有 没有 四 to 十) are drafts for the native speaker's check.
+
 **Prologue: the first day (built).** The baby is born from the stone. The old monkey, like a grandparent, welcomes it and sends it off to explore: you learn the names of things by finding them yourself (anything that sparkles has a word), and the monkeys you meet teach a few more through what they need: food, water, play, trading. The story is told through short lines, not long cutscenes. The waterfall is loud, and a little frightening; by the end of the day the troop wonders what's behind it. The prologue ends with the story of your first day, read at the waterfall.
 
 **Chapter 1: the Water Curtain Cave.** As in the book:
@@ -122,7 +150,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 3. You jump back and lead the troop in. The cave becomes their home (家), and they make you king (王): 美猴王 (Měi Hóuwáng · Handsome Monkey King).
 4. As the troop moves in, you count them: numbers 1–10, with 只 (三只猴子, three monkeys). The longer story from the book's opening, saved from the waterfall, is read here (see below).
 
-**Life as king.** New places unlock: the cave itself, the high slopes and the shore. The troop has new requests, the 老板 has new stock (food, and decorations for the cave), and new animals live in the new places. Most of what you hear uses words you already know, so this is where the prologue's words get their repetition, with new words arriving a few at a time.
+**Life as king** (now chapter 1 B and C, above). New places unlock: the cave itself, a new place past the trees you chop, and the shore. The troop has new requests, the 老板 has new stock (food, and decorations for the cave), and new animals live in the new places. Most of what you hear uses words you already know, so this is where the prologue's words get their repetition, with new words arriving a few at a time.
 
 **Leaving.** At a feast, you grow sad that one day you'll die. An old gibbon tells you about immortals who never die, and you decide to find one and learn from them. The troop helps you build a raft from wood (木头) on the shore. Before you sail, the troop gives you a send-off: you name everything you've learned on the mountain (the area's word test, 80% to pass). Then you sail across the sea (海), and Area 2 begins.
 
@@ -140,28 +168,27 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 ## Progression and economy
 
-XP and money come mainly from learning, so progress in the game and progress in Chinese move together.
+Money comes mainly from learning, so progress in the game and progress in Chinese move together.
 
-**XP and levels.** You earn XP for catching words, answering correctly, completing quests and passing tests. Levels unlock things like extra bag space or new training challenges. Walking around earns nothing on its own. For now a level is just shown in the header; rewards for levels come once there is more to unlock.
+**No XP or levels** (decided 18 October 2026). They had no effect on anything. Progress is the words you know: how many you've caught, and how well you know each one (the Word Scroll). That already makes the game grow with you, as a bigger collection is a bigger pool for every battle, game and lesson, and words you know better get harder questions. The menu and your tasks show your shells, words and friends. In battles you always start with the same hearts; help comes from friends and food, and a tougher fight means harder questions, not a bigger number. (XP and levels were added on 16 October 2026 and taken out two days later.)
 
 **Money.** Shells are the money on Flower Fruit Mountain: the troop trades cowrie shells from the shore, as China did before coins (which is why 贝 is inside money words like 买, 卖 and 贵). From the human world (Area 2) onward, coins (钱) take over, which teaches the word naturally. (Peaches were the money at first, but you could pick them from the trees, so they became shells on 17 October 2026. Peaches are just food. 贝壳 isn't a word to catch for now.)
 
 **Shops.** Every area has a shopkeeper who sells that area's items. Each item has a card with its picture, its Chinese with pinyin, its English and its price, so it's always clear what's for sale (decided 16 October 2026, replacing Chinese-only labels). Buying means filling the gap in a sentence, such as 我要＿ (I want an apple), with the word for what you want. Items are either useful (food that helps in encounters, tools such as a raft or rope) or cosmetic (decorations for your cave). Prices stay modest so the economy never becomes a grind. Until 一个 is taught in chapter 1, buying uses the prologue's pattern: 我要 + thing.
 
-**Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 shells. Buying it is on the prologue's checklist, so you need it before chapter 1 begins, and every player can afford it by then. Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
+**Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 shells. It's something you choose to buy, not something you must do (decided 18 October 2026; it used to be on the prologue's checklist, and becoming king with the crown came straight after it). Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
 
-**Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 2, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops, request rewards and levels, so each area's shop has clothes to sell as well as food and cave decorations.
+**Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 2, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops and request rewards, so each area's shop has clothes to sell as well as food and cave decorations.
 
 **Training ground.** A place in every area where you can do a rolling word-matching test at any time. It always includes your newest words and anything due for review.
 
-| Word in the test | XP |
+| Word in the test | Reward |
 | --- | --- |
-| Due for review | Full |
-| Newly caught | Full |
-| Not due and already mastered | Very little |
-| Wrong answer | None, and it comes back sooner |
+| Due for review (newly caught words are due), right first time | A shell |
+| Not due | Nothing |
+| Wrong answer | Nothing, and it comes back sooner |
 
-This stops anyone farming easy words for XP, and keeps the reward pointed at what actually needs practice.
+This stops anyone farming easy words, and keeps the reward pointed at what actually needs practice. The troop's school will take over from the training ground on Flower Fruit Mountain (chapter 1 C).
 
 **Moving on.** Each area ends with a word test covering that area's words, with an 80% pass mark, as part of the story: on Flower Fruit Mountain it's the troop's send-off on the shore, before you sail.
 
@@ -177,7 +204,7 @@ Encounters are the game's battles: you win by answering, and every answer is a c
 | Fill the gap | A sentence in Chinese and English, one word missing | The missing word: a picture with its Chinese while it's new, then Chinese and pinyin | Words in context |
 | Tones (later) | Two similar words spoken | Which one you heard | Tones |
 
-The question type follows the word's mastery level, so new words start easy and get harder as you know them better. A word needs two right answers in a row before its questions get harder, and each area says which kinds it asks: Flower Fruit Mountain asks only Listen and Read, so a beginner always has a picture to go on. Hear and read starts in a later area, for words you can already read. From Area 3, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters.
+The question type follows the word's mastery level, so new words start easy and get harder as you know them better. A word needs two right answers in a row before its questions get harder, and each area says which kinds it asks: Flower Fruit Mountain asks only Listen and Read, so a beginner always has a picture to go on. Hear and read starts in a later area, for words you can already read. From Area 3, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters. Battles are planned in The game's mechanics, above: hearts on both sides, and on each turn a question, a friend's power or an item.
 
 ## Screens
 
@@ -189,9 +216,9 @@ Every screen should take as few presses as possible, so time goes on Chinese rat
 - **Talk** appears in a speech box across the bottom of the game screen, with the map still visible above; the view slides up so you and whoever is talking stay in sight. A (or B) moves on. Full cards are kept for new words, quizzes, the shop and the story. A line of story in a conversation (such as the old monkey sending you off to explore) waits in the speech box too, so the next line can't cover it. A card's buttons always stay in sight at its bottom, however long the card.
 - **Bigger objects, with today's graphics** (decided 17 October 2026, from mockups that also tried richer tiles and new characters): trees, the fruit trees, your stone, the rocks and the stall are drawn bigger than their squares, in today's colours (the practice post went back to its one-square look, which looked better). A block of forest two squares by two is one big round tree, other trees are taller, and the stall is three squares wide. What reaches up above an object's squares (leaves, the awning) is drawn over the characters, so you can walk behind things. Walking through a peach or apple tree's wide branches (the squares right beside it), it rustles once, gently, dropping a couple of leaves; walking behind trees, it doesn't. The ground, water, mountain and characters keep today's look.
 - **Your tasks only list what you've found** (decided 17 October 2026): the chapter's checklist shows a quest once you've met it (the big monkey's flowers once he has asked), or once it's done, then "More to find as you play" while some are still hidden. Finding things is part of the fun, so the list never gives them away.
-- **Start and Select** (decided 17 October 2026), like a Game Boy, under the D-pad: Start opens the menu and Select your tasks, both with your level, XP, shells and words at the top. They replace the header (title, stats and a Menu button) and the task box under the screen, so the screen can be taller. A new task is announced with a message, and a red dot stays on Select until you've looked. The title screen's words and the opening's buttons are in the picture. They are labelled TASKS and MENU (decided 18 October 2026), so it is clear what they do.
+- **Start and Select** (decided 17 October 2026), like a Game Boy, under the D-pad: Start opens the menu and Select your tasks, both with your shells, words and friends at the top. They replace the header (title, stats and a Menu button) and the task box under the screen, so the screen can be taller. A new task is announced with a message, and a red dot stays on Select until you've looked. The title screen's words and the opening's buttons are in the picture. They are labelled TASKS and MENU (decided 18 October 2026), so it is clear what they do.
 - **The menu** has five big tiles, each with an icon, Chinese and English: 词 Word Scroll, 任务 Tasks, 朋友 Friends, 衣服 Wardrobe and 保存 Save. A Settings page holds music, sound effects, pinyin, English on replies, How to play, the opening and the title screen. The game saves itself; Save says so ("Saved: Game 1, just now"), because players expect a Save button.
-- **Three games (save slots)** (decided 18 October 2026), like a Game Boy game, so two people can share a phone. The title screen shows them side by side, each with the level, words, chapter and when it was last played, or empty. Choosing one opens its card: Continue, Copy to a file, or Delete (asked once more, with Keep it as the main button, and a copy kept in the browser); an empty one has New game or Load from a file. Each game keeps its own settings, and a new game starts with the sound and reading settings you're using. Your game from before is Game 1, unchanged. Saving, loading and starting again moved here from Settings.
+- **Three games (save slots)** (decided 18 October 2026), like a Game Boy game, so two people can share a phone. The title screen shows them side by side, each with its words, chapter and when it was last played, or empty. Choosing one opens its card: Continue, Copy to a file, or Delete (asked once more, with Keep it as the main button, and a copy kept in the browser); an empty one has New game or Load from a file. Each game keeps its own settings, and a new game starts with the sound and reading settings you're using. Your game from before is Game 1, unchanged. Saving, loading and starting again moved here from Settings.
 - **The Word Scroll** is a grid of sprites, with shadows for words you haven't caught and category tabs across the top. Today's words is a filter in it.
 - **Played sideways, like a Game Boy Advance** (decided 17 October 2026). There's one layout: the screen in the middle, always 15 columns by 10 rows (the GBA's shape, 3:2), as big as fits; the D-pad, Select and Start on the left with a power light; A and B on the right with a speaker. A tall screen on an upright phone looked strange, so held upright a card asks you to turn the phone, and the game waits (if the phone's rotation lock is on, it has to be switched off). Every place must be at least 15 by 10 (a test checks). Cards sit over the screen, so they only have its height: they use its width instead (pictures beside words, answers in a row), and text and pictures follow the screen's height (13 to 18px text), so the same layouts fit an iPhone, an Android phone and a computer. It can be installed as an app (manifest.webmanifest, sw.js) to get the whole screen: on Android it opens full screen and stays sideways; on an iPhone it opens without Safari's bars, but the phone must still be turned.
 
@@ -214,7 +241,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 | A long first area | Area 1 has two chapters, about 50 words | Chapter 1 mostly reuses the prologue's words, and new places keep it fresh; playtest the prologue first |
 | Art | Every collectible needs a sprite | Reuse palettes and shapes; aim for 15–20 new sprites per area |
 | Time per session | Walking and menus crowd out learning | Target at least half of play time hearing, reading or answering |
-| XP farming | Players repeat easy words for rewards | XP weighted to due words, as above |
+| Reward farming | Players repeat easy words for rewards | Shells only for words due for review, as above |
 | Chinese accuracy | Unnatural lines as grammar gets harder | Native-speaker review of each area's lines |
 | Lost progress | A cleared browser wipes the save | Save export and import |
 
@@ -320,7 +347,14 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Chapter 1, part A: the troop's dare at the waterfall, the jump (跳), the Water Curtain Cave as a new place (洞 桥 床 碗 桌子), coming back out and telling the old monkey (里面有床), with the draft Chinese until it's checked (17 October 2026)
 - [x] Chapter 1, part B: the troop moves in, you become king (家 王; your name becomes 美猴王), and three more of the troop are counted in (一 二 三, with 两 explained on the card for 二), with the draft Chinese until it's checked (17 October 2026)
 - [ ] Chapter 1: the story from the book's opening, read in the cave (checked already; it needs 一个, 一只, 很, 大 and 快乐 back in the word bank)
-- [ ] Chapter 1, life as king: the troop moving in (numbers 1–10), new places, requests, shop stock and animals
+- [x] Record the long-term mechanics and a longer Area 1 (18 October 2026)
+- [x] Take out XP and levels (save version 22, 18 October 2026)
+- [ ] Prologue: more dialogue from the old monkey and the troop, guiding you instead of prompts; the headband no longer required
+- [ ] Prologue 3: up the stream, a new place upstream with the waterfall at its source
+- [ ] A play-time clock in each saved game, to see how long each part takes
+- [ ] Chapter 1 B: setting up home (有, 没有), counting the troop in (four to ten), then king at the feast
+- [ ] Chapter 1 C: chopping trees for wood, a new place, building the school, lessons and hide and seek
+- [ ] Friend powers in encounters
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2
 - [ ] Build Area 2, Across the sea
