@@ -379,6 +379,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] The longer way up the stream (18 October 2026; save version 25): three places following the river (the mountain path, the river valley, deep in the mountains), with a fork, animal friends from the meadow who play or give advice, and fruit trees
 - [x] Fruit that does different things (the peach brings a heart back, the apple takes away a wrong answer), and the bag (包) (18 October 2026)
 - [x] Battle animations (the stick's swing, hits and misses; the enemy hiding, then striking) and quicker, calm battle music (18 October 2026): the battle song is the same pentatonic scale at 116 beats a minute, a bouncy guzheng, a soft drum and wood block, and a tune on guzheng and dizi in turn; the area's song comes back after
+- [x] The cave's own music (18 October 2026): slower (60 beats a minute), with a long echo, a low hum, a slow tune on guzheng then a low dizi, and drips of water; a place can have its own song
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2
 - [ ] Build Area 2, Across the sea

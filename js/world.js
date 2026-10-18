@@ -313,6 +313,7 @@ findGrass();
 function enterPlace(id){
   if (id === PLACE) return;
   setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; pickedHere.clear(); buildMap();
+  playSong(placeSong());   // its own music, if it has some
 }
 // Through a way to another place: a quick fade, and you're there, with its name at the top of the screen.
 async function goThrough(e){

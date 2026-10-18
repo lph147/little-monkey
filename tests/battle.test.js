@@ -133,6 +133,19 @@ test('the wild boar blocks the way at the top until you chase it off', () => {
   assert.equal(at({areas: {1: {gate: true, climb: 3}}}), 'gone', 'a game past the waterfall never meets it');
 });
 
+test('the Water Curtain Cave has its own music, slower and echoing; outside, the area’s comes back', () => {
+  const g = fighting();
+  g.run("enterPlace('cave')");
+  assert.equal(g.run('song'), 'cave');
+  g.run("enterPlace('falls')");
+  assert.equal(g.run('song'), 'home');
+  assert.ok(g.run('SONGS.cave.bpm') < g.run('SONGS.home.bpm'), 'slower');
+  assert.ok(g.run('SONGS.cave.echo[0]') > g.run('SONGS.home.echo[0]'), 'with a longer echo');
+  assert.equal(g.run("SONGS.cave.events.filter(e => e.k === 'mel').reduce((n, e) => n + e.d, 0)"), g.run('SONGS.cave.beats'), 'its tune fills its loop');
+  assert.ok(g.run('SONGS.cave.events.filter(e => e.m).every(e => [0, 2, 4, 7, 9].includes(e.m % 12))'), 'only the five notes of the pentatonic scale');
+  assert.ok(g.run("Object.values(PLACES).every(p => !p.music || SONGS[p.music])"), 'every place’s music is a song');
+});
+
 test('a battle has its own music, quicker but calm; the area’s comes back afterwards', async () => {
   const g = fighting();
   assert.equal(g.run('song'), 'home');

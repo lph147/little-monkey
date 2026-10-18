@@ -216,6 +216,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   exits   ways to other places: step onto at and you go to the place to, arriving at arrive and
   //           facing facing. An exit with an if stays shut until it matches, and says closed instead.
   //   map     one letter per tile; the legend below says what each letter is
+  //   music   its own song (one of SONGS in js/sound.js), instead of the area's
   // Positions elsewhere in this file ([x, y], or x and y) are in the first place. Something in another
   // place says which: [x, y, 'place'], or place:'id'.
   places: {
@@ -335,6 +336,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // through it again.
     cave: {
       name: {zh:'水帘洞', py:'Shuǐlián Dòng', en:'Water Curtain Cave'},
+      music: 'cave',   // slower, echoing, with drips of water
       exits: [
         {at:[6, 13], to:'falls', arrive:[5, 1], facing:'right'},
         {at:[7, 13], to:'falls', arrive:[5, 1], facing:'right'},
