@@ -95,7 +95,7 @@ test('wild creatures jump out of the long grass, now and then, not every step', 
   const g = fighting();
   g.run("globalThis.__fights = 0; wildBattle = async () => { __fights++; return 'ran'; }; Math.random = () => 0");
   const t = 'AREA.legend.n';   // the long grass
-  for (let i = 0; i < 6; i++) await g.run(`wildStep(${t})`);
+  for (let i = 0; i < 10; i++) await g.run(`wildStep(${t})`);
   assert.equal(g.run('__fights'), 2, 'one battle every few steps at most');
   g.run('Math.random = () => .99');
   for (let i = 0; i < 6; i++) await g.run(`wildStep(${t})`);

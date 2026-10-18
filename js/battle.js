@@ -8,7 +8,7 @@
 const ENEMIES = AREA.enemies || {};
 const BATTLES = AREA.battles || {};
 const canBattle = () => !!BATTLES.when && matches(BATTLES.when);   // you can fight (you have the stick)
-const WILD_AFTER = 3, WILD_CHANCE = .3;   // at least this many steps on wild ground between battles, then this chance a step
+const WILD_AFTER = 5, WILD_CHANCE = .2;   // at least this many steps on wild ground between battles, then this chance a step
 let wildSteps = 0;
 const hearts = () => S.hearts ?? HEARTS;
 const heartsHTML = (n, of) => [...Array(of)].map((_, i) => heartHTML(i < n)).join('');

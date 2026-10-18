@@ -109,10 +109,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(11, 8, 'down', 'collecting water from the pond');
   await pressAt(2, 11, 'down', 'giving the thirsty monkey the water');
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
-  assert.equal(area().gate, true, 'the rocks should have rolled away');
+  assert.equal(area().gate, false, 'the rocks stay until the rest of the prologue is done');
 
   // The big monkey, in the middle meadow: a red, a yellow and a white flower, for shells
-  await pressAt(16, 3, 'right', 'meeting the big monkey, with the troop where the rocks were');
+  await pressAt(4, 10, 'right', 'meeting the big monkey');
   assert.equal(area().flowers, 'asked', 'the big monkey should ask for flowers');
   await pressAt(11, 6, 'down', 'picking a red flower');
   assert.ok(knows('红'), 'the first red flower should teach 红');
@@ -123,7 +123,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   for (const w of ['黄', '白']) assert.ok(knows(w), `picking should teach ${w}`);
   assert.equal(area().holding.flowers, '花', 'you should be holding 3 flowers');
   const peaches = get('S.shells');
-  await pressAt(16, 3, 'right', 'giving the big monkey the flowers');
+  await pressAt(4, 10, 'right', 'giving the big monkey the flowers');
   assert.equal(area().flowers, 'done', 'the big monkey should take the flowers');
   assert.ok(get('S.shells') > peaches, 'and give you peaches for them');
 
@@ -155,6 +155,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(13, 19, 'up', 'meeting the squirrel with an apple in your bag');
   assert.equal(get('S.bag')['苹果'], 0, 'the apple should be eaten');
 
+  assert.equal(area().gate, true, 'with everything done, the rocks should have rolled away');
+
   // Up the stream: you set off alone, find the waterfall, come back down and lead the troop up
   await pressAt(15, 2, 'left', 'talking to the old monkey where the rocks were');
   assert.equal(area().climb, 1, 'you should set off up the path');
@@ -162,7 +164,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('PLACE'), 'path', 'you should be on the mountain path');
   assert.ok(knows('路'), 'arriving on the mountain path should teach 路');
   assert.ok(knows('棍子'), 'the big monkey should give you a stick');
-  for (const [x, y] of [[3, 12], [4, 12], [5, 12]]) await stepOn(x, y, 'walking through the long grass');
+  for (const [x, y] of [[3, 12], [4, 12], [5, 12], [6, 12], [7, 12]]) await stepOn(x, y, 'walking through the long grass');
   assert.ok(knows('蛇'), 'a snake should jump out of the long grass, and be chased away');
   assert.equal(get('S.hearts'), 5, 'every dodge right: no hearts lost');
   await pressAt(8, 2, 'right', 'chasing the wild boar off the path');

@@ -108,7 +108,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The thirsty monkey (bottom left) teaches 喝 (drink). A task asks you to collect water.
 - [ ] Face the pond (middle of the meadow, where the yellow arrow points) and press A to learn 水 (water).
 - [ ] Take it back. A new-word card for 我 (I) appears, then fill the gap in 我要喝＿。 (I want to drink water.). +3 🐚.
-- [ ] With both monkeys helped, the screen shakes and a message says the rocks north of the meadow have rolled away and the troop gathers there. The old monkey and the little monkey are where the rocks were, with a ! over the old monkey.
+- [ ] The rocks stay until everything else in the prologue is done: the hungry, thirsty and big monkeys helped, and all 4 animals found. Then the screen shakes and a message says the rocks north of the meadow have rolled away and the troop gathers there. The old monkey and the little monkey are where the rocks were, with a ! over the old monkey.
 
 **Friends and animals**
 - [ ] The little monkey (in the south meadow, on the path near the bottom right, below the 老板's stall) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.

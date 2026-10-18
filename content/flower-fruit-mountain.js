@@ -194,7 +194,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{chapter:0, ready:true}, do:[{chapter:1}]},   // the prologue is done: chapter 1 begins
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     {if:{place:'cave', cave:3}, do:[{message:'The troop follows you through the water curtain!'}, {set:{cave:4}}]},   // you lead the troop in
-    {if:{hungry:'done', thirsty:'done', gate:false}, do:[
+    // the rocks roll away once everything else in the prologue is done: the three monkeys helped, and every animal found
+    {if:{hungry:'done', thirsty:'done', flowers:'done', animalsLeft:0, gate:false}, do:[
       {set:{gate:true}},
       {rumble:true},   // the ground shakes and the map is redrawn
       {message:'A rumble from the {山}! The rocks north of the meadow have rolled away, and the troop gathers there.'}

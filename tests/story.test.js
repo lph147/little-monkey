@@ -86,3 +86,16 @@ test('the story shows each sentence\'s English the first time, then behind the E
   sheet.querySelector('[data-a=en]').click();
   assert.equal(sheet.querySelectorAll('.sent .sentence-en').filter(e => !e.hidden).length, AREA.story.length, 'English shows them all');
 });
+
+test('the rocks roll away only once the rest of the prologue is done: the three monkeys helped, and every animal found', async () => {
+  const gate = async (area, met) => {
+    const g = loadGame({save: {version: 24, started: true, met, areas: {1: {elder: 2, ...area}}}});
+    g.run("showNarration = showNotice = async () => {}; toast = () => {}; SFX.rumble = () => {}");
+    await g.run('runEvents()');
+    return g.run('here().gate');
+  };
+  const all = ['rabbit', 'fox', 'squirrel', 'goat'];
+  assert.equal(await gate({hungry: 'done', thirsty: 'done'}, all), false, 'not before the flowers');
+  assert.equal(await gate({hungry: 'done', thirsty: 'done', flowers: 'done'}, ['rabbit', 'fox']), false, 'not before every animal is found');
+  assert.equal(await gate({hungry: 'done', thirsty: 'done', flowers: 'done'}, all), true);
+});
