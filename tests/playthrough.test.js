@@ -74,7 +74,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // The old monkey, and the first words
   await stepOn(9, 3, 'taking the first step on the path');
-  assert.ok(!knows('路'), "the path doesn't teach 路 yet (it waits for chapter 1)");
+  assert.ok(!knows('路'), "the path doesn't teach 路 yet (it waits for the mountain path)");
   await pressAt(7, 2, 'up', 'meeting the old monkey');
   assert.equal(area().elder, 1, 'the old monkey should have said hello');
   assert.ok(knows('你好'), 'the old monkey should teach 你好');
@@ -193,8 +193,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(5, 1, 'left', 'reading the story at the waterfall');
   assert.equal(area().story, true, 'the story at the waterfall should be read');
 
-  // The prologue is done, so chapter 1 begins (its title card was answered along the way)
-  assert.equal(area().chapter, 1, 'chapter 1 should begin once the prologue is done');
+  // There's no prologue: it's chapter 1 all the way, with no chapter card part way through
+  assert.equal(area().chapter, 0, 'still chapter 1');
 
   // Chapter 1, part A: the dare at the waterfall, the jump, the cave, and telling the old monkey
   assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => [n.id, n.x, n.y])"), [['elder', 9, 1], ['big', 10, 2], ['playful', 5, 2]], 'the troop gathers at the waterfall');

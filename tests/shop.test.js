@@ -24,8 +24,7 @@ test('the shop is run by a character, and sells words you can collect, asked for
   }
 });
 
-test('the headband is something you choose to buy: chapter 1 can begin without it', () => {
-  assert.equal(play({areas: {1: area()}, met: ['rabbit', 'fox', 'squirrel', 'goat']}).run('chapterDone()'), true);
+test('the headband is something you choose to buy: it isn’t on the checklist, nor a task', () => {
   assert.ok(!AREA.checklist.some(c => /headband/.test(c.text)), 'it isn’t on the checklist');
   assert.ok(!AREA.tasks.some(t => /头带/.test(t.text) && /Buy/.test(t.text)), 'nor a task to do');
 });

@@ -69,7 +69,7 @@ test('Select opens your tasks: your words, friends and shells, what to do now, t
   assert.doesNotMatch(text, /Level|XP/, 'no levels or XP');
   assert.match(text, /4 words|0\/\d+ words/);
   for (const t of tasks) assert.ok(text.includes(t), `the task list should include "${t}"`);
-  assert.ok(text.indexOf(tasks[0]) < text.indexOf('Prologue'), 'what to do now comes first, then the checklist');
+  assert.ok(text.indexOf(tasks[0]) < text.indexOf('Chapter 1'), 'what to do now comes first, then the checklist');
   run('pressSelect()');
   assert.equal(run('modal.hidden'), true, 'Select again closes it');
   run('pressSelect(); pressB()');
@@ -88,7 +88,7 @@ test('your tasks only list what you’ve found: the flowers once the big monkey 
   run("pressB(); here().flowers = 'asked'; pressSelect()");
   text = sheet.textContent;
   assert.match(text, /a red, a yellow and a white flower/, 'once asked, it’s on the list');
-  assert.ok(JSON.parse(run('JSON.stringify(areaChecklist().map(c => c[1]))')).length === 9, 'the whole checklist still counts towards finishing the chapter');
+  assert.equal(JSON.parse(run('JSON.stringify(areaChecklist().map(c => c[1]))')).length, 16, 'the whole checklist still counts towards finishing the chapter');
 });
 
 test('Start opens the menu, with your words, friends and shells at the top', () => {

@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 26;
+const SAVE_VERSION = 27;
 const HEARTS = 5;   // the most hearts you can have in a battle (the story can raise it later)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
@@ -151,6 +151,10 @@ function upgradeSave(s){
     if (s.today && Array.isArray(s.today.ids)) s.today.ids = s.today.ids.map(w => renamed[w] || w);
     for (const a of Object.values(s.areas || {})) for (const [r, p] of Object.entries((a && a.picked) || {})) if (Array.isArray(p)) a.picked[r] = p.map(w => renamed[w] || w);
     s.version = 26;
+  }
+  if (s.version === 26){   // version 26: there was a prologue (chapter 0) before chapter 1. Now it's all chapter 1 (0, counting from 0)
+    for (const a of Object.values(s.areas || {})) if (a && typeof a === 'object') a.chapter = 0;
+    s.version = 27;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];

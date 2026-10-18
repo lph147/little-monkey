@@ -48,7 +48,7 @@ test('after converting, the game shows the same progress', () => {
   assert.match(stats, /🐚 7/);
   assert.match(stats, /2\/45 words/, '石头 and 路 (路 left the words for a while, and is back on the mountain path)');
   // Said hello, learned about animals, 1 of 4 animals found, hungry monkey helped, thirsty not yet, no story (the headband is optional now)
-  assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false, false]);   // (the prologue's checklist: no word test there any more)
+  assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false]);   // (chapter 1's checklist: no word test there any more)
 });
 
 test('a finished area stays finished', () => {
@@ -256,4 +256,13 @@ test('a version 25 save’s colours become 红色, 黄色 and 白色, keeping wh
   assert.equal(s.gloss['黄色'], 1);
   assert.deepEqual(s.today.ids, ['红色', '花']);
   assert.deepEqual(s.areas[1].picked.flowers, ['红色', '白色'], 'the flowers you’ve picked');
+});
+
+test('a version 26 save in chapter 1 or the prologue is in chapter 1 (the only one) now', () => {
+  for (const chapter of [0, 1]){
+    const s = saveOf(loadGame({save: {version: 26, started: true, areas: {1: {chapter, story: chapter === 1, cave: chapter ? 2 : 0}}}}));
+    assert.equal(s.version, VERSION);
+    assert.equal(s.areas[1].chapter, 0);
+    assert.equal(s.areas[1].cave, chapter ? 2 : 0, 'everything else stays');
+  }
 });

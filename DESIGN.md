@@ -129,6 +129,8 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 ### Area 1: Flower Fruit Mountain
 
+**One chapter so far** (decided 19 October 2026, after playtesting). There's no prologue: everything built so far, from being born to counting the troop into the cave, is Chapter 1: The Water Curtain Cave, with one checklist and no chapter card part way through. The parts below are still called prologue 1 to 3 and chapter 1 B and C, as plans; when chapter 2 begins is still to be decided. Save version 27.
+
 **A longer Area 1** (decided 18 October 2026). Playtesters became king in about 5 minutes, which is far too soon, and the headband and the crown came straight after each other. The prologue grows into three parts, and becoming king moves later in chapter 1. (A play-time clock in each saved game was considered and not added: playtesters can be timed by watching.) The prologue gains 路 棍子 打 蛇 蜜蜂 野猪, from 30 words to 36; if that's too many, the boar's name can be heard only. (A frog in the new place was planned and dropped.)
 
 | Part | What happens | Status |
@@ -379,6 +381,9 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] The longer way up the stream (18 October 2026; save version 25): three places following the river (the mountain path, the river valley, deep in the mountains), with a fork, animal friends from the meadow who play or give advice, and fruit trees
 - [x] Fruit that does different things (the peach brings a heart back, the apple takes away a wrong answer), and the bag (包) (18 October 2026)
 - [x] Battle animations (the stick's swing, hits and misses; the enemy hiding, then striking) and quicker, calm battle music (18 October 2026): the battle song is the same pentatonic scale at 116 beats a minute, a bouncy guzheng, a soft drum and wood block, and a tune on guzheng and dizi in turn; the area's song comes back after
+- [x] Playtest fixes (19 October 2026): the menu's English is what its Chinese means (词 Words, 衣服 Clothes); the troop across the river give advice; the story at the waterfall is your story so far; the arrows work on a game's card; the colours are 红色, 黄色 and 白色 (我要红色的花。, save version 26); 再见 is taught as you set off up the path; one chapter, no prologue (save version 27)
+- [ ] The title screen: Continue (your most recent game), New game and Save files (your three games)
+- [ ] Jumping through the waterfall: the cave just visible behind the water, and a jump through it
 - [x] The cave's own music (18 October 2026; remade 19 October to sound unlike the meadow's): slower (54 beats a minute) and sparser, with a long echo: a slow tune on soft bells, then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water; a place can have its own song
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2

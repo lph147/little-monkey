@@ -14,7 +14,7 @@ They also check the content files: every word in a sentence is in the word bank,
 
 One test plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1, part A), pressing the game's own buttons the way a player would (tests/playthrough.test.js). If a change makes the area impossible to finish, it says where it got stuck.
 
-And they try out a few things the game does: the story questions only show words you've caught, chapter 1 begins as soon as the prologue is done, and Space and Enter work as A on the title screen and in the intro.
+And they try out a few things the game does: the story questions only show words you've caught, it's chapter 1 all the way (no prologue), and Space and Enter work as A on the title screen and in the intro.
 
 They can't tell whether the game *feels* right, so the checks below are still needed.
 
@@ -109,7 +109,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The thirsty monkey (bottom left) teaches 喝 (drink). A task asks you to collect water.
 - [ ] Face the pond (middle of the meadow, where the yellow arrow points) and press A to learn 水 (water).
 - [ ] Take it back. A new-word card for 我 (I) appears, then fill the gap in 我要喝＿。 (I want to drink water.). +3 🐚.
-- [ ] The rocks stay until everything else in the prologue is done: the hungry, thirsty and big monkeys helped, and all 4 animals found. Then the screen shakes and a message says the rocks north of the meadow have rolled away and the troop gathers there. The old monkey and the little monkey are where the rocks were, with a ! over the old monkey.
+- [ ] The rocks stay until everything else in the meadow is done: the hungry, thirsty and big monkeys helped, and all 4 animals found. Then the screen shakes and a message says the rocks north of the meadow have rolled away and the troop gathers there. The old monkey and the little monkey are where the rocks were, with a ! over the old monkey.
 
 **Friends and animals**
 - [ ] The little monkey (in the south meadow, on the path near the bottom right, below the 老板's stall) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.
@@ -179,12 +179,11 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The hungry monkey adds 水果在树上。 (Fruit grows on the trees.) and the thirsty monkey 河里有水。 (There's water in the river.) while you're looking.
 - [ ] Each of the three monkeys of the troop says 你好, you reply, and then they say something of their own. The two across the river give advice: one says 去找动物吧！ (Go and find the animals!) and where they hide (once you've found them all, it tells you about the practice post instead); the other says 老板有苹果。 (The shop owner has apples.) and how to earn shells. The third says 树上有鸟。
 
-**The end of the prologue**
+**After the story at the waterfall**
 - [ ] There's no cave door on the far left any more (and no word test for now: it comes back as the troop's send-off at the end of Area 1).
-- [ ] Menu, Tasks shows "Prologue: The first day" and its checklist; the menu shows "Prologue" with how many are done.
-- [ ] As soon as the last thing on the prologue's checklist is done (whatever it is), a card says "Chapter 1: The Water Curtain Cave" with a Begin button.
+- [ ] There's no prologue: from the start, Tasks shows "Chapter 1: The Water Curtain Cave" and its checklist, which grows as you go, and no chapter card appears after the story.
 
-**Chapter 1, part A: the Water Curtain Cave**
+**The Water Curtain Cave**
 - [ ] The old monkey, the big monkey and the little monkey are by the waterfall, with a ! over the old monkey; the task says "Go to the 瀑布 (waterfall): the troop is gathering". Talk to the old monkey: 瀑布后面有什么？, then the big monkey says 谁跳进去，谁就是王！ (with its name over the speech box), then a card teaches 跳 (jump), the little monkey says 我怕！, and "Everyone looks at you."
 - [ ] Task: "Jump through the 瀑布 (waterfall)". Stand just right of the waterfall and face it: A says Jump. Press A: a fade, and you're in the Water Curtain Cave, with its name 水帘洞 Shuǐlián Dòng at the top. A card says 洞 (cave) aloud: "A big, dry cave, hidden behind the water!"
 - [ ] The cave has rock walls, stone beds of straw with a leaf blanket along the top, a stone table with fruit on it, stone bowls, a stone tablet just inside the entrance, a stream with an iron bridge, and the water curtain at the bottom. Four things sparkle. Stepping on the bridge teaches 桥 (bridge); facing the beds, the table and the bowls and pressing A teaches 床 (bed), 桌子 (table) and 碗 (bowl). The task counts them: "Look around the 洞 (cave) (2/4)". The tablet says 水帘洞 (Water Curtain Cave).

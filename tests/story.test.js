@@ -99,3 +99,12 @@ test('the rocks roll away only once the rest of the prologue is done: the three 
   assert.equal(await gate({hungry: 'done', thirsty: 'done', flowers: 'done'}, ['rabbit', 'fox']), false, 'not before every animal is found');
   assert.equal(await gate({hungry: 'done', thirsty: 'done', flowers: 'done'}, all), true);
 });
+
+test('there’s no prologue: everything so far is chapter 1, with no chapter card part way through', () => {
+  const {loadGame} = require('./fake-browser');
+  const g = loadGame();
+  const chapters = JSON.parse(g.run('JSON.stringify(AREA.chapters)'));
+  assert.deepEqual(chapters, [{name: 'Chapter 1', title: 'The Water Curtain Cave'}]);
+  assert.ok(!g.run("JSON.stringify(AREA.events).includes('\"chapter\":')"), 'no event starts a chapter (yet)');
+  assert.ok(g.run('AREA.checklist.every(c => !c.chapter)'), 'the whole checklist is chapter 1’s');
+});
