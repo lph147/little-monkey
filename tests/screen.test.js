@@ -60,12 +60,13 @@ function taskGame(extra = {}){
   return {game, sheet: game.el('#sheet'), run: code => game.run(code)};
 }
 
-test('Select opens your tasks: your level, shells and words, what to do now, then the chapter’s checklist', () => {
+test('Select opens your tasks: your words, friends and shells, what to do now, then the chapter’s checklist', () => {
   const {sheet, run} = taskGame({shells: 4});
   const tasks = JSON.parse(run('JSON.stringify(getTasks().map(t => t.text))'));
   run('pressSelect()');
   const text = sheet.textContent;
-  assert.match(text, /Level 1/);
+  assert.match(text, /friends/);
+  assert.doesNotMatch(text, /Level|XP/, 'no levels or XP');
   assert.match(text, /4 words|0\/\d+ words/);
   for (const t of tasks) assert.ok(text.includes(t), `the task list should include "${t}"`);
   assert.ok(text.indexOf(tasks[0]) < text.indexOf('Prologue'), 'what to do now comes first, then the checklist');
@@ -90,11 +91,11 @@ test('your tasks only list what you’ve found: the flowers once the big monkey 
   assert.ok(JSON.parse(run('JSON.stringify(areaChecklist().map(c => c[1]))')).length === 8, 'the whole checklist still counts towards finishing the chapter');
 });
 
-test('Start opens the menu, with your level, shells and words at the top', () => {
+test('Start opens the menu, with your words, friends and shells at the top', () => {
   const {sheet, run} = taskGame({shells: 6});
   run('pressMenu()');
   assert.ok(sheet.querySelector('[data-m="words"]'), 'the menu');
-  assert.match(sheet.querySelector('.stats').textContent, /Level 1/);
+  assert.match(sheet.querySelector('.stats').textContent, /words.*friends.*6/);
   run('pressMenu()');
   assert.equal(run('modal.hidden'), true, 'Start again closes it');
 });

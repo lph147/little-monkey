@@ -51,11 +51,10 @@ test('buying the headband puts it on, and it stays in your wardrobe', async () =
 });
 
 test('a version 6 save is converted with nothing bought yet', () => {
-  const game = loadGame({save: {version: 6, started: true, xp: 40, areas: {1: {elder: 1, hungry: 'asked', thirsty: 'not asked', gate: false, story: false, holding: {}, done: false}}}});
+  const game = loadGame({save: {version: 6, started: true, areas: {1: {elder: 1, hungry: 'asked', thirsty: 'not asked', gate: false, story: false, holding: {}, done: false}}}});
   const s = get(game, 'S');
   assert.equal(s.version, VERSION);
   assert.deepEqual(s.areas[1].bought, []);
-  assert.equal(s.xp, 40);
   assert.ok(game.storage.get('xiaohouzi-v2-backup-v6'), 'a copy of the version 6 save is kept');
 });
 
@@ -75,13 +74,12 @@ test('the 老板 sells 苹果 as food, and keeps selling it after the headband',
   assert.deepEqual(get(game, 'forSale().map(i => i.item)'), ['苹果']);
 });
 
-test('buying a 苹果 costs 2 shells, puts it in your bag, and earns no XP', async () => {
-  const game = play({areas: {1: area()}, shells: 5, xp: 30, w: {'苹果': {lv: 1, due: 0, ok: 0}}});
+test('buying a 苹果 costs 2 shells and puts it in your bag', async () => {
+  const game = play({areas: {1: area()}, shells: 5, w: {'苹果': {lv: 1, due: 0, ok: 0}}});
   assert.equal(await buyIt(game, APPLE()), true);
   const s = get(game, 'S');
   assert.equal(s.shells, 3);
   assert.deepEqual(s.bag, {'苹果': 1});
-  assert.equal(s.xp, 30);
   assert.deepEqual(s.areas[1].bought, [], 'food isn\'t "bought" for good, so it stays for sale');
   assert.equal(s.w['苹果'].used, 1, 'asking for it with 我要苹果 counts as using the word');
   assert.equal(s.w['苹果'].lv, 1, 'it reaches Used once you can read it too');

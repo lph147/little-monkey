@@ -140,7 +140,7 @@ async function replyWith(best){
 // Your monkey says a phrase. If it's the one that fits (best), it counts as using it; if not, the game says which fits.
 async function iSay(said, best = said){
   const fits = said === best;
-  if (fits){ const r = rec(best); r.used = 1; r.lv = 4; gainXP(XP.right); addToday(best); save(); }
+  if (fits){ const r = rec(best); r.used = 1; r.lv = 4; addToday(best); save(); }
   const en = WORDS[said].en.split(',')[0];
   await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
 }
@@ -184,7 +184,7 @@ async function request(r, face){
     const sentence = toks(c.sentence);
     await gapQ({who:face, t:sentence, en:c.sentenceEn, gap:c.gap || has});
     sentence.filter(x => lvl(x) >= 1).forEach(useWord);
-    p[r.id] = 'done'; delete p.holding[r.id]; S.shells += r.reward; gainXP(XP.task); save(); SFX.fanfare();
+    p[r.id] = 'done'; delete p.holding[r.id]; S.shells += r.reward; save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
     toast(`+${r.reward} 🐚. Task complete!`);
@@ -224,8 +224,8 @@ async function buy(i, face){   // buying something from the shop by asking for i
   await gapQ({who:face, t:sentence, en:i.sentenceEn, gap:i.gap || i.item});
   sentence.filter(w => lvl(w) >= 1).forEach(useWord);
   S.shells -= i.price;
-  if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag (no XP: you can buy it again and again)
-  else { here().bought.push(i.item); gainXP(XP.task); }
+  if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag: you can buy it again and again
+  else here().bought.push(i.item);
   if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); S.wardrobe.wearing.push(i.item); }   // you put it on
   save(); SFX.fanfare();
   if (i.wear) redress();   // redraw your monkey wearing it

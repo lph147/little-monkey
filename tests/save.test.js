@@ -43,7 +43,7 @@ test('the converted save is written back, and the old one is kept as a backup', 
 test('after converting, the game shows the same progress', () => {
   const game = loadGame({save: V2});
   game.runFrame();
-  assert.match(game.el('#titleButtons').innerHTML, /class="slot primary" data-slot="1">.*Level \d+ · \d+ words/, 'Game 1 has the converted game');
+  assert.match(game.el('#titleButtons').innerHTML, /class="slot primary" data-slot="1">.*\d+ words/, 'Game 1 has the converted game');
   const stats = game.run('statsHTML()');
   assert.match(stats, /🐚 7/);
   assert.match(stats, /1\/40 words/, 'just 石头: 路 is no longer one of the words');
@@ -208,4 +208,14 @@ test('a version 19 save is converted: the hungry monkey still wants the peach he
   const all = saveOf(loadGame({save: {version: 19, started: true, areas: {1: {flowers: 'asked', holding: {flowers: '花'}, picked: {flowers: [[11, 7], [17, 9], [1, 10]]}}}}}));
   assert.deepEqual(all.areas[1].picked.flowers, ['红', '黄', '白'], 'with all 3, you have one of each');
   assert.equal(all.areas[1].holding.flowers, '花');
+});
+
+test('a version 21 save loses its XP (levels did nothing) and keeps everything else', () => {
+  const old = {version: 21, started: true, shells: 8, xp: 260, w: {'山': {lv: 2, due: 0, ok: 1}}, friends: ['fox'], pos: {x: 13, y: 6, dir: 'up'}};
+  const game = loadGame({save: old});
+  const s = saveOf(game);
+  assert.equal(s.version, VERSION);
+  assert.equal('xp' in s, false, 'no XP');
+  assert.equal(s.shells, 8); assert.deepEqual(s.w['山'], {lv: 2, due: 0, ok: 1}); assert.deepEqual(s.friends, ['fox']);
+  assert.equal(game.storage.get(SAVE_KEY + '-backup-v21'), JSON.stringify(old), 'the old save is kept as a backup');
 });

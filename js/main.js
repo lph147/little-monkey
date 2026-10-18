@@ -141,7 +141,7 @@ function toTitle(pick = SLOT){
   $('#areaName').textContent = AREA.name.en;
   titleSlot = pick;
   $('#titleButtons').innerHTML = SLOTS.map(n => { const g = slotSummary(n); return g
-    ? `<button class="slot${n === pick ? ' primary' : ''}" data-slot="${n}"><span class="top">${faceHTML()}<span class="t">Game ${n}</span></span><span class="s">Level ${g.level} · ${g.words} ${g.words === 1 ? 'word' : 'words'}</span><span class="s">${esc(g.chapter.name)}${g.played ? ' · ' + ago(g.played) : ''}</span></button>`
+    ? `<button class="slot${n === pick ? ' primary' : ''}" data-slot="${n}"><span class="top">${faceHTML()}<span class="t">Game ${n}</span></span><span class="s">${g.words} ${g.words === 1 ? 'word' : 'words'} · ${g.friends} ${g.friends === 1 ? 'friend' : 'friends'}</span><span class="s">${esc(g.chapter.name)}${g.played ? ' · ' + ago(g.played) : ''}</span></button>`
     : `<button class="slot empty${n === pick ? ' primary' : ''}" data-slot="${n}"><span class="top"><span class="face"></span><span class="t">Game ${n}</span></span><span class="s">Empty</span><span class="s">Start a new game here</span></button>`; }).join('');
   $('#titleButtons').querySelectorAll('.slot').forEach(b => b.onclick = () => { SFX.blip(); slotCard(+b.dataset.slot); });
   titleText();
@@ -172,7 +172,7 @@ function slotCard(n){
   }
   const due = g.due ? `<p>${g.due} ${g.due === 1 ? 'word is' : 'words are'} due for review: practise at the practice post, or meet animals in the tall grass.</p>` : '';
   const friends = `${g.friends} ${g.friends === 1 ? 'friend' : 'friends'}`;
-  openCard(`<p class="label">Game ${n}</p><div class="slotcard">${faceHTML()}<div><p><b>Level ${g.level}</b> · ${g.xp}/${XP_PER_LEVEL} XP · ${g.shells} 🐚</p><p>${g.words} ${g.words === 1 ? 'word' : 'words'} · ${friends}</p>
+  openCard(`<p class="label">Game ${n}</p><div class="slotcard">${faceHTML()}<div><p><b>${g.words} ${g.words === 1 ? 'word' : 'words'}</b> · ${friends} · ${g.shells} 🐚</p>
       <p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${due}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
     <div class="actions"><button class="btn danger" data-a="del">Delete</button><button class="btn" data-a="copy">Copy to a file</button><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" id="contBtn">Continue</button></div>`);
   on('[data-a=back]', () => { closeCard(); toTitle(n); });
@@ -187,7 +187,7 @@ function slotCard(n){
     toast(`Copied Game ${n} to ${f.name}`);
   });
   on('[data-a=del]', () => {
-    openCard(`<p class="label">Delete Game ${n}?</p><div class="slotcard">${faceHTML()}<div><p>Level ${g.level} · ${g.words} ${g.words === 1 ? 'word' : 'words'} · ${friends}</p><p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}</p>
+    openCard(`<p class="label">Delete Game ${n}?</p><div class="slotcard">${faceHTML()}<div><p>${g.words} ${g.words === 1 ? 'word' : 'words'} · ${friends}</p><p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}</p>
         <p class="small">Everything in this game is erased from this phone. To keep a copy, copy it to a file first.</p></div></div>
       <div class="actions"><button class="btn danger" data-a="yes">Delete it</button><button class="btn primary" data-a="no" data-b>Keep it</button></div>`);
     on('[data-a=no]', () => slotCard(n));

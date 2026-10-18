@@ -18,7 +18,7 @@ const SAVES = {
   // just born, with the old monkey waiting: no tips had yet
   born: {version: 19, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},
   // halfway through Flower Fruit Mountain, holding a peach for the hungry monkey
-  middle: {version: 19, started: true, tips: ALL_TIPS, ...QUIET, shells: 6, xp: 260, w: knows(1, MIDDLE_WORDS),
+  middle: {version: 19, started: true, tips: ALL_TIPS, ...QUIET, shells: 6, w: knows(1, MIDDLE_WORDS),
     met: ['rabbit'], friends: ['rabbit'], pos: {x: 13, y: 6, dir: 'up'},
     wardrobe: {owned: ['头带'], wearing: []},
     areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false}}},
@@ -53,7 +53,7 @@ const SCREENS = [
   {id: 'title-novoice', title: 'Title, no Chinese voice', voices: 'missing', why: 'The warning must not push the buttons off screen.'},
   {id: 'title-back', title: 'Title, coming back', save: 'middle'},
   {id: 'title-games', title: 'Title, two games', save: 'middle', why: 'Game 2 is someone else’s; Game 3 is empty.', run: async () => {
-    localStorage.setItem(KEY + '-game2', JSON.stringify({...S, started: true, xp: 40, w: {'石头': {lv: 1, due: 0, ok: 0}, '你好': {lv: 1, due: 0, ok: 0}}, friends: []}));
+    localStorage.setItem(KEY + '-game2', JSON.stringify({...S, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}, '你好': {lv: 1, due: 0, ok: 0}}, friends: []}));
     setSlotsInfo(d => ({...d, played: {1: Date.now(), 2: Date.now() - 3 * 86400000}})); toTitle(); await wait(300); }},
   {id: 'game-card', title: 'A game’s card', save: 'middle', why: 'Continue, copy it to a file, or delete it.', run: async () => { click('#titleButtons .primary'); await wait(300); }},
   {id: 'game-empty', title: 'An empty game’s card', why: 'A new game, or one from a file.', run: async () => { click('#titleButtons .primary'); await wait(300); }},

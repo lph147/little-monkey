@@ -2,15 +2,13 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 21;
-// XP, earned only by learning, never by walking about. Every XP_PER_LEVEL is a new level.
-const XP = {word:10, right:2, rightDue:5, task:20, story:20, exitTest:50}, XP_PER_LEVEL = 100;
+const SAVE_VERSION = 22;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
   for (const r of REQUESTS) p[r.id] = 'not asked';
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], done:false});
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, xp:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -43,12 +41,7 @@ function upgradeSave(s){
     if (((s.areas || {})[AREA.number] || {}).story) for (const t of [...STORY.map(x => x.t), ...AREA.storyQuestions.map(q => toks(q.zh))]) hear(t, s.heard);
     s.version = 5;
   }
-  if (s.version === 5){   // version 5: there was no XP, so work it out from what you've done
-    const a = (s.areas || {})[AREA.number] || {};
-    s.xp = Object.values(s.w || {}).filter(r => r && r.lv >= 1).length * XP.word
-      + REQUESTS.filter(r => a[r.id] === 'done').length * XP.task + (a.story ? XP.story : 0) + (a.done ? XP.exitTest : 0);
-    s.version = 6;
-  }
+  if (s.version === 5) s.version = 6;   // version 6 worked out XP from what you'd done (XP went in version 22)
   if (s.version === 6){   // version 6: there was no shop. What you've bought starts empty (filled in below).
     s.version = 7;
   }
@@ -126,6 +119,10 @@ function upgradeSave(s){
     s.tasksRead = {...(s.tasksSeen || {})};   // ones you'd seen there count as looked at
     s.version = 21;
   }
+  if (s.version === 21){   // version 21 had XP and levels, which did nothing: progress is the words you know
+    delete s.xp;
+    s.version = 22;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
@@ -177,7 +174,7 @@ function slotSummary(n){
 }
 function summaryOf(s, n){
   const area = s.areas[AREA.number] || {}, chapter = AREA.chapters[area.chapter || 0] || AREA.chapters[0];
-  return {n, level:level(s.xp || 0), xp:(s.xp || 0) % XP_PER_LEVEL, shells:s.shells || 0, friends:s.friends.length,
+  return {n, shells:s.shells || 0, friends:s.friends.length,
     words:Object.values(s.w).filter(x => x && x.lv > 0).length, chapter, played:slotsInfo().played[n] || 0,
     due:(() => { const keep = S; S = s; try { return dueWords().length; } finally { S = keep; } })()};   // (dueWords() reads S)
 }
@@ -228,12 +225,7 @@ function todayKey(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMont
 function addToday(w){ const k = todayKey(); if (S.today.d !== k) S.today = {d:k, ids:[]}; if (!S.today.ids.includes(w)) S.today.ids.push(w); }
 // A sentence was shown: each word in it (not punctuation) counts as heard once more.
 function hear(words, heard = S.heard){ for (const t of words) if (WORDS[t] || GLOSS[t]) heard[t] = (heard[t] || 0) + 1; }
-const level = (xp = S.xp) => Math.floor((xp || 0) / XP_PER_LEVEL) + 1;
-function gainXP(n){   // a new level is announced just after whatever message earned it
-  const before = level(); S.xp = (S.xp || 0) + n;
-  if (level() > before) setTimeout(() => { SFX.chime(); toast(`Level up! You're now level ${level()}.`); }, 1400);
-}
-function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.due = Date.now(); gainXP(XP.word); } addToday(w); save(); }
+function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.due = Date.now(); } addToday(w); save(); }
 // You used w in a sentence (a request or a shop order). It's Used once you can read it as well.
 function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; addToday(w); save(); }
 // Questions get harder slowly. A word moves up from Caught to Recognised after STEP_UP right answers in a
@@ -244,7 +236,6 @@ function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; add
 const STEP_UP = 2;
 function answer(w, ok, type){
   const r = rec(w);
-  if (ok) gainXP(r.due <= Date.now() ? XP.rightDue : XP.right);
   if (ok){
     r.n = (r.n || 0) + 1;
     const up = type === 'fill' ? !WORDS[w].pic && r.lv < 3 : (type === 'listen' && r.lv === 1) || (type === 'read' && r.lv === 2);

@@ -13,7 +13,7 @@ test('your game is Game 1, just where it was; Games 2 and 3 are empty', () => {
   game.runFrame();
   assert.equal(game.run('SLOT'), 1);
   const [one, two, three] = slots(game);
-  assert.match(one.textContent, /Game 1.*Level 1 · 2 words/);
+  assert.match(one.textContent, /Game 1.*2 words · 0 friends/);
   assert.ok(two.classList.contains('empty') && three.classList.contains('empty'));
   game.run('save()');
   assert.equal(JSON.parse(game.storage.get(SAVE_KEY)).shells, 5, 'it saves under the same name as before');

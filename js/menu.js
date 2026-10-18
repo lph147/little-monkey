@@ -55,8 +55,8 @@ function wardrobePage(back, focus){
     await showDialog(speaker('player'), {t:[...toks(c.sentence), '。'], en:c.sentenceEn}, {teach:c.teach || c.item});
   });
 }
-// Your level, XP, shells and words: at the top of the menu (Start) and your tasks (Select).
-const statsHTML = () => `<div class="stats"><span>Level ${level()} · ${S.xp % XP_PER_LEVEL}/${XP_PER_LEVEL} XP</span><span>🐚 ${S.shells}</span><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span></div>`;
+// Your words, friends and shells: at the top of the menu and your tasks.
+const statsHTML = () => `<div class="stats"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${S.friends.length} ${S.friends.length === 1 ? 'friend' : 'friends'}</span><span>🐚 ${S.shells}</span></div>`;
 // 任务 Tasks (Select, or the menu's tile): what to do now, then the chapter's checklist. back: what Back does.
 // Opening it counts as looking at your tasks, so Select's red dot goes.
 function tasksPage(back){

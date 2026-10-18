@@ -50,11 +50,11 @@ The save on your phone belongs to this address, so it is separate from saves any
 
 ## Quick check (after every change, about 5 minutes)
 
-- [ ] The title screen shows the night sky with the stone on the mountain on the right, 小猴子 on the left, and three games side by side along the bottom: each with its level, words, chapter and when it was last played, or Empty. The chosen one has a yellow border and a red A badge; the D-pad (or arrow keys) moves between them.
+- [ ] The title screen shows the night sky with the stone on the mountain on the right, 小猴子 on the left, and three games side by side along the bottom: each with its words, friends, chapter and when it was last played, or Empty. The chosen one has a yellow border and a red A badge; the D-pad (or arrow keys) moves between them.
 - [ ] A first game says to turn your sound on. If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). The words sit under the title on the left, clear of the stone and the mountain.
-- [ ] There's no header or task box. Under the D-pad are two small buttons, SELECT and START, like a Game Boy's.
-- [ ] A on a game opens its card: level, XP, shells, words, friends, where you are, how many words are due for review, and Continue, Copy to a file, Delete and Back. Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your level, XP, shells (a pixel shell) and words at the top, and pressing the same button again (or B) closes them.
-- [ ] The menu shows your level with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
+- [ ] There's no header or task box. Under the D-pad are two small buttons, TASKS and MENU, where a Game Boy has Select and Start.
+- [ ] A on a game opens its card: words, friends, shells, where you are, how many words are due for review, and Continue, Copy to a file, Delete and Back. Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your words, friends and shells (a pixel shell) at the top, and pressing the same button again (or B) closes them.
+- [ ] There are no levels or XP anywhere (they were taken out on 18 October 2026). A saved game from before still has all its words, friends and shells.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] Held upright, the phone shows only a card: 小猴子, a phone turning, and "Turn your phone sideways to play". (If nothing happens when you turn it, the phone's rotation lock is on.)
 - [ ] Held sideways, the console is a Game Boy Advance: the screen in the middle (15 columns, 10 rows), the D-pad, SELECT and START on the left with a green POWER light, and B and A on the right with a speaker's slanted slots. There's a gap between the D-pad and the screen, and nothing scrolls. Turn it upright and back mid-game: you carry on where you were. A computer window looks the same.

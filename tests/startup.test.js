@@ -19,13 +19,13 @@ test('a new player sees the title screen with three empty games, Game 1 chosen',
   game.run('pressA()');
   assert.match(game.el('#sheet').innerHTML, /id="newBtn">New game</, 'an empty game: New game');
   assert.match(game.el('#sheet').innerHTML, /Load from a file/);
-  assert.match(game.run('statsHTML()'), /Level 1 · 0\/100 XP.*🐚 0.*0\/40 words/);
+  assert.match(game.run('statsHTML()'), /0\/40 words.*0 friends.*🐚 0/);
 });
 
 test('a returning player sees their game, and its card has Continue, with their shells and words', () => {
   const game = loadGame({dom: true, save: {started: true, shells: 5, w: {'石头': {lv: 1, due: 0, ok: 0}}}});
   game.runFrame();
-  assert.match(game.el('#titleButtons').innerHTML, /class="slot primary" data-slot="1">.*Game 1.*Level 1 · 1 word</);
+  assert.match(game.el('#titleButtons').innerHTML, /class="slot primary" data-slot="1">.*Game 1.*1 word · 0 friends/);
   game.run('pressA()');
   const card = game.el('#sheet').innerHTML;
   assert.match(card, /id="contBtn">Continue</);
@@ -33,5 +33,5 @@ test('a returning player sees their game, and its card has Continue, with their 
   assert.match(card, /Copy to a file/); assert.match(card, /Delete/);
   game.el('#sheet').querySelector('#contBtn').click();
   assert.equal(game.run('mode'), 'play', 'Continue plays on');
-  assert.match(game.run('statsHTML()'), /🐚 5.*1\/40 words/);
+  assert.match(game.run('statsHTML()'), /1\/40 words.*🐚 5/);
 });
