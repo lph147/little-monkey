@@ -77,3 +77,15 @@ test('a save file loads into an empty game, leaving the others alone', () => {
   assert.equal(JSON.parse(game.storage.get(SAVE_KEY)).shells, 5);
   assert.match(game.run('saveFile(3).name'), /^little-monkey-game3-/);
 });
+
+test('on a game’s card, the arrows move between its buttons, and A presses the one chosen', () => {
+  const game = loadGame({dom: true, save: {version: 25, started: true}});
+  game.run('slotCard(1)');
+  const sheet = game.el('#sheet');
+  assert.equal(game.run('document.activeElement && document.activeElement.id'), 'contBtn', 'Continue to start with');
+  game.run("navFocus('left')");
+  assert.equal(game.run('document.activeElement.dataset.a'), 'back', 'left: Back');
+  game.run('pressA()');
+  assert.equal(game.run('modal.hidden'), true, 'A pressed Back: the card closes');
+  assert.ok(sheet);
+});

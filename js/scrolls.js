@@ -14,7 +14,7 @@ function storyScroll(){
   return new Promise(res => {
     const firstRead = !here().story;   // the English shows under each sentence the first time; after that, behind English
     STORY.forEach(s => hear(s.t)); save();
-    openCard(`<p class="label">Story Scroll</p><p class="small">The story of your first day, in words you've met. Tap any word you're unsure of.</p>
+    openCard(`<p class="label">Story Scroll</p><p class="small">Your story so far, in words you've met. Tap any word you're unsure of.</p>
       ${STORY.map((s,i) => `<div class="sent" data-i="${i}">${s.pic ? `<span class="spic" aria-hidden="true">${picHTML(s.pic)}</span>` : ''}<div>${lineHTML(s.t)}<div class="sentence-en" ${firstRead ? '' : 'hidden'}>${esc(s.en)}</div></div></div>`).join('')}
       <div class="gloss">Tap a word for its meaning.</div>
       <div class="actions"><button class="btn grow" data-a="read">🔊 Read it to me</button>${firstRead ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">Questions</button></div>`);

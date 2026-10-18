@@ -42,7 +42,7 @@ function openCard(html){
   const f = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
   if (f) f.focus({preventScroll:true}); else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 }
-const NAV_SEL = '.actions button, .menu button';
+const NAV_SEL = '.actions button, .menu button', NAVIGABLE = '.menu, [data-nav]';
 function navItems(){ return [...sheet.querySelectorAll(NAV_SEL)].filter(b => !b.disabled && !b.hidden && b.offsetParent !== null); }
 sheet.addEventListener('focusin', e => { sheet.querySelectorAll('.navsel').forEach(x => x.classList.remove('navsel')); if (e.target.matches(NAV_SEL)) e.target.classList.add('navsel'); });
 function navFocus(d){
@@ -52,7 +52,7 @@ function navFocus(d){
     tabs[(i + (d === 'left' ? -1 : 1) + tabs.length) % tabs.length].click();
     return;
   }
-  if (!sheet.querySelector('.menu')) return;          // otherwise the D-pad only moves through menus; on cards A is always the main button
+  if (!sheet.querySelector(NAVIGABLE)) return;        // otherwise the D-pad only moves through menus (and cards whose buttons are a choice, data-nav); on other cards A is always the main button
   const items = navItems(); if (!items.length) return;
   const cur = items.indexOf(document.activeElement);
   const go = i => { items[i].focus({preventScroll:false}); SFX.turn(); };

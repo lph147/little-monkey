@@ -40,7 +40,7 @@ async function pressA(){
   if (mode === 'title' && modal.hidden){ const t = $('#titleButtons').querySelector('.primary'); if (t) t.click(); return; }   // the chosen game (a card on the title screen: its button)
   if (mode === 'intro'){ const bb = $('#beginBtn') || $('#nextBtn'); if (bb) bb.click(); return; }
   if (!modal.hidden){
-    const f = document.activeElement, inMenu = !!sheet.querySelector('.menu');
+    const f = document.activeElement, inMenu = !!sheet.querySelector(NAVIGABLE);
     if (inMenu && f && sheet.contains(f) && f.matches(NAV_SEL) && !f.disabled) f.click();
     else { const p = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled); if (p) p.click(); else if (inMenu){ const first = navItems()[0]; if (first) first.click(); } }
     return;

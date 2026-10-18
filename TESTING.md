@@ -54,6 +54,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] A first game says to turn your sound on. If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). The words sit under the title on the left, clear of the stone and the mountain.
 - [ ] There's no header or task box. Under the D-pad are two small buttons, TASKS and MENU, where a Game Boy has Select and Start.
 - [ ] A on a game opens its card: words, friends, shells, where you are, how many words are due for review, and Continue, Copy to a file, Delete and Back. Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your words, friends and shells (a pixel shell) at the top, and pressing the same button again (or B) closes them.
+- [ ] On a game's card, the arrows (or the D-pad) move between its buttons, with a gold outline and the A badge on the one chosen; A presses it.
 - [ ] There are no levels or XP anywhere (they were taken out on 18 October 2026). A saved game from before still has all its words, friends and shells.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] Held upright, the phone shows only a card: 小猴子, a phone turning, and "Turn your phone sideways to play". (If nothing happens when you turn it, the phone's rotation lock is on.)
@@ -66,7 +67,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Menu, Settings, English on replies Off: reply choices show only Chinese and pinyin.
 - [ ] The Word Scroll has a Phrases tab (你好, 谢谢, 不客气, 对不起, 没关系, 再见, 我不要). Phrases don't count in the word total in the menu. A phrase you've replied with has all four gold squares.
 - [ ] A line you've seen before hides its English behind an English button. "Tap any word to see what it means" only shows under your first few lines.
-- [ ] MENU (or M) opens the menu: four tiles in a row: 词 Word Scroll, 任务 Tasks, 朋友 Friends and 衣服 Wardrobe, each with pinyin and English, then Settings and Close side by side. The first tile has the gold outline and A badge; the D-pad moves between them. B, Close or Start closes it.
+- [ ] MENU (or M) opens the menu: six tiles in a row: 词 Words, 任务 Tasks, 包 Bag, 朋友 Friends, 衣服 Clothes and 保存 Save, each with pinyin and its English meaning, then Settings and Close side by side. The first tile has the gold outline and A badge; the D-pad moves between them. B, Close or Start closes it.
 - [ ] The Word Scroll has tabs across the top: one per category (Animals, Food, Nature and so on), then Today, then Heard. On a phone they fit in two rows. Tapping a tab (or pressing left or right on the D-pad) switches to it, and the scroll opens at the same tab next time.
 - [ ] A category's tab shows its count, such as "Animals 1/8", and a grid of its words, four across on a phone: caught words show their pixel picture, characters, pinyin and gold squares (words without a picture, like 我, show just the characters). Words you've heard but not caught show as a shadow of their picture, marked "heard 2×" and so on; the rest show ？.
 - [ ] Tapping a caught word opens its page: its picture on the left, and beside it its characters, pinyin and sound, its level (Caught, Recognised, Read or Used), where you found it, and an example sentence with the word in bold. English shows the meanings; Back returns to the same tab and place in the scroll.
@@ -163,12 +164,12 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The meadow has no waterfall any more: the river comes in from the top right.
 
 **The waterfall**
-- [ ] At the waterfall, face it with the troop there and press A: the Story Scroll opens: 8 short sentences about your first day (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
+- [ ] At the waterfall, face it with the troop there and press A: the Story Scroll opens: 8 short sentences: your story so far (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
 - [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). The sentence's English, with the gap, is shown underneath. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🐚: "The troop stares at the roaring waterfall. What could be behind it?"
 
 **The wardrobe**
 - [ ] Buying the 头带 puts it on. It's the wardrobe's only item for now.
-- [ ] Menu, 衣服 Wardrobe shows what you own, with "Wearing" on what's on. Tapping something you're not wearing closes the menu: the first time, a card teaches 戴 (wear); then your monkey says 我戴花 (or 我戴头带) and is wearing it on the map. Tapping something you're wearing takes it off.
+- [ ] Menu, 衣服 Clothes shows what you own, with "Wearing" on what's on. Tapping something you're not wearing closes the menu: the first time, a card teaches 戴 (wear); then your monkey says 我戴花 (or 我戴头带) and is wearing it on the map. Tapping something you're wearing takes it off.
 
 **The old monkey**
 - [ ] After the old monkey's first 你好 and your reply, he says 我是老猴子。这是花果山。 (I'm the old monkey. This is Flower Fruit Mountain.). Then the speech box says (in italics) that every baby monkey explores the mountain to find out what things are called, and waits for A before his next line.
@@ -176,7 +177,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] When he tells you about 动物 (animals), he adds 去找猴子吧！ (Go and find the monkeys!), and explains that a ! over a monkey means it wants something, that TASKS reminds you what to do, and that MENU shows your words.
 - [ ] Talking to him again, he checks in: 饿猴子要吃水果。, 渴猴子要喝水。 or 大猴子要花。 for whatever the troop has asked you for, or 去找猴子吧！ while a monkey still needs help.
 - [ ] The hungry monkey adds 水果在树上。 (Fruit grows on the trees.) and the thirsty monkey 河里有水。 (There's water in the river.) while you're looking.
-- [ ] Each of the three monkeys of the troop says 你好, you reply, and then they say something of their own: 我要吃桃子！, 我们玩吧！ or 树上有鸟。
+- [ ] Each of the three monkeys of the troop says 你好, you reply, and then they say something of their own. The two across the river give advice: one says 去找动物吧！ (Go and find the animals!) and where they hide (once you've found them all, it tells you about the practice post instead); the other says 老板有苹果。 (The shop owner has apples.) and how to earn shells. The third says 树上有鸟。
 
 **The end of the prologue**
 - [ ] There's no cave door on the far left any more (and no word test for now: it comes back as the troop's send-off at the end of Area 1).
@@ -200,7 +201,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.
-- [ ] 词 Word Scroll and 朋友 Friends open, and Back returns to the menu, on the same tile.
+- [ ] 词 Words (the Word Scroll) and 朋友 Friends open, and Back returns to the menu, on the same tile.
 - [ ] Settings: Music, Sound effects and Pinyin switch on and off. With pinyin off, it's hidden over words in sentences. Back returns to the menu.
 - [ ] 保存 Save closes the menu and says "Saved: Game 1, just now".
 - [ ] Settings, Watch the opening plays the opening, then carries on where you were. Settings, Title screen: your games, then your game and Continue, puts you back where you were.

@@ -3,11 +3,11 @@
 /* ================= MENU ================= */
 // The menu's tiles, with Chinese, pinyin and English (the Chinese is on the review sheet, CHINESE.md).
 const MENU_TILES = [
-  {m:'words', icon:'📜', zh:'词', py:'cí', en:'Word Scroll'},
+  {m:'words', icon:'📜', zh:'词', py:'cí', en:'Words'},   // each tile's English is what its Chinese means
   {m:'tasks', icon:'📋', zh:'任务', py:'rènwu', en:'Tasks'},
   {m:'bag', icon:'👝', zh:'包', py:'bāo', en:'Bag'},
   {m:'friends', icon:'🐾', zh:'朋友', py:'péngyou', en:'Friends'},
-  {m:'wardrobe', icon:'👕', zh:'衣服', py:'yīfu', en:'Wardrobe'},
+  {m:'wardrobe', icon:'👕', zh:'衣服', py:'yīfu', en:'Clothes'},
   {m:'save', icon:'💾', zh:'保存', py:'bǎocún', en:'Save'}   // it saves by itself anyway: this says so
 ];
 function openMenu(focusId){
@@ -64,7 +64,7 @@ function bagPage(back, focus, note){
 }
 function wardrobePage(back, focus){
   const own = (AREA.wardrobe || []).filter(c => S.wardrobe.owned.includes(c.item)), more = (AREA.wardrobe || []).length - own.length;
-  openCard(`<p class="label">衣服 yīfu · Wardrobe</p>
+  openCard(`<p class="label">衣服 yīfu · Clothes</p>
     ${own.length ? `<p class="small">Tap something to put it on or take it off.</p><div class="menu grid">${own.map(c => { const on = wearing(c.item);
       return `<button class="card wear${on ? ' on' : ''}" data-w="${c.item}" data-label="${on ? 'Take off' : 'Put on'}"><div class="c" aria-hidden="true">${picHTML(c.item)}</div><div class="hz">${c.item}</div><div class="p">${WORDS[c.item].py}</div><div class="small">${on ? 'Wearing' : 'Put on'}</div></button>`; }).join('')}</div>`
       : '<p class="hint">Nothing to wear yet. Clothes come from the shop and from friends.</p>'}

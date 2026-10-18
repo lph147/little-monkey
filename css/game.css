@@ -291,8 +291,9 @@ rt.hid{visibility:hidden}
 .talk .next{min-height:2.1rem;padding:.1rem .9rem;font-size:.9rem;position:relative}
 .round.ready{box-shadow:0 4px 0 rgba(0,0,0,.3),0 0 0 4px var(--gold)}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}
-.sheet .menu button.navsel{outline:3px solid var(--gold);outline-offset:2px}
-.sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.titlecard .btn.primary::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-8px;left:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
+.sheet .menu button.navsel,.sheet [data-nav] button.navsel{outline:3px solid var(--gold);outline-offset:2px}
+.sheet [data-nav]:has(.navsel:not(.primary)) .btn.primary::before{display:none}   /* the A badge follows the button you've chosen */
+.sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.sheet [data-nav] button.navsel::before,.titlecard .btn.primary::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-8px;left:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .sheet [data-b]::after,#skipBtn::after{content:"B";position:absolute;top:-8px;right:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnB);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}

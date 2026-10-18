@@ -162,9 +162,10 @@ function slotCard(n){
   if (!g){
     openCard(`<div class="who" aria-hidden="true">💾</div><p class="label">Game ${n} · empty</p><p>Start a new game here, or load one from a file: a game copied from another phone, or a backup.</p>
       <input type="file" accept=".json,application/json" hidden>
-      <div class="actions"><button class="btn" data-a="back" data-b>Back</button><button class="btn" data-a="load">Load from a file</button><button class="btn primary" id="newBtn">New game</button></div>`);
+      <div class="actions" data-nav><button class="btn" data-a="back" data-b>Back</button><button class="btn" data-a="load">Load from a file</button><button class="btn primary" id="newBtn">New game</button></div>`);
     on('[data-a=back]', () => { closeCard(); toTitle(n); });
     sheet.querySelector('#newBtn').onclick = go(() => { newGameIn(n); setUpGame(); closeCard(); playIntro(); });
+    sheet.querySelector('#newBtn').focus();
     const pick = sheet.querySelector('input[type=file]');
     on('[data-a=load]', () => pick.click());
     pick.onchange = async () => {
@@ -179,8 +180,9 @@ function slotCard(n){
   const friends = `${g.friends} ${g.friends === 1 ? 'friend' : 'friends'}`;
   openCard(`<p class="label">Game ${n}</p><div class="slotcard">${faceHTML()}<div><p><b>${g.words} ${g.words === 1 ? 'word' : 'words'}</b> · ${friends} · ${g.shells} 🐚</p>
       <p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${due}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
-    <div class="actions"><button class="btn danger" data-a="del">Delete</button><button class="btn" data-a="copy">Copy to a file</button><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" id="contBtn">Continue</button></div>`);
+    <div class="actions" data-nav><button class="btn danger" data-a="del">Delete</button><button class="btn" data-a="copy">Copy to a file</button><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" id="contBtn">Continue</button></div>`);
   on('[data-a=back]', () => { closeCard(); toTitle(n); });
+  sheet.querySelector('#contBtn').focus();   // the arrows move from here
   sheet.querySelector('#contBtn').onclick = go(() => {
     if (n !== SLOT){ useSlot(n); setUpGame(); }
     closeCard(); $('#titlecard').hidden = true; placePlayer(); mode = 'play'; updateHUD();

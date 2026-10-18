@@ -23,7 +23,7 @@ shown where the word list has them.
 | 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 老板 (Shop owner) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), squirrel, goat, 猴子 (Monkey) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), squirrel, goat |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
 | 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |
@@ -42,7 +42,8 @@ shown where the word list has them.
 | 大猴子要花。 | dà hóuzi yào huā. | The big monkey wants flowers. | 老猴子 (Old monkey) |  |
 | 水果在树上。 | shuǐguǒ zài shù shàng. | Fruit grows on the trees. | 饿猴子 (Hungry monkey) |  |
 | 河里有水。 | hé lǐ yǒu shuǐ. | There’s water in the river. | 渴猴子 (Thirsty monkey) |  |
-| 我要吃桃子！ | wǒ yào chī táozi! | I want to eat a peach! | 猴子 (Monkey) |  |
+| 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | 猴子 (Monkey) |  |
+| 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | 猴子 (Monkey) |  |
 | 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | 猴子 (Monkey) |  |
 | 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 老猴子 (Old monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
@@ -273,11 +274,11 @@ The names of the menu's tiles, shown with pinyin and English.
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 词 | cí | Word Scroll |  |
+| 词 | cí | Words |  |
 | 任务 | rènwu | Tasks |  |
 | 包 | bāo | Bag |  |
 | 朋友 | péngyou | Friends |  |
-| 衣服 | yīfu | Wardrobe |  |
+| 衣服 | yīfu | Clothes |  |
 | 保存 | bǎocún | Save |  |
 
 ## New sentences to check

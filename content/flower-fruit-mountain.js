@@ -662,7 +662,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     bigWants: {zh:'大 猴子 要 花 。', en:'The big monkey wants flowers.'},
     fruitOnTrees: {zh:'水果 在 树 上 。', en:'Fruit grows on the trees.'},
     waterInRiver: {zh:'河 里 有 水 。', en:'There’s water in the river.'},
-    wantPeach: {zh:'我 要 吃 桃子 ！', en:'I want to eat a peach!'},
+    findAnimals: {zh:'去 找 动物 吧 ！', en:'Go and find the animals!'},
+    bossHasApples: {zh:'老板 有 苹果 。', en:'The shop owner has apples.'},
     birdsInTrees: {zh:'树 上 有 鸟 。', en:'There are birds in the trees.'},
     // Up the stream (drafts, not checked yet: see CHINESE.md)
     whereFrom: {zh:'水 从 哪里 来 ？', en:'Where does the water come from?'},
@@ -814,8 +815,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
       notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}]}}]}],
     goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
       notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}]}}]}],
-    troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'wantPeach'}]}],
-    troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'play'}]}],
+    // two of the troop, across the river, give advice
+    troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
+      {if:{animalsLeft:{atLeast:1}}, do:[{say:'hi'}, {reply:'你好'}, {say:'findAnimals'}, {message:'Animals hide in the tall grass. Walk through it to find them, and answer their questions to make friends.'}]},
+      {do:[{say:'hi'}, {reply:'你好'}, {message:'When the practice post by the pond has a !, some of your words are due: practise them there, so you don’t forget them.'}]}],
+    troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
+      {do:[{say:'hi'}, {reply:'你好'}, {say:'bossHasApples'}, {message:'Earn shells by helping the troop, making friends and practising. The {老板} sells {苹果}: in a question, one takes away a wrong answer.'}]}],
     troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],
     big: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
@@ -825,7 +830,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]
   },
 
-  // The Story Scroll at the waterfall: your first day, told in short sentences made of words you've met.
+  // The Story Scroll at the waterfall: your story so far, told in short sentences made of words you've met.
   // pic is the word whose picture is shown beside the sentence. Each sentence's English shows under it
   // the first time you read the story. (The longer story from the book's opening, with 一只, 一个 and
   // 很, waits for the Water Curtain Cave, which teaches them.)
@@ -859,7 +864,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     reward: 5,
     rumble: false,
     text: [
-      'You read a whole story in Chinese: the story of your first day on Flower Fruit Mountain.',
+      'You read a whole story in Chinese: your story on Flower Fruit Mountain.',
       'The troop stares at the roaring waterfall. What could be behind it?'
     ]
   },
