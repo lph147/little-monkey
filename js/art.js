@@ -185,13 +185,49 @@ function caveWall(g, X, Y, x, y){
   R(g, X+1, Y+1, 5, 1, '#5E5850'); R(g, X+8, Y+9, 5, 1, '#5E5850');
   if (y + 1 < ROWS && tileAt(x, y+1).look !== 'caveWall') R(g, X, Y+13, T, 3, '#2E2B27');   // a shadow where it meets the floor
 }
-function stoneTable(g, X, Y, x, y){   // a big stone table over several tiles: its edges where the next tile isn't table
+// The troop's stone things, outlined and lit from the top left, with a shadow on the floor.
+const CAVE_OUT = '#2E2A26', STONE = '#BDB6A6', STONE_FRONT = '#857E71', STONE_LIGHT = '#DDD6C8', CAVE_SHADOW = '#5E5040';
+function stoneBed(g, X, Y, x, y){   // a stone bed against the wall: straw, a leaf blanket and a stone pillow
+  caveFloor(g, X, Y, x, y);
+  R(g, X+1, Y+14, 14, 2, CAVE_SHADOW);
+  R(g, X+2, Y-5, 12, 8, CAVE_OUT); R(g, X+3, Y-4, 10, 6, STONE); R(g, X+3, Y-4, 10, 1, STONE_LIGHT);   // the headboard, up against the wall
+  R(g, X+1, Y+1, 14, 14, CAVE_OUT); R(g, X+2, Y+2, 12, 9, '#D6B35A'); R(g, X+2, Y+11, 12, 3, STONE_FRONT); R(g, X+2, Y+11, 12, 1, STONE);   // the frame and the straw
+  for (let i = 0; i < 9; i++){ const px = 2 + Math.floor(rnd(x, y, i + 700) * 11), py = 2 + Math.floor(rnd(x, y, i + 710) * 8); R(g, X+px, Y+py, 2, 1, i % 2 ? '#B58F3E' : '#F0D68E'); }
+  R(g, X+4, Y+2, 8, 4, CAVE_OUT); R(g, X+5, Y+2, 6, 3, '#EEE7D6'); R(g, X+5, Y+4, 6, 1, '#C9C2B2');            // the pillow
+  R(g, X+2, Y+7, 12, 4, '#5E9A3E'); R(g, X+2, Y+7, 12, 1, '#8CC45A'); R(g, X+2, Y+10, 12, 1, '#3F6E2A');  // the leaf blanket
+  [3, 7, 11].forEach(i => R(g, X+i, Y+8, 1, 1, '#A8D877'));
+}
+function stoneTable(g, X, Y, x, y){   // a big stone table, two squares by two, on two legs, with peaches and an apple on it
   caveFloor(g, X, Y, x, y);
   const is = (dx, dy) => tileAt(x+dx, y+dy).look === 'stoneTable';
-  const x0 = is(-1,0) ? 0 : 2, x1 = is(1,0) ? 16 : 14, y0 = is(0,-1) ? 0 : 3, y1 = is(0,1) ? 16 : 11;
-  R(g, X+x0, Y+y0, x1-x0, y1-y0, '#B4AEA0');
-  if (!is(0,-1)) R(g, X+x0, Y+y0, x1-x0, 2, '#CFC9BC');
-  if (!is(0,1)) R(g, X+x0, Y+y1, x1-x0, 2, '#5E594F');
+  const tx = is(-1, 0) ? 16 : 0, ty = is(0, -1) ? 16 : 0;   // where this square is in the 32 x 32 table
+  const px = (u, v, c) => { if (u >= tx && u < tx + 16 && v >= ty && v < ty + 16) R(g, X + u - tx, Y + v - ty, 1, 1, c); };
+  for (let v = 0; v < 32; v++) for (let u = 0; u < 32; u++){
+    const corner = (u < 3 || u > 28) && (v < 4 || (v > 17 && v < 25));
+    let c = null;
+    if (v >= 29 && v <= 31 && u >= 3 && u <= 28) c = CAVE_SHADOW;
+    if (v >= 24 && v <= 29 && ((u >= 5 && u <= 9) || (u >= 22 && u <= 26))) c = u === 5 || u === 26 || v === 29 ? CAVE_OUT : u === 6 || u === 23 ? '#8E877A' : '#6F695E';   // the legs
+    if (u >= 1 && u <= 30 && v >= 2 && v <= 24 && !corner) c = (v === 2 || v === 24 || u === 1 || u === 30) ? CAVE_OUT : v >= 20 ? (v === 20 ? STONE : STONE_FRONT) : v <= 4 ? STONE_LIGHT : (u * 7 + v * 3) % 23 === 0 ? '#A9A291' : STONE;
+    if (c) px(u, v, c);
+  }
+  [[9, 9, '#F29B8F'], [13, 8, '#F7B3A5'], [21, 12, '#E8343C']].forEach(([cx, cy, c]) => {
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) if (dx * dx + dy * dy <= 5) px(cx + dx, cy + dy, dx * dx + dy * dy >= 4 ? CAVE_OUT : dx < 0 && dy < 0 ? '#FFFFFF' : c);
+    px(cx, cy - 3, '#3E8A3E');
+  });
+}
+function stoneBowl(g, X, Y, x, y){   // a big stone bowl
+  caveFloor(g, X, Y, x, y);
+  oval(g, X+8, Y+14, 6, 1, CAVE_SHADOW);
+  [7, 7, 6, 5, 4].forEach((w, k) => { R(g, X+8-w, Y+8+k, 2*w+1, 1, CAVE_OUT); R(g, X+9-w, Y+8+k, 2*w-1, 1, k < 1 ? STONE : '#A39C8E'); R(g, X+9-w, Y+8+k, 1, 1, STONE_LIGHT); });   // its sides
+  R(g, X+5, Y+13, 7, 1, CAVE_OUT);                                                                                      // its foot
+  oval(g, X+8, Y+7, 7, 2, CAVE_OUT); oval(g, X+8, Y+7, 6, 1, '#E2DCCF'); R(g, X+4, Y+7, 9, 1, '#4A443B');               // the rim, and inside
+}
+function stoneTablet(g, X, Y, x, y){   // a stone tablet with the cave's name carved down it (水帘洞), on a plinth
+  caveFloor(g, X, Y, x, y);
+  R(g, X+1, Y+14, 14, 2, CAVE_SHADOW);
+  R(g, X+1, Y+11, 14, 4, CAVE_OUT); R(g, X+2, Y+12, 12, 2, STONE_FRONT); R(g, X+2, Y+12, 12, 1, STONE);   // the plinth
+  R(g, X+4, Y, 8, 12, CAVE_OUT); R(g, X+5, Y+1, 6, 10, STONE); R(g, X+5, Y+1, 2, 10, STONE_LIGHT); R(g, X+10, Y+1, 1, 10, STONE_FRONT);
+  [1, 4, 7].forEach(r => { R(g, X+7, Y+r+1, 2, 2, '#5E574C'); R(g, X+6, Y+r+2, 4, 1, '#5E574C'); });   // three carved characters
 }
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
 // How each look is painted. Each area's legend picks a look for each map letter.
@@ -215,10 +251,10 @@ const LOOKS = {
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
   caveWall:  (g,X,Y,x,y) => caveWall(g,X,Y,x,y),
-  stoneBed:  (g,X,Y,x,y) => { caveFloor(g,X,Y,x,y); R(g,X+1,Y+3,14,11,'#3E3A35'); R(g,X+2,Y+3,12,9,'#C2BCAE'); R(g,X+2,Y+3,12,2,'#D9D4C8'); R(g,X+3,Y+5,4,3,'#E8E3D8'); },
+  stoneBed:  (g,X,Y,x,y) => stoneBed(g,X,Y,x,y),
   stoneTable:(g,X,Y,x,y) => stoneTable(g,X,Y,x,y),
-  stoneBowls:(g,X,Y,x,y) => { caveFloor(g,X,Y,x,y); R(g,X+1,Y+10,14,2,'#5E594F'); [[2,5],[9,5]].forEach(([a,c]) => { R(g,X+a,Y+c,5,5,'#3E3A35'); R(g,X+a+1,Y+c,3,4,'#D8D2C4'); R(g,X+a+1,Y+c,3,1,'#9C968A'); }); },
-  tablet:    (g,X,Y,x,y) => { caveFloor(g,X,Y,x,y); R(g,X+3,Y+1,10,14,'#3E3A35'); R(g,X+4,Y+2,8,12,'#A9A598'); [3,6,9].forEach(r => R(g,X+7,Y+2+r,2,2,'#3E3A35')); },
+  stoneBowls:(g,X,Y,x,y) => stoneBowl(g,X,Y,x,y),
+  tablet:    (g,X,Y,x,y) => stoneTablet(g,X,Y,x,y),
   curtain:   (g,X,Y,x,y) => { R(g,X,Y,T,T,'#8FD0EE'); },   // the falling water is animated in js/draw.js
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js

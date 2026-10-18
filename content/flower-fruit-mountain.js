@@ -247,7 +247,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "ZDzDzDZZZZDzDzDZ",
         "ZzzzzzzzzzzzzzzZ",
         "ZzzAAzzzzVVzzzzZ",
-        "ZzzAAzzzzzzzLzzZ",
+        "ZzzAAzzzzzzzzzzZ",
         "ZzzzzzzzzzzzzzzZ",
         "ZUUUUUUIUUUUUUUZ",
         "ZzzzzzzzzzzzzzzZ",
@@ -255,7 +255,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "ZzzzzzzzzzzzzzzZ",
         "ZzzzzzzzzzzzzzzZ",
         "ZzzzzzzzzzzzzzzZ",
-        "ZzzzzzzzzzzzzzzZ",
+        "ZzzzzLzzzzzzzzzZ",
         "ZZZZZZCCCZZZZZZZ"
       ]
     }
