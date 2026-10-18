@@ -45,6 +45,20 @@ test('your turn: hit, eat (a peach, when you’re hurt) or run; a hit takes one 
   assert.equal(g.run('S.shells'), 1, 'a shell for chasing it off');
 });
 
+test('Run away chosen with the D-pad: A presses it, even when the phone drops the focus (as an iPhone does)', async () => {
+  const g = fighting();
+  g.run("globalThis.__r = null; battle('snake').then(r => { __r = r; })"); await g.flush();
+  assert.equal(g.run('chosenBtn().dataset.act'), 'hit', 'Hit to start with');
+  g.run("navFocus('right')");   // from Hit to Run away
+  assert.equal(g.sheet.querySelector('.navsel').dataset.act, 'run', 'the gold outline is on Run away');
+  assert.equal(g.run('buttonLabels(0)[0]'), 'Run away', 'and A says so');
+  g.run('document.activeElement && document.activeElement.blur()');   // touching the D-pad or A on an iPhone
+  assert.equal(g.run('buttonLabels(0)[0]'), 'Run away', 'A still says Run away');
+  await g.run('pressA()'); await g.flush();
+  assert.equal(g.run('__r'), 'ran', 'A ran away, instead of hitting');
+  assert.equal(g.run('modal.hidden'), true);
+});
+
 test('a wrong dodge costs a heart, and your hearts stay down after the battle', async () => {
   const g = fighting();
   g.run("battle('snake')"); await g.flush();

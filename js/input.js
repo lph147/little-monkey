@@ -41,8 +41,8 @@ async function pressA(){
   if (mode === 'title' && modal.hidden){ const t = $('#titleButtons').querySelector('.sel'); if (t) t.click(); return; }   // the chosen button on the title screen (Continue, New game or Save files)
   if (mode === 'intro'){ const bb = $('#beginBtn') || $('#nextBtn'); if (bb) bb.click(); return; }
   if (!modal.hidden){
-    const f = document.activeElement, inMenu = !!sheet.querySelector(NAVIGABLE);
-    if (inMenu && f && sheet.contains(f) && f.matches(NAV_SEL) && !f.disabled) f.click();
+    const f = chosenBtn(), inMenu = !!sheet.querySelector(NAVIGABLE);
+    if (inMenu && f) f.click();
     else { const p = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled); if (p) p.click(); else if (inMenu){ const first = navItems()[0]; if (first) first.click(); } }
     return;
   }

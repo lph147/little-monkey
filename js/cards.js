@@ -44,7 +44,14 @@ function openCard(html){
 }
 const NAV_SEL = '.actions button, .menu button', NAVIGABLE = '.menu, [data-nav]';
 function navItems(){ return [...sheet.querySelectorAll(NAV_SEL)].filter(b => !b.disabled && !b.hidden && b.offsetParent !== null); }
-sheet.addEventListener('focusin', e => { sheet.querySelectorAll('.navsel').forEach(x => x.classList.remove('navsel')); if (e.target.matches(NAV_SEL)) e.target.classList.add('navsel'); });
+const markNav = b => { sheet.querySelectorAll('.navsel').forEach(x => x.classList.remove('navsel')); if (b && b.matches(NAV_SEL)) b.classList.add('navsel'); };
+sheet.addEventListener('focusin', e => markNav(e.target));
+// The button chosen on a card (with the gold outline): the one A presses. Usually it has the keyboard's focus, but an
+// iPhone drops the focus when you touch the D-pad or A, so the outline (navsel) remembers it too.
+function chosenBtn(){
+  const items = navItems(), f = document.activeElement;
+  return items.includes(f) ? f : items.find(b => b.classList.contains('navsel')) || null;
+}
 function navFocus(d){
   const tabs = [...sheet.querySelectorAll('.scrolltabs .tab')];
   if (tabs.length && (d === 'left' || d === 'right')){   // left and right switch the Word Scroll's tabs
@@ -54,8 +61,8 @@ function navFocus(d){
   }
   if (!sheet.querySelector(NAVIGABLE)) return;        // otherwise the D-pad only moves through menus (and cards whose buttons are a choice, data-nav); on other cards A is always the main button
   const items = navItems(); if (!items.length) return;
-  const cur = items.indexOf(document.activeElement);
-  const go = i => { items[i].focus({preventScroll:false}); SFX.turn(); };
+  const cur = items.indexOf(chosenBtn());
+  const go = i => { markNav(items[i]); items[i].focus({preventScroll:false}); SFX.turn(); };
   if (cur < 0) return go(Math.max(0, items.findIndex(b => b.classList.contains('primary'))));
   const inOrder = () => go((cur + ((d === 'left' || d === 'up') ? -1 : 1) + items.length) % items.length);
   if (!items.some(b => b.getBoundingClientRect().width)) return inOrder();   // no layout to go by: step through in order

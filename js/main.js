@@ -93,8 +93,8 @@ function currentPrompt(now){
 }
 function buttonLabels(now){
   if (!modal.hidden){
-    const f = document.activeElement, primary = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
-    const focused = sheet.querySelector(NAVIGABLE) && f && sheet.contains(f) && f.matches(NAV_SEL) ? f : primary;
+    const f = chosenBtn(), primary = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
+    const focused = sheet.querySelector(NAVIGABLE) && f ? f : primary;
     const bb = sheet.querySelector('[data-b]');
     return [btnLabel(focused), bb && bb.offsetParent !== null ? btnLabel(bb) : ''];
   }
