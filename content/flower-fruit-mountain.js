@@ -880,17 +880,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     returnTo: {x:3, y:4, facing:'down'}
   },
 
-  // The opening scene, told in English so a beginner can follow it. Each caption appears this many
-  // seconds in (at), then waits for Next. word: a word from the word bank to show and say with it, one
-  // you'll meet on the mountain (one at most, or none). The pictures (night, dawn,
-  // the stone cracking) are drawn by js/draw.js to match these times.
+  // The opening scene: the story in Chinese (zh, with its pinyin, py) and English (en), read aloud. Each caption appears
+  // this many seconds in (at), then waits for Next. The pictures (night, dawn, the stone cracking) are drawn by js/draw.js
+  // to match these times. (Its Chinese is just to listen to, so its words needn't be in the word bank.)
   intro: [
-    {at:0, en:'Long, long ago, in the middle of the sea…'},
-    {at:2.8, en:'…there was a mountain.', word:'山'},
-    {at:5.4, en:'On top of the mountain sat a big stone.', word:'石头'},
-    {at:7.2, en:'One day, the stone began to move!'},
-    {at:9, en:'It cracked open, and out jumped a little monkey!', word:'猴子'},
-    {at:10.6, en:'Light shone from its eyes.'},
-    {at:13.2, en:'An old monkey came to say hello.', word:'你好'}
+    {at:0, zh:'很久很久以前……', py:'Hěn jiǔ hěn jiǔ yǐqián……', en:'Long, long ago…'},
+    {at:2.8, zh:'海里有一座山，叫花果山。', py:'Hǎi lǐ yǒu yí zuò shān, jiào Huāguǒ Shān.', en:'In the sea stood a mountain called Flower Fruit Mountain.'},
+    {at:5.4, zh:'山上有一个大石头。', py:'Shān shàng yǒu yí gè dà shítou.', en:'On top of the mountain sat a big stone.'},
+    {at:7.2, zh:'石头动了！', py:'Shítou dòng le!', en:'The stone moved!'},
+    {at:9, zh:'一只小猴子！', py:'Yì zhī xiǎo hóuzi!', en:'A little monkey!'},
+    {at:10.6, zh:'它的眼睛里有光。', py:'Tā de yǎnjing lǐ yǒu guāng.', en:'Light shone from its eyes.'},
+    {at:13.2, zh:'你好，小猴子！', py:'Nǐ hǎo, xiǎo hóuzi!', en:'Hello, little monkey!'}
   ]
 };

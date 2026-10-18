@@ -67,9 +67,9 @@ const SCREENS = [
   {id: 'game-card', title: 'A game’s card', save: 'middle', why: 'Continue, copy it to a file, or delete it.', run: async () => { click('#titleButtons .primary'); await wait(300); }},
   {id: 'game-empty', title: 'An empty game’s card', why: 'A new game, or one from a file.', run: async () => { click('#titleButtons .primary'); await wait(300); }},
   {id: 'game-delete', title: 'Deleting a game', save: 'middle', why: 'Asked once more; Keep it is the main button.', run: async () => { click('#titleButtons .primary'); click('[data-a=del]'); await wait(300); }},
-  {id: 'intro-sea', title: 'Opening: the mountain', why: 'Told in English, with one word you’ll meet.', run: async () => { click('#titleButtons .primary'); click('#newBtn'); introClock = 2.85; advancedTo = 1; await wait(400); }},
+  {id: 'intro-sea', title: 'Opening: the mountain', why: 'The story in Chinese, with pinyin and English, read aloud.', run: async () => { click('#titleButtons .primary'); click('#newBtn'); introClock = 2.85; advancedTo = 1; await wait(400); }},
   {id: 'intro-monkey', title: 'Opening: the monkey is born', run: async () => { click('#titleButtons .primary'); click('#newBtn'); introClock = 9.05; advancedTo = 4; await wait(400); }},
-  {id: 'intro-eyes', title: 'Opening: light in its eyes', why: 'A caption with no word.', run: async () => { click('#titleButtons .primary'); click('#newBtn'); introClock = 10.65; advancedTo = 5; await wait(400); }},
+  {id: 'intro-eyes', title: 'Opening: light in its eyes', run: async () => { click('#titleButtons .primary'); click('#newBtn'); introClock = 10.65; advancedTo = 5; await wait(400); }},
   {id: 'stone', title: 'Born from the stone', why: 'Straight after Start: a word you discover yourself.', run: async () => { startGame(); await wait(1500); }},
   {id: 'first-steps', title: 'First steps', why: 'The message, the task box, the arrow and the first tip.', run: async () => {
     startGame(); await wait(1500); click('[data-a=ok]'); await wait(500); }},

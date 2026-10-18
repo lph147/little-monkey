@@ -71,14 +71,14 @@ function frame(now){
   sc.drawImage(buf, 0, 0, cv.width, cv.height);
   requestAnimationFrame(frame);
 }
-// A caption of the opening: its English, and its word (if it has one) in Chinese, pinyin and English, said aloud.
+// A caption of the opening: the story in Chinese, with its pinyin (unless that's switched off) and English, read aloud;
+// 🔊 reads it again.
 function showCaption(c, last){
-  const w = c.word, [py, en] = w ? info(w) : [];
-  const box = $('#capbox');   // over the sky in the picture, so the page keeps its size
-  box.innerHTML = pixelIcons(`<div class="cap"><div class="cen">${esc(c.en)}</div>${w ? `<button class="wchip" id="capWord"><span class="wzh">${w}</span>${S.pinyin ? `<span class="wpy">${py}</span>` : ''}<span class="wen">${esc(en.split(',')[0])}</span> 🔊</button>` : ''}</div>
-    <div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><span class="spacer"></span>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`);
+  const box = $('#capbox');   // in a panel beside the picture, so the page keeps its size
+  box.innerHTML = pixelIcons(`<div class="cap">${S.pinyin ? `<div class="cpy">${esc(c.py)}</div>` : ''}<div class="czh">${esc(c.zh)}</div><div class="cen">${esc(c.en)}</div></div>
+    <div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><button class="btn" id="againBtn" aria-label="Hear it again">🔊</button><span class="spacer"></span>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`);
   box.hidden = false;
-  if (w){ say(w); $('#capWord').onclick = () => say(w); }
+  say(c.zh); $('#againBtn').onclick = () => say(c.zh);
   $('#skipBtn').onclick = startGame;
   const nx = $('#nextBtn'); if (nx) nx.onclick = () => { advancedTo = capIdx + 1; SFX.blip(); };
   const bb = $('#beginBtn'); if (bb) bb.onclick = startGame;

@@ -122,14 +122,15 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 ### The opening scene
 
-The opening is told in English. These captions each show one word, said aloud.
-
-| Word | Pinyin | Caption | Notes |
+| Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 山 | shān | …there was a mountain. |  |
-| 石头 | shítou | On top of the mountain sat a big stone. |  |
-| 猴子 | hóuzi | It cracked open, and out jumped a little monkey! |  |
-| 你好 | nǐ hǎo | An old monkey came to say hello. |  |
+| 很久很久以前…… | Hěn jiǔ hěn jiǔ yǐqián…… | Long, long ago… |  |
+| 海里有一座山，叫花果山。 | Hǎi lǐ yǒu yí zuò shān, jiào Huāguǒ Shān. | In the sea stood a mountain called Flower Fruit Mountain. |  |
+| 山上有一个大石头。 | Shān shàng yǒu yí gè dà shítou. | On top of the mountain sat a big stone. |  |
+| 石头动了！ | Shítou dòng le! | The stone moved! |  |
+| 一只小猴子！ | Yì zhī xiǎo hóuzi! | A little monkey! |  |
+| 它的眼睛里有光。 | Tā de yǎnjing lǐ yǒu guāng. | Light shone from its eyes. |  |
+| 你好，小猴子！ | Nǐ hǎo, xiǎo hóuzi! | Hello, little monkey! |  |
 
 ### Names
 

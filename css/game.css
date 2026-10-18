@@ -87,13 +87,10 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .capbox{position:absolute;left:8px;top:8px;bottom:8px;width:47%;display:flex;flex-direction:column;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:.6rem .7rem;z-index:5}
 .capbox[hidden]{display:none}
 .cap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;gap:.5rem;text-align:center}
+.cap .cpy{color:var(--muted);font-size:.95rem;line-height:1.3}
+.cap .czh{font-family:var(--text);font-size:1.5rem;font-weight:600;line-height:1.3}
 .cap .cen{font-size:1rem;line-height:1.35}
-/* the opening's word: Chinese, pinyin and English, tap to hear it */
-.wchip{display:inline-flex;align-items:baseline;flex-wrap:wrap;justify-content:center;gap:.2rem .5rem;border:2px solid var(--ink);border-radius:8px;background:var(--bg);color:var(--ink);padding:.2rem .7rem;box-shadow:0 3px 0 var(--ink)}
-.wchip:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
-.wchip .wzh{font-family:var(--text);font-size:1.6rem;font-weight:700;color:var(--jade)}
-.wchip .wpy{font-size:1rem}
-.wchip .wen{color:var(--muted)}
+@media (max-width:700px){.capbox{width:56%}.cap{gap:.2rem}.cap .cpy{font-size:.72rem}.cap .czh{font-size:1.1rem}.cap .cen{font-size:.78rem;line-height:1.25}.capbox .caprow{gap:4px;margin-top:.2rem}.caprow .btn{font-size:.72rem;min-height:1.9rem;padding:.15rem .45rem}}   /* the opening on the smallest phones */
 .caprow{display:flex;align-items:center;gap:8px;margin-top:4px}
 .caprow .spacer{flex:1}
 

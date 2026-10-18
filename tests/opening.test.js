@@ -1,26 +1,29 @@
-// The opening is told in English, so a beginner can follow it. Some captions show one word you'll meet on
-// the mountain, in Chinese, pinyin and English, said aloud. The caption sits over the sky in the picture.
+// The opening (brought back 18 October 2026, at the player's request): the story in Chinese, with pinyin and English,
+// read aloud, in a panel beside the picture.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
-test('a caption with a word shows its English, and the word in Chinese, pinyin and English, said aloud', () => {
+test('each caption shows the story in Chinese, with its pinyin and English, read aloud; 🔊 reads it again', () => {
   const game = loadGame();
   game.run("globalThis.__said = []; say = t => __said.push(t); playIntro(); showCaption(CAPS[1], false)");
   const html = game.el('#capbox').innerHTML;
-  assert.match(html, /there was a mountain/);
-  assert.match(html, /<span class="wzh">山<\/span><span class="wpy">shān<\/span><span class="wen">mountain<\/span>/);
-  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__said)')), ['山'], 'only the word is said');
+  assert.ok(html.includes('<div class="cpy">Hǎi lǐ yǒu yí zuò shān, jiào Huāguǒ Shān.</div><div class="czh">海里有一座山，叫花果山。</div><div class="cen">In the sea stood a mountain called Flower Fruit Mountain.</div>'),
+    'the pinyin, the Chinese and the English');
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__said)')), ['海里有一座山，叫花果山。'], 'read aloud');
+  game.run("$('#againBtn').onclick()");
+  assert.equal(JSON.parse(game.run('JSON.stringify(__said)')).length, 2, 'and again');
   assert.equal(game.el('#capbox').hidden, false);
-  assert.match(game.el('#capbox').innerHTML, /id="nextBtn"/, 'its buttons are in the caption box too');
+  assert.match(html, /id="nextBtn"/, 'its buttons are in the caption box too');
 });
 
-test('a caption without a word is just English, and says nothing', () => {
-  const game = loadGame();
-  game.run("globalThis.__said = []; say = t => __said.push(t); playIntro(); showCaption(CAPS[0], false)");
-  assert.ok(!/wchip/.test(game.el('#capbox').innerHTML));
-  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__said)')), []);
+test('with pinyin switched off, the opening hides it too', () => {
+  const game = loadGame({save: {version: 25, pinyin: false}});
+  game.run('say = () => {}; playIntro(); showCaption(CAPS[0], false)');
+  const html = game.el('#capbox').innerHTML;
+  assert.doesNotMatch(html, /class="cpy"/);
+  assert.match(html, /class="czh">很久很久以前……/);
 });
 
 test('the last caption has Begin, and starting the game hides the caption', () => {
