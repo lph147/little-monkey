@@ -194,7 +194,9 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Talk to the old monkey: 里面有什么？, then fill the gap in 里面有＿。 (There are beds inside.) with 床, then 太好了！我们去看看！ and "The rest of chapter 1 is coming soon". Menu, Tasks shows those three things ticked on chapter 1's checklist.
 
 **Chapter 1, part B: the troop moves in**
-- [ ] Task: "Lead the troop into the 洞 (cave): jump through the 瀑布 (waterfall)". Jump in: a message says the troop follows you, and the old monkey, the big monkey and the little monkey are in the cave.
+- [ ] Task: "Lead the troop into the 洞 (cave): jump through the 瀑布 (waterfall)". Jump in: a message says the troop follows you, and the old monkey, the big monkey and the little monkey are in the cave, and another monkey stands just inside the entrance, to your right, with a !.
+- [ ] Talk to the monkey by the entrance: 累了吗？去床上睡觉吧！ (Tired? Go and sleep in a bed!), with 睡觉 in bold, and a card teaches 睡觉 (sleep, a picture of a monkey asleep with Zs). Its ! goes. Talking to it again, it says the same, with a hint to face a 床 (bed) and press A.
+- [ ] Get hurt in a battle on the mountain path (a wrong dodge), then come back to the cave. Face a bed (the top row): A says Sleep. Press it: the screen goes dark, Zs float up from you, and you wake with all your hearts ("You wake up with all your hearts."); the hearts at the top left go. If you sleep before the monkey has told you, the first time a card teaches 睡觉 instead. Before you know 床 (exploring the cave the first time), A at a bed looks at it and teaches 床, as before.
 - [ ] Talk to the old monkey (he has a !): 这是我们的家！ and a card teaches 家 (home).
 - [ ] Talk to the big monkey (now he has the !): 你是我们的王！, a card teaches 王 (king), and "The troop names you 美猴王". From then on, your replies show 美猴王 Měi Hóuwáng as your name.
 - [ ] Talk to the old monkey three times. Each time a monkey comes in through the water curtain, he counts (一只猴子。, 两只猴子。, 三只猴子。) and a card teaches one number: 一 (one), 二 (two, with a note that you say 两 when counting things) and 三 (three). The task counts 1/3, 2/3, 3/3, and three more monkeys from the meadow are now in the cave.

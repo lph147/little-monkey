@@ -63,6 +63,7 @@ shown where the word list has them.
 | 一只猴子。 | yī zhī hóuzi. | One monkey. | 老猴子 (Old monkey) |  |
 | 两只猴子。 | liǎng zhī hóuzi. | Two monkeys. | 老猴子 (Old monkey) |  |
 | 三只猴子。 | sān zhī hóuzi. | Three monkeys. | 老猴子 (Old monkey) |  |
+| 累了吗？去床上睡觉吧！ | lèi le ma? qù chuáng shàng shuìjiào ba! | Tired? Go and sleep in a bed! | 猴子 (Monkey) |  |
 
 ### Sentences the player completes (one word missing)
 
@@ -112,7 +113,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | 桥 |  |
 | 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | 碗 |  |
 | 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | 桌子 |  |
-| 洞里有床。 | dòng lǐ yǒu chuáng. | There are beds in the cave. | 床 |  |
 | 一，二，三！ | yī, èr, sān! | One, two, three! | 二 |  |
 
 ### Questions after the story
@@ -144,6 +144,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 饿猴子 | è hóuzi | Hungry monkey |  |
 | 渴猴子 | kě hóuzi | Thirsty monkey |  |
 | 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
@@ -193,6 +194,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 碗 | wǎn | bowl |  |
 | 桌子 | zhuōzi | table |  |
 | 家 | jiā | home |  |
+| 睡觉 | shuìjiào | to sleep |  |
 | 王 | wáng | king |  |
 | 一 | yī | one |  |
 | 二 | èr | two |  |
@@ -259,6 +261,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 老 | lǎo | old |  |
 | 找 | zhǎo | to look for |  |
 | 这 | zhè | this |  |
+| 累 | lèi | tired |  |
 | 很久 | hěn jiǔ | a long time |  |
 | 以前 | yǐqián | before, ago |  |
 | 海 | hǎi | sea |  |
@@ -308,7 +311,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | Chapter 1, part A (in the game): The example on 桥 (bridge)’s page in the Word Scroll |  |
 | 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | Chapter 1, part A (in the game): The example on 碗 (bowl)’s page |  |
 | 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | Chapter 1, part A (in the game): The example on 桌子 (table)’s page |  |
-| 洞里有床。 | dòng lǐ yǒu chuáng. | There are beds in the cave. | Chapter 1, part A (in the game): The example on 床 (bed)’s page |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave | Chapter 1, part A (in the game): What the stone tablet (石碑 shíbēi: please check this name too) in the cave says |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | Chapter 1, part B (in the game): The old monkey, when the troop moves into the cave |  |
 | 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | Chapter 1, part B (in the game): The big monkey, for the troop (then you’re called 美猴王 Měi Hóuwáng: please check this name too) |  |
@@ -322,10 +324,11 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | The prologue, changed on 17 October 2026: The big monkey asking for flowers (红色, 黄色 and 白色 are each taught when you pick that colour; changed on 19 October 2026 from 红花, 黄花 and 白花) |  |
 | 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | The prologue, changed on 17 October 2026: The sentence you finish when you give the big monkey the flowers (filling in 红色; changed on 19 October 2026 from 我要红花。) |  |
-| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 and 19 October 2026: The rabbit, by the long grass on the mountain path |  |
-| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 and 19 October 2026: The fox, at the fork in the river valley |  |
-| 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
-| 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
+| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 to 20 October 2026: The rabbit, by the long grass on the mountain path |  |
+| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 to 20 October 2026: The fox, at the fork in the river valley |  |
+| 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | New on 18 to 20 October 2026: A monkey across the river, giving advice |  |
+| 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | New on 18 to 20 October 2026: A monkey across the river, giving advice |  |
+| 累了吗？去床上睡觉吧！ | lèi le ma? qù chuáng shàng shuìjiào ba! | Tired? Go and sleep in a bed! | New on 18 to 20 October 2026: A monkey just inside the cave’s entrance (teaching 睡觉 shuìjiào, to sleep; 累 lèi, tired, is just for listening) |  |
 | 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, after your first 你好 |  |
 | 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, sending you to help the troop |  |
 | 饿猴子要吃水果。 | è hóuzi yào chī shuǐguǒ. | The hungry monkey wants to eat some fruit. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |

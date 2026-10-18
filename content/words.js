@@ -63,6 +63,7 @@ const WORD_BANK = {
   '碗': {py:'wǎn', en:'bowl', pic:'🥣', area:1, category:'items'},
   '桌子': {py:'zhuōzi', en:'table', pic:'🪑', area:1, category:'items'},
   '家': {py:'jiā', en:'home', pic:'🏠', area:1, category:'places'},
+  '睡觉': {py:'shuìjiào', en:'to sleep', pic:'😴', area:1, category:'actions'},
   '王': {py:'wáng', en:'king', pic:'👑', area:1, category:'people'},
   '一': {py:'yī', en:'one', pic:'1️⃣', area:1, category:'numbers'},
   '二': {py:'èr', en:'two', pic:'2️⃣', area:1, category:'numbers'},
@@ -128,6 +129,7 @@ const WORD_BANK = {
   '老': {py:'lǎo', en:'old'},
   '找': {py:'zhǎo', en:'to look for'},
   '这': {py:'zhè', en:'this'},
+  '累': {py:'lèi', en:'tired'},
 
   // Heard in the opening's story
   '很久': {py:'hěn jiǔ', en:'a long time'},

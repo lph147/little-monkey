@@ -240,9 +240,20 @@ function drawWorld(now){
     for (let i = 0; i < 80; i++){ const x = (i * 37) % (VW*T), y = Math.floor(i * 53 + now * (.25 + (i % 3) * .1)) % (VH*T); R(b, x, y, 1, 7 + i % 9, i % 3 ? '#FFFFFF' : '#BFE8FA'); }
     b.globalAlpha = 1;
   }
+  const sk = (now - sleepT) / SLEEP_MS;   // sleeping in a bed: the screen goes dark and Zs float up from you, then it's light again
+  if (sk >= 0 && sk < 1){
+    const a = Math.min(1, sk / .2, (1 - sk) / .2), PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
+    b.globalAlpha = a * .82; R(b, 0, 0, VW*T, VH*T, '#0B1024');
+    for (let k = 0; k < 3; k++){
+      const ph = (sk * 2.5 + k / 3) % 1;
+      b.globalAlpha = a * (1 - ph * .8); zee(PX + 10 + Math.round(ph * 14), PY - Math.round(ph * 26), 4 + k * 2, '#CFE8F7');
+    }
+    b.globalAlpha = 1;
+  }
   const fk = (now - fadeT) / 700;
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
 }
+function zee(x, y, s, c){ R(b, x, y, s, 1, c); R(b, x, y + s - 1, s, 1, c); for (let i = 1; i < s - 1; i++) R(b, x + s - 1 - i, y + i, 1, 1, c); }   // a little Z, s pixels across
 // Little birds that land near you now and then and hop about for most of a minute. Walk up and face
 // one to look at it (A); it flies off then, or if you step right onto it.
 const birds = [];

@@ -46,7 +46,7 @@ test('after converting, the game shows the same progress', () => {
   assert.match(game.el('#titleButtons').innerHTML, /id="contBtn".*Game 1 · \d+ words/, 'Continue: Game 1, the converted game');
   const stats = game.run('statsHTML()');
   assert.match(stats, /🐚 7/);
-  assert.match(stats, /2\/45 words/, '石头 and 路 (路 left the words for a while, and is back on the mountain path)');
+  assert.match(stats, /2\/46 words/, '石头 and 路 (路 left the words for a while, and is back on the mountain path)');
   // Said hello, learned about animals, 1 of 4 animals found, hungry monkey helped, thirsty not yet, no story (the headband is optional now)
   assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false]);   // (chapter 1's checklist: no word test there any more)
 });

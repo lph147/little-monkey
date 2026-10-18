@@ -1039,6 +1039,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '睡觉': {   // to sleep
+    palette: {a:'#535656', b:'#404345', c:'#DDEFF9', d:'#A1B5C1', e:'#CFE8F7', f:'#4E3C2D', g:'#CD9E78', h:'#905A30', i:'#3A2616', j:'#B8743E', k:'#6B4324', l:'#F6D2A8', m:'#1E1A16', n:'#5B5854', o:'#494641', p:'#F7F5F0', q:'#F4F1EA', r:'#BEBCB7', s:'#A86A48', t:'#39424E', u:'#232D3B', v:'#8CB1DE', w:'#345379', x:'#4670A2', y:'#5A8FD0', z:'#354251', A:'#7FB0E8'},
+    rows: [
+      ".....................aaaaaab....",
+      "....................accccccdb...",
+      "....................bdddddedb...",
+      "..............aaaab..bbbbbdb....",
+      ".............accccdb....bdb.....",
+      ".............bddeedb...bdb......",
+      "..............bacdb...bdb.......",
+      "...............bdb...bdbaaab....",
+      "..............bdbab.aceccccdb...",
+      ".............aceccdbbdddddddb...",
+      "...........ffbdddddb.bbbbbbb....",
+      ".........ffggggghii.............",
+      "......fffggjjjjjjghifi..........",
+      ".....fgghkjjjjjjjjkgghi.........",
+      "....fgjjkjjlllllljjkjjhi........",
+      "....fgjjkjlllllllljkjjhi........",
+      "....ihjjkjlmlmlmlmjkjjhi........",
+      "....nihhkjjlmlllmjjkhhio........",
+      "...npppqqkjlllllljkqqppro.......",
+      "..npqqqqqkklllsllkkqqqqqro......",
+      ".npqqqqqqqqkkkkkkqqqqqqqqro.....",
+      ".orqqqqqqqqqqqqqqqqqqqqqqrotttu.",
+      "tvwwwwwwwwwwwwwwwwwwwwwwwwvvvvxu",
+      "tvyyyyyyyyyyyyyyyyyyyyyyyyyyyyxu",
+      "zAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAz",
+      "tvyyyyyyyyyyyyyyyyyyyyyyyyyyyyxu",
+      "tvyyyyyyyyyyyyyyyyyyyyyyyyyyyyxu",
+      "tvyyyyyyyyyyyyyyyyyyyyyyyyyyyyxu",
+      "tvyyyyyyyyyyyyyyyyyyyyyyyyyyyyxu",
+      "tvyyyyyyyyyyyyyyyyyyyyyyyyyyyyxu",
+      "uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxu",
+      ".uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu."
+    ]
+  },
   '碗': {   // bowl
     palette: {a:'#58544F', b:'#46423C', c:'#EEEAE2', d:'#B3B0A6', e:'#E6E1D5', f:'#C9C3B4', g:'#5B5854', h:'#F7F5F0', i:'#F4F1EA', j:'#BEBCB7', k:'#494641', l:'#26333F', m:'#4F82B0', n:'#55524C', o:'#E4E1D9', p:'#D9D4C8', q:'#A9A59C', r:'#423E39'},
     rows: [

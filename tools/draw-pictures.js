@@ -321,6 +321,17 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(10.5, 16.5, 3.6, 2.2), '#FFFFFF', {edge: true});
     p.fill(Rc(6, 23, 21, 3), '#6B4A2A');
   },
+  '睡觉': p => {   // to sleep: a monkey asleep on a pillow, tucked in, with Zs
+    p.fill(O(14, 21, 12, 4.2), '#F4F1EA', {edge: true});   // the pillow
+    p.fill(O(7.5, 15.5, 2.3, 2.4), FUR); p.fill(O(20.5, 15.5, 2.3, 2.4), FUR);   // ears
+    p.fill(O(14, 16, 6, 5.4), FUR, {edge: true});
+    p.flat(or(O(12.2, 16, 2.1, 2.3), O(15.8, 16, 2.1, 2.3), O(14, 18.6, 2.9, 1.8)), SKIN);
+    [[11, 16], [12, 17], [13, 16], [15, 16], [16, 17], [17, 16]].forEach(([x, y]) => p.dot(x, y, '#1E1A16'));   // eyes closed
+    p.dot(14, 19, '#A86A48');
+    p.fill(Rc(1, 22, 30, 9), '#5A8FD0', {edge: true}); p.flat(Rc(1, 24, 30, 1), '#7FB0E8');   // the blanket, up to its chin
+    p.fill(path([[21, 2], [28, 2], [21, 9], [28, 9]], .7), '#CFE8F7');   // a big Z
+    p.fill(path([[14, 5], [18.5, 5], [14, 10], [18.5, 10]], .55), '#CFE8F7');   // and a little one
+  },
   '碗': p => {   // bowl
     p.fill(Rc(12, 26, 8, 3), '#D9D4C8');
     p.fill(and(O(16, 16, 13, 11), Rc(0, 16, 32, 16)), '#F4F1EA');

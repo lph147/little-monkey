@@ -134,6 +134,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
+    doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
     big: [{if:{cave:5}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
   },
 
@@ -385,7 +386,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   ledge          true for a ledge: you can hop down it from above (landing just below), never climb it
   //   wild           the enemies that jump out to fight as you walk through it (see enemies)
   //   onLook         steps for pressing A at it, as in talk below: the first part whose if matches runs,
-  //                  instead of its action or card (when none matches, it's looked at as usual)
+  //                  instead of its action or card (when none matches, it's looked at as usual); a part's
+  //                  label is what the A button says while it matches
   //   pick           a fruit tree you can pick from for your bag (item, one of the food below) once its if matches:
   //                  one fruit each time you come to the place, up to as many as you can carry
   legend: {
@@ -435,7 +437,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'C': {look:'curtain', walk:true},   // the water curtain: the way back out
     'U': {look:'water'},   // the stream through the cave
     'I': {look:'ironBridge', walk:true, word:'桥', learnOnStep:true, stepNote:'An iron bridge over the stream.'},
-    'D': {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.'},
+    'D': {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.', onLook:[   // once you know 床, A sleeps in it
+      {if:{knows:'床', new:'睡觉'}, label:'Sleep', do:[{card:'睡觉', note:'You lie down on the stone bed and go to sleep.'}, {sleep:'You wake up with all your hearts.'}]},
+      {if:{knows:'床'}, label:'Sleep', do:[{sleep:'You wake up with all your hearts.'}]}]},
     'A': {look:'stoneTable', word:'桌子', landmark:true, note:'A big table of stone.'},
     'V': {look:'stoneBowls', word:'碗', landmark:true, note:'Bowls of stone, ready for the troop.'},
     'L': {look:'tablet', landmark:true, action:'sign', sign:{name:{zh:'石碑', py:'shíbēi', en:'Stone tablet'}, says:{zh:'水帘洞', en:'Water Curtain Cave'}, hint:'The name of the cave.'}}
@@ -469,6 +473,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#40250F', f:'#A8673A', s:'#EFC79C', m:'#C08060', e:'#24160C'}},
     {id:'troop3', x:20, y:13, facing:'right', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:3}}, place:'cave', x:12, y:8, facing:'left'}],
       palette:{o:'#4A2C17', f:'#D9A050', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
+    // a monkey just inside the cave's entrance, once the troop has moved in: it tells you to sleep in the beds
+    {id:'doorway', place:'cave', x:9, y:12, facing:'left', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{cave:{below:4}}, place:'gone', x:0, y:0}],
+      palette:{o:'#40250F', f:'#B5793F', s:'#F3CDA2', m:'#C68A64', e:'#24160C'}},
     // the wild boar, blocking the narrow way to the waterfall until you chase it off
     {id:'boar', place:'falls', x:7, y:3, facing:'down', look:'野猪', label:'Fight', name:{zh:'野猪', py:'yězhū', en:'Wild boar'},
       moves:[{if:{boar:1}, place:'gone', x:0, y:0}, {if:{climb:{atLeast:2}}, place:'gone', x:0, y:0}]},
@@ -552,6 +559,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '跳': 'The big monkey dared the troop to jump through the waterfall.',
     '桥': 'The iron bridge over the stream in the Water Curtain Cave.',
     '床': 'The stone beds in the Water Curtain Cave.',
+    '睡觉': 'The stone beds in the Water Curtain Cave: sleep there to get your hearts back.',
     '碗': 'The stone bowls in the Water Curtain Cave.',
     '桌子': 'The stone table in the Water Curtain Cave.',
     '家': 'The old monkey, when the troop moved into the Water Curtain Cave.',
@@ -577,7 +585,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'},
     '碗': {zh:'桌子 上 有 碗 。', en:'There are bowls on the table.'},
     '桌子': {zh:'洞 里 有 桌子 。', en:'There is a table in the cave.'},
-    '床': {zh:'洞 里 有 床 。', en:'There are beds in the cave.'},
     '二': {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'}
   },
 
@@ -687,7 +694,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     king: {zh:'你 是 我们 的 王 ！', en:'You are our king!'},
     count1: {zh:'一 只 猴子 。', en:'One monkey.'},
     count2: {zh:'两 只 猴子 。', en:'Two monkeys.'},
-    count3: {zh:'三 只 猴子 。', en:'Three monkeys.'}
+    count3: {zh:'三 只 猴子 。', en:'Three monkeys.'},
+    tired: {zh:'累 了 吗 ？ 去 床 上 睡觉 吧 ！', en:'Tired? Go and sleep in a bed!'}
   },
 
   // What happens when you press A beside each character. The game goes down their list and
@@ -705,6 +713,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   reply     your reply: you choose what to say from phrases you know, and this is the one that fits
   //             (taught on its own card the first time). Any choice is fine; the game says which fits best.
   //   bag       put food in your bag (if there's room), with a note saying so
+  //   rest      your hearts are full again
+  //   sleep     you sleep (in a bed): the screen goes dark, and you wake with all your hearts (its text: the message then)
   //   match     match the words you've learned to their pictures (its heading), as at the practice post; stop
   //             is its button to stop, which ends the conversation there (notYet: the message then)
   //   wordGame  offer a word game. ask: the question; word: who you're playing with; win: steps if you win;
@@ -819,6 +829,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{request:'thirsty'}]}
     ],
     boar: [{do:[{battle:'boar', win:[{set:{boar:1}}, {message:'The way to the top is clear.'}]}]}],
+    // the monkey by the cave's entrance: sleep in a bed to get your hearts back
+    doorway: [
+      {if:{new:'睡觉'}, do:[{say:'tired', teach:'睡觉'}, {newWord:'睡觉', note:'Sleep in a {床} and all your hearts come back.'}]},
+      {do:[{say:'tired', hint:'Face a {床} and press A to sleep. You wake up with all your hearts.'}]}
+    ],
     rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
     fox: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
     squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}? If you win, it gives you a {桃子}.', word:'松鼠',

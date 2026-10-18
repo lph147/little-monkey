@@ -25,7 +25,6 @@ const DRAFTS = [
     ['河 上 有 桥 。', 'There is a bridge over the river.', 'The example on 桥 (bridge)’s page in the Word Scroll'],
     ['桌子 上 有 碗 。', 'There are bowls on the table.', 'The example on 碗 (bowl)’s page'],
     ['洞 里 有 桌子 。', 'There is a table in the cave.', 'The example on 桌子 (table)’s page'],
-    ['洞 里 有 床 。', 'There are beds in the cave.', 'The example on 床 (bed)’s page'],
     ['水帘洞', 'Water Curtain Cave', 'What the stone tablet (石碑 shíbēi: please check this name too) in the cave says']]
     .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part A (in the game): ' + where})),
   ...[['这 是 我们 的 家 ！', 'This is our home!', 'The old monkey, when the troop moves into the cave'],
@@ -45,8 +44,9 @@ const DRAFTS = [
   ...[['草 里 有 蛇 。', 'There are snakes in the grass.', 'The rabbit, by the long grass on the mountain path'],
     ['水 从 山 上 来 。', 'The water comes from up the mountain.', 'The fox, at the fork in the river valley'],
     ['去 找 动物 吧 ！', 'Go and find the animals!', 'A monkey across the river, giving advice'],
-    ['老板 有 苹果 。', 'The shop owner has apples.', 'A monkey across the river, giving advice']]
-    .map(([zh, en, where]) => ({zh, en, where:'New on 18 and 19 October 2026: ' + where})),
+    ['老板 有 苹果 。', 'The shop owner has apples.', 'A monkey across the river, giving advice'],
+    ['累 了 吗 ？ 去 床 上 睡觉 吧 ！', 'Tired? Go and sleep in a bed!', 'A monkey just inside the cave’s entrance (teaching 睡觉 shuìjiào, to sleep; 累 lèi, tired, is just for listening)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 18 to 20 October 2026: ' + where})),
   ...[['我 是 老 猴子 。 这 是 花果山 。', 'I’m the old monkey. This is Flower Fruit Mountain.', 'The old monkey, after your first 你好'],
     ['去 找 猴子 吧 ！', 'Go and find the monkeys!', 'The old monkey, sending you to help the troop'],
     ['饿 猴子 要 吃 水果 。', 'The hungry monkey wants to eat some fruit.', 'The old monkey, checking in'],

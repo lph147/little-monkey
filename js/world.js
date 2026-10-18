@@ -58,6 +58,8 @@ function promptFor(x, y){
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return way.label || 'Go';   // a way you go through by pressing A, such as jumping through the waterfall
   const t = tileAt(x, y);
+  const look = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
+  if (look && look.label) return look.label;   // the tile's own steps say what A does, such as Sleep in a bed
   if (t.gather && canGather(t.gather)) return t.gather.label;
   if (canPick(t)) return 'Pick';
   if (t.landmark) return t.label || 'Look';
@@ -141,6 +143,13 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
   rest(){ S.hearts = HEARTS; save(); SFX.chime(); },   // your hearts are full again
+  // Sleep (in a bed): the screen goes dark and Zs float up from you, and you wake with all your hearts (its text: the
+  // message then).
+  async sleep(s){
+    sleepT = performance.now();
+    await sleep(SLEEP_MS / 2); S.hearts = HEARTS; save();
+    await sleep(SLEEP_MS / 2); SFX.chime(); if (typeof s.sleep === 'string') toast(fill(s.sleep));
+  },
   async battle(s, who){ if (await battle(s.battle) === 'won' && s.win) await runSteps(s.win, who); },   // a battle (an enemy in AREA.enemies), and what happens if you win
   async message(s, who){ if (who) await showNarration(fill(s.message)); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
 };
@@ -161,6 +170,7 @@ async function iSay(said, best = said){
 }
 // Runs a list of steps, one after another. A step that gives STOP ends the list there (such as a word match you stop).
 const STOP = 'stop';
+const SLEEP_MS = 2400;   // how long you sleep in a bed (the sleep step)
 async function runSteps(steps, who){ for (const s of steps) if (await STEPS[Object.keys(s).find(k => STEPS[k])](s, who) === STOP) return STOP; }
 // The area's events: each happens by itself when its if matches (checked after anything you do).
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); }

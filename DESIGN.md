@@ -115,7 +115,7 @@ The game follows Sun Wukong's story in order, and stays true to it. Three words 
 
 | Area | Story | New collections (samples) | New ability |
 | --- | --- | --- | --- |
-| 1 Flower Fruit Mountain | The prologue: born from a stone, a baby's first day. Chapter 1: jumps through the waterfall, finds the Water Curtain Cave, becomes king; then leaves on a raft to find an immortal to learn from | Prologue: animals 兔子 狐狸 松鼠 山羊; food 桃子 苹果; nature 山 树 花 河. Chapter 1: home 床 碗 桌子 门 家; 王; numbers 1–10; 海 sea | Walk, talk, then 跳 jump |
+| 1 Flower Fruit Mountain | The prologue: born from a stone, a baby's first day. Chapter 1: jumps through the waterfall, finds the Water Curtain Cave, becomes king; then leaves on a raft to find an immortal to learn from | Prologue: animals 兔子 狐狸 松鼠 山羊; food 桃子 苹果; nature 山 树 花 河. Chapter 1: home 床 碗 桌子 门 家 睡觉; 王; numbers 1–10; 海 sea | Walk, talk, then 跳 jump |
 | 2 Across the sea | Sails the raft to the human world and dresses like a person | Travel 船 风; people 人 孩子; clothes 衣服 帽子; 钱 money | 游 swim |
 | 3 The teacher's mountain | Learns from Master Subhuti and gets his name; then flies home to Flower Fruit Mountain and defeats the demon bullying the troop | Body 手 脚 眼睛; sky 云; actions 飞 爬 | 变成 transform, cloud somersault |
 | 4 Dragon King's palace | Finds his staff under the sea | Sea creatures 虾 蟹 乌龟 龙; treasure 金 | Staff |
@@ -222,7 +222,7 @@ Agreed on 18 October 2026, with mockups. A battle looks like an animal encounter
 - **Who you fight.** On Flower Fruit Mountain, wild creatures on the path up the stream: snakes and bees in the long grass, a wild boar blocking the last stretch, all chased away, never hurt. Demons from Area 3 (little demons, then the Demon of Havoc, 混世魔王), the Dragon King's guards in Area 4, Heaven's soldiers in Area 5.
 - **Where.** Wild creatures jump out of long grass on paths, drawn like the meadow's tall grass, a shade darker; bushes, boulders and ledges mean you can't always go round it, and standing in it hides your feet, as in Pokémon. The meadow's tall grass keeps its friendly animals. Big enemies (the boar, demons) stand on the map guarding the way.
 - **Bosses** come in stages; between them the boss says a line and you answer by filling the gap in a sentence (你是谁？ … 我是美猴王！).
-- **Winning and losing.** The first meeting with a kind of enemy teaches its name on a card. Winning gives shells or coins, sometimes an item. Losing isn't punished: you're carried back to rest with full hearts, and the words you missed come back sooner.
+- **Winning and losing.** The first meeting with a kind of enemy teaches its name on a card. Winning gives shells or coins, sometimes an item. Losing isn't punished: you're carried back to rest with full hearts, and the words you missed come back sooner. Hearts come back by eating a peach, resting with the old monkey, or sleeping (睡觉) in a bed in the Water Curtain Cave, which a monkey just inside the entrance tells you about once the troop has moved in (decided 20 October 2026).
 - **Getting harder without levels.** The path's creatures ask about words you've known a while, with pictures; later enemies use harder kinds of question (characters by sound, sentence gaps, tones), and bosses mix them all.
 
 **Hearts.** You start with 5, and they carry over between battles. Only enemies cost hearts; animal encounters never do. Eating a peach brings one back (it counts as using the word). Resting refills them all: in the prologue the old monkey, waiting at the foot of the path; from chapter 1 the cave's stone beds; somewhere to stay in each later area. The story raises the most you can have, above all the Peaches of Immortality in Heaven (Area 5). Hearts first appear when the big monkey gives you the stick.
@@ -386,6 +386,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] The title screen (19 October 2026): Continue (the game you played last), New game (in an empty game) and Save files (your three games, each with its card as before)
 - [x] Jumping through the waterfall (19 October 2026): the cave just visible behind the water; A leaps you into it with a splash, a rush of falling water instead of a fade, and you land inside dripping; walking out through the curtain is a rush of water too
 - [x] The cave's own music (18 October 2026; remade 19 October to sound unlike the meadow's): slower (54 beats a minute) and sparser, with a long echo: a slow tune on soft bells, then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water; a place can have its own song
+- [x] Sleeping in the cave's beds (20 October 2026): once you know 床, A at a bed says Sleep; the screen goes dark, Zs float up, and you wake with all your hearts. A monkey just inside the entrance says 累了吗？去床上睡觉吧！ once the troop has moved in, teaching 睡觉 (sleep, with its own picture)
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2
 - [ ] Build Area 2, Across the sea
