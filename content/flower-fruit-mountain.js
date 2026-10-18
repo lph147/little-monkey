@@ -543,7 +543,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '不客气': 'You said it when a monkey thanked you for your help.',
     '对不起': 'You said it when you brought the hungry monkey the wrong fruit.',
     '没关系': 'The hungry monkey said it when you said sorry.',
-    '再见': 'You said it to the old monkey after he told you about the animals.',
+    '再见': 'You said it to the old monkey as you set off up the mountain path.',
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
     '戴': 'You said it when you put something on from your wardrobe.',
     '跳': 'The big monkey dared the troop to jump through the waterfall.',
@@ -727,9 +727,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
         {say:'findMonkeys'},
         {message:'Some of the troop need help too. A ! over a monkey means it wants something. If you forget what to do, press TASKS. MENU shows the words you’ve learned.'},
-        {set:{elder:2}},
-        {reply:'再见'},
-        {say:'bye'}
+        {set:{elder:2}}
       ]},
       // the end of the prologue: up the stream. Where does the water come from? You go alone, find the waterfall,
       // and come back to tell the troop, who follow you up.
@@ -742,6 +740,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'The big monkey shows you how to fight. When something jumps out of the long grass, choose 打 (dǎ, hit) and answer to hit it. When it attacks, listen for where it’s coming from, and pick that to jump aside.'},
         {message:'A wrong answer when it attacks costs a heart, and you have 5. Eat something to get one back, or come back to the old monkey to rest.'},
         {set:{climb:1}},
+        {say:'bye'},
+        {reply:'再见'},   // goodbye, as you set off (taught here, 19 October 2026: it means more now you're leaving)
         {message:'You set off up the path, on your own.'}
       ]},
       {if:{hurt:true}, do:[{rest:true}, {message:'You rest with the old monkey. Your hearts are full again.'}]},

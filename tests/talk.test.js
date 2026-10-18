@@ -156,3 +156,12 @@ test('the hungry and thirsty monkeys say where to look, and each of the troop ha
   assert.ok(says('troop1').includes('findAnimals') && says('troop1').includes('message'));
   assert.ok(says('troop2').includes('bossHasApples') && says('troop2').includes('message'));
 });
+
+test('再见 is taught as you set off up the mountain path: the old monkey says it, and you say it back', () => {
+  const g = loadGame();
+  const part = cond => JSON.parse(g.run(`JSON.stringify(AREA.talk.elder.find(p => p.if && ${cond}).do.map(s => s.reply || s.newWord || s.say || Object.keys(s)[0]))`));
+  const setOff = part('p.if.gate === true && p.if.climb === 0');
+  assert.ok(setOff.indexOf('bye') >= 0 && setOff.indexOf('再见') === setOff.indexOf('bye') + 1, 'he says goodbye, and you reply');
+  assert.ok(setOff.indexOf('棍子') >= 0 && setOff.indexOf('棍子') < setOff.indexOf('bye') - 1, 'not straight after the stick: one new word at a time');
+  assert.ok(!part('p.if.elder === 1 && !p.if.newWords').includes('再见'), 'not when he tells you about the animals');
+});
