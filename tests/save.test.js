@@ -16,7 +16,7 @@ const START = {chapter: 0, elder: 0, gate: false, story: false, cave: 0, count: 
 const V2 = {
   w: {'石头': {lv: 2, due: 1760000000000, ok: 1}, '路': {lv: 1, due: 0, ok: 0}, '你好': {lv: 4, due: 0, ok: 3}},
   gloss: {}, shells: 7, q: {elder: 2, hungry: 3, thirsty: 1}, gate: false, story: false,
-  friends: ['playful', 'fox'], pos: {x: 12, y: 12, dir: 'left'}, started: true, sound: false, music: true,
+  friends: ['playful', 'fox'], pos: {x: 14, y: 12, dir: 'left'}, started: true, sound: false, music: true,
   tasksSeen: {elder: 1, h1: 1}, area1Done: false, pinyin: false, lines: {'你好！': 1}, howto: true,
   carry: null, met: ['fox'], encounters: 3, today: {d: '2026-10-15', ids: ['石头']}
 };

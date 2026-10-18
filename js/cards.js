@@ -35,7 +35,7 @@ const pips = w => `<span class="pips" aria-label="Level ${lvl(w)} of 4">${[1,2,3
 /* ================= MODAL ================= */
 const modal = $('#modal'), sheet = $('#sheet');
 function openCard(html){
-  sheet.innerHTML = money(html); modal.hidden = false; sheet.scrollTop = 0;
+  sheet.innerHTML = pixelIcons(html); modal.hidden = false; sheet.scrollTop = 0;
   if (markGloss.length){ markGloss.forEach(t => S.gloss[t] = 1); markGloss = []; save(); }
   held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
   // A always starts on the card's main button. If a card has none (a quiz waiting for an answer), A does nothing until you tap.
@@ -104,9 +104,9 @@ function showDialog(who, line, opts = {}){
     const key = line.t.join(''), firstTime = !S.lines[key];
     S.lines[key] = 1; hear(line.t); save();
     const tip = Object.keys(S.lines).length <= TAP_TIP_LINES, again = !talkBox.hidden;   // again: the box is still up from the last line
-    talkBox.innerHTML = `<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
+    talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       ${lineHTML(line.t, opts.teach)}<div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
-      <div class="talkfoot${tip ? ' tip' : ''}"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || 'Next')}">${opts.ok ? esc(opts.ok) + ' ' : ''}▼</button></div>`;
+      <div class="talkfoot${tip ? ' tip' : ''}"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || 'Next')}">${opts.ok ? esc(opts.ok) + ' ' : ''}▼</button></div>`);
     talkBox.classList.toggle('again', again);
     talkBox.hidden = false; talkBox.scrollTop = 0;
     $('#saybox').hidden = true;   // the box covers the message spot
@@ -126,7 +126,7 @@ function showDialog(who, line, opts = {}){
 // the old monkey does for baby monkeys. A moves on, so the next line can't cover it.
 function showNarration(text){
   return new Promise(res => {
-    talkBox.innerHTML = `<p class="narration">${money(esc(text))}</p>
+    talkBox.innerHTML = `<p class="narration">${pixelIcons(esc(text))}</p>
       <div class="talkfoot"><span class="spacer"></span><button class="btn primary next" data-a="ok" data-label="Next">▼</button></div>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
     talkBox.hidden = false; talkBox.scrollTop = 0;

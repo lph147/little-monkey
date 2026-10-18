@@ -1,4 +1,4 @@
-// Big objects: trees, the fruit trees, your stone, the rocks and the practice post are drawn bigger than their
+// Big objects: trees, the fruit trees, your stone and the rocks are drawn bigger than their
 // squares (js/art.js), and the part above their squares goes over anyone walking behind them.
 'use strict';
 const test = require('node:test');
@@ -16,12 +16,12 @@ test('a block of forest two squares by two is one big tree; other trees stand on
   assert.deepEqual(at(list, 5, 21), {look: 'tree', x: 5, y: 21, w: 1, h: 1}, 'a row of forest is tall trees');
 });
 
-test('the fruit trees, your stone, the post and the rocks are big objects; the rocks are one pile', () => {
+test('the fruit trees, your stone and the rocks are big objects, but not the practice post; the rocks are one pile', () => {
   const list = objects(loadGame());
   assert.equal(at(list, 1, 6).look, 'peachTree');
   assert.equal(at(list, 21, 17).look, 'appleTree');
   assert.equal(at(list, 9, 1).look, 'stone');
-  assert.equal(at(list, 13, 9).look, 'post');
+  assert.equal(at(list, 13, 9), undefined, 'the practice post is one square, as it always was');
   assert.deepEqual(at(list, 15, 4), {look: 'rocks', x: 15, y: 4, w: 2, h: 1});
   assert.equal(at(list, 16, 4), undefined);
   const bottoms = list.map(o => o.y + o.h);

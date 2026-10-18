@@ -83,12 +83,13 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .dpad .r{grid-column:3;grid-row:2;border-radius:0 8px 8px 0}
 .dpad .d{grid-column:2;grid-row:3;border-radius:0 0 8px 8px}
 .dpad button.held{filter:brightness(1.35)}
-.ab{grid-area:ab;justify-self:end;margin-right:6px;display:flex;gap:14px;align-items:flex-end;transform:rotate(-12deg)}
+.ab{grid-area:ab;justify-self:end;margin-right:6px;display:flex;gap:10px;align-items:flex-end;transform:rotate(-12deg)}
 .abwrap{display:flex;flex-direction:column;align-items:center;gap:4px}
 .round{width:62px;height:62px;border-radius:50%;border:none;color:#FFF;font-family:var(--pixel);font-size:1.4rem;box-shadow:0 4px 0 rgba(0,0,0,.3);touch-action:none}
 .round:active,.round.held{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
 #btnA{background:var(--btnA)}
-#btnB{background:var(--btnB);width:52px;height:52px;font-size:1.1rem;margin-bottom:18px}
+#btnB{background:var(--btnB);width:56px;height:56px;font-size:1.2rem}
+.ab .abwrap:last-child{margin-bottom:30px}   /* A higher than B, like a GBA */
 .ablabel{font-family:var(--pixel);font-size:.85rem;color:var(--muted);min-height:1.2em;transform:rotate(12deg)}
 .keys{display:none;grid-area:keys;margin:6px 0 2px;font-size:.8rem;color:var(--muted);text-align:center}
 @media (hover:hover) and (pointer:fine){.keys{display:block}}
@@ -327,6 +328,7 @@ rt.hid{visibility:hidden}
 
 /* the money symbol (a pixel shell), and the shop's cards */
 .money{width:1em;height:1em;image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:-.12em}
+.speakericon{width:1.25em;height:1.25em;image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:-.3em}   /* the pixel speaker (🔊 in the text) */
 .menu.shopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
 .shopitem{display:flex;flex-direction:column;align-items:center;padding:.4rem .3rem;border:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);line-height:1.25}
 .shopitem:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}

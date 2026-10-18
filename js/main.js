@@ -75,8 +75,8 @@ function frame(now){
 function showCaption(c, last){
   const w = c.word, [py, en] = w ? info(w) : [];
   const box = $('#capbox');   // over the sky in the picture, so the page keeps its size
-  box.innerHTML = `<div class="cap"><div class="cen">${esc(c.en)}</div>${w ? `<button class="wchip" id="capWord"><span class="wzh">${w}</span>${S.pinyin ? `<span class="wpy">${py}</span>` : ''}<span class="wen">${esc(en.split(',')[0])}</span> 🔊</button>` : ''}</div>
-    <div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><span class="spacer"></span>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`;
+  box.innerHTML = pixelIcons(`<div class="cap"><div class="cen">${esc(c.en)}</div>${w ? `<button class="wchip" id="capWord"><span class="wzh">${w}</span>${S.pinyin ? `<span class="wpy">${py}</span>` : ''}<span class="wen">${esc(en.split(',')[0])}</span> 🔊</button>` : ''}</div>
+    <div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><span class="spacer"></span>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`);
   box.hidden = false;
   if (w){ say(w); $('#capWord').onclick = () => say(w); }
   $('#skipBtn').onclick = startGame;
@@ -158,7 +158,7 @@ function howToPlay(){
          <li><span class="kbd pad">✚</span><span><b>Walk</b> by holding a direction. Tap it to turn on the spot. You can slide your thumb between directions.</span></li>
          <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> When someone talks, A moves on. On cards, A presses the button with the red A badge.</span></li>
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
-         <li><span class="kbd menu">☰</span><span><b>Start</b> opens the menu: the Word Scroll, friends and settings. <b>Select</b> shows your tasks.</span></li>
+         <li><span class="kbd menu">☰</span><span><b>Menu</b> opens the menu: the Word Scroll, friends and settings. <b>Tasks</b> shows your tasks.</span></li>
        </ul>
        <p class="small">Answers and words in sentences are simply tapped.</p>`,
       `<p class="label">How to play · 2 of 2</p>

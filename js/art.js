@@ -66,10 +66,17 @@ const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
 
-// The money symbol: a shell (the troop trades in shells from the shore), small, wherever the text says 🐚.
+// Pixel icons in text (pixelIcons): the money symbol, a shell (the troop trades in shells from the shore), small,
+// wherever the text says 🐚.
 const SHELL = ["................","......oooo......","....oowrrwoo....","...owrwrrwrwo...","..owrwwrrwwrwo..",".owrwwwrrwwwrwo.",".orwwwwrrwwwwro.",".owrwwwrrwwwrwo.","..owrwwrrwwrwo..","...owrwrrwrwo...","....owrrrrwo....",".....owrrwo.....","....ooowwooo....","....owwoowwo....","....oooooooo....","................"];   // a scallop shell
 let shellImg = null;
-const money = html => String(html).replace(/🐚/g, () => shellImg || (shellImg = `<img class="money" alt="shells" src="${sprite(SHELL, {o:'#8A5A3A', w:'#F7E7CF', r:'#D9A77C'}).toDataURL()}">`));
+// The speaker on buttons that say a word again: a little loudspeaker, wherever the text says 🔊.
+const SPEAKER = ["................","................","......oo........",".....owo........","....owwo.....b..","oooowwwo..b...b.","owwwwwwo...b..b.","owlwwwwo...b..b.",
+  "owlwwwwo...b..b.","owwwwwwo...b..b.","oooowwwo..b...b.","....owwo.....b..",".....owo........","......oo........","................","................"];
+let speakerImg = null;
+const pixelIcons = html => String(html)
+  .replace(/🐚/g, () => shellImg || (shellImg = `<img class="money" alt="shells" src="${sprite(SHELL, {o:'#8A5A3A', w:'#F7E7CF', r:'#D9A77C'}).toDataURL()}">`))
+  .replace(/🔊/g, () => speakerImg || (speakerImg = `<img class="speakericon" alt="" src="${sprite(SPEAKER, {o:'#2A2622', w:'#E2DDD2', l:'#FFFFFF', b:'#4F9FDB'}).toDataURL()}">`));
 // A pixel heart for an animal's friendship in an encounter: red once won, grey until then.
 const HEART = [".oo...oo.", "ohho.orro", "ohrrrrrro", "orrrrrrro", ".orrrrro.", "..orrro..", "...oro...", "....o...."];
 const heartImg = {};
@@ -190,7 +197,7 @@ const LOOKS = {
   redFlowers:    (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#E8343C'); flower(g,X+11,Y+7,'#E8343C'); flower(g,X+6,Y+11,'#E8343C'); },
   yellowFlowers: (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F7D23E'); flower(g,X+11,Y+7,'#F7D23E'); flower(g,X+6,Y+11,'#F7D23E'); },
   whiteFlowers:  (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#FFFFFF'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#FFFFFF'); },
-  // trees, the fruit trees, your stone, the rocks, the stall and the practice post: just the ground here; they're big objects (OBJECT_ART, below)
+  // trees, the fruit trees, your stone, the rocks and the stall: just the ground here; they're big objects (OBJECT_ART, below)
   tree:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
   peachTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
   appleTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
@@ -198,7 +205,7 @@ const LOOKS = {
   stone:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
   stall:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
-  post:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },   // the practice post, one square
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
   caveWall:  (g,X,Y,x,y) => caveWall(g,X,Y,x,y),
@@ -222,7 +229,7 @@ const LOOKS = {
   }
 };
 
-/* ---- big objects: trees, the fruit trees, your stone, the rocks, the stall and the practice post ----
+/* ---- big objects: trees, the fruit trees, your stone, the rocks and the stall ----
    They're bigger than the squares they stand on: a tree's leaves reach up into the square above, and a block of
    forest two squares by two is one big tree. Each is drawn into two pictures of its own (OBJECT_PIECES, below),
    which js/draw.js puts on the screen every frame, from the top of the map down so nearer ones overlap: its base
@@ -256,12 +263,6 @@ function boulder(g, cx, by, rx, ry, cracked){   // a rock sitting on the ground 
   R(g, cx-rx+2, by-3, rx*2-3, 2, GREY[1]);
   if (cracked) [[0,0],[0,2],[-1,4],[0,6],[1,8],[2,5],[3,4],[-2,7],[-3,8]].forEach(([a, c]) => dot(g, cx+a, by-6-ry+c, GREY[0]));
 }
-function tallPost(g, X, Y){   // the practice post, a square and a half tall
-  const top = Y - 8;
-  groundShadow(g, X+8, Y+15, 6, 1); R(g, X+6, top, 4, 23, WOOD[0]); R(g, X+7, top+1, 2, 22, WOOD[3]); dot(g, X+7, top+1, WOOD[4]);
-  R(g, X+2, top+5, 12, 3, WOOD[0]); R(g, X+3, top+6, 10, 1, WOOD[3]);
-  R(g, X+3, top+17, 10, 3, WOOD[0]); R(g, X+4, top+18, 8, 1, WOOD[2]);
-}
 // How each big object is drawn, given where it stands {x, y, w, h} (in squares).
 const OBJECT_ART = {
   tree: (g, o) => {
@@ -273,7 +274,6 @@ const OBJECT_ART = {
   appleTree: (g, o) => fruitTree(g, o, APPLES),
   stone: (g, o) => boulder(g, o.x*T + 8, o.y*T + 15, 11, 9, true),
   rocks: (g, o) => { for (let i = 0; i < o.w; i++) boulder(g, o.x*T + 8 + i*14, o.y*T + 15, 10 - i % 2, 8 - i % 2, false); },
-  post: (g, o) => tallPost(g, o.x*T, o.y*T),
   stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4)
 };
 function stall(g, L, Y, w){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit

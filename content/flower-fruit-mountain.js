@@ -220,8 +220,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YPggGGGGggggTgg.ggWWgGgY",
         "YTggGGGgggOOOKg.gJWWGGgY",
         "YJgggggggOOOOgg.ggWWGGgY",
-        "YTgggGGGggggggg.ggWWgggY",
-        "YggJgGGGggggggg...BBgggY",
+        "YTgggGGGgOOOOOg.ggWWgggY",
+        "YggJgGGGggOOOgg...BBgggY",
         "YgggggggggggggggggWWgGgY",
         "YTgGGGggggggggFgggWWGGgY",
         "YTggggg.ggggggTgggWWgggY",
@@ -438,8 +438,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '二': {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'}
   },
 
-  // Where a fish jumps out of the water now and then.
-  fish: [[11, 10]],
+  // Where fish jump out of the water now and then, one after another.
+  fish: [[11, 9], [9, 10], [12, 11], [10, 12]],
 
   // The area's animals. The id is kept in saved games, so never change it. An animal with at lives
   // at that spot (x, y) on the map, such as up a tree or on a cliff: face it and press A to meet it,

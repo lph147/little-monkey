@@ -118,9 +118,13 @@ function drawWorld(now){
   for (const p of OBJECT_PIECES) drawPiece(p, p.base, cx, cy, now);   // big objects, under the characters
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
-  // fish jumping out of the water (the area's fish)
-  const fp = (now % 5200) / 900;
-  if (fp < 1) for (const [fx0, fy0] of AREA.fish.filter(f => placeOf(f) === PLACE)){ const fx = fx0*T - cx + 2 + fp*10, fy = fy0*T - cy + 6 - Math.sin(fp*Math.PI)*8; R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx)-1, Math.round(fy), 1, 2, '#D96A1E'); }
+  // fish jumping out of the water (the area's fish), one after another, every other one the other way
+  AREA.fish.forEach((f, i) => {
+    const fp = ((now + i * 2300) % (5200 + i * 700)) / 900;
+    if (fp >= 1 || placeOf(f) !== PLACE) return;
+    const way = i % 2 ? -1 : 1, fx = f[0]*T - cx + 8 + way * (fp*10 - 6), fy = f[1]*T - cy + 6 - Math.sin(fp*Math.PI)*8;
+    R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx) + (way > 0 ? -1 : 3), Math.round(fy), 1, 2, '#D96A1E');
+  });
   // sparkles on things whose word is not yet known
   for (const s of SPARKLES){
     const [x, y] = s.at;

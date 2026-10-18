@@ -48,9 +48,9 @@
         <button class="r" data-dir="right" aria-label="Walk right">▶</button>
         <button class="d" data-dir="down" aria-label="Walk down">▼</button>
       </div>
-      <div class="ss">   <!-- Select (your tasks) and Start (the menu), like a Game Boy's -->
-        <div class="sswrap"><button class="pill" id="selectBtn" aria-label="Select: your tasks"><span class="dot" id="selectDot" hidden></span></button><span class="sslabel">SELECT</span></div>
-        <div class="sswrap"><button class="pill" id="startBtn" aria-label="Start: the menu"></button><span class="sslabel">START</span></div>
+      <div class="ss">   <!-- Tasks and Menu: a Game Boy's Select and Start buttons -->
+        <div class="sswrap"><button class="pill" id="selectBtn" aria-label="Your tasks"><span class="dot" id="selectDot" hidden></span></button><span class="sslabel">TASKS</span></div>
+        <div class="sswrap"><button class="pill" id="startBtn" aria-label="The menu"></button><span class="sslabel">MENU</span></div>
       </div>
       <div class="ab">
         <div class="abwrap"><button class="round" id="btnB" aria-label="Back or menu">B</button><span class="ablabel" id="bLabel"></span></div>
@@ -58,7 +58,7 @@
       </div>
       <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>   <!-- the speaker, just for looks -->
     </div>
-    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for Start (the menu) · T for Select (your tasks)</p>
+    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for the menu · T for your tasks</p>
   </div>
 </div>
 <div class="turn" id="turn" hidden role="status">   <!-- held upright: the game is played sideways (fit() in js/main.js) -->
