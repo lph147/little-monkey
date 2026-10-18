@@ -107,12 +107,19 @@ function talkCamera(cy){
   const k = talkK * talkK * (3 - 2 * talkK);   // eased
   return Math.round(cy + (want - cy) * k);
 }
-// The tall or long grass you're standing in (a square, or two as you walk from one to the next). Its bottom edge is
-// drawn again over you, so it hides your feet, as in Pokémon.
-const HIDES_FEET = ['tallGrass', 'longGrass'];
-function grassUnder(){
-  const xs = [...new Set([Math.floor(pl.px / T), Math.ceil(pl.px / T)])], ys = [...new Set([Math.floor(pl.py / T), Math.ceil(pl.py / T)])];
-  return xs.flatMap(x => ys.map(y => [x, y])).filter(([x, y]) => HIDES_FEET.includes(tileAt(x, y).look));
+// Standing in tall or long grass hides your feet, as in Pokémon: the map where your feet are (the bottom FEET pixels of
+// your square, wherever you are, between two squares as you walk) is drawn again over you, where it's grass. Gives
+// those parts, each [x, y, w, h] in map pixels.
+const HIDES_FEET = ['tallGrass', 'longGrass'], FEET = 4;
+function feetInGrass(){
+  const left = Math.round(pl.px), top = Math.round(pl.py) + T - FEET, out = [];
+  for (let ty = Math.floor(top / T); ty <= Math.floor((top + FEET - 1) / T); ty++)
+    for (let tx = Math.floor(left / T); tx <= Math.floor((left + T - 1) / T); tx++){
+      if (!HIDES_FEET.includes(tileAt(tx, ty).look)) continue;
+      const x0 = Math.max(left, tx*T), x1 = Math.min(left + T, (tx+1)*T), y0 = Math.max(top, ty*T), y1 = Math.min(top + FEET, (ty+1)*T);
+      out.push([x0, y0, x1 - x0, y1 - y0]);
+    }
+  return out;
 }
 function drawWorld(now){
   let cx = Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));
@@ -165,7 +172,7 @@ function drawWorld(now){
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
-      for (const [gx, gy] of grassUnder()) b.drawImage(mapCanvas, gx*T, gy*T + 12, T, 4, gx*T - cx, gy*T - cy + 12, T, 4);   // the grass over your feet
+      for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
       continue;
     }

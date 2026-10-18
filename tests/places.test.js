@@ -168,12 +168,15 @@ test('animal friends on the way up: the rabbit and the fox give advice, the squi
 
 test('standing in tall or long grass hides your feet, as in Pokémon; on the path it doesn’t', () => {
   const at = (place, x, y) => { const g = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place, x, y, dir: 'down'}}}); g.run("mode = 'play'; placePlayer()"); return g; };
-  assert.deepEqual(get(at('meadow', 4, 7), 'grassUnder()'), [[4, 7]], 'the meadow’s tall grass');
-  assert.deepEqual(get(at('path', 8, 11), 'grassUnder()'), [[8, 11]], 'the path’s long grass');
-  assert.deepEqual(get(at('path', 16, 15), 'grassUnder()'), [], 'not on the path itself');
-  const walking = at('meadow', 4, 7);
-  walking.run('pl.px += T / 2');
-  assert.deepEqual(get(walking, 'grassUnder()'), [[4, 7], [5, 7]], 'between two squares of grass, both');
+  assert.deepEqual(get(at('meadow', 4, 7), 'feetInGrass()'), [[64, 124, 16, 4]], 'the bottom of your square, in the meadow’s tall grass');
+  assert.deepEqual(get(at('path', 8, 11), 'feetInGrass()'), [[128, 188, 16, 4]], 'the path’s long grass');
+  assert.deepEqual(get(at('path', 16, 15), 'feetInGrass()'), [], 'not on the path itself');
+  const across = at('meadow', 4, 7);
+  across.run('pl.px += T / 2');
+  assert.deepEqual(get(across, 'feetInGrass()'), [[72, 124, 8, 4], [80, 124, 8, 4]], 'walking across, half of each square');
+  const down = at('meadow', 4, 7);
+  down.run('pl.py += T / 2');
+  assert.deepEqual(get(down, 'feetInGrass()'), [[64, 132, 16, 4]], 'walking down, only at your feet, never a band across your middle');
 });
 
 test('the mountain path is edged with bushes and boulders, not stone walls', () => {
