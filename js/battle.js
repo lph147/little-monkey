@@ -91,10 +91,10 @@ async function fight(id){
   }
   // Lost: no game over. You're carried back to rest, with full hearts; the words you missed come back sooner.
   S.hearts = HEARTS;
-  const at = BATTLES.restAt || {};
+  const at = [].concat(BATTLES.restAt || []).find(r => !r.if || matches(r.if)) || {};   // the first place to rest whose if matches
   if (at.at){ S.pos = {place:placeOf(at.at), x:at.at[0], y:at.at[1], dir:at.facing || 'down'}; }
   save();
-  await infoBox(scene(), `<p class="label center">Ouch!</p><p class="endmsg">${esc(fill(BATTLES.lost || 'You’re worn out, and go back to rest.'))}</p>`);
+  await infoBox(scene(), `<p class="label center">Ouch!</p><p class="endmsg">${esc(fill(at.lost || BATTLES.lost || 'You’re worn out, and go back to rest.'))}</p>`);
   if (at.at){ foe = null; placePlayer(); showPlaceName(); }
   return 'lost';
 }

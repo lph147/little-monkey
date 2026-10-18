@@ -600,13 +600,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     boar: {word:'野猪', hearts:4, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
       meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },
-  // Battles: when you can fight (when), what you hit with (weapon), and what happens if you lose (lost: you rest,
-  // with full hearts, at restAt).
+  // Battles: when you can fight (when), what you hit with (weapon), and what happens if you lose: you rest, with full
+  // hearts, at the first restAt whose if matches (lost: the message then).
   battles: {
     when: {knows:'棍子'},   // once the big monkey has given you the stick
     weapon: '棍子',
-    lost: 'You’re worn out. You crawl back down to the meadow and rest until your hearts are full again.',
-    restAt: {at:[15, 2], facing:'left'}
+    restAt: [
+      {if:{cave:{atLeast:2}}, at:[3, 2, 'cave'], facing:'up', lost:'You’re worn out. You crawl back to the Water Curtain Cave and sleep until your hearts are full again.'},   // once you've found the cave: by a bed
+      {at:[15, 2], facing:'left', lost:'You’re worn out. You crawl back down to the meadow and rest until your hearts are full again.'}
+    ]
   },
 
   // Where fish jump out of the water now and then, one after another.

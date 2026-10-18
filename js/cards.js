@@ -64,12 +64,12 @@ function navFocus(d){
   const cur = items.indexOf(chosenBtn());
   const go = i => { markNav(items[i]); items[i].focus({preventScroll:false}); SFX.turn(); };
   if (cur < 0) return go(Math.max(0, items.findIndex(b => b.classList.contains('primary'))));
-  const inOrder = () => go((cur + ((d === 'left' || d === 'up') ? -1 : 1) + items.length) % items.length);
+  const inOrder = () => { const i = cur + ((d === 'left' || d === 'up') ? -1 : 1); if (i >= 0 && i < items.length) go(i); };   // (stopping at the first and last: no wrapping round, so Run away never slips back to Hit)
   if (!items.some(b => b.getBoundingClientRect().width)) return inOrder();   // no layout to go by: step through in order
   const next = nearestIn(d, items[cur], items);
   if (next) return go(items.indexOf(next));
   // Nothing that way: left and right step through in reading order (to the next row, in a grid); up
-  // and down stay put at the top and bottom.
+  // and down stay put at the top and bottom, and nothing wraps round from the last button to the first.
   if (d === 'left' || d === 'right') inOrder();
 }
 // The button you'd reach by moving from b in direction d (up, down, left or right) on screen: the nearest

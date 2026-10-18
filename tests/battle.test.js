@@ -51,6 +51,8 @@ test('Run away chosen with the D-pad: A presses it, even when the phone drops th
   assert.equal(g.run('chosenBtn().dataset.act'), 'hit', 'Hit to start with');
   g.run("navFocus('right')");   // from Hit to Run away
   assert.equal(g.sheet.querySelector('.navsel').dataset.act, 'run', 'the gold outline is on Run away');
+  g.run("navFocus('right')");
+  assert.equal(g.run('chosenBtn().dataset.act'), 'run', 'right again stays on Run away: it doesn’t wrap round to Hit');
   assert.equal(g.run('buttonLabels(0)[0]'), 'Run away', 'and A says so');
   g.run('document.activeElement && document.activeElement.blur()');   // touching the D-pad or A on an iPhone
   assert.equal(g.run('buttonLabels(0)[0]'), 'Run away', 'A still says Run away');
@@ -119,6 +121,19 @@ test('losing isn’t punished: you rest in the meadow with full hearts', async (
   assert.equal(g.run('__r'), 'lost');
   assert.equal(g.run('S.hearts'), 5);
   assert.equal(g.run('S.pos.place'), 'meadow');
+});
+
+test('once you’ve found the cave, losing puts you by a bed in the cave instead', async () => {
+  const g = fighting({hearts: 1, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 3, story: true, cave: 2}}, pos: {place: 'path', x: 8, y: 13, dir: 'down'}});
+  g.run("globalThis.__r = null; battle('snake').then(r => { __r = r; })"); await g.flush();
+  await g.choose('hit'); await g.answer(false);
+  await g.answer(false);   // the last heart
+  assert.match(g.sheet.textContent, /Water Curtain Cave/, 'it says where you go');
+  g.sheet.querySelector('[data-a=ok]').click(); await g.flush();
+  assert.equal(g.run('__r'), 'lost');
+  assert.equal(g.run('S.hearts'), 5);
+  assert.deepEqual(JSON.parse(g.run('JSON.stringify(S.pos)')), {place: 'cave', x: 3, y: 2, dir: 'up'}, 'by a bed');
+  assert.equal(g.run('PLACE'), 'cave');
 });
 
 test('when you’re hurt, the old monkey lets you rest', () => {
