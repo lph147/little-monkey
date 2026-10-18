@@ -126,3 +126,30 @@ test('punctuation stays on the same line as the word before it', () => {
   assert.ok(marks.length >= 2);
   for (const p of marks) assert.ok(p.parentElement.classList.contains('nb'), `${p.textContent} is kept with its word`);
 });
+
+// The prologue's guide (18 October 2026): the characters say what to do, instead of prompts.
+test('the old monkey introduces himself and the mountain, after your first 你好', () => {
+  const steps = JSON.parse(loadGame().run('JSON.stringify(AREA.talk.elder[0].do)'));
+  const i = steps.findIndex(s => s.reply === '你好');
+  assert.equal(steps[i + 1].say, 'iamOld');
+  assert.equal(loadGame().run("L.iamOld.t.join('')"), '我是老猴子。这是花果山。');
+});
+
+test('the old monkey checks in on what the troop has asked you for, then sends you to whoever still needs help', () => {
+  const said = save => { const g = loadGame({save: {version: 22, started: true, ...save}}); return g.run("(AREA.talk.elder.find(p => !p.if || matches(p.if)).do[0] || {}).say"); };
+  const area = more => ({areas: {1: {chapter: 0, elder: 2, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', ...more}}});
+  assert.equal(said(area({hungry: 'asked'})), 'hungryWants');
+  assert.equal(said(area({hungry: 'done', thirsty: 'asked'})), 'thirstyWants');
+  assert.equal(said(area({hungry: 'done', thirsty: 'done', flowers: 'asked'})), 'bigWants');
+  assert.equal(said(area({hungry: 'done'})), 'findMonkeys', 'someone still needs help');
+  assert.equal(said(area({hungry: 'done', thirsty: 'done', flowers: 'done'})), 'hi', 'nobody needs help: hello, and your tasks');
+});
+
+test('the hungry and thirsty monkeys say where to look, and each of the troop has something to say', () => {
+  const g = loadGame();
+  const parts = who => JSON.parse(g.run(`JSON.stringify(AREA.talk.${who})`));
+  assert.ok(parts('hungry').some(p => p.do.some(s => s.say === 'fruitOnTrees')));
+  assert.ok(parts('thirsty').some(p => p.do.some(s => s.say === 'waterInRiver')));
+  const lines = ['troop1', 'troop2', 'troop3'].map(t => parts(t).at(-1).do.at(-1).say);
+  assert.deepEqual(lines, ['wantPeach', 'play', 'birdsInTrees']);
+});

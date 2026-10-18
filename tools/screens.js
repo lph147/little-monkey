@@ -68,6 +68,10 @@ const SCREENS = [
   {id: 'tip-menu', title: 'Tip: the Menu', save: 'noMenuTip', why: 'Once you know 3 words, for 8 seconds.', run: async () => { play(); await wait(500); }},
   {id: 'hello', title: 'The old monkey says hello', save: 'born', why: 'The speech box, teaching a word.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
+  {id: 'elder-checks-in', title: 'The old monkey checks in', save: 'middle', why: 'He reminds you what the troop asked for, in words you know.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(600); }},
+  {id: 'troop-line', title: 'A monkey of the troop', save: 'middle', why: 'Each of the troop has something to say, after 你好.', run: async () => {
+    play(); await wait(100); talk(npc('troop1')); await wait(300); next(); await wait(300); click('#talk .reply'); await wait(400); next(); await wait(600); }},
   {id: 'hello-card', title: 'A new word in a conversation', save: 'born', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
   {id: 'first-reply', title: 'Your first reply', save: 'born', run: async () => {

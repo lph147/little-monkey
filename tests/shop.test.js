@@ -1,4 +1,4 @@
-// The shop: the 老板 (shop owner) sells a headband, which you need before the cave door test.
+// The shop: the 老板 (shop owner) sells a headband, which you can choose to buy, and apples.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -24,9 +24,10 @@ test('the shop is run by a character, and sells words you can collect, asked for
   }
 });
 
-test('the prologue needs the headband before chapter 1 can begin', () => {
-  assert.equal(play({areas: {1: area()}, met: ['rabbit', 'fox', 'squirrel', 'goat']}).run('chapterDone()'), false);
-  assert.equal(play({areas: {1: area({bought: ['头带']})}, met: ['rabbit', 'fox', 'squirrel', 'goat']}).run('chapterDone()'), true);
+test('the headband is something you choose to buy: chapter 1 can begin without it', () => {
+  assert.equal(play({areas: {1: area()}, met: ['rabbit', 'fox', 'squirrel', 'goat']}).run('chapterDone()'), true);
+  assert.ok(!AREA.checklist.some(c => /headband/.test(c.text)), 'it isn’t on the checklist');
+  assert.ok(!AREA.tasks.some(t => /头带/.test(t.text) && /Buy/.test(t.text)), 'nor a task to do');
 });
 
 test('the 老板 shows ! with something to teach, and ? once you can afford the headband', () => {

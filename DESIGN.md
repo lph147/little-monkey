@@ -367,7 +367,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Record the long-term mechanics and a longer Area 1 (18 October 2026)
 - [x] Take out XP and levels (save version 22, 18 October 2026)
 - [x] The game plan, with mockups: the story area by area, battles, hearts, Prologue 3 walked alone, agreed (18 October 2026)
-- [ ] Prologue: more dialogue from the old monkey and the troop, guiding you instead of prompts; the headband no longer required
+- [x] Prologue: more dialogue from the old monkey and the troop, guiding you instead of prompts (the Tasks and Menu tips went); the headband no longer required (18 October 2026)
 - [ ] Prologue 3, the mountain path: the new place, the waterfall moving to its top, 路, walls, ledges, long grass, the fallen tree, fetching the troop
 - [ ] Prologue 3, the first battles: the stick and the big monkey's lesson, hearts, snakes and bees, the wild boar, resting with the old monkey
 - [ ] Chapter 1 B: setting up home (有, 没有), counting the troop in (four to ten), then king at the feast

@@ -41,7 +41,17 @@ const DRAFTS = [
     ['我 要 吃 苹果 。', 'I want to eat an apple.', 'The sentence you finish when you give him the apple'],
     ['我 要 红 花 、 黄 花 和 白 花 ！', 'I want a red flower, a yellow flower and a white flower!', 'The big monkey asking for flowers (红, 黄 and 白 are each taught when you pick that colour)'],
     ['我 要 红 花 。', 'I want a red flower.', 'The sentence you finish when you give the big monkey the flowers (filling in 红)']]
-    .map(([zh, en, where]) => ({zh, en, where:'The prologue, changed on 17 October 2026: ' + where}))
+    .map(([zh, en, where]) => ({zh, en, where:'The prologue, changed on 17 October 2026: ' + where})),
+  ...[['我 是 老 猴子 。 这 是 花果山 。', 'I’m the old monkey. This is Flower Fruit Mountain.', 'The old monkey, after your first 你好'],
+    ['去 找 猴子 吧 ！', 'Go and find the monkeys!', 'The old monkey, sending you to help the troop'],
+    ['饿 猴子 要 吃 水果 。', 'The hungry monkey wants to eat some fruit.', 'The old monkey, checking in'],
+    ['渴 猴子 要 喝 水 。', 'The thirsty monkey wants to drink some water.', 'The old monkey, checking in'],
+    ['大 猴子 要 花 。', 'The big monkey wants flowers.', 'The old monkey, checking in'],
+    ['水果 在 树 上 。', 'Fruit grows on the trees.', 'The hungry monkey, after asking for fruit'],
+    ['河 里 有 水 。', 'There’s water in the river.', 'The thirsty monkey, after asking for water'],
+    ['我 要 吃 桃子 ！', 'I want to eat a peach!', 'A monkey of the troop'],
+    ['树 上 有 鸟 。', 'There are birds in the trees.', 'A monkey of the troop (also in the story at the waterfall)']]
+    .map(([zh, en, where]) => ({zh, en, where:'The prologue, more dialogue on 18 October 2026 (in the game): ' + where}))
 ];
 
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the

@@ -46,8 +46,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     animals: {count:'animals'},
     found: {count:'animalsFound'},
     animalsLeft: {count:'animalsLeft'},
-    shells: {count:'shells', max:10},   // your shells, up to the headband's price
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
+    shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
     caveThings: {count:'known', words:['桥', '床', '碗', '桌子']},   // things you've found in the Water Curtain Cave
     troopIn: {count:'known', words:['一', '二', '三']}   // the troop counted in (each count teaches its number)
   },
@@ -75,7 +75,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to the big monkey', arrow:'big'},
     {id:'fall', if:{gate:true, story:false}, text:'Climb up beside the river to the waterfall', arrow:[18, 1]},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
-    {id:'shop2', if:{knows:'头带', bought:{'头带':false}}, text:'Buy the {头带} from the {老板} ({shells}/10 🐚)', arrow:'boss'},
     {id:'dare', if:{chapter:1, cave:0}, text:'Go to the {瀑布}: the troop is gathering', arrow:'elder'},
     {id:'jump', if:{cave:1}, text:'Jump through the {瀑布}', arrow:[18, 1]},
     {id:'explore', if:{cave:2, caveThings:{below:4}}, text:'Look around the {洞} ({caveThings}/4)'},
@@ -108,7 +107,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Bring water to the thirsty monkey', show:{thirsty:'asked'}, done:{thirsty:'done'}},
     {text:'Bring the big monkey a red, a yellow and a white flower', show:{flowers:'asked'}, done:{flowers:'done'}},
     {text:'Read the story at the waterfall', show:{gate:true}, done:{story:true}},
-    {text:'Buy a headband from the shop owner', show:{knows:'头带'}, done:{bought:{'头带':true}}},
     {chapter:1, text:'Jump through the waterfall', show:{cave:{atLeast:1}}, done:{cave:{atLeast:2}}},
     {chapter:1, text:'Look around the cave', show:{cave:{atLeast:2}}, done:{caveThings:4}},
     {chapter:1, text:'Tell the old monkey what’s inside', show:{caveThings:4}, done:{cave:{atLeast:3}}},
@@ -493,6 +491,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     wantFlowers: {zh:'我 要 红 花 、 黄 花 和 白 花 ！', en:'I want a red flower, a yellow flower and a white flower!'},
     haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'},
+    // The prologue's guide (drafts, not checked yet: see CHINESE.md)
+    iamOld: {zh:'我 是 老 猴子 。 这 是 花果山 。', en:'I’m the old monkey. This is Flower Fruit Mountain.'},
+    findMonkeys: {zh:'去 找 猴子 吧 ！', en:'Go and find the monkeys!'},
+    hungryWants: {zh:'饿 猴子 要 吃 水果 。', en:'The hungry monkey wants to eat some fruit.'},
+    thirstyWants: {zh:'渴 猴子 要 喝 水 。', en:'The thirsty monkey wants to drink some water.'},
+    bigWants: {zh:'大 猴子 要 花 。', en:'The big monkey wants flowers.'},
+    fruitOnTrees: {zh:'水果 在 树 上 。', en:'Fruit grows on the trees.'},
+    waterInRiver: {zh:'河 里 有 水 。', en:'There’s water in the river.'},
+    wantPeach: {zh:'我 要 吃 桃子 ！', en:'I want to eat a peach!'},
+    birdsInTrees: {zh:'树 上 有 鸟 。', en:'There are birds in the trees.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     whatBehind: {zh:'瀑布 后面 有 什么 ？', en:'What’s behind the waterfall?'},
     dare: {zh:'谁 跳 进去 ， 谁 就 是 王 ！', en:'Whoever jumps in will be king!'},
@@ -534,6 +542,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'hi', teach:'你好'},
         {newWord:'你好'},
         {reply:'你好'},
+        {say:'iamOld'},
         {message:'Every baby monkey explores the mountain to find out what things are called. Today it’s your turn!'},
         {say:'go', hint:'Things that sparkle have words. Learn 4, then come back.'},
         {set:{elder:1}}
@@ -544,10 +553,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{elder:1}, do:[
         {say:'animals', teach:'动物', hint:'Animals hide in rustling grass, up a tree and on the cliffs to the south.'},
         {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
+        {say:'findMonkeys'},
+        {message:'Some of the troop need help too. A ! over a monkey means it wants something. If you forget what to do, press TASKS. MENU shows the words you’ve learned.'},
         {set:{elder:2}},
         {reply:'再见'},
         {say:'bye'}
       ]},
+      // the prologue: he checks in on what the troop has asked you for, or sends you off to find who needs help
+      {if:{chapter:0, hungry:'asked'}, do:[{say:'hungryWants'}]},
+      {if:{chapter:0, thirsty:'asked'}, do:[{say:'thirstyWants'}]},
+      {if:{chapter:0, flowers:'asked'}, do:[{say:'bigWants'}]},
+      {if:{chapter:0, hungry:'not asked'}, do:[{say:'findMonkeys', hint:'Look for a monkey with a ! over its head.'}]},
+      {if:{chapter:0, thirsty:'not asked'}, do:[{say:'findMonkeys', hint:'Look for a monkey with a ! over its head.'}]},
+      {if:{chapter:0, flowers:'not asked'}, do:[{say:'findMonkeys', hint:'Look for a monkey with a ! over its head.'}]},
       // chapter 1: the dare at the waterfall, then telling him what's inside
       {if:{chapter:1, cave:0}, do:[
         {say:'whatBehind'},
@@ -587,15 +605,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ],
     hungry: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
+      {if:{hungry:'not asked'}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
+      {if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
       {do:[{request:'hungry'}]}
     ],
     thirsty: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
+      {if:{thirsty:'not asked'}, do:[{request:'thirsty'}, {say:'waterInRiver'}]},
+      {if:{thirsty:'asked', holding:{thirsty:false}}, do:[{request:'thirsty'}, {say:'waterInRiver'}]},
       {do:[{request:'thirsty'}]}
     ],
-    troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}]}],
-    troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}]}],
-    troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}]}],
+    troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'wantPeach'}]}],
+    troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'play'}]}],
+    troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],
     big: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{cave:5}, do:[{say:'king', teach:'王'}, {newWord:'王'}, {message:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}]},

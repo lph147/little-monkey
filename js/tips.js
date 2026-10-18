@@ -11,9 +11,8 @@ const TIPS = {
   walk: {at:'.dpad', text:'Hold an arrow to walk.<br>Tap to turn.', when:() => canAct()},
   talk: {at:'#btnA', text:'Press <b>A</b> to talk', when:() => canAct() && !!npcAt(...facing())},
   look: {at:'#btnA', text:'Press <b>A</b> to look', when:() => canAct() && !npcAt(...facing()) && promptFor(...facing()) === 'Look'},
-  grey: {at:'#talk .tok.listen', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove},
-  select: {at:'#selectBtn', text:'Press <b>Tasks</b> to see your tasks', when:() => canAct() && getTasks().length > 0, lasts:8000},
-  start: {at:'#startBtn', text:'Press <b>Menu</b> for your words and more', when:() => canAct() && learnedCount() >= 3, lasts:8000}
+  grey: {at:'#talk .tok.listen', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove}
+  // (Tasks and Menu had tips too; the old monkey tells you about them instead, decided 18 October 2026.)
 };
 let tip = null;   // the tip showing: {id, target, until}
 const tipBox = () => $('#tip') || document.body.appendChild(Object.assign(document.createElement('div'), {id:'tip', className:'tipb', hidden:true}));

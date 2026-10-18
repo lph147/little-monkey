@@ -46,20 +46,14 @@ test('facing something to look at, the tip says to press A to look', () => {
   assert.equal(showing(game), 'look');
 });
 
-test('with a task to do, a tip points at Select; once you know 3 words, one points at Start, each for a few seconds', () => {
+test('Tasks and Menu have no tips: the old monkey tells you about them instead', () => {
   const w = Object.fromEntries(['石头', '山', '花'].map(hz => [hz, {lv: 1, due: 0, ok: 0}]));
   const game = playing({version: 21, started: true, w, tips: {walk: 1, talk: 1, look: 1, grey: 1}, pos: {x: 9, y: 5, dir: 'down'}});
   game.run('updateTips(1000)');
-  assert.equal(showing(game), 'select', 'there is a task: say hello to the old monkey');
-  game.run("tipPressed('#selectBtn')");
-  assert.equal(get(game, 'S.tips.select'), 1, 'pressing Select is enough');
-  game.run('updateTips(2000)');
-  assert.equal(showing(game), 'start');
-  game.run('updateTips(6000)');
-  assert.equal(showing(game), 'start', 'still there after 4 seconds');
-  game.run('updateTips(10500)');
-  assert.equal(showing(game), null, 'gone after 8');
-  assert.equal(get(game, 'S.tips.start'), 1);
+  assert.equal(showing(game), null, 'no tip, though there is a task and you know 3 words');
+  const said = JSON.stringify(get(game, 'AREA.talk.elder'));
+  assert.match(said, /press TASKS/, 'the old monkey mentions TASKS');
+  assert.match(said, /MENU shows the words/, 'and MENU');
 });
 
 test('the grey-words tip shows during a line, once', () => {

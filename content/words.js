@@ -86,6 +86,7 @@ const WORD_BANK = {
   '水果': {py:'shuǐguǒ', en:'fruit'},
   '和': {py:'hé', en:'and'},
   '后面': {py:'hòumiàn', en:'behind'},
+  '大': {py:'dà', en:'big'},
   '谁': {py:'shéi', en:'who, whoever'},
   '进去': {py:'jìnqù', en:'to go in'},
   '就': {py:'jiù', en:'then'},

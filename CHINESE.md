@@ -23,7 +23,7 @@ shown where the word list has them.
 | 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 老板 (Shop owner) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
 | 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |
@@ -35,6 +35,15 @@ shown where the word list has them.
 | 我要红花、黄花和白花！ | wǒ yào hóng huā, huáng huā hé bái huā! | I want a red flower, a yellow flower and a white flower! | 大猴子 (Big monkey) |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
+| 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | 老猴子 (Old monkey) |  |
+| 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | 老猴子 (Old monkey) |  |
+| 饿猴子要吃水果。 | è hóuzi yào chī shuǐguǒ. | The hungry monkey wants to eat some fruit. | 老猴子 (Old monkey) |  |
+| 渴猴子要喝水。 | kě hóuzi yào hē shuǐ. | The thirsty monkey wants to drink some water. | 老猴子 (Old monkey) |  |
+| 大猴子要花。 | dà hóuzi yào huā. | The big monkey wants flowers. | 老猴子 (Old monkey) |  |
+| 水果在树上。 | shuǐguǒ zài shù shàng. | Fruit grows on the trees. | 饿猴子 (Hungry monkey) |  |
+| 河里有水。 | hé lǐ yǒu shuǐ. | There’s water in the river. | 渴猴子 (Thirsty monkey) |  |
+| 我要吃桃子！ | wǒ yào chī táozi! | I want to eat a peach! | 猴子 (Monkey) |  |
+| 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | 猴子 (Monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
 | 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | 老猴子 (Old monkey), 大猴子 (Big monkey) |  |
 | 我怕！ | wǒ pà! | I’m scared! | 老猴子 (Old monkey), 小猴子 (Little monkey) |  |
@@ -191,6 +200,7 @@ The opening is told in English. These captions each show one word, said aloud.
 | 水果 | shuǐguǒ | fruit |  |
 | 和 | hé | and |  |
 | 后面 | hòumiàn | behind |  |
+| 大 | dà | big |  |
 | 谁 | shéi | who, whoever |  |
 | 进去 | jìnqù | to go in |  |
 | 就 | jiù | then |  |
@@ -276,6 +286,15 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
 | 我要红花、黄花和白花！ | wǒ yào hóng huā, huáng huā hé bái huā! | I want a red flower, a yellow flower and a white flower! | The prologue, changed on 17 October 2026: The big monkey asking for flowers (红, 黄 and 白 are each taught when you pick that colour) |  |
 | 我要红花。 | wǒ yào hóng huā. | I want a red flower. | The prologue, changed on 17 October 2026: The sentence you finish when you give the big monkey the flowers (filling in 红) |  |
+| 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, after your first 你好 |  |
+| 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, sending you to help the troop |  |
+| 饿猴子要吃水果。 | è hóuzi yào chī shuǐguǒ. | The hungry monkey wants to eat some fruit. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |
+| 渴猴子要喝水。 | kě hóuzi yào hē shuǐ. | The thirsty monkey wants to drink some water. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |
+| 大猴子要花。 | dà hóuzi yào huā. | The big monkey wants flowers. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |
+| 水果在树上。 | shuǐguǒ zài shù shàng. | Fruit grows on the trees. | The prologue, more dialogue on 18 October 2026 (in the game): The hungry monkey, after asking for fruit |  |
+| 河里有水。 | hé lǐ yǒu shuǐ. | There’s water in the river. | The prologue, more dialogue on 18 October 2026 (in the game): The thirsty monkey, after asking for water |  |
+| 我要吃桃子！ | wǒ yào chī táozi! | I want to eat a peach! | The prologue, more dialogue on 18 October 2026 (in the game): A monkey of the troop |  |
+| 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | The prologue, more dialogue on 18 October 2026 (in the game): A monkey of the troop (also in the story at the waterfall) |  |
 
 ## Questions
 
