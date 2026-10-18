@@ -90,7 +90,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The task asks you to learn 4 words, with a counter.
 - [ ] Learn words from things that sparkle: face a cliff (山), a tree (树) or the river (河) and press A; walk into flowers (花) or tall grass (草). The counter goes up.
 - [ ] The sign next to the stone shows 花果山 with its name, and the note "The name of your home." (nothing about a book).
-- [ ] Talk to the old monkey again: he teaches 动物 (animal). A new task asks you to find the hidden animals (0/4).
+- [ ] Talk to the old monkey again, with 4 or more new words: he says 我们看看！ (Let's have a look!) and you match each word you've learned to its picture, as at the practice post (tap a word, then its picture; a wrong one shakes, and you try again). Not now ends the talk, and he waits until you're ready. Once they're all matched, he says 太好了！ (Great!) and teaches 动物 (animal). A new task asks you to find the hidden animals (0/4).
 
 **The hungry monkey**
 - [ ] The monkey to the right of the old monkey has a !. It says 我饿了。我要吃水果！ (I want to eat some fruit: 水果 is grey, just for listening) and teaches 吃 (eat). The task says "Find some fruit for the hungry monkey", with no arrow: finding it is the point.

@@ -165,3 +165,18 @@ test('再见 is taught as you set off up the mountain path: the old monkey says 
   assert.ok(setOff.indexOf('棍子') >= 0 && setOff.indexOf('棍子') < setOff.indexOf('bye') - 1, 'not straight after the stick: one new word at a time');
   assert.ok(!part('p.if.elder === 1 && !p.if.newWords').includes('再见'), 'not when he tells you about the animals');
 });
+
+test('back with your first words, the old monkey checks them: you match them to their pictures, then he tells you about the animals', async () => {
+  const g = loadGame({save: {version: 27, started: true, w: Object.fromEntries(['石头', '山', '花', '草', '树'].map(w => [w, {lv: 1, due: 0, ok: 0}])), areas: {1: {elder: 1}}}});
+  g.run("mode = 'play'; globalThis.__said = []; showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNotice = async () => {}; showNarration = async () => {}; toast = () => {}");
+  g.run("globalThis.__matched = null; matchWords = async words => { __matched = words; return new Set(); }");
+  await g.run("talk(ALL_NPCS.find(n => n.id === 'elder'))");
+  assert.deepEqual(JSON.parse(g.run('JSON.stringify(__matched)')).sort(), ['山', '石头', '树', '花', '草'].sort(), 'the words you’ve learned');
+  const said = JSON.parse(g.run('JSON.stringify(__said)'));
+  assert.ok(said.indexOf('太好了！') >= 0 && said.indexOf('太好了！') < said.findIndex(s => s.includes('动物')), 'well done, then the animals');
+  assert.equal(g.run('here().elder'), 2);
+  const stop = loadGame({save: {version: 27, started: true, w: Object.fromEntries(['石头', '山', '花', '草', '树'].map(w => [w, {lv: 1, due: 0, ok: 0}])), areas: {1: {elder: 1}}}});
+  stop.run("mode = 'play'; showDialog = showNotice = showNarration = async () => {}; toast = () => {}; matchWords = async () => null");
+  await stop.run("talk(ALL_NPCS.find(n => n.id === 'elder'))");
+  assert.equal(stop.run('here().elder'), 1, 'stopped: he waits until you’re ready');
+});

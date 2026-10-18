@@ -56,6 +56,8 @@ shown where the word list has them.
 | 我怕！ | wǒ pà! | I’m scared! | 老猴子 (Old monkey), 小猴子 (Little monkey) |  |
 | 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | 老猴子 (Old monkey) |  |
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | 老猴子 (Old monkey) |  |
+| 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
+| 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
 | 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | 大猴子 (Big monkey) |  |
 | 一只猴子。 | yī zhī hóuzi. | One monkey. | 老猴子 (Old monkey) |  |

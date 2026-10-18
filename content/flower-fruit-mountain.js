@@ -677,6 +677,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     scared: {zh:'我 怕 ！', en:'I’m scared!'},
     inside: {zh:'里面 有 什么 ？', en:'What’s inside?'},
     letsGo: {zh:'太 好 了 ！ 我们 去 看看 ！', en:'Wonderful! Let’s go and see!'},
+    letsLook: {zh:'我们 看看 ！', en:'Let’s have a look!'},
+    great: {zh:'太 好 了 ！', en:'Great!'},
     home: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},
     king: {zh:'你 是 我们 的 王 ！', en:'You are our king!'},
     count1: {zh:'一 只 猴子 。', en:'One monkey.'},
@@ -699,6 +701,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   reply     your reply: you choose what to say from phrases you know, and this is the one that fits
   //             (taught on its own card the first time). Any choice is fine; the game says which fits best.
   //   bag       put food in your bag (if there's room), with a note saying so
+  //   match     match the words you've learned to their pictures (its heading), as at the practice post; stop
+  //             is its button to stop, which ends the conversation there (notYet: the message then)
   //   wordGame  offer a word game. ask: the question; word: who you're playing with; win: steps if you win;
   //             notYet: the message if you don't know enough words yet
   //   gap       a sentence to finish by filling the gap: {sentence, en, word}, word being the missing one
@@ -722,6 +726,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'go', hint:'Learn 4 words first, then come back. ({newWords}/4)'}
       ]},
       {if:{elder:1}, do:[
+        {say:'letsLook'},   // he checks your first words: you match them to their pictures
+        {match:'Show the old monkey your words', stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him your words.'},
+        {say:'great'},
         {say:'animals', teach:'动物', hint:'Animals hide in rustling grass, up a tree and on the cliffs to the south.'},
         {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
         {say:'findMonkeys'},

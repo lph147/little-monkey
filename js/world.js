@@ -91,7 +91,7 @@ function matches(cond){   // does the game match everything in an if?
     return compare(here()[k], v);
   });
 }
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note']};   // extra settings a step can have
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet']};   // extra settings a step can have
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
     const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
@@ -128,6 +128,14 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     SFX.encounter();
     if (await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}) && g.win) await runSteps(g.win, who);
   },
+  // Match the words you've learned (with pictures) to their pictures, as at the practice post (title: its heading;
+  // stop: the button to stop). Stopping ends the conversation there, with notYet as a message.
+  async match(s){
+    const words = shuffle(ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));
+    const missed = await matchWords(words, s.match, s.stop || 'Not now');
+    if (!missed){ if (s.notYet) toast(fill(s.notYet)); return STOP; }
+    closeCard(); SFX.fanfare();   // all matched: on with the conversation
+  },
   bag(s){ toast(intoBag(s.bag) ? fill(s.note || `A {${s.bag}} for your bag.`) : `Your bag is full of ${wz(s.bag)}.`); },   // food for your bag, if there's room
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
@@ -151,7 +159,9 @@ async function iSay(said, best = said){
   const en = WORDS[said].en.split(',')[0];
   await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
 }
-async function runSteps(steps, who){ for (const s of steps) await STEPS[Object.keys(s).find(k => STEPS[k])](s, who); }
+// Runs a list of steps, one after another. A step that gives STOP ends the list there (such as a word match you stop).
+const STOP = 'stop';
+async function runSteps(steps, who){ for (const s of steps) if (await STEPS[Object.keys(s).find(k => STEPS[k])](s, who) === STOP) return STOP; }
 // The area's events: each happens by itself when its if matches (checked after anything you do).
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); }
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
