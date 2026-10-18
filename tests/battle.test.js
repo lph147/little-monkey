@@ -132,3 +132,15 @@ test('the wild boar blocks the way at the top until you chase it off', () => {
   assert.equal(at({areas: {1: {gate: true, climb: 1, boar: 1}}}), 'gone', 'chased off');
   assert.equal(at({areas: {1: {gate: true, climb: 3}}}), 'gone', 'a game past the waterfall never meets it');
 });
+
+test('a battle has its own music, quicker but calm; the area’s comes back afterwards', async () => {
+  const g = fighting();
+  assert.equal(g.run('song'), 'home');
+  g.run("battle('snake')"); await g.flush();
+  assert.equal(g.run('song'), 'battle');
+  await g.choose('run');
+  assert.equal(g.run('song'), 'home', 'back to the area’s music');
+  assert.ok(g.run('SONGS.battle.bpm') > g.run('SONGS.home.bpm'), 'quicker');
+  assert.equal(g.run("SONGS.battle.events.filter(e => e.k === 'mel').reduce((n, e) => n + e.d, 0)"), g.run('SONGS.battle.beats'), 'its tune fills its loop');
+  assert.ok(g.run('SONGS.battle.events.filter(e => e.m).every(e => [0, 2, 4, 7, 9].includes(e.m % 12))'), 'only the five notes of the pentatonic scale: nothing tense');
+});

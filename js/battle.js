@@ -37,8 +37,12 @@ async function wildBattle(id, spot = findSpot()){
   return r;
 }
 
-// The battle itself. Gives 'won', 'lost' or 'ran'.
+// The battle itself, with its own music (the area's comes back afterwards). Gives 'won', 'lost' or 'ran'.
 async function battle(id){
+  playSong('battle');
+  try { return await fight(id); } finally { playSong('home'); }
+}
+async function fight(id){
   const f = ENEMIES[id], img = `<img class="portrait" alt="" src="${sprite(PICTURES[f.word].rows, PICTURES[f.word].palette).toDataURL()}">`;
   if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
   else { say(f.word); await sleep(700); }
@@ -79,7 +83,7 @@ async function battle(id){
     await dodge(f, scene('', 'hiding'), note);
     note = '';
   }
-  closeCard();
+  closeCard(); playSong('home');
   if (left <= 0){
     S.shells += f.reward || 0; save(); SFX.fanfare();
     await infoBox(scene('gone'), `<p class="label center">You win!</p><p class="endmsg">${esc(fill(f.away || `The {${f.word}} runs away.`))}${f.reward ? ` +${f.reward} 🐚` : ''}</p>`);

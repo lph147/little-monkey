@@ -36,9 +36,10 @@ const SFX = {
 };
 
 /* ---- background music: guzheng and dizi in a Chinese pentatonic style ----
-   Odd passes: the tune on a plucked guzheng (with tremolo on long notes and bends).
-   Even passes: the tune on a breathy dizi flute with slides, grace notes and vibrato.
-   Underneath: a rolling guzheng accompaniment, glissando sweeps and a soft wood block. */
+   Two songs. The area's (home): odd passes, the tune on a plucked guzheng (with tremolo on long notes and bends); even
+   passes, on a breathy dizi flute with slides, grace notes and vibrato; underneath, a rolling guzheng accompaniment,
+   glissando sweeps and a soft wood block. Battles' (battle): quicker, but calm and cheerful, never tense: the same
+   pentatonic scale, a bouncy guzheng in quavers, a soft drum and wood block, and a tune taking turns on guzheng and dizi. */
 const BPM = 72, BEAT = 60 / BPM, LOOP_BEATS = 64;
 const MEL = [[76,1.5],[79,.5],[81,1],[84,.5],[81,.5], [79,2],[76,1],[79,1], [74,.5],[76,.5],[79,1],[76,1],[74,.5],[72,.5], [74,4],
              [76,1.5],[79,.5],[81,1],[79,.5],[81,.5], [84,2],[86,1],[84,.5],[81,.5], [79,.5],[81,.5],[79,.5],[76,.5],[74,1],[76,1], [69,4],
@@ -58,12 +59,30 @@ const EVENTS = (() => {
   ev.push({b:31.25, k:'gliss'}); ev.push({b:63.25, k:'gliss'});
   return ev.sort((a,c) => a.b - c.b);
 })();
+// The battle song: 8 bars, a bar of the tune each line, and the bar's root note for the bass and the rolling guzheng.
+const BATTLE_MEL = [[72,.5],[74,.5],[76,1],[79,.5],[76,.5],[74,1], [72,.5],[74,.5],[76,.5],[79,.5],[81,2],
+                    [79,.5],[81,.5],[79,.5],[76,.5],[74,1],[76,1], [72,1],[69,1],[72,2],
+                    [76,.5],[79,.5],[81,1],[84,.5],[81,.5],[79,1], [76,.5],[79,.5],[81,.5],[79,.5],[76,2],
+                    [74,.5],[76,.5],[79,.5],[76,.5],[74,1],[72,1], [74,1],[76,1],[72,2]];
+const BATTLE_ROOTS = [48,45,43,48, 45,48,43,48];
+const BATTLE_EVENTS = (() => {
+  const ev = []; let bt = 0;
+  BATTLE_MEL.forEach(([m,d]) => { ev.push({b:bt, m, d, k:'mel'}); bt += d; });
+  BATTLE_ROOTS.forEach((r,i) => {
+    [r+12, r+19, r+24, r+19, r+12, r+19, r+24, r+19].forEach((m,j) => ev.push({b:i*4 + j*.5, m, k:'roll'}));   // quavers
+    ev.push({b:i*4, m:r, k:'bass'}); ev.push({b:i*4 + 2, m:r + 7, k:'bass'});
+    ev.push({b:i*4, k:'drum', v:.05}); ev.push({b:i*4 + 2, k:'drum', v:.035});
+    ev.push({b:i*4 + 1, k:'wood', v:.022}); ev.push({b:i*4 + 3, k:'wood', v:.022});
+    if (i % 2) ev.push({b:i*4 + 3.5, k:'wood', v:.014});
+  });
+  return ev.sort((a,c) => a.b - c.b);
+})();
 const midi = m => 440 * Math.pow(2, (m - 69) / 12);
 let mBus = null, mTimer = null, mStart = 0, mIdx = 0, mLoop = 0, noiseBuf = null;
 function musicGraph(a){
   if (mBus) return;
   mBus = a.createGain(); mBus.gain.value = 0; mBus.connect(a.destination);
-  const dl = a.createDelay(1); dl.delayTime.value = BEAT * .5;
+  const dl = a.createDelay(1); dl.delayTime.value = 60 / SONGS[song].bpm * .5; mBus.delay = dl;   // an echo, half a beat later
   const fb = a.createGain(); fb.gain.value = .32; const wet = a.createGain(); wet.gain.value = .3;
   const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200;
   mBus.echoIn = a.createGain(); mBus.echoIn.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(mBus);
@@ -103,6 +122,12 @@ function dizi(a, f, t, dur, fromF, graceF){
   }
   [o, o2, lfo].forEach(x => { x.start(t); x.stop(end + .2); });
 }
+function drum(a, t, v){   // a soft, low drum
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(65, t + .13);
+  g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + .22);
+  o.connect(g); g.connect(mBus); o.start(t); o.stop(t + .26);
+}
 function wood(a, t, v){
   const o = a.createOscillator(), g = a.createGain();
   o.type = 'sine'; o.frequency.setValueAtTime(1250, t); o.frequency.exponentialRampToValueAtTime(820, t + .05);
@@ -127,15 +152,41 @@ function playEvent(a, ev, t, pass){
   else if (ev.k === 'wood') wood(a, t, ev.v);
   else if (ev.k === 'gliss') [60,62,64,67,69,72,74,76,79].forEach((m,i) => zheng(a, midi(m), t + i*.045, .028, .9, false));
 }
+function playBattleEvent(a, ev, t, pass){
+  const beat = 60 / SONGS.battle.bpm;
+  if (ev.k === 'mel'){
+    if (pass === 0) zheng(a, midi(ev.m), t, .07, Math.min(ev.d * beat + .4, 1.2), false);
+    else dizi(a, midi(ev.m), t, ev.d * beat * .9, 0, 0);
+  } else if (ev.k === 'roll') zheng(a, midi(ev.m), t, .022, .45, false);
+  else if (ev.k === 'bass') zheng(a, midi(ev.m), t, .05, .9, false);
+  else if (ev.k === 'drum') drum(a, t, ev.v);
+  else if (ev.k === 'wood') wood(a, t, ev.v);
+}
+// The songs: how fast (beats a minute), how many beats before it loops, its notes, and how each is played.
+const SONGS = {
+  home: {bpm:BPM, beats:LOOP_BEATS, events:EVENTS, play:playEvent},
+  battle: {bpm:116, beats:32, events:BATTLE_EVENTS, play:playBattleEvent}
+};
+let song = 'home';   // the song playing (or that will, once the music is on)
 function musicTick(){
   const a = AC; if (!a || !mBus) return;
-  const ahead = a.currentTime + .35;
+  const sg = SONGS[song], beat = 60 / sg.bpm, ahead = a.currentTime + .35;
   for (let guard = 0; guard < 80; guard++){
-    const ev = EVENTS[mIdx], t = mStart + (mLoop * LOOP_BEATS + ev.b) * BEAT;
+    const ev = sg.events[mIdx], t = mStart + (mLoop * sg.beats + ev.b) * beat;
     if (t > ahead) break;
-    if (t > a.currentTime - .05) playEvent(a, ev, t, mLoop % 2);
-    mIdx++; if (mIdx >= EVENTS.length){ mIdx = 0; mLoop++; }
+    if (t > a.currentTime - .05) sg.play(a, ev, t, mLoop % 2);
+    mIdx++; if (mIdx >= sg.events.length){ mIdx = 0; mLoop++; }
   }
+}
+// Changes the song (such as into a battle and out again), from its start, with a moment's quiet between.
+function playSong(name){
+  if (song === name || !SONGS[name]) return;
+  song = name;
+  if (!mTimer || !AC || !mBus) return;
+  const now = AC.currentTime;
+  mStart = now + .25; mIdx = 0; mLoop = 0;
+  mBus.delay.delayTime.setValueAtTime(60 / SONGS[name].bpm * .5, now);
+  mBus.gain.cancelScheduledValues(now); mBus.gain.setTargetAtTime(0, now, .04); mBus.gain.setTargetAtTime(musicLevel(), now + .25, .2);
 }
 function musicStart(){
   if (!S.music || mTimer) return;
