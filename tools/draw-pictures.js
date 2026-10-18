@@ -352,7 +352,15 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
   '三': p => { p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); p.fill(O(10.5, 10.5, 2.4), RED); p.fill(O(16, 16, 2.4), RED); p.fill(O(21.5, 21.5, 2.4), RED); },
   '红': p => splat(p, '#E0303A'),
   '黄': p => splat(p, '#F2C93A'),
-  '白': p => splat(p, '#F8F6F0')
+  '白': p => splat(p, '#F8F6F0'),
+  '路': p => {   // path: a sandy path winding away up a grassy slope, narrowing into the distance
+    p.fill(Rc(1, 8, 30, 23, 5), '#6CB35C', {light: '#8CCB6E', dark: '#4F9446'});
+    p.fill(Pg([[7, 31], [24, 31], [20, 25], [13.5, 20.5], [17.5, 15], [21, 10.5], [18, 10.5], [12, 15], [8.5, 20.5], [11.5, 25.5]]), '#D9BB8A', {light: '#EBD3A8', dark: '#B9965F'});
+    p.flat(or(O(15, 27, 1.2, .8), O(12.5, 22, 1, .7), O(16, 17, .9, .6)), '#C6A473');   // ruts
+    p.fill(O(4.5, 23.5, 2, 1.5), '#A9A598'); p.fill(O(27, 18.5, 1.8, 1.3), '#A9A598');   // stones by the path
+    p.fill(Rc(25, 6, 2, 5), '#8A5A32'); p.fill(O(26, 5.5, 3.6, 4), '#3F9A4C', {light: '#6CC066'});   // a tree far up the path
+    p.flat(or(Rc(5, 13, 1, 2), Rc(8, 11, 1, 2), Rc(27, 26, 1, 2)), '#4F9446');   // tufts
+  }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops
   p.fill(or(O(15.5, 17, 10.5, 9), O(23, 21.5, 4.6, 4)), c);

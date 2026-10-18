@@ -10,7 +10,7 @@ const saveOf = game => JSON.parse(game.run('JSON.stringify(S)'));
 const VERSION = loadGame().run('SAVE_VERSION');   // the current save version
 // Words at Used (level 4) in an older save are marked as used when it's converted (version 9).
 const usedMarked = w => Object.fromEntries(Object.entries(w).map(([k, r]) => [k, r.lv === 4 ? {...r, used: 1} : r]));
-const START = {chapter: 0, elder: 0, gate: false, story: false, cave: 0, count: 0, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', holding: {}, wanted: {}, picked: {}, bought: [], done: false};
+const START = {chapter: 0, elder: 0, gate: false, climb: 0, story: false, cave: 0, count: 0, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', holding: {}, wanted: {}, picked: {}, bought: [], done: false};
 
 // A save as Little Monkey 8 (and the versions since, up to the map legend) wrote it: version 2.
 const V2 = {
@@ -26,7 +26,7 @@ test('a version 2 save is converted, keeping everything', () => {
   const s = saveOf(game);
   assert.equal(s.version, VERSION);
   assert.equal(s.area, 1);
-  assert.deepEqual(s.areas[1], {chapter: 0, elder: 2, hungry: 'done', thirsty: 'asked', flowers: 'not asked', gate: false, story: false, cave: 0, count: 0, holding: {}, wanted: {}, picked: {}, bought: [], done: false});
+  assert.deepEqual(s.areas[1], {chapter: 0, elder: 2, hungry: 'done', thirsty: 'asked', flowers: 'not asked', gate: false, climb: 0, story: false, cave: 0, count: 0, holding: {}, wanted: {}, picked: {}, bought: [], done: false});
   for (const old of ['q', 'gate', 'story', 'area1Done', 'carry']) assert.ok(!(old in s), `the old field ${old} should have moved`);
   for (const [k, v] of Object.entries(V2)){
     if (['q', 'gate', 'story', 'area1Done', 'carry'].includes(k)) continue;
@@ -46,14 +46,14 @@ test('after converting, the game shows the same progress', () => {
   assert.match(game.el('#titleButtons').innerHTML, /class="slot primary" data-slot="1">.*\d+ words/, 'Game 1 has the converted game');
   const stats = game.run('statsHTML()');
   assert.match(stats, /🐚 7/);
-  assert.match(stats, /1\/40 words/, 'just 石头: 路 is no longer one of the words');
+  assert.match(stats, /2\/41 words/, '石头 and 路 (路 left the words for a while, and is back on the mountain path)');
   // Said hello, learned about animals, 1 of 4 animals found, hungry monkey helped, thirsty not yet, no story (the headband is optional now)
-  assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false]);   // (the prologue's checklist: no word test there any more)
+  assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false, false]);   // (the prologue's checklist: no word test there any more)
 });
 
 test('a finished area stays finished', () => {
   const game = loadGame({save: {...V2, q: {elder: 2, hungry: 3, thirsty: 3}, gate: true, story: true, area1Done: true}});
-  assert.deepEqual(saveOf(game).areas[1], {chapter: 0, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'not asked', gate: true, story: true, cave: 0, count: 0, holding: {}, wanted: {}, picked: {}, bought: [], done: true});
+  assert.deepEqual(saveOf(game).areas[1], {chapter: 0, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'not asked', gate: true, climb: 3, story: true, cave: 0, count: 0, holding: {}, wanted: {}, picked: {}, bought: [], done: true});
   assert.equal(game.run('tileAt(15, 4).look'), 'path', 'the rocks should still be gone');
 });
 
@@ -113,7 +113,7 @@ test('a version 3 save is converted: tasks become words, and what you carry move
   const game = loadGame({save: V3});
   const s = saveOf(game);
   assert.equal(s.version, VERSION);
-  assert.deepEqual(s.areas[1], {chapter: 0, elder: 2, gate: false, story: false, cave: 0, count: 0, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '苹果', thirsty: '水'}, wanted: {hungry: '桃子'}, picked: {}, bought: [], done: false});
+  assert.deepEqual(s.areas[1], {chapter: 0, elder: 2, gate: false, climb: 0, story: false, cave: 0, count: 0, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '苹果', thirsty: '水'}, wanted: {hungry: '桃子'}, picked: {}, bought: [], done: false});
   assert.ok(!('carry' in s));
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v3'), JSON.stringify(V3));
 });
@@ -136,7 +136,7 @@ test('a version 4 save is converted: the words in lines you have seen count as h
   assert.equal(s.version, VERSION);
   assert.deepEqual(s.heard, {'你好': 1, '我': 2, '饿': 1, '了': 1, '要': 1, '吃': 1, '水果': 1});
   // (the big monkey's request, and the things you've picked for it, are new since then)
-  const later = a => Object.fromEntries(Object.entries(a).map(([n, p]) => [n, {chapter: 0, cave: 0, count: 0, ...p, flowers: 'not asked', picked: {}, wanted: p.hungry === 'asked' ? {hungry: '桃子'} : {}}]));
+  const later = a => Object.fromEntries(Object.entries(a).map(([n, p]) => [n, {chapter: 0, climb: 0, cave: 0, count: 0, ...p, flowers: 'not asked', picked: {}, wanted: p.hungry === 'asked' ? {hungry: '桃子'} : {}}]));
   for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : k === 'areas' ? later(v) : k === 'pos' ? {...v, place: 'meadow'} : v, `${k} should be unchanged`);
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v4'), JSON.stringify(V4));
 });
@@ -218,4 +218,13 @@ test('a version 21 save loses its XP (levels did nothing) and keeps everything e
   assert.equal('xp' in s, false, 'no XP');
   assert.equal(s.shells, 8); assert.deepEqual(s.w['山'], {lv: 2, due: 0, ok: 1}); assert.deepEqual(s.friends, ['fox']);
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v21'), JSON.stringify(old), 'the old save is kept as a backup');
+});
+
+test('a version 22 save that has read the story at the waterfall has been up the mountain path with the troop', () => {
+  const read = saveOf(loadGame({save: {version: 22, started: true, areas: {1: {chapter: 1, elder: 2, gate: true, story: true, cave: 2}}}}));
+  assert.equal(read.version, VERSION);
+  assert.equal(read.areas[1].climb, 3, 'the troop is up at the waterfall');
+  assert.equal(read.areas[1].cave, 2, 'everything else stays');
+  const before = saveOf(loadGame({save: {version: 22, started: true, areas: {1: {chapter: 0, elder: 2, gate: true, story: false}}}}));
+  assert.equal(before.areas[1].climb, 0, 'not read yet: the climb is still to come');
 });

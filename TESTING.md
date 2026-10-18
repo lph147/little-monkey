@@ -108,7 +108,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The thirsty monkey (bottom left) teaches 喝 (drink). A task asks you to collect water.
 - [ ] Face the pond (middle of the meadow, where the yellow arrow points) and press A to learn 水 (water).
 - [ ] Take it back. A new-word card for 我 (I) appears, then fill the gap in 我要喝＿。 (I want to drink water.). +3 🐚.
-- [ ] With both monkeys helped, the screen shakes and a message says the rocks north of the meadow have rolled away.
+- [ ] With both monkeys helped, the screen shakes and a message says the rocks north of the meadow have rolled away and the troop gathers there. The old monkey and the little monkey are where the rocks were, with a ! over the old monkey.
 
 **Friends and animals**
 - [ ] The little monkey (in the south meadow, on the path near the bottom right, below the 老板's stall) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.
@@ -141,9 +141,16 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] With fewer than 10 🐚, it says how many you have and how to earn more. The headband is something you choose to buy: it isn't a task or on the checklist, and chapter 1 can begin without it. The 老板 shows a ? once you have 10.
 - [ ] With 10 🐚: fill the gap in 我要＿。 (I want the headband.). Your shells go down by 10, the 老板 says 谢谢你！, and your monkey wears a red headband on the map from then on (a new monkey starts without one).
 
+**Up the stream**
+- [ ] Talk to the old monkey where the rocks were: the little monkey asks 水从哪里来？ (Where does the water come from?), the old monkey says 山上有蛇。 (There are snakes up the mountain.), and you set off up the path on your own. The task says to follow the path up beside the river.
+- [ ] Walk up past where the rocks were, off the top of the meadow: a fade, and you're on the mountain path (山路 shānlù). Your first step on it teaches 路 (path), with its picture.
+- [ ] Low stone walls and ledges send you through the dark long grass (nothing lives in it yet: wild animals come next). You can hop down a ledge (a little jump), but not climb back up one. A fallen tree blocks the way to a peach tree on the left: pressing A says the troop might move it one day.
+- [ ] At the top, stand left of the waterfall and face it: a card teaches 瀑布 (waterfall): this is where the river comes from. A message says to go back and tell the troop.
+- [ ] Walk back down to the meadow (off the bottom of the path) and talk to the old monkey: you say 山上有瀑布！, he says 太好了！我们去看看！, and the troop follows you up. The old monkey, the big monkey and the little monkey are now by the waterfall at the top of the path.
+- [ ] The meadow has no waterfall any more: the river comes in from the top right.
+
 **The waterfall**
-- [ ] The rocks at the top of the right-hand path have gone. Walk up through the gap to the top right, stand just left of the waterfall, face it and press A.
-- [ ] A card teaches 瀑布 (waterfall), with its picture, then the Story Scroll opens: 8 short sentences about your first day (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
+- [ ] At the top of the path, face the waterfall with the troop there and press A: the Story Scroll opens: 8 short sentences about your first day (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
 - [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). The sentence's English, with the gap, is shown underneath. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🐚: "The troop stares at the roaring waterfall. What could be behind it?"
 
 **The wardrobe**
@@ -167,7 +174,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The old monkey, the big monkey and the little monkey are by the waterfall, with a ! over the old monkey; the task says "Go to the 瀑布 (waterfall): the troop is gathering". Talk to the old monkey: 瀑布后面有什么？, then the big monkey says 谁跳进去，谁就是王！ (with its name over the speech box), then a card teaches 跳 (jump), the little monkey says 我怕！, and "Everyone looks at you."
 - [ ] Task: "Jump through the 瀑布 (waterfall)". Stand just left of the waterfall and face it: A says Jump. Press A: a fade, and you're in the Water Curtain Cave, with its name 水帘洞 Shuǐlián Dòng at the top. A card says 洞 (cave) aloud: "A big, dry cave, hidden behind the water!"
 - [ ] The cave has rock walls, stone beds of straw with a leaf blanket along the top, a stone table with fruit on it, stone bowls, a stone tablet just inside the entrance, a stream with an iron bridge, and the water curtain at the bottom. Four things sparkle. Stepping on the bridge teaches 桥 (bridge); facing the beds, the table and the bowls and pressing A teaches 床 (bed), 桌子 (table) and 碗 (bowl). The task counts them: "Look around the 洞 (cave) (2/4)". The tablet says 水帘洞 (Water Curtain Cave).
-- [ ] Walk down into the water curtain: you're back beside the waterfall. The task says to tell the old monkey, with the arrow on him (inside the cave, the arrow points to the curtain).
+- [ ] Walk down into the water curtain: you're back beside the waterfall, at the top of the mountain path. The task says to tell the old monkey, with the arrow on him (inside the cave, the arrow points to the curtain).
 - [ ] Talk to the old monkey: 里面有什么？, then fill the gap in 里面有＿。 (There are beds inside.) with 床, then 太好了！我们去看看！ and "The rest of chapter 1 is coming soon". Menu, Tasks shows those three things ticked on chapter 1's checklist.
 
 **Chapter 1, part B: the troop moves in**

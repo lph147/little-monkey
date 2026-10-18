@@ -17,7 +17,8 @@ const placeholders = text => [...String(text).matchAll(/\{([^}]+)\}/g)].map(m =>
 const allSteps = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.map(s => [`${who}'s talk, part ${i + 1}`, s, who]))),
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
-  ...AREA.begin.map(s => ['begin', s, null])
+  ...AREA.begin.map(s => ['begin', s, null]),
+  ...Object.entries(AREA.legend).flatMap(([ch, t]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at "${ch}", part ${i + 1}`, s, null])))
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),

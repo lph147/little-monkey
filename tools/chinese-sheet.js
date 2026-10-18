@@ -51,7 +51,12 @@ const DRAFTS = [
     ['河 里 有 水 。', 'There’s water in the river.', 'The thirsty monkey, after asking for water'],
     ['我 要 吃 桃子 ！', 'I want to eat a peach!', 'A monkey of the troop'],
     ['树 上 有 鸟 。', 'There are birds in the trees.', 'A monkey of the troop (also in the story at the waterfall)']]
-    .map(([zh, en, where]) => ({zh, en, where:'The prologue, more dialogue on 18 October 2026 (in the game): ' + where}))
+    .map(([zh, en, where]) => ({zh, en, where:'The prologue, more dialogue on 18 October 2026 (in the game): ' + where})),
+  ...[['水 从 哪里 来 ？', 'Where does the water come from?', 'The little monkey, when the rocks have rolled away'],
+    ['山 上 有 蛇 。', 'There are snakes up the mountain.', 'The old monkey, before you set off up the mountain path (山路 shānlù: please check this name too)'],
+    ['山 上 有 瀑布 ！', 'There’s a waterfall up the mountain!', 'You, back from the top of the path (also in the story at the waterfall)'],
+    ['山 上 有 路 。', 'There is a path up the mountain.', 'The example on 路 (path)’s page in the Word Scroll']]
+    .map(([zh, en, where]) => ({zh, en, where:'The prologue, up the stream, 18 October 2026 (in the game): ' + where}))
 ];
 
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the

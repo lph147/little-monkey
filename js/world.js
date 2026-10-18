@@ -276,6 +276,7 @@ async function interact(x, y){
   const bd = birdAt(x, y);
   if (bd && BIRD_WORD){ await showNotice(BIRD_WORD, AREA.birds.note ? {note:fill(AREA.birds.note)} : {}); shooBird(bd); return; }
   const t = tileAt(x, y);
+  if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return runSteps(p.do); }   // the tile's own steps, while the story says
   if (t.gather && canGather(t.gather)) return gather(t, x, y);
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
@@ -301,6 +302,8 @@ async function goThrough(e){
   enterPlace(e.to);
   S.pos = {place:e.to, x:e.arrive[0], y:e.arrive[1], dir:e.facing || pl.dir}; placePlayer(); save();
   showPlaceName();
+  const t = tileAt(e.arrive[0], e.arrive[1]);   // arriving on something you learn by stepping on it, such as the mountain path, counts
+  if (t.learnOnStep && lvl(t.word) === 0) await showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
 }
 let placeNameT;
 function showPlaceName(){

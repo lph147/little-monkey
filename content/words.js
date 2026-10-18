@@ -52,6 +52,7 @@ const WORD_BANK = {
   '黄': {py:'huáng', en:'yellow', pic:'🟨', area:1, category:'colours'},
   '白': {py:'bái', en:'white', pic:'⬜', area:1, category:'colours'},
   // Chapter 1: the Water Curtain Cave
+  '路': {py:'lù', en:'path, road', pic:'🛤️', area:1, category:'places'},
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
   '桥': {py:'qiáo', en:'bridge', pic:'🌉', area:1, category:'places'},
   '床': {py:'chuáng', en:'bed', pic:'🛏️', area:1, category:'items'},
@@ -87,6 +88,10 @@ const WORD_BANK = {
   '和': {py:'hé', en:'and'},
   '后面': {py:'hòumiàn', en:'behind'},
   '大': {py:'dà', en:'big'},
+  '从': {py:'cóng', en:'from'},
+  '哪里': {py:'nǎlǐ', en:'where'},
+  '来': {py:'lái', en:'to come'},
+  '蛇': {py:'shé', en:'snake'},
   '谁': {py:'shéi', en:'who, whoever'},
   '进去': {py:'jìnqù', en:'to go in'},
   '就': {py:'jiù', en:'then'},

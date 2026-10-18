@@ -155,19 +155,34 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(13, 19, 'up', 'meeting the squirrel with an apple in your bag');
   assert.equal(get('S.bag')['苹果'], 0, 'the apple should be eaten');
 
+  // Up the stream: you set off alone, find the waterfall, come back down and lead the troop up
+  await pressAt(15, 2, 'left', 'talking to the old monkey where the rocks were');
+  assert.equal(area().climb, 1, 'you should set off up the path');
+  await stepOn(15, 0, 'going up the mountain path');
+  assert.equal(run('PLACE'), 'path', 'you should be on the mountain path');
+  assert.ok(knows('路'), 'arriving on the mountain path should teach 路');
+  await pressAt(15, 1, 'right', 'finding the waterfall');
+  assert.equal(area().climb, 2, 'you should find the waterfall');
+  assert.ok(knows('瀑布'), 'the waterfall should teach 瀑布');
+  await stepOn(5, 16, 'going back down the path');
+  assert.equal(run('PLACE'), 'meadow', 'you should be back in the meadow');
+  await pressAt(15, 2, 'left', 'telling the old monkey about the waterfall');
+  assert.equal(area().climb, 3, 'the troop should follow you up');
+  await stepOn(15, 0, 'going back up the mountain path');
+
   // The story at the waterfall
-  await pressAt(17, 1, 'right', 'reading the story at the waterfall');
+  await pressAt(15, 1, 'right', 'reading the story at the waterfall');
   assert.equal(area().story, true, 'the story at the waterfall should be read');
 
   // The prologue is done, so chapter 1 begins (its title card was answered along the way)
   assert.equal(area().chapter, 1, 'chapter 1 should begin once the prologue is done');
 
   // Chapter 1, part A: the dare at the waterfall, the jump, the cave, and telling the old monkey
-  assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => [n.id, n.x, n.y])"), [['elder', 15, 1], ['big', 16, 2], ['playful', 14, 2]], 'the troop gathers at the waterfall');
-  await pressAt(16, 1, 'left', 'hearing the dare at the waterfall');
+  assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => [n.id, n.x, n.y])"), [['elder', 13, 1], ['big', 14, 2], ['playful', 12, 2]], 'the troop gathers at the waterfall');
+  await pressAt(14, 1, 'left', 'hearing the dare at the waterfall');
   assert.ok(knows('跳'), 'the dare should teach 跳');
   assert.equal(area().cave, 1);
-  await pressAt(17, 1, 'right', 'jumping through the waterfall');
+  await pressAt(15, 1, 'right', 'jumping through the waterfall');
   assert.equal(run('PLACE'), 'cave', 'you should be in the Water Curtain Cave');
   assert.ok(knows('洞'), 'going in should teach 洞');
   await stepOn(7, 6, 'crossing the iron bridge');
@@ -177,14 +192,14 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(12, 5, 'up', 'reading the stone tablet');
   for (const w of ['桥', '床', '碗', '桌子']) assert.ok(knows(w), `${w} should be found in the cave`);
   await stepOn(7, 13, 'walking out through the water curtain');
-  assert.equal(run('PLACE'), 'meadow', 'you should be back by the waterfall');
-  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [17, 1]);
-  await pressAt(16, 1, 'left', 'telling the old monkey about the cave');
+  assert.equal(run('PLACE'), 'path', 'you should be back by the waterfall');
+  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [15, 1]);
+  await pressAt(14, 1, 'left', 'telling the old monkey about the cave');
   assert.equal(area().cave, 3, 'the old monkey should hear about the cave');
   assert.ok(get('areaChecklist()').slice(0, 3).every(([, done]) => done), 'part A of chapter 1 should be ticked off');
 
   // Chapter 1, part B: leading the troop in, home, becoming king, and counting them in
-  await pressAt(17, 1, 'right', 'leading the troop into the cave');
+  await pressAt(15, 1, 'right', 'leading the troop into the cave');
   assert.equal(run('PLACE'), 'cave');
   assert.equal(area().cave, 4, 'the troop should follow you in');
   assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => n.place)"), ['cave', 'cave', 'cave']);

@@ -124,7 +124,7 @@ const SPR = {
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
-const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall'];   // looks with grass underneath
+const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall','ledge','wall','log'];   // looks with grass underneath
 const CLIFFS = ['cliff'];
 const WATERY = ['water','waterfall','bridge','ironBridge'];
 function grass(g, X, Y, x, y){
@@ -229,6 +229,37 @@ function stoneTablet(g, X, Y, x, y){   // a stone tablet with the cave's name ca
   R(g, X+4, Y, 8, 12, CAVE_OUT); R(g, X+5, Y+1, 6, 10, STONE); R(g, X+5, Y+1, 2, 10, STONE_LIGHT); R(g, X+10, Y+1, 1, 10, STONE_FRONT);
   [1, 4, 7].forEach(r => { R(g, X+7, Y+r+1, 2, 2, '#5E574C'); R(g, X+6, Y+r+2, 4, 1, '#5E574C'); });   // three carved characters
 }
+// The mountain path's ground: long grass (darker and taller than the meadow's tall grass: wild animals live in it),
+// low walls of stacked stones, ledges with a little drop at their bottom edge (you hop down them), and a fallen tree.
+function longGrass(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#3F8F47');
+  for (let i = 0; i < 9; i++){
+    const bx = X + 1 + ((i * 7 + x * 3) % 15), by = Y + 2 + ((i * 5 + y * 7) % 9), h = 5 + (i % 3);
+    R(g, bx, by, 1, h, '#22592A'); R(g, bx + 1, by + 1, 1, h - 1, '#2C6B33'); R(g, bx, by - 1, 1, 1, '#7CC46B');
+  }
+  R(g, X, Y + 14, T, 2, '#2C6B33');
+}
+function wall(g, X, Y, x, y){
+  grass(g, X, Y, x, y);
+  R(g, X, Y + 4, T, 11, '#4A463F');
+  const off = (x + y) % 2 ? 0 : 4;   // the stones don't line up from one square to the next
+  [[0, 5, 7, 4], [8, 5, 8, 4], [0, 10, 4, 4], [5, 10, 6, 4], [12, 10, 4, 4]].forEach(([a, b, w, h]) => {
+    const ax = (a + off) % 16, ww = Math.min(w, 16 - ax);
+    R(g, X + ax, Y + b, ww, h, '#A9A598'); R(g, X + ax, Y + b, ww, 1, '#C9C5B8'); R(g, X + ax, Y + b + h - 1, ww, 1, '#7C786D');
+  });
+  R(g, X, Y + 15, T, 1, '#2E2B27');
+}
+function ledge(g, X, Y, x, y){
+  grass(g, X, Y, x, y);
+  R(g, X, Y + 10, T, 2, '#4E9446'); R(g, X, Y + 12, T, 3, '#9A7046'); R(g, X, Y + 12, T, 1, '#B98A5A'); R(g, X, Y + 15, T, 1, '#5E4430');
+}
+function fallenTree(g, X, Y, x, y){
+  grass(g, X, Y, x, y);
+  R(g, X, Y + 6, T, 7, '#4A2C17'); R(g, X, Y + 7, T, 5, '#8A5A32'); R(g, X, Y + 7, T, 1, '#B98A55');
+  for (let i = 2; i < 16; i += 5) R(g, X + i, Y + 9, 3, 1, '#6B4A2A');
+  R(g, X + 11, Y + 6, 5, 7, '#4A2C17'); R(g, X + 12, Y + 7, 3, 5, '#D9B07A'); R(g, X + 13, Y + 9, 1, 1, '#8A5A32');   // its broken end
+  R(g, X + 4, Y + 3, 1, 3, '#3E8A3E'); R(g, X + 3, Y + 2, 3, 1, '#5FA85A');   // a green shoot
+}
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
 // How each look is painted. Each area's legend picks a look for each map letter.
 const LOOKS = {
@@ -249,6 +280,10 @@ const LOOKS = {
   stall:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },   // the practice post, one square
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
+  longGrass: (g,X,Y,x,y) => longGrass(g,X,Y,x,y),
+  wall:      (g,X,Y,x,y) => wall(g,X,Y,x,y),
+  ledge:     (g,X,Y,x,y) => ledge(g,X,Y,x,y),
+  log:       (g,X,Y,x,y) => fallenTree(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
   caveWall:  (g,X,Y,x,y) => caveWall(g,X,Y,x,y),
   stoneBed:  (g,X,Y,x,y) => stoneBed(g,X,Y,x,y),

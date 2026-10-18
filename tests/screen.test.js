@@ -88,7 +88,7 @@ test('your tasks only list what you’ve found: the flowers once the big monkey 
   run("pressB(); here().flowers = 'asked'; pressSelect()");
   text = sheet.textContent;
   assert.match(text, /a red, a yellow and a white flower/, 'once asked, it’s on the list');
-  assert.ok(JSON.parse(run('JSON.stringify(areaChecklist().map(c => c[1]))')).length === 7, 'the whole checklist still counts towards finishing the chapter');
+  assert.ok(JSON.parse(run('JSON.stringify(areaChecklist().map(c => c[1]))')).length === 9, 'the whole checklist still counts towards finishing the chapter');
 });
 
 test('Start opens the menu, with your words, friends and shells at the top', () => {

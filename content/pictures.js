@@ -1408,6 +1408,43 @@ const PICTURES = {
       "................................",
       "................................"
     ]
+  },
+  '路': {   // path, road
+    palette: {a:'#2F4727', b:'#1C301A', c:'#6CC066', d:'#31783B', e:'#3F9A4C', f:'#394A2A', g:'#8CCB6E', h:'#26391D', i:'#6CB35C', j:'#AD8C70', k:'#6C4627', l:'#4F9446', m:'#EBD3A8', n:'#B9965F', o:'#D9BB8A', p:'#C3C0B7', q:'#848177', r:'#A9A598', s:'#C6A473', t:'#473A25'},
+    rows: [
+      "................................",
+      "........................aaab....",
+      ".......................acccdb...",
+      "......................aceeeedb..",
+      "......................aceeeedb..",
+      ".....................bdeeeeeedb.",
+      "......................aceeeedb..",
+      "....ffffffffffffffffffbdeeeedb..",
+      "..ffggggggggggggggggggggddddbh..",
+      ".fggiiiiiiiiiiiiiiiiiiiiijkiglh.",
+      ".fgiiiiiiiiiiiiiiimmniiiikkiilh.",
+      "fgiiiiiiliiiiiiiimoniiiiiiiiiilh",
+      "fgiiiiiiliiiiiimmoniiiiiiiiiiilh",
+      "fgiiiliiiiiiiimoooniiiiiiiiiiilh",
+      "fgiiiliiiiiiimoooniiiiiiiiiiiilh",
+      "fgiiiiiiiiiimoooniiiiiiiiiiiiilh",
+      "fgiiiiiiiiimoooniiiiiiiiiiiiiilh",
+      "fgiiiiiiiimooooniiiiiiiiiipqiilh",
+      "fgiiiiiiiimoooniiiiiiiiiiqrrqilh",
+      "fgiiiiiiimoooniiiiiiiiiiiiqqiilh",
+      "fgiiiiiinoooniiiiiiiiiiiiiiiiilh",
+      "fgiiiiiiinoosmniiiiiiiiiiiiiiilh",
+      "fgippqiiiimosooniiiiiiiiiiiiiilh",
+      "fgqrrrqiiinooooomniiiiiiiiiiiilh",
+      "fgiqqqiiiiimooooooniiiiiiiiiiilh",
+      "fgiiiiiiiiimoooooooniiiiiiiiiilh",
+      "fgiiiiiiiiimoossooooniiiiiiliilh",
+      "hliiiiiiiimooossoooooniiiiiliilh",
+      ".fgiiiiiimoooooooooooniiiiiiilh.",
+      ".hlliiiimoooooooooooooniiiiillh.",
+      "..hhlllnnnnnnnnnnnnnnnnnllllhh..",
+      "....hhhttttttttttttttttthhhh...."
+    ]
   }
 };
 

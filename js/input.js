@@ -10,14 +10,19 @@ function tryStep(d, now){
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
   const [dx,dy] = DV[d], nx = pl.x + dx, ny = pl.y + dy, way = exitAt(nx, ny);
   if (way && !way.by && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
+  if (tileAt(nx, ny).ledge){   // a ledge: you hop down it, landing just below, but can never climb it
+    if (d === 'down' && walkable(nx, ny + 1)){ pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny + 1, t0:now, hop:true}; pl.parity ^= 1; SFX.turn(); }
+    else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
+    return;
+  }
   if (walkable(nx, ny)){ pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now}; pl.parity ^= 1; }
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
 }
 function update(now){
   if (mode !== 'play') return;
   if (pl.mv){
-    const m = pl.mv, p = Math.min(1, (now - m.t0) / STEP);
-    pl.px = (m.fx + (m.tx - m.fx) * p) * T; pl.py = (m.fy + (m.ty - m.fy) * p) * T;
+    const m = pl.mv, p = Math.min(1, (now - m.t0) / (m.hop ? STEP * 1.6 : STEP));   // a hop down a ledge takes a little longer
+    pl.px = (m.fx + (m.tx - m.fx) * p) * T; pl.py = (m.fy + (m.ty - m.fy) * p) * T - (m.hop ? Math.sin(p * Math.PI) * 7 : 0);
     if (p >= 1){
       pl.x = m.tx; pl.y = m.ty; pl.mv = null; busy = true; lastMoveEnd = now;
       Promise.resolve(arrive(pl.x, pl.y)).then(runEvents).finally(() => { busy = false; updateHUD(); });

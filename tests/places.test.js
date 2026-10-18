@@ -73,3 +73,42 @@ test('a task arrow to someone in another place points the way there', () => {
   assert.deepEqual(elder.target, [1, 2], 'the way back to the meadow, where the old monkey is');
   assert.ok(!elder.npc);
 });
+
+// The mountain path (18 October 2026): up beside the river from the meadow to the waterfall at its top.
+test('the mountain path leads up from the meadow, and the waterfall is at its top, not in the meadow', () => {
+  const game = loadGame();
+  const looks = id => [...new Set(get(game, `PLACES.${id}.map.join('')`).split('').map(ch => get(game, `AREA.legend[${JSON.stringify(ch)}].look`)))];
+  assert.ok(!looks('meadow').includes('waterfall'), 'the meadow has no waterfall now');
+  assert.ok(looks('path').includes('waterfall'), 'the path has it');
+  const up = get(game, "PLACES.meadow.exits.filter(e => e.to === 'path')");
+  assert.ok(up.length >= 1, 'a way up from the meadow');
+  assert.ok(get(game, "PLACES.path.exits.some(e => e.to === 'meadow')"), 'and back down');
+  assert.ok(get(game, "PLACES.path.exits.some(e => e.to === 'cave' && e.by === 'A')"), 'the jump into the cave is at the top of the path');
+});
+
+test('you can hop down a ledge, but never climb it', () => {
+  const game = loadGame({save: {version: 23, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place: 'path', x: 8, y: 9, dir: 'down'}}});
+  game.run("mode = 'play'; placePlayer()");
+  assert.equal(get(game, 'tileAt(8, 10).look'), 'ledge');
+  game.run('tryStep("down", 10000)');
+  assert.deepEqual(get(game, '[pl.mv.tx, pl.mv.ty, pl.mv.hop]'), [8, 11, true], 'down over the ledge, landing below it');
+  game.run("pl.mv = null; S.pos = {place: 'path', x: 8, y: 11, dir: 'up'}; placePlayer(); tryStep('up', 10000)");
+  assert.equal(get(game, 'pl.mv'), null, 'not back up it');
+});
+
+test('setting off: the old monkey sends you up alone, and the waterfall at the top is where the water comes from', async () => {
+  const game = loadGame({save: {version: 23, started: true, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true}}}});
+  game.run("mode = 'play'; showDialog = showNarration = showNotice = replyWith = async () => {}; toast = () => {}");
+  const said = () => get(game, "(AREA.talk.elder.find(p => !p.if || matches(p.if)).do || []).map(s => s.say || s.set && 'set' || s.message && 'message')");
+  assert.deepEqual(said().slice(0, 2), ['whereFrom', 'snakes'], 'the little monkey wonders, and the old monkey warns of snakes');
+  await game.run("runSteps(AREA.talk.elder.find(p => !p.if || matches(p.if)).do, 'elder')");
+  assert.equal(get(game, 'here().climb'), 1);
+  assert.equal(get(game, "ALL_NPCS.find(n => n.id === 'elder').place"), 'meadow', 'the troop stays below');
+  game.run("S.pos = {place: 'path', x: 15, y: 1, dir: 'right'}; placePlayer()");
+  await game.run('interact(16, 1)');
+  assert.equal(get(game, 'here().climb'), 2, 'the waterfall: found it');
+  await game.run("runSteps(AREA.talk.elder.find(p => !p.if || matches(p.if)).do, 'elder')");
+  assert.equal(get(game, 'here().climb'), 3, 'back down, you tell the troop');
+  game.run('placeCharacters()');
+  assert.deepEqual(get(game, "['elder', 'big', 'playful'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'path'], 'and they follow you up');
+});

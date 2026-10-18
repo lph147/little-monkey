@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 22;
+const SAVE_VERSION = 23;
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
   for (const r of REQUESTS) p[r.id] = 'not asked';
@@ -122,6 +122,11 @@ function upgradeSave(s){
   if (s.version === 21){   // version 21 had XP and levels, which did nothing: progress is the words you know
     delete s.xp;
     s.version = 22;
+  }
+  if (s.version === 22){   // version 22: the waterfall was in the meadow. It's at the top of the mountain path now, and a
+    const a = (s.areas || {})[AREA.number];   // game that has read the story there has been up the path with the troop
+    if (a && (a.story || (a.chapter || 0) >= 1)) a.climb = 3;
+    s.version = 23;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];

@@ -44,6 +44,9 @@ shown where the word list has them.
 | 河里有水。 | hé lǐ yǒu shuǐ. | There’s water in the river. | 渴猴子 (Thirsty monkey) |  |
 | 我要吃桃子！ | wǒ yào chī táozi! | I want to eat a peach! | 猴子 (Monkey) |  |
 | 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | 猴子 (Monkey) |  |
+| 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 老猴子 (Old monkey) |  |
+| 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
+| 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 老猴子 (Old monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
 | 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | 老猴子 (Old monkey), 大猴子 (Big monkey) |  |
 | 我怕！ | wǒ pà! | I’m scared! | 老猴子 (Old monkey), 小猴子 (Little monkey) |  |
@@ -97,6 +100,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
 | 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
 | 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
+| 山上有路。 | shān shàng yǒu lù. | There is a path up the mountain. | 路 |  |
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | 桥 |  |
 | 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | 碗 |  |
 | 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | 桌子 |  |
@@ -138,6 +142,7 @@ The opening is told in English. These captions each show one word, said aloud.
 | 牌子 | páizi | Sign |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
 | 草地 | cǎodì | The meadow |  |
+| 山路 | shānlù | The mountain path |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 
 ### Words to collect
@@ -165,6 +170,7 @@ The opening is told in English. These captions each show one word, said aloud.
 | 红 | hóng | red |  |
 | 黄 | huáng | yellow |  |
 | 白 | bái | white |  |
+| 路 | lù | path, road |  |
 | 跳 | tiào | to jump |  |
 | 桥 | qiáo | bridge |  |
 | 床 | chuáng | bed |  |
@@ -201,6 +207,10 @@ The opening is told in English. These captions each show one word, said aloud.
 | 和 | hé | and |  |
 | 后面 | hòumiàn | behind |  |
 | 大 | dà | big |  |
+| 从 | cóng | from |  |
+| 哪里 | nǎlǐ | where |  |
+| 来 | lái | to come |  |
+| 蛇 | shé | snake |  |
 | 谁 | shéi | who, whoever |  |
 | 进去 | jìnqù | to go in |  |
 | 就 | jiù | then |  |
@@ -295,6 +305,10 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 河里有水。 | hé lǐ yǒu shuǐ. | There’s water in the river. | The prologue, more dialogue on 18 October 2026 (in the game): The thirsty monkey, after asking for water |  |
 | 我要吃桃子！ | wǒ yào chī táozi! | I want to eat a peach! | The prologue, more dialogue on 18 October 2026 (in the game): A monkey of the troop |  |
 | 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | The prologue, more dialogue on 18 October 2026 (in the game): A monkey of the troop (also in the story at the waterfall) |  |
+| 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | The prologue, up the stream, 18 October 2026 (in the game): The little monkey, when the rocks have rolled away |  |
+| 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | The prologue, up the stream, 18 October 2026 (in the game): The old monkey, before you set off up the mountain path (山路 shānlù: please check this name too) |  |
+| 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | The prologue, up the stream, 18 October 2026 (in the game): You, back from the top of the path (also in the story at the waterfall) |  |
+| 山上有路。 | shān shàng yǒu lù. | There is a path up the mountain. | The prologue, up the stream, 18 October 2026 (in the game): The example on 路 (path)’s page in the Word Scroll |  |
 
 ## Questions
 
