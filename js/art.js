@@ -124,7 +124,7 @@ const SPR = {
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
-const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall','ledge','wall','log'];   // looks with grass underneath
+const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log'];   // looks with grass underneath
 const CLIFFS = ['cliff'];
 const WATERY = ['water','waterfall','bridge','ironBridge'];
 function grass(g, X, Y, x, y){
@@ -146,12 +146,13 @@ function path(g, X, Y, x, y){
     }
   });
 }
-function tall(g, X, Y, x, y){
-  R(g, X, Y, T, T, '#5BA552');
+const TALL = ['#5BA552', '#2F6E38', '#94D883'], LONG = ['#479147', '#1D4F27', '#7CC46B'];   // the ground, the blades and their tips
+function tall(g, X, Y, x, y, [ground, blade, tip] = TALL){   // tufts of tall grass (the meadow's), or long grass (LONG: where wild animals live)
+  R(g, X, Y, T, T, ground);
   const tuft = (ox, oy) => {
-    [[0,3],[1,2],[2,3],[3,1],[4,3],[5,2],[6,3]].forEach(([a,c]) => R(g, X+ox+a, Y+oy+c, 1, 1, '#2F6E38'));
-    [[1,1],[3,0],[5,1]].forEach(([a,c]) => R(g, X+ox+a, Y+oy+c, 1, 1, '#94D883'));
-    R(g, X+ox, Y+oy+4, 7, 1, '#2F6E38');
+    [[0,3],[1,2],[2,3],[3,1],[4,3],[5,2],[6,3]].forEach(([a,c]) => R(g, X+ox+a, Y+oy+c, 1, 1, blade));
+    [[1,1],[3,0],[5,1]].forEach(([a,c]) => R(g, X+ox+a, Y+oy+c, 1, 1, tip));
+    R(g, X+ox, Y+oy+4, 7, 1, blade);
   };
   tuft(0,1); tuft(8,0); tuft(4,6); tuft(9,9); tuft(0,10);
 }
@@ -229,29 +230,26 @@ function stoneTablet(g, X, Y, x, y){   // a stone tablet with the cave's name ca
   R(g, X+4, Y, 8, 12, CAVE_OUT); R(g, X+5, Y+1, 6, 10, STONE); R(g, X+5, Y+1, 2, 10, STONE_LIGHT); R(g, X+10, Y+1, 1, 10, STONE_FRONT);
   [1, 4, 7].forEach(r => { R(g, X+7, Y+r+1, 2, 2, '#5E574C'); R(g, X+6, Y+r+2, 4, 1, '#5E574C'); });   // three carved characters
 }
-// The mountain path's ground: long grass (darker and taller than the meadow's tall grass: wild animals live in it),
-// low walls of stacked stones, ledges with a little drop at their bottom edge (you hop down them), and a fallen tree.
-function longGrass(g, X, Y, x, y){
-  R(g, X, Y, T, T, '#3F8F47');
-  for (let i = 0; i < 9; i++){
-    const bx = X + 1 + ((i * 7 + x * 3) % 15), by = Y + 2 + ((i * 5 + y * 7) % 9), h = 5 + (i % 3);
-    R(g, bx, by, 1, h, '#22592A'); R(g, bx + 1, by + 1, 1, h - 1, '#2C6B33'); R(g, bx, by - 1, 1, 1, '#7CC46B');
-  }
-  R(g, X, Y + 14, T, 2, '#2C6B33');
-}
-function wall(g, X, Y, x, y){
-  grass(g, X, Y, x, y);
-  R(g, X, Y + 4, T, 11, '#4A463F');
-  const off = (x + y) % 2 ? 0 : 4;   // the stones don't line up from one square to the next
-  [[0, 5, 7, 4], [8, 5, 8, 4], [0, 10, 4, 4], [5, 10, 6, 4], [12, 10, 4, 4]].forEach(([a, b, w, h]) => {
-    const ax = (a + off) % 16, ww = Math.min(w, 16 - ax);
-    R(g, X + ax, Y + b, ww, h, '#A9A598'); R(g, X + ax, Y + b, ww, 1, '#C9C5B8'); R(g, X + ax, Y + b + h - 1, ww, 1, '#7C786D');
-  });
-  R(g, X, Y + 15, T, 1, '#2E2B27');
-}
+// The mountain path's ground: long grass (the meadow's tall grass, a shade darker: wild animals live in it), ledges
+// (you hop down them), bushes and boulders along its edges, and a fallen tree.
+// A ledge, as in Pokémon: the grass ends in a rounded lip, with a short grassy bank below it, lit at the top and darker
+// down to its foot, and its shadow on the grass below. Where a row of ledges ends, the lip curves down.
+const BANK = ['#A9E08F', '#5FA14F', '#4F9445', '#4F9445', '#3F7F38', '#3F7F38'];
 function ledge(g, X, Y, x, y){
   grass(g, X, Y, x, y);
-  R(g, X, Y + 10, T, 2, '#4E9446'); R(g, X, Y + 12, T, 3, '#9A7046'); R(g, X, Y + 12, T, 1, '#B98A5A'); R(g, X, Y + 15, T, 1, '#5E4430');
+  const end = a => tileAt(a, y).look !== 'ledge', left = end(x-1), right = end(x+1);
+  for (let i = 0; i < T; i++){
+    const e = Math.min(left ? i : 9, right ? 15 - i : 9), top = Y + 6 + ([4, 2, 1][e] || 0);   // how far from the end it is, and where its lip is
+    for (let k = 0; top + k < Y + 12; k++) R(g, X+i, top + k, 1, 1, BANK[Math.min(k, BANK.length - 1)]);
+    if (i % 2 && e > 0) R(g, X+i, top + 2, 1, i % 4 === 1 ? 2 : 1, '#3F7F38');   // grass hanging over the lip
+    if (e === 0) R(g, X+i, top + 1, 1, Y + 12 - top, '#2C5E2A');                // the very end
+    R(g, X+i, Y+12, 1, 1, '#2C5E2A'); R(g, X+i, Y+13, 1, 2, '#5FA853');         // its foot, and its shadow
+  }
+}
+function bush(g, X, Y, x, y){   // a round bush, its leaves like the trees'
+  grass(g, X, Y, x, y);
+  groundShadow(g, X+8, Y+14, 7, 2);
+  leaves(g, [[5,9,4],[11,9,4],[8,6,5]], X, Y, x*7 + y*13);
 }
 function fallenTree(g, X, Y, x, y){
   grass(g, X, Y, x, y);
@@ -280,9 +278,10 @@ const LOOKS = {
   stall:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },   // the practice post, one square
   cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
-  longGrass: (g,X,Y,x,y) => longGrass(g,X,Y,x,y),
-  wall:      (g,X,Y,x,y) => wall(g,X,Y,x,y),
+  longGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y,LONG),
   ledge:     (g,X,Y,x,y) => ledge(g,X,Y,x,y),
+  bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
+  boulder:   (g,X,Y,x,y) => { grass(g,X,Y,x,y); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a boulder by the path
   log:       (g,X,Y,x,y) => fallenTree(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
   caveWall:  (g,X,Y,x,y) => caveWall(g,X,Y,x,y),

@@ -216,7 +216,7 @@ Agreed on 18 October 2026, with mockups. A battle looks like an animal encounter
 - **Moves come from the story**, and harder ones ask harder questions and hit harder: 打 with your stick (from the prologue; a Listen question, 1 heart), 跳 jump (the enemy's next attack misses), 变成 transform (Area 3: your next question loses a wrong answer), and the staff, 金箍棒 (Area 4: a Read question, 2 hearts; your stick becomes the staff).
 - **No friend powers** (decided 18 October 2026, after playtesting): planned, then dropped to keep battles simple. Abilities like transforming (变成) come later, with the story.
 - **Who you fight.** On Flower Fruit Mountain, wild creatures on the path up the stream: snakes and bees in the long grass, a wild boar blocking the last stretch, all chased away, never hurt. Demons from Area 3 (little demons, then the Demon of Havoc, 混世魔王), the Dragon King's guards in Area 4, Heaven's soldiers in Area 5.
-- **Where.** Wild creatures jump out of long grass on paths, drawn darker and taller than the meadow's tall grass; walls and ledges mean you can't always go round it. The meadow's tall grass keeps its friendly animals. Big enemies (the boar, demons) stand on the map guarding the way.
+- **Where.** Wild creatures jump out of long grass on paths, drawn like the meadow's tall grass, a shade darker; bushes, boulders and ledges mean you can't always go round it, and standing in it hides your feet, as in Pokémon. The meadow's tall grass keeps its friendly animals. Big enemies (the boar, demons) stand on the map guarding the way.
 - **Bosses** come in stages; between them the boss says a line and you answer by filling the gap in a sentence (你是谁？ … 我是美猴王！).
 - **Winning and losing.** The first meeting with a kind of enemy teaches its name on a card. Winning gives shells or coins, sometimes an item. Losing isn't punished: you're carried back to rest with full hearts, and the words you missed come back sooner.
 - **Getting harder without levels.** The path's creatures ask about words you've known a while, with pictures; later enemies use harder kinds of question (characters by sound, sentence gaps, tones), and bosses mix them all.
@@ -373,6 +373,10 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [ ] Chapter 1 B: setting up home (有, 没有), counting the troop in (four to ten), then king at the feast
 - [ ] Chapter 1 C: chopping trees for wood, a new place, building the school, lessons and hide and seek
 - [x] Playtest fixes (18 October 2026): the rocks roll away only once the rest of the prologue is done; wild creatures jump out less often; no friend powers
+- [x] The path's new looks (18 October 2026, after playtesting): long grass like the meadow's tall grass, a shade darker; Pokémon-style ledges; bushes and boulders instead of stone walls; grass hides your feet
+- [ ] The longer way up the stream: three places following the river, with a fork, animal friends from the meadow who play or give advice, and fruit trees
+- [ ] Fruit that does different things (the peach brings a heart back, the apple takes away a wrong answer), and the bag (包)
+- [ ] Battle animations (the stick's swing, hits and misses; the enemy hiding, then striking) and quicker, calm battle music
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2
 - [ ] Build Area 2, Across the sea

@@ -134,3 +134,20 @@ test('on the way up the mountain path there is no way round the long grass', () 
   assert.equal(way(false), true, 'you can reach the waterfall');
   assert.equal(way(true), false, 'but not without going through long grass');
 });
+
+test('standing in tall or long grass hides your feet, as in Pokémon; on the path it doesn’t', () => {
+  const at = (place, x, y) => { const g = loadGame({save: {version: 24, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place, x, y, dir: 'down'}}}); g.run("mode = 'play'; placePlayer()"); return g; };
+  assert.deepEqual(get(at('meadow', 4, 7), 'grassUnder()'), [[4, 7]], 'the meadow’s tall grass');
+  assert.deepEqual(get(at('path', 6, 11), 'grassUnder()'), [[6, 11]], 'the path’s long grass');
+  assert.deepEqual(get(at('path', 5, 15), 'grassUnder()'), [], 'not on the path itself');
+  const walking = at('meadow', 4, 7);
+  walking.run('pl.px += T / 2');
+  assert.deepEqual(get(walking, 'grassUnder()'), [[4, 7], [5, 7]], 'between two squares of grass, both');
+});
+
+test('the mountain path is edged with bushes and boulders, not stone walls', () => {
+  const game = loadGame();
+  assert.ok(!get(game, 'Object.keys(LOOKS)').includes('wall'));
+  assert.equal(get(game, "AREA.legend.w.look"), 'bush');
+  assert.ok(!get(game, '!!AREA.legend.w.walk'), 'you can’t walk through a bush');
+});

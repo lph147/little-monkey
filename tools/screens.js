@@ -132,7 +132,9 @@ const SCREENS = [
   {id: 'cave-things', title: 'The troop’s things', save: 'caveTop', why: 'Beds of straw against the wall, the table, the bowls.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(500); }},
   {id: 'set-off', title: 'Where does the water come from?', save: 'rocksGone', why: 'The troop gathers where the rocks were; you set off up the path alone.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
-  {id: 'mountain-path', title: 'The mountain path', save: 'climbing', why: 'Walls and ledges send you through the long grass (wild animals to come).', run: async () => { play(); await wait(500); }},
+  {id: 'mountain-path', title: 'The mountain path', save: 'climbing', why: 'Bushes and ledges send you through the long grass, where wild animals live.', run: async () => { play(); await wait(500); }},
+  {id: 'long-grass', title: 'In the long grass', save: 'climbing', why: 'Standing in the long grass hides your feet; a ledge above, to hop down.', run: async () => {
+    play(); await wait(200); S.pos = {place: 'path', x: 6, y: 11, dir: 'up'}; placePlayer(); await wait(400); }},
   {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'rocksGone', why: 'Teaching 棍子, before the lesson on how to fight.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); next(); await wait(300); next(); await wait(600); }},
   {id: 'battle-snake', title: 'A battle: your turn', save: 'fighting', why: 'Hit, eat (you have an apple) or run. Hearts on both sides.', run: async () => {

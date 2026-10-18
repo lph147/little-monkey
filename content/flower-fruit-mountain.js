@@ -241,7 +241,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ]
     },
     // The mountain path, up beside the river from the meadow to the waterfall at its top (the end of the prologue):
-    // low walls and ledges send you through two bands of long grass (there's no way round), a wild boar blocks the narrow
+    // bushes and ledges send you through two bands of long grass (there's no way round), a wild boar blocks the narrow
     // way at the top, and a fallen tree hides a peach tree for chapter 1.
     path: {
       name: {zh:'山路', py:'shānlù', en:'The mountain path'},
@@ -353,7 +353,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the mountain path
     'r': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'A path up the mountain, beside the river.'},
     'n': {look:'longGrass', walk:true, wild:['snake', 'bee']},   // long grass: snakes and bees jump out to fight
-    'w': {look:'wall'},
+    'w': {look:'bush'},   // bushes along the path
     'v': {look:'ledge', ledge:true},
     'l': {look:'log', word:'树', landmark:true, message:'A fallen tree blocks the way. Maybe the troop can move it one day.'},
     // the Water Curtain Cave

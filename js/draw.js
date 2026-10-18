@@ -107,6 +107,13 @@ function talkCamera(cy){
   const k = talkK * talkK * (3 - 2 * talkK);   // eased
   return Math.round(cy + (want - cy) * k);
 }
+// The tall or long grass you're standing in (a square, or two as you walk from one to the next). Its bottom edge is
+// drawn again over you, so it hides your feet, as in Pokémon.
+const HIDES_FEET = ['tallGrass', 'longGrass'];
+function grassUnder(){
+  const xs = [...new Set([Math.floor(pl.px / T), Math.ceil(pl.px / T)])], ys = [...new Set([Math.floor(pl.py / T), Math.ceil(pl.py / T)])];
+  return xs.flatMap(x => ys.map(y => [x, y])).filter(([x, y]) => HIDES_FEET.includes(tileAt(x, y).look));
+}
 function drawWorld(now){
   let cx = Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));
   let cy = talkCamera(Math.round(clamp(pl.py + 8 - VH*T/2, 0, ROWS*T - VH*T)));
@@ -158,6 +165,7 @@ function drawWorld(now){
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
+      for (const [gx, gy] of grassUnder()) b.drawImage(mapCanvas, gx*T, gy*T + 12, T, 4, gx*T - cx, gy*T - cy + 12, T, 4);   // the grass over your feet
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
       continue;
     }
