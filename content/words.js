@@ -48,9 +48,9 @@ const WORD_BANK = {
   '松鼠': {py:'sōngshǔ', en:'squirrel', pic:'🐿️', area:1, category:'animals'},
   '山羊': {py:'shānyáng', en:'goat', pic:'🐐', area:1, category:'animals'},
   '洞': {py:'dòng', en:'cave', pic:'🕳️', area:1, category:'places'},
-  '红': {py:'hóng', en:'red', pic:'🟥', area:1, category:'colours'},
-  '黄': {py:'huáng', en:'yellow', pic:'🟨', area:1, category:'colours'},
-  '白': {py:'bái', en:'white', pic:'⬜', area:1, category:'colours'},
+  '红色': {py:'hóngsè', en:'red', pic:'🟥', area:1, category:'colours'},
+  '黄色': {py:'huángsè', en:'yellow', pic:'🟨', area:1, category:'colours'},
+  '白色': {py:'báisè', en:'white', pic:'⬜', area:1, category:'colours'},
   // Chapter 1: the Water Curtain Cave
   '路': {py:'lù', en:'path, road', pic:'🛤️', area:1, category:'places'},
   '棍子': {py:'gùnzi', en:'stick', pic:'🪵', area:1, category:'items'},

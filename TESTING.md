@@ -101,9 +101,9 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] A new-word card for 要 (want) appears. Then "Fill the gap": 我要吃＿。 with the English underneath, and 3 choices. While the fruit is new they're pictures with the Chinese; once you've recognised it, Chinese and pinyin only. Choosing fills the gap and reads the sentence aloud; a wrong choice shows the right one, and either way the task completes with +3 🐚.
 
 **The big monkey**
-- [ ] The big monkey (大猴子) stands in the middle meadow, between the two patches of tall grass on the left, with a ! once you've said hello to the old monkey. It says 我要红花、黄花和白花！ (I want a red flower, a yellow flower and a white flower) and teaches 花 if you don't know it yet.
-- [ ] Red flowers grow in the middle of the meadow, yellow ones in the south and white ones on the far left and by the river. Face a patch and press A (it says Pick): the first of each colour teaches its word on a card (红 red, 黄 yellow, 白 white), then "You picked a red 花 (flower) (1/3)". Another patch of a colour you have says you have that colour already. The task box counts up to 3, with no arrow.
-- [ ] Take them back (it shows a ?): 你有花吗？, then fill the gap in 我要＿花。 (I want a red flower.), +3 🐚, and reply 不客气 when it says thank you.
+- [ ] The big monkey (大猴子) stands in the middle meadow, between the two patches of tall grass on the left, with a ! once you've said hello to the old monkey. It says 我要红色、黄色和白色的花！ (I want red, yellow and white flowers!) and teaches 花 if you don't know it yet.
+- [ ] Red flowers grow in the middle of the meadow, yellow ones in the south and white ones on the far left and by the river. Face a patch and press A (it says Pick): the first of each colour teaches its word on a card (红色 hóngsè red, 黄色 huángsè yellow, 白色 báisè white), then "You picked a red 花 (flower) (1/3)". Another patch of a colour you have says you have that colour already. The task box counts up to 3, with no arrow.
+- [ ] Take them back (it shows a ?): 你有花吗？, then fill the gap in 我要＿的花。 (I want a red flower.), +3 🐚, and reply 不客气 when it says thank you.
 
 **The thirsty monkey**
 - [ ] The thirsty monkey (bottom left) teaches 喝 (drink). A task asks you to collect water.

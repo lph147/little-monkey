@@ -39,9 +39,14 @@ const DRAFTS = [
     ['这 是 桃子 。 我 要 吃 苹果 ！', 'This is a peach. I want to eat an apple!', 'The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring)'],
     ['你 有 苹果 吗 ？', 'Do you have an apple?', 'The hungry monkey, when you bring the apple he wants'],
     ['我 要 吃 苹果 。', 'I want to eat an apple.', 'The sentence you finish when you give him the apple'],
-    ['我 要 红 花 、 黄 花 和 白 花 ！', 'I want a red flower, a yellow flower and a white flower!', 'The big monkey asking for flowers (红, 黄 and 白 are each taught when you pick that colour)'],
-    ['我 要 红 花 。', 'I want a red flower.', 'The sentence you finish when you give the big monkey the flowers (filling in 红)']]
+    ['我 要 红色 、 黄色 和 白色 的 花 ！', 'I want red, yellow and white flowers!', 'The big monkey asking for flowers (红色, 黄色 and 白色 are each taught when you pick that colour; changed on 19 October 2026 from 红花, 黄花 and 白花)'],
+    ['我 要 红色 的 花 。', 'I want a red flower.', 'The sentence you finish when you give the big monkey the flowers (filling in 红色; changed on 19 October 2026 from 我要红花。)']]
     .map(([zh, en, where]) => ({zh, en, where:'The prologue, changed on 17 October 2026: ' + where})),
+  ...[['草 里 有 蛇 。', 'There are snakes in the grass.', 'The rabbit, by the long grass on the mountain path'],
+    ['水 从 山 上 来 。', 'The water comes from up the mountain.', 'The fox, at the fork in the river valley'],
+    ['去 找 动物 吧 ！', 'Go and find the animals!', 'A monkey across the river, giving advice'],
+    ['老板 有 苹果 。', 'The shop owner has apples.', 'A monkey across the river, giving advice']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 18 and 19 October 2026: ' + where})),
   ...[['我 是 老 猴子 。 这 是 花果山 。', 'I’m the old monkey. This is Flower Fruit Mountain.', 'The old monkey, after your first 你好'],
     ['去 找 猴子 吧 ！', 'Go and find the monkeys!', 'The old monkey, sending you to help the troop'],
     ['饿 猴子 要 吃 水果 。', 'The hungry monkey wants to eat some fruit.', 'The old monkey, checking in'],

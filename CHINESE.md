@@ -32,7 +32,7 @@ shown where the word list has them.
 | 你好！我是老板。 | nǐ hǎo! wǒ shì lǎobǎn. | Hello! I'm the shop owner. | 老板 (Shop owner) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey) |  |
-| 我要红花、黄花和白花！ | wǒ yào hóng huā, huáng huā hé bái huā! | I want a red flower, a yellow flower and a white flower! | 大猴子 (Big monkey) |  |
+| 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
 | 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | 老猴子 (Old monkey) |  |
@@ -69,7 +69,7 @@ shown where the word list has them.
 | 我要吃桃子 | wǒ yào chī táozi | I want to eat a peach. | 饿猴子 (Hungry monkey) |  |
 | 我要吃苹果 | wǒ yào chī píngguǒ | I want to eat an apple. | 饿猴子 (Hungry monkey) |  |
 | 我要喝水 | wǒ yào hē shuǐ | I want to drink water. | 渴猴子 (Thirsty monkey) |  |
-| 我要红花 | wǒ yào hóng huā | I want a red flower. | 大猴子 (Big monkey) |  |
+| 我要红色的花 | wǒ yào hóngsè de huā | I want a red flower. | 大猴子 (Big monkey) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
@@ -177,9 +177,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 松鼠 | sōngshǔ | squirrel |  |
 | 山羊 | shānyáng | goat |  |
 | 洞 | dòng | cave |  |
-| 红 | hóng | red |  |
-| 黄 | huáng | yellow |  |
-| 白 | bái | white |  |
+| 红色 | hóngsè | red |  |
+| 黄色 | huángsè | yellow |  |
+| 白色 | báisè | white |  |
 | 路 | lù | path, road |  |
 | 棍子 | gùnzi | stick |  |
 | 蛇 | shé | snake |  |
@@ -318,8 +318,12 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! | The prologue, changed on 17 October 2026: The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants |  |
 | 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
-| 我要红花、黄花和白花！ | wǒ yào hóng huā, huáng huā hé bái huā! | I want a red flower, a yellow flower and a white flower! | The prologue, changed on 17 October 2026: The big monkey asking for flowers (红, 黄 and 白 are each taught when you pick that colour) |  |
-| 我要红花。 | wǒ yào hóng huā. | I want a red flower. | The prologue, changed on 17 October 2026: The sentence you finish when you give the big monkey the flowers (filling in 红) |  |
+| 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | The prologue, changed on 17 October 2026: The big monkey asking for flowers (红色, 黄色 and 白色 are each taught when you pick that colour; changed on 19 October 2026 from 红花, 黄花 and 白花) |  |
+| 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | The prologue, changed on 17 October 2026: The sentence you finish when you give the big monkey the flowers (filling in 红色; changed on 19 October 2026 from 我要红花。) |  |
+| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 and 19 October 2026: The rabbit, by the long grass on the mountain path |  |
+| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 and 19 October 2026: The fox, at the fork in the river valley |  |
+| 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
+| 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
 | 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, after your first 你好 |  |
 | 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, sending you to help the troop |  |
 | 饿猴子要吃水果。 | è hóuzi yào chī shuǐguǒ. | The hungry monkey wants to eat some fruit. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |

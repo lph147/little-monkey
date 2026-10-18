@@ -166,7 +166,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
       sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
     flowers: {from:'big', wants:'花', verb:'花', ask:'wantFlowers', asked:'The big monkey wants a red, a yellow and a white {花}, and will give you shells for them. Check your tasks.',
-      offer:'haveFlowers', sentence:'我 要 红 花', sentenceEn:'I want a red flower.', gap:'红', reward:3, thanks:'thanks', thanksReply:'不客气'}
+      offer:'haveFlowers', sentence:'我 要 红色 的 花', sentenceEn:'I want a red flower.', gap:'红色', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
@@ -388,13 +388,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
   legend: {
     'g': {look:'grass', walk:true},
     'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
-    'F': {look:'redFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'红', count:3, label:'Pick', note:'You pick a flower.',
+    'F': {look:'redFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'红色', count:3, label:'Pick', note:'You pick a flower.',
       kindNote:'The colour of these flowers.', message:'You picked a red {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
       again:'You have a red {花} already. Find another colour.'}},   // red flowers, in the middle of the meadow
-    'E': {look:'yellowFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'黄', count:3, label:'Pick', note:'You pick a flower.',
+    'E': {look:'yellowFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'黄色', count:3, label:'Pick', note:'You pick a flower.',
       kindNote:'The colour of these flowers.', message:'You picked a yellow {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
       again:'You have a yellow {花} already. Find another colour.'}},   // yellow flowers, in the south
-    'J': {look:'whiteFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'白', count:3, label:'Pick', note:'You pick a flower.',
+    'J': {look:'whiteFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'白色', count:3, label:'Pick', note:'You pick a flower.',
       kindNote:'The colour of these flowers.', message:'You picked a white {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
       again:'You have a white {花} already. Find another colour.'}},   // white flowers, on the far left and by the river
     '.': {look:'path', walk:true},   // (路 path waits for chapter 1: stepping off the stone was straight into a word)
@@ -509,9 +509,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '猴子': 'The little monkey, playing in the south meadow.',
     '山': 'The cliffs all around the mountain.',
     '花': 'The flowers growing in the grass.',
-    '红': 'The red flowers in the middle of the meadow.',
-    '黄': 'The yellow flowers in the south.',
-    '白': 'The white flowers on the far left and by the river.',
+    '红色': 'The red flowers in the middle of the meadow.',
+    '黄色': 'The yellow flowers in the south.',
+    '白色': 'The white flowers on the far left and by the river.',
     '草': 'The tall grass, where animals hide.',
     '树': 'The trees on the mountain.',
     '桃子': 'The peach trees at the far left end of the long path.',
@@ -651,7 +651,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     boss: {zh:'你好 ！ 我 是 老板 。', en:"Hello! I'm the shop owner."},
     whatWant: {zh:'你 要 什么 ？', en:'What do you want?'},
     bye: {zh:'再见 ！', en:'Goodbye!'},
-    wantFlowers: {zh:'我 要 红 花 、 黄 花 和 白 花 ！', en:'I want a red flower, a yellow flower and a white flower!'},
+    wantFlowers: {zh:'我 要 红色 、 黄色 和 白色 的 花 ！', en:'I want red, yellow and white flowers!'},
     haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'},
     // The prologue's guide (drafts, not checked yet: see CHINESE.md)

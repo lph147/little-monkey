@@ -115,12 +115,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(4, 10, 'right', 'meeting the big monkey');
   assert.equal(area().flowers, 'asked', 'the big monkey should ask for flowers');
   await pressAt(11, 6, 'down', 'picking a red flower');
-  assert.ok(knows('红'), 'the first red flower should teach 红');
+  assert.ok(knows('红色'), 'the first red flower should teach 红色');
   await pressAt(11, 6, 'down', 'trying another red flower');
   assert.equal(get('here().picked.flowers.length'), 1, 'one flower of each colour');
   await pressAt(11, 16, 'down', 'picking a yellow flower in the south');
   await pressAt(16, 9, 'right', 'picking a white flower by the river');
-  for (const w of ['黄', '白']) assert.ok(knows(w), `picking should teach ${w}`);
+  for (const w of ['黄色', '白色']) assert.ok(knows(w), `picking should teach ${w}`);
   assert.equal(area().holding.flowers, '花', 'you should be holding 3 flowers');
   const peaches = get('S.shells');
   await pressAt(4, 10, 'right', 'giving the big monkey the flowers');

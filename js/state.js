@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 25;
+const SAVE_VERSION = 26;
 const HEARTS = 5;   // the most hearts you can have in a battle (the story can raise it later)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
@@ -140,6 +140,17 @@ function upgradeSave(s){
       s.pos = top ? {place:'falls', x:5, y:1, dir:'left'} : {place:'path', x:16, y:18, dir:'up'};
     }
     s.version = 25;
+  }
+  if (s.version === 25){   // version 25: the colours were 红, 黄 and 白. They're 红色, 黄色 and 白色 now: what you knew of them carries over
+    const renamed = {'红':'红色', '黄':'黄色', '白':'白色'};
+    for (const k of ['w', 'gloss', 'heard']) for (const [from, to] of Object.entries(renamed)){
+      const o = s[k]; if (!o || !(from in o)) continue;
+      if (!(to in o)) o[to] = o[from];
+      delete o[from];
+    }
+    if (s.today && Array.isArray(s.today.ids)) s.today.ids = s.today.ids.map(w => renamed[w] || w);
+    for (const a of Object.values(s.areas || {})) for (const [r, p] of Object.entries((a && a.picked) || {})) if (Array.isArray(p)) a.picked[r] = p.map(w => renamed[w] || w);
+    s.version = 26;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];

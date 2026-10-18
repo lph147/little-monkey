@@ -206,7 +206,7 @@ test('a version 19 save is converted: the hungry monkey still wants the peach he
   assert.deepEqual(s.areas[1].wanted, {hungry: '桃子'}, 'he asked for a peach then');
   assert.deepEqual(s.areas[1].picked.flowers, [], 'part-way through the flowers, you start again (one of each colour now)');
   const all = saveOf(loadGame({save: {version: 19, started: true, areas: {1: {flowers: 'asked', holding: {flowers: '花'}, picked: {flowers: [[11, 7], [17, 9], [1, 10]]}}}}}));
-  assert.deepEqual(all.areas[1].picked.flowers, ['红', '黄', '白'], 'with all 3, you have one of each');
+  assert.deepEqual(all.areas[1].picked.flowers, ['红色', '黄色', '白色'], 'with all 3, you have one of each');
   assert.equal(all.areas[1].holding.flowers, '花');
 });
 
@@ -244,4 +244,16 @@ test('a version 24 save on the old mountain path is put where it was on the new 
   assert.deepEqual(at({place: 'path', x: 6, y: 12, dir: 'down'}, {climb: 1}).pos, {place: 'path', x: 16, y: 18, dir: 'up'}, 'part way up: back to the bottom');
   assert.deepEqual(at({place: 'path', x: 5, y: 3, dir: 'up'}, {climb: 1}).pos, {place: 'path', x: 16, y: 18, dir: 'up'}, 'not past the boar yet: the bottom too');
   assert.deepEqual(at({place: 'cave', x: 7, y: 9, dir: 'up'}, {climb: 3, cave: 2}).pos, {place: 'cave', x: 7, y: 9, dir: 'up'}, 'anywhere else stays');
+});
+
+test('a version 25 save’s colours become 红色, 黄色 and 白色, keeping what you knew of them', () => {
+  const s = saveOf(loadGame({save: {version: 25, started: true, w: {'红': {lv: 2, due: 5, ok: 3}, '花': {lv: 1, due: 0, ok: 1}}, gloss: {'黄': 1},
+    today: {d: 'x', ids: ['红', '花']}, areas: {1: {flowers: 'asked', picked: {flowers: ['红', '白']}}}}}));
+  assert.equal(s.version, VERSION);
+  assert.deepEqual(s.w['红色'], {lv: 2, due: 5, ok: 3}, 'what you knew of 红 is now 红色');
+  assert.equal(s.w['红'], undefined);
+  assert.ok(s.w['花'], 'everything else stays');
+  assert.equal(s.gloss['黄色'], 1);
+  assert.deepEqual(s.today.ids, ['红色', '花']);
+  assert.deepEqual(s.areas[1].picked.flowers, ['红色', '白色'], 'the flowers you’ve picked');
 });
