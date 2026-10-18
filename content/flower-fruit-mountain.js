@@ -213,7 +213,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // The area's places: small maps you move between. The first is where the game starts. Each has
   //   name    Chinese, pinyin and English, shown when you arrive (names aren't vocabulary)
   //   exits   ways to other places: step onto at and you go to the place to, arriving at arrive and
-  //           facing facing. An exit with an if stays shut until it matches, and says closed instead.
+  //           facing facing. An exit with an if stays shut until it matches, and says closed instead. by:'A'
+  //           goes when you face it and press A (label: what A says). how: 'water' goes through falling water
+  //           (a rush of water instead of a fade), and 'jump' leaps into it first, with a splash
+  //   glimpse what's just visible behind a waterfall: a cave's dark mouth, over [x, y, how wide, how tall]
   //   map     one letter per tile; the legend below says what each letter is
   //   music   its own song (one of SONGS in js/sound.js), instead of the area's
   // Positions elsewhere in this file ([x, y], or x and y) are in the first place. Something in another
@@ -313,8 +316,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       name: {zh:'深山', py:'shēnshān', en:'Deep in the mountains'},
       exits: [
         {at:[5, 12], to:'valley', arrive:[5, 1], facing:'down'}, {at:[6, 12], to:'valley', arrive:[5, 1], facing:'down'},   // back down to the river valley
-        {at:[4, 1], by:'A', label:'Jump', to:'cave', arrive:[7, 12], facing:'up', if:{cave:{atLeast:1}}}   // jumping through the waterfall
+        {at:[4, 1], by:'A', label:'Jump', how:'jump', to:'cave', arrive:[7, 12], facing:'up', if:{cave:{atLeast:1}}}   // jumping through the waterfall
       ],
+      glimpse: [3, 0, 2, 2],   // the cave, just visible behind the falling water (x, y, how wide, how tall)
       map: [
         "MMMXXMMMMMMMMMMMMMMM",
         "MMMXXgggJgMMMMMMMMMM",
@@ -337,9 +341,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       name: {zh:'水帘洞', py:'Shuǐlián Dòng', en:'Water Curtain Cave'},
       music: 'cave',   // slower, echoing, with drips of water
       exits: [
-        {at:[6, 13], to:'falls', arrive:[5, 1], facing:'right'},
-        {at:[7, 13], to:'falls', arrive:[5, 1], facing:'right'},
-        {at:[8, 13], to:'falls', arrive:[5, 1], facing:'right'}
+        {at:[6, 13], how:'water', to:'falls', arrive:[5, 1], facing:'right'},
+        {at:[7, 13], how:'water', to:'falls', arrive:[5, 1], facing:'right'},
+        {at:[8, 13], how:'water', to:'falls', arrive:[5, 1], facing:'right'}
       ],
       map: [
         "ZZZZZZZZZZZZZZZZ",

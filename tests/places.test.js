@@ -185,3 +185,20 @@ test('the mountain path is edged with bushes and boulders, not stone walls', () 
   assert.equal(get(game, "AREA.legend.w.look"), 'bush');
   assert.ok(!get(game, '!!AREA.legend.w.walk'), 'you can’t walk through a bush');
 });
+
+test('the waterfall: the cave just visible behind it; you jump through it, and walk out through the curtain', async () => {
+  const game = loadGame({dom: true, save: {version: 27, started: true, areas: {1: {gate: true, climb: 3, story: true, cave: 1}}, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}}});
+  game.run("mode = 'play'; placePlayer(); showNotice = showNarration = showDialog = async () => {}; toast = () => {}");
+  const [gx, gy, gw, gh] = get(game, 'PLACES.falls.glimpse');
+  for (let y = gy; y < gy + gh; y++) for (let x = gx; x < gx + gw; x++) assert.equal(get(game, `AREA.legend[PLACES.falls.map[${y}][${x}]].look`), 'waterfall', 'the glimpse is over the waterfall');
+  assert.equal(get(game, "PLACES.falls.exits.find(e => e.to === 'cave').how"), 'jump');
+  assert.ok(get(game, "PLACES.cave.exits.every(e => e.how === 'water')"), 'out through the curtain: falling water');
+  game.run("globalThis.__heights = []; (() => { let v = pl.py; Object.defineProperty(pl, 'py', {get: () => v, set: n => { v = n; __heights.push(n); }, configurable: true}); })()");
+  let done = false;
+  game.run('interact(4, 1)').then(() => { done = true; });
+  for (let i = 0; i < 500 && !done; i++){ await new Promise(r => setImmediate(r)); game.flush(); }   // (the leap and the rush of water wait on timers)
+  assert.ok(done, 'the jump finishes');
+  assert.equal(get(game, 'PLACE'), 'cave', 'through the waterfall, into the cave');
+  assert.ok(Math.min(...get(game, '__heights')) < 1 * 16 - 6, 'leaping up in an arc on the way');
+  assert.ok(get(game, 'waterT') > 0 && get(game, 'dripUntil') > 0, 'through a rush of water, and dripping');
+});

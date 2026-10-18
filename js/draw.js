@@ -121,6 +121,34 @@ function feetInGrass(){
     }
   return out;
 }
+// The cave just visible behind a waterfall (the place's glimpse): its dark mouth, a glint inside, and the water falling
+// in front of it.
+function drawGlimpse(cx, cy, now){
+  const g = PLACES[PLACE].glimpse; if (!g) return;
+  const X = g[0]*T - cx, Y = g[1]*T - cy, W = g[2]*T, H = g[3]*T, top = Y + Math.round(H * .56);
+  b.globalAlpha = .5; R(b, X + Math.round(W * .12), top, Math.round(W * .76), Y + H - top, '#1E2830'); oval(b, X + W/2, top, Math.round(W * .38), Math.round(H * .19), '#1E2830');
+  b.globalAlpha = .3; R(b, X + Math.round(W * .3), top + 6, 3, 2, '#C9A66B'); R(b, X + Math.round(W * .62), top + 8, 2, 2, '#C9A66B');
+  b.globalAlpha = .55;
+  for (let i = 0; i < 9; i++){ const off = (now / 22 + i * 7) % (H * .5); R(b, X + 3 + i * Math.floor(W / 10), Y + Math.round(H * .45) + Math.floor(off), 1, Math.min(6, Y + H - (Y + Math.round(H * .45) + Math.floor(off))), '#FFFFFF'); }
+  b.globalAlpha = 1;
+}
+// Splashes of water (going into a waterfall), and drops falling from you after you come through one.
+function drawSplashes(cx, cy, now){
+  for (let i = splashes.length - 1; i >= 0; i--){
+    const s = splashes[i], t = (now - s.t0) / 1000;
+    if (t > .7){ splashes.splice(i, 1); continue; }
+    for (let k = 0; k < 12; k++){
+      const a = Math.PI * (.1 + .8 * k / 11), v = 40 + (k % 4) * 14;
+      const x = s.x + Math.cos(a) * v * t * (k % 2 ? 1 : -1), y = s.y - Math.sin(a) * v * t + 90 * t * t;
+      R(b, Math.round(x - cx), Math.round(y - cy), 2, 2, k % 3 ? '#FFFFFF' : '#BFE8FA');
+    }
+  }
+  if (now < dripUntil){
+    const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy), left = (dripUntil - now) / 1500;
+    b.globalAlpha = .45 * left; oval(b, PX + 8, PY + 15, 8, 2, '#3F8FCB'); b.globalAlpha = 1;   // a little puddle
+    for (let k = 0; k < 6; k++){ const ph = ((now / 600) + k / 6) % 1; R(b, PX + 2 + (k * 5) % 13, PY + 4 + Math.round(ph * 12), 1, 2, '#BFE8FA'); }   // drops falling from your fur
+  }
+}
 function drawWorld(now){
   let cx = Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));
   let cy = talkCamera(Math.round(clamp(pl.py + 8 - VH*T/2, 0, ROWS*T - VH*T)));
@@ -132,6 +160,7 @@ function drawWorld(now){
   for (const p of OBJECT_PIECES) drawPiece(p, p.base, cx, cy, now);   // big objects, under the characters
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
+  drawGlimpse(cx, cy, now);
   // fish jumping out of the water (the area's fish), one after another, every other one the other way
   AREA.fish.forEach((f, i) => {
     const fp = ((now + i * 2300) % (5200 + i * 700)) / 900;
@@ -203,7 +232,14 @@ function drawWorld(now){
   }
   for (const [x, y, show] of bubbles) bubble(x, y, show);
   if (trainingCalls()) for (const [x, y] of TRAINING_TILES) bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words are due for review
+  drawSplashes(cx, cy, now);
   drawMarkers(cx, cy, now);
+  const wk = (now - waterT) / 600;   // going through falling water: a rush of water covers the screen, then clears
+  if (wk >= 0 && wk < 2){
+    b.globalAlpha = (wk < 1 ? wk : 2 - wk) * .96; R(b, 0, 0, VW*T, VH*T, '#8FD0EE');
+    for (let i = 0; i < 80; i++){ const x = (i * 37) % (VW*T), y = Math.floor(i * 53 + now * (.25 + (i % 3) * .1)) % (VH*T); R(b, x, y, 1, 7 + i % 9, i % 3 ? '#FFFFFF' : '#BFE8FA'); }
+    b.globalAlpha = 1;
+  }
   const fk = (now - fadeT) / 700;
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
 }

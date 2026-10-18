@@ -132,7 +132,9 @@ const SCREENS = [
   {id: 'troop-gathers', title: 'Chapter 1: the troop gathers', save: 'chapter1', why: 'At the waterfall, with a ! over the old monkey.', run: async () => { play(); await wait(500); }},
   {id: 'dare', title: 'The dare', save: 'chapter1', why: 'The big monkey speaks while you talk to the old monkey.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
-  {id: 'jump', title: 'Ready to jump', save: 'dared', why: 'Facing the waterfall, A says Jump.', run: async () => { play(); await wait(500); }},
+  {id: 'jump', title: 'Ready to jump', save: 'dared', why: 'Facing the waterfall, A says Jump. The cave is just visible behind the falling water.', run: async () => { play(); await wait(500); }},
+  {id: 'jump-water', title: 'Through the waterfall', save: 'dared', why: 'A rush of falling water instead of a black fade (held still here).', run: async () => { play(); await wait(200); setInterval(() => { waterT = performance.now() - 560; }, 30); await wait(300); }},
+  {id: 'jump-landed', title: 'Landed in the cave', save: 'inCave', why: 'Dripping: drops fall from your fur and a little puddle fades (held still here).', run: async () => { play(); await wait(200); setInterval(() => { dripUntil = performance.now() + 900; }, 30); await wait(300); }},
   {id: 'cave', title: 'The Water Curtain Cave', save: 'inCave', why: 'Four things sparkle: the bridge, the beds, the table and the bowls.', run: async () => { play(); await wait(500); }},
   {id: 'cave-things', title: 'The troop’s things', save: 'caveTop', why: 'Beds of straw against the wall, the table, the bowls.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(500); }},
   {id: 'set-off', title: 'Where does the water come from?', save: 'rocksGone', why: 'The troop gathers where the rocks were; you set off up the path alone.', run: async () => {

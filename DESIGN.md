@@ -384,7 +384,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Playtest fixes (19 October 2026): the menu's English is what its Chinese means (词 Words, 衣服 Clothes); the troop across the river give advice; the story at the waterfall is your story so far; the arrows work on a game's card; the colours are 红色, 黄色 and 白色 (我要红色的花。, save version 26); 再见 is taught as you set off up the path; one chapter, no prologue (save version 27)
 - [x] The old monkey checks your first words (19 October 2026): back with 4 or more, you match the words you've learned to their pictures, as at the practice post; he says 太好了！, then tells you about the animals
 - [x] The title screen (19 October 2026): Continue (the game you played last), New game (in an empty game) and Save files (your three games, each with its card as before)
-- [ ] Jumping through the waterfall: the cave just visible behind the water, and a jump through it
+- [x] Jumping through the waterfall (19 October 2026): the cave just visible behind the water; A leaps you into it with a splash, a rush of falling water instead of a fade, and you land inside dripping; walking out through the curtain is a rush of water too
 - [x] The cave's own music (18 October 2026; remade 19 October to sound unlike the meadow's): slower (54 beats a minute) and sparser, with a long echo: a slow tune on soft bells, then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water; a place can have its own song
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2

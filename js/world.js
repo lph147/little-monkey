@@ -327,13 +327,27 @@ function enterPlace(id){
 }
 // Through a way to another place: a quick fade, and you're there, with its name at the top of the screen.
 async function goThrough(e){
-  held = null; queued = null; fadeT = performance.now(); SFX.blip();
-  await sleep(350);
+  held = null; queued = null;
+  const water = e.how === 'water' || e.how === 'jump';
+  if (e.how === 'jump') await leap(e.at);   // a jump into the waterfall, with a splash
+  if (water){ waterT = performance.now(); SFX.splash(); } else { fadeT = performance.now(); SFX.blip(); }
+  await sleep(water ? 600 : 350);           // (a rush of water covers the screen, or it fades to black)
   enterPlace(e.to);
   S.pos = {place:e.to, x:e.arrive[0], y:e.arrive[1], dir:e.facing || pl.dir}; placePlayer(); save();
+  if (water) dripUntil = performance.now() + 1500;   // you come through dripping
   showPlaceName();
   const t = tileAt(e.arrive[0], e.arrive[1]);   // arriving on something you learn by stepping on it, such as the mountain path, counts
   if (t.learnOnStep && lvl(t.word) === 0) await showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
+}
+// You leap from where you stand into the square at (the waterfall), in an arc, landing with a splash.
+async function leap([tx, ty]){
+  const fx = pl.px, fy = pl.py, STEPS_IN = 24;
+  for (let i = 1; i <= STEPS_IN; i++){
+    const p = i / STEPS_IN;
+    pl.px = fx + (tx*T - fx) * p; pl.py = fy + (ty*T - fy) * p - Math.sin(p * Math.PI) * 12;
+    await sleep(17);
+  }
+  splashes.push({x:tx*T + 8, y:ty*T + 10, t0:performance.now()}); SFX.splash();
 }
 let placeNameT;
 function showPlaceName(){

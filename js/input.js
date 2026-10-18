@@ -3,7 +3,8 @@
 /* ================= PLAYER & INPUT ================= */
 const pl = {x:START.x, y:START.y, px:START.x*T, py:START.y*T, dir:'down', mv:null, parity:0, turnT:0};
 function placePlayer(){ enterPlace(S.pos.place || FIRST_PLACE); pl.x = S.pos.x; pl.y = S.pos.y; pl.dir = S.pos.dir || 'down'; pl.px = pl.x*T; pl.py = pl.y*T; pl.mv = null; }
-let held = null, queued = null, busy = false, mode = 'title', lastBump = 0, shakeT = -9999, lastMoveEnd = 0, fadeT = -9999;
+let held = null, queued = null, busy = false, mode = 'title', lastBump = 0, shakeT = -9999, lastMoveEnd = 0, fadeT = -9999, waterT = -9999, dripUntil = 0;
+const splashes = [];   // splashes of water, each where (x, y, in the map) and when (t0)
 const canAct = () => mode === 'play' && !busy && modal.hidden && !talkNext && !pl.mv;
 function tryStep(d, now){
   if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); return; }   // first turn to face the new way
