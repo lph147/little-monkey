@@ -85,11 +85,12 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
+    if (k === 'hurt') return ((S.hearts ?? HEARTS) < HEARTS) === v;   // you've lost hearts in a battle
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
 }
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note']};   // extra settings a step can have
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win']};   // extra settings a step can have
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
     const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
@@ -127,6 +128,8 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
+  rest(){ S.hearts = HEARTS; save(); SFX.chime(); },   // your hearts are full again
+  async battle(s, who){ if (await battle(s.battle) === 'won' && s.win) await runSteps(s.win, who); },   // a battle (an enemy in AREA.enemies), and what happens if you win
   async message(s, who){ if (who) await showNarration(fill(s.message)); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
 };
 // You reply: choose what to say from the phrases you know, with best the one that fits (taught on its
@@ -325,6 +328,7 @@ async function arrive(x, y){
   const t = tileAt(x, y);
   stepsSince++;
   if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
+  if (t.wild && await wildStep(t)) return;   // a wild creature jumps out of the long grass
   if (rustle && rustle.x === x && rustle.y === y && canWild()){ const a = rustle.a; rustle = null; stepsSince = 0; held = null; queued = null; return wildAppears(a); }
   hideAnimal();
 }

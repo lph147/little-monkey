@@ -163,6 +163,10 @@ function drawWorld(now){
     }
     const n = e.n, X = n.x*T - cx, Y = n.y*T - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
+      R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)'); b.drawImage(mapSprite(n.look), X, Y - Math.floor(Math.abs(Math.sin(now/400)) * 1));
+      continue;
+    }
     if (n.look === 'bird'){
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
       R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(SPR.bird, X+4, Y+6 - hop);

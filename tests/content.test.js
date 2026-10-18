@@ -209,9 +209,9 @@ test('fish jump out of water', () => {
   }
 });
 
-test('characters are drawn as monkeys (with colours) or birds, and sparkle on real words', () => {
+test('characters are drawn as monkeys (with colours), birds or an animal with a map sprite, and sparkle on real words', () => {
   for (const c of AREA.characters){
-    assert.ok(c.look === undefined || ['monkey', 'bird'].includes(c.look), `${c.id} has look "${c.look}"; it can be monkey or bird`);
+    assert.ok(c.look === undefined || ['monkey', 'bird'].includes(c.look) || MAP_SPRITES[c.look], `${c.id} has look "${c.look}"; it can be monkey, bird or a word with a map sprite`);
     if (!c.look || c.look === 'monkey') assert.ok(c.palette, `${c.id} is a monkey, so it needs a palette`);
     if (c.word) assert.ok(collectible.includes(c.word), `${c.id}'s word ${c.word} isn't a word you can collect in ${where}`);
   }
@@ -307,7 +307,7 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -432,4 +432,14 @@ test('replies after requests and the shop are phrases you can learn here', () =>
 test('no word tiles anywhere: sentences are completed by filling a gap, never put in order', () => {
   const things = [...Object.values(AREA.requests).flatMap(asked), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];
   for (const b of things) for (const old of ['build', 'buildEn', 'extraTile', 'buildPrompt']) assert.ok(!(old in b), `"${old}" is from word tiles: use sentence, sentenceEn and gap`);
+});
+
+test('every enemy is a collectible word with a picture and a map sprite, attacking from words with pictures', () => {
+  for (const [id, e] of Object.entries(AREA.enemies)){
+    assert.ok(collectible.includes(e.word) && BANK[e.word].pic, `${id}'s word ${e.word} should be a word you can collect, with a picture`);
+    assert.ok(PICTURES[e.word] && MAP_SPRITES[e.word], `${e.word} needs a picture and a map sprite`);
+    assert.ok(e.hearts >= 1 && e.attacks.length >= 3, `${id} needs hearts and at least 3 places to attack from`);
+    for (const w of e.attacks) assert.ok(collectible.includes(w) && BANK[w].pic, `${id} attacks from ${w}, which should be a word with a picture`);
+  }
+  for (const t of Object.values(AREA.legend).filter(t => t.wild)) for (const id of t.wild) assert.ok(AREA.enemies[id], `wild ground has ${id}, which isn't one of the enemies`);
 });

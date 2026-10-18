@@ -19,7 +19,7 @@ test('a new player sees the title screen with three empty games, Game 1 chosen',
   game.run('pressA()');
   assert.match(game.el('#sheet').innerHTML, /id="newBtn">New game</, 'an empty game: New game');
   assert.match(game.el('#sheet').innerHTML, /Load from a file/);
-  assert.match(game.run('statsHTML()'), /0\/41 words.*0 friends.*🐚 0/);
+  assert.match(game.run('statsHTML()'), /0\/45 words.*0 friends.*🐚 0/);
 });
 
 test('a returning player sees their game, and its card has Continue, with their shells and words', () => {
@@ -33,5 +33,5 @@ test('a returning player sees their game, and its card has Continue, with their 
   assert.match(card, /Copy to a file/); assert.match(card, /Delete/);
   game.el('#sheet').querySelector('#contBtn').click();
   assert.equal(game.run('mode'), 'play', 'Continue plays on');
-  assert.match(game.run('statsHTML()'), /1\/41 words.*🐚 5/);
+  assert.match(game.run('statsHTML()'), /1\/45 words.*🐚 5/);
 });

@@ -112,7 +112,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().gate, true, 'the rocks should have rolled away');
 
   // The big monkey, in the middle meadow: a red, a yellow and a white flower, for shells
-  await pressAt(4, 10, 'right', 'meeting the big monkey');
+  await pressAt(16, 3, 'right', 'meeting the big monkey, with the troop where the rocks were');
   assert.equal(area().flowers, 'asked', 'the big monkey should ask for flowers');
   await pressAt(11, 6, 'down', 'picking a red flower');
   assert.ok(knows('红'), 'the first red flower should teach 红');
@@ -123,7 +123,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   for (const w of ['黄', '白']) assert.ok(knows(w), `picking should teach ${w}`);
   assert.equal(area().holding.flowers, '花', 'you should be holding 3 flowers');
   const peaches = get('S.shells');
-  await pressAt(4, 10, 'right', 'giving the big monkey the flowers');
+  await pressAt(16, 3, 'right', 'giving the big monkey the flowers');
   assert.equal(area().flowers, 'done', 'the big monkey should take the flowers');
   assert.ok(get('S.shells') > peaches, 'and give you peaches for them');
 
@@ -161,6 +161,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await stepOn(15, 0, 'going up the mountain path');
   assert.equal(run('PLACE'), 'path', 'you should be on the mountain path');
   assert.ok(knows('路'), 'arriving on the mountain path should teach 路');
+  assert.ok(knows('棍子'), 'the big monkey should give you a stick');
+  for (const [x, y] of [[3, 12], [4, 12], [5, 12]]) await stepOn(x, y, 'walking through the long grass');
+  assert.ok(knows('蛇'), 'a snake should jump out of the long grass, and be chased away');
+  assert.equal(get('S.hearts'), 5, 'every dodge right: no hearts lost');
+  await pressAt(8, 2, 'right', 'chasing the wild boar off the path');
+  assert.equal(area().boar, 1, 'the wild boar should run off');
+  assert.ok(knows('野猪'));
   await pressAt(15, 1, 'right', 'finding the waterfall');
   assert.equal(area().climb, 2, 'you should find the waterfall');
   assert.ok(knows('瀑布'), 'the waterfall should teach 瀑布');

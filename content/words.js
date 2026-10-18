@@ -53,6 +53,10 @@ const WORD_BANK = {
   '白': {py:'bái', en:'white', pic:'⬜', area:1, category:'colours'},
   // Chapter 1: the Water Curtain Cave
   '路': {py:'lù', en:'path, road', pic:'🛤️', area:1, category:'places'},
+  '棍子': {py:'gùnzi', en:'stick', pic:'🪵', area:1, category:'items'},
+  '蛇': {py:'shé', en:'snake', pic:'🐍', area:1, category:'animals'},
+  '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals'},
+  '野猪': {py:'yězhū', en:'wild boar', pic:'🐗', area:1, category:'animals'},
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
   '桥': {py:'qiáo', en:'bridge', pic:'🌉', area:1, category:'places'},
   '床': {py:'chuáng', en:'bed', pic:'🛏️', area:1, category:'items'},
@@ -91,7 +95,6 @@ const WORD_BANK = {
   '从': {py:'cóng', en:'from'},
   '哪里': {py:'nǎlǐ', en:'where'},
   '来': {py:'lái', en:'to come'},
-  '蛇': {py:'shé', en:'snake'},
   '谁': {py:'shéi', en:'who, whoever'},
   '进去': {py:'jìnqù', en:'to go in'},
   '就': {py:'jiù', en:'then'},

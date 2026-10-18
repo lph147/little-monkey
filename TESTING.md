@@ -142,9 +142,15 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] With 10 🐚: fill the gap in 我要＿。 (I want the headband.). Your shells go down by 10, the 老板 says 谢谢你！, and your monkey wears a red headband on the map from then on (a new monkey starts without one).
 
 **Up the stream**
-- [ ] Talk to the old monkey where the rocks were: the little monkey asks 水从哪里来？ (Where does the water come from?), the old monkey says 山上有蛇。 (There are snakes up the mountain.), and you set off up the path on your own. The task says to follow the path up beside the river.
+- [ ] Talk to the old monkey where the rocks were: the little monkey asks 水从哪里来？ (Where does the water come from?), the old monkey says 山上有蛇。 (There are snakes up the mountain.), and the big monkey gives you a stick: 这是棍子。, with a card teaching 棍子 (stick). The speech box explains how to fight, and you set off up the path on your own. The task says to follow the path up beside the river.
 - [ ] Walk up past where the rocks were, off the top of the meadow: a fade, and you're on the mountain path (山路 shānlù). Your first step on it teaches 路 (path), with its picture.
-- [ ] Low stone walls and ledges send you through the dark long grass (nothing lives in it yet: wild animals come next). You can hop down a ledge (a little jump), but not climb back up one. A fallen tree blocks the way to a peach tree on the left: pressing A says the troop might move it one day.
+- [ ] Low stone walls and ledges send you through two bands of dark long grass: there's no way round. You can hop down a ledge (a little jump), but not climb back up one. A fallen tree blocks the way to a peach tree on the left: pressing A says the troop might move it one day.
+- [ ] Walking through the long grass, every few steps a snake (蛇) or a bee (蜜蜂) may jump out with a !. The first time, a card teaches its name. Then a battle: its name and hearts at the top, yours (5) at the bottom.
+- [ ] Your turn: 打 (Hit), 吃 (Eat, only with food in your bag) or 跑 (Run away). The D-pad moves between them and A chooses. Hit asks a question about one of your words: right is a hit (one of its hearts goes), wrong is a miss.
+- [ ] Its turn: it attacks, and you hear where from (such as 草 or 石头). Pick that picture to jump aside; a wrong pick costs a heart. When its hearts are gone it runs off, and you get a shell.
+- [ ] Eating an apple brings a heart back. Running away ends the battle. Your hearts stay down after a battle, and show at the top left of the screen while you're hurt.
+- [ ] If you lose all your hearts: no game over. You crawl back down to the meadow, and your hearts are full again. Talking to the old monkey while you're hurt lets you rest (full hearts).
+- [ ] Near the top, a wild boar (野猪) blocks the narrow way. Face it and press A (Fight): a battle with 4 hearts, and no running away. Once it runs off, the way to the top is clear.
 - [ ] At the top, stand left of the waterfall and face it: a card teaches 瀑布 (waterfall): this is where the river comes from. A message says to go back and tell the troop.
 - [ ] Walk back down to the meadow (off the bottom of the path) and talk to the old monkey: you say 山上有瀑布！, he says 太好了！我们去看看！, and the troop follows you up. The old monkey, the big monkey and the little monkey are now by the waterfall at the top of the path.
 - [ ] The meadow has no waterfall any more: the river comes in from the top right.

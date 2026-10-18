@@ -31,13 +31,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   gate    true once the rocks have rolled away
   //   climb   up the stream: 0 not yet, 1 setting off alone up the mountain path, 2 found the waterfall,
   //           3 brought the troop up to it
+  //   boar    1 once you've chased the wild boar off the path
   //   story   true once you've read the story at the waterfall
   //   cave    chapter 1: 0 not dared yet, 1 dared to jump, 2 been inside the cave, 3 told the old monkey,
   //           4 led the troop in, 5 heard it's home, 6 made king
   //   count   how many of the troop you've counted into the cave (chapter 1)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, story:false, cave:0, count:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
@@ -239,7 +240,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ]
     },
     // The mountain path, up beside the river from the meadow to the waterfall at its top (the end of the prologue):
-    // low walls and ledges send you through long grass, and a fallen tree hides a peach tree for chapter 1.
+    // low walls and ledges send you through two bands of long grass (there's no way round), a wild boar blocks the narrow
+    // way at the top, and a fallen tree hides a peach tree for chapter 1.
     path: {
       name: {zh:'山路', py:'shānlù', en:'The mountain path'},
       exits: [
@@ -249,18 +251,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
       map: [
         "MMMMMMMMMMMMMMMMXXMM",
         "MMMMMMMMMMMMJgggXXMM",
-        "MMMMMMMMMMMgrrggWWMM",
-        "MMMMMMMMMMgrrgggWWMM",
-        "MMMMMrrvvvvvvvvgWWMM",
-        "MMnnnnnnnnnnnnngWWMM",
-        "MMnnnnnnnnnnnnngWWMM",
-        "MMwwwwwwwwwwwrrgWWMM",
+        "MMMMgrrrrrrrrgggWWMM",
+        "MMMrrggggwggggggWWMM",
+        "MMMrrvvvvvvvvvvvWWMM",
+        "MMnnnnnnnnnnnnnnWWMM",
+        "MMnnnnnnnnnnnnnnWWMM",
+        "MMwwwwwwwwwwwrrwWWMM",
         "MMPlggggTggggrrgWWMM",
         "MMwwgggggggrrrggWWMM",
-        "MMvvvvvvvvrrvvvgWWMM",
-        "MMnnnnnnnnnnnnngWWMM",
-        "MMnnnnnnnnnnnnngWWMM",
-        "MMrrwwwwwwwwwwwgWWMM",
+        "MMvvvvvvvvrrvvvvWWMM",
+        "MMnnnnnnnnnnnnnnWWMM",
+        "MMnnnnnnnnnnnnnnWWMM",
+        "MMrrwwwwwwwwwwwwWWMM",
         "MMggrgggggTgggggWWMM",
         "MMMgrrggggggggggWWMM",
         "MMMMMrMMMMMMMMMMWWMM"
@@ -313,6 +315,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   label          what the A button says when you face it (Look if not given)
   //   whenGateOpens  the letter it becomes once the rocks have rolled away
   //   ledge          true for a ledge: you can hop down it from above (landing just below), never climb it
+  //   wild           the enemies that jump out to fight as you walk through it (see enemies)
   //   onLook         steps for pressing A at it, as in talk below: the first part whose if matches runs,
   //                  instead of its action or card (when none matches, it's looked at as usual)
   legend: {
@@ -348,7 +351,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]},
     // the mountain path
     'r': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'A path up the mountain, beside the river.'},
-    'n': {look:'longGrass', walk:true},   // long grass: wild animals live in it (to come)
+    'n': {look:'longGrass', walk:true, wild:['snake', 'bee']},   // long grass: snakes and bees jump out to fight
     'w': {look:'wall'},
     'v': {look:'ledge', ledge:true},
     'l': {look:'log', word:'树', landmark:true, message:'A fallen tree blocks the way. Maybe the troop can move it one day.'},
@@ -375,7 +378,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:3}}, place:'path', x:13, y:1, facing:'right'},
       {if:{gate:true}, x:14, y:2, facing:'right'}],   // by the waterfall once the troop is up there; where the rocks were till then
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
-    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:3}}, place:'path', x:14, y:2, facing:'up'}],
+    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:3}}, place:'path', x:14, y:2, facing:'up'},
+      {if:{gate:true}, x:17, y:3, facing:'left'}],
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
@@ -391,6 +395,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#40250F', f:'#A8673A', s:'#EFC79C', m:'#C08060', e:'#24160C'}},
     {id:'troop3', x:20, y:13, facing:'right', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:3}}, place:'cave', x:12, y:8, facing:'left'}],
       palette:{o:'#4A2C17', f:'#D9A050', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
+    // the wild boar, blocking the narrow way at the top of the mountain path until you chase it off
+    {id:'boar', place:'path', x:9, y:2, facing:'down', look:'野猪', label:'Fight', name:{zh:'野猪', py:'yězhū', en:'Wild boar'},
+      moves:[{if:{boar:1}, place:'gone', x:0, y:0}, {if:{climb:{atLeast:2}}, place:'gone', x:0, y:0}]},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -449,6 +456,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '要': 'You learned it to say what a monkey wanted.',
     '瀑布': 'The waterfall at the top of the mountain path, where the river comes from.',
     '路': 'The mountain path, up beside the river from the meadow.',
+    '棍子': 'The big monkey gave it to you, before you set off up the mountain path.',
+    '蛇': 'In the long grass on the mountain path.',
+    '蜜蜂': 'In the long grass on the mountain path.',
+    '野猪': 'Blocking the narrow way at the top of the mountain path.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -479,13 +490,36 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
     '山羊': {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.'},
     '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'},
-    '路': {zh:'山 上 有 路 。', en:'There is a path up the mountain.'},   // (draft, not checked yet)
+    '路': {zh:'山 上 有 路 。', en:'There is a path up the mountain.'},   // (drafts, not checked yet)
+    '蜜蜂': {zh:'花 上 有 蜜蜂 。', en:'There is a bee on the flower.'},
+    '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'},
     '碗': {zh:'桌子 上 有 碗 。', en:'There are bowls on the table.'},
     '桌子': {zh:'洞 里 有 桌子 。', en:'There is a table in the cave.'},
     '床': {zh:'洞 里 有 床 。', en:'There are beds in the cave.'},
     '二': {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'}
+  },
+
+  // Wild creatures you can fight, in battles (js/battle.js). Each: its word (taught on a card the first time you
+  // meet it, with meetNote), its hearts (hits to chase it away), where it attacks from (attacks: you hear one and
+  // pick it to jump aside; only words you've caught are used), what it does (meet, attack), the message when it
+  // runs off (away) with a reward in shells, and boss: true for a big enemy you can't run from.
+  enemies: {
+    snake: {word:'蛇', hearts:2, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
+      attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
+    bee: {word:'蜜蜂', hearts:2, attacks:['花', '树', '草', '山'], meetNote:'A bee buzzes out of the long grass!', meet:'A {蜜蜂} buzzes round your head!',
+      attack:'The {蜜蜂} dives at you!', away:'The {蜜蜂} buzzes off over the flowers.', reward:1},
+    boar: {word:'野猪', hearts:4, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
+      meet:'The {野猪} snorts and paws the ground!', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
+  },
+  // Battles: when you can fight (when), what you hit with (weapon), and what happens if you lose (lost: you rest,
+  // with full hearts, at restAt).
+  battles: {
+    when: {knows:'棍子'},   // once the big monkey has given you the stick
+    weapon: '棍子',
+    lost: 'You’re worn out. You crawl back down to the meadow and rest until your hearts are full again.',
+    restAt: {at:[15, 2], facing:'left'}
   },
 
   // Where fish jump out of the water now and then, one after another.
@@ -557,6 +591,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     whereFrom: {zh:'水 从 哪里 来 ？', en:'Where does the water come from?'},
     snakes: {zh:'山 上 有 蛇 。', en:'There are snakes up the mountain.'},
     foundFall: {zh:'山 上 有 瀑布 ！', en:'There’s a waterfall up the mountain!'},
+    stickHere: {zh:'这 是 棍子 。', en:'This is a stick.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     whatBehind: {zh:'瀑布 后面 有 什么 ？', en:'What’s behind the waterfall?'},
     dare: {zh:'谁 跳 进去 ， 谁 就 是 王 ！', en:'Whoever jumps in will be king!'},
@@ -621,9 +656,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'whereFrom', by:'playful'},
         {say:'snakes'},
         {message:'The path up beside the river is wild, and nobody has been to the top. Someone brave should go and see where the water comes from.'},
+        {say:'stickHere', by:'big', teach:'棍子'},
+        {newWord:'棍子', note:'The big monkey gives you a stick, to chase wild animals off the path.'},
+        {message:'The big monkey shows you how to fight. When something jumps out of the long grass, choose 打 (dǎ, hit) and answer to hit it. When it attacks, listen for where it’s coming from, and pick that to jump aside.'},
+        {message:'A wrong answer when it attacks costs a heart, and you have 5. Eat something to get one back, or come back to the old monkey to rest.'},
         {set:{climb:1}},
         {message:'You set off up the path, on your own.'}
       ]},
+      {if:{hurt:true}, do:[{rest:true}, {message:'You rest with the old monkey. Your hearts are full again.'}]},
       {if:{chapter:0, climb:1}, do:[{say:'go', hint:'Follow the path up beside the river, and find where the water comes from.'}]},
       {if:{chapter:0, climb:2}, do:[
         {say:'foundFall', by:'player'},
@@ -687,6 +727,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{thirsty:'asked', holding:{thirsty:false}}, do:[{request:'thirsty'}, {say:'waterInRiver'}]},
       {do:[{request:'thirsty'}]}
     ],
+    boar: [{do:[{battle:'boar', win:[{set:{boar:1}}, {message:'The way to the top is clear.'}]}]}],
     troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'wantPeach'}]}],
     troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'play'}]}],
     troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],

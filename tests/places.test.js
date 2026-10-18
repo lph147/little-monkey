@@ -112,3 +112,25 @@ test('setting off: the old monkey sends you up alone, and the waterfall at the t
   game.run('placeCharacters()');
   assert.deepEqual(get(game, "['elder', 'big', 'playful'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'path'], 'and they follow you up');
 });
+
+test('on the way up the mountain path there is no way round the long grass', () => {
+  const game = loadGame();
+  const map = get(game, 'PLACES.path.map'), legend = get(game, 'AREA.legend');
+  const way = (avoidGrass) => {   // can you get from the bottom to the waterfall, walking up (never up a ledge)?
+    const seen = new Set(['5,16']), todo = [[5, 16]];
+    while (todo.length){
+      const [x, y] = todo.pop();
+      if (x === 15 && y === 1) return true;
+      for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0]]){
+        const nx = x + dx, ny = y + dy, t = legend[(map[ny] || '')[nx]];
+        if (!t || seen.has(nx + ',' + ny)) continue;
+        if (t.ledge){ if (dy === 1 && legend[map[ny + 1][nx]].walk){ seen.add(nx + ',' + (ny + 1)); todo.push([nx, ny + 1]); } continue; }
+        if (!t.walk || (avoidGrass && t.look === 'longGrass')) continue;
+        seen.add(nx + ',' + ny); todo.push([nx, ny]);
+      }
+    }
+    return false;
+  };
+  assert.equal(way(false), true, 'you can reach the waterfall');
+  assert.equal(way(true), false, 'but not without going through long grass');
+});

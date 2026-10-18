@@ -369,7 +369,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] The game plan, with mockups: the story area by area, battles, hearts, Prologue 3 walked alone, agreed (18 October 2026)
 - [x] Prologue: more dialogue from the old monkey and the troop, guiding you instead of prompts (the Tasks and Menu tips went); the headband no longer required (18 October 2026)
 - [x] Prologue 3, the mountain path: the new place, the waterfall moving to its top, 路, walls, ledges, long grass, the fallen tree, fetching the troop (18 October 2026; save version 23)
-- [ ] Prologue 3, the first battles: the stick and the big monkey's lesson, hearts, snakes and bees, the wild boar, resting with the old monkey
+- [x] Prologue 3, the first battles: the stick and the big monkey's lesson, hearts, snakes and bees, the wild boar, resting with the old monkey (18 October 2026; save version 24). 打 (hit) and 跑 (run) are on the battle buttons with pinyin and English, but aren't words to collect yet: teaching 打 straight after 棍子 would have been two new words back to back
 - [ ] Chapter 1 B: setting up home (有, 没有), counting the troop in (four to ten), then king at the feast
 - [ ] Chapter 1 C: chopping trees for wood, a new place, building the school, lessons and hide and seek
 - [ ] Friend powers in encounters and battles

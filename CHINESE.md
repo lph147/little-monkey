@@ -47,6 +47,7 @@ shown where the word list has them.
 | 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 老猴子 (Old monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 老猴子 (Old monkey) |  |
+| 这是棍子。 | zhè shì gùnzi. | This is a stick. | 老猴子 (Old monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
 | 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | 老猴子 (Old monkey), 大猴子 (Big monkey) |  |
 | 我怕！ | wǒ pà! | I’m scared! | 老猴子 (Old monkey), 小猴子 (Little monkey) |  |
@@ -101,6 +102,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
 | 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
 | 山上有路。 | shān shàng yǒu lù. | There is a path up the mountain. | 路 |  |
+| 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | 蜜蜂 |  |
+| 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | 桥 |  |
 | 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | 碗 |  |
 | 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | 桌子 |  |
@@ -138,6 +141,7 @@ The opening is told in English. These captions each show one word, said aloud.
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
+| 野猪 | yězhū | Wild boar |  |
 | 老板 | lǎobǎn | Shop owner |  |
 | 牌子 | páizi | Sign |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
@@ -171,6 +175,10 @@ The opening is told in English. These captions each show one word, said aloud.
 | 黄 | huáng | yellow |  |
 | 白 | bái | white |  |
 | 路 | lù | path, road |  |
+| 棍子 | gùnzi | stick |  |
+| 蛇 | shé | snake |  |
+| 蜜蜂 | mìfēng | bee |  |
+| 野猪 | yězhū | wild boar |  |
 | 跳 | tiào | to jump |  |
 | 桥 | qiáo | bridge |  |
 | 床 | chuáng | bed |  |
@@ -210,7 +218,6 @@ The opening is told in English. These captions each show one word, said aloud.
 | 从 | cóng | from |  |
 | 哪里 | nǎlǐ | where |  |
 | 来 | lái | to come |  |
-| 蛇 | shé | snake |  |
 | 谁 | shéi | who, whoever |  |
 | 进去 | jìnqù | to go in |  |
 | 就 | jiù | then |  |
@@ -309,6 +316,9 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | The prologue, up the stream, 18 October 2026 (in the game): The old monkey, before you set off up the mountain path (山路 shānlù: please check this name too) |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | The prologue, up the stream, 18 October 2026 (in the game): You, back from the top of the path (also in the story at the waterfall) |  |
 | 山上有路。 | shān shàng yǒu lù. | There is a path up the mountain. | The prologue, up the stream, 18 October 2026 (in the game): The example on 路 (path)’s page in the Word Scroll |  |
+| 这是棍子。 | zhè shì gùnzi. | This is a stick. | The prologue, up the stream, 18 October 2026 (in the game): The big monkey, giving you a stick before you set off |  |
+| 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | The prologue, up the stream, 18 October 2026 (in the game): The example on 蜜蜂 (bee)’s page |  |
+| 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | The prologue, up the stream, 18 October 2026 (in the game): The example on 野猪 (wild boar)’s page |  |
 
 ## Questions
 

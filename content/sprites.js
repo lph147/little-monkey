@@ -1,6 +1,6 @@
 // The animals as they look walking about on the map: 16 × 16 pixels, the size of a square, one letter per
-// pixel ('.' is see-through) and each letter's colour in its palette. Every animal in an area needs one (the
-// tests check). Their pictures everywhere else, bigger and sharper, are in content/pictures.js.
+// pixel ('.' is see-through) and each letter's colour in its palette. Every animal and wild creature in an area
+// needs one (the tests check). Their pictures everywhere else, bigger and sharper, are in content/pictures.js.
 const MAP_SPRITES = {
   '兔子': {   // rabbit
     palette: {o:'#4A3B33', w:'#F2EEE6', g:'#CFC7BA', p:'#F4A6B0', e:'#1E1E1E'},
@@ -85,5 +85,18 @@ const MAP_SPRITES = {
       "..oho....oho....",
       "..oo......oo...."
     ]
+  },
+  // wild creatures, which jump out of long grass to fight (drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
+  '蛇': {   // snake
+    palette: {a:'#414F29', b:'#233113', c:'#A6D86A', d:'#477A26', e:'#6CA83E', f:'#1E1A16', g:'#511C19', h:'#D83A3A', i:'#3F6124'},
+    rows: ["................","................",".........aab....","......aaaccdb...",".....accceefdb..","....aceddeeedbg.","...acedbbdddghhg","..aceedb.bbb.gg.","..acedb.........","..bdedb.........","...acdbaaaaab...","..aciiccccccdb..",".aceiieeeeeeedb.",".bdeeeeeeeeeedb.","..bddddddddddb..","...bbbbbbbbbb..."]
+  },
+  '蜜蜂': {   // bee
+    palette: {a:'#5E5B58', b:'#424A4D', c:'#FFFFFF', d:'#A9C9DA', e:'#DDEFF8', f:'#3A2E22', g:'#FFE58A', h:'#C99A2E', i:'#4D3B16', j:'#1B150F', k:'#2D241B', l:'#5E5333', m:'#F2C14E', n:'#322C27', o:'#756D64', p:'#1F1812'},
+    rows: ["................","................","....aaaaaaab....","...acccccccdb...","..aceeeeeeedb...","..bdeeeeddddb...","...bdddfghii....","..jklggfmmfhi...",".nofkmmfmmfmhi..","jkfcfkmfmmfmhip.",".jkfkmmfmmfmhpfp","..jkhmmfmmfmhip.","...jihhfmmfhi...",".....ipfhhii....",".......pii......","................"]
+  },
+  '野猪': {   // wild boar
+    palette: {a:'#201710', b:'#3E2A1C', c:'#A07250', d:'#3F2E20', e:'#7A5236', f:'#563826', g:'#281B13', h:'#47301F', i:'#1E1A16', j:'#D3AD97', k:'#966C53', l:'#C08A6A', m:'#3C2C21', n:'#5A5651', o:'#F4F0E8', p:'#352D27', q:'#806E64', r:'#3A251B', s:'#1F150F'},
+    rows: ["................","................","................",".......aaaa.....","....aaabbbbaaa..","...abbbbcccbbba.","..dddceeeeeeefg.",".dccchheeeeeeefg","dceeieeheeeeeefg","jjkeeeeheeeeeefg","jlkeeeeheeeeeefg","kkkffhheeeeeefg.","mnonpqfffffffg..","..n.pqrsggpqrs..","....srrs..srrs..",".....ss....ss..."]
   }
 };

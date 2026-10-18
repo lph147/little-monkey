@@ -55,7 +55,10 @@ const DRAFTS = [
   ...[['水 从 哪里 来 ？', 'Where does the water come from?', 'The little monkey, when the rocks have rolled away'],
     ['山 上 有 蛇 。', 'There are snakes up the mountain.', 'The old monkey, before you set off up the mountain path (山路 shānlù: please check this name too)'],
     ['山 上 有 瀑布 ！', 'There’s a waterfall up the mountain!', 'You, back from the top of the path (also in the story at the waterfall)'],
-    ['山 上 有 路 。', 'There is a path up the mountain.', 'The example on 路 (path)’s page in the Word Scroll']]
+    ['山 上 有 路 。', 'There is a path up the mountain.', 'The example on 路 (path)’s page in the Word Scroll'],
+    ['这 是 棍子 。', 'This is a stick.', 'The big monkey, giving you a stick before you set off'],
+    ['花 上 有 蜜蜂 。', 'There is a bee on the flower.', 'The example on 蜜蜂 (bee)’s page'],
+    ['山 上 有 野猪 。', 'There is a wild boar on the mountain.', 'The example on 野猪 (wild boar)’s page']]
     .map(([zh, en, where]) => ({zh, en, where:'The prologue, up the stream, 18 October 2026 (in the game): ' + where}))
 ];
 

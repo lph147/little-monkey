@@ -360,6 +360,47 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(4.5, 23.5, 2, 1.5), '#A9A598'); p.fill(O(27, 18.5, 1.8, 1.3), '#A9A598');   // stones by the path
     p.fill(Rc(25, 6, 2, 5), '#8A5A32'); p.fill(O(26, 5.5, 3.6, 4), '#3F9A4C', {light: '#6CC066'});   // a tree far up the path
     p.flat(or(Rc(5, 13, 1, 2), Rc(8, 11, 1, 2), Rc(27, 26, 1, 2)), '#4F9446');   // tufts
+  },
+  '棍子': p => {   // stick: a straight branch with a knot, a stub and one leaf
+    p.fill(path([[6, 27], [26, 5]], 2.1), '#9A6A3E', {light: '#C49461', dark: '#6E4A2A'});
+    p.fill(path([[17, 15], [21.5, 17.5]], 1.2), '#9A6A3E', {light: '#C49461', dark: '#6E4A2A', edge: true});
+    p.fill(O(23, 18.5, 3, 1.8), '#5FA85A', {light: '#8CC86A'});
+    p.flat(O(12, 21, 1.4, 1.1), '#6E4A2A'); p.flat(O(20, 12, 1.2, 1), '#6E4A2A');
+    p.flat(O(26, 5, 1.6, 1.6), '#E2C08E'); p.dot(26, 5, '#B98A55');   // the cut end
+  },
+  '蛇': p => {   // snake: green, coiled, head raised, tongue out
+    const G = '#6CA83E', LT = {light: '#A6D86A', dark: '#477A26'};
+    p.fill(O(16, 25, 12, 4.5), G, LT);
+    p.fill(O(15, 21, 9, 4), G, {...LT, edge: true});
+    p.fill(path([[11, 20], [9, 14], [12, 9], [17, 8.5]], 2.4), G, {...LT, edge: true});
+    p.fill(O(19.5, 8.5, 4.6, 3.6), G, LT);
+    [[10, 26], [16, 27], [22, 26], [13, 22], [18, 22]].forEach(([x, y]) => p.flat(O(x, y, 1.6, .9), '#3F6E22'));
+    p.flat(Rc(13, 24, 6, 1), '#E8D27A');
+    p.eye(20, 7, '#1E1A16', 2);
+    p.flat(path([[24, 9.5], [27, 10], [28.5, 8.6]], .5), '#D83A3A'); p.dot(28, 11, '#D83A3A');
+  },
+  '蜜蜂': p => {   // bee: a round striped body, see-through wings, a little stinger
+    p.fill(or(O(11, 8, 5.5, 4.5), O(19, 7, 5, 4)), '#DDEFF8', {light: '#FFFFFF', dark: '#A9C9DA'});   // wings
+    p.fill(Pg([[27.5, 20], [31, 21], [27.5, 22.5]]), '#3A2E22');                                      // stinger
+    p.fill(O(17, 20, 10, 7.5), GOLD, {light: '#FFE58A', dark: '#C99A2E'});                             // body
+    p.flat(and(O(17, 20, 10, 7.5), or(Rc(13, 0, 3, 32), Rc(19, 0, 3, 32))), '#3A2E22');               // stripes
+    p.fill(O(7.5, 19.5, 4.5, 4.5), '#3A2E22', {light: '#5E5048'});                                     // head
+    p.eye(5, 18, '#111111', 2); p.dot(5, 18, '#FFFFFF');
+    p.fill(path([[6, 15.5], [4, 11.5]], .6), '#3A2E22'); p.fill(path([[9, 15.5], [10, 11.5]], .6), '#3A2E22');   // feelers
+  },
+  '野猪': p => {   // wild boar: a bristly brown back, a long snout, two white tusks
+    const B = '#7A5236', LT = {light: '#A07250', dark: '#563826'};
+    p.fill(or(Rc(9, 25, 3, 5, 1), Rc(22, 25, 3, 5, 1)), '#4A3022');                 // back legs
+    p.fill(O(18, 18, 11.5, 8.5), B, LT);                                              // body
+    p.flat(path([[9, 11], [14, 9.5], [20, 9.5], [27, 12]], 1), '#3E2A1C');             // its bristly back
+    p.fill(or(Rc(12, 25, 3, 6, 1), Rc(25, 25, 3, 6, 1)), '#5E3E28', {edge: true});    // front legs
+    p.fill(O(9, 19, 6.5, 5.5), B, {...LT, edge: true});                                // head
+    p.fill(Pg([[7, 13], [9.5, 9.5], [11, 14]]), '#563826');                            // ear
+    p.fill(Rc(1, 18, 5, 5, 2), '#C08A6A', {light: '#D9A88A'});                         // snout
+    p.dot(2, 20, '#3E2A1C'); p.dot(4, 20, '#3E2A1C');
+    p.fill(path([[5, 23.5], [4, 20]], .7), '#F4F0E8');                                // a tusk
+    p.eye(8, 17, '#1E1A16', 2);
+    p.flat(path([[29.5, 15], [31, 13]], .5), '#3E2A1C');                               // tail
   }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops

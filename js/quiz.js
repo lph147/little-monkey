@@ -44,6 +44,24 @@ function questionType(w){
     : asks('hear') ? (Math.random() < .6 ? 'hear' : 'read') : (Math.random() < .6 ? 'read' : 'listen');
   return asks(want) ? want : 'listen';
 }
+// A question about word w, of the kind its level calls for: what to show (body), and the answers (opts, as HTML in
+// options), never with avoid among them (such as an animal that's right there). Only words you've already met.
+function wordQuestion(w, avoid){
+  const type = questionType(w);
+  const others = shuffle(picWords().filter(x => x !== w && x !== avoid && lvl(x) >= 1));
+  const opts = shuffle([w].concat(others.slice(0, 2)));
+  let body;
+  if (type === 'listen') body = `<div class="askrow"><p class="prompt">Listen. Which picture is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
+  else if (type === 'read') body = `<p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`;
+  else body = `<div class="askrow"><p class="prompt">Listen. Which word is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
+  // The answers: when listening, pictures with their characters; when reading, just pictures (the word has its
+  // pinyin, so pinyin here would match itself); when hearing, the words with their pinyin. Never characters alone.
+  // When listening, each one's pinyin shows once you've answered (before, you could match the sound to it).
+  const options = opts.map(o => type === 'hear' ? o + (S.pinyin ? `<span class="cap">${WORDS[o].py}</span>` : '') : `<span class="ico">${picHTML(o)}</span>${type === 'read' ? '' : `<span class="cap">${o}</span>${laterPy(o)}`}`);
+  return {type, body, opts, options, text:type === 'hear', answerIdx:opts.indexOf(w)};
+}
+// The words to ask about: the ones due for review first, then the ones you know least, avoiding avoid.
+const dueFirst = avoid => picWords().filter(w => w !== avoid && lvl(w) >= 1).sort((a,b) => (rec(a).due - rec(b).due) || (lvl(a) - lvl(b)));
 const snack = () => (AREA.shop ? AREA.shop.items : []).find(i => i.eat && (S.bag[i.item] || 0) > 0);   // food in your bag to eat in an encounter
 const wrongToEat = (n, answerIdx) => shuffle([...Array(n).keys()].filter(i => i !== answerIdx))[0];   // which wrong answer eating takes away
 async function encounter(foe){
@@ -59,29 +77,18 @@ async function encounter(foe){
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}"><div class="plate"><div class="name">${nameHTML()}</div>`
     + `<div class="hearts" aria-label="Friendship: ${filled} of 3">${[0, 1, 2].map(k => heartHTML(k < filled)).join('')}</div>${n ? `<div class="qn">Question ${n} of 3</div>` : ''}</div>`
     + '<div class="plus" aria-hidden="true" hidden>+♥</div></div>';
-  const pool = picWords().filter(w => w !== an && lvl(w) >= 1).sort((a,b) => (rec(a).due - rec(b).due) || (lvl(a) - lvl(b)));
-  const targets = shuffle(pool.slice(0, 5)).slice(0, 3);
+  const targets = shuffle(dueFirst(an).slice(0, 5)).slice(0, 3);
   let score = 0;
   for (let i = 0; i < targets.length; i++){
     // Sometimes, in an area that asks them, the last question is a sentence you know with a word missing.
     const b = AREA.questions.includes('gap') && i === targets.length - 1 && Math.random() < GAP_CHANCE ? practiceSentence() : null;
     if (b){ if ((await gapRound(b, img)).right) score++; continue; }
-    const w = targets[i], type = questionType(w);
-    const others = shuffle(picWords().filter(x => x !== w && x !== an && lvl(x) >= 1));   // only words you have already met (and not the animal, which is right there)
-    const opts = shuffle([w].concat(others.slice(0, 2)));
+    const w = targets[i], q = wordQuestion(w, an), {type, body, opts} = q;   // (never the animal, which is right there)
     const head = scene(score, i + 1);
-    let body;
-    if (type === 'listen') body = `<div class="askrow"><p class="prompt">Listen. Which picture is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
-    else if (type === 'read') body = `<p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`;
-    else body = `<div class="askrow"><p class="prompt">Listen. Which word is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
     const food = foe.wild && snack();   // in an animal encounter, food from the shop takes away a wrong answer
     const helper = food ? `<button class="helper" data-a="eat">${picHTML(food.item)}<span>Eat a ${esc(wz(food.item))}: one wrong answer goes · ${S.bag[food.item]} left</span></button>` : '';
-    const ok = await pictureQ({head, body, word: w, type, helper,
-      // The answers: when listening, pictures with their characters; when reading, just pictures (the word has its
-      // pinyin, so pinyin here would match itself); when hearing, the words with their pinyin. Never characters alone.
-      // When listening, each one's pinyin shows once you've answered (before, you could match the sound to it).
-      options: opts.map(o => type === 'hear' ? o + (S.pinyin ? `<span class="cap">${WORDS[o].py}</span>` : '') : `<span class="ico">${picHTML(o)}</span>${type === 'read' ? '' : `<span class="cap">${o}</span>${laterPy(o)}`}`), text: type === 'hear',
-      answerIdx: opts.indexOf(w), onAnswer: ok => {   // right: the animal hops and a heart fills
+    const ok = await pictureQ({head, body, word: w, type, helper, options: q.options, text: q.text,
+      answerIdx: q.answerIdx, onAnswer: ok => {   // right: the animal hops and a heart fills
         if (!ok) return;
         const sc = sheet.querySelector('.scene'); if (!sc) return;
         sc.querySelector('.foe').classList.add('hop');

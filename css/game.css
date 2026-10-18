@@ -431,6 +431,20 @@ rt.hid{visibility:hidden}
 .sheet:has(> .scene) .big{font-size:2.6rem}
 .sheet:has(> .scene) > .actions{margin-top:.3rem}
 .endmsg{text-align:center;font-size:1.1rem}
+/* A battle: the scene also shows your hearts, in a plate at its bottom right; your turn is a menu of what to do. */
+.scene .plate.mine{top:auto;bottom:5px;left:auto;right:5px;max-width:62%}
+.sheet:has(> .scene) .plate.mine{top:auto;bottom:5px;left:auto;right:5px}
+.plate.mine .name{font:600 .8rem var(--pixel);color:var(--jade)}
+.sheet:has(> .scene) .plate.mine .heart{width:.95rem;height:.85rem}
+.plate.mine .hearts{gap:2px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin:.2rem 0}
+.act{display:flex;flex-direction:column;align-items:center;padding:.3rem 0;background:var(--bg);border:2px solid var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);color:var(--ink)}
+.act .z{font-family:var(--text);font-size:1.5rem;font-weight:700;line-height:1.1}
+.act .p{font-size:.85rem}
+.act .e{font:.75rem var(--pixel);color:var(--jade);text-align:center}
+.hud{position:absolute;left:14px;top:14px;display:flex;gap:3px;padding:4px 6px;background:rgba(14,26,51,.75);border-radius:6px;z-index:4;pointer-events:none}
+.hud[hidden]{display:none}
+.hud .heart{width:18px;height:16px}
 /* A question (an animal's, or filling a gap): from the top down, with the bottom row (what happened, or a helper,
    and Next) at the bottom, its space kept, so nothing moves when you answer. */
 .sheet:has(> .scene):has(> .opts){grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr);grid-template-rows:auto auto 1fr auto;row-gap:.4rem}
