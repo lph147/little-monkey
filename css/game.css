@@ -293,7 +293,7 @@ rt.hid{visibility:hidden}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}
 .sheet .menu button.navsel,.sheet [data-nav] button.navsel{outline:3px solid var(--gold);outline-offset:2px}
 .sheet [data-nav]:has(.navsel:not(.primary)) .btn.primary::before{display:none}   /* the A badge follows the button you've chosen */
-.sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.sheet [data-nav] button.navsel::before,.titlecard .btn.primary::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-8px;left:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
+.sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.sheet [data-nav] button.navsel::before,.titlecard .btn.sel::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-8px;left:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .sheet [data-b]::after,#skipBtn::after{content:"B";position:absolute;top:-8px;right:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnB);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
@@ -611,3 +611,19 @@ rt.hid{visibility:hidden}
 .turn h2{margin:0;font-size:2.2rem;letter-spacing:.12em}
 .turn p{margin:0;font:600 1.15rem/1.4 var(--pixel);max-width:16rem}
 .turn .small{font:400 .9rem var(--en);color:var(--muted)}
+
+/* the title screen's buttons: Continue across the top (with which game, and when you played it), then New game and Save
+   files; the chosen one has a gold outline and the A badge */
+#titleButtons{display:grid;grid-template-columns:auto auto;justify-content:start;gap:.5rem;pointer-events:auto}
+#titleButtons #contBtn{grid-column:1 / -1}
+.titlecard .btn.big{font-size:1rem;padding:.4rem .9rem;display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;line-height:1.15;white-space:normal;text-align:left}
+.titlecard .btn.big .sub{font:500 .72rem var(--text);opacity:.8}
+.titlecard .btn.sel{outline:3px solid var(--gold);outline-offset:2px}
+@media (max-width:700px){.titlecard .btn.big{font-size:.85rem;padding:.3rem .7rem}.titlecard .btn.big .sub{font-size:.65rem}}
+/* Save files: your three games, one to a row */
+.files .menu .btn.slotrow{display:flex;align-items:center;gap:.6rem;justify-content:flex-start;padding:.35rem .6rem;text-align:left}
+.files .slotrow .face{width:28px;height:28px;image-rendering:pixelated;flex:none}
+.files .slotrow .gt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.files .slotrow .gt b{font:600 .95rem var(--pixel)}
+.files .slotrow .gt span{font-size:.8rem;color:var(--muted)}
+.files .slotrow.empty{border-style:dashed}

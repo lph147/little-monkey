@@ -50,10 +50,12 @@ The save on your phone belongs to this address, so it is separate from saves any
 
 ## Quick check (after every change, about 5 minutes)
 
-- [ ] The title screen shows the night sky with the stone on the mountain on the right, 小猴子 on the left, and three games side by side along the bottom: each with its words, friends, chapter and when it was last played, or Empty. The chosen one has a yellow border and a red A badge; the D-pad (or arrow keys) moves between them.
+- [ ] The title screen shows the night sky with the stone on the mountain on the right, 小猴子 on the left, and its buttons: a gold Continue, saying which game, how many words and when you last played (it carries on with the game you played last), then New game and Save files in white. The first time, there's just New game (gold) and Save files. The chosen one has a gold outline and the red A badge; the D-pad (or arrow keys) moves between them, and the A label says what it does.
 - [ ] A first game says to turn your sound on. If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). The words sit under the title on the left, clear of the stone and the mountain.
 - [ ] There's no header or task box. Under the D-pad are two small buttons, TASKS and MENU, where a Game Boy has Select and Start.
-- [ ] A on a game opens its card: words, friends, shells, where you are, how many words are due for review, and Continue, Copy to a file, Delete and Back. Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your words, friends and shells (a pixel shell) at the top, and pressing the same button again (or B) closes them.
+- [ ] New game starts in an empty game (the opening plays). With all three games in use, it opens Save files instead, saying how to make room.
+- [ ] Save files lists your three games, one to a row: each with its words, friends, chapter and when it was last played, or Empty. A on a game opens its card (Back returns to Save files).
+- [ ] A game's card: words, friends, shells, where you are, how many words are due for review, and Continue, Copy to a file, Delete and Back. Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your words, friends and shells (a pixel shell) at the top, and pressing the same button again (or B) closes them.
 - [ ] On a game's card, the arrows (or the D-pad) move between its buttons, with a gold outline and the A badge on the one chosen; A presses it.
 - [ ] There are no levels or XP anywhere (they were taken out on 18 October 2026). A saved game from before still has all its words, friends and shells.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
@@ -210,10 +212,10 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] On your phone, with your real save: Continue works, and your words, shells, friends and tasks are all as they were. (After the update from peaches to shells, you have the same number of shells as you had peaches.)
 - [ ] After an update that changes the save format: the same, plus Menu, 任务 Tasks shows the same ticks as before.
 - [ ] Your game from before the save slots is Game 1, with everything as it was.
-- [ ] Choose Game 2 (empty), New game: the opening plays and a new game starts. Back on the title screen (Settings, Title screen), Game 1 is still as it was, and Game 2 is the chosen one next time you open the game.
+- [ ] New game (or Save files, Game 2, New game): the opening plays and a new game starts in Game 2. Back on the title screen (Settings, Title screen), Game 1 is still as it was in Save files, and Continue goes to Game 2, the one you played last.
 - [ ] A game, Copy to a file, saves a file called little-monkey-game1- and the date. On a phone it goes to your downloads (Files on an iPhone).
-- [ ] An empty game, Load from a file, and pick that file: the game appears in that slot, and Continue carries on from it.
-- [ ] A game, Delete: it asks once more (Keep it is the A button); Delete it empties the slot.
+- [ ] Save files, an empty game, Load from a file, and pick that file: the game appears in that slot, and its Continue carries on from it.
+- [ ] A game, Delete: it asks once more (Keep it is the A button); Delete it empties the slot, and you're back on Save files.
 - [ ] Loading something that isn't a save (any other file) says so and changes nothing.
 
 When the save format changes, the game keeps a copy of your old save in the browser before converting it, so it can be recovered if anything goes wrong.

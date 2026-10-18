@@ -6,50 +6,59 @@ const assert = require('node:assert/strict');
 const {loadGame, SAVE_KEY} = require('./fake-browser');
 
 const MINE = {started: true, shells: 5, w: {'石头': {lv: 1, due: 0, ok: 0}, '你好': {lv: 1, due: 0, ok: 0}}};
-const slots = game => game.el('#titleButtons').querySelectorAll('.slot');
 
 test('your game is Game 1, just where it was; Games 2 and 3 are empty', () => {
   const game = loadGame({dom: true, save: MINE});
   game.runFrame();
   assert.equal(game.run('SLOT'), 1);
-  const [one, two, three] = slots(game);
+  game.run('filesCard()');
+  const [one, two, three] = game.el('#sheet').querySelectorAll('.slotrow');
   assert.match(one.textContent, /Game 1.*2 words · 0 friends/);
   assert.ok(two.classList.contains('empty') && three.classList.contains('empty'));
   game.run('save()');
   assert.equal(JSON.parse(game.storage.get(SAVE_KEY)).shells, 5, 'it saves under the same name as before');
 });
 
-test('the D-pad moves between the games, and A opens the chosen one', () => {
+test('on the title screen the D-pad moves between Continue, New game and Save files, and A presses the chosen one', () => {
   const game = loadGame({dom: true, save: MINE});
   game.runFrame();
-  game.run("moveSlot('right')");
-  assert.ok(slots(game)[1].classList.contains('primary'), 'Game 2 chosen');
-  game.run("moveSlot('right'); moveSlot('right')");
-  assert.ok(slots(game)[2].classList.contains('primary'), 'and it stops at Game 3');
-  game.run("moveSlot('left'); moveSlot('left')");
-  assert.ok(slots(game)[0].classList.contains('primary'));
-  game.run('pressA()');
-  assert.match(game.el('#sheet').textContent, /Game 1/);
+  const chosen = () => game.el('#titleButtons').querySelector('.sel').id;
+  assert.equal(chosen(), 'contBtn');
+  game.run("moveTitle('right')"); assert.equal(chosen(), 'newBtn');
+  game.run("moveTitle('right'); moveTitle('right')"); assert.equal(chosen(), 'filesBtn', 'it stops at Save files');
+  game.run("moveTitle('left'); moveTitle('left'); moveTitle('left')"); assert.equal(chosen(), 'contBtn');
+  game.run("moveTitle('right'); moveTitle('right'); pressA()");
+  assert.match(game.el('#sheet').textContent, /Save files/);
 });
 
-test('a new game in Game 2 leaves Game 1 alone, and the game you played last is chosen next time', () => {
+test('New game starts in an empty game, leaving Game 1 alone; Continue then goes to the game you played last', () => {
   const game = loadGame({dom: true, save: MINE});
   game.runFrame();
-  game.run('slotCard(2)');
-  game.el('#sheet').querySelector('#newBtn').click();
-  assert.equal(game.run('SLOT'), 2);
+  game.el('#titleButtons').querySelector('#newBtn').click();
+  assert.equal(game.run('SLOT'), 2, 'the first empty game');
   assert.equal(game.run('S.shells'), 0, 'a new game');
   game.run('startGame()');   // after the opening
   assert.ok(game.storage.get(SAVE_KEY + '-game2'), 'Game 2 is saved under its own name');
   assert.equal(JSON.parse(game.storage.get(SAVE_KEY)).shells, 5, 'Game 1 is untouched');
   const again = loadGame({dom: true, storage: Object.fromEntries(game.storage)});
   again.runFrame();
-  assert.equal(again.run('SLOT'), 2, 'next time, Game 2 is the one you were playing');
-  assert.ok(slots(again)[1].classList.contains('primary'));
-  again.run('slotCard(1)');
+  assert.match(again.el('#titleButtons').innerHTML, /id="contBtn".*Game 2/, 'Continue: Game 2, played last');
+  again.run('filesCard(); slotCard(1)');
   again.el('#sheet').querySelector('#contBtn').click();
   assert.equal(again.run('SLOT'), 1);
-  assert.equal(again.run('S.shells'), 5, 'Continue on Game 1 switches back to it');
+  assert.equal(again.run('S.shells'), 5, 'Continue on Game 1’s card switches back to it');
+});
+
+test('with all three games in use, New game opens Save files and says how to make room', () => {
+  const store = {};
+  const game = loadGame({dom: true, save: MINE});
+  for (const n of [2, 3]) game.storage.set(SAVE_KEY + '-game' + n, JSON.stringify({...MINE, version: 27}));
+  game.run('toTitle()');
+  assert.match(game.el('#titleButtons').innerHTML, /Your 3 games are in use/);
+  game.el('#titleButtons').querySelector('#newBtn').click();
+  assert.match(game.el('#sheet').textContent, /All three games are in use/);
+  assert.equal(game.run('SLOT'), 1, 'nothing started');
+  assert.ok(store);
 });
 
 test('deleting a game asks once more, keeps a copy in the browser, and leaves the slot empty', () => {
@@ -63,7 +72,7 @@ test('deleting a game asks once more, keeps a copy in the browser, and leaves th
   sheet.querySelector('[data-a=yes]').click();
   assert.equal(game.storage.get(SAVE_KEY), undefined, 'the game is gone');
   assert.ok([...game.storage.keys()].some(k => k.startsWith(SAVE_KEY + '-backup-deleted-game1-')), 'but a copy is kept');
-  assert.ok(slots(game)[0].classList.contains('empty'));
+  assert.ok(sheet.querySelectorAll('.slotrow')[0].classList.contains('empty'), 'back on Save files, Game 1 is empty');
   assert.equal(game.run('S.started'), false);
 });
 
@@ -86,6 +95,5 @@ test('on a game’s card, the arrows move between its buttons, and A presses the
   game.run("navFocus('left')");
   assert.equal(game.run('document.activeElement.dataset.a'), 'back', 'left: Back');
   game.run('pressA()');
-  assert.equal(game.run('modal.hidden'), true, 'A pressed Back: the card closes');
-  assert.ok(sheet);
+  assert.match(sheet.textContent, /Save files/, 'A pressed Back: back to Save files');
 });

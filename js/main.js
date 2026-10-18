@@ -94,12 +94,12 @@ function currentPrompt(now){
 function buttonLabels(now){
   if (!modal.hidden){
     const f = document.activeElement, primary = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
-    const focused = sheet.querySelector('.menu') && f && sheet.contains(f) && f.matches(NAV_SEL) ? f : primary;
+    const focused = sheet.querySelector(NAVIGABLE) && f && sheet.contains(f) && f.matches(NAV_SEL) ? f : primary;
     const bb = sheet.querySelector('[data-b]');
     return [btnLabel(focused), bb && bb.offsetParent !== null ? btnLabel(bb) : ''];
   }
   if (talkNext){ const ok = talkBox.querySelector('[data-a=ok]'); return [ok ? btnLabel(ok) : 'Say it', '']; }
-  if (mode === 'title') return ['Choose', ''];
+  if (mode === 'title'){ const s = $('#titleButtons').querySelector('.sel'); return [s ? btnLabel(s) : 'Choose', '']; }
   if (mode === 'intro') return [$('#beginBtn') ? 'Begin' : 'Next', 'Skip'];
   return [currentPrompt(now), !$('#saybox').hidden ? 'Close' : ''];
 }
@@ -134,36 +134,60 @@ function titleText(){   // the title screen's words, under its name: for a first
   if (vh) vh.onclick = () => { openCard(`<p class="label">Hearing Chinese</p><p>${VOICE_HELP[problem]}</p><div class="actions"><button class="btn primary" data-a="ok" data-b>OK</button></div>`); on('[data-a=ok]', closeCard); };
 }
 try { speechSynthesis.addEventListener('voiceschanged', () => { if (mode === 'title') titleText(); }); } catch(e) {}   // voices can arrive late
-// The title screen: the three games (save slots) side by side, each with a summary, or empty. The D-pad moves
-// between them and A chooses one: its card has Continue (or New game), Copy to a file and Delete.
-let titleSlot = 1;
+// The title screen: Continue (the game you played last), New game (in an empty game) and Save files (your three games;
+// each game's card has Continue, Copy to a file and Delete, or New game and Load from a file). The D-pad moves between
+// the buttons and A presses the chosen one. The first time, there's New game and Save files.
+let titleSel = 0;
 const go = fn => () => { getAC(); unlockSpeech(); musicStart(); fn(); };   // (sound can only start from a tap)
 const ago = t => { const d = Math.floor((Date.now() - t) / 86400000); return !t ? '' : d < 1 ? 'today' : d < 2 ? 'yesterday' : `${d} days ago`; };
 const faceHTML = () => `<img class="face" alt="" src="${monkeySprite('player', 'down', false, 0).toDataURL()}">`;
-function toTitle(pick = SLOT){
+const lastPlayed = () => { const p = slotsInfo().played || {}; return SLOTS.filter(slotSummary).sort((a, c) => (p[c] || 0) - (p[a] || 0) || a - c)[0] || null; };
+function toTitle(){
   mode = 'title'; musicStop(); $('#capbox').hidden = true; $('#skipBtn').hidden = true;
   $('#titlecard').hidden = false;
   $('#areaName').textContent = AREA.name.en;
-  titleSlot = pick;
-  $('#titleButtons').innerHTML = SLOTS.map(n => { const g = slotSummary(n); return g
-    ? `<button class="slot${n === pick ? ' primary' : ''}" data-slot="${n}"><span class="top">${faceHTML()}<span class="t">Game ${n}</span></span><span class="s">${g.words} ${g.words === 1 ? 'word' : 'words'} · ${g.friends} ${g.friends === 1 ? 'friend' : 'friends'}</span><span class="s">${esc(g.chapter.name)}${g.played ? ' · ' + ago(g.played) : ''}</span></button>`
-    : `<button class="slot empty${n === pick ? ' primary' : ''}" data-slot="${n}"><span class="top"><span class="face"></span><span class="t">Game ${n}</span></span><span class="s">Empty</span><span class="s">Start a new game here</span></button>`; }).join('');
-  $('#titleButtons').querySelectorAll('.slot').forEach(b => b.onclick = () => { SFX.blip(); slotCard(+b.dataset.slot); });
+  const n = lastPlayed(), g = n && slotSummary(n), empty = SLOTS.find(k => !slotSummary(k));
+  $('#titleButtons').innerHTML = (g ? `<button class="btn big primary" id="contBtn" data-label="Continue">Continue<span class="sub">Game ${n} · ${g.words} ${g.words === 1 ? 'word' : 'words'}${g.played ? ' · played ' + ago(g.played) : ''}</span></button>` : '')
+    + `<button class="btn big${g ? '' : ' primary'}" id="newBtn" data-label="New game">New game<span class="sub">${!g ? 'Start the story' : empty ? 'In an empty game' : 'Your 3 games are in use'}</span></button>`
+    + `<button class="btn big" id="filesBtn" data-label="Save files">Save files<span class="sub">${g ? 'Your 3 games' : 'Load a game from a file'}</span></button>`;
+  const tb = $('#titleButtons');
+  if (g) tb.querySelector('#contBtn').onclick = go(() => continueGame(n));
+  tb.querySelector('#newBtn').onclick = () => { SFX.blip(); if (empty) go(() => { newGameIn(empty); setUpGame(); playIntro(); })(); else filesCard('full'); };
+  tb.querySelector('#filesBtn').onclick = () => { SFX.blip(); filesCard(); };
+  titleSel = 0; markTitle();
   titleText();
 }
-function moveSlot(d){   // the D-pad on the title screen
-  const n = titleSlot + (d === 'left' || d === 'up' ? -1 : 1);
-  if (SLOTS.includes(n)){ SFX.blip(); toTitle(n); }
+function markTitle(){ $('#titleButtons').querySelectorAll('.btn').forEach((b, i) => b.classList.toggle('sel', i === titleSel)); }
+function moveTitle(d){   // the D-pad on the title screen: between its buttons
+  const n = $('#titleButtons').querySelectorAll('.btn').length, i = titleSel + (d === 'left' || d === 'up' ? -1 : 1);
+  if (i >= 0 && i < n){ titleSel = i; markTitle(); SFX.blip(); }
+}
+function continueGame(n){   // play game n from where you left off
+  if (n !== SLOT){ useSlot(n); setUpGame(); }
+  closeCard(); $('#titlecard').hidden = true; placePlayer(); mode = 'play'; updateHUD();
+}
+// Save files: your three games, each with its words, friends, chapter and when you last played; choosing one opens its
+// card. full: New game found no empty game, so it says how to make room. pick: the game to start on.
+function filesCard(full, pick){
+  const row = n => { const g = slotSummary(n); return g
+    ? `<button class="btn slotrow" data-slot="${n}" data-label="Choose">${faceHTML()}<span class="gt"><b>Game ${n}</b><span>${g.words} ${g.words === 1 ? 'word' : 'words'} · ${g.friends} ${g.friends === 1 ? 'friend' : 'friends'} · ${esc(g.chapter.name)}${g.played ? ' · ' + ago(g.played) : ''}</span></span></button>`
+    : `<button class="btn slotrow empty" data-slot="${n}" data-label="Choose"><span class="face"></span><span class="gt"><b>Game ${n}</b><span>Empty: start a new game here, or load one</span></span></button>`; };
+  openCard(`<div class="files"><p class="label">Save files</p><p class="small">${full === 'full'
+      ? 'All three games are in use. To start a new one, choose a game and delete it (copy it to a file first if you want to keep it).'
+      : 'Choose a game to play it, copy it to a file or delete it. An empty one starts a new game, or loads one from a file.'}</p>
+    <div class="menu">${SLOTS.map(row).join('')}</div></div><div class="actions"><button class="btn" data-a="back" data-b>Back</button></div>`);
+  sheet.querySelectorAll('.slotrow').forEach(b => b.onclick = () => { SFX.blip(); slotCard(+b.dataset.slot); });
+  on('[data-a=back]', () => { closeCard(); toTitle(); });
+  (sheet.querySelector(`.slotrow[data-slot="${pick}"]`) || sheet.querySelector('.slotrow')).focus();
 }
 // A game's card: what's in it, then Continue, Copy to a file or Delete; or, for an empty slot, New game or Load from a file.
 function slotCard(n){
-  titleSlot = n;
   const g = slotSummary(n);
   if (!g){
     openCard(`<div class="who" aria-hidden="true">💾</div><p class="label">Game ${n} · empty</p><p>Start a new game here, or load one from a file: a game copied from another phone, or a backup.</p>
       <input type="file" accept=".json,application/json" hidden>
       <div class="actions" data-nav><button class="btn" data-a="back" data-b>Back</button><button class="btn" data-a="load">Load from a file</button><button class="btn primary" id="newBtn">New game</button></div>`);
-    on('[data-a=back]', () => { closeCard(); toTitle(n); });
+    on('[data-a=back]', () => filesCard(null, n));
     sheet.querySelector('#newBtn').onclick = go(() => { newGameIn(n); setUpGame(); closeCard(); playIntro(); });
     sheet.querySelector('#newBtn').focus();
     const pick = sheet.querySelector('input[type=file]');
@@ -172,7 +196,7 @@ function slotCard(n){
       const file = pick.files[0]; if (!file) return;
       const r = readSaveFile(await file.text());
       if (r.error){ infoBox('💾', `<p>${esc(r.error)}</p>`).then(() => slotCard(n)); return; }
-      useSave(r.save, n); setUpGame(); closeCard(); toTitle(n); toast(`Loaded into Game ${n}.`);
+      useSave(r.save, n); setUpGame(); toTitle(); filesCard(null, n); toast(`Loaded into Game ${n}.`);
     };
     return;
   }
@@ -181,12 +205,9 @@ function slotCard(n){
   openCard(`<p class="label">Game ${n}</p><div class="slotcard">${faceHTML()}<div><p><b>${g.words} ${g.words === 1 ? 'word' : 'words'}</b> · ${friends} · ${g.shells} 🐚</p>
       <p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${due}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
     <div class="actions" data-nav><button class="btn danger" data-a="del">Delete</button><button class="btn" data-a="copy">Copy to a file</button><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" id="contBtn">Continue</button></div>`);
-  on('[data-a=back]', () => { closeCard(); toTitle(n); });
+  on('[data-a=back]', () => filesCard(null, n));
   sheet.querySelector('#contBtn').focus();   // the arrows move from here
-  sheet.querySelector('#contBtn').onclick = go(() => {
-    if (n !== SLOT){ useSlot(n); setUpGame(); }
-    closeCard(); $('#titlecard').hidden = true; placePlayer(); mode = 'play'; updateHUD();
-  });
+  sheet.querySelector('#contBtn').onclick = go(() => continueGame(n));
   on('[data-a=copy]', () => {
     const f = saveFile(n), a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([f.text], {type:'application/json'})); a.download = f.name;
@@ -198,7 +219,7 @@ function slotCard(n){
         <p class="small">Everything in this game is erased from this phone. To keep a copy, copy it to a file first.</p></div></div>
       <div class="actions"><button class="btn danger" data-a="yes">Delete it</button><button class="btn primary" data-a="no" data-b>Keep it</button></div>`);
     on('[data-a=no]', () => slotCard(n));
-    on('[data-a=yes]', () => { deleteSlot(n); if (n === SLOT) setUpGame(); closeCard(); toTitle(n); toast(`Game ${n} is deleted.`); });
+    on('[data-a=yes]', () => { deleteSlot(n); if (n === SLOT) setUpGame(); toTitle(); filesCard(null, n); toast(`Game ${n} is deleted.`); });
   });
 }
 function playIntro(){
