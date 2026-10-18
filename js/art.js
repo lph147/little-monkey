@@ -102,9 +102,11 @@ NAMES.sign = AREA.sign.name;
 NAMES.player = {zh:'小猴子', py:'xiǎo hóuzi', en:'You'};   // you, when you reply
 // Your name: 小猴子 (You), or the first of the area's names for you (yourNames) whose if matches, such as 美猴王 once you're king.
 const yourName = () => (AREA.yourNames || []).find(n => matches(n.if)) || NAMES.player;
+// An animal friend met on the way (a character that looks like an animal) is called by its word, in Chinese and pinyin.
+const animalName = id => { const a = ANIMALS.find(x => x.id === id); return a && {zh:a.hz, py:WORD_BANK[a.hz].py}; };
 function speaker(id){
-  const n = id === 'player' ? yourName() : NAMES[id];
-  return `<div class="speaker">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div><div class="spk-en">${n.en}</div></div>` : ''}</div>`;
+  const n = id === 'player' ? yourName() : NAMES[id] || animalName(id);
+  return `<div class="speaker">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
 }
 function portrait(id){
   if (portraitCache[id]) return portraitCache[id];
@@ -126,7 +128,7 @@ const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; ma
 const mg = mapCanvas.getContext('2d');
 const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log'];   // looks with grass underneath
 const CLIFFS = ['cliff'];
-const WATERY = ['water','waterfall','bridge','ironBridge'];
+const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
   for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i)*16), py = Math.floor(rnd(x,y,i+20)*16); R(g, X+px, Y+py, 1, 1, i % 3 ? '#6CB35C' : '#93D67F'); }
@@ -297,6 +299,11 @@ const LOOKS = {
     waterBase(g,X,Y,x,y);
     R(g,X+2,Y,12,T,'#5A616B'); for (let i = 0; i < 16; i += 3) R(g,X+2,Y+i,12,1,'#454B54');
     R(g,X+1,Y,1,T,'#2F3338'); R(g,X+14,Y,1,T,'#2F3338');
+  },
+  bridgeAcross:(g,X,Y,x,y) => {   // a bridge over a river that runs from side to side: its planks go across
+    waterBase(g,X,Y,x,y);
+    for (let i = 0; i < 16; i += 4){ R(g,X+1,Y+i,14,3,(i/4) % 2 ? '#A0743F' : '#B98A55'); R(g,X+1,Y+i+3,14,1,'#6B4A2A'); }
+    R(g,X,Y,2,T,'#6B4A2A'); R(g,X+14,Y,2,T,'#6B4A2A');
   },
   bridge:    (g,X,Y,x,y) => {
     waterBase(g,X,Y,x,y);

@@ -164,34 +164,44 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('PLACE'), 'path', 'you should be on the mountain path');
   assert.ok(knows('路'), 'arriving on the mountain path should teach 路');
   assert.ok(knows('棍子'), 'the big monkey should give you a stick');
-  for (const [x, y] of [[3, 12], [4, 12], [5, 12], [6, 12], [7, 12]]) await stepOn(x, y, 'walking through the long grass');
+  for (const [x, y] of [[13, 14], [12, 14], [11, 14], [10, 14], [9, 14]]) await stepOn(x, y, 'walking through the long grass');
   assert.ok(knows('蛇'), 'a snake should jump out of the long grass, and be chased away');
   assert.equal(get('S.hearts'), 5, 'every dodge right: no hearts lost');
-  await pressAt(8, 2, 'right', 'chasing the wild boar off the path');
+  await pressAt(15, 15, 'left', 'meeting the rabbit by the long grass');
+  await stepOn(16, 0, 'going on up to the river valley');
+  assert.equal(run('PLACE'), 'valley', 'you should be in the river valley');
+  await pressAt(19, 4, 'up', 'playing with the goat over the first bridge');
+  assert.equal(area().goatPlayed, 1, 'the goat should have played a word game with you');
+  await stepOn(5, 0, 'going on up, deep into the mountains');
+  assert.equal(run('PLACE'), 'falls', 'you should be deep in the mountains');
+  await pressAt(7, 4, 'up', 'chasing the wild boar out of the narrow way');
   assert.equal(area().boar, 1, 'the wild boar should run off');
   assert.ok(knows('野猪'));
-  await pressAt(15, 1, 'right', 'finding the waterfall');
+  await pressAt(5, 1, 'left', 'finding the waterfall');
   assert.equal(area().climb, 2, 'you should find the waterfall');
   assert.ok(knows('瀑布'), 'the waterfall should teach 瀑布');
-  await stepOn(5, 16, 'going back down the path');
-  assert.equal(run('PLACE'), 'meadow', 'you should be back in the meadow');
+  for (const [x, y, place] of [[5, 12, 'valley'], [19, 12, 'path'], [16, 19, 'meadow']]){
+    await stepOn(x, y, 'going back down');
+    assert.equal(run('PLACE'), place, `going back down, you should reach the ${place}`);
+  }
   await pressAt(15, 2, 'left', 'telling the old monkey about the waterfall');
   assert.equal(area().climb, 3, 'the troop should follow you up');
-  await stepOn(15, 0, 'going back up the mountain path');
+  for (const [x, y] of [[15, 0], [16, 0], [5, 0]]) await stepOn(x, y, 'going back up to the waterfall');
+  assert.equal(run('PLACE'), 'falls');
 
   // The story at the waterfall
-  await pressAt(15, 1, 'right', 'reading the story at the waterfall');
+  await pressAt(5, 1, 'left', 'reading the story at the waterfall');
   assert.equal(area().story, true, 'the story at the waterfall should be read');
 
   // The prologue is done, so chapter 1 begins (its title card was answered along the way)
   assert.equal(area().chapter, 1, 'chapter 1 should begin once the prologue is done');
 
   // Chapter 1, part A: the dare at the waterfall, the jump, the cave, and telling the old monkey
-  assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => [n.id, n.x, n.y])"), [['elder', 13, 1], ['big', 14, 2], ['playful', 12, 2]], 'the troop gathers at the waterfall');
-  await pressAt(14, 1, 'left', 'hearing the dare at the waterfall');
+  assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => [n.id, n.x, n.y])"), [['elder', 9, 1], ['big', 10, 2], ['playful', 5, 2]], 'the troop gathers at the waterfall');
+  await pressAt(8, 1, 'right', 'hearing the dare at the waterfall');
   assert.ok(knows('跳'), 'the dare should teach 跳');
   assert.equal(area().cave, 1);
-  await pressAt(15, 1, 'right', 'jumping through the waterfall');
+  await pressAt(5, 1, 'left', 'jumping through the waterfall');
   assert.equal(run('PLACE'), 'cave', 'you should be in the Water Curtain Cave');
   assert.ok(knows('洞'), 'going in should teach 洞');
   await stepOn(7, 6, 'crossing the iron bridge');
@@ -201,14 +211,14 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(12, 5, 'up', 'reading the stone tablet');
   for (const w of ['桥', '床', '碗', '桌子']) assert.ok(knows(w), `${w} should be found in the cave`);
   await stepOn(7, 13, 'walking out through the water curtain');
-  assert.equal(run('PLACE'), 'path', 'you should be back by the waterfall');
-  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [15, 1]);
-  await pressAt(14, 1, 'left', 'telling the old monkey about the cave');
+  assert.equal(run('PLACE'), 'falls', 'you should be back by the waterfall');
+  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [5, 1]);
+  await pressAt(8, 1, 'right', 'telling the old monkey about the cave');
   assert.equal(area().cave, 3, 'the old monkey should hear about the cave');
   assert.ok(get('areaChecklist()').slice(0, 3).every(([, done]) => done), 'part A of chapter 1 should be ticked off');
 
   // Chapter 1, part B: leading the troop in, home, becoming king, and counting them in
-  await pressAt(15, 1, 'right', 'leading the troop into the cave');
+  await pressAt(5, 1, 'left', 'leading the troop into the cave');
   assert.equal(run('PLACE'), 'cave');
   assert.equal(area().cave, 4, 'the troop should follow you in');
   assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => n.place)"), ['cave', 'cave', 'cave']);

@@ -72,7 +72,7 @@ test('the wild boar is a big enemy: you can’t run from it', async () => {
 });
 
 test('losing isn’t punished: you rest in the meadow with full hearts', async () => {
-  const g = fighting({hearts: 1, pos: {place: 'path', x: 4, y: 12, dir: 'down'}});
+  const g = fighting({hearts: 1, pos: {place: 'path', x: 8, y: 13, dir: 'down'}});
   g.run("globalThis.__r = null; battle('snake').then(r => { __r = r; })"); await g.flush();
   await g.choose('hit'); await g.answer(false);
   await g.answer(false);   // the last heart
@@ -104,7 +104,7 @@ test('wild creatures jump out of the long grass, now and then, not every step', 
 
 test('the wild boar blocks the way at the top until you chase it off', () => {
   const at = save => loadGame({save: {version: 24, started: true, ...save}}).run("placeCharacters(); ALL_NPCS.find(n => n.id === 'boar').place");
-  assert.equal(at({areas: {1: {gate: true, climb: 1}}}), 'path');
+  assert.equal(at({areas: {1: {gate: true, climb: 1}}}), 'falls');
   assert.equal(at({areas: {1: {gate: true, climb: 1, boar: 1}}}), 'gone', 'chased off');
   assert.equal(at({areas: {1: {gate: true, climb: 3}}}), 'gone', 'a game past the waterfall never meets it');
 });

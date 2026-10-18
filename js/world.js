@@ -123,7 +123,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async wordGame(s, who){
     const g = s.wordGame;
     if (!canEncounter()){ toast(g.notYet); return; }
-    if (await confirmBox(speaker(who), g.ask, 'Play', 'Not now')){ SFX.encounter(); await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}); }
+    if (await confirmBox(speaker(who), fill(g.ask), 'Play', 'Not now')){ SFX.encounter(); await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}); }
   },
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },

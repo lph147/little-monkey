@@ -74,72 +74,103 @@ test('a task arrow to someone in another place points the way there', () => {
   assert.ok(!elder.npc);
 });
 
-// The mountain path (18 October 2026): up beside the river from the meadow to the waterfall at its top.
-test('the mountain path leads up from the meadow, and the waterfall is at its top, not in the meadow', () => {
+// The way up the stream (18 October 2026): from the meadow to the waterfall, in three places that follow the river.
+test('the way up the stream: the mountain path, the river valley and deep in the mountains, with the waterfall at the end', () => {
   const game = loadGame();
   const looks = id => [...new Set(get(game, `PLACES.${id}.map.join('')`).split('').map(ch => get(game, `AREA.legend[${JSON.stringify(ch)}].look`)))];
   assert.ok(!looks('meadow').includes('waterfall'), 'the meadow has no waterfall now');
-  assert.ok(looks('path').includes('waterfall'), 'the path has it');
-  const up = get(game, "PLACES.meadow.exits.filter(e => e.to === 'path')");
-  assert.ok(up.length >= 1, 'a way up from the meadow');
-  assert.ok(get(game, "PLACES.path.exits.some(e => e.to === 'meadow')"), 'and back down');
-  assert.ok(get(game, "PLACES.path.exits.some(e => e.to === 'cave' && e.by === 'A')"), 'the jump into the cave is at the top of the path');
+  assert.ok(looks('falls').includes('waterfall'), 'deep in the mountains has it');
+  for (const id of ['path', 'valley', 'falls']) assert.ok(looks(id).includes('water') && looks(id).includes('longGrass'), `${id}: the river runs through it, and there's long grass`);
+  const goes = (a, b) => get(game, `PLACES.${a}.exits.some(e => e.to === '${b}')`);
+  for (const [a, b] of [['meadow', 'path'], ['path', 'valley'], ['valley', 'falls']]) assert.ok(goes(a, b) && goes(b, a), `${a} and ${b} are joined, both ways`);
+  assert.ok(get(game, "PLACES.falls.exits.some(e => e.to === 'cave' && e.by === 'A')"), 'the jump into the cave is at the waterfall');
+  assert.ok(get(game, "PLACES.cave.exits.every(e => e.to === 'falls')"), 'and you come out in front of it');
 });
 
 test('you can hop down a ledge, but never climb it', () => {
-  const game = loadGame({save: {version: 23, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place: 'path', x: 8, y: 9, dir: 'down'}}});
+  const game = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place: 'path', x: 8, y: 11, dir: 'down'}}});
   game.run("mode = 'play'; placePlayer()");
-  assert.equal(get(game, 'tileAt(8, 10).look'), 'ledge');
+  assert.equal(get(game, 'tileAt(8, 12).look'), 'ledge');
   game.run('tryStep("down", 10000)');
-  assert.deepEqual(get(game, '[pl.mv.tx, pl.mv.ty, pl.mv.hop]'), [8, 11, true], 'down over the ledge, landing below it');
-  game.run("pl.mv = null; S.pos = {place: 'path', x: 8, y: 11, dir: 'up'}; placePlayer(); tryStep('up', 10000)");
+  assert.deepEqual(get(game, '[pl.mv.tx, pl.mv.ty, pl.mv.hop]'), [8, 13, true], 'down over the ledge, landing below it');
+  game.run("pl.mv = null; S.pos = {place: 'path', x: 8, y: 13, dir: 'up'}; placePlayer(); tryStep('up', 10000)");
   assert.equal(get(game, 'pl.mv'), null, 'not back up it');
 });
 
-test('setting off: the old monkey sends you up alone, and the waterfall at the top is where the water comes from', async () => {
-  const game = loadGame({save: {version: 23, started: true, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true}}}});
+test('setting off: the old monkey sends you up alone, and the waterfall at the end is where the water comes from', async () => {
+  const game = loadGame({save: {version: 25, started: true, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true}}}});
   game.run("mode = 'play'; showDialog = showNarration = showNotice = replyWith = async () => {}; toast = () => {}");
   const said = () => get(game, "(AREA.talk.elder.find(p => !p.if || matches(p.if)).do || []).map(s => s.say || s.set && 'set' || s.message && 'message')");
   assert.deepEqual(said().slice(0, 2), ['whereFrom', 'snakes'], 'the little monkey wonders, and the old monkey warns of snakes');
   await game.run("runSteps(AREA.talk.elder.find(p => !p.if || matches(p.if)).do, 'elder')");
   assert.equal(get(game, 'here().climb'), 1);
   assert.equal(get(game, "ALL_NPCS.find(n => n.id === 'elder').place"), 'meadow', 'the troop stays below');
-  game.run("S.pos = {place: 'path', x: 15, y: 1, dir: 'right'}; placePlayer()");
-  await game.run('interact(16, 1)');
+  game.run("S.pos = {place: 'falls', x: 5, y: 1, dir: 'left'}; PLACE = null; enterPlace('falls'); placePlayer()");
+  await game.run('interact(4, 1)');
   assert.equal(get(game, 'here().climb'), 2, 'the waterfall: found it');
   await game.run("runSteps(AREA.talk.elder.find(p => !p.if || matches(p.if)).do, 'elder')");
   assert.equal(get(game, 'here().climb'), 3, 'back down, you tell the troop');
   game.run('placeCharacters()');
-  assert.deepEqual(get(game, "['elder', 'big', 'playful'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'path'], 'and they follow you up');
+  assert.deepEqual(get(game, "['elder', 'big', 'playful'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['falls', 'falls', 'falls'], 'and they follow you up');
 });
 
-test('on the way up the mountain path there is no way round the long grass', () => {
-  const game = loadGame();
-  const map = get(game, 'PLACES.path.map'), legend = get(game, 'AREA.legend');
-  const way = (avoidGrass) => {   // can you get from the bottom to the waterfall, walking up (never up a ledge)?
-    const seen = new Set(['5,16']), todo = [[5, 16]];
-    while (todo.length){
-      const [x, y] = todo.pop();
-      if (x === 15 && y === 1) return true;
-      for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0]]){
-        const nx = x + dx, ny = y + dy, t = legend[(map[ny] || '')[nx]];
-        if (!t || seen.has(nx + ',' + ny)) continue;
-        if (t.ledge){ if (dy === 1 && legend[map[ny + 1][nx]].walk){ seen.add(nx + ',' + (ny + 1)); todo.push([nx, ny + 1]); } continue; }
-        if (!t.walk || (avoidGrass && t.look === 'longGrass')) continue;
-        seen.add(nx + ',' + ny); todo.push([nx, ny]);
-      }
+// Walking the way up, from the bottom of the mountain path, through the places' exits: can you reach the waterfall?
+// (Never up a ledge; with avoidGrass, never through long grass; blocked: squares you can't walk on, such as a bridge.)
+function wayUp(game, {avoidGrass = false, from = ['path', 16, 18], blocked = []} = {}){
+  const places = get(game, 'PLACES'), legend = get(game, 'AREA.legend');
+  const key = (p, x, y) => p + ',' + x + ',' + y, seen = new Set([key(...from)]), todo = [from];
+  while (todo.length){
+    const [p, x, y] = todo.pop(), map = places[p].map;
+    if (p === 'falls' && x === 5 && y === 1) return true;
+    const exit = places[p].exits.find(e => !e.by && e.at[0] === x && e.at[1] === y);
+    const next = exit ? [[exit.to, ...exit.arrive]] : [];
+    for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0]]){
+      const nx = x + dx, ny = y + dy, t = legend[(map[ny] || '')[nx]];
+      if (!t || blocked.includes(key(p, nx, ny))) continue;
+      if (t.ledge){ if (dy === 1 && legend[map[ny + 1][nx]].walk) next.push([p, nx, ny + 1]); continue; }
+      if (!t.walk || (avoidGrass && t.look === 'longGrass')) continue;
+      next.push([p, nx, ny]);
     }
-    return false;
-  };
-  assert.equal(way(false), true, 'you can reach the waterfall');
-  assert.equal(way(true), false, 'but not without going through long grass');
+    for (const n of next) if (!seen.has(key(...n))){ seen.add(key(...n)); todo.push(n); }
+  }
+  return false;
+}
+test('on the way up the stream there is no way round the long grass', () => {
+  const game = loadGame();
+  assert.equal(wayUp(game), true, 'you can reach the waterfall');
+  assert.equal(wayUp(game, {avoidGrass: true}), false, 'but not without going through long grass');
+  for (const [p, x, y] of [['valley', 19, 11], ['falls', 5, 11]]) assert.equal(wayUp(game, {from: [p, x, y], avoidGrass: true}), false, `not from ${p} (${x}, ${y}) either`);
+});
+
+test('in the river valley the way forks: over the first bridge, away from the river, is a dead end', () => {
+  const game = loadGame();
+  assert.equal(get(game, "AREA.legend[PLACES.valley.map[6][19]].look"), 'bridgeAcross', 'the first bridge');
+  assert.equal(wayUp(game, {from: ['valley', 19, 3], blocked: ['valley,19,6', 'valley,19,7']}), false, 'from the clearing, only back over the bridge');
+  assert.equal(wayUp(game, {from: ['valley', 19, 9], blocked: ['valley,19,7']}), true, 'along the river is the way up');
+});
+
+test('animal friends on the way up: the rabbit and the fox give advice, the squirrel and the goat want to play', async () => {
+  const game = loadGame({save: {version: 25, started: true, w: Object.fromEntries(['松鼠', '石头', '山', '花', '草'].map(w => [w, {lv: 1, due: 0, ok: 0}])), areas: {1: {gate: true, climb: 1}}, pos: {place: 'path', x: 5, y: 4, dir: 'up'}}});
+  const steps = id => get(game, `AREA.talk.${id}[0].do.map(s => Object.keys(s)[0])`);
+  for (const id of ['rabbit', 'fox']) assert.ok(!steps(id).includes('wordGame') && steps(id)[0] === 'say', `the ${id} says something useful`);
+  for (const id of ['squirrel', 'goat']) assert.ok(steps(id).includes('wordGame'), `the ${id} plays a word game`);
+  assert.deepEqual(get(game, "['rabbit', 'squirrel', 'fox', 'goat'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'valley', 'valley']);
+  const name = get(game, "speaker('squirrel')");
+  assert.match(name, /松鼠 <span class="spk-py">sōngshǔ<\/span>/, 'called by its word, with pinyin');
+  assert.doesNotMatch(name, /spk-en/, 'and no English: it’s a word you know');
+  game.run("mode = 'play'; placePlayer(); showDialog = async () => {}; confirmBox = async () => true; globalThis.__played = 0; encounter = async f => { __played = f.hz; return true; }");
+  const bubble = () => get(game, "((AREA.bubbles.squirrel || []).find(b => matches(b.if)) || {}).show || ''");
+  assert.equal(bubble(), '!', 'it wants to play');
+  await game.run("talk(ALL_NPCS.find(n => n.id === 'squirrel'))");
+  assert.equal(get(game, '__played'), '松鼠', 'a word game with the squirrel');
+  assert.equal(bubble(), '', 'and then its ! goes');
 });
 
 test('standing in tall or long grass hides your feet, as in Pokémon; on the path it doesn’t', () => {
-  const at = (place, x, y) => { const g = loadGame({save: {version: 24, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place, x, y, dir: 'down'}}}); g.run("mode = 'play'; placePlayer()"); return g; };
+  const at = (place, x, y) => { const g = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place, x, y, dir: 'down'}}}); g.run("mode = 'play'; placePlayer()"); return g; };
   assert.deepEqual(get(at('meadow', 4, 7), 'grassUnder()'), [[4, 7]], 'the meadow’s tall grass');
-  assert.deepEqual(get(at('path', 6, 11), 'grassUnder()'), [[6, 11]], 'the path’s long grass');
-  assert.deepEqual(get(at('path', 5, 15), 'grassUnder()'), [], 'not on the path itself');
+  assert.deepEqual(get(at('path', 8, 11), 'grassUnder()'), [[8, 11]], 'the path’s long grass');
+  assert.deepEqual(get(at('path', 16, 15), 'grassUnder()'), [], 'not on the path itself');
   const walking = at('meadow', 4, 7);
   walking.run('pl.px += T / 2');
   assert.deepEqual(get(walking, 'grassUnder()'), [[4, 7], [5, 7]], 'between two squares of grass, both');

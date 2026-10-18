@@ -27,10 +27,10 @@ SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};   // every word 
 // chapter 1 has begun: the prologue is done, and the troop is at the waterfall; you're beside the old monkey
 const PROLOGUE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 3, story: true, bought: ['头带'], cave: 0};
 SAVES.chapter1 = {...SAVES.middle, w: knows(1, [...MIDDLE_WORDS, '瀑布', '狐狸', '松鼠', '山羊', '朋友']), met: ['rabbit', 'fox', 'squirrel', 'goat'],
-  wardrobe: {owned: ['头带'], wearing: ['头带']}, areas: {1: PROLOGUE}, pos: {place: 'path', x: 14, y: 1, dir: 'left'}};
-SAVES.dared = {...SAVES.chapter1, w: {...SAVES.chapter1.w, ...knows(1, ['跳'])}, areas: {1: {...PROLOGUE, cave: 1}}, pos: {place: 'path', x: 15, y: 1, dir: 'right'}};
+  wardrobe: {owned: ['头带'], wearing: ['头带']}, areas: {1: PROLOGUE}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
+SAVES.dared = {...SAVES.chapter1, w: {...SAVES.chapter1.w, ...knows(1, ['跳'])}, areas: {1: {...PROLOGUE, cave: 1}}, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
 SAVES.inCave = {...SAVES.dared, w: {...SAVES.dared.w, ...knows(1, ['洞'])}, areas: {1: {...PROLOGUE, cave: 2}}, pos: {place: 'cave', x: 7, y: 9, dir: 'up'}};
-SAVES.explored = {...SAVES.inCave, w: {...SAVES.inCave.w, ...knows(1, ['桥', '床', '碗', '桌子'])}, pos: {place: 'path', x: 14, y: 1, dir: 'left'}};
+SAVES.explored = {...SAVES.inCave, w: {...SAVES.inCave.w, ...knows(1, ['桥', '床', '碗', '桌子'])}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
 // part B: the troop has followed you in (cave 4), you're king (cave 6), and the troop is counted in
 const CAVE_WORDS = knows(1, ['洞', '跳', '桥', '床', '碗', '桌子']);
 SAVES.ledIn = {...SAVES.explored, w: {...SAVES.chapter1.w, ...CAVE_WORDS}, areas: {1: {...PROLOGUE, cave: 4}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
@@ -39,10 +39,12 @@ SAVES.king = {...SAVES.toBeKing, w: {...SAVES.toBeKing.w, ...knows(1, ['王', '�
 SAVES.home = {...SAVES.king, w: {...SAVES.king.w, ...knows(1, ['二', '三'])}, areas: {1: {...PROLOGUE, cave: 6, count: 3}}, pos: {place: 'cave', x: 7, y: 12, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.rocksGone = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], hungry: 'done', thirsty: 'done', holding: {}, gate: true}}, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};   // the troop gathers where the rocks were
-SAVES.climbing = {...SAVES.rocksGone, w: {...SAVES.rocksGone.w, ...knows(1, ['路'])}, areas: {1: {...SAVES.rocksGone.areas[1], climb: 1}}, pos: {place: 'path', x: 3, y: 12, dir: 'right'}};
+SAVES.climbing = {...SAVES.rocksGone, version: 25, w: {...SAVES.rocksGone.w, ...knows(1, ['路'])}, areas: {1: {...SAVES.rocksGone.areas[1], climb: 1}}, pos: {place: 'path', x: 15, y: 14, dir: 'left'}};   // (version 25: older saves on the path are moved off it)
 SAVES.fighting = {...SAVES.climbing, w: {...SAVES.climbing.w, ...knows(1, ['棍子', '蛇'])}, hearts: 4, bag: {'苹果': 1}};   // on the path, with the stick, a snake met before
 SAVES.hurt = {...SAVES.fighting, hearts: 2, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};
-SAVES.atTheTop = {...SAVES.climbing, pos: {place: 'path', x: 15, y: 1, dir: 'right'}};
+SAVES.valley = {...SAVES.fighting, pos: {place: 'valley', x: 18, y: 9, dir: 'up'}};   // at the fork in the river valley, by the fox
+SAVES.deepIn = {...SAVES.fighting, pos: {place: 'falls', x: 7, y: 5, dir: 'up'}};   // below the wild boar, deep in the mountains
+SAVES.atTheTop = {...SAVES.climbing, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
 SAVES.appleTree = {...SAVES.middle, pos: {place: 'meadow', x: 20, y: 17, dir: 'right'}};
 SAVES.withApple = {...SAVES.middle, bag: {'苹果': 1}};   // an apple from the shop, to eat in an encounter
 SAVES.allFriends = {...SAVES.chapter1, friends: ['rabbit', 'fox', 'squirrel', 'goat']};   // every animal won over
@@ -133,8 +135,15 @@ const SCREENS = [
   {id: 'set-off', title: 'Where does the water come from?', save: 'rocksGone', why: 'The troop gathers where the rocks were; you set off up the path alone.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
   {id: 'mountain-path', title: 'The mountain path', save: 'climbing', why: 'Bushes and ledges send you through the long grass, where wild animals live.', run: async () => { play(); await wait(500); }},
+  {id: 'rabbit-advice', title: 'The rabbit’s advice', save: 'climbing', why: 'Animal friends from the meadow, met on the way up: the rabbit, by the long grass.', run: async () => {
+    play(); await wait(200); S.pos = {place: 'path', x: 15, y: 15, dir: 'left'}; placePlayer(); await wait(200); talk(npc('rabbit')); await wait(500); }},
+  {id: 'river-fork', title: 'The fork in the river valley', save: 'valley', why: 'Over the bridge, away from the river, or along it? The fox gives a hint.', run: async () => {
+    play(); await wait(200); talk(npc('fox')); await wait(500); }},
+  {id: 'goat-play', title: 'The goat wants to play', save: 'valley', why: 'In the clearing over the first bridge (a dead end): a word game.', run: async () => {
+    play(); await wait(200); S.pos = {place: 'valley', x: 19, y: 4, dir: 'up'}; placePlayer(); await wait(200); talk(npc('goat')); await wait(300); pressA(); await wait(500); }},
+  {id: 'deep-mountains', title: 'Deep in the mountains', save: 'deepIn', why: 'The wild boar blocks the narrow way to the waterfall.', run: async () => { play(); await wait(500); }},
   {id: 'long-grass', title: 'In the long grass', save: 'climbing', why: 'Standing in the long grass hides your feet; a ledge above, to hop down.', run: async () => {
-    play(); await wait(200); S.pos = {place: 'path', x: 6, y: 11, dir: 'up'}; placePlayer(); await wait(400); }},
+    play(); await wait(200); S.pos = {place: 'path', x: 8, y: 11, dir: 'up'}; placePlayer(); await wait(400); }},
   {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'rocksGone', why: 'Teaching 棍子, before the lesson on how to fight.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); next(); await wait(300); next(); await wait(600); }},
   {id: 'battle-snake', title: 'A battle: your turn', save: 'fighting', why: 'Hit, eat (you have an apple) or run. Hearts on both sides.', run: async () => {

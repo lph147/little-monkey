@@ -38,7 +38,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   count   how many of the troop you've counted into the cave (chapter 1)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
@@ -77,15 +77,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Find a red, a yellow and a white {花} for the big monkey ({flowersPicked}/3)'},
     {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to the big monkey', arrow:'big'},
     {id:'climb0', if:{gate:true, climb:0}, text:'Talk to the old monkey, where the rocks were', arrow:'elder'},
-    {id:'climb1', if:{climb:1}, text:'Follow the path up beside the river, and find where the water comes from', arrow:[15, 1, 'path']},
+    {id:'climb1', if:{climb:1}, text:'Follow the path up beside the river, and find where the water comes from', arrow:[5, 1, 'falls']},
     {id:'climb2', if:{climb:2}, text:'Go back down and tell the old monkey what you found', arrow:'elder'},
-    {id:'fall', if:{climb:3, story:false}, text:'Read the story at the {瀑布}', arrow:[15, 1, 'path']},
+    {id:'fall', if:{climb:3, story:false}, text:'Read the story at the {瀑布}', arrow:[5, 1, 'falls']},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
     {id:'dare', if:{chapter:1, cave:0}, text:'Go to the {瀑布}: the troop is gathering', arrow:'elder'},
-    {id:'jump', if:{cave:1}, text:'Jump through the {瀑布}', arrow:[16, 1, 'path']},
+    {id:'jump', if:{cave:1}, text:'Jump through the {瀑布}', arrow:[4, 1, 'falls']},
     {id:'explore', if:{cave:2, caveThings:{below:4}}, text:'Look around the {洞} ({caveThings}/4)'},
     {id:'tell', if:{cave:2, caveThings:4}, text:'Tell the old monkey about the {洞}', arrow:'elder'},
-    {id:'lead', if:{cave:3}, text:'Lead the troop into the {洞}: jump through the {瀑布}', arrow:[16, 1, 'path']},
+    {id:'lead', if:{cave:3}, text:'Lead the troop into the {洞}: jump through the {瀑布}', arrow:[4, 1, 'falls']},
     {id:'home', if:{cave:4}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
     {id:'king', if:{cave:5}, text:'Talk to the big monkey', arrow:'big'},
     {id:'count', if:{cave:6, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
@@ -133,6 +133,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
+    squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
     big: [{if:{cave:5}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
   },
 
@@ -213,7 +214,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     meadow: {
       name: {zh:'草地', py:'cǎodì', en:'The meadow'},
       exits: [
-        {at:[15, 0], to:'path', arrive:[5, 15], facing:'up'}, {at:[16, 0], to:'path', arrive:[5, 15], facing:'up'}   // up the mountain path
+        {at:[15, 0], to:'path', arrive:[16, 18], facing:'up'}, {at:[16, 0], to:'path', arrive:[16, 18], facing:'up'}   // up the mountain path
       ],
       map: [
         "MMMMMMMMMMMMMMM..MWWMMMM",
@@ -240,33 +241,86 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYYYYYYYYYYYYYYYYYWWYYYY"
       ]
     },
-    // The mountain path, up beside the river from the meadow to the waterfall at its top (the end of the prologue):
-    // bushes and ledges send you through two bands of long grass (there's no way round), a wild boar blocks the narrow
-    // way at the top, and a fallen tree hides a peach tree for chapter 1.
+    // The way up the stream, from the meadow to the waterfall (the end of the prologue), in three places that follow the
+    // river. Bushes, boulders and ledges send you through long grass (there's no way round), where snakes and bees jump out.
+    // The mountain path: up beside the river, but ledges send you west, through long grass, and back east along a terrace.
+    // A clearing on the left has a peach tree and the squirrel.
     path: {
       name: {zh:'山路', py:'shānlù', en:'The mountain path'},
       exits: [
-        {at:[5, 16], to:'meadow', arrive:[15, 1], facing:'down'},   // back down to the meadow
-        {at:[16, 1], by:'A', label:'Jump', to:'cave', arrive:[7, 12], facing:'up', if:{cave:{atLeast:1}}}   // jumping through the waterfall
+        {at:[16, 19], to:'meadow', arrive:[15, 1], facing:'down'}, {at:[17, 19], to:'meadow', arrive:[15, 1], facing:'down'},   // back down to the meadow
+        {at:[16, 0], to:'valley', arrive:[19, 11], facing:'up'}, {at:[17, 0], to:'valley', arrive:[19, 11], facing:'up'}       // on up to the river valley
       ],
       map: [
-        "MMMMMMMMMMMMMMMMXXMM",
-        "MMMMMMMMMMMMJgggXXMM",
-        "MMMMgrrrrrrrrgggWWMM",
-        "MMMrrggggwggggggWWMM",
-        "MMMrrvvvvvvvvvvvWWMM",
-        "MMnnnnnnnnnnnnnnWWMM",
-        "MMnnnnnnnnnnnnnnWWMM",
-        "MMwwwwwwwwwwwrrwWWMM",
-        "MMPlggggTggggrrgWWMM",
-        "MMwwgggggggrrrggWWMM",
-        "MMvvvvvvvvrrvvvvWWMM",
-        "MMnnnnnnnnnnnnnnWWMM",
-        "MMnnnnnnnnnnnnnnWWMM",
-        "MMrrwwwwwwwwwwwwWWMM",
-        "MMggrgggggTgggggWWMM",
-        "MMMgrrggggggggggWWMM",
-        "MMMMMrMMMMMMMMMMWWMM"
+        "YYYYYYYYYYYYYYYYrrWWMM",
+        "YYYYYYYYYYYYYYYgrrWWMM",
+        "YYYggggYYYYYYYYgrgWWMM",
+        "YYgPgggJYYYYYYYgrgWWMM",
+        "YYggggJggrrrrrrrrgWWMM",
+        "YYYggggwwYYYYYYgrgWWMM",
+        "YYYYwwwYYYYYYYYgrgWWMM",
+        "MMMMMMwwwwwwwwwgrwWWMM",
+        "MMgggggnnnnnnggrrgWWMM",
+        "MMgrrrrnnnnnnrrrggWWMM",
+        "MMgrggnnnnnnnggoggWWMM",
+        "MMgrggnnnnnnnggggoWWMM",
+        "MMrrovvvvvvvvvvvvvWWMM",
+        "MMrgggnnnnnnnnngggWWMM",
+        "MMrrrrnnnnnnnnrrrgWWMM",
+        "MMggggnnnnnnnnggrgWWMM",
+        "MMMgggnnnnnnnngggrWWMM",
+        "MMMMMMnnnnnnnnggrrWWMM",
+        "MMMMMMMMMMMMMMMMrrWWMM",
+        "MMMMMMMMMMMMMMMMrrWWMM"
+      ]
+    },
+    // The river valley: the river turns, coming from the west. At the first bridge the way forks: over it, away from the
+    // river, is a clearing with the goat and an apple tree (a dead end); along the river, through long grass, is the second
+    // bridge and the way on up. A fallen tree hides a peach tree for chapter 1.
+    valley: {
+      name: {zh:'河谷', py:'hégǔ', en:'The river valley'},
+      exits: [
+        {at:[19, 12], to:'path', arrive:[16, 1], facing:'down'}, {at:[20, 12], to:'path', arrive:[16, 1], facing:'down'},   // back down the mountain path
+        {at:[5, 0], to:'falls', arrive:[5, 11], facing:'up'}, {at:[6, 0], to:'falls', arrive:[5, 11], facing:'up'}           // on up, deep into the mountains
+      ],
+      map: [
+        "MMMWWrrMMMMMMMMMMMMMMMMMMM",
+        "MMYWWrrgYYYYYMMYYYYYYYYYMM",
+        "MMYWWnnnnnnYYMMYggggJgQgYM",
+        "MMYWWnnnnnnnYMMYgJggggggYM",
+        "MMwWWnnnnnnnwMMwggggggggwM",
+        "MMwWWgrgggggwMMwwggrggwwwM",
+        "MMwWWWkWWWWWWWWWWWWkWWWwwM",
+        "MMwWWWkWWWWWWWWWWWWkWWWwwM",
+        "MMwgggrgnnnnnnnngggrgWWwwM",
+        "MMwwgrrrnnnnnnnnrrrrgWWwwM",
+        "MMwPlgggnnnnnnnngggrgWWwwM",
+        "MMwwwgTgnnnnnnnngTgrgWWwwM",
+        "MMMMMMMMMMMMMMMMMMMrrWWMMM"
+      ]
+    },
+    // Deep in the mountains: beside the river, east along the bottom, then back west across long grass, past the wild boar
+    // in the narrow way, to the waterfall where the river begins. Jump through it into the Water Curtain Cave (chapter 1).
+    falls: {
+      name: {zh:'深山', py:'shēnshān', en:'Deep in the mountains'},
+      exits: [
+        {at:[5, 12], to:'valley', arrive:[5, 1], facing:'down'}, {at:[6, 12], to:'valley', arrive:[5, 1], facing:'down'},   // back down to the river valley
+        {at:[4, 1], by:'A', label:'Jump', to:'cave', arrive:[7, 12], facing:'up', if:{cave:{atLeast:1}}}   // jumping through the waterfall
+      ],
+      map: [
+        "MMMXXMMMMMMMMMMMMMMM",
+        "MMMXXgggJgMMMMMMMMMM",
+        "MMYWWggrgggYMMMMMMMM",
+        "MMYWWwwrwwwYYYYYYYMM",
+        "MMYWWggrnnnnnngggYMM",
+        "MMYWWggrnnnnnngPgYMM",
+        "MMwWWrrrnnnnnnrrrwMM",
+        "MMwWWgggnnnnnngrgwMM",
+        "MMwWWgggnnnnnngrgwMM",
+        "MMwWWvvvvvvvvvrrgwMM",
+        "MMwWWrrrrrrrrrrggwMM",
+        "MMwWWrgggTggggggTwMM",
+        "MMMWWrrMMMMMMMMMMMMM"
       ]
     },
     // Behind the waterfall (chapter 1). You jump in through the water curtain at the bottom, and walk out
@@ -274,9 +328,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     cave: {
       name: {zh:'水帘洞', py:'Shuǐlián Dòng', en:'Water Curtain Cave'},
       exits: [
-        {at:[6, 13], to:'path', arrive:[15, 1], facing:'down'},
-        {at:[7, 13], to:'path', arrive:[15, 1], facing:'down'},
-        {at:[8, 13], to:'path', arrive:[15, 1], facing:'down'}
+        {at:[6, 13], to:'falls', arrive:[5, 1], facing:'right'},
+        {at:[7, 13], to:'falls', arrive:[5, 1], facing:'right'},
+        {at:[8, 13], to:'falls', arrive:[5, 1], facing:'right'}
       ],
       map: [
         "ZZZZZZZZZZZZZZZZ",
@@ -354,6 +408,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'r': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'A path up the mountain, beside the river.'},
     'n': {look:'longGrass', walk:true, wild:['snake', 'bee']},   // long grass: snakes and bees jump out to fight
     'w': {look:'bush'},   // bushes along the path
+    'o': {look:'boulder', word:'石头'},   // a boulder by the path
+    'k': {look:'bridgeAcross', walk:true},   // a bridge over the river in the valley, to walk across it up or down
     'v': {look:'ledge', ledge:true},
     'l': {look:'log', word:'树', landmark:true, message:'A fallen tree blocks the way. Maybe the troop can move it one day.'},
     // the Water Curtain Cave
@@ -376,17 +432,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // beard: draws a white beard. moves: where they go as the story goes on: the first whose if matches
   // (with x, y, facing, and place if it's another place), instead of where they start.
   characters: [
-    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:3}}, place:'path', x:13, y:1, facing:'right'},
+    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:3}}, place:'falls', x:9, y:1, facing:'left'},
       {if:{gate:true}, x:14, y:2, facing:'right'}],   // by the waterfall once the troop is up there; where the rocks were till then
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
-    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:3}}, place:'path', x:14, y:2, facing:'up'},
+    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:3}}, place:'falls', x:10, y:2, facing:'left'},
       {if:{gate:true}, x:17, y:3, facing:'left'}],
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
-    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:3}}, place:'path', x:12, y:2, facing:'right'},
+    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:3}}, place:'falls', x:5, y:2, facing:'up'},
       {if:{gate:true}, x:14, y:3, facing:'right'}],
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
     // the rest of the troop, in the meadow until they're counted into the cave in chapter 1
@@ -396,9 +452,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#40250F', f:'#A8673A', s:'#EFC79C', m:'#C08060', e:'#24160C'}},
     {id:'troop3', x:20, y:13, facing:'right', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:3}}, place:'cave', x:12, y:8, facing:'left'}],
       palette:{o:'#4A2C17', f:'#D9A050', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
-    // the wild boar, blocking the narrow way at the top of the mountain path until you chase it off
-    {id:'boar', place:'path', x:9, y:2, facing:'down', look:'野猪', label:'Fight', name:{zh:'野猪', py:'yězhū', en:'Wild boar'},
+    // the wild boar, blocking the narrow way to the waterfall until you chase it off
+    {id:'boar', place:'falls', x:7, y:3, facing:'down', look:'野猪', label:'Fight', name:{zh:'野猪', py:'yězhū', en:'Wild boar'},
       moves:[{if:{boar:1}, place:'gone', x:0, y:0}, {if:{climb:{atLeast:2}}, place:'gone', x:0, y:0}]},
+    // animal friends from the meadow, met again on the way up the stream: the rabbit and the fox give advice, the
+    // squirrel and the goat want to play. They look like the animals (look), and have no names: they're words you know.
+    {id:'rabbit', place:'path', x:14, y:15, facing:'left', look:'兔子'},      // by the first long grass
+    {id:'squirrel', place:'path', x:5, y:3, facing:'down', look:'松鼠'},      // in the clearing, by the peach tree
+    {id:'fox', place:'valley', x:18, y:8, facing:'down', look:'狐狸'},        // at the fork
+    {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊'},       // in the clearing over the first bridge
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -421,7 +483,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 7]},
     {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[21, 17]},
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
-    {word:'瀑布', at:[16, 1, 'path']},   // at the top of the mountain path
+    {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
     {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']}, {word:'桥', at:[7, 6, 'cave']}
   ],
 
@@ -591,6 +653,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // Up the stream (drafts, not checked yet: see CHINESE.md)
     whereFrom: {zh:'水 从 哪里 来 ？', en:'Where does the water come from?'},
     snakes: {zh:'山 上 有 蛇 。', en:'There are snakes up the mountain.'},
+    snakesInGrass: {zh:'草 里 有 蛇 。', en:'There are snakes in the grass.'},
+    waterFromMountain: {zh:'水 从 山 上 来 。', en:'The water comes from up the mountain.'},
     foundFall: {zh:'山 上 有 瀑布 ！', en:'There’s a waterfall up the mountain!'},
     stickHere: {zh:'这 是 棍子 。', en:'This is a stick.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
@@ -729,6 +793,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{request:'thirsty'}]}
     ],
     boar: [{do:[{battle:'boar', win:[{set:{boar:1}}, {message:'The way to the top is clear.'}]}]}],
+    rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
+    fox: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
+    squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}?', word:'松鼠', notYet:'Learn a few more words first, then come back to play.'}}]}],
+    goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}?', word:'山羊', notYet:'Learn a few more words first, then come back to play.'}}]}],
     troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'wantPeach'}]}],
     troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'play'}]}],
     troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],

@@ -23,7 +23,7 @@ shown where the word list has them.
 | 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 老板 (Shop owner) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), squirrel, goat, 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
 | 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |
@@ -46,6 +46,8 @@ shown where the word list has them.
 | 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | 猴子 (Monkey) |  |
 | 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 老猴子 (Old monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
+| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | rabbit |  |
+| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | fox |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 老猴子 (Old monkey) |  |
 | 这是棍子。 | zhè shì gùnzi. | This is a stick. | 老猴子 (Old monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
@@ -147,6 +149,8 @@ The opening is told in English. These captions each show one word, said aloud.
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
 | 草地 | cǎodì | The meadow |  |
 | 山路 | shānlù | The mountain path |  |
+| 河谷 | hégǔ | The river valley |  |
+| 深山 | shēnshān | Deep in the mountains |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 
 ### Words to collect

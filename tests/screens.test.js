@@ -27,7 +27,7 @@ test('every game function the screens use still exists', () => {
     for (const n of names) assert.equal(game.run(`typeof ${n}`), 'function', `${s.id}: the game has no function called ${n}`);
     for (const [, obj, fn] of src.matchAll(/(?<![\w$.])([A-Z][A-Z_]*)\.([A-Za-z_$][\w$]*)\s*\(/g))   // such as ACTIONS.sign(...)
       assert.equal(game.run(`typeof ${obj}.${fn}`), 'function', `${s.id}: the game has no ${obj}.${fn}`);
-    for (const [, id] of src.matchAll(/npc\('(\w+)'\)/g)) assert.ok(game.run(`NPCS.some(n => n.id === ${JSON.stringify(id)})`), `${s.id}: there's no character ${id}`);
+    for (const [, id] of src.matchAll(/npc\('(\w+)'\)/g)) assert.ok(game.run(`ALL_NPCS.some(n => n.id === ${JSON.stringify(id)})`), `${s.id}: there's no character ${id}`);   // in any place
   }
 });
 

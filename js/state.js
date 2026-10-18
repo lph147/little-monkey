@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 24;
+const SAVE_VERSION = 25;
 const HEARTS = 5;   // the most hearts you can have in a battle (the story can raise it later)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
@@ -132,6 +132,14 @@ function upgradeSave(s){
   if (s.version === 23){   // version 23: there were no battles. Your hearts start full.
     if (typeof s.hearts !== 'number') s.hearts = HEARTS;
     s.version = 24;
+  }
+  if (s.version === 24){   // version 24: the way up the stream was one place, the path, with the waterfall at its top. It's three
+    const a = (s.areas || {})[AREA.number] || {}, p = s.pos || {};   // places now: a game by the waterfall (past the boar) is put
+    if (p.place === 'path'){                                         // in front of it again, any other at the bottom of the path
+      const top = p.y <= 3 && (a.boar || (a.climb || 0) >= 2);
+      s.pos = top ? {place:'falls', x:5, y:1, dir:'left'} : {place:'path', x:16, y:18, dir:'up'};
+    }
+    s.version = 25;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];
