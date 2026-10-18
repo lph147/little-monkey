@@ -29,15 +29,17 @@ Catching is the heart of it, and the review scheduler feeds old words back into 
 
 ## The game's mechanics (the long-term plan)
 
-Decided on 18 October 2026, so the first area can prepare you for what comes later. Every mechanic is about words, never grammar, and each has a gentle first version on Flower Fruit Mountain.
+Decided on 18 October 2026, so the first area can prepare you for what comes later, and agreed from a plan with mockups (the [game plan](https://claude.ai/artifact/5pJaFHNBeLDFVGUUntw9VK)). Every mechanic is about words, never grammar, and each has a gentle first version on Flower Fruit Mountain.
 
 | Mechanic | Later in the game | First on Flower Fruit Mountain |
 | --- | --- | --- |
 | Explore with abilities | Like Pokémon's Cut and Surf: each ability is a word you learn and then use to open the map, such as 游 swim (Area 2), and 变成 transform and the cloud somersault (Area 3) | Rocks that roll away, 跳 jump through the waterfall, and chopping trees (砍) to open a way to a new place |
-| Befriend, then battle | From Area 3, demons. You and the foe each have hearts. On your turn you choose a question, a friend's power or an item: a right answer hits, a wrong one costs you a heart. Harder kinds of question hit harder, so you choose your risk | Animal encounters, food that helps (the apple), and friend powers: each animal friend can help once in an encounter, such as the fox taking away a wrong answer. A friendly sparring match with the big monkey at the school shows your own hearts for the first time |
+| Befriend, then battle | Battles with hearts on both sides (see Battles, below): wild creatures from the end of the prologue, demons from Area 3 | Animal encounters, food that helps (the apple), friend powers, and the first battles on the path up the stream, with the stick the big monkey gives you |
 | Build | Gather materials and build things for others: the raft that ends Area 1, and something in each area after | The troop's school: gather wood (木头) and stone to build it |
-| Learn at school | Lessons review the words that are due; each area's word test is its exam | The school replaces the practice post, with the old monkey as teacher (老师); hide and seek happens there, once you know enough places |
+| Learn at school | Lessons review the words that are due; each area's word test is its exam | The school replaces the practice post, with the old monkey as teacher (老师); hide and seek happens there, once you know enough places, and practice battles with the big monkey |
 | Grow | No levels: progress is the words you know (see Progression). A bigger collection means a bigger pool for every battle, game and lesson, and words you know better get harder questions | Shells, friends, and the Word Scroll filling up |
+
+**How it ties together.** The school can't teach him how to live forever, so he leaves to find a real teacher (Area 3). Building the school leads to building the raft. Animal friends made from the first day help in battles. The apple in encounters becomes food that brings back hearts. The big monkey's stick becomes the staff (金箍棒) in Area 4. 跳, learned at the waterfall, becomes the move that dodges. The cave's stone beds are where you rest. Peaches, the first fruit you pick, become the Peaches of Immortality that make you stronger in Heaven (Area 5).
 
 **Guided by characters, not prompts** (decided 18 October 2026). Playtesters ignored the task prompts and tips, which stayed flashing for ages. What to do next comes from a character in the speech box, as part of the story: the old monkey is your guide and checks in after each step, and other monkeys mention where things are. The task list stays as a reminder, and its dot doesn't flash.
 
@@ -127,16 +129,16 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 ### Area 1: Flower Fruit Mountain
 
-**A longer Area 1** (decided 18 October 2026). Playtesters became king in about 5 minutes, which is far too soon, and the headband and the crown came straight after each other. The prologue grows into three parts, and becoming king moves later in chapter 1. (A play-time clock in each saved game was considered and not added: playtesters can be timed by watching.)
+**A longer Area 1** (decided 18 October 2026). Playtesters became king in about 5 minutes, which is far too soon, and the headband and the crown came straight after each other. The prologue grows into three parts, and becoming king moves later in chapter 1. (A play-time clock in each saved game was considered and not added: playtesters can be timed by watching.) The prologue gains 路 棍子 打 蛇 蜜蜂 野猪, from 30 words to 36; if that's too many, the boar's name can be heard only. (A frog in the new place was planned and dropped.)
 
 | Part | What happens | Status |
 | --- | --- | --- |
 | Prologue 1: born, and naming things | Born from the stone; the old monkey explains more (the troop, the mountain, why every baby learns names) and sends you off to find things | Built; more dialogue to come |
 | Prologue 2: helping the troop | The hungry, thirsty and big monkeys' finding quests, the animals and the shop; the old monkey introduces the others and checks in after each | Built; more dialogue to come |
-| Prologue 3: up the stream | From the book: the monkeys follow the river up to where it starts. When the rocks roll away, a new place opens upstream, with obstacles, one or two new animals and a friend's power used for the first time. At the source is the waterfall, and the story of your first days | To build next |
+| Prologue 3: up the stream, alone | When the rocks roll away, the troop wonders where the river comes from (水从哪里来？), but the path up is wild (山上有蛇。). You set off alone: the big monkey gives you a stick (棍子, 这是棍子。) and shows you how to fight. A new place, the mountain path (山路), teaches 路: low walls and ledges send you through long grass, where snakes (蛇) and bees (蜜蜂) jump out; a wild boar (野猪) blocks the last stretch; a fallen tree hides a peach tree for chapter 1. At the top you find the waterfall, hurry back to tell the troop (山上有瀑布！) and lead them up, and the story of your first days is read there. The waterfall moves from the meadow to the top of the path. In the book the troop goes up together; going alone keeps him the brave one, as at the cave | To build |
 | Chapter 1 A: the dare and the cave | The dare, the jump, the Water Curtain Cave | Built |
 | Chapter 1 B: moving in, then king | The troop moves in and sets up home, with requests using 有 and 没有 (碗里没有水, 床上没有草); you count the rest of the troop in (four to ten); then you become king at the feast. In the book the monkeys scramble for beds and bowls, then he reminds them of their promise and they bow | Partly built (home, king, one to three) |
-| Chapter 1 C: a school for the troop | Now they have a home, the troop wants more. You chop trees for wood, which opens a path to a new place, and build a school (学校): the old monkey becomes the teacher (老师), there are books (书), its lessons replace the practice post, and hide and seek comes near the end | To plan |
+| Chapter 1 C: a school for the troop | Now they have a home, the troop wants more. You chop trees for wood, which opens a path to a new place, and build a school (学校): the old monkey becomes the teacher (老师), there are books (书), its lessons replace the practice post, and hide and seek comes near the end, with practice battles | To plan |
 | The end of Area 1 | The old gibbon, building the raft (building again), the send-off word test as the school's exam, sailing away | To plan |
 
 The school isn't in the book: it fills the gap where the story skips hundreds of years of happy life on the mountain, and sets up what comes next, as the school can't teach him how to live forever, so he goes to find a real teacher (Area 3). The new words (砍 木头 学校 老师 书 有 没有 四 to 十) are drafts for the native speaker's check.
@@ -204,7 +206,22 @@ Encounters are the game's battles: you win by answering, and every answer is a c
 | Fill the gap | A sentence in Chinese and English, one word missing | The missing word: a picture with its Chinese while it's new, then Chinese and pinyin | Words in context |
 | Tones (later) | Two similar words spoken | Which one you heard | Tones |
 
-The question type follows the word's mastery level, so new words start easy and get harder as you know them better. A word needs two right answers in a row before its questions get harder, and each area says which kinds it asks: Flower Fruit Mountain asks only Listen and Read, so a beginner always has a picture to go on. Hear and read starts in a later area, for words you can already read. From Area 3, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters. Battles are planned in The game's mechanics, above: hearts on both sides, and on each turn a question, a friend's power or an item.
+The question type follows the word's mastery level, so new words start easy and get harder as you know them better. A word needs two right answers in a row before its questions get harder, and each area says which kinds it asks: Flower Fruit Mountain asks only Listen and Read, so a beginner always has a picture to go on. Hear and read starts in a later area, for words you can already read. From Area 3, enemies (demons and guards) replace friendly animals in some places and ask harder questions, and abilities like transformations can be used in encounters. Battles are planned below.
+
+### Battles
+
+Agreed on 18 October 2026, with mockups. A battle looks like an animal encounter and plays like a Pokémon battle, but every hit or miss depends on whether you know the word: no levels, no luck, no timers.
+
+- **A round.** Your turn: four buttons in Chinese with pinyin and English, 打 (dǎ, attack), 朋友 (péngyou, a friend helps), 吃 (chī, eat something) and 跑 (pǎo, run away; not from big enemies). Your move asks a question: right, you hit; wrong, you miss. Then the enemy's turn: it says where it's attacking from or what it throws (草！ 石头！ 火！) and you pick what you heard: right, you dodge; wrong, you lose a heart.
+- **Moves come from the story**, and harder ones ask harder questions and hit harder: 打 with your stick (from the prologue; a Listen question, 1 heart), 跳 jump (the enemy's next attack misses), 变成 transform (Area 3: your next question loses a wrong answer), and the staff, 金箍棒 (Area 4: a Read question, 2 hearts; your stick becomes the staff).
+- **Friend powers**, once per battle and in encounters: the fox takes away a wrong answer, the rabbit plays the word again slowly, the goat shields you from one hit, the squirrel shows the pinyin first. Later animals bring new powers.
+- **Who you fight.** On Flower Fruit Mountain, wild creatures on the path up the stream: snakes and bees in the long grass, a wild boar blocking the last stretch, all chased away, never hurt. Demons from Area 3 (little demons, then the Demon of Havoc, 混世魔王), the Dragon King's guards in Area 4, Heaven's soldiers in Area 5.
+- **Where.** Wild creatures jump out of long grass on paths, drawn darker and taller than the meadow's tall grass; walls and ledges mean you can't always go round it. The meadow's tall grass keeps its friendly animals. Big enemies (the boar, demons) stand on the map guarding the way.
+- **Bosses** come in stages; between them the boss says a line and you answer by filling the gap in a sentence (你是谁？ … 我是美猴王！).
+- **Winning and losing.** The first meeting with a kind of enemy teaches its name on a card. Winning gives shells or coins, sometimes an item. Losing isn't punished: you're carried back to rest with full hearts, and the words you missed come back sooner.
+- **Getting harder without levels.** The path's creatures ask about words you've known a while, with pictures; later enemies use harder kinds of question (characters by sound, sentence gaps, tones), and bosses mix them all.
+
+**Hearts.** You start with 5, and they carry over between battles. Only enemies cost hearts; animal encounters never do. Eating fruit brings one back (and says the sentence, such as 我吃桃子, which counts as using the word). Resting refills them all: in the prologue the old monkey, waiting at the foot of the path; from chapter 1 the cave's stone beds; somewhere to stay in each later area. The story raises the most you can have, above all the Peaches of Immortality in Heaven (Area 5). Hearts first appear when the big monkey gives you the stick.
 
 ## Screens
 
@@ -349,11 +366,13 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [ ] Chapter 1: the story from the book's opening, read in the cave (checked already; it needs 一个, 一只, 很, 大 and 快乐 back in the word bank)
 - [x] Record the long-term mechanics and a longer Area 1 (18 October 2026)
 - [x] Take out XP and levels (save version 22, 18 October 2026)
+- [x] The game plan, with mockups: the story area by area, battles, hearts, Prologue 3 walked alone, agreed (18 October 2026)
 - [ ] Prologue: more dialogue from the old monkey and the troop, guiding you instead of prompts; the headband no longer required
-- [ ] Prologue 3: up the stream, a new place upstream with the waterfall at its source
+- [ ] Prologue 3, the mountain path: the new place, the waterfall moving to its top, 路, walls, ledges, long grass, the fallen tree, fetching the troop
+- [ ] Prologue 3, the first battles: the stick and the big monkey's lesson, hearts, snakes and bees, the wild boar, resting with the old monkey
 - [ ] Chapter 1 B: setting up home (有, 没有), counting the troop in (four to ten), then king at the feast
 - [ ] Chapter 1 C: chopping trees for wood, a new place, building the school, lessons and hide and seek
-- [ ] Friend powers in encounters
+- [ ] Friend powers in encounters and battles
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2
 - [ ] Build Area 2, Across the sea
