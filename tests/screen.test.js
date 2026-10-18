@@ -37,6 +37,8 @@ test('text and pictures follow the screen’s height, and pictures stay sharp', 
       assert.ok(Math.abs(real - Math.round(real)) < 1e-6 && real >= 1, `${k} on a ${h} screen: ${s[k]}px gives each picture pixel a whole number of real pixels`);
     }
     assert.ok(s.face <= s.small && s.small <= s.mid && s.mid <= s.scene && s.scene <= s.big, 'from small to big');
+    const icon = s.icon * dpr / 16;   // the 16-pixel icons
+    assert.ok(Math.abs(icon - Math.round(icon)) < 1e-6 && icon >= 1, `icon on a ${h} screen: ${s.icon}px gives each icon pixel a whole number of real pixels`);
   }
 });
 

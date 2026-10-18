@@ -194,6 +194,7 @@ When the save format changes, the game keeps a copy of your old save in the brow
 - [ ] Pressing and holding on text never selects it.
 - [ ] On cards, the main button has a red A badge and A presses it; the back button has a blue B badge.
 - [ ] Held sideways, the whole console fits on screen; held upright, you see only the card asking you to turn the phone.
+- [ ] No emoji anywhere: the menu's tiles, Settings, the star on new words, the save file, the story, the test and area complete all have pixel icons.
 - [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, the shop, the Word Scroll (and its shadows), the Story Scroll, animal encounters and the Friends list. They look sharp, not blurry, with every pixel the same size.
 
 ## Known issues (not fixed yet)

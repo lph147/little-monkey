@@ -116,7 +116,7 @@ async function wordTest(){   // the exit test at the cave door: every word with 
   save();
   if (pass) SFX.fanfare(); else SFX.wrong();
   return new Promise(res => {
-    openCard(`<div class="who" aria-hidden="true">${pass ? '🎉' : '📜'}</div>
+    openCard(`<div class="who" aria-hidden="true">${pass ? '🏆' : '📜'}</div>
       <p class="label">${pass ? 'Test passed!' : 'Not quite yet'}</p>
       <p>You matched <b>${right} of ${words.length}</b> words right first time. You needed ${need}.</p>
       ${missedHTML(missed)}

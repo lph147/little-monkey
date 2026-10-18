@@ -40,14 +40,14 @@ function fit(){
 // a whole number of the screen's real pixels, so they stay sharp.
 function screenSizes(h, dpr = 1){
   const fs = clamp(h / 20, 13, 18);
-  const art = k => Math.max(32, Math.round(fs * k * dpr / 32) * 32) / dpr;
-  return {fs: +fs.toFixed(1), face: art(1.7), small: art(2), mid: art(3), scene: art(4), big: art(6)};
+  const art = (k, px = 32) => Math.max(px, Math.round(fs * k * dpr / px) * px) / dpr;
+  return {fs: +fs.toFixed(1), face: art(1.7), small: art(2), mid: art(3), scene: art(4), big: art(6), icon: art(1.15, 16)};   // icon: for the 16-pixel icons, about the text's size
 }
 function sizeText(h){
   const root = document.documentElement, s = screenSizes(h, window.devicePixelRatio || 1);
   if (!root) return;   // (the tests' pretend page has none)
   root.style.fontSize = s.fs + 'px';
-  for (const k of ['face', 'small', 'mid', 'scene', 'big']) root.style.setProperty('--pic-' + k, s[k] + 'px');
+  for (const k of ['face', 'small', 'mid', 'scene', 'big', 'icon']) root.style.setProperty('--pic-' + k, s[k] + 'px');
 }
 let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}, advancedTo = 0;
 function frame(now){

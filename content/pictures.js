@@ -1410,3 +1410,260 @@ const PICTURES = {
     ]
   }
 };
+
+// The game's icons, 16 x 16, by the emoji the text uses for them: wherever the game's text has one of these, it
+// shows the pixel icon instead (pixelIcons() in js/art.js).
+const ICONS = {
+  '⭐': {
+    palette: {a:'#5E573D', b:'#513B12', c:'#FFF1A8', d:'#D89A22', e:'#F2C14E'},
+    rows: [
+      "................",
+      ".......ab.......",
+      "......acdb......",
+      "......acdb......",
+      "......acdb......",
+      ".baaaaceedbaaab.",
+      "bdcccceeeeccccdb",
+      ".bdeeeeeeeeeedb.",
+      "..bddeeeeeeddb..",
+      "...baceeeedbb...",
+      "....aceeeedb....",
+      "...aceeddeedb...",
+      "...acedbbdedb...",
+      "...bddb..bddb...",
+      "....bb....bb....",
+      "................"
+    ]
+  },
+  '📜': {
+    palette: {a:'#524434', b:'#3E301E', c:'#D9B88C', d:'#9D7847', e:'#C99A5B', f:'#5B554B', g:'#F5EBD4', h:'#F1E3C2', i:'#D8C49A', j:'#514838', k:'#B79A6A'},
+    rows: [
+      "..aaaaaaaaaaab..",
+      ".acccccccccccdb.",
+      ".aceeeeeeeeeeedb",
+      ".bddddddddddddb.",
+      "..fghhhhhhhhij..",
+      "..fghhhhhhhhij..",
+      "..fghkkkkkkhij..",
+      "..fghhhhhhhhij..",
+      "..fghkkkkkhhij..",
+      "..fghhhhhhhhij..",
+      "..fghkkkkkkhij..",
+      "..fghhhhhhhhij..",
+      ".acccccccccccdb.",
+      ".aceeeeeeeeeeedb",
+      ".bddddddddddddb.",
+      "..bbbbbbbbbbbb.."
+    ]
+  },
+  '📋': {
+    palette: {a:'#474746', b:'#333332', c:'#4E4132', d:'#B8C0C6', e:'#788188', f:'#3A2C1C', g:'#CEAD88', h:'#9AA5AE', i:'#906C42', j:'#B98A55', k:'#FFFFFF', l:'#C3C0B8', m:'#FAF6EC', n:'#3E9A4A', o:'#9A948A'},
+    rows: [
+      ".....aaaaab.....",
+      "..ccadddddebcf..",
+      ".cgggdhhhheggif.",
+      ".cgjjeeeeeejjif.",
+      ".cgjkkkkkkkklif.",
+      ".cgjkmmnmmmmlif.",
+      ".cgjkmnnmmmmlif.",
+      ".cgjknnmmooolif.",
+      ".cgjkmmmmmmmlif.",
+      ".cgjkmmnmmmmlif.",
+      ".cgjnnnmmmmmlif.",
+      ".cgjknnmmooolif.",
+      ".cgjkmmmmmmmlif.",
+      ".cgjlllllllllif.",
+      ".fijjjjjjjjjjif.",
+      "..fiiiiiiiiiif.."
+    ]
+  },
+  '🐾': {
+    palette: {a:'#453121', b:'#2F2015', c:'#B07A52', d:'#6C462D', e:'#8A5A3A'},
+    rows: [
+      ".....ab..ab.....",
+      "....acdbacdb....",
+      "...acedbacedb...",
+      "...bdedbbdedb...",
+      ".aabbdb..bdbaab.",
+      "accdbb....baccdb",
+      "acedb......acedb",
+      "bdddb......bdddb",
+      ".bbb..aaab..bbb.",
+      ".....acccdb.....",
+      "....aceeeedb....",
+      "...aceeeeeedb...",
+      "...bdeeeeeedb...",
+      "....bdeeeedb....",
+      ".....bddddb.....",
+      "......bbbb......"
+    ]
+  },
+  '👕': {
+    palette: {a:'#35424D', b:'#202A33', c:'#7FB0DC', d:'#3E6589', e:'#4F82B0'},
+    rows: [
+      "....ab....ab....",
+      "...acdb..acdb...",
+      "..acedbaaacedb..",
+      ".aceeecccceeedb.",
+      "aceeeeeeeeeeeedb",
+      "deeeeeeeeeeeeeed",
+      "bdeeeeeeeeeeeedb",
+      ".bddeeeeeeeeddb.",
+      "..baceeeeeedbb..",
+      "...aceeeeeedb...",
+      "...aceeeeeedb...",
+      "...aceeeeeedb...",
+      "...aceeeeeedb...",
+      "...aceeeeeedb...",
+      "...bddddddddb...",
+      "....bbbbbbbb...."
+    ]
+  },
+  '⚙': {
+    palette: {a:'#535251', b:'#DDE4E8', c:'#848C93', d:'#363636', e:'#A9B4BC'},
+    rows: [
+      "......abcd......",
+      "..aadabecd.aad..",
+      ".abbcabecdabbcd.",
+      ".abeebeeebbeecd.",
+      ".dceeeeeeeeeecd.",
+      ".aabeeecceeecdd.",
+      "abbeeecddceeebcd",
+      "beeeecd..abeeeec",
+      "ceeeecd..abeeeec",
+      "dcceeecdabeeeccd",
+      ".dabeeebbeeecdd.",
+      ".abeeeeeeeeeecd.",
+      ".abeeceeeeceecd.",
+      ".dcccabeecdcccd.",
+      "..ddddceecdddd..",
+      "......dccd......"
+    ]
+  },
+  '💾': {
+    palette: {a:'#2F3A49', b:'#4E4D4C', c:'#3A3A39', d:'#1C2533', e:'#6E97D0', f:'#CED4D9', g:'#90979D', h:'#315789', i:'#3F6FB0', j:'#B9C2C9', k:'#F7F5EF', l:'#BEBBB5', m:'#F4F0E8', n:'#9A948A', o:'#494541'},
+    rows: [
+      "................",
+      "..aaabbbbbbcaad.",
+      ".aeeeffffffgeehd",
+      ".aeiifjjjiigiihd",
+      ".aeiifjjjiigiihd",
+      ".aeiigggggggiihd",
+      ".aeiiiiiiiiiiihd",
+      ".aeiiiiiiiiiiihd",
+      ".aeikkkkkkkklihd",
+      ".aeikmmmmmmmlihd",
+      ".aeiknnnnnnmlihd",
+      ".aeikmmmmmmmlihd",
+      ".aeiknnnnmmmlihd",
+      ".aeikmmmmmmmlihd",
+      ".dhhlllllllllhd.",
+      "..ddoooooooood.."
+    ]
+  },
+  '📖': {
+    palette: {a:'#5E5B58', b:'#514C43', c:'#4F4940', d:'#FFFFFF', e:'#D8D0BC', f:'#D0C7B2', g:'#FAF6EC', h:'#F1EBDC', i:'#AD766D', j:'#6C2E24', k:'#2F1812', l:'#B8AE98', m:'#8A3B2E'},
+    rows: [
+      "................",
+      ".ab.........ac..",
+      "adebaab.aaaadfc.",
+      "adgdddeaddddhfc.",
+      "idggggeadhhhhfjk",
+      "idgllleidhlllfjk",
+      "idggggemdhhhhfjk",
+      "idglllemdhlllfjk",
+      "idggggemdhhhhfjk",
+      "idglllemdhllhfjk",
+      "idggggemdhhhhfjk",
+      "ieegggemdhhhffjk",
+      "immeeeemffffmmjk",
+      "jjjmmmmmmmmmmjjk",
+      "kkkjjjjjjjjjjkk.",
+      "...kkkkkkkkkk..."
+    ]
+  },
+  '🏆': {
+    palette: {a:'#5E573D', b:'#513B12', c:'#FFF1A8', d:'#D89A22', e:'#554427', f:'#F2C14E', g:'#42300F', h:'#E4B864', i:'#A8781B', j:'#44362B', k:'#2F2013', l:'#AD8C70', m:'#6C4627', n:'#8A5A32'},
+    rows: [
+      "...aaaaaaaaab...",
+      "..acccccccccdb..",
+      ".eacffffffffdbg.",
+      "ehhcffffffffdhig",
+      "ehidffffffffdhig",
+      "ehiacffffffdehig",
+      "giibdffffffdehig",
+      ".giiicffffdhiig.",
+      "..ggiddddddigg..",
+      "....gbbegbbg....",
+      "......ehig......",
+      ".....jgiigjk....",
+      "....jllllllmk...",
+      "....jlnnnnnmk...",
+      "....kmmmmmmk....",
+      ".....kkkkkk....."
+    ]
+  },
+  '⛰️': {
+    palette: {a:'#5B5854', b:'#F6F6F0', c:'#474742', d:'#B8C0B8', e:'#9AA59A', f:'#788178', g:'#33332D', h:'#41423C', i:'#A5AFA6', j:'#626D64', k:'#2C2C27', l:'#7E8C80', m:'#3A4834', n:'#24331D', o:'#8FC28C', p:'#4A8346', q:'#5FA85A'},
+    rows: [
+      "................",
+      "................",
+      ".....aa.........",
+      "....abba........",
+      "....abba..aa....",
+      "...abbbbaabba...",
+      "...cdbefghijk...",
+      "..cdeeeefilljk..",
+      "..cdeeeefilljk..",
+      "..cdeeeefllljk..",
+      ".cdeeeeeefllljk.",
+      "mcdeeeeeefllljkn",
+      "ooooooooooooooop",
+      "oqqqqqqqqqqqqqqp",
+      "pppppppppppppppp",
+      "nnnnnnnnnnnnnnnn"
+    ]
+  },
+  '☰': {
+    palette: {a:'#393B36', b:'#272823', c:'#8D9C94', d:'#535F59', e:'#6B7A72'},
+    rows: [
+      "................",
+      "................",
+      "................",
+      "................",
+      "..aaaaaaaaaaab..",
+      ".acccccccccccdb.",
+      "aceeeeeeeeeeeedb",
+      "aceeeeeeeeeeeedb",
+      "aceeeeeeeeeeeedb",
+      "bdeeeeeeeeeeeedb",
+      ".bddeeeeeeeeddb.",
+      "..bbddddddddbb..",
+      "....bbbbbbbb....",
+      "................",
+      "................",
+      "................"
+    ]
+  },
+  '✚': {
+    palette: {a:'#333530', b:'#22221E', c:'#7A8880', d:'#434D48', e:'#56635C'},
+    rows: [
+      "......aaab......",
+      ".....acccdb.....",
+      ".....aceedb.....",
+      ".....aceedb.....",
+      ".....aceedb.....",
+      ".aaaaaceedbaaab.",
+      "accccceeeeccccdb",
+      "aceeeeeeeeeeeedb",
+      "aceeeeeeeeeeeedb",
+      "bdddddeeeedddddb",
+      ".bbbbaceedbbbbb.",
+      ".....aceedb.....",
+      ".....aceedb.....",
+      ".....aceedb.....",
+      ".....bddddb.....",
+      "......bbbb......"
+    ]
+  }
+};

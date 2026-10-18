@@ -66,8 +66,8 @@ const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
 
-// Pixel icons in text (pixelIcons): the money symbol, a shell (the troop trades in shells from the shore), small,
-// wherever the text says 🐚.
+// Pixel icons in text (pixelIcons), instead of emoji: the money symbol, a shell (the troop trades in shells from the
+// shore), small, wherever the text says 🐚.
 const SHELL = ["................","......oooo......","....oowrrwoo....","...owrwrrwrwo...","..owrwwrrwwrwo..",".owrwwwrrwwwrwo.",".orwwwwrrwwwwro.",".owrwwwrrwwwrwo.","..owrwwrrwwrwo..","...owrwrrwrwo...","....owrrrrwo....",".....owrrwo.....","....ooowwooo....","....owwoowwo....","....oooooooo....","................"];   // a scallop shell
 let shellImg = null;
 // The speaker on buttons that say a word again: a little loudspeaker, wherever the text says 🔊.
@@ -76,7 +76,13 @@ const SPEAKER = ["................","................","......oo........",".....
 let speakerImg = null;
 const pixelIcons = html => String(html)
   .replace(/🐚/g, () => shellImg || (shellImg = `<img class="money" alt="shells" src="${sprite(SHELL, {o:'#8A5A3A', w:'#F7E7CF', r:'#D9A77C'}).toDataURL()}">`))
-  .replace(/🔊/g, () => speakerImg || (speakerImg = `<img class="speakericon" alt="" src="${sprite(SPEAKER, {o:'#2A2622', w:'#E2DDD2', l:'#FFFFFF', b:'#4F9FDB'}).toDataURL()}">`));
+  .replace(/🔊/g, () => speakerImg || (speakerImg = `<img class="speakericon" alt="" src="${sprite(SPEAKER, {o:'#2A2622', w:'#E2DDD2', l:'#FFFFFF', b:'#4F9FDB'}).toDataURL()}">`))
+  .replace(ICON_RE, m => { const k = m.replace(/\uFE0F/g, ''); return k === '♥' ? heartHTML(true) : iconHTML(k); });
+// The game's other icons (content/pictures.js), wherever the text has their emoji (⭐, 📜 and so on), and ♥ as the pixel heart.
+const ICON_KEYS = Object.fromEntries(Object.keys(ICONS).map(k => [k.replace(/\uFE0F/g, ''), k]));
+const ICON_RE = new RegExp(`(?:${[...Object.keys(ICON_KEYS), '♥'].join('|')})\uFE0F?`, 'gu');
+const iconImg = {};
+const iconHTML = k => iconImg[k] || (iconImg[k] = `<img class="icon" alt="" src="${sprite(ICONS[ICON_KEYS[k]].rows, ICONS[ICON_KEYS[k]].palette).toDataURL()}">`);
 // A pixel heart for an animal's friendship in an encounter: red once won, grey until then.
 const HEART = [".oo...oo.", "ohho.orro", "ohrrrrrro", "orrrrrrro", ".orrrrro.", "..orrro..", "...oro...", "....o...."];
 const heartImg = {};

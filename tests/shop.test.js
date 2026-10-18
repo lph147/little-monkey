@@ -2,7 +2,9 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {loadGame} = require('./fake-browser');
+const fs = require('node:fs');
+const path = require('node:path');
+const {loadGame, ROOT} = require('./fake-browser');
 
 const base = loadGame();
 const get = (game, expr) => JSON.parse(game.run(`JSON.stringify(${expr})`));
@@ -137,4 +139,25 @@ test('the speaker on buttons is a pixel loudspeaker, not an emoji', () => {
   const game = loadGame({dom: true});
   game.run("openCard('<button>🔊 Hear it</button>')");
   assert.match(game.el('#sheet').innerHTML, /<button><img class="speakericon"[^>]*> Hear it<\/button>/);
+});
+
+test('the game’s icons are pixel art: every emoji the game shows has a pixel icon', () => {
+  const game = loadGame({dom: true});
+  game.run("openCard('<p class=\"label\">⭐ New word to learn</p><p>♥ ⚙ ⛰️</p>')");
+  const html = game.el('#sheet').innerHTML;
+  assert.equal((html.match(/<img class="icon"/g) || []).length, 3, 'the star, the cog and the mountains');
+  assert.match(html, /<img class="heart on"/, 'and ♥ is the pixel heart');
+  assert.doesNotMatch(html, /\p{Extended_Pictographic}/u, 'no emoji left');
+  // Every emoji in the game's code and content (not in comments, nor the word bank's, which only mark a word as
+  // having a picture) has a pixel icon: the shell, the speaker, the heart or one of ICONS.
+  // (◀ and ▶ are the D-pad's arrows, plain text like ▲ and ▼.)
+  const known = new Set(['🐚', '🔊', '♥', '◀', '▶', ...JSON.parse(game.run('JSON.stringify(Object.keys(ICON_KEYS))'))]);
+  const files = [...fs.readdirSync(path.join(ROOT, 'js')).map(f => 'js/' + f), 'content/flower-fruit-mountain.js', 'index.html'];
+  for (const f of files){
+    fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').forEach((line, i) => {
+      const code = line.replace(/^\s*\/\/.*$/, '').replace(/\s\/\/\s.*$/, '').replace(/<!--.*?-->/g, '');
+      for (const m of code.matchAll(/\p{Extended_Pictographic}/gu))
+        assert.ok(known.has(m[0]), `${f}:${i + 1} shows ${m[0]}, which has no pixel icon (draw one in tools/draw-pictures.js)`);
+    });
+  }
 });

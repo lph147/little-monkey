@@ -1,4 +1,5 @@
-// The word pictures (content/pictures.js): 32 x 32 pixel art for every word with a picture, drawn here from
+// The word pictures (content/pictures.js): 32 x 32 pixel art for every word with a picture, and the game's
+// 16 x 16 icons (ICON_DRAWINGS, below), drawn here from
 // shapes. Run it with:  npm run pictures   (after changing a drawing below; a test checks the pictures are up to date).
 // It needs no packages: each picture is worked out pixel by pixel, then written as rows of letters with a palette.
 //
@@ -11,7 +12,7 @@
 const fs = require('node:fs');
 const path_ = require('node:path');
 
-const N = 32;
+let N = 32;   // the picture's size: 32 for word pictures, 16 for icons (draw() sets it)
 const hex = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
 const mix = (a, b, k) => '#' + hex(a).map((v, i) => Math.round(v + (hex(b)[i] - v) * k).toString(16).padStart(2, '0')).join('');
 // masks: does pixel (x, y) belong to the shape?
@@ -40,7 +41,8 @@ const and = (...ms) => (x, y) => ms.every(m => m(x, y));
 const not = m => (x, y) => !m(x, y);
 
 // Draws one picture: its colours, pixel by pixel ('#RRGGBB', or null where it's see-through).
-function draw(word){
+function draw(word, drawing = DRAWINGS[word], size = 32){
+  N = size;
   const cells = new Array(N * N).fill(null), at = (x, y) => (x < 0 || y < 0 || x >= N || y >= N ? null : cells[y * N + x]);
   const p = {
     fill(mask, c, o = {}){
@@ -59,7 +61,7 @@ function draw(word){
     dot(x, y, c){ if (x >= 0 && y >= 0 && x < N && y < N) cells[y * N + x] = c; },
     eye(x, y, c = '#1E1A16', h = 2){ for (let i = 0; i < h; i++){ p.dot(x, y + i, c); p.dot(x + 1, y + i, c); } p.dot(x, y, '#FFFFFF'); }
   };
-  DRAWINGS[word](p);
+  drawing(p);
   const out = cells.slice();   // the outline: a dark shade of what it touches
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++){
     if (cells[y * N + x]) continue;
@@ -358,10 +360,72 @@ function splat(p, c){   // a smooth, round dab of paint, for a colour, with two 
   p.flat(O(11.5, 12.5, 3.4, 2), mix(c, '#FFFFFF', .5)); p.flat(O(16.5, 11, 1.2, .8), mix(c, '#FFFFFF', .5));
 }
 
+// The game's icons, 16 x 16, for the menu, card headings and labels (instead of emoji, which look different on
+// every phone). The text in the game says them as emoji (⭐, 📜 ...), and js/art.js swaps in these pictures.
+const ICON_DRAWINGS = {
+  '⭐': p => {   // a star: a new word, a new friend
+    const pts = [...Array(10)].map((_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 3.3 : 7.6; return [8 + r * Math.cos(a), 8.7 + r * Math.sin(a)]; });
+    p.fill(Pg(pts), GOLD, {light: '#FFF1A8', dark: '#D89A22'});
+  },
+  '📜': p => {   // a scroll: the Word Scroll
+    p.fill(Rc(3, 3, 10, 10), '#F1E3C2', {dark: '#D8C49A'});
+    p.flat(or(Rc(5, 6, 6, 1), Rc(5, 8, 5, 1), Rc(5, 10, 6, 1)), '#B79A6A');
+    p.fill(Rc(1.5, 1, 13, 3, 1.5), '#C99A5B'); p.fill(Rc(1.5, 12, 13, 3, 1.5), '#C99A5B');
+  },
+  '📋': p => {   // a clipboard with ticks: your tasks
+    p.fill(Rc(2, 2, 12, 13.5, 1), WOOD);
+    p.fill(Rc(3.5, 4, 9, 10), '#FAF6EC', {light: '#FFFFFF'});
+    p.flat(or(path([[5, 7], [6, 8], [7.5, 6]], .5), path([[5, 10.5], [6, 11.5], [7.5, 9.5]], .5)), '#3E9A4A');
+    p.flat(or(Rc(8.5, 7, 3, 1), Rc(8.5, 10.5, 3, 1)), '#9A948A');
+    p.fill(Rc(5, 1, 6, 3, 1), '#9AA5AE');
+  },
+  '🐾': p => {   // a paw print: friends
+    const c = '#8A5A3A', o = {light: '#B07A52'};
+    p.fill(O(8, 12, 3.8, 3.2), c, o);
+    [[2.4, 6.6], [5.7, 2.8], [10.3, 2.8], [13.6, 6.6]].forEach(([x, y]) => p.fill(O(x, y, 1.5, 1.9), c, o));
+  },
+  '👕': p => {   // a shirt: the wardrobe
+    p.fill(and(Pg([[4.5, 1], [11.5, 1], [16, 5], [13.4, 8.4], [12, 7.4], [12, 15], [4, 15], [4, 7.4], [2.6, 8.4], [0, 5]]), not(O(8, 1, 2.4, 2))), '#4F82B0', {light: '#7FB0DC'});
+  },
+  '⚙': p => {   // a cog: settings
+    const teeth = [...Array(8)].map((_, i) => { const a = i * Math.PI / 4; return Cp(8, 8, 8 + 6.6 * Math.cos(a), 8 + 6.6 * Math.sin(a), 1.5); });
+    p.fill(and(or(O(8, 8, 5), ...teeth), not(O(8, 8, 2))), '#A9B4BC', {light: '#DDE4E8'});
+  },
+  '💾': p => {   // a floppy disk: the save file
+    p.fill(Rc(1.5, 1.5, 13, 13, 1), '#3F6FB0', {light: '#6E97D0'});
+    p.fill(Rc(4.5, 1.5, 7, 4.5), '#B9C2C9'); p.flat(Rc(9, 2.5, 1.5, 2.5), '#3F6FB0');
+    p.fill(Rc(3.5, 8, 9, 6.5), '#F4F0E8');
+    p.flat(or(Rc(5, 10, 6, 1), Rc(5, 12, 4, 1)), '#9A948A');
+  },
+  '📖': p => {   // an open book: the story
+    p.fill(Pg([[0.5, 3.5], [8, 5], [15.5, 3.5], [15.5, 14], [8, 15.5], [0.5, 14]]), '#8A3B2E');
+    p.fill(Pg([[1.5, 2], [7.5, 3.5], [7.5, 13.5], [1.5, 12]]), '#FAF6EC', {light: '#FFFFFF', dark: '#D8D0BC'});
+    p.fill(Pg([[8.5, 3.5], [14.5, 2], [14.5, 12], [8.5, 13.5]]), '#F1EBDC', {light: '#FFFFFF', dark: '#D0C7B2'});
+    p.flat(or(Rc(3, 5, 3, 1), Rc(3, 7, 3, 1), Rc(3, 9, 3, 1), Rc(10, 5, 3, 1), Rc(10, 7, 3, 1), Rc(10, 9, 2, 1)), '#B8AE98');
+  },
+  '🏆': p => {   // a cup: you passed
+    p.fill(or(path([[3.5, 3.5], [1.6, 4], [2.2, 7], [4.5, 8]], .8), path([[12.5, 3.5], [14.4, 4], [13.8, 7], [11.5, 8]], .8)), '#D89A22');
+    p.fill(Pg([[3, 1.5], [13, 1.5], [12.4, 6], [10, 9.5], [6, 9.5], [3.6, 6]]), GOLD, {light: '#FFF1A8', dark: '#D89A22'});
+    p.fill(Rc(7, 9.5, 2, 2.5), '#D89A22');
+    p.fill(Rc(4.5, 12, 7, 2.5, .5), '#8A5A32');
+  },
+  '⛰️': p => {   // mountains: an area done
+    p.fill(Pg([[6, 15], [11, 4], [16, 15]]), '#7E8C80');
+    p.fill(Pg([[0, 15], [6, 2], [12, 15]]), '#9AA59A');
+    p.flat(Pg([[4, 6.4], [6, 2], [8.1, 6.4], [7, 6], [6, 7], [5, 6]]), '#F6F6F0');
+    p.flat(Pg([[9.8, 6.6], [11, 4], [12.3, 6.6], [11.3, 6.2]]), '#F6F6F0');
+    p.fill(Rc(0, 12, 16, 3), '#5FA85A');
+  },
+  '☰': p => p.fill(Rc(1, 4.5, 14, 7, 3.5), '#6B7A72', {light: '#8D9C94'}),   // the console's MENU button, in How to play
+  '✚': p => p.fill(or(Rc(5.5, 1, 5, 14, .8), Rc(1, 5.5, 14, 5, .8)), '#56635C', {light: '#7A8880'})   // the D-pad, in How to play
+};
+function icon(name){ const cells = draw(name, ICON_DRAWINGS[name], 16); N = 16; return rowsOf(cells, name); }
+
 // Each picture as rows of letters and a palette, as content/pictures.js has them.
 const LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-function picture(word){
-  const cells = draw(word), palette = {}, letter = {};
+function picture(word){ return rowsOf(draw(word), word); }
+function rowsOf(cells, word){
+  const palette = {}, letter = {};
   const rows = [];
   for (let y = 0; y < N; y++){
     let row = '';
@@ -379,10 +443,8 @@ function picture(word){
 function text(){
   const words = Object.keys(DRAWINGS);
   const bank = (() => { const g = {}; new Function('g', fs.readFileSync(path_.join(__dirname, '../content/words.js'), 'utf8') + '; g.WORD_BANK = WORD_BANK;')(g); return g.WORD_BANK; })();
-  const one = w => {
-    const {palette, rows} = picture(w);
-    return `  '${w}': {   // ${bank[w] ? bank[w].en : ''}\n    palette: {${Object.entries(palette).map(([l, k]) => `${l}:'${k}'`).join(', ')}},\n    rows: [\n${rows.map(r => `      "${r}"`).join(',\n')}\n    ]\n  }`;
-  };
+  const entry = (key, {palette, rows}, note) => `  '${key}': {${note ? `   // ${note}` : ''}\n    palette: {${Object.entries(palette).map(([l, k]) => `${l}:'${k}'`).join(', ')}},\n    rows: [\n${rows.map(r => `      "${r}"`).join(',\n')}\n    ]\n  }`;
+  const one = w => entry(w, picture(w), bank[w] ? bank[w].en : '');
   return `// The word pictures: 32 x 32 pixel art for every word with a picture, one letter per pixel ('.' is see-through),
 // and each letter's colour in its palette. They're shown on word cards, in questions, the scrolls, the shop and
 // animal encounters (the animals walking on the map are in content/sprites.js).
@@ -390,8 +452,14 @@ function text(){
 const PICTURES = {
 ${words.map(one).join(',\n')}
 };
+
+// The game's icons, 16 x 16, by the emoji the text uses for them: wherever the game's text has one of these, it
+// shows the pixel icon instead (pixelIcons() in js/art.js).
+const ICONS = {
+${Object.keys(ICON_DRAWINGS).map(k => entry(k, icon(k))).join(',\n')}
+};
 `;
 }
 const FILE = path_.join(__dirname, '../content/pictures.js');
-if (require.main === module){ fs.writeFileSync(FILE, text()); console.log('Wrote content/pictures.js (' + Object.keys(DRAWINGS).length + ' pictures)'); }
-module.exports = {text, FILE, DRAWINGS, picture};
+if (require.main === module){ fs.writeFileSync(FILE, text()); console.log('Wrote content/pictures.js (' + Object.keys(DRAWINGS).length + ' pictures, ' + Object.keys(ICON_DRAWINGS).length + ' icons)'); }
+module.exports = {text, FILE, DRAWINGS, picture, ICON_DRAWINGS, icon};
