@@ -127,5 +127,17 @@ const WORD_BANK = {
   '吧': {py:'ba', en:'(let’s…)'},
   '老': {py:'lǎo', en:'old'},
   '找': {py:'zhǎo', en:'to look for'},
-  '这': {py:'zhè', en:'this'}
+  '这': {py:'zhè', en:'this'},
+
+  // Heard in the opening's story
+  '很久': {py:'hěn jiǔ', en:'a long time'},
+  '以前': {py:'yǐqián', en:'before, ago'},
+  '海': {py:'hǎi', en:'sea'},
+  '一座': {py:'yí zuò', en:'a, one (mountain, building)'},
+  '叫': {py:'jiào', en:'to be called'},
+  '动': {py:'dòng', en:'to move'},
+  '小': {py:'xiǎo', en:'little, small'},
+  '它': {py:'tā', en:'it'},
+  '眼睛': {py:'yǎnjing', en:'eyes'},
+  '光': {py:'guāng', en:'light'}
 };

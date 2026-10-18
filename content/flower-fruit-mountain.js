@@ -880,16 +880,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
     returnTo: {x:3, y:4, facing:'down'}
   },
 
-  // The opening scene: the story in Chinese (zh, with its pinyin, py) and English (en), read aloud. Each caption appears
-  // this many seconds in (at), then waits for Next. The pictures (night, dawn, the stone cracking) are drawn by js/draw.js
-  // to match these times. (Its Chinese is just to listen to, so its words needn't be in the word bank.)
+  // The opening scene: the story in Chinese, read aloud, as subtitles with pinyin over each word, and English (en).
+  // Each caption appears this many seconds in (at), then waits for Next. The pictures (night, dawn, the stone cracking)
+  // are drawn by js/draw.js to match these times. Like every sentence, its words are in the word bank (most of them
+  // just to listen to), with a space between them.
   intro: [
-    {at:0, zh:'很久很久以前……', py:'Hěn jiǔ hěn jiǔ yǐqián……', en:'Long, long ago…'},
-    {at:2.8, zh:'海里有一座山，叫花果山。', py:'Hǎi lǐ yǒu yí zuò shān, jiào Huāguǒ Shān.', en:'In the sea stood a mountain called Flower Fruit Mountain.'},
-    {at:5.4, zh:'山上有一个大石头。', py:'Shān shàng yǒu yí gè dà shítou.', en:'On top of the mountain sat a big stone.'},
-    {at:7.2, zh:'石头动了！', py:'Shítou dòng le!', en:'The stone moved!'},
-    {at:9, zh:'一只小猴子！', py:'Yì zhī xiǎo hóuzi!', en:'A little monkey!'},
-    {at:10.6, zh:'它的眼睛里有光。', py:'Tā de yǎnjing lǐ yǒu guāng.', en:'Light shone from its eyes.'},
-    {at:13.2, zh:'你好，小猴子！', py:'Nǐ hǎo, xiǎo hóuzi!', en:'Hello, little monkey!'}
+    {at:0, zh:'很久 很久 以前 ……', en:'Long, long ago…'},
+    {at:2.8, zh:'海 里 有 一座 山 ， 叫 花果山 。', en:'In the sea stood a mountain called Flower Fruit Mountain.'},
+    {at:5.4, zh:'山 上 有 一个 大 石头 。', en:'On top of the mountain sat a big stone.'},
+    {at:7.2, zh:'石头 动 了 ！', en:'The stone moved!'},
+    {at:9, zh:'一只 小 猴子 ！', en:'A little monkey!'},
+    {at:10.6, zh:'它 的 眼睛 里 有 光 。', en:'Light shone from its eyes.'},
+    {at:13.2, zh:'你好 ， 小 猴子 ！', en:'Hello, little monkey!'}
   ]
 };

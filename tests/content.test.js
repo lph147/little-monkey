@@ -52,6 +52,7 @@ const sentences = [
   ...AREA.storyQuestions.map((q, i) => [`story question ${i + 1}`, q]),
   ...Object.entries(AREA.examples).map(([w, e]) => [`the example for ${w}`, e]),
   ['the sign', AREA.sign.says],
+  ...AREA.intro.map((c, i) => [`the opening's caption ${i + 1}`, c]),
   ...Object.entries(AREA.legend).filter(([, t]) => t.sign).map(([ch, t]) => [`the sign on "${ch}" tiles`, t.sign.says]),
   ...Object.values(AREA.talk).flatMap(parts => parts.flatMap(p => p.do.filter(s => s.gap).map(s => [`the gap sentence "${s.gap.sentence}"`, {zh: s.gap.sentence, en: s.gap.en}])))
 ];
@@ -395,9 +396,9 @@ test('bubbles are for characters, and show ! or ?', () => {
   }
 });
 
-test('intro captions are in time order, each with its Chinese, pinyin and English', () => {
+test('intro captions are in time order, each with its Chinese and English (its words are checked with every sentence)', () => {
   AREA.intro.forEach((c, i) => {
-    assert.ok(c.zh && c.py && c.en, `intro caption ${i + 1} needs its Chinese (zh), pinyin (py) and English (en)`);
+    assert.ok(c.zh && c.en, `intro caption ${i + 1} needs its Chinese (zh, words with spaces between) and English (en)`);
     if (i) assert.ok(c.at > AREA.intro[i - 1].at, `intro caption ${i + 1} comes before the one above it`);
   });
 });

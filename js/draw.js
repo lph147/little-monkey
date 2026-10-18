@@ -262,7 +262,7 @@ function drawMarkers(cx, cy, now){
 }
 
 /* ---- opening scene ---- */
-function drawScene(t, now){
+function drawScene(t, now, mid = 0){   // mid: from 0 (the mountain on the right, for the title screen) to 1 (in the middle)
   const W = VW*T, H = VH*T;
   const dawn = clamp((t - 2.8) / 2.6, 0, 1);
   const skyTop = mix('#0E1A33','#79BFE6',dawn), skyBot = mix('#26385F','#F6C69C',dawn);
@@ -276,10 +276,10 @@ function drawScene(t, now){
       b.globalAlpha = 1;
     }
   }
-  // The mountain and the stone are drawn for a screen 176 pixels wide (11 columns). They're moved to the
-  // right, leaving the sky on the left for the title's words and the opening's story; the hills and the sea
-  // go all the way across.
-  const dx = Math.round(W * .68 - 88);
+  // The mountain and the stone are drawn for a screen 176 pixels wide (11 columns). On the title screen they're moved
+  // to the right, leaving the sky on the left for the title's words; in the opening they're in the middle, with the
+  // story along the bottom. The hills and the sea go all the way across.
+  const dx = Math.round(W * (.68 - .18 * mid) - 88);
   b.save(); b.translate(dx, 0);
   if (dawn > 0){ disc(b, 34, Math.round(116 - dawn*28), 9, '#FFD27A'); }
   for (let x = -dx; x < W - dx; x += 2){ const h = Math.round(98 - Math.abs(Math.sin(x/23))*14 - rnd(x>>2,7)*4); R(b, x, h, 2, 126 - h, mix('#22334F','#7FA79A',dawn)); }

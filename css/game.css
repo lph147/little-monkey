@@ -83,14 +83,24 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .slotcard p{margin:0 0 .15rem}
 .btn.danger{color:var(--bad);border-color:var(--bad);box-shadow:0 3px 0 var(--bad)}
 
-/* the opening's story, in a panel on the left of the picture (the stone, the mountain and the monkey are on the right) */
-.capbox{position:absolute;left:8px;top:8px;bottom:8px;width:47%;display:flex;flex-direction:column;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:.6rem .7rem;z-index:5}
+/* the opening's story: subtitles over a soft shadow at the bottom of the picture, with 🔊 and Next beside them, and Skip
+   in the top corner. The words keep their colours over the picture, whatever the theme. */
+.capbox{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto;align-items:end;column-gap:.6rem;padding:1.6rem .8rem .5rem;background:linear-gradient(rgba(10,20,16,0),rgba(10,20,16,.78) 38%);z-index:5}
 .capbox[hidden]{display:none}
-.cap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;gap:.5rem;text-align:center}
-.cap .cpy{color:var(--muted);font-size:.95rem;line-height:1.3}
-.cap .czh{font-family:var(--text);font-size:1.5rem;font-weight:600;line-height:1.3}
-.cap .cen{font-size:1rem;line-height:1.35}
-@media (max-width:700px){.capbox{width:56%}.cap{gap:.2rem}.cap .cpy{font-size:.72rem}.cap .czh{font-size:1.1rem}.cap .cen{font-size:.78rem;line-height:1.25}.capbox .caprow{gap:4px;margin-top:.2rem}.caprow .btn{font-size:.72rem;min-height:1.9rem;padding:.15rem .45rem}}   /* the opening on the smallest phones */
+.cap{display:flex;flex-direction:column;align-items:center;gap:.05rem;text-align:center;text-shadow:0 2px 0 rgba(0,0,0,.6)}
+.cap .line{justify-content:center;margin:0}
+.cap .tok,.cap .tok.listen{font-size:1.45rem;font-weight:600;color:#FFF6D8;border-bottom-color:rgba(255,246,216,.18)}
+.cap .tok.learn{color:#9BE08A;border-bottom-color:rgba(155,224,138,.4)}
+.cap rt{color:#D9E6DC}
+.cap .punct{color:#FFF6D8;font-size:1.45rem}
+.cap .gloss{min-height:0;margin:0;font-size:.85rem;color:#FFF6D8}
+.cap .gloss:empty{display:none}
+.cap .gloss b{color:#FFF6D8}
+.cap .cen{font-size:.95rem;line-height:1.3;color:#E7EFE9;font-style:italic}
+.capbox .caprow{margin:0;gap:.4rem}
+.btn.skipcorner{position:absolute;top:8px;right:8px;z-index:6;font-size:.8rem;min-height:1.9rem;padding:.15rem .7rem}
+.skipcorner[hidden]{display:none}
+@media (max-width:700px){.capbox{padding:1.2rem .5rem .35rem}.cap .tok,.cap .punct{font-size:1.15rem}.cap .cen{font-size:.8rem;line-height:1.2}.caprow .btn{font-size:.72rem;min-height:1.9rem;padding:.15rem .45rem}}   /* the opening on the smallest phones */
 .caprow{display:flex;align-items:center;gap:8px;margin-top:4px}
 .caprow .spacer{flex:1}
 
@@ -581,7 +591,6 @@ rt.hid{visibility:hidden}
 .titletext{margin-top:.4rem;font-size:.86rem;line-height:1.4;color:#FFF6E0;text-shadow:0 1px 2px #000;pointer-events:auto}
 .titletext p{margin:0}
 .titletext .warn{color:#FFB4A8;margin-top:.3rem}
-.capbox .caprow{margin-top:.4rem}
 .caprow .btn{font-size:.85rem;padding:.25rem .6rem;min-height:2.3rem}
 
 /* the power light, beside the screen's top-left corner, and the speaker's slots, under A and B */

@@ -17,11 +17,11 @@ for (const [w, d] of Object.entries(WORD_BANK)){
 }
 const ORDER = Object.keys(WORDS).filter(w => !WORDS[w].phrase);    // the area's words, in Word Scroll order
 const PHRASES = Object.keys(WORDS).filter(w => WORDS[w].phrase);  // its phrases (你好, 谢谢…), a collection of their own
-const PUNCT = new Set(['！','。','，','？','、']);
+const PUNCT = new Set(['！','。','，','？','、','……']);
 const L = {};                         // what the characters say
 for (const [k, line] of Object.entries(AREA.lines)) L[k] = {t:toks(line.zh), en:line.en};
 const STORY = AREA.story.map(s => ({t:toks(s.zh), en:s.en, pic:s.pic}));
-const CAPS = AREA.intro.map(c => ({t:c.at, zh:c.zh, py:c.py, en:c.en}));   // the opening's captions
+const CAPS = AREA.intro.map(c => ({t:c.at, words:toks(c.zh), en:c.en}));   // the opening's captions
 const DAY = 86400000, INTERVALS = [1,3,7,21];
 
 // The area's places, small maps you move between, and the one you're in. A position in the content is

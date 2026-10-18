@@ -131,7 +131,7 @@ ${table(['Chinese', 'Pinyin', 'English', 'Answer', 'Notes'], AREA.storyQuestions
 
 ### The opening scene
 
-${table(['Chinese', 'Pinyin', 'English', 'Notes'], AREA.intro.map(c => [c.zh, c.py, c.en, notes]))}
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], AREA.intro.map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
 
 ### Names
 

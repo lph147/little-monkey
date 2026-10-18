@@ -124,13 +124,13 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 很久很久以前…… | Hěn jiǔ hěn jiǔ yǐqián…… | Long, long ago… |  |
-| 海里有一座山，叫花果山。 | Hǎi lǐ yǒu yí zuò shān, jiào Huāguǒ Shān. | In the sea stood a mountain called Flower Fruit Mountain. |  |
-| 山上有一个大石头。 | Shān shàng yǒu yí gè dà shítou. | On top of the mountain sat a big stone. |  |
-| 石头动了！ | Shítou dòng le! | The stone moved! |  |
-| 一只小猴子！ | Yì zhī xiǎo hóuzi! | A little monkey! |  |
-| 它的眼睛里有光。 | Tā de yǎnjing lǐ yǒu guāng. | Light shone from its eyes. |  |
-| 你好，小猴子！ | Nǐ hǎo, xiǎo hóuzi! | Hello, little monkey! |  |
+| 很久很久以前…… | hěn jiǔ hěn jiǔ yǐqián ?? | Long, long ago… |  |
+| 海里有一座山，叫花果山。 | hǎi lǐ yǒu yí zuò shān, jiào Huāguǒ Shān. | In the sea stood a mountain called Flower Fruit Mountain. |  |
+| 山上有一个大石头。 | shān shàng yǒu yí gè dà shítou. | On top of the mountain sat a big stone. |  |
+| 石头动了！ | shítou dòng le! | The stone moved! |  |
+| 一只小猴子！ | yì zhī xiǎo hóuzi! | A little monkey! |  |
+| 它的眼睛里有光。 | tā de yǎnjing lǐ yǒu guāng. | Light shone from its eyes. |  |
+| 你好，小猴子！ | nǐ hǎo, xiǎo hóuzi! | Hello, little monkey! |  |
 
 ### Names
 
@@ -256,6 +256,16 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 老 | lǎo | old |  |
 | 找 | zhǎo | to look for |  |
 | 这 | zhè | this |  |
+| 很久 | hěn jiǔ | a long time |  |
+| 以前 | yǐqián | before, ago |  |
+| 海 | hǎi | sea |  |
+| 一座 | yí zuò | a, one (mountain, building) |  |
+| 叫 | jiào | to be called |  |
+| 动 | dòng | to move |  |
+| 小 | xiǎo | little, small |  |
+| 它 | tā | it |  |
+| 眼睛 | yǎnjing | eyes |  |
+| 光 | guāng | light |  |
 
 ## The menu
 

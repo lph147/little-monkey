@@ -60,7 +60,7 @@ function frame(now){
     if (next && nt >= next.t && advancedTo < capIdx + 1) nt = Math.max(introClock, next.t - .001);
     introClock = nt;
     const t = introClock;
-    drawScene(t, now);
+    drawScene(t, now, Math.min(1, t / .8));   // the mountain slides to the middle as the story begins
     const ci = CAPS.reduce((a, c, i) => t >= c.t ? i : a, 0);
     if (ci !== capIdx){ capIdx = ci; capShownAt = now; showCaption(CAPS[ci], ci === CAPS.length - 1); }
     const ev = (k, at, fn) => { if (t >= at && !introEvents[k]){ introEvents[k] = 1; fn(); } };
@@ -71,14 +71,17 @@ function frame(now){
   sc.drawImage(buf, 0, 0, cv.width, cv.height);
   requestAnimationFrame(frame);
 }
-// A caption of the opening: the story in Chinese, with its pinyin (unless that's switched off) and English, read aloud;
-// 🔊 reads it again.
+// A caption of the opening, as subtitles over the bottom of the picture: the story in Chinese, read aloud, with pinyin
+// over each word (unless that's switched off; tap a word for its meaning) and its English; 🔊 reads it again. Skip is
+// in the top corner.
+const capSaid = c => c.words.join('');
 function showCaption(c, last){
-  const box = $('#capbox');   // in a panel beside the picture, so the page keeps its size
-  box.innerHTML = pixelIcons(`<div class="cap">${S.pinyin ? `<div class="cpy">${esc(c.py)}</div>` : ''}<div class="czh">${esc(c.zh)}</div><div class="cen">${esc(c.en)}</div></div>
-    <div class="caprow"><button class="btn" id="skipBtn">Skip intro</button><button class="btn" id="againBtn" aria-label="Hear it again">🔊</button><span class="spacer"></span>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`);
-  box.hidden = false;
-  say(c.zh); $('#againBtn').onclick = () => say(c.zh);
+  const box = $('#capbox');
+  box.innerHTML = pixelIcons(`<div class="cap">${lineHTML(c.words)}<div class="gloss"></div><div class="cen">${esc(c.en)}</div></div>
+    <div class="caprow"><button class="btn" id="againBtn" aria-label="Hear it again">🔊</button>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`);
+  box.hidden = false; $('#skipBtn').hidden = false;
+  bindTokens(box);
+  say(capSaid(c)); $('#againBtn').onclick = () => say(capSaid(c));
   $('#skipBtn').onclick = startGame;
   const nx = $('#nextBtn'); if (nx) nx.onclick = () => { advancedTo = capIdx + 1; SFX.blip(); };
   const bb = $('#beginBtn'); if (bb) bb.onclick = startGame;
@@ -138,7 +141,7 @@ const go = fn => () => { getAC(); unlockSpeech(); musicStart(); fn(); };   // (s
 const ago = t => { const d = Math.floor((Date.now() - t) / 86400000); return !t ? '' : d < 1 ? 'today' : d < 2 ? 'yesterday' : `${d} days ago`; };
 const faceHTML = () => `<img class="face" alt="" src="${monkeySprite('player', 'down', false, 0).toDataURL()}">`;
 function toTitle(pick = SLOT){
-  mode = 'title'; musicStop(); $('#capbox').hidden = true;
+  mode = 'title'; musicStop(); $('#capbox').hidden = true; $('#skipBtn').hidden = true;
   $('#titlecard').hidden = false;
   $('#areaName').textContent = AREA.name.en;
   titleSlot = pick;
@@ -238,7 +241,7 @@ function howToPlay(){
 async function startGame(){
   stopSpeech();
   const firstTime = !S.started;
-  $('#titlecard').hidden = true; $('#capbox').hidden = true;
+  $('#titlecard').hidden = true; $('#capbox').hidden = true; $('#skipBtn').hidden = true;
   if (firstTime){ S.started = true; S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'}; }
   placePlayer(); mode = 'play'; save(); musicStart();
   if (firstTime){
