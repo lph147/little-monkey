@@ -58,7 +58,28 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .titlecard[hidden]{display:none}
 .titlecard h2{margin:0;font-size:2.9rem;letter-spacing:.1em;line-height:1.1;text-shadow:0 3px 0 #0E1A33}
 .titlecard p{margin:0 0 .4rem;font-family:var(--pixel);font-size:1rem;text-shadow:0 2px 0 #0E1A33}
-.titlecard .row{display:flex;gap:.5rem;flex-wrap:nowrap;justify-content:flex-start;pointer-events:auto}
+/* the three games (save slots), side by side along the bottom of the title screen; A chooses the one with the A badge */
+.titlecard:has(.slots){width:auto;right:8px;padding:3% 3% 3% 4%}
+.titlecard:has(.slots) .titlehead{max-width:57%}
+.titlecard:has(.slots) h2{font-size:2.5rem}
+@media (max-width:700px){.titlecard:has(.slots) h2{font-size:2rem}.titlecard:has(.slots) .titlehead{max-width:72%}.titlecard:has(.slots) .titletext{margin-top:.1rem;font-size:.8rem}}   /* the smallest phones */
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;width:100%;pointer-events:auto}
+.slot{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;min-width:0;text-align:left;background:rgba(14,26,51,.86);color:#FFF6E0;
+  border:2px solid #C9D6E8;border-radius:6px;padding:.35rem .5rem .4rem;box-shadow:0 3px 0 #0E1A33;font:inherit}
+.slot.primary{border-color:#F2C14E;box-shadow:0 0 0 2px #F2C14E,0 3px 0 #0E1A33}
+.slot.primary::before{content:"A";position:absolute;top:-8px;left:-6px;width:18px;height:18px;border-radius:50%;background:var(--btnA);color:#fff;font:600 .7rem/18px var(--pixel);text-align:center}
+.slot .top{display:flex;align-items:center;gap:.4rem}
+.slot .face{width:var(--pic-face);height:var(--pic-face);image-rendering:pixelated;image-rendering:crisp-edges;flex:none}
+.slot .t{font:600 .9rem var(--pixel);color:#F2C14E;line-height:1.2}
+.slot .s{font-size:.76rem;line-height:1.35;color:#E3EAF3}
+.slot.empty{border-style:dashed;background:rgba(14,26,51,.6)}
+.slot.empty .t{color:#C9D6E8}
+.slot.empty.primary{border-style:solid}
+/* a game's card on the title screen: the monkey, then what's in the game */
+.slotcard{display:grid;grid-template-columns:auto 1fr;gap:.2rem .8rem;align-items:start}
+.slotcard .face{width:var(--pic-scene);height:var(--pic-scene);image-rendering:pixelated;image-rendering:crisp-edges}
+.slotcard p{margin:0 0 .15rem}
+.btn.danger{color:var(--bad);border-color:var(--bad);box-shadow:0 3px 0 var(--bad)}
 
 /* the opening's story, in a panel on the left of the picture (the stone, the mountain and the monkey are on the right) */
 .capbox{position:absolute;left:8px;top:8px;bottom:8px;width:47%;display:flex;flex-direction:column;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:.6rem .7rem;z-index:5}
@@ -293,7 +314,7 @@ rt.hid{visibility:hidden}
 .sheet:has(.tiles){display:grid;grid-template-columns:1fr auto;column-gap:.6rem;align-items:end;align-content:center}
 .sheet:has(.tiles) > *{grid-column:1 / -1}
 .sheet:has(.tiles) .menu{display:contents}
-.sheet:has(.tiles) .tiles{grid-column:1 / -1;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:.4rem 0 .5rem}
+.sheet:has(.tiles) .tiles{grid-column:1 / -1;grid-template-columns:repeat(5,1fr);gap:.5rem;margin:.4rem 0 .5rem}
 .sheet:has(.tiles) .menu > .btn{grid-column:1;justify-self:start}
 .sheet:has(.tiles) > .actions{grid-column:2;position:static;margin:0;padding:0;box-shadow:none}
 .checklist{list-style:none;margin:6px 0 10px;padding:0}
@@ -436,6 +457,9 @@ rt.hid{visibility:hidden}
 /* the smallest phones, where the game screen is only about 210px tall: smaller pictures, speaker and text */
 .modal{container-type:size}
 @container (max-height:260px){
+  .slotcard{font-size:.82rem;line-height:1.3}
+  .slotcard .face{width:var(--pic-small);height:var(--pic-small)}
+  .slotcard .played{display:none}
   .sheet{padding:8px 10px 8px}
   .sheet:has(> .scene):has(> .opts){grid-template-columns:minmax(0,.7fr) minmax(0,1.4fr);row-gap:.25rem}
   .sheet:has(> .scene) .opt .pix,.sheet:has(> .qhead) .opt .pix{width:var(--pic-small);height:var(--pic-small)}

@@ -51,9 +51,15 @@ const SCREENS = [
   {id: 'title', title: 'Title screen', why: 'A new game.'},
   {id: 'title-novoice', title: 'Title, no Chinese voice', voices: 'missing', why: 'The warning must not push the buttons off screen.'},
   {id: 'title-back', title: 'Title, coming back', save: 'middle'},
-  {id: 'intro-sea', title: 'Opening: the mountain', why: 'Told in English, with one word you’ll meet.', run: async () => { click('#newBtn'); introClock = 2.85; advancedTo = 1; await wait(400); }},
-  {id: 'intro-monkey', title: 'Opening: the monkey is born', run: async () => { click('#newBtn'); introClock = 9.05; advancedTo = 4; await wait(400); }},
-  {id: 'intro-eyes', title: 'Opening: light in its eyes', why: 'A caption with no word.', run: async () => { click('#newBtn'); introClock = 10.65; advancedTo = 5; await wait(400); }},
+  {id: 'title-games', title: 'Title, two games', save: 'middle', why: 'Game 2 is someone else’s; Game 3 is empty.', run: async () => {
+    localStorage.setItem(KEY + '-game2', JSON.stringify({...S, started: true, xp: 40, w: {'石头': {lv: 1, due: 0, ok: 0}, '你好': {lv: 1, due: 0, ok: 0}}, friends: []}));
+    setSlotsInfo(d => ({...d, played: {1: Date.now(), 2: Date.now() - 3 * 86400000}})); toTitle(); await wait(300); }},
+  {id: 'game-card', title: 'A game’s card', save: 'middle', why: 'Continue, copy it to a file, or delete it.', run: async () => { click('#titleButtons .primary'); await wait(300); }},
+  {id: 'game-empty', title: 'An empty game’s card', why: 'A new game, or one from a file.', run: async () => { click('#titleButtons .primary'); await wait(300); }},
+  {id: 'game-delete', title: 'Deleting a game', save: 'middle', why: 'Asked once more; Keep it is the main button.', run: async () => { click('#titleButtons .primary'); click('[data-a=del]'); await wait(300); }},
+  {id: 'intro-sea', title: 'Opening: the mountain', why: 'Told in English, with one word you’ll meet.', run: async () => { click('#titleButtons .primary'); click('#newBtn'); introClock = 2.85; advancedTo = 1; await wait(400); }},
+  {id: 'intro-monkey', title: 'Opening: the monkey is born', run: async () => { click('#titleButtons .primary'); click('#newBtn'); introClock = 9.05; advancedTo = 4; await wait(400); }},
+  {id: 'intro-eyes', title: 'Opening: light in its eyes', why: 'A caption with no word.', run: async () => { click('#titleButtons .primary'); click('#newBtn'); introClock = 10.65; advancedTo = 5; await wait(400); }},
   {id: 'stone', title: 'Born from the stone', why: 'Straight after Start: a word you discover yourself.', run: async () => { startGame(); await wait(1500); }},
   {id: 'first-steps', title: 'First steps', why: 'The message, the task box, the arrow and the first tip.', run: async () => {
     startGame(); await wait(1500); click('[data-a=ok]'); await wait(500); }},
@@ -124,6 +130,7 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); next(); await wait(400); }},
   {id: 'troop-home', title: 'The whole troop is home', save: 'home', run: async () => { play(); await wait(500); }},
   {id: 'menu', title: 'Menu', save: 'middle', run: async () => { play(); await wait(100); openMenu(); await wait(300); }},
+  {id: 'saved', title: 'Saved', save: 'middle', why: 'The menu’s Save tile: it saves by itself anyway, and this says so.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(100); openMenu(); click('[data-m=save]'); clearTimeout(msgT); await wait(300); }},
   {id: 'tasks', title: 'Tasks', save: 'middle', run: async () => { play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'scroll', title: 'Word Scroll', save: 'middle', run: async () => { play(); await wait(100); openScroll(() => closeCard()); await wait(300); }},
   {id: 'word-page', title: 'A word’s page', save: 'middle', run: async () => { play(); await wait(100); wordPage('桃子', () => closeCard()); await wait(300); }},
@@ -161,7 +168,7 @@ function prepare(save, voices){
   window.click = sel => { const el = document.querySelector(sel); if (el) el.click(); return !!el; };
   window.next = () => { if (talkNext) talkNext(); };
   window.npc = id => NPCS.find(n => n.id === id);
-  window.play = () => click('#contBtn');
+  window.play = () => { click('#titleButtons .primary'); click('#contBtn'); };   // Continue the game
 }
 
 /* ================= THE PAGE ================= */

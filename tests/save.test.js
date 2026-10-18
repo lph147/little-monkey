@@ -43,7 +43,7 @@ test('the converted save is written back, and the old one is kept as a backup', 
 test('after converting, the game shows the same progress', () => {
   const game = loadGame({save: V2});
   game.runFrame();
-  assert.match(game.el('#titleButtons').innerHTML, />Continue</);
+  assert.match(game.el('#titleButtons').innerHTML, /class="slot primary" data-slot="1">.*Level \d+ · \d+ words/, 'Game 1 has the converted game');
   const stats = game.run('statsHTML()');
   assert.match(stats, /🐚 7/);
   assert.match(stats, /1\/40 words/, 'just 石头: 路 is no longer one of the words');
@@ -92,7 +92,7 @@ test('an unreadable save is kept as a backup, and the game starts fresh', () => 
   const game = loadGame({save: broken});
   game.runFrame();
   assert.equal(game.storage.get(SAVE_KEY + '-backup-unreadable'), broken);
-  assert.match(game.el('#titleButtons').innerHTML, />Start</);
+  assert.match(game.el('#titleButtons').innerHTML, /class="slot empty primary" data-slot="1"/, 'Game 1 is empty: a new game');
   assert.equal(saveOf(game).version, VERSION);
 });
 

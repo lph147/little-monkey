@@ -96,7 +96,7 @@ function buttonLabels(now){
     return [btnLabel(focused), bb && bb.offsetParent !== null ? btnLabel(bb) : ''];
   }
   if (talkNext){ const ok = talkBox.querySelector('[data-a=ok]'); return [ok ? btnLabel(ok) : 'Say it', '']; }
-  if (mode === 'title') return [S.started ? 'Continue' : 'Start', ''];
+  if (mode === 'title') return ['Choose', ''];
   if (mode === 'intro') return [$('#beginBtn') ? 'Begin' : 'Next', 'Skip'];
   return [currentPrompt(now), !$('#saybox').hidden ? 'Close' : ''];
 }
@@ -118,32 +118,80 @@ function updateHUD(){
   if (!fresh.length) return;
   if (!canAct() || !$('#saybox').hidden) return;
   fresh.forEach(t => { S.tasksSeen[t.id] = 1; });
-  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {}
+  try { localStorage.setItem(slotKey(SLOT), JSON.stringify(S)); } catch(e) {}
   if (S.started){ SFX.chime(); toast('New task: ' + fresh[0].text + (fresh.length > 1 ? ` (and ${fresh.length - 1} more)` : '')); }
 }
-function titleText(){   // the title screen's words, under its buttons, with a short warning if there's no Chinese voice (and how to fix it on a card)
-  const problem = voiceProblem();
-  const due = dueWords().length;
-  $('#titleText').innerHTML = `<p id="goal">${S.started ? 'Welcome back, little monkey.' + (due ? ` ${due} ${due === 1 ? 'word is' : 'words are'} due for review: practise at the practice post, or meet animals in the tall grass.` : '') : 'Turn your sound on. Every word is spoken aloud using your device’s Chinese voice.'}</p>`
+function titleText(){   // the title screen's words, under its name: for a first game, to turn the sound on, and a short warning if there's no Chinese voice (and how to fix it on a card)
+  const problem = voiceProblem(), first = !SLOTS.some(slotSummary);
+  $('#titleText').innerHTML = (first && !problem ? '<p id="goal">Turn your sound on. Every word is spoken aloud using your device’s Chinese voice.</p>' : '')
     + (problem ? `<p class="small warn">${VOICE_SHORT[problem]} <button class="linkbtn" id="voiceHelp">How to fix it</button></p>` : '');
   const vh = $('#voiceHelp');
   if (vh) vh.onclick = () => { openCard(`<p class="label">Hearing Chinese</p><p>${VOICE_HELP[problem]}</p><div class="actions"><button class="btn primary" data-a="ok" data-b>OK</button></div>`); on('[data-a=ok]', closeCard); };
 }
 try { speechSynthesis.addEventListener('voiceschanged', () => { if (mode === 'title') titleText(); }); } catch(e) {}   // voices can arrive late
-function toTitle(){
+// The title screen: the three games (save slots) side by side, each with a summary, or empty. The D-pad moves
+// between them and A chooses one: its card has Continue (or New game), Copy to a file and Delete.
+let titleSlot = 1;
+const go = fn => () => { getAC(); unlockSpeech(); musicStart(); fn(); };   // (sound can only start from a tap)
+const ago = t => { const d = Math.floor((Date.now() - t) / 86400000); return !t ? '' : d < 1 ? 'today' : d < 2 ? 'yesterday' : `${d} days ago`; };
+const faceHTML = () => `<img class="face" alt="" src="${monkeySprite('player', 'down', false, 0).toDataURL()}">`;
+function toTitle(pick = SLOT){
   mode = 'title'; musicStop(); $('#capbox').hidden = true;
   $('#titlecard').hidden = false;
   $('#areaName').textContent = AREA.name.en;
-  const tbn = $('#titleButtons');
-  tbn.innerHTML = S.started
-    ? '<button class="btn primary" id="contBtn">Continue</button><button class="btn" id="watchBtn">Watch the opening</button>'
-    : '<button class="btn primary" id="newBtn">Start</button>';
+  titleSlot = pick;
+  $('#titleButtons').innerHTML = SLOTS.map(n => { const g = slotSummary(n); return g
+    ? `<button class="slot${n === pick ? ' primary' : ''}" data-slot="${n}"><span class="top">${faceHTML()}<span class="t">Game ${n}</span></span><span class="s">Level ${g.level} · ${g.words} ${g.words === 1 ? 'word' : 'words'}</span><span class="s">${esc(g.chapter.name)}${g.played ? ' · ' + ago(g.played) : ''}</span></button>`
+    : `<button class="slot empty${n === pick ? ' primary' : ''}" data-slot="${n}"><span class="top"><span class="face"></span><span class="t">Game ${n}</span></span><span class="s">Empty</span><span class="s">Start a new game here</span></button>`; }).join('');
+  $('#titleButtons').querySelectorAll('.slot').forEach(b => b.onclick = () => { SFX.blip(); slotCard(+b.dataset.slot); });
   titleText();
-  const go = fn => () => { getAC(); unlockSpeech(); musicStart(); fn(); };
-  if ($('#newBtn')) $('#newBtn').onclick = go(playIntro);
-  if ($('#watchBtn')) $('#watchBtn').onclick = go(playIntro);
-  if ($('#contBtn')) $('#contBtn').onclick = go(() => {
-    $('#titlecard').hidden = true; placePlayer(); mode = 'play'; updateHUD();
+}
+function moveSlot(d){   // the D-pad on the title screen
+  const n = titleSlot + (d === 'left' || d === 'up' ? -1 : 1);
+  if (SLOTS.includes(n)){ SFX.blip(); toTitle(n); }
+}
+// A game's card: what's in it, then Continue, Copy to a file or Delete; or, for an empty slot, New game or Load from a file.
+function slotCard(n){
+  titleSlot = n;
+  const g = slotSummary(n);
+  if (!g){
+    openCard(`<div class="who" aria-hidden="true">💾</div><p class="label">Game ${n} · empty</p><p>Start a new game here, or load one from a file: a game copied from another phone, or a backup.</p>
+      <input type="file" accept=".json,application/json" hidden>
+      <div class="actions"><button class="btn" data-a="back" data-b>Back</button><button class="btn" data-a="load">Load from a file</button><button class="btn primary" id="newBtn">New game</button></div>`);
+    on('[data-a=back]', () => { closeCard(); toTitle(n); });
+    sheet.querySelector('#newBtn').onclick = go(() => { newGameIn(n); setUpGame(); closeCard(); playIntro(); });
+    const pick = sheet.querySelector('input[type=file]');
+    on('[data-a=load]', () => pick.click());
+    pick.onchange = async () => {
+      const file = pick.files[0]; if (!file) return;
+      const r = readSaveFile(await file.text());
+      if (r.error){ infoBox('💾', `<p>${esc(r.error)}</p>`).then(() => slotCard(n)); return; }
+      useSave(r.save, n); setUpGame(); closeCard(); toTitle(n); toast(`Loaded into Game ${n}.`);
+    };
+    return;
+  }
+  const due = g.due ? `<p>${g.due} ${g.due === 1 ? 'word is' : 'words are'} due for review: practise at the practice post, or meet animals in the tall grass.</p>` : '';
+  const friends = `${g.friends} ${g.friends === 1 ? 'friend' : 'friends'}`;
+  openCard(`<p class="label">Game ${n}</p><div class="slotcard">${faceHTML()}<div><p><b>Level ${g.level}</b> · ${g.xp}/${XP_PER_LEVEL} XP · ${g.shells} 🐚</p><p>${g.words} ${g.words === 1 ? 'word' : 'words'} · ${friends}</p>
+      <p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${due}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
+    <div class="actions"><button class="btn danger" data-a="del">Delete</button><button class="btn" data-a="copy">Copy to a file</button><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" id="contBtn">Continue</button></div>`);
+  on('[data-a=back]', () => { closeCard(); toTitle(n); });
+  sheet.querySelector('#contBtn').onclick = go(() => {
+    if (n !== SLOT){ useSlot(n); setUpGame(); }
+    closeCard(); $('#titlecard').hidden = true; placePlayer(); mode = 'play'; updateHUD();
+  });
+  on('[data-a=copy]', () => {
+    const f = saveFile(n), a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([f.text], {type:'application/json'})); a.download = f.name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast(`Copied Game ${n} to ${f.name}`);
+  });
+  on('[data-a=del]', () => {
+    openCard(`<p class="label">Delete Game ${n}?</p><div class="slotcard">${faceHTML()}<div><p>Level ${g.level} · ${g.words} ${g.words === 1 ? 'word' : 'words'} · ${friends}</p><p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}</p>
+        <p class="small">Everything in this game is erased from this phone. To keep a copy, copy it to a file first.</p></div></div>
+      <div class="actions"><button class="btn danger" data-a="yes">Delete it</button><button class="btn primary" data-a="no" data-b>Keep it</button></div>`);
+    on('[data-a=no]', () => slotCard(n));
+    on('[data-a=yes]', () => { deleteSlot(n); if (n === SLOT) setUpGame(); closeCard(); toTitle(n); toast(`Game ${n} is deleted.`); });
   });
 }
 function playIntro(){
@@ -199,12 +247,16 @@ async function startGame(){
   }
 }
 
+// The game as S has it (at the start, or after switching games): where everyone is, the place you're in and its map.
+function setUpGame(){
+  if (!PLACES[S.pos.place]) S.pos.place = FIRST_PLACE;   // a place that's gone
+  placeCharacters();   // where the story has put everyone
+  enterPlace(S.pos.place);
+  if (!walkable(S.pos.x, S.pos.y)) S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
+  buildMap(); placePlayer(); updateHUD();
+}
 window.addEventListener('resize', fit);
-if (!PLACES[S.pos.place]) S.pos.place = FIRST_PLACE;   // a place that's gone
-placeCharacters();   // where the story has put everyone
-enterPlace(S.pos.place);
-if (!walkable(S.pos.x, S.pos.y)) S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
-buildMap(); placePlayer(); fit(); updateHUD(); toTitle();
+setUpGame(); fit(); toTitle();
 requestAnimationFrame(frame);
 // The app (sw.js): lets the game be installed on a phone's home screen, full screen, and played offline.
 if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

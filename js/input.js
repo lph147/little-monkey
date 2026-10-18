@@ -32,7 +32,7 @@ function update(now){
 }
 async function pressA(){
   tipPressed('#btnA');
-  if (mode === 'title' && modal.hidden){ const t = $('#titleButtons .primary'); if (t) t.click(); return; }   // (a card on the title screen: its button)
+  if (mode === 'title' && modal.hidden){ const t = $('#titleButtons').querySelector('.primary'); if (t) t.click(); return; }   // the chosen game (a card on the title screen: its button)
   if (mode === 'intro'){ const bb = $('#beginBtn') || $('#nextBtn'); if (bb) bb.click(); return; }
   if (!modal.hidden){
     const f = document.activeElement, inMenu = !!sheet.querySelector('.menu');
@@ -83,8 +83,9 @@ document.addEventListener('keydown', e => {
   if (isMenu){ e.preventDefault(); pressMenu(); return; }
   if (isSelect){ e.preventDefault(); pressSelect(); return; }
   const isA = e.key === ' ' || e.key === 'Enter';
+  if (mode === 'title' && KEYS[e.key] && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); if (!e.repeat) moveSlot(KEYS[e.key]); return; }   // the arrows move between the games
   if (mode !== 'play'){
-    // The title screen and the intro: A presses Start, Next or Begin, unless you've moved to another button with Tab.
+    // The title screen and the intro: A chooses the game, or presses Next or Begin, unless you've moved to another button with Tab.
     if (isA && !e.target.matches('button:focus-visible')){ e.preventDefault(); if (!e.repeat) pressA(); }
     return;
   }
@@ -112,6 +113,7 @@ function setPad(d){
   padDir = d;
   document.querySelectorAll('.dpad button').forEach(b => b.classList.toggle('held', b.dataset.dir === d));
   if (!modal.hidden){ held = null; if (d) navFocus(d); return; }
+  if (mode === 'title'){ held = null; if (d) moveSlot(d); return; }   // the D-pad moves between the games
   if (talkNext){ held = null; if (d && talkMove) talkMove(d); return; }   // no walking off while someone's talking
   held = d; if (d) queued = d;
 }

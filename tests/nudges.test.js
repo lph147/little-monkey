@@ -7,6 +7,7 @@ const {loadGame} = require('./fake-browser');
 
 const LATER = Date.now() + 5 * 86400000;
 const title = game => { game.run('titleText()'); return game.el('#titleText').innerHTML; };
+const gameCard = game => { game.run('slotCard(SLOT)'); return game.el('#sheet').innerHTML; };   // the game's card, chosen on the title screen
 
 test('the title screen warns when the device has no Chinese voice', () => {
   const game = loadGame();
@@ -21,12 +22,12 @@ test('the title screen warns when the device has no Chinese voice', () => {
   assert.doesNotMatch(title(game), /class="small warn"/, 'voices not loaded yet: no warning');
 });
 
-test('a returning player is told how many words are due', () => {
+test('a returning player is told how many words are due, on their game’s card', () => {
   const w = {'山': {lv: 1, due: 0, ok: 0}, '花': {lv: 2, due: 0, ok: 1}, '草': {lv: 1, due: LATER, ok: 1}, '我': {lv: 4, due: 0, ok: 0}};
   const game = loadGame({save: {started: true, w}});
-  assert.match(title(game), /3 words are due for review/, '山, 花 and 我 (我 has no picture, so it\'s practised by listening)');
+  assert.match(gameCard(game), /3 words are due for review/, '山, 花 and 我 (我 has no picture, so it\'s practised by listening)');
   const none = loadGame({save: {started: true, w: {'草': {lv: 1, due: LATER, ok: 1}}}});
-  assert.doesNotMatch(title(none), /due for review/);
+  assert.doesNotMatch(gameCard(none), /due for review/);
 });
 
 test('the practice post shows a ! when there are due words to practise', () => {

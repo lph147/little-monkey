@@ -11,7 +11,7 @@ const PLAYED = {version: 5, started: true, shells: 12, w: {'石头': {lv: 3, due
 test('a downloaded save loads back exactly as it was', () => {
   const from = loadGame({save: PLAYED});
   const file = JSON.parse(from.run('JSON.stringify(saveFile())'));
-  assert.match(file.name, /^little-monkey-save-\d{4}-\d\d-\d\d\.json$/);
+  assert.match(file.name, /^little-monkey-game1-\d{4}-\d\d-\d\d\.json$/);
   const to = loadGame();
   to.run(`useSave(readSaveFile(${JSON.stringify(file.text)}).save)`);
   assert.deepEqual(saveOf(to), saveOf(from));

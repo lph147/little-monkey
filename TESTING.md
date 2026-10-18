@@ -42,7 +42,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 
 - **Android (Chrome):** open the address, then menu ⋮ → **Install app** (or **Add to Home screen**). Open 小猴子 from the home screen: no address bar, status bar or navigation buttons, and it stays sideways even when the phone is upright. Your save is the same one as in Chrome.
 - **iPhone (Safari):** open the address, then Share → **Add to Home Screen** → Add. Open 小猴子 from the home screen and turn the phone sideways: no Safari bars and no status bar. iPhones don't let it stay sideways by itself, so upright you'll see the "turn your phone" card.
-- **iPhone saves:** the home-screen app has its own save, separate from Safari's. To bring your progress across: in Safari, MENU → Settings → Save file → download it; then in the home-screen app, MENU → Settings → Save file → load it.
+- **iPhone saves:** the home-screen app has its own games, separate from Safari's. To bring a game across: in Safari, on the title screen, choose the game → Copy to a file; then in the home-screen app, choose an empty game → Load from a file.
 - [ ] The icon on the home screen is the monkey on grass under a blue sky, named 小猴子.
 - [ ] It opens full screen, sideways, and plays as in the browser.
 - [ ] After an upload to GitHub, closing and opening the app again shows the new version (it always loads the newest when there's a connection).
@@ -50,10 +50,10 @@ The save on your phone belongs to this address, so it is separate from saves any
 
 ## Quick check (after every change, about 5 minutes)
 
-- [ ] The title screen shows the night sky with the stone on the mountain on the right, and 小猴子, its words and a Start (or Continue) button with a red A badge on the left.
-- [ ] If words are due for review, the title screen says how many (after "Welcome back"). If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). The words sit under the title on the left, clear of the stone and the mountain.
+- [ ] The title screen shows the night sky with the stone on the mountain on the right, 小猴子 on the left, and three games side by side along the bottom: each with its level, words, chapter and when it was last played, or Empty. The chosen one has a yellow border and a red A badge; the D-pad (or arrow keys) moves between them.
+- [ ] A first game says to turn your sound on. If your device has no Chinese voice, a short red note under it says so, and How to fix it opens a card explaining how to add one (A or OK closes it, without starting the game). The words sit under the title on the left, clear of the stone and the mountain.
 - [ ] There's no header or task box. Under the D-pad are two small buttons, SELECT and START, like a Game Boy's.
-- [ ] Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your level, XP, shells (a pixel shell) and words at the top, and pressing the same button again (or B) closes them.
+- [ ] A on a game opens its card: level, XP, shells, words, friends, where you are, how many words are due for review, and Continue, Copy to a file, Delete and Back. Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your level, XP, shells (a pixel shell) and words at the top, and pressing the same button again (or B) closes them.
 - [ ] The menu shows your level with your XP, such as "Level 1 · 40/100 XP". Catching a new word adds 10 XP, a right answer 2 (5 if the word was due), a monkey's task 20, the story 20 and the cave door test 50. Every 100 XP, "Level up!" appears.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
 - [ ] Held upright, the phone shows only a card: 小猴子, a phone turning, and "Turn your phone sideways to play". (If nothing happens when you turn it, the phone's rotation lock is on.)
@@ -74,7 +74,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 
 ## Full playthrough of Flower Fruit Mountain (about 20 minutes)
 
-Do this in a **private or incognito window**, so your real save isn't touched. To start again from scratch there: Menu, Settings, Reset progress, Erase everything.
+Do this in a **private or incognito window**, so your real save isn't touched. To start again from scratch there: on the title screen, choose an empty game and New game (or delete the game).
 
 **Start**
 - [ ] Press Start. The opening plays, told in English in a panel on the left of the picture, with Next to move on; the stone cracks and the monkey is born. Four captions also show a word in Chinese, pinyin and English (山 mountain, 石头 stone, 猴子 monkey, 你好 hello), said aloud; tapping it says it again. The stone, mountain and monkey are never hidden by the box. The last caption has Begin. (Skip intro also works. On a computer, Space or Enter presses Start, Next and Begin.)
@@ -176,14 +176,18 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] 任务 Tasks shows the area checklist, all ticked.
 - [ ] 词 Word Scroll and 朋友 Friends open, and Back returns to the menu, on the same tile.
 - [ ] Settings: Music, Sound effects and Pinyin switch on and off. With pinyin off, it's hidden over words in sentences. Back returns to the menu.
-- [ ] Settings, Title screen, then Continue, puts you back where you were.
+- [ ] 保存 Save closes the menu and says "Saved: Game 1, just now".
+- [ ] Settings, Watch the opening plays the opening, then carries on where you were. Settings, Title screen: your games, then your game and Continue, puts you back where you were.
 
 ## Saved games
 
 - [ ] On your phone, with your real save: Continue works, and your words, shells, friends and tasks are all as they were. (After the update from peaches to shells, you have the same number of shells as you had peaches.)
 - [ ] After an update that changes the save format: the same, plus Menu, 任务 Tasks shows the same ticks as before.
-- [ ] Menu, Settings, Save file, Download saves a file called little-monkey-save- and the date. On a phone it goes to your downloads (Files on an iPhone).
-- [ ] In a private or incognito window: Menu, Settings, Save file, Load a save file, and pick that file. It shows how many words and shells the save has; Load it puts you on the title screen, and Continue carries on from that save.
+- [ ] Your game from before the save slots is Game 1, with everything as it was.
+- [ ] Choose Game 2 (empty), New game: the opening plays and a new game starts. Back on the title screen (Settings, Title screen), Game 1 is still as it was, and Game 2 is the chosen one next time you open the game.
+- [ ] A game, Copy to a file, saves a file called little-monkey-game1- and the date. On a phone it goes to your downloads (Files on an iPhone).
+- [ ] An empty game, Load from a file, and pick that file: the game appears in that slot, and Continue carries on from it.
+- [ ] A game, Delete: it asks once more (Keep it is the A button); Delete it empties the slot.
 - [ ] Loading something that isn't a save (any other file) says so and changes nothing.
 
 When the save format changes, the game keeps a copy of your old save in the browser before converting it, so it can be recovered if anything goes wrong.
@@ -199,4 +203,5 @@ When the save format changes, the game keeps a copy of your old save in the brow
 
 ## Known issues (not fixed yet)
 
-- On the smallest phones (640 × 360), when the device has no Chinese voice, the title's warning pushes Start just below the screen (A still presses it).
+
+- None right now.

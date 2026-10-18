@@ -145,23 +145,61 @@ function upgradeSave(s){
 function keepBackup(label, raw){
   try { const k = KEY + '-backup-' + label; if (localStorage.getItem(k) === null) localStorage.setItem(k, raw); } catch(e) {}
 }
-function loadSave(){
+// Three games (save slots), so two people can share a phone. Each is kept in the browser under its own name:
+// Game 1 under KEY, where the one game always was, and Games 2 and 3 beside it. KEY-slots remembers which game
+// you're playing and when each was last played.
+const SLOTS = [1, 2, 3];
+const slotKey = n => n === 1 ? KEY : `${KEY}-game${n}`;
+function slotsInfo(){ try { const d = JSON.parse(localStorage.getItem(KEY + '-slots')); if (d && typeof d === 'object') return {active:1, played:{}, ...d}; } catch(e) {} return {active:1, played:{}}; }
+function setSlotsInfo(change){ try { localStorage.setItem(KEY + '-slots', JSON.stringify(change(slotsInfo()))); } catch(e) {} }
+// A game from the browser, brought up to date (keeping a copy of an old or unreadable one first).
+function loadSave(n = 1){
   let raw = null;
-  try { raw = localStorage.getItem(KEY); } catch(e) {}
+  try { raw = localStorage.getItem(slotKey(n)); } catch(e) {}
   if (!raw) return fresh();
+  const tag = n === 1 ? '' : `game${n}-`;
   let data = null;
   try { data = JSON.parse(raw); } catch(e) {}
-  if (!data || typeof data !== 'object' || Array.isArray(data)){ keepBackup('unreadable', raw); return fresh(); }
+  if (!data || typeof data !== 'object' || Array.isArray(data)){ keepBackup(tag + 'unreadable', raw); return fresh(); }
   if (data.version === SAVE_VERSION) return upgradeSave(data);
-  keepBackup('v' + (data.version || 2), raw);   // the old save, exactly as it was, before converting it
+  keepBackup(tag + 'v' + (data.version || 2), raw);   // the old save, exactly as it was, before converting it
   const s = upgradeSave(data);
-  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e) {}
+  try { localStorage.setItem(slotKey(n), JSON.stringify(s)); } catch(e) {}
   return s;
 }
-// Your save as a file to download (Menu, Settings, Save file), so a cleared browser can't lose it.
-function saveFile(){
-  const d = new Date(), two = n => String(n).padStart(2, '0');
-  return {name:`little-monkey-save-${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}.json`, text:JSON.stringify(S)};
+// What the title screen shows about game n: null if it's empty (never started).
+function slotSummary(n){
+  if (n === SLOT) return S.started ? summaryOf(S, n) : null;
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(slotKey(n))); } catch(e) {}
+  if (!data || typeof data !== 'object' || Array.isArray(data) || !data.started || (data.version || 2) > SAVE_VERSION) return null;
+  return summaryOf(upgradeSave(data), n);
+}
+function summaryOf(s, n){
+  const area = s.areas[AREA.number] || {}, chapter = AREA.chapters[area.chapter || 0] || AREA.chapters[0];
+  return {n, level:level(s.xp || 0), xp:(s.xp || 0) % XP_PER_LEVEL, shells:s.shells || 0, friends:s.friends.length,
+    words:Object.values(s.w).filter(x => x && x.lv > 0).length, chapter, played:slotsInfo().played[n] || 0,
+    due:(() => { const keep = S; S = s; try { return dueWords().length; } finally { S = keep; } })()};   // (dueWords() reads S)
+}
+// Plays game n from now on: it's remembered as the game you're playing.
+function useSlot(n){ SLOT = n; S = loadSave(n); setSlotsInfo(d => ({...d, active:n})); }
+// A new game in slot n, keeping your sound and reading settings.
+function newGameIn(n){
+  const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn};
+  SLOT = n; S = Object.assign(fresh(), keep); setSlotsInfo(d => ({...d, active:n}));
+}
+// Deletes game n, keeping a copy in the browser just in case. Deleting the game you're playing leaves a new one.
+function deleteSlot(n){
+  try { const raw = localStorage.getItem(slotKey(n)); if (raw) keepBackup(`deleted-game${n}-${Date.now()}`, raw); localStorage.removeItem(slotKey(n)); } catch(e) {}
+  setSlotsInfo(d => { const played = {...d.played}; delete played[n]; return {...d, played}; });
+  if (n === SLOT){ const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn}; S = Object.assign(fresh(), keep); }
+}
+// Game n as a file to download (Copy to a file), to keep it safe or carry it to another device.
+function saveFile(n = SLOT){
+  const d = new Date(), two = x => String(x).padStart(2, '0');
+  let text = n === SLOT ? JSON.stringify(S) : null;
+  if (text === null) try { text = localStorage.getItem(slotKey(n)); } catch(e) {}
+  return {name:`little-monkey-game${n}-${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}.json`, text};
 }
 // A downloaded save, brought up to date: {save}, or {error} saying what's wrong with the file.
 function readSaveFile(text){
@@ -171,14 +209,19 @@ function readSaveFile(text){
   if ((data.version || 2) > SAVE_VERSION) return {error:'That save is from a newer version of the game. Reload the page to get the newest version, then try again.'};
   return {save:upgradeSave(data)};
 }
-// Plays on from a loaded save, keeping a copy of the game it replaces in the browser.
-function useSave(s){
-  try { const raw = localStorage.getItem(KEY); if (raw) keepBackup('before-load-' + Date.now(), raw); } catch(e) {}
-  S = s; save();
+// Plays on from a loaded save in game n (an empty slot), keeping a copy of anything that was there.
+function useSave(s, n = SLOT){
+  try { const raw = localStorage.getItem(slotKey(n)); if (raw) keepBackup(`before-load-${n === 1 ? '' : 'game' + n + '-'}${Date.now()}`, raw); } catch(e) {}
+  SLOT = n; S = s; setSlotsInfo(d => ({...d, active:n})); save();
 }
-let S = loadSave();
+let SLOT = SLOTS.includes(slotsInfo().active) ? slotsInfo().active : 1;   // the game you're playing
+let S = loadSave(SLOT);
 const here = () => S.areas[AREA.number];   // your progress in the area you're in
-function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} updateHUD(); }
+function save(){
+  try { localStorage.setItem(slotKey(SLOT), JSON.stringify(S)); } catch(e) {}
+  if (S.started) setSlotsInfo(d => ({...d, active:SLOT, played:{...d.played, [SLOT]:Date.now()}}));
+  updateHUD();
+}
 const lvl = w => (S.w[w] && S.w[w].lv) || 0;
 function rec(w){ if (!S.w[w]) S.w[w] = {lv:0,due:0,ok:0}; return S.w[w]; }
 function todayKey(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }

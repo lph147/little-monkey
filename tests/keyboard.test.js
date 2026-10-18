@@ -12,16 +12,17 @@ function watch(buttons, {mode, save} = {}){
   game.run('globalThis.pressed = []');
   for (const [sel, name] of Object.entries(buttons)){
     if (name === null) game.run(`document.querySelector = (find => s => s === '${sel}' ? null : find(s))(document.querySelector)`);   // not on the page
+    else if (sel === '#titleButtons .primary') game.run(`document.querySelector('#titleButtons').querySelector = s => s === '.primary' ? {click: () => pressed.push('${name}')} : null`);   // the chosen game
     else game.run(`document.querySelector('${sel}').click = () => pressed.push('${name}')`);
   }
   return {key: (k, o) => game.key(k, o), pressed: () => game.run('pressed.join()')};
 }
 
-test('Space and Enter press Start (or Continue) on the title screen', () => {
+test('Space and Enter choose the game on the title screen', () => {
   for (const key of [' ', 'Enter']){
-    const g = watch({'#titleButtons .primary': 'Start'});
+    const g = watch({'#titleButtons .primary': 'Game 1'});
     assert.equal(g.key(key).defaultPrevented, true);
-    assert.equal(g.pressed(), 'Start', `${key === ' ' ? 'Space' : key} should press Start`);
+    assert.equal(g.pressed(), 'Game 1', `${key === ' ' ? 'Space' : key} should choose Game 1`);
   }
 });
 
@@ -43,7 +44,7 @@ test('holding the key down presses only once', () => {
 });
 
 test('a button chosen with Tab is pressed by the browser, not the A button', () => {
-  const g = watch({'#titleButtons .primary': 'Continue'}, {save: {started: true}});
+  const g = watch({'#titleButtons .primary': 'Game 1'}, {save: {started: true}});
   const e = g.key('Enter', {tabbedTo: true});
   assert.equal(g.pressed(), '');
   assert.equal(e.defaultPrevented, false, 'the browser should be left to press the chosen button');

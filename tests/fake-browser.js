@@ -58,8 +58,8 @@ function scriptsIn(page, root = ROOT){
 // (an object, or a string for the exact text, such as a broken save), and {storage} for
 // anything else already in the browser's storage. {root} and {page} load a different copy
 // of the game (used to compare versions).
-// {dom: true} is for tests that play the game: the card (#sheet), the speech box (#talk) and the
-// text box (#textbox) become working copies whose buttons can be found and pressed (see mini-dom.js),
+// {dom: true} is for tests that play the game: the card (#sheet), the speech box (#talk), the
+// text box (#textbox) and the title screen's games (#titleButtons) become working copies whose buttons can be found and pressed (see mini-dom.js),
 // and timers wait until the test calls flush().
 function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = false} = {}){
   const elements = {}, storage = new Map(Object.entries(stored)), frames = [], listeners = {};
@@ -77,6 +77,7 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = 
     elements['#sheet'] = makeElement('div', {id: 'sheet', class: 'sheet', role: 'dialog'}, document);
     elements['#talk'] = makeElement('div', {id: 'talk', class: 'talk', hidden: ''}, document);
     elements['#textbox'] = makeElement('div', {id: 'textbox', class: 'textbox'}, document);
+    elements['#titleButtons'] = makeElement('div', {id: 'titleButtons', class: 'slots'}, document);   // the title screen's games
   }
   const win = vm.createContext({
     document,

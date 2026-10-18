@@ -235,6 +235,7 @@ The names of the menu's tiles, shown with pinyin and English.
 | 任务 | rènwu | Tasks |  |
 | 朋友 | péngyou | Friends |  |
 | 衣服 | yīfu | Wardrobe |  |
+| 保存 | bǎocún | Save |  |
 
 ## New sentences to check
 

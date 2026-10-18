@@ -11,16 +11,16 @@ function menuGame(){
   return {game, sheet, run: code => game.run(code), items: () => sheet.querySelectorAll('[data-m]').map(b => b.dataset.m)};
 }
 
-test('the menu has a tile each for the Word Scroll, tasks, friends and wardrobe, then Settings', () => {
+test('the menu has a tile each for the Word Scroll, tasks, friends, wardrobe and saving, then Settings', () => {
   const {sheet, run, items} = menuGame();
   run('pressMenu()');
-  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'wardrobe', 'settings']);
+  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'wardrobe', 'save', 'settings']);
   const tile = sheet.querySelector('.mtile[data-m="tasks"]');
   assert.equal(tile.querySelector('.mzh').textContent, '任务');
   assert.equal(tile.querySelector('.mpy').textContent, 'rènwu');
   assert.equal(tile.querySelector('.men').textContent, 'Tasks', 'each tile has Chinese, pinyin and English');
   assert.equal(run('document.activeElement && document.activeElement.dataset.m'), 'words', 'A starts on the first tile');
-  assert.ok(!/Save game|Resume|Today/.test(sheet.textContent), 'no Save, Resume or Today\'s words: the game saves itself, B closes, and Today is in the Word Scroll');
+  assert.ok(!/Resume|Today/.test(sheet.textContent), 'no Resume or Today\'s words: B closes, and Today is in the Word Scroll');
 });
 
 test('the tiles open their pages, and Back comes back to the same tile', () => {
@@ -34,21 +34,27 @@ test('the tiles open their pages, and Back comes back to the same tile', () => {
   }
 });
 
-test('Settings has the sound, pinyin, English on replies, How to play, save file, title screen and reset', () => {
+test('Save saves the game and says so; it saves by itself anyway', () => {
+  const {sheet, run} = menuGame();
+  run('openMenu()');
+  run('S.shells = 9');
+  sheet.querySelector('[data-m="save"]').click();
+  assert.equal(run('modal.hidden'), true, 'the menu closes');
+  assert.equal(JSON.parse(run('localStorage.getItem(KEY)')).shells, 9, 'the game is saved');
+  assert.match(run("document.querySelector('#saybox').innerHTML"), /Saved: Game 1, just now/);
+});
+
+test('Settings has the sound, pinyin, English on replies, How to play, the opening and the title screen', () => {
   const {sheet, run, items} = menuGame();
   run('openMenu()');
   sheet.querySelector('[data-m="settings"]').click();
-  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'howto', 'save', 'title', 'reset']);
+  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'howto', 'opening', 'title'], 'saving, loading and starting again are on the title screen');
   const pinyin = run('S.pinyin');
   sheet.querySelector('[data-m="pinyin"]').click();
   assert.equal(run('S.pinyin'), !pinyin, 'Pinyin switches');
   assert.equal(run('document.activeElement.dataset.m'), 'pinyin', 'and stays chosen');
-  sheet.querySelector('[data-m="save"]').click();
-  assert.match(sheet.textContent, /saves by itself/);
   run('pressB()');
-  assert.equal(run('document.activeElement.dataset.m'), 'save', 'Back from the save file returns to Settings');
-  run('pressB()');
-  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'wardrobe', 'settings'], 'B from Settings goes back to the menu');
+  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'wardrobe', 'save', 'settings'], 'B from Settings goes back to the menu');
   assert.equal(run('document.activeElement.dataset.m'), 'settings');
 });
 
@@ -67,7 +73,7 @@ test('the D-pad moves around the menu on screen: up and down between rows, left 
   const {sheet, run} = menuGame();
   run('openMenu()');
   // the menu as it looks: a 2 × 2 grid of tiles, then Settings across the width, then Close
-  const place = {words: [0, 0, 150, 100], tasks: [160, 0, 150, 100], friends: [0, 110, 150, 100], wardrobe: [160, 110, 150, 100], settings: [0, 220, 310, 40]};
+  const place = {words: [0, 0, 150, 100], tasks: [160, 0, 150, 100], friends: [0, 110, 150, 100], wardrobe: [160, 110, 150, 100], save: [320, 110, 150, 100], settings: [0, 220, 310, 40]};
   for (const [m, [left, top, width, height]] of Object.entries(place)) sheet.querySelector(`[data-m="${m}"]`).rect = {left, top, width, height};
   sheet.querySelector('[data-a=close]').rect = {left: 230, top: 280, width: 80, height: 40};
   const on = () => run("document.activeElement.dataset.m || document.activeElement.dataset.a");
@@ -80,5 +86,5 @@ test('the D-pad moves around the menu on screen: up and down between rows, left 
   run("navFocus('down'); navFocus('down')"); assert.equal(on(), 'settings', 'down from the grid goes to Settings');
   run("navFocus('down')"); assert.equal(on(), 'close', 'then to Close');
   run("navFocus('up'); navFocus('up')"); assert.equal(on(), 'friends', 'and back up to the grid');
-  run("navFocus('right'); navFocus('right')"); assert.equal(on(), 'settings', 'right at the end of a row carries on to the next');
+  run("navFocus('right'); navFocus('right'); navFocus('right')"); assert.equal(on(), 'settings', 'right at the end of a row (past Save) carries on to the next');
 });
