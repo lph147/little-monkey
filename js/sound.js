@@ -30,7 +30,9 @@ const SFX = {
   fanfare: () => [523,659,784,1047,784,1047].forEach((f,i) => tone(f, .13, 'square', .04, i*.1)),
   rumble: () => noise(.9, .16),
   chime: () => [1047,1319,1568,2093].forEach((f,i) => tone(f, .35, 'triangle', .05, i*.08)),
-  shimmer: () => tone(520, 1.1, 'triangle', .04, 0, 900)
+  shimmer: () => tone(520, 1.1, 'triangle', .04, 0, 900),
+  swish: (when = 0) => tone(900, .18, 'triangle', .025, when, -650),   // something cutting through the air: a stick, a leap
+  thwack: (when = 0) => { tone(150, .09, 'square', .05, when, -60); tone(90, .14, 'triangle', .06, when); }   // a hit
 };
 
 /* ---- background music: guzheng and dizi in a Chinese pentatonic style ----

@@ -156,6 +156,10 @@ const SCREENS = [
     click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(200); click('[data-a=next]'); await wait(600); }},
   {id: 'battle-apple', title: 'A battle: an apple helps', save: 'fighting', why: 'Under any question, an apple takes away a wrong answer, without using your turn.', run: async () => {
     play(); await wait(100); battle('snake'); await wait(1200); click('.act[data-act=hit]'); await wait(500); }},
+  {id: 'snake-struck-from', title: 'A battle: where it struck from', save: 'fighting', why: 'It hid, then struck from where you heard: that picture is beside you, and you jumped aside.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); };
+    battle('snake'); await wait(1200); click('.act[data-act=hit]'); await wait(300); click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(200); click('[data-a=next]'); await wait(900);
+    click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(1500); }},
   {id: 'battle-boar', title: 'The wild boar', save: 'fighting', why: 'A big enemy: no running away.', run: async () => {
     play(); await wait(100); S.w['野猪'] = {lv: 1, due: 0, ok: 0}; battle('boar'); await wait(1200); }},
   {id: 'hurt', title: 'Hurt: your hearts, and resting', save: 'hurt', why: 'Your hearts show while you’re hurt; the old monkey lets you rest.', run: async () => {

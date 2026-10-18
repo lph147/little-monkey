@@ -578,15 +578,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // Wild creatures you can fight, in battles (js/battle.js). Each: its word (taught on a card the first time you
   // meet it, with meetNote), its hearts (hits to chase it away), where it attacks from (attacks: you hear one and
-  // pick it to jump aside; only words you've caught are used), what it does (meet, attack), the message when it
+  // pick it to jump aside; only words you've caught are used), what it does (meet; hide, then attack, on its turn), the message when it
   // runs off (away) with a reward in shells, and boss: true for a big enemy you can't run from.
   enemies: {
     snake: {word:'蛇', hearts:2, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
-      attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
+      hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
     bee: {word:'蜜蜂', hearts:2, attacks:['花', '树', '草', '山'], meetNote:'A bee buzzes out of the long grass!', meet:'A {蜜蜂} buzzes round your head!',
-      attack:'The {蜜蜂} dives at you!', away:'The {蜜蜂} buzzes off over the flowers.', reward:1},
+      hide:'The {蜜蜂} zips out of sight…', attack:'The {蜜蜂} dives at you!', away:'The {蜜蜂} buzzes off over the flowers.', reward:1},
     boar: {word:'野猪', hearts:4, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
-      meet:'The {野猪} snorts and paws the ground!', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
+      meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },
   // Battles: when you can fight (when), what you hit with (weapon), and what happens if you lose (lost: you rest,
   // with full hearts, at restAt).

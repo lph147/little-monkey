@@ -451,6 +451,43 @@ rt.hid{visibility:hidden}
 /* A battle: the scene also shows your hearts, in a plate at its bottom right; your turn is a menu of what to do. */
 .scene .plate.mine{top:auto;bottom:5px;left:auto;right:5px;max-width:62%}
 .sheet:has(> .scene) .plate.mine{top:auto;bottom:5px;left:auto;right:5px}
+/* A battle's animations. Your turn (.swing): you lunge and swing your stick; a hit (.hit) knocks the enemy back with a
+   flash and a burst, a miss (.miss) and it hops aside. Its turn: it hides (.hiding), then leaps out of where it strikes
+   from (.strike: that picture pops up beside you); you jump aside (.dodged) or it hits you (.struck). A word pops up. */
+.scene .stick,.scene .from,.scene .striker,.scene .pow,.scene .fx{position:absolute;pointer-events:none}
+.scene .stick{left:calc(6% - var(--pic-scene) * .02);bottom:calc(var(--pic-scene) * .42);width:calc(var(--pic-scene) * .6);height:auto;image-rendering:pixelated;image-rendering:crisp-edges;transform-origin:12% 88%;rotate:-60deg}   /* held up at your left shoulder */
+.scene .from{left:44%;bottom:calc(var(--pic-scene) * 1.15);width:var(--pic-small);height:var(--pic-small);opacity:0}
+.scene .from .pix{width:100%;height:100%}
+.scene .striker{left:34%;bottom:calc(var(--pic-scene) * 1.2);opacity:0}
+.scene .striker .portrait{width:calc(var(--pic-scene) * .8);height:calc(var(--pic-scene) * .8)}
+.scene .pow{right:calc(8% + var(--pic-scene) * .2);top:calc(44% + var(--pic-scene) * .1);width:calc(var(--pic-scene) * .6);aspect-ratio:1;opacity:0;background:#FFE066;
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.scene .fx{z-index:3;font:700 1.05rem var(--pixel);color:#FFF6D8;opacity:0;white-space:nowrap;text-shadow:0 2px 0 #1E2B26,0 -2px 0 #1E2B26,2px 0 0 #1E2B26,-2px 0 0 #1E2B26}
+.scene.swing .fx{right:16%;top:30%}
+.scene.strike .fx{left:6%;top:32%}
+.scene.swing .me{animation:lunge .5s ease-out}
+.scene.swing .stick{animation:lunge .5s ease-out,swing .5s ease-out}
+.scene.hit .foe{animation:knock .7s}
+.scene.hit .pow{animation:pow .45s .15s}
+.scene.miss .foe{animation:sidestep .7s}
+.scene.swing .fx,.scene.strike .fx{animation:fxpop 1.1s .25s forwards}
+.scene.hiding .foe{animation:hide .5s forwards}
+.scene.strike .from{animation:popin .25s forwards}
+.scene.strike .striker{animation:leap .6s .25s forwards}
+.scene.dodged .me,.scene.dodged .stick{animation:sidejump .6s .3s}
+.scene.struck .me,.scene.struck .stick{animation:hurt .55s .5s}
+@keyframes lunge{35%{translate:24px -28px}}
+@keyframes swing{0%{rotate:-60deg}15%{rotate:-80deg}38%{rotate:20deg}100%{rotate:-60deg}}
+@keyframes knock{0%,22%{translate:0;filter:none}30%{translate:10px 0;filter:brightness(2.6)}45%{translate:16px 2px;rotate:10deg;filter:none}100%{translate:0;rotate:0deg}}
+@keyframes pow{0%{opacity:1;scale:.2}60%{opacity:1;scale:1.1}100%{opacity:0;scale:1.3}}
+@keyframes sidestep{0%,20%{translate:0}40%,70%{translate:18px -18px}100%{translate:0}}
+@keyframes fxpop{0%{opacity:0;translate:0 6px}20%{opacity:1;translate:0}80%{opacity:1}100%{opacity:0;translate:0 -8px}}
+@keyframes hide{0%{opacity:1}30%{translate:0 -8px}100%{opacity:0;translate:0 24px;scale:.5}}
+@keyframes popin{0%{opacity:0;scale:.3}100%{opacity:1;scale:1}}
+@keyframes leap{0%{opacity:1;translate:0 0;scale:.6}60%{opacity:1;translate:calc(var(--pic-scene) * -.55) calc(var(--pic-scene) * 1);scale:1}100%{opacity:0;translate:calc(var(--pic-scene) * -.75) calc(var(--pic-scene) * 1.2);scale:1}}
+@keyframes sidejump{40%{translate:-16px -24px}70%{translate:-10px -8px}}
+@keyframes hurt{0%,100%{translate:0;filter:none}20%{translate:-6px 0;filter:brightness(.7) sepia(1) saturate(6) hue-rotate(-35deg)}40%{translate:6px 0}60%{translate:-4px 0;filter:brightness(.7) sepia(1) saturate(6) hue-rotate(-35deg)}}
+@media (prefers-reduced-motion: reduce){.scene .me,.scene .stick,.scene .foe,.scene .pow,.scene .striker{animation:none!important}.scene.hiding .foe{opacity:0}.scene.strike .from{opacity:1}.scene .fx{animation:none!important;opacity:1}}
 .plate.mine .name{font:600 .8rem var(--pixel);color:var(--jade)}
 .sheet:has(> .scene) .plate.mine .heart{width:.95rem;height:.85rem}
 .plate.mine .hearts{gap:2px}

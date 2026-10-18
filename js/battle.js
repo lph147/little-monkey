@@ -44,8 +44,13 @@ async function battle(id){
   else { say(f.word); await sleep(700); }
   const me = monkeySprite('player', 'up', false, 0).toDataURL();
   let left = f.hearts, note = fill(f.meet || `A {${f.word}} blocks your way!`);
-  const scene = look => `<div class="scene${f.home === '山' ? ' cliff' : ''}"><div class="mound foem"></div><div class="foe ${look || ''}">${img}</div>`
-    + `<div class="mound mem"></div><img class="me" alt="" src="${me}">`
+  // The scene: the enemy on its mound, you from behind with your stick, and what the animations use (js below, css
+  // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
+  // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).
+  const stick = BATTLES.weapon && PICTURES[BATTLES.weapon] ? `<img class="stick" alt="" src="${sprite(PICTURES[BATTLES.weapon].rows, PICTURES[BATTLES.weapon].palette).toDataURL()}">` : '';
+  const scene = (look = '', act = '') => `<div class="scene${f.home === '山' ? ' cliff' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
+    + `<div class="mound mem"></div><img class="me" alt="" src="${me}">${stick}`
+    + `<div class="from" aria-hidden="true"></div><div class="striker" aria-hidden="true">${img}</div><div class="pow" aria-hidden="true"></div><div class="fx" aria-hidden="true"></div>`
     + `<div class="plate"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div></div>`
     + `<div class="hearts" aria-label="Its hearts: ${left} of ${f.hearts}">${heartsHTML(left, f.hearts)}</div></div>`
     + `<div class="plate mine"><div class="name">You</div><div class="hearts" aria-label="Your hearts: ${hearts()} of ${HEARTS}">${heartsHTML(hearts(), HEARTS)}</div></div></div>`;
@@ -62,15 +67,16 @@ async function battle(id){
       const ok = await pictureQ({head:scene(), body:`<p class="label">You swing your ${wz(BATTLES.weapon || '棍子')}!</p>` + q.body, word:w, type:q.type,
         options:q.options, text:q.text, answerIdx:q.answerIdx, helper:helperHTML(),
         onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); wireHelper(q.options.length, q.answerIdx); },
-        onAnswer:ok => {
-          const fb = sheet.querySelector('.feedback');
-          if (ok){ left--; sheet.querySelector('.scene .foe').classList.add('hop'); sheet.querySelector('.scene .plate .hearts').innerHTML = heartsHTML(left, f.hearts); }
+        onAnswer:ok => {   // you swing: a hit knocks it back, or it hops aside
+          const fb = sheet.querySelector('.feedback'), sc = sheet.querySelector('.scene');
+          sc.classList.add('swing'); sc.classList.add(ok ? 'hit' : 'miss'); sc.querySelector('.fx').textContent = ok ? 'Hit!' : 'Miss!';
+          if (ok){ left--; sc.querySelector('.plate .hearts').innerHTML = heartsHTML(left, f.hearts); SFX.thwack(.2); } else SFX.swish(.1);
           fb.innerHTML += ok ? ' <b>A hit!</b>' : ' You miss.';
         }});
       if (!ok) note = `The ${wz(f.word)} dodges.`;
     }
     if (left <= 0) break;
-    await dodge(f, scene(), note);
+    await dodge(f, scene('', 'hiding'), note);
     note = '';
   }
   closeCard();
@@ -102,24 +108,28 @@ function battleTurn(f, head, note){
     sheet.querySelectorAll('.act').forEach(b => b.onclick = () => { SFX.blip(); res(b.dataset.act); });
   });
 }
-// The enemy's turn: it attacks from somewhere (one of its attacks you've caught); hear it and pick it to jump aside.
+// The enemy's turn: it hides (head: the scene, with it hiding), then attacks from somewhere (one of its attacks you've
+// caught); hear it and pick it to jump aside. Then it leaps out of there: you jump aside, or it hits you.
 async function dodge(f, head, note){
   const known = w => lvl(w) >= 1 && WORDS[w] && WORDS[w].pic && w !== f.word;
   const mine = shuffle((f.attacks || []).filter(known)), any = shuffle(picWords().filter(known));
   const a = mine[0] || any[0];
   const others = [...mine.slice(1), ...any.filter(w => w !== a && !mine.includes(w))].slice(0, 2);
   const opts = shuffle([a, ...others]);
-  return pictureQ({head, body:`<p class="label">${esc(note ? note + ' ' : '')}${esc(fill(f.attack || `The {${f.word}} attacks!`))}</p>`
+  const strikes = fill(f.attack || `The {${f.word}} attacks!`);
+  return pictureQ({head, body:`<p class="label">${esc(note ? note + ' ' : '')}${esc(fill(f.hide || `The {${f.word}} hides!`))}</p>`
       + `<div class="askrow"><p class="prompt">${esc(f.dodge || 'Listen. Where is it coming from? Pick it to jump aside.')}</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`,
     word:a, type:'listen', options:opts.map(o => `<span class="ico">${picHTML(o)}</span><span class="cap">${o}</span>${laterPy(o)}`), answerIdx:opts.indexOf(a),
     helper:helperHTML(), onShow:() => { setTimeout(() => say(a), 300); wireHelper(opts.length, opts.indexOf(a)); },
-    onAnswer:ok => {
-      const fb = sheet.querySelector('.feedback');
+    onAnswer:ok => {   // it leaps out of where it was: you jump aside, or it hits you
+      const fb = sheet.querySelector('.feedback'), sc = sheet.querySelector('.scene');
+      sc.querySelector('.from').innerHTML = picHTML(a);
+      sc.classList.add('strike'); sc.classList.add(ok ? 'dodged' : 'struck'); sc.querySelector('.fx').textContent = ok ? 'Missed you!' : 'Ouch!';
+      SFX.swish(.25); sheet.querySelector('.label').textContent = strikes;   // it strikes!
       if (ok) fb.innerHTML += ' <b>You jump aside!</b>';
       else {
-        S.hearts = Math.max(0, hearts() - 1); save();
-        sheet.querySelector('.scene .plate.mine .hearts').innerHTML = heartsHTML(hearts(), HEARTS);
-        sheet.querySelector('.scene').classList.add('shake');
+        S.hearts = Math.max(0, hearts() - 1); save(); SFX.thwack(.5);
+        sc.querySelector('.plate.mine .hearts').innerHTML = heartsHTML(hearts(), HEARTS);
         fb.innerHTML += ' <b>Ouch!</b>';
       }
     }});
