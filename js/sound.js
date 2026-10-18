@@ -40,8 +40,8 @@ const SFX = {
    passes, on a breathy dizi flute with slides, grace notes and vibrato; underneath, a rolling guzheng accompaniment,
    glissando sweeps and a soft wood block. Battles' (battle): quicker, but calm and cheerful, never tense: the same
    pentatonic scale, a bouncy guzheng in quavers, a soft drum and wood block, and a tune taking turns on guzheng and dizi.
-   The cave's (cave): slower, with a long echo: a low hum, soft guzheng notes, a slow tune on guzheng then a low dizi,
-   and drips of water. A place can have its own song (the content's music); otherwise it's home's. */
+   The cave's (cave): its own sound, unlike the others: slower and sparser, with a long echo; a slow tune on soft bells,
+   then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water. A place can have its own song (the content's music); otherwise it's home's. */
 const BPM = 72, BEAT = 60 / BPM, LOOP_BEATS = 64;
 const MEL = [[76,1.5],[79,.5],[81,1],[84,.5],[81,.5], [79,2],[76,1],[79,1], [74,.5],[76,.5],[79,1],[76,1],[74,.5],[72,.5], [74,4],
              [76,1.5],[79,.5],[81,1],[79,.5],[81,.5], [84,2],[86,1],[84,.5],[81,.5], [79,.5],[81,.5],[79,.5],[76,.5],[74,1],[76,1], [69,4],
@@ -79,17 +79,19 @@ const BATTLE_EVENTS = (() => {
   });
   return ev.sort((a,c) => a.b - c.b);
 })();
-// The cave's song: a slow tune, a hum every 8 beats (on these roots) with soft guzheng notes over it, and drips.
-const CAVE_MEL = [[69,2],[72,1],[74,1], [76,3],[74,1], [72,2],[69,2], [67,4],
-                  [69,2],[72,1],[76,1], [79,3],[76,1], [74,2],[72,1],[74,1], [69,4]];
-const CAVE_ROOTS = [45,43,45,48];
+// The cave's song: a slow tune with pauses (0 is a rest), a hum every 8 beats on these roots with three plinks over it
+// (CAVE_PLINKS, the root's own notes), and drips.
+const CAVE_MEL = [[81,2],[76,1],[79,1],[72,3],[0,1], [74,1],[76,1],[79,2],[76,4],
+                  [84,2],[81,1],[79,1],[76,3],[0,1], [74,2],[72,1],[69,1],[72,4]];
+const CAVE_ROOTS = [45,43,48,40];
+const CAVE_PLINKS = {45:[69,76,81], 43:[67,74,79], 48:[72,79,84], 40:[64,67,76]};
 const CAVE_DRIPS = [[1.5,2400],[5.25,3100],[9.75,2700],[13.5,3400],[18.25,2500],[21.5,3000],[26.75,2800],[30.25,3300]];
 const CAVE_EVENTS = (() => {
   const ev = []; let bt = 0, prev = 0;
   CAVE_MEL.forEach(([m,d]) => { ev.push({b:bt, m, d, k:'mel', prev}); prev = m; bt += d; });
   CAVE_ROOTS.forEach((r,i) => {
     ev.push({b:i*8, m:r, k:'hum'});
-    [r+12, r+19, r+24, r+19, r+12, r+19, r+24, r+19].forEach((m,j) => ev.push({b:i*8 + j, m, k:'arp'}));
+    CAVE_PLINKS[r].forEach((m,j) => ev.push({b:i*8 + [1.5, 4, 6.5][j], m, k:'plink'}));
   });
   CAVE_DRIPS.forEach(([b,f]) => ev.push({b, f, k:'drip'}));
   return ev.sort((a,c) => a.b - c.b);
@@ -153,6 +155,26 @@ function hum(a, f, t, dur){   // a low, soft hum, as if the cave itself were sin
   o.connect(lp); o2.connect(lp); lp.connect(g); g.connect(mBus);
   [o, o2].forEach(x => { x.start(t); x.stop(t + dur + .7); });
 }
+function bell(a, f, t, v, len){   // a soft bell: the note, with two quieter overtones that fade first
+  [[1, v, len], [2.76, v * .3, len * .35], [5.4, v * .1, len * .18]].forEach(([mul, vv, l]) => {
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(f * mul, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vv, t + .006); g.gain.exponentialRampToValueAtTime(0.0001, t + l);
+    o.connect(g); g.connect(mBus); g.connect(mBus.echoIn); o.start(t); o.stop(t + l + .05);
+  });
+}
+function xun(a, f, t, dur){   // the xun, an ancient clay flute: a deep, hollow note that swells in, with a slow wobble
+  const o = a.createOscillator(), o2 = a.createOscillator(), g = a.createGain(), g2 = a.createGain(), lfo = a.createOscillator(), lg = a.createGain(), lp = a.createBiquadFilter();
+  o.type = 'sine'; o2.type = 'triangle'; g2.gain.value = .12;
+  o.frequency.setValueAtTime(f, t); o2.frequency.setValueAtTime(f * 2, t);
+  lfo.frequency.value = 4.2; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(f * .008, t + Math.min(dur, .8));
+  lfo.connect(lg); lg.connect(o.frequency); lg.connect(o2.frequency);
+  lp.type = 'lowpass'; lp.frequency.value = 1400;
+  const end = t + dur;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.07, t + .18); g.gain.setValueAtTime(.06, Math.max(t + .2, end - .15)); g.gain.exponentialRampToValueAtTime(0.0001, end + .3);
+  o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(g); g.connect(mBus); g.connect(mBus.echoIn);
+  [o, o2, lfo].forEach(x => { x.start(t); x.stop(end + .35); });
+}
 function drip(a, t, f){   // a drop of water falling into a pool: a little plink, rising, that echoes
   const o = a.createOscillator(), g = a.createGain();
   o.type = 'sine'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 1.9, t + .06);
@@ -196,12 +218,10 @@ function playBattleEvent(a, ev, t, pass){
 function playCaveEvent(a, ev, t, pass){
   const beat = 60 / SONGS.cave.bpm;
   if (ev.k === 'mel'){
-    if (pass === 0){
-      const f = midi(ev.m), len = ev.d * beat;
-      zheng(a, f, t, .05, Math.min(len + 1, 2.4), ev.d >= 2);
-      if (ev.d >= 3) for (let tt = t + .5; tt < t + len - .3; tt += .14) zheng(a, f, tt, .016, .4, false);   // a soft tremolo
-    } else dizi(a, midi(ev.m - 12), t, ev.d * beat * .95, ev.prev && Math.abs(ev.m - ev.prev) <= 3 ? midi(ev.prev - 12) : 0, 0);
-  } else if (ev.k === 'arp') zheng(a, midi(ev.m), t, .016, 1.4, false);
+    if (!ev.m) return;   // a rest
+    if (pass === 0) bell(a, midi(ev.m), t, .055, Math.min(ev.d * beat + 1.6, 3.2));
+    else xun(a, midi(ev.m - 12), t, ev.d * beat * .92);
+  } else if (ev.k === 'plink') bell(a, midi(ev.m + 12), t, .016, 1.4);
   else if (ev.k === 'hum') hum(a, midi(ev.m), t, 8 * beat);
   else if (ev.k === 'drip') drip(a, t, ev.f);
 }
@@ -210,7 +230,7 @@ function playCaveEvent(a, ev, t, pass){
 const SONGS = {
   home: {bpm:BPM, beats:LOOP_BEATS, events:EVENTS, play:playEvent, echo:[.32, .3]},
   battle: {bpm:116, beats:32, events:BATTLE_EVENTS, play:playBattleEvent, echo:[.32, .3]},
-  cave: {bpm:60, beats:32, events:CAVE_EVENTS, play:playCaveEvent, echo:[.5, .5]}
+  cave: {bpm:54, beats:32, events:CAVE_EVENTS, play:playCaveEvent, echo:[.52, .55]}
 };
 const placeSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].music]) ? PLACES[PLACE].music : 'home';   // the place you're in's own song, if it has one
 let song = 'home';   // the song playing (or that will, once the music is on)
