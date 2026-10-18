@@ -127,7 +127,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 ### Area 1: Flower Fruit Mountain
 
-**A longer Area 1** (decided 18 October 2026). Playtesters became king in about 5 minutes, which is far too soon, and the headband and the crown came straight after each other. The prologue grows into three parts, and becoming king moves later in chapter 1. A play-time clock in each saved game will show how long each part really takes.
+**A longer Area 1** (decided 18 October 2026). Playtesters became king in about 5 minutes, which is far too soon, and the headband and the crown came straight after each other. The prologue grows into three parts, and becoming king moves later in chapter 1. (A play-time clock in each saved game was considered and not added: playtesters can be timed by watching.)
 
 | Part | What happens | Status |
 | --- | --- | --- |
@@ -351,7 +351,6 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Take out XP and levels (save version 22, 18 October 2026)
 - [ ] Prologue: more dialogue from the old monkey and the troop, guiding you instead of prompts; the headband no longer required
 - [ ] Prologue 3: up the stream, a new place upstream with the waterfall at its source
-- [ ] A play-time clock in each saved game, to see how long each part takes
 - [ ] Chapter 1 B: setting up home (有, 没有), counting the troop in (four to ten), then king at the feast
 - [ ] Chapter 1 C: chopping trees for wood, a new place, building the school, lessons and hide and seek
 - [ ] Friend powers in encounters
