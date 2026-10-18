@@ -59,8 +59,8 @@ test('a version 6 save is converted with nothing bought yet', () => {
   assert.ok(game.storage.get('xiaohouzi-v2-backup-v6'), 'a copy of the version 6 save is kept');
 });
 
-// The 老板 also sells 苹果: you can buy them again and again (up to 3 in your bag), and eat one in an
-// animal encounter to take away a wrong answer.
+// The 老板 also sells 苹果: you can buy them again and again (up to 3 in your bag), and eat one in a
+// question (in a battle or with an animal) to take away a wrong answer.
 const APPLE = () => 'AREA.shop.items.find(i => i.item === "苹果")';
 const buyIt = async (game, what) => {   // buy something, answering every card as a player would
   game.run('showDialog = showNotice = infoBox = replyWith = async () => {}; toast = () => {}; gapQ = async () => true;');
@@ -69,7 +69,8 @@ const buyIt = async (game, what) => {   // buy something, answering every card a
 
 test('the 老板 sells 苹果 as food, and keeps selling it after the headband', () => {
   const apple = get(base, APPLE());
-  assert.ok(apple && apple.eat && apple.carry === 3 && apple.price === 2, '苹果 should be food that costs 2 and you can carry 3 of');
+  assert.ok(apple && apple.eat && apple.price === 2, '苹果 should be food that costs 2');
+  assert.equal(get(base, 'FOOD["苹果"].carry'), 3, 'you can carry 3');
   assert.equal(apple.sentence, '我 要 苹果');
   const game = play({areas: {1: area({bought: ['头带']})}});
   assert.deepEqual(get(game, 'forSale().map(i => i.item)'), ['苹果']);
@@ -97,8 +98,8 @@ test('you can carry 3 苹果, and need 2 shells for each', async () => {
 
 test('eating takes away one wrong answer, never the right one', () => {
   const game = play({bag: {'苹果': 2}});
-  assert.equal(get(game, 'snack()').item, '苹果');
-  assert.equal(get(play({bag: {}}), 'snack() || null'), null, 'nothing to eat with an empty bag');
+  assert.equal(get(game, "foodThat('helps')"), '苹果');
+  assert.equal(get(play({bag: {}}), "foodThat('helps') || null"), null, 'nothing to eat with an empty bag');
   for (let i = 0; i < 50; i++){
     const gone = game.run('wrongToEat(3, 1)');
     assert.ok(gone === 0 || gone === 2, `took away option ${gone}`);

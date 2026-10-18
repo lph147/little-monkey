@@ -264,6 +264,7 @@ The names of the menu's tiles, shown with pinyin and English.
 | --- | --- | --- | --- |
 | 词 | cí | Word Scroll |  |
 | 任务 | rènwu | Tasks |  |
+| 包 | bāo | Bag |  |
 | 朋友 | péngyou | Friends |  |
 | 衣服 | yīfu | Wardrobe |  |
 | 保存 | bǎocún | Save |  |

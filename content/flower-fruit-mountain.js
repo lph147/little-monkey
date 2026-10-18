@@ -185,8 +185,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {item:'头带', price:10, sentence:'我 要 头带', sentenceEn:'I want the headband.',
         note:'A red cloth headband.', bought:'You tie on the red {头带}. It suits you!', wear:true},
       {item:'苹果', price:2, sentence:'我 要 苹果', sentenceEn:'I want an apple.',
-        note:'A crunchy apple.', bought:'You put the {苹果} in your bag. In an animal encounter, eat it to take away a wrong answer.', eat:true, carry:3}
+        note:'A crunchy apple.', bought:'You put the {苹果} in your bag. In a battle or with an animal, eat it to take away a wrong answer.', eat:true}
     ]
+  },
+
+  // Food you carry in your bag (up to carry of each), and what eating it does. heal: how many hearts come back (in a battle,
+  // 吃 eats it on your turn; outside one, tap it in your bag). helps: it takes away a wrong answer in a question, in a
+  // battle or with an animal, without using your turn. does: what your bag says it does.
+  food: {
+    '桃子': {heal:1, carry:3, does:'Brings a heart back'},
+    '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'}
   },
 
   // Things that happen by themselves when the time comes (checked whenever a request is done).
@@ -373,6 +381,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   wild           the enemies that jump out to fight as you walk through it (see enemies)
   //   onLook         steps for pressing A at it, as in talk below: the first part whose if matches runs,
   //                  instead of its action or card (when none matches, it's looked at as usual)
+  //   pick           a fruit tree you can pick from for your bag (item, one of the food below) once its if matches:
+  //                  one fruit each time you come to the place, up to as many as you can carry
   legend: {
     'g': {look:'grass', walk:true},
     'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
@@ -389,8 +399,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
     'Y': {look:'tree', word:'树'},   // the forest round the edge of the map
-    'P': {look:'peachTree', word:'桃子', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'}},
-    'Q': {look:'appleTree', word:'苹果', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'}},
+    'P': {look:'peachTree', word:'桃子', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'},
+      pick:{item:'桃子', if:{hungry:'done'}}},   // once the hungry monkey has eaten, its fruit is for your bag
+    'Q': {look:'appleTree', word:'苹果', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'},
+      pick:{item:'苹果', if:{hungry:'done'}}},
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
     'K': {look:'post', landmark:true, label:'Train', action:'training'},   // the training ground
@@ -684,7 +696,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   give      put something in your wardrobe, such as {give:'花'}, with a message afterwards (note)
   //   reply     your reply: you choose what to say from phrases you know, and this is the one that fits
   //             (taught on its own card the first time). Any choice is fine; the game says which fits best.
-  //   wordGame  offer a word game. ask: the question; word: who you're playing with;
+  //   bag       put food in your bag (if there's room), with a note saying so
+  //   wordGame  offer a word game. ask: the question; word: who you're playing with; win: steps if you win;
   //             notYet: the message if you don't know enough words yet
   //   gap       a sentence to finish by filling the gap: {sentence, en, word}, word being the missing one
   //   chapter   a new chapter begins: its title card, and its part of the checklist from then on
@@ -795,8 +808,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     boar: [{do:[{battle:'boar', win:[{set:{boar:1}}, {message:'The way to the top is clear.'}]}]}],
     rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
     fox: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
-    squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}?', word:'松鼠', notYet:'Learn a few more words first, then come back to play.'}}]}],
-    goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}?', word:'山羊', notYet:'Learn a few more words first, then come back to play.'}}]}],
+    squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}? If you win, it gives you a {桃子}.', word:'松鼠',
+      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}]}}]}],
+    goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
+      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}]}}]}],
     troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'wantPeach'}]}],
     troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'play'}]}],
     troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],

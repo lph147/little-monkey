@@ -62,6 +62,8 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .titlecard:has(.slots){width:auto;right:8px;padding:3% 3% 3% 4%}
 .titlecard:has(.slots) .titlehead{max-width:57%}
 .titlecard:has(.slots) h2{font-size:2.5rem}
+@media (max-width:700px){.bag .card .pix{width:var(--pic-small);height:var(--pic-small)}.bag .card .hz{font-size:1rem}.bag .card .p{font-size:.7rem}.bag .card .small{font-size:.62rem}.bag .card{padding:.15rem 1.5rem .15rem .4rem;column-gap:.4rem}}   /* the bag on the smallest phones */
+@media (max-width:700px){.sheet:has(.tiles) .mzh{font-size:1.1rem;white-space:nowrap}.sheet:has(.tiles) .men{font-size:.62rem}.sheet:has(.tiles) .mpy{font-size:.65rem}.sheet:has(.tiles) .tiles{gap:.3rem}.mtile{padding:.35rem .1rem .3rem}}   /* six menu tiles on the smallest phones */
 @media (max-width:700px){.titlecard:has(.slots) h2{font-size:2rem}.titlecard:has(.slots) .titlehead{max-width:72%}.titlecard:has(.slots) .titletext{margin-top:.1rem;font-size:.8rem}}   /* the smallest phones */
 .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;width:100%;pointer-events:auto}
 .slot{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;min-width:0;text-align:left;background:rgba(14,26,51,.86);color:#FFF6E0;
@@ -314,7 +316,7 @@ rt.hid{visibility:hidden}
 .sheet:has(.tiles){display:grid;grid-template-columns:1fr auto;column-gap:.6rem;align-items:end;align-content:center}
 .sheet:has(.tiles) > *{grid-column:1 / -1}
 .sheet:has(.tiles) .menu{display:contents}
-.sheet:has(.tiles) .tiles{grid-column:1 / -1;grid-template-columns:repeat(5,1fr);gap:.5rem;margin:.4rem 0 .5rem}
+.sheet:has(.tiles) .tiles{grid-column:1 / -1;grid-template-columns:repeat(6,1fr);gap:.4rem;margin:.4rem 0 .5rem}
 .sheet:has(.tiles) .menu > .btn{grid-column:1;justify-self:start}
 .sheet:has(.tiles) > .actions{grid-column:2;position:static;margin:0;padding:0;box-shadow:none}
 .checklist{list-style:none;margin:6px 0 10px;padding:0}
@@ -346,6 +348,21 @@ rt.hid{visibility:hidden}
 .menu.grid{display:grid}
 .card.wear.on{border-color:var(--jade);background:color-mix(in srgb,var(--jade) 14%,var(--bg))}
 .card.wear .small{margin-top:2px}
+/* the bag: two columns of things, each its picture beside its name, how many, and what it does; and your hearts */
+.bag .menu.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem;margin:.2rem 0}
+.bag .card{position:relative;display:grid;grid-template-columns:auto 1fr;column-gap:.6rem;align-items:center;justify-items:start;text-align:left;padding:.3rem 1.8rem .3rem .5rem}
+.bag .card .c{grid-row:span 3;height:auto}
+.bag .card .hz,.bag .card .p,.bag .card .small{grid-column:2}
+.bag .card .hz{line-height:1.15}
+.bag .card .p{min-height:0}
+.bag .card .count{position:absolute;top:4px;right:7px;font:600 .8rem var(--pixel);color:var(--ink)}
+.bag .card .small{font-family:var(--pixel);color:var(--jade);line-height:1.15}
+.bag .baghead{display:flex;flex-wrap:wrap;align-items:center;gap:0 1.2rem}
+.bag .baghead .label{margin:0}
+.bag .stats{align-items:center;margin:.2rem 0}
+.bag .stats .hearts{display:flex;gap:2px}
+.bag .stats .heart{width:.95rem;height:.85rem}
+.bag .stats .note{color:var(--ink);font-family:var(--text)}
 
 /* the money symbol (a pixel shell), and the shop's cards */
 .money{width:1em;height:1em;image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:-.12em}

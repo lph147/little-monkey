@@ -180,6 +180,8 @@ Money comes mainly from learning, so progress in the game and progress in Chines
 
 **Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 shells. It's something you choose to buy, not something you must do (decided 18 October 2026; it used to be on the prologue's checklist, and becoming king with the crown came straight after it). Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
 
+**Fruit and the bag** (decided 18 October 2026). Each fruit does one thing, the same everywhere: a 桃子 (peach) brings a heart back (on your turn in a battle, with 吃, or from your bag), and a 苹果 (apple) takes away a wrong answer under any question, in a battle or with an animal, without using your turn. You carry up to 3 of each. Fruit trees fill your bag once the hungry monkey has eaten (one fruit a tree each time you come to the place), friends give fruit when you win their word games (the squirrel a peach, the goat an apple), and the 老板 sells apples. Later areas can add fruit with other jobs. The bag (包 bāo, on the menu) shows your food, how many and what each does, your stick, and what you're carrying for someone; tap a peach to eat it. Clothes stay in the Wardrobe.
+
 **Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 2, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops and request rewards, so each area's shop has clothes to sell as well as food and cave decorations.
 
 **Training ground.** A place in every area where you can do a rolling word-matching test at any time. It always includes your newest words and anything due for review.
@@ -212,7 +214,7 @@ The question type follows the word's mastery level, so new words start easy and 
 
 Agreed on 18 October 2026, with mockups. A battle looks like an animal encounter and plays like a Pokémon battle, but every hit or miss depends on whether you know the word: no levels, no luck, no timers.
 
-- **A round.** Your turn: buttons in Chinese with pinyin and English, 打 (dǎ, attack), 吃 (chī, eat something) and 跑 (pǎo, run away; not from big enemies). Your move asks a question: right, you hit; wrong, you miss. Then the enemy's turn: it says where it's attacking from or what it throws (草！ 石头！ 火！) and you pick what you heard: right, you dodge; wrong, you lose a heart.
+- **A round.** Your turn: buttons in Chinese with pinyin and English, 打 (dǎ, attack), 吃 (chī, eat a peach, when you're hurt and have one) and 跑 (pǎo, run away; not from big enemies). Your move asks a question: right, you hit; wrong, you miss. Then the enemy's turn: it says where it's attacking from or what it throws (草！ 石头！ 火！) and you pick what you heard: right, you dodge; wrong, you lose a heart.
 - **Moves come from the story**, and harder ones ask harder questions and hit harder: 打 with your stick (from the prologue; a Listen question, 1 heart), 跳 jump (the enemy's next attack misses), 变成 transform (Area 3: your next question loses a wrong answer), and the staff, 金箍棒 (Area 4: a Read question, 2 hearts; your stick becomes the staff).
 - **No friend powers** (decided 18 October 2026, after playtesting): planned, then dropped to keep battles simple. Abilities like transforming (变成) come later, with the story.
 - **Who you fight.** On Flower Fruit Mountain, wild creatures on the path up the stream: snakes and bees in the long grass, a wild boar blocking the last stretch, all chased away, never hurt. Demons from Area 3 (little demons, then the Demon of Havoc, 混世魔王), the Dragon King's guards in Area 4, Heaven's soldiers in Area 5.
@@ -221,7 +223,7 @@ Agreed on 18 October 2026, with mockups. A battle looks like an animal encounter
 - **Winning and losing.** The first meeting with a kind of enemy teaches its name on a card. Winning gives shells or coins, sometimes an item. Losing isn't punished: you're carried back to rest with full hearts, and the words you missed come back sooner.
 - **Getting harder without levels.** The path's creatures ask about words you've known a while, with pictures; later enemies use harder kinds of question (characters by sound, sentence gaps, tones), and bosses mix them all.
 
-**Hearts.** You start with 5, and they carry over between battles. Only enemies cost hearts; animal encounters never do. Eating fruit brings one back (and says the sentence, such as 我吃桃子, which counts as using the word). Resting refills them all: in the prologue the old monkey, waiting at the foot of the path; from chapter 1 the cave's stone beds; somewhere to stay in each later area. The story raises the most you can have, above all the Peaches of Immortality in Heaven (Area 5). Hearts first appear when the big monkey gives you the stick.
+**Hearts.** You start with 5, and they carry over between battles. Only enemies cost hearts; animal encounters never do. Eating a peach brings one back (it counts as using the word). Resting refills them all: in the prologue the old monkey, waiting at the foot of the path; from chapter 1 the cave's stone beds; somewhere to stay in each later area. The story raises the most you can have, above all the Peaches of Immortality in Heaven (Area 5). Hearts first appear when the big monkey gives you the stick.
 
 ## Screens
 
@@ -375,7 +377,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Playtest fixes (18 October 2026): the rocks roll away only once the rest of the prologue is done; wild creatures jump out less often; no friend powers
 - [x] The path's new looks (18 October 2026, after playtesting): long grass like the meadow's tall grass, a shade darker; Pokémon-style ledges; bushes and boulders instead of stone walls; grass hides your feet
 - [x] The longer way up the stream (18 October 2026; save version 25): three places following the river (the mountain path, the river valley, deep in the mountains), with a fork, animal friends from the meadow who play or give advice, and fruit trees
-- [ ] Fruit that does different things (the peach brings a heart back, the apple takes away a wrong answer), and the bag (包)
+- [x] Fruit that does different things (the peach brings a heart back, the apple takes away a wrong answer), and the bag (包) (18 October 2026)
 - [ ] Battle animations (the stick's swing, hits and misses; the enemy hiding, then striking) and quicker, calm battle music
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2

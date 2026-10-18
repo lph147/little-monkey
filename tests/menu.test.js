@@ -11,10 +11,10 @@ function menuGame(){
   return {game, sheet, run: code => game.run(code), items: () => sheet.querySelectorAll('[data-m]').map(b => b.dataset.m)};
 }
 
-test('the menu has a tile each for the Word Scroll, tasks, friends, wardrobe and saving, then Settings', () => {
+test('the menu has a tile each for the Word Scroll, tasks, the bag, friends, wardrobe and saving, then Settings', () => {
   const {sheet, run, items} = menuGame();
   run('pressMenu()');
-  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'wardrobe', 'save', 'settings']);
+  assert.deepEqual(items(), ['words', 'tasks', 'bag', 'friends', 'wardrobe', 'save', 'settings']);
   const tile = sheet.querySelector('.mtile[data-m="tasks"]');
   assert.equal(tile.querySelector('.mzh').textContent, '任务');
   assert.equal(tile.querySelector('.mpy').textContent, 'rènwu');
@@ -25,7 +25,7 @@ test('the menu has a tile each for the Word Scroll, tasks, friends, wardrobe and
 
 test('the tiles open their pages, and Back comes back to the same tile', () => {
   const {sheet, run} = menuGame();
-  for (const [m, title] of [['words', 'Word Scroll'], ['tasks', 'Tasks'], ['friends', 'Friends']]){
+  for (const [m, title] of [['words', 'Word Scroll'], ['tasks', 'Tasks'], ['bag', '包 bāo · Bag'], ['friends', 'Friends']]){
     run('openMenu()');
     sheet.querySelector(`[data-m="${m}"]`).click();
     assert.ok(sheet.querySelector('.label').textContent.startsWith(title), `${m} should open ${title}`);
@@ -54,7 +54,7 @@ test('Settings has the sound, pinyin, English on replies, How to play, the openi
   assert.equal(run('S.pinyin'), !pinyin, 'Pinyin switches');
   assert.equal(run('document.activeElement.dataset.m'), 'pinyin', 'and stays chosen');
   run('pressB()');
-  assert.deepEqual(items(), ['words', 'tasks', 'friends', 'wardrobe', 'save', 'settings'], 'B from Settings goes back to the menu');
+  assert.deepEqual(items(), ['words', 'tasks', 'bag', 'friends', 'wardrobe', 'save', 'settings'], 'B from Settings goes back to the menu');
   assert.equal(run('document.activeElement.dataset.m'), 'settings');
 });
 
@@ -72,8 +72,8 @@ test('B or the Menu button closes the menu, from the menu or Settings', () => {
 test('the D-pad moves around the menu on screen: up and down between rows, left and right along them', () => {
   const {sheet, run} = menuGame();
   run('openMenu()');
-  // the menu as it looks: a 2 × 2 grid of tiles, then Settings across the width, then Close
-  const place = {words: [0, 0, 150, 100], tasks: [160, 0, 150, 100], friends: [0, 110, 150, 100], wardrobe: [160, 110, 150, 100], save: [320, 110, 150, 100], settings: [0, 220, 310, 40]};
+  // the menu, laid out as a 3 × 2 grid of tiles, then Settings across the width, then Close
+  const place = {words: [0, 0, 150, 100], tasks: [160, 0, 150, 100], bag: [320, 0, 150, 100], friends: [0, 110, 150, 100], wardrobe: [160, 110, 150, 100], save: [320, 110, 150, 100], settings: [0, 220, 310, 40]};
   for (const [m, [left, top, width, height]] of Object.entries(place)) sheet.querySelector(`[data-m="${m}"]`).rect = {left, top, width, height};
   sheet.querySelector('[data-a=close]').rect = {left: 230, top: 280, width: 80, height: 40};
   const on = () => run("document.activeElement.dataset.m || document.activeElement.dataset.a");

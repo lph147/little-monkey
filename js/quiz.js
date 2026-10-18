@@ -62,8 +62,26 @@ function wordQuestion(w, avoid){
 }
 // The words to ask about: the ones due for review first, then the ones you know least, avoiding avoid.
 const dueFirst = avoid => picWords().filter(w => w !== avoid && lvl(w) >= 1).sort((a,b) => (rec(a).due - rec(b).due) || (lvl(a) - lvl(b)));
-const snack = () => (AREA.shop ? AREA.shop.items : []).find(i => i.eat && (S.bag[i.item] || 0) > 0);   // food in your bag to eat in an encounter
+// Food: what's in your bag to eat (AREA.food says what each does). Some brings hearts back (heal: eaten on your turn in a
+// battle, or from your bag), and some takes away a wrong answer in a question (helps: no turn used).
+const FOOD = AREA.food || {};
+const foodThat = does => Object.keys(FOOD).find(w => FOOD[w][does] && (S.bag[w] || 0) > 0);   // food in your bag that heals, or helps
+const bagFull = w => (S.bag[w] || 0) >= ((FOOD[w] || {}).carry || 3);
+function intoBag(w){ if (bagFull(w)) return false; S.bag[w] = (S.bag[w] || 0) + 1; save(); return true; }   // false: no room
 const wrongToEat = (n, answerIdx) => shuffle([...Array(n).keys()].filter(i => i !== answerIdx))[0];   // which wrong answer eating takes away
+// Food that takes away a wrong answer, such as an apple, offered under a question until you answer: its button (helperHTML),
+// and eating it (wireHelper: one of the wrong answers goes; n is how many answers there are, right the right one).
+function helperHTML(){ const w = foodThat('helps'); return w ? `<button class="helper" data-a="eat">${picHTML(w)}<span>Eat a ${esc(wz(w))}: one wrong answer goes · ${S.bag[w]} left</span></button>` : ''; }
+function wireHelper(n, right){
+  on('[data-a=eat]', e => {
+    const w = foodThat('helps');
+    if (!w || sheet.querySelector('.opt[disabled]')) return;   // already answered
+    sheet.querySelector(`.opt[data-i="${wrongToEat(n, right)}"]`).hidden = true;
+    S.bag[w]--; save(); SFX.blip();
+    e.currentTarget.remove();
+    sheet.querySelector('.feedback').textContent = 'Crunch! One wrong answer is gone.';
+  });
+}
 async function encounter(foe){
   const an = foe.hz, img = foe.img;
   let showEn = false;
@@ -85,8 +103,7 @@ async function encounter(foe){
     if (b){ if ((await gapRound(b, img)).right) score++; continue; }
     const w = targets[i], q = wordQuestion(w, an), {type, body, opts} = q;   // (never the animal, which is right there)
     const head = scene(score, i + 1);
-    const food = foe.wild && snack();   // in an animal encounter, food from the shop takes away a wrong answer
-    const helper = food ? `<button class="helper" data-a="eat">${picHTML(food.item)}<span>Eat a ${esc(wz(food.item))}: one wrong answer goes · ${S.bag[food.item]} left</span></button>` : '';
+    const helper = foe.wild ? helperHTML() : '';   // in an animal encounter, food such as an apple takes away a wrong answer
     const ok = await pictureQ({head, body, word: w, type, helper, options: q.options, text: q.text,
       answerIdx: q.answerIdx, onAnswer: ok => {   // right: the animal hops and a heart fills
         if (!ok) return;
@@ -97,13 +114,7 @@ async function encounter(foe){
       }, onShow: () => {
         if (type !== 'read') setTimeout(() => say(w), 300);
         on('[data-a=foeen]', e => { showEn = true; e.currentTarget.outerHTML = ` <span class="small">${esc(WORDS[an].en)}</span>`; });
-        on('[data-a=eat]', e => {
-          if (sheet.querySelector('.opt[disabled]')) return;   // already answered
-          sheet.querySelector(`.opt[data-i="${wrongToEat(opts.length, opts.indexOf(w))}"]`).hidden = true;
-          S.bag[food.item]--; save(); SFX.blip();
-          e.currentTarget.remove();
-          sheet.querySelector('.feedback').textContent = 'Crunch! One wrong answer is gone.';
-        });
+        wireHelper(opts.length, opts.indexOf(w));
       }});
     if (ok) score++;
   }

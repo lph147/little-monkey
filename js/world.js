@@ -59,6 +59,7 @@ function promptFor(x, y){
   if (way && way.by === 'A' && isOpen(way)) return way.label || 'Go';   // a way you go through by pressing A, such as jumping through the waterfall
   const t = tileAt(x, y);
   if (t.gather && canGather(t.gather)) return t.gather.label;
+  if (canPick(t)) return 'Pick';
   if (t.landmark) return t.label || 'Look';
   const w = lookWord(t);
   return w && lvl(w) === 0 ? 'Look' : '';
@@ -90,7 +91,7 @@ function matches(cond){   // does the game match everything in an if?
     return compare(here()[k], v);
   });
 }
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win']};   // extra settings a step can have
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note']};   // extra settings a step can have
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
     const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
@@ -120,11 +121,14 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   set(s){ Object.assign(here(), s.set); save(); placeCharacters(); },
   async request(s, who){ await request(REQUESTS.find(r => r.id === s.request), speaker(who)); },
   async shop(s, who){ await shop(speaker(who)); },
-  async wordGame(s, who){
+  async wordGame(s, who){   // win: what happens if you win, such as a present
     const g = s.wordGame;
     if (!canEncounter()){ toast(g.notYet); return; }
-    if (await confirmBox(speaker(who), fill(g.ask), 'Play', 'Not now')){ SFX.encounter(); await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}); }
+    if (!(await confirmBox(speaker(who), fill(g.ask), 'Play', 'Not now'))) return;
+    SFX.encounter();
+    if (await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}) && g.win) await runSteps(g.win, who);
   },
+  bag(s){ toast(intoBag(s.bag) ? fill(s.note || `A {${s.bag}} for your bag.`) : `Your bag is full of ${wz(s.bag)}.`); },   // food for your bag, if there's room
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
@@ -221,13 +225,13 @@ async function shop(face){   // the area's shop: what it sells, and buying it by
 async function buy(i, face){   // buying something from the shop by asking for it. Gives true if you bought it.
   const sh = AREA.shop;
   if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note), quiet:true});
-  if (i.eat && (S.bag[i.item] || 0) >= i.carry){ await infoBox(face, `<p>You can carry ${i.carry} ${esc(wz(i.item))}, and your bag is full. Eat one in an animal encounter first.</p>`); return false; }
+  if (i.eat && bagFull(i.item)){ await infoBox(face, `<p>You can carry ${FOOD[i.item].carry} ${esc(wz(i.item))}, and your bag is full. Eat one first.</p>`); return false; }
   if (S.shells < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🐚, and you have ${S.shells}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const sentence = toks(i.sentence);
   await gapQ({who:face, t:sentence, en:i.sentenceEn, gap:i.gap || i.item});
   sentence.filter(w => lvl(w) >= 1).forEach(useWord);
   S.shells -= i.price;
-  if (i.eat) S.bag[i.item] = (S.bag[i.item] || 0) + 1;   // food goes in your bag: you can buy it again and again
+  if (i.eat) intoBag(i.item);   // food goes in your bag: you can buy it again and again
   else here().bought.push(i.item);
   if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); S.wardrobe.wearing.push(i.item); }   // you put it on
   save(); SFX.fanfare();
@@ -260,6 +264,17 @@ async function gather(t, x, y){   // pick up something for a request, such as fr
   }
   here().holding[g.for] = g.item; save(); SFX.right(); toast(fill(g.message));
 }
+// A fruit tree, once the content says (the legend's pick), gives you a fruit for your bag: one each time you come to
+// the place (it has no more ripe ones until then), up to as many as you can carry.
+const canPick = t => !!t.pick && matches(t.pick.if || {});
+const pickedHere = new Set();   // the trees you've picked from since you came into the place you're in
+function pick(t, x, y){
+  const w = t.pick.item;
+  if (pickedHere.has(x + ',' + y)){ SFX.bump(); toast('No more ripe ones. Come back another time.'); return; }
+  if (!intoBag(w)){ SFX.bump(); toast(`Your bag has ${FOOD[w].carry} ${wz(w)} already.`); return; }
+  pickedHere.add(x + ',' + y); SFX.right();
+  toast(`You pick a ${wz(w)} for your bag (${S.bag[w]} of ${FOOD[w].carry}). ${FOOD[w].does}.`);
+}
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
   async story(t){ await lookAt(t); await storyScroll(); },
   training(){ return trainingGround(); },
@@ -281,6 +296,7 @@ async function interact(x, y){
   const t = tileAt(x, y);
   if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return runSteps(p.do); }   // the tile's own steps, while the story says
   if (t.gather && canGather(t.gather)) return gather(t, x, y);
+  if (canPick(t)) return pick(t, x, y);
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
@@ -296,7 +312,7 @@ findGrass();
 // hiding, birds, a meeting) is left behind.
 function enterPlace(id){
   if (id === PLACE) return;
-  setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; buildMap();
+  setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; pickedHere.clear(); buildMap();
 }
 // Through a way to another place: a quick fade, and you're there, with its name at the top of the screen.
 async function goThrough(e){

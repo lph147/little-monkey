@@ -1,6 +1,6 @@
 // Battles: with wild creatures from the end of the prologue, and (later) demons. A battle looks like an animal
 // encounter, but both sides have hearts. On your turn you hit (a question: right hits, wrong misses), eat something
-// or run away; on the enemy's turn it attacks from somewhere you hear (草！ 石头！) and you pick it to jump aside
+// (food that brings a heart back) or run away; on the enemy's turn it attacks from somewhere you hear (草！ 石头！) and you pick it to jump aside
 // (wrong: you lose a heart). Every hit or miss depends on whether you know the word: no levels, no luck, no timers.
 // The enemies are content (AREA.enemies); wild ones jump out of ground whose legend says wild (AREA.battles).
 
@@ -54,13 +54,14 @@ async function battle(id){
     note = '';
     if (act === 'run'){ closeCard(); toast(fill(f.ran || `You run away from the {${f.word}}.`)); return 'ran'; }
     if (act === 'eat'){
-      const food = snack();
-      S.bag[food.item]--; S.hearts = Math.min(HEARTS, hearts() + 1); useWord(food.item); save(); SFX.right();
-      note = `You eat a ${wz(food.item)}: a heart comes back.`;
+      const w = foodThat('heal');
+      S.bag[w]--; S.hearts = Math.min(HEARTS, hearts() + FOOD[w].heal); useWord(w); save(); SFX.right();
+      note = `You eat a ${wz(w)}: a heart comes back.`;
     } else {
       const w = shuffle(dueFirst(f.word).slice(0, 5))[0], q = wordQuestion(w, f.word);
       const ok = await pictureQ({head:scene(), body:`<p class="label">You swing your ${wz(BATTLES.weapon || '棍子')}!</p>` + q.body, word:w, type:q.type,
-        options:q.options, text:q.text, answerIdx:q.answerIdx, onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); },
+        options:q.options, text:q.text, answerIdx:q.answerIdx, helper:helperHTML(),
+        onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); wireHelper(q.options.length, q.answerIdx); },
         onAnswer:ok => {
           const fb = sheet.querySelector('.feedback');
           if (ok){ left--; sheet.querySelector('.scene .foe').classList.add('hop'); sheet.querySelector('.scene .plate .hearts').innerHTML = heartsHTML(left, f.hearts); }
@@ -87,12 +88,13 @@ async function battle(id){
   if (at.at){ foe = null; placePlayer(); showPlaceName(); }
   return 'lost';
 }
-// Your turn: hit, eat something (if you have food) or run away (not from a big enemy). Gives 'hit', 'eat' or 'run'.
+// Your turn: hit, eat something (food that brings a heart back, if you're hurt) or run away (not from a big enemy).
+// Gives 'hit', 'eat' or 'run'.
 function battleTurn(f, head, note){
   return new Promise(res => {
-    const food = snack();
+    const food = hearts() < HEARTS && foodThat('heal');
     const acts = [['hit', '打', 'dǎ', 'Hit'],
-      food && ['eat', '吃', 'chī', `Eat: ${wz(food.item)} ×${S.bag[food.item]}`],
+      food && ['eat', '吃', 'chī', `Eat: ${wz(food)} ×${S.bag[food]}`],
       !f.boss && ['run', '跑', 'pǎo', 'Run away']].filter(Boolean);
     openCard(`${head}<p class="label">${note ? esc(note) : 'Your turn'}</p><p class="prompt">What will you do?</p>
       <div class="menu acts">${acts.map(([id, zh, py, en]) => `<button class="act" data-act="${id}" data-label="${en.split(':')[0]}"><span class="z">${zh}</span><span class="p">${py}</span><span class="e">${esc(en)}</span></button>`).join('')}</div>`);
@@ -110,7 +112,7 @@ async function dodge(f, head, note){
   return pictureQ({head, body:`<p class="label">${esc(note ? note + ' ' : '')}${esc(fill(f.attack || `The {${f.word}} attacks!`))}</p>`
       + `<div class="askrow"><p class="prompt">${esc(f.dodge || 'Listen. Where is it coming from? Pick it to jump aside.')}</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`,
     word:a, type:'listen', options:opts.map(o => `<span class="ico">${picHTML(o)}</span><span class="cap">${o}</span>${laterPy(o)}`), answerIdx:opts.indexOf(a),
-    onShow:() => setTimeout(() => say(a), 300),
+    helper:helperHTML(), onShow:() => { setTimeout(() => say(a), 300); wireHelper(opts.length, opts.indexOf(a)); },
     onAnswer:ok => {
       const fb = sheet.querySelector('.feedback');
       if (ok) fb.innerHTML += ' <b>You jump aside!</b>';

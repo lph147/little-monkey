@@ -1683,6 +1683,27 @@ const ICONS = {
       "......bbbb......"
     ]
   },
+  '👝': {
+    palette: {a:'#473420', b:'#302113', c:'#B9854E', d:'#704926', e:'#8F5E31', f:'#564429', g:'#E8B86A', h:'#9D6C36', i:'#3E2C18', j:'#C98A45'},
+    rows: [
+      "................",
+      "....aab..aab....",
+      "...accdbaccdb...",
+      "...bdedbacedb...",
+      "....bdeccedb....",
+      "....fgddddhi....",
+      "...fgjjjjjjhi...",
+      "..fgjjjjjjjjhi..",
+      ".fgjjjjjjjjjjhi.",
+      ".fgjjjjjjjjjjhi.",
+      "ihjjjjjjjjjjjjhi",
+      ".fgjjjjjjjjjjhi.",
+      ".ihjjjjjjjjjjhi.",
+      "..ihjjjjjjjjhi..",
+      "...ihhhhhhhhi...",
+      "....iiiiiiii...."
+    ]
+  },
   '👕': {
     palette: {a:'#35424D', b:'#202A33', c:'#7FB0DC', d:'#3E6589', e:'#4F82B0'},
     rows: [

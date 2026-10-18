@@ -40,7 +40,9 @@ SAVES.home = {...SAVES.king, w: {...SAVES.king.w, ...knows(1, ['二', '三'])}, 
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.rocksGone = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], hungry: 'done', thirsty: 'done', holding: {}, gate: true}}, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};   // the troop gathers where the rocks were
 SAVES.climbing = {...SAVES.rocksGone, version: 25, w: {...SAVES.rocksGone.w, ...knows(1, ['路'])}, areas: {1: {...SAVES.rocksGone.areas[1], climb: 1}}, pos: {place: 'path', x: 15, y: 14, dir: 'left'}};   // (version 25: older saves on the path are moved off it)
-SAVES.fighting = {...SAVES.climbing, w: {...SAVES.climbing.w, ...knows(1, ['棍子', '蛇'])}, hearts: 4, bag: {'苹果': 1}};   // on the path, with the stick, a snake met before
+SAVES.fighting = {...SAVES.climbing, w: {...SAVES.climbing.w, ...knows(1, ['棍子', '蛇'])}, hearts: 4, bag: {'桃子': 2, '苹果': 1}};   // on the path, with the stick, a snake met before, and fruit
+SAVES.packed = {...SAVES.fighting, hearts: 3, areas: {1: {...SAVES.fighting.areas[1], thirsty: 'asked', holding: {thirsty: '水'}}}};   // hurt, with fruit, and water for the thirsty monkey
+SAVES.byPeaches = {...SAVES.fighting, pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}};   // by a peach tree, the hungry monkey fed
 SAVES.hurt = {...SAVES.fighting, hearts: 2, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};
 SAVES.valley = {...SAVES.fighting, pos: {place: 'valley', x: 18, y: 9, dir: 'up'}};   // at the fork in the river valley, by the fox
 SAVES.deepIn = {...SAVES.fighting, pos: {place: 'falls', x: 7, y: 5, dir: 'up'}};   // below the wild boar, deep in the mountains
@@ -146,12 +148,14 @@ const SCREENS = [
     play(); await wait(200); S.pos = {place: 'path', x: 8, y: 11, dir: 'up'}; placePlayer(); await wait(400); }},
   {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'rocksGone', why: 'Teaching 棍子, before the lesson on how to fight.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); next(); await wait(300); next(); await wait(600); }},
-  {id: 'battle-snake', title: 'A battle: your turn', save: 'fighting', why: 'Hit, eat (you have an apple) or run. Hearts on both sides.', run: async () => {
+  {id: 'battle-snake', title: 'A battle: your turn', save: 'fighting', why: 'Hit, eat (a peach brings a heart back) or run. Hearts on both sides.', run: async () => {
     play(); await wait(100); battle('snake'); await wait(1200); }},
   {id: 'snake-strikes', title: 'A battle: dodging', save: 'fighting', why: 'The snake strikes: hear where from, and pick it to jump aside.', run: async () => {
     play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); };
     battle('snake'); await wait(1200); click('.act[data-act=hit]'); await wait(300);
     click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(200); click('[data-a=next]'); await wait(600); }},
+  {id: 'battle-apple', title: 'A battle: an apple helps', save: 'fighting', why: 'Under any question, an apple takes away a wrong answer, without using your turn.', run: async () => {
+    play(); await wait(100); battle('snake'); await wait(1200); click('.act[data-act=hit]'); await wait(500); }},
   {id: 'battle-boar', title: 'The wild boar', save: 'fighting', why: 'A big enemy: no running away.', run: async () => {
     play(); await wait(100); S.w['野猪'] = {lv: 1, due: 0, ok: 0}; battle('boar'); await wait(1200); }},
   {id: 'hurt', title: 'Hurt: your hearts, and resting', save: 'hurt', why: 'Your hearts show while you’re hurt; the old monkey lets you rest.', run: async () => {
@@ -174,6 +178,12 @@ const SCREENS = [
   {id: 'scroll', title: 'Word Scroll', save: 'middle', run: async () => { play(); await wait(100); openScroll(() => closeCard()); await wait(300); }},
   {id: 'word-page', title: 'A word’s page', save: 'middle', run: async () => { play(); await wait(100); wordPage('桃子', () => closeCard()); await wait(300); }},
   {id: 'friends', title: 'Friends', save: 'allFriends', run: async () => { play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(300); }},
+  {id: 'bag', title: 'The bag', save: 'packed', why: 'Food (how many, and what it does), your stick, and what you’re carrying for someone.', run: async () => {
+    play(); await wait(100); openMenu('bag'); await wait(100); click('[data-m=bag]'); await wait(300); }},
+  {id: 'bag-eat', title: 'Eating a peach from the bag', save: 'packed', why: 'Hurt: tap a peach, and a heart comes back.', run: async () => {
+    play(); await wait(100); bagPage(() => closeCard()); await wait(100); click('.bagitem[data-w="桃子"]'); await wait(300); }},
+  {id: 'pick-peach', title: 'Picking a peach for your bag', save: 'byPeaches', why: 'Once the hungry monkey has eaten, the fruit trees fill your bag.', run: async () => {
+    play(); await wait(200); S.bag = {}; pressA(); await wait(900); }},
   {id: 'wardrobe', title: 'Wardrobe', save: 'middle', run: async () => { play(); await wait(100); wardrobePage(() => closeCard()); await wait(300); }},
   {id: 'settings', title: 'Settings', save: 'middle', run: async () => { play(); await wait(100); openSettings(); await wait(300); }},
   {id: 'howto-1', title: 'How to play, 1 of 2', save: 'middle', why: 'Now only in Settings.', run: async () => { play(); await wait(100); howToPlay(); await wait(300); }},

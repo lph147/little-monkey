@@ -14,8 +14,10 @@ const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), 
 const STEP_OPTIONS = get('STEP_OPTIONS'), COUNTS = get('Object.keys(COUNTS)');
 const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests), 'done'];   // what the area keeps in the save
 const placeholders = text => [...String(text).matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+// A step, and the steps inside it for if you win (a battle's, or a word game's)
+const withWins = (where, s, who) => [[where, s, who], ...[...(s.win || []), ...((s.wordGame || {}).win || [])].flatMap(w => withWins(`${where}, if you win`, w, who))];
 const allSteps = () => [
-  ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.map(s => [`${who}'s talk, part ${i + 1}`, s, who]))),
+  ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.flatMap(s => withWins(`${who}'s talk, part ${i + 1}`, s, who)))),
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
   ...AREA.begin.map(s => ['begin', s, null]),
   ...Object.entries(AREA.legend).flatMap(([ch, t]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at "${ch}", part ${i + 1}`, s, null])))
@@ -29,6 +31,7 @@ const allIfs = () => [
   ...AREA.checklist.filter(c => c.show).map((c, i) => [`checklist item ${AREA.checklist.indexOf(c) + 1}'s show`, c.show]),
   ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if])),
   ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word}`, s.if]),
+  ...Object.entries(AREA.legend).filter(([, t]) => t.pick && t.pick.if).map(([ch, t]) => [`picking at "${ch}"`, t.pick.if]),
   ['animalsAppear', AREA.animalsAppear]
 ];
 const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]) || (w.startsWith('wanted:') && (AREA.requests[w.slice(7)] || {}).choices);
@@ -335,6 +338,7 @@ test('every step does one thing, with settings that exist, using real lines and 
     if (a === 'request') assert.ok(AREA.requests[s.request] && AREA.requests[s.request].from === who, `${where}: "${s.request}" isn't a request from ${who}`);
     if (a === 'reply') assert.ok(BANK[s.reply] && BANK[s.reply].phrase && collectible.includes(s.reply), `${where}: ${s.reply} isn't a phrase you can learn here`);
     if (a === 'wordGame') assert.ok(s.wordGame.ask && s.wordGame.notYet && collectible.includes(s.wordGame.word), `${where}: wordGame needs ask, notYet and a word`);
+    if (a === 'bag') assert.ok((AREA.food || {})[s.bag], `${where}: ${s.bag} isn't one of the area's food`);
   }
 });
 
@@ -442,4 +446,12 @@ test('every enemy is a collectible word with a picture and a map sprite, attacki
     for (const w of e.attacks) assert.ok(collectible.includes(w) && BANK[w].pic, `${id} attacks from ${w}, which should be a word with a picture`);
   }
   for (const t of Object.values(AREA.legend).filter(t => t.wild)) for (const id of t.wild) assert.ok(AREA.enemies[id], `wild ground has ${id}, which isn't one of the enemies`);
+});
+
+test('food: each says what it does, how many you can carry, and heals or helps; fruit trees give food', () => {
+  for (const [w, f] of Object.entries(AREA.food || {})){
+    assert.ok(collectible.includes(w), `${w} is a word you can collect here`);
+    assert.ok(f.does && f.carry > 0 && (f.heal > 0 || f.helps === true), `${w}: does, carry, and heal or helps`);
+  }
+  for (const [ch, t] of Object.entries(AREA.legend)) if (t.pick) assert.ok((AREA.food || {})[t.pick.item], `picking at "${ch}" gives ${t.pick.item}, which isn't food`);
 });

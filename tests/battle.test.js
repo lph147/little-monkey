@@ -30,8 +30,8 @@ test('you can only fight once the big monkey has given you the stick', () => {
   assert.equal(without.run('canBattle()'), false);
 });
 
-test('your turn: hit, eat (with food) or run; a hit takes one of its hearts; it runs off when they are gone', async () => {
-  const g = fighting({bag: {'苹果': 1}});
+test('your turn: hit, eat (a peach, when you’re hurt) or run; a hit takes one of its hearts; it runs off when they are gone', async () => {
+  const g = fighting({hearts: 4, bag: {'桃子': 1}});
   g.run("globalThis.__r = null; battle('snake').then(r => { __r = r; })"); await g.flush();
   assert.deepEqual(g.sheet.querySelectorAll('.act').map(b => b.dataset.act), ['hit', 'eat', 'run']);
   assert.match(g.sheet.textContent, /蛇/, 'the snake’s name on its plate');
@@ -41,7 +41,7 @@ test('your turn: hit, eat (with food) or run; a hit takes one of its hearts; it 
   assert.match(g.sheet.textContent, /You win!/);
   g.run("document.querySelector('#sheet [data-a=ok]') || 0"); g.sheet.querySelector('[data-a=ok]').click(); await g.flush();
   assert.equal(g.run('__r'), 'won');
-  assert.equal(g.run('S.hearts'), 5, 'no hearts lost');
+  assert.equal(g.run('S.hearts'), 4, 'no hearts lost');
   assert.equal(g.run('S.shells'), 1, 'a shell for chasing it off');
 });
 
@@ -56,13 +56,37 @@ test('a wrong dodge costs a heart, and your hearts stay down after the battle', 
   assert.equal(JSON.parse(g.run('localStorage.getItem(KEY)')).hearts, 4, 'saved');
 });
 
-test('eating something brings a heart back', async () => {
-  const g = fighting({hearts: 3, bag: {'苹果': 2}});
+test('eating a peach brings a heart back, on your turn', async () => {
+  const g = fighting({hearts: 3, bag: {'桃子': 2}});
   g.run("battle('snake')"); await g.flush();
+  assert.match(g.sheet.querySelector('.act[data-act=eat]').textContent, /Eat: 桃子 \(peach\) ×2/);
   await g.choose('eat');
   assert.equal(g.run('S.hearts'), 4);
-  assert.equal(g.run("S.bag['苹果']"), 1);
+  assert.equal(g.run("S.bag['桃子']"), 1);
   assert.match(g.sheet.textContent, /a heart comes back/);
+});
+
+test('with full hearts, or only an apple, there’s nothing to eat on your turn', async () => {
+  for (const save of [{hearts: 5, bag: {'桃子': 2}}, {hearts: 3, bag: {'苹果': 2}}]){
+    const g = fighting(save);
+    g.run("battle('snake')"); await g.flush();
+    assert.deepEqual(g.sheet.querySelectorAll('.act').map(b => b.dataset.act), ['hit', 'run']);
+  }
+});
+
+test('an apple takes away a wrong answer, when you hit or dodge, without using your turn', async () => {
+  const g = fighting({bag: {'苹果': 2}});
+  g.run("battle('snake')"); await g.flush();
+  await g.choose('hit');
+  const shown = () => g.sheet.querySelectorAll('.opt').filter(o => !o.hidden).length;
+  const before = shown();
+  g.sheet.querySelector('[data-a=eat]').click(); await g.flush();
+  assert.equal(shown(), before - 1, 'one answer goes');
+  assert.ok(!g.sheet.querySelector(`.opt[data-i="${g.run('__q.answerIdx')}"]`).hidden, 'never the right one');
+  assert.equal(g.run("S.bag['苹果']"), 1);
+  assert.equal(g.sheet.querySelector('[data-a=eat]'), null, 'one apple a question');
+  await g.answer(true);
+  assert.ok(g.sheet.querySelector('[data-a=eat]'), 'dodging, you can eat one too');
 });
 
 test('the wild boar is a big enemy: you can’t run from it', async () => {
