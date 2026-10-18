@@ -324,11 +324,11 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | The prologue, changed on 17 October 2026: The big monkey asking for flowers (红色, 黄色 and 白色 are each taught when you pick that colour; changed on 19 October 2026 from 红花, 黄花 and 白花) |  |
 | 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | The prologue, changed on 17 October 2026: The sentence you finish when you give the big monkey the flowers (filling in 红色; changed on 19 October 2026 from 我要红花。) |  |
-| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 to 20 October 2026: The rabbit, by the long grass on the mountain path |  |
-| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 to 20 October 2026: The fox, at the fork in the river valley |  |
-| 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | New on 18 to 20 October 2026: A monkey across the river, giving advice |  |
-| 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | New on 18 to 20 October 2026: A monkey across the river, giving advice |  |
-| 累了吗？去床上睡觉吧！ | lèi le ma? qù chuáng shàng shuìjiào ba! | Tired? Go and sleep in a bed! | New on 18 to 20 October 2026: A monkey just inside the cave’s entrance (teaching 睡觉 shuìjiào, to sleep; 累 lèi, tired, is just for listening) |  |
+| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 and 19 October 2026: The rabbit, by the long grass on the mountain path |  |
+| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 and 19 October 2026: The fox, at the fork in the river valley |  |
+| 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
+| 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
+| 累了吗？去床上睡觉吧！ | lèi le ma? qù chuáng shàng shuìjiào ba! | Tired? Go and sleep in a bed! | New on 18 and 19 October 2026: A monkey just inside the cave’s entrance (teaching 睡觉 shuìjiào, to sleep; 累 lèi, tired, is just for listening) |  |
 | 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, after your first 你好 |  |
 | 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, sending you to help the troop |  |
 | 饿猴子要吃水果。 | è hóuzi yào chī shuǐguǒ. | The hungry monkey wants to eat some fruit. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |

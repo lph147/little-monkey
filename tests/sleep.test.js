@@ -1,4 +1,4 @@
-// Sleeping in the cave's beds (20 October 2026): once you know 床 (bed), A at a bed sleeps in it, and you wake with
+// Sleeping in the cave's beds (19 October 2026): once you know 床 (bed), A at a bed sleeps in it, and you wake with
 // all your hearts. A monkey just inside the cave's entrance tells you so once the troop has moved in, teaching 睡觉.
 'use strict';
 const test = require('node:test');
