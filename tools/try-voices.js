@@ -19,27 +19,30 @@ const OUT = path.join(__dirname, 'try-voices');
 // with Yunze for the old monkey. Round 2: in the game Yunxi sounded slow and exaggerated, with breaths, on a Pixel 8 Pro;
 // of Yunxi as it was, at normal speed, tidy, and tidy and chatty, tidy and chatty was best for sentences, and giving the
 // pinyin fixed 只. Single words sounded clearer in the Pixel's own woman's voice (a native speaker agreed), so round 3
-// looks for a woman's voice for words said on their own: Xiaoxiao (the first column) was chosen.
-const ROUND = 'Round 3: a woman’s voice for single words (new-word cards, tapping a word, listening questions). Sentences will be Yunxi, tidy and chatty, as chosen in round 2. Which is as clear as This device, or clearer? Do you hear any breathing?';
+// looks for a woman's voice for words said on their own: Xiaoxiao (the first column) was chosen. Round 4: in the game,
+// 水, 草 and 喝 sounded strange said on their own (third tones, and a word with two readings). Given the pinyin, all ten
+// came out byte for byte the same as before (the voice already read them right), so it compares Xiaoxiao as in the
+// game, 20% and 35% slower, and Xiaoxiao HD. noPinyin: the voice isn't given an item's ph.
+const ROUND = 'Round 4: single words that sounded strange in the game (水, 草, 喝), and others like them: third tones said on their own, and words with two readings. Which sounds most natural? (Giving the voice the pinyin made no difference: it already reads them right.)';
 const VOICES = [
-  {id:'w-xiaoxiao', name:'zh-CN-XiaoxiaoNeural', rate:null, tidy:true, label:'Xiaoxiao', about:'Microsoft’s main voice: very clear'},
-  {id:'w-xiaoxiao-hd', name:'zh-CN-Xiaoxiao:DragonHDFlashLatestNeural', rate:null, tidy:true, label:'Xiaoxiao HD', about:'the same woman, newer and more natural'},
-  {id:'w-xiaochen', name:'zh-CN-XiaochenNeural', rate:null, tidy:true, label:'Xiaochen', about:'calm and clear'},
-  {id:'w-xiaoyi', name:'zh-CN-XiaoyiNeural', rate:null, tidy:true, label:'Xiaoyi', about:'younger and livelier'},
+  {id:'r4-now', name:'zh-CN-XiaoxiaoNeural', rate:null, tidy:true, label:'Now', about:'as in the game'},
+  {id:'r4-slow', name:'zh-CN-XiaoxiaoNeural', rate:'-20%', tidy:true, label:'Slower', about:'20% slower'},
+  {id:'r4-slower', name:'zh-CN-XiaoxiaoNeural', rate:'-35%', tidy:true, label:'Slower still', about:'35% slower'},
+  {id:'r4-hd', name:'zh-CN-Xiaoxiao:DragonHDFlashLatestNeural', rate:null, tidy:true, label:'Xiaoxiao HD', about:'the same woman, newer technology'},
 ];
 
 // `ph` gives the voice the pinyin (tone numbers, a space before each), to see if a reading can be fixed.
 const ITEMS = [
-  {id:'shan', zh:'山', py:'shān', en:'mountain', listen:'One short syllable: high and level.'},
-  {id:'houzi', zh:'猴子', py:'hóuzi', en:'monkey', listen:'子 is light and short.'},
-  {id:'zhi-fixed', zh:'只', py:'zhī', en:'(counts animals)', ph:'zhi 1', listen:'zhī, high and level (given its pinyin, as the game does).'},
-  {id:'yizhi', zh:'一只', py:'yì zhī', en:'a, one (animal)', listen:'一 changes to yì (falling) before zhī.'},
-  {id:'shuiguo', zh:'水果', py:'shuǐguǒ', en:'fruit', listen:'Two third tones: the first one rises, like shuíguǒ.'},
-  {id:'bukeqi', zh:'不客气', py:'bú kèqi', en:'you’re welcome', listen:'不 changes to bú, and 气 is light.'},
-  {id:'nihao', zh:'你好', py:'nǐ hǎo', en:'hello', listen:'Two third tones again: like ní hǎo.'},
-  {id:'pingguo', zh:'苹果', py:'píngguǒ', en:'apple', listen:'Rising, then low.'},
-  {id:'pubu', zh:'瀑布', py:'pùbù', en:'waterfall', listen:'Two falling tones.'},
-  {id:'xiexie', zh:'谢谢', py:'xièxie', en:'thank you', listen:'The second 谢 is light.'},
+  {id:'shui', zh:'水', py:'shuǐ', en:'water', ph:'shui 3', listen:'Third tone: dips low, then rises.'},
+  {id:'cao', zh:'草', py:'cǎo', en:'grass', ph:'cao 3', listen:'Third tone: dips low, then rises.'},
+  {id:'he1', zh:'喝', py:'hē', en:'to drink', ph:'he 1', listen:'hē, high and level (not hè, to shout).'},
+  {id:'niao', zh:'鸟', py:'niǎo', en:'bird', ph:'niao 3', listen:'Third tone.'},
+  {id:'wo', zh:'我', py:'wǒ', en:'I, me', ph:'wo 3', listen:'Third tone.'},
+  {id:'hao', zh:'好', py:'hǎo', en:'good', ph:'hao 3', listen:'hǎo, third tone (not hào).'},
+  {id:'you', zh:'有', py:'yǒu', en:'to have', ph:'you 3', listen:'Third tone.'},
+  {id:'he2', zh:'和', py:'hé', en:'and', ph:'he 2', listen:'hé, rising (it has other readings).'},
+  {id:'yao', zh:'要', py:'yào', en:'to want', ph:'yao 4', listen:'yào, falling (not yāo).'},
+  {id:'le', zh:'了', py:'le', en:'(a change)', ph:'le 5', listen:'le, light (not liǎo).'},
 ];
 
 const RATE = '-15%';   // a little slower than normal: the game's clips so far
@@ -54,7 +57,7 @@ function readKey(file = KEY_FILE){
 
 function ssml(voice, item, full = true){   // full: with the voice's speed, style and silences (false: just the words)
   const rate = full && (voice.rate === undefined ? RATE : voice.rate);
-  let said = item.ph ? `<phoneme alphabet="sapi" ph="${item.ph}">${item.zh}</phoneme>` : item.zh;
+  let said = item.ph && !voice.noPinyin ? `<phoneme alphabet="sapi" ph="${item.ph}">${item.zh}</phoneme>` : item.zh;
   if (rate) said = `<prosody rate="${rate}">${said}</prosody>`;
   if (full && voice.style) said = `<mstts:express-as style="${voice.style}">${said}</mstts:express-as>`;
   const tidy = full && voice.tidy ? '<mstts:silence type="Leading-exact" value="0ms"/><mstts:silence type="Tailing-exact" value="0ms"/><mstts:silence type="Sentenceboundary-exact" value="250ms"/>' : '';

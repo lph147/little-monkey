@@ -1,139 +1,139 @@
 {
- "round": "Round 3: a woman’s voice for single words (new-word cards, tapping a word, listening questions). Sentences will be Yunxi, tidy and chatty, as chosen in round 2. Which is as clear as This device, or clearer? Do you hear any breathing?",
+ "round": "Round 4: single words that sounded strange in the game (水, 草, 喝), and others like them: third tones said on their own, and words with two readings. Which sounds most natural? (Giving the voice the pinyin made no difference: it already reads them right.)",
  "voices": [
   {
-   "id": "w-xiaoxiao",
-   "label": "Xiaoxiao",
-   "about": "Microsoft’s main voice: very clear"
+   "id": "r4-now",
+   "label": "Now",
+   "about": "as in the game"
   },
   {
-   "id": "w-xiaoxiao-hd",
+   "id": "r4-slow",
+   "label": "Slower",
+   "about": "20% slower"
+  },
+  {
+   "id": "r4-slower",
+   "label": "Slower still",
+   "about": "35% slower"
+  },
+  {
+   "id": "r4-hd",
    "label": "Xiaoxiao HD",
-   "about": "the same woman, newer and more natural"
-  },
-  {
-   "id": "w-xiaochen",
-   "label": "Xiaochen",
-   "about": "calm and clear"
-  },
-  {
-   "id": "w-xiaoyi",
-   "label": "Xiaoyi",
-   "about": "younger and livelier"
+   "about": "the same woman, newer technology"
   }
  ],
  "items": [
   {
-   "id": "shan",
-   "zh": "山",
-   "py": "shān",
-   "en": "mountain",
-   "listen": "One short syllable: high and level."
+   "id": "shui",
+   "zh": "水",
+   "py": "shuǐ",
+   "en": "water",
+   "listen": "Third tone: dips low, then rises."
   },
   {
-   "id": "houzi",
-   "zh": "猴子",
-   "py": "hóuzi",
-   "en": "monkey",
-   "listen": "子 is light and short."
+   "id": "cao",
+   "zh": "草",
+   "py": "cǎo",
+   "en": "grass",
+   "listen": "Third tone: dips low, then rises."
   },
   {
-   "id": "zhi-fixed",
-   "zh": "只",
-   "py": "zhī",
-   "en": "(counts animals)",
-   "listen": "zhī, high and level (given its pinyin, as the game does)."
+   "id": "he1",
+   "zh": "喝",
+   "py": "hē",
+   "en": "to drink",
+   "listen": "hē, high and level (not hè, to shout)."
   },
   {
-   "id": "yizhi",
-   "zh": "一只",
-   "py": "yì zhī",
-   "en": "a, one (animal)",
-   "listen": "一 changes to yì (falling) before zhī."
+   "id": "niao",
+   "zh": "鸟",
+   "py": "niǎo",
+   "en": "bird",
+   "listen": "Third tone."
   },
   {
-   "id": "shuiguo",
-   "zh": "水果",
-   "py": "shuǐguǒ",
-   "en": "fruit",
-   "listen": "Two third tones: the first one rises, like shuíguǒ."
+   "id": "wo",
+   "zh": "我",
+   "py": "wǒ",
+   "en": "I, me",
+   "listen": "Third tone."
   },
   {
-   "id": "bukeqi",
-   "zh": "不客气",
-   "py": "bú kèqi",
-   "en": "you’re welcome",
-   "listen": "不 changes to bú, and 气 is light."
+   "id": "hao",
+   "zh": "好",
+   "py": "hǎo",
+   "en": "good",
+   "listen": "hǎo, third tone (not hào)."
   },
   {
-   "id": "nihao",
-   "zh": "你好",
-   "py": "nǐ hǎo",
-   "en": "hello",
-   "listen": "Two third tones again: like ní hǎo."
+   "id": "you",
+   "zh": "有",
+   "py": "yǒu",
+   "en": "to have",
+   "listen": "Third tone."
   },
   {
-   "id": "pingguo",
-   "zh": "苹果",
-   "py": "píngguǒ",
-   "en": "apple",
-   "listen": "Rising, then low."
+   "id": "he2",
+   "zh": "和",
+   "py": "hé",
+   "en": "and",
+   "listen": "hé, rising (it has other readings)."
   },
   {
-   "id": "pubu",
-   "zh": "瀑布",
-   "py": "pùbù",
-   "en": "waterfall",
-   "listen": "Two falling tones."
+   "id": "yao",
+   "zh": "要",
+   "py": "yào",
+   "en": "to want",
+   "listen": "yào, falling (not yāo)."
   },
   {
-   "id": "xiexie",
-   "zh": "谢谢",
-   "py": "xièxie",
-   "en": "thank you",
-   "listen": "The second 谢 is light."
+   "id": "le",
+   "zh": "了",
+   "py": "le",
+   "en": "(a change)",
+   "listen": "le, light (not liǎo)."
   }
  ],
  "made": [
-  "w-xiaoxiao-shan.mp3",
-  "w-xiaoxiao-houzi.mp3",
-  "w-xiaoxiao-zhi-fixed.mp3",
-  "w-xiaoxiao-yizhi.mp3",
-  "w-xiaoxiao-shuiguo.mp3",
-  "w-xiaoxiao-bukeqi.mp3",
-  "w-xiaoxiao-nihao.mp3",
-  "w-xiaoxiao-pingguo.mp3",
-  "w-xiaoxiao-pubu.mp3",
-  "w-xiaoxiao-xiexie.mp3",
-  "w-xiaoxiao-hd-shan.mp3",
-  "w-xiaoxiao-hd-houzi.mp3",
-  "w-xiaoxiao-hd-zhi-fixed.mp3",
-  "w-xiaoxiao-hd-yizhi.mp3",
-  "w-xiaoxiao-hd-shuiguo.mp3",
-  "w-xiaoxiao-hd-bukeqi.mp3",
-  "w-xiaoxiao-hd-nihao.mp3",
-  "w-xiaoxiao-hd-pingguo.mp3",
-  "w-xiaoxiao-hd-pubu.mp3",
-  "w-xiaoxiao-hd-xiexie.mp3",
-  "w-xiaochen-shan.mp3",
-  "w-xiaochen-houzi.mp3",
-  "w-xiaochen-zhi-fixed.mp3",
-  "w-xiaochen-yizhi.mp3",
-  "w-xiaochen-shuiguo.mp3",
-  "w-xiaochen-bukeqi.mp3",
-  "w-xiaochen-nihao.mp3",
-  "w-xiaochen-pingguo.mp3",
-  "w-xiaochen-pubu.mp3",
-  "w-xiaochen-xiexie.mp3",
-  "w-xiaoyi-shan.mp3",
-  "w-xiaoyi-houzi.mp3",
-  "w-xiaoyi-zhi-fixed.mp3",
-  "w-xiaoyi-yizhi.mp3",
-  "w-xiaoyi-shuiguo.mp3",
-  "w-xiaoyi-bukeqi.mp3",
-  "w-xiaoyi-nihao.mp3",
-  "w-xiaoyi-pingguo.mp3",
-  "w-xiaoyi-pubu.mp3",
-  "w-xiaoyi-xiexie.mp3"
+  "r4-now-shui.mp3",
+  "r4-now-cao.mp3",
+  "r4-now-he1.mp3",
+  "r4-now-niao.mp3",
+  "r4-now-wo.mp3",
+  "r4-now-hao.mp3",
+  "r4-now-you.mp3",
+  "r4-now-he2.mp3",
+  "r4-now-yao.mp3",
+  "r4-now-le.mp3",
+  "r4-slow-shui.mp3",
+  "r4-slow-cao.mp3",
+  "r4-slow-he1.mp3",
+  "r4-slow-niao.mp3",
+  "r4-slow-wo.mp3",
+  "r4-slow-hao.mp3",
+  "r4-slow-you.mp3",
+  "r4-slow-he2.mp3",
+  "r4-slow-yao.mp3",
+  "r4-slow-le.mp3",
+  "r4-slower-shui.mp3",
+  "r4-slower-cao.mp3",
+  "r4-slower-he1.mp3",
+  "r4-slower-niao.mp3",
+  "r4-slower-wo.mp3",
+  "r4-slower-hao.mp3",
+  "r4-slower-you.mp3",
+  "r4-slower-he2.mp3",
+  "r4-slower-yao.mp3",
+  "r4-slower-le.mp3",
+  "r4-hd-shui.mp3",
+  "r4-hd-cao.mp3",
+  "r4-hd-he1.mp3",
+  "r4-hd-niao.mp3",
+  "r4-hd-wo.mp3",
+  "r4-hd-hao.mp3",
+  "r4-hd-you.mp3",
+  "r4-hd-he2.mp3",
+  "r4-hd-yao.mp3",
+  "r4-hd-le.mp3"
  ]
 }
