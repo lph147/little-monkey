@@ -386,7 +386,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] The title screen (19 October 2026): Continue (the game you played last), New game (in an empty game) and Save files (your three games, each with its card as before)
 - [x] Jumping through the waterfall (19 October 2026): the cave just visible behind the water; A leaps you into it with a splash, a rush of falling water instead of a fade, and you land inside dripping; walking out through the curtain is a rush of water too
 - [x] The cave's own music (18 October 2026; remade 19 October to sound unlike the meadow's): slower (54 beats a minute) and sparser, with a long echo: a slow tune on soft bells, then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water; a place can have its own song
-- [x] Sleeping in the cave's beds (19 October 2026): once you know 床, A at a bed says Sleep; the screen goes dark, Zs float up, and you wake with all your hearts. A monkey just inside the entrance says 累了吗？去床上睡觉吧！ once the troop has moved in, teaching 睡觉 (sleep, with its own picture)
+- [x] Sleeping in the cave's beds (19 October 2026): once you know 床, A at a bed says Sleep; you hop into it and lie under the leaf blanket, the cave goes dim and Zs float up, and you hop down again with all your hearts. A monkey just inside the entrance says 累了吗？去床上睡觉吧！ once the troop has moved in, teaching 睡觉 (sleep, with its own picture)
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2
 - [ ] Build Area 2, Across the sea

@@ -143,12 +143,18 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
   rest(){ S.hearts = HEARTS; save(); SFX.chime(); },   // your hearts are full again
-  // Sleep (in a bed): the screen goes dark and Zs float up from you, and you wake with all your hearts (its text: the
-  // message then).
+  // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
+  // up, then you hop down again, sparkling, with all your hearts (its text: the message then).
   async sleep(s){
-    sleepT = performance.now();
+    const [bx, by] = facing(), from = [pl.px, pl.py];
+    await hop(bx * T, by * T - 3);   // up onto the bed
+    sleepAt = {x:bx, y:by}; pl.py = by * T; sleepT = performance.now();
     await sleep(SLEEP_MS / 2); S.hearts = HEARTS; save();
-    await sleep(SLEEP_MS / 2); SFX.chime(); if (typeof s.sleep === 'string') toast(fill(s.sleep));
+    await sleep(SLEEP_MS / 2);
+    sleepAt = null; pl.py = by * T - 3; pl.dir = 'down';
+    await hop(...from);   // and down again, facing the room
+    S.pos.dir = 'down'; save(); wakeT = performance.now(); SFX.chime();
+    if (typeof s.sleep === 'string') toast(fill(s.sleep));
   },
   async battle(s, who){ if (await battle(s.battle) === 'won' && s.win) await runSteps(s.win, who); },   // a battle (an enemy in AREA.enemies), and what happens if you win
   async message(s, who){ if (who) await showNarration(fill(s.message)); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
@@ -348,6 +354,12 @@ async function goThrough(e){
   showPlaceName();
   const t = tileAt(e.arrive[0], e.arrive[1]);   // arriving on something you learn by stepping on it, such as the mountain path, counts
   if (t.learnOnStep && lvl(t.word) === 0) await showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
+}
+// A little hop, in an arc, to (tx, ty) in the map (pixels), such as onto a bed and off it again.
+async function hop(tx, ty, ms = 300){
+  const fx = pl.px, fy = pl.py, n = Math.max(1, Math.round(ms / 17));
+  for (let i = 1; i <= n; i++){ const p = i / n; pl.px = fx + (tx - fx) * p; pl.py = fy + (ty - fy) * p - Math.sin(p * Math.PI) * 6; await sleep(17); }
+  SFX.turn();
 }
 // You leap from where you stand into the square at (the waterfall), in an arc, landing with a splash.
 async function leap([tx, ty]){

@@ -197,12 +197,15 @@ function drawWorld(now){
   for (const e of ents){
     if (e.f){ drawFoe(cx, cy, now); continue; }
     if (e.p){
+      if (sleepAt){ drawAsleep(sleepAt.x*T - cx, sleepAt.y*T - cy); continue; }   // asleep in a bed
       const moving = !!pl.mv, p = moving ? (now - pl.mv.t0) / STEP : 0;
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
       for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
+      if (now - wakeT < 1000) [[-3, 2], [17, 4], [-1, -4], [15, -3], [7, -7]].forEach(([dx, dy], i) => {   // waking up with all your hearts: sparkles
+        const tw = (now / 200 + i) % 2 < 1; R(b, PX + dx, PY + dy, 1, 3, '#FFE27A'); R(b, PX + dx - 1, PY + dy + 1, 3, 1, tw ? '#FFFFFF' : '#FFE27A'); });
       continue;
     }
     const n = e.n, X = n.x*T - cx, Y = n.y*T - cy;
@@ -240,10 +243,10 @@ function drawWorld(now){
     for (let i = 0; i < 80; i++){ const x = (i * 37) % (VW*T), y = Math.floor(i * 53 + now * (.25 + (i % 3) * .1)) % (VH*T); R(b, x, y, 1, 7 + i % 9, i % 3 ? '#FFFFFF' : '#BFE8FA'); }
     b.globalAlpha = 1;
   }
-  const sk = (now - sleepT) / SLEEP_MS;   // sleeping in a bed: the screen goes dark and Zs float up from you, then it's light again
+  const sk = (now - sleepT) / SLEEP_MS;   // sleeping in a bed: the cave goes dim and Zs float up from you, then it's light again
   if (sk >= 0 && sk < 1){
     const a = Math.min(1, sk / .2, (1 - sk) / .2), PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
-    b.globalAlpha = a * .82; R(b, 0, 0, VW*T, VH*T, '#0B1024');
+    b.globalAlpha = a * .55; R(b, 0, 0, VW*T, VH*T, '#0B1024');   // (not too dark: you can still see yourself asleep)
     for (let k = 0; k < 3; k++){
       const ph = (sk * 2.5 + k / 3) % 1;
       b.globalAlpha = a * (1 - ph * .8); zee(PX + 10 + Math.round(ph * 14), PY - Math.round(ph * 26), 4 + k * 2, '#CFE8F7');
@@ -252,6 +255,15 @@ function drawWorld(now){
   }
   const fk = (now - fadeT) / 700;
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
+}
+// You, asleep in the bed whose square is at X, Y on the screen: your head on the stone pillow, and the leaf blanket
+// pulled up over you, with a hand on top.
+function drawAsleep(X, Y){
+  b.drawImage(asleepSprite(), X + 2, Y - 1);
+  R(b, X + 1, Y + 6, 14, 7, '#2E2A26'); R(b, X + 2, Y + 6, 12, 6, '#5E9A3E'); R(b, X + 2, Y + 6, 12, 1, '#8CC45A');
+  R(b, X + 4, Y + 5, 8, 2, '#5E9A3E'); R(b, X + 4, Y + 5, 8, 1, '#8CC45A');   // the shape of you under it
+  R(b, X + 2, Y + 11, 12, 1, '#3F6E2A'); [4, 8, 11].forEach(i => R(b, X + i, Y + 8, 1, 1, '#A8D877'));
+  R(b, X + 11, Y + 6, 3, 2, PALS.player.f);
 }
 function zee(x, y, s, c){ R(b, x, y, s, 1, c); R(b, x, y + s - 1, s, 1, c); for (let i = 1; i < s - 1; i++) R(b, x + s - 1 - i, y + i, 1, 1, c); }   // a little Z, s pixels across
 // Little birds that land near you now and then and hop about for most of a minute. Walk up and face

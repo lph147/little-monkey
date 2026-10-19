@@ -39,7 +39,7 @@ SAVES.king = {...SAVES.toBeKing, w: {...SAVES.toBeKing.w, ...knows(1, ['王', '�
 SAVES.home = {...SAVES.king, w: {...SAVES.king.w, ...knows(1, ['二', '三'])}, areas: {1: {...PROLOGUE, cave: 6, count: 3}}, pos: {place: 'cave', x: 7, y: 12, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
-SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 1, y: 2, dir: 'up'}};   // hurt, facing a bed
+SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
 SAVES.rocksGone = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], hungry: 'done', thirsty: 'done', holding: {}, gate: true}}, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};   // the troop gathers where the rocks were
 SAVES.climbing = {...SAVES.rocksGone, version: 25, w: {...SAVES.rocksGone.w, ...knows(1, ['路'])}, areas: {1: {...SAVES.rocksGone.areas[1], climb: 1}}, pos: {place: 'path', x: 15, y: 14, dir: 'left'}};   // (version 25: older saves on the path are moved off it)
 SAVES.fighting = {...SAVES.climbing, w: {...SAVES.climbing.w, ...knows(1, ['棍子', '蛇'])}, hearts: 4, bag: {'桃子': 2, '苹果': 1}};   // on the path, with the stick, a snake met before, and fruit
@@ -183,7 +183,7 @@ const SCREENS = [
   {id: 'troop-home', title: 'The whole troop is home', save: 'home', run: async () => { play(); await wait(500); }},
   {id: 'doorway', title: 'Tired? Sleep in a bed', save: 'atDoor', why: 'Just inside the entrance, a monkey teaches 睡觉 (sleep).', run: async () => { play(); await wait(100); talk(npc('doorway')); await wait(400); }},
   {id: 'bed', title: 'Ready to sleep', save: 'byBed', why: 'Facing a bed (once you know 床): A says Sleep.', run: async () => { play(); await wait(500); }},
-  {id: 'sleeping', title: 'Sleeping', save: 'byBed', why: 'The screen goes dark and Zs float up (held still here); you wake with all your hearts.', run: async () => { play(); await wait(200); setInterval(() => { sleepT = performance.now() - SLEEP_MS * .45; }, 30); await wait(300); }},
+  {id: 'sleeping', title: 'Sleeping', save: 'byBed', why: 'You hop into the bed and lie under the leaf blanket; the cave goes dim and Zs float up (held still here). Then you hop down with all your hearts.', run: async () => { play(); await wait(200); sleepAt = {x: 12, y: 1}; pl.px = 12 * T; pl.py = T; setInterval(() => { sleepT = performance.now() - SLEEP_MS * .45; }, 30); await wait(300); }},
   {id: 'menu', title: 'Menu', save: 'middle', run: async () => { play(); await wait(100); openMenu(); await wait(300); }},
   {id: 'saved', title: 'Saved', save: 'middle', why: 'The menu’s Save tile: it saves by itself anyway, and this says so.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(100); openMenu(); click('[data-m=save]'); clearTimeout(msgT); await wait(300); }},
   {id: 'tasks', title: 'Tasks', save: 'middle', run: async () => { play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},

@@ -56,6 +56,14 @@ function monkeyRows(kind, dir, blink, step = 0){
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return out;
 }
+// Your monkey asleep in a bed: its head on the pillow, eyes shut (the rest is under the blanket: drawAsleep in js/draw.js).
+const ASLEEP = ["...oooooo...", "..offffffo..", ".offffffffo.", "oofssssssfoo", "osfmmssmmfso", "osfssssssfso", "oofssmmssfoo", ".offssssffo."];
+function asleepSprite(){
+  const band = wearing('头带'), k = 'asleep' + (band ? 'b' : ''); if (spriteCache[k]) return spriteCache[k];
+  const rows = ASLEEP.map(r => [...r]);
+  if (band) for (let x = 1; x <= 10; x++) if (rows[2][x] === 'f') rows[2][x] = 'b';   // the red headband
+  return spriteCache[k] = sprite(rows.map(r => r.join('')), PALS.player);
+}
 // The area's animals: at their own spot (at), or hiding in the tall grass. spr: how they look on the map (content/sprites.js,
 // a square's size); pic: their picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:placeOf(a.at), home:a.home || HIDING_WORD, meetNote:a.meetNote,

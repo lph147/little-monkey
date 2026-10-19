@@ -29,7 +29,15 @@ test('a bed: A looks at it until you know 床, then sleeps in it, and you wake w
 
   const game = byBed({hearts: 2, w: knows(['床'])});
   assert.equal(game.run('promptFor(1, 1)'), 'Sleep', 'once you know 床, A says Sleep');
+  const at = [game.run('pl.px'), game.run('pl.py')];
+  game.run("globalThis.__beds = []; globalThis.__tops = []; (() => { let v = pl.py; Object.defineProperty(pl, 'py', {get: () => v, set: n => { v = n; __tops.push(n); if (sleepAt) __beds.push(sleepAt.x + ',' + sleepAt.y); }, configurable: true}); })()");
   await finish(game, 'interact(1, 1)');
+  assert.ok(Math.min(...get(game, '__tops')) <= 16 - 3, 'you hop up onto the bed');
+  assert.deepEqual([...new Set(get(game, '__beds'))], ['1,1'], 'and lie in it while you sleep');
+  assert.equal(game.run('sleepAt'), null, 'then you get up again');
+  assert.deepEqual([game.run('pl.px'), game.run('pl.py')], at, 'back where you stood');
+  assert.equal(game.run('pl.dir'), 'down', 'facing the room');
+  assert.ok(game.run('wakeT') > 0, 'sparkling');
   assert.deepEqual(get(game, '__cards'), ['睡觉'], 'the first time, a card teaches 睡觉 (sleep)');
   assert.ok(game.run('sleepT') > 0, 'the screen goes dark while you sleep');
   assert.equal(game.run('S.hearts'), 5, 'you wake with all your hearts');
