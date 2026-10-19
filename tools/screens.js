@@ -61,7 +61,11 @@ SAVES.noMenuTip = {...SAVES.middle, tips: {...ALL_TIPS, menu: 0}};
 const SCREENS = [
   {id: 'turn', title: 'Held upright', size: '375x812', why: 'The game is played sideways, so it asks you to turn the phone.'},
   {id: 'title', title: 'Title screen', why: 'A new game.'},
-  {id: 'title-novoice', title: 'Title, no Chinese voice', voices: 'missing', why: 'The warning must not push the buttons off screen.'},
+  {id: 'title-novoice', title: 'Title, no Chinese voice', voices: 'missing', why: 'With the game’s own voice clips there’s no warning: the device’s voice isn’t needed.'},
+  {id: 'title-phone', title: 'Title, in a phone’s browser', why: 'Play full screen: on Android it goes full screen, on an iPhone it shows how to add it to the home screen. Never once it’s the app.', run: async () => {
+    window.matchMedia = q => ({matches: q === '(pointer: coarse)'}); titleText(); await wait(200); }},
+  {id: 'fullscreen-iphone', title: 'Play full screen, on an iPhone', why: 'How to add it to the home screen, and how to carry a game across to the app.', run: async () => {
+    window.matchMedia = q => ({matches: q === '(pointer: coarse)'}); showAddSteps(); await wait(300); }},
   {id: 'title-back', title: 'Title, coming back', save: 'middle'},
   {id: 'title-games', title: 'Title, two games', save: 'middle', why: 'Continue goes to the game played last (Game 1); Save files has both.', run: async () => {
     localStorage.setItem(KEY + '-game2', JSON.stringify({...S, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}, '你好': {lv: 1, due: 0, ok: 0}}, friends: []}));

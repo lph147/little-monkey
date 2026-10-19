@@ -481,7 +481,17 @@ const ICON_DRAWINGS = {
     p.fill(Rc(0, 12, 16, 3), '#5FA85A');
   },
   '☰': p => p.fill(Rc(1, 4.5, 14, 7, 3.5), '#6B7A72', {light: '#8D9C94'}),   // the console's MENU button, in How to play
-  '✚': p => p.fill(or(Rc(5.5, 1, 5, 14, .8), Rc(1, 5.5, 14, 5, .8)), '#56635C', {light: '#7A8880'})   // the D-pad, in How to play
+  '✚': p => p.fill(or(Rc(5.5, 1, 5, 14, .8), Rc(1, 5.5, 14, 5, .8)), '#56635C', {light: '#7A8880'}),   // the D-pad, in How to play
+  '📤': p => {   // an iPhone's Share button: a tray, open at the top, with an arrow up out of it
+    p.flat(path([[5.5, 6], [2.5, 6], [2.5, 14.5], [13.5, 14.5], [13.5, 6], [10.5, 6]], .9), '#2F7BE0');
+    p.flat(or(Rc(7.2, 3, 1.6, 7.5), Pg([[8, .5], [11.6, 4.4], [4.4, 4.4]])), '#2F7BE0');
+  },
+  '➕': p => {   // Add to Home Screen: a plus in a white rounded square, as on an iPhone
+    p.fill(Rc(1, 1, 14, 14, 3.5), '#F4F0E8', {dark: '#C9C2B4'});
+    p.flat(or(Rc(7.2, 4, 1.6, 8), Rc(4, 7.2, 8, 1.6)), '#3A3632');
+  },
+  '⛶': p => p.flat(or(path([[1.5, 5.5], [1.5, 1.5], [5.5, 1.5]], .9), path([[10.5, 1.5], [14.5, 1.5], [14.5, 5.5]], .9),   // full screen: four corners
+    path([[14.5, 10.5], [14.5, 14.5], [10.5, 14.5]], .9), path([[5.5, 14.5], [1.5, 14.5], [1.5, 10.5]], .9)), '#F2C14E')
 };
 function icon(name){ const cells = draw(name, ICON_DRAWINGS[name], 16); N = 16; return rowsOf(cells, name); }
 

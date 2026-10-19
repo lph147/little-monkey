@@ -356,6 +356,8 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Console and map touches (18 October 2026): Select and Start labelled TASKS and MENU; A higher than B, like a GBA; the pond bigger, with four fish jumping in turn; the practice post back to one square; a pixel speaker instead of 🔊
 - [x] Sharper word pictures (17 October 2026): every word's picture redrawn at 32 × 32, on word cards, questions, the scrolls, the shop, animal encounters and the Friends list; the animals on the map unchanged
 - [ ] Playtest the prologue for a week
+- [x] Help to play full screen (19 October 2026): Play full screen on the title in a phone's browser; on Android it goes full screen (and offers Install the app), on an iPhone it shows how to add it to the home screen
+- [x] A version number on the title screen, raised with every commit (19 October 2026)
 - [ ] Voices (19 October 2026): a free Azure Speech account (Free F0, East US) and a listening test of 13 tricky words and lines in 4 voices (npm run try-voices; Yunxi chosen, with Yunze for the old monkey); then a clip for every word and line (npm run voices), checked by the native speaker
   - [x] Part 1: a clip for every word and line, 223 of them (19 October 2026)
   - [x] Part 2: the game plays them (the device's voice for anything without one), and the app downloads them all for offline play (19 October 2026)

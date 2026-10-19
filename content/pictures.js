@@ -1908,5 +1908,68 @@ const ICONS = {
       ".....bddddb.....",
       "......bbbb......"
     ]
+  },
+  '📤': {
+    palette: {a:'#1B314E', b:'#2F7BE0'},
+    rows: [
+      ".......aa.......",
+      "......abba......",
+      ".....abbbba.....",
+      "....abbbbbba....",
+      "..aaaaaabaaaaa..",
+      ".abbbbaababbbba.",
+      ".abbbbaababbbba.",
+      ".abaaa.abaaaaba.",
+      ".aba...aba..aba.",
+      ".aba...aba..aba.",
+      ".aba...aba..aba.",
+      ".aba....a...aba.",
+      ".aba........aba.",
+      ".abaaaaaaaaaaba.",
+      ".abbbbbbbbbbbba.",
+      "..aaaaaaaaaaaa.."
+    ]
+  },
+  '➕': {
+    palette: {a:'#5B5853', b:'#4D4840', c:'#F7F5EF', d:'#C9C2B4', e:'#F4F0E8', f:'#3A3632'},
+    rows: [
+      "...aaaaaaaaab...",
+      "..acccccccccdb..",
+      ".aceeeeeeeeeedb.",
+      "aceeeeeeeeeeeedb",
+      "aceeeeeefeeeeedb",
+      "aceeeeeefeeeeedb",
+      "aceeeeeefeeeeedb",
+      "aceeeeeefeeeeedb",
+      "aceeffffffffeedb",
+      "aceeeeeefeeeeedb",
+      "aceeeeeefeeeeedb",
+      "aceeeeeefeeeeedb",
+      "bdeeeeeeeeeeeedb",
+      ".bdeeeeeeeeeedb.",
+      "..bddddddddddb..",
+      "...bbbbbbbbbb..."
+    ]
+  },
+  '⛶': {
+    palette: {a:'#5A4720', b:'#F2C14E'},
+    rows: [
+      ".aaaaa....aaaaa.",
+      "abbbbba..abbbbba",
+      "abaaaa....aaaaba",
+      "aba..........aba",
+      "aba..........aba",
+      "aba..........aba",
+      ".a............a.",
+      "................",
+      "................",
+      ".a............a.",
+      "aba..........aba",
+      "aba..........aba",
+      "aba..........aba",
+      "abaaaa....aaaaba",
+      "abbbbba..abbbbba",
+      ".aaaaa....aaaaa."
+    ]
   }
 };
