@@ -1,24 +1,25 @@
 {
+ "round": "Round 3: a woman’s voice for single words (new-word cards, tapping a word, listening questions). Sentences will be Yunxi, tidy and chatty, as chosen in round 2. Which is as clear as This device, or clearer? Do you hear any breathing?",
  "voices": [
   {
-   "id": "yunxi",
-   "label": "Now",
-   "about": "as in the game: 15% slower"
+   "id": "w-xiaoxiao",
+   "label": "Xiaoxiao",
+   "about": "Microsoft’s main voice: very clear"
   },
   {
-   "id": "yunxi-normal",
-   "label": "Normal speed",
-   "about": "not slowed down"
+   "id": "w-xiaoxiao-hd",
+   "label": "Xiaoxiao HD",
+   "about": "the same woman, newer and more natural"
   },
   {
-   "id": "yunxi-tidy",
-   "label": "Tidy",
-   "about": "normal speed, no silence around it, short pauses"
+   "id": "w-xiaochen",
+   "label": "Xiaochen",
+   "about": "calm and clear"
   },
   {
-   "id": "yunxi-chat",
-   "label": "Tidy and chatty",
-   "about": "the same, in a relaxed, chatty style"
+   "id": "w-xiaoyi",
+   "label": "Xiaoyi",
+   "about": "younger and livelier"
   }
  ],
  "items": [
@@ -27,7 +28,7 @@
    "zh": "山",
    "py": "shān",
    "en": "mountain",
-   "listen": "One short syllable on its own, as on a word card: high and level."
+   "listen": "One short syllable: high and level."
   },
   {
    "id": "houzi",
@@ -37,18 +38,11 @@
    "listen": "子 is light and short."
   },
   {
-   "id": "zhi",
-   "zh": "只",
-   "py": "zhī",
-   "en": "(counts animals)",
-   "listen": "Said alone, it should be zhī (high and level), the counting word, not zhǐ (“only”)."
-  },
-  {
    "id": "zhi-fixed",
    "zh": "只",
    "py": "zhī",
    "en": "(counts animals)",
-   "listen": "The same word, with its pinyin given to the voice: does the fix work?"
+   "listen": "zhī, high and level (given its pinyin, as the game does)."
   },
   {
    "id": "yizhi",
@@ -73,99 +67,73 @@
   },
   {
    "id": "nihao",
-   "zh": "你好！",
-   "py": "nǐ hǎo!",
-   "en": "Hello!",
+   "zh": "你好",
+   "py": "nǐ hǎo",
+   "en": "hello",
    "listen": "Two third tones again: like ní hǎo."
   },
   {
-   "id": "kankan",
-   "zh": "去看看！",
-   "py": "qù kànkan!",
-   "en": "Go and take a look!",
-   "listen": "The second 看 is light."
+   "id": "pingguo",
+   "zh": "苹果",
+   "py": "píngguǒ",
+   "en": "apple",
+   "listen": "Rising, then low."
   },
   {
-   "id": "e",
-   "zh": "我饿了。我要吃水果！",
-   "py": "wǒ è le. wǒ yào chī shuǐguǒ!",
-   "en": "I’m hungry. I want to eat some fruit!",
-   "listen": "了 is light, with a natural pause between the two sentences."
+   "id": "pubu",
+   "zh": "瀑布",
+   "py": "pùbù",
+   "en": "waterfall",
+   "listen": "Two falling tones."
   },
   {
-   "id": "taozi",
-   "zh": "你有桃子吗？",
-   "py": "nǐ yǒu táozi ma?",
-   "en": "Do you have a peach?",
-   "listen": "It sounds like a question."
-  },
-  {
-   "id": "laohouzi",
-   "zh": "我是老猴子。这是花果山。",
-   "py": "wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān.",
-   "en": "I’m the old monkey. This is Flower Fruit Mountain.",
-   "listen": "花果山 said as one name."
-  },
-  {
-   "id": "hua",
-   "zh": "我要红色、黄色和白色的花！",
-   "py": "wǒ yào hóngsè, huángsè hé báisè de huā!",
-   "en": "I want red, yellow and white flowers!",
-   "listen": "A list, with small pauses."
+   "id": "xiexie",
+   "zh": "谢谢",
+   "py": "xièxie",
+   "en": "thank you",
+   "listen": "The second 谢 is light."
   }
  ],
  "made": [
-  "yunxi-shan.mp3",
-  "yunxi-houzi.mp3",
-  "yunxi-zhi.mp3",
-  "yunxi-zhi-fixed.mp3",
-  "yunxi-yizhi.mp3",
-  "yunxi-shuiguo.mp3",
-  "yunxi-bukeqi.mp3",
-  "yunxi-nihao.mp3",
-  "yunxi-kankan.mp3",
-  "yunxi-e.mp3",
-  "yunxi-taozi.mp3",
-  "yunxi-laohouzi.mp3",
-  "yunxi-hua.mp3",
-  "yunxi-normal-shan.mp3",
-  "yunxi-normal-houzi.mp3",
-  "yunxi-normal-zhi.mp3",
-  "yunxi-normal-zhi-fixed.mp3",
-  "yunxi-normal-yizhi.mp3",
-  "yunxi-normal-shuiguo.mp3",
-  "yunxi-normal-bukeqi.mp3",
-  "yunxi-normal-nihao.mp3",
-  "yunxi-normal-kankan.mp3",
-  "yunxi-normal-e.mp3",
-  "yunxi-normal-taozi.mp3",
-  "yunxi-normal-laohouzi.mp3",
-  "yunxi-normal-hua.mp3",
-  "yunxi-tidy-shan.mp3",
-  "yunxi-tidy-houzi.mp3",
-  "yunxi-tidy-zhi.mp3",
-  "yunxi-tidy-zhi-fixed.mp3",
-  "yunxi-tidy-yizhi.mp3",
-  "yunxi-tidy-shuiguo.mp3",
-  "yunxi-tidy-bukeqi.mp3",
-  "yunxi-tidy-nihao.mp3",
-  "yunxi-tidy-kankan.mp3",
-  "yunxi-tidy-e.mp3",
-  "yunxi-tidy-taozi.mp3",
-  "yunxi-tidy-laohouzi.mp3",
-  "yunxi-tidy-hua.mp3",
-  "yunxi-chat-shan.mp3",
-  "yunxi-chat-houzi.mp3",
-  "yunxi-chat-zhi.mp3",
-  "yunxi-chat-zhi-fixed.mp3",
-  "yunxi-chat-yizhi.mp3",
-  "yunxi-chat-shuiguo.mp3",
-  "yunxi-chat-bukeqi.mp3",
-  "yunxi-chat-nihao.mp3",
-  "yunxi-chat-kankan.mp3",
-  "yunxi-chat-e.mp3",
-  "yunxi-chat-taozi.mp3",
-  "yunxi-chat-laohouzi.mp3",
-  "yunxi-chat-hua.mp3"
+  "w-xiaoxiao-shan.mp3",
+  "w-xiaoxiao-houzi.mp3",
+  "w-xiaoxiao-zhi-fixed.mp3",
+  "w-xiaoxiao-yizhi.mp3",
+  "w-xiaoxiao-shuiguo.mp3",
+  "w-xiaoxiao-bukeqi.mp3",
+  "w-xiaoxiao-nihao.mp3",
+  "w-xiaoxiao-pingguo.mp3",
+  "w-xiaoxiao-pubu.mp3",
+  "w-xiaoxiao-xiexie.mp3",
+  "w-xiaoxiao-hd-shan.mp3",
+  "w-xiaoxiao-hd-houzi.mp3",
+  "w-xiaoxiao-hd-zhi-fixed.mp3",
+  "w-xiaoxiao-hd-yizhi.mp3",
+  "w-xiaoxiao-hd-shuiguo.mp3",
+  "w-xiaoxiao-hd-bukeqi.mp3",
+  "w-xiaoxiao-hd-nihao.mp3",
+  "w-xiaoxiao-hd-pingguo.mp3",
+  "w-xiaoxiao-hd-pubu.mp3",
+  "w-xiaoxiao-hd-xiexie.mp3",
+  "w-xiaochen-shan.mp3",
+  "w-xiaochen-houzi.mp3",
+  "w-xiaochen-zhi-fixed.mp3",
+  "w-xiaochen-yizhi.mp3",
+  "w-xiaochen-shuiguo.mp3",
+  "w-xiaochen-bukeqi.mp3",
+  "w-xiaochen-nihao.mp3",
+  "w-xiaochen-pingguo.mp3",
+  "w-xiaochen-pubu.mp3",
+  "w-xiaochen-xiexie.mp3",
+  "w-xiaoyi-shan.mp3",
+  "w-xiaoyi-houzi.mp3",
+  "w-xiaoyi-zhi-fixed.mp3",
+  "w-xiaoyi-yizhi.mp3",
+  "w-xiaoyi-shuiguo.mp3",
+  "w-xiaoyi-bukeqi.mp3",
+  "w-xiaoyi-nihao.mp3",
+  "w-xiaoyi-pingguo.mp3",
+  "w-xiaoyi-pubu.mp3",
+  "w-xiaoyi-xiexie.mp3"
  ]
 }

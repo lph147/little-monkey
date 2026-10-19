@@ -12,32 +12,34 @@ const ROOT = path.join(__dirname, '..');
 const KEY_FILE = path.join(ROOT, 'voice-key.txt');
 const OUT = path.join(__dirname, 'try-voices');
 
-// Round 2 (19 October 2026): Yunxi was chosen, but in the game it sounded slow and exaggerated, with breaths,
-// so these are versions of Yunxi. rate: slower or faster (left out: RATE, below, as the game's clips so far; null: normal speed);
-// tidy: no silence before or after, and short pauses between sentences; style: one of the voice's speaking styles.
-// `only` limits a voice to some items. (Round 1 compared Xiaoxiao, Xiaoxiao HD, Yunxi and Xiaoyou, and Yunze for the old monkey.)
+// Each round of the test, what it compares and why (shown at the top of the page).
+// rate: slower or faster (left out: RATE, below, the game's clips so far; null: normal speed); tidy: no silence before
+// or after, and short pauses between sentences; style: one of the voice's speaking styles. `only` limits a voice to some items.
+// Round 1 (19 October 2026) compared Xiaoxiao, Xiaoxiao HD, Yunxi and Xiaoyou, and Yunze for the old monkey: Yunxi chosen,
+// with Yunze for the old monkey. Round 2: in the game Yunxi sounded slow and exaggerated, with breaths, on a Pixel 8 Pro;
+// of Yunxi as it was, at normal speed, tidy, and tidy and chatty, tidy and chatty was best for sentences, and giving the
+// pinyin fixed 只. Single words sounded clearer in the Pixel's own woman's voice (a native speaker agreed), so round 3
+// looks for a woman's voice for words said on their own.
+const ROUND = 'Round 3: a woman’s voice for single words (new-word cards, tapping a word, listening questions). Sentences will be Yunxi, tidy and chatty, as chosen in round 2. Which is as clear as This device, or clearer? Do you hear any breathing?';
 const VOICES = [
-  {id:'yunxi', name:'zh-CN-YunxiNeural', label:'Now', about:'as in the game: 15% slower'},
-  {id:'yunxi-normal', name:'zh-CN-YunxiNeural', rate:null, label:'Normal speed', about:'not slowed down'},
-  {id:'yunxi-tidy', name:'zh-CN-YunxiNeural', rate:null, tidy:true, label:'Tidy', about:'normal speed, no silence around it, short pauses'},
-  {id:'yunxi-chat', name:'zh-CN-YunxiNeural', rate:null, tidy:true, style:'chat', label:'Tidy and chatty', about:'the same, in a relaxed, chatty style'},
+  {id:'w-xiaoxiao', name:'zh-CN-XiaoxiaoNeural', rate:null, tidy:true, label:'Xiaoxiao', about:'Microsoft’s main voice: very clear'},
+  {id:'w-xiaoxiao-hd', name:'zh-CN-Xiaoxiao:DragonHDFlashLatestNeural', rate:null, tidy:true, label:'Xiaoxiao HD', about:'the same woman, newer and more natural'},
+  {id:'w-xiaochen', name:'zh-CN-XiaochenNeural', rate:null, tidy:true, label:'Xiaochen', about:'calm and clear'},
+  {id:'w-xiaoyi', name:'zh-CN-XiaoyiNeural', rate:null, tidy:true, label:'Xiaoyi', about:'younger and livelier'},
 ];
 
 // `ph` gives the voice the pinyin (tone numbers, a space before each), to see if a reading can be fixed.
 const ITEMS = [
-  {id:'shan', zh:'山', py:'shān', en:'mountain', listen:'One short syllable on its own, as on a word card: high and level.'},
+  {id:'shan', zh:'山', py:'shān', en:'mountain', listen:'One short syllable: high and level.'},
   {id:'houzi', zh:'猴子', py:'hóuzi', en:'monkey', listen:'子 is light and short.'},
-  {id:'zhi', zh:'只', py:'zhī', en:'(counts animals)', listen:'Said alone, it should be zhī (high and level), the counting word, not zhǐ (“only”).'},
-  {id:'zhi-fixed', zh:'只', py:'zhī', en:'(counts animals)', ph:'zhi 1', listen:'The same word, with its pinyin given to the voice: does the fix work?'},
+  {id:'zhi-fixed', zh:'只', py:'zhī', en:'(counts animals)', ph:'zhi 1', listen:'zhī, high and level (given its pinyin, as the game does).'},
   {id:'yizhi', zh:'一只', py:'yì zhī', en:'a, one (animal)', listen:'一 changes to yì (falling) before zhī.'},
   {id:'shuiguo', zh:'水果', py:'shuǐguǒ', en:'fruit', listen:'Two third tones: the first one rises, like shuíguǒ.'},
   {id:'bukeqi', zh:'不客气', py:'bú kèqi', en:'you’re welcome', listen:'不 changes to bú, and 气 is light.'},
-  {id:'nihao', zh:'你好！', py:'nǐ hǎo!', en:'Hello!', listen:'Two third tones again: like ní hǎo.'},
-  {id:'kankan', zh:'去看看！', py:'qù kànkan!', en:'Go and take a look!', listen:'The second 看 is light.'},
-  {id:'e', zh:'我饿了。我要吃水果！', py:'wǒ è le. wǒ yào chī shuǐguǒ!', en:'I’m hungry. I want to eat some fruit!', listen:'了 is light, with a natural pause between the two sentences.'},
-  {id:'taozi', zh:'你有桃子吗？', py:'nǐ yǒu táozi ma?', en:'Do you have a peach?', listen:'It sounds like a question.'},
-  {id:'laohouzi', zh:'我是老猴子。这是花果山。', py:'wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān.', en:'I’m the old monkey. This is Flower Fruit Mountain.', listen:'花果山 said as one name.'},
-  {id:'hua', zh:'我要红色、黄色和白色的花！', py:'wǒ yào hóngsè, huángsè hé báisè de huā!', en:'I want red, yellow and white flowers!', listen:'A list, with small pauses.'},
+  {id:'nihao', zh:'你好', py:'nǐ hǎo', en:'hello', listen:'Two third tones again: like ní hǎo.'},
+  {id:'pingguo', zh:'苹果', py:'píngguǒ', en:'apple', listen:'Rising, then low.'},
+  {id:'pubu', zh:'瀑布', py:'pùbù', en:'waterfall', listen:'Two falling tones.'},
+  {id:'xiexie', zh:'谢谢', py:'xièxie', en:'thank you', listen:'The second 谢 is light.'},
 ];
 
 const RATE = '-15%';   // a little slower than normal: the game's clips so far
@@ -50,12 +52,12 @@ function readKey(file = KEY_FILE){
   return {key:get('key'), region:get('region') || 'eastus'};
 }
 
-function ssml(voice, item, slow = true){
-  const rate = voice.rate === undefined ? RATE : voice.rate;
+function ssml(voice, item, full = true){   // full: with the voice's speed, style and silences (false: just the words)
+  const rate = full && (voice.rate === undefined ? RATE : voice.rate);
   let said = item.ph ? `<phoneme alphabet="sapi" ph="${item.ph}">${item.zh}</phoneme>` : item.zh;
-  if (rate && slow) said = `<prosody rate="${rate}">${said}</prosody>`;
-  if (voice.style) said = `<mstts:express-as style="${voice.style}">${said}</mstts:express-as>`;
-  const tidy = voice.tidy ? '<mstts:silence type="Leading-exact" value="0ms"/><mstts:silence type="Tailing-exact" value="0ms"/><mstts:silence type="Sentenceboundary-exact" value="250ms"/>' : '';
+  if (rate) said = `<prosody rate="${rate}">${said}</prosody>`;
+  if (full && voice.style) said = `<mstts:express-as style="${voice.style}">${said}</mstts:express-as>`;
+  const tidy = full && voice.tidy ? '<mstts:silence type="Leading-exact" value="0ms"/><mstts:silence type="Tailing-exact" value="0ms"/><mstts:silence type="Sentenceboundary-exact" value="250ms"/>' : '';
   return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">`
     + `<voice name="${voice.name}">${tidy}${said}</voice></speak>`;
 }
@@ -71,7 +73,7 @@ async function makeClip({key, region}, voice, item){
         method:'POST',
         headers:{'Ocp-Apim-Subscription-Key':key, 'Content-Type':'application/ssml+xml',
           'X-Microsoft-OutputFormat':'audio-24khz-48kbitrate-mono-mp3', 'User-Agent':'little-monkey-try-voices'},
-        body:ssml(voice, item, tries < 1)   // if Azure doesn't like the slower speed for this voice, try once at normal speed
+        body:ssml(voice, item, tries < 1)   // if Azure doesn't like the speed, style or silences for this voice, try once with just the words
       });
     } catch(e) { throw new Error('Couldn’t reach Azure. Are you online?'); }
     if (res.ok){
@@ -88,7 +90,7 @@ async function makeClip({key, region}, voice, item){
 
 function writeList(){
   const made = wanted().filter(([v, i]) => fs.existsSync(path.join(OUT, clipFile(v, i)))).map(([v, i]) => clipFile(v, i));
-  const list = {voices:VOICES.map(({id, label, about, only}) => ({id, label, about, only})), items:ITEMS.map(({ph, ...i}) => i), made};
+  const list = {round:ROUND, voices:VOICES.map(({id, label, about, only}) => ({id, label, about, only})), items:ITEMS.map(({ph, ...i}) => i), made};
   fs.writeFileSync(path.join(OUT, 'list.json'), JSON.stringify(list, null, 1) + '\n');
   return made.length;
 }
