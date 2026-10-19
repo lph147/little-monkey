@@ -146,6 +146,7 @@ function toTitle(){
   mode = 'title'; musicStop(); $('#capbox').hidden = true; $('#skipBtn').hidden = true;
   $('#titlecard').hidden = false;
   $('#areaName').textContent = AREA.name.en;
+  $('#version').textContent = 'v' + VERSION;
   const n = lastPlayed(), g = n && slotSummary(n), empty = SLOTS.find(k => !slotSummary(k));
   $('#titleButtons').innerHTML = (g ? `<button class="btn big primary" id="contBtn" data-label="Continue">Continue<span class="sub">Game ${n} · ${g.words} ${g.words === 1 ? 'word' : 'words'}${g.played ? ' · played ' + ago(g.played) : ''}</span></button>` : '')
     + `<button class="btn big${g ? '' : ' primary'}" id="newBtn" data-label="New game">New game<span class="sub">${!g ? 'Start the story' : empty ? 'In an empty game' : 'Your 3 games are in use'}</span></button>`

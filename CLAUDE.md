@@ -19,7 +19,7 @@ I'm new to coding. Please:
 - Tell me exactly how to check your work (what to open, where to walk, what to press).
 
 ## How we work
-- Commit to git after every change that works, with a clear message. Never leave the game broken at the end of a task.
+- Commit to git after every change that works, with a clear message. Each commit raises the version on the title screen by one, by itself (js/version.js, via .githooks/pre-commit; on a new computer, switch the hook on once with `git config core.hooksPath .githooks`). After pushing, tell me the new version number so I can check my phone has it. Never leave the game broken at the end of a task.
 - Ask me before each upload (push) to GitHub, because uploading publishes to the live site.
 - Run the automated tests before every commit, once they exist. Add or update a test when you add a feature.
 - Keep saved games working. If the save format changes, migrate old saves instead of wiping them.

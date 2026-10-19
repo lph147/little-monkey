@@ -51,6 +51,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky with the stone on the mountain on the right, 小猴子 on the left, and its buttons: a gold Continue, saying which game, how many words and when you last played (it carries on with the game you played last), then New game and Save files in white. The first time, there's just New game (gold) and Save files. The chosen one has a gold outline and the red A badge; the D-pad (or arrow keys) moves between them, and the A label says what it does.
+- [ ] The version (such as v144) is small in the title screen's bottom-right corner, and matches the one Claude said was pushed. If it's lower, close the game and open it again.
 - [ ] A first game says to turn your sound on: every word is spoken aloud. (The red note about a missing Chinese voice, with How to fix it, now only shows on a browser that can't play the game's voice clips.) The words sit under the title on the left, clear of the stone and the mountain.
 - [ ] There's no header or task box. Under the D-pad are two small buttons, TASKS and MENU, where a Game Boy has Select and Start.
 - [ ] New game starts in an empty game (the opening plays). With all three games in use, it opens Save files instead, saying how to make room.
