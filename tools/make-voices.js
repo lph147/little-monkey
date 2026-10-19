@@ -13,7 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const {loadGame, ROOT} = require('../tests/fake-browser');
-const {readKey, makeClip, pause} = require('./try-voices');
+const {readKey, makeClip, pauseAfter, pause} = require('./try-voices');
 
 const AUDIO = path.join(ROOT, 'audio');
 const INDEX = path.join(ROOT, 'content', 'voices.js');
@@ -25,7 +25,7 @@ const SAY_AS = {
 
 const CJK = /[一-鿿]/;
 const said = zh => zh.replace(/ /g, '');   // content writes sentences with spaces between words; the game says them without
-const short = name => name.replace(/^zh-CN-|Neural$/g, '').toLowerCase();   // zh-CN-YunxiNeural → yunxi
+const short = name => name.replace(/^zh-CN-|Neural$/g, '').replace(/^cmn-CN-/, 'google-').toLowerCase();   // zh-CN-YunxiNeural → yunxi, cmn-CN-Wavenet-A → google-wavenet-a
 const code = (voice, text) => crypto.createHash('sha1').update(`${voice.name}|${voice.style || ''}|tidy|${text}|${SAY_AS[text] || ''}`).digest('hex').slice(0, 10);
 const settings = voice => ({...voice, rate: null, tidy: true});   // as tools/try-voices.js makes them
 
@@ -88,8 +88,8 @@ const VOICE_OF = ${JSON.stringify(who)};   // which voice says what: words on th
 
 async function main(){
   const azure = readKey();
-  if (!azure.key){ console.log('No key yet: paste KEY 1 from the Azure portal after "key=" in voice-key.txt, then run this again.'); process.exitCode = 1; return; }
-  const p = plan();
+  const p = plan(), google = Object.values(p.voices).some(v => v.provider === 'google');
+  if (!azure.key || (google && !azure.google)){ console.log(`A key is missing: paste ${!azure.key ? 'KEY 1 from the Azure portal after "key="' : 'the API key from Google Cloud after "google="'} in voice-key.txt, then run this again.`); process.exitCode = 1; return; }
   const todo = Object.entries(p.clips).flatMap(([v, texts]) => Object.entries(texts).filter(([, c]) => !fs.existsSync(clipPath(v, c))).map(([t, c]) => [v, t, c]));
   console.log(todo.length ? `Making ${todo.length} clips (slowly: the free tier allows about 20 a minute, so about ${Math.ceil(todo.length * 3.3 / 60)} minutes)…` : 'Every clip is already made.');
   let n = 0;
@@ -103,7 +103,7 @@ async function main(){
       console.log(`  ${v}: ${text}: ${e.message}`);
       process.exitCode = 1; break;
     }
-    await pause(3200);
+    await pause(pauseAfter(p.voices[v]));
   }
   // Clips nothing says any more, and voices nobody uses
   if (fs.existsSync(AUDIO)) for (const v of fs.readdirSync(AUDIO)){

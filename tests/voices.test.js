@@ -23,9 +23,9 @@ test('an empty key line reads as no key, not as the region on the next line', ()
   const os = require('os');
   const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'voices-')), 'voice-key.txt');
   fs.writeFileSync(file, '# a note\r\nkey=\r\nregion=eastus\r\n');
-  assert.deepEqual(readKey(file), {key:'', region:'eastus'});
+  assert.deepEqual(readKey(file), {key:'', region:'eastus', google:''});
   fs.writeFileSync(file, 'key= abc123 \nregion=\n');
-  assert.deepEqual(readKey(file), {key:'abc123', region:'eastus'});
+  assert.deepEqual(readKey(file), {key:'abc123', region:'eastus', google:''});
 });
 
 test('every voice clip is made and listed (run npm run voices after changing any Chinese)', () => {
@@ -96,4 +96,16 @@ test('with the clips, the title screen doesn’t warn about a missing Chinese vo
   const game = withClips();
   game.run(`globalThis.speechSynthesis = undefined; delete globalThis.speechSynthesis; titleText()`);
   assert.doesNotMatch(game.el('#titleText').innerHTML, /class="small warn"/);
+});
+
+test('Google’s voices: the key is read from its own line, and a clip asks for the words in that voice', () => {
+  const {readKey, googleRequest, pauseAfter} = require('../tools/try-voices');
+  const os = require('os');
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'voices-')), 'voice-key.txt');
+  fs.writeFileSync(file, 'key=azure123\nregion=eastus\n# a note\ngoogle=goog456\n');
+  assert.deepEqual(readKey(file), {key:'azure123', region:'eastus', google:'goog456'});
+  const voice = {provider:'google', name:'cmn-CN-Wavenet-A'};
+  assert.deepEqual(googleRequest(voice, {zh:'水'}), {input:{text:'水'}, voice:{languageCode:'cmn-CN', name:'cmn-CN-Wavenet-A'}, audioConfig:{audioEncoding:'MP3', sampleRateHertz:24000}});
+  assert.equal(googleRequest({...voice, speed:0.9}, {zh:'水'}).audioConfig.speakingRate, 0.9);
+  assert.ok(pauseAfter(voice) < pauseAfter({name:'zh-CN-XiaoxiaoNeural'}), 'Azure’s free tier needs a longer pause between clips');
 });

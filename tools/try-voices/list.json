@@ -1,25 +1,30 @@
 {
- "round": "Round 4: single words that sounded strange in the game (水, 草, 喝), and others like them: third tones said on their own, and words with two readings. Which sounds most natural? (Giving the voice the pinyin made no difference: it already reads them right.)",
+ "round": "Round 5: Google’s voices for words on their own, since This device (your Pixel’s voice, which is Google’s) sounded much better than Xiaoxiao on single words. Which is as good as This device? Do the longer words (猴子, 苹果, 不客气) sound good too?",
  "voices": [
   {
-   "id": "r4-now",
-   "label": "Now",
-   "about": "as in the game"
+   "id": "r5-xiaoxiao",
+   "label": "Xiaoxiao",
+   "about": "as in the game now"
   },
   {
-   "id": "r4-slow",
-   "label": "Slower",
-   "about": "20% slower"
+   "id": "r5-g-standard",
+   "label": "Google Standard",
+   "about": "Google’s plainest voice"
   },
   {
-   "id": "r4-slower",
-   "label": "Slower still",
-   "about": "35% slower"
+   "id": "r5-g-wavenet",
+   "label": "Google WaveNet",
+   "about": "Google’s older natural voice"
   },
   {
-   "id": "r4-hd",
-   "label": "Xiaoxiao HD",
-   "about": "the same woman, newer technology"
+   "id": "r5-g-chirp-1",
+   "label": "Google HD 1",
+   "about": "Google’s newest voices"
+  },
+  {
+   "id": "r5-g-chirp-2",
+   "label": "Google HD 2",
+   "about": "another of the newest"
   }
  ],
  "items": [
@@ -92,48 +97,35 @@
    "py": "le",
    "en": "(a change)",
    "listen": "le, light (not liǎo)."
+  },
+  {
+   "id": "shan",
+   "zh": "山",
+   "py": "shān",
+   "en": "mountain",
+   "listen": "High and level."
+  },
+  {
+   "id": "houzi",
+   "zh": "猴子",
+   "py": "hóuzi",
+   "en": "monkey",
+   "listen": "子 is light and short."
+  },
+  {
+   "id": "pingguo",
+   "zh": "苹果",
+   "py": "píngguǒ",
+   "en": "apple",
+   "listen": "Rising, then low."
+  },
+  {
+   "id": "bukeqi",
+   "zh": "不客气",
+   "py": "bú kèqi",
+   "en": "you’re welcome",
+   "listen": "不 changes to bú, and 气 is light."
   }
  ],
- "made": [
-  "r4-now-shui.mp3",
-  "r4-now-cao.mp3",
-  "r4-now-he1.mp3",
-  "r4-now-niao.mp3",
-  "r4-now-wo.mp3",
-  "r4-now-hao.mp3",
-  "r4-now-you.mp3",
-  "r4-now-he2.mp3",
-  "r4-now-yao.mp3",
-  "r4-now-le.mp3",
-  "r4-slow-shui.mp3",
-  "r4-slow-cao.mp3",
-  "r4-slow-he1.mp3",
-  "r4-slow-niao.mp3",
-  "r4-slow-wo.mp3",
-  "r4-slow-hao.mp3",
-  "r4-slow-you.mp3",
-  "r4-slow-he2.mp3",
-  "r4-slow-yao.mp3",
-  "r4-slow-le.mp3",
-  "r4-slower-shui.mp3",
-  "r4-slower-cao.mp3",
-  "r4-slower-he1.mp3",
-  "r4-slower-niao.mp3",
-  "r4-slower-wo.mp3",
-  "r4-slower-hao.mp3",
-  "r4-slower-you.mp3",
-  "r4-slower-he2.mp3",
-  "r4-slower-yao.mp3",
-  "r4-slower-le.mp3",
-  "r4-hd-shui.mp3",
-  "r4-hd-cao.mp3",
-  "r4-hd-he1.mp3",
-  "r4-hd-niao.mp3",
-  "r4-hd-wo.mp3",
-  "r4-hd-hao.mp3",
-  "r4-hd-you.mp3",
-  "r4-hd-he2.mp3",
-  "r4-hd-yao.mp3",
-  "r4-hd-le.mp3"
- ]
+ "made": []
 }
