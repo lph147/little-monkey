@@ -42,7 +42,7 @@ function openCard(html){
   const f = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
   if (f) f.focus({preventScroll:true}); else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 }
-const NAV_SEL = '.actions button, .menu button', NAVIGABLE = '.menu, [data-nav]';
+const NAV_SEL = '.actions button, .menu button, [data-nav] button', NAVIGABLE = '.menu, [data-nav]';
 function navItems(){ return [...sheet.querySelectorAll(NAV_SEL)].filter(b => !b.disabled && !b.hidden && b.offsetParent !== null); }
 const markNav = b => { sheet.querySelectorAll('.navsel').forEach(x => x.classList.remove('navsel')); if (b && b.matches(NAV_SEL)) b.classList.add('navsel'); };
 sheet.addEventListener('focusin', e => markNav(e.target));
@@ -57,6 +57,15 @@ function navFocus(d){
   if (tabs.length && (d === 'left' || d === 'right')){   // left and right switch the Word Scroll's tabs
     const i = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
     tabs[(i + (d === 'left' ? -1 : 1) + tabs.length) % tabs.length].click();
+    return;
+  }
+  if (tabs.length){   // up and down step through the Word Scroll's words one by one (A opens the chosen one's page), then Back
+    const items = navItems(); if (!items.length) return;
+    const last = items.length - 1, list = sheet.querySelector('[data-nav]');   // Back, after the words: where it starts
+    let cur = items.indexOf(chosenBtn()); if (cur < 0) cur = last;
+    // From Back, down goes to the first word, until you've been through the words (then Back is the end: no going round)
+    const i = cur === last && d === 'down' ? (list && list.dataset.went ? cur : 0) : cur + (d === 'down' ? 1 : -1);
+    if (i >= 0 && i <= last && i !== cur){ markNav(items[i]); items[i].focus({preventScroll:false}); SFX.turn(); if (list) list.dataset.went = '1'; }
     return;
   }
   if (!sheet.querySelector(NAVIGABLE)) return;        // otherwise the D-pad only moves through menus (and cards whose buttons are a choice, data-nav); on other cards A is always the main button

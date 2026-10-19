@@ -200,7 +200,7 @@ async function nextArea(){
 }
 const todaysWords = () => S.today.d === todayKey() ? S.today.ids.filter(w => WORDS[w] && lvl(w) > 0) : [];   // not words since removed from the game
 function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow of its picture, not giving it away) or not met yet
-  if (lvl(w) > 0) return `<button class="card" data-w="${w}">${WORDS[w].pic ? `<div class="c" aria-hidden="true">${picHTML(w)}</div><div class="hz">${w}</div>` : `<div class="c hz">${w}</div>`}<div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
+  if (lvl(w) > 0) return `<button class="card" data-w="${w}" data-label="Open">${WORDS[w].pic ? `<div class="c" aria-hidden="true">${picHTML(w)}</div><div class="hz">${w}</div>` : `<div class="c hz">${w}</div>`}<div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
   if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : '？'}</div><div class="p">heard ${S.heard[w]}×</div></div>`;
   return `<div class="card unseen"><div class="c">？</div><div class="p"></div></div>`;
 }
@@ -242,17 +242,17 @@ function scrollPage(tab){   // what a tab of the Word Scroll shows
   if (tab === 'today'){
     const ids = todaysWords(), due = ORDER.filter(w => lvl(w) >= 1 && rec(w).due <= Date.now() + DAY).length;
     return `<p class="label cathead">Today’s words <span class="catn">${ids.length}</span></p>
-      ${ids.length ? `<div class="grid">${ids.map(scrollCard).join('')}</div>` : '<p>You haven’t met any words yet today.</p>'}
+      ${ids.length ? `<div class="grid" data-nav>${ids.map(scrollCard).join('')}</div>` : '<p>You haven’t met any words yet today.</p>'}
       <p class="small">${due} ${due === 1 ? 'word is' : 'words are'} due for review within a day: practise at the practice post, or meet animals in the tall grass.</p>`;
   }
   if (tab === 'heard'){
     const heard = heardWords();
     return `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
-      <div class="chips">${heard.map(w => `<button class="chip" data-h="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${info(w)[0]}</rt></ruby> <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
+      <div class="chips" data-nav>${heard.map(w => `<button class="chip" data-h="${w}" data-label="Hear it"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${info(w)[0]}</rt></ruby> <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
   }
   const ws = SCROLL_WORDS().filter(w => WORDS[w].category === tab);
   return `<p class="label cathead">${CATEGORIES[tab].name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>
-    <div class="grid">${ws.map(scrollCard).join('')}</div>`;
+    <div class="grid" data-nav>${ws.map(scrollCard).join('')}</div>`;
 }
 function openScroll(back, top, tab){   // top: where to scroll to, to come back to the same place. tab: the tab to open at
   const tabs = scrollTabs();
@@ -269,7 +269,9 @@ function openScroll(back, top, tab){   // top: where to scroll to, to come back 
   sheet.querySelectorAll('.tab').forEach(b => b.onclick = () => { if (b.dataset.tab !== scrollTab){ SFX.turn(); openScroll(back, 0, b.dataset.tab); } });
   sheet.querySelectorAll('.card[data-w]').forEach(b => b.onclick = () => {
     const at = sheet.scrollTop;
-    SFX.blip(); wordPage(b.dataset.w, () => openScroll(back, at));
+    SFX.blip(); wordPage(b.dataset.w, () => {   // back from its page, still on the same word
+      openScroll(back, at); const c = sheet.querySelector(`.card[data-w="${b.dataset.w}"]`); if (c){ markNav(c); c.focus({preventScroll:true}); }
+    });
   });
   sheet.querySelectorAll('.chip[data-h]').forEach(b => b.onclick = () => {
     const w = b.dataset.h, [py, en] = info(w); say(w);

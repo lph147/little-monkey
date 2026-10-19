@@ -33,7 +33,7 @@ test('the Word Scroll shows caught words, shadows of heard words, and ？ for th
   const game = loadGame({save: {version: 5, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}}, heard: {'猴子': 3, '石头': 2, '有': 9}}});
   const html = allCategories(game), total = game.run('ORDER.length + PHRASES.length');   // words and phrases
   const stone = game.run("picHTML('石头')"), monkey = game.run("picHTML('猴子')");   // their pixel sprites
-  assert.ok(html.includes(`<button class="card" data-w="石头"><div class="c" aria-hidden="true">${stone}</div><div class="hz">石头</div><div class="p">shítou</div>`), 'a caught word shows its picture, characters and pinyin');
+  assert.ok(html.includes(`<button class="card" data-w="石头" data-label="Open"><div class="c" aria-hidden="true">${stone}</div><div class="hz">石头</div><div class="p">shítou</div>`), 'a caught word shows its picture, characters and pinyin');
   assert.ok(html.includes(`<div class="card heard" aria-label="Heard 3 times, not caught yet"><div class="c sil" aria-hidden="true">${monkey}</div><div class="p">heard 3×</div>`), 'a heard word shows its shadow and count');
   assert.ok(!html.includes('猴子') && !html.includes('hóuzi'), 'a heard word is not given away');
   assert.equal(count(html, 'class="pix"'), 2, 'only the caught word and the heard word (its shadow) show a picture');
@@ -42,7 +42,7 @@ test('the Word Scroll shows caught words, shadows of heard words, and ？ for th
 
 test('a caught word without a picture shows its characters in the grid', () => {
   const game = loadGame({save: {version: 8, started: true, w: {'我': {lv: 1, due: 0, ok: 0}}}});
-  assert.ok(allCategories(game).includes('<button class="card" data-w="我"><div class="c hz">我</div><div class="p">wǒ</div>'));
+  assert.ok(allCategories(game).includes('<button class="card" data-w="我" data-label="Open"><div class="c hz">我</div><div class="p">wǒ</div>'));
 });
 
 test('the Word Scroll has a tab for each category, with how many of its words you have caught', () => {
@@ -93,7 +93,7 @@ test('the Heard tab shows words this area doesn\'t teach, most heard first', () 
   const game = loadGame({save: {version: 5, started: true, heard: {'是': 4, '有': 9, '猴子': 3, '里': 5}}});
   game.run("openScroll(null, 0, 'heard')");
   const html = game.el('#sheet').innerHTML, list = html.slice(html.indexOf('>Heard<'));
-  assert.deepEqual([...list.matchAll(/data-h="([^"]+)"><ruby>\1<rt[^>]*>([^<]+)<\/rt><\/ruby> <span class="small">(\d+)×/g)].map(m => m[1] + m[2] + m[3]),
+  assert.deepEqual([...list.matchAll(/data-h="([^"]+)" data-label="Hear it"><ruby>\1<rt[^>]*>([^<]+)<\/rt><\/ruby> <span class="small">(\d+)×/g)].map(m => m[1] + m[2] + m[3]),
     ['有yǒu9', '里lǐ5', '是shì4'], 'with pinyin, most heard first');
   assert.ok(!list.includes('猴子'), 'a word you can collect here goes in its category, not the Heard list');
   const fresh = loadGame();
@@ -122,4 +122,30 @@ test('a word\'s example is the first line with it if you haven\'t seen one, or o
   assert.ok(game.el('#sheet').innerHTML.includes('There is a rabbit in the grass.'), 'no line has 兔子, so its page shows the example written for it');
   game.run("S.w['头带'] = {lv: 1, due: 0, ok: 0}; wordPage('头带', () => {})");
   assert.ok(game.el('#sheet').innerHTML.includes('I want the headband.'), '头带 is only in a sentence you complete, so that is its example');
+});
+
+test('in the Word Scroll, up and down step through the words one by one, A opens the chosen one, and Back returns to it', () => {
+  const game = loadGame({dom: true, save: {version: 27, started: true, w: Object.fromEntries(['石头', '山', '花'].map(w => [w, {lv: 1, due: 0, ok: 0}]))}});
+  const sheet = game.el('#sheet'), chosen = () => game.run('(c => c && (c.dataset.w || c.dataset.a))(chosenBtn())');
+  game.run("mode = 'play'; openScroll(null, 0, 'nature')");
+  assert.equal(chosen(), 'ok', 'Back to start with');
+  game.run("navFocus('down')"); assert.equal(chosen(), '石头', 'down: the first word');
+  assert.equal(game.run('buttonLabels(0)[0]'), 'Open', 'and A says Open');
+  game.run("navFocus('up')"); assert.equal(chosen(), '石头', 'up from the first word stays put');
+  game.run("navFocus('down')"); assert.equal(chosen(), '山', 'down: the next word');
+  game.run('pressA()');
+  assert.match(sheet.textContent, /shān/, 'A opens its page');
+  sheet.querySelector('[data-a=ok]').click();
+  assert.equal(chosen(), '山', 'Back from its page: still on 山');
+  assert.ok(sheet.querySelector('.tab[aria-selected="true"][data-tab="nature"]'), 'on the same tab');
+  for (let i = 0; i < 20; i++) game.run("navFocus('down')");
+  assert.equal(chosen(), 'ok', 'past the last word: Back');
+  game.run("navFocus('up')"); assert.equal(chosen(), '花', 'up from Back: the last word you’ve caught');
+});
+
+test('the word being taught has green pinyin too, like its characters', () => {
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '../css/game.css'), 'utf8');
+  assert.match(css, /\.tok\.teach rt\{color:var\(--jade\)/);
+  const game = loadGame();
+  assert.match(game.run("lineHTML(['我', '是', '猴子', '。'], '猴子')"), /class="tok learn teach" data-t="猴子"><ruby>猴子<rt/);
 });

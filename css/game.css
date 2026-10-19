@@ -153,6 +153,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .sentence-en{font-size:1rem;color:var(--ink);background:color-mix(in srgb,var(--gold) 16%,transparent);border-radius:4px;padding:4px 8px;margin:6px 0 8px}
 ruby{ruby-position:over}
 rt{font-size:.5em;color:var(--muted);font-family:var(--text)}
+.tok.teach rt{color:var(--jade);font-weight:700}   /* the word being taught: its pinyin is green too, like its characters */
 rt.hid{visibility:hidden}
 .punct{font-size:1.55rem;line-height:1.2;padding-bottom:4px;align-self:flex-start;margin-top:.55em}
 .nb{display:inline-flex;align-items:flex-end;gap:2px}   /* a word and the punctuation after it, never split across lines */
@@ -292,7 +293,7 @@ rt.hid{visibility:hidden}
 .round.ready{box-shadow:0 4px 0 rgba(0,0,0,.3),0 0 0 4px var(--gold)}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}
 .sheet .menu button.navsel,.sheet [data-nav] button.navsel{outline:3px solid var(--gold);outline-offset:2px}
-.sheet [data-nav]:has(.navsel:not(.primary)) .btn.primary::before{display:none}   /* the A badge follows the button you've chosen */
+.sheet [data-nav]:has(.navsel:not(.primary)) .btn.primary::before,.sheet:has(.grid[data-nav] .navsel,.chips[data-nav] .navsel) .actions .btn.primary::before{display:none}   /* the A badge follows the button you've chosen */
 .sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.sheet [data-nav] button.navsel::before,.titlecard .btn.sel::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-8px;left:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .sheet [data-b]::after,#skipBtn::after{content:"B";position:absolute;top:-8px;right:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnB);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
