@@ -128,7 +128,7 @@ function updateHUD(){
 }
 function titleText(){   // the title screen's words, under its name: for a first game, to turn the sound on, and a short warning if there's no Chinese voice (and how to fix it on a card)
   const problem = voiceProblem(), first = !SLOTS.some(slotSummary);
-  $('#titleText').innerHTML = (first && !problem ? '<p id="goal">Turn your sound on. Every word is spoken aloud using your device’s Chinese voice.</p>' : '')
+  $('#titleText').innerHTML = (first && !problem ? '<p id="goal">Turn your sound on: every word is spoken aloud.</p>' : '')
     + (problem ? `<p class="small warn">${VOICE_SHORT[problem]} <button class="linkbtn" id="voiceHelp">How to fix it</button></p>` : '');
   const vh = $('#voiceHelp');
   if (vh) vh.onclick = () => { openCard(`<p class="label">Hearing Chinese</p><p>${VOICE_HELP[problem]}</p><div class="actions"><button class="btn primary" data-a="ok" data-b>OK</button></div>`); on('[data-a=ok]', closeCard); };
@@ -287,4 +287,10 @@ window.addEventListener('resize', fit);
 setUpGame(); fit(); toTitle();
 requestAnimationFrame(frame);
 // The app (sw.js): lets the game be installed on a phone's home screen, full screen, and played offline.
-if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+// Once it's ready, it's given every voice clip to keep, so all the Chinese can be heard offline too.
+if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+  const keepClips = () => navigator.serviceWorker.ready.then(r => r.active && r.active.postMessage({keepClips:
+    Object.entries(VOICE_CLIPS).flatMap(([v, clips]) => Object.values(clips).map(code => `audio/${v}/${code}.mp3`))})).catch(() => {});
+  if (typeof VOICE_CLIPS !== 'undefined'){ keepClips(); navigator.serviceWorker.addEventListener('controllerchange', keepClips); }   // and again when a new version takes over
+}

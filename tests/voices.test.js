@@ -44,3 +44,53 @@ test('the old monkey has his own voice for his lines, and everyone else the main
   assert.ok(!p.clips.yunze['我怕！'], 'the little monkey’s line isn’t in the old monkey’s voice');
   assert.ok(p.clips.yunxi['猴子'] && p.clips.yunxi['你好！'], 'words and lines are in the main voice');
 });
+
+// The game with pretend sound: an AudioContext whose clips "play" (recorded in __played), clip files that load
+// unless they're in __offline, and a device voice that records what it says (__spoken).
+function withClips(){
+  const {loadGame} = require('./fake-browser');
+  const game = loadGame();
+  game.run(`globalThis.__played = []; globalThis.__spoken = []; globalThis.__offline = false;
+    globalThis.fetch = url => __offline ? Promise.reject(new Error('offline')) : Promise.resolve({ok: true, arrayBuffer: () => Promise.resolve(url)});
+    window.AudioContext = class { constructor(){ this.state = 'running'; this.destination = {}; }
+      decodeAudioData(data, ok){ ok({url: data}); }
+      createBufferSource(){ const s = {connect(){}, start(){ __played.push(s.buffer.url); setTimeout(() => s.onended && s.onended(), 0); }, stop(){}}; return s; } };
+    AC = null;
+    globalThis.SpeechSynthesisUtterance = function(t){ this.text = t; };
+    globalThis.speechSynthesis = {speaking: false, pending: false, getVoices: () => [{lang: 'zh-CN'}], cancel(){}, speak(u){ __spoken.push(u.text); setTimeout(() => u.onend && u.onend(), 0); }};`);
+  return game;
+}
+const settle = game => new Promise(r => setImmediate(r)).then(() => { game.flush(); return new Promise(r => setImmediate(r)); }).then(() => game.flush());
+
+test('the game says Chinese with its clips: the old monkey in his own voice, everyone else in the main one', async () => {
+  const game = withClips();
+  const clip = (text, who) => game.run(`clipFor(${JSON.stringify(text)}, ${JSON.stringify(who)})`);
+  assert.match(clip('我是老猴子。这是花果山。', 'elder'), /^audio\/yunze\/\w+\.mp3$/);
+  assert.match(clip('猴子', 'elder'), /^audio\/yunxi\//, 'a word he has no clip for is in the main voice');
+  assert.match(clip('我是老猴子。这是花果山。', 'playful'), /^audio\/yunxi\//);
+  assert.equal(clip('不在游戏里', 'elder'), null);
+  game.run(`say('猴子')`); await settle(game);
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__played)')), [clip('猴子')]);
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__spoken)')), [], 'not the device voice');
+});
+
+test('without a clip, or offline before a clip was kept, the device voice says it', async () => {
+  const game = withClips();
+  game.run(`say('不在游戏里')`); await settle(game);
+  game.run(`__offline = true; say('山')`); await settle(game);
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__spoken)')), ['不在游戏里', '山']);
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__played)')), []);
+});
+
+test('a line in the speech box is said in its speaker’s voice', () => {
+  const game = withClips();
+  game.run(`globalThis.__who = []; (() => { const s = say; say = (t, e, who) => { __who.push(who); return s(t, e, who); }; })();
+    showDialog(speaker('elder'), {t: ['你好', '！'], en: 'Hello!'})`);
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__who)')), ['elder']);
+});
+
+test('with the clips, the title screen doesn’t warn about a missing Chinese voice', () => {
+  const game = withClips();
+  game.run(`globalThis.speechSynthesis = undefined; delete globalThis.speechSynthesis; titleText()`);
+  assert.doesNotMatch(game.el('#titleText').innerHTML, /class="small warn"/);
+});

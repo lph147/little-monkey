@@ -1,4 +1,5 @@
-// Sound effects, the background music (guzheng and dizi) and the device's Chinese voice.
+// Sound effects, the background music (guzheng and dizi), and the Chinese: voice clips (made by npm run voices,
+// listed in content/voices.js), or the device's Chinese voice for anything without one.
 
 /* ================= SOUND ================= */
 let AC = null;
@@ -293,12 +294,13 @@ function duck(){ if (AC && mBus && mTimer){ mBus.gain.cancelScheduledValues(AC.c
 document.addEventListener('visibilitychange', () => { if (document.hidden) musicStop(); else if (mode !== 'title') musicStart(); });
 
 /* ================= SPEECH ================= */
-let zhVoice = null, speaking = false, speakSafety = 0, uttRef = null;
+let zhVoice = null, speaking = false, speakSafety = 0, uttRef = null, clipSrc = null;
 function pickVoice(){ try { const vs = speechSynthesis.getVoices(); zhVoice = vs.find(v => /zh[-_]CN/i.test(v.lang)) || vs.find(v => /^zh/i.test(v.lang)) || null; } catch(e) {} }
 if ('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
 // What's wrong with the Chinese voice, if anything: 'none' if this browser can't speak at all,
 // 'missing' if it has voices but no Chinese one, '' if all is well (or the voices haven't loaded yet).
 function voiceProblem(){
+  if (canPlayClips()) return '';   // the game's own voice clips: no device voice needed
   if (!('speechSynthesis' in window)) return 'none';
   let vs = []; try { vs = speechSynthesis.getVoices() || []; } catch(e) {}
   if (!vs.length) return '';
@@ -313,7 +315,41 @@ const VOICE_HELP = {
   missing: 'Your device has no Chinese voice yet, so you won’t hear the words. On an iPhone: Settings, Accessibility, Spoken Content, Voices, Chinese, then download a voice. On Android: in Settings, search for Text-to-speech, open Speech Services by Google, Install voice data, and add Chinese (Mandarin). Then reload the game.'
 };
 const speechBusy = () => speaking && performance.now() < speakSafety;
-function say(text, onend){
+const canPlayClips = () => typeof VOICE_CLIPS !== 'undefined' && !!(window.AudioContext || window.webkitAudioContext);
+// The clip that says this text in who's voice (a character with their own voice, VOICE_OF in content/voices.js),
+// or in everyone's voice; null if there isn't one.
+function clipFor(text, who){
+  if (typeof VOICE_CLIPS === 'undefined') return null;
+  for (const v of [VOICE_OF[who], VOICE_OF.everyone]){
+    const code = v && VOICE_CLIPS[v] && VOICE_CLIPS[v][text];
+    if (code) return `audio/${v}/${code}.mp3`;
+  }
+  return null;
+}
+const clipBuffers = new Map();   // each clip, once loaded and decoded
+function loadClip(a, url){
+  if (!clipBuffers.has(url)) clipBuffers.set(url, fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    .then(data => new Promise((ok, no) => a.decodeAudioData(data, ok, no)))
+    .catch(e => { clipBuffers.delete(url); throw e; }));
+  return clipBuffers.get(url);
+}
+// Say some Chinese aloud: its clip if there is one (in who's voice), else the device's Chinese voice.
+// onend runs when it's finished (or couldn't be said).
+function say(text, onend, who){
+  const url = clipFor(text, who), a = url && getAC();
+  if (!a) return sayDevice(text, onend);
+  stopSpeech();
+  const me = {}; uttRef = me;
+  speaking = true; speakSafety = performance.now() + text.length * 500 + 4000; duck();
+  loadClip(a, url).then(buf => {
+    if (uttRef !== me) return;   // something else was said in the meantime
+    const s = a.createBufferSource();
+    s.buffer = buf; s.connect(a.destination);
+    s.onended = () => { if (uttRef !== me) return; clipSrc = null; speaking = false; duck(); if (onend) onend(); };
+    clipSrc = s; s.start();
+  }).catch(() => { if (uttRef === me) sayDevice(text, onend); });   // the clip didn't load (offline before it was kept): the device's voice
+}
+function sayDevice(text, onend){
   try {
     if (!('speechSynthesis' in window)) { onend && onend(); return; }
     const ss = speechSynthesis;
@@ -327,5 +363,10 @@ function say(text, onend){
     else ss.speak(u);
   } catch(e) { speaking = false; onend && onend(); }
 }
-function stopSpeech(){ try { uttRef = null; speaking = false; speechSynthesis.cancel(); duck(); } catch(e) {} }
+function stopSpeech(){
+  uttRef = null; speaking = false;
+  if (clipSrc){ try { clipSrc.onended = null; clipSrc.stop(); } catch(e) {} clipSrc = null; }
+  try { speechSynthesis.cancel(); } catch(e) {}
+  duck();
+}
 function unlockSpeech(){ try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch(e) {} }

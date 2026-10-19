@@ -251,7 +251,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **A shared word bank.** Every word is defined once, with its pinyin, meaning, category, sprite and the area it belongs to. The scheduler, the Word Scroll, shops and encounters all read from it.
 - **Pixel pictures for every collectible.** Emoji look different on every device and clash with the pixel style, so animals, food and items get their own pixel pictures. They're 32 × 32 (decided 17 October 2026: at 16 × 16 they looked too rough on cards, and 你好 (hello) was hard to read), drawn from shapes in tools/draw-pictures.js, which shades and outlines them, so a new one is quick to make. They're shown at sizes that give each pixel a whole number of the screen's real pixels, so they stay sharp. The animals walking on the map stay 16 × 16, a square's size. This is the biggest cost per area.
 - **Saving.** Progress stays in the browser, plus a save export and import, so a cleared browser doesn't lose weeks of play.
-- **Audio.** The device's Chinese voice for now. The plan (19 October 2026): pick a computer voice from Azure with a listening test (tools/try-voices.html), then make an audio file for every word and line in advance, so every device sounds the same and works offline, with the device's voice for anything without a file. Recorded native audio replaces the files later, under the same names, once the game is finished. **Chosen after the listening test (19 October 2026): Yunxi (zh-CN-YunxiNeural, a young man) for the words and most lines, and Yunze (zh-CN-YunzeNeural, an older man) for the old monkey.**
+- **Audio.** Voice clips made in advance (since 19 October 2026; before, the device's Chinese voice). The plan (19 October 2026): pick a computer voice from Azure with a listening test (tools/try-voices.html), then make an audio file for every word and line in advance, so every device sounds the same and works offline, with the device's voice for anything without a file. Recorded native audio replaces the files later, under the same names, once the game is finished. **Chosen after the listening test (19 October 2026): Yunxi (zh-CN-YunxiNeural, a young man) for the words and most lines, and Yunze (zh-CN-YunzeNeural, an older man) for the old monkey.**
 - **Format.** A web game that runs in a phone browser, hosted on GitHub Pages and built in Claude Code.
 
 ## Risks and open questions
@@ -358,7 +358,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [ ] Playtest the prologue for a week
 - [ ] Voices (19 October 2026): a free Azure Speech account (Free F0, East US) and a listening test of 13 tricky words and lines in 4 voices (npm run try-voices; Yunxi chosen, with Yunze for the old monkey); then a clip for every word and line (npm run voices), checked by the native speaker
   - [x] Part 1: a clip for every word and line, 223 of them (19 October 2026)
-  - [ ] Part 2: the game plays them (the device's voice for anything without one), and the app downloads them all for offline play
+  - [x] Part 2: the game plays them (the device's voice for anything without one), and the app downloads them all for offline play (19 October 2026)
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md
   - [x] One fill-the-gap question: the sentence in Chinese and English, choices following the word's level

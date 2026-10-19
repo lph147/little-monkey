@@ -114,7 +114,7 @@ const yourName = () => (AREA.yourNames || []).find(n => matches(n.if)) || NAMES.
 const animalName = id => { const a = ANIMALS.find(x => x.id === id); return a && {zh:a.hz, py:WORD_BANK[a.hz].py}; };
 function speaker(id){
   const n = id === 'player' ? yourName() : NAMES[id] || animalName(id);
-  return `<div class="speaker">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
+  return `<div class="speaker" data-id="${esc(id)}">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
 }
 function portrait(id){
   if (portraitCache[id]) return portraitCache[id];

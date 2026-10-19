@@ -129,8 +129,9 @@ function showDialog(who, line, opts = {}){
     held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
     bindTokens(talkBox);
     const text = line.t.join(''), q = sel => talkBox.querySelector(sel);
-    say(text);
-    q('[data-a=say]').onclick = () => say(text);
+    const id = (who.match(/data-id="([^"]*)"/) || [])[1];   // who's speaking (from speaker()), for their own voice
+    say(text, null, id);
+    q('[data-a=say]').onclick = () => say(text, null, id);
     const en = q('[data-a=en]');
     if (en) en.onclick = () => { q('.sentence-en').hidden = false; en.remove(); };
     const next = () => { talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };
