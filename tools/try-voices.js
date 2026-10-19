@@ -57,10 +57,12 @@ const RATE = '-15%';   // a little slower than normal: the game's clips so far
 const clipFile = (voice, item) => `${voice.id}-${item.id}.mp3`;
 const wanted = () => VOICES.flatMap(v => ITEMS.filter(i => !v.only || v.only.includes(i.id)).map(i => [v, i]));
 
-function readKey(file = KEY_FILE){
-  if (!fs.existsSync(file)) return {};
-  const get = name => (fs.readFileSync(file, 'utf8').match(new RegExp(`^[ \\t]*${name}[ \\t]*=[ \\t]*(\\S*)`, 'm')) || [])[1] || '';
-  return {key:get('key'), region:get('region') || 'eastus', google:get('google')};
+// The keys, from voice-key.txt, or from GitHub's secrets (AZURE_TTS_KEY, GOOGLE_TTS_KEY) when GitHub makes the clips
+// (.github/workflows/voices.yml).
+function readKey(file = KEY_FILE, env = process.env){
+  const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+  const get = name => (text.match(new RegExp(`^[ \\t]*${name}[ \\t]*=[ \\t]*(\\S*)`, 'm')) || [])[1] || '';
+  return {key:get('key') || env.AZURE_TTS_KEY || '', region:get('region') || 'eastus', google:get('google') || env.GOOGLE_TTS_KEY || ''};
 }
 
 function ssml(voice, item, full = true){   // full: with the voice's speed, style and silences (false: just the words)
@@ -84,8 +86,8 @@ async function makeGoogleClip(key, voice, item){
   for (let tries = 0; ; tries++){
     let res;
     try {
-      res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${encodeURIComponent(key)}`, {
-        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(googleRequest(voice, item))});
+      res = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
+        method:'POST', headers:{'Content-Type':'application/json', 'X-Goog-Api-Key':key}, body:JSON.stringify(googleRequest(voice, item))});
     } catch(e) { throw new Error('Couldn’t reach Google. Are you online?'); }
     if (res.ok){
       const audio = Buffer.from((await res.json()).audioContent || '', 'base64');
@@ -101,9 +103,23 @@ async function makeGoogleClip(key, voice, item){
 }
 // Google's Mandarin voices: [{name, gender}].
 async function googleVoices(key){
-  const res = await fetch(`https://texttospeech.googleapis.com/v1/voices?languageCode=cmn-CN&key=${encodeURIComponent(key)}`);
+  const res = await fetch('https://texttospeech.googleapis.com/v1/voices?languageCode=cmn-CN', {headers:{'X-Goog-Api-Key':key}});
   if (!res.ok) throw new Error(`Google said no (${res.status}): check the key in voice-key.txt, and that the Cloud Text-to-Speech API is enabled.`);
   return ((await res.json()).voices || []).map(v => ({name:v.name, gender:v.ssmlGender}));
+}
+// A Google voice whose name Google doesn't have is swapped for another woman's voice of the same kind (Standard,
+// Wavenet, Chirp3-HD) that isn't used yet, and its description says which. (voices: those about to be made)
+async function checkGoogleNames(key, voices){
+  let have;
+  try { have = await googleVoices(key); } catch(e) { return; }   // making the clips will say what's wrong
+  const used = new Set(voices.map(v => v.name)), kind = name => name.replace(/-[^-]+$/, '');
+  for (const v of new Set(voices.filter(v => v.provider === 'google'))){
+    if (have.some(h => h.name === v.name)) continue;
+    const swap = have.find(h => kind(h.name) === kind(v.name) && h.gender === 'FEMALE' && !used.has(h.name));
+    if (!swap) continue;
+    console.log(`  Google has no ${v.name}: using ${swap.name} instead.`);
+    used.add(swap.name); v.about += ` (${swap.name.replace(/^cmn-CN-/, '')})`; v.name = swap.name;
+  }
 }
 // One clip, from Google or Azure (keys: readKey()'s). Throws an Error with a plain-English message if it can't.
 const makeClip = (keys, voice, item) => voice.provider === 'google' ? makeGoogleClip(keys.google, voice, item) : makeAzureClip(keys, voice, item);
@@ -145,14 +161,18 @@ async function main(){
     try { for (const v of await googleVoices(keys.google)) console.log(`${v.name} (${String(v.gender).toLowerCase()})`); } catch(e) { console.log(e.message); process.exitCode = 1; }
     return;
   }
-  const missing = [VOICES.some(v => v.provider !== 'google') && !keys.key && 'KEY 1 from the Azure portal after "key="',
-    VOICES.some(v => v.provider === 'google') && !keys.google && 'the API key from Google Cloud after "google="'].filter(Boolean);
+  // The clips still to make, for the voices there's a key for (the others are skipped, and said so).
+  const hasKey = v => v.provider === 'google' ? !!keys.google : !!keys.key;
+  const all = wanted().filter(([v, i]) => !fs.existsSync(path.join(OUT, clipFile(v, i)))), todo = all.filter(([v]) => hasKey(v));
+  const missing = [all.some(([v]) => v.provider !== 'google' && !hasKey(v)) && 'KEY 1 from the Azure portal after "key="',
+    all.some(([v]) => v.provider === 'google' && !hasKey(v)) && 'the API key from Google Cloud after "google="'].filter(Boolean);
   if (missing.length){
-    console.log(`A key is missing. Open voice-key.txt in the project folder and paste ${missing.join(', and ')}. Save it, and run this again.`);
-    process.exitCode = 1; return;
+    console.log(`A key is missing, so ${[...new Set(all.filter(([v]) => !hasKey(v)).map(([v]) => v.label))].join(', ')} can't be made: open voice-key.txt in the project folder and paste ${missing.join(', and ')}.`);
+    process.exitCode = 1;
+    if (!todo.length){ if (fs.existsSync(OUT)) writeList(); return; }
   }
+  if (todo.some(([v]) => v.provider === 'google')) await checkGoogleNames(keys.google, todo.map(([v]) => v));
   fs.mkdirSync(OUT, {recursive:true});
-  const todo = wanted().filter(([v, i]) => !fs.existsSync(path.join(OUT, clipFile(v, i))));
   console.log(todo.length ? `Making ${todo.length} clips (Azure's slowly: its free tier allows about 20 a minute)…` : 'All the clips are already made.');
   const failed = new Set();
   for (const [voice, item] of todo){
@@ -173,4 +193,4 @@ async function main(){
 }
 
 if (require.main === module) main();
-module.exports = {VOICES, ITEMS, KEY_FILE, clipFile, ssml, googleRequest, readKey, makeClip, pauseAfter, pause};
+module.exports = {VOICES, ITEMS, KEY_FILE, clipFile, ssml, googleRequest, checkGoogleNames, readKey, makeClip, pauseAfter, pause};

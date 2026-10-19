@@ -1,0 +1,37 @@
+# Makes voice clips on GitHub, so they can be made without the computer that has voice-key.txt. The keys are kept
+# in GitHub's secrets (the repository's Settings, Secrets and variables, Actions): GOOGLE_TTS_KEY for Google's
+# voices, and AZURE_TTS_KEY if Azure's are ever made here. GitHub never shows a secret, even in its logs.
+# It runs when the `voices` branch is pushed, or by hand from the Actions tab (Make voice clips, Run workflow).
+# It makes any clips the voice test (tools/try-voices.js) or the game (tools/make-voices.js) is missing, lists
+# Google's Mandarin voices in tools/try-voices/google-voices.txt, and saves them back on the same branch, so
+# nothing goes live until that branch is merged into main.
+name: Make voice clips
+on:
+  push:
+    branches: [voices]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  clips:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Make the clips
+        env:
+          GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
+          AZURE_TTS_KEY: ${{ secrets.AZURE_TTS_KEY }}
+        run: |
+          node tools/try-voices.js --list-google > tools/try-voices/google-voices.txt || true
+          node tools/try-voices.js || true
+          node tools/make-voices.js || true
+      - name: Save them on this branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898315+github-actions[bot]@users.noreply.github.com"
+          git add -A tools/try-voices audio content/voices.js
+          git diff --cached --quiet || git commit -m "Voice clips, made on GitHub"
+          git push origin HEAD:${{ github.ref_name }}

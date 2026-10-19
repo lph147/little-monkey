@@ -88,10 +88,11 @@ const VOICE_OF = ${JSON.stringify(who)};   // which voice says what: words on th
 
 async function main(){
   const azure = readKey();
-  const p = plan(), google = Object.values(p.voices).some(v => v.provider === 'google');
-  if (!azure.key || (google && !azure.google)){ console.log(`A key is missing: paste ${!azure.key ? 'KEY 1 from the Azure portal after "key="' : 'the API key from Google Cloud after "google="'} in voice-key.txt, then run this again.`); process.exitCode = 1; return; }
+  const p = plan();
   const todo = Object.entries(p.clips).flatMap(([v, texts]) => Object.entries(texts).filter(([, c]) => !fs.existsSync(clipPath(v, c))).map(([t, c]) => [v, t, c]));
-  console.log(todo.length ? `Making ${todo.length} clips (slowly: the free tier allows about 20 a minute, so about ${Math.ceil(todo.length * 3.3 / 60)} minutes)…` : 'Every clip is already made.');
+  const needs = provider => todo.some(([v]) => (p.voices[v].provider || 'azure') === provider);   // only the keys for clips still to make
+  if ((needs('azure') && !azure.key) || (needs('google') && !azure.google)){ console.log(`A key is missing: paste ${needs('azure') && !azure.key ? 'KEY 1 from the Azure portal after "key="' : 'the API key from Google Cloud after "google="'} in voice-key.txt, then run this again.`); process.exitCode = 1; return; }
+  console.log(todo.length ? `Making ${todo.length} clips (Azure's slowly: its free tier allows about 20 a minute)…` : 'Every clip is already made.');
   let n = 0;
   for (const [v, text, c] of todo){
     try {

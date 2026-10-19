@@ -109,3 +109,26 @@ test('Google’s voices: the key is read from its own line, and a clip asks for 
   assert.equal(googleRequest({...voice, speed:0.9}, {zh:'水'}).audioConfig.speakingRate, 0.9);
   assert.ok(pauseAfter(voice) < pauseAfter({name:'zh-CN-XiaoxiaoNeural'}), 'Azure’s free tier needs a longer pause between clips');
 });
+
+test('keys can come from GitHub’s secrets, and a Google voice it doesn’t have is swapped for one like it', async () => {
+  const {readKey, checkGoogleNames} = require('../tools/try-voices');
+  assert.deepEqual(readKey(path.join(__dirname, 'no-such-file.txt'), {GOOGLE_TTS_KEY:'g', AZURE_TTS_KEY:'a'}), {key:'a', region:'eastus', google:'g'});
+  const real = global.fetch;
+  global.fetch = async () => ({ok:true, json: async () => ({voices:[
+    {name:'cmn-CN-Wavenet-A', ssmlGender:'FEMALE'}, {name:'cmn-CN-Wavenet-B', ssmlGender:'MALE'}, {name:'cmn-CN-Wavenet-D', ssmlGender:'FEMALE'}]})});
+  try {
+    const voices = [{provider:'google', name:'cmn-CN-Wavenet-A', about:'one'}, {provider:'google', name:'cmn-CN-Wavenet-Z', about:'two'}];
+    await checkGoogleNames('key', voices);
+    assert.equal(voices[0].name, 'cmn-CN-Wavenet-A', 'a voice Google has stays');
+    assert.equal(voices[1].name, 'cmn-CN-Wavenet-D', 'a missing one becomes another woman’s voice of the same kind, not one already used');
+    assert.match(voices[1].about, /Wavenet-D/, 'and says so');
+  } finally { global.fetch = real; }
+});
+
+test('the GitHub job uses the secrets, and only saves clips on its own branch', () => {
+  const job = fs.readFileSync(path.join(__dirname, '..', '.github', 'workflows', 'voices.yml'), 'utf8');
+  assert.match(job, /GOOGLE_TTS_KEY: \$\{\{ secrets\.GOOGLE_TTS_KEY \}\}/);
+  assert.match(job, /branches: \[voices\]/, 'it runs for the voices branch, never main');
+  const push = job.split('\n').filter(l => l.includes('git push'));
+  assert.deepEqual(push.map(l => l.trim()), ['git push origin HEAD:${{ github.ref_name }}'], 'it pushes back to its own branch, never to main (the live site)');
+});
