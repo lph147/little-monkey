@@ -205,6 +205,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.
 - [ ] 词 Words (the Word Scroll) and 朋友 Friends open, and Back returns to the menu, on the same tile.
+- [ ] On an iPhone (iOS 17 or later): with the silent switch on, the music and sound effects still play. Lock the phone (or switch to another app) for a moment and come back: the music starts again when you come back (or at your next tap).
 - [ ] Settings: Music, Sound effects and Pinyin switch on and off. With pinyin off, it's hidden over words in sentences. Back returns to the menu.
 - [ ] 保存 Save closes the menu and says "Saved: Game 1, just now".
 - [ ] Settings, Watch the opening plays the opening, then carries on where you were. Settings, Title screen: your games, then your game and Continue, puts you back where you were.

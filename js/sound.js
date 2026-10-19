@@ -2,7 +2,19 @@
 
 /* ================= SOUND ================= */
 let AC = null;
-function getAC(){ try { if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume(); } catch(e) { return null; } return AC; }
+// The sound engine, made the first time a tap needs it. An iPhone (iOS 17 or later) is told this is a game with
+// sound (playback), so its silent switch doesn't mute the music and effects, as with a video. Sound that's paused
+// starts again: suspended, or interrupted (an iPhone, after the phone is locked, a call or another app).
+function getAC(){
+  try {
+    if (!AC){
+      if (typeof navigator !== 'undefined' && navigator.audioSession) try { navigator.audioSession.type = 'playback'; } catch(e) {}
+      AC = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (AC.state !== 'running' && AC.state !== 'closed') AC.resume();
+  } catch(e) { return null; }
+  return AC;
+}
 function ac(){ return S.sound ? getAC() : null; }
 function tone(f, d = .1, type = 'square', v = .045, when = 0, slide = 0){
   const a = ac(); if (!a) return;
