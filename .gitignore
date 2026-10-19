@@ -1,2 +1,5 @@
 # Personal Claude Code settings for this computer
 .claude/settings.local.json
+
+# The Azure key for making voice clips (tools/try-voices.js): it stays on this computer, never on GitHub
+voice-key.txt

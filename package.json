@@ -7,6 +7,7 @@
     "test": "node --test",
     "chinese": "node tools/chinese-sheet.js",
     "icons": "node tools/make-icons.js",
-    "pictures": "node tools/draw-pictures.js"
+    "pictures": "node tools/draw-pictures.js",
+    "try-voices": "node tools/try-voices.js"
   }
 }

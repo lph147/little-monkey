@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice test · Little Monkey</title>
+<!-- The voice test: the same tricky words and lines in a few of Azure's Mandarin voices, side by side
+     with this device's own voice (the one the game uses now), to pick a voice for the game.
+     The clips are made by `npm run try-voices` (tools/try-voices.js), which writes try-voices/list.json.
+     Open it at http://127.0.0.1:8000/tools/try-voices.html (npm start). -->
+<style>
+:root{--bg:#E9F0EA;--paper:#FFFDF6;--ink:#1F2A24;--muted:#5B6A61;--line:#C9D6CC;--accent:#2E7D4F;--bad:#B23A32}
+@media (prefers-color-scheme: dark){:root{--bg:#121A16;--paper:#1C2822;--ink:#E7EFE9;--muted:#9FB0A6;--line:#33463B;--accent:#6CCB91;--bad:#F08A80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif;padding:16px}
+h1{font-size:1.3rem;margin:0 0 4px}
+p{margin:0 0 10px;max-width:46rem}
+.muted{color:var(--muted)}
+.err{color:var(--bad);font-weight:600}
+.wrap{overflow-x:auto;border:2px solid var(--ink);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+th{font-size:.85rem;font-weight:600}
+th small{display:block;font-weight:400;color:var(--muted)}
+.zh{font-size:1.35rem;font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;white-space:nowrap}
+.py{color:var(--accent)}
+.listen{font-size:.85rem;color:var(--muted);max-width:18rem}
+button{font:inherit;padding:4px 10px;border:2px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink);cursor:pointer;min-width:44px;min-height:36px}
+button:hover{background:var(--bg)}
+button.playing{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+button.all{font-size:.85rem}
+td.none{color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<h1>Voice test</h1>
+<p>Each row is a word or line from the game that computer voices often get wrong; the note says what to listen for.
+Press ▶ to hear a voice, or <b>All</b> to hear every voice in turn. <b>This device</b> is the voice the game uses now.</p>
+<p id="status" class="muted">Loading…</p>
+<div class="wrap"><table id="table" hidden></table></div>
+<script>
+'use strict';
+let current = null;   // what's playing: {stop, btn}
+function stop(){ if (current){ current.stop(); current.btn.classList.remove('playing'); current = null; } }
+
+// Plays one clip (or the device voice) and calls done when it ends.
+function play(btn, src, zh, done){
+  stop();
+  btn.classList.add('playing');
+  const end = () => { if (current && current.btn === btn){ btn.classList.remove('playing'); current = null; done && done(); } };
+  if (src){
+    const a = new Audio(src);
+    a.onended = end; a.onerror = end;
+    current = {btn, stop: () => a.pause()};
+    a.play().catch(end);
+  } else {
+    if (!('speechSynthesis' in window)) { end(); return; }
+    const u = new SpeechSynthesisUtterance(zh);
+    u.lang = 'zh-CN'; u.rate = 0.8;
+    const v = speechSynthesis.getVoices().find(v => /zh[-_]CN/i.test(v.lang)) || speechSynthesis.getVoices().find(v => /^zh/i.test(v.lang));
+    if (v) u.voice = v;
+    u.onend = end; u.onerror = end;
+    current = {btn, stop: () => speechSynthesis.cancel()};
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }
+}
+
+function cell(html){ const td = document.createElement('td'); td.innerHTML = html; return td; }
+
+fetch('try-voices/list.json', {cache:'no-store'}).then(r => { if (!r.ok) throw 0; return r.json(); }).then(({voices, items, made}) => {
+  const has = new Set(made);
+  const table = document.getElementById('table');
+  const head = table.insertRow();
+  head.innerHTML = '<th>Word or line</th><th>Listen for</th>'
+    + voices.map(v => `<th>${v.label}<small>${v.about}</small></th>`).join('')
+    + '<th>This device<small>the game’s voice now</small></th><th></th>';
+  for (const item of items){
+    const row = table.insertRow();
+    row.append(cell(`<div class="zh">${item.zh}</div><div class="py">${item.py}</div><div class="muted">${item.en}</div>`), cell(`<div class="listen">${item.listen}</div>`));
+    const players = [];   // the buttons in this row, in order, for All
+    for (const v of voices){
+      const file = `${v.id}-${item.id}.mp3`;
+      if (v.only && !v.only.includes(item.id)) { row.append(cell('')); continue; }
+      if (!has.has(file)) { row.append(Object.assign(cell('not made'), {className:'none'})); continue; }
+      const b = document.createElement('button'); b.textContent = '▶'; b.title = v.label;
+      b.onclick = () => play(b, `try-voices/${file}`, item.zh);
+      players.push([b, `try-voices/${file}`]);
+      const td = document.createElement('td'); td.append(b); row.append(td);
+    }
+    const d = document.createElement('button'); d.textContent = '▶'; d.title = 'This device';
+    d.onclick = () => play(d, null, item.zh);
+    players.push([d, null]);
+    const td = document.createElement('td'); td.append(d); row.append(td);
+    const all = document.createElement('button'); all.textContent = 'All'; all.className = 'all';
+    all.onclick = () => { let n = 0; const next = () => { if (n < players.length){ const [b, src] = players[n++]; setTimeout(() => play(b, src, item.zh, next), 400); } }; next(); };
+    const tdAll = document.createElement('td'); tdAll.append(all); row.append(tdAll);
+  }
+  table.hidden = false;
+  const total = voices.reduce((n, v) => n + items.filter(i => !v.only || v.only.includes(i.id)).length, 0);
+  document.getElementById('status').textContent = made.length < total ? `${made.length} of ${total} clips made: run npm run try-voices to make the rest.` : '';
+}).catch(() => {
+  const s = document.getElementById('status');
+  s.className = 'err';
+  s.textContent = 'No clips yet. Paste your Azure key into voice-key.txt, then run npm run try-voices.';
+});
+</script>
+</body>
+</html>
