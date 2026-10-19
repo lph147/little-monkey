@@ -36,13 +36,15 @@ test('every voice clip is made and listed (run npm run voices after changing any
   assert.deepEqual(missing, [], 'these clips are missing: run npm run voices');
 });
 
-test('the old monkey has his own voice for his lines, and everyone else the main one', () => {
+test('words on their own have their own voice, the old monkey his for his lines, and everyone else the main one', () => {
   const {plan} = require('../tools/make-voices');
   const p = plan();
-  assert.deepEqual(p.who, {everyone:'yunxi', elder:'yunze'});
+  assert.deepEqual(p.who, {words:'xiaoxiao', everyone:'yunxi', elder:'yunze'});
   assert.ok(p.clips.yunze['我是老猴子。这是花果山。'], 'the old monkey says who he is in his own voice');
   assert.ok(!p.clips.yunze['我怕！'], 'the little monkey’s line isn’t in the old monkey’s voice');
-  assert.ok(p.clips.yunxi['猴子'] && p.clips.yunxi['你好！'], 'words and lines are in the main voice');
+  assert.ok(p.clips.xiaoxiao['猴子'] && p.clips.xiaoxiao['你好'], 'words (and phrases) on their own are in the words voice');
+  assert.ok(p.clips.yunxi['你好！'] && !p.clips.yunxi['猴子'], 'lines, such as your reply, are in the main voice, and words aren’t');
+  assert.ok(!p.clips.xiaoxiao['我怕！'], 'lines aren’t in the words voice');
 });
 
 // The game with pretend sound: an AudioContext whose clips "play" (recorded in __played), clip files that load
@@ -62,11 +64,12 @@ function withClips(){
 }
 const settle = game => new Promise(r => setImmediate(r)).then(() => { game.flush(); return new Promise(r => setImmediate(r)); }).then(() => game.flush());
 
-test('the game says Chinese with its clips: the old monkey in his own voice, everyone else in the main one', async () => {
+test('the game says Chinese with its clips: words in the words voice, the old monkey in his own, other lines in the main one', async () => {
   const game = withClips();
   const clip = (text, who) => game.run(`clipFor(${JSON.stringify(text)}, ${JSON.stringify(who)})`);
   assert.match(clip('我是老猴子。这是花果山。', 'elder'), /^audio\/yunze\/\w+\.mp3$/);
-  assert.match(clip('猴子', 'elder'), /^audio\/yunxi\//, 'a word he has no clip for is in the main voice');
+  assert.match(clip('猴子', 'elder'), /^audio\/xiaoxiao\//, 'a word on its own is in the words voice, whoever you’re with');
+  assert.match(clip('猴子'), /^audio\/xiaoxiao\//);
   assert.match(clip('我是老猴子。这是花果山。', 'playful'), /^audio\/yunxi\//);
   assert.equal(clip('不在游戏里', 'elder'), null);
   game.run(`say('猴子')`); await settle(game);

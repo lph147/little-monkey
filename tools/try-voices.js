@@ -19,7 +19,7 @@ const OUT = path.join(__dirname, 'try-voices');
 // with Yunze for the old monkey. Round 2: in the game Yunxi sounded slow and exaggerated, with breaths, on a Pixel 8 Pro;
 // of Yunxi as it was, at normal speed, tidy, and tidy and chatty, tidy and chatty was best for sentences, and giving the
 // pinyin fixed 只. Single words sounded clearer in the Pixel's own woman's voice (a native speaker agreed), so round 3
-// looks for a woman's voice for words said on their own.
+// looks for a woman's voice for words said on their own: Xiaoxiao (the first column) was chosen.
 const ROUND = 'Round 3: a woman’s voice for single words (new-word cards, tapping a word, listening questions). Sentences will be Yunxi, tidy and chatty, as chosen in round 2. Which is as clear as This device, or clearer? Do you hear any breathing?';
 const VOICES = [
   {id:'w-xiaoxiao', name:'zh-CN-XiaoxiaoNeural', rate:null, tidy:true, label:'Xiaoxiao', about:'Microsoft’s main voice: very clear'},

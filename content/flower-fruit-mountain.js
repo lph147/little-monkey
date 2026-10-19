@@ -445,9 +445,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'L': {look:'tablet', landmark:true, action:'sign', sign:{name:{zh:'石碑', py:'shíbēi', en:'Stone tablet'}, says:{zh:'水帘洞', en:'Water Curtain Cave'}, hint:'The name of the cave.'}}
   },
 
-  // The voices that say the Chinese (Azure's, made into clips by npm run voices): everyone uses the first,
-  // and a character listed here by id has their own for their lines.
-  voices: {everyone:'zh-CN-YunxiNeural', elder:'zh-CN-YunzeNeural'},
+  // The voices that say the Chinese (Azure's, made into clips by npm run voices, chosen in the voice tests):
+  // words, a word said on its own (a new-word card, tapping a word, a listening question); everyone, the lines;
+  // and a character listed here by id, their own lines. style: one of the voice's speaking styles.
+  voices: {words:{name:'zh-CN-XiaoxiaoNeural'}, everyone:{name:'zh-CN-YunxiNeural', style:'chat'}, elder:{name:'zh-CN-YunzeNeural'}},
 
   // Characters standing on the map. A character's name shows Chinese, pinyin and English
   // together, because names aren't vocabulary.

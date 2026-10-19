@@ -316,11 +316,12 @@ const VOICE_HELP = {
 };
 const speechBusy = () => speaking && performance.now() < speakSafety;
 const canPlayClips = () => typeof VOICE_CLIPS !== 'undefined' && !!(window.AudioContext || window.webkitAudioContext);
-// The clip that says this text in who's voice (a character with their own voice, VOICE_OF in content/voices.js),
-// or in everyone's voice; null if there isn't one.
+// The clip that says this text (VOICE_CLIPS and VOICE_OF in content/voices.js): in who's own voice if they have one
+// (the old monkey's lines), a word on its own in the words voice, and any other line in everyone's voice; null if
+// there isn't one.
 function clipFor(text, who){
   if (typeof VOICE_CLIPS === 'undefined') return null;
-  for (const v of [VOICE_OF[who], VOICE_OF.everyone]){
+  for (const v of [VOICE_OF[who], VOICE_OF.words, VOICE_OF.everyone]){
     const code = v && VOICE_CLIPS[v] && VOICE_CLIPS[v][text];
     if (code) return `audio/${v}/${code}.mp3`;
   }

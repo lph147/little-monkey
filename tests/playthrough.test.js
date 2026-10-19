@@ -237,8 +237,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'all of chapter 1 so far should be ticked off');
 
   // Everything said on the way has a voice clip (npm run voices makes them)
-  const clips = require('../tools/make-voices').plan().clips.yunxi, said = get('__said');
+  const clips = require('../tools/make-voices').plan().clips, said = get('__said');
   assert.ok(said.length > 50, 'the game should say plenty aloud');
-  const missing = [...new Set(said)].filter(t => !clips[t]);
+  const missing = [...new Set(said)].filter(t => !clips.xiaoxiao[t] && !clips.yunxi[t]);   // every word, or every line
   assert.deepEqual(missing, [], 'these are said but have no voice clip: tools/make-voices.js should find them in the content');
 });

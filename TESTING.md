@@ -207,7 +207,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.
 - [ ] 词 Words (the Word Scroll) and 朋友 Friends open, and Back returns to the menu, on the same tile.
-- [ ] The Chinese is said in the game's own voices: a young man's (Yunxi) for words and most lines, an older man's (Yunze) for the old monkey. It sounds the same on every device, and the music goes quiet while it speaks.
+- [ ] The Chinese is said in the game's own voices: a woman's (Xiaoxiao) for a word on its own (new-word cards, tapping a word, listening questions), a young man's (Yunxi) for lines, and an older man's (Yunze) for the old monkey. Natural speed, with no breaths or long pauses. It sounds the same on every device, and the music goes quiet while it speaks.
 - [ ] Offline: open the game with a connection, wait half a minute, then turn on airplane mode and reload. Words and lines you haven't heard yet are still said in the game's voice.
 - [ ] On an iPhone (iOS 17 or later): with the silent switch on, the music, sound effects and voices still play. Lock the phone (or switch to another app) for a moment and come back: the music starts again when you come back (or at your next tap).
 - [ ] Settings: Music, Sound effects and Pinyin switch on and off. With pinyin off, it's hidden over words in sentences. Back returns to the menu.
