@@ -445,6 +445,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'L': {look:'tablet', landmark:true, action:'sign', sign:{name:{zh:'石碑', py:'shíbēi', en:'Stone tablet'}, says:{zh:'水帘洞', en:'Water Curtain Cave'}, hint:'The name of the cave.'}}
   },
 
+  // The voices that say the Chinese (Azure's, made into clips by npm run voices): everyone uses the first,
+  // and a character listed here by id has their own for their lines.
+  voices: {everyone:'zh-CN-YunxiNeural', elder:'zh-CN-YunzeNeural'},
+
   // Characters standing on the map. A character's name shows Chinese, pinyin and English
   // together, because names aren't vocabulary.
   // palette: a monkey's colours. o outline, f fur, s face and tummy, m mouth, e eyes, w beard.

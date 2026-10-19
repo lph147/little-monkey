@@ -27,3 +27,20 @@ test('an empty key line reads as no key, not as the region on the next line', ()
   fs.writeFileSync(file, 'key= abc123 \nregion=\n');
   assert.deepEqual(readKey(file), {key:'abc123', region:'eastus'});
 });
+
+test('every voice clip is made and listed (run npm run voices after changing any Chinese)', () => {
+  const {plan, indexText, clipPath, INDEX} = require('../tools/make-voices');
+  const p = plan();
+  assert.ok(fs.existsSync(INDEX) && fs.readFileSync(INDEX, 'utf8') === indexText(p), 'content/voices.js is out of date: run npm run voices');
+  const missing = Object.entries(p.clips).flatMap(([v, texts]) => Object.entries(texts).filter(([, c]) => !fs.existsSync(clipPath(v, c))).map(([t]) => `${v}: ${t}`));
+  assert.deepEqual(missing, [], 'these clips are missing: run npm run voices');
+});
+
+test('the old monkey has his own voice for his lines, and everyone else the main one', () => {
+  const {plan} = require('../tools/make-voices');
+  const p = plan();
+  assert.deepEqual(p.who, {everyone:'yunxi', elder:'yunze'});
+  assert.ok(p.clips.yunze['我是老猴子。这是花果山。'], 'the old monkey says who he is in his own voice');
+  assert.ok(!p.clips.yunze['我怕！'], 'the little monkey’s line isn’t in the old monkey’s voice');
+  assert.ok(p.clips.yunxi['猴子'] && p.clips.yunxi['你好！'], 'words and lines are in the main voice');
+});

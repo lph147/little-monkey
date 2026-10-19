@@ -357,6 +357,8 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Sharper word pictures (17 October 2026): every word's picture redrawn at 32 × 32, on word cards, questions, the scrolls, the shop, animal encounters and the Friends list; the animals on the map unchanged
 - [ ] Playtest the prologue for a week
 - [ ] Voices (19 October 2026): a free Azure Speech account (Free F0, East US) and a listening test of 13 tricky words and lines in 4 voices (npm run try-voices; Yunxi chosen, with Yunze for the old monkey); then a clip for every word and line (npm run voices), checked by the native speaker
+  - [x] Part 1: a clip for every word and line, 223 of them (19 October 2026)
+  - [ ] Part 2: the game plays them (the device's voice for anything without one), and the app downloads them all for offline play
 - [x] A vocabulary game, never a grammar test (decided 16 October 2026):
   - [x] Record the decision here and in CLAUDE.md
   - [x] One fill-the-gap question: the sentence in Chinese and English, choices following the word's level

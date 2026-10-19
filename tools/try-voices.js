@@ -115,4 +115,4 @@ async function main(){
 }
 
 if (require.main === module) main();
-module.exports = {VOICES, ITEMS, KEY_FILE, clipFile, ssml, readKey};
+module.exports = {VOICES, ITEMS, KEY_FILE, clipFile, ssml, readKey, makeClip, pause};

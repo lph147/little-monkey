@@ -21,6 +21,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   run('Math.random = () => 0');   // the same every time: e.g. the first animal you haven't met jumps out, on your third step in the grass
   // Notice what the game asks, as a player hears and reads it: the word in a question or the gap.
   run(`(() => { const pq = pictureQ; pictureQ = q => { globalThis.__q = q; return pq(q); }; })()`);
+  run(`globalThis.__said = []; (() => { const s = say; say = (text, end) => { __said.push(text); return s(text, end); }; })()`);   // everything said aloud, to check it has a voice clip
 
   const tick = () => new Promise(r => setImmediate(r));
   async function settle(){   // let the game finish what it's doing, including anything it waits for (timers)
@@ -234,4 +235,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
   assert.ok(get("['troop1', 'troop2', 'troop3'].every(id => ALL_NPCS.find(n => n.id === id).place === 'cave')"), 'the whole troop should be in the cave');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'all of chapter 1 so far should be ticked off');
+
+  // Everything said on the way has a voice clip (npm run voices makes them)
+  const clips = require('../tools/make-voices').plan().clips.yunxi, said = get('__said');
+  assert.ok(said.length > 50, 'the game should say plenty aloud');
+  const missing = [...new Set(said)].filter(t => !clips[t]);
+  assert.deepEqual(missing, [], 'these are said but have no voice clip: tools/make-voices.js should find them in the content');
 });
