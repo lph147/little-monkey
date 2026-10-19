@@ -1,0 +1,180 @@
+{
+ "voices": [
+  {
+   "id": "xiaoxiao",
+   "label": "Xiaoxiao",
+   "about": "a woman: Microsoft’s main Mandarin voice"
+  },
+  {
+   "id": "xiaoxiao-hd",
+   "label": "Xiaoxiao HD",
+   "about": "the same woman, newest technology"
+  },
+  {
+   "id": "yunxi",
+   "label": "Yunxi",
+   "about": "a young man"
+  },
+  {
+   "id": "xiaoyou",
+   "label": "Xiaoyou",
+   "about": "a child"
+  },
+  {
+   "id": "yunze",
+   "label": "Yunze",
+   "about": "an older man (just the old monkey’s line)",
+   "only": [
+    "laohouzi"
+   ]
+  }
+ ],
+ "items": [
+  {
+   "id": "shan",
+   "zh": "山",
+   "py": "shān",
+   "en": "mountain",
+   "listen": "One short syllable on its own, as on a word card: high and level."
+  },
+  {
+   "id": "houzi",
+   "zh": "猴子",
+   "py": "hóuzi",
+   "en": "monkey",
+   "listen": "子 is light and short."
+  },
+  {
+   "id": "zhi",
+   "zh": "只",
+   "py": "zhī",
+   "en": "(counts animals)",
+   "listen": "Said alone, it should be zhī (high and level), the counting word, not zhǐ (“only”)."
+  },
+  {
+   "id": "zhi-fixed",
+   "zh": "只",
+   "py": "zhī",
+   "en": "(counts animals)",
+   "listen": "The same word, with its pinyin given to the voice: does the fix work?"
+  },
+  {
+   "id": "yizhi",
+   "zh": "一只",
+   "py": "yì zhī",
+   "en": "a, one (animal)",
+   "listen": "一 changes to yì (falling) before zhī."
+  },
+  {
+   "id": "shuiguo",
+   "zh": "水果",
+   "py": "shuǐguǒ",
+   "en": "fruit",
+   "listen": "Two third tones: the first one rises, like shuíguǒ."
+  },
+  {
+   "id": "bukeqi",
+   "zh": "不客气",
+   "py": "bú kèqi",
+   "en": "you’re welcome",
+   "listen": "不 changes to bú, and 气 is light."
+  },
+  {
+   "id": "nihao",
+   "zh": "你好！",
+   "py": "nǐ hǎo!",
+   "en": "Hello!",
+   "listen": "Two third tones again: like ní hǎo."
+  },
+  {
+   "id": "kankan",
+   "zh": "去看看！",
+   "py": "qù kànkan!",
+   "en": "Go and take a look!",
+   "listen": "The second 看 is light."
+  },
+  {
+   "id": "e",
+   "zh": "我饿了。我要吃水果！",
+   "py": "wǒ è le. wǒ yào chī shuǐguǒ!",
+   "en": "I’m hungry. I want to eat some fruit!",
+   "listen": "了 is light, with a natural pause between the two sentences."
+  },
+  {
+   "id": "taozi",
+   "zh": "你有桃子吗？",
+   "py": "nǐ yǒu táozi ma?",
+   "en": "Do you have a peach?",
+   "listen": "It sounds like a question."
+  },
+  {
+   "id": "laohouzi",
+   "zh": "我是老猴子。这是花果山。",
+   "py": "wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān.",
+   "en": "I’m the old monkey. This is Flower Fruit Mountain.",
+   "listen": "花果山 said as one name."
+  },
+  {
+   "id": "hua",
+   "zh": "我要红色、黄色和白色的花！",
+   "py": "wǒ yào hóngsè, huángsè hé báisè de huā!",
+   "en": "I want red, yellow and white flowers!",
+   "listen": "A list, with small pauses."
+  }
+ ],
+ "made": [
+  "xiaoxiao-shan.mp3",
+  "xiaoxiao-houzi.mp3",
+  "xiaoxiao-zhi.mp3",
+  "xiaoxiao-zhi-fixed.mp3",
+  "xiaoxiao-yizhi.mp3",
+  "xiaoxiao-shuiguo.mp3",
+  "xiaoxiao-bukeqi.mp3",
+  "xiaoxiao-nihao.mp3",
+  "xiaoxiao-kankan.mp3",
+  "xiaoxiao-e.mp3",
+  "xiaoxiao-taozi.mp3",
+  "xiaoxiao-laohouzi.mp3",
+  "xiaoxiao-hua.mp3",
+  "xiaoxiao-hd-shan.mp3",
+  "xiaoxiao-hd-houzi.mp3",
+  "xiaoxiao-hd-zhi.mp3",
+  "xiaoxiao-hd-zhi-fixed.mp3",
+  "xiaoxiao-hd-yizhi.mp3",
+  "xiaoxiao-hd-shuiguo.mp3",
+  "xiaoxiao-hd-bukeqi.mp3",
+  "xiaoxiao-hd-nihao.mp3",
+  "xiaoxiao-hd-kankan.mp3",
+  "xiaoxiao-hd-e.mp3",
+  "xiaoxiao-hd-taozi.mp3",
+  "xiaoxiao-hd-laohouzi.mp3",
+  "xiaoxiao-hd-hua.mp3",
+  "yunxi-shan.mp3",
+  "yunxi-houzi.mp3",
+  "yunxi-zhi.mp3",
+  "yunxi-zhi-fixed.mp3",
+  "yunxi-yizhi.mp3",
+  "yunxi-shuiguo.mp3",
+  "yunxi-bukeqi.mp3",
+  "yunxi-nihao.mp3",
+  "yunxi-kankan.mp3",
+  "yunxi-e.mp3",
+  "yunxi-taozi.mp3",
+  "yunxi-laohouzi.mp3",
+  "yunxi-hua.mp3",
+  "xiaoyou-shan.mp3",
+  "xiaoyou-houzi.mp3",
+  "xiaoyou-zhi.mp3",
+  "xiaoyou-zhi-fixed.mp3",
+  "xiaoyou-yizhi.mp3",
+  "xiaoyou-shuiguo.mp3",
+  "xiaoyou-bukeqi.mp3",
+  "xiaoyou-nihao.mp3",
+  "xiaoyou-kankan.mp3",
+  "xiaoyou-e.mp3",
+  "xiaoyou-taozi.mp3",
+  "xiaoyou-laohouzi.mp3",
+  "xiaoyou-hua.mp3",
+  "yunze-laohouzi.mp3"
+ ]
+}
