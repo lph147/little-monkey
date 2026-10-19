@@ -1,32 +1,24 @@
 {
  "voices": [
   {
-   "id": "xiaoxiao",
-   "label": "Xiaoxiao",
-   "about": "a woman: Microsoft’s main Mandarin voice"
-  },
-  {
-   "id": "xiaoxiao-hd",
-   "label": "Xiaoxiao HD",
-   "about": "the same woman, newest technology"
-  },
-  {
    "id": "yunxi",
-   "label": "Yunxi",
-   "about": "a young man"
+   "label": "Now",
+   "about": "as in the game: 15% slower"
   },
   {
-   "id": "xiaoyou",
-   "label": "Xiaoyou",
-   "about": "a child"
+   "id": "yunxi-normal",
+   "label": "Normal speed",
+   "about": "not slowed down"
   },
   {
-   "id": "yunze",
-   "label": "Yunze",
-   "about": "an older man (just the old monkey’s line)",
-   "only": [
-    "laohouzi"
-   ]
+   "id": "yunxi-tidy",
+   "label": "Tidy",
+   "about": "normal speed, no silence around it, short pauses"
+  },
+  {
+   "id": "yunxi-chat",
+   "label": "Tidy and chatty",
+   "about": "the same, in a relaxed, chatty style"
   }
  ],
  "items": [
@@ -123,32 +115,6 @@
   }
  ],
  "made": [
-  "xiaoxiao-shan.mp3",
-  "xiaoxiao-houzi.mp3",
-  "xiaoxiao-zhi.mp3",
-  "xiaoxiao-zhi-fixed.mp3",
-  "xiaoxiao-yizhi.mp3",
-  "xiaoxiao-shuiguo.mp3",
-  "xiaoxiao-bukeqi.mp3",
-  "xiaoxiao-nihao.mp3",
-  "xiaoxiao-kankan.mp3",
-  "xiaoxiao-e.mp3",
-  "xiaoxiao-taozi.mp3",
-  "xiaoxiao-laohouzi.mp3",
-  "xiaoxiao-hua.mp3",
-  "xiaoxiao-hd-shan.mp3",
-  "xiaoxiao-hd-houzi.mp3",
-  "xiaoxiao-hd-zhi.mp3",
-  "xiaoxiao-hd-zhi-fixed.mp3",
-  "xiaoxiao-hd-yizhi.mp3",
-  "xiaoxiao-hd-shuiguo.mp3",
-  "xiaoxiao-hd-bukeqi.mp3",
-  "xiaoxiao-hd-nihao.mp3",
-  "xiaoxiao-hd-kankan.mp3",
-  "xiaoxiao-hd-e.mp3",
-  "xiaoxiao-hd-taozi.mp3",
-  "xiaoxiao-hd-laohouzi.mp3",
-  "xiaoxiao-hd-hua.mp3",
   "yunxi-shan.mp3",
   "yunxi-houzi.mp3",
   "yunxi-zhi.mp3",
@@ -162,19 +128,44 @@
   "yunxi-taozi.mp3",
   "yunxi-laohouzi.mp3",
   "yunxi-hua.mp3",
-  "xiaoyou-shan.mp3",
-  "xiaoyou-houzi.mp3",
-  "xiaoyou-zhi.mp3",
-  "xiaoyou-zhi-fixed.mp3",
-  "xiaoyou-yizhi.mp3",
-  "xiaoyou-shuiguo.mp3",
-  "xiaoyou-bukeqi.mp3",
-  "xiaoyou-nihao.mp3",
-  "xiaoyou-kankan.mp3",
-  "xiaoyou-e.mp3",
-  "xiaoyou-taozi.mp3",
-  "xiaoyou-laohouzi.mp3",
-  "xiaoyou-hua.mp3",
-  "yunze-laohouzi.mp3"
+  "yunxi-normal-shan.mp3",
+  "yunxi-normal-houzi.mp3",
+  "yunxi-normal-zhi.mp3",
+  "yunxi-normal-zhi-fixed.mp3",
+  "yunxi-normal-yizhi.mp3",
+  "yunxi-normal-shuiguo.mp3",
+  "yunxi-normal-bukeqi.mp3",
+  "yunxi-normal-nihao.mp3",
+  "yunxi-normal-kankan.mp3",
+  "yunxi-normal-e.mp3",
+  "yunxi-normal-taozi.mp3",
+  "yunxi-normal-laohouzi.mp3",
+  "yunxi-normal-hua.mp3",
+  "yunxi-tidy-shan.mp3",
+  "yunxi-tidy-houzi.mp3",
+  "yunxi-tidy-zhi.mp3",
+  "yunxi-tidy-zhi-fixed.mp3",
+  "yunxi-tidy-yizhi.mp3",
+  "yunxi-tidy-shuiguo.mp3",
+  "yunxi-tidy-bukeqi.mp3",
+  "yunxi-tidy-nihao.mp3",
+  "yunxi-tidy-kankan.mp3",
+  "yunxi-tidy-e.mp3",
+  "yunxi-tidy-taozi.mp3",
+  "yunxi-tidy-laohouzi.mp3",
+  "yunxi-tidy-hua.mp3",
+  "yunxi-chat-shan.mp3",
+  "yunxi-chat-houzi.mp3",
+  "yunxi-chat-zhi.mp3",
+  "yunxi-chat-zhi-fixed.mp3",
+  "yunxi-chat-yizhi.mp3",
+  "yunxi-chat-shuiguo.mp3",
+  "yunxi-chat-bukeqi.mp3",
+  "yunxi-chat-nihao.mp3",
+  "yunxi-chat-kankan.mp3",
+  "yunxi-chat-e.mp3",
+  "yunxi-chat-taozi.mp3",
+  "yunxi-chat-laohouzi.mp3",
+  "yunxi-chat-hua.mp3"
  ]
 }

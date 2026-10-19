@@ -12,13 +12,15 @@ const ROOT = path.join(__dirname, '..');
 const KEY_FILE = path.join(ROOT, 'voice-key.txt');
 const OUT = path.join(__dirname, 'try-voices');
 
-// `only` limits a voice to some items: the older man is just for the old monkey's line.
+// Round 2 (19 October 2026): Yunxi was chosen, but in the game it sounded slow and exaggerated, with breaths,
+// so these are versions of Yunxi. rate: slower or faster (left out: RATE, below, as the game's clips so far; null: normal speed);
+// tidy: no silence before or after, and short pauses between sentences; style: one of the voice's speaking styles.
+// `only` limits a voice to some items. (Round 1 compared Xiaoxiao, Xiaoxiao HD, Yunxi and Xiaoyou, and Yunze for the old monkey.)
 const VOICES = [
-  {id:'xiaoxiao', name:'zh-CN-XiaoxiaoNeural', label:'Xiaoxiao', about:'a woman: Microsoft’s main Mandarin voice'},
-  {id:'xiaoxiao-hd', name:'zh-CN-Xiaoxiao:DragonHDFlashLatestNeural', label:'Xiaoxiao HD', about:'the same woman, newest technology'},
-  {id:'yunxi', name:'zh-CN-YunxiNeural', label:'Yunxi', about:'a young man'},
-  {id:'xiaoyou', name:'zh-CN-XiaoyouNeural', label:'Xiaoyou', about:'a child'},
-  {id:'yunze', name:'zh-CN-YunzeNeural', label:'Yunze', about:'an older man (just the old monkey’s line)', only:['laohouzi']},
+  {id:'yunxi', name:'zh-CN-YunxiNeural', label:'Now', about:'as in the game: 15% slower'},
+  {id:'yunxi-normal', name:'zh-CN-YunxiNeural', rate:null, label:'Normal speed', about:'not slowed down'},
+  {id:'yunxi-tidy', name:'zh-CN-YunxiNeural', rate:null, tidy:true, label:'Tidy', about:'normal speed, no silence around it, short pauses'},
+  {id:'yunxi-chat', name:'zh-CN-YunxiNeural', rate:null, tidy:true, style:'chat', label:'Tidy and chatty', about:'the same, in a relaxed, chatty style'},
 ];
 
 // `ph` gives the voice the pinyin (tone numbers, a space before each), to see if a reading can be fixed.
@@ -38,7 +40,7 @@ const ITEMS = [
   {id:'hua', zh:'我要红色、黄色和白色的花！', py:'wǒ yào hóngsè, huángsè hé báisè de huā!', en:'I want red, yellow and white flowers!', listen:'A list, with small pauses.'},
 ];
 
-const RATE = '-15%';   // a little slower than normal, like the game's voice now
+const RATE = '-15%';   // a little slower than normal: the game's clips so far
 const clipFile = (voice, item) => `${voice.id}-${item.id}.mp3`;
 const wanted = () => VOICES.flatMap(v => ITEMS.filter(i => !v.only || v.only.includes(i.id)).map(i => [v, i]));
 
@@ -49,9 +51,13 @@ function readKey(file = KEY_FILE){
 }
 
 function ssml(voice, item, slow = true){
-  const said = item.ph ? `<phoneme alphabet="sapi" ph="${item.ph}">${item.zh}</phoneme>` : item.zh;
-  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-CN">`
-    + `<voice name="${voice.name}">${slow ? `<prosody rate="${RATE}">${said}</prosody>` : said}</voice></speak>`;
+  const rate = voice.rate === undefined ? RATE : voice.rate;
+  let said = item.ph ? `<phoneme alphabet="sapi" ph="${item.ph}">${item.zh}</phoneme>` : item.zh;
+  if (rate && slow) said = `<prosody rate="${rate}">${said}</prosody>`;
+  if (voice.style) said = `<mstts:express-as style="${voice.style}">${said}</mstts:express-as>`;
+  const tidy = voice.tidy ? '<mstts:silence type="Leading-exact" value="0ms"/><mstts:silence type="Tailing-exact" value="0ms"/><mstts:silence type="Sentenceboundary-exact" value="250ms"/>' : '';
+  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">`
+    + `<voice name="${voice.name}">${tidy}${said}</voice></speak>`;
 }
 
 const pause = ms => new Promise(r => setTimeout(r, ms));
