@@ -250,6 +250,16 @@ When the save format changes, the game keeps a copy of your old save in the brow
 - [ ] No emoji anywhere: the menu's tiles, Settings, the star on new words, the save file, the story, the test and area complete all have pixel icons.
 - [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, the shop, the Word Scroll (and its shadows), the Story Scroll, animal encounters and the Friends list. They look sharp, not blurry, with every pixel the same size.
 
+## Controller checks
+
+With a game controller (Xbox, PlayStation, Switch Pro or a Bluetooth one) connected to the computer or phone. The game notices it once you press one of its buttons.
+
+- [ ] The bottom button (Xbox A, PlayStation ✕) is A, and the right one (Xbox B, PlayStation ○) is B. The A or B on the screen lights up as you press it. Holding it down presses only once.
+- [ ] Start (Menu, Options) opens and closes the menu; Select (View, Share) opens and closes your tasks.
+- [ ] The D-pad and the left stick walk, turn and move between buttons, just like the D-pad on the screen; a small nudge of the stick does nothing.
+- [ ] On the title screen, a card, a question or your replies, holding a direction moves again after a moment, then quickly. Walking into the tall grass while holding a direction, the answers don't start moving by themselves when the animal jumps out.
+- [ ] Sound: if there's no sound until you tap the screen or press a key, note it (browsers may not count a controller button as permission to play sound).
+
 ## Known issues (not fixed yet)
 
 
