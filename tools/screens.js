@@ -108,7 +108,7 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); click('[data-a=ok]'); await wait(200);
     next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
   {id: 'playing', title: 'Playing', save: 'middle', why: 'The map, the task box, the header.', run: async () => { play(); await wait(600); }},
-  {id: 'chapter-card', title: 'A new chapter', save: 'middle', why: 'Its title card, when a chapter begins (chapter 1 is the only one so far).', run: async () => { play(); await wait(100); STEPS.chapter({chapter: 0}); await wait(300); }},
+  {id: 'chapter-card', title: 'A new chapter', save: 'home', why: 'Its title card, when a chapter begins: chapter 1, once the whole troop is home and the prologue is over.', run: async () => { play(); await wait(100); STEPS.chapter({chapter: 1}); await wait(300); }},
   {id: 'place-name', title: 'Arriving in a place', save: 'middle', why: 'Its name for a moment, when you go from one place to another.', run: async () => { play(); await wait(100); showPlaceName(); clearTimeout(placeNameT); await wait(300); }},
   {id: 'gap-picture', title: 'Fill the gap (pictures)', save: 'middle', why: 'Giving the peach: the word is new, so the choices are pictures.', run: async () => {
     play(); await wait(100); gapQ({who: speaker('hungry'), t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '桃子'}); await wait(400); }},

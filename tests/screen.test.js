@@ -69,7 +69,7 @@ test('Select opens your tasks: your words, friends and shells, what to do now, t
   assert.doesNotMatch(text, /Level|XP/, 'no levels or XP');
   assert.match(text, /4 words|0\/\d+ words/);
   for (const t of tasks) assert.ok(text.includes(t), `the task list should include "${t}"`);
-  assert.ok(text.indexOf(tasks[0]) < text.indexOf('Chapter 1'), 'what to do now comes first, then the checklist');
+  assert.ok(text.indexOf(tasks[0]) < text.indexOf('Prologue: The Water Curtain Cave'), 'what to do now comes first, then the checklist');
   run('pressSelect()');
   assert.equal(run('modal.hidden'), true, 'Select again closes it');
   run('pressSelect(); pressB()');

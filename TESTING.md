@@ -216,7 +216,8 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Talk to the old monkey (he has a !): 这是我们的家！ and a card teaches 家 (home).
 - [ ] Talk to the big monkey (now he has the !): 你是我们的王！, a card teaches 王 (king), and "The troop names you 美猴王". From then on, your replies show 美猴王 Měi Hóuwáng as your name.
 - [ ] Talk to the old monkey three times. Each time a monkey comes in through the water curtain, he counts (一只猴子。, 两只猴子。, 三只猴子。) and a card teaches one number: 一 (one), 二 (two, with a note that you say 两 when counting things) and 三 (three). The task counts 1/3, 2/3, 3/3, and three more monkeys from the meadow are now in the cave.
-- [ ] Afterwards your tasks (TASKS) say the whole troop is home, and that the rest of chapter 1 is coming soon.
+- [ ] After the third, "The whole troop is home.", then the prologue is over: a card says Chapter 1, The Great Feast, with Begin. Your tasks (TASKS) now say Flower Fruit Mountain · Chapter 1: The Great Feast, that the whole troop is home, and that the rest of the story is coming soon. Before this, they said Prologue: The Water Curtain Cave, as does a game's card on the title screen.
+- [ ] A game saved after counting the troop in, from before version 169: the first thing you do shows the Chapter 1 card.
 
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.

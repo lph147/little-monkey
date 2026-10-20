@@ -219,7 +219,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // There's no prologue: it's chapter 1 all the way, with no chapter card part way through
   assert.equal(area().chapter, 0, 'still chapter 1');
 
-  // Chapter 1, part A: the dare at the waterfall, the jump, the cave, and telling the old monkey
+  // The end of the prologue: the dare at the waterfall, the jump, the cave, and telling the old monkey
   assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => [n.id, n.x, n.y])"), [['elder', 9, 1], ['big', 10, 2], ['playful', 5, 2]], 'the troop gathers at the waterfall');
   await pressAt(8, 1, 'right', 'hearing the dare at the waterfall');
   assert.ok(knows('跳'), 'the dare should teach 跳');
@@ -238,9 +238,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [5, 1]);
   await pressAt(8, 1, 'right', 'telling the old monkey about the cave');
   assert.equal(area().cave, 3, 'the old monkey should hear about the cave');
-  assert.ok(get('areaChecklist()').slice(0, 3).every(([, done]) => done), 'part A of chapter 1 should be ticked off');
+  assert.ok(get('areaChecklist()').slice(0, 3).every(([, done]) => done), 'the start of the prologue’s checklist should be ticked off');
 
-  // Chapter 1, part B: leading the troop in, home, becoming king, and counting them in
+  // Then leading the troop in, home, becoming king, and counting them in
   await pressAt(5, 1, 'left', 'leading the troop into the cave');
   assert.equal(run('PLACE'), 'cave');
   assert.equal(area().cave, 4, 'the troop should follow you in');
@@ -256,7 +256,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   }
   for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
   assert.ok(get("['troop1', 'troop2', 'troop3'].every(id => ALL_NPCS.find(n => n.id === id).place === 'cave')"), 'the whole troop should be in the cave');
-  assert.ok(get('areaChecklist()').every(([, done]) => done), 'all of chapter 1 so far should be ticked off');
+  assert.ok(get('AREA.checklist.filter(c => !c.chapter).every(c => matches(c.done))'), 'all of the prologue should be ticked off');
+  assert.equal(area().chapter, 1, 'the prologue is over, and chapter 1 begins, with its card');
 
   // Everything said on the way has a voice clip (npm run voices makes them)
   const clips = require('../tools/make-voices').plan().clips, said = get('__said');

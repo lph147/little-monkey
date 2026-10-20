@@ -19,14 +19,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   ],
 
   // The story's chapters here, in order: each has its name and title, shown on a card when it begins (the
-  // chapter step), and its own items on the checklist below. (There's no prologue: everything so far is chapter 1.
-  // When chapter 2 begins is still to be decided.)
+  // chapter step), and its own items on the checklist below. The prologue is everything from being born to
+  // becoming king and counting the troop in; chapter 1 is the troop's new home and the feast, then leaving.
   chapters: [
-    {name:'Chapter 1', title:'The Water Curtain Cave'}
+    {name:'Prologue', title:'The Water Curtain Cave'},
+    {name:'Chapter 1', title:'The Great Feast'}
   ],
 
   // What this area remembers in your save, and the values a new game starts with.
-  //   chapter the chapter you're in, counting from 0 (chapter 1)
+  //   chapter the chapter you're in, counting from 0 (the prologue), so 1 is chapter 1
   //   elder   0 not spoken to yet, 1 said hello, 2 told you about the animals
   //   gate    true once the rocks have rolled away
   //   climb   up the stream: 0 not yet, 1 setting off alone up the mountain path, 2 found the waterfall,
@@ -221,7 +222,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the big monkey waits by the way up and stops you as you set off, to give you a stick
     {if:{climb:1, new:'棍子', near:'big'}, do:[{stopsYou:'big'}]},
     // the troop has followed you up: as you come out of the narrow way by the waterfall, they leap past you to their places
-    {if:{climb:3, at:[7, 2, 'falls']}, do:[{set:{climb:4}}, {follow:[]}, {message:'The troop has followed you all the way up to the {瀑布}!'}]}
+    {if:{climb:3, at:[7, 2, 'falls']}, do:[{set:{climb:4}}, {follow:[]}, {message:'The troop has followed you all the way up to the {瀑布}!'}]},
+    // the whole troop is home, and you're king: the prologue is over, and chapter 1 begins (its title card)
+    {if:{chapter:0, count:3}, do:[{chapter:1}]}
   ],
 
   // The area's places: small maps you move between. The first is where the game starts. Each has
