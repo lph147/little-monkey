@@ -576,7 +576,7 @@ rt.hid{visibility:hidden}
   .plate .hearts .heart{width:.9rem;height:.85rem}
   /* (20 October 2026) so the main thing on each card fits without scrolling: */
   .sheet > .actions{padding-top:4px;padding-bottom:6px}   /* a shorter row of buttons along the bottom */
-  .sheet > .actions .btn{min-height:32px;padding:3px 10px}
+  .sheet > .actions .btn{min-height:32px;padding:8px 12px 1px}   /* (the word sits below the A and B badges) */
   .match{gap:.3rem;margin:.2rem 0}   /* the word test and training: both rows, words and pictures */
   .mw,.mp{min-height:2.5rem}
   .mw{font-size:1.15rem}
