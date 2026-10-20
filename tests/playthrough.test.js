@@ -181,6 +181,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(5, 1, 'left', 'finding the waterfall');
   assert.equal(area().climb, 2, 'you should find the waterfall');
   assert.ok(knows('瀑布'), 'the waterfall should teach 瀑布');
+  stand(7, 4, 'down');
+  await act('arrive(7, 4).then(runEvents)', 'walking down the narrow way, past the goat');
+  assert.equal(area().ledgeTip, 1, 'the goat below the waterfall should stop you, to tell you that you can hop down the ledges');
   for (const [x, y, place] of [[5, 12, 'valley'], [19, 12, 'path'], [16, 19, 'meadow']]){
     await stepOn(x, y, 'going back down');
     assert.equal(run('PLACE'), place, `going back down, you should reach the ${place}`);

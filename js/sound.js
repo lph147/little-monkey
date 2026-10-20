@@ -40,6 +40,7 @@ const SFX = {
   right: () => [523,659,784].forEach((f,i) => tone(f, .09, 'square', .04, i*.07)),
   wrong: () => { tone(330, .12); tone(247, .2, 'square', .04, .12); },
   encounter: () => [392,523,392,659,784].forEach((f,i) => tone(f, .07, 'square', .04, i*.06)),
+  call: () => { tone(988, .06, 'square', .04); tone(1319, .12, 'square', .04, .08); },   // someone calls you over: a ! pops up over them
   fanfare: () => [523,659,784,1047,784,1047].forEach((f,i) => tone(f, .13, 'square', .04, i*.1)),
   rumble: () => noise(.9, .16),
   chime: () => [1047,1319,1568,2093].forEach((f,i) => tone(f, .35, 'triangle', .05, i*.08)),

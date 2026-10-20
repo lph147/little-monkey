@@ -212,17 +212,16 @@ function drawWorld(now){
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
     if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
       R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)'); b.drawImage(mapSprite(n.look), X, Y - Math.floor(Math.abs(Math.sin(now/400)) * 1));
-      continue;
-    }
-    if (n.look === 'bird'){
+    } else if (n.look === 'bird'){
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
       R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(SPR.bird, X+4, Y+6 - hop);
       if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
-      continue;
+    } else {
+      const idle = Math.floor(now/700 + n.x) % 2;
+      drawEntityMonkey(n.kind, X, Y, n.dir, now, idle, 0, n.x + n.y);
     }
-    const idle = Math.floor(now/700 + n.x) % 2;
-    drawEntityMonkey(n.kind, X, Y, n.dir, now, idle, 0, n.x + n.y);
-    const bub = (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // a ! or ? from the area's bubbles
+    // a ! while they're stopping you (the stopsYou step), or a ! or ? from the area's bubbles
+    const bub = now < (n.calls || 0) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));
     if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
   // the tops of big objects (a tree's leaves, the stall's awning), over anyone walking behind them

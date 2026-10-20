@@ -110,8 +110,10 @@ NAMES.sign = AREA.sign.name;
 NAMES.player = {zh:'小猴子', py:'xiǎo hóuzi', en:'You'};   // you, when you reply
 // Your name: 小猴子 (You), or the first of the area's names for you (yourNames) whose if matches, such as 美猴王 once you're king.
 const yourName = () => (AREA.yourNames || []).find(n => matches(n.if)) || NAMES.player;
-// An animal friend met on the way (a character that looks like an animal) is called by its word, in Chinese and pinyin.
-const animalName = id => { const a = ANIMALS.find(x => x.id === id); return a && {zh:a.hz, py:WORD_BANK[a.hz].py}; };
+// An animal friend met on the way (a character that looks like an animal: the animal itself, such as the goat in the
+// valley, or another of its kind, such as the goat below the waterfall) is called by its word, in Chinese and pinyin.
+const animalOf = id => ANIMALS.find(x => x.id === id) || ANIMALS.find(x => x.hz === (AREA.characters.find(c => c.id === id) || {}).look);
+const animalName = id => { const a = animalOf(id); return a && {zh:a.hz, py:WORD_BANK[a.hz].py}; };
 function speaker(id){
   const n = id === 'player' ? yourName() : NAMES[id] || animalName(id);
   return `<div class="speaker" data-id="${esc(id)}">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
@@ -121,7 +123,7 @@ function portrait(id){
   let c;
   if (PALS[id]) c = monkeySprite(id, 'down', false, 0);
   else if (id === 'sign') c = SPR.sign;
-  else { const a = ANIMALS.find(x => x.id === id); c = a ? a.pic : SPR.rock; }
+  else { const a = animalOf(id); c = a ? a.pic : SPR.rock; }
   return portraitCache[id] = `<img class="portrait" alt="" src="${c.toDataURL()}">`;
 }
 const SPR = {

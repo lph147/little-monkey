@@ -311,13 +311,14 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
       if (k === 'new' || k === 'knows') assert.ok(collectible.includes(v), `${where}: ${v} isn't a word you can collect in ${where}`);
       if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id], `${where} checks holding for "${id}", which isn't a request`);
       if (k === 'place') assert.ok(AREA.places[v], `${where} checks place ${v}, which isn't a place`);
+      if (k === 'near') assert.ok(AREA.characters.some(c => c.id === v), `${where} checks near "${v}", who isn't a character`);
       if (k === 'bought') for (const w of Object.keys(v)) assert.ok(AREA.shop.items.some(i => i.item === w), `${where} checks bought for ${w}, which the shop doesn't sell`);
     }
   }
@@ -340,6 +341,7 @@ test('every step does one thing, with settings that exist, using real lines and 
     if (a === 'reply') assert.ok(BANK[s.reply] && BANK[s.reply].phrase && collectible.includes(s.reply), `${where}: ${s.reply} isn't a phrase you can learn here`);
     if (a === 'wordGame') assert.ok(s.wordGame.ask && s.wordGame.notYet && collectible.includes(s.wordGame.word), `${where}: wordGame needs ask, notYet and a word`);
     if (a === 'bag') assert.ok((AREA.food || {})[s.bag], `${where}: ${s.bag} isn't one of the area's food`);
+    if (a === 'stopsYou') assert.ok(AREA.characters.some(c => c.id === s.stopsYou) && AREA.talk[s.stopsYou], `${where}: "${s.stopsYou}" isn't a character with something to say`);
   }
 });
 

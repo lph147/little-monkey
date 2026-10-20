@@ -49,6 +49,8 @@ SAVES.hurt = {...SAVES.fighting, hearts: 2, pos: {place: 'meadow', x: 15, y: 2, 
 SAVES.valley = {...SAVES.fighting, pos: {place: 'valley', x: 18, y: 9, dir: 'up'}};   // at the fork in the river valley, by the fox
 SAVES.deepIn = {...SAVES.fighting, pos: {place: 'falls', x: 7, y: 5, dir: 'up'}};   // below the wild boar, deep in the mountains
 SAVES.atTheTop = {...SAVES.climbing, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
+SAVES.foundFall = {...SAVES.fighting, w: {...SAVES.fighting.w, ...knows(1, ['瀑布', '野猪', '山羊'])}, areas: {1: {...SAVES.fighting.areas[1], climb: 2, boar: 1}},
+  pos: {place: 'falls', x: 7, y: 3, dir: 'down'}};   // found the waterfall, setting off back down the narrow way
 SAVES.appleTree = {...SAVES.middle, pos: {place: 'meadow', x: 20, y: 17, dir: 'right'}};
 SAVES.withApple = {...SAVES.middle, bag: {'苹果': 1}};   // an apple from the shop, to eat in an encounter
 SAVES.allFriends = {...SAVES.chapter1, friends: ['rabbit', 'fox', 'squirrel', 'goat']};   // every animal won over
@@ -175,6 +177,10 @@ const SCREENS = [
     play(); await wait(300); talk(npc('elder')); await wait(600); }},
   {id: 'path-top', title: 'The top of the path', save: 'atTheTop', why: 'Facing the waterfall: where the river comes from.', run: async () => { play(); await wait(500); }},
   {id: 'waterfall-found', title: 'Found it!', save: 'atTheTop', why: 'The waterfall teaches 瀑布, then: go back and tell the troop.', run: async () => { play(); await wait(100); pressA(); await wait(600); }},
+  {id: 'goat-stops', title: 'A goat stops you', save: 'foundFall', why: 'Walking down from the waterfall, past the goat beside the narrow way: a ! pops up, you turn to face it, and it says hello.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'falls', x: 7, y: 4, dir: 'down'}; placePlayer(); runEvents(); await wait(400); }},
+  {id: 'goat-tip', title: 'Hop down the ledges', save: 'foundFall', why: 'The goat’s tip for the way down (once; talk to it again for a reminder).', run: async () => {
+    play(); await wait(100); S.pos = {place: 'falls', x: 7, y: 4, dir: 'down'}; placePlayer(); runEvents(); await wait(1300); next(); await wait(200); next(); await wait(300); next(); await wait(500); }},
   {id: 'tablet', title: 'The stone tablet', save: 'inCave', run: async () => { play(); await wait(100); ACTIONS.sign(LEGEND.L); await wait(400); }},
   {id: 'tell', title: 'Telling the old monkey', save: 'explored', why: 'Your answer: fill the gap.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},

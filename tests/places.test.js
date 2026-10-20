@@ -166,6 +166,54 @@ test('animal friends on the way up: the rabbit and the fox give advice, the squi
   assert.equal(bubble(), '', 'and then its ! goes');
 });
 
+test('below the waterfall, a goat tells you that you can hop down the ledges, and stops you if you walk past', async () => {
+  const goat = climb => {
+    const g = loadGame({dom: true, save: {version: 27, started: true, w: Object.fromEntries(['山羊', '你好', '瀑布'].map(w => [w, {lv: 1, due: 0, ok: 0}])),
+      areas: {1: {gate: true, boar: 1, climb}}, pos: {place: 'falls', x: 7, y: 3, dir: 'down'}}});
+    g.run(`mode = 'play'; placePlayer(); toast = () => {}; globalThis.__heard = [];
+      showDialog = async (who, line) => { __heard.push(line.t.join('')); }; replyWith = async w => { __heard.push('you: ' + w); };
+      showNarration = async m => { __heard.push(m); }`);
+    return g;
+  };
+  const where = g => get(g, "(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'ledgeGoat'))");
+  const finish = async (g, code) => {   // (it waits a moment, with its ! showing, before it talks)
+    let done = false;
+    g.run(code).then(() => { done = true; });
+    for (let i = 0; i < 200 && !done; i++){ await tick(); g.flush(); }
+    assert.ok(done, code + ' finishes');
+  };
+  assert.equal(where(goat(1))[0], 'gone', 'not there on the way up, beside the wild boar');
+  const g = goat(2);
+  assert.deepEqual(where(g), ['falls', 6, 4], 'once you’ve found the waterfall, beside the narrow way');
+  assert.match(get(g, "speaker('ledgeGoat')"), /山羊 <span class="spk-py">shānyáng<\/span>/, 'called by its word, like the animal friends');
+  const bubble = () => get(g, "((AREA.bubbles.ledgeGoat || []).find(b => matches(b.if)) || {}).show || ''");
+  assert.equal(bubble(), '!');
+
+  await finish(g, 'runEvents()');
+  assert.deepEqual(get(g, '__heard'), [], 'not from up by the waterfall');
+  g.run("S.pos = {place: 'falls', x: 7, y: 4, dir: 'down'}; placePlayer()");   // you walk down the narrow way, past it
+  await finish(g, 'runEvents()');
+  const heard = get(g, '__heard');
+  assert.deepEqual(heard.slice(0, 2), ['你好！', 'you: 你好'], 'it stops you, and you say hello');
+  assert.match(heard[2], /hop down/, 'then it tells you about the ledges');
+  assert.equal(get(g, 'pl.dir'), 'left', 'you turned to face it');
+  assert.equal(get(g, 'here().ledgeTip'), 1);
+  assert.equal(bubble(), '', 'and its ! goes');
+  g.run('__heard.length = 0');
+  await finish(g, 'runEvents()');
+  assert.deepEqual(get(g, '__heard'), [], 'it only stops you once');
+  await finish(g, "talk(NPCS.find(n => n.id === 'ledgeGoat'))");
+  assert.match(get(g, '__heard').join(' '), /Hop down the ledges/, 'talk to it again for a reminder');
+
+  const asked = goat(2);   // talking to it first: it tells you then, and doesn't stop you as well
+  asked.run("S.pos = {place: 'falls', x: 5, y: 4, dir: 'right'}; placePlayer()");
+  await finish(asked, "talk(NPCS.find(n => n.id === 'ledgeGoat'))");
+  assert.equal(get(asked, 'here().ledgeTip'), 1);
+  asked.run("__heard.length = 0; S.pos = {place: 'falls', x: 7, y: 4, dir: 'down'}; placePlayer()");
+  await finish(asked, 'runEvents()');
+  assert.deepEqual(get(asked, '__heard'), []);
+});
+
 test('standing in tall or long grass hides your feet, as in Pokémon; on the path it doesn’t', () => {
   const at = (place, x, y) => { const g = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place, x, y, dir: 'down'}}}); g.run("mode = 'play'; placePlayer()"); return g; };
   assert.deepEqual(get(at('meadow', 4, 7), 'feetInGrass()'), [[64, 124, 16, 4]], 'the bottom of your square, in the meadow’s tall grass');

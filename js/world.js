@@ -16,6 +16,7 @@ const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : 
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
+const dirOf = (dx, dy) => Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');   // the way towards dx, dy
 
 const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
 const metCount = () => Math.min(S.met.length, ANIMALS.length);
@@ -89,10 +90,12 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
     if (k === 'hurt') return ((S.hearts ?? HEARTS) < HEARTS) === v;   // you've lost hearts in a battle
+    if (k === 'near'){ const n = NPCS.find(c => c.id === v); return !!n && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) === 1; }   // you're right beside this character
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
 }
+const CALL_MS = 900;   // how long a character's ! shows before they talk to you, when they stop you (the stopsYou step)
 const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet']};   // extra settings a step can have
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
@@ -156,7 +159,18 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     S.pos.dir = 'down'; save(); wakeT = performance.now(); SFX.chime();
     if (typeof s.sleep === 'string') toast(fill(s.sleep));
   },
-  async battle(s, who){ if (await battle(s.battle) === 'won' && s.win) await runSteps(s.win, who); },   // a battle (an enemy in AREA.enemies), and what happens if you win
+  async battle(s, who){ if (await battle(s.battle) === 'won' && s.win) await runSteps(s.win, who); },
+  // A character stops you as you walk past (in an event, near them), like a trainer in Pokémon: a ! pops up over them,
+  // you turn to face them, and they talk to you.
+  async stopsYou(s){
+    const n = NPCS.find(c => c.id === s.stopsYou);
+    if (!n) return;
+    held = null; queued = null;
+    pl.dir = dirOf(n.x - pl.x, n.y - pl.y); S.pos.dir = pl.dir; save();
+    n.calls = performance.now() + CALL_MS; SFX.call();
+    await sleep(CALL_MS);
+    await talk(n);
+  },   // a battle (an enemy in AREA.enemies), and what happens if you win
   async message(s, who){ if (who) await showNarration(fill(s.message)); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
 };
 // You reply: choose what to say from the phrases you know, with best the one that fits (taught on its

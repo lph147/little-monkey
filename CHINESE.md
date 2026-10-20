@@ -14,7 +14,7 @@ shown where the word list has them.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 猴子 (Monkey) |  |
+| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 山羊 (goat), 猴子 (Monkey) |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
 | 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey) |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I'm hungry. I want to eat some fruit! | 饿猴子 (Hungry monkey) |  |
@@ -23,7 +23,7 @@ shown where the word list has them.
 | 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 老板 (Shop owner) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), squirrel, goat |  |
+| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 松鼠 (squirrel), 山羊 (goat) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
 | 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |
@@ -47,8 +47,8 @@ shown where the word list has them.
 | 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | 猴子 (Monkey) |  |
 | 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 老猴子 (Old monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
-| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | rabbit |  |
-| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | fox |  |
+| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | 兔子 (rabbit) |  |
+| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | 狐狸 (fox) |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 老猴子 (Old monkey) |  |
 | 这是棍子。 | zhè shì gùnzi. | This is a stick. | 老猴子 (Old monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |

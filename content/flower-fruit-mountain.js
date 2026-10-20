@@ -36,9 +36,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   cave    after the story: 0 not dared yet, 1 dared to jump, 2 been inside the cave, 3 told the old monkey,
   //           4 led the troop in, 5 heard it's home, 6 made king
   //   count   how many of the troop you've counted into the cave
+  //   ledgeTip 1 once the goat below the waterfall has told you that you can hop down the ledges
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
@@ -134,6 +135,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
+    ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the ledges
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
     big: [{if:{cave:5}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
   },
@@ -198,8 +200,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'}
   },
 
-  // Things that happen by themselves when the time comes (checked whenever a request is done).
-  // A word in {curly brackets} in a message is shown as 汉字 (English).
+  // Things that happen by themselves when the time comes (checked after anything you do, such as a step or a
+  // request done). Besides what a task's if can check, an event's if can check near:'id' (you're right beside that
+  // character). A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     {if:{place:'cave', cave:3}, do:[{message:'The troop follows you through the water curtain!'}, {set:{cave:4}}]},   // you lead the troop in
@@ -208,7 +211,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {set:{gate:true}},
       {rumble:true},   // the ground shakes and the map is redrawn
       {message:'A rumble from the {山}! The rocks north of the meadow have rolled away, and the troop gathers there.'}
-    ]}
+    ]},
+    // the goat below the waterfall stops you as you walk past, to tell you the way down is quicker: once, on your way
+    // down to tell the troop, or any time later (not on the way up with them)
+    {if:{climb:2, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]},
+    {if:{climb:{atLeast:3}, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]}
   ],
 
   // The area's places: small maps you move between. The first is where the game starts. Each has
@@ -491,6 +498,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'squirrel', place:'path', x:5, y:3, facing:'down', look:'松鼠'},      // in the clearing, by the peach tree
     {id:'fox', place:'valley', x:18, y:8, facing:'down', look:'狐狸'},        // at the fork
     {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊'},       // in the clearing over the first bridge
+    // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
+    // down the ledges (it stops you if you walk past: see events)
+    {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -728,6 +738,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   wordGame  offer a word game. ask: the question; word: who you're playing with; win: steps if you win;
   //             notYet: the message if you don't know enough words yet
   //   gap       a sentence to finish by filling the gap: {sentence, en, word}, word being the missing one
+  //   stopsYou  a character stops you as you walk past (in an event): a ! pops up over them, you turn to face
+  //             them, and they talk to you (their talk here)
   //   chapter   a new chapter begins: its title card, and its part of the checklist from then on
   //   message   a line of English, such as what's happening: in a conversation it waits in the speech
   //             box until you press A; anywhere else it's a message at the bottom of the screen
@@ -848,6 +860,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
       notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}]}}]}],
     goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
       notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}]}}]}],
+    // the goat below the waterfall: the way down is quicker, hopping down the ledges that sent you round on the way up
+    ledgeGoat: [
+      {if:{ledgeTip:0}, do:[{say:'hi'}, {reply:'你好'},
+        {message:'Going down is quicker! The ledges that sent you the long way round can’t be climbed, but you can hop down them. Just walk off the edge.'},
+        {set:{ledgeTip:1}}]},
+      {do:[{say:'hi'}, {reply:'你好'}, {message:'Going down the mountain? Hop down the ledges: it’s quicker.'}]}
+    ],
     // two of the troop, across the river, give advice
     troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{animalsLeft:{atLeast:1}}, do:[{say:'hi'}, {reply:'你好'}, {say:'findAnimals'}, {message:'Animals hide in the tall grass. Walk through it to find them, and answer their questions to make friends.'}]},

@@ -81,7 +81,10 @@ function sheet(){
   const chars = zh => zh.split(' ').join('');
   const row = cells => `| ${cells.join(' | ')} |`;
   const table = (head, rows) => [row(head), row(head.map(() => '---')), ...rows.map(row)].join('\n');
-  const name = id => { const c = AREA.characters.find(x => x.id === id); return c && c.name ? `${c.name.zh} (${c.name.en})` : id; };
+  const name = id => {   // a character's name, or for an animal friend (which has none), its word, such as 山羊 (goat)
+    const c = AREA.characters.find(x => x.id === id);
+    return c && c.name ? `${c.name.zh} (${c.name.en})` : c && BANK[c.look] ? `${c.look} (${BANK[c.look].en})` : id;
+  };
 
   // Who says each line
   const saidBy = {};
