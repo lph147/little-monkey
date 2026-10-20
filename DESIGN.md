@@ -51,7 +51,7 @@ The Word Scroll becomes the game's Pokédex: a collection you want to complete, 
 
 **Categories:** animals, food, nature, places, items, actions (verbs), and people and phrases. Each shows a completion count, such as "Animals 6/10". A category only appears once there are words in it (Flower Fruit Mountain has no items).
 
-**Phrases** (你好, 谢谢, 再见 and so on) are a collection of their own, on a Phrases page. They don't count towards a chapter's budget of about 25 words, and they earn their Used mastery when you reply with them (see Grammar through characters).
+**Phrases** (你好, 谢谢, 再见 and so on) are a collection of their own, on a Phrases page. They don't count towards a chapter's words, and they earn their Used mastery when you reply with them (see Grammar through characters).
 
 **Each entry holds:** its pixel sprite, the word with pinyin and sound, an example sentence from the game, where you found it, and a mastery level.
 
@@ -110,15 +110,15 @@ Patterns are met in characters' lines, gap sentences, shops and replies. The pro
 The game follows Sun Wukong's story in order, and stays true to it. Three words describe its shape:
 
 - An **area** is a part of the world where a stretch of the story happens, such as Flower Fruit Mountain. You leave it when the story does, after a word test.
-- A **chapter** is a part of the story within an area. Each brings about 25 new words, new requests and encounters, and reuses the words you already know.
+- A **chapter** is a part of the story: one for each place and part of the journey, so an area has one or two. Each brings new words (as many as the story needs: there's no fixed number, decided 20 October 2026), new requests and encounters, and reuses the words you already know.
 - A **place** is one small map within an area. New places unlock as the story goes on, so you keep coming back to familiar ground with new things to do.
 
 | Area | Story | New collections (samples) | New ability |
 | --- | --- | --- | --- |
-| 1 Flower Fruit Mountain | The prologue: born from a stone, a baby's first day. Chapter 1: jumps through the waterfall, finds the Water Curtain Cave, becomes king; then leaves on a raft to find an immortal to learn from | Prologue: animals 兔子 狐狸 松鼠 山羊; food 桃子 苹果; nature 山 树 花 河. Chapter 1: home 床 碗 桌子 门 家 睡觉; 王; numbers 1–10; 海 sea | Walk, talk, then 跳 jump |
+| 1 Flower Fruit Mountain | The prologue: born from a stone, a baby's first day, the way up the stream, the Water Curtain Cave, becoming king. Chapter 1: makes the troop's new home (a school, a shop, a hive, a garden, a cow), prepares a feast, then leaves on a raft to find an immortal to learn from | Prologue: animals 兔子 狐狸 松鼠 山羊; food 桃子 苹果; nature 山 树 花 河; home 床 碗 桌子 家 睡觉; 王; 一 二 三. Chapter 1: school 学校 老师; numbers 四 to 十; colours; bees and honey; fruit; the cow and milk; fishing; 海 sea; 木筏 raft | Walk, talk, then 跳 jump |
 | 2 Across the sea | Sails the raft to the human world and dresses like a person | Travel 船 风; people 人 孩子; clothes 衣服 帽子; 钱 money | 游 swim |
 | 3 The teacher's mountain | Learns from Master Subhuti and gets his name; then flies home to Flower Fruit Mountain and defeats the demon bullying the troop | Body 手 脚 眼睛; sky 云; actions 飞 爬 | 变成 transform, cloud somersault |
-| 4 Dragon King's palace | Finds his staff under the sea | Sea creatures 虾 蟹 乌龟 龙; treasure 金 | Staff |
+| 4 Dragon King's palace | Finds his staff under the sea | Sea creatures 乌龟 龙 (虾 and 螃蟹 are caught fishing in Area 1); treasure 金 | Staff |
 | 5 Heaven | Looks after the horses and guards the peach garden | Sky 太阳 月亮 星星; 马 horses; more fruit | Fly |
 | 6 Under the mountain | Trapped by the Buddha for 500 years; freed by the monk | Time 年 月 天; directions 东 南 西 北 | Joins the pilgrims |
 | 7 onward | The journey west with the pig and Sandy | Demons, towns, more food and items | Team members |
@@ -129,7 +129,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 ### Area 1: Flower Fruit Mountain
 
-**One chapter so far** (decided 19 October 2026, after playtesting). There's no prologue: everything built so far, from being born to counting the troop into the cave, is Chapter 1: The Water Curtain Cave, with one checklist and no chapter card part way through. The parts below are still called prologue 1 to 3 and chapter 1 B and C, as plans; when chapter 2 begins is still to be decided. Save version 27.
+**The prologue, then chapter 1** (decided 20 October 2026, replacing "one chapter so far" of 19 October). Everything built so far, from being born to becoming king and counting the troop in, is the prologue, with its 46 words; a chapter card shows at its end. Chapter 1 runs from there to leaving the mountain: making the troop's new home by the waterfall, then preparing the feast, all one chapter. Chapters follow the journey's places, so Flower Fruit Mountain has just these two. (From 19 October there was no prologue, and everything built was Chapter 1: The Water Curtain Cave, with one checklist; save version 27.)
 
 **A longer Area 1** (decided 18 October 2026). Playtesters became king in about 5 minutes, which is far too soon, and the headband and the crown came straight after each other. The prologue grows into three parts, and becoming king moves later in chapter 1. (A play-time clock in each saved game was considered and not added: playtesters can be timed by watching.) The prologue gains 路 棍子 打 蛇 蜜蜂 野猪, from 30 words to 36; if that's too many, the boar's name can be heard only. (A frog in the new place was planned and dropped.)
 
@@ -137,32 +137,49 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 | --- | --- | --- |
 | Prologue 1: born, and naming things | Born from the stone; the old monkey explains more (the troop, the mountain, why every baby learns names) and sends you off to find things | Built; more dialogue to come |
 | Prologue 2: helping the troop | The hungry, thirsty and big monkeys' finding quests, the animals and the shop; the old monkey introduces the others and checks in after each | Built; more dialogue to come |
-| Prologue 3: up the stream, alone | When the rocks roll away, the troop wonders where the river comes from (水从哪里来？), but the path up is wild (山上有蛇。). You set off alone: the old monkey says goodbye (再见！), and on the way up the big monkey stops you to give you a stick (棍子, 这是棍子。) and show you how to fight (two conversations, so each teaches one new word). The way up follows the river through three places, the mountain path (山路, which teaches 路), the river valley (河谷) and deep in the mountains (深山): bushes, boulders and ledges send you through long grass, where snakes (蛇) and bees (蜜蜂) jump out; the way changes direction; in the valley it forks, and only the way along the river goes on up (水从山上来。, says the fox); animal friends from the meadow give advice (草里有蛇。) or want to play a word game; a wild boar (野猪) blocks the narrow way to the waterfall; a fallen tree hides a peach tree for chapter 1. At the end you find the waterfall, where the river begins, hurry back to tell the troop (山上有瀑布！) and lead them up, and the story of your first days is read there. The waterfall moves from the meadow to the end of the way up. In the book the troop goes up together; going alone keeps him the brave one, as at the cave | To build |
-| Chapter 1 A: the dare and the cave | The dare, the jump, the Water Curtain Cave | Built |
-| Chapter 1 B: moving in, then king | The troop moves in and sets up home, with requests using 有 and 没有 (碗里没有水, 床上没有草); you count the rest of the troop in (four to ten); then you become king at the feast. In the book the monkeys scramble for beds and bowls, then he reminds them of their promise and they bow | Partly built (home, king, one to three) |
-| Chapter 1 C: a school for the troop | Now they have a home, the troop wants more. You chop trees for wood, which opens a path to a new place, and build a school (学校): the old monkey becomes the teacher (老师), there are books (书), its lessons replace the practice post, and hide and seek comes near the end, with practice battles | To plan |
-| The end of Area 1 | The old gibbon, building the raft (building again), the send-off word test as the school's exam, sailing away | To plan |
+| Prologue 3: up the stream, alone | When the rocks roll away, the troop wonders where the river comes from (水从哪里来？), but the path up is wild (山上有蛇。). You set off alone: the old monkey says goodbye (再见！), and on the way up the big monkey stops you to give you a stick (棍子, 这是棍子。) and show you how to fight (two conversations, so each teaches one new word). The way up follows the river through three places, the mountain path (山路, which teaches 路), the river valley (河谷) and deep in the mountains (深山): bushes, boulders and ledges send you through long grass, where snakes (蛇) and bees (蜜蜂) jump out (a spider, 蜘蛛, will take the bee's place: the bee moves to chapter 1, where you make friends with them); the way changes direction; in the valley it forks, and only the way along the river goes on up (水从山上来。, says the fox); animal friends from the meadow give advice (草里有蛇。) or want to play a word game; a wild boar (野猪) blocks the narrow way to the waterfall; a fallen tree hides a peach tree for chapter 1. At the end you find the waterfall, where the river begins, hurry back to tell the troop (山上有瀑布！) and lead them up, and the story of your first days is read there. The waterfall moves from the meadow to the end of the way up. In the book the troop goes up together; going alone keeps him the brave one, as at the cave | To build |
+| Prologue 4: the dare and the cave | The dare, the jump, the Water Curtain Cave (until 20 October 2026, chapter 1 A) | Built |
+| Prologue 5: moving in, and king | The troop moves in (家), you become king (王: 美猴王), and you count three of the troop in (一 二 三). The prologue ends here, with a chapter card | Built; the chapter card to build |
+| Chapter 1 A: the troop's new home | The clearing by the cave becomes the troop's settlement. Wood (木头) and stone build a school (学校), with numbers and colours games, and a new shop | To build |
+| Chapter 1 B: preparing the feast | The bees and their queen (a hive, and honey), the garden (bananas, grapes, watermelon), the cow (milk, yoghurt, cheese), then fishing in the lake, the river and the sea | To build |
+| Chapter 1 C: the feast, and leaving | The school's exam (the area's word test), the feast, the old monkey and the immortals, and leaving on a raft | To build |
 
-The school isn't in the book: it fills the gap where the story skips hundreds of years of happy life on the mountain, and sets up what comes next, as the school can't teach him how to live forever, so he goes to find a real teacher (Area 3). The new words (砍 木头 学校 老师 书 有 没有 四 to 十) are drafts for the native speaker's check.
+The school isn't in the book: it fills the gap where the story skips hundreds of years of happy life on the mountain, and sets up what comes next, as the school can't teach him how to live forever, so he goes to find a real teacher (Area 3). Nor are the hive, the garden or the cow: they're the troop's good life on the mountain, and the feast that life leads to is the one in the book.
 
 **Prologue: the first day (built).** The baby is born from the stone. The old monkey, like a grandparent, welcomes it and sends it off to explore: you learn the names of things by finding them yourself (anything that sparkles has a word), and the monkeys you meet teach a few more through what they need: food, water, play, trading. The story is told through short lines, not long cutscenes. The waterfall is loud, and a little frightening; by the end of the day the troop wonders what's behind it. The prologue ends with the story of your first day, read at the waterfall.
 
-**Chapter 1: the Water Curtain Cave.** As in the book:
+**The end of the prologue: the Water Curtain Cave.** As in the book:
 
 1. The troop gathers at the waterfall, and agrees that whoever can jump through and come back unhurt will be their king.
 2. You jump (跳) through the water and find a cave behind it: an iron bridge (桥) and a stone home with stone beds (床), bowls (碗) and tables (桌子). A stone tablet names it 水帘洞 (Water Curtain Cave).
 3. You jump back and lead the troop in. The cave becomes their home (家), and they make you king (王): 美猴王 (Měi Hóuwáng · Handsome Monkey King).
-4. As the troop moves in, you count them: numbers 1–10, with 只 (三只猴子, three monkeys). The longer story from the book's opening, saved from the waterfall, is read here (see below).
+4. As the troop moves in, you count three of them in (一 二 三, with 只: 三只猴子, three monkeys); four to ten wait for the school in chapter 1. The longer story from the book's opening, saved from the waterfall, is read here (see below).
 
-**Life as king** (now chapter 1 B and C, above). New places unlock: the cave itself, a new place past the trees you chop, and the shore. The troop has new requests, the 老板 has new stock (food, and decorations for the cave), and new animals live in the new places. Most of what you hear uses words you already know, so this is where the prologue's words get their repetition, with new words arriving a few at a time.
+**Chapter 1: the troop's new home, and the feast** (planned 20 October 2026). Inspired by Digimon World, where the town you come back to grows with each part of the story: the clearing outside the cave, by the waterfall, becomes the troop's settlement, the base every new path leads out from and every quest brings something back to. Empty plots with signs fill in as you build: the school, the shop, the hive, the garden, the cow's pen, and the big table in the cave's entrance. Most of what you hear uses words you already know, so this is where the prologue's words get their repetition, with new words arriving one at a time.
 
-**Leaving.** At a feast, you grow sad that one day you'll die. An old gibbon tells you about immortals who never die, and you decide to find one and learn from them. The troop helps you build a raft from wood (木头) on the shore. Before you sail, the troop gives you a send-off: you name everything you've learned on the mountain (the area's word test, 80% to pass). Then you sail across the sea (海), and Area 2 begins.
+*A: the troop's new home.*
+- **Wood and stone.** You gather wood (木头) and small stones for building, counted as you go. Chopping trees (砍) can open the way to a new place, as planned for the mechanics.
+- **The school** (学校), built from them, replaces the practice post: its lessons review the words that need practice. The old monkey is the teacher (老师), and the little monkeys are your classmates (同学). It has two games. Numbers (四 to 十; 一 二 三 are known): how many peaches are on the table? Colours (黑色 black, 蓝色 blue, 粉色 pink, 棕色 brown, 绿色 green, 橙色 orange; 红色 黄色 白色 are known): hear a colour, and tap the paint pot. Each lesson teaches one new number or colour, then practises it with the ones you know. Later areas have schools of their own, for numbers past ten and measure words.
+- **The new shop.** A simple task (what it is, to decide). It sells things in the colours from school (我要蓝色的…), so the colours are used and shells have a purpose, and later honey or seeds.
 
-**Words.** The prologue has 30 words (and 7 phrases), with the colours 红色 黄色 白色 (with 色, decided 19 October 2026: 红色的花, a red flower). Chapter 1 brings about 25 more, such as 跳 洞 路 桥 床 碗 桌子 门 家 王, the numbers 一 to 十, 有, 海 and 木头, and a fruit or two for the shop. The list is a draft; its Chinese, and the names 美猴王 and the old gibbon's, need the native speaker's check.
+*B: preparing the feast.* The old monkey announces a big feast. The big table in the cave's entrance holds its checklist, in Chinese with 有 and 没有 (我们有蜂蜜。我们没有鱼。), which brings back the cave's words (桌子, 碗) that are never heard after the cave. New paths open from the settlement, in this order:
+1. **The bees.** A new place where bees (蜜蜂) and wasps (黄蜂) jump out of the grass: fight the wasps, and play word games with the bees. With six bee friends (六, from school), they say you must persuade their queen (蜂王, "bee king", with 王 from becoming king): a big creature, like the wild boar, with more hearts and harder questions. Back home they start a hive, and you collect honey (蜂蜜) every so often, as you pick fruit from the trees. Honey gives you energy: you walk faster for a while (each food does one thing). Hives can turn up in later chapters, to find honey. The bee moves here from the way up the stream, where a spider (蜘蛛) jumps out instead (a save that has caught 蜜蜂 keeps it).
+2. **The garden.** Seeds (种子) and plants from three new places, each with its own twist: bananas (香蕉) in a warm valley; grapes (葡萄) on a cliff you reach by hopping down ledges; and watermelon (西瓜) in a field where birds keep stealing them. Back home, the garden appears, where the troop grows them.
+3. **The cow.** A cow (牛) is lost on the mountain. Make friends with it, and it follows you home (the follow step, as the troop did). Wolves (狼) jump out on the way; lose a fight and the cow runs back to its field, and you fetch it again (losing isn't punished). At home it lives in a wooden pen: A at it says 牛在吃草。 (The cow is eating grass: words you know), and it gives milk (牛奶), then yoghurt (酸奶), then cheese (奶酪), each new word on its own.
+4. **Fishing.** With the cheese comes a fishing rod (鱼竿) (from whom, to decide). You catch something in three places: a fish (鱼) in the lake you know, a shrimp (虾) in the river, and last, so it's fresh for the feast, a crab (螃蟹) where the river meets the sea (海): the shore you'll leave from. Fishing is a small new game (to design: wait for a bite, then press A).
+
+*C: the feast, and leaving.*
+- **The school's exam**: the area's word test (80% to pass), before the feast.
+- **The feast**, at the big table in the cave's entrance, told like the opening: pictures with captions in Chinese, pinyin and English. At the feast you grow sad that one day you'll die. The old monkey tells you about immortals who never die (in the book an old gibbon does; the old monkey fits our story, decided 20 October 2026), and you decide to find one and learn from them.
+- **Leaving.** As in the book, you leave on a raft (木筏, with 木 from 木头; in the book he ties one from dead pines, and sets off alone). The troop sees you off: you walk down to the shore with the little, big and old monkeys following, step onto the raft, and the chapter ends. Once the engine runs more than one area, Area 2 begins.
+
+*What the engine needs* (each its own small task): parts of the map that appear once built; gathering materials; the school's games; a food that makes you faster; the cow running home when you lose; fishing; the feast's scenes; and more than one area.
+
+**Words.** The prologue has 46 words (and 7 phrases), with the colours 红色 黄色 白色 (with 色, decided 19 October 2026: 红色的花, a red flower); the spider (蜘蛛) takes the bee's place, so it stays at 46. Chapter 1 brings about 40 (planned 20 October 2026): 木头 学校 老师 同学 (and 砍, if chopping opens a way); 四 五 六 七 八 九 十; 黑色 蓝色 粉色 棕色 绿色 橙色; 有 没有; 蜜蜂 黄蜂 蜂王 蜂蜜; 种子 香蕉 葡萄 西瓜; 牛 狼 牛奶 酸奶 奶酪; 鱼竿 虾 螃蟹 海; 木筏. 虾 and 螃蟹 were planned for the Dragon King's palace (Area 4), which can find other sea creatures; 船 (boat) stays in Area 2. The list is a draft: its Chinese, and the name 美猴王, need the native speaker's check.
 
 **路 (path) waits for chapter 1** (decided 17 October 2026): stepping off the stone onto the path taught it straight away, one word too soon. Chapter 1 can teach it on a path to a new place, such as up to the high slopes. Its word bank entry and sprite were removed meanwhile (the tests don't allow unused ones); they're in git history, in the commit before the one that took it out.
 
-**What changes in the prologue.** The cave door on the far left (洞) isn't in the story, so it goes: 洞 is caught at the Water Curtain Cave instead. The word test moves from that door to the send-off on the shore. The waterfall's fright and the troop's wondering aren't in the game yet: the rumble after the waterfall story becomes the troop wondering what's behind the water, which leads into chapter 1.
+**What changes in the prologue.** The cave door on the far left (洞) isn't in the story, so it goes: 洞 is caught at the Water Curtain Cave instead. The word test moves from that door to the school's exam before the feast. The waterfall's fright and the troop's wondering aren't in the game yet: the rumble after the waterfall story becomes the troop wondering what's behind the water, which leads into chapter 1.
 
 **Saved for chapter 1:** the story from the book's opening that was at the waterfall, checked by the native speaker: 山上有一个大石头。石头里有一只小猴子。小猴子有很多朋友。猴子吃桃子，喝水。鸟在树上玩。河里有鱼，山上有瀑布。小猴子很快乐！ It needs 一个, 一只, 很 and 大, which come with chapter 1 (大, 很, 快乐 and 谁 left the word bank with it). Its questions used 谁 and 什么, so they wait for Area 2's questions, or become gap questions like the prologue's.
 
@@ -182,7 +199,7 @@ Money comes mainly from learning, so progress in the game and progress in Chines
 
 **Flower Fruit Mountain's shop.** A monkey shop owner, 老板 (lǎobǎn), sells a red cloth headband, 头带 (tóudài), for about 10 shells. It's something you choose to buy, not something you must do (decided 18 October 2026; it used to be on the prologue's checklist, and becoming king with the crown came straight after it). Your monkey wears it from then on. (The golden headband comes much later in the story, from the monk.)
 
-**Fruit and the bag** (decided 18 October 2026). Each fruit does one thing, the same everywhere: a 桃子 (peach) brings a heart back (on your turn in a battle, with 吃, or from your bag), and a 苹果 (apple) takes away a wrong answer under any question, in a battle or with an animal, without using your turn. You carry up to 3 of each. Fruit trees fill your bag once the hungry monkey has eaten (one fruit a tree each time you come to the place), friends give fruit when you win their word games (the squirrel a peach, the goat an apple), and the 老板 sells apples. Later areas can add fruit with other jobs. The bag (包 bāo, on the menu) shows your food, how many and what each does, your stick, and what you're carrying for someone; tap a peach to eat it. Clothes stay in the Wardrobe.
+**Fruit and the bag** (decided 18 October 2026). Each fruit does one thing, the same everywhere: a 桃子 (peach) brings a heart back (on your turn in a battle, with 吃, or from your bag), and a 苹果 (apple) takes away a wrong answer under any question, in a battle or with an animal, without using your turn. You carry up to 3 of each. Fruit trees fill your bag once the hungry monkey has eaten (one fruit a tree each time you come to the place), friends give fruit when you win their word games (the squirrel a peach, the goat an apple), and the 老板 sells apples. Later areas can add fruit with other jobs. Honey (蜂蜜, chapter 1) gives you energy: you walk faster for a while. The bag (包 bāo, on the menu) shows your food, how many and what each does, your stick, and what you're carrying for someone; tap a peach to eat it. Clothes stay in the Wardrobe.
 
 **Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 2, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops and request rewards, so each area's shop has clothes to sell as well as food and cave decorations.
 
@@ -194,7 +211,7 @@ Money comes mainly from learning, so progress in the game and progress in Chines
 | Known well | Nothing |
 | Wrong answer | Nothing, and it comes back sooner |
 
-This stops anyone farming easy words, and keeps the reward pointed at what actually needs practice. The troop's school will take over from the training ground on Flower Fruit Mountain (chapter 1 C).
+This stops anyone farming easy words, and keeps the reward pointed at what actually needs practice. The troop's school will take over from the training ground on Flower Fruit Mountain (chapter 1 A).
 
 **Moving on.** Each area ends with a word test covering that area's words, with an 80% pass mark, as part of the story: on Flower Fruit Mountain it's the troop's send-off on the shore, before you sail.
 
@@ -268,7 +285,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 **Decided** (these were the open questions)
 
-- **Words per chapter:** about 25 new words to collect, like the prologue (27: 28 once the shop added 老板 and 头带 and 森林 was dropped, then 路 moved to chapter 1), so about 20 new sprites per chapter. (Area 1 has two chapters, decided 17 October 2026.) Words you only hear in sentences don't count towards this.
+- **Words per chapter:** no fixed number since 20 October 2026 (Flower Fruit Mountain's prologue has 46, and its chapter 1 about 40). It was about 25 new words to collect, like the prologue (27: 28 once the shop added 老板 and 头带 and 森林 was dropped, then 路 moved to chapter 1), so about 20 new sprites per chapter. (Area 1 has two chapters, decided 17 October 2026.) Words you only hear in sentences don't count towards this.
 - **Demons:** harder battles start at Area 3, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
 - **Pinyin** stays over every word (the menu setting turns it off); it doesn't fade as you learn words.
 - **After the headband:** the 老板 also sells 苹果, bought with 我要苹果; eating one in an animal encounter takes away a wrong answer.
@@ -277,7 +294,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 **Decided on 16 October 2026** (from the [second review](https://claude.ai/code/artifact/a02dc745-404f-4605-9b78-00d70691112e))
 
-- **Phrases** are their own collection, outside the budget of about 25 words per area.
+- **Phrases** are their own collection, outside the words counted for each area.
 - **我不要** is taught in Area 1 as a fixed phrase; 不 on its own waits for Area 2.
 - **Talk** moves into a speech box over the map; full cards only for the big moments.
 - **The wardrobe** starts in Area 1 with the headband, and opens fully in Area 2. (A flower behind your ear was tried and taken out.)
@@ -379,8 +396,6 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Prologue: more dialogue from the old monkey and the troop, guiding you instead of prompts (the Tasks and Menu tips went); the headband no longer required (18 October 2026)
 - [x] Prologue 3, the mountain path: the new place, the waterfall moving to its top, 路, walls, ledges, long grass, the fallen tree, fetching the troop (18 October 2026; save version 23)
 - [x] Prologue 3, the first battles: the stick and the big monkey's lesson, hearts, snakes and bees, the wild boar, resting with the old monkey (18 October 2026; save version 24). 打 (hit) and 跑 (run) are on the battle buttons with pinyin and English, but aren't words to collect yet: teaching 打 straight after 棍子 would have been two new words back to back
-- [ ] Chapter 1 B: setting up home (有, 没有), counting the troop in (four to ten), then king at the feast
-- [ ] Chapter 1 C: chopping trees for wood, a new place, building the school, lessons and hide and seek
 - [x] Playtest fixes (18 October 2026): the rocks roll away only once the rest of the prologue is done; wild creatures jump out less often; no friend powers
 - [x] The path's new looks (18 October 2026, after playtesting): long grass like the meadow's tall grass, a shade darker; Pokémon-style ledges; bushes and boulders instead of stone walls; grass hides your feet
 - [x] The longer way up the stream (18 October 2026; save version 25): three places following the river (the mountain path, the river valley, deep in the mountains), with a fork, animal friends from the meadow who play or give advice, and fruit trees
@@ -403,6 +418,25 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Rule slips from the review (20 October 2026): one new word per conversation. The old monkey's send-off teaches only 再见, and the big monkey stops you on the way up (like the goat) to give you the 棍子; a reply you haven't learned waits when the conversation has already taught a word, in any conversation (不客气 after your first request's 要, 谢谢 after a new thing from the shop); you say 谢谢 when the squirrel or the goat gives you fruit for winning its word game, another chance to catch it; your tasks write a word you haven't caught in plain English ("Find the apple the hungry monkey wants")
 - [x] Answering with the D-pad and A (20 October 2026), as well as by tapping: a question's answers, its 🔊 and the apple under it, and a matching game's words and pictures. With nothing chosen, A shows where you are (the first answer) and never answers for you; the chosen answer has the gold outline, never the A badge, and the A label says Choose
 - [x] Game controllers (20 October 2026, js/gamepad.js): Xbox, PlayStation, Switch Pro and Bluetooth controllers, on a computer or a phone. Each button presses one of the game's own, with the Xbox layout (the bottom button is A, the right one B); Start is MENU, Select is TASKS; the D-pad or left stick is the D-pad, and holding a direction on a card moves again after a moment
-- [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
+- [x] Plan chapter 1 (20 October 2026): everything built so far becomes the prologue (46 words); chapter 1 is the troop's new home by the cave (the school, numbers and colours, a new shop) and preparing the feast (bees and honey, the garden, the cow, fishing), then the feast, the old monkey and the immortals, and leaving on a raft. No fixed number of words per chapter
+- [ ] The prologue and chapter 1: a chapter card once the troop is counted in, and chapter 1's own checklist
+- [ ] A spider (蜘蛛) instead of the bee on the way up the stream
+- [ ] The troop's new home: the clearing by the cave as a settlement, with plots that fill in as you build
+- [ ] Wood (木头) and stone for building
+- [ ] The school (学校, 老师, 同学), replacing the practice post
+- [ ] The school's numbers game (四 to 十)
+- [ ] The school's colours game (黑色 蓝色 粉色 棕色 绿色 橙色)
+- [ ] The new shop, with things in the school's colours
+- [ ] The feast announced: the big table, and its checklist with 有 and 没有
+- [ ] The bees: a new place, bees and wasps, six bee friends
+- [ ] The queen bee, the hive and honey (energy: walking faster)
+- [ ] The garden: bananas, grapes and watermelon from three new places
+- [ ] The cow: finding it, and bringing it home past the wolves
+- [ ] The cow's pen: milk, yoghurt and cheese
+- [ ] Fishing: the rod, the lake and the river
+- [ ] The sea: the shore, and a crab for the feast
+- [ ] The school's exam (the area's word test)
+- [ ] The feast, told like the opening: the old monkey and the immortals
+- [ ] Leaving on the raft, with the troop seeing you off
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2
 - [ ] Build Area 2, Across the sea
