@@ -106,7 +106,7 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); click('[data-a=ok]'); await wait(200);
     next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
   {id: 'playing', title: 'Playing', save: 'middle', why: 'The map, the task box, the header.', run: async () => { play(); await wait(600); }},
-  {id: 'chapter-card', title: 'A new chapter', save: 'middle', why: 'When the prologue is done.', run: async () => { play(); await wait(100); STEPS.chapter({chapter: 1}); await wait(300); }},
+  {id: 'chapter-card', title: 'A new chapter', save: 'middle', why: 'Its title card, when a chapter begins (chapter 1 is the only one so far).', run: async () => { play(); await wait(100); STEPS.chapter({chapter: 0}); await wait(300); }},
   {id: 'place-name', title: 'Arriving in a place', save: 'middle', why: 'Its name for a moment, when you go from one place to another.', run: async () => { play(); await wait(100); showPlaceName(); clearTimeout(placeNameT); await wait(300); }},
   {id: 'gap-picture', title: 'Fill the gap (pictures)', save: 'middle', why: 'Giving the peach: the word is new, so the choices are pictures.', run: async () => {
     play(); await wait(100); gapQ({who: speaker('hungry'), t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '桃子'}); await wait(400); }},
@@ -230,7 +230,7 @@ const SCREENS = [
 // What goes at the top of each frame, before the game's own scripts: pretend storage holding the
 // save, a pretend Chinese voice that says nothing, no sound effects or music, the helpers, and a
 // list of any errors.
-function prepare(save, voices){
+function prepare(save, voices, phone){   // phone: as on a phone, with no keyboard help under the console
   const mem = {};
   if (save) mem['xiaohouzi-v2'] = JSON.stringify(save);
   const storage = {getItem: k => (k in mem ? mem[k] : null), setItem: (k, v) => { mem[k] = String(v); }, removeItem: k => { delete mem[k]; },
@@ -243,7 +243,7 @@ function prepare(save, voices){
   window.SpeechSynthesisUtterance = function(text){ this.text = text; };
   window.AudioContext = window.webkitAudioContext = undefined;
   const still = document.createElement('style');   // no animations, so every screen is seen as it settles
-  still.textContent = '*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition:none!important}';
+  still.textContent = '*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition:none!important}' + (phone ? '.keys{display:none!important}' : '');
   document.head.append(still);
   window.__errors = [];
   window.addEventListener('error', e => window.__errors.push(e.message));
@@ -263,7 +263,7 @@ async function load(fig, s, [w, h], zoom){
   box.style.width = w * zoom + 'px'; box.style.height = h * zoom + 'px';
   const f = document.createElement('iframe');
   f.width = w; f.height = h; f.style.transform = `scale(${zoom})`; f.title = s.title;
-  const top = `<base href="${new URL('../', location.href)}"><script>(${prepare})(${JSON.stringify(s.save ? SAVES[s.save] : null)}, ${JSON.stringify(s.voices || 'zh')})<\/script>`;
+  const top = `<base href="${new URL('../', location.href)}"><script>(${prepare})(${JSON.stringify(s.save ? SAVES[s.save] : null)}, ${JSON.stringify(s.voices || 'zh')}, ${h < 600})<\/script>`;
   f.srcdoc = gamePage.replace(/<head>/i, '<head>' + top);
   box.replaceChildren(f);
   note.textContent = 'Loading…';

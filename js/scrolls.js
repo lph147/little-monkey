@@ -54,9 +54,10 @@ function checklistHTML(onlyLeft){
   const more = all.some(([, , , found]) => !found);
   return `<ul class="checklist">${items.map(([t, done]) => `<li class="${done ? 'done' : ''}">${esc(t)}</li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
 }
-function infoBox(who, html){
+function infoBox(who, html){   // who: a picture over it, or an animal's or a battle's scene, down its left as in the questions
   return new Promise(res => {
-    openCard(`<div class="who" aria-hidden="true">${who}</div>${html}<div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
+    const top = who.startsWith('<div class="scene') ? who : `<div class="who" aria-hidden="true">${who}</div>`;
+    openCard(`${top}${html}<div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
     on('[data-a=ok]', () => { closeCard(); res(); });
   });
 }
@@ -265,6 +266,8 @@ function openScroll(back, top, tab){   // top: where to scroll to, to come back 
     <p class="small">Gold squares show how well you know a word: caught, recognised, read, used. Shadows are words you've heard but not caught yet.</p>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>${back ? 'Back' : 'Close'}</button></div>`);
   if (top) sheet.scrollTop = top;
+  const chosen = sheet.querySelector('.tab[aria-selected="true"]'), row = sheet.querySelector('.scrolltabs');
+  if (chosen && row) row.scrollLeft = Math.max(0, chosen.offsetLeft - row.offsetLeft - 24) || 0;   // the tabs are one row: the chosen one in view
   sheet.querySelectorAll('.tab').forEach(b => b.onclick = () => { if (b.dataset.tab !== scrollTab){ SFX.turn(); openScroll(back, 0, b.dataset.tab); } });
   sheet.querySelectorAll('.card[data-w]').forEach(b => b.onclick = () => {
     const at = sheet.scrollTop;

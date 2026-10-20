@@ -179,6 +179,14 @@ rt.hid{visibility:hidden}
 /* A word's card, and its page in the Word Scroll: the picture on the left, the word, pinyin, English and notes
    beside it, in the middle of a card that fills the screen. */
 .sheet{min-height:100%}
+/* Every card is a column: its buttons sit at the bottom (so the line over them is the card's own edge, never a line
+   halfway down), and what's above them sits in the middle of the room that's left, not squashed up at the top. (Cards
+   laid out as a grid, such as an animal's scene down the left, or the menu's tiles, place their own.) */
+.sheet{display:flex;flex-direction:column}
+.sheet > *{flex-shrink:0}
+.sheet > :first-child{margin-top:auto}
+.sheet > .actions{margin-top:auto}
+.sheet:has(.tiles) > :first-child,.sheet:has(> .scene) > :first-child{margin-top:0}
 .sheet:has(> .word.side){display:flex;flex-direction:column}
 .sheet:has(> .word.side) > .actions{margin-top:auto}
 .word.side{flex:1;display:grid;grid-template-columns:auto 1fr;column-gap:1.3rem;align-content:center;align-items:center;justify-items:start;text-align:left;padding:.3rem .6rem}
@@ -216,7 +224,9 @@ rt.hid{visibility:hidden}
 .shake{animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 /* the Word Scroll: tabs across the top, and a grid of word pictures */
-.scrolltabs{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0 2px}
+.scrolltabs{display:flex;gap:4px;margin:8px 0 2px;overflow-x:auto;scrollbar-width:none}   /* one row, scrolling sideways, so there's room for the words */
+.scrolltabs::-webkit-scrollbar{display:none}
+.scrolltabs .tab{flex-shrink:0}
 .tab{font-family:var(--pixel);font-size:.82rem;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:4px;padding:1px 5px;min-height:32px}
 .tab[aria-selected="true"]{background:var(--jade);border-color:var(--jade);color:var(--jade-ink)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px;margin-top:6px}
@@ -296,7 +306,7 @@ rt.hid{visibility:hidden}
 .round.ready{box-shadow:0 4px 0 rgba(0,0,0,.3),0 0 0 4px var(--gold)}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}
 .sheet .menu button.navsel,.sheet [data-nav] button.navsel{outline:3px solid var(--gold);outline-offset:2px}
-.sheet [data-nav]:has(.navsel:not(.primary)) .btn.primary::before,.sheet:has(.grid[data-nav] .navsel,.chips[data-nav] .navsel) .actions .btn.primary::before{display:none}   /* the A badge follows the button you've chosen */
+.sheet [data-nav]:has(.navsel:not(.primary)) .btn.primary::before,.sheet:has(.grid[data-nav] .navsel,.chips[data-nav] .navsel,.menu .navsel:not(.primary)) .actions .btn.primary::before{display:none}   /* the A badge follows the button you've chosen */
 .sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.sheet [data-nav] button.navsel::before,.titlecard .btn.sel::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-8px;left:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .sheet [data-b]::after,#skipBtn::after{content:"B";position:absolute;top:-8px;right:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnB);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
@@ -348,7 +358,7 @@ rt.hid{visibility:hidden}
 .mp{font-size:1.8rem;white-space:nowrap}
 .mw.sel{background:color-mix(in srgb,var(--gold) 35%,var(--paper));border-color:var(--gold)}
 .mw.done,.mp.done{opacity:.25;box-shadow:none;cursor:default}
-.friends{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.friends{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
 .friends button{display:flex;flex-direction:column;align-items:center;background:var(--bg);border:2px solid var(--line);border-radius:6px;padding:8px 4px;font-family:var(--text)}
 .friends .portrait{width:var(--pic-mid);height:var(--pic-mid)}
 .stats{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--pixel);font-size:.85rem;color:var(--muted);margin:.1rem 0 .2rem}
@@ -459,6 +469,7 @@ rt.hid{visibility:hidden}
 .sheet:has(> .scene) .word{padding:0}
 .sheet:has(> .scene) .big{font-size:2.6rem}
 .sheet:has(> .scene) > .actions{margin-top:.3rem}
+.sheet:has(> .scene) > .endmsg ~ .actions{grid-row:-2;align-self:end}   /* a result (a new friend, a battle won): OK at the bottom */
 .endmsg{text-align:center;font-size:1.1rem}
 /* A battle: the scene also shows your hearts, in a plate at its bottom right; your turn is a menu of what to do. */
 .scene .plate.mine{top:auto;bottom:5px;left:auto;right:5px;max-width:62%}
