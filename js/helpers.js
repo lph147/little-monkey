@@ -4,15 +4,17 @@
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const wz = hz => `${hz} (${(WORDS[hz] || {en: (GLOSS[hz] || ['', ''])[1]}).en})`;
+const enOf = hz => (WORDS[hz] || {en: (GLOSS[hz] || ['', ''])[1]}).en;
+const wz = hz => `${hz} (${enOf(hz)})`;
 // Fills in content text: a counter such as '{animals}' becomes its number, a word such as '{水}'
 // becomes '水 (water)', '{holding:hungry}' the word for what you're holding for that request, and
 // '{wanted:hungry}' the word for what a fussy request wants now.
-// With raw, words are left as they are (for task ids).
-const fill = (text, raw) => String(text).replace(/\{([^}]+)\}/g, (m, k) => {
+// With raw, words are left as they are (for task ids). With plain (your tasks), a word you haven't caught
+// yet is just its English: 'Find the apple', not 'Find the 苹果 (apple)'.
+const fill = (text, raw, plain) => String(text).replace(/\{([^}]+)\}/g, (m, k) => {
   if (AREA.counters[k]) return counter(k);
   const w = k.startsWith('holding:') ? here().holding[k.slice(8)] : k.startsWith('wanted:') ? (here().wanted || {})[k.slice(7)] : k;
-  return raw ? w : wz(w);
+  return raw ? w : plain && lvl(w) < 1 ? enOf(w).split(',')[0] : wz(w);
 });
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function rnd(x, y, k = 0){ let h = Math.imul(x|0, 374761393) ^ Math.imul(y|0, 668265263) ^ Math.imul(k|0, 1442695041); h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; }

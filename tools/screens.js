@@ -41,6 +41,8 @@ SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
 SAVES.rocksGone = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], hungry: 'done', thirsty: 'done', holding: {}, gate: true}}, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};   // the troop gathers where the rocks were
+SAVES.settingOff = {...SAVES.rocksGone, version: 29, w: {...SAVES.rocksGone.w, ...knows(1, ['再见'])}, areas: {1: {...SAVES.rocksGone.areas[1], flowers: 'done', climb: 1}},
+  pos: {place: 'meadow', x: 15, y: 2, dir: 'up'}};   // said goodbye to the old monkey, about to walk up past the big monkey (no stick yet)
 SAVES.climbing = {...SAVES.rocksGone, version: 25, w: {...SAVES.rocksGone.w, ...knows(1, ['路'])}, areas: {1: {...SAVES.rocksGone.areas[1], climb: 1}}, pos: {place: 'path', x: 15, y: 14, dir: 'left'}};   // (version 25: older saves on the path are moved off it)
 SAVES.fighting = {...SAVES.climbing, w: {...SAVES.climbing.w, ...knows(1, ['棍子', '蛇'])}, hearts: 4, bag: {'桃子': 2, '苹果': 1}};   // on the path, with the stick, a snake met before, and fruit
 SAVES.packed = {...SAVES.fighting, hearts: 3, areas: {1: {...SAVES.fighting.areas[1], thirsty: 'asked', holding: {thirsty: '水'}}}};   // hurt, with fruit, and water for the thirsty monkey
@@ -162,8 +164,10 @@ const SCREENS = [
   {id: 'deep-mountains', title: 'Deep in the mountains', save: 'deepIn', why: 'The wild boar blocks the narrow way to the waterfall.', run: async () => { play(); await wait(500); }},
   {id: 'long-grass', title: 'In the long grass', save: 'climbing', why: 'Standing in the long grass hides your feet; a ledge above, to hop down.', run: async () => {
     play(); await wait(200); S.pos = {place: 'path', x: 8, y: 11, dir: 'up'}; placePlayer(); await wait(400); }},
-  {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'rocksGone', why: 'Teaching 棍子, before the lesson on how to fight.', run: async () => {
-    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); next(); await wait(300); next(); await wait(600); }},
+  {id: 'big-stops', title: 'The big monkey stops you', save: 'settingOff', why: 'Setting off, past the big monkey in the way up: a ! pops up, you turn to face him, and he says 这是棍子。', run: async () => {
+    play(); await wait(100); S.pos = {place: 'meadow', x: 15, y: 1, dir: 'up'}; placePlayer(); runEvents(); await wait(400); }},
+  {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'settingOff', why: 'Its own new-word card (the old monkey’s goodbye, 再见, came before, in another conversation), then the lesson on how to fight.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'meadow', x: 15, y: 1, dir: 'up'}; placePlayer(); runEvents(); await wait(1500); next(); await wait(600); }},
   {id: 'stick-held', title: 'Holding the stick', save: 'fighting', why: 'From then on your monkey holds the stick (棍子) on the map, and in its picture: small, so a longer staff can replace it later.', run: async () => {
     play(); await wait(200); S.pos = {place: 'path', x: 16, y: 16, dir: 'down'}; placePlayer(); await wait(400); }},
   {id: 'battle-snake', title: 'A battle: your turn', save: 'fighting', why: 'Hit, eat (a peach brings a heart back) or run. Hearts on both sides.', run: async () => {

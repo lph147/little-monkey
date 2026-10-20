@@ -102,9 +102,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(13, 6, 'up', 'giving the hungry monkey the peach');
   assert.equal(area().holding.hungry, undefined, 'the peach is given back');
   assert.deepEqual(area().wanted, {hungry: '苹果'}, 'he wants the apple instead');
+  assert.ok(get('getTasks()').some(t => t.text === 'Find the apple the hungry monkey wants'), 'a task names a word you haven’t caught in plain English');
   await pressAt(20, 17, 'right', 'picking an apple from the tree across the river');
+  assert.ok(get('getTasks()').some(t => t.text === 'Give the 苹果 (apple) to the hungry monkey'), 'once caught, in Chinese and English');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
   assert.equal(area().hungry, 'done', 'the hungry monkey should take the apple');
+  assert.ok(knows('要') && !knows('不客气'), 'your first request teaches 要, so your reply 不客气 waits: one new word at a time');
   assert.ok(!knows('没关系'), 'he said 没关系 when you said sorry, but you haven’t said it yet');
   await pressAt(13, 6, 'up', 'talking to the hungry monkey once he has eaten: he says sorry for being fussy');
   assert.ok(knows('没关系'), 'you reply 没关系 (that’s OK), and catch it');
@@ -130,6 +133,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   const peaches = get('S.shells');
   await pressAt(4, 10, 'right', 'giving the big monkey the flowers');
   assert.equal(area().flowers, 'done', 'the big monkey should take the flowers');
+  assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气');
   assert.ok(get('S.shells') > peaches, 'and give you peaches for them');
 
   // The shop owner, and the animals in the tall grass
@@ -152,10 +156,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   plan.buy = '头带';
   await pressAt(11, 15, 'down', 'buying the headband');
   assert.deepEqual(area().bought, ['头带'], 'you should have bought the headband');
+  assert.ok(!knows('谢谢'), 'the headband was new, so your reply 谢谢 waits');
   plan.buy = '苹果';
   await pressAt(11, 15, 'down', 'buying an apple');
   plan.buy = null;
   assert.equal(get('S.bag')['苹果'], 1, 'you should have an apple in your bag');
+  assert.ok(knows('谢谢'), 'buying something you know, you say 谢谢');
   plan.eat = true;
   await pressAt(13, 19, 'up', 'meeting the squirrel with an apple in your bag');
   assert.equal(get('S.bag')['苹果'], 0, 'the apple should be eaten');
@@ -165,10 +171,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // Up the stream: you set off alone, find the waterfall, come back down and lead the troop up
   await pressAt(15, 2, 'left', 'talking to the old monkey where the rocks were');
   assert.equal(area().climb, 1, 'you should set off up the path');
+  assert.ok(knows('再见') && !knows('棍子'), 'the old monkey says goodbye, and you say it back');
+  stand(15, 1, 'up');
+  await act('arrive(15, 1).then(runEvents)', 'walking up past the big monkey');
+  assert.ok(knows('棍子'), 'the big monkey should stop you, and give you a stick');
   await stepOn(15, 0, 'going up the mountain path');
   assert.equal(run('PLACE'), 'path', 'you should be on the mountain path');
   assert.ok(knows('路'), 'arriving on the mountain path should teach 路');
-  assert.ok(knows('棍子'), 'the big monkey should give you a stick');
   for (const [x, y] of [[13, 14], [12, 14], [11, 14], [10, 14], [9, 14]]) await stepOn(x, y, 'walking through the long grass');
   assert.ok(knows('蛇'), 'a snake should jump out of the long grass, and be chased away');
   assert.equal(get('S.hearts'), 5, 'every dodge right: no hearts lost');

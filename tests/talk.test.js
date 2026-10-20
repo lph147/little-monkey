@@ -162,8 +162,11 @@ test('再见 is taught as you set off up the mountain path: the old monkey says 
   const part = cond => JSON.parse(g.run(`JSON.stringify(AREA.talk.elder.find(p => p.if && ${cond}).do.map(s => s.reply || s.newWord || s.say || Object.keys(s)[0]))`));
   const setOff = part('p.if.gate === true && p.if.climb === 0');
   assert.ok(setOff.indexOf('bye') >= 0 && setOff.indexOf('再见') === setOff.indexOf('bye') + 1, 'he says goodbye, and you reply');
-  assert.ok(setOff.indexOf('棍子') >= 0 && setOff.indexOf('棍子') < setOff.indexOf('bye') - 1, 'not straight after the stick: one new word at a time');
+  assert.ok(!setOff.includes('棍子'), 'not in the same conversation as the stick: one new word at a time');
   assert.ok(!part('p.if.elder === 1 && !p.if.newWords').includes('再见'), 'not when he tells you about the animals');
+  // the big monkey gives you the stick on your way: its own conversation, with nothing else new
+  const stick = JSON.parse(g.run(`JSON.stringify(AREA.talk.big.find(p => p.if && p.if.new === '棍子').do.map(s => s.reply || s.newWord || s.say || Object.keys(s)[0]))`));
+  assert.deepEqual(stick.filter(s => s !== 'message'), ['stickHere', '棍子']);
 });
 
 test('back with your first words, the old monkey checks them: you match them to their pictures, then he tells you about the animals', async () => {
@@ -179,4 +182,11 @@ test('back with your first words, the old monkey checks them: you match them to 
   stop.run("mode = 'play'; showDialog = showNotice = showNarration = async () => {}; toast = () => {}; matchWords = async () => null");
   await stop.run("talk(ALL_NPCS.find(n => n.id === 'elder'))");
   assert.equal(stop.run('here().elder'), 1, 'stopped: he waits until you’re ready');
+});
+
+test('the big monkey waits in the way up to stop you with the stick, and only until he has given it to you', () => {
+  const big = w => { const g = loadGame({save: {version: 29, started: true, w, areas: {1: {elder: 2, gate: true, climb: 1}}}}); g.run('placeCharacters()');
+    return JSON.parse(g.run(`JSON.stringify((({place, x, y}) => [place, x, y])(ALL_NPCS.find(n => n.id === 'big')))`)); };
+  assert.deepEqual(big({}), ['meadow', 16, 1], 'in the gap where the rocks were: you can’t go up without passing him');
+  assert.deepEqual(big({'棍子': {lv: 1, ok: 0}}), ['meadow', 17, 3], 'back beside it once you have the stick');
 });

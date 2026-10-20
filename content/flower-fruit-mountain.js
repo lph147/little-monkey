@@ -139,7 +139,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the ledges
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
-    big: [{if:{cave:5}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
+    big: [{if:{climb:1, new:'棍子'}, show:'!'}, {if:{cave:5}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:
@@ -218,6 +218,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // down to tell the troop, or any time later (not on the way up with them)
     {if:{climb:2, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]},
     {if:{climb:{atLeast:4}, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]},
+    // the big monkey waits by the way up and stops you as you set off, to give you a stick
+    {if:{climb:1, new:'棍子', near:'big'}, do:[{stopsYou:'big'}]},
     // the troop has followed you up: as you come out of the narrow way by the waterfall, they leap past you to their places
     {if:{climb:3, at:[7, 2, 'falls']}, do:[{set:{climb:4}}, {follow:[]}, {message:'The troop has followed you all the way up to the {瀑布}!'}]}
   ],
@@ -475,7 +477,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{gate:true}, x:14, y:2, facing:'right'}],   // by the waterfall once the troop is up there; where the rocks were till then
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
     {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:10, y:2, facing:'left'},
-      {if:{gate:true}, x:17, y:3, facing:'left'}],
+      {if:{climb:1, new:'棍子'}, x:16, y:1, facing:'left'}, {if:{gate:true}, x:17, y:3, facing:'left'}],   // (in the way up, with a stick for you)
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
@@ -783,14 +785,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'whereFrom', by:'playful'},
         {say:'snakes'},
         {message:'The path up beside the river is wild, and nobody has been to the top. Someone brave should go and see where the water comes from.'},
-        {say:'stickHere', by:'big', teach:'棍子'},
-        {newWord:'棍子', note:'The big monkey gives you a stick, to chase wild animals off the path.'},
-        {message:'The big monkey shows you how to fight. When something jumps out of the long grass, choose 打 (dǎ, hit) and answer to hit it. When it attacks, listen for where it’s coming from, and pick that to jump aside.'},
-        {message:'A wrong answer when it attacks costs a heart, and you have 5. Eat something to get one back, or come back to the old monkey to rest.'},
         {set:{climb:1}},
         {say:'bye'},
         {reply:'再见'},   // goodbye, as you set off (taught here, 19 October 2026: it means more now you're leaving)
-        {message:'You set off up the path, on your own.'}
+        {message:'You set off for the path, on your own.'}   // (the big monkey stops you on the way, with a stick: its own new word)
       ]},
       {if:{hurt:true}, do:[{rest:true}, {message:'You rest with the old monkey. Your hearts are full again.'}]},
       {if:{story:false, climb:1}, do:[{say:'go', hint:'Follow the path up beside the river, and find where the water comes from.'}]},
@@ -889,6 +887,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],
     big: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
+      {if:{climb:1, new:'棍子'}, do:[   // he stops you as you set off up the path
+        {say:'stickHere', teach:'棍子'},
+        {newWord:'棍子', note:'The big monkey gives you a stick, to chase wild animals off the path.'},
+        {message:'The big monkey shows you how to fight. When something jumps out of the long grass, choose 打 (dǎ, hit) and answer to hit it. When it attacks, listen for where it’s coming from, and pick that to jump aside.'},
+        {message:'A wrong answer when it attacks costs a heart, and you have 5. Eat something to get one back, or come back to the old monkey to rest.'}
+      ]},
       {if:{cave:5}, do:[{say:'king', teach:'王'}, {newWord:'王'}, {message:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}]},
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'dare'}]},

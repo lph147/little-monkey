@@ -25,14 +25,14 @@ const metCount = () => Math.min(S.met.length, ANIMALS.length);
 const chapterNow = () => here().chapter || 0;
 const chapterItems = () => AREA.checklist.filter(c => (c.chapter || 0) === chapterNow());
 // [text, done, is it the exit test, found yet]: an item with show is found once show matches, or it's done
-const areaChecklist = () => chapterItems().map(c => { const done = matches(c.done); return [fill(c.text), done, !!c.exitTest, !c.show || done || matches(c.show)]; });
+const areaChecklist = () => chapterItems().map(c => { const done = matches(c.done); return [fill(c.text, false, true), done, !!c.exitTest, !c.show || done || matches(c.show)]; });
 const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
     const c = typeof t.arrow === 'string' && ALL_NPCS.find(n => n.id === t.arrow);   // an arrow to a character
     const at = c ? [c.x, c.y, c.place] : t.arrow || null, there = at && placeOf(at);
     const target = !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
-    return {id:fill(t.id, true), text:fill(t.text), target, ...(c && there === PLACE ? {npc:true} : {})};
+    return {id:fill(t.id, true), text:fill(t.text, false, true), target, ...(c && there === PLACE ? {npc:true} : {})};
   });
 }
 // The way out of the place you're in towards another place: the exit to take first on the shortest
@@ -48,7 +48,7 @@ function wayTo(place){
   }
   return null;
 }
-function tasksHint(){ const h = AREA.hints.find(h => matches(h.if)); return h ? fill(h.text) : ''; }
+function tasksHint(){ const h = AREA.hints.find(h => matches(h.if)); return h ? fill(h.text, false, true) : ''; }
 function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).join('. ') + '.' : tasksHint(); }
 function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
@@ -195,6 +195,9 @@ async function replyWith(best){
   const choices = shuffle([best, ...shuffle(PHRASES.filter(p => p !== best && lvl(p) >= 1)).slice(0, 2)]);
   await iSay(await chooseReply(speaker('player'), choices), best);
 }
+// Your reply at the end of a conversation that has already taught a new word (taught): a phrase that's new too waits
+// for another time, so you never get two new words back to back (such as 要 then 不客气 at your first request).
+const replyAfter = (best, taught) => taught && lvl(best) === 0 ? Promise.resolve() : replyWith(best);
 // Your monkey says a phrase. If it's the one that fits (best), it counts as using it; if not, the game says which fits.
 async function iSay(said, best = said){
   const fits = said === best;
@@ -269,7 +272,7 @@ async function request(r, face){
     sentence.filter(x => lvl(x) >= 1).forEach(useWord);
     p[r.id] = 'done'; delete p.holding[r.id]; S.shells += r.reward; save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
-    if (r.thanksReply) await replyWith(r.thanksReply);
+    if (r.thanksReply) await replyAfter(r.thanksReply, !!nw);
     toast(`+${r.reward} 🐚. Task complete!`);
     await runEvents();
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
@@ -299,8 +302,8 @@ async function shop(face){   // the area's shop: what it sells, and buying it by
   else if (sh.no){ if (lvl(sh.no) === 0) await showNotice(sh.no, {quiet:true}); await iSay(sh.no); }   // you say 我不要
 }
 async function buy(i, face){   // buying something from the shop by asking for it. Gives true if you bought it.
-  const sh = AREA.shop;
-  if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note), quiet:true});
+  const sh = AREA.shop, isNew = lvl(i.item) === 0;
+  if (isNew) await showNotice(i.item, {note:fill(i.note), quiet:true});
   if (i.eat && bagFull(i.item)){ await infoBox(face, `<p>You can carry ${FOOD[i.item].carry} ${esc(wz(i.item))}, and your bag is full. Eat one first.</p>`); return false; }
   if (S.shells < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🐚, and you have ${S.shells}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const sentence = toks(i.sentence);
@@ -313,7 +316,7 @@ async function buy(i, face){   // buying something from the shop by asking for i
   save(); SFX.fanfare();
   if (i.wear) redress();   // redraw your monkey wearing it
   await showDialog(face, L[sh.thanks]);
-  if (sh.thanksReply) await replyWith(sh.thanksReply);
+  if (sh.thanksReply) await replyAfter(sh.thanksReply, isNew);
   toast(fill(i.bought));
   await runEvents();
   return true;
