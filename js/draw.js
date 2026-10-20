@@ -244,7 +244,7 @@ function drawWorld(now){
     b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - 5 - bob, 10, 10);
   }
   for (const [x, y, show] of bubbles) bubble(x, y, show);
-  if (trainingCalls()) for (const [x, y] of TRAINING_TILES) bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words are due for review
+  if (trainingCalls()) for (const [x, y] of TRAINING_TILES) bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice
   drawSplashes(cx, cy, now);
   drawMarkers(cx, cy, now);
   const wk = (now - waterT) / 600;   // going through falling water: a rush of water covers the screen, then clears

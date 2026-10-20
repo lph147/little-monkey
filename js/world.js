@@ -452,11 +452,13 @@ function findSpot(){
   for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy, t = tileAt(x,y); if (t.walk && t.look !== 'bridge' && !npcAt(x,y) && !followerAt(x,y)) return {x, y, d}; }
   const [dx,dy] = DV[pl.dir]; return {x:pl.x + dx, y:pl.y + dy, d:pl.dir};
 }
-// Which animal hides: usually one you haven't met yet; otherwise usually one whose name is due for review.
+// Which animal hides: usually one you haven't met yet; otherwise usually one whose name needs practice or is near the
+// front of the review list.
 function pickAnimal(animals = ANIMALS){
   const unmet = animals.filter(x => !S.met.includes(x.id));
-  const due = animals.filter(x => S.met.includes(x.id) && rec(x.hz).due <= Date.now());
-  const pool = unmet.length && Math.random() < .75 ? unmet : due.length && Math.random() < .75 ? due : animals;
+  const front = new Set(reviewOrder(ORDER.filter(w => lvl(w) >= 1)).slice(0, 2 * PICK_FROM));
+  const soon = animals.filter(x => S.met.includes(x.id) && (needsPractice(x.hz) || front.has(x.hz)));
+  const pool = unmet.length && Math.random() < .75 ? unmet : soon.length && Math.random() < .75 ? soon : animals;
   return pool[Math.floor(Math.random() * pool.length)];
 }
 // Meeting an animal: it jumps out next to you (from the grass), or at its own spot (spot).

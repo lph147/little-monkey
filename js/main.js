@@ -203,10 +203,10 @@ function slotCard(n){
     };
     return;
   }
-  const due = g.due ? `<p>${g.due} ${g.due === 1 ? 'word is' : 'words are'} due for review: practise at the practice post, or meet animals in the tall grass.</p>` : '';
+  const practise = g.practise ? `<p>${g.practise} ${g.practise === 1 ? 'word needs' : 'words need'} practice: practise at the practice post, or meet animals in the tall grass.</p>` : '';
   const friends = `${g.friends} ${g.friends === 1 ? 'friend' : 'friends'}`;
   openCard(`<p class="label">Game ${n}</p><div class="slotcard">${faceHTML()}<div><p><b>${g.words} ${g.words === 1 ? 'word' : 'words'}</b> · ${friends} · ${g.shells} 🐚</p>
-      <p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${due}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
+      <p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${practise}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
     <div class="actions" data-nav><button class="btn danger" data-a="del">Delete</button><button class="btn" data-a="copy">Copy to a file</button><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" id="contBtn">Continue</button></div>`);
   on('[data-a=back]', () => filesCard(null, n));
   sheet.querySelector('#contBtn').focus();   // the arrows move from here

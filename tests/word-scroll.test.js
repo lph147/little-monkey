@@ -77,14 +77,14 @@ test('the Word Scroll opens again at the tab you left it on; left and right swit
   assert.equal(chosen(), 'today', 'tapping a tab opens it');
 });
 
-test('the Today tab shows the words you met today, and how many are due', () => {
-  const game = loadGame({save: {version: 8, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}, '我': {lv: 2, due: 9e15, ok: 1}}}});
+test('the Today tab shows the words you met today, and how many need practice', () => {
+  const game = loadGame({save: {version: 29, started: true, w: {'石头': {lv: 1, ok: 0}, '我': {lv: 2, ok: 2}}}});
   game.run("S.today = {d: todayKey(), ids: ['石头', '我']}");
   game.run("openScroll(null, 0, 'today')");
   const html = game.el('#sheet').innerHTML;
   assert.ok(html.includes('Today’s words <span class="catn">2</span>'));
   assert.ok(html.includes('data-w="石头"') && html.includes('data-w="我"'), 'both words are shown');
-  assert.ok(html.includes('1 word is due for review within a day'), '石头 is due; 我 is not');
+  assert.ok(html.includes('1 word needs practice'), '石头 is new; 我 has been right twice in a row');
   game.run("S.today = {d: 'long ago', ids: ['石头']}; openScroll(null, 0, 'today')");
   assert.ok(game.el('#sheet').innerHTML.includes('You haven’t met any words yet today.'));
 });

@@ -75,14 +75,14 @@ A spaced-repetition scheduler sits behind everything and decides which words com
 
 | Channel | How the scheduler uses it |
 | --- | --- |
-| Animals in the grass | Animals whose names are due appear more often; their questions draw on due words |
-| Shops | Due items are stocked and highlighted |
-| Quests | Requests ("我要…") ask for words you're due to practise |
+| Animals in the grass | Animals whose names need practice, or are near the front of the review list, appear more often; their questions come from the front of the list |
+| Shops | Items near the front of the list are stocked and highlighted |
+| Quests | Requests ("我要…") ask for words near the front of the list |
 | Conversations | Characters' lines reuse caught words from earlier areas |
-| Training ground | The rolling word test favours due words |
+| Training ground | The rolling word test takes words from the front of the list |
 | Transformations | Turning into a caught animal says and shows its name |
 
-Review gaps follow 1, 3, 7 and 21 days. A wrong answer brings a word back sooner. Words from earlier areas keep appearing in later ones, so nothing is learned once and then dropped.
+**The review list** (decided 20 October 2026: no days). Every word you've caught is in one list, worked through in turns: the game counts every question you answer. A new word goes in behind the first 3 words you got right last time, and a word you get wrong behind the first 2, so it comes back within a few questions, however many words are waiting. A word you get right goes back 4 questions, then 8, 16, 32 and at most 64, the more times in a row you've got it right, so words you know well come up less often and new and weak ones more. Questions pick at random from the first few words that suit them, so you can't tell what's coming. Because the count only goes up, every word's turn comes round: nothing gets stuck at the back (and a missed word only ever goes behind words you got right, so words you keep missing can't fill the front between them). A word **needs practice** until you've got it right twice in a row (new, or missed since): the practice post's !, its shells and a game's card count those. Words from earlier areas keep appearing in later ones, so nothing is learned once and then dropped. (Until 20 October 2026, gaps were 1, 3, 7 and 21 days; a missed word joined the back of the words due, and right answers in one sitting moved a word weeks ahead.)
 
 ## Sentences through characters
 
@@ -186,12 +186,12 @@ Money comes mainly from learning, so progress in the game and progress in Chines
 
 **Wardrobe.** Clothes are a collection on a Wardrobe page (衣服): the items you own, each with its sprite, Chinese and pinyin. Putting one on says the sentence, such as 我戴头带。 or 我穿衣服。, which counts as using the words: 戴 is for things on your head, 穿 for clothes and shoes. The wardrobe starts on Flower Fruit Mountain with the 头带 headband, and opens fully in Area 2, where Sun Wukong takes human clothes to dress like a person (衣服, 帽子, 鞋). Items come from shops and request rewards, so each area's shop has clothes to sell as well as food and cave decorations.
 
-**Training ground.** A place in every area where you can do a rolling word-matching test at any time. It always includes your newest words and anything due for review.
+**Training ground.** A place in every area where you can do a rolling word-matching test at any time. It takes its words from the front of the review list, so it always includes your newest words and the ones you've missed.
 
 | Word in the test | Reward |
 | --- | --- |
-| Due for review (newly caught words are due), right first time | A shell |
-| Not due | Nothing |
+| Needs practice (new, or missed since, until right twice in a row), right first time | A shell |
+| Known well | Nothing |
 | Wrong answer | Nothing, and it comes back sooner |
 
 This stops anyone farming easy words, and keeps the reward pointed at what actually needs practice. The troop's school will take over from the training ground on Flower Fruit Mountain (chapter 1 C).
@@ -262,7 +262,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 | A long first area | Area 1 has two chapters, about 50 words | Chapter 1 mostly reuses the prologue's words, and new places keep it fresh; playtest the prologue first |
 | Art | Every collectible needs a sprite | Reuse palettes and shapes; aim for 15–20 new sprites per area |
 | Time per session | Walking and menus crowd out learning | Target at least half of play time hearing, reading or answering |
-| Reward farming | Players repeat easy words for rewards | Shells only for words due for review, as above |
+| Reward farming | Players repeat easy words for rewards | Shells only for words that need practice, as above |
 | Chinese accuracy | Unnatural lines as grammar gets harder | Native-speaker review of each area's lines |
 | Lost progress | A cleared browser wipes the save | Save export and import |
 
@@ -285,7 +285,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 - **Day and night:** a day ends with sleep in the cave and a summary. (Tried, then taken out on 16 October 2026: see below.)
 - **Native speaker check:** 再见, 不客气, 对不起, 没关系, 我不要, 早上好, 晚安, 我戴头带, 我穿衣服 and 这是山 are all fine as written.
 
-**Decided on 16 October 2026: no days or sleeping.** A nest, a day count, an end-of-day summary and good night and good morning scenes were built and then taken out: people play at any time and for any length, so a day rhythm gave no real reason to sleep. Reviews still follow real time (1, 3, 7 and 21 days), whenever you next play. 早上好 and 晚安 left the phrases with it; they're checked, and can come back if a good place for them turns up. The book of firsts was taken out too. The repetition target above (8 times in a word's first week) assumed daily play and needs rethinking with the scheduler.
+**Decided on 16 October 2026: no days or sleeping.** A nest, a day count, an end-of-day summary and good night and good morning scenes were built and then taken out: people play at any time and for any length, so a day rhythm gave no real reason to sleep. Reviews followed real time (1, 3, 7 and 21 days) until 20 October 2026; now they're a list worked through in turns (see The review list). 早上好 and 晚安 left the phrases with it; they're checked, and can come back if a good place for them turns up. The book of firsts was taken out too. The repetition target above (8 times in a word's first week) assumed daily play and needs rethinking with the scheduler.
 
 **Decided on 16 October 2026: a vocabulary game, never a grammar test.** Sentence tasks always give the whole sentence in Chinese and English with one word missing, and you choose the word; word tiles in order are gone. The choices follow the word's level (pictures while new, then Chinese and pinyin). This makes the game more relaxed while still giving lots of repeated input of simple sentence structures.
 
@@ -396,6 +396,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] The troop follows you up (20 October 2026; save version 28): when you tell the old monkey about the waterfall, the little monkey, the big monkey and the old monkey follow you up in a line, like Pikachu in Pokémon Yellow, each stepping into the square the one ahead has left. They come with you from place to place, never block your way, and can be talked to; wild creatures still jump out. Out of the narrow way at the top, they leap to their places by the waterfall. The follow step works for any characters, for leading the troop into the cave later, and for companions such as the pig and Sandy from Area 7
 - [x] Holding the stick (20 October 2026): once the big monkey gives you the stick (棍子), your monkey holds it on the map and in its picture: small, from hip to shoulder, in a reddish wood that stands out against its fur. What you hold is the area's battle weapon (HELD in js/art.js), so the staff (金箍棒, Area 4) can replace it, longer, without the stick having looked too big
 - [x] Fixes from the review of 20 October 2026: the hungry monkey answers when you talk to him again before finding fruit; 没关系 can be caught (once he's eaten, he says 对不起！ for being fussy, and you reply 没关系); the pixel font's fi and fl read properly; the captions under answers have no shadow; the Chinese sheet says who really says each line
+- [x] The review list, in turns instead of days (20 October 2026; save version 29): new and missed words slotted in near the front, right answers further back each time in a row (4 to 64 questions), questions picked at random from near the front, nothing stuck at the back; "needs practice" instead of "due"; a wrong choice in a fill-the-gap question counts too
 - [ ] The end of Area 1: the old gibbon, building the raft, the troop's send-off word test, sailing away
 - [ ] Let the engine run more than one area, so sailing away leads into Area 2
 - [ ] Build Area 2, Across the sea

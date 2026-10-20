@@ -111,7 +111,7 @@ async function wordTest(){   // the exit test at the cave door: every word with 
   const missed = await matchWords(words, 'Word test', 'Stop test');
   if (!missed) return false;
   const right = words.length - missed.size, need = Math.ceil(words.length * PASS), pass = right >= need;
-  missed.forEach(w => { const rr = rec(w); rr.due = Date.now(); });
+  missed.forEach(w => reviewed(w, false));   // missed: near the front of the review list
   save();
   if (pass) SFX.fanfare(); else SFX.wrong();
   return new Promise(res => {
@@ -130,37 +130,36 @@ async function wordTest(){   // the exit test at the cave door: every word with 
 const TRAINING_WORDS = 8, TRAINING_MIN = 4;   // words to match per session, and how many you need to start
 const trainable = () => ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1);   // caught words with a picture
 const unpictured = () => ORDER.filter(w => !WORDS[w].pic && lvl(w) >= 1);   // caught words without a picture (我 要), practised by filling gaps in sentences sentences
-const isDue = w => rec(w).due <= Date.now();   // a newly caught word is due straight away
-const dueWords = () => [...trainable(), ...unpictured()].filter(isDue);   // words due for review that you can practise
-const trainingCalls = () => trainable().length >= TRAINING_MIN && dueWords().length > 0;   // the practice post shows a !
-// The words to practise: the ones due for review first, then the ones due soonest, in a random order.
-const trainingWords = () => shuffle(shuffle(trainable()).sort((a, b) => rec(a).due - rec(b).due).slice(0, TRAINING_WORDS));
+const practiceWords = () => [...trainable(), ...unpictured()].filter(needsPractice);   // words that need practice (new, or missed since), that you can practise
+const trainingCalls = () => trainable().length >= TRAINING_MIN && practiceWords().length > 0;   // the practice post shows a !
+// The words to practise: from the front of the review list (js/state.js), in a random order.
+const trainingWords = () => shuffle(nextWords(trainable(), TRAINING_WORDS));
 const SENTENCES = () => [...REQUESTS.flatMap(r => r.choices ? Object.values(r.choices) : [r]), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];   // the area's sentences you complete
 // A sentence for practising a word without a picture (such as 我 or 要): one you've met in a request, the
-// shop or the wardrobe, with every word caught, and that word missing (gap), preferring a word that's due.
+// shop or the wardrobe, with every word caught, and that word missing (gap): the one nearest the front of the review
+// list, preferring a word that needs practice.
 function practiceSentence(){
   const all = SENTENCES().map(b => ({t:toks(b.sentence), en:b.sentenceEn})).filter(b => b.t.every(w => lvl(w) >= 1) && b.t.some(w => !WORDS[w].pic))
-    .map(b => { const bare = shuffle(b.t.filter(w => !WORDS[w].pic)); return {...b, gap:bare.find(isDue) || bare[0]}; });
-  const due = all.filter(b => isDue(b.gap));
-  return shuffle(due.length ? due : all)[0] || null;
+    .map(b => ({...b, gap:reviewOrder(shuffle(b.t.filter(w => !WORDS[w].pic)))[0]}));
+  const need = all.filter(b => needsPractice(b.gap));
+  return shuffle(need.length ? need : all)[0] || null;
 }
-// Fill the gap in a sentence (from practiceSentence). A right choice earns a shell if the word was due.
+// Fill the gap in a sentence (from practiceSentence). A right choice earns a shell if the word needed practice.
 // Gives {right, shells}.
 async function gapRound(b, who){
-  const due = isDue(b.gap), right = await gapQ({who, t:b.t, en:b.en, gap:b.gap});
-  const shells = right && due ? 1 : 0;
+  const need = needsPractice(b.gap), right = await gapQ({who, t:b.t, en:b.en, gap:b.gap});
+  const shells = right && need ? 1 : 0;
   S.shells += shells; save();
   return {right, shells};
 }
-// After a session: a word matched first time comes back later, a missed one straight away (the gold
-// squares stay the same). Each due word matched first time earns a shell. Gives how many shells.
+// After a session: a word matched first time moves back in the review list, a missed one goes near the front (the
+// gold squares stay the same). Each word that needed practice, matched first time, earns a shell. Gives how many shells.
 function trained(words, missed){
   let shells = 0;
   for (const w of words){
-    const r = rec(w), ok = !missed.has(w);
-    if (ok && isDue(w)) shells++;
-    if (ok){ r.ok = (r.ok || 0) + 1; r.due = Date.now() + INTERVALS[Math.min(r.ok - 1, 3)] * DAY; }
-    else { r.ok = 0; r.due = Date.now(); }
+    const ok = !missed.has(w);
+    if (ok && needsPractice(w)) shells++;
+    reviewed(w, ok);
     addToday(w);
   }
   S.shells += shells; save();
@@ -170,10 +169,10 @@ async function trainingGround(){
   const who = `<img class="portrait" alt="" src="${SPR.post.toDataURL()}">`, have = trainable().length;
   if (have < TRAINING_MIN){ await infoBox(who, `<p>A practice post. Come back once you've learned ${TRAINING_MIN} words with pictures (${have}/${TRAINING_MIN}).</p>`); return; }
   const words = trainingWords(), sentence = practiceSentence();
-  const due = [...words, ...(sentence ? [sentence.gap] : [])].filter(isDue).length;
-  const ask = 'Practise matching words to their pictures' + (sentence ? `, then fill the gap in a sentence with ${wz(sentence.gap)}. ` : '. ') + (due
-    ? `${due} of them ${due === 1 ? 'is' : 'are'} due for review: each one you get right first time earns a 🐚.`
-    : 'None of your words are due for review right now, so there are no 🐚 shells this time.');
+  const need = [...words, ...(sentence ? [sentence.gap] : [])].filter(needsPractice).length;
+  const ask = 'Practise matching words to their pictures' + (sentence ? `, then fill the gap in a sentence with ${wz(sentence.gap)}. ` : '. ') + (need
+    ? `${need} of them ${need === 1 ? 'needs' : 'need'} practice: each one you get right first time earns a 🐚.`
+    : 'None of these words need practice right now, so there are no 🐚 shells this time.');
   if (!await confirmBox(who, ask, 'Start', 'Not now')) return;
   const missed = await matchWords(words, 'Training', 'Stop');
   if (!missed) return;
@@ -240,10 +239,10 @@ const scrollTabs = () => [
 let scrollTab = null;   // the tab the Word Scroll is open at; it opens there again next time
 function scrollPage(tab){   // what a tab of the Word Scroll shows
   if (tab === 'today'){
-    const ids = todaysWords(), due = ORDER.filter(w => lvl(w) >= 1 && rec(w).due <= Date.now() + DAY).length;
+    const ids = todaysWords(), need = practiceWords().length;
     return `<p class="label cathead">Today’s words <span class="catn">${ids.length}</span></p>
       ${ids.length ? `<div class="grid" data-nav>${ids.map(scrollCard).join('')}</div>` : '<p>You haven’t met any words yet today.</p>'}
-      <p class="small">${due} ${due === 1 ? 'word is' : 'words are'} due for review within a day: practise at the practice post, or meet animals in the tall grass.</p>`;
+      <p class="small">${need} ${need === 1 ? 'word needs' : 'words need'} practice: practise at the practice post, or meet animals in the tall grass.</p>`;
   }
   if (tab === 'heard'){
     const heard = heardWords();

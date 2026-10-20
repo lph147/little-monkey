@@ -1,15 +1,15 @@
-// The saved game: what you have learned and done, kept in the browser, and when each word is next due for review.
+// The saved game: what you have learned and done, kept in the browser, and where each word is in the review list.
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 28;
+const SAVE_VERSION = 29;
 const HEARTS = 5;   // the most hearts you can have in a battle (the story can raise it later)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
   for (const r of REQUESTS) p[r.id] = 'not asked';
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], done:false});
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[]}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -161,6 +161,13 @@ function upgradeSave(s){
     if (a && a.climb === 3) a.climb = 4;
     s.version = 28;
   }
+  if (s.version === 28){   // version 28: a word came back for review after days (due). Now there are no days: the words are in one
+    const caught = Object.values(s.w || {}).filter(r => r && r.lv >= 1).sort((a, b) => (a.due || 0) - (b.due || 0));   // list, worked
+    caught.forEach((r, i) => { r.next = i; });   // through in turns: they go into it in the order they were due, the most overdue first
+    for (const r of Object.values(s.w || {})) if (r) delete r.due;
+    s.turn = 0;
+    s.version = 29;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
@@ -215,7 +222,7 @@ function summaryOf(s, n){
   const area = s.areas[AREA.number] || {}, chapter = AREA.chapters[area.chapter || 0] || AREA.chapters[0];
   return {n, shells:s.shells || 0, friends:s.friends.length,
     words:Object.values(s.w).filter(x => x && x.lv > 0).length, chapter, played:slotsInfo().played[n] || 0,
-    due:(() => { const keep = S; S = s; try { return dueWords().length; } finally { S = keep; } })()};   // (dueWords() reads S)
+    practise:(() => { const keep = S; S = s; try { return practiceWords().length; } finally { S = keep; } })()};   // (practiceWords() reads S)
 }
 // Plays game n from now on: it's remembered as the game you're playing.
 function useSlot(n){ SLOT = n; S = loadSave(n); setSlotsInfo(d => ({...d, active:n})); }
@@ -259,19 +266,19 @@ function save(){
   updateHUD();
 }
 const lvl = w => (S.w[w] && S.w[w].lv) || 0;
-function rec(w){ if (!S.w[w]) S.w[w] = {lv:0,due:0,ok:0}; return S.w[w]; }
+function rec(w){ if (!S.w[w]) S.w[w] = {lv:0, ok:0}; return S.w[w]; }
 function todayKey(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
 function addToday(w){ const k = todayKey(); if (S.today.d !== k) S.today = {d:k, ids:[]}; if (!S.today.ids.includes(w)) S.today.ids.push(w); }
 // A sentence was shown: each word in it (not punctuation) counts as heard once more.
 function hear(words, heard = S.heard){ for (const t of words) if (WORDS[t] || GLOSS[t]) heard[t] = (heard[t] || 0) + 1; }
-function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.due = Date.now(); } addToday(w); save(); }
+function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.ok = 0; slotIn(w, NEW_PLACE); } addToday(w); save(); }   // a new word goes near the front of the review list
 // You used w in a sentence (a request or a shop order). It's Used once you can read it as well.
 function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; addToday(w); save(); }
 // Questions get harder slowly. A word moves up from Caught to Recognised after STEP_UP right answers in a
 // row picking it by sound (listen), then to Read after STEP_UP more picking it from its characters (read).
 // A word without a picture (我 要) moves up the same way when you fill the gap in a sentence with it (fill).
 // A wrong answer moves it back down a level. In each word's record: lv its level, n right answers in a
-// row at that level, ok right answers in a row (for when it's due again), used once you've used it.
+// row at that level, ok right answers in a row (for the review list, below), used once you've used it.
 const STEP_UP = 2;
 function answer(w, ok, type){
   const r = rec(w);
@@ -280,8 +287,33 @@ function answer(w, ok, type){
     const up = type === 'fill' ? !WORDS[w].pic && r.lv < 3 : (type === 'listen' && r.lv === 1) || (type === 'read' && r.lv === 2);
     if (r.n >= STEP_UP && up){ r.lv++; r.n = 0; }
     if (r.lv === 3 && r.used) r.lv = 4;
-    r.ok = (r.ok || 0) + 1;
-    r.due = Date.now() + INTERVALS[Math.min(r.ok - 1, 3)] * DAY;
-  } else { r.lv = Math.max(1, r.lv - 1); r.n = 0; r.ok = 0; r.due = Date.now(); }
+  } else { r.lv = Math.max(1, r.lv - 1); r.n = 0; }
+  reviewed(w, ok);
   addToday(w); save();
+}
+
+// The review list (decided 20 October 2026: no days). Every word you've caught is in one list, worked through in
+// turns: S.turn counts every question you answer, and each word's place is its turn number (next), lowest first.
+// A new word goes in behind the first NEW_PLACE words you got right last time, and a word you get wrong behind the
+// first WRONG_PLACE, so they come back within a few questions, however many words are waiting. (Only behind words
+// you got right: words you keep missing never fill the front between them, keeping every other word waiting.)
+// A word you get right comes back RIGHT_GAPS questions later, more the more times in a row you've got it right.
+// Because the count only goes up, every word's turn comes round: nothing gets stuck at the back. Questions pick at random from the first few that
+// suit them (nextWords), so you can't tell what's coming. A word needs practice until you've got it right twice
+// in a row (new, or missed since): the practice post's !, its shells and the title screen count those.
+const NEW_PLACE = 3, WRONG_PLACE = 2, RIGHT_GAPS = [4, 8, 16, 32, 64], PICK_FROM = 3;
+const reviewKey = w => { const n = (S.w[w] || {}).next; return typeof n === 'number' ? n : -1e9; };
+const reviewOrder = words => [...words].sort((a, b) => (reviewKey(a) - reviewKey(b)) || (lvl(a) - lvl(b)));   // (the least known first, if level)
+const nextWords = (words, n = 1) => shuffle(reviewOrder(words).slice(0, n + PICK_FROM - 1)).slice(0, n);   // n of them, from near the front
+const needsPractice = w => (rec(w).ok || 0) < 2;
+function slotIn(w, place){   // w goes into the review list behind the first place words you got right last time (or at the end)
+  const others = ORDER.filter(x => x !== w && lvl(x) >= 1), right = others.filter(x => rec(x).ok > 0).map(reviewKey).sort((a, b) => a - b);
+  rec(w).next = right.length > place ? (right[place - 1] + right[place]) / 2 : others.length ? Math.max(...others.map(reviewKey)) + 1 : S.turn || 0;
+}
+function reviewed(w, ok){   // you answered a question about w: a turn goes by, and it moves in the review list
+  if (lvl(w) < 1) return;
+  const r = rec(w);
+  S.turn = (S.turn || 0) + 1;
+  if (ok){ r.ok = (r.ok || 0) + 1; r.next = S.turn + RIGHT_GAPS[Math.min(r.ok, RIGHT_GAPS.length) - 1]; }
+  else { r.ok = 0; slotIn(w, WRONG_PLACE); }
 }

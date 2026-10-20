@@ -67,7 +67,7 @@ async function fight(id){
       S.bag[w]--; S.hearts = Math.min(HEARTS, hearts() + FOOD[w].heal); useWord(w); save(); SFX.right();
       note = `You eat a ${wz(w)}: a heart comes back.`;
     } else {
-      const w = shuffle(dueFirst(f.word).slice(0, 5))[0], q = wordQuestion(w, f.word);
+      const w = toAsk(f.word, 1)[0], q = wordQuestion(w, f.word);
       const ok = await pictureQ({head:scene(), body:`<p class="label">You swing your ${wz(BATTLES.weapon || '棍子')}!</p>` + q.body, word:w, type:q.type,
         options:q.options, text:q.text, answerIdx:q.answerIdx, helper:helperHTML(),
         onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); wireHelper(q.options.length, q.answerIdx); },

@@ -1,36 +1,37 @@
-// Who you meet: animals you haven't met jump out most, then animals whose names are due for review,
+// Who you meet: animals you haven't met jump out most, then animals whose names need practice or are near the front of
+// the review list,
 // and the little monkey shows a ! while it has a word to teach you.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
-const LATER = Date.now() + 5 * 86400000;
 const ALL = ['rabbit', 'fox', 'squirrel', 'goat'];
 const NAMES = {'兔子': 'rabbit', '狐狸': 'fox', '松鼠': 'squirrel', '山羊': 'goat'};
-const word = (due, lv = 1) => ({lv, due, ok: 1});
+const word = (soon, lv = 1) => (soon ? {lv, ok: 0, next: 50} : {lv, ok: 3, next: 100});   // soon: it needs practice (otherwise known well, far back in the list)
+const FRONT = Object.fromEntries(['石头', '山', '花', '草', '树', '河', '水', '鱼'].map((w, i) => [w, {lv: 1, ok: 3, next: i}]));   // other words, at the front of the list
 
 function picks(save, n = 2000){
-  const game = loadGame({save: {version: 5, started: true, ...save}});
+  const game = loadGame({save: {version: 29, started: true, ...save, w: {...FRONT, ...save.w}}});
   return JSON.parse(game.run(`JSON.stringify(Array.from({length: ${n}}, () => pickAnimal().id))`));
 }
 const share = (list, id) => list.filter(x => x === id).length / list.length;
 
-test('once you have met them all, an animal whose name is due jumps out most often', () => {
-  const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(hz === '狐狸' ? 0 : LATER)]));
+test('once you have met them all, an animal whose name needs practice jumps out most often', () => {
+  const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(hz === '狐狸')]));
   const got = picks({met: ALL, w});
-  assert.ok(share(got, 'fox') > 0.7, `the fox is due, so it should be picked most (it was ${share(got, 'fox')})`);
+  assert.ok(share(got, 'fox') > 0.7, `狐狸 needs practice, so the fox should be picked most (it was ${share(got, 'fox')})`);
   for (const id of ['rabbit', 'squirrel', 'goat']) assert.ok(share(got, id) > 0.02, `${id} should still turn up sometimes`);
 });
 
 test('an animal you have not met yet still comes first', () => {
-  const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(0)]));   // all due
+  const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(true)]));   // all need practice
   const got = picks({met: ['rabbit', 'fox', 'squirrel'], w});
   assert.ok(share(got, 'goat') > 0.7, `the goat hasn't been met, so it should be picked most (it was ${share(got, 'goat')})`);
 });
 
-test('with nothing due, every animal is as likely as the others', () => {
-  const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(LATER)]));
+test('with no animal’s name needing practice, every animal is as likely as the others', () => {
+  const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(false)]));
   const got = picks({met: ALL, w});
   for (const id of ALL) assert.ok(Math.abs(share(got, id) - 0.25) < 0.06, `${id} was picked ${share(got, id)} of the time`);
 });

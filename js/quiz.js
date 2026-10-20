@@ -60,8 +60,8 @@ function wordQuestion(w, avoid){
   const options = opts.map(o => type === 'hear' ? o + (S.pinyin ? `<span class="cap">${WORDS[o].py}</span>` : '') : `<span class="ico">${picHTML(o)}</span>${type === 'read' ? '' : `<span class="cap">${o}</span>${laterPy(o)}`}`);
   return {type, body, opts, options, text:type === 'hear', answerIdx:opts.indexOf(w)};
 }
-// The words to ask about: the ones due for review first, then the ones you know least, avoiding avoid.
-const dueFirst = avoid => picWords().filter(w => w !== avoid && lvl(w) >= 1).sort((a,b) => (rec(a).due - rec(b).due) || (lvl(a) - lvl(b)));
+// The words to ask about (n of them, avoiding avoid): from the front of the review list, at random (nextWords, js/state.js).
+const toAsk = (avoid, n) => nextWords(picWords().filter(w => w !== avoid && lvl(w) >= 1), n);
 // Food: what's in your bag to eat (AREA.food says what each does). Some brings hearts back (heal: eaten on your turn in a
 // battle, or from your bag), and some takes away a wrong answer in a question (helps: no turn used).
 const FOOD = AREA.food || {};
@@ -95,7 +95,7 @@ async function encounter(foe){
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}"><div class="plate"><div class="name">${nameHTML()}</div>`
     + `<div class="hearts" aria-label="Friendship: ${filled} of 3">${[0, 1, 2].map(k => heartHTML(k < filled)).join('')}</div>${n ? `<div class="qn">Question ${n} of 3</div>` : ''}</div>`
     + '<div class="plus" aria-hidden="true" hidden>+♥</div></div>';
-  const targets = shuffle(dueFirst(an).slice(0, 5)).slice(0, 3);
+  const targets = toAsk(an, 3);
   let score = 0;
   for (let i = 0; i < targets.length; i++){
     // Sometimes, in an area that asks them, the last question is a sentence you know with a word missing.
@@ -159,5 +159,6 @@ async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, option
     onAnswer:() => { sheet.querySelector('.line').outerHTML = lineHTML(shown, gap); bindTokens(sheet); say(t.join('')); }});
   closeCard();
   if (ok) answer(gap, true, !WORDS[gap].pic ? 'fill' : pics ? 'gap' : 'read');
+  else reviewed(gap, false);   // missed: it comes back soon (its gold squares stay: filling a gap is practice, not a test)
   return ok;
 }

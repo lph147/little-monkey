@@ -58,7 +58,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] There's no header or task box. Under the D-pad are two small buttons, TASKS and MENU, where a Game Boy has Select and Start.
 - [ ] New game starts in an empty game (the opening plays). With all three games in use, it opens Save files instead, saying how to make room.
 - [ ] Save files lists your three games, one to a row: each with its words, friends, chapter and when it was last played, or Empty. A on a game opens its card (Back returns to Save files).
-- [ ] A game's card: words, friends, shells, where you are, how many words are due for review, and Continue, Copy to a file, Delete and Back. Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your words, friends and shells (a pixel shell) at the top, and pressing the same button again (or B) closes them.
+- [ ] A game's card: words, friends, shells, where you are, how many words need practice, and Continue, Copy to a file, Delete and Back. Continue puts you back where you left off. MENU (or M) opens the menu and TASKS (or T) your tasks; both show your words, friends and shells (a pixel shell) at the top, and pressing the same button again (or B) closes them.
 - [ ] On a game's card, the arrows (or the D-pad) move between its buttons, with a gold outline and the A badge on the one chosen; A presses it.
 - [ ] There are no levels or XP anywhere (they were taken out on 18 October 2026). A saved game from before still has all its words, friends and shells.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
@@ -76,7 +76,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] The Word Scroll has tabs across the top: one per category (Animals, Food, Nature and so on), then Today, then Heard. On a phone they fit in two rows. Tapping a tab (or pressing left or right on the D-pad) switches to it, and the scroll opens at the same tab next time. Up and down on the D-pad step through the tab's words one by one (a gold outline, and A says Open), then Back; A opens the chosen word's page, and Back from there returns to the same word.
 - [ ] A category's tab shows its count, such as "Animals 1/8", and a grid of its words, four across on a phone: caught words show their pixel picture, characters, pinyin and gold squares (words without a picture, like 我, show just the characters). Words you've heard but not caught show as a shadow of their picture, marked "heard 2×" and so on; the rest show ？.
 - [ ] Tapping a caught word opens its page: its picture on the left, and beside it its characters, pinyin and sound, its level (Caught, Recognised, Read or Used), where you found it, and an example sentence with the word in bold. English shows the meanings; Back returns to the same tab and place in the scroll.
-- [ ] Today shows the words you've caught or practised today, and how many words are due for review within a day. Heard shows words like 有 with how often you've heard them; tapping one says it and shows its meaning.
+- [ ] Today shows the words you've caught or practised today, and how many words need practice. Heard shows words like 有 with how often you've heard them; tapping one says it and shows its meaning.
 
 ## Full playthrough of Flower Fruit Mountain (about 20 minutes)
 
@@ -134,12 +134,13 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 **The training ground**
 - [ ] A wooden practice post stands just right of the pond, in the middle of the meadow. Face it: A says Train.
 - [ ] Before you have 4 words with pictures, it says to come back later (with a count).
-- [ ] After that, it asks if you want to practise and says how many words are due for review. Start matches about 8 words to their pictures in 2 rounds. Stop ends it without changing anything.
+- [ ] After that, it asks if you want to practise and says how many of the words need practice (new ones, or ones you've missed since, until you've got them right twice in a row). Start matches about 8 words to their pictures in 2 rounds. Stop ends it without changing anything.
 - [ ] Once you know 我 (I) and 要 (want), the practice ends with a sentence you know with one of them missing, such as 我＿吃桃子。 with its English, and Chinese and pinyin to choose from. There is no listening round where you pick characters by sound.
-- [ ] At the end it says how many you matched right first time and whether you built the sentence right first time, and gives 1 🐚 for each due word you got right first time.
+- [ ] At the end it says how many you matched right first time and whether you built the sentence right first time, and gives 1 🐚 for each word that needed practice and you got right first time.
 - [ ] 瀑布 (waterfall), 老板 (shop owner) and 头带 (headband) have pixel pictures: on their new-word cards, in the Word Scroll, at the practice post and in the cave door test.
-- [ ] When words are due for review, the post has a ! over it.
-- [ ] Words you got right first time aren't due again for a day or more, so training again straight away gives no shells for them (only for words you missed, or due words that didn't fit in the first go).
+- [ ] When words need practice, the post has a ! over it.
+- [ ] Train twice in a row: words you got right both times don't need practice any more, so the third go gives no shells for them (only for words you missed, or new ones).
+- [ ] The review list: miss a word in a battle or with an animal, and it's asked again within a few questions (in the same battle, the next animal or at the practice post). A new word comes back soon after you catch it. Which word comes next isn't always the same. There are no days: a word you know well still comes back every so often, however soon you play again.
 
 **The shop**
 - [ ] During a whole conversation (talking to the 老板, the shop, filling the gap, his thanks and your reply), the map stays still behind it: it may slide up once at the start, and slides back only when the conversation is over.

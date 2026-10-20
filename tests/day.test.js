@@ -23,7 +23,7 @@ test('a version 13 save is converted: the day count and the book of firsts go, a
   assert.equal(s.version, get(game, 'SAVE_VERSION'));
   assert.ok(!('day' in s) && !('lastDay' in s) && !('firsts' in s));
   assert.equal(s.shells, 9);
-  assert.deepEqual(s.w['山'], {lv: 2, due: 0, ok: 1});
+  assert.deepEqual(s.w['山'], {lv: 2, ok: 1, next: 0}, 'what you knew (its place in the review list is from version 29)');
   assert.deepEqual(s.wardrobe, {owned: ['头带'], wearing: ['头带']});
   assert.ok(game.storage.get('xiaohouzi-v2-backup-v13'), 'the old save is kept as a backup');
 });

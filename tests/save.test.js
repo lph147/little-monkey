@@ -10,6 +10,9 @@ const saveOf = game => JSON.parse(game.run('JSON.stringify(S)'));
 const VERSION = loadGame().run('SAVE_VERSION');   // the current save version
 // Words at Used (level 4) in an older save are marked as used when it's converted (version 9).
 const usedMarked = w => Object.fromEntries(Object.entries(w).map(([k, r]) => [k, r.lv === 4 ? {...r, used: 1} : r]));
+// Since version 29 a word's record has its place in the review list (next), not when it was due (due): they go into the
+// list in the order they were due (tested below). So the older tests compare words without either.
+const noTurns = w => Object.fromEntries(Object.entries(w).map(([k, r]) => { const {due, next, ...rest} = r; return [k, rest]; }));
 const START = {chapter: 0, elder: 0, gate: false, climb: 0, boar: 0, story: false, cave: 0, count: 0, squirrelPlayed: 0, goatPlayed: 0, ledgeTip: 0, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', holding: {}, wanted: {}, picked: {}, bought: [], done: false};
 
 // A save as Little Monkey 8 (and the versions since, up to the map legend) wrote it: version 2.
@@ -30,7 +33,7 @@ test('a version 2 save is converted, keeping everything', () => {
   for (const old of ['q', 'gate', 'story', 'area1Done', 'carry']) assert.ok(!(old in s), `the old field ${old} should have moved`);
   for (const [k, v] of Object.entries(V2)){
     if (['q', 'gate', 'story', 'area1Done', 'carry'].includes(k)) continue;
-    assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : k === 'pos' ? {...v, place: 'meadow'} : v, `${k} should be unchanged`);   // (your spot is in the meadow, the only place then)
+    assert.deepEqual(k === 'w' ? noTurns(s[k]) : s[k], k === 'w' ? noTurns(usedMarked(v)) : k === 'pos' ? {...v, place: 'meadow'} : v, `${k} should be unchanged`);   // (your spot is in the meadow, the only place then)
   }
 });
 
@@ -138,7 +141,7 @@ test('a version 4 save is converted: the words in lines you have seen count as h
   assert.deepEqual(s.heard, {'你好': 1, '我': 2, '饿': 1, '了': 1, '要': 1, '吃': 1, '水果': 1});
   // (the big monkey's request, and the things you've picked for it, are new since then)
   const later = a => Object.fromEntries(Object.entries(a).map(([n, p]) => [n, {chapter: 0, climb: 0, boar: 0, cave: 0, count: 0, squirrelPlayed: 0, goatPlayed: 0, ledgeTip: 0, ...p, flowers: 'not asked', picked: {}, wanted: p.hungry === 'asked' ? {hungry: '桃子'} : {}}]));
-  for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(s[k], k === 'w' ? usedMarked(v) : k === 'areas' ? later(v) : k === 'pos' ? {...v, place: 'meadow'} : v, `${k} should be unchanged`);
+  for (const [k, v] of Object.entries(V4)) if (k !== 'version') assert.deepEqual(k === 'w' ? noTurns(s[k]) : s[k], k === 'w' ? noTurns(usedMarked(v)) : k === 'areas' ? later(v) : k === 'pos' ? {...v, place: 'meadow'} : v, `${k} should be unchanged`);
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v4'), JSON.stringify(V4));
 });
 
@@ -154,7 +157,7 @@ test('a version 8 save is converted: words at Used are marked as used, and every
   const game = loadGame({save: {version: 8, started: true, w, shells: 4, bag: {'苹果': 1}}});
   const s = saveOf(game);
   assert.equal(s.version, VERSION);
-  assert.deepEqual(s.w, {'桃子': {lv: 4, due: 0, ok: 0, used: 1}, '水': {lv: 1, due: 0, ok: 0}, '山': {lv: 3, due: 5, ok: 2}});
+  assert.deepEqual(noTurns(s.w), {'桃子': {lv: 4, ok: 0, used: 1}, '水': {lv: 1, ok: 0}, '山': {lv: 3, ok: 2}});
   assert.equal(s.shells, 4);
   assert.deepEqual(s.bag, {'苹果': 1});
   assert.ok(game.storage.get(SAVE_KEY + '-backup-v8'), 'the version 8 save is kept as a backup');
@@ -166,7 +169,7 @@ test('a version 9 save is converted: English on reply choices starts on', () => 
   assert.equal(s.version, VERSION);
   assert.equal(s.replyEn, true);
   assert.equal(s.pinyin, false, 'other settings are kept');
-  assert.deepEqual(s.w['山'], {lv: 2, due: 0, ok: 1, n: 1});
+  assert.deepEqual(noTurns(s.w)['山'], {lv: 2, ok: 1, n: 1});
 });
 
 test('a save from before version 16 had peaches for money: they become the same number of shells', () => {
@@ -217,7 +220,7 @@ test('a version 21 save loses its XP (levels did nothing) and keeps everything e
   const s = saveOf(game);
   assert.equal(s.version, VERSION);
   assert.equal('xp' in s, false, 'no XP');
-  assert.equal(s.shells, 8); assert.deepEqual(s.w['山'], {lv: 2, due: 0, ok: 1}); assert.deepEqual(s.friends, ['fox']);
+  assert.equal(s.shells, 8); assert.deepEqual(noTurns(s.w)['山'], {lv: 2, ok: 1}); assert.deepEqual(s.friends, ['fox']);
   assert.equal(game.storage.get(SAVE_KEY + '-backup-v21'), JSON.stringify(old), 'the old save is kept as a backup');
 });
 
@@ -251,7 +254,7 @@ test('a version 25 save’s colours become 红色, 黄色 and 白色, keeping wh
   const s = saveOf(loadGame({save: {version: 25, started: true, w: {'红': {lv: 2, due: 5, ok: 3}, '花': {lv: 1, due: 0, ok: 1}}, gloss: {'黄': 1},
     today: {d: 'x', ids: ['红', '花']}, areas: {1: {flowers: 'asked', picked: {flowers: ['红', '白']}}}}}));
   assert.equal(s.version, VERSION);
-  assert.deepEqual(s.w['红色'], {lv: 2, due: 5, ok: 3}, 'what you knew of 红 is now 红色');
+  assert.deepEqual(noTurns(s.w)['红色'], {lv: 2, ok: 3}, 'what you knew of 红 is now 红色');
   assert.equal(s.w['红'], undefined);
   assert.ok(s.w['花'], 'everything else stays');
   assert.equal(s.gloss['黄色'], 1);
@@ -282,4 +285,15 @@ test('a version 26 save in chapter 1 or the prologue is in chapter 1 (the only o
     assert.equal(s.areas[1].chapter, 0);
     assert.equal(s.areas[1].cave, chapter ? 2 : 0, 'everything else stays');
   }
+});
+
+test('a version 28 save’s words go into the review list in the order they were due, the most overdue first: no days any more', () => {
+  const s = saveOf(loadGame({save: {version: 28, started: true,
+    w: {'山': {lv: 2, due: 5000, ok: 3}, '花': {lv: 1, due: 10, ok: 0}, '树': {lv: 3, due: 9e12, ok: 4, used: 1}, '鱼': {lv: 0, due: 0, ok: 0}}}}));
+  assert.equal(s.version, VERSION);
+  assert.equal(s.turn, 0, 'no questions answered yet in the new list');
+  assert.deepEqual(['花', '山', '树'].map(w => s.w[w].next), [0, 1, 2], '花 was due first, then 山, then 树');
+  assert.equal(s.w['鱼'].next, undefined, 'a word not caught isn’t in the list');
+  assert.ok(Object.values(s.w).every(r => !('due' in r)), 'no due dates');
+  assert.deepEqual(noTurns(s.w)['树'], {lv: 3, ok: 4, used: 1}, 'what you knew of each word stays');
 });
