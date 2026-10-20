@@ -33,9 +33,23 @@ const LEGS = {
 const BEARDED = new Set(AREA.characters.filter(c => c.beard).map(c => c.id));   // characters drawn with a white beard
 const wearing = item => S.wardrobe.wearing.includes(item);   // is your monkey wearing this?
 function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (const k in portraitCache) delete portraitCache[k]; }   // draw your monkey again in what it wears
+// What your monkey holds in its hand once it can fight (the area's battles: their weapon, once their when matches): a
+// small stick (棍子), short, so that the staff (金箍棒, Area 4) can be longer without the stick ever having looked too big.
+// Each: how many pixels long it is, and its colours (l the wood, k its dark edge and ends), reddish so it stands out
+// against your fur.
+const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}};
+const inHand = () => BATTLES.weapon && HELD[BATTLES.weapon] && canBattle() ? BATTLES.weapon : null;
+// Where it's held, upright, facing down, up or to the side (the right; the left is the same, the other way round): its
+// wood in column x with its dark edge in column edge, its foot at row y, and the hand over it (grip).
+const HAND = {
+  down:{x:14, edge:15, y:13, grip:[[13, 11], [14, 11], [13, 12]]},
+  up:{x:1, edge:0, y:13, grip:[[2, 11], [1, 11], [2, 12]]},
+  side:{x:13, edge:14, y:13, grip:[[12, 11], [13, 11], [12, 12]]}
+};
 function monkeySprite(kind, dir, blink, step = 0){
-  const k = kind + dir + (blink ? 'b' : '') + step; if (spriteCache[k]) return spriteCache[k];
-  return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step), PALS[kind]);
+  const stick = kind === 'player' && inHand();
+  const k = kind + dir + (blink ? 'b' : '') + step + (stick || ''); if (spriteCache[k]) return spriteCache[k];
+  return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step), stick ? {...PALS[kind], ...HELD[stick].pal} : PALS[kind]);
 }
 // A monkey's pixel rows, as letters (PALS says each letter's colour). The app's icons use them too (tools/make-icons.js).
 function monkeyRows(kind, dir, blink, step = 0){
@@ -52,6 +66,12 @@ function monkeyRows(kind, dir, blink, step = 0){
     if (BEARDED.has(kind)){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
   }
   if (kind === 'player' && wearing('头带')){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the red headband
+  const stick = kind === 'player' && inHand();
+  if (stick){   // the stick in your hand
+    const h = HAND[side ? 'side' : dir], top = h.y - HELD[stick].len + 1;
+    for (let y = top; y <= h.y; y++){ rows[y][h.x] = y === top || y === h.y ? 'k' : 'l'; rows[y][h.edge] = 'k'; }
+    for (const [x, y] of h.grip) rows[y][x] = 'f';
+  }
   let out = rows.map(r => r.join(''));
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return out;
@@ -119,12 +139,13 @@ function speaker(id){
   return `<div class="speaker" data-id="${esc(id)}">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
 }
 function portrait(id){
-  if (portraitCache[id]) return portraitCache[id];
+  const key = id + (id === 'player' ? inHand() || '' : '');   // (your monkey holds the stick once it has one)
+  if (portraitCache[key]) return portraitCache[key];
   let c;
   if (PALS[id]) c = monkeySprite(id, 'down', false, 0);
   else if (id === 'sign') c = SPR.sign;
   else { const a = animalOf(id); c = a ? a.pic : SPR.rock; }
-  return portraitCache[id] = `<img class="portrait" alt="" src="${c.toDataURL()}">`;
+  return portraitCache[key] = `<img class="portrait" alt="" src="${c.toDataURL()}">`;
 }
 const SPR = {
   rock: sprite(ROCK, ROCK_PAL),

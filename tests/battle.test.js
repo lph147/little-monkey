@@ -186,3 +186,24 @@ test('a battle has its own music, quicker but calm; the area’s comes back afte
   assert.equal(g.run("SONGS.battle.events.filter(e => e.k === 'mel').reduce((n, e) => n + e.d, 0)"), g.run('SONGS.battle.beats'), 'its tune fills its loop');
   assert.ok(g.run('SONGS.battle.events.filter(e => e.m).every(e => [0, 2, 4, 7, 9].includes(e.m % 12))'), 'only the five notes of the pentatonic scale: nothing tense');
 });
+
+test('once the big monkey gives you the stick, your monkey holds it on the map: small, so the staff can replace it later', () => {
+  const game = loadGame({save: {version: 28, started: true, w: knows(['石头', '山']), areas: {1: {elder: 2, gate: true, climb: 0}}}});
+  const rows = (kind, dir) => game.run(`JSON.stringify(monkeyRows('${kind}', '${dir}', false, 0))`);
+  const stickIn = r => JSON.parse(r).filter(row => /[kl]/.test(row)).length;   // how many rows the stick is in
+  const dirs = ['down', 'up', 'left', 'right'];
+  for (const d of dirs) assert.equal(stickIn(rows('player', d)), 0, `no stick before you have one (facing ${d})`);
+  game.run("portrait('player')");
+  game.run("S.w['棍子'] = {lv: 1, due: 0, ok: 0}");
+  assert.equal(game.run('inHand()'), '棍子', 'the area’s weapon, once you can fight');
+  for (const d of dirs){
+    const r = JSON.parse(rows('player', d));
+    assert.ok(r.every(row => row.length === 16), 'still 16 pixels across');
+    assert.ok(stickIn(rows('player', d)) >= 5, `in your hand, facing ${d}`);
+    assert.ok(stickIn(rows('player', d)) <= 7, `and small: less than half your height, so a staff can be longer (facing ${d})`);
+  }
+  game.run("portrait('player')");
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(Object.keys(portraitCache))')), ['player', 'player棍子'], 'your picture in the speech box is drawn again, holding it');
+  for (const d of dirs) assert.equal(stickIn(rows('elder', d)), 0, 'only your monkey holds it');
+  assert.ok(game.run('HELD[BATTLES.weapon].len') < 16 / 2);
+});

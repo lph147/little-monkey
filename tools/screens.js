@@ -161,6 +161,8 @@ const SCREENS = [
     play(); await wait(200); S.pos = {place: 'path', x: 8, y: 11, dir: 'up'}; placePlayer(); await wait(400); }},
   {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'rocksGone', why: 'Teaching 棍子, before the lesson on how to fight.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); next(); await wait(300); next(); await wait(600); }},
+  {id: 'stick-held', title: 'Holding the stick', save: 'fighting', why: 'From then on your monkey holds the stick (棍子) on the map, and in its picture: small, so a longer staff can replace it later.', run: async () => {
+    play(); await wait(200); S.pos = {place: 'path', x: 16, y: 16, dir: 'down'}; placePlayer(); await wait(400); }},
   {id: 'battle-snake', title: 'A battle: your turn', save: 'fighting', why: 'Hit, eat (a peach brings a heart back) or run. Hearts on both sides.', run: async () => {
     play(); await wait(100); battle('snake'); await wait(1200); }},
   {id: 'snake-strikes', title: 'A battle: dodging', save: 'fighting', why: 'The snake strikes: hear where from, and pick it to jump aside.', run: async () => {
