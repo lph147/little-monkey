@@ -71,7 +71,7 @@ function intoBag(w){ if (bagFull(w)) return false; S.bag[w] = (S.bag[w] || 0) + 
 const wrongToEat = (n, answerIdx) => shuffle([...Array(n).keys()].filter(i => i !== answerIdx))[0];   // which wrong answer eating takes away
 // Food that takes away a wrong answer, such as an apple, offered under a question until you answer: its button (helperHTML),
 // and eating it (wireHelper: one of the wrong answers goes; n is how many answers there are, right the right one).
-function helperHTML(){ const w = foodThat('helps'); return w ? `<button class="helper" data-a="eat">${picHTML(w)}<span>Eat a ${esc(wz(w))}: one wrong answer goes · ${S.bag[w]} left</span></button>` : ''; }
+function helperHTML(){ const w = foodThat('helps'); return w ? `<button class="helper" data-a="eat">${picHTML(w)}<span>Eat a ${esc(wz(w))}<span class="why">: one wrong answer goes</span> · ${S.bag[w]} left</span></button>` : ''; }
 function wireHelper(n, right){
   on('[data-a=eat]', e => {
     const w = foodThat('helps');

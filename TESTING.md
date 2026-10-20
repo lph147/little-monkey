@@ -28,7 +28,7 @@ Then open http://127.0.0.1:8000 in a browser. Press Ctrl+C in the terminal to st
 
 ## The screens gallery
 
-With `npm start` running, open http://127.0.0.1:8000/tools/screens.html. It shows every screen of the game side by side at phone size (the title, the opening, tips, How to play, conversations, replies, word cards, fill the gap, the shop, animals, the menu pages, the story and the cave door), each the real game with its own pretend save. Your saved game isn't touched, and it's silent. Change the size to check a small phone or a computer, and "alone" shows one screen bigger.
+With `npm start` running, open http://127.0.0.1:8000/tools/screens.html. It shows every screen of the game side by side at phone size (the title, the opening, tips, How to play, conversations, replies, word cards, fill the gap, the shop, animals, the menu pages, the story and the cave door), each the real game with its own pretend save. Your saved game isn't touched, and it's silent. Change the size to check a small phone or a computer, and "alone" shows one screen bigger. The smallest, Small phone (640 × 360), has its own tighter layout: check that the word test shows both rows, the Word Scroll a whole row of tiles, Settings all its buttons and a battle its answers and the apple without scrolling.
 
 After any change you can see, look through it for things that overlap, buttons you'd have to scroll to find, text that's too long, and screens that don't match the others. A red "Error" under a screen means it didn't load. The screens are listed in tools/screens.js; add one when the game gets a new screen.
 

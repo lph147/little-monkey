@@ -574,6 +574,35 @@ rt.hid{visibility:hidden}
   .sheet:has(> .qhead) > .opts{margin-top:.2rem}
   .sheet > .qfoot{margin-top:.2rem;padding-top:4px;padding-bottom:6px}
   .plate .hearts .heart{width:.9rem;height:.85rem}
+  /* (20 October 2026) so the main thing on each card fits without scrolling: */
+  .sheet > .actions{padding-top:4px;padding-bottom:6px}   /* a shorter row of buttons along the bottom */
+  .sheet > .actions .btn{min-height:32px;padding:3px 10px}
+  .match{gap:.3rem;margin:.2rem 0}   /* the word test and training: both rows, words and pictures */
+  .mw,.mp{min-height:2.5rem}
+  .mw{font-size:1.15rem}
+  .mp .pix{width:var(--pic-small);height:var(--pic-small)}
+  .scrolltabs{margin:4px 0 0}   /* the Word Scroll: a whole row of words */
+  .scrolltabs .tab{min-height:26px;font-size:.72rem}
+  .cathead{margin:4px 0 0}
+  .cathead + .grid{margin-top:3px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:4px}
+  .card .pips{margin-top:1px}
+  .card{padding:3px 2px}
+  .card .c{height:30px}
+  .card .pix{width:var(--pic-small);height:var(--pic-small)}
+  .card .hz{font-size:1rem}
+  .card .p{font-size:.7rem}
+  .shopitem{padding:.2rem .3rem;line-height:1.1}   /* the shop: its prices */
+  .shopitem .pix{width:var(--pic-small);height:var(--pic-small)}
+  .helper{font-size:.72rem;padding:.1rem .4rem}   /* the apple's hint: short, so it doesn't cover the answers */
+  .helper .why{display:none}
+  .act .e{font-size:.8rem}   /* a battle's Hit, Eat and Run */
+  .menu.twocol{gap:.3rem .5rem;margin-top:3px}   /* Settings: every row */
+  .menu.twocol .btn{min-height:28px;padding:3px 10px}
+  .menu.twocol > .btn:last-child:nth-child(odd){grid-column:1 / -1}   /* (a last one on its own takes the whole row, on one line) */
+  .sheet:has(> .scene) .plate.mine .heart{width:.62rem;height:.58rem}   /* your hearts, inside the scene */
+  .sheet:has(> .qhead) .line rt{font-size:.6em}   /* pinyin over a sentence you fill: big enough to read */
+  .plate .engbtn{font-size:.75rem;padding:2px 6px}   /* English, on an animal's name plate: big enough to tap */
 }
 /* a short screen (a small phone): a smaller scene, 🔊 and answers, so the answers fit without scrolling */
 @media (max-height:680px){.scene{height:104px;margin-bottom:6px}.scene .foem{top:66px;width:96px;height:26px}.scene .foe{top:10px}.scene .foe .portrait{width:64px;height:64px}
@@ -639,6 +668,7 @@ rt.hid{visibility:hidden}
 .titlecard .btn.big .sub{font:500 .72rem var(--text);opacity:.8}
 .titlecard .btn.sel{outline:3px solid var(--gold);outline-offset:2px}
 @media (max-width:700px){.titlecard .btn.big{font-size:.85rem;padding:.3rem .7rem}.titlecard .btn.big .sub{font-size:.65rem}}
+@media (max-width:700px){.talk rt{font-size:.6em}}   /* pinyin in the speech box on the smallest phones: big enough to read */
 /* Save files: your three games, one to a row */
 .files .menu .btn.slotrow{display:flex;align-items:center;gap:.6rem;justify-content:flex-start;padding:.35rem .6rem;text-align:left}
 .files .slotrow .face{width:28px;height:28px;image-rendering:pixelated;flex:none}

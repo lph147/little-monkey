@@ -122,3 +122,16 @@ test('the pixel font never joins letters (it turned fi and fl into a letter like
   assert.doesNotMatch(cap, /text-shadow/, 'a shadow there would smudge the captions under answers');
   assert.match(css, /\.capbox \.cap\{text-shadow/, 'the opening’s captions keep theirs, over the picture');
 });
+
+test('the smallest phones’ tighter layout stays inside their own block, so bigger phones never get it', () => {
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  const start = css.indexOf('@container (max-height:260px){');
+  assert.ok(start > 0, 'the block for the smallest phones');
+  let depth = 0, end = start;   // its closing brace
+  for (let i = css.indexOf('{', start); i < css.length; i++){ if (css[i] === '{') depth++; else if (css[i] === '}' && !--depth){ end = i; break; } }
+  const inside = css.slice(start, end), outside = css.slice(0, start) + css.slice(end);
+  for (const rule of ['.helper .why{display:none}', '.menu.twocol > .btn:last-child:nth-child(odd){grid-column:1 / -1}', '.grid{grid-template-columns:repeat(auto-fill,minmax(54px,1fr))', '.mp .pix{width:var(--pic-small)']){
+    assert.ok(inside.includes(rule), `${rule} is for the smallest phones`);
+    assert.ok(!outside.includes(rule), `${rule} only there`);
+  }
+});
