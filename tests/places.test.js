@@ -217,7 +217,7 @@ test('animal friends on the way up: the rabbit and the fox give advice, the squi
   const name = get(game, "speaker('squirrel')");
   assert.match(name, /松鼠 <span class="spk-py">sōngshǔ<\/span>/, 'called by its word, with pinyin');
   assert.doesNotMatch(name, /spk-en/, 'and no English: it’s a word you know');
-  game.run("mode = 'play'; placePlayer(); showDialog = async () => {}; confirmBox = async () => true; globalThis.__played = 0; encounter = async f => { __played = f.hz; return true; }");
+  game.run("mode = 'play'; placePlayer(); showDialog = showNarration = replyWith = async () => {}; confirmBox = async () => true; globalThis.__played = 0; encounter = async f => { __played = f.hz; return true; }");
   const bubble = () => get(game, "((AREA.bubbles.squirrel || []).find(b => matches(b.if)) || {}).show || ''");
   assert.equal(bubble(), '!', 'it wants to play');
   await game.run("talk(ALL_NPCS.find(n => n.id === 'squirrel'))");

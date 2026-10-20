@@ -71,8 +71,9 @@ test('before the hungry monkey has eaten, the fruit trees are for him, not your 
 test('win a word game with the squirrel and it gives you a peach; the goat gives an apple; lose, and nothing', async () => {
   for (const [who, fruit] of [['squirrel', '桃子'], ['goat', '苹果']]) for (const won of [true, false]){
     const {run, get} = game();
-    run(`showDialog = async () => {}; confirmBox = async () => true; encounter = async () => ${won}`);
+    run(`showDialog = showNarration = async () => {}; confirmBox = async () => true; encounter = async () => ${won}; globalThis.__replied = null; replyWith = async w => { __replied = w; }`);
     await run(`runSteps(AREA.talk.${who}[0].do, '${who}')`);
     assert.equal(get(`S.bag['${fruit}'] || 0`), won ? 1 : 0, `${who}, ${won ? 'won' : 'lost'}`);
+    assert.equal(get('__replied'), won ? '谢谢' : null, 'you say thank you for a present');
   }
 });

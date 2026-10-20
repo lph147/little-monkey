@@ -190,3 +190,21 @@ test('the big monkey waits in the way up to stop you with the stick, and only un
   assert.deepEqual(big({}), ['meadow', 16, 1], 'in the gap where the rocks were: you can’t go up without passing him');
   assert.deepEqual(big({'棍子': {lv: 1, ok: 0}}), ['meadow', 17, 3], 'back beside it once you have the stick');
 });
+
+test('one new word per conversation: a phrase you haven’t learned waits if the conversation has already taught a word; a present gets a 谢谢', async () => {
+  const words = ['石头', '山', '花', '草', '树', '松鼠', '桃子'];
+  const g = loadGame({save: {version: 29, started: true, w: Object.fromEntries(words.map(w => [w, {lv: 1, ok: 0}])), areas: {1: {elder: 2, gate: true, climb: 1}},
+    pos: {place: 'path', x: 5, y: 4, dir: 'up'}}});
+  g.run("mode = 'play'; placePlayer(); showDialog = showNarration = async () => {}; confirmBox = async () => true; encounter = async () => true; toast = () => {}");
+  g.run("globalThis.__cards = []; showNotice = async w => { __cards.push(w); setSeen(w); }; chooseReply = async (who, choices) => choices[0]");
+  const cards = () => JSON.parse(g.run('JSON.stringify(__cards.splice(0))')), knows = w => g.run(`lvl('${w}')`) >= 1;
+  await g.run("talk(ALL_NPCS.find(n => n.id === 'squirrel'))");
+  assert.deepEqual(cards(), ['谢谢'], 'you win a peach, and say thank you: the only new word');
+  assert.ok(knows('谢谢'));
+  g.run("AREA.talk.squirrel = [{do:[{newWord:'兔子'}, {reply:'不客气'}]}]");   // a conversation that teaches a word, then wants a new reply
+  await g.run("talk(ALL_NPCS.find(n => n.id === 'squirrel'))");
+  assert.deepEqual(cards(), ['兔子'], 'the reply waits for another time');
+  assert.ok(!knows('不客气'));
+  await g.run('replyWith("不客气")');   // outside a conversation (as in other tests), nothing waits
+  assert.deepEqual(cards(), ['不客气']);
+});

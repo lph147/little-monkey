@@ -143,7 +143,10 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (!missed){ if (s.notYet) toast(fill(s.notYet)); return STOP; }
     closeCard(); SFX.fanfare();   // all matched: on with the conversation
   },
-  bag(s){ toast(intoBag(s.bag) ? fill(s.note || `A {${s.bag}} for your bag.`) : `Your bag is full of ${wz(s.bag)}.`); },   // food for your bag, if there's room
+  async bag(s, who){   // food for your bag, if there's room (in a conversation, the message waits in the speech box)
+    const text = intoBag(s.bag) ? fill(s.note || `A {${s.bag}} for your bag.`) : `Your bag is full of ${wz(s.bag)}.`;
+    if (who) await showNarration(text); else toast(text);
+  },
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
@@ -190,14 +193,16 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
 // You reply: choose what to say from the phrases you know, with best the one that fits (taught on its
 // own card the first time). Any choice is fine: you say it, and if another fits better the game says
 // so. Replying with the one that fits counts as using it. A phrase you don't know yet isn't offered.
+// One new word at a time: if this conversation has already taught one, a phrase that's new too waits for another
+// time (such as 要 then 不客气 at your first request), and the character's line stands on its own.
 async function replyWith(best){
-  if (lvl(best) === 0) await showNotice(best, {quiet:true});
+  if (lvl(best) === 0){
+    if (caughtBefore !== null && caughtCount() > caughtBefore) return;
+    await showNotice(best, {quiet:true});
+  }
   const choices = shuffle([best, ...shuffle(PHRASES.filter(p => p !== best && lvl(p) >= 1)).slice(0, 2)]);
   await iSay(await chooseReply(speaker('player'), choices), best);
 }
-// Your reply at the end of a conversation that has already taught a new word (taught): a phrase that's new too waits
-// for another time, so you never get two new words back to back (such as 要 then 不客气 at your first request).
-const replyAfter = (best, taught) => taught && lvl(best) === 0 ? Promise.resolve() : replyWith(best);
 // Your monkey says a phrase. If it's the one that fits (best), it counts as using it; if not, the game says which fits.
 async function iSay(said, best = said){
   const fits = said === best;
@@ -243,10 +248,17 @@ function followersStep(now, hop){   // you're stepping off your square (hop: dow
     n.dir = dirOf(dx, dy); n.parity = (n.parity || 0) ^ 1; n.x = to[0]; n.y = to[1];
   });
 }
+// How many words you'd caught when the conversation you're in began (null outside one), so a reply can tell if it
+// has already taught a new word (replyWith).
+let caughtBefore = null;
+const caughtCount = () => Object.keys(WORDS).filter(w => lvl(w) >= 1).length;
 async function talk(n){
   n.dir = OPP[pl.dir];
   const part = (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
-  if (part) await runSteps(part.do, n.id);
+  if (!part) return;
+  const outer = caughtBefore;   // (a character can stop you during another conversation)
+  caughtBefore = caughtCount();
+  try { await runSteps(part.do, n.id); } finally { caughtBefore = outer; }
 }
 // A character asking you to bring something (the area's requests). A request with choices (such as the
 // hungry monkey's fruit) is fussy: whichever you bring first, they want the other (remembered in wanted),
@@ -272,7 +284,7 @@ async function request(r, face){
     sentence.filter(x => lvl(x) >= 1).forEach(useWord);
     p[r.id] = 'done'; delete p.holding[r.id]; S.shells += r.reward; save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
-    if (r.thanksReply) await replyAfter(r.thanksReply, !!nw);
+    if (r.thanksReply) await replyWith(r.thanksReply);
     toast(`+${r.reward} 🐚. Task complete!`);
     await runEvents();
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
@@ -302,8 +314,8 @@ async function shop(face){   // the area's shop: what it sells, and buying it by
   else if (sh.no){ if (lvl(sh.no) === 0) await showNotice(sh.no, {quiet:true}); await iSay(sh.no); }   // you say 我不要
 }
 async function buy(i, face){   // buying something from the shop by asking for it. Gives true if you bought it.
-  const sh = AREA.shop, isNew = lvl(i.item) === 0;
-  if (isNew) await showNotice(i.item, {note:fill(i.note), quiet:true});
+  const sh = AREA.shop;
+  if (lvl(i.item) === 0) await showNotice(i.item, {note:fill(i.note), quiet:true});
   if (i.eat && bagFull(i.item)){ await infoBox(face, `<p>You can carry ${FOOD[i.item].carry} ${esc(wz(i.item))}, and your bag is full. Eat one first.</p>`); return false; }
   if (S.shells < i.price){ await infoBox(face, `<p>The ${esc(wz(i.item))} costs ${i.price} 🐚, and you have ${S.shells}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const sentence = toks(i.sentence);
@@ -316,7 +328,7 @@ async function buy(i, face){   // buying something from the shop by asking for i
   save(); SFX.fanfare();
   if (i.wear) redress();   // redraw your monkey wearing it
   await showDialog(face, L[sh.thanks]);
-  if (sh.thanksReply) await replyAfter(sh.thanksReply, isNew);
+  if (sh.thanksReply) await replyWith(sh.thanksReply);
   toast(fill(i.bought));
   await runEvents();
   return true;

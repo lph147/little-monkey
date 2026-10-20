@@ -868,9 +868,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
     fox: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
     squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}? If you win, it gives you a {桃子}.', word:'松鼠',
-      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}]}}]}],
+      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}, {reply:'谢谢'}]}}]}],
     goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
-      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}]}}]}],
+      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}, {reply:'谢谢'}]}}]}],
     // the goat below the waterfall: the way down is quicker, hopping down the ledges that sent you round on the way up
     ledgeGoat: [
       {if:{ledgeTip:0}, do:[{say:'hi'}, {reply:'你好'},
