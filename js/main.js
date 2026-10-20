@@ -140,7 +140,9 @@ try { speechSynthesis.addEventListener('voiceschanged', () => { if (mode === 'ti
 // each game's card has Continue, Copy to a file and Delete, or New game and Load from a file). The D-pad moves between
 // the buttons and A presses the chosen one. The first time, there's New game and Save files.
 let titleSel = 0;
-const go = fn => () => { getAC(); unlockSpeech(); musicStart(); fn(); };   // (sound can only start from a tap)
+const go = fn => () => { getAC(); unlockSpeech(); musicStart(); keepSaves(); fn(); };   // (sound can only start from a tap)
+// Asks the browser to keep your saved games for good, rather than clear them to make room, once you play.
+const keepSaves = () => { try { navigator.storage.persist().catch(() => {}); } catch(e) {} };
 const ago = t => { const d = Math.floor((Date.now() - t) / 86400000); return !t ? '' : d < 1 ? 'today' : d < 2 ? 'yesterday' : `${d} days ago`; };
 const faceHTML = () => `<img class="face" alt="" src="${monkeySprite('player', 'down', false, 0).toDataURL()}">`;
 const lastPlayed = () => { const p = slotsInfo().played || {}; return SLOTS.filter(slotSummary).sort((a, c) => (p[c] || 0) - (p[a] || 0) || a - c)[0] || null; };
@@ -214,7 +216,7 @@ function slotCard(n){
   on('[data-a=copy]', () => {
     const f = saveFile(n), a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([f.text], {type:'application/json'})); a.download = f.name;
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);   // (an iPhone asks before it downloads: the file waits a minute)
     toast(`Copied Game ${n} to ${f.name}`);
   });
   on('[data-a=del]', () => {
@@ -290,10 +292,13 @@ window.addEventListener('resize', fit);
 setUpGame(); fit(); toTitle();
 requestAnimationFrame(frame);
 // The app (sw.js): lets the game be installed on a phone's home screen, full screen, and played offline.
-// Once it's ready, it's given every voice clip to keep, so all the Chinese can be heard offline too.
+// Once it's ready, it's given the game's own files to keep (the first time, the page loaded before it was there to
+// keep them), and every voice clip, so all the Chinese can be heard offline too.
 if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(() => {});
-  const keepClips = () => navigator.serviceWorker.ready.then(r => r.active && r.active.postMessage({keepClips:
-    Object.entries(VOICE_CLIPS).flatMap(([v, clips]) => Object.values(clips).map(code => `audio/${v}/${code}.mp3`))})).catch(() => {});
-  if (typeof VOICE_CLIPS !== 'undefined'){ keepClips(); navigator.serviceWorker.addEventListener('controllerchange', keepClips); }   // and again when a new version takes over
+  const ownFiles = () => ['./', ...[...document.querySelectorAll('script[src], link[href]')].map(el => el.src || el.href)
+    .filter(u => new URL(u, location.href).origin === location.origin)];   // the page, its scripts, styles, icons and app description
+  const clips = () => typeof VOICE_CLIPS === 'undefined' ? [] : Object.entries(VOICE_CLIPS).flatMap(([v, c]) => Object.values(c).map(code => `audio/${v}/${code}.mp3`));
+  const keep = () => navigator.serviceWorker.ready.then(r => r.active && r.active.postMessage({keepFiles:ownFiles(), keepClips:clips()})).catch(() => {});
+  keep(); navigator.serviceWorker.addEventListener('controllerchange', keep);   // and again when a new version takes over
 }

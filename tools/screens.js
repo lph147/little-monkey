@@ -68,6 +68,9 @@ const SCREENS = [
   {id: 'title-novoice', title: 'Title, no Chinese voice', voices: 'missing', why: 'With the game’s own voice clips there’s no warning: the device’s voice isn’t needed.'},
   {id: 'title-phone', title: 'Title, in a phone’s browser', why: 'Play full screen: on Android it goes full screen, on an iPhone it shows how to add it to the home screen. Never once it’s the app.', run: async () => {
     window.matchMedia = q => ({matches: q === '(pointer: coarse)'}); titleText(); await wait(200); }},
+  {id: 'title-iphone', title: 'Title, in Safari on an iPhone', save: 'middle', why: 'Safari can delete a game after a week away: a warning, with Play full screen to add it to the home screen, where it’s safe.', run: async () => {
+    Object.defineProperty(navigator, 'userAgent', {get: () => 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});
+    window.matchMedia = q => ({matches: q === '(pointer: coarse)'}); titleText(); await wait(200); }},
   {id: 'fullscreen-iphone', title: 'Play full screen, on an iPhone', why: 'How to add it to the home screen, and how to carry a game across to the app.', run: async () => {
     window.matchMedia = q => ({matches: q === '(pointer: coarse)'}); showAddSteps(); await wait(300); }},
   {id: 'title-back', title: 'Title, coming back', save: 'middle'},

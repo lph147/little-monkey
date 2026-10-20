@@ -46,7 +46,9 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] The icon on the home screen is the monkey on grass under a blue sky, named 小猴子.
 - [ ] It opens full screen, sideways, and plays as in the browser.
 - [ ] After an upload to GitHub, closing and opening the app again shows the new version (it always loads the newest when there's a connection).
-- [ ] With no connection (flight mode), it still opens and plays, once it has been opened online before.
+- [ ] With no connection (flight mode), it still opens and plays, voices and all, once it has been opened online just once (wait a minute on that first visit, for the voice clips). On an iPhone, the home-screen app counts as a first visit: open it once online.
+- [ ] On a weak signal, it opens from its copy after about 3 seconds instead of waiting, and words are said straight away.
+- [ ] In Safari on an iPhone, once you have a game, the title screen says ⛶ Keep your games safe (instead of Play full screen). It opens the steps to add it to the home screen, which say Safari can delete games after a week away, and how to bring a game across (Copy to a file, then Load from a file). Copy to a file works even if you take a while to tap Download.
 
 ## Quick check (after every change, about 5 minutes)
 

@@ -78,3 +78,19 @@ test('on an iPhone, Not now hides it for a day', () => {
   game.run('const __now = Date.now(); Date.now = () => __now + 2 * 86400000; titleText()');
   assert.match(title(game), /Play full screen/, 'back the next day');
 });
+
+test('in Safari on an iPhone, once you have a game, the title offers to keep it safe: Safari can delete it after a week away', () => {
+  const GAME = {'xiaohouzi-v2': JSON.stringify({version: 29, started: true, w: {'石头': {lv: 1, ok: 0}}})};
+  const WARNING = /Keep your games safe/;
+  const safari = on('iphone', {storage: GAME});
+  assert.match(title(safari), WARNING);
+  safari.el('#fullBtn').onclick();
+  assert.match(safari.el('#sheet').innerHTML, /your games are safe: Safari can delete them after a week away/, 'the card says why');
+  assert.match(safari.el('#sheet').innerHTML, /Add to Home Screen/, 'and how');
+  assert.doesNotMatch(title(on('iphone')), WARNING, 'not before you have a game');
+  assert.doesNotMatch(title(on('iphone', {app: true, storage: GAME})), WARNING, 'not in the app: its games are safe');
+  assert.doesNotMatch(title(on('android', {storage: GAME})), WARNING, 'not on Android');
+  safari.el('#fullBtn').onclick();
+  safari.el('#sheet').querySelector('[data-a=yes]').onclick();
+  assert.doesNotMatch(title(safari), WARNING, 'not once you’ve added it to the home screen');
+});

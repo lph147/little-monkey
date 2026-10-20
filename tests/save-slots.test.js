@@ -97,3 +97,10 @@ test('on a game’s card, the arrows move between its buttons, and A presses the
   game.run('pressA()');
   assert.match(sheet.textContent, /Save files/, 'A pressed Back: back to Save files');
 });
+
+test('playing asks the browser to keep your games for good, rather than clear them to make room', () => {
+  const game = loadGame({dom: true, save: {version: 29, started: true, w: {}}});
+  game.run("globalThis.__kept = 0; globalThis.navigator = {storage: {persist: () => { __kept++; return Promise.resolve(true); }}}");
+  game.el('#titleButtons').querySelector('#contBtn').click();
+  assert.equal(game.run('__kept'), 1);
+});
