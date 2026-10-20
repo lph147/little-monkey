@@ -90,7 +90,7 @@ async function encounter(foe){
     : `<div class="spk-zh">${an} <span class="spk-py">${WORDS[an].py}</span>${foe.justTaught ? '' : (showEn ? ` <span class="small">${esc(WORDS[an].en)}</span>` : ' <button class="engbtn" data-a="foeen">English</button>')}</div>`;
   // The scene: your monkey, from behind, facing the animal on the grass (or a cliff, if that's its home), and its
   // name plate with hearts for the friendship won so far (filled: how many) and which question this is (n of 3).
-  const me = monkeySprite('player', 'up', false, 0).toDataURL();
+  const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (no stick: these are friends)
   const scene = (filled, n, look = '') => `<div class="scene${foe.home === '山' ? ' cliff' : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}"><div class="plate"><div class="name">${nameHTML()}</div>`
     + `<div class="hearts" aria-label="Friendship: ${filled} of 3">${[0, 1, 2].map(k => heartHTML(k < filled)).join('')}</div>${n ? `<div class="qn">Question ${n} of 3</div>` : ''}</div>`

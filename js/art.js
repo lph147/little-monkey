@@ -46,13 +46,14 @@ const HAND = {
   up:{x:1, edge:0, y:13, grip:[[2, 11], [1, 11], [2, 12]]},
   side:{x:13, edge:14, y:13, grip:[[12, 11], [13, 11], [12, 12]]}
 };
-function monkeySprite(kind, dir, blink, step = 0){
-  const stick = kind === 'player' && inHand();
+// empty: with nothing in its hands (in a battle the scene holds the stick itself; meeting an animal, you hold nothing).
+function monkeySprite(kind, dir, blink, step = 0, empty = false){
+  const stick = !empty && kind === 'player' && inHand();
   const k = kind + dir + (blink ? 'b' : '') + step + (stick || ''); if (spriteCache[k]) return spriteCache[k];
-  return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step), stick ? {...PALS[kind], ...HELD[stick].pal} : PALS[kind]);
+  return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step, empty), stick ? {...PALS[kind], ...HELD[stick].pal} : PALS[kind]);
 }
 // A monkey's pixel rows, as letters (PALS says each letter's colour). The app's icons use them too (tools/make-icons.js).
-function monkeyRows(kind, dir, blink, step = 0){
+function monkeyRows(kind, dir, blink, step = 0, empty = false){
   const side = dir === 'left' || dir === 'right';
   const rows = (dir === 'up' ? BACK : side ? SIDE : MONKEY).map(r => [...r]);
   const legs = (side ? LEGS.side : LEGS.front)[step];
@@ -66,7 +67,7 @@ function monkeyRows(kind, dir, blink, step = 0){
     if (BEARDED.has(kind)){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
   }
   if (kind === 'player' && wearing('头带')){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the red headband
-  const stick = kind === 'player' && inHand();
+  const stick = !empty && kind === 'player' && inHand();
   if (stick){   // the stick in your hand
     const h = HAND[side ? 'side' : dir], top = h.y - HELD[stick].len + 1;
     for (let y = top; y <= h.y; y++){ rows[y][h.x] = y === top || y === h.y ? 'k' : 'l'; rows[y][h.edge] = 'k'; }

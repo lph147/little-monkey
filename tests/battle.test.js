@@ -205,5 +205,7 @@ test('once the big monkey gives you the stick, your monkey holds it on the map: 
   game.run("portrait('player')");
   assert.deepEqual(JSON.parse(game.run('JSON.stringify(Object.keys(portraitCache))')), ['player', 'player棍子'], 'your picture in the speech box is drawn again, holding it');
   for (const d of dirs) assert.equal(stickIn(rows('elder', d)), 0, 'only your monkey holds it');
+  assert.equal(stickIn(game.run("JSON.stringify(monkeyRows('player', 'up', false, 0, true))")), 0, 'but not in a battle’s scene, which has its own stick to swing, nor meeting an animal');
+  assert.match(game.run('fight.toString() + encounter.toString()'), /monkeySprite\('player', 'up', false, 0, true\)[\s\S]*monkeySprite\('player', 'up', false, 0, true\)/, 'the battle and the meeting both draw your monkey with empty hands');
   assert.ok(game.run('HELD[BATTLES.weapon].len') < 16 / 2);
 });
