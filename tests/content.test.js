@@ -347,6 +347,15 @@ test('every step does one thing, with settings that exist, using real lines and 
   }
 });
 
+test('every phrase can be caught: a reply, a card or a request teaches it', () => {
+  const taught = new Set([
+    ...allSteps().flatMap(([, s]) => [s.reply, s.newWord, s.card]),
+    ...Object.values(AREA.requests).flatMap(r => [r.wrongReply, r.thanksReply]),
+    ...(AREA.shop ? [AREA.shop.thanksReply, AREA.shop.no] : [])
+  ].filter(Boolean));
+  for (const p of collectible.filter(w => BANK[w].phrase)) assert.ok(taught.has(p), `${p} is a phrase you can never catch: nothing teaches it`);
+});
+
 test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),

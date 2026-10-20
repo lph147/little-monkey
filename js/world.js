@@ -260,7 +260,7 @@ async function request(r, face){
     delete p.holding[r.id]; save(); toast(fill(r.wrongMessage));
     return;
   }
-  if (p[r.id] === 'asked' && has === want){          // you brought what they wanted
+  if (p[r.id] === 'asked' && has && has === want){   // you brought what they wanted (not just nothing, before a fussy one has said which)
     await showDialog(face, L[c.offer], {ok:'Give it'});
     const nw = (r.firstTeach || []).find(f => lvl(f.word) === 0);
     if (nw) await showNotice(nw.word, {note:nw.note, quiet:true});

@@ -35,6 +35,7 @@ shown where the word list has them.
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
+| 对不起！ | duìbuqǐ! | Sorry! | 饿猴子 (Hungry monkey) |  |
 | 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | 老猴子 (Old monkey) |  |
 | 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | 老猴子 (Old monkey) |  |
 | 饿猴子要吃水果。 | è hóuzi yào chī shuǐguǒ. | The hungry monkey wants to eat some fruit. | 老猴子 (Old monkey) |  |
@@ -45,15 +46,15 @@ shown where the word list has them.
 | 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | 猴子 (Monkey) |  |
 | 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | 猴子 (Monkey) |  |
 | 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | 猴子 (Monkey) |  |
-| 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 老猴子 (Old monkey) |  |
+| 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 小猴子 (Little monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
 | 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | 兔子 (rabbit) |  |
 | 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | 狐狸 (fox) |  |
-| 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 老猴子 (Old monkey) |  |
-| 这是棍子。 | zhè shì gùnzi. | This is a stick. | 老猴子 (Old monkey) |  |
+| 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 小猴子 (You) |  |
+| 这是棍子。 | zhè shì gùnzi. | This is a stick. | 大猴子 (Big monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
-| 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | 老猴子 (Old monkey), 大猴子 (Big monkey) |  |
-| 我怕！ | wǒ pà! | I’m scared! | 老猴子 (Old monkey), 小猴子 (Little monkey) |  |
+| 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | 大猴子 (Big monkey) |  |
+| 我怕！ | wǒ pà! | I’m scared! | 小猴子 (Little monkey) |  |
 | 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | 老猴子 (Old monkey) |  |
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | 老猴子 (Old monkey), 小猴子 (Little monkey), 大猴子 (Big monkey) |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
@@ -127,7 +128,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 很久很久以前…… | hěn jiǔ hěn jiǔ yǐqián ?? | Long, long ago… |  |
+| 很久很久以前…… | hěn jiǔ hěn jiǔ yǐqián… | Long, long ago… |  |
 | 海里有一座山，叫花果山。 | hǎi lǐ yǒu yí zuò shān, jiào Huāguǒ Shān. | In the sea stood a mountain called Flower Fruit Mountain. |  |
 | 山上有一个大石头。 | shān shàng yǒu yí gè dà shítou. | On top of the mountain sat a big stone. |  |
 | 石头动了！ | shítou dòng le! | The stone moved! |  |
@@ -345,6 +346,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 这是棍子。 | zhè shì gùnzi. | This is a stick. | The prologue, up the stream, 18 October 2026 (in the game): The big monkey, giving you a stick before you set off |  |
 | 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | The prologue, up the stream, 18 October 2026 (in the game): The example on 蜜蜂 (bee)’s page |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | The prologue, up the stream, 18 October 2026 (in the game): The example on 野猪 (wild boar)’s page |  |
+| 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 
 ## Questions
 

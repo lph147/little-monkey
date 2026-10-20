@@ -95,6 +95,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // The hungry monkey wants fruit: whichever you bring first, he wants the other
   await pressAt(13, 6, 'up', 'meeting the hungry monkey');
+  await pressAt(13, 6, 'up', 'talking to the hungry monkey again, before finding any fruit');   // (he used to say nothing)
   assert.equal(area().hungry, 'asked', 'the hungry monkey should ask for some fruit');
   await pressAt(2, 6, 'left', 'picking a peach');
   assert.equal(area().holding.hungry, '桃子', 'you should be holding the peach');
@@ -104,6 +105,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(20, 17, 'right', 'picking an apple from the tree across the river');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
   assert.equal(area().hungry, 'done', 'the hungry monkey should take the apple');
+  assert.ok(!knows('没关系'), 'he said 没关系 when you said sorry, but you haven’t said it yet');
+  await pressAt(13, 6, 'up', 'talking to the hungry monkey once he has eaten: he says sorry for being fussy');
+  assert.ok(knows('没关系'), 'you reply 没关系 (that’s OK), and catch it');
 
   // The thirsty monkey, then the rocks roll away
   await pressAt(2, 11, 'down', 'meeting the thirsty monkey');

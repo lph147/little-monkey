@@ -35,6 +35,7 @@
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{font-variant-ligatures:none}   /* the pixel font joins fi and fl into a letter like A ("Save Ales"), so no joined letters anywhere */
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--en);line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
@@ -88,7 +89,8 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
    in the top corner. The words keep their colours over the picture, whatever the theme. */
 .capbox{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto;align-items:end;column-gap:.6rem;padding:1.6rem .8rem .5rem;background:linear-gradient(rgba(10,20,16,0),rgba(10,20,16,.78) 38%);z-index:5}
 .capbox[hidden]{display:none}
-.cap{display:flex;flex-direction:column;align-items:center;gap:.05rem;text-align:center;text-shadow:0 2px 0 rgba(0,0,0,.6)}
+.cap{display:flex;flex-direction:column;align-items:center;gap:.05rem;text-align:center}
+.capbox .cap{text-shadow:0 2px 0 rgba(0,0,0,.6)}   /* the opening's captions, over the picture (not the captions under answers, which are .cap too) */
 .cap .line{justify-content:center;margin:0}
 .cap .tok,.cap .tok.listen{font-size:1.45rem;font-weight:600;color:#FFF6D8;border-bottom-color:rgba(255,246,216,.18)}
 .cap .tok.learn{color:#9BE08A;border-bottom-color:rgba(155,224,138,.4)}

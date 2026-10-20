@@ -64,14 +64,15 @@ const DRAFTS = [
     ['这 是 棍子 。', 'This is a stick.', 'The big monkey, giving you a stick before you set off'],
     ['花 上 有 蜜蜂 。', 'There is a bee on the flower.', 'The example on 蜜蜂 (bee)’s page'],
     ['山 上 有 野猪 。', 'There is a wild boar on the mountain.', 'The example on 野猪 (wild boar)’s page']]
-    .map(([zh, en, where]) => ({zh, en, where:'The prologue, up the stream, 18 October 2026 (in the game): ' + where}))
+    .map(([zh, en, where]) => ({zh, en, where:'The prologue, up the stream, 18 October 2026 (in the game): ' + where})),
+  {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'}
 ];
 
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the
 // word bank yet, so each line gives its own pinyin. When it's built, these move into the area file.
 // Questions for the native speaker about the game's Chinese.
 const QUESTIONS = ['When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line? (The card for 二 says: "When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).")'];
-const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':','};
+const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
 function sheet(){
   const game = loadGame();
   const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
@@ -82,6 +83,7 @@ function sheet(){
   const row = cells => `| ${cells.join(' | ')} |`;
   const table = (head, rows) => [row(head), row(head.map(() => '---')), ...rows.map(row)].join('\n');
   const name = id => {   // a character's name, or for an animal friend (which has none), its word, such as 山羊 (goat)
+    if (id === 'player') return '小猴子 (You)';
     const c = AREA.characters.find(x => x.id === id);
     return c && c.name ? `${c.name.zh} (${c.name.en})` : c && BANK[c.look] ? `${c.look} (${BANK[c.look].en})` : id;
   };
@@ -89,7 +91,7 @@ function sheet(){
   // Who says each line
   const saidBy = {};
   const add = (key, who) => { (saidBy[key] = saidBy[key] || new Set()).add(who); };
-  for (const [who, parts] of Object.entries(AREA.talk)) for (const p of parts) for (const s of p.do) if (s.say) add(s.say, name(who));
+  for (const [who, parts] of Object.entries(AREA.talk)) for (const p of parts) for (const s of p.do) if (s.say) add(s.say, name(s.by || who));   // (by: someone else says it)
   for (const r of Object.values(AREA.requests)) for (const k of [r.ask, r.offer, r.thanks, r.wrong]) if (k) add(k, name(r.from));
   if (AREA.shop) for (const k of [AREA.shop.ask, AREA.shop.thanks]) add(k, name(AREA.shop.who));
   for (const r of Object.values(AREA.requests)) if (r.wrongAnswer) add(r.wrongAnswer, name(r.from));

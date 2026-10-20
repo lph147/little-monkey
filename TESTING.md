@@ -51,6 +51,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 ## Quick check (after every change, about 5 minutes)
 
 - [ ] The title screen shows the night sky with the stone on the mountain on the right, 小猴子 on the left, and its buttons: a gold Continue, saying which game, how many words and when you last played (it carries on with the game you played last), then New game and Save files in white. The first time, there's just New game (gold) and Save files. The chosen one has a gold outline and the red A badge; the D-pad (or arrow keys) moves between them, and the A label says what it does.
+- [ ] Words with "fi" and "fl" in the pixel font read properly: Save Files, Flower Fruit Mountain, find, first (they used to show a letter like A, "Save Ales"). The Chinese and pinyin under answer pictures are crisp, with no shadow.
 - [ ] The version (such as v144) is small in the title screen's bottom-right corner, and matches the one Claude said was pushed. If it's lower, close the game and open it again.
 - [ ] A first game says to turn your sound on: every word is spoken aloud.
 - [ ] In a phone's browser, the title screen has ⛶ Play full screen. On Android it goes full screen and sideways (and Install the app shows if Chrome offers it). On an iPhone it opens the steps to Add to Home Screen: Not now hides it until tomorrow, I've added it hides it for good. Opened from the home screen, it's never there. On a computer, never. (The red note about a missing Chinese voice, with How to fix it, now only shows on a browser that can't play the game's voice clips.) The words sit under the title on the left, clear of the stone and the mountain.
@@ -98,8 +99,10 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **The hungry monkey**
 - [ ] The monkey to the right of the old monkey has a !. It says 我饿了。我要吃水果！ (I want to eat some fruit: 水果 is grey, just for listening) and teaches 吃 (eat). The task says "Find some fruit for the hungry monkey", with no arrow: finding it is the point.
+- [ ] Talk to him again before you've found any fruit: he asks again and says 水果在树上。 (he used to say nothing at all).
 - [ ] Peach trees grow at the far left end of the long path; the apple tree is in the south-east, across the river. Face one and press A to learn its word (桃子 peach or 苹果 apple) and pick one.
 - [ ] Whichever you bring first, he gives it back: 这是桃子。我要吃苹果！ (or 这是苹果。我要吃桃子！). You reply 对不起 and he says 没关系. The task changes to "Find the 苹果 (apple) the hungry monkey wants" (or the 桃子).
+- [ ] Once he's eaten, he has a ! again. Talk to him: he looks a little embarrassed about being so fussy and says 对不起！ (Sorry!), and you reply 没关系 (that's OK), taught on its own card. The Phrases tab then has all 7.
 - [ ] The thirsty monkey stands near the bottom of the map: when it talks, you both still show above the speech box.
 - [ ] Bring the other fruit: 你有苹果吗？ (or 你有桃子吗？). The button says Give it.
 - [ ] A new-word card for 要 (want) appears. Then "Fill the gap": 我要吃＿。 with the English underneath, and 3 choices. While the fruit is new they're pictures with the Chinese; once you've recognised it, Chinese and pinyin only. Choosing fills the gap and reads the sentence aloud; a wrong choice shows the right one, and either way the task completes with +3 🐚.

@@ -133,7 +133,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
-    hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'}],
+    hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'},
+      {if:{hungry:'done', new:'没关系'}, show:'!'}],   // once he's eaten, he wants to say sorry for being fussy
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the ledges
@@ -572,7 +573,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '谢谢': 'You said it to the {老板} after buying from the stall.',
     '不客气': 'You said it when a monkey thanked you for your help.',
     '对不起': 'You said it when you brought the hungry monkey the wrong fruit.',
-    '没关系': 'The hungry monkey said it when you said sorry.',
+    '没关系': 'You said it when the hungry monkey said sorry for being so fussy.',
     '再见': 'You said it to the old monkey as you set off up the mountain path.',
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
     '戴': 'You said it when you put something on from your wardrobe.',
@@ -686,6 +687,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     wantFlowers: {zh:'我 要 红色 、 黄色 和 白色 的 花 ！', en:'I want red, yellow and white flowers!'},
     haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'},
+    sorry: {zh:'对不起 ！', en:'Sorry!'},   // the hungry monkey, sorry for being fussy (draft, not checked yet: see CHINESE.md)
     // The prologue's guide (drafts, not checked yet: see CHINESE.md)
     iamOld: {zh:'我 是 老 猴子 。 这 是 花果山 。', en:'I’m the old monkey. This is Flower Fruit Mountain.'},
     findMonkeys: {zh:'去 找 猴子 吧 ！', en:'Go and find the monkeys!'},
@@ -849,6 +851,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{hungry:'not asked'}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
       {if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
+      // once he's eaten, he says sorry for being so fussy, and you say that's OK: 没关系, heard when you said sorry, to say now
+      {if:{hungry:'done', new:'没关系'}, do:[{message:'The hungry monkey looks a little embarrassed about being so fussy.'}, {say:'sorry'}, {reply:'没关系'}]},
       {do:[{request:'hungry'}]}
     ],
     thirsty: [
