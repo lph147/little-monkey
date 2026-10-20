@@ -110,8 +110,67 @@ test('setting off: the old monkey sends you up alone, and the waterfall at the e
   assert.equal(get(game, 'here().climb'), 2, 'the waterfall: found it');
   await game.run("runSteps(AREA.talk.elder.find(p => !p.if || matches(p.if)).do, 'elder')");
   assert.equal(get(game, 'here().climb'), 3, 'back down, you tell the troop');
-  game.run('placeCharacters()');
-  assert.deepEqual(get(game, "['elder', 'big', 'playful'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['falls', 'falls', 'falls'], 'and they follow you up');
+  assert.deepEqual(get(game, 'S.following'), ['playful', 'big', 'elder'], 'and they follow you up');
+});
+
+test('the troop follows you up to the waterfall, like Pikachu in Pokémon Yellow, then leaps to their places', async () => {
+  const game = loadGame({dom: true, save: {version: 28, started: true, w: {'瀑布': {lv: 1, due: 0, ok: 0}}, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 2}},
+    pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}}});
+  game.run(`mode = 'play'; placePlayer(); toast = () => {}; showDialog = showNarration = showNotice = replyWith = async () => {};
+    globalThis.step = d => { pl.dir = d; tryStep(d, 10000); const m = pl.mv; pl.x = m.tx; pl.y = m.ty; pl.mv = null; };   // a step, done at once`);
+  const at = () => get(game, 'FOLLOWERS.map(n => [n.id, n.x, n.y])');
+  const finish = async code => {
+    let done = false;
+    game.run(code).then(() => { done = true; });
+    for (let i = 0; i < 200 && !done; i++){ await tick(); game.flush(); }
+    assert.ok(done, code + ' finishes');
+  };
+  await finish("talk(NPCS.find(n => n.id === 'elder'))");
+  assert.deepEqual(get(game, 'S.following'), ['playful', 'big', 'elder']);
+  assert.deepEqual(at(), [['playful', 14, 3], ['big', 17, 3], ['elder', 14, 2]], 'they wait where they are, until you walk');
+  assert.ok(get(game, "NPCS.every(n => !S.following.includes(n.id))"), 'and they don’t stand in your way');
+
+  game.run("step('up')");
+  assert.deepEqual(at()[0], ['playful', 15, 2], 'the little monkey falls in behind you, into the square you left');
+  assert.ok(get(game, 'FOLLOWERS[0].mv.far'), 'with a leap, from where it stood');
+  assert.deepEqual(at().slice(1), [['big', 17, 3], ['elder', 14, 2]], 'the others wait their turn');
+  for (const d of ['right', 'down', 'down']) game.run(`step('${d}')`);
+  assert.deepEqual(at(), [['playful', 16, 2], ['big', 16, 1], ['elder', 15, 1]], 'in line, each in the square the one ahead has left');
+  assert.equal(get(game, 'FOLLOWERS[0].dir'), 'down', 'facing the way they walk');
+  assert.ok(get(game, 'walkable(16, 2)'), 'you can turn back through them');
+  game.run("pl.dir = 'up'");
+  assert.equal(get(game, 'promptFor(16, 2)'), 'Talk', 'and talk to them');
+  await finish("talk(FOLLOWERS[2])");   // the old monkey, while he follows you
+
+  game.run("S.pos = {place: 'path', x: 16, y: 18, dir: 'up'}; placePlayer()");   // up the mountain path
+  assert.deepEqual(at(), [['playful', 16, 18], ['big', 16, 18], ['elder', 16, 18]], 'they come with you, waiting on your square as you arrive');
+  game.run("step('up')");
+  game.run("step('up')");
+  assert.deepEqual(at(), [['playful', 16, 17], ['big', 16, 18], ['elder', 16, 18]], 'and fall in one by one');
+
+  game.run("S.pos = {place: 'path', x: 8, y: 10, dir: 'down'}; placePlayer(); step('down'); step('down')");   // down over a ledge (a shortcut, the other way)
+  assert.deepEqual(get(game, '[pl.x, pl.y]'), [8, 13]);
+  game.run("step('down')");
+  assert.deepEqual(at()[0], ['playful', 8, 13], 'the little monkey hops down the ledge after you');
+  assert.ok(get(game, 'FOLLOWERS[0].mv.far'), 'with a leap');
+
+  const kept = JSON.parse(game.storage.get('xiaohouzi-v2'));
+  assert.deepEqual(kept.following, ['playful', 'big', 'elder'], 'kept in the save: come back later, and they’re still with you');
+
+  game.run("S.pos = {place: 'falls', x: 7, y: 5, dir: 'up'}; placePlayer(); step('up')");   // up the narrow way to the waterfall
+  assert.deepEqual(get(game, '[pl.x, pl.y]'), [7, 4]);
+  await finish('runEvents()');
+  assert.equal(get(game, 'here().ledgeTip'), 0, 'the goat doesn’t stop you on the way up with the troop');
+  game.run("step('up')");
+  await finish('runEvents()');
+  assert.equal(get(game, 'here().climb'), 3, 'not there yet');
+  game.run("step('up')");
+  assert.deepEqual(get(game, '[pl.x, pl.y]'), [7, 2]);
+  await finish('runEvents()');
+  assert.equal(get(game, 'here().climb'), 4, 'out of the narrow way by the waterfall: the troop is up');
+  assert.deepEqual(get(game, 'S.following'), []);
+  assert.deepEqual(get(game, "['elder', 'big', 'playful'].map(id => (n => [n.place, n.x, n.y, !!(n.mv && n.mv.far)])(NPCS.find(n => n.id === id)))"),
+    [['falls', 9, 1, true], ['falls', 10, 2, true], ['falls', 5, 2, true]], 'they leap past you to their places by the waterfall');
 });
 
 // Walking the way up, from the bottom of the mountain path, through the places' exits: can you reach the waterfall?

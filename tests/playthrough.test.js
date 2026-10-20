@@ -190,8 +190,14 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   }
   await pressAt(15, 2, 'left', 'telling the old monkey about the waterfall');
   assert.equal(area().climb, 3, 'the troop should follow you up');
+  assert.deepEqual(get('S.following'), ['playful', 'big', 'elder'], 'the little monkey, the big monkey and the old monkey follow you');
   for (const [x, y] of [[15, 0], [16, 0], [5, 0]]) await stepOn(x, y, 'going back up to the waterfall');
   assert.equal(run('PLACE'), 'falls');
+  assert.deepEqual(get("FOLLOWERS.map(n => n.place)"), ['falls', 'falls', 'falls'], 'the troop comes with you');
+  stand(7, 2, 'up');
+  await act('arrive(7, 2).then(runEvents)', 'coming out of the narrow way by the waterfall, with the troop');
+  assert.equal(area().climb, 4, 'the troop should be up at the waterfall');
+  assert.deepEqual(get('S.following'), [], 'and stop following you');
 
   // The story at the waterfall
   await pressAt(5, 1, 'left', 'reading the story at the waterfall');

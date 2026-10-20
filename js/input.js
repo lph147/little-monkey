@@ -2,7 +2,7 @@
 
 /* ================= PLAYER & INPUT ================= */
 const pl = {x:START.x, y:START.y, px:START.x*T, py:START.y*T, dir:'down', mv:null, parity:0, turnT:0};
-function placePlayer(){ enterPlace(S.pos.place || FIRST_PLACE); pl.x = S.pos.x; pl.y = S.pos.y; pl.dir = S.pos.dir || 'down'; pl.px = pl.x*T; pl.py = pl.y*T; pl.mv = null; }
+function placePlayer(){ enterPlace(S.pos.place || FIRST_PLACE); pl.x = S.pos.x; pl.y = S.pos.y; pl.dir = S.pos.dir || 'down'; pl.px = pl.x*T; pl.py = pl.y*T; pl.mv = null; lineUp(); }   // (anyone following you waits on your square)
 let held = null, queued = null, busy = false, mode = 'title', lastBump = 0, shakeT = -9999, lastMoveEnd = 0, fadeT = -9999, waterT = -9999, dripUntil = 0, sleepT = -9999, sleepAt = null, wakeT = -9999;   // (sleepAt: the bed you're asleep in)
 const splashes = [];   // splashes of water, each where (x, y, in the map) and when (t0)
 const canAct = () => mode === 'play' && !busy && modal.hidden && !talkNext && !pl.mv;
@@ -12,11 +12,11 @@ function tryStep(d, now){
   const [dx,dy] = DV[d], nx = pl.x + dx, ny = pl.y + dy, way = exitAt(nx, ny);
   if (way && !way.by && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
   if (tileAt(nx, ny).ledge){   // a ledge: you hop down it, landing just below, but can never climb it
-    if (d === 'down' && walkable(nx, ny + 1)){ pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny + 1, t0:now, hop:true}; pl.parity ^= 1; SFX.turn(); }
+    if (d === 'down' && walkable(nx, ny + 1)){ followersStep(now, true); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny + 1, t0:now, hop:true}; pl.parity ^= 1; SFX.turn(); }
     else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
     return;
   }
-  if (walkable(nx, ny)){ pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now}; pl.parity ^= 1; }
+  if (walkable(nx, ny)){ followersStep(now); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now}; pl.parity ^= 1; }
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
 }
 function update(now){

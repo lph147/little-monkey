@@ -2,14 +2,14 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 27;
+const SAVE_VERSION = 28;
 const HEARTS = 5;   // the most hearts you can have in a battle (the story can raise it later)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing
   const p = {...AREA.progress};
   for (const r of REQUESTS) p[r.id] = 'not asked';
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], done:false});
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[]}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -156,6 +156,11 @@ function upgradeSave(s){
     for (const a of Object.values(s.areas || {})) if (a && typeof a === 'object') a.chapter = 0;
     s.version = 27;
   }
+  if (s.version === 27){   // version 27: bringing the troop up to the waterfall was climb 3, and they were there at once. Now they
+    const a = (s.areas || {})[AREA.number];   // follow you up (climb 3, and following, filled in below), and 4 is when they've got there
+    if (a && a.climb === 3) a.climb = 4;
+    s.version = 28;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
@@ -167,6 +172,7 @@ function upgradeSave(s){
   s.areas[AREA.number].picked = Object.assign({}, s.areas[AREA.number].picked);
   if (!Array.isArray(s.met)) s.met = [];
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};
+  s.following = Array.isArray(s.following) ? s.following.filter(id => AREA.characters.some(c => c.id === id)) : [];   // who's following you (characters still here)
   const clothes = w => [...(w || [])].filter(i => (AREA.wardrobe || []).some(c => c.item === i));   // only what the wardrobe has now
   s.wardrobe = {owned:clothes((s.wardrobe || {}).owned), wearing:clothes((s.wardrobe || {}).wearing)};
   return s;

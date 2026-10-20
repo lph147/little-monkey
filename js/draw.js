@@ -111,8 +111,8 @@ function talkCamera(cy){
 // your square, wherever you are, between two squares as you walk) is drawn again over you, where it's grass. Gives
 // those parts, each [x, y, w, h] in map pixels.
 const HIDES_FEET = ['tallGrass', 'longGrass'], FEET = 4;
-function feetInGrass(){
-  const left = Math.round(pl.px), top = Math.round(pl.py) + T - FEET, out = [];
+function feetInGrass(px = pl.px, py = pl.py){   // (anyone following you too: where they are, px and py)
+  const left = Math.round(px), top = Math.round(py) + T - FEET, out = [];
   for (let ty = Math.floor(top / T); ty <= Math.floor((top + FEET - 1) / T); ty++)
     for (let tx = Math.floor(left / T); tx <= Math.floor((left + T - 1) / T); tx++){
       if (!HIDES_FEET.includes(tileAt(tx, ty).look)) continue;
@@ -148,6 +148,15 @@ function drawSplashes(cx, cy, now){
     b.globalAlpha = .45 * left; oval(b, PX + 8, PY + 15, 8, 2, '#3F8FCB'); b.globalAlpha = 1;   // a little puddle
     for (let k = 0; k < 6; k++){ const ph = ((now / 600) + k / 6) % 1; R(b, PX + 2 + (k * 5) % 13, PY + 4 + Math.round(ph * 12), 1, 2, '#BFE8FA'); }   // drops falling from your fur
   }
+}
+// Where a character is drawn (x and y in map pixels; ground, its y without a leap's lift), and whether it's mid-step:
+// stepping or leaping from square to square (mv: someone following you, or going to their place), or on its square.
+function charPos(n, now){
+  const m = n.mv, p = m ? clamp((now - m.t0) / m.dur, 0, 1) : 1;
+  if (p >= 1) return {x:n.x*T, y:n.y*T, ground:n.y*T, mid:false};
+  const far = Math.abs(n.x - m.fx) + Math.abs(n.y - m.fy), ground = (m.fy + (n.y - m.fy) * p) * T;
+  const lift = m.far ? Math.sin(p * Math.PI) * (4 + 2 * far) : 0;
+  return {x:(m.fx + (n.x - m.fx) * p) * T, y:ground - lift, ground, mid:p > .15 && p < .85};
 }
 function drawWorld(now){
   let cx = Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));
@@ -193,7 +202,8 @@ function drawWorld(now){
   drawBirds(cx, cy, now);
   // entities sorted by row (their ! and ? bubbles wait until after the over-layer)
   const bubbles = [];
-  const ents = NPCS.map(n => ({n, y:n.y*T})).concat([{p:true, y:pl.py}]).concat(foe ? [{f:true, y:foe.y*T}] : []).sort((a,c) => a.y - c.y);
+  const ents = [...NPCS, ...FOLLOWERS].map(n => { const c = charPos(n, now); return {n, c, y:c.ground}; })   // (on your square, they're behind you)
+    .concat([{p:true, y:pl.py}]).concat(foe ? [{f:true, y:foe.y*T}] : []).sort((a,c) => a.y - c.y);
   for (const e of ents){
     if (e.f){ drawFoe(cx, cy, now); continue; }
     if (e.p){
@@ -208,7 +218,7 @@ function drawWorld(now){
         const tw = (now / 200 + i) % 2 < 1; R(b, PX + dx, PY + dy, 1, 3, '#FFE27A'); R(b, PX + dx - 1, PY + dy + 1, 3, 1, tw ? '#FFFFFF' : '#FFE27A'); });
       continue;
     }
-    const n = e.n, X = n.x*T - cx, Y = n.y*T - cy;
+    const n = e.n, X = Math.round(e.c.x) - cx, Y = Math.round(e.c.y) - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
     if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
       R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)'); b.drawImage(mapSprite(n.look), X, Y - Math.floor(Math.abs(Math.sin(now/400)) * 1));
@@ -218,8 +228,9 @@ function drawWorld(now){
       if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
     } else {
       const idle = Math.floor(now/700 + n.x) % 2;
-      drawEntityMonkey(n.kind, X, Y, n.dir, now, idle, 0, n.x + n.y);
+      drawEntityMonkey(n.kind, X, Y, n.dir, now, e.c.mid ? 1 : idle, e.c.mid ? 1 + (n.parity || 0) : 0, n.x + n.y);
     }
+    if (FOLLOWERS.includes(n)) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
     // a ! while they're stopping you (the stopsYou step), or a ! or ? from the area's bubbles
     const bub = now < (n.calls || 0) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));
     if (bub) bubbles.push([X+10, Y-8, bub.show]);

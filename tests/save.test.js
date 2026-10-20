@@ -53,7 +53,7 @@ test('after converting, the game shows the same progress', () => {
 
 test('a finished area stays finished', () => {
   const game = loadGame({save: {...V2, q: {elder: 2, hungry: 3, thirsty: 3}, gate: true, story: true, area1Done: true}});
-  assert.deepEqual(saveOf(game).areas[1], {chapter: 0, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'not asked', gate: true, climb: 3, boar: 0, story: true, squirrelPlayed: 0, goatPlayed: 0, ledgeTip: 0, cave: 0, count: 0, holding: {}, wanted: {}, picked: {}, bought: [], done: true});
+  assert.deepEqual(saveOf(game).areas[1], {chapter: 0, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'not asked', gate: true, climb: 4, boar: 0, story: true, squirrelPlayed: 0, goatPlayed: 0, ledgeTip: 0, cave: 0, count: 0, holding: {}, wanted: {}, picked: {}, bought: [], done: true});
   assert.equal(game.run('tileAt(15, 4).look'), 'path', 'the rocks should still be gone');
 });
 
@@ -224,7 +224,7 @@ test('a version 21 save loses its XP (levels did nothing) and keeps everything e
 test('a version 22 save that has read the story at the waterfall has been up the mountain path with the troop', () => {
   const read = saveOf(loadGame({save: {version: 22, started: true, areas: {1: {chapter: 1, elder: 2, gate: true, story: true, cave: 2}}}}));
   assert.equal(read.version, VERSION);
-  assert.equal(read.areas[1].climb, 3, 'the troop is up at the waterfall');
+  assert.equal(read.areas[1].climb, 4, 'the troop is up at the waterfall');
   assert.equal(read.areas[1].cave, 2, 'everything else stays');
   const before = saveOf(loadGame({save: {version: 22, started: true, areas: {1: {chapter: 0, elder: 2, gate: true, story: false}}}}));
   assert.equal(before.areas[1].climb, 0, 'not read yet: the climb is still to come');
@@ -257,6 +257,22 @@ test('a version 25 save’s colours become 红色, 黄色 and 白色, keeping wh
   assert.equal(s.gloss['黄色'], 1);
   assert.deepEqual(s.today.ids, ['红色', '花']);
   assert.deepEqual(s.areas[1].picked.flowers, ['红色', '白色'], 'the flowers you’ve picked');
+});
+
+test('a version 27 save that has brought the troop up to the waterfall still has them there; on the way, they aren’t following you yet', () => {
+  const up = saveOf(loadGame({save: {version: 27, started: true, areas: {1: {gate: true, climb: 3, story: true, cave: 2}}}}));
+  assert.equal(up.version, VERSION);
+  assert.equal(up.areas[1].climb, 4, 'up at the waterfall (climb 3 is leading them up now)');
+  assert.equal(up.areas[1].cave, 2, 'everything else stays');
+  assert.deepEqual(up.following, [], 'nobody is following you');
+  const found = saveOf(loadGame({save: {version: 27, started: true, areas: {1: {gate: true, climb: 2}}}}));
+  assert.equal(found.areas[1].climb, 2, 'found the waterfall, and not told the troop yet: the same');
+});
+
+test('who’s following you is kept, as long as they’re characters in the area', () => {
+  const s = saveOf(loadGame({save: {version: VERSION, started: true, following: ['playful', 'nobody', 'elder'], areas: {1: {gate: true, climb: 3}}}}));
+  assert.deepEqual(s.following, ['playful', 'elder']);
+  assert.deepEqual(saveOf(loadGame({save: {version: VERSION, started: true, following: 'elder'}})).following, [], 'not a list: nobody');
 });
 
 test('a version 26 save in chapter 1 or the prologue is in chapter 1 (the only one) now', () => {

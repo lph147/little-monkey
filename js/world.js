@@ -52,7 +52,7 @@ function tasksHint(){ const h = AREA.hints.find(h => matches(h.if)); return h ? 
 function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).join('. ') + '.' : tasksHint(); }
 function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
-  const n = npcAt(x, y);
+  const n = npcAt(x, y) || followerAt(x, y);
   if (n) return n.label || 'Talk';
   if (animalAt(x, y)) return 'Meet';
   if (BIRD_WORD && birdAt(x, y)) return 'Look';
@@ -91,11 +91,13 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'place') return PLACE === v;   // the place you're in
     if (k === 'hurt') return ((S.hearts ?? HEARTS) < HEARTS) === v;   // you've lost hearts in a battle
     if (k === 'near'){ const n = NPCS.find(c => c.id === v); return !!n && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) === 1; }   // you're right beside this character
+    if (k === 'at') return placeOf(v) === PLACE && pl.x === v[0] && pl.y === v[1];   // you're standing here: [x, y], or [x, y, 'place']
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
 }
 const CALL_MS = 900;   // how long a character's ! shows before they talk to you, when they stop you (the stopsYou step)
+const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet']};   // extra settings a step can have
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
@@ -160,6 +162,18 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (typeof s.sleep === 'string') toast(fill(s.sleep));
   },
   async battle(s, who){ if (await battle(s.battle) === 'won' && s.win) await runSteps(s.win, who); },
+  // Characters follow you (follow: their ids, in line, the first right behind you), like Pikachu in Pokémon Yellow; with
+  // none, they stop, and each goes to its own place (where its moves say), with a leap if that's here, one after another.
+  async follow(s){
+    const was = FOLLOWERS, from = was.map(n => [n.x, n.y]);
+    S.following = [...s.follow]; save();
+    placeCharacters();
+    trail.length = 0;   // those standing here fall in behind you as you walk; anyone elsewhere comes to you
+    for (const n of FOLLOWERS) if (n.place !== PLACE) Object.assign(n, {place:PLACE, x:pl.x, y:pl.y, mv:null});
+    const now = performance.now(), going = was.filter(n => !FOLLOWERS.includes(n) && n.place === PLACE);
+    going.forEach((n, i) => { const [fx, fy] = from[was.indexOf(n)]; n.mv = {fx, fy, t0:now + i * 150, dur:LEAP_MS, far:true}; });
+    if (going.length){ SFX.turn(); await sleep(LEAP_MS + 150 * (going.length - 1)); }
+  },
   // A character stops you as you walk past (in an event, near them), like a trainer in Pokémon: a ! pops up over them,
   // you turn to face them, and they talk to you.
   async stopsYou(s){
@@ -195,14 +209,36 @@ async function runSteps(steps, who){ for (const s of steps) if (await STEPS[Obje
 // The area's events: each happens by itself when its if matches (checked after anything you do).
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); }
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
-// where the content first puts them.
+// where the content first puts them. Someone following you is wherever you've been instead (FOLLOWERS, below).
 function placeCharacters(){
   for (const n of ALL_NPCS){
+    if (S.following.includes(n.id)) continue;
     const m = (n.moves || []).find(m => matches(m.if)) || n.home;
     const place = placeOf(m);
     if (n.place !== place || n.x !== m.x || n.y !== m.y){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; }
   }
-  NPCS = ALL_NPCS.filter(n => n.place === PLACE);
+  NPCS = ALL_NPCS.filter(n => n.place === PLACE && !S.following.includes(n.id));
+  FOLLOWERS = S.following.map(id => ALL_NPCS.find(n => n.id === id)).filter(Boolean);
+}
+// The characters following you (S.following, the follow step), in line: each steps into the square the one ahead of it
+// has just left, from the squares you've walked through (trail, the latest first). They don't block your way: turn back,
+// and you pass through them. They come with you from place to place, waiting on your square as you arrive, and fall in
+// behind you one by one as you walk on. A move further than the next square (over a ledge, or falling in from where
+// they stood) is a leap.
+let FOLLOWERS = [];
+const trail = [];
+const followerAt = (x, y) => FOLLOWERS.find(n => n.x === x && n.y === y);
+function lineUp(){ trail.length = 0; for (const n of FOLLOWERS) Object.assign(n, {place:PLACE, x:pl.x, y:pl.y, dir:pl.dir, mv:null}); }   // on your square
+function followersStep(now, hop){   // you're stepping off your square (hop: down a ledge, which takes a little longer)
+  if (!FOLLOWERS.length) return;
+  trail.unshift([pl.x, pl.y]); trail.length = Math.min(trail.length, FOLLOWERS.length);
+  FOLLOWERS.forEach((n, i) => {
+    const to = trail[i];
+    if (!to || (to[0] === n.x && to[1] === n.y)) return;
+    const dx = to[0] - n.x, dy = to[1] - n.y;
+    n.mv = {fx:n.x, fy:n.y, t0:now, dur:hop ? STEP * 1.6 : STEP, far:Math.abs(dx) + Math.abs(dy) > 1};
+    n.dir = dirOf(dx, dy); n.parity = (n.parity || 0) ^ 1; n.x = to[0]; n.y = to[1];
+  });
 }
 async function talk(n){
   n.dir = OPP[pl.dir];
@@ -325,7 +361,7 @@ const ACTIONS = {   // special things that happen when you press A at some tiles
   }
 };
 async function interact(x, y){
-  const n = npcAt(x, y);
+  const n = npcAt(x, y) || followerAt(x, y);
   if (n) return talk(n);
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return goThrough(way);
@@ -413,7 +449,7 @@ async function arrive(x, y){
 let foe = null, alertUntil = 0;
 function findSpot(){
   const order = [pl.dir].concat(['down','left','right','up'].filter(d => d !== pl.dir));
-  for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy, t = tileAt(x,y); if (t.walk && t.look !== 'bridge' && !npcAt(x,y)) return {x, y, d}; }
+  for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy, t = tileAt(x,y); if (t.walk && t.look !== 'bridge' && !npcAt(x,y) && !followerAt(x,y)) return {x, y, d}; }
   const [dx,dy] = DV[pl.dir]; return {x:pl.x + dx, y:pl.y + dy, d:pl.dir};
 }
 // Which animal hides: usually one you haven't met yet; otherwise usually one whose name is due for review.
