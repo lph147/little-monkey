@@ -24,7 +24,7 @@ const OUT = path.join(__dirname, 'try-voices');
 // 水, 草 and 喝 sounded strange said on their own (third tones, and a word with two readings). Given the pinyin, all ten
 // came out byte for byte the same as before (the voice already read them right), so it compares Xiaoxiao as in the
 // game, 20% and 35% slower, and Xiaoxiao HD: all sounded much the same, and still strange, while the Pixel's own voice
-// (Google's) sounded much better. Round 5 tries Google's voices. noPinyin: the voice isn't given an item's ph.
+// (Google's) sounded much better. Round 5 tries Google's voices: Google Standard (cmn-CN-Standard-A) was chosen. noPinyin: the voice isn't given an item's ph.
 // provider: 'google' for Google's voices (Azure's otherwise); speed: Google's speaking rate (1 is normal).
 const ROUND = 'Round 5: Google’s voices for words on their own, since This device (your Pixel’s voice, which is Google’s) sounded much better than Xiaoxiao on single words. Which is as good as This device? Do the longer words (猴子, 苹果, 不客气) sound good too?';
 const VOICES = [   // Google's names checked with --list-google once the key is in; change any that aren't there

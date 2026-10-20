@@ -328,9 +328,21 @@ function clipFor(text, who){
   return null;
 }
 const clipBuffers = new Map();   // each clip, once loaded and decoded
+// Where the speech in a clip starts and how long it lasts, in seconds, leaving out the silence before and after it
+// (Google's clips have some): from the first to the last sound louder than a fiftieth of its loudest, and a little more.
+function speechSpan(buf){
+  const d = buf.getChannelData(0), pad = Math.round(buf.sampleRate * 0.04);
+  let peak = 0; for (const x of d) peak = Math.max(peak, Math.abs(x));
+  let from = 0, to = d.length - 1;
+  while (from < to && Math.abs(d[from]) < peak / 50) from++;
+  while (to > from && Math.abs(d[to]) < peak / 50) to--;
+  from = Math.max(0, from - pad); to = Math.min(d.length, to + pad);
+  return [from / buf.sampleRate, (to - from) / buf.sampleRate];
+}
 function loadClip(a, url){
   if (!clipBuffers.has(url)) clipBuffers.set(url, fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
     .then(data => new Promise((ok, no) => a.decodeAudioData(data, ok, no)))
+    .then(buf => { if (buf.getChannelData) buf.span = speechSpan(buf); return buf; })
     .catch(e => { clipBuffers.delete(url); throw e; }));
   return clipBuffers.get(url);
 }
@@ -347,7 +359,7 @@ function say(text, onend, who){
     const s = a.createBufferSource();
     s.buffer = buf; s.connect(a.destination);
     s.onended = () => { if (uttRef !== me) return; clipSrc = null; speaking = false; duck(); if (onend) onend(); };
-    clipSrc = s; s.start();
+    clipSrc = s; s.start(0, ...(buf.span || []));   // just the speech, without the silence around it
   }).catch(() => { if (uttRef === me) sayDevice(text, onend); });   // the clip didn't load (offline before it was kept): the device's voice
 }
 function sayDevice(text, onend){

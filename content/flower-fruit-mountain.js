@@ -447,8 +447,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // The voices that say the Chinese (Azure's, made into clips by npm run voices, chosen in the voice tests):
   // words, a word said on its own (a new-word card, tapping a word, a listening question); everyone, the lines;
-  // and a character listed here by id, their own lines. style: one of the voice's speaking styles.
-  voices: {words:{name:'zh-CN-XiaoxiaoNeural'}, everyone:{name:'zh-CN-YunxiNeural', style:'chat'}, elder:{name:'zh-CN-YunzeNeural'}},
+  // and a character listed here by id, their own lines. style: one of the voice's speaking styles. provider: 'google'
+  // for one of Google's voices (made on GitHub, which has the key: .github/workflows/voices.yml), Azure's otherwise.
+  voices: {words:{provider:'google', name:'cmn-CN-Standard-A'}, everyone:{name:'zh-CN-YunxiNeural', style:'chat'}, elder:{name:'zh-CN-YunzeNeural'}},
 
   // Characters standing on the map. A character's name shows Chinese, pinyin and English
   // together, because names aren't vocabulary.

@@ -39,12 +39,12 @@ test('every voice clip is made and listed (run npm run voices after changing any
 test('words on their own have their own voice, the old monkey his for his lines, and everyone else the main one', () => {
   const {plan} = require('../tools/make-voices');
   const p = plan();
-  assert.deepEqual(p.who, {words:'xiaoxiao', everyone:'yunxi', elder:'yunze'});
+  assert.deepEqual(p.who, {words:'google-standard-a', everyone:'yunxi', elder:'yunze'});
   assert.ok(p.clips.yunze['我是老猴子。这是花果山。'], 'the old monkey says who he is in his own voice');
   assert.ok(!p.clips.yunze['我怕！'], 'the little monkey’s line isn’t in the old monkey’s voice');
-  assert.ok(p.clips.xiaoxiao['猴子'] && p.clips.xiaoxiao['你好'], 'words (and phrases) on their own are in the words voice');
+  assert.ok(p.clips['google-standard-a']['猴子'] && p.clips['google-standard-a']['你好'], 'words (and phrases) on their own are in the words voice');
   assert.ok(p.clips.yunxi['你好！'] && !p.clips.yunxi['猴子'], 'lines, such as your reply, are in the main voice, and words aren’t');
-  assert.ok(!p.clips.xiaoxiao['我怕！'], 'lines aren’t in the words voice');
+  assert.ok(!p.clips['google-standard-a']['我怕！'], 'lines aren’t in the words voice');
 });
 
 // The game with pretend sound: an AudioContext whose clips "play" (recorded in __played), clip files that load
@@ -68,8 +68,8 @@ test('the game says Chinese with its clips: words in the words voice, the old mo
   const game = withClips();
   const clip = (text, who) => game.run(`clipFor(${JSON.stringify(text)}, ${JSON.stringify(who)})`);
   assert.match(clip('我是老猴子。这是花果山。', 'elder'), /^audio\/yunze\/\w+\.mp3$/);
-  assert.match(clip('猴子', 'elder'), /^audio\/xiaoxiao\//, 'a word on its own is in the words voice, whoever you’re with');
-  assert.match(clip('猴子'), /^audio\/xiaoxiao\//);
+  assert.match(clip('猴子', 'elder'), /^audio\/google-standard-a\//, 'a word on its own is in the words voice, whoever you’re with');
+  assert.match(clip('猴子'), /^audio\/google-standard-a\//);
   assert.match(clip('我是老猴子。这是花果山。', 'playful'), /^audio\/yunxi\//);
   assert.equal(clip('不在游戏里', 'elder'), null);
   game.run(`say('猴子')`); await settle(game);
@@ -131,4 +131,12 @@ test('the GitHub job uses the secrets, and only saves clips on its own branch', 
   assert.match(job, /branches: \[voices\]/, 'it runs for the voices branch, never main');
   const push = job.split('\n').filter(l => l.includes('git push'));
   assert.deepEqual(push.map(l => l.trim()), ['git push origin HEAD:${{ github.ref_name }}'], 'it pushes back to its own branch, never to main (the live site)');
+});
+
+test('a clip plays just its speech, without the silence around it', async () => {
+  const game = withClips();
+  // a pretend clip: 0.2 seconds of silence, half a second of sound, then 0.3 seconds of silence (at 1000 samples a second)
+  const span = JSON.parse(game.run(`JSON.stringify(speechSpan({sampleRate: 1000, getChannelData: () => Float32Array.from({length: 1000}, (_, i) => i >= 200 && i < 700 ? 0.5 * Math.sin(i) + 0.3 : 0)}))`));
+  assert.ok(Math.abs(span[0] - 0.16) < 0.01, 'it starts just before the sound');
+  assert.ok(Math.abs(span[0] + span[1] - 0.74) < 0.01, 'and stops just after it');
 });
