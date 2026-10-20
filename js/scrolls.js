@@ -74,7 +74,7 @@ function matchWords(words, title, stopLabel){
       const set = rounds[r], left = shuffle(set), right = shuffle(set);
       openCard(`<p class="label">${title} · ${r + 1} of ${rounds.length}</p>
         <p class="small">Tap a word, then tap its picture.</p>
-        <div class="match"><div class="col">${left.map(w => `<button class="mw" data-w="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${WORDS[w].py}</rt></ruby></button>`).join('')}</div>
+        <div class="match" data-nav><div class="col">${left.map(w => `<button class="mw" data-w="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${WORDS[w].py}</rt></ruby></button>`).join('')}</div>
         <div class="col">${right.map(w => `<button class="mp" data-w="${w}">${picHTML(w)}</button>`).join('')}</div></div>
         <div class="feedback" aria-live="polite"></div>
         <div class="actions"><button class="btn" data-a="quit" data-b>${stopLabel}</button></div>`);

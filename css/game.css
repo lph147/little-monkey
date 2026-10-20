@@ -305,10 +305,12 @@ rt.hid{visibility:hidden}
 .talk .next{min-height:2.1rem;padding:.1rem .9rem;font-size:.9rem;position:relative}
 .round.ready{box-shadow:0 4px 0 rgba(0,0,0,.3),0 0 0 4px var(--gold)}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}
-.sheet .menu button.navsel,.sheet [data-nav] button.navsel{outline:3px solid var(--gold);outline-offset:2px}
+.sheet .menu button.navsel,.sheet [data-nav] button.navsel,.sheet .helper.navsel,.sheet .askrow button.navsel{outline:3px solid var(--gold);outline-offset:2px}
 .sheet [data-nav]:has(.navsel:not(.primary)) .btn.primary::before,.sheet:has(.grid[data-nav] .navsel,.chips[data-nav] .navsel,.menu .navsel:not(.primary)) .actions .btn.primary::before{display:none}   /* the A badge follows the button you've chosen */
 .sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.sheet [data-nav] button.navsel::before,.titlecard .btn.sel::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-8px;left:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 .sheet [data-b]::after,#skipBtn::after{content:"B";position:absolute;top:-8px;right:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnB);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
+/* answers, words to match and 🔊 are tapped directly, so they get the gold outline when chosen but never the A badge */
+.sheet .opts button.navsel::before,.sheet .match button.navsel::before{content:none}
 .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
 .mtile{display:flex;flex-direction:column;align-items:center;padding:.5rem .2rem .4rem;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink)}

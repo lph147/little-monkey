@@ -43,7 +43,12 @@ async function pressA(){
   if (!modal.hidden){
     const f = chosenBtn(), inMenu = !!sheet.querySelector(NAVIGABLE);
     if (inMenu && f) f.click();
-    else { const p = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled); if (p) p.click(); else if (inMenu){ const first = navItems()[0]; if (first) first.click(); } }
+    else {
+      const p = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
+      if (p) p.click();
+      else if (sheet.querySelector(ANSWERS)) navFocus('down');   // a question: A shows where you are (its first answer), never answers it for you
+      else if (inMenu){ const first = navItems()[0]; if (first) first.click(); }
+    }
     return;
   }
   if (talkNext){ talkNext(); return; }   // the speech box: on to what comes next
@@ -77,18 +82,19 @@ document.addEventListener('keydown', e => {
   const isB = e.key === 'x' || e.key === 'X' || (e.key === 'Escape' && (!modal.hidden || !!talkNext));
   const isMenu = e.key === 'm' || e.key === 'M' || (e.key === 'Escape' && modal.hidden && !talkNext);   // Start
   const isSelect = e.key === 't' || e.key === 'T';
+  const isA = e.key === ' ' || e.key === 'Enter';
   if (!modal.hidden){
     const d = KEYS[e.key];
     if (d && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); navFocus(d); }
     else if (isB){ e.preventDefault(); pressB(); }
     else if (isMenu){ e.preventDefault(); pressMenu(); }
     else if (isSelect){ e.preventDefault(); pressSelect(); }
+    else if (isA && !(e.target.matches && e.target.matches('button'))){ e.preventDefault(); if (!e.repeat) pressA(); }   // (a chosen button is pressed by the browser)
     return;
   }
   if (isB){ e.preventDefault(); pressB(); return; }
   if (isMenu){ e.preventDefault(); pressMenu(); return; }
   if (isSelect){ e.preventDefault(); pressSelect(); return; }
-  const isA = e.key === ' ' || e.key === 'Enter';
   if (mode === 'title' && KEYS[e.key] && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); if (!e.repeat) moveTitle(KEYS[e.key]); return; }   // the arrows move between the title's buttons
   if (mode !== 'play'){
     // The title screen and the intro: A chooses the game, or presses Next or Begin, unless you've moved to another button with Tab.

@@ -6,7 +6,7 @@
 // once you've answered (class later).
 function pictureQ({head, body, options, answerIdx, word, type, text, helper = '', onShow, onAnswer}){
   return new Promise(res => {
-    openCard(`${head}${body}<div class="opts">${options.map((o,i) => `<button class="opt${text ? ' hz' : ''}" data-i="${i}" aria-label="Option ${i+1}">${o}</button>`).join('')}</div>
+    openCard(`${head}${body}<div class="opts" data-nav>${options.map((o,i) => `<button class="opt${text ? ' hz' : ''}" data-i="${i}" aria-label="Option ${i+1}">${o}</button>`).join('')}</div>
       <div class="actions qfoot"><div class="feedback" aria-live="polite">${helper}</div><button class="btn primary" data-a="next" hidden>Next</button></div>`);
     bindTokens(sheet);
     if (onShow) onShow();
@@ -71,7 +71,7 @@ function intoBag(w){ if (bagFull(w)) return false; S.bag[w] = (S.bag[w] || 0) + 
 const wrongToEat = (n, answerIdx) => shuffle([...Array(n).keys()].filter(i => i !== answerIdx))[0];   // which wrong answer eating takes away
 // Food that takes away a wrong answer, such as an apple, offered under a question until you answer: its button (helperHTML),
 // and eating it (wireHelper: one of the wrong answers goes; n is how many answers there are, right the right one).
-function helperHTML(){ const w = foodThat('helps'); return w ? `<button class="helper" data-a="eat">${picHTML(w)}<span>Eat a ${esc(wz(w))}<span class="why">: one wrong answer goes</span> · ${S.bag[w]} left</span></button>` : ''; }
+function helperHTML(){ const w = foodThat('helps'); return w ? `<button class="helper" data-a="eat" data-label="Eat">${picHTML(w)}<span>Eat a ${esc(wz(w))}<span class="why">: one wrong answer goes</span> · ${S.bag[w]} left</span></button>` : ''; }
 function wireHelper(n, right){
   on('[data-a=eat]', e => {
     const w = foodThat('helps');

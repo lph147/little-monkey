@@ -42,8 +42,12 @@ function openCard(html){
   const f = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
   if (f) f.focus({preventScroll:true}); else if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
 }
-const NAV_SEL = '.actions button, .menu button, [data-nav] button', NAVIGABLE = '.menu, [data-nav]';
-function navItems(){ return [...sheet.querySelectorAll(NAV_SEL)].filter(b => !b.disabled && !b.hidden && b.offsetParent !== null); }
+// The buttons the D-pad (or the arrow keys) moves between on a card, and A presses: a card's buttons along the bottom,
+// a menu's, and those in a choice (data-nav), such as a question's answers and a matching game's words and pictures,
+// with a question's 🔊 (a word you've matched already is skipped).
+const NAV_SEL = '.actions button, .menu button, [data-nav] button, .askrow button', NAVIGABLE = '.menu, [data-nav]';
+function navItems(){ return [...sheet.querySelectorAll(NAV_SEL)].filter(b => !b.disabled && !b.hidden && !b.classList.contains('done') && b.offsetParent !== null); }
+const ANSWERS = '.opts .opt, .match .mw';   // where the D-pad starts on a question: its first answer (or word to match)
 const markNav = b => { sheet.querySelectorAll('.navsel').forEach(x => x.classList.remove('navsel')); if (b && b.matches(NAV_SEL)) b.classList.add('navsel'); };
 sheet.addEventListener('focusin', e => markNav(e.target));
 // The button chosen on a card (with the gold outline): the one A presses. Usually it has the keyboard's focus, but an
@@ -72,7 +76,7 @@ function navFocus(d){
   const items = navItems(); if (!items.length) return;
   const cur = items.indexOf(chosenBtn());
   const go = i => { markNav(items[i]); items[i].focus({preventScroll:false}); SFX.turn(); };
-  if (cur < 0) return go(Math.max(0, items.findIndex(b => b.classList.contains('primary'))));
+  if (cur < 0){ const a = items.findIndex(b => b.matches(ANSWERS)); return go(a >= 0 ? a : Math.max(0, items.findIndex(b => b.classList.contains('primary')))); }
   const inOrder = () => { const i = cur + ((d === 'left' || d === 'up') ? -1 : 1); if (i >= 0 && i < items.length) go(i); };   // (stopping at the first and last: no wrapping round, so Run away never slips back to Hit)
   if (!items.some(b => b.getBoundingClientRect().width)) return inOrder();   // no layout to go by: step through in order
   const next = nearestIn(d, items[cur], items);
@@ -103,7 +107,8 @@ function nearestIn(d, b, items){
 function btnLabel(f){
   if (!f) return '';
   if (f.dataset.label) return f.dataset.label;
-  if (f.classList.contains('opt')) return 'Choose';
+  if (f.classList.contains('opt') || f.classList.contains('mw') || f.classList.contains('mp')) return 'Choose';
+  if (f.classList.contains('sayBig')) return 'Hear it';
   if (f.classList.contains('card') || f.classList.contains('chip')) return 'Hear';
   return f.textContent.replace(/[^\p{L}\p{N}' ]/gu, '').trim().slice(0, 12);
 }
