@@ -27,9 +27,9 @@ const DRAFTS = [
     .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part A (in the game): ' + where})),
   ...[['这 是 我们 的 家 ！', 'This is our home!', 'The old monkey, when the troop moves into the cave'],
     ['你 是 我们 的 王 ！', 'You are our king!', 'The big monkey, for the troop (then you’re called 美猴王 Měi Hóuwáng: please check this name too)'],
-    ['一 只 猴子 。', 'One monkey.', 'The old monkey, counting the troop into the cave (teaching 一)'],
-    ['两 只 猴子 。', 'Two monkeys.', 'The old monkey, counting (the card teaches 二: see the question below)'],
-    ['三 只 猴子 。', 'Three monkeys.', 'The old monkey, counting (teaching 三)']]
+    ['一 ！', 'One!', 'The old monkey, counting the troop into the cave as each monkey comes in (teaching 一; changed on 21 October 2026 from 一只猴子。: see the question below)'],
+    ['一 ， 二 ！', 'One, two!', 'The old monkey, counting (teaching 二; it was 两只猴子。)'],
+    ['一 ， 二 ， 三 ！', 'One, two, three!', 'The old monkey, counting (teaching 三; it was 三只猴子。)']]
     .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part B (in the game): ' + where})),
   ...[['我 饿 了 。 我 要 吃 水果 ！', 'I’m hungry. I want to eat some fruit!', 'The hungry monkey now asks for fruit (水果), not a peach'],
     ['这 是 桃子 。 我 要 吃 苹果 ！', 'This is a peach. I want to eat an apple!', 'The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring)'],
@@ -105,7 +105,7 @@ const DRAFTS = [
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the
 // word bank yet, so each line gives its own pinyin. When it's built, these move into the area file.
 // Questions for the native speaker about the game's Chinese.
-const QUESTIONS = ['When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line? (The card for 二 says: "When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).")'];
+const QUESTIONS = ['When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)'];
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
 function sheet(){
   const game = loadGame();

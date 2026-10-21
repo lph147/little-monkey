@@ -40,7 +40,7 @@ const laterPy = w => S.pinyin ? `<span class="cap py later">${WORDS[w].py}</span
 async function countQ({who, thing, n}){
   const num = COUNTING[n - 1], line = L[thing.ask], text = line.t.join(''), pics = lvl(num) <= 1;
   const gap = w => Math.abs(COUNTING.indexOf(w) - (n - 1));
-  const near = shuffle(COUNTING.filter(w => w !== num && WORDS[w] && lvl(w) >= 1)).sort((a, b) => gap(a) - gap(b)).slice(0, 2);
+  const near = shuffle(COUNTING.filter(w => w !== num && !NOT_HOW_MANY.includes(w) && WORDS[w] && lvl(w) >= 1)).sort((a, b) => gap(a) - gap(b)).slice(0, 2);
   const opts = shuffle([num, ...near]);
   hear(line.t);
   // (the question beside the teacher's face, then the things with its English beside them, so it all fits above the
@@ -60,12 +60,15 @@ async function countQ({who, thing, n}){
 // another you know. Each right answer earns a shell if that number needed practice. Gives whether you had the lesson
 // (you can say Not now at the start).
 const LESSON_QUESTIONS = 5;   // (in a number or colour lesson)
+// Numbers that never answer how many there are: two things are 两 (liǎng), not 二, so there are never two things to
+// count, and 二 is never an answer (decided 21 October 2026).
+const NOT_HOW_MANY = ['二'];
 async function countLesson(series, word, who){
   const face = speaker(who);
   if (!await confirmBox(face, fill(series.start), 'Start', 'Not now')) return false;
   await showDialog(face, L[series.teach[word]], {teach:word});
   await showNotice(word, {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
-  const top = COUNTING.indexOf(word) + 1, others = shuffle([...Array(top - 1).keys()].map(i => i + 1));
+  const top = COUNTING.indexOf(word) + 1, others = shuffle([...Array(top - 1).keys()].map(i => i + 1).filter(n => !NOT_HOW_MANY.includes(COUNTING[n - 1])));
   const counts = shuffle([...Array(LESSON_QUESTIONS - 2).fill(top), ...others.slice(0, 2)]);
   let right = 0, shells = 0;
   for (const n of counts){

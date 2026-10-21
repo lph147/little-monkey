@@ -124,7 +124,6 @@ const WORD_BANK = {
   '好': {py:'hǎo', en:'good'},
   '的': {py:'de', en:'(shows belonging: 我们的, our)'},
   '只': {py:'zhī', en:'(counts animals: 三只猴子, three monkeys)'},
-  '两': {py:'liǎng', en:'two (when counting things)'},
   '水帘洞': {py:'Shuǐlián Dòng', en:'Water Curtain Cave (a name)'},
   '美猴王': {py:'Měi Hóuwáng', en:'Handsome Monkey King (a name)'},
   '很': {py:'hěn', en:'very'},

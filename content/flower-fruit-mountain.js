@@ -970,9 +970,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     great: {zh:'太 好 了 ！', en:'Great!'},
     home: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},
     king: {zh:'你 是 我们 的 王 ！', en:'You are our king!'},
-    count1: {zh:'一 只 猴子 。', en:'One monkey.'},
-    count2: {zh:'两 只 猴子 。', en:'Two monkeys.'},
-    count3: {zh:'三 只 猴子 。', en:'Three monkeys.'},
+    // counting the troop in, as each monkey comes in: counting, which is where 二 is said (decided 21 October 2026: it
+    // was 两只猴子, two monkeys, while the card taught 二; 两, for two of something, is a word of its own, for later)
+    count1: {zh:'一 ！', en:'One!'},
+    count2: {zh:'一 ， 二 ！', en:'One, two!'},
+    count3: {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'},
     tired: {zh:'累 了 吗 ？ 去 床 上 睡觉 吧 ！', en:'Tired? Go and sleep in a bed!'}
   },
 
@@ -1081,7 +1083,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // the troop moves in. One new word each time you talk to him.
       {if:{cave:4}, do:[{say:'home', teach:'家'}, {newWord:'家'}, {set:{cave:5}}]},
       {if:{cave:{atLeast:5}, count:0}, do:[{message:'A monkey comes in through the water curtain.'}, {say:'count1', teach:'一'}, {newWord:'一'}, {set:{count:1}}]},
-      {if:{cave:{atLeast:5}, count:1}, do:[{message:'Another monkey comes in.'}, {say:'count2'}, {newWord:'二', note:'When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).'}, {set:{count:2}}]},
+      {if:{cave:{atLeast:5}, count:1}, do:[{message:'Another monkey comes in.'}, {say:'count2', teach:'二'}, {newWord:'二'}, {set:{count:2}}]},
       {if:{cave:{atLeast:5}, count:2}, do:[{message:'And another!'}, {say:'count3', teach:'三'}, {newWord:'三'}, {set:{count:3}}, {message:'The whole troop is home.'}]},
       // chapter 1: at school, he's the teacher. The first time you talk to him there, the class greets him the way children
       // in China do; after that, he gives you a lesson whenever you like (he has a ! when words need practice).

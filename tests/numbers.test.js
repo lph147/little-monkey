@@ -109,3 +109,14 @@ test('saying Not now to a number lesson ends it there: no 下课', async () => {
   assert.deepEqual(get(g, '__said'), ['上课！']);
   assert.equal(g.run('lvl("四")'), 0, 'nothing learned');
 });
+
+test('there are never two things to count, and 二 is never an answer: two things are 两 (liǎng), a word of its own', async () => {
+  const g = game();
+  answering(g);
+  for (let i = 0; i < 6; i++){ g.run("rec('四').lv = 0; rec('四').ok = 0"); await lesson(g); }   // (the first lesson, again and again)
+  const qs = get(g, '__qs');
+  assert.ok(qs.length >= 30);
+  assert.ok(qs.every(q => q.word !== '二'), 'never two things');
+  assert.ok(qs.every(q => q.options.every(o => !/^二|>二</.test(o))), 'nor 二 among the answers');
+  assert.deepEqual(get(g, "L.count2.t"), ['一', '，', '二', '！'], 'the troop is counted in as numbers: 一，二！');
+});

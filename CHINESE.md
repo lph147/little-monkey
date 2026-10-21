@@ -94,9 +94,9 @@ shown where the word list has them.
 | 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
 | 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | 大猴子 (Big monkey) |  |
-| 一只猴子。 | yī zhī hóuzi. | One monkey. | 老猴子 (Old monkey) |  |
-| 两只猴子。 | liǎng zhī hóuzi. | Two monkeys. | 老猴子 (Old monkey) |  |
-| 三只猴子。 | sān zhī hóuzi. | Three monkeys. | 老猴子 (Old monkey) |  |
+| 一！ | yī! | One! | 老猴子 (Old monkey) |  |
+| 一，二！ | yī, èr! | One, two! | 老猴子 (Old monkey) |  |
+| 一，二，三！ | yī, èr, sān! | One, two, three! | 老猴子 (Old monkey) |  |
 | 累了吗？去床上睡觉吧！ | lèi le ma? qù chuáng shàng shuìjiào ba! | Tired? Go and sleep in a bed! | 猴子 (Monkey) |  |
 
 ### Sentences the player completes (one word missing)
@@ -327,7 +327,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 好 | hǎo | good |  |
 | 的 | de | (shows belonging: 我们的, our) |  |
 | 只 | zhī | (counts animals: 三只猴子, three monkeys) |  |
-| 两 | liǎng | two (when counting things) |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
 | 很 | hěn | very |  |
@@ -421,9 +420,9 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave | Chapter 1, part A (in the game): What the stone tablet (石碑 shíbēi: please check this name too) in the cave says |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | Chapter 1, part B (in the game): The old monkey, when the troop moves into the cave |  |
 | 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | Chapter 1, part B (in the game): The big monkey, for the troop (then you’re called 美猴王 Měi Hóuwáng: please check this name too) |  |
-| 一只猴子。 | yī zhī hóuzi. | One monkey. | Chapter 1, part B (in the game): The old monkey, counting the troop into the cave (teaching 一) |  |
-| 两只猴子。 | liǎng zhī hóuzi. | Two monkeys. | Chapter 1, part B (in the game): The old monkey, counting (the card teaches 二: see the question below) |  |
-| 三只猴子。 | sān zhī hóuzi. | Three monkeys. | Chapter 1, part B (in the game): The old monkey, counting (teaching 三) |  |
+| 一！ | yī! | One! | Chapter 1, part B (in the game): The old monkey, counting the troop into the cave as each monkey comes in (teaching 一; changed on 21 October 2026 from 一只猴子。: see the question below) |  |
+| 一，二！ | yī, èr! | One, two! | Chapter 1, part B (in the game): The old monkey, counting (teaching 二; it was 两只猴子。) |  |
+| 一，二，三！ | yī, èr, sān! | One, two, three! | Chapter 1, part B (in the game): The old monkey, counting (teaching 三; it was 三只猴子。) |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I’m hungry. I want to eat some fruit! | The prologue, changed on 17 October 2026: The hungry monkey now asks for fruit (水果), not a peach |  |
 | 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! | The prologue, changed on 17 October 2026: The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants |  |
@@ -488,4 +487,4 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 ## Questions
 
-- When the troop is counted into the cave, the number cards teach 一, 二 and 三, but the old monkey says 两只猴子 for two monkeys. Is that right, and how would you explain 二 and 两 to a beginner in one short line? (The card for 二 says: "When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).")
+- When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)
