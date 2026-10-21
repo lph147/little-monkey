@@ -243,8 +243,16 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Walk up into the door: the screen fades and you're inside, a classroom: a big blackboard with chalk writing and two windows on the back wall, the teacher's table (books and a cup), six double desks with open books, and the little monkey and the troop at their desks. The old monkey stands at the front with a !. Walk down onto the red mat to go back out (in front of the door), and in again.
 - [ ] Walk up to the old monkey and talk to him: 上课！ (the teacher), 老师好！ (the class, by the little monkey: 老师 in bold green, and a card teaches 老师 without saying it again), 同学们好！ (the teacher). A message says lessons are where you practise now. The little monkey has a !, and TASKS says to talk to it.
 - [ ] Talk to the little monkey (stand beside it): 我们是同学！ (We're classmates!), and a card teaches 同学. TASKS: all of chapter 1 so far is ticked.
-- [ ] Talk to the teacher again (he has a ! when some words need practice): 上课！, then a card asks to start a lesson (Start, or Not now): match words to their pictures, fill a gap, and get shells for words that needed practice; then 下课！. Choosing Not now ends it, without 下课.
+- [ ] Talk to the teacher again (he has a ! while there's a new number to learn, or some words need practice): 上课！, then a card asks to start a lesson (Start, or Not now). With a new number to learn, it's a number lesson (below); otherwise it's practice: match words to their pictures, fill a gap, and get shells for words that needed practice. Then 下课！. Choosing Not now ends it, without 下课.
 - [ ] In the meadow, the practice post by the pond has gone. The title screen's card for the game, and the Word Scroll's Today, say to practise in a lesson at school.
+
+**Chapter 1: number lessons (四 to 十)**
+- [ ] Once you've met your classmates, TASKS' checklist has "Learn to count to ten at school (0/7)", and the hint says the teacher gives a lesson whenever there's a new number to learn, or your words need practice.
+- [ ] Talk to the teacher: 上课！, then a card says today is a new number, then counting (Start, or Not now). Start: he counts peaches onto his table, 一，二，三，四！ (四 in bold green), and a card teaches 四 (a die with four spots) without saying it again.
+- [ ] Five counting questions follow, each read aloud in his voice (🔊 hears it again): the question beside his face, with its English beside the things to count: peaches, apples or bowls on his table (桌子上有几个桃子？ How many peaches are on the table?) or monkeys, rabbits or birds on the grass (这里有几只猴子？), in rows of five. Three of the five are the new number. While it's new, the answers are pictures (dice) with their characters; once you know a number, characters with pinyin. The wrong answers are the numbers next to the right one, so you have to count. A wrong answer shows the right one, and Next carries on.
+- [ ] After the fifth: a fanfare, and a card says how many you counted right and the shells you got (one for each right answer while that number needed practice). Then 下课！. The checklist says 1/7.
+- [ ] Talk to him again: if you got 四 right twice in a row, the lesson teaches 五; if not, it's a practice lesson (四 among the words) until you have. And so on to 十: from 七 the pictures are ten frames, two rows of five boxes, filled in. With all seven, the checklist's line is ticked, and lessons are practice.
+- [ ] On the smallest phone, the counting card fits without scrolling: even ten things, answered, with Next.
 
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.

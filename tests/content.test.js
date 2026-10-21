@@ -31,6 +31,7 @@ const allIfs = () => [
   ...AREA.checklist.filter(c => c.show).map((c, i) => [`checklist item ${AREA.checklist.indexOf(c) + 1}'s show`, c.show]),
   ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if])),
   ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word}`, s.if]),
+  ...(AREA.lessons || []).filter(l => l.if).map(l => [`the lessons ${l.id}`, l.if]),
   ...allLegend.filter(([, t]) => t.pick && t.pick.if).map(([, t, from]) => [`picking at ${from}`, t.pick.if]),
   ['animalsAppear', AREA.animalsAppear]
 ];
@@ -317,7 +318,7 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'practice'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'practice', 'lesson'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -366,7 +367,8 @@ test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
-    ...(AREA.shop ? [AREA.shop.ask, AREA.shop.thanks] : [])
+    ...(AREA.shop ? [AREA.shop.ask, AREA.shop.thanks] : []),
+    ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask)])
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
 });
@@ -485,4 +487,18 @@ test('food: each says what it does, how many you can carry, and heals or helps; 
     assert.ok(f.does && f.carry > 0 && (f.heal > 0 || f.helps === true), `${w}: does, carry, and heal or helps`);
   }
   for (const [, t, from] of allLegend) if (t.pick) assert.ok((AREA.food || {})[t.pick.item], `picking at ${from} gives ${t.pick.item}, which isn't food`);
+});
+
+test('each lesson series is one the engine can give, teaching words you can collect, with lines that exist', () => {
+  const KINDS = get('Object.keys(LESSON_KINDS)');
+  for (const l of AREA.lessons || []){
+    assert.ok(KINDS.includes(l.kind), `the lessons ${l.id} are of kind "${l.kind}"; the kinds are ${KINDS.join(', ')}`);
+    assert.ok(l.start && AREA.characters.some(c => c.id === l.by), `the lessons ${l.id} need start, and by: the character who teaches them`);
+    for (const w of l.words){
+      assert.ok(collectible.includes(w), `the lessons ${l.id} teach ${w}, which isn't a word you can collect in ${where}`);
+      if (l.teach) assert.ok(AREA.lines[l.teach[w]] && AREA.lines[l.teach[w]].zh.split(' ').includes(w), `the lessons ${l.id}: the line teaching ${w} should be a line with ${w} in it`);
+    }
+    for (const t of l.things || []) assert.ok(collectible.includes(t.word) && BANK[t.word].pic && AREA.lines[t.ask] && AREA.lines[t.ask].zh.split(' ').includes(t.word), `the lessons ${l.id}: ${t.word} should be a word with a picture, asked about in a line with it`);
+    if (l.kind === 'count') assert.deepEqual(l.words, get('COUNTING').slice(get('COUNTING').indexOf(l.words[0]), get('COUNTING').indexOf(l.words[0]) + l.words.length), 'numbers are learned in order');
+  }
 });

@@ -119,6 +119,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'place') return PLACE === v;   // the place you're in
     if (k === 'hurt') return ((S.hearts ?? HEARTS) < HEARTS) === v;   // you've lost hearts in a battle
     if (k === 'practice') return trainingCalls() === v;   // some of your words need practice (the practice post's !)
+    if (k === 'lesson') return !!lessonNow() === v;       // a lesson series at school has a new word ready for you
     if (k === 'near'){ const n = NPCS.find(c => c.id === v); return !!n && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) === 1; }   // you're right beside this character
     if (k === 'at') return placeOf(v) === PLACE && pl.x === v[0] && pl.y === v[1];   // you're standing here: [x, y], or [x, y, 'place']
     if (AREA.counters[k]) return compare(counter(k), v);
@@ -129,7 +130,19 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet'],
   change:['at'], collect:['for','count','note','each','full']};   // extra settings a step can have
-const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step)
+const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
+// The area's lesson series (AREA.lessons) teach their words one at a time, one a lesson, in order: the next once you've
+// got the last one right twice (it no longer needs practice), so they don't all come at once. The series and word ready
+// now, if any (the first series whose if matches with a word ready).
+function lessonNow(){
+  for (const series of AREA.lessons || []){
+    if (series.if && !matches(series.if)) continue;
+    const i = series.words.findIndex(w => lvl(w) === 0);
+    if (i >= 0 && (i === 0 || !needsPractice(series.words[i - 1]))) return {series, word:series.words[i]};
+  }
+  return null;
+}
+const LESSON_KINDS = {count:countLesson};   // how each kind of lesson series goes (count: js/quiz.js)
 // Swinging your stick (the hit step): how long it takes, how far through it the stick strikes, and the swing now (when it
 // began, and the square it strikes), drawn by js/draw.js.
 const SWING_MS = 420, SWING_CONTACT = .45;
@@ -216,9 +229,13 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     toast((counted ? `${wz(num)}! ` : '') + fill(all ? s.full : s.each));
   },
   rest(){ S.hearts = HEARTS; save(); SFX.chime(); },   // your hearts are full again
-  // A lesson with the character you're talking to (the teacher at school): practising your words, as at the practice
-  // post. If you stop, or don't start, the conversation ends there.
-  async lesson(s, who){ if (!await practise(speaker(who), PRACTICE.lesson)) return STOP; },
+  // A lesson with the character you're talking to (the teacher at school): a new word from one of the area's lesson
+  // series, if one's ready (lessonNow), or else practising your words, as at the practice post. If you stop, or don't
+  // start, the conversation ends there.
+  async lesson(s, who){
+    const l = lessonNow();
+    if (!await (l ? LESSON_KINDS[l.series.kind](l.series, l.word, who) : practise(speaker(who), PRACTICE.lesson))) return STOP;
+  },
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
   // up, then you hop down again, sparkling, with all your hearts (its text: the message then).
   async sleep(s){

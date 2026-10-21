@@ -58,6 +58,7 @@ function wanted(){
     for (const k in o) steps(o[k]);
   })(parts);
   for (const r of Object.values(AREA.requests)) for (const k of [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer]) if (k) add(k, r.from);
+  for (const l of AREA.lessons || []) for (const k of [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask)]) add(k, l.by);   // the teacher's, in a lesson
   const words = Object.keys(BANK);   // said on their own, in the words voice; everything else is a line
   const out = {words: {voice: AREA.voices.words, texts: words}, everyone: {voice: AREA.voices.everyone, texts: [...all].filter(t => !BANK[t])}};
   for (const [key, ids] of Object.entries(sayers)) for (const id of ids) if (AREA.voices[id] && !out[id] && AREA.lines[key]) out[id] = {voice: AREA.voices[id], texts: []};

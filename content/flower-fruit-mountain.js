@@ -62,8 +62,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
     caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (the bridge's 桥 waits for chapter 1)
     troopIn: {count:'known', words:['一', '二', '三']},   // the troop counted in (each count teaches its number)
     woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
-    stonesGot: {count:'picked', request:'stones'}    // and small stones
+    stonesGot: {count:'picked', request:'stones'},   // and small stones
+    numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']}   // the numbers you've learned at school
   },
+
+  // Lessons at school (the lesson step, with the teacher): each series teaches its words one at a time, one a lesson, in
+  // order, the next once you've got the last one right twice; when none is ready, a lesson is practice, as at the practice
+  // post. kind: what its lessons are (count: the teacher counts things onto his table, teaching the new number with his
+  // line for it, teach, then asks how many there are, with his question about each of the things); by: who teaches it;
+  // start: what the card asking you to start says; note: on the new word's card.
+  lessons: [
+    {id:'numbers', kind:'count', by:'elder', if:{school:{atLeast:2}}, words:['四', '五', '六', '七', '八', '九', '十'],
+      start:'Today: a new number, then counting. Each right answer earns a 🐚 if that number needs practice.',
+      note:'The teacher counts peaches onto his table, one by one.',
+      teach:{'四':'count4', '五':'count5', '六':'count6', '七':'count7', '八':'count8', '九':'count9', '十':'count10'},
+      things:[{word:'桃子', ask:'howManyPeaches', on:'table'}, {word:'苹果', ask:'howManyApples', on:'table'}, {word:'碗', ask:'howManyBowls', on:'table'},
+        {word:'猴子', ask:'howManyMonkeys', on:'grass'}, {word:'兔子', ask:'howManyRabbits', on:'grass'}, {word:'鸟', ask:'howManyBirds', on:'grass'}]}
+  ],
 
   // Where you practise your words now (the title screen and the Word Scroll say so): the first whose if matches.
   practiseAt: [{if:{school:{atLeast:1}}, text:'in a lesson at school'}, {text:'at the practice post'}],
@@ -118,7 +133,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
-    {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
+    {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the school: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a school first. The big monkey has something to ask you.'},
     {if:{count:3}, text:'The whole troop is home in the {洞}. The rest of the story is coming soon.'},
@@ -152,12 +167,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Bring {木头} and small {石头} for the school', show:{build:{atLeast:1}}, done:{build:{atLeast:2}}},
     {chapter:1, text:'Build the {学校} with the troop', show:{build:{atLeast:2}}, done:{school:{atLeast:1}}},
     {chapter:1, text:'Go to school, and meet your {老师}', show:{school:{atLeast:1}}, done:{school:{atLeast:2}}},
-    {chapter:1, text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}}
+    {chapter:1, text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}},
+    {chapter:1, text:'Learn to count to ten at school ({numbersKnown}/7)', show:{school:{atLeast:2}}, done:{numbersKnown:7}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
-    elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'},
+    elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, lesson:true}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
@@ -767,13 +783,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '学校': 'The troop built it at the home ground, with the wood and stones you brought.',
     '老师': 'The little monkeys greeting the old monkey, their teacher, at school.',
     '同学': 'The little monkey, at school: you’re classmates.',
+    '四': 'A number lesson at school: the teacher counting peaches onto his table.',
+    '五': 'A number lesson at school: the teacher counting peaches onto his table.',
+    '六': 'A number lesson at school: the teacher counting peaches onto his table.',
+    '七': 'A number lesson at school: the teacher counting peaches onto his table.',
+    '八': 'A number lesson at school: the teacher counting peaches onto his table.',
+    '九': 'A number lesson at school: the teacher counting peaches onto his table.',
+    '十': 'A number lesson at school: the teacher counting peaches onto his table.',
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
   // the Word Scroll. (A word that only appears in a sentence you complete, such as 头带, shows that.)
   // Checked by a native speaker on 16 October 2026.
   examples: {
-    '兔子': {zh:'草 里 有 一只 兔子 。', en:'There is a rabbit in the grass.'},
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
     '山羊': {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.'},
@@ -783,10 +805,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '蜜蜂': {zh:'花 上 有 蜜蜂 。', en:'There is a bee on the flower.'},
     '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
-    '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'},
-    '碗': {zh:'桌子 上 有 碗 。', en:'There are bowls on the table.'},
-    '桌子': {zh:'洞 里 有 桌子 。', en:'There is a table in the cave.'},
-    '二': {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'}
+    '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'}
+    // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now)
   },
 
   // Wild creatures you can fight, in battles (js/battle.js). Each: its word (taught on a card the first time you
@@ -906,6 +926,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
     classHi: {zh:'同学 们 好 ！', en:'Hello, class!'},
     classEnd: {zh:'下课 ！', en:'Class is over!'},
     classmates: {zh:'我们 是 同学 ！', en:'We’re classmates!'},
+    count4: {zh:'一 ， 二 ， 三 ， 四 ！', en:'One, two, three, four!'},   // the teacher, counting peaches onto his table (number lessons)
+    count5: {zh:'一 ， 二 ， 三 ， 四 ， 五 ！', en:'One, two, three, four, five!'},
+    count6: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ！', en:'One, two, three, four, five, six!'},
+    count7: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ！', en:'One, two, three, four, five, six, seven!'},
+    count8: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ！', en:'One, two, three, four, five, six, seven, eight!'},
+    count9: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ！', en:'One, two, three, four, five, six, seven, eight, nine!'},
+    count10: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ， 十 ！', en:'One, two, three, four, five, six, seven, eight, nine, ten!'},
+    howManyPeaches: {zh:'桌子 上 有 几 个 桃子 ？', en:'How many peaches are on the table?'},   // and asking how many there are
+    howManyApples: {zh:'桌子 上 有 几 个 苹果 ？', en:'How many apples are on the table?'},
+    howManyBowls: {zh:'桌子 上 有 几 个 碗 ？', en:'How many bowls are on the table?'},
+    howManyMonkeys: {zh:'这里 有 几 只 猴子 ？', en:'How many monkeys are there?'},
+    howManyRabbits: {zh:'这里 有 几 只 兔子 ？', en:'How many rabbits are there?'},
+    howManyBirds: {zh:'这里 有 几 只 鸟 ？', en:'How many birds are there?'},
     letsLook: {zh:'我们 看看 ！', en:'Let’s have a look!'},
     great: {zh:'太 好 了 ！', en:'Great!'},
     home: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},

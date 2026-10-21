@@ -31,6 +31,52 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
   });
 }
 const laterPy = w => S.pinyin ? `<span class="cap py later">${WORDS[w].py}</span>` : '';   // an answer's pinyin, shown once you've answered
+// A counting question (a number lesson): n things to count (thing: its word, and where they are, on the teacher's table
+// or together on the grass), the teacher's question about them (his line, ask, read aloud in his voice: who), and three
+// numbers you know to choose from: the right one and the two nearest it, so you have to count.
+// While the right one is new, the answers are pictures with their characters (as when listening); after that,
+// characters with pinyin. A miss is practice, not a test: the number comes back soon, and keeps its gold squares.
+// Gives whether you were right.
+async function countQ({who, thing, n}){
+  const num = COUNTING[n - 1], line = L[thing.ask], text = line.t.join(''), pics = lvl(num) <= 1;
+  const gap = w => Math.abs(COUNTING.indexOf(w) - (n - 1));
+  const near = shuffle(COUNTING.filter(w => w !== num && WORDS[w] && lvl(w) >= 1)).sort((a, b) => gap(a) - gap(b)).slice(0, 2);
+  const opts = shuffle([num, ...near]);
+  hear(line.t);
+  // (the question beside the teacher's face, then the things with its English beside them, so it all fits above the
+  // answers on a small phone)
+  const ok = await pictureQ({head:`<div class="qhead counthead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(line.t)}<button class="tbtn" data-a="ask" aria-label="Hear the question again">🔊</button></div>`,
+    body:`<div class="countq"><div class="count ${thing.on || 'table'}">${Array.from({length:n}, () => `<span class="thing">${picHTML(thing.word)}</span>`).join('')}</div>
+      <div class="sentence-en">${esc(line.en)}</div></div><div class="gloss"></div>`,
+    options:opts.map(w => pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>${laterPy(w)}` : `${w}<span class="cap">${WORDS[w].py}</span>`),
+    text:!pics, answerIdx:opts.indexOf(num), word:num,
+    onShow:() => { say(text, null, who); on('[data-a=ask]', () => say(text, null, who)); }});
+  closeCard();
+  if (ok) answer(num, true, pics ? 'listen' : 'read'); else reviewed(num, false);
+  return ok;
+}
+// A number lesson (a lesson series of kind count, with the teacher: who): he counts things onto his table, teaching the
+// new number (his line for it, teach), then asks how many there are, five times: the new number three times, and twice
+// another you know. Each right answer earns a shell if that number needed practice. Gives whether you had the lesson
+// (you can say Not now at the start).
+const COUNT_QUESTIONS = 5;
+async function countLesson(series, word, who){
+  const face = speaker(who);
+  if (!await confirmBox(face, fill(series.start), 'Start', 'Not now')) return false;
+  await showDialog(face, L[series.teach[word]], {teach:word});
+  await showNotice(word, {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
+  const top = COUNTING.indexOf(word) + 1, others = shuffle([...Array(top - 1).keys()].map(i => i + 1));
+  const counts = shuffle([...Array(COUNT_QUESTIONS - 2).fill(top), ...others.slice(0, 2)]);
+  let right = 0, shells = 0;
+  for (const n of counts){
+    const things = series.things.filter(t => lvl(t.word) >= 1), thing = things[Math.floor(Math.random() * things.length)] || series.things[0];
+    const need = needsPractice(COUNTING[n - 1]);
+    if (await countQ({who, thing, n})){ right++; if (need) shells++; }
+  }
+  S.shells += shells; save(); SFX.fanfare();
+  await infoBox(face, `<p class="label">Lesson over</p><p>You counted <b>${right} of ${counts.length}</b> right.${shells ? ` +${shells} 🐚` : ''}</p>`);
+  return true;
+}
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 // An animal asks about 3 words you've caught, never its own name (that's on the screen), so you need 4.
 const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 4;

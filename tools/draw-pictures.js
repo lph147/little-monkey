@@ -71,6 +71,14 @@ function draw(word, drawing = DRAWINGS[word], size = 32){
   return out.map(k => k && k.toUpperCase());
 }
 
+// Numbers: a dice face (its dots, [x, y] each), up to six; from seven, a ten frame: two rows of five boxes, the dots
+// filling the top row, then the bottom one, the way children learn to see numbers up to ten.
+function dice(p, dots){ p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); for (const [x, y] of dots) p.fill(O(x, y, 2.4), '#D83A3A'); }
+function tenFrame(p, n){
+  p.fill(Rc(1, 7, 30, 18, 2), '#FAFAF5', {dark: '#C9C6BC'});
+  p.flat(or(...[1, 2, 3, 4].map(i => Rc(1 + i * 6, 8, 1, 16)), Rc(2, 15, 28, 1)), '#C9C6BC');   // the boxes
+  for (let i = 0; i < n; i++) p.fill(O(4 + (i % 5) * 6, i < 5 ? 11.5 : 19.5, 2.3), '#D83A3A');
+}
 // Colours used more than once
 const FUR = '#B8743E', SKIN = '#F6D2A8', WHITE = '#F4F0E8', LEAF = '#4FA34A', BARK = '#8A5A32', WOOD = '#B98A55', STONE = '#A9A598', BLUE = '#3F8FCB', RED = '#D83A3A', GOLD = '#F2C14E';
 
@@ -361,6 +369,10 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
   '一': p => { p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); p.fill(O(16, 16, 2.8), RED); },
   '二': p => { p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); p.fill(O(11, 11, 2.6), RED); p.fill(O(21, 21, 2.6), RED); },
   '三': p => { p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); p.fill(O(10.5, 10.5, 2.4), RED); p.fill(O(16, 16, 2.4), RED); p.fill(O(21.5, 21.5, 2.4), RED); },
+  '四': p => dice(p, [[10.5, 10.5], [21.5, 10.5], [10.5, 21.5], [21.5, 21.5]]),
+  '五': p => dice(p, [[10.5, 10.5], [21.5, 10.5], [16, 16], [10.5, 21.5], [21.5, 21.5]]),
+  '六': p => dice(p, [[10.5, 9.5], [21.5, 9.5], [10.5, 16], [21.5, 16], [10.5, 22.5], [21.5, 22.5]]),
+  '七': p => tenFrame(p, 7), '八': p => tenFrame(p, 8), '九': p => tenFrame(p, 9), '十': p => tenFrame(p, 10),
   '红色': p => splat(p, '#E0303A'),
   '黄色': p => splat(p, '#F2C93A'),
   '白色': p => splat(p, '#F8F6F0'),

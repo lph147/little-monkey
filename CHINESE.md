@@ -71,6 +71,19 @@ shown where the word list has them.
 | 同学们好！ | tóngxué men hǎo! | Hello, class! | 老猴子 (Old monkey) |  |
 | 下课！ | xiàkè! | Class is over! | 老猴子 (Old monkey) |  |
 | 我们是同学！ | wǒmen shì tóngxué! | We’re classmates! | 小猴子 (Little monkey) |  |
+| 一，二，三，四！ | yī, èr, sān, sì! | One, two, three, four! |  |  |
+| 一，二，三，四，五！ | yī, èr, sān, sì, wǔ! | One, two, three, four, five! |  |  |
+| 一，二，三，四，五，六！ | yī, èr, sān, sì, wǔ, liù! | One, two, three, four, five, six! |  |  |
+| 一，二，三，四，五，六，七！ | yī, èr, sān, sì, wǔ, liù, qī! | One, two, three, four, five, six, seven! |  |  |
+| 一，二，三，四，五，六，七，八！ | yī, èr, sān, sì, wǔ, liù, qī, bā! | One, two, three, four, five, six, seven, eight! |  |  |
+| 一，二，三，四，五，六，七，八，九！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ! | One, two, three, four, five, six, seven, eight, nine! |  |  |
+| 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! |  |  |
+| 桌子上有几个桃子？ | zhuōzi shàng yǒu jǐ gè táozi? | How many peaches are on the table? |  |  |
+| 桌子上有几个苹果？ | zhuōzi shàng yǒu jǐ gè píngguǒ? | How many apples are on the table? |  |  |
+| 桌子上有几个碗？ | zhuōzi shàng yǒu jǐ gè wǎn? | How many bowls are on the table? |  |  |
+| 这里有几只猴子？ | zhèlǐ yǒu jǐ zhī hóuzi? | How many monkeys are there? |  |  |
+| 这里有几只兔子？ | zhèlǐ yǒu jǐ zhī tùzi? | How many rabbits are there? |  |  |
+| 这里有几只鸟？ | zhèlǐ yǒu jǐ zhī niǎo? | How many birds are there? |  |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
 | 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
@@ -119,7 +132,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | For the word | Notes |
 | --- | --- | --- | --- | --- |
-| 草里有一只兔子。 | cǎo lǐ yǒu yì zhī tùzi. | There is a rabbit in the grass. | 兔子 |  |
 | 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
 | 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
@@ -129,9 +141,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | 蜜蜂 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | 桥 |  |
-| 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | 碗 |  |
-| 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | 桌子 |  |
-| 一，二，三！ | yī, èr, sān! | One, two, three! | 二 |  |
 
 ### Questions after the story
 
@@ -240,6 +249,13 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 一 | yī | one |  |
 | 二 | èr | two |  |
 | 三 | sān | three |  |
+| 四 | sì | four |  |
+| 五 | wǔ | five |  |
+| 六 | liù | six |  |
+| 七 | qī | seven |  |
+| 八 | bā | eight |  |
+| 九 | jiǔ | nine |  |
+| 十 | shí | ten |  |
 | 吃 | chī | to eat |  |
 | 喝 | hē | to drink |  |
 | 朋友 | péngyou | friend |  |
@@ -287,6 +303,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
 | 很 | hěn | very |  |
 | 盖 | gài | to build (a house) |  |
+| 几 | jǐ | how many |  |
+| 个 | gè | (counts things: 几个, how many) |  |
 | 们 | men | (more than one: 同学们, the class) |  |
 | 上课 | shàngkè | class begins |  |
 | 下课 | xiàkè | class is over |  |
@@ -364,15 +382,12 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 里面有床。 | lǐmiàn yǒu chuáng. | There are beds inside. | Chapter 1, part A (in the game): Your answer (you choose 床 to fill the gap) |  |
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | Chapter 1, part A (in the game): The old monkey |  |
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | Chapter 1, part A (in the game): The example on 桥 (bridge)’s page in the Word Scroll |  |
-| 桌子上有碗。 | zhuōzi shàng yǒu wǎn. | There are bowls on the table. | Chapter 1, part A (in the game): The example on 碗 (bowl)’s page |  |
-| 洞里有桌子。 | dòng lǐ yǒu zhuōzi. | There is a table in the cave. | Chapter 1, part A (in the game): The example on 桌子 (table)’s page |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave | Chapter 1, part A (in the game): What the stone tablet (石碑 shíbēi: please check this name too) in the cave says |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | Chapter 1, part B (in the game): The old monkey, when the troop moves into the cave |  |
 | 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | Chapter 1, part B (in the game): The big monkey, for the troop (then you’re called 美猴王 Měi Hóuwáng: please check this name too) |  |
 | 一只猴子。 | yī zhī hóuzi. | One monkey. | Chapter 1, part B (in the game): The old monkey, counting the troop into the cave (teaching 一) |  |
 | 两只猴子。 | liǎng zhī hóuzi. | Two monkeys. | Chapter 1, part B (in the game): The old monkey, counting (the card teaches 二: see the question below) |  |
 | 三只猴子。 | sān zhī hóuzi. | Three monkeys. | Chapter 1, part B (in the game): The old monkey, counting (teaching 三) |  |
-| 一，二，三！ | yī, èr, sān! | One, two, three! | Chapter 1, part B (in the game): The example on 二 (two)’s page in the Word Scroll |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I’m hungry. I want to eat some fruit! | The prologue, changed on 17 October 2026: The hungry monkey now asks for fruit (水果), not a peach |  |
 | 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! | The prologue, changed on 17 October 2026: The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants |  |
@@ -424,6 +439,9 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 同学们好！ | tóngxué men hǎo! | Hello, class! | New on 21 October 2026 (in the game), the school opens: The teacher’s reply (同学们 tóngxuémen; 们 is just for listening) |  |
 | 我们是同学！ | wǒmen shì tóngxué! | We’re classmates! | New on 21 October 2026 (in the game), the school opens: The little monkey at school, teaching 同学 tóngxué, classmate |  |
 | 下课！ | xiàkè! | Class is over! | New on 21 October 2026 (in the game), the school opens: The teacher, after a lesson (下课 xiàkè, just for listening) |  |
+| 一，二，三，四！ | yī, èr, sān, sì! | One, two, three, four! | New on 21 October 2026 (in the game), the number lessons at school: The teacher counting peaches onto his table, teaching 四 sì, four (and the same, one more each time, for 五 wǔ, 六 liù, 七 qī, 八 bā, 九 jiǔ and 十 shí: one, two… up to ten) |  |
+| 桌子上有几个桃子？ | zhuōzi shàng yǒu jǐ gè táozi? | How many peaches are on the table? | New on 21 October 2026 (in the game), the number lessons at school: The teacher, asking how many (几 jǐ and 个 gè are just for listening); the same with 苹果 (apples) and 碗 (bowls) |  |
+| 这里有几只猴子？ | zhèlǐ yǒu jǐ zhī hóuzi? | How many monkeys are there? | New on 21 October 2026 (in the game), the number lessons at school: The teacher, asking how many of something alive (几只); the same with 兔子 (rabbits) and 鸟 (birds) |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 

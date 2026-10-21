@@ -533,6 +533,17 @@ rt.hid{visibility:hidden}
 .sheet:has(> .scene) .opt .pix{width:var(--pic-scene);height:var(--pic-scene)}
 .sheet:has(> .qhead):has(> .opts) > .qhead{margin-top:0}
 .askrow{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+/* A counting question (a number lesson): the teacher's question beside his face, then the things to count, in rows of
+   up to five, on his table or on the grass, beside its English */
+.counthead{gap:.6rem}
+.sheet:has(> .qhead) .counthead .line{margin:0;min-width:0}
+.counthead .tbtn{margin-left:auto}
+.countq{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:.7rem;margin:.3rem 0 0}
+.sheet:has(> .qhead) .countq .sentence-en{margin:0}
+.count{display:flex;flex-wrap:wrap;justify-content:center;gap:.1rem .3rem;max-width:calc(5 * var(--pic-small) + 2.3rem);padding:.3rem .5rem .45rem;border-radius:6px}
+.count.table{background:#C49461;box-shadow:inset 0 3px 0 #D9AE79,inset 0 -5px 0 #8A5A32}
+.count.grass{background:#7CC46B;box-shadow:inset 0 -4px 0 #5FA853}
+.count .pix{width:var(--pic-small);height:var(--pic-small)}
 .askrow .prompt{margin:0;font-size:1rem}
 .askrow .sayBig{flex:none;width:3rem;height:3rem;font-size:1.4rem}
 .opts{margin:0}
@@ -576,6 +587,13 @@ rt.hid{visibility:hidden}
   .sheet:has(> .qhead) > .opts{margin-top:.2rem}
   .sheet > .qfoot{margin-top:.2rem;padding-top:4px;padding-bottom:6px}
   .plate .hearts .heart{width:.9rem;height:.85rem}
+  .sheet:has(> .qhead):has(> .opts) .counthead{gap:.3rem}   /* a counting question: smaller things to count, and each answer on one line */
+  .countq{margin-top:.2rem}
+  .count{max-width:calc(3.75 * var(--pic-small) + 2.1rem);padding:.2rem .4rem .3rem}
+  .count .pix{width:calc(var(--pic-small) * .75);height:calc(var(--pic-small) * .75)}
+  .sheet:has(.countq) .opt{display:flex;align-items:center;justify-content:center;gap:.35rem}
+  .sheet:has(.countq) .opt .ico{display:flex}
+  .sheet:has(.countq) .opt .cap,.sheet:has(.countq) .opt .later{margin:0}
   /* (20 October 2026) so the main thing on each card fits without scrolling: */
   .sheet > .actions{padding-top:4px;padding-bottom:6px}   /* a shorter row of buttons along the bottom */
   .sheet > .actions .btn{min-height:32px;padding:8px 12px 1px}   /* (the word sits below the A and B badges) */

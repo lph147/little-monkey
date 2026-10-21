@@ -1,4 +1,4 @@
-// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school, and a lesson), the way a
+// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school and its lessons), the way a
 // player would: standing in front of things and pressing A, stepping into flowers and rustling grass,
 // pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
@@ -324,6 +324,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(7, 3, 'up', 'a lesson with the teacher');
   assert.ok(get('__said').includes('上课！') && get('__said').includes('下课！'), 'class begins, and is over');
   assert.ok(get('S.shells') >= shellsBefore, 'shells for words that needed practice');
+  assert.ok(knows('四'), 'the first lesson teaches a new number: 四');
+  for (let i = 0; i < 12 && run('counter("numbersKnown")') < 7; i++) await pressAt(7, 3, 'up', `number lesson ${i + 2}`);
+  for (const n of ['五', '六', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);
+  await pressAt(7, 3, 'up', 'a lesson once you know the numbers to ten: practice');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
 
   // Everything said on the way has a voice clip (npm run voices makes them)

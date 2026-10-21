@@ -114,12 +114,12 @@ test('a caught word has a page: picture, pinyin, level, where you found it and a
 });
 
 test('a word\'s example is the first line with it if you haven\'t seen one, or one written for it, or a sentence you complete', () => {
-  const game = loadGame({save: {version: 5, started: true, w: {'猴子': {lv: 1, due: 0, ok: 0}, '兔子': {lv: 1, due: 0, ok: 0}}}});
+  const game = loadGame({save: {version: 5, started: true, w: {'猴子': {lv: 1, due: 0, ok: 0}, '狐狸': {lv: 1, due: 0, ok: 0}}}});
   game.run("wordPage('猴子', () => {})");
   assert.ok(game.el('#sheet').innerHTML.includes('I am a monkey. You are a monkey too!'));
   assert.ok(game.el('#sheet').innerHTML.includes('Caught'));
-  game.run("wordPage('兔子', () => {})");
-  assert.ok(game.el('#sheet').innerHTML.includes('There is a rabbit in the grass.'), 'no line has 兔子, so its page shows the example written for it');
+  game.run("wordPage('狐狸', () => {})");
+  assert.ok(game.el('#sheet').innerHTML.includes('The fox is playing in the grass.'), 'no line has 狐狸, so its page shows the example written for it');
   game.run("S.w['头带'] = {lv: 1, due: 0, ok: 0}; wordPage('头带', () => {})");
   assert.ok(game.el('#sheet').innerHTML.includes('I want the headband.'), '头带 is only in a sentence you complete, so that is its example');
 });

@@ -23,16 +23,13 @@ const DRAFTS = [
     ['里面 有 床 。', 'There are beds inside.', 'Your answer (you choose 床 to fill the gap)'],
     ['太 好 了 ！ 我们 去 看看 ！', 'Wonderful! Let’s go and see!', 'The old monkey'],
     ['河 上 有 桥 。', 'There is a bridge over the river.', 'The example on 桥 (bridge)’s page in the Word Scroll'],
-    ['桌子 上 有 碗 。', 'There are bowls on the table.', 'The example on 碗 (bowl)’s page'],
-    ['洞 里 有 桌子 。', 'There is a table in the cave.', 'The example on 桌子 (table)’s page'],
     ['水帘洞', 'Water Curtain Cave', 'What the stone tablet (石碑 shíbēi: please check this name too) in the cave says']]
     .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part A (in the game): ' + where})),
   ...[['这 是 我们 的 家 ！', 'This is our home!', 'The old monkey, when the troop moves into the cave'],
     ['你 是 我们 的 王 ！', 'You are our king!', 'The big monkey, for the troop (then you’re called 美猴王 Měi Hóuwáng: please check this name too)'],
     ['一 只 猴子 。', 'One monkey.', 'The old monkey, counting the troop into the cave (teaching 一)'],
     ['两 只 猴子 。', 'Two monkeys.', 'The old monkey, counting (the card teaches 二: see the question below)'],
-    ['三 只 猴子 。', 'Three monkeys.', 'The old monkey, counting (teaching 三)'],
-    ['一 ， 二 ， 三 ！', 'One, two, three!', 'The example on 二 (two)’s page in the Word Scroll']]
+    ['三 只 猴子 。', 'Three monkeys.', 'The old monkey, counting (teaching 三)']]
     .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part B (in the game): ' + where})),
   ...[['我 饿 了 。 我 要 吃 水果 ！', 'I’m hungry. I want to eat some fruit!', 'The hungry monkey now asks for fruit (水果), not a peach'],
     ['这 是 桃子 。 我 要 吃 苹果 ！', 'This is a peach. I want to eat an apple!', 'The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring)'],
@@ -91,6 +88,10 @@ const DRAFTS = [
     ['我们 是 同学 ！', 'We’re classmates!', 'The little monkey at school, teaching 同学 tóngxué, classmate'],
     ['下课 ！', 'Class is over!', 'The teacher, after a lesson (下课 xiàkè, just for listening)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), the school opens: ' + where})),
+  ...[['一 ， 二 ， 三 ， 四 ！', 'One, two, three, four!', 'The teacher counting peaches onto his table, teaching 四 sì, four (and the same, one more each time, for 五 wǔ, 六 liù, 七 qī, 八 bā, 九 jiǔ and 十 shí: one, two… up to ten)'],
+    ['桌子 上 有 几 个 桃子 ？', 'How many peaches are on the table?', 'The teacher, asking how many (几 jǐ and 个 gè are just for listening); the same with 苹果 (apples) and 碗 (bowls)'],
+    ['这里 有 几 只 猴子 ？', 'How many monkeys are there?', 'The teacher, asking how many of something alive (几只); the same with 兔子 (rabbits) and 鸟 (birds)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), the number lessons at school: ' + where})),
   {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.', where:'New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path'},
   {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'}
 ];
