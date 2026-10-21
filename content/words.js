@@ -110,6 +110,7 @@ const WORD_BANK = {
   '水帘洞': {py:'Shuǐlián Dòng', en:'Water Curtain Cave (a name)'},
   '美猴王': {py:'Měi Hóuwáng', en:'Handsome Monkey King (a name)'},
   '很': {py:'hěn', en:'very'},
+  '这里': {py:'zhèlǐ', en:'here'},
   '勇敢': {py:'yǒnggǎn', en:'brave'},
   '从此': {py:'cóngcǐ', en:'from then on'},
   '快乐': {py:'kuàilè', en:'happy'},

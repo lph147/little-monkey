@@ -45,7 +45,7 @@ const mapOf = p => (AREA.places[p || FIRST] || {}).map;
 const onMap = ([x, y, p]) => { const m = mapOf(p); return !!m && y >= 0 && y < m.length && x >= 0 && x < m[0].length; };
 const tile = ([x, y, p]) => mapOf(p)[y][x];
 const allMaps = Object.entries(AREA.places).map(([id, p]) => [id, p.map]);
-const canWalk = at => !!(AREA.legend[tile(at)] || {}).walk;
+const canWalk = at => { const t = AREA.legend[tile(at)] || {}; return !!t.walk || (t.becomes || []).some(b => (AREA.legend[b.to] || {}).walk); };   // (or will be, once the story opens it)
 const sentences = [
   ...Object.entries(AREA.lines).map(([k, l]) => [`line "${k}"`, l]),
   ...AREA.story.map((s, i) => [`story sentence ${i + 1}`, s]),
@@ -137,7 +137,7 @@ test('the legend only teaches collectible words', () => {
     }
     if (t.learnOnStep || t.newNote || t.learnFirst) assert.ok(t.word, `legend "${ch}" needs a word`);
     if (t.gather) assert.ok(t.gather.label && t.gather.note, `legend "${ch}": gather needs a label and a note`);
-    if (t.whenGateOpens) assert.ok(AREA.legend[t.whenGateOpens], `legend "${ch}" turns into "${t.whenGateOpens}", which isn't in the legend`);
+    for (const b of t.becomes || []) assert.ok(AREA.legend[b.to] && b.if, `legend "${ch}" turns into "${b.to}" (once its if matches), which isn't in the legend`);
   }
 });
 

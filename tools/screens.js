@@ -37,6 +37,10 @@ SAVES.ledIn = {...SAVES.explored, w: {...SAVES.chapter1.w, ...CAVE_WORDS}, areas
 SAVES.toBeKing = {...SAVES.ledIn, w: {...SAVES.ledIn.w, ...knows(1, ['家'])}, areas: {1: {...PROLOGUE, cave: 5}}, pos: {place: 'cave', x: 9, y: 9, dir: 'up'}};
 SAVES.king = {...SAVES.toBeKing, w: {...SAVES.toBeKing.w, ...knows(1, ['王', '一'])}, areas: {1: {...PROLOGUE, cave: 6, count: 1}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
 SAVES.home = {...SAVES.king, w: {...SAVES.king.w, ...knows(1, ['二', '三'])}, areas: {1: {...PROLOGUE, cave: 6, count: 3}}, pos: {place: 'cave', x: 7, y: 12, dir: 'up'}};
+// chapter 1: the troop's home ground beside the waterfall (version 29: climb 4 is the troop up at the waterfall)
+SAVES.chapterOne = {...SAVES.home, version: 29, areas: {1: {...PROLOGUE, climb: 4, boar: 1, cave: 6, count: 3, chapter: 1, home: 0}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
+SAVES.toHomeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1], home: 1}}, following: ['elder'], pos: {place: 'falls', x: 12, y: 2, dir: 'right'}};
+SAVES.homeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1], home: 2}}, pos: {place: 'homeGround', x: 3, y: 5, dir: 'right'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -215,6 +219,14 @@ const SCREENS = [
     play(); await wait(100); storyScene('becomingKing'); introClock = 8.05; advancedTo = 3; await wait(400); }},
   {id: 'becoming-king-dusk', title: 'Happy ever after', save: 'home', why: 'Outside, the sun sets on Flower Fruit Mountain, with the troop at home on top; then night, and fireflies.', run: async () => {
     play(); await wait(100); storyScene('becomingKing'); introClock = 11.05; advancedTo = 4; await wait(400); }},
+  {id: 'chapter1-start', title: 'Chapter 1 begins', save: 'chapterOne', why: 'The old monkey: 我们有家了！ (We have a home now!), then he follows you to the troop’s new home ground.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(600); }},
+  {id: 'way-to-home', title: 'The way to the home ground', save: 'toHomeGround', why: 'Beside the waterfall, the bushes are cleared: a path to the home ground, with the old monkey following you.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'home-ground', title: 'The home ground (家园)', save: 'homeGround', why: 'Chapter 1’s settlement: five plots marked out with string and stakes, each with a sign; the ways out shut by bushes.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'plot-sign', title: 'A plot’s sign', save: 'homeGround', why: 'What the troop wants to build there.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'homeGround', x: 5, y: 4, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(400); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'Your replies show 美猴王 now.', run: async () => { play(); await wait(100); replyWith('你好'); await wait(400); }},
   {id: 'count-two', title: 'Counting the troop in', save: 'king', why: 'The card for 二 explains 两.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); next(); await wait(400); }},

@@ -292,6 +292,16 @@ function fallenTree(g, X, Y, x, y){
   R(g, X + 11, Y + 6, 5, 7, '#4A2C17'); R(g, X + 12, Y + 7, 3, 5, '#D9B07A'); R(g, X + 13, Y + 9, 1, 1, '#8A5A32');   // its broken end
   R(g, X + 4, Y + 3, 1, 3, '#3E8A3E'); R(g, X + 3, Y + 2, 3, 1, '#5FA85A');   // a green shoot
 }
+// Ground marked out for building (a plot): bare earth, with string along its edges and a wooden stake at each corner.
+function plot(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#A8794A');
+  for (let i = 0; i < 6; i++){ const px = Math.floor(rnd(x,y,i+900)*15), py = Math.floor(rnd(x,y,i+910)*15); R(g, X+px, Y+py, 2, 1, i % 2 ? '#93683F' : '#BD8E5C'); }
+  const edge = (dx, dy) => tileAt(x+dx, y+dy).look !== 'plot', up = edge(0, -1), down = edge(0, 1), left = edge(-1, 0), right = edge(1, 0);
+  if (up) R(g, X, Y+1, T, 1, '#EFE6CF'); if (down) R(g, X, Y+14, T, 1, '#EFE6CF');
+  if (left) R(g, X+1, Y, 1, T, '#EFE6CF'); if (right) R(g, X+14, Y, 1, T, '#EFE6CF');
+  const stake = (sx, sy) => { R(g, X+sx, Y+sy-2, 2, 5, WOOD[1]); R(g, X+sx, Y+sy-2, 1, 5, WOOD[3]); R(g, X+sx, Y+sy-2, 2, 1, WOOD[0]); };
+  if (up && left) stake(0, 1); if (up && right) stake(14, 1); if (down && left) stake(0, 12); if (down && right) stake(14, 12);
+}
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
 // How each look is painted. Each area's legend picks a look for each map letter.
 const LOOKS = {
@@ -315,6 +325,7 @@ const LOOKS = {
   longGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y,LONG),
   ledge:     (g,X,Y,x,y) => ledge(g,X,Y,x,y),
   bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
+  plot:      (g,X,Y,x,y) => plot(g,X,Y,x,y),   // ground marked out for building
   boulder:   (g,X,Y,x,y) => { grass(g,X,Y,x,y); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a boulder by the path
   log:       (g,X,Y,x,y) => fallenTree(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
@@ -432,6 +443,7 @@ let OBJECT_PIECES = [];
 const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its pictures above and beside an object's squares, for what reaches out of them
 const LEAFY = ['tree', 'peachTree', 'appleTree'];   // what has leaves: they go over the characters beside it too, and rustle
 function buildMap(){   // the place you're in: the ground, then the big objects' pictures
+  mapStory = mapStoryNow();   // (what the map letters that change with the story are, as it's drawn)
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
   OBJECT_PIECES = mapObjects().map(o => {

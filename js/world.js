@@ -3,11 +3,17 @@
 /* ================= WORLD LOGIC ================= */
 const EDGE = {look:'cliff'};   // what lies beyond the edge of the map
 const BIRD_WORD = (AREA.birds || {}).word;   // the word for the birds that land near you
-function tileAt(x, y){         // the legend entry for the map letter at x, y
+function tileAt(x, y){         // the legend entry for the map letter at x, y (or what it has become, as the story goes on)
   if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return EDGE;
   const t = LEGEND[MAP[y][x]];
-  return here().gate && t.whenGateOpens ? LEGEND[t.whenGateOpens] : t;
+  return t.becomes ? LEGEND[becomesNow(t)] || t : t;
 }
+// A map letter that changes with the story (becomes, in the legend), such as the rocks rolling away: the letter it is now.
+// The map is drawn again when what any of them are changes (refreshMap).
+const becomesNow = t => (t.becomes.find(b => matches(b.if)) || {}).to;
+const mapStoryNow = () => Object.values(LEGEND).filter(t => t.becomes).map(becomesNow).join();
+let mapStory = null;   // what they were when the map was last drawn (buildMap)
+function refreshMap(){ if (mapStoryNow() !== mapStory){ buildMap(); findGrass(); } }
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
 const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && e.at[1] === y);   // a way to another place
 const isOpen = e => !e.if || matches(e.if);
@@ -127,7 +133,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   },
   async newWord(s, who){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },   // quiet when a character teaches it
   async card(s, who){ await showNotice(s.card, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },
-  set(s){ Object.assign(here(), s.set); save(); placeCharacters(); },
+  set(s){ Object.assign(here(), s.set); save(); placeCharacters(); refreshMap(); },
   async request(s, who){ await request(REQUESTS.find(r => r.id === s.request), speaker(who)); },
   async shop(s, who){ await shop(speaker(who)); },
   async wordGame(s, who){   // win: what happens if you win, such as a present
@@ -217,7 +223,7 @@ const STOP = 'stop';
 const SLEEP_MS = 2400;   // how long you sleep in a bed (the sleep step)
 async function runSteps(steps, who){ for (const s of steps) if (await STEPS[Object.keys(s).find(k => STEPS[k])](s, who) === STOP) return STOP; }
 // The area's events: each happens by itself when its if matches (checked after anything you do).
-async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); }
+async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); refreshMap(); }
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
 // where the content first puts them. Someone following you is wherever you've been instead (FOLLOWERS, below).
 function placeCharacters(){

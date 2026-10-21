@@ -105,7 +105,7 @@ test('the prologue runs from being born to counting the troop in and becoming ki
   const g = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 5, count: 2}}}});
   const chapters = JSON.parse(g.run('JSON.stringify(AREA.chapters)'));
   assert.deepEqual(chapters, [{name: 'Prologue', title: 'The Water Curtain Cave'}, {name: 'Chapter 1', title: 'The Great Feast'}]);
-  assert.ok(g.run('AREA.checklist.every(c => !c.chapter)'), 'the checklist so far is the prologue’s');
+  assert.ok(g.run('AREA.checklist.filter(c => !c.chapter).length > 10'), 'the prologue’s checklist');
   g.run("mode = 'play'; save = () => {}");
   await g.run('runEvents()');
   assert.equal(g.run('here().chapter'), 0, 'still the prologue while the troop is coming in');
@@ -117,7 +117,7 @@ test('the prologue runs from being born to counting the troop in and becoming ki
   assert.equal(g.run('here().cave'), 6, 'you’re king');
   assert.match(g.el('#sheet').textContent, /Chapter 1\s*The Great Feast/, 'then chapter 1’s card');
   assert.equal(g.run('here().chapter'), 1);
-  assert.equal(g.run('chapterItems().length'), 0, 'chapter 1’s checklist is still to come');
+  assert.match(g.run('chapterItems()[0].text'), /old monkey/, 'chapter 1’s checklist begins with going with the old monkey to the new home ground');
 });
 
 test('a scene plays like the opening: its pictures, its captions one at a time, and OK or Skip ends it; Settings can play it again', async () => {

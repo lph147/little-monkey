@@ -57,6 +57,8 @@ shown where the word list has them.
 | 我怕！ | wǒ pà! | I’m scared! | 小猴子 (Little monkey) |  |
 | 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | 老猴子 (Old monkey) |  |
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | 老猴子 (Old monkey), 小猴子 (Little monkey), 大猴子 (Big monkey) |  |
+| 我们有家了！ | wǒmen yǒu jiā le! | We have a home now! | 老猴子 (Old monkey) |  |
+| 这里很大！ | zhèlǐ hěn dà! | It’s so big here! | 老猴子 (Old monkey) |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
 | 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
@@ -169,6 +171,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 河谷 | hégǔ | The river valley |  |
 | 深山 | shēnshān | Deep in the mountains |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
+| 家园 | jiāyuán | Home ground |  |
 
 ### Words to collect
 
@@ -254,6 +257,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
 | 很 | hěn | very |  |
+| 这里 | zhèlǐ | here |  |
 | 勇敢 | yǒnggǎn | brave |  |
 | 从此 | cóngcǐ | from then on |  |
 | 快乐 | kuàilè | happy |  |
@@ -367,6 +371,8 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 你很勇敢！ | nǐ hěn yǒnggǎn! | You are very brave! (很 hěn, very; 勇敢 yǒnggǎn, brave) | New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before) |  |
 | 美猴王！ | Měi Hóuwáng! | Handsome Monkey King! | New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before) |  |
 | 从此，花果山的猴子很快乐。 | cóngcǐ, Huāguǒ Shān de hóuzi hěn kuàilè. | From then on, the monkeys of Flower Fruit Mountain were very happy. (从此 cóngcǐ, from then on; 快乐 kuàilè, happy) | New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before) |  |
+| 我们有家了！ | wǒmen yǒu jiā le! | We have a home now! | New on 21 October 2026 (in the game): The old monkey, at the start of chapter 1, before showing you the troop’s new home ground |  |
+| 这里很大！ | zhèlǐ hěn dà! | It’s so big here! | New on 21 October 2026 (in the game): The old monkey, arriving at the home ground beside the waterfall (这里 zhèlǐ, here; the place is called 家园 jiāyuán, home ground: please check this name too) |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 

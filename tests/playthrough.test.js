@@ -263,6 +263,20 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('AREA.checklist.filter(c => !c.chapter).every(c => matches(c.done))'), 'all of the prologue should be ticked off');
   assert.equal(area().chapter, 1, 'the prologue is over, and chapter 1 begins, with its card');
 
+  // Chapter 1: the old monkey shows you the troop's new home ground, beside the waterfall
+  await pressAt(6, 10, 'up', 'talking to the old monkey at the start of chapter 1');
+  assert.equal(area().home, 1, 'he tells you about the troop’s new home ground');
+  assert.deepEqual(get('S.following'), ['elder'], 'and follows you there');
+  await stepOn(7, 13, 'walking out through the water curtain');
+  assert.equal(run('PLACE'), 'falls');
+  stand(19, 2, 'right');
+  await act('arrive(19, 2).then(runEvents)', 'walking along beside the waterfall, where the troop has cleared a way, to the home ground');
+  assert.equal(run('PLACE'), 'homeGround', 'you should be at the home ground');
+  assert.equal(area().home, 2, 'with the old monkey');
+  assert.deepEqual(get("(({place, x, y}) => [place, x, y])(ALL_NPCS.find(n => n.id === 'elder'))"), ['homeGround', 8, 6], 'by the school’s plot');
+  assert.ok(get('__said').includes('这里很大！'), 'he says how big it is');
+  assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
+
   // Everything said on the way has a voice clip (npm run voices makes them)
   const clips = require('../tools/make-voices').plan().clips, said = get('__said');
   assert.ok(said.length > 50, 'the game should say plenty aloud');
