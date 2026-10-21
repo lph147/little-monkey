@@ -64,6 +64,8 @@ test('the home ground: five plots, each with a sign saying what the troop wants 
   assert.deepEqual(where(g, 'big'), ['homeGround', 15, 4], 'and the big monkey');
   assert.deepEqual(where(g, 'playful'), ['homeGround', 5, 8], 'and the little monkey');
   assert.equal(get(g, "ALL_NPCS.filter(n => n.id.startsWith('troop')).map(n => n.place).join()"), 'cave,cave,cave', 'the others are at home in the cave');
+  const stream = map.findIndex(r => r.includes('k'));   // the row with the bridge over the stream
+  assert.deepEqual([g.run(`tileAt(0, ${stream}).look`), g.run(`tileAt(${map[0].length - 1}, ${stream}).look`)], ['water', 'water'], 'the stream flows in from the west and out through the trees to the east, never stopping short at them');
 });
 
 test('chapter 1 begins with the old monkey: we have a home now; he follows you to the home ground, where he says it’s big', async () => {

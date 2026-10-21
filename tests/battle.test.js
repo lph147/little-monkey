@@ -248,12 +248,33 @@ test('a battle in the pine wood has its own song and its pines behind the creatu
   g.run("placePlayer(); globalThis.__songs = []; playSong = name => __songs.push(name)");
   g.run("battle('wolf')"); await g.flush();
   assert.equal(g.run('__songs[0]'), 'pineBattle', 'the pine wood’s battle song');
+  assert.equal(g.run("SONGS.pineBattle.events.filter(e => e.k === 'mel').reduce((n, e) => n + e.d, 0)"), g.run('SONGS.pineBattle.beats'), 'its tune fills its loop');
+  assert.ok(g.run('SONGS.pineBattle.events.filter(e => e.m).every(e => [0, 2, 4, 7, 9].includes(e.m % 12))'), 'every note one of the tune’s own five (A C D E G), so nothing clashes with it');
   assert.ok(g.sheet.querySelector('.scene').className.split(' ').includes('pines'), 'among the pines');
   const meadow = fighting();
   meadow.run("globalThis.__songs = []; playSong = name => __songs.push(name)");
   meadow.run("battle('snake')"); await meadow.flush();
   assert.equal(meadow.run('__songs[0]'), 'battle');
   assert.ok(!meadow.sheet.querySelector('.scene').className.split(' ').includes('pines'));
+});
+
+test('only one song plays at a time: changing it stops the last, with all it was still playing (such as the pine wood’s long hum)', () => {
+  const g = fighting({areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, chapter: 1, home: 2, build: 1, woodIn: 1}}, pos: {place: 'pineWood', x: 15, y: 17, dir: 'up'}});
+  g.run(`(() => {   // a pretend sound engine: each volume remembers where it was last sent
+    const param = v => ({value: v, setValueAtTime(x){ this.value = x; }, setTargetAtTime(x){ this.target = x; }, cancelScheduledValues(){}, exponentialRampToValueAtTime(){}, linearRampToValueAtTime(){}});
+    const node = () => ({gain: param(1), frequency: param(0), delayTime: param(0), Q: param(0), connect: n => n, disconnect(){}, start(){}, stop(){}});
+    window.AudioContext = class { constructor(){ this.currentTime = 0; this.state = 'running'; this.sampleRate = 8000; this.destination = node(); }
+      createGain(){ return node(); } createDelay(){ return node(); } createBiquadFilter(){ return node(); } createOscillator(){ return node(); }
+      createBufferSource(){ return node(); } createBuffer(c, n){ const d = new Float32Array(n); return {getChannelData: () => d}; } resume(){} };
+    setInterval = () => 1; S.music = true; placePlayer(); musicStart();
+  })()`);
+  assert.equal(g.run('song'), 'pineWood');
+  g.run("globalThis.__wood = mBus; playSong('pineBattle')");
+  assert.ok(g.run('mBus !== __wood'), 'the battle song has its own way out');
+  assert.equal(g.run('__wood.gain.target'), 0, 'and the wood’s fades away at once, with its hum and slow notes');
+  assert.equal(g.run('mBus.parts[2].delayTime.value'), 0.3, 'its echo: half a beat of the battle song');
+  g.run("globalThis.__battle = mBus; musicStop(); musicStart()");
+  assert.ok(g.run('mBus !== __battle && __battle.gain.target === 0'), 'music started again (back from another app) starts afresh, with nothing left over');
 });
 
 test('your turn is laid out as a question is (what to do where the answers go, the bottom row kept), and an answer shows its English too', async () => {

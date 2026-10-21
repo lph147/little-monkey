@@ -454,7 +454,7 @@ async function buy(i, face){   // buying something from the shop by asking for i
 async function lookAt(t){   // the card for the word you learn by looking at a tile
   const w = lookWord(t);
   const note = w === t.word ? t.note || (lvl(w) === 0 ? t.newNote : '') : '';
-  await showNotice(w, note ? {note} : {});
+  await showNotice(w, note ? {note:fill(note)} : {});
   if (t.message) toast(t.message);
 }
 async function gather(t, x, y){   // pick up something for a request, such as fruit or water

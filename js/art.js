@@ -224,6 +224,40 @@ function waterBase(g, X, Y, x, y){
     if (dx === 1){ R(g, X+14, Y, 2, T, '#2C6B9E'); }
   });
 }
+// Writing in the world is real Chinese, never made-up squiggles, so there's more for you to read (decided 21 October
+// 2026): the school's sign (学校), the cave's stone tablet (水帘洞) and the numbers on the blackboard. Each character is
+// drawn by hand in pixels ('#' is ink); writing something new needs its characters drawn here (a test checks).
+const HANZI = {
+  '学': [".#..#...#.", "..#..#.#..", "##########", "#........#", "..######..", "......#...", ".....#....", "##########", ".....#....", ".....#....", "...###...."],
+  '校': ["..#....#...", "..#.....#..", "####.######", "..#...#..#.", ".###.#....#", ".##.#.#..#.", "#.#....##..", "..#....##..", "..#...#..#.", "..#..#....#", "..#.#......"],
+  '水': ["....#....", "....#....", "....#..#.", "###.#.#..", "..#.##...", "..#.##...", ".#..#.#..", "#...#..#.", "...##...#"],
+  '帘': ["....#....", "#########", "#..#.#..#", "..#...#..", ".#..#..#.", ".#######.", ".#..#..#.", ".#..#.##.", "....#...."],
+  '洞': ["#..#######", ".#.#.....#", "...#.###.#", "#..#.....#", ".#.#.###.#", "...#.#.#.#", ".#.#.###.#", "#..#.....#", "#..#....##"],
+  '一': [".......", ".......", ".......", "#######", ".......", ".......", "......."],
+  '二': [".......", ".#####.", ".......", ".......", ".......", "#######", "......."],
+  '三': [".#####.", ".......", ".......", "..###..", ".......", ".......", "#######"],
+  '四': ["#######", "#.#.#.#", "#.#.#.#", "#.#.#.#", "##...##", "#.....#", "#######"],
+  '五': ["#######", "..#....", "..#....", ".#####.", ".#...#.", ".#...#.", "#######"],
+  '六': ["...#...", "....#..", "#######", ".......", "..#.#..", ".#...#.", "#.....#"],
+  '七': ["..#....", "..#..##", "..###..", "###....", "..#....", "..#...#", "..#####"],
+  '八': ["..#.#..", "..#.#..", "..#..#.", ".#...#.", ".#....#", "#.....#", "......."],
+  '九': ["..#....", "..#....", "#####..", "..#.#..", "..#.#..", ".#..#.#", "#...###"],
+  '十': ["...#...", "...#...", "...#...", "#######", "...#...", "...#...", "...#..."],
+};
+// Writes text in HANZI's characters from X, Y, in ink: across, gap pixels apart, or down (each centred in the column).
+function write(g, text, X, Y, ink, {gap = 1, down = false} = {}){
+  const col = Math.max(...[...text].map(c => HANZI[c][0].length));
+  for (const c of text){
+    const rows = HANZI[c], x0 = down ? X + Math.round((col - rows[0].length) / 2) : X;
+    rows.forEach((row, r) => { for (let i = 0; i < row.length; i++) if (row[i] === '#') R(g, x0 + i, Y + r, 1, 1, ink); });
+    if (down) Y += rows.length + gap; else X += rows[0].length + gap;
+  }
+}
+function writtenSize(text, gap = 1, down = false){   // how wide and tall write() makes it: [w, h]
+  const gs = [...text].map(c => HANZI[c]), across = gs.reduce((n, r) => n + r[0].length, 0) + gap * (gs.length - 1);
+  const along = gs.reduce((n, r) => n + r.length, 0) + gap * (gs.length - 1);
+  return down ? [Math.max(...gs.map(r => r[0].length)), along] : [across, Math.max(...gs.map(r => r.length))];
+}
 // The Water Curtain Cave: rock walls, a stone floor, and the troop's stone things.
 function caveFloor(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7D7262');
@@ -272,12 +306,13 @@ function stoneBowl(g, X, Y, x, y){   // a big stone bowl
   R(g, X+5, Y+13, 7, 1, CAVE_OUT);                                                                                      // its foot
   oval(g, X+8, Y+7, 7, 2, CAVE_OUT); oval(g, X+8, Y+7, 6, 1, '#E2DCCF'); R(g, X+4, Y+7, 9, 1, '#4A443B');               // the rim, and inside
 }
-function stoneTablet(g, X, Y, x, y){   // a stone tablet with the cave's name carved down it (水帘洞), on a plinth
-  caveFloor(g, X, Y, x, y);
-  R(g, X+1, Y+14, 14, 2, CAVE_SHADOW);
-  R(g, X+1, Y+11, 14, 4, CAVE_OUT); R(g, X+2, Y+12, 12, 2, STONE_FRONT); R(g, X+2, Y+12, 12, 1, STONE);   // the plinth
-  R(g, X+4, Y, 8, 12, CAVE_OUT); R(g, X+5, Y+1, 6, 10, STONE); R(g, X+5, Y+1, 2, 10, STONE_LIGHT); R(g, X+10, Y+1, 1, 10, STONE_FRONT);
-  [1, 4, 7].forEach(r => { R(g, X+7, Y+r+1, 2, 2, '#5E574C'); R(g, X+6, Y+r+2, 4, 1, '#5E574C'); });   // three carved characters
+function stoneTablet(g, X, Y, says){   // a stone tablet on a plinth, with what it says carved down it (the cave's name, 水帘洞): two squares tall, from its bottom square (X, Y)
+  const [tw, th] = writtenSize(says, 1, true), w = tw + 6, L = X + 8 - Math.floor(w / 2), top = Y + 11 - (th + 3), h = Y + 11 - top;
+  R(g, X-1, Y+15, 18, 1, CAVE_SHADOW);
+  R(g, L + 1, top, w - 2, h, CAVE_OUT); R(g, L, top + 1, w, h - 1, CAVE_OUT);   // its outline, its top corners rounded
+  R(g, L + 1, top + 1, w - 2, h - 1, STONE); R(g, L + 1, top + 1, 1, h - 1, STONE_LIGHT); R(g, L + w - 2, top + 1, 1, h - 1, STONE_FRONT);
+  write(g, says, L + 3, top + 2, '#5E574C', {down: true});
+  R(g, X-1, Y+11, 18, 4, CAVE_OUT); R(g, X, Y+12, 16, 2, STONE_FRONT); R(g, X, Y+12, 16, 1, STONE);   // the plinth, a little wider
 }
 // The mountain path's ground: long grass (the meadow's tall grass, a shade darker: wild animals live in it), ledges
 // (you hop down them), bushes and boulders along its edges, and a fallen tree.
@@ -388,14 +423,11 @@ function classWindow(g, o){   // a paper window in the back wall, as tall as its
   for (let j = 5; j < h - 1; j += 5) R(g, X+1, Y+j, w-2, 1, '#8A5A32');
   dot(g, X+2, Y+2, '#FFFFFF');
 }
-function blackboard(g, o){   // the blackboard, as big as its block: a wooden frame, chalk writing, and a tray with chalk
+function blackboard(g, o){   // the blackboard, as big as its block: a wooden frame, the numbers in chalk, and a tray with chalk
   const X = o.x*T, Y = o.y*T + 4, w = o.w*T, h = o.h*T - 10;
   R(g, X, Y, w, h, '#7A5230'); R(g, X+2, Y+2, w-4, h-4, CLASS.chalk);
-  for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++){   // lines of chalk writing
-    if (rnd(r, c, 994) < .25) continue;
-    const lx = X + 6 + c * Math.floor((w - 12) / 4), ly = Y + 5 + r * 6, lw = 6 + Math.floor(rnd(r, c, 995) * 10);
-    R(g, lx, ly, Math.min(lw, X + w - 6 - lx), 1, r === 0 ? '#E8F0E8' : '#C6D6C6'); if (rnd(r, c, 996) < .5) R(g, lx + 2, ly + 2, 3, 1, '#C6D6C6');
-  }
+  const [nw, nh] = writtenSize('一二三四五六七八九十', 3);
+  write(g, '一二三四五六七八九十', X + Math.round((w - nw) / 2), Y + Math.round((h - nh) / 2), '#E8F0E8', {gap: 3});   // the numbers, in the middle
   R(g, X+1, Y+h, w-2, 2, '#5A3A20'); R(g, X + Math.round(w * .7), Y+h-1, 3, 1, '#FFFFFF'); R(g, X + Math.round(w * .3), Y+h-1, 2, 1, '#F4D0D0');   // the tray, with chalk
 }
 function classTable(g, X, Y, x, y, top, front, book){   // a table as long as its row (the teacher's, or a pupils' desk)
@@ -463,7 +495,7 @@ const LOOKS = {
   stoneBed:  (g,X,Y,x,y) => stoneBed(g,X,Y,x,y),
   stoneTable:(g,X,Y,x,y) => stoneTable(g,X,Y,x,y),
   stoneBowls:(g,X,Y,x,y) => stoneBowl(g,X,Y,x,y),
-  tablet:    (g,X,Y,x,y) => stoneTablet(g,X,Y,x,y),
+  tablet:    (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),   // (the stone tablet is a big object, taller than its square: OBJECT_ART)
   curtain:   (g,X,Y,x,y) => { R(g,X,Y,T,T,'#8FD0EE'); },   // the falling water is animated in js/draw.js
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
@@ -485,7 +517,7 @@ const LOOKS = {
   }
 };
 
-/* ---- big objects: trees, the fruit trees, your stone, the rocks and the stall ----
+/* ---- big objects: trees, the fruit trees, your stone, the rocks, the stall and the cave's stone tablet ----
    They're bigger than the squares they stand on: a tree's leaves reach up into the square above, and a block of
    forest two squares by two is one big tree. Each is drawn into two pictures of its own (OBJECT_PIECES, below),
    which js/draw.js puts on the screen every frame, from the top of the map down so nearer ones overlap: its base
@@ -533,6 +565,7 @@ const OBJECT_ART = {
   stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4),
   pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
+  tablet: (g, o) => stoneTablet(g, o.x*T, (o.y + o.h - 1)*T, tileAt(o.x, o.y).sign.says.zh),   // (standing on its bottom square, with what it says carved down it)
   crackedRock: (g, o) => {   // a rock with a deep crack down it, and moss on top: one hit with your stick will break it
     const X = o.x*T, Y = o.y*T;
     boulder(g, X+8, Y+15, 7, 6, false);
@@ -586,7 +619,7 @@ function woodLine(g, x0, y0, x1, y1){   // a beam from (x0, y0) to (x1, y1): dar
 }
 // The school, once the troop has built it, over its frame: a footing of the small stones, plank walls between wooden
 // pillars, paper windows with a lattice, a double door in the middle (over the door square), a grey tiled roof whose eaves
-// curl up at the ends, red lanterns, and a sign over the door. built: how far it's got (in the scene of the troop building
+// curl up at the ends, red lanterns, and a sign over the door saying 学校. built: how far it's got (in the scene of the troop building
 // it): its walls and roof, from 0 to 1, each going up from the bottom, and whether the sign and lanterns are up. Its
 // paint: the parts the troop has painted (the colour lessons), each with its colour word (walls, pillars, windows, door,
 // roof, and blossom, peach blossom painted under the windows); and wipe: the part being painted (in the scene of it),
@@ -655,8 +688,9 @@ function schoolHouse(g, X, Y, W, H, built = {walls:1, roof:1, sign:true}){
     for (const [ex, d] of [[mid - W / 2 + 12, -1], [mid + W / 2 - 13, 1]]){ R(g, ex + d, ridge - 4, 1, 3, t[0]); R(g, ex + 2 * d, ridge - 5, 1, 2, t[0]); }
   }));
   if (built.sign){
-    R(g, mid - 9, wallTop + 2, 18, 8, '#5A1A14'); R(g, mid - 8, wallTop + 3, 16, 6, '#9E2B25'); R(g, mid - 8, wallTop + 3, 16, 1, '#E2B84A');   // the sign, with 学校 on it
-    for (const cx of [mid - 5, mid + 1]){ R(g, cx, wallTop + 5, 4, 1, '#F4E3B0'); R(g, cx + 1, wallTop + 4, 1, 4, '#F4E3B0'); R(g, cx + 3, wallTop + 6, 1, 2, '#F4E3B0'); }
+    const [tw, th] = writtenSize('学校', 2), pw = tw + 6, ph = th + 5, px = mid - Math.floor(pw / 2), py = wallTop - 7;   // the sign, under the eaves, over the door
+    R(g, px, py, pw, ph, '#5A1A14'); R(g, px + 1, py + 1, pw - 2, ph - 2, '#9E2B25'); R(g, px + 1, py + 1, pw - 2, 1, '#E2B84A');
+    write(g, '学校', px + 3, py + 3, '#F4E3B0', {gap: 2});
     for (const lx of [X + 6, X + W - 9]){ R(g, lx + 1, wallTop + 3, 1, 2, '#4A2C17'); oval(g, lx + 1, wallTop + 7, 2, 3, '#B0231C'); R(g, lx, wallTop + 6, 3, 1, '#E0443C'); R(g, lx, wallTop + 4, 3, 1, GOLD_DOT); R(g, lx + 1, wallTop + 11, 1, 2, GOLD_DOT); }   // red lanterns
   }
 }
@@ -691,7 +725,7 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
 const ROW_OBJECTS = ['rocks', 'stall'];   // side by side, these make one object as wide as the row
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow'];   // and these one object as big as the block of them (such as the school's frame on its plot)
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
 // stall letters one stall; a block of frame letters is one frame; anything else stands on its own square. They come from the top of the map down, the order they're drawn in.

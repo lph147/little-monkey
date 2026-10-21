@@ -463,8 +463,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "ZzzzzzzzzzzzzzzZ",
         "ZzzzzzzzzzzzzzzZ",
         "ZzzzzzzzzzzzzzzZ",
-        "ZzzzzzzzzzzzzzzZ",
         "ZzzzzLzzzzzzzzzZ",
+        "ZzzzzLzzzzzzzzzZ",   // the stone tablet, two squares tall, with 水帘洞 carved down it
         "ZZZZZZCCCZZZZZZZ"
       ]
     },
@@ -501,7 +501,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "Yggggeeeeeeee4gg.gOOOggggggggTgY",
         "YgTggeeeeeeeeggg.gOOOggTgggQgggY",
         "Yggggggggggggggg.ggggTgggggggggY",
-        "YWWWWWWWWWWWWWWWkWWWWWWWWWWWWWWY",
+        "WWWWWWWWWWWWWWWWkWWWWWWWWWWWWWWW",   // the stream, flowing in from the west and out through the trees to the east
         "YYYYYYYYYYYYYYYY.YYYYYYYYYYYYYYY",
         "YYYYYYYYYYYYYYYY.YYYYYYYYYYYYYYY",
         "YYYYYYYYYYYYYYYYuYYYYYYYYYYYYYYY"
@@ -572,7 +572,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         '#': {look:'classWall'},
         '=': {look:'wallFace'},
         '+': {look:'classWindow'},
-        'b': {look:'blackboard', landmark:true, onLook:[{do:[{message:'The blackboard, with the teacher’s chalk writing on it.'}]}]},
+        'b': {look:'blackboard', landmark:true, onLook:[{do:[{message:'The blackboard: the teacher has written the numbers on it, {一} to {十}.'}]}]},   // (the numbers in chalk: js/art.js)
         't': {look:'teacherTable', word:'桌子', landmark:true, note:'The teacher’s table, with books and a cup on it.'},
         'd': {look:'desk', word:'桌子', note:'A desk for two, with books on it.'},
         '_': {look:'classFloor', walk:true},
@@ -676,7 +676,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'u': {look:'bush', landmark:true, onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
     's': {look:'plot', walk:true, becomes:[{if:{school:{atLeast:1}}, to:'t'}, {if:{build:{atLeast:2}}, to:'a'}]},   // the school's plot: ground marked out with string and stakes
     'a': {look:'frame', landmark:true, onLook:[{do:[{message:'The frame of the school is up. The troop is busy building.'}]}]},   // (the school going up on it)
-    't': {look:'school', word:'学校', landmark:true, note:'The troop’s school. Walk in through its door.'},   // (and then the school itself: its door is a way in)
+    't': {look:'school', word:'学校', landmark:true, note:'The troop’s school: the sign over its door says {学校}. Walk in through its door.'},   // (and then the school itself: its door is a way in)
     'd': {look:'plot', walk:true},   // the new shop's
     'h': {look:'plot', walk:true},   // the hive's
     'e': {look:'plot', walk:true},   // the garden's

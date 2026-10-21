@@ -529,3 +529,28 @@ test('a place’s own songs, backdrop, gloom and sounds, and every sound a step 
   }
   for (const [where, s] of allSteps().filter(([, s]) => s.sound)) assert.ok(SFX.includes(s.sound), `${where}: there's no sound ${s.sound} (js/sound.js)`);
 });
+
+test('writing in the world is real Chinese, in characters drawn for it: the school’s sign, the cave’s tablet, the blackboard', () => {
+  const g = loadGame({save: {version: 24, started: true}});
+  const HANZI = JSON.parse(g.run('JSON.stringify(HANZI)'));
+  for (const [c, rows] of Object.entries(HANZI)){
+    assert.ok(rows.length >= 7 && rows.every(r => r.length === rows[0].length && /^[#.]+$/.test(r)), `${c} (js/art.js): rows of # and ., all as long, at least 7 tall`);
+    assert.ok(rows.join('').includes('#'), `${c} has ink`);
+  }
+  g.run("globalThis.__ink = []; write({fillRect(x, y){ __ink.push([x, y]); }}, '学', 10, 20, '#000')");
+  const where = HANZI['学'].flatMap((row, y) => [...row].flatMap((c, x) => c === '#' ? [[10 + x, 20 + y]] : []));
+  assert.deepEqual(JSON.parse(g.run('JSON.stringify(__ink)')), where, 'write() puts ink just where the character’s # are');
+  // what each thing with writing on it writes, as it's drawn
+  g.run(`globalThis.__wrote = []; const write0 = write; write = (g, text, ...rest) => { __wrote.push(text); return write0(g, text, ...rest); };
+    const pen = {fillRect(){}, save(){}, restore(){}, beginPath(){}, rect(){}, clip(){}};
+    schoolHouse(pen, 0, 0, 128, 64, {walls: 1, roof: 1, sign: true});
+    blackboard(pen, {x: 4, y: 0, w: 7, h: 2});
+    const sofar = __wrote.length; S.pos = {place: 'cave', x: 8, y: 8, dir: 'down'}; placePlayer(); __wrote.length = sofar;   // (going in draws it too)
+    for (const o of mapObjects()) if (o.look === 'tablet') OBJECT_ART.tablet(pen, o);`);
+  const wrote = JSON.parse(g.run('JSON.stringify(__wrote)'));
+  assert.deepEqual(wrote, ['学校', '一二三四五六七八九十', '水帘洞'], 'the school’s sign, the blackboard, the cave’s tablet');
+  for (const text of wrote){
+    for (const c of text) assert.ok(HANZI[c], `${c} is drawn in HANZI (js/art.js)`);
+    assert.ok(BANK[text] || [...text].every(c => BANK[c]) || Object.values(AREA.places).some(p => p.name.zh === text), `${text}: a word, words, or a place’s name, never made up`);
+  }
+});

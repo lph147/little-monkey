@@ -583,7 +583,7 @@ function drawBuildingSchool(t, now){
   if (t >= 9) for (let i = 0; i < 10; i++){   // sparkles round the sign
     const a = i / 10 * Math.PI * 2 + now / 1500, tw = Math.sin(now / 170 + i * 2);
     if (tw < 0) continue;
-    const sx = Math.round(120 + Math.cos(a) * 30), sy = Math.round(26 + Math.sin(a) * 12);
+    const sx = Math.round(120 + Math.cos(a) * 36), sy = Math.round(53 + Math.sin(a) * 20);   // (round its sign: 学校)
     R(b, sx, sy, 1, 1, '#FFF6D8'); if (tw > .7){ R(b, sx - 1, sy, 3, 1, '#FFE27A'); R(b, sx, sy - 1, 1, 3, '#FFE27A'); }
   }
 }

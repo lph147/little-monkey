@@ -96,8 +96,9 @@ const SFX = {
    then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water. The pine wood's
    (pineWood): slower still, quiet and gloomy, in a minor key, on the xun and then soft bells, with a hum, far-apart plinks
    and the wind sighing; and its battle song (pineBattle): its own tune, slower, on the xun and then the dizi, over a
-   heartbeat of a drum and a low guzheng. A place can have its own song (the content's music) and battle song (battleMusic); otherwise
-   they're home's and battle. */
+   heartbeat of a drum and a low guzheng, all in the tune's five notes. A place can have its own song (the content's music)
+   and battle song (battleMusic); otherwise they're home's and battle. Only one song sounds at a time: changing it stops
+   the last, with all it was still playing (songBus). */
 const BPM = 72, BEAT = 60 / BPM, LOOP_BEATS = 64;
 const MEL = [[76,1.5],[79,.5],[81,1],[84,.5],[81,.5], [79,2],[76,1],[79,1], [74,.5],[76,.5],[79,1],[76,1],[74,.5],[72,.5], [74,4],
              [76,1.5],[79,.5],[81,1],[79,.5],[81,.5], [84,2],[86,1],[84,.5],[81,.5], [79,.5],[81,.5],[79,.5],[76,.5],[74,1],[76,1], [69,4],
@@ -154,17 +155,19 @@ const CAVE_EVENTS = (() => {
 })();
 // The pine wood's battle song, unlike the other (decided 21 October 2026: the first, the battle tune in a minor key, was
 // too like it to notice): its own tune, slower, low on the xun and then on the dizi, over a heartbeat of a drum and a low
-// guzheng, with no cheerful wood block. A little tense, never frightening.
+// guzheng rocking on open fifths, with no cheerful wood block. A little tense, never frightening. Every note is one of the
+// tune's own five (A C D E G), on roots that suit each bar, so nothing clashes with it (the guzheng had B flat, F and B
+// in it, up among the tune's notes, and it sounded like two songs at once).
 const PINE_BATTLE_MEL = [[57,1],[60,.5],[62,.5],[64,1],[62,1], [60,.5],[57,.5],[55,1],[57,2],
                          [64,1],[67,.5],[69,.5],[67,1],[64,1], [62,.5],[64,.5],[62,1],[57,2],
                          [69,1],[72,.5],[74,.5],[72,1],[69,1], [67,.5],[69,.5],[67,1],[64,2],
                          [62,1],[64,.5],[62,.5],[60,1],[57,1], [55,1],[57,1],[57,2]];
-const PINE_BATTLE_ROOTS = [45,45,40,45, 45,43,40,45];
+const PINE_BATTLE_ROOTS = [45,45,48,43, 45,48,43,45];   // A A C G, A C G A
 const PINE_BATTLE_EVENTS = (() => {
   const ev = []; let bt = 0;
   PINE_BATTLE_MEL.forEach(([m,d]) => { ev.push({b:bt, m, d, k:'mel'}); bt += d; });
   PINE_BATTLE_ROOTS.forEach((r,i) => {
-    [r+12, r+15, r+19, r+15, r+12, r+15, r+19, r+22].forEach((m,j) => ev.push({b:i*4 + j*.5, m, k:'roll'}));   // quavers, low
+    [r, r+7, r+12, r+7, r, r+7, r+12, r+7].forEach((m,j) => ev.push({b:i*4 + j*.5, m, k:'roll'}));   // quavers, low, under the tune
     ev.push({b:i*4, m:r, k:'bass'}); ev.push({b:i*4 + 2, m:r + 7, k:'bass'});
     [[0, .07], [.5, .045], [2, .06], [2.5, .04]].forEach(([o, v]) => ev.push({b:i*4 + o, k:'drum', v}));   // a heartbeat
   });
@@ -185,15 +188,24 @@ const PINE_EVENTS = (() => {
   return ev.sort((a,c) => a.b - c.b);
 })();
 const midi = m => 440 * Math.pow(2, (m - 69) / 12);
-let mBus = null, mTimer = null, mStart = 0, mIdx = 0, mLoop = 0, noiseBuf = null;
+// The music's volume (mMain), and the song playing's own way out to it (mBus: its notes go into it, and its echo, half a
+// beat later, into mBus.echoIn). Each song gets a new mBus, and the last one fades away at once with everything it was
+// still playing, so two songs never sound together (decided 21 October 2026: the pine wood's low hum, ten seconds long,
+// and its slow notes went on under its battle song).
+let mMain = null, mBus = null, mTimer = null, mStart = 0, mIdx = 0, mLoop = 0, noiseBuf = null;
 function musicGraph(a){
-  if (mBus) return;
-  mBus = a.createGain(); mBus.gain.value = 0; mBus.connect(a.destination);
-  const dl = a.createDelay(1); dl.delayTime.value = 60 / SONGS[song].bpm * .5; mBus.delay = dl;   // an echo, half a beat later
-  const fb = a.createGain(); fb.gain.value = SONGS[song].echo[0]; const wet = a.createGain(); wet.gain.value = SONGS[song].echo[1]; mBus.fb = fb; mBus.wet = wet;
-  const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200;
-  mBus.echoIn = a.createGain(); mBus.echoIn.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(mBus);
+  if (mMain) return;
+  mMain = a.createGain(); mMain.gain.value = 0; mMain.connect(a.destination);
   noiseBuf = a.createBuffer(1, a.sampleRate * .3, a.sampleRate); const ch = noiseBuf.getChannelData(0); for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+}
+function songBus(a, name){
+  const old = mBus, sg = SONGS[name];
+  if (old){ old.gain.setTargetAtTime(0, a.currentTime, .03); setTimeout(() => old.parts.forEach(n => n.disconnect()), 1000); }
+  mBus = a.createGain(); mBus.connect(mMain);
+  const dl = a.createDelay(1), fb = a.createGain(), lp = a.createBiquadFilter(), wet = a.createGain();
+  dl.delayTime.value = 60 / sg.bpm * .5; fb.gain.value = sg.echo[0]; wet.gain.value = sg.echo[1]; lp.type = 'lowpass'; lp.frequency.value = 2200;
+  mBus.echoIn = a.createGain(); mBus.echoIn.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(mBus);
+  mBus.parts = [mBus, mBus.echoIn, dl, fb, lp, wet];
 }
 function zheng(a, f, t, v, len, bend){
   const o = a.createOscillator(), o2 = a.createOscillator(), flt = a.createBiquadFilter(), g = a.createGain(), g2 = a.createGain();
@@ -347,7 +359,7 @@ const SONGS = {
   battle: {bpm:116, beats:32, events:BATTLE_EVENTS, play:playBattleEvent, echo:[.32, .3]},
   cave: {bpm:54, beats:32, events:CAVE_EVENTS, play:playCaveEvent, echo:[.52, .55]},
   pineWood: {bpm:50, beats:32, events:PINE_EVENTS, play:playPineEvent, echo:[.45, .45]},
-  pineBattle: {bpm:100, beats:32, events:PINE_BATTLE_EVENTS, play:playPineBattleEvent, echo:[.4, .34]}
+  pineBattle: {bpm:100, beats:32, events:PINE_BATTLE_EVENTS, play:playPineBattleEvent, echo:[.26, .22]}   // (less echo, so the tune stays clear)
 };
 const placeSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].music]) ? PLACES[PLACE].music : 'home';   // the place you're in's own song, if it has one
 const battleSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].battleMusic]) ? PLACES[PLACE].battleMusic : 'battle';   // and its own battle song
@@ -367,28 +379,27 @@ function musicTick(){
 function playSong(name){
   if (song === name || !SONGS[name]) return;
   song = name;
-  if (!mTimer || !AC || !mBus) return;
+  if (!mTimer || !AC || !mMain) return;
   const now = AC.currentTime;
   mStart = now + .25; mIdx = 0; mLoop = 0;
-  mBus.delay.delayTime.setValueAtTime(60 / SONGS[name].bpm * .5, now);
-  mBus.fb.gain.setValueAtTime(SONGS[name].echo[0], now + .2); mBus.wet.gain.setValueAtTime(SONGS[name].echo[1], now + .2);
-  mBus.gain.cancelScheduledValues(now); mBus.gain.setTargetAtTime(0, now, .04); mBus.gain.setTargetAtTime(musicLevel(), now + .25, .2);
+  songBus(AC, name);   // (the last song stops, with all it was playing)
+  mMain.gain.cancelScheduledValues(now); mMain.gain.setTargetAtTime(0, now, .04); mMain.gain.setTargetAtTime(musicLevel(), now + .25, .2);
 }
 function musicStart(){
   if (!S.music || mTimer) return;
   if (!isBattleSong(song)) song = placeSong();
   const a = getAC(); if (!a) return;
-  musicGraph(a);
+  musicGraph(a); songBus(a, song);   // (from its start: anything left from before is gone)
   mStart = a.currentTime + .15; mIdx = 0; mLoop = 0;
-  mBus.gain.cancelScheduledValues(a.currentTime); mBus.gain.setTargetAtTime(musicLevel(), a.currentTime, .8);
+  mMain.gain.cancelScheduledValues(a.currentTime); mMain.gain.setTargetAtTime(musicLevel(), a.currentTime, .8);
   mTimer = setInterval(musicTick, 50); musicTick();
 }
 function musicStop(){
   if (!mTimer) return; clearInterval(mTimer); mTimer = null;
-  if (AC && mBus){ mBus.gain.cancelScheduledValues(AC.currentTime); mBus.gain.setTargetAtTime(0, AC.currentTime, .3); }
+  if (AC && mMain){ mMain.gain.cancelScheduledValues(AC.currentTime); mMain.gain.setTargetAtTime(0, AC.currentTime, .3); }
 }
 const musicLevel = () => speaking ? .28 : .7;
-function duck(){ if (AC && mBus && mTimer){ mBus.gain.cancelScheduledValues(AC.currentTime); mBus.gain.setTargetAtTime(musicLevel(), AC.currentTime, .25); } }
+function duck(){ if (AC && mMain && mTimer){ mMain.gain.cancelScheduledValues(AC.currentTime); mMain.gain.setTargetAtTime(musicLevel(), AC.currentTime, .25); } }
 document.addEventListener('visibilitychange', () => { if (document.hidden) musicStop(); else if (mode !== 'title') musicStart(); });
 
 /* ================= SPEECH ================= */
