@@ -483,6 +483,42 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(path([[5, 23.5], [4, 20]], .7), '#F4F0E8');                                // a tusk
     p.eye(8, 17, '#1E1A16', 2);
     p.flat(path([[29.5, 15], [31, 13]], .5), '#3E2A1C');                               // tail
+  },
+  '鹿': p => {   // deer: a sika deer, standing, brown with white spots and branching antlers (unlike the goat: white, curled horns)
+    const D = '#C27A3E', LT = {light: '#DE9E62', dark: '#9A5A28'}, ANT = '#9C7B55';
+    p.fill(or(Rc(15.5, 20, 2, 9), Rc(26, 20, 2, 9)), '#8E5226');                           // far legs
+    p.fill(O(28.4, 14.6, 1.7, 2.1), '#F4F0E8');                                             // white tail
+    p.fill(O(20, 17, 8.6, 5), D, LT);                                                       // body
+    p.flat(and(O(20, 17, 8.6, 5), Rc(0, 20, 32, 3)), '#E9C79C');                             // pale belly
+    [[15, 14], [18, 13], [21, 13], [24, 14], [17, 16], [20, 16], [23, 16], [26, 16]].forEach(([x, y]) => p.dot(x, y, '#FBF1DE'));   // spots
+    p.fill(or(Rc(13, 20, 2, 10), Rc(23.5, 20, 2, 10)), D, {...LT, edge: true});            // near legs
+    p.flat(or(Rc(13, 29, 2, 1), Rc(23.5, 29, 2, 1), Rc(15.5, 28, 2, 1), Rc(26, 28, 2, 1)), '#3A2A1E');   // hooves
+    p.fill(Pg([[9.5, 10], [13, 7.5], [16.5, 14.5], [12.5, 16.5]]), D, LT);                   // neck
+    p.fill(path([[8.6, 6.5], [7.6, 3.4], [5.6, 1]], .6), ANT); p.fill(path([[7.8, 3.8], [4.8, 3.6]], .55), ANT);      // antlers
+    p.fill(path([[10.4, 6.3], [11.8, 3.2], [13.8, 1]], .6), ANT); p.fill(path([[11.6, 3.6], [14.6, 3.8]], .55), ANT);
+    p.fill(Pg([[11.2, 7.4], [16.5, 5.6], [13.4, 9.4]]), D, LT);                              // ear
+    p.fill(O(9.2, 9, 3.6, 3.1), D, {...LT, edge: true});                                     // head
+    p.fill(O(5.6, 10.6, 2.6, 1.9), D, {...LT, edge: true});                                  // muzzle
+    p.dot(3, 10, '#2A1E16'); p.dot(3, 11, '#2A1E16');                                        // nose
+    p.eye(8, 8);
+  },
+  '狼': p => {   // wolf: grey, sitting, howling with its head up (unlike the fox: orange, sitting facing you)
+    const G = '#8A9199', LT = {light: '#B0B7BE', dark: '#5E656C'}, PALE = '#DCE0E3';
+    p.fill(path([[21, 28.6], [26.5, 28], [30.4, 24.5]], 2.3), G, LT);                        // bushy tail
+    p.flat(O(30, 24.6, 1.4, 1.6), '#5F666E');                                                // its dark tip
+    p.fill(O(20, 23, 6.6, 6.4), G, LT);                                                      // haunch
+    p.fill(Pg([[10, 14], [16.5, 10], [24.5, 19], [21, 29.5], [12, 29.5]]), G, LT);           // body
+    p.flat(and(Pg([[10, 14], [16.5, 10], [24.5, 19], [21, 29.5], [12, 29.5]]), not(Rc(0, 15.5, 19, 20))), '#5F666E');   // its darker back
+    p.fill(or(Rc(11.6, 20, 2.6, 10), Rc(15.6, 21, 2.6, 9)), G, {...LT, edge: true});         // front legs
+    p.flat(O(13.2, 19, 2.4, 4.6), PALE);                                                     // pale chest
+    p.fill(Pg([[8.6, 10.6], [3, 2.4], [5.4, .6], [14, 7.2]]), G, LT);                        // long snout, pointing up
+    p.fill(Pg([[13, 7], [17.4, 1.6], [18.4, 9.6]]), G, {...LT, edge: true});                 // pointed ear
+    p.flat(Pg([[14.6, 6.4], [17, 3.8], [17.3, 8]]), '#4A4F55');                              // inside it
+    p.fill(O(12.4, 10, 4.4, 4), G, {...LT, edge: true});                                     // head
+    p.flat(Pg([[9.2, 12], [5.4, 6.4], [7.2, 5.8], [11, 10.6]]), PALE);                       // pale throat
+    p.flat(path([[8.3, 7.6], [5.2, 2.6]], .5), '#2A2A2E');                                   // its open mouth, howling
+    p.dot(3, 1, '#2A2A2E'); p.dot(4, 1, '#2A2A2E'); p.dot(3, 2, '#2A2A2E');                 // nose
+    p.flat(path([[10.4, 7.6], [12.6, 7]], .45), '#2A2A2E');                                  // eye, shut tight
   }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops

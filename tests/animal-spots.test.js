@@ -9,11 +9,13 @@ const get = (game, expr) => JSON.parse(game.run(`JSON.stringify(${expr})`));
 const ready = () => loadGame({save: {version: 10, started: true, areas: {1: {elder: 2}},
   w: Object.fromEntries(['动物', '石头', '山', '树', '花', '草'].map(w => [w, {lv: 1, due: 0, ok: 0}]))}});   // animals appear
 
-test('animals with a spot live where you can face them, on a tile you can\'t walk on', () => {
-  const game = loadGame();
+test('animals with a spot live where you can face them: up a tree, on a cliff, or standing in a clearing, where you can\'t walk through them', () => {
+  const game = ready();
   for (const a of get(game, 'ANIMALS.filter(a => a.at)')){
     const [x, y] = a.at;
-    assert.equal(get(game, `!!tileAt(${x}, ${y}).walk`), false, `${a.hz} should be on a tree or cliff, not where you walk`);
+    game.run(`setPlace('${a.place}')`);
+    assert.equal(get(game, `walkable(${x}, ${y})`), false, `${a.hz} should be in the way, not somewhere you walk`);
+    assert.equal(get(game, `animalAt(${x}, ${y}).id`), a.id);
     assert.ok(get(game, `[[0,1],[0,-1],[1,0],[-1,0]].some(([dx, dy]) => walkable(${x} + dx, ${y} + dy))`), `you should be able to stand next to ${a.hz}`);
   }
 });

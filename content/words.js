@@ -64,6 +64,8 @@ const WORD_BANK = {
   '蜘蛛': {py:'zhīzhū', en:'spider', pic:'🕷️', area:1, category:'animals'},
   '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals'},   // (caught in the long grass until 21 October 2026; in chapter 1, a friend)
   '野猪': {py:'yězhū', en:'wild boar', pic:'🐗', area:1, category:'animals'},
+  '鹿': {py:'lù', en:'deer', pic:'🦌', area:1, category:'animals'},   // (chapter 1: a friend in the pine wood)
+  '狼': {py:'láng', en:'wolf', pic:'🐺', area:1, category:'animals'},   // (chapter 1: in the pine wood's long grass)
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
   '桥': {py:'qiáo', en:'bridge', pic:'🌉', area:1, category:'places'},
   '床': {py:'chuáng', en:'bed', pic:'🛏️', area:1, category:'items'},

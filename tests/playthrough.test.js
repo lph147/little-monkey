@@ -284,7 +284,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(25, 0, 'up');
   await act('arrive(25, 0).then(runEvents)', 'going up through the bushes he cleared, to the pine wood');
   assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
-  await pressAt(10, 10, 'right', 'meeting a squirrel in the pine wood');
+  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [17, 26], 'at the way in, at the bottom');
+  await pressAt(18, 21, 'right', 'meeting a squirrel in the clearing where the paths meet');
   assert.ok(get('__said').includes('你要木头吗？'), 'it asks if you want wood');
   await pressAt(3, 3, 'up', 'knocking down a dry, dead pine with your stick');
   assert.ok(knows('木头'), 'the first piece of wood teaches 木头');
@@ -299,8 +300,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(19, 3, 'up', 'knocking down the dead pine in the clearing');
   await pressAt(18, 3, 'up', 'picking up the small stone in the clearing');
   assert.deepEqual(area().holding, {wood: '木头', stones: '石头'}, 'three of each: you have them all');
-  stand(10, 13, 'down');
-  await act('arrive(10, 13).then(runEvents)', 'going back down to the home ground');
+  await pressAt(29, 3, 'right', 'meeting the deer in the sunny clearing in the north-east');
+  assert.ok(knows('鹿') && get('S.friends').includes('deer'), 'the deer teaches 鹿, and becomes your friend');
+  assert.equal(run('counter("woodAnimalsLeft")'), 0, 'the animal in the pine wood is found');
+  for (let i = 0; i < 5 && !knows('狼'); i++) await stepOn(3, 16, 'walking through the long grass, where wolves live');
+  assert.ok(knows('狼'), 'a wolf jumps out of the long grass, teaching 狼');
+  stand(17, 27, 'down');
+  await act('arrive(17, 27).then(runEvents)', 'going back down to the home ground');
   assert.equal(run('PLACE'), 'homeGround');
   await pressAt(15, 5, 'up', 'giving the big monkey the wood and the stones');
   assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them, and the troop gets to work');

@@ -86,6 +86,10 @@ const MAP_SPRITES = {
       "..oo......oo...."
     ]
   },
+  '鹿': {   // deer (chapter 1, in the pine wood; drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
+    palette: {a:'#3E3122', b:'#9C7B55', c:'#302012', d:'#714724', e:'#DE9E62', f:'#1A130E', g:'#533C26', h:'#1E1A16', i:'#9A5A28', j:'#3E2614', k:'#2A1E16', l:'#D4A278', m:'#975F30', n:'#3D2816', o:'#C27A3E', p:'#FBF1DE', q:'#6F401E', r:'#301E10'},
+    rows: [".aba..aba.......",".abbaaba........","abbbababa.......",".acdedca........",".fgehdij........","fklmidij.ggj....",".nmnjioigeeijj..","..n..geieoooeij.",".....jiiopopopij",".....jiooopopoij","......cdiooodij.","......cdqiiidqr.","......cdqrjcdqr.","......cdqr.cdqr.","......cdqr.cdqr.",".......cr...cr.."]
+  },
   // wild creatures, which jump out of long grass to fight (drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
   '蛇': {   // snake
     palette: {a:'#414F29', b:'#233113', c:'#A6D86A', d:'#477A26', e:'#6CA83E', f:'#1E1A16', g:'#511C19', h:'#D83A3A', i:'#3F6124'},
@@ -102,5 +106,9 @@ const MAP_SPRITES = {
   '野猪': {   // wild boar
     palette: {a:'#201710', b:'#3E2A1C', c:'#A07250', d:'#3F2E20', e:'#7A5236', f:'#563826', g:'#281B13', h:'#47301F', i:'#1E1A16', j:'#D3AD97', k:'#966C53', l:'#C08A6A', m:'#3C2C21', n:'#5A5651', o:'#F4F0E8', p:'#352D27', q:'#806E64', r:'#3A251B', s:'#1F150F'},
     rows: ["................","................","................",".......aaaa.....","....aaabbbbaaa..","...abbbbcccbbba.","..dddceeeeeeefg.",".dccchheeeeeeefg","dceeieeheeeeeefg","jjkeeeeheeeeeefg","jlkeeeeheeeeeefg","kkkffhheeeeeefg.","mnonpqfffffffg..","..n.pqrsggpqrs..","....srrs..srrs..",".....ss....ss..."]
+  },
+  '狼': {   // wolf (chapter 1, in the pine wood's long grass)
+    palette: {a:'#2A2A29', b:'#5E656C', c:'#454444', d:'#B0B7BE', e:'#505459', f:'#262423', g:'#2B2A2A', h:'#1A1716', i:'#2F2E2D', j:'#6C7177', k:'#8A9199', l:'#F2C14E', m:'#5F666E', n:'#2A2A2E', o:'#ADB2B8', p:'#4E5359', q:'#93979C', r:'#252423'},
+    rows: ["................",".....a..........","....aba.........","....aba.........","...cabba........","..cddeef.gg.....","hijklkbagmmggg..","nojjkbemmmmmmmg.","jjiabcdkkkkkkbba","ii..acdkkkkkkbba",".....febbkkebbba",".....fepabbeqpdb",".....feprafeqpbb",".....fepr.feqpra",".....fepr.feppr.","......fr...frr.."]
   }
 };

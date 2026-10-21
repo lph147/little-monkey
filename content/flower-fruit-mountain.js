@@ -49,14 +49,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
   progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0, build:0, school:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
-  // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
-  // (how many you've picked for a request, given as request).
+  // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
+  // (how many you've picked for a request, given as request). The animals are the prologue's, or a
+  // chapter's (chapter).
   // minus takes some away; max is the most it can be.
   counters: {
     newWords: {count:'wordsLearned', minus:1, max:4},   // words learned apart from one (you're born knowing 石头), up to 4
     animals: {count:'animals'},
     found: {count:'animalsFound'},
     animalsLeft: {count:'animalsLeft'},
+    woodAnimalsLeft: {count:'animalsLeft', chapter:1},   // chapter 1's animal, the deer in the pine wood, not met yet
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
     caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (the bridge's 桥 waits for chapter 1)
@@ -174,6 +176,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the great feast
     {chapter:1, text:'Go with the old monkey to the troop’s new home ground', done:{home:{atLeast:2}}},
     {chapter:1, text:'Bring {木头} and small {石头} for the school', show:{build:{atLeast:1}}, done:{build:{atLeast:2}}},
+    {chapter:1, text:'Find the animal that lives in the pine wood', show:{build:{atLeast:1}}, done:{woodAnimalsLeft:0}},
     {chapter:1, text:'Build the {学校} with the troop', show:{build:{atLeast:2}}, done:{school:{atLeast:1}}},
     {chapter:1, text:'Go to school, and meet your {老师}', show:{school:{atLeast:1}}, done:{school:{atLeast:2}}},
     {chapter:1, text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}},
@@ -468,7 +471,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
-        {at:[25, 0], to:'pineWood', arrive:[10, 12], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
+        {at:[25, 0], to:'pineWood', arrive:[17, 26], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
         {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
       ],
       map: [
@@ -496,29 +499,49 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYYYYYYYYYYYYYYYuYYYYYYYYYYYYYYY"
       ]
     },
-    // Chapter 1: the pine wood, up from the home ground (the big monkey clears the way when he wants wood). Three dry, dead
-    // pines to knock down for wood, small stones by the stream, long grass where wild things live, and a little clearing
-    // in the north-east, behind a cracked rock you break with your stick, with the last dead pine and the last stone.
+    // Chapter 1: the pine wood, up from the home ground (the big monkey clears the way when he wants wood). The way in is
+    // at the bottom, into a clearing where the paths meet. Dry, dead pines to knock down for wood, small stones by the
+    // stream and among the rocks, long grass where wild things live (wolves, here: its own legend), and two clearings in
+    // the north: one behind a cracked rock you break with your stick, with a dead pine and a stone; and a sunny one in
+    // the north-east, with flowers, a pool, and a deer. (The old wood, before it grew on 21 October 2026, is the top-left
+    // 22 x 14 squares, just as it was, so the squares you changed there in a saved game are still the same.)
     pineWood: {
       name: {zh:'松林', py:'sōnglín', en:'Pine wood'},
       exits: [
-        {at:[10, 13], to:'homeGround', arrive:[25, 1], facing:'down'}   // back down to the home ground
+        {at:[17, 27], to:'homeGround', arrive:[25, 1], facing:'down'}   // back down to the home ground
       ],
+      legend: {
+        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']}   // long grass: here, wolves too
+      },
       map: [
-        "pppppppppppppppppppppp",
-        "ppiiiiippiiiiiiipiiipp",
-        "ppiqiiippiiiiqiipimqpp",
-        "piiiiiipiiipiiiipiiipp",
-        "piiiiiiiiiiiiiiixiiipp",
-        "ppiinniiiiipiiiiippppp",
-        "ppimnniiiiiiiiiiiiiipp",
-        "WWWWWWWWWWkWWWWWWWWWWW",
-        "ppiiiiiiiiiiiiimiiiipp",
-        "ppinnnippi.ipiiiiiiipp",
-        "ppinnnnipp.ipppiiiiipp",
-        "ppinnniip..ipppppiippp",
-        "pppiiiipp...pppppppppp",
-        "pppppppppp.ppppppppppp"
+        "pppppppppppppppppppppppppppppppppppp",
+        "ppiiiiippiiiiiiipiiipppppigggggFpppp",
+        "ppiqiiippiiiiqiipimqppppiggJgggggEpp",
+        "piiiiiipiiipiiiipiiipppigggFgggTgggp",
+        "piiiiiiiiiiiiiiixiiipppigEgggggggJgp",
+        "ppiinniiiiipiiiiippppppiiggggggggppp",
+        "ppimnniiiiiiiiiiiiiiiiiiiiggiiigOOOp",
+        "WWWWWWWWWWkWWWWWWWWWWWWWWWWWkWWWOOOO",
+        "ppiiiiiiiiiiiiimiiiipppiiiiiiiippOOp",
+        "ppinnnippi.ipiiiiiiiiiiiqiinnnnipppp",
+        "ppinnnnipp.ipppiiiiiiiiiiinnnnniipmp",
+        "ppinnniip..ipppppiipppppippnnnniiiip",
+        "pppiiiipp...ppppppppppppipppiiiiqppp",
+        "pppppppppp.pppppppppppppippppipppppp",
+        "ppppppppppipppppppppppppipppppippppp",
+        "ppnnnnnniiiippppppppppppipppipipiqpp",
+        "pinnnnnniiiiipppppppppppippiipiiiipp",
+        "pinnnnnniiipppppppppppppiiiiiiippppp",
+        "pinnnnnniiipppiiiiiiipiiipppppippppp",
+        "ppnnnnnniiippiiiiiiiiippippppiiiiimp",
+        "ppiiiiiippiiiiiiiiiiiiiiippppiioiiip",
+        "ppiiiiqipppppiiiiiiiiippiiiipiiimiip",
+        "ppiiiiiipppppiiiiiiiiippiiiipiiiioip",
+        "pppppppppppppppppipppppppiiipoiiiiip",
+        "pppppppppppppppppipppppppppppppppppp",
+        "pppppppppppppppppipppppppppppppppppp",
+        "pppppppppppppppppipppppppppppppppppp",
+        "pppppppppppppppppipppppppppppppppppp"
       ]
     },
     // Chapter 1: inside the school, once the troop has built it: a classroom. The old monkey teaches at the front, by the
@@ -721,7 +744,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
     // down the ledges (it stops you if you walk past: see events)
     {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
-    {id:'woodSquirrel', place:'pineWood', x:11, y:10, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, by the way in
+    {id:'woodSquirrel', place:'pineWood', x:19, y:21, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, in the clearing by the way in
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -785,6 +808,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '蜘蛛': 'In the long grass on the mountain path.',
     '蜜蜂': 'In the long grass on the mountain path.',   // (until 21 October 2026; the bees of chapter 1 will change this)
     '野猪': 'Blocking the narrow way at the top of the mountain path.',
+    '鹿': 'In the sunny clearing deep in the pine wood, in the north-east.',
+    '狼': 'In the long grass in the pine wood.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -837,7 +862,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '蜜蜂': {zh:'花 上 有 蜜蜂 。', en:'There is a bee on the flower.'},
     '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
-    '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'}
+    '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'},
+    '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
+    '狼': {zh:'草 里 有 狼 。', en:'There is a wolf in the grass.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now)
   },
 
@@ -850,6 +877,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
     spider: {word:'蜘蛛', hearts:2, attacks:['树', '草', '石头', '山'], meetNote:'A spider scuttles out of the long grass!', meet:'A {蜘蛛} scuttles at you!',
       hide:'The {蜘蛛} scurries out of sight…', attack:'The {蜘蛛} jumps at you!', away:'The {蜘蛛} scurries off into the grass.', reward:1},   // (in the bee's place since 21 October 2026)
+    wolf: {word:'狼', hearts:3, attacks:['树', '草', '石头', '木头'], meetNote:'A wolf leaps out of the long grass, growling!', meet:'A {狼} growls at you!',
+      hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', reward:2},   // (chapter 1: in the pine wood)
     boar: {word:'野猪', hearts:4, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
       meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },
@@ -868,14 +897,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
   fish: [[11, 9], [9, 10], [12, 11], [10, 12]],
 
   // The area's animals. The id is kept in saved games, so never change it. An animal with at lives
-  // at that spot (x, y) on the map, such as up a tree or on a cliff: face it and press A to meet it,
-  // and home is the word for where it lives. The others hide in the tall grass, which rustles where
-  // one is hiding: step in to meet it. meetNote is on its new-word card the first time.
+  // at that spot (x, y) on the map, such as up a tree, on a cliff or in a clearing (you can't walk
+  // through it): face it and press A to meet it, and home is the word for where it lives. The others
+  // hide in the tall grass, which rustles where one is hiding: step in to meet it. meetNote is on its
+  // new-word card the first time. chapter: the chapter it's found in (0, the prologue, if not given),
+  // for the counters that count animals.
   animals: [
     {id:'rabbit', word:'兔子'},
     {id:'fox', word:'狐狸'},
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
-    {id:'goat', word:'山羊', at:[4, 18], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'}
+    {id:'goat', word:'山羊', at:[4, 18], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
+    // chapter 1: a deer in the sunny clearing deep in the pine wood (counted on its own: the prologue's animals are those above)
+    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'树', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
   birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},

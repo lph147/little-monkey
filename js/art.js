@@ -85,9 +85,10 @@ function asleepSprite(){
   if (band) for (let x = 1; x <= 10; x++) if (rows[2][x] === 'f') rows[2][x] = 'b';   // the red headband
   return spriteCache[k] = sprite(rows.map(r => r.join('')), PALS.player);
 }
-// The area's animals: at their own spot (at), or hiding in the tall grass. spr: how they look on the map (content/sprites.js,
-// a square's size); pic: their picture everywhere else, in encounters and the Friends list (content/pictures.js).
-const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:placeOf(a.at), home:a.home || HIDING_WORD, meetNote:a.meetNote,
+// The area's animals: at their own spot (at), or hiding in the tall grass, each in a chapter of the story (0 if not given).
+// spr: how they look on the map (content/sprites.js, a square's size); pic: their picture everywhere else, in encounters
+// and the Friends list (content/pictures.js).
+const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:placeOf(a.at), home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette)}));
 const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
 const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && a.at[0] === x && a.at[1] === y) : null;   // an animal living at this spot, once animals appear

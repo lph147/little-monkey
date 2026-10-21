@@ -13,7 +13,7 @@ const FRONT = Object.fromEntries(['石头', '山', '花', '草', '树', '河', '
 
 function picks(save, n = 2000){
   const game = loadGame({save: {version: 29, started: true, ...save, w: {...FRONT, ...save.w}}});
-  return JSON.parse(game.run(`JSON.stringify(Array.from({length: ${n}}, () => pickAnimal().id))`));
+  return JSON.parse(game.run(`JSON.stringify(Array.from({length: ${n}}, () => pickAnimal(chapterAnimals(0)).id))`));   // (the prologue's four animals)
 }
 const share = (list, id) => list.filter(x => x === id).length / list.length;
 

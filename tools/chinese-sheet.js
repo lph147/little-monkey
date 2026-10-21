@@ -98,6 +98,9 @@ const DRAFTS = [
     ['我们 去 画 花 吧 ！', 'Let’s go and paint some flowers!', 'The class, going out to paint peach blossom under the school’s windows (画 huà, to paint a picture, just for listening)'],
     ['花 是 粉色 的 ！', 'The flowers are pink!', 'Once they’re painted']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), the colour lessons at school: ' + where})),
+  ...[['鹿 在 吃 草 。', 'The deer is eating grass.', 'The example on 鹿 (lù, deer)’s page: a deer you make friends with, in a sunny clearing in the pine wood'],
+    ['草 里 有 狼 。', 'There is a wolf in the grass.', 'The example on 狼 (láng, wolf)’s page: wolves jump out of the long grass in the pine wood, to fight']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), the bigger pine wood: ' + where})),
   {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.', where:'New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path'},
   {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'}
 ];

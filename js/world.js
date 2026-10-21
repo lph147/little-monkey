@@ -36,7 +36,7 @@ function stepClear(){
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
 const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && e.at[1] === y && (!e.when || matches(e.when)));   // a way to another place (when: only there once the story says)
 const isOpen = e => (!e.when || matches(e.when)) && (!e.if || matches(e.if));   // (a way that isn't there yet isn't open either)
-const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y);
+const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y);   // (an animal standing on open ground, such as a deer, is in the way)
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
@@ -44,7 +44,10 @@ const OPP = {up:'down', down:'up', left:'right', right:'left'};
 const dirOf = (dx, dy) => Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');   // the way towards dx, dy
 
 const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
-const metCount = () => Math.min(S.met.length, ANIMALS.length);
+// The animals in a chapter of the story (each animal's chapter, 0 if not given), and how many of them you've met: the
+// prologue's animals are counted on their own, so a new chapter's animals never stand in the way of the prologue's story.
+const chapterAnimals = (ch = 0) => ANIMALS.filter(a => a.chapter === ch);
+const metCount = (ch = 0) => chapterAnimals(ch).filter(a => S.met.includes(a.id)).length;
 // The story's chapters in this area (AREA.chapters), and the one you're in (counting from 0). Each item on the
 // area's checklist belongs to a chapter (chapter, 0 if not given); the checklist shows the chapter you're in.
 const chapterNow = () => here().chapter || 0;
@@ -97,9 +100,9 @@ function promptFor(x, y){
 }
 const COUNTS = {   // what a counter in the content can count
   wordsLearned: () => learnedCount(),
-  animalsFound: () => metCount(),
-  animals: () => ANIMALS.length,
-  animalsLeft: () => ANIMALS.length - metCount(),
+  animalsFound: c => metCount(c.chapter || 0),   // (a chapter's animals: chapter, 0 if not given)
+  animals: c => chapterAnimals(c.chapter || 0).length,
+  animalsLeft: c => chapterAnimals(c.chapter || 0).length - metCount(c.chapter || 0),
   shells: () => S.shells,
   picked: c => (here().picked[c.request] || []).length,
   known: c => c.words.filter(w => lvl(w) >= 1).length   // how many of these words you've caught
@@ -560,7 +563,7 @@ async function arrive(x, y){
 let foe = null, alertUntil = 0;
 function findSpot(){
   const order = [pl.dir].concat(['down','left','right','up'].filter(d => d !== pl.dir));
-  for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy, t = tileAt(x,y); if (t.walk && t.look !== 'bridge' && !npcAt(x,y) && !followerAt(x,y)) return {x, y, d}; }
+  for (const d of order){ const [dx,dy] = DV[d], x = pl.x + dx, y = pl.y + dy, t = tileAt(x,y); if (t.walk && t.look !== 'bridge' && !npcAt(x,y) && !followerAt(x,y) && !animalAt(x,y)) return {x, y, d}; }
   const [dx,dy] = DV[pl.dir]; return {x:pl.x + dx, y:pl.y + dy, d:pl.dir};
 }
 // Which animal hides: usually one you haven't met yet; otherwise usually one whose name needs practice or is near the
@@ -584,7 +587,8 @@ async function wildAppears(a, spot = findSpot()){
   const justTaught = lvl(a.hz) === 0;
   if (justTaught) await showNotice(a.hz, {note:a.meetNote ? fill(a.meetNote) : `A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
   else { say(a.hz); await sleep(900); }
-  if (firstMeet) toast(`Animals found: ${metCount()}/${ANIMALS.length}`);
+  const all = chapterAnimals(a.chapter).length;
+  if (firstMeet && all > 1) toast(`Animals found: ${metCount(a.chapter)}/${all}`);   // (a chapter with one animal, such as the deer, needs no count)
   const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home});
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
   await sleep(won ? 1000 : 650);

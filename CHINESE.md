@@ -147,6 +147,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | 蜜蜂 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | 桥 |  |
+| 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
+| 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | 狼 |  |
 
 ### Questions after the story
 
@@ -267,6 +269,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 蜘蛛 | zhīzhū | spider |  |
 | 蜜蜂 | mìfēng | bee |  |
 | 野猪 | yězhū | wild boar |  |
+| 鹿 | lù | deer |  |
+| 狼 | láng | wolf |  |
 | 跳 | tiào | to jump |  |
 | 桥 | qiáo | bridge |  |
 | 床 | chuáng | bed |  |
@@ -482,6 +486,8 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 门是黑色的！ | mén shì hēisè de! | The door is black! | New on 21 October 2026 (in the game), the colour lessons at school: Once it’s painted; the same for the roof (蓝色, blue), the windows (绿色, green), the walls (棕色, brown) and the pillars (橙色, orange) |  |
 | 我们去画花吧！ | wǒmen qù huà huā ba! | Let’s go and paint some flowers! | New on 21 October 2026 (in the game), the colour lessons at school: The class, going out to paint peach blossom under the school’s windows (画 huà, to paint a picture, just for listening) |  |
 | 花是粉色的！ | huā shì fěnsè de! | The flowers are pink! | New on 21 October 2026 (in the game), the colour lessons at school: Once they’re painted |  |
+| 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | New on 21 October 2026 (in the game), the bigger pine wood: The example on 鹿 (lù, deer)’s page: a deer you make friends with, in a sunny clearing in the pine wood |  |
+| 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | New on 21 October 2026 (in the game), the bigger pine wood: The example on 狼 (láng, wolf)’s page: wolves jump out of the long grass in the pine wood, to fight |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 

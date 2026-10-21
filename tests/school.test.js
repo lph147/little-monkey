@@ -13,7 +13,7 @@ const CHAPTER_ONE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flow
 const WORDS = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '猴子', '朋友', '河', '鱼', '木头', '一', '二', '三', '桌子'];
 function game(area = {}, pos = {place: 'homeGround', x: 15, y: 5, dir: 'up'}, more = []){
   const w = Object.fromEntries([...WORDS, ...more].map(x => [x, {lv: 1, ok: 0}]));
-  const g = loadGame({dom: true, save: {version: 29, started: true, w, met: ['rabbit', 'fox', 'squirrel', 'goat'], areas: {1: {...CHAPTER_ONE, ...area}}, pos}});
+  const g = loadGame({dom: true, save: {version: 29, started: true, w, met: ['rabbit', 'fox', 'squirrel', 'goat', 'deer'], areas: {1: {...CHAPTER_ONE, ...area}}, pos}});   // (the deer: met in the pine wood)
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__scenes = []; globalThis.__lessons = 0");
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }; replyWith = async () => {}");
   g.run("showNotice = async w => { __notes.push('card: ' + w); rec(w).lv = Math.max(rec(w).lv || 0, 1); }; storyScene = async id => { __scenes.push(id); }");
