@@ -441,7 +441,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]},
     // the mountain path
     'r': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'A path up the mountain, beside the river.'},
-    'n': {look:'longGrass', walk:true, wild:['snake', 'bee']},   // long grass: snakes and bees jump out to fight
+    'n': {look:'longGrass', walk:true, wild:['snake', 'spider']},   // long grass: snakes and spiders jump out to fight
     'w': {look:'bush'},   // bushes along the path
     'o': {look:'boulder', word:'石头'},   // a boulder by the path
     'k': {look:'bridgeAcross', walk:true},   // a bridge over the river in the valley, to walk across it up or down
@@ -571,7 +571,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '路': 'The mountain path, up beside the river from the meadow.',
     '棍子': 'The big monkey gave it to you, before you set off up the mountain path.',
     '蛇': 'In the long grass on the mountain path.',
-    '蜜蜂': 'In the long grass on the mountain path.',
+    '蜘蛛': 'In the long grass on the mountain path.',
+    '蜜蜂': 'In the long grass on the mountain path.',   // (until 21 October 2026; the bees of chapter 1 will change this)
     '野猪': 'Blocking the narrow way at the top of the mountain path.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
@@ -605,6 +606,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '山羊': {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.'},
     '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'},
     '路': {zh:'山 上 有 路 。', en:'There is a path up the mountain.'},   // (drafts, not checked yet)
+    '蜘蛛': {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.'},   // (a draft, not checked yet)
     '蜜蜂': {zh:'花 上 有 蜜蜂 。', en:'There is a bee on the flower.'},
     '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
@@ -621,8 +623,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   enemies: {
     snake: {word:'蛇', hearts:2, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
       hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
-    bee: {word:'蜜蜂', hearts:2, attacks:['花', '树', '草', '山'], meetNote:'A bee buzzes out of the long grass!', meet:'A {蜜蜂} buzzes round your head!',
-      hide:'The {蜜蜂} zips out of sight…', attack:'The {蜜蜂} dives at you!', away:'The {蜜蜂} buzzes off over the flowers.', reward:1},
+    spider: {word:'蜘蛛', hearts:2, attacks:['树', '草', '石头', '山'], meetNote:'A spider scuttles out of the long grass!', meet:'A {蜘蛛} scuttles at you!',
+      hide:'The {蜘蛛} scurries out of sight…', attack:'The {蜘蛛} jumps at you!', away:'The {蜘蛛} scurries off into the grass.', reward:1},   // (in the bee's place since 21 October 2026)
     boar: {word:'野猪', hearts:4, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
       meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },

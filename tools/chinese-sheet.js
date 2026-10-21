@@ -65,6 +65,7 @@ const DRAFTS = [
     ['花 上 有 蜜蜂 。', 'There is a bee on the flower.', 'The example on 蜜蜂 (bee)’s page'],
     ['山 上 有 野猪 。', 'There is a wild boar on the mountain.', 'The example on 野猪 (wild boar)’s page']]
     .map(([zh, en, where]) => ({zh, en, where:'The prologue, up the stream, 18 October 2026 (in the game): ' + where})),
+  {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.', where:'New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path'},
   {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'}
 ];
 

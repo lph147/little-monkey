@@ -109,6 +109,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
 | 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
 | 山上有路。 | shān shàng yǒu lù. | There is a path up the mountain. | 路 |  |
+| 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | 蜘蛛 |  |
 | 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | 蜜蜂 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | 桥 |  |
@@ -187,6 +188,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 路 | lù | path, road |  |
 | 棍子 | gùnzi | stick |  |
 | 蛇 | shé | snake |  |
+| 蜘蛛 | zhīzhū | spider |  |
 | 蜜蜂 | mìfēng | bee |  |
 | 野猪 | yězhū | wild boar |  |
 | 跳 | tiào | to jump |  |
@@ -346,6 +348,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 这是棍子。 | zhè shì gùnzi. | This is a stick. | The prologue, up the stream, 18 October 2026 (in the game): The big monkey, giving you a stick before you set off |  |
 | 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | The prologue, up the stream, 18 October 2026 (in the game): The example on 蜜蜂 (bee)’s page |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | The prologue, up the stream, 18 October 2026 (in the game): The example on 野猪 (wild boar)’s page |  |
+| 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 
 ## Questions

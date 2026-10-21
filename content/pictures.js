@@ -1594,6 +1594,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '蜘蛛': {   // spider
+    palette: {a:'#292229', b:'#1B1519', c:'#2F2831', d:'#1C161B', e:'#5A4C6C', f:'#2D2538', g:'#6E5E84', h:'#30263E', i:'#3A2F48', j:'#4A3D5C', k:'#5E5B58', l:'#FFFFFF', m:'#D8D4E0', n:'#514D4E', o:'#2B2335', p:'#1E1A16', q:'#1A1518', r:'#2A2236', s:'#E08A3C'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      ".....ab.......cccd.......ab.....",
+      "....aefb....ccggghdd....aefb....",
+      "...aeiffb..cggjjjjghd..aefifb...",
+      "..aeifbffbbkllmjjllmnaaefbfifb..",
+      "..aefb.bfefollplllpmoeefb.bffb..",
+      ".aefbab.bfiomlpmmlpmoifb.aabffb.",
+      ".bfaeefbbbfojmmjjmmjofbaaeefbfb.",
+      "..aeiffefbbfojjjjjjofbaeeffifb..",
+      "..aefbbffefqoojjjjooaeeffbbffb..",
+      ".aefb..bbffgjjororjjhffbb..aefb.",
+      ".aefbaaaacgjjjjrjrjjjhdaaaabffb.",
+      "aefaeeeeegjjjjssssjjjjheeeefbffb",
+      "bfbaeffffgjjjjssssjjjjhfffffbbfb",
+      ".baefbbbcgjjjjssssjjjjhdbbaefbb.",
+      "..aefb..cgjjssjjjjssjjhd..bffb..",
+      ".aefb.aaegjjssjjjjssjjhfbb.aefb.",
+      ".aefbaeefhjjssjjjjssjjhfefbbffb.",
+      "aefb.aefbdhjjjjjjjjjjhdbffb.aefb",
+      "bffbaefb..dhjjjjjjjjhd..aefbbffb",
+      ".bb.aefb...dhhhhhhhhd...bffb.bb.",
+      "...aefb.....dddddddd.....aefb...",
+      "...aefb..................bffb...",
+      "...bfb....................bfb...",
+      "....b......................b....",
+      "................................",
+      "................................"
+    ]
+  },
   '野猪': {   // wild boar
     palette: {a:'#201710', b:'#3E2A1C', c:'#221810', d:'#432C1E', e:'#382F28', f:'#897467', g:'#A07250', h:'#7A5236', i:'#3F2E20', j:'#563826', k:'#281B13', l:'#47301F', m:'#FFFFFF', n:'#1E1A16', o:'#523F33', p:'#D9A88A', q:'#966C53', r:'#C08A6A', s:'#BEBBB5', t:'#3C2C21', u:'#494541', v:'#352D27', w:'#3A3028', x:'#241911', y:'#806E64', z:'#3A251B', A:'#372417', B:'#8E7869', C:'#49301F', D:'#4A3022', E:'#5E3E28', F:'#1F150F'},
     rows: [

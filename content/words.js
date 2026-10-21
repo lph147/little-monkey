@@ -55,7 +55,8 @@ const WORD_BANK = {
   '路': {py:'lù', en:'path, road', pic:'🛤️', area:1, category:'places'},
   '棍子': {py:'gùnzi', en:'stick', pic:'🪵', area:1, category:'items'},
   '蛇': {py:'shé', en:'snake', pic:'🐍', area:1, category:'animals'},
-  '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals'},
+  '蜘蛛': {py:'zhīzhū', en:'spider', pic:'🕷️', area:1, category:'animals'},
+  '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals'},   // (caught in the long grass until 21 October 2026; in chapter 1, a friend)
   '野猪': {py:'yězhū', en:'wild boar', pic:'🐗', area:1, category:'animals'},
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
   '桥': {py:'qiáo', en:'bridge', pic:'🌉', area:1, category:'places'},

@@ -399,6 +399,17 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.eye(5, 18, '#111111', 2); p.dot(5, 18, '#FFFFFF');
     p.fill(path([[6, 15.5], [4, 11.5]], .6), '#3A2E22'); p.fill(path([[9, 15.5], [10, 11.5]], .6), '#3A2E22');   // feelers
   },
+  '蜘蛛': p => {   // spider: a round body on eight bent legs, two big eyes, orange spots on its back
+    const S = '#4A3D5C', LT = {light: '#6E5E84', dark: '#30263E'};
+    const legs = [[[12, 13], [6, 7.5], [2.5, 12]], [[11.5, 15.5], [5, 12.5], [1.5, 18.5]], [[11.5, 18], [5, 18], [2, 24]], [[12.5, 20.5], [7, 23], [4.5, 28]]];
+    for (const leg of legs) for (const side of [leg, leg.map(([x, y]) => [32 - x, y])]) p.fill(path(side, .85), '#3A2F48', {light: '#5A4C6C'});
+    p.fill(O(16, 20, 7.5, 6.5), S, LT);                                                            // body
+    p.flat(or(O(16, 18.5, 2.2, 1.6), O(13, 21.5, 1.3, 1.1), O(19, 21.5, 1.3, 1.1)), '#E08A3C');   // orange spots on its back
+    p.fill(O(16, 11.5, 5, 4.5), S, {...LT, edge: true});                                          // head
+    p.fill(or(O(13.8, 10.8, 1.9, 2), O(18.2, 10.8, 1.9, 2)), '#FFFFFF', {light: '#FFFFFF', dark: '#D8D4E0'});
+    p.dot(14, 11, '#1E1A16'); p.dot(14, 10, '#1E1A16'); p.dot(18, 11, '#1E1A16'); p.dot(18, 10, '#1E1A16');
+    p.flat(or(Rc(14.5, 15, 1, 1.5), Rc(16.5, 15, 1, 1.5)), '#2A2236');                            // little fangs
+  },
   '野猪': p => {   // wild boar: a bristly brown back, a long snout, two white tusks
     const B = '#7A5236', LT = {light: '#A07250', dark: '#563826'};
     p.fill(or(Rc(9, 25, 3, 5, 1), Rc(22, 25, 3, 5, 1)), '#4A3022');                 // back legs

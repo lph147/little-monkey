@@ -209,3 +209,14 @@ test('once the big monkey gives you the stick, your monkey holds it on the map: 
   assert.match(game.run('fight.toString() + encounter.toString()'), /monkeySprite\('player', 'up', false, 0, true\)[\s\S]*monkeySprite\('player', 'up', false, 0, true\)/, 'the battle and the meeting both draw your monkey with empty hands');
   assert.ok(game.run('HELD[BATTLES.weapon].len') < 16 / 2);
 });
+
+test('snakes and spiders jump out of the long grass; the bee moved to chapter 1, and a game that caught it keeps it', async () => {
+  const {run, sheet, flush} = fighting({w: {...WORDS, '蜜蜂': {lv: 1, due: 0, ok: 0}}});
+  assert.deepEqual(JSON.parse(run('JSON.stringify(AREA.legend.n.wild)')), ['snake', 'spider']);
+  assert.ok(!run("'bee' in AREA.enemies"), 'no bees to fight: in chapter 1 you make friends with them');
+  assert.ok(run("lvl('蜜蜂')") >= 1 && run("ORDER.includes('蜜蜂')"), 'a bee caught before stays in your words');
+  run("globalThis.__card = null; showNotice = async (w, o) => { __card = [w, o && o.note]; setSeen(w); }; battle('spider')");
+  await flush();
+  assert.deepEqual(JSON.parse(run('JSON.stringify(__card)')), ['蜘蛛', 'A spider scuttles out of the long grass!'], 'its first meeting teaches 蜘蛛');
+  assert.match(sheet.textContent, /蜘蛛/, 'then the battle');
+});
