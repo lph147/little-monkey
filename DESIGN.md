@@ -129,7 +129,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 ### Area 1: Flower Fruit Mountain
 
-**The prologue, then chapter 1** (decided 20 October 2026, replacing "one chapter so far" of 19 October). Everything built so far, from being born to becoming king and counting the troop in, is the prologue, with its 46 words; a chapter card shows at its end. Chapter 1 runs from there to leaving the mountain: making the troop's new home by the waterfall, then preparing the feast, all one chapter. Chapters follow the journey's places, so Flower Fruit Mountain has just these two. (From 19 October there was no prologue, and everything built was Chapter 1: The Water Curtain Cave, with one checklist; save version 27.)
+**The prologue, then chapter 1** (decided 20 October 2026, replacing "one chapter so far" of 19 October). Everything built so far, from being born to becoming king and counting the troop in, is the prologue, with its 45 words (46 when it was decided; the bridge's 桥 moved to chapter 1 on 21 October 2026); a chapter card shows at its end. Chapter 1 runs from there to leaving the mountain: making the troop's new home by the waterfall, then preparing the feast, all one chapter. Chapters follow the journey's places, so Flower Fruit Mountain has just these two. (From 19 October there was no prologue, and everything built was Chapter 1: The Water Curtain Cave, with one checklist; save version 27.)
 
 **A longer Area 1** (decided 18 October 2026). Playtesters became king in about 5 minutes, which is far too soon, and the headband and the crown came straight after each other. The prologue grows into three parts, and becoming king moves later in chapter 1. (A play-time clock in each saved game was considered and not added: playtesters can be timed by watching.) The prologue gains 路 棍子 打 蛇 蜜蜂 野猪, from 30 words to 36; if that's too many, the boar's name can be heard only. (A frog in the new place was planned and dropped.)
 
@@ -151,7 +151,7 @@ The school isn't in the book: it fills the gap where the story skips hundreds of
 **The end of the prologue: the Water Curtain Cave.** As in the book:
 
 1. The troop gathers at the waterfall, and agrees that whoever can jump through and come back unhurt will be their king.
-2. You jump (跳) through the water and find a cave behind it: an iron bridge (桥) and a stone home with stone beds (床), bowls (碗) and tables (桌子). A stone tablet names it 水帘洞 (Water Curtain Cave).
+2. You jump (跳) through the water and find a cave behind it: an iron bridge and a stone home with stone beds (床), bowls (碗) and tables (桌子). (The bridge's word, 桥, waits for chapter 1, decided 21 October 2026: the cave comes just after 洞 and 瀑布, so three new words there are enough.) A stone tablet names it 水帘洞 (Water Curtain Cave).
 3. You jump back and lead the troop in. The cave becomes their home (家), and they make you king (王): 美猴王 (Měi Hóuwáng · Handsome Monkey King).
 4. As the troop moves in, you count three of them in (一 二 三, with 只: 三只猴子, three monkeys); four to ten wait for the school in chapter 1. The longer story from the book's opening, saved from the waterfall, is read here (see below).
 
@@ -175,7 +175,7 @@ The school isn't in the book: it fills the gap where the story skips hundreds of
 
 *What the engine needs* (each its own small task): parts of the map that appear once built; gathering materials; the school's games; a food that makes you faster; the cow running home when you lose; fishing; the feast's scenes; and more than one area.
 
-**Words.** The prologue has 46 words (and 7 phrases), with the colours 红色 黄色 白色 (with 色, decided 19 October 2026: 红色的花, a red flower); the spider (蜘蛛) takes the bee's place, so it stays at 46. Chapter 1 brings about 40 (planned 20 October 2026): 木头 学校 老师 同学 (and 砍, if chopping opens a way); 四 五 六 七 八 九 十; 黑色 蓝色 粉色 棕色 绿色 橙色; 有 没有; 蜜蜂 黄蜂 蜂王 蜂蜜; 种子 香蕉 葡萄 西瓜; 牛 狼 牛奶 酸奶 奶酪; 鱼竿 虾 螃蟹 海; 木筏. 虾 and 螃蟹 were planned for the Dragon King's palace (Area 4), which can find other sea creatures; 船 (boat) stays in Area 2. The list is a draft: its Chinese, and the name 美猴王, need the native speaker's check.
+**Words.** The prologue has 45 words (and 7 phrases), with the colours 红色 黄色 白色 (with 色, decided 19 October 2026: 红色的花, a red flower); the spider (蜘蛛) takes the bee's place, and the bridge's 桥 waits for chapter 1, so it has 45 (Flower Fruit Mountain's word bank has 47, with 蜜蜂 and 桥). Chapter 1 brings about 40 (planned 20 October 2026): 桥 (somewhere new, such as a bridge on one of the trips out); 木头 学校 老师 同学 (and 砍, if chopping opens a way); 四 五 六 七 八 九 十; 黑色 蓝色 粉色 棕色 绿色 橙色; 有 没有; 蜜蜂 黄蜂 蜂王 蜂蜜; 种子 香蕉 葡萄 西瓜; 牛 狼 牛奶 酸奶 奶酪; 鱼竿 虾 螃蟹 海; 木筏. 虾 and 螃蟹 were planned for the Dragon King's palace (Area 4), which can find other sea creatures; 船 (boat) stays in Area 2. The list is a draft: its Chinese, and the name 美猴王, need the native speaker's check.
 
 **路 (path) waits for chapter 1** (decided 17 October 2026): stepping off the stone onto the path taught it straight away, one word too soon. Chapter 1 can teach it on a path to a new place, such as up to the high slopes. Its word bank entry and sprite were removed meanwhile (the tests don't allow unused ones); they're in git history, in the commit before the one that took it out.
 
@@ -285,7 +285,7 @@ The current game is one hand-built map in one file. Adding areas that way would 
 
 **Decided** (these were the open questions)
 
-- **Words per chapter:** no fixed number since 20 October 2026 (Flower Fruit Mountain's prologue has 46, and its chapter 1 about 40). It was about 25 new words to collect, like the prologue (27: 28 once the shop added 老板 and 头带 and 森林 was dropped, then 路 moved to chapter 1), so about 20 new sprites per chapter. (Area 1 has two chapters, decided 17 October 2026.) Words you only hear in sentences don't count towards this.
+- **Words per chapter:** no fixed number since 20 October 2026 (Flower Fruit Mountain's prologue has 45, and its chapter 1 about 40). It was about 25 new words to collect, like the prologue (27: 28 once the shop added 老板 and 头带 and 森林 was dropped, then 路 moved to chapter 1), so about 20 new sprites per chapter. (Area 1 has two chapters, decided 17 October 2026.) Words you only hear in sentences don't count towards this.
 - **Demons:** harder battles start at Area 3, as in the story: Sun Wukong comes home from his teacher and defeats the Demon of Havoc (混世魔王), who has been bullying the monkeys.
 - **Pinyin** stays over every word (the menu setting turns it off); it doesn't fade as you learn words.
 - **After the headband:** the 老板 also sells 苹果, bought with 我要苹果; eating one in an animal encounter takes away a wrong answer.
@@ -420,6 +420,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Game controllers (20 October 2026, js/gamepad.js): Xbox, PlayStation, Switch Pro and Bluetooth controllers, on a computer or a phone. Each button presses one of the game's own, with the Xbox layout (the bottom button is A, the right one B); Start is MENU, Select is TASKS; the D-pad or left stick is the D-pad, and holding a direction on a card moves again after a moment
 - [x] Plan chapter 1 (20 October 2026): everything built so far becomes the prologue (46 words); chapter 1 is the troop's new home by the cave (the school, numbers and colours, a new shop) and preparing the feast (bees and honey, the garden, the cow, fishing), then the feast, the old monkey and the immortals, and leaving on a raft. No fixed number of words per chapter
 - [x] The prologue and chapter 1 (20 October 2026): Prologue: The Water Curtain Cave, then the card for Chapter 1: The Great Feast once the troop is counted in (a game already past that point sees it the next time you do something; no save change). Chapter 1's checklist fills in as its parts are built
+- [x] The cave's bridge no longer teaches 桥 (21 October 2026): the cave has three things to find (床 桌子 碗), just after 洞 and 瀑布; 桥 comes in chapter 1, and a game that caught it keeps it. The prologue has 45 words
 - [x] A spider (蜘蛛) instead of the bee on the way up the stream (21 October 2026): its picture, its sprite in the long grass, its battle; a game that caught 蜜蜂 keeps it, and the bee comes back in chapter 1 as a friend. Area 1 has 47 words
 - [ ] The troop's new home: the clearing by the cave as a settlement, with plots that fill in as you build
 - [ ] Wood (木头) and stone for building

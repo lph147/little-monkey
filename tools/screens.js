@@ -30,9 +30,9 @@ SAVES.chapter1 = {...SAVES.middle, w: knows(1, [...MIDDLE_WORDS, '瀑布', '狐�
   wardrobe: {owned: ['头带'], wearing: ['头带']}, areas: {1: PROLOGUE}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
 SAVES.dared = {...SAVES.chapter1, w: {...SAVES.chapter1.w, ...knows(1, ['跳'])}, areas: {1: {...PROLOGUE, cave: 1}}, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
 SAVES.inCave = {...SAVES.dared, w: {...SAVES.dared.w, ...knows(1, ['洞'])}, areas: {1: {...PROLOGUE, cave: 2}}, pos: {place: 'cave', x: 7, y: 9, dir: 'up'}};
-SAVES.explored = {...SAVES.inCave, w: {...SAVES.inCave.w, ...knows(1, ['桥', '床', '碗', '桌子'])}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
+SAVES.explored = {...SAVES.inCave, w: {...SAVES.inCave.w, ...knows(1, ['床', '碗', '桌子'])}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
 // part B: the troop has followed you in (cave 4), you're king (cave 6), and the troop is counted in
-const CAVE_WORDS = knows(1, ['洞', '跳', '桥', '床', '碗', '桌子']);
+const CAVE_WORDS = knows(1, ['洞', '跳', '床', '碗', '桌子']);
 SAVES.ledIn = {...SAVES.explored, w: {...SAVES.chapter1.w, ...CAVE_WORDS}, areas: {1: {...PROLOGUE, cave: 4}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
 SAVES.toBeKing = {...SAVES.ledIn, w: {...SAVES.ledIn.w, ...knows(1, ['家'])}, areas: {1: {...PROLOGUE, cave: 5}}, pos: {place: 'cave', x: 9, y: 9, dir: 'up'}};
 SAVES.king = {...SAVES.toBeKing, w: {...SAVES.toBeKing.w, ...knows(1, ['王', '一'])}, areas: {1: {...PROLOGUE, cave: 6, count: 1}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
@@ -150,7 +150,7 @@ const SCREENS = [
   {id: 'jump', title: 'Ready to jump', save: 'dared', why: 'Facing the waterfall, A says Jump. The cave is just visible behind the falling water.', run: async () => { play(); await wait(500); }},
   {id: 'jump-water', title: 'Through the waterfall', save: 'dared', why: 'A rush of falling water instead of a black fade (held still here).', run: async () => { play(); await wait(200); setInterval(() => { waterT = performance.now() - 560; }, 30); await wait(300); }},
   {id: 'jump-landed', title: 'Landed in the cave', save: 'inCave', why: 'Dripping: drops fall from your fur and a little puddle fades (held still here).', run: async () => { play(); await wait(200); setInterval(() => { dripUntil = performance.now() + 900; }, 30); await wait(300); }},
-  {id: 'cave', title: 'The Water Curtain Cave', save: 'inCave', why: 'Four things sparkle: the bridge, the beds, the table and the bowls.', run: async () => { play(); await wait(500); }},
+  {id: 'cave', title: 'The Water Curtain Cave', save: 'inCave', why: 'Three things sparkle: the beds, the table and the bowls (the bridge’s word waits for chapter 1).', run: async () => { play(); await wait(500); }},
   {id: 'cave-things', title: 'The troop’s things', save: 'caveTop', why: 'Beds of straw against the wall, the table, the bowls.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(500); }},
   {id: 'set-off', title: 'Where does the water come from?', save: 'rocksGone', why: 'The troop gathers where the rocks were; you set off up the path alone.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},

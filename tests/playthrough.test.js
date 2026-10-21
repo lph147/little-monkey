@@ -232,7 +232,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(3, 5, 'up', 'looking at the stone table');
   await pressAt(9, 4, 'up', 'looking at the stone bowls');
   await pressAt(12, 5, 'up', 'reading the stone tablet');
-  for (const w of ['桥', '床', '碗', '桌子']) assert.ok(knows(w), `${w} should be found in the cave`);
+  for (const w of ['床', '碗', '桌子']) assert.ok(knows(w), `${w} should be found in the cave`);
+  assert.ok(!knows('桥'), 'the bridge doesn’t teach 桥 (it waits for chapter 1)');
   await stepOn(7, 13, 'walking out through the water curtain');
   assert.equal(run('PLACE'), 'falls', 'you should be back by the waterfall');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [5, 1]);

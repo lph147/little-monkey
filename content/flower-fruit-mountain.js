@@ -53,7 +53,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     animalsLeft: {count:'animalsLeft'},
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
-    caveThings: {count:'known', words:['桥', '床', '碗', '桌子']},   // things you've found in the Water Curtain Cave
+    caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (the bridge's 桥 waits for chapter 1)
     troopIn: {count:'known', words:['一', '二', '三']}   // the troop counted in (each count teaches its number)
   },
 
@@ -86,8 +86,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
     {id:'dare', if:{story:true, cave:0}, text:'Go to the {瀑布}: the troop is gathering', arrow:'elder'},
     {id:'jump', if:{cave:1}, text:'Jump through the {瀑布}', arrow:[4, 1, 'falls']},
-    {id:'explore', if:{cave:2, caveThings:{below:4}}, text:'Look around the {洞} ({caveThings}/4)'},
-    {id:'tell', if:{cave:2, caveThings:4}, text:'Tell the old monkey about the {洞}', arrow:'elder'},
+    {id:'explore', if:{cave:2, caveThings:{below:3}}, text:'Look around the {洞} ({caveThings}/3)'},
+    {id:'tell', if:{cave:2, caveThings:3}, text:'Tell the old monkey about the {洞}', arrow:'elder'},
     {id:'lead', if:{cave:3}, text:'Lead the troop into the {洞}: jump through the {瀑布}', arrow:[4, 1, 'falls']},
     {id:'home', if:{cave:4}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
     {id:'king', if:{cave:5}, text:'Talk to the big monkey', arrow:'big'},
@@ -119,8 +119,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Bring the troop up to the waterfall', show:{climb:{atLeast:2}}, done:{climb:{atLeast:4}}},
     {text:'Read the story at the waterfall', show:{climb:{atLeast:4}}, done:{story:true}},
     {text:'Jump through the waterfall', show:{cave:{atLeast:1}}, done:{cave:{atLeast:2}}},
-    {text:'Look around the cave', show:{cave:{atLeast:2}}, done:{caveThings:4}},
-    {text:'Tell the old monkey what’s inside', show:{caveThings:4}, done:{cave:{atLeast:3}}},
+    {text:'Look around the cave', show:{cave:{atLeast:2}}, done:{caveThings:3}},
+    {text:'Tell the old monkey what’s inside', show:{caveThings:3}, done:{cave:{atLeast:3}}},
     {text:'Lead the troop into the cave', show:{cave:{atLeast:3}}, done:{cave:{atLeast:4}}},
     {text:'Hear what the old monkey calls the cave', show:{cave:{atLeast:4}}, done:{cave:{atLeast:5}}},
     {text:'Become the troop’s king', show:{cave:{atLeast:5}}, done:{cave:{atLeast:6}}},
@@ -452,7 +452,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'z': {look:'caveFloor', walk:true},
     'C': {look:'curtain', walk:true},   // the water curtain: the way back out
     'U': {look:'water'},   // the stream through the cave
-    'I': {look:'ironBridge', walk:true, word:'桥', learnOnStep:true, stepNote:'An iron bridge over the stream.'},
+    'I': {look:'ironBridge', walk:true},   // (it taught 桥 until 21 October 2026: the word waits for chapter 1, so the cave has three new words)
     'D': {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.', onLook:[   // once you know 床, A sleeps in it
       {if:{knows:'床', new:'睡觉'}, label:'Sleep', do:[{card:'睡觉', note:'You lie down on the stone bed and go to sleep.'}, {sleep:'You wake up with all your hearts.'}]},
       {if:{knows:'床'}, label:'Sleep', do:[{sleep:'You wake up with all your hearts.'}]}]},
@@ -534,7 +534,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[21, 17]},
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
     {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
-    {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']}, {word:'桥', at:[7, 6, 'cave']}
+    {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']}
   ],
 
   // Where you found each word, shown on its page in the Word Scroll. Every word you can collect
@@ -584,7 +584,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
     '戴': 'You said it when you put something on from your wardrobe.',
     '跳': 'The big monkey dared the troop to jump through the waterfall.',
-    '桥': 'The iron bridge over the stream in the Water Curtain Cave.',
+    '桥': 'The iron bridge over the stream in the Water Curtain Cave.',   // (until 21 October 2026; chapter 1 will teach it somewhere new)
     '床': 'The stone beds in the Water Curtain Cave.',
     '睡觉': 'The stone beds in the Water Curtain Cave: sleep there to get your hearts back.',
     '碗': 'The stone bowls in the Water Curtain Cave.',
@@ -822,7 +822,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {set:{cave:1}}
       ]},
       {if:{cave:1}, do:[{say:'dare', by:'big', hint:'Jump through the waterfall!'}]},
-      {if:{cave:2, caveThings:4}, do:[
+      {if:{cave:2, caveThings:3}, do:[
         {say:'inside'},
         {gap:{sentence:'里面 有 床', en:'There are beds inside.', word:'床'}},
         {say:'letsGo'},
