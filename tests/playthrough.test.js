@@ -1,4 +1,4 @@
-// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1, part A), the way a
+// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school's frame), the way a
 // player would: standing in front of things and pressing A, stepping into flowers and rustling grass,
 // pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
@@ -275,6 +275,36 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().home, 2, 'with the old monkey');
   assert.deepEqual(get("(({place, x, y}) => [place, x, y])(ALL_NPCS.find(n => n.id === 'elder'))"), ['homeGround', 8, 6], 'by the school’s plot');
   assert.ok(get('__said').includes('这里很大！'), 'he says how big it is');
+  assert.ok(get('areaChecklist()').filter(([, , , found]) => found).every(([, done]) => done), 'chapter 1 so far is ticked off');
+
+  // Chapter 1: the big monkey wants wood and small stones to build the school, from the pine wood up the hill
+  await pressAt(13, 5, 'up', 'talking to the big monkey at the home ground');
+  assert.equal(area().build, 1, 'he wants wood and small stones');
+  assert.deepEqual([area().wood, area().stones], ['asked', 'asked']);
+  stand(18, 0, 'up');
+  await act('arrive(18, 0).then(runEvents)', 'going up through the bushes he cleared, to the pine wood');
+  assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
+  await pressAt(10, 10, 'right', 'meeting a squirrel in the pine wood');
+  assert.ok(get('__said').includes('你要木头吗？'), 'it asks if you want wood');
+  await pressAt(3, 3, 'up', 'knocking down a dry, dead pine with your stick');
+  assert.ok(knows('木头'), 'the first piece of wood teaches 木头');
+  assert.equal(run('tileAt(3, 2).look'), 'stump', 'the dead pine is down');
+  await pressAt(13, 3, 'up', 'knocking down another dead pine');
+  await pressAt(3, 5, 'down', 'picking up a small stone by the stream');
+  await pressAt(15, 9, 'up', 'picking up another small stone');
+  assert.deepEqual([run('counter("woodGot")'), run('counter("stonesGot")')], [2, 2], 'two of each, counted');
+  assert.ok(get('__said').includes('二'), 'you count them aloud');
+  await pressAt(15, 4, 'right', 'breaking the cracked rock');
+  assert.ok(run('tileAt(16, 4).walk'), 'the way into the little clearing is open');
+  await pressAt(19, 3, 'up', 'knocking down the dead pine in the clearing');
+  await pressAt(18, 3, 'up', 'picking up the small stone in the clearing');
+  assert.deepEqual(area().holding, {wood: '木头', stones: '石头'}, 'three of each: you have them all');
+  stand(10, 13, 'down');
+  await act('arrive(10, 13).then(runEvents)', 'going back down to the home ground');
+  assert.equal(run('PLACE'), 'homeGround');
+  await pressAt(13, 5, 'up', 'giving the big monkey the wood and the stones');
+  assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them, and the troop gets to work');
+  assert.equal(run('tileAt(6, 2).look'), 'frame', 'the school’s frame is up on its plot');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
 
   // Everything said on the way has a voice clip (npm run voices makes them)

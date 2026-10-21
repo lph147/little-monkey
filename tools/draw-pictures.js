@@ -379,6 +379,15 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(O(12, 21, 1.4, 1.1), '#6E4A2A'); p.flat(O(20, 12, 1.2, 1), '#6E4A2A');
     p.flat(O(26, 5, 1.6, 1.6), '#E2C08E'); p.dot(26, 5, '#B98A55');   // the cut end
   },
+  '木头': p => {   // wood: three cut logs in a little pile, their ends towards you showing the rings
+    const log = (x, y) => {   // a log, its cut end at (x, y) and its bark going back to the right
+      p.fill(Rc(x - 1, y - 6, 13, 12, 5), BARK, {light: '#B07A48', dark: '#5E3B1F', edge: true});
+      p.fill(O(x, y, 6.2, 6), '#E2C08E', {light: '#F2DDB0', dark: '#C49461', edge: true});
+      p.flat(and(O(x, y, 4.2, 4), not(O(x, y, 3, 2.8))), '#B98A55');
+      p.flat(O(x, y, 1.2, 1.2), '#8A5A32');
+    };
+    log(13, 11); log(7, 23); log(19, 23);
+  },
   '蛇': p => {   // snake: green, coiled, head raised, tongue out
     const G = '#6CA83E', LT = {light: '#A6D86A', dark: '#477A26'};
     p.fill(O(16, 25, 12, 4.5), G, LT);

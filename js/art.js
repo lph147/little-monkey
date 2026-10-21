@@ -158,7 +158,8 @@ const SPR = {
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
-const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log'];   // looks with grass underneath
+const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log',
+  'needles','pine','deadPine','crackedRock','stump','pebble','rubble'];   // looks with grass underneath (or the pine wood's floor)
 const CLIFFS = ['cliff'];
 const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge'];
 function grass(g, X, Y, x, y){
@@ -293,14 +294,50 @@ function fallenTree(g, X, Y, x, y){
   R(g, X + 4, Y + 3, 1, 3, '#3E8A3E'); R(g, X + 3, Y + 2, 3, 1, '#5FA85A');   // a green shoot
 }
 // Ground marked out for building (a plot): bare earth, with string along its edges and a wooden stake at each corner.
+// (What's built on it stands on the same earth: its edges are where the look changes.)
 function plot(g, X, Y, x, y){
   R(g, X, Y, T, T, '#A8794A');
   for (let i = 0; i < 6; i++){ const px = Math.floor(rnd(x,y,i+900)*15), py = Math.floor(rnd(x,y,i+910)*15); R(g, X+px, Y+py, 2, 1, i % 2 ? '#93683F' : '#BD8E5C'); }
-  const edge = (dx, dy) => tileAt(x+dx, y+dy).look !== 'plot', up = edge(0, -1), down = edge(0, 1), left = edge(-1, 0), right = edge(1, 0);
+  const me = tileAt(x, y).look, edge = (dx, dy) => tileAt(x+dx, y+dy).look !== me, up = edge(0, -1), down = edge(0, 1), left = edge(-1, 0), right = edge(1, 0);
   if (up) R(g, X, Y+1, T, 1, '#EFE6CF'); if (down) R(g, X, Y+14, T, 1, '#EFE6CF');
   if (left) R(g, X+1, Y, 1, T, '#EFE6CF'); if (right) R(g, X+14, Y, 1, T, '#EFE6CF');
   const stake = (sx, sy) => { R(g, X+sx, Y+sy-2, 2, 5, WOOD[1]); R(g, X+sx, Y+sy-2, 1, 5, WOOD[3]); R(g, X+sx, Y+sy-2, 2, 1, WOOD[0]); };
   if (up && left) stake(0, 1); if (up && right) stake(14, 1); if (down && left) stake(0, 12); if (down && right) stake(14, 12);
+}
+// The pine wood: its floor (grass a shade darker, strewn with fallen pine needles); what's left of a dry tree you've knocked
+// down (a stump, its cut top showing the rings, chips round it); a small stone to pick up, by the stream; and what's left
+// of a rock you've broken (small stones scattered about, walkable).
+function needles(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#72B262');
+  for (let i = 0; i < 9; i++){
+    const px = Math.floor(rnd(x,y,i+940)*14), py = Math.floor(rnd(x,y,i+950)*15), c = ['#5E9A4E', '#A57A48', '#C29560'][i % 3];
+    if (i % 3 === 0) R(g, X+px, Y+py, 1, 1, c);
+    else if (rnd(x,y,i+960) < .5) R(g, X+px, Y+py, 2, 1, c);                    // a needle lying across
+    else { R(g, X+px, Y+py, 1, 1, c); R(g, X+px+1, Y+py+1, 1, 1, c); }          // or aslant
+  }
+}
+function stump(g, X, Y, x, y){
+  needles(g, X, Y, x, y);
+  oval(g, X+8, Y+13, 7, 1, '#5E9A4E');                                                               // its shadow
+  R(g, X+2, Y+11, 13, 3, WOOD[0]); R(g, X+3, Y+11, 11, 2, WOOD[1]);                                   // roots, spreading out
+  R(g, X+4, Y+7, 9, 6, WOOD[0]); R(g, X+5, Y+7, 7, 5, WOOD[1]); R(g, X+5, Y+7, 2, 5, WOOD[2]);       // the bark, lit on the left
+  R(g, X+8, Y+9, 1, 3, WOOD[0]); R(g, X+10, Y+8, 1, 3, WOOD[0]);                                      // its furrows
+  R(g, X+5, Y+4, 7, 1, WOOD[0]); R(g, X+4, Y+5, 9, 3, WOOD[0]); R(g, X+3, Y+6, 11, 1, WOOD[0]); R(g, X+5, Y+8, 7, 1, WOOD[0]);   // the cut top: its rim,
+  R(g, X+5, Y+5, 7, 3, '#E2C08E'); R(g, X+4, Y+6, 9, 1, '#E2C08E');                                   // pale wood,
+  R(g, X+7, Y+5, 3, 1, '#C49461'); R(g, X+7, Y+7, 3, 1, '#C49461'); dot(g, X+6, Y+6, '#C49461'); dot(g, X+10, Y+6, '#C49461'); dot(g, X+8, Y+6, WOOD[1]);   // and its rings
+  R(g, X+1, Y+9, 2, 1, WOOD[4]); R(g, X+13, Y+14, 2, 1, WOOD[3]); dot(g, X+14, Y+3, WOOD[4]);         // chips
+}
+function pebble(g, X, Y, x, y){
+  needles(g, X, Y, x, y);
+  oval(g, X+8, Y+12, 5, 1, '#5E9A4E');
+  oval(g, X+8, Y+9, 5, 3, GREY[0]); oval(g, X+8, Y+9, 4, 2, GREY[2]); R(g, X+5, Y+8, 4, 1, GREY[3]); dot(g, X+6, Y+7, GREY[4]); R(g, X+7, Y+11, 4, 1, GREY[1]);
+  R(g, X+1, Y+13, 2, 2, GREY[1]); dot(g, X+1, Y+13, GREY[3]); R(g, X+13, Y+4, 2, 1, GREY[2]);
+}
+function rubble(g, X, Y, x, y){
+  needles(g, X, Y, x, y);
+  [[3, 9, 3, 2], [9, 11, 3, 2], [10, 5, 3, 2], [5, 4, 2, 1], [13, 9, 2, 1], [2, 13, 2, 1]].forEach(([px, py, w, h], i) => {
+    R(g, X+px, Y+py+h, w, 1, '#5E9A4E'); R(g, X+px, Y+py, w, h, i % 2 ? GREY[1] : GREY[2]); dot(g, X+px, Y+py, GREY[3]);
+  });
 }
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
 // How each look is painted. Each area's legend picks a look for each map letter.
@@ -326,6 +363,14 @@ const LOOKS = {
   ledge:     (g,X,Y,x,y) => ledge(g,X,Y,x,y),
   bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
   plot:      (g,X,Y,x,y) => plot(g,X,Y,x,y),   // ground marked out for building
+  frame:     (g,X,Y,x,y) => plot(g,X,Y,x,y),   // the school's frame going up on its plot: a big object (OBJECT_ART), on the plot's earth
+  needles:   (g,X,Y,x,y) => needles(g,X,Y,x,y),   // the pine wood's floor
+  pine:      (g,X,Y,x,y) => needles(g,X,Y,x,y),   // a pine, a dead one and a cracked rock: big objects, on the pine wood's floor
+  deadPine:  (g,X,Y,x,y) => needles(g,X,Y,x,y),
+  crackedRock:(g,X,Y,x,y) => needles(g,X,Y,x,y),
+  stump:     (g,X,Y,x,y) => stump(g,X,Y,x,y),
+  pebble:    (g,X,Y,x,y) => pebble(g,X,Y,x,y),
+  rubble:    (g,X,Y,x,y) => rubble(g,X,Y,x,y),
   boulder:   (g,X,Y,x,y) => { grass(g,X,Y,x,y); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a boulder by the path
   log:       (g,X,Y,x,y) => fallenTree(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
@@ -400,8 +445,70 @@ const OBJECT_ART = {
   appleTree: (g, o) => fruitTree(g, o, APPLES),
   stone: (g, o) => boulder(g, o.x*T + 8, o.y*T + 15, 11, 9, true),
   rocks: (g, o) => { for (let i = 0; i < o.w; i++) boulder(g, o.x*T + 8 + i*14, o.y*T + 15, 10 - i % 2, 8 - i % 2, false); },
-  stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4)
+  stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4),
+  pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
+  deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
+  crackedRock: (g, o) => {   // a rock with a deep crack down it, and moss on top: one hit with your stick will break it
+    const X = o.x*T, Y = o.y*T;
+    boulder(g, X+8, Y+15, 7, 6, false);
+    [[8,3],[8,4],[7,5],[7,6],[8,7],[9,8],[8,9],[8,10],[9,11],[9,5],[10,4],[6,7],[5,8]].forEach(([a, c]) => dot(g, X+a, Y+c, GREY[0]));
+    [[4,4],[5,3],[6,3],[11,3],[12,4],[3,6]].forEach(([a, c]) => dot(g, X+a, Y+c, '#5E8F3E'));
+  },
+  frame: (g, o) => schoolFrame(g, o)
 };
+// A pine (the pine wood's trees): a straight trunk, and three tiers of dark needles narrowing to a point, reaching well
+// up above its square.
+const PINE = ['#163A28', '#24573A', '#33724A', '#4E9460', '#83C07A'];   // darkest to lightest
+function pine(g, X, Y, seed){
+  groundShadow(g, X+8, Y+14, 6, 2);
+  trunk(g, X+7, Y+8, 3, 7);
+  const tier = (top, bottom, half) => {   // a tier of needles: from its point at top, widening to half each side at bottom
+    const w = y => Math.round(half * (y - top + 1) / (bottom - top + 1));
+    for (let y = top; y <= bottom; y++) R(g, X+7-w(y), Y+y, 2*w(y)+3, 1, PINE[0]);   // its outline
+    for (let y = top + 1; y < bottom; y++){
+      const k = w(y), lit = Math.max(1, Math.round(k * .7));
+      R(g, X+8-k, Y+y, 2*k+1, 1, PINE[2]); R(g, X+8-k, Y+y, lit, 1, PINE[3]); R(g, X+9+Math.round(k * .3), Y+y, Math.max(0, k - Math.round(k * .3)), 1, PINE[1]);
+    }
+    dot(g, X+6, Y+top+3, PINE[4]); if (rnd(seed, top, 3) < .6) dot(g, X+5, Y+bottom-2, PINE[4]);
+  };
+  tier(-1, 12, 7); tier(-9, 5, 6); tier(-17, -2, 4);
+}
+// A dead pine, long dry: a bare grey trunk with a broken top, and a few bare branches, one with its last brown needles.
+// One hit with your stick knocks it down (it becomes a stump).
+const BARE = ['#3B3128', '#6E6152', '#948573', '#B9AA94'];   // darkest to lightest
+function deadPine(g, X, Y){
+  groundShadow(g, X+8, Y+14, 5, 2);
+  R(g, X+5, Y+12, 7, 3, BARE[0]); R(g, X+6, Y-13, 5, 26, BARE[0]);                                  // its roots, and the trunk's edge
+  R(g, X+7, Y-12, 3, 26, BARE[2]); R(g, X+7, Y-12, 1, 26, BARE[3]); R(g, X+9, Y-12, 1, 26, BARE[1]);  // the trunk
+  R(g, X+7, Y-16, 3, 4, BARE[0]); R(g, X+8, Y-15, 1, 3, BARE[2]);                                    // its broken top
+  [[8, 2], [8, 6], [9, -5], [7, -9]].forEach(([a, c]) => R(g, X+a, Y+c, 1, 2, BARE[1]));            // cracks in the bark
+  const branch = pts => { pts.forEach(([a, c]) => R(g, X+a-1, Y+c, 2, 2, BARE[0])); pts.forEach(([a, c]) => dot(g, X+a, Y+c, BARE[2])); };
+  branch([[5, -3], [4, -4], [3, -5], [2, -6], [1, -8]]);       // up to the left
+  branch([[11, -8], [12, -9], [13, -10], [14, -12]]);          // up to the right
+  branch([[5, 5], [4, 4], [3, 3]]);                            // a short one, broken
+  branch([[11, 2], [12, 1], [13, 0], [14, 0]]);
+  oval(g, X+14, Y-13, 2, 2, '#5A3E22'); oval(g, X+14, Y-13, 1, 1, '#9C6B3A'); dot(g, X+15, Y-12, '#B98A55');   // its last brown needles
+}
+// The school going up on its plot (once the troop has the wood and stones): a footing of small stones along the front,
+// wooden posts and beams, the roof's frame rising to a point in the middle, a brace in each side, and a ladder.
+function woodLine(g, x0, y0, x1, y1){   // a beam from (x0, y0) to (x1, y1): dark edges, light wood
+  const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) || 1;
+  for (let i = 0; i <= n; i++){ const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n); R(g, x - 1, y - 1, 3, 3, WOOD[0]); }
+  for (let i = 0; i <= n; i++){ const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n); dot(g, x, y, WOOD[3]); }
+}
+function schoolFrame(g, o){
+  const X = o.x*T, Y = o.y*T, W = o.w*T, base = Y + o.h*T - 4, top = base - 28, peak = top - 22, mid = X + Math.round(W / 2);
+  const posts = [X + 6, X + Math.round(W / 3), X + Math.round(W * 2 / 3), X + W - 7];
+  woodLine(g, X + 6, top, mid, peak); woodLine(g, X + W - 7, top, mid, peak); woodLine(g, mid, peak, mid, top);   // the roof's frame
+  woodLine(g, mid - 12, top - 10, mid + 12, top - 10);                                                               // a cross beam
+  posts.forEach(px => woodLine(g, px, base, px, top));                                                               // the posts
+  woodLine(g, X + 4, top, X + W - 5, top); woodLine(g, X + 4, top + 13, X + W - 5, top + 13);                        // the beams
+  woodLine(g, posts[0], top + 13, posts[1], top); woodLine(g, posts[3], top + 13, posts[2], top);                    // braces
+  for (let sx = X + 2; sx < X + W - 4; sx += 7){ oval(g, sx + 3, base + 1, 3, 2, GREY[0]); oval(g, sx + 3, base + 1, 2, 1, GREY[2]); dot(g, sx + 2, base, GREY[3]); }   // the footing
+  const lx = posts[2] + 9;   // a ladder against a post
+  woodLine(g, lx, base, lx + 4, top + 2); woodLine(g, lx + 6, base, lx + 10, top + 2);
+  for (let r = 1; r <= 4; r++){ const y = base - r * 6, k = (base - y) / (base - top - 2); R(g, Math.round(lx + 4 * k), y, 7, 1, WOOD[3]); }
+}
 function stall(g, L, Y, w){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit
   const top = Y + 16 - Math.round(w * .66), cy = Y + 16 - Math.round(w * .26);
   groundShadow(g, L + w/2, Y+15, w/2, 2);
@@ -419,10 +526,10 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
 const ROW_OBJECTS = ['rocks', 'stall'];   // side by side, these make one object as wide as the row
+const BLOCK_OBJECTS = ['frame'];          // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
-// stall letters one stall; anything
-// else stands on its own square. They come from the top of the map down, the order they're drawn in.
+// stall letters one stall; a block of frame letters is one frame; anything else stands on its own square. They come from the top of the map down, the order they're drawn in.
 function mapObjects(){
   const out = [], taken = new Set(), key = (x, y) => x + ',' + y;
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
@@ -432,6 +539,7 @@ function mapObjects(){
     let w = 1, h = 1;
     if (t.look === 'tree' && same(x+1, y) && same(x, y+1) && same(x+1, y+1)){ w = 2; h = 2; }
     else if (ROW_OBJECTS.includes(t.look)) while (same(x+w, y)) w++;
+    else if (BLOCK_OBJECTS.includes(t.look)){ while (same(x+w, y)) w++; while ([...Array(w).keys()].every(a => same(x+a, y+h))) h++; }
     for (let a = 0; a < w; a++) for (let c = 0; c < h; c++) taken.add(key(x+a, y+c));
     out.push({look:t.look, x, y, w, h});
   }
@@ -442,10 +550,16 @@ function mapObjects(){
 let OBJECT_PIECES = [];
 const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its pictures above and beside an object's squares, for what reaches out of them
 const LEAFY = ['tree', 'peachTree', 'appleTree'];   // what has leaves: they go over the characters beside it too, and rustle
+const COLLECTABLE = [];   // the squares in the place you're in with something to collect (a part of their onLook has sparkle)
 function buildMap(){   // the place you're in: the ground, then the big objects' pictures
   mapStory = mapStoryNow();   // (what the map letters that change with the story are, as it's drawn)
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
-  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
+  COLLECTABLE.length = 0;
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
+    const t = tileAt(x, y);
+    LOOKS[t.look](mg, x*T, y*T, x, y);
+    if ((t.onLook || []).some(p => p.sparkle)) COLLECTABLE.push([x, y]);
+  }
   OBJECT_PIECES = mapObjects().map(o => {
     const x0 = o.x*T - PIECE_SIDE, y0 = o.y*T - PIECE_UP, w = o.w*T + 2*PIECE_SIDE, h = PIECE_UP + o.h*T + 4;
     const part = (rects, over) => {   // the object drawn, just inside these parts of its picture, each [x, y, w, h]

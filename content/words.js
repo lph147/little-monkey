@@ -78,6 +78,8 @@ const WORD_BANK = {
   '老板': {py:'lǎobǎn', en:'shop owner, boss', pic:'🏪', area:1, category:'people'},
   '头带': {py:'tóudài', en:'headband', pic:'🎀', area:1, category:'items'},
   '戴': {py:'dài', en:'to wear (on your head)', area:1, category:'actions'},
+  // Chapter 1: the troop's new home
+  '木头': {py:'mùtou', en:'wood', pic:'🌲', area:1, category:'items'},
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true},

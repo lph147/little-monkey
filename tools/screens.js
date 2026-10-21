@@ -41,6 +41,16 @@ SAVES.home = {...SAVES.king, w: {...SAVES.king.w, ...knows(1, ['二', '三'])}, 
 SAVES.chapterOne = {...SAVES.home, version: 29, areas: {1: {...PROLOGUE, climb: 4, boar: 1, cave: 6, count: 3, chapter: 1, home: 0}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
 SAVES.toHomeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1], home: 1}}, following: ['elder'], pos: {place: 'falls', x: 12, y: 2, dir: 'right'}};
 SAVES.homeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1], home: 2}}, pos: {place: 'homeGround', x: 3, y: 5, dir: 'right'}};
+// building the school: the big monkey wants wood and small stones, from the pine wood (part-way through: two dead pines down,
+// a stone picked up, and the cracked rock broken); then the school's frame goes up
+SAVES.bigAsks = {...SAVES.homeGround, pos: {place: 'homeGround', x: 13, y: 5, dir: 'up'}};
+const BUILDING = {...SAVES.homeGround.areas[1], build: 1, wood: 'asked', stones: 'asked'};
+SAVES.pineWood = {...SAVES.homeGround, areas: {1: BUILDING}, pos: {place: 'pineWood', x: 10, y: 11, dir: 'up'}};
+SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
+  areas: {1: {...BUILDING, picked: {wood: ['pineWood:3,2', 'pineWood:13,2'], stones: ['pineWood:3,6']},
+    changed: {'pineWood:3,2': 'j', 'pineWood:13,2': 'j', 'pineWood:3,6': 'i', 'pineWood:16,4': 'y'}}}, pos: {place: 'pineWood', x: 15, y: 4, dir: 'right'}};
+SAVES.schoolFrame = {...SAVES.pineWoodLater, areas: {1: {...SAVES.pineWoodLater.areas[1], build: 2, wood: 'done', stones: 'done', picked: {}}},
+  pos: {place: 'homeGround', x: 10, y: 6, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -227,6 +237,16 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'plot-sign', title: 'A plot’s sign', save: 'homeGround', why: 'What the troop wants to build there.', run: async () => {
     play(); await wait(100); S.pos = {place: 'homeGround', x: 5, y: 4, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(400); }},
+  {id: 'big-asks', title: 'Wood and small stones', save: 'bigAsks', why: 'The big monkey, building the school: 我们要木头和小石头！ (木头 wood is just for listening until you find some).', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(600); }},
+  {id: 'pine-wood', title: 'The pine wood (松林)', save: 'pineWood', why: 'Up from the home ground: pines, three dry dead ones that sparkle (knock them down with your stick), small stones by the stream, and a squirrel with a !.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'pine-wood-later', title: 'The cracked rock, broken', save: 'pineWoodLater', why: 'Part-way through: two dead pines are stumps now, a stone picked up, and the rock broken, opening the little clearing with the last dead pine and stone.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'first-wood', title: 'Down comes the dry pine', save: 'pineWood', why: 'Hit a dead pine with your stick: it comes down, and you find 木头 (wood), said aloud.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'pineWood', x: 3, y: 3, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(1200); }},
+  {id: 'school-frame', title: 'The school’s frame', save: 'schoolFrame', why: 'With the wood and stones, the troop gets to work: the frame of the school goes up on its plot.', run: async () => {
+    play(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'Your replies show 美猴王 now.', run: async () => { play(); await wait(100); replyWith('你好'); await wait(400); }},
   {id: 'count-two', title: 'Counting the troop in', save: 'king', why: 'The card for 二 explains 两.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); next(); await wait(400); }},

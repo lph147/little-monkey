@@ -5,15 +5,34 @@ const EDGE = {look:'cliff'};   // what lies beyond the edge of the map
 const BIRD_WORD = (AREA.birds || {}).word;   // the word for the birds that land near you
 function tileAt(x, y){         // the legend entry for the map letter at x, y (or what it has become, as the story goes on)
   if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return EDGE;
-  const t = LEGEND[MAP[y][x]];
+  const t = LEGEND[here().changed[squareKey(x, y)] || MAP[y][x]];
   return t.becomes ? LEGEND[becomesNow(t)] || t : t;
 }
 // A map letter that changes with the story (becomes, in the legend), such as the rocks rolling away: the letter it is now.
-// The map is drawn again when what any of them are changes (refreshMap).
+// A single square can change for good too (the change step, kept in the save's changed), such as a dry tree you've knocked
+// down. The map is drawn again when either changes (refreshMap).
 const becomesNow = t => (t.becomes.find(b => matches(b.if)) || {}).to;
-const mapStoryNow = () => Object.values(LEGEND).filter(t => t.becomes).map(becomesNow).join();
+const squareKey = (x, y, place = PLACE) => `${place}:${x},${y}`;
+const mapStoryNow = () => Object.values(LEGEND).filter(t => t.becomes).map(becomesNow).join() + '|'
+  + Object.entries(here().changed).filter(([k]) => k.startsWith(PLACE + ':')).join();
 let mapStory = null;   // what they were when the map was last drawn (buildMap)
-function refreshMap(){ if (mapStoryNow() !== mapStory){ buildMap(); findGrass(); } }
+function refreshMap(){ if (mapStoryNow() !== mapStory){ buildMap(); findGrass(); stepClear(); } }
+// If the map changes under you (such as the school's frame going up on the plot you're standing on), you step out onto
+// the nearest square you can walk on.
+function stepClear(){
+  if (tileAt(pl.x, pl.y).walk) return;
+  const seen = new Set([pl.x + ',' + pl.y]), queue = [[pl.x, pl.y]];
+  while (queue.length){
+    const [x, y] = queue.shift();
+    for (const [dx, dy] of Object.values(DV)){
+      const nx = x + dx, ny = y + dy;
+      if (seen.has(nx + ',' + ny) || nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) continue;
+      seen.add(nx + ',' + ny);
+      if (walkable(nx, ny) && !exitAt(nx, ny)){ pl.x = nx; pl.y = ny; pl.px = nx*T; pl.py = ny*T; S.pos = {...S.pos, x:nx, y:ny}; save(); lineUp(); return; }
+      queue.push([nx, ny]);
+    }
+  }
+}
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
 const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && e.at[1] === y);   // a way to another place
 const isOpen = e => !e.if || matches(e.if);
@@ -36,8 +55,9 @@ const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => mat
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
     const c = typeof t.arrow === 'string' && ALL_NPCS.find(n => n.id === t.arrow);   // an arrow to a character
-    const at = c ? [c.x, c.y, c.place] : t.arrow || null, there = at && placeOf(at);
-    const target = !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
+    const toPlace = t.arrow && t.arrow.place;   // or {place}: the way to a place, and none once you're there
+    const at = c ? [c.x, c.y, c.place] : toPlace ? null : t.arrow || null, there = toPlace || (at && placeOf(at));
+    const target = toPlace ? (there === PLACE ? null : wayTo(there)) : !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
     return {id:fill(t.id, true), text:fill(t.text, false, true), target, ...(c && there === PLACE ? {npc:true} : {})};
   });
 }
@@ -104,7 +124,13 @@ function matches(cond){   // does the game match everything in an if?
 }
 const CALL_MS = 900;   // how long a character's ! shows before they talk to you, when they stop you (the stopsYou step)
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet']};   // extra settings a step can have
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet'],
+  change:['at'], collect:['for','count','note','each','full']};   // extra settings a step can have
+const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step)
+// Swinging your stick (the hit step): how long it takes, how far through it the stick strikes, and the swing now (when it
+// began, and the square it strikes), drawn by js/draw.js.
+const SWING_MS = 420, SWING_CONTACT = .45;
+let swing = null;
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
     const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
@@ -158,6 +184,34 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
+  // You swing your stick at the square you're facing, like Cut and Rock Smash in Pokémon: a whack, and chips fly off it
+  // (hit: what it's made of, 'wood' or 'stone').
+  async hit(s){
+    const [x, y] = facing();
+    swing = {t0:performance.now(), x, y}; SFX.swish();
+    await sleep(SWING_MS * SWING_CONTACT); SFX.thwack(); burst(x, y, s.hit); shakeT = performance.now() - 400;   // (a little shake)
+    await sleep(SWING_MS * (1 - SWING_CONTACT));
+  },
+  // The square you're facing (or at: [x, y], or [x, y, 'place']) becomes another letter of the legend, for good, such as
+  // a dry tree you've knocked down (a stump), or a stone you've picked up (the ground it lay on).
+  change(s){
+    const [x, y, place] = s.at ? [s.at[0], s.at[1], placeOf(s.at)] : [...facing(), PLACE];
+    here().changed[squareKey(x, y, place)] = s.change; save(); refreshMap();
+  },
+  // You get one of something for a request (for), from the square you're facing, such as a piece of wood from a dry
+  // tree, one at a time until you have count of them. The first teaches its word if it's new (you found it yourself:
+  // its card, said aloud, with note). You count them aloud in Chinese as you go (一, 二, 三…, with the numbers you
+  // know), with a message each time (each), or full once you have them all.
+  async collect(s){
+    const item = s.collect, p = here().picked[s.for] = here().picked[s.for] || [];
+    if (lvl(item) === 0) await showNotice(item, s.note ? {note:fill(s.note)} : {});
+    p.push(squareKey(...facing())); SFX.right();
+    const n = p.length, all = n >= (s.count || 1), num = COUNTING[n - 1], counted = !!num && lvl(num) >= 1;
+    if (all) here().holding[s.for] = item;
+    save();
+    if (counted) say(num);
+    toast((counted ? `${wz(num)}! ` : '') + fill(all ? s.full : s.each));
+  },
   rest(){ S.hearts = HEARTS; save(); SFX.chime(); },   // your hearts are full again
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
   // up, then you hop down again, sparkling, with all your hearts (its text: the message then).

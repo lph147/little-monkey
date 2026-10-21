@@ -149,6 +149,41 @@ function drawSplashes(cx, cy, now){
     for (let k = 0; k < 6; k++){ const ph = ((now / 600) + k / 6) % 1; R(b, PX + 2 + (k * 5) % 13, PY + 4 + Math.round(ph * 12), 1, 2, '#BFE8FA'); }   // drops falling from your fur
   }
 }
+// Swinging your stick (the hit step, js/world.js): your monkey with nothing in its hands, and the stick sweeping from up
+// high down onto the square you face, with a faint swoosh behind it; it stays there a moment after it strikes. Each way
+// you face: where the stick turns from and to (degrees: 0 is to the right, 90 down), and the hand holding it (in the
+// sprite). Facing away, the stick is beyond you, so it's drawn first.
+const SWING_ARC = {right:[-115, 5], left:[295, 175], down:[-70, 95], up:[150, 268]};
+const SWING_HAND = {right:[12, 9], left:[3, 9], down:[13, 10], up:[2, 9]};
+function drawSwing(PX, PY, now){
+  const t = Math.max(0, (now - swing.t0) / SWING_MS), k = Math.min(1, t / SWING_CONTACT), eased = 1 - (1 - k) * (1 - k);
+  const [a0, a1] = SWING_ARC[pl.dir], [hx, hy] = SWING_HAND[pl.dir], len = HELD['棍子'].len + 2, pal = HELD['棍子'].pal;   // (a little longer as it swings)
+  const angle = a0 + (a1 - a0) * eased - (t > SWING_CONTACT ? (a1 - a0) * .08 * Math.sin((t - SWING_CONTACT) / (1 - SWING_CONTACT) * Math.PI) : 0);   // (a little bounce back)
+  const along = (deg, r) => [PX + hx + Math.cos(deg * Math.PI / 180) * r, PY + hy + Math.sin(deg * Math.PI / 180) * r];
+  const stick = () => {
+    if (k < 1){ b.globalAlpha = .45; for (let i = 0; i <= 8; i++){ const [x, y] = along(a0 + (angle - a0) * i / 8, len - 1); R(b, Math.round(x), Math.round(y), 1, 1, '#FFFFFF'); } b.globalAlpha = 1; }   // the swoosh
+    for (let r = -1; r <= len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x) - 1, Math.round(y) - 1, 2, 2, pal.k); }   // its dark edge
+    for (let r = 0; r < len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x), Math.round(y), 1, 1, pal.l); }           // the wood
+  };
+  if (pl.dir === 'up') stick();
+  R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
+  b.drawImage(monkeySprite('player', pl.dir, false, 0, true), PX, PY);
+  if (pl.dir !== 'up') stick();
+}
+// Chips flying off what you hit (burst, at the moment your stick strikes): wood or stone, falling as they fly.
+const chips = [];
+const CHIP_COLOURS = {wood:['#D2A46A', '#8A5A32', '#B98A55', '#6B4A2A'], stone:['#E6E2D6', '#A9A598', '#7C786D', '#D6D2C5']};
+function burst(x, y, kind){
+  const now = performance.now(), cols = CHIP_COLOURS[kind] || CHIP_COLOURS.wood;
+  for (let i = 0; i < 10; i++){ const a = Math.PI * (1.1 + .8 * Math.random()), v = 30 + Math.random() * 45; chips.push({x:x*T + 8, y:y*T + 7, vx:Math.cos(a) * v * (Math.random() < .5 ? -1 : 1), vy:Math.sin(a) * v, c:cols[i % cols.length], t0:now}); }
+}
+function drawChips(cx, cy, now){
+  for (let i = chips.length - 1; i >= 0; i--){
+    const p = chips[i], t = (now - p.t0) / 1000;
+    if (t > .6){ chips.splice(i, 1); continue; }
+    R(b, Math.round(p.x + p.vx * t - cx), Math.round(p.y + p.vy * t + 160 * t * t - cy), 2, 1, p.c);
+  }
+}
 // Where a character is drawn (x and y in map pixels; ground, its y without a leap's lift), and whether it's mid-step:
 // stepping or leaping from square to square (mv: someone following you, or going to their place), or on its square.
 function charPos(n, now){
@@ -186,6 +221,10 @@ function drawWorld(now){
     if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
     sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
   }
+  for (const [x, y] of COLLECTABLE){   // and on things you can collect right now (their onLook part with sparkle matches)
+    const t = tileAt(x, y), p = (t.onLook || []).find(p => !p.if || matches(p.if));
+    if (p && p.sparkle) sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
+  }
   // animals at their own spots on the ground (a cliff), once animals appear; those up a tree come after the leaves
   const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE && !(foe && foe.a === a)) : [];
   const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree';
@@ -211,7 +250,8 @@ function drawWorld(now){
       const moving = !!pl.mv, p = moving ? (now - pl.mv.t0) / STEP : 0;
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
-      drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
+      if (swing && now - swing.t0 < SWING_MS) drawSwing(PX, PY, now);   // swinging your stick (the hit step)
+      else drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
       for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
       if (now - wakeT < 1000) [[-3, 2], [17, 4], [-1, -4], [15, -3], [7, -7]].forEach(([dx, dy], i) => {   // waking up with all your hearts: sparkles
@@ -246,6 +286,7 @@ function drawWorld(now){
   for (const [x, y, show] of bubbles) bubble(x, y, show);
   if (trainingCalls()) for (const [x, y] of TRAINING_TILES) bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice
   drawSplashes(cx, cy, now);
+  drawChips(cx, cy, now);
   drawMarkers(cx, cy, now);
   const wk = (now - waterT) / 600;   // going through falling water: a rush of water covers the screen, then clears
   if (wk >= 0 && wk < 2){

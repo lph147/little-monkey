@@ -226,6 +226,16 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Three ways out are shut by thick bushes (right along the main path, up the path at the top right, and over the stream's bridge): A says the troop will clear a way through when it's needed. Walk back out on the left to the waterfall.
 - [ ] A game saved after counting the troop in, from before version 169: the first thing you do shows the Chapter 1 card.
 
+**Chapter 1: wood and stones for the school (the pine wood, 松林)**
+- [ ] At the home ground, the big monkey has a !. Talk to him: 我们要木头和小石头！ (We need wood and small stones!: 木头 is grey, just for listening). The speech box says he's cleared a way up to the pine wood, and that one hit with your stick knocks down dead, dry pines. Two new tasks: three pieces of wood (in plain English) and three small 石头, each 0/3, with an arrow up to the top right.
+- [ ] The bushes at the top right have gone: walk up the path and off the top. You arrive at 松林 sōnglín · Pine wood: tall dark pines, a stream with a little bridge, long grass, and a squirrel with a ! by the path. Talk to it: 你好！, your reply, then 你要木头吗？ (Do you want wood?), and it points out the grey, dead pines. The task arrow has gone (you're there), and the things to collect sparkle.
+- [ ] Walk up to a grey, dead pine and face it: A says Hit. Press it: your monkey swings its stick, chips fly, the screen jolts, and the tree is gone: a stump is left. A card teaches 木头 (wood), said aloud. Then "一 (one)! Down comes the dry pine! You take a piece of 木头 (wood)." and you hear 一. The task says 1/3, now with 木头.
+- [ ] Knock down the second dead pine (二, two), and pick up the small stones by the stream (A says Pick up; each is gone once picked, and counted: 一, 二).
+- [ ] The third dead pine and stone are in a little clearing at the top right, behind a big cracked rock between the pines. Face the rock: A says Hit. Hit it: it breaks into rubble and you can walk in. Get the last pine (三) and stone (三): "You have three…, take them to the big monkey."
+- [ ] Leave the pine wood (and come back): the stumps and the broken rock stay as they are. Reload the game: still the same.
+- [ ] Back at the home ground, the big monkey has a ?. Talk to him: 你有木头吗？, Give it, fill the gap (我们要＿: 木头), shells, 谢谢你！ and your reply; then the same for the stones (我们要小＿: 石头).
+- [ ] The ground shakes and the troop gets to work: the frame of the school goes up on the big plot (posts, beams, the roof's frame, a ladder, and a footing of small stones). If you were standing on the plot, you step off it. The school's sign says the troop is building a school there. TASKS: both of chapter 1's steps are ticked, and the hint says the troop is building the school.
+
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.
 - [ ] 词 Words (the Word Scroll) and 朋友 Friends open, and Back returns to the menu, on the same tile.

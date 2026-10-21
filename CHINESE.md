@@ -14,7 +14,7 @@ shown where the word list has them.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 山羊 (goat), 猴子 (Monkey) |  |
+| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
 | 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey) |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I'm hungry. I want to eat some fruit! | 饿猴子 (Hungry monkey) |  |
@@ -59,6 +59,12 @@ shown where the word list has them.
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | 老猴子 (Old monkey), 小猴子 (Little monkey), 大猴子 (Big monkey) |  |
 | 我们有家了！ | wǒmen yǒu jiā le! | We have a home now! | 老猴子 (Old monkey) |  |
 | 这里很大！ | zhèlǐ hěn dà! | It’s so big here! | 老猴子 (Old monkey) |  |
+| 我们要木头和小石头！ | wǒmen yào mùtou hé xiǎo shítou! | We need wood and small stones! | 大猴子 (Big monkey) |  |
+| 我们要木头。 | wǒmen yào mùtou. | We need wood. | 大猴子 (Big monkey) |  |
+| 我们也要小石头。 | wǒmen yě yào xiǎo shítou. | We need small stones too. | 大猴子 (Big monkey) |  |
+| 你有木头吗？ | nǐ yǒu mùtou ma? | Do you have the wood? | 大猴子 (Big monkey) |  |
+| 你有石头吗？ | nǐ yǒu shítou ma? | Do you have the stones? | 大猴子 (Big monkey) |  |
+| 你要木头吗？ | nǐ yào mùtou ma? | Do you want wood? | 松鼠 (squirrel) |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
 | 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
@@ -76,6 +82,8 @@ shown where the word list has them.
 | 我要吃苹果 | wǒ yào chī píngguǒ | I want to eat an apple. | 饿猴子 (Hungry monkey) |  |
 | 我要喝水 | wǒ yào hē shuǐ | I want to drink water. | 渴猴子 (Thirsty monkey) |  |
 | 我要红色的花 | wǒ yào hóngsè de huā | I want a red flower. | 大猴子 (Big monkey) |  |
+| 我们要木头 | wǒmen yào mùtou | We need wood. | 大猴子 (Big monkey) |  |
+| 我们要小石头 | wǒmen yào xiǎo shítou | We need small stones. | 大猴子 (Big monkey) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
@@ -172,6 +180,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 深山 | shēnshān | Deep in the mountains |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 | 家园 | jiāyuán | Home ground |  |
+| 松林 | sōnglín | Pine wood |  |
 
 ### Words to collect
 
@@ -224,6 +233,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 老板 | lǎobǎn | shop owner, boss |  |
 | 头带 | tóudài | headband |  |
 | 戴 | dài | to wear (on your head) |  |
+| 木头 | mùtou | wood |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -373,6 +383,14 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 从此，花果山的猴子很快乐。 | cóngcǐ, Huāguǒ Shān de hóuzi hěn kuàilè. | From then on, the monkeys of Flower Fruit Mountain were very happy. (从此 cóngcǐ, from then on; 快乐 kuàilè, happy) | New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before) |  |
 | 我们有家了！ | wǒmen yǒu jiā le! | We have a home now! | New on 21 October 2026 (in the game): The old monkey, at the start of chapter 1, before showing you the troop’s new home ground |  |
 | 这里很大！ | zhèlǐ hěn dà! | It’s so big here! | New on 21 October 2026 (in the game): The old monkey, arriving at the home ground beside the waterfall (这里 zhèlǐ, here; the place is called 家园 jiāyuán, home ground: please check this name too) |  |
+| 我们要木头和小石头！ | wǒmen yào mùtou hé xiǎo shítou! | We need wood and small stones! | New on 21 October 2026 (in the game), building the school: The big monkey, who wants to build the school (木头 mùtou, wood, is just for listening until you find some) |  |
+| 我们要木头。 | wǒmen yào mùtou. | We need wood. | New on 21 October 2026 (in the game), building the school: The big monkey, if you come back without the wood |  |
+| 我们也要小石头。 | wǒmen yě yào xiǎo shítou. | We need small stones too. | New on 21 October 2026 (in the game), building the school: The big monkey, if you come back without the stones |  |
+| 你有木头吗？ | nǐ yǒu mùtou ma? | Do you have the wood? | New on 21 October 2026 (in the game), building the school: The big monkey, when you bring the wood |  |
+| 你有石头吗？ | nǐ yǒu shítou ma? | Do you have the stones? | New on 21 October 2026 (in the game), building the school: The big monkey, when you bring the small stones |  |
+| 我们要木头。 | wǒmen yào mùtou. | We need wood. | New on 21 October 2026 (in the game), building the school: The sentence you finish when you give him the wood (filling in 木头) |  |
+| 我们要小石头。 | wǒmen yào xiǎo shítou. | We need small stones. | New on 21 October 2026 (in the game), building the school: The sentence you finish when you give him the stones (filling in 石头) |  |
+| 你要木头吗？ | nǐ yào mùtou ma? | Do you want wood? | New on 21 October 2026 (in the game), building the school: A squirrel in the pine wood (the place is called 松林 sōnglín, pine wood: please check this name too), showing you the dry, dead pines |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 

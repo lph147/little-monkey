@@ -383,12 +383,13 @@ test('every {word} or {counter} in content text is real', () => {
   for (const t of texts) for (const w of placeholders(t)) assert.ok(okPlaceholder(w), `"${t}" has {${w}}, which isn't a word in the word bank, a counter or holding:<a request>`);
 });
 
-test('tasks have different ids, and their arrows point at a character or a place on the map', () => {
+test('tasks have different ids, and their arrows point at a character, a place on the map, or the way to a place', () => {
   const ids = AREA.tasks.map(t => t.id);
   assert.equal(new Set(ids).size, ids.length, 'two tasks have the same id');
   for (const t of AREA.tasks){
     assert.ok(t.text, `task ${t.id} needs text`);
     if (typeof t.arrow === 'string') assert.ok(AREA.characters.some(c => c.id === t.arrow), `task ${t.id} points at "${t.arrow}", who isn't a character`);
+    else if (t.arrow && t.arrow.place) assert.ok(AREA.places[t.arrow.place], `task ${t.id} points the way to "${t.arrow.place}", which isn't a place`);
     else if (t.arrow) assert.ok(onMap(t.arrow), `task ${t.id} points at ${t.arrow}, which is off the map`);
   }
 });

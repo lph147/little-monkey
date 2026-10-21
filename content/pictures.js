@@ -1520,6 +1520,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '木头': {   // wood
+    palette: {a:'#5A503F', b:'#362D21', c:'#45311E', d:'#2A1C11', e:'#F2DDB0', f:'#836F52', g:'#B07A48', h:'#5E3B1F', i:'#E2C08E', j:'#8A5A32', k:'#B98A55', l:'#4B3926', m:'#C49461', n:'#50341D'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "...........aaabccccccd..........",
+      ".........aaeeefgggggghdd........",
+      "........aeeiiiiffjjjjjghd.......",
+      ".......aeiikkkkiifjjjjjhd.......",
+      "......aeiikkiikkiifjjjjjhd......",
+      "......aeikiiiiiikifjjjjjhd......",
+      "......aeikiijjiikifjjjjjhd......",
+      "......aeikiijjiikifjjjjjhd......",
+      "......aeikiiiiiikifjjjjjhd......",
+      "......lmiikkiikkiifjjjjjhd......",
+      ".......lmiikkkkiifjjjjjhd.......",
+      "........lmmiiiiffjjjjjhhd.......",
+      ".....aaabclmmmfhhhhhhhdccccd....",
+      "...aaeeefggnnnnnbffffnggggghdd..",
+      "..aeeiiiiffjjjjfeiiiiffjjjjjghd.",
+      ".aeiikkkkiifjjfiikkkkiifjjjjjhd.",
+      "aeiikkiikkiiffiikkiikkiifjjjjjhd",
+      "aeikiiiiiikiffikiiiiiikifjjjjjhd",
+      "aeikiijjiikiffikiijjiikifjjjjjhd",
+      "aeikiijjiikiffikiijjiikifjjjjjhd",
+      "aeikiiiiiikiffikiiiiiikifjjjjjhd",
+      "lmiikkiikkiiffiikkiikkiifjjjjjhd",
+      ".lmiikkkkiifjjfiikkkkiifjjjjjhd.",
+      "..lmmiiiiffjjjjfmiiiiffjjjjjhhd.",
+      "...llmmmfhhhhhhhlmmmfhhhhhhhdd..",
+      ".....lllbddddddd.lllbddddddd....",
+      "................................",
+      "................................"
+    ]
+  },
   '蛇': {   // snake
     palette: {a:'#414F29', b:'#233113', c:'#A6D86A', d:'#477A26', e:'#6CA83E', f:'#FFFFFF', g:'#1E1A16', h:'#511C19', i:'#D83A3A', j:'#3F6124', k:'#202912', l:'#3F6E22', m:'#E8D27A'},
     rows: [

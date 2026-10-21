@@ -40,9 +40,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   ledgeTip 1 once the goat below the waterfall has told you that you can hop down the ledges
   //   home    chapter 1, the troop's home ground beside the waterfall: 0 not yet, 1 the old monkey is going there with you,
   //           2 you've been there with him
+  //   build   chapter 1, building the school: 0 not yet, 1 the big monkey wants wood and small stones (the way up to the pine
+  //           wood is open), 2 you've brought them and the school's frame is up
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0, build:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
@@ -56,7 +58,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
     caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (the bridge's 桥 waits for chapter 1)
-    troopIn: {count:'known', words:['一', '二', '三']}   // the troop counted in (each count teaches its number)
+    troopIn: {count:'known', words:['一', '二', '三']},   // the troop counted in (each count teaches its number)
+    woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
+    stonesGot: {count:'picked', request:'stones'}    // and small stones
   },
 
   // The task box under the game screen. Every task whose if matches is shown, in this order.
@@ -94,6 +98,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'home', if:{cave:4}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
     {id:'home0', if:{chapter:1, home:0}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
     {id:'home1', if:{home:1}, text:'Lead the old monkey to the troop’s new home ground, along beside the waterfall', arrow:[19, 2, 'falls']},
+    {id:'wood', if:{wood:'asked', holding:{wood:false}}, text:'Find three pieces of {木头} in the pine wood ({woodGot}/3)', arrow:{place:'pineWood'}},
+    {id:'stones', if:{stones:'asked', holding:{stones:false}}, text:'Find three small {石头} in the pine wood ({stonesGot}/3)', arrow:{place:'pineWood'}},
+    {id:'woodBack', if:{wood:'asked', holding:{wood:true}}, text:'Take the {木头} to the big monkey', arrow:'big'},
+    {id:'stonesBack', if:{stones:'asked', holding:{stones:true}}, text:'Take the small {石头} to the big monkey', arrow:'big'},
     {id:'count', if:{cave:{atLeast:5}, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
   ],
 
@@ -102,7 +110,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
-    {if:{home:2}, text:'The troop wants to build a school first. The rest of chapter 1 is coming soon.'},
+    {if:{build:2}, text:'The troop is building the school. The rest of chapter 1 is coming soon.'},
+    {if:{home:2}, text:'The troop wants to build a school first. The big monkey has something to ask you.'},
     {if:{count:3}, text:'The whole troop is home in the {洞}. The rest of the story is coming soon.'},
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
   ],
@@ -130,7 +139,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Count the troop into the cave ({troopIn}/3)', show:{cave:{atLeast:5}}, done:{count:3}},
     {text:'Become the troop’s king', show:{count:3}, done:{cave:{atLeast:6}}},
     // chapter 1: the great feast
-    {chapter:1, text:'Go with the old monkey to the troop’s new home ground', done:{home:{atLeast:2}}}
+    {chapter:1, text:'Go with the old monkey to the troop’s new home ground', done:{home:{atLeast:2}}},
+    {chapter:1, text:'Bring {木头} and small {石头} for the school', show:{build:{atLeast:1}}, done:{build:{atLeast:2}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -146,7 +156,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the ledges
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
-    big: [{if:{climb:1, new:'棍子'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
+    big: [{if:{climb:1, new:'棍子'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'},
+      {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', holding:{stones:true}}, show:'?'}],   // chapter 1: the school
+    woodSquirrel: [{if:{new:'木头'}, show:'!'}]   // the squirrel in the pine wood, until you've found wood
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:
@@ -178,7 +190,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
       sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
     flowers: {from:'big', wants:'花', verb:'花', ask:'wantFlowers', asked:'The big monkey wants a red, a yellow and a white {花}, and will give you shells for them. Check your tasks.',
-      offer:'haveFlowers', sentence:'我 要 红色 的 花', sentenceEn:'I want a red flower.', gap:'红色', reward:3, thanks:'thanks', thanksReply:'不客气'}
+      offer:'haveFlowers', sentence:'我 要 红色 的 花', sentenceEn:'I want a red flower.', gap:'红色', reward:3, thanks:'thanks', thanksReply:'不客气'},
+    // chapter 1: the big monkey wants wood and small stones to build the school. He asks for both at once (his talk), and
+    // you find them in the pine wood: the dry, dead pines you knock down with your stick, and the stones by the stream
+    // (collect, in the legend).
+    wood: {from:'big', wants:'木头', ask:'wantWood', asked:'The big monkey wants three pieces of {木头}. Check your tasks.',
+      offer:'haveWood', sentence:'我们 要 木头', sentenceEn:'We need wood.', reward:3, thanks:'thanks', thanksReply:'不客气'},
+    stones: {from:'big', wants:'石头', ask:'wantStones', asked:'The big monkey wants three small {石头}. Check your tasks.',
+      offer:'haveStones', sentence:'我们 要 小 石头', sentenceEn:'We need small stones.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
@@ -234,7 +253,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{chapter:0, count:3}, do:[{scene:'becomingKing'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}]},
     // chapter 1: you arrive at the home ground with the old monkey, who goes to his place there and tells you about it
     {if:{home:1, place:'homeGround'}, do:[{set:{home:2}}, {follow:[]}, {say:'bigHere', by:'elder'},
-      {message:'Each plot is marked out for something the troop dreams of: a school, a new shop, a hive, a garden and a pen. First, a school!'}]}
+      {message:'Each plot is marked out for something the troop dreams of: a school, a new shop, a hive, a garden and a pen. First, a school!'}]},
+    // you've brought the big monkey the wood and the small stones: the troop gets to work, and the school's frame goes up
+    {if:{build:1, wood:'done', stones:'done'}, do:[{set:{build:2}}, {rumble:true},
+      {message:'The troop gets to work with the wood and stones, and up goes the frame of the school!'}]}
   ],
 
   // The area's places: small maps you move between. The first is where the game starts. Each has
@@ -392,14 +414,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     },
     // Chapter 1: the troop's home ground, beside the waterfall (the way there opens once the old monkey has told you about
     // it). Each plot is marked out for something the troop wants to build, with a sign; the ways out are shut by thick
-    // bushes until the troop needs them: east to the bees, north to the high pasture, south over the stream.
+    // bushes until the troop needs them: north to the pine wood (once the big monkey wants wood), east to the bees, south
+    // over the stream.
     homeGround: {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       exits: [
-        {at:[0, 5], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 6], to:'falls', arrive:[18, 2], facing:'left'}   // back to the waterfall
+        {at:[0, 5], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 6], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
+        {at:[18, 0], to:'pineWood', arrive:[10, 12], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'}   // up to the pine wood
       ],
       map: [
-        "YYYYYYYYYYYYYYYYYYuYYY",
+        "YYYYYYYYYYYYYYYYYYbYYY",
         "YYMMMMMMMMMMMMMMMg.gYY",
         "Ygggggsssssssgghhh.gJY",
         "YgTgg1sssssssg3hhh.FEY",
@@ -413,6 +437,31 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YWWWWWWWWWWWWWkWWWWWWY",
         "YYYYYYYYYYYYYY.YYYYYYY",
         "YYYYYYYYYYYYYYuYYYYYYY"
+      ]
+    },
+    // Chapter 1: the pine wood, up from the home ground (the big monkey clears the way when he wants wood). Three dry, dead
+    // pines to knock down for wood, small stones by the stream, long grass where wild things live, and a little clearing
+    // in the north-east, behind a cracked rock you break with your stick, with the last dead pine and the last stone.
+    pineWood: {
+      name: {zh:'松林', py:'sōnglín', en:'Pine wood'},
+      exits: [
+        {at:[10, 13], to:'homeGround', arrive:[18, 1], facing:'down'}   // back down to the home ground
+      ],
+      map: [
+        "pppppppppppppppppppppp",
+        "ppiiiiippiiiiiiipiiipp",
+        "ppiqiiippiiiiqiipimqpp",
+        "piiiiiipiiipiiiipiiipp",
+        "piiiiiiiiiiiiiiixiiipp",
+        "ppiinniiiiipiiiiippppp",
+        "ppimnniiiiiiiiiiiiiipp",
+        "WWWWWWWWWWkWWWWWWWWWWW",
+        "ppiiiiiiiiiiiiimiiiipp",
+        "ppinnnippi.ipiiiiiiipp",
+        "ppinnnnipp.ipppiiiiipp",
+        "ppinnniip..ipppppiippp",
+        "pppiiiipp...pppppppppp",
+        "pppppppppp.ppppppppppp"
       ]
     }
   },
@@ -498,16 +547,37 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the way from the waterfall to the home ground, and the home ground's plots, their signs, and the ways out
     'f': {look:'bush', becomes:[{if:{home:{atLeast:1}}, to:'.'}]},   // bushes, until the troop clears a way through them
     'u': {look:'bush', landmark:true, onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
-    's': {look:'plot', walk:true},   // the school's plot: ground marked out with string and stakes
+    's': {look:'plot', walk:true, becomes:[{if:{build:{atLeast:2}}, to:'a'}]},   // the school's plot: ground marked out with string and stakes
+    'a': {look:'frame', landmark:true, onLook:[{do:[{message:'The frame of the school is up. The troop is busy building.'}]}]},   // (the school going up on it)
     'd': {look:'plot', walk:true},   // the new shop's
     'h': {look:'plot', walk:true},   // the hive's
     'e': {look:'plot', walk:true},   // the garden's
     'c': {look:'plot', walk:true},   // the cow pen's
-    '1': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants to build a school here, where the little monkeys can learn.'}]}]},
+    '1': {look:'sign', landmark:true, label:'Read', onLook:[{if:{build:{atLeast:2}}, do:[{message:'The troop is building a school here, where the little monkeys can learn.'}]},
+      {do:[{message:'The troop wants to build a school here, where the little monkeys can learn.'}]}]},
     '2': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants a new shop here.'}]}]},
     '3': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants a hive here, by the flowers, for bees.'}]}]},
     '4': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants to grow things here, in a garden by the stream.'}]}]},
     '5': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants a pen here, for a cow.'}]}]},
+    'b': {look:'bush', landmark:true, becomes:[{if:{build:{atLeast:1}}, to:'.'}],   // thick bushes, until the big monkey clears the way up to the pine wood
+      onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
+    // chapter 1: the pine wood. Its floor, its pines, and the dry, dead pines: one hit with your stick knocks one down (it
+    // becomes a stump), and you take a piece of wood. Small stones by the stream, to pick up. A cracked rock: one hit
+    // breaks it, opening the way to the little clearing behind it.
+    'i': {look:'needles', walk:true},
+    'p': {look:'pine', word:'树'},
+    'q': {look:'deadPine', landmark:true, onLook:[
+      {if:{wood:'asked', holding:{wood:false}}, label:'Hit', sparkle:true, do:[{hit:'wood'}, {change:'j'}, {collect:'木头', for:'wood', count:3,
+        note:'Dry wood from a dead pine, for building.', each:'Down comes the dry pine! You take a piece of {木头}.', full:'You have three pieces of {木头}. Take them to the big monkey.'}]},
+      {do:[{message:'An old pine, long dead and dry.'}]}]},
+    'j': {look:'stump'},   // what's left of a dead pine you've knocked down
+    'm': {look:'pebble', word:'石头', onLook:[
+      {if:{stones:'asked', holding:{stones:false}}, label:'Pick up', sparkle:true, do:[{change:'i'}, {collect:'石头', for:'stones', count:3,
+        each:'You pick up a small {石头}.', full:'You have three small {石头}. Take them to the big monkey.'}]}]},
+    'x': {look:'crackedRock', landmark:true, onLook:[
+      {if:{stones:'asked'}, label:'Hit', sparkle:true, do:[{hit:'stone'}, {change:'y'}, {message:'Crack! The rock breaks apart, and the way to the little clearing is open.'}]},
+      {do:[{message:'A big rock with a deep crack down it. Behind it, between the pines, is a little clearing.'}]}]},
+    'y': {look:'rubble', walk:true},   // what's left of the cracked rock
     'L': {look:'tablet', landmark:true, action:'sign', sign:{name:{zh:'石碑', py:'shíbēi', en:'Stone tablet'}, says:{zh:'水帘洞', en:'Water Curtain Cave'}, hint:'The name of the cave.'}}
   },
 
@@ -561,6 +631,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
     // down the ledges (it stops you if you walk past: see events)
     {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
+    {id:'woodSquirrel', place:'pineWood', x:11, y:10, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, by the way in
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -644,6 +715,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '一': 'Counting the troop into the Water Curtain Cave.',
     '二': 'Counting the troop into the Water Curtain Cave.',
     '三': 'Counting the troop into the Water Curtain Cave.',
+    '木头': 'A dry, dead pine in the pine wood, knocked down with your stick.',
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -771,6 +843,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     letsGo: {zh:'太 好 了 ！ 我们 去 看看 ！', en:'Wonderful! Let’s go and see!'},
     haveHome: {zh:'我们 有 家 了 ！', en:'We have a home now!'},   // chapter 1 (drafts, not checked yet: see CHINESE.md)
     bigHere: {zh:'这里 很 大 ！', en:'It’s so big here!'},
+    needWood: {zh:'我们 要 木头 和 小 石头 ！', en:'We need wood and small stones!'},   // the big monkey, building the school
+    wantWood: {zh:'我们 要 木头 。', en:'We need wood.'},
+    wantStones: {zh:'我们 也 要 小 石头 。', en:'We need small stones too.'},
+    haveWood: {zh:'你 有 木头 吗 ？', en:'Do you have the wood?'},
+    haveStones: {zh:'你 有 石头 吗 ？', en:'Do you have the stones?'},
+    squirrelWood: {zh:'你 要 木头 吗 ？', en:'Do you want wood?'},   // the squirrel in the pine wood
     letsLook: {zh:'我们 看看 ！', en:'Let’s have a look!'},
     great: {zh:'太 好 了 ！', en:'Great!'},
     home: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},
@@ -937,6 +1015,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     fox: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
     squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}? If you win, it gives you a {桃子}.', word:'松鼠',
       notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}, {reply:'谢谢'}]}}]}],
+    // the squirrel in the pine wood (chapter 1) shows you the dry pines; it loves the pines, as its name says
+    woodSquirrel: [
+      {if:{new:'木头'}, do:[{say:'hi'}, {reply:'你好'}, {say:'squirrelWood'},
+        {message:'The squirrel points its nose at the grey, dead pines. Their wood is dry: one hit with your stick, and down they come!'}]},
+      {do:[{say:'hi'}, {reply:'你好'}, {message:'The squirrel loves the pine wood. Its name, {松鼠}, means pine mouse!'}]}
+    ],
     goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
       notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}, {reply:'谢谢'}]}}]}],
     // the goat below the waterfall: the way down is quicker, hopping down the ledges that sent you round on the way up
@@ -961,6 +1045,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'The big monkey shows you how to fight. When something jumps out of the long grass, choose 打 (dǎ, hit) and answer to hit it. When it attacks, listen for where it’s coming from, and pick that to jump aside.'},
         {message:'A wrong answer when it attacks costs a heart, and you have 5. Eat something to get one back, or come back to the old monkey to rest.'}
       ]},
+      // chapter 1: he wants wood and small stones to build the school (both at once), and has cleared the way to the pine wood
+      {if:{home:2, build:0}, do:[
+        {say:'needWood'},
+        {message:'The troop needs wood and small stones to build the school. The big monkey has cleared a way through the bushes at the top of the home ground, up to the pine wood.'},
+        {message:'Look there for dead, dry pines: one hit with your stick knocks them down. Small stones lie by the stream.'},
+        {set:{build:1, wood:'asked', stones:'asked'}}
+      ]},
+      {if:{build:1, wood:'asked', stones:'asked'}, do:[{request:'wood'}, {request:'stones'}]},   // you bring them (or he asks again)
+      {if:{build:1, wood:'asked'}, do:[{request:'wood'}]},
+      {if:{build:1, stones:'asked'}, do:[{request:'stones'}]},
       {if:{cave:{atLeast:6}}, do:[{say:'king'}]},   // once you're king (the troop makes you king at the end of the prologue: the crowning scene)
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'dare'}]},
