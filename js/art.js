@@ -312,6 +312,13 @@ function plot(g, X, Y, x, y){
 // The pine wood: its floor (grass a shade darker, strewn with fallen pine needles); what's left of a dry tree you've knocked
 // down (a stump, its cut top showing the rings, chips round it); a small stone to pick up, by the stream; and what's left
 // of a rock you've broken (small stones scattered about, walkable).
+// The pine wood's floor under something small, or where something was (a stone picked up, a stump): grass where it's
+// grassy round about (in the sunny glade), pine needles otherwise.
+const GRASS_FLOOR = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers'];
+function woodFloor(g, X, Y, x, y){
+  const grassy = Object.values(DV).filter(([dx, dy]) => GRASS_FLOOR.includes(tileAt(x + dx, y + dy).look)).length;
+  (grassy >= 2 ? grass : needles)(g, X, Y, x, y);
+}
 function needles(g, X, Y, x, y){
   R(g, X, Y, T, T, '#72B262');
   for (let i = 0; i < 9; i++){
@@ -322,7 +329,7 @@ function needles(g, X, Y, x, y){
   }
 }
 function stump(g, X, Y, x, y){
-  needles(g, X, Y, x, y);
+  woodFloor(g, X, Y, x, y);
   oval(g, X+8, Y+13, 7, 1, '#5E9A4E');                                                               // its shadow
   R(g, X+2, Y+11, 13, 3, WOOD[0]); R(g, X+3, Y+11, 11, 2, WOOD[1]);                                   // roots, spreading out
   R(g, X+4, Y+7, 9, 6, WOOD[0]); R(g, X+5, Y+7, 7, 5, WOOD[1]); R(g, X+5, Y+7, 2, 5, WOOD[2]);       // the bark, lit on the left
@@ -333,13 +340,13 @@ function stump(g, X, Y, x, y){
   R(g, X+1, Y+9, 2, 1, WOOD[4]); R(g, X+13, Y+14, 2, 1, WOOD[3]); dot(g, X+14, Y+3, WOOD[4]);         // chips
 }
 function pebble(g, X, Y, x, y){
-  needles(g, X, Y, x, y);
+  woodFloor(g, X, Y, x, y);
   oval(g, X+8, Y+12, 5, 1, '#5E9A4E');
   oval(g, X+8, Y+9, 5, 3, GREY[0]); oval(g, X+8, Y+9, 4, 2, GREY[2]); R(g, X+5, Y+8, 4, 1, GREY[3]); dot(g, X+6, Y+7, GREY[4]); R(g, X+7, Y+11, 4, 1, GREY[1]);
   R(g, X+1, Y+13, 2, 2, GREY[1]); dot(g, X+1, Y+13, GREY[3]); R(g, X+13, Y+4, 2, 1, GREY[2]);
 }
 function rubble(g, X, Y, x, y){
-  needles(g, X, Y, x, y);
+  woodFloor(g, X, Y, x, y);
   [[3, 9, 3, 2], [9, 11, 3, 2], [10, 5, 3, 2], [5, 4, 2, 1], [13, 9, 2, 1], [2, 13, 2, 1]].forEach(([px, py, w, h], i) => {
     R(g, X+px, Y+py+h, w, 1, '#5E9A4E'); R(g, X+px, Y+py, w, h, i % 2 ? GREY[1] : GREY[2]); dot(g, X+px, Y+py, GREY[3]);
   });
@@ -424,10 +431,10 @@ const LOOKS = {
   bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
   plot:      (g,X,Y,x,y) => plot(g,X,Y,x,y),   // ground marked out for building
   frame:     (g,X,Y,x,y) => plot(g,X,Y,x,y),   // the school's frame going up on its plot: a big object (OBJECT_ART), on the plot's earth
-  needles:   (g,X,Y,x,y) => needles(g,X,Y,x,y),   // the pine wood's floor
-  pine:      (g,X,Y,x,y) => needles(g,X,Y,x,y),   // a pine, a dead one and a cracked rock: big objects, on the pine wood's floor
-  deadPine:  (g,X,Y,x,y) => needles(g,X,Y,x,y),
-  crackedRock:(g,X,Y,x,y) => needles(g,X,Y,x,y),
+  needles:   (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // the pine wood's floor (grass in a sunny glade)
+  pine:      (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // a pine, a dead one and a cracked rock: big objects, on the pine wood's floor
+  deadPine:  (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),
+  crackedRock:(g,X,Y,x,y) => woodFloor(g,X,Y,x,y),
   stump:     (g,X,Y,x,y) => stump(g,X,Y,x,y),
   pebble:    (g,X,Y,x,y) => pebble(g,X,Y,x,y),
   rubble:    (g,X,Y,x,y) => rubble(g,X,Y,x,y),

@@ -45,11 +45,12 @@ SAVES.homeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1
 // a stone picked up, and the cracked rock broken); then the school's frame goes up
 SAVES.bigAsks = {...SAVES.homeGround, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};
 const BUILDING = {...SAVES.homeGround.areas[1], build: 1, wood: 'asked', stones: 'asked'};
-SAVES.pineWood = {...SAVES.homeGround, areas: {1: BUILDING}, pos: {place: 'pineWood', x: 17, y: 26, dir: 'up'}};   // (in at the bottom)
-SAVES.pineDeer = {...SAVES.pineWood, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the sunny clearing, by the deer
+SAVES.pineWood = {...SAVES.homeGround, areas: {1: BUILDING}, pos: {place: 'pineWood', x: 16, y: 28, dir: 'up'}};   // (in at the bottom)
+SAVES.pineMeadow = {...SAVES.pineWood, pos: {place: 'pineWood', x: 15, y: 17, dir: 'up'}};   // in the long grass below the bridge
+SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
-  areas: {1: {...BUILDING, picked: {wood: ['pineWood:3,2', 'pineWood:13,2'], stones: ['pineWood:3,6']},
-    changed: {'pineWood:3,2': 'j', 'pineWood:13,2': 'j', 'pineWood:3,6': 'i', 'pineWood:16,4': 'y'}}}, pos: {place: 'pineWood', x: 15, y: 4, dir: 'right'}};
+  areas: {1: {...BUILDING, picked: {wood: ['pineWood:2,18', 'pineWood:2,2'], stones: ['pineWood:3,12']},
+    changed: {'pineWood:2,18': 'j', 'pineWood:2,2': 'j', 'pineWood:3,12': 'i', 'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 22, y: 5, dir: 'right'}};
 SAVES.schoolFrame = {...SAVES.pineWoodLater, areas: {1: {...SAVES.pineWoodLater.areas[1], build: 2, wood: 'done', stones: 'done', picked: {}}},
   pos: {place: 'homeGround', x: 12, y: 6, dir: 'up'}};
 // the school: built, then inside it (the class has met its teacher)
@@ -255,9 +256,11 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'homeGround', x: 6, y: 4, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(400); }},
   {id: 'big-asks', title: 'Wood and small stones', save: 'bigAsks', why: 'The big monkey, building the school: 我们要木头和小石头！ (木头 wood is just for listening until you find some).', run: async () => {
     play(); await wait(100); talk(npc('big')); await wait(600); }},
-  {id: 'pine-wood', title: 'The pine wood (松林)', save: 'pineWood', why: 'Up from the home ground, in at the bottom: a clearing where the paths meet, with a squirrel with a !. Dry, dead pines that sparkle (knock them down with your stick) and small stones are all over the wood.', run: async () => {
+  {id: 'pine-wood', title: 'The pine wood (松林)', save: 'pineWood', why: 'Up from the home ground, in at the bottom: the way leads up to the squirrel’s clearing, where the ways part. Three dry, dead pines that sparkle (knock them down with your stick) and three small stones are hidden around the wood, with long grass on every way to them.', run: async () => {
     play(); await wait(500); }},
-  {id: 'pine-wood-deer', title: 'The sunny clearing', save: 'pineDeer', why: 'Deep in the pine wood, in the north-east: flowers, a pool, and a deer, chapter 1’s animal to find. It’s in the way: face it and press A to meet it.', run: async () => {
+  {id: 'pine-wood-meadow', title: 'Long grass, below the bridge', save: 'pineMeadow', why: 'A meadow of long grass right across the way to the only bridge over the stream: wolves, snakes and spiders jump out of it.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'pine-wood-deer', title: 'The sunny glade', save: 'pineDeer', why: 'Behind the cracked rock: a sunny glade with white flowers, the last dead pine and stone, and a deer, chapter 1’s animal to find. It’s in the way: face it and press A to meet it.', run: async () => {
     play(); await wait(500); }},
   {id: 'deer-meet', title: 'A deer', save: 'pineDeer', why: 'Its first meeting teaches 鹿 (lù, deer), said straight away; then its questions, to make friends.', run: async () => {
     play(); await wait(100); pressA(); await wait(1600); }},
@@ -267,10 +270,10 @@ const SCREENS = [
     play(); await wait(100); battle('wolf'); await wait(600); }},
   {id: 'battle-wolf', title: 'A battle with a wolf', save: 'pineWood', why: 'Three hearts: tougher than a snake or a spider, not as tough as the wild boar, and you can run away.', run: async () => {
     play(); await wait(100); S.w['狼'] = {lv: 1, due: 0, ok: 0}; battle('wolf'); await wait(1200); }},
-  {id: 'pine-wood-later', title: 'The cracked rock, broken', save: 'pineWoodLater', why: 'Part-way through: two dead pines are stumps now, a stone picked up, and the rock broken, opening the little clearing with the last dead pine and stone.', run: async () => {
+  {id: 'pine-wood-later', title: 'The cracked rock, broken', save: 'pineWoodLater', why: 'Part-way through: two dead pines are stumps now, a stone picked up, and the rock broken, opening the way into the sunny glade, with the last dead pine and stone.', run: async () => {
     play(); await wait(500); }},
   {id: 'first-wood', title: 'Down comes the dry pine', save: 'pineWood', why: 'Hit a dead pine with your stick: it comes down, and you find 木头 (wood), said aloud.', run: async () => {
-    play(); await wait(100); S.pos = {place: 'pineWood', x: 3, y: 3, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(1200); }},
+    play(); await wait(100); S.pos = {place: 'pineWood', x: 2, y: 19, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(1200); }},
   {id: 'school-frame', title: 'The school’s frame', save: 'schoolFrame', why: 'With the wood and stones, the troop gets to work: the frame of the school goes up on its plot.', run: async () => {
     play(); await wait(500); }},
   {id: 'build-school', title: 'Let’s build the school!', save: 'schoolFrame', why: 'The big monkey, once the frame is up: 我们来盖学校吧！', run: async () => {

@@ -5,7 +5,7 @@ const EDGE = {look:'cliff'};   // what lies beyond the edge of the map
 const BIRD_WORD = (AREA.birds || {}).word;   // the word for the birds that land near you
 function tileAt(x, y){         // the legend entry for the map letter at x, y (or what it has become, as the story goes on)
   if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return EDGE;
-  const t = LEGEND[here().changed[squareKey(x, y)] || MAP[y][x]];
+  const t = LEGEND[changedTo(x, y) || MAP[y][x]];
   return t.becomes ? LEGEND[becomesNow(t)] || t : t;
 }
 // A map letter that changes with the story (becomes, in the legend), such as the rocks rolling away: the letter it is now.
@@ -13,6 +13,24 @@ function tileAt(x, y){         // the legend entry for the map letter at x, y (o
 // down. The map is drawn again when either changes (refreshMap).
 const becomesNow = t => (t.becomes.find(b => matches(b.if)) || {}).to;
 const squareKey = (x, y, place = PLACE) => `${place}:${x},${y}`;
+// A square changed for good counts only while the map still has there a letter that can change into it (a change step in
+// that letter's onLook, in the place's legend), or a step changes that very square (at). So a place's map can be drawn
+// anew without an old change turning up in the wrong place, such as a stump in the middle of a new path (decided
+// 21 October 2026, when the pine wood was laid out again).
+const CHANGES = (() => {
+  const can = new Set();
+  for (const [id, p] of Object.entries(PLACES)) for (const [c, t] of Object.entries({...AREA.legend, ...(p.legend || {})}))
+    for (const part of t.onLook || []) for (const s of part.do) if (s.change) can.add(`${id}:${c}>${s.change}`);
+  (function walk(o){   // steps that change a square of their own (at), anywhere in the content
+    if (Array.isArray(o)) o.forEach(walk);
+    else if (o && typeof o === 'object'){ if (o.change && o.at) can.add(`${squareKey(o.at[0], o.at[1], placeOf(o.at))}>${o.change}`); Object.values(o).forEach(walk); }
+  })(AREA);
+  return can;
+})();
+const changedTo = (x, y) => {
+  const k = squareKey(x, y), to = here().changed[k];
+  return to && (CHANGES.has(`${PLACE}:${MAP[y][x]}>${to}`) || CHANGES.has(`${k}>${to}`)) ? to : null;
+};
 const mapStoryNow = () => Object.values(LEGEND).filter(t => t.becomes).map(becomesNow).join() + '|'
   + Object.entries(here().changed).filter(([k]) => k.startsWith(PLACE + ':')).join() + '|' + Object.entries(paintedParts()).join();
 let mapStory = null;   // what they were when the map was last drawn (buildMap)

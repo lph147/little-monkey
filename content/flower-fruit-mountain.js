@@ -471,7 +471,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
-        {at:[25, 0], to:'pineWood', arrive:[17, 26], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
+        {at:[25, 0], to:'pineWood', arrive:[16, 28], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
         {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
       ],
       map: [
@@ -499,49 +499,53 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYYYYYYYYYYYYYYYuYYYYYYYYYYYYYYY"
       ]
     },
-    // Chapter 1: the pine wood, up from the home ground (the big monkey clears the way when he wants wood). The way in is
-    // at the bottom, into a clearing where the paths meet. Dry, dead pines to knock down for wood, small stones by the
-    // stream and among the rocks, long grass where wild things live (wolves, here: its own legend), and two clearings in
-    // the north: one behind a cracked rock you break with your stick, with a dead pine and a stone; and a sunny one in
-    // the north-east, with flowers, a pool, and a deer. (The old wood, before it grew on 21 October 2026, is the top-left
-    // 22 x 14 squares, just as it was, so the squares you changed there in a saved game are still the same.)
+    // Chapter 1: the pine wood, up from the home ground (the big monkey clears the way when he wants wood): thick, gloomy
+    // pines, and wolves in the long grass. In at the bottom, to the squirrel's clearing, where the ways part: west to a
+    // hollow, east to a pool, north through a meadow of long grass to the only bridge over the stream; over it, west along
+    // the stream and up into the oldest pines, or north-east up to a cracked rock, the only way into a sunny glade, where
+    // the deer lives. Three dry, dead pines and three small stones, one here and one there: you need every one, and every
+    // way to them goes through long grass, so you meet what lives in it (laid out again on 21 October 2026, after playing
+    // the first wood on a phone: you could walk in, pick everything up and never meet a thing).
     pineWood: {
       name: {zh:'松林', py:'sōnglín', en:'Pine wood'},
       exits: [
-        {at:[17, 27], to:'homeGround', arrive:[25, 1], facing:'down'}   // back down to the home ground
+        {at:[16, 29], to:'homeGround', arrive:[25, 1], facing:'down'},   // back down to the home ground
+        {at:[17, 29], to:'homeGround', arrive:[25, 1], facing:'down'}
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']}   // long grass: here, wolves too
       },
       map: [
-        "pppppppppppppppppppppppppppppppppppp",
-        "ppiiiiippiiiiiiipiiipppppigggggFpppp",
-        "ppiqiiippiiiiqiipimqppppiggJgggggEpp",
-        "piiiiiipiiipiiiipiiipppigggFgggTgggp",
-        "piiiiiiiiiiiiiiixiiipppigEgggggggJgp",
-        "ppiinniiiiipiiiiippppppiiggggggggppp",
-        "ppimnniiiiiiiiiiiiiiiiiiiiggiiigOOOp",
-        "WWWWWWWWWWkWWWWWWWWWWWWWWWWWkWWWOOOO",
-        "ppiiiiiiiiiiiiimiiiipppiiiiiiiippOOp",
-        "ppinnnippi.ipiiiiiiiiiiiqiinnnnipppp",
-        "ppinnnnipp.ipppiiiiiiiiiiinnnnniipmp",
-        "ppinnniip..ipppppiipppppippnnnniiiip",
-        "pppiiiipp...ppppppppppppipppiiiiqppp",
-        "pppppppppp.pppppppppppppippppipppppp",
-        "ppppppppppipppppppppppppipppppippppp",
-        "ppnnnnnniiiippppppppppppipppipipiqpp",
-        "pinnnnnniiiiipppppppppppippiipiiiipp",
-        "pinnnnnniiipppppppppppppiiiiiiippppp",
-        "pinnnnnniiipppiiiiiiipiiipppppippppp",
-        "ppnnnnnniiippiiiiiiiiippippppiiiiimp",
-        "ppiiiiiippiiiiiiiiiiiiiiippppiioiiip",
-        "ppiiiiqipppppiiiiiiiiippiiiipiiimiip",
-        "ppiiiiiipppppiiiiiiiiippiiiipiiiioip",
-        "pppppppppppppppppipppppppiiipoiiiiip",
-        "pppppppppppppppppipppppppppppppppppp",
-        "pppppppppppppppppipppppppppppppppppp",
-        "pppppppppppppppppipppppppppppppppppp",
-        "pppppppppppppppppipppppppppppppppppp"
+        "pppppppppppppppppppppppppppppppppp",
+        "pppiiippppppppppppppppppppggggpppp",
+        "ppqiiiippppppppppppppppppggggggqpp",
+        "ppiiiiipppppppppppppppppggJgggggpp",
+        "ppiipiippppppppppppppppogggggggggp",
+        "ppiiiiippppppppppppppiixgggggggggp",
+        "pppppiippppppppppppppniopggJggmgpp",
+        "pppppnnppppppppppnnnnnippppggggppp",
+        "pppppnnppppppppppnnnnnippppppppppp",
+        "ppiiiiippppppiiiiiippppppppppppppp",
+        "piiiiiippppppiiiiipppppppppppppppp",
+        "ppiiiiiiinnnniiiiiippppppppppppppp",
+        "pppmppiiinnnniiiippppppppppppppppp",
+        "WWWWWWWWWWWWWWWkkWWWWWWWWWOOOOOppp",
+        "pppppppppppppppiippppppppOOOOOOOpp",
+        "pppppppppppppiiiiiippppppOOOOOOOpp",
+        "ppppppppppppnnnnnnnpppppppOOOOOOpp",
+        "ppppiipppppnnnnnnnnnpppppppOOOOppp",
+        "ppqiiiipppppnnnnnnnppppppoiiimpppp",
+        "piiiiipppppppppnnnpppppiiiiiiipppp",
+        "piiiiiiiinnpppiiiiippppiiiiiippppp",
+        "ppiiiiiiinnpoipiiiippppnippppppppp",
+        "ppppiipppnnpniiiiiiipppnippppppppp",
+        "pppppppppnnnniiiiiiinnnnippppppppp",
+        "pppppppppnnnniiiippinnnnippppppppp",
+        "pppppppppppppppiiipppppppppppppppp",
+        "pppppppppppppppiiipppppppppppppppp",
+        "ppppppppppppppppiipppppppppppppppp",
+        "ppppppppppppppppiipppppppppppppppp",
+        "ppppppppppppppppiipppppppppppppppp"
       ]
     },
     // Chapter 1: inside the school, once the troop has built it: a classroom. The old monkey teaches at the front, by the
@@ -676,7 +680,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
     // chapter 1: the pine wood. Its floor, its pines, and the dry, dead pines: one hit with your stick knocks one down (it
     // becomes a stump), and you take a piece of wood. Small stones by the stream, to pick up. A cracked rock: one hit
-    // breaks it, opening the way to the little clearing behind it.
+    // breaks it (any time, once the way up to the pine wood is open), opening the way into the glade behind it.
     'i': {look:'needles', walk:true},
     'p': {look:'pine', word:'树'},
     'q': {look:'deadPine', landmark:true, onLook:[
@@ -688,8 +692,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{stones:'asked', holding:{stones:false}}, label:'Pick up', sparkle:true, do:[{change:'i'}, {collect:'石头', for:'stones', count:3,
         each:'You pick up a small {石头}.', full:'You have three small {石头}. Take them to the big monkey.'}]}]},
     'x': {look:'crackedRock', landmark:true, onLook:[
-      {if:{stones:'asked'}, label:'Hit', sparkle:true, do:[{hit:'stone'}, {change:'y'}, {message:'Crack! The rock breaks apart, and the way to the little clearing is open.'}]},
-      {do:[{message:'A big rock with a deep crack down it. Behind it, between the pines, is a little clearing.'}]}]},
+      {if:{build:{atLeast:1}}, label:'Hit', sparkle:true, do:[{hit:'stone'}, {change:'y'}, {message:'Crack! The rock breaks apart, and the way into the glade is open.'}]},
+      {do:[{message:'A big rock with a deep crack down it. Behind it, between the pines, the sun shines into a glade.'}]}]},
     'y': {look:'rubble', walk:true},   // what's left of the cracked rock
     'L': {look:'tablet', landmark:true, action:'sign', sign:{name:{zh:'石碑', py:'shíbēi', en:'Stone tablet'}, says:{zh:'水帘洞', en:'Water Curtain Cave'}, hint:'The name of the cave.'}}
   },
@@ -744,7 +748,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
     // down the ledges (it stops you if you walk past: see events)
     {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
-    {id:'woodSquirrel', place:'pineWood', x:19, y:21, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, in the clearing by the way in
+    {id:'woodSquirrel', place:'pineWood', x:18, y:21, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, in the clearing by the way in
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -808,7 +812,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '蜘蛛': 'In the long grass on the mountain path.',
     '蜜蜂': 'In the long grass on the mountain path.',   // (until 21 October 2026; the bees of chapter 1 will change this)
     '野猪': 'Blocking the narrow way at the top of the mountain path.',
-    '鹿': 'In the sunny clearing deep in the pine wood, in the north-east.',
+    '鹿': 'In a sunny glade deep in the pine wood, behind a cracked rock.',
     '狼': 'In the long grass in the pine wood.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
@@ -888,6 +892,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     when: {knows:'棍子'},   // once the big monkey has given you the stick
     weapon: '棍子',
     restAt: [
+      {if:{home:{atLeast:2}}, at:[17, 7, 'homeGround'], facing:'up', lost:'You’re worn out. You crawl back down to the home ground and rest under the big tree until your hearts are full again.'},   // chapter 1: under the big tree
       {if:{cave:{atLeast:2}}, at:[3, 2, 'cave'], facing:'up', lost:'You’re worn out. You crawl back to the Water Curtain Cave and sleep until your hearts are full again.'},   // once you've found the cave: by a bed
       {at:[15, 2], facing:'left', lost:'You’re worn out. You crawl back down to the meadow and rest until your hearts are full again.'}
     ]
@@ -907,7 +912,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'fox', word:'狐狸'},
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
     {id:'goat', word:'山羊', at:[4, 18], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
-    // chapter 1: a deer in the sunny clearing deep in the pine wood (counted on its own: the prologue's animals are those above)
+    // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
+    // animals are those above)
     {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
@@ -1195,7 +1201,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the squirrel in the pine wood (chapter 1) shows you the dry pines; it loves the pines, as its name says
     woodSquirrel: [
       {if:{new:'木头'}, do:[{say:'hi'}, {reply:'你好'}, {say:'squirrelWood'},
-        {message:'The squirrel points its nose at the grey, dead pines. Their wood is dry: one hit with your stick, and down they come!'}]},
+        {message:'The squirrel points its nose at the grey, dead pines. Their wood is dry: one hit with your stick, and down they come!'},
+        {message:'Its tail twitches. Wolves live in the long grass, and every way through the wood goes through it. Eating a {桃子} in a fight brings a heart back: pick some at the home ground.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'The squirrel loves the pine wood. Its name, {松鼠}, means pine mouse!'}]}
     ],
     goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
@@ -1227,7 +1234,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{home:2, build:0}, do:[
         {say:'needWood'},
         {message:'The troop needs wood and small stones to build the school. The big monkey has cleared a way through the bushes at the top of the home ground, up to the pine wood.'},
-        {message:'Look there for dead, dry pines: one hit with your stick knocks them down. Small stones lie by the stream.'},
+        {message:'Look there for dead, dry pines: one hit with your stick knocks them down. Small stones lie by the water.'},
         {set:{build:1, wood:'asked', stones:'asked'}}
       ]},
       {if:{build:1, wood:'asked', stones:'asked'}, do:[{request:'wood'}, {request:'stones'}]},   // you bring them (or he asks again)

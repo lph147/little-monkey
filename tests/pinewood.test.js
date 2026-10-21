@@ -44,58 +44,64 @@ test('the big monkey wants wood and small stones, and clears the way up to the p
   assert.deepEqual(get(g, 'getTasks()[0].target'), [25, 0], 'the arrow points the way up to the pine wood');
 });
 
-test('in the pine wood: a squirrel shows you the dry pines; things to collect sparkle, and no arrow points inside', async () => {
-  const g = game(BUILDING, {place: 'pineWood', x: 18, y: 21, dir: 'right'});
+test('in the pine wood: a squirrel shows you the dry pines and warns you about the wolves; things to collect sparkle, and no arrow points inside', async () => {
+  const g = game(BUILDING, {place: 'pineWood', x: 17, y: 21, dir: 'right'});
   assert.deepEqual(get(g, 'PLACES.pineWood.name'), {zh: '松林', py: 'sōnglín', en: 'Pine wood'});
   assert.equal(get(g, "((AREA.bubbles.woodSquirrel || []).find(b => matches(b.if)) || {}).show"), '!');
-  await press(g, 18, 21, 'right');
+  await press(g, 17, 21, 'right');
   assert.deepEqual(get(g, '__said').slice(-1), ['你要木头吗？'], 'it asks if you want wood');
+  assert.match(get(g, '__notes').join(' '), /Wolves live in the long grass/, 'and warns you');
   assert.equal(get(g, 'getTasks()[0].target'), null, 'no arrow once you’re in the pine wood');
   const sparkly = get(g, 'COLLECTABLE.filter(([x, y]) => { const t = tileAt(x, y), p = t.onLook.find(p => !p.if || matches(p.if)); return p && p.sparkle; })');
-  assert.deepEqual(sparkly.sort(), [[3, 2], [13, 2], [19, 2], [24, 9], [32, 12], [33, 15], [6, 21], [3, 6], [15, 8], [18, 2], [34, 10], [34, 19], [32, 21], [16, 4]].sort(),
-    'seven dead pines, six stones and the cracked rock, all over the wood');
+  assert.deepEqual(sparkly.sort(), [[2, 18], [2, 2], [31, 2], [29, 18], [3, 12], [30, 6], [23, 5]].sort(), 'three dead pines, three stones and the cracked rock');
 });
 
 test('hitting a dry, dead pine with your stick knocks it down: a stump, a piece of wood, counted aloud', async () => {
-  const g = game(BUILDING, {place: 'pineWood', x: 3, y: 3, dir: 'up'});
-  assert.equal(g.run('promptFor(3, 2)'), 'Hit');
-  await press(g, 3, 3, 'up');
+  const g = game(BUILDING, {place: 'pineWood', x: 2, y: 19, dir: 'up'});
+  assert.equal(g.run('promptFor(2, 18)'), 'Hit');
+  await press(g, 2, 19, 'up');
   assert.ok(get(g, '__notes').includes('card: 木头'), 'the first piece teaches 木头: you found it yourself');
-  assert.equal(g.run('tileAt(3, 2).look'), 'stump', 'the dead pine is down');
-  assert.deepEqual(get(g, 'here().changed'), {'pineWood:3,2': 'j'}, 'for good: it’s in the save');
+  assert.equal(g.run('tileAt(2, 18).look'), 'stump', 'the dead pine is down');
+  assert.deepEqual(get(g, 'here().changed'), {'pineWood:2,18': 'j'}, 'for good: it’s in the save');
   assert.equal(g.run('counter("woodGot")'), 1);
   assert.deepEqual(get(g, '__spoken'), ['一'], 'you count it aloud');
   assert.match(get(g, '__notes').slice(-1)[0], /^一 \(one\)! Down comes the dry pine! You take a piece of 木头 \(wood\)\./);
   assert.ok(get(g, 'swing') && g.run('chips.length') > 0, 'your stick swings, and chips fly');
-  assert.equal(g.run('promptFor(3, 2)'), '', 'nothing more to do at a stump');
+  assert.equal(g.run('promptFor(2, 18)'), '', 'nothing more to do at a stump');
   assert.match(get(g, 'getTasks()[0].text'), /^Find three pieces of 木头 \(wood\) in the pine wood \(1\/3\)$/, 'now in Chinese too');
 });
 
-test('a square that has changed stays changed in a saved game', () => {
-  const g = game({...BUILDING, changed: {'pineWood:3,2': 'j', 'pineWood:16,4': 'y'}}, {place: 'pineWood', x: 15, y: 4, dir: 'right'});
-  assert.equal(g.run('tileAt(3, 2).look'), 'stump');
-  assert.ok(g.run('tileAt(16, 4).walk'), 'the broken rock');
+test('a square that has changed stays changed in a saved game, but only while the map still has there what changed', () => {
+  const g = game({...BUILDING, changed: {'pineWood:2,18': 'j', 'pineWood:23,5': 'y'}}, {place: 'pineWood', x: 22, y: 5, dir: 'right'});
+  assert.equal(g.run('tileAt(2, 18).look'), 'stump');
+  assert.ok(g.run('tileAt(23, 5).walk'), 'the broken rock');
   g.run("S.pos = {place: 'homeGround', x: 3, y: 5, dir: 'right'}; placePlayer()");
-  assert.equal(g.run('tileAt(3, 2).look'), 'grass', 'only in the place it changed');
+  assert.equal(g.run('tileAt(2, 18).look'), 'water', 'only in the place it changed');
+  // changes saved on the pine wood's first map (a dead pine and the cracked rock were there; now it's the floor, and a pine)
+  const old = game({...BUILDING, changed: {'pineWood:3,2': 'j', 'pineWood:16,4': 'y'}}, {place: 'pineWood', x: 3, y: 3, dir: 'up'});
+  assert.equal(old.run('tileAt(3, 2).look'), 'needles', 'no stump left in the middle of the floor');
+  assert.equal(old.run('tileAt(16, 4).look'), 'pine', 'and no hole among the pines');
 });
 
-test('the cracked rock shuts the little clearing until you break it; then the last pine and stone, and you have them all', async () => {
-  const g = game({...BUILDING, picked: {wood: ['pineWood:3,2', 'pineWood:13,2'], stones: ['pineWood:3,6', 'pineWood:15,8']},
-    changed: {'pineWood:3,2': 'j', 'pineWood:13,2': 'j', 'pineWood:3,6': 'i', 'pineWood:15,8': 'i'}}, {place: 'pineWood', x: 15, y: 4, dir: 'right'}, {'木头': {lv: 1, ok: 0}});
-  assert.ok(!g.run('walkable(16, 4)'), 'the rock is in the way');
-  assert.equal(g.run('promptFor(16, 4)'), 'Hit');
-  await press(g, 15, 4, 'right');
-  assert.ok(g.run('walkable(16, 4)'), 'it breaks: the way is open');
-  assert.equal(g.run('tileAt(16, 4).look'), 'rubble');
-  await press(g, 19, 3, 'up');
+test('the cracked rock shuts the sunny glade until you break it, any time in chapter 1; then the last pine and stone, and you have them all', async () => {
+  const g = game({...BUILDING, picked: {wood: ['pineWood:2,18', 'pineWood:2,2'], stones: ['pineWood:29,18', 'pineWood:3,12']},
+    changed: {'pineWood:2,18': 'j', 'pineWood:2,2': 'j', 'pineWood:29,18': 'i', 'pineWood:3,12': 'i'}}, {place: 'pineWood', x: 22, y: 5, dir: 'right'}, {'木头': {lv: 1, ok: 0}});
+  assert.ok(!g.run('walkable(23, 5)'), 'the rock is in the way');
+  assert.equal(g.run('promptFor(23, 5)'), 'Hit');
+  await press(g, 22, 5, 'right');
+  assert.ok(g.run('walkable(23, 5)'), 'it breaks: the way is open');
+  assert.equal(g.run('tileAt(23, 5).look'), 'rubble');
+  await press(g, 30, 2, 'right');
   assert.deepEqual(get(g, '__spoken'), ['三'], 'the third piece of wood');
   assert.match(get(g, '__notes').slice(-1)[0], /You have three pieces of 木头 \(wood\)\. Take them to the big monkey\./);
-  assert.equal(g.run('promptFor(18, 2)'), 'Pick up');
-  await press(g, 18, 3, 'up');
-  assert.equal(g.run('tileAt(18, 2).look'), 'needles', 'the stone is picked up');
+  assert.equal(g.run('promptFor(30, 6)'), 'Pick up');
+  await press(g, 30, 7, 'up');
+  assert.equal(g.run('tileAt(30, 6).look'), 'needles', 'the stone is picked up');
   assert.deepEqual(get(g, 'here().holding'), {wood: '木头', stones: '石头'});
   assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Take the 木头 (wood) to the big monkey', 'Take the small 石头 (stone, rock) to the big monkey']);
   assert.ok(get(g, 'getTasks().every(t => t.target)'), 'with arrows the way back');
+  const later = game({...BUILDING, build: 2, wood: 'done', stones: 'done'}, {place: 'pineWood', x: 22, y: 5, dir: 'right'});
+  assert.equal(later.run('promptFor(23, 5)'), 'Hit', 'with the wood and stones brought already, you can still break it: the deer’s glade is behind it');
 });
 
 test('bring them to the big monkey: he takes both, and the school’s frame goes up (if you stand on its plot, you step off it)', async () => {
@@ -115,37 +121,53 @@ test('bring them to the big monkey: he takes both, and the school’s frame goes
   assert.match(get(g, 'getTasks()[0].text'), /^Talk to the big monkey: the troop is ready to build the school$/, 'next, the troop builds the school');
 });
 
-// The pine wood grew on 21 October 2026 (the old wood is its top-left corner, unchanged): a way in at the bottom, ways
-// through to new woods in the east and the south, a deer in a sunny clearing, and wolves in the long grass.
+// The pine wood was laid out again on 21 October 2026, after playing it on a phone: you could walk in, pick everything up
+// and never meet a thing. In at the bottom, the ways part at the squirrel's clearing; one bridge over the stream; a cracked
+// rock shutting the sunny glade where the deer lives. Three dead pines and three stones, all needed, and long grass across
+// every way to them, where wolves, snakes and spiders live.
 const KNOWS = Object.fromEntries(['动物', '树', '草', '棍子'].map(w => [w, {lv: 1, ok: 0}]));   // (animals appear, and you have your stick)
-test('the bigger pine wood: in at the bottom from the home ground, and every part of it can be reached from there', () => {
-  const g = game(BUILDING, {place: 'pineWood', x: 17, y: 26, dir: 'up'}, KNOWS);
-  assert.deepEqual(get(g, '[COLS, ROWS]'), [36, 28]);
-  assert.deepEqual(get(g, "PLACES.homeGround.exits.find(e => e.to === 'pineWood').arrive"), [17, 26], 'from the home ground, you come in at the bottom');
-  assert.deepEqual(get(g, '(e => [e.to, e.arrive])(exitAt(17, 27))'), ['homeGround', [25, 1]], 'and go back down the same way');
-  g.run("here().changed = {'pineWood:16,4': 'y'}");   // (with the cracked rock broken)
-  const [cutOff, outOfReach] = get(g, `(() => {
-    const seen = new Set(['17,26']), queue = [[17, 26]], cutOff = [], outOfReach = [];
-    while (queue.length){
-      const [x, y] = queue.shift();
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){ const k = (x + dx) + ',' + (y + dy); if (!seen.has(k) && tileAt(x + dx, y + dy).walk){ seen.add(k); queue.push([x + dx, y + dy]); } }
+// From the way in: the fewest squares of long grass you must wade through to stand on each square you can reach (a step into
+// long grass costs one, any other step nothing), with the cracked rock broken or not.
+const grassTo = (g, broken) => get(g, `(() => {
+  if (${broken}) here().changed['pineWood:23,5'] = 'y'; else delete here().changed['pineWood:23,5'];
+  const cost = {'16,28': 0}, queue = [[16, 28]];
+  while (queue.length){
+    const [x, y] = queue.shift(), c = cost[x + ',' + y];
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){
+      const t = tileAt(x + dx, y + dy), k = (x + dx) + ',' + (y + dy), n = c + (t.wild ? 1 : 0);
+      if (!t.walk || (cost[k] !== undefined && cost[k] <= n)) continue;
+      cost[k] = n; (t.wild ? queue.push : queue.unshift).call(queue, [x + dx, y + dy]);
     }
-    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
-      if (tileAt(x, y).walk && !seen.has(x + ',' + y)) cutOff.push([x, y]);
-      const thing = 'qmx'.includes(MAP[y][x]) || animalAt(x, y);   // things to collect, the cracked rock, the deer
-      if (thing && ![[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => seen.has((x + dx) + ',' + (y + dy)))) outOfReach.push([x, y, MAP[y][x]]);
-    }
-    return [cutOff, outOfReach];
-  })()`);
+  }
+  return cost;
+})()`);
+const beside = (cost, x, y) => Math.min(...[[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dy]) => cost[(x + dx) + ',' + (y + dy)] ?? Infinity));
+const THINGS = {deadPines: [[2, 18], [2, 2], [31, 2]], stones: [[29, 18], [3, 12], [30, 6]]};
+
+test('the pine wood: in at the bottom from the home ground; everywhere can be reached, and the glade only through the cracked rock', () => {
+  const g = game(BUILDING, {place: 'pineWood', x: 16, y: 28, dir: 'up'}, KNOWS);
+  assert.deepEqual(get(g, '[COLS, ROWS]'), [34, 30]);
+  assert.deepEqual(get(g, "PLACES.homeGround.exits.find(e => e.to === 'pineWood').arrive"), [16, 28], 'from the home ground, you come in at the bottom');
+  for (const x of [16, 17]) assert.deepEqual(get(g, `(e => [e.to, e.arrive])(exitAt(${x}, 29))`), ['homeGround', [25, 1]], 'and go back down the same way');
+  const open = grassTo(g, true), cutOff = get(g, `(() => { const out = []; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).walk) out.push(x + ',' + y); return out; })()`).filter(k => !(k in open));
   assert.deepEqual(cutOff, [], 'nowhere you can walk is cut off');
-  assert.deepEqual(outOfReach, [], 'and you can get next to every dead pine, small stone and animal');
-  assert.equal(get(g, "MAP.join('').split('').filter(c => c === 'q').length"), 7, 'seven dead pines: more than the three you need, all over the wood');
+  const shut = grassTo(g, false);
+  for (const [x, y] of [[30, 3], ...THINGS.deadPines.slice(2), ...THINGS.stones.slice(2)]) assert.equal(beside(shut, x, y), Infinity, `${x}, ${y} is in the glade, behind the rock`);
+  assert.ok(beside(open, 30, 3) < Infinity, 'once it’s broken, you can get to the deer');
+  assert.deepEqual(get(g, "['q', 'm'].map(c => MAP.join('').split(c).length - 1)"), [3, 3], 'three dead pines and three stones: you need every one');
+  for (const [x, y] of [...THINGS.deadPines, ...THINGS.stones, [23, 5]]) assert.notEqual(get(g, `MAP[${y + 1}][${x}]`), 'p', `nothing at ${x}, ${y} hides behind the top of a pine below it`);
 });
 
-test('a deer lives in the sunny clearing: chapter 1’s animal, counted on its own, so the prologue’s animals are just as they were', async () => {
-  const g = game(BUILDING, {place: 'pineWood', x: 29, y: 3, dir: 'right'}, KNOWS);
+test('every way to every dead pine and stone goes through long grass, so you meet what lives in it', () => {
+  const g = game(BUILDING, {place: 'pineWood', x: 16, y: 28, dir: 'up'}, KNOWS), cost = grassTo(g, true);
+  for (const [x, y] of [...THINGS.deadPines, ...THINGS.stones]) assert.ok(beside(cost, x, y) >= 4, `at least 4 squares of long grass on the way to ${x}, ${y} (${beside(cost, x, y)})`);
+  assert.ok(beside(cost, 30, 3) >= 4, 'and to the deer');
+});
+
+test('a deer lives in the sunny glade: chapter 1’s animal, counted on its own, so the prologue’s animals are just as they were', async () => {
+  const g = game({...BUILDING, changed: {'pineWood:23,5': 'y'}}, {place: 'pineWood', x: 29, y: 3, dir: 'right'}, KNOWS);
   assert.equal(get(g, 'animalAt(30, 3).hz'), '鹿');
-  assert.equal(get(g, 'animalAt(30, 3).home'), '草', 'it grazes in the clearing: if you don’t make friends, it goes back to the 草 (grass)');
+  assert.equal(get(g, 'animalAt(30, 3).home'), '草', 'it grazes in the glade: if you don’t make friends, it goes back to the 草 (grass)');
   assert.equal(g.run('promptFor(30, 3)'), 'Meet');
   assert.ok(!g.run('walkable(30, 3)'), 'you can’t walk through it');
   assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft")]'), [4, 4, 0], 'the prologue’s four animals, all found');
@@ -163,14 +185,24 @@ test('a deer lives in the sunny clearing: chapter 1’s animal, counted on its o
     'in the prologue, the deer doesn’t count: the rocks wait for the goat');
 });
 
-test('wolves live in the long grass of the pine wood (and only there): a wild creature to fight, 狼', async () => {
-  const g = game(BUILDING, {place: 'pineWood', x: 3, y: 16, dir: 'down'}, KNOWS);
-  assert.deepEqual(get(g, '[...new Set(tileAt(3, 16).wild)].sort()'), ['snake', 'spider', 'wolf']);
+test('wolves live in the long grass of the pine wood (and only there); lose a fight in chapter 1, and you rest under the big tree at the home ground', async () => {
+  const g = game(BUILDING, {place: 'pineWood', x: 15, y: 17, dir: 'up'}, KNOWS);
+  assert.deepEqual(get(g, '[...new Set(tileAt(15, 17).wild)].sort()'), ['snake', 'spider', 'wolf']);
   assert.equal(get(g, 'ENEMIES.wolf.word'), '狼');
   g.run("Math.random = () => 0; wildSteps = 4; battle = async id => { globalThis.__fought = id; return 'won'; }");   // (the battle itself: tests/battle.test.js)
-  await play(g, 'arrive(3, 16)');
+  await play(g, 'arrive(15, 17)');
   assert.equal(get(g, '__fought'), 'wolf', 'a wolf jumps out');
+  const rest = get(g, '[].concat(BATTLES.restAt).find(r => !r.if || matches(r.if))');
+  assert.deepEqual([rest.at, rest.facing], [[17, 7, 'homeGround'], 'up']);
+  assert.match(rest.lost, /rest under the big tree/);
+  g.run("S.pos = {place: 'homeGround', x: 17, y: 7, dir: 'up'}; placePlayer()");
+  assert.ok(g.run('walkable(17, 7)'), 'beside the big tree');
   g.run("S.pos = {place: 'path', x: 14, y: 15, dir: 'down'}; placePlayer()");
   const wild = get(g, "(() => { const out = new Set(); MAP.forEach((r, y) => [...r].forEach((c, x) => (tileAt(x, y).wild || []).forEach(id => out.add(id)))); return [...out].sort(); })()");
   assert.deepEqual(wild, ['snake', 'spider'], 'none on the mountain path');
+});
+
+test('if the map has changed under your saved spot in the pine wood, you start at its way in (not back at your stone)', () => {
+  const g = loadGame({save: {version: 29, started: true, areas: {1: {...CHAPTER_ONE, ...BUILDING}}, pos: {place: 'pineWood', x: 15, y: 4, dir: 'right'}}});   // (among the pines now)
+  assert.deepEqual(get(g, 'S.pos'), {place: 'pineWood', x: 16, y: 28, dir: 'up'});
 });

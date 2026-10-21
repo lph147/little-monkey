@@ -307,8 +307,14 @@ function setUpGame(){
   if (!PLACES[S.pos.place]) S.pos.place = FIRST_PLACE;   // a place that's gone
   placeCharacters();   // where the story has put everyone
   enterPlace(S.pos.place);
-  if (!walkable(S.pos.x, S.pos.y)) S.pos = {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
+  if (!walkable(S.pos.x, S.pos.y)) S.pos = (S.pos.place !== START.place && wayInto(S.pos.place)) || {place:START.place, x:START.x, y:START.y, dir:START.facing || 'down'};   // the map changed under your saved spot
   buildMap(); placePlayer(); updateHUD();
+}
+// Where you come into a place (where the first way into it from another place puts you), such as the pine wood's way in
+// from the home ground: if a place's map has changed under your saved spot, you start there, not back at the very start.
+function wayInto(place){
+  for (const p of Object.values(PLACES)) for (const e of p.exits || []) if (e.to === place) return {place, x:e.arrive[0], y:e.arrive[1], dir:e.facing || 'down'};
+  return null;
 }
 window.addEventListener('resize', fit);
 setUpGame(); fit(); toTitle();
