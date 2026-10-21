@@ -113,6 +113,7 @@ test('Google’s voices: the key is read from its own line, and a clip asks for 
 test('keys can come from GitHub’s secrets, and a Google voice it doesn’t have is swapped for one like it', async () => {
   const {readKey, checkGoogleNames} = require('../tools/try-voices');
   assert.deepEqual(readKey(path.join(__dirname, 'no-such-file.txt'), {GOOGLE_TTS_KEY:'g', AZURE_TTS_KEY:'a'}), {key:'a', region:'eastus', google:'g'});
+  assert.equal(readKey(path.join(__dirname, 'no-such-file.txt'), {AZURE_TTS_KEY:'a', AZURE_TTS_REGION:'uksouth'}).region, 'uksouth', 'GitHub can be told the key’s region');
   const real = global.fetch;
   global.fetch = async () => ({ok:true, json: async () => ({voices:[
     {name:'cmn-CN-Wavenet-A', ssmlGender:'FEMALE'}, {name:'cmn-CN-Wavenet-B', ssmlGender:'MALE'}, {name:'cmn-CN-Wavenet-D', ssmlGender:'FEMALE'}]})});

@@ -1,6 +1,6 @@
 # Makes voice clips on GitHub, so they can be made without the computer that has voice-key.txt. The keys are kept
 # in GitHub's secrets (the repository's Settings, Secrets and variables, Actions): GOOGLE_TTS_KEY for Google's
-# voices, and AZURE_TTS_KEY if Azure's are ever made here. GitHub never shows a secret, even in its logs.
+# voices, and AZURE_TTS_KEY for Azure's, with AZURE_TTS_REGION (its region, such as uksouth; eastus if not given). GitHub never shows a secret, even in its logs.
 # It runs when the `voices` branch is pushed, or by hand from the Actions tab (Make voice clips, Run workflow).
 # It makes any clips the voice test (tools/try-voices.js) or the game (tools/make-voices.js) is missing, lists
 # Google's Mandarin voices in tools/try-voices/google-voices.txt, and saves them back on the same branch, so
@@ -24,6 +24,7 @@ jobs:
         env:
           GOOGLE_TTS_KEY: ${{ secrets.GOOGLE_TTS_KEY }}
           AZURE_TTS_KEY: ${{ secrets.AZURE_TTS_KEY }}
+          AZURE_TTS_REGION: ${{ secrets.AZURE_TTS_REGION }}
         run: |
           node tools/try-voices.js --list-google > tools/try-voices/google-voices.txt || true
           node tools/try-voices.js || true

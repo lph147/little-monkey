@@ -57,12 +57,12 @@ const RATE = '-15%';   // a little slower than normal: the game's clips so far
 const clipFile = (voice, item) => `${voice.id}-${item.id}.mp3`;
 const wanted = () => VOICES.flatMap(v => ITEMS.filter(i => !v.only || v.only.includes(i.id)).map(i => [v, i]));
 
-// The keys, from voice-key.txt, or from GitHub's secrets (AZURE_TTS_KEY, GOOGLE_TTS_KEY) when GitHub makes the clips
+// The keys, from voice-key.txt, or from GitHub's secrets (AZURE_TTS_KEY, its AZURE_TTS_REGION, GOOGLE_TTS_KEY) when GitHub makes the clips
 // (.github/workflows/voices.yml).
 function readKey(file = KEY_FILE, env = process.env){
   const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
   const get = name => (text.match(new RegExp(`^[ \\t]*${name}[ \\t]*=[ \\t]*(\\S*)`, 'm')) || [])[1] || '';
-  return {key:get('key') || env.AZURE_TTS_KEY || '', region:get('region') || 'eastus', google:get('google') || env.GOOGLE_TTS_KEY || ''};
+  return {key:get('key') || env.AZURE_TTS_KEY || '', region:get('region') || env.AZURE_TTS_REGION || 'eastus', google:get('google') || env.GOOGLE_TTS_KEY || ''};
 }
 
 function ssml(voice, item, full = true){   // full: with the voice's speed, style and silences (false: just the words)
