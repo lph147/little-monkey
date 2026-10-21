@@ -465,6 +465,9 @@ rt.hid{visibility:hidden}
 .sheet:has(> .scene) > *{grid-column:2}
 .sheet:has(> .scene) > .scene{grid-column:1;grid-row:1 / -1;height:auto;min-height:13rem;margin:0;background:linear-gradient(#9FD4F0 0 48%,#BDE6F7 48% 52%,#7DC15A 52%)}
 .sheet:has(> .scene) > .scene.cliff{background:linear-gradient(#9FD4F0 0 48%,#BDE6F7 48% 52%,#A49F8E 52%)}
+.scene.pines,.sheet:has(> .scene) > .scene.pines{background:var(--backdrop-pines) center / cover;image-rendering:pixelated;image-rendering:crisp-edges}   /* a gloomy pine wood (js/art.js: BACKDROPS) */
+.scene.pines::before{display:none}
+.scene.pines .mound{background:#4F7E45;box-shadow:inset 0 -6px 0 #3C6335}
 .sheet:has(> .scene) > .scene::before{inset:52% 0 0}
 .sheet:has(> .scene) .plate{left:5px;right:5px;top:5px;min-width:0;max-width:none;font-size:.85rem;padding:.2rem .5rem .3rem}
 .sheet:has(> .scene) .plate .spk-zh{font-size:1rem;white-space:normal}
@@ -554,6 +557,9 @@ rt.hid{visibility:hidden}
 .count .pix{width:var(--pic-small);height:var(--pic-small)}
 .askrow .prompt{margin:0;font-size:1rem}
 .askrow .sayBig{flex:none;width:3rem;height:3rem;font-size:1.4rem}
+.askrow .word{flex:none;padding:0 .5rem 0 0;text-align:center}   /* the word to read, beside the question, above the answers */
+.askrow .word .big{font-size:2.4rem;line-height:1.05}
+.askrow .word .py{font-size:1rem;line-height:1.25}
 .opts{margin:0}
 .opt .later{visibility:hidden;font-size:.85rem;line-height:1.2;color:var(--muted);margin-top:.1rem}
 .opts.answered .opt .later{visibility:visible}
@@ -577,6 +583,8 @@ rt.hid{visibility:hidden}
   .sheet:has(> .scene) .opt .pix,.sheet:has(> .qhead) .opt .pix{width:var(--pic-small);height:var(--pic-small)}
   .askrow .prompt{font-size:.85rem}
   .askrow .sayBig{width:2.3rem;height:2.3rem;font-size:1rem}
+  .askrow .word .big{font-size:1.9rem}
+  .askrow .word .py{font-size:.85rem}
   .opt{padding:.2rem 0}
   .opt .cap{font-size:.85rem;margin-top:0}
   .opt.hz{font-size:1.3rem}

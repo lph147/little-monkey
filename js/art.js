@@ -89,7 +89,16 @@ function asleepSprite(){
 // spr: how they look on the map (content/sprites.js, a square's size); pic: their picture everywhere else, in encounters
 // and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:placeOf(a.at), home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0,
-  spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette)}));
+  spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette)}));
+// An animal (or a wild creature: spr, its map sprite, and faces, which way it looks) turned to face you, from where it is
+// (x): drawn the other way round when it would look away from you, such as a wolf jumping out on your left. Or away from
+// you (away), as it runs off.
+const mirrors = new Map();
+function mirrored(spr){
+  if (!mirrors.has(spr)){ const c = document.createElement('canvas'); c.width = spr.width; c.height = spr.height; const g = c.getContext('2d'); g.translate(spr.width, 0); g.scale(-1, 1); g.drawImage(spr, 0, 0); mirrors.set(spr, c); }
+  return mirrors.get(spr);
+}
+const towardsYou = (a, x, away = false) => { const want = pl.x < x ? 'left' : pl.x > x ? 'right' : null; return want && a.faces && (a.faces !== want) !== away ? mirrored(a.spr) : a.spr; };
 const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
 const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && a.at[0] === x && a.at[1] === y) : null;   // an animal living at this spot, once animals appear
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
@@ -773,3 +782,26 @@ function buildGloom(){
   }
   GLOOM = {...gl, open, shade, beams};
 }
+// Backdrops for battles and animals' questions, where a place has one (its backdrop): pines, a gloomy pine wood (in the
+// daytime: sunbeams, never night), drawn once with the map's own pines. Each is a scene's background (css/game.css:
+// --backdrop-pines). Otherwise the scene is a meadow, or a cliff if that's where the animal lives (home 山).
+const BACKDROPS = {
+  pines(){
+    const W = 72, H = 128, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d'), sky = g.createLinearGradient(0, 0, 0, 62);
+    sky.addColorStop(0, '#5E7C6A'); sky.addColorStop(1, '#9DB79F'); g.fillStyle = sky; g.fillRect(0, 0, W, 62);
+    for (let i = 0; i < 9; i++) pine(g, i * 9 - 6, 44 + (i % 3) * 2, i + 7);   // the far pines, in a row
+    g.fillStyle = 'rgba(157,183,159,.5)'; g.fillRect(0, 0, W, 64);              // (hazy, far off)
+    R(g, 0, 60, W, H - 60, '#5B8C50');                                           // the floor, strewn with needles
+    for (let i = 0; i < 90; i++) R(g, Math.floor(rnd(i, 3, 1) * W), 60 + Math.floor(rnd(i, 4, 2) * (H - 60)), 2, 1, ['#4C7A43', '#A57A48', '#6E9A5E'][i % 3]);
+    pine(g, -9, 46, 3); pine(g, 64, 44, 5);                                       // near pines, at the sides
+    for (const [x, w] of [[14, 7], [40, 5]]){                                     // sunbeams
+      g.fillStyle = 'rgba(255,246,200,.16)'; g.beginPath(); g.moveTo(x, 0); g.lineTo(x + w, 0); g.lineTo(x + w + 22, 78); g.lineTo(x + 22, 78); g.closePath(); g.fill();
+    }
+    g.fillStyle = 'rgba(225,232,222,.22)'; g.fillRect(0, 55, W, 9);              // mist, low over the floor
+    return c;
+  }
+};
+if (document.documentElement) for (const [name, draw] of Object.entries(BACKDROPS)) document.documentElement.style.setProperty(`--backdrop-${name}`, `url(${draw().toDataURL()})`);
+// A battle's or an animal's scene: the place's backdrop if it has one; otherwise a cliff where the animal lives on one.
+const sceneLook = home => { const bd = (PLACES[PLACE] || {}).backdrop; return BACKDROPS[bd] ? ' ' + bd : home === '山' ? ' cliff' : ''; };

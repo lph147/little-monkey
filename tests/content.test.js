@@ -515,10 +515,12 @@ test('each lesson series is one the engine can give, teaching words you can coll
   }
 });
 
-test('a place’s own song, gloom and sounds, and every sound a step plays, are ones the game has', () => {
+test('a place’s own songs, backdrop, gloom and sounds, and every sound a step plays, are ones the game has', () => {
   const SONGS = get('Object.keys(SONGS)'), SFX = get('Object.keys(SFX)');
   for (const [id, p] of Object.entries(AREA.places)){
     if (p.music) assert.ok(SONGS.includes(p.music), `${id}'s music, ${p.music}, isn't one of the songs (js/sound.js)`);
+    if (p.battleMusic) assert.ok(SONGS.includes(p.battleMusic), `${id}'s battle music, ${p.battleMusic}, isn't one of the songs (js/sound.js)`);
+    if (p.backdrop) assert.ok(get('Object.keys(BACKDROPS)').includes(p.backdrop), `${id}'s backdrop, ${p.backdrop}, isn't one of the backdrops (js/art.js)`);
     for (const s of p.sounds || []) assert.ok(SFX.includes(s), `${id}'s sound ${s} isn't one of the sound effects (js/sound.js)`);
     if (p.gloom){
       assert.ok(p.gloom.deep > p.gloom.open && p.gloom.open >= 0 && p.gloom.deep < 1, `${id}'s gloom: deep (${p.gloom.deep}) should be darker than open (${p.gloom.open}), and never black`);

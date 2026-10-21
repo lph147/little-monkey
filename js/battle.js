@@ -28,7 +28,7 @@ async function wildStep(t){
 async function wildBattle(id, spot = findSpot()){
   const f = ENEMIES[id];
   pl.dir = spot.d;
-  foe = {a:{spr:mapSprite(f.word)}, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
+  foe = {a:{spr:mapSprite(f.word), faces:MAP_SPRITES[f.word].faces}, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
   alertUntil = performance.now() + 1000;
   SFX.encounter();
   await sleep(1100);
@@ -39,7 +39,7 @@ async function wildBattle(id, spot = findSpot()){
 
 // The battle itself, with its own music (the place's comes back afterwards). Gives 'won', 'lost' or 'ran'.
 async function battle(id){
-  playSong('battle');
+  playSong(battleSong());   // (the place's own, if it has one)
   try { return await fight(id); } finally { playSong(placeSong()); }
 }
 async function fight(id){
@@ -52,7 +52,7 @@ async function fight(id){
   // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
   // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).
   const stick = BATTLES.weapon && PICTURES[BATTLES.weapon] ? `<img class="stick" alt="" src="${sprite(PICTURES[BATTLES.weapon].rows, PICTURES[BATTLES.weapon].palette).toDataURL()}">` : '';
-  const scene = (look = '', act = '') => `<div class="scene${f.home === '山' ? ' cliff' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
+  const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}">${stick}`
     + `<div class="from" aria-hidden="true"></div><div class="striker" aria-hidden="true">${img}</div><div class="pow" aria-hidden="true"></div><div class="fx" aria-hidden="true"></div>`
     + `<div class="plate"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div></div>`

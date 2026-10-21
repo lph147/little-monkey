@@ -320,6 +320,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           (deep) and lightest where it's open (open), with sunshine on grass and sunbeams slanting into the open
   //           places; mist: true for mist drifting low, and eyes: true for eyes glinting now and then in the deepest shade
   //   sounds  its own sounds, one now and then (some of SFX in js/sound.js), such as crows and a far-off howl
+  //   battleMusic  its own battle song (one of SONGS), and backdrop: how a battle or an animal's questions look here
+  //           (one of BACKDROPS in js/art.js, such as 'pines'), instead of a meadow
   // Positions elsewhere in this file ([x, y], or x and y) are in the first place. Something in another
   // place says which: [x, y, 'place'], or place:'id'.
   places: {
@@ -515,6 +517,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     pineWood: {
       name: {zh:'松林', py:'sōnglín', en:'Pine wood'},
       music: 'pineWood',   // slow, quiet and gloomy
+      battleMusic: 'pineBattle', backdrop: 'pines',   // a battle here: in the wood's minor key, among the pines
       gloom: {deep:.7, open:.24, mist:true, eyes:true},
       sounds: ['crow', 'crow', 'wind', 'howl'],
       exits: [

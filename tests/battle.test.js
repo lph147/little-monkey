@@ -220,3 +220,38 @@ test('snakes and spiders jump out of the long grass; the bee moved to chapter 1,
   assert.deepEqual(JSON.parse(run('JSON.stringify(__card)')), ['蜘蛛', 'A spider scuttles out of the long grass!'], 'its first meeting teaches 蜘蛛');
   assert.match(sheet.textContent, /蜘蛛/, 'then the battle');
 });
+
+// Fixed on 21 October 2026, after playing in the pine wood on a phone.
+test('a reading question shows the word to read beside the question, above the answers (not under them)', () => {
+  const g = fighting({w: {...WORDS, '山': {lv: 2, due: 0, ok: 0}}});
+  const q = JSON.parse(g.run("JSON.stringify(wordQuestion('山', '蛇'))"));
+  assert.equal(q.type, 'read');
+  assert.match(q.body, /^<div class="askrow"><p class="prompt">Read it\. Which picture is it\?<\/p><div class="word"><div class="big">山<\/div><div class="py">shān<\/div><\/div><\/div>/,
+    'in the question’s row, as a listening question has its 🔊: the answers come after it');
+});
+
+test('a creature that jumps out (or an animal you meet) looks at you, and away from you as it runs off', () => {
+  const g = fighting();
+  g.run("pl.x = 10; globalThis.__a = {spr: {width: 16, height: 16}, faces: 'left'}");
+  assert.equal(g.run('towardsYou(__a, 11) === __a.spr'), true, 'on your right, looking left: at you');
+  assert.equal(g.run('towardsYou(__a, 9) === __a.spr'), false, 'on your left, it’s turned round to look at you');
+  assert.equal(g.run('towardsYou(__a, 9, true) === __a.spr'), true, 'and running off to the left, it looks where it’s going');
+  assert.equal(g.run('towardsYou(__a, 10) === __a.spr'), true, 'above or below you: as it is');
+  assert.equal(g.run("towardsYou({spr: __a.spr}, 9) === __a.spr"), true, 'one that looks at you anyway (no faces) is never turned');
+  assert.equal(g.run("MAP_SPRITES['狼'].faces"), 'left');
+  assert.equal(g.run("MAP_SPRITES['蛇'].faces"), 'right');
+});
+
+test('a battle in the pine wood has its own song and its pines behind the creature; anywhere else, the usual', async () => {
+  const g = fighting({w: {...WORDS, '狼': {lv: 1, due: 0, ok: 0}}, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, chapter: 1, home: 2, build: 1, woodIn: 1}},
+    pos: {place: 'pineWood', x: 15, y: 17, dir: 'up'}});
+  g.run("placePlayer(); globalThis.__songs = []; playSong = name => __songs.push(name)");
+  g.run("battle('wolf')"); await g.flush();
+  assert.equal(g.run('__songs[0]'), 'pineBattle', 'the pine wood’s battle song');
+  assert.ok(g.sheet.querySelector('.scene').className.split(' ').includes('pines'), 'among the pines');
+  const meadow = fighting();
+  meadow.run("globalThis.__songs = []; playSong = name => __songs.push(name)");
+  meadow.run("battle('snake')"); await meadow.flush();
+  assert.equal(meadow.run('__songs[0]'), 'battle');
+  assert.ok(!meadow.sheet.querySelector('.scene').className.split(' ').includes('pines'));
+});

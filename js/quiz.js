@@ -148,7 +148,7 @@ function wordQuestion(w, avoid){
   const opts = shuffle([w].concat(type === 'read' ? others.slice(0, 2) : soundApart(w, others, 2)));   // (listening: none that sound alike)
   let body;
   if (type === 'listen') body = `<div class="askrow"><p class="prompt">Listen. Which picture is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
-  else if (type === 'read') body = `<p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`;
+  else if (type === 'read') body = `<div class="askrow"><p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div></div>`;   // (the word to read where a listening question has its 🔊: above the answers)
   else body = `<div class="askrow"><p class="prompt">Listen. Which word is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
   // The answers: when listening, pictures with their characters; when reading, just pictures (the word has its
   // pinyin, so pinyin here would match itself); when hearing, the words with their pinyin. Never characters alone.
@@ -187,7 +187,7 @@ async function encounter(foe){
   // The scene: your monkey, from behind, facing the animal on the grass (or a cliff, if that's its home), and its
   // name plate with hearts for the friendship won so far (filled: how many) and which question this is (n of 3).
   const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (no stick: these are friends)
-  const scene = (filled, n, look = '') => `<div class="scene${foe.home === '山' ? ' cliff' : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
+  const scene = (filled, n, look = '') => `<div class="scene${sceneLook(foe.home)}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}"><div class="plate"><div class="name">${nameHTML()}</div>`
     + `<div class="hearts" aria-label="Friendship: ${filled} of 3">${[0, 1, 2].map(k => heartHTML(k < filled)).join('')}</div>${n ? `<div class="qn">Question ${n} of 3</div>` : ''}</div>`
     + '<div class="plus" aria-hidden="true" hidden>+♥</div></div>';

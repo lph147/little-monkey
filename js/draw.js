@@ -65,7 +65,7 @@ function drawFallingLeaves(cx, cy, now){
 function heart(X, Y){ [[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[2,3]].forEach(([a,c]) => R(b, X+a, Y+c, 1, 1, '#E0446A')); }
 function drawFoe(cx, cy, now){
   if (!foe) return;
-  const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = foe.a.spr;
+  const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x);   // (looking at you)
   if (foe.state === 'in'){
     const k = clamp(e / 280, 0, 1), h = Math.max(1, Math.round(16 * k)), jump = e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
     R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)');
@@ -82,7 +82,7 @@ function drawFoe(cx, cy, now){
       const [dx, dy] = DV[OPP[pl.dir]] ? DV[pl.dir] : [0, 1];
       const d = e1 / 650 * 20;
       b.globalAlpha = clamp(1 - e1 / 650, 0, 1);
-      b.drawImage(spr, Math.round(X + dx * d), Math.round(Y + dy * d - Math.abs(Math.sin(e1 / 70)) * 2));
+      b.drawImage(towardsYou(foe.a, foe.x, true), Math.round(X + dx * d), Math.round(Y + dy * d - Math.abs(Math.sin(e1 / 70)) * 2));   // (running off, away from you)
       b.globalAlpha = 1;
     }
   }
@@ -220,7 +220,7 @@ function drawWorld(now){
   for (const a of spotAnimals.filter(a => !inTree(a))){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(a.spr, X, Y - 3 - bob);
+    R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(towardsYou(a, a.at[0]), X, Y - 3 - bob);   // (looking your way)
   }
   // tall grass rustling where an animal hides
   if (rustle && canWild() && Math.floor(now / 160) % 6 < 3){
@@ -271,7 +271,7 @@ function drawWorld(now){
   for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - 5 - bob, 10, 10);
+    b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5 - bob, 10, 10);
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
   for (const [x, y, show] of bubbles) bubble(x, y, show);

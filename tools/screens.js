@@ -47,6 +47,7 @@ SAVES.bigAsks = {...SAVES.homeGround, pos: {place: 'homeGround', x: 15, y: 5, di
 const BUILDING = {...SAVES.homeGround.areas[1], build: 1, wood: 'asked', stones: 'asked', woodIn: 1};   // (been into the pine wood before)
 SAVES.pineWood = {...SAVES.homeGround, areas: {1: BUILDING}, pos: {place: 'pineWood', x: 16, y: 26, dir: 'up'}};   // (in at the bottom)
 SAVES.pineMeadow = {...SAVES.pineWood, pos: {place: 'pineWood', x: 15, y: 17, dir: 'up'}};   // in the long grass below the bridge
+SAVES.pineKnowsWell = {...SAVES.pineWood, w: Object.fromEntries(Object.entries(SAVES.pineWood.w).map(([w, r]) => [w, {...r, lv: 2}]))};   // words recognised: reading questions
 SAVES.pineFirst = {...SAVES.homeGround, areas: {1: {...BUILDING, woodIn: 0}}, pos: {place: 'homeGround', x: 25, y: 1, dir: 'up'}};   // about to go in for the first time
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
@@ -271,6 +272,8 @@ const SCREENS = [
     play(); await wait(100); S.w['鹿'] = {lv: 1, due: 0, ok: 0}; encounter({id: 'deer', hz: '鹿', img: portrait('deer'), wild: true, home: '草'}); await wait(500); }},
   {id: 'wolf-meet', title: 'A wolf jumps out', save: 'pineWood', why: 'Out of the long grass in the pine wood: its first meeting teaches 狼 (láng, wolf).', run: async () => {
     play(); await wait(100); battle('wolf'); await wait(600); }},
+  {id: 'battle-wolf-read', title: 'A battle in the pine wood: read it', save: 'pineKnowsWell', why: 'Among the pines, with the pine wood’s own battle song. A word you know well to read, beside the question and above the answers.', run: async () => {
+    play(); await wait(100); S.w['狼'] = {lv: 1, due: 0, ok: 0}; battle('wolf'); await wait(700); click('[data-act=hit]'); await wait(700); }},
   {id: 'battle-wolf', title: 'A battle with a wolf', save: 'pineWood', why: 'Three hearts: tougher than a snake or a spider, not as tough as the wild boar, and you can run away.', run: async () => {
     play(); await wait(100); S.w['狼'] = {lv: 1, due: 0, ok: 0}; battle('wolf'); await wait(1200); }},
   {id: 'pine-wood-later', title: 'The cracked rock, broken', save: 'pineWoodLater', why: 'Part-way through: two dead pines are stumps now, a stone picked up, and the rock broken, opening the way into the sunny glade, with the last dead pine and stone.', run: async () => {
