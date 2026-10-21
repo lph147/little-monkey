@@ -529,5 +529,51 @@ function drawBuildingSchool(t, now){
     R(b, sx, sy, 1, 1, '#FFF6D8'); if (tw > .7){ R(b, sx - 1, sy, 3, 1, '#FFE27A'); R(b, sx, sy - 1, 1, 3, '#FFE27A'); }
   }
 }
-// The pictures for the area's scenes (AREA.scenes), by name; the opening's are drawScene, above.
-const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool};
+// The class painting a part of the school with a new colour (after a colour lesson; def.paints: the colour, and its
+// lesson series says which part it paints), at the home ground, close up as in the building scene: two monkeys with
+// long brushes paint it from left to right, dripping paint, beside a pot of it (from .6 to 3.6); then they turn round,
+// and once you press Next, the troop jumps for joy, and the part sparkles.
+const PAINTERS = [['big', 0, 64, 84, 166], ['troop1', -62, 68, 30, 112]], WATCHERS = [['elder', 4, 70, 'right'], ['playful', 180, 72, 'left'], ['player', 206, 69, 'left']];   // painters: [who, behind the brushes' edge by, y, from x, to x]
+const PAINT_AT = {door:[120, 86, 12, 14], windows:[116, 76, 56, 8], walls:[120, 78, 84, 18], pillars:[120, 78, 84, 18], roof:[120, 30, 84, 14], blossom:[116, 98, 56, 4]};   // [x, y] the brushes reach to, and the sparkles' spread
+function drawPaintingSchool(t, now, def){
+  const W = VW*T, H = VH*T, blink = now % 3200 < 130;
+  for (let y = 0; y < 44; y += 4) R(b, 0, y, W, 4, mix('#8FCBEF', '#CFE9F7', y / 44));   // the sky
+  R(b, 0, 30, W, 16, '#8E8A7E'); R(b, 0, 30, W, 2, '#B5B1A4'); R(b, 0, 44, W, 2, '#6A665C');   // the cliff behind the home ground
+  R(b, 0, 46, W, H - 46, '#7CC46B');
+  for (let i = 0; i < 60; i++) R(b, Math.floor(rnd(i, 41) * W), 46 + Math.floor(rnd(i, 42) * (H - 46)), 1, 1, i % 3 ? '#6CB35C' : '#93D67F');
+  const part = paintsPart(def.paints), colour = PAINT[def.paints] || '#888888', k = clamp((t - .6) / 3, 0, 1);
+  const [ax, ay, sx, sy] = PAINT_AT[part] || [120, 80, 60, 10];
+  if (!siteCanvas){ siteCanvas = document.createElement('canvas'); siteCanvas.width = 120; siteCanvas.height = 64; }
+  const g = siteCanvas.getContext('2d'); g.clearRect(0, 0, 120, 64);
+  schoolHouse(g, 10, 14, 100, 48, {walls:1, roof:1, sign:true, paint:{...paintedParts(), [part]:def.paints}, wipe:{part, k}});
+  b.drawImage(siteCanvas, 0, 0, 120, 64, 0, -8, 240, 128);
+  R(b, 216, 96, 14, 11, '#6B6B6B'); R(b, 217, 97, 12, 9, '#9A9A9A'); R(b, 216, 95, 14, 2, '#4E4E4E'); R(b, 217, 95, 12, 1, colour); R(b, 218, 98, 2, 6, colour);   // the pot of paint, a drip down its side
+  const edge = -28 + 296 * k, done = t >= 3.7, cheer = t >= 4.4;
+  WATCHERS.forEach(([id, x, y, dir], i) => {
+    const hop = cheer ? Math.round(Math.abs(Math.sin(now / 180 + i)) * 6) : 0;
+    b.drawImage(monkeySprite(id, cheer ? 'down' : dir, blink && i % 2 === 0, 0, true), x, y - hop, 32, 32);
+  });
+  PAINTERS.forEach(([id, off, y, from, to], i) => {
+    const tx = clamp(edge + off, ax - 110, ax + 110), x = Math.round(clamp(tx - 16, from, to));   // (each along their own stretch of the wall, reaching with the brush)
+    const hop = cheer ? Math.round(Math.abs(Math.sin(now / 180 + i + 2)) * 6) : 0, step = !done && k > 0 && k < 1 ? 1 + Math.floor(now / 160 + i) % 2 : 0;
+    b.drawImage(monkeySprite(id, done ? 'down' : 'up', blink && i, step, true), x, y - hop, 32, 32);
+    if (done) return;
+    const hx = x + 16, hy = y + 14, by = Math.round(ay + Math.sin(now / 90 + i * 2) * 3), bx = Math.round(clamp(tx, 4, 236));   // the brush, on a long handle, brushing up and down
+    const n = Math.max(Math.abs(bx - hx), Math.abs(by - hy)) || 1;
+    for (let j = 0; j <= n; j++) R(b, Math.round(hx + (bx - hx) * j / n) - 1, Math.round(hy + (by - hy) * j / n) - 1, 3, 3, '#4A2C17');   // (dark edges, light wood: it shows up on any paint)
+    for (let j = 0; j <= n; j++) R(b, Math.round(hx + (bx - hx) * j / n), Math.round(hy + (by - hy) * j / n), 1, 1, '#E2C08E');
+    R(b, bx - 3, by - 2, 7, 5, '#C9A26B'); R(b, bx - 3, by + 1, 7, 3, colour);
+    if (k > 0 && k < 1) for (let d = 0; d < 3; d++){   // drips of paint, falling
+      const ph = (now / 420 + d / 3 + i * .17) % 1; b.globalAlpha = 1 - ph;
+      R(b, bx - 2 + d * 2, by + 4 + Math.round(ph * 16), 2, 2, colour); b.globalAlpha = 1;
+    }
+  });
+  if (cheer) for (let i = 0; i < 12; i++){   // sparkles over the newly painted part
+    const a = i / 12 * Math.PI * 2 + now / 1500, tw = Math.sin(now / 170 + i * 2);
+    if (tw < 0) continue;
+    const px = Math.round(ax + Math.cos(a) * sx), py = Math.round(ay + Math.sin(a) * sy);
+    R(b, px, py, 1, 1, '#FFF6D8'); if (tw > .7){ R(b, px - 1, py, 3, 1, '#FFE27A'); R(b, px, py - 1, 1, 3, '#FFE27A'); }
+  }
+}
+// The pictures for the area's scenes (AREA.scenes), by name (a scene's art, or else its id); the opening's are drawScene, above.
+const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool};

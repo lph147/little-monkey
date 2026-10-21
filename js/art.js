@@ -519,7 +519,7 @@ const OBJECT_ART = {
     [[4,4],[5,3],[6,3],[11,3],[12,4],[3,6]].forEach(([a, c]) => dot(g, X+a, Y+c, '#5E8F3E'));
   },
   frame: (g, o) => schoolFrame(g, o),
-  school: (g, o) => schoolHouse(g, o.x*T, o.y*T, o.w*T, o.h*T),
+  school: (g, o) => schoolHouse(g, o.x*T, o.y*T, o.w*T, o.h*T, {walls:1, roof:1, sign:true, paint:paintedParts()}),   // (painted as you learn colours)
   blackboard: (g, o) => blackboard(g, o),
   classWindow: (g, o) => classWindow(g, o)
 };
@@ -566,39 +566,73 @@ function woodLine(g, x0, y0, x1, y1){   // a beam from (x0, y0) to (x1, y1): dar
 // The school, once the troop has built it, over its frame: a footing of the small stones, plank walls between wooden
 // pillars, paper windows with a lattice, a double door in the middle (over the door square), a grey tiled roof whose eaves
 // curl up at the ends, red lanterns, and a sign over the door. built: how far it's got (in the scene of the troop building
-// it): its walls and roof, from 0 to 1, each going up from the bottom, and whether the sign and lanterns are up.
+// it): its walls and roof, from 0 to 1, each going up from the bottom, and whether the sign and lanterns are up. Its
+// paint: the parts the troop has painted (the colour lessons), each with its colour word (walls, pillars, windows, door,
+// roof, and blossom, peach blossom painted under the windows); and wipe: the part being painted (in the scene of it),
+// and how far across the brushes have got, from 0 to 1.
 const TILES = ['#3E4852', '#56616C', '#64707C', '#7C8996'];   // the roof's tiles, darkest to lightest
+// The paints, by colour word: each part is shaded from its paint (shade: darker below 0, lighter above).
+const SCHOOL_PARTS = ['walls', 'pillars', 'windows', 'blossom', 'door', 'roof'];   // the parts of the school that can be painted
+const PAINT = {'红色':'#C8322B', '黄色':'#E8B83A', '白色':'#F2EEE4', '黑色':'#2A2626', '蓝色':'#3A6DB5', '绿色':'#2F8F4E', '棕色':'#6E4325', '橙色':'#E0702A', '粉色':'#F4A6C6'};
+const shade = (c, k) => k < 0 ? mix(c, '#000000', -k) : mix(c, '#FFFFFF', k);
 function schoolHouse(g, X, Y, W, H, built = {walls:1, roof:1, sign:true}){
   const base = Y + H - 4, wallTop = base - 28, ridge = wallTop - 20, mid = X + Math.round(W / 2);
   const reveal = (from, to, k, draw) => { if (k <= 0) return; g.save(); g.beginPath(); g.rect(X - 24, Math.floor(to + (from - to) * (1 - k)), W + 48, Math.ceil((from - to) * k) + 2); g.clip(); draw(); g.restore(); };
+  const paint = built.paint || {}, wipe = built.wipe;
+  const part = (name, draw) => {   // a part, in its paint (c), if it has one; being painted, bare, then painted as far across as the brushes are
+    const c = PAINT[paint[name]];
+    if (!wipe || wipe.part !== name){ draw(c); return; }
+    draw(null);
+    if (c && wipe.k > 0){ g.save(); g.beginPath(); g.rect(X - 24, Y - 40, Math.round((W + 48) * wipe.k), H + 80); g.clip(); draw(c); g.restore(); }
+  };
+  const ww = mid - 16 - (X + 14) - 4;   // the windows' width
   reveal(base, wallTop, built.walls, () => {   // the walls, from the footing up
-    for (let y = wallTop; y < base; y++) R(g, X + 4, y, W - 8, 1, (y - wallTop) % 4 === 0 ? WOOD[2] : WOOD[3]);
-    R(g, X + 4, wallTop, 1, base - wallTop, WOOD[4]);
-    for (const px of [X + 4, mid - 12, mid + 9, X + W - 7]){ R(g, px, wallTop, 3, base - wallTop, WOOD[0]); R(g, px + 1, wallTop, 1, base - wallTop, WOOD[1]); }   // pillars
-    for (const wx of [X + 14, mid + 16]){   // paper windows with a lattice
-      const ww = mid - 16 - (X + 14) - 4;
-      R(g, wx, wallTop + 7, ww, 12, WOOD[0]); R(g, wx + 1, wallTop + 8, ww - 2, 10, '#F3E9D2');
-      for (let i = 4; i < ww - 2; i += 4) R(g, wx + i, wallTop + 8, 1, 10, WOOD[2]);
-      for (let j = 3; j < 10; j += 3) R(g, wx + 1, wallTop + 8 + j, ww - 2, 1, WOOD[2]);
-    }
-    R(g, mid - 6, base - 19, 12, 19, WOOD[0]); R(g, mid - 5, base - 18, 5, 18, WOOD[1]); R(g, mid + 1, base - 18, 4, 18, WOOD[1]);   // the double door
-    R(g, mid - 4, base - 16, 3, 6, WOOD[2]); R(g, mid + 2, base - 16, 2, 6, WOOD[2]); dot(g, mid - 2, base - 9, GOLD_DOT); dot(g, mid + 1, base - 9, GOLD_DOT);
+    part('walls', c => {
+      for (let y = wallTop; y < base; y++) R(g, X + 4, y, W - 8, 1, (y - wallTop) % 4 === 0 ? (c ? shade(c, -.35) : WOOD[2]) : c || WOOD[3]);
+      R(g, X + 4, wallTop, 1, base - wallTop, c ? shade(c, .25) : WOOD[4]);
+    });
+    part('pillars', c => { for (const px of [X + 4, mid - 12, mid + 9, X + W - 7]){ R(g, px, wallTop, 3, base - wallTop, c ? shade(c, -.3) : WOOD[0]); R(g, px + 1, wallTop, 1, base - wallTop, c || WOOD[1]); } });
+    part('windows', c => {   // paper windows with a lattice
+      for (const wx of [X + 14, mid + 16]){
+        R(g, wx, wallTop + 7, ww, 12, c ? shade(c, -.25) : WOOD[0]); R(g, wx + 1, wallTop + 8, ww - 2, 10, '#F3E9D2');
+        for (let i = 4; i < ww - 2; i += 4) R(g, wx + i, wallTop + 8, 1, 10, c || WOOD[2]);
+        for (let j = 3; j < 10; j += 3) R(g, wx + 1, wallTop + 8 + j, ww - 2, 1, c || WOOD[2]);
+      }
+    });
+    part('blossom', c => {   // a branch of peach blossom painted under each window (only once it's painted)
+      if (!c) return;
+      for (const wx of [X + 14, mid + 16]){
+        const by = wallTop + 23;
+        for (let i = 0; i < ww - 2; i++) dot(g, wx + 1 + i, by + Math.round(Math.sin(i / 3) * .8), '#3A2212');
+        for (const [dx, dy] of [[3, -2], [8, 1], [12, -2], [17, 1], [21, -2], [25, 1]]){
+          if (dx >= ww - 2) continue;
+          const fx = wx + dx, fy = by + dy;
+          dot(g, fx, fy - 1, c); dot(g, fx - 1, fy, c); dot(g, fx + 1, fy, shade(c, -.15)); dot(g, fx, fy + 1, shade(c, -.15)); dot(g, fx, fy, shade(c, .55));
+        }
+      }
+    });
+    part('door', c => {   // the double door, with gold studs once it's painted
+      R(g, mid - 6, base - 19, 12, 19, c ? shade(c, -.45) : WOOD[0]); R(g, mid - 5, base - 18, 5, 18, c || WOOD[1]); R(g, mid + 1, base - 18, 4, 18, c || WOOD[1]);
+      R(g, mid - 4, base - 16, 3, 6, c ? shade(c, .12) : WOOD[2]); R(g, mid + 2, base - 16, 2, 6, c ? shade(c, .12) : WOOD[2]); dot(g, mid - 2, base - 9, GOLD_DOT); dot(g, mid + 1, base - 9, GOLD_DOT);
+      if (c) for (const [sx, sy] of [[-4, -15], [3, -15], [-4, -4], [3, -4]]) dot(g, mid + sx, base + sy, GOLD_DOT);
+    });
   });
   for (let sx = X + 2; sx < X + W - 4; sx += 7){ oval(g, sx + 3, base + 1, 3, 2, GREY[0]); oval(g, sx + 3, base + 1, 2, 1, GREY[2]); dot(g, sx + 2, base, GREY[3]); }   // the footing
   R(g, mid - 8, base + 1, 16, 3, GREY[1]); R(g, mid - 8, base + 1, 16, 1, GREY[3]);   // a stone step at the door
-  reveal(wallTop + 3, ridge - 3, built.roof, () => {   // the roof, from the eaves up
+  reveal(wallTop + 3, ridge - 3, built.roof, () => part('roof', c => {   // the roof, from the eaves up: its tiles, in their paint once it's painted
+    const t = c ? [shade(c, -.45), shade(c, -.2), c, shade(c, .25)] : TILES;
     for (let y = ridge; y <= wallTop + 2; y++){
       const k = (y - ridge) / (wallTop + 2 - ridge), half = Math.round(W / 2 - 14 + k * 20), L = mid - half, w = 2 * half;
-      R(g, L - 1, y, w + 2, 1, TILES[0]);
-      R(g, L, y, w, 1, (y - ridge) % 5 < 2 ? TILES[2] : TILES[1]);
-      for (let tx = L + 2 + (y % 2); tx < L + w - 1; tx += 4) dot(g, tx, y, TILES[0]);   // the rows of tiles
-      if ((y - ridge) % 5 === 0) R(g, L, y, w, 1, TILES[3]);
+      R(g, L - 1, y, w + 2, 1, t[0]);
+      R(g, L, y, w, 1, (y - ridge) % 5 < 2 ? t[2] : t[1]);
+      for (let tx = L + 2 + (y % 2); tx < L + w - 1; tx += 4) dot(g, tx, y, t[0]);   // the rows of tiles
+      if ((y - ridge) % 5 === 0) R(g, L, y, w, 1, t[3]);
     }
-    R(g, mid - W / 2 - 6, wallTop + 2, W + 12, 2, TILES[0]);   // the eaves' edge, and their tips curling up
-    for (const [ex, d] of [[mid - W / 2 - 6, -1], [mid + W / 2 + 5, 1]]){ R(g, ex, wallTop, 1, 3, TILES[0]); R(g, ex + d, wallTop - 2, 1, 3, TILES[0]); dot(g, ex + d, wallTop - 3, TILES[2]); }
-    R(g, mid - W / 2 + 12, ridge - 2, W - 24, 3, TILES[0]); R(g, mid - W / 2 + 13, ridge - 2, W - 26, 1, TILES[2]);   // the ridge, curling up at both ends
-    for (const [ex, d] of [[mid - W / 2 + 12, -1], [mid + W / 2 - 13, 1]]){ R(g, ex + d, ridge - 4, 1, 3, TILES[0]); R(g, ex + 2 * d, ridge - 5, 1, 2, TILES[0]); }
-  });
+    R(g, mid - W / 2 - 6, wallTop + 2, W + 12, 2, t[0]);   // the eaves' edge, and their tips curling up
+    for (const [ex, d] of [[mid - W / 2 - 6, -1], [mid + W / 2 + 5, 1]]){ R(g, ex, wallTop, 1, 3, t[0]); R(g, ex + d, wallTop - 2, 1, 3, t[0]); dot(g, ex + d, wallTop - 3, t[2]); }
+    R(g, mid - W / 2 + 12, ridge - 2, W - 24, 3, t[0]); R(g, mid - W / 2 + 13, ridge - 2, W - 26, 1, t[2]);   // the ridge, curling up at both ends
+    for (const [ex, d] of [[mid - W / 2 + 12, -1], [mid + W / 2 - 13, 1]]){ R(g, ex + d, ridge - 4, 1, 3, t[0]); R(g, ex + 2 * d, ridge - 5, 1, 2, t[0]); }
+  }));
   if (built.sign){
     R(g, mid - 9, wallTop + 2, 18, 8, '#5A1A14'); R(g, mid - 8, wallTop + 3, 16, 6, '#9E2B25'); R(g, mid - 8, wallTop + 3, 16, 1, '#E2B84A');   // the sign, with 学校 on it
     for (const cx of [mid - 5, mid + 1]){ R(g, cx, wallTop + 5, 4, 1, '#F4E3B0'); R(g, cx + 1, wallTop + 4, 1, 4, '#F4E3B0'); R(g, cx + 3, wallTop + 6, 1, 2, '#F4E3B0'); }

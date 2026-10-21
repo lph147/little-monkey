@@ -243,7 +243,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Walk up into the door: the screen fades and you're inside, a classroom: a big blackboard with chalk writing and two windows on the back wall, the teacher's table (books and a cup), six double desks with open books, and the little monkey and the troop at their desks. The old monkey stands at the front with a !. Walk down onto the red mat to go back out (in front of the door), and in again.
 - [ ] Walk up to the old monkey and talk to him: 上课！ (the teacher), 老师好！ (the class, by the little monkey: 老师 in bold green, and a card teaches 老师 without saying it again), 同学们好！ (the teacher). A message says lessons are where you practise now. The little monkey has a !, and TASKS says to talk to it.
 - [ ] Talk to the little monkey (stand beside it): 我们是同学！ (We're classmates!), and a card teaches 同学. TASKS: all of chapter 1 so far is ticked.
-- [ ] Talk to the teacher again (he has a ! while there's a new number to learn, or some words need practice): 上课！, then a card asks to start a lesson (Start, or Not now). With a new number to learn, it's a number lesson (below); otherwise it's practice: match words to their pictures, fill a gap, and get shells for words that needed practice. Then 下课！. Choosing Not now ends it, without 下课.
+- [ ] Talk to the teacher again (he has a ! while there's a new number or colour to learn, or some words need practice): 上课！, then a card asks to start a lesson (Start, or Not now). With a new number or colour to learn, it's a number or colour lesson (below); otherwise it's practice: match words to their pictures, fill a gap, and get shells for words that needed practice. Then 下课！. Choosing Not now ends it, without 下课.
 - [ ] In the meadow, the practice post by the pond has gone. The title screen's card for the game, and the Word Scroll's Today, say to practise in a lesson at school.
 
 **Chapter 1: number lessons (四 to 十)**
@@ -253,6 +253,14 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] After the fifth: a fanfare, and a card says how many you counted right and the shells you got (one for each right answer while that number needed practice). Then 下课！. The checklist says 1/7.
 - [ ] Talk to him again: if you got 四 right twice in a row, the lesson teaches 五; if not, it's a practice lesson (四 among the words) until you have. And so on to 十: from 七 the pictures are ten frames, two rows of five boxes, filled in. With all seven, the checklist's line is ticked, and lessons are practice.
 - [ ] On the smallest phone, the counting card fits without scrolling: even ten things, answered, with Next.
+
+**Chapter 1: colour lessons (黑色 to 粉色)**
+- [ ] TASKS' checklist has "Learn six colours, and paint the school (0/6)". When there's a new number and a new colour to learn, number and colour lessons take turns.
+- [ ] A colour lesson: 上课！, then a card says today is a new colour, then painting the school (Start, or Not now). Start: the teacher says 这是黑色。 (黑色 in bold green), and a card teaches 黑色 (a black splat of paint) without saying it again.
+- [ ] Five paints to choose, from three colours you know each time. Three of them are the new colour. While it's new: "Listen. Which paint is it?", it's said aloud (the big 🔊 says it again), and each paint has its characters. Once you know it: "Read it. Which paint is it?", the colour in characters with pinyin, and the paints alone. A wrong answer shows the right one, and Next carries on.
+- [ ] Then a scene: the school, two monkeys with long brushes painting the door black from left to right, dripping paint, a pot of it on the ground, and the others watching (我们去刷门吧！). Next: 门是黑色的！, and the troop jumps for joy as the door sparkles. OK, then a card says how many paints you chose right and your shells, then 下课！. The checklist says 1/6.
+- [ ] Walk out of the school: its door is black, with gold studs. The next colour lessons paint the roof blue, the windows green, the walls brown, the pillars orange, and pink peach blossom under the windows, each in its own scene. With all six, the school is all painted and the checklist's line is ticked.
+- [ ] On the smallest phone, both colour cards fit without scrolling (the reading one has the colour smaller).
 
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.

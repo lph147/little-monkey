@@ -84,6 +84,12 @@ shown where the word list has them.
 | 这里有几只猴子？ | zhèlǐ yǒu jǐ zhī hóuzi? | How many monkeys are there? |  |  |
 | 这里有几只兔子？ | zhèlǐ yǒu jǐ zhī tùzi? | How many rabbits are there? |  |  |
 | 这里有几只鸟？ | zhèlǐ yǒu jǐ zhī niǎo? | How many birds are there? |  |  |
+| 这是黑色。 | zhè shì hēisè. | This is black. |  |  |
+| 这是蓝色。 | zhè shì lánsè. | This is blue. |  |  |
+| 这是绿色。 | zhè shì lǜsè. | This is green. |  |  |
+| 这是棕色。 | zhè shì zōngsè. | This is brown. |  |  |
+| 这是橙色。 | zhè shì chéngsè. | This is orange. |  |  |
+| 这是粉色。 | zhè shì fěnsè. | This is pink. |  |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
 | 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
@@ -181,6 +187,23 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 太好了！ | tài hǎo le! | Wonderful! |  |
 | 这是我们的学校！ | zhè shì wǒmen de xuéxiào! | This is our school! |  |
 
+### Scenes after lessons (the class painting the school)
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 我们去刷门吧！ | wǒmen qù shuā mén ba! | Let’s go and paint the door! |  |
+| 门是黑色的！ | mén shì hēisè de! | The door is black! |  |
+| 我们去刷屋顶吧！ | wǒmen qù shuā wūdǐng ba! | Let’s go and paint the roof! |  |
+| 屋顶是蓝色的！ | wūdǐng shì lánsè de! | The roof is blue! |  |
+| 我们去刷窗户吧！ | wǒmen qù shuā chuānghu ba! | Let’s go and paint the windows! |  |
+| 窗户是绿色的！ | chuānghu shì lǜsè de! | The windows are green! |  |
+| 我们去刷墙吧！ | wǒmen qù shuā qiáng ba! | Let’s go and paint the walls! |  |
+| 墙是棕色的！ | qiáng shì zōngsè de! | The walls are brown! |  |
+| 我们去刷柱子吧！ | wǒmen qù shuā zhùzi ba! | Let’s go and paint the pillars! |  |
+| 柱子是橙色的！ | zhùzi shì chéngsè de! | The pillars are orange! |  |
+| 我们去画花吧！ | wǒmen qù huà huā ba! | Let’s go and paint some flowers! |  |
+| 花是粉色的！ | huā shì fěnsè de! | The flowers are pink! |  |
+
 ### Names
 
 | Chinese | Pinyin | English | Notes |
@@ -232,6 +255,12 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 红色 | hóngsè | red |  |
 | 黄色 | huángsè | yellow |  |
 | 白色 | báisè | white |  |
+| 黑色 | hēisè | black |  |
+| 蓝色 | lánsè | blue |  |
+| 绿色 | lǜsè | green |  |
+| 棕色 | zōngsè | brown |  |
+| 橙色 | chéngsè | orange |  |
+| 粉色 | fěnsè | pink |  |
 | 路 | lù | path, road |  |
 | 棍子 | gùnzi | stick |  |
 | 蛇 | shé | snake |  |
@@ -303,6 +332,13 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
 | 很 | hěn | very |  |
 | 盖 | gài | to build (a house) |  |
+| 刷 | shuā | to paint (with a brush) |  |
+| 画 | huà | to paint (a picture), to draw |  |
+| 门 | mén | door |  |
+| 屋顶 | wūdǐng | roof |  |
+| 窗户 | chuānghu | window |  |
+| 墙 | qiáng | wall |  |
+| 柱子 | zhùzi | pillar |  |
 | 几 | jǐ | how many |  |
 | 个 | gè | (counts things: 几个, how many) |  |
 | 们 | men | (more than one: 同学们, the class) |  |
@@ -442,6 +478,11 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 一，二，三，四！ | yī, èr, sān, sì! | One, two, three, four! | New on 21 October 2026 (in the game), the number lessons at school: The teacher counting peaches onto his table, teaching 四 sì, four (and the same, one more each time, for 五 wǔ, 六 liù, 七 qī, 八 bā, 九 jiǔ and 十 shí: one, two… up to ten) |  |
 | 桌子上有几个桃子？ | zhuōzi shàng yǒu jǐ gè táozi? | How many peaches are on the table? | New on 21 October 2026 (in the game), the number lessons at school: The teacher, asking how many (几 jǐ and 个 gè are just for listening); the same with 苹果 (apples) and 碗 (bowls) |  |
 | 这里有几只猴子？ | zhèlǐ yǒu jǐ zhī hóuzi? | How many monkeys are there? | New on 21 October 2026 (in the game), the number lessons at school: The teacher, asking how many of something alive (几只); the same with 兔子 (rabbits) and 鸟 (birds) |  |
+| 这是黑色。 | zhè shì hēisè. | This is black. | New on 21 October 2026 (in the game), the colour lessons at school: The teacher opening a pot of paint, teaching 黑色 hēisè, black (and the same for 蓝色 lánsè blue, 绿色 lǜsè green, 棕色 zōngsè brown, 橙色 chéngsè orange and 粉色 fěnsè pink) |  |
+| 我们去刷门吧！ | wǒmen qù shuā mén ba! | Let’s go and paint the door! | New on 21 October 2026 (in the game), the colour lessons at school: The class, going out to paint a part of the school after a colour lesson (刷 shuā, to paint with a brush, and 门 mén, door, are just for listening); the same with 屋顶 wūdǐng (the roof), 窗户 chuānghu (the windows), 墙 qiáng (the walls) and 柱子 zhùzi (the pillars). Please check 刷 sounds natural for painting each of these |  |
+| 门是黑色的！ | mén shì hēisè de! | The door is black! | New on 21 October 2026 (in the game), the colour lessons at school: Once it’s painted; the same for the roof (蓝色, blue), the windows (绿色, green), the walls (棕色, brown) and the pillars (橙色, orange) |  |
+| 我们去画花吧！ | wǒmen qù huà huā ba! | Let’s go and paint some flowers! | New on 21 October 2026 (in the game), the colour lessons at school: The class, going out to paint peach blossom under the school’s windows (画 huà, to paint a picture, just for listening) |  |
+| 花是粉色的！ | huā shì fěnsè de! | The flowers are pink! | New on 21 October 2026 (in the game), the colour lessons at school: Once they’re painted |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 

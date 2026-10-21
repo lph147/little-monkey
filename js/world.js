@@ -14,7 +14,7 @@ function tileAt(x, y){         // the legend entry for the map letter at x, y (o
 const becomesNow = t => (t.becomes.find(b => matches(b.if)) || {}).to;
 const squareKey = (x, y, place = PLACE) => `${place}:${x},${y}`;
 const mapStoryNow = () => Object.values(LEGEND).filter(t => t.becomes).map(becomesNow).join() + '|'
-  + Object.entries(here().changed).filter(([k]) => k.startsWith(PLACE + ':')).join();
+  + Object.entries(here().changed).filter(([k]) => k.startsWith(PLACE + ':')).join() + '|' + Object.entries(paintedParts()).join();
 let mapStory = null;   // what they were when the map was last drawn (buildMap)
 function refreshMap(){ if (mapStoryNow() !== mapStory){ buildMap(); findGrass(); stepClear(); } }
 // If the map changes under you (such as the school's frame going up on the plot you're standing on), you step out onto
@@ -133,16 +133,26 @@ const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 // The area's lesson series (AREA.lessons) teach their words one at a time, one a lesson, in order: the next once you've
 // got the last one right twice (it no longer needs practice), so they don't all come at once. The series and word ready
-// now, if any (the first series whose if matches with a word ready).
+// now, if any (of the series whose if matches); when more than one has a word ready, they take turns, so it isn't the
+// same kind of lesson every time (here().lastLesson: the series of your last lesson).
 function lessonNow(){
+  const ready = [];
   for (const series of AREA.lessons || []){
     if (series.if && !matches(series.if)) continue;
     const i = series.words.findIndex(w => lvl(w) === 0);
-    if (i >= 0 && (i === 0 || !needsPractice(series.words[i - 1]))) return {series, word:series.words[i]};
+    if (i >= 0 && (i === 0 || !needsPractice(series.words[i - 1]))) ready.push({series, word:series.words[i]});
   }
-  return null;
+  return ready.find(l => l.series.id !== here().lastLesson) || ready[0] || null;
 }
-const LESSON_KINDS = {count:countLesson};   // how each kind of lesson series goes (count: js/quiz.js)
+const LESSON_KINDS = {count:countLesson, paint:paintLesson};   // how each kind of lesson series goes (js/quiz.js)
+// The parts of the school painted so far (a lesson series' paint: which part each of its colours paints), each with its
+// colour: those of the colours you've learned. (js/art.js draws them.)
+function paintedParts(){
+  const out = {};
+  for (const series of AREA.lessons || []) for (const [w, part] of Object.entries(series.paint || {})) if (lvl(w) >= 1) out[part] = w;
+  return out;
+}
+const paintsPart = w => (AREA.lessons || []).map(series => (series.paint || {})[w]).find(Boolean);   // the part a colour paints
 // Swinging your stick (the hit step): how long it takes, how far through it the stick strikes, and the swing now (when it
 // began, and the square it strikes), drawn by js/draw.js.
 const SWING_MS = 420, SWING_CONTACT = .45;
@@ -235,6 +245,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async lesson(s, who){
     const l = lessonNow();
     if (!await (l ? LESSON_KINDS[l.series.kind](l.series, l.word, who) : practise(speaker(who), PRACTICE.lesson))) return STOP;
+    if (l){ here().lastLesson = l.series.id; save(); }
   },
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
   // up, then you hop down again, sparkling, with all your hearts (its text: the message then).

@@ -425,10 +425,12 @@ test('intro captions are in time order, each with its Chinese and English (its w
   });
 });
 
-test('every scene has pictures, captions in time order (each with Chinese and English, teaching only a word it says), and a Settings button to watch it again', () => {
+test('every scene has pictures, captions in time order (each with Chinese and English, teaching only a word it says), and a Settings button to watch it again (but a lesson’s, played after it)', () => {
+  const afterLessons = (AREA.lessons || []).flatMap(l => Object.values(l.scenes || {}));
   for (const [id, sc] of Object.entries(AREA.scenes || {})){
-    assert.ok(get(`typeof SCENE_ART[${JSON.stringify(id)}] === 'function'`), `the ${id} scene needs its pictures in SCENE_ART (js/draw.js)`);
-    assert.ok(sc.watch && sc.when, `the ${id} scene needs watch (its button in Settings) and when (once it's been seen)`);
+    assert.ok(get(`typeof SCENE_ART[${JSON.stringify(sc.art || id)}] === 'function'`), `the ${id} scene needs its pictures in SCENE_ART (js/draw.js), named by its art or its id`);
+    if (afterLessons.includes(id)) assert.ok(!sc.watch, `the ${id} scene is played after a lesson: it doesn't need a button in Settings`);
+    else assert.ok(sc.watch && sc.when, `the ${id} scene needs watch (its button in Settings) and when (once it's been seen)`);
     sc.captions.forEach((c, i) => {
       assert.ok(c.zh && c.en, `the ${id} scene's caption ${i + 1} needs its Chinese and English`);
       if (i) assert.ok(c.at > sc.captions[i - 1].at, `the ${id} scene's caption ${i + 1} comes before the one above it`);
@@ -500,5 +502,15 @@ test('each lesson series is one the engine can give, teaching words you can coll
     }
     for (const t of l.things || []) assert.ok(collectible.includes(t.word) && BANK[t.word].pic && AREA.lines[t.ask] && AREA.lines[t.ask].zh.split(' ').includes(t.word), `the lessons ${l.id}: ${t.word} should be a word with a picture, asked about in a line with it`);
     if (l.kind === 'count') assert.deepEqual(l.words, get('COUNTING').slice(get('COUNTING').indexOf(l.words[0]), get('COUNTING').indexOf(l.words[0]) + l.words.length), 'numbers are learned in order');
+    if (l.kind === 'paint'){
+      const PARTS = get('SCHOOL_PARTS');
+      for (const w of l.words){
+        assert.ok(BANK[w].category === 'colours' && get(`!!PAINT[${JSON.stringify(w)}]`), `the lessons ${l.id}: ${w} should be a colour, with its paint in PAINT (js/art.js)`);
+        assert.ok(PARTS.includes((l.paint || {})[w]), `the lessons ${l.id}: ${w} should paint a part of the school (paint), one of ${PARTS.join(', ')}`);
+        const sc = (AREA.scenes || {})[(l.scenes || {})[w]];
+        assert.ok(sc && sc.paints === w, `the lessons ${l.id}: ${w} needs its scene (scenes), painting with it (paints)`);
+      }
+      assert.equal(new Set(Object.values(l.paint)).size, l.words.length, `the lessons ${l.id}: each colour paints a different part`);
+    }
   }
 });

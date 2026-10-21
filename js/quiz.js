@@ -45,7 +45,7 @@ async function countQ({who, thing, n}){
   hear(line.t);
   // (the question beside the teacher's face, then the things with its English beside them, so it all fits above the
   // answers on a small phone)
-  const ok = await pictureQ({head:`<div class="qhead counthead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(line.t)}<button class="tbtn" data-a="ask" aria-label="Hear the question again">🔊</button></div>`,
+  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(line.t)}<button class="tbtn" data-a="ask" aria-label="Hear the question again">🔊</button></div>`,
     body:`<div class="countq"><div class="count ${thing.on || 'table'}">${Array.from({length:n}, () => `<span class="thing">${picHTML(thing.word)}</span>`).join('')}</div>
       <div class="sentence-en">${esc(line.en)}</div></div><div class="gloss"></div>`,
     options:opts.map(w => pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>${laterPy(w)}` : `${w}<span class="cap">${WORDS[w].py}</span>`),
@@ -59,14 +59,14 @@ async function countQ({who, thing, n}){
 // new number (his line for it, teach), then asks how many there are, five times: the new number three times, and twice
 // another you know. Each right answer earns a shell if that number needed practice. Gives whether you had the lesson
 // (you can say Not now at the start).
-const COUNT_QUESTIONS = 5;
+const LESSON_QUESTIONS = 5;   // (in a number or colour lesson)
 async function countLesson(series, word, who){
   const face = speaker(who);
   if (!await confirmBox(face, fill(series.start), 'Start', 'Not now')) return false;
   await showDialog(face, L[series.teach[word]], {teach:word});
   await showNotice(word, {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
   const top = COUNTING.indexOf(word) + 1, others = shuffle([...Array(top - 1).keys()].map(i => i + 1));
-  const counts = shuffle([...Array(COUNT_QUESTIONS - 2).fill(top), ...others.slice(0, 2)]);
+  const counts = shuffle([...Array(LESSON_QUESTIONS - 2).fill(top), ...others.slice(0, 2)]);
   let right = 0, shells = 0;
   for (const n of counts){
     const things = series.things.filter(t => lvl(t.word) >= 1), thing = things[Math.floor(Math.random() * things.length)] || series.things[0];
@@ -75,6 +75,43 @@ async function countLesson(series, word, who){
   }
   S.shells += shells; save(); SFX.fanfare();
   await infoBox(face, `<p class="label">Lesson over</p><p>You counted <b>${right} of ${counts.length}</b> right.${shells ? ` +${shells} 🐚` : ''}</p>`);
+  return true;
+}
+// A colour question (a colour lesson): the teacher wants a paint, and you choose it from three colours you know, as in
+// any picture question: you hear it while it's new, and the paints have their characters (and their pinyin once you've
+// answered); once you know it, you read it, and choose from the paints alone. A miss is practice, as when counting.
+// Gives whether you were right.
+async function colourQ({who, w}){
+  const others = shuffle(ORDER.filter(x => x !== w && WORDS[x].category === WORDS[w].category && lvl(x) >= 1)).slice(0, 2);
+  const opts = shuffle([w, ...others]), listen = lvl(w) <= 1;
+  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${listen ? 'Listen. Which paint is it?' : 'Read it. Which paint is it?'}</p></div>`,
+    body:listen ? '<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>'
+      : `<div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`,
+    options:opts.map(o => `<span class="ico">${picHTML(o)}</span>${listen ? `<span class="cap">${o}</span>${laterPy(o)}` : ''}`),
+    answerIdx:opts.indexOf(w), word:w, onShow:() => { if (listen) setTimeout(() => say(w), 300); }});
+  closeCard();
+  if (ok) answer(w, true, listen ? 'listen' : 'read'); else reviewed(w, false);
+  return ok;
+}
+// A colour lesson (a lesson series of kind paint, with the teacher: who): he opens a pot of the new colour, teaching it
+// (his line for it, teach), then wants paints, five times: the new colour three times, and twice another colour you
+// know. Each right answer earns a shell if that colour needed practice. Then the class goes out and paints a part of the
+// school with the new colour (its scene, in scenes). Gives whether you had the lesson (you can say Not now at the start).
+async function paintLesson(series, word, who){
+  const face = speaker(who);
+  if (!await confirmBox(face, fill(series.start), 'Start', 'Not now')) return false;
+  await showDialog(face, L[series.teach[word]], {teach:word});
+  await showNotice(word, {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
+  const others = shuffle(ORDER.filter(x => x !== word && WORDS[x].category === WORDS[word].category && lvl(x) >= 1));
+  const asks = shuffle([...Array(LESSON_QUESTIONS - 2).fill(word), ...others.slice(0, 2)]);
+  let right = 0, shells = 0;
+  for (const w of asks){
+    const need = needsPractice(w);
+    if (await colourQ({who, w})){ right++; if (need) shells++; }
+  }
+  S.shells += shells; save();
+  if ((series.scenes || {})[word]) await storyScene(series.scenes[word]);   // (with its own fanfare)
+  await infoBox(face, `<p class="label">Lesson over</p><p>You chose <b>${right} of ${asks.length}</b> paints right.${shells ? ` +${shells} 🐚` : ''}</p>`);
   return true;
 }
 const picWords = () => ORDER.filter(w => WORDS[w].pic);

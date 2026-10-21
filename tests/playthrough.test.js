@@ -325,9 +325,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('__said').includes('上课！') && get('__said').includes('下课！'), 'class begins, and is over');
   assert.ok(get('S.shells') >= shellsBefore, 'shells for words that needed practice');
   assert.ok(knows('四'), 'the first lesson teaches a new number: 四');
-  for (let i = 0; i < 12 && run('counter("numbersKnown")') < 7; i++) await pressAt(7, 3, 'up', `number lesson ${i + 2}`);
+  for (let i = 0; i < 20 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 6); i++) await pressAt(7, 3, 'up', `lesson ${i + 2}`);
   for (const n of ['五', '六', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);
-  await pressAt(7, 3, 'up', 'a lesson once you know the numbers to ten: practice');
+  for (const c of ['黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']) assert.ok(knows(c), `the colour lessons teach ${c}`);
+  assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintDoor', 'paintRoof', 'paintWindows', 'paintWalls', 'paintPillars', 'paintBlossom'],
+    'each colour lesson ends with the class painting a part of the school');
+  assert.deepEqual(Object.keys(get('paintedParts()')).sort(), ['blossom', 'door', 'pillars', 'roof', 'walls', 'windows'], 'and it’s all painted');
+  await pressAt(7, 3, 'up', 'a lesson once you know the numbers to ten and the colours: practice');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
 
   // Everything said on the way has a voice clip (npm run voices makes them)

@@ -376,6 +376,12 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
   '红色': p => splat(p, '#E0303A'),
   '黄色': p => splat(p, '#F2C93A'),
   '白色': p => splat(p, '#F8F6F0'),
+  '黑色': p => splat(p, '#2B2727'),
+  '蓝色': p => splat(p, '#3A6DB5'),
+  '绿色': p => splat(p, '#3E9C4F'),
+  '棕色': p => splat(p, '#7A4A27'),
+  '橙色': p => splat(p, '#EE8429'),
+  '粉色': p => splat(p, '#F4A0C2'),
   '路': p => {   // path: a sandy path winding away up a grassy slope, narrowing into the distance
     p.fill(Rc(1, 8, 30, 23, 5), '#6CB35C', {light: '#8CCB6E', dark: '#4F9446'});
     p.fill(Pg([[7, 31], [24, 31], [20, 25], [13.5, 20.5], [17.5, 15], [21, 10.5], [18, 10.5], [12, 15], [8.5, 20.5], [11.5, 25.5]]), '#D9BB8A', {light: '#EBD3A8', dark: '#B9965F'});

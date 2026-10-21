@@ -53,7 +53,8 @@ function sizeText(h){
 // Each has its captions, its pictures (drawn by js/draw.js to match the captions' times), its sounds (at those times), the
 // label on its last button, and what happens when it ends (Skip, or that last button).
 const SCENE_SOUNDS = {opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer']], becomingKing:[[5.5, 'chime'], [8, 'fanfare'], [11, 'shimmer']],
-  buildingSchool:[[3.6, 'thwack'], [4.2, 'thwack'], [4.8, 'thwack'], [5.4, 'thwack'], [6.6, 'thwack'], [7.3, 'thwack'], [8, 'thwack'], [9.05, 'fanfare'], [9.6, 'chime']]};
+  buildingSchool:[[3.6, 'thwack'], [4.2, 'thwack'], [4.8, 'thwack'], [5.4, 'thwack'], [6.6, 'thwack'], [7.3, 'thwack'], [8, 'thwack'], [9.05, 'fanfare'], [9.6, 'chime']],
+  paintingSchool:[[.9, 'swish'], [1.5, 'swish'], [2.1, 'swish'], [2.7, 'swish'], [3.3, 'swish'], [4.4, 'fanfare'], [4.9, 'chime']]};
 let scene = {id:'opening', caps:CAPS, last:'Begin', end:() => startGame()};
 let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}, advancedTo = 0;
 function frame(now){
@@ -67,10 +68,10 @@ function frame(now){
     introClock = nt;
     const t = introClock;
     if (scene.id === 'opening') drawScene(t, now, Math.min(1, t / .8));   // the mountain slides to the middle as the story begins
-    else SCENE_ART[scene.id](t, now);
+    else SCENE_ART[scene.art || scene.id](t, now, scene.def);
     const ci = caps.reduce((a, c, i) => t >= c.t ? i : a, 0);
     if (ci !== capIdx){ capIdx = ci; capShownAt = now; showCaption(caps[ci], ci === caps.length - 1); }
-    for (const [at, sound] of SCENE_SOUNDS[scene.id] || []) if (t >= at && !introEvents[at]){ introEvents[at] = 1; SFX[sound](); }
+    for (const [at, sound] of SCENE_SOUNDS[scene.art || scene.id] || []) if (t >= at && !introEvents[at]){ introEvents[at] = 1; SFX[sound](); }
   } else { update(now); drawWorld(now); }
   updateCtx(now); updateTips(now);
   sc.imageSmoothingEnabled = false;
@@ -239,12 +240,14 @@ function playScene(s){
   mode = 'intro'; introClock = 0; introLast = performance.now(); capIdx = -1; introEvents = {}; advancedTo = 0;
 }
 function playIntro(){ playScene({id:'opening', caps:CAPS, last:'Begin', end:() => startGame()}); }
-// One of the area's other scenes (AREA.scenes), in the story (the scene step) or watched again from Settings: once
-// it ends, you're back where you were.
+// One of the area's other scenes (AREA.scenes), in the story (the scene step), after a lesson, or watched again from
+// Settings: once it ends, you're back where you were. Its pictures are its art, if it has one (several scenes can share
+// one, such as painting each part of the school), drawn with the scene's own settings (def).
 function storyScene(id){
   return new Promise(res => {
     let ended = false;
-    playScene({id, caps:sceneCaps(AREA.scenes[id].captions), last:'OK', end:() => {
+    const def = AREA.scenes[id];
+    playScene({id, art:def.art || id, def, caps:sceneCaps(def.captions), last:'OK', end:() => {
       if (ended) return; ended = true;
       stopSpeech(); $('#capbox').hidden = true; $('#skipBtn').hidden = true; mode = 'play'; res();
     }});

@@ -99,7 +99,7 @@ test('the first time you talk to the teacher, the class greets him: 老师好！
 });
 
 test('the little monkey: 我们是同学！ (同学); then lessons with the teacher, who has a ! when words need practice', async () => {
-  const g = game({school: 2}, {place: 'school', x: 4, y: 5, dir: 'left'}, ['学校', '老师', '四', '五', '六', '七', '八', '九', '十']);   // (no new number to learn: tests/numbers.test.js)
+  const g = game({school: 2}, {place: 'school', x: 4, y: 5, dir: 'left'}, ['学校', '老师', '四', '五', '六', '七', '八', '九', '十', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']);   // (no new number or colour to learn: tests/numbers.test.js, tests/colours.test.js)
   assert.equal(bubble(g, 'playful'), '!');
   assert.match(get(g, 'getTasks()[0].text'), /Talk to the little monkey/);
   await press(g, 4, 5, 'left');
@@ -115,5 +115,5 @@ test('the little monkey: 我们是同学！ (同学); then lessons with the teac
   g.run('__said.length = 0; practise = async () => false');   // you don't start it, or stop
   await press(g, 7, 3, 'up');
   assert.deepEqual(get(g, '__said'), ['上课！'], 'no 下课 if you don’t have the lesson');
-  assert.match(g.run('tasksHint()'), /gives you a lesson whenever there’s a new number to learn, or your words need practice/);
+  assert.match(g.run('tasksHint()'), /gives you a lesson whenever there’s a new number or colour to learn, or your words need practice/);
 });

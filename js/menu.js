@@ -108,7 +108,7 @@ function openSettings(focusId){
       <button class="btn" data-m="replyEn" data-label="English">English on replies <span class="val">${S.replyEn ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="howto">How to play</button>
       <button class="btn" data-m="opening">Watch the opening</button>
-      ${Object.entries(AREA.scenes || {}).filter(([, sc]) => matches(sc.when)).map(([id, sc]) => `<button class="btn" data-m="scene" data-scene="${id}">${esc(sc.watch)}</button>`).join('')}
+      ${Object.entries(AREA.scenes || {}).filter(([, sc]) => sc.watch && matches(sc.when)).map(([id, sc]) => `<button class="btn" data-m="scene" data-scene="${id}">${esc(sc.watch)}</button>`).join('')}
       <button class="btn" data-m="title">Title screen: your games</button>
     </div>
     <div class="actions"><button class="btn" data-a="back" data-b>Back</button></div>`);

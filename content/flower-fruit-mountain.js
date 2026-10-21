@@ -63,21 +63,30 @@ const FLOWER_FRUIT_MOUNTAIN = {
     troopIn: {count:'known', words:['一', '二', '三']},   // the troop counted in (each count teaches its number)
     woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
     stonesGot: {count:'picked', request:'stones'},   // and small stones
-    numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']}   // the numbers you've learned at school
+    numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']},   // the numbers you've learned at school
+    coloursKnown: {count:'known', words:['黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']}   // and the colours (each painting a part of the school)
   },
 
   // Lessons at school (the lesson step, with the teacher): each series teaches its words one at a time, one a lesson, in
-  // order, the next once you've got the last one right twice; when none is ready, a lesson is practice, as at the practice
-  // post. kind: what its lessons are (count: the teacher counts things onto his table, teaching the new number with his
-  // line for it, teach, then asks how many there are, with his question about each of the things); by: who teaches it;
-  // start: what the card asking you to start says; note: on the new word's card.
+  // order, the next once you've got the last one right twice; when two series have a word ready, they take turns, and
+  // when none has, a lesson is practice, as at the practice post. kind: what its lessons are (count: the teacher counts
+  // things onto his table, teaching the new number with his line for it, teach, then asks how many there are, with his
+  // question about each of the things; paint: he opens a pot of the new colour, teaching it, then wants paints, and the
+  // class goes out and paints the part of the school it's for, paint, in its scene, scenes); by: who teaches it; start:
+  // what the card asking you to start says; note: on the new word's card.
   lessons: [
     {id:'numbers', kind:'count', by:'elder', if:{school:{atLeast:2}}, words:['四', '五', '六', '七', '八', '九', '十'],
       start:'Today: a new number, then counting. Each right answer earns a 🐚 if that number needs practice.',
       note:'The teacher counts peaches onto his table, one by one.',
       teach:{'四':'count4', '五':'count5', '六':'count6', '七':'count7', '八':'count8', '九':'count9', '十':'count10'},
       things:[{word:'桃子', ask:'howManyPeaches', on:'table'}, {word:'苹果', ask:'howManyApples', on:'table'}, {word:'碗', ask:'howManyBowls', on:'table'},
-        {word:'猴子', ask:'howManyMonkeys', on:'grass'}, {word:'兔子', ask:'howManyRabbits', on:'grass'}, {word:'鸟', ask:'howManyBirds', on:'grass'}]}
+        {word:'猴子', ask:'howManyMonkeys', on:'grass'}, {word:'兔子', ask:'howManyRabbits', on:'grass'}, {word:'鸟', ask:'howManyBirds', on:'grass'}]},
+    {id:'colours', kind:'paint', by:'elder', if:{school:{atLeast:2}}, words:['黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'],
+      start:'Today: a new colour, then we paint the school with it. Each right answer earns a 🐚 if that colour needs practice.',
+      note:'The teacher opens a pot of paint for the school.',
+      teach:{'黑色':'thisBlack', '蓝色':'thisBlue', '绿色':'thisGreen', '棕色':'thisBrown', '橙色':'thisOrange', '粉色':'thisPink'},
+      paint:{'黑色':'door', '蓝色':'roof', '绿色':'windows', '棕色':'walls', '橙色':'pillars', '粉色':'blossom'},
+      scenes:{'黑色':'paintDoor', '蓝色':'paintRoof', '绿色':'paintWindows', '棕色':'paintWalls', '橙色':'paintPillars', '粉色':'paintBlossom'}}
   ],
 
   // Where you practise your words now (the title screen and the Word Scroll say so): the first whose if matches.
@@ -133,7 +142,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
-    {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
+    {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the school: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a school first. The big monkey has something to ask you.'},
     {if:{count:3}, text:'The whole troop is home in the {洞}. The rest of the story is coming soon.'},
@@ -168,7 +177,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Build the {学校} with the troop', show:{build:{atLeast:2}}, done:{school:{atLeast:1}}},
     {chapter:1, text:'Go to school, and meet your {老师}', show:{school:{atLeast:1}}, done:{school:{atLeast:2}}},
     {chapter:1, text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}},
-    {chapter:1, text:'Learn to count to ten at school ({numbersKnown}/7)', show:{school:{atLeast:2}}, done:{numbersKnown:7}}
+    {chapter:1, text:'Learn to count to ten at school ({numbersKnown}/7)', show:{school:{atLeast:2}}, done:{numbersKnown:7}},
+    {chapter:1, text:'Learn six colours, and paint the school ({coloursKnown}/6)', show:{school:{atLeast:2}}, done:{coloursKnown:6}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -790,6 +800,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '八': 'A number lesson at school: the teacher counting peaches onto his table.',
     '九': 'A number lesson at school: the teacher counting peaches onto his table.',
     '十': 'A number lesson at school: the teacher counting peaches onto his table.',
+    '黑色': 'A colour lesson at school: the class painted the door with it.',
+    '蓝色': 'A colour lesson at school: the class painted the roof with it.',
+    '绿色': 'A colour lesson at school: the class painted the windows with it.',
+    '棕色': 'A colour lesson at school: the class painted the walls with it.',
+    '橙色': 'A colour lesson at school: the class painted the pillars with it.',
+    '粉色': 'A colour lesson at school: the class painted peach blossom under the windows with it.',
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -939,6 +955,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     howManyMonkeys: {zh:'这里 有 几 只 猴子 ？', en:'How many monkeys are there?'},
     howManyRabbits: {zh:'这里 有 几 只 兔子 ？', en:'How many rabbits are there?'},
     howManyBirds: {zh:'这里 有 几 只 鸟 ？', en:'How many birds are there?'},
+    thisBlack: {zh:'这 是 黑色 。', en:'This is black.'},   // the teacher, opening a pot of paint (colour lessons)
+    thisBlue: {zh:'这 是 蓝色 。', en:'This is blue.'},
+    thisGreen: {zh:'这 是 绿色 。', en:'This is green.'},
+    thisBrown: {zh:'这 是 棕色 。', en:'This is brown.'},
+    thisOrange: {zh:'这 是 橙色 。', en:'This is orange.'},
+    thisPink: {zh:'这 是 粉色 。', en:'This is pink.'},
     letsLook: {zh:'我们 看看 ！', en:'Let’s have a look!'},
     great: {zh:'太 好 了 ！', en:'Great!'},
     home: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},
@@ -1263,6 +1285,32 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {at:3.2, zh:'一 ， 二 ， 三 ！', en:'One, two, three!'},
       {at:6.2, zh:'太 好 了 ！', en:'Wonderful!'},
       {at:9, zh:'这 是 我们 的 学校 ！', en:'This is our school!', teach:'学校'}
+    ]},
+    // chapter 1: after each colour lesson, the class goes out and paints a part of the school with the new colour (the
+    // colours lesson series says which part, and which scene): all with the same pictures (art), with that colour (paints)
+    paintDoor: {art:'paintingSchool', paints:'黑色', captions: [
+      {at:0, zh:'我们 去 刷 门 吧 ！', en:'Let’s go and paint the door!'},
+      {at:4.4, zh:'门 是 黑色 的 ！', en:'The door is black!'}
+    ]},
+    paintRoof: {art:'paintingSchool', paints:'蓝色', captions: [
+      {at:0, zh:'我们 去 刷 屋顶 吧 ！', en:'Let’s go and paint the roof!'},
+      {at:4.4, zh:'屋顶 是 蓝色 的 ！', en:'The roof is blue!'}
+    ]},
+    paintWindows: {art:'paintingSchool', paints:'绿色', captions: [
+      {at:0, zh:'我们 去 刷 窗户 吧 ！', en:'Let’s go and paint the windows!'},
+      {at:4.4, zh:'窗户 是 绿色 的 ！', en:'The windows are green!'}
+    ]},
+    paintWalls: {art:'paintingSchool', paints:'棕色', captions: [
+      {at:0, zh:'我们 去 刷 墙 吧 ！', en:'Let’s go and paint the walls!'},
+      {at:4.4, zh:'墙 是 棕色 的 ！', en:'The walls are brown!'}
+    ]},
+    paintPillars: {art:'paintingSchool', paints:'橙色', captions: [
+      {at:0, zh:'我们 去 刷 柱子 吧 ！', en:'Let’s go and paint the pillars!'},
+      {at:4.4, zh:'柱子 是 橙色 的 ！', en:'The pillars are orange!'}
+    ]},
+    paintBlossom: {art:'paintingSchool', paints:'粉色', captions: [
+      {at:0, zh:'我们 去 画 花 吧 ！', en:'Let’s go and paint some flowers!'},
+      {at:4.4, zh:'花 是 粉色 的 ！', en:'The flowers are pink!'}
     ]}
   }
 };

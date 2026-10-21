@@ -92,6 +92,12 @@ const DRAFTS = [
     ['桌子 上 有 几 个 桃子 ？', 'How many peaches are on the table?', 'The teacher, asking how many (几 jǐ and 个 gè are just for listening); the same with 苹果 (apples) and 碗 (bowls)'],
     ['这里 有 几 只 猴子 ？', 'How many monkeys are there?', 'The teacher, asking how many of something alive (几只); the same with 兔子 (rabbits) and 鸟 (birds)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), the number lessons at school: ' + where})),
+  ...[['这 是 黑色 。', 'This is black.', 'The teacher opening a pot of paint, teaching 黑色 hēisè, black (and the same for 蓝色 lánsè blue, 绿色 lǜsè green, 棕色 zōngsè brown, 橙色 chéngsè orange and 粉色 fěnsè pink)'],
+    ['我们 去 刷 门 吧 ！', 'Let’s go and paint the door!', 'The class, going out to paint a part of the school after a colour lesson (刷 shuā, to paint with a brush, and 门 mén, door, are just for listening); the same with 屋顶 wūdǐng (the roof), 窗户 chuānghu (the windows), 墙 qiáng (the walls) and 柱子 zhùzi (the pillars). Please check 刷 sounds natural for painting each of these'],
+    ['门 是 黑色 的 ！', 'The door is black!', 'Once it’s painted; the same for the roof (蓝色, blue), the windows (绿色, green), the walls (棕色, brown) and the pillars (橙色, orange)'],
+    ['我们 去 画 花 吧 ！', 'Let’s go and paint some flowers!', 'The class, going out to paint peach blossom under the school’s windows (画 huà, to paint a picture, just for listening)'],
+    ['花 是 粉色 的 ！', 'The flowers are pink!', 'Once they’re painted']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), the colour lessons at school: ' + where})),
   {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.', where:'New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path'},
   {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'}
 ];
@@ -170,11 +176,15 @@ ${table(['Chinese', 'Pinyin', 'English', 'Answer', 'Notes'], AREA.storyQuestions
 ### The opening scene
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], AREA.intro.map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
-${Object.entries(AREA.scenes || {}).map(([id, sc]) => `
+${Object.entries(AREA.scenes || {}).filter(([, sc]) => sc.watch).map(([id, sc]) => `
 ### Scene: ${sc.watch.replace(/^Watch /, '')}
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], sc.captions.map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
-`).join('')}
+`).join('')}${Object.values(AREA.scenes || {}).some(sc => !sc.watch) ? `
+### Scenes after lessons (the class painting the school)
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], Object.values(AREA.scenes).filter(sc => !sc.watch).flatMap(sc => sc.captions).map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
+` : ''}
 ### Names
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], names.map(n => [n.zh, n.py, n.en, notes]))}
