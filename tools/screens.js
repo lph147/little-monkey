@@ -262,7 +262,7 @@ const SCREENS = [
   {id: 'deer-meet', title: 'A deer', save: 'pineDeer', why: 'Its first meeting teaches 鹿 (lù, deer), said straight away; then its questions, to make friends.', run: async () => {
     play(); await wait(100); pressA(); await wait(1600); }},
   {id: 'deer-question', title: 'The deer asks', save: 'pineDeer', why: 'Its questions, as the other animals ask them, on the grass of its clearing.', run: async () => {
-    play(); await wait(100); S.w['鹿'] = {lv: 1, due: 0, ok: 0}; encounter({id: 'deer', hz: '鹿', img: portrait('deer'), wild: true, home: '树'}); await wait(500); }},
+    play(); await wait(100); S.w['鹿'] = {lv: 1, due: 0, ok: 0}; encounter({id: 'deer', hz: '鹿', img: portrait('deer'), wild: true, home: '草'}); await wait(500); }},
   {id: 'wolf-meet', title: 'A wolf jumps out', save: 'pineWood', why: 'Out of the long grass in the pine wood: its first meeting teaches 狼 (láng, wolf).', run: async () => {
     play(); await wait(100); battle('wolf'); await wait(600); }},
   {id: 'battle-wolf', title: 'A battle with a wolf', save: 'pineWood', why: 'Three hearts: tougher than a snake or a spider, not as tough as the wild boar, and you can run away.', run: async () => {

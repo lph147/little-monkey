@@ -145,6 +145,7 @@ test('the bigger pine wood: in at the bottom from the home ground, and every par
 test('a deer lives in the sunny clearing: chapter 1’s animal, counted on its own, so the prologue’s animals are just as they were', async () => {
   const g = game(BUILDING, {place: 'pineWood', x: 29, y: 3, dir: 'right'}, KNOWS);
   assert.equal(get(g, 'animalAt(30, 3).hz'), '鹿');
+  assert.equal(get(g, 'animalAt(30, 3).home'), '草', 'it grazes in the clearing: if you don’t make friends, it goes back to the 草 (grass)');
   assert.equal(g.run('promptFor(30, 3)'), 'Meet');
   assert.ok(!g.run('walkable(30, 3)'), 'you can’t walk through it');
   assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft")]'), [4, 4, 0], 'the prologue’s four animals, all found');

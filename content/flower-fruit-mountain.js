@@ -908,7 +908,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
     {id:'goat', word:'山羊', at:[4, 18], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny clearing deep in the pine wood (counted on its own: the prologue's animals are those above)
-    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'树', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'}
+    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
   birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
