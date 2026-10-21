@@ -64,3 +64,14 @@ test('the area\'s questions list only has kinds the game knows, starting with li
   assert.equal(kinds[0], 'listen', 'new words are always asked by sound first');
   for (const k of kinds) assert.ok(['listen', 'read', 'hear', 'gap'].includes(k), `"${k}" isn't a kind of question: use listen, read, hear or gap`);
 });
+
+test('when you only hear the word, no two answers sound alike apart from their tones (喝 hē and 河 hé); reading, they can', () => {
+  const words = ['河', '喝', '山', '花', '草', '树', '石头'];
+  const game = loadGame({save: {version: 9, started: true, w: Object.fromEntries(words.map(w => [w, {lv: 1, due: 0, ok: 0}]))}});
+  const answers = (w, lv) => { const seen = new Set(); for (let i = 0; i < 300; i++) JSON.parse(game.run(`rec('${w}').lv = ${lv}; JSON.stringify(wordQuestion('${w}').opts)`)).forEach(o => seen.add(o)); return seen; };
+  assert.ok(!answers('河', 1).has('喝'), 'listening for 河: never 喝 beside it');
+  assert.ok(!answers('喝', 1).has('河'), 'nor the other way round');
+  assert.ok(answers('河', 2).has('喝'), 'reading 河, 喝 can be an answer: you see the characters');
+  assert.equal(game.run("toneless('喝')"), 'he');
+  assert.deepEqual(JSON.parse(game.run("JSON.stringify(soundApart('河', ['喝', '山', '花', '草'], 2))")), ['山', '花']);
+});

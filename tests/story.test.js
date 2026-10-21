@@ -85,6 +85,10 @@ test('the story shows each sentence\'s English the first time, then behind the E
   assert.equal(sheet.querySelectorAll('.sent .sentence-en').filter(e => !e.hidden).length, 0, 'hidden after that');
   sheet.querySelector('[data-a=en]').click();
   assert.equal(sheet.querySelectorAll('.sent .sentence-en').filter(e => !e.hidden).length, AREA.story.length, 'English shows them all');
+  assert.equal(sheet.querySelector('.primary').dataset.a, 'close', 'read before: A closes it, so the questions don’t start again by accident');
+  assert.ok(sheet.querySelector('[data-a=ok]') && !sheet.querySelector('[data-a=ok]').classList.contains('primary'), 'the questions have their own button');
+  sheet.querySelector('[data-a=close]').click();
+  assert.equal(game.run('modal.hidden'), true);
 });
 
 test('the rocks roll away only once the rest of the prologue is done: the three monkeys helped, and every animal found', async () => {

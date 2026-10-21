@@ -118,7 +118,7 @@ async function dodge(f, head, note){
   const known = w => lvl(w) >= 1 && WORDS[w] && WORDS[w].pic && w !== f.word;
   const mine = shuffle((f.attacks || []).filter(known)), any = shuffle(picWords().filter(known));
   const a = mine[0] || any[0];
-  const others = [...mine.slice(1), ...any.filter(w => w !== a && !mine.includes(w))].slice(0, 2);
+  const others = soundApart(a, [...mine.slice(1), ...any.filter(w => w !== a && !mine.includes(w))], 2);   // (you hear it: none that sound alike)
   const opts = shuffle([a, ...others]);
   const strikes = fill(f.attack || `The {${f.word}} attacks!`);
   return pictureQ({head, body:`<p class="label">${esc(note ? note + ' ' : '')}${esc(fill(f.hide || `The {${f.word}} hides!`))}</p>`

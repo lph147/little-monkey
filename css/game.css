@@ -7,11 +7,13 @@
   --btnA:#B8323A; --btnB:#3D6A93;
   --tip:#FFF3B8; --tip-ink:#2A2215;   /* a tip bubble: the same in light and dark, like a sticky note */
   --sil:brightness(0);   /* the shadow of a word you have heard but not caught */
-  --pixel:"Pixelify Sans", "Noto Sans SC", system-ui, sans-serif;
-  --text:"Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
-  /* English text. The Chinese font draws ‘ ’ “ ” as wide as a character ("device’ s"), so these
-     four marks come from Source Sans 3 (index.html loads only them). Chinese sentences use --text. */
-  --en:"Source Sans 3", var(--text);
+  --pixel:"Pixelify Sans", "Source Sans 3", "Noto Sans SC", system-ui, sans-serif;
+  /* Chinese, and its pinyin: Latin letters from Source Sans 3, the Chinese font's own Latin design, whose tone marks
+     are drawn properly (Noto Sans SC's sit beside ā ē ī ō ū, and keep the dot on ī ǐ: fixed 21 October 2026), and
+     Chinese characters from Noto Sans SC */
+  --text:"Source Sans 3", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  /* English text (also drawing ‘ ’ “ ” properly: the Chinese font draws them as wide as a character, "device’ s") */
+  --en:var(--text);
   color-scheme: light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -116,6 +118,11 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .dpad .r{grid-column:3;grid-row:2;border-radius:0 8px 8px 0}
 .dpad .d{grid-column:2;grid-row:3;border-radius:0 0 8px 8px}
 .dpad button.held{filter:brightness(1.35)}
+.dpad button::before{content:'';width:0;height:0;border:.46rem solid transparent}   /* each button's arrow, a triangle (not a character, which a phone can show as an emoji) */
+.dpad .u::before{border-top:0;border-bottom:.72rem solid var(--pad-ink)}
+.dpad .d::before{border-bottom:0;border-top:.72rem solid var(--pad-ink)}
+.dpad .l::before{border-left:0;border-right:.72rem solid var(--pad-ink)}
+.dpad .r::before{border-right:0;border-left:.72rem solid var(--pad-ink)}
 .ab{grid-area:ab;justify-self:end;margin-right:6px;display:flex;gap:10px;align-items:flex-end;transform:rotate(-12deg)}
 .abwrap{display:flex;flex-direction:column;align-items:center;gap:4px}
 .round{width:62px;height:62px;border-radius:50%;border:none;color:#FFF;font-family:var(--pixel);font-size:1.4rem;box-shadow:0 4px 0 rgba(0,0,0,.3);touch-action:none}
@@ -635,8 +642,9 @@ rt.hid{visibility:hidden}
   .sayBig{width:56px;height:56px;font-size:1.6rem}.opts{margin:6px 0 2px}.opt{padding:6px 0}}
 @media (prefers-reduced-motion: reduce){.scene .foe{transition:none}}
 
-/* the name of a place, at the top of the game screen for a moment when you arrive there */
-.placename{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:6;pointer-events:none;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);padding:4px 14px 6px;text-align:center;white-space:nowrap;animation:rise .2s ease-out}
+/* the name of a place, in the top right of the game screen for a moment when you arrive there (not the middle, where
+   it could cover you) */
+.placename{position:absolute;right:10px;top:10px;z-index:6;pointer-events:none;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);padding:4px 14px 6px;text-align:center;white-space:nowrap;animation:rise .2s ease-out}
 .placename[hidden]{display:none}
 .placename .pzh{font-family:var(--text);font-size:1.3rem;font-weight:700}
 .placename .ppy{color:var(--muted);font-size:.9rem}

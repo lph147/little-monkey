@@ -119,7 +119,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'climb3', if:{climb:3}, text:'Lead the troop up the mountain path to the {瀑布}', arrow:[7, 2, 'falls']},
     {id:'fall', if:{climb:4, story:false}, text:'Read the story at the {瀑布}', arrow:[5, 1, 'falls']},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
-    {id:'dare', if:{story:true, cave:0}, text:'Go to the {瀑布}: the troop is gathering', arrow:'elder'},
+    {id:'dare', if:{story:true, cave:0}, text:'Talk to the old monkey: what could be behind the {瀑布}?', arrow:'elder'},
     {id:'jump', if:{cave:1}, text:'Jump through the {瀑布}', arrow:[4, 1, 'falls']},
     {id:'explore', if:{cave:2, caveThings:{below:3}}, text:'Look around the {洞} ({caveThings}/3)'},
     {id:'tell', if:{cave:2, caveThings:3}, text:'Tell the old monkey about the {洞}', arrow:'elder'},
@@ -286,6 +286,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{climb:{atLeast:4}, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]},
     // the big monkey waits by the way up and stops you as you set off, to give you a stick
     {if:{climb:1, new:'棍子', near:'big'}, do:[{stopsYou:'big'}]},
+    // and before that, once the rocks have rolled away, the old monkey stops you if you walk past him: he has something to
+    // say before you go up (the way up is shut till then)
+    {if:{gate:true, climb:0, near:'elder'}, do:[{stopsYou:'elder'}]},
     // the troop has followed you up: as you come out of the narrow way by the waterfall, they leap past you to their places
     {if:{climb:3, at:[7, 2, 'falls']}, do:[{set:{climb:4}}, {follow:[]}, {message:'The troop has followed you all the way up to the {瀑布}!'}]},
     // the whole troop is home: the prologue ends with the troop making you king (a scene, told like the opening; as in
@@ -314,7 +317,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     meadow: {
       name: {zh:'草地', py:'cǎodì', en:'The meadow'},
       exits: [
-        {at:[15, 0], to:'path', arrive:[16, 18], facing:'up'}, {at:[16, 0], to:'path', arrive:[16, 18], facing:'up'}   // up the mountain path
+        // up the mountain path (in the same column: the two maps line up), once the old monkey has sent you off up it
+        {at:[15, 0], to:'path', arrive:[15, 18], facing:'up', if:{climb:{atLeast:1}}, closed:'The old monkey wants to talk to you first.'},
+        {at:[16, 0], to:'path', arrive:[16, 18], facing:'up', if:{climb:{atLeast:1}}, closed:'The old monkey wants to talk to you first.'}
       ],
       map: [
         "MMMMMMMMMMMMMMM..MWWMMMM",
@@ -322,7 +327,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "MMMMMMMgg.gNMMg..JWWYYYY",
         "MMMMMMMgg.ggMMg..gWWYYYY",
         "MMgggMMMg.gMMMMRRMWWYYYY",
-        "YTggggggg.ggggg.ggWWYYYY",
+        "YTggggggg.ggggg..gWWYYYY",
         "YPg.............ggWWYYYY",
         "YTggGGGGgggFggg.ggWWgggY",
         "YPggGGGGggggTgg.ggWWgGgY",
@@ -348,30 +353,30 @@ const FLOWER_FRUIT_MOUNTAIN = {
     path: {
       name: {zh:'山路', py:'shānlù', en:'The mountain path'},
       exits: [
-        {at:[16, 19], to:'meadow', arrive:[15, 1], facing:'down'}, {at:[17, 19], to:'meadow', arrive:[15, 1], facing:'down'},   // back down to the meadow
+        {at:[15, 19], to:'meadow', arrive:[15, 1], facing:'down'}, {at:[16, 19], to:'meadow', arrive:[16, 1], facing:'down'},   // back down to the meadow
         {at:[16, 0], to:'valley', arrive:[19, 11], facing:'up'}, {at:[17, 0], to:'valley', arrive:[19, 11], facing:'up'}       // on up to the river valley
       ],
       map: [
-        "YYYYYYYYYYYYYYYYrrWWMM",
-        "YYYYYYYYYYYYYYYgrrWWMM",
-        "YYYggggYYYYYYYYgrgWWMM",
-        "YYgPgggJYYYYYYYgrgWWMM",
-        "YYggggJggrrrrrrrrgWWMM",
-        "YYYggggwwYYYYYYgrgWWMM",
-        "YYYYwwwYYYYYYYYgrgWWMM",
-        "MMMMMMwwwwwwwwwgrwWWMM",
-        "MMgggggnnnnnnggrrgWWMM",
-        "MMgrrrrnnnnnnrrrggWWMM",
-        "MMgrggnnnnnnnggoggWWMM",
-        "MMgrggnnnnnnnggggoWWMM",
-        "MMrrovvvvvvvvvvvvvWWMM",
-        "MMrgggnnnnnnnnngggWWMM",
-        "MMrrrrnnnnnnnnrrrgWWMM",
-        "MMggggnnnnnnnnggrgWWMM",
-        "MMMgggnnnnnnnngggrWWMM",
-        "MMMMMMnnnnnnnnggrrWWMM",
-        "MMMMMMMMMMMMMMMMrrWWMM",
-        "MMMMMMMMMMMMMMMMrrWWMM"
+        "YYYYYYYYYYYYYYYYrrWWMMMM",
+        "YYYYYYYYYYYYYYYgrrWWMMMM",
+        "YYYggggYYYYYYYYgrgWWMMMM",
+        "YYgPgggJYYYYYYYgrgWWMMMM",
+        "YYggggJggrrrrrrrrgWWMMMM",
+        "YYYggggwwYYYYYYgrgWWMMMM",
+        "YYYYwwwYYYYYYYYgrgWWMMMM",
+        "MMMMMMwwwwwwwwwgrwWWMMMM",
+        "MMgggggnnnnnnggrrgWWMMMM",
+        "MMgrrrrnnnnnnrrrggWWMMMM",
+        "MMgrggnnnnnnnggoggWWMMMM",
+        "MMgrggnnnnnnnggggoWWMMMM",
+        "MMrrovvvvvvvvvvvvvWWMMMM",
+        "MMrgggnnnnnnnnngggWWMMMM",
+        "MMrrrrnnnnnnnnrrrgWWMMMM",
+        "MMggggnnnnnnnngrrgWWMMMM",
+        "MMMgggnnnnnnnngrrgWWMMMM",
+        "MMMMMMnnnnnnnngrrgWWMMMM",
+        "MMMMMMMMMMMMMMMrrMWWMMMM",
+        "MMMMMMMMMMMMMMMrrMWWMMMM"
       ]
     },
     // The river valley: the river turns, coming from the west. At the first bridge the way forks: over it, away from the
@@ -1233,7 +1238,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     rumble: false,
     text: [
       'You read a whole story in Chinese: your story on Flower Fruit Mountain.',
-      'The troop stares at the roaring waterfall. What could be behind it?'
+      'The troop stares at the roaring waterfall. What could be behind it?',
+      'Talk to the old monkey: he has something to ask you.'
     ]
   },
 

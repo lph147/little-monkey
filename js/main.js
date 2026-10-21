@@ -135,9 +135,9 @@ function updateHUD(){
 }
 function titleText(){   // the title screen's words, under its name: for a first game, to turn the sound on, a short warning if there's no Chinese voice (and how to fix it on a card), and on a phone's browser, Play full screen (js/fullscreen.js)
   const problem = voiceProblem(), first = !SLOTS.some(slotSummary);
-  $('#titleText').innerHTML = (first && !problem ? '<p id="goal">Turn your sound on: every word is spoken aloud.</p>' : '')
+  $('#titleText').innerHTML = pixelIcons((first && !problem ? '<p id="goal">Turn your sound on: every word is spoken aloud.</p>' : '')
     + (problem ? `<p class="small warn">${VOICE_SHORT[problem]} <button class="linkbtn" id="voiceHelp">How to fix it</button></p>` : '')
-    + fullscreenHTML();
+    + fullscreenHTML());   // (⛶, as a pixel icon)
   wireFullscreen();
   const vh = $('#voiceHelp');
   if (vh) vh.onclick = () => { openCard(`<p class="label">Hearing Chinese</p><p>${VOICE_HELP[problem]}</p><div class="actions"><button class="btn primary" data-a="ok" data-b>OK</button></div>`); on('[data-a=ok]', closeCard); };

@@ -6,6 +6,10 @@ function placePlayer(){ enterPlace(S.pos.place || FIRST_PLACE); pl.x = S.pos.x; 
 let held = null, queued = null, busy = false, mode = 'title', lastBump = 0, shakeT = -9999, lastMoveEnd = 0, fadeT = -9999, waterT = -9999, dripUntil = 0, sleepT = -9999, sleepAt = null, wakeT = -9999;   // (sleepAt: the bed you're asleep in)
 const splashes = [];   // splashes of water, each where (x, y, in the map) and when (t0)
 const canAct = () => mode === 'play' && !busy && modal.hidden && !talkNext && !pl.mv;
+// For a moment after something you started with A has finished (a conversation, the last card of the story), A does
+// nothing on the map, so a second press meant for that last card doesn't start it all again (decided 21 October 2026).
+const AGAIN_MS = 450;
+let actedAt = 0;
 function tryStep(d, now){
   if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); return; }   // first turn to face the new way
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
@@ -52,10 +56,10 @@ async function pressA(){
     return;
   }
   if (talkNext){ talkNext(); return; }   // the speech box: on to what comes next
-  if (!canAct()) return;
+  if (!canAct() || performance.now() - actedAt < AGAIN_MS) return;
   const [fx, fy] = facing();
   busy = true;
-  try { await interact(fx, fy); await runEvents(); } finally { busy = false; updateHUD(); }
+  try { await interact(fx, fy); await runEvents(); } finally { busy = false; actedAt = performance.now(); updateHUD(); }
 }
 function pressB(){
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null) b.click(); return; }

@@ -82,6 +82,10 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] Tapping a caught word opens its page: its picture on the left, and beside it its characters, pinyin and sound, its level (Caught, Recognised, Read or Used), where you found it, and an example sentence with the word in bold. English shows the meanings; Back returns to the same tab and place in the scroll.
 - [ ] Today shows the words you've caught or practised today, and how many words need practice. Heard shows words like 有 with how often you've heard them; tapping one says it and shows its meaning.
 
+- [ ] Pinyin tone marks sit on their letters: zhīzhū (蜘蛛), hē (喝), chī (吃), shuǐ (水), sōngshǔ (松鼠). No dot on an i with a tone mark, and no line beside the letter.
+- [ ] Arriving somewhere new, its name shows in the top right of the screen, not over your monkey.
+- [ ] The D-pad's arrows are plain triangles, the same on every phone.
+
 ## Full playthrough of Flower Fruit Mountain (about 20 minutes)
 
 Do this in a **private or incognito window**, so your real save isn't touched. To start again from scratch there: on the title screen, choose an empty game and New game (or delete the game).
@@ -156,10 +160,11 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] With 10 🐚: fill the gap in 我要＿。 (I want the headband.). Your shells go down by 10, the 老板 says 谢谢你！ (you don't reply: the 头带 was new), and your monkey wears a red headband on the map from then on (a new monkey starts without one).
 
 **Up the stream**
+- [ ] Before talking to him, try to walk up the path past him: walking beside him, a ! pops up and he stops you to talk; up the far side, at the top of the meadow, you bump and a message says the old monkey wants to talk to you first.
 - [ ] Talk to the old monkey where the rocks were: the little monkey asks 水从哪里来？ (Where does the water come from?), the old monkey says 山上有蛇。 (There are snakes up the mountain.), and the speech box says someone brave should go. The old monkey says 再见！ and you reply 再见 (goodbye), taught here on a card the first time, and you set off on your own. The task says to follow the path up beside the river.
 - [ ] Walk up between where the rocks were: the big monkey stands in the way, with a !. As you pass, a ! pops up over him, you turn to face him, and he says 这是棍子。, with a card teaching 棍子 (stick): its own conversation, nothing else new. The speech box explains how to fight. Then he steps aside and you can go on up. Once you have the stick, he never stops you again.
 - [ ] From then on your monkey holds the stick: a small reddish-brown stick in its hand, upright, from its hip to its shoulder (facing down it's on the right, facing up on the left, facing sideways in front), and in your picture in the speech box when you reply. Before the big monkey gives it to you, there's no stick. The troop never holds one.
-- [ ] Walk up past where the rocks were, off the top of the meadow: a fade, and you're on the mountain path (山路 shānlù). Your first step on it teaches 路 (path), with its picture.
+- [ ] Walk up past where the rocks were, off the top of the meadow: a fade, and you're on the mountain path (山路 shānlù), in the same column, with the path two squares wide and straight up to where it turns left. Your first step on it teaches 路 (path), with its picture.
 - [ ] The way up has three places, each following the river: the mountain path (山路), the river valley (河谷) and deep in the mountains (深山). Its name shows as you arrive in each. Bushes, boulders and ledges send you through long grass (like the meadow's tall grass, a shade darker): two bands on the mountain path, two in the river valley and one deep in the mountains, with no way round. Standing in long or tall grass hides your feet. A ledge is a grassy lip with a short bank below it, curving down at its ends. You can hop down a ledge (a little jump), but not climb back up one.
 - [ ] On the mountain path, ledges block the way straight up: go west through the long grass, up the far side, and back east along a terrace, through more long grass, to the river. A clearing on the left at the top has a peach tree.
 - [ ] Animal friends from the meadow are on the way. The 兔子 (rabbit), by the first long grass, says 草里有蛇。 (There are snakes in the grass.) and how to dodge. The 松鼠 (squirrel), in the clearing, has a ! and says 我们玩吧！: Play starts a word game with it (Not now is fine too), and its ! goes. Their names show in Chinese and pinyin.
@@ -182,7 +187,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The meadow has no waterfall any more: the river comes in from the top right.
 
 **The waterfall**
-- [ ] At the waterfall, face it with the troop there and press A: the Story Scroll opens: 8 short sentences: your story so far (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. The next time you read it, the English is behind the English button.
+- [ ] At the waterfall, face it with the troop there and press A: the Story Scroll opens: 8 short sentences: your story so far (石头里有猴子。我是猴子。…), each with a picture beside it and its English underneath. Read it to me highlights each sentence as it's spoken. Its last card says to talk to the old monkey. Press A again at once: nothing happens (a second press doesn't start it again). The next time you read it, the English is behind the English button, and A closes it: its questions are on their own button.
 - [ ] Questions asks up to 3 questions: a sentence from the story with a gap (石头里有＿。), and pictures to fill it, with the Chinese under each picture and only words you've caught (a question is skipped if you haven't caught its answer, such as 鱼 (fish) or 猴子 (monkey)). The sentence's English, with the gap, is shown underneath. Answering fills the gap and says the sentence. Then it shows "Your first story" with +5 🐚: "The troop stares at the roaring waterfall. What could be behind it?"
 
 **The wardrobe**

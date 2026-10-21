@@ -158,6 +158,10 @@ const SPR = {
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;
 const mg = mapCanvas.getContext('2d');
+// The big objects that never move (all but the fruit trees, which rustle), drawn once for the place into two layers:
+// their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
+// wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
+const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
 const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble'];   // looks with grass underneath (or the pine wood's floor)
 const CLIFFS = ['cliff'];
@@ -426,7 +430,7 @@ const LOOKS = {
   stump:     (g,X,Y,x,y) => stump(g,X,Y,x,y),
   pebble:    (g,X,Y,x,y) => pebble(g,X,Y,x,y),
   rubble:    (g,X,Y,x,y) => rubble(g,X,Y,x,y),
-  school:    (g,X,Y,x,y) => plot(g,X,Y,x,y),   // the school, on its plot: a big object (OBJECT_ART)
+  school:    (g,X,Y,x,y) => grass(g,X,Y,x,y),   // the school, built on its plot: a big object (OBJECT_ART), on grass (no string or stakes round it any more)
   classFloor:(g,X,Y,x,y) => classFloor(g,X,Y,x,y),   // inside the school
   classWall: (g,X,Y,x,y) => classWall(g,X,Y,x,y),
   wallFace:  (g,X,Y,x,y) => wallFace(g,X,Y,x,y),
@@ -720,4 +724,7 @@ function buildMap(){   // the place you're in: the ground, then the big objects'
       // where walking in makes it rustle: through a wide fruit tree's branches, in the squares right beside it (not behind it, nor its corners)
       leafy: leafy && o.look !== 'tree' ? [[o.x-1, o.y], [o.x+1, o.y]] : null};
   });
+  for (const c of [baseCanvas, topCanvas]){ c.width = COLS*T; c.height = ROWS*T; }   // (which clears them)
+  const bg = baseCanvas.getContext('2d'), tg = topCanvas.getContext('2d');
+  for (const p of OBJECT_PIECES) if (!p.leafy){ bg.drawImage(p.base, p.x0, p.y0); tg.drawImage(p.top, p.x0, p.y0); p.baked = true; }
 }

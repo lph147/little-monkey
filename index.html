@@ -18,8 +18,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- (crossorigin, so the app's offline copy can keep the fonts too) -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet" crossorigin>
-<!-- Just the curly quotes ‘ ’ “ ” for English text (see --en in css/game.css). -->
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;700&text=%E2%80%98%E2%80%99%E2%80%9C%E2%80%9D&display=swap" rel="stylesheet" crossorigin>
+<!-- Latin letters, for pinyin and English (see --text and --en in css/game.css): the same letters as Noto Sans SC's,
+     but its own tone marks are drawn properly (Noto Sans SC's put the line of ā ē ī ō ū beside the letter, and keep the
+     dot on ī ǐ). The browser downloads only the parts it needs. -->
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;700&display=swap" rel="stylesheet" crossorigin>
 <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
@@ -45,11 +47,11 @@
     <div class="controls">
       <div class="power" aria-hidden="true"><i></i>POWER</div>   <!-- just for looks -->
       <div class="dpad" aria-label="Direction pad">
-        <button class="u" data-dir="up" aria-label="Walk up">▲</button>
-        <button class="l" data-dir="left" aria-label="Walk left">◀</button>
+        <button class="u" data-dir="up" aria-label="Walk up"></button>   <!-- (their arrows are drawn in css/game.css: no emoji) -->
+        <button class="l" data-dir="left" aria-label="Walk left"></button>
         <span class="c"></span>
-        <button class="r" data-dir="right" aria-label="Walk right">▶</button>
-        <button class="d" data-dir="down" aria-label="Walk down">▼</button>
+        <button class="r" data-dir="right" aria-label="Walk right"></button>
+        <button class="d" data-dir="down" aria-label="Walk down"></button>
       </div>
       <div class="ss">   <!-- Tasks and Menu: a Game Boy's Select and Start buttons -->
         <div class="sswrap"><button class="pill" id="selectBtn" aria-label="Your tasks"><span class="dot" id="selectDot" hidden></span></button><span class="sslabel">TASKS</span></div>

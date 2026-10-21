@@ -309,3 +309,31 @@ test('the waterfall: the cave just visible behind it; you jump through it, and w
   assert.ok(Math.min(...get(game, '__heights')) < 1 * 16 - 6, 'leaping up in an arc on the way');
   assert.ok(get(game, 'waterT') > 0 && get(game, 'dripUntil') > 0, 'through a rush of water, and dripping');
 });
+
+test('once the rocks roll away, the way up is shut till the old monkey sends you off; walk past him and he stops you', async () => {
+  const meadow = (pos, climb = 0) => {
+    const g = loadGame({dom: true, save: {version: 29, started: true, w: Object.fromEntries(['石头', '你好', '再见'].map(w => [w, {lv: 1, due: 0, ok: 0}])),
+      areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb}}, pos}});
+    g.run(`mode = 'play'; placePlayer(); globalThis.__toasts = []; toast = m => { __toasts.push(m); }; globalThis.__heard = [];
+      showDialog = async (who, line) => { __heard.push(line.t.join('')); }; replyWith = async w => { __heard.push('you: ' + w); };
+      showNarration = async m => { __heard.push(m); }; showNotice = async () => {}`);
+    return g;
+  };
+  const finish = async (g, code) => {
+    let done = false;
+    g.run(code).then(() => { done = true; });
+    for (let i = 0; i < 200 && !done; i++){ await tick(); g.flush(); }
+    assert.ok(done, code + ' finishes');
+  };
+  const top = meadow({place: 'meadow', x: 16, y: 1, dir: 'up'});
+  top.run("pl.dir = 'up'; tryStep('up', performance.now() + 1e6)");
+  assert.equal(top.run('PLACE'), 'meadow', 'the way up is shut');
+  assert.deepEqual(get(top, '__toasts'), ['The old monkey wants to talk to you first.']);
+  const past = meadow({place: 'meadow', x: 15, y: 2, dir: 'up'});   // walking up the path, right beside him
+  await finish(past, 'runEvents()');
+  assert.ok(get(past, '__heard').length > 2, 'he stops you, and sends you off up the stream');
+  assert.equal(past.run('here().climb'), 1);
+  assert.deepEqual(get(past, "(e => [e.to, isOpen(e)])(PLACES.meadow.exits[0])"), ['path', true], 'and now the way up is open');
+  const later = meadow({place: 'meadow', x: 16, y: 1, dir: 'up'}, 4);
+  assert.ok(get(later, 'isOpen(PLACES.meadow.exits[1])'), 'it stays open');
+});

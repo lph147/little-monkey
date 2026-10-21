@@ -82,8 +82,8 @@ async function countLesson(series, word, who){
 // answered); once you know it, you read it, and choose from the paints alone. A miss is practice, as when counting.
 // Gives whether you were right.
 async function colourQ({who, w}){
-  const others = shuffle(ORDER.filter(x => x !== w && WORDS[x].category === WORDS[w].category && lvl(x) >= 1)).slice(0, 2);
-  const opts = shuffle([w, ...others]), listen = lvl(w) <= 1;
+  const listen = lvl(w) <= 1, colours = shuffle(ORDER.filter(x => x !== w && WORDS[x].category === WORDS[w].category && lvl(x) >= 1));
+  const opts = shuffle([w, ...(listen ? soundApart(w, colours, 2) : colours.slice(0, 2))]);
   const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${listen ? 'Listen. Which paint is it?' : 'Read it. Which paint is it?'}</p></div>`,
     body:listen ? '<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>'
       : `<div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`,
@@ -115,6 +115,16 @@ async function paintLesson(series, word, who){
   return true;
 }
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
+// A word's pinyin without its tones (ü as u, no spaces): the words that sound alike, to anyone just hearing them.
+const toneless = w => WORDS[w].py.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s/g, '').toLowerCase();
+// n of these words, in order, to go beside the answer when you only hear it (listening): none that sounds like the
+// answer or another of them apart from its tone, such as 喝 hē beside 河 hé (decided 21 October 2026: confusing, and a
+// voice can't always make the tone clear). When reading, they can be together.
+function soundApart(answer, words, n){
+  const heard = new Set([toneless(answer)]), out = [];
+  for (const w of words){ if (out.length >= n) break; if (!heard.has(toneless(w))){ heard.add(toneless(w)); out.push(w); } }
+  return out;
+}
 // An animal asks about 3 words you've caught, never its own name (that's on the screen), so you need 4.
 const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 4;
 const canWild = () => matches(AREA.animalsAppear) && canEncounter();   // can animals jump out of their hiding place yet?
@@ -132,7 +142,7 @@ function questionType(w){
 function wordQuestion(w, avoid){
   const type = questionType(w);
   const others = shuffle(picWords().filter(x => x !== w && x !== avoid && lvl(x) >= 1));
-  const opts = shuffle([w].concat(others.slice(0, 2)));
+  const opts = shuffle([w].concat(type === 'read' ? others.slice(0, 2) : soundApart(w, others, 2)));   // (listening: none that sound alike)
   let body;
   if (type === 'listen') body = `<div class="askrow"><p class="prompt">Listen. Which picture is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
   else if (type === 'read') body = `<p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`;

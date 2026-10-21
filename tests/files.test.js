@@ -14,17 +14,19 @@ test(`${ENTRY} loads every script in js/ and content/`, () => {
   }
 });
 
-// The Chinese font draws ‘ ’ “ ” as wide as a character, so English text gets them from another font.
-test('English text gets its curly quotes from a font that draws them narrow', () => {
+// The Chinese font draws ‘ ’ “ ” as wide as a character, and puts the tone marks of ā ē ī ō ū beside the letter (and
+// keeps the dot on ī ǐ), so Latin letters, in English and in pinyin, come from another font.
+test('English and pinyin get their Latin letters (and curly quotes) from a font that draws them properly', () => {
   const css = fs.readFileSync(path.join(ROOT, 'css/game.css'), 'utf8');
   const html = fs.readFileSync(path.join(ROOT, ENTRY), 'utf8');
   assert.match(css, /\bbody\{[^}]*font-family:var\(--en\)/, 'the page text should use --en');
-  const font = /--en:\s*"([^"]+)"/.exec(css);
-  assert.ok(font, '--en should start with a font for the quotes');
+  assert.match(css, /--en:\s*var\(--text\)/, 'English text uses the same fonts as Chinese and pinyin');
+  const font = /--text:\s*"([^"]+)",\s*"Noto Sans SC"/.exec(css);
+  assert.ok(font, '--text should start with a Latin font, before the Chinese one');
   const link = [...html.matchAll(/href="([^"]*fonts\.googleapis\.com[^"]*)"/g)].map(m => decodeURIComponent(m[1]))
     .find(u => u.includes(`family=${font[1].replace(/ /g, '+')}:`));
   assert.ok(link, `${ENTRY} should load ${font[1]}`);
-  for (const q of '‘’“”') assert.ok(/text=([^&]*)/.exec(link)[1].includes(q), `${font[1]} should be loaded with ${q}`);
+  assert.ok(!/[?&]text=/.test(link), `${font[1]} should be loaded whole, for every letter with a tone mark (not just some, with text=)`);
 });
 
 // CHINESE.md lists all the game's Chinese for a native speaker to check (tools/chinese-sheet.js).

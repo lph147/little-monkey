@@ -149,8 +149,8 @@ test('the game’s icons are pixel art: every emoji the game shows has a pixel i
   assert.doesNotMatch(html, /\p{Extended_Pictographic}/u, 'no emoji left');
   // Every emoji in the game's code and content (not in comments, nor the word bank's, which only mark a word as
   // having a picture) has a pixel icon: the shell, the speaker, the heart or one of ICONS.
-  // (◀ and ▶ are the D-pad's arrows, plain text like ▲ and ▼.)
-  const known = new Set(['🐚', '🔊', '♥', '◀', '▶', ...JSON.parse(game.run('JSON.stringify(Object.keys(ICON_KEYS))'))]);
+  // (The D-pad's arrows are drawn by css/game.css, not ◀ and ▶, which a phone can show as emoji.)
+  const known = new Set(['🐚', '🔊', '♥', ...JSON.parse(game.run('JSON.stringify(Object.keys(ICON_KEYS))'))]);
   const files = [...fs.readdirSync(path.join(ROOT, 'js')).map(f => 'js/' + f), 'content/flower-fruit-mountain.js', 'index.html'];
   for (const f of files){
     fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').forEach((line, i) => {
@@ -159,4 +159,6 @@ test('the game’s icons are pixel art: every emoji the game shows has a pixel i
         assert.ok(known.has(m[0]), `${f}:${i + 1} shows ${m[0]}, which has no pixel icon (draw one in tools/draw-pictures.js)`);
     });
   }
+  game.run("fullscreenHTML = () => '<button class=\"linkbtn\">⛶ Play full screen</button>'; titleText()");   // (as on a phone's browser)
+  assert.doesNotMatch(game.el('#titleText').innerHTML, /\p{Extended_Pictographic}|⛶/u, 'the title screen’s icons are pixel art too');
 });

@@ -17,7 +17,10 @@ function storyScroll(){
     openCard(`<p class="label">Story Scroll</p><p class="small">Your story so far, in words you've met. Tap any word you're unsure of.</p>
       ${STORY.map((s,i) => `<div class="sent" data-i="${i}">${s.pic ? `<span class="spic" aria-hidden="true">${picHTML(s.pic)}</span>` : ''}<div>${lineHTML(s.t)}<div class="sentence-en" ${firstRead ? '' : 'hidden'}>${esc(s.en)}</div></div></div>`).join('')}
       <div class="gloss">Tap a word for its meaning.</div>
-      <div class="actions"><button class="btn grow" data-a="read">🔊 Read it to me</button>${firstRead ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">Questions</button></div>`);
+      <div class="actions"><button class="btn grow" data-a="read">🔊 Read it to me</button>${firstRead ? '<button class="btn primary" data-a="ok">Questions</button>'
+        : '<button class="btn" data-a="en">English</button><button class="btn" data-a="ok">Questions</button><button class="btn primary" data-a="close" data-b>Close</button>'}</div>`);
+    // (read before: A closes it, so the questions never start again by accident; they're on their own button)
+    on('[data-a=close]', () => { stopSpeech(); closeCard(); res(); });
     bindTokens(sheet);
     on('[data-a=en]', e => { sheet.querySelectorAll('.sent .sentence-en').forEach(x => x.hidden = false); e.currentTarget.remove(); });
     on('[data-a=read]', () => {

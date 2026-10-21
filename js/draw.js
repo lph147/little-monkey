@@ -200,8 +200,9 @@ function drawWorld(now){
   const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to
   if (sh < VH*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');
   b.drawImage(mapCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
+  b.drawImage(baseCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);   // big objects, under the characters: those that never move, all at once
   touchLeaves(now);
-  for (const p of OBJECT_PIECES) drawPiece(p, p.base, cx, cy, now);   // big objects, under the characters
+  for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.base, cx, cy, now);   // and the fruit trees, which rustle
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
   drawGlimpse(cx, cy, now);
@@ -276,7 +277,8 @@ function drawWorld(now){
     if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
   // the tops of big objects (a tree's leaves, the stall's awning), over anyone walking behind them
-  for (const p of OBJECT_PIECES) drawPiece(p, p.top, cx, cy, now);
+  b.drawImage(topCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
+  for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.top, cx, cy, now);
   drawFallingLeaves(cx, cy, now);
   for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
