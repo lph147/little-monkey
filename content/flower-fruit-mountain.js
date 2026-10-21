@@ -44,9 +44,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           wood is open), 2 you've brought them and the school's frame is up
   //   school  chapter 1: 0 not built yet, 1 the troop has built it (the scene), 2 you've been in, and the class has greeted
   //           its teacher, the old monkey
+  //   woodIn  chapter 1: 1 once you've been into the pine wood (the first time, a wolf howls far off)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0, build:0, school:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0, build:0, school:0, woodIn:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -275,6 +276,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // request done). Besides what a task's if can check, an event's if can check near:'id' (you're right beside that
   // character) and at:[x, y, 'place'] (you're standing there). A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
+    {if:{place:'pineWood', woodIn:0}, do:[{sound:'howl'}, {message:'It’s gloomy under the thick pines, and very still. Somewhere far off, a wolf howls…'}, {set:{woodIn:1}}]},   // into the pine wood for the first time
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     {if:{place:'cave', cave:3}, do:[{message:'The troop follows you through the water curtain!'}, {set:{cave:4}}]},   // you lead the troop in
     // the rocks roll away once everything else in the prologue is done: the three monkeys helped, and every animal found
@@ -314,6 +316,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   glimpse what's just visible behind a waterfall: a cave's dark mouth, over [x, y, how wide, how tall]
   //   map     one letter per tile; the legend below says what each letter is
   //   music   its own song (one of SONGS in js/sound.js), instead of the area's
+  //   gloom   gloomy, as under thick trees (but always in the daytime: never night): shade, darkest deep in the trees
+  //           (deep) and lightest where it's open (open), with sunshine on grass and sunbeams slanting into the open
+  //           places; mist: true for mist drifting low, and eyes: true for eyes glinting now and then in the deepest shade
+  //   sounds  its own sounds, one now and then (some of SFX in js/sound.js), such as crows and a far-off howl
   // Positions elsewhere in this file ([x, y], or x and y) are in the first place. Something in another
   // place says which: [x, y, 'place'], or place:'id'.
   places: {
@@ -471,7 +477,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
-        {at:[25, 0], to:'pineWood', arrive:[16, 28], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
+        {at:[25, 0], to:'pineWood', arrive:[16, 26], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
         {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
       ],
       map: [
@@ -508,6 +514,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the first wood on a phone: you could walk in, pick everything up and never meet a thing).
     pineWood: {
       name: {zh:'松林', py:'sōnglín', en:'Pine wood'},
+      music: 'pineWood',   // slow, quiet and gloomy
+      gloom: {deep:.7, open:.24, mist:true, eyes:true},
+      sounds: ['crow', 'crow', 'wind', 'howl'],
       exits: [
         {at:[16, 29], to:'homeGround', arrive:[25, 1], facing:'down'},   // back down to the home ground
         {at:[17, 29], to:'homeGround', arrive:[25, 1], facing:'down'}

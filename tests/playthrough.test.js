@@ -284,7 +284,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(25, 0, 'up');
   await act('arrive(25, 0).then(runEvents)', 'going up through the bushes he cleared, to the pine wood');
   assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
-  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [16, 28], 'at the way in, at the bottom');
+  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [16, 26], 'at the way in, at the bottom');
   await pressAt(17, 21, 'right', 'meeting a squirrel in the clearing where the ways part');
   assert.ok(get('__said').includes('你要木头吗？'), 'it asks if you want wood');
   await pressAt(2, 19, 'up', 'knocking down a dry, dead pine in the hollow to the west, with your stick');

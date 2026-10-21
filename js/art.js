@@ -735,4 +735,41 @@ function buildMap(){   // the place you're in: the ground, then the big objects'
   for (const c of [baseCanvas, topCanvas]){ c.width = COLS*T; c.height = ROWS*T; }   // (which clears them)
   const bg = baseCanvas.getContext('2d'), tg = topCanvas.getContext('2d');
   for (const p of OBJECT_PIECES) if (!p.leafy){ bg.drawImage(p.base, p.x0, p.y0); tg.drawImage(p.top, p.x0, p.y0); p.baked = true; }
+  buildGloom();
+}
+// A gloomy place (a place's gloom, such as the pine wood's), made ready once for the place (drawGloom, js/draw.js, draws
+// it): its shade, one pixel a square, darkest where the trees are thickest (deep) and lightest where it's open (open),
+// worked out from how open each square's surroundings are, with sunshine on grass (a glade); and sunbeams slanting down
+// into the open places. Gloomy, but always the daytime, never night, which would look as if night had fallen there
+// while the home ground is in sunshine (decided 21 October 2026).
+let GLOOM = null;   // the place's gloom; open: how open each square's surroundings are (0 deep in the trees, 1 wide open);
+                    // shade: how dark each square is (0 to 1); beams: the squares where sunbeams land
+const gloomCanvas = document.createElement('canvas'), beamCanvas = document.createElement('canvas');
+function buildGloom(){
+  const gl = PLACES[PLACE].gloom;
+  GLOOM = null;
+  if (!gl) return;
+  const clear = (x, y) => { const t = tileAt(x, y); return !!t.walk || WATERY.includes(t.look); };   // (beyond the map: more trees)
+  const open = [], shade = [], beams = [];
+  gloomCanvas.width = COLS; gloomCanvas.height = ROWS;
+  const g = gloomCanvas.getContext('2d');
+  for (let y = 0; y < ROWS; y++){ open[y] = []; shade[y] = []; for (let x = 0; x < COLS; x++){
+    let n = 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) n += clear(x + dx, y + dy);
+    const o = open[y][x] = n / 25, sunny = GRASS_FLOOR.includes(tileAt(x, y).look);
+    const a = shade[y][x] = sunny ? 0 : +(gl.deep - (gl.deep - gl.open) * Math.min(1, o / .7)).toFixed(3);
+    g.fillStyle = `rgba(12,28,22,${a})`; g.fillRect(x, y, 1, 1);
+  } }
+  beamCanvas.width = COLS*T; beamCanvas.height = ROWS*T;
+  const bg = beamCanvas.getContext('2d');
+  for (let y = 1; y < ROWS - 1; y += 3) for (let x = 1 + y % 2; x < COLS - 1; x += 3){   // a sunbeam slanting down into each open place
+    if (open[y][x] < .62 || !clear(x, y)) continue;
+    beams.push([x, y]);
+    const bx = x*T + 8, by = y*T + 14, sh = bg.createLinearGradient(bx - 30, by - 60, bx, by);
+    sh.addColorStop(0, 'rgba(255,246,200,0)'); sh.addColorStop(1, 'rgba(255,246,200,.3)');
+    bg.fillStyle = sh; bg.beginPath(); bg.moveTo(bx - 40, by - 64); bg.lineTo(bx - 26, by - 64); bg.lineTo(bx + 9, by); bg.lineTo(bx - 7, by); bg.closePath(); bg.fill();
+    const pool = bg.createRadialGradient(bx, by - 2, 1, bx, by - 2, 12);   // and where it lands
+    pool.addColorStop(0, 'rgba(255,248,210,.3)'); pool.addColorStop(1, 'rgba(255,248,210,0)');
+    bg.fillStyle = pool; bg.save(); bg.translate(bx, by - 2); bg.scale(1, .5); bg.beginPath(); bg.arc(0, 0, 12, 0, 7); bg.fill(); bg.restore();
+  }
+  GLOOM = {...gl, open, shade, beams};
 }

@@ -10,7 +10,7 @@ const {loadGame} = require('./fake-browser');
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 // A game in chapter 1, at the home ground with the old monkey (area: more progress; pos: where you are).
 const CHAPTER_ONE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2};
-const BUILDING = {build: 1, wood: 'asked', stones: 'asked'};
+const BUILDING = {build: 1, wood: 'asked', stones: 'asked', woodIn: 1};   // (and you've been into the pine wood: the first time is its own test)
 function game(area = {}, pos = {place: 'homeGround', x: 15, y: 5, dir: 'up'}, w = {}){
   const g = loadGame({dom: true, save: {version: 29, started: true, w: {'石头': {lv: 1, ok: 0}, '一': {lv: 1, ok: 0}, '二': {lv: 1, ok: 0}, '三': {lv: 1, ok: 0}, ...w},
     met: ['rabbit', 'fox', 'squirrel', 'goat'], areas: {1: {...CHAPTER_ONE, ...area}}, pos}});
@@ -130,7 +130,7 @@ const KNOWS = Object.fromEntries(['动物', '树', '草', '棍子'].map(w => [w,
 // long grass costs one, any other step nothing), with the cracked rock broken or not.
 const grassTo = (g, broken) => get(g, `(() => {
   if (${broken}) here().changed['pineWood:23,5'] = 'y'; else delete here().changed['pineWood:23,5'];
-  const cost = {'16,28': 0}, queue = [[16, 28]];
+  const cost = {'16,26': 0}, queue = [[16, 26]];
   while (queue.length){
     const [x, y] = queue.shift(), c = cost[x + ',' + y];
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){
@@ -145,9 +145,9 @@ const beside = (cost, x, y) => Math.min(...[[1, 0], [-1, 0], [0, 1], [0, -1]].ma
 const THINGS = {deadPines: [[2, 18], [2, 2], [31, 2]], stones: [[29, 18], [3, 12], [30, 6]]};
 
 test('the pine wood: in at the bottom from the home ground; everywhere can be reached, and the glade only through the cracked rock', () => {
-  const g = game(BUILDING, {place: 'pineWood', x: 16, y: 28, dir: 'up'}, KNOWS);
+  const g = game(BUILDING, {place: 'pineWood', x: 16, y: 26, dir: 'up'}, KNOWS);
   assert.deepEqual(get(g, '[COLS, ROWS]'), [34, 30]);
-  assert.deepEqual(get(g, "PLACES.homeGround.exits.find(e => e.to === 'pineWood').arrive"), [16, 28], 'from the home ground, you come in at the bottom');
+  assert.deepEqual(get(g, "PLACES.homeGround.exits.find(e => e.to === 'pineWood').arrive"), [16, 26], 'from the home ground, you come in at the bottom (a few steps in, so a message never hides you)');
   for (const x of [16, 17]) assert.deepEqual(get(g, `(e => [e.to, e.arrive])(exitAt(${x}, 29))`), ['homeGround', [25, 1]], 'and go back down the same way');
   const open = grassTo(g, true), cutOff = get(g, `(() => { const out = []; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).walk) out.push(x + ',' + y); return out; })()`).filter(k => !(k in open));
   assert.deepEqual(cutOff, [], 'nowhere you can walk is cut off');
@@ -159,7 +159,7 @@ test('the pine wood: in at the bottom from the home ground; everywhere can be re
 });
 
 test('every way to every dead pine and stone goes through long grass, so you meet what lives in it', () => {
-  const g = game(BUILDING, {place: 'pineWood', x: 16, y: 28, dir: 'up'}, KNOWS), cost = grassTo(g, true);
+  const g = game(BUILDING, {place: 'pineWood', x: 16, y: 26, dir: 'up'}, KNOWS), cost = grassTo(g, true);
   for (const [x, y] of [...THINGS.deadPines, ...THINGS.stones]) assert.ok(beside(cost, x, y) >= 4, `at least 4 squares of long grass on the way to ${x}, ${y} (${beside(cost, x, y)})`);
   assert.ok(beside(cost, 30, 3) >= 4, 'and to the deer');
 });
@@ -204,5 +204,37 @@ test('wolves live in the long grass of the pine wood (and only there); lose a fi
 
 test('if the map has changed under your saved spot in the pine wood, you start at its way in (not back at your stone)', () => {
   const g = loadGame({save: {version: 29, started: true, areas: {1: {...CHAPTER_ONE, ...BUILDING}}, pos: {place: 'pineWood', x: 15, y: 4, dir: 'right'}}});   // (among the pines now)
-  assert.deepEqual(get(g, 'S.pos'), {place: 'pineWood', x: 16, y: 28, dir: 'up'});
+  assert.deepEqual(get(g, 'S.pos'), {place: 'pineWood', x: 16, y: 26, dir: 'up'});
+});
+
+test('the first time you go into the pine wood, it’s gloomy and still, and a wolf howls far off (just the once)', async () => {
+  const g = game({build: 1, wood: 'asked', stones: 'asked'}, {place: 'homeGround', x: 25, y: 1, dir: 'up'});
+  g.run("globalThis.__sounds = []; SFX.howl = () => __sounds.push('howl')");
+  await play(g, 'arrive(25, 0).then(runEvents)');
+  assert.equal(g.run('PLACE'), 'pineWood');
+  assert.deepEqual(get(g, '__sounds'), ['howl']);
+  assert.match(get(g, '__notes').join(' '), /gloomy under the thick pines/);
+  assert.equal(g.run('here().woodIn'), 1);
+  g.run('__notes.length = 0; __sounds.length = 0');
+  await play(g, 'arrive(16, 29).then(runEvents)');
+  assert.equal(g.run('PLACE'), 'homeGround');
+  await play(g, 'arrive(25, 0).then(runEvents)');
+  assert.deepEqual(get(g, '__sounds'), [], 'not again');
+});
+
+test('the pine wood is gloomy, but always in the daytime: shade deepest in the trees, the glade in sunshine, sunbeams in the open places', () => {
+  const g = game(BUILDING, {place: 'pineWood', x: 16, y: 26, dir: 'up'}, KNOWS);
+  const gl = get(g, 'GLOOM'), at = (x, y) => gl.shade[y][x];
+  assert.ok(at(8, 26) > .6, 'deep in the pines: darkest');
+  assert.ok(at(16, 22) < at(16, 27) && at(16, 22) < .4, 'lighter in the squirrel’s clearing than on the narrow way in');
+  assert.equal(at(30, 3), 0, 'the glade, in sunshine');
+  assert.ok(gl.beams.some(([x, y]) => y >= 15 && y <= 20 && x >= 11 && x <= 21), 'sunbeams in the meadow below the bridge');
+  assert.ok(gl.beams.some(([x, y]) => y <= 7 && x >= 24), 'and in the glade');
+  assert.ok(gl.mist && gl.eyes);
+  assert.equal(get(g, 'PLACES.pineWood.music'), 'pineWood');
+  assert.ok(get(g, 'Object.keys(SONGS)').includes('pineWood'), 'with a song of its own');
+  for (const s of get(g, 'PLACES.pineWood.sounds')) assert.equal(g.run(`typeof SFX.${s}`), 'function', `and its sounds: ${s}`);
+  for (let t = 0; t < 12000; t += 700) g.run(`drawWorld(${t})`);   // (drawing it, eyes and all, a frame at a time)
+  g.run("S.pos = {place: 'homeGround', x: 25, y: 1, dir: 'down'}; placePlayer()");
+  assert.equal(get(g, 'GLOOM'), null, 'the home ground is in sunshine');
 });

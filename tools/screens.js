@@ -44,9 +44,10 @@ SAVES.homeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1
 // building the school: the big monkey wants wood and small stones, from the pine wood (part-way through: two dead pines down,
 // a stone picked up, and the cracked rock broken); then the school's frame goes up
 SAVES.bigAsks = {...SAVES.homeGround, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};
-const BUILDING = {...SAVES.homeGround.areas[1], build: 1, wood: 'asked', stones: 'asked'};
-SAVES.pineWood = {...SAVES.homeGround, areas: {1: BUILDING}, pos: {place: 'pineWood', x: 16, y: 28, dir: 'up'}};   // (in at the bottom)
+const BUILDING = {...SAVES.homeGround.areas[1], build: 1, wood: 'asked', stones: 'asked', woodIn: 1};   // (been into the pine wood before)
+SAVES.pineWood = {...SAVES.homeGround, areas: {1: BUILDING}, pos: {place: 'pineWood', x: 16, y: 26, dir: 'up'}};   // (in at the bottom)
 SAVES.pineMeadow = {...SAVES.pineWood, pos: {place: 'pineWood', x: 15, y: 17, dir: 'up'}};   // in the long grass below the bridge
+SAVES.pineFirst = {...SAVES.homeGround, areas: {1: {...BUILDING, woodIn: 0}}, pos: {place: 'homeGround', x: 25, y: 1, dir: 'up'}};   // about to go in for the first time
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
   areas: {1: {...BUILDING, picked: {wood: ['pineWood:2,18', 'pineWood:2,2'], stones: ['pineWood:3,12']},
@@ -258,6 +259,8 @@ const SCREENS = [
     play(); await wait(100); talk(npc('big')); await wait(600); }},
   {id: 'pine-wood', title: 'The pine wood (松林)', save: 'pineWood', why: 'Up from the home ground, in at the bottom: the way leads up to the squirrel’s clearing, where the ways part. Three dry, dead pines that sparkle (knock them down with your stick) and three small stones are hidden around the wood, with long grass on every way to them.', run: async () => {
     play(); await wait(500); }},
+  {id: 'pine-wood-first', title: 'Into the pine wood', save: 'pineFirst', why: 'The first time you go in: gloomy under the thick pines (but in the daytime: sunbeams, never night), with mist, and a wolf howling far off.', run: async () => {
+    play(); await wait(100); arrive(25, 0).then(runEvents); await wait(1500); }},
   {id: 'pine-wood-meadow', title: 'Long grass, below the bridge', save: 'pineMeadow', why: 'A meadow of long grass right across the way to the only bridge over the stream: wolves, snakes and spiders jump out of it.', run: async () => {
     play(); await wait(500); }},
   {id: 'pine-wood-deer', title: 'The sunny glade', save: 'pineDeer', why: 'Behind the cracked rock: a sunny glade with white flowers, the last dead pine and stone, and a deer, chapter 1’s animal to find. It’s in the way: face it and press A to meet it.', run: async () => {

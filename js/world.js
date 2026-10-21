@@ -231,6 +231,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
+  sound(s){ if (SFX[s.sound]) SFX[s.sound](); },   // a sound (one of SFX in js/sound.js), such as a wolf howling far off
   // You swing your stick at the square you're facing, like Cut and Rock Smash in Pokémon: a whack, and chips fly off it
   // (hit: what it's made of, 'wood' or 'stone').
   async hit(s){
@@ -552,6 +553,17 @@ async function leap([tx, ty]){
     await sleep(17);
   }
   splashes.push({x:tx*T + 8, y:ty*T + 10, t0:performance.now()}); SFX.splash();
+}
+// A place's own sounds (its sounds, such as the pine wood's crows, wind and a far-off howl): one now and then, every 12 to
+// 30 seconds while you're there, the first a few seconds after you come in. Never while a card is open.
+let ambientAt = 0, ambientIn = null;
+function ambience(now){
+  const sounds = PLACES[PLACE].sounds;
+  if (!sounds || mode !== 'play' || !modal.hidden){ ambientAt = 0; return; }
+  if (!ambientAt || ambientIn !== PLACE){ ambientIn = PLACE; ambientAt = now + 4000 + Math.random() * 6000; return; }
+  if (now < ambientAt) return;
+  SFX[sounds[Math.floor(Math.random() * sounds.length)]]();
+  ambientAt = now + 12000 + Math.random() * 18000;
 }
 let placeNameT;
 function showPlaceName(){

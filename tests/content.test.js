@@ -514,3 +514,16 @@ test('each lesson series is one the engine can give, teaching words you can coll
     }
   }
 });
+
+test('a place’s own song, gloom and sounds, and every sound a step plays, are ones the game has', () => {
+  const SONGS = get('Object.keys(SONGS)'), SFX = get('Object.keys(SFX)');
+  for (const [id, p] of Object.entries(AREA.places)){
+    if (p.music) assert.ok(SONGS.includes(p.music), `${id}'s music, ${p.music}, isn't one of the songs (js/sound.js)`);
+    for (const s of p.sounds || []) assert.ok(SFX.includes(s), `${id}'s sound ${s} isn't one of the sound effects (js/sound.js)`);
+    if (p.gloom){
+      assert.ok(p.gloom.deep > p.gloom.open && p.gloom.open >= 0 && p.gloom.deep < 1, `${id}'s gloom: deep (${p.gloom.deep}) should be darker than open (${p.gloom.open}), and never black`);
+      for (const k of Object.keys(p.gloom)) assert.ok(['deep', 'open', 'mist', 'eyes'].includes(k), `${id}'s gloom: "${k}" isn't one of its settings`);
+    }
+  }
+  for (const [where, s] of allSteps().filter(([, s]) => s.sound)) assert.ok(SFX.includes(s.sound), `${where}: there's no sound ${s.sound} (js/sound.js)`);
+});

@@ -54,7 +54,37 @@ const SFX = {
     s.connect(f); f.connect(g); g.connect(a.destination); s.start();
   },
   swish: (when = 0) => tone(900, .18, 'triangle', .025, when, -650),   // something cutting through the air: a stick, a leap
-  thwack: (when = 0) => { tone(150, .09, 'square', .05, when, -60); tone(90, .14, 'triangle', .06, when); }   // a hit
+  thwack: (when = 0) => { tone(150, .09, 'square', .05, when, -60); tone(90, .14, 'triangle', .06, when); },   // a hit
+  // a place's own sounds, now and then (its sounds: ambience in js/world.js), such as the pine wood's
+  crow: () => {   // a crow somewhere up in the pines: caw, caw
+    const a = ac(); if (!a) return;
+    for (const w of [0, .34]){
+      const t = a.currentTime + w, o = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain();
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(640, t); o.frequency.exponentialRampToValueAtTime(430, t + .22);
+      f.type = 'bandpass'; f.frequency.value = 1300; f.Q.value = 2.5;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.045, t + .03); g.gain.exponentialRampToValueAtTime(0.0001, t + .24);
+      o.connect(f); f.connect(g); g.connect(a.destination); o.start(t); o.stop(t + .26);
+    }
+  },
+  howl: () => {   // a wolf howling, far off: rising, holding with a waver, and falling away
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), lfo = a.createOscillator(), lg = a.createGain(), f = a.createBiquadFilter(), g = a.createGain();
+    o.type = 'triangle'; o.frequency.setValueAtTime(300, t); o.frequency.exponentialRampToValueAtTime(560, t + .7);
+    o.frequency.setValueAtTime(560, t + 1.4); o.frequency.exponentialRampToValueAtTime(380, t + 2.4);
+    lfo.frequency.value = 5; lg.gain.value = 6; lfo.connect(lg); lg.connect(o.frequency);
+    f.type = 'lowpass'; f.frequency.value = 900;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.035, t + .5); g.gain.setValueAtTime(.035, t + 1.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
+    o.connect(f); f.connect(g); g.connect(a.destination); [o, lfo].forEach(x => { x.start(t); x.stop(t + 2.6); });
+  },
+  wind: () => {   // the wind in the pines: a soft rush that swells and dies away
+    const a = ac(); if (!a) return;
+    const d = 3.2, t = a.currentTime, buf = a.createBuffer(1, a.sampleRate * d, a.sampleRate), ch = buf.getChannelData(0);
+    for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+    const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+    f.type = 'bandpass'; f.Q.value = .8; f.frequency.setValueAtTime(400, t); f.frequency.linearRampToValueAtTime(700, t + 1.6); f.frequency.linearRampToValueAtTime(350, t + d);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.05, t + 1.4); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    src.buffer = buf; src.connect(f); f.connect(g); g.connect(a.destination); src.start(t);
+  }
 };
 
 /* ---- background music: guzheng and dizi in a Chinese pentatonic style ----
@@ -63,7 +93,9 @@ const SFX = {
    glissando sweeps and a soft wood block. Battles' (battle): quicker, but calm and cheerful, never tense: the same
    pentatonic scale, a bouncy guzheng in quavers, a soft drum and wood block, and a tune taking turns on guzheng and dizi.
    The cave's (cave): its own sound, unlike the others: slower and sparser, with a long echo; a slow tune on soft bells,
-   then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water. A place can have its own song (the content's music); otherwise it's home's. */
+   then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water. The pine wood's
+   (pineWood): slower still, quiet and gloomy, in a minor key, on the xun and then soft bells, with a hum, far-apart plinks
+   and the wind sighing. A place can have its own song (the content's music); otherwise it's home's. */
 const BPM = 72, BEAT = 60 / BPM, LOOP_BEATS = 64;
 const MEL = [[76,1.5],[79,.5],[81,1],[84,.5],[81,.5], [79,2],[76,1],[79,1], [74,.5],[76,.5],[79,1],[76,1],[74,.5],[72,.5], [74,4],
              [76,1.5],[79,.5],[81,1],[79,.5],[81,.5], [84,2],[86,1],[84,.5],[81,.5], [79,.5],[81,.5],[79,.5],[76,.5],[74,1],[76,1], [69,4],
@@ -116,6 +148,20 @@ const CAVE_EVENTS = (() => {
     CAVE_PLINKS[r].forEach((m,j) => ev.push({b:i*8 + [1.5, 4, 6.5][j], m, k:'plink'}));
   });
   CAVE_DRIPS.forEach(([b,f]) => ev.push({b, f, k:'drip'}));
+  return ev.sort((a,c) => a.b - c.b);
+})();
+// The pine wood's song: slow and quiet, in a minor key (A C D E G), with long rests; a low hum on these roots, a few high
+// plinks, far apart, and the wind sighing now and then. Gloomy, but not frightening.
+const PINE_MEL = [[69,2],[72,1],[69,1],[67,3],[0,1], [64,2],[67,1],[64,1],[62,4],
+                  [64,2],[69,1],[67,1],[64,3],[0,1], [62,2],[60,1],[62,1],[57,4]];
+const PINE_ROOTS = [45, 43, 40, 45];
+const PINE_PLINKS = [[3.5, 81], [11, 76], [19.5, 84], [27, 79]];
+const PINE_EVENTS = (() => {
+  const ev = []; let bt = 0;
+  PINE_MEL.forEach(([m,d]) => { ev.push({b:bt, m, d, k:'mel'}); bt += d; });
+  PINE_ROOTS.forEach((r,i) => ev.push({b:i*8, m:r, k:'hum'}));
+  PINE_PLINKS.forEach(([b, m]) => ev.push({b, m, k:'plink'}));
+  [6, 22].forEach(b => ev.push({b, k:'sigh'}));
   return ev.sort((a,c) => a.b - c.b);
 })();
 const midi = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -247,12 +293,31 @@ function playCaveEvent(a, ev, t, pass){
   else if (ev.k === 'hum') hum(a, midi(ev.m), t, 8 * beat);
   else if (ev.k === 'drip') drip(a, t, ev.f);
 }
+function playPineEvent(a, ev, t, pass){
+  const beat = 60 / SONGS.pineWood.bpm;
+  if (ev.k === 'mel'){
+    if (!ev.m) return;   // a rest
+    if (pass === 0) xun(a, midi(ev.m - 12), t, ev.d * beat * .92);
+    else bell(a, midi(ev.m), t, .04, Math.min(ev.d * beat + 1.4, 3));
+  } else if (ev.k === 'hum') hum(a, midi(ev.m), t, 8 * beat);
+  else if (ev.k === 'plink') bell(a, midi(ev.m), t, .013, 1.6);
+  else if (ev.k === 'sigh') sigh(a, t);
+}
+function sigh(a, t){   // the wind sighing through the trees, very softly, into the song's echo
+  const d = 2.6, buf = a.createBuffer(1, a.sampleRate * d, a.sampleRate), ch = buf.getChannelData(0);
+  for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+  const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  f.type = 'bandpass'; f.Q.value = 1.2; f.frequency.setValueAtTime(500, t); f.frequency.linearRampToValueAtTime(800, t + 1.3); f.frequency.linearRampToValueAtTime(450, t + d);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.02, t + 1.1); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  src.buffer = buf; src.connect(f); f.connect(g); g.connect(mBus); g.connect(mBus.echoIn); src.start(t);
+}
 // The songs: how fast (beats a minute), how many beats before it loops, its notes, how each is played, and its echo
 // (how much comes back each time, and how loud it is).
 const SONGS = {
   home: {bpm:BPM, beats:LOOP_BEATS, events:EVENTS, play:playEvent, echo:[.32, .3]},
   battle: {bpm:116, beats:32, events:BATTLE_EVENTS, play:playBattleEvent, echo:[.32, .3]},
-  cave: {bpm:54, beats:32, events:CAVE_EVENTS, play:playCaveEvent, echo:[.52, .55]}
+  cave: {bpm:54, beats:32, events:CAVE_EVENTS, play:playCaveEvent, echo:[.52, .55]},
+  pineWood: {bpm:50, beats:32, events:PINE_EVENTS, play:playPineEvent, echo:[.45, .45]}
 };
 const placeSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].music]) ? PLACES[PLACE].music : 'home';   // the place you're in's own song, if it has one
 let song = 'home';   // the song playing (or that will, once the music is on)

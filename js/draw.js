@@ -213,19 +213,7 @@ function drawWorld(now){
     const way = i % 2 ? -1 : 1, fx = f[0]*T - cx + 8 + way * (fp*10 - 6), fy = f[1]*T - cy + 6 - Math.sin(fp*Math.PI)*8;
     R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx) + (way > 0 ? -1 : 3), Math.round(fy), 1, 2, '#D96A1E');
   });
-  // sparkles on things whose word is not yet known
-  for (const s of SPARKLES){
-    const [x, y] = s.at;
-    if (lvl(s.word) > 0) continue;
-    if (s.if && !matches(s.if)) continue;
-    const t = tileAt(x, y);
-    if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
-    sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
-  }
-  for (const [x, y] of COLLECTABLE){   // and on things you can collect right now (their onLook part with sparkle matches)
-    const t = tileAt(x, y), p = (t.onLook || []).find(p => !p.if || matches(p.if));
-    if (p && p.sparkle) sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
-  }
+  if (!GLOOM) drawSparkles(cx, cy, now);   // (in a gloomy place, over its shade instead, so they shine)
   // animals at their own spots on the ground (a cliff), once animals appear; those up a tree come after the leaves
   const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE && !(foe && foe.a === a)) : [];
   const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree';
@@ -285,6 +273,7 @@ function drawWorld(now){
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
     b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - 5 - bob, 10, 10);
   }
+  if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
   for (const [x, y, show] of bubbles) bubble(x, y, show);
   if (trainingCalls()) for (const [x, y] of TRAINING_TILES) if (tileAt(x, y).action === 'training') bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice (while the post stands)
   drawSplashes(cx, cy, now);
@@ -308,6 +297,60 @@ function drawWorld(now){
   }
   const fk = (now - fadeT) / 700;
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
+}
+// Sparkles on things whose word you don't know yet, and on things you can collect right now (their onLook part with
+// sparkle matches).
+function drawSparkles(cx, cy, now){
+  for (const s of SPARKLES){
+    const [x, y] = s.at;
+    if (lvl(s.word) > 0) continue;
+    if (s.if && !matches(s.if)) continue;
+    const t = tileAt(x, y);
+    if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
+    sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
+  }
+  for (const [x, y] of COLLECTABLE){
+    const t = tileAt(x, y), p = (t.onLook || []).find(p => !p.if || matches(p.if));
+    if (p && p.sparkle) sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
+  }
+}
+// A gloomy place, such as the pine wood (its gloom, made ready in buildGloom, js/art.js), over everything on the map but
+// the bubbles and sparkles: its shade, soft (one pixel a square, smoothed as it's drawn bigger), sunbeams shimmering,
+// mist drifting low, and now and then a pair of eyes glinting deep in the shade. Gloomy, but always the daytime.
+function drawGloom(cx, cy, sh, now){
+  b.imageSmoothingEnabled = true; b.drawImage(gloomCanvas, cx / T, cy / T, VW, sh / T, 0, 0, VW*T, sh); b.imageSmoothingEnabled = false;
+  b.globalAlpha = .75 + .25 * Math.sin(now / 1700); b.drawImage(beamCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh); b.globalAlpha = 1;
+  if (GLOOM.mist){ const off = (now / 90) % (2*VW*T); b.drawImage(mistStrip(), -off, 0); b.drawImage(mistStrip(), 2*VW*T - off, 0); }
+  if (GLOOM.eyes) drawEyes(cx, cy, now);
+}
+let mistCanvas = null;
+function mistStrip(){   // soft wisps of mist, in a strip twice the screen's width, to drift across it
+  if (mistCanvas) return mistCanvas;
+  const W = 2*VW*T, H = VH*T; mistCanvas = document.createElement('canvas'); mistCanvas.width = W; mistCanvas.height = H;
+  const g = mistCanvas.getContext('2d');
+  for (let k = 0; k < 24; k++){
+    const mx = (k * 97) % W, my = (k * 53) % H, rx = 30 + (k * 13) % 40, ry = 6 + (k * 7) % 8;
+    const gr = g.createRadialGradient(mx, my, 1, mx, my, rx); gr.addColorStop(0, 'rgba(225,232,222,.15)'); gr.addColorStop(1, 'rgba(225,232,222,0)');
+    g.save(); g.translate(mx, my); g.scale(1, ry / rx); g.translate(-mx, -my); g.fillStyle = gr; g.beginPath(); g.arc(mx, my, rx, 0, 7); g.fill(); g.restore();
+  }
+  return mistCanvas;
+}
+// Eyes glinting between the trees, deep in the shade and well away from you: they blink twice and are gone, and after a
+// while another pair glints somewhere else. Gone at once if you come near.
+const EYES_MS = 2600;
+let eyes = null, eyesNext = 0;
+function drawEyes(cx, cy, now){
+  if (eyes && (now - eyes.t0 > EYES_MS || Math.abs(eyes.x - pl.x) + Math.abs(eyes.y - pl.y) < 4)){ eyes = null; eyesNext = now + 3000 + Math.random() * 5000; }
+  if (!eyes && now >= eyesNext){
+    for (let k = 0; k < 20 && !eyes; k++){   // somewhere in view, deep in the trees
+      const x = Math.floor(cx / T) + 1 + Math.floor(Math.random() * (VW - 2)), y = Math.floor(cy / T) + 1 + Math.floor(Math.random() * (VH - 2));
+      if (y < ROWS && x < COLS && GLOOM.open[y][x] < .3 && !tileAt(x, y).walk && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 5) eyes = {x, y, t0:now};
+    }
+    if (!eyes) eyesNext = now + 1000;
+  }
+  if (!eyes || (now - eyes.t0) % 1300 < 140) return;   // (blinking)
+  const X = eyes.x*T - cx + 5, Y = eyes.y*T - cy + 3;
+  R(b, X, Y, 2, 1, '#F5E36A'); R(b, X + 4, Y, 2, 1, '#F5E36A');
 }
 // You, asleep in the bed whose square is at X, Y on the screen: your head on the stone pillow, and the leaf blanket
 // pulled up over you, with a hand on top.
