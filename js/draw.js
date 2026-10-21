@@ -331,25 +331,24 @@ function drawMarkers(cx, cy, now){
 }
 
 /* ---- opening scene ---- */
-function drawScene(t, now, mid = 0){   // mid: from 0 (the mountain on the right, for the title screen) to 1 (in the middle)
+// The sky, the sea and Flower Fruit Mountain, from night (light 0) to day (1), with the mountain moved dx to the right.
+// The mountain is drawn for a screen 176 pixels wide (11 columns); the hills and the sea go all the way across. The
+// opening (at dawn) and the end of the prologue (at dusk) share it.
+function drawMountain(light, now, dx){
   const W = VW*T, H = VH*T;
-  const dawn = clamp((t - 2.8) / 2.6, 0, 1);
-  const skyTop = mix('#0E1A33','#79BFE6',dawn), skyBot = mix('#26385F','#F6C69C',dawn);
+  const skyTop = mix('#0E1A33','#79BFE6',light), skyBot = mix('#26385F','#F6C69C',light);
   for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix(skyTop, skyBot, y / H));
-  if (dawn < 1){
+  if (light < 1){
     for (let i = 0; i < 36; i++){
       const sx = Math.floor(rnd(i,1)*W), sy = Math.floor(rnd(i,2)*H*.55), tw = (Math.sin(now/420 + i*1.7) + 1) / 2;
       if (tw < .3) continue;
-      b.globalAlpha = (1 - dawn) * (.45 + .55*tw);
+      b.globalAlpha = (1 - light) * (.45 + .55*tw);
       R(b, sx, sy, 1, 1, '#FFF6D8'); if (tw > .9 && i % 3 === 0){ R(b, sx-1, sy, 3, 1, '#FFF6D8'); R(b, sx, sy-1, 1, 3, '#FFF6D8'); }
       b.globalAlpha = 1;
     }
   }
-  // The mountain and the stone are drawn for a screen 176 pixels wide (11 columns). On the title screen they're moved
-  // to the right, leaving the sky on the left for the title's words; in the opening they're in the middle, with the
-  // story along the bottom. The hills and the sea go all the way across.
-  const dx = Math.round(W * (.68 - .18 * mid) - 88);
   b.save(); b.translate(dx, 0);
+  const dawn = light;
   if (dawn > 0){ disc(b, 34, Math.round(116 - dawn*28), 9, '#FFD27A'); }
   for (let x = -dx; x < W - dx; x += 2){ const h = Math.round(98 - Math.abs(Math.sin(x/23))*14 - rnd(x>>2,7)*4); R(b, x, h, 2, 126 - h, mix('#22334F','#7FA79A',dawn)); }
   R(b, -dx, 124, W, H - 124, mix('#13284A','#3F8FCB',dawn));
@@ -359,6 +358,16 @@ function drawScene(t, now, mid = 0){   // mid: from 0 (the mountain on the right
     R(b, x, top, 2, 126 - top, mix('#1D3A30','#3F7D55',dawn)); R(b, x, top, 2, 2, mix('#2B5242','#6CC066',dawn));
   }
   for (let i = 0; i < 18; i++){ const tx = 36 + Math.floor(rnd(i,11)*104), ty0 = Math.round(70 + Math.pow(Math.abs(tx - 88)/64, 1.25)*56) + 4 + Math.floor(rnd(i,12)*20); if (ty0 < 122 && Math.abs(tx-88) > 10) disc(b, tx, ty0, 2, mix('#16302A','#2F7A3E',dawn)); }
+  b.restore();
+}
+function drawScene(t, now, mid = 0){   // mid: from 0 (the mountain on the right, for the title screen) to 1 (in the middle)
+  const W = VW*T, H = VH*T;
+  const dawn = clamp((t - 2.8) / 2.6, 0, 1);
+  // On the title screen the mountain and the stone are moved to the right, leaving the sky on the left for the title's
+  // words; in the opening they're in the middle, with the story along the bottom.
+  const dx = Math.round(W * (.68 - .18 * mid) - 88);
+  drawMountain(dawn, now, dx);
+  b.save(); b.translate(dx, 0);
   // stone, glow, cracks, birth
   const glow = clamp((t - 5.4) / 3.2, 0, 1);
   const pulse = glow > 0 && t < 9.4 ? glow * (.6 + .4*Math.sin(now/120)) : 0;
@@ -387,3 +396,57 @@ function drawScene(t, now, mid = 0){   // mid: from 0 (the mountain on the right
   b.restore();
   if (t > 8.6 && t < 9.4){ b.globalAlpha = clamp(1 - Math.abs(t - 8.8) / .6, 0, 1); R(b, 0, 0, W, H, '#FFFDF0'); b.globalAlpha = 1; }
 }
+
+/* ---- the end of the prologue: becoming king ---- */
+// In the Water Curtain Cave the troop gathers round you on the stone seat, looks at you, and makes you king (a crown
+// drops onto your head, with sparkles), then bows, one after another. Then, outside, the sun sets on Flower Fruit
+// Mountain, with the troop at home on top. Its times match the crowning scene's captions (scenes.crowning in the area):
+// 0 home, 3 brave, 5.5 king, 8 美猴王, 11 happy ever after. The scene waits just before each caption's time until you
+// press Next, so each moment looks right there (the cave fades out only once the last caption has begun). The captions
+// cover the bottom, so it all happens above them.
+const CROWD = [['big', 66, 46, 'right'], ['playful', 38, 54, 'right'], ['troop2', 10, 62, 'right'],   // [who, x, y, facing you]
+  ['elder', 142, 46, 'left'], ['troop1', 170, 54, 'left'], ['troop3', 198, 62, 'left']];
+function drawCrowning(t, now){
+  const W = VW*T, H = VH*T, blink = now % 3200 < 130;
+  if (t < 11.3){
+    for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#2A231E', '#4A3E33', y / H));   // the cave's rock
+    for (let i = 0; i < 70; i++) R(b, Math.floor(rnd(i, 21) * W), Math.floor(rnd(i, 22) * H), 2 + Math.floor(rnd(i, 23) * 5), 2, i % 2 ? '#3A312A' : '#55483C');
+    const warm = clamp(t / 1.2, 0, 1) * (t >= 8 ? 1 : .7);   // a warm glow round the seat, brighter once you're king
+    const gl = b.createRadialGradient(120, 40, 4, 120, 40, 90); gl.addColorStop(0, `rgba(255,214,140,${.45 * warm})`); gl.addColorStop(1, 'rgba(255,214,140,0)');
+    b.fillStyle = gl; b.fillRect(0, 0, W, H);
+    R(b, 100, 14, 40, 34, '#7C786E'); R(b, 100, 14, 40, 2, '#9A968C'); R(b, 100, 14, 2, 34, '#6A665D'); R(b, 138, 14, 2, 34, '#6A665D');   // the stone seat's back
+    const hop = t >= 5.5 && t < 6.1 ? Math.round(Math.sin((t - 5.5) / .6 * Math.PI) * 6) : 0;   // you jump for joy
+    b.drawImage(monkeySprite('player', 'down', blink), 104, 22 - hop, 32, 32);
+    R(b, 96, 46, 48, 14, '#8E8A80'); R(b, 96, 46, 48, 2, '#ABA79C'); R(b, 96, 58, 48, 2, '#5E5A52');   // and its seat, in front of your legs
+    if (t >= 5.5){   // the crown drops onto your head
+      const y = 15 - hop - Math.round(18 * (1 - clamp((t - 5.5) / .4, 0, 1)));
+      R(b, 113, y + 5, 14, 3, '#F2C14E'); R(b, 113, y + 7, 14, 1, '#C99A2E');
+      for (const [x, h] of [[113, 5], [119, 7], [125, 5]]) R(b, x, y + 5 - h + 2, 2, h, '#F2C14E');
+      R(b, 119, y + 6, 2, 1, '#D83A3A'); R(b, 115, y + 6, 1, 1, '#3F8FCB'); R(b, 124, y + 6, 1, 1, '#3F8FCB');
+      for (let i = 0; i < 10; i++){   // sparkles round you
+        const a = i / 10 * Math.PI * 2 + now / 1600, r = 22 + 4 * Math.sin(now / 300 + i), tw = Math.sin(now / 180 + i * 2);
+        if (tw < 0) continue;
+        const sx = Math.round(120 + Math.cos(a) * r), sy = Math.round(38 + Math.sin(a) * r * .8);
+        R(b, sx, sy, 1, 1, '#FFF6D8'); if (tw > .7){ R(b, sx - 1, sy, 3, 1, '#FFE27A'); R(b, sx, sy - 1, 1, 3, '#FFE27A'); }
+      }
+    }
+    CROWD.forEach(([id, x, y, dir], i) => {   // the troop: looking at you from 3 on, bowing one by one from 8
+      const bow = t >= 8 + i * .25, d = t >= 3 ? dir : 'down';
+      if (bow) b.drawImage(monkeySprite(id, d, false), x, y + 7, 32, 25);
+      else b.drawImage(monkeySprite(id, d, blink && i % 2 === 0), x, y, 32, 32);
+    });
+    if (t > 11){ b.globalAlpha = clamp((t - 11) / .3, 0, 1); R(b, 0, 0, W, H, '#0B0907'); b.globalAlpha = 1; }   // fading out of the cave
+    return;
+  }
+  const light = 1 - clamp((t - 11.8) / 3.5, 0, 1);   // outside: the sun sets
+  drawMountain(light, now, Math.round(W * .5 - 88));
+  [['troop2', 96, 60], ['playful', 104, 56], ['player', 112, 53], ['big', 120, 56], ['elder', 128, 60]].forEach(([id, x, y]) =>   // the troop, at home on top
+    b.drawImage(monkeySprite(id, 'down', blink), x, y, 16, 16));
+  for (let i = 0; i < 8; i++){   // fireflies, once it's dark
+    const k = (1 - light) * Math.max(0, Math.sin(now / 400 + i * 1.3));
+    if (k > .2){ b.globalAlpha = k; R(b, 84 + Math.floor(rnd(i, 31) * 72) + Math.round(Math.sin(now / 900 + i) * 3), 50 + Math.floor(rnd(i, 32) * 26), 1, 1, '#FFF2A0'); b.globalAlpha = 1; }
+  }
+  if (t < 11.9){ b.globalAlpha = 1 - clamp((t - 11.3) / .6, 0, 1); R(b, 0, 0, W, H, '#0B0907'); b.globalAlpha = 1; }   // fading in
+}
+// The pictures for the area's scenes (AREA.scenes), by name; the opening's are drawScene, above.
+const SCENE_ART = {crowning: drawCrowning};

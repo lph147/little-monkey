@@ -137,6 +137,16 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 它的眼睛里有光。 | tā de yǎnjing lǐ yǒu guāng. | Light shone from its eyes. |  |
 | 你好，小猴子！ | nǐ hǎo, xiǎo hóuzi! | Hello, little monkey! |  |
 
+### Scene: becoming king
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 水帘洞是我们的家。 | Shuǐlián Dòng shì wǒmen de jiā. | The Water Curtain Cave is our home. |  |
+| 你很勇敢！ | nǐ hěn yǒnggǎn! | You are very brave! |  |
+| 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! |  |
+| 美猴王！ | Měi Hóuwáng! | Handsome Monkey King! |  |
+| 从此，花果山的猴子很快乐。 | cóngcǐ, Huāguǒ Shān de hóuzi hěn kuàilè. | From then on, the monkeys of Flower Fruit Mountain were very happy. |  |
+
 ### Names
 
 | Chinese | Pinyin | English | Notes |
@@ -242,6 +252,11 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 只 | zhī | (counts animals: 三只猴子, three monkeys) |  |
 | 两 | liǎng | two (when counting things) |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
+| 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
+| 很 | hěn | very |  |
+| 勇敢 | yǒnggǎn | brave |  |
+| 从此 | cóngcǐ | from then on |  |
+| 快乐 | kuàilè | happy |  |
 | 你 | nǐ | you |  |
 | 也 | yě | also, too |  |
 | 去 | qù | to go |  |
@@ -348,6 +363,10 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 这是棍子。 | zhè shì gùnzi. | This is a stick. | The prologue, up the stream, 18 October 2026 (in the game): The big monkey, giving you a stick before you set off |  |
 | 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | The prologue, up the stream, 18 October 2026 (in the game): The example on 蜜蜂 (bee)’s page |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | The prologue, up the stream, 18 October 2026 (in the game): The example on 野猪 (wild boar)’s page |  |
+| 水帘洞是我们的家。 | Shuǐlián Dòng shì wǒmen de jiā. | The Water Curtain Cave is our home. | New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before) |  |
+| 你很勇敢！ | nǐ hěn yǒnggǎn! | You are very brave! (很 hěn, very; 勇敢 yǒnggǎn, brave) | New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before) |  |
+| 美猴王！ | Měi Hóuwáng! | Handsome Monkey King! | New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before) |  |
+| 从此，花果山的猴子很快乐。 | cóngcǐ, Huāguǒ Shān de hóuzi hěn kuàilè. | From then on, the monkeys of Flower Fruit Mountain were very happy. (从此 cóngcǐ, from then on; 快乐 kuàilè, happy) | New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before) |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 

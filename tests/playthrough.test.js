@@ -248,14 +248,17 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => n.place)"), ['cave', 'cave', 'cave']);
   await pressAt(6, 10, 'up', 'hearing what the old monkey calls the cave');
   assert.ok(knows('家'), 'the old monkey should teach 家');
-  await pressAt(9, 9, 'up', 'being made king');
-  assert.ok(knows('王'), 'the big monkey should teach 王');
-  assert.equal(get('yourName().zh'), '美猴王', 'you should be called 美猴王 now');
+  run("globalThis.__scenes = []; storyScene = async id => { __scenes.push(id); }");   // (the scene plays by itself, with its pictures; its own test plays it)
   for (const n of [1, 2, 3]){
     await pressAt(6, 10, 'up', `counting monkey ${n} into the cave`);
     assert.equal(area().count, n);
   }
   for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
+  assert.deepEqual(get('__scenes'), ['crowning'], 'with the whole troop home, they make you king: the scene, told like the opening');
+  assert.ok(knows('王'), 'becoming king teaches 王');
+  assert.equal(get('yourName().zh'), '美猴王', 'you should be called 美猴王 now');
+  await pressAt(9, 9, 'up', 'talking to the big monkey, now you’re king');
+  assert.ok(get('__said').includes('你是我们的王！'), 'he hails you as king');
   assert.ok(get("['troop1', 'troop2', 'troop3'].every(id => ALL_NPCS.find(n => n.id === id).place === 'cave')"), 'the whole troop should be in the cave');
   assert.ok(get('AREA.checklist.filter(c => !c.chapter).every(c => matches(c.done))'), 'all of the prologue should be ticked off');
   assert.equal(area().chapter, 1, 'the prologue is over, and chapter 1 begins, with its card');

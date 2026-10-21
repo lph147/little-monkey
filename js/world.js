@@ -114,6 +114,8 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     await gapQ({who:speaker(who), t, en:s.gap.en, gap:s.gap.word});
     t.filter(w => lvl(w) >= 1).forEach(useWord);
   },
+  // A scene told like the opening (one of the area's scenes): pictures and captions, read aloud; then the game carries on.
+  async scene(s){ await storyScene(s.scene); },
   // A new chapter of the story begins: its title card, and its checklist from then on.
   async chapter(s){
     here().chapter = s.chapter; save(); SFX.fanfare();

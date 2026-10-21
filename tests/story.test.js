@@ -100,18 +100,47 @@ test('the rocks roll away only once the rest of the prologue is done: the three 
   assert.equal(await gate({hungry: 'done', thirsty: 'done', flowers: 'done'}, all), true);
 });
 
-test('the prologue runs from being born to counting the troop in; then chapter 1, The Great Feast, begins with its card', async () => {
+test('the prologue runs from being born to counting the troop in and becoming king; then chapter 1, The Great Feast, begins with its card', async () => {
   const {loadGame} = require('./fake-browser');
-  const g = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 6, count: 2}}}});
+  const g = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 5, count: 2}}}});
   const chapters = JSON.parse(g.run('JSON.stringify(AREA.chapters)'));
   assert.deepEqual(chapters, [{name: 'Prologue', title: 'The Water Curtain Cave'}, {name: 'Chapter 1', title: 'The Great Feast'}]);
   assert.ok(g.run('AREA.checklist.every(c => !c.chapter)'), 'the checklist so far is the prologue’s');
   g.run("mode = 'play'; save = () => {}");
   await g.run('runEvents()');
   assert.equal(g.run('here().chapter'), 0, 'still the prologue while the troop is coming in');
+  g.run("globalThis.__shown = []; storyScene = async id => { __shown.push('scene ' + id); }; showNotice = async w => { __shown.push(w); setSeen(w); }");
   g.run('here().count = 3');
   g.run('runEvents()');
-  assert.match(g.el('#sheet').textContent, /Chapter 1\s*The Great Feast/, 'the whole troop is home: chapter 1’s card');
+  for (let i = 0; i < 5; i++) await new Promise(r => setImmediate(r));
+  assert.deepEqual(JSON.parse(g.run('JSON.stringify(__shown)')), ['scene crowning', '王'], 'the whole troop is home: the scene of becoming king, then the card for 王');
+  assert.equal(g.run('here().cave'), 6, 'you’re king');
+  assert.match(g.el('#sheet').textContent, /Chapter 1\s*The Great Feast/, 'then chapter 1’s card');
   assert.equal(g.run('here().chapter'), 1);
   assert.equal(g.run('chapterItems().length'), 0, 'chapter 1’s checklist is still to come');
+});
+
+test('a scene plays like the opening: its pictures, its captions one at a time, and OK or Skip ends it; Settings can play it again', async () => {
+  const {loadGame} = require('./fake-browser');
+  const g = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 6, count: 3, chapter: 1}}}});
+  g.run("mode = 'play'; save = () => {}; globalThis.__done = false; storyScene('crowning').then(() => { __done = true; })");
+  assert.equal(g.run('mode'), 'intro', 'it plays over the game, as the opening does');
+  for (let t = 0; t <= 16; t += .25) g.run(`SCENE_ART.crowning(${t}, ${1000 + t * 1000})`);   // every moment of it can be drawn
+  g.run('frame(1050)');
+  assert.equal(g.run('capIdx'), 0, 'its first caption');
+  assert.equal(g.run("scene.caps.map(c => c.words.join('')).join(' | ')"), '水帘洞是我们的家。 | 你很勇敢！ | 你是我们的王！ | 美猴王！ | 从此，花果山的猴子很快乐。');
+  assert.equal(g.run("scene.caps[2].teach"), '王', 'the word it teaches is in bold green');
+  assert.equal(g.run('scene.last'), 'OK');
+  g.run("document.querySelector('#skipBtn').onclick()");
+  await new Promise(r => setImmediate(r));
+  assert.equal(g.run('__done'), true, 'Skip ends it');
+  assert.equal(g.run('mode'), 'play', 'and you carry on where you were');
+  g.run('openSettings()');
+  const watch = g.el('#sheet').querySelector('[data-scene="crowning"]');
+  assert.ok(watch && /Watch becoming king/.test(watch.textContent), 'Settings can play it again');
+  watch.click();
+  assert.equal(g.run('mode'), 'intro');
+  const early = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 5, count: 2}}}});
+  early.run("mode = 'play'; openSettings()");
+  assert.ok(!early.el('#sheet').querySelector('[data-scene]'), 'not before you’ve become king');
 });

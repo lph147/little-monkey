@@ -53,6 +53,7 @@ const sentences = [
   ...Object.entries(AREA.examples).map(([w, e]) => [`the example for ${w}`, e]),
   ['the sign', AREA.sign.says],
   ...AREA.intro.map((c, i) => [`the opening's caption ${i + 1}`, c]),
+  ...Object.entries(AREA.scenes || {}).flatMap(([id, sc]) => sc.captions.map((c, i) => [`the ${id} scene's caption ${i + 1}`, c])),
   ...Object.entries(AREA.legend).filter(([, t]) => t.sign).map(([ch, t]) => [`the sign on "${ch}" tiles`, t.sign.says]),
   ...Object.values(AREA.talk).flatMap(parts => parts.flatMap(p => p.do.filter(s => s.gap).map(s => [`the gap sentence "${s.gap.sentence}"`, {zh: s.gap.sentence, en: s.gap.en}])))
 ];
@@ -414,6 +415,18 @@ test('intro captions are in time order, each with its Chinese and English (its w
     assert.ok(c.zh && c.en, `intro caption ${i + 1} needs its Chinese (zh, words with spaces between) and English (en)`);
     if (i) assert.ok(c.at > AREA.intro[i - 1].at, `intro caption ${i + 1} comes before the one above it`);
   });
+});
+
+test('every scene has pictures, captions in time order (each with Chinese and English, teaching only a word it says), and a Settings button to watch it again', () => {
+  for (const [id, sc] of Object.entries(AREA.scenes || {})){
+    assert.ok(get(`typeof SCENE_ART[${JSON.stringify(id)}] === 'function'`), `the ${id} scene needs its pictures in SCENE_ART (js/draw.js)`);
+    assert.ok(sc.watch && sc.when, `the ${id} scene needs watch (its button in Settings) and when (once it's been seen)`);
+    sc.captions.forEach((c, i) => {
+      assert.ok(c.zh && c.en, `the ${id} scene's caption ${i + 1} needs its Chinese and English`);
+      if (i) assert.ok(c.at > sc.captions[i - 1].at, `the ${id} scene's caption ${i + 1} comes before the one above it`);
+      if (c.teach) assert.ok(c.zh.split(' ').includes(c.teach) && collectible.includes(c.teach), `the ${id} scene's caption ${i + 1} teaches ${c.teach}, which it should say, and you should be able to collect`);
+    });
+  }
 });
 
 test('every word you can collect has an example sentence for its page', () => {

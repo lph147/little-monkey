@@ -205,6 +205,16 @@ const SCREENS = [
   {id: 'led-in', title: 'The troop follows you in', save: 'ledIn', why: 'In the cave, with a ! over the old monkey.', run: async () => { play(); await wait(500); }},
   {id: 'home', title: 'Our home', save: 'ledIn', why: 'The old monkey teaches 家.', run: async () => { play(); await wait(100); talk(npc('elder')); await wait(400); }},
   {id: 'made-king', title: 'You are our king', save: 'toBeKing', why: 'The big monkey teaches 王.', run: async () => { play(); await wait(100); talk(npc('big')); await wait(400); }},
+  // becoming king, the scene that ends the prologue: each screen is held where it waits for Next (introClock: just after
+  // its caption's time, in scenes.crowning; advancedTo: which caption)
+  {id: 'crowning-home', title: 'The troop is home', save: 'home', why: 'The scene that ends the prologue, told like the opening: the troop gathers round you in the cave.', run: async () => {
+    play(); await wait(100); storyScene('crowning'); introClock = .05; advancedTo = 0; await wait(400); }},
+  {id: 'crowning-king', title: 'You are our king!', save: 'home', why: 'A crown drops onto your head, with sparkles, and the troop looks at you (王 in bold green).', run: async () => {
+    play(); await wait(100); storyScene('crowning'); introClock = 5.55; advancedTo = 2; await wait(400); }},
+  {id: 'crowning-bow', title: 'Handsome Monkey King!', save: 'home', why: 'The troop bows, one after another.', run: async () => {
+    play(); await wait(100); storyScene('crowning'); introClock = 8.05; advancedTo = 3; await wait(400); }},
+  {id: 'crowning-dusk', title: 'Happy ever after', save: 'home', why: 'Outside, the sun sets on Flower Fruit Mountain, with the troop at home on top; then night, and fireflies.', run: async () => {
+    play(); await wait(100); storyScene('crowning'); introClock = 11.05; advancedTo = 4; await wait(400); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'Your replies show 美猴王 now.', run: async () => { play(); await wait(100); replyWith('你好'); await wait(400); }},
   {id: 'count-two', title: 'Counting the troop in', save: 'king', why: 'The card for 二 explains 两.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); next(); await wait(400); }},

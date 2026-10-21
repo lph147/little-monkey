@@ -65,6 +65,9 @@ const DRAFTS = [
     ['花 上 有 蜜蜂 。', 'There is a bee on the flower.', 'The example on 蜜蜂 (bee)’s page'],
     ['山 上 有 野猪 。', 'There is a wild boar on the mountain.', 'The example on 野猪 (wild boar)’s page']]
     .map(([zh, en, where]) => ({zh, en, where:'The prologue, up the stream, 18 October 2026 (in the game): ' + where})),
+  ...[['水帘洞 是 我们 的 家 。', 'The Water Curtain Cave is our home.'], ['你 很 勇敢 ！', 'You are very brave! (很 hěn, very; 勇敢 yǒnggǎn, brave)'],
+    ['美猴王 ！', 'Handsome Monkey King!'], ['从此 ， 花果山 的 猴子 很 快乐 。', 'From then on, the monkeys of Flower Fruit Mountain were very happy. (从此 cóngcǐ, from then on; 快乐 kuàilè, happy)']]
+    .map(([zh, en]) => ({zh, en, where:'New on 21 October 2026 (in the game): the scene of becoming king, which ends the prologue (its third caption, 你是我们的王！, is the big monkey’s line from before)'})),
   {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.', where:'New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path'},
   {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'}
 ];
@@ -143,7 +146,11 @@ ${table(['Chinese', 'Pinyin', 'English', 'Answer', 'Notes'], AREA.storyQuestions
 ### The opening scene
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], AREA.intro.map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
+${Object.entries(AREA.scenes || {}).map(([id, sc]) => `
+### Scene: ${sc.watch.replace(/^Watch /, '')}
 
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], sc.captions.map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
+`).join('')}
 ### Names
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], names.map(n => [n.zh, n.py, n.en, notes]))}

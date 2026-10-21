@@ -90,8 +90,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'tell', if:{cave:2, caveThings:3}, text:'Tell the old monkey about the {洞}', arrow:'elder'},
     {id:'lead', if:{cave:3}, text:'Lead the troop into the {洞}: jump through the {瀑布}', arrow:[4, 1, 'falls']},
     {id:'home', if:{cave:4}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
-    {id:'king', if:{cave:5}, text:'Talk to the big monkey', arrow:'big'},
-    {id:'count', if:{cave:6, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
+    {id:'count', if:{cave:{atLeast:5}, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
   ],
 
   // What the task box says when there are no tasks: the first whose if matches.
@@ -123,14 +122,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Tell the old monkey what’s inside', show:{caveThings:3}, done:{cave:{atLeast:3}}},
     {text:'Lead the troop into the cave', show:{cave:{atLeast:3}}, done:{cave:{atLeast:4}}},
     {text:'Hear what the old monkey calls the cave', show:{cave:{atLeast:4}}, done:{cave:{atLeast:5}}},
-    {text:'Become the troop’s king', show:{cave:{atLeast:5}}, done:{cave:{atLeast:6}}},
-    {text:'Count the troop into the cave ({troopIn}/3)', show:{cave:{atLeast:6}}, done:{count:3}}
+    {text:'Count the troop into the cave ({troopIn}/3)', show:{cave:{atLeast:5}}, done:{count:3}},
+    {text:'Become the troop’s king', show:{count:3}, done:{cave:{atLeast:6}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
     elder: [{if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'},
-      {if:{cave:4}, show:'!'}, {if:{cave:6, count:{below:3}}, show:'!'}],
+      {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
@@ -140,7 +139,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the ledges
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
-    big: [{if:{climb:1, new:'棍子'}, show:'!'}, {if:{cave:5}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
+    big: [{if:{climb:1, new:'棍子'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'}]
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:
@@ -223,8 +222,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{climb:1, new:'棍子', near:'big'}, do:[{stopsYou:'big'}]},
     // the troop has followed you up: as you come out of the narrow way by the waterfall, they leap past you to their places
     {if:{climb:3, at:[7, 2, 'falls']}, do:[{set:{climb:4}}, {follow:[]}, {message:'The troop has followed you all the way up to the {瀑布}!'}]},
-    // the whole troop is home, and you're king: the prologue is over, and chapter 1 begins (its title card)
-    {if:{chapter:0, count:3}, do:[{chapter:1}]}
+    // the whole troop is home: the prologue ends with the troop making you king (a scene, told like the opening; as in
+    // the book, they move in, then make him king), and chapter 1 begins (its title card)
+    {if:{chapter:0, count:3}, do:[{scene:'crowning'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}]}
   ],
 
   // The area's places: small maps you move between. The first is where the game starts. Each has
@@ -753,6 +753,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   gap       a sentence to finish by filling the gap: {sentence, en, word}, word being the missing one
   //   stopsYou  a character stops you as you walk past (in an event): a ! pops up over them, you turn to face
   //             them, and they talk to you (their talk here)
+  //   scene     one of the area's scenes (scenes, below) plays, told like the opening, then the steps carry on
   //   chapter   a new chapter begins: its title card, and its part of the checklist from then on
   //   follow    characters follow you, in line, like Pikachu in Pokémon Yellow, such as {follow:['playful', 'big']}
   //             (the first right behind you); {follow:[]} and they stop, going to their places (see moves)
@@ -832,9 +833,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cave:3}, do:[{say:'letsGo', hint:'Lead the way: jump through the waterfall.'}]},
       // the troop moves in. One new word each time you talk to him.
       {if:{cave:4}, do:[{say:'home', teach:'家'}, {newWord:'家'}, {set:{cave:5}}]},
-      {if:{cave:6, count:0}, do:[{message:'A monkey comes in through the water curtain.'}, {say:'count1', teach:'一'}, {newWord:'一'}, {set:{count:1}}]},
-      {if:{cave:6, count:1}, do:[{message:'Another monkey comes in.'}, {say:'count2'}, {newWord:'二', note:'When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).'}, {set:{count:2}}]},
-      {if:{cave:6, count:2}, do:[{message:'And another!'}, {say:'count3', teach:'三'}, {newWord:'三'}, {set:{count:3}}, {message:'The whole troop is home.'}]},
+      {if:{cave:{atLeast:5}, count:0}, do:[{message:'A monkey comes in through the water curtain.'}, {say:'count1', teach:'一'}, {newWord:'一'}, {set:{count:1}}]},
+      {if:{cave:{atLeast:5}, count:1}, do:[{message:'Another monkey comes in.'}, {say:'count2'}, {newWord:'二', note:'When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).'}, {set:{count:2}}]},
+      {if:{cave:{atLeast:5}, count:2}, do:[{message:'And another!'}, {say:'count3', teach:'三'}, {newWord:'三'}, {set:{count:3}}, {message:'The whole troop is home.'}]},
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
@@ -898,7 +899,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'The big monkey shows you how to fight. When something jumps out of the long grass, choose 打 (dǎ, hit) and answer to hit it. When it attacks, listen for where it’s coming from, and pick that to jump aside.'},
         {message:'A wrong answer when it attacks costs a heart, and you have 5. Eat something to get one back, or come back to the old monkey to rest.'}
       ]},
-      {if:{cave:5}, do:[{say:'king', teach:'王'}, {newWord:'王'}, {message:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}]},
+      {if:{cave:{atLeast:6}}, do:[{say:'king'}]},   // once you're king (the troop makes you king at the end of the prologue: the crowning scene)
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'dare'}]},
       {do:[{request:'flowers'}]}
@@ -972,5 +973,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {at:9, zh:'一只 小 猴子 ！', en:'A little monkey!'},
     {at:10.6, zh:'它 的 眼睛 里 有 光 。', en:'Light shone from its eyes.'},
     {at:13.2, zh:'你好 ， 小 猴子 ！', en:'Hello, little monkey!'}
-  ]
+  ],
+
+  // Other scenes told like the opening, played by the scene step: their captions, as the opening's (teach: the word
+  // being taught, in bold green), and watch: a button in Settings to watch it again, once its when matches. Their
+  // pictures are drawn by js/draw.js (SCENE_ART), to match the times.
+  scenes: {
+    // the end of the prologue: in the cave, the troop makes you king; then, outside, the sun sets on Flower Fruit Mountain
+    crowning: {watch:'Watch becoming king', when:{cave:{atLeast:6}}, captions: [
+      {at:0, zh:'水帘洞 是 我们 的 家 。', en:'The Water Curtain Cave is our home.'},
+      {at:3, zh:'你 很 勇敢 ！', en:'You are very brave!'},
+      {at:5.5, zh:'你 是 我们 的 王 ！', en:'You are our king!', teach:'王'},
+      {at:8, zh:'美猴王 ！', en:'Handsome Monkey King!'},
+      {at:11, zh:'从此 ， 花果山 的 猴子 很 快乐 。', en:'From then on, the monkeys of Flower Fruit Mountain were very happy.'}
+    ]}
+  }
 };

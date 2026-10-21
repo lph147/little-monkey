@@ -49,6 +49,11 @@ function sizeText(h){
   root.style.fontSize = s.fs + 'px';
   for (const k of ['face', 'small', 'mid', 'scene', 'big', 'icon']) root.style.setProperty('--pic-' + k, s[k] + 'px');
 }
+// Scenes told with pictures and captions: the opening, and the area's other scenes (AREA.scenes), such as becoming king.
+// Each has its captions, its pictures (drawn by js/draw.js to match the captions' times), its sounds (at those times), the
+// label on its last button, and what happens when it ends (Skip, or that last button).
+const SCENE_SOUNDS = {opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer']], crowning:[[5.5, 'chime'], [8, 'fanfare'], [11, 'shimmer']]};
+let scene = {id:'opening', caps:CAPS, last:'Begin', end:() => startGame()};
 let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}, advancedTo = 0;
 function frame(now){
   if (mode === 'title') drawScene(0, now);
@@ -56,15 +61,15 @@ function frame(now){
     // The scene waits at each sentence until the player presses Next.
     const dt = Math.min(.05, (now - introLast) / 1000); introLast = now;
     let nt = introClock + dt;
-    const next = CAPS[capIdx + 1];
+    const caps = scene.caps, next = caps[capIdx + 1];
     if (next && nt >= next.t && advancedTo < capIdx + 1) nt = Math.max(introClock, next.t - .001);
     introClock = nt;
     const t = introClock;
-    drawScene(t, now, Math.min(1, t / .8));   // the mountain slides to the middle as the story begins
-    const ci = CAPS.reduce((a, c, i) => t >= c.t ? i : a, 0);
-    if (ci !== capIdx){ capIdx = ci; capShownAt = now; showCaption(CAPS[ci], ci === CAPS.length - 1); }
-    const ev = (k, at, fn) => { if (t >= at && !introEvents[k]){ introEvents[k] = 1; fn(); } };
-    ev('r', 7.2, SFX.rumble); ev('c', 8.7, SFX.chime); ev('s', 10.6, SFX.shimmer);
+    if (scene.id === 'opening') drawScene(t, now, Math.min(1, t / .8));   // the mountain slides to the middle as the story begins
+    else SCENE_ART[scene.id](t, now);
+    const ci = caps.reduce((a, c, i) => t >= c.t ? i : a, 0);
+    if (ci !== capIdx){ capIdx = ci; capShownAt = now; showCaption(caps[ci], ci === caps.length - 1); }
+    for (const [at, sound] of SCENE_SOUNDS[scene.id] || []) if (t >= at && !introEvents[at]){ introEvents[at] = 1; SFX[sound](); }
   } else { update(now); drawWorld(now); }
   updateCtx(now); updateTips(now);
   sc.imageSmoothingEnabled = false;
@@ -77,14 +82,14 @@ function frame(now){
 const capSaid = c => c.words.join('');
 function showCaption(c, last){
   const box = $('#capbox');
-  box.innerHTML = pixelIcons(`<div class="cap">${lineHTML(c.words)}<div class="gloss"></div><div class="cen">${esc(c.en)}</div></div>
-    <div class="caprow"><button class="btn" id="againBtn" aria-label="Hear it again">🔊</button>${last ? '<button class="btn primary" id="beginBtn">Begin</button>' : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`);
+  box.innerHTML = pixelIcons(`<div class="cap">${lineHTML(c.words, c.teach)}<div class="gloss"></div><div class="cen">${esc(c.en)}</div></div>
+    <div class="caprow"><button class="btn" id="againBtn" aria-label="Hear it again">🔊</button>${last ? `<button class="btn primary" id="beginBtn">${esc(scene.last)}</button>` : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`);
   box.hidden = false; $('#skipBtn').hidden = false;
   bindTokens(box);
   say(capSaid(c)); $('#againBtn').onclick = () => say(capSaid(c));
-  $('#skipBtn').onclick = startGame;
+  $('#skipBtn').onclick = scene.end;
   const nx = $('#nextBtn'); if (nx) nx.onclick = () => { advancedTo = capIdx + 1; SFX.blip(); };
-  const bb = $('#beginBtn'); if (bb) bb.onclick = startGame;
+  const bb = $('#beginBtn'); if (bb) bb.onclick = scene.end;
 }
 let lastCtx = null;
 function currentPrompt(now){
@@ -100,7 +105,7 @@ function buttonLabels(now){
   }
   if (talkNext){ const ok = talkBox.querySelector('[data-a=ok]'); return [ok ? btnLabel(ok) : 'Say it', '']; }
   if (mode === 'title'){ const s = $('#titleButtons').querySelector('.sel'); return [s ? btnLabel(s) : 'Choose', '']; }
-  if (mode === 'intro') return [$('#beginBtn') ? 'Begin' : 'Next', 'Skip'];
+  if (mode === 'intro') return [$('#beginBtn') ? scene.last : 'Next', 'Skip'];
   return [currentPrompt(now), !$('#saybox').hidden ? 'Close' : ''];
 }
 let lastLabels = '';
@@ -227,9 +232,22 @@ function slotCard(n){
     on('[data-a=yes]', () => { deleteSlot(n); if (n === SLOT) setUpGame(); toTitle(); filesCard(null, n); toast(`Game ${n} is deleted.`); });
   });
 }
-function playIntro(){
+function playScene(s){
+  scene = s;
   $('#titlecard').hidden = true;
   mode = 'intro'; introClock = 0; introLast = performance.now(); capIdx = -1; introEvents = {}; advancedTo = 0;
+}
+function playIntro(){ playScene({id:'opening', caps:CAPS, last:'Begin', end:() => startGame()}); }
+// One of the area's other scenes (AREA.scenes), in the story (the scene step) or watched again from Settings: once
+// it ends, you're back where you were.
+function storyScene(id){
+  return new Promise(res => {
+    let ended = false;
+    playScene({id, caps:sceneCaps(AREA.scenes[id].captions), last:'OK', end:() => {
+      if (ended) return; ended = true;
+      stopSpeech(); $('#capbox').hidden = true; $('#skipBtn').hidden = true; mode = 'play'; res();
+    }});
+  });
 }
 function howToPlay(){
   return new Promise(res => {

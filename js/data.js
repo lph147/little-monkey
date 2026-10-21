@@ -21,7 +21,8 @@ const PUNCT = new Set(['！','。','，','？','、','……']);
 const L = {};                         // what the characters say
 for (const [k, line] of Object.entries(AREA.lines)) L[k] = {t:toks(line.zh), en:line.en};
 const STORY = AREA.story.map(s => ({t:toks(s.zh), en:s.en, pic:s.pic}));
-const CAPS = AREA.intro.map(c => ({t:c.at, words:toks(c.zh), en:c.en}));   // the opening's captions
+const sceneCaps = list => list.map(c => ({t:c.at, words:toks(c.zh), en:c.en, teach:c.teach}));
+const CAPS = sceneCaps(AREA.intro);   // the opening's captions (the other scenes': AREA.scenes, played by playScene in js/main.js)
 
 // The area's places, small maps you move between, and the one you're in. A position in the content is
 // in the first place unless it says another: [x, y, 'place'], or place:'id' (placeOf gives which).

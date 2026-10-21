@@ -96,7 +96,8 @@ function tasksPage(back){
 }
 
 /* ================= SETTINGS ================= */
-// Sound, pinyin, English on reply choices (for players who know some Chinese already), How to play, the opening and the title screen
+// Sound, pinyin, English on reply choices (for players who know some Chinese already), How to play, the opening (and the area's
+// other scenes, such as becoming king, once you've seen them) and the title screen
 // (where your games are: to switch, start a new one, copy one to a file or delete one). The game saves by itself.
 function openSettings(focusId){
   openCard(`<p class="label">Settings</p>
@@ -107,6 +108,7 @@ function openSettings(focusId){
       <button class="btn" data-m="replyEn" data-label="English">English on replies <span class="val">${S.replyEn ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="howto">How to play</button>
       <button class="btn" data-m="opening">Watch the opening</button>
+      ${Object.entries(AREA.scenes || {}).filter(([, sc]) => matches(sc.when)).map(([id, sc]) => `<button class="btn" data-m="scene" data-scene="${id}">${esc(sc.watch)}</button>`).join('')}
       <button class="btn" data-m="title">Title screen: your games</button>
     </div>
     <div class="actions"><button class="btn" data-a="back" data-b>Back</button></div>`);
@@ -119,7 +121,8 @@ function openSettings(focusId){
     replyEn: () => { S.replyEn = !S.replyEn; save(); openSettings('replyEn'); },
     howto: () => howToPlay().then(() => openSettings('howto')),
     opening: () => { closeCard(); playIntro(); },
+    scene: bt => { closeCard(); storyScene(bt.dataset.scene); },
     title: () => { closeCard(); toTitle(); }
   };
-  sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](); });
+  sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](bt); });
 }
