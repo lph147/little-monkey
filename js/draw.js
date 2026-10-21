@@ -398,42 +398,43 @@ function drawScene(t, now, mid = 0){   // mid: from 0 (the mountain on the right
 }
 
 /* ---- the end of the prologue: becoming king ---- */
-// In the Water Curtain Cave the troop gathers round you on the stone seat, looks at you, and makes you king (a crown
-// drops onto your head, with sparkles), then bows, one after another. Then, outside, the sun sets on Flower Fruit
-// Mountain, with the troop at home on top. Its times match the crowning scene's captions (scenes.crowning in the area):
-// 0 home, 3 brave, 5.5 king, 8 美猴王, 11 happy ever after. The scene waits just before each caption's time until you
+// As in the book: in the Water Curtain Cave the troop gathers round you by the high stone seat and looks at you; they
+// bow, one after another, and call you their king; then you climb up onto the high seat (高登王位), and take the name
+// 美猴王 (no crown: he doesn't get one). Then, outside, the sun sets on Flower Fruit Mountain, with the troop at home on
+// top. Its times match the becoming-king scene's captions (scenes.becomingKing in the area): 0 home, 3 brave, 5.5 king (they
+// bow), 8 美猴王 (up onto the seat), 11 happy ever after. The scene waits just before each caption's time until you
 // press Next, so each moment looks right there (the cave fades out only once the last caption has begun). The captions
 // cover the bottom, so it all happens above them.
 const CROWD = [['big', 66, 46, 'right'], ['playful', 38, 54, 'right'], ['troop2', 10, 62, 'right'],   // [who, x, y, facing you]
   ['elder', 142, 46, 'left'], ['troop1', 170, 54, 'left'], ['troop3', 198, 62, 'left']];
-function drawCrowning(t, now){
+function drawBecomingKing(t, now){
   const W = VW*T, H = VH*T, blink = now % 3200 < 130;
   if (t < 11.3){
     for (let y = 0; y < H; y += 4) R(b, 0, y, W, 4, mix('#2A231E', '#4A3E33', y / H));   // the cave's rock
     for (let i = 0; i < 70; i++) R(b, Math.floor(rnd(i, 21) * W), Math.floor(rnd(i, 22) * H), 2 + Math.floor(rnd(i, 23) * 5), 2, i % 2 ? '#3A312A' : '#55483C');
-    const warm = clamp(t / 1.2, 0, 1) * (t >= 8 ? 1 : .7);   // a warm glow round the seat, brighter once you're king
+    const warm = clamp(t / 1.2, 0, 1) * (t >= 8 ? 1 : .7);   // a warm glow round the seat, brighter once you're up on it
     const gl = b.createRadialGradient(120, 40, 4, 120, 40, 90); gl.addColorStop(0, `rgba(255,214,140,${.45 * warm})`); gl.addColorStop(1, 'rgba(255,214,140,0)');
     b.fillStyle = gl; b.fillRect(0, 0, W, H);
-    R(b, 100, 14, 40, 34, '#7C786E'); R(b, 100, 14, 40, 2, '#9A968C'); R(b, 100, 14, 2, 34, '#6A665D'); R(b, 138, 14, 2, 34, '#6A665D');   // the stone seat's back
-    const hop = t >= 5.5 && t < 6.1 ? Math.round(Math.sin((t - 5.5) / .6 * Math.PI) * 6) : 0;   // you jump for joy
-    b.drawImage(monkeySprite('player', 'down', blink), 104, 22 - hop, 32, 32);
-    R(b, 96, 46, 48, 14, '#8E8A80'); R(b, 96, 46, 48, 2, '#ABA79C'); R(b, 96, 58, 48, 2, '#5E5A52');   // and its seat, in front of your legs
-    if (t >= 5.5){   // the crown drops onto your head
-      const y = 15 - hop - Math.round(18 * (1 - clamp((t - 5.5) / .4, 0, 1)));
-      R(b, 113, y + 5, 14, 3, '#F2C14E'); R(b, 113, y + 7, 14, 1, '#C99A2E');
-      for (const [x, h] of [[113, 5], [119, 7], [125, 5]]) R(b, x, y + 5 - h + 2, 2, h, '#F2C14E');
-      R(b, 119, y + 6, 2, 1, '#D83A3A'); R(b, 115, y + 6, 1, 1, '#3F8FCB'); R(b, 124, y + 6, 1, 1, '#3F8FCB');
-      for (let i = 0; i < 10; i++){   // sparkles round you
+    R(b, 100, 14, 40, 34, '#7C786E'); R(b, 100, 14, 40, 2, '#9A968C'); R(b, 100, 14, 2, 34, '#6A665D'); R(b, 138, 14, 2, 34, '#6A665D');   // the high stone seat's back
+    const seatFront = () => { R(b, 96, 46, 48, 14, '#8E8A80'); R(b, 96, 46, 48, 2, '#ABA79C'); R(b, 96, 58, 48, 2, '#5E5A52'); };
+    const up = clamp((t - 8) / .6, 0, 1);   // from 8 you climb up onto the seat: from the floor in front of it, in a little arc
+    const you = monkeySprite('player', 'down', blink), y = Math.round(54 - up * 32 - Math.sin(up * Math.PI) * 10);
+    if (up < 1){ seatFront(); b.drawImage(you, 104, y, 32, 32); }   // standing in front of it (and on your way up)
+    else { b.drawImage(you, 104, y, 32, 32); seatFront(); }          // sitting on it: its front hides your legs
+    if (t >= 8){   // sparkles round you, up on the seat
+      for (let i = 0; i < 10; i++){
         const a = i / 10 * Math.PI * 2 + now / 1600, r = 22 + 4 * Math.sin(now / 300 + i), tw = Math.sin(now / 180 + i * 2);
-        if (tw < 0) continue;
+        if (tw < 0 || up < 1) continue;
         const sx = Math.round(120 + Math.cos(a) * r), sy = Math.round(38 + Math.sin(a) * r * .8);
         R(b, sx, sy, 1, 1, '#FFF6D8'); if (tw > .7){ R(b, sx - 1, sy, 3, 1, '#FFE27A'); R(b, sx, sy - 1, 1, 3, '#FFE27A'); }
       }
     }
-    CROWD.forEach(([id, x, y, dir], i) => {   // the troop: looking at you from 3 on, bowing one by one from 8
-      const bow = t >= 8 + i * .25, d = t >= 3 ? dir : 'down';
-      if (bow) b.drawImage(monkeySprite(id, d, false), x, y + 7, 32, 25);
-      else b.drawImage(monkeySprite(id, d, blink && i % 2 === 0), x, y, 32, 32);
+    CROWD.forEach(([id, x, y, dir], i) => {   // the troop: looking at you from 3 on, bowing one by one from 5.5
+      const bow = t >= 5.5 + i * .25, d = t >= 3 ? dir : 'down';
+      if (bow){   // bowing: leaning forward towards you, from the feet, and a little lower
+        b.save(); b.translate(x + 16, y + 32); b.rotate(dir === 'right' ? .45 : -.45);
+        b.drawImage(monkeySprite(id, d, true), -16, -28, 32, 28); b.restore();
+      } else b.drawImage(monkeySprite(id, d, blink && i % 2 === 0), x, y, 32, 32);
     });
     if (t > 11){ b.globalAlpha = clamp((t - 11) / .3, 0, 1); R(b, 0, 0, W, H, '#0B0907'); b.globalAlpha = 1; }   // fading out of the cave
     return;
@@ -449,4 +450,4 @@ function drawCrowning(t, now){
   if (t < 11.9){ b.globalAlpha = 1 - clamp((t - 11.3) / .6, 0, 1); R(b, 0, 0, W, H, '#0B0907'); b.globalAlpha = 1; }   // fading in
 }
 // The pictures for the area's scenes (AREA.scenes), by name; the opening's are drawScene, above.
-const SCENE_ART = {crowning: drawCrowning};
+const SCENE_ART = {becomingKing: drawBecomingKing};

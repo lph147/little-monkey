@@ -254,7 +254,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     assert.equal(area().count, n);
   }
   for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
-  assert.deepEqual(get('__scenes'), ['crowning'], 'with the whole troop home, they make you king: the scene, told like the opening');
+  assert.deepEqual(get('__scenes'), ['becomingKing'], 'with the whole troop home, they make you king: the scene, told like the opening');
   assert.ok(knows('王'), 'becoming king teaches 王');
   assert.equal(get('yourName().zh'), '美猴王', 'you should be called 美猴王 now');
   await pressAt(9, 9, 'up', 'talking to the big monkey, now you’re king');

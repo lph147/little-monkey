@@ -52,7 +52,7 @@ function sizeText(h){
 // Scenes told with pictures and captions: the opening, and the area's other scenes (AREA.scenes), such as becoming king.
 // Each has its captions, its pictures (drawn by js/draw.js to match the captions' times), its sounds (at those times), the
 // label on its last button, and what happens when it ends (Skip, or that last button).
-const SCENE_SOUNDS = {opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer']], crowning:[[5.5, 'chime'], [8, 'fanfare'], [11, 'shimmer']]};
+const SCENE_SOUNDS = {opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer']], becomingKing:[[5.5, 'chime'], [8, 'fanfare'], [11, 'shimmer']]};
 let scene = {id:'opening', caps:CAPS, last:'Begin', end:() => startGame()};
 let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}, advancedTo = 0;
 function frame(now){

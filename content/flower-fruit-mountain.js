@@ -224,7 +224,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{climb:3, at:[7, 2, 'falls']}, do:[{set:{climb:4}}, {follow:[]}, {message:'The troop has followed you all the way up to the {瀑布}!'}]},
     // the whole troop is home: the prologue ends with the troop making you king (a scene, told like the opening; as in
     // the book, they move in, then make him king), and chapter 1 begins (its title card)
-    {if:{chapter:0, count:3}, do:[{scene:'crowning'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}]}
+    {if:{chapter:0, count:3}, do:[{scene:'becomingKing'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}]}
   ],
 
   // The area's places: small maps you move between. The first is where the game starts. Each has
@@ -980,7 +980,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // pictures are drawn by js/draw.js (SCENE_ART), to match the times.
   scenes: {
     // the end of the prologue: in the cave, the troop makes you king; then, outside, the sun sets on Flower Fruit Mountain
-    crowning: {watch:'Watch becoming king', when:{cave:{atLeast:6}}, captions: [
+    becomingKing: {watch:'Watch becoming king', when:{cave:{atLeast:6}}, captions: [
       {at:0, zh:'水帘洞 是 我们 的 家 。', en:'The Water Curtain Cave is our home.'},
       {at:3, zh:'你 很 勇敢 ！', en:'You are very brave!'},
       {at:5.5, zh:'你 是 我们 的 王 ！', en:'You are our king!', teach:'王'},
