@@ -52,7 +52,8 @@ function sizeText(h){
 // Scenes told with pictures and captions: the opening, and the area's other scenes (AREA.scenes), such as becoming king.
 // Each has its captions, its pictures (drawn by js/draw.js to match the captions' times), its sounds (at those times), the
 // label on its last button, and what happens when it ends (Skip, or that last button).
-const SCENE_SOUNDS = {opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer']], becomingKing:[[5.5, 'chime'], [8, 'fanfare'], [11, 'shimmer']]};
+const SCENE_SOUNDS = {opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer']], becomingKing:[[5.5, 'chime'], [8, 'fanfare'], [11, 'shimmer']],
+  buildingSchool:[[3.6, 'thwack'], [4.2, 'thwack'], [4.8, 'thwack'], [5.4, 'thwack'], [6.6, 'thwack'], [7.3, 'thwack'], [8, 'thwack'], [9.05, 'fanfare'], [9.6, 'chime']]};
 let scene = {id:'opening', caps:CAPS, last:'Begin', end:() => startGame()};
 let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}, advancedTo = 0;
 function frame(now){
@@ -210,7 +211,7 @@ function slotCard(n){
     };
     return;
   }
-  const practise = g.practise ? `<p>${g.practise} ${g.practise === 1 ? 'word needs' : 'words need'} practice: practise at the practice post, or meet animals in the tall grass.</p>` : '';
+  const practise = g.practise ? `<p>${g.practise} ${g.practise === 1 ? 'word needs' : 'words need'} practice: practise ${esc(g.where)}, or meet animals in the tall grass.</p>` : '';
   const friends = `${g.friends} ${g.friends === 1 ? 'friend' : 'friends'}`;
   openCard(`<p class="label">Game ${n}</p><div class="slotcard">${faceHTML()}<div><p><b>${g.words} ${g.words === 1 ? 'word' : 'words'}</b> · ${friends} · ${g.shells} 🐚</p>
       <p>${esc(AREA.name.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${practise}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
@@ -234,7 +235,7 @@ function slotCard(n){
 }
 function playScene(s){
   scene = s;
-  $('#titlecard').hidden = true;
+  $('#titlecard').hidden = true; $('#saybox').hidden = true;   // (it covers any message that was showing)
   mode = 'intro'; introClock = 0; introLast = performance.now(); capIdx = -1; introEvents = {}; advancedTo = 0;
 }
 function playIntro(){ playScene({id:'opening', caps:CAPS, last:'Begin', end:() => startGame()}); }

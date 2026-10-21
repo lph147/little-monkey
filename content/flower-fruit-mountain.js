@@ -42,9 +42,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           2 you've been there with him
   //   build   chapter 1, building the school: 0 not yet, 1 the big monkey wants wood and small stones (the way up to the pine
   //           wood is open), 2 you've brought them and the school's frame is up
+  //   school  chapter 1: 0 not built yet, 1 the troop has built it (the scene), 2 you've been in, and the class has greeted
+  //           its teacher, the old monkey
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0, build:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0, build:0, school:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many hide in the grass), animalsLeft, shells, or picked
@@ -62,6 +64,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
     stonesGot: {count:'picked', request:'stones'}    // and small stones
   },
+
+  // Where you practise your words now (the title screen and the Word Scroll say so): the first whose if matches.
+  practiseAt: [{if:{school:{atLeast:1}}, text:'in a lesson at school'}, {text:'at the practice post'}],
 
   // The task box under the game screen. Every task whose if matches is shown, in this order.
   //   id     a name for the task; the game remembers which tasks you've seen, to mark new ones
@@ -102,6 +107,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'stones', if:{stones:'asked', holding:{stones:false}}, text:'Find three small {石头} in the pine wood ({stonesGot}/3)', arrow:{place:'pineWood'}},
     {id:'woodBack', if:{wood:'asked', holding:{wood:true}}, text:'Take the {木头} to the big monkey', arrow:'big'},
     {id:'stonesBack', if:{stones:'asked', holding:{stones:true}}, text:'Take the small {石头} to the big monkey', arrow:'big'},
+    {id:'build', if:{build:2, school:0}, text:'Talk to the big monkey: the troop is ready to build the {学校}', arrow:'big'},
+    {id:'goIn', if:{school:1}, text:'Go into the {学校}, and talk to the old monkey at the front of the class', arrow:'elder'},
+    {id:'classmates', if:{school:{atLeast:2}, new:'同学'}, text:'Talk to the little monkey in the {学校}', arrow:'playful'},
     {id:'count', if:{cave:{atLeast:5}, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
   ],
 
@@ -110,7 +118,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, flowers:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
-    {if:{build:2}, text:'The troop is building the school. The rest of chapter 1 is coming soon.'},
+    {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
+    {if:{build:2}, text:'The troop is ready to build the school: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a school first. The big monkey has something to ask you.'},
     {if:{count:3}, text:'The whole troop is home in the {洞}. The rest of the story is coming soon.'},
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your friends.'}
@@ -140,16 +149,20 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Become the troop’s king', show:{count:3}, done:{cave:{atLeast:6}}},
     // chapter 1: the great feast
     {chapter:1, text:'Go with the old monkey to the troop’s new home ground', done:{home:{atLeast:2}}},
-    {chapter:1, text:'Bring {木头} and small {石头} for the school', show:{build:{atLeast:1}}, done:{build:{atLeast:2}}}
+    {chapter:1, text:'Bring {木头} and small {石头} for the school', show:{build:{atLeast:1}}, done:{build:{atLeast:2}}},
+    {chapter:1, text:'Build the {学校} with the troop', show:{build:{atLeast:2}}, done:{school:{atLeast:1}}},
+    {chapter:1, text:'Go to school, and meet your {老师}', show:{school:{atLeast:1}}, done:{school:{atLeast:2}}},
+    {chapter:1, text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
-    elder: [{if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'},
+    elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
-    playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'}],   // until it has taught you both its words
+    playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'},   // until it has taught you both its words
+      {if:{school:{atLeast:2}, new:'同学'}, show:'!'}],   // and at school, that you're classmates
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'},
       {if:{hungry:'done', new:'没关系'}, show:'!'}],   // once he's eaten, he wants to say sorry for being fussy
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
@@ -157,7 +170,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the ledges
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
     big: [{if:{climb:1, new:'棍子'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'},
-      {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', holding:{stones:true}}, show:'?'}],   // chapter 1: the school
+      {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', holding:{stones:true}}, show:'?'},
+      {if:{build:2, school:0}, show:'!'}],   // chapter 1: the school
     woodSquirrel: [{if:{new:'木头'}, show:'!'}]   // the squirrel in the pine wood, until you've found wood
   },
 
@@ -210,7 +224,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // with carry: the most you can carry.
   shop: {
     who:'boss', ask:'whatWant', thanks:'thanks', thanksReply:'谢谢', no:'我不要',
-    earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and training at the practice post.',
+    earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and practising your words.',
     soldOut:'You have everything the {老板} sells. Come back another time.',
     items: [
       {item:'头带', price:10, sentence:'我 要 头带', sentenceEn:'I want the headband.',
@@ -420,7 +434,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       exits: [
         {at:[0, 5], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 6], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
-        {at:[18, 0], to:'pineWood', arrive:[10, 12], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'}   // up to the pine wood
+        {at:[18, 0], to:'pineWood', arrive:[10, 12], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
+        {at:[9, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
       ],
       map: [
         "YYYYYYYYYYYYYYYYYYbYYY",
@@ -462,6 +477,37 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "ppinnniip..ipppppiippp",
         "pppiiiipp...pppppppppp",
         "pppppppppp.ppppppppppp"
+      ]
+    },
+    // Chapter 1: inside the school, once the troop has built it: a classroom. The old monkey teaches at the front, by the
+    // blackboard; the little monkey and the rest of the troop sit at their double desks. Its own legend: letters that only
+    // mean this here.
+    school: {
+      name: {zh:'学校', py:'xuéxiào', en:'School'},
+      exits: [
+        {at:[7, 9], to:'homeGround', arrive:[9, 5], facing:'down'}   // back out through the door
+      ],
+      legend: {
+        '#': {look:'classWall'},
+        '=': {look:'wallFace'},
+        '+': {look:'classWindow'},
+        'b': {look:'blackboard', landmark:true, onLook:[{do:[{message:'The blackboard, with the teacher’s chalk writing on it.'}]}]},
+        't': {look:'teacherTable', word:'桌子', landmark:true, note:'The teacher’s table, with books and a cup on it.'},
+        'd': {look:'desk', word:'桌子', note:'A desk for two, with books on it.'},
+        '_': {look:'classFloor', walk:true},
+        'm': {look:'doorMat', walk:true}
+      },
+      map: [
+        "#=+=bbbbbbb=+=#",
+        "#=+=bbbbbbb=+=#",
+        "#________tt___#",
+        "#_____________#",
+        "#_dd__dd__dd__#",
+        "#_____________#",
+        "#_dd__dd__dd__#",
+        "#_____________#",
+        "#_____________#",
+        "#######m#######"
       ]
     }
   },
@@ -514,7 +560,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       pick:{item:'苹果', if:{hungry:'done'}}},
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
-    'K': {look:'post', landmark:true, label:'Train', action:'training'},   // the training ground
+    'K': {look:'post', landmark:true, label:'Train', action:'training', becomes:[{if:{school:{atLeast:1}}, to:'g'}]},   // the training ground (the troop uses the post to build the school: lessons take its place)
     'H': {look:'stall'},   // the shop owner's stall: as wide as its row of H (three squares)
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', becomes:[{if:{gate:true}, to:'.'}]},
     'M': {look:'cliff', word:'山'},
@@ -547,13 +593,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the way from the waterfall to the home ground, and the home ground's plots, their signs, and the ways out
     'f': {look:'bush', becomes:[{if:{home:{atLeast:1}}, to:'.'}]},   // bushes, until the troop clears a way through them
     'u': {look:'bush', landmark:true, onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
-    's': {look:'plot', walk:true, becomes:[{if:{build:{atLeast:2}}, to:'a'}]},   // the school's plot: ground marked out with string and stakes
+    's': {look:'plot', walk:true, becomes:[{if:{school:{atLeast:1}}, to:'t'}, {if:{build:{atLeast:2}}, to:'a'}]},   // the school's plot: ground marked out with string and stakes
     'a': {look:'frame', landmark:true, onLook:[{do:[{message:'The frame of the school is up. The troop is busy building.'}]}]},   // (the school going up on it)
+    't': {look:'school', word:'学校', landmark:true, note:'The troop’s school. Walk in through its door.'},   // (and then the school itself: its door is a way in)
     'd': {look:'plot', walk:true},   // the new shop's
     'h': {look:'plot', walk:true},   // the hive's
     'e': {look:'plot', walk:true},   // the garden's
     'c': {look:'plot', walk:true},   // the cow pen's
-    '1': {look:'sign', landmark:true, label:'Read', onLook:[{if:{build:{atLeast:2}}, do:[{message:'The troop is building a school here, where the little monkeys can learn.'}]},
+    '1': {look:'sign', landmark:true, label:'Read', onLook:[{if:{school:{atLeast:1}}, do:[{message:'The troop’s {学校}, where the little monkeys learn. The {老师} gives lessons inside.'}]},
+      {if:{build:{atLeast:2}}, do:[{message:'The troop is building a school here, where the little monkeys can learn.'}]},
       {do:[{message:'The troop wants to build a school here, where the little monkeys can learn.'}]}]},
     '2': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants a new shop here.'}]}]},
     '3': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants a hive here, by the flowers, for bees.'}]}]},
@@ -596,7 +644,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // (with x, y, facing, and place if it's another place), instead of where they start. Someone following you
   // (the follow step) is wherever you've been instead, until they stop.
   characters: [
-    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{home:{atLeast:2}}, place:'homeGround', x:8, y:6, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:9, y:1, facing:'left'},
+    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:7, y:2, facing:'down'}, {if:{home:{atLeast:2}}, place:'homeGround', x:8, y:6, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:9, y:1, facing:'left'},
       {if:{gate:true}, x:14, y:2, facing:'right'}],   // by the waterfall once the troop is up there; where the rocks were till then
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
     {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{home:{atLeast:1}}, place:'homeGround', x:13, y:4, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:10, y:2, facing:'left'},
@@ -606,15 +654,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
-    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{home:{atLeast:1}}, place:'homeGround', x:4, y:6, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
+    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:4, y:6, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
       {if:{gate:true}, x:14, y:3, facing:'right'}],
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
     // the rest of the troop, in the meadow until they're counted into the cave
-    {id:'troop1', x:21, y:7, facing:'left', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:1}}, place:'cave', x:10, y:11, facing:'up'}],
+    {id:'troop1', x:21, y:7, facing:'left', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:6, y:5, facing:'up'}, {if:{count:{atLeast:1}}, place:'cave', x:10, y:11, facing:'up'}],
       palette:{o:'#4A2C17', f:'#C27C3A', s:'#F4CDA5', m:'#C98E6A', e:'#24160C'}},
-    {id:'troop2', x:21, y:11, facing:'down', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:2}}, place:'cave', x:4, y:11, facing:'up'}],
+    {id:'troop2', x:21, y:11, facing:'down', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:2, y:7, facing:'up'}, {if:{count:{atLeast:2}}, place:'cave', x:4, y:11, facing:'up'}],
       palette:{o:'#40250F', f:'#A8673A', s:'#EFC79C', m:'#C08060', e:'#24160C'}},
-    {id:'troop3', x:20, y:13, facing:'right', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{count:{atLeast:3}}, place:'cave', x:12, y:8, facing:'left'}],
+    {id:'troop3', x:20, y:13, facing:'right', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:11, y:7, facing:'up'}, {if:{count:{atLeast:3}}, place:'cave', x:12, y:8, facing:'left'}],
       palette:{o:'#4A2C17', f:'#D9A050', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
     // a monkey just inside the cave's entrance, once the troop has moved in: it tells you to sleep in the beds
     {id:'doorway', place:'cave', x:9, y:12, facing:'left', name:{zh:'猴子', py:'hóuzi', en:'Monkey'}, moves:[{if:{cave:{below:4}}, place:'gone', x:0, y:0}],
@@ -716,6 +764,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '二': 'Counting the troop into the Water Curtain Cave.',
     '三': 'Counting the troop into the Water Curtain Cave.',
     '木头': 'A dry, dead pine in the pine wood, knocked down with your stick.',
+    '学校': 'The troop built it at the home ground, with the wood and stones you brought.',
+    '老师': 'The little monkeys greeting the old monkey, their teacher, at school.',
+    '同学': 'The little monkey, at school: you’re classmates.',
   },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
@@ -849,6 +900,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveWood: {zh:'你 有 木头 吗 ？', en:'Do you have the wood?'},
     haveStones: {zh:'你 有 石头 吗 ？', en:'Do you have the stones?'},
     squirrelWood: {zh:'你 要 木头 吗 ？', en:'Do you want wood?'},   // the squirrel in the pine wood
+    buildIt: {zh:'我们 来 盖 学校 吧 ！', en:'Let’s build the school!'},   // the big monkey, once the frame is up
+    classStart: {zh:'上课 ！', en:'Class is starting!'},   // at school: the teacher starts a lesson, and the class greets him
+    teacherHi: {zh:'老师 好 ！', en:'Hello, teacher!'},
+    classHi: {zh:'同学 们 好 ！', en:'Hello, class!'},
+    classEnd: {zh:'下课 ！', en:'Class is over!'},
+    classmates: {zh:'我们 是 同学 ！', en:'We’re classmates!'},
     letsLook: {zh:'我们 看看 ！', en:'Let’s have a look!'},
     great: {zh:'太 好 了 ！', en:'Great!'},
     home: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},
@@ -966,6 +1023,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cave:{atLeast:5}, count:0}, do:[{message:'A monkey comes in through the water curtain.'}, {say:'count1', teach:'一'}, {newWord:'一'}, {set:{count:1}}]},
       {if:{cave:{atLeast:5}, count:1}, do:[{message:'Another monkey comes in.'}, {say:'count2'}, {newWord:'二', note:'When you count things, two is 两 (liǎng): 两只猴子 (two monkeys).'}, {set:{count:2}}]},
       {if:{cave:{atLeast:5}, count:2}, do:[{message:'And another!'}, {say:'count3', teach:'三'}, {newWord:'三'}, {set:{count:3}}, {message:'The whole troop is home.'}]},
+      // chapter 1: at school, he's the teacher. The first time you talk to him there, the class greets him the way children
+      // in China do; after that, he gives you a lesson whenever you like (he has a ! when words need practice).
+      {if:{school:1}, do:[
+        {message:'The little monkeys are sitting at their desks. The old monkey stands at the front: he’s their teacher now!'},
+        {say:'classStart'},
+        {say:'teacherHi', by:'playful', teach:'老师'},
+        {newWord:'老师', note:'The class greets the old monkey: he’s their teacher now.'},
+        {say:'classHi'},
+        {set:{school:2}},
+        {message:'Lessons are where you practise your words now. Talk to the teacher when he has a ! and he’ll give you one.'}
+      ]},
+      {if:{school:{atLeast:2}}, do:[{say:'classStart'}, {lesson:true}, {say:'classEnd'}]},
       // chapter 1: the troop's new home ground, beside the waterfall. He tells you about it, then follows you there.
       {if:{chapter:1, home:0}, do:[
         {say:'haveHome'},
@@ -979,6 +1048,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
+      {if:{school:{atLeast:2}, new:'同学'}, do:[{say:'classmates', teach:'同学'}, {newWord:'同学', note:'The little monkeys you learn with at school are your classmates.'}]},
+      {if:{school:{atLeast:2}}, do:[{say:'classmates'}]},
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
       {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'}]},
@@ -1033,6 +1104,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // two of the troop, across the river, give advice
     troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{animalsLeft:{atLeast:1}}, do:[{say:'hi'}, {reply:'你好'}, {say:'findAnimals'}, {message:'Animals hide in the tall grass. Walk through it to find them, and answer their questions to make friends.'}]},
+      {if:{school:{atLeast:1}}, do:[{say:'hi'}, {reply:'你好'}, {message:'When the {老师} has a !, some of your words need practice: he’ll give you a lesson.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'When the practice post by the pond has a !, some of your words are due: practise them there, so you don’t forget them.'}]}],
     troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {say:'bossHasApples'}, {message:'Earn shells by helping the troop, making friends and practising. The {老板} sells {苹果}: in a question, one takes away a wrong answer.'}]}],
@@ -1055,6 +1127,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{build:1, wood:'asked', stones:'asked'}, do:[{request:'wood'}, {request:'stones'}]},   // you bring them (or he asks again)
       {if:{build:1, wood:'asked'}, do:[{request:'wood'}]},
       {if:{build:1, stones:'asked'}, do:[{request:'stones'}]},
+      // the frame is up: the troop builds the school (a scene, told like the opening), and you learn 学校
+      {if:{build:2, school:0}, do:[
+        {say:'buildIt'},
+        {scene:'buildingSchool'},
+        {newWord:'学校', note:'The troop has built its school!'},
+        {set:{school:1}},
+        {message:'The old monkey has gone in: he’s the teacher now. Walk in through the school’s door!'},
+        {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}
+      ]},
       {if:{cave:{atLeast:6}}, do:[{say:'king'}]},   // once you're king (the troop makes you king at the end of the prologue: the crowning scene)
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'dare'}]},
@@ -1142,6 +1223,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {at:5.5, zh:'你 是 我们 的 王 ！', en:'You are our king!', teach:'王'},
       {at:8, zh:'美猴王 ！', en:'Handsome Monkey King!'},
       {at:11, zh:'从此 ， 花果山 的 猴子 很 快乐 。', en:'From then on, the monkeys of Flower Fruit Mountain were very happy.'}
+    ]},
+    // chapter 1: the troop builds the school, at the home ground: the walls go up, then the roof, then its sign
+    buildingSchool: {watch:'Watch the school being built', when:{school:{atLeast:1}}, captions: [
+      {at:0, zh:'我们 有 木头 ， 也 有 石头 。', en:'We have wood, and stones too.'},
+      {at:3.2, zh:'一 ， 二 ， 三 ！', en:'One, two, three!'},
+      {at:6.2, zh:'太 好 了 ！', en:'Wonderful!'},
+      {at:9, zh:'这 是 我们 的 学校 ！', en:'This is our school!', teach:'学校'}
     ]}
   }
 };

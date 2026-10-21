@@ -379,6 +379,39 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(O(12, 21, 1.4, 1.1), '#6E4A2A'); p.flat(O(20, 12, 1.2, 1), '#6E4A2A');
     p.flat(O(26, 5, 1.6, 1.6), '#E2C08E'); p.dot(26, 5, '#B98A55');   // the cut end
   },
+  '学校': p => {   // school: a long building with a grey tiled roof curling up at its ends, a door, windows, and a bell
+    p.fill(Rc(3, 17, 26, 12), '#E9D9B4', {edge: true});
+    for (const x of [5, 10, 19, 24]) p.fill(Rc(x, 19, 3, 4), '#9FD0E8', {edge: true});
+    p.fill(Rc(13, 20, 6, 9), '#8A5A32', {edge: true}); p.flat(Rc(16, 21, 1, 8), '#5E3B1F');
+    p.fill(Pg([[0, 17.5], [1, 13.5], [6, 10], [26, 10], [31, 13.5], [32, 17.5]]), '#64707C', {light: '#7C8996', dark: '#4A5561', edge: true});
+    p.flat(Rc(6, 12, 20, 1), '#56616C'); p.flat(Rc(3, 15, 26, 1), '#56616C');
+    p.fill(Rc(13, 4, 6, 6), '#8A5A32', {edge: true}); p.fill(O(16, 7.5, 2.2, 2.4), GOLD);   // the bell, in its little tower
+    p.flat(Rc(12, 3, 8, 1), '#4A5561');
+    p.fill(Rc(0, 29, 32, 2), '#6CC066');
+  },
+  '老师': p => {   // teacher: the old monkey, with his white beard, pointing at a blackboard
+    p.fill(Rc(1, 3, 22, 16), '#6B4A2A'); p.flat(Rc(2, 4, 20, 14), '#2F4A3B');
+    p.flat(or(Rc(4, 7, 8, 1), Rc(5, 10, 6, 1), Rc(13, 7, 5, 1), Rc(4, 13, 9, 1)), '#DCE8DC');
+    p.fill(O(23, 27, 6, 5), '#A9A79F'); p.flat(O(23, 28, 3.5, 3), '#EADCC8');
+    p.fill(path([[19, 24], [12, 12]], .9), '#C49461', {edge: true});   // his pointer
+    p.fill(O(17.5, 18.5, 2, 2.2), '#A9A79F'); p.fill(O(28.5, 18.5, 2, 2.2), '#A9A79F');
+    p.fill(O(23, 19, 6, 5.4), '#A9A79F', {edge: true});
+    p.flat(or(O(21, 19, 2.3, 2.5), O(25, 19, 2.3, 2.5), O(23, 21.8, 3.2, 2.1)), '#EADCC8');
+    p.eye(20, 18); p.eye(24, 18);
+    p.flat(or(O(23, 24, 2.6, 1.6), Rc(21, 23, 5, 1)), '#FAFAF5');   // his white beard
+  },
+  '同学': p => {   // classmates: two little monkeys side by side at their double desk, each with an open book
+    for (const cx of [9, 23]){
+      p.fill(O(cx - 6, 13.5, 1.8, 2), FUR); p.fill(O(cx + 6, 13.5, 1.8, 2), FUR);
+      p.fill(O(cx, 14, 5.6, 5), FUR, {edge: true});
+      p.flat(or(O(cx - 2, 14, 2.1, 2.3), O(cx + 2, 14, 2.1, 2.3), O(cx, 16.6, 3, 1.9)), SKIN);
+      p.eye(cx - 3, 13); p.eye(cx + 1, 13);
+      p.fill(O(cx, 21, 4.6, 3), FUR);
+    }
+    p.fill(Rc(1, 21, 30, 5), '#D2A46A', {light: '#E6C48E', dark: '#9C6E3E', edge: true}); p.fill(Rc(2, 26, 28, 3), '#9C6E3E');
+    p.fill(or(Rc(3, 29, 2, 3), Rc(27, 29, 2, 3)), '#5A3A20');
+    for (const bx of [5, 19]){ p.fill(Rc(bx, 21, 8, 3), '#F4F0E4', {edge: true}); p.flat(Rc(bx + 4, 21, 1, 3), '#B8AE98'); }
+  },
   '木头': p => {   // wood: three cut logs in a little pile, their ends towards you showing the rings
     const log = (x, y) => {   // a log, its cut end at (x, y) and its bark going back to the right
       p.fill(Rc(x - 1, y - 6, 13, 12, 5), BARK, {light: '#B07A48', dark: '#5E3B1F', edge: true});

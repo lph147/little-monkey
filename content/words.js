@@ -80,6 +80,9 @@ const WORD_BANK = {
   '戴': {py:'dài', en:'to wear (on your head)', area:1, category:'actions'},
   // Chapter 1: the troop's new home
   '木头': {py:'mùtou', en:'wood', pic:'🌲', area:1, category:'items'},
+  '学校': {py:'xuéxiào', en:'school', pic:'🏫', area:1, category:'places'},
+  '老师': {py:'lǎoshī', en:'teacher', pic:'🧑‍🏫', area:1, category:'people'},
+  '同学': {py:'tóngxué', en:'classmate', pic:'🎒', area:1, category:'people'},
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true},
@@ -112,6 +115,10 @@ const WORD_BANK = {
   '水帘洞': {py:'Shuǐlián Dòng', en:'Water Curtain Cave (a name)'},
   '美猴王': {py:'Měi Hóuwáng', en:'Handsome Monkey King (a name)'},
   '很': {py:'hěn', en:'very'},
+  '盖': {py:'gài', en:'to build (a house)'},
+  '们': {py:'men', en:'(more than one: 同学们, the class)'},
+  '上课': {py:'shàngkè', en:'class begins'},
+  '下课': {py:'xiàkè', en:'class is over'},
   '这里': {py:'zhèlǐ', en:'here'},
   '勇敢': {py:'yǒnggǎn', en:'brave'},
   '从此': {py:'cóngcǐ', en:'from then on'},

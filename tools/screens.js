@@ -51,6 +51,11 @@ SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(
     changed: {'pineWood:3,2': 'j', 'pineWood:13,2': 'j', 'pineWood:3,6': 'i', 'pineWood:16,4': 'y'}}}, pos: {place: 'pineWood', x: 15, y: 4, dir: 'right'}};
 SAVES.schoolFrame = {...SAVES.pineWoodLater, areas: {1: {...SAVES.pineWoodLater.areas[1], build: 2, wood: 'done', stones: 'done', picked: {}}},
   pos: {place: 'homeGround', x: 10, y: 6, dir: 'up'}};
+// the school: built, then inside it (the class has met its teacher)
+SAVES.schoolBuilt = {...SAVES.schoolFrame, w: {...SAVES.schoolFrame.w, ...knows(1, ['学校'])}, areas: {1: {...SAVES.schoolFrame.areas[1], school: 1}},
+  pos: {place: 'homeGround', x: 9, y: 6, dir: 'up'}};
+SAVES.classroom = {...SAVES.schoolBuilt, w: {...SAVES.schoolBuilt.w, ...knows(1, ['老师'])}, areas: {1: {...SAVES.schoolBuilt.areas[1], school: 2}},
+  pos: {place: 'school', x: 7, y: 8, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -247,6 +252,22 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'pineWood', x: 3, y: 3, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(1200); }},
   {id: 'school-frame', title: 'The school’s frame', save: 'schoolFrame', why: 'With the wood and stones, the troop gets to work: the frame of the school goes up on its plot.', run: async () => {
     play(); await wait(500); }},
+  {id: 'build-school', title: 'Let’s build the school!', save: 'schoolFrame', why: 'The big monkey, once the frame is up: 我们来盖学校吧！', run: async () => {
+    play(); await wait(100); S.pos = {place: 'homeGround', x: 13, y: 5, dir: 'up'}; placePlayer(); talk(npc('big')); await wait(600); }},
+  {id: 'building-walls', title: 'One, two, three!', save: 'schoolFrame', why: 'The troop building the school, told like the opening: the walls go up, plank by plank, with the troop hammering.', run: async () => {
+    play(); await wait(100); storyScene('buildingSchool'); introClock = 4.6; advancedTo = 1; await wait(400); }},
+  {id: 'building-roof', title: 'The roof goes on', save: 'schoolFrame', why: 'Then the grey tiled roof, row by row.', run: async () => {
+    play(); await wait(100); storyScene('buildingSchool'); introClock = 7.6; advancedTo = 2; await wait(400); }},
+  {id: 'building-done', title: 'This is our school!', save: 'schoolFrame', why: 'The sign and the lanterns go up, and the troop jumps for joy: 这是我们的学校！ teaches 学校.', run: async () => {
+    play(); await wait(100); storyScene('buildingSchool'); introClock = 9.6; advancedTo = 3; await wait(400); }},
+  {id: 'school-built', title: 'The school (学校)', save: 'schoolBuilt', why: 'The school stands on its plot: walk in through its door.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'class-greets', title: 'Hello, teacher!', save: 'schoolBuilt', why: 'The first time you talk to the old monkey at school, the class greets him: 老师好！ teaches 老师.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(300); next(); await wait(500); }},
+  {id: 'classroom', title: 'The classroom', save: 'classroom', why: 'Inside the school: the blackboard, the teacher’s table, double desks, and the troop at them.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'Your replies show 美猴王 now.', run: async () => { play(); await wait(100); replyWith('你好'); await wait(400); }},
   {id: 'count-two', title: 'Counting the troop in', save: 'king', why: 'The card for 二 explains 两.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); next(); await wait(400); }},

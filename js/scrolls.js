@@ -166,27 +166,35 @@ function trained(words, missed){
   S.shells += shells; save();
   return shells;
 }
-async function trainingGround(){
-  const who = `<img class="portrait" alt="" src="${SPR.post.toDataURL()}">`, have = trainable().length;
-  if (have < TRAINING_MIN){ await infoBox(who, `<p>A practice post. Come back once you've learned ${TRAINING_MIN} words with pictures (${have}/${TRAINING_MIN}).</p>`); return; }
+// A practice session: match words to their pictures, then fill the gap in a sentence. At the practice post, or in a
+// lesson at school (the lesson step), with who's face; kind: what it's called. Gives whether you finished it.
+const PRACTICE = {
+  post:{what:'A practice post.', title:'Training', start:'Start', done:'Training done'},
+  lesson:{what:'A lesson.', title:'Lesson', start:'Start', done:'Lesson over'}
+};
+async function trainingGround(){ await practise(`<img class="portrait" alt="" src="${SPR.post.toDataURL()}">`); }
+async function practise(who, kind = PRACTICE.post){
+  const have = trainable().length;
+  if (have < TRAINING_MIN){ await infoBox(who, `<p>${kind.what} Come back once you've learned ${TRAINING_MIN} words with pictures (${have}/${TRAINING_MIN}).</p>`); return false; }
   const words = trainingWords(), sentence = practiceSentence();
   const need = [...words, ...(sentence ? [sentence.gap] : [])].filter(needsPractice).length;
   const ask = 'Practise matching words to their pictures' + (sentence ? `, then fill the gap in a sentence with ${wz(sentence.gap)}. ` : '. ') + (need
     ? `${need} of them ${need === 1 ? 'needs' : 'need'} practice: each one you get right first time earns a 🐚.`
     : 'None of these words need practice right now, so there are no 🐚 shells this time.');
-  if (!await confirmBox(who, ask, 'Start', 'Not now')) return;
-  const missed = await matchWords(words, 'Training', 'Stop');
-  if (!missed) return;
+  if (!await confirmBox(who, ask, kind.start, 'Not now')) return false;
+  const missed = await matchWords(words, kind.title, 'Stop');
+  if (!missed) return false;
   const right = words.length - missed.size, filled = sentence ? await gapRound(sentence, who) : null, shells = trained(words, missed) + (filled ? filled.shells : 0);
   SFX.fanfare();
   await new Promise(res => {
-    openCard(`<div class="who" aria-hidden="true">${who}</div><p class="label">Training done</p>
+    openCard(`<div class="who" aria-hidden="true">${who}</div><p class="label">${kind.done}</p>
       <p>You matched <b>${right} of ${words.length}</b> words right first time.${filled ? (filled.right ? ' You filled the gap right.' : ' You filled the gap.') : ''}${shells ? ` +${shells} 🐚` : ''}</p>
       ${missedHTML(missed)}
       <div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
     bindMissed();
     on('[data-a=ok]', () => { closeCard(); res(); });
   });
+  return true;
 }
 async function nextArea(){
   here().done = true; save(); SFX.fanfare(); fadeT = performance.now();
@@ -243,7 +251,7 @@ function scrollPage(tab){   // what a tab of the Word Scroll shows
     const ids = todaysWords(), need = practiceWords().length;
     return `<p class="label cathead">Today’s words <span class="catn">${ids.length}</span></p>
       ${ids.length ? `<div class="grid" data-nav>${ids.map(scrollCard).join('')}</div>` : '<p>You haven’t met any words yet today.</p>'}
-      <p class="small">${need} ${need === 1 ? 'word needs' : 'words need'} practice: practise at the practice post, or meet animals in the tall grass.</p>`;
+      <p class="small">${need} ${need === 1 ? 'word needs' : 'words need'} practice: practise ${esc(practiseWhere())}, or meet animals in the tall grass.</p>`;
   }
   if (tab === 'heard'){
     const heard = heardWords();

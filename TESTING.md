@@ -236,6 +236,16 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Back at the home ground, the big monkey has a ?. Talk to him: 你有木头吗？, Give it, fill the gap (我们要＿: 木头), shells, 谢谢你！ and your reply; then the same for the stones (我们要小＿: 石头).
 - [ ] The ground shakes and the troop gets to work: the frame of the school goes up on the big plot (posts, beams, the roof's frame, a ladder, and a footing of small stones). If you were standing on the plot, you step off it. The school's sign says the troop is building a school there. TASKS: both of chapter 1's steps are ticked, and the hint says the troop is building the school.
 
+**Chapter 1: the school opens (学校)**
+- [ ] With the school's frame up, the big monkey has a !, and TASKS says to talk to him: the troop is ready to build the school. Talk to him: 我们来盖学校吧！ (Let's build the school!).
+- [ ] A scene plays, told like becoming king (captions in Chinese with pinyin and English, read aloud; Next, and Skip in the corner): the frame on its plot with two monkeys carrying in logs (我们有木头，也有石头。); the walls go up plank by plank, with hammering (一，二，三！); the grey tiled roof goes on, row by row, its ends curling up (太好了！); then the red sign and lanterns go up, sparkling, and the troop turns round and jumps for joy (这是我们的学校！, 学校 in bold green). No message box shows through the captions. OK ends it: a card teaches 学校 (school). Then: the old monkey has gone in to be the teacher, and the troop used the practice post to build the school.
+- [ ] The school stands on the big plot: wooden walls and pillars, two lattice windows, a double door with a stone step, a grey tiled roof, a red sign over the door, and red lanterns. The task arrow points at the door. Settings has Watch the school being built.
+- [ ] Walk up into the door: the screen fades and you're inside, a classroom: a big blackboard with chalk writing and two windows on the back wall, the teacher's table (books and a cup), six double desks with open books, and the little monkey and the troop at their desks. The old monkey stands at the front with a !. Walk down onto the red mat to go back out (in front of the door), and in again.
+- [ ] Walk up to the old monkey and talk to him: 上课！ (the teacher), 老师好！ (the class, by the little monkey: 老师 in bold green, and a card teaches 老师 without saying it again), 同学们好！ (the teacher). A message says lessons are where you practise now. The little monkey has a !, and TASKS says to talk to it.
+- [ ] Talk to the little monkey (stand beside it): 我们是同学！ (We're classmates!), and a card teaches 同学. TASKS: all of chapter 1 so far is ticked.
+- [ ] Talk to the teacher again (he has a ! when some words need practice): 上课！, then a card asks to start a lesson (Start, or Not now): match words to their pictures, fill a gap, and get shells for words that needed practice; then 下课！. Choosing Not now ends it, without 下课.
+- [ ] In the meadow, the practice post by the pond has gone. The title screen's card for the game, and the Word Scroll's Today, say to practise in a lesson at school.
+
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.
 - [ ] 词 Words (the Word Scroll) and 朋友 Friends open, and Back returns to the menu, on the same tile.

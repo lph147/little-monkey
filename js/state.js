@@ -223,7 +223,7 @@ function summaryOf(s, n){
   const area = s.areas[AREA.number] || {}, chapter = AREA.chapters[area.chapter || 0] || AREA.chapters[0];
   return {n, shells:s.shells || 0, friends:s.friends.length,
     words:Object.values(s.w).filter(x => x && x.lv > 0).length, chapter, played:slotsInfo().played[n] || 0,
-    practise:(() => { const keep = S; S = s; try { return practiceWords().length; } finally { S = keep; } })()};   // (practiceWords() reads S)
+    ...(() => { const keep = S; S = s; try { return {practise:practiceWords().length, where:practiseWhere()}; } finally { S = keep; } })()};   // (they read S)
 }
 // Plays game n from now on: it's remembered as the game you're playing.
 function useSlot(n){ SLOT = n; S = loadSave(n); setSlotsInfo(d => ({...d, active:n})); }

@@ -29,7 +29,7 @@ const CAPS = sceneCaps(AREA.intro);   // the opening's captions (the other scene
 const PLACES = AREA.places, FIRST_PLACE = Object.keys(PLACES)[0];
 const placeOf = p => (Array.isArray(p) ? p[2] : p && p.place) || FIRST_PLACE;
 let PLACE = null, MAP = [], COLS = 0, ROWS = 0;   // the place you're in, and its map (see setPlace)
-const LEGEND = AREA.legend;           // what each map letter is
+let LEGEND = AREA.legend;             // what each map letter is: the area's legend, and the place's own if it has one (setPlace)
 const REQUESTS = Object.entries(AREA.requests).map(([id, r]) => ({id, ...r}));   // characters asking you to bring something
 const requestFrom = who => REQUESTS.find(r => r.from === who);
 const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word,
@@ -40,6 +40,7 @@ const TRAINING_TILES = [];            // where the practice posts are (the train
 // (enterPlace in js/world.js does this and redraws the map.)
 function setPlace(id){
   PLACE = id; MAP = PLACES[id].map; COLS = MAP[0].length; ROWS = MAP.length;
+  LEGEND = PLACES[id].legend ? {...AREA.legend, ...PLACES[id].legend} : AREA.legend;   // (a place's own letters, such as the classroom's)
   NPCS = ALL_NPCS.filter(n => n.place === id);
   SPARKLES = AREA.sparkles.filter(s => placeOf(s.at) === id);
   TRAINING_TILES.length = 0;

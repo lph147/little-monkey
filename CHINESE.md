@@ -65,6 +65,12 @@ shown where the word list has them.
 | 你有木头吗？ | nǐ yǒu mùtou ma? | Do you have the wood? | 大猴子 (Big monkey) |  |
 | 你有石头吗？ | nǐ yǒu shítou ma? | Do you have the stones? | 大猴子 (Big monkey) |  |
 | 你要木头吗？ | nǐ yào mùtou ma? | Do you want wood? | 松鼠 (squirrel) |  |
+| 我们来盖学校吧！ | wǒmen lái gài xuéxiào ba! | Let’s build the school! | 大猴子 (Big monkey) |  |
+| 上课！ | shàngkè! | Class is starting! | 老猴子 (Old monkey) |  |
+| 老师好！ | lǎoshī hǎo! | Hello, teacher! | 小猴子 (Little monkey) |  |
+| 同学们好！ | tóngxué men hǎo! | Hello, class! | 老猴子 (Old monkey) |  |
+| 下课！ | xiàkè! | Class is over! | 老猴子 (Old monkey) |  |
+| 我们是同学！ | wǒmen shì tóngxué! | We’re classmates! | 小猴子 (Little monkey) |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
 | 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
@@ -157,6 +163,15 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 美猴王！ | Měi Hóuwáng! | Handsome Monkey King! |  |
 | 从此，花果山的猴子很快乐。 | cóngcǐ, Huāguǒ Shān de hóuzi hěn kuàilè. | From then on, the monkeys of Flower Fruit Mountain were very happy. |  |
 
+### Scene: the school being built
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 我们有木头，也有石头。 | wǒmen yǒu mùtou, yě yǒu shítou. | We have wood, and stones too. |  |
+| 一，二，三！ | yī, èr, sān! | One, two, three! |  |
+| 太好了！ | tài hǎo le! | Wonderful! |  |
+| 这是我们的学校！ | zhè shì wǒmen de xuéxiào! | This is our school! |  |
+
 ### Names
 
 | Chinese | Pinyin | English | Notes |
@@ -181,6 +196,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 | 家园 | jiāyuán | Home ground |  |
 | 松林 | sōnglín | Pine wood |  |
+| 学校 | xuéxiào | School |  |
 
 ### Words to collect
 
@@ -234,6 +250,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 头带 | tóudài | headband |  |
 | 戴 | dài | to wear (on your head) |  |
 | 木头 | mùtou | wood |  |
+| 学校 | xuéxiào | school |  |
+| 老师 | lǎoshī | teacher |  |
+| 同学 | tóngxué | classmate |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -267,6 +286,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
 | 很 | hěn | very |  |
+| 盖 | gài | to build (a house) |  |
+| 们 | men | (more than one: 同学们, the class) |  |
+| 上课 | shàngkè | class begins |  |
+| 下课 | xiàkè | class is over |  |
 | 这里 | zhèlǐ | here |  |
 | 勇敢 | yǒnggǎn | brave |  |
 | 从此 | cóngcǐ | from then on |  |
@@ -391,6 +414,16 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们要木头。 | wǒmen yào mùtou. | We need wood. | New on 21 October 2026 (in the game), building the school: The sentence you finish when you give him the wood (filling in 木头) |  |
 | 我们要小石头。 | wǒmen yào xiǎo shítou. | We need small stones. | New on 21 October 2026 (in the game), building the school: The sentence you finish when you give him the stones (filling in 石头) |  |
 | 你要木头吗？ | nǐ yào mùtou ma? | Do you want wood? | New on 21 October 2026 (in the game), building the school: A squirrel in the pine wood (the place is called 松林 sōnglín, pine wood: please check this name too), showing you the dry, dead pines |  |
+| 我们来盖学校吧！ | wǒmen lái gài xuéxiào ba! | Let’s build the school! | New on 21 October 2026 (in the game), the school opens: The big monkey, once the school’s frame is up (盖 gài, to build a house, is just for listening) |  |
+| 我们有木头，也有石头。 | wǒmen yǒu mùtou, yě yǒu shítou. | We have wood, and stones too. | New on 21 October 2026 (in the game), the school opens: The scene of the troop building the school, caption 1 |  |
+| 一，二，三！ | yī, èr, sān! | One, two, three! | New on 21 October 2026 (in the game), the school opens: Caption 2, as the troop lifts the walls |  |
+| 太好了！ | tài hǎo le! | Wonderful! | New on 21 October 2026 (in the game), the school opens: Caption 3, as the roof goes on |  |
+| 这是我们的学校！ | zhè shì wǒmen de xuéxiào! | This is our school! | New on 21 October 2026 (in the game), the school opens: Caption 4, teaching 学校 xuéxiào, school (also the name of the place inside: please check it as a name too) |  |
+| 上课！ | shàngkè! | Class is starting! | New on 21 October 2026 (in the game), the school opens: The old monkey, the teacher now, starting a lesson (上课 shàngkè, just for listening) |  |
+| 老师好！ | lǎoshī hǎo! | Hello, teacher! | New on 21 October 2026 (in the game), the school opens: The class (the little monkey) greeting him, teaching 老师 lǎoshī, teacher |  |
+| 同学们好！ | tóngxué men hǎo! | Hello, class! | New on 21 October 2026 (in the game), the school opens: The teacher’s reply (同学们 tóngxuémen; 们 is just for listening) |  |
+| 我们是同学！ | wǒmen shì tóngxué! | We’re classmates! | New on 21 October 2026 (in the game), the school opens: The little monkey at school, teaching 同学 tóngxué, classmate |  |
+| 下课！ | xiàkè! | Class is over! | New on 21 October 2026 (in the game), the school opens: The teacher, after a lesson (下课 xiàkè, just for listening) |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 

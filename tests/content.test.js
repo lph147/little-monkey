@@ -20,7 +20,7 @@ const allSteps = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.flatMap(s => withWins(`${who}'s talk, part ${i + 1}`, s, who)))),
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
   ...AREA.begin.map(s => ['begin', s, null]),
-  ...Object.entries(AREA.legend).flatMap(([ch, t]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at "${ch}", part ${i + 1}`, s, null])))
+  ...allLegend.flatMap(([ch, t, from]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at ${from}, part ${i + 1}`, s, null])))
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
@@ -31,7 +31,7 @@ const allIfs = () => [
   ...AREA.checklist.filter(c => c.show).map((c, i) => [`checklist item ${AREA.checklist.indexOf(c) + 1}'s show`, c.show]),
   ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if])),
   ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word}`, s.if]),
-  ...Object.entries(AREA.legend).filter(([, t]) => t.pick && t.pick.if).map(([ch, t]) => [`picking at "${ch}"`, t.pick.if]),
+  ...allLegend.filter(([, t]) => t.pick && t.pick.if).map(([, t, from]) => [`picking at ${from}`, t.pick.if]),
   ['animalsAppear', AREA.animalsAppear]
 ];
 const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]) || (w.startsWith('wanted:') && (AREA.requests[w.slice(7)] || {}).choices);
@@ -45,7 +45,12 @@ const mapOf = p => (AREA.places[p || FIRST] || {}).map;
 const onMap = ([x, y, p]) => { const m = mapOf(p); return !!m && y >= 0 && y < m.length && x >= 0 && x < m[0].length; };
 const tile = ([x, y, p]) => mapOf(p)[y][x];
 const allMaps = Object.entries(AREA.places).map(([id, p]) => [id, p.map]);
-const canWalk = at => { const t = AREA.legend[tile(at)] || {}; return !!t.walk || (t.becomes || []).some(b => (AREA.legend[b.to] || {}).walk); };   // (or will be, once the story opens it)
+// The legend in a place: the area's, with the place's own letters if it has any. Every legend entry, with its letter, where
+// it's from (for messages) and the place whose legend it's in (none for the area's).
+const legendOf = p => ({...AREA.legend, ...((AREA.places[p || FIRST] || {}).legend || {})});
+const allLegend = [...Object.entries(AREA.legend).map(([ch, t]) => [ch, t, `legend "${ch}"`, null]),
+  ...Object.entries(AREA.places).flatMap(([id, p]) => Object.entries(p.legend || {}).map(([ch, t]) => [ch, t, `${id}'s legend "${ch}"`, id]))];
+const canWalk = at => { const l = legendOf(at[2]), t = l[tile(at)] || {}; return !!t.walk || (t.becomes || []).some(b => (l[b.to] || {}).walk); };   // (or will be, once the story opens it)
 const sentences = [
   ...Object.entries(AREA.lines).map(([k, l]) => [`line "${k}"`, l]),
   ...AREA.story.map((s, i) => [`story sentence ${i + 1}`, s]),
@@ -54,7 +59,7 @@ const sentences = [
   ['the sign', AREA.sign.says],
   ...AREA.intro.map((c, i) => [`the opening's caption ${i + 1}`, c]),
   ...Object.entries(AREA.scenes || {}).flatMap(([id, sc]) => sc.captions.map((c, i) => [`the ${id} scene's caption ${i + 1}`, c])),
-  ...Object.entries(AREA.legend).filter(([, t]) => t.sign).map(([ch, t]) => [`the sign on "${ch}" tiles`, t.sign.says]),
+  ...allLegend.filter(([, t]) => t.sign).map(([, t, from]) => [`the sign on ${from}`, t.sign.says]),
   ...Object.values(AREA.talk).flatMap(parts => parts.flatMap(p => p.do.filter(s => s.gap).map(s => [`the gap sentence "${s.gap.sentence}"`, {zh: s.gap.sentence, en: s.gap.en}])))
 ];
 
@@ -116,28 +121,28 @@ test('the map of every place is a rectangle', () => {
   }
 });
 
-test('every letter on the map is in the legend', () => {
+test('every letter on the map is in the legend (the area’s, or the place’s own)', () => {
   for (const [id, map] of allMaps) map.forEach((row, y) => [...row].forEach((ch, x) => {
-    assert.ok(AREA.legend[ch], `${id}: the map has "${ch}" at ${x},${y}, but the legend doesn't say what "${ch}" is`);
+    assert.ok(legendOf(id)[ch], `${id}: the map has "${ch}" at ${x},${y}, but the legend doesn't say what "${ch}" is`);
   }));
 });
 
 test('the legend only uses looks and actions the engine has', () => {
-  for (const [ch, t] of Object.entries(AREA.legend)){
-    assert.equal(ch.length, 1, `legend entry "${ch}" should be a single letter`);
-    assert.ok(LOOKS.includes(t.look), `legend "${ch}" has look "${t.look}"; the looks are ${LOOKS.join(', ')}`);
-    if (t.action) assert.ok(ACTIONS.includes(t.action), `legend "${ch}" has action "${t.action}"; the actions are ${ACTIONS.join(', ')}`);
+  for (const [ch, t, from] of allLegend){
+    assert.equal(ch.length, 1, `${from} should be a single letter`);
+    assert.ok(LOOKS.includes(t.look), `${from} has look "${t.look}"; the looks are ${LOOKS.join(', ')}`);
+    if (t.action) assert.ok(ACTIONS.includes(t.action), `${from} has action "${t.action}"; the actions are ${ACTIONS.join(', ')}`);
   }
 });
 
 test('the legend only teaches collectible words', () => {
-  for (const [ch, t] of Object.entries(AREA.legend)){
+  for (const [, t, from, place] of allLegend){
     for (const w of [t.word, t.learnFirst, t.gather && t.gather.item].filter(Boolean)){
-      assert.ok(collectible.includes(w), `legend "${ch}" teaches ${w}, which isn't a word you can collect in ${where}`);
+      assert.ok(collectible.includes(w), `${from} teaches ${w}, which isn't a word you can collect in ${where}`);
     }
-    if (t.learnOnStep || t.newNote || t.learnFirst) assert.ok(t.word, `legend "${ch}" needs a word`);
-    if (t.gather) assert.ok(t.gather.label && t.gather.note, `legend "${ch}": gather needs a label and a note`);
-    for (const b of t.becomes || []) assert.ok(AREA.legend[b.to] && b.if, `legend "${ch}" turns into "${b.to}" (once its if matches), which isn't in the legend`);
+    if (t.learnOnStep || t.newNote || t.learnFirst) assert.ok(t.word, `${from} needs a word`);
+    if (t.gather) assert.ok(t.gather.label && t.gather.note, `${from}: gather needs a label and a note`);
+    for (const b of t.becomes || []) assert.ok((place ? legendOf(place) : AREA.legend)[b.to] && b.if, `${from} turns into "${b.to}" (once its if matches), which isn't in the legend`);
   }
 });
 
@@ -210,7 +215,7 @@ test('the story ending has a title, a reward and text', () => {
 
 test('fish jump out of water', () => {
   for (const at of AREA.fish){
-    assert.ok(onMap(at) && (AREA.legend[tile(at)] || {}).look === 'water', `the fish at ${at} isn't in water`);
+    assert.ok(onMap(at) && (legendOf(at[2])[tile(at)] || {}).look === 'water', `the fish at ${at} isn't in water`);
   }
 });
 
@@ -297,12 +302,12 @@ test('requests use real characters, lines and words', () => {
 });
 
 test('everything you can gather is for a request, and the wrong thing has a line', () => {
-  for (const [ch, t] of Object.entries(AREA.legend)){
+  for (const [, t, from] of allLegend){
     if (!t.gather) continue;
     const r = AREA.requests[t.gather.for];
-    assert.ok(r, `legend "${ch}" gathers for "${t.gather.for}", which isn't a request`);
-    assert.ok(t.gather.message, `legend "${ch}": gather needs a message`);
-    if (!r.choices && t.gather.item !== r.wants) assert.ok(r.wrong && r.wrongMessage, `request ${t.gather.for} needs wrong and wrongMessage, because legend "${ch}" gives ${t.gather.item}`);
+    assert.ok(r, `${from} gathers for "${t.gather.for}", which isn't a request`);
+    assert.ok(t.gather.message, `${from}: gather needs a message`);
+    if (!r.choices && t.gather.item !== r.wants) assert.ok(r.wrong && r.wrongMessage, `request ${t.gather.for} needs wrong and wrongMessage, because ${from} gives ${t.gather.item}`);
   }
 });
 
@@ -312,7 +317,7 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'practice'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -376,7 +381,7 @@ test('counters count things the engine can count', () => {
 test('every {word} or {counter} in content text is real', () => {
   const texts = [
     ...allSteps().flatMap(([, s]) => [s.message, s.hint, s.note]),
-    ...Object.values(AREA.legend).map(t => t.gather && t.gather.message),
+    ...allLegend.map(([, t]) => t.gather && t.gather.message),
     ...AREA.tasks.flatMap(t => [t.id, t.text]), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text),
     ...Object.values(AREA.found)
   ].filter(Boolean);
@@ -471,7 +476,7 @@ test('every enemy is a collectible word with a picture and a map sprite, attacki
     assert.ok(e.hearts >= 1 && e.attacks.length >= 3, `${id} needs hearts and at least 3 places to attack from`);
     for (const w of e.attacks) assert.ok(collectible.includes(w) && BANK[w].pic, `${id} attacks from ${w}, which should be a word with a picture`);
   }
-  for (const t of Object.values(AREA.legend).filter(t => t.wild)) for (const id of t.wild) assert.ok(AREA.enemies[id], `wild ground has ${id}, which isn't one of the enemies`);
+  for (const [, t] of allLegend.filter(([, t]) => t.wild)) for (const id of t.wild) assert.ok(AREA.enemies[id], `wild ground has ${id}, which isn't one of the enemies`);
 });
 
 test('food: each says what it does, how many you can carry, and heals or helps; fruit trees give food', () => {
@@ -479,5 +484,5 @@ test('food: each says what it does, how many you can carry, and heals or helps; 
     assert.ok(collectible.includes(w), `${w} is a word you can collect here`);
     assert.ok(f.does && f.carry > 0 && (f.heal > 0 || f.helps === true), `${w}: does, carry, and heal or helps`);
   }
-  for (const [ch, t] of Object.entries(AREA.legend)) if (t.pick) assert.ok((AREA.food || {})[t.pick.item], `picking at "${ch}" gives ${t.pick.item}, which isn't food`);
+  for (const [, t, from] of allLegend) if (t.pick) assert.ok((AREA.food || {})[t.pick.item], `picking at ${from} gives ${t.pick.item}, which isn't food`);
 });

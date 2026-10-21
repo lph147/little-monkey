@@ -1,4 +1,4 @@
-// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school's frame), the way a
+// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school, and a lesson), the way a
 // player would: standing in front of things and pressing A, stepping into flowers and rustling grass,
 // pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
@@ -305,6 +305,25 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(13, 5, 'up', 'giving the big monkey the wood and the stones');
   assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them, and the troop gets to work');
   assert.equal(run('tileAt(6, 2).look'), 'frame', 'the school’s frame is up on its plot');
+
+  // Chapter 1: the troop builds the school, and you go in: the class greets its teacher, the little monkey is your
+  // classmate, and the teacher gives you a lesson
+  await pressAt(13, 5, 'up', 'talking to the big monkey: the troop builds the school');
+  assert.deepEqual(get('__scenes').slice(-1), ['buildingSchool'], 'the scene of the troop building it, told like the opening');
+  assert.ok(knows('学校'), 'the school teaches 学校');
+  assert.equal(run('tileAt(6, 2).look'), 'school', 'the school stands on its plot');
+  stand(9, 5, 'up');
+  await act('arrive(9, 4).then(runEvents)', 'walking in through the school’s door');
+  assert.equal(run('PLACE'), 'school', 'you should be in the classroom');
+  await pressAt(7, 3, 'up', 'talking to the old monkey at the front of the class');
+  assert.ok(knows('老师') && get('__said').includes('老师好！'), 'the class greets the old monkey, their teacher: 老师');
+  assert.equal(area().school, 2);
+  await pressAt(4, 5, 'left', 'talking to the little monkey at school');
+  assert.ok(knows('同学'), 'you’re classmates: 同学');
+  const shellsBefore = get('S.shells');
+  await pressAt(7, 3, 'up', 'a lesson with the teacher');
+  assert.ok(get('__said').includes('上课！') && get('__said').includes('下课！'), 'class begins, and is over');
+  assert.ok(get('S.shells') >= shellsBefore, 'shells for words that needed practice');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
 
   // Everything said on the way has a voice clip (npm run voices makes them)

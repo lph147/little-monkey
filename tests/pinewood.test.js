@@ -110,6 +110,6 @@ test('bring them to the big monkey: he takes both, and the school’s frame goes
   assert.equal(get(g, 'OBJECT_PIECES.filter(p => p.look === "frame").map(p => [p.x, p.y, p.w, p.h])').join(), '6,2,7,3', 'one frame, as big as the plot');
   assert.ok(g.run('tileAt(pl.x, pl.y).walk') && !(g.run('pl.x') === 12 && g.run('pl.y') === 4), 'you stepped off the plot as the frame went up');
   assert.match(get(g, '__notes').join(' '), /up goes the frame of the school/);
-  assert.ok(get(g, 'areaChecklist().every(([, done]) => done)'), 'chapter 1 so far is ticked off');
-  assert.match(g.run('tasksHint()'), /building the school/);
+  assert.ok(get(g, 'areaChecklist().slice(0, 2).every(([, done]) => done)'), 'chapter 1 so far is ticked off');
+  assert.match(get(g, 'getTasks()[0].text'), /^Talk to the big monkey: the troop is ready to build the school$/, 'next, the troop builds the school');
 });

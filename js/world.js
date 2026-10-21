@@ -34,8 +34,8 @@ function stepClear(){
   }
 }
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
-const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && e.at[1] === y);   // a way to another place
-const isOpen = e => !e.if || matches(e.if);
+const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && e.at[1] === y && (!e.when || matches(e.when)));   // a way to another place (when: only there once the story says)
+const isOpen = e => (!e.when || matches(e.when)) && (!e.if || matches(e.if));   // (a way that isn't there yet isn't open either)
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y);
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
@@ -75,6 +75,8 @@ function wayTo(place){
   return null;
 }
 function tasksHint(){ const h = AREA.hints.find(h => matches(h.if)); return h ? fill(h.text, false, true) : ''; }
+// Where you practise your words now (the area's practiseAt: the first whose if matches), such as at the practice post.
+const practiseWhere = () => ((AREA.practiseAt || []).find(p => !p.if || matches(p.if)) || {}).text || '';
 function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).join('. ') + '.' : tasksHint(); }
 function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
@@ -116,6 +118,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
     if (k === 'hurt') return ((S.hearts ?? HEARTS) < HEARTS) === v;   // you've lost hearts in a battle
+    if (k === 'practice') return trainingCalls() === v;   // some of your words need practice (the practice post's !)
     if (k === 'near'){ const n = NPCS.find(c => c.id === v); return !!n && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) === 1; }   // you're right beside this character
     if (k === 'at') return placeOf(v) === PLACE && pl.x === v[0] && pl.y === v[1];   // you're standing here: [x, y], or [x, y, 'place']
     if (AREA.counters[k]) return compare(counter(k), v);
@@ -213,6 +216,9 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     toast((counted ? `${wz(num)}! ` : '') + fill(all ? s.full : s.each));
   },
   rest(){ S.hearts = HEARTS; save(); SFX.chime(); },   // your hearts are full again
+  // A lesson with the character you're talking to (the teacher at school): practising your words, as at the practice
+  // post. If you stop, or don't start, the conversation ends there.
+  async lesson(s, who){ if (!await practise(speaker(who), PRACTICE.lesson)) return STOP; },
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
   // up, then you hop down again, sparkling, with all your hearts (its text: the message then).
   async sleep(s){

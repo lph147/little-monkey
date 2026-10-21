@@ -284,7 +284,7 @@ function drawWorld(now){
     b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - 5 - bob, 10, 10);
   }
   for (const [x, y, show] of bubbles) bubble(x, y, show);
-  if (trainingCalls()) for (const [x, y] of TRAINING_TILES) bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice
+  if (trainingCalls()) for (const [x, y] of TRAINING_TILES) if (tileAt(x, y).action === 'training') bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice (while the post stands)
   drawSplashes(cx, cy, now);
   drawChips(cx, cy, now);
   drawMarkers(cx, cy, now);
@@ -490,5 +490,44 @@ function drawBecomingKing(t, now){
   }
   if (t < 11.9){ b.globalAlpha = 1 - clamp((t - 11.3) / .6, 0, 1); R(b, 0, 0, W, H, '#0B0907'); b.globalAlpha = 1; }   // fading in
 }
+// The troop building the school (chapter 1), at the home ground, close up: the frame on its plot, and two monkeys carrying
+// in wood (to 3); the walls go up, plank by plank, with the troop hammering (3 to 6); then the grey tiled roof, row by row
+// (6 to 9); then the sign and the lanterns go up, sparkling, and the troop turns round and jumps for joy (from 9).
+// The building is drawn as on the map, a little narrower, at twice the size.
+const BUILDERS = [['big', 8, 66, 'right'], ['troop1', 38, 70, 'right'], ['player', 146, 72, 'left'], ['playful', 172, 70, 'left'], ['elder', 200, 66, 'left']];   // [who, x, y, facing the school]
+let siteCanvas = null;
+function drawBuildingSchool(t, now){
+  const W = VW*T, H = VH*T, blink = now % 3200 < 130;
+  for (let y = 0; y < 44; y += 4) R(b, 0, y, W, 4, mix('#8FCBEF', '#CFE9F7', y / 44));   // the sky
+  R(b, 0, 30, W, 16, '#8E8A7E'); R(b, 0, 30, W, 2, '#B5B1A4'); R(b, 0, 44, W, 2, '#6A665C');   // the cliff behind the home ground
+  R(b, 0, 46, W, H - 46, '#7CC46B');
+  for (let i = 0; i < 60; i++) R(b, Math.floor(rnd(i, 41) * W), 46 + Math.floor(rnd(i, 42) * (H - 46)), 1, 1, i % 3 ? '#6CB35C' : '#93D67F');
+  const k = (a, d) => clamp((t - a) / d, 0, 1);
+  const built = {walls: k(3.2, 2.6), roof: k(6.2, 2.6), sign: t >= 9};
+  if (!siteCanvas){ siteCanvas = document.createElement('canvas'); siteCanvas.width = 120; siteCanvas.height = 64; }
+  const g = siteCanvas.getContext('2d'); g.clearRect(0, 0, 120, 64);
+  schoolFrame(g, {x: 10 / T, y: 14 / T, w: 100 / T, h: 3});   // (in the site's own pixels: the school's base is 4 up from its bottom)
+  schoolHouse(g, 10, 14, 100, 48, built);
+  b.drawImage(siteCanvas, 0, 0, 120, 64, 0, -8, 240, 128);
+  if (t < 6.5){   // the pile of wood and stones, getting smaller as it's used
+    const left = 3 - Math.floor(k(3.2, 3.2) * 3);
+    for (let i = 0; i < left; i++){ R(b, 214, 92 - i * 7, 22, 6, '#6B4A2A'); R(b, 215, 93 - i * 7, 20, 4, '#B98A55'); R(b, 214, 93 - i * 7, 4, 4, '#E2C08E'); }
+  }
+  BUILDERS.forEach(([id, x, y, dir], i) => {
+    const carrying = i < 2 && t < 2.4, walkIn = carrying ? 1 - k(0, 2.2) : 0, X = Math.round(x - walkIn * 90);
+    const working = t >= 3.2 && t < 9 && i < 2 && Math.floor(now / 260 + i) % 2 === 0, cheer = t >= 9;
+    const hop = cheer ? Math.round(Math.abs(Math.sin(now / 180 + i)) * 6) : working ? 2 : 0;
+    const step = carrying && walkIn > 0 ? 1 + Math.floor(now / 160) % 2 : 0;
+    b.drawImage(monkeySprite(id, cheer ? 'down' : dir, blink && i % 2 === 0, step, true), X, y - hop, 32, 32);
+    if (carrying){ R(b, X + 2, y - 7, 28, 6, '#6B4A2A'); R(b, X + 3, y - 6, 26, 4, '#B98A55'); R(b, X + 25, y - 6, 4, 4, '#E2C08E'); }   // a log, carried over their head
+  });
+  if (t >= 3.2 && t < 9){ for (let i = 0; i < 4; i++){ const ph = (now / 500 + i / 4) % 1; b.globalAlpha = 1 - ph; R(b, 70 + i * 30 + Math.round(ph * 6), 90 - Math.round(ph * 14), 2, 2, '#E6DCC8'); } b.globalAlpha = 1; }   // dust
+  if (t >= 9) for (let i = 0; i < 10; i++){   // sparkles round the sign
+    const a = i / 10 * Math.PI * 2 + now / 1500, tw = Math.sin(now / 170 + i * 2);
+    if (tw < 0) continue;
+    const sx = Math.round(120 + Math.cos(a) * 30), sy = Math.round(26 + Math.sin(a) * 12);
+    R(b, sx, sy, 1, 1, '#FFF6D8'); if (tw > .7){ R(b, sx - 1, sy, 3, 1, '#FFE27A'); R(b, sx, sy - 1, 1, 3, '#FFE27A'); }
+  }
+}
 // The pictures for the area's scenes (AREA.scenes), by name; the opening's are drawScene, above.
-const SCENE_ART = {becomingKing: drawBecomingKing};
+const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool};

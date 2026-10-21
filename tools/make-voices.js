@@ -50,7 +50,7 @@ function wanted(){
     if (!o || typeof o !== 'object') return;
     if (typeof o.say === 'string') add(o.say, o.by || owner);
     for (const k in o) steps(o[k], owner);
-  })([AREA.events, AREA.legend], null);
+  })([AREA.events, AREA.legend, ...Object.values(AREA.places).map(p => p.legend || {})], null);
   for (const [id, parts] of Object.entries(AREA.talk)) (function steps(o){
     if (Array.isArray(o)) return o.forEach(steps);
     if (!o || typeof o !== 'object') return;

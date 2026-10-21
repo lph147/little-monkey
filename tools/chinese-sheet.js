@@ -80,6 +80,17 @@ const DRAFTS = [
     ['我们 要 小 石头 。', 'We need small stones.', 'The sentence you finish when you give him the stones (filling in 石头)'],
     ['你 要 木头 吗 ？', 'Do you want wood?', 'A squirrel in the pine wood (the place is called 松林 sōnglín, pine wood: please check this name too), showing you the dry, dead pines']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), building the school: ' + where})),
+  ...[['我们 来 盖 学校 吧 ！', 'Let’s build the school!', 'The big monkey, once the school’s frame is up (盖 gài, to build a house, is just for listening)'],
+    ['我们 有 木头 ， 也 有 石头 。', 'We have wood, and stones too.', 'The scene of the troop building the school, caption 1'],
+    ['一 ， 二 ， 三 ！', 'One, two, three!', 'Caption 2, as the troop lifts the walls'],
+    ['太 好 了 ！', 'Wonderful!', 'Caption 3, as the roof goes on'],
+    ['这 是 我们 的 学校 ！', 'This is our school!', 'Caption 4, teaching 学校 xuéxiào, school (also the name of the place inside: please check it as a name too)'],
+    ['上课 ！', 'Class is starting!', 'The old monkey, the teacher now, starting a lesson (上课 shàngkè, just for listening)'],
+    ['老师 好 ！', 'Hello, teacher!', 'The class (the little monkey) greeting him, teaching 老师 lǎoshī, teacher'],
+    ['同学 们 好 ！', 'Hello, class!', 'The teacher’s reply (同学们 tóngxuémen; 们 is just for listening)'],
+    ['我们 是 同学 ！', 'We’re classmates!', 'The little monkey at school, teaching 同学 tóngxué, classmate'],
+    ['下课 ！', 'Class is over!', 'The teacher, after a lesson (下课 xiàkè, just for listening)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), the school opens: ' + where})),
   {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.', where:'New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path'},
   {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'}
 ];
