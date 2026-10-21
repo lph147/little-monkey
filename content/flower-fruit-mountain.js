@@ -411,7 +411,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       exits: [
         {at:[5, 12], to:'valley', arrive:[5, 1], facing:'down'}, {at:[6, 12], to:'valley', arrive:[5, 1], facing:'down'},   // back down to the river valley
         {at:[4, 1], by:'A', label:'Jump', how:'jump', to:'cave', arrive:[7, 12], facing:'up', if:{cave:{atLeast:1}}},   // jumping through the waterfall
-        {at:[19, 2], to:'homeGround', arrive:[1, 5], facing:'right', if:{home:{atLeast:1}}, closed:'Thick bushes block the way.'}   // chapter 1: along beside the waterfall to the troop's home ground
+        {at:[19, 2], to:'homeGround', arrive:[1, 9], facing:'right', if:{home:{atLeast:1}}, closed:'Thick bushes block the way.'}   // chapter 1: along beside the waterfall to the troop's home ground
       ],
       glimpse: [3, 0, 2, 2],   // the cave, just visible behind the falling water (x, y, how wide, how tall)
       map: [
@@ -458,31 +458,42 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ]
     },
     // Chapter 1: the troop's home ground, beside the waterfall (the way there opens once the old monkey has told you about
-    // it). Each plot is marked out for something the troop wants to build, with a sign; the ways out are shut by thick
-    // bushes until the troop needs them: north to the pine wood (once the big monkey wants wood), east to the bees, south
-    // over the stream.
+    // it): a wide valley (made bigger on 21 October 2026, with room between its plots), a road through it from the
+    // waterfall in the west, and a square in the middle with a big old tree, where the troop meets. Each plot is marked
+    // out for something the troop wants to build, with a sign: the school on its terrace under the cliff, the new shop by
+    // the way in, the hive among the flowers, the cow's pen, and the garden by the stream. A peach tree and an apple tree
+    // to pick from, and a little pond with fish. The ways out are shut by thick bushes until the troop needs them: north to the pine wood (once the big
+    // monkey wants wood), east to the bees, south over the stream.
     homeGround: {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       exits: [
-        {at:[0, 5], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 6], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
-        {at:[18, 0], to:'pineWood', arrive:[10, 12], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
-        {at:[9, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
+        {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
+        {at:[25, 0], to:'pineWood', arrive:[10, 12], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
+        {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
       ],
       map: [
-        "YYYYYYYYYYYYYYYYYYbYYY",
-        "YYMMMMMMMMMMMMMMMg.gYY",
-        "Ygggggsssssssgghhh.gJY",
-        "YgTgg1sssssssg3hhh.FEY",
-        "Ygggggsssssssggggg.gFY",
-        ".....................u",
-        "..gggggggg.ggggggggggY",
-        "Ygddd2gggg.gTg5cccccgY",
-        "Ygdddggggg.ggggcccccgY",
-        "Ygggggeeeeeeee4cccccgY",
-        "YggTggeeeeeeeegggggTgY",
-        "YWWWWWWWWWWWWWkWWWWWWY",
-        "YYYYYYYYYYYYYY.YYYYYYY",
-        "YYYYYYYYYYYYYYuYYYYYYY"
+        "YYYYYYYYYYYYYYYYYYYYYYYYYbYYYYYY",
+        "YMMMMMMMMMMMMMMMMMMMMMMMg.gYYYYY",
+        "Ygggggggsssssssgggggggggg.FEJFFY",
+        "YgTggg1gsssssssgggggTgggg.3hhhgY",
+        "YgggggggsssssssggggggPggg.ghhhEY",
+        "Ygggggggggg.gggggTTgggggg.JEFgJY",
+        "YggTggggggg.gggggTTgggggg.gggggY",
+        "YgEFggggggg.gJggggggFgggg.gggTgY",
+        "Ygggggggggg.ggggggggggggg.gggggY",
+        "...............................u",
+        "...............................Y",
+        "Yggggggggggggggg.gggggggggggEggY",
+        "Yggddd2ggEgggggg.ggggg5cccccgggY",
+        "YggdddggTgggggTg.gJFgTgcccccgggY",
+        "Yggggggggggggggg.ggggggcccccgggY",
+        "Yggggeeeeeeee4gg.gOOOggggggggTgY",
+        "YgTggeeeeeeeeggg.gOOOggTgggQgggY",
+        "Yggggggggggggggg.ggggTgggggggggY",
+        "YWWWWWWWWWWWWWWWkWWWWWWWWWWWWWWY",
+        "YYYYYYYYYYYYYYYY.YYYYYYYYYYYYYYY",
+        "YYYYYYYYYYYYYYYY.YYYYYYYYYYYYYYY",
+        "YYYYYYYYYYYYYYYYuYYYYYYYYYYYYYYY"
       ]
     },
     // Chapter 1: the pine wood, up from the home ground (the big monkey clears the way when he wants wood). Three dry, dead
@@ -491,7 +502,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     pineWood: {
       name: {zh:'松林', py:'sōnglín', en:'Pine wood'},
       exits: [
-        {at:[10, 13], to:'homeGround', arrive:[18, 1], facing:'down'}   // back down to the home ground
+        {at:[10, 13], to:'homeGround', arrive:[25, 1], facing:'down'}   // back down to the home ground
       ],
       map: [
         "pppppppppppppppppppppp",
@@ -516,7 +527,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     school: {
       name: {zh:'学校', py:'xuéxiào', en:'School'},
       exits: [
-        {at:[7, 9], to:'homeGround', arrive:[9, 5], facing:'down'}   // back out through the door
+        {at:[7, 9], to:'homeGround', arrive:[11, 5], facing:'down'}   // back out through the door
       ],
       legend: {
         '#': {look:'classWall'},
@@ -675,17 +686,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // (with x, y, facing, and place if it's another place), instead of where they start. Someone following you
   // (the follow step) is wherever you've been instead, until they stop.
   characters: [
-    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:7, y:2, facing:'down'}, {if:{home:{atLeast:2}}, place:'homeGround', x:8, y:6, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:9, y:1, facing:'left'},
+    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:7, y:2, facing:'down'}, {if:{home:{atLeast:2}}, place:'homeGround', x:10, y:6, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:9, y:1, facing:'left'},
       {if:{gate:true}, x:14, y:2, facing:'right'}],   // by the waterfall once the troop is up there; where the rocks were till then
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
-    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{home:{atLeast:1}}, place:'homeGround', x:13, y:4, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:10, y:2, facing:'left'},
+    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{home:{atLeast:1}}, place:'homeGround', x:15, y:4, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:10, y:2, facing:'left'},
       {if:{climb:1, new:'棍子'}, x:16, y:1, facing:'left'}, {if:{gate:true}, x:17, y:3, facing:'left'}],   // (in the way up, with a stick for you)
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
-    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:4, y:6, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
+    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:5, y:8, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
       {if:{gate:true}, x:14, y:3, facing:'right'}],
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
     // the rest of the troop, in the meadow until they're counted into the cave

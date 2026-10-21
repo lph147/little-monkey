@@ -11,7 +11,7 @@ const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const CHAPTER_ONE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2,
   build: 2, wood: 'done', stones: 'done'};
 const WORDS = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '猴子', '朋友', '河', '鱼', '木头', '一', '二', '三', '桌子'];
-function game(area = {}, pos = {place: 'homeGround', x: 13, y: 5, dir: 'up'}, more = []){
+function game(area = {}, pos = {place: 'homeGround', x: 15, y: 5, dir: 'up'}, more = []){
   const w = Object.fromEntries([...WORDS, ...more].map(x => [x, {lv: 1, ok: 0}]));
   const g = loadGame({dom: true, save: {version: 29, started: true, w, met: ['rabbit', 'fox', 'squirrel', 'goat'], areas: {1: {...CHAPTER_ONE, ...area}}, pos}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__scenes = []; globalThis.__lessons = 0");
@@ -36,16 +36,16 @@ test('the frame is up: the big monkey starts the troop building the school (a sc
   const g = game();
   assert.equal(bubble(g, 'big'), '!');
   assert.match(get(g, 'getTasks()[0].text'), /^Talk to the big monkey: the troop is ready to build the school$/);
-  await press(g, 13, 5, 'up');
+  await press(g, 15, 5, 'up');
   assert.deepEqual(get(g, '__said'), ['我们来盖学校吧！']);
   assert.deepEqual(get(g, '__scenes'), ['buildingSchool'], 'the scene, told like the opening');
   assert.ok(get(g, '__notes').includes('card: 学校'));
   assert.equal(g.run('here().school'), 1);
-  assert.equal(g.run('tileAt(6, 2).look'), 'school');
-  assert.equal(get(g, 'OBJECT_PIECES.filter(p => p.look === "school").map(p => [p.x, p.y, p.w, p.h])').join(), '6,2,7,3', 'one building, as big as the plot');
+  assert.equal(g.run('tileAt(8, 2).look'), 'school');
+  assert.equal(get(g, 'OBJECT_PIECES.filter(p => p.look === "school").map(p => [p.x, p.y, p.w, p.h])').join(), '8,2,7,3', 'one building, as big as the plot');
   assert.match(get(g, '__notes').join(' '), /practice post from the meadow/, 'the troop used the practice post');
   assert.match(get(g, 'getTasks()[0].text'), /^Go into the 学校 \(school\), and talk to the old monkey at the front of the class$/);
-  assert.deepEqual(get(g, 'getTasks()[0].target'), [9, 4], 'the arrow points the way in: its door');
+  assert.deepEqual(get(g, 'getTasks()[0].target'), [11, 4], 'the arrow points the way in: its door');
   const scene = get(g, 'AREA.scenes.buildingSchool.captions').map(c => c.zh.replace(/ /g, ''));
   assert.deepEqual(scene, ['我们有木头，也有石头。', '一，二，三！', '太好了！', '这是我们的学校！']);
 });
@@ -62,16 +62,16 @@ test('the practice post in the meadow is gone once the school is built: lessons 
 });
 
 test('the school’s door: you walk in through it, though the building isn’t somewhere you can walk; before it’s built, there’s no way in', async () => {
-  const g = game({school: 1}, {place: 'homeGround', x: 9, y: 5, dir: 'up'}, ['学校']);
-  assert.ok(!g.run('tileAt(9, 4).walk'), 'the building');
+  const g = game({school: 1}, {place: 'homeGround', x: 11, y: 5, dir: 'up'}, ['学校']);
+  assert.ok(!g.run('tileAt(11, 4).walk'), 'the building');
   await walk(g, 'up');
   assert.equal(g.run('PLACE'), 'school', 'through the door');
   assert.deepEqual(get(g, '[pl.x, pl.y, pl.dir]'), [7, 8, 'up']);
   await walk(g, 'down');
   assert.equal(g.run('PLACE'), 'homeGround', 'and out again');
-  assert.deepEqual(get(g, '[pl.x, pl.y]'), [9, 5]);
-  const frame = game({}, {place: 'homeGround', x: 9, y: 5, dir: 'up'});
-  assert.equal(frame.run('exitAt(9, 4)'), undefined, 'just the frame: no way in yet');
+  assert.deepEqual(get(g, '[pl.x, pl.y]'), [11, 5]);
+  const frame = game({}, {place: 'homeGround', x: 11, y: 5, dir: 'up'});
+  assert.equal(frame.run('exitAt(11, 4)'), undefined, 'just the frame: no way in yet');
 });
 
 test('the classroom has its own legend: letters that mean something else outside', () => {
@@ -81,11 +81,11 @@ test('the classroom has its own legend: letters that mean something else outside
   assert.equal(g.run('tileAt(9, 2).look'), 'teacherTable');
   assert.equal(g.run('tileAt(5, 1).look'), 'blackboard');
   g.run("S.pos = {place: 'homeGround', x: 3, y: 5, dir: 'right'}; placePlayer()");
-  assert.equal(g.run('tileAt(2, 7).look'), 'plot', 'and on the home ground, a "d" is the shop’s plot');
+  assert.equal(g.run('tileAt(3, 12).look'), 'plot', 'and on the home ground, a "d" is the shop’s plot');
 });
 
 test('the first time you talk to the teacher, the class greets him: 老师好！ (老师), 同学们好！', async () => {
-  const g = game({school: 1}, {place: 'homeGround', x: 9, y: 5, dir: 'up'}, ['学校']);
+  const g = game({school: 1}, {place: 'homeGround', x: 11, y: 5, dir: 'up'}, ['学校']);
   assert.equal(bubble(g, 'elder'), '!');
   await walk(g, 'up');
   assert.deepEqual(get(g, 'getTasks()[0].target'), [7, 2], 'inside, the arrow points at him');

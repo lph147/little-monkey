@@ -110,19 +110,19 @@ test('the next colour waits until you’ve got the last one right twice; with a 
 });
 
 test('the school on the home ground has every part painted so far, and is drawn again as you learn each colour', () => {
-  const g = game({}, {place: 'homeGround', x: 9, y: 5, dir: 'up'});
+  const g = game({}, {place: 'homeGround', x: 11, y: 5, dir: 'up'});
   assert.deepEqual(get(g, 'paintedParts()'), {}, 'no colours learned yet: bare wood');
   const before = g.run('mapStoryNow()');
   g.run('rec("黑色").lv = 1');
   assert.notEqual(g.run('mapStoryNow()'), before, 'learning a colour changes the map, so it’s drawn again');
-  const all = game(Object.fromEntries(COLOURS.map(c => [c, 2])), {place: 'homeGround', x: 9, y: 5, dir: 'up'});
+  const all = game(Object.fromEntries(COLOURS.map(c => [c, 2])), {place: 'homeGround', x: 11, y: 5, dir: 'up'});
   assert.deepEqual(get(all, 'paintedParts()'), {door: '黑色', roof: '蓝色', windows: '绿色', walls: '棕色', pillars: '橙色', blossom: '粉色'});
   assert.equal(get(all, 'lessonNow()'), null, 'all six learned: no more colour lessons');
   assert.ok(get(all, 'areaChecklist().find(([t]) => /colours/.test(t))[1]'), 'the checklist is ticked: 6/6');
 });
 
 test('each painting scene can be drawn at every moment, and saying Not now to a colour lesson ends it there', async () => {
-  const g = game(Object.fromEntries(COLOURS.map(c => [c, 2])), {place: 'homeGround', x: 9, y: 5, dir: 'up'});
+  const g = game(Object.fromEntries(COLOURS.map(c => [c, 2])), {place: 'homeGround', x: 11, y: 5, dir: 'up'});
   for (const id of Object.values(get(g, 'AREA.lessons.find(l => l.id === "colours").scenes'))){
     assert.equal(g.run(`AREA.scenes.${id}.art`), 'paintingSchool');
     for (let t = 0; t <= 6; t += .25) g.run(`SCENE_ART.paintingSchool(${t}, ${1000 + t * 1000}, AREA.scenes.${id})`);

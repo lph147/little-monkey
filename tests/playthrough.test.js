@@ -273,16 +273,16 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await act('arrive(19, 2).then(runEvents)', 'walking along beside the waterfall, where the troop has cleared a way, to the home ground');
   assert.equal(run('PLACE'), 'homeGround', 'you should be at the home ground');
   assert.equal(area().home, 2, 'with the old monkey');
-  assert.deepEqual(get("(({place, x, y}) => [place, x, y])(ALL_NPCS.find(n => n.id === 'elder'))"), ['homeGround', 8, 6], 'by the school’s plot');
+  assert.deepEqual(get("(({place, x, y}) => [place, x, y])(ALL_NPCS.find(n => n.id === 'elder'))"), ['homeGround', 10, 6], 'by the school’s plot');
   assert.ok(get('__said').includes('这里很大！'), 'he says how big it is');
   assert.ok(get('areaChecklist()').filter(([, , , found]) => found).every(([, done]) => done), 'chapter 1 so far is ticked off');
 
   // Chapter 1: the big monkey wants wood and small stones to build the school, from the pine wood up the hill
-  await pressAt(13, 5, 'up', 'talking to the big monkey at the home ground');
+  await pressAt(15, 5, 'up', 'talking to the big monkey at the home ground');
   assert.equal(area().build, 1, 'he wants wood and small stones');
   assert.deepEqual([area().wood, area().stones], ['asked', 'asked']);
-  stand(18, 0, 'up');
-  await act('arrive(18, 0).then(runEvents)', 'going up through the bushes he cleared, to the pine wood');
+  stand(25, 0, 'up');
+  await act('arrive(25, 0).then(runEvents)', 'going up through the bushes he cleared, to the pine wood');
   assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
   await pressAt(10, 10, 'right', 'meeting a squirrel in the pine wood');
   assert.ok(get('__said').includes('你要木头吗？'), 'it asks if you want wood');
@@ -302,18 +302,18 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(10, 13, 'down');
   await act('arrive(10, 13).then(runEvents)', 'going back down to the home ground');
   assert.equal(run('PLACE'), 'homeGround');
-  await pressAt(13, 5, 'up', 'giving the big monkey the wood and the stones');
+  await pressAt(15, 5, 'up', 'giving the big monkey the wood and the stones');
   assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them, and the troop gets to work');
-  assert.equal(run('tileAt(6, 2).look'), 'frame', 'the school’s frame is up on its plot');
+  assert.equal(run('tileAt(8, 2).look'), 'frame', 'the school’s frame is up on its plot');
 
   // Chapter 1: the troop builds the school, and you go in: the class greets its teacher, the little monkey is your
   // classmate, and the teacher gives you a lesson
-  await pressAt(13, 5, 'up', 'talking to the big monkey: the troop builds the school');
+  await pressAt(15, 5, 'up', 'talking to the big monkey: the troop builds the school');
   assert.deepEqual(get('__scenes').slice(-1), ['buildingSchool'], 'the scene of the troop building it, told like the opening');
   assert.ok(knows('学校'), 'the school teaches 学校');
-  assert.equal(run('tileAt(6, 2).look'), 'school', 'the school stands on its plot');
-  stand(9, 5, 'up');
-  await act('arrive(9, 4).then(runEvents)', 'walking in through the school’s door');
+  assert.equal(run('tileAt(8, 2).look'), 'school', 'the school stands on its plot');
+  stand(11, 5, 'up');
+  await act('arrive(11, 4).then(runEvents)', 'walking in through the school’s door');
   assert.equal(run('PLACE'), 'school', 'you should be in the classroom');
   await pressAt(7, 3, 'up', 'talking to the old monkey at the front of the class');
   assert.ok(knows('老师') && get('__said').includes('老师好！'), 'the class greets the old monkey, their teacher: 老师');

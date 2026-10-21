@@ -11,7 +11,7 @@ const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 // A game in chapter 1, at the home ground with the old monkey (area: more progress; pos: where you are).
 const CHAPTER_ONE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2};
 const BUILDING = {build: 1, wood: 'asked', stones: 'asked'};
-function game(area = {}, pos = {place: 'homeGround', x: 13, y: 5, dir: 'up'}, w = {}){
+function game(area = {}, pos = {place: 'homeGround', x: 15, y: 5, dir: 'up'}, w = {}){
   const g = loadGame({dom: true, save: {version: 29, started: true, w: {'石头': {lv: 1, ok: 0}, '一': {lv: 1, ok: 0}, '二': {lv: 1, ok: 0}, '三': {lv: 1, ok: 0}, ...w},
     met: ['rabbit', 'fox', 'squirrel', 'goat'], areas: {1: {...CHAPTER_ONE, ...area}}, pos}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__spoken = []");
@@ -32,16 +32,16 @@ const press = (g, x, y, dir) => { face(g, x, y, dir); return play(g, 'interact(.
 test('the big monkey wants wood and small stones, and clears the way up to the pine wood', async () => {
   const g = game();
   assert.equal(get(g, "((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show"), '!', 'he has a ! for you');
-  assert.ok(!g.run('tileAt(18, 0).walk'), 'the way up is shut by thick bushes');
-  await press(g, 13, 5, 'up');
+  assert.ok(!g.run('tileAt(25, 0).walk'), 'the way up is shut by thick bushes');
+  await press(g, 15, 5, 'up');
   assert.deepEqual(get(g, '__said'), ['我们要木头和小石头！']);
   assert.match(get(g, '__notes').join(' '), /up to the pine wood/);
   assert.deepEqual(get(g, '[here().build, here().wood, here().stones]'), [1, 'asked', 'asked']);
-  assert.ok(g.run('tileAt(18, 0).walk') && g.run('isOpen(exitAt(18, 0))'), 'the bushes are cleared');
-  assert.equal(g.run('exitAt(18, 0).to'), 'pineWood');
+  assert.ok(g.run('tileAt(25, 0).walk') && g.run('isOpen(exitAt(25, 0))'), 'the bushes are cleared');
+  assert.equal(g.run('exitAt(25, 0).to'), 'pineWood');
   assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Find three pieces of wood in the pine wood (0/3)', 'Find three small 石头 (stone, rock) in the pine wood (0/3)'],
     'wood is in plain English: you haven’t found any yet');
-  assert.deepEqual(get(g, 'getTasks()[0].target'), [18, 0], 'the arrow points the way up to the pine wood');
+  assert.deepEqual(get(g, 'getTasks()[0].target'), [25, 0], 'the arrow points the way up to the pine wood');
 });
 
 test('in the pine wood: a squirrel shows you the dry pines; things to collect sparkle, and no arrow points inside', async () => {
@@ -98,16 +98,16 @@ test('the cracked rock shuts the little clearing until you break it; then the la
 });
 
 test('bring them to the big monkey: he takes both, and the school’s frame goes up (if you stand on its plot, you step off it)', async () => {
-  const g = game({...BUILDING, holding: {wood: '木头', stones: '石头'}, picked: {wood: [1, 2, 3], stones: [1, 2, 3]}}, {place: 'homeGround', x: 12, y: 4, dir: 'right'}, {'木头': {lv: 1, ok: 0}});
+  const g = game({...BUILDING, holding: {wood: '木头', stones: '石头'}, picked: {wood: [1, 2, 3], stones: [1, 2, 3]}}, {place: 'homeGround', x: 14, y: 4, dir: 'right'}, {'木头': {lv: 1, ok: 0}});
   assert.equal(get(g, "((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show"), '?', 'he has a ? while you have something for him');
   g.run("gapQ = async () => {}; __said.length = 0");   // (filling the gaps: their own tests)
   const shells = g.run('S.shells');
-  await press(g, 12, 4, 'right');
+  await press(g, 14, 4, 'right');
   assert.deepEqual(get(g, '__said'), ['你有木头吗？', '谢谢你！', '你有石头吗？', '谢谢你！']);
   assert.deepEqual(get(g, '[here().wood, here().stones, here().build]'), ['done', 'done', 2]);
   assert.equal(g.run('S.shells'), shells + 6);
-  assert.equal(g.run('tileAt(6, 2).look'), 'frame', 'the frame is up on the school’s plot');
-  assert.equal(get(g, 'OBJECT_PIECES.filter(p => p.look === "frame").map(p => [p.x, p.y, p.w, p.h])').join(), '6,2,7,3', 'one frame, as big as the plot');
+  assert.equal(g.run('tileAt(8, 2).look'), 'frame', 'the frame is up on the school’s plot');
+  assert.equal(get(g, 'OBJECT_PIECES.filter(p => p.look === "frame").map(p => [p.x, p.y, p.w, p.h])').join(), '8,2,7,3', 'one frame, as big as the plot');
   assert.ok(g.run('tileAt(pl.x, pl.y).walk') && !(g.run('pl.x') === 12 && g.run('pl.y') === 4), 'you stepped off the plot as the frame went up');
   assert.match(get(g, '__notes').join(' '), /up goes the frame of the school/);
   assert.ok(get(g, 'areaChecklist().slice(0, 2).every(([, done]) => done)'), 'chapter 1 so far is ticked off');

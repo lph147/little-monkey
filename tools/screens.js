@@ -40,20 +40,20 @@ SAVES.home = {...SAVES.king, w: {...SAVES.king.w, ...knows(1, ['二', '三'])}, 
 // chapter 1: the troop's home ground beside the waterfall (version 29: climb 4 is the troop up at the waterfall)
 SAVES.chapterOne = {...SAVES.home, version: 29, areas: {1: {...PROLOGUE, climb: 4, boar: 1, cave: 6, count: 3, chapter: 1, home: 0}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
 SAVES.toHomeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1], home: 1}}, following: ['elder'], pos: {place: 'falls', x: 12, y: 2, dir: 'right'}};
-SAVES.homeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1], home: 2}}, pos: {place: 'homeGround', x: 3, y: 5, dir: 'right'}};
+SAVES.homeGround = {...SAVES.chapterOne, areas: {1: {...SAVES.chapterOne.areas[1], home: 2}}, pos: {place: 'homeGround', x: 3, y: 9, dir: 'right'}};
 // building the school: the big monkey wants wood and small stones, from the pine wood (part-way through: two dead pines down,
 // a stone picked up, and the cracked rock broken); then the school's frame goes up
-SAVES.bigAsks = {...SAVES.homeGround, pos: {place: 'homeGround', x: 13, y: 5, dir: 'up'}};
+SAVES.bigAsks = {...SAVES.homeGround, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};
 const BUILDING = {...SAVES.homeGround.areas[1], build: 1, wood: 'asked', stones: 'asked'};
 SAVES.pineWood = {...SAVES.homeGround, areas: {1: BUILDING}, pos: {place: 'pineWood', x: 10, y: 11, dir: 'up'}};
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
   areas: {1: {...BUILDING, picked: {wood: ['pineWood:3,2', 'pineWood:13,2'], stones: ['pineWood:3,6']},
     changed: {'pineWood:3,2': 'j', 'pineWood:13,2': 'j', 'pineWood:3,6': 'i', 'pineWood:16,4': 'y'}}}, pos: {place: 'pineWood', x: 15, y: 4, dir: 'right'}};
 SAVES.schoolFrame = {...SAVES.pineWoodLater, areas: {1: {...SAVES.pineWoodLater.areas[1], build: 2, wood: 'done', stones: 'done', picked: {}}},
-  pos: {place: 'homeGround', x: 10, y: 6, dir: 'up'}};
+  pos: {place: 'homeGround', x: 12, y: 6, dir: 'up'}};
 // the school: built, then inside it (the class has met its teacher)
 SAVES.schoolBuilt = {...SAVES.schoolFrame, w: {...SAVES.schoolFrame.w, ...knows(1, ['学校'])}, areas: {1: {...SAVES.schoolFrame.areas[1], school: 1}},
-  pos: {place: 'homeGround', x: 9, y: 6, dir: 'up'}};
+  pos: {place: 'homeGround', x: 11, y: 6, dir: 'up'}};
 SAVES.classroom = {...SAVES.schoolBuilt, w: {...SAVES.schoolBuilt.w, ...knows(1, ['老师'])}, areas: {1: {...SAVES.schoolBuilt.areas[1], school: 2}},
   pos: {place: 'school', x: 7, y: 8, dir: 'up'}};
 // number lessons: by the teacher, just learning 四; and later, knowing the numbers to six
@@ -64,7 +64,7 @@ SAVES.numbersTen = {...SAVES.numbersLater, w: {...SAVES.numbersLater.w, ...knows
 // and the school on the home ground, half painted, then all painted
 SAVES.coloursNew = {...SAVES.numbersNew, w: {...SAVES.numbersNew.w, ...knows(2, ['红色', '黄色', '白色', '四', '五', '六', '七', '八', '九', '十'])}};
 SAVES.coloursLater = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['黑色'])}};
-SAVES.schoolHalf = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['黑色', '蓝色', '绿色'])}, pos: {place: 'homeGround', x: 9, y: 6, dir: 'up'}};
+SAVES.schoolHalf = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['黑色', '蓝色', '绿色'])}, pos: {place: 'homeGround', x: 11, y: 6, dir: 'up'}};
 SAVES.schoolPainted = {...SAVES.schoolHalf, w: {...SAVES.schoolHalf.w, ...knows(2, ['棕色', '橙色', '粉色'])}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
@@ -251,7 +251,7 @@ const SCREENS = [
   {id: 'home-ground', title: 'The home ground (家园)', save: 'homeGround', why: 'Chapter 1’s settlement: five plots marked out with string and stakes, each with a sign; the ways out shut by bushes.', run: async () => {
     play(); await wait(500); }},
   {id: 'plot-sign', title: 'A plot’s sign', save: 'homeGround', why: 'What the troop wants to build there.', run: async () => {
-    play(); await wait(100); S.pos = {place: 'homeGround', x: 5, y: 4, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(400); }},
+    play(); await wait(100); S.pos = {place: 'homeGround', x: 6, y: 4, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(400); }},
   {id: 'big-asks', title: 'Wood and small stones', save: 'bigAsks', why: 'The big monkey, building the school: 我们要木头和小石头！ (木头 wood is just for listening until you find some).', run: async () => {
     play(); await wait(100); talk(npc('big')); await wait(600); }},
   {id: 'pine-wood', title: 'The pine wood (松林)', save: 'pineWood', why: 'Up from the home ground: pines, three dry dead ones that sparkle (knock them down with your stick), small stones by the stream, and a squirrel with a !.', run: async () => {
@@ -263,7 +263,7 @@ const SCREENS = [
   {id: 'school-frame', title: 'The school’s frame', save: 'schoolFrame', why: 'With the wood and stones, the troop gets to work: the frame of the school goes up on its plot.', run: async () => {
     play(); await wait(500); }},
   {id: 'build-school', title: 'Let’s build the school!', save: 'schoolFrame', why: 'The big monkey, once the frame is up: 我们来盖学校吧！', run: async () => {
-    play(); await wait(100); S.pos = {place: 'homeGround', x: 13, y: 5, dir: 'up'}; placePlayer(); talk(npc('big')); await wait(600); }},
+    play(); await wait(100); S.pos = {place: 'homeGround', x: 15, y: 5, dir: 'up'}; placePlayer(); talk(npc('big')); await wait(600); }},
   {id: 'building-walls', title: 'One, two, three!', save: 'schoolFrame', why: 'The troop building the school, told like the opening: the walls go up, plank by plank, with the troop hammering.', run: async () => {
     play(); await wait(100); storyScene('buildingSchool'); introClock = 4.6; advancedTo = 1; await wait(400); }},
   {id: 'building-roof', title: 'The roof goes on', save: 'schoolFrame', why: 'Then the grey tiled roof, row by row.', run: async () => {
