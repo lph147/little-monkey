@@ -21,7 +21,7 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
       ok ? SFX.right() : SFX.wrong();
       const fb = sheet.querySelector('.feedback');
       if (word){
-        fb.innerHTML = `${ok ? 'Yes!' : 'Not quite.'}<span class="hz">${word}</span>${WORDS[word].py}${ok ? '' : ' · ' + esc(WORDS[word].en)}`;
+        fb.innerHTML = `${ok ? 'Yes!' : 'Not quite.'}<span class="hz">${word}</span>${WORDS[word].py} · ${esc(WORDS[word].en)}`;   // (the English either way, in case a picture wasn't clear)
         setTimeout(() => say(word), 250); if (type) answer(word, ok, type);
       } else fb.textContent = ok ? 'Yes!' : 'Not quite.';
       if (onAnswer) onAnswer(ok);

@@ -608,7 +608,7 @@ function pickAnimal(animals = ANIMALS){
 // Meeting an animal: it jumps out next to you (from the grass), or at its own spot (spot).
 async function wildAppears(a, spot = findSpot()){
   pl.dir = spot.d;
-  foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
+  foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in', spot:!!a.at};   // (spot: one at its own spot stays there)
   alertUntil = performance.now() + 1000;
   SFX.encounter();
   await sleep(1100);

@@ -63,8 +63,19 @@ function drawFallingLeaves(cx, cy, now){
   }
 }
 function heart(X, Y){ [[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[2,3]].forEach(([a,c]) => R(b, X+a, Y+c, 1, 1, '#E0446A')); }
+// An animal at its own spot that you're meeting (it's drawn there, not as one jumping out): how far it hops up now. It hops
+// when it sees you; and if you make friends, it hops for joy, with a heart rising over it (at X, Y); if not, it stays put.
+function meetHop(a, X, Y, now){
+  if (!foe || foe.a !== a) return 0;
+  const e = now - foe.t0;
+  if (foe.state === 'in') return e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
+  if (foe.state !== 'happy') return 0;
+  const e1 = now - foe.t1;
+  heart(X + 6, Y - 6 - Math.round(e1 / 120));
+  return Math.round(Math.abs(Math.sin(e1 / 130)) * 4);
+}
 function drawFoe(cx, cy, now){
-  if (!foe) return;
+  if (!foe || foe.spot) return;   // (one met at its own spot is drawn there: meetHop)
   const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x);   // (looking at you)
   if (foe.state === 'in'){
     const k = clamp(e / 280, 0, 1), h = Math.max(1, Math.round(16 * k)), jump = e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
@@ -214,13 +225,15 @@ function drawWorld(now){
     R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx) + (way > 0 ? -1 : 3), Math.round(fy), 1, 2, '#D96A1E');
   });
   if (!GLOOM) drawSparkles(cx, cy, now);   // (in a gloomy place, over its shade instead, so they shine)
-  // animals at their own spots on the ground (a cliff), once animals appear; those up a tree come after the leaves
-  const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE && !(foe && foe.a === a)) : [];
+  // animals at their own spots, once animals appear: standing on open ground (the deer), or a little up a cliff, bobbing;
+  // those up a tree come after the leaves. While you're meeting one, it stays where it is (meetHop).
+  const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE) : [];
   const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree';
   for (const a of spotAnimals.filter(a => !inTree(a))){
-    const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
+    const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(towardsYou(a, a.at[0]), X, Y - 3 - bob);   // (looking your way)
+    const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y, now);
+    R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
   }
   // tall grass rustling where an animal hides
   if (rustle && canWild() && Math.floor(now / 160) % 6 < 3){
@@ -271,7 +284,7 @@ function drawWorld(now){
   for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5 - bob, 10, 10);
+    b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5 - bob - meetHop(a, X, Y - 8, now), 10, 10);
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
   for (const [x, y, show] of bubbles) bubble(x, y, show);

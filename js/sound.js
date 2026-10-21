@@ -95,8 +95,8 @@ const SFX = {
    The cave's (cave): its own sound, unlike the others: slower and sparser, with a long echo; a slow tune on soft bells,
    then on a xun (an ancient clay flute, deep and hollow), bell-like plinks, a low hum and drips of water. The pine wood's
    (pineWood): slower still, quiet and gloomy, in a minor key, on the xun and then soft bells, with a hum, far-apart plinks
-   and the wind sighing; and its battle song (pineBattle), the battle song in its minor key, lower, on a deep guzheng and the
-   xun over a low drum. A place can have its own song (the content's music) and battle song (battleMusic); otherwise
+   and the wind sighing; and its battle song (pineBattle): its own tune, slower, on the xun and then the dizi, over a
+   heartbeat of a drum and a low guzheng. A place can have its own song (the content's music) and battle song (battleMusic); otherwise
    they're home's and battle. */
 const BPM = 72, BEAT = 60 / BPM, LOOP_BEATS = 64;
 const MEL = [[76,1.5],[79,.5],[81,1],[84,.5],[81,.5], [79,2],[76,1],[79,1], [74,.5],[76,.5],[79,1],[76,1],[74,.5],[72,.5], [74,4],
@@ -152,21 +152,21 @@ const CAVE_EVENTS = (() => {
   CAVE_DRIPS.forEach(([b,f]) => ev.push({b, f, k:'drip'}));
   return ev.sort((a,c) => a.b - c.b);
 })();
-// The pine wood's battle song: as quick as the other, but in the wood's minor key, on a deep guzheng and then the xun,
-// over a low drum: a little tense, never frightening.
-const PINE_BATTLE_MEL = [[69,.5],[72,.5],[74,1],[76,.5],[74,.5],[72,1], [69,.5],[67,.5],[64,1],[67,2],
-                         [69,.5],[72,.5],[74,.5],[76,.5],[79,1],[76,1], [74,.5],[72,.5],[69,1],[69,2],
-                         [76,.5],[79,.5],[81,1],[79,.5],[76,.5],[74,1], [72,.5],[74,.5],[76,1],[72,2],
-                         [69,.5],[72,.5],[74,.5],[72,.5],[69,1],[67,1], [64,1],[67,1],[69,2]];
-const PINE_BATTLE_ROOTS = [45,43,45,40, 45,48,43,45];
+// The pine wood's battle song, unlike the other (decided 21 October 2026: the first, the battle tune in a minor key, was
+// too like it to notice): its own tune, slower, low on the xun and then on the dizi, over a heartbeat of a drum and a low
+// guzheng, with no cheerful wood block. A little tense, never frightening.
+const PINE_BATTLE_MEL = [[57,1],[60,.5],[62,.5],[64,1],[62,1], [60,.5],[57,.5],[55,1],[57,2],
+                         [64,1],[67,.5],[69,.5],[67,1],[64,1], [62,.5],[64,.5],[62,1],[57,2],
+                         [69,1],[72,.5],[74,.5],[72,1],[69,1], [67,.5],[69,.5],[67,1],[64,2],
+                         [62,1],[64,.5],[62,.5],[60,1],[57,1], [55,1],[57,1],[57,2]];
+const PINE_BATTLE_ROOTS = [45,45,40,45, 45,43,40,45];
 const PINE_BATTLE_EVENTS = (() => {
   const ev = []; let bt = 0;
   PINE_BATTLE_MEL.forEach(([m,d]) => { ev.push({b:bt, m, d, k:'mel'}); bt += d; });
   PINE_BATTLE_ROOTS.forEach((r,i) => {
-    [r+12, r+19, r+24, r+19, r+12, r+19, r+22, r+19].forEach((m,j) => ev.push({b:i*4 + j*.5, m, k:'roll'}));   // quavers
+    [r+12, r+15, r+19, r+15, r+12, r+15, r+19, r+22].forEach((m,j) => ev.push({b:i*4 + j*.5, m, k:'roll'}));   // quavers, low
     ev.push({b:i*4, m:r, k:'bass'}); ev.push({b:i*4 + 2, m:r + 7, k:'bass'});
-    ev.push({b:i*4, k:'drum', v:.06}); ev.push({b:i*4 + 2.5, k:'drum', v:.03}); ev.push({b:i*4 + 3, k:'drum', v:.04});
-    ev.push({b:i*4 + 1, k:'wood', v:.016}); ev.push({b:i*4 + 3, k:'wood', v:.016});
+    [[0, .07], [.5, .045], [2, .06], [2.5, .04]].forEach(([o, v]) => ev.push({b:i*4 + o, k:'drum', v}));   // a heartbeat
   });
   return ev.sort((a,c) => a.b - c.b);
 })();
@@ -316,12 +316,11 @@ function playCaveEvent(a, ev, t, pass){
 function playPineBattleEvent(a, ev, t, pass){
   const beat = 60 / SONGS.pineBattle.bpm;
   if (ev.k === 'mel'){
-    if (pass === 0) zheng(a, midi(ev.m), t, .07, Math.min(ev.d * beat + .4, 1.2), false);
-    else xun(a, midi(ev.m - 12), t, ev.d * beat * .9);
-  } else if (ev.k === 'roll') zheng(a, midi(ev.m), t, .02, .45, false);
+    if (pass === 0) xun(a, midi(ev.m), t, ev.d * beat * .9);
+    else dizi(a, midi(ev.m + 12), t, ev.d * beat * .92, 0, 0);
+  } else if (ev.k === 'roll') zheng(a, midi(ev.m), t, .018, .45, false);
   else if (ev.k === 'bass') zheng(a, midi(ev.m), t, .055, 1, false);
   else if (ev.k === 'drum') drum(a, t, ev.v);
-  else if (ev.k === 'wood') wood(a, t, ev.v);
 }
 function playPineEvent(a, ev, t, pass){
   const beat = 60 / SONGS.pineWood.bpm;
@@ -348,7 +347,7 @@ const SONGS = {
   battle: {bpm:116, beats:32, events:BATTLE_EVENTS, play:playBattleEvent, echo:[.32, .3]},
   cave: {bpm:54, beats:32, events:CAVE_EVENTS, play:playCaveEvent, echo:[.52, .55]},
   pineWood: {bpm:50, beats:32, events:PINE_EVENTS, play:playPineEvent, echo:[.45, .45]},
-  pineBattle: {bpm:112, beats:32, events:PINE_BATTLE_EVENTS, play:playPineBattleEvent, echo:[.38, .32]}
+  pineBattle: {bpm:100, beats:32, events:PINE_BATTLE_EVENTS, play:playPineBattleEvent, echo:[.4, .34]}
 };
 const placeSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].music]) ? PLACES[PLACE].music : 'home';   // the place you're in's own song, if it has one
 const battleSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].battleMusic]) ? PLACES[PLACE].battleMusic : 'battle';   // and its own battle song

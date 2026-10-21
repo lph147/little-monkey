@@ -107,7 +107,8 @@ function battleTurn(f, head, note){
       food && ['eat', '吃', 'chī', `Eat: ${wz(food)} ×${S.bag[food]}`],
       !f.boss && ['run', '跑', 'pǎo', 'Run away']].filter(Boolean);
     openCard(`${head}<p class="label">${note ? esc(note) : 'Your turn'}</p><p class="prompt">What will you do?</p>
-      <div class="menu acts">${acts.map(([id, zh, py, en]) => `<button class="act" data-act="${id}" data-label="${en.split(':')[0]}"><span class="z">${zh}</span><span class="p">${py}</span><span class="e">${esc(en)}</span></button>`).join('')}</div>`);
+      <div class="menu acts">${acts.map(([id, zh, py, en]) => `<button class="act" data-act="${id}" data-label="${en.split(':')[0]}"><span class="z">${zh}</span><span class="p">${py}</span><span class="e">${esc(en)}</span></button>`).join('')}</div>
+      <div class="actions qfoot"><div class="feedback"></div><span class="btn qspace" aria-hidden="true">Next</span></div>`);   // (a question's bottom row, kept empty, so nothing jumps between them)
     const first = sheet.querySelector('.act'); if (first) first.focus();
     sheet.querySelectorAll('.act').forEach(b => b.onclick = () => { SFX.blip(); res(b.dataset.act); });
   });

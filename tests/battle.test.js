@@ -255,3 +255,15 @@ test('a battle in the pine wood has its own song and its pines behind the creatu
   assert.equal(meadow.run('__songs[0]'), 'battle');
   assert.ok(!meadow.sheet.querySelector('.scene').className.split(' ').includes('pines'));
 });
+
+test('your turn is laid out as a question is (what to do where the answers go, the bottom row kept), and an answer shows its English too', async () => {
+  const g = fighting();
+  g.run("battle('snake')"); await g.flush();
+  assert.ok(g.sheet.querySelector('.acts'), 'your turn: hit or run');
+  assert.ok(g.sheet.querySelector('.qfoot .qspace'), 'with the bottom row of a question, kept empty, so nothing jumps when the question comes');
+  await g.choose('hit');
+  const i = g.run('__q.answerIdx'), word = g.run('__q.word');
+  g.sheet.querySelector(`.opt[data-i="${i}"]`).click();
+  const en = JSON.parse(g.run(`JSON.stringify(WORDS[${JSON.stringify(word)}].en)`));
+  assert.ok(g.sheet.querySelector('.feedback').textContent.includes(en), `right: "Yes!", the word, its pinyin and its English (${en}), in case the picture wasn’t clear`);
+});

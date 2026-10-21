@@ -173,8 +173,9 @@ test('a deer lives in the sunny glade: chapter 1’s animal, counted on its own,
   assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft")]'), [4, 4, 0], 'the prologue’s four animals, all found');
   const item = () => get(g, 'areaChecklist().find(([t]) => /animal that lives in the pine wood/.test(t))');
   assert.equal(item()[1], false, 'on the checklist, to find');
-  g.run('encounter = async () => true');   // (making friends: tests/animals.test.js)
+  g.run("encounter = async () => { globalThis.__met = {spot: foe.spot, at: [foe.x, foe.y]}; return true; }");   // (making friends: tests/animals.test.js)
   await press(g, 29, 3, 'right');
+  assert.deepEqual(get(g, '__met'), {spot: true, at: [30, 3]}, 'it stays where it stands as you meet it (it doesn’t jump out of the ground again)');
   assert.ok(get(g, '__notes').includes('card: 鹿'), 'meeting it teaches 鹿');
   assert.ok(!get(g, '__notes').some(n => /Animals found/.test(n)), 'the only animal to find here: no count');
   assert.deepEqual(get(g, 'S.met'), ['rabbit', 'fox', 'squirrel', 'goat', 'deer']);
