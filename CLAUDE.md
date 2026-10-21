@@ -52,7 +52,8 @@ I'm new to coding. Please:
 - **Quizzes only use words the player has already caught**, including all wrong-answer options. Every picture must be unique and unambiguous. Answers show Chinese under the picture when listening (its characters), and each one's pinyin once you've answered (before, you could match the sound to the pinyin).
 - **Never characters alone.** Wherever a question shows Chinese for you to recognise, its pinyin is with it (unless pinyin is switched off in Settings). When reading, the word shows characters and pinyin, and the answers are just pictures, so the pinyin can't be matched to itself.
 - **Writing in the world is real Chinese.** Signs, tablets and blackboards say something real (words from the word bank, or a name), drawn as pixel characters (`HANZI` in js/art.js, written with `write()`; a new character needs a drawing there), never made-up squiggles. Word pictures have no writing in them, so they can't give an answer away.
-- **Names of characters** (e.g. 老猴子 lǎo hóuzi · Old monkey) show Chinese, pinyin and English together, because names aren't vocabulary. Use plain descriptions, never invented nicknames.
+- **Names of characters** (e.g. 老猴子 lǎo hóuzi · Old monkey) show Chinese, pinyin and English together, because names aren't vocabulary. So does the game's own name on the title screen (小猴子 xiǎo hóuzi, Little Monkey), and places' names (花果山 Huāguǒ Shān, Flower Fruit Mountain).
+- **English beside Chinese always says what that Chinese means**, never something else next to it (the title screen had the area's name, Flower Fruit Mountain, under 小猴子, as if that were its meaning). Use plain descriptions, never invented nicknames.
 - **Animal names:** the first meeting teaches the name on a new-word card and the encounter never shows the English. Later meetings show Chinese and pinyin with English on tap.
 - **The old monkey must be spoken to first**; other characters point the player to him until then.
 

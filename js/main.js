@@ -153,10 +153,17 @@ const keepSaves = () => { try { navigator.storage.persist().catch(() => {}); } c
 const ago = t => { const d = Math.floor((Date.now() - t) / 86400000); return !t ? '' : d < 1 ? 'today' : d < 2 ? 'yesterday' : `${d} days ago`; };
 const faceHTML = () => `<img class="face" alt="" src="${monkeySprite('player', 'down', false, 0).toDataURL()}">`;
 const lastPlayed = () => { const p = slotsInfo().played || {}; return SLOTS.filter(slotSummary).sort((a, c) => (p[c] || 0) - (p[a] || 0) || a - c)[0] || null; };
+// The game's name, shown as names are in the game: its Chinese, with pinyin over each word (unless it's off), and under
+// it its English, which says what the Chinese means. The area's own name has a label of its own in the corner, as a
+// place's name shows when you arrive (decided 21 October 2026: under 小猴子 was Flower Fruit Mountain, the area's
+// English name, as if that were what 小猴子 meant).
+const GAME_NAME = {zh: [['小', 'xiǎo'], ['猴子', 'hóuzi']], en: 'Little Monkey'};
 function toTitle(){
   mode = 'title'; musicStop(); $('#capbox').hidden = true; $('#skipBtn').hidden = true;
   $('#titlecard').hidden = false;
-  $('#areaName').textContent = AREA.name.en;
+  $('#gameName').innerHTML = GAME_NAME.zh.map(([w, py]) => `<ruby>${w}<rt${S.pinyin ? '' : ' class="hid"'}>${py}</rt></ruby>`).join('');
+  $('#gameEn').textContent = GAME_NAME.en;
+  $('#titleArea').innerHTML = `<span class="pzh">${AREA.name.zh}</span> <span class="ppy">${AREA.name.py}</span><span class="pen">${esc(AREA.name.en)}</span>`;
   $('#version').textContent = 'v' + VERSION;
   const n = lastPlayed(), g = n && slotSummary(n), empty = SLOTS.find(k => !slotSummary(k));
   $('#titleButtons').innerHTML = (g ? `<button class="btn big primary" id="contBtn" data-label="Continue">Continue<span class="sub">Game ${n} · ${g.words} ${g.words === 1 ? 'word' : 'words'}${g.played ? ' · played ' + ago(g.played) : ''}</span></button>` : '')

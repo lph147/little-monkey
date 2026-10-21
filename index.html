@@ -31,7 +31,8 @@
     <div class="screen" id="screenWrap">
       <canvas id="screen" aria-label="Game screen"></canvas>
       <div class="titlecard" id="titlecard">
-        <div class="titlehead"><h2>小猴子</h2><p id="areaName">Flower Fruit Mountain</p><div class="titletext" id="titleText" aria-live="polite"></div></div>
+        <div class="titlehead"><h2 id="gameName">小猴子</h2><p id="gameEn">Little Monkey</p><div class="titletext" id="titleText" aria-live="polite"></div></div>
+        <div class="placename titlearea" id="titleArea"></div>   <!-- the area's name, in the corner, as a place's name shows in the game (toTitle() in js/main.js) -->
         <div class="slots" id="titleButtons"></div>   <!-- your three games (toTitle() in js/main.js) -->
         <p class="version" id="version"></p>   <!-- the version (js/version.js), to tell if this is the newest -->
       </div>
