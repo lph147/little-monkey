@@ -393,7 +393,24 @@ test('every {word} or {counter} in content text is real', () => {
   for (const t of texts) for (const w of placeholders(t)) assert.ok(okPlaceholder(w), `"${t}" has {${w}}, which isn't a word in the word bank, a counter or holding:<a request>`);
 });
 
-test('your tasks, the checklist and hints write a word from the word bank as 汉字 (English), never just in English', () => {
+// English text's sentences (split after . ! ?), and the words from the word bank a sentence writes as 汉字 (English): {水}
+const sentencesOf = text => String(text).split(/(?<=[.!?])\s+/);
+const wordsIn = sentence => placeholders(sentence).filter(w => BANK[w]);
+
+test('English text writes at most two words as 汉字 (English) in a sentence, never two side by side, so it never reads as Chinese in English word order', () => {
+  // (a red 花 (flower), not a 红色 (red) 花 (flower): read without the English, that's 红色花, where the game teaches 红色的花.
+  // Decided 22 October 2026: every word you knew written that way piled up, and read as Chinese with English grammar.)
+  const texts = [];
+  (function walk(o){ if (typeof o === 'string'){ if (/\{/.test(o) && /[a-z]/i.test(o)) texts.push(o); } else if (o && typeof o === 'object') for (const k in o) walk(o[k]); })(AREA);
+  assert.ok(texts.length > 50);
+  for (const t of texts) for (const sentence of sentencesOf(t)){
+    assert.ok(wordsIn(sentence).length <= 2, `"${sentence}" writes ${wordsIn(sentence).length} words as 汉字 (English): two at most, best one, the word it's about`);
+    for (const [, a, b] of sentence.matchAll(/\{([^}|]+)[^}]*\}[\s,]*(?=\{([^}|]+)[^}]*\})/g))
+      assert.ok(!(BANK[a] && BANK[b]), `"${sentence}" has ${a} and ${b} side by side: keep English between them (a red {花}, not a {红色} {花})`);
+  }
+});
+
+test('a sentence in your tasks, the checklist or hints that mentions words from the word bank writes one of them as 汉字 (English)', () => {
   // ({水} in the content: 水 (water), or just water till you've caught it. Names stay English, as do places' names, numbers,
   // and want, which is what 要 means but isn't 要 in these sentences: the old monkey, the home ground, the pine wood, Flower
   // Fruit Mountain, three pieces of wood.)
@@ -401,11 +418,12 @@ test('your tasks, the checklist and hints write a word from the word bank as 汉
   const meanings = Object.entries(BANK).filter(([, b]) => b.area <= AREA.number).flatMap(([w, b]) => b.en.split(/,\s*/)
     .map(e => e.replace(/^(a|an|the|to) /, '')).filter(e => e.length > 2).map(e => [w, e]));
   const texts = [...AREA.tasks.map(t => t.text), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)];
-  for (const t of texts){
-    const english = t.replace(/\{[^}]*\}/g, '').replace(names, '');
+  for (const t of texts) for (const sentence of sentencesOf(t)){
+    if (wordsIn(sentence).length) continue;
+    const english = sentence.replace(/\{[^}]*\}/g, '').replace(names, '');
     for (const [w, e] of meanings){
       const said = new RegExp(`\\b${e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(s|es)?\\b`, 'i');
-      assert.doesNotMatch(english, said, `"${t}" says ${e}: write {${w}}, which shows as ${w} (${e}), or just ${e} till you've caught it`);
+      assert.doesNotMatch(english, said, `"${sentence}" says ${e} but writes no word as 汉字 (English): write {${w}}, which shows as ${w} (${e}), or just ${e} till you've caught it`);
     }
   }
 });

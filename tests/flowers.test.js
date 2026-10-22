@@ -49,7 +49,7 @@ test('once the class has painted the school in every colour, the big monkey has 
   assert.equal(g.run('here().flowers'), 'asked');
   assert.match(get(g, '__notes').join(' '), /wants to plant 花 \(flowers\) in front of the 学校 \(school\)/, 'why he wants them');
   const task = get(g, 'getTasks()[0]');
-  assert.equal(task.text, 'Pick a 红色 (red), a 黄色 (yellow) and a 白色 (white) 花 (flower) for the big monkey to plant (0/3)');
+  assert.equal(task.text, 'Pick a red, a yellow and a white 花 (flower) for the big monkey to plant (0/3)');
   assert.deepEqual(task.target, [27, 2], 'the arrow points at the flowers by the top of the home ground');
   assert.deepEqual(item(g), ['Plant 花 (flowers) in front of the 学校 (school)', false, false, true], 'and it’s on the checklist');
 });
@@ -62,11 +62,11 @@ test('each flower you pick shows what it is, with its own picture: 红色的花,
   assert.deepEqual(get(g, '__notes'), [], 'and nothing else: the note is on its card');
   await press(g, 26, 3, 'up');
   assert.equal(get(g, '__picked').length, 1, 'a red one again: no');
-  assert.deepEqual(get(g, '__notes'), ['You have a 红色 (red) 花 (flower) already. Find another colour.']);
+  assert.deepEqual(get(g, '__notes'), ['You have a red 花 (flower) already. Find another colour.']);
   await press(g, 27, 3, 'up');
   await press(g, 28, 3, 'up');
   assert.deepEqual(get(g, '__picked').slice(1), [['黄色 的 花', 'A yellow flower', 'For the big monkey to plant (2/3). Find the other colours.'],
-    ['白色 的 花', 'A white flower', 'You have a 红色 (red), a 黄色 (yellow) and a 白色 (white) 花 (flower). Take them to the big monkey.']]);
+    ['白色 的 花', 'A white flower', 'You have a red, a yellow and a white 花 (flower). Take them to the big monkey.']]);
   assert.equal(g.run('here().holding.flowers'), '花');
   assert.equal(bubble(g), '?', 'a ? over the big monkey while you have them');
   assert.equal(get(g, 'getTasks()[0].text'), 'Take the 花 (flower) to the big monkey');
