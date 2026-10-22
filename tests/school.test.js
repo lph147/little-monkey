@@ -106,7 +106,7 @@ test('the little monkey: 我们是同学！ (同学); then lessons with the teac
   assert.deepEqual(get(g, '__said'), ['我们是同学！']);
   assert.ok(get(g, '__notes').includes('card: 同学'));
   assert.equal(bubble(g, 'playful'), null);
-  assert.ok(get(g, 'areaChecklist().every(([, done]) => done)'), 'chapter 1 so far is ticked off');
+  assert.ok(get(g, 'areaChecklist().filter(([, , , found]) => found).every(([, done]) => done)'), 'chapter 1 so far is ticked off (the flowers wait for the big monkey to ask)');
   assert.equal(bubble(g, 'elder'), g.run('trainingCalls()') ? '!' : null, 'a ! over the teacher when words need practice');
   g.run('__said.length = 0');
   await press(g, 7, 3, 'up');
@@ -115,5 +115,7 @@ test('the little monkey: 我们是同学！ (同学); then lessons with the teac
   g.run('__said.length = 0; practise = async () => false');   // you don't start it, or stop
   await press(g, 7, 3, 'up');
   assert.deepEqual(get(g, '__said'), ['上课！'], 'no 下课 if you don’t have the lesson');
+  assert.match(g.run('tasksHint()'), /painted in every colour! The big monkey has something to ask you/, 'with every colour learned, the big monkey wants flowers for the school');
+  g.run("Object.assign(here(), {flowers: 'done', schoolFlowers: true})");
   assert.match(g.run('tasksHint()'), /gives you a lesson whenever there’s a new number or colour to learn, or your words need practice/);
 });

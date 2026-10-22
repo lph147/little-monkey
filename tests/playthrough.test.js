@@ -1,4 +1,4 @@
-// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school and its lessons), the way a
+// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school, its lessons and its flowers), the way a
 // player would: standing in front of things and pressing A, stepping into flowers and rustling grass,
 // pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
@@ -339,6 +339,21 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     'each colour lesson ends with the class painting a part of the school');
   assert.deepEqual(Object.keys(get('paintedParts()')).sort(), ['blossom', 'door', 'lanterns', 'pillars', 'roof', 'sign', 'steps', 'walls', 'windows'], 'and it’s all painted');
   await pressAt(7, 3, 'up', 'a lesson once you know the numbers to ten and the colours: practice');
+  assert.ok(get('areaChecklist()').filter(([, , , found]) => found).every(([, done]) => done), 'chapter 1 so far is ticked off');
+
+  // Chapter 1: the school painted in every colour, the big monkey wants flowers to plant in front of it, a red, a yellow
+  // and a white one, picked at the home ground; each shows what it is as you pick it, and he plants them as you watch
+  stand(7, 8, 'down');
+  await act('arrive(7, 9).then(runEvents)', 'walking out of the school');
+  assert.equal(run('PLACE'), 'homeGround');
+  await pressAt(15, 5, 'up', 'talking to the big monkey, now the school is painted');
+  assert.ok(get('__said').includes('学校很好看！') && get('__said').includes('我们来种花吧！'), 'the school looks lovely: let’s plant flowers!');
+  assert.equal(area().flowers, 'asked');
+  for (const x of [26, 27, 28]) await pressAt(x, 3, 'up', 'picking a flower at the top of the home ground');
+  assert.deepEqual(area().picked.flowers, ['红色', '黄色', '白色'], 'one of each colour');
+  assert.ok(['红色的花', '黄色的花', '白色的花'].every(t => get('__said').includes(t)), 'each said as you pick it: 红色的花, a red flower');
+  await pressAt(15, 5, 'up', 'giving the big monkey the flowers');
+  assert.deepEqual([area().flowers, area().schoolFlowers, run('tileAt(10, 5).look')], ['done', true, 'flowerBed'], 'he plants them in front of the school');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
 
   // Everything said on the way has a voice clip (npm run voices makes them)

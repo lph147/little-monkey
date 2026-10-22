@@ -193,6 +193,9 @@ let swing = null;
 // marked out: {t0, changed: the squares that change, fresh: their new look, box: the plot's squares, x0 y0 to x1 y1; hold:
 // a moment to show it at, still, as the screens gallery does}.
 const MARK = {stakes:[150, 420, 690, 960], string:[1150, 1650], ground:[1750, 2300], end:2500};
+// Planting as you watch (the plant step), with what's being planted in marking too (grow: true): a square every each ms,
+// each growing up out of the ground in grow ms.
+const PLANT = {each:380, grow:450};
 let marking = null;
 const mapLooks = () => MAP.map((r, y) => [...r].map((c, x) => tileAt(x, y).look));
 function markingOf(was){   // what's being marked out, now the story has changed (was: each square's look before)
@@ -270,6 +273,18 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     let t = 0;
     if (marking.box) for (const at of MARK.stakes){ await sleep(at - t); t = at; SFX.tock(); }   // (each stake, hammered in)
     await sleep(MARK.end - t);
+    marking = null; refreshMap();
+  },
+  // The troop plants something as you watch (plant: what the story becomes then), such as the flowers you've brought, in
+  // front of the school: each square that changes grows up out of the ground, one after another, with a little pop.
+  async plant(s){
+    const was = mapLooks();
+    Object.assign(here(), s.plant); save(); placeCharacters();
+    marking = markingOf(was);
+    if (!marking){ refreshMap(); return; }
+    marking.grow = true;
+    for (let i = 0; i < marking.changed.length; i++){ if (i) await sleep(PLANT.each); SFX.sprout(); }
+    await sleep(PLANT.grow + 150);
     marking = null; refreshMap();
   },
   sound(s){ if (SFX[s.sound]) SFX[s.sound](); },   // a sound (one of SFX in js/sound.js), such as a wolf howling far off
@@ -395,7 +410,7 @@ async function runSteps(steps, who, ends){
   for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i)) === STOP) return STOP;
 }
 // Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map.
-const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'sleep'];
+const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep'];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){
@@ -547,7 +562,9 @@ async function gather(t, x, y){   // pick up something for a request, such as fr
     if (g.kind && WORDS[g.kind] && lvl(g.kind) === 0) await showNotice(g.kind, g.kindNote ? {note:fill(g.kindNote)} : {});   // the first of its kind teaches its word, such as 红
     p.push(key); SFX.right();
     if (p.length >= g.count) here().holding[g.for] = g.item;
-    save(); toast(fill(p.length >= g.count ? g.full : g.message));
+    save();
+    const text = fill(p.length >= g.count ? g.full : g.message);
+    if (g.picked) await showPicked(g.picked, text); else toast(text);   // what you've picked, such as 红色的花 (a red flower), with the message on its card
     return;
   }
   here().holding[g.for] = g.item; save(); SFX.right(); toast(fill(g.message));

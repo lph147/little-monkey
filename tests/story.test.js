@@ -107,7 +107,7 @@ test('the rocks roll away only once the rest of the prologue is done: the hungry
   assert.equal(await gate(helped, all), true, 'and not waiting for the big monkey’s flowers: they’re in chapter 1 now (decided 22 October 2026)');
 });
 
-test('in the prologue, the big monkey has nothing to ask (his flowers wait for chapter 1): he says hello; a game saved in the middle of his flowers can finish them', async () => {
+test('in the prologue, the big monkey has nothing to ask (his flowers wait for chapter 1): he says hello, even to a game saved in the middle of them', async () => {
   const talkTo = async (area, words = ['石头', '你好', '花']) => {
     const w = Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0, ok: 2}]));
     const g = loadGame({save: {version: 29, started: true, w, areas: {1: {elder: 2, ...area}}}});
@@ -122,8 +122,7 @@ test('in the prologue, the big monkey has nothing to ask (his flowers wait for c
   assert.deepEqual(now.said, ['你好！', '你好！'], 'he says hello, and you say it back');
   assert.equal(now.flowers, 'not asked');
   const before = await talkTo({flowers: 'asked', holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}}, ['石头', '你好', '花', '红色', '黄色', '白色']);
-  assert.equal(before.bubble, '?', 'holding his flowers: a ?');
-  assert.equal(before.flowers, 'done', 'and he takes them');
+  assert.deepEqual([before.bubble, before.said, before.flowers], [null, ['你好！', '你好！'], 'not asked'], 'a game saved holding his flowers (before version 30) waits for chapter 1 too');
 });
 
 test('the prologue runs from being born to counting the troop in and becoming king; then chapter 1, The Great Feast, begins with its card', async () => {

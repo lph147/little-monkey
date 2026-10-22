@@ -84,6 +84,13 @@ SAVES.coloursThree = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2
 SAVES.coloursLater = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(2, ['黑色'])}};
 SAVES.schoolHalf = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(2, ['黑色', '蓝色', '绿色'])}, pos: {place: 'homeGround', x: 11, y: 6, dir: 'up'}};
 SAVES.schoolPainted = {...SAVES.schoolHalf, w: {...SAVES.schoolHalf.w, ...knows(2, ['棕色', '橙色', '粉色'])}};
+// flowers for the school (version 30: they're chapter 1's): the big monkey asks for them once it's all painted; picking them
+// at the top of the home ground; bringing them to him; and planted in front of the school
+SAVES.flowersAsk = {...SAVES.schoolPainted, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};
+SAVES.flowersPicking = {...SAVES.schoolPainted, version: 30, areas: {1: {...SAVES.schoolPainted.areas[1], flowers: 'asked'}}, pos: {place: 'homeGround', x: 26, y: 3, dir: 'up'}};
+SAVES.flowersBack = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}}},
+  pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};
+SAVES.flowersPlanted = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], flowers: 'done', schoolFlowers: true}}, pos: {place: 'homeGround', x: 11, y: 7, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -375,7 +382,16 @@ const SCREENS = [
   {id: 'painted-roof', title: 'The roof is blue!', save: 'coloursLater', why: 'Then (Next) the troop jumps for joy, and the newly painted roof sparkles.', run: async () => {
     play(); await wait(100); storyScene('paintRoof'); await wait(4600); click('#nextBtn'); await wait(900); }},
   {id: 'school-colours', title: 'The school, half painted', save: 'schoolHalf', why: 'Each part painted as you learn its colour: the lanterns red, the sign yellow, the step white, the door black, the roof blue, the windows green.', run: async () => { play(); await wait(500); }},
-  {id: 'school-painted', title: 'The school, all painted', save: 'schoolPainted', why: 'All nine colours: the walls brown, the pillars orange, and pink peach blossom under the windows too.', run: async () => { play(); await wait(500); }},
+  {id: 'school-painted', title: 'The school, all painted', save: 'schoolPainted', why: 'All nine colours: the walls brown, the pillars orange, and pink peach blossom under the windows too. The big monkey has a ! now.', run: async () => { play(); await wait(500); }},
+  {id: 'flowers-ask', title: 'The school looks lovely!', save: 'flowersAsk', why: 'With the school painted in every colour, the big monkey: 学校很好看！ (好看 just for listening), then 我们来种花吧！ (Let’s plant some flowers!).', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
+  {id: 'flowers-want', title: 'Red, yellow and white flowers', save: 'flowersAsk', why: 'Then he asks for one of each of the first colours you learned, to plant in front of the school.', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(300); next(); await wait(300); next(); await wait(500); }},
+  {id: 'picked-red', title: 'A red flower', save: 'flowersPicking', why: 'Each flower you pick shows what it is, with its own picture: 红色的花 (a red flower), said aloud, and how many you have.', run: async () => {
+    play(); await wait(200); interact(...facing()); await wait(600); }},
+  {id: 'planting', title: 'Planting the flowers', save: 'flowersBack', why: 'Bring them to the big monkey, and he plants them in front of the school as you watch: each square of the beds comes up out of the ground in turn, with a little pop.', run: async () => {
+    play(); await wait(100); const was = mapLooks(); Object.assign(here(), {flowers: 'done', schoolFlowers: true}); marking = {...markingOf(was), grow: true, hold: 900}; await wait(300); }},
+  {id: 'school-flowers', title: 'Flowers in front of the school', save: 'flowersPlanted', why: 'Red, yellow and white, either side of the path up to the door: the flowers you picked.', run: async () => { play(); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

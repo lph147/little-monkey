@@ -12,7 +12,7 @@ They start the game in a pretend browser (no window opens) and check that it loa
 
 They also check the content files: every word in a sentence is in the word bank, no word is listed twice, every picture is different, characters stand where you can walk, names have Chinese, pinyin and English, the word pictures are complete and up to date, and so on. If a test fails, its message says what's wrong and where.
 
-One test plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1, part A), pressing the game's own buttons the way a player would (tests/playthrough.test.js). If a change makes the area impossible to finish, it says where it got stuck.
+One test plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school, its lessons and its flowers), pressing the game's own buttons the way a player would (tests/playthrough.test.js). If a change makes the area impossible to finish, it says where it got stuck.
 
 And they try out a few things the game does: the story questions only show words you've caught, it's chapter 1 all the way (no prologue), and Space and Enter work as A on the title screen and in the intro.
 
@@ -276,6 +276,14 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Before the colour lessons, the school is bare: wooden walls, paper lanterns, a bare wooden sign with 学校 in dark wood, and a grey stone step. Walk out after the first lesson: its lanterns are red. The next colour lessons paint the sign yellow (its writing dark red: 牌子是黄色的！), the step at the door white (台阶是白色的！), the door black (with gold studs), the roof blue, the windows green, the walls brown, the pillars orange, and pink peach blossom under the windows, each in its own scene. With all nine, the school is all painted and the checklist's line is ticked.
 - [ ] A game that learned red, yellow and white in the prologue (before version 200) starts the colour lessons at 黑色, and its school has red lanterns, a yellow sign and a white step already.
 - [ ] On the smallest phone, both colour cards fit without scrolling (the reading one has the colour smaller).
+
+**Chapter 1: flowers for the school**
+- [ ] Before the last colour lesson, the big monkey (beside the school) has no ! and says 你是我们的王！. Once the school is painted in all nine colours, he has a !, and with no tasks, TASKS says the school is painted in every colour and the big monkey has something to ask you.
+- [ ] Talk to him: 学校很好看！ (The school looks lovely!: 好看 grey), then 我们来种花吧！ (Let's plant some flowers!: 种花 grey), then 我要红色、黄色和白色的花！ (the last line says Done). A message says he wants to plant flowers in front of the school, and a new task: pick a red, a yellow and a white 花 (flower) for the big monkey to plant (0/3), its arrow pointing to the top right of the home ground. TASKS' checklist has "Plant flowers in front of the 学校 (school)".
+- [ ] At the top right of the home ground, red, yellow and white flowers grow side by side. Face the red ones: A says Pick. Pick: a card says You picked, with a picture of a red flower, 红色的花, hóngsè de huā, "A red flower", said aloud, and "For the big monkey to plant (1/3)". Pick the red ones again: "You have a red 花 (flower) already". The yellow and white ones show 黄色的花 and 白色的花, each with its own flower (a yellow one with an orange middle, a white one), and after the third the card says to take them to the big monkey.
+- [ ] The big monkey has a ?. Talk to him: 你有花吗？, Give it, fill the gap (我要＿的花: 红色), 3 shells, 谢谢你！ and your reply. Then, as you watch, flowers come up in front of the school, square by square, with a little pop each: two beds of red, yellow and white flowers either side of the path up to the door. A message says he plants them, and the checklist's line is ticked.
+- [ ] The beds can't be walked on (the path between them can). Face one and press A: they're the flowers you picked, planted in front of the school.
+- [ ] A game that picked or brought the flowers in the prologue (before version 201) is asked for them again here, after the colour lessons, and keeps the shells it had for them.
 
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.

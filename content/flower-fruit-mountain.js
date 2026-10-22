@@ -46,9 +46,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   school  chapter 1: 0 not built yet, 1 the troop has built it (the scene), 2 you've been in, and the class has greeted
   //           its teacher, the old monkey
   //   woodIn  chapter 1: 1 once you've been into the pine wood (the first time, a wolf howls far off)
+  //   schoolFlowers chapter 1: true once the big monkey has planted the flowers you brought him in front of the school
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0, build:0, school:0, woodIn:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -122,8 +123,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
     {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect water from the river or the pond', arrow:[11, 9]},
     {id:'t2', if:{thirsty:'asked', holding:{thirsty:true}}, text:'Give the {水} to the thirsty monkey', arrow:'thirsty'},
-    {id:'f1', if:{flowers:'asked', holding:{flowers:false}}, text:'Find a red, a yellow and a white {花} for the big monkey ({flowersPicked}/3)'},
-    {id:'f2', if:{flowers:'asked', holding:{flowers:true}}, text:'Give the {花} to the big monkey', arrow:'big'},
     {id:'climb0', if:{gate:true, climb:0}, text:'Talk to the old monkey, where the rocks were', arrow:'elder'},
     {id:'climb1', if:{climb:1}, text:'Follow the path up beside the river, and find where the water comes from', arrow:[5, 1, 'falls']},
     {id:'climb2', if:{climb:2}, text:'Go back down and tell the old monkey what you found', arrow:'elder'},
@@ -145,6 +144,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'build', if:{build:2, school:0}, text:'Talk to the big monkey: the troop is ready to build the {学校}', arrow:'big'},
     {id:'goIn', if:{school:1}, text:'Go into the {学校}, and talk to the old monkey at the front of the class', arrow:'elder'},
     {id:'classmates', if:{school:{atLeast:2}, new:'同学'}, text:'Talk to the little monkey in the {学校}', arrow:'playful'},
+    {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
+    {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
     {id:'count', if:{cave:{atLeast:5}, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
   ],
 
@@ -152,6 +153,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   hints: [
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
+    {if:{coloursKnown:9, flowers:'not asked'}, text:'The {学校} is painted in every colour! The big monkey has something to ask you.'},
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the school: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a school first. The big monkey has something to ask you.'},
@@ -189,7 +191,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Go to school, and meet your {老师}', show:{school:{atLeast:1}}, done:{school:{atLeast:2}}},
     {chapter:1, text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}},
     {chapter:1, text:'Learn to count to ten at school ({numbersKnown}/7)', show:{school:{atLeast:2}}, done:{numbersKnown:7}},
-    {chapter:1, text:'Learn nine colours, and paint the school ({coloursKnown}/9)', show:{school:{atLeast:2}}, done:{coloursKnown:9}}
+    {chapter:1, text:'Learn nine colours, and paint the school ({coloursKnown}/9)', show:{school:{atLeast:2}}, done:{coloursKnown:9}},
+    {chapter:1, text:'Plant flowers in front of the {学校}', show:{flowers:'asked'}, done:{schoolFlowers:true}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -206,9 +209,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the ledges
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
-    big: [{if:{climb:1, new:'棍子'}, show:'!'}, {if:{elder:{atLeast:1}, flowers:'asked', holding:{flowers:true}}, show:'?'},
+    big: [{if:{climb:1, new:'棍子'}, show:'!'},
       {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', holding:{stones:true}}, show:'?'},
-      {if:{build:2, school:0}, show:'!'}],   // chapter 1: the school
+      {if:{build:2, school:0}, show:'!'},   // chapter 1: the school
+      {if:{coloursKnown:9, flowers:'not asked'}, show:'!'}, {if:{flowers:'asked', holding:{flowers:true}}, show:'?'}],   // and flowers for it
     woodSquirrel: [{if:{new:'木头'}, show:'!'}]   // the squirrel in the pine wood, until you've found wood
   },
 
@@ -240,9 +244,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
       sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
-    // the big monkey wants flowers: in the prologue until 22 October 2026; they wait for chapter 1 now, once you've learned
-    // the colours at school (a game saved in the middle of them can finish them)
-    flowers: {from:'big', wants:'花', verb:'花', ask:'wantFlowers', asked:'The big monkey wants a red, a yellow and a white {花}, and will give you shells for them. Check your tasks.',
+    // chapter 1: once the class has painted the school in every colour, the big monkey wants flowers to plant in front of it,
+    // one of each of the first colours you learned, picked at the home ground (see gather in the legend). (They were the
+    // prologue's until 22 October 2026, wanted for no reason: the colours are taught at school now.)
+    flowers: {from:'big', wants:'花', verb:'花', ask:'wantFlowers', asked:'The big monkey wants to plant flowers in front of the {学校}: a red, a yellow and a white {花}. Check your tasks.',
       offer:'haveFlowers', sentence:'我 要 红色 的 花', sentenceEn:'I want a red flower.', gap:'红色', reward:3, thanks:'thanks', thanksReply:'不客气'},
     // chapter 1: the big monkey wants wood and small stones to build the school. He asks for both at once (his talk), and
     // you find them in the pine wood: the dry, dead pines you knock down with your stick, and the stones by the stream
@@ -322,7 +327,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{build:1, wood:'done', stones:'done'}, do:[{say:'buildIt', by:'big'}, {scene:'buildingSchool'}, {newWord:'学校', note:'The troop has built its school!'},
       {set:{build:2, school:1}},
       {message:'The old monkey has gone in: he’s the teacher now. Walk in through the school’s door!'},
-      {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}]}
+      {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}]},
+    // you've brought the big monkey his flowers: he plants them in front of the school, as you watch (the plant step: each
+    // square of the beds grows up out of the ground, one after another)
+    {if:{place:'homeGround', flowers:'done', schoolFlowers:false}, do:[{plant:{schoolFlowers:true}},
+      {message:'The big monkey plants your flowers in front of the {学校}: red, yellow and white. It looks lovely!'}]}
   ],
 
   // The area's places: small maps you move between. The first is where the game starts. Each has
@@ -508,7 +517,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "Ygggggggsssssssgggggggggg.FEJFFY",
         "YgTggg1gsssssssgggggTgggg.3hhhgY",
         "YgggggggsssssssggggggPggg.ghhhEY",
-        "Ygggggggggg8gggggTTgggggg.JEFgJY",
+        "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
         "YgEFggggggg8gJggggggFgggg.gggTgY",
         "Ygggggggggg8ggggggggggggg.gggggY",
@@ -642,15 +651,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
   legend: {
     'g': {look:'grass', walk:true},
     'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
+    // flowers: red, yellow and white, all over the meadow and the home ground. In chapter 1, you pick one of each for the big
+    // monkey to plant in front of the school: each shows you what you've picked, such as 红色的花, a red flower, with its
+    // picture (picked; decided 22 October 2026: the card just said 花, flower), and message under it
     'F': {look:'redFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'红色', count:3, label:'Pick', note:'You pick a flower.',
-      kindNote:'The colour of these flowers.', message:'You picked a red {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
-      again:'You have a red {花} already. Find another colour.'}},   // red flowers, in the middle of the meadow
+      picked:{zh:'红色 的 花', en:'A red flower'}, message:'For the big monkey to plant ({flowersPicked}/3). Find the other colours.',
+      full:'You have a red, a yellow and a white {花}. Take them to the big monkey.', again:'You have a red {花} already. Find another colour.'}},
     'E': {look:'yellowFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'黄色', count:3, label:'Pick', note:'You pick a flower.',
-      kindNote:'The colour of these flowers.', message:'You picked a yellow {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
-      again:'You have a yellow {花} already. Find another colour.'}},   // yellow flowers, in the south
+      picked:{zh:'黄色 的 花', en:'A yellow flower'}, message:'For the big monkey to plant ({flowersPicked}/3). Find the other colours.',
+      full:'You have a red, a yellow and a white {花}. Take them to the big monkey.', again:'You have a yellow {花} already. Find another colour.'}},
     'J': {look:'whiteFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'白色', count:3, label:'Pick', note:'You pick a flower.',
-      kindNote:'The colour of these flowers.', message:'You picked a white {花} ({flowersPicked}/3). Find the other colours.', full:'You have a red, a yellow and a white {花}. Take them to the big monkey.',
-      again:'You have a white {花} already. Find another colour.'}},   // white flowers, on the far left and by the river
+      picked:{zh:'白色 的 花', en:'A white flower'}, message:'For the big monkey to plant ({flowersPicked}/3). Find the other colours.',
+      full:'You have a red, a yellow and a white {花}. Take them to the big monkey.', again:'You have a white {花} already. Find another colour.'}},
     '.': {look:'path', walk:true},   // (路 path waits for the mountain path: stepping off the stone was straight into a word)
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
@@ -706,6 +718,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '2': {look:'grass', walk:true}, '3': {look:'grass', walk:true}, '4': {look:'grass', walk:true}, '5': {look:'grass', walk:true},
     '1': {look:'grass', walk:true, becomes:[{if:{build:{atLeast:1}}, to:'7'}]},   // the school's sign, put up when its plot is marked out
     '8': {look:'grass', walk:true, becomes:[{if:{build:{atLeast:1}}, to:'.'}]},   // the little path up to the school, trodden in then too
+    // the beds either side of that path, in front of the school: grass, until the big monkey plants the flowers you've brought
+    // him there (as you watch: the plant step)
+    '9': {look:'grass', walk:true, becomes:[{if:{schoolFlowers:true}, to:'0'}]},
+    '0': {look:'flowerBed', landmark:true, onLook:[{do:[{message:'Red, yellow and white flowers: the ones you picked, planted in front of the {学校}.'}]}]},
     '7': {look:'sign', landmark:true, label:'Read', onLook:[{if:{school:{atLeast:1}}, do:[{message:'The troop’s {学校}, where the little monkeys learn. The {老师} gives lessons inside.'}]},
       {if:{build:{atLeast:2}}, do:[{message:'The troop is building a school here, where the little monkeys can learn.'}]},
       {do:[{message:'The troop wants to build a school here, where the little monkeys can learn.'}]}]},
@@ -998,7 +1014,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     findMonkeys: {zh:'去 找 猴子 吧 ！', en:'Go and find the monkeys!'},
     hungryWants: {zh:'饿 猴子 要 吃 水果 。', en:'The hungry monkey wants to eat some fruit.'},
     thirstyWants: {zh:'渴 猴子 要 喝 水 。', en:'The thirsty monkey wants to drink some water.'},
-    bigWants: {zh:'大 猴子 要 花 。', en:'The big monkey wants flowers.'},
     fruitOnTrees: {zh:'水果 在 树 上 。', en:'Fruit grows on the trees.'},
     waterInRiver: {zh:'河 里 有 水 。', en:'There’s water in the river.'},
     findAnimals: {zh:'去 找 动物 吧 ！', en:'Go and find the animals!'},
@@ -1026,6 +1041,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveStones: {zh:'你 有 石头 吗 ？', en:'Do you have the stones?'},
     squirrelWood: {zh:'你 要 木头 吗 ？', en:'Do you want wood?'},   // the squirrel in the pine wood
     buildIt: {zh:'我们 来 盖 学校 吧 ！', en:'Let’s build the school!'},   // the big monkey, once the frame is up
+    schoolLovely: {zh:'学校 很 好看 ！', en:'The school looks lovely!'},   // and once the class has painted it in every colour,
+    plantFlowers: {zh:'我们 来 种花 吧 ！', en:'Let’s plant some flowers!'},   // he wants flowers in front of it (种花 in one piece: 种 has two readings)
     classStart: {zh:'上课 ！', en:'Class is starting!'},   // at school: the teacher starts a lesson, and the class greets him
     teacherHi: {zh:'老师 好 ！', en:'Hello, teacher!'},
     classHi: {zh:'同学 们 好 ！', en:'Hello, class!'},
@@ -1149,7 +1166,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // before the story at the waterfall: he checks in on what the troop has asked you for, or sends you off to find who needs help
       {if:{story:false, hungry:'asked'}, do:[{say:'hungryWants'}]},
       {if:{story:false, thirsty:'asked'}, do:[{say:'thirstyWants'}]},
-      {if:{story:false, flowers:'asked'}, do:[{say:'bigWants'}]},
       {if:{story:false, hungry:'not asked'}, do:[{say:'findMonkeys', hint:'Look for a monkey with a ! over its head.'}]},
       {if:{story:false, thirsty:'not asked'}, do:[{say:'findMonkeys', hint:'Look for a monkey with a ! over its head.'}]},
       // after the story: the dare at the waterfall, then telling him what's inside
@@ -1291,10 +1307,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'The old monkey has gone in: he’s the teacher now. Walk in through the school’s door!'},
         {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}
       ]},
+      // chapter 1: once the class has painted the school in every colour, he wants flowers to plant in front of it (decided 22
+      // October 2026: he wanted them in the prologue, for no reason), then you bring them (or he asks again)
+      {if:{coloursKnown:9, flowers:'not asked'}, do:[{say:'schoolLovely'}, {say:'plantFlowers'}, {request:'flowers'}]},
+      {if:{flowers:'asked'}, do:[{request:'flowers'}]},
       {if:{cave:{atLeast:6}}, do:[{say:'king'}]},   // once you're king (the troop makes you king at the end of the prologue: the crowning scene)
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'dare'}]},
-      {if:{flowers:'asked'}, do:[{request:'flowers'}]},   // (a game saved in the middle of the prologue's flowers, before 22 October 2026, can finish them)
       {do:[{say:'hi'}, {reply:'你好'}]}   // in the meadow: the troop's builder, with nothing to ask of you yet
     ]
   },

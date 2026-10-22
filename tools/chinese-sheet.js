@@ -14,8 +14,6 @@ const DRAFTS = [
     ['树 上 有 鸟 。', 'There are birds in the trees.'], ['河 里 有 鱼 。', 'There are fish in the river.'],
     ['山 上 有 瀑布 ！', 'There is a waterfall on the mountain!']]
     .map(([zh, en]) => ({zh, en, where:'The new, shorter story at the waterfall (in the game)'})),
-  {zh:'我 要 花 ！', en:'I want flowers!', where:'The big monkey (大猴子 dà hóuzi: please check this name too, in Names) asking for flowers'},
-  {zh:'你 有 花 吗 ？', en:'Do you have flowers?', where:'The big monkey, when you bring the flowers'},
   ...[['瀑布 后面 有 什么 ？', 'What’s behind the waterfall?', 'The old monkey, as the troop gathers at the waterfall'],
     ['谁 跳 进去 ， 谁 就 是 王 ！', 'Whoever jumps in will be king!', 'The big monkey, daring the troop'],
     ['我 怕 ！', 'I’m scared!', 'The little monkey'],
@@ -34,9 +32,7 @@ const DRAFTS = [
   ...[['我 饿 了 。 我 要 吃 水果 ！', 'I’m hungry. I want to eat some fruit!', 'The hungry monkey now asks for fruit (水果), not a peach'],
     ['这 是 桃子 。 我 要 吃 苹果 ！', 'This is a peach. I want to eat an apple!', 'The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring)'],
     ['你 有 苹果 吗 ？', 'Do you have an apple?', 'The hungry monkey, when you bring the apple he wants'],
-    ['我 要 吃 苹果 。', 'I want to eat an apple.', 'The sentence you finish when you give him the apple'],
-    ['我 要 红色 、 黄色 和 白色 的 花 ！', 'I want red, yellow and white flowers!', 'The big monkey asking for flowers (红色, 黄色 and 白色 are each taught when you pick that colour; changed on 19 October 2026 from 红花, 黄花 and 白花)'],
-    ['我 要 红色 的 花 。', 'I want a red flower.', 'The sentence you finish when you give the big monkey the flowers (filling in 红色; changed on 19 October 2026 from 我要红花。)']]
+    ['我 要 吃 苹果 。', 'I want to eat an apple.', 'The sentence you finish when you give him the apple']]
     .map(([zh, en, where]) => ({zh, en, where:'The prologue, changed on 17 October 2026: ' + where})),
   ...[['草 里 有 蛇 。', 'There are snakes in the grass.', 'The rabbit, by the long grass on the mountain path'],
     ['水 从 山 上 来 。', 'The water comes from up the mountain.', 'The fox, at the fork in the river valley'],
@@ -48,7 +44,6 @@ const DRAFTS = [
     ['去 找 猴子 吧 ！', 'Go and find the monkeys!', 'The old monkey, sending you to help the troop'],
     ['饿 猴子 要 吃 水果 。', 'The hungry monkey wants to eat some fruit.', 'The old monkey, checking in'],
     ['渴 猴子 要 喝 水 。', 'The thirsty monkey wants to drink some water.', 'The old monkey, checking in'],
-    ['大 猴子 要 花 。', 'The big monkey wants flowers.', 'The old monkey, checking in'],
     ['水果 在 树 上 。', 'Fruit grows on the trees.', 'The hungry monkey, after asking for fruit'],
     ['河 里 有 水 。', 'There’s water in the river.', 'The thirsty monkey, after asking for water'],
     ['我 要 吃 桃子 ！', 'I want to eat a peach!', 'A monkey of the troop'],
@@ -102,13 +97,30 @@ const DRAFTS = [
     ['草 里 有 狼 。', 'There is a wolf in the grass.', 'The example on 狼 (láng, wolf)’s page: wolves jump out of the long grass in the pine wood, to fight']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), the bigger pine wood: ' + where})),
   {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.', where:'New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path'},
-  {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'}
+  {zh:'对不起 ！', en:'Sorry!', where:'New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK)'},
+  ...[['这 是 红色 。', 'This is red.', 'The teacher opening a pot of paint, teaching 红色 hóngsè, red (and the same for 黄色 huángsè, yellow, and 白色 báisè, white): the first three colours now, taught by the big monkey’s flowers in the prologue until now'],
+    ['我们 去 刷 灯笼 吧 ！', 'Let’s go and paint the lanterns!', 'The class, going out to paint the school’s lanterns red (灯笼 dēnglong, lanterns, just for listening): see the question below'],
+    ['灯笼 是 红色 的 ！', 'The lanterns are red!', 'Once they’re painted'],
+    ['我们 去 刷 牌子 吧 ！', 'Let’s go and paint the sign!', 'The class, going out to paint the school’s sign yellow (牌子 páizi, sign)'],
+    ['牌子 是 黄色 的 ！', 'The sign is yellow!', 'Once it’s painted'],
+    ['我们 去 刷 台阶 吧 ！', 'Let’s go and paint the step!', 'The class, going out to paint the step at the school’s door white (台阶 táijiē, step)'],
+    ['台阶 是 白色 的 ！', 'The step is white!', 'Once it’s painted']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), red, yellow and white at school: ' + where})),
+  ...[['学校 很 好看 ！', 'The school looks lovely!', 'The big monkey, once the class has painted the school in every colour (好看 hǎokàn, lovely, just for listening)'],
+    ['我们 来 种花 吧 ！', 'Let’s plant some flowers!', 'The big monkey (种花 zhòng huā, to plant flowers, just for listening: written as one piece, so a voice saying it on its own can’t read 种 as zhǒng)'],
+    ['我 要 红色 、 黄色 和 白色 的 花 ！', 'I want red, yellow and white flowers!', 'The big monkey, asking for flowers to plant in front of the school: see the question below about white flowers'],
+    ['红色 的 花', 'A red flower', 'What you see on a card when you pick a red flower for him (and 黄色的花, a yellow flower, and 白色的花, a white flower)'],
+    ['你 有 花 吗 ？', 'Do you have flowers?', 'The big monkey, when you bring them'],
+    ['我 要 红色 的 花 。', 'I want a red flower.', 'The sentence you finish when you give him the flowers (filling in 红色)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): ' + where}))
 ];
 
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the
 // word bank yet, so each line gives its own pinyin. When it's built, these move into the area file.
 // Questions for the native speaker about the game's Chinese.
-const QUESTIONS = ['When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)'];
+const QUESTIONS = ['The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?',
+  'Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better? (White paints the step at the door, 台阶, not the paper in the windows: you paste window paper on, so 刷窗户纸 seemed wrong.)',
+  'When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)'];
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
 function sheet(){
   const game = loadGame();
@@ -157,6 +169,12 @@ ${table(['Chinese', 'Pinyin', 'English', 'Said by', 'Notes'], Object.entries(ARE
 ### Sentences the player completes (one word missing)
 
 ${table(['Chinese', 'Pinyin', 'English', 'Said to', 'Notes'], builds.map(([b, en, who]) => [chars(b), py(b), en || '', who, notes]))}
+
+### What you pick
+
+What a card shows when you pick a flower for the big monkey: a red flower, and so on.
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], [...new Map(Object.values(AREA.legend).filter(t => t.gather && t.gather.picked).map(t => [t.gather.picked.zh, t.gather.picked])).values()].map(f => [chars(f.zh), py(f.zh), f.en, notes]))}
 
 ### The sign
 

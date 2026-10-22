@@ -140,9 +140,8 @@ test('the old monkey checks in on what the troop has asked you for, then sends y
   const area = more => ({areas: {1: {chapter: 0, elder: 2, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', ...more}}});
   assert.equal(said(area({hungry: 'asked'})), 'hungryWants');
   assert.equal(said(area({hungry: 'done', thirsty: 'asked'})), 'thirstyWants');
-  assert.equal(said(area({hungry: 'done', thirsty: 'done', flowers: 'asked'})), 'bigWants');
   assert.equal(said(area({hungry: 'done'})), 'findMonkeys', 'someone still needs help');
-  assert.equal(said(area({hungry: 'done', thirsty: 'done', flowers: 'done'})), 'hi', 'nobody needs help: hello, and your tasks');
+  assert.equal(said(area({hungry: 'done', thirsty: 'done'})), 'hi', 'nobody needs help: hello, and your tasks (the big monkey’s flowers wait for chapter 1)');
 });
 
 test('the hungry and thirsty monkeys say where to look, and each of the troop has something to say', () => {

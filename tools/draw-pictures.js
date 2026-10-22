@@ -172,12 +172,11 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(path([[0, 20.5], [4, 19], [8, 21.5], [12, 19.5], [16, 22]], .5), '#7CC46B');
   },
 
-  '花': p => {   // flower
-    p.fill(Cp(16, 18, 16, 30, 1), '#3E8A3E');
-    p.fill(O(11, 25, 4, 1.8), LEAF); p.fill(O(21, 22.5, 4, 1.8), LEAF);
-    for (let i = 0; i < 5; i++){ const a = -Math.PI / 2 + i * 2 * Math.PI / 5; p.fill(O(16 + Math.cos(a) * 5.4, 12 + Math.sin(a) * 5.4, 3.8), '#F48FB1', {edge: true}); }
-    p.fill(O(16, 12, 2.8), '#FFD54A', {edge: true});
-  },
+  '花': p => flower(p, '#F48FB1', '#FFD54A'),   // flower
+  // a few words together (as the content writes them, with spaces), such as what you pick for the big monkey to plant
+  '红色 的 花': p => flower(p, '#E8343C', '#FFD54A'),   // a red flower
+  '黄色 的 花': p => flower(p, '#F7D23E', '#E0782A'),   // a yellow flower (its middle orange, to stand out)
+  '白色 的 花': p => flower(p, '#FAFAF5', '#FFD54A'),   // a white flower
   '草': p => {   // grass: a thick tuft
     const blades = [[3, 13, '#4FA34A'], [6, 8, '#6CC066'], [9, 14, '#3E8A3E'], [11, 5, '#5BB451'], [14, 10, '#6CC066'], [16, 3, '#4FA34A'],
       [19, 9, '#5BB451'], [21, 6, '#6CC066'], [24, 12, '#3E8A3E'], [26, 7, '#5BB451'], [29, 12, '#4FA34A'], [8, 18, '#5BB451'], [18, 17, '#4FA34A'], [27, 18, '#6CC066']];
@@ -525,6 +524,12 @@ function splat(p, c){   // a smooth, round dab of paint, for a colour, with two 
   p.fill(or(O(15.5, 17, 10.5, 9), O(23, 21.5, 4.6, 4)), c);
   p.fill(O(27, 8.5, 2), c); p.fill(O(5.5, 27, 1.6), c);
   p.flat(O(11.5, 12.5, 3.4, 2), mix(c, '#FFFFFF', .5)); p.flat(O(16.5, 11, 1.2, .8), mix(c, '#FFFFFF', .5));
+}
+function flower(p, petal, middle){   // a flower, its five petals one colour (petal), on a stem with two leaves
+  p.fill(Cp(16, 18, 16, 30, 1), '#3E8A3E');
+  p.fill(O(11, 25, 4, 1.8), LEAF); p.fill(O(21, 22.5, 4, 1.8), LEAF);
+  for (let i = 0; i < 5; i++){ const a = -Math.PI / 2 + i * 2 * Math.PI / 5; p.fill(O(16 + Math.cos(a) * 5.4, 12 + Math.sin(a) * 5.4, 3.8), petal, {edge: true}); }
+  p.fill(O(16, 12, 2.8), middle, {edge: true});
 }
 
 // The game's icons, 16 x 16, for the menu, card headings and labels (instead of emoji, which look different on

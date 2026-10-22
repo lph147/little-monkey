@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 29;
+const SAVE_VERSION = 30;
 const HEARTS = 5;   // the most hearts you can have in a battle (the story can raise it later)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // and no square of the map changed yet (changed: 'place:x,y' to the letter it's become)
@@ -167,6 +167,15 @@ function upgradeSave(s){
     for (const r of Object.values(s.w || {})) if (r) delete r.due;
     s.turn = 0;
     s.version = 29;
+  }
+  if (s.version === 29){   // version 29: the big monkey wanted flowers in the prologue. Now he wants them in chapter 1, to plant in front
+    const a = (s.areas || {})[AREA.number];   // of the school once you've learned the colours there, so a game that has picked them,
+    if (a){                                   // or brought them, is asked again then (the shells it had for them stay)
+      a.flowers = 'not asked';
+      if (a.holding) delete a.holding.flowers;
+      if (a.picked) delete a.picked.flowers;
+    }
+    s.version = 30;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];

@@ -185,9 +185,17 @@ function drawSwing(PX, PY, now){
 }
 // Ground being marked out (the markOut step): a stake hammered in at each corner of the plot, one by one, as plot() in
 // js/art.js has them; the string pulled tight round them, from the top-left, round to the right, along the bottom and back
-// up; then the new ground fading in, with its sign and its path (and anything else that's changed).
+// up; then the new ground fading in, with its sign and its path (and anything else that's changed). Or something being
+// planted (the plant step), such as flowers.
 function drawMarking(cx, cy, now){
   const m = marking, e = m.hold ?? now - m.t0, k = (from, to) => clamp((e - from) / (to - from), 0, 1);
+  if (m.grow){   // being planted (the plant step): each square grows up out of the ground, one after another
+    m.changed.forEach(([x, y], i) => {
+      const h = Math.round(k(i * PLANT.each, i * PLANT.each + PLANT.grow) * T);
+      if (h) b.drawImage(m.fresh, x*T, y*T + T - h, T, h, x*T - cx, y*T + T - h - cy, T, h);
+    });
+    return;
+  }
   const fade = k(...MARK.ground);
   if (fade > 0){ b.globalAlpha = fade; for (const [x, y] of m.changed) b.drawImage(m.fresh, x*T, y*T, T, T, x*T - cx, y*T - cy, T, T); b.globalAlpha = 1; }
   if (!m.box) return;

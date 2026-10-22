@@ -172,7 +172,7 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble'];   // looks with grass underneath (or the pine wood's floor)
 const CLIFFS = ['cliff'];
 const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge'];
@@ -448,6 +448,13 @@ const desk = (g, X, Y, x, y) => classTable(g, X, Y, x, y, '#D2A46A', '#9C6E3E', 
 });
 function doorMat(g, X, Y, x, y){ classFloor(g, X, Y, x, y); R(g, X+1, Y+3, 14, 12, '#7A1F1A'); R(g, X+2, Y+4, 12, 10, '#B0352C'); R(g, X+4, Y+6, 8, 6, '#C9483C'); }
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
+function flowerBed(g, X, Y, x, y){   // flowers planted in a bed of earth, red, yellow and white, in two rows (beds side by side join up)
+  grass(g, X, Y, x, y);
+  R(g, X, Y+8, 16, 7, '#7A5230'); R(g, X, Y+8, 16, 1, '#946640'); R(g, X, Y+14, 16, 1, '#5E3E22');   // the earth
+  R(g, X+1, Y+12, 2, 1, '#674426'); R(g, X+11, Y+13, 2, 1, '#674426');                               // (lumps of it)
+  [[2, 5, '#E8343C'], [7, 4, '#F7D23E'], [12, 5, '#FFFFFF']].forEach(([fx, fy, c]) => flower(g, X+fx, Y+fy, c));   // the back row
+  [[4, 9, '#FFFFFF'], [9, 10, '#E8343C'], [14, 9, '#F7D23E']].forEach(([fx, fy, c]) => flower(g, X+fx, Y+fy, c));   // and the front
+}
 // How each look is painted. Each area's legend picks a look for each map letter.
 const LOOKS = {
   grass:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
@@ -457,6 +464,7 @@ const LOOKS = {
   redFlowers:    (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#E8343C'); flower(g,X+11,Y+7,'#E8343C'); flower(g,X+6,Y+11,'#E8343C'); },
   yellowFlowers: (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F7D23E'); flower(g,X+11,Y+7,'#F7D23E'); flower(g,X+6,Y+11,'#F7D23E'); },
   whiteFlowers:  (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#FFFFFF'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#FFFFFF'); },
+  flowerBed:     (g,X,Y,x,y) => flowerBed(g,X,Y,x,y),   // flowers planted in a bed (the ones you brought the big monkey)
   // trees, the fruit trees, your stone, the rocks and the stall: just the ground here; they're big objects (OBJECT_ART, below)
   tree:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
   peachTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),

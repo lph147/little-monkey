@@ -63,6 +63,7 @@ const sentences = [
   ...AREA.intro.map((c, i) => [`the opening's caption ${i + 1}`, c]),
   ...Object.entries(AREA.scenes || {}).flatMap(([id, sc]) => sc.captions.map((c, i) => [`the ${id} scene's caption ${i + 1}`, c])),
   ...allLegend.filter(([, t]) => t.sign).map(([, t, from]) => [`the sign on ${from}`, t.sign.says]),
+  ...allLegend.filter(([, t]) => t.gather && t.gather.picked).map(([, t, from]) => [`what you pick at ${from}`, t.gather.picked]),
   ...Object.values(AREA.talk).flatMap(parts => parts.flatMap(p => p.do.filter(s => s.gap).map(s => [`the gap sentence "${s.gap.sentence}"`, {zh: s.gap.sentence, en: s.gap.en}])))
 ];
 
@@ -239,10 +240,10 @@ test('animals are collectible words, each with a sprite for the map', () => {
   }
 });
 
-test('every word with a picture has its own pixel picture', () => {
-  const seen = {};
-  for (const w of collectible.filter(w => BANK[w].pic)){
-    assert.ok(PICTURES[w], `${w} has a picture (${BANK[w].pic}) but no pixel picture in content/pictures.js (draw it in tools/draw-pictures.js)`);
+test('every word with a picture has its own pixel picture, and so does what you pick (such as 红色 的 花, a red flower)', () => {
+  const seen = {}, picked = allLegend.filter(([, t]) => t.gather && t.gather.picked).map(([, t]) => t.gather.picked.zh);
+  for (const w of [...collectible.filter(w => BANK[w].pic), ...new Set(picked)]){
+    assert.ok(PICTURES[w], `${w} has a picture (${(BANK[w] || {}).pic || 'what you pick'}) but no pixel picture in content/pictures.js (draw it in tools/draw-pictures.js)`);
     const key = JSON.stringify([PICTURES[w].rows, PICTURES[w].palette]);
     assert.ok(!seen[key], `${w} and ${seen[key]} have the same picture; every picture must be unique`);
     seen[key] = w;
@@ -252,7 +253,7 @@ test('every word with a picture has its own pixel picture', () => {
 // Each picture's rows of letters: the right size, and every letter with a colour.
 const checkPixels = (file, pics, size) => {
   for (const [w, s] of Object.entries(pics)){
-    assert.ok(BANK[w], `${file} has a picture for ${w}, which isn't in the word bank`);
+    assert.ok(BANK[w] || w.split(' ').every(x => BANK[x]), `${file} has a picture for ${w}, which isn't in the word bank (nor a few words from it, with spaces between)`);
     assert.equal(s.rows.length, size, `${w}'s picture in ${file} has ${s.rows.length} rows, not ${size}`);
     s.rows.forEach((r, y) => {
       assert.equal(r.length, size, `${w}'s picture in ${file}: row ${y} is ${r.length} pixels wide, not ${size}`);

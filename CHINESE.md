@@ -41,7 +41,6 @@ shown where the word list has them.
 | 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | 老猴子 (Old monkey) |  |
 | 饿猴子要吃水果。 | è hóuzi yào chī shuǐguǒ. | The hungry monkey wants to eat some fruit. | 老猴子 (Old monkey) |  |
 | 渴猴子要喝水。 | kě hóuzi yào hē shuǐ. | The thirsty monkey wants to drink some water. | 老猴子 (Old monkey) |  |
-| 大猴子要花。 | dà hóuzi yào huā. | The big monkey wants flowers. | 老猴子 (Old monkey) |  |
 | 水果在树上。 | shuǐguǒ zài shù shàng. | Fruit grows on the trees. | 饿猴子 (Hungry monkey) |  |
 | 河里有水。 | hé lǐ yǒu shuǐ. | There’s water in the river. | 渴猴子 (Thirsty monkey) |  |
 | 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | 猴子 (Monkey) |  |
@@ -67,6 +66,8 @@ shown where the word list has them.
 | 你有石头吗？ | nǐ yǒu shítou ma? | Do you have the stones? | 大猴子 (Big monkey) |  |
 | 你要木头吗？ | nǐ yào mùtou ma? | Do you want wood? | 松鼠 (squirrel) |  |
 | 我们来盖学校吧！ | wǒmen lái gài xuéxiào ba! | Let’s build the school! | 大猴子 (Big monkey) |  |
+| 学校很好看！ | xuéxiào hěn hǎokàn! | The school looks lovely! | 大猴子 (Big monkey) |  |
+| 我们来种花吧！ | wǒmen lái zhòng huā ba! | Let’s plant some flowers! | 大猴子 (Big monkey) |  |
 | 上课！ | shàngkè! | Class is starting! | 老猴子 (Old monkey) |  |
 | 老师好！ | lǎoshī hǎo! | Hello, teacher! | 小猴子 (Little monkey) |  |
 | 同学们好！ | tóngxué men hǎo! | Hello, class! | 老猴子 (Old monkey) |  |
@@ -116,6 +117,16 @@ shown where the word list has them.
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
+
+### What you pick
+
+What a card shows when you pick a flower for the big monkey: a red flower, and so on.
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 红色的花 | hóngsè de huā | A red flower |  |
+| 黄色的花 | huángsè de huā | A yellow flower |  |
+| 白色的花 | báisè de huā | A white flower |  |
 
 ### The sign
 
@@ -339,7 +350,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 里面 | lǐmiàn | inside |  |
 | 太 | tài | too, very |  |
 | 好 | hǎo | good |  |
-| 的 | de | (shows belonging: 我们的, our) |  |
+| 的 | de | (joins words: 我们的, our; 红色的花, a red flower) |  |
 | 只 | zhī | (counts animals: 三只猴子, three monkeys) |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
@@ -355,6 +366,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 灯笼 | dēnglong | lantern |  |
 | 牌子 | páizi | sign, board |  |
 | 台阶 | táijiē | step, steps |  |
+| 好看 | hǎokàn | good-looking, lovely |  |
+| 种花 | zhòng huā | to plant flowers |  |
 | 几 | jǐ | how many |  |
 | 个 | gè | (counts things: 几个, how many) |  |
 | 们 | men | (more than one: 同学们, the class) |  |
@@ -425,8 +438,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | The new, shorter story at the waterfall (in the game) |  |
 | 河里有鱼。 | hé lǐ yǒu yú. | There are fish in the river. | The new, shorter story at the waterfall (in the game) |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There is a waterfall on the mountain! | The new, shorter story at the waterfall (in the game) |  |
-| 我要花！ | wǒ yào huā! | I want flowers! | The big monkey (大猴子 dà hóuzi: please check this name too, in Names) asking for flowers |  |
-| 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | The big monkey, when you bring the flowers |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | Chapter 1, part A (in the game): The old monkey, as the troop gathers at the waterfall |  |
 | 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | Chapter 1, part A (in the game): The big monkey, daring the troop |  |
 | 我怕！ | wǒ pà! | I’m scared! | Chapter 1, part A (in the game): The little monkey |  |
@@ -444,8 +455,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! | The prologue, changed on 17 October 2026: The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants |  |
 | 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
-| 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | The prologue, changed on 17 October 2026: The big monkey asking for flowers (红色, 黄色 and 白色 are each taught when you pick that colour; changed on 19 October 2026 from 红花, 黄花 and 白花) |  |
-| 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | The prologue, changed on 17 October 2026: The sentence you finish when you give the big monkey the flowers (filling in 红色; changed on 19 October 2026 from 我要红花。) |  |
 | 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 and 19 October 2026: The rabbit, by the long grass on the mountain path |  |
 | 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 and 19 October 2026: The fox, at the fork in the river valley |  |
 | 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
@@ -455,7 +464,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, sending you to help the troop |  |
 | 饿猴子要吃水果。 | è hóuzi yào chī shuǐguǒ. | The hungry monkey wants to eat some fruit. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |
 | 渴猴子要喝水。 | kě hóuzi yào hē shuǐ. | The thirsty monkey wants to drink some water. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |
-| 大猴子要花。 | dà hóuzi yào huā. | The big monkey wants flowers. | The prologue, more dialogue on 18 October 2026 (in the game): The old monkey, checking in |  |
 | 水果在树上。 | shuǐguǒ zài shù shàng. | Fruit grows on the trees. | The prologue, more dialogue on 18 October 2026 (in the game): The hungry monkey, after asking for fruit |  |
 | 河里有水。 | hé lǐ yǒu shuǐ. | There’s water in the river. | The prologue, more dialogue on 18 October 2026 (in the game): The thirsty monkey, after asking for water |  |
 | 我要吃桃子！ | wǒ yào chī táozi! | I want to eat a peach! | The prologue, more dialogue on 18 October 2026 (in the game): A monkey of the troop |  |
@@ -503,7 +511,22 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | New on 21 October 2026 (in the game), the bigger pine wood: The example on 狼 (láng, wolf)’s page: wolves jump out of the long grass in the pine wood, to fight |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
+| 这是红色。 | zhè shì hóngsè. | This is red. | New on 22 October 2026 (in the game), red, yellow and white at school: The teacher opening a pot of paint, teaching 红色 hóngsè, red (and the same for 黄色 huángsè, yellow, and 白色 báisè, white): the first three colours now, taught by the big monkey’s flowers in the prologue until now |  |
+| 我们去刷灯笼吧！ | wǒmen qù shuā dēnglong ba! | Let’s go and paint the lanterns! | New on 22 October 2026 (in the game), red, yellow and white at school: The class, going out to paint the school’s lanterns red (灯笼 dēnglong, lanterns, just for listening): see the question below |  |
+| 灯笼是红色的！ | dēnglong shì hóngsè de! | The lanterns are red! | New on 22 October 2026 (in the game), red, yellow and white at school: Once they’re painted |  |
+| 我们去刷牌子吧！ | wǒmen qù shuā páizi ba! | Let’s go and paint the sign! | New on 22 October 2026 (in the game), red, yellow and white at school: The class, going out to paint the school’s sign yellow (牌子 páizi, sign) |  |
+| 牌子是黄色的！ | páizi shì huángsè de! | The sign is yellow! | New on 22 October 2026 (in the game), red, yellow and white at school: Once it’s painted |  |
+| 我们去刷台阶吧！ | wǒmen qù shuā táijiē ba! | Let’s go and paint the step! | New on 22 October 2026 (in the game), red, yellow and white at school: The class, going out to paint the step at the school’s door white (台阶 táijiē, step) |  |
+| 台阶是白色的！ | táijiē shì báisè de! | The step is white! | New on 22 October 2026 (in the game), red, yellow and white at school: Once it’s painted |  |
+| 学校很好看！ | xuéxiào hěn hǎokàn! | The school looks lovely! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, once the class has painted the school in every colour (好看 hǎokàn, lovely, just for listening) |  |
+| 我们来种花吧！ | wǒmen lái zhòng huā ba! | Let’s plant some flowers! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey (种花 zhòng huā, to plant flowers, just for listening: written as one piece, so a voice saying it on its own can’t read 种 as zhǒng) |  |
+| 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, asking for flowers to plant in front of the school: see the question below about white flowers |  |
+| 红色的花 | hóngsè de huā | A red flower | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): What you see on a card when you pick a red flower for him (and 黄色的花, a yellow flower, and 白色的花, a white flower) |  |
+| 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, when you bring them |  |
+| 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The sentence you finish when you give him the flowers (filling in 红色) |  |
 
 ## Questions
 
+- The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?
+- Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better? (White paints the step at the door, 台阶, not the paper in the windows: you paste window paper on, so 刷窗户纸 seemed wrong.)
 - When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)

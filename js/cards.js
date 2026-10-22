@@ -234,6 +234,21 @@ function showNotice(w, opts = {}){
     on('[data-a=ok]', () => { closeCard(); if (isNew){ setSeen(w); toast(`${wz(w)} added to your Word Scroll`); } res(); });
   });
 }
+// What you've picked (f: a few words you know together, such as 红色 的 花, with their English, en), with its own picture,
+// on a card like a word's (decided 22 October 2026: picking a red flower showed 花, flower): said straight away, as you
+// found it yourself, with a note under it (such as how many you have). (Picking it has its own sound.)
+function showPicked(f, note){
+  return new Promise(res => {
+    const t = toks(f.zh), text = t.join('');
+    openCard(`<p class="label">You picked</p>
+      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(f.zh)}</div><div class="big">${text}</div><div class="py">${t.map(w => info(w)[0]).join(' ')}</div>
+      <div class="en">${esc(f.en)}</div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
+      <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="ok">OK</button></div>`);
+    say(text);
+    on('[data-a=say]', () => say(text));
+    on('[data-a=ok]', () => { closeCard(); res(); });
+  });
+}
 function confirmBox(who, html, yes, no){
   return new Promise(res => {
     openCard(`<div class="who" aria-hidden="true">${who}</div><p>${html}</p><div class="actions"><button class="btn" data-a="no" data-b>${no}</button><button class="btn primary" data-a="yes">${yes}</button></div>`);
