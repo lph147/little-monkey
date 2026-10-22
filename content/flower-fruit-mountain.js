@@ -64,7 +64,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     woodAnimalsLeft: {count:'animalsLeft', chapter:1},   // chapter 1's animal, the deer in the pine wood, not met yet
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
-    caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (the bridge's 桥 waits for chapter 1)
+    caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (桥, bridge, is chapter 1's, on its bridges)
     // the words for the meadow the old monkey wants you to learn, which nothing else makes you learn, each as the task
     // calls it till you've found it ({left:meadowWords}) (decided 22 October 2026: you could leave without them)
     meadowWords: {count:'known', words:['山', '河', '树', '鱼', '鸟'],
@@ -506,6 +506,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // monkey wants wood), east to the bees, south over the stream.
     homeGround: {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
+      legend: {
+        'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'}   // the bridge over the stream (chapter 1's bridges teach 桥)
+      },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
         {at:[25, 0], to:'pineWood', arrive:[16, 26], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
@@ -554,7 +557,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[17, 29], to:'homeGround', arrive:[25, 1], facing:'down'}
       ],
       legend: {
-        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']}   // long grass: here, wolves too
+        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass: here, wolves too
+        'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'}   // the only way over the stream (chapter 1's bridges teach 桥)
       },
       map: [
         "pppppppppppppppppppppppppppppppppp",
@@ -873,7 +877,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
     '戴': 'You said it when you put something on from your wardrobe.',
     '跳': 'The big monkey dared the troop to jump through the waterfall.',
-    '桥': 'The iron bridge over the stream in the Water Curtain Cave.',   // (until 21 October 2026; chapter 1 will teach it somewhere new)
+    '桥': 'A bridge over the stream, at the home ground or in the pine wood.',   // (the iron bridge in the Water Curtain Cave until 21 October 2026)
     '床': 'The stone beds in the Water Curtain Cave.',
     '睡觉': 'The stone beds in the Water Curtain Cave: sleep there to get your hearts back.',
     '碗': 'The stone bowls in the Water Curtain Cave.',

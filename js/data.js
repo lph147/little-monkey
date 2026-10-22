@@ -15,7 +15,11 @@ for (const [w, d] of Object.entries(WORD_BANK)){
   if (d.area === AREA.number){ const {area, ...word} = d; WORDS[w] = word; }
   else GLOSS[w] = [d.py, d.en];
 }
-const ORDER = Object.keys(WORDS).filter(w => !WORDS[w].phrase);    // the area's words, in Word Scroll order
+// The area's words, in Word Scroll order. A word for later (later: in the word bank, such as 蜜蜂 till the troop's bees) only
+// counts, and is in the Word Scroll, once the game you're playing has caught it (decided 22 October 2026: a word nothing
+// teaches made the words impossible to finish): wordsForGame, as a game starts.
+const ORDER = Object.keys(WORDS).filter(w => !WORDS[w].phrase && !WORDS[w].later);
+function wordsForGame(){ ORDER.length = 0; ORDER.push(...Object.keys(WORDS).filter(w => !WORDS[w].phrase && (!WORDS[w].later || lvl(w) >= 1))); }
 const PHRASES = Object.keys(WORDS).filter(w => WORDS[w].phrase);  // its phrases (你好, 谢谢…), a collection of their own
 const PUNCT = new Set(['！','。','，','？','、','……']);
 const L = {};                         // what the characters say

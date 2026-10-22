@@ -40,6 +40,19 @@ test('the Word Scroll shows caught words, shadows of heard words, and ？ for th
   assert.equal(count(html, 'class="card unseen"'), total - 2, 'every other word shows ？');
 });
 
+test('a word for later (蜜蜂, till the troop’s bees) isn’t counted or in the Word Scroll, unless the game you’re playing caught it before', () => {
+  const caught = {'石头': {lv: 1, ok: 0}};
+  const now = loadGame({save: {version: 30, started: true, w: caught}});
+  const n = now.run('ORDER.length');
+  assert.equal(now.run("ORDER.includes('蜜蜂')"), false, 'nothing teaches it yet');
+  assert.match(now.run('statsHTML()'), new RegExp(`1/${n} words`), 'so it isn’t counted');
+  assert.equal(count(now.run("scrollPage('animals')"), 'class="card'), now.run("ORDER.filter(w => WORDS[w].category === 'animals').length"), 'nor a ？ in the Word Scroll');
+  const before = loadGame({save: {version: 30, started: true, w: {...caught, '蜜蜂': {lv: 2, ok: 1}}}});
+  assert.equal(before.run("ORDER.includes('蜜蜂')"), true, 'a game that caught one in the long grass (before 21 October 2026) keeps it');
+  assert.equal(before.run('ORDER.length'), n + 1);
+  assert.match(before.run('statsHTML()'), new RegExp(`2/${n + 1} words`));
+});
+
 test('a caught word without a picture shows its characters in the grid', () => {
   const game = loadGame({save: {version: 8, started: true, w: {'我': {lv: 1, due: 0, ok: 0}}}});
   assert.ok(allCategories(game).includes('<button class="card" data-w="我" data-label="Open"><div class="c hz">我</div><div class="p">wǒ</div>'));
@@ -56,7 +69,7 @@ test('the Word Scroll has a tab for each category, with how many of its words yo
   for (const [id, c] of used){
     game.run(`openScroll(null, 0, '${id}')`);
     const html = game.el('#sheet').innerHTML, page = html.slice(html.indexOf('<p class="label cathead">'));
-    const words = Object.keys(WORDS).filter(w => WORDS[w].category === id), caught = words.filter(w => ['石头', '猴子'].includes(w));
+    const words = Object.keys(WORDS).filter(w => WORDS[w].category === id && !WORDS[w].later), caught = words.filter(w => ['石头', '猴子'].includes(w));   // (a word for later isn't there yet: below)
     assert.ok(html.includes(`data-tab="${id}" aria-selected="true"`), `the ${c.tab} tab is chosen`);
     assert.ok(page.startsWith(`<p class="label cathead">${c.name} <span class="catn">${caught.length}/${words.length}</span>`), `${c.tab} should be headed ${c.name} ${caught.length}/${words.length}`);
     assert.equal(count(page, 'class="card'), words.length, `${c.tab} should show all its words`);

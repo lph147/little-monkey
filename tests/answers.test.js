@@ -70,6 +70,17 @@ test('a matching game can be played with the D-pad and A: choose a word, then it
   assert.ok(!items().includes('w' + first.dataset.w) && !items().includes(target), 'and skipped from then on');
 });
 
+test('Stop, pressed just as a round of matching is done, ends it: the next round never opens', async () => {
+  const g = game(), sheet = g.el('#sheet');
+  g.run("globalThis.__result = 'playing'; matchWords(['山', '花', '草', '树', '石头', '桃子', '苹果', '吃'], 'Training', 'Stop').then(r => { __result = r; })");
+  assert.match(sheet.textContent, /Training · 1 of 2/);
+  for (const w of sheet.querySelectorAll('.mw').map(b => b.dataset.w)){ sheet.querySelector(`.mw[data-w="${w}"]`).click(); sheet.querySelector(`.mp[data-w="${w}"]`).click(); }
+  sheet.querySelector('[data-a=quit]').click();   // Stop, before the next round comes
+  await settle(g);
+  assert.equal(g.run('modal.hidden'), true, 'no card: not the next round');
+  assert.equal(g.run('__result'), null, 'stopped');
+});
+
 test('answers get the gold outline when chosen, but never the A badge (they’re tapped directly)', () => {
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
   const badge = css.indexOf('.sheet [data-nav] button.navsel::before'), none = css.indexOf('.sheet .opts button.navsel::before,.sheet .match button.navsel::before{content:none}');

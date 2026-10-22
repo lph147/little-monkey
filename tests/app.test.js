@@ -59,8 +59,9 @@ test('the page links the app description, the icons, and the lines an iPhone nee
 // A file on the server is its text, or {status} for an error, or {login} for a Wi-Fi login page it's sent on to.
 const SITE = 'https://lph147.github.io/little-monkey/';
 function worker(){
-  const server = {[SITE]: 'version 1', [SITE + 'js/main.js']: 'the game'}, copy = new Map(), on = {}, timers = [], waiting = [];
-  const web = {online: true, slow: false, server, copy, fetched: {}};
+  const server = {[SITE]: 'version 1', [SITE + 'js/main.js']: 'the game'}, stores = {}, on = {}, timers = [], waiting = [];
+  const web = {online: true, slow: false, server, fetched: {}, reopened: [],   // (reopened: pages told to open again)
+    get copy(){ return (stores['little-monkey'] || {}).map || new Map(); }, get next(){ return (stores['little-monkey-next'] || {}).map || new Map(); }};
   const response = (url, body, more = {}) => ({ok: true, status: 200, url, body, ...more, clone(){ return response(url, body, more); }});
   const reply = url => {
     const f = server[url];
@@ -69,10 +70,12 @@ function worker(){
     if (f.login) return response(url, f.login, {redirected: true});
     return response(url, f);
   };
-  const store = {put: async (req, res) => { copy.set(typeof req === 'string' ? req : req.url, res); }, match: async req => copy.get(typeof req === 'string' ? req : req.url),
-    keys: async () => [...copy.keys()].map(url => ({url})), delete: async req => copy.delete(req.url)};
+  const url = req => typeof req === 'string' ? new URL(req, SITE + 'sw.js').href : req.url;
+  const store = name => stores[name] || (stores[name] = (map => ({map, put: async (req, res) => { map.set(url(req), res); }, match: async req => map.get(url(req)),
+    keys: async () => [...map.keys()].map(u => ({url: u})), delete: async req => map.delete(req.url)}))(new Map()));   // a cache: its files, by address
   vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8'), {
-    self: {addEventListener: (type, fn) => { on[type] = fn; }, skipWaiting(){}, clients: {claim: async () => {}}, registration: {scope: SITE}},
+    self: {addEventListener: (type, fn) => { on[type] = fn; }, skipWaiting(){}, registration: {scope: SITE},
+      clients: {claim: async () => {}, get: async id => ({id, url: SITE, navigate: async () => { web.reopened.push(id); }})}},
     fetch: async req => {
       const url = typeof req === 'string' ? req : req.url;
       web.fetched[url] = (web.fetched[url] || 0) + 1;
@@ -80,7 +83,7 @@ function worker(){
       if (!web.online) throw new TypeError('No connection');
       return reply(url);
     },
-    caches: {open: async () => store, match: async req => copy.get(typeof req === 'string' ? new URL(req, SITE + 'sw.js').href : req.url)},
+    caches: {open: async name => store(name), delete: async name => delete stores[name]},
     setTimeout: fn => timers.push(fn),
     Response: {error: () => ({ok: false, error: true})}, URL
   });
@@ -97,22 +100,29 @@ function worker(){
     const res = await answer; await Promise.all(after);
     return res;
   };
-  web.send = async data => { const after = []; on.message({data, waitUntil: p => after.push(p)}); await Promise.all(after); };   // a message from the page
+  web.send = async (data, page = 'page 1') => { const after = []; on.message({data, source: {id: page}, waitUntil: p => after.push(p)}); await Promise.all(after); };   // a message from a page
+  web.load = async (page = 'page 1') => {   // the game loads whole from the web: its page, its file, then the list of its files
+    const res = await web.get(SITE, 'navigate', page); await web.get(SITE + 'js/main.js', 'no-cors', page);
+    await web.send({keepFiles: [SITE, SITE + 'js/main.js']}, page); return res;
+  };
   return web;
 }
 
-test('online, the app always loads the newest version, and keeps a copy', async () => {
+test('online, the app always loads the newest version, and keeps a copy once it has loaded whole', async () => {
   const web = worker();
-  assert.equal((await web.get(SITE, 'navigate')).body, 'version 1');
+  assert.equal((await web.load()).body, 'version 1');
   assert.equal(web.copy.get(SITE).body, 'version 1', 'a copy is kept');
-  web.server[SITE] = 'version 2';   // an upload to GitHub
-  assert.equal((await web.get(SITE, 'navigate')).body, 'version 2', 'the new version, not the old copy');
-  assert.equal(web.copy.get(SITE).body, 'version 2', 'and the copy is updated');
+  web.server[SITE] = 'version 2'; web.server[SITE + 'js/main.js'] = 'the new game';   // an upload to GitHub
+  assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 2', 'the new version, not the old copy');
+  await web.get(SITE + 'js/main.js', 'no-cors', 'page 2');
+  assert.deepEqual([web.copy.get(SITE).body, web.copy.get(SITE + 'js/main.js').body], ['version 1', 'the game'], 'the copy waits till it has loaded whole…');
+  await web.send({keepFiles: [SITE, SITE + 'js/main.js']}, 'page 2');
+  assert.deepEqual([web.copy.get(SITE).body, web.copy.get(SITE + 'js/main.js').body], ['version 2', 'the new game'], '…then it’s all updated together');
 });
 
 test('offline, the app uses its copy', async () => {
   const web = worker();
-  await web.get(SITE, 'navigate'); await web.get(SITE + 'js/main.js');
+  await web.load();
   web.online = false;
   assert.equal((await web.get(SITE, 'navigate')).body, 'version 1');
   assert.equal((await web.get(SITE + 'js/main.js')).body, 'the game');
@@ -150,7 +160,7 @@ test('the clips are downloaded once, even when their list arrives twice at once'
 
 test('on a slow connection, the game opens from its copy, and that page’s files all come from the copy (the versions never mix)', async () => {
   const web = worker();
-  await web.get(SITE, 'navigate'); await web.get(SITE + 'js/main.js');   // played before: the copy has version 1
+  await web.load();   // played before: the copy has version 1
   web.server[SITE] = 'version 2'; web.server[SITE + 'js/main.js'] = 'the new game';   // an upload to GitHub
   web.slow = true;
   assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 1', 'after a wait, the copy');
@@ -159,6 +169,33 @@ test('on a slow connection, the game opens from its copy, and that page’s file
   assert.equal(web.copy.get(SITE).body, 'version 1', 'the new page, coming too late, isn’t kept with the old files');
   assert.equal((await web.get(SITE, 'navigate', 'page 3')).body, 'version 2', 'next time, with a good connection, the newest version');
   assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 3')).body, 'the new game');
+});
+
+test('if the connection drops as a new version loads, the page opens again from the copy, whole: the versions never mix', async () => {
+  const web = worker();
+  await web.load();   // played before: the copy has version 1
+  web.server[SITE] = 'version 2'; web.server[SITE + 'js/main.js'] = 'the new game';   // an upload to GitHub
+  assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 2', 'the new page, from the web');
+  web.online = false;   // and the connection drops as its files load
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 2')).error, true, 'not the old file from the copy');
+  assert.deepEqual(web.reopened, ['page 2'], 'the page is told to open again');
+  await web.send({keepFiles: [SITE, SITE + 'js/main.js']}, 'page 2');
+  assert.deepEqual([web.copy.get(SITE).body, web.copy.get(SITE + 'js/main.js').body], ['version 1', 'the game'], 'and the copy is still version 1, whole');
+  web.online = true;   // (even if the connection comes back straight away)
+  assert.equal((await web.get(SITE, 'navigate', 'page 3')).body, 'version 1', 'it opens from the copy');
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 3')).body, 'the game', 'with all its files from the copy');
+  assert.equal((await web.get(SITE, 'navigate', 'page 4')).body, 'version 2', 'and the next time, the newest version from the web');
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 4')).body, 'the new game');
+});
+
+test('opened from the copy with no connection, a page gets all its files from the copy, even if the connection comes back as it loads', async () => {
+  const web = worker();
+  await web.load();
+  web.server[SITE] = 'version 2'; web.server[SITE + 'js/main.js'] = 'the new game';
+  web.online = false;
+  assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 1');
+  web.online = true;
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 2')).body, 'the game', 'the old page’s own file, not the new one');
 });
 
 test('on a slow connection with no copy yet, the game waits for the web', async () => {
@@ -174,9 +211,12 @@ test('on a slow connection with no copy yet, the game waits for the web', async 
 
 test('an error, or a Wi-Fi login page, is never kept: the copy is used instead', async () => {
   const web = worker();
-  await web.get(SITE, 'navigate'); await web.get(SITE + 'js/main.js');
+  await web.load();
   web.server[SITE + 'js/main.js'] = {status: 500};
-  assert.equal((await web.get(SITE + 'js/main.js')).body, 'the game', 'a server error: the copy');
+  assert.equal((await web.get(SITE + 'js/main.js')).error, true, 'a server error for a file: not the copy’s, which could be older…');
+  assert.deepEqual(web.reopened, ['page 1'], '…the page opens again from the copy, whole');
+  assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 1');
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 2')).body, 'the game', 'all of it');
   web.server[SITE] = {login: 'Log in to the hotel Wi-Fi'};
   assert.equal((await web.get(SITE, 'navigate')).body, 'version 1', 'sent on to a login page: the game, from the copy');
   assert.equal(web.copy.get(SITE).body, 'version 1', 'and the login page isn’t kept');

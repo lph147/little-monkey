@@ -35,10 +35,11 @@ const mapStoryNow = () => Object.values(LEGEND).filter(t => t.becomes).map(becom
   + Object.entries(here().changed).filter(([k]) => k.startsWith(PLACE + ':')).join() + '|' + Object.entries(paintedParts()).join();
 let mapStory = null;   // what they were when the map was last drawn (buildMap)
 function refreshMap(){ if (mapStoryNow() !== mapStory){ if (!patchMap()) buildMap(); findGrass(); stepClear(); } }   // (just the squares that change, if it can: patchMap, js/art.js)
-// If the map changes under you (such as the school's frame going up on the plot you're standing on), you step out onto
+// If the map changes under you (such as the school's frame going up on the plot you're standing on), or you arrive where
+// someone stands (decided 22 October 2026: coming down the mountain path put you on the big monkey), you step out onto
 // the nearest square you can walk on.
 function stepClear(){
-  if (tileAt(pl.x, pl.y).walk) return;
+  if (tileAt(pl.x, pl.y).walk && !npcAt(pl.x, pl.y)) return;
   const seen = new Set([pl.x + ',' + pl.y]), queue = [[pl.x, pl.y]];
   while (queue.length){
     const [x, y] = queue.shift();
@@ -305,14 +306,18 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // You get one of something for a request (for), from the square you're facing, such as a piece of wood from a dry
   // tree, one at a time until you have count of them. The first teaches its word if it's new (you found it yourself:
   // its card, said aloud, with note). You count them aloud in Chinese as you go (一, 二, 三…, with the numbers you
-  // know), with a message each time (each), or full once you have them all.
+  // know), with a message each time (each), or full once you have them all. It's kept in the save before its card
+  // shows, as the square it came from has changed for good already (decided 22 October 2026: a game closed while the
+  // card showed lost that piece of wood for good, with no dead pine left to get it from).
   async collect(s){
     const item = s.collect, p = here().picked[s.for] = here().picked[s.for] || [];
-    if (lvl(item) === 0) await showNotice(item, s.note ? {note:fill(s.note)} : {});
-    p.push(squareKey(...facing())); SFX.right();
-    const n = p.length, all = n >= (s.count || 1), num = COUNTING[n - 1], counted = !!num && lvl(num) >= 1;
+    p.push(squareKey(...facing()));
+    const n = p.length, all = n >= (s.count || 1), num = COUNTING[n - 1];
     if (all) here().holding[s.for] = item;
     save();
+    if (lvl(item) === 0) await showNotice(item, s.note ? {note:fill(s.note)} : {});
+    SFX.right();
+    const counted = !!num && lvl(num) >= 1;
     if (counted) say(num);
     toast((counted ? `${wz(num)}! ` : '') + fill(all ? s.full : s.each));
   },
@@ -628,10 +633,10 @@ async function goThrough(e){
   if (water){ waterT = performance.now(); SFX.splash(); } else { fadeT = performance.now(); SFX.blip(); }
   await sleep(water ? 600 : 350);           // (a rush of water covers the screen, or it fades to black)
   enterPlace(e.to);
-  S.pos = {place:e.to, x:e.arrive[0], y:e.arrive[1], dir:e.facing || pl.dir}; placePlayer(); save();
+  S.pos = {place:e.to, x:e.arrive[0], y:e.arrive[1], dir:e.facing || pl.dir}; placePlayer(); stepClear(); save();
   if (water) dripUntil = performance.now() + 1500;   // you come through dripping
   showPlaceName();
-  const t = tileAt(e.arrive[0], e.arrive[1]);   // arriving on something you learn by stepping on it, such as the mountain path, counts
+  const t = tileAt(pl.x, pl.y);   // arriving on something you learn by stepping on it, such as the mountain path, counts
   if (t.learnOnStep && lvl(t.word) === 0) await showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
 }
 // A little hop, in an arc, to (tx, ty) in the map (pixels), such as onto a bed and off it again.

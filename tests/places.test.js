@@ -47,6 +47,17 @@ test('stepping onto a way to another place takes you there, names it, and rememb
   assert.equal(get(game, 'NPCS.length'), 0, 'the meadow’s monkeys stay in the meadow');
 });
 
+test('arriving where someone stands, you step aside: down the right of the mountain path, past the big monkey', async () => {
+  const game = loadGame({dom: true, save: {version: 30, started: true, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 2}},
+    w: {'石头': {lv: 1, ok: 0}, '路': {lv: 1, ok: 0}}, pos: {place: 'path', x: 16, y: 18, dir: 'down'}}});   // back from the waterfall, to tell the troop
+  game.run("mode = 'play'; placePlayer(); globalThis.__went = arrive(16, 19)");
+  for (let i = 0; i < 4; i++){ game.flush(); await tick(); }
+  assert.equal(game.run('PLACE'), 'meadow');
+  assert.deepEqual(get(game, "(({x, y}) => [x, y])(NPCS.find(n => n.id === 'big'))"), [16, 1], 'the big monkey, in the way up');
+  assert.deepEqual(get(game, '[pl.x, pl.y]'), [16, 2], 'you, just below him (that way’s arrival), not on top of him');
+  assert.deepEqual(get(game, '[S.pos.x, S.pos.y]'), [16, 2]);
+});
+
 test('standing in another place puts you on its map', () => {
   const game = loadGame({save: {version: 18, started: true}});
   withNook(game);

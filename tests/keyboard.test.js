@@ -43,6 +43,21 @@ test('holding the key down presses only once', () => {
   assert.equal(g.pressed(), 'Next');
 });
 
+test('on a card, Space and Enter press what A would (its main button), even after you’ve clicked 🔊 Hear it; a button chosen with Tab is left to the browser', () => {
+  const game = loadGame({dom: true, save: {version: 30, started: true}});
+  game.run(`mode = 'play'; globalThis.pressed = [];
+    openCard('<div class="actions"><button class="btn" data-a="say">Hear it</button><button class="btn primary" data-a="ok">OK</button></div>');
+    sheet.querySelector('[data-a=say]').onclick = () => pressed.push('Hear it'); sheet.querySelector('[data-a=ok]').onclick = () => pressed.push('OK')`);
+  const clicked = {matches: sel => sel === 'button'};   // Hear it, clicked with the mouse: a button with the focus, but not shown as chosen
+  for (const key of [' ', 'Enter']){
+    const e = game.key(key, {target: clicked});
+    assert.equal(e.defaultPrevented, true, 'not left to the browser, which would press Hear it again');
+  }
+  assert.equal(game.run('pressed.join()'), 'OK,OK');
+  const e = game.key('Enter', {tabbedTo: true});
+  assert.equal(e.defaultPrevented, false, 'chosen with Tab (shown as chosen): the browser presses it');
+});
+
 test('a button chosen with Tab is pressed by the browser, not the A button', () => {
   const g = watch({'#titleButtons .sel': 'Continue'}, {save: {started: true}});
   const e = g.key('Enter', {tabbedTo: true});

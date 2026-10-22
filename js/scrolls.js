@@ -72,7 +72,7 @@ function matchWords(words, title, stopLabel){
     const rounds = []; for (let i = 0; i < words.length; i += 4) rounds.push(words.slice(i, i + 4));
     if (rounds.length > 1 && rounds[rounds.length - 1].length < 3){ const last = rounds.pop(); rounds[rounds.length - 1].push(...last); }
     const missed = new Set();
-    let r = 0, picked = null;
+    let r = 0, picked = null, stopped = false;   // (stopped: the next round never comes, even if a round has just been matched)
     function render(){
       const set = rounds[r], left = shuffle(set), right = shuffle(set);
       openCard(`<p class="label">${title} · ${r + 1} of ${rounds.length}</p>
@@ -95,14 +95,14 @@ function matchWords(words, title, stopLabel){
         if (bt.dataset.w === picked){
           SFX.right(); bt.classList.add('done'); wbtn.classList.remove('sel'); wbtn.classList.add('done'); picked = null;
           if (![...sheet.querySelectorAll('.mw')].some(x => !x.classList.contains('done'))){
-            setTimeout(() => { r++; if (r < rounds.length) render(); else res(missed); }, 450);
+            setTimeout(() => { if (stopped) return; r++; if (r < rounds.length) render(); else res(missed); }, 450);
           }
         } else {
           SFX.wrong(); missed.add(picked); bt.classList.add('shake'); setTimeout(() => bt.classList.remove('shake'), 400);
           fb.textContent = 'Not that one. Try again.';
         }
       });
-      on('[data-a=quit]', () => { closeCard(); res(null); });
+      on('[data-a=quit]', () => { stopped = true; closeCard(); res(null); });
     }
     render();
   });

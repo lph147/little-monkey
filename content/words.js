@@ -11,6 +11,8 @@
 //         count towards the area's words, and you use them by choosing them as replies.
 //   use   a phrase's: when you say it ("when someone thanks you"), on its card and when another reply fits better
 //   cue   a phrase's: what someone does that you answer with it ("thanks you"), to say what's happening when you reply
+//   later true for a word the area will teach later, but nothing does yet (such as 蜜蜂, till the troop's bees): it isn't
+//         counted, or in the Word Scroll, unless the game you're playing has caught it already
 //
 // In the Word Scroll, each category's words appear in the order they are listed here.
 // Sentences in the content files may only use words from this bank (the tests check).
@@ -64,7 +66,7 @@ const WORD_BANK = {
   '棍子': {py:'gùnzi', en:'stick', pic:'🪵', area:1, category:'items'},
   '蛇': {py:'shé', en:'snake', pic:'🐍', area:1, category:'animals'},
   '蜘蛛': {py:'zhīzhū', en:'spider', pic:'🕷️', area:1, category:'animals'},
-  '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals'},   // (caught in the long grass until 21 October 2026; in chapter 1, a friend)
+  '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals', later:true},   // (caught in the long grass until 21 October 2026; in chapter 1, a friend: till then, for later)
   '野猪': {py:'yězhū', en:'wild boar', pic:'🐗', area:1, category:'animals'},
   '鹿': {py:'lù', en:'deer', pic:'🦌', area:1, category:'animals'},   // (chapter 1: a friend in the pine wood)
   '狼': {py:'láng', en:'wolf', pic:'🐺', area:1, category:'animals'},   // (chapter 1: in the pine wood's long grass)

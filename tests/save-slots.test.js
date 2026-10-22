@@ -49,6 +49,19 @@ test('New game starts in an empty game, leaving Game 1 alone; Continue then goes
   assert.equal(again.run('S.shells'), 5, 'Continue on Game 1’s card switches back to it');
 });
 
+test('Continue on another game plays it with its own settings: its music on or off, and your monkey in what you wear in it', () => {
+  const one = {...MINE, version: 30, music: true, wardrobe: {owned: ['头带'], wearing: ['头带']}};
+  const two = {...MINE, version: 30, music: false, wardrobe: {owned: [], wearing: []}};
+  const game = loadGame({dom: true, storage: {[SAVE_KEY]: JSON.stringify(one), [SAVE_KEY + '-game2']: JSON.stringify(two)}});
+  game.runFrame();
+  game.run("globalThis.__music = []; musicStart = () => __music.push(S.music); globalThis.__drawn = []; { const r = redress; redress = () => { __drawn.push(S.wardrobe.wearing.join()); r(); }; }");
+  game.run('filesCard(); slotCard(2)');
+  game.el('#sheet').querySelector('#contBtn').click();
+  assert.equal(game.run('SLOT'), 2);
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__music)')), [false], 'the music as Game 2 has it: off (not Game 1’s on)');
+  assert.deepEqual(JSON.parse(game.run('JSON.stringify(__drawn)')), [''], 'your monkey drawn again as in Game 2: no headband');
+});
+
 test('with all three games in use, New game opens Save files and says how to make room', () => {
   const store = {};
   const game = loadGame({dom: true, save: MINE});

@@ -50,6 +50,16 @@ test('the D-pad or the left stick walks, like the D-pad on the screen; a small p
   assert.equal(p.get('held'), 'down');
 });
 
+test('if the controller goes (its battery, or Bluetooth) while you walk, you stop', () => {
+  const p = withPad();
+  p.press(15); p.press(0); p.frame(1000);
+  assert.equal(p.get('held'), 'right', 'walking right, holding A');
+  p.g.run('navigator.getGamepads = () => [null, null]');   // it's gone, still "pressing"
+  p.frame(1016);
+  assert.equal(p.get('held'), null, 'you stop');
+  assert.equal(p.get('padWas[0]'), false, 'and A is let go too');
+});
+
 test('held on a card, a direction moves again after a moment, then quickly; not on a card that opened as you walked', () => {
   const p = withPad();
   p.g.run("globalThis.__moves = []; navFocus = d => __moves.push(d)");

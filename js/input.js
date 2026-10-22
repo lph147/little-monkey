@@ -107,7 +107,7 @@ document.addEventListener('keydown', e => {
     else if (isB){ e.preventDefault(); pressB(e.timeStamp); }
     else if (isMenu){ e.preventDefault(); pressMenu(); }
     else if (isSelect){ e.preventDefault(); pressSelect(); }
-    else if (isA && !(e.target.matches && e.target.matches('button'))){ e.preventDefault(); if (!e.repeat) pressA(e.timeStamp); }   // (a chosen button is pressed by the browser)
+    else if (isA && !(e.target.matches && e.target.matches('button:focus-visible'))){ e.preventDefault(); if (!e.repeat) pressA(e.timeStamp); }   // (a button chosen with Tab or the arrows is pressed by the browser; one clicked with the mouse isn't: what A would press is, decided 22 October 2026)
     return;
   }
   if (isB){ e.preventDefault(); pressB(e.timeStamp); return; }

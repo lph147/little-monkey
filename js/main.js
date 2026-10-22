@@ -148,7 +148,7 @@ try { speechSynthesis.addEventListener('voiceschanged', () => { if (mode === 'ti
 // each game's card has Continue, Copy to a file and Delete, or New game and Load from a file). The D-pad moves between
 // the buttons and A presses the chosen one. The first time, there's New game and Save files.
 let titleSel = 0;
-const go = fn => () => { getAC(); unlockSpeech(); musicStart(); keepSaves(); fn(); };   // (sound can only start from a tap)
+const go = fn => () => { getAC(); unlockSpeech(); keepSaves(); fn(); musicStart(); };   // (sound can only start from a tap; the music once the game is chosen, with its own setting)
 // Asks the browser to keep your saved games for good, rather than clear them to make room, once you play.
 const keepSaves = () => { try { navigator.storage.persist().catch(() => {}); } catch(e) {} };
 const ago = t => { const d = Math.floor((Date.now() - t) / 86400000); return !t ? '' : d < 1 ? 'today' : d < 2 ? 'yesterday' : `${d} days ago`; };
@@ -312,6 +312,7 @@ async function startGame(){
 
 // The game as S has it (at the start, or after switching games): where everyone is, the place you're in and its map.
 function setUpGame(){
+  wordsForGame(); redress();   // its words, and your monkey in what you wear in it (decided 22 October 2026: the last game's showed)
   if (!PLACES[S.pos.place]) S.pos.place = FIRST_PLACE;   // a place that's gone
   placeCharacters();   // where the story has put everyone
   enterPlace(S.pos.place);

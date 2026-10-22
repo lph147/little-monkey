@@ -25,7 +25,7 @@ function padDirOf(p){   // the direction a controller is pressing: its D-pad, or
 }
 function readPads(now){
   const pads = padsNow();
-  if (!pads.length){ padLoop = 0; return; }   // none connected: stop looking until one is
+  if (!pads.length){ padLoop = 0; letGo(); return; }   // none connected: let go of what it held, and stop looking until one is
   padLoop = requestAnimationFrame(readPads);
   if (upright) return;   // the phone is upright: the game waits until it's turned
   for (const [i, sel, press] of PAD_BUTTONS){   // a button pressed (not held): it presses the game's button once
@@ -44,6 +44,12 @@ function readPads(now){
     else if (padHeldOn === 'title') moveTitle(d);
     else talkMove(d);
   }
+}
+// The last controller has gone (its battery, or Bluetooth) with a direction or a button down: they're let go, so you
+// stop walking (decided 22 October 2026: you walked on, with nothing pressed).
+function letGo(){
+  if (padHeldDir){ padHeldDir = null; setPad(null); held = null; }
+  for (const [i, sel] of PAD_BUTTONS) if (padWas[i]){ $(sel).classList.remove('held'); padWas[i] = false; }
 }
 const watchPads = () => { if (!padLoop && padsNow().length) padLoop = requestAnimationFrame(readPads); };
 window.addEventListener('gamepadconnected', watchPads);

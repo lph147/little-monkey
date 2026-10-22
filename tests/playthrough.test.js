@@ -292,6 +292,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(2, 19, 'up', 'knocking down a dry, dead pine in the hollow to the west, with your stick');
   assert.ok(knows('木头'), 'the first piece of wood teaches 木头');
   assert.equal(run('tileAt(2, 18).look'), 'stump', 'the dead pine is down');
+  await stepOn(15, 13, 'crossing the only bridge over the stream');
+  assert.ok(knows('桥'), 'chapter 1’s bridges teach 桥');
   await pressAt(2, 3, 'up', 'knocking down another dead pine, among the oldest pines over the stream');
   await pressAt(3, 11, 'down', 'picking up a small stone by the stream');
   await pressAt(28, 18, 'right', 'picking up another small stone, on the shore of the pool');
@@ -355,6 +357,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(15, 5, 'up', 'giving the big monkey the flowers');
   assert.deepEqual([area().flowers, area().schoolFlowers, run('tileAt(10, 5).look')], ['done', true, 'flowerBed'], 'he plants them in front of the school');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
+  // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
+  // your wardrobe; 睡觉, sleep, by the cave's beds; and the spider, which the long grass didn't send this player)
+  assert.deepEqual(get('ORDER.filter(w => lvl(w) < 1)').sort(), ['戴', '睡觉', '蜘蛛'].sort(), 'the words this player hasn’t caught');
 
   // Everything said on the way has a voice clip (npm run voices makes them)
   const clips = require('../tools/make-voices').plan().clips, said = get('__said');

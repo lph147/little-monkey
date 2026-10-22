@@ -77,6 +77,26 @@ test('hitting a dry, dead pine with your stick knocks it down: a stump, a piece 
   assert.match(get(g, 'getTasks()[0].text'), /^Find three pieces of 木头 \(wood\) in the pine wood \(1\/3\)$/, 'now in Chinese too');
 });
 
+test('chapter 1’s bridges teach 桥 (bridge) as you step onto one: the pine wood’s and the home ground’s, not the prologue’s', async () => {
+  const g = game(BUILDING, {place: 'pineWood', x: 15, y: 14, dir: 'up'});
+  await play(g, 'arrive(15, 13)');
+  assert.ok(get(g, '__notes').includes('card: 桥'), 'onto the bridge in the pine wood: 桥');
+  const home = game({}, {place: 'homeGround', x: 16, y: 17, dir: 'down'});
+  await play(home, 'arrive(16, 18)');
+  assert.ok(get(home, '__notes').includes('card: 桥'), 'and the home ground’s, over the stream');
+  const valley = game({chapter: 0, home: 0, gate: true, climb: 1, story: false, cave: 0, count: 0}, {place: 'valley', x: 6, y: 5, dir: 'down'});
+  await play(valley, 'arrive(6, 6)');
+  assert.ok(!get(valley, '__notes').some(n => /桥/.test(n)), 'the river valley’s bridges, on the way up in the prologue, teach nothing');
+});
+
+test('the piece of wood is in the save before its card shows, so a game closed then never loses it (the pine is a stump for good)', async () => {
+  const g = game(BUILDING, {place: 'pineWood', x: 2, y: 19, dir: 'up'});
+  g.run("globalThis.__saves = []; save = () => { __saves.push(JSON.stringify([here().changed, here().picked.wood || []])); }");
+  g.run("showNotice = async w => { globalThis.__atCard = __saves[__saves.length - 1]; rec(w).lv = 1; }");   // (what's saved when the card shows)
+  await press(g, 2, 19, 'up');
+  assert.deepEqual(JSON.parse(g.run('__atCard')), [{'pineWood:2,18': 'j'}, ['pineWood:2,18']], 'the stump, and the piece of wood from it');
+});
+
 test('knocking down a dead pine draws again only what’s around it, not the whole wood (that stopped the game for two seconds on a phone)', async () => {
   const g = game(BUILDING, {place: 'pineWood', x: 2, y: 19, dir: 'up'});
   g.run(`globalThis.__tiles = []; globalThis.__pines = 0;
