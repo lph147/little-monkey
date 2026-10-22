@@ -149,7 +149,7 @@ function matches(cond){   // does the game match everything in an if?
 }
 const CALL_MS = 900;   // how long a character's ! shows before they talk to you, when they stop you (the stopsYou step)
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet'],
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 // The area's lesson series (AREA.lessons) teach their words one at a time, one a lesson, in order: the next once you've
@@ -244,7 +244,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const text = intoBag(s.bag) ? fill(s.note || `A {${s.bag}} for your bag.`) : `Your bag is full of ${wz(s.bag)}.`;
     if (who) await showNarration(text); else toast(text);
   },
-  async reply(s){ await replyWith(s.reply); },
+  async reply(s, who){ await replyWith(s.reply, {about:s.about, pic:s.pic, who}); },   // (about, pic: what you're answering, if it isn't a line just said)
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
   // The troop marks out ground for something they'll build, as you watch (markOut: what the story becomes then): a stake
@@ -338,25 +338,40 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   },   // a battle (an enemy in AREA.enemies), and what happens if you win
   async message(s, who){ if (who) await showNarration(fill(s.message)); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
 };
-// You reply: choose what to say from the phrases you know, with best the one that fits (taught on its
-// own card the first time). Any choice is fine: you say it, and if another fits better the game says
-// so. Replying with the one that fits counts as using it. A phrase you don't know yet isn't offered.
+// You reply: choose what to say from the phrases you know, with best the one that fits (taught on its own card the first
+// time, saying when you say it). What you're answering stays in sight (chooseReply, js/cards.js): the line someone has
+// just said, or else what's happening (about, in English, with who: whose face, and pic: a picture of what they've given
+// you), and it's put in plain English: what they've done (the phrase's cue: says hello, thanks you…, or about) and what
+// to do, so a reply is never a guess at what you're answering (decided 22 October 2026). One that doesn't fit shows why,
+// with the one that does, and your monkey says that one, so the conversation makes sense. Replying with the one that
+// fits counts as using it. A phrase you don't know yet isn't offered.
 // One new word at a time: if this conversation has already taught one, a phrase that's new too waits for another
-// time (such as 要 then 不客气 at your first request), and the character's line stands on its own.
-async function replyWith(best){
+// time (such as 要 then 不客气 at your first request), and the character's line stands on its own. Gives whether you
+// replied.
+async function replyWith(best, {about, pic, who} = {}){
+  const heard = about ? null : lastLine;   // (now: a card may teach the phrase first)
   if (lvl(best) === 0){
-    if (caughtBefore !== null && caughtCount() > caughtBefore) return;
-    await showNotice(best, {quiet:true});
+    if (caughtBefore !== null && caughtCount() > caughtBefore) return false;
+    await showNotice(best, {quiet:true, note:`Say it ${WORDS[best].use}.`});
   }
   const choices = shuffle([best, ...shuffle(PHRASES.filter(p => p !== best && lvl(p) >= 1)).slice(0, 2)]);
-  await iSay(await chooseReply(speaker('player'), choices), best);
+  const id = heard ? heard.id : who, what = about ? fill(about) : `${cap(theName(id))} ${WORDS[best].cue}.`;
+  const ask = `${what} ${choices.length < 2 ? 'Now you say it!' : heard ? 'What do you say back?' : 'What do you say?'}`;
+  await iSay(best, await chooseReply(choices, {id, line:heard && heard.line, pic, ask, best}) === best);
+  return true;
 }
-// Your monkey says a phrase. If it's the one that fits (best), it counts as using it; if not, the game says which fits.
-async function iSay(said, best = said){
-  const fits = said === best;
-  if (fits){ const r = rec(best); r.used = 1; r.lv = 4; addToday(best); save(); }
+// Someone, in English text: the old monkey, the shop owner (a character, by their name in English), the 松鼠 (squirrel)
+// (an animal, by its word).
+function theName(id){
+  if (NAMES[id]) return 'the ' + NAMES[id].en.toLowerCase();
+  const a = animalName(id);
+  return a ? 'the ' + wz(a.zh) : 'someone';
+}
+// Your monkey says a phrase. It counts as using it if you chose it yourself (chose), not when the game said which fits.
+async function iSay(said, chose = true){
+  if (chose){ const r = rec(said); r.used = 1; r.lv = 4; addToday(said); save(); }
   const en = WORDS[said].en.split(',')[0];
-  await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, ...(fits ? {} : {hint:`${wz(best)} fits best here.`})});
+  await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said});
 }
 // Runs a list of steps, one after another. A step that gives STOP ends the list there (such as a word match you stop).
 const STOP = 'stop';
@@ -405,7 +420,7 @@ async function talk(n){
   const part = (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
   if (!part) return;
   const outer = caughtBefore;   // (a character can stop you during another conversation)
-  caughtBefore = caughtCount();
+  caughtBefore = caughtCount(); lastLine = null;   // (nothing said yet to reply to)
   try { await runSteps(part.do, n.id); } finally { caughtBefore = outer; }
 }
 // A character asking you to bring something (the area's requests). A request with choices (such as the
@@ -475,8 +490,9 @@ async function buy(i, face){   // buying something from the shop by asking for i
   if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); S.wardrobe.wearing.push(i.item); }   // you put it on
   save(); SFX.fanfare();
   if (i.wear) redress();   // redraw your monkey wearing it
-  await showDialog(face, L[sh.thanks]);
-  if (sh.thanksReply) await replyWith(sh.thanksReply);
+  // it's handed to you: you say thank you, and they say you're welcome (decided 22 October 2026: they thanked you, and
+  // you thanked them, which made it a puzzle why a monkey's thanks wanted 不客气)
+  if (sh.reply && await replyWith(sh.reply, {about:sh.given.replace('{item}', `{${i.item}}`), pic:i.item, who:sh.who}) && sh.welcome) await showDialog(face, L[sh.welcome]);
   toast(fill(i.bought));
   await runEvents();
   return true;

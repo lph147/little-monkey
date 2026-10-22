@@ -24,6 +24,7 @@ const SAVES = {
     areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false}}},
 };
 SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};
+SAVES.phrases = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['谢谢', '不客气', '再见', '对不起', '没关系', '松鼠'])}};   // the phrases you reply with, all caught
 SAVES.lowTalk = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}};   // on the path at the bottom of the meadow, facing the little monkey (before the gate, it's there)   // every word Recognised: animals ask you to read
 // chapter 1 has begun: the prologue is done, and the troop is at the waterfall; you're beside the old monkey
 const PROLOGUE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 3, story: true, bought: ['头带'], cave: 0};
@@ -139,8 +140,17 @@ const SCREENS = [
     play(); await wait(100); talk(npc('playful')); await wait(600); }},
   {id: 'hello-card', title: 'A new word in a conversation', save: 'born', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
-  {id: 'first-reply', title: 'Your first reply', save: 'born', run: async () => {
+  {id: 'first-reply', title: 'Your first reply', save: 'born', why: 'His line stays in sight: The old monkey says hello. Now you say it!', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); click('[data-a=ok]'); await wait(400); }},
+  {id: 'reply-thanks', title: 'Replying to thanks', save: 'phrases', why: 'What you’re answering stays in sight (his line, 谢谢你！), with what’s happening in plain English: The hungry monkey thanks you. What do you say back?', run: async () => {
+    play(); await wait(100); (async () => { await showDialog(speaker('hungry'), L.thanks); await replyWith('不客气'); })(); await wait(200); next(); await wait(400); }},
+  {id: 'reply-not-fit', title: 'A reply that doesn’t fit', save: 'phrases', why: 'Why not, and the one that does (green), which your monkey says next.', run: async () => {
+    play(); await wait(100); (async () => { await showDialog(speaker('hungry'), L.thanks); await replyWith('不客气'); })(); await wait(200); next(); await wait(300);
+    [...document.querySelectorAll('#talk .reply')].find(b => !b.textContent.includes('不客气')).click(); await wait(400); }},
+  {id: 'reply-gift', title: 'Thanking for a gift', save: 'phrases', why: 'Not a line, so what’s happening, with a picture of it: The 松鼠 (squirrel) gives you a 桃子 (peach). What do you say?', run: async () => {
+    play(); await wait(100); STEPS.reply({reply: '谢谢', about: 'The {松鼠} gives you a {桃子}.', pic: '桃子'}, 'squirrel'); await wait(400); }},
+  {id: 'shop-handed', title: 'Handed what you bought', save: 'phrases', why: 'The 老板 gives it to you: you say 谢谢 (and he says 不客气).', run: async () => {
+    play(); await wait(100); gapQ = async () => true; buy(AREA.shop.items.find(i => i.item === '苹果'), speaker('boss')); await wait(400); }},
   {id: 'welcome', title: 'The old monkey’s welcome', save: 'born', why: 'A line of story, waiting in the speech box.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); click('[data-a=ok]'); await wait(200);
     next(); await wait(200); next(); await wait(500); }},
@@ -337,7 +347,8 @@ const SCREENS = [
   {id: 'school-painted', title: 'The school, all painted', save: 'schoolPainted', why: 'All six colours: the walls brown, the pillars orange, and pink peach blossom under the windows too.', run: async () => { play(); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
-  {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'Your replies show 美猴王 now.', run: async () => { play(); await wait(100); replyWith('你好'); await wait(400); }},
+  {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {
+    play(); await wait(100); (async () => { await showDialog(speaker('troop1'), L.hi); await replyWith('你好'); })(); await wait(200); next(); await wait(200); click('#talk .reply'); await wait(400); }},
   {id: 'count-two', title: 'Counting the troop in', save: 'king', why: 'The card for 二 explains 两.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); next(); await wait(400); }},
   {id: 'troop-home', title: 'The whole troop is home', save: 'home', run: async () => { play(); await wait(500); }},

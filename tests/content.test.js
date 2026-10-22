@@ -358,7 +358,7 @@ test('every phrase can be caught: a reply, a card or a request teaches it', () =
   const taught = new Set([
     ...allSteps().flatMap(([, s]) => [s.reply, s.newWord, s.card]),
     ...Object.values(AREA.requests).flatMap(r => [r.wrongReply, r.thanksReply]),
-    ...(AREA.shop ? [AREA.shop.thanksReply, AREA.shop.no] : [])
+    ...(AREA.shop ? [AREA.shop.reply, AREA.shop.no] : [])
   ].filter(Boolean));
   for (const p of collectible.filter(w => BANK[w].phrase)) assert.ok(taught.has(p), `${p} is a phrase you can never catch: nothing teaches it`);
 });
@@ -367,7 +367,7 @@ test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
-    ...(AREA.shop ? [AREA.shop.ask, AREA.shop.thanks] : []),
+    ...(AREA.shop ? [AREA.shop.ask, AREA.shop.welcome] : []),
     ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask)])
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
@@ -464,7 +464,7 @@ test('every word you only hear is used in a sentence somewhere', () => {
 test('replies after requests and the shop are phrases you can learn here', () => {
   const isPhrase = p => BANK[p] && BANK[p].phrase && collectible.includes(p);
   for (const [id, r] of Object.entries(AREA.requests)) for (const k of ['thanksReply', 'wrongReply']) if (r[k]) assert.ok(isPhrase(r[k]), `request ${id}: ${k} ${r[k]} isn't a phrase you can learn here`);
-  if (AREA.shop) for (const k of ['thanksReply', 'no']) if (AREA.shop[k]) assert.ok(isPhrase(AREA.shop[k]), `shop: ${k} ${AREA.shop[k]} isn't a phrase you can learn here`);
+  if (AREA.shop) for (const k of ['reply', 'no']) if (AREA.shop[k]) assert.ok(isPhrase(AREA.shop[k]), `shop: ${k} ${AREA.shop[k]} isn't a phrase you can learn here`);
 });
 
 

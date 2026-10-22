@@ -1,5 +1,6 @@
-// Replying in Chinese: after some lines you choose what to say from phrases you know, with their
-// pinyin and English (unless it's switched off). Any choice is fine; the one that fits counts as used.
+// Replying in Chinese: after some lines you choose what to say from phrases you know, with their pinyin and English
+// (unless it's switched off), under what you're answering, put in plain English. One that doesn't fit shows why, with
+// the one that does, which your monkey says; the one that fits counts as used when you choose it.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -55,14 +56,25 @@ test('choosing the phrase that fits: you say it, and it counts as used', async (
   assert.equal(t.run('__done'), true);
 });
 
-test('choosing another phrase is fine: the game says which fits best', async () => {
+test('choosing one that doesn’t fit: it says why, with the one that does, and your monkey says that one (not counted as used)', async () => {
   const t = replyGame(know('你好', '谢谢'));
   t.start('谢谢');
   await tick();
   t.box.querySelectorAll('.reply').find(b => b.querySelector('.rzh').textContent === '你好').click();
   await tick();
-  assert.match(t.box.querySelector('.hintline').textContent, /谢谢 \(thank you\) fits best here/);
-  assert.equal(t.rec('谢谢').lv, 1, 'it isn\'t counted as used');
+  const mark = w => t.box.querySelectorAll('.reply').find(b => b.querySelector('.rzh').textContent === w).className;
+  assert.match(mark('你好'), /\bno\b/, 'the one you chose doesn’t fit');
+  assert.match(mark('谢谢'), /\byes\b/, 'and this one does');
+  assert.equal(t.box.querySelector('.why').textContent, '你好 (hello) is for when you meet someone. When someone gives you something or helps you, you say 谢谢 (thank you).');
+  assert.equal(t.box.querySelector('.spk-zh'), null, 'nothing said yet: it waits for you to read why');
+  t.run('pressA()');
+  await tick();
+  assert.match(t.box.querySelector('.spk-zh').textContent, /小猴子/, 'then your monkey says…');
+  assert.ok(t.box.querySelector('.tok.teach[data-t="谢谢"]'), '…the one that fits');
+  assert.equal(t.rec('谢谢').lv, 1, 'it isn’t counted as used: you didn’t choose it');
+  t.run('pressA()');
+  await tick();
+  assert.equal(t.run('__done'), true);
 });
 
 test('a phrase you don\'t know yet is taught on its own card first', async () => {
@@ -88,10 +100,11 @@ test('the arrows move between choices and A chooses; B doesn\'t choose', async (
   assert.equal(sel(), 2, 'round to the last one');
   t.run('pressB()');
   assert.equal(t.run('!!talkMove'), true, 'still choosing');
-  const picked = t.choices()[2];
+  const fits = t.choices().indexOf('你好');
+  while (sel() !== fits) t.game.key('ArrowRight');
   t.game.key(' ');
   await tick();
-  assert.ok(t.box.querySelector(`.tok.teach[data-t="${picked}"]`), 'A said the chosen one');
+  assert.ok(t.box.querySelector('.tok.teach[data-t="你好"]'), 'A said the chosen one');
 });
 
 test('at the shop, 我不要 turns everything down: taught the first time, then your monkey says it', async () => {
@@ -127,9 +140,53 @@ test('your very first reply, with only one phrase to say, asks you to say it ins
   t.start('你好');
   await tick();
   assert.deepEqual(t.choices(), ['你好']);
-  assert.equal(t.box.querySelector('.label').textContent, 'Now you say it');
+  assert.match(t.box.querySelector('.ask').textContent, /Now you say it!$/);
   const two = replyGame(know('你好', '再见'));
   two.start('再见');
   await tick();
-  assert.equal(two.box.querySelector('.label').textContent, 'Your reply');
+  assert.match(two.box.querySelector('.ask').textContent, /What do you say\?$/);
+});
+
+test('what you’re answering stays in sight: the line they’ve just said, with who said it, and what’s happening, in plain English', async () => {
+  const t = replyGame(know('你好', '谢谢', '不客气', '再见'));
+  t.run(`showDialog(speaker('hungry'), L.thanks).then(() => replyWith('不客气')).then(() => { __done = true; })`);
+  await tick();
+  t.run('pressA()');   // (on from his line)
+  await tick();
+  const to = t.box.querySelector('.replyto');
+  assert.ok(to.querySelector('.tok[data-t="谢谢"]') && to.querySelector('.tok[data-t="你"]'), 'his line, 谢谢你！, still there');
+  assert.equal(t.box.querySelector('.ask').textContent, 'The hungry monkey thanks you. What do you say back?');
+  const hi = replyGame(know('你好', '再见'));
+  hi.run(`showDialog(speaker('troop1'), L.hi).then(() => replyWith('你好'))`);
+  await tick(); hi.run('pressA()'); await tick();
+  assert.equal(hi.box.querySelector('.ask').textContent, 'The monkey says hello. What do you say back?');
+  const sorry = replyGame(know('你好', '没关系'));
+  sorry.run(`showDialog(speaker('hungry'), L.sorry).then(() => replyWith('没关系'))`);
+  await tick(); sorry.run('pressA()'); await tick();
+  assert.equal(sorry.box.querySelector('.ask').textContent, 'The hungry monkey says sorry. What do you say back?');
+});
+
+test('a reply to something that isn’t a line, such as a gift: what’s happening, with a picture of it', async () => {
+  const t = replyGame(know('你好', '谢谢', '再见', '松鼠', '桃子'));
+  t.run(`STEPS.reply({reply: '谢谢', about: 'The {松鼠} gives you a {桃子}.', pic: '桃子'}, 'squirrel').then(() => { __done = true; })`);
+  await tick();
+  assert.equal(t.box.querySelector('.ask').textContent, 'The 松鼠 (squirrel) gives you a 桃子 (peach). What do you say?');
+  assert.ok(t.box.querySelector('.replyto .gift'), 'the peach');
+  assert.equal(t.box.querySelector('.replyto .tok'), null, 'and no line: there wasn’t one');
+});
+
+test('a phrase’s card says when you say it', async () => {
+  const t = replyGame(know('你好'));
+  t.start('不客气');
+  await tick();
+  assert.match(t.sheet.textContent, /Say it when someone thanks you\./);
+});
+
+test('every phrase says when you say it, and what someone does that you answer with it, if it’s a reply', () => {
+  const t = replyGame({});
+  const phrases = JSON.parse(t.run('JSON.stringify(PHRASES.map(p => [p, WORDS[p].use, WORDS[p].cue]))'));
+  for (const [p, use, cue] of phrases) assert.ok(/^when /.test(use || ''), `${p}: use says when you say it ("when …")`);
+  const replies = JSON.parse(t.run(`JSON.stringify([...new Set([...Object.values(AREA.requests).flatMap(r => [r.thanksReply, r.wrongReply]),
+    ...Object.values(AREA.talk).flat().flatMap(p => p.do).filter(s => s.reply && !s.about).map(s => s.reply)].filter(Boolean))])`));
+  for (const p of replies) assert.ok(JSON.parse(t.run(`JSON.stringify(WORDS['${p}'].cue || null)`)), `${p} is a reply to a line: it needs a cue`);
 });

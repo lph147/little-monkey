@@ -22,7 +22,7 @@ shown where the word list has them.
 | 你有桃子吗？ | nǐ yǒu táozi ma? | Do you have a peach? |  |  |
 | 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? |  |  |
-| 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 老板 (Shop owner) |  |
+| 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 松鼠 (squirrel), 山羊 (goat) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
@@ -35,6 +35,7 @@ shown where the word list has them.
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
+| 不客气！ | bú kèqi! | You’re welcome! | 老板 (Shop owner) |  |
 | 对不起！ | duìbuqǐ! | Sorry! | 饿猴子 (Hungry monkey) |  |
 | 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | 老猴子 (Old monkey) |  |
 | 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | 老猴子 (Old monkey) |  |

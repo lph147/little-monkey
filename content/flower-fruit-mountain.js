@@ -245,8 +245,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       offer:'haveStones', sentence:'我们 要 小 石头', sentenceEn:'We need small stones.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
-  // The shop. who runs it, their line when you visit (ask) and after you buy (thanks, with thanksReply
-  // the phrase that fits as your reply), the phrase you say when you don't want anything (no), what they say
+  // The shop. who runs it, their line when you visit (ask); when you buy something, they give it to you (given, what's
+  // happening, with {item} for what you bought), reply is the phrase that fits as your reply, and welcome their line after
+  // it (decided 22 October 2026: they used to thank you, and you thanked them back, which made it a puzzle why a monkey's
+  // thanks wanted 不客气); the phrase you say when you don't want anything (no), what they say
   // if you can't afford something yet (earnMore, after how many shells you need), and when you've
   // bought everything (soldOut). Each item: its word and price in shells, the sentence you complete
   // to ask for it (sentence, with sentenceEn; the item is the missing word), a line on its new-word card (note), a message
@@ -254,7 +256,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // eat: true for food you can buy again and eat in an animal encounter to take away a wrong answer,
   // with carry: the most you can carry.
   shop: {
-    who:'boss', ask:'whatWant', thanks:'thanks', thanksReply:'谢谢', no:'我不要',
+    who:'boss', ask:'whatWant', given:'The {老板} gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
     earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and practising your words.',
     soldOut:'You have everything the {老板} sells. Come back another time.',
     items: [
@@ -980,6 +982,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     wantFlowers: {zh:'我 要 红色 、 黄色 和 白色 的 花 ！', en:'I want red, yellow and white flowers!'},
     haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'},
+    welcome: {zh:'不客气 ！', en:'You’re welcome!'},   // the 老板, when you thank him for what you've bought
     sorry: {zh:'对不起 ！', en:'Sorry!'},   // the hungry monkey, sorry for being fussy (draft, not checked yet: see CHINESE.md)
     // The prologue's guide (drafts, not checked yet: see CHINESE.md)
     iamOld: {zh:'我 是 老 猴子 。 这 是 花果山 。', en:'I’m the old monkey. This is Flower Fruit Mountain.'},
@@ -1063,7 +1066,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   shop      open the area's shop (see shop below)
   //   give      put something in your wardrobe, such as {give:'花'}, with a message afterwards (note)
   //   reply     your reply: you choose what to say from phrases you know, and this is the one that fits
-  //             (taught on its own card the first time). Any choice is fine; the game says which fits best.
+  //             (taught on its own card the first time). What you're answering stays in sight: the line just
+  //             said, put in plain English (the phrase's cue in content/words.js: someone says hello, thanks
+  //             you…), or else about (what's happening), with pic (a picture), such as a gift. One that doesn't
+  //             fit shows why, with the one that does, and your monkey says that one.
   //   bag       put food in your bag (if there's room), with a note saying so
   //   rest      your hearts are full again
   //   sleep     you sleep (in a bed): the screen goes dark, and you wake with all your hearts (its text: the message then)
@@ -1220,7 +1226,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
     fox: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
     squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}? If you win, it gives you a {桃子}.', word:'松鼠',
-      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}, {reply:'谢谢'}]}}]}],
+      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The {松鼠} gives you a {桃子}.', pic:'桃子'}]}}]}],
     // the squirrel in the pine wood (chapter 1) shows you the dry pines; it loves the pines, as its name says
     woodSquirrel: [
       {if:{new:'木头'}, do:[{say:'hi'}, {reply:'你好'}, {say:'squirrelWood'},
@@ -1229,7 +1235,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi'}, {reply:'你好'}, {message:'The squirrel loves the pine wood. Its name, {松鼠}, means pine mouse!'}]}
     ],
     goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
-      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}, {reply:'谢谢'}]}}]}],
+      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}, {reply:'谢谢', about:'The {山羊} gives you a {苹果}.', pic:'苹果'}]}}]}],
     // the goat below the waterfall: the way down is quicker, hopping down the ledges that sent you round on the way up
     ledgeGoat: [
       {if:{ledgeTip:0}, do:[{say:'hi'}, {reply:'你好'},

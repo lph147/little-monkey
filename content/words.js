@@ -9,6 +9,8 @@
 //   category  where the word goes in the Word Scroll: one of the CATEGORIES below
 //   phrase  true for a phrase such as 你好 or 谢谢. Phrases are a collection of their own: they don't
 //         count towards the area's words, and you use them by choosing them as replies.
+//   use   a phrase's: when you say it ("when someone thanks you"), on its card and when another reply fits better
+//   cue   a phrase's: what someone does that you answer with it ("thanks you"), to say what's happening when you reply
 //
 // In the Word Scroll, each category's words appear in the order they are listed here.
 // Sentences in the content files may only use words from this bank (the tests check).
@@ -100,13 +102,13 @@ const WORD_BANK = {
   '同学': {py:'tóngxué', en:'classmate', pic:'🎒', area:1, category:'people'},
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
-  '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true},
-  '谢谢': {py:'xièxie', en:'thank you', area:1, category:'phrases', phrase:true},
-  '不客气': {py:'bú kèqi', en:'you’re welcome', area:1, category:'phrases', phrase:true},
-  '对不起': {py:'duìbuqǐ', en:'sorry', area:1, category:'phrases', phrase:true},
-  '没关系': {py:'méi guānxi', en:'that’s OK', area:1, category:'phrases', phrase:true},
-  '再见': {py:'zàijiàn', en:'goodbye', area:1, category:'phrases', phrase:true},
-  '我不要': {py:'wǒ bú yào', en:'no thanks, I don’t want it', area:1, category:'phrases', phrase:true},
+  '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
+  '谢谢': {py:'xièxie', en:'thank you', area:1, category:'phrases', phrase:true, use:'when someone gives you something or helps you', cue:'helps you'},
+  '不客气': {py:'bú kèqi', en:'you’re welcome', area:1, category:'phrases', phrase:true, use:'when someone thanks you', cue:'thanks you'},
+  '对不起': {py:'duìbuqǐ', en:'sorry', area:1, category:'phrases', phrase:true, use:'when you’ve got something wrong', cue:'isn’t happy'},
+  '没关系': {py:'méi guānxi', en:'that’s OK', area:1, category:'phrases', phrase:true, use:'when someone says sorry', cue:'says sorry'},
+  '再见': {py:'zàijiàn', en:'goodbye', area:1, category:'phrases', phrase:true, use:'when you leave', cue:'says goodbye'},
+  '我不要': {py:'wǒ bú yào', en:'no thanks, I don’t want it', area:1, category:'phrases', phrase:true, use:'when you don’t want something'},
 
   // Heard in sentences
   '是': {py:'shì', en:'am, is, are'},

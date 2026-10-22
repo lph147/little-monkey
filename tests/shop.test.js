@@ -14,7 +14,8 @@ const play = (save = {}) => loadGame({save: {version: VERSION, started: true, ..
 
 test('the shop is run by a character, and sells words you can collect, asked for with a sentence', () => {
   assert.ok(AREA.characters.some(c => c.id === AREA.shop.who), 'the shop needs a character to run it');
-  assert.ok(AREA.lines[AREA.shop.ask] && AREA.lines[AREA.shop.thanks]);
+  assert.ok(AREA.lines[AREA.shop.ask] && AREA.lines[AREA.shop.welcome]);
+  assert.match(AREA.shop.given, /\{item\}/, 'what’s happening when they give you what you’ve bought says what it is');
   for (const i of AREA.shop.items){
     assert.equal(BANK[i.item] && BANK[i.item].area, AREA.number, `${i.item} should be a word you can collect here`);
     assert.ok(i.price > 0 && i.note && i.bought && i.sentenceEn, `${i.item} needs a price, note, bought and sentenceEn`);
@@ -65,6 +66,26 @@ const buyIt = async (game, what) => {   // buy something, answering every card a
   game.run('showDialog = showNotice = infoBox = replyWith = async () => {}; toast = () => {}; gapQ = async () => true;');
   return game.run(`buy(${what}, '')`);
 };
+
+test('the 老板 hands you what you’ve bought: you say 谢谢 (seeing what’s happening, and what it is), and he says 不客气, not the other way round', async () => {
+  const know = ws => Object.fromEntries(ws.map(w => [w, {lv: 1, due: 0, ok: 0}]));
+  const game = loadGame({dom: true, save: {version: VERSION, started: true, areas: {1: area()}, shells: 5, w: know(['苹果', '谢谢', '你好', '再见'])}});
+  const tick = () => new Promise(r => setImmediate(r));
+  game.run("mode = 'play'; globalThis.__said = []; globalThis.__done = false; gapQ = async () => true; toast = () => {};");
+  game.run("{ const sd = showDialog; showDialog = (who, line, o) => { __said.push(line.t.join('')); return sd(who, line, o); }; }");
+  game.run(`buy(${APPLE()}, speaker('boss')).then(() => { __done = true; })`);
+  await tick();
+  const box = game.el('#talk');
+  assert.equal(box.querySelector('.ask').textContent, 'The 老板 (shop owner, boss) gives you the 苹果 (apple). What do you say?');
+  assert.ok(box.querySelector('.replyto .portrait'), 'his face');
+  assert.ok(box.querySelector('.replyto .gift'), 'and what he gives you');
+  box.querySelectorAll('.reply').find(b => b.querySelector('.rzh').textContent === '谢谢').click();
+  await tick();
+  game.run('pressA()'); await tick();
+  assert.deepEqual(get(game, '__said'), ['谢谢！', '不客气！'], 'you thank him, and he says you’re welcome');
+  game.run('pressA()'); await tick();
+  assert.equal(game.run('__done'), true);
+});
 
 test('the 老板 sells 苹果 as food, and keeps selling it after the headband', () => {
   const apple = get(base, APPLE());

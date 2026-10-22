@@ -6,6 +6,7 @@ const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const enOf = hz => (WORDS[hz] || {en: (GLOSS[hz] || ['', ''])[1]}).en;
 const wz = hz => `${hz} (${enOf(hz)})`;
+const cap = s => s && s[0].toUpperCase() + s.slice(1);   // (a sentence's first letter)
 // Fills in content text: a counter such as '{animals}' becomes its number, a word such as '{水}'
 // becomes '水 (water)', '{holding:hungry}' the word for what you're holding for that request, and
 // '{wanted:hungry}' the word for what a fussy request wants now.

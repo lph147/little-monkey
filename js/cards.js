@@ -131,6 +131,7 @@ const on = (sel, fn) => { const el = sheet.querySelector(sel); if (el) el.onclic
 const talkBox = $('#talk');
 let talkNext = null;          // moves on to what comes after the line, while the speech box is showing one
 let talkMove = null;          // moves between reply choices with the D-pad, while the box shows them
+let lastLine = null;          // the line someone else said last ({id, line}), until the story moves on: what a reply answers
 const TAP_TIP_LINES = 5;      // "Tap any word" shows under your first few lines, then only a word's meaning when you tap it
 function showDialog(who, line, opts = {}){
   return new Promise(res => {
@@ -147,6 +148,7 @@ function showDialog(who, line, opts = {}){
     bindTokens(talkBox);
     const text = line.t.join(''), q = sel => talkBox.querySelector(sel);
     const id = (who.match(/data-id="([^"]*)"/) || [])[1];   // who's speaking (from speaker()), for their own voice
+    lastLine = id && id !== 'player' ? {id, line} : null;
     say(text, null, id);
     q('[data-a=say]').onclick = () => say(text, null, id);
     const en = q('[data-a=en]');
@@ -159,6 +161,7 @@ function showDialog(who, line, opts = {}){
 // A line of the story in the speech box during a conversation, in English, said by no one: such as what
 // the old monkey does for baby monkeys. A moves on, so the next line can't cover it.
 function showNarration(text){
+  lastLine = null;   // (the story has moved on)
   return new Promise(res => {
     talkBox.innerHTML = `<p class="narration">${pixelIcons(esc(text))}</p>
       <div class="talkfoot"><span class="spacer"></span><button class="btn primary next" data-a="ok" data-label="Next">▼</button></div>`;
@@ -171,22 +174,38 @@ function showNarration(text){
     talkNext = next;
   });
 }
-// Your reply: the phrases you could say, each with pinyin, and English unless it's switched off in
-// Settings. Tapping one says it; on a keyboard or the D-pad, move between them and press A. Gives the
-// phrase you chose. The box stays up for your line, which comes next. With only one phrase to say (your
-// very first reply), it isn't a choice: you're asked to say it.
-function chooseReply(who, choices){
+// Your reply: the phrases you could say, each with pinyin, and English unless it's switched off in Settings, under what
+// you're answering: the face of who you're answering (id), and the line they've just said (line) or a picture of what
+// they've given you (pic), with what's happening in plain English and what to do (ask). Tapping one chooses it; on a
+// keyboard or the D-pad, move between them and press A. One that doesn't fit (best is the one that does) shows why, and
+// the one that fits, until you press A (decided 22 October 2026: it was said anyway, as if it fitted). Gives the phrase
+// you chose. The box stays up for your line, which comes next. With only one phrase to say (your very first reply), it
+// isn't a choice: you're asked to say it.
+function chooseReply(choices, {id, line, pic, ask, best} = {}){
   return new Promise(res => {
     let sel = 0;
-    talkBox.innerHTML = `<div class="talkhead">${who}</div><p class="label">${choices.length > 1 ? 'Your reply' : 'Now you say it'}</p>
-      <div class="replies">${choices.map((p, i) => `<button class="reply" data-i="${i}"><span class="rzh">${p}</span><span class="rpy">${WORDS[p].py}</span>${S.replyEn ? `<span class="ren">${esc(WORDS[p].en)}</span>` : ''}</button>`).join('')}</div>`;
+    talkBox.innerHTML = `<div class="replyto">${id ? portrait(id) : ''}${line ? lineHTML(line.t) : ''}${pic ? `<span class="gift">${picHTML(pic)}</span>` : ''}</div>
+      <p class="ask">${esc(ask || '')}</p>
+      <div class="replies">${choices.map((p, i) => `<button class="reply" data-i="${i}"><span class="rzh">${p}</span><span class="rpy">${WORDS[p].py}</span>${S.replyEn ? `<span class="ren">${esc(WORDS[p].en)}</span>` : ''}</button>`).join('')}</div>
+      <div class="whyfoot"></div>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();
     $('#saybox').hidden = true;
     held = null; queued = null;
+    bindTokens(talkBox);   // (the words they said can be tapped for their meaning, as always)
     const btns = [...talkBox.querySelectorAll('.reply')];
     const mark = () => btns.forEach((b, i) => b.classList.toggle('sel', i === sel));
-    const pick = i => { talkNext = null; talkMove = null; SFX.blip(); res(choices[i]); };
+    const pick = i => {
+      talkNext = null; talkMove = null; SFX.blip();
+      if (!best || choices[i] === best){ res(choices[i]); return; }
+      btns.forEach((b, j) => { b.disabled = true; b.classList.remove('sel'); b.classList.toggle('no', j === i); b.classList.toggle('yes', choices[j] === best); });
+      const not = choices[i];
+      talkBox.querySelector('.whyfoot').innerHTML = `<p class="why">${esc(`${wz(not)} is for ${WORDS[not].use}. ${cap(WORDS[best].use)}, you say ${wz(best)}.`)}</p>
+        <button class="btn primary next" data-a="ok" data-label="Next">▼</button>`;   // (beside why, to keep the box short)
+      const next = () => { talkNext = null; SFX.blip(); res(not); };
+      talkBox.querySelector('[data-a=ok]').onclick = next;
+      talkNext = next; placeTalk(); shown();
+    };
     btns.forEach((b, i) => b.onclick = () => pick(i));
     mark();
     talkNext = () => pick(sel);
