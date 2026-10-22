@@ -64,6 +64,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
     caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (the bridge's 桥 waits for chapter 1)
+    // the words for the meadow the old monkey wants you to learn, which nothing else makes you learn, each as the task
+    // calls it till you've found it ({left:meadowWords}) (decided 22 October 2026: you could leave without them)
+    meadowWords: {count:'known', words:['山', '河', '树', '鱼', '鸟'],
+      called:{'山':'the mountain', '河':'the river', '树':'a tree', '鱼':'the fish in the pond', '鸟':'a bird'}},
     troopIn: {count:'known', words:['一', '二', '三']},   // the troop counted in (each count teaches its number)
     woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
     stonesGot: {count:'picked', request:'stones'},   // and small stones
@@ -110,6 +114,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'elder2', if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
     {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words, then talk to the old monkey again ({newWords}/4)'},
     {id:'animals', if:{elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the animals: in rustling grass, up a tree, on a cliff ({found}/{animals})'},
+    {id:'meadow', if:{elder:{atLeast:2}, chapter:0, meadowWords:{below:5}}, text:'Learn the words for the meadow ({meadowWords}/5). Still to find: {left:meadowWords}. Things that sparkle have words.'},
     {id:'h1', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, text:'Find some fruit for the hungry monkey'},
     {id:'h1b', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:true}}, text:'Find the {wanted:hungry} the hungry monkey wants'},
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
@@ -162,6 +167,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Say hello to the old monkey', done:{elder:{atLeast:1}}},
     {text:'Learn about animals from the old monkey', show:{elder:{atLeast:1}}, done:{elder:{atLeast:2}}},
     {text:'Find the animals ({found}/{animals})', show:{elder:{atLeast:2}}, done:{animalsLeft:0}},
+    {text:'Learn the words for the meadow ({meadowWords}/5)', show:{elder:{atLeast:2}}, done:{meadowWords:5}},
     {text:'Bring the hungry monkey the fruit it wants', show:{hungry:'asked'}, done:{hungry:'done'}},
     {text:'Bring water to the thirsty monkey', show:{thirsty:'asked'}, done:{thirsty:'done'}},
     {text:'Bring the big monkey a red, a yellow and a white flower', show:{flowers:'asked'}, done:{flowers:'done'}},
@@ -284,8 +290,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
     // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)
     {if:{place:'cave', cave:3}, do:[{sound:'splash'}, {set:{cave:4}}, {follow:[]}, {message:'Splash, splash! The troop follows you through the water curtain!'}]},
-    // the rocks roll away once everything else in the prologue is done: the three monkeys helped, and every animal found
-    {if:{hungry:'done', thirsty:'done', flowers:'done', animalsLeft:0, gate:false}, do:[
+    // the rocks roll away once everything else in the prologue is done: the three monkeys helped, every animal found, and
+    // the words for the meadow learned
+    {if:{hungry:'done', thirsty:'done', flowers:'done', animalsLeft:0, meadowWords:5, gate:false}, do:[
       {set:{gate:true}},
       {rumble:true},   // the ground shakes and the map is redrawn
       {message:'A rumble from the {山}! The rocks north of the meadow have rolled away, and the troop gathers there.'}
@@ -1108,6 +1115,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'great'},
         {say:'animals', teach:'动物', hint:'Animals hide in rustling grass, up a tree and on the cliffs to the south.'},
         {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
+        {message:'The old monkey wants you to learn the words for the meadow too: {left:meadowWords}. Things that sparkle have words.', if:{meadowWords:{below:5}}},
         {say:'findMonkeys'},
         {message:'Some of the troop need help too. A ! over a monkey means it wants something. If you forget what to do, press TASKS. MENU shows the words you’ve learned.'},
         {set:{elder:2}}

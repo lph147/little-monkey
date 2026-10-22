@@ -57,6 +57,9 @@ const isOpen = e => (!e.when || matches(e.when)) && (!e.if || matches(e.if));   
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y);   // (an animal standing on open ground, such as a deer, is in the way)
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
+// Somewhere you collect something else (water, from the river or the pond) whose own word you don't know yet: A looks
+// first, teaching its word, and collects after that (decided 22 October 2026: you got the water, and never the word).
+const looksFirst = t => !!t.word && t.word !== t.gather.item && lvl(t.word) === 0;
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
 const dirOf = (dx, dy) => Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');   // the way towards dx, dy
@@ -110,7 +113,7 @@ function promptFor(x, y){
   const t = tileAt(x, y);
   const look = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
   if (look && look.label) return look.label;   // the tile's own steps say what A does, such as Sleep in a bed
-  if (t.gather && canGather(t.gather)) return t.gather.label;
+  if (t.gather && canGather(t.gather) && !looksFirst(t)) return t.gather.label;
   if (canPick(t)) return 'Pick';
   if (t.landmark) return t.label || 'Look';
   const w = lookWord(t);
@@ -126,6 +129,13 @@ const COUNTS = {   // what a counter in the content can count
   known: c => c.words.filter(w => lvl(w) >= 1).length   // how many of these words you've caught
 };
 function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count](c) - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
+// What a counter of words you know (count: known) still waits for: those you haven't caught, as the counter calls them in
+// English (called, such as 'the fish in the pond'; or else the word's English), such as 'the river, the fish in the pond
+// and a bird'.
+function stillToFind(name){
+  const c = AREA.counters[name], left = c.words.filter(w => lvl(w) < 1).map(w => (c.called || {})[w] || enOf(w));
+  return left.length < 2 ? left.join('') : left.slice(0, -1).join(', ') + ' and ' + left[left.length - 1];
+}
 const compare = (have, want) => (want !== null && typeof want === 'object'
   ? (want.atLeast === undefined || have >= want.atLeast) && (want.below === undefined || have < want.below)
   : have === want);
@@ -373,10 +383,12 @@ async function iSay(said, chose = true){
   const en = WORDS[said].en.split(',')[0];
   await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said});
 }
-// Runs a list of steps, one after another. A step that gives STOP ends the list there (such as a word match you stop).
+// Runs a list of steps, one after another: a step with an if only if it matches (such as the old monkey asking for the
+// meadow's words, if there are any you don't know). A step that gives STOP ends the list there (such as a word match you
+// stop).
 const STOP = 'stop';
 const SLEEP_MS = 2400;   // how long you sleep in a bed (the sleep step)
-async function runSteps(steps, who){ for (const s of steps) if (await STEPS[Object.keys(s).find(k => STEPS[k])](s, who) === STOP) return STOP; }
+async function runSteps(steps, who){ for (const s of steps) if ((!s.if || matches(s.if)) && await STEPS[Object.keys(s).find(k => STEPS[k])](s, who) === STOP) return STOP; }
 // The area's events: each happens by itself when its if matches (checked after anything you do).
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); refreshMap(); }
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
@@ -550,7 +562,7 @@ async function interact(x, y){
   if (bd && BIRD_WORD){ await showNotice(BIRD_WORD, AREA.birds.note ? {note:fill(AREA.birds.note)} : {}); shooBird(bd); return; }
   const t = tileAt(x, y);
   if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return runSteps(p.do); }   // the tile's own steps, while the story says
-  if (t.gather && canGather(t.gather)) return gather(t, x, y);
+  if (t.gather && canGather(t.gather) && !looksFirst(t)) return gather(t, x, y);
   if (canPick(t)) return pick(t, x, y);
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);

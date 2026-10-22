@@ -8,12 +8,14 @@ const enOf = hz => (WORDS[hz] || {en: (GLOSS[hz] || ['', ''])[1]}).en;
 const wz = hz => `${hz} (${enOf(hz)})`;
 const cap = s => s && s[0].toUpperCase() + s.slice(1);   // (a sentence's first letter)
 // Fills in content text: a counter such as '{animals}' becomes its number, a word such as '{水}'
-// becomes '水 (water)', '{holding:hungry}' the word for what you're holding for that request, and
-// '{wanted:hungry}' the word for what a fussy request wants now.
+// becomes '水 (water)', '{holding:hungry}' the word for what you're holding for that request,
+// '{wanted:hungry}' the word for what a fussy request wants now, and '{left:meadowWords}' what a counter of
+// words you know still waits for, such as 'the river and a bird' (stillToFind, js/world.js).
 // With raw, words are left as they are (for task ids). With plain (your tasks), a word you haven't caught
 // yet is just its English: 'Find the apple', not 'Find the 苹果 (apple)'.
 const fill = (text, raw, plain) => String(text).replace(/\{([^}]+)\}/g, (m, k) => {
   if (AREA.counters[k]) return counter(k);
+  if (k.startsWith('left:')) return stillToFind(k.slice(5));
   const w = k.startsWith('holding:') ? here().holding[k.slice(8)] : k.startsWith('wanted:') ? (here().wanted || {})[k.slice(7)] : k;
   return raw ? w : plain && lvl(w) < 1 ? enOf(w).split(',')[0] : wz(w);
 });

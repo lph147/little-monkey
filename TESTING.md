@@ -105,7 +105,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The task asks you to learn 4 words, with a counter.
 - [ ] Learn words from things that sparkle: face a cliff (山), a tree (树) or the river (河) and press A; walk into flowers (花) or tall grass (草). The counter goes up.
 - [ ] The sign next to the stone shows 花果山 with its name, and the note "The name of your home." (nothing about a book).
-- [ ] Talk to the old monkey again, with 4 or more new words: he says 我们看看！ (Let's have a look!) and you match each word you've learned to its picture, as at the practice post (tap a word, then its picture; a wrong one shakes, and you try again). Not now ends the talk, and he waits until you're ready. Once they're all matched, he says 太好了！ (Great!) and teaches 动物 (animal). A new task asks you to find the hidden animals (0/4).
+- [ ] Talk to the old monkey again, with 4 or more new words: he says 我们看看！ (Let's have a look!) and you match each word you've learned to its picture, as at the practice post (tap a word, then its picture; a wrong one shakes, and you try again). Not now ends the talk, and he waits until you're ready. Once they're all matched, he says 太好了！ (Great!) and teaches 动物 (animal). A new task asks you to find the hidden animals (0/4). Then, if there are words for the meadow you don't know yet, a message says he wants you to learn them too, naming just those (such as "the river, the fish in the pond and a bird"). TASKS says "Learn the words for the meadow (2/5). Still to find: …", and the list gets shorter as you find them; the checklist has it too. If you already know all five, he doesn't ask.
 
 **The hungry monkey**
 - [ ] The monkey to the right of the old monkey has a !. It says 我饿了。我要吃水果！ (I want to eat some fruit: 水果 is grey, just for listening) and teaches 吃 (eat). The task says "Find some fruit for the hungry monkey", with no arrow: finding it is the point.
@@ -124,9 +124,9 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 **The thirsty monkey**
 - [ ] The thirsty monkey (bottom left) teaches 喝 (drink). A task asks you to collect water.
-- [ ] Face the pond (middle of the meadow, where the yellow arrow points) and press A to learn 水 (water).
+- [ ] Face the pond (middle of the meadow, where the yellow arrow points). While you don't know 鱼 (fish), A says Look and shows you the pond's fish first ("Little fish dart about in the pond."); then A says Collect, and teaches 水 (water). The river is the same: 河 (river) first, then the water. One new word each time you press A.
 - [ ] Take it back. A new-word card for 我 (I) appears, then fill the gap in 我要喝＿。 (I want to drink water.). +3 🐚.
-- [ ] The rocks stay until everything else in the meadow is done: the hungry, thirsty and big monkeys helped, and all 4 animals found. Then the screen shakes and a message says the rocks north of the meadow have rolled away and the troop gathers there. The old monkey and the little monkey are where the rocks were, with a ! over the old monkey.
+- [ ] The rocks stay until everything else in the meadow is done: the hungry, thirsty and big monkeys helped, all 4 animals found, and the meadow's five words learned: 山 (mountain), 河 (river), 树 (tree), 鱼 (fish) and 鸟 (bird: now and then a little bird lands on the grass near you, sparkling; face it and press A). With everything else done and a word still to find, the rocks stay and TASKS says which. Then the screen shakes and a message says the rocks north of the meadow have rolled away and the troop gathers there. The old monkey and the little monkey are where the rocks were, with a ! over the old monkey.
 
 **Friends and animals**
 - [ ] The little monkey (in the south meadow, on the path near the bottom right, below the 老板's stall) has a ! over it once you've said hello to the old monkey. It teaches 猴子 (monkey) the first time, 朋友 (friend) the second, then offers a word game. The ! goes once it has taught you both words.

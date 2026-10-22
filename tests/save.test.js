@@ -51,7 +51,7 @@ test('after converting, the game shows the same progress', () => {
   assert.match(stats, /🐚 7/);
   assert.ok(stats.includes(`2/${game.run('ORDER.length')} words`), '石头 and 路 (路 left the words for a while, and is back on the mountain path)');
   // Said hello, learned about animals, 1 of 4 animals found, hungry monkey helped, thirsty not yet, no story (the headband is optional now)
-  assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, true, false, false, false, false, false, false, false, false, false, false, false, false]);   // (chapter 1's checklist: no word test there any more)
+  assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false]);   // (chapter 1's checklist: no word test there any more; the meadow's words, not learned yet)
 });
 
 test('a finished area stays finished', () => {
@@ -124,7 +124,7 @@ test('a version 3 save is converted: tasks become words, and what you carry move
 
 test('after converting a version 3 save, the tasks and bubbles are the same', () => {
   const game = loadGame({save: V3});
-  assert.deepEqual(json(game.run('getTasks().map(t => t.id)')), ['animals', 'h2苹果', 't2']);
+  assert.deepEqual(json(game.run('getTasks().map(t => t.id)')), ['animals', 'meadow', 'h2苹果', 't2'], 'and, in the meadow still, the words for it to learn');
   assert.equal(game.run('canGather(LEGEND.P.gather)'), true, 'you can still swap the apple for a peach');
   assert.equal(game.run('canGather(LEGEND.O.gather)'), false, 'you already have the water');
 });

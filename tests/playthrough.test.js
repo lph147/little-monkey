@@ -114,10 +114,20 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // The thirsty monkey, then the rocks roll away
   await pressAt(2, 11, 'down', 'meeting the thirsty monkey');
+  await pressAt(11, 8, 'down', 'looking at the pond');
+  assert.ok(knows('鱼') && area().holding.thirsty === undefined, 'A at the pond shows you its fish first, not the water');
   await pressAt(11, 8, 'down', 'collecting water from the pond');
   await pressAt(2, 11, 'down', 'giving the thirsty monkey the water');
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
   assert.equal(area().gate, false, 'the rocks stay until the rest of the prologue is done');
+
+  // The rest of the words for the meadow, which the old monkey asked you to learn: the river, and a bird
+  assert.ok(get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow (3/5). Still to find: the river and a bird.')), 'your tasks say which are left');
+  await pressAt(17, 10, 'right', 'looking at the river');
+  run('birds.push({tx:9, ty:7, x:9*T + 4, y:7*T + 6, t0:performance.now(), until:performance.now() + 60000, from:1})');   // a little bird lands on the grass
+  await pressAt(9, 6, 'down', 'looking at the little bird');
+  for (const w of ['河', '鸟']) assert.ok(knows(w), `${w} should be learned`);
+  assert.ok(!get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow')), 'with all five, that task is done');
 
   // The big monkey, in the middle meadow: a red, a yellow and a white flower, for shells
   await pressAt(4, 10, 'right', 'meeting the big monkey');

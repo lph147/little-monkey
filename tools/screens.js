@@ -25,6 +25,10 @@ const SAVES = {
 };
 SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};
 SAVES.phrases = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['谢谢', '不客气', '再见', '对不起', '没关系', '松鼠'])}};   // the phrases you reply with, all caught
+// the old monkey has told you about animals, and wants the meadow's words too: you know 山 and 树, not 河, 鱼 or 鸟; the
+// thirsty monkey has asked for water, and you're facing the river
+SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝']), met: [], friends: [],
+  areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {}, gate: false}}, pos: {place: 'meadow', x: 17, y: 10, dir: 'right'}};
 SAVES.lowTalk = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}};   // on the path at the bottom of the meadow, facing the little monkey (before the gate, it's there)   // every word Recognised: animals ask you to read
 // chapter 1 has begun: the prologue is done, and the troop is at the waterfall; you're beside the old monkey
 const PROLOGUE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 3, story: true, bought: ['头带'], cave: 0};
@@ -134,6 +138,12 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
   {id: 'elder-checks-in', title: 'The old monkey checks in', save: 'middle', why: 'He reminds you what the troop asked for, in words you know.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
+  {id: 'meadow-ask', title: 'The words for the meadow', save: 'meadowWords', why: 'Telling you about animals, the old monkey wants the meadow’s words too: just those you don’t know yet.', run: async () => {
+    play(); await wait(100); runSteps(AREA.talk.elder.flatMap(p => p.do).filter(s => s.message && s.if), 'elder'); await wait(400); }},
+  {id: 'tasks-meadow', title: 'Tasks: the words for the meadow', save: 'meadowWords', why: 'Which are still to find. The rocks wait for them.', run: async () => {
+    play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
+  {id: 'river-look', title: 'At the river: looking first', save: 'meadowWords', why: 'Asked for water, but you don’t know 河 (river) yet: A says Look, and teaches it. Then A says Collect.', run: async () => {
+    S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(500); }},
   {id: 'troop-line', title: 'A monkey of the troop', save: 'middle', why: 'Each of the troop has something to say, after 你好.', run: async () => {
     play(); await wait(100); talk(npc('troop1')); await wait(300); next(); await wait(300); click('#talk .reply'); await wait(400); next(); await wait(600); }},
   {id: 'talk-top', title: 'Talking low on the screen', save: 'lowTalk', why: 'At the bottom of a map the speech box would cover you, so it’s at the top of the screen instead, for the whole conversation. The map never moves for it.', run: async () => {

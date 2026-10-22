@@ -33,9 +33,11 @@ const allIfs = () => [
   ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word}`, s.if]),
   ...(AREA.lessons || []).filter(l => l.if).map(l => [`the lessons ${l.id}`, l.if]),
   ...allLegend.filter(([, t]) => t.pick && t.pick.if).map(([, t, from]) => [`picking at ${from}`, t.pick.if]),
+  ...allSteps().filter(([, s]) => s.if).map(([where, s]) => [`a step in ${where}`, s.if]),
   ['animalsAppear', AREA.animalsAppear]
 ];
-const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]) || (w.startsWith('wanted:') && (AREA.requests[w.slice(7)] || {}).choices);
+const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]) || (w.startsWith('wanted:') && (AREA.requests[w.slice(7)] || {}).choices)
+  || (w.startsWith('left:') && (AREA.counters[w.slice(5)] || {}).count === 'known');   // (what a counter of words you know still waits for)
 // A request's sentences: its own, or each of its choices' (a fussy request, such as the hungry monkey's fruit).
 const asked = r => (r.choices ? Object.entries(r.choices).map(([wants, c]) => ({...r, ...c, wants})) : [r]);
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
@@ -337,7 +339,7 @@ test('every step does one thing, with settings that exist, using real lines and 
     const actions = Object.keys(s).filter(k => STEPS.includes(k));
     assert.equal(actions.length, 1, `${where}: each step needs exactly one of ${STEPS.join(', ')}, not ${JSON.stringify(s)}`);
     const a = actions[0];
-    for (const k of Object.keys(s)) if (k !== a) assert.ok((STEP_OPTIONS[a] || []).includes(k), `${where}: "${k}" isn't a setting for ${a}`);
+    for (const k of Object.keys(s)) if (k !== a && k !== 'if') assert.ok((STEP_OPTIONS[a] || []).includes(k), `${where}: "${k}" isn't a setting for ${a}`);   // (any step can have an if)
     if (a === 'say'){
       assert.ok(AREA.lines[s.say], `${where}: "${s.say}" isn't one of the lines`);
       if (s.teach) assert.ok(AREA.lines[s.say].zh.split(' ').includes(s.teach), `${where}: line "${s.say}" doesn't contain ${s.teach}, so it can't be taught there`);

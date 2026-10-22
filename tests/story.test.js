@@ -91,17 +91,20 @@ test('the story shows each sentence\'s English the first time, then behind the E
   assert.equal(game.run('modal.hidden'), true);
 });
 
-test('the rocks roll away only once the rest of the prologue is done: the three monkeys helped, and every animal found', async () => {
-  const gate = async (area, met) => {
-    const g = loadGame({save: {version: 24, started: true, met, areas: {1: {elder: 2, ...area}}}});
+test('the rocks roll away only once the rest of the prologue is done: the three monkeys helped, every animal found, and the words for the meadow learned', async () => {
+  const meadow = ['山', '河', '树', '鱼', '鸟'];
+  const gate = async (area, met, words = meadow) => {
+    const w = Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0, ok: 0}]));
+    const g = loadGame({save: {version: 24, started: true, met, w, areas: {1: {elder: 2, ...area}}}});
     g.run("showNarration = showNotice = async () => {}; toast = () => {}; SFX.rumble = () => {}");
     await g.run('runEvents()');
     return g.run('here().gate');
   };
-  const all = ['rabbit', 'fox', 'squirrel', 'goat'];
+  const all = ['rabbit', 'fox', 'squirrel', 'goat'], helped = {hungry: 'done', thirsty: 'done', flowers: 'done'};
   assert.equal(await gate({hungry: 'done', thirsty: 'done'}, all), false, 'not before the flowers');
-  assert.equal(await gate({hungry: 'done', thirsty: 'done', flowers: 'done'}, ['rabbit', 'fox']), false, 'not before every animal is found');
-  assert.equal(await gate({hungry: 'done', thirsty: 'done', flowers: 'done'}, all), true);
+  assert.equal(await gate(helped, ['rabbit', 'fox']), false, 'not before every animal is found');
+  assert.equal(await gate(helped, all, ['山', '河', '树', '鱼']), false, 'not before the meadow’s words are learned (here, all but 鸟)');
+  assert.equal(await gate(helped, all), true);
 });
 
 test('the prologue runs from being born to counting the troop in and becoming king; then chapter 1, The Great Feast, begins with its card', async () => {
