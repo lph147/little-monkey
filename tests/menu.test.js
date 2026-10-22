@@ -88,3 +88,45 @@ test('the D-pad moves around the menu on screen: up and down between rows, left 
   run("navFocus('up'); navFocus('up')"); assert.equal(on(), 'friends', 'and back up to the grid');
   run("navFocus('right'); navFocus('right'); navFocus('right')"); assert.equal(on(), 'settings', 'right at the end of a row (past Save) carries on to the next');
 });
+
+test('How to play is three pages, each short enough for a phone held sideways: the controls, the kinds of word, the rest', () => {
+  const {game, sheet, run} = menuGame();
+  run('howToPlay()');
+  const seen = [];
+  for (let i = 0; i < 3; i++){
+    seen.push(sheet.querySelector('.label').textContent);
+    if (i === 1){   // the kinds of word: tap one in the example, and its meaning shows beside it
+      sheet.querySelector('.example .tok[data-t="水"]').click();
+      assert.match(sheet.querySelector('.example .gloss').textContent, /水 shuǐ · water/);
+    }
+    if (i < 2) sheet.querySelector('[data-a=next]').click();
+  }
+  assert.deepEqual(seen, ['How to play · 1 of 3', 'How to play · 2 of 3', 'How to play · 3 of 3']);
+  assert.match(sheet.textContent, /keyboard or a game controller/, 'the last page has the rest');
+  sheet.querySelector('[data-a=back]').click();
+  assert.equal(sheet.querySelector('.label').textContent, 'How to play · 2 of 3', 'Back goes back a page');
+  sheet.querySelector('[data-a=next]').click();
+  assert.equal(sheet.querySelector('[data-a=next]').textContent, 'Got it');
+  sheet.querySelector('[data-a=next]').click();
+  assert.equal(run('S.howto'), true);
+  assert.equal(game.run('modal.hidden'), true);
+});
+
+test('the labels under A and B stay on one line, with their apostrophes: a long button gives its first word, never half a word', () => {
+  const {game, run} = menuGame();
+  const label = text => run(`btnLabel({dataset: {}, classList: {contains: () => false}, textContent: ${JSON.stringify(text)}})`);
+  assert.equal(label('I’ve added it'), 'I’ve added it', 'its apostrophe stays (it was "Ive added it")');
+  assert.equal(label('Copy to a file'), 'Copy', 'not "Copy to a fi"');
+  assert.equal(label('Watch the opening'), 'Watch');
+  assert.equal(label('⚙ Settings'), 'Settings');
+  run(`openCard('<div class="actions"><button class="btn" data-a="no" data-b>Not now</button><button class="btn primary" data-a="yes">I’ve added it</button></div>'); updateCtx(performance.now())`);
+  const [a, b] = [game.el('#aLabel'), game.el('#bLabel')];
+  assert.deepEqual([a.textContent, b.textContent], ['I’ve added it', 'Not now']);
+  assert.deepEqual([a.classList.contains('long'), b.classList.contains('long')], [true, false], 'a long one is a little smaller');
+  run('closeCard(); openSettings()');
+  assert.ok(run(`[...sheet.querySelectorAll('.menu button')].every(b => btnLabel(b).length <= LABEL_MAX)`), 'every one of Settings’ buttons fits');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  const rule = css.match(/^\.ablabel\{[^}]*\}/m)[0];
+  assert.match(rule, /white-space:nowrap/, 'on one line');
+  assert.match(rule, /width:0/, 'never moving the buttons, however long');
+});

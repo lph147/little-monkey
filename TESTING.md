@@ -98,7 +98,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Press Start. The opening plays: the picture fills the screen and the mountain slides to the middle. Each sentence of the story appears as subtitles at the bottom, in Chinese (很久很久以前……, 海里有一座山，叫花果山。 and so on) with pinyin over each word and the English underneath, and is read aloud. 🔊 reads it again and Next moves on; the stone cracks and the monkey is born. Tapping a word shows its pinyin and meaning and says it. Skip is a small button in the top corner (B). With pinyin off in Settings, the pinyin is hidden. The stone, the mountain and the monkey are never hidden by the words. The last caption has Begin. (On a computer, Space or Enter presses Start, Next and Begin.)
 - [ ] There's no How to play: a new-word card for 石头 (stone) appears straight away, with the English showing: the picture on the left, the word, pinyin, English and note beside it. Then a message says the old monkey is waiting by your stone.
 - [ ] Tips: a yellow bubble over the D-pad says "Hold an arrow to walk. Tap to turn." and goes once you take a step. Facing the old monkey, one over the A button says "Press A to talk"; facing something new, "Press A to look". In the old monkey's "去看看！" line, one points at a grey word: they're just for listening. Once you know 3 words, one points at the Menu for a few seconds. Each tip shows only once.
-- [ ] Menu, Settings, How to play still has its two pages; Next, Back and Got it are always in sight at the bottom of the card, even on a small phone.
+- [ ] Menu, Settings, How to play has three pages (the controls; green, bold green and grey words, with tapping a word in the example showing its meaning beside it; and the rest), each fitting the screen on a Pixel 8 Pro, even in Chrome; Next, Back and Got it are always in sight at the bottom of the card, even on a small phone.
 
 **The old monkey**
 - [ ] Stepping off the stone onto the path is just walking: no word card (路 waits for chapter 1).
@@ -318,6 +318,10 @@ When the save format changes, the game keeps a copy of your old save in the brow
 - [ ] D-pad: hold to walk, tap to turn, and slide your thumb between directions without lifting.
 - [ ] Pressing and holding on text never selects it.
 - [ ] On cards, the main button has a red A badge and A presses it; the back button has a blue B badge.
+- [ ] A card with more than fits (Tasks in Chrome, the Story Scroll, the Word Scroll) has ▼ More in its bottom row, left of its buttons, bobbing gently (or just over the buttons, in the middle, when there's no room beside them). Tapping it, or pressing down on the D-pad, scrolls down; at the end it goes, and pressing up scrolls back. A card that fits never has it.
+- [ ] The labels under A and B are always on one line, never moving the buttons: on Add to Home Screen, A says I’ve added it (with its apostrophe, a little smaller) and B Not now; in Save files, a game's card has Copy and Load, never half a word.
+- [ ] Tasks: Tasks and your words, friends and shells on the top line; Now on the left; the chapter (Prologue: The Water Curtain Cave) over its checklist on the right, what you've done struck through, a line each (cut short with …). As the app on a Pixel 8 Pro it all fits.
+- [ ] In a scene (becoming king, painting the school), the word being taught is bright green, its pinyin too (wáng over 王).
 - [ ] Held sideways, the whole console fits on screen; held upright, you see only the card asking you to turn the phone.
 - [ ] No emoji anywhere: the menu's tiles, Settings, the star on new words, the save file, the story, the test and area complete all have pixel icons.
 - [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, the shop, the Word Scroll (and its shadows), the Story Scroll, animal encounters and the Friends list. They look sharp, not blurry, with every pixel the same size.

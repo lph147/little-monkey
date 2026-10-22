@@ -55,7 +55,7 @@ function storyScroll(){
 function checklistHTML(onlyLeft){
   const all = areaChecklist(), items = all.filter(([t, done, exitTest, found]) => found && (!onlyLeft || (!done && !exitTest)));
   const more = all.some(([, , , found]) => !found);
-  return `<ul class="checklist">${items.map(([t, done]) => `<li class="${done ? 'done' : ''}">${esc(t)}</li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
+  return `<ul class="checklist">${items.map(([t, done]) => `<li class="${done ? 'done' : ''}"><span>${esc(t)}</span></li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
 }
 function infoBox(who, html){   // who: a picture over it, or an animal's or a battle's scene, down its left as in the questions
   return new Promise(res => {

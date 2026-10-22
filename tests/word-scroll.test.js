@@ -162,3 +162,10 @@ test('the word being taught has green pinyin too, like its characters', () => {
   const game = loadGame();
   assert.match(game.run("lineHTML(['我', '是', '猴子', '。'], '猴子')"), /class="tok learn teach" data-t="猴子"><ruby>猴子<rt/);
 });
+
+test('in a scene’s caption, on its dark band, the word being taught has pinyin as bright as its characters', () => {
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '../css/game.css'), 'utf8');
+  const word = css.match(/\.cap \.tok\.learn\{color:(#[0-9A-Fa-f]+)\}/)[1], py = css.match(/\.cap \.tok\.teach rt\{color:(#[0-9A-Fa-f]+)\}/);
+  assert.ok(py, 'its own colour there (the dark green of a card couldn’t be read: wáng, under 王)');
+  assert.equal(py[1], word, 'the same bright green as its characters');
+});

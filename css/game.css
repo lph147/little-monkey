@@ -99,6 +99,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .cap .tok,.cap .tok.listen{font-size:1.45rem;font-weight:600;color:#FFF6D8}
 .cap .tok.learn{color:#9BE08A}
 .cap rt{color:#D9E6DC}
+.cap .tok.teach rt{color:#9BE08A}   /* the word being taught: its pinyin bright green like its characters (the dark green of a card can't be read on the dark band) */
 .cap .punct{color:#FFF6D8;font-size:1.45rem}
 .cap .gloss{min-height:0;margin:0;font-size:.85rem;color:#FFF6D8}
 .cap .gloss:empty{display:none}
@@ -132,7 +133,8 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 #btnA{background:var(--btnA)}
 #btnB{background:var(--btnB);width:56px;height:56px;font-size:1.2rem}
 .ab .abwrap:last-child{margin-bottom:30px}   /* A higher than B, like a GBA */
-.ablabel{font-family:var(--pixel);font-size:.85rem;color:var(--muted);min-height:1.2em;transform:rotate(12deg)}
+.ablabel{font-family:var(--pixel);font-size:.85rem;color:var(--muted);height:1.25rem;line-height:1.25rem;width:0;display:flex;justify-content:center;white-space:nowrap;transform:rotate(12deg)}   /* on one line, centred under its button, never moving the buttons however long it is (decided 22 October 2026) */
+.ablabel.long{font-size:.72rem}   /* a long one (more than 10 letters, such as I’ve added it), a little smaller, so it stays clear of B */
 .keys{display:none;grid-area:keys;margin:6px 0 2px;font-size:.8rem;color:var(--muted);text-align:center}
 @media (hover:hover) and (pointer:fine){.keys{display:block}}
 
@@ -177,6 +179,13 @@ rt.hid{visibility:hidden}
 .actions .grow{margin-right:auto}
 /* a card's buttons stay in sight at the bottom while what's above them scrolls */
 .sheet>.actions{position:sticky;bottom:-12px;z-index:1;margin:10px -8px -12px;padding:8px 8px 12px;background:var(--paper);box-shadow:inset 0 -3px 0 var(--paper),inset 0 -5px 0 var(--line),0 -12px 10px -6px var(--paper)}
+/* ▼ More, by a card's buttons while the card has more below (js/cards.js places it: inrow, left of the buttons; or
+   else over them, in the middle); tap it to scroll down */
+.morecue{position:absolute;left:50%;z-index:2;transform:translateX(-50%);font-family:var(--pixel);font-size:.8rem;line-height:1;color:var(--jade);background:var(--paper);border:2px solid var(--jade);border-radius:999px;padding:.28rem .7rem .32rem;box-shadow:0 2px 0 var(--jade);cursor:pointer;white-space:nowrap;animation:bob .9s ease-in-out infinite alternate}
+.morecue.inrow{transform:none}
+.morecue[hidden]{display:none}
+@keyframes bob{from{translate:0 -1px}to{translate:0 2px}}
+@media (prefers-reduced-motion: reduce){.morecue{animation:none}}
 .word{text-align:center;padding:4px 0}
 .pic{font-size:2.8rem;line-height:1.1}
 /* a word's pixel sprite, at a whole number of screen pixels per sprite pixel so it stays crisp */
@@ -271,7 +280,7 @@ rt.hid{visibility:hidden}
 .linkish{background:none;border:none;color:var(--bad);text-decoration:underline;font-size:.9rem;padding:4px}
 .display{position:relative}
 .tasks{list-style:none;margin:0;padding:0}
-.tasks li{display:flex;gap:8px;align-items:baseline;font-size:.98rem;line-height:1.4;padding:1px 0}
+.tasks li{display:flex;gap:8px;align-items:baseline;font-size:.98rem;line-height:1.3;padding:1px 0}
 .tasks li::before{content:"";flex:none;width:9px;height:9px;border:2px solid var(--jade);border-radius:2px}
 .hint{margin:0;color:var(--muted)}
 .warn{color:var(--bad);margin:6px 0 0}
@@ -352,7 +361,7 @@ rt.hid{visibility:hidden}
 .mzh{font-family:var(--text);font-size:1.45rem;font-weight:500;line-height:1.25}
 .mpy{font-size:.75rem;color:var(--muted)}
 .men{font-family:var(--pixel);font-size:.75rem;color:var(--jade);line-height:1.2;text-align:center}
-.howto{list-style:none;margin:6px 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.6rem 1rem;font-size:.92rem}   /* two by two, on the wide screen */
+.howto{list-style:none;margin:4px 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.6rem 1rem;font-size:.92rem;line-height:1.4}   /* two by two, on the wide screen */
 .howto:has(.dot){grid-template-columns:1fr;gap:.2rem}   /* the three kinds of word: short, one line each */
 .howto li{display:flex;gap:10px;align-items:flex-start}
 .kbd{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;color:#FFF;font-family:var(--pixel);font-size:1rem}
@@ -361,14 +370,20 @@ rt.hid{visibility:hidden}
 .dot.learn::before{content:"字";color:var(--jade);font-weight:500}
 .dot.teach::before{content:"字";color:var(--jade);font-weight:800;background:color-mix(in srgb,var(--jade) 12%,transparent)}
 .dot.listen::before{content:"字";color:var(--muted)}
-.example{background:var(--bg);border-radius:6px;padding:4px 8px;margin:8px 0}
+.example{display:flex;flex-wrap:wrap;align-items:flex-end;column-gap:1rem;background:var(--bg);border-radius:6px;padding:4px 8px;margin:6px 0}
+.example .line{margin:0}
+.example .tok,.example .punct{font-size:1.35rem}
+.example .gloss{flex:1;min-height:0;margin:0 0 .3rem;text-align:right}   /* a word's meaning, when you tap it, beside the sentence */
+.sheet:has(.howto) > p{margin:.3rem 0}   /* How to play: its paragraphs closer together, so each page fits a phone's screen (a card's paragraphs don't share their space between them) */
 .menu .btn{text-align:left;display:flex;justify-content:space-between;align-items:center}
 .menu .btn .val{color:var(--muted);font-size:.9rem}
 /* Two columns: Settings' buttons, and your tasks beside the chapter's checklist. */
-.twocol{display:grid;grid-template-columns:1fr 1fr;gap:.4rem 1rem;align-items:start}
+.twocol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem 1rem;align-items:start}
 .menu.twocol{gap:.4rem .6rem}
 .menu.twocol .btn{min-height:2.4rem;font-size:.9rem}
 .twocol .label{margin-top:.3rem}
+.cardtop{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:1.2rem}   /* a page's name and your words, friends and shells, on one line */
+.cardtop .label,.cardtop .stats{margin:0}
 /* The Start menu: four tiles in a row, then Settings and Close side by side, in the middle of the card. */
 .sheet:has(.tiles){display:grid;grid-template-columns:1fr auto;column-gap:.6rem;align-items:end;align-content:center}
 .sheet:has(.tiles) > *{grid-column:1 / -1}
@@ -376,12 +391,13 @@ rt.hid{visibility:hidden}
 .sheet:has(.tiles) .tiles{grid-column:1 / -1;grid-template-columns:repeat(6,1fr);gap:.4rem;margin:.4rem 0 .5rem}
 .sheet:has(.tiles) .menu > .btn{grid-column:1;justify-self:start}
 .sheet:has(.tiles) > .actions{grid-column:2;position:static;margin:0;padding:0;box-shadow:none}
-.checklist{list-style:none;margin:6px 0 10px;padding:0}
-.checklist li{display:flex;gap:8px;align-items:baseline;padding:2px 0}
+.checklist{list-style:none;margin:4px 0 6px;padding:0;line-height:1.3}
+.checklist li{display:flex;gap:8px;align-items:baseline;padding:1px 0}
 .checklist li.more{color:var(--muted);font-style:italic}
 .checklist li.more::before{display:none}
 .checklist li::before{content:"";flex:none;width:12px;height:12px;border:2px solid var(--jade);border-radius:2px;transform:translateY(2px)}
 .checklist li.done{color:var(--muted);text-decoration:line-through}
+.checklist li.done span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}   /* what you've done, one line each, so what's left is in sight sooner */
 .checklist li.done::before{background:var(--jade)}
 /* Matching words to pictures (the word test, the training ground): the words in a row, their pictures in a row under them. */
 .match{display:flex;flex-direction:column;gap:.6rem;margin:.5rem 0}

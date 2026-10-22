@@ -73,7 +73,7 @@ function frame(now){
     if (ci !== capIdx){ capIdx = ci; capShownAt = now; showCaption(caps[ci], ci === caps.length - 1); }
     for (const [at, sound] of SCENE_SOUNDS[scene.art || scene.id] || []) if (t >= at && !introEvents[at]){ introEvents[at] = 1; SFX[sound](); }
   } else { update(now); drawWorld(now); ambience(now); }
-  updateCtx(now); updateTips(now);
+  updateCtx(now); updateTips(now); moreCue();
   sc.imageSmoothingEnabled = false;
   sc.drawImage(buf, 0, 0, cv.width, cv.height);
   requestAnimationFrame(frame);
@@ -116,6 +116,7 @@ function updateCtx(now){
   const [a, bl] = buttonLabels(now), key = a + '|' + bl;
   if (key === lastLabels) return;
   lastLabels = key; $('#aLabel').textContent = a; $('#bLabel').textContent = bl;
+  $('#aLabel').classList.toggle('long', a.length > 10); $('#bLabel').classList.toggle('long', bl.length > 10);   // (a little smaller, on one line)
   $('#btnA').classList.toggle('ready', mode === 'play' && modal.hidden && !talkNext && !!a);
 }
 // After anything happens. Select has a red dot while there's a task you haven't looked at in your task
@@ -263,32 +264,37 @@ function storyScene(id){
 }
 function howToPlay(){
   return new Promise(res => {
+    // Three pages, each short enough to fit the screen of a phone held sideways (decided 22 October 2026: the second
+    // was cut off at the bottom, with no sign of more): the controls, the three kinds of word, and the rest.
     const pages = [
-      `<p class="label">How to play · 1 of 2</p>
+      `<p class="label">How to play · 1 of 3</p>
        <ul class="howto">
          <li><span class="kbd pad">✚</span><span><b>Walk</b> by holding a direction. Tap it to turn on the spot. You can slide your thumb between directions.</span></li>
          <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> When someone talks, A moves on. On cards, A presses the button with the red A badge.</span></li>
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
          <li><span class="kbd menu">☰</span><span><b>Menu</b> opens the menu: the Word Scroll, friends and settings. <b>Tasks</b> shows your tasks.</span></li>
-       </ul>
-       <p class="small">Tap an answer, or choose it with the D-pad and A. A keyboard or a game controller works too.</p>`,
-      `<p class="label">How to play · 2 of 2</p>
+       </ul>`,
+      `<p class="label">How to play · 2 of 3</p>
        <p>You’ll hear lots of Chinese, like a baby monkey listening to the forest. <b>You don’t need to understand or remember all of it.</b></p>
        <div class="example">${lineOf(['我','渴','了','。','我','要','喝','水','！'], t => {
          const c = {'我':'learn', '要':'learn', '喝':'learn teach'}[t] || 'listen';
-         return PUNCT.has(t) ? `<span class="punct">${t}</span>` : `<button class="tok ${c}" data-t="${t}"><ruby>${t}<rt class="${S.pinyin ? '' : 'hid'}">${info(t)[0]}</rt></ruby></button>`; })}</div>
+         return PUNCT.has(t) ? `<span class="punct">${t}</span>` : `<button class="tok ${c}" data-t="${t}"><ruby>${t}<rt class="${S.pinyin ? '' : 'hid'}">${info(t)[0]}</rt></ruby></button>`; })}<div class="gloss"></div></div>
        <ul class="howto">
          <li><span class="dot learn"></span><span><b>Green words</b> are ones you’ve already learned.</span></li>
          <li><span class="dot teach"></span><span>A <b>bold green word</b> is the new one you’re learning right now.</span></li>
          <li><span class="dot listen"></span><span><b>Grey words</b> are just for listening. Tap one if you’re curious, then let it go.</span></li>
+       </ul>`,
+      `<p class="label">How to play · 3 of 3</p>
+       <ul class="howto">
          <li><span class="dot star">⭐</span><span>Only words on a <b>New word to learn</b> card go into your Word Scroll.</span></li>
        </ul>
-       <p class="small">The first time you see a sentence, its English is shown underneath. After that, tap English if you need it.</p>
-       <p class="small">When someone talks to you, you can reply in Chinese. Each choice shows its English too; if you know some Chinese already, turn that off in Settings, English on replies.</p>`
+       <p>The first time you see a sentence, its English is shown underneath. After that, tap English if you need it.</p>
+       <p>When someone talks to you, you can reply in Chinese. Each choice shows its English too; if you know some Chinese already, turn that off in Settings, English on replies.</p>
+       <p class="small">Tap an answer, or choose it with the D-pad and A. A keyboard or a game controller works too.</p>`
     ];
     let i = 0;
     const show = () => {
-      openCard(`${pages[i]}<div class="gloss"></div><div class="actions">${i > 0 ? '<button class="btn" data-a="back" data-b>Back</button>' : ''}<button class="btn primary" data-a="next">${i < pages.length - 1 ? 'Next' : 'Got it'}</button></div>`);
+      openCard(`${pages[i]}<div class="actions">${i > 0 ? '<button class="btn" data-a="back" data-b>Back</button>' : ''}<button class="btn primary" data-a="next">${i < pages.length - 1 ? 'Next' : 'Got it'}</button></div>`);
       bindTokens(sheet);
       on('[data-a=back]', () => { i--; show(); });
       on('[data-a=next]', () => { if (i < pages.length - 1){ i++; show(); } else { S.howto = true; save(); closeCard(); res(); } });

@@ -135,3 +135,43 @@ test('the smallest phones’ tighter layout stays inside their own block, so big
     assert.ok(!outside.includes(rule), `${rule} only there`);
   }
 });
+
+test('a card with more than it shows has ▼ More by its buttons, and the D-pad scrolls it (decided 22 October 2026)', () => {
+  const {game, sheet, run} = taskGame();
+  const more = game.el('#more');
+  run('pressSelect()');
+  game.runFrame();   // (checked every frame)
+  assert.equal(more.hidden, true, 'a card that fits has none');
+  sheet.scrollHeight = 900; sheet.clientHeight = 300;   // a short screen: the card has 600px more than it shows
+  game.runFrame();
+  assert.equal(more.hidden, false, '▼ More');
+  run("navFocus('down')");
+  assert.equal(sheet.scrollTop, 180, 'the D-pad’s down scrolls by most of what the card shows');
+  game.key('ArrowDown');
+  assert.equal(sheet.scrollTop, 360, 'so does the down arrow');
+  run("navFocus('down'); navFocus('down')");
+  assert.equal(sheet.scrollTop, 600, 'as far as the bottom, and no further');
+  run('moreCue()');
+  assert.equal(more.hidden, true, 'at the bottom, ▼ More goes');
+  run("navFocus('up')");
+  assert.equal(sheet.scrollTop, 420, 'up scrolls back');
+  run('moreCue()');
+  assert.equal(more.hidden, false, 'and it’s back');
+  more.onclick();   // tapping it
+  assert.equal(sheet.scrollTop, 600);
+  run("navFocus('up'); pressB()");
+  assert.equal(more.hidden, true, 'closing the card takes it away');
+  assert.equal(run('modal.hidden'), true);
+});
+
+test('the Tasks page: Tasks and your words on one line, then the chapter over its checklist, what you’ve done a line each', () => {
+  const {sheet, run} = taskGame();
+  run('pressSelect()');
+  const top = sheet.querySelector('.cardtop');
+  assert.ok(top.querySelector('.taskslabel') && top.querySelector('.stats'), 'one line at the top');
+  assert.ok(sheet.querySelectorAll('.twocol .label').some(l => l.textContent === 'Prologue: The Water Curtain Cave'), 'the chapter, over its checklist');
+  const done = sheet.querySelector('.checklist li.done');
+  assert.match(done.textContent, /Say hello to the old monkey/);
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.match(css, /\.checklist li\.done span\{[^}]*white-space:nowrap;text-overflow:ellipsis/, 'what you’ve done takes a line each');
+});

@@ -70,3 +70,16 @@ test('once the game has set itself up, the start-up screen goes, and the console
   assert.ok(game.el('#gameName').innerHTML.includes('<ruby>'), 'the title, with its pinyin, is ready');
   assert.ok(game.run('cv.width > 0'), 'and the screen its size');
 });
+
+test('no two of the game’s scripts give the same name to two things (a later function quietly replaces an earlier one)', () => {
+  const {scriptsIn} = require('./fake-browser');
+  const seen = new Map();
+  for (const s of scriptsIn(ENTRY)){
+    const where = path.relative(ROOT, s.file);
+    for (const m of s.code.matchAll(/^(?:async\s+)?function\s*\*?\s*([\w$]+)|^(?:const|let|var)\s+([\w$]+)/gm)){
+      const name = m[1] || m[2];
+      assert.ok(!seen.has(name), `${name} is in both ${seen.get(name)} and ${where}`);
+      seen.set(name, where);
+    }
+  }
+});

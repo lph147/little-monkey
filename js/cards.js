@@ -47,7 +47,7 @@ function tooSoon(at, since = shownAt){   // at: when the press was made, if know
   return at < since + READ_MS;
 }
 function openCard(html){
-  sheet.innerHTML = pixelIcons(html); modal.hidden = false; sheet.scrollTop = 0; shown();
+  sheet.innerHTML = pixelIcons(html); modal.hidden = false; sheet.scrollTop = 0; shown(); cardsOpened++;
   if (markGloss.length){ markGloss.forEach(t => S.gloss[t] = 1); markGloss = []; save(); }
   held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
   // A always starts on the card's main button. If a card has none (a quiz waiting for an answer), A does nothing until you tap.
@@ -84,7 +84,7 @@ function navFocus(d){
     if (i >= 0 && i <= last && i !== cur){ markNav(items[i]); items[i].focus({preventScroll:false}); SFX.turn(); if (list) list.dataset.went = '1'; }
     return;
   }
-  if (!sheet.querySelector(NAVIGABLE)) return;        // otherwise the D-pad only moves through menus (and cards whose buttons are a choice, data-nav); on other cards A is always the main button
+  if (!sheet.querySelector(NAVIGABLE)){ if (d === 'up' || d === 'down') scrollSheet(d); return; }   // otherwise the D-pad only moves through menus (and cards whose buttons are a choice, data-nav); on other cards A is always the main button, and up and down scroll one with more than it shows
   const items = navItems(); if (!items.length) return;
   const cur = items.indexOf(chosenBtn());
   const go = i => { markNav(items[i]); items[i].focus({preventScroll:false}); SFX.turn(); };
@@ -116,16 +116,59 @@ function nearestIn(d, b, items){
   }
   return best;
 }
+// What the label under A (or B) says a button does: its own (data-label), or its words, with their apostrophes. One
+// longer than LABEL_MAX letters gives just its first word, such as Copy for Copy to a file, so a label always fits on
+// one line and is never cut off in the middle of a word.
+const LABEL_MAX = 13;
 function btnLabel(f){
   if (!f) return '';
   if (f.dataset.label) return f.dataset.label;
   if (f.classList.contains('opt') || f.classList.contains('mw') || f.classList.contains('mp')) return 'Choose';
   if (f.classList.contains('sayBig')) return 'Hear it';
   if (f.classList.contains('card') || f.classList.contains('chip')) return 'Hear';
-  return f.textContent.replace(/[^\p{L}\p{N}' ]/gu, '').trim().slice(0, 12);
+  const t = f.textContent.replace(/[^\p{L}\p{N}'’ ]/gu, '').replace(/\s+/g, ' ').trim();
+  return t.length <= LABEL_MAX ? t : t.split(' ')[0].slice(0, LABEL_MAX);
 }
-function closeCard(){ modal.hidden = true; sheet.innerHTML = ''; }
+function closeCard(){ modal.hidden = true; sheet.innerHTML = ''; more.hidden = true; }
 const on = (sel, fn) => { const el = sheet.querySelector(sel); if (el) el.onclick = fn; };
+// A card with more than it shows (the Tasks page or How to play on a short screen, the Story Scroll) has ▼ More by
+// its buttons while there's more below (decided 22 October 2026: cut off at the bottom, a card gave no sign of it).
+// Tapping it, or the D-pad's down (or the down arrow), scrolls down, and up scrolls back, on any card whose D-pad
+// doesn't move between buttons (on one that does, the button you choose comes into sight). Checked every frame.
+const more = $('#more');
+let cardsOpened = 0, moreAt = '';   // (moreAt: the card, and its size, that ▼ More was last placed for)
+function moreCue(){
+  const left = modal.hidden ? 0 : (sheet.scrollHeight || 0) - (sheet.clientHeight || 0) - (sheet.scrollTop || 0);
+  if (left <= 4){ if (!more.hidden) more.hidden = true; return; }
+  if (more.hidden) more.hidden = false;
+  const bar = [...sheet.children].find(c => c.classList && c.classList.contains('actions'));
+  const key = [cardsOpened, sheet.scrollHeight, sheet.clientHeight, bar ? bar.offsetHeight : 0].join();
+  if (key === moreAt) return;
+  moreAt = key;
+  // Where it goes: in the row of buttons at the card's bottom, left of them, if there's room (so it covers nothing);
+  // else just over the row, in the middle (or over the card's bottom edge, on a card whose buttons don't stay there).
+  const m = modal.getBoundingClientRect(), w = more.offsetWidth || 0, h = more.offsetHeight || 0;
+  const sticky = bar && (!window.getComputedStyle || getComputedStyle(bar).position === 'sticky');
+  let x = null, y;
+  if (sticky){
+    const r = bar.getBoundingClientRect(), kids = [...bar.children].filter(c => c.getBoundingClientRect).map(c => c.getBoundingClientRect()).filter(k => k.width);
+    const start = kids.length ? Math.min(...kids.map(k => k.left)) : r.right;
+    if (start - r.left >= w + 28){ x = r.left - m.left + 14; y = (kids.length ? (Math.min(...kids.map(k => k.top)) + Math.max(...kids.map(k => k.bottom))) / 2 : r.top + r.height / 2) - m.top - h / 2; }
+    else y = r.top - m.top - h - 2;
+  } else y = sheet.getBoundingClientRect().bottom - m.top - h - 10;
+  more.classList.toggle('inrow', x !== null);
+  more.style.left = x === null ? '' : Math.round(x) + 'px';
+  more.style.top = Math.round(y) + 'px';
+}
+function scrollSheet(d){   // the card, by most of what it shows
+  const top = sheet.scrollTop || 0, max = Math.max(0, (sheet.scrollHeight || 0) - (sheet.clientHeight || 0));
+  const to = clamp(top + (d === 'down' ? 1 : -1) * Math.round((sheet.clientHeight || 0) * .6), 0, max);
+  if (Math.abs(to - top) < 1) return;
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (sheet.scrollTo) sheet.scrollTo({top: to, behavior: still ? 'auto' : 'smooth'}); else sheet.scrollTop = to;
+  SFX.turn();
+}
+more.onclick = () => scrollSheet('down');
 
 /* ================= SPEECH BOX (what characters say, over the bottom of the map) ================= */
 const talkBox = $('#talk');

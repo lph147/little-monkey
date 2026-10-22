@@ -88,9 +88,11 @@ const statsHTML = () => `<div class="stats"><span>${ORDER.filter(w => lvl(w) > 0
 function tasksPage(back){
   const tasks = getTasks();
   tasks.forEach(t => { S.tasksRead[t.id] = 1; }); save();
-  openCard(`<p class="label taskslabel">Tasks</p>${statsHTML()}
+  // (on one line at the top: Tasks and your words, friends and shells; the chapter over its checklist, and what it's
+  // done of it a line each, so as much as can be fits on a short screen: decided 22 October 2026)
+  openCard(`<div class="cardtop"><p class="label taskslabel">Tasks</p>${statsHTML()}</div>
     <div class="twocol"><div><p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}</div>
-    <div><p class="label">${AREA.name.en} · ${esc(AREA.chapters[chapterNow()].name)}: ${esc(AREA.chapters[chapterNow()].title)}</p>${checklistHTML(false)}</div></div>
+    <div><p class="label">${esc(AREA.chapters[chapterNow()].name)}: ${esc(AREA.chapters[chapterNow()].title)}</p>${checklistHTML(false)}</div></div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=ok]', back);
 }
@@ -109,7 +111,7 @@ function openSettings(focusId){
       <button class="btn" data-m="howto">How to play</button>
       <button class="btn" data-m="opening">Watch the opening</button>
       ${Object.entries(AREA.scenes || {}).filter(([, sc]) => sc.watch && matches(sc.when)).map(([id, sc]) => `<button class="btn" data-m="scene" data-scene="${id}">${esc(sc.watch)}</button>`).join('')}
-      <button class="btn" data-m="title">Title screen: your games</button>
+      <button class="btn" data-m="title" data-label="Your games">Title screen: your games</button>
     </div>
     <div class="actions"><button class="btn" data-a="back" data-b>Back</button></div>`);
   const f = sheet.querySelector(`[data-m="${focusId || 'music'}"]`); if (f) f.focus();

@@ -59,7 +59,8 @@ function scriptsIn(page, root = ROOT){
 // anything else already in the browser's storage. {root} and {page} load a different copy
 // of the game (used to compare versions).
 // {dom: true} is for tests that play the game: the card (#sheet), the speech box (#talk), the
-// text box (#textbox) and the title screen's games (#titleButtons) become working copies whose buttons can be found and pressed (see mini-dom.js),
+// text box (#textbox), the title screen's games (#titleButtons), ▼ More (#more) and the labels under A and B (#aLabel,
+// #bLabel) become working copies whose buttons can be found and pressed (see mini-dom.js),
 // and timers wait until the test calls flush().
 // {html: true} gives the page its <html> element (game.el('html')), starting as index.html's does, with the start-up
 // screen showing (class loading).
@@ -81,6 +82,9 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = 
     elements['#talk'] = makeElement('div', {id: 'talk', class: 'talk', hidden: ''}, document);
     elements['#textbox'] = makeElement('div', {id: 'textbox', class: 'textbox'}, document);
     elements['#titleButtons'] = makeElement('div', {id: 'titleButtons', class: 'slots'}, document);   // the title screen's games
+    elements['#more'] = makeElement('div', {id: 'more', class: 'morecue', hidden: ''}, document);   // ▼ More, by a card's buttons while it has more below
+    elements['#aLabel'] = makeElement('span', {id: 'aLabel', class: 'ablabel'}, document);   // what A and B do, under them
+    elements['#bLabel'] = makeElement('span', {id: 'bLabel', class: 'ablabel'}, document);
   }
   const win = vm.createContext({
     document,
