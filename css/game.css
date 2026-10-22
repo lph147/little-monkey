@@ -716,6 +716,23 @@ rt.hid{visibility:hidden}
 .turn p{margin:0;font:600 1.15rem/1.4 var(--pixel);max-width:16rem}
 .turn .small{font:400 .9rem var(--en);color:var(--muted)}
 
+/* The start-up screen (in index.html): until the game has set itself up, the app's monkey and three dots, instead of the
+   console half-built while its code downloads (decided 22 October 2026). The console is there but unseen, so fit() can
+   measure it, and fades in once it's ready, its full size, with the whole title. After 8 seconds, a note says why. */
+.boot{position:fixed;inset:0;z-index:90;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;background:var(--bg);color:var(--muted)}
+.loading .boot{display:flex}
+.loading .app{visibility:hidden;opacity:0}
+.app{transition:opacity .25s}
+.boot img{width:104px;height:104px;border-radius:22px;image-rendering:pixelated}
+.boot .dots{display:flex;gap:10px}
+.boot .dots i{width:10px;height:10px;background:var(--jade);opacity:.3;animation:bootdot 1.2s infinite}
+.boot .dots i:nth-child(2){animation-delay:.2s}
+.boot .dots i:nth-child(3){animation-delay:.4s}
+@keyframes bootdot{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.boot .slow{margin:0;font:500 .95rem var(--en);opacity:0;animation:bootslow .4s 8s forwards}
+@keyframes bootslow{to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.boot .dots i{animation:none;opacity:.6}.app{transition:none}}
+
 /* the title screen's buttons: Continue across the top (with which game, and when you played it), then New game and Save
    files; the chosen one has a gold outline and the A badge */
 #titleButtons{display:grid;grid-template-columns:auto auto;justify-content:start;gap:.5rem;pointer-events:auto}

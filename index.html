@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="loading">   <!-- loading: the start-up screen shows until the game is ready (see below) -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -25,6 +25,10 @@
 <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
+<!-- The start-up screen: the app's monkey and three dots, until the game's code has set the game up (the end of
+     js/main.js takes "loading" off the page), so the console never shows half-built while the code downloads. After
+     8 seconds it says why it's taking so long. -->
+<div class="boot" role="status" aria-label="Loading"><img src="icons/icon-192.png" alt="" width="104" height="104"><div class="dots" aria-hidden="true"><i></i><i></i><i></i></div><p class="slow">Slow connection, still loading…</p></div>
 <div class="app">
   <div class="console">
     <div class="display">

@@ -100,6 +100,10 @@ SAVES.noMenuTip = {...SAVES.middle, tips: {...ALL_TIPS, menu: 0}};
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
 const SCREENS = [
   {id: 'turn', title: 'Held upright', size: '375x812', why: 'The game is played sideways, so it asks you to turn the phone.'},
+  {id: 'startup', title: 'Starting up', why: 'Until the game has set itself up: the app’s monkey and three dots (on a slow connection, the console showed half-built for a few seconds).', run: async () => {
+    document.documentElement.classList.add('loading'); document.querySelector('.boot .slow').style.visibility = 'hidden'; await wait(200); }},
+  {id: 'startup-slow', title: 'Starting up, slowly', why: 'After 8 seconds on the start-up screen, it says why.', run: async () => {
+    document.documentElement.classList.add('loading'); await wait(200); }},
   {id: 'title', title: 'Title screen', why: 'A new game.'},
   {id: 'title-novoice', title: 'Title, no Chinese voice', voices: 'missing', why: 'With the game’s own voice clips there’s no warning: the device’s voice isn’t needed.'},
   {id: 'title-phone', title: 'Title, in a phone’s browser', why: 'Play full screen: on Android it goes full screen, on an iPhone it shows how to add it to the home screen. Never once it’s the app.', run: async () => {

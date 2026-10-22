@@ -324,7 +324,10 @@ function wayInto(place){
   return null;
 }
 window.addEventListener('resize', fit);
-setUpGame(); fit(); toTitle();
+// Then the start-up screen (in index.html) goes, and the console shows, its full size, with the whole title. (It goes even
+// if setting up fails, so it never says the connection is slow when it isn't.)
+try { setUpGame(); fit(); toTitle(); }
+finally { if (document.documentElement) document.documentElement.classList.remove('loading'); }
 requestAnimationFrame(frame);
 // The app (sw.js): lets the game be installed on a phone's home screen, full screen, and played offline.
 // Once it's ready, it's given the game's own files to keep (the first time, the page loaded before it was there to

@@ -61,7 +61,9 @@ function scriptsIn(page, root = ROOT){
 // {dom: true} is for tests that play the game: the card (#sheet), the speech box (#talk), the
 // text box (#textbox) and the title screen's games (#titleButtons) become working copies whose buttons can be found and pressed (see mini-dom.js),
 // and timers wait until the test calls flush().
-function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = false} = {}){
+// {html: true} gives the page its <html> element (game.el('html')), starting as index.html's does, with the start-up
+// screen showing (class loading).
+function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = false, html = false} = {}){
   const elements = {}, storage = new Map(Object.entries(stored)), frames = [], listeners = {};
   const timers = new Map(); let nextTimer = 1;
   if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
@@ -73,6 +75,7 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = 
     createElement: tag => stub(`<${tag}>`),
     addEventListener(type, fn){ (listeners[type] = listeners[type] || []).push(fn); }
   };
+  if (html) elements.html = document.documentElement = makeElement('html', {lang: 'en', class: 'loading'}, document);
   if (dom){
     elements['#sheet'] = makeElement('div', {id: 'sheet', class: 'sheet', role: 'dialog'}, document);
     elements['#talk'] = makeElement('div', {id: 'talk', class: 'talk', hidden: ''}, document);

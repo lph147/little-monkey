@@ -17,7 +17,7 @@ class Text {
 class El {
   constructor(tag, attrs, doc){
     this.tag = tag; this.attrs = attrs || {}; this.children = []; this.parent = null; this.doc = doc;
-    this.onclick = null; this.scrollTop = 0; this.style = {};
+    this.onclick = null; this.scrollTop = 0; this.style = {setProperty(k, v){ this[k] = String(v); }};
   }
   // attributes
   getAttribute(k){ return k in this.attrs ? this.attrs[k] : null; }

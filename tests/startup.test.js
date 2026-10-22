@@ -1,8 +1,12 @@
-// The game starts without errors and shows the title screen.
+// The game starts without errors and shows the title screen. Until then, the start-up screen: the app's monkey and
+// three dots, never the console half-built while the code downloads (on a slow connection it showed for seconds:
+// 小猴子 on a black screen, an empty label and no buttons).
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {loadGame} = require('./fake-browser');
+const fs = require('node:fs');
+const path = require('node:path');
+const {loadGame, ROOT, ENTRY} = require('./fake-browser');
 
 test('a new player sees the title screen: New game (chosen) and Save files, with no game to continue', () => {
   const game = loadGame({dom: true});
@@ -37,4 +41,32 @@ test('a returning player sees Continue, with their game, and A plays on', () => 
   assert.match(card, /id="contBtn">Continue</, 'its card in Save files: Continue');
   assert.match(card, /5 <img class="money"/, 'its shells');
   assert.match(card, /Copy to a file/); assert.match(card, /Delete/);
+});
+
+const page = fs.readFileSync(path.join(ROOT, ENTRY), 'utf8');
+const css = fs.readFileSync(path.join(ROOT, 'css', 'game.css'), 'utf8');
+
+test('the page opens on the start-up screen, before any of the game’s code: the app’s monkey, three dots, and a note for a slow connection', () => {
+  assert.match(page, /<html\b[^>]*\bclass="loading"/, 'the page starts loading');
+  const boot = page.match(/<div class="boot"[^]*?<\/div><p class="slow">([^<]*)<\/p><\/div>/);
+  assert.ok(boot, 'the start-up screen');
+  assert.match(boot[0], /<img src="icons\/icon-192\.png"/, 'the app’s monkey');
+  assert.equal((boot[0].match(/<i><\/i>/g) || []).length, 3, 'three dots');
+  assert.equal(boot[1], 'Slow connection, still loading…');
+  assert.ok(page.indexOf('class="boot"') < page.indexOf('<script'), 'it’s on the page before the code, so it shows while the code downloads');
+  assert.match(page, /<link rel="icon" href="icons\/icon-192\.png">/, 'its picture is one of the files the app keeps, so it shows offline too');
+});
+
+test('until the game is ready, the start-up screen covers the console, which is there but unseen, so it can be measured; the note waits 8 seconds', () => {
+  assert.match(css, /\.loading \.boot\{display:flex\}/);
+  assert.match(css, /\.boot\{position:fixed;inset:0;[^}]*display:none/, 'and only then');
+  assert.match(css, /\.loading \.app\{visibility:hidden/, 'unseen, not left out (fit() sizes the screen from the console’s measurements)');
+  assert.match(css, /\.boot \.slow\{[^}]*opacity:0;animation:bootslow \.4s 8s forwards\}/);
+});
+
+test('once the game has set itself up, the start-up screen goes, and the console shows with the whole title', () => {
+  const game = loadGame({html: true, save: {version: 24, started: true}});
+  assert.equal(game.el('html').classList.contains('loading'), false);
+  assert.ok(game.el('#gameName').innerHTML.includes('<ruby>'), 'the title, with its pinyin, is ready');
+  assert.ok(game.run('cv.width > 0'), 'and the screen its size');
 });
