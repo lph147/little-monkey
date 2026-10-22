@@ -107,9 +107,9 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = 
     flush(){ const due = [...timers.values()]; timers.clear(); due.forEach(fn => fn()); return due.length; },   // run waiting timers (with dom: true)
     run: code => vm.runInContext(code, win),     // run code inside the game, e.g. run('ORDER.length')
     // Press a key, such as ' ' or 'Enter'. repeat: the key is being held down. tabbedTo: a button
-    // has been chosen with the Tab key. Returns the key press, to check if the game used it.
-    key(key, {repeat = false, tabbedTo = false} = {}){
-      const e = {key, repeat, target: {matches: () => tabbedTo}, defaultPrevented: false, preventDefault(){ e.defaultPrevented = true; }};
+    // has been chosen with the Tab key. at: when it was pressed (its timeStamp). Returns the key press, to check if the game used it.
+    key(key, {repeat = false, tabbedTo = false, at} = {}){
+      const e = {key, repeat, timeStamp: at, target: {matches: () => tabbedTo}, defaultPrevented: false, preventDefault(){ e.defaultPrevented = true; }};
       for (const fn of listeners.keydown || []) fn(e);
       return e;
     }

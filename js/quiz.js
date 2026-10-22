@@ -25,7 +25,7 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
         setTimeout(() => say(word), 250); if (type) answer(word, ok, type);
       } else fb.textContent = ok ? 'Yes!' : 'Not quite.';
       if (onAnswer) onAnswer(ok);
-      const n = sheet.querySelector('[data-a=next]'); n.hidden = false; n.focus();
+      const n = sheet.querySelector('[data-a=next]'); n.hidden = false; n.focus(); shown();   // (so A pressed again at once doesn't skip what it says)
       n.onclick = () => res(ok);
     });
   });

@@ -40,11 +40,12 @@ function update(now){
   const d = held || tapped;
   if (d) tryStep(d, now);
 }
-async function pressA(){
+async function pressA(at){   // at: when it was pressed, if known (tooSoon, js/cards.js)
   tipPressed('#btnA');
   if (mode === 'title' && modal.hidden){ const t = $('#titleButtons').querySelector('.sel'); if (t) t.click(); return; }   // the chosen button on the title screen (Continue, New game or Save files)
   if (mode === 'intro'){ const bb = $('#beginBtn') || $('#nextBtn'); if (bb) bb.click(); return; }
   if (!modal.hidden){
+    if (tooSoon(at)) return;   // (pressed before this card appeared, or just as it did)
     const f = chosenBtn(), inMenu = !!sheet.querySelector(NAVIGABLE);
     if (inMenu && f) f.click();
     else {
@@ -55,15 +56,15 @@ async function pressA(){
     }
     return;
   }
-  if (talkNext){ talkNext(); return; }   // the speech box: on to what comes next
+  if (talkNext){ if (!tooSoon(at)) talkNext(); return; }   // the speech box: on to what comes next
   if (!canAct() || performance.now() - actedAt < AGAIN_MS) return;
   const [fx, fy] = facing();
   busy = true;
   try { await interact(fx, fy); await runEvents(); } finally { busy = false; actedAt = performance.now(); updateHUD(); }
 }
-function pressB(){
-  if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null) b.click(); return; }
-  if (talkNext && !talkMove){ talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
+function pressB(at){
+  if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null && !tooSoon(at)) b.click(); return; }
+  if (talkNext && !talkMove){ if (!tooSoon(at)) talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
   const sb = $('#saybox'); if (!sb.hidden){ sb.hidden = true; updateHUD(); return; }
 }
@@ -89,14 +90,15 @@ document.addEventListener('keydown', e => {
   const isA = e.key === ' ' || e.key === 'Enter';
   if (!modal.hidden){
     const d = KEYS[e.key];
+    if ((isA || isB) && tooSoon(e.timeStamp)){ e.preventDefault(); return; }   // (not even pressing the card's chosen button)
     if (d && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); navFocus(d); }
-    else if (isB){ e.preventDefault(); pressB(); }
+    else if (isB){ e.preventDefault(); pressB(e.timeStamp); }
     else if (isMenu){ e.preventDefault(); pressMenu(); }
     else if (isSelect){ e.preventDefault(); pressSelect(); }
-    else if (isA && !(e.target.matches && e.target.matches('button'))){ e.preventDefault(); if (!e.repeat) pressA(); }   // (a chosen button is pressed by the browser)
+    else if (isA && !(e.target.matches && e.target.matches('button'))){ e.preventDefault(); if (!e.repeat) pressA(e.timeStamp); }   // (a chosen button is pressed by the browser)
     return;
   }
-  if (isB){ e.preventDefault(); pressB(); return; }
+  if (isB){ e.preventDefault(); pressB(e.timeStamp); return; }
   if (isMenu){ e.preventDefault(); pressMenu(); return; }
   if (isSelect){ e.preventDefault(); pressSelect(); return; }
   if (mode === 'title' && KEYS[e.key] && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); if (!e.repeat) moveTitle(KEYS[e.key]); return; }   // the arrows move between the title's buttons
@@ -107,13 +109,13 @@ document.addEventListener('keydown', e => {
   }
   if (talkNext){   // while someone's talking, only A and B do anything, and the arrows move between replies
     const d = KEYS[e.key];
-    if (isA){ e.preventDefault(); if (!e.repeat) pressA(); }
+    if (isA){ e.preventDefault(); if (!e.repeat) pressA(e.timeStamp); }
     else if (d && talkMove){ e.preventDefault(); if (!e.repeat) talkMove(d); }
     return;
   }
   const d = KEYS[e.key];
   if (d){ e.preventDefault(); if (!e.repeat) queued = d; held = d; return; }
-  if (isA){ e.preventDefault(); pressA(); }
+  if (isA){ e.preventDefault(); pressA(e.timeStamp); }
 });
 document.addEventListener('keyup', e => { const d = KEYS[e.key]; if (d && held === d) held = null; });
 window.addEventListener('blur', () => { held = null; });
@@ -141,9 +143,9 @@ dpad.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('selectstart', e => { if (dpadPointer !== null) e.preventDefault(); });
 ['btnA','btnB'].forEach(id => {
   const el = $('#' + id), fn = id === 'btnA' ? pressA : pressB;
-  el.addEventListener('pointerdown', e => { e.preventDefault(); getAC(); el.classList.add('held'); fn(); });
+  el.addEventListener('pointerdown', e => { e.preventDefault(); getAC(); el.classList.add('held'); fn(e.timeStamp); });
   ['pointerup','pointercancel','pointerleave'].forEach(t => el.addEventListener(t, () => el.classList.remove('held')));
   el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); });
-  el.addEventListener('click', e => { if (e.detail === 0) fn(); });
+  el.addEventListener('click', e => { if (e.detail === 0) fn(e.timeStamp); });
   el.addEventListener('contextmenu', e => e.preventDefault());
 });

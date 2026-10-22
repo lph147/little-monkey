@@ -77,6 +77,22 @@ test('hitting a dry, dead pine with your stick knocks it down: a stump, a piece 
   assert.match(get(g, 'getTasks()[0].text'), /^Find three pieces of 木头 \(wood\) in the pine wood \(1\/3\)$/, 'now in Chinese too');
 });
 
+test('knocking down a dead pine draws again only what’s around it, not the whole wood (that stopped the game for two seconds on a phone)', async () => {
+  const g = game(BUILDING, {place: 'pineWood', x: 2, y: 19, dir: 'up'});
+  g.run(`globalThis.__tiles = []; globalThis.__pines = 0;
+    for (const k of Object.keys(LOOKS)){ const f = LOOKS[k]; LOOKS[k] = (gg, X, Y, x, y) => { __tiles.push([x, y]); return f(gg, X, Y, x, y); }; }
+    { const f = OBJECT_ART.pine; OBJECT_ART.pine = (gg, o) => { __pines++; return f(gg, o); }; }`);
+  await press(g, 2, 19, 'up');
+  assert.equal(g.run('tileAt(2, 18).look'), 'stump');
+  const tiles = get(g, '__tiles'), all = g.run('COLS * ROWS');
+  assert.ok(tiles.length > 0 && tiles.length <= 25, `its ground and the squares beside it are drawn again (${tiles.length}), not all ${all}`);
+  assert.ok(tiles.every(([x, y]) => Math.abs(x - 2) <= 2 && Math.abs(y - 18) <= 2), 'all of them around it');
+  assert.ok(g.run('__pines') > 0 && g.run('__pines') <= 60, `and the pines it overlapped (${g.run('__pines')} drawings), not all ${g.run('OBJECT_PIECES.length')} of them twice`);
+  assert.ok(!g.run('OBJECT_PIECES.some(p => p.look === "deadPine" && p.x === 2 && p.y === 18)'), 'the dead pine is gone from the map’s objects');
+  g.run("__tiles.length = 0; S.pos = {place: 'homeGround', x: 3, y: 9, dir: 'right'}; placePlayer()");
+  assert.equal(get(g, '__tiles').length, g.run('COLS * ROWS'), 'another place is drawn whole');
+});
+
 test('a square that has changed stays changed in a saved game, but only while the map still has there what changed', () => {
   const g = game({...BUILDING, changed: {'pineWood:2,18': 'j', 'pineWood:23,5': 'y'}}, {place: 'pineWood', x: 22, y: 5, dir: 'right'});
   assert.equal(g.run('tileAt(2, 18).look'), 'stump');

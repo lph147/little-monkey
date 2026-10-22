@@ -519,10 +519,9 @@ const LOOKS = {
 
 /* ---- big objects: trees, the fruit trees, your stone, the rocks, the stall and the cave's stone tablet ----
    They're bigger than the squares they stand on: a tree's leaves reach up into the square above, and a block of
-   forest two squares by two is one big tree. Each is drawn into two pictures of its own (OBJECT_PIECES, below),
-   which js/draw.js puts on the screen every frame, from the top of the map down so nearer ones overlap: its base
-   (its squares and below) under the characters, and its top (what reaches up above its squares) over them. Walk
-   behind a tree and its leaves cover you; walk through them and it rustles. */
+   forest two squares by two is one big tree. Each is drawn in two parts (OBJECT_PIECES, below), from the top of the
+   map down so nearer ones overlap: its base (its squares and below) under the characters, and its top (what reaches
+   up above its squares) over them. Walk behind a tree and its leaves cover you; walk through them and it rustles. */
 const LEAF = [TREE_PAL.o, TREE_PAL.d, TREE_PAL.l, TREE_PAL.h, '#9BE08A'];   // darkest to lightest
 const GREY = [ROCK_PAL.o, ROCK_PAL.d, ROCK_PAL.m, ROCK_PAL.l, '#E6E2D6'];
 const WOOD = ['#4A2C17', '#6B4A2A', '#8A5A32', '#B98A55', '#D2A46A'];
@@ -751,41 +750,95 @@ function mapObjects(){
   }
   return out.sort((p, q) => (p.y + p.h) - (q.y + q.h));
 }
-// The big objects in the place you're in, each {look, x, y, w, h} with: x0, y0 (where its pictures go on the map, in
-// pixels), base and top (its two pictures), leaves (where its leaves reach, if it rustles) and rustle (when it last did).
+// The big objects in the place you're in, each {look, x, y, w, h} with: key (which it is), x0, y0, pw, ph (where its picture
+// goes on the map, in pixels, and its size), and the parts of its picture it's drawn in, each [x, y, w, h] from its corner:
+// under (its squares and below, under the characters) and over (what reaches up above its squares, over the characters,
+// and for a tree with wide branches, its leaves beside them too, so you go through them as you pass, not over them). Those
+// that never move are drawn straight into two layers for the whole place, baseCanvas and topCanvas (baked); the fruit
+// trees, which rustle, have two pictures of their own, base and top, drawn every frame, with leafy (the squares where
+// walking in makes it rustle) and rustle (when it last did).
 let OBJECT_PIECES = [];
-const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its pictures above and beside an object's squares, for what reaches out of them
+const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its picture above and beside an object's squares, for what reaches out of them
 const LEAFY = ['tree', 'peachTree', 'appleTree'];   // what has leaves: they go over the characters beside it too, and rustle
 const COLLECTABLE = [];   // the squares in the place you're in with something to collect (a part of their onLook has sparkle)
-function buildMap(){   // the place you're in: the ground, then the big objects' pictures
-  mapStory = mapStoryNow();   // (what the map letters that change with the story are, as it's drawn)
-  if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
-  COLLECTABLE.length = 0;
-  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
-    const t = tileAt(x, y);
-    LOOKS[t.look](mg, x*T, y*T, x, y);
-    if ((t.onLook || []).some(p => p.sparkle)) COLLECTABLE.push([x, y]);
+const objectKey = o => `${o.look}@${o.x},${o.y},${o.w},${o.h}`;
+function pieceOf(o){
+  const x0 = o.x*T - PIECE_SIDE, y0 = o.y*T - PIECE_UP, pw = o.w*T + 2*PIECE_SIDE, ph = PIECE_UP + o.h*T + 4, right = PIECE_SIDE + o.w*T;
+  const wide = LEAFY.includes(o.look), beside = wide ? [[0, PIECE_UP, PIECE_SIDE, ph - PIECE_UP], [right, PIECE_UP, pw - right, ph - PIECE_UP]] : [];
+  const p = {...o, key:objectKey(o), x0, y0, pw, ph, under:[[0, PIECE_UP, pw, ph - PIECE_UP]], over:[[0, 0, pw, PIECE_UP], ...beside], rustle:-1e9,
+    leafy: wide && o.look !== 'tree' ? [[o.x-1, o.y], [o.x+1, o.y]] : null};   // (where walking in makes a wide fruit tree rustle: the squares right beside it)
+  if (p.leafy) for (const [k, parts, over] of [['base', p.under, false], ['top', p.over, true]]){   // its own pictures
+    const c = p[k] = document.createElement('canvas'); c.width = pw; c.height = ph;
+    drawObject(c.getContext('2d'), p, parts, over, null, x0, y0);
   }
-  OBJECT_PIECES = mapObjects().map(o => {
-    const x0 = o.x*T - PIECE_SIDE, y0 = o.y*T - PIECE_UP, w = o.w*T + 2*PIECE_SIDE, h = PIECE_UP + o.h*T + 4;
-    const part = (rects, over) => {   // the object drawn, just inside these parts of its picture, each [x, y, w, h]
-      const c = document.createElement('canvas'); c.width = w; c.height = h;
-      const g = c.getContext('2d'); g.save(); g.beginPath(); rects.forEach(([rx, ry, rw, rh]) => g.rect(rx, ry, rw, rh)); g.clip(); g.translate(-x0, -y0);
-      shadows = !over; OBJECT_ART[o.look](g, o); shadows = true; g.restore();
-      return c;
-    };
-    const leafy = LEAFY.includes(o.look);
-    // Over the characters: what reaches up above its squares, and for a tree, its leaves reaching out beside them too (a
-    // fruit tree's wide branches), so you go through them as you pass, not over them.
-    const right = PIECE_SIDE + o.w*T, beside = [[0, PIECE_UP, PIECE_SIDE, h - PIECE_UP], [right, PIECE_UP, w - right, h - PIECE_UP]];
-    return {...o, x0, y0, base: part([[0, PIECE_UP, w, h - PIECE_UP]], false), top: part([[0, 0, w, PIECE_UP], ...(leafy ? beside : [])], true), rustle: -1e9,
-      // where walking in makes it rustle: through a wide fruit tree's branches, in the squares right beside it (not behind it, nor its corners)
-      leafy: leafy && o.look !== 'tree' ? [[o.x-1, o.y], [o.x+1, o.y]] : null};
-  });
-  for (const c of [baseCanvas, topCanvas]){ c.width = COLS*T; c.height = ROWS*T; }   // (which clears them)
+  return p;
+}
+// Draws object p into g, which starts at ox, oy on the map (a layer for the whole map, or its own picture), just inside
+// these parts of its picture, and inside clip ([x, y, w, h] on the map) if given. What goes over the characters (over)
+// has no shadows: they stay on the ground.
+function drawObject(g, p, parts, over, clip, ox = 0, oy = 0){
+  g.save(); g.translate(-ox, -oy);
+  g.beginPath(); for (const [x, y, w, h] of parts) g.rect(p.x0 + x, p.y0 + y, w, h); g.clip();
+  if (clip){ g.beginPath(); g.rect(...clip); g.clip(); }
+  shadows = !over; OBJECT_ART[p.look](g, p); shadows = true; g.restore();
+}
+// The objects that never move, into the two layers (only inside clip, [x, y, w, h] on the map, if given).
+function bakeObjects(clip){
   const bg = baseCanvas.getContext('2d'), tg = topCanvas.getContext('2d');
-  for (const p of OBJECT_PIECES) if (!p.leafy){ bg.drawImage(p.base, p.x0, p.y0); tg.drawImage(p.top, p.x0, p.y0); p.baked = true; }
+  if (clip){ bg.clearRect(...clip); tg.clearRect(...clip); }
+  for (const p of OBJECT_PIECES){
+    if (p.leafy || (clip && !overlaps([p.x0, p.y0, p.pw, p.ph], clip))) continue;
+    drawObject(bg, p, p.under, false, clip); drawObject(tg, p, p.over, true, clip); p.baked = true;
+  }
+}
+const overlaps = ([ax, ay, aw, ah], [bx, by, bw, bh]) => ax < bx + bw && bx < ax + aw && ay < by + bh && by < ay + ah;
+// The ground of the squares from x0, y0 to x1, y1 (all of them if none are given), and only inside clip if given.
+function drawTiles(clip, x0 = 0, y0 = 0, x1 = COLS - 1, y1 = ROWS - 1){
+  if (clip){ mg.save(); mg.beginPath(); mg.rect(...clip); mg.clip(); mg.clearRect(...clip); }
+  for (let y = Math.max(0, y0); y <= Math.min(ROWS - 1, y1); y++) for (let x = Math.max(0, x0); x <= Math.min(COLS - 1, x1); x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
+  if (clip) mg.restore();
+}
+// What the map was drawn for: the place, the school's paint, and each square's tile (patchMap compares them).
+let drawnFor = null;
+const tilesNow = () => MAP.map((r, y) => [...r].map((c, x) => tileAt(x, y)));
+const paintNow = () => Object.entries(paintedParts()).join();
+function afterDrawing(){
+  mapStory = mapStoryNow();   // (what the map letters that change with the story are, as it's drawn)
+  drawnFor = {place:PLACE, paint:paintNow(), tiles:tilesNow()};
+  COLLECTABLE.length = 0;
+  for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if ((tileAt(x, y).onLook || []).some(p => p.sparkle)) COLLECTABLE.push([x, y]);
   buildGloom();
+}
+function buildMap(){   // the place you're in: the ground, then the big objects' pictures
+  if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
+  drawTiles();
+  OBJECT_PIECES = mapObjects().map(pieceOf);
+  for (const c of [baseCanvas, topCanvas]){ c.width = COLS*T; c.height = ROWS*T; }   // (which clears them)
+  bakeObjects();
+  afterDrawing();
+}
+// When the story changes a few of the map's squares, such as a dry pine you've knocked down (a stump now), only they are
+// drawn again, with the squares beside them (whose edges may change), and the big objects that have gone or are new,
+// with whatever they overlap. So the game doesn't stop while a whole place is drawn again: the pine wood, with its 671
+// pines, took two seconds on a phone (decided 22 October 2026). Gives false if it must all be drawn again instead
+// (another place, the school's paint, or most of the map changing).
+function patchMap(){
+  if (!drawnFor || drawnFor.place !== PLACE || drawnFor.paint !== paintNow()) return false;
+  const tiles = tilesNow();
+  let x0 = COLS, y0 = ROWS, x1 = -1, y1 = -1;
+  tiles.forEach((row, y) => row.forEach((t, x) => { if (t !== drawnFor.tiles[y][x]){ x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); } }));
+  if (x1 >= 0 && (x1 - x0 + 3) * (y1 - y0 + 3) > COLS * ROWS / 2) return false;
+  const was = new Map(OBJECT_PIECES.map(p => [p.key, p]));
+  const pieces = mapObjects().map(o => was.get(objectKey(o)) || pieceOf(o));   // (those still there kept as they are, rustling and all)
+  const kept = new Set(pieces), moved = [...OBJECT_PIECES.filter(p => !kept.has(p)), ...pieces.filter(p => !was.has(p.key))];
+  OBJECT_PIECES = pieces;
+  if (x1 >= 0) drawTiles([(x0 - 1)*T, (y0 - 1)*T, (x1 - x0 + 3)*T, (y1 - y0 + 3)*T], x0 - 2, y0 - 2, x1 + 2, y1 + 2);   // (the squares beside them too, and what reaches into those)
+  if (moved.length){
+    const xs = moved.flatMap(p => [p.x0, p.x0 + p.pw]), ys = moved.flatMap(p => [p.y0, p.y0 + p.ph]);
+    bakeObjects([Math.min(...xs), Math.min(...ys), Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)]);
+  }
+  afterDrawing();
+  return true;
 }
 // A gloomy place (a place's gloom, such as the pine wood's), made ready once for the place (drawGloom, js/draw.js, draws
 // it): its shade, one pixel a square, darkest where the trees are thickest (deep) and lightest where it's open (open),
@@ -799,7 +852,8 @@ function buildGloom(){
   const gl = PLACES[PLACE].gloom;
   GLOOM = null;
   if (!gl) return;
-  const clear = (x, y) => { const t = tileAt(x, y); return !!t.walk || WATERY.includes(t.look); };   // (beyond the map: more trees)
+  const isClear = MAP.map((r, y) => [...r].map((c, x) => { const t = tileAt(x, y); return !!t.walk || WATERY.includes(t.look); }));   // (each square looked at once)
+  const clear = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS && isClear[y][x];   // (beyond the map: more trees)
   const open = [], shade = [], beams = [];
   gloomCanvas.width = COLS; gloomCanvas.height = ROWS;
   const g = gloomCanvas.getContext('2d');

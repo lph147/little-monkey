@@ -34,7 +34,7 @@ const changedTo = (x, y) => {
 const mapStoryNow = () => Object.values(LEGEND).filter(t => t.becomes).map(becomesNow).join() + '|'
   + Object.entries(here().changed).filter(([k]) => k.startsWith(PLACE + ':')).join() + '|' + Object.entries(paintedParts()).join();
 let mapStory = null;   // what they were when the map was last drawn (buildMap)
-function refreshMap(){ if (mapStoryNow() !== mapStory){ buildMap(); findGrass(); stepClear(); } }
+function refreshMap(){ if (mapStoryNow() !== mapStory){ if (!patchMap()) buildMap(); findGrass(); stepClear(); } }   // (just the squares that change, if it can: patchMap, js/art.js)
 // If the map changes under you (such as the school's frame going up on the plot you're standing on), you step out onto
 // the nearest square you can walk on.
 function stepClear(){

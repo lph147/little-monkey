@@ -6,7 +6,7 @@
 // looked at, every frame.
 
 /* ================= CONTROLLERS ================= */
-const PAD_BUTTONS = [[0, '#btnA', () => pressA()], [1, '#btnB', () => pressB()], [9, '#startBtn', () => pressMenu()], [8, '#selectBtn', () => pressSelect()]];
+const PAD_BUTTONS = [[0, '#btnA', () => pressA(performance.now())], [1, '#btnB', () => pressB(performance.now())], [9, '#startBtn', () => pressMenu()], [8, '#selectBtn', () => pressSelect()]];
 const PAD_DIRS = [[12, 'up'], [13, 'down'], [14, 'left'], [15, 'right']];
 const STICK = 0.5;                            // how far the stick must be pushed to count
 const PAD_WAIT = 400, PAD_REPEAT = 150;       // holding a direction on a card: it moves again after PAD_WAIT, then every PAD_REPEAT
