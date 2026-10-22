@@ -188,7 +188,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
-    elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, lesson:true}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:4}, show:'!'},
+    elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, lesson:true}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
@@ -279,7 +279,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   events: [
     {if:{place:'pineWood', woodIn:0}, do:[{sound:'howl'}, {message:'It’s gloomy under the thick pines, and very still. Somewhere far off, a wolf howls…'}, {set:{woodIn:1}}]},   // into the pine wood for the first time
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
-    {if:{place:'cave', cave:3}, do:[{message:'The troop follows you through the water curtain!'}, {set:{cave:4}}]},   // you lead the troop in
+    // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
+    // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)
+    {if:{place:'cave', cave:3}, do:[{sound:'splash'}, {set:{cave:4}}, {follow:[]}, {message:'Splash, splash! The troop follows you through the water curtain!'}]},
     // the rocks roll away once everything else in the prologue is done: the three monkeys helped, and every animal found
     {if:{hungry:'done', thirsty:'done', flowers:'done', animalsLeft:0, gate:false}, do:[
       {set:{gate:true}},
@@ -737,7 +739,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{gate:true}, x:14, y:2, facing:'right'}],   // by the waterfall once the troop is up there; where the rocks were till then
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
     {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{home:{atLeast:1}}, place:'homeGround', x:15, y:4, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:10, y:2, facing:'left'},
-      {if:{climb:1, new:'棍子'}, x:16, y:1, facing:'left'}, {if:{gate:true}, x:17, y:3, facing:'left'}],   // (in the way up, with a stick for you)
+      {if:{gate:true}, x:16, y:1, facing:'down'}],   // in the way up once the rocks have rolled away, where he stops you with a stick for you, and stays (he used to jump there and back)
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
@@ -1146,7 +1148,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'inside'},
         {gap:{sentence:'里面 有 床', en:'There are beds inside.', word:'床'}},
         {say:'letsGo'},
-        {set:{cave:3}}
+        {set:{cave:3}},
+        {follow:['elder', 'big', 'playful', 'doorway']}   // the troop follows you, to jump in after you
       ]},
       {if:{cave:2}, do:[{say:'go', hint:'Look around the cave first.'}]},
       {if:{cave:3}, do:[{say:'letsGo', hint:'Lead the way: jump through the waterfall.'}]},

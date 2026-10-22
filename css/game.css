@@ -96,8 +96,8 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .cap{display:flex;flex-direction:column;align-items:center;gap:.05rem;text-align:center}
 .capbox .cap{text-shadow:0 2px 0 rgba(0,0,0,.6)}   /* the opening's captions, over the picture (not the captions under answers, which are .cap too) */
 .cap .line{justify-content:center;margin:0}
-.cap .tok,.cap .tok.listen{font-size:1.45rem;font-weight:600;color:#FFF6D8;border-bottom-color:rgba(255,246,216,.18)}
-.cap .tok.learn{color:#9BE08A;border-bottom-color:rgba(155,224,138,.4)}
+.cap .tok,.cap .tok.listen{font-size:1.45rem;font-weight:600;color:#FFF6D8}
+.cap .tok.learn{color:#9BE08A}
 .cap rt{color:#D9E6DC}
 .cap .punct{color:#FFF6D8;font-size:1.45rem}
 .cap .gloss{min-height:0;margin:0;font-size:.85rem;color:#FFF6D8}
@@ -156,10 +156,11 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .engbtn{font-family:var(--pixel);font-size:.8rem;border:1px solid var(--line);background:var(--paper);border-radius:4px;padding:1px 6px;margin-left:4px;vertical-align:middle}
 .label{font-family:var(--pixel);font-size:.95rem;color:var(--jade);margin:0 0 4px}
 .line{font-family:var(--text);display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px 2px;margin:4px 0 6px}
-.tok{display:inline-flex;flex-direction:column;align-items:center;background:none;border:none;border-bottom:2px dotted var(--line);padding:2px 3px 1px;font-size:1.55rem;line-height:1.2;font-family:var(--text);color:var(--ink);border-radius:3px}
+/* a word in a sentence (no line under it: under 一 or 二, a line looks like another stroke; decided 22 October 2026) */
+.tok{display:inline-flex;flex-direction:column;align-items:center;background:none;border:none;padding:2px 3px 1px;font-size:1.55rem;line-height:1.2;font-family:var(--text);color:var(--ink);border-radius:3px}
 .tok:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}
 .tok.on{background:color-mix(in srgb,var(--gold) 28%,transparent)}
-.tok.learn{color:var(--jade);border-bottom:2px solid color-mix(in srgb,var(--jade) 55%,transparent);font-weight:500}
+.tok.learn{color:var(--jade);font-weight:500}
 .tok.teach{font-weight:800;background:color-mix(in srgb,var(--jade) 12%,transparent)}
 .tok.listen{color:var(--muted)}
 .sentence-en{font-size:1rem;color:var(--ink);background:color-mix(in srgb,var(--gold) 16%,transparent);border-radius:4px;padding:4px 8px;margin:6px 0 8px}
@@ -334,9 +335,9 @@ rt.hid{visibility:hidden}
 .kbd{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;color:#FFF;font-family:var(--pixel);font-size:1rem}
 .kbd.a{background:var(--btnA)} .kbd.b{background:var(--btnB)} .kbd.pad{background:var(--pad);border-radius:6px} .kbd.menu{background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:6px}
 .dot{flex:none;width:30px;text-align:center;font-weight:700}
-.dot.learn::before{content:"字";color:var(--jade);border-bottom:2px solid var(--jade)}
-.dot.teach::before{content:"字";color:var(--jade);font-weight:800;border-bottom:2px solid var(--jade);background:color-mix(in srgb,var(--jade) 12%,transparent)}
-.dot.listen::before{content:"字";color:var(--muted);border-bottom:2px dotted var(--line)}
+.dot.learn::before{content:"字";color:var(--jade);font-weight:500}
+.dot.teach::before{content:"字";color:var(--jade);font-weight:800;background:color-mix(in srgb,var(--jade) 12%,transparent)}
+.dot.listen::before{content:"字";color:var(--muted)}
 .example{background:var(--bg);border-radius:6px;padding:4px 8px;margin:8px 0}
 .menu .btn{text-align:left;display:flex;justify-content:space-between;align-items:center}
 .menu .btn .val{color:var(--muted);font-size:.9rem}

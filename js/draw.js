@@ -84,7 +84,11 @@ function drawFoe(cx, cy, now){
     if (e < 600 && tileAt(foe.x, foe.y).look === 'tallGrass'){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
   } else {
     const e1 = now - foe.t1;
-    if (foe.state === 'happy'){
+    if (foe.state === 'hide'){   // ducking back down into the grass where it came from (you ran away from it)
+      const h = Math.round(16 * clamp(1 - e1 / 450, 0, 1));
+      if (h > 0){ R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)'); b.drawImage(spr, 0, 0, 16, h, X, Y + 16 - h, 16, h); }
+      if (e1 < 600 && tileAt(foe.x, foe.y).look === 'tallGrass'){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e1/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
+    } else if (foe.state === 'happy'){
       const hop = Math.round(Math.abs(Math.sin(e1 / 130)) * 4);
       b.globalAlpha = clamp(1 - (e1 - 700) / 300, 0, 1);
       b.drawImage(spr, X, Y - hop); heart(X + 6, Y - 6 - Math.round(e1 / 120));

@@ -554,3 +554,29 @@ test('writing in the world is real Chinese, in characters drawn for it: the scho
     assert.ok(BANK[text] || [...text].every(c => BANK[c]) || Object.values(AREA.places).some(p => p.name.zh === text), `${text}: a word, words, or a place’s name, never made up`);
   }
 });
+
+test('a task that points its arrow at someone gives them a ! or ? too, so you can see who to go to', () => {
+  const tasks = AREA.tasks.filter(t => typeof t.arrow === 'string');
+  let checked = 0;
+  for (const t of tasks){
+    const g = loadGame({save: {version: 29, started: true, w: {}, areas: {1: {elder: 2}}}});   // (you've met the old monkey: the story starts there)
+    // the game as the task's if says, each condition in its simplest form (words caught, counters' words caught, values)
+    const ready = g.run(`(() => {
+      const c = ${JSON.stringify(t.if)}, h = here(); h.holding = h.holding || {};
+      for (const [k, v] of Object.entries(c)){
+        const n = typeof v === 'object' && v !== null ? (v.atLeast ?? v.below - 1) : v;
+        if (k === 'new') delete S.w[v];
+        else if (k === 'knows') S.w[v] = {lv: 1, ok: 0};
+        else if (k === 'holding') for (const [id, want] of Object.entries(v)) h.holding[id] = want === true ? 'it' : want;
+        else if (AREA.counters[k]){ const cn = AREA.counters[k]; if (cn.count !== 'known') return false; cn.words.slice(0, n).forEach(w => { S.w[w] = {lv: 1, ok: 0}; }); }
+        else h[k] = n;
+      }
+      return matches(c);
+    })()`);
+    if (!ready) continue;   // (a condition too involved to set up simply)
+    checked++;
+    const show = g.run(`((AREA.bubbles[${JSON.stringify(t.arrow)}] || []).find(b => matches(b.if)) || {}).show`);
+    assert.ok(show === '!' || show === '?', `the task "${t.text}" points at ${t.arrow}, who has no ! or ? then`);
+  }
+  assert.ok(checked >= 12, `checked ${checked} of the ${tasks.length} tasks that point at someone`);
+});

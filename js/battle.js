@@ -33,7 +33,11 @@ async function wildBattle(id, spot = findSpot()){
   SFX.encounter();
   await sleep(1100);
   const r = await battle(id);
-  if (foe){ foe.state = 'flee'; foe.t1 = performance.now(); await sleep(650); foe = null; }
+  if (foe){   // beaten, it runs off; if you ran away (or it beat you), it ducks back down into the grass, and you've turned away
+    foe.state = r === 'won' ? 'flee' : 'hide'; foe.t1 = performance.now();
+    if (r === 'ran'){ pl.dir = dirOf(pl.x - foe.x, pl.y - foe.y); S.pos.dir = pl.dir; SFX.turn(); }
+    await sleep(650); foe = null;
+  }
   return r;
 }
 

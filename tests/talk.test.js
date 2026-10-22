@@ -184,11 +184,13 @@ test('back with your first words, the old monkey checks them: you match them to 
   assert.equal(stop.run('here().elder'), 1, 'stopped: he waits until you’re ready');
 });
 
-test('the big monkey waits in the way up to stop you with the stick, and only until he has given it to you', () => {
+test('the big monkey waits in the way up to stop you with the stick, and stays there once he has given it to you (no jumping about)', () => {
   const big = w => { const g = loadGame({save: {version: 29, started: true, w, areas: {1: {elder: 2, gate: true, climb: 1}}}}); g.run('placeCharacters()');
     return JSON.parse(g.run(`JSON.stringify((({place, x, y}) => [place, x, y])(ALL_NPCS.find(n => n.id === 'big')))`)); };
   assert.deepEqual(big({}), ['meadow', 16, 1], 'in the gap where the rocks were: you can’t go up without passing him');
-  assert.deepEqual(big({'棍子': {lv: 1, ok: 0}}), ['meadow', 17, 3], 'back beside it once you have the stick');
+  assert.deepEqual(big({'棍子': {lv: 1, ok: 0}}), ['meadow', 16, 1], 'and still there once you have the stick: the other side of the way is open');
+  const before = loadGame({save: {version: 29, started: true, w: {}, areas: {1: {elder: 2, gate: true, climb: 0}}}}); before.run('placeCharacters()');
+  assert.deepEqual(JSON.parse(before.run(`JSON.stringify((({x, y}) => [x, y])(ALL_NPCS.find(n => n.id === 'big')))`)), [16, 1], 'already there before the old monkey sends you off, so he doesn’t jump in');
 });
 
 test('one new word per conversation: a phrase you haven’t learned waits if the conversation has already taught a word; a present gets a 谢谢', async () => {

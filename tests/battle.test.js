@@ -258,6 +258,18 @@ test('a battle in the pine wood has its own song and its pines behind the creatu
   assert.ok(!meadow.sheet.querySelector('.scene').className.split(' ').includes('pines'));
 });
 
+test('run away from a battle: it ducks back down into the grass and you turn away from it (it runs off only when you beat it)', async () => {
+  const g = fighting();
+  g.run("placePlayer(); pl.dir = 'up'; globalThis.__done = false; wildBattle('snake', {x: pl.x, y: pl.y - 1, d: 'up'}).then(() => { __done = true; })");
+  await g.flush();   // it jumps out, and the battle begins
+  g.sheet.querySelector('.act[data-act="run"]').click();
+  for (let i = 0; i < 5; i++) await tick();   // (just as you get away: the game's timers haven't run)
+  assert.equal(g.run('foe.state'), 'hide', 'it ducks back down into the grass, rather than running off as if beaten');
+  assert.equal(g.run('pl.dir'), 'down', 'you’ve turned away from it');
+  await g.flush();
+  assert.ok(g.run('__done') && g.run('foe') === null, 'and it’s gone');
+});
+
 test('only one song plays at a time: changing it stops the last, with all it was still playing (such as the pine wood’s long hum)', () => {
   const g = fighting({areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, chapter: 1, home: 2, build: 1, woodIn: 1}}, pos: {place: 'pineWood', x: 15, y: 17, dir: 'up'}});
   g.run(`(() => {   // a pretend sound engine: each volume remembers where it was last sent
