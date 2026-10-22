@@ -91,7 +91,7 @@ test('the story shows each sentence\'s English the first time, then behind the E
   assert.equal(game.run('modal.hidden'), true);
 });
 
-test('the rocks roll away only once the rest of the prologue is done: the three monkeys helped, every animal found, and the words for the meadow learned', async () => {
+test('the rocks roll away only once the rest of the prologue is done: the hungry and thirsty monkeys helped, every animal found, and the words for the meadow learned', async () => {
   const meadow = ['山', '河', '树', '鱼', '鸟'];
   const gate = async (area, met, words = meadow) => {
     const w = Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0, ok: 0}]));
@@ -100,11 +100,30 @@ test('the rocks roll away only once the rest of the prologue is done: the three 
     await g.run('runEvents()');
     return g.run('here().gate');
   };
-  const all = ['rabbit', 'fox', 'squirrel', 'goat'], helped = {hungry: 'done', thirsty: 'done', flowers: 'done'};
-  assert.equal(await gate({hungry: 'done', thirsty: 'done'}, all), false, 'not before the flowers');
+  const all = ['rabbit', 'fox', 'squirrel', 'goat'], helped = {hungry: 'done', thirsty: 'done'};
+  assert.equal(await gate({hungry: 'done'}, all), false, 'not before the thirsty monkey has its water');
   assert.equal(await gate(helped, ['rabbit', 'fox']), false, 'not before every animal is found');
   assert.equal(await gate(helped, all, ['山', '河', '树', '鱼']), false, 'not before the meadow’s words are learned (here, all but 鸟)');
-  assert.equal(await gate(helped, all), true);
+  assert.equal(await gate(helped, all), true, 'and not waiting for the big monkey’s flowers: they’re in chapter 1 now (decided 22 October 2026)');
+});
+
+test('in the prologue, the big monkey has nothing to ask (his flowers wait for chapter 1): he says hello; a game saved in the middle of his flowers can finish them', async () => {
+  const talkTo = async (area, words = ['石头', '你好', '花']) => {
+    const w = Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0, ok: 2}]));
+    const g = loadGame({save: {version: 29, started: true, w, areas: {1: {elder: 2, ...area}}}});
+    g.run("globalThis.__said = []; showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = showNotice = async () => {}; toast = () => {}");
+    g.run("chooseReply = async choices => choices[0]; gapQ = async () => true");
+    const bubble = g.run("((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show || null");
+    await g.run("talk(ALL_NPCS.find(n => n.id === 'big'))");
+    return {said: JSON.parse(g.run('JSON.stringify(__said)')), bubble, flowers: g.run('here().flowers')};
+  };
+  const now = await talkTo({});
+  assert.equal(now.bubble, null, 'no ! over him');
+  assert.deepEqual(now.said, ['你好！', '你好！'], 'he says hello, and you say it back');
+  assert.equal(now.flowers, 'not asked');
+  const before = await talkTo({flowers: 'asked', holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}}, ['石头', '你好', '花', '红色', '黄色', '白色']);
+  assert.equal(before.bubble, '?', 'holding his flowers: a ?');
+  assert.equal(before.flowers, 'done', 'and he takes them');
 });
 
 test('the prologue runs from being born to counting the troop in and becoming king; then chapter 1, The Great Feast, begins with its card', async () => {

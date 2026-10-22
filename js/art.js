@@ -625,7 +625,7 @@ function woodLine(g, x0, y0, x1, y1){   // a beam from (x0, y0) to (x1, y1): dar
 // and how far across the brushes have got, from 0 to 1.
 const TILES = ['#3E4852', '#56616C', '#64707C', '#7C8996'];   // the roof's tiles, darkest to lightest
 // The paints, by colour word: each part is shaded from its paint (shade: darker below 0, lighter above).
-const SCHOOL_PARTS = ['walls', 'pillars', 'windows', 'blossom', 'door', 'roof'];   // the parts of the school that can be painted
+const SCHOOL_PARTS = ['walls', 'pillars', 'windows', 'blossom', 'door', 'roof', 'lanterns', 'sign', 'steps'];   // the parts of the school that can be painted
 const PAINT = {'红色':'#C8322B', '黄色':'#E8B83A', '白色':'#F2EEE4', '黑色':'#2A2626', '蓝色':'#3A6DB5', '绿色':'#2F8F4E', '棕色':'#6E4325', '橙色':'#E0702A', '粉色':'#F4A6C6'};
 const shade = (c, k) => k < 0 ? mix(c, '#000000', -k) : mix(c, '#FFFFFF', k);
 function schoolHouse(g, X, Y, W, H, built = {walls:1, roof:1, sign:true}){
@@ -671,7 +671,7 @@ function schoolHouse(g, X, Y, W, H, built = {walls:1, roof:1, sign:true}){
     });
   });
   for (let sx = X + 2; sx < X + W - 4; sx += 7){ oval(g, sx + 3, base + 1, 3, 2, GREY[0]); oval(g, sx + 3, base + 1, 2, 1, GREY[2]); dot(g, sx + 2, base, GREY[3]); }   // the footing
-  R(g, mid - 8, base + 1, 16, 3, GREY[1]); R(g, mid - 8, base + 1, 16, 1, GREY[3]);   // a stone step at the door
+  part('steps', c => { R(g, mid - 9, base + 1, 18, 3, c ? shade(c, -.14) : GREY[1]); R(g, mid - 9, base + 1, 18, 1, c || GREY[3]); });   // a stone step at the door: grey, then painted white
   reveal(wallTop + 3, ridge - 3, built.roof, () => part('roof', c => {   // the roof, from the eaves up: its tiles, in their paint once it's painted
     const t = c ? [shade(c, -.45), shade(c, -.2), c, shade(c, .25)] : TILES;
     for (let y = ridge; y <= wallTop + 2; y++){
@@ -688,9 +688,14 @@ function schoolHouse(g, X, Y, W, H, built = {walls:1, roof:1, sign:true}){
   }));
   if (built.sign){
     const [tw, th] = writtenSize('学校', 2), pw = tw + 6, ph = th + 5, px = mid - Math.floor(pw / 2), py = wallTop - 7;   // the sign, under the eaves, over the door
-    R(g, px, py, pw, ph, '#5A1A14'); R(g, px + 1, py + 1, pw - 2, ph - 2, '#9E2B25'); R(g, px + 1, py + 1, pw - 2, 1, '#E2B84A');
-    write(g, '学校', px + 3, py + 3, '#F4E3B0', {gap: 2});
-    for (const lx of [X + 6, X + W - 9]){ R(g, lx + 1, wallTop + 3, 1, 2, '#4A2C17'); oval(g, lx + 1, wallTop + 7, 2, 3, '#B0231C'); R(g, lx, wallTop + 6, 3, 1, '#E0443C'); R(g, lx, wallTop + 4, 3, 1, GOLD_DOT); R(g, lx + 1, wallTop + 11, 1, 2, GOLD_DOT); }   // red lanterns
+    part('sign', c => {   // bare wood, with its writing dark; then painted yellow, its writing dark red
+      R(g, px, py, pw, ph, c ? shade(c, -.55) : WOOD[0]); R(g, px + 1, py + 1, pw - 2, ph - 2, c || WOOD[3]); R(g, px + 1, py + 1, pw - 2, 1, c ? shade(c, .45) : WOOD[4]);
+      write(g, '学校', px + 3, py + 3, c ? '#7A1E18' : WOOD[0], {gap: 2});
+    });
+    part('lanterns', c => {   // paper lanterns, then painted red
+      const body = c ? shade(c, -.12) : '#E2D4B0', band = c ? shade(c, .18) : '#F6EEDA', rim = c ? GOLD_DOT : WOOD[1];
+      for (const lx of [X + 6, X + W - 9]){ R(g, lx + 1, wallTop + 3, 1, 2, '#4A2C17'); oval(g, lx + 1, wallTop + 7, 2, 3, body); R(g, lx, wallTop + 6, 3, 1, band); R(g, lx, wallTop + 4, 3, 1, rim); R(g, lx + 1, wallTop + 11, 1, 2, rim); }
+    });
   }
 }
 const GOLD_DOT = '#E2B84A';

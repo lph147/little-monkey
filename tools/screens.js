@@ -29,6 +29,7 @@ SAVES.phrases = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['谢谢', 
 SAVES.notYet = {...SAVES.born, tips: ALL_TIPS, w: knows(1, ['石头', '你好', '山']), areas: {1: {elder: 1}}, pos: {x: 7, y: 2, dir: 'up'}};
 // facing the hungry monkey, who hasn't asked for anything yet
 SAVES.hungryAsks = {...SAVES.middle, areas: {1: {elder: 2, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', holding: {}, gate: false}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
+SAVES.bigHello = {...SAVES.hungryAsks, pos: {place: 'meadow', x: 4, y: 10, dir: 'right'}};   // facing the big monkey, in the middle meadow
 // the old monkey has told you about animals, and wants the meadow's words too: you know 山 and 树, not 河, 鱼 or 鸟; the
 // thirsty monkey has asked for water, and you're facing the river
 SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝']), met: [], friends: [],
@@ -74,11 +75,14 @@ SAVES.classroom = {...SAVES.schoolBuilt, w: {...SAVES.schoolBuilt.w, ...knows(1,
 SAVES.numbersNew = {...SAVES.classroom, w: {...SAVES.classroom.w, ...knows(1, ['一', '二', '三', '同学', '碗', '兔子'])}, pos: {place: 'school', x: 7, y: 3, dir: 'up'}};
 SAVES.numbersLater = {...SAVES.numbersNew, w: {...SAVES.numbersNew.w, ...knows(2, ['四', '五', '六'])}};
 SAVES.numbersTen = {...SAVES.numbersLater, w: {...SAVES.numbersLater.w, ...knows(2, ['七', '八', '九', '鸟']), ...knows(1, ['十'])}};
-// colour lessons: by the teacher, knowing the numbers to ten, just learning 黑色; then knowing it (the door's painted black);
-// and the school on the home ground, half painted, then all painted
-SAVES.coloursNew = {...SAVES.numbersNew, w: {...SAVES.numbersNew.w, ...knows(2, ['红色', '黄色', '白色', '四', '五', '六', '七', '八', '九', '十'])}};
-SAVES.coloursLater = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['黑色'])}};
-SAVES.schoolHalf = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['黑色', '蓝色', '绿色'])}, pos: {place: 'homeGround', x: 11, y: 6, dir: 'up'}};
+// colour lessons: by the teacher, knowing the numbers to ten and no colours yet, so the first lesson is 红色 (it paints the
+// lanterns); knowing red, then red, yellow and white, just learning 黑色; then knowing it (the door's painted black); and
+// the school on the home ground, half painted, then all painted
+SAVES.coloursNew = {...SAVES.numbersNew, w: {...SAVES.numbersNew.w, ...knows(2, ['四', '五', '六', '七', '八', '九', '十'])}};
+SAVES.coloursRed = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['红色'])}};
+SAVES.coloursThree = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['红色', '黄色', '白色'])}};
+SAVES.coloursLater = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(2, ['黑色'])}};
+SAVES.schoolHalf = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(2, ['黑色', '蓝色', '绿色'])}, pos: {place: 'homeGround', x: 11, y: 6, dir: 'up'}};
 SAVES.schoolPainted = {...SAVES.schoolHalf, w: {...SAVES.schoolHalf.w, ...knows(2, ['棕色', '橙色', '粉色'])}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
@@ -187,7 +191,8 @@ const SCREENS = [
   {id: 'gap-words', title: 'Fill the gap (words)', save: 'knowsWell', why: 'Once a word is recognised, the choices are Chinese and pinyin.', run: async () => {
     play(); await wait(100); gapQ({who: speaker('thirsty'), t: toks('我 要 喝 水'), en: 'I want to drink some water.', gap: '喝'}); await wait(400); }},
   {id: 'shop', title: 'The shop', save: 'middle', run: async () => { play(); await wait(100); shop(speaker('boss')); await wait(200); next(); await wait(400); }},
-  {id: 'red-flower', title: 'A red flower', save: 'middle', why: 'The first flower of a colour teaches its word.', run: async () => { play(); await wait(100); showNotice('红色', {note: 'The colour of these flowers.'}); await wait(400); }},
+  {id: 'big-hello', title: 'The big monkey says hello', save: 'bigHello', why: 'In the meadow, the big monkey has nothing to ask yet: his flowers wait for chapter 1.', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
   {id: 'behind-tree', title: 'Behind a tree', save: 'middle', why: 'Its leaves cover you as you walk behind it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 12, y: 7, dir: 'left'}; placePlayer(); await wait(500); }},
   {id: 'stall', title: 'The shop owner’s stall', save: 'middle', why: 'Three squares wide, with the shop owner beside it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 9, y: 18, dir: 'up'}; placePlayer(); await wait(500); }},
   {id: 'apple-tree', title: 'The apple tree', save: 'appleTree', why: 'In the south-east, across the river, with yellow flowers nearby.', run: async () => { play(); await wait(500); }},
@@ -329,7 +334,7 @@ const SCREENS = [
     play(); await wait(100); storyScene('buildingSchool'); introClock = 7.6; advancedTo = 2; await wait(400); }},
   {id: 'building-done', title: 'This is our school!', save: 'schoolFrame', why: 'The sign and the lanterns go up, and the troop jumps for joy: 这是我们的学校！ teaches 学校.', run: async () => {
     play(); await wait(100); storyScene('buildingSchool'); introClock = 9.6; advancedTo = 3; await wait(400); }},
-  {id: 'school-built', title: 'The school (学校)', save: 'schoolBuilt', why: 'The school stands on its plot: walk in through its door.', run: async () => {
+  {id: 'school-built', title: 'The school (学校)', save: 'schoolBuilt', why: 'The school stands on its plot, bare wood, with paper lanterns and a grey step: walk in through its door.', run: async () => {
     play(); await wait(500); }},
   {id: 'class-greets', title: 'Hello, teacher!', save: 'schoolBuilt', why: 'The first time you talk to the old monkey at school, the class greets him: 老师好！ teaches 老师.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(300); next(); await wait(500); }},
@@ -351,9 +356,17 @@ const SCREENS = [
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[5], n: 10}); await wait(400); [...document.querySelectorAll('.opt')].find(b => b.textContent.includes('十')).click(); await wait(500); }},
   {id: 'colour-lesson', title: 'A colour lesson', save: 'coloursNew', why: 'With a new colour to learn (taking turns with the numbers), a lesson is a colour lesson: 上课！, then this card.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
-  {id: 'teacher-paint', title: 'This is black.', save: 'coloursNew', why: 'The teacher opens a pot of paint, teaching 黑色 (bold).', run: async () => {
+  {id: 'teacher-paint', title: 'This is red.', save: 'coloursNew', why: 'The teacher opens a pot of paint, teaching 红色 (bold): red, yellow and white come first.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('[data-a=yes]'); await wait(500); }},
-  {id: 'paint-new', title: 'Which paint?', save: 'coloursNew', why: 'A colour question while 黑色 is new: hear it, and choose from paints with their characters (colours you know).', run: async () => {
+  {id: 'paint-first', title: 'The first colour', save: 'coloursNew', why: 'While 红色 is the only colour you know, the other answers are things you know: Which is it?', run: async () => {
+    play(); await wait(100); rec('红色').lv = 1; colourQ({who: 'elder', w: '红色'}); await wait(600); }},
+  {id: 'painting-lanterns', title: 'Painting the lanterns', save: 'coloursNew', why: 'The first colour lesson ends with the class painting the paper lanterns 红色 (red).', run: async () => {
+    play(); await wait(100); rec('红色').lv = 1; storyScene('paintLanterns'); await wait(2300); }},
+  {id: 'painted-sign', title: 'The sign is yellow!', save: 'coloursRed', why: 'The second: the sign, painted 黄色 (yellow), its writing dark red.', run: async () => {
+    play(); await wait(100); rec('黄色').lv = 1; storyScene('paintSign'); await wait(4600); click('#nextBtn'); await wait(900); }},
+  {id: 'painted-step', title: 'The step is white!', save: 'coloursThree', why: 'The third: the step at the door, painted 白色 (white).', run: async () => {
+    play(); await wait(100); storyScene('paintSteps'); await wait(4600); click('#nextBtn'); await wait(900); }},
+  {id: 'paint-new', title: 'Which paint?', save: 'coloursThree', why: 'A colour question while 黑色 is new: hear it, and choose from paints with their characters (colours you know).', run: async () => {
     play(); await wait(100); rec('黑色').lv = 1; colourQ({who: 'elder', w: '黑色'}); await wait(600); }},
   {id: 'paint-read', title: 'Which paint? (reading)', save: 'coloursLater', why: 'Once 黑色 is recognised: read it, and choose from the paints alone.', run: async () => {
     play(); await wait(100); colourQ({who: 'elder', w: '黑色'}); await wait(500); }},
@@ -361,8 +374,8 @@ const SCREENS = [
     play(); await wait(100); storyScene('paintDoor'); await wait(2300); }},
   {id: 'painted-roof', title: 'The roof is blue!', save: 'coloursLater', why: 'Then (Next) the troop jumps for joy, and the newly painted roof sparkles.', run: async () => {
     play(); await wait(100); storyScene('paintRoof'); await wait(4600); click('#nextBtn'); await wait(900); }},
-  {id: 'school-colours', title: 'The school, half painted', save: 'schoolHalf', why: 'Each part painted as you learn its colour: the door black, the roof blue, the windows green.', run: async () => { play(); await wait(500); }},
-  {id: 'school-painted', title: 'The school, all painted', save: 'schoolPainted', why: 'All six colours: the walls brown, the pillars orange, and pink peach blossom under the windows too.', run: async () => { play(); await wait(500); }},
+  {id: 'school-colours', title: 'The school, half painted', save: 'schoolHalf', why: 'Each part painted as you learn its colour: the lanterns red, the sign yellow, the step white, the door black, the roof blue, the windows green.', run: async () => { play(); await wait(500); }},
+  {id: 'school-painted', title: 'The school, all painted', save: 'schoolPainted', why: 'All nine colours: the walls brown, the pillars orange, and pink peach blossom under the windows too.', run: async () => { play(); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

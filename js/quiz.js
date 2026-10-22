@@ -94,11 +94,16 @@ async function countLesson(series, word, who){
 // A colour question (a colour lesson): the teacher wants a paint, and you choose it from three colours you know, as in
 // any picture question: you hear it while it's new, and the paints have their characters (and their pinyin once you've
 // answered); once you know it, you read it, and choose from the paints alone. A miss is practice, as when counting.
+// In your first colour lessons, before you know two other colours, other things you know with pictures make up the
+// answers (decided 22 October 2026: red, yellow and white, which the prologue's flowers taught, are the first lessons now).
 // Gives whether you were right.
 async function colourQ({who, w}){
-  const listen = lvl(w) <= 1, colours = shuffle(ORDER.filter(x => x !== w && WORDS[x].category === WORDS[w].category && lvl(x) >= 1));
-  const opts = shuffle([w, ...(listen ? soundApart(w, colours, 2) : colours.slice(0, 2))]);
-  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${listen ? 'Listen. Which paint is it?' : 'Read it. Which paint is it?'}</p></div>`,
+  const listen = lvl(w) <= 1, known = x => x !== w && lvl(x) >= 1;
+  const colours = shuffle(ORDER.filter(x => known(x) && WORDS[x].category === WORDS[w].category));
+  const pool = colours.length >= 2 ? colours : [...colours, ...shuffle(picWords().filter(x => known(x) && WORDS[x].category !== WORDS[w].category))];
+  const opts = shuffle([w, ...(listen ? soundApart(w, pool, 2) : pool.slice(0, 2))]);
+  const which = opts.every(o => WORDS[o].category === WORDS[w].category) ? 'Which paint is it?' : 'Which is it?';
+  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${listen ? 'Listen.' : 'Read it.'} ${which}</p></div>`,
     body:listen ? '<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>'
       : `<div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`,
     options:opts.map(o => `<span class="ico">${picHTML(o)}</span>${listen ? `<span class="cap">${o}</span>${laterPy(o)}` : ''}`),
@@ -109,15 +114,15 @@ async function colourQ({who, w}){
 }
 // A colour lesson (a lesson series of kind paint, with the teacher: who): he opens a pot of the new colour, teaching it
 // (his line for it, teach), then wants paints, five times: the new colour three times, and twice another colour you
-// know. Each right answer earns a shell if that colour needed practice. Then the class goes out and paints a part of the
+// know (in your first lessons, the new colour instead, until you know two others). Each right answer earns a shell if that colour needed practice. Then the class goes out and paints a part of the
 // school with the new colour (its scene, in scenes). Gives whether you had the lesson (you can say Not now at the start).
 async function paintLesson(series, word, who){
   const face = speaker(who);
   if (!await confirmBox(face, fill(series.start), 'Start', 'Not now')) return false;
   await showDialog(face, L[series.teach[word]], {teach:word});
   await showNotice(word, {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
-  const others = shuffle(ORDER.filter(x => x !== word && WORDS[x].category === WORDS[word].category && lvl(x) >= 1));
-  const asks = shuffle([...Array(LESSON_QUESTIONS - 2).fill(word), ...others.slice(0, 2)]);
+  const others = shuffle(ORDER.filter(x => x !== word && WORDS[x].category === WORDS[word].category && lvl(x) >= 1)).slice(0, 2);   // (the first lessons: fewer, or none)
+  const asks = shuffle([...Array(LESSON_QUESTIONS - others.length).fill(word), ...others]);
   let right = 0, shells = 0;
   for (const w of asks){
     const need = needsPractice(w);

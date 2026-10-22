@@ -129,22 +129,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   for (const w of ['河', '鸟']) assert.ok(knows(w), `${w} should be learned`);
   assert.ok(!get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow')), 'with all five, that task is done');
 
-  // The big monkey, in the middle meadow: a red, a yellow and a white flower, for shells
-  await pressAt(4, 10, 'right', 'meeting the big monkey');
-  assert.equal(area().flowers, 'asked', 'the big monkey should ask for flowers');
-  await pressAt(11, 6, 'down', 'picking a red flower');
-  assert.ok(knows('红色'), 'the first red flower should teach 红色');
-  await pressAt(11, 6, 'down', 'trying another red flower');
-  assert.equal(get('here().picked.flowers.length'), 1, 'one flower of each colour');
-  await pressAt(11, 16, 'down', 'picking a yellow flower in the south');
-  await pressAt(16, 9, 'right', 'picking a white flower by the river');
-  for (const w of ['黄色', '白色']) assert.ok(knows(w), `picking should teach ${w}`);
-  assert.equal(area().holding.flowers, '花', 'you should be holding 3 flowers');
-  const peaches = get('S.shells');
-  await pressAt(4, 10, 'right', 'giving the big monkey the flowers');
-  assert.equal(area().flowers, 'done', 'the big monkey should take the flowers');
-  assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气');
-  assert.ok(get('S.shells') > peaches, 'and give you peaches for them');
+  // The big monkey, in the middle meadow, has nothing to ask yet: his flowers wait for chapter 1 (decided 22 October 2026)
+  await pressAt(4, 10, 'right', 'saying hello to the big monkey');
+  assert.equal(area().flowers, 'not asked', 'he doesn’t ask for flowers');
+  for (const w of ['红色', '黄色', '白色']) assert.ok(!knows(w), `${w} waits for school`);
+  assert.ok(!knows('不客气'), 'no one has thanked you with nothing else new yet, so 不客气 waits too');
 
   // The shop owner, and the animals in the tall grass
   await pressAt(11, 15, 'down', 'meeting the shop owner');
@@ -323,6 +312,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('PLACE'), 'homeGround');
   await pressAt(15, 5, 'up', 'giving the big monkey the wood and the stones');
   assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them');
+  assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气 to his thanks');
 
   // Chapter 1: the troop builds the school at once, and you go in: the class greets its teacher, the little monkey is
   // your classmate, and the teacher gives you a lesson
@@ -342,12 +332,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('__said').includes('上课！') && get('__said').includes('下课！'), 'class begins, and is over');
   assert.ok(get('S.shells') >= shellsBefore, 'shells for words that needed practice');
   assert.ok(knows('四'), 'the first lesson teaches a new number: 四');
-  for (let i = 0; i < 20 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 6); i++) await pressAt(7, 3, 'up', `lesson ${i + 2}`);
+  for (let i = 0; i < 25 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9); i++) await pressAt(7, 3, 'up', `lesson ${i + 2}`);
   for (const n of ['五', '六', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);
-  for (const c of ['黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']) assert.ok(knows(c), `the colour lessons teach ${c}`);
-  assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintDoor', 'paintRoof', 'paintWindows', 'paintWalls', 'paintPillars', 'paintBlossom'],
+  for (const c of ['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']) assert.ok(knows(c), `the colour lessons teach ${c}`);
+  assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns', 'paintSign', 'paintSteps', 'paintDoor', 'paintRoof', 'paintWindows', 'paintWalls', 'paintPillars', 'paintBlossom'],
     'each colour lesson ends with the class painting a part of the school');
-  assert.deepEqual(Object.keys(get('paintedParts()')).sort(), ['blossom', 'door', 'pillars', 'roof', 'walls', 'windows'], 'and it’s all painted');
+  assert.deepEqual(Object.keys(get('paintedParts()')).sort(), ['blossom', 'door', 'lanterns', 'pillars', 'roof', 'sign', 'steps', 'walls', 'windows'], 'and it’s all painted');
   await pressAt(7, 3, 'up', 'a lesson once you know the numbers to ten and the colours: practice');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
 

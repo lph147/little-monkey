@@ -14,7 +14,7 @@ shown where the word list has them.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
+| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey), 大猴子 (Big monkey) |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
 | 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey) |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I'm hungry. I want to eat some fruit! | 饿猴子 (Hungry monkey) |  |
@@ -91,6 +91,9 @@ shown where the word list has them.
 | 这是棕色。 | zhè shì zōngsè. | This is brown. |  |  |
 | 这是橙色。 | zhè shì chéngsè. | This is orange. |  |  |
 | 这是粉色。 | zhè shì fěnsè. | This is pink. |  |  |
+| 这是红色。 | zhè shì hóngsè. | This is red. |  |  |
+| 这是黄色。 | zhè shì huángsè. | This is yellow. |  |  |
+| 这是白色。 | zhè shì báisè. | This is white. |  |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
 | 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
@@ -206,6 +209,12 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 柱子是橙色的！ | zhùzi shì chéngsè de! | The pillars are orange! |  |
 | 我们去画花吧！ | wǒmen qù huà huā ba! | Let’s go and paint some flowers! |  |
 | 花是粉色的！ | huā shì fěnsè de! | The flowers are pink! |  |
+| 我们去刷灯笼吧！ | wǒmen qù shuā dēnglong ba! | Let’s go and paint the lanterns! |  |
+| 灯笼是红色的！ | dēnglong shì hóngsè de! | The lanterns are red! |  |
+| 我们去刷牌子吧！ | wǒmen qù shuā páizi ba! | Let’s go and paint the sign! |  |
+| 牌子是黄色的！ | páizi shì huángsè de! | The sign is yellow! |  |
+| 我们去刷台阶吧！ | wǒmen qù shuā táijiē ba! | Let’s go and paint the step! |  |
+| 台阶是白色的！ | táijiē shì báisè de! | The step is white! |  |
 
 ### Names
 
@@ -343,6 +352,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 窗户 | chuānghu | window |  |
 | 墙 | qiáng | wall |  |
 | 柱子 | zhùzi | pillar |  |
+| 灯笼 | dēnglong | lantern |  |
+| 牌子 | páizi | sign, board |  |
+| 台阶 | táijiē | step, steps |  |
 | 几 | jǐ | how many |  |
 | 个 | gè | (counts things: 几个, how many) |  |
 | 们 | men | (more than one: 同学们, the class) |  |

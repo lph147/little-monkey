@@ -50,7 +50,7 @@ const WORD_BANK = {
   '松鼠': {py:'sōngshǔ', en:'squirrel', pic:'🐿️', area:1, category:'animals'},
   '山羊': {py:'shānyáng', en:'goat', pic:'🐐', area:1, category:'animals'},
   '洞': {py:'dòng', en:'cave', pic:'🕳️', area:1, category:'places'},
-  '红色': {py:'hóngsè', en:'red', pic:'🟥', area:1, category:'colours'},
+  '红色': {py:'hóngsè', en:'red', pic:'🟥', area:1, category:'colours'},   // (chapter 1: the school's colour lessons; the prologue's flowers taught red, yellow and white until 22 October 2026)
   '黄色': {py:'huángsè', en:'yellow', pic:'🟨', area:1, category:'colours'},
   '白色': {py:'báisè', en:'white', pic:'⬜', area:1, category:'colours'},
   '黑色': {py:'hēisè', en:'black', pic:'⬛', area:1, category:'colours'},   // (chapter 1: the school's colour lessons)
@@ -139,6 +139,9 @@ const WORD_BANK = {
   '窗户': {py:'chuānghu', en:'window'},
   '墙': {py:'qiáng', en:'wall'},
   '柱子': {py:'zhùzi', en:'pillar'},
+  '灯笼': {py:'dēnglong', en:'lantern'},
+  '牌子': {py:'páizi', en:'sign, board'},
+  '台阶': {py:'táijiē', en:'step, steps'},
   '几': {py:'jǐ', en:'how many'},
   '个': {py:'gè', en:'(counts things: 几个, how many)'},
   '们': {py:'men', en:'(more than one: 同学们, the class)'},

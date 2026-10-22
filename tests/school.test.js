@@ -99,7 +99,7 @@ test('the first time you talk to the teacher, the class greets him: 老师好！
 });
 
 test('the little monkey: 我们是同学！ (同学); then lessons with the teacher, who has a ! when words need practice', async () => {
-  const g = game({school: 2}, {place: 'school', x: 4, y: 5, dir: 'left'}, ['学校', '老师', '四', '五', '六', '七', '八', '九', '十', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']);   // (no new number or colour to learn: tests/numbers.test.js, tests/colours.test.js)
+  const g = game({school: 2}, {place: 'school', x: 4, y: 5, dir: 'left'}, ['学校', '老师', '四', '五', '六', '七', '八', '九', '十', '红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']);   // (no new number or colour to learn: tests/numbers.test.js, tests/colours.test.js)
   assert.equal(bubble(g, 'playful'), '!');
   assert.match(get(g, 'getTasks()[0].text'), /Talk to the little monkey/);
   await press(g, 4, 5, 'left');

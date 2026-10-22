@@ -616,7 +616,8 @@ function drawBuildingSchool(t, now){
 // long brushes paint it from left to right, dripping paint, beside a pot of it (from .6 to 3.6); then they turn round,
 // and once you press Next, the troop jumps for joy, and the part sparkles.
 const PAINTERS = [['big', 0, 64, 84, 166], ['troop1', -62, 68, 30, 112]], WATCHERS = [['elder', 4, 70, 'right'], ['playful', 180, 72, 'left'], ['player', 206, 69, 'left']];   // painters: [who, behind the brushes' edge by, y, from x, to x]
-const PAINT_AT = {door:[120, 86, 12, 14], windows:[116, 76, 56, 8], walls:[120, 78, 84, 18], pillars:[120, 78, 84, 18], roof:[120, 30, 84, 14], blossom:[116, 98, 56, 4]};   // [x, y] the brushes reach to, and the sparkles' spread
+const PAINT_AT = {door:[120, 86, 12, 14], windows:[116, 76, 56, 8], walls:[120, 78, 84, 18], pillars:[120, 78, 84, 18], roof:[120, 30, 84, 14], blossom:[116, 98, 56, 4],
+  lanterns:[120, 66, 86, 6], sign:[120, 50, 22, 9], steps:[120, 113, 18, 3]};   // [x, y] the brushes reach to, and the sparkles' spread
 function drawPaintingSchool(t, now, def){
   const W = VW*T, H = VH*T, blink = now % 3200 < 130;
   for (let y = 0; y < 44; y += 4) R(b, 0, y, W, 4, mix('#8FCBEF', '#CFE9F7', y / 44));   // the sky
