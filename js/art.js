@@ -695,18 +695,25 @@ function schoolHouse(g, X, Y, W, H, built = {walls:1, roof:1, sign:true}){
   }
 }
 const GOLD_DOT = '#E2B84A';
-function schoolFrame(g, o){
+// The school's frame, k of the way up (from 0 to 1: up, on the map; as the troop builds it, in the scene of building the
+// school): the footing of small stones laid first, then the posts going up one by one, the beams, the braces, the roof's
+// frame and a cross beam, and last a ladder (decided 21 October 2026: it had just popped up on the map).
+function schoolFrame(g, o, k = 1){
   const X = o.x*T, Y = o.y*T, W = o.w*T, base = Y + o.h*T - 4, top = base - 28, peak = top - 22, mid = X + Math.round(W / 2);
   const posts = [X + 6, X + Math.round(W / 3), X + Math.round(W * 2 / 3), X + W - 7];
-  woodLine(g, X + 6, top, mid, peak); woodLine(g, X + W - 7, top, mid, peak); woodLine(g, mid, peak, mid, top);   // the roof's frame
-  woodLine(g, mid - 12, top - 10, mid + 12, top - 10);                                                               // a cross beam
-  posts.forEach(px => woodLine(g, px, base, px, top));                                                               // the posts
-  woodLine(g, X + 4, top, X + W - 5, top); woodLine(g, X + 4, top + 13, X + W - 5, top + 13);                        // the beams
-  woodLine(g, posts[0], top + 13, posts[1], top); woodLine(g, posts[3], top + 13, posts[2], top);                    // braces
-  for (let sx = X + 2; sx < X + W - 4; sx += 7){ oval(g, sx + 3, base + 1, 3, 2, GREY[0]); oval(g, sx + 3, base + 1, 2, 1, GREY[2]); dot(g, sx + 2, base, GREY[3]); }   // the footing
+  const up = (from, to) => clamp((k - from) / (to - from), 0, 1);   // how far one part is up, as k goes from its from to its to
+  const beam = (x0, y0, x1, y1, f) => { if (f > 0) woodLine(g, x0, y0, Math.round(x0 + (x1 - x0) * f), Math.round(y0 + (y1 - y0) * f)); };   // from (x0, y0), f of the way
+  beam(X + 6, top, mid, peak, up(.76, .86)); beam(X + W - 7, top, mid, peak, up(.8, .9)); beam(mid, top, mid, peak, up(.84, .92));   // the roof's frame
+  beam(mid - 12, top - 10, mid + 12, top - 10, up(.9, .96));                                                         // a cross beam
+  posts.forEach((px, i) => beam(px, base, px, top, up(.16 + i * .08, .3 + i * .08)));                                // the posts
+  beam(X + 4, top, X + W - 5, top, up(.52, .62)); beam(X + 4, top + 13, X + W - 5, top + 13, up(.56, .66));          // the beams
+  beam(posts[0], top + 13, posts[1], top, up(.66, .72)); beam(posts[3], top + 13, posts[2], top, up(.7, .76));       // braces
+  const stones = []; for (let sx = X + 2; sx < X + W - 4; sx += 7) stones.push(sx);
+  stones.slice(0, Math.ceil(stones.length * up(0, .16))).forEach(sx => { oval(g, sx + 3, base + 1, 3, 2, GREY[0]); oval(g, sx + 3, base + 1, 2, 1, GREY[2]); dot(g, sx + 2, base, GREY[3]); });   // the footing
+  if (k < .97) return;
   const lx = posts[2] + 9;   // a ladder against a post
   woodLine(g, lx, base, lx + 4, top + 2); woodLine(g, lx + 6, base, lx + 10, top + 2);
-  for (let r = 1; r <= 4; r++){ const y = base - r * 6, k = (base - y) / (base - top - 2); R(g, Math.round(lx + 4 * k), y, 7, 1, WOOD[3]); }
+  for (let r = 1; r <= 4; r++){ const y = base - r * 6, f = (base - y) / (base - top - 2); R(g, Math.round(lx + 4 * f), y, 7, 1, WOOD[3]); }   // its rungs
 }
 function stall(g, L, Y, w){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit
   const top = Y + 16 - Math.round(w * .66), cy = Y + 16 - Math.round(w * .26);

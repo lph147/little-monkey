@@ -181,6 +181,26 @@ function drawSwing(PX, PY, now){
   b.drawImage(monkeySprite('player', pl.dir, false, 0, true), PX, PY);
   if (pl.dir !== 'up') stick();
 }
+// Ground being marked out (the markOut step): a stake hammered in at each corner of the plot, one by one, as plot() in
+// js/art.js has them; the string pulled tight round them, from the top-left, round to the right, along the bottom and back
+// up; then the new ground fading in, with its sign and its path (and anything else that's changed).
+function drawMarking(cx, cy, now){
+  const m = marking, e = m.hold ?? now - m.t0, k = (from, to) => clamp((e - from) / (to - from), 0, 1);
+  const fade = k(...MARK.ground);
+  if (fade > 0){ b.globalAlpha = fade; for (const [x, y] of m.changed) b.drawImage(m.fresh, x*T, y*T, T, T, x*T - cx, y*T - cy, T, T); b.globalAlpha = 1; }
+  if (!m.box) return;
+  const X0 = m.box.x0*T - cx, Y0 = m.box.y0*T - cy, X1 = m.box.x1*T - cx, Y1 = m.box.y1*T - cy, w = X1 + T - X0, h = Y1 + T - Y0;
+  let left = Math.round(k(...MARK.string) * 2 * (w + h));   // how much string is out
+  for (const [x, y, dx, dy, n] of [[X0, Y0 + 1, 1, 0, w], [X1 + 14, Y0, 0, 1, h], [X1 + T, Y1 + 14, -1, 0, w], [X0 + 1, Y1 + T, 0, -1, h]]){
+    const d = Math.min(n, left); left -= d;
+    if (d > 0) R(b, dx < 0 ? x - d : x, dy < 0 ? y - d : y, dx ? d : 1, dy ? d : 1, '#EFE6CF');
+  }
+  [[X0, Y0 + 1], [X1 + 14, Y0 + 1], [X1 + 14, Y1 + 12], [X0, Y1 + 12]].forEach(([sx, sy], i) => {
+    if (e < MARK.stakes[i]) return;
+    const y = sy - 2 - Math.max(0, 3 - Math.floor((e - MARK.stakes[i]) / 40));   // (dropping into place as it's hammered in)
+    R(b, sx, y, 2, 5, WOOD[1]); R(b, sx, y, 1, 5, WOOD[3]); R(b, sx, y, 2, 1, WOOD[0]);
+  });
+}
 // Chips flying off what you hit (burst, at the moment your stick strikes): wood or stone, falling as they fly.
 const chips = [];
 const CHIP_COLOURS = {wood:['#D2A46A', '#8A5A32', '#B98A55', '#6B4A2A'], stone:['#E6E2D6', '#A9A598', '#7C786D', '#D6D2C5']};
@@ -217,6 +237,7 @@ function drawWorld(now){
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
   drawGlimpse(cx, cy, now);
+  if (marking) drawMarking(cx, cy, now);   // ground being marked out (the markOut step)
   // fish jumping out of the water (the area's fish), one after another, every other one the other way
   AREA.fish.forEach((f, i) => {
     const fp = ((now + i * 2300) % (5200 + i * 700)) / 900;
@@ -548,9 +569,10 @@ function drawBecomingKing(t, now){
   }
   if (t < 11.9){ b.globalAlpha = 1 - clamp((t - 11.3) / .6, 0, 1); R(b, 0, 0, W, H, '#0B0907'); b.globalAlpha = 1; }   // fading in
 }
-// The troop building the school (chapter 1), at the home ground, close up: the frame on its plot, and two monkeys carrying
-// in wood (to 3); the walls go up, plank by plank, with the troop hammering (3 to 6); then the grey tiled roof, row by row
-// (6 to 9); then the sign and the lanterns go up, sparkling, and the troop turns round and jumps for joy (from 9).
+// The troop building the school (chapter 1), at the home ground, close up: on the bare plot, two monkeys carry in wood,
+// and the frame goes up, the footing first, then post by post (to 3); the walls go up, plank by plank, with the troop
+// hammering (3 to 6); then the grey tiled roof, row by row (6 to 9); then the sign and the lanterns go up, sparkling, and
+// the troop turns round and jumps for joy (from 9).
 // The building is drawn as on the map, a little narrower, at twice the size.
 const BUILDERS = [['big', 8, 66, 'right'], ['troop1', 38, 70, 'right'], ['player', 146, 72, 'left'], ['playful', 172, 70, 'left'], ['elder', 200, 66, 'left']];   // [who, x, y, facing the school]
 let siteCanvas = null;
@@ -564,7 +586,7 @@ function drawBuildingSchool(t, now){
   const built = {walls: k(3.2, 2.6), roof: k(6.2, 2.6), sign: t >= 9};
   if (!siteCanvas){ siteCanvas = document.createElement('canvas'); siteCanvas.width = 120; siteCanvas.height = 64; }
   const g = siteCanvas.getContext('2d'); g.clearRect(0, 0, 120, 64);
-  schoolFrame(g, {x: 10 / T, y: 14 / T, w: 100 / T, h: 3});   // (in the site's own pixels: the school's base is 4 up from its bottom)
+  schoolFrame(g, {x: 10 / T, y: 14 / T, w: 100 / T, h: 3}, k(.6, 2.4));   // (in the site's own pixels: the school's base is 4 up from its bottom)
   schoolHouse(g, 10, 14, 100, 48, built);
   b.drawImage(siteCanvas, 0, 0, 120, 64, 0, -8, 240, 128);
   if (t < 6.5){   // the pile of wood and stones, getting smaller as it's used
@@ -573,13 +595,13 @@ function drawBuildingSchool(t, now){
   }
   BUILDERS.forEach(([id, x, y, dir], i) => {
     const carrying = i < 2 && t < 2.4, walkIn = carrying ? 1 - k(0, 2.2) : 0, X = Math.round(x - walkIn * 90);
-    const working = t >= 3.2 && t < 9 && i < 2 && Math.floor(now / 260 + i) % 2 === 0, cheer = t >= 9;
+    const working = t >= 2.4 && t < 9 && i < 2 && Math.floor(now / 260 + i) % 2 === 0, cheer = t >= 9;
     const hop = cheer ? Math.round(Math.abs(Math.sin(now / 180 + i)) * 6) : working ? 2 : 0;
     const step = carrying && walkIn > 0 ? 1 + Math.floor(now / 160) % 2 : 0;
     b.drawImage(monkeySprite(id, cheer ? 'down' : dir, blink && i % 2 === 0, step, true), X, y - hop, 32, 32);
     if (carrying){ R(b, X + 2, y - 7, 28, 6, '#6B4A2A'); R(b, X + 3, y - 6, 26, 4, '#B98A55'); R(b, X + 25, y - 6, 4, 4, '#E2C08E'); }   // a log, carried over their head
   });
-  if (t >= 3.2 && t < 9){ for (let i = 0; i < 4; i++){ const ph = (now / 500 + i / 4) % 1; b.globalAlpha = 1 - ph; R(b, 70 + i * 30 + Math.round(ph * 6), 90 - Math.round(ph * 14), 2, 2, '#E6DCC8'); } b.globalAlpha = 1; }   // dust
+  if (t >= .6 && t < 9){ for (let i = 0; i < 4; i++){ const ph = (now / 500 + i / 4) % 1; b.globalAlpha = 1 - ph; R(b, 70 + i * 30 + Math.round(ph * 6), 90 - Math.round(ph * 14), 2, 2, '#E6DCC8'); } b.globalAlpha = 1; }   // dust
   if (t >= 9) for (let i = 0; i < 10; i++){   // sparkles round the sign
     const a = i / 10 * Math.PI * 2 + now / 1500, tw = Math.sin(now / 170 + i * 2);
     if (tw < 0) continue;

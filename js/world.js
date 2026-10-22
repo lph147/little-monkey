@@ -178,6 +178,22 @@ const paintsPart = w => (AREA.lessons || []).map(series => (series.paint || {})[
 // began, and the square it strikes), drawn by js/draw.js.
 const SWING_MS = 420, SWING_CONTACT = .45;
 let swing = null;
+// The troop marking out ground as you watch (the markOut step): when each stake is hammered in, when the string is pulled
+// tight round them, when the new ground fades in (with its sign and path), and when it's done, in ms; and what's being
+// marked out: {t0, changed: the squares that change, fresh: their new look, box: the plot's squares, x0 y0 to x1 y1; hold:
+// a moment to show it at, still, as the screens gallery does}.
+const MARK = {stakes:[150, 420, 690, 960], string:[1150, 1650], ground:[1750, 2300], end:2500};
+let marking = null;
+const mapLooks = () => MAP.map((r, y) => [...r].map((c, x) => tileAt(x, y).look));
+function markingOf(was){   // what's being marked out, now the story has changed (was: each square's look before)
+  const now = mapLooks(), changed = [];
+  now.forEach((row, y) => row.forEach((look, x) => { if (look !== was[y][x]) changed.push([x, y]); }));
+  if (!changed.length) return null;
+  const fresh = document.createElement('canvas'); fresh.width = COLS*T; fresh.height = ROWS*T;
+  const fg = fresh.getContext('2d'); changed.forEach(([x, y]) => LOOKS[now[y][x]](fg, x*T, y*T, x, y));
+  const plot = changed.filter(([x, y]) => now[y][x] === 'plot'), xs = plot.map(p => p[0]), ys = plot.map(p => p[1]);
+  return {t0:performance.now(), changed, fresh, box:plot.length ? {x0:Math.min(...xs), y0:Math.min(...ys), x1:Math.max(...xs), y1:Math.max(...ys)} : null};
+}
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
   async say(s, who){
     const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
@@ -231,6 +247,20 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async reply(s){ await replyWith(s.reply); },
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
+  // The troop marks out ground for something they'll build, as you watch (markOut: what the story becomes then): a stake
+  // hammered in at each corner of the plot, the string pulled tight round them, then the ground cleared, with its sign and
+  // the path to it, and anything else the story changes then fading in too (decided 21 October 2026: the home ground had
+  // its plots before anyone had planned them, and things that just appear look odd).
+  async markOut(s){
+    const was = mapLooks();
+    Object.assign(here(), s.markOut); save(); placeCharacters();
+    marking = markingOf(was);
+    if (!marking){ refreshMap(); return; }
+    let t = 0;
+    if (marking.box) for (const at of MARK.stakes){ await sleep(at - t); t = at; SFX.tock(); }   // (each stake, hammered in)
+    await sleep(MARK.end - t);
+    marking = null; refreshMap();
+  },
   sound(s){ if (SFX[s.sound]) SFX[s.sound](); },   // a sound (one of SFX in js/sound.js), such as a wolf howling far off
   // You swing your stick at the square you're facing, like Cut and Rock Smash in Pokémon: a whack, and chips fly off it
   // (hit: what it's made of, 'wood' or 'stone').

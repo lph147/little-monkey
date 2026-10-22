@@ -343,7 +343,7 @@ test('every step does one thing, with settings that exist, using real lines and 
       if (s.teach) assert.ok(AREA.lines[s.say].zh.split(' ').includes(s.teach), `${where}: line "${s.say}" doesn't contain ${s.teach}, so it can't be taught there`);
     }
     if (a === 'newWord' || a === 'card') assert.ok(collectible.includes(s[a]), `${where}: ${s[a]} isn't a word you can collect in ${where}`);
-    if (a === 'set') for (const k of Object.keys(s.set)) assert.ok(remembered.includes(k), `${where} sets "${k}", which the area doesn't remember`);
+    if (a === 'set' || a === 'markOut') for (const k of Object.keys(s[a])) assert.ok(remembered.includes(k), `${where} sets "${k}", which the area doesn't remember`);
     if (a === 'shop') assert.ok(AREA.shop && AREA.shop.who === who, `${where}: ${who} doesn't run the shop`);
     if (a === 'request') assert.ok(AREA.requests[s.request] && AREA.requests[s.request].from === who, `${where}: "${s.request}" isn't a request from ${who}`);
     if (a === 'reply') assert.ok(BANK[s.reply] && BANK[s.reply].phrase && collectible.includes(s.reply), `${where}: ${s.reply} isn't a phrase you can learn here`);

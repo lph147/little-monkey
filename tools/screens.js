@@ -252,12 +252,14 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
   {id: 'way-to-home', title: 'The way to the home ground', save: 'toHomeGround', why: 'Beside the waterfall, the bushes are cleared: a path to the home ground, with the old monkey following you.', run: async () => {
     play(); await wait(500); }},
-  {id: 'home-ground', title: 'The home ground (家园)', save: 'homeGround', why: 'Chapter 1’s settlement: five plots marked out with string and stakes, each with a sign; the ways out shut by bushes.', run: async () => {
+  {id: 'home-ground', title: 'The home ground (家园)', save: 'homeGround', why: 'Chapter 1’s settlement when you first come: wide, open ground, before anyone has marked anything out; the ways out shut by bushes.', run: async () => {
     play(); await wait(500); }},
-  {id: 'plot-sign', title: 'A plot’s sign', save: 'homeGround', why: 'What the troop wants to build there.', run: async () => {
-    play(); await wait(100); S.pos = {place: 'homeGround', x: 6, y: 4, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(400); }},
   {id: 'big-asks', title: 'Wood and small stones', save: 'bigAsks', why: 'The big monkey, building the school: 我们要木头和小石头！ (木头 wood is just for listening until you find some).', run: async () => {
     play(); await wait(100); talk(npc('big')); await wait(600); }},
+  {id: 'mark-out', title: 'Marking out the school’s plot', save: 'bigAsks', why: 'Then, as you watch, he marks out the school’s plot beside him: a stake hammered in at each corner (tock), the string pulled tight round them, then the ground cleared, with its sign and the path up to it.', run: async () => {
+    play(); await wait(100); const was = mapLooks(); Object.assign(here(), {build: 1}); marking = {...markingOf(was), hold: 1400}; await wait(300); }},
+  {id: 'plot-sign', title: 'The school’s sign', save: 'pineFirst', why: 'Put up when its plot is marked out: what the troop will build there.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'homeGround', x: 6, y: 4, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(400); }},
   {id: 'pine-wood', title: 'The pine wood (松林)', save: 'pineWood', why: 'Up from the home ground, in at the bottom: the way leads up to the squirrel’s clearing, where the ways part. Three dry, dead pines that sparkle (knock them down with your stick) and three small stones are hidden around the wood, with long grass on every way to them.', run: async () => {
     play(); await wait(500); }},
   {id: 'pine-wood-first', title: 'Into the pine wood', save: 'pineFirst', why: 'The first time you go in: gloomy under the thick pines (but in the daytime: sunbeams, never night), with mist, and a wolf howling far off.', run: async () => {
@@ -280,10 +282,12 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'first-wood', title: 'Down comes the dry pine', save: 'pineWood', why: 'Hit a dead pine with your stick: it comes down, and you find 木头 (wood), said aloud.', run: async () => {
     play(); await wait(100); S.pos = {place: 'pineWood', x: 2, y: 19, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(1200); }},
-  {id: 'school-frame', title: 'The school’s frame', save: 'schoolFrame', why: 'With the wood and stones, the troop gets to work: the frame of the school goes up on its plot.', run: async () => {
+  {id: 'school-frame', title: 'The school’s frame (an older game)', save: 'schoolFrame', why: 'A game saved with just the frame up, before version 191, keeps it until you talk to the big monkey: now the frame goes up in the scene of building the school.', run: async () => {
     play(); await wait(500); }},
-  {id: 'build-school', title: 'Let’s build the school!', save: 'schoolFrame', why: 'The big monkey, once the frame is up: 我们来盖学校吧！', run: async () => {
+  {id: 'build-school', title: 'Let’s build the school!', save: 'schoolFrame', why: 'The big monkey, as soon as you bring him the wood and stones: 我们来盖学校吧！', run: async () => {
     play(); await wait(100); S.pos = {place: 'homeGround', x: 15, y: 5, dir: 'up'}; placePlayer(); talk(npc('big')); await wait(600); }},
+  {id: 'building-frame', title: 'The frame goes up', save: 'schoolFrame', why: 'The troop building the school starts on the bare plot: two monkeys carry in the wood, and the frame goes up, the footing first, then post by post, with hammering.', run: async () => {
+    play(); await wait(100); storyScene('buildingSchool'); introClock = 1.9; advancedTo = 0; await wait(150); }},
   {id: 'building-walls', title: 'One, two, three!', save: 'schoolFrame', why: 'The troop building the school, told like the opening: the walls go up, plank by plank, with the troop hammering.', run: async () => {
     play(); await wait(100); storyScene('buildingSchool'); introClock = 4.6; advancedTo = 1; await wait(400); }},
   {id: 'building-roof', title: 'The roof goes on', save: 'schoolFrame', why: 'Then the grey tiled roof, row by row.', run: async () => {

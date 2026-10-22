@@ -277,8 +277,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('__said').includes('这里很大！'), 'he says how big it is');
   assert.ok(get('areaChecklist()').filter(([, , , found]) => found).every(([, done]) => done), 'chapter 1 so far is ticked off');
 
-  // Chapter 1: the big monkey wants wood and small stones to build the school, from the pine wood up the hill
+  // Chapter 1: the big monkey marks out the school's plot, and wants wood and small stones to build it, from the pine wood
+  // up the hill
+  assert.equal(run('tileAt(8, 2).look'), 'grass', 'the home ground is open ground when you come: no plots yet');
   await pressAt(15, 5, 'up', 'talking to the big monkey at the home ground');
+  assert.equal(run('tileAt(8, 2).look'), 'plot', 'he marks out the school’s plot as you watch');
   assert.equal(area().build, 1, 'he wants wood and small stones');
   assert.deepEqual([area().wood, area().stones], ['asked', 'asked']);
   stand(25, 0, 'up');
@@ -309,13 +312,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await act('arrive(16, 29).then(runEvents)', 'going back down to the home ground');
   assert.equal(run('PLACE'), 'homeGround');
   await pressAt(15, 5, 'up', 'giving the big monkey the wood and the stones');
-  assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them, and the troop gets to work');
-  assert.equal(run('tileAt(8, 2).look'), 'frame', 'the school’s frame is up on its plot');
+  assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them');
 
-  // Chapter 1: the troop builds the school, and you go in: the class greets its teacher, the little monkey is your
-  // classmate, and the teacher gives you a lesson
-  await pressAt(15, 5, 'up', 'talking to the big monkey: the troop builds the school');
-  assert.deepEqual(get('__scenes').slice(-1), ['buildingSchool'], 'the scene of the troop building it, told like the opening');
+  // Chapter 1: the troop builds the school at once, and you go in: the class greets its teacher, the little monkey is
+  // your classmate, and the teacher gives you a lesson
+  assert.deepEqual(get('__scenes').slice(-1), ['buildingSchool'], 'and the troop builds the school straight away, told like the opening: the frame goes up, then the walls, the roof and the sign');
   assert.ok(knows('学校'), 'the school teaches 学校');
   assert.equal(run('tileAt(8, 2).look'), 'school', 'the school stands on its plot');
   stand(11, 5, 'up');

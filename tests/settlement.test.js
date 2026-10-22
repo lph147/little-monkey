@@ -43,20 +43,19 @@ test('the rocks still roll away (the first map letter that changed with the stor
   assert.equal(g.run('tileAt(15, 4).look'), 'path');
 });
 
-test('the home ground: five plots, each with a sign saying what the troop wants to build there, and ways out shut by bushes', async () => {
+test('the home ground: open ground when you first come (each plot is marked out when its story begins), and ways out shut by bushes', async () => {
   const g = chapterOne({home: 2}, {place: 'homeGround', x: 1, y: 9, dir: 'right'});
   assert.deepEqual(get(g, 'PLACES.homeGround.name'), {zh: '家园', py: 'jiāyuán', en: 'Home ground'});
-  const map = get(g, 'MAP'), count = ch => map.join('').split(ch).length - 1;
-  for (const ch of ['s', 'd', 'h', 'e', 'c']) assert.ok(count(ch) >= 6, `the plot "${ch}" is marked out`);
-  assert.equal(g.run("tileAt(8, 2).look"), 'plot');
-  const signs = {1: /school/, 2: /shop/, 3: /hive/, 4: /garden/, 5: /pen/};
-  for (const [ch, says] of Object.entries(signs)){
-    const y = map.findIndex(r => r.includes(ch)), x = map[y].indexOf(ch);
-    assert.equal(g.run(`promptFor(${x}, ${y})`), 'Read');
-    g.run('__notes.length = 0');
-    await g.run(`interact(${x}, ${y})`);
-    assert.match(get(g, '__notes').join(), says, `the sign "${ch}" says what the plot is for`);
-  }
+  const map = get(g, 'MAP'), looks = () => get(g, 'MAP.flatMap((r, y) => [...r].map((c, x) => tileAt(x, y).look))');
+  assert.ok(!looks().some(l => l === 'plot' || l === 'sign'), 'no plots or signs yet: nobody has planned them');
+  for (const ch of ['s', 'd', 'h', 'e', 'c']) assert.ok(map.join('').split(ch).length - 1 >= 6, `the map has room for the plot "${ch}", marked out when its story begins`);
+  g.run('here().build = 1; refreshMap()');   // once the big monkey has marked out the school's plot (its own test, in pinewood.test.js)
+  assert.equal(g.run('tileAt(8, 2).look'), 'plot');
+  assert.equal(g.run('promptFor(6, 3)'), 'Read');
+  g.run('__notes.length = 0');
+  await g.run('interact(6, 3)');
+  assert.match(get(g, '__notes').join(), /wants to build a school here/, 'its sign says what it’s for');
+  assert.equal(looks().filter(l => l === 'plot').length, 21, 'just the school’s plot: the others wait for their stories');
   g.run('__notes.length = 0');
   await g.run('interact(31, 9)');
   assert.match(get(g, '__notes').join(), /clear a way through here when it’s needed/, 'the ways out are shut by thick bushes for now');
@@ -85,7 +84,7 @@ test('chapter 1 begins with the old monkey: we have a home now; he follows you t
   assert.deepEqual(get(g, 'S.following'), [], 'he stops following you');
   assert.deepEqual(where(g, 'elder'), ['homeGround', 10, 6], 'and goes to his place, by the school’s plot');
   assert.deepEqual(get(g, '__said'), ['这里很大！']);
-  assert.match(get(g, '__notes').join(' '), /a school, a new shop, a hive, a garden and a pen/);
+  assert.match(get(g, '__notes').join(' '), /open valley, all their own!.*a school here, and a new shop, a hive, a garden and a pen/);
   assert.ok(get(g, "areaChecklist()[0][1]"), 'chapter 1’s first step is ticked off');
   assert.match(g.run('tasksHint()'), /school first/);
 });

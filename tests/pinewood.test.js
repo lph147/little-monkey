@@ -1,7 +1,7 @@
 // Chapter 1: building the school. The big monkey wants wood and small stones, from the pine wood up the hill: you knock
 // down dry, dead pines with your stick (the hit step) for wood, pick up small stones by the stream, and break a cracked
 // rock to reach a little clearing, counting each thing aloud as you get it. Squares that change for good (a dead pine
-// becomes a stump) are kept in the save. Bring them back, and the school's frame goes up on its plot.
+// becomes a stump) are kept in the save. Bring them back, and the troop builds the school at once.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -14,7 +14,8 @@ const BUILDING = {build: 1, wood: 'asked', stones: 'asked', woodIn: 1};   // (an
 function game(area = {}, pos = {place: 'homeGround', x: 15, y: 5, dir: 'up'}, w = {}){
   const g = loadGame({dom: true, save: {version: 29, started: true, w: {'石头': {lv: 1, ok: 0}, '一': {lv: 1, ok: 0}, '二': {lv: 1, ok: 0}, '三': {lv: 1, ok: 0}, ...w},
     met: ['rabbit', 'fox', 'squirrel', 'goat'], areas: {1: {...CHAPTER_ONE, ...area}}, pos}});
-  g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__spoken = []");
+  g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__spoken = []; globalThis.__scenes = []; globalThis.__tocks = 0");
+  g.run("storyScene = async id => { __scenes.push(id); }; SFX.tock = () => { __tocks++; }");   // (scenes: their own tests)
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
   g.run("showNotice = async w => { __notes.push('card: ' + w); rec(w).lv = Math.max(rec(w).lv || 0, 1); }; say = t => { __spoken.push(t); }; replyWith = async () => {}");   // (replying: its own tests)
   g.run('placePlayer()');
@@ -29,12 +30,17 @@ async function play(g, code){
 const face = (g, x, y, dir) => g.run(`S.pos = {place: PLACE, x: ${x}, y: ${y}, dir: '${dir}'}; placePlayer()`);
 const press = (g, x, y, dir) => { face(g, x, y, dir); return play(g, 'interact(...facing()).then(runEvents)'); };
 
-test('the big monkey wants wood and small stones, and clears the way up to the pine wood', async () => {
+test('the big monkey marks out the school’s plot as you watch, wants wood and small stones, and clears the way up to the pine wood', async () => {
   const g = game();
   assert.equal(get(g, "((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show"), '!', 'he has a ! for you');
   assert.ok(!g.run('tileAt(25, 0).walk'), 'the way up is shut by thick bushes');
+  assert.deepEqual(get(g, '[tileAt(8, 2).look, tileAt(6, 3).look, tileAt(11, 6).look]'), ['grass', 'grass', 'grass'], 'no plot yet: open grass');
   await press(g, 15, 5, 'up');
   assert.deepEqual(get(g, '__said'), ['我们要木头和小石头！']);
+  assert.match(get(g, '__notes').join(' '), /marks out the ground for the school/);
+  assert.equal(g.run('__tocks'), 4, 'a stake hammered in at each corner');
+  assert.equal(g.run('marking'), null, 'and it’s done');
+  assert.deepEqual(get(g, '[tileAt(8, 2).look, tileAt(14, 4).look, tileAt(6, 3).look, tileAt(11, 6).look]'), ['plot', 'plot', 'sign', 'path'], 'the school’s plot, its sign and the path up to it');
   assert.match(get(g, '__notes').join(' '), /up to the pine wood/);
   assert.deepEqual(get(g, '[here().build, here().wood, here().stones]'), [1, 'asked', 'asked']);
   assert.ok(g.run('tileAt(25, 0).walk') && g.run('isOpen(exitAt(25, 0))'), 'the bushes are cleared');
@@ -104,21 +110,33 @@ test('the cracked rock shuts the sunny glade until you break it, any time in cha
   assert.equal(later.run('promptFor(23, 5)'), 'Hit', 'with the wood and stones brought already, you can still break it: the deer’s glade is behind it');
 });
 
-test('bring them to the big monkey: he takes both, and the school’s frame goes up (if you stand on its plot, you step off it)', async () => {
+test('bring them to the big monkey: he takes both, and the troop builds the school at once (the frame goes up in the scene, never on its own; if you stand on its plot, you step off it)', async () => {
   const g = game({...BUILDING, holding: {wood: '木头', stones: '石头'}, picked: {wood: [1, 2, 3], stones: [1, 2, 3]}}, {place: 'homeGround', x: 14, y: 4, dir: 'right'}, {'木头': {lv: 1, ok: 0}});
   assert.equal(get(g, "((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show"), '?', 'he has a ? while you have something for him');
   g.run("gapQ = async () => {}; __said.length = 0");   // (filling the gaps: their own tests)
   const shells = g.run('S.shells');
   await press(g, 14, 4, 'right');
-  assert.deepEqual(get(g, '__said'), ['你有木头吗？', '谢谢你！', '你有石头吗？', '谢谢你！']);
-  assert.deepEqual(get(g, '[here().wood, here().stones, here().build]'), ['done', 'done', 2]);
+  assert.deepEqual(get(g, '__said'), ['你有木头吗？', '谢谢你！', '你有石头吗？', '谢谢你！', '我们来盖学校吧！'], 'and straight away: let’s build the school!');
+  assert.deepEqual(get(g, '__scenes'), ['buildingSchool'], 'the troop builds it, in a scene: the frame goes up, then the walls, the roof and the sign');
+  assert.deepEqual(get(g, '[here().wood, here().stones, here().build, here().school]'), ['done', 'done', 2, 1]);
   assert.equal(g.run('S.shells'), shells + 6);
-  assert.equal(g.run('tileAt(8, 2).look'), 'frame', 'the frame is up on the school’s plot');
-  assert.equal(get(g, 'OBJECT_PIECES.filter(p => p.look === "frame").map(p => [p.x, p.y, p.w, p.h])').join(), '8,2,7,3', 'one frame, as big as the plot');
-  assert.ok(g.run('tileAt(pl.x, pl.y).walk') && !(g.run('pl.x') === 12 && g.run('pl.y') === 4), 'you stepped off the plot as the frame went up');
-  assert.match(get(g, '__notes').join(' '), /up goes the frame of the school/);
-  assert.ok(get(g, 'areaChecklist().slice(0, 2).every(([, done]) => done)'), 'chapter 1 so far is ticked off');
-  assert.match(get(g, 'getTasks()[0].text'), /^Talk to the big monkey: the troop is ready to build the school$/, 'next, the troop builds the school');
+  assert.ok(get(g, '__notes').includes('card: 学校'), 'it teaches 学校');
+  assert.equal(g.run('tileAt(8, 2).look'), 'school', 'the school stands on its plot');
+  assert.equal(get(g, 'OBJECT_PIECES.filter(p => p.look === "school").map(p => [p.x, p.y, p.w, p.h])').join(), '8,2,7,3', 'one school, as big as the plot');
+  assert.ok(!get(g, 'OBJECT_PIECES.some(p => p.look === "frame")'), 'no frame on its own on the map');
+  assert.ok(g.run('tileAt(pl.x, pl.y).walk'), 'you stepped off the plot as it went up');
+  assert.match(get(g, '__notes').join(' '), /he’s the teacher now/);
+  assert.ok(get(g, 'areaChecklist().filter(([t]) => /^(Go with|Bring|Build)/.test(t)).every(([, done]) => done)'), 'chapter 1 so far is ticked off');
+});
+
+test('a game saved with just the school’s frame up (before version 191) keeps it, and the big monkey builds the school when you talk to him', async () => {
+  const g = game({...BUILDING, build: 2, wood: 'done', stones: 'done'}, {place: 'homeGround', x: 15, y: 5, dir: 'up'});
+  assert.equal(g.run('tileAt(8, 2).look'), 'frame');
+  assert.match(get(g, 'getTasks()[0].text'), /^Talk to the big monkey: the troop is ready to build the school$/);
+  await press(g, 15, 5, 'up');
+  assert.deepEqual(get(g, '__scenes'), ['buildingSchool']);
+  assert.equal(g.run('here().school'), 1);
+  assert.equal(g.run('tileAt(8, 2).look'), 'school');
 });
 
 // The pine wood was laid out again on 21 October 2026, after playing it on a phone: you could walk in, pick everything up

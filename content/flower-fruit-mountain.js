@@ -40,8 +40,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   ledgeTip 1 once the goat below the waterfall has told you that you can hop down the ledges
   //   home    chapter 1, the troop's home ground beside the waterfall: 0 not yet, 1 the old monkey is going there with you,
   //           2 you've been there with him
-  //   build   chapter 1, building the school: 0 not yet, 1 the big monkey wants wood and small stones (the way up to the pine
-  //           wood is open), 2 you've brought them and the school's frame is up
+  //   build   chapter 1, building the school: 0 not yet, 1 the big monkey has marked out its plot and wants wood and small
+  //           stones (the way up to the pine wood is open), 2 you've brought them (and the troop builds it at once; a game
+  //           saved before 22 October 2026 can be at 2 with just the school's frame up, until you talk to the big monkey)
   //   school  chapter 1: 0 not built yet, 1 the troop has built it (the scene), 2 you've been in, and the class has greeted
   //           its teacher, the old monkey
   //   woodIn  chapter 1: 1 once you've been into the pine wood (the first time, a wolf howls far off)
@@ -178,7 +179,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Go with the old monkey to the troop’s new home ground', done:{home:{atLeast:2}}},
     {chapter:1, text:'Bring {木头} and small {石头} for the school', show:{build:{atLeast:1}}, done:{build:{atLeast:2}}},
     {chapter:1, text:'Find the animal that lives in the pine wood', show:{build:{atLeast:1}}, done:{woodAnimalsLeft:0}},
-    {chapter:1, text:'Build the {学校} with the troop', show:{build:{atLeast:2}}, done:{school:{atLeast:1}}},
+    {chapter:1, text:'Build the {学校} with the troop', show:{build:{atLeast:1}}, done:{school:{atLeast:1}}},
     {chapter:1, text:'Go to school, and meet your {老师}', show:{school:{atLeast:1}}, done:{school:{atLeast:2}}},
     {chapter:1, text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}},
     {chapter:1, text:'Learn to count to ten at school ({numbersKnown}/7)', show:{school:{atLeast:2}}, done:{numbersKnown:7}},
@@ -301,10 +302,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{chapter:0, count:3}, do:[{scene:'becomingKing'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}]},
     // chapter 1: you arrive at the home ground with the old monkey, who goes to his place there and tells you about it
     {if:{home:1, place:'homeGround'}, do:[{set:{home:2}}, {follow:[]}, {say:'bigHere', by:'elder'},
-      {message:'Each plot is marked out for something the troop dreams of: a school, a new shop, a hive, a garden and a pen. First, a school!'}]},
-    // you've brought the big monkey the wood and the small stones: the troop gets to work, and the school's frame goes up
-    {if:{build:1, wood:'done', stones:'done'}, do:[{set:{build:2}}, {rumble:true},
-      {message:'The troop gets to work with the wood and stones, and up goes the frame of the school!'}]}
+      {message:'A wide, open valley, all their own! The troop dreams of building a school here, and a new shop, a hive, a garden and a pen. First, a school!'}]},
+    // you've brought the big monkey the wood and the small stones: the troop builds the school at once (a scene, told like
+    // the opening: on its plot, the frame goes up, then the walls, the roof and the sign), and you learn 学校 (decided 22
+    // October 2026: the frame had just popped up on the map, and you had to talk to him again)
+    {if:{build:1, wood:'done', stones:'done'}, do:[{say:'buildIt', by:'big'}, {scene:'buildingSchool'}, {newWord:'学校', note:'The troop has built its school!'},
+      {set:{build:2, school:1}},
+      {message:'The old monkey has gone in: he’s the teacher now. Walk in through the school’s door!'},
+      {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}]}
   ],
 
   // The area's places: small maps you move between. The first is where the game starts. Each has
@@ -470,9 +475,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     },
     // Chapter 1: the troop's home ground, beside the waterfall (the way there opens once the old monkey has told you about
     // it): a wide valley (made bigger on 21 October 2026, with room between its plots), a road through it from the
-    // waterfall in the west, and a square in the middle with a big old tree, where the troop meets. Each plot is marked
-    // out for something the troop wants to build, with a sign: the school on its terrace under the cliff, the new shop by
-    // the way in, the hive among the flowers, the cow's pen, and the garden by the stream. A peach tree and an apple tree
+    // waterfall in the west, and a square in the middle with a big old tree, where the troop meets. It's open ground when
+    // you first come: each thing the troop wants to build gets its plot marked out (with string and stakes, and a sign)
+    // when its story begins, as you watch (decided 22 October 2026: the plots were there before anyone had planned them):
+    // the school on its terrace under the cliff, then, to come, the new shop by the way in, the hive among the flowers,
+    // the cow's pen, and the garden by the stream. A peach tree and an apple tree
     // to pick from, and a little pond with fish. The ways out are shut by thick bushes until the troop needs them: north to the pine wood (once the big
     // monkey wants wood), east to the bees, south over the stream.
     homeGround: {
@@ -488,10 +495,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "Ygggggggsssssssgggggggggg.FEJFFY",
         "YgTggg1gsssssssgggggTgggg.3hhhgY",
         "YgggggggsssssssggggggPggg.ghhhEY",
-        "Ygggggggggg.gggggTTgggggg.JEFgJY",
-        "YggTggggggg.gggggTTgggggg.gggggY",
-        "YgEFggggggg.gJggggggFgggg.gggTgY",
-        "Ygggggggggg.ggggggggggggg.gggggY",
+        "Ygggggggggg8gggggTTgggggg.JEFgJY",
+        "YggTggggggg8gggggTTgggggg.gggggY",
+        "YgEFggggggg8gJggggggFgggg.gggTgY",
+        "Ygggggggggg8ggggggggggggg.gggggY",
         "...............................u",
         "...............................Y",
         "Yggggggggggggggg.gggggggggggEggY",
@@ -674,20 +681,21 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the way from the waterfall to the home ground, and the home ground's plots, their signs, and the ways out
     'f': {look:'bush', becomes:[{if:{home:{atLeast:1}}, to:'.'}]},   // bushes, until the troop clears a way through them
     'u': {look:'bush', landmark:true, onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
-    's': {look:'plot', walk:true, becomes:[{if:{school:{atLeast:1}}, to:'t'}, {if:{build:{atLeast:2}}, to:'a'}]},   // the school's plot: ground marked out with string and stakes
+    's': {look:'grass', walk:true, becomes:[{if:{school:{atLeast:1}}, to:'t'}, {if:{build:{atLeast:2}}, to:'a'}, {if:{build:{atLeast:1}}, to:'6'}]},   // the school's plot: open grass, until the big monkey marks it out
+    '6': {look:'plot', walk:true},   // the school's plot, marked out with string and stakes (as you watch: the markOut step)
     'a': {look:'frame', landmark:true, onLook:[{do:[{message:'The frame of the school is up. The troop is busy building.'}]}]},   // (the school going up on it)
     't': {look:'school', word:'学校', landmark:true, note:'The troop’s school: the sign over its door says {学校}. Walk in through its door.'},   // (and then the school itself: its door is a way in)
-    'd': {look:'plot', walk:true},   // the new shop's
-    'h': {look:'plot', walk:true},   // the hive's
-    'e': {look:'plot', walk:true},   // the garden's
-    'c': {look:'plot', walk:true},   // the cow pen's
-    '1': {look:'sign', landmark:true, label:'Read', onLook:[{if:{school:{atLeast:1}}, do:[{message:'The troop’s {学校}, where the little monkeys learn. The {老师} gives lessons inside.'}]},
+    // where the other plots will be marked out, each when its story begins, with its sign (2 to 5): open grass till then
+    'd': {look:'grass', walk:true},   // the new shop's (its sign: "The troop wants a new shop here.")
+    'h': {look:'grass', walk:true},   // the hive's ("The troop wants a hive here, by the flowers, for bees.")
+    'e': {look:'grass', walk:true},   // the garden's ("The troop wants to grow things here, in a garden by the stream.")
+    'c': {look:'grass', walk:true},   // the cow pen's ("The troop wants a pen here, for a cow.")
+    '2': {look:'grass', walk:true}, '3': {look:'grass', walk:true}, '4': {look:'grass', walk:true}, '5': {look:'grass', walk:true},
+    '1': {look:'grass', walk:true, becomes:[{if:{build:{atLeast:1}}, to:'7'}]},   // the school's sign, put up when its plot is marked out
+    '8': {look:'grass', walk:true, becomes:[{if:{build:{atLeast:1}}, to:'.'}]},   // the little path up to the school, trodden in then too
+    '7': {look:'sign', landmark:true, label:'Read', onLook:[{if:{school:{atLeast:1}}, do:[{message:'The troop’s {学校}, where the little monkeys learn. The {老师} gives lessons inside.'}]},
       {if:{build:{atLeast:2}}, do:[{message:'The troop is building a school here, where the little monkeys can learn.'}]},
       {do:[{message:'The troop wants to build a school here, where the little monkeys can learn.'}]}]},
-    '2': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants a new shop here.'}]}]},
-    '3': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants a hive here, by the flowers, for bees.'}]}]},
-    '4': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants to grow things here, in a garden by the stream.'}]}]},
-    '5': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop wants a pen here, for a cow.'}]}]},
     'b': {look:'bush', landmark:true, becomes:[{if:{build:{atLeast:1}}, to:'.'}],   // thick bushes, until the big monkey clears the way up to the pine wood
       onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
     // chapter 1: the pine wood. Its floor, its pines, and the dry, dead pines: one hit with your stick knocks one down (it
@@ -1245,14 +1253,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // chapter 1: he wants wood and small stones to build the school (both at once), and has cleared the way to the pine wood
       {if:{home:2, build:0}, do:[
         {say:'needWood'},
-        {message:'The troop needs wood and small stones to build the school. The big monkey has cleared a way through the bushes at the top of the home ground, up to the pine wood.'},
-        {message:'Look there for dead, dry pines: one hit with your stick knocks them down. Small stones lie by the water.'},
-        {set:{build:1, wood:'asked', stones:'asked'}}
+        {message:'First, he marks out the ground for the school, right here beside him.'},
+        {markOut:{build:1, wood:'asked', stones:'asked'}},   // as you watch: stakes, string, the plot, its sign and path (and the way up to the pine wood opens)
+        {message:'To build it, the troop needs wood and small stones. The big monkey has cleared a way through the bushes at the top of the home ground, up to the pine wood.'},
+        {message:'Look there for dead, dry pines: one hit with your stick knocks them down. Small stones lie by the water.'}
       ]},
       {if:{build:1, wood:'asked', stones:'asked'}, do:[{request:'wood'}, {request:'stones'}]},   // you bring them (or he asks again)
       {if:{build:1, wood:'asked'}, do:[{request:'wood'}]},
       {if:{build:1, stones:'asked'}, do:[{request:'stones'}]},
-      // the frame is up: the troop builds the school (a scene, told like the opening), and you learn 学校
+      // a game saved with just the frame up (before 22 October 2026): the troop builds the school when you talk to him
       {if:{build:2, school:0}, do:[
         {say:'buildIt'},
         {scene:'buildingSchool'},

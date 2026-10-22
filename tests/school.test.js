@@ -81,7 +81,7 @@ test('the classroom has its own legend: letters that mean something else outside
   assert.equal(g.run('tileAt(9, 2).look'), 'teacherTable');
   assert.equal(g.run('tileAt(5, 1).look'), 'blackboard');
   g.run("S.pos = {place: 'homeGround', x: 3, y: 5, dir: 'right'}; placePlayer()");
-  assert.equal(g.run('tileAt(3, 12).look'), 'plot', 'and on the home ground, a "d" is the shop’s plot');
+  assert.equal(g.run('tileAt(3, 12).look'), 'grass', 'and on the home ground, a "d" is where the shop’s plot will be (open grass till its story begins)');
 });
 
 test('the first time you talk to the teacher, the class greets him: 老师好！ (老师), 同学们好！', async () => {
