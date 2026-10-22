@@ -66,7 +66,7 @@ test('the next number waits until you’ve got the last one right twice; until t
   assert.ok(get(all, 'areaChecklist().find(([t]) => /count to ten/.test(t))[1]'), 'the checklist is ticked: 7/7');
 });
 
-test('a counting question: n things, the teacher’s question in his voice, and three numbers you know, the nearest, so you have to count', async () => {
+test('a counting question, once you know the number: n things, the teacher’s question in his voice, and three numbers you know, the nearest, so you have to count', async () => {
   const g = game({'四': 0, '五': 2, '六': 2});
   g.run('rec("六").lv = 2');   // (recognised)
   g.run("globalThis.__voice = []; say = (t, end, who) => { __voice.push([t, who || null]); }");
@@ -81,11 +81,24 @@ test('a counting question: n things, the teacher’s question in his voice, and 
   assert.equal((q.body.match(/class="thing"/g) || []).length, 6, 'six peaches to count');
   assert.match(q.body, /count table/);
   assert.deepEqual(get(g, '__voice')[0], ['桌子上有几个桃子？', 'elder'], 'the teacher asks, aloud, in his own voice');
-  g.run('__qs.length = 0');
-  await play(g, `countQ({who: 'elder', thing: ${series}.things[3], n: 4})`);
-  const q2 = get(g, '__qs[0]');
-  assert.ok(q2.options.every(o => /class="ico"/.test(o)), 'while the right one (四) is new, every answer has its picture');
-  assert.match(q2.body, /count grass/, 'monkeys are counted together on the grass');
+});
+
+test('a counting question while the number is new: you hear it, and choose the one with that many things, never a picture of a number (you could count a die’s dots)', async () => {
+  const g = game({'四': 0, '五': 2, '六': 2});
+  g.run("globalThis.__voice = []; say = (t, end, who) => { __voice.push([t, who || null]); }");
+  answering(g);
+  await play(g, "countQ({who: 'elder', thing: AREA.lessons[0].things[3], n: 4})");
+  const q = get(g, '__qs[0]');
+  assert.equal(q.word, '四');
+  assert.match(q.body, /data-a="say"/, 'a 🔊 to hear it again');
+  assert.doesNotMatch(q.body, /class="thing"/, 'nothing to count in the question: the answers are what you count');
+  assert.deepEqual(get(g, '__voice'), [['四', null]], 'you hear the number, not the question');
+  const shown = q.options.map(o => ({num: o.match(/<span class="cap">([^<]+)</)[1], things: (o.match(/class="thing"/g) || []).length, grass: /count few grass/.test(o), pic: /class="ico"/.test(o)}));
+  assert.deepEqual(shown.map(a => a.num).sort(), ['三', '五', '四'].sort(), 'the right one and the two nearest it you know');
+  assert.ok(shown.every(a => a.things === get(g, `COUNTING.indexOf('${a.num}') + 1`)), 'each answer is that many things, with its characters');
+  assert.ok(shown.every(a => a.grass), 'monkeys, together on the grass');
+  assert.ok(shown.every(a => !a.pic), 'no pictures of numbers');
+  assert.ok(q.options.every(o => /class="cap py later"/.test(o)), 'each one’s pinyin, once you’ve answered');
 });
 
 test('a wrong count is practice, not a test: the number comes back soon and keeps its gold squares; things you count are words you know', async () => {
@@ -96,10 +109,11 @@ test('a wrong count is practice, not a test: the number comes back soon and keep
   assert.equal(g.run('rec("四").lv'), 2, 'its level stays');
   assert.equal(g.run('rec("四").ok'), 0, 'and it needs practice again');
   const noBirds = game();
-  noBirds.run("delete S.w['鸟']");
-  answering(noBirds);
-  await lesson(noBirds);
-  assert.ok(get(noBirds, '__qs').every(q => !/几只鸟/.test(q.body)), 'you’ve not caught 鸟, so there are never birds to count');
+  noBirds.run("delete S.w['鸟']; globalThis.__things = []; countQ = async ({thing}) => { __things.push(thing.word); return true; }");
+  for (let i = 0; i < 4; i++){ noBirds.run("rec('四').lv = 0; rec('四').ok = 0"); await lesson(noBirds); }   // (the first lesson, again and again)
+  const counted = get(noBirds, '__things');
+  assert.equal(counted.length, 20);
+  assert.ok(!counted.includes('鸟'), 'you’ve not caught 鸟, so there are never birds to count');
 });
 
 test('saying Not now to a number lesson ends it there: no 下课', async () => {

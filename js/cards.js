@@ -129,7 +129,7 @@ function showDialog(who, line, opts = {}){
       ${lineHTML(line.t, opts.teach)}<div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
       <div class="talkfoot${tip ? ' tip' : ''}"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || 'Next')}">${opts.ok ? esc(opts.ok) + ' ' : ''}▼</button></div>`);
     talkBox.classList.toggle('again', again);
-    talkBox.hidden = false; talkBox.scrollTop = 0;
+    talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk();   // at the top of the screen, if at the bottom it would cover you
     $('#saybox').hidden = true;   // the box covers the message spot
     held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
     bindTokens(talkBox);
@@ -151,7 +151,7 @@ function showNarration(text){
     talkBox.innerHTML = `<p class="narration">${pixelIcons(esc(text))}</p>
       <div class="talkfoot"><span class="spacer"></span><button class="btn primary next" data-a="ok" data-label="Next">▼</button></div>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
-    talkBox.hidden = false; talkBox.scrollTop = 0;
+    talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk();
     $('#saybox').hidden = true;
     held = null; queued = null;
     const next = () => { talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };
@@ -169,7 +169,7 @@ function chooseReply(who, choices){
     talkBox.innerHTML = `<div class="talkhead">${who}</div><p class="label">${choices.length > 1 ? 'Your reply' : 'Now you say it'}</p>
       <div class="replies">${choices.map((p, i) => `<button class="reply" data-i="${i}"><span class="rzh">${p}</span><span class="rpy">${WORDS[p].py}</span>${S.replyEn ? `<span class="ren">${esc(WORDS[p].en)}</span>` : ''}</button>`).join('')}</div>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
-    talkBox.hidden = false; talkBox.scrollTop = 0;
+    talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk();
     $('#saybox').hidden = true;
     held = null; queued = null;
     const btns = [...talkBox.querySelectorAll('.reply')];

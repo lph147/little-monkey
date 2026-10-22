@@ -102,25 +102,23 @@ function drawFoe(cx, cy, now){
     }
   }
 }
-// While the speech box covers the bottom of the screen, the view slides up so that you and whoever
-// you're talking to are in the part still showing (below the map's bottom edge is hidden by the box).
-// It only moves if one of you would be covered, and it stays put for the whole conversation, through
-// every line, card and reply, sliding back only once it's over, so the map doesn't shift about.
-let talkK = 0, talkCover = 0, talkMoves = false;   // how far the view has slid (0 to 1); how much the box covers, in map pixels; whether it needs to move
-function talkCamera(cy){
-  const open = !talkBox.hidden, talking = open || (busy && talkK > 0);   // still in the conversation (a card may be open)
-  if (open){
-    const h = +cv.clientHeight || 0, bh = +talkBox.offsetHeight || 0;
-    if (h > 0) talkCover = Math.max(talkCover, Math.min(VH*T - T, bh * VH*T / h));   // the tallest box so far, so it never slides back mid-conversation
-    const [, fy] = facing(), low = Math.max(pl.py, fy*T) + T - cy;   // the lower of you and the tile you face, on screen
-    if (low > VH*T - talkCover) talkMoves = true;                    // one of you would be covered
+// The speech box covers the bottom of the screen. If you, or the square you face (whoever you're talking to), would
+// be under it, it goes at the top of the screen instead, and stays there for the whole conversation, through every
+// line, card and reply, so it doesn't jump about; the map never moves for it. Checked as each line shows (before it's
+// drawn: placeTalk() in js/cards.js) and on every frame, in case the box grows, such as when its English is shown.
+let talkTop = false, talkCover = 0;   // whether the box is at the top; how much of the view it covers, in map pixels (the most this conversation)
+const camY = () => Math.round(clamp(pl.py + 8 - VH*T/2, 0, ROWS*T - VH*T));   // the top of the view: you in the middle, as far as the map goes
+function placeTalk(cy = camY()){
+  if (talkBox.hidden){
+    if (!busy && (talkTop || talkCover)){ talkTop = false; talkCover = 0; talkBox.classList.remove('top'); }   // the conversation is over
+    return;
   }
-  talkK = clamp(talkK + (talking && talkMoves ? .2 : -.2), 0, 1);
-  if (!talkK){ if (!talking){ talkCover = 0; talkMoves = false; } return cy; }
-  const [, fy] = facing(), mid = (pl.py + fy*T) / 2 + 8;   // halfway between you and the tile you face
-  const want = clamp(mid - (VH*T - talkCover) / 2, 0, ROWS*T - VH*T + talkCover);
-  const k = talkK * talkK * (3 - 2 * talkK);   // eased
-  return Math.round(cy + (want - cy) * k);
+  if (talkTop) return;
+  const h = +cv.clientHeight || 0, bh = +talkBox.offsetHeight || 0;
+  if (h > 0) talkCover = Math.max(talkCover, Math.min(VH*T, bh * VH*T / h));
+  const [, fy] = facing(), top = Math.min(pl.py, fy*T) - cy, low = Math.max(pl.py, fy*T) + T - cy;   // you and the square you face, on screen
+  const under = low - (VH*T - talkCover), over = talkCover - top;   // how far you'd be under the box at the bottom, and at the top
+  if (under > 0 && over < under){ talkTop = true; talkBox.classList.add('top'); $('#placeName').hidden = true; }   // (the place's name would cover its buttons)
 }
 // Standing in tall or long grass hides your feet, as in Pokémon: the map where your feet are (the bottom FEET pixels of
 // your square, wherever you are, between two squares as you walk) is drawn again over you, where it's grass. Gives
@@ -230,7 +228,7 @@ function charPos(n, now){
 }
 function drawWorld(now){
   let cx = Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));
-  let cy = talkCamera(Math.round(clamp(pl.py + 8 - VH*T/2, 0, ROWS*T - VH*T)));
+  let cy = camY(); placeTalk(cy);
   if (now - shakeT < 600){ cx += Math.round((Math.random()-.5)*3); cy += Math.round((Math.random()-.5)*3); }
   const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to
   if (sh < VH*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');

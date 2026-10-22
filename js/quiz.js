@@ -31,33 +31,44 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
   });
 }
 const laterPy = w => S.pinyin ? `<span class="cap py later">${WORDS[w].py}</span>` : '';   // an answer's pinyin, shown once you've answered
-// A counting question (a number lesson): n things to count (thing: its word, and where they are, on the teacher's table
-// or together on the grass), the teacher's question about them (his line, ask, read aloud in his voice: who), and three
-// numbers you know to choose from: the right one and the two nearest it, so you have to count.
-// While the right one is new, the answers are pictures with their characters (as when listening); after that,
-// characters with pinyin. A miss is practice, not a test: the number comes back soon, and keeps its gold squares.
-// Gives whether you were right.
+// A counting question (a number lesson), about n things (thing: its word, and where they are: on the teacher's table,
+// or together on the grass), with three numbers you know to choose from: the right one and the two nearest it.
+// While the right one is new, you hear it, and choose the one with that many things, each with its characters (and its
+// pinyin once you've answered). After that, the teacher asks how many there are (his line, ask, read aloud in his
+// voice: who), and you count n things and choose its characters with pinyin. The answers are never pictures of numbers,
+// such as dice: you could count their dots instead (decided 22 October 2026). A miss is practice, not a test: the
+// number comes back soon, and keeps its gold squares. Gives whether you were right.
 async function countQ({who, thing, n}){
-  const num = COUNTING[n - 1], line = L[thing.ask], text = line.t.join(''), pics = lvl(num) <= 1;
+  const num = COUNTING[n - 1], listen = lvl(num) <= 1;
   const gap = w => Math.abs(COUNTING.indexOf(w) - (n - 1));
-  const near = shuffle(COUNTING.filter(w => w !== num && !NOT_HOW_MANY.includes(w) && WORDS[w] && lvl(w) >= 1)).sort((a, b) => gap(a) - gap(b)).slice(0, 2);
-  const opts = shuffle([num, ...near]);
-  hear(line.t);
-  // (the question beside the teacher's face, then the things with its English beside them, so it all fits above the
-  // answers on a small phone)
-  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(line.t)}<button class="tbtn" data-a="ask" aria-label="Hear the question again">🔊</button></div>`,
-    body:`<div class="countq"><div class="count ${thing.on || 'table'}">${Array.from({length:n}, () => `<span class="thing">${picHTML(thing.word)}</span>`).join('')}</div>
-      <div class="sentence-en">${esc(line.en)}</div></div><div class="gloss"></div>`,
-    options:opts.map(w => pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>${laterPy(w)}` : `${w}<span class="cap">${WORDS[w].py}</span>`),
-    text:!pics, answerIdx:opts.indexOf(num), word:num,
-    onShow:() => { say(text, null, who); on('[data-a=ask]', () => say(text, null, who)); }});
+  const near = shuffle(COUNTING.filter(w => w !== num && !NOT_HOW_MANY.includes(w) && WORDS[w] && lvl(w) >= 1)).sort((a, b) => gap(a) - gap(b));
+  const opts = shuffle([num, ...(listen ? soundApart(num, near, 2) : near.slice(0, 2))]);
+  const things = k => Array.from({length:k}, () => `<span class="thing">${picHTML(thing.word)}</span>`).join('');
+  let ok;
+  if (listen) ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">Listen. Which has that many?</p></div>`,
+    body:'<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>',
+    options:opts.map(w => { const k = COUNTING.indexOf(w) + 1;   // (its characters, then its pinyin once you've answered, under it)
+      return `<span class="count few ${thing.on || 'table'}">${things(k)}</span><span class="under"><span class="cap">${w}</span>${laterPy(w)}</span>`; }),
+    answerIdx:opts.indexOf(num), word:num, onShow:() => setTimeout(() => say(num), 300)});
+  else {
+    const line = L[thing.ask], text = line.t.join('');
+    hear(line.t);
+    // (the question beside the teacher's face, then the things with its English beside them, so it all fits above the
+    // answers on a small phone)
+    ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(line.t)}<button class="tbtn" data-a="ask" aria-label="Hear the question again">🔊</button></div>`,
+      body:`<div class="countq"><div class="count ${thing.on || 'table'}">${things(n)}</div>
+        <div class="sentence-en">${esc(line.en)}</div></div><div class="gloss"></div>`,
+      options:opts.map(w => `${w}<span class="cap">${WORDS[w].py}</span>`),
+      text:true, answerIdx:opts.indexOf(num), word:num,
+      onShow:() => { say(text, null, who); on('[data-a=ask]', () => say(text, null, who)); }});
+  }
   closeCard();
-  if (ok) answer(num, true, pics ? 'listen' : 'read'); else reviewed(num, false);
+  if (ok) answer(num, true, listen ? 'listen' : 'read'); else reviewed(num, false);
   return ok;
 }
 // A number lesson (a lesson series of kind count, with the teacher: who): he counts things onto his table, teaching the
-// new number (his line for it, teach), then asks how many there are, five times: the new number three times, and twice
-// another you know. Each right answer earns a shell if that number needed practice. Gives whether you had the lesson
+// new number (his line for it, teach), then five counting questions: the new number three times, and twice another
+// you know. Each right answer earns a shell if that number needed practice. Gives whether you had the lesson
 // (you can say Not now at the start).
 const LESSON_QUESTIONS = 5;   // (in a number or colour lesson)
 // Numbers that never answer how many there are: two things are 两 (liǎng), not 二, so there are never two things to

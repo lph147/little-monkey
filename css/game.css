@@ -285,8 +285,10 @@ rt.hid{visibility:hidden}
   display:grid;grid-template-columns:1fr auto;column-gap:.6rem;align-items:end}
 .talk > *{grid-column:1 / -1}
 .talk[hidden]{display:none}
+.talk.top{top:6px;bottom:auto;animation-name:drop}   /* where it would cover you at the bottom (placeTalk() in js/draw.js) */
+@keyframes drop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
 .talk.again{animation:none}
-@media (prefers-reduced-motion: reduce){.talk{animation:none}}
+@media (prefers-reduced-motion: reduce){.talk,.talk.top{animation:none}}
 .talkhead{display:flex;align-items:center;gap:6px}
 .talkhead .speaker{gap:.4rem;font-size:.9rem}
 .talkhead .portrait{width:var(--pic-face);height:var(--pic-face)}
@@ -561,6 +563,12 @@ rt.hid{visibility:hidden}
 .count.table{background:#C49461;box-shadow:inset 0 3px 0 #D9AE79,inset 0 -5px 0 #8A5A32}
 .count.grass{background:#7CC46B;box-shadow:inset 0 -4px 0 #5FA853}
 .count .pix{width:var(--pic-small);height:var(--pic-small)}
+/* a counting question, listening: each answer is that many things, in rows of five, on a table (or grass) as big as each
+   other answer's, so the things are the same size in all three, with the number's characters under it */
+.opts:has(.count.few) .opt{display:flex;flex-direction:column;align-items:stretch}
+.opt .count.few{flex:1;align-content:center;gap:2px 0;max-width:none;margin:0 .35rem .15rem;padding:.25rem .15rem .4rem}
+.opt .count.few .thing{display:flex;justify-content:center;width:20%}
+.opt .count.few .pix{width:min(100%, calc(var(--pic-small) * .75));height:auto}
 .askrow .prompt{margin:0;font-size:1rem}
 .askrow .sayBig{flex:none;width:3rem;height:3rem;font-size:1.4rem}
 .askrow .word{flex:none;padding:0 .5rem 0 0;text-align:center}   /* the word to read, beside the question, above the answers */
@@ -620,6 +628,7 @@ rt.hid{visibility:hidden}
   .sheet:has(.countq) .opt{display:flex;align-items:center;justify-content:center;gap:.35rem}
   .sheet:has(.countq) .opt .ico{display:flex}
   .sheet:has(.countq) .opt .cap,.sheet:has(.countq) .opt .later{margin:0}
+  .sheet .opt .count.few .pix{width:min(100%, calc(var(--pic-small) * .75));height:auto}   /* (not the size of other answers' pictures) */
   /* (20 October 2026) so the main thing on each card fits without scrolling: */
   .sheet > .actions{padding-top:4px;padding-bottom:6px}   /* a shorter row of buttons along the bottom */
   .sheet > .actions .btn{min-height:32px;padding:8px 12px 1px}   /* (the word sits below the A and B badges) */

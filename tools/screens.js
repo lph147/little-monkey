@@ -23,7 +23,8 @@ const SAVES = {
     wardrobe: {owned: ['头带'], wearing: []},
     areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false}}},
 };
-SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};   // every word Recognised: animals ask you to read
+SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};
+SAVES.lowTalk = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}};   // on the path at the bottom of the meadow, facing the little monkey (before the gate, it's there)   // every word Recognised: animals ask you to read
 // chapter 1 has begun: the prologue is done, and the troop is at the waterfall; you're beside the old monkey
 const PROLOGUE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 3, story: true, bought: ['头带'], cave: 0};
 SAVES.chapter1 = {...SAVES.middle, w: knows(1, [...MIDDLE_WORDS, '瀑布', '狐狸', '松鼠', '山羊', '朋友']), met: ['rabbit', 'fox', 'squirrel', 'goat'],
@@ -130,6 +131,8 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
   {id: 'troop-line', title: 'A monkey of the troop', save: 'middle', why: 'Each of the troop has something to say, after 你好.', run: async () => {
     play(); await wait(100); talk(npc('troop1')); await wait(300); next(); await wait(300); click('#talk .reply'); await wait(400); next(); await wait(600); }},
+  {id: 'talk-top', title: 'Talking low on the screen', save: 'lowTalk', why: 'At the bottom of a map the speech box would cover you, so it’s at the top of the screen instead, for the whole conversation. The map never moves for it.', run: async () => {
+    play(); await wait(100); talk(npc('playful')); await wait(600); }},
   {id: 'hello-card', title: 'A new word in a conversation', save: 'born', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
   {id: 'first-reply', title: 'Your first reply', save: 'born', run: async () => {
@@ -304,13 +307,15 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'teacher-counts', title: 'One, two, three, four!', save: 'numbersNew', why: 'The teacher counts peaches onto his table, teaching 四 (bold).', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('[data-a=yes]'); await wait(500); }},
-  {id: 'count-new', title: 'How many peaches?', save: 'numbersNew', why: 'A counting question while 四 is new: the answers are pictures with their characters.', run: async () => {
+  {id: 'count-new', title: 'Which has 四?', save: 'numbersNew', why: 'A counting question while 四 is new: you hear it, and choose the one with that many peaches, each with its characters. Never a picture of a number, such as a die: you could count its dots.', run: async () => {
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[0], n: 4}); await wait(500); }},
+  {id: 'count-six', title: 'Which has 六?', save: 'numbersLater', why: 'While 六 is new: six apples beside five and four, the tables all the same size, so the things are too.', run: async () => {
+    play(); await wait(100); rec('六').lv = 1; countQ({who: 'elder', thing: AREA.lessons[0].things[1], n: 6}); await wait(500); }},
   {id: 'count-apples', title: 'How many apples?', save: 'numbersLater', why: 'Later: the numbers you know, in characters with pinyin, the nearest to the right one, so you have to count.', run: async () => {
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[1], n: 6}); await wait(500); }},
   {id: 'count-monkeys', title: 'How many monkeys?', save: 'numbersLater', why: 'Things that are alive are counted on the grass, with 只: 这里有几只猴子？', run: async () => {
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[3], n: 5}); await wait(500); }},
-  {id: 'count-ten', title: 'How many birds?', save: 'numbersTen', why: 'Ten, the most there are: two rows of five, while 十 is new, answered (the right one, and each answer’s pinyin), still fitting a small phone.', run: async () => {
+  {id: 'count-ten', title: 'Which has 十?', save: 'numbersTen', why: 'Ten, the most there are, while 十 is new: ten, nine and eight birds, two rows of five each, answered (the right one, and each answer’s pinyin), still fitting a small phone.', run: async () => {
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[5], n: 10}); await wait(400); [...document.querySelectorAll('.opt')].find(b => b.textContent.includes('十')).click(); await wait(500); }},
   {id: 'colour-lesson', title: 'A colour lesson', save: 'coloursNew', why: 'With a new colour to learn (taking turns with the numbers), a lesson is a colour lesson: 上课！, then this card.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
