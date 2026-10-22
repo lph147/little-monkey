@@ -10,7 +10,7 @@ const knows = words => Object.fromEntries(words.map(w => [w, {lv: 1, due: 0, ok:
 const WORDS = knows(['石头', '山', '花', '草', '树', '桃子', '苹果', '河', '水', '鱼', '棍子', '蛇', '野猪']);
 function fighting(save = {}){
   const game = loadGame({dom: true, save: {version: 24, started: true, w: WORDS, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 1}}, ...save}});
-  game.run("mode = 'play'; globalThis.__q = null; const q = pictureQ; pictureQ = o => { __q = o; return q(o); }; say = () => {}");
+  game.run("mode = 'play'; globalThis.__q = null; const q = pictureQ; pictureQ = o => { __q = o; return q(o); }; say = () => {}; globalThis.__realRandom = Math.random");
   const sheet = game.el('#sheet');
   const run = code => game.run(code);
   const flush = async () => { for (let i = 0; i < 20; i++){ await tick(); game.flush(); } };
@@ -208,6 +208,23 @@ test('once the big monkey gives you the stick, your monkey holds it on the map: 
   assert.equal(stickIn(game.run("JSON.stringify(monkeyRows('player', 'up', false, 0, true))")), 0, 'but not in a battle’s scene, which has its own stick to swing, nor meeting an animal');
   assert.match(game.run('fight.toString() + encounter.toString()'), /monkeySprite\('player', 'up', false, 0, true\)[\s\S]*monkeySprite\('player', 'up', false, 0, true\)/, 'the battle and the meeting both draw your monkey with empty hands');
   assert.ok(game.run('HELD[BATTLES.weapon].len') < 16 / 2);
+});
+
+test('the same creature never jumps out more than twice in a row, unless it’s all that lives there', async () => {
+  const g = fighting();
+  g.run("globalThis.__fights = []; wildBattle = async id => { __fights.push(id); return 'ran'; }; Math.random = () => .1");   // (.1: one jumps out, the first that lives there)
+  const fights = async (wild, steps) => {
+    g.run('__fights = []');
+    for (let i = 0; i < steps; i++) await g.run(`wildStep({wild:${JSON.stringify(wild)}})`);
+    return JSON.parse(g.run('JSON.stringify(__fights)'));
+  };
+  assert.deepEqual(await fights(['snake', 'spider'], 30), ['snake', 'snake', 'spider', 'snake', 'snake', 'spider'], 'on the way up: never a third snake');
+  assert.deepEqual(await fights(['wolf', 'wolf', 'snake', 'spider'], 30), ['wolf', 'wolf', 'snake', 'wolf', 'wolf', 'snake'], 'in the pine wood, wolves come most, but never three');
+  assert.deepEqual(await fights(['spider'], 15), ['spider', 'spider', 'spider'], 'where only spiders live, it’s always a spider');
+  g.run('Math.random = __realRandom');   // and by chance, as in the game: snakes and spiders, never three of one in a row
+  const seen = JSON.parse(g.run("JSON.stringify([...Array(300)].map(() => pickFoe(['snake', 'spider'])))"));
+  assert.ok(!seen.some((id, i) => i > 1 && id === seen[i - 1] && id === seen[i - 2]), seen.join(' '));
+  assert.ok(seen.filter(id => id === 'spider').length > 100 && seen.filter(id => id === 'snake').length > 100, 'both, about as often');
 });
 
 test('snakes and spiders jump out of the long grass; the bee moved to chapter 1, and a game that caught it keeps it', async () => {

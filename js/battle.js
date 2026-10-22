@@ -20,9 +20,19 @@ async function wildStep(t){
   if (!t.wild || !canBattle()) return false;
   if (++wildSteps < WILD_AFTER || Math.random() >= WILD_CHANCE) return false;
   wildSteps = 0; held = null; queued = null;
-  const id = t.wild[Math.floor(Math.random() * t.wild.length)];
-  await wildBattle(id);
+  await wildBattle(pickFoe(t.wild));
   return true;
+}
+// Which creature jumps out: one of those that live there (wild; one listed twice comes twice as often), at random, but
+// never the same three times in a row, unless it's all that lives there (decided 22 October 2026: by chance, a spider
+// jumped out six times in a row). lastFoes: the last two that did.
+const lastFoes = [];
+function pickFoe(wild){
+  const twice = lastFoes.length === 2 && lastFoes[0] === lastFoes[1] ? lastFoes[0] : null;
+  const pool = wild.some(id => id !== twice) ? wild.filter(id => id !== twice) : wild;
+  const id = pool[Math.floor(Math.random() * pool.length)];
+  lastFoes.push(id); if (lastFoes.length > 2) lastFoes.shift();
+  return id;
 }
 // It jumps out of the grass beside you, with a !, then the battle.
 async function wildBattle(id, spot = findSpot()){
