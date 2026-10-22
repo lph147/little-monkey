@@ -40,11 +40,11 @@ const modal = $('#modal'), sheet = $('#sheet');
 const READ_MS = 300;
 let shownAt = -1e9;
 const shown = () => { shownAt = performance.now(); };
-function tooSoon(at){   // at: when the press was made, if known (not in the tests or the screens gallery)
+function tooSoon(at, since = shownAt){   // at: when the press was made, if known (not in the tests or the screens gallery); since: when what it would press appeared
   if (at === undefined) return false;
   const now = performance.now();
   if (!(at > now - 5000 && at <= now + 50)) at = now;   // (a time that can't be right, from an odd browser: as if pressed now, so A never stops working)
-  return at < shownAt + READ_MS;
+  return at < since + READ_MS;
 }
 function openCard(html){
   sheet.innerHTML = pixelIcons(html); modal.hidden = false; sheet.scrollTop = 0; shown();
@@ -133,6 +133,8 @@ let talkNext = null;          // moves on to what comes after the line, while th
 let talkMove = null;          // moves between reply choices with the D-pad, while the box shows them
 let lastLine = null;          // the line someone else said last ({id, line}), until the story moves on: what a reply answers
 const TAP_TIP_LINES = 5;      // "Tap any word" shows under your first few lines, then only a word's meaning when you tap it
+// A line someone says (opts: teach, the word being taught, in bold green; hint, a note under it; ok, what A does, such
+// as Give it; last, the conversation's last line: its button says Done, not ▼ Next, so you can tell it's ending).
 function showDialog(who, line, opts = {}){
   return new Promise(res => {
     const key = line.t.join(''), firstTime = !S.lines[key];
@@ -140,7 +142,7 @@ function showDialog(who, line, opts = {}){
     const tip = Object.keys(S.lines).length <= TAP_TIP_LINES, again = !talkBox.hidden;   // again: the box is still up from the last line
     talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       ${lineHTML(line.t, opts.teach)}<div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
-      <div class="talkfoot${tip ? ' tip' : ''}"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || 'Next')}">${opts.ok ? esc(opts.ok) + ' ' : ''}▼</button></div>`);
+      <div class="talkfoot${tip ? ' tip' : ''}"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button></div>`);
     talkBox.classList.toggle('again', again);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();   // at the top of the screen, if at the bottom it would cover you
     $('#saybox').hidden = true;   // the box covers the message spot
@@ -159,12 +161,12 @@ function showDialog(who, line, opts = {}){
   });
 }
 // A line of the story in the speech box during a conversation, in English, said by no one: such as what
-// the old monkey does for baby monkeys. A moves on, so the next line can't cover it.
-function showNarration(text){
+// the old monkey does for baby monkeys. A moves on, so the next line can't cover it. The conversation's last (last): Done.
+function showNarration(text, last){
   lastLine = null;   // (the story has moved on)
   return new Promise(res => {
     talkBox.innerHTML = `<p class="narration">${pixelIcons(esc(text))}</p>
-      <div class="talkfoot"><span class="spacer"></span><button class="btn primary next" data-a="ok" data-label="Next">▼</button></div>`;
+      <div class="talkfoot"><span class="spacer"></span><button class="btn primary next" data-a="ok" data-label="${last ? 'Done' : 'Next'}">${last ? 'Done' : '▼'}</button></div>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();
     $('#saybox').hidden = true;

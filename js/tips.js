@@ -9,8 +9,8 @@
 // makes it had, or for walk, taking a step; grey counts as had as soon as it shows).
 const TIPS = {
   walk: {at:'.dpad', text:'Hold an arrow to walk.<br>Tap to turn.', when:() => canAct()},
-  talk: {at:'#btnA', text:'Press <b>A</b> to talk', when:() => canAct() && !!npcAt(...facing())},
-  look: {at:'#btnA', text:'Press <b>A</b> to look', when:() => canAct() && !npcAt(...facing()) && promptFor(...facing()) === 'Look'},
+  talk: {at:'#btnA', text:'Press <b>A</b> to talk', when:() => aActs() && !!npcAt(...facing())},
+  look: {at:'#btnA', text:'Press <b>A</b> to look', when:() => aActs() && !npcAt(...facing()) && promptFor(...facing()) === 'Look'},
   grey: {at:'#talk .tok.listen', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove}
   // (Tasks and Menu had tips too; the old monkey tells you about them instead, decided 18 October 2026.)
 };

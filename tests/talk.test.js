@@ -210,15 +210,3 @@ test('one new word per conversation: a phrase you haven’t learned waits if the
   await g.run('replyWith("不客气")');   // outside a conversation (as in other tests), nothing waits
   assert.deepEqual(cards(), ['不客气']);
 });
-
-test('just after something you started with A has finished, A does nothing on the map, so a second press doesn’t start it again', async () => {
-  const t = talkGame({version: 29, started: true, pos: {place: 'meadow', x: 7, y: 2, dir: 'up'}});
-  t.run("globalThis.__talks = 0; talk = async () => { __talks++; }; placePlayer()");   // (facing the old monkey)
-  await t.run('pressA()'); await tick();
-  assert.equal(t.run('__talks'), 1, 'A talks to him');
-  await t.run('pressA()'); await tick();
-  assert.equal(t.run('__talks'), 1, 'a second press, straight after: nothing');
-  t.run('actedAt = performance.now() - AGAIN_MS');   // a moment later
-  await t.run('pressA()'); await tick();
-  assert.equal(t.run('__talks'), 2, 'then A talks to him again');
-});

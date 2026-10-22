@@ -66,7 +66,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     assert.ok(!open(), `a card was left open after ${what}: ${cardText()}`);
   }
   const stand = (x, y, dir) => run(`S.pos = {place:PLACE, x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // in the place you're in
-  const pressAt = (x, y, dir, what) => { stand(x, y, dir); return act('actedAt = -1e9; pressA()', what); };   // face something and press A (after a moment, as a player does: the game ignores A on the map just after something ends)
+  const pressAt = (x, y, dir, what) => { stand(x, y, dir); return act('finishedAt = null; pressA()', what); };   // face something and press A (after a moment, as a player does: what you've just finished with rests)
   const stepOn = (x, y, what) => { stand(x, y, 'down'); return act(`arrive(${x}, ${y})`, what); };
 
   // A new game: How to play, then born from the stone

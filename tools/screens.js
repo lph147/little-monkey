@@ -25,6 +25,10 @@ const SAVES = {
 };
 SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};
 SAVES.phrases = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['谢谢', '不客气', '再见', '对不起', '没关系', '松鼠'])}};   // the phrases you reply with, all caught
+// two words of the four the old monkey wants: he says to go and learn some more, in a conversation of one line (Done)
+SAVES.notYet = {...SAVES.born, tips: ALL_TIPS, w: knows(1, ['石头', '你好', '山']), areas: {1: {elder: 1}}, pos: {x: 7, y: 2, dir: 'up'}};
+// facing the hungry monkey, who hasn't asked for anything yet
+SAVES.hungryAsks = {...SAVES.middle, areas: {1: {elder: 2, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', holding: {}, gate: false}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
 // the old monkey has told you about animals, and wants the meadow's words too: you know 山 and 树, not 河, 鱼 or 鸟; the
 // thirsty monkey has asked for water, and you're facing the river
 SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝']), met: [], friends: [],
@@ -148,6 +152,10 @@ const SCREENS = [
     play(); await wait(100); talk(npc('troop1')); await wait(300); next(); await wait(300); click('#talk .reply'); await wait(400); next(); await wait(600); }},
   {id: 'talk-top', title: 'Talking low on the screen', save: 'lowTalk', why: 'At the bottom of a map the speech box would cover you, so it’s at the top of the screen instead, for the whole conversation. The map never moves for it.', run: async () => {
     play(); await wait(100); talk(npc('playful')); await wait(600); }},
+  {id: 'talk-done', title: 'The last line: Done', save: 'notYet', why: 'A conversation’s last line says Done, not ▼ Next, so you can tell it’s ending.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(500); }},
+  {id: 'message-ok', title: 'A message after talking', save: 'hungryAsks', why: 'Where the speech box was: A says OK, and closes it, never starting the conversation again. Then what you’ve just finished with rests for 2 seconds.', run: async () => {
+    S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); toast('New task: Find some fruit for the hungry monkey'); clearTimeout(msgT); await wait(400); }},
   {id: 'hello-card', title: 'A new word in a conversation', save: 'born', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
   {id: 'first-reply', title: 'Your first reply', save: 'born', why: 'His line stays in sight: The old monkey says hello. Now you say it!', run: async () => {

@@ -6,10 +6,19 @@ function placePlayer(){ enterPlace(S.pos.place || FIRST_PLACE); pl.x = S.pos.x; 
 let held = null, queued = null, busy = false, mode = 'title', lastBump = 0, shakeT = -9999, lastMoveEnd = 0, fadeT = -9999, waterT = -9999, dripUntil = 0, sleepT = -9999, sleepAt = null, wakeT = -9999;   // (sleepAt: the bed you're asleep in)
 const splashes = [];   // splashes of water, each where (x, y, in the map) and when (t0)
 const canAct = () => mode === 'play' && !busy && modal.hidden && !talkNext && !pl.mv;
-// For a moment after something you started with A has finished (a conversation, the last card of the story), A does
-// nothing on the map, so a second press meant for that last card doesn't start it all again (decided 21 October 2026).
-const AGAIN_MS = 450;
-let actedAt = 0;
+// What you've just finished with (a conversation, a lesson, the story, an animal you've met…) rests: A at it does nothing
+// until you turn, take a step or REST_MS go by, with A's label blank meanwhile, so an A meant for the last of it never
+// starts it all over again (decided 22 October 2026: 21 October's half a second was too short).
+const REST_MS = 2000;
+let finishedAt = null;   // {place, x, y, t}: the square you were facing when something ended
+function finished(){ const [x, y] = facing(); finishedAt = {place:PLACE, x, y, t:performance.now()}; }
+const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && finishedAt.x === x && finishedAt.y === y
+  && performance.now() - finishedAt.t < REST_MS && lastMoveEnd < finishedAt.t && pl.turnT < finishedAt.t;
+// A message that has come up (toast, js/helpers.js) since you last moved or turned: A closes it, as B does, never
+// reaching past it to whoever you're facing (decided 22 October 2026: it's where the speech box was, and looks like it,
+// and A, pressed to clear it, started the conversation you'd just had all over again). Once you've moved on, A is as ever.
+const newMessage = () => !$('#saybox').hidden && msgAt > Math.max(lastMoveEnd, pl.turnT);
+const aActs = () => canAct() && !newMessage() && !justFinished(...facing());   // A, pressed now, would do something with what you're facing (the tips to talk and look wait for it)
 function tryStep(d, now){
   if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); return; }   // first turn to face the new way
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
@@ -30,7 +39,8 @@ function update(now){
     pl.px = (m.fx + (m.tx - m.fx) * p) * T; pl.py = (m.fy + (m.ty - m.fy) * p) * T - (m.hop ? Math.sin(p * Math.PI) * 7 : 0);
     if (p >= 1){
       pl.x = m.tx; pl.y = m.ty; pl.mv = null; busy = true; lastMoveEnd = now;
-      Promise.resolve(arrive(pl.x, pl.y)).then(runEvents).finally(() => { busy = false; updateHUD(); });
+      const was = shownAt;   // (if arriving showed you something, such as someone stopping you to talk, it rests when it ends)
+      Promise.resolve(arrive(pl.x, pl.y)).then(runEvents).finally(() => { busy = false; if (shownAt !== was) finished(); updateHUD(); });
     }
     return;
   }
@@ -57,16 +67,18 @@ async function pressA(at){   // at: when it was pressed, if known (tooSoon, js/c
     return;
   }
   if (talkNext){ if (!tooSoon(at)) talkNext(); return; }   // the speech box: on to what comes next
-  if (!canAct() || performance.now() - actedAt < AGAIN_MS) return;
+  if (!canAct()) return;
+  if (newMessage()){ if (!tooSoon(at, msgAt)){ closeMessage(); finished(); } return; }   // (not if pressed just as it came up; and then what you're facing rests, as after anything A does)
   const [fx, fy] = facing();
+  if (justFinished(fx, fy)) return;
   busy = true;
-  try { await interact(fx, fy); await runEvents(); } finally { busy = false; actedAt = performance.now(); updateHUD(); }
+  try { await interact(fx, fy); await runEvents(); } finally { busy = false; finished(); updateHUD(); }
 }
 function pressB(at){
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null && !tooSoon(at)) b.click(); return; }
   if (talkNext && !talkMove){ if (!tooSoon(at)) talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
-  const sb = $('#saybox'); if (!sb.hidden){ sb.hidden = true; updateHUD(); return; }
+  if (!$('#saybox').hidden){ closeMessage(); return; }
 }
 // Start: the menu (pressing it again closes it). Select: your tasks (again closes them).
 function pressMenu(){

@@ -23,9 +23,11 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':
 function rnd(x, y, k = 0){ let h = Math.imul(x|0, 374761393) ^ Math.imul(y|0, 668265263) ^ Math.imul(k|0, 1442695041); h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; }
 function hex(c){ const n = parseInt(c.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
 function mix(a, b, k){ const A = hex(a), B = hex(b); return '#' + A.map((v,i) => Math.round(v + (B[i] - v) * k).toString(16).padStart(2,'0')).join(''); }
-let msgT;
+// A message, in a box at the bottom of the game screen, for a few seconds (msgAt: when the one showing came up).
+let msgT, msgAt = -1e9;
 function toast(msg){
-  const el = $('#saybox'); el.innerHTML = pixelIcons(esc(msg)); el.hidden = false; el.onclick = () => { el.hidden = true; updateHUD(); };
+  const el = $('#saybox'); el.innerHTML = pixelIcons(esc(msg)); el.hidden = false; el.onclick = closeMessage; msgAt = performance.now();
   el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
-  clearTimeout(msgT); msgT = setTimeout(() => { el.hidden = true; updateHUD(); }, Math.max(3200, msg.length * 70));   // (a new task waiting can be announced then)
+  clearTimeout(msgT); msgT = setTimeout(closeMessage, Math.max(3200, msg.length * 70));
 }
+function closeMessage(){ $('#saybox').hidden = true; updateHUD(); }   // (tapped, B, A just after it came up, or in time: a new task waiting can be announced then)

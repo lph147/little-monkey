@@ -94,9 +94,9 @@ function showCaption(c, last){
   const bb = $('#beginBtn'); if (bb) bb.onclick = scene.end;
 }
 let lastCtx = null;
-function currentPrompt(now){
-  if (mode !== 'play' || !modal.hidden || busy || pl.mv || held || now - lastMoveEnd < 250) return '';
-  const [fx, fy] = facing(); return promptFor(fx, fy);
+function currentPrompt(now){   // (nothing while a new message is up, or what you're facing has just finished: js/input.js)
+  if (mode !== 'play' || !modal.hidden || busy || pl.mv || held || now - lastMoveEnd < 250 || newMessage()) return '';
+  const [fx, fy] = facing(); return justFinished(fx, fy) ? '' : promptFor(fx, fy);
 }
 function buttonLabels(now){
   if (!modal.hidden){
@@ -108,6 +108,7 @@ function buttonLabels(now){
   if (talkNext){ const ok = talkBox.querySelector('[data-a=ok]'); return [ok ? btnLabel(ok) : 'Say it', '']; }
   if (mode === 'title'){ const s = $('#titleButtons').querySelector('.sel'); return [s ? btnLabel(s) : 'Choose', '']; }
   if (mode === 'intro') return [$('#beginBtn') ? scene.last : 'Next', 'Skip'];
+  if (canAct() && newMessage()) return ['OK', 'Close'];   // A closes a message that's just come up
   return [currentPrompt(now), !$('#saybox').hidden ? 'Close' : ''];
 }
 let lastLabels = '';

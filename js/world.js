@@ -204,12 +204,13 @@ function markingOf(was){   // what's being marked out, now the story has changed
   const plot = changed.filter(([x, y]) => now[y][x] === 'plot'), xs = plot.map(p => p[0]), ys = plot.map(p => p[1]);
   return {t0:performance.now(), changed, fresh, box:plot.length ? {x0:Math.min(...xs), y0:Math.min(...ys), x1:Math.max(...xs), y1:Math.max(...ys)} : null};
 }
-const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to
-  async say(s, who){
+const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to; last, whether it's the last thing in the conversation (runSteps)
+  async say(s, who, last){
     const hint = s.showTasks ? goalText() || fill(s.hint) : s.hint && fill(s.hint), opts = {};
     if (s.teach) opts.teach = s.teach;
     if (hint) opts.hint = hint;
     if (s.ok) opts.ok = s.ok;
+    if (last) opts.last = true;
     await showDialog(speaker(s.by || who), L[s.say], opts);   // by: someone else says it, during this conversation
   },
   // A sentence to finish by filling the gap, such as your answer to a question: sentence, its English (en),
@@ -233,7 +234,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async newWord(s, who){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },   // quiet when a character teaches it
   async card(s, who){ await showNotice(s.card, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },
   set(s){ Object.assign(here(), s.set); save(); placeCharacters(); refreshMap(); },
-  async request(s, who){ await request(REQUESTS.find(r => r.id === s.request), speaker(who)); },
+  async request(s, who, last){ await request(REQUESTS.find(r => r.id === s.request), speaker(who), last); },
   async shop(s, who){ await shop(speaker(who)); },
   async wordGame(s, who){   // win: what happens if you win, such as a present
     const g = s.wordGame;
@@ -250,11 +251,11 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (!missed){ if (s.notYet) toast(fill(s.notYet)); return STOP; }
     closeCard(); SFX.fanfare();   // all matched: on with the conversation
   },
-  async bag(s, who){   // food for your bag, if there's room (in a conversation, the message waits in the speech box)
+  async bag(s, who, last){   // food for your bag, if there's room (in a conversation, the message waits in the speech box)
     const text = intoBag(s.bag) ? fill(s.note || `A {${s.bag}} for your bag.`) : `Your bag is full of ${wz(s.bag)}.`;
-    if (who) await showNarration(text); else toast(text);
+    if (who) await showNarration(text, last); else toast(text);
   },
-  async reply(s, who){ await replyWith(s.reply, {about:s.about, pic:s.pic, who}); },   // (about, pic: what you're answering, if it isn't a line just said)
+  async reply(s, who, last){ await replyWith(s.reply, {about:s.about, pic:s.pic, who, last}); },   // (about, pic: what you're answering, if it isn't a line just said)
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
   // The troop marks out ground for something they'll build, as you watch (markOut: what the story becomes then): a stake
@@ -346,7 +347,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     await sleep(CALL_MS);
     await talk(n);
   },   // a battle (an enemy in AREA.enemies), and what happens if you win
-  async message(s, who){ if (who) await showNarration(fill(s.message)); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
+  async message(s, who, last){ if (who) await showNarration(fill(s.message), last); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
 };
 // You reply: choose what to say from the phrases you know, with best the one that fits (taught on its own card the first
 // time, saying when you say it). What you're answering stays in sight (chooseReply, js/cards.js): the line someone has
@@ -357,8 +358,8 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
 // fits counts as using it. A phrase you don't know yet isn't offered.
 // One new word at a time: if this conversation has already taught one, a phrase that's new too waits for another
 // time (such as 要 then 不客气 at your first request), and the character's line stands on its own. Gives whether you
-// replied.
-async function replyWith(best, {about, pic, who} = {}){
+// replied. (last: your line is the last of the conversation.)
+async function replyWith(best, {about, pic, who, last} = {}){
   const heard = about ? null : lastLine;   // (now: a card may teach the phrase first)
   if (lvl(best) === 0){
     if (caughtBefore !== null && caughtCount() > caughtBefore) return false;
@@ -367,7 +368,7 @@ async function replyWith(best, {about, pic, who} = {}){
   const choices = shuffle([best, ...shuffle(PHRASES.filter(p => p !== best && lvl(p) >= 1)).slice(0, 2)]);
   const id = heard ? heard.id : who, what = about ? fill(about) : `${cap(theName(id))} ${WORDS[best].cue}.`;
   const ask = `${what} ${choices.length < 2 ? 'Now you say it!' : heard ? 'What do you say back?' : 'What do you say?'}`;
-  await iSay(best, await chooseReply(choices, {id, line:heard && heard.line, pic, ask, best}) === best);
+  await iSay(best, await chooseReply(choices, {id, line:heard && heard.line, pic, ask, best}) === best, last);
   return true;
 }
 // Someone, in English text: the old monkey, the shop owner (a character, by their name in English), the 松鼠 (squirrel)
@@ -378,17 +379,36 @@ function theName(id){
   return a ? 'the ' + wz(a.zh) : 'someone';
 }
 // Your monkey says a phrase. It counts as using it if you chose it yourself (chose), not when the game said which fits.
-async function iSay(said, chose = true){
+async function iSay(said, chose = true, last = false){
   if (chose){ const r = rec(said); r.used = 1; r.lv = 4; addToday(said); save(); }
   const en = WORDS[said].en.split(',')[0];
-  await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said});
+  await showDialog(speaker('player'), {t:[said, '！'], en:en[0].toUpperCase() + en.slice(1) + '!'}, {teach:said, last});
 }
 // Runs a list of steps, one after another: a step with an if only if it matches (such as the old monkey asking for the
 // meadow's words, if there are any you don't know). A step that gives STOP ends the list there (such as a word match you
-// stop).
+// stop). A whole conversation (ends) says when it's ending: a line with nothing after it to press A for (showsMore) says
+// Done, not ▼ Next (decided 22 October 2026: you couldn't tell, pressed A again, and it all started again).
 const STOP = 'stop';
 const SLEEP_MS = 2400;   // how long you sleep in a bed (the sleep step)
-async function runSteps(steps, who){ for (const s of steps) if ((!s.if || matches(s.if)) && await STEPS[Object.keys(s).find(k => STEPS[k])](s, who) === STOP) return STOP; }
+const stepKind = s => Object.keys(s).find(k => STEPS[k]);
+async function runSteps(steps, who, ends){
+  for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i)) === STOP) return STOP;
+}
+// Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map.
+const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'sleep'];
+// Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
+// says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
+function showsMore(steps, i){
+  let changed = false;
+  for (const s of steps.slice(i + 1)){
+    const k = stepKind(s);
+    if (QUIET_STEPS.includes(k)){ changed = changed || k !== 'sound'; continue; }
+    if (s.if && !changed && !matches(s.if)) continue;
+    if (k === 'newWord' && lvl(s.newWord) >= 1) continue;   // (a word you know isn't taught again)
+    return true;
+  }
+  return false;
+}
 // The area's events: each happens by itself when its if matches (checked after anything you do).
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); refreshMap(); }
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
@@ -433,20 +453,21 @@ async function talk(n){
   if (!part) return;
   const outer = caughtBefore;   // (a character can stop you during another conversation)
   caughtBefore = caughtCount(); lastLine = null;   // (nothing said yet to reply to)
-  try { await runSteps(part.do, n.id); } finally { caughtBefore = outer; }
+  try { await runSteps(part.do, n.id, true); } finally { caughtBefore = outer; }
 }
 // A character asking you to bring something (the area's requests). A request with choices (such as the
 // hungry monkey's fruit) is fussy: whichever you bring first, they want the other (remembered in wanted),
-// and each choice has its own lines and sentence.
-async function request(r, face){
+// and each choice has its own lines and sentence. (last: the request ends the conversation, so its last line says
+// Done, where nothing can come after it.)
+async function request(r, face, last = false){
   const p = here(), has = p.holding[r.id];
   const want = r.choices ? (p.wanted || {})[r.id] : r.wants;
   const c = has && r.choices ? r.choices[has] : r;   // the lines and sentence for what you've brought
   if (p[r.id] === 'asked' && has && has !== want){   // you brought the wrong thing
     if (r.choices && !want){ p.wanted = {...p.wanted, [r.id]: Object.keys(r.choices).find(x => x !== has)}; save(); }
-    await showDialog(face, L[c.wrong]);
-    if (r.wrongReply) await replyWith(r.wrongReply);
-    if (r.wrongAnswer) await showDialog(face, L[r.wrongAnswer]);
+    await showDialog(face, L[c.wrong], {last:last && !r.wrongReply && !r.wrongAnswer});
+    if (r.wrongReply) await replyWith(r.wrongReply, {last:last && !r.wrongAnswer});
+    if (r.wrongAnswer) await showDialog(face, L[r.wrongAnswer], {last});
     delete p.holding[r.id]; save(); toast(fill(r.wrongMessage));
     return;
   }
@@ -464,10 +485,10 @@ async function request(r, face){
     await runEvents();
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
     const verb = r.verb && lvl(r.verb) === 0 ? r.verb : null;   // a new word to teach, if there is one
-    await showDialog(face, L[r.ask], {teach:verb});
+    await showDialog(face, L[r.ask], {teach:verb, last:last && !verb});
     if (verb) await showNotice(verb, {quiet:true});
     if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(fill(r.asked)); }
-  } else await showDialog(face, L[r.thanks]);
+  } else await showDialog(face, L[r.thanks], {last});
 }
 const forSale = () => AREA.shop.items.filter(i => i.eat || !here().bought.includes(i.item));   // food can be bought again; other things once
 async function shop(face){   // the area's shop: what it sells, and buying it by asking for it with 我要…
