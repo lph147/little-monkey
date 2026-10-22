@@ -175,3 +175,66 @@ test('the Tasks page: Tasks and your words on one line, then the chapter over it
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
   assert.match(css, /\.checklist li\.done span\{[^}]*white-space:nowrap;text-overflow:ellipsis/, 'what you’ve done takes a line each');
 });
+
+test('the game tells the page how small its screen is (data-screen), for the buttons and speech box outside the cards', () => {
+  const game = loadGame({html: true});
+  const at = (w, h) => { sized(game, w, h); return game.el('html').dataset.screen; };
+  // (the pretend page has no padding round the screen, so it's a little bigger here than on a phone: an iPhone's 750 × 369 is
+  // about 700 × 369 here)
+  assert.equal(at(640, 360), 'tiny', 'the smallest phones');
+  assert.equal(at(700, 369), 'small', 'an iPhone, held sideways');
+  assert.equal(at(998, 392), 'big', 'a Pixel 8 Pro, in Chrome');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.match(css, /data-screen=small\],\[data-screen=tiny\]\) :is\(#nextBtn,#beginBtn,\.talk \.next,\.titlecard \.btn\)\{padding-left:15px\}/, 'room for the A badge (OK read UK)');
+  assert.match(css, /data-screen=tiny\]\) #skipBtn\{padding-right:15px\}/, 'and for B');
+  assert.match(css, /data-screen=tiny\]\) \.talk \.gloss\.tip\{display:none\}/, 'a shorter speech box: no "Tap any word…" there');
+  assert.match(css, /\.screen:has\(> \.talk\.top:not\(\[hidden\]\)\) > \.hud\{top:auto;bottom:14px\}/, 'with the speech box at the top, your hearts go to the bottom');
+});
+
+test('pinyin is never smaller than 10.5px, wherever it is, so its tone marks can be read on a small phone', () => {
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  const sizes = [...css.matchAll(/(?:^|[}\s,(])((?:[^{}]*\s)?rt)\{[^}]*?font-size:([^;}]+)/gm)].map(m => [m[1].trim(), m[2]]);
+  assert.ok(sizes.length >= 5, 'every rule that sizes pinyin over characters');
+  for (const [sel, size] of sizes) assert.match(size, /^max\(.*,10\.5px\)$/, `${sel}: ${size}`);
+  for (const sel of ['.mpy', '.card .p', '.opt .later', '.bag .card .p']){   // pinyin on a line of its own, on the small phones
+    const rule = new RegExp(sel.replace(/\./g, '\\.') + '\\{font-size:max\\([^)]*,10\\.5px\\)');
+    assert.match(css, rule, sel);
+  }
+});
+
+test('on small phones, a tip line ("Tap a word for its meaning.") goes, but a word you tap still shows its meaning', () => {
+  const game = loadGame({dom: true, save: {version: 21, started: true, w: {'我': {lv: 1, due: 0, ok: 0}, '桃子': {lv: 1, due: 0, ok: 0}, '吃': {lv: 1, due: 0, ok: 0}, '要': {lv: 1, due: 0, ok: 0}}}});
+  game.run("mode = 'play'; gapQ({t: ['我', '要', '吃', '桃子'], en: 'I want to eat a peach.', gap: '桃子'})");
+  const sheet = game.el('#sheet'), gloss = sheet.querySelector('.gloss');
+  assert.ok(gloss.classList.contains('tip'), 'the hint is a tip, for a new player');
+  sheet.querySelector('.tok[data-t="我"]').click();
+  assert.ok(!gloss.classList.contains('tip'), 'tapped, it’s a word’s meaning: shown on every phone');
+  assert.match(gloss.textContent, /我 wǒ · I/);
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.doesNotMatch(css, /\.sheet:has\(> \.qhead\) \.gloss\{display:none\}/, 'the smallest phones no longer hide it (tapping a word showed nothing)');
+  assert.match(css, /@container \(max-height:310px\)\{\s*\.gloss\.tip\{display:none\}/, 'just the tip');
+});
+
+test('the bag’s Back stays at the bottom of the card however full it is, and Save files fits the smallest phones', () => {
+  const {game, sheet, run} = taskGame({bag: {'桃子': 2, '苹果': 1}});
+  run('bagPage(() => closeCard())');
+  assert.ok(sheet.children.some(c => c.classList && c.classList.contains('actions')), 'Back is in the card’s own row of buttons, which stays in sight');
+  run("bagPage(() => closeCard(), '桃子', 'You eat a 桃子 (peach): a heart comes back.')");
+  const note = sheet.querySelector('.baghead .note');
+  assert.ok(note && !note.parentElement.classList.contains('stats'), 'what just happened, on its own line under your hearts (not among them)');
+  run('closeCard(); filesCard()');
+  assert.ok(sheet.querySelector('.files p.small.spare') && sheet.querySelector('.slotrow.empty .spare'), 'what to do, and an empty game’s hint, can go on the smallest phones');
+  run("filesCard('full')");
+  assert.ok(!sheet.querySelector('.files p.small.spare'), 'but not when all three games are full: then it says how to make room');
+  game.run('closeCard()');
+});
+
+test('a word’s page: where you found it and its example go across the card, under the picture and the word', () => {
+  const game = loadGame({dom: true, save: {version: 5, started: true, w: {'猴子': {lv: 2, due: 0, ok: 1}}}});
+  game.run("wordPage('猴子', () => {})");
+  const more = game.el('#sheet').querySelector('.word.side .wordmore');
+  assert.ok(more && more.parentElement.classList.contains('side'), 'a part of its own');
+  assert.ok(more.querySelector('.note') && more.querySelector('.examplehead'), 'Found and Example in it');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.match(css, /\.word\.side > \.wordmore\{grid-column:1 \/ -1/, 'across both columns, so they take fewer lines');
+});

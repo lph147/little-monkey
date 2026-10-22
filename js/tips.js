@@ -25,9 +25,11 @@ function tipDone(id){ if (!S.tips[id]){ S.tips[id] = 1; save(); } if (tip && tip
 function tipPressed(sel){ if (tip && TIPS[tip.id].at === sel) tipDone(tip.id); }
 function placeTip(){   // the bubble above what it points at (below it, if there's no room above)
   const box = tipBox(), r = tip.target.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight;
-  const below = r.top < h + 20, left = clamp(r.left + r.width / 2 - w / 2, 6, window.innerWidth - w - 6);
+  const talk = tip.target.closest && tip.target.closest('#talk:not(.top)');   // a word in the speech box at the bottom: the bubble above the box, so it never covers who's speaking
+  const top = talk ? talk.getBoundingClientRect().top : r.top;
+  const below = top < h + 20, left = clamp(r.left + r.width / 2 - w / 2, 6, window.innerWidth - w - 6);
   box.classList.toggle('below', below);
-  box.style.left = left + 'px'; box.style.top = (below ? r.bottom + 14 : r.top - h - 14) + 'px';
+  box.style.left = left + 'px'; box.style.top = (below ? r.bottom + 14 : top - h - 14) + 'px';
   box.style.setProperty('--ax', clamp(r.left + r.width / 2 - left, 14, w - 14) + 'px');   // the arrow, under the middle of what it points at
 }
 function updateTips(now){

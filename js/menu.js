@@ -49,9 +49,9 @@ function bagPage(back, focus, note){
     ...(canBattle() && BATTLES.weapon ? [card(BATTLES.weapon, 'To fight with', 'Hear')] : []),
     ...Object.entries(here().holding).filter(([, w]) => w && WORDS[w]).map(([id, w]) => card(w, forWhom(id), 'Hear'))];
   openCard(`<div class="bag"><div class="baghead"><p class="label">包 bāo · Bag</p>
-    <div class="stats"><span class="hearts" aria-label="Your hearts: ${hearts()} of ${HEARTS}">${heartsHTML(hearts(), HEARTS)}</span><span>🐚 ${S.shells}</span>${note ? `<span class="note">${esc(note)}</span>` : ''}</div></div>
-    ${items.length ? `<div class="menu grid">${items.join('')}</div>` : '<p class="hint">Nothing in your bag yet. Fruit trees, friends and the shop have things to put in it.</p>'}
-    <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div></div>`);
+    <div class="stats"><span class="hearts" aria-label="Your hearts: ${hearts()} of ${HEARTS}">${heartsHTML(hearts(), HEARTS)}</span><span>🐚 ${S.shells}</span></div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
+    ${items.length ? `<div class="menu grid">${items.join('')}</div>` : '<p class="hint">Nothing in your bag yet. Fruit trees, friends and the shop have things to put in it.</p>'}</div>
+    <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);   // (outside the bag, so Back stays at the card's bottom however full it is)
   const f = sheet.querySelector(`.bagitem[data-w="${focus}"]`) || sheet.querySelector('.bagitem'); if (f) f.focus();
   on('[data-a=ok]', back);
   sheet.querySelectorAll('.bagitem').forEach(b => b.onclick = () => {

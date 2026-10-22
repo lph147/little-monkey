@@ -232,8 +232,9 @@ function wordPage(w, back){   // a caught word's page in the Word Scroll
   say(w);
   openCard(`<p class="label">Word Scroll · ${CATEGORIES[d.category].name}</p>
     <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en" hidden>${esc(d.en)}</div>
-      <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p><p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
-      ${ex ? `<p class="label examplehead">Example</p>${lineHTML(ex.t, w)}<div class="sentence-en" hidden>${esc(ex.en)}</div>${Object.keys(S.lines).length <= TAP_TIP_LINES ? '<div class="gloss">Tap any word to see what it means.</div>' : ''}` : ''}</div>
+      <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p>
+      <div class="wordmore"><p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
+      ${ex ? `<p class="label examplehead">Example</p>${lineHTML(ex.t, w)}<div class="sentence-en" hidden>${esc(ex.en)}</div>${Object.keys(S.lines).length <= TAP_TIP_LINES ? '<div class="gloss tip">Tap any word to see what it means.</div>' : ''}` : ''}</div></div>
     <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn" data-a="en">English</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   bindTokens(sheet);
   on('[data-a=say]', () => say(w));

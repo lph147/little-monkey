@@ -66,6 +66,7 @@ test('choosing one that doesn’t fit: it says why, with the one that does, and 
   assert.match(mark('你好'), /\bno\b/, 'the one you chose doesn’t fit');
   assert.match(mark('谢谢'), /\byes\b/, 'and this one does');
   assert.equal(t.box.querySelector('.why').textContent, '你好 (hello) is for when you meet someone. When someone gives you something or helps you, you say 谢谢 (thank you).');
+  assert.equal(t.box.querySelector('.ask').hidden, true, 'why takes the place of what to do, so the box is no taller (it hid you)');
   assert.equal(t.box.querySelector('.spk-zh'), null, 'nothing said yet: it waits for you to read why');
   t.run('pressA()');
   await tick();

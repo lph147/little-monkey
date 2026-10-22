@@ -31,6 +31,10 @@ function fit(){
   }
   const dpr = window.devicePixelRatio || 1;
   cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  // A small phone's screen (an iPhone's, about 270px tall; the smallest, about 200px): css/game.css makes room there for
+  // the A and B badges on the buttons outside the cards (the cards have container queries of their own, on #modal)
+  const root = document.documentElement;
+  if (root && root.dataset) root.dataset.screen = h < 232 ? 'tiny' : h < 282 ? 'small' : 'big';
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   sc.imageSmoothingEnabled = false;
 }
@@ -192,8 +196,8 @@ function continueGame(n){   // play game n from where you left off
 function filesCard(full, pick){
   const row = n => { const g = slotSummary(n); return g
     ? `<button class="btn slotrow" data-slot="${n}" data-label="Choose">${faceHTML()}<span class="gt"><b>Game ${n}</b><span>${g.words} ${g.words === 1 ? 'word' : 'words'} · ${g.friends} ${g.friends === 1 ? 'friend' : 'friends'} · ${esc(g.chapter.name)}${g.played ? ' · ' + ago(g.played) : ''}</span></span></button>`
-    : `<button class="btn slotrow empty" data-slot="${n}" data-label="Choose"><span class="face"></span><span class="gt"><b>Game ${n}</b><span>Empty: start a new game here, or load one</span></span></button>`; };
-  openCard(`<div class="files"><p class="label">Save files</p><p class="small">${full === 'full'
+    : `<button class="btn slotrow empty" data-slot="${n}" data-label="Choose"><span class="face"></span><span class="gt"><b>Game ${n}</b><span>Empty<span class="spare">: start a new game here, or load one</span></span></span></button>`; };
+  openCard(`<div class="files"><p class="label">Save files</p><p class="small${full === 'full' ? '' : ' spare'}">${full === 'full'
       ? 'All three games are in use. To start a new one, choose a game and delete it (copy it to a file first if you want to keep it).'
       : 'Choose a game to play it, copy it to a file or delete it. An empty one starts a new game, or loads one from a file.'}</p>
     <div class="menu">${SLOTS.map(row).join('')}</div></div><div class="actions"><button class="btn" data-a="back" data-b>Back</button></div>`);

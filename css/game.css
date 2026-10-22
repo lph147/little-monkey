@@ -62,14 +62,14 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .titlecard .version{position:absolute;right:8px;bottom:4px;margin:0;font-size:.6rem;opacity:.6;text-shadow:none}   /* the version, small in the corner */
 .titlecard h2{margin:0;font-size:2.9rem;letter-spacing:.1em;line-height:1.1;text-shadow:0 3px 0 #0E1A33}
 .titlecard p{margin:0 0 .4rem;font-family:var(--pixel);font-size:1rem;text-shadow:0 2px 0 #0E1A33}
-.titlecard h2 rt{font-size:.3em;letter-spacing:.02em;color:#FFF6E0;opacity:.85;text-shadow:0 1px 0 #0E1A33}   /* the game's name's pinyin */
+.titlecard h2 rt{font-size:max(.3em,10.5px);letter-spacing:.02em;color:#FFF6E0;opacity:.85;text-shadow:0 1px 0 #0E1A33}   /* the game's name's pinyin */
 .titlecard .titlearea{right:0;top:0;animation:none}   /* the area's name, in the corner, as a place's name shows in the game */
 /* the three games (save slots), side by side along the bottom of the title screen; A chooses the one with the A badge */
 .titlecard:has(.slots){width:auto;right:8px;padding:3% 3% 3% 4%}
 .titlecard:has(.slots) .titlehead{max-width:57%}
 .titlecard:has(.slots) h2{font-size:2.5rem}
-@media (max-width:700px){.bag .card .pix{width:var(--pic-small);height:var(--pic-small)}.bag .card .hz{font-size:1rem}.bag .card .p{font-size:.7rem}.bag .card .small{font-size:.62rem}.bag .card{padding:.15rem 1.5rem .15rem .4rem;column-gap:.4rem}}   /* the bag on the smallest phones */
-@media (max-width:700px){.sheet:has(.tiles) .mzh{font-size:1.1rem;white-space:nowrap}.sheet:has(.tiles) .men{font-size:.62rem}.sheet:has(.tiles) .mpy{font-size:.65rem}.sheet:has(.tiles) .tiles{gap:.3rem}.mtile{padding:.35rem .1rem .3rem}}   /* six menu tiles on the smallest phones */
+@media (max-width:700px){.bag .card .pix{width:var(--pic-small);height:var(--pic-small)}.bag .card .hz{font-size:1rem}.bag .card .p{font-size:max(.7rem,10.5px)}.bag .card .small{font-size:.72rem}.bag .card{padding:.15rem 1.5rem .15rem .4rem;column-gap:.4rem}}   /* the bag on the smallest phones */
+@media (max-width:700px){.sheet:has(.tiles) .mzh{font-size:1.1rem;white-space:nowrap}.sheet:has(.tiles) .men{font-size:.7rem}.sheet:has(.tiles) .mpy{font-size:max(.65rem,10.5px)}.sheet:has(.tiles) .tiles{gap:.3rem}.mtile{padding:.35rem .1rem .3rem}}   /* six menu tiles on the smallest phones */
 @media (max-width:700px){.titlecard:has(.slots) h2{font-size:2rem}.titlecard:has(.slots) .titlehead{max-width:72%}.titlecard:has(.slots) .titletext{margin-top:.1rem;font-size:.8rem}}   /* the smallest phones */
 .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;width:100%;pointer-events:auto}
 .slot{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;min-width:0;text-align:left;background:rgba(14,26,51,.86);color:#FFF6E0;
@@ -167,7 +167,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .tok.listen{color:var(--muted)}
 .sentence-en{font-size:1rem;color:var(--ink);background:color-mix(in srgb,var(--gold) 16%,transparent);border-radius:4px;padding:4px 8px;margin:6px 0 8px}
 ruby{ruby-position:over}
-rt{font-size:.5em;color:var(--muted);font-family:var(--text)}
+rt{font-size:max(.5em,10.5px);color:var(--muted);font-family:var(--text)}   /* pinyin: half its characters' size, but never under 10.5px, so its tone marks can be read on a small phone (decided 22 October 2026: 7.5px in a scene's captions) */
 .tok.teach rt{color:var(--jade);font-weight:700}   /* the word being taught: its pinyin is green too, like its characters */
 rt.hid{visibility:hidden}
 .punct{font-size:1.55rem;line-height:1.2;padding-bottom:4px;align-self:flex-start;margin-top:.55em}
@@ -179,8 +179,8 @@ rt.hid{visibility:hidden}
 .actions .grow{margin-right:auto}
 /* a card's buttons stay in sight at the bottom while what's above them scrolls */
 .sheet>.actions{position:sticky;bottom:-12px;z-index:1;margin:10px -8px -12px;padding:8px 8px 12px;background:var(--paper);box-shadow:inset 0 -3px 0 var(--paper),inset 0 -5px 0 var(--line),0 -12px 10px -6px var(--paper)}
-/* ▼ More, by a card's buttons while the card has more below (js/cards.js places it: inrow, left of the buttons; or
-   else over them, in the middle); tap it to scroll down */
+/* ▼ More, by a card's buttons while the card has more below (js/cards.js places it: inrow, in a gap in the row of
+   buttons, or just over it; or else over the card's bottom edge, in the middle); tap it to scroll down */
 .morecue{position:absolute;left:50%;z-index:2;transform:translateX(-50%);font-family:var(--pixel);font-size:.8rem;line-height:1;color:var(--jade);background:var(--paper);border:2px solid var(--jade);border-radius:999px;padding:.28rem .7rem .32rem;box-shadow:0 2px 0 var(--jade);cursor:pointer;white-space:nowrap;animation:bob .9s ease-in-out infinite alternate}
 .morecue.inrow{transform:none}
 .morecue[hidden]{display:none}
@@ -208,16 +208,17 @@ rt.hid{visibility:hidden}
 .sheet:has(.tiles) > :first-child,.sheet:has(> .scene) > :first-child{margin-top:0}
 .sheet:has(> .word.side){display:flex;flex-direction:column}
 .sheet:has(> .word.side) > .actions{margin-top:auto}
-.word.side{flex:1;display:grid;grid-template-columns:auto 1fr;column-gap:1.3rem;align-content:center;align-items:center;justify-items:start;text-align:left;padding:.3rem .6rem}
+.word.side{flex:1;display:grid;grid-template-columns:auto 1fr;column-gap:1.3rem;align-content:center;align-items:center;justify-items:start;text-align:left;padding:.2rem .6rem}
 .word.side > *{grid-column:2}
-.word.side > .pic{grid-column:1;grid-row:1 / span 6}
+.word.side > .pic{grid-column:1;grid-row:1 / span 4}
+.word.side > .wordmore{grid-column:1 / -1;justify-self:stretch}   /* where you found it and an example: under the picture and the word, across the card, so they take fewer lines */
 .word.side .pic .pix{width:var(--pic-big);height:var(--pic-big)}
 .word.side .big{font-size:3rem;line-height:1.05}
 .word.side .py{font-size:1.15rem}
 .word.side .en{margin:.35rem 0 0;font-size:.95rem}
-.word.side .note,.word.side .mastery{text-align:left;font-size:.85rem;margin:.35rem 0 0}
+.word.side .note,.word.side .mastery{text-align:left;font-size:.85rem;margin:.25rem 0 0}
 .word.side .mastery + .note{margin-top:.1rem}
-.word.side .examplehead{margin:.5rem 0 0;font-size:.8rem}
+.word.side .examplehead{margin:.35rem 0 0;font-size:.8rem}
 .word.side .line{margin:.1rem 0 0}
 .word.side .tok,.word.side .punct{font-size:1.3rem}
 .word.side .sentence-en,.word.side .gloss{margin:.2rem 0 0;font-size:.85rem}
@@ -314,6 +315,18 @@ rt.hid{visibility:hidden}
 .talkfoot{grid-column:2;display:flex;align-items:center;gap:8px}
 .talkfoot.tip{grid-column:1 / -1;margin-top:.2rem}   /* with "Tap any word…" (your first few lines), Next goes under the English */
 .talkfoot .gloss{flex:1;min-height:0;margin:0;font-size:.85rem}
+.talk:has(> .sentence-en[hidden]):not(:has(> .hintline)) > .line{grid-column:1}   /* no English under the line (you've seen it before): Next goes beside the line, not on a row of its own (decided 22 October 2026: the box covered you) */
+/* On a small phone's screen (data-screen, set by fit() in js/main.js), the speech box is shorter, so you and who you're
+   talking to stay in sight above or below it (decided 22 October 2026: on the smallest, it took two thirds of the
+   screen): no "Tap any word…" (a word's meaning still shows when you tap it), and lower buttons */
+:root:is([data-screen=small],[data-screen=tiny]) .talk .gloss.tip{display:none}
+:root:is([data-screen=small],[data-screen=tiny]) .talkfoot.tip{grid-column:2;margin-top:0}
+:root:is([data-screen=small],[data-screen=tiny]) .talk{padding:.2rem .5rem .3rem}
+:root:is([data-screen=small],[data-screen=tiny]) .tbtn{min-height:1.6rem}
+:root:is([data-screen=small],[data-screen=tiny]) .talk .next{min-height:1.75rem}
+:root:is([data-screen=small],[data-screen=tiny]) .talk .line{margin:0 0 .1rem}
+:root:is([data-screen=small],[data-screen=tiny]) .talk .sentence-en{padding:.1rem .5rem}
+:root[data-screen=tiny] .talk .tok,:root[data-screen=tiny] .talk .punct{font-size:1.2rem}
 .talk .label{font-size:.8rem;margin:.2rem 0 .1rem}
 .narration{margin:.2rem 2px .1rem;font-size:.95rem;line-height:1.4;font-style:italic}
 .replies{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:6px;margin:2px 0 2px}
@@ -331,25 +344,29 @@ rt.hid{visibility:hidden}
 .whyfoot{display:flex;align-items:flex-end;gap:.6rem;margin-top:.3rem}
 .whyfoot:empty{display:none}
 .talk .why{flex:1;margin:0;font-size:.92rem;line-height:1.3}
-@media (max-width:700px){   /* the smallest phones: all of it in sight, with why when a reply doesn't fit */
-  .replyto .tok,.replyto .punct{font-size:1rem}
-  .talk .ask{font-size:.85rem;margin:0 0 .2rem}
-  .reply{padding:.15rem .2rem}
-  .rzh{font-size:1.05rem}
-  .talk .why{font-size:.8rem;line-height:1.25}
-}
-.reply{display:flex;flex-direction:column;align-items:center;padding:.3rem .2rem;border:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);line-height:1.2}
+/* a small phone's screen (an iPhone's and smaller): all of it in sight, with why when a reply doesn't fit */
+:root:is([data-screen=small],[data-screen=tiny]) :is(.replyto .tok,.replyto .punct){font-size:1rem}
+:root:is([data-screen=small],[data-screen=tiny]) .talk .ask{font-size:.85rem;margin:0 0 .2rem}
+:root:is([data-screen=small],[data-screen=tiny]) .reply{padding:.15rem .2rem}
+:root:is([data-screen=small],[data-screen=tiny]) .rzh{font-size:1.05rem}
+:root:is([data-screen=small],[data-screen=tiny]) .talk .why{font-size:.8rem;line-height:1.25}
+.reply{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;column-gap:.35rem;padding:.3rem .2rem;border:2px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);line-height:1.2}
 .reply:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 .reply.sel{outline:3px solid var(--gold);outline-offset:1px}
 .rzh{font-family:var(--text);font-size:1.25rem;font-weight:500}
 .rpy{font-size:.8rem;color:var(--muted)}
-.ren{font-size:.82rem;color:var(--jade);text-align:center}
+.ren{flex-basis:100%;font-size:.82rem;color:var(--jade);text-align:center}   /* (the Chinese and its pinyin side by side where there's room, so the box is shorter; the English under them) */
 .talk .next{min-height:2.1rem;padding:.1rem .9rem;font-size:.9rem;position:relative}
 .round.ready{box-shadow:0 4px 0 rgba(0,0,0,.3),0 0 0 4px var(--gold)}
 .sheet button,.titlecard .btn,.caprow .btn{position:relative}
 .sheet .menu button.navsel,.sheet [data-nav] button.navsel,.sheet .helper.navsel,.sheet .askrow button.navsel{outline:3px solid var(--gold);outline-offset:2px}
 .sheet [data-nav]:has(.navsel:not(.primary)) .btn.primary::before,.sheet:has(.grid[data-nav] .navsel,.chips[data-nav] .navsel,.menu .navsel:not(.primary)) .actions .btn.primary::before{display:none}   /* the A badge follows the button you've chosen */
 .sheet .actions .btn.primary:not([disabled])::before,.talk .next::before,.sheet .menu button.navsel::before,.sheet [data-nav] button.navsel::before,.titlecard .btn.sel::before,#beginBtn::before,#nextBtn::before{content:"A";position:absolute;top:-8px;left:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnA);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
+/* On a small phone's screen (data-screen, set by fit() in js/main.js), the buttons outside the cards have room for their
+   badge, so it never covers a letter ("OK" read "UK"; decided 22 October 2026). Title buttons all get it: A goes from one
+   to another. */
+:root:is([data-screen=small],[data-screen=tiny]) :is(#nextBtn,#beginBtn,.talk .next,.titlecard .btn){padding-left:15px}
+:root:is([data-screen=small],[data-screen=tiny]) #skipBtn{padding-right:15px}
 .sheet [data-b]::after,#skipBtn::after{content:"B";position:absolute;top:-8px;right:-3px;width:20px;height:20px;border-radius:50%;background:var(--btnB);color:#FFF;font:600 12px/20px var(--pixel);text-align:center;box-shadow:0 1px 0 rgba(0,0,0,.35);z-index:1}
 /* answers, words to match and 🔊 are tapped directly, so they get the gold outline when chosen but never the A badge */
 .sheet .opts button.navsel::before,.sheet .match button.navsel::before{content:none}
@@ -405,7 +422,7 @@ rt.hid{visibility:hidden}
 .match .col > *{flex:1;min-width:0}
 .mw,.mp{min-height:3.4rem;border:2px solid var(--ink);border-radius:6px;background:var(--bg);box-shadow:0 3px 0 var(--ink)}
 .mw{font-family:var(--text);font-size:1.45rem}
-.mw rt{font-size:.5em;color:var(--muted)}
+.mw rt{font-size:max(.5em,10.5px);color:var(--muted)}
 .mp{font-size:1.8rem;white-space:nowrap}
 .mw.sel{background:color-mix(in srgb,var(--gold) 35%,var(--paper));border-color:var(--gold)}
 .mw.done,.mp.done{opacity:.25;box-shadow:none;cursor:default}
@@ -435,7 +452,7 @@ rt.hid{visibility:hidden}
 .bag .stats{align-items:center;margin:.2rem 0}
 .bag .stats .hearts{display:flex;gap:2px}
 .bag .stats .heart{width:.95rem;height:.85rem}
-.bag .stats .note{color:var(--ink);font-family:var(--text)}
+.bag .baghead .note{flex-basis:100%;margin:0 0 .1rem;color:var(--ink);font-size:inherit;text-align:left}   /* what just happened (You eat a 桃子 (peach)…), on its own line under your hearts */
 
 /* the money symbol (a pixel shell), and the shop's cards */
 .money{width:1em;height:1em;image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:-.12em}
@@ -575,6 +592,7 @@ rt.hid{visibility:hidden}
 .act .e{font:.75rem var(--pixel);color:var(--jade);text-align:center}
 .hud{position:absolute;left:14px;top:14px;display:flex;gap:3px;padding:4px 6px;background:rgba(14,26,51,.75);border-radius:6px;z-index:4;pointer-events:none}
 .hud[hidden]{display:none}
+.screen:has(> .talk.top:not([hidden])) > .hud{top:auto;bottom:14px}   /* (with the speech box at the top, your hearts go to the bottom corner, not under it) */
 .hud .heart{width:18px;height:16px}
 /* A question (an animal's, or filling a gap): from the top down, with the bottom row (what happened, or a helper,
    and Next) at the bottom, its space kept, so nothing moves when you answer. */
@@ -623,8 +641,19 @@ rt.hid{visibility:hidden}
 .qfoot [data-a=next][hidden]{display:inline-block;visibility:hidden}
 .helper{display:inline-flex;align-items:center;gap:.5rem;font:inherit;font-size:.82rem;line-height:1.3;color:var(--muted);text-align:left;background:none;border:1px dashed var(--line);border-radius:6px;padding:.2rem .6rem .2rem .3rem}
 .helper .pix{width:var(--pic-small);height:var(--pic-small);flex:none}
-/* the smallest phones, where the game screen is only about 210px tall: smaller pictures, speaker and text */
+/* iPhones held sideways (the game screen about 270px tall) and smaller: cards a little tighter, so the main thing on
+   each fits without scrolling (decided 22 October 2026) */
 .modal{container-type:size}
+@container (max-height:310px){
+  .gloss.tip{display:none}   /* the hint "Tap a word for its meaning." (a word's meaning still shows when you tap it) */
+  .sheet > p:not([class]),.sheet > p.small{margin:.4em 0}   /* a card's paragraphs closer together (they don't share the space between them) */
+  .sheet .files .menu .btn.slotrow{padding:.2rem .6rem}   /* Save files: all three games (.sheet: over the rules for them further down) */
+  .files > p.small{margin:.3em 0}
+  .sheet:has(.howto) > p{margin:.2rem 0}   /* How to play's pages */
+  .example{margin:3px 0}
+  .example .tok,.example .punct{font-size:1.2rem}
+}
+/* the smallest phones, where the game screen is only about 210px tall: smaller pictures, speaker and text */
 @container (max-height:260px){
   .slotcard{font-size:.82rem;line-height:1.3}
   .slotcard .face{width:var(--pic-small);height:var(--pic-small)}
@@ -639,18 +668,16 @@ rt.hid{visibility:hidden}
   .opt{padding:.2rem 0}
   .opt .cap{font-size:.85rem;margin-top:0}
   .opt.hz{font-size:1.3rem}
-  .opt .later{font-size:.7rem}
+  .opt .later{font-size:max(.7rem,10.5px)}
   .feedback .hz{font-size:1.1rem}
   .qfoot .btn{min-height:32px;padding:3px 10px}
   .sheet:has(> .qhead) .tok{font-size:1.2rem}
   .sheet:has(> .qhead) .line{margin:.1rem 0}
   .sheet:has(> .qhead) .sentence-en{font-size:.8rem;margin:0 0 .1rem;padding-top:1px;padding-bottom:1px}
   .opt .ico{line-height:1}
-  .sheet:has(> .qhead) .gloss{display:none}
   .sheet:has(> .qhead):has(> .opts) .qhead .prompt{display:none}   /* "Choose the missing word": the gap says it */
   .sheet:has(> .qhead):has(> .opts) .qhead .speaker{gap:.3rem}
   .sheet:has(> .qhead):has(> .opts) .qhead{gap:.5rem}
-  .sheet:has(> .qhead) .line rt{font-size:.45em}
   .sheet:has(> .qhead) > .opts{margin-top:.2rem}
   .sheet > .qfoot{margin-top:.2rem;padding-top:4px;padding-bottom:6px}
   .plate .hearts .heart{width:.9rem;height:.85rem}
@@ -667,8 +694,8 @@ rt.hid{visibility:hidden}
   .sheet:has(.countq) .opt .cap,.sheet:has(.countq) .opt .later{margin:0}
   .sheet .opt .count.few .pix{width:min(100%, calc(var(--pic-small) * .75));height:auto}   /* (not the size of other answers' pictures) */
   /* (20 October 2026) so the main thing on each card fits without scrolling: */
-  .sheet > .actions{padding-top:4px;padding-bottom:6px}   /* a shorter row of buttons along the bottom */
-  .sheet > .actions .btn{min-height:32px;padding:8px 12px 1px}   /* (the word sits below the A and B badges) */
+  .sheet > .actions{padding-top:4px;padding-bottom:6px;margin-bottom:-8px;bottom:-8px}   /* a shorter row of buttons along the bottom (reaching just the card's own padding, so a card that fits never scrolls) */
+  .sheet > .actions .btn{min-height:32px;padding:8px 9px 1px}   /* (the word sits below the A and B badges) */
   .match{gap:.3rem;margin:.2rem 0}   /* the word test and training: both rows, words and pictures */
   .mw,.mp{min-height:2.5rem}
   .mw{font-size:1.15rem}
@@ -683,18 +710,35 @@ rt.hid{visibility:hidden}
   .card .c{height:30px}
   .card .pix{width:var(--pic-small);height:var(--pic-small)}
   .card .hz{font-size:1rem}
-  .card .p{font-size:.7rem}
+  .card .p{font-size:max(.7rem,10.5px)}
   .shopitem{padding:.2rem .3rem;line-height:1.1}   /* the shop: its prices */
   .shopitem .pix{width:var(--pic-small);height:var(--pic-small)}
   .helper{font-size:.72rem;padding:.1rem .4rem}   /* the apple's hint: short, so it doesn't cover the answers */
   .helper .why{display:none}
   .act .e{font-size:.8rem}   /* a battle's Hit, Eat and Run */
+  .acts:has(> :nth-child(3)) .act{display:grid;grid-template-columns:auto auto;justify-content:center;align-items:center;column-gap:.4rem;padding:.2rem .3rem}   /* three of them (hurt, with fruit to eat): each its character beside its pinyin and English, so both rows fit */
+  .acts:has(> :nth-child(3)) .act .z{grid-row:1 / span 2}
+  .acts:has(> :nth-child(3)) .act .p,.acts:has(> :nth-child(3)) .act .e{grid-column:2;justify-self:start;text-align:left;line-height:1.2}
   .menu.twocol{gap:.3rem .5rem;margin-top:3px}   /* Settings: every row */
-  .menu.twocol .btn{min-height:28px;padding:3px 10px}
+  .menu.twocol .btn{min-height:28px;padding:3px 5px 3px 15px}   /* (room for the A badge, which goes from one to another) */
   .menu.twocol > .btn:last-child:nth-child(odd){grid-column:1 / -1}   /* (a last one on its own takes the whole row, on one line) */
   .sheet:has(> .scene) .plate.mine .heart{width:.62rem;height:.58rem}   /* your hearts, inside the scene */
-  .sheet:has(> .qhead) .line rt{font-size:.6em}   /* pinyin over a sentence you fill: big enough to read */
+  .sheet:has(> .qhead) .line rt{font-size:max(.6em,10.5px)}   /* pinyin over a sentence you fill: big enough to read */
   .plate .engbtn{font-size:.75rem;padding:2px 6px}   /* English, on an animal's name plate: big enough to tap */
+  .word.side{padding:0 .3rem;column-gap:1rem}   /* a word's page: a smaller word and picture, and its example closer */
+  .word.side .big{font-size:2.1rem}
+  .word.side .pic .pix{width:var(--pic-mid);height:var(--pic-mid)}
+  .word.side .note{margin-top:.2rem}
+  .word.side .examplehead{margin-top:.15rem}
+  .word.side .tok,.word.side .punct{font-size:1.15rem}
+  .sheet .files .slotrow .gt{flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:.5rem}   /* Save files: each game on one line */
+  .files .spare{display:none}   /* (what to do, and an empty game's "start a new game here, or load one", which the game's card says) */
+  .word.side .py{font-size:1rem}
+  .word.side .mastery{margin-top:.1rem}
+  .word.side .examplehead{font-size:.75rem}
+  .bag .menu.grid{gap:.3rem;margin:.1rem 0}   /* the bag: both rows */
+  .bag .card{padding-top:.1rem;padding-bottom:.1rem}
+  .morecue{font-size:.7rem;padding:.2rem .5rem .25rem}   /* ▼ More, smaller, so it fits between the buttons */
 }
 /* a short screen (a small phone): a smaller scene, 🔊 and answers, so the answers fit without scrolling */
 @media (max-height:680px){.scene{height:104px;margin-bottom:6px}.scene .foem{top:66px;width:96px;height:26px}.scene .foe{top:10px}.scene .foe .portrait{width:64px;height:64px}
@@ -777,8 +821,8 @@ rt.hid{visibility:hidden}
 .titlecard .btn.big{font-size:1rem;padding:.4rem .9rem;display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;line-height:1.15;white-space:normal;text-align:left}
 .titlecard .btn.big .sub{font:500 .72rem var(--text);opacity:.8}
 .titlecard .btn.sel{outline:3px solid var(--gold);outline-offset:2px}
-@media (max-width:700px){.titlecard .btn.big{font-size:.85rem;padding:.3rem .7rem}.titlecard .btn.big .sub{font-size:.65rem}}
-@media (max-width:700px){.talk rt{font-size:.6em}}   /* pinyin in the speech box on the smallest phones: big enough to read */
+@media (max-width:700px){.titlecard .btn.big{font-size:.85rem;padding:.3rem .7rem}.titlecard .btn.big .sub{font-size:max(.65rem,10px)}}
+:root:is([data-screen=small],[data-screen=tiny]) .talk rt{font-size:max(.6em,10.5px)}   /* pinyin in the speech box on a small phone's screen: big enough to read */
 /* Save files: your three games, one to a row */
 .files .menu .btn.slotrow{display:flex;align-items:center;gap:.6rem;justify-content:flex-start;padding:.35rem .6rem;text-align:left}
 .files .slotrow .face{width:28px;height:28px;image-rendering:pixelated;flex:none}

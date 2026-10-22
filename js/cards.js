@@ -26,7 +26,7 @@ function bindTokens(root){
     const t = b.dataset.t, [py, en] = info(t);
     root.querySelectorAll('.tok.on').forEach(x => x.classList.remove('on'));
     b.classList.add('on'); const rt = b.querySelector('rt'); if (rt) rt.classList.remove('hid');
-    if (g) g.innerHTML = `<b>${esc(t)}</b> ${esc(py)} · ${esc(en)}${b.classList.contains('listen') ? ' <span class="small">(just listen)</span>' : ''}`;
+    if (g){ g.classList.remove('tip'); g.innerHTML = `<b>${esc(t)}</b> ${esc(py)} · ${esc(en)}${b.classList.contains('listen') ? ' <span class="small">(just listen)</span>' : ''}`; }   // (no longer a tip: shown on every phone)
     say(t);
   });
 }
@@ -142,19 +142,28 @@ function moreCue(){
   if (left <= 4){ if (!more.hidden) more.hidden = true; return; }
   if (more.hidden) more.hidden = false;
   const bar = [...sheet.children].find(c => c.classList && c.classList.contains('actions'));
-  const key = [cardsOpened, sheet.scrollHeight, sheet.clientHeight, bar ? bar.offsetHeight : 0].join();
+  const key = [cardsOpened, sheet.scrollHeight, sheet.clientHeight, bar ? bar.offsetHeight + '/' + bar.textContent.length : 0].join();
   if (key === moreAt) return;
   moreAt = key;
-  // Where it goes: in the row of buttons at the card's bottom, left of them, if there's room (so it covers nothing);
-  // else just over the row, in the middle (or over the card's bottom edge, on a card whose buttons don't stay there).
+  // Where it goes: in the row of buttons at the card's bottom, in the first gap with room for it (left of the buttons,
+  // or between them), so it covers nothing; else just over the row, at its left (or over the card's bottom edge, on a
+  // card whose buttons don't stay there). What's in the row takes the room of its words (an empty message, none), and
+  // a button its own, even while hidden (a question's Next, which comes when you answer).
   const m = modal.getBoundingClientRect(), w = more.offsetWidth || 0, h = more.offsetHeight || 0;
   const sticky = bar && (!window.getComputedStyle || getComputedStyle(bar).position === 'sticky');
   let x = null, y;
   if (sticky){
-    const r = bar.getBoundingClientRect(), kids = [...bar.children].filter(c => c.getBoundingClientRect).map(c => c.getBoundingClientRect()).filter(k => k.width);
-    const start = kids.length ? Math.min(...kids.map(k => k.left)) : r.right;
-    if (start - r.left >= w + 28){ x = r.left - m.left + 14; y = (kids.length ? (Math.min(...kids.map(k => k.top)) + Math.max(...kids.map(k => k.bottom))) / 2 : r.top + r.height / 2) - m.top - h / 2; }
-    else y = r.top - m.top - h - 2;
+    const r = bar.getBoundingClientRect(), taken = [...bar.children].filter(c => c.getBoundingClientRect).map(c => {
+      if (c.matches('button, .btn') || !document.createRange) return c.getBoundingClientRect();
+      const words = document.createRange(); words.selectNodeContents(c); return words.getBoundingClientRect();
+    }).filter(k => k.width).sort((a, b) => a.left - b.left);
+    let from = r.left + 8, first = true;
+    for (const k of [...taken, {left: r.right - 8, right: r.right}]){
+      if (k.left - from >= w + 12){ x = (first ? from + 6 : (from + k.left - w) / 2) - m.left; break; }
+      from = Math.max(from, k.right); first = false;
+    }
+    if (x !== null) y = (taken.length ? (Math.min(...taken.map(k => k.top)) + Math.max(...taken.map(k => k.bottom))) / 2 : r.top + r.height / 2) - m.top - h / 2;
+    else { x = r.left + 14 - m.left; y = r.top - m.top - h - 2; }
   } else y = sheet.getBoundingClientRect().bottom - m.top - h - 10;
   more.classList.toggle('inrow', x !== null);
   more.style.left = x === null ? '' : Math.round(x) + 'px';
@@ -185,7 +194,7 @@ function showDialog(who, line, opts = {}){
     const tip = Object.keys(S.lines).length <= TAP_TIP_LINES, again = !talkBox.hidden;   // again: the box is still up from the last line
     talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       ${lineHTML(line.t, opts.teach)}<div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
-      <div class="talkfoot${tip ? ' tip' : ''}"><div class="gloss">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button></div>`);
+      <div class="talkfoot${tip ? ' tip' : ''}"><div class="gloss${tip ? ' tip' : ''}">${tip ? 'Tap any word to see what it means.' : ''}</div><button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button></div>`);
     talkBox.classList.toggle('again', again);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();   // at the top of the screen, if at the bottom it would cover you
     $('#saybox').hidden = true;   // the box covers the message spot
@@ -245,6 +254,7 @@ function chooseReply(choices, {id, line, pic, ask, best} = {}){
       if (!best || choices[i] === best){ res(choices[i]); return; }
       btns.forEach((b, j) => { b.disabled = true; b.classList.remove('sel'); b.classList.toggle('no', j === i); b.classList.toggle('yes', choices[j] === best); });
       const not = choices[i];
+      talkBox.querySelector('.ask').hidden = true;   // (what to do: done; why takes its place, so the box is no taller)
       talkBox.querySelector('.whyfoot').innerHTML = `<p class="why">${esc(`${wz(not)} is for ${WORDS[not].use}. ${cap(WORDS[best].use)}, you say ${wz(best)}.`)}</p>
         <button class="btn primary next" data-a="ok" data-label="Next">▼</button>`;   // (beside why, to keep the box short)
       const next = () => { talkNext = null; SFX.blip(); res(not); };
