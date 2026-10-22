@@ -138,8 +138,10 @@ const portraitCache = {};
 const NAMES = {};   // the names shown above what characters say
 AREA.characters.forEach(c => { if (c.name) NAMES[c.id] = c.name; });
 NAMES.sign = AREA.sign.name;
-NAMES.player = {zh:'小猴子', py:'xiǎo hóuzi', en:'You'};   // you, when you reply
-// Your name: 小猴子 (You), or the first of the area's names for you (yourNames) whose if matches, such as 美猴王 once you're king.
+// you, when you reply: the English says what the name means, as every name's does, and that it's you (decided 22 October 2026:
+// it said just You)
+NAMES.player = {zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey (you)'};
+// Your name: 小猴子 (Little monkey), or the first of the area's names for you (yourNames) whose if matches, such as 美猴王 once you're king.
 const yourName = () => (AREA.yourNames || []).find(n => matches(n.if)) || NAMES.player;
 // An animal friend met on the way (a character that looks like an animal: the animal itself, such as the goat in the
 // valley, or another of its kind, such as the goat below the waterfall) is called by its word, in Chinese and pinyin.

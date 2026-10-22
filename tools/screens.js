@@ -24,6 +24,7 @@ const SAVES = {
     areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false}}},
 };
 SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};
+SAVES.meadowTasks = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}};   // (the rocks still there: every task in the meadow at once)
 SAVES.phrases = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['谢谢', '不客气', '再见', '对不起', '没关系', '松鼠'])}};   // the phrases you reply with, all caught
 // two words of the four the old monkey wants: he says to go and learn some more, in a conversation of one line (Done)
 SAVES.notYet = {...SAVES.born, tips: ALL_TIPS, w: knows(1, ['石头', '你好', '山']), areas: {1: {elder: 1}}, pos: {x: 7, y: 2, dir: 'up'}};
@@ -178,6 +179,8 @@ const SCREENS = [
     [...document.querySelectorAll('#talk .reply')].find(b => !b.textContent.includes('不客气')).click(); await wait(400); }},
   {id: 'reply-gift', title: 'Thanking for a gift', save: 'phrases', why: 'Not a line, so what’s happening, with a picture of it: The 松鼠 (squirrel) gives you a 桃子 (peach). What do you say?', run: async () => {
     play(); await wait(100); STEPS.reply({reply: '谢谢', about: 'The {松鼠} gives you a {桃子}.', pic: '桃子'}, 'squirrel'); await wait(400); }},
+  {id: 'king-says', title: 'Your name, once you’re king', save: 'home', why: 'Over what you say, your name and what it means: 美猴王 Měi Hóuwáng, Handsome Monkey King (you). Before that, 小猴子 xiǎo hóuzi, Little monkey (you).', run: async () => {
+    play(); await wait(100); iSay('你好'); await wait(400); }},
   {id: 'shop-handed', title: 'Handed what you bought', save: 'phrases', why: 'The 老板 gives it to you: you say 谢谢 (and he says 不客气).', run: async () => {
     play(); await wait(100); gapQ = async () => true; buy(AREA.shop.items.find(i => i.item === '苹果'), speaker('boss')); await wait(400); }},
   {id: 'welcome', title: 'The old monkey’s welcome', save: 'born', why: 'A line of story, waiting in the speech box.', run: async () => {
@@ -404,7 +407,7 @@ const SCREENS = [
   {id: 'sleeping', title: 'Sleeping', save: 'byBed', why: 'You hop into the bed and lie under the leaf blanket; the cave goes dim and Zs float up (held still here). Then you hop down with all your hearts.', run: async () => { play(); await wait(200); sleepAt = {x: 12, y: 1}; pl.px = 12 * T; pl.py = T; setInterval(() => { sleepT = performance.now() - SLEEP_MS * .45; }, 30); await wait(300); }},
   {id: 'menu', title: 'Menu', save: 'middle', run: async () => { play(); await wait(100); openMenu(); await wait(300); }},
   {id: 'saved', title: 'Saved', save: 'middle', why: 'The menu’s Save tile: it saves by itself anyway, and this says so.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(100); openMenu(); click('[data-m=save]'); clearTimeout(msgT); await wait(300); }},
-  {id: 'tasks', title: 'Tasks', save: 'middle', run: async () => { play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
+  {id: 'tasks', title: 'Tasks', save: 'meadowTasks', why: 'The most there are at once: in the meadow, before the rocks roll away.', run: async () => { play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'scroll', title: 'Word Scroll', save: 'middle', run: async () => { play(); await wait(100); openScroll(() => closeCard()); await wait(300); }},
   {id: 'word-page', title: 'A word’s page', save: 'middle', run: async () => { play(); await wait(100); wordPage('桃子', () => closeCard()); await wait(300); }},
   {id: 'friends', title: 'Friends', save: 'allFriends', run: async () => { play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(300); }},

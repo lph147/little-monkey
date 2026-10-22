@@ -171,7 +171,7 @@ test('the Tasks page: Tasks and your words on one line, then the chapter over it
   assert.ok(top.querySelector('.taskslabel') && top.querySelector('.stats'), 'one line at the top');
   assert.ok(sheet.querySelectorAll('.twocol .label').some(l => l.textContent === 'Prologue: The Water Curtain Cave'), 'the chapter, over its checklist');
   const done = sheet.querySelector('.checklist li.done');
-  assert.match(done.textContent, /Say hello to the old monkey/);
+  assert.match(done.textContent, /Say hello to the old monkey/);   // (this game hasn't caught 你好)
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
   assert.match(css, /\.checklist li\.done span\{[^}]*white-space:nowrap;text-overflow:ellipsis/, 'what you’ve done takes a line each');
 });

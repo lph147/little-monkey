@@ -46,7 +46,7 @@ test('the first number lesson: the teacher counts peaches onto his table, teachi
   assert.equal(g.run('__lessons'), 0, 'a number lesson, not practice');
   assert.equal(g.run('rec("四").ok'), 3, 'each right answer counts');
   assert.equal(g.run('S.shells'), 2, 'a shell for each right answer while 四 needed practice (the first two)');
-  assert.equal(get(g, 'areaChecklist().find(([t]) => /count to ten/.test(t))[0]'), 'Learn to count to ten at school (1/7)');
+  assert.equal(get(g, 'areaChecklist().find(([t]) => /count to ten/.test(t))[0]'), 'Learn to count to ten at 学校 (school) (1/7)');
 });
 
 test('the next number waits until you’ve got the last one right twice; until then, lessons are practice', async () => {

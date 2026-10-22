@@ -127,7 +127,7 @@ test('in the prologue, the big monkey has nothing to ask (his flowers wait for c
 
 test('the prologue runs from being born to counting the troop in and becoming king; then chapter 1, The Great Feast, begins with its card', async () => {
   const {loadGame} = require('./fake-browser');
-  const g = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 5, count: 2}}}});
+  const g = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {elder: 2, gate: true, climb: 4, story: true, cave: 5, count: 2}}}});
   const chapters = JSON.parse(g.run('JSON.stringify(AREA.chapters)'));
   assert.deepEqual(chapters, [{name: 'Prologue', title: 'The Water Curtain Cave'}, {name: 'Chapter 1', title: 'The Great Feast'}]);
   assert.ok(g.run('AREA.checklist.filter(c => !c.chapter).length > 10'), 'the prologue’s checklist');
@@ -136,9 +136,15 @@ test('the prologue runs from being born to counting the troop in and becoming ki
   assert.equal(g.run('here().chapter'), 0, 'still the prologue while the troop is coming in');
   g.run("globalThis.__shown = []; storyScene = async id => { __shown.push('scene ' + id); }; showNotice = async w => { __shown.push(w); setSeen(w); }");
   g.run('here().count = 3');
-  g.run('runEvents()');
+  await g.run('runEvents()');
+  // (counting the third monkey in teaches 三: until 22 October 2026 the troop made you king straight away, teaching 王 too)
+  assert.deepEqual(JSON.parse(g.run('JSON.stringify(__shown)')), [], 'the whole troop is home, but nothing more happens in the same go: one new word at a time');
+  assert.equal(g.run('here().chapter'), 0);
+  assert.equal(g.run("((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show"), '!', 'the old monkey has a ! over him');
+  assert.ok(g.run("getTasks().some(t => t.id === 'king' && t.target && /old monkey/.test(t.text))"), 'and a task points to him');
+  g.run("talk(ALL_NPCS.find(n => n.id === 'elder'))");
   for (let i = 0; i < 5; i++) await new Promise(r => setImmediate(r));
-  assert.deepEqual(JSON.parse(g.run('JSON.stringify(__shown)')), ['scene becomingKing', '王'], 'the whole troop is home: the scene of becoming king, then the card for 王');
+  assert.deepEqual(JSON.parse(g.run('JSON.stringify(__shown)')), ['scene becomingKing', '王'], 'talking to him: the scene of becoming king, then the card for 王');
   assert.equal(g.run('here().cave'), 6, 'you’re king');
   assert.match(g.el('#sheet').textContent, /Chapter 1\s*The Great Feast/, 'then chapter 1’s card');
   assert.equal(g.run('here().chapter'), 1);

@@ -62,7 +62,7 @@ test('the first colour lesson: the teacher opens a pot of paint, teaching 红色
   assert.equal(g.run('__lessons'), 0, 'a colour lesson, not practice');
   assert.equal(g.run('here().lastLesson'), 'colours');
   assert.deepEqual(get(g, 'AREA.scenes.paintLanterns.captions').map(c => c.zh.replace(/ /g, '')), ['我们去刷灯笼吧！', '灯笼是红色的！']);
-  assert.equal(get(g, 'areaChecklist().find(([t]) => /colours/.test(t))[0]'), 'Learn nine colours, and paint the school (1/9)');
+  assert.equal(get(g, 'areaChecklist().find(([t]) => /colours/.test(t))[0]'), 'Learn nine colours, and paint the 学校 (school) (1/9)');
 });
 
 test('the second, knowing red: one other colour to choose from, then the sign is painted yellow; the third, white, paints the step', async () => {

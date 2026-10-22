@@ -302,8 +302,8 @@ rt.hid{visibility:hidden}
 .talkhead{display:flex;align-items:center;gap:6px}
 .talkhead .speaker{gap:.4rem;font-size:.9rem}
 .talkhead .portrait{width:var(--pic-face);height:var(--pic-face)}
-.talkhead .spk{display:flex;flex-wrap:nowrap;column-gap:.5rem;align-items:baseline}
-.talkhead .spk-zh{font-size:1rem}
+.talkhead .spk{display:flex;flex-wrap:wrap;column-gap:.5rem;align-items:baseline}   /* a long name's English goes under it, whole */
+.talkhead .spk-zh{font-size:1rem;white-space:nowrap}
 .talkhead .spk-py{font-size:.8rem}
 .talkhead .spk-en{font-size:.8rem}
 .talkhead .spacer{flex:1}
@@ -466,6 +466,8 @@ rt.hid{visibility:hidden}
 .shopitem .pix{width:var(--pic-mid);height:var(--pic-mid)}
 .szh{font-family:var(--text);font-size:1.4rem;font-weight:500;margin-top:2px}
 .spy{font-size:.8rem;color:var(--muted)}
+.btn .nzh{font-family:var(--text);font-weight:500}   /* the shop's 我不要: Chinese, pinyin and English, as a reply choice */
+.btn .npy{font-family:var(--text);font-size:.8rem;color:var(--muted);margin:0 .35rem}
 .sen{font-size:.9rem}
 .sprice{font-family:var(--pixel);font-size:.95rem;margin-top:4px}
 .shopitem.dear .sprice{color:var(--bad)}

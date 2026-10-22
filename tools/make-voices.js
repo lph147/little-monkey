@@ -18,15 +18,19 @@ const {readKey, makeClip, pauseAfter, pause} = require('./try-voices');
 const AUDIO = path.join(ROOT, 'audio');
 const INDEX = path.join(ROOT, 'content', 'voices.js');
 
-// Words a voice reads wrongly on its own, with the pinyin to give it (tone numbers, a space before each).
+// Words a voice reads wrongly on its own: ph, the pinyin to give it (tone numbers, a space before each). Azure's voices
+// take it; Google's are given it too, but if a clip comes out just as it does without it (Google's custom pronunciations
+// are for English so far), google is a word that sounds the same for it to say instead, or by another voice, which takes
+// the pinyin, says the word (decided 22 October 2026: Google's voice said 只 as zhǐ and 吧 as bā).
 const SAY_AS = {
-  '只': 'zhi 1',   // the counting word, not zhǐ (only)
+  '只': {ph:'zhi 1', google:'知'},   // the counting word, zhī, not zhǐ (only): 知 (to know) sounds just the same
+  '吧': {ph:'ba 5', by:{name:'zh-CN-XiaoxiaoNeural'}},   // light, not bā (as in 酒吧, a bar): Azure's Xiaoxiao, a woman's voice
 };
 
 const CJK = /[一-鿿]/;
 const said = zh => zh.replace(/ /g, '');   // content writes sentences with spaces between words; the game says them without
 const short = name => name.replace(/^zh-CN-|Neural$/g, '').replace(/^cmn-CN-/, 'google-').toLowerCase();   // zh-CN-YunxiNeural → yunxi, cmn-CN-Wavenet-A → google-wavenet-a
-const code = (voice, text) => crypto.createHash('sha1').update(`${voice.name}|${voice.style || ''}|tidy|${text}|${SAY_AS[text] || ''}`).digest('hex').slice(0, 10);
+const code = (voice, text) => crypto.createHash('sha1').update(`${voice.name}|${voice.style || ''}|tidy|${text}|${SAY_AS[text] ? JSON.stringify(SAY_AS[text]) : ''}`).digest('hex').slice(0, 10);
 const settings = voice => ({...voice, rate: null, tidy: true});   // as tools/try-voices.js makes them
 
 // What each of the area's voices says: {role: {voice, texts}}, from the content (role: words, everyone or a character's id).
@@ -79,6 +83,22 @@ function plan(){
 
 const clipPath = (v, c) => path.join(AUDIO, v, c + '.mp3');
 
+// A clip of text in a voice, said right if it's in SAY_AS (make: makeClip, or a pretend one in the tests). Google's voice
+// is given the pinyin, and it's checked: if the clip comes out just the same as without it (made twice, in case Google
+// never sends the same clip twice), Google took no notice, so it says the word that sounds the same, or the other voice
+// says the word. Says which it did.
+async function sayRight(make, keys, voice, text, log = console.log){
+  const as = SAY_AS[text];
+  if (!as) return make(keys, voice, {zh: text});
+  if (voice.provider !== 'google') return make(keys, voice, {zh: text, ph: as.ph});
+  const plain = await make(keys, voice, {zh: text}), again = await make(keys, voice, {zh: text});
+  const given = await make(keys, voice, {zh: text, ph: as.ph}).catch(e => { log(`    ${text}: Google won’t take the pinyin (${e.message})`); return null; });
+  if (given && plain.equals(again) && !given.equals(plain)){ log(`    ${text}: Google took the pinyin, ${as.ph}`); return given; }
+  if (as.google){ log(`    ${text}: Google takes no notice of the pinyin, so it says ${as.google}, which sounds the same`); return make(keys, voice, {zh: as.google}); }
+  if (as.by){ log(`    ${text}: Google takes no notice of the pinyin, so ${as.by.name} says it, with the pinyin`); return make(keys, settings(as.by), {zh: text, ph: as.ph}); }
+  throw new Error(`Google takes no notice of the pinyin for ${text}: give it a word that sounds the same (google) or another voice (by) in SAY_AS`);
+}
+
 function indexText({clips, who}){
   return `// The voice clips: for each voice, what it says and the clip that says it (audio/<voice>/<clip>.mp3).
 // Made by tools/make-voices.js: change the Chinese or the area's voices and run  npm run voices , not here.
@@ -97,7 +117,7 @@ async function main(){
   let n = 0;
   for (const [v, text, c] of todo){
     try {
-      const audio = await makeClip(azure, settings(p.voices[v]), {zh: text, ph: SAY_AS[text]});
+      const audio = await sayRight(makeClip, azure, settings(p.voices[v]), text);
       fs.mkdirSync(path.join(AUDIO, v), {recursive: true});
       fs.writeFileSync(clipPath(v, c), audio);
       console.log(`  ${++n}/${todo.length} ${v}: ${text}`);
@@ -107,16 +127,16 @@ async function main(){
     }
     await pause(pauseAfter(p.voices[v]));
   }
+  if (process.exitCode){ console.log('Stopped: run it again to carry on (it keeps what it made).'); return; }   // (the clips in use stay as they were till then)
   // Clips nothing says any more, and voices nobody uses
   if (fs.existsSync(AUDIO)) for (const v of fs.readdirSync(AUDIO)){
     const keep = new Set(Object.values(p.clips[v] || {}).map(c => c + '.mp3'));
     for (const f of fs.readdirSync(path.join(AUDIO, v))) if (!keep.has(f)){ fs.unlinkSync(path.join(AUDIO, v, f)); console.log(`  removed ${v}/${f}`); }
     if (!fs.readdirSync(path.join(AUDIO, v)).length) fs.rmdirSync(path.join(AUDIO, v));
   }
-  if (process.exitCode) { console.log('Stopped: run it again to carry on (it keeps what it made).'); return; }
   fs.writeFileSync(INDEX, indexText(p));
   console.log(`Wrote content/voices.js: ${Object.values(p.clips).reduce((s, c) => s + Object.keys(c).length, 0)} clips.`);
 }
 
-module.exports = {plan, indexText, clipPath, INDEX, SAY_AS};
+module.exports = {plan, indexText, clipPath, INDEX, SAY_AS, sayRight};
 if (require.main === module) main();

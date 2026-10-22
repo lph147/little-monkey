@@ -113,7 +113,7 @@ test('at the shop, 我不要 turns everything down: taught the first time, then 
   t.run("showDialog = async () => {}; globalThis.__said = []; iSay = async p => { __said.push(p); }; shop(speaker('boss')).then(() => { __done = true; })");
   await tick();
   const no = t.sheet.querySelector('[data-a=no]');
-  assert.match(no.textContent, /我不要 · no thanks/);
+  assert.deepEqual(['.nzh', '.npy', '.nen'].map(c => no.querySelector(c).textContent), ['我不要', 'wǒ bú yào', '· no thanks'], 'Chinese, pinyin and English, as a reply choice shows it');
   no.click();
   await tick();
   assert.match(t.sheet.textContent, /我不要/, 'a new-word card for 我不要');
@@ -121,6 +121,15 @@ test('at the shop, 我不要 turns everything down: taught the first time, then 
   await tick();
   assert.deepEqual(JSON.parse(t.run('JSON.stringify(__said)')), ['我不要']);
   assert.equal(t.run('__done'), true);
+});
+
+test('with English on replies switched off, the shop’s 我不要 still has its pinyin: never characters alone', async () => {
+  const t = replyGame({'老板': {lv: 1, due: 0, ok: 0}}, {areas: {1: {elder: 2}}, replyEn: false});
+  t.run("showDialog = async () => {}; shop(speaker('boss'))");
+  await tick();
+  const no = t.sheet.querySelector('[data-a=no]');
+  assert.equal(no.querySelector('.npy').textContent, 'wǒ bú yào');
+  assert.equal(no.querySelector('.nen'), null, 'no English');
 });
 
 test('an animal\'s last question is sometimes a sentence you know with a word missing', async () => {
@@ -190,4 +199,15 @@ test('every phrase says when you say it, and what someone does that you answer w
   const replies = JSON.parse(t.run(`JSON.stringify([...new Set([...Object.values(AREA.requests).flatMap(r => [r.thanksReply, r.wrongReply]),
     ...Object.values(AREA.talk).flat().flatMap(p => p.do).filter(s => s.reply && !s.about).map(s => s.reply)].filter(Boolean))])`));
   for (const p of replies) assert.ok(JSON.parse(t.run(`JSON.stringify(WORDS['${p}'].cue || null)`)), `${p} is a reply to a line: it needs a cue`);
+});
+
+test('your name over what you say has English that says what it means, and that it’s you: 小猴子, then 美猴王 once you’re king', async () => {
+  const t = replyGame(know('你好'));
+  const name = () => { const s = t.run("speaker('player')"); return [s.match(/spk-zh">([^ <]+)/)[1], s.match(/spk-en">([^<]+)/)[1]]; };
+  assert.deepEqual(name(), ['小猴子', 'Little monkey (you)'], 'it said just You, which isn’t what 小猴子 means');
+  t.run('here().cave = 6');
+  assert.deepEqual(name(), ['美猴王', 'Handsome Monkey King (you)'], 'it said You, the king');
+  t.run("iSay('你好')");
+  await tick();
+  assert.match(t.box.textContent, /美猴王[\s\S]*Handsome Monkey King \(you\)[\s\S]*你好/, 'over what you say');
 });

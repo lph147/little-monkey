@@ -77,9 +77,11 @@ function ssml(voice, item, full = true){   // full: with the voice's speed, styl
 
 const pause = ms => new Promise(r => setTimeout(r, ms));
 
-// What to ask Google for (its Text-to-Speech API): the words, the voice, and MP3 at its speed.
+// What to ask Google for (its Text-to-Speech API): the words, the voice, and MP3 at its speed. An item's pinyin (ph) goes
+// as a custom pronunciation, in Google's way of writing it: a tone number after each syllable (zhi1, not zhi 1).
 function googleRequest(voice, item){
-  return {input:{text:item.zh}, voice:{languageCode:'cmn-CN', name:voice.name},
+  const ph = item.ph && !voice.noPinyin ? {customPronunciations:{pronunciations:[{phrase:item.zh, phoneticEncoding:'PHONETIC_ENCODING_PINYIN', pronunciation:item.ph.replace(/ (\d)/g, '$1')}]}} : {};
+  return {input:{text:item.zh, ...ph}, voice:{languageCode:'cmn-CN', name:voice.name},
     audioConfig:{audioEncoding:'MP3', sampleRateHertz:24000, ...(voice.speed ? {speakingRate:voice.speed} : {})}};
 }
 async function makeGoogleClip(key, voice, item){

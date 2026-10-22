@@ -76,7 +76,7 @@ test('the 老板 hands you what you’ve bought: you say 谢谢 (seeing what’s
   game.run(`buy(${APPLE()}, speaker('boss')).then(() => { __done = true; })`);
   await tick();
   const box = game.el('#talk');
-  assert.equal(box.querySelector('.ask').textContent, 'The 老板 (shop owner, boss) gives you the 苹果 (apple). What do you say?');
+  assert.equal(box.querySelector('.ask').textContent, 'The 老板 (shop owner) gives you the 苹果 (apple). What do you say?');
   assert.ok(box.querySelector('.replyto .portrait'), 'his face');
   assert.ok(box.querySelector('.replyto .gift'), 'and what he gives you');
   box.querySelectorAll('.reply').find(b => b.querySelector('.rzh').textContent === '谢谢').click();

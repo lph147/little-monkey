@@ -45,7 +45,7 @@ test('the big monkey marks out the school’s plot as you watch, wants wood and 
   assert.deepEqual(get(g, '[here().build, here().wood, here().stones]'), [1, 'asked', 'asked']);
   assert.ok(g.run('tileAt(25, 0).walk') && g.run('isOpen(exitAt(25, 0))'), 'the bushes are cleared');
   assert.equal(g.run('exitAt(25, 0).to'), 'pineWood');
-  assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Find three pieces of wood in the pine wood (0/3)', 'Find three small 石头 (stone, rock) in the pine wood (0/3)'],
+  assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Find three pieces of wood in the pine wood (0/3)', 'Find three small 石头 (stones) in the pine wood (0/3)'],
     'wood is in plain English: you haven’t found any yet');
   assert.deepEqual(get(g, 'getTasks()[0].target'), [25, 0], 'the arrow points the way up to the pine wood');
 });
@@ -140,7 +140,7 @@ test('the cracked rock shuts the sunny glade until you break it, any time in cha
   await press(g, 30, 7, 'up');
   assert.equal(g.run('tileAt(30, 6).look'), 'needles', 'the stone is picked up');
   assert.deepEqual(get(g, 'here().holding'), {wood: '木头', stones: '石头'});
-  assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Take the 木头 (wood) to the big monkey', 'Take the small 石头 (stone, rock) to the big monkey']);
+  assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Take the 木头 (wood) to the big monkey', 'Take the small 石头 (stones) to the big monkey']);
   assert.ok(get(g, 'getTasks().every(t => t.target)'), 'with arrows the way back');
   const later = game({...BUILDING, build: 2, wood: 'done', stones: 'done'}, {place: 'pineWood', x: 22, y: 5, dir: 'right'});
   assert.equal(later.run('promptFor(23, 5)'), 'Hit', 'with the wood and stones brought already, you can still break it: the deer’s glade is behind it');
@@ -225,7 +225,7 @@ test('a deer lives in the sunny glade: chapter 1’s animal, counted on its own,
   assert.equal(g.run('promptFor(30, 3)'), 'Meet');
   assert.ok(!g.run('walkable(30, 3)'), 'you can’t walk through it');
   assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft")]'), [4, 4, 0], 'the prologue’s four animals, all found');
-  const item = () => get(g, 'areaChecklist().find(([t]) => /animal that lives in the pine wood/.test(t))');
+  const item = () => get(g, 'areaChecklist().find(([t]) => /that lives in the pine wood/.test(t))');
   assert.equal(item()[1], false, 'on the checklist, to find');
   g.run("encounter = async () => { globalThis.__met = {spot: foe.spot, at: [foe.x, foe.y]}; return true; }");   // (making friends: tests/animals.test.js)
   await press(g, 29, 3, 'right');

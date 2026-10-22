@@ -107,7 +107,48 @@ test('Google’s voices: the key is read from its own line, and a clip asks for 
   const voice = {provider:'google', name:'cmn-CN-Wavenet-A'};
   assert.deepEqual(googleRequest(voice, {zh:'水'}), {input:{text:'水'}, voice:{languageCode:'cmn-CN', name:'cmn-CN-Wavenet-A'}, audioConfig:{audioEncoding:'MP3', sampleRateHertz:24000}});
   assert.equal(googleRequest({...voice, speed:0.9}, {zh:'水'}).audioConfig.speakingRate, 0.9);
+  assert.deepEqual(googleRequest(voice, {zh:'只', ph:'zhi 1'}).input, {text:'只', customPronunciations:{pronunciations:[
+    {phrase:'只', phoneticEncoding:'PHONETIC_ENCODING_PINYIN', pronunciation:'zhi1'}]}}, 'the pinyin goes too, as Google writes it');
   assert.ok(pauseAfter(voice) < pauseAfter({name:'zh-CN-XiaoxiaoNeural'}), 'Azure’s free tier needs a longer pause between clips');
+});
+
+// Pinyin with tone numbers (zhi 1, ba 5) as the word bank writes it, with tone marks (zhī, ba)
+const MARKS = {a:'āáǎà', e:'ēéěè', i:'īíǐì', o:'ōóǒò', u:'ūúǔù', ü:'ǖǘǚǜ'};
+const marked = ph => [...ph.matchAll(/([a-zü]+) (\d)/g)].map(([, s, t]) => {
+  if (t === '5') return s;   // a light syllable has no mark
+  const v = /[ae]/.exec(s) || /o(?=u)/.exec(s) || [...s.matchAll(/[aeiouü]/g)].pop();
+  return s.slice(0, v.index) + MARKS[v[0]][t - 1] + s.slice(v.index + 1);
+}).join('');
+
+test('a word the voice reads wrongly on its own has its pinyin, as the word bank says it (只 zhī, not zhǐ; 吧 ba, not bā)', () => {
+  const {SAY_AS} = require('../tools/make-voices');
+  const {loadGame} = require('./fake-browser');
+  const bank = JSON.parse(loadGame().run('JSON.stringify(WORD_BANK)'));
+  assert.ok(SAY_AS['只'] && SAY_AS['吧'], 'Google’s voice said 只 as zhǐ and 吧 as bā');
+  for (const [w, as] of Object.entries(SAY_AS)){
+    assert.ok(bank[w], `${w} isn't in the word bank`);
+    assert.equal(marked(as.ph), bank[w].py.replace(/ /g, ''), `${w}'s pinyin, ${as.ph}, should say what the word bank does`);
+    assert.ok(as.google || as.by, `${w} needs a way to be said right if Google takes no notice of its pinyin`);
+  }
+});
+
+test('Google’s voice is given the pinyin; if it takes no notice, it says a word that sounds the same, or another voice says it', async () => {
+  const {sayRight} = require('../tools/make-voices');
+  const google = {provider:'google', name:'cmn-CN-Standard-A'}, quiet = () => {}, made = [];
+  const said = (voice, item) => Buffer.from(`${voice.name} ${item.zh}${item.ph ? ' ' + item.ph : ''}`);
+  const deaf = async (keys, voice, item) => { made.push([voice.name, item.zh, item.ph]); return said(voice, {zh: item.zh}); };   // (the pinyin changes nothing)
+  assert.equal(String(await sayRight(deaf, {}, google, '只', quiet)), 'cmn-CN-Standard-A 知', 'Google says 知 (zhī), which sounds the same');
+  assert.equal(String(await sayRight(deaf, {}, google, '吧', quiet)), 'zh-CN-XiaoxiaoNeural 吧', 'Azure’s Xiaoxiao says 吧');
+  assert.deepEqual(made.at(-1), ['zh-CN-XiaoxiaoNeural', '吧', 'ba 5'], 'with its pinyin');
+  const hears = async (keys, voice, item) => said(voice, item);
+  assert.equal(String(await sayRight(hears, {}, google, '吧', quiet)), 'cmn-CN-Standard-A 吧 ba 5', 'if Google takes the pinyin, its own voice says it');
+  const refuses = async (keys, voice, item) => { if (item.ph && voice.provider === 'google') throw new Error('400'); return said(voice, item); };
+  assert.equal(String(await sayRight(refuses, {}, google, '只', quiet)), 'cmn-CN-Standard-A 知', 'or if Google won’t take it');
+  let n = 0;
+  const neverTheSame = async (keys, voice, item) => Buffer.from(`${voice.name} ${item.zh} ${n++}`);
+  assert.match(String(await sayRight(neverTheSame, {}, google, '只', quiet)), /知/, 'if Google never sends the same clip twice, it can’t tell, so 知 it is');
+  assert.equal(String(await sayRight(hears, {}, {name:'zh-CN-YunxiNeural'}, '只', quiet)), 'zh-CN-YunxiNeural 只 zhi 1', 'Azure’s voices take the pinyin');
+  assert.equal(String(await sayRight(hears, {}, google, '山', quiet)), 'cmn-CN-Standard-A 山', 'other words are just said');
 });
 
 test('keys can come from GitHub’s secrets, and a Google voice it doesn’t have is swapped for one like it', async () => {

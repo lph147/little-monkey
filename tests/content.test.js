@@ -13,7 +13,7 @@ const BANK = get('WORD_BANK'), PICTURES = get('PICTURES'), MAP_SPRITES = get('MA
 const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), STEPS = get('Object.keys(STEPS)');   // what the engine can draw and do
 const STEP_OPTIONS = get('STEP_OPTIONS'), COUNTS = get('Object.keys(COUNTS)');
 const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests), 'done'];   // what the area keeps in the save
-const placeholders = text => [...String(text).matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+const placeholders = text => [...String(text).matchAll(/\{([^}|]+)(?:\|[^}]*)?\}/g)].map(m => m[1]);   // (a word's, without the English that fits the sentence: {石头|stones})
 // A step, and the steps inside it for if you win (a battle's, or a word game's)
 const withWins = (where, s, who) => [[where, s, who], ...[...(s.win || []), ...((s.wordGame || {}).win || [])].flatMap(w => withWins(`${where}, if you win`, w, who))];
 const allSteps = () => [
@@ -391,6 +391,23 @@ test('every {word} or {counter} in content text is real', () => {
     ...Object.values(AREA.found)
   ].filter(Boolean);
   for (const t of texts) for (const w of placeholders(t)) assert.ok(okPlaceholder(w), `"${t}" has {${w}}, which isn't a word in the word bank, a counter or holding:<a request>`);
+});
+
+test('your tasks, the checklist and hints write a word from the word bank as 汉字 (English), never just in English', () => {
+  // ({水} in the content: 水 (water), or just water till you've caught it. Names stay English, as do places' names, numbers,
+  // and want, which is what 要 means but isn't 要 in these sentences: the old monkey, the home ground, the pine wood, Flower
+  // Fruit Mountain, three pieces of wood.)
+  const names = /\b(monkeys?|home ground|pine wood|Flower Fruit Mountain|wants?|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi;
+  const meanings = Object.entries(BANK).filter(([, b]) => b.area <= AREA.number).flatMap(([w, b]) => b.en.split(/,\s*/)
+    .map(e => e.replace(/^(a|an|the|to) /, '')).filter(e => e.length > 2).map(e => [w, e]));
+  const texts = [...AREA.tasks.map(t => t.text), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)];
+  for (const t of texts){
+    const english = t.replace(/\{[^}]*\}/g, '').replace(names, '');
+    for (const [w, e] of meanings){
+      const said = new RegExp(`\\b${e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(s|es)?\\b`, 'i');
+      assert.doesNotMatch(english, said, `"${t}" says ${e}: write {${w}}, which shows as ${w} (${e}), or just ${e} till you've caught it`);
+    }
+  }
 });
 
 test('tasks have different ids, and their arrows point at a character, a place on the map, or the way to a place', () => {

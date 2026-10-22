@@ -49,7 +49,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     if (items.length){ (items.find(b => plan.buy && b.querySelector('.szh').textContent === plan.buy) || sheet.querySelector('[data-a=no]')).click(); return; }
     run('pressA()');   // the main button: OK, Got it, Next, Start, Give it, Say it...
   }
+  const caught = () => get('Object.keys(WORDS).filter(w => lvl(w) >= 1)');
   async function act(code, what){   // start something, then answer its cards until it's finished
+    const before = caught();
     let done = false, failed = null, last = '', same = 0;
     Promise.resolve(run(code)).then(() => { done = true; }, e => { failed = e; done = true; });
     for (let i = 0; i < 2000 && !done; i++){
@@ -64,6 +66,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     assert.ok(done, `stuck while ${what}: ${open() ? cardText() : 'no card open'}`);
     await settle();
     assert.ok(!open(), `a card was left open after ${what}: ${cardText()}`);
+    const learned = caught().filter(w => !before.includes(w));
+    assert.ok(learned.length <= 1, `one new word at a time, but ${what} taught ${learned.join(' and ')}`);
   }
   const stand = (x, y, dir) => run(`S.pos = {place:PLACE, x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // in the place you're in
   const pressAt = (x, y, dir, what) => { stand(x, y, dir); return act('finishedAt = null; pressA()', what); };   // face something and press A (after a moment, as a player does: what you've just finished with rests)
@@ -240,7 +244,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().cave, 3, 'the old monkey should hear about the cave');
   assert.ok(get('areaChecklist()').slice(0, 3).every(([, done]) => done), 'the start of the prologue’s checklist should be ticked off');
 
-  // Then leading the troop in, home, becoming king, and counting them in
+  // Then leading the troop in, home, counting them in, and becoming king
   await pressAt(5, 1, 'left', 'leading the troop into the cave');
   assert.equal(run('PLACE'), 'cave');
   assert.equal(area().cave, 4, 'the troop should follow you in');
@@ -253,6 +257,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     assert.equal(area().count, n);
   }
   for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
+  assert.deepEqual(get('__scenes'), [], 'the third monkey teaches 三: becoming king waits till you talk to him again');
+  await pressAt(6, 10, 'up', 'talking to the old monkey, with the whole troop home');
   assert.deepEqual(get('__scenes'), ['becomingKing'], 'with the whole troop home, they make you king: the scene, told like the opening');
   assert.ok(knows('王'), 'becoming king teaches 王');
   assert.equal(get('yourName().zh'), '美猴王', 'you should be called 美猴王 now');
@@ -314,7 +320,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('PLACE'), 'homeGround');
   await pressAt(15, 5, 'up', 'giving the big monkey the wood and the stones');
   assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them');
-  assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气 to his thanks');
+  assert.ok(!knows('不客气'), 'no reply to his thanks: the school comes next, teaching 学校, so 不客气 waits');
 
   // Chapter 1: the troop builds the school at once, and you go in: the class greets its teacher, the little monkey is
   // your classmate, and the teacher gives you a lesson
@@ -355,6 +361,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(area().picked.flowers, ['红色', '黄色', '白色'], 'one of each colour');
   assert.ok(['红色的花', '黄色的花', '白色的花'].every(t => get('__said').includes(t)), 'each said as you pick it: 红色的花, a red flower');
   await pressAt(15, 5, 'up', 'giving the big monkey the flowers');
+  assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气 to his thanks');
   assert.deepEqual([area().flowers, area().schoolFlowers, run('tileAt(10, 5).look')], ['done', true, 'flowerBed'], 'he plants them in front of the school');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
