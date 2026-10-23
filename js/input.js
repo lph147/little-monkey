@@ -12,12 +12,16 @@ const SLIP_MS = 520, SLIP_UP = 7;
 const slipLift = p => p < .4 ? SLIP_UP * Math.sin(p / .4 * Math.PI / 2) : SLIP_UP * (1 - ((p - .4) / .6) ** 2);
 // What you've just finished with (a conversation, a lesson, the story, an animal you've met…) rests: A at it does nothing
 // until you turn, take a step or REST_MS go by, with A's label blank meanwhile, so an A meant for the last of it never
-// starts it all over again (decided 22 October 2026: 21 October's half a second was too short).
+// starts it all over again (decided 22 October 2026: 21 October's half a second was too short). But not someone with
+// something new for you, a ! or ? over them, and not what they've just said: A talks to them at once (decided 23 October
+// 2026, after playing it: the old monkey taught 家 and went straight on to counting the troop in, but A, after closing
+// each message, did nothing, as if you couldn't talk to him).
 const REST_MS = 2000;
 let finishedAt = null;   // {place, x, y, t}: the square you were facing when something ended
 function finished(){ const [x, y] = facing(); finishedAt = {place:PLACE, x, y, t:performance.now()}; }
 const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && finishedAt.x === x && finishedAt.y === y
-  && performance.now() - finishedAt.t < REST_MS && lastMoveEnd < finishedAt.t && pl.turnT < finishedAt.t;
+  && performance.now() - finishedAt.t < REST_MS && lastMoveEnd < finishedAt.t && pl.turnT < finishedAt.t
+  && !(n => n && hasNews(n))(npcAt(x, y) || followerAt(x, y));
 // A message that has come up (toast, js/helpers.js) since you last moved or turned: A closes it, as B does, never
 // reaching past it to whoever you're facing (decided 22 October 2026: it's where the speech box was, and looks like it,
 // and A, pressed to clear it, started the conversation you'd just had all over again). Once you've moved on, A is as ever.

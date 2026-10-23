@@ -467,10 +467,17 @@ function followersStep(now, hop){   // you're stepping off your square (hop: dow
 // has already taught a new word (replyWith).
 let caughtBefore = null;
 const caughtCount = () => Object.keys(WORDS).filter(w => lvl(w) >= 1).length;
+// The part of a character's talk you'd hear now (the first whose if matches), and the one you heard last (lastTalk), so
+// A can tell when talking again would say something new (js/input.js).
+const talkPart = n => (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
+let lastTalk = null;   // {id, part}
+// A character with something new for you: a ! or ? over them, and not what they've just said.
+const hasNews = n => !!(AREA.bubbles[n.id] || []).find(b => matches(b.if)) && !!talkPart(n) && !(lastTalk && lastTalk.id === n.id && lastTalk.part === talkPart(n));
 async function talk(n){
   n.dir = OPP[pl.dir];
-  const part = (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
+  const part = talkPart(n);
   if (!part) return;
+  lastTalk = {id:n.id, part};
   const outer = caughtBefore;   // (a character can stop you during another conversation)
   caughtBefore = caughtCount(); lastLine = null;   // (nothing said yet to reply to)
   try { await runSteps(part.do, n.id, true); } finally { caughtBefore = outer; }
