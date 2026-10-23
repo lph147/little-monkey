@@ -449,9 +449,9 @@ function slabs(g, X, Y, x, y){
   }
 }
 // Writing in the world is real Chinese, never made-up squiggles, so there's more for you to read (decided 21 October
-// 2026): the school's sign (学校), the cave's stone tablet (水帘洞), the numbers on the blackboard and the archway into the
-// pine wood (松林). Each character is drawn by hand in pixels ('#' is ink); writing something new needs its characters
-// drawn here (a test checks).
+// 2026): the school's sign (学校), the cave's stone tablet (水帘洞), the numbers on the blackboard, the archway into the
+// pine wood (松林) and the gate of heaven in the lookout's view (南天门). Each character is drawn by hand in pixels ('#' is
+// ink); writing something new needs its characters drawn here (a test checks).
 const HANZI = {
   '学': [".#..#...#.", "..#..#.#..", "##########", "#........#", "..######..", "......#...", ".....#....", "##########", ".....#....", ".....#....", "...###...."],
   '校': ["..#....#...", "..#.....#..", "####.######", "..#...#..#.", ".###.#....#", ".##.#.#..#.", "#.#....##..", "..#....##..", "..#...#..#.", "..#..#....#", "..#.#......"],
@@ -470,6 +470,9 @@ const HANZI = {
   '十': ["...#...", "...#...", "...#...", "#######", "...#...", "...#...", "...#..."],
   '松': ["..#...#..#.", "..#...#...#", "####.#....#", "..#........", ".###...#...", ".##...#....", "#.#...#..#.", "..#..#....#", "..#..#####.", "..#........", "..#........"],
   '林': ["..#.....#..", "..#.....#..", "#####.#####", "..#.....#..", ".###...###.", ".##.#.##.#.", "#.#...#.#.#", "..#.....#..", "..#.....#..", "..#.....#..", "..#.....#.."],
+  '南': ["...#...", "#######", "...#...", "#######", "#.#.#.#", "#.###.#", "#..#..#", "#.###.#", "#..#.##"],
+  '天': [".#####.", "...#...", "...#...", "#######", "...#...", "...#...", "..#.#..", ".#...#.", "#.....#"],
+  '门': [".#.....", "..#####", "#.....#", "#.....#", "#.....#", "#.....#", "#.....#", "#.....#", "#....##"],
 };
 // Writes text in HANZI's characters from X, Y, in ink: across, gap pixels apart, or down (each centred in the column).
 function write(g, text, X, Y, ink, {gap = 1, down = false} = {}){

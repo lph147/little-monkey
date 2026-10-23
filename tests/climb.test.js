@@ -1,5 +1,6 @@
 // Chapter 1, the hillside (decided 23 October 2026): sounds that change as you climb (birdsong at the foot, the wind on the
-// terraces, crows under the pines), and in the lookout's view, two gods peeking out from a gate in the clouds now and then.
+// terraces, crows under the pines), and in the lookout's view, two gods peeking out from a gate in the clouds now and then,
+// the gate of heaven (南天门), as in the book (redesigned the same day).
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -49,4 +50,16 @@ test('in the lookout’s view, two gods peek out from behind a gate in the cloud
   assert.ok(peeks.filter(k => k === 0).length / peeks.length > .6, 'and hidden most of the time');
   assert.ok(peeks.every(k => k >= 0 && k <= 1));
   for (const now of [0, 1000, 2500]) g.run(`drawLookout(2, ${now})`);   // (it draws, peeking or not)
+});
+
+test('the gate is the gate of heaven, 南天门 on its plaque; Thousand-Mile Eye comes out on its left and Wind-Following Ear on its right', () => {
+  const g = game(21, 21);
+  g.run(`globalThis.__wrote = []; const write0 = write; write = (g, text, ...rest) => { __wrote.push(text); return write0(g, text, ...rest); };
+    globalThis.__gods = []; b.drawImage = (img, x) => { if (img === GODS.eye || img === GODS.ear) __gods.push([img === GODS.eye ? 'eye' : 'ear', x]); }`);
+  g.run('drawLookout(2, 0)');   // hidden behind the pillars
+  g.run('drawLookout(2, 1000)');   // out
+  assert.deepEqual(get(g, '__wrote'), ['南天门', '南天门']);
+  const [eye0, ear0, eye1, ear1] = get(g, '__gods');
+  assert.deepEqual([eye0[0], ear0[0], eye1[0], ear1[0]], ['eye', 'ear', 'eye', 'ear']);
+  assert.ok(eye1[1] < eye0[1] && ear1[1] > ear0[1], 'out: Thousand-Mile Eye to the left, Wind-Following Ear to the right');
 });

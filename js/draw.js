@@ -794,28 +794,45 @@ function drawCarving(t, now){
     b.globalAlpha = shine; oval(b, 120, 104, 13, 3, 'rgba(0,0,0,.25)'); b.drawImage(monkeySprite('player', 'up', false), 104, 72, 32, 32); b.globalAlpha = 1;   // you, looking up at it
   }
 }
-// High in the sky over the lookout, a gate in the clouds, the gate of heaven, and two gods peeking out from behind its
-// pillars for a moment now and then, then ducking back (in the book, Thousand-Mile Eye, shading his eyes, and Wind-Following
-// Ear, cupping his ear, sent by the Jade Emperor to see what the light from your eyes was, when you were born): a secret,
-// with nothing said about it (decided 23 October 2026). How far out they are (0 to 1) now: every few seconds, whatever the
-// scene's clock is doing (it waits at each line until Next).
+// High in the sky over the lookout, the gate of heaven in the clouds, 南天门 (the Southern Gate of Heaven), and two gods
+// peeking out from behind its pillars for a moment now and then, then ducking back: a secret, with nothing said about it
+// (decided 23 October 2026). In the book, when you were born and light shone from your eyes, the Jade Emperor sent these
+// two out of this gate to see and hear what it was: Thousand-Mile Eye (千里眼) and Wind-Following Ear (顺风耳). The book
+// doesn't say how they look, so they're drawn as temples show them (redesigned 23 October 2026), in armour, each with a
+// horned helmet: Thousand-Mile Eye red-faced, his eyes wide and his mouth shut, a hand held flat over his brow to see far;
+// Wind-Following Ear green-faced, his mouth open, cupping a huge ear (temples pair one red face with one green; which is
+// which varies from place to place). How far out they are (0 to 1) now: every few seconds, whatever the scene's clock is
+// doing (it waits at each line until Next).
 function godsPeek(now){
   const c = (now / 1000) % 5;
   return clamp(c < .3 ? c / .3 : c < 1.4 ? 1 : c < 1.7 ? (1.7 - c) / .3 : 0, 0, 1);
 }
+const GODS = {
+  eye: sprite(["......Hh...hH.", "......hh...hH.", ".....ooooooooo", ".....ogggggggo", "oooooooooooRro", "opppppppppoRro", "ooooooooooorro",
+    "orRo.orwkrwkro", "orRo.orwwrwwro", "orRo.orrrrrrro", ".orRoorbbbbbro", ".orRooRrrrrRo.", "..oaaaoyyyyyo.", "..oaAaaaaaAaao", "..oaaaaaaaaaao"],
+    {o:'#2A1A14', h:'#F2E6C4', H:'#C9B98E', g:'#E8B83E', p:'#F08A70', r:'#D9503F', R:'#B23A2E', w:'#FFFFFF', k:'#141414', b:'#4A1E14', y:'#E8B83E', a:'#3B5FA0', A:'#6C8FD0'}),
+  ear: sprite(["....hH..........", "....hh..........", "ooooooooo.......", "ogggggggo.......", "offfffffo.ooo...", "ofwkffwkfoeeeo.c", "ofwwffwwfoeEeocc",
+    "offfffffoeEEeocc", "ofnnnnnffoeEeocc", "oftnnntfooeeeoc.", ".offffffo.oooc..", "..oyyyyyo..cc...", ".ommmmmmmo......", "ommmmymmmmo....."],
+    {o:'#1E2A1A', h:'#F2E6C4', H:'#C9B98E', g:'#E8B83E', f:'#4FA65A', e:'#5FBB6A', E:'#2F6E38', c:'#8FD88F', w:'#FFFFFF', k:'#141414', n:'#3A1010', t:'#FFFFFF', y:'#E8B83E', m:'#B8322A'})
+};
 function heavenGate(k, cloud){
-  const x0 = 92, glow = '#FFF3C8', red = '#C2412F', dark = '#7A2416', gold = '#E7A93A', skin = '#F1C9A0', hair = '#2E2A26';
-  disc(b, x0 + 13, 15, 8, glow);   // the light of heaven, through the gateway
-  const out = Math.round(k * 4);
-  if (out){   // the gods, out from behind the pillars: Thousand-Mile Eye (left), his hand shading his eyes, in blue;
-    const L = x0 + 3 - out, Rx = x0 + 22 + out;   // Wind-Following Ear (right), his hand cupping his ear, in green
-    R(b, L - 1, 16, 5, 6, '#3B6FB6'); R(b, L, 10, 4, 6, skin); R(b, L, 9, 4, 2, hair); R(b, L, 12, 1, 1, '#FFFFFF'); R(b, L + 1, 12, 1, 1, '#1E1A16'); R(b, L - 1, 10, 4, 1, skin);
-    R(b, Rx, 16, 5, 6, '#3E8E5A'); R(b, Rx, 10, 4, 6, skin); R(b, Rx, 9, 4, 2, hair); R(b, Rx + 2, 12, 1, 1, '#1E1A16'); R(b, Rx + 4, 10, 2, 4, skin); R(b, Rx + 5, 9, 1, 1, skin);
-  }
-  R(b, x0 + 3, 7, 3, 16, red); R(b, x0 + 3, 7, 1, 16, dark); R(b, x0 + 20, 7, 3, 16, red); R(b, x0 + 22, 7, 1, 16, dark);   // its pillars
-  R(b, x0 + 1, 7, 24, 2, red); R(b, x0 + 1, 9, 24, 1, dark); R(b, x0 + 10, 9, 6, 3, gold);   // the beam across, and its golden plaque
-  R(b, x0 - 1, 4, 28, 3, gold); R(b, x0, 3, 26, 1, '#F6CD6A'); R(b, x0 - 1, 6, 28, 1, '#A8701E'); R(b, x0 - 2, 3, 1, 1, gold); R(b, x0 + 27, 3, 1, 1, gold);   // its roof, with upturned eaves
-  cloud(x0 - 2, 24, .55); cloud(x0 + 14, 25, .5);   // the clouds it stands on
+  const x0 = 70, red = '#B8322A', redD = '#7E1F18', gold = '#E8B83E', goldD = '#A8771E', goldL = '#F8DC80', jade = '#5FB49C';
+  b.save(); b.translate(0, 4);
+  disc(b, x0 + 25, 25, 14, '#FFF3C8'); disc(b, x0 + 25, 25, 9, '#FFFBEA');   // the light of heaven, through the gateway
+  const L = x0 + 6, Rx = x0 + 44, hide = Math.round((1 - k) * 15);   // the pillars' outer edges; how far in the gods still are
+  b.save(); b.beginPath(); b.rect(0, 0, L, 60); b.clip(); b.drawImage(GODS.eye, L - 13 + hide, 13); b.restore();   // Thousand-Mile Eye, out from behind the left pillar
+  b.save(); b.beginPath(); b.rect(Rx, 0, 240, 60); b.clip(); b.drawImage(GODS.ear, Rx - 2 - hide, 13); b.restore();   // Wind-Following Ear, out from behind the right
+  for (const px of [L, Rx - 4]){ R(b, px, 13, 4, 23, red); R(b, px + 3, 13, 1, 23, redD); R(b, px - 1, 13, 6, 2, gold); R(b, px - 1, 33, 6, 2, gold); }   // its pillars, gold at top and foot
+  R(b, x0 + 2, 10, 46, 3, red); R(b, x0 + 2, 12, 46, 1, redD);   // the beam across
+  R(b, x0 + 4, 8, 42, 2, jade); for (let i = x0 + 5; i < x0 + 45; i += 4) R(b, i, 8, 2, 1, goldL);   // its painted brackets
+  for (let y = 4; y < 8; y++){ const w = 52 - (7 - y) * 2; R(b, x0 + 25 - w / 2, y, w, 1, y % 2 ? gold : goldL); }   // the lower roof, golden tiles
+  R(b, x0 - 2, 3, 2, 1, gold); R(b, x0 + 50, 3, 2, 1, gold);   // its eaves, turned up
+  for (let y = 0; y < 3; y++){ const w = 30 - (2 - y) * 2; R(b, x0 + 25 - w / 2, y, w, 1, y % 2 ? goldL : gold); }   // the upper roof
+  R(b, x0 + 9, 0, 2, 1, goldD); R(b, x0 + 39, 0, 2, 1, goldD);
+  R(b, x0 + 11, 15, 28, 13, gold); R(b, x0 + 12, 16, 26, 11, '#24365F');   // the plaque, hung under the beam
+  write(b, '南天门', x0 + 14, 17, goldL);   // its name, the Southern Gate of Heaven
+  cloud(x0 - 8, 36, 1); cloud(x0 + 14, 38, .9); cloud(x0 + 36, 36, 1);   // the clouds it stands on
+  b.restore();
 }
 // The pictures for the area's scenes (AREA.scenes), by name (a scene's art, or else its id); the opening's are drawScene, above.
 const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout, carving: drawCarving};

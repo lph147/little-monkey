@@ -7,7 +7,8 @@ const path = require('node:path');
 const {loadGame, ROOT} = require('../tests/fake-browser');
 
 // New sentences waiting to be checked, as {zh, en, where}: ones not in the game yet, and new ones already
-// in it. Once checked (and corrected), put any corrections into the content and delete them from here.
+// in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
+// into the content and delete them from here.
 const DRAFTS = [
   ...[['石头 里 有 猴子 。', 'There is a monkey inside the stone.'], ['我 是 猴子 。', 'I am a monkey.'], ['我 有 朋友 。', 'I have friends.'],
     ['我 吃 桃子 ， 喝 水 。', 'I eat peaches and drink water.'], ['草 里 有 动物 。', 'There are animals in the grass.'],
@@ -113,6 +114,7 @@ const DRAFTS = [
     ['你 有 花 吗 ？', 'Do you have flowers?', 'The big monkey, when you bring them'],
     ['我 要 红色 的 花 。', 'I want a red flower.', 'The sentence you finish when you give him the flowers (filling in 红色)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): ' + where})),
+  {zh:'南天门', py:'Nán Tiān Mén', en:'the Southern Gate of Heaven', where:'New on 23 October 2026 (in the game): written on the plaque of a gate high in the clouds, in the view from the hillside’s lookout, where two gods peek out now and then (in the book, 千里眼 Qiānlǐ Yǎn, Thousand-Mile Eye, and 顺风耳 Shùnfēng Ěr, Wind-Following Ear, came out of it to see the light from the stone monkey’s eyes; the game doesn’t name them). Written left to right, in simplified characters (门): please check that reads naturally on a gate of heaven'},
   {zh:'羊 吃 草 。', en:'Sheep eat grass.', where:'New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside'},
   ...[['山 上 有 石头 。', 'There’s a stone on the mountain.'], ['这 只 猴子 就是 你 ！', 'This monkey is you!']]
     .map(([zh, en]) => ({zh, en, where:'New on 23 October 2026 (in the game): the story carved in the hillside’s cliff, coming to life, with 石头里有猴子。 between them (就是 jiùshì, is none other than: just for listening)'}))
@@ -252,7 +254,7 @@ ${table(['Chinese', 'Pinyin', 'English', 'Notes'], MENU.map(t => [t.zh, t.py, t.
 
 Sentences that haven't been checked yet: new ones waiting to go into the game, and new ones already in it.
 
-${DRAFTS.length ? table(['Chinese', 'Pinyin', 'English', 'Where', 'Notes'], DRAFTS.map(d => [chars(d.zh), py(d.zh), d.en, d.where, notes])) : 'None at the moment.'}
+${DRAFTS.length ? table(['Chinese', 'Pinyin', 'English', 'Where', 'Notes'], DRAFTS.map(d => [chars(d.zh), d.py || py(d.zh), d.en, d.where, notes])) : 'None at the moment.'}
 
 ## Questions
 

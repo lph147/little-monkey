@@ -609,7 +609,7 @@ test('a place’s own songs, backdrop, gloom and sounds, and every sound a step 
   for (const [where, s] of allSteps().filter(([, s]) => s.sound)) assert.ok(SFX.includes(s.sound), `${where}: there's no sound ${s.sound} (js/sound.js)`);
 });
 
-test('writing in the world is real Chinese, in characters drawn for it: the school’s sign, the cave’s tablet, the blackboard', () => {
+test('writing in the world is real Chinese, in characters drawn for it: the school’s sign, the cave’s tablet, the blackboard, the gate of heaven', () => {
   const g = loadGame({save: {version: 24, started: true}});
   const HANZI = JSON.parse(g.run('JSON.stringify(HANZI)'));
   for (const [c, rows] of Object.entries(HANZI)){
@@ -625,12 +625,14 @@ test('writing in the world is real Chinese, in characters drawn for it: the scho
     schoolHouse(pen, 0, 0, 128, 64, {walls: 1, roof: 1, sign: true});
     blackboard(pen, {x: 4, y: 0, w: 7, h: 2});
     const sofar = __wrote.length; S.pos = {place: 'cave', x: 8, y: 8, dir: 'down'}; placePlayer(); __wrote.length = sofar;   // (going in draws it too)
-    for (const o of mapObjects()) if (o.look === 'tablet') OBJECT_ART.tablet(pen, o);`);
+    for (const o of mapObjects()) if (o.look === 'tablet') OBJECT_ART.tablet(pen, o);
+    drawLookout(2, 0);`);
   const wrote = JSON.parse(g.run('JSON.stringify(__wrote)'));
-  assert.deepEqual(wrote, ['学校', '一二三四五六七八九十', '水帘洞'], 'the school’s sign, the blackboard, the cave’s tablet');
+  assert.deepEqual(wrote, ['学校', '一二三四五六七八九十', '水帘洞', '南天门'], 'the school’s sign, the blackboard, the cave’s tablet, the gate of heaven in the lookout’s view');
+  const IN_THE_BOOK = {'南天门': 'the Southern Gate of Heaven, which the gods came out of to look at the light from your eyes'};
   for (const text of wrote){
     for (const c of text) assert.ok(HANZI[c], `${c} is drawn in HANZI (js/art.js)`);
-    assert.ok(BANK[text] || [...text].every(c => BANK[c]) || Object.values(AREA.places).some(p => p.name.zh === text), `${text}: a word, words, or a place’s name, never made up`);
+    assert.ok(BANK[text] || [...text].every(c => BANK[c]) || Object.values(AREA.places).some(p => p.name.zh === text) || IN_THE_BOOK[text], `${text}: a word, words, or a name (a place’s, or one in the book), never made up`);
   }
 });
 
