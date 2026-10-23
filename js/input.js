@@ -6,6 +6,10 @@ function placePlayer(){ enterPlace(S.pos.place || FIRST_PLACE); pl.x = S.pos.x; 
 let held = null, queued = null, busy = false, mode = 'title', lastBump = 0, shakeT = -9999, lastMoveEnd = 0, fadeT = -9999, waterT = -9999, dripUntil = 0, sleepT = -9999, sleepAt = null, wakeT = -9999;   // (sleepAt: the bed you're asleep in)
 const splashes = [];   // splashes of water, each where (x, y, in the map) and when (t0)
 const canAct = () => mode === 'play' && !busy && modal.hidden && !talkNext && !pl.mv;
+// Trying to climb a ledge or a bank (decided 23 October 2026, after playing the hillside: a bump didn't show why you
+// couldn't): you scramble up a little, then slip back down, in SLIP_MS, SLIP_UP pixels at most.
+const SLIP_MS = 520, SLIP_UP = 7;
+const slipLift = p => p < .4 ? SLIP_UP * Math.sin(p / .4 * Math.PI / 2) : SLIP_UP * (1 - ((p - .4) / .6) ** 2);
 // What you've just finished with (a conversation, a lesson, the story, an animal you've met…) rests: A at it does nothing
 // until you turn, take a step or REST_MS go by, with A's label blank meanwhile, so an A meant for the last of it never
 // starts it all over again (decided 22 October 2026: 21 October's half a second was too short).
@@ -27,6 +31,7 @@ function tryStep(d, now){
   if (tileAt(nx, ny).ledge){   // a ledge: you hop down it, landing just below (below the whole of a bank two squares high), but can never climb it
     let ly = ny + 1; while (tileAt(nx, ly).ledge) ly++;
     if (d === 'down' && walkable(nx, ly)){ followersStep(now, true); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ly, t0:now, hop:true}; pl.parity ^= 1; SFX.turn(); }
+    else if (d === 'up' && now - lastBump > 300){ lastBump = now + SLIP_MS; pl.mv = {fx:pl.x, fy:pl.y, tx:pl.x, ty:pl.y, t0:now, slip:true}; pl.parity ^= 1; SFX.slip(); }   // up it: you slip back down
     else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
     return;
   }
@@ -35,6 +40,12 @@ function tryStep(d, now){
 }
 function update(now){
   if (mode !== 'play') return;
+  if (pl.mv && pl.mv.slip){   // trying to climb a ledge: up a little, and sliding back down where you were (not a step: nothing happens there)
+    const m = pl.mv, p = Math.min(1, (now - m.t0) / SLIP_MS);
+    pl.px = m.fx * T; pl.py = m.fy * T - slipLift(p);
+    if (p >= 1){ pl.py = m.fy * T; pl.mv = null; }
+    return;
+  }
   if (pl.mv){
     const m = pl.mv, p = Math.min(1, (now - m.t0) / (m.hop ? STEP * 1.6 : STEP));   // a hop down a ledge takes a little longer
     pl.px = (m.fx + (m.tx - m.fx) * p) * T; pl.py = (m.fy + (m.ty - m.fy) * p) * T - (m.hop ? Math.sin(p * Math.PI) * 7 : 0);

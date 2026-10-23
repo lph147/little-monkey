@@ -57,6 +57,7 @@ const SFX = {
   thwack: (when = 0) => { tone(150, .09, 'square', .05, when, -60); tone(90, .14, 'triangle', .06, when); },   // a hit
   tock: (when = 0) => { tone(620, .045, 'square', .025, when, -220); tone(240, .09, 'triangle', .05, when, -40); },   // a stake hammered into the ground
   sprout: (when = 0) => { tone(440, .08, 'triangle', .045, when, 380); tone(1175, .1, 'triangle', .02, when + .07); },   // something planted, coming up out of the ground
+  slip: () => { tone(330, .1, 'triangle', .035, 0, 160); tone(560, .24, 'triangle', .03, .14, -380); },   // trying to climb a bank: a scramble up, then sliding back down
   // a place's own sounds, now and then (its sounds: ambience in js/world.js), such as the pine wood's
   crow: () => {   // a crow somewhere up in the pines: caw, caw
     const a = ac(); if (!a) return;

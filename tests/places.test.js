@@ -98,14 +98,18 @@ test('the way up the stream: the mountain path, the river valley and deep in the
   assert.ok(get(game, "PLACES.cave.exits.every(e => e.to === 'falls')"), 'and you come out in front of it');
 });
 
-test('you can hop down a ledge, but never climb it', () => {
+test('you can hop down a ledge, but never climb it: you scramble up a little and slip back down', () => {
   const game = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place: 'path', x: 8, y: 11, dir: 'down'}}});
   game.run("mode = 'play'; placePlayer()");
   assert.equal(get(game, 'tileAt(8, 12).look'), 'ledge');
   game.run('tryStep("down", 10000)');
   assert.deepEqual(get(game, '[pl.mv.tx, pl.mv.ty, pl.mv.hop]'), [8, 13, true], 'down over the ledge, landing below it');
-  game.run("pl.mv = null; S.pos = {place: 'path', x: 8, y: 13, dir: 'up'}; placePlayer(); tryStep('up', 10000)");
-  assert.equal(get(game, 'pl.mv'), null, 'not back up it');
+  game.run("pl.mv = null; S.pos = {place: 'path', x: 8, y: 13, dir: 'up'}; placePlayer(); globalThis.__slips = 0; SFX.slip = () => __slips++; tryStep('up', 10000)");
+  assert.deepEqual(get(game, '[pl.mv.tx, pl.mv.ty, !!pl.mv.slip, __slips]'), [8, 13, true, 1], 'not back up it: you slip back down where you were');
+  game.run('update(10000 + SLIP_MS * .4)');
+  assert.ok(get(game, 'pl.py') < get(game, '13 * T'), 'up a little first');
+  game.run('update(10000 + SLIP_MS + 1)');
+  assert.deepEqual(get(game, '[pl.mv, pl.x, pl.y, pl.py === 13 * T]'), [null, 8, 13, true], 'and back down, on the same square');
 });
 
 test('setting off: the old monkey sends you up alone, and the waterfall at the end is where the water comes from', async () => {

@@ -107,7 +107,7 @@ function drawFoe(cx, cy, now){
 // line, card and reply, so it doesn't jump about; the map never moves for it. Checked as each line shows (before it's
 // drawn: placeTalk() in js/cards.js) and on every frame, in case the box grows, such as when its English is shown.
 let talkTop = false, talkCover = 0;   // whether the box is at the top; how much of the view it covers, in map pixels (the most this conversation)
-const camY = () => Math.round(clamp(pl.py + 8 - VH*T/2, 0, ROWS*T - VH*T));   // the top of the view: you in the middle, as far as the map goes
+const camY = () => Math.round(clamp((pl.mv && pl.mv.slip ? pl.mv.fy*T : pl.py) + 8 - VH*T/2, 0, ROWS*T - VH*T));   // the top of the view: you in the middle, as far as the map goes (still while you slip down a bank, so you can see yourself slip)
 function placeTalk(cy = camY()){
   if (talkBox.hidden){
     if (!busy && (talkTop || talkCover)){ talkTop = false; talkCover = 0; talkBox.classList.remove('top'); }   // the conversation is over

@@ -273,7 +273,9 @@ test('the edges between the hillside’s terraces are one drop, as high all alon
   g.run("mode = 'play'; placePlayer(); tryStep('down', 10000)");
   assert.deepEqual(get(g, '[pl.mv.tx, pl.mv.ty, pl.mv.hop]'), [12, 18, true], 'down a bank two squares high in one hop, landing below it');
   g.run("pl.mv = null; S.pos = {place: 'hillside', x: 12, y: 18, dir: 'up'}; placePlayer(); tryStep('up', 10000)");
-  assert.equal(get(g, 'pl.mv'), null, 'never up it');
+  assert.equal(get(g, '!!pl.mv.slip'), true, 'never up it: you slip back down');
+  g.run('update(10000 + SLIP_MS + 1)');
+  assert.deepEqual(get(g, '[pl.mv, pl.x, pl.y]'), [null, 12, 18]);
   assert.deepEqual(get(g, '[tileAt(21, 22).look, !!tileAt(21, 22).walk, tileAt(21, 21).look, !!tileAt(21, 21).walk]'), ['railing', false, 'slabs', true],
     'the lookout: a flat rock at the top of the cliff, with a railing at its edge');
   assert.equal(g.run('promptFor(21, 22)'), 'Look', 'A at the railing looks out');
