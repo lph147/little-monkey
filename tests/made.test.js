@@ -23,14 +23,17 @@ test('every entry is a word here: its parts make the word, and their pinyin is t
   for (const [w, m] of Object.entries(made)){
     assert.ok(words[w], `${w} is one of this area's words`);
     assert.ok(typeof m.why === 'string' && m.why.length > 3, `${w} says what it adds up to, or the picture it was drawn from`);
-    const isPart = p => Array.isArray(p) && p.length === 3 && p.every(x => typeof x === 'string' && x);
+    // [Chinese, pinyin, English], and maybe other words with it that have nothing here (words of this area, each with it)
+    const isPart = p => Array.isArray(p) && (p.length === 3 || p.length === 4) && p.slice(0, 3).every(x => typeof x === 'string' && x)
+      && [].concat(p[3] || []).every(o => words[o] && !made[o] && o.includes(p[0]));
     if (m.parts){
-      assert.ok(m.parts.length >= 2 && m.parts.every(isPart), `${w}: each part is [Chinese, pinyin, English]`);
+      assert.ok(m.parts.length >= 2 && m.parts.every(isPart), `${w}: each part is [Chinese, pinyin, English] (and maybe words with it)`);
       assert.equal(m.parts.map(p => p[0]).join(''), w, `${w}: its parts, in order, make the word`);
       assert.equal(plain(m.parts.map(p => p[1]).join('')), plain(words[w].py), `${w}: its parts’ pinyin is the word’s own`);
       assert.ok(!m.clue, `${w}: parts or a clue, not both`);
     } else if (m.clue){
-      assert.ok(isPart(m.clue) && [...w].length === 1, `${w}: a clue is inside a word of one character`);
+      assert.ok(isPart(m.clue), `${w}: its clue is [Chinese, pinyin, English] (and maybe words with it)`);
+      assert.ok([...w].length === 1 || [...w].includes(m.clue[0]), `${w}: a clue is inside a word of one character, or one of a word’s characters`);
     } else assert.equal([...w].length, 1, `${w}: a picture is what one character was drawn from`);
   }
   // decided 23 October 2026: only where it genuinely helps, never characters that just say the meaning again
@@ -66,6 +69,9 @@ test('a card says where you’ve met a part before, in another word you know (wh
   assert.equal(link(['石头', '山羊'], '羊'), '羊 is also in 山羊shānyáng (goat), a word you know.', 'meet the goat before the sheep, and the sheep says so');
   assert.equal(link(['石头', '吃'], '喝'), '口 is also in 吃chī (to eat), a word you know.', 'a clue: the mouth in eat and drink');
   assert.equal(link(['石头', '草'], '花'), '艹 is also in 草cǎo (grass), a word you know.', 'the plants on top of flower and grass');
+  assert.equal(link(['石头', '树'], '木头'), '木 is also in 树shù (tree), a word you know.', 'the 木 (tree) of 木头 (wood)');
+  assert.equal(link(['石头', '学校'], '同学'), '学 is also in 学校xuéxiào (school), a word you know.', 'a word with nothing here, named by the part');
+  assert.equal(link(['石头'], '碗'), '石 is also in 石头shítou (stone), a word you know.', 'the 石 (stone) of 碗 (bowl): your very first word');
   assert.equal(link(['石头'], '苹果'), null, 'nothing, when you know no other word with its parts');
   assert.equal(link(['石头', '山', '羊'], '山羊'), null, 'its parts are words you know: they’re green instead');
 });

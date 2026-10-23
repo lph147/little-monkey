@@ -349,22 +349,47 @@ simply put. A part's pinyin is as it's said in the word.
 | 水 | shuǐ | Drawn like flowing water, splashing out either side. |  |
 | 鱼 | yú | Drawn like a fish: its head at the top, its tail at the bottom. |  |
 | 羊 | yáng | Drawn like a sheep’s head: its two horns are at the top. |  |
+| 一 | yī | One line, for one. |  |
+| 二 | èr | Two lines, for two. |  |
+| 三 | sān | Three lines, for three. |  |
 | 花 | huā | 艹 cǎo (plants): on top: a flower is a plant |  |
 | 草 | cǎo | 艹 cǎo (plants): on top: grass is a plant |  |
 | 树 | shù | 木 mù (tree): on its left, drawn like a tree |  |
+| 木头 | mùtou | 木 mù (tree): drawn like a tree: wood comes from trees |  |
+| 桥 | qiáo | 木 mù (wood): on its left: many bridges are made of wood |  |
+| 床 | chuáng | 木 mù (wood): under a roof: most beds are made of wood |  |
 | 河 | hé | 氵 shuǐ (water): three drops on its left: a river is water |  |
 | 吃 | chī | 口 kǒu (mouth): on its left: you eat with your mouth |  |
 | 喝 | hē | 口 kǒu (mouth): on its left: you drink with your mouth |  |
+| 路 | lù | 足 zú (foot): on its left: a path is where your feet go |  |
+| 跳 | tiào | 足 zú (foot): on its left: you jump with your feet |  |
+| 碗 | wǎn | 石 shí (stone): on its left: bowls can be made of stone, like the cave’s |  |
+| 家 | jiā | 豕 shǐ (pig): under a roof: long ago, families kept pigs at home |  |
 | 山羊 | shānyáng | 山 shān (mountain) + 羊 yáng (sheep) = a mountain sheep |  |
 | 水果 | shuǐguǒ | 水 shuǐ (water) + 果 guǒ (fruit) = fresh, juicy fruit |  |
 | 苹果 | píngguǒ | 苹 píng (only in this word) + 果 guǒ (fruit) = a kind of fruit |  |
 | 动物 | dòngwù | 动 dòng (to move) + 物 wù (thing) = things that move |  |
 | 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = a pine mouse |  |
 | 头带 | tóudài | 头 tóu (head) + 带 dài (band) = a band for your head |  |
+| 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = a wild pig |  |
+| 瀑布 | pùbù | 瀑 pù (rushing water) + 布 bù (cloth) = water hanging down like a sheet of cloth |  |
+| 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = a honey bee |  |
+| 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = someone you learn with |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = hello, wishing you well |  |
 | 再见 | zàijiàn | 再 zài (again) + 见 jiàn (to see) = goodbye: see you again |  |
 | 没关系 | méi guānxi | 没 méi (not) + 关系 guānxi (connection) = it doesn’t matter |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = I don’t want it |  |
+| 不客气 | bú kèqi | 不 bú (not) + 客气 kèqi (polite) = no need to be so polite |  |
+| 花果山 | Huāguǒ Shān | 花 huā (flower) + 果 guǒ (fruit) + 山 shān (mountain) = a mountain of flowers and fruit (your home’s name, on the sign by your stone, once you know its parts) |  |
+
+### Tips about Chinese
+
+Each shown once, on a card, the first time an animal plays with you (new on 23 October 2026, not checked yet). Please
+check that each is true and simply put.
+
+| Tip | Example | Text | Notes |
+| --- | --- | --- | --- |
+| Tip: one character, one syllable | 山 shān + 羊 yáng | Each Chinese character is one syllable. Shān, yáng: two syllables, two characters. When you hear a word, count its syllables: that’s how many characters to look for. |  |
 
 ### Words only heard in sentences
 
@@ -565,4 +590,5 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 - A sheep in the meadow teaches 羊 (yáng) as sheep, before the goat teaches 山羊 (shānyáng), so players see that a goat is a mountain sheep. Strictly, 羊 means any sheep or goat, and 绵羊 (miányáng) is the exact word for sheep. Is 羊 natural for the sheep?
 - The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?
 - Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better? (White paints the step at the door, 台阶, not the paper in the windows: you paste window paper on, so 刷窗户纸 seemed wrong.)
+- The goat’s tip says each Chinese character is one syllable (山 shān + 羊 yáng). 儿 in words such as 哪儿 (nǎr) joins the syllable before it: is the tip still fine for beginners as it is?
 - When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)

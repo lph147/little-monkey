@@ -237,6 +237,13 @@ rt.hid{visibility:hidden}
 .made .mlink{flex-basis:100%;font-size:.8rem;color:var(--muted)}
 .made .mlink ruby{font-size:1.05rem}
 .madeabout .made{margin-top:.15rem}
+/* a tip about Chinese (learnTip in js/quiz.js): its example, a word's characters with their pinyin over them */
+.tiphead{display:flex;align-items:center;gap:.9rem}
+.tiphead .who{margin:0}
+.tipex{font-family:var(--text);font-size:2rem;line-height:1.2;margin:.2rem 0 0}
+.tipex rt{font-size:max(.42em,10.5px);color:var(--muted)}
+.tipex .tipplus{color:var(--muted);font-size:1.2rem}
+.tiptext{font-size:.92rem;line-height:1.4}
 .pips{display:inline-flex;gap:4px;vertical-align:middle}
 .pips i{width:10px;height:10px;border-radius:2px;background:var(--line);display:block}
 .pips i.on{background:var(--gold)}
@@ -756,13 +763,16 @@ rt.hid{visibility:hidden}
   .bag .menu.grid{gap:.3rem;margin:.1rem 0}   /* the bag: both rows */
   .bag .card{padding-top:.1rem;padding-bottom:.1rem}
   .morecue{font-size:.7rem;padding:.2rem .5rem .25rem}   /* ▼ More, smaller, so it fits between the buttons */
-  /* a new word's card with how it's made: a small picture in a row with the word, its pinyin and its English, then the
-     note and the box under them, so it all fits without scrolling */
-  .word.side:has(> .made:not([hidden])){display:flex;flex-wrap:wrap;align-items:center;align-content:center;column-gap:.45rem;row-gap:.1rem}
+  /* a new word's card with how it's made (or a name's): a small picture and the word, with its pinyin over its English
+     beside them, then the note and the box under them, so it all fits without scrolling */
+  .word.side:has(> .made:not([hidden])){grid-template-columns:auto auto minmax(0,1fr);column-gap:.45rem;row-gap:.1rem}
+  .word.side:has(> .made:not([hidden])) > .pic{grid-column:1;grid-row:1 / span 2}
+  .word.side:has(> .made:not([hidden])) > .big{grid-column:2;grid-row:1 / span 2}
+  .word.side:has(> .made:not([hidden])) > :is(.py,.en){grid-column:3}
   .word.side:has(> .made:not([hidden])) .pic .pix{width:var(--pic-small);height:var(--pic-small)}
   .word.side:has(> .made:not([hidden])) .big{font-size:1.7rem}
   .word.side:has(> .made:not([hidden])) .en{margin:0}
-  .word.side:has(> .made:not([hidden])) > :is(.note,.made){flex-basis:100%;margin-top:0}
+  .word.side:has(> .made:not([hidden])) > :is(.note,.made){grid-column:1 / -1;margin-top:0}
   .made{padding:.05rem .4rem .15rem;gap:0 .3rem}
   .made ruby{font-size:1.05rem}
   .made .mden,.made .mwhy{font-size:.75rem}

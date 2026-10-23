@@ -343,11 +343,11 @@ function drawWorld(now){
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
 }
 // Sparkles on things whose word you don't know yet, and on things you can collect right now (their onLook part with
-// sparkle matches).
+// sparkle matches). One with no word, such as on the sign, sparkles while its if matches.
 function drawSparkles(cx, cy, now){
   for (const s of SPARKLES){
     const [x, y] = s.at;
-    if (lvl(s.word) > 0) continue;
+    if (s.word && lvl(s.word) > 0) continue;
     if (s.if && !matches(s.if)) continue;
     const t = tileAt(x, y);
     if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树

@@ -57,9 +57,9 @@ function checklistHTML(onlyLeft){
   const more = all.some(([, , , found]) => !found);
   return `<ul class="checklist">${items.map(([t, done]) => `<li class="${done ? 'done' : ''}"><span>${esc(t)}</span></li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
 }
-function infoBox(who, html){   // who: a picture over it, or an animal's or a battle's scene, down its left as in the questions
+function infoBox(who, html){   // who: a picture over it, or an animal's or a battle's scene, down its left as in the questions (or none)
   return new Promise(res => {
-    const top = who.startsWith('<div class="scene') ? who : `<div class="who" aria-hidden="true">${who}</div>`;
+    const top = !who ? '' : who.startsWith('<div class="scene') ? who : `<div class="who" aria-hidden="true">${who}</div>`;
     openCard(`${top}${html}<div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
     on('[data-a=ok]', () => { closeCard(); res(); });
   });

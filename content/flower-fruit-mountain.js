@@ -47,9 +47,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           its teacher, the old monkey
   //   woodIn  chapter 1: 1 once you've been into the pine wood (the first time, a wolf howls far off)
   //   schoolFlowers chapter 1: true once the big monkey has planted the flowers you brought him in front of the school
+  //   homeName 1 once you know every part of your home's name (花, 果 in 水果, and 山): a message says so, and the sign by
+  //           your stone sparkles; 2 once you've read it there, and seen how the name is made
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -71,6 +73,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     meadowWords: {count:'known', words:['山', '河', '树', '鱼', '鸟'],
       called:{'山':'the mountain', '河':'the river', '树':'a tree', '鱼':'the fish in the pond', '鸟':'a bird'}},
     troopIn: {count:'known', words:['一', '二', '三']},   // the troop counted in (each count teaches its number)
+    nameParts: {count:'known', words:['花', '山', '水果']},   // the parts of your home's name you know: 花, 山, and the 果 of 水果
     woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
     stonesGot: {count:'picked', request:'stones'},   // and small stones
     numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']},   // the numbers you've learned at school
@@ -309,6 +312,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {rumble:true},   // the ground shakes and the map is redrawn
       {message:'A rumble from the {山}! The rocks north of the meadow have rolled away, and the troop gathers there.'}
     ]},
+    // once you know every part of your home's name, you can read it: the sign by your stone sparkles, and shows how the name
+    // is made (decided 23 October 2026: Chinese is logical; a game past the meadow learns 水果 at a fruit tree, and the sign is
+    // there when it goes back)
+    {if:{nameParts:3, homeName:0}, do:[{set:{homeName:1}}, {message:'You know every part of your home’s name now! Read the sign by your stone, in the meadow.'}]},
     // the goat below the waterfall stops you as you walk past, to tell you the way down is quicker: once, on your way
     // down to tell the troop, or any time later (not on the way up with them)
     {if:{climb:2, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]},
@@ -909,7 +916,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   sign: {
     name: {zh:'牌子', py:'páizi', en:'Sign'},
     says: {zh:'花果山', en:'Flower Fruit Mountain'},
-    hint: 'The name of your home.'
+    hint: 'The name of your home.',
+    // once you know every part of the name (if), reading it shows how it's made, on a card like a word's (title, and the parts
+    // with what they add up to), then set (decided 23 October 2026: Chinese is logical)
+    made: {if:{nameParts:3}, title:'Your home’s name', parts:[['花', 'huā', 'flower'], ['果', 'guǒ', 'fruit'], ['山', 'shān', 'mountain']],
+      why:'a mountain of flowers and fruit', set:{homeName:2}}
   },
 
   // Things that sparkle until you learn their word: the word, where it is on the map, and
@@ -920,6 +931,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {word:'水果', at:[1, 6], if:{knows:'水'}}, {word:'水果', at:[21, 17], if:{knows:'水'}},   // the fruit trees, once you know 水: then 水果
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
     {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
+    {at:[11, 2], if:{homeName:1}},        // the sign by your stone, once you can read your home's name, till you have
     {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']}
   ],
 
@@ -1079,6 +1091,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // English under it (the first time you meet one, its card says that instead): for an animal you're making friends
   // with, and for a friend (decided 23 October 2026, after playing it: the questions just started, with nothing to say why).
   animalsPlay: {say:'play', hint:'It wants to play! Answer its questions to make friends.', friendHint:'Your {朋友} wants to play again! Answer its questions.'},
+  // Tips about Chinese itself, each shown once, on a card, just before the questions the first time an animal of that word
+  // plays with you (word), so you can try it straight away: its title and text, and an example, a word's characters each
+  // with its pinyin. (Decided 23 October 2026: a goat gives the tips you might otherwise miss; a game that met the goat
+  // before gets it the next time a goat plays with it.)
+  tips: {
+    syllables: {word:'山羊', title:'Tip: one character, one syllable', example:[['山', 'shān'], ['羊', 'yáng']],
+      text:'Each Chinese character is one syllable. Shān, yáng: two syllables, two characters. When you hear a word, count its syllables: that’s how many characters to look for.'}
+  },
   // The kinds of question animals ask, easiest first: 'listen' (hear a word, pick its picture), 'read'
   // (see its characters, pick its picture) and 'hear' (hear a word, pick its characters, with no
   // pictures). A word's questions get harder as you know it better, but only up to the kinds listed
@@ -1331,7 +1351,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
-      {if:{school:{atLeast:2}, new:'同学'}, do:[{say:'classmates', teach:'同学'}, {newWord:'同学', note:'The little monkeys you learn with at school are your classmates.'}]},
+      {if:{school:{atLeast:2}, new:'同学'}, do:[{say:'classmates', teach:'同学'}, {newWord:'同学', note:'The little monkeys at school with you.'}]},
       {if:{school:{atLeast:2}}, do:[{say:'classmates'}]},
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},

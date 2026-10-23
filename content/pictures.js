@@ -299,6 +299,43 @@ const PICTURES = {
       ".........pqqqqpbbpqqqqp........."
     ]
   },
+  '花果山': {   // Flower Fruit Mountain
+    palette: {a:'#3A4831', b:'#253A1D', c:'#8EC383', d:'#4E9944', e:'#CECBC1', f:'#9C978A', g:'#B9B4A6', h:'#5DA94E', i:'#FFD54A', j:'#F48FB1', k:'#FAFAF5', l:'#2E5F2B', m:'#4FA34A', n:'#F7A08F', o:'#6C4627', p:'#82AF7F', q:'#3B6D38', r:'#4C8C48'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "...............ab...............",
+      "..............acdb..............",
+      ".............acefdb.............",
+      "............aceggfdb............",
+      "...........acfgffgfdb...........",
+      "..........achhfhhfdddb..........",
+      ".........achhhhhhhddddb.........",
+      "........achhhhhhhhdddddb........",
+      ".......achhhhhhhhhdiidddb.......",
+      ".......achhhjjhhhhhiidddb.......",
+      "......achhhhjjhhhhhddddddb......",
+      "......achhhhhhhhhhhddddddb......",
+      ".....achhhhkkhhjjhhhdddkkdb.....",
+      "....achhhhhkkhhjjhhhdddkkddb....",
+      "....achhhhhhhhhhhhhhdddddddb....",
+      "...achhhkkhhhhhhhhhhdjjdddddb...",
+      "...achhllllhhhhhhhhhdjjdddddb...",
+      "..achhlmmmmlhhhhhiihhddddddddb..",
+      "..achlmmmmnmlhhhhiihhdlllljjdb..",
+      ".achhlmmnmmmlhhhhhhhhlmmmmljdb..",
+      ".achhhlmmnmlhhhhhhhhlmmmmnmlddb.",
+      ".achhiillllhhhhhhhhhlmmnmmmlddb.",
+      "achhhiihhohhhhhhhhhhhlmmnmlddddb",
+      "achhhhhhhohhhhhhhhhhhhlllldddddb",
+      "pppppppppppppppppppppppppppppppq",
+      "prrrrrrrrrrrrrrrrrrrrrrrrrrrrrrq",
+      "prrrrrrrrrrrrrrrrrrrrrrrrrrrrrrq",
+      "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
+    ]
+  },
   '山': {   // mountain
     palette: {a:'#5B5854', b:'#F6F6F0', c:'#9AA59A', d:'#7E897E', e:'#35352F', f:'#474742', g:'#B8C0B8', h:'#41423C', i:'#A5AFA6', j:'#7E8C80', k:'#677468', l:'#2D2F28', m:'#344829', n:'#7CC46B', o:'#24331D', p:'#5FA85A', q:'#8FC28C', r:'#4A8346', s:'#4C8C48'},
     rows: [

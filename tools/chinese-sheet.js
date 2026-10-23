@@ -122,6 +122,7 @@ const DRAFTS = [
 const QUESTIONS = ['A sheep in the meadow teaches 羊 (yáng) as sheep, before the goat teaches 山羊 (shānyáng), so players see that a goat is a mountain sheep. Strictly, 羊 means any sheep or goat, and 绵羊 (miányáng) is the exact word for sheep. Is 羊 natural for the sheep?',
   'The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?',
   'Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better? (White paints the step at the door, 台阶, not the paper in the windows: you paste window paper on, so 刷窗户纸 seemed wrong.)',
+  'The goat’s tip says each Chinese character is one syllable (山 shān + 羊 yáng). 儿 in words such as 哪儿 (nǎr) joins the syllable before it: is the tip still fine for beginners as it is?',
   'When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)'];
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
 function sheet(){
@@ -225,7 +226,15 @@ Shown on a word's new-word card and its page in the Word Scroll (new on 23 Octob
 what they add up to, the clue inside it, or the picture it was drawn from. Please check that each is true, well known and
 simply put. A part's pinyin is as it's said in the word.
 
-${table(['Word', 'Pinyin', 'How it’s made', 'Notes'], Object.entries(MADE).map(([w, m]) => [w, BANK[w].py, made(m), notes]))}
+${table(['Word', 'Pinyin', 'How it’s made', 'Notes'], [...Object.entries(MADE).map(([w, m]) => [w, BANK[w].py, made(m), notes]),
+  ...(AREA.sign.made ? [[AREA.sign.says.zh, AREA.name.py, `${made(AREA.sign.made)} (your home’s name, on the sign by your stone, once you know its parts)`, notes]] : [])])}
+
+### Tips about Chinese
+
+Each shown once, on a card, the first time an animal plays with you (new on 23 October 2026, not checked yet). Please
+check that each is true and simply put.
+
+${table(['Tip', 'Example', 'Text', 'Notes'], Object.values(AREA.tips || {}).map(t => [t.title, t.example.map(([c, p]) => `${c} ${p}`).join(' + '), t.text, notes]))}
 
 ### Words only heard in sentences
 

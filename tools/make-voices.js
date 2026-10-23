@@ -40,9 +40,10 @@ function wanted(){
   const AREA = get('AREA'), BANK = get('WORD_BANK');
   const all = new Set();
   for (const w of Object.keys(BANK)) if (BANK[w].phrase) all.add(w + '！');   // your replies (iSay in js/world.js)
-  (function walk(o){   // every Chinese string in the area, except English text that mentions a word ({水})
+  (function walk(o){   // every Chinese string in the area, except English text that mentions a word ({水}), and the parts
+    // shown in how a name is made (made) or in a tip's example, which nothing says
     if (typeof o === 'string'){ if (CJK.test(o) && !/[A-Za-z]/.test(o)) all.add(said(o)); }
-    else if (o && typeof o === 'object') for (const k in o) walk(o[k]);
+    else if (o && typeof o === 'object') for (const k in o) if (k !== 'made' && k !== 'example') walk(o[k]);
   })(AREA);
 
   // Who says each line (the game's speaker(s.by || who)): a say step in a character's talk is theirs unless

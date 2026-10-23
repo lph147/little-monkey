@@ -210,7 +210,18 @@ function wireHelper(n, right){
     sheet.querySelector('.feedback').textContent = 'Crunch! One wrong answer is gone.';
   });
 }
+// A tip about Chinese (the area's tips), the first time it helps: just before an animal's questions, the first time one of
+// that word plays with you, such as the goat's (one character, one syllable). Shown once: the save remembers it (S.tips).
+async function learnTip(foe){
+  const [id, t] = Object.entries(AREA.tips || {}).find(([k, t]) => t.word === foe.hz && !S.tips[k]) || [];
+  if (!t) return;
+  S.tips[id] = 1; save();
+  const ex = t.example.map(([c, py]) => `<ruby>${c}<rt>${py}</rt></ruby>`).join(' <span class="tipplus">+</span> ');
+  await infoBox(null, `<div class="tiphead"><div class="who" aria-hidden="true">${foe.img}</div><div><p class="label">${esc(t.title)}</p>`
+    + `<p class="tipex">${ex}</p></div></div><p class="tiptext">${esc(t.text)}</p>`);   // (the animal beside its example)
+}
 async function encounter(foe){
+  await learnTip(foe);
   const an = foe.hz, img = foe.img;
   let showEn = false;
   const nameHTML = () => foe.name

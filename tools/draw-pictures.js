@@ -173,6 +173,19 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.eye(11, 11, '#24160C', 3); p.eye(19, 11, '#24160C', 3);
     p.flat(Rc(15, 15, 2, 1), '#A86A48'); p.flat(path([[13.5, 18], [16, 19], [18.5, 18]], .5), '#A86A48');
   },
+  '花果山': p => {   // Flower Fruit Mountain, on the sign's card: a green mountain, flowers on its slopes, fruit trees (unlike 山: grey peaks)
+    p.fill(Pg([[0, 29], [5, 18], [10, 10], [16, 5], [22, 10], [27, 18], [32, 29]]), '#5DA94E', {dark: '#468F3F', edge: true});
+    p.flat(Pg([[16, 5], [22, 10], [27, 18], [32, 29], [22, 29], [20, 18]]), '#4E9944');   // its shady side
+    p.fill(Pg([[13, 8.5], [16, 5], [19, 8.5], [17.6, 9.6], [16, 8.6], [14.4, 9.6]]), '#B9B4A6', {dark: '#9C978A'});   // a rocky top
+    for (const [x, y, c] of [[12, 13, '#F48FB1'], [19, 12, '#FFD54A'], [8, 19, '#FAFAF5'], [15, 16, '#F48FB1'], [23, 16, '#FAFAF5'], [26, 22, '#F48FB1'], [5, 25, '#FFD54A'], [17, 21, '#FFD54A'], [11, 16, '#FAFAF5'], [21, 19, '#F48FB1']])
+      { p.dot(x, y, c); p.dot(x + 1, y, c); p.dot(x, y + 1, c); p.dot(x + 1, y + 1, c); }   // flowers
+    for (const [x, y] of [[9, 23], [24, 25]]){   // fruit trees, with peaches
+      p.fill(Rc(x - .7, y + 1.5, 1.6, 4), BARK);
+      p.fill(O(x, y, 3.6, 3), LEAF, {edge: true});
+      for (const [dx, dy] of [[-1.5, -.5], [1.2, -1.2], [.4, 1]]) p.dot(Math.round(x + dx), Math.round(y + dy), '#F7A08F');
+    }
+    p.fill(Rc(0, 28, 32, 4), '#4C8C48');
+  },
   '山': p => {   // mountain: rocky peaks with snow, green slopes below
     p.fill(Pg([[13, 27], [23.5, 9], [32, 27]]), '#7E8C80', {edge: true});
     p.fill(Pg([[0, 27], [12, 4], [25, 27]]), '#9AA59A', {edge: true});

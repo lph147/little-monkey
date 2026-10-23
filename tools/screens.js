@@ -13,7 +13,7 @@
 const knows = (lv, words) => Object.fromEntries(words.map(w => [w, {lv, due: 0, ok: 0}]));
 const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '水果', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
 const QUIET = {sound: false, music: false};
-const ALL_TIPS = {walk: 1, talk: 1, look: 1, grey: 1, menu: 1};   // tips already had (js/tips.js)
+const ALL_TIPS = {walk: 1, talk: 1, look: 1, grey: 1, menu: 1, syllables: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
 const SAVES = {
   // just born, with the old monkey waiting: no tips had yet
   born: {version: 19, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},
@@ -21,7 +21,7 @@ const SAVES = {
   middle: {version: 19, started: true, tips: ALL_TIPS, ...QUIET, shells: 6, w: knows(1, MIDDLE_WORDS),
     met: ['rabbit'], friends: ['rabbit'], pos: {x: 13, y: 6, dir: 'up'},
     wardrobe: {owned: ['头带'], wearing: []},
-    areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false}}},
+    areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false, homeName: 2}}},
 };
 SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};
 SAVES.meadowTasks = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}};   // (the rocks still there: every task in the meadow at once)
@@ -36,8 +36,9 @@ SAVES.bigHello = {...SAVES.hungryAsks, pos: {place: 'meadow', x: 4, y: 10, dir: 
 SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝']), met: [], friends: [],
   areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {}, gate: false}}, pos: {place: 'meadow', x: 17, y: 10, dir: 'right'}};
 SAVES.lowTalk = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}};   // on the path at the bottom of the meadow, facing the little monkey (before the gate, it's there)   // every word Recognised: animals ask you to read
-// chapter 1 has begun: the prologue is done, and the troop is at the waterfall; you're beside the old monkey
-const PROLOGUE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 3, story: true, bought: ['头带'], cave: 0};
+// chapter 1 has begun: the prologue is done (your home's name read on the sign too), and the troop is at the waterfall;
+// you're beside the old monkey
+const PROLOGUE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 3, story: true, bought: ['头带'], cave: 0, homeName: 2};
 SAVES.chapter1 = {...SAVES.middle, w: knows(1, [...MIDDLE_WORDS, '瀑布', '羊', '松鼠', '山羊', '朋友']), met: ['rabbit', 'sheep', 'squirrel', 'goat'],
   wardrobe: {owned: ['头带'], wearing: ['头带']}, areas: {1: PROLOGUE}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
 SAVES.dared = {...SAVES.chapter1, w: {...SAVES.chapter1.w, ...knows(1, ['跳'])}, areas: {1: {...PROLOGUE, cave: 1}}, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
@@ -124,6 +125,11 @@ SAVES.bySheep = {...SAVES.middle, pos: {place: 'meadow', x: 3, y: 6, dir: 'up'}}
 // by a peach tree, the hungry monkey asking for fruit, and you know 水 but not 水果 (fruit) or 桃子 (peach) yet
 SAVES.fruitTree = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => !['水果', '桃子'].includes(w))), areas: {1: {...SAVES.middle.areas[1], holding: {}}},
   pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}};
+// your home's name: you know every part of it (花, 山 and the 果 of 水果), below the sign by your stone; the message not
+// had yet (homeName 0), or had, the sign sparkling (1)
+SAVES.homeParts = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], homeName: 0}}, pos: {place: 'meadow', x: 11, y: 3, dir: 'up'}};
+SAVES.homeSign = {...SAVES.homeParts, areas: {1: {...SAVES.middle.areas[1], homeName: 1}}};
+SAVES.goatTip = {...SAVES.middle, tips: {...ALL_TIPS, syllables: 0}};   // the goat's tip still to come
 SAVES.withApple = {...SAVES.middle, bag: {'苹果': 1}};   // an apple from the shop, to eat in an encounter
 SAVES.allFriends = {...SAVES.chapter1, friends: ['rabbit', 'sheep', 'squirrel', 'goat']};   // every animal in the prologue won over
 SAVES.wantsApple = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], holding: {}, wanted: {hungry: '苹果'}}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
@@ -222,6 +228,10 @@ const SCREENS = [
   {id: 'meadow-sheep', title: 'A sheep at the foot of the cliffs', save: 'bySheep', why: 'Near your stone, eating grass: 羊 (sheep), then the goat on its rock to the south, 山羊 (goat: a mountain sheep).', run: async () => { play(); await wait(500); }},
   {id: 'fruit-tree', title: 'A fruit tree: 水果 first', save: 'fruitTree', why: 'It sparkles once you know 水 (water). A at a peach or apple tree shows its word, 水果 (fruit), first; picking teaches the fruit.', run: async () => {
     play(); await wait(100); interact(1, 6); await wait(400); }},
+  {id: 'home-parts', title: 'You can read your home’s name', save: 'homeParts', why: 'Once you know 花 (flower), 山 (mountain) and 水果 (fruit), a message says so, and the sign by your stone sparkles until you read it.', run: async () => {
+    play(); await wait(100); runEvents(); await wait(500); }},
+  {id: 'home-name', title: 'Your home’s name', save: 'homeSign', why: 'A at the sign: how 花果山 is made, on a card like a word’s: 花 flower + 果 fruit + 山 mountain, the parts you know green, and the 果 of 水果.', run: async () => {
+    play(); await wait(100); interact(11, 2); await wait(400); }},
   {id: 'wants-other', title: 'He wants the other fruit', save: 'wantsApple', why: 'After you bring the peach first.', run: async () => { play(); await wait(500); }},
   {id: 'animal-card', title: 'Meeting an animal', save: 'middle', why: 'The first time: its name on a new-word card.', run: async () => {
     play(); await wait(100); showNotice('羊', {note: 'A sheep is eating grass at the foot of the 山 (mountain). Answer its questions to make friends.'}); await wait(400); }},
@@ -237,6 +247,8 @@ const SCREENS = [
     play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); };
     encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(300);
     click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(400); }},
+  {id: 'syllable-tip', title: 'A tip: one character, one syllable', save: 'goatTip', why: 'The first time a goat plays with you, just before its questions (once): 山 shān + 羊 yáng, two syllables, two characters.', run: async () => {
+    play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
   {id: 'goat-read', title: 'The goat: read', save: 'knowsWell', why: 'On its cliff. Characters with pinyin, and just pictures to choose from.', run: async () => {
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
   {id: 'word-game', title: 'The little monkey’s word game', save: 'middle', why: 'A monkey’s name plate: Chinese, pinyin and English.', run: async () => {

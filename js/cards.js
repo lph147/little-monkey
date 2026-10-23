@@ -273,26 +273,44 @@ talkBox.addEventListener('pointerdown', e => { if (e.target.closest && e.target.
 // How a word is made (MADE, in content/words.js): its parts, each with its pinyin over it and its English (green if it's a
 // word you know), and what they add up to; or the clue inside a character; or the picture it was drawn from. Then where
 // you've met a part before, in another word you know (just one, so the card stays small). It goes with a word's English:
-// on its first card, and behind the English button after that (hide). (Decided 23 October 2026: Chinese is logical.)
-const madeParts = w => { const m = MADE[w]; return !m ? [] : m.parts || (m.clue ? [m.clue] : []); };
-const PART_IN = {};   // each part, such as 果, to the words made with it (水果, 苹果)
-for (const w of Object.keys(MADE)) for (const [zh] of madeParts(w)) (PART_IN[zh] = PART_IN[zh] || []).push(w);
+// on its first card, and behind the English button after that (hide). (Decided 23 October 2026: Chinese is logical.) A
+// name can have its own, such as your home's on the sign (nameCard).
+const madeParts = m => !m ? [] : m.parts || (m.clue ? [m.clue] : []);
+const PART_IN = {};   // each part, such as 果, to the words made with it (水果, 苹果), and others a part names (学: 学校)
+for (const [w, m] of Object.entries(MADE)) for (const [zh, , , also] of madeParts(m))
+  for (const o of [w, ...[].concat(also || [])]) if (!(PART_IN[zh] = PART_IN[zh] || []).includes(o)) PART_IN[zh].push(o);
 const knownWord = (zh, w) => zh !== w && !!WORDS[zh] && lvl(zh) >= 1;   // a part that's a word you know (not the word itself)
-function madeLinks(w){   // [a part of w, a word you know with it too], or none
-  for (const zh of MADE[w].parts ? MADE[w].parts.map(p => p[0]) : [w, ...madeParts(w).map(p => p[0])]){
+function madeLinks(m, w){   // [a part of w (or w itself, one character), a word you know with it too], or none
+  for (const zh of m.parts ? m.parts.map(p => p[0]) : [...([...w].length === 1 ? [w] : []), ...madeParts(m).map(p => p[0])]){
     if (knownWord(zh, w)) continue;   // (green in the box already)
     const other = (PART_IN[zh] || []).find(o => knownWord(o, w));
     if (other) return [[zh, other]];
   }
   return [];
 }
-function madeHTML(w, hide = false){
-  const m = MADE[w]; if (!m || !WORDS[w]) return '';
+function madeBox(m, w, hide = false){   // the box for how w is made (m: its entry in MADE, or a name's own)
   const part = ([zh, py, en]) => `<span class="mpart"><ruby${knownWord(zh, w) ? ' class="known"' : ''}>${zh}<rt>${py}</rt></ruby> <span class="mden">${esc(en)}</span></span>`;
   const story = m.parts ? `${m.parts.map(part).join(' <span class="mplus">+</span> ')} <span class="mwhy">= ${esc(m.why)}</span>`   // (spaces: for a screen reader)
     : `${m.clue ? part(m.clue) + ' ' : ''}<span class="mwhy">${esc(m.why)}</span>`;
-  const links = madeLinks(w).map(([zh, o]) => `<span class="mlink">${zh} is also in <ruby class="known">${o}<rt>${WORDS[o].py}</rt></ruby> (${esc(WORDS[o].en.split(',')[0])}), a word you know.</span>`);
+  const links = madeLinks(m, w).map(([zh, o]) => `<span class="mlink">${zh} is also in <ruby class="known">${o}<rt>${WORDS[o].py}</rt></ruby> (${esc(WORDS[o].en.split(',')[0])}), a word you know.</span>`);
   return `<div class="made"${hide ? ' hidden' : ''}>${story}${links.map(l => ' ' + l).join('')}</div>`;
+}
+const madeHTML = (w, hide = false) => MADE[w] && WORDS[w] ? madeBox(MADE[w], w, hide) : '';
+// A name you can read now, such as your home's on the sign (says: its Chinese and English; m: how it's made, with its
+// title): its picture, characters, pinyin and English, and how it's made, as on a word's card. A name isn't a word to
+// learn, so nothing is caught.
+function nameCard(says, m){
+  return new Promise(res => {
+    const zh = says.zh;
+    SFX.word();
+    openCard(`<p class="label">${esc(m.title)}</p>
+      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(zh)}</div><div class="big">${zh}</div><div class="py">${info(zh)[0]}</div>
+      <div class="en">${esc(says.en)}</div>${madeBox(m, zh)}</div>
+      <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="ok">OK</button></div>`);
+    say(zh);
+    on('[data-a=say]', () => say(zh));
+    on('[data-a=ok]', () => { closeCard(); res(); });
+  });
 }
 // A word's card. It says the word straight away when you discover it yourself; in a conversation
 // (opts.quiet) it doesn't, so the conversation isn't broken up by the word again: 🔊 Hear it is there. How the word is made

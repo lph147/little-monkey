@@ -134,7 +134,7 @@ test('an apple from the shop is a small helper in the bottom row: eating it take
 });
 
 test('an animal that lives on a cliff is met on a cliff', async () => {
-  const game = loadGame({dom: true, save: {version: 17, started: true, w: knowsSome()}});
+  const game = loadGame({dom: true, save: {version: 17, started: true, w: knowsSome(), tips: {syllables: 1}}});   // (the goat's tip had: tests/home-name.test.js)
   game.run("encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'})");
   await tick();
   assert.ok(game.el('#sheet').querySelector('.scene').classList.contains('cliff'));

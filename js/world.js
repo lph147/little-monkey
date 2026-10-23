@@ -601,8 +601,11 @@ const ACTIONS = {   // special things that happen when you press A at some tiles
   async story(t){ await lookAt(t); await storyScroll(); },
   training(){ return trainingGround(); },
   async sign(t){   // the area's sign, or a tile's own (sign: its name, what it says and a hint)
+    const sg = t.sign || AREA.sign, mk = sg.made;
+    // once you know each part of what it says (made, with its if), its card shows how it's made, as a word's does
+    if (mk && matches(mk.if)){ await nameCard(sg.says, mk); if (mk.set){ Object.assign(here(), mk.set); save(); } return; }
     SFX.blip();
-    const sg = t.sign || AREA.sign, face = t.sign ? `<div class="speaker"><div class="spk"><div class="spk-zh">${sg.name.zh} <span class="spk-py">${sg.name.py}</span></div><div class="spk-en">${esc(sg.name.en)}</div></div></div>` : speaker('sign');
+    const face = t.sign ? `<div class="speaker"><div class="spk"><div class="spk-zh">${sg.name.zh} <span class="spk-py">${sg.name.py}</span></div><div class="spk-en">${esc(sg.name.en)}</div></div></div>` : speaker('sign');
     await showDialog(face, {t:toks(sg.says.zh), en:sg.says.en}, sg.hint ? {hint:sg.hint} : {});
   }
 };

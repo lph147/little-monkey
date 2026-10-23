@@ -30,7 +30,7 @@ const allIfs = () => [
   ...AREA.checklist.map((c, i) => [`checklist item ${i + 1}`, c.done]),
   ...AREA.checklist.filter(c => c.show).map((c, i) => [`checklist item ${AREA.checklist.indexOf(c) + 1}'s show`, c.show]),
   ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if])),
-  ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word}`, s.if]),
+  ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word || 'what’s at ' + s.at}`, s.if]),
   ...(AREA.lessons || []).filter(l => l.if).map(l => [`the lessons ${l.id}`, l.if]),
   ...allLegend.filter(([, t]) => t.pick && t.pick.if).map(([, t, from]) => [`picking at ${from}`, t.pick.if]),
   ...allSteps().filter(([, s]) => s.if).map(([where, s]) => [`a step in ${where}`, s.if]),
@@ -205,8 +205,9 @@ test('character names show Chinese, pinyin and English', () => {
   assert.ok(n && n.zh && n.py && n.en, 'the sign needs a name with zh, py and en');
 });
 
-test('sparkles are on collectible words, on the map', () => {
-  for (const {word: w, at} of AREA.sparkles){
+test('sparkles are on collectible words, on the map (or, with no word, say when they sparkle, such as the sign’s)', () => {
+  for (const {word: w, at, if: when} of AREA.sparkles){
+    if (!w){ assert.ok(when, `the sparkle at ${at} has no word, so it needs an if: when it sparkles`); assert.ok(onMap(at), `the sparkle at ${at} is off the map`); continue; }
     assert.ok(collectible.includes(w), `${w} sparkles, but it isn't a word you can collect in ${where}`);
     assert.ok(onMap(at), `the sparkle for ${w} at ${at} is off the map`);
   }
