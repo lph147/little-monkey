@@ -196,14 +196,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 美猴王！ | Měi Hóuwáng! | Handsome Monkey King! |  |
 | 从此，花果山的猴子很快乐。 | cóngcǐ, Huāguǒ Shān de hóuzi hěn kuàilè. | From then on, the monkeys of Flower Fruit Mountain were very happy. |  |
 
-### Scene: the carving on the hillside
-
-| Chinese | Pinyin | English | Notes |
-| --- | --- | --- | --- |
-| 山上有石头。 | shān shàng yǒu shítou. | There’s a stone on the mountain. |  |
-| 石头里有猴子。 | shítou lǐ yǒu hóuzi. | There’s a monkey in the stone. |  |
-| 这只猴子就是你！ | zhè zhī hóuzi jiùshì nǐ! | This monkey is you! |  |
-
 ### Scene: the school being built
 
 | Chinese | Pinyin | English | Notes |
@@ -415,7 +407,6 @@ check that each is true and simply put.
 | 谁 | shéi | who, whoever |  |
 | 进去 | jìnqù | to go in |  |
 | 就 | jiù | then |  |
-| 就是 | jiùshì | is (none other than) |  |
 | 怕 | pà | to be scared |  |
 | 里面 | lǐmiàn | inside |  |
 | 太 | tài | too, very |  |
@@ -596,8 +587,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The sentence you finish when you give him the flowers (filling in 红色) |  |
 | 南天门 | Nán Tiān Mén | the Southern Gate of Heaven | New on 23 October 2026 (in the game): written on the plaque of a gate high in the clouds, in the view from the hillside’s lookout, where two gods peek out now and then (in the book, 千里眼 Qiānlǐ Yǎn, Thousand-Mile Eye, and 顺风耳 Shùnfēng Ěr, Wind-Following Ear, came out of it to see the light from the stone monkey’s eyes; the game doesn’t name them). Written left to right, in simplified characters (门): please check that reads naturally on a gate of heaven |  |
 | 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside |  |
-| 山上有石头。 | shān shàng yǒu shítou. | There’s a stone on the mountain. | New on 23 October 2026 (in the game): the story carved in the hillside’s cliff, coming to life, with 石头里有猴子。 between them (就是 jiùshì, is none other than: just for listening) |  |
-| 这只猴子就是你！ | zhè zhī hóuzi jiùshì nǐ! | This monkey is you! | New on 23 October 2026 (in the game): the story carved in the hillside’s cliff, coming to life, with 石头里有猴子。 between them (就是 jiùshì, is none other than: just for listening) |  |
 
 ## Questions
 

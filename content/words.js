@@ -129,7 +129,6 @@ const WORD_BANK = {
   '谁': {py:'shéi', en:'who, whoever'},
   '进去': {py:'jìnqù', en:'to go in'},
   '就': {py:'jiù', en:'then'},
-  '就是': {py:'jiùshì', en:'is (none other than)'},
   '怕': {py:'pà', en:'to be scared'},
   '里面': {py:'lǐmiàn', en:'inside'},
   '太': {py:'tài', en:'too, very'},

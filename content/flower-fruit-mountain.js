@@ -51,10 +51,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           your stone sparkles; 2 once you've read it there, and seen how the name is made
   //   trainee1, trainee2  chapter 1: 1 once that little monkey in training on the hillside has stopped you for a word game
   //           (the first by the stepping stones, the second on the middle terrace)
-  //   carving chapter 1: 1 once you've looked at the story carved in the hillside's cliff (it sparkles till then)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, carving:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -595,9 +594,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'A': {look:'archway', walk:true, says:'松林'},         // the way through the archway into the pine wood, with its name on the board over it
         'I': {look:'archPost'},                               // the archway's pillars
         'L': {look:'slabs', walk:true},                       // the lookout's stone platform
-        'R': {look:'railing', landmark:true, onLook:[{do:[{scene:'lookout'}]}]},   // its railing, at the top of the cliff: A shows you the view
-        // a story carved in the cliff long ago, behind the peach tree: A shows it, coming to life (it sparkles till you have)
-        'K': {look:'cliffFace', carving:true, landmark:true, onLook:[{do:[{scene:'carving'}, {set:{carving:1}}]}]}
+        'R': {look:'railing', landmark:true, onLook:[{do:[{scene:'lookout'}]}]}   // its railing, at the top of the cliff: A shows you the view
       },
       map: [
         "pppppppppppp..pppppppppppp",   // the way into the pine wood
@@ -630,8 +627,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYgTgg.gggnnnggggggnnnggYY",
         "YYggg..gognonTgggggnnnggYY",
         "YYgTg..gggnnoggggggggTggYY",
-        "MMKKM==MMMvvvvvvvvMMMMMMMM",   // stone steps (left), a bank (middle), and a story carved in the cliff (left)
-        "MMKKM==MMMvvvvvvvvMMMMMMMM",
+        "MMMMM==MMMvvvvvvvvMMMMMMMM",   // stone steps (left), a bank (middle)
+        "MMMMM==MMMvvvvvvvvMMMMMMMM",
         "YYgfg..fgfgfggfgggfgfggfYY",   // a slope of flowers; a peach tree in the corner
         "YYgPg..gfgfgfggffggfgffgYY",
         "YYfgg...............ggfgYY",
@@ -957,7 +954,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
     {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
     {at:[11, 2], if:{homeName:1}},        // the sign by your stone, once you can read your home's name, till you have
-    {at:[2, 31, 'hillside'], if:{carving:0}},   // the story carved in the hillside's cliff, till you've looked at it
     {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']}
   ],
 
@@ -1602,14 +1598,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     lookout: {captions: [
       {at:0, zh:'这里 很 好看 ！', en:'It’s lovely up here!'},
       {at:3, zh:'海 很 大 ！', en:'The sea is so big!'}
-    ]},
-    // chapter 1: the story carved long ago in the hillside's cliff, behind the peach tree (A at it), coming to life: your
-    // birth, the start of the legend (decided 23 October 2026: old stone carvings off the paths, each a moment of the legend,
-    // collected through the chapter and watched again in Settings). Nothing new: words you know, and words to listen to.
-    carving: {watch:'Watch the carving on the hillside', when:{carving:{atLeast:1}}, captions: [
-      {at:0, zh:'山 上 有 石头 。', en:'There’s a stone on the mountain.'},
-      {at:3.4, zh:'石头 里 有 猴子 。', en:'There’s a monkey in the stone.'},
-      {at:6.8, zh:'这 只 猴子 就是 你 ！', en:'This monkey is you!'}
     ]},
     // chapter 1: the troop builds the school, at the home ground: the walls go up, then the roof, then its sign
     buildingSchool: {watch:'Watch the school being built', when:{school:{atLeast:1}}, captions: [

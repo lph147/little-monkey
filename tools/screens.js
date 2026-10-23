@@ -70,7 +70,6 @@ SAVES.hillsideGoat = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 22, 
 SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
 SAVES.byTrainee = {...SAVES.pineWood, pos: {place: 'hillside', x: 17, y: 38, dir: 'right'}};   // coming up to the stepping stones, a little monkey in training beyond them
 SAVES.byHidden = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 22, y: 38, dir: 'down'}};   // above the tree with shells tucked behind it
-SAVES.byCarving = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 2, y: 32, dir: 'up'}};   // facing the story carved in the cliff, behind the peach tree
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
   areas: {1: {...BUILDING, picked: {wood: ['pineWood:2,18', 'pineWood:2,2'], stones: ['pineWood:3,12']},
@@ -357,14 +356,6 @@ const SCREENS = [
     play(); await wait(100); glintsNow = () => [[22, 39, 1]]; await wait(400); }},
   {id: 'hidden-found', title: 'Found it!', save: 'byHidden', why: 'A at it: 2 🐚 (or an apple for your bag), once.', run: async () => {
     play(); await wait(100); interact(22, 39); clearTimeout(msgT); await wait(400); }},   // (the message held)
-  {id: 'carving', title: 'A story carved in the cliff', save: 'byCarving', why: 'Behind the peach tree at the foot of the hillside: a panel cut into the rock long ago, worn, with moss along its top: a mountain, a stone on its top, and a little monkey curled up inside it. It sparkles till you’ve looked at it.', run: async () => {
-    play(); await wait(500); }},
-  {id: 'carving-stone', title: 'The carving: 山上有石头。', save: 'byCarving', why: 'A at it: the carving close up, told like the opening (There’s a stone on the mountain.). Nothing new: words you know, and words to listen to.', run: async () => {
-    play(); await wait(100); storyScene('carving'); introClock = .05; advancedTo = 0; await wait(400); }},
-  {id: 'carving-monkey', title: 'The carving: 石头里有猴子。', save: 'byCarving', why: 'The stone glows, and a little monkey curled up inside it comes out of the carving (There’s a monkey in the stone.).', run: async () => {
-    play(); await wait(100); storyScene('carving'); introClock = 4.3; advancedTo = 1; await wait(400); }},
-  {id: 'carving-you', title: 'The carving: 这只猴子就是你！', save: 'byCarving', why: 'Its eyes shine, as in the opening, and there you are, looking up at it (This monkey is you!). Then Settings has Watch the carving on the hillside.', run: async () => {
-    play(); await wait(100); storyScene('carving'); introClock = 7.7; advancedTo = 2; await wait(400); }},
   {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
   {id: 'lookout-goat', title: 'Go and take a look!', save: 'hillsideGoat', why: 'Coming up the steps beside the lookout the first time, a goat on it stops you (a ! over it, then it talks): 你好！, 去看看！ and how to look out. Wherever there’s something you might miss, a goat is there to tell you, as below the waterfall.', run: async () => {
