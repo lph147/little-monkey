@@ -86,6 +86,7 @@ shown where the word list has them.
 | 这里有几只猴子？ | zhèlǐ yǒu jǐ zhī hóuzi? | How many monkeys are there? |  |  |
 | 这里有几只兔子？ | zhèlǐ yǒu jǐ zhī tùzi? | How many rabbits are there? |  |  |
 | 这里有几只鸟？ | zhèlǐ yǒu jǐ zhī niǎo? | How many birds are there? |  |  |
+| 这里有几个石头？ | zhèlǐ yǒu jǐ gè shítou? | How many stones are there? | 猴子 (Monkey) |  |
 | 这是黑色。 | zhè shì hēisè. | This is black. |  |  |
 | 这是蓝色。 | zhè shì lánsè. | This is blue. |  |  |
 | 这是绿色。 | zhè shì lǜsè. | This is green. |  |  |
@@ -96,12 +97,12 @@ shown where the word list has them.
 | 这是黄色。 | zhè shì huángsè. | This is yellow. |  |  |
 | 这是白色。 | zhè shì báisè. | This is white. |  |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
-| 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey) |  |
+| 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey), 猴子 (Monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
 | 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | 大猴子 (Big monkey) |  |
 | 一！ | yī! | One! | 老猴子 (Old monkey) |  |
 | 一，二！ | yī, èr! | One, two! | 老猴子 (Old monkey) |  |
-| 一，二，三！ | yī, èr, sān! | One, two, three! | 老猴子 (Old monkey) |  |
+| 一，二，三！ | yī, èr, sān! | One, two, three! | 老猴子 (Old monkey), 猴子 (Monkey) |  |
 | 累了吗？去床上睡觉吧！ | lèi le ma? qù chuáng shàng shuìjiào ba! | Tired? Go and sleep in a bed! | 猴子 (Monkey) |  |
 
 ### Sentences the player completes (one word missing)
@@ -244,6 +245,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 野猪 | yězhū | Wild boar |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 老板 | lǎobǎn | Shop owner |  |
@@ -586,6 +589,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, when you bring them |  |
 | 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The sentence you finish when you give him the flowers (filling in 红色) |  |
 | 南天门 | Nán Tiān Mén | the Southern Gate of Heaven | New on 23 October 2026 (in the game): written on the plaque of a gate high in the clouds, in the view from the hillside’s lookout, where two gods peek out now and then (in the book, 千里眼 Qiānlǐ Yǎn, Thousand-Mile Eye, and 顺风耳 Shùnfēng Ěr, Wind-Following Ear, came out of it to see the light from the stone monkey’s eyes; the game doesn’t name them). Written left to right, in simplified characters (门): please check that reads naturally on a gate of heaven |  |
+| 这里有几个石头？ | zhèlǐ yǒu jǐ gè shítou? | How many stones are there? | New on 23 October 2026 (in the game): two little monkeys on the hillside, building a tower of stones, as the troop does in the book (砌宝塔), ask you to count its stones with them. 块 (kuài) is the usual measure word for stones (几块石头): is 几个石头 natural for small stones, said by a child, or should it be 几块? |  |
 | 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside |  |
 
 ## Questions

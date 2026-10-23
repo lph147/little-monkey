@@ -70,6 +70,10 @@ SAVES.hillsideGoat = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 22, 
 SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
 SAVES.byTrainee = {...SAVES.pineWood, pos: {place: 'hillside', x: 17, y: 38, dir: 'right'}};   // coming up to the stepping stones, a little monkey in training beyond them
 SAVES.byHidden = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 22, y: 38, dir: 'down'}};   // above the tree with shells tucked behind it
+// below the little monkeys building a tower of stones, at the foot of the hillside's cliff: the first time, knowing just
+// 一, 二 and 三; and later, knowing the numbers to six from school (to count with them)
+SAVES.byTower = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 8, y: 33, dir: 'up'}};
+SAVES.towerCounts = {...SAVES.byTower, w: {...SAVES.byTower.w, ...knows(2, ['一', '三', '四', '五', '六'])}, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1, tower: 1}}};
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
   areas: {1: {...BUILDING, picked: {wood: ['pineWood:2,18', 'pineWood:2,2'], stones: ['pineWood:3,12']},
@@ -356,6 +360,16 @@ const SCREENS = [
     play(); await wait(100); glintsNow = () => [[22, 39, 1]]; await wait(400); }},
   {id: 'hidden-found', title: 'Found it!', save: 'byHidden', why: 'A at it: 2 🐚 (or an apple for your bag), once.', run: async () => {
     play(); await wait(100); interact(22, 39); clearTimeout(msgT); await wait(400); }},   // (the message held)
+  {id: 'tower', title: 'Building a tower of stones', save: 'byTower', why: 'At the foot of the cliff, by the stone steps, two little monkeys pile stones into a tower, taking turns, as high as it will go (here, a stone on its way up), with a little clack as each goes on (in the book, chapter 1: 砌宝塔, they build pagodas).', run: async () => {
+    S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); towerAt = () => ({h: 5, phase: 'build', k: .3, stones: 3, carried: 3, by: 1, lift: .55}); await wait(400); }},
+  {id: 'tower-falls', title: 'Crash!', save: 'byTower', why: 'Then it sways, and falls, the stones tumbling down round it with a clatter (here, falling); the monkeys jump back, then jump about laughing, gather the stones up and start again.', run: async () => {
+    S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); towerAt = () => ({h: 6, phase: 'fall', k: .45, stones: 6, carried: null}); await wait(400); }},
+  {id: 'tower-hello', title: 'One, two, three!', save: 'byTower', why: 'Talk to them: 你好！ and your reply, then a message, and while you only know 一, 二 and 三, they count the stones as they put them on: 一，二，三！, and you can come back once you know more numbers.', run: async () => {
+    play(); await wait(100); here().tower = 1; talk(NPCS.find(n => n.id === 'towerR')); await wait(900); }},
+  {id: 'tower-count', title: 'How many stones?', save: 'towerCounts', why: 'Once you know more numbers (from 四, at school): 我们玩吧！, then three counting questions, as in a number lesson, about the stones in their tower: 这里有几个石头？ (How many stones are there?). Each right answer earns a 🐚 if that number needs practice.', run: async () => {
+    play(); await wait(100); countQ({who: 'towerL', thing: AREA.countGames.tower.thing, n: 5}); await wait(500); }},
+  {id: 'tower-count-new', title: 'Which tower has 六?', save: 'towerCounts', why: 'While a number is new, you hear it and choose the tower with that many stones: six, five and four, four to a row at most, still fitting a small phone.', run: async () => {
+    play(); await wait(100); rec('六').lv = 1; countQ({who: 'towerL', thing: AREA.countGames.tower.thing, n: 6}); await wait(500); }},
   {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
   {id: 'lookout-goat', title: 'Go and take a look!', save: 'hillsideGoat', why: 'Coming up the steps beside the lookout the first time, a goat on it stops you (a ! over it, then it talks): 你好！, 去看看！ and how to look out. Wherever there’s something you might miss, a goat is there to tell you, as below the waterfall.', run: async () => {

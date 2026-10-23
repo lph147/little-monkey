@@ -115,6 +115,7 @@ const DRAFTS = [
     ['我 要 红色 的 花 。', 'I want a red flower.', 'The sentence you finish when you give him the flowers (filling in 红色)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): ' + where})),
   {zh:'南天门', py:'Nán Tiān Mén', en:'the Southern Gate of Heaven', where:'New on 23 October 2026 (in the game): written on the plaque of a gate high in the clouds, in the view from the hillside’s lookout, where two gods peek out now and then (in the book, 千里眼 Qiānlǐ Yǎn, Thousand-Mile Eye, and 顺风耳 Shùnfēng Ěr, Wind-Following Ear, came out of it to see the light from the stone monkey’s eyes; the game doesn’t name them). Written left to right, in simplified characters (门): please check that reads naturally on a gate of heaven'},
+  {zh:'这里 有 几 个 石头 ？', en:'How many stones are there?', where:'New on 23 October 2026 (in the game): two little monkeys on the hillside, building a tower of stones, as the troop does in the book (砌宝塔), ask you to count its stones with them. 块 (kuài) is the usual measure word for stones (几块石头): is 几个石头 natural for small stones, said by a child, or should it be 几块?'},
   {zh:'羊 吃 草 。', en:'Sheep eat grass.', where:'New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside'}
 ];
 
@@ -146,6 +147,10 @@ function sheet(){
   const saidBy = {};
   const add = (key, who) => { (saidBy[key] = saidBy[key] || new Set()).add(who); };
   for (const [who, parts] of Object.entries(AREA.talk)) for (const p of parts) for (const s of p.do) if (s.say) add(s.say, name(s.by || who));   // (by: someone else says it)
+  for (const [who, parts] of Object.entries(AREA.talk)) for (const p of parts) for (const s of p.do) if (s.countGame){   // counting with you: the question, and what they say if you get them all right
+    const g = AREA.countGames[s.countGame];
+    for (const k of [g.thing.ask, ...(g.win || []).map(w => w.say)]) if (k) add(k, name(who));
+  }
   for (const r of Object.values(AREA.requests)) for (const k of [r.ask, r.offer, r.thanks, r.wrong]) if (k) add(k, name(r.from));
   if (AREA.shop) for (const k of [AREA.shop.ask, AREA.shop.welcome]) add(k, name(AREA.shop.who));
   for (const r of Object.values(AREA.requests)) if (r.wrongAnswer) add(r.wrongAnswer, name(r.from));

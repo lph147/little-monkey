@@ -703,6 +703,7 @@ const LOOKS = {
   mushrooms: (g,X,Y,x,y) => { woodFloor(g,X,Y,x,y); mushrooms(g,X,Y,x,y); },   // little mushrooms under the pines
   archway:   (g,X,Y,x,y) => path(g,X,Y,x,y),        // the way through an archway (the archway itself is a big object: OBJECT_ART)
   archPost:  (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // an archway's pillar, beside the way through (a big object)
+  stoneTower:(g,X,Y,x,y) => path(g,X,Y,x,y),        // the little monkeys' tower of stones, on sandy ground (animated in js/draw.js)
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
   waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js

@@ -20,7 +20,8 @@ const allSteps = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.flatMap(s => withWins(`${who}'s talk, part ${i + 1}`, s, who)))),
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
   ...AREA.begin.map(s => ['begin', s, null]),
-  ...allLegend.flatMap(([ch, t, from]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at ${from}, part ${i + 1}`, s, null])))
+  ...allLegend.flatMap(([ch, t, from]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at ${from}, part ${i + 1}`, s, null]))),
+  ...Object.entries(AREA.countGames || {}).flatMap(([id, g]) => (g.win || []).map(s => [`the counting game ${id}, if you win`, s, null]))
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
@@ -386,6 +387,17 @@ test('every step does one thing, with settings that exist, using real lines and 
     if (a === 'bag') assert.ok((AREA.food || {})[s.bag], `${where}: ${s.bag} isn't one of the area's food`);
     if (a === 'follow') for (const id of s.follow) assert.ok(AREA.characters.some(c => c.id === id), `${where}: "${id}" can't follow you: they aren't a character`);
     if (a === 'stopsYou') assert.ok(AREA.characters.some(c => c.id === s.stopsYou) && AREA.talk[s.stopsYou], `${where}: "${s.stopsYou}" isn't a character with something to say`);
+    if (a === 'talkTo') assert.ok(AREA.characters.some(c => c.id === s.talkTo) && AREA.talk[s.talkTo], `${where}: "${s.talkTo}" isn't a character with something to say`);
+    if (a === 'countGame') assert.ok((AREA.countGames || {})[s.countGame], `${where}: "${s.countGame}" isn't one of the area's countGames`);
+  }
+});
+
+test('a counting game counts things you can see, with a question about them, and says when you know too few numbers', () => {
+  for (const [id, g] of Object.entries(AREA.countGames || {})){
+    assert.ok(BANK[g.thing.word] && PICTURES[g.thing.word], `counting game ${id}: ${g.thing.word} needs a picture to count`);
+    assert.ok(['table', 'grass', 'tower'].includes(g.thing.on), `counting game ${id}: its things are on the table, the grass or a tower, not ${g.thing.on}`);
+    assert.ok(AREA.lines[g.thing.ask] && AREA.lines[g.thing.ask].zh.split(' ').includes(g.thing.word), `counting game ${id}: its question (${g.thing.ask}) asks how many ${g.thing.word} there are`);
+    assert.ok(g.start && g.notYet, `counting game ${id} needs start and notYet`);
   }
 });
 
@@ -403,7 +415,8 @@ test('every line is said somewhere', () => {
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
     ...(AREA.shop ? [AREA.shop.ask, AREA.shop.welcome] : []),
-    ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask)])
+    ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask)]),
+    ...Object.values(AREA.countGames || {}).map(g => g.thing.ask)
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
 });

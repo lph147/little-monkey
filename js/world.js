@@ -165,6 +165,9 @@ const LEAP_MS = 450;   // how long a leap takes, when someone stops following yo
 const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
+const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
+// How many things you could count with the numbers you know: never two (NOT_HOW_MANY, js/quiz.js).
+const countable = () => COUNTING.map((w, i) => i + 1).filter(n => !NOT_HOW_MANY.includes(COUNTING[n - 1]) && WORDS[COUNTING[n - 1]] && lvl(COUNTING[n - 1]) >= 1);
 // The area's lesson series (AREA.lessons) teach their words one at a time, one a lesson, in order: the next once you've
 // got the last one right twice (it no longer needs practice), so they don't all come at once. The series and word ready
 // now, if any (of the series whose if matches); when more than one has a word ready, they take turns, so it isn't the
@@ -199,6 +202,34 @@ const PRACTISES = new Set(AREA.characters.filter(c => c.practises).map(c => c.id
 const practiceT = n => n.x * 397 + n.y * 211;
 const practising = n => PRACTISES.has(n.id) && !n.mv && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) > 1;
 function swingStart(n, now){ const ph = (now + practiceT(n)) % PRACTICE_MS; return ph < SWING_MS ? now - ph : null; }   // when its swing now began, if it's swinging
+// Monkeys of the troop at play, as in the book (chapter 1: on a hot day the troop plays under the pines and by the stream):
+// what each is doing (plays, in the area's characters), all the time, except while you're talking to it, when it turns
+// to you. 'tower': piling stones into a tower with the monkey on the other side of it (a stoneTower square between them).
+const PLAYS = Object.fromEntries(AREA.characters.filter(c => c.plays).map(c => [c.id, c.plays]));
+let talkingTo = null;   // the character you're talking to (talk), if any
+const playing = n => !!PLAYS[n.id] && !n.mv && talkingTo !== n.id;
+// The tower of stones: the two monkeys take turns to put a stone on it, as high as it will go (each tower a little
+// different: heights), then it wobbles, and falls, the stones tumbling down round it; they jump about laughing, gather the
+// stones and start again. Each stone takes place ms, landing on the tower land of the way through. How it is now: its
+// height for this time (h), what's happening (phase: build, wobble, fall or rest), how far through that it is (k, 0 to 1),
+// how many stones are on it (stones), and while building, the stone on its way up (carried: which, by: whose turn, 0 the
+// monkey on the left, 1 the one on the right, and lift: how far it's gone, 0 to 1).
+const TOWER = {place:850, land:.6, wobble:1000, fall:650, rest:1500, heights:[4, 6, 5]};
+function towerAt(now){
+  const lens = TOWER.heights.map(h => h * TOWER.place + TOWER.wobble + TOWER.fall + TOWER.rest);
+  let t = now % lens.reduce((a, b) => a + b, 0), i = 0;
+  while (t >= lens[i]){ t -= lens[i]; i++; }
+  const h = TOWER.heights[i], built = h * TOWER.place;
+  if (t < built){
+    const s = Math.floor(t / TOWER.place), k = (t - s * TOWER.place) / TOWER.place, up = k < TOWER.land;
+    return {h, phase:'build', k, stones:s + (up ? 0 : 1), carried:up ? s : null, by:s % 2, lift:up ? k / TOWER.land : 1};
+  }
+  t -= built;
+  for (const phase of ['wobble', 'fall', 'rest']){
+    if (t < TOWER[phase]) return {h, phase, k:t / TOWER[phase], stones:h, carried:null};
+    t -= TOWER[phase];
+  }
+}
 // The troop marking out ground as you watch (the markOut step): when each stake is hammered in, when the string is pulled
 // tight round them, when the new ground fades in (with its sign and path), and when it's done, in ms; and what's being
 // marked out: {t0, changed: the squares that change, fresh: their new look, box: the plot's squares, x0 y0 to x1 y1; hold:
@@ -257,6 +288,28 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     SFX.encounter();
     if (await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}) && g.win) await runSteps(g.win, who);
   },
+  // Counting with the one you're talking to (countGame: one of the area's countGames), such as the stones in the little
+  // monkeys' tower on the hillside: COUNT_GAME counting questions, as in a number lesson (js/quiz.js), each about a
+  // different number you know (those needing practice first), each right answer earning a 🐚 if that number needed
+  // practice; and if you get them all right, its win. Till you know three numbers to count with (二 isn't one: two things
+  // are 两), its notYet message instead.
+  async countGame(s, who, last){
+    const g = AREA.countGames[s.countGame], nums = countable();
+    if (nums.length < 3){ if (who) await showNarration(fill(g.notYet), last); else toast(fill(g.notYet)); return; }
+    if (!await confirmBox(speaker(who), fill(g.start), 'Count', 'Not now')) return STOP;
+    const asks = shuffle(nums).sort((a, c) => needsPractice(COUNTING[c - 1]) - needsPractice(COUNTING[a - 1])).slice(0, COUNT_GAME);
+    let right = 0, shells = 0;
+    for (const n of asks){
+      const need = needsPractice(COUNTING[n - 1]);
+      if (await countQ({who, thing:g.thing, n})){ right++; if (need) shells++; }
+    }
+    S.shells += shells; save();
+    const all = right === asks.length;
+    if (all){ SFX.fanfare(); if (g.win) await runSteps(g.win, who); }
+    const text = `You counted ${all ? `all ${right}` : `${right} of ${asks.length}`} right.${shells ? ` +${shells} 🐚` : ''}`;
+    if (who) await showNarration(text, last); else toast(text);
+  },
+  async talkTo(s){ const n = NPCS.find(c => c.id === s.talkTo); if (n) await talk(n); },   // talking to someone, such as A at the little monkeys' tower talking to them
   // Match the words you've learned (with pictures) to their pictures, as at the practice post (title: its heading;
   // stop: the button to stop). Stopping ends the conversation there, with notYet as a message.
   async match(s){
@@ -493,9 +546,9 @@ async function talk(n){
   const part = talkPart(n);
   if (!part) return;
   lastTalk = {id:n.id, part};
-  const outer = caughtBefore;   // (a character can stop you during another conversation)
-  caughtBefore = caughtCount(); lastLine = null;   // (nothing said yet to reply to)
-  try { await runSteps(part.do, n.id, true); } finally { caughtBefore = outer; }
+  const outer = caughtBefore, was = talkingTo;   // (a character can stop you during another conversation)
+  caughtBefore = caughtCount(); lastLine = null; talkingTo = n.id;   // (nothing said yet to reply to)
+  try { await runSteps(part.do, n.id, true); } finally { caughtBefore = outer; talkingTo = was; }
 }
 // A character asking you to bring something (the area's requests). A request with choices (such as the
 // hungry monkey's fruit) is fussy: whichever you bring first, they want the other (remembered in wanted),
@@ -705,6 +758,16 @@ function practiceSounds(now){
     if (swishedAt[n.id] !== undefined && swishedAt[n.id] !== k && near && mode === 'play' && modal.hidden) SFX.swish(.12);
     swishedAt[n.id] = k;
   }
+}
+// The monkeys at play, when you're near: a little clack as each stone goes onto their tower, and a clatter as it falls.
+let towerWas = null;
+function playSounds(now){
+  const n = NPCS.find(c => PLAYS[c.id] === 'tower');
+  if (!n){ towerWas = null; return; }
+  const t = towerAt(now), near = Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) <= 5 && mode === 'play' && modal.hidden;
+  if (towerWas && near && t.phase === 'build' && t.stones > towerWas.stones) SFX.clack();
+  if (towerWas && near && t.phase === 'fall' && towerWas.phase !== 'fall') SFX.clatter();
+  towerWas = t;
 }
 // The sounds of the part of the place you're in: the place's own (sounds: some of SFX's names), or, where they change from
 // one part of it to another (each part: its rows, from and to, and its sounds), the part you're in, such as the hillside's

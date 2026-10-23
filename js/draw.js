@@ -23,7 +23,50 @@ function animTile(x, y, X, Y, now){
   } else if (look === 'waterfall' || look === 'curtain'){
     R(b, X, Y, T, T, '#8FD0EE');
     for (let i = 0; i < 5; i++){ const xx = X + 1 + i*3, off = (now/18 + i*7) % 22 - 6; R(b, xx, Y + Math.max(0, off), 1, Math.min(7, 16 - Math.max(0, off)), '#FFFFFF'); R(b, xx+1, Y, 1, T, '#B9E4F7'); }
+  } else if (look === 'stoneTower') drawTower(X, Y, now);
+}
+// The little monkeys' tower of stones (towerAt, js/world.js) on its square at X, Y: the stones piled up, a little
+// crooked, smaller to the top; swaying before it falls, then tumbling down round it and lying where they fell, till the
+// monkeys gather them up to start again. (The stone on its way up is drawn with the monkey carrying it: drawPlaying.)
+// Each stone's lean from the middle, how wide it is, and where it lands when the tower falls (from the tower's foot).
+const TOWER_LEAN = [0, 1, -1, 1, 0, -1], TOWER_WIDE = [11, 10, 9, 8, 7, 6], TOWER_LANDS = [[-2, 0], [10, 1], [-11, 2], [13, -1], [-14, 1], [5, 2]];
+const towerStoneAt = (X, Y, i) => ({x:X + 8 + TOWER_LEAN[i], y:Y + 11 - 4 * i, w:TOWER_WIDE[i]});   // stone i (0 at the bottom) on the tower: its middle, top and width
+function towerStone(x, y, w){   // a stone w wide, its middle at x, its top at y: lit on top, darker underneath
+  const l = Math.round(x - w / 2);
+  R(b, l + 1, y, w - 2, 1, GREY[4]); R(b, l, y + 1, w, 1, GREY[3]); R(b, l, y + 2, w, 1, GREY[2]); R(b, l + 1, y + 3, w - 2, 1, GREY[1]);
+  R(b, l + 1, y + 1, 1, 1, GREY[4]);   // (a glint)
+}
+function drawTower(X, Y, now){
+  const t = towerAt(now);
+  if (t.phase === 'build' || t.phase === 'wobble'){
+    if (t.stones) R(b, X + 3, Y + 15, 10, 1, 'rgba(0,0,0,.2)');   // its shadow
+    for (let i = 0; i < t.stones; i++){
+      const s = towerStoneAt(X, Y, i), sway = t.phase === 'wobble' ? Math.round(Math.sin(now / 70) * 1.6 * i / (t.h - 1)) : 0;   // (the top sways most)
+      towerStone(s.x + sway, s.y, s.w);
+    }
+    return;
   }
+  b.globalAlpha = t.phase === 'rest' ? clamp((1 - t.k) / .25, 0, 1) : 1;   // (gathered up at the end)
+  for (let i = 0; i < t.h; i++){
+    const s = towerStoneAt(X, Y, i), [dx, dy] = TOWER_LANDS[i];
+    const k = t.phase === 'rest' ? 1 : clamp((t.k - (t.h - 1 - i) * .08) / .6, 0, 1);   // (the top ones first)
+    const x = s.x + (X + 8 + dx - s.x) * k, y = s.y + (Y + 12 + dy - s.y) * k - Math.sin(k * Math.PI) * (3 + i);
+    towerStone(Math.round(x), Math.round(y), s.w);
+  }
+  b.globalAlpha = 1;
+}
+// A monkey of the troop at play (PLAYS, js/world.js), at X, Y. Building the tower of stones, facing it: when it's its turn
+// (or the other one's talking to you), it hops up to put a stone on top, the stone going up from its hands; as the tower
+// falls they jump back, and then they jump about laughing.
+function drawPlaying(n, X, Y, now){
+  const dir = n.home.facing, t = towerAt(now), partner = NPCS.find(c => c !== n && PLAYS[c.id] === 'tower');
+  const turn = t.phase === 'build' && t.carried !== null && (t.by === (dir === 'right' ? 0 : 1) || !partner || !playing(partner));
+  const bob = turn ? Math.round(Math.sin(t.lift * Math.PI) * 2) : t.phase === 'fall' ? Math.round(Math.sin(t.k * Math.PI) * 3)
+    : t.phase === 'rest' && t.k < .7 ? Math.round(Math.abs(Math.sin(t.k * Math.PI * 5)) * 2) : 0;
+  drawEntityMonkey(n.kind, X, Y, dir, now, bob, 0, n.x + n.y);
+  if (!turn) return;
+  const [hx, hy] = SWING_HAND[dir], s = towerStoneAt(X + (dir === 'right' ? T : -T), Y, t.carried), k = t.lift;
+  towerStone(Math.round(X + hx + (s.x - X - hx) * k), Math.round(Y - bob + hy + (s.y - Y - hy) * k - Math.sin(k * Math.PI) * 6), s.w);
 }
 function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
   R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
@@ -300,6 +343,8 @@ function drawWorld(now){
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
       R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(SPR.bird, X+4, Y+6 - hop);
       if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
+    } else if (playing(n)){   // a monkey of the troop at play, such as building a tower of stones
+      drawPlaying(n, X, Y, now);
     } else if (practising(n)){   // a little monkey in training, facing its own way, swinging its stick now and then
       const t0 = swingStart(n, now);
       if (t0 !== null) drawSwing(n.kind, n.home.facing, X, Y, t0, now);
