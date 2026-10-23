@@ -509,7 +509,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
-        {at:[25, 0], to:'hillside', arrive:[9, 26], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up the hillside to the pine wood
+        {at:[25, 0], to:'hillside', arrive:[12, 43], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up the hillside to the pine wood
         {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
       ],
       map: [
@@ -539,52 +539,77 @@ const FLOWER_FRUIT_MOUNTAIN = {
     },
     // Chapter 1: the hillside, the way from the home ground up to the pine wood (decided 23 October 2026: the wood was
     // straight through the bushes at the top of the home ground, a different world a step away, and chapter 1 had few
-    // places to practise the words you know). Open grass at the bottom, rocky ground and scattered trees, then the first
-    // pines at the top. Two bands of long grass right across the way, which you can't go round, so you meet what lives in
-    // them (snakes and spiders, and now and then a wolf from the pines): a battle or two each way, practising words you
-    // know, and nothing new to learn. A peach tree in a nook on the left, to fill your bag; tall grass on the right, where
-    // your animal friends hide; and ledges to hop down, a quicker way back (going up, the way round is by the path at
-    // their right end).
+    // places to practise the words you know; laid out again the same day, after playing the first, which was short, dull
+    // and all big blocks of long grass). About 90 steps up, winding, in three parts that each look different: at the foot,
+    // a slope of flowers, a winding brook you cross on stepping stones, and a hedge; in the middle, three terraces with
+    // stone steps zig-zagging up the cliffs between them, ledges to hop down (the quicker way back), and a lookout over
+    // the sea; at the top, under the first pines, mushrooms, and a stone archway with 松林 on it, the way into the wood.
+    // Long grass in patches, most of which you can go round; where it has grown over the way (the gap in the hedge, across
+    // the middle terrace, under the pines), you can't, so you meet what lives in it: snakes and spiders, and now and then
+    // a wolf from the pines, practising words you know. A peach tree in a corner, and tall grass where your friends hide.
     hillside: {
       name: {zh:'山坡', py:'shānpō', en:'The hillside'},
       exits: [
-        {at:[9, 29], to:'homeGround', arrive:[25, 1], facing:'down'}, {at:[10, 29], to:'homeGround', arrive:[25, 1], facing:'down'},   // down to the home ground
-        {at:[9, 0], to:'pineWood', arrive:[16, 26], facing:'up'}, {at:[10, 0], to:'pineWood', arrive:[17, 26], facing:'up'}   // into the pine wood
+        {at:[12, 45], to:'homeGround', arrive:[25, 1], facing:'down'}, {at:[13, 45], to:'homeGround', arrive:[25, 1], facing:'down'},   // down to the home ground
+        {at:[12, 0], to:'pineWood', arrive:[16, 26], facing:'up'}, {at:[13, 0], to:'pineWood', arrive:[17, 26], facing:'up'}   // into the pine wood
       ],
       legend: {
-        'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider', 'spider', 'wolf']}   // long grass: snakes and spiders, and now and then a wolf
+        'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider', 'spider', 'wolf']},   // long grass: snakes and spiders, and now and then a wolf
+        'f': {look:'flowers', walk:true},                     // flowers on the slope (not for picking)
+        's': {look:'steps', walk:true},                       // stone steps up a cliff
+        'z': {look:'steppingStones', walk:true},              // stepping stones over the brook
+        'm': {look:'mushrooms', walk:true},                   // mushrooms under the pines
+        'A': {look:'archway', walk:true, says:'松林'},         // the way through the archway into the pine wood, with its name on the board over it
+        'I': {look:'archPost'},                               // the archway's pillars
+        'V': {look:'view'}                                    // the view from the lookout: the sky, and the sea far below
       },
       map: [
-        "ppppppppp..ppppppppp",   // the way into the pine wood
-        "pppppppii..iippppppp",
-        "ppppppiii..iiipppppp",   // the first pines, needles underfoot
-        "pppppiiiii.iiiiipppp",
-        "pppnnnnnnnnnnnnnnppp",   // the upper band of long grass, right across
-        "ppnnnnnnnnnnnnnnnnpp",
-        "ppnnnnnpnnnnnnnnnnpp",
-        "pTnnnnnnnnnnnnpnnnTp",
-        "YTnnnnnnnnnnnnnnnnTY",
-        "YYTnnnnnnnnnnnnnnTYY",
-        "YYgggoggg........gYY",   // rocky ground above the ledges
-        "YYvvvvvvvvvvvvvo.wYY",   // the ledges: hop down anywhere; going up, only by the path at their right end
-        "YYg..............gYY",
-        "YTg.gggwggggggg.ggTY",
-        "YgP.ggggggTggGGGG.gY",   // a peach tree in the nook on the left; tall grass on the right, where your friends hide
-        "Ygg.ggoggggggGGGG.gY",
-        "YTg.gggggwgggGGGG.TY",
-        "YYg.......gggggg..YY",
-        "YYTgggggg.ggggggTTYY",
-        "YYwnnnnnnnnnnnnnnwYY",   // the lower band of long grass, right across
-        "YYnnnnnnnnnnnnnnnnYY",
-        "YTnnnnTnnnnnnnnnnnTY",
-        "YYnnnnnnnnnnnnnnnnYY",
-        "YYnnnnnnnnnonnnnnnYY",
-        "YYwnnnnnnnnnnnnnnwYY",
-        "YYggTgggg..ggggTggYY",
-        "YYgwggggg..gggggwgYY",
-        "YYTgggTgg..ggTgggTYY",
-        "YYYYggggg..ggggYYYYY",
-        "YYYYYYYYY..YYYYYYYYY"    // down to the home ground
+        "pppppppppppp..pppppppppppp",   // the way into the pine wood
+        "ppppppppppii..iipppppppppp",
+        "ppppppppppiIAAIipppppppppp",   // the archway, with 松林 on its board
+        "pppppppppiii..iimipppppppp",
+        "ppppppppmiii..iiiiippppppp",
+        "pppppppiiiii..iiiipppppppp",
+        "pppppppmi....iiiimpppppppp",
+        "pppppppnnnnppppppppppppppp",   // long grass grown over the way under the pines
+        "pppppnnnnpnnnppppppppppppp",
+        "ppppppnnnnnnnppppppppppppp",
+        "ppppppnni......iiipppppppp",
+        "pppppiipiiiiii.imipiippppp",
+        "YYppiTgggggggg.gggTippipYY",   // the edge of the pines
+        "YYpgggg........gnnnggggpYY",
+        "YYggggT.ggggggggnnnnTgpgYY",
+        "YYMMMMg.ggggggggggggggggYY",
+        "YYMMMMssMMgggggggMMMMMMMYY",   // stone steps up the cliff (left), ledges to hop down (middle)
+        "YYMMMMssMMvvvvvvvMMMMMVVVV",
+        "YYggggg.ggggggggggggggVVVV",
+        "YYGGGgg...............VVVV",   // along the terrace to the lookout, and its view
+        "YYGGGogggggggnnngg.gg.VVVV",
+        "YYGGGgggggggTgnngo.gggVVVV",
+        "YYMMgggggggggggggg.gggVVVV",
+        "YYMMMMMMgggggggMMMssMMMMYY",   // stone steps (right), ledges (middle)
+        "YYMMMMMMvvvvvvvMMMssMMMMYY",
+        "YYggggggggonnggggg.gggggYY",   // long grass right across, among boulders
+        "YYggg.....nnn......gggTgYY",
+        "YYgTg.ggggnnnggggggnnnggYY",
+        "YYggg.ggognonTgggggnnnggYY",
+        "YYggg.ggggnnogggggggMMMMYY",
+        "YYMMMssMMMggggggggMMMMMMYY",   // stone steps (left), ledges (middle)
+        "YYMMMssMMMvvvvvvvvMMMMMMYY",
+        "YYgfg.gfgfgfggfgggfgfggfYY",   // a slope of flowers; a peach tree in the corner
+        "YYgPg.fgfgfgfggffggfgffgYY",
+        "YYfgg...............ggfgYY",
+        "YYgffggggfgggfgggfWzWWWWYY",   // the brook, winding, and its stepping stones
+        "YYgggggWWWWWWWWWWWWzWWWWYY",
+        "YYWWWWWWWWWWWWWWWWg.ggggYY",
+        "YYWWWWWgggTgggg.....ggggYY",
+        "YYggTggggggggggnngggggTgYY",
+        "YYggggggggwTwwnnnnggggggYY",   // a hedge, and the gap grown over with long grass
+        "YYwwTwwwTwgggnnnnwwwTwwTYY",
+        "YYggggggggggggnnggggggggYY",
+        "YYgGGGGggggg....ggnnnnggYY",   // tall grass, where your friends hide
+        "YYgGGGGgTggg..ggggnnnnggYY",
+        "YYYYYYYYYYYY..YYYYYYYYYYYY"    // down to the home ground
       ]
     },
     // Chapter 1: the pine wood, up the hillside from the home ground (the big monkey clears the way when he wants wood): thick, gloomy
@@ -601,8 +626,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       gloom: {deep:.7, open:.24, mist:true, eyes:true},
       sounds: ['crow', 'crow', 'wind', 'howl'],
       exits: [
-        {at:[16, 29], to:'hillside', arrive:[9, 1], facing:'down'},   // back down the hillside to the home ground
-        {at:[17, 29], to:'hillside', arrive:[10, 1], facing:'down'}
+        {at:[16, 29], to:'hillside', arrive:[12, 1], facing:'down'},   // back down the hillside to the home ground
+        {at:[17, 29], to:'hillside', arrive:[13, 1], facing:'down'}
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass: here, wolves too

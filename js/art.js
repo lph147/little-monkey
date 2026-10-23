@@ -175,9 +175,9 @@ const mg = mapCanvas.getContext('2d');
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
 const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log',
-  'needles','pine','deadPine','crackedRock','stump','pebble','rubble'];   // looks with grass underneath (or the pine wood's floor)
+  'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
 const CLIFFS = ['cliff'];
-const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge'];
+const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
   for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i)*16), py = Math.floor(rnd(x,y,i+20)*16); R(g, X+px, Y+py, 1, 1, i % 3 ? '#6CB35C' : '#93D67F'); }
@@ -226,9 +226,66 @@ function waterBase(g, X, Y, x, y){
     if (dx === 1){ R(g, X+14, Y, 2, T, '#2C6B9E'); }
   });
 }
+// Stone steps cut up a cliff (the hillside's): four treads to a square, each lit along its edge, with its shadow under it,
+// and dark sides where the cliff rises beside them.
+function stoneSteps(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#A8A294');
+  for (let i = 0; i < 4; i++){ const ty = Y + i*4; R(g, X, ty, T, 1, '#D2CCBE'); R(g, X, ty+1, T, 2, '#B4AE9F'); R(g, X, ty+3, T, 1, '#6F6B61'); }
+  for (let i = 0; i < 5; i++) R(g, X + Math.floor(rnd(x,y,i+300)*15), Y + Math.floor(rnd(x,y,i+310)*16), 1, 1, '#9A9487');   // worn spots
+  if (tileAt(x-1, y).look !== 'steps') R(g, X, Y, 1, T, '#5E5A51');
+  if (tileAt(x+1, y).look !== 'steps') R(g, X+15, Y, 1, T, '#5E5A51');
+}
+// Flat stones across a brook, two to a square, a little out of line, each with its shadow in the water.
+function steppingStones(g, X, Y, x, y){
+  waterBase(g, X, Y, x, y);
+  const k = rnd(x, y, 400) < .5 ? 2 : -2;
+  for (const [cx, cy] of [[8 + k, 4], [8 - k, 12]]){
+    oval(g, X+cx, Y+cy+1, 5, 3, '#2C6B9E');
+    oval(g, X+cx, Y+cy, 5, 3, '#6F6B61'); oval(g, X+cx, Y+cy-1, 4, 2, '#B4AE9F'); R(g, X+cx-2, Y+cy-2, 2, 1, '#D2CCBE');
+  }
+}
+// A few little mushrooms on the floor under the pines: one red with white spots, and two small brown ones.
+function mushrooms(g, X, Y, x, y){
+  const one = (cx, by, r, cap, spots) => {
+    R(g, X+cx-1, Y+by-3, 2, 3, '#EFE3C8'); R(g, X+cx-1, Y+by-1, 2, 1, '#C9B88F');
+    oval(g, X+cx, Y+by-4, r, Math.max(1, r-1), cap); R(g, X+cx-r+1, Y+by-5, 1, 1, '#FFFFFF80');
+    if (spots){ R(g, X+cx-1, Y+by-5, 1, 1, '#FFFFFF'); R(g, X+cx+1, Y+by-4, 1, 1, '#FFFFFF'); }
+  };
+  const k = Math.floor(rnd(x, y, 410) * 4);
+  one(5 + k, 9, 3, '#D9433A', true); one(11, 13, 2, '#9C6B3A', false); one(3, 15, 2, '#B98A55', false);
+}
+// The view from a lookout, over the edge of the hill: the sky with a cloud or two, and far below, the sea, out to the
+// horizon, with an island. It's one picture across all the view's squares, each square drawing its part of it.
+function farView(g, X, Y, x, y){
+  let top = y, bottom = y, left = x, right = x;
+  while (tileAt(x, top - 1).look === 'view') top--;
+  while (tileAt(x, bottom + 1).look === 'view') bottom++;
+  while (tileAt(left - 1, y).look === 'view') left--;
+  while (tileAt(right + 1, y).look === 'view') right++;
+  const w = (right - left + 1) * T, h = (bottom - top + 1) * T, horizon = Math.round(h * .42);
+  const inCloud = (vx, vy, cx, cy, rx, ry) => ((vx - cx) / rx) ** 2 + ((vy - cy) / ry) ** 2 <= 1;
+  for (let r = 0; r < T; r++) for (let c = 0; c < T; c++){
+    const vx = (x - left) * T + c, vy = (y - top) * T + r;   // where this pixel is in the view
+    let col;
+    if (vy < horizon){
+      col = mix('#86C6EC', '#DDF1FA', vy / horizon);
+      if (inCloud(vx, vy, w * .3, h * .12, 10, 3) || inCloud(vx, vy, w * .3 + 6, h * .12 - 2, 6, 3) || inCloud(vx, vy, w * .75, h * .26, 8, 2)) col = vy % 4 === 3 ? '#E3F1F8' : '#FFFFFF';
+      const isle = Math.max(0, 7 - Math.abs(vx - w * .62) / 2.2);   // a far-off island on the horizon
+      if (horizon - vy <= isle && Math.abs(vx - w * .62) < 16) col = horizon - vy <= isle - 2 ? '#7FA2B8' : '#93B4C7';
+    } else if (vy === horizon) col = '#3A7DB5';
+    else {
+      col = mix('#4B9BD5', '#2D6CA6', (vy - horizon) / (h - horizon));
+      if (rnd(vx, vy, 420) < .035) col = '#A6DAF3';                      // the sun sparkling on the sea
+      else if ((vy + Math.floor(vx / 9)) % 7 === 0 && rnd(vx, vy, 421) < .5) col = '#3F86C2';   // waves, far off
+    }
+    R(g, X + c, Y + r, 1, 1, col);
+  }
+  if (tileAt(x - 1, y).look !== 'view'){ R(g, X, Y, 3, T, '#8E8A7E'); R(g, X+3, Y, 1, T, '#6A665C'); R(g, X, Y, 1, T, '#7CC46B'); }   // the edge of the hill
+}
 // Writing in the world is real Chinese, never made-up squiggles, so there's more for you to read (decided 21 October
-// 2026): the school's sign (学校), the cave's stone tablet (水帘洞) and the numbers on the blackboard. Each character is
-// drawn by hand in pixels ('#' is ink); writing something new needs its characters drawn here (a test checks).
+// 2026): the school's sign (学校), the cave's stone tablet (水帘洞), the numbers on the blackboard and the archway into the
+// pine wood (松林). Each character is drawn by hand in pixels ('#' is ink); writing something new needs its characters
+// drawn here (a test checks).
 const HANZI = {
   '学': [".#..#...#.", "..#..#.#..", "##########", "#........#", "..######..", "......#...", ".....#....", "##########", ".....#....", ".....#....", "...###...."],
   '校': ["..#....#...", "..#.....#..", "####.######", "..#...#..#.", ".###.#....#", ".##.#.#..#.", "#.#....##..", "..#....##..", "..#...#..#.", "..#..#....#", "..#.#......"],
@@ -245,6 +302,8 @@ const HANZI = {
   '八': ["..#.#..", "..#.#..", "..#..#.", ".#...#.", ".#....#", "#.....#", "......."],
   '九': ["..#....", "..#....", "#####..", "..#.#..", "..#.#..", ".#..#.#", "#...###"],
   '十': ["...#...", "...#...", "...#...", "#######", "...#...", "...#...", "...#..."],
+  '松': ["..#...#..#.", "..#...#...#", "####.#....#", "..#........", ".###...#...", ".##...#....", "#.#...#..#.", "..#..#....#", "..#..#####.", "..#........", "..#........"],
+  '林': ["..#.....#..", "..#.....#..", "#####.#####", "..#.....#..", ".###...###.", ".##.#.##.#.", "#.#...#.#.#", "..#.....#..", "..#.....#..", "..#.....#..", "..#.....#.."],
 };
 // Writes text in HANZI's characters from X, Y, in ink: across, gap pixels apart, or down (each centred in the column).
 function write(g, text, X, Y, ink, {gap = 1, down = false} = {}){
@@ -508,6 +567,13 @@ const LOOKS = {
   tablet:    (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),   // (the stone tablet is a big object, taller than its square: OBJECT_ART)
   curtain:   (g,X,Y,x,y) => { R(g,X,Y,T,T,'#8FD0EE'); },   // the falling water is animated in js/draw.js
 
+  steps:     (g,X,Y,x,y) => stoneSteps(g,X,Y,x,y),   // stone steps up a cliff (the hillside's)
+  steppingStones:(g,X,Y,x,y) => steppingStones(g,X,Y,x,y),   // flat stones across a brook, to step on
+  mushrooms: (g,X,Y,x,y) => { woodFloor(g,X,Y,x,y); mushrooms(g,X,Y,x,y); },   // little mushrooms under the pines
+  archway:   (g,X,Y,x,y) => path(g,X,Y,x,y),        // the way through an archway (the archway itself is a big object: OBJECT_ART)
+  archPost:  (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // an archway's pillar, beside the way through (a big object)
+  view:      (g,X,Y,x,y) => farView(g,X,Y,x,y),     // the view from a lookout: the sky, and the sea far below
+
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
   waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js
   ironBridge:(g,X,Y,x,y) => {   // an iron bridge across a stream
@@ -582,10 +648,31 @@ const OBJECT_ART = {
     [[4,4],[5,3],[6,3],[11,3],[12,4],[3,6]].forEach(([a, c]) => dot(g, X+a, Y+c, '#5E8F3E'));
   },
   frame: (g, o) => schoolFrame(g, o),
+  archway: (g, o) => archway(g, o),
+  archPost: (g, o) => {   // a stone pillar of an archway, on its plinth (the beam over the way rests on it: archway, below)
+    const X = o.x*T, Y = o.y*T;
+    groundShadow(g, X+8, Y+15, 6, 2);
+    R(g, X+3, Y+10, 10, 6, '#5E5A51'); R(g, X+4, Y+11, 8, 4, '#B4AE9F'); R(g, X+4, Y+11, 8, 1, '#D2CCBE');
+    R(g, X+5, Y-19, 6, 30, '#5E5A51'); R(g, X+6, Y-19, 4, 29, '#A8A294'); R(g, X+6, Y-19, 1, 29, '#D2CCBE'); R(g, X+9, Y-19, 1, 29, '#857E71');
+  },
   school: (g, o) => schoolHouse(g, o.x*T, o.y*T, o.w*T, o.h*T, {walls:1, roof:1, sign:true, paint:paintedParts()}),   // (painted as you learn colours)
   blackboard: (g, o) => blackboard(g, o),
   classWindow: (g, o) => classWindow(g, o)
 };
+// An archway over the way into a place (the hillside's, into the pine wood): a stone beam across its two pillars
+// (archPost), with a little tiled roof, and a board on it saying where you're going (says, in the legend: 松林), in gold.
+function archway(g, o){
+  const X = o.x*T, Y = o.y*T, W = o.w*T, L = X - 14, Rt = X + W + 14, says = tileAt(o.x, o.y).says;
+  R(g, L, Y-25, Rt-L, 6, '#5E5A51'); R(g, L+1, Y-24, Rt-L-2, 4, '#A8A294'); R(g, L+1, Y-24, Rt-L-2, 1, '#D2CCBE');   // the beam
+  R(g, L-2, Y-30, Rt-L+4, 5, '#3E434A'); R(g, L-1, Y-29, Rt-L+2, 3, '#5B636D');                                       // its roof
+  for (let i = L; i < Rt; i += 3) R(g, i, Y-27, 1, 2, '#3E434A');
+  R(g, L-3, Y-32, 2, 2, '#3E434A'); R(g, Rt+1, Y-32, 2, 2, '#3E434A');                                                  // curling up at its ends
+  if (says){
+    const [tw, th] = writtenSize(says, 1), bw = tw + 6, bx = X + Math.round((W - bw) / 2), by = Y - 22;
+    R(g, bx - 1, by - 1, bw + 2, th + 6, '#22190F'); R(g, bx, by, bw, th + 4, '#4A2F1E');
+    write(g, says, bx + 3, by + 2, '#F2D16B');
+  }
+}
 // A pine (the pine wood's trees): a straight trunk, and three tiers of dark needles narrowing to a point, reaching well
 // up above its square.
 const PINE = ['#163A28', '#24573A', '#33724A', '#4E9460', '#83C07A'];   // darkest to lightest
@@ -746,7 +833,7 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
 const ROW_OBJECTS = ['rocks', 'stall'];   // side by side, these make one object as wide as the row
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet'];   // and these one object as big as the block of them (such as the school's frame on its plot)
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
 // stall letters one stall; a block of frame letters is one frame; anything else stands on its own square. They come from the top of the map down, the order they're drawn in.

@@ -303,11 +303,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(25, 0, 'up');
   await act('arrive(25, 0).then(runEvents)', 'going up through the bushes he cleared');
   assert.equal(run('PLACE'), 'hillside', 'up the hillside to the pine wood');
-  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [9, 26]);
+  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [12, 43]);
   run('globalThis.__fights = 0; (() => { const b = wildBattle; wildBattle = (...a) => { __fights++; return b(...a); }; })()');
-  await walk([[9, 26], [9, 17], [17, 17], [17, 12], [16, 12], [16, 10], [10, 10], [10, 1]], 'walking up the hillside, through its long grass');
+  await walk([[12, 43], [15, 43], [15, 38], [19, 38], [19, 34], [5, 34], [5, 26], [18, 26], [18, 19], [7, 19], [7, 13], [10, 13], [10, 6], [12, 6], [12, 1]],
+    'walking up the hillside: through the gap in the hedge, over the brook, up the stone steps and through its long grass');
   assert.ok(get('__fights') >= 1, `something jumps out of the long grass on the way up (${get('__fights')})`);
-  await stepOn(9, 0, 'going into the pine wood');
+  await stepOn(12, 0, 'going into the pine wood, through the archway');
   assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [16, 26], 'at the way in, at the bottom');
   await pressAt(17, 21, 'right', 'meeting a squirrel in the clearing where the ways part');
@@ -335,11 +336,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(16, 29, 'down');
   await act('arrive(16, 29).then(runEvents)', 'going back down to the hillside');
   assert.equal(run('PLACE'), 'hillside');
-  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [9, 1]);
+  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [12, 1]);
   run('__fights = 0');
-  await walk([[9, 1], [9, 10], [9, 12], [3, 12], [3, 17], [9, 17], [9, 28]], 'walking down the hillside, hopping down a ledge');
+  await walk([[12, 1], [12, 6], [10, 6], [10, 18], [10, 23], [14, 23], [14, 34], [19, 34], [19, 38], [15, 38], [15, 43], [12, 43], [12, 44]], 'walking down the hillside, hopping down the ledges');
   assert.ok(get('__fights') >= 1, `something jumps out of the long grass on the way down too (${get('__fights')})`);
-  await stepOn(9, 29, 'going back down to the home ground');
+  await stepOn(12, 45, 'going back down to the home ground');
   assert.equal(run('PLACE'), 'homeGround');
   await pressAt(15, 5, 'up', 'giving the big monkey the wood and the stones');
   assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them');

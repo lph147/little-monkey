@@ -60,10 +60,12 @@ const BUILDING = {...SAVES.homeGround.areas[1], build: 1, wood: 'asked', stones:
 SAVES.pineWood = {...SAVES.homeGround, areas: {1: BUILDING}, pos: {place: 'pineWood', x: 16, y: 26, dir: 'up'}};   // (in at the bottom)
 SAVES.pineMeadow = {...SAVES.pineWood, pos: {place: 'pineWood', x: 15, y: 17, dir: 'up'}};   // in the long grass below the bridge
 SAVES.pineKnowsWell = {...SAVES.pineWood, w: Object.fromEntries(Object.entries(SAVES.pineWood.w).map(([w, r]) => [w, {...r, lv: 2}]))};   // words recognised: reading questions
-SAVES.pineFirst = {...SAVES.homeGround, areas: {1: {...BUILDING, woodIn: 0}}, pos: {place: 'hillside', x: 9, y: 1, dir: 'up'}};   // about to go in for the first time, at the top of the hillside
-// the hillside, between the home ground and the pine wood: just come up from the home ground, and higher, by the ledges
-SAVES.hillside = {...SAVES.pineWood, pos: {place: 'hillside', x: 9, y: 26, dir: 'up'}};
-SAVES.hillsideLedges = {...SAVES.pineWood, pos: {place: 'hillside', x: 16, y: 12, dir: 'up'}};
+SAVES.pineFirst = {...SAVES.homeGround, areas: {1: {...BUILDING, woodIn: 0}}, pos: {place: 'hillside', x: 12, y: 1, dir: 'up'}};   // about to go in for the first time, at the top of the hillside
+// the hillside, between the home ground and the pine wood: at the foot, by the brook's stepping stones; in the middle, at the
+// lookout; and at the top, under the first pines, by the archway into the wood
+SAVES.hillside = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 37, dir: 'up'}};
+SAVES.hillsideLookout = {...SAVES.pineWood, pos: {place: 'hillside', x: 21, y: 20, dir: 'right'}};
+SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
   areas: {1: {...BUILDING, picked: {wood: ['pineWood:2,18', 'pineWood:2,2'], stones: ['pineWood:3,12']},
@@ -315,12 +317,14 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'homeGround', x: 6, y: 4, dir: 'up'}; placePlayer(); await wait(200); pressA(); await wait(400); }},
   {id: 'pine-wood', title: 'The pine wood (松林)', save: 'pineWood', why: 'Up from the home ground, in at the bottom: the way leads up to the squirrel’s clearing, where the ways part. Three dry, dead pines that sparkle (knock them down with your stick) and three small stones are hidden around the wood, with long grass on every way to them.', run: async () => {
     play(); await wait(500); }},
-  {id: 'hillside', title: 'The hillside (山坡)', save: 'hillside', why: 'Up from the home ground, on the way to the pine wood: a band of long grass right across the way, which you can’t go round (snakes and spiders, and now and then a wolf), practising words you know.', run: async () => {
+  {id: 'hillside', title: 'The hillside (山坡): the foot', save: 'hillside', why: 'Up from the home ground, on the way to the pine wood, a walk of about 90 steps winding up in three parts. At the foot, a slope of flowers, a brook you cross on stepping stones, and a hedge whose gap long grass has grown over: you can’t go round it (snakes and spiders, and now and then a wolf), practising words you know.', run: async () => {
     play(); await wait(500); }},
-  {id: 'hillside-ledges', title: 'The hillside: ledges and the first pines', save: 'hillsideLedges', why: 'Going up, the way round the ledges is by the path at their right end; coming down, hop down them anywhere. Above them, more long grass, then the first pines. A peach tree in the nook on the left, and tall grass on the right, where your friends hide.', run: async () => {
+  {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, with stone steps zig-zagging up the cliffs between them and ledges to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout at the end of the middle one: your first view of the sea.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'hillside-top', title: 'The hillside: under the first pines', save: 'hillsideTop', why: 'Mushrooms, long grass grown over the way under the pines, and a stone archway with the pine wood’s name, 松林, on its board: the way into the wood.', run: async () => {
     play(); await wait(500); }},
   {id: 'pine-wood-first', title: 'Into the pine wood', save: 'pineFirst', why: 'The first time you go in: gloomy under the thick pines (but in the daytime: sunbeams, never night), with mist, and a wolf howling far off.', run: async () => {
-    play(); await wait(100); arrive(9, 0).then(runEvents); await wait(1500); }},
+    play(); await wait(100); arrive(12, 0).then(runEvents); await wait(1500); }},
   {id: 'pine-wood-meadow', title: 'Long grass, below the bridge', save: 'pineMeadow', why: 'A meadow of long grass right across the way to the only bridge over the stream: wolves, snakes and spiders jump out of it.', run: async () => {
     play(); await wait(500); }},
   {id: 'pine-wood-deer', title: 'The sunny glade', save: 'pineDeer', why: 'Behind the cracked rock: a sunny glade with white flowers, the last dead pine and stone, and a deer, chapter 1’s animal to find. It’s in the way: face it and press A to meet it.', run: async () => {
