@@ -49,9 +49,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   schoolFlowers chapter 1: true once the big monkey has planted the flowers you brought him in front of the school
   //   homeName 1 once you know every part of your home's name (花, 果 in 水果, and 山): a message says so, and the sign by
   //           your stone sparkles; 2 once you've read it there, and seen how the name is made
+  //   trainee1, trainee2  chapter 1: 1 once that little monkey in training on the hillside has stopped you for a word game
+  //           (the first by the stepping stones, the second on the middle terrace)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -215,6 +217,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
+    // the little monkeys in training on the hillside: until they've stopped you, and then whenever some of your words need
+    // practice, for another word game
+    trainee1: [{if:{trainee1:0}, show:'!'}, {if:{practice:true}, show:'!'}], trainee2: [{if:{trainee2:0}, show:'!'}, {if:{practice:true}, show:'!'}],
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
     big: [{if:{climb:1, new:'棍子'}, show:'!'},
       {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', holding:{stones:true}}, show:'?'},
@@ -324,6 +329,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // up the steps' other side
     {if:{lookTip:0, near:'lookoutGoat'}, do:[{stopsYou:'lookoutGoat'}]},
     {if:{lookTip:0, at:[18, 21, 'hillside']}, do:[{stopsYou:'lookoutGoat'}]},
+    // each little monkey in training on the hillside stops you as you pass, the first time, for a word game, like a trainer
+    // in Pokémon (decided 23 October 2026); after that, talk to it to play again
+    {if:{trainee1:0, near:'trainee1'}, do:[{stopsYou:'trainee1'}]},
+    {if:{trainee2:0, near:'trainee2'}, do:[{stopsYou:'trainee2'}]},
     // the big monkey waits by the way up and stops you as you set off, to give you a stick
     {if:{climb:1, new:'棍子', near:'big'}, do:[{stopsYou:'big'}]},
     // and before that, once the rocks have rolled away, the old monkey stops you if you walk past him: he has something to
@@ -902,6 +911,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // to tell you to take a look: see events). Wherever there's something you might miss, a goat is there to tell you.
     {id:'lookoutGoat', place:'hillside', x:20, y:21, facing:'down', look:'山羊'},
     {id:'woodSquirrel', place:'pineWood', x:18, y:21, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, in the clearing by the way in
+    // chapter 1: two little monkeys in training on the hillside, practising with sticks like yours (in the book, chapter 3,
+    // the Monkey King trains the troop): one by the stepping stones, one on the middle terrace. Each stops you as you pass,
+    // the first time, for a word game (see events). holds: what's in its hand; practises: it swings it now and then,
+    // facing its own way, while you're not beside it
+    {id:'trainee1', place:'hillside', x:20, y:37, facing:'left', holds:'棍子', practises:true, name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#4A2C17', f:'#C8894A', s:'#F6D1A7', m:'#C98E6A', e:'#24160C'}},
+    {id:'trainee2', place:'hillside', x:9, y:20, facing:'right', holds:'棍子', practises:true, name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#40250F', f:'#A56A3A', s:'#F0C89E', m:'#C08060', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -1404,6 +1421,24 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'Going down is quicker! You can hop down the grassy banks in the cliffs: just walk off the edge. You can’t climb back up them, though.'},
         {set:{ledgeTip:1}}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'Going down the mountain? Hop down the grassy banks: it’s quicker.'}]}
+    ],
+    // the little monkeys in training on the hillside: a word game, the first time when they stop you, and a present each
+    // time you win (shells, or a peach for your bag, handy against the pine wood's wolves)
+    trainee1: [
+      {if:{trainee1:0}, do:[{set:{trainee1:1}}, {say:'hi'}, {reply:'你好'},
+        {message:'This little monkey is practising with a stick, just like yours. It wants to be like you, its king!'}, {say:'play'},
+        {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you 3 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+          win:[{say:'great'}, {shells:3, note:'The monkey gives you 3 🐚.'}, {reply:'谢谢', about:'The monkey gives you 3 🐚.'}]}}]},
+      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you 3 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+        win:[{say:'great'}, {shells:3, note:'The monkey gives you 3 🐚.'}, {reply:'谢谢', about:'The monkey gives you 3 🐚.'}]}}]}
+    ],
+    trainee2: [
+      {if:{trainee2:0}, do:[{set:{trainee2:1}}, {say:'hi'}, {reply:'你好'},
+        {message:'This little monkey is practising too, swinging its stick at the air. It wants to be like you, its king!'}, {say:'play'},
+        {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you a {桃子}.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+          win:[{say:'great'}, {bag:'桃子', note:'The monkey gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The monkey gives you a {桃子}.', pic:'桃子'}]}}]},
+      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you a {桃子}.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+        win:[{say:'great'}, {bag:'桃子', note:'The monkey gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The monkey gives you a {桃子}.', pic:'桃子'}]}}]}
     ],
     // the goat on the hillside's lookout: have a look at the view
     lookoutGoat: [

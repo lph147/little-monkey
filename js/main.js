@@ -76,7 +76,7 @@ function frame(now){
     const ci = caps.reduce((a, c, i) => t >= c.t ? i : a, 0);
     if (ci !== capIdx){ capIdx = ci; capShownAt = now; showCaption(caps[ci], ci === caps.length - 1); }
     for (const [at, sound] of SCENE_SOUNDS[scene.art || scene.id] || []) if (t >= at && !introEvents[at]){ introEvents[at] = 1; SFX[sound](); }
-  } else { update(now); drawWorld(now); ambience(now); }
+  } else { update(now); drawWorld(now); ambience(now); practiceSounds(now); }
   updateCtx(now); updateTips(now); moreCue();
   sc.imageSmoothingEnabled = false;
   sc.drawImage(buf, 0, 0, cv.width, cv.height);

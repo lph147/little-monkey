@@ -39,6 +39,10 @@ function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (con
 // against your fur.
 const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}};
 const inHand = () => BATTLES.weapon && HELD[BATTLES.weapon] && canBattle() ? BATTLES.weapon : null;
+// What a monkey holds (kind: 'player', or a character's id): your stick once you can fight, or a character's own (holds, in the
+// area's characters), such as the sticks of the little monkeys in training. empty: nothing, whatever it has.
+const HOLDS = Object.fromEntries(AREA.characters.filter(c => c.holds).map(c => [c.id, c.holds]));
+const heldBy = (kind, empty = false) => empty ? null : kind === 'player' ? inHand() : HOLDS[kind] || null;
 // Where it's held, upright, facing down, up or to the side (the right; the left is the same, the other way round): its
 // wood in column x with its dark edge in column edge, its foot at row y, and the hand over it (grip).
 const HAND = {
@@ -48,7 +52,7 @@ const HAND = {
 };
 // empty: with nothing in its hands (in a battle the scene holds the stick itself; meeting an animal, you hold nothing).
 function monkeySprite(kind, dir, blink, step = 0, empty = false){
-  const stick = !empty && kind === 'player' && inHand();
+  const stick = heldBy(kind, empty);
   const k = kind + dir + (blink ? 'b' : '') + step + (stick || ''); if (spriteCache[k]) return spriteCache[k];
   return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step, empty), stick ? {...PALS[kind], ...HELD[stick].pal} : PALS[kind]);
 }
@@ -67,8 +71,8 @@ function monkeyRows(kind, dir, blink, step = 0, empty = false){
     if (BEARDED.has(kind)){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
   }
   if (kind === 'player' && wearing('头带')){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the red headband
-  const stick = !empty && kind === 'player' && inHand();
-  if (stick){   // the stick in your hand
+  const stick = heldBy(kind, empty);
+  if (stick){   // the stick in its hand
     const h = HAND[side ? 'side' : dir], top = h.y - HELD[stick].len + 1;
     for (let y = top; y <= h.y; y++){ rows[y][h.x] = y === top || y === h.y ? 'k' : 'l'; rows[y][h.edge] = 'k'; }
     for (const [x, y] of h.grip) rows[y][x] = 'f';

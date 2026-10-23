@@ -162,15 +162,16 @@ function drawSplashes(cx, cy, now){
     for (let k = 0; k < 6; k++){ const ph = ((now / 600) + k / 6) % 1; R(b, PX + 2 + (k * 5) % 13, PY + 4 + Math.round(ph * 12), 1, 2, '#BFE8FA'); }   // drops falling from your fur
   }
 }
-// Swinging your stick (the hit step, js/world.js): your monkey with nothing in its hands, and the stick sweeping from up
-// high down onto the square you face, with a faint swoosh behind it; it stays there a moment after it strikes. Each way
-// you face: where the stick turns from and to (degrees: 0 is to the right, 90 down), and the hand holding it (in the
-// sprite). Facing away, the stick is beyond you, so it's drawn first.
+// Swinging a stick (yours, in the hit step, js/world.js; or a little monkey's in training, as it practises): the monkey
+// (kind) with nothing in its hands, and the stick sweeping from up high down onto the square it faces (dir), with a faint
+// swoosh behind it, from t0; it stays there a moment after it strikes. Each way it faces: where the stick turns from and
+// to (degrees: 0 is to the right, 90 down), and the hand holding it (in the sprite). Facing away, the stick is beyond the
+// monkey, so it's drawn first.
 const SWING_ARC = {right:[-115, 5], left:[295, 175], down:[-70, 95], up:[150, 268]};
 const SWING_HAND = {right:[12, 9], left:[3, 9], down:[13, 10], up:[2, 9]};
-function drawSwing(PX, PY, now){
-  const t = Math.max(0, (now - swing.t0) / SWING_MS), k = Math.min(1, t / SWING_CONTACT), eased = 1 - (1 - k) * (1 - k);
-  const [a0, a1] = SWING_ARC[pl.dir], [hx, hy] = SWING_HAND[pl.dir], len = HELD['棍子'].len + 2, pal = HELD['棍子'].pal;   // (a little longer as it swings)
+function drawSwing(kind, dir, PX, PY, t0, now){
+  const t = Math.max(0, (now - t0) / SWING_MS), k = Math.min(1, t / SWING_CONTACT), eased = 1 - (1 - k) * (1 - k);
+  const held = HELD[heldBy(kind) || '棍子'], [a0, a1] = SWING_ARC[dir], [hx, hy] = SWING_HAND[dir], len = held.len + 2, pal = held.pal;   // (a little longer as it swings)
   const angle = a0 + (a1 - a0) * eased - (t > SWING_CONTACT ? (a1 - a0) * .08 * Math.sin((t - SWING_CONTACT) / (1 - SWING_CONTACT) * Math.PI) : 0);   // (a little bounce back)
   const along = (deg, r) => [PX + hx + Math.cos(deg * Math.PI / 180) * r, PY + hy + Math.sin(deg * Math.PI / 180) * r];
   const stick = () => {
@@ -178,10 +179,10 @@ function drawSwing(PX, PY, now){
     for (let r = -1; r <= len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x) - 1, Math.round(y) - 1, 2, 2, pal.k); }   // its dark edge
     for (let r = 0; r < len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x), Math.round(y), 1, 1, pal.l); }           // the wood
   };
-  if (pl.dir === 'up') stick();
+  if (dir === 'up') stick();
   R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
-  b.drawImage(monkeySprite('player', pl.dir, false, 0, true), PX, PY);
-  if (pl.dir !== 'up') stick();
+  b.drawImage(monkeySprite(kind, dir, false, 0, true), PX, PY);
+  if (dir !== 'up') stick();
 }
 // Ground being marked out (the markOut step): a stake hammered in at each corner of the plot, one by one, as plot() in
 // js/art.js has them; the string pulled tight round them, from the top-left, round to the right, along the bottom and back
@@ -283,7 +284,7 @@ function drawWorld(now){
       const moving = !!pl.mv, p = moving ? (now - pl.mv.t0) / STEP : 0;
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
-      if (swing && now - swing.t0 < SWING_MS) drawSwing(PX, PY, now);   // swinging your stick (the hit step)
+      if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
       else drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
       for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
@@ -299,6 +300,10 @@ function drawWorld(now){
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
       R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(SPR.bird, X+4, Y+6 - hop);
       if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
+    } else if (practising(n)){   // a little monkey in training, facing its own way, swinging its stick now and then
+      const t0 = swingStart(n, now);
+      if (t0 !== null) drawSwing(n.kind, n.home.facing, X, Y, t0, now);
+      else drawEntityMonkey(n.kind, X, Y, n.home.facing, now, 0, 0, n.x + n.y);
     } else {
       const idle = Math.floor(now/700 + n.x) % 2;
       drawEntityMonkey(n.kind, X, Y, n.dir, now, e.c.mid ? 1 : idle, e.c.mid ? 1 + (n.parity || 0) : 0, n.x + n.y);

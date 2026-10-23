@@ -23,7 +23,7 @@ shown where the word list has them.
 | 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 松鼠 (squirrel), 山羊 (goat) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
 | 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |
@@ -244,6 +244,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 野猪 | yězhū | Wild boar |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
 | 老板 | lǎobǎn | Shop owner |  |
 | 牌子 | páizi | Sign |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |

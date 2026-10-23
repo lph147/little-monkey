@@ -68,6 +68,7 @@ SAVES.hillside = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 37, dir:
 SAVES.hillsideLookout = {...SAVES.pineWood, areas: {1: {...BUILDING, lookTip: 1}}, pos: {place: 'hillside', x: 21, y: 21, dir: 'down'}};   // (the goat has told you)
 SAVES.hillsideGoat = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 22, dir: 'up'}};   // coming up the steps by the lookout, the first time
 SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
+SAVES.byTrainee = {...SAVES.pineWood, pos: {place: 'hillside', x: 17, y: 38, dir: 'right'}};   // coming up to the stepping stones, a little monkey in training beyond them
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
   areas: {1: {...BUILDING, picked: {wood: ['pineWood:2,18', 'pineWood:2,2'], stones: ['pineWood:3,12']},
@@ -344,6 +345,12 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'hillside', title: 'The hillside (山坡): the foot', save: 'hillside', why: 'Up from the home ground, on the way to the pine wood, a walk of about 90 steps winding up in three parts. At the foot, a slope of flowers, a brook you cross on stepping stones, and a hedge whose gap long grass has grown over: you can’t go round it (snakes and spiders, and now and then a wolf), practising words you know.', run: async () => {
     play(); await wait(500); }},
+  {id: 'trainee', title: 'A little monkey in training', save: 'byTrainee', why: 'By the stepping stones: practising with a stick like yours, facing its own way and swinging it now and then (here, mid-swing), with a swish as you come near. A ! until it has stopped you.', run: async () => {
+    play(); await wait(100); swingStart = (n, now) => now - SWING_MS * .4; await wait(400); }},
+  {id: 'trainee-stops', title: 'It stops you for a word game', save: 'byTrainee', why: 'The first time you pass, like a trainer in Pokémon: a ! pops up, you turn to face it, and it says 你好！ Then, after your reply, that it wants to be like you, its king, and 我们玩吧！ (Let’s play!).', run: async () => {
+    play(); await wait(100); S.pos = {place: 'hillside', x: 19, y: 37, dir: 'up'}; placePlayer(); arrive(19, 37).then(runEvents); await wait(1600); }},
+  {id: 'trainee-game', title: 'Its word game', save: 'byTrainee', why: 'Its name plate: 猴子 hóuzi, Monkey, as the troop are called. Win, and it gives you 3 🐚 (the one on the middle terrace, a 桃子 for your bag), every time.', run: async () => {
+    play(); await wait(100); encounter({id: 'trainee1', hz: '猴子', img: portrait('trainee1'), wild: false, name: NAMES.trainee1}); await wait(500); }},
   {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
   {id: 'lookout-goat', title: 'Go and take a look!', save: 'hillsideGoat', why: 'Coming up the steps beside the lookout the first time, a goat on it stops you (a ! over it, then it talks): 你好！, 去看看！ and how to look out. Wherever there’s something you might miss, a goat is there to tell you, as below the waterfall.', run: async () => {

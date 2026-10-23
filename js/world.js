@@ -162,7 +162,7 @@ function matches(cond){   // does the game match everything in an if?
 }
 const CALL_MS = 900;   // how long a character's ! shows before they talk to you, when they stop you (the stopsYou step)
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], match:['stop','notYet'], reply:['about','pic'],
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 // The area's lesson series (AREA.lessons) teach their words one at a time, one a lesson, in order: the next once you've
@@ -191,6 +191,14 @@ const paintsPart = w => (AREA.lessons || []).map(series => (series.paint || {})[
 // began, and the square it strikes), drawn by js/draw.js.
 const SWING_MS = 420, SWING_CONTACT = .45;
 let swing = null;
+// A little monkey in training (practises, in the area's characters) swings its stick now and then, facing its own way,
+// while you're not beside it; beside it, it turns to you, as anyone does to talk. Each begins a swing every PRACTICE_MS,
+// at its own time (practiceT), with a soft swish when you're near (practiceSounds).
+const PRACTICE_MS = 2300;
+const PRACTISES = new Set(AREA.characters.filter(c => c.practises).map(c => c.id));
+const practiceT = n => n.x * 397 + n.y * 211;
+const practising = n => PRACTISES.has(n.id) && !n.mv && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) > 1;
+function swingStart(n, now){ const ph = (now + practiceT(n)) % PRACTICE_MS; return ph < SWING_MS ? now - ph : null; }   // when its swing now began, if it's swinging
 // The troop marking out ground as you watch (the markOut step): when each stake is hammered in, when the string is pulled
 // tight round them, when the new ground fades in (with its sign and path), and when it's done, in ms; and what's being
 // marked out: {t0, changed: the squares that change, fresh: their new look, box: the plot's squares, x0 y0 to x1 y1; hold:
@@ -256,6 +264,11 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const missed = await matchWords(words, s.match, s.stop || 'Not now');
     if (!missed){ if (s.notYet) toast(fill(s.notYet)); return STOP; }
     closeCard(); SFX.fanfare();   // all matched: on with the conversation
+  },
+  async shells(s, who, last){   // shells for you, such as a present (in a conversation, the message waits in the speech box)
+    S.shells += s.shells; save(); SFX.right();
+    const text = fill(s.note || `You get ${s.shells} 🐚.`);
+    if (who) await showNarration(text, last); else toast(text);
   },
   async bag(s, who, last){   // food for your bag, if there's room (in a conversation, the message waits in the speech box)
     const text = intoBag(s.bag) ? fill(s.note || `A {${s.bag}} for your bag.`) : `Your bag is full of ${wz(s.bag)}.`;
@@ -673,6 +686,15 @@ async function leap([tx, ty]){
 // A place's own sounds (its sounds, such as the pine wood's crows, wind and a far-off howl): one now and then, every 12 to
 // 30 seconds while you're there, the first a few seconds after you come in. Never while a card is open.
 let ambientAt = 0, ambientIn = null;
+const swishedAt = {};   // each monkey in training's last swing you could have heard
+function practiceSounds(now){
+  for (const n of NPCS){
+    if (!practising(n)) continue;
+    const k = Math.floor((now + practiceT(n)) / PRACTICE_MS), near = Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) <= 4;
+    if (swishedAt[n.id] !== undefined && swishedAt[n.id] !== k && near && mode === 'play' && modal.hidden) SFX.swish(.12);
+    swishedAt[n.id] = k;
+  }
+}
 function ambience(now){
   const sounds = PLACES[PLACE].sounds;
   if (!sounds || mode !== 'play' || !modal.hidden){ ambientAt = 0; return; }
