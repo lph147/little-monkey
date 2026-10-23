@@ -208,6 +208,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
+| 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
+| 海很大！ | hǎi hěn dà! | The sea is so big! |  |
 | 我们去刷门吧！ | wǒmen qù shuā mén ba! | Let’s go and paint the door! |  |
 | 门是黑色的！ | mén shì hēisè de! | The door is black! |  |
 | 我们去刷屋顶吧！ | wǒmen qù shuā wūdǐng ba! | Let’s go and paint the roof! |  |

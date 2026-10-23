@@ -565,7 +565,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'M': {look:'cliffFace', word:'山'},                   // a cliff between two terraces: the ground above comes to its edge, its face, and its shadow below
         'v': {look:'bank', ledge:true},                       // a grassy bank between them, as high as the cliffs, that you hop down
         'L': {look:'slabs', walk:true},                       // the lookout's stone platform
-        'R': {look:'railing', landmark:true, onLook:[{do:[{message:'You can see a long way from up here: down the hillside, over the trees, and far off, the sea.'}]}]}   // its railing, at the top of the cliff (the view: later, a scene)
+        'R': {look:'railing', landmark:true, onLook:[{do:[{scene:'lookout'}]}]}   // its railing, at the top of the cliff: A shows you the view
       },
       map: [
         "pppppppppppp..pppppppppppp",   // the way into the pine wood
@@ -1485,6 +1485,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {at:5.5, zh:'你 是 我们 的 王 ！', en:'You are our king!', teach:'王'},
       {at:8, zh:'美猴王 ！', en:'Handsome Monkey King!'},
       {at:11, zh:'从此 ， 花果山 的 猴子 很 快乐 。', en:'From then on, the monkeys of Flower Fruit Mountain were very happy.'}
+    ]},
+    // chapter 1: the view from the lookout on the hillside, the sea far off (A at its railing): nothing new, just words
+    // you've heard (这里 and 好看 at the home ground, 海 in the opening)
+    lookout: {captions: [
+      {at:0, zh:'这里 很 好看 ！', en:'It’s lovely up here!'},
+      {at:3, zh:'海 很 大 ！', en:'The sea is so big!'}
     ]},
     // chapter 1: the troop builds the school, at the home ground: the walls go up, then the roof, then its sign
     buildingSchool: {watch:'Watch the school being built', when:{school:{atLeast:1}}, captions: [

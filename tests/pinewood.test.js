@@ -279,6 +279,19 @@ test('the edges between the hillside’s terraces are one drop, as high all alon
   assert.equal(g.run('promptFor(21, 22)'), 'Look', 'A at the railing looks out');
 });
 
+test('A at the lookout’s railing shows you the view, a picture like the opening’s, with nothing new in it', async () => {
+  const g = game(BUILDING, {place: 'hillside', x: 21, y: 21, dir: 'down'}, KNOWS);
+  g.run("globalThis.__scenes = []; storyScene = async id => { __scenes.push(id); }");
+  await press(g, 21, 21, 'down');
+  assert.deepEqual(get(g, '__scenes'), ['lookout']);
+  assert.equal(get(g, 'typeof SCENE_ART.lookout'), 'function', 'its picture');
+  const words = get(g, "AREA.scenes.lookout.captions.flatMap(c => c.zh.split(' ')).filter(w => WORD_BANK[w]).map(w => [w, WORD_BANK[w].area || 0])");
+  assert.ok(words.some(([w]) => w === '海'), 'the sea: 海, heard in the opening');
+  assert.ok(words.every(([, area]) => area <= 1), 'words from this area or just for listening');
+  assert.ok(!get(g, 'AREA.scenes.lookout.captions').some(c => c.teach), 'it teaches nothing (the butterfly is the hillside’s new word)');
+  assert.equal(get(g, '!!AREA.scenes.lookout.watch'), false, 'not one to watch again from Settings');
+});
+
 test('the hillside teaches nothing new: everything there is a word from the prologue; a peach tree fills your bag, and your friends hide in its tall grass', () => {
   const g = game(BUILDING, {place: 'hillside', x: 12, y: 43, dir: 'up'}, KNOWS);
   const words = get(g, '[...new Set(MAP.flatMap((r, y) => [...r].map((c, x) => tileAt(x, y).word)).filter(Boolean))].sort()');

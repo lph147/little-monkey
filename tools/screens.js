@@ -321,6 +321,10 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
+  {id: 'lookout-view', title: 'The view from the lookout', save: 'hillsideLookout', why: 'A at the lookout’s railing: what you can see, told like the opening (a far view is a picture, never part of the map): the hillside going down, the river winding out to the sea, islands far off, and you at the railing. 这里很好看！ (It’s lovely up here!)', run: async () => {
+    play(); await wait(100); storyScene('lookout'); introClock = .8; advancedTo = 0; await wait(400); }},
+  {id: 'lookout-sea', title: 'The sea is so big!', save: 'hillsideLookout', why: 'Then 海很大！: nothing new, just words you’ve heard (海, sea, in the opening).', run: async () => {
+    play(); await wait(100); storyScene('lookout'); introClock = 3.6; advancedTo = 1; await wait(400); }},
   {id: 'hillside-top', title: 'The hillside: under the first pines', save: 'hillsideTop', why: 'Mushrooms, long grass grown over the way under the pines, and a stone archway with the pine wood’s name, 松林, on its board: the way into the wood.', run: async () => {
     play(); await wait(500); }},
   {id: 'pine-wood-first', title: 'Into the pine wood', save: 'pineFirst', why: 'The first time you go in: gloomy under the thick pines (but in the daytime: sunbeams, never night), with mist, and a wolf howling far off.', run: async () => {

@@ -666,5 +666,56 @@ function drawPaintingSchool(t, now, def){
     R(b, px, py, 1, 1, '#FFF6D8'); if (tw > .7){ R(b, px - 1, py, 3, 1, '#FFE27A'); R(b, px, py - 1, 1, 3, '#FFE27A'); }
   }
 }
+
+/* ---- the view from the hillside's lookout ---- */
+// What you see from the lookout on the hillside, told like the opening (decided 23 October 2026: a far view is a
+// picture, never part of the map, where the sea looked out of place): the sky, with clouds drifting by and two birds
+// flying past; the sea out to the horizon, with islands far off; the hillside going down to it either side, its trees,
+// and the river winding out to the sea; and you, at the lookout's railing, looking out. The captions cover the bottom,
+// so it's all above them.
+function drawLookout(t, now){
+  const W = VW*T, hz = 46;
+  for (let y = 0; y < hz; y += 2) R(b, 0, y, W, 2, mix('#6AB4E2', '#D6EEF7', y / hz));   // the sky
+  const cloud = (cx, cy, s) => {
+    cx = Math.round(cx); const r = k => Math.round(k * s);
+    disc(b, cx, cy, r(5), '#FFFFFF'); disc(b, cx + r(7), cy - r(3), r(7), '#FFFFFF'); disc(b, cx + r(15), cy, r(5), '#FFFFFF');
+    R(b, cx - r(4), cy, r(24), r(5), '#FFFFFF'); R(b, cx - r(4), cy + r(5), r(24), 1, '#C9DFEC');
+  };
+  const drift = t * 1.2;   // (the clouds drift slowly to the right)
+  cloud(18 + drift, 12, 1); cloud(140 + drift * .7, 8, 1.3); cloud(204 + drift * .5, 26, .7);
+  for (const [k, by] of [[0, 20], [.12, 25]]){   // two birds flying past
+    const bx = Math.round(-10 + ((t * 22 + k * 260) % 280)), flap = Math.sin(now / 90 + k * 9) > 0;
+    R(b, bx - 2, by + (flap ? 0 : 1), 2, 1, '#3A4A5A'); R(b, bx, by + 1, 1, 1, '#3A4A5A'); R(b, bx + 1, by + (flap ? 0 : 1), 2, 1, '#3A4A5A');
+  }
+  for (let x = 0; x < W; x++){   // islands, far off on the horizon
+    const isle = (c, w, h) => Math.max(0, Math.round(h * (1 - ((x - c) / w) ** 2)));
+    const hh = Math.max(isle(178, 20, 6), isle(198, 9, 3), isle(62, 11, 3));
+    if (hh) R(b, x, hz - hh, 1, hh, '#93B6C8');
+  }
+  for (let y = hz; y < 80; y += 2) R(b, 0, y, W, 2, mix('#68B0DE', '#2F78B4', (y - hz) / 34));   // the sea
+  R(b, 0, hz, W, 1, '#A9D7F0');
+  for (let i = 0; i < 22; i++){ const sx = Math.floor(rnd(i, 31) * W), sy = hz + 3 + Math.floor(rnd(i, 32) * 14); if (Math.sin(now / 420 + i) > .2) R(b, sx, sy, 3, 1, '#D6F2FF'); }   // sun on the sea
+  for (let x = 0; x < W; x += 2){ const h = Math.round(60 + Math.sin(x / 19) * 2 + Math.sin(x / 7)); R(b, x, h, 2, 100 - h, '#6FA889'); }   // the land along the shore
+  for (let y = 62; y < 100; y++){   // the river, winding out to the sea
+    const rx = Math.round(118 + Math.sin(y / 7) * 8 + (y - 62) * .4), w = 2 + Math.floor((y - 62) / 13);
+    R(b, rx, y, w, 1, '#5FA6D6'); if (y === 62) R(b, rx - 1, y - 1, w + 2, 1, '#5FA6D6');
+  }
+  const slope = (from, to, top, bot, col, seed) => {   // the hillside going down, one side of the view
+    for (let x = from; x !== to; x += Math.sign(to - from) * 2){
+      const k = Math.abs(x - from) / Math.abs(to - from), h = Math.round(top + (bot - top) * Math.pow(k, .8) + rnd(x >> 1, seed) * 2);
+      R(b, Math.min(x, x - 1), h, 2, 120 - h, col); R(b, Math.min(x, x - 1), h, 2, 1, mix(col, '#A9E08F', .5));
+    }
+    for (let i = 0; i < 22; i++){   // its trees
+      const k = rnd(i, seed) * .9, x = Math.round(from + (to - from) * k), y = Math.round(top + (bot - top) * Math.pow(k, .8)) + 4 + Math.floor(rnd(i, seed + 1) * 24);
+      if (y < 110){ disc(b, x, y, 3, '#2F7A3E'); disc(b, x - 1, y - 1, 1, '#4E9A55'); }
+    }
+  };
+  slope(0, 104, 54, 120, '#4F9A55', 51); slope(W, 150, 58, 120, '#468F4D', 61);
+  R(b, 0, 100, W, 60, '#B9B3A5'); R(b, 0, 100, W, 1, '#D6D1C4');   // the lookout's flat rock
+  for (let i = 0; i < 30; i++) R(b, Math.floor(rnd(i, 71) * W), 102 + Math.floor(rnd(i, 72) * 20), 2, 1, i % 3 ? '#A7A193' : '#CFCABD');
+  b.drawImage(monkeySprite('player', 'up', false), 104, 74, 32, 32);   // you, looking out
+  for (const px of [4, 46, 88, 147, 189, 231]){ R(b, px, 88, 5, 40, WOOD[0]); R(b, px, 88, 4, 40, WOOD[2]); R(b, px, 88, 1, 40, WOOD[3]); R(b, px, 88, 5, 1, WOOD[4]); }   // the railing
+  for (const ry of [92, 101]){ R(b, 0, ry, W, 4, WOOD[0]); R(b, 0, ry, W, 3, WOOD[2]); R(b, 0, ry, W, 1, WOOD[3]); }
+}
 // The pictures for the area's scenes (AREA.scenes), by name (a scene's art, or else its id); the opening's are drawScene, above.
-const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool};
+const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout};
