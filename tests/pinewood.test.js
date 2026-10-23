@@ -44,7 +44,7 @@ test('the big monkey marks out the school’s plot as you watch, wants wood and 
   assert.match(get(g, '__notes').join(' '), /up to the pine wood/);
   assert.deepEqual(get(g, '[here().build, here().wood, here().stones]'), [1, 'asked', 'asked']);
   assert.ok(g.run('tileAt(25, 0).walk') && g.run('isOpen(exitAt(25, 0))'), 'the bushes are cleared');
-  assert.equal(g.run('exitAt(25, 0).to'), 'pineWood');
+  assert.equal(g.run('exitAt(25, 0).to'), 'hillside', 'up the hillside, to the pine wood');
   assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Find three pieces of wood in the pine wood (0/3)', 'Find three small 石头 (stones) in the pine wood (0/3)'],
     'wood is in plain English: you haven’t found any yet');
   assert.deepEqual(get(g, 'getTasks()[0].target'), [25, 0], 'the arrow points the way up to the pine wood');
@@ -201,8 +201,8 @@ const THINGS = {deadPines: [[2, 18], [2, 2], [31, 2]], stones: [[29, 18], [3, 12
 test('the pine wood: in at the bottom from the home ground; everywhere can be reached, and the glade only through the cracked rock', () => {
   const g = game(BUILDING, {place: 'pineWood', x: 16, y: 26, dir: 'up'}, KNOWS);
   assert.deepEqual(get(g, '[COLS, ROWS]'), [34, 30]);
-  assert.deepEqual(get(g, "PLACES.homeGround.exits.find(e => e.to === 'pineWood').arrive"), [16, 26], 'from the home ground, you come in at the bottom (a few steps in, so a message never hides you)');
-  for (const x of [16, 17]) assert.deepEqual(get(g, `(e => [e.to, e.arrive])(exitAt(${x}, 29))`), ['homeGround', [25, 1]], 'and go back down the same way');
+  assert.deepEqual(get(g, "PLACES.hillside.exits.filter(e => e.to === 'pineWood').map(e => e.arrive)"), [[16, 26], [17, 26]], 'up the hillside, you come in at the bottom (a few steps in, so a message never hides you)');
+  for (const [x, arrive] of [[16, [9, 1]], [17, [10, 1]]]) assert.deepEqual(get(g, `(e => [e.to, e.arrive])(exitAt(${x}, 29))`), ['hillside', arrive], 'and go back down the same way');
   const open = grassTo(g, true), cutOff = get(g, `(() => { const out = []; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).walk) out.push(x + ',' + y); return out; })()`).filter(k => !(k in open));
   assert.deepEqual(cutOff, [], 'nowhere you can walk is cut off');
   const shut = grassTo(g, false);
@@ -210,6 +210,60 @@ test('the pine wood: in at the bottom from the home ground; everywhere can be re
   assert.ok(beside(open, 30, 3) < Infinity, 'once it’s broken, you can get to the deer');
   assert.deepEqual(get(g, "['q', 'm'].map(c => MAP.join('').split(c).length - 1)"), [3, 3], 'three dead pines and three stones: you need every one');
   for (const [x, y] of [...THINGS.deadPines, ...THINGS.stones, [23, 5]]) assert.notEqual(get(g, `MAP[${y + 1}][${x}]`), 'p', `nothing at ${x}, ${y} hides behind the top of a pine below it`);
+});
+
+// The fewest steps from a square on the hillside to a row of it (ledges: hopped down, never climbed), or null if there's
+// no way; avoiding: without stepping on long grass.
+const stepsTo = (g, [fx, fy], row, avoiding = false) => g.run(`(() => {
+  const seen = {'${fx},${fy}': 0}, q = [[${fx}, ${fy}]];
+  while (q.length){
+    const [x, y] = q.shift(), d = seen[x + ',' + y];
+    if (y === ${row}) return d;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){
+      let nx = x + dx, ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) continue;
+      if (tileAt(nx, ny).ledge){ if (dy !== 1) continue; ny++; }
+      const t = tileAt(nx, ny);
+      if (!t.walk || (${avoiding} && t.wild) || (nx + ',' + ny) in seen) continue;
+      seen[nx + ',' + ny] = d + 1; q.push([nx, ny]);
+    }
+  }
+  return null;
+})()`);
+
+test('the hillside: the way up from the home ground to the pine wood, and back down', () => {
+  const g = game(BUILDING, {place: 'hillside', x: 9, y: 26, dir: 'up'}, KNOWS);
+  assert.deepEqual(get(g, 'PLACES.hillside.name'), {zh: '山坡', py: 'shānpō', en: 'The hillside'});
+  assert.deepEqual(get(g, "PLACES.homeGround.exits.find(e => e.to === 'hillside').arrive"), [9, 26], 'up from the home ground, a few steps in');
+  for (const x of [9, 10]){
+    assert.deepEqual(get(g, `(e => [e.to, e.arrive])(exitAt(${x}, 29))`), ['homeGround', [25, 1]], 'down at the bottom to the home ground');
+    assert.equal(get(g, `exitAt(${x}, 0).to`), 'pineWood', 'and at the top into the pine wood');
+  }
+});
+
+test('you can’t get up or down the hillside without going through its long grass, twice, so you practise on the way', () => {
+  const g = game(BUILDING, {place: 'hillside', x: 9, y: 26, dir: 'up'}, KNOWS);
+  assert.equal(stepsTo(g, [9, 28], 0, true), null, 'no way up round the long grass');
+  assert.equal(stepsTo(g, [9, 1], 29, true), null, 'nor down');
+  assert.equal(stepsTo(g, [9, 28], 17, true), null, 'the lower band is right across the way');
+  assert.equal(stepsTo(g, [9, 12], 3, true), null, 'and so is the upper one');
+  assert.deepEqual(get(g, "tileAt(9, 22).wild"), ['snake', 'snake', 'spider', 'spider', 'wolf'], 'snakes and spiders, and now and then a wolf from the pines');
+});
+
+test('the hillside’s ledges make the way down quicker: hop down anywhere; going up, round by the path at their right end', () => {
+  const g = game(BUILDING, {place: 'hillside', x: 9, y: 26, dir: 'up'}, KNOWS);
+  const up = stepsTo(g, [9, 28], 0), down = stepsTo(g, [9, 1], 29);
+  assert.ok(up >= 40, `a walk up of about three screens (${up} steps)`);
+  assert.ok(down <= up - 10, `the way down is quicker (${down} steps, ${up} up)`);
+});
+
+test('the hillside teaches nothing new: everything there is a word from the prologue; a peach tree fills your bag, and your friends hide in its tall grass', () => {
+  const g = game(BUILDING, {place: 'hillside', x: 9, y: 26, dir: 'up'}, KNOWS);
+  const words = get(g, '[...new Set(MAP.flatMap((r, y) => [...r].map((c, x) => tileAt(x, y).word)).filter(Boolean))].sort()');
+  const prologue = get(g, "ORDER.filter(w => WORD_BANK[w].area === 1)");
+  for (const w of words) assert.ok(prologue.includes(w) && !['桥', '木头', '学校', '老师', '同学', '鹿', '狼'].includes(w), `${w} is a word you already know by chapter 1`);
+  assert.equal(get(g, 'tileAt(2, 14).pick.item'), '桃子', 'a peach tree in the nook on the left');
+  assert.ok(get(g, 'MAP.some((r, y) => [...r].some((c, x) => tileAt(x, y).animals))'), 'tall grass, where your animal friends hide');
 });
 
 test('every way to every dead pine and stone goes through long grass, so you meet what lives in it', () => {
@@ -266,14 +320,20 @@ test('the first time you go into the pine wood, it’s gloomy and still, and a w
   const g = game({build: 1, wood: 'asked', stones: 'asked'}, {place: 'homeGround', x: 25, y: 1, dir: 'up'});
   g.run("globalThis.__sounds = []; SFX.howl = () => __sounds.push('howl')");
   await play(g, 'arrive(25, 0).then(runEvents)');
+  assert.equal(g.run('PLACE'), 'hillside', 'up the hillside first');
+  assert.deepEqual(get(g, '__sounds'), []);
+  await play(g, 'arrive(9, 0).then(runEvents)');
   assert.equal(g.run('PLACE'), 'pineWood');
   assert.deepEqual(get(g, '__sounds'), ['howl']);
   assert.match(get(g, '__notes').join(' '), /gloomy under the thick pines/);
   assert.equal(g.run('here().woodIn'), 1);
   g.run('__notes.length = 0; __sounds.length = 0');
   await play(g, 'arrive(16, 29).then(runEvents)');
+  assert.equal(g.run('PLACE'), 'hillside');
+  await play(g, 'arrive(9, 29).then(runEvents)');
   assert.equal(g.run('PLACE'), 'homeGround');
   await play(g, 'arrive(25, 0).then(runEvents)');
+  await play(g, 'arrive(10, 0).then(runEvents)');
   assert.deepEqual(get(g, '__sounds'), [], 'not again');
 });
 

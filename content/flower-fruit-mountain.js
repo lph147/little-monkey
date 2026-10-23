@@ -500,8 +500,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // when its story begins, as you watch (decided 22 October 2026: the plots were there before anyone had planned them):
     // the school on its terrace under the cliff, then, to come, the new shop by the way in, the hive among the flowers,
     // the cow's pen, and the garden by the stream. A peach tree and an apple tree
-    // to pick from, and a little pond with fish. The ways out are shut by thick bushes until the troop needs them: north to the pine wood (once the big
-    // monkey wants wood), east to the bees, south over the stream.
+    // to pick from, and a little pond with fish. The ways out are shut by thick bushes until the troop needs them: north up
+    // the hillside to the pine wood (once the big monkey wants wood), east to the bees, south over the stream.
     homeGround: {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       legend: {
@@ -509,7 +509,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
-        {at:[25, 0], to:'pineWood', arrive:[16, 26], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up to the pine wood
+        {at:[25, 0], to:'hillside', arrive:[9, 26], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up the hillside to the pine wood
         {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
       ],
       map: [
@@ -537,7 +537,57 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYYYYYYYYYYYYYYYuYYYYYYYYYYYYYYY"
       ]
     },
-    // Chapter 1: the pine wood, up from the home ground (the big monkey clears the way when he wants wood): thick, gloomy
+    // Chapter 1: the hillside, the way from the home ground up to the pine wood (decided 23 October 2026: the wood was
+    // straight through the bushes at the top of the home ground, a different world a step away, and chapter 1 had few
+    // places to practise the words you know). Open grass at the bottom, rocky ground and scattered trees, then the first
+    // pines at the top. Two bands of long grass right across the way, which you can't go round, so you meet what lives in
+    // them (snakes and spiders, and now and then a wolf from the pines): a battle or two each way, practising words you
+    // know, and nothing new to learn. A peach tree in a nook on the left, to fill your bag; tall grass on the right, where
+    // your animal friends hide; and ledges to hop down, a quicker way back (going up, the way round is by the path at
+    // their right end).
+    hillside: {
+      name: {zh:'山坡', py:'shānpō', en:'The hillside'},
+      exits: [
+        {at:[9, 29], to:'homeGround', arrive:[25, 1], facing:'down'}, {at:[10, 29], to:'homeGround', arrive:[25, 1], facing:'down'},   // down to the home ground
+        {at:[9, 0], to:'pineWood', arrive:[16, 26], facing:'up'}, {at:[10, 0], to:'pineWood', arrive:[17, 26], facing:'up'}   // into the pine wood
+      ],
+      legend: {
+        'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider', 'spider', 'wolf']}   // long grass: snakes and spiders, and now and then a wolf
+      },
+      map: [
+        "ppppppppp..ppppppppp",   // the way into the pine wood
+        "pppppppii..iippppppp",
+        "ppppppiii..iiipppppp",   // the first pines, needles underfoot
+        "pppppiiiii.iiiiipppp",
+        "pppnnnnnnnnnnnnnnppp",   // the upper band of long grass, right across
+        "ppnnnnnnnnnnnnnnnnpp",
+        "ppnnnnnpnnnnnnnnnnpp",
+        "pTnnnnnnnnnnnnpnnnTp",
+        "YTnnnnnnnnnnnnnnnnTY",
+        "YYTnnnnnnnnnnnnnnTYY",
+        "YYgggoggg........gYY",   // rocky ground above the ledges
+        "YYvvvvvvvvvvvvvo.wYY",   // the ledges: hop down anywhere; going up, only by the path at their right end
+        "YYg..............gYY",
+        "YTg.gggwggggggg.ggTY",
+        "YgP.ggggggTggGGGG.gY",   // a peach tree in the nook on the left; tall grass on the right, where your friends hide
+        "Ygg.ggoggggggGGGG.gY",
+        "YTg.gggggwgggGGGG.TY",
+        "YYg.......gggggg..YY",
+        "YYTgggggg.ggggggTTYY",
+        "YYwnnnnnnnnnnnnnnwYY",   // the lower band of long grass, right across
+        "YYnnnnnnnnnnnnnnnnYY",
+        "YTnnnnTnnnnnnnnnnnTY",
+        "YYnnnnnnnnnnnnnnnnYY",
+        "YYnnnnnnnnnonnnnnnYY",
+        "YYwnnnnnnnnnnnnnnwYY",
+        "YYggTgggg..ggggTggYY",
+        "YYgwggggg..gggggwgYY",
+        "YYTgggTgg..ggTgggTYY",
+        "YYYYggggg..ggggYYYYY",
+        "YYYYYYYYY..YYYYYYYYY"    // down to the home ground
+      ]
+    },
+    // Chapter 1: the pine wood, up the hillside from the home ground (the big monkey clears the way when he wants wood): thick, gloomy
     // pines, and wolves in the long grass. In at the bottom, to the squirrel's clearing, where the ways part: west to a
     // hollow, east to a pool, north through a meadow of long grass to the only bridge over the stream; over it, west along
     // the stream and up into the oldest pines, or north-east up to a cracked rock, the only way into a sunny glade, where
@@ -551,8 +601,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       gloom: {deep:.7, open:.24, mist:true, eyes:true},
       sounds: ['crow', 'crow', 'wind', 'howl'],
       exits: [
-        {at:[16, 29], to:'homeGround', arrive:[25, 1], facing:'down'},   // back down to the home ground
-        {at:[17, 29], to:'homeGround', arrive:[25, 1], facing:'down'}
+        {at:[16, 29], to:'hillside', arrive:[9, 1], facing:'down'},   // back down the hillside to the home ground
+        {at:[17, 29], to:'hillside', arrive:[10, 1], facing:'down'}
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass: here, wolves too

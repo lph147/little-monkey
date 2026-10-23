@@ -250,6 +250,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 深山 | shēnshān | Deep in the mountains |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 | 家园 | jiāyuán | Home ground |  |
+| 山坡 | shānpō | The hillside |  |
 | 松林 | sōnglín | Pine wood |  |
 | 学校 | xuéxiào | School |  |
 

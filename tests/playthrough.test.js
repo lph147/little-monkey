@@ -72,6 +72,17 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   const stand = (x, y, dir) => run(`S.pos = {place:PLACE, x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // in the place you're in
   const pressAt = (x, y, dir, what) => { stand(x, y, dir); return act('finishedAt = null; pressA()', what); };   // face something and press A (after a moment, as a player does: what you've just finished with rests)
   const stepOn = (x, y, what) => { stand(x, y, 'down'); return act(`arrive(${x}, ${y})`, what); };
+  // A walk, one square after another (from to to, along a row or a column, then the next leg), as a player walks it
+  async function walk(legs, what){
+    for (let i = 1; i < legs.length; i++){
+      const [[fx, fy], [tx, ty]] = [legs[i - 1], legs[i]], dx = Math.sign(tx - fx), dy = Math.sign(ty - fy);
+      for (let x = fx + dx, y = fy + dy; ; x += dx, y += dy){
+        if (dy === 1 && run(`!!tileAt(${x}, ${y}).ledge`)){ y++; }   // hopping down a ledge
+        await stepOn(x, y, what);
+        if (x === tx && y === ty) break;
+      }
+    }
+  }
 
   // A new game: How to play, then born from the stone
   await act('startGame()', 'starting a new game');
@@ -290,7 +301,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().build, 1, 'he wants wood and small stones');
   assert.deepEqual([area().wood, area().stones], ['asked', 'asked']);
   stand(25, 0, 'up');
-  await act('arrive(25, 0).then(runEvents)', 'going up through the bushes he cleared, to the pine wood');
+  await act('arrive(25, 0).then(runEvents)', 'going up through the bushes he cleared');
+  assert.equal(run('PLACE'), 'hillside', 'up the hillside to the pine wood');
+  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [9, 26]);
+  run('globalThis.__fights = 0; (() => { const b = wildBattle; wildBattle = (...a) => { __fights++; return b(...a); }; })()');
+  await walk([[9, 26], [9, 17], [17, 17], [17, 12], [16, 12], [16, 10], [10, 10], [10, 1]], 'walking up the hillside, through its long grass');
+  assert.ok(get('__fights') >= 1, `something jumps out of the long grass on the way up (${get('__fights')})`);
+  await stepOn(9, 0, 'going into the pine wood');
   assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [16, 26], 'at the way in, at the bottom');
   await pressAt(17, 21, 'right', 'meeting a squirrel in the clearing where the ways part');
@@ -316,7 +333,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   for (let i = 0; i < 5 && !knows('狼'); i++) await stepOn(15, 17, 'walking through the long grass below the bridge, where wolves live');
   assert.ok(knows('狼'), 'a wolf jumps out of the long grass, teaching 狼');
   stand(16, 29, 'down');
-  await act('arrive(16, 29).then(runEvents)', 'going back down to the home ground');
+  await act('arrive(16, 29).then(runEvents)', 'going back down to the hillside');
+  assert.equal(run('PLACE'), 'hillside');
+  assert.deepEqual(get('[S.pos.x, S.pos.y]'), [9, 1]);
+  run('__fights = 0');
+  await walk([[9, 1], [9, 10], [9, 12], [3, 12], [3, 17], [9, 17], [9, 28]], 'walking down the hillside, hopping down a ledge');
+  assert.ok(get('__fights') >= 1, `something jumps out of the long grass on the way down too (${get('__fights')})`);
+  await stepOn(9, 29, 'going back down to the home ground');
   assert.equal(run('PLACE'), 'homeGround');
   await pressAt(15, 5, 'up', 'giving the big monkey the wood and the stones');
   assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them');
@@ -365,8 +388,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual([area().flowers, area().schoolFlowers, run('tileAt(10, 5).look')], ['done', true, 'flowerBed'], 'he plants them in front of the school');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
-  // your wardrobe; 睡觉, sleep, by the cave's beds; and the spider, which the long grass didn't send this player)
-  assert.deepEqual(get('ORDER.filter(w => lvl(w) < 1)').sort(), ['戴', '睡觉', '蜘蛛'].sort(), 'the words this player hasn’t caught');
+  // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
+  // player, jumps out on the hillside.)
+  assert.deepEqual(get('ORDER.filter(w => lvl(w) < 1)').sort(), ['戴', '睡觉'].sort(), 'the words this player hasn’t caught');
 
   // Everything said on the way has a voice clip (npm run voices makes them)
   const clips = require('../tools/make-voices').plan().clips, said = get('__said');
