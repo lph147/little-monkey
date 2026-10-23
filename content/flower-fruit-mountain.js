@@ -955,6 +955,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#3F2614', f:'#A9784C', s:'#F0CBA2', m:'#BE8A66', e:'#24160C'}},
     {id:'splash2', place:'hillside', x:5, y:37, facing:'left', plays:'splash', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#4B2A12', f:'#C27A45', s:'#F3CFA8', m:'#C98C68', e:'#24160C'}},
+    // chapter 1: under the first pines on the hillside, in the clearing beside the way to the archway, two little monkeys
+    // grooming each other, taking turns (in the book, chapter 1: 捉虱子…理毛衣, they pick out fleas and tidy their fur)
+    {id:'groomA', place:'hillside', x:15, y:5, facing:'right', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#43260F', f:'#B07A48', s:'#F2CDA4', m:'#C48A64', e:'#24160C'}},
+    {id:'groomB', place:'hillside', x:16, y:5, facing:'down', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#4A2B13', f:'#C99558', s:'#F6D6B0', m:'#D09A76', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -1512,6 +1518,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     chaser: [{do:[{say:'hi'}, {reply:'你好'}, {message:'It’s chasing a dragonfly, but the dragonfly is far too quick for it!'}]}],
     splash1: [{do:[{say:'hi'}, {reply:'你好'}, {say:'playWater'}]}],
     splash2: [{do:[{say:'hi'}, {reply:'你好'}, {say:'playWater'}]}],
+    // the little monkeys grooming each other under the hillside's pines: friends
+    groomA: [{do:[{say:'hi'}, {reply:'你好'}, {say:'weFriends'}, {message:'They take turns to groom each other, picking through each other’s fur, as monkeys do with their friends.'}]}],
+    groomB: [{do:[{say:'hi'}, {reply:'你好'}, {say:'weFriends'}, {message:'They take turns to groom each other, picking through each other’s fur, as monkeys do with their friends.'}]}],
     // the goat on the hillside's lookout: have a look at the view
     lookoutGoat: [
       {if:{lookTip:0}, do:[{say:'hi'}, {reply:'你好'}, {say:'go'},

@@ -77,6 +77,8 @@ SAVES.byTower = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, traine
 // the two splashing in the water
 SAVES.byBrook = {...SAVES.byTower, pos: {place: 'hillside', x: 10, y: 34, dir: 'down'}};
 SAVES.bySplashers = {...SAVES.byTower, pos: {place: 'hillside', x: 4, y: 36, dir: 'down'}};
+// under the first pines at the top of the hillside, on the way to the archway, beside the little monkeys grooming each other
+SAVES.byGroomers = {...SAVES.byTower, pos: {place: 'hillside', x: 13, y: 5, dir: 'right'}};
 SAVES.towerCounts = {...SAVES.byTower, w: {...SAVES.byTower.w, ...knows(2, ['一', '三', '四', '五', '六'])}, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1, tower: 1}}};
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
@@ -380,6 +382,10 @@ const SCREENS = [
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); chaseLeap = () => 1; chasedAt = n => ({x: n.x*T + 15, y: n.y*T - 9, left: false}); await wait(300); }},
   {id: 'brook-splash', title: 'We’re playing in the water!', save: 'bySplashers', why: 'Say hello to the little monkeys splashing in the brook: 你好！, your reply, then 我们在玩水！ (We’re playing in the water!).', run: async () => {
     play(); await wait(100); talk(NPCS.find(n => n.id === 'splash1')); await wait(200); document.querySelector('[data-a=next]')?.click(); await wait(900); }},
+  {id: 'groom', title: 'Grooming', save: 'byGroomers', why: 'Under the first pines, in the clearing beside the way to the archway, two little monkeys groom each other, taking turns: one picks through the other’s fur, nodding as it goes, while the other sits with its eyes shut, enjoying it (in the book, chapter 1: 捉虱子…理毛衣, they pick out fleas and tidy their fur).', run: async () => {
+    S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(400); }},
+  {id: 'groom-hello', title: 'We are friends!', save: 'byGroomers', why: 'Say hello: 你好！, your reply, then 我们是朋友！ (We are friends!) and a message: they take turns to groom each other, as monkeys do with their friends.', run: async () => {
+    play(); await wait(100); talk(NPCS.find(n => n.id === 'groomA')); await wait(200); document.querySelector('[data-a=next]')?.click(); await wait(900); }},
   {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
   {id: 'lookout-goat', title: 'Go and take a look!', save: 'hillsideGoat', why: 'Coming up the steps beside the lookout the first time, a goat on it stops you (a ! over it, then it talks): 你好！, 去看看！ and how to look out. Wherever there’s something you might miss, a goat is there to tell you, as below the waterfall.', run: async () => {

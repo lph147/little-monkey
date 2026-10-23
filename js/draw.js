@@ -63,6 +63,16 @@ function drawPlaying(n, X, Y, now){
   else if (!playing(n)) drawEntityMonkey(n.kind, X, Y, n.dir, now, Math.floor(now/700 + n.x) % 2, 0, n.x + n.y);
   else if (kind === 'tower') drawTowerBuilder(n, X, Y, now);
   else if (kind === 'dragonflies') drawChaser(n, X, Y, now);
+  else if (kind === 'groom') drawGroomer(n, X, Y, now);
+}
+// Grooming the other one, or being groomed, taking turns: the groomer sits facing its friend, nodding as it picks through
+// its fur; the one being groomed sits facing you, eyes shut, enjoying it, its friend's hand moving over its shoulder.
+function drawGroomer(n, X, Y, now){
+  const friend = NPCS.find(c => c !== n && PLAYS[c.id] === 'groom'), left = !friend || n.x < friend.x;
+  if (groomAt(now).who === (left ? 0 : 1)){ drawEntityMonkey(n.kind, X + (left ? 2 : -2), Y, left ? 'right' : 'left', now, Math.round(Math.abs(Math.sin(now / 260))), 0, n.x + n.y); return; }   // (sitting close)
+  R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
+  b.drawImage(monkeySprite(n.kind, 'down', true), X, Y);
+  if (friend && playing(friend)) R(b, X + (left ? 12 : 2) + Math.round(Math.sin(now / 180)), Y + 10 + (Math.sin(now / 260) > 0 ? 1 : 0), 2, 2, (PALS[friend.kind] || PALS.player).s);
 }
 // Chasing a dragonfly: it leaps up at it now and then, turning to face it, and the dragonfly darts off just out of reach
 // (drawn with the others: drawDragonflies).

@@ -251,6 +251,10 @@ function chaseLeap(now){ const t = now % CHASE_MS; return t < CHASE_LEAP ? Math.
 // other (by: 0 the one on the left, 1 the one on the right), flying for SPLASH_FLY ms (k, 0 to 1, as it flies).
 const SPLASH_MS = 1900, SPLASH_FLY = 650;
 function splashAt(now){ const n = Math.floor(now / SPLASH_MS), t = now - n * SPLASH_MS; return {n, by:n % 2, k:t < SPLASH_FLY ? t / SPLASH_FLY : null}; }
+// 'groom': two little monkeys grooming each other, as monkeys do with their friends, taking turns: every GROOM_MS the other
+// one has its turn (who: 0, the one on the left grooms the one on the right; 1, the other way round).
+const GROOM_MS = 9000;
+function groomAt(now){ return {who:Math.floor(now / GROOM_MS) % 2}; }
 // The troop marking out ground as you watch (the markOut step): when each stake is hammered in, when the string is pulled
 // tight round them, when the new ground fades in (with its sign and path), and when it's done, in ms; and what's being
 // marked out: {t0, changed: the squares that change, fresh: their new look, box: the plot's squares, x0 y0 to x1 y1; hold:
