@@ -291,7 +291,7 @@ test('A at the lookout’s railing shows you the view, a picture like the openin
   const words = get(g, "AREA.scenes.lookout.captions.flatMap(c => c.zh.split(' ')).filter(w => WORD_BANK[w]).map(w => [w, WORD_BANK[w].area || 0])");
   assert.ok(words.some(([w]) => w === '海'), 'the sea: 海, heard in the opening');
   assert.ok(words.every(([, area]) => area <= 1), 'words from this area or just for listening');
-  assert.ok(!get(g, 'AREA.scenes.lookout.captions').some(c => c.teach), 'it teaches nothing (the butterfly is the hillside’s new word)');
+  assert.ok(!get(g, 'AREA.scenes.lookout.captions').some(c => c.teach), 'it teaches nothing (the fox is the hillside’s new word)');
   assert.equal(get(g, '!!AREA.scenes.lookout.watch'), false, 'not one to watch again from Settings');
 });
 
