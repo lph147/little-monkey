@@ -24,8 +24,9 @@ function tryStep(d, now){
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
   const [dx,dy] = DV[d], nx = pl.x + dx, ny = pl.y + dy, way = exitAt(nx, ny);
   if (way && !way.by && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
-  if (tileAt(nx, ny).ledge){   // a ledge: you hop down it, landing just below, but can never climb it
-    if (d === 'down' && walkable(nx, ny + 1)){ followersStep(now, true); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny + 1, t0:now, hop:true}; pl.parity ^= 1; SFX.turn(); }
+  if (tileAt(nx, ny).ledge){   // a ledge: you hop down it, landing just below (below the whole of a bank two squares high), but can never climb it
+    let ly = ny + 1; while (tileAt(nx, ly).ledge) ly++;
+    if (d === 'down' && walkable(nx, ly)){ followersStep(now, true); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ly, t0:now, hop:true}; pl.parity ^= 1; SFX.turn(); }
     else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
     return;
   }

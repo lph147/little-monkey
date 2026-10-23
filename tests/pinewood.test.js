@@ -212,7 +212,7 @@ test('the pine wood: in at the bottom from the home ground; everywhere can be re
   for (const [x, y] of [...THINGS.deadPines, ...THINGS.stones, [23, 5]]) assert.notEqual(get(g, `MAP[${y + 1}][${x}]`), 'p', `nothing at ${x}, ${y} hides behind the top of a pine below it`);
 });
 
-// The fewest steps from a square on the hillside to a row of it (ledges: hopped down, never climbed), or null if there's
+// The fewest steps from a square on the hillside to a row of it (ledges and banks: hopped down, never climbed), or null if there's
 // no way; avoiding: without stepping on long grass.
 const stepsTo = (g, [fx, fy], row, avoiding = false) => g.run(`(() => {
   const seen = {'${fx},${fy}': 0}, q = [[${fx}, ${fy}]];
@@ -222,7 +222,7 @@ const stepsTo = (g, [fx, fy], row, avoiding = false) => g.run(`(() => {
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){
       let nx = x + dx, ny = y + dy;
       if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) continue;
-      if (tileAt(nx, ny).ledge){ if (dy !== 1) continue; ny++; }
+      if (tileAt(nx, ny).ledge){ if (dy !== 1) continue; while (tileAt(nx, ny).ledge) ny++; }
       const t = tileAt(nx, ny);
       if (!t.walk || (${avoiding} && t.wild) || (nx + ',' + ny) in seen) continue;
       seen[nx + ',' + ny] = d + 1; q.push([nx, ny]);
@@ -247,12 +247,12 @@ test('you can’t get up or down the hillside without going through its long gra
   assert.equal(stepsTo(g, [12, 1], 45, true), null, 'nor down');
   assert.equal(stepsTo(g, [12, 44], 38, true), null, 'it has grown over the gap in the hedge, at the foot');
   assert.equal(stepsTo(g, [5, 28], 22, true), null, 'and right across the lowest terrace, on the way up');
-  assert.notEqual(stepsTo(g, [18, 25], 32, true), null, '(coming down, you can hop down the ledges round it)');
+  assert.notEqual(stepsTo(g, [18, 25], 32, true), null, '(coming down, you can hop down the banks round it)');
   assert.equal(stepsTo(g, [12, 11], 6, true), null, 'and under the first pines');
   assert.deepEqual(get(g, "tileAt(15, 40).wild"), ['snake', 'snake', 'spider', 'spider', 'wolf'], 'snakes and spiders, and now and then a wolf from the pines');
 });
 
-test('the hillside is a long, winding walk up, by stone steps up the cliffs and stepping stones over the brook; its ledges make the way down quicker', () => {
+test('the hillside is a long, winding walk up, by stone steps up the cliffs and stepping stones over the brook; its banks make the way down quicker', () => {
   const g = game(BUILDING, {place: 'hillside', x: 12, y: 43, dir: 'up'}, KNOWS);
   const up = stepsTo(g, [12, 44], 0), down = stepsTo(g, [12, 1], 45);
   assert.ok(up >= 85, `a walk up of about twice the old one (${up} steps)`);
@@ -261,6 +261,22 @@ test('the hillside is a long, winding walk up, by stone steps up the cliffs and 
   assert.deepEqual(get(g, '[tileAt(19, 35).look, !!tileAt(19, 35).walk, !!tileAt(18, 35).walk]'), ['steppingStones', true, false], 'stepping stones over the brook');
   g.run("MAP[35] = MAP[35].replace('z', 'W'); MAP[36] = MAP[36].replace('z', 'W')");
   assert.equal(stepsTo(g, [12, 44], 34), null, 'the only way over it');
+});
+
+test('the edges between the hillside’s terraces are one drop, as high all along: cliffs, steps up them, and grassy banks you hop down in one go', () => {
+  const g = game(BUILDING, {place: 'hillside', x: 12, y: 15, dir: 'down'}, KNOWS);
+  for (const y of [16, 23, 30]){
+    const looks = get(g, `[...new Set(MAP[${y}].split('').map((c, x) => tileAt(x, ${y}).look))].filter(l => l !== 'tree').sort()`);
+    assert.deepEqual(looks, ['bank', 'cliffFace', 'steps'], `row ${y}: the top of a drop, all along`);
+    assert.deepEqual(get(g, `MAP[${y}].split('').map((c, x) => tileAt(x, ${y}).look === tileAt(x, ${y + 1}).look)`).every(Boolean), true, 'two squares high everywhere');
+  }
+  g.run("mode = 'play'; placePlayer(); tryStep('down', 10000)");
+  assert.deepEqual(get(g, '[pl.mv.tx, pl.mv.ty, pl.mv.hop]'), [12, 18, true], 'down a bank two squares high in one hop, landing below it');
+  g.run("pl.mv = null; S.pos = {place: 'hillside', x: 12, y: 18, dir: 'up'}; placePlayer(); tryStep('up', 10000)");
+  assert.equal(get(g, 'pl.mv'), null, 'never up it');
+  assert.deepEqual(get(g, '[tileAt(21, 22).look, !!tileAt(21, 22).walk, tileAt(21, 21).look, !!tileAt(21, 21).walk]'), ['railing', false, 'slabs', true],
+    'the lookout: a flat rock at the top of the cliff, with a railing at its edge');
+  assert.equal(g.run('promptFor(21, 22)'), 'Look', 'A at the railing looks out');
 });
 
 test('the hillside teaches nothing new: everything there is a word from the prologue; a peach tree fills your bag, and your friends hide in its tall grass', () => {

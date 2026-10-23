@@ -64,7 +64,7 @@ SAVES.pineFirst = {...SAVES.homeGround, areas: {1: {...BUILDING, woodIn: 0}}, po
 // the hillside, between the home ground and the pine wood: at the foot, by the brook's stepping stones; in the middle, at the
 // lookout; and at the top, under the first pines, by the archway into the wood
 SAVES.hillside = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 37, dir: 'up'}};
-SAVES.hillsideLookout = {...SAVES.pineWood, pos: {place: 'hillside', x: 21, y: 20, dir: 'right'}};
+SAVES.hillsideLookout = {...SAVES.pineWood, pos: {place: 'hillside', x: 21, y: 21, dir: 'down'}};
 SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
@@ -319,7 +319,7 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'hillside', title: 'The hillside (山坡): the foot', save: 'hillside', why: 'Up from the home ground, on the way to the pine wood, a walk of about 90 steps winding up in three parts. At the foot, a slope of flowers, a brook you cross on stepping stones, and a hedge whose gap long grass has grown over: you can’t go round it (snakes and spiders, and now and then a wolf), practising words you know.', run: async () => {
     play(); await wait(500); }},
-  {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, with stone steps zig-zagging up the cliffs between them and ledges to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout at the end of the middle one: your first view of the sea.', run: async () => {
+  {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
   {id: 'hillside-top', title: 'The hillside: under the first pines', save: 'hillsideTop', why: 'Mushrooms, long grass grown over the way under the pines, and a stone archway with the pine wood’s name, 松林, on its board: the way into the wood.', run: async () => {
     play(); await wait(500); }},

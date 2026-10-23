@@ -77,7 +77,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     for (let i = 1; i < legs.length; i++){
       const [[fx, fy], [tx, ty]] = [legs[i - 1], legs[i]], dx = Math.sign(tx - fx), dy = Math.sign(ty - fy);
       for (let x = fx + dx, y = fy + dy; ; x += dx, y += dy){
-        if (dy === 1 && run(`!!tileAt(${x}, ${y}).ledge`)){ y++; }   // hopping down a ledge
+        while (dy === 1 && run(`!!tileAt(${x}, ${y}).ledge`)) y++;   // hopping down a ledge (or a bank two squares high)
         await stepOn(x, y, what);
         if (x === tx && y === ty) break;
       }
@@ -338,7 +338,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('PLACE'), 'hillside');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [12, 1]);
   run('__fights = 0');
-  await walk([[12, 1], [12, 6], [10, 6], [10, 18], [10, 23], [14, 23], [14, 34], [19, 34], [19, 38], [15, 38], [15, 43], [12, 43], [12, 44]], 'walking down the hillside, hopping down the ledges');
+  await walk([[12, 1], [12, 6], [10, 6], [10, 18], [10, 22], [14, 22], [14, 34], [19, 34], [19, 38], [15, 38], [15, 43], [12, 43], [12, 44]], 'walking down the hillside, hopping down its banks');
   assert.ok(get('__fights') >= 1, `something jumps out of the long grass on the way down too (${get('__fights')})`);
   await stepOn(12, 45, 'going back down to the home ground');
   assert.equal(run('PLACE'), 'homeGround');

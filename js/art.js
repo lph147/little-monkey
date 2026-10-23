@@ -226,14 +226,125 @@ function waterBase(g, X, Y, x, y){
     if (dx === 1){ R(g, X+14, Y, 2, T, '#2C6B9E'); }
   });
 }
-// Stone steps cut up a cliff (the hillside's): four treads to a square, each lit along its edge, with its shadow under it,
-// and dark sides where the cliff rises beside them.
+// The edge between two terraces (the hillside's), so you can see one is higher than the other: the ground above comes
+// to the edge, with a lit, rounded lip and grass hanging over it, as on a ledge; then a drop the same height all along,
+// in rock (a cliff) or in grass (a bank you can hop down), lit at the top and darker down to its foot; and its shadow on
+// the ground below (castShadow). However many squares high it is, it's one drop.
+const DROPS = ['cliffFace', 'bank'];
+const isDrop = (x, y) => DROPS.includes(tileAt(x, y).look);
+const FACE = {lit:'#C9C4B6', top:'#ABA698', foot:'#77726A', crack:'#57534A', base:'#45413A', side:'#3A352E'};
+const BANKS = {top:'#86CB70', foot:'#3F8238', blade:'#3A7A35', tip:'#9BD884', base:'#2C5E2A'};
+function dropOf(x, y){   // the drop this square is part of: how far down it this square starts, its height, and where it ends
+  let up = 0, dn = 0;
+  while (isDrop(x, y - up - 1)) up++;
+  while (isDrop(x, y + dn + 1)) dn++;
+  const open = a => !isDrop(a, y) && tileAt(a, y).look !== 'steps';   // (beside steps, a wall of rock: stoneSteps)
+  return {up, dn, top:up*T, H:(up + dn + 1)*T, endL:open(x-1), endR:open(x+1)};
+}
+function dropLip(g, X, Y, x, y, {endL, endR}){   // the ground above coming to the edge, its lip, and the grass hanging over: gives each column's first row below it
+  const above = tileAt(x, y-1);
+  g.save(); g.beginPath(); g.rect(X, Y, T, 10); g.clip();
+  (LOOKS[above.look] || grass)(g, X, Y - T + 10, x, y - 1);
+  g.restore();
+  const below = [];
+  for (let c = 0; c < T; c++){
+    const e = Math.min(endL ? c : 9, endR ? 15 - c : 9), d = 2 + (rnd(x*T + c, y, 503) < .3 ? 1 : 0) + ([6, 3, 1][e] || 0);   // (further down at a corner)
+    R(g, X+c, Y+d, 1, 1, '#A9E08F'); R(g, X+c, Y+d+1, 1, 1, BANKS.top);
+    const hang = c % 2 ? (c % 4 === 1 ? 2 : 1) : 0;
+    R(g, X+c, Y+d+2, 1, hang, BANKS.blade);
+    below.push(d + 2 + hang);
+  }
+  return below;
+}
+// Natural rock, as chunks round points scattered over it (each pixel belongs to the nearest), cw by ch pixels apart:
+// how near this pixel is to its chunk's crack (d2 - d1: under 1 is on it), and which way from its chunk's middle it is.
+function rockAt(px, py, cw, ch, k){
+  const i0 = Math.floor(px / cw), j0 = Math.floor(py / ch);
+  let d1 = 1e9, d2 = 1e9, sx = 0, sy = 0;
+  for (let i = i0 - 1; i <= i0 + 1; i++) for (let j = j0 - 1; j <= j0 + 1; j++){
+    const cx = (i + .15 + rnd(i, j, k) * .7) * cw, cy = (j + .15 + rnd(i, j, k + 1) * .7) * ch, d = Math.hypot((px - cx) / cw, (py - cy) / ch) * cw;
+    if (d < d1){ d2 = d1; d1 = d; sx = px - cx; sy = py - cy; } else if (d < d2) d2 = d;
+  }
+  return {edge:d2 - d1, sx:sx / cw, sy:sy / ch};
+}
+function cliffFace(g, X, Y, x, y){
+  const drop = dropOf(x, y), {up, dn, top, H, endL, endR} = drop, from = up ? null : dropLip(g, X, Y, x, y, drop);
+  for (let c = 0; c < T; c++){
+    const fx = x*T + c;
+    for (let row = up ? 0 : from[c]; row < T; row++){
+      const fy = top + row, k = fy / (H - 1), rock = rockAt(fx, y*T + row, 9, 7, 600);
+      let col = mix(FACE.top, FACE.foot, k);
+      const light = -(rock.sx * .6 + rock.sy);   // lit on its top and left, in shade on its bottom and right
+      if (rock.edge < 1.1) col = FACE.crack;                                   // a crack between two chunks
+      else if (rock.edge < 2.2 && light > 0) col = mix(FACE.lit, col, k * .6);  // the lit edge of a chunk
+      else if (light < -.35) col = mix(col, FACE.crack, .35);
+      else if (light > .3) col = mix(col, FACE.lit, .3);
+      if (rnd(fx, fy, 504) < .04) col = mix(col, FACE.crack, .45);   // pits in the rock
+      if (endR && c >= 13) col = mix(col, FACE.side, [.25, .45, .7][c - 13]);   // turning the corner
+      if (endL && c === 0) col = mix(col, FACE.side, .55);
+      R(g, X+c, Y+row, 1, 1, col);
+    }
+    if (!up) R(g, X+c, Y+from[c], 1, 1, FACE.side);   // the shadow under the lip
+    if (!dn){   // its foot, with grass growing at it
+      R(g, X+c, Y+14, 1, 1, FACE.crack); R(g, X+c, Y+15, 1, 1, FACE.base);
+      if (rnd(fx, y, 505) < .4) R(g, X+c, Y+13 + (rnd(fx, y, 506) < .5 ? 1 : 0), 1, 3, c % 3 ? '#4F9445' : '#5FA14F');
+    }
+  }
+}
+// A grassy bank between two terraces, as high as the cliffs beside it, that you can hop down (a ledge, however many
+// squares high): blades of grass down it, darker towards its foot.
+function bank(g, X, Y, x, y){
+  const drop = dropOf(x, y), {up, dn, top, H} = drop, from = up ? null : dropLip(g, X, Y, x, y, drop);
+  for (let c = 0; c < T; c++){
+    const fx = x*T + c;
+    for (let row = up ? 0 : from[c]; row < T; row++){
+      const fy = top + row, k = fy / (H - 1);
+      let col = mix(BANKS.top, BANKS.foot, k);
+      if ((fy + Math.floor(rnd(fx, 9, 510) * 6)) % 6 === 0) col = mix(col, BANKS.blade, .45 + k * .4);   // blades of grass, down the bank
+      else if (rnd(fx, fy, 511) < .05) col = BANKS.tip;
+      R(g, X+c, Y+row, 1, 1, col);
+    }
+    if (!dn){ R(g, X+c, Y+14, 1, 1, BANKS.blade); R(g, X+c, Y+15, 1, 1, BANKS.base); }
+  }
+}
+// The shadow a drop casts on the ground at its foot (drawn over that ground, whatever it is: drawTiles).
+const SHADOW = ['#1C3A1C55', '#1C3A1C38', '#1C3A1C1C'];
+function castShadow(g, X, Y, x, y){
+  if (!isDrop(x, y-1) || isDrop(x, y) || tileAt(x, y).look === 'steps') return;
+  for (let c = 0; c < T; c++){
+    const deep = 2 + (rnd(x*T + c, y, 507) < .5 ? 1 : 0);
+    for (let r = 0; r <= deep; r++) R(g, X+c, Y+r, 1, 1, SHADOW[Math.max(0, r - deep + 2)]);
+  }
+}
+// Stone steps cut up a cliff (the hillside's), so you can see them climb from one level to the other: a few steps to a
+// square, each a lit tread with its edge catching the light and a riser in shade under it, paler higher up; set into
+// the cliff between walls of rock, the ground above coming round the top of them, and the path going on below.
+const STAIR = {tread:'#E4DDC9', treadLow:'#B8AF97', nose:'#F4EFE2', riser:'#9C9482', riserLow:'#736B5C', crease:'#5A5347'};
 function stoneSteps(g, X, Y, x, y){
-  R(g, X, Y, T, T, '#A8A294');
-  for (let i = 0; i < 4; i++){ const ty = Y + i*4; R(g, X, ty, T, 1, '#D2CCBE'); R(g, X, ty+1, T, 2, '#B4AE9F'); R(g, X, ty+3, T, 1, '#6F6B61'); }
-  for (let i = 0; i < 5; i++) R(g, X + Math.floor(rnd(x,y,i+300)*15), Y + Math.floor(rnd(x,y,i+310)*16), 1, 1, '#9A9487');   // worn spots
-  if (tileAt(x-1, y).look !== 'steps') R(g, X, Y, 1, T, '#5E5A51');
-  if (tileAt(x+1, y).look !== 'steps') R(g, X+15, Y, 1, T, '#5E5A51');
+  const isSteps = (a, c) => tileAt(a, c).look === 'steps';
+  let up = 0, dn = 0;
+  while (isSteps(x, y - up - 1)) up++;
+  while (isSteps(x, y + dn + 1)) dn++;
+  const H = (up + dn + 1) * T, top = up * T, n = Math.round(H / 6), stepTop = i => Math.round(i * H / n);
+  const wallL = isDrop(x-1, y), wallR = isDrop(x+1, y);
+  for (let r = 0; r < T; r++){
+    const fy = top + r, k = fy / (H - 1), i = Math.floor(fy * n / H), o = fy - stepTop(i), h = stepTop(i + 1) - stepTop(i);
+    const col = o < h - 2 ? (o === h - 3 ? STAIR.nose : mix(STAIR.tread, STAIR.treadLow, k)) : o === h - 1 ? STAIR.crease : mix(STAIR.riser, STAIR.riserLow, k);
+    R(g, X, Y+r, T, 1, col);
+  }
+  for (let i = 0; i < 4; i++) R(g, X + 3 + Math.floor(rnd(x,y,i+300)*10), Y + Math.floor(rnd(x,y,i+310)*16), 1, 1, '#A39B88');   // worn spots
+  for (const [wall, c0, dir] of [[wallL, 0, 1], [wallR, 15, -1]]){   // the walls of rock either side, as the cliff's
+    if (!wall) continue;
+    for (let r = 0; r < T; r++){
+      const k = (top + r) / (H - 1);
+      R(g, X + c0, Y+r, 1, 1, FACE.side); R(g, X + c0 + dir, Y+r, 1, 1, mix(dir > 0 ? FACE.lit : FACE.top, FACE.foot, k));
+      R(g, X + c0 + 2*dir, Y+r, 1, 1, mix(FACE.top, FACE.foot, k)); R(g, X + c0 + 3*dir, Y+r, 1, 1, STAIR.crease);   // (its shadow on the steps)
+    }
+    if (!up){   // the ground above coming round the top of the wall, with its lip
+      const c1 = Math.min(c0, c0 + 3*dir);
+      R(g, X + c1, Y, 4, 3, '#7CC46B'); R(g, X + c1, Y + 3, 4, 1, '#A9E08F'); R(g, X + c1, Y + 4, 4, 1, BANKS.top); R(g, X + c1, Y + 5, 4, 1, FACE.side);
+    }
+  }
 }
 // Flat stones across a brook, two to a square, a little out of line, each with its shadow in the water.
 function steppingStones(g, X, Y, x, y){
@@ -254,33 +365,35 @@ function mushrooms(g, X, Y, x, y){
   const k = Math.floor(rnd(x, y, 410) * 4);
   one(5 + k, 9, 3, '#D9433A', true); one(11, 13, 2, '#9C6B3A', false); one(3, 15, 2, '#B98A55', false);
 }
-// The view from a lookout, over the edge of the hill: the sky with a cloud or two, and far below, the sea, out to the
-// horizon, with an island. It's one picture across all the view's squares, each square drawing its part of it.
-function farView(g, X, Y, x, y){
-  let top = y, bottom = y, left = x, right = x;
-  while (tileAt(x, top - 1).look === 'view') top--;
-  while (tileAt(x, bottom + 1).look === 'view') bottom++;
-  while (tileAt(left - 1, y).look === 'view') left--;
-  while (tileAt(right + 1, y).look === 'view') right++;
-  const w = (right - left + 1) * T, h = (bottom - top + 1) * T, horizon = Math.round(h * .42);
-  const inCloud = (vx, vy, cx, cy, rx, ry) => ((vx - cx) / rx) ** 2 + ((vy - cy) / ry) ** 2 <= 1;
+// A flat rock, worn smooth, at the top of a cliff (the lookout's), one rock across all its squares (its railing stands
+// along its front edge): rounded at the corners, lit along the top and left and darker along the bottom and right, with
+// a crack or two, in the grass.
+const FLAT = ['slabs', 'railing'];
+function slabs(g, X, Y, x, y){
+  grass(g, X, Y, x, y);
+  const flat = (a, c) => FLAT.includes(tileAt(a, c).look);
+  let x0 = x, x1 = x, y0 = y, y1 = y;
+  while (flat(x0 - 1, y)) x0--;
+  while (flat(x1 + 1, y)) x1++;
+  while (flat(x, y0 - 1)) y0--;
+  while (flat(x, y1 + 1)) y1++;
+  const w = (x1 - x0 + 1) * T - 2, h = (y1 - y0 + 1) * T - 1, rad = 5;   // the rock, from 1 in at the left, to the bottom of its squares
   for (let r = 0; r < T; r++) for (let c = 0; c < T; c++){
-    const vx = (x - left) * T + c, vy = (y - top) * T + r;   // where this pixel is in the view
-    let col;
-    if (vy < horizon){
-      col = mix('#86C6EC', '#DDF1FA', vy / horizon);
-      if (inCloud(vx, vy, w * .3, h * .12, 10, 3) || inCloud(vx, vy, w * .3 + 6, h * .12 - 2, 6, 3) || inCloud(vx, vy, w * .75, h * .26, 8, 2)) col = vy % 4 === 3 ? '#E3F1F8' : '#FFFFFF';
-      const isle = Math.max(0, 7 - Math.abs(vx - w * .62) / 2.2);   // a far-off island on the horizon
-      if (horizon - vy <= isle && Math.abs(vx - w * .62) < 16) col = horizon - vy <= isle - 2 ? '#7FA2B8' : '#93B4C7';
-    } else if (vy === horizon) col = '#3A7DB5';
-    else {
-      col = mix('#4B9BD5', '#2D6CA6', (vy - horizon) / (h - horizon));
-      if (rnd(vx, vy, 420) < .035) col = '#A6DAF3';                      // the sun sparkling on the sea
-      else if ((vy + Math.floor(vx / 9)) % 7 === 0 && rnd(vx, vy, 421) < .5) col = '#3F86C2';   // waves, far off
-    }
-    R(g, X + c, Y + r, 1, 1, col);
+    const u = (x - x0) * T + c - 1, v = (y - y0) * T + r - 1;   // where this pixel is on the rock
+    const cx = Math.max(rad - u, 0, u - (w - 1 - rad)), cy = Math.max(rad - v, 0, v - (h - 1 - rad)), d = Math.hypot(cx, cy);   // (outside its rounded corners?)
+    if (u < 0 || v < 0 || u >= w || v >= h || d > rad + .5) continue;
+    const edge = d > rad - .7 || u === 0 || v === 0 || u === w - 1 || v === h - 1;
+    const px = x*T + c, py = y*T + r, plate = rockAt(px, py, 22, 18, 610), mottle = rnd(px >> 2, py >> 2, 562);
+    let col = mix('#BDB7A9', '#A9A395', mottle * .8);
+    if (edge) col = '#6F6B61';
+    else if (u <= 1 || v <= 1) col = '#D6D1C4';                                      // lit edges
+    else if (u >= w - 3 || v >= h - 3) col = '#958F81';                               // shaded edges
+    else if (plate.edge < .9) col = '#8E887B';                                        // a crack between two plates
+    else if (plate.edge < 1.9 && plate.sy < 0) col = '#CFCABD';
+    else if (rnd(px, py, 560) < .05) col = '#A39D8F';
+    else if (rnd(px >> 1, py >> 1, 564) < .025) col = '#9DB07A';                       // lichen
+    R(g, X+c, Y+r, 1, 1, col);
   }
-  if (tileAt(x - 1, y).look !== 'view'){ R(g, X, Y, 3, T, '#8E8A7E'); R(g, X+3, Y, 1, T, '#6A665C'); R(g, X, Y, 1, T, '#7CC46B'); }   // the edge of the hill
 }
 // Writing in the world is real Chinese, never made-up squiggles, so there's more for you to read (decided 21 October
 // 2026): the school's sign (学校), the cave's stone tablet (水帘洞), the numbers on the blackboard and the archway into the
@@ -568,11 +681,14 @@ const LOOKS = {
   curtain:   (g,X,Y,x,y) => { R(g,X,Y,T,T,'#8FD0EE'); },   // the falling water is animated in js/draw.js
 
   steps:     (g,X,Y,x,y) => stoneSteps(g,X,Y,x,y),   // stone steps up a cliff (the hillside's)
+  cliffFace: (g,X,Y,x,y) => cliffFace(g,X,Y,x,y),    // a cliff between two terraces (the hillside's)
+  bank:      (g,X,Y,x,y) => bank(g,X,Y,x,y),         // a grassy bank between them, that you hop down
+  slabs:     (g,X,Y,x,y) => slabs(g,X,Y,x,y),        // a stone platform (the lookout's)
+  railing:   (g,X,Y,x,y) => slabs(g,X,Y,x,y),        // its railing stands on it (a big object: OBJECT_ART)
   steppingStones:(g,X,Y,x,y) => steppingStones(g,X,Y,x,y),   // flat stones across a brook, to step on
   mushrooms: (g,X,Y,x,y) => { woodFloor(g,X,Y,x,y); mushrooms(g,X,Y,x,y); },   // little mushrooms under the pines
   archway:   (g,X,Y,x,y) => path(g,X,Y,x,y),        // the way through an archway (the archway itself is a big object: OBJECT_ART)
   archPost:  (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // an archway's pillar, beside the way through (a big object)
-  view:      (g,X,Y,x,y) => farView(g,X,Y,x,y),     // the view from a lookout: the sky, and the sea far below
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
   waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js
@@ -649,6 +765,13 @@ const OBJECT_ART = {
   },
   frame: (g, o) => schoolFrame(g, o),
   archway: (g, o) => archway(g, o),
+  railing: (g, o) => {   // a wooden railing along the top of a cliff (the lookout's): a post at each end and between, two rails
+    const X = o.x*T, Y = o.y*T, W = o.w*T;
+    const posts = []; for (let px = X + 1; px < X + W - 9; px += 15) posts.push(px); posts.push(X + W - 4);
+    for (const px of posts) groundShadow(g, px + 2, Y + 18, 3, 1);
+    for (const ry of [Y+3, Y+10]){ R(g, X, ry, W, 3, WOOD[0]); R(g, X, ry, W, 2, WOOD[2]); R(g, X, ry, W, 1, WOOD[3]); }
+    for (const px of posts){ R(g, px, Y+1, 3, 18, WOOD[0]); R(g, px, Y+1, 2, 17, WOOD[2]); R(g, px, Y+1, 1, 17, WOOD[3]); R(g, px, Y+1, 3, 1, WOOD[4]); }
+  },
   archPost: (g, o) => {   // a stone pillar of an archway, on its plinth (the beam over the way rests on it: archway, below)
     const X = o.x*T, Y = o.y*T;
     groundShadow(g, X+8, Y+15, 6, 2);
@@ -832,7 +955,7 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
-const ROW_OBJECTS = ['rocks', 'stall'];   // side by side, these make one object as wide as the row
+const ROW_OBJECTS = ['rocks', 'stall', 'railing'];   // side by side, these make one object as wide as the row
 const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
@@ -897,7 +1020,9 @@ const overlaps = ([ax, ay, aw, ah], [bx, by, bw, bh]) => ax < bx + bw && bx < ax
 // The ground of the squares from x0, y0 to x1, y1 (all of them if none are given), and only inside clip if given.
 function drawTiles(clip, x0 = 0, y0 = 0, x1 = COLS - 1, y1 = ROWS - 1){
   if (clip){ mg.save(); mg.beginPath(); mg.rect(...clip); mg.clip(); mg.clearRect(...clip); }
-  for (let y = Math.max(0, y0); y <= Math.min(ROWS - 1, y1); y++) for (let x = Math.max(0, x0); x <= Math.min(COLS - 1, x1); x++) LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y);
+  for (let y = Math.max(0, y0); y <= Math.min(ROWS - 1, y1); y++) for (let x = Math.max(0, x0); x <= Math.min(COLS - 1, x1); x++){
+    LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y); castShadow(mg, x*T, y*T, x, y);
+  }
   if (clip) mg.restore();
 }
 // What the map was drawn for: the place, the school's paint, and each square's tile (patchMap compares them).

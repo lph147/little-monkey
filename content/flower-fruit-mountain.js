@@ -541,12 +541,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // straight through the bushes at the top of the home ground, a different world a step away, and chapter 1 had few
     // places to practise the words you know; laid out again the same day, after playing the first, which was short, dull
     // and all big blocks of long grass). About 90 steps up, winding, in three parts that each look different: at the foot,
-    // a slope of flowers, a winding brook you cross on stepping stones, and a hedge; in the middle, three terraces with
-    // stone steps zig-zagging up the cliffs between them, ledges to hop down (the quicker way back), and a lookout over
-    // the sea; at the top, under the first pines, mushrooms, and a stone archway with 松林 on it, the way into the wood.
-    // Long grass in patches, most of which you can go round; where it has grown over the way (the gap in the hedge, across
-    // the middle terrace, under the pines), you can't, so you meet what lives in it: snakes and spiders, and now and then
-    // a wolf from the pines, practising words you know. A peach tree in a corner, and tall grass where your friends hide.
+    // a slope of flowers, a winding brook you cross on stepping stones, and a hedge; in the middle, three terraces, each a
+    // level higher, with an edge between them that's one drop, as high all along (rock cliffs, stone steps up them, and
+    // grassy banks you hop down, the quicker way back), and a lookout, a flat rock at the top of a cliff with a railing;
+    // at the top, under the first pines, mushrooms, and a stone archway with 松林 on it, the way into the wood. Long grass
+    // in patches, most of which you can go round; where it has grown over the way (the gap in the hedge, across the lowest
+    // terrace, under the pines), you can't, so you meet what lives in it: snakes and spiders, and now and then a wolf from
+    // the pines, practising words you know. A peach tree in a corner, and tall grass where your friends hide.
     hillside: {
       name: {zh:'山坡', py:'shānpō', en:'The hillside'},
       exits: [
@@ -561,7 +562,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'm': {look:'mushrooms', walk:true},                   // mushrooms under the pines
         'A': {look:'archway', walk:true, says:'松林'},         // the way through the archway into the pine wood, with its name on the board over it
         'I': {look:'archPost'},                               // the archway's pillars
-        'V': {look:'view'}                                    // the view from the lookout: the sky, and the sea far below
+        'M': {look:'cliffFace', word:'山'},                   // a cliff between two terraces: the ground above comes to its edge, its face, and its shadow below
+        'v': {look:'bank', ledge:true},                       // a grassy bank between them, as high as the cliffs, that you hop down
+        'L': {look:'slabs', walk:true},                       // the lookout's stone platform
+        'R': {look:'railing', landmark:true, onLook:[{do:[{message:'You can see a long way from up here: down the hillside, over the trees, and far off, the sea.'}]}]}   // its railing, at the top of the cliff (the view: later, a scene)
       },
       map: [
         "pppppppppppp..pppppppppppp",   // the way into the pine wood
@@ -579,22 +583,22 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYppiTgggggggg.gggTippipYY",   // the edge of the pines
         "YYpgggg........gnnnggggpYY",
         "YYggggT.ggggggggnnnnTgpgYY",
-        "YYMMMMg.ggggggggggggggggYY",
-        "YYMMMMssMMgggggggMMMMMMMYY",   // stone steps up the cliff (left), ledges to hop down (middle)
-        "YYMMMMssMMvvvvvvvMMMMMVVVV",
-        "YYggggg.ggggggggggggggVVVV",
-        "YYGGGgg...............VVVV",   // along the terrace to the lookout, and its view
-        "YYGGGogggggggnnngg.gg.VVVV",
-        "YYGGGgggggggTgnngo.gggVVVV",
-        "YYMMgggggggggggggg.gggVVVV",
-        "YYMMMMMMgggggggMMMssMMMMYY",   // stone steps (right), ledges (middle)
+        "YYgTggg.gggggggggggggTggYY",
+        "YYMMMMssMMvvvvvvvMMMMMMMYY",   // stone steps up the cliff (left), a grassy bank to hop down (middle)
+        "YYMMMMssMMvvvvvvvMMMMMMMYY",
+        "YYggggg.ggggggggggggggggYY",
+        "YYGGGgg...............ggYY",   // along the terrace to the lookout
+        "YYGGGogggggggnnngg.gLLLLYY",   // the lookout: a stone platform at the top of the cliff
+        "YYGGGgggggggTgnngo.gLLLLYY",
+        "YYgggTggggggggggTg.gRRRRYY",   // its railing
+        "YYMMMMMMvvvvvvvMMMssMMMMYY",   // stone steps (right), a bank (middle)
         "YYMMMMMMvvvvvvvMMMssMMMMYY",
         "YYggggggggonnggggg.gggggYY",   // long grass right across, among boulders
         "YYggg.....nnn......gggTgYY",
         "YYgTg.ggggnnnggggggnnnggYY",
         "YYggg.ggognonTgggggnnnggYY",
-        "YYggg.ggggnnogggggggMMMMYY",
-        "YYMMMssMMMggggggggMMMMMMYY",   // stone steps (left), ledges (middle)
+        "YYgTg.ggggnnoggggggggTggYY",
+        "YYMMMssMMMvvvvvvvvMMMMMMYY",   // stone steps (left), a bank (middle)
         "YYMMMssMMMvvvvvvvvMMMMMMYY",
         "YYgfg.gfgfgfggfgggfgfggfYY",   // a slope of flowers; a peach tree in the corner
         "YYgPg.fgfgfgfggffggfgffgYY",
