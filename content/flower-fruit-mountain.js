@@ -946,6 +946,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#45291A', f:'#B98A5E', s:'#F4D3AE', m:'#C99272', e:'#24160C'}},
     {id:'towerR', place:'hillside', x:9, y:32, facing:'left', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#46240F', f:'#B4693A', s:'#F2CA9F', m:'#C2805E', e:'#24160C'}},
+    // chapter 1: by the hillside's brook, a little monkey on the bank chasing a dragonfly, leaping at it, and two in the water
+    // at the brook's end, splashing each other (in the book, chapter 1: 赶蜻蜓, they chase dragonflies, and 绿水涧边随洗濯, by
+    // the green stream they wash)
+    {id:'chaser', place:'hillside', x:11, y:35, facing:'down', plays:'dragonflies', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#47280F', f:'#C08850', s:'#F5D2AA', m:'#CC9070', e:'#24160C'}},
+    {id:'splash1', place:'hillside', x:3, y:37, facing:'right', plays:'splash', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#3F2614', f:'#A9784C', s:'#F0CBA2', m:'#BE8A66', e:'#24160C'}},
+    {id:'splash2', place:'hillside', x:5, y:37, facing:'left', plays:'splash', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#4B2A12', f:'#C27A45', s:'#F3CFA8', m:'#C98C68', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}}
   ],
@@ -1107,6 +1116,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // Where fish jump out of the water now and then, one after another.
   fish: [[11, 9], [9, 10], [12, 11], [10, 12]],
+  // Dragonflies darting about over the water, each in its own patch, from at to to (squares, in at's place): just to look at
+  // (in the book, chapter 1, the troop chases them: 赶蜻蜓)
+  dragonflies: [{at:[8, 36, 'hillside'], to:[16, 37]}, {at:[20, 35, 'hillside'], to:[23, 36]}],
 
   // The area's animals. The id is kept in saved games, so never change it. An animal with at lives
   // at that spot (x, y) on the map, such as up a tree, on a cliff or in a clearing (you can't walk
@@ -1249,6 +1261,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     howManyRabbits: {zh:'这里 有 几 只 兔子 ？', en:'How many rabbits are there?'},
     howManyBirds: {zh:'这里 有 几 只 鸟 ？', en:'How many birds are there?'},
     howManyStones: {zh:'这里 有 几 个 石头 ？', en:'How many stones are there?'},   // the little monkeys on the hillside, counting the stones in their tower with you
+    playWater: {zh:'我们 在 玩 水 ！', en:'We’re playing in the water!'},   // the little monkeys splashing in the hillside's brook
     thisBlack: {zh:'这 是 黑色 。', en:'This is black.'},   // the teacher, opening a pot of paint (colour lessons)
     thisBlue: {zh:'这 是 蓝色 。', en:'This is blue.'},
     thisGreen: {zh:'这 是 绿色 。', en:'This is green.'},
@@ -1495,6 +1508,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{numbersKnown:0}, do:[{say:'count3'}, {countGame:'tower'}]},
       {do:[{say:'play'}, {countGame:'tower'}, {set:{tower:2}}]}
     ],
+    // the little monkeys at play by the hillside's brook
+    chaser: [{do:[{say:'hi'}, {reply:'你好'}, {message:'It’s chasing a dragonfly, but the dragonfly is far too quick for it!'}]}],
+    splash1: [{do:[{say:'hi'}, {reply:'你好'}, {say:'playWater'}]}],
+    splash2: [{do:[{say:'hi'}, {reply:'你好'}, {say:'playWater'}]}],
     // the goat on the hillside's lookout: have a look at the view
     lookoutGoat: [
       {if:{lookTip:0}, do:[{say:'hi'}, {reply:'你好'}, {say:'go'},

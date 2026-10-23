@@ -45,12 +45,12 @@ const SFX = {
   rumble: () => noise(.9, .16),
   chime: () => [1047,1319,1568,2093].forEach((f,i) => tone(f, .35, 'triangle', .05, i*.08)),
   shimmer: () => tone(520, 1.1, 'triangle', .04, 0, 900),
-  splash: () => {   // a splash of water: a burst of noise, bright and quick
+  splash: (v = .22) => {   // a splash of water: a burst of noise, bright and quick (v: how loud)
     const a = ac(); if (!a) return;
     const buf = a.createBuffer(1, a.sampleRate * .45, a.sampleRate), ch = buf.getChannelData(0);
     for (let i = 0; i < ch.length; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / ch.length, 2);
     const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
-    f.type = 'bandpass'; f.frequency.value = 1800; f.Q.value = .7; g.gain.value = .22; s.buffer = buf;
+    f.type = 'bandpass'; f.frequency.value = 1800; f.Q.value = .7; g.gain.value = v; s.buffer = buf;
     s.connect(f); f.connect(g); g.connect(a.destination); s.start();
   },
   swish: (when = 0) => tone(900, .18, 'triangle', .025, when, -650),   // something cutting through the air: a stick, a leap

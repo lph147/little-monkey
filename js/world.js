@@ -230,6 +230,27 @@ function towerAt(now){
     t -= TOWER[phase];
   }
 }
+// A dragonfly darting about (the area's dragonflies, each over the water in its own patch, and the one a little monkey
+// chases, round it): it hovers a moment, then darts to another spot in its box (x0, y0 to x1, y1, in map pixels), every
+// `every` ms, somewhere new each time (seed: which dragonfly). Where it is now, and whether it's heading left.
+const DART_MS = 160;
+function dragonflyAt(box, seed, now, every = 1400){
+  const n = Math.floor(now / every), t = now - n * every;
+  const spot = i => [box[0] + rnd(seed, i, 801) * (box[2] - box[0]), box[1] + rnd(seed, i, 802) * (box[3] - box[1])];
+  const [ax, ay] = spot(n - 1), [bx, by] = spot(n), k = Math.min(1, t / DART_MS), e = 1 - (1 - k) * (1 - k);
+  return {x:ax + (bx - ax) * e, y:ay + (by - ay) * e + (k < 1 ? 0 : Math.sin(now / 120 + seed) * .7), left:bx < ax};
+}
+const dragonflyBox = d => [d.at[0]*T, d.at[1]*T, (d.to[0] + 1)*T, (d.to[1] + 1)*T];   // one of the area's dragonflies' patch, in map pixels
+// 'dragonflies': a little monkey chasing a dragonfly, which darts about round it (chaseBox): every CHASE_MS it leaps at
+// it, and the dragonfly darts off just as the leap is highest (CHASE_LEAP: how long a leap takes).
+const CHASE_MS = 1600, CHASE_LEAP = 420;
+const chaseBox = n => [n.x*T - 20, n.y*T - 16, n.x*T + 36, n.y*T + 4];
+function chasedAt(n, now){ return dragonflyAt(chaseBox(n), n.x * 31 + n.y, now - CHASE_LEAP / 2, CHASE_MS); }   // its dragonfly
+function chaseLeap(now){ const t = now % CHASE_MS; return t < CHASE_LEAP ? Math.sin(t / CHASE_LEAP * Math.PI) : 0; }   // how high in its leap it is (0 to 1)
+// 'splash': two little monkeys in the water, splashing each other, taking turns: every SPLASH_MS one throws water over the
+// other (by: 0 the one on the left, 1 the one on the right), flying for SPLASH_FLY ms (k, 0 to 1, as it flies).
+const SPLASH_MS = 1900, SPLASH_FLY = 650;
+function splashAt(now){ const n = Math.floor(now / SPLASH_MS), t = now - n * SPLASH_MS; return {n, by:n % 2, k:t < SPLASH_FLY ? t / SPLASH_FLY : null}; }
 // The troop marking out ground as you watch (the markOut step): when each stake is hammered in, when the string is pulled
 // tight round them, when the new ground fades in (with its sign and path), and when it's done, in ms; and what's being
 // marked out: {t0, changed: the squares that change, fresh: their new look, box: the plot's squares, x0 y0 to x1 y1; hold:
@@ -759,15 +780,18 @@ function practiceSounds(now){
     swishedAt[n.id] = k;
   }
 }
-// The monkeys at play, when you're near: a little clack as each stone goes onto their tower, and a clatter as it falls.
-let towerWas = null;
+// The monkeys at play, when you're near: a little clack as each stone goes onto their tower, and a clatter as it falls;
+// a splash as one splashes the other.
+let towerWas = null, splashWas = null;
+const nearYou = n => Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) <= 5 && mode === 'play' && modal.hidden;
 function playSounds(now){
-  const n = NPCS.find(c => PLAYS[c.id] === 'tower');
-  if (!n){ towerWas = null; return; }
-  const t = towerAt(now), near = Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) <= 5 && mode === 'play' && modal.hidden;
-  if (towerWas && near && t.phase === 'build' && t.stones > towerWas.stones) SFX.clack();
-  if (towerWas && near && t.phase === 'fall' && towerWas.phase !== 'fall') SFX.clatter();
+  const n = NPCS.find(c => PLAYS[c.id] === 'tower'), t = n ? towerAt(now) : null;
+  if (towerWas && t && nearYou(n) && t.phase === 'build' && t.stones > towerWas.stones) SFX.clack();
+  if (towerWas && t && nearYou(n) && t.phase === 'fall' && towerWas.phase !== 'fall') SFX.clatter();
   towerWas = t;
+  const sp = NPCS.find(c => PLAYS[c.id] === 'splash'), s = sp ? splashAt(now).n : null;
+  if (splashWas !== null && s !== null && s !== splashWas && nearYou(sp)) SFX.splash(.07);
+  splashWas = s;
 }
 // The sounds of the part of the place you're in: the place's own (sounds: some of SFX's names), or, where they change from
 // one part of it to another (each part: its rows, from and to, and its sounds), the part you're in, such as the hillside's

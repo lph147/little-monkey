@@ -186,12 +186,13 @@ test('you start on a tile you can walk on', () => {
   assert.ok(onMap(at) && canWalk(at), `the start ${at} isn't a walkable tile`);
 });
 
-test('characters stand on the map, on walkable tiles, one per tile', () => {
+test('characters stand on the map, on walkable tiles (or in the water, splashing about), one per tile', () => {
   const taken = new Set([String([AREA.start.x, AREA.start.y, AREA.start.place || FIRST])]);
   for (const c of AREA.characters){
     const at = [c.x, c.y, c.place || FIRST];
     assert.ok(onMap(at), `${c.id} at ${at} is off the map`);
-    assert.ok(canWalk(at), `${c.id} stands on "${tile(at)}" at ${at}, which isn't walkable`);
+    if (c.plays === 'splash') assert.equal((legendOf(at[2])[tile(at)] || {}).look, 'water', `${c.id} splashes about in the water, not on "${tile(at)}" at ${at}`);
+    else assert.ok(canWalk(at), `${c.id} stands on "${tile(at)}" at ${at}, which isn't walkable`);
     assert.ok(!taken.has(String(at)), `${c.id} at ${at} shares a tile with someone else or the start`);
     taken.add(String(at));
     assert.ok(['up', 'down', 'left', 'right'].includes(c.facing), `${c.id} faces "${c.facing}"`);

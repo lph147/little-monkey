@@ -173,7 +173,7 @@ const WORD_BANK = {
   '上': {py:'shàng', en:'on top of'},
   '一个': {py:'yí gè', en:'a, one'},
   '一只': {py:'yì zhī', en:'a, one (animal)'},
-  '在': {py:'zài', en:'at, in, on'},
+  '在': {py:'zài', en:'at, in, on; doing now (在玩, playing)'},
   '玩': {py:'wán', en:'to play'},
   '什么': {py:'shénme', en:'what'},
   '吗': {py:'ma', en:'(yes/no question)'},

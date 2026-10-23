@@ -29,7 +29,7 @@ const bubble = (g, id) => get(g, `((AREA.bubbles.${id} || []).find(b => matches(
 
 test('two little monkeys stand at the foot of the cliff by the stone steps, a tower of stones between them, and you can’t walk through them', () => {
   const g = game();
-  assert.deepEqual(get(g, "ALL_NPCS.filter(n => PLAYS[n.id]).map(n => [n.id, n.place, n.x, n.y, n.home.facing, PLAYS[n.id]])"),
+  assert.deepEqual(get(g, "ALL_NPCS.filter(n => PLAYS[n.id] === 'tower').map(n => [n.id, n.place, n.x, n.y, n.home.facing, PLAYS[n.id]])"),
     [['towerL', 'hillside', 7, 32, 'right', 'tower'], ['towerR', 'hillside', 9, 32, 'left', 'tower']], 'facing each other, across the tower');
   assert.equal(g.run('tileAt(8, 32).look'), 'stoneTower');
   assert.ok([[7, 32], [8, 32], [9, 32]].every(([x, y]) => !g.run(`walkable(${x}, ${y})`)));

@@ -87,6 +87,7 @@ shown where the word list has them.
 | 这里有几只兔子？ | zhèlǐ yǒu jǐ zhī tùzi? | How many rabbits are there? |  |  |
 | 这里有几只鸟？ | zhèlǐ yǒu jǐ zhī niǎo? | How many birds are there? |  |  |
 | 这里有几个石头？ | zhèlǐ yǒu jǐ gè shítou? | How many stones are there? | 猴子 (Monkey) |  |
+| 我们在玩水！ | wǒmen zài wán shuǐ! | We’re playing in the water! | 猴子 (Monkey) |  |
 | 这是黑色。 | zhè shì hēisè. | This is black. |  |  |
 | 这是蓝色。 | zhè shì lánsè. | This is blue. |  |  |
 | 这是绿色。 | zhè shì lǜsè. | This is green. |  |  |
@@ -245,6 +246,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 野猪 | yězhū | Wild boar |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
@@ -454,7 +458,7 @@ check that each is true and simply put.
 | 上 | shàng | on top of |  |
 | 一个 | yí gè | a, one |  |
 | 一只 | yì zhī | a, one (animal) |  |
-| 在 | zài | at, in, on |  |
+| 在 | zài | at, in, on; doing now (在玩, playing) |  |
 | 玩 | wán | to play |  |
 | 什么 | shénme | what |  |
 | 吗 | ma | (yes/no question) |  |
@@ -590,6 +594,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The sentence you finish when you give him the flowers (filling in 红色) |  |
 | 南天门 | Nán Tiān Mén | the Southern Gate of Heaven | New on 23 October 2026 (in the game): written on the plaque of a gate high in the clouds, in the view from the hillside’s lookout, where two gods peek out now and then (in the book, 千里眼 Qiānlǐ Yǎn, Thousand-Mile Eye, and 顺风耳 Shùnfēng Ěr, Wind-Following Ear, came out of it to see the light from the stone monkey’s eyes; the game doesn’t name them). Written left to right, in simplified characters (门): please check that reads naturally on a gate of heaven |  |
 | 这里有几个石头？ | zhèlǐ yǒu jǐ gè shítou? | How many stones are there? | New on 23 October 2026 (in the game): two little monkeys on the hillside, building a tower of stones, as the troop does in the book (砌宝塔), ask you to count its stones with them. 块 (kuài) is the usual measure word for stones (几块石头): is 几个石头 natural for small stones, said by a child, or should it be 几块? |  |
+| 我们在玩水！ | wǒmen zài wán shuǐ! | We’re playing in the water! | New on 23 October 2026 (in the game): two little monkeys splashing each other in the hillside’s brook, as the troop washes by the stream in the book (绿水涧边随洗濯), when you say hello |  |
 | 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside |  |
 
 ## Questions

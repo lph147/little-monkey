@@ -55,10 +55,58 @@ function drawTower(X, Y, now){
   }
   b.globalAlpha = 1;
 }
-// A monkey of the troop at play (PLAYS, js/world.js), at X, Y. Building the tower of stones, facing it: when it's its turn
-// (or the other one's talking to you), it hops up to put a stone on top, the stone going up from its hands; as the tower
-// falls they jump back, and then they jump about laughing.
+// A monkey of the troop at play (PLAYS, js/world.js), at X, Y; or stopped to talk to you, facing you (one in the water stays
+// in it).
 function drawPlaying(n, X, Y, now){
+  const kind = PLAYS[n.id];
+  if (kind === 'splash') drawSplasher(n, X, Y, now);
+  else if (!playing(n)) drawEntityMonkey(n.kind, X, Y, n.dir, now, Math.floor(now/700 + n.x) % 2, 0, n.x + n.y);
+  else if (kind === 'tower') drawTowerBuilder(n, X, Y, now);
+  else if (kind === 'dragonflies') drawChaser(n, X, Y, now);
+}
+// Chasing a dragonfly: it leaps up at it now and then, turning to face it, and the dragonfly darts off just out of reach
+// (drawn with the others: drawDragonflies).
+function drawChaser(n, X, Y, now){
+  const bob = Math.round(chaseLeap(now) * 6);
+  drawEntityMonkey(n.kind, X, Y, chasedAt(n, now).x < n.x*T + 8 ? 'left' : 'right', now, bob, bob ? 1 : 0, n.x + n.y);
+}
+// Splashing in the water with the other one: in the water up to its chin, with ripples round it; when it's its turn, it
+// rises a little and throws water from its hands over the other, who ducks as it lands.
+function drawSplasher(n, X, Y, now){
+  const at = playing(n), dir = at ? n.home.facing : n.dir, s = splashAt(now), mine = s.by === (n.home.facing === 'right' ? 0 : 1), other = NPCS.find(c => c !== n && PLAYS[c.id] === 'splash');
+  const throwing = at && s.k !== null && mine, ducking = s.k !== null && !mine && s.k > .7;
+  const sink = 3 + (ducking ? 2 : 0) - (throwing ? Math.round(Math.sin(s.k * Math.PI) * 2) : 0), line = 13;   // how far down it is; the water's surface
+  const ph = (now / 1100 + n.x * .37) % 1, rx = 6 + Math.round(ph * 4);   // a ripple spreading round it
+  b.globalAlpha = .8 * (1 - ph); R(b, X + 8 - rx, Y + line, 3, 1, '#BFE8FA'); R(b, X + 6 + rx, Y + line, 3, 1, '#BFE8FA'); b.globalAlpha = 1;
+  b.drawImage(monkeySprite(n.kind, dir, (now + (n.x + n.y) * 977) % 3600 < 130), 0, 0, 16, line - sink, X, Y + sink, 16, line - sink);
+  R(b, X + 3, Y + line, 10, 1, '#D6F2FF');   // the water round it
+  if (!throwing || !other) return;
+  const [hx, hy] = SWING_HAND[dir], x0 = X + hx, y0 = Y + sink + hy - 2, x1 = X + (other.x - n.x) * T + 8, y1 = Y + 6;
+  for (let j = 0; j < 10; j++){   // the water it throws, in a spray
+    const k = clamp(s.k * 1.3 - (j % 5) * .05, 0, 1), sz = j % 2 ? 1 : 2;
+    if (k <= 0 || k >= 1) continue;
+    R(b, Math.round(x0 + (x1 - x0) * k + (j - 4.5) * 2 * k), Math.round(y0 + (y1 - y0) * k - Math.sin(k * Math.PI) * (6 + (j % 4) * 3)), sz, sz, j % 3 ? '#FFFFFF' : '#BFE8FA');
+  }
+}
+// The dragonflies (the area's, and those the little monkeys chase), little and bright, their wings a flicker.
+const DRAGONFLY = [['#E0483A', '#9E2C24'], ['#F2A33A', '#A8641C'], ['#E0483A', '#9E2C24']];   // body, head: red and orange, bright over the water
+function dragonfly(X, Y, left, now, i){
+  X = Math.round(X); Y = Math.round(Y);
+  const [body, head] = DRAGONFLY[i % DRAGONFLY.length], at = dx => X + (left ? -dx : dx);
+  b.globalAlpha = .85;   // its four wings, spread out either side, a flicker as they beat
+  const beat = Math.floor(now / 40 + i) % 2;
+  for (const dy of beat ? [-1, 1] : [-2, -1, 1, 2]) for (const dx of [-2, -1, 0]) if (Math.abs(dy) < 2 || dx !== -1) R(b, at(dx), Y + dy, 1, 1, '#EAF6FF');
+  b.globalAlpha = 1;
+  for (let dx = -5; dx <= 0; dx++) R(b, at(dx), Y, 1, 1, dx === -5 ? head : body);   // its long body, darker at the tip
+  R(b, at(1), Y, 1, 1, head);
+}
+function drawDragonflies(cx, cy, now){
+  (AREA.dragonflies || []).forEach((d, i) => { if (placeOf(d.at) === PLACE){ const a = dragonflyAt(dragonflyBox(d), i + 11, now); dragonfly(a.x - cx, a.y - cy, a.left, now, i + 1); } });
+  for (const n of NPCS) if (PLAYS[n.id] === 'dragonflies'){ const a = chasedAt(n, now); dragonfly(a.x - cx, a.y - cy, a.left, now, 0); }
+}
+// Building the tower of stones, facing it: when it's its turn (or the other one's talking to you), it hops up to put a
+// stone on top, the stone going up from its hands; as the tower falls they jump back, and then they jump about laughing.
+function drawTowerBuilder(n, X, Y, now){
   const dir = n.home.facing, t = towerAt(now), partner = NPCS.find(c => c !== n && PLAYS[c.id] === 'tower');
   const turn = t.phase === 'build' && t.carried !== null && (t.by === (dir === 'right' ? 0 : 1) || !partner || !playing(partner));
   const bob = turn ? Math.round(Math.sin(t.lift * Math.PI) * 2) : t.phase === 'fall' ? Math.round(Math.sin(t.k * Math.PI) * 3)
@@ -343,7 +391,7 @@ function drawWorld(now){
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
       R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(SPR.bird, X+4, Y+6 - hop);
       if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
-    } else if (playing(n)){   // a monkey of the troop at play, such as building a tower of stones
+    } else if (PLAYS[n.id]){   // a monkey of the troop at play, such as building a tower of stones (or stopped to talk to you)
       drawPlaying(n, X, Y, now);
     } else if (practising(n)){   // a little monkey in training, facing its own way, swinging its stick now and then
       const t0 = swingStart(n, now);
@@ -358,6 +406,7 @@ function drawWorld(now){
     const bub = now < (n.calls || 0) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));
     if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
+  drawDragonflies(cx, cy, now);
   // the tops of big objects (a tree's leaves, the stall's awning), over anyone walking behind them
   b.drawImage(topCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.top, cx, cy, now);

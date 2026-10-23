@@ -73,6 +73,10 @@ SAVES.byHidden = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, train
 // below the little monkeys building a tower of stones, at the foot of the hillside's cliff: the first time, knowing just
 // 一, 二 and 三; and later, knowing the numbers to six from school (to count with them)
 SAVES.byTower = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 8, y: 33, dir: 'up'}};
+// by the brook at the foot of the hillside: on the path above the little monkey chasing a dragonfly, and on the bank above
+// the two splashing in the water
+SAVES.byBrook = {...SAVES.byTower, pos: {place: 'hillside', x: 10, y: 34, dir: 'down'}};
+SAVES.bySplashers = {...SAVES.byTower, pos: {place: 'hillside', x: 4, y: 36, dir: 'down'}};
 SAVES.towerCounts = {...SAVES.byTower, w: {...SAVES.byTower.w, ...knows(2, ['一', '三', '四', '五', '六'])}, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1, tower: 1}}};
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
@@ -370,6 +374,12 @@ const SCREENS = [
     play(); await wait(100); countQ({who: 'towerL', thing: AREA.countGames.tower.thing, n: 5}); await wait(500); }},
   {id: 'tower-count-new', title: 'Which tower has 六?', save: 'towerCounts', why: 'While a number is new, you hear it and choose the tower with that many stones: six, five and four, four to a row at most, still fitting a small phone.', run: async () => {
     play(); await wait(100); rec('六').lv = 1; countQ({who: 'towerL', thing: AREA.countGames.tower.thing, n: 6}); await wait(500); }},
+  {id: 'brook', title: 'By the brook', save: 'byBrook', why: 'Dragonflies dart about over the brook, hovering, then darting off; on the bank, a little monkey leaps at one, turning to follow it, but it darts away just out of reach; and at the brook’s end, two little monkeys in the water splash each other, taking turns, the other ducking (in the book, chapter 1: 赶蜻蜓, they chase dragonflies, and 绿水涧边随洗濯, they wash by the green stream).', run: async () => {
+    S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); splashAt = () => ({n: 1, by: 0, k: .45}); await wait(300); }},
+  {id: 'brook-chase', title: 'Too quick!', save: 'byBrook', why: 'The little monkey mid-leap, the dragonfly just out of reach. Talk to it: 你好！, your reply, and a message: the dragonfly is far too quick for it!', run: async () => {
+    S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); chaseLeap = () => 1; chasedAt = n => ({x: n.x*T + 15, y: n.y*T - 9, left: false}); await wait(300); }},
+  {id: 'brook-splash', title: 'We’re playing in the water!', save: 'bySplashers', why: 'Say hello to the little monkeys splashing in the brook: 你好！, your reply, then 我们在玩水！ (We’re playing in the water!).', run: async () => {
+    play(); await wait(100); talk(NPCS.find(n => n.id === 'splash1')); await wait(200); document.querySelector('[data-a=next]')?.click(); await wait(900); }},
   {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
   {id: 'lookout-goat', title: 'Go and take a look!', save: 'hillsideGoat', why: 'Coming up the steps beside the lookout the first time, a goat on it stops you (a ! over it, then it talks): 你好！, 去看看！ and how to look out. Wherever there’s something you might miss, a goat is there to tell you, as below the waterfall.', run: async () => {
