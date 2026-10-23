@@ -294,6 +294,30 @@ test('A at the lookout’s railing shows you the view, a picture like the openin
   assert.equal(get(g, '!!AREA.scenes.lookout.watch'), false, 'not one to watch again from Settings');
 });
 
+test('a goat on the lookout stops you as you come up the steps beside it, the first time, to tell you to look at the view', async () => {
+  const bubble = g => get(g, "((AREA.bubbles.lookoutGoat || []).find(b => matches(b.if)) || {}).show || ''");
+  for (const x of [18, 19]){   // up either side of the steps
+    const g = game(BUILDING, {place: 'hillside', x, y: 22, dir: 'up'}, KNOWS);
+    assert.deepEqual(get(g, "(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'lookoutGoat'))"), ['hillside', 20, 21], 'on the lookout, by its railing');
+    assert.equal(bubble(g), '!');
+    face(g, x, 21, 'up');
+    await play(g, `arrive(${x}, 21).then(runEvents)`);
+    assert.deepEqual(get(g, '__said'), ['你好！', '去看看！'], 'it stops you: hello, and go and take a look!');
+    assert.match(get(g, '__notes').join(' '), /Face the railing and press A/);
+    assert.deepEqual([get(g, 'here().lookTip'), bubble(g)], [1, ''], 'its ! goes');
+    g.run('__said.length = 0');
+    await play(g, `arrive(${x}, 21).then(runEvents)`);
+    assert.deepEqual(get(g, '__said'), [], 'only the once');
+  }
+});
+
+test('the mushrooms under the pines are just to look at', async () => {
+  const g = game(BUILDING, {place: 'hillside', x: 9, y: 4, dir: 'left'}, KNOWS);
+  assert.equal(g.run('promptFor(8, 4)'), 'Look');
+  await press(g, 9, 4, 'left');
+  assert.match(get(g, '__notes').join(' '), /mushrooms/);
+});
+
 test('the hillside teaches nothing new: everything there is a word from the prologue; a peach tree fills your bag, and your friends hide in its tall grass', () => {
   const g = game(BUILDING, {place: 'hillside', x: 12, y: 43, dir: 'up'}, KNOWS);
   const words = get(g, '[...new Set(MAP.flatMap((r, y) => [...r].map((c, x) => tileAt(x, y).word)).filter(Boolean))].sort()');

@@ -16,7 +16,7 @@ shown where the word list has them.
 | --- | --- | --- | --- | --- |
 | 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey), 大猴子 (Big monkey) |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
-| 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey) |  |
+| 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey), 山羊 (goat) |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I'm hungry. I want to eat some fruit! | 饿猴子 (Hungry monkey) |  |
 | 我渴了。我要喝水！ | wǒ kě le. wǒ yào hē shuǐ! | I'm thirsty. I want to drink some water! | 渴猴子 (Thirsty monkey) |  |
 | 你有桃子吗？ | nǐ yǒu táozi ma? | Do you have a peach? |  |  |

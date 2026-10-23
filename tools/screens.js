@@ -64,7 +64,8 @@ SAVES.pineFirst = {...SAVES.homeGround, areas: {1: {...BUILDING, woodIn: 0}}, po
 // the hillside, between the home ground and the pine wood: at the foot, by the brook's stepping stones; in the middle, at the
 // lookout; and at the top, under the first pines, by the archway into the wood
 SAVES.hillside = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 37, dir: 'up'}};
-SAVES.hillsideLookout = {...SAVES.pineWood, pos: {place: 'hillside', x: 21, y: 21, dir: 'down'}};
+SAVES.hillsideLookout = {...SAVES.pineWood, areas: {1: {...BUILDING, lookTip: 1}}, pos: {place: 'hillside', x: 21, y: 21, dir: 'down'}};   // (the goat has told you)
+SAVES.hillsideGoat = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 22, dir: 'up'}};   // coming up the steps by the lookout, the first time
 SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
@@ -321,6 +322,8 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
+  {id: 'lookout-goat', title: 'Go and take a look!', save: 'hillsideGoat', why: 'Coming up the steps beside the lookout the first time, a goat on it stops you (a ! over it, then it talks): 你好！, 去看看！ and how to look out. Wherever there’s something you might miss, a goat is there to tell you, as below the waterfall.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'hillside', x: 19, y: 21, dir: 'up'}; placePlayer(); arrive(19, 21).then(runEvents); await wait(2200); }},
   {id: 'lookout-view', title: 'The view from the lookout', save: 'hillsideLookout', why: 'A at the lookout’s railing: what you can see, told like the opening (a far view is a picture, never part of the map): the hillside going down, the river winding out to the sea, islands far off, and you at the railing. 这里很好看！ (It’s lovely up here!)', run: async () => {
     play(); await wait(100); storyScene('lookout'); introClock = .8; advancedTo = 0; await wait(400); }},
   {id: 'lookout-sea', title: 'The sea is so big!', save: 'hillsideLookout', why: 'Then 海很大！: nothing new, just words you’ve heard (海, sea, in the opening).', run: async () => {

@@ -72,13 +72,15 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   const stand = (x, y, dir) => run(`S.pos = {place:PLACE, x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // in the place you're in
   const pressAt = (x, y, dir, what) => { stand(x, y, dir); return act('finishedAt = null; pressA()', what); };   // face something and press A (after a moment, as a player does: what you've just finished with rests)
   const stepOn = (x, y, what) => { stand(x, y, 'down'); return act(`arrive(${x}, ${y})`, what); };
-  // A walk, one square after another (from to to, along a row or a column, then the next leg), as a player walks it
+  // A walk, one square after another (from to to, along a row or a column, then the next leg), as a player walks it,
+  // with whatever happens as you arrive on each (someone stopping you, say)
   async function walk(legs, what){
     for (let i = 1; i < legs.length; i++){
       const [[fx, fy], [tx, ty]] = [legs[i - 1], legs[i]], dx = Math.sign(tx - fx), dy = Math.sign(ty - fy);
       for (let x = fx + dx, y = fy + dy; ; x += dx, y += dy){
         while (dy === 1 && run(`!!tileAt(${x}, ${y}).ledge`)) y++;   // hopping down a ledge (or a bank two squares high)
-        await stepOn(x, y, what);
+        stand(x, y, dy < 0 ? 'up' : dy > 0 ? 'down' : dx < 0 ? 'left' : 'right');
+        await act(`arrive(${x}, ${y}).then(runEvents)`, what);
         if (x === tx && y === ty) break;
       }
     }
@@ -308,6 +310,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[12, 43], [15, 43], [15, 38], [19, 38], [19, 34], [5, 34], [5, 26], [18, 26], [18, 19], [7, 19], [7, 13], [10, 13], [10, 6], [12, 6], [12, 1]],
     'walking up the hillside: through the gap in the hedge, over the brook, up the stone steps and through its long grass');
   assert.ok(get('__fights') >= 1, `something jumps out of the long grass on the way up (${get('__fights')})`);
+  assert.equal(area().lookTip, 1, 'the goat on the lookout stopped you on the way up, to tell you about the view');
   await stepOn(12, 0, 'going into the pine wood, through the archway');
   assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [16, 26], 'at the way in, at the bottom');

@@ -238,7 +238,7 @@ function dropOf(x, y){   // the drop this square is part of: how far down it thi
   let up = 0, dn = 0;
   while (isDrop(x, y - up - 1)) up++;
   while (isDrop(x, y + dn + 1)) dn++;
-  const open = a => !isDrop(a, y) && tileAt(a, y).look !== 'steps';   // (beside steps, a wall of rock: stoneSteps)
+  const open = a => a >= 0 && a < COLS && !isDrop(a, y) && tileAt(a, y).look !== 'steps';   // (beside steps, a wall of rock: stoneSteps; at the side of the map, it runs on beyond it)
   return {up, dn, top:up*T, H:(up + dn + 1)*T, endL:open(x-1), endR:open(x+1)};
 }
 function dropLip(g, X, Y, x, y, {endL, endR}){   // the ground above coming to the edge, its lip, and the grass hanging over: gives each column's first row below it
