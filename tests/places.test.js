@@ -98,18 +98,36 @@ test('the way up the stream: the mountain path, the river valley and deep in the
   assert.ok(get(game, "PLACES.cave.exits.every(e => e.to === 'falls')"), 'and you come out in front of it');
 });
 
-test('you can hop down a ledge, but never climb it: you scramble up a little and slip back down', () => {
-  const game = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place: 'path', x: 8, y: 11, dir: 'down'}}});
+test('you can hop down a bank, but never climb it: you scramble up a little and slip back down', () => {
+  const game = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place: 'path', x: 8, y: 10, dir: 'down'}}});
   game.run("mode = 'play'; placePlayer()");
-  assert.equal(get(game, 'tileAt(8, 12).look'), 'ledge');
+  assert.deepEqual(get(game, '[tileAt(8, 11).look, tileAt(8, 12).look]'), ['bank', 'bank'], 'a grassy bank, two squares high');
   game.run('tryStep("down", 10000)');
-  assert.deepEqual(get(game, '[pl.mv.tx, pl.mv.ty, pl.mv.hop]'), [8, 13, true], 'down over the ledge, landing below it');
+  assert.deepEqual(get(game, '[pl.mv.tx, pl.mv.ty, pl.mv.hop]'), [8, 13, true], 'down over the bank in one hop, landing below it');
   game.run("pl.mv = null; S.pos = {place: 'path', x: 8, y: 13, dir: 'up'}; placePlayer(); globalThis.__slips = 0; SFX.slip = () => __slips++; tryStep('up', 10000)");
   assert.deepEqual(get(game, '[pl.mv.tx, pl.mv.ty, !!pl.mv.slip, __slips]'), [8, 13, true, 1], 'not back up it: you slip back down where you were');
   game.run('update(10000 + SLIP_MS * .4)');
   assert.ok(get(game, 'pl.py') < get(game, '13 * T'), 'up a little first');
   game.run('update(10000 + SLIP_MS + 1)');
   assert.deepEqual(get(game, '[pl.mv, pl.x, pl.y, pl.py === 13 * T]'), [null, 8, 13, true], 'and back down, on the same square');
+});
+
+test('rock all round the mountain: its top, and at its front a cliff two squares high; at the top of the map, a cliff carries on out of sight', () => {
+  const game = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place: 'meadow', x: 9, y: 4, dir: 'up'}}});
+  game.run("mode = 'play'; placePlayer()");
+  assert.deepEqual(get(game, '[0, 1, 2, 3, 4, 5].map(y => tileAt(0, y).look)'), ['heights', 'heights', 'heights', 'cliffFace', 'cliffFace', 'tree']);
+  assert.ok(!get(game, '!!tileAt(0, 0).walk || !!tileAt(0, 3).walk'), 'you can’t walk on the rock');
+  assert.equal(get(game, 'dropOf(0, 3).up'), 0, 'its cliff starts at a lip, with the top of the rock above');
+  assert.deepEqual(get(game, '(d => [d.up, d.H])(dropOf(8, 0))'), [1, 2 * get(game, 'T')], 'behind the nook your stone is in, the cliff carries on above the map');
+  assert.equal(get(game, 'tileAt(-1, 5).look'), 'heights', 'beyond the edge of the map, more rock');
+  const goat = get(game, "AREA.animals.find(a => a.id === 'goat').at");
+  assert.equal(get(game, `tileAt(${goat}).look`), 'heights', 'the goat stands on top of its rock');
+  assert.ok(get(game, `walkable(${goat[0] + 1}, ${goat[1]})`), 'beside it, ground you can stand on to meet it');
+
+  game.run("S.pos = {place: 'path', x: 3, y: 13, dir: 'up'}; placePlayer(); tryStep('up', 10000)");   // the mountain path: stone steps up beside its bank
+  assert.deepEqual(get(game, '[tileAt(3, 12).look, pl.mv.ty, !!pl.mv.slip]'), ['steps', 12, false], 'up the steps');
+  game.run("pl.mv = null; S.pos = {place: 'path', x: 5, y: 13, dir: 'up'}; placePlayer(); tryStep('up', 10000)");
+  assert.deepEqual(get(game, '[tileAt(5, 12).look, pl.mv.ty, !!pl.mv.slip]'), ['bank', 13, true], 'not up the bank beside them');
 });
 
 test('setting off: the old monkey sends you up alone, and the waterfall at the end is where the water comes from', async () => {
@@ -163,10 +181,10 @@ test('the troop follows you up to the waterfall, like Pikachu in Pokémon Yellow
   game.run("step('up')");
   assert.deepEqual(at(), [['playful', 16, 17], ['big', 16, 18], ['elder', 16, 18]], 'and fall in one by one');
 
-  game.run("S.pos = {place: 'path', x: 8, y: 10, dir: 'down'}; placePlayer(); step('down'); step('down')");   // down over a ledge (a shortcut, the other way)
+  game.run("S.pos = {place: 'path', x: 8, y: 9, dir: 'down'}; placePlayer(); step('down'); step('down')");   // down over a bank (a shortcut, the other way)
   assert.deepEqual(get(game, '[pl.x, pl.y]'), [8, 13]);
   game.run("step('down')");
-  assert.deepEqual(at()[0], ['playful', 8, 13], 'the little monkey hops down the ledge after you');
+  assert.deepEqual(at()[0], ['playful', 8, 13], 'the little monkey hops down the bank after you');
   assert.ok(get(game, 'FOLLOWERS[0].mv.far'), 'with a leap');
 
   const kept = JSON.parse(game.storage.get('xiaohouzi-v2'));
@@ -264,7 +282,7 @@ test('animal friends on the way up: the rabbit and the fox give advice, the squi
   assert.equal(bubble(), '', 'and then its ! goes');
 });
 
-test('below the waterfall, a goat tells you that you can hop down the ledges, and stops you if you walk past', async () => {
+test('below the waterfall, a goat tells you that you can hop down the banks, and stops you if you walk past', async () => {
   const goat = climb => {
     const g = loadGame({dom: true, save: {version: 27, started: true, w: Object.fromEntries(['山羊', '你好', '瀑布'].map(w => [w, {lv: 1, due: 0, ok: 0}])),
       areas: {1: {gate: true, boar: 1, climb}}, pos: {place: 'falls', x: 7, y: 3, dir: 'down'}}});
@@ -293,7 +311,7 @@ test('below the waterfall, a goat tells you that you can hop down the ledges, an
   await finish(g, 'runEvents()');
   const heard = get(g, '__heard');
   assert.deepEqual(heard.slice(0, 2), ['你好！', 'you: 你好'], 'it stops you, and you say hello');
-  assert.match(heard[2], /hop down/, 'then it tells you about the ledges');
+  assert.match(heard[2], /hop down/, 'then it tells you about the banks');
   assert.equal(get(g, 'pl.dir'), 'left', 'you turned to face it');
   assert.equal(get(g, 'here().ledgeTip'), 1);
   assert.equal(bubble(), '', 'and its ! goes');
@@ -301,7 +319,7 @@ test('below the waterfall, a goat tells you that you can hop down the ledges, an
   await finish(g, 'runEvents()');
   assert.deepEqual(get(g, '__heard'), [], 'it only stops you once');
   await finish(g, "talk(NPCS.find(n => n.id === 'ledgeGoat'))");
-  assert.match(get(g, '__heard').join(' '), /Hop down the ledges/, 'talk to it again for a reminder');
+  assert.match(get(g, '__heard').join(' '), /Hop down the grassy banks/, 'talk to it again for a reminder');
 
   const asked = goat(2);   // talking to it first: it tells you then, and doesn't stop you as well
   asked.run("S.pos = {place: 'falls', x: 5, y: 4, dir: 'right'}; placePlayer()");
@@ -315,7 +333,7 @@ test('below the waterfall, a goat tells you that you can hop down the ledges, an
 test('standing in tall or long grass hides your feet, as in Pokémon; on the path it doesn’t', () => {
   const at = (place, x, y) => { const g = loadGame({save: {version: 25, started: true, areas: {1: {gate: true, climb: 1}}, pos: {place, x, y, dir: 'down'}}}); g.run("mode = 'play'; placePlayer()"); return g; };
   assert.deepEqual(get(at('meadow', 4, 7), 'feetInGrass()'), [[64, 124, 16, 4]], 'the bottom of your square, in the meadow’s tall grass');
-  assert.deepEqual(get(at('path', 8, 11), 'feetInGrass()'), [[128, 188, 16, 4]], 'the path’s long grass');
+  assert.deepEqual(get(at('path', 8, 10), 'feetInGrass()'), [[128, 172, 16, 4]], 'the path’s long grass');
   assert.deepEqual(get(at('path', 16, 15), 'feetInGrass()'), [], 'not on the path itself');
   const across = at('meadow', 4, 7);
   across.run('pl.px += T / 2');

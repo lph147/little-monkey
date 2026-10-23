@@ -96,7 +96,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(7, 2, 'up', 'meeting the old monkey');
   assert.equal(area().elder, 1, 'the old monkey should have said hello');
   assert.ok(knows('你好'), 'the old monkey should teach 你好');
-  await pressAt(8, 4, 'left', 'looking at the cliff');
+  await pressAt(7, 4, 'left', 'looking at the cliff');
   await pressAt(12, 7, 'down', 'looking at the tree');
   await stepOn(11, 7, 'walking into the flowers');
   await stepOn(4, 7, 'walking into the tall grass');
@@ -156,7 +156,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(11, 15, 'down', 'meeting the shop owner');
   assert.ok(knows('老板'), 'the shop owner should teach 老板');
   await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
-  await pressAt(5, 18, 'left', 'meeting the goat on the cliff');
+  await pressAt(5, 16, 'left', 'meeting the goat on top of its rock');
   for (let i = 0; i < 30 && get('S.met').length < 4; i++){   // walk about until the grass rustles, then step in
     const r = get('rustle');
     if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass'); else await stepOn(9, 7, 'walking about');
@@ -212,7 +212,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('瀑布'), 'the waterfall should teach 瀑布');
   stand(7, 4, 'down');
   await act('arrive(7, 4).then(runEvents)', 'walking down the narrow way, past the goat');
-  assert.equal(area().ledgeTip, 1, 'the goat below the waterfall should stop you, to tell you that you can hop down the ledges');
+  assert.equal(area().ledgeTip, 1, 'the goat below the waterfall should stop you, to tell you that you can hop down the banks');
   for (const [x, y, place] of [[5, 12, 'valley'], [19, 12, 'path'], [16, 19, 'meadow']]){
     await stepOn(x, y, 'going back down');
     assert.equal(run('PLACE'), place, `going back down, you should reach the ${place}`);

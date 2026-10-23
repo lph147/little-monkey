@@ -174,9 +174,8 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','ledge','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
-const CLIFFS = ['cliff'];
 const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
@@ -207,14 +206,6 @@ function tall(g, X, Y, x, y, [ground, blade, tip] = TALL){   // tufts of tall gr
   };
   tuft(0,1); tuft(8,0); tuft(4,6); tuft(9,9); tuft(0,10);
 }
-function cliff(g, X, Y, x, y){
-  R(g, X, Y, T, T, '#8E8A7E');
-  for (let i = 0; i < 10; i++){ const px = Math.floor(rnd(x,y,i+80)*16), py = Math.floor(rnd(x,y,i+90)*16); R(g, X+px, Y+py, 2, 1, i % 2 ? '#7E7A6F' : '#A3A094'); }
-  if (rnd(x,y,7) < .5){ const px = 3 + Math.floor(rnd(x,y,8)*10); R(g, X+px, Y+4, 1, 6, '#6F6B61'); R(g, X+px+1, Y+9, 1, 3, '#6F6B61'); }
-  const up = tileAt(x, y-1).look, dn = tileAt(x, y+1).look;
-  if (!CLIFFS.includes(up) && y > 0){ R(g, X, Y, T, 3, '#B5B1A4'); R(g, X, Y, T, 1, '#7CC46B'); }
-  if (!CLIFFS.includes(dn)){ R(g, X, Y+12, T, 3, '#6A665C'); R(g, X, Y+15, T, 1, '#4A463F'); }
-}
 function waterBase(g, X, Y, x, y){
   R(g, X, Y, T, T, '#3F8FCB');
   for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x,y,i+120)*14), py = Math.floor(rnd(x,y,i+130)*16); R(g, X+px, Y+py, 2, 1, '#367FB8'); }
@@ -226,35 +217,60 @@ function waterBase(g, X, Y, x, y){
     if (dx === 1){ R(g, X+14, Y, 2, T, '#2C6B9E'); }
   });
 }
-// The edge between two terraces (the hillside's), so you can see one is higher than the other: the ground above comes
-// to the edge, with a lit, rounded lip and grass hanging over it, as on a ledge; then a drop the same height all along,
-// in rock (a cliff) or in grass (a bank you can hop down), lit at the top and darker down to its foot; and its shadow on
-// the ground below (castShadow). However many squares high it is, it's one drop.
+// The edge between two levels (the hillside's terraces, and the rock all round the mountain), so you can see one is
+// higher than the other: the ground above comes to the edge, with a lit, rounded lip and grass hanging over it, as on a
+// ledge; then a drop two squares high, the same all along, in rock (a cliff) or in grass (a bank you can hop down), lit
+// at the top and darker down to its foot; and its shadow on the ground below (castShadow). At the top of the map, a
+// shorter one carries on above it, out of sight.
 const DROPS = ['cliffFace', 'bank'];
 const isDrop = (x, y) => DROPS.includes(tileAt(x, y).look);
+const isMass = (x, y) => { const l = tileAt(x, y).look; return l === 'heights' || DROPS.includes(l); };   // higher than the ground round it: the top of the rock, or a drop
 const FACE = {lit:'#C9C4B6', top:'#ABA698', foot:'#77726A', crack:'#57534A', base:'#45413A', side:'#3A352E'};
 const BANKS = {top:'#86CB70', foot:'#3F8238', blade:'#3A7A35', tip:'#9BD884', base:'#2C5E2A'};
 function dropOf(x, y){   // the drop this square is part of: how far down it this square starts, its height, and where it ends
   let up = 0, dn = 0;
-  while (isDrop(x, y - up - 1)) up++;
+  while (y - up - 1 >= 0 && isDrop(x, y - up - 1)) up++;
   while (isDrop(x, y + dn + 1)) dn++;
   const open = a => a >= 0 && a < COLS && !isDrop(a, y) && tileAt(a, y).look !== 'steps';   // (beside steps, a wall of rock: stoneSteps; at the side of the map, it runs on beyond it)
-  return {up, dn, top:up*T, H:(up + dn + 1)*T, endL:open(x-1), endR:open(x+1)};
+  const n = up + dn + 1, past = y - up === 0 && n < 2 ? 2 - n : 0;   // (at the top of the map, the rows of it above, out of sight)
+  return {up:up + past, dn, top:(up + past)*T, H:(n + past)*T, endL:open(x-1), endR:open(x+1)};
 }
 function dropLip(g, X, Y, x, y, {endL, endR}){   // the ground above coming to the edge, its lip, and the grass hanging over: gives each column's first row below it
-  const above = tileAt(x, y-1);
+  const above = tileAt(x, y-1), rock = above.look === 'heights';   // (the top of the rock: a lip of rock, a tuft hanging over it now and then)
   g.save(); g.beginPath(); g.rect(X, Y, T, 10); g.clip();
   (LOOKS[above.look] || grass)(g, X, Y - T + 10, x, y - 1);
   g.restore();
   const below = [];
   for (let c = 0; c < T; c++){
     const e = Math.min(endL ? c : 9, endR ? 15 - c : 9), d = 2 + (rnd(x*T + c, y, 503) < .3 ? 1 : 0) + ([6, 3, 1][e] || 0);   // (further down at a corner)
-    R(g, X+c, Y+d, 1, 1, '#A9E08F'); R(g, X+c, Y+d+1, 1, 1, BANKS.top);
-    const hang = c % 2 ? (c % 4 === 1 ? 2 : 1) : 0;
-    R(g, X+c, Y+d+2, 1, hang, BANKS.blade);
+    R(g, X+c, Y+d, 1, 1, rock ? TOP.edge : '#A9E08F'); R(g, X+c, Y+d+1, 1, 1, rock ? TOP.lip : BANKS.top);
+    const hang = rock ? (rnd(x*T + c, y, 512) < .18 ? 2 : 0) : c % 2 ? (c % 4 === 1 ? 2 : 1) : 0;
+    R(g, X+c, Y+d+2, 1, hang, rock ? TOP.tuft : BANKS.blade);
     below.push(d + 2 + hang);
   }
   return below;
+}
+// The top of a mass of rock you can't climb, seen from above (round the meadow, up the mountain path, deep in the
+// mountains): flat rock, lighter than the cliff at its front, with specks, a crack now and then and a tuft of grass;
+// where the ground beside it is lower, its edge, lit, with a dark line outside it (and its shadow on the ground to its
+// right: castShadow); and at the back, where it falls away out of sight, a dark line. Its front is a cliff, two squares
+// high (decided 23 October 2026, from a mock-up: on top, grass looked like somewhere you could walk, and loose stones
+// or chunks of rock like paving).
+const TOP = {rock:'#A39E90', light:'#B7B2A4', dark:'#928D80', crack:'#7A7569', edge:'#DDD8CB', lip:'#D3CEC1', grass:'#6FAE57', grassDark:'#4F8F45', tuft:'#4E8A42'};
+function heights(g, X, Y, x, y){
+  R(g, X, Y, T, T, TOP.rock);
+  for (let i = 0; i < 9; i++){ const px = Math.floor(rnd(x,y,i+80)*15), py = Math.floor(rnd(x,y,i+90)*16); R(g, X+px, Y+py, 2, 1, i % 2 ? TOP.dark : TOP.light); }
+  if (rnd(x,y,7) < .45){   // a crack
+    const px = 3 + Math.floor(rnd(x,y,8)*10), py = 2 + Math.floor(rnd(x,y,9)*6);
+    R(g, X+px, Y+py, 1, 5, TOP.crack); R(g, X+px+1, Y+py+4, 1, 3, TOP.crack); R(g, X+px+1, Y+py, 1, 4, TOP.light);
+  }
+  if (rnd(x,y,670) < .4){   // a tuft of grass
+    const px = 2 + Math.floor(rnd(x,y,671)*10), py = 3 + Math.floor(rnd(x,y,672)*10);
+    [[0,2],[1,1],[2,0],[3,1],[4,2]].forEach(([a, b]) => R(g, X+px+a, Y+py+b, 1, 1, TOP.grass)); R(g, X+px, Y+py+3, 5, 1, TOP.grassDark);
+  }
+  if (!isMass(x, y-1)){ R(g, X, Y, T, 1, FACE.crack); R(g, X, Y+1, T, 1, TOP.edge); }   // (off the map, it carries on)
+  if (!isMass(x-1, y)){ R(g, X, Y, 1, T, FACE.side); R(g, X+1, Y, 1, T, TOP.edge); }
+  if (!isMass(x+1, y)){ R(g, X+13, Y, 1, T, TOP.edge); R(g, X+14, Y, 1, T, FACE.foot); R(g, X+15, Y, 1, T, FACE.side); }
 }
 // Natural rock, as chunks round points scattered over it (each pixel belongs to the nearest), cw by ch pixels apart:
 // how near this pixel is to its chunk's crack (d2 - d1: under 1 is on it), and which way from its chunk's middle it is.
@@ -307,18 +323,23 @@ function bank(g, X, Y, x, y){
     if (!dn){ R(g, X+c, Y+14, 1, 1, BANKS.blade); R(g, X+c, Y+15, 1, 1, BANKS.base); }
   }
 }
-// The shadow a drop casts on the ground at its foot (drawn over that ground, whatever it is: drawTiles).
+// The shadow a drop casts on the ground at its foot, and rock on the ground to its right (drawn over that ground,
+// whatever it is: drawTiles).
 const SHADOW = ['#1C3A1C55', '#1C3A1C38', '#1C3A1C1C'];
 function castShadow(g, X, Y, x, y){
+  if (x > 0 && isMass(x-1, y) && !isMass(x, y) && tileAt(x, y).look !== 'steps') for (let r = 0; r < T; r++){
+    const deep = 2 + (rnd(x, y*T + r, 508) < .5 ? 1 : 0);
+    for (let c = 0; c <= deep; c++) R(g, X+c, Y+r, 1, 1, SHADOW[Math.max(0, c - deep + 2)]);
+  }
   if (!isDrop(x, y-1) || isDrop(x, y) || tileAt(x, y).look === 'steps') return;
   for (let c = 0; c < T; c++){
     const deep = 2 + (rnd(x*T + c, y, 507) < .5 ? 1 : 0);
     for (let r = 0; r <= deep; r++) R(g, X+c, Y+r, 1, 1, SHADOW[Math.max(0, r - deep + 2)]);
   }
 }
-// Stone steps cut up a cliff (the hillside's), so you can see them climb from one level to the other: a few steps to a
+// Stone steps cut up a cliff or a bank, so you can see them climb from one level to the other: a few steps to a
 // square, each a lit tread with its edge catching the light and a riser in shade under it, paler higher up; set into
-// the cliff between walls of rock, the ground above coming round the top of them, and the path going on below.
+// it between walls of rock, the ground above coming round the top of them, and the path going on below.
 const STAIR = {tread:'#E4DDC9', treadLow:'#B8AF97', nose:'#F4EFE2', riser:'#9C9482', riserLow:'#736B5C', crease:'#5A5347'};
 function stoneSteps(g, X, Y, x, y){
   const isSteps = (a, c) => tileAt(a, c).look === 'steps';
@@ -326,7 +347,7 @@ function stoneSteps(g, X, Y, x, y){
   while (isSteps(x, y - up - 1)) up++;
   while (isSteps(x, y + dn + 1)) dn++;
   const H = (up + dn + 1) * T, top = up * T, n = Math.round(H / 6), stepTop = i => Math.round(i * H / n);
-  const wallL = isDrop(x-1, y), wallR = isDrop(x+1, y);
+  const wallL = isMass(x-1, y), wallR = isMass(x+1, y);
   for (let r = 0; r < T; r++){
     const fy = top + r, k = fy / (H - 1), i = Math.floor(fy * n / H), o = fy - stepTop(i), h = stepTop(i + 1) - stepTop(i);
     const col = o < h - 2 ? (o === h - 3 ? STAIR.nose : mix(STAIR.tread, STAIR.treadLow, k)) : o === h - 1 ? STAIR.crease : mix(STAIR.riser, STAIR.riserLow, k);
@@ -488,22 +509,8 @@ function stoneTablet(g, X, Y, says){   // a stone tablet on a plinth, with what 
   write(g, says, L + 3, top + 2, '#5E574C', {down: true});
   R(g, X-1, Y+11, 18, 4, CAVE_OUT); R(g, X, Y+12, 16, 2, STONE_FRONT); R(g, X, Y+12, 16, 1, STONE);   // the plinth, a little wider
 }
-// The mountain path's ground: long grass (the meadow's tall grass, a shade darker: wild animals live in it), ledges
+// The mountain path's ground: long grass (the meadow's tall grass, a shade darker: wild animals live in it), banks
 // (you hop down them), bushes and boulders along its edges, and a fallen tree.
-// A ledge, as in Pokémon: the grass ends in a rounded lip, with a short grassy bank below it, lit at the top and darker
-// down to its foot, and its shadow on the grass below. Where a row of ledges ends, the lip curves down.
-const BANK = ['#A9E08F', '#5FA14F', '#4F9445', '#4F9445', '#3F7F38', '#3F7F38'];
-function ledge(g, X, Y, x, y){
-  grass(g, X, Y, x, y);
-  const end = a => tileAt(a, y).look !== 'ledge', left = end(x-1), right = end(x+1);
-  for (let i = 0; i < T; i++){
-    const e = Math.min(left ? i : 9, right ? 15 - i : 9), top = Y + 6 + ([4, 2, 1][e] || 0);   // how far from the end it is, and where its lip is
-    for (let k = 0; top + k < Y + 12; k++) R(g, X+i, top + k, 1, 1, BANK[Math.min(k, BANK.length - 1)]);
-    if (i % 2 && e > 0) R(g, X+i, top + 2, 1, i % 4 === 1 ? 2 : 1, '#3F7F38');   // grass hanging over the lip
-    if (e === 0) R(g, X+i, top + 1, 1, Y + 12 - top, '#2C5E2A');                // the very end
-    R(g, X+i, Y+12, 1, 1, '#2C5E2A'); R(g, X+i, Y+13, 1, 2, '#5FA853');         // its foot, and its shadow
-  }
-}
 function bush(g, X, Y, x, y){   // a round bush, its leaves like the trees'
   grass(g, X, Y, x, y);
   groundShadow(g, X+8, Y+14, 7, 2);
@@ -648,9 +655,7 @@ const LOOKS = {
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
   stall:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },   // the practice post, one square
-  cliff:     (g,X,Y,x,y) => cliff(g,X,Y,x,y),
   longGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y,LONG),
-  ledge:     (g,X,Y,x,y) => ledge(g,X,Y,x,y),
   bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
   plot:      (g,X,Y,x,y) => plot(g,X,Y,x,y),   // ground marked out for building
   frame:     (g,X,Y,x,y) => plot(g,X,Y,x,y),   // the school's frame going up on its plot: a big object (OBJECT_ART), on the plot's earth
@@ -680,9 +685,10 @@ const LOOKS = {
   tablet:    (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),   // (the stone tablet is a big object, taller than its square: OBJECT_ART)
   curtain:   (g,X,Y,x,y) => { R(g,X,Y,T,T,'#8FD0EE'); },   // the falling water is animated in js/draw.js
 
-  steps:     (g,X,Y,x,y) => stoneSteps(g,X,Y,x,y),   // stone steps up a cliff (the hillside's)
-  cliffFace: (g,X,Y,x,y) => cliffFace(g,X,Y,x,y),    // a cliff between two terraces (the hillside's)
-  bank:      (g,X,Y,x,y) => bank(g,X,Y,x,y),         // a grassy bank between them, that you hop down
+  steps:     (g,X,Y,x,y) => stoneSteps(g,X,Y,x,y),   // stone steps up a cliff or a bank
+  cliffFace: (g,X,Y,x,y) => cliffFace(g,X,Y,x,y),    // a cliff, two squares high: between two terraces, or the front of the rock
+  bank:      (g,X,Y,x,y) => bank(g,X,Y,x,y),         // a grassy bank, as high, that you hop down
+  heights:   (g,X,Y,x,y) => heights(g,X,Y,x,y),      // the top of the rock, seen from above
   slabs:     (g,X,Y,x,y) => slabs(g,X,Y,x,y),        // a stone platform (the lookout's)
   railing:   (g,X,Y,x,y) => slabs(g,X,Y,x,y),        // its railing stands on it (a big object: OBJECT_ART)
   steppingStones:(g,X,Y,x,y) => steppingStones(g,X,Y,x,y),   // flat stones across a brook, to step on

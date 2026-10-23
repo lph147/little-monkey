@@ -37,7 +37,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   cave    after the story: 0 not dared yet, 1 dared to jump, 2 been inside the cave, 3 told the old monkey,
   //           4 led the troop in, 5 heard it's home, 6 made king
   //   count   how many of the troop you've counted into the cave
-  //   ledgeTip 1 once the goat below the waterfall has told you that you can hop down the ledges
+  //   ledgeTip 1 once the goat below the waterfall has told you that you can hop down the banks
   //   home    chapter 1, the troop's home ground beside the waterfall: 0 not yet, 1 the old monkey is going there with you,
   //           2 you've been there with him
   //   build   chapter 1, building the school: 0 not yet, 1 the big monkey has marked out its plot and wants wood and small
@@ -207,7 +207,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{hungry:'done', new:'没关系'}, show:'!'}],   // once he's eaten, he wants to say sorry for being fussy
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
-    ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the ledges
+    ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
     big: [{if:{climb:1, new:'棍子'}, show:'!'},
@@ -363,11 +363,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[16, 0], to:'path', arrive:[16, 18], facing:'up', if:{climb:{atLeast:1}}, closed:'The old monkey wants to talk to you first.'}
       ],
       map: [
-        "MMMMMMMMMMMMMMM..MWWMMMM",
-        "MMMMMMMggSggMMg..gWWYYYY",
-        "MMMMMMMgg.gNMMg..JWWYYYY",
+        "^^^^^^^MMMMM^^M..MWWMMMM",
+        "^^^^^^^ggSgg^^g..gWWYYYY",
+        "^^MMM^^gg.gN^^g..JWWYYYY",
         "MMMMMMMgg.ggMMg..gWWYYYY",
-        "MMgggMMMg.gMMMMRRMWWYYYY",
+        "MMgggMMgg.ggMMoRRoWWYYYY",
         "YTggggggg.ggggg..gWWYYYY",
         "YPg.............ggWWYYYY",
         "YTggGGGGgggFggg.ggWWgggY",
@@ -379,17 +379,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggggggggggggWWgGgY",
         "YTgGGGggggggggFgggWWGGgY",
         "YTggggg.ggggggTgggWWgggY",
-        "YMMMMgg.HHHgggggggWWgggY",
-        "YMMMMgg.gggEggggggWWgQgY",
-        "YMMMMgg.GGGGgTggggWWgggY",
+        "Y^^^^gg.HHHgggggggWWgggY",
+        "Y^^^Mgg.gggEggggggWWgQgY",
+        "Y^^MMgg.GGGGgTggggWWgggY",
         "YMMMggg...........BBgEgY",
         "YMMgEggGGGggggggggWWgggY",
         "YYYYYYYYYYYYYYYYYYWWYYYY"
       ]
     },
     // The way up the stream, from the meadow to the waterfall (the end of the prologue), in three places that follow the
-    // river. Bushes, boulders and ledges send you through long grass (there's no way round), where snakes and bees jump out.
-    // The mountain path: up beside the river, but ledges send you west, through long grass, and back east along a terrace.
+    // river. Bushes, boulders and banks send you through long grass (there's no way round), where snakes and spiders jump
+    // out. The mountain path: up beside the river, but a bank sends you west, up stone steps, and back east through long
+    // grass along a terrace.
     // A clearing on the left has a peach tree and the squirrel.
     path: {
       name: {zh:'山路', py:'shānlù', en:'The mountain path'},
@@ -398,26 +399,26 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[16, 0], to:'valley', arrive:[19, 11], facing:'up'}, {at:[17, 0], to:'valley', arrive:[19, 11], facing:'up'}       // on up to the river valley
       ],
       map: [
-        "YYYYYYYYYYYYYYYYrrWWMMMM",
-        "YYYYYYYYYYYYYYYgrrWWMMMM",
-        "YYYggggYYYYYYYYgrgWWMMMM",
-        "YYgPgggJYYYYYYYgrgWWMMMM",
-        "YYggggJggrrrrrrrrgWWMMMM",
-        "YYYggggwwYYYYYYgrgWWMMMM",
-        "YYYYwwwYYYYYYYYgrgWWMMMM",
-        "MMMMMMwwwwwwwwwgrwWWMMMM",
-        "MMgggggnnnnnnggrrgWWMMMM",
-        "MMgrrrrnnnnnnrrrggWWMMMM",
-        "MMgrggnnnnnnnggoggWWMMMM",
-        "MMgrggnnnnnnnggggoWWMMMM",
-        "MMrrovvvvvvvvvvvvvWWMMMM",
-        "MMrgggnnnnnnnnngggWWMMMM",
-        "MMrrrrnnnnnnnnrrrgWWMMMM",
-        "MMggggnnnnnnnngrrgWWMMMM",
-        "MMMgggnnnnnnnngrrgWWMMMM",
-        "MMMMMMnnnnnnnngrrgWWMMMM",
-        "MMMMMMMMMMMMMMMrrMWWMMMM",
-        "MMMMMMMMMMMMMMMrrMWWMMMM"
+        "YYYYYYYYYYYYYYYYrrWW^^^^",
+        "YYYYYYYYYYYYYYYgrrWW^^^^",
+        "YYYggggYYYYYYYYgrgWW^^^^",
+        "YYgPgggJYYYYYYYgrgWW^^^^",
+        "YYggggJggrrrrrrrrgWW^^^^",
+        "YYYggggwwYYYYYYgrgWW^^^^",
+        "YYYYwwwYYYYYYYYgrgWW^^^^",
+        "^^wwwwwwwwwwwwwgrwWW^^^^",
+        "^^gggggnnnnnnggrrgWW^^^^",
+        "^^grrrrnnnnnnrrrggWW^^^^",
+        "^^rrggnnnnnnnggoggWW^^^^",
+        "^^==MvvvvvvvvvvvvvWW^^^^",
+        "^^==MvvvvvvvvvvvvvWW^^^^",
+        "^^rrggnnnnnnnnngggWW^^^^",
+        "^^rrrrnnnnnnnnrrrgWW^^^^",
+        "^^ggggnnnnnnnngrrgWW^^^^",
+        "^^^gggnnnnnnnngrrgWW^^^^",
+        "^^^^^^nnnnnnnngrrgWW^^^^",
+        "^^^^^^^^^^^^^^^rr^WW^^^^",
+        "^^^^^^^^^^^^^^^rr^WW^^^^"
       ]
     },
     // The river valley: the river turns, coming from the west. At the first bridge the way forks: over it, away from the
@@ -430,23 +431,24 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[5, 0], to:'falls', arrive:[5, 11], facing:'up'}, {at:[6, 0], to:'falls', arrive:[5, 11], facing:'up'}           // on up, deep into the mountains
       ],
       map: [
-        "MMMWWrrMMMMMMMMMMMMMMMMMMM",
-        "MMYWWrrgYYYYYMMYYYYYYYYYMM",
-        "MMYWWnnnnnnYYMMYggggJgQgYM",
-        "MMYWWnnnnnnnYMMYgJggggggYM",
-        "MMwWWnnnnnnnwMMwggggggggwM",
-        "MMwWWgrgggggwMMwwggrggwwwM",
-        "MMwWWWkWWWWWWWWWWWWkWWWwwM",
-        "MMwWWWkWWWWWWWWWWWWkWWWwwM",
-        "MMwgggrgnnnnnnnngggrgWWwwM",
-        "MMwwgrrrnnnnnnnnrrrrgWWwwM",
-        "MMwPlgggnnnnnnnngggrgWWwwM",
-        "MMwwwgTgnnnnnnnngTgrgWWwwM",
-        "MMMMMMMMMMMMMMMMMMMrrWWMMM"
+        "^^MWWrrMMMMMM^^MMMMMMMMMM^",
+        "^^YWWrrgYYYYY^^YYYYYYYYYM^",
+        "^^YWWnnnnnnYY^^YggggJgQgY^",
+        "^^YWWnnnnnnnY^^YgJggggggY^",
+        "^^wWWnnnnnnnwMMwggggggggw^",
+        "^^wWWgrgggggwMMwwggrggwww^",
+        "^^wWWWkWWWWWWWWWWWWkWWWww^",
+        "^^wWWWkWWWWWWWWWWWWkWWWww^",
+        "^^wgggrgnnnnnnnngggrgWWww^",
+        "^^wwgrrrnnnnnnnnrrrrgWWww^",
+        "^^wPlgggnnnnnnnngggrgWWww^",
+        "^^wwwgTgnnnnnnnngTgrgWWww^",
+        "^^^^^^^^^^^^^^^^^^^rrWW^^^"
       ]
     },
-    // Deep in the mountains: beside the river, east along the bottom, then back west across long grass, past the wild boar
-    // in the narrow way, to the waterfall where the river begins. Jump through it into the Water Curtain Cave.
+    // Deep in the mountains: beside the river, east along the bottom and up stone steps beside a bank, then back west across
+    // long grass, past the wild boar in the narrow way, to the waterfall where the river begins, pouring down the cliff.
+    // Jump through it into the Water Curtain Cave.
     falls: {
       name: {zh:'深山', py:'shēnshān', en:'Deep in the mountains'},
       exits: [
@@ -456,19 +458,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ],
       glimpse: [3, 0, 2, 2],   // the cave, just visible behind the falling water (x, y, how wide, how tall)
       map: [
-        "MMMXXMMMMMMMMMMMMMMM",
-        "MMMXXgggJgMMMMMMMMMM",
-        "MMYWWggrgggfffffffff",
-        "MMYWWwwrwwwYYYYYYYMM",
-        "MMYWWggrnnnnnngggYMM",
-        "MMYWWggrnnnnnngPgYMM",
-        "MMwWWrrrnnnnnnrrrwMM",
-        "MMwWWgggnnnnnngrgwMM",
-        "MMwWWgggnnnnnngrgwMM",
-        "MMwWWvvvvvvvvvrrgwMM",
-        "MMwWWrrrrrrrrrrggwMM",
-        "MMwWWrgggTggggggTwMM",
-        "MMMWWrrMMMMMMMMMMMMM"
+        "^^MXXMMMMMMMMMMMMMMM",
+        "^^MXXgggJgMMMMMMMMMM",
+        "^^YWWggrgggfffffffff",
+        "^^YWWwwrwwwYYYYYYY^^",
+        "^^YWWggrnnnnnngggY^^",
+        "^^YWWggrnnnnnngPgY^^",
+        "^^wWWrrrnnnnnnrrrw^^",
+        "^^wWWgggnnnnnnrrgw^^",
+        "^^wWWvvvvvvvvv==Mw^^",
+        "^^wWWvvvvvvvvv==Mw^^",
+        "^^wWWrrrrrrrrrrrgw^^",
+        "^^wWWrgggTggggggTw^^",
+        "^^^WWrr^^^^^^^^^^^^^"
       ]
     },
     // Behind the waterfall. You jump in through the water curtain at the bottom, and walk out
@@ -518,7 +520,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
       ],
       map: [
-        "YYYYYYYYYYYYYYYYYYYYYYYYYbYYYYYY",
+        "YMMMMMMMMMMMMMMMMMMMMMMMYbYYYYYY",   // the cliff behind the school, rising out of sight
         "YMMMMMMMMMMMMMMMMMMMMMMMg.gYYYYY",
         "Ygggggggsssssssgggggggggg.FEJFFY",
         "YgTggg1gsssssssgggggTgggg.3hhhgY",
@@ -562,13 +564,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       legend: {
         'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider', 'spider', 'wolf']},   // long grass: snakes and spiders, and now and then a wolf
         'f': {look:'flowers', walk:true},                     // flowers on the slope (not for picking)
-        's': {look:'steps', walk:true},                       // stone steps up a cliff
         'z': {look:'steppingStones', walk:true},              // stepping stones over the brook
         'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},   // mushrooms under the pines (just to look at)
         'A': {look:'archway', walk:true, says:'松林'},         // the way through the archway into the pine wood, with its name on the board over it
         'I': {look:'archPost'},                               // the archway's pillars
-        'M': {look:'cliffFace', word:'山'},                   // a cliff between two terraces: the ground above comes to its edge, its face, and its shadow below
-        'v': {look:'bank', ledge:true},                       // a grassy bank between them, as high as the cliffs, that you hop down
         'L': {look:'slabs', walk:true},                       // the lookout's stone platform
         'R': {look:'railing', landmark:true, onLook:[{do:[{scene:'lookout'}]}]}   // its railing, at the top of the cliff: A shows you the view
       },
@@ -589,22 +588,22 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYpgggg.ggogggggnnnggggpYY",
         "YYgggg..ggggggggnnnnTgpgYY",
         "YYgTgg..gggggggggggggTggYY",
-        "MMMMMMssMMvvvvvvvMMMMMMMMM",   // stone steps up the cliff (left), a grassy bank to hop down (middle): right across, off the map at both sides
-        "MMMMMMssMMvvvvvvvMMMMMMMMM",
+        "MMMMMM==MMvvvvvvvMMMMMMMMM",   // stone steps up the cliff (left), a grassy bank to hop down (middle): right across, off the map at both sides
+        "MMMMMM==MMvvvvvvvMMMMMMMMM",
         "YYgggg..ggggggggggggggggYY",
         "YYGGGg..............ggggYY",   // along the terrace to the lookout
         "YYGGGogggggggnnngg..LLLLYY",   // the lookout: a stone platform at the top of the cliff
         "YYGGGgggggggTgnngo..LLLLYY",
         "YYgggTggggggggggTg..RRRRYY",   // its railing
-        "MMMMMMMMvvvvvvvMMMssMMMMMM",   // stone steps (right), a bank (middle)
-        "MMMMMMMMvvvvvvvMMMssMMMMMM",
+        "MMMMMMMMvvvvvvvMMM==MMMMMM",   // stone steps (right), a bank (middle)
+        "MMMMMMMMvvvvvvvMMM==MMMMMM",
         "YYggggggggonnggggg..ggggYY",   // long grass right across, among boulders
         "YYgggg....nnn.......ggTgYY",
         "YYgTgg.gggnnnggggggnnnggYY",
         "YYggg..gognonTgggggnnnggYY",
         "YYgTg..gggnnoggggggggTggYY",
-        "MMMMMssMMMvvvvvvvvMMMMMMMM",   // stone steps (left), a bank (middle)
-        "MMMMMssMMMvvvvvvvvMMMMMMMM",
+        "MMMMM==MMMvvvvvvvvMMMMMMMM",   // stone steps (left), a bank (middle)
+        "MMMMM==MMMvvvvvvvvMMMMMMMM",
         "YYgfg..fgfgfggfgggfgfggfYY",   // a slope of flowers; a peach tree in the corner
         "YYgPg..gfgfgfggffggfgffgYY",
         "YYfgg...............ggfgYY",
@@ -727,7 +726,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   label          what the A button says when you face it (Look if not given)
   //   becomes        what it turns into once the story says: [{if, to}], to being another letter of the legend (the first
   //                  whose if matches), such as the rocks once they've rolled away
-  //   ledge          true for a ledge: you can hop down it from above (landing just below), never climb it
+  //   ledge          true for a bank (a ledge): you can hop down it from above (landing just below it, however high it
+  //                  is), never climb it
   //   wild           the enemies that jump out to fight as you walk through it (see enemies)
   //   onLook         steps for pressing A at it, as in talk below: the first part whose if matches runs,
   //                  instead of its action or card (when none matches, it's looked at as usual); a part's
@@ -762,7 +762,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'K': {look:'post', landmark:true, label:'Train', action:'training', becomes:[{if:{school:{atLeast:1}}, to:'g'}]},   // the training ground (the troop uses the post to build the school: lessons take its place)
     'H': {look:'stall'},   // the shop owner's stall: as wide as its row of H (three squares)
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', becomes:[{if:{gate:true}, to:'.'}]},
-    'M': {look:'cliff', word:'山'},
+    // the rock all round the mountain: its top, seen from above (^), and at its front a cliff two squares high (M), as
+    // between the hillside's terraces; grassy banks as high, that you hop down (v); and stone steps up them (=)
+    'M': {look:'cliffFace', word:'山'},
+    '^': {look:'heights', word:'山'},
+    '=': {look:'steps', walk:true},
     'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story', onLook:[
@@ -776,7 +780,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'w': {look:'bush'},   // bushes along the path
     'o': {look:'boulder', word:'石头'},   // a boulder by the path
     'k': {look:'bridgeAcross', walk:true},   // a bridge over the river in the valley, to walk across it up or down
-    'v': {look:'ledge', ledge:true},
+    'v': {look:'bank', ledge:true},
     'l': {look:'log', word:'树', landmark:true, message:'A fallen tree blocks the way. Maybe the troop can move it one day.'},
     // the Water Curtain Cave
     'Z': {look:'caveWall'},
@@ -881,7 +885,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'fox', place:'valley', x:18, y:8, facing:'down', look:'狐狸'},        // at the fork
     {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊'},       // in the clearing over the first bridge
     // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
-    // down the ledges (it stops you if you walk past: see events)
+    // down the banks (it stops you if you walk past: see events)
     {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
     // chapter 1: a goat on the hillside's lookout, by its railing, looking out (it stops you as you pass, the first time,
     // to tell you to take a look: see events). Wherever there's something you might miss, a goat is there to tell you.
@@ -1050,7 +1054,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'rabbit', word:'兔子'},
     {id:'fox', word:'狐狸'},
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
-    {id:'goat', word:'山羊', at:[4, 18], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
+    {id:'goat', word:'山羊', at:[4, 16], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
     {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'}
@@ -1362,12 +1366,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ],
     goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
       notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}, {reply:'谢谢', about:'The {山羊} gives you a {苹果}.', pic:'苹果'}]}}]}],
-    // the goat below the waterfall: the way down is quicker, hopping down the ledges that sent you round on the way up
+    // the goat below the waterfall: the way down is quicker, hopping down the banks that sent you round on the way up
     ledgeGoat: [
       {if:{ledgeTip:0}, do:[{say:'hi'}, {reply:'你好'},
-        {message:'Going down is quicker! The ledges that sent you the long way round can’t be climbed, but you can hop down them. Just walk off the edge.'},
+        {message:'Going down is quicker! The grassy banks that sent you the long way round can’t be climbed, but you can hop down them. Just walk off the edge.'},
         {set:{ledgeTip:1}}]},
-      {do:[{say:'hi'}, {reply:'你好'}, {message:'Going down the mountain? Hop down the ledges: it’s quicker.'}]}
+      {do:[{say:'hi'}, {reply:'你好'}, {message:'Going down the mountain? Hop down the grassy banks: it’s quicker.'}]}
     ],
     // the goat on the hillside's lookout: have a look at the view
     lookoutGoat: [

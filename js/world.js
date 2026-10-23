@@ -1,7 +1,7 @@
 // What happens in the world: where you can walk, tasks, talking to characters, looking at things and wild animals.
 
 /* ================= WORLD LOGIC ================= */
-const EDGE = {look:'cliff'};   // what lies beyond the edge of the map
+const EDGE = {look:'heights'};   // what lies beyond the edge of the map: rock (so a cliff or the top of the rock carries on past it)
 const BIRD_WORD = (AREA.birds || {}).word;   // the word for the birds that land near you
 function tileAt(x, y){         // the legend entry for the map letter at x, y (or what it has become, as the story goes on)
   if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return EDGE;

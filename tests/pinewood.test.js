@@ -110,7 +110,8 @@ test('knocking down a dead pine draws again only what’s around it, not the who
   assert.ok(g.run('__pines') > 0 && g.run('__pines') <= 60, `and the pines it overlapped (${g.run('__pines')} drawings), not all ${g.run('OBJECT_PIECES.length')} of them twice`);
   assert.ok(!g.run('OBJECT_PIECES.some(p => p.look === "deadPine" && p.x === 2 && p.y === 18)'), 'the dead pine is gone from the map’s objects');
   g.run("__tiles.length = 0; S.pos = {place: 'homeGround', x: 3, y: 9, dir: 'right'}; placePlayer()");
-  assert.equal(get(g, '__tiles').length, g.run('COLS * ROWS'), 'another place is drawn whole');
+  const whole = new Set(get(g, '__tiles').filter(([x, y]) => x >= 0 && y >= 0).map(String));   // (a cliff's lip draws a little of what's above it too)
+  assert.equal(whole.size, g.run('COLS * ROWS'), 'another place is drawn whole');
 });
 
 test('a square that has changed stays changed in a saved game, but only while the map still has there what changed', () => {

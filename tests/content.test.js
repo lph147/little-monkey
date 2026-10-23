@@ -134,6 +134,26 @@ test('the map of every place is a rectangle', () => {
   }
 });
 
+test('cliffs and banks are two squares high, so every level looks as high as the next (at the top of the map, the rest is out of sight); steps climb all of one, between walls of rock', () => {
+  const EDGES = ['cliffFace', 'bank', 'steps'], ROCK = ['heights', 'cliffFace', 'bank'];
+  for (const [id, map] of allMaps){
+    const look = (x, y) => (legendOf(id)[(map[y] || '')[x]] || {}).look;
+    map.forEach((row, y) => [...row].forEach((ch, x) => {
+      const l = look(x, y);
+      if (EDGES.includes(l) && !EDGES.includes(look(x, y - 1))){   // the top of a drop
+        let n = 1; while (EDGES.includes(look(x, y + n))) n++;
+        assert.ok(n === 2 || (y === 0 && n < 2), `${id}: the ${l} at ${x},${y} is ${n} square${n === 1 ? "" : "s"} high; make it 2, as everywhere`);
+      }
+      if (l === 'heights') assert.ok(y === map.length - 1 || ['heights', 'cliffFace'].includes(look(x, y + 1)),
+        `${id}: the top of the rock at ${x},${y} needs more rock or a cliff below it, not ${look(x, y + 1)}`);
+      if (l === 'steps') for (const dx of [-1, 1]){
+        let a = x + dx; while (look(a, y) === 'steps') a += dx;
+        assert.ok(a < 0 || a >= row.length || ROCK.includes(look(a, y)), `${id}: the steps at ${x},${y} need rock beside them, not ${look(a, y)}`);
+      }
+    }));
+  }
+});
+
 test('every letter on the map is in the legend (the area’s, or the place’s own)', () => {
   for (const [id, map] of allMaps) map.forEach((row, y) => [...row].forEach((ch, x) => {
     assert.ok(legendOf(id)[ch], `${id}: the map has "${ch}" at ${x},${y}, but the legend doesn't say what "${ch}" is`);
