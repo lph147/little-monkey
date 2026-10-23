@@ -68,6 +68,27 @@ const MAP_SPRITES = {
       "................"
     ]
   },
+  '羊': {   // sheep: woolly, with a black face and legs
+    palette: {o:'#3A342F', w:'#F6F2E8', g:'#D6CFBF', k:'#2B2622', e:'#FFFFFF', n:'#6A6058'},
+    rows: [
+      ".....oooooo.....",
+      "....owwgwwwo....",
+      "...owwwwwwgwo...",
+      "..oowkkkkkkwoo..",
+      ".okkokkkkkkokko.",
+      "..ooookekkekooo.",
+      "..owwkkkkkkwwo..",
+      ".owwwwkkkkwwwwo.",
+      ".owgwwknnkwwgwo.",
+      ".owwwwwkkwwwwwo.",
+      ".owgwwwwwwwwgwo.",
+      ".owwwwgwwgwwwwo.",
+      "..owwwwwwwwwwo..",
+      "...owwwwwwwwo...",
+      "...okko..okko...",
+      "...oooo..oooo..."
+    ]
+  },
   '山羊': {   // goat
     palette: {o:'#3E3A33', w:'#EDE8DD', g:'#C9C2B3', h:'#8C7A5B', e:'#1E1E1E', p:'#E8A7A0'},
     rows: [

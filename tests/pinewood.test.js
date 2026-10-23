@@ -340,6 +340,7 @@ test('a deer lives in the sunny glade: chapter 1’s animal, counted on its own,
   assert.equal(get(g, 'animalAt(30, 3).home'), '草', 'it grazes in the glade: if you don’t make friends, it goes back to the 草 (grass)');
   assert.equal(g.run('promptFor(30, 3)'), 'Meet');
   assert.ok(!g.run('walkable(30, 3)'), 'you can’t walk through it');
+  g.run("S.met = ['rabbit', 'sheep', 'squirrel', 'goat']");   // (a game that met the sheep in the meadow, since 23 October 2026)
   assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft")]'), [4, 4, 0], 'the prologue’s four animals, all found');
   const item = () => get(g, 'areaChecklist().find(([t]) => /that lives in the pine wood/.test(t))');
   assert.equal(item()[1], false, 'on the checklist, to find');
@@ -348,10 +349,10 @@ test('a deer lives in the sunny glade: chapter 1’s animal, counted on its own,
   assert.deepEqual(get(g, '__met'), {spot: true, at: [30, 3]}, 'it stays where it stands as you meet it (it doesn’t jump out of the ground again)');
   assert.ok(get(g, '__notes').includes('card: 鹿'), 'meeting it teaches 鹿');
   assert.ok(!get(g, '__notes').some(n => /Animals found/.test(n)), 'the only animal to find here: no count');
-  assert.deepEqual(get(g, 'S.met'), ['rabbit', 'fox', 'squirrel', 'goat', 'deer']);
+  assert.deepEqual(get(g, 'S.met'), ['rabbit', 'sheep', 'squirrel', 'goat', 'deer']);
   assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft"), counter("woodAnimalsLeft")]'), [4, 4, 0, 0]);
   assert.equal(item()[1], true, 'found');
-  const early = loadGame({save: {version: 29, started: true, met: ['rabbit', 'fox', 'squirrel', 'deer'], areas: {1: {elder: 2}}, w: KNOWS}});
+  const early = loadGame({save: {version: 29, started: true, met: ['rabbit', 'sheep', 'squirrel', 'deer'], areas: {1: {elder: 2}}, w: KNOWS}});
   assert.deepEqual(JSON.parse(early.run('JSON.stringify([counter("found"), counter("animals"), counter("animalsLeft")])')), [3, 4, 1],
     'in the prologue, the deer doesn’t count: the rocks wait for the goat');
 });

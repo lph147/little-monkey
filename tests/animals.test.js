@@ -6,8 +6,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
-const ALL = ['rabbit', 'fox', 'squirrel', 'goat'];
-const NAMES = {'兔子': 'rabbit', '狐狸': 'fox', '松鼠': 'squirrel', '山羊': 'goat'};
+const ALL = ['rabbit', 'sheep', 'squirrel', 'goat'];   // (the sheep took the fox's place on 23 October 2026)
+const NAMES = {'兔子': 'rabbit', '羊': 'sheep', '松鼠': 'squirrel', '山羊': 'goat'};
 const word = (soon, lv = 1) => (soon ? {lv, ok: 0, next: 50} : {lv, ok: 3, next: 100});   // soon: it needs practice (otherwise known well, far back in the list)
 const FRONT = Object.fromEntries(['石头', '山', '花', '草', '树', '河', '水', '鱼'].map((w, i) => [w, {lv: 1, ok: 3, next: i}]));   // other words, at the front of the list
 
@@ -18,15 +18,15 @@ function picks(save, n = 2000){
 const share = (list, id) => list.filter(x => x === id).length / list.length;
 
 test('once you have met them all, an animal whose name needs practice jumps out most often', () => {
-  const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(hz === '狐狸')]));
+  const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(hz === '羊')]));
   const got = picks({met: ALL, w});
-  assert.ok(share(got, 'fox') > 0.7, `狐狸 needs practice, so the fox should be picked most (it was ${share(got, 'fox')})`);
+  assert.ok(share(got, 'sheep') > 0.7, `羊 needs practice, so the sheep should be picked most (it was ${share(got, 'sheep')})`);
   for (const id of ['rabbit', 'squirrel', 'goat']) assert.ok(share(got, id) > 0.02, `${id} should still turn up sometimes`);
 });
 
 test('an animal you have not met yet still comes first', () => {
   const w = Object.fromEntries(Object.keys(NAMES).map(hz => [hz, word(true)]));   // all need practice
-  const got = picks({met: ['rabbit', 'fox', 'squirrel'], w});
+  const got = picks({met: ['rabbit', 'sheep', 'squirrel'], w});
   assert.ok(share(got, 'goat') > 0.7, `the goat hasn't been met, so it should be picked most (it was ${share(got, 'goat')})`);
 });
 

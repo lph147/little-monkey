@@ -11,7 +11,7 @@
 
 // Pretend saves. Words are {lv, due, ok}: lv 1 Caught, 2 Recognised, 3 Read, 4 Used.
 const knows = (lv, words) => Object.fromEntries(words.map(w => [w, {lv, due: 0, ok: 0}]));
-const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
+const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '水果', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
 const QUIET = {sound: false, music: false};
 const ALL_TIPS = {walk: 1, talk: 1, look: 1, grey: 1, menu: 1};   // tips already had (js/tips.js)
 const SAVES = {
@@ -38,7 +38,7 @@ SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '�
 SAVES.lowTalk = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}};   // on the path at the bottom of the meadow, facing the little monkey (before the gate, it's there)   // every word Recognised: animals ask you to read
 // chapter 1 has begun: the prologue is done, and the troop is at the waterfall; you're beside the old monkey
 const PROLOGUE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 3, story: true, bought: ['头带'], cave: 0};
-SAVES.chapter1 = {...SAVES.middle, w: knows(1, [...MIDDLE_WORDS, '瀑布', '狐狸', '松鼠', '山羊', '朋友']), met: ['rabbit', 'fox', 'squirrel', 'goat'],
+SAVES.chapter1 = {...SAVES.middle, w: knows(1, [...MIDDLE_WORDS, '瀑布', '羊', '松鼠', '山羊', '朋友']), met: ['rabbit', 'sheep', 'squirrel', 'goat'],
   wardrobe: {owned: ['头带'], wearing: ['头带']}, areas: {1: PROLOGUE}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
 SAVES.dared = {...SAVES.chapter1, w: {...SAVES.chapter1.w, ...knows(1, ['跳'])}, areas: {1: {...PROLOGUE, cave: 1}}, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
 SAVES.inCave = {...SAVES.dared, w: {...SAVES.dared.w, ...knows(1, ['洞'])}, areas: {1: {...PROLOGUE, cave: 2}}, pos: {place: 'cave', x: 7, y: 9, dir: 'up'}};
@@ -109,7 +109,7 @@ SAVES.fighting = {...SAVES.climbing, w: {...SAVES.climbing.w, ...knows(1, ['棍�
 SAVES.packed = {...SAVES.fighting, hearts: 3, areas: {1: {...SAVES.fighting.areas[1], thirsty: 'asked', holding: {thirsty: '水'}}}};   // hurt, with fruit, and water for the thirsty monkey
 SAVES.byPeaches = {...SAVES.fighting, pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}};   // by a peach tree, the hungry monkey fed
 SAVES.hurt = {...SAVES.fighting, hearts: 2, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};
-SAVES.valley = {...SAVES.fighting, pos: {place: 'valley', x: 18, y: 9, dir: 'up'}};   // at the fork in the river valley, by the fox
+SAVES.valley = {...SAVES.fighting, pos: {place: 'valley', x: 18, y: 9, dir: 'up'}};   // at the fork in the river valley, by the sheep
 SAVES.deepIn = {...SAVES.fighting, pos: {place: 'falls', x: 7, y: 5, dir: 'up'}};   // below the wild boar, deep in the mountains
 SAVES.atTheTop = {...SAVES.climbing, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
 SAVES.foundFall = {...SAVES.fighting, w: {...SAVES.fighting.w, ...knows(1, ['瀑布', '野猪', '山羊', '朋友'])}, areas: {1: {...SAVES.fighting.areas[1], flowers: 'done', climb: 2, boar: 1}},
@@ -117,8 +117,12 @@ SAVES.foundFall = {...SAVES.fighting, w: {...SAVES.fighting.w, ...knows(1, ['瀑
 SAVES.leading = {...SAVES.foundFall, version: 28, areas: {1: {...SAVES.foundFall.areas[1], climb: 3, ledgeTip: 1}}, following: ['playful', 'big', 'elder'],
   pos: {place: 'path', x: 16, y: 18, dir: 'up'}};   // leading the troop up, at the bottom of the mountain path (version 28: climb 3 is leading them up)
 SAVES.appleTree = {...SAVES.middle, pos: {place: 'meadow', x: 20, y: 17, dir: 'right'}};
+SAVES.bySheep = {...SAVES.middle, pos: {place: 'meadow', x: 3, y: 6, dir: 'up'}};   // below the sheep, at the foot of the cliffs by your stone
+// by a peach tree, the hungry monkey asking for fruit, and you know 水 but not 水果 (fruit) or 桃子 (peach) yet
+SAVES.fruitTree = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => !['水果', '桃子'].includes(w))), areas: {1: {...SAVES.middle.areas[1], holding: {}}},
+  pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}};
 SAVES.withApple = {...SAVES.middle, bag: {'苹果': 1}};   // an apple from the shop, to eat in an encounter
-SAVES.allFriends = {...SAVES.chapter1, friends: ['rabbit', 'fox', 'squirrel', 'goat']};   // every animal won over
+SAVES.allFriends = {...SAVES.chapter1, friends: ['rabbit', 'sheep', 'squirrel', 'goat']};   // every animal in the prologue won over
 SAVES.wantsApple = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], holding: {}, wanted: {hungry: '苹果'}}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
 SAVES.facing = {...SAVES.born, tips: {walk: 1}, pos: {x: 7, y: 2, dir: 'up'}};   // facing the old monkey, having walked
 SAVES.noMenuTip = {...SAVES.middle, tips: {...ALL_TIPS, menu: 0}};
@@ -212,9 +216,12 @@ const SCREENS = [
   {id: 'behind-tree', title: 'Behind a tree', save: 'middle', why: 'Its leaves cover you as you walk behind it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 12, y: 7, dir: 'left'}; placePlayer(); await wait(500); }},
   {id: 'stall', title: 'The shop owner’s stall', save: 'middle', why: 'Three squares wide, with the shop owner beside it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 9, y: 18, dir: 'up'}; placePlayer(); await wait(500); }},
   {id: 'apple-tree', title: 'The apple tree', save: 'appleTree', why: 'In the south-east, across the river, with yellow flowers nearby.', run: async () => { play(); await wait(500); }},
+  {id: 'meadow-sheep', title: 'A sheep at the foot of the cliffs', save: 'bySheep', why: 'Near your stone, eating grass: 羊 (sheep), then the goat on its rock to the south, 山羊 (goat: a mountain sheep).', run: async () => { play(); await wait(500); }},
+  {id: 'fruit-tree', title: 'A fruit tree: 水果 first', save: 'fruitTree', why: 'It sparkles once you know 水 (water). A at a peach or apple tree shows its word, 水果 (fruit), first; picking teaches the fruit.', run: async () => {
+    play(); await wait(100); interact(1, 6); await wait(400); }},
   {id: 'wants-other', title: 'He wants the other fruit', save: 'wantsApple', why: 'After you bring the peach first.', run: async () => { play(); await wait(500); }},
   {id: 'animal-card', title: 'Meeting an animal', save: 'middle', why: 'The first time: its name on a new-word card.', run: async () => {
-    play(); await wait(100); showNotice('狐狸', {note: 'A wild fox jumped out of the 草 (grass)! Answer its questions to make friends.'}); await wait(400); }},
+    play(); await wait(100); showNotice('羊', {note: 'A sheep is eating grass at the foot of the 山 (mountain). Answer its questions to make friends.'}); await wait(400); }},
   {id: 'animal-wants-to-play', title: 'It wants to play!', save: 'middle', why: 'An animal you’ve met jumps out of the grass and says 我们玩吧！ (Let’s play!), over its name, with what’s happening under it; Play starts its questions (the first time, its card says what’s happening). So its questions never just start.', run: async () => {
     play(); await wait(100); rec('狐狸').lv = Math.max(rec('狐狸').lv || 0, 1); wildAppears(ANIMALS.find(a => a.id === 'fox')); await wait(2600); }},
   {id: 'encounter-listen', title: 'Animal: listen', save: 'middle', why: 'The question must never be about the animal itself.', run: async () => {
@@ -248,8 +255,8 @@ const SCREENS = [
   {id: 'mountain-path', title: 'The mountain path', save: 'climbing', why: 'Bushes and ledges send you through the long grass, where wild animals live.', run: async () => { play(); await wait(500); }},
   {id: 'rabbit-advice', title: 'The rabbit’s advice', save: 'climbing', why: 'Animal friends from the meadow, met on the way up: the rabbit, by the long grass.', run: async () => {
     play(); await wait(200); S.pos = {place: 'path', x: 15, y: 15, dir: 'left'}; placePlayer(); await wait(200); talk(npc('rabbit')); await wait(500); }},
-  {id: 'river-fork', title: 'The fork in the river valley', save: 'valley', why: 'Over the bridge, away from the river, or along it? The fox gives a hint.', run: async () => {
-    play(); await wait(200); talk(npc('fox')); await wait(500); }},
+  {id: 'river-fork', title: 'The fork in the river valley', save: 'valley', why: 'Over the bridge, away from the river, or along it? The sheep gives a hint.', run: async () => {
+    play(); await wait(200); talk(npc('sheep')); await wait(500); }},
   {id: 'goat-play', title: 'The goat wants to play', save: 'valley', why: 'In the clearing over the first bridge (a dead end): a word game.', run: async () => {
     play(); await wait(200); S.pos = {place: 'valley', x: 19, y: 4, dir: 'up'}; placePlayer(); await wait(200); talk(npc('goat')); await wait(300); pressA(); await wait(500); }},
   {id: 'deep-mountains', title: 'Deep in the mountains', save: 'deepIn', why: 'The wild boar blocks the narrow way to the waterfall.', run: async () => { play(); await wait(500); }},

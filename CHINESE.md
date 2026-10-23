@@ -49,7 +49,7 @@ shown where the word list has them.
 | 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 小猴子 (Little monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
 | 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | 兔子 (rabbit) |  |
-| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | 狐狸 (fox) |  |
+| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | 羊 (sheep) |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 小猴子 (You) |  |
 | 这是棍子。 | zhè shì gùnzi. | This is a stick. | 大猴子 (Big monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
@@ -154,6 +154,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | Chinese | Pinyin | English | For the word | Notes |
 | --- | --- | --- | --- | --- |
 | 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
+| 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | 羊 |  |
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
 | 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
 | 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
@@ -270,11 +271,12 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 苹果 | píngguǒ | apple |  |
 | 河 | hé | river |  |
 | 水 | shuǐ | water |  |
+| 水果 | shuǐguǒ | fruit |  |
 | 鱼 | yú | fish |  |
 | 鸟 | niǎo | bird |  |
 | 动物 | dòngwù | animal |  |
 | 兔子 | tùzi | rabbit |  |
-| 狐狸 | húli | fox |  |
+| 羊 | yáng | sheep |  |
 | 松鼠 | sōngshǔ | squirrel |  |
 | 山羊 | shānyáng | goat |  |
 | 洞 | dòng | cave |  |
@@ -295,6 +297,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 野猪 | yězhū | wild boar |  |
 | 鹿 | lù | deer |  |
 | 狼 | láng | wolf |  |
+| 狐狸 | húli | fox |  |
 | 跳 | tiào | to jump |  |
 | 桥 | qiáo | bridge |  |
 | 床 | chuáng | bed |  |
@@ -339,7 +342,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 是 | shì | am, is, are |  |
-| 水果 | shuǐguǒ | fruit |  |
 | 和 | hé | and |  |
 | 后面 | hòumiàn | behind |  |
 | 大 | dà | big |  |
@@ -459,7 +461,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants |  |
 | 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
 | 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 and 19 October 2026: The rabbit, by the long grass on the mountain path |  |
-| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 and 19 October 2026: The fox, at the fork in the river valley |  |
+| 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 and 19 October 2026: The sheep (the fox until 23 October 2026), at the fork in the river valley |  |
 | 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
 | 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
 | 累了吗？去床上睡觉吧！ | lèi le ma? qù chuáng shàng shuìjiào ba! | Tired? Go and sleep in a bed! | New on 18 and 19 October 2026: A monkey just inside the cave’s entrance (teaching 睡觉 shuìjiào, to sleep; 累 lèi, tired, is just for listening) |  |
@@ -527,9 +529,11 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 红色的花 | hóngsè de huā | A red flower | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): What you see on a card when you pick a red flower for him (and 黄色的花, a yellow flower, and 白色的花, a white flower) |  |
 | 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, when you bring them |  |
 | 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The sentence you finish when you give him the flowers (filling in 红色) |  |
+| 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside |  |
 
 ## Questions
 
+- A sheep in the meadow teaches 羊 (yáng) as sheep, before the goat teaches 山羊 (shānyáng), so players see that a goat is a mountain sheep. Strictly, 羊 means any sheep or goat, and 绵羊 (miányáng) is the exact word for sheep. Is 羊 natural for the sheep?
 - The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?
 - Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better? (White paints the step at the door, 台阶, not the paper in the windows: you paste window paper on, so 刷窗户纸 seemed wrong.)
 - When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)

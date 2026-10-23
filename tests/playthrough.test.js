@@ -114,7 +114,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(13, 6, 'up', 'meeting the hungry monkey');
   await pressAt(13, 6, 'up', 'talking to the hungry monkey again, before finding any fruit');   // (he used to say nothing)
   assert.equal(area().hungry, 'asked', 'the hungry monkey should ask for some fruit');
+  await pressAt(2, 6, 'left', 'looking at the peach tree');
+  assert.ok(knows('水果') && !knows('桃子') && area().holding.hungry === undefined, 'A at a fruit tree shows you its word first, 水果 (fruit), not the peach');
   await pressAt(2, 6, 'left', 'picking a peach');
+  assert.ok(knows('桃子'), 'picking it teaches 桃子');
   assert.equal(area().holding.hungry, '桃子', 'you should be holding the peach');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the peach');
   assert.equal(area().holding.hungry, undefined, 'the peach is given back');
@@ -155,6 +158,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // The shop owner, and the animals in the tall grass
   await pressAt(11, 15, 'down', 'meeting the shop owner');
   assert.ok(knows('老板'), 'the shop owner should teach 老板');
+  await pressAt(3, 5, 'up', 'meeting the sheep at the foot of the cliffs, near your stone');
+  assert.ok(knows('羊'), 'the sheep teaches 羊');
   await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
   await pressAt(5, 16, 'left', 'meeting the goat on top of its rock');
   for (let i = 0; i < 30 && get('S.met').length < 4; i++){   // walk about until the grass rustles, then step in
@@ -162,7 +167,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass'); else await stepOn(9, 7, 'walking about');
   }
   assert.equal(get('S.met').length, 4, 'all four animals should be found');
-  assert.ok(['rabbit', 'fox', 'squirrel', 'goat'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
+  assert.ok(['rabbit', 'sheep', 'squirrel', 'goat'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
 
   // The practice post: matching pictures, then listening for words without pictures
   await pressAt(13, 10, 'up', 'training at the practice post');
@@ -306,7 +311,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await act('arrive(25, 0).then(runEvents)', 'going up through the bushes he cleared');
   assert.equal(run('PLACE'), 'hillside', 'up the hillside to the pine wood');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [12, 43]);
-  run('globalThis.__fights = 0; (() => { const b = wildBattle; wildBattle = (...a) => { __fights++; return b(...a); }; })()');
+  for (let i = 0; i < 30 && !get('S.met').includes('fox'); i++){   // walk about until its tall grass rustles, then step in
+    const r = get('rustle');
+    if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass on the hillside'); else await stepOn(12, 42, 'walking about at the foot of the hillside');
+  }
+  assert.ok(knows('狐狸') && get('S.friends').includes('fox'), 'a fox jumps out of the hillside’s tall grass, teaching 狐狸, and becomes your friend');
+  assert.equal(run('counter("hillAnimalsLeft")'), 0, 'the animal on the hillside is found');
+  run('globalThis.__fights = 0;(() => { const b = wildBattle; wildBattle = (...a) => { __fights++; return b(...a); }; })()');
   await walk([[12, 43], [15, 43], [15, 38], [19, 38], [19, 34], [5, 34], [5, 26], [18, 26], [18, 19], [7, 19], [7, 13], [10, 13], [10, 6], [12, 6], [12, 1]],
     'walking up the hillside: through the gap in the hedge, over the brook, up the stone steps and through its long grass');
   assert.ok(get('__fights') >= 1, `something jumps out of the long grass on the way up (${get('__fights')})`);

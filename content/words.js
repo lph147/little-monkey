@@ -48,11 +48,12 @@ const WORD_BANK = {
   '苹果': {py:'píngguǒ', en:'apple', pic:'🍎', area:1, category:'food'},
   '河': {py:'hé', en:'river', pic:'🏞️', area:1, category:'nature', alike:['瀑布']},
   '水': {py:'shuǐ', en:'water', pic:'💧', area:1, category:'food', alike:['喝']},
+  '水果': {py:'shuǐguǒ', en:'fruit', pic:'🧺', area:1, category:'food', alike:['桃子', '苹果']},   // (the fruit trees teach it, since 23 October 2026: heard only till then)
   '鱼': {py:'yú', en:'fish', pic:'🐟', area:1, category:'animals'},
   '鸟': {py:'niǎo', en:'bird', pic:'🐦', area:1, category:'animals'},
   '动物': {py:'dòngwù', en:'animal', pic:'🐾', area:1, category:'animals', alike:['*animals']},
   '兔子': {py:'tùzi', en:'rabbit', pic:'🐇', area:1, category:'animals'},
-  '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},
+  '羊': {py:'yáng', en:'sheep', pic:'🐑', area:1, category:'animals', alike:['山羊']},   // (the fox's place in the prologue, since 23 October 2026: 羊, then 山羊)
   '松鼠': {py:'sōngshǔ', en:'squirrel', pic:'🐿️', area:1, category:'animals'},
   '山羊': {py:'shānyáng', en:'goat', pic:'🐐', area:1, category:'animals'},
   '洞': {py:'dòng', en:'cave', pic:'🕳️', area:1, category:'places'},
@@ -74,6 +75,7 @@ const WORD_BANK = {
   '野猪': {py:'yězhū', en:'wild boar', pic:'🐗', area:1, category:'animals'},
   '鹿': {py:'lù', en:'deer', pic:'🦌', area:1, category:'animals'},   // (chapter 1: a friend in the pine wood)
   '狼': {py:'láng', en:'wolf', pic:'🐺', area:1, category:'animals'},   // (chapter 1: in the pine wood's long grass)
+  '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},   // (chapter 1: hiding on the hillside; in the meadow's tall grass until 23 October 2026)
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
   '桥': {py:'qiáo', en:'bridge', pic:'🌉', area:1, category:'places'},
   '床': {py:'chuáng', en:'bed', pic:'🛏️', area:1, category:'items', alike:['睡觉']},
@@ -118,7 +120,6 @@ const WORD_BANK = {
 
   // Heard in sentences
   '是': {py:'shì', en:'am, is, are'},
-  '水果': {py:'shuǐguǒ', en:'fruit'},
   '和': {py:'hé', en:'and'},
   '后面': {py:'hòumiàn', en:'behind'},
   '大': {py:'dà', en:'big'},

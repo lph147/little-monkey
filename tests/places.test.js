@@ -266,12 +266,12 @@ test('in the river valley the way forks: over the first bridge, away from the ri
   assert.equal(wayUp(game, {from: ['valley', 19, 9], blocked: ['valley,19,7']}), true, 'along the river is the way up');
 });
 
-test('animal friends on the way up: the rabbit and the fox give advice, the squirrel and the goat want to play', async () => {
+test('animal friends on the way up: the rabbit and the sheep give advice, the squirrel and the goat want to play', async () => {
   const game = loadGame({save: {version: 25, started: true, w: Object.fromEntries(['松鼠', '石头', '山', '花', '草'].map(w => [w, {lv: 1, due: 0, ok: 0}])), areas: {1: {gate: true, climb: 1}}, pos: {place: 'path', x: 5, y: 4, dir: 'up'}}});
   const steps = id => get(game, `AREA.talk.${id}[0].do.map(s => Object.keys(s)[0])`);
-  for (const id of ['rabbit', 'fox']) assert.ok(!steps(id).includes('wordGame') && steps(id)[0] === 'say', `the ${id} says something useful`);
+  for (const id of ['rabbit', 'sheep']) assert.ok(!steps(id).includes('wordGame') && steps(id)[0] === 'say', `the ${id} says something useful`);
   for (const id of ['squirrel', 'goat']) assert.ok(steps(id).includes('wordGame'), `the ${id} plays a word game`);
-  assert.deepEqual(get(game, "['rabbit', 'squirrel', 'fox', 'goat'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'valley', 'valley']);
+  assert.deepEqual(get(game, "['rabbit', 'squirrel', 'sheep', 'goat'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'valley', 'valley']);
   const name = get(game, "speaker('squirrel')");
   assert.match(name, /松鼠 <span class="spk-py">sōngshǔ<\/span>/, 'called by its word, with pinyin');
   assert.doesNotMatch(name, /spk-en/, 'and no English: it’s a word you know');

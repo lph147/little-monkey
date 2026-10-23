@@ -117,6 +117,20 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.eye(8, 11); p.dot(5, 14, '#3E2412');
     p.fill(O(8.5, 21, 2.4, 2.8), '#8A5A2A', {edge: true}); p.fill(O(8.5, 18.6, 2.6, 1.4), '#5E3B1F');
   },
+  '羊': p => {   // sheep, standing: round and woolly, with a black face and legs (unlike the goat: smooth, with horns and a beard)
+    const leg = '#3A342F';
+    p.fill(or(Rc(10, 21, 3, 8), Rc(14.5, 22, 3, 7), Rc(21, 22, 3, 7), Rc(25, 21, 3, 8)), leg);
+    p.flat(or(Rc(10, 28, 3, 1), Rc(14.5, 28, 3, 1), Rc(21, 28, 3, 1), Rc(25, 28, 3, 1)), '#1E1A16');
+    const wool = or(O(19.5, 16.5, 9.5, 6.5), O(12, 12.5, 3.7), O(16, 10, 3.9), O(21, 9.5, 3.9), O(26, 11, 3.7), O(29, 15.5, 3), O(27.5, 20.5, 3.5),
+      O(22, 22.5, 3.6), O(16, 22.5, 3.6), O(11.5, 19.5, 3.4));
+    p.fill(wool, '#F6F2E8', {dark: '#D6CFBF', edge: true});
+    for (const [x, y] of [[15, 14], [20, 13], [25, 15], [18, 18], [23, 19], [13, 17], [27, 18]]) p.dot(x, y, '#E2DCCE');   // curls in the wool
+    p.fill(O(7, 15, 3.6, 4.5), leg, {edge: true});                      // its face
+    p.fill(O(10.2, 12, 2.6, 1.2), leg, {edge: true});                    // an ear
+    p.fill(O(8.3, 10.6, 2.8, 2.1), '#F6F2E8', {dark: '#D6CFBF'});        // a tuft of wool on top
+    p.dot(5, 14, '#FFFFFF'); p.dot(6, 14, '#FFFFFF'); p.dot(5, 15, '#FFFFFF'); p.dot(6, 15, '#1E1A16');   // its eye
+    p.flat(O(5, 18.5, 1.3, .8), '#5A524A');                              // its nose
+  },
   '山羊': p => {   // goat, standing
     p.fill(or(Rc(10, 20, 3, 8), Rc(14, 20, 3, 8), Rc(21, 20, 3, 8), Rc(25, 20, 3, 8)), '#E2DACA');
     p.flat(or(Rc(10, 27, 3, 2), Rc(14, 27, 3, 2), Rc(21, 27, 3, 2), Rc(25, 27, 3, 2)), '#4A453D');
@@ -189,6 +203,19 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(or(O(16, 11, 9.5, 8), O(9, 15.5, 6.2, 5.5), O(24, 15.5, 6.2, 5.5), O(16.5, 17.5, 8, 4.6)), LEAF);
     p.flat(or(O(12.5, 8, 3.5, 2.4), O(7.5, 13.5, 2, 1.6)), '#7CC46B');
     [[19, 12], [12, 16], [22, 17], [16, 19], [9, 18]].forEach(([x, y]) => p.flat(Rc(x, y, 2, 1), '#2F7A3E'));
+  },
+  '水果': p => {   // fruit: a basket of all sorts, bananas, grapes, an orange and an apple (unlike 桃子 and 苹果: one of a kind)
+    p.fill(path([[6, 15], [10, 7.5], [17, 4.5]], 2.3), '#F5D33F', {dark: '#D9B02A'});   // bananas, at the back
+    p.fill(path([[9, 16], [14, 9], [21, 6.5]], 2.1), '#F8DE5A', {dark: '#D9B02A', edge: true});
+    p.flat(or(O(17.6, 4.6, 1, 1), O(21.6, 6.5, 1, 1)), '#6B4A2A');
+    p.fill(or(O(22, 12, 2), O(25.5, 12, 2), O(23.8, 15, 2), O(27, 15, 2), O(25.5, 18, 2)), '#7E4BA8', {edge: true});   // grapes
+    p.fill(Cp(24, 9.5, 25, 6.5, .8), '#5BAA4B');
+    p.fill(O(10, 18, 4.6, 4.4), '#F39A2A', {edge: true}); p.dot(10, 14, '#5BAA4B'); p.dot(8, 16, '#FFC27A');   // an orange
+    p.fill(or(O(16.5, 18.5, 3.6, 4), O(20.5, 18.5, 3.6, 4)), '#E0303A', {edge: true}); p.flat(O(17.5, 16.6, 1.3, 1.6), '#FF8A80');   // an apple
+    p.fill(Pg([[3, 20], [29, 20], [26, 30], [6, 30]]), '#C08A4E', {edge: true});   // the basket
+    p.flat(or(Rc(5, 23, 22, 1), Rc(6, 26, 20, 1)), '#8E6234');
+    p.flat(or(...[8, 12, 16, 20, 24].map(x => Rc(x, 21, 1, 2)), ...[10, 14, 18, 22].map(x => Rc(x, 24, 1, 2)), ...[8, 12, 16, 20, 24].map(x => Rc(x, 27, 1, 2))), '#8E6234');
+    p.fill(Rc(2, 19, 28, 2, 1), '#D9A464', {dark: '#A8743E'});   // its rim
   },
   '桃子': p => {   // peach
     p.fill(Rc(15, 6, 2, 4), BARK);

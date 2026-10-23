@@ -100,9 +100,9 @@ test('the rocks roll away only once the rest of the prologue is done: the hungry
     await g.run('runEvents()');
     return g.run('here().gate');
   };
-  const all = ['rabbit', 'fox', 'squirrel', 'goat'], helped = {hungry: 'done', thirsty: 'done'};
+  const all = ['rabbit', 'sheep', 'squirrel', 'goat'], helped = {hungry: 'done', thirsty: 'done'};
   assert.equal(await gate({hungry: 'done'}, all), false, 'not before the thirsty monkey has its water');
-  assert.equal(await gate(helped, ['rabbit', 'fox']), false, 'not before every animal is found');
+  assert.equal(await gate(helped, ['rabbit', 'sheep']), false, 'not before every animal is found');
   assert.equal(await gate(helped, all, ['山', '河', '树', '鱼']), false, 'not before the meadow’s words are learned (here, all but 鸟)');
   assert.equal(await gate(helped, all), true, 'and not waiting for the big monkey’s flowers: they’re in chapter 1 now (decided 22 October 2026)');
 });

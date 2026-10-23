@@ -114,6 +114,43 @@ const PICTURES = {
       ".........FFFFF.FFFFF............"
     ]
   },
+  '羊': {   // sheep
+    palette: {a:'#5C5853', b:'#514C44', c:'#F9F6EF', d:'#D6CFBF', e:'#F6F2E8', f:'#322E2A', g:'#75716D', h:'#221E1B', i:'#3A342F', j:'#E2DCCE', k:'#FFFFFF', l:'#1B1713', m:'#2D2925', n:'#1E1A16', o:'#29241E', p:'#5A524A', q:'#3A3632', r:'#8F8C87', s:'#16120E'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "..............aaab.aaab.........",
+      ".............acccdacccdb.ab.....",
+      "............aceeeeceeeedacdbb...",
+      "......aaaabaceeeeeeeeeeeceecdb..",
+      ".....accccdceeeeeeeeeeeeeeeedb..",
+      ".....aceeedeeeeeeeeeeeeeeeeeedb.",
+      "....fgdeeddhheeeeeeeeeeeeeeeedb.",
+      "...fgiiddhhhheeeeeeeeeeeeeeedbb.",
+      "...fgiiiiheeeeeeeeeejeeeeeeeecdb",
+      "..fgikkiiiheeeejeeeeeeeeeeeeeeed",
+      "..lmikniiiheeeeeeeeeeeeeejeeeeed",
+      "...fgiiiihceeeeeeeeeeeeeeeeeeeed",
+      "...lmiiiiheeejeeeeeeeeeeeeeeeedb",
+      "...oppmmheeeeeeeeejeeeeeeeejedb.",
+      "....oolaceeeeeeeeeeeeeejeeeeeedb",
+      ".......bdeeeeeeeeeeeeeeeeeeeeedb",
+      "........bdeeeeeeeeeeeeeeeeeeeedb",
+      ".........qrrreeeeeeeeeeeereeedb.",
+      ".........fgimreeeeeeeeeergrrdb..",
+      ".........fgimreeeeddeeeergiml...",
+      ".........fgimbdrrrqbdrrrfgiml...",
+      ".........fgimlfgiml.fgimfgiml...",
+      ".........fgimlfgiml.fgimfgiml...",
+      ".........snnnssnnns.snnnsnnns...",
+      "..........sss..sss...sss.sss....",
+      "................................",
+      "................................"
+    ]
+  },
   '山羊': {   // goat
     palette: {a:'#48443E', b:'#332F29', c:'#BAB6AD', d:'#7A756C', e:'#9C968A', f:'#5A5651', g:'#F4F0E7', h:'#8B8880', i:'#57534D', j:'#454039', k:'#EFEADC', l:'#837E75', m:'#EBE5DA', n:'#B0AA9E', o:'#FFFFFF', p:'#1E1A16', q:'#36322C', r:'#BAB7AC', s:'#E2DACA', t:'#24201A', u:'#4A453D', v:'#CDC9C1', w:'#908B81', x:'#4E4A45', y:'#3A3630', z:'#393530'},
     rows: [
@@ -519,6 +556,43 @@ const PICTURES = {
       "..........mpppppqppppno.........",
       "..........onnnnnqnnnnno.........",
       "...........ooooonooooo.........."
+    ]
+  },
+  '水果': {   // fruit
+    palette: {a:'#5C512E', b:'#524214', c:'#F8E079', d:'#D9B02A', e:'#F5D33F', f:'#5C5434', g:'#6B4A2A', h:'#FAE88C', i:'#908134', j:'#F8DE5A', k:'#394830', l:'#23341A', m:'#8CC481', n:'#47853B', o:'#413345', p:'#2C1C31', q:'#A581C2', r:'#623B83', s:'#7E4BA8', t:'#441515', u:'#8D5918', v:'#5BAA4B', w:'#39260E', x:'#361212', y:'#AF252D', z:'#572D2C', A:'#F39A2A', B:'#BE7821', C:'#821C22', D:'#E96E75', E:'#E0303A', F:'#FF8A80', G:'#FFC27A', H:'#554736', I:'#493011', J:'#422F1B', K:'#E4BF93', L:'#A8743E', M:'#3C2C1A', N:'#966C3D', O:'#C08A4E', P:'#8E6234', Q:'#504131', R:'#D3AD83'},
+    rows: [
+      "................................",
+      "................ab..............",
+      ".............aaacdb.............",
+      "...........aaccceedbfb..........",
+      ".........aacceeeeggfhdb.........",
+      "........acceeeeeegihjjdbkl......",
+      ".......aceeeeeeiiijjjggkmnl.....",
+      "......aceeeeeiijjjjjjjdkmnl.....",
+      "......aceeeeijjjjjjdddkmnl......",
+      ".....aceeeeijjjjdddbbolnnlp.....",
+      ".....aceeeijjjjdbbb.oqroqqrp....",
+      "....aceeedijjjdb...oqssqssrp....",
+      "....aceeeijjjdb....prsssssrp....",
+      "...aceeeijjjdb..t...prsssssrp...",
+      "...aceeuuuvuuwxtytztyoqsssssrp..",
+      "...aceuAAAAAABCDEFDDEDCsssssrp..",
+      "...bdduAGAAAACEEFFFEEEECsssrp...",
+      "....wuAAAAAAACEEFFFEEEECqsrp....",
+      "..HHIBAAAAAAACEEEEEEEEECqsrpHJ..",
+      ".HKKKKKKKKKKKKKKKKKKKKKKKKKKKLJ.",
+      ".JLLLLLLLLLLLLLLLLLLLLLLLLLLLLJ.",
+      "..MNOOOOPOOOPOOOPOOOPOOOPOOONM..",
+      "...QROOOPOOOPOOOPOOOPOOOPOONM...",
+      "...QRPPPPPPPPPPPPPPPPPPPPPPNM...",
+      "...MNOOOOOPOOOPOOOPOOOPOOOONM...",
+      "....QROOOOPOOOPOOOPOOOPOOONM....",
+      "....QRPPPPPPPPPPPPPPPPPPPPNM....",
+      "....MNOOPOOOPOOOPOOOPOOOPONM....",
+      ".....QROPOOOPOOOPOOOPOOOPNM.....",
+      ".....MNNNNNNNNNNNNNNNNNNNNM.....",
+      "......MMMMMMMMMMMMMMMMMMMM......",
+      "................................"
     ]
   },
   '桃子': {   // peach

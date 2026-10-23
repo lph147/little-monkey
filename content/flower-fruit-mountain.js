@@ -54,14 +54,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
   // (how many you've picked for a request, given as request). The animals are the prologue's, or a
-  // chapter's (chapter).
+  // chapter's (chapter), or just those of one place in it (place).
   // minus takes some away; max is the most it can be.
   counters: {
     newWords: {count:'wordsLearned', minus:1, max:4},   // words learned apart from one (you're born knowing 石头), up to 4
     animals: {count:'animals'},
     found: {count:'animalsFound'},
     animalsLeft: {count:'animalsLeft'},
-    woodAnimalsLeft: {count:'animalsLeft', chapter:1},   // chapter 1's animal, the deer in the pine wood, not met yet
+    hillAnimalsLeft: {count:'animalsLeft', chapter:1, place:'hillside'},   // chapter 1's animals: the fox hiding on the hillside, not met yet,
+    woodAnimalsLeft: {count:'animalsLeft', chapter:1, place:'pineWood'},   // and the deer in the pine wood
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
     caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (桥, bridge, is chapter 1's, on its bridges)
@@ -116,9 +117,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'elder', if:{elder:0}, text:'Say {你好} to the old monkey, by your {石头}', arrow:'elder'},
     {id:'elder2', if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
     {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words, then talk to the old monkey again ({newWords}/4)'},
-    {id:'animals', if:{elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the {动物|animals}: in rustling grass, up a tree, on a cliff ({found}/{animals})'},
+    // (the prologue's animals: a game already in chapter 1 when the sheep came, 23 October 2026, can still meet it in the meadow)
+    {id:'animals', if:{chapter:0, elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the {动物|animals}: in rustling grass, out in the open, up a tree, on a cliff ({found}/{animals})'},
     {id:'meadow', if:{elder:{atLeast:2}, chapter:0, meadowWords:{below:5}}, text:'Learn the words for the meadow ({meadowWords}/5). Still to find: {left:meadowWords}. Things that sparkle have words.'},
-    {id:'h1', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, text:'Find some fruit for the hungry monkey'},
+    {id:'h1', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, text:'Find some {水果|fruit} for the hungry monkey'},
     {id:'h1b', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:true}}, text:'Find the {wanted:hungry} the hungry monkey wants'},
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
     {id:'t1', if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect {水} from the {河} or the pond', arrow:[11, 9]},
@@ -171,7 +173,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Learn about {动物|animals} from the old monkey', show:{elder:{atLeast:1}}, done:{elder:{atLeast:2}}},
     {text:'Find the {动物|animals} ({found}/{animals})', show:{elder:{atLeast:2}}, done:{animalsLeft:0}},
     {text:'Learn the words for the meadow ({meadowWords}/5)', show:{elder:{atLeast:2}}, done:{meadowWords:5}},
-    {text:'Bring the hungry monkey the fruit it wants', show:{hungry:'asked'}, done:{hungry:'done'}},
+    {text:'Bring the hungry monkey the {水果|fruit} it wants', show:{hungry:'asked'}, done:{hungry:'done'}},
     {text:'Bring {水} to the thirsty monkey', show:{thirsty:'asked'}, done:{thirsty:'done'}},
     {text:'Find where the {河} comes from', show:{gate:true}, done:{climb:{atLeast:2}}},
     {text:'Bring the troop up to the {瀑布}', show:{climb:{atLeast:2}}, done:{climb:{atLeast:4}}},
@@ -186,6 +188,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the great feast
     {chapter:1, text:'Go with the old monkey to the troop’s new home ground', done:{home:{atLeast:2}}},
     {chapter:1, text:'Bring {木头} and small {石头|stones} for the school', show:{build:{atLeast:1}}, done:{build:{atLeast:2}}},
+    {chapter:1, text:'Find the {动物} hiding on the hillside', show:{build:{atLeast:1}}, done:{hillAnimalsLeft:0}},
     {chapter:1, text:'Find the {动物} that lives in the pine wood', show:{build:{atLeast:1}}, done:{woodAnimalsLeft:0}},
     {chapter:1, text:'Build the {学校} with the troop', show:{build:{atLeast:1}}, done:{school:{atLeast:1}}},
     {chapter:1, text:'Go to {学校}, and meet your {老师}', show:{school:{atLeast:1}}, done:{school:{atLeast:2}}},
@@ -616,7 +619,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYggggggggwTwwnnnnggggggYY",   // a hedge, and the gap grown over with long grass
         "YYwwTwwwTwgggnnnnwwwTwwTYY",
         "YYggggggggggggnnggggggggYY",
-        "YYgGGGGggggg....ggnnnnggYY",   // tall grass, where your friends hide
+        "YYgGGGGggggg....ggnnnnggYY",   // tall grass, where the fox hides (chapter 1's), and your friends
         "YYgGGGGgTggg..ggggnnnnggYY",
         "YYYYYYYYYYYY..YYYYYYYYYYYY"    // down to the home ground
       ]
@@ -754,9 +757,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
     'Y': {look:'tree', word:'树'},   // the forest round the edge of the map
-    'P': {look:'peachTree', word:'桃子', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'},
+    'P': {look:'peachTree', word:'水果', note:'Ripe fruit hangs from its branches.', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'},
       pick:{item:'桃子', if:{hungry:'done'}}},   // once the hungry monkey has eaten, its fruit is for your bag
-    'Q': {look:'appleTree', word:'苹果', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'},
+    'Q': {look:'appleTree', word:'水果', note:'Ripe fruit hangs from its branches.', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'},
       pick:{item:'苹果', if:{hungry:'done'}}},
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
@@ -879,11 +882,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the wild boar, blocking the narrow way to the waterfall until you chase it off
     {id:'boar', place:'falls', x:7, y:3, facing:'down', look:'野猪', label:'Fight', name:{zh:'野猪', py:'yězhū', en:'Wild boar'},
       moves:[{if:{boar:1}, place:'gone', x:0, y:0}, {if:{climb:{atLeast:2}}, place:'gone', x:0, y:0}]},
-    // animal friends from the meadow, met again on the way up the stream: the rabbit and the fox give advice, the
+    // animal friends from the meadow, met again on the way up the stream: the rabbit and the sheep give advice, the
     // squirrel and the goat want to play. They look like the animals (look), and have no names: they're words you know.
     {id:'rabbit', place:'path', x:14, y:15, facing:'left', look:'兔子'},      // by the first long grass
     {id:'squirrel', place:'path', x:5, y:3, facing:'down', look:'松鼠'},      // in the clearing, by the peach tree
-    {id:'fox', place:'valley', x:18, y:8, facing:'down', look:'狐狸'},        // at the fork
+    {id:'sheep', place:'valley', x:18, y:8, facing:'down', look:'羊'},        // at the fork
     {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊'},       // in the clearing over the first bridge
     // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
     // down the banks (it stops you if you walk past: see events)
@@ -913,7 +916,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // (optionally) an if that must match before it starts sparkling.
   sparkles: [
     {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 7]},
-    {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]}, {word:'桃子', at:[1, 6]}, {word:'苹果', at:[21, 17]},
+    {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]},
+    {word:'水果', at:[1, 6], if:{knows:'水'}}, {word:'水果', at:[21, 17], if:{knows:'水'}},   // the fruit trees, once you know 水: then 水果
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
     {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
     {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']}
@@ -936,11 +940,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '苹果': 'The apple tree in the south-east, across the river.',
     '河': 'The river that runs down the right of the mountain.',
     '水': 'You collected it for the thirsty monkey.',
+    '水果': 'The fruit trees: peaches and apples grow on them.',
     '鱼': 'Little fish in the pond in the middle of the meadow.',
     '鸟': 'Little birds that land on the grass near you.',
     '动物': 'The old monkey told you about the hidden animals.',
     '兔子': 'It jumped out of the tall grass.',
-    '狐狸': 'It jumped out of the tall grass.',
+    '羊': 'Eating grass at the foot of the cliffs, near your stone.',
     '松鼠': 'It lives in the big tree to the south.',
     '山羊': 'It lives on the cliffs to the south.',
     '洞': 'The Water Curtain Cave, behind the waterfall.',
@@ -958,6 +963,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '野猪': 'Blocking the narrow way at the top of the mountain path.',
     '鹿': 'In a sunny glade deep in the pine wood, behind a cracked rock.',
     '狼': 'In the long grass in the pine wood.',
+    '狐狸': 'Hiding in the tall grass on the hillside.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -1002,6 +1008,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Checked by a native speaker on 16 October 2026.
   examples: {
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
+    '羊': {zh:'羊 吃 草 。', en:'Sheep eat grass.'},   // (a draft, not checked yet)
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
     '山羊': {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.'},
     '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'},
@@ -1048,17 +1055,21 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // The area's animals. The id is kept in saved games, so never change it. An animal with at lives
   // at that spot (x, y) on the map, such as up a tree, on a cliff or in a clearing (you can't walk
   // through it): face it and press A to meet it, and home is the word for where it lives. The others
-  // hide in the tall grass, which rustles where one is hiding: step in to meet it. meetNote is on its
+  // hide in the tall grass, which rustles where one is hiding: step in to meet it. One with hides hides
+  // only in that place's tall grass (such as the fox, on the hillside). meetNote is on its
   // new-word card the first time. chapter: the chapter it's found in (0, the prologue, if not given),
-  // for the counters that count animals.
+  // for the counters that count animals (a counter's place counts just those in one place).
   animals: [
     {id:'rabbit', word:'兔子'},
-    {id:'fox', word:'狐狸'},
+    {id:'sheep', word:'羊', at:[3, 4], home:'草', meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
     {id:'goat', word:'山羊', at:[4, 16], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
-    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'}
+    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
+    // chapter 1: a fox hiding in the hillside's tall grass, only there (hides). It was the prologue's, in the meadow's tall grass, until
+    // 23 October 2026, when the sheep took its place, for 羊 (sheep), then 山 + 羊 = 山羊 (goat).
+    {id:'fox', word:'狐狸', hides:'hillside', chapter:1, meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
   birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
@@ -1234,7 +1245,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'letsLook'},   // he checks your first words: you match them to their pictures
         {match:'Show the old monkey your words', stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him your words.'},
         {say:'great'},
-        {say:'animals', teach:'动物', hint:'Animals hide in rustling grass, up a tree and on the cliffs to the south.'},
+        {say:'animals', teach:'动物', hint:'Animals live in rustling grass, out in the open, up a tree and on the cliffs to the south.'},
         {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
         {message:'The old monkey wants you to learn the words for the meadow too: {left:meadowWords}. Things that sparkle have words.', if:{meadowWords:{below:5}}},
         {say:'findMonkeys'},
@@ -1355,7 +1366,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'tired', hint:'Face a {床} and press A to sleep. You wake up with all your hearts.'}]}
     ],
     rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
-    fox: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
+    sheep: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
     squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}? If you win, it gives you a {桃子}.', word:'松鼠',
       notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The {松鼠} gives you a {桃子}.', pic:'桃子'}]}}]}],
     // the squirrel in the pine wood (chapter 1) shows you the dry pines; it loves the pines, as its name says
@@ -1382,7 +1393,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ],
     // two of the troop, across the river, give advice
     troop1: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
-      {if:{animalsLeft:{atLeast:1}}, do:[{say:'hi'}, {reply:'你好'}, {say:'findAnimals'}, {message:'Animals hide in the tall grass. Walk through it to find them, and answer their questions to make friends.'}]},
+      {if:{chapter:0, animalsLeft:{atLeast:1}}, do:[{say:'hi'}, {reply:'你好'}, {say:'findAnimals'}, {message:'Some animals hide in the tall grass. Walk through it to find them, and answer their questions to make friends.'}]},
       {if:{school:{atLeast:1}}, do:[{say:'hi'}, {reply:'你好'}, {message:'When the {老师} has a !, some of your words need practice: he’ll give you a lesson.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'When the practice post by the pond has a !, some of your words are due: practise them there, so you don’t forget them.'}]}],
     troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},

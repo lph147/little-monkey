@@ -58,18 +58,20 @@ const isOpen = e => (!e.when || matches(e.when)) && (!e.if || matches(e.if));   
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y);   // (an animal standing on open ground, such as a deer, is in the way)
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
-// Somewhere you collect something else (water, from the river or the pond) whose own word you don't know yet: A looks
-// first, teaching its word, and collects after that (decided 22 October 2026: you got the water, and never the word).
-const looksFirst = t => !!t.word && t.word !== t.gather.item && lvl(t.word) === 0;
+// Somewhere you collect something else (water, from the river or the pond; a peach or an apple, from a fruit tree, whose
+// word is 水果) whose own word you don't know yet: A looks first, teaching its word, and collects after that (decided 22
+// October 2026: you got the water, and never the word). The same when a fruit tree fills your bag (pick).
+const looksFirst = t => !!t.word && lvl(t.word) === 0 && t.word !== (t.gather || t.pick || {}).item;
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
 const dirOf = (dx, dy) => Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');   // the way towards dx, dy
 
 const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
-// The animals in a chapter of the story (each animal's chapter, 0 if not given), and how many of them you've met: the
-// prologue's animals are counted on their own, so a new chapter's animals never stand in the way of the prologue's story.
-const chapterAnimals = (ch = 0) => ANIMALS.filter(a => a.chapter === ch);
-const metCount = (ch = 0) => chapterAnimals(ch).filter(a => S.met.includes(a.id)).length;
+// The animals in a chapter of the story (each animal's chapter, 0 if not given), or just those of one place in it (place,
+// such as the fox on the hillside), and how many of them you've met: the prologue's animals are counted on their own, so a
+// new chapter's animals never stand in the way of the prologue's story.
+const chapterAnimals = (ch = 0, place) => ANIMALS.filter(a => a.chapter === ch && (!place || a.place === place));
+const metCount = (ch = 0, place) => chapterAnimals(ch, place).filter(a => S.met.includes(a.id)).length;
 // The story's chapters in this area (AREA.chapters), and the one you're in (counting from 0). Each item on the
 // area's checklist belongs to a chapter (chapter, 0 if not given); the checklist shows the chapter you're in.
 const chapterNow = () => here().chapter || 0;
@@ -115,16 +117,16 @@ function promptFor(x, y){
   const look = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
   if (look && look.label) return look.label;   // the tile's own steps say what A does, such as Sleep in a bed
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return t.gather.label;
-  if (canPick(t)) return 'Pick';
+  if (canPick(t) && !looksFirst(t)) return 'Pick';
   if (t.landmark) return t.label || 'Look';
   const w = lookWord(t);
   return w && lvl(w) === 0 ? 'Look' : '';
 }
 const COUNTS = {   // what a counter in the content can count
   wordsLearned: () => learnedCount(),
-  animalsFound: c => metCount(c.chapter || 0),   // (a chapter's animals: chapter, 0 if not given)
-  animals: c => chapterAnimals(c.chapter || 0).length,
-  animalsLeft: c => chapterAnimals(c.chapter || 0).length - metCount(c.chapter || 0),
+  animalsFound: c => metCount(c.chapter || 0, c.place),   // (a chapter's animals: chapter, 0 if not given; or one place's in it)
+  animals: c => chapterAnimals(c.chapter || 0, c.place).length,
+  animalsLeft: c => chapterAnimals(c.chapter || 0, c.place).length - metCount(c.chapter || 0, c.place),
   shells: () => S.shells,
   picked: c => (here().picked[c.request] || []).length,
   known: c => c.words.filter(w => lvl(w) >= 1).length   // how many of these words you've caught
@@ -616,7 +618,7 @@ async function interact(x, y){
   const t = tileAt(x, y);
   if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return runSteps(p.do); }   // the tile's own steps, while the story says
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return gather(t, x, y);
-  if (canPick(t)) return pick(t, x, y);
+  if (canPick(t) && !looksFirst(t)) return pick(t, x, y);
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
@@ -682,12 +684,13 @@ function showPlaceName(){
   el.innerHTML = `<span class="pzh">${n.zh}</span> <span class="ppy">${n.py}</span><span class="pen">${esc(n.en)}</span>`;
   el.hidden = false; clearTimeout(placeNameT); placeNameT = setTimeout(() => { el.hidden = true; }, 2600);
 }
-function hideAnimal(){   // a grass animal hides in tall grass at least 3 steps from you
-  if (rustle || !canWild() || !GRASS_ANIMALS.length || stepsSince < HIDE_AFTER) return;
+function hideAnimal(){   // a grass animal hides in tall grass at least 3 steps from you (one that lives in one place, hides, only there)
+  const hiding = GRASS_ANIMALS.filter(a => !a.hides || a.hides === PLACE);
+  if (rustle || !canWild() || !hiding.length || stepsSince < HIDE_AFTER) return;
   const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3);
   if (!far.length) return;
   const [x, y] = far[Math.floor(Math.random() * far.length)];
-  rustle = {x, y, a:pickAnimal(GRASS_ANIMALS)};
+  rustle = {x, y, a:pickAnimal(hiding)};
 }
 async function arrive(x, y){
   S.pos = {place:PLACE, x, y, dir:pl.dir}; save();
@@ -729,8 +732,8 @@ async function wildAppears(a, spot = findSpot()){
   if (justTaught) await showNotice(a.hz, {note:a.meetNote ? fill(a.meetNote) : `A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
   else { say(a.hz); await sleep(900); }
   if (play) await showDialog(speaker(a.id), L[play.say], {ok:'Play', hint:justTaught ? '' : fill(S.friends.includes(a.id) ? play.friendHint : play.hint)});   // it says it wants to play, so its questions never just start
-  const all = chapterAnimals(a.chapter).length;
-  if (firstMeet && all > 1) toast(`Animals found: ${metCount(a.chapter)}/${all}`);   // (a chapter with one animal, such as the deer, needs no count)
+  const all = chapterAnimals(a.chapter, a.place).length;   // (counted with its chapter's animals in the same place: one on its own, such as the deer, needs no count)
+  if (firstMeet && all > 1) toast(`Animals found: ${metCount(a.chapter, a.place)}/${all}`);
   const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home});
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
   await sleep(won ? 1000 : 650);

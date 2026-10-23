@@ -35,7 +35,7 @@ const DRAFTS = [
     ['我 要 吃 苹果 。', 'I want to eat an apple.', 'The sentence you finish when you give him the apple']]
     .map(([zh, en, where]) => ({zh, en, where:'The prologue, changed on 17 October 2026: ' + where})),
   ...[['草 里 有 蛇 。', 'There are snakes in the grass.', 'The rabbit, by the long grass on the mountain path'],
-    ['水 从 山 上 来 。', 'The water comes from up the mountain.', 'The fox, at the fork in the river valley'],
+    ['水 从 山 上 来 。', 'The water comes from up the mountain.', 'The sheep (the fox until 23 October 2026), at the fork in the river valley'],
     ['去 找 动物 吧 ！', 'Go and find the animals!', 'A monkey across the river, giving advice'],
     ['老板 有 苹果 。', 'The shop owner has apples.', 'A monkey across the river, giving advice'],
     ['累 了 吗 ？ 去 床 上 睡觉 吧 ！', 'Tired? Go and sleep in a bed!', 'A monkey just inside the cave’s entrance (teaching 睡觉 shuìjiào, to sleep; 累 lèi, tired, is just for listening)']]
@@ -112,13 +112,15 @@ const DRAFTS = [
     ['红色 的 花', 'A red flower', 'What you see on a card when you pick a red flower for him (and 黄色的花, a yellow flower, and 白色的花, a white flower)'],
     ['你 有 花 吗 ？', 'Do you have flowers?', 'The big monkey, when you bring them'],
     ['我 要 红色 的 花 。', 'I want a red flower.', 'The sentence you finish when you give him the flowers (filling in 红色)']]
-    .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): ' + where}))
+    .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): ' + where})),
+  {zh:'羊 吃 草 。', en:'Sheep eat grass.', where:'New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside'}
 ];
 
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the
 // word bank yet, so each line gives its own pinyin. When it's built, these move into the area file.
 // Questions for the native speaker about the game's Chinese.
-const QUESTIONS = ['The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?',
+const QUESTIONS = ['A sheep in the meadow teaches 羊 (yáng) as sheep, before the goat teaches 山羊 (shānyáng), so players see that a goat is a mountain sheep. Strictly, 羊 means any sheep or goat, and 绵羊 (miányáng) is the exact word for sheep. Is 羊 natural for the sheep?',
+  'The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?',
   'Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better? (White paints the step at the door, 台阶, not the paper in the windows: you paste window paper on, so 刷窗户纸 seemed wrong.)',
   'When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)'];
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
