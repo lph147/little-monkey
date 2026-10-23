@@ -113,7 +113,9 @@ const DRAFTS = [
     ['你 有 花 吗 ？', 'Do you have flowers?', 'The big monkey, when you bring them'],
     ['我 要 红色 的 花 。', 'I want a red flower.', 'The sentence you finish when you give him the flowers (filling in 红色)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): ' + where})),
-  {zh:'羊 吃 草 。', en:'Sheep eat grass.', where:'New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside'}
+  {zh:'羊 吃 草 。', en:'Sheep eat grass.', where:'New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside'},
+  ...[['山 上 有 石头 。', 'There’s a stone on the mountain.'], ['这 只 猴子 就是 你 ！', 'This monkey is you!']]
+    .map(([zh, en]) => ({zh, en, where:'New on 23 October 2026 (in the game): the story carved in the hillside’s cliff, coming to life, with 石头里有猴子。 between them (就是 jiùshì, is none other than: just for listening)'}))
 ];
 
 // Chapter 1, written but not built yet (the script was agreed on 17 October 2026). Its words aren't in the

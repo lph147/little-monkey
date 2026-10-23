@@ -312,6 +312,33 @@ function cliffFace(g, X, Y, x, y){
     }
   }
 }
+// A story carved in a cliff long ago (the squares with carving, in a place's legend, together one panel), each square drawing
+// its part of it: a panel cut into the rock, worn, with moss along its top, and in it the start of the legend: a mountain,
+// with a round stone on its top and a little monkey curled up inside it, its eyes catching the light.
+function carvingPanel(g, X, Y, x, y){
+  const is = (a, b) => !!tileAt(a, b).carving;
+  let x0 = x, x1 = x, y0 = y, y1 = y;
+  while (is(x0 - 1, y)) x0--; while (is(x1 + 1, y)) x1++; while (is(x, y0 - 1)) y0--; while (is(x, y1 + 1)) y1++;
+  const PX = X - (x - x0)*T, PY = Y - (y - y0)*T, w = (x1 - x0 + 1)*T, h = (y1 - y0 + 1)*T;
+  g.save(); g.beginPath(); g.rect(X, Y, T, T); g.clip();
+  const l = PX + 3, t = PY + 3, r = PX + w - 4, bt = PY + h - 5, mid = Math.round((l + r) / 2), cut = mix(FACE.top, FACE.foot, .55);
+  R(g, l, t, r - l + 1, bt - t + 1, cut);                                   // the panel, cut into the rock
+  R(g, l, t, r - l + 1, 1, FACE.crack); R(g, l, t, 1, bt - t + 1, FACE.crack);   // in shade along its top and left
+  R(g, l, bt, r - l + 1, 1, FACE.lit); R(g, r, t, 1, bt - t + 1, FACE.lit);       // lit along its bottom and right
+  for (let c = l; c <= r; c++) if (rnd(c, y0, 512) < .45) R(g, c, t - 1 - (rnd(c, y0, 513) < .4 ? 1 : 0), 1, 2, c % 3 ? '#5E8F4C' : '#79A85C');   // moss along its top
+  const peak = t + 12, foot = bt - 2, half = Math.round((r - l) / 2) - 3;
+  for (let k = 0; k <= half; k++){   // the mountain: its sides grooved into the stone, each lit on its lower edge
+    const y = Math.round(peak + (foot - peak) * k / half);
+    for (const x of [mid - k, mid + k]){ R(g, x, y, 1, 1, FACE.crack); R(g, x, y + 1, 1, 1, FACE.lit); }
+  }
+  R(g, l + 3, foot, r - l - 5, 1, FACE.crack);   // the ground under it
+  const sx = mid, sy = peak - 5;   // the stone on its top, and the little monkey curled up inside it
+  for (const [dx, dy] of [[-2,-4],[-1,-4],[0,-4],[1,-4],[2,-4],[-3,-3],[3,-3],[-4,-2],[4,-2],[-4,-1],[4,-1],[-4,0],[4,0],[-4,1],[4,1],[-3,2],[3,2],[-2,3],[-1,3],[0,3],[1,3],[2,3]]) R(g, sx + dx, sy + dy, 1, 1, FACE.crack);
+  for (const [dx, dy] of [[-1,-1],[1,-1],[-2,0],[2,0],[-1,1],[0,1],[1,1]]) R(g, sx + dx, sy + dy, 1, 1, FACE.foot);
+  R(g, sx - 1, sy - 1, 1, 1, '#E8C25A'); R(g, sx + 1, sy - 1, 1, 1, '#E8C25A');   // its eyes
+  R(g, PX + w - 9, PY + 6, 1, 4, FACE.crack); R(g, PX + w - 8, PY + 9, 1, 3, FACE.crack);   // a crack, from long ago
+  g.restore();
+}
 // A grassy bank between two terraces, as high as the cliffs beside it, that you can hop down (a ledge, however many
 // squares high): blades of grass down it, darker towards its foot.
 function bank(g, X, Y, x, y){
@@ -691,7 +718,7 @@ const LOOKS = {
   curtain:   (g,X,Y,x,y) => { R(g,X,Y,T,T,'#8FD0EE'); },   // the falling water is animated in js/draw.js
 
   steps:     (g,X,Y,x,y) => stoneSteps(g,X,Y,x,y),   // stone steps up a cliff or a bank
-  cliffFace: (g,X,Y,x,y) => cliffFace(g,X,Y,x,y),    // a cliff, two squares high: between two terraces, or the front of the rock
+  cliffFace: (g,X,Y,x,y) => { cliffFace(g,X,Y,x,y); if (tileAt(x, y).carving) carvingPanel(g, X, Y, x, y); },    // a cliff, two squares high: between two terraces, or the front of the rock (with a story carved in it, if it has one)
   bank:      (g,X,Y,x,y) => bank(g,X,Y,x,y),         // a grassy bank, as high, that you hop down
   heights:   (g,X,Y,x,y) => heights(g,X,Y,x,y),      // the top of the rock, seen from above
   slabs:     (g,X,Y,x,y) => slabs(g,X,Y,x,y),        // a stone platform (the lookout's)

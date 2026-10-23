@@ -742,5 +742,56 @@ function drawLookout(t, now){
   for (const px of [4, 46, 88, 147, 189, 231]){ R(b, px, 88, 5, 40, WOOD[0]); R(b, px, 88, 4, 40, WOOD[2]); R(b, px, 88, 1, 40, WOOD[3]); R(b, px, 88, 5, 1, WOOD[4]); }   // the railing
   for (const ry of [92, 101]){ R(b, 0, ry, W, 4, WOOD[0]); R(b, 0, ry, W, 3, WOOD[2]); R(b, 0, ry, W, 1, WOOD[3]); }
 }
+/* ---- the story carving on the hillside ---- */
+// The story carved long ago in the hillside's cliff, behind the peach tree (A at it), told like the opening: the rock, close
+// up, with the panel cut into it, worn and mossy. First the mountain, with a round stone on its top (山上有石头); then, inside
+// the stone, a little monkey curled up, fading in as the stone glows (石头里有猴子); then its eyes shine, and you're there in
+// front of it, looking up (这只猴子就是你！). The captions cover the bottom, so it's all above them.
+let carvingRock = null;
+function drawCarving(t, now){
+  const W = VW*T, H = VH*T;
+  if (!carvingRock){   // the rock all round, as the cliffs are drawn
+    carvingRock = document.createElement('canvas'); carvingRock.width = W; carvingRock.height = H;
+    const g = carvingRock.getContext('2d');
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++){
+      const rock = rockAt(x, y, 22, 16, 700), light = -(rock.sx * .6 + rock.sy);
+      let col = mix(FACE.top, FACE.foot, .25 + y / H * .5);
+      if (rock.edge < 1.1) col = FACE.crack; else if (rock.edge < 2.2 && light > 0) col = mix(FACE.lit, col, .4); else if (light < -.35) col = mix(col, FACE.crack, .3);
+      if (rnd(x, y, 714) < .04) col = mix(col, FACE.crack, .45);
+      R(g, x, y, 1, 1, col);
+    }
+  }
+  b.drawImage(carvingRock, 0, 0);
+  const l = 48, top = 6, r = 192, bot = 102, cut = mix(FACE.top, FACE.foot, .55);
+  R(b, l, top, r - l + 1, bot - top + 1, cut);   // the panel, cut into the rock
+  R(b, l, top, r - l + 1, 2, FACE.crack); R(b, l, top, 2, bot - top + 1, FACE.crack);   // in shade along its top and left
+  R(b, l, bot - 1, r - l + 1, 2, FACE.lit); R(b, r - 1, top, 2, bot - top + 1, FACE.lit);   // lit along its bottom and right
+  for (let x = l; x <= r; x++) if (rnd(x, 3, 715) < .5) R(b, x, top - 2 - Math.floor(rnd(x, 4, 716) * 3), 1, 3, x % 3 ? '#5E8F4C' : '#79A85C');   // moss along its top
+  const groove = (x, y) => { R(b, x, y, 2, 2, FACE.crack); R(b, x, y + 2, 2, 1, FACE.lit); };   // a line cut into the stone, lit on its lower edge
+  const peakX = 120, peakY = 53, footY = 96;
+  for (let x = 58; x <= 182; x++){   // the mountain, and lines across it
+    const y = Math.round(peakY + (footY - peakY) * Math.abs(x - peakX) / 62);
+    if (x % 2 === 0) groove(x, y);
+    if (x % 23 === 5 && y < footY - 8) for (let k = 0; k < 9; k += 2) groove(x + k, y + 9 + Math.round(k / 3));
+  }
+  for (let x = 54; x <= 186; x += 2) groove(x, footY + 1);
+  const sx = 120, sy = 33, glow = clamp((t - 3.4) / .8, 0, 1), shine = clamp((t - 6.8) / .6, 0, 1);
+  if (glow){   // the stone glowing
+    b.globalAlpha = glow * (.18 + .1 * Math.sin(now / 300)); disc(b, sx, sy, 26, '#FFE7A0'); disc(b, sx, sy, 20, '#FFF2C8'); b.globalAlpha = 1;
+  }
+  for (let a = 0; a < 360; a += 5){ const q = a * Math.PI / 180; groove(Math.round(sx - 1 + Math.cos(q) * 19), Math.round(sy - 1 + Math.sin(q) * 18)); }   // the stone, on the mountain's top
+  const mx = sx - 16, my = sy - 16;   // a little monkey inside it, carved: the game's own monkey, its lines cut into the stone
+  if (glow){
+    b.globalAlpha = glow;
+    const tone = {o:FACE.crack, f:mix(cut, FACE.foot, .35), s:mix(cut, FACE.lit, .45), m:mix(cut, FACE.crack, .5), e:FACE.crack};
+    monkeyRows('carving', 'down', false, 0, true).forEach((row, y) => [...row].forEach((c, x) => { if (tone[c]) R(b, mx + x*2, my + y*2, 2, 2, tone[c]); }));
+    b.globalAlpha = 1;
+  }
+  if (shine){   // its eyes shine (in the opening, light shone from its eyes)
+    b.globalAlpha = shine * (.45 + .3 * Math.sin(now / 200)); disc(b, mx + 13, my + 11, 4, '#FFF6C0'); disc(b, mx + 19, my + 11, 4, '#FFF6C0'); b.globalAlpha = 1;
+    R(b, mx + 12, my + 10, 2, 2, '#FFD34E'); R(b, mx + 18, my + 10, 2, 2, '#FFD34E');
+    b.globalAlpha = shine; oval(b, 120, 104, 13, 3, 'rgba(0,0,0,.25)'); b.drawImage(monkeySprite('player', 'up', false), 104, 72, 32, 32); b.globalAlpha = 1;   // you, looking up at it
+  }
+}
 // The pictures for the area's scenes (AREA.scenes), by name (a scene's art, or else its id); the opening's are drawScene, above.
-const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout};
+const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout, carving: drawCarving};

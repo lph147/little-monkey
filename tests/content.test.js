@@ -495,10 +495,10 @@ test('intro captions are in time order, each with its Chinese and English (its w
   });
 });
 
-test('every scene has pictures, captions in time order (each with Chinese and English, teaching only a word it says), and a Settings button to watch it again (but a lesson’s, played after it, or one you see again where it is)', () => {
+test('every scene has pictures, captions in time order (each with Chinese and English, teaching only a word it says), and a Settings button to watch it again (but a lesson’s, played after it, or one you see again where it is, unless it’s a story carving, collected through the chapter)', () => {
   const afterLessons = (AREA.lessons || []).flatMap(l => Object.values(l.scenes || {}));
   const legends = [AREA.legend, ...Object.values(AREA.places || {}).map(p => p.legend || {})];
-  const onMap = legends.flatMap(l => Object.values(l)).flatMap(t => (t.onLook || []).flatMap(p => p.do)).map(s => s.scene).filter(Boolean);   // (A at something on the map plays it, such as the lookout's view)
+  const onMap = legends.flatMap(l => Object.values(l)).filter(t => !t.carving).flatMap(t => (t.onLook || []).flatMap(p => p.do)).map(s => s.scene).filter(Boolean);   // (A at something on the map plays it, such as the lookout's view; but a carving's are collected, in Settings)
   for (const [id, sc] of Object.entries(AREA.scenes || {})){
     assert.ok(get(`typeof SCENE_ART[${JSON.stringify(sc.art || id)}] === 'function'`), `the ${id} scene needs its pictures in SCENE_ART (js/draw.js), named by its art or its id`);
     if (afterLessons.includes(id)) assert.ok(!sc.watch, `the ${id} scene is played after a lesson: it doesn't need a button in Settings`);
