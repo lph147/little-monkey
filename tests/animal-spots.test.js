@@ -63,3 +63,23 @@ test('if the map changed under your saved spot, you start at the stone', () => {
   const fine = loadGame({save: {version: 12, started: true, pos: {x: 9, y: 7, dir: 'left'}}});
   assert.deepEqual(get(fine, '[S.pos.x, S.pos.y]'), [9, 7], 'a spot you can still stand on is kept');
 });
+
+test('an animal says it wants to play before its questions, with what’s happening under it, so they never just start', async () => {
+  const meet = async (fox, friends = []) => {
+    const game = loadGame({dom: true, save: {version: 10, started: true, areas: {1: {elder: 2}}, friends,
+      w: Object.fromEntries(['动物', '石头', '山', '树', '花', '草', ...(fox ? ['狐狸'] : [])].map(w => [w, {lv: 1, due: 0, ok: 0}]))}});
+    game.run(`S.pos = {x:9, y:7, dir:'down'}; placePlayer(); mode = 'play'; globalThis.__seen = [];
+      showNotice = async (w, o) => { __seen.push('card: ' + w); rec(w).lv = Math.max(rec(w).lv || 0, 1); };
+      showDialog = async (who, line, o) => { __seen.push([line.t.join(''), o.hint || '', o.ok, /狐狸/.test(who)]); };
+      encounter = async () => { __seen.push('questions'); return true; }; toast = () => {}`);
+    let done = false;
+    const p = Promise.resolve(game.run("wildAppears(ANIMALS.find(a => a.id === 'fox'))")).then(() => { done = true; });
+    for (let i = 0; i < 200 && !done; i++){ await new Promise(r => setImmediate(r)); game.flush(); }   // (letting its pauses go by)
+    await p;
+    return get(game, '__seen');
+  };
+  assert.deepEqual(await meet(false), ['card: 狐狸', ['我们玩吧！', '', 'Play', true], 'questions'],
+    'the first time: its card teaches its name and says what’s happening, then it says 我们玩吧！ (Let’s play!), over its name, and Play starts its questions');
+  assert.deepEqual(await meet(true), [['我们玩吧！', 'It wants to play! Answer its questions to make friends.', 'Play', true], 'questions'], 'later: what’s happening, under its line');
+  assert.deepEqual(await meet(true, ['fox']), [['我们玩吧！', 'Your 朋友 (friend) wants to play again! Answer its questions.', 'Play', true], 'questions'], 'and a friend');
+});

@@ -215,6 +215,8 @@ const SCREENS = [
   {id: 'wants-other', title: 'He wants the other fruit', save: 'wantsApple', why: 'After you bring the peach first.', run: async () => { play(); await wait(500); }},
   {id: 'animal-card', title: 'Meeting an animal', save: 'middle', why: 'The first time: its name on a new-word card.', run: async () => {
     play(); await wait(100); showNotice('狐狸', {note: 'A wild fox jumped out of the 草 (grass)! Answer its questions to make friends.'}); await wait(400); }},
+  {id: 'animal-wants-to-play', title: 'It wants to play!', save: 'middle', why: 'An animal you’ve met jumps out of the grass and says 我们玩吧！ (Let’s play!), over its name, with what’s happening under it; Play starts its questions (the first time, its card says what’s happening). So its questions never just start.', run: async () => {
+    play(); await wait(100); rec('狐狸').lv = Math.max(rec('狐狸').lv || 0, 1); wildAppears(ANIMALS.find(a => a.id === 'fox')); await wait(2600); }},
   {id: 'encounter-listen', title: 'Animal: listen', save: 'middle', why: 'The question must never be about the animal itself.', run: async () => {
     play(); await wait(100); encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(500); }},
   {id: 'encounter-apple', title: 'Animal: with an apple to eat', save: 'withApple', why: 'Eating it takes away a wrong answer.', run: async () => {

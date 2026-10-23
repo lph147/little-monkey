@@ -1059,6 +1059,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
+  // What an animal says as it comes out to play, before its questions (one of the lines), with what's happening in plain
+  // English under it (the first time you meet one, its card says that instead): for an animal you're making friends
+  // with, and for a friend (decided 23 October 2026, after playing it: the questions just started, with nothing to say why).
+  animalsPlay: {say:'play', hint:'It wants to play! Answer its questions to make friends.', friendHint:'Your {朋友} wants to play again! Answer its questions.'},
   // The kinds of question animals ask, easiest first: 'listen' (hear a word, pick its picture), 'read'
   // (see its characters, pick its picture) and 'hear' (hear a word, pick its characters, with no
   // pictures). A word's questions get harder as you know it better, but only up to the kinds listed

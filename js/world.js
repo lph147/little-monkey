@@ -718,9 +718,10 @@ async function wildAppears(a, spot = findSpot()){
   await sleep(1100);
   const firstMeet = !S.met.includes(a.id);
   if (firstMeet){ S.met.push(a.id); save(); }
-  const justTaught = lvl(a.hz) === 0;
+  const justTaught = lvl(a.hz) === 0, play = AREA.animalsPlay;
   if (justTaught) await showNotice(a.hz, {note:a.meetNote ? fill(a.meetNote) : `A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
   else { say(a.hz); await sleep(900); }
+  if (play) await showDialog(speaker(a.id), L[play.say], {ok:'Play', hint:justTaught ? '' : fill(S.friends.includes(a.id) ? play.friendHint : play.hint)});   // it says it wants to play, so its questions never just start
   const all = chapterAnimals(a.chapter).length;
   if (firstMeet && all > 1) toast(`Animals found: ${metCount(a.chapter)}/${all}`);   // (a chapter with one animal, such as the deer, needs no count)
   const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home});
