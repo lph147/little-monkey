@@ -118,6 +118,15 @@ test('every collectible picture is different', () => {
   }
 });
 
+test('look-alikes (alike) are other words in the word bank, or a category of them, each pair listed once', () => {
+  const categories = new Set(Object.values(BANK).map(d => d.category));
+  for (const [w, d] of Object.entries(BANK)) for (const a of d.alike || []){
+    if (a[0] === '*'){ assert.ok(categories.has(a.slice(1)), `${w}: '${a}' isn't a category of words`); continue; }
+    assert.ok(BANK[a] && a !== w, `${w}: its look-alike ${a} isn't another word in the word bank`);
+    assert.ok(!(BANK[a].alike || []).includes(w), `${w} and ${a} both list each other: it works both ways, so list it once`);
+  }
+});
+
 test('the map of every place is a rectangle', () => {
   for (const [id, map] of allMaps){
     const width = map[0].length;
@@ -270,11 +279,12 @@ test('content/pictures.js is up to date with tools/draw-pictures.js', () => {
     'a drawing has changed: run  npm run pictures');
 });
 
-test('story questions offer different collectible pictures, one of them the answer', () => {
+test('story questions offer different collectible pictures, one of them the answer, and no two look-alikes', () => {
   AREA.storyQuestions.forEach((q, i) => {
     assert.equal(new Set(q.options).size, q.options.length, `story question ${i + 1} repeats an option`);
     for (const w of q.options) assert.ok(collectible.includes(w) && BANK[w].pic, `story question ${i + 1}: ${w} isn't a collectible word with a picture`);
     assert.ok(q.options.includes(q.answer), `story question ${i + 1}: the answer ${q.answer} isn't one of the options`);
+    for (const a of q.options) for (const b of q.options) assert.ok(a === b || !game.run(`alike('${a}', '${b}')`), `story question ${i + 1}: ${a} and ${b} look alike, so they can't both be answers`);
   });
 });
 

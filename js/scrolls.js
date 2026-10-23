@@ -65,12 +65,24 @@ function infoBox(who, html){   // who: a picture over it, or an animal's or a ba
   });
 }
 const PASS = 0.8;
+// Words split into rounds of size (the last at least 3, or it joins the one before), with no two look-alikes in a round
+// when that can be helped, as no two are answers in a question: the words with the most look-alikes go first, each into
+// the first round with room and the fewest of its look-alikes (none, if it can). The rounds come in a random order.
+function roundsApart(words, size){
+  const sizes = []; for (let i = 0; i < words.length; i += size) sizes.push(Math.min(size, words.length - i));
+  if (sizes.length > 1 && sizes[sizes.length - 1] < 3) sizes[sizes.length - 2] += sizes.pop();
+  const rounds = sizes.map(() => []), many = w => words.filter(o => alike(o, w)).length;
+  for (const w of [...words].sort((a, b) => many(b) - many(a))){   // (sort keeps the rest in the order given)
+    const clashes = r => r.filter(o => alike(o, w)).length;
+    rounds.filter((r, i) => r.length < sizes[i]).sort((a, b) => clashes(a) - clashes(b))[0].push(w);
+  }
+  return shuffle(rounds);
+}
 // Matching words to their pictures, in rounds of about 4 (the cave door test and the training ground).
 // Gives the words you missed first time, or null if you stop.
 function matchWords(words, title, stopLabel){
   return new Promise(res => {
-    const rounds = []; for (let i = 0; i < words.length; i += 4) rounds.push(words.slice(i, i + 4));
-    if (rounds.length > 1 && rounds[rounds.length - 1].length < 3){ const last = rounds.pop(); rounds[rounds.length - 1].push(...last); }
+    const rounds = roundsApart(words, 4);
     const missed = new Set();
     let r = 0, picked = null, stopped = false;   // (stopped: the next round never comes, even if a round has just been matched)
     function render(){

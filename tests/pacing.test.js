@@ -75,3 +75,51 @@ test('when you only hear the word, no two answers sound alike apart from their t
   assert.equal(game.run("toneless('喝')"), 'he');
   assert.deepEqual(JSON.parse(game.run("JSON.stringify(soundApart('河', ['喝', '山', '花', '草'], 2))")), ['山', '花']);
 });
+
+test('look-alikes are never two answers in one question, such as 家 (home) and 学校 (school), both houses', () => {
+  const game = loadGame();
+  const alike = (a, b) => game.run(`alike('${a}', '${b}')`);
+  assert.ok(alike('家', '学校') && alike('学校', '家'), 'it works both ways, though only 家 lists it');
+  assert.ok(alike('动物', '鱼') && alike('猴子', '动物'), '动物 (animal) and every animal');
+  assert.ok(!alike('家', '山') && !alike('家', '家') && !alike('动物', '动物'));
+  const apart = (w, words) => JSON.parse(game.run(`JSON.stringify(apart('${w}', ${JSON.stringify(words)}, 2, false))`));
+  assert.deepEqual(apart('家', ['学校', '洞', '山', '花']), ['山', '花'], 'none a look-alike of the answer');
+  assert.deepEqual(apart('山', ['家', '学校', '花']), ['家', '花'], 'nor of each other');
+  assert.deepEqual(JSON.parse(game.run("JSON.stringify(soundApart('家', ['学校', '山', '花'], 2))")), ['山', '花'], 'nor in a battle, when it hides');
+});
+
+test('with every word caught, no question ever offers two look-alikes, at any level', () => {
+  const game = loadGame({save: {version: 9, started: true, w: {}}});
+  const clash = game.run(`(() => {
+    const words = picWords(); words.forEach(w => rec(w).lv = 1);
+    for (let i = 0; i < 3000; i++){
+      const w = words[i % words.length]; rec(w).lv = 1 + i % 3;
+      const {opts, type} = wordQuestion(w); rec(w).lv = 1;
+      if (opts.length < 3) return w + ' (' + type + '): only ' + opts.join(' ');
+      for (const a of opts) for (const b of opts) if (a !== b && alike(a, b)) return w + ' (' + type + '): ' + a + ' and ' + b;
+    }
+    return '';
+  })()`);
+  assert.equal(clash, '', 'two look-alikes as answers together, or too few answers');
+});
+
+test('filling a gap never offers a look-alike of the missing word, even one the content suggests', () => {
+  const game = loadGame({dom: true, save: {version: 29, started: true, turn: 0, w: Object.fromEntries(['我', '要', '吃', '桃子', '碗', '山', '花'].map((w, i) => [w, {lv: 1, ok: 0, next: i}]))}});
+  game.run("mode = 'play'; save = () => {}; gapQ({t: toks('我 要 吃 桃子'), en: 'I want to eat a peach.', gap: '吃', wrong: ['碗', '山', '花']})");
+  const opts = game.el('#sheet').querySelectorAll('.opt').map(o => o.querySelector('.cap').textContent).sort();
+  assert.deepEqual(opts, ['吃', '山', '花'].sort(), 'not 碗 (bowl): the picture for 吃 (to eat) is a bowl too');
+});
+
+test('matching words to pictures, no round has two look-alikes when that can be helped, and rounds are still about 4', () => {
+  const game = loadGame();
+  const words = ['家', '学校', '洞', '床', '睡觉', '碗', '吃', '山', '花', '草', '鱼', '石头'];
+  for (let i = 0; i < 200; i++){
+    const rounds = JSON.parse(game.run(`JSON.stringify(roundsApart(shuffle(${JSON.stringify(words)}), 4))`));
+    assert.deepEqual(rounds.map(r => r.length), [4, 4, 4]);
+    assert.deepEqual(rounds.flat().sort(), [...words].sort(), 'every word, once');
+    for (const r of rounds) for (const a of r) for (const b of r) assert.ok(a === b || !game.run(`alike('${a}', '${b}')`), `${a} and ${b} in the same round`);
+  }
+  const sizes = n => JSON.parse(game.run(`JSON.stringify(roundsApart(${JSON.stringify(words.slice(0, n))}, 4).map(r => r.length).sort())`));
+  assert.deepEqual(sizes(10), [4, 6], '10 words: the last 2 join the round before');
+  assert.deepEqual(sizes(11), [3, 4, 4], 'but 3 can be a round of their own');
+});

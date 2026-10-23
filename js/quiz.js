@@ -42,7 +42,7 @@ async function countQ({who, thing, n}){
   const num = COUNTING[n - 1], listen = lvl(num) <= 1;
   const gap = w => Math.abs(COUNTING.indexOf(w) - (n - 1));
   const near = shuffle(COUNTING.filter(w => w !== num && !NOT_HOW_MANY.includes(w) && WORDS[w] && lvl(w) >= 1)).sort((a, b) => gap(a) - gap(b));
-  const opts = shuffle([num, ...(listen ? soundApart(num, near, 2) : near.slice(0, 2))]);
+  const opts = shuffle([num, ...apart(num, near, 2, listen)]);
   const things = k => Array.from({length:k}, () => `<span class="thing">${picHTML(thing.word)}</span>`).join('');
   let ok;
   if (listen) ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">Listen. Which has that many?</p></div>`,
@@ -101,7 +101,7 @@ async function colourQ({who, w}){
   const listen = lvl(w) <= 1, known = x => x !== w && lvl(x) >= 1;
   const colours = shuffle(ORDER.filter(x => known(x) && WORDS[x].category === WORDS[w].category));
   const pool = colours.length >= 2 ? colours : [...colours, ...shuffle(picWords().filter(x => known(x) && WORDS[x].category !== WORDS[w].category))];
-  const opts = shuffle([w, ...(listen ? soundApart(w, pool, 2) : pool.slice(0, 2))]);
+  const opts = shuffle([w, ...apart(w, pool, 2, listen)]);
   const which = opts.every(o => WORDS[o].category === WORDS[w].category) ? 'Which paint is it?' : 'Which is it?';
   const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${listen ? 'Listen.' : 'Read it.'} ${which}</p></div>`,
     body:listen ? '<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>'
@@ -136,14 +136,30 @@ async function paintLesson(series, word, who){
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 // A word's pinyin without its tones (ü as u, no spaces): the words that sound alike, to anyone just hearing them.
 const toneless = w => WORDS[w].py.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s/g, '').toLowerCase();
-// n of these words, in order, to go beside the answer when you only hear it (listening): none that sounds like the
-// answer or another of them apart from its tone, such as 喝 hē beside 河 hé (decided 21 October 2026: confusing, and a
-// voice can't always make the tone clear). When reading, they can be together.
-function soundApart(answer, words, n){
+// Look-alikes (alike, in the word bank): words whose pictures share their main thing, or whose meanings overlap so a
+// picture of one could be taken for the other, such as 家 (home) and 学校 (school), 床 (bed) and 睡觉 (to sleep), or 动物
+// (animal) and any animal. They're never two answers in the same question (decided 23 October 2026, after playing it:
+// 学校 and 家 side by side were confusing). It works both ways; '*animals' is every word in that category.
+const ALIKE = {};
+for (const [w, d] of Object.entries(WORD_BANK)) for (const a of d.alike || []){
+  for (const o of a[0] === '*' ? Object.keys(WORD_BANK).filter(x => x !== w && WORD_BANK[x].category === a.slice(1)) : [a]){
+    (ALIKE[w] = ALIKE[w] || new Set()).add(o); (ALIKE[o] = ALIKE[o] || new Set()).add(w);
+  }
+}
+const alike = (a, b) => !!ALIKE[a] && ALIKE[a].has(b);
+// n of these words, in order, to go beside the answer: none a look-alike of it or of each other; and when you only hear
+// it (listen), none that sounds like it or another of them apart from its tone, such as 喝 hē beside 河 hé (decided 21
+// October 2026: confusing, and a voice can't always make the tone clear). When reading, they can sound alike.
+function apart(answer, words, n, listen){
   const heard = new Set([toneless(answer)]), out = [];
-  for (const w of words){ if (out.length >= n) break; if (!heard.has(toneless(w))){ heard.add(toneless(w)); out.push(w); } }
+  for (const w of words){
+    if (out.length >= n) break;
+    if ([answer, ...out].some(o => alike(o, w)) || (listen && heard.has(toneless(w)))) continue;
+    heard.add(toneless(w)); out.push(w);
+  }
   return out;
 }
+const soundApart = (answer, words, n) => apart(answer, words, n, true);   // (when you only hear it)
 // An animal asks about 3 words you've caught, never its own name (that's on the screen), so you need 4.
 const canEncounter = () => picWords().filter(w => lvl(w) >= 1).length >= 4;
 const canWild = () => matches(AREA.animalsAppear) && canEncounter();   // can animals jump out of their hiding place yet?
@@ -161,7 +177,7 @@ function questionType(w){
 function wordQuestion(w, avoid){
   const type = questionType(w);
   const others = shuffle(picWords().filter(x => x !== w && x !== avoid && lvl(x) >= 1));
-  const opts = shuffle([w].concat(type === 'read' ? others.slice(0, 2) : soundApart(w, others, 2)));   // (listening: none that sound alike)
+  const opts = shuffle([w].concat(apart(w, others, 2, type !== 'read')));   // (no look-alikes; listening, none that sound alike)
   let body;
   if (type === 'listen') body = `<div class="askrow"><p class="prompt">Listen. Which picture is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
   else if (type === 'read') body = `<div class="askrow"><p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div></div>`;   // (the word to read where a listening question has its 🔊: above the answers)
@@ -259,7 +275,7 @@ async function encounter(foe){
 async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, options}){
   const pics = !!WORDS[gap].pic && lvl(gap) <= 1;
   const fits = w => w !== gap && WORDS[w] && !WORDS[w].phrase && lvl(w) >= 1 && !t.includes(w) && (!pics || WORDS[w].pic);
-  const opts = options || shuffle([gap, ...(wrong ? wrong.filter(fits) : shuffle(ORDER.filter(fits))).slice(0, 2)]);
+  const opts = options || shuffle([gap, ...apart(gap, wrong ? wrong.filter(fits) : shuffle(ORDER.filter(fits)), 2, false)]);   // (no look-alikes)
   const shown = PUNCT.has(t.at(-1)) ? t : [...t, '。'];
   hear(t);
   // The speaker beside what to do, then the sentence and its English (and, for your first few lines, how to see a word's meaning).

@@ -13,6 +13,10 @@
 //   cue   a phrase's: what someone does that you answer with it ("thanks you"), to say what's happening when you reply
 //   later true for a word the area will teach later, but nothing does yet (such as 蜜蜂, till the troop's bees): it isn't
 //         counted, or in the Word Scroll, unless the game you're playing has caught it already
+//   alike its look-alikes: words whose pictures share their main thing (床 and 睡觉, both a bed), or whose meanings
+//         overlap so a picture of one could be taken for the other (家 and 学校). They're never two answers in the
+//         same question. It works both ways, so one of the two lists it; '*animals' is every word in that category.
+//         A new word with a picture lists its look-alikes (decided 23 October 2026)
 //
 // In the Word Scroll, each category's words appear in the order they are listed here.
 // Sentences in the content files may only use words from this bank (the tests check).
@@ -35,18 +39,18 @@ const CATEGORIES = {
 const WORD_BANK = {
   // Collected on Flower Fruit Mountain (area 1)
   '石头': {py:'shítou', en:'stone, rock', pic:'🪨', area:1, category:'nature'},
-  '猴子': {py:'hóuzi', en:'monkey', pic:'🐒', area:1, category:'animals'},
+  '猴子': {py:'hóuzi', en:'monkey', pic:'🐒', area:1, category:'animals', alike:['同学', '朋友', '跳', '老板', '老师', '睡觉']},
   '山': {py:'shān', en:'mountain', pic:'⛰️', area:1, category:'nature'},
   '花': {py:'huā', en:'flower', pic:'🌸', area:1, category:'nature'},
   '草': {py:'cǎo', en:'grass', pic:'🌿', area:1, category:'nature'},
-  '树': {py:'shù', en:'tree', pic:'🌳', area:1, category:'nature'},
+  '树': {py:'shù', en:'tree', pic:'🌳', area:1, category:'nature', alike:['木头', '棍子']},
   '桃子': {py:'táozi', en:'peach', pic:'🍑', area:1, category:'food'},
   '苹果': {py:'píngguǒ', en:'apple', pic:'🍎', area:1, category:'food'},
-  '河': {py:'hé', en:'river', pic:'🏞️', area:1, category:'nature'},
-  '水': {py:'shuǐ', en:'water', pic:'💧', area:1, category:'food'},
+  '河': {py:'hé', en:'river', pic:'🏞️', area:1, category:'nature', alike:['瀑布']},
+  '水': {py:'shuǐ', en:'water', pic:'💧', area:1, category:'food', alike:['喝']},
   '鱼': {py:'yú', en:'fish', pic:'🐟', area:1, category:'animals'},
   '鸟': {py:'niǎo', en:'bird', pic:'🐦', area:1, category:'animals'},
-  '动物': {py:'dòngwù', en:'animal', pic:'🐾', area:1, category:'animals'},
+  '动物': {py:'dòngwù', en:'animal', pic:'🐾', area:1, category:'animals', alike:['*animals']},
   '兔子': {py:'tùzi', en:'rabbit', pic:'🐇', area:1, category:'animals'},
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},
   '松鼠': {py:'sōngshǔ', en:'squirrel', pic:'🐿️', area:1, category:'animals'},
@@ -72,10 +76,10 @@ const WORD_BANK = {
   '狼': {py:'láng', en:'wolf', pic:'🐺', area:1, category:'animals'},   // (chapter 1: in the pine wood's long grass)
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
   '桥': {py:'qiáo', en:'bridge', pic:'🌉', area:1, category:'places'},
-  '床': {py:'chuáng', en:'bed', pic:'🛏️', area:1, category:'items'},
-  '碗': {py:'wǎn', en:'bowl', pic:'🥣', area:1, category:'items'},
+  '床': {py:'chuáng', en:'bed', pic:'🛏️', area:1, category:'items', alike:['睡觉']},
+  '碗': {py:'wǎn', en:'bowl', pic:'🥣', area:1, category:'items', alike:['吃']},
   '桌子': {py:'zhuōzi', en:'table', pic:'🪑', area:1, category:'items'},
-  '家': {py:'jiā', en:'home', pic:'🏠', area:1, category:'places'},
+  '家': {py:'jiā', en:'home', pic:'🏠', area:1, category:'places', alike:['学校', '洞']},
   '睡觉': {py:'shuìjiào', en:'to sleep', pic:'😴', area:1, category:'actions'},
   '王': {py:'wáng', en:'king', pic:'👑', area:1, category:'people'},
   '一': {py:'yī', en:'one', pic:'1️⃣', area:1, category:'numbers'},
@@ -90,7 +94,7 @@ const WORD_BANK = {
   '十': {py:'shí', en:'ten', pic:'🔟', area:1, category:'numbers'},
   '吃': {py:'chī', en:'to eat', pic:'😋', area:1, category:'actions'},
   '喝': {py:'hē', en:'to drink', pic:'🥤', area:1, category:'actions'},
-  '朋友': {py:'péngyou', en:'friend', pic:'🧑‍🤝‍🧑', area:1, category:'people'},
+  '朋友': {py:'péngyou', en:'friend', pic:'🧑‍🤝‍🧑', area:1, category:'people', alike:['兔子']},
   '我': {py:'wǒ', en:'I, me', area:1, category:'people'},
   '要': {py:'yào', en:'to want', area:1, category:'actions'},
   '瀑布': {py:'pùbù', en:'waterfall', pic:'💦', area:1, category:'nature'},
@@ -98,7 +102,7 @@ const WORD_BANK = {
   '头带': {py:'tóudài', en:'headband', pic:'🎀', area:1, category:'items'},
   '戴': {py:'dài', en:'to wear (on your head)', area:1, category:'actions'},
   // Chapter 1: the troop's new home
-  '木头': {py:'mùtou', en:'wood', pic:'🌲', area:1, category:'items'},
+  '木头': {py:'mùtou', en:'wood', pic:'🌲', area:1, category:'items', alike:['棍子']},
   '学校': {py:'xuéxiào', en:'school', pic:'🏫', area:1, category:'places'},
   '老师': {py:'lǎoshī', en:'teacher', pic:'🧑‍🏫', area:1, category:'people'},
   '同学': {py:'tóngxué', en:'classmate', pic:'🎒', area:1, category:'people'},
