@@ -388,9 +388,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ]
     },
     // The way up the stream, from the meadow to the waterfall (the end of the prologue), in three places that follow the
-    // river. Bushes, boulders and banks send you through long grass (there's no way round), where snakes and spiders jump
-    // out. The mountain path: up beside the river, but a bank sends you west, up stone steps, and back east through long
-    // grass along a terrace.
+    // river. Bushes, boulders and cliffs send you through long grass (there's no way round), where snakes and spiders jump
+    // out; on the way back down, short grassy banks in the cliffs let you hop down (decided 23 October 2026, after playing
+    // it: a bank right across was too much grass). The mountain path: up beside the river, but a cliff sends you west, up
+    // stone steps, and back east through long grass along a terrace.
     // A clearing on the left has a peach tree and the squirrel.
     path: {
       name: {zh:'山路', py:'shānlù', en:'The mountain path'},
@@ -410,8 +411,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "^^gggggnnnnnnggrrgWW^^^^",
         "^^grrrrnnnnnnrrrggWW^^^^",
         "^^rrggnnnnnnnggoggWW^^^^",
-        "^^==MvvvvvvvvvvvvvWW^^^^",
-        "^^==MvvvvvvvvvvvvvWW^^^^",
+        "^^==MMMMMvvMMMMvvvWW^^^^",   // stone steps up the cliff (left), and short grassy banks to hop down
+        "^^==MMMMMvvMMMMvvvWW^^^^",
         "^^rrggnnnnnnnnngggWW^^^^",
         "^^rrrrnnnnnnnnrrrgWW^^^^",
         "^^ggggnnnnnnnngrrgWW^^^^",
@@ -446,7 +447,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "^^^^^^^^^^^^^^^^^^^rrWW^^^"
       ]
     },
-    // Deep in the mountains: beside the river, east along the bottom and up stone steps beside a bank, then back west across
+    // Deep in the mountains: beside the river, east along the bottom and up stone steps in a cliff, then back west across
     // long grass, past the wild boar in the narrow way, to the waterfall where the river begins, pouring down the cliff.
     // Jump through it into the Water Curtain Cave.
     falls: {
@@ -466,8 +467,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "^^YWWggrnnnnnngPgY^^",
         "^^wWWrrrnnnnnnrrrw^^",
         "^^wWWgggnnnnnnrrgw^^",
-        "^^wWWvvvvvvvvv==Mw^^",
-        "^^wWWvvvvvvvvv==Mw^^",
+        "^^wWWvvvMMMMMM==Mw^^",   // a short grassy bank to hop down (left), and stone steps up the cliff (right)
+        "^^wWWvvvMMMMMM==Mw^^",
         "^^wWWrrrrrrrrrrrgw^^",
         "^^wWWrgggTggggggTw^^",
         "^^^WWrr^^^^^^^^^^^^^"
@@ -1369,7 +1370,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the goat below the waterfall: the way down is quicker, hopping down the banks that sent you round on the way up
     ledgeGoat: [
       {if:{ledgeTip:0}, do:[{say:'hi'}, {reply:'你好'},
-        {message:'Going down is quicker! The grassy banks that sent you the long way round can’t be climbed, but you can hop down them. Just walk off the edge.'},
+        {message:'Going down is quicker! You can hop down the grassy banks in the cliffs: just walk off the edge. You can’t climb back up them, though.'},
         {set:{ledgeTip:1}}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'Going down the mountain? Hop down the grassy banks: it’s quicker.'}]}
     ],
