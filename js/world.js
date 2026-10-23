@@ -706,10 +706,19 @@ function practiceSounds(now){
     swishedAt[n.id] = k;
   }
 }
-function ambience(now){
+// The sounds of the part of the place you're in: the place's own (sounds: some of SFX's names), or, where they change from
+// one part of it to another (each part: its rows, from and to, and its sounds), the part you're in, such as the hillside's
+// as you climb. A sound comes soon after you come into a part, then every so often.
+function placeSounds(){
   const sounds = PLACES[PLACE].sounds;
+  if (!sounds || typeof sounds[0] === 'string') return sounds;
+  const part = sounds.find(p => pl.y >= p.rows[0] && pl.y <= p.rows[1]);
+  return part ? part.sounds : null;
+}
+function ambience(now){
+  const sounds = placeSounds();
   if (!sounds || mode !== 'play' || !modal.hidden){ ambientAt = 0; return; }
-  if (!ambientAt || ambientIn !== PLACE){ ambientIn = PLACE; ambientAt = now + 4000 + Math.random() * 6000; return; }
+  if (!ambientAt || ambientIn !== sounds){ ambientAt = now + (ambientAt ? 1500 + Math.random() * 2500 : 4000 + Math.random() * 6000); ambientIn = sounds; return; }
   if (now < ambientAt) return;
   SFX[sounds[Math.floor(Math.random() * sounds.length)]]();
   ambientAt = now + 12000 + Math.random() * 18000;

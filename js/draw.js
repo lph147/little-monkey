@@ -706,6 +706,7 @@ function drawLookout(t, now){
     disc(b, cx, cy, r(5), '#FFFFFF'); disc(b, cx + r(7), cy - r(3), r(7), '#FFFFFF'); disc(b, cx + r(15), cy, r(5), '#FFFFFF');
     R(b, cx - r(4), cy, r(24), r(5), '#FFFFFF'); R(b, cx - r(4), cy + r(5), r(24), 1, '#C9DFEC');
   };
+  heavenGate(godsPeek(now), cloud);
   const drift = t * 1.2;   // (the clouds drift slowly to the right)
   cloud(18 + drift, 12, 1); cloud(140 + drift * .7, 8, 1.3); cloud(204 + drift * .5, 26, .7);
   for (const [k, by] of [[0, 20], [.12, 25]]){   // two birds flying past
@@ -792,6 +793,29 @@ function drawCarving(t, now){
     R(b, mx + 12, my + 10, 2, 2, '#FFD34E'); R(b, mx + 18, my + 10, 2, 2, '#FFD34E');
     b.globalAlpha = shine; oval(b, 120, 104, 13, 3, 'rgba(0,0,0,.25)'); b.drawImage(monkeySprite('player', 'up', false), 104, 72, 32, 32); b.globalAlpha = 1;   // you, looking up at it
   }
+}
+// High in the sky over the lookout, a gate in the clouds, the gate of heaven, and two gods peeking out from behind its
+// pillars for a moment now and then, then ducking back (in the book, Thousand-Mile Eye, shading his eyes, and Wind-Following
+// Ear, cupping his ear, sent by the Jade Emperor to see what the light from your eyes was, when you were born): a secret,
+// with nothing said about it (decided 23 October 2026). How far out they are (0 to 1) now: every few seconds, whatever the
+// scene's clock is doing (it waits at each line until Next).
+function godsPeek(now){
+  const c = (now / 1000) % 5;
+  return clamp(c < .3 ? c / .3 : c < 1.4 ? 1 : c < 1.7 ? (1.7 - c) / .3 : 0, 0, 1);
+}
+function heavenGate(k, cloud){
+  const x0 = 92, glow = '#FFF3C8', red = '#C2412F', dark = '#7A2416', gold = '#E7A93A', skin = '#F1C9A0', hair = '#2E2A26';
+  disc(b, x0 + 13, 15, 8, glow);   // the light of heaven, through the gateway
+  const out = Math.round(k * 4);
+  if (out){   // the gods, out from behind the pillars: Thousand-Mile Eye (left), his hand shading his eyes, in blue;
+    const L = x0 + 3 - out, Rx = x0 + 22 + out;   // Wind-Following Ear (right), his hand cupping his ear, in green
+    R(b, L - 1, 16, 5, 6, '#3B6FB6'); R(b, L, 10, 4, 6, skin); R(b, L, 9, 4, 2, hair); R(b, L, 12, 1, 1, '#FFFFFF'); R(b, L + 1, 12, 1, 1, '#1E1A16'); R(b, L - 1, 10, 4, 1, skin);
+    R(b, Rx, 16, 5, 6, '#3E8E5A'); R(b, Rx, 10, 4, 6, skin); R(b, Rx, 9, 4, 2, hair); R(b, Rx + 2, 12, 1, 1, '#1E1A16'); R(b, Rx + 4, 10, 2, 4, skin); R(b, Rx + 5, 9, 1, 1, skin);
+  }
+  R(b, x0 + 3, 7, 3, 16, red); R(b, x0 + 3, 7, 1, 16, dark); R(b, x0 + 20, 7, 3, 16, red); R(b, x0 + 22, 7, 1, 16, dark);   // its pillars
+  R(b, x0 + 1, 7, 24, 2, red); R(b, x0 + 1, 9, 24, 1, dark); R(b, x0 + 10, 9, 6, 3, gold);   // the beam across, and its golden plaque
+  R(b, x0 - 1, 4, 28, 3, gold); R(b, x0, 3, 26, 1, '#F6CD6A'); R(b, x0 - 1, 6, 28, 1, '#A8701E'); R(b, x0 - 2, 3, 1, 1, gold); R(b, x0 + 27, 3, 1, 1, gold);   // its roof, with upturned eaves
+  cloud(x0 - 2, 24, .55); cloud(x0 + 14, 25, .5);   // the clouds it stands on
 }
 // The pictures for the area's scenes (AREA.scenes), by name (a scene's art, or else its id); the opening's are drawScene, above.
 const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout, carving: drawCarving};

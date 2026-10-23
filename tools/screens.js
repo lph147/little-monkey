@@ -371,6 +371,8 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'hillside', x: 19, y: 21, dir: 'up'}; placePlayer(); arrive(19, 21).then(runEvents); await wait(2200); }},
   {id: 'lookout-view', title: 'The view from the lookout', save: 'hillsideLookout', why: 'A at the lookout’s railing: what you can see, told like the opening (a far view is a picture, never part of the map): the hillside going down, the river winding out to the sea, islands far off, and you at the railing. 这里很好看！ (It’s lovely up here!)', run: async () => {
     play(); await wait(100); storyScene('lookout'); introClock = .8; advancedTo = 0; await wait(400); }},
+  {id: 'lookout-gods', title: 'Who’s that, up in the clouds?', save: 'hillsideLookout', why: 'High in the sky, a gate in the clouds, and two gods peeking out from behind its pillars for a moment, then ducking back (in the book, Thousand-Mile Eye and Wind-Following Ear, sent to see the light from your eyes when you were born): a secret, with nothing said about it.', run: async () => {
+    play(); await wait(100); godsPeek = () => 1; storyScene('lookout'); introClock = 1.8; advancedTo = 0; await wait(400); }},   // (held out)
   {id: 'lookout-sea', title: 'The sea is so big!', save: 'hillsideLookout', why: 'Then 海很大！: nothing new, just words you’ve heard (海, sea, in the opening).', run: async () => {
     play(); await wait(100); storyScene('lookout'); introClock = 3.6; advancedTo = 1; await wait(400); }},
   {id: 'hillside-top', title: 'The hillside: under the first pines', save: 'hillsideTop', why: 'Mushrooms, long grass grown over the way under the pines, and a stone archway with the pine wood’s name, 松林, on its board: the way into the wood.', run: async () => {

@@ -79,6 +79,10 @@ const SFX = {
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.035, t + .5); g.gain.setValueAtTime(.035, t + 1.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
     o.connect(f); f.connect(g); g.connect(a.destination); [o, lfo].forEach(x => { x.start(t); x.stop(t + 2.6); });
   },
+  birds: () => {   // birdsong somewhere nearby: a few quick chirps, then a little trill
+    [[2600, 900], [2850, 650], [2500, 1000]].forEach(([f, up], i) => tone(f, .07, 'sine', .02, i * .13, up));
+    for (let i = 0; i < 5; i++) tone(3300 - i * 70, .04, 'sine', .015, .52 + i * .065, -450);
+  },
   wind: () => {   // the wind in the pines: a soft rush that swells and dies away
     const a = ac(); if (!a) return;
     const d = 3.2, t = a.currentTime, buf = a.createBuffer(1, a.sampleRate * d, a.sampleRate), ch = buf.getChannelData(0);

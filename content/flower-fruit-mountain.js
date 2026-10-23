@@ -369,7 +369,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   gloom   gloomy, as under thick trees (but always in the daytime: never night): shade, darkest deep in the trees
   //           (deep) and lightest where it's open (open), with sunshine on grass and sunbeams slanting into the open
   //           places; mist: true for mist drifting low, and eyes: true for eyes glinting now and then in the deepest shade
-  //   sounds  its own sounds, one now and then (some of SFX in js/sound.js), such as crows and a far-off howl
+  //   sounds  its own sounds, one now and then (some of SFX in js/sound.js), such as crows and a far-off howl; or sounds that
+  //           change from one part of it to another, as you go (each part: its rows, from and to, from the top, and its
+  //           sounds), such as the hillside's as you climb
   //   battleMusic  its own battle song (one of SONGS), and backdrop: how a battle or an animal's questions look here
   //           (one of BACKDROPS in js/art.js, such as 'pines'), instead of a meadow
   // Positions elsewhere in this file ([x, y], or x and y) are in the first place. Something in another
@@ -578,6 +580,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the pines, practising words you know. A peach tree in a corner, and tall grass where your friends hide.
     hillside: {
       name: {zh:'山坡', py:'shānpō', en:'The hillside'},
+      // sounds that change as you climb (decided 23 October 2026): crows under the pines at the top, the wind on the terraces,
+      // and birdsong at the foot, by the flowers and the brook
+      sounds: [{rows:[0, 15], sounds:['crow', 'crow', 'wind']}, {rows:[16, 31], sounds:['wind']}, {rows:[32, 45], sounds:['birds']}],
       exits: [
         {at:[12, 45], to:'homeGround', arrive:[25, 1], facing:'down'}, {at:[13, 45], to:'homeGround', arrive:[25, 1], facing:'down'},   // down to the home ground
         {at:[12, 0], to:'pineWood', arrive:[16, 26], facing:'up'}, {at:[13, 0], to:'pineWood', arrive:[17, 26], facing:'up'}   // into the pine wood

@@ -594,7 +594,13 @@ test('a place’s own songs, backdrop, gloom and sounds, and every sound a step 
     if (p.music) assert.ok(SONGS.includes(p.music), `${id}'s music, ${p.music}, isn't one of the songs (js/sound.js)`);
     if (p.battleMusic) assert.ok(SONGS.includes(p.battleMusic), `${id}'s battle music, ${p.battleMusic}, isn't one of the songs (js/sound.js)`);
     if (p.backdrop) assert.ok(get('Object.keys(BACKDROPS)').includes(p.backdrop), `${id}'s backdrop, ${p.backdrop}, isn't one of the backdrops (js/art.js)`);
-    for (const s of p.sounds || []) assert.ok(SFX.includes(s), `${id}'s sound ${s} isn't one of the sound effects (js/sound.js)`);
+    const parts = (p.sounds || []).filter(s => typeof s !== 'string');   // (sounds that change from one part of the place to another)
+    for (const s of (p.sounds || []).flatMap(s => typeof s === 'string' ? [s] : s.sounds)) assert.ok(SFX.includes(s), `${id}'s sound ${s} isn't one of the sound effects (js/sound.js)`);
+    if (parts.length){
+      assert.equal(parts.length, p.sounds.length, `${id}'s sounds: all of them by part of the place, or none`);
+      parts.forEach((q, i) => assert.equal(q.rows[0], i ? parts[i - 1].rows[1] + 1 : 0, `${id}'s sounds: each part starts where the one before it ends, from the top`));
+      assert.equal(parts[parts.length - 1].rows[1], p.map.length - 1, `${id}'s sounds: the parts go right down to its bottom row`);
+    }
     if (p.gloom){
       assert.ok(p.gloom.deep > p.gloom.open && p.gloom.open >= 0 && p.gloom.deep < 1, `${id}'s gloom: deep (${p.gloom.deep}) should be darker than open (${p.gloom.open}), and never black`);
       for (const k of Object.keys(p.gloom)) assert.ok(['deep', 'open', 'mist', 'eyes'].includes(k), `${id}'s gloom: "${k}" isn't one of its settings`);
