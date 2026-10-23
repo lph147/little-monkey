@@ -88,7 +88,8 @@ test('every word you can collect here says where you found it', () => {
 });
 
 test('the word bank lists each word only once', () => {
-  const text = fs.readFileSync(path.join(ROOT, 'content', 'words.js'), 'utf8');
+  const file = fs.readFileSync(path.join(ROOT, 'content', 'words.js'), 'utf8');
+  const text = file.slice(file.indexOf('const WORD_BANK'), file.indexOf('\n};', file.indexOf('const WORD_BANK')));   // (the bank, not MADE after it)
   const seen = new Set();
   for (const [, w] of text.matchAll(/^\s*'([^']+)'\s*:/gm)){
     assert.ok(!seen.has(w), `${w} is in content/words.js twice; the second one silently replaces the first`);

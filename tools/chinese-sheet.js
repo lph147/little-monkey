@@ -127,7 +127,7 @@ const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'
 function sheet(){
   const game = loadGame();
   const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
-  const AREA = get('AREA'), BANK = get('WORD_BANK'), MENU = get('MENU_TILES');
+  const AREA = get('AREA'), BANK = get('WORD_BANK'), MENU = get('MENU_TILES'), MADE = get('MADE');
   // Pinyin for a sentence written with spaces between words, from the word bank.
   const py = zh => zh.split(' ').reduce((out, t) => PUNCT[t] ? out + PUNCT[t] : (out ? out + ' ' : '') + ((BANK[t] || {}).py || '??'), '');
   const chars = zh => zh.split(' ').join('');
@@ -151,6 +151,9 @@ function sheet(){
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name)];   // characters, the sign, the area and its places
   const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe'])];
   const notes = '';
+  // how a word is made, in one line: its parts (each Chinese, pinyin, English) and what they add up to; or the clue inside it
+  const part = ([zh, p, en]) => `${zh} ${p} (${en})`;
+  const made = m => m.parts ? `${m.parts.map(part).join(' + ')} = ${m.why}` : m.clue ? `${part(m.clue)}: ${m.why}` : m.why;
 
   return `# Chinese in Little Monkey: for checking
 
@@ -215,6 +218,14 @@ ${table(['Chinese', 'Pinyin', 'English', 'Notes'], names.map(n => [n.zh, n.py, n
 ### Words to collect
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], collect.map(w => [w, BANK[w].py, BANK[w].en, notes]))}
+
+### How words are made
+
+Shown on a word's new-word card and its page in the Word Scroll (new on 23 October 2026, not checked yet): its parts and
+what they add up to, the clue inside it, or the picture it was drawn from. Please check that each is true, well known and
+simply put. A part's pinyin is as it's said in the word.
+
+${table(['Word', 'Pinyin', 'How it’s made', 'Notes'], Object.entries(MADE).map(([w, m]) => [w, BANK[w].py, made(m), notes]))}
 
 ### Words only heard in sentences
 

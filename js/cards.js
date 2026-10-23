@@ -270,8 +270,33 @@ function chooseReply(choices, {id, line, pic, ask, best} = {}){
 // The box stays up for a moment, so lines one after another change in place instead of closing and opening again.
 function closeTalk(){ setTimeout(() => { if (!talkNext){ talkBox.hidden = true; talkBox.innerHTML = ''; } }, 0); }
 talkBox.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('button')) e.preventDefault(); });   // tapping its buttons doesn't take the keyboard's focus
+// How a word is made (MADE, in content/words.js): its parts, each with its pinyin over it and its English (green if it's a
+// word you know), and what they add up to; or the clue inside a character; or the picture it was drawn from. Then where
+// you've met a part before, in another word you know (just one, so the card stays small). It goes with a word's English:
+// on its first card, and behind the English button after that (hide). (Decided 23 October 2026: Chinese is logical.)
+const madeParts = w => { const m = MADE[w]; return !m ? [] : m.parts || (m.clue ? [m.clue] : []); };
+const PART_IN = {};   // each part, such as 果, to the words made with it (水果, 苹果)
+for (const w of Object.keys(MADE)) for (const [zh] of madeParts(w)) (PART_IN[zh] = PART_IN[zh] || []).push(w);
+const knownWord = (zh, w) => zh !== w && !!WORDS[zh] && lvl(zh) >= 1;   // a part that's a word you know (not the word itself)
+function madeLinks(w){   // [a part of w, a word you know with it too], or none
+  for (const zh of MADE[w].parts ? MADE[w].parts.map(p => p[0]) : [w, ...madeParts(w).map(p => p[0])]){
+    if (knownWord(zh, w)) continue;   // (green in the box already)
+    const other = (PART_IN[zh] || []).find(o => knownWord(o, w));
+    if (other) return [[zh, other]];
+  }
+  return [];
+}
+function madeHTML(w, hide = false){
+  const m = MADE[w]; if (!m || !WORDS[w]) return '';
+  const part = ([zh, py, en]) => `<span class="mpart"><ruby${knownWord(zh, w) ? ' class="known"' : ''}>${zh}<rt>${py}</rt></ruby> <span class="mden">${esc(en)}</span></span>`;
+  const story = m.parts ? `${m.parts.map(part).join(' <span class="mplus">+</span> ')} <span class="mwhy">= ${esc(m.why)}</span>`   // (spaces: for a screen reader)
+    : `${m.clue ? part(m.clue) + ' ' : ''}<span class="mwhy">${esc(m.why)}</span>`;
+  const links = madeLinks(w).map(([zh, o]) => `<span class="mlink">${zh} is also in <ruby class="known">${o}<rt>${WORDS[o].py}</rt></ruby> (${esc(WORDS[o].en.split(',')[0])}), a word you know.</span>`);
+  return `<div class="made"${hide ? ' hidden' : ''}>${story}${links.map(l => ' ' + l).join('')}</div>`;
+}
 // A word's card. It says the word straight away when you discover it yourself; in a conversation
-// (opts.quiet) it doesn't, so the conversation isn't broken up by the word again: 🔊 Hear it is there.
+// (opts.quiet) it doesn't, so the conversation isn't broken up by the word again: 🔊 Hear it is there. How the word is made
+// goes with its English (madeHTML).
 function showNotice(w, opts = {}){
   return new Promise(res => {
     const d = WORDS[w], isNew = lvl(w) === 0;
@@ -279,11 +304,11 @@ function showNotice(w, opts = {}){
     openCard(`${isNew ? '<p class="label">⭐ New word to learn</p>' : `<p class="label">Word ${pips(w)}</p>`}
 
       <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
-      <div class="en" ${isNew ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}</div>
+      <div class="en" ${isNew ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}${madeHTML(w, !isNew)}</div>
       <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${isNew ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${isNew ? 'Got it' : 'OK'}</button></div>`);
     if (!opts.quiet) say(w);
     on('[data-a=say]', () => say(w));
-    on('[data-a=en]', () => { sheet.querySelector('.word .en').hidden = false; });
+    on('[data-a=en]', () => { sheet.querySelectorAll('.word .en, .word .made').forEach(x => x.hidden = false); });
     on('[data-a=ok]', () => { closeCard(); if (isNew){ setSeen(w); toast(`${wz(w)} added to your Word Scroll`); } res(); });
   });
 }

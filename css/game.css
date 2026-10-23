@@ -222,6 +222,21 @@ rt.hid{visibility:hidden}
 .word.side .line{margin:.1rem 0 0}
 .word.side .tok,.word.side .punct{font-size:1.3rem}
 .word.side .sentence-en,.word.side .gloss{margin:.2rem 0 0;font-size:.85rem}
+/* how a word is made (madeHTML in js/cards.js): a box under its English, across the card, with each part's pinyin over it
+   (never smaller than 10.5px) and its English, a part you know green, and where you've met a part before */
+.made{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.15rem .4rem;margin:.35rem 0 0;padding:.25rem .55rem .3rem;border-radius:6px;background:color-mix(in srgb,var(--gold) 14%,transparent);font-family:var(--text);font-size:.88rem;line-height:1.3;color:var(--ink);text-align:left}
+.made[hidden],.madeabout[hidden]{display:none}
+.word.side > .made{grid-column:1 / -1;justify-self:stretch}
+.made .mpart{display:inline-flex;align-items:flex-end;gap:.25rem}
+.made ruby{font-family:var(--text);font-size:1.35rem;line-height:1.1;color:var(--muted);ruby-align:center}   /* (a word's characters together, under pinyin wider than them) */
+.made rt{font-size:max(.5em,10.5px);color:var(--muted);font-weight:400}
+.made ruby.known{color:var(--jade);font-weight:600}
+.made .mden,.made .mplus,.made .mwhy{padding-bottom:.15rem}
+.made .mden{font-size:.85rem}
+.made .mplus{color:var(--muted);font-weight:700}
+.made .mlink{flex-basis:100%;font-size:.8rem;color:var(--muted)}
+.made .mlink ruby{font-size:1.05rem}
+.madeabout .made{margin-top:.15rem}
 .pips{display:inline-flex;gap:4px;vertical-align:middle}
 .pips i{width:10px;height:10px;border-radius:2px;background:var(--line);display:block}
 .pips i.on{background:var(--gold)}
@@ -741,6 +756,18 @@ rt.hid{visibility:hidden}
   .bag .menu.grid{gap:.3rem;margin:.1rem 0}   /* the bag: both rows */
   .bag .card{padding-top:.1rem;padding-bottom:.1rem}
   .morecue{font-size:.7rem;padding:.2rem .5rem .25rem}   /* ▼ More, smaller, so it fits between the buttons */
+  /* a new word's card with how it's made: a small picture in a row with the word, its pinyin and its English, then the
+     note and the box under them, so it all fits without scrolling */
+  .word.side:has(> .made:not([hidden])){display:flex;flex-wrap:wrap;align-items:center;align-content:center;column-gap:.45rem;row-gap:.1rem}
+  .word.side:has(> .made:not([hidden])) .pic .pix{width:var(--pic-small);height:var(--pic-small)}
+  .word.side:has(> .made:not([hidden])) .big{font-size:1.7rem}
+  .word.side:has(> .made:not([hidden])) .en{margin:0}
+  .word.side:has(> .made:not([hidden])) > :is(.note,.made){flex-basis:100%;margin-top:0}
+  .made{padding:.05rem .4rem .15rem;gap:0 .3rem}
+  .made ruby{font-size:1.05rem}
+  .made .mden,.made .mwhy{font-size:.75rem}
+  .made .mlink{font-size:.72rem}
+  .made .mlink ruby{font-size:.9rem}
 }
 /* a short screen (a small phone): a smaller scene, 🔊 and answers, so the answers fit without scrolling */
 @media (max-height:680px){.scene{height:104px;margin-bottom:6px}.scene .foem{top:66px;width:96px;height:26px}.scene .foe{top:10px}.scene .foe .portrait{width:64px;height:64px}

@@ -196,3 +196,40 @@ const WORD_BANK = {
   '眼睛': {py:'yǎnjing', en:'eyes'},
   '光': {py:'guāng', en:'light'}
 };
+
+// How a word is made, shown on its new-word card (with its English) and its page in the Word Scroll, for words where it
+// genuinely helps you understand or remember them (decided 23 October 2026): never for one whose characters just say the
+// meaning again (朋友: 朋 friend + 友 friend), and never a story that isn't true. A part you know as a word shows green, and
+// a card says where you've met a part before, in another word you know (such as the 果 of 苹果, in 水果).
+//   parts  a word of two or more characters (or a phrase): each as [Chinese, pinyin, English], its pinyin as said in this
+//          word (so together they make the word's own), then why: what they add up to
+//   clue   a word of one character: a part of it that gives a clue, as [Chinese, pinyin, English], then why
+//   why    on its own: the picture a character was drawn from
+// The explanations wait for the native speaker's check (CHINESE.md). The meadow's words first; the rest of Flower Fruit
+// Mountain's to come.
+const MADE = {
+  // drawn from a picture
+  '山': {why:'Drawn like three mountain peaks.'},
+  '水': {why:'Drawn like flowing water, splashing out either side.'},
+  '鱼': {why:'Drawn like a fish: its head at the top, its tail at the bottom.'},
+  '羊': {why:'Drawn like a sheep’s head: its two horns are at the top.'},
+  // a clue inside
+  '花': {clue:['艹', 'cǎo', 'plants'], why:'on top: a flower is a plant'},
+  '草': {clue:['艹', 'cǎo', 'plants'], why:'on top: grass is a plant'},
+  '树': {clue:['木', 'mù', 'tree'], why:'on its left, drawn like a tree'},
+  '河': {clue:['氵', 'shuǐ', 'water'], why:'three drops on its left: a river is water'},
+  '吃': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you eat with your mouth'},
+  '喝': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you drink with your mouth'},
+  // made of words or characters
+  '山羊': {parts:[['山', 'shān', 'mountain'], ['羊', 'yáng', 'sheep']], why:'a mountain sheep'},
+  '水果': {parts:[['水', 'shuǐ', 'water'], ['果', 'guǒ', 'fruit']], why:'fresh, juicy fruit'},
+  '苹果': {parts:[['苹', 'píng', 'only in this word'], ['果', 'guǒ', 'fruit']], why:'a kind of fruit'},
+  '动物': {parts:[['动', 'dòng', 'to move'], ['物', 'wù', 'thing']], why:'things that move'},
+  '松鼠': {parts:[['松', 'sōng', 'pine'], ['鼠', 'shǔ', 'mouse']], why:'a pine mouse'},
+  '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']], why:'a band for your head'},
+  // phrases
+  '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']], why:'hello, wishing you well'},
+  '再见': {parts:[['再', 'zài', 'again'], ['见', 'jiàn', 'to see']], why:'goodbye: see you again'},
+  '没关系': {parts:[['没', 'méi', 'not'], ['关系', 'guānxi', 'connection']], why:'it doesn’t matter'},
+  '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not'], ['要', 'yào', 'to want']], why:'I don’t want it'}
+};

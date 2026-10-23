@@ -337,6 +337,35 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 再见 | zàijiàn | goodbye |  |
 | 我不要 | wǒ bú yào | no thanks, I don’t want it |  |
 
+### How words are made
+
+Shown on a word's new-word card and its page in the Word Scroll (new on 23 October 2026, not checked yet): its parts and
+what they add up to, the clue inside it, or the picture it was drawn from. Please check that each is true, well known and
+simply put. A part's pinyin is as it's said in the word.
+
+| Word | Pinyin | How it’s made | Notes |
+| --- | --- | --- | --- |
+| 山 | shān | Drawn like three mountain peaks. |  |
+| 水 | shuǐ | Drawn like flowing water, splashing out either side. |  |
+| 鱼 | yú | Drawn like a fish: its head at the top, its tail at the bottom. |  |
+| 羊 | yáng | Drawn like a sheep’s head: its two horns are at the top. |  |
+| 花 | huā | 艹 cǎo (plants): on top: a flower is a plant |  |
+| 草 | cǎo | 艹 cǎo (plants): on top: grass is a plant |  |
+| 树 | shù | 木 mù (tree): on its left, drawn like a tree |  |
+| 河 | hé | 氵 shuǐ (water): three drops on its left: a river is water |  |
+| 吃 | chī | 口 kǒu (mouth): on its left: you eat with your mouth |  |
+| 喝 | hē | 口 kǒu (mouth): on its left: you drink with your mouth |  |
+| 山羊 | shānyáng | 山 shān (mountain) + 羊 yáng (sheep) = a mountain sheep |  |
+| 水果 | shuǐguǒ | 水 shuǐ (water) + 果 guǒ (fruit) = fresh, juicy fruit |  |
+| 苹果 | píngguǒ | 苹 píng (only in this word) + 果 guǒ (fruit) = a kind of fruit |  |
+| 动物 | dòngwù | 动 dòng (to move) + 物 wù (thing) = things that move |  |
+| 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = a pine mouse |  |
+| 头带 | tóudài | 头 tóu (head) + 带 dài (band) = a band for your head |  |
+| 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = hello, wishing you well |  |
+| 再见 | zàijiàn | 再 zài (again) + 见 jiàn (to see) = goodbye: see you again |  |
+| 没关系 | méi guānxi | 没 méi (not) + 关系 guānxi (connection) = it doesn’t matter |  |
+| 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = I don’t want it |  |
+
 ### Words only heard in sentences
 
 | Chinese | Pinyin | English | Notes |

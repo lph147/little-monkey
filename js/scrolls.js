@@ -239,18 +239,18 @@ function exampleFor(w){
   const done = SENTENCES().find(b => toks(b.sentence).includes(w));
   return done && {t:[...toks(done.sentence), '。'], en:done.sentenceEn};
 }
-function wordPage(w, back){   // a caught word's page in the Word Scroll
+function wordPage(w, back){   // a caught word's page in the Word Scroll (English, and how it's made, behind the English button)
   const d = WORDS[w], ex = exampleFor(w);
   say(w);
   openCard(`<p class="label">Word Scroll · ${CATEGORIES[d.category].name}</p>
     <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en" hidden>${esc(d.en)}</div>
       <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p>
-      <div class="wordmore"><p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
+      <div class="wordmore">${MADE[w] ? `<div class="madeabout" hidden><p class="label examplehead">How it’s made</p>${madeHTML(w)}</div>` : ''}<p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
       ${ex ? `<p class="label examplehead">Example</p>${lineHTML(ex.t, w)}<div class="sentence-en" hidden>${esc(ex.en)}</div>${Object.keys(S.lines).length <= TAP_TIP_LINES ? '<div class="gloss tip">Tap any word to see what it means.</div>' : ''}` : ''}</div></div>
     <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn" data-a="en">English</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   bindTokens(sheet);
   on('[data-a=say]', () => say(w));
-  on('[data-a=en]', e => { sheet.querySelectorAll('.word .en, .sentence-en').forEach(x => x.hidden = false); e.currentTarget.remove(); const p = sheet.querySelector('.primary'); if (p) p.focus(); });
+  on('[data-a=en]', e => { sheet.querySelectorAll('.word .en, .sentence-en, .madeabout').forEach(x => x.hidden = false); e.currentTarget.remove(); const p = sheet.querySelector('.primary'); if (p) p.focus(); });
   on('[data-a=ok]', back);
 }
 const heardWords = () => Object.keys(GLOSS).filter(w => S.heard[w]).sort((a, b) => S.heard[b] - S.heard[a]);   // words this area doesn't teach, most heard first
