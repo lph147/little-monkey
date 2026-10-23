@@ -69,6 +69,7 @@ SAVES.hillsideLookout = {...SAVES.pineWood, areas: {1: {...BUILDING, lookTip: 1}
 SAVES.hillsideGoat = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 22, dir: 'up'}};   // coming up the steps by the lookout, the first time
 SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
 SAVES.byTrainee = {...SAVES.pineWood, pos: {place: 'hillside', x: 17, y: 38, dir: 'right'}};   // coming up to the stepping stones, a little monkey in training beyond them
+SAVES.byHidden = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 22, y: 38, dir: 'down'}};   // above the tree with shells tucked behind it
 SAVES.pineDeer = {...SAVES.pineWood, areas: {1: {...BUILDING, changed: {'pineWood:23,5': 'y'}}}, pos: {place: 'pineWood', x: 29, y: 3, dir: 'right'}};   // in the glade, by the deer
 SAVES.pineWoodLater = {...SAVES.homeGround, w: {...SAVES.homeGround.w, ...knows(1, ['木头'])},
   areas: {1: {...BUILDING, picked: {wood: ['pineWood:2,18', 'pineWood:2,2'], stones: ['pineWood:3,12']},
@@ -351,6 +352,10 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'hillside', x: 19, y: 37, dir: 'up'}; placePlayer(); arrive(19, 37).then(runEvents); await wait(1600); }},
   {id: 'trainee-game', title: 'Its word game', save: 'byTrainee', why: 'Its name plate: 猴子 hóuzi, Monkey, as the troop are called. Win, and it gives you 3 🐚 (the one on the middle terrace, a 桃子 for your bag), every time.', run: async () => {
     play(); await wait(100); encounter({id: 'trainee1', hz: '猴子', img: portrait('trainee1'), wild: false, name: NAMES.trainee1}); await wait(500); }},
+  {id: 'hidden-glint', title: 'Something hidden', save: 'byHidden', why: 'Three piles of shells and two apples are hidden on the hillside, at trees, a boulder and a pine. A tiny glint gives each away now and then, easy to miss (here, at the tree below you, held still).', run: async () => {
+    play(); await wait(100); glintsNow = () => [[22, 39, 1]]; await wait(400); }},
+  {id: 'hidden-found', title: 'Found it!', save: 'byHidden', why: 'A at it: 2 🐚 (or an apple for your bag), once.', run: async () => {
+    play(); await wait(100); interact(22, 39); clearTimeout(msgT); await wait(400); }},   // (the message held)
   {id: 'hillside-lookout', title: 'The hillside: the steep middle', save: 'hillsideLookout', why: 'Three terraces, each a level higher than the last: cliffs between them, as high all along, with the ground above coming to their edge and their shadow below, stone steps zig-zagging up them, and grassy banks to hop down (the quicker way back). Long grass right across the lowest terrace, tall grass where your friends hide, and a lookout on the middle one: a flat rock at the top of the cliff, with a railing.', run: async () => {
     play(); await wait(500); }},
   {id: 'lookout-goat', title: 'Go and take a look!', save: 'hillsideGoat', why: 'Coming up the steps beside the lookout the first time, a goat on it stops you (a ! over it, then it talks): 你好！, 去看看！ and how to look out. Wherever there’s something you might miss, a goat is there to tell you, as below the waterfall.', run: async () => {

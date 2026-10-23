@@ -631,6 +631,8 @@ async function interact(x, y){
   if (a) return wildAppears(a, {x, y, d:pl.dir});
   const bd = birdAt(x, y);
   if (bd && BIRD_WORD){ await showNotice(BIRD_WORD, AREA.birds.note ? {note:fill(AREA.birds.note)} : {}); shooBird(bd); return; }
+  const h = hiddenAt(x, y);
+  if (h) return findHidden(h);
   const t = tileAt(x, y);
   if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return runSteps(p.do); }   // the tile's own steps, while the story says
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return gather(t, x, y);
@@ -638,6 +640,15 @@ async function interact(x, y){
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
+}
+// Something hidden off the path (the area's hidden), not found yet, here in the place you're in; and finding it: shells, or a
+// fruit for your bag (with no room, it stays where it is), once.
+const hiddenAt = (x, y) => (AREA.hidden || []).find(h => placeOf(h.at) === PLACE && h.at[0] === x && h.at[1] === y && !here().finds[h.id]);
+function findHidden(h){
+  if (h.fruit && !intoBag(h.fruit)){ SFX.bump(); toast(`There’s a ${wz(h.fruit)} here, but your bag has no room for it. Come back for it.`); return; }
+  here().finds[h.id] = 1;
+  if (h.shells) S.shells += h.shells;
+  save(); SFX.chime(); toast(fill(h.note));
 }
 // An animal hiding in the tall grass, which rustles there: step in to meet it. After you meet one,
 // another hides a few steps later.

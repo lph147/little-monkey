@@ -1102,6 +1102,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
   birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
+  // Things hidden off the paths (decided 23 October 2026: paths have shells and fruit tucked away in nooks and behind
+  // trees), each at something you can't walk through, such as a tree or a boulder, found by pressing A at it, once (the
+  // save keeps which: here().finds). A tiny glint gives each away now and then, easy to miss. id: its name in the save;
+  // shells: how many it gives you, or fruit: which, for your bag (with no room, it stays till you come back); note: what
+  // you find.
+  hidden: [
+    // the hillside: shells at the foot, on the lowest terrace and on the middle one; apples on the top terrace and under the pines
+    {id:'hillTree', at:[22, 39, 'hillside'], shells:2, note:'Tucked behind the tree: 2 🐚!'},
+    {id:'hillBoulder', at:[8, 28, 'hillside'], shells:2, note:'Under the edge of the boulder: 2 🐚!'},
+    {id:'hillHollow', at:[5, 22, 'hillside'], shells:2, note:'In a hollow in the tree: 2 🐚!'},
+    {id:'hillSnack', at:[20, 14, 'hillside'], fruit:'苹果', note:'A little monkey’s hidden snack, behind the tree: a {苹果} for your bag!'},
+    {id:'hillPine', at:[19, 4, 'hillside'], fruit:'苹果', note:'Tucked among the pine’s roots: a {苹果} for your bag!'}
+  ],
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
   // What an animal says as it comes out to play, before its questions (one of the lines), with what's happening in plain

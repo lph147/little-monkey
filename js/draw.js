@@ -323,6 +323,7 @@ function drawWorld(now){
     b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5 - bob - meetHop(a, X, Y - 8, now), 10, 10);
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
+  for (const [x, y, k] of glintsNow(now)) glint(x*T - cx + 8, y*T - cy + 11, k);   // things hidden off the path
   for (const [x, y, show] of bubbles) bubble(x, y, show);
   if (trainingCalls()) for (const [x, y] of TRAINING_TILES) if (tileAt(x, y).action === 'training') bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice (while the post stands)
   drawSplashes(cx, cy, now);
@@ -346,6 +347,25 @@ function drawWorld(now){
   }
   const fk = (now - fadeT) / 700;
   if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
+}
+// Things hidden off the path (the area's hidden) give themselves away with a tiny glint now and then, easy to miss: each
+// of them in the place you're in, not found yet, glinting now ([x, y, how bright, 0 to 1]), every GLINT_EVERY ms for
+// GLINT_MS, each at its own time; and the glint, a little cross of light, at X, Y.
+const GLINT_EVERY = 3400, GLINT_MS = 420;
+function glintsNow(now){
+  const out = [];
+  for (const h of AREA.hidden || []){
+    if (placeOf(h.at) !== PLACE || here().finds[h.id]) continue;
+    const [x, y] = h.at, t = (now + x * 977 + y * 613) % GLINT_EVERY;
+    if (t < GLINT_MS) out.push([x, y, Math.sin(t / GLINT_MS * Math.PI)]);
+  }
+  return out;
+}
+function glint(X, Y, k){
+  const r = Math.round(1 + k * 2);
+  b.globalAlpha = .4 + k * .6;
+  R(b, X - r, Y, 2*r + 1, 1, '#FFFFFF'); R(b, X, Y - r, 1, 2*r + 1, '#FFFFFF'); R(b, X, Y, 1, 1, '#FFF3B0');
+  b.globalAlpha = 1;
 }
 // Sparkles on things whose word you don't know yet, and on things you can collect right now (their onLook part with
 // sparkle matches). One with no word, such as on the sign, sparkles while its if matches.

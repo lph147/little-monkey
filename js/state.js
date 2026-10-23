@@ -5,9 +5,9 @@ const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old n
 const SAVE_VERSION = 30;
 const HEARTS = 5;   // the most hearts you can have in a battle (the story can raise it later)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
-  const p = {...AREA.progress};   // and no square of the map changed yet (changed: 'place:x,y' to the letter it's become)
-  for (const r of REQUESTS) p[r.id] = 'not asked';
-  return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], changed:{}, done:false});
+  const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
+  for (const r of REQUESTS) p[r.id] = 'not asked';   // nothing hidden found yet (finds: the ids of AREA.hidden you've found)
+  return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], changed:{}, finds:{}, done:false});
 }
 function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
 
@@ -187,6 +187,7 @@ function upgradeSave(s){
   if (!Array.isArray(s.areas[AREA.number].bought)) s.areas[AREA.number].bought = [];
   s.areas[AREA.number].picked = Object.assign({}, s.areas[AREA.number].picked);
   s.areas[AREA.number].changed = Object.assign({}, s.areas[AREA.number].changed);
+  s.areas[AREA.number].finds = Object.assign({}, s.areas[AREA.number].finds);
   if (!Array.isArray(s.met)) s.met = [];
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};
   s.following = Array.isArray(s.following) ? s.following.filter(id => AREA.characters.some(c => c.id === id)) : [];   // who's following you (characters still here)
