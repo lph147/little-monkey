@@ -386,7 +386,7 @@ check that each is true and simply put.
 
 | Tip | Example | Text | Notes |
 | --- | --- | --- | --- |
-| Tip: one character, one syllable | 山 shān + 羊 yáng | Each Chinese character is one syllable. Shān, yáng: two syllables, two characters. When you hear a word, count its syllables: that’s how many characters to look for. |  |
+| Tip: one character, one syllable | 山 shān + 羊 yáng | 2 beats you hear = 2 characters you see. When you hear a new word, count its beats: that’s how many characters to look for. |  |
 
 ### Words only heard in sentences
 

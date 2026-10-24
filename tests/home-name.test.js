@@ -71,7 +71,8 @@ test('until you know every part, the sign just says your home’s name, as befor
 // card), 'q' (a question) or 'end' (how it went)
 async function play(g, id, hz){
   g.run(`globalThis.__log = []; pictureQ = () => { __log.push('q'); return Promise.resolve(true); };
-    infoBox = (who, html) => { __log.push(/Tip/.test(html) ? 'tip ' + html : 'end'); return Promise.resolve(); };
+    tipCard = t => { __log.push('tip ' + t.title + ' | ' + t.example.map(e => e.join(' ')).join(' + ') + ' | ' + t.text); return Promise.resolve(); };
+    infoBox = () => { __log.push('end'); return Promise.resolve(); };
     globalThis.__run = encounter({id: '${id}', hz: '${hz}', img: '', wild: true});`);
   await g.run('__run');
   return get(g, '__log');
@@ -81,9 +82,7 @@ const PLAYING = ['兔子', '山', '花', '草', '树', '山羊'];   // words to 
 test('the first time a goat plays with you, a tip comes just before its questions: one character, one syllable', async () => {
   const g = loadGame({save: {version: 29, started: true, w: knowing(PLAYING)}});
   const [tip, ...rest] = await play(g, 'goat', '山羊');
-  assert.match(tip, /<p class="label">Tip: one character, one syllable<\/p>/);
-  assert.ok(tip.includes('<ruby>山<rt>shān</rt></ruby> <span class="tipplus">+</span> <ruby>羊<rt>yáng</rt></ruby>'), 'each character with its syllable');
-  assert.match(tip, /Each Chinese character is one syllable\. Shān, yáng: two syllables, two characters\./);
+  assert.equal(tip, 'tip Tip: one character, one syllable | 山 shān + 羊 yáng | When you hear a new word, count its beats: that’s how many characters to look for.');
   assert.ok(rest[0] === 'q' && rest[rest.length - 1] === 'end' && !rest.some(x => x.startsWith('tip')), 'then its questions');
   assert.equal(g.run('S.tips.syllables'), 1, 'the save remembers it');
   assert.ok(!(await play(g, 'goat', '山羊')).some(x => x.startsWith('tip')), 'the next goat just plays');
@@ -97,16 +96,44 @@ test('the tip is the goat’s: other animals just play', async () => {
   assert.equal(g.run('S.tips.syllables'), undefined);
 });
 
-test('the tip’s card shows the goat, and OK goes on to its questions', async () => {
+test('the tip is something you try: each tap of the drum (or A) says the next syllable and lights its character; then OK goes on to the questions', async () => {
   const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(PLAYING)}});
-  g.run("globalThis.__asked = 0; pictureQ = () => { __asked++; return new Promise(() => {}); }; encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true})");
+  g.run("globalThis.__asked = 0; globalThis.__said = []; say = w => __said.push(w); pictureQ = () => { __asked++; return new Promise(() => {}); }; encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true})");
   await new Promise(r => setImmediate(r));
-  const sheet = g.el('#sheet');
+  const sheet = g.el('#sheet'), lit = () => [...sheet.querySelectorAll('.beat')].map(b => b.classList.contains('on'));
+  const drum = sheet.querySelector('.drum'), ok = sheet.querySelector('[data-a=ok]');
   assert.ok(sheet.querySelector('.who .portrait'), 'the goat, by the tip');
   assert.equal(text(sheet.querySelector('.label')), 'Tip: one character, one syllable');
-  assert.equal(text(sheet.querySelector('.tipex')), '山shān + 羊yáng');
+  assert.deepEqual([...sheet.querySelectorAll('.beat')].map(text), ['shān 山', 'yáng 羊'], 'each character with its syllable over it');
+  assert.deepEqual(lit(), [false, false], 'both waiting, in grey');
+  assert.equal(text(sheet.querySelector('.tipask')), 'Tap the drum to hear 山羊 (goat), one beat at a time.');
+  assert.ok(drum.classList.contains('primary') && ok.hidden, 'A taps the drum: no OK yet, so A can’t skip it');
+  assert.equal(text(drum), 'Hear shān');
+  g.run('pressA()');
+  assert.deepEqual(lit(), [true, false], 'shān: 山 lights up');
+  assert.deepEqual(get(g, '__said'), ['山'], 'and is said');
+  assert.equal(text(drum), 'Hear yáng');
+  assert.ok(sheet.querySelector('.tipdone').hidden, 'nothing more yet');
+  drum.click();   // (tapping the drum does the same)
+  assert.deepEqual(lit(), [true, true], 'yáng: 羊 lights up');
+  assert.deepEqual(get(g, '__said'), ['山', '羊']);
+  assert.equal(text(sheet.querySelector('.tipheard')), '2 beats you hear = 2 characters you see');
+  assert.equal(text(sheet.querySelector('.tiptext')), 'When you hear a new word, count its beats: that’s how many characters to look for.');
+  assert.ok(sheet.querySelector('.tipask').hidden, 'what to do has gone');
+  assert.ok(!ok.hidden && !drum.classList.contains('primary'), 'now A is OK');
+  assert.equal(text(drum), 'Again');
+  drum.click(); g.flush();
+  assert.deepEqual(get(g, '__said'), ['山', '羊', '山', '羊'], 'Again: both, one after the other');
   assert.equal(g.run('__asked'), 0, 'no question yet');
-  sheet.querySelector('[data-a=ok]').click();
+  g.run('pressA()');
   await new Promise(r => setImmediate(r));
   assert.equal(g.run('__asked'), 1, 'OK: the first question');
+});
+
+test('every tip’s example can be heard: each character is a word with its own voice clip', () => {
+  const g = loadGame({});
+  for (const [id, t] of Object.entries(get(g, 'AREA.tips'))){
+    assert.ok(t.ask && t.heard && t.text && t.example.length > 1, `tip ${id} needs what to do, what it shows and the tip`);
+    for (const [c] of t.example) assert.ok(g.run(`!!WORDS[${JSON.stringify(c)}] && !!clipFor(${JSON.stringify(c)})`), `tip ${id}: ${c} has no voice clip`);
+  }
 });

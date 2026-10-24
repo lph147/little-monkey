@@ -216,9 +216,37 @@ async function learnTip(foe){
   const [id, t] = Object.entries(AREA.tips || {}).find(([k, t]) => t.word === foe.hz && !S.tips[k]) || [];
   if (!t) return;
   S.tips[id] = 1; save();
-  const ex = t.example.map(([c, py]) => `<ruby>${c}<rt>${py}</rt></ruby>`).join(' <span class="tipplus">+</span> ');
-  await infoBox(null, `<div class="tiphead"><div class="who" aria-hidden="true">${foe.img}</div><div><p class="label">${esc(t.title)}</p>`
-    + `<p class="tipex">${ex}</p></div></div><p class="tiptext">${esc(t.text)}</p>`);   // (the animal beside its example)
+  await tipCard(t, foe.img);
+}
+// A tip's card, something you try (decided 24 October 2026: a paragraph to read before): its example's characters wait in
+// grey, each with its syllable over it and a beat under it, beside a drum. Each tap of the drum (or A) says the next one
+// and lights it; once you've heard them all, what that shows (heard) and the tip (text), and A is OK. Again plays them all.
+function tipCard(t, img){
+  return new Promise(res => {
+    const ex = t.example;
+    openCard(`<div class="tiphead"><div class="who" aria-hidden="true">${img}</div><p class="label">${esc(t.title)}</p></div>
+      <div class="drumrow"><div class="beats">${ex.map(([c, py]) => `<div class="beat"><span class="bpy">${py}</span> <span class="bhz">${c}</span> <span class="bdot"></span></div>`).join('')}</div>
+      <button class="drum primary" data-a="drum">🔊<span class="dlab"></span></button></div>
+      <div class="tipend"><p class="tipask">${esc(fill(t.ask))}</p><div class="tipdone" hidden><p class="tipheard">${esc(t.heard)}</p><p class="tiptext">${esc(t.text)}</p></div></div>
+      <div class="actions"><button class="btn primary" data-a="ok" hidden>OK</button></div>`);
+    const drum = sheet.querySelector('.drum'), beats = [...sheet.querySelectorAll('.beat')], ok = sheet.querySelector('[data-a=ok]');
+    let n = 0, again = [];
+    const label = () => { drum.querySelector('.dlab').textContent = n < ex.length ? `Hear ${ex[n][1]}` : 'Again'; };
+    const beat = i => { beats.forEach(b => b.classList.remove('now')); beats[i].classList.add('on', 'now'); say(ex[i][0]); };
+    label();
+    drum.onclick = () => {
+      if (n < ex.length){ beat(n++); label(); }
+      else {   // Again: each in turn, a beat apart
+        again.forEach(clearTimeout); beats.forEach(b => b.classList.remove('on', 'now'));
+        again = ex.map((_, i) => setTimeout(() => beat(i), i * 800));
+      }
+      if (n === ex.length && ok.hidden){   // all heard: what it shows, and A is OK
+        sheet.querySelector('.tipask').hidden = true; sheet.querySelector('.tipdone').hidden = false;
+        drum.classList.remove('primary'); ok.hidden = false; ok.focus({preventScroll:true}); shown();
+      }
+    };
+    ok.onclick = () => { again.forEach(clearTimeout); closeCard(); res(); };
+  });
 }
 async function encounter(foe){
   await learnTip(foe);

@@ -1190,12 +1190,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // with, and for a friend (decided 23 October 2026, after playing it: the questions just started, with nothing to say why).
   animalsPlay: {say:'play', hint:'It wants to play! Answer its questions to make friends.', friendHint:'Your {朋友} wants to play again! Answer its questions.'},
   // Tips about Chinese itself, each shown once, on a card, just before the questions the first time an animal of that word
-  // plays with you (word), so you can try it straight away: its title and text, and an example, a word's characters each
-  // with its pinyin. (Decided 23 October 2026: a goat gives the tips you might otherwise miss; a game that met the goat
-  // before gets it the next time a goat plays with it.)
+  // plays with you (word), so you can try it straight away: its title, and an example, a word's characters each with its
+  // pinyin, which you hear one at a time on a drum (ask: what to do), then what that shows (heard) and the tip (text).
+  // (Decided 23 October 2026: a goat gives the tips you might otherwise miss; a game that met the goat before gets it the
+  // next time a goat plays with it. The drum since 24 October 2026: the tip was a paragraph to read.)
   tips: {
     syllables: {word:'山羊', title:'Tip: one character, one syllable', example:[['山', 'shān'], ['羊', 'yáng']],
-      text:'Each Chinese character is one syllable. Shān, yáng: two syllables, two characters. When you hear a word, count its syllables: that’s how many characters to look for.'}
+      ask:'Tap the drum to hear {山羊}, one beat at a time.', heard:'2 beats you hear = 2 characters you see',
+      text:'When you hear a new word, count its beats: that’s how many characters to look for.'}
   },
   // The kinds of question animals ask, easiest first: 'listen' (hear a word, pick its picture), 'read'
   // (see its characters, pick its picture) and 'hear' (hear a word, pick its characters, with no

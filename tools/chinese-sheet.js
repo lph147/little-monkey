@@ -236,7 +236,7 @@ ${table(['Word', 'Pinyin', 'How it’s made', 'Notes'], [...Object.entries(MADE)
 Each shown once, on a card, the first time an animal plays with you (new on 23 October 2026, not checked yet). Please
 check that each is true and simply put.
 
-${table(['Tip', 'Example', 'Text', 'Notes'], Object.values(AREA.tips || {}).map(t => [t.title, t.example.map(([c, p]) => `${c} ${p}`).join(' + '), t.text, notes]))}
+${table(['Tip', 'Example', 'Text', 'Notes'], Object.values(AREA.tips || {}).map(t => [t.title, t.example.map(([c, p]) => `${c} ${p}`).join(' + '), [t.heard, t.text].filter(Boolean).join('. '), notes]))}
 
 ### Words only heard in sentences
 

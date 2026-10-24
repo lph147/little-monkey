@@ -50,7 +50,7 @@ test('an animal never asks about its own name (it\'s on the screen), and friends
   const game = loadGame({save: {version: 16, started: true, w}});
   game.run(`globalThis.__asked = []; globalThis.__heads = [];
     pictureQ = o => { __asked.push(o.word || null); __heads.push(o.head); return Promise.resolve(true); };   // answer every question right, at once
-    infoBox = () => Promise.resolve();
+    infoBox = tipCard = () => Promise.resolve();
     globalThis.__runs = (async () => { for (let i = 0; i < 30; i++) await encounter({id: 'rabbit', hz: '兔子', img: '', wild: true}); })();`);
   await game.run('__runs');
   const asked = JSON.parse(game.run('JSON.stringify(__asked)')), heads = JSON.parse(game.run('JSON.stringify(__heads)'));
@@ -70,7 +70,7 @@ test('a Read question shows the word in characters with pinyin, never characters
   const game = loadGame({save: {version: 16, started: true, w}});
   game.run(`globalThis.__qs = [];
     pictureQ = o => { __qs.push({type: o.type, word: o.word, body: o.body, options: o.options}); return Promise.resolve(true); };
-    infoBox = () => Promise.resolve();
+    infoBox = tipCard = () => Promise.resolve();
     globalThis.__runs = (async () => { for (let i = 0; i < 10; i++) await encounter({id: 'goat', hz: '山羊', img: '', wild: true}); })();`);
   await game.run('__runs');
   const reads = JSON.parse(game.run('JSON.stringify(__qs)')).filter(q => q.type === 'read');
@@ -143,7 +143,7 @@ test('an animal that lives on a cliff is met on a cliff', async () => {
 test('the end of an encounter: a new friend, an old friend, or the animal going away', async () => {
   const end = async (friends, right) => {
     const game = loadGame({save: {version: 17, started: true, w: knowsSome(), friends}});
-    game.run(`globalThis.__end = null; pictureQ = () => Promise.resolve(${right}); infoBox = (who, html) => { __end = who + html; return Promise.resolve(); };
+    game.run(`globalThis.__end = null; pictureQ = () => Promise.resolve(${right}); tipCard = () => Promise.resolve(); infoBox = (who, html) => { __end = who + html; return Promise.resolve(); };
       globalThis.__run = encounter({id: 'rabbit', hz: '兔子', img: '', wild: true});`);
     await game.run('__run');
     return game.run('__end');

@@ -280,8 +280,10 @@ const SCREENS = [
     play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); };
     encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(300);
     click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(400); }},
-  {id: 'syllable-tip', title: 'A tip: one character, one syllable', save: 'goatTip', why: 'The first time a goat plays with you, just before its questions (once): 山 shān + 羊 yáng, two syllables, two characters.', run: async () => {
+  {id: 'syllable-tip', title: 'A tip: one character, one syllable', save: 'goatTip', why: 'The first time a goat plays with you, just before its questions (once): 山 and 羊 wait in grey beside a drum. Each tap of the drum (or A) says the next one and lights it.', run: async () => {
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
+  {id: 'syllable-tip-heard', title: 'The tip, tried', save: 'goatTip', why: 'Both beats heard: 2 beats you hear = 2 characters you see, and the tip. Now A is OK, and the drum plays them again.', run: async () => {
+    play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(400); click('.drum'); await wait(100); click('.drum'); await wait(500); }},
   {id: 'goat-read', title: 'The goat: read', save: 'knowsWell', why: 'On its cliff. Characters with pinyin, and just pictures to choose from.', run: async () => {
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
   {id: 'word-game', title: 'The little monkey’s word game', save: 'middle', why: 'A monkey’s name plate: Chinese, pinyin and English.', run: async () => {
