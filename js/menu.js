@@ -25,17 +25,23 @@ function openMenu(focusId){
     bag: () => bagPage(() => openMenu('bag')),
     save: () => { save(); closeCard(); toast(`💾 Saved: Game ${SLOT}, just now. It also saves by itself as you play.`); },
     words: () => openScroll(() => openMenu('words')),
-    friends: () => {
-      openCard(`<p class="label">Friends</p>${S.friends.length ? `<div class="friends">${S.friends.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}">${portrait(id)}<span style="font-size:1.2rem">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : '<p class="hint">No friends yet. Answer the questions of animals in the tall grass to make friends.</p>'}
-        <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
-      sheet.querySelectorAll('.friends button').forEach(bt => bt.onclick = () => say(bt.dataset.w));
-      on('[data-a=ok]', () => openMenu('friends'));
-    },
+    friends: () => friendsPage(() => openMenu('friends')),
     settings: () => openSettings()
   };
   sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](); });
 }
 
+// 朋友 Friends: the animals (and monkeys) you've made friends with. Tap one whose name is a word you know, and its page
+// opens, as in the Word Scroll, with its English and how it's made behind the English button (decided 24 October 2026: it
+// only said its name); a monkey's name isn't a word, so tapping it says the name. focus: the friend to come back to.
+function friendsPage(back, focus){
+  const page = w => !!WORDS[w] && lvl(w) > 0;
+  openCard(`<p class="label">Friends</p>${S.friends.length ? `<div class="friends" data-nav>${S.friends.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}" data-label="${page(hz) ? 'Open' : 'Hear it'}">${portrait(id)}<span style="font-size:1.2rem">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : '<p class="hint">No friends yet. Answer the questions of animals in the tall grass to make friends.</p>'}
+    <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  sheet.querySelectorAll('.friends button').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; if (page(w)){ SFX.blip(); wordPage(w, () => friendsPage(back, w), 'Friends'); } else say(w); });
+  on('[data-a=ok]', back);
+  const f = focus && sheet.querySelector(`.friends [data-w="${focus}"]`); if (f) f.focus();
+}
 // 衣服 Wardrobe: the clothes you own. Tap one to put it on (your monkey says so, such as 我戴头带, which
 // teaches 戴 the first time and counts as using the words) or to take it off.
 // 包 Bag: what you carry. Food, how many and what it does (tap food that brings a heart back to eat it, if you're hurt),

@@ -239,10 +239,10 @@ function exampleFor(w){
   const done = SENTENCES().find(b => toks(b.sentence).includes(w));
   return done && {t:[...toks(done.sentence), '。'], en:done.sentenceEn};
 }
-function wordPage(w, back){   // a caught word's page in the Word Scroll (English, and how it's made, behind the English button)
+function wordPage(w, back, from = 'Word Scroll'){   // a caught word's page in the Word Scroll, or Friends (English, and how it's made, behind the English button)
   const d = WORDS[w], ex = exampleFor(w);
   say(w);
-  openCard(`<p class="label">Word Scroll · ${CATEGORIES[d.category].name}</p>
+  openCard(`<p class="label">${from} · ${CATEGORIES[d.category].name}</p>
     <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en" hidden>${esc(d.en)}</div>
       <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p>
       <div class="wordmore">${MADE[w] ? `<div class="madeabout" hidden><p class="label examplehead">How it’s made</p>${madeHTML(w)}</div>` : ''}<p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>

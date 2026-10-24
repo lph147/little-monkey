@@ -130,3 +130,27 @@ test('the labels under A and B stay on one line, with their apostrophes: a long 
   assert.match(rule, /white-space:nowrap/, 'on one line');
   assert.match(rule, /width:0/, 'never moving the buttons, however long');
 });
+
+test('Friends: tap a friend for its page, as in the Word Scroll, its English and how it’s made behind English; Back comes back to that friend (24 October 2026)', () => {
+  const game = loadGame({dom: true, save: {version: 29, started: true, friends: ['rabbit', 'goat'],
+    w: Object.fromEntries(['石头', '山', '羊', '兔子', '山羊'].map(w => [w, {lv: 1, due: 0, ok: 0}]))}});
+  game.run("mode = 'play'; globalThis.__said = []; say = w => { __said.push(w); }");
+  const sheet = game.el('#sheet'), run = code => game.run(code);
+  run('openMenu()');
+  sheet.querySelector('[data-m="friends"]').click();
+  assert.deepEqual(sheet.querySelectorAll('.friends button').map(b => [b.dataset.w, b.dataset.label]), [['兔子', 'Open'], ['山羊', 'Open']]);
+  sheet.querySelector('.friends [data-w="山羊"]').click();
+  assert.equal(sheet.querySelector('.label').textContent, 'Friends · Animals', 'the word’s page');
+  assert.equal(sheet.querySelector('.big').textContent, '山羊');
+  assert.deepEqual(run('JSON.stringify(__said)'), '["山羊"]', 'it says the word');
+  const hidden = sel => sheet.querySelector(sel).hidden;
+  assert.ok(hidden('.word .en') && hidden('.madeabout'), 'English and how it’s made wait behind English');
+  sheet.querySelector('[data-a=en]').click();
+  assert.ok(!hidden('.word .en') && !hidden('.madeabout'));
+  assert.match(sheet.querySelector('.madeabout').textContent, /mountain sheep/);
+  run('pressB()');
+  assert.equal(sheet.querySelector('.label').textContent, 'Friends', 'Back to your friends');
+  assert.equal(run('document.activeElement && document.activeElement.dataset.w'), '山羊', 'on the friend you opened');
+  run('pressB()');
+  assert.equal(run('document.activeElement && document.activeElement.dataset.m'), 'friends', 'and Back again to the menu');
+});

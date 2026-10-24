@@ -512,6 +512,8 @@ const SCREENS = [
   {id: 'made-page', title: 'How a word is made, in the Word Scroll', save: 'middle', why: 'Behind the English button, with the English: here, after pressing it.', run: async () => {
     play(); await wait(100); wordPage('水果', () => closeCard()); await wait(300); click('[data-a=en]'); await wait(300); }},
   {id: 'friends', title: 'Friends', save: 'allFriends', run: async () => { play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(300); }},
+  {id: 'friend-page', title: 'A friend’s page', save: 'allFriends', why: 'Tap a friend: its page, as in the Word Scroll, with its English and how it’s made behind English (here, pressed).', run: async () => {
+    play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(200); click('.friends [data-w="山羊"]'); await wait(300); click('[data-a=en]'); await wait(300); }},
   {id: 'bag', title: 'The bag', save: 'packed', why: 'Food (how many, and what it does), your stick, and what you’re carrying for someone.', run: async () => {
     play(); await wait(100); openMenu('bag'); await wait(100); click('[data-m=bag]'); await wait(300); }},
   {id: 'bag-eat', title: 'Eating a peach from the bag', save: 'packed', why: 'Hurt: tap a peach, and a heart comes back.', run: async () => {
