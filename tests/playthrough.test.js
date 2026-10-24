@@ -207,7 +207,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await stepOn(16, 0, 'going on up to the river valley');
   assert.equal(run('PLACE'), 'valley', 'you should be in the river valley');
   await pressAt(19, 4, 'up', 'playing with the goat over the first bridge');
-  assert.equal(area().goatPlayed, 1, 'the goat should have played a word game with you');
+  assert.equal(area().goatPlayed, 2, 'the goat should have played a word game with you, and given you its apple');
   await stepOn(5, 0, 'going on up, deep into the mountains');
   assert.equal(run('PLACE'), 'falls', 'you should be deep in the mountains');
   await pressAt(7, 4, 'up', 'chasing the wild boar out of the narrow way');

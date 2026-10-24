@@ -118,3 +118,20 @@ test('a squirrel or goat’s present the same way, and a game saved before 24 Oc
   const old = game();
   assert.deepEqual(old.get('here().kept'), {}, 'filled in for an old save');
 });
+
+test('the squirrel and the goat give their fruit the first time you win, then their games are just for practice, earning nothing (24 October 2026)', async () => {
+  for (const [who, fruit, flag] of [['squirrel', '桃子', 'squirrelPlayed'], ['goat', '苹果', 'goatPlayed']]){
+    const {run, get} = game();
+    run("globalThis.__asks = []; globalThis.__games = []; globalThis.__win = false; showDialog = showNarration = async () => {}; replyWith = async () => true");
+    run("confirmBox = async (who, text) => { __asks.push(text); return true; }; encounter = async foe => { __games.push(!!foe.practice); return __win; }");
+    const npc = `ALL_NPCS.find(n => n.id === '${who}')`, bubble = () => get(`((AREA.bubbles.${who} || []).find(b => matches(b.if)) || {}).show || ''`);
+    assert.equal(bubble(), '!', `${who}: a ! till it has played with you`);
+    await run(`talk(${npc})`);
+    assert.deepEqual([get(`here().${flag}`), get(`S.bag['${fruit}'] || 0`), bubble()], [1, 0, ''], `${who}: lost, no fruit, and its ! gone`);
+    run('__win = true'); await run(`talk(${npc})`);
+    assert.deepEqual([get(`here().${flag}`), get(`S.bag['${fruit}'] || 0`)], [2, 1], `${who}: won, its fruit`);
+    await run(`talk(${npc})`);
+    assert.deepEqual([get(`S.bag['${fruit}'] || 0`), get('__games'), bubble()], [1, [false, false, true], ''], `${who}: then just for practice`);
+    assert.match(get('__asks.at(-1)'), /just for practice\?$/);
+  }
+});

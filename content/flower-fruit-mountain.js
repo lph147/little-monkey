@@ -37,6 +37,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   cave    after the story: 0 not dared yet, 1 dared to jump, 2 been inside the cave, 3 told the old monkey,
   //           4 led the troop in, 5 heard it's home, 6 made king
   //   count   how many of the troop you've counted into the cave
+  //   squirrelPlayed, goatPlayed  1 once that friend on the way up the stream has played a word game with you, 2 once
+  //           you've won its present (a peach from the squirrel, an apple from the goat)
   //   ledgeTip 1 once the goat below the waterfall has told you that you can hop down the banks
   //   home    chapter 1, the troop's home ground beside the waterfall: 0 not yet, 1 the old monkey is going there with you,
   //           2 you've been there with him
@@ -226,7 +228,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{hungry:'done', new:'没关系'}, show:'!'},   // once he's eaten, he wants to say sorry for being fussy
       {if:{hungry:'done', new:'水果'}, show:'!'}],   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
-    squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
+    squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
     // the little monkeys in training on the hillside: until they've stopped you, and then whenever some of your words need
@@ -1487,8 +1489,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ],
     rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
     sheep: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
-    squirrel: [{do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}? If you win, it gives you a {桃子}.', word:'松鼠',
-      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The {松鼠} gives you a {桃子}.', pic:'桃子'}]}}]}],
+    // the squirrel and the goat on the way up the stream want to play: a word game, with a present if you win (fruit for your
+    // bag), till you've won it; then their games are just for practice, earning nothing, as the little monkeys in training's
+    // (decided 24 October 2026: they gave their fruit every time you won)
+    squirrel: [
+      {if:{squirrelPlayed:{below:2}}, do:[{say:'play'}, {set:{squirrelPlayed:1}}, {wordGame:{ask:'Play a word game with the {松鼠}? If you win, it gives you a {桃子}.', word:'松鼠',
+        notYet:'Learn a few more words first, then come back to play.', win:[{set:{squirrelPlayed:2}}, {bag:'桃子', note:'The {松鼠} gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The {松鼠} gives you a {桃子}.', pic:'桃子'}]}}]},
+      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the {松鼠}, just for practice?', word:'松鼠', practice:true, notYet:'Learn a few more words first, then come back to play.'}}]}
+    ],
     // the squirrel in the pine wood (chapter 1) shows you the dry pines; it loves the pines, as its name says
     woodSquirrel: [
       {if:{new:'木头'}, do:[{say:'hi'}, {reply:'你好'}, {say:'squirrelWood'},
@@ -1496,8 +1504,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'Its tail twitches. Wolves live in the long grass, and every way through the wood goes through it. Eating a {桃子} in a fight brings a heart back: pick some at the home ground.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'The squirrel loves the pine wood. Its name, {松鼠}, means pine mouse!'}]}
     ],
-    goat: [{do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
-      notYet:'Learn a few more words first, then come back to play.', win:[{bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}, {reply:'谢谢', about:'The {山羊} gives you a {苹果}.', pic:'苹果'}]}}]}],
+    goat: [
+      {if:{goatPlayed:{below:2}}, do:[{say:'play'}, {set:{goatPlayed:1}}, {wordGame:{ask:'Play a word game with the {山羊}? If you win, it gives you a {苹果}.', word:'山羊',
+        notYet:'Learn a few more words first, then come back to play.', win:[{set:{goatPlayed:2}}, {bag:'苹果', note:'The {山羊} gives you a {苹果} for your bag.'}, {reply:'谢谢', about:'The {山羊} gives you a {苹果}.', pic:'苹果'}]}}]},
+      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the {山羊}, just for practice?', word:'山羊', practice:true, notYet:'Learn a few more words first, then come back to play.'}}]}
+    ],
     // the goat below the waterfall: the way down is quicker, hopping down the banks that sent you round on the way up
     ledgeGoat: [
       {if:{ledgeTip:0}, do:[{say:'hi'}, {reply:'你好'},
