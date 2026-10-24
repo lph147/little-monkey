@@ -160,7 +160,7 @@ test('the word being taught has green pinyin too, like its characters', () => {
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '../css/game.css'), 'utf8');
   assert.match(css, /\.tok\.teach rt\{color:var\(--jade\)/);
   const game = loadGame();
-  assert.match(game.run("lineHTML(['我', '是', '猴子', '。'], '猴子')"), /class="tok learn teach" data-t="猴子"><ruby>猴子<rt/);
+  assert.match(game.run("lineHTML(['我', '是', '猴子', '。'], '猴子')"), /class="tok learn teach" data-t="猴子"><ruby><span class="rb">猴子<\/span><rt/);
 });
 
 test('in a scene’s caption, on its dark band, the word being taught has pinyin as bright as its characters', () => {

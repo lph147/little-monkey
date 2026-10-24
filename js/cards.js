@@ -11,7 +11,8 @@ function tokHTML(t){
   if (t === GAP) return '<span class="gap" aria-label="missing word">？</span>';
   const [py] = info(t);
   const cls = t === teachWord ? 'learn teach' : (WORDS[t] && lvl(t) >= 1 ? 'learn' : 'listen');
-  return `<button class="tok ${cls}" data-t="${esc(t)}"><ruby>${esc(t)}<rt class="${S.pinyin ? '' : 'hid'}">${esc(py)}</rt></ruby></button>`;
+  // (its characters in a box of their own, so a wider pinyin over them never spreads them apart: 动 物)
+  return `<button class="tok ${cls}" data-t="${esc(t)}"><ruby><span class="rb">${esc(t)}</span><rt class="${S.pinyin ? '' : 'hid'}">${esc(py)}</rt></ruby></button>`;
 }
 // A sentence's words in a row that wraps, with each punctuation mark kept on the same line as the word before it.
 function lineOf(toks, html){

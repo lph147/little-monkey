@@ -87,3 +87,18 @@ test('once the rocks roll away, they’re no longer drawn', () => {
   game.run('here().gate = true');
   assert.equal(at(objects(game), 15, 4), undefined);
 });
+
+test('stones: no lone pixel at their top or bottom, a dark underside that curves, and a shadow you can see the path through (decided 24 October 2026)', () => {
+  const game = loadGame();
+  // what a stone paints: [colour, x, y, width, height] for each rectangle
+  const paint = code => JSON.parse(game.run(`(() => { const out = [], g = {fillStyle: '', fillRect(x, y, w, h){ out.push([this.fillStyle, x, y, w, h]); }}; ${code}; return JSON.stringify(out); })()`));
+  const rows = paint("blob(g, 0, 0, 10, 8, '#000')");
+  assert.ok(rows[0][3] > 1 && rows[rows.length - 1][3] > 1, 'its top and bottom rows are more than one pixel wide');
+  const stone = paint('boulder(g, 20, 30, 10, 8, false)');
+  const dark = game.run('GREY[1]');
+  assert.ok(!stone.some(([c, , , w, h]) => c === dark && h === 2 && w > 10), 'no straight band across its bottom');
+  assert.match(stone[0][0], /^rgba\(/, 'its shadow, drawn first, is see-through');
+  assert.ok(!stone.some(([c]) => c === '#5DA651'), 'not grass green');
+  const pile = paint("OBJECT_ART.rocks(g, {x: 2, y: 3, w: 2, h: 1})");
+  assert.equal(pile.filter(([c]) => c === game.run('ROCK_SHADOW')).length, 5, 'a pile has one shadow under all of it (5 rows)');
+});

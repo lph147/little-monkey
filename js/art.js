@@ -750,11 +750,16 @@ function leaves(g, blobs, X, Y, seed){   // a tree's leaves, as round clumps [x,
 }
 function trunk(g, X, Y, w, h){ R(g, X, Y, w, h, WOOD[1]); R(g, X, Y, 1, h, WOOD[3]); R(g, X+w-1, Y, 1, h, WOOD[0]); R(g, X-1, Y+h-1, w+2, 1, WOOD[0]); }
 const fruit = (g, spots, X, Y, [col, shine]) => spots.forEach(([cx, cy]) => { R(g, X+cx, Y+cy, 2, 2, col); dot(g, X+cx, Y+cy, shine); });
-function boulder(g, cx, by, rx, ry, cracked){   // a rock sitting on the ground at by
-  groundShadow(g, cx, by, rx+1, 3);
-  oval(g, cx, by-ry, rx+1, ry+1, GREY[0]); oval(g, cx, by-ry, rx, ry, GREY[2]);
-  oval(g, cx-2, by-ry-2, rx-3, ry-3, GREY[3]); oval(g, cx-4, by-ry-4, Math.max(1, rx-8), Math.max(1, ry-7), GREY[4]);
-  R(g, cx-rx+2, by-3, rx*2-3, 2, GREY[1]);
+// An oval with its rows measured at their middles, so its top and bottom are short rows, not a lone pixel sticking out.
+function blob(g, cx, cy, rx, ry, col){ for (let dy = -ry; dy <= ry; dy++){ const w = Math.round(rx * Math.sqrt(1 - dy*dy / ((ry + .5) * (ry + .5)))); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
+const ROCK_SHADOW = 'rgba(30,45,25,.28)';   // see-through, so it's a shadow on the path too, not a strip of grass
+// A rock sitting on the ground at by: its dark underside a curve along its bottom (decided 24 October 2026: a straight
+// band across it, a lone pixel at its top and bottom, and a grass-green shadow that showed as a stripe across the path).
+// noShadow: a pile has one shadow under all of it (rocks).
+function boulder(g, cx, by, rx, ry, cracked, noShadow){
+  if (shadows && !noShadow) blob(g, cx, by, rx+1, 2, ROCK_SHADOW);
+  blob(g, cx, by-ry, rx+1, ry+1, GREY[0]); blob(g, cx, by-ry, rx, ry, GREY[1]); blob(g, cx, by-ry-1, rx, ry-1, GREY[2]);
+  blob(g, cx-2, by-ry-2, rx-3, ry-3, GREY[3]); blob(g, cx-4, by-ry-4, Math.max(1, rx-8), Math.max(1, ry-7), GREY[4]);
   if (cracked) [[0,0],[0,2],[-1,4],[0,6],[1,8],[2,5],[3,4],[-2,7],[-3,8]].forEach(([a, c]) => dot(g, cx+a, by-6-ry+c, GREY[0]));
 }
 // How each big object is drawn, given where it stands {x, y, w, h} (in squares).
@@ -767,7 +772,10 @@ const OBJECT_ART = {
   peachTree: (g, o) => fruitTree(g, o, PEACHES),
   appleTree: (g, o) => fruitTree(g, o, APPLES),
   stone: (g, o) => boulder(g, o.x*T + 8, o.y*T + 15, 11, 9, true),
-  rocks: (g, o) => { for (let i = 0; i < o.w; i++) boulder(g, o.x*T + 8 + i*14, o.y*T + 15, 10 - i % 2, 8 - i % 2, false); },
+  rocks: (g, o) => {
+    if (shadows) blob(g, o.x*T + 1 + o.w*7, o.y*T + 15, o.w*7 + 3, 2, ROCK_SHADOW);
+    for (let i = 0; i < o.w; i++) boulder(g, o.x*T + 8 + i*14, o.y*T + 15, 10 - i % 2, 8 - i % 2, false, true);
+  },
   stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4),
   pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),

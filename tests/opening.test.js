@@ -9,8 +9,8 @@ test('each caption is a subtitle: the story in Chinese with pinyin over each wor
   const game = loadGame();
   game.run("globalThis.__said = []; say = t => __said.push(t); playIntro(); showCaption(CAPS[1], false)");
   const html = game.el('#capbox').innerHTML;
-  assert.ok(html.includes('data-t="海"><ruby>海<rt class="">hǎi</rt></ruby>'), 'pinyin over each word');
-  assert.ok(html.includes('data-t="花果山"><ruby>花果山<rt class="">Huāguǒ Shān</rt></ruby>'));
+  assert.ok(html.includes('data-t="海"><ruby><span class="rb">海</span><rt class="">hǎi</rt></ruby>'), 'pinyin over each word');
+  assert.ok(html.includes('data-t="花果山"><ruby><span class="rb">花果山</span><rt class="">Huāguǒ Shān</rt></ruby>'));
   assert.ok(html.includes('<div class="cen">In the sea stood a mountain called Flower Fruit Mountain.</div>'), 'the English underneath');
   assert.deepEqual(JSON.parse(game.run('JSON.stringify(__said)')), ['海里有一座山，叫花果山。'], 'read aloud');
   game.run("$('#againBtn').onclick()");
@@ -23,7 +23,7 @@ test('with pinyin switched off, the opening hides it too', () => {
   const game = loadGame({save: {version: 25, pinyin: false}});
   game.run('say = () => {}; playIntro(); showCaption(CAPS[0], false)');
   const html = game.el('#capbox').innerHTML;
-  assert.ok(html.includes('<ruby>很久<rt class="hid">hěn jiǔ</rt></ruby>'));
+  assert.ok(html.includes('<ruby><span class="rb">很久</span><rt class="hid">hěn jiǔ</rt></ruby>'));
 });
 
 test('the last caption has Begin, and starting the game hides the caption', () => {

@@ -85,7 +85,9 @@ test('Next sits beside the English, which is just as wide as its words (or besid
   assert.match(css, /\.talk \.sentence-en\{grid-column:1;justify-self:start;/, 'the English as wide as its words, not a bar across the box');
   assert.match(css, /\.talk > \.next\{grid-column:2;justify-self:end\}/, 'Next beside it');
   assert.match(css, /\.talk:has\(> \.sentence-en\[hidden\]\) > \.talkline\{grid-column:1\}/, 'and beside the line when there’s no English');
-  assert.match(css, /\.talk \.tok rt\{font-size:max\(\.8em,10\.5px\);font-weight:600;color:inherit\}/, 'the pinyin nearly as big as the characters, in its word’s colour');
+  assert.match(css, /\.talk \.tok rt\{font-size:max\(\.68em,10\.5px\);font-weight:500;color:inherit\}/, 'the pinyin big, a little smaller than the characters, in its word’s colour');
+  assert.match(css, /ruby\{ruby-position:over;ruby-align:center\}/, 'a word’s characters kept together under a wider pinyin (动物, not 动 物)');
+  assert.match(t.box.querySelector('.tok[data-t="去"]').innerHTML, /<ruby><span class="rb">去<\/span><rt/, 'in a box of their own, for browsers without ruby-align');
 });
 
 test('a different button text', () => {

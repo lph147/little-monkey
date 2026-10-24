@@ -166,7 +166,8 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .tok.teach{font-weight:800;background:color-mix(in srgb,var(--jade) 12%,transparent)}
 .tok.listen{color:var(--muted)}
 .sentence-en{font-size:1rem;color:var(--ink);background:color-mix(in srgb,var(--gold) 16%,transparent);border-radius:4px;padding:4px 8px;margin:6px 0 8px}
-ruby{ruby-position:over}
+ruby{ruby-position:over;ruby-align:center}   /* a word's characters stay together under a wider pinyin (not 动 物) */
+.tok .rb{display:inline-block}   /* (and on browsers without ruby-align, its characters in a box of their own: cards.js) */
 rt{font-size:max(.5em,10.5px);color:var(--muted);font-family:var(--text)}   /* pinyin: half its characters' size, but never under 10.5px, so its tone marks can be read on a small phone (decided 22 October 2026: 7.5px in a scene's captions) */
 .tok.teach rt{color:var(--jade);font-weight:700}   /* the word being taught: its pinyin is green too, like its characters */
 rt.hid{visibility:hidden}
@@ -417,11 +418,14 @@ rt.hid{visibility:hidden}
 .talk .line{margin:.05rem 0 .2rem}
 .talkline{display:flex;flex-wrap:wrap;align-items:flex-end;column-gap:.6rem}
 .talkline .gloss{flex:1 1 7rem;min-height:0;margin:0 0 .4rem;font-size:.85rem;text-align:right}
-/* the pinyin nearly as big as the characters, and as bright (decided 24 October 2026: for the words a beginner meets,
-   the sound matters more than the characters); in the colour of its word: green if you know it, grey if not */
+/* the pinyin big, a little smaller than the characters, and as bright (decided 24 October 2026: for the words a beginner
+   meets, the sound matters more than the characters; then a little smaller and lighter, as nearly as big looked heavy);
+   in the colour of its word: green if you know it, grey if not */
 .talk .tok,.talk .punct{font-size:1.25rem}
-.talk .tok rt{font-size:max(.8em,10.5px);font-weight:600;color:inherit}
-.talk .tok.teach rt{font-weight:800}
+.talk .tok rt{font-size:max(.68em,10.5px);font-weight:500;color:inherit}
+.talk .tok.teach rt{font-weight:700}
+.talk .tok{border-radius:8px;padding:2px 6px}   /* rounded, like the box: the word being taught has a soft green box, and the tip about tapping a soft gold edge */
+.talk .tok.tipglow{box-shadow:0 0 0 2px var(--gold),0 0 12px 3px color-mix(in srgb,var(--gold) 45%,transparent)!important}
 .talk .punct{align-self:flex-end;margin-top:0;padding-bottom:3px}
 .talk .sentence-en{grid-column:1;justify-self:start;font-size:.9rem;margin:0;padding:.15rem .6rem}
 .talk > .next{grid-column:2;justify-self:end}
