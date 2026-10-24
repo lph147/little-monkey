@@ -16,7 +16,7 @@ test('telling you about animals, the old monkey asks you to learn the meadow’s
     assert.equal(g.run('here().elder'), 2, 'he has told you about animals');
     return JSON.parse(g.run('JSON.stringify(__told)'));
   };
-  assert.ok((await told(['山', '树'])).includes('The old monkey wants you to learn the words for the meadow too: the river, the fish in the pond and a bird. Things that sparkle have words.'),
+  assert.ok((await told(['山', '树'])).includes('The old monkey wants you to learn the words for the meadow too: the river, the fish in the pond and a bird. Things that sparkle ✨ have words.'),
     'he names the three you haven’t found');
   assert.ok(!(await told(['山', '树', '河', '鱼', '鸟'])).some(t => /words for the meadow/.test(t)), 'if you know them all already, he doesn’t ask');
 });
@@ -25,11 +25,11 @@ test('your tasks say which of the meadow’s words are still to find, until you 
   const g = loadGame({save: {version: 24, started: true, w: knowing(['山', '树']), areas: {1: {elder: 2}}}});
   const task = () => JSON.parse(g.run('JSON.stringify((getTasks().find(t => t.id === "meadow") || {}).text || null)'));
   const item = () => JSON.parse(g.run('JSON.stringify(areaChecklist().find(([t]) => t.startsWith("Learn the words for the meadow")).slice(0, 2))'));
-  assert.equal(task(), 'Learn the words for the meadow (2/5). Still to find: the river, the fish in the pond and a bird. Things that sparkle have words.');
+  assert.equal(task(), 'Learn the words for the meadow (2/5). Still to find: the river, the fish in the pond and a bird. Things that sparkle ✨ have words.');
   g.run("setSeen('河')");
-  assert.equal(task(), 'Learn the words for the meadow (3/5). Still to find: the fish in the pond and a bird. Things that sparkle have words.');
+  assert.equal(task(), 'Learn the words for the meadow (3/5). Still to find: the fish in the pond and a bird. Things that sparkle ✨ have words.');
   g.run("setSeen('鱼')");
-  assert.equal(task(), 'Learn the words for the meadow (4/5). Still to find: a bird. Things that sparkle have words.');
+  assert.equal(task(), 'Learn the words for the meadow (4/5). Still to find: a bird. Things that sparkle ✨ have words.');
   assert.deepEqual(item(), ['Learn the words for the meadow (4/5)', false]);
   g.run("setSeen('鸟')");
   assert.equal(task(), null, 'all five: the task is done');

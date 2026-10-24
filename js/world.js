@@ -81,12 +81,24 @@ const areaChecklist = () => chapterItems().map(c => { const done = matches(c.don
 const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
+    if (t.arrow && t.arrow.sparkle) return {id:fill(t.id, true), text:fill(t.text, false, true), target:sparkleToFind()};   // or {sparkle}: the nearest thing that sparkles
     const c = typeof t.arrow === 'string' && ALL_NPCS.find(n => n.id === t.arrow);   // an arrow to a character
     const toPlace = t.arrow && t.arrow.place;   // or {place}: the way to a place, and none once you're there
     const at = c ? [c.x, c.y, c.place] : toPlace ? null : t.arrow || null, there = toPlace || (at && placeOf(at));
     const target = toPlace ? (there === PLACE ? null : wayTo(there)) : !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
     return {id:fill(t.id, true), text:fill(t.text, false, true), target, ...(c && there === PLACE ? {npc:true} : {})};
   });
+}
+// Does a sparkle (AREA.sparkles) sparkle now? Until you know its word, while its if matches, and not on a square that
+// teaches another word first (such as the forest, which only sparkles once you know 树).
+const sparkling = s => !(s.word && lvl(s.word) > 0) && (!s.if || matches(s.if)) && !(tileAt(...s.at).learnFirst && lvl(tileAt(...s.at).learnFirst) === 0);
+// For a task's arrow {sparkle}, such as your first words: the nearest thing in this place that sparkles for a word you
+// don't know yet, or null if there's none. It stays on that one until you learn it, so it doesn't jump about as you walk.
+let sparkleAimed = null;
+function sparkleToFind(){
+  const left = SPARKLES.filter(s => s.word && sparkling(s)), far = s => Math.abs(s.at[0] - pl.x) + Math.abs(s.at[1] - pl.y);
+  if (!left.includes(sparkleAimed)) sparkleAimed = left.sort((a, b) => far(a) - far(b))[0] || null;
+  return sparkleAimed && [sparkleAimed.at[0], sparkleAimed.at[1]];
 }
 // The way out of the place you're in towards another place: the exit to take first on the shortest
 // route (through ways that are open), or null if there's none.

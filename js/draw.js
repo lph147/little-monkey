@@ -1,8 +1,17 @@
 // Drawing each frame: the world, characters, sparkles and task arrows, and the opening scene.
 
 /* ---- per-frame drawing ---- */
+let bigSparkles = false;   // bigger and never out, while the area's bigSparkles matches, such as while you learn your first words (set each frame)
 function sparkle(X, Y, now, ph){
-  const s = (Math.sin(now/260 + ph) + 1) / 2; if (s < .25) return;
+  const s = (Math.sin(now/260 + ph) + 1) / 2;
+  if (bigSparkles){
+    const glow = `rgba(255,226,122,${(.25 + s * .3).toFixed(2)})`, n = s > .5 ? 4 : 3;
+    R(b, X-2, Y-1, 5, 3, glow); R(b, X-1, Y-2, 3, 1, glow); R(b, X-1, Y+2, 3, 1, glow);   // a soft glow
+    for (let i = 2; i <= n; i++){ R(b, X-i, Y, 1, 1, '#FFE27A'); R(b, X+i, Y, 1, 1, '#FFE27A'); R(b, X, Y-i, 1, 1, '#FFE27A'); R(b, X, Y+i, 1, 1, '#FFE27A'); }
+    R(b, X-1, Y, 3, 1, '#FFFFFF'); R(b, X, Y-1, 1, 3, '#FFFFFF');
+    return;
+  }
+  if (s < .25) return;
   R(b, X, Y, 1, 1, '#FFFFFF');
   R(b, X-1, Y, 1, 1, '#FFE27A'); R(b, X+1, Y, 1, 1, '#FFE27A'); R(b, X, Y-1, 1, 1, '#FFE27A'); R(b, X, Y+1, 1, 1, '#FFE27A');
   if (s > .7){ R(b, X-2, Y, 1, 1, '#FFE27A'); R(b, X+2, Y, 1, 1, '#FFE27A'); R(b, X, Y-2, 1, 1, '#FFE27A'); R(b, X, Y+2, 1, 1, '#FFE27A'); }
@@ -339,6 +348,7 @@ function charPos(n, now){
 function drawWorld(now){
   let cx = Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));
   let cy = camY(); placeTalk(cy);
+  bigSparkles = !!AREA.bigSparkles && matches(AREA.bigSparkles);
   if (now - shakeT < 600){ cx += Math.round((Math.random()-.5)*3); cy += Math.round((Math.random()-.5)*3); }
   const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to
   if (sh < VH*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');
@@ -475,11 +485,8 @@ function glint(X, Y, k){
 // sparkle matches). One with no word, such as on the sign, sparkles while its if matches.
 function drawSparkles(cx, cy, now){
   for (const s of SPARKLES){
-    const [x, y] = s.at;
-    if (s.word && lvl(s.word) > 0) continue;
-    if (s.if && !matches(s.if)) continue;
-    const t = tileAt(x, y);
-    if (t.learnFirst && lvl(t.learnFirst) === 0) continue;   // e.g. the forest only sparkles once you know 树
+    if (!sparkling(s)) continue;
+    const [x, y] = s.at, t = tileAt(x, y);
     sparkle(x*T - cx + (t.walk ? 8 : 12), y*T - cy + (t.walk ? 8 : 3), now, x + y);
   }
   for (const [x, y] of COLLECTABLE){

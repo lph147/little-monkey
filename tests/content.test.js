@@ -476,13 +476,14 @@ test('a sentence in your tasks, the checklist or hints that mentions words from 
   }
 });
 
-test('tasks have different ids, and their arrows point at a character, a place on the map, or the way to a place', () => {
+test('tasks have different ids, and their arrows point at a character, a place on the map, the way to a place, or the nearest thing that sparkles', () => {
   const ids = AREA.tasks.map(t => t.id);
   assert.equal(new Set(ids).size, ids.length, 'two tasks have the same id');
   for (const t of AREA.tasks){
     assert.ok(t.text, `task ${t.id} needs text`);
     if (typeof t.arrow === 'string') assert.ok(AREA.characters.some(c => c.id === t.arrow), `task ${t.id} points at "${t.arrow}", who isn't a character`);
     else if (t.arrow && t.arrow.place) assert.ok(AREA.places[t.arrow.place], `task ${t.id} points the way to "${t.arrow.place}", which isn't a place`);
+    else if (t.arrow && t.arrow.sparkle) assert.equal(t.arrow.sparkle, true, `task ${t.id}'s arrow says {sparkle:true}`);
     else if (t.arrow) assert.ok(onMap(t.arrow), `task ${t.id} points at ${t.arrow}, which is off the map`);
   }
 });

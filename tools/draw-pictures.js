@@ -579,6 +579,12 @@ const ICON_DRAWINGS = {
     const pts = [...Array(10)].map((_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 3.3 : 7.6; return [8 + r * Math.cos(a), 8.7 + r * Math.sin(a)]; });
     p.fill(Pg(pts), GOLD, {light: '#FFF1A8', dark: '#D89A22'});
   },
+  '✨': p => {   // sparkles, as on the map: things that sparkle have words
+    const spark = (cx, cy, r, w) => Pg([...Array(8)].map((_, i) => { const a = -Math.PI / 2 + i * Math.PI / 4, d = i % 2 ? w : r; return [cx + d * Math.cos(a), cy + d * Math.sin(a)]; }));
+    p.fill(spark(6.5, 8.5, 6.8, 2.3), GOLD, {light: '#FFF1A8', dark: '#D89A22'});
+    p.flat(O(6.5, 8.5, 1.3), '#FFFFFF');
+    p.fill(spark(12.6, 3.4, 3.3, 1.3), GOLD, {light: '#FFF1A8'});
+  },
   '📜': p => {   // a scroll: the Word Scroll
     p.fill(Rc(3, 3, 10, 10), '#F1E3C2', {dark: '#D8C49A'});
     p.flat(or(Rc(5, 6, 6, 1), Rc(5, 8, 5, 1), Rc(5, 10, 6, 1)), '#B79A6A');

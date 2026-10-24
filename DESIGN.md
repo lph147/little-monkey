@@ -150,7 +150,7 @@ The first areas follow the opening of the Jeff Pepper series closely, so by the 
 
 The school isn't in the book: it fills the gap where the story skips hundreds of years of happy life on the mountain, and sets up what comes next, as the school can't teach him how to live forever, so he goes to find a real teacher (Area 3). Nor are the hive, the garden or the cow: they're the troop's good life on the mountain, and the feast that life leads to is the one in the book.
 
-**Prologue: the first day (built).** The baby is born from the stone. The old monkey, like a grandparent, welcomes it and sends it off to explore: you learn the names of things by finding them yourself (anything that sparkles has a word), and the monkeys you meet teach a few more through what they need: food, water, play, trading. The story is told through short lines, not long cutscenes. The waterfall is loud, and a little frightening; by the end of the day the troop wonders what's behind it. The prologue ends with the story of your first day, read at the waterfall.
+**Prologue: the first day (built).** The baby is born from the stone. The old monkey, like a grandparent, welcomes it and sends it off to explore: you learn the names of things by finding them yourself (anything that sparkles has a word: for your first 4, the sparkles are bigger and the task's arrow shows you the nearest), and the monkeys you meet teach a few more through what they need: food, water, play, trading. The story is told through short lines, not long cutscenes. The waterfall is loud, and a little frightening; by the end of the day the troop wonders what's behind it. The prologue ends with the story of your first day, read at the waterfall.
 
 **The end of the prologue: the Water Curtain Cave.** As in the book:
 
@@ -498,6 +498,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] The home ground's pool shows 水 (water) when you look at it, not 鱼 (fish): no fish live in it (24 October 2026)
 - [x] A present your bag has no room for (24 October 2026): the friend keeps it for you (kept, in the save), with a ! once you have room, and your thanks waits till then
 - [x] The squirrel and the goat on the way up give their fruit only the first time you win (24 October 2026), as the little monkeys in training do: then their games are just for practice
+- [x] Finding your first words (24 October 2026; a playtester got stuck looking for them): the task and the old monkey say what to do (walk up to things that sparkle ✨ and press A), the task's arrow bobs over the nearest thing that sparkles, staying on it till you learn its word, and until you know 4 the sparkles are bigger, with a soft glow, and never go out
 - [ ] The feast announced: the old monkey's 有, the big table under the home ground's big tree, the hungry monkey's 没有, and the table's checklist
 - [ ] The path east, with a butterfly (蝴蝶) among its flowers, its new word, and the bees' valley (百花谷): wasps (黄蜂) and six bee friends (蜜蜂)
 - [ ] The queen bee (蜂王), the hive, and honey (蜂蜜) brought to the table

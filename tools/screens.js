@@ -28,6 +28,8 @@ SAVES.meadowTasks = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate
 SAVES.phrases = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['谢谢', '不客气', '再见', '对不起', '没关系', '松鼠'])}};   // the phrases you reply with, all caught
 // two words of the four the old monkey wants: he says to go and learn some more, in a conversation of one line (Done)
 SAVES.notYet = {...SAVES.born, tips: ALL_TIPS, w: knows(1, ['石头', '你好', '山']), areas: {1: {elder: 1}}, pos: {x: 7, y: 2, dir: 'up'}};
+// just sent off by the old monkey to learn your first 4 words, below him by your stone (the task seen)
+SAVES.firstWords = {...SAVES.born, tips: ALL_TIPS, w: knows(1, ['石头', '你好']), areas: {1: {elder: 1}}, tasksSeen: {learn4: 1}, pos: {x: 9, y: 3, dir: 'down'}};
 // facing the hungry monkey, who hasn't asked for anything yet
 SAVES.hungryAsks = {...SAVES.middle, areas: {1: {elder: 2, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', holding: {}, gate: false}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
 SAVES.bigHello = {...SAVES.hungryAsks, pos: {place: 'meadow', x: 4, y: 10, dir: 'right'}};   // facing the big monkey, in the middle meadow
@@ -204,6 +206,10 @@ const SCREENS = [
     play(); await wait(100); talk(npc('troop1')); await wait(300); next(); await wait(300); click('#talk .reply'); await wait(400); next(); await wait(600); }},
   {id: 'talk-top', title: 'Talking low on the screen', save: 'lowTalk', why: 'At the bottom of a map the speech box would cover you, so it’s at the top of the screen instead, for the whole conversation. The map never moves for it.', run: async () => {
     play(); await wait(100); talk(npc('playful')); await wait(600); }},
+  {id: 'first-words', title: 'Your first words: what to look for', save: 'firstWords', why: 'Sent off to learn 4 words: the arrow bobs over the nearest thing that sparkles (the cliff), and until you know 4, the sparkles are bigger and never go out.', run: async () => {
+    play(); await wait(800); }},
+  {id: 'tasks-first-words', title: 'Tasks: your first words', save: 'firstWords', why: 'Walk up to things that sparkle, with the sparkle as on the map, and press A.', run: async () => {
+    play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'talk-done', title: 'The last line: Done', save: 'notYet', why: 'A conversation’s last line says Done, not ▼ Next, so you can tell it’s ending.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(500); }},
   {id: 'message-ok', title: 'A message after talking', save: 'hungryAsks', why: 'Where the speech box was: A says OK, and closes it, never starting the conversation again. Then what you’ve just finished with rests for 2 seconds.', run: async () => {

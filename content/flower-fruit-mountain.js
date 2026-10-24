@@ -134,10 +134,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   tasks: [
     {id:'elder', if:{elder:0}, text:'Say {你好} to the old monkey, by your {石头}', arrow:'elder'},
     {id:'elder2', if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
-    {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words, then talk to the old monkey again ({newWords}/4)'},
+    {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words: walk up to things that sparkle ✨ and press A ({newWords}/4)', arrow:{sparkle:true}},   // (the arrow over the nearest thing that sparkles)
     // (the prologue's animals: a game already in chapter 1 when the sheep came, 23 October 2026, can still meet it in the meadow)
     {id:'animals', if:{chapter:0, elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the {动物|animals}: in rustling grass, out in the open, up a tree, on a cliff ({found}/{animals})'},
-    {id:'meadow', if:{elder:{atLeast:2}, chapter:0, meadowWords:{below:5}}, text:'Learn the words for the meadow ({meadowWords}/5). Still to find: {left:meadowWords}. Things that sparkle have words.'},
+    {id:'meadow', if:{elder:{atLeast:2}, chapter:0, meadowWords:{below:5}}, text:'Learn the words for the meadow ({meadowWords}/5). Still to find: {left:meadowWords}. Things that sparkle ✨ have words.'},
     {id:'h1', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, text:'Find some {水果|fruit} for the hungry monkey'},
     {id:'h1b', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:true}}, text:'Find the {wanted:hungry} the hungry monkey wants'},
     {id:'h2{holding:hungry}', if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
@@ -1003,6 +1003,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]}
   ],
 
+  // While you learn your first words, the sparkles are bigger and never go out, so you can see what to look for.
+  bigSparkles: {elder:1, newWords:{below:4}},
   // Things that sparkle until you learn their word: the word, where it is on the map, and
   // (optionally) an if that must match before it starts sparkling.
   sparkles: [
@@ -1355,11 +1357,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {reply:'你好'},
         {say:'iamOld'},
         {message:'Every baby monkey explores the mountain to find out what things are called. Today it’s your turn!'},
-        {say:'go', hint:'Things that sparkle have words. Learn 4, then come back.'},
+        {say:'go', hint:'Things that sparkle ✨ have words: walk up to one and press A. Learn 4, then come back.'},
         {set:{elder:1}}
       ]},
       {if:{elder:1, newWords:{below:4}}, do:[
-        {say:'go', hint:'Learn 4 words first, then come back. ({newWords}/4)'}
+        {say:'go', hint:'Learn 4 words first, then come back ({newWords}/4). Things that sparkle ✨ have words: walk up to one and press A.'}
       ]},
       {if:{elder:1}, do:[
         {say:'letsLook'},   // he checks your first words: you match them to their pictures
@@ -1367,7 +1369,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'great'},
         {say:'animals', teach:'动物', hint:'Animals live in rustling grass, out in the open, up a tree and on the cliffs to the south.'},
         {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
-        {message:'The old monkey wants you to learn the words for the meadow too: {left:meadowWords}. Things that sparkle have words.', if:{meadowWords:{below:5}}},
+        {message:'The old monkey wants you to learn the words for the meadow too: {left:meadowWords}. Things that sparkle ✨ have words.', if:{meadowWords:{below:5}}},
         {say:'findMonkeys'},
         {message:'Some of the troop need help too. A ! over a monkey means it wants something. If you forget what to do, press TASKS. MENU shows the words you’ve learned.'},
         {set:{elder:2}}

@@ -97,7 +97,7 @@ function tasksPage(back){
   // (on one line at the top: Tasks and your words, friends and shells; the chapter over its checklist, and what it's
   // done of it a line each, so as much as can be fits on a short screen: decided 22 October 2026)
   openCard(`<div class="cardtop"><p class="label taskslabel">Tasks</p>${statsHTML()}</div>
-    <div class="twocol"><div><p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}</div>
+    <div class="twocol"><div><p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li><span>${esc(t.text)}</span></li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}</div>
     <div><p class="label">${esc(AREA.chapters[chapterNow()].name)}: ${esc(AREA.chapters[chapterNow()].title)}</p>${checklistHTML(false)}</div></div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=ok]', back);
