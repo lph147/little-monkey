@@ -114,18 +114,56 @@ test('each part has its pinyin and English, a part you know as a word is green, 
 
 test('the card says where you’ve met a part before, in another word you know (whichever of the two you meet second), or that you know every part', () => {
   const note = (words, w) => { const n = made(words, w).querySelector('.mnote'); return n && text(n); };
-  assert.equal(note(['石头', '水果'], '苹果'), '果 is also in 水果shuǐguǒ (fruit), a word you know.', 'the 果 (fruit) of 苹果');
-  assert.equal(note(['石头', '苹果'], '水果'), '果 is also in 苹果píngguǒ (apple), a word you know.', 'and the other way round');
+  const from = (words, w) => { const n = made(words, w).querySelector('.mfrom'); return n && text(n); };   // (a part of a word made of parts: in its column)
+  assert.equal(from(['石头', '水果'], '苹果'), 'as in 水果 (fruit)', 'the 果 (fruit) of 苹果');
+  assert.equal(from(['石头', '苹果'], '水果'), 'as in 苹果 (apple)', 'and the other way round');
   assert.equal(note(['石头', '山羊'], '羊'), '羊 is also in 山羊shānyáng (goat), a word you know.', 'meet the goat before the sheep, and the sheep says so');
   assert.equal(note(['石头', '吃'], '喝'), '口 is also in 吃chī (to eat), a word you know.', 'a clue: the mouth in eat and drink');
   assert.equal(note(['石头', '草'], '花'), '艹 is also in 草cǎo (grass), a word you know.', 'the plants on top of flower and grass');
   assert.equal(note(['石头', '树'], '木头'), '木 is also in 树shù (tree), a word you know.', 'the 木 (tree) of 木头 (wood)');
-  assert.equal(note(['石头', '学校'], '同学'), '学 is also in 学校xuéxiào (school), a word you know.', 'a word with nothing here, named by the part');
+  assert.equal(from(['石头', '学校'], '同学'), 'as in 学校 (school)', 'a word with nothing here, named by the part');
   assert.equal(note(['石头'], '碗'), '石 is also in 石头shítou (stone), a word you know.', 'the 石 (stone) of 碗 (bowl): your very first word');
-  assert.equal(note(['石头'], '苹果'), null, 'nothing, when you know no other word with its parts');
+  assert.ok(!note(['石头'], '苹果') && !from(['石头'], '苹果'), 'nothing, when you know no other word with its parts');
   assert.equal(note(['石头', '山', '羊'], '山羊'), 'You know both parts already!', 'its parts are words you know: they’re green, and it says so');
-  assert.equal(note(['石头', '我', '不客气', '要'], '我不要'), '不 is also in 不客气bú kèqi (you’re welcome), a word you know.', 'three parts, not all of them words');
+  assert.equal(from(['石头', '我', '不客气', '要'], '我不要'), 'as in 不客气 (you’re welcome)', 'three parts, not all of them words');
 });
+
+test('a word made of parts comes together as you watch: the parts one by one, then each flies into the word, whose picture and meaning come last', () => {
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(['石头', '山'])}});
+  g.run("madeCard('山羊', () => {}, () => { globalThis.__done = true; }, 'Got it')");
+  const sheet = g.el('#sheet'), stage = sheet.querySelector('.madestage'), inn = sel => stage.querySelectorAll(sel).map(x => x.classList.contains('in'));
+  assert.ok(stage.classList.contains('anim'), 'it plays');
+  assert.deepEqual(inn('.mpart'), [false, false], 'the parts come in one by one');
+  assert.deepEqual(inn('.mch'), [false, false], 'the word waits for its characters');
+  assert.equal(stage.querySelector('.mword').classList.contains('in'), false, 'and its picture and meaning');
+  g.flush();
+  assert.ok(!stage.classList.contains('anim'), 'then it’s all there');
+  assert.deepEqual(inn('.mch'), [true, true], 'each character flew in');
+  assert.equal(text(sheet.querySelector('[data-a=again]')), '↻ Watch again');
+  sheet.querySelector('[data-a=again]').click();
+  assert.ok(stage.classList.contains('anim') && !inn('.mch').some(Boolean), 'Watch again plays it again');
+  g.run('pressA()');
+  assert.ok(!stage.classList.contains('anim') && !g.run('modal.hidden'), 'A while it’s moving shows the end at once, and the card stays');
+  assert.ok(!g.run('globalThis.__done'), 'not Got it yet');
+  g.run('pressA()');
+  assert.ok(g.run('globalThis.__done'), 'then A is Got it');
+  assert.equal(made(['石头'], '花').querySelector('[data-a=again]'), null, 'a clue or a picture stays still: nothing to watch again');
+});
+
+test('a part you know from another word: that word shows first, with its picture, and the part lifts out of it', () => {
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(['石头', '水', '水果'])}});
+  g.run("madeCard('苹果', () => {}, () => {}, 'Got it')");
+  const sheet = g.el('#sheet'), col = sheet.querySelector('.mpart.from');
+  assert.equal(col.dataset.i, '1', 'the 果 of 苹果');
+  assert.equal(text(col.querySelector('.mpyword')), 'shuǐguǒ', 'first, 水果, with its pinyin');
+  assert.deepEqual(col.querySelectorAll('.mchz span').map(x => [text(x), x.className]), [['水', 'mfade'], ['果', 'mpartch']], 'the rest of it fades as 果 lifts out');
+  assert.equal(text(col.querySelector('.mpypart')), 'guǒ', 'then the part’s own pinyin');
+  assert.ok(col.querySelector('.mcpic .pix'), 'with the picture of 水果');
+  assert.ok(!col.classList.contains('lifted'));
+  g.flush();
+  assert.ok(col.classList.contains('lifted'), 'lifted out');
+});
+
 
 test('in the Word Scroll, a word’s page: English shows the English, then How it’s made opens its card, whose Back comes back', () => {
   const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(['石头', '水', '水果'])}});
@@ -150,6 +188,7 @@ test('in the Word Scroll, a word’s page: English shows the English, then How i
 test('its parts aren’t new words: a card teaches just its own word', () => {
   const {g, sheet} = card(['石头'], '山羊');
   sheet.querySelector('[data-a=made]').click();
+  g.flush();   // (it has come together)
   sheet.querySelector('[data-a=ok]').click();
   assert.deepEqual(get(g, "Object.keys(WORDS).filter(w => lvl(w) >= 1)").sort(), ['山羊', '石头'].sort(), '山 and 羊 aren’t caught by seeing them');
 });

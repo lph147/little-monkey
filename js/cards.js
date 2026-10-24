@@ -308,10 +308,23 @@ function madeStage(w){
   const op = c => `<div class="mcol mop" aria-hidden="true"><div class="mcpic"></div><span class="mcpy"></span><span class="mchz">${c}</span></div>`;   // + and =, in line with the characters
   const links = madeLinks(m, w).map(([zh, o]) => `<p class="mnote">${zh} is also in <ruby class="known">${o}<rt>${WORDS[o].py}</rt></ruby> (${esc(WORDS[o].en.split(',')[0])}), a word you know.</p>`).join('');
   if (m.parts){
-    const parts = m.parts.map(([zh, py, en], i) => col(zh, py, en, `mpart${knownWord(zh, w) ? ' known' : ''}`, partPic(zh)).replace('<div class="mcol', `<div data-i="${i}" class="mcol`));
-    const all = m.parts.every(([zh]) => knownWord(zh, w)), pics = !!PICTURES[w] || m.parts.some(([zh]) => partPic(zh));
-    return `<div class="madestage parts${pics ? '' : ' nopic'}">${parts.join(op('+'))}${op('=')}${col(w, d.py, m.why, 'mword', PICTURES[w] ? picHTML(w) : '')}</div>`
-      + (all ? `<p class="mnote known">You know ${m.parts.length === 2 ? 'both' : 'all ' + m.parts.length} parts already!</p>` : links);
+    // A part you've met inside another word you know shows that word, with its picture, until the part lifts out of it
+    // (madeAnim): "as in 水果 (fruit)" says where it's from.
+    const [link] = madeLinks(m, w);
+    const parts = m.parts.map(([zh, py, en], i) => {
+      const known = knownWord(zh, w), from = !known && link && link[0] === zh ? link[1] : null;
+      if (!from) return col(zh, py, en, `mpart${known ? ' known' : ''}`, partPic(zh)).replace('<div class="mcol', `<div data-i="${i}" class="mcol`);
+      const at = from.indexOf(zh), fade = t => t ? `<span class="mfade">${t}</span>` : '';
+      return `<div data-i="${i}" class="mcol mpart from"><div class="mcpic" aria-hidden="true">${PICTURES[from] ? picHTML(from) : ''}</div>`
+        + `<span class="mcpy"><span class="mpyword">${esc(WORDS[from].py)}</span><span class="mpypart">${esc(py)}</span></span> `
+        + `<span class="mchz">${fade(from.slice(0, at))}<span class="mpartch">${zh}</span>${fade(from.slice(at + zh.length))}</span> `
+        + `<span class="mcen">${esc(en)}</span> <span class="mfrom">as in ${esc(wz(from))}</span></div>`;
+    });
+    const word = `<div class="mcol mword"><div class="mcpic" aria-hidden="true">${PICTURES[w] ? picHTML(w) : ''}</div><span class="mcpy">${esc(d.py)}</span> `
+      + `<span class="mchz">${m.parts.map(([zh], i) => `<span class="mch" data-i="${i}">${zh}</span>`).join('')}</span> <span class="mcen">${esc(m.why)}</span></div>`;
+    const all = m.parts.every(([zh]) => knownWord(zh, w)), pics = !!PICTURES[w] || m.parts.some(([zh]) => partPic(zh)) || !!(link && PICTURES[link[1]]);
+    return `<div class="madestage parts${pics ? '' : ' nopic'}">${parts.join(op('+'))}${op('=')}${word}</div>`
+      + (all ? `<p class="mnote known">You know ${m.parts.length === 2 ? 'both' : 'all ' + m.parts.length} parts already!</p>` : '');
   }
   if (m.clue){
     const [zh, py, en] = m.clue;
@@ -321,13 +334,58 @@ function madeStage(w){
   return `<div class="madestage drawn"><div class="mcol mdrawn"><div class="mcpic" aria-hidden="true">${PICTURES[w] ? picHTML(w) : ''}</div></div><div class="mcol mop" aria-hidden="true"><span class="mchz">▸</span></div>${col(w, d.py, d.en.split(',')[0], 'mword big')}</div>`
     + `<p class="mwhy">${esc(m.why)}</p>${links}`;
 }
+// Watching a word made of parts come together (decided 24 October 2026): the parts come in one by one, with + between
+// them; a part you know from another word lifts out of it; then each flies into the word, whose picture and meaning come
+// last. Playing: the stage has anim, and each thing shows as it gets in. Stopping shows it all at once.
+function madeAnim(stage){
+  const parts = [...stage.querySelectorAll('.mpart')], ops = [...stage.querySelectorAll('.mop')], word = stage.querySelector('.mword');
+  let timers = [], playing = false;
+  const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+  const stop = () => { timers.forEach(clearTimeout); timers = []; stage.querySelectorAll('.mfly').forEach(f => f.remove()); };
+  const fly = (p, i) => {   // a copy of the part's character, from its column into the word
+    const src = p.querySelector('.mpartch') || p.querySelector('.mchz'), dst = word.querySelector(`.mch[data-i="${i}"]`);
+    const land = () => dst.classList.add('in');
+    const sr = src.getBoundingClientRect(), dr = dst.getBoundingClientRect(), base = stage.getBoundingClientRect();
+    if (!sr.width || !document.body.animate) return land();
+    const f = document.createElement('span'), size = parseFloat(getComputedStyle(src).fontSize);
+    f.className = 'mfly'; f.textContent = src.textContent; f.style.fontSize = size + 'px';
+    f.style.left = (sr.left - base.left) + 'px'; f.style.top = (sr.top - base.top) + 'px';
+    stage.append(f);
+    const k = parseFloat(getComputedStyle(dst).fontSize) / size, dx = dr.left - sr.left, dy = dr.top - sr.top;
+    f.animate([{transform:'none'}, {transform:`translate(${dx * .5}px, ${dy * .5 - 22}px) scale(${(1 + k) / 2})`}, {transform:`translate(${dx}px, ${dy}px) scale(${k})`}],
+      {duration:650, easing:'ease-in-out', fill:'forwards'}).onfinish = () => { f.remove(); land(); };
+  };
+  return {
+    playing: () => playing,
+    play(){
+      stop(); playing = true;
+      stage.classList.add('anim');
+      ['.in', '.lifted'].forEach(c => stage.querySelectorAll(c).forEach(x => x.classList.remove('in', 'lifted')));
+      let t = 150;
+      parts.forEach((p, i) => {
+        at(t, () => { p.classList.add('in'); if (i) ops[i - 1].classList.add('in'); }); t += 350;
+        if (p.classList.contains('from')){ at(t + 300, () => p.classList.add('lifted')); t += 900; }   // out of the word you know
+      });
+      at(t, () => ops[ops.length - 1].classList.add('in')); t += 300;   // =
+      parts.forEach((p, i) => { at(t, () => fly(p, i)); t += 300; });
+      at(t += 400, () => word.classList.add('in'));
+      at(t + 500, () => this.finish());
+    },
+    finish(){ stop(); playing = false; stage.classList.remove('anim'); stage.querySelectorAll('.from').forEach(p => p.classList.add('lifted')); }
+  };
+}
 // The card: Back (B) goes back to the word's card; done is A's (Got it, for a new word; OK, seen again), or none, when
-// Back is A's too (from a word's page).
+// Back is A's too (from a word's page). A word made of parts comes together as you watch (Watch again plays it again);
+// A while it's moving shows the end at once, and a moment later it's Got it.
 function madeCard(w, back, done, doneLabel){
+  const parts = !!MADE[w].parts;
   openCard(`<p class="label">How <span class="mhzlabel">${w}</span> is made</p>${madeStage(w)}
-    <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>◂ Back</button>${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
-  on('[data-a=back]', back);
-  if (done) on('[data-a=ok]', done);
+    <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>◂ Back</button>${parts ? '<button class="btn" data-a="again">↻ Watch again</button>' : ''}${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
+  const anim = parts ? madeAnim(sheet.querySelector('.madestage')) : null;
+  if (anim && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) anim.play();
+  on('[data-a=back]', () => { if (anim) anim.finish(); back(); });
+  on('[data-a=again]', () => anim.play());
+  if (done) on('[data-a=ok]', () => { if (anim && anim.playing()){ anim.finish(); shown(); return; } done(); });
 }
 // A name you can read now, such as your home's on the sign (says: its Chinese and English; m: how it's made, with its
 // title): its picture, characters, pinyin and English, and how it's made, as on a word's card. A name isn't a word to

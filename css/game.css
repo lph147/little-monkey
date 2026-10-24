@@ -259,6 +259,25 @@ rt.hid{visibility:hidden}
 .mcol.mop{color:var(--muted)}
 .mcol.mop .mchz{font-size:1.8rem;line-height:calc(2.6rem * 1.1)}
 .mcol.big ~ .mop .mchz{line-height:calc(3.6rem * 1.1)}
+/* coming together (madeAnim in js/cards.js): while it plays (anim), each thing shows as it gets in */
+.madestage{position:relative}
+.madestage .mpart,.madestage .mop,.mword .mcpic,.mword .mcpy,.mword .mcen{transition:opacity .35s,transform .35s}
+.madestage.anim .mpart:not(.in),.madestage.anim .mop:not(.in){opacity:0;transform:translateY(8px)}
+.madestage.anim .mword:not(.in) :is(.mcpic,.mcpy,.mcen){opacity:0;transform:scale(.6)}
+.madestage.anim .mch:not(.in){opacity:0}
+.madestage.anim + .mnote{opacity:0}
+.mnote{transition:opacity .4s}
+.mfly{position:absolute;z-index:2;pointer-events:none;font-family:var(--text);font-weight:500;line-height:1.1;color:var(--ink);transform-origin:0 0;white-space:nowrap}
+/* a part you know from another word: that word, its other characters fading away as the part lifts out of it */
+.mpart.from .mpartch{border-radius:6px;transition:background .4s}
+.madestage.anim .mpart.from.in:not(.lifted) .mpartch{background:color-mix(in srgb,var(--gold) 35%,transparent)}
+.mfade{display:inline-block;overflow:hidden;vertical-align:bottom;max-width:0;opacity:0;transition:max-width .5s,opacity .5s}
+.madestage.anim .mpart.from:not(.lifted) .mfade{max-width:4em;opacity:1}
+.mpyword{display:none}
+.madestage.anim .mpart.from:not(.lifted) .mpyword{display:inline}
+.madestage.anim .mpart.from:not(.lifted) .mpypart{display:none}
+.mfrom{font-size:.75rem;color:var(--jade);font-weight:600;transition:opacity .4s}
+.madestage.anim .mpart.from:not(.lifted) .mfrom{opacity:0}
 .mwhy{text-align:center;font-size:1rem;margin:.1rem 0 0}
 .mnote{text-align:center;font-size:.85rem;color:var(--muted);margin:.15rem 0 0}
 .mnote.known{color:var(--jade);font-weight:600}
@@ -838,6 +857,7 @@ rt.hid{visibility:hidden}
   .mcol.big ~ .mop .mchz{line-height:calc(2.6rem * 1.1)}
   .mwhy{font-size:.88rem}
   .mnote{font-size:.78rem;margin-top:.05rem}
+  .mfrom{font-size:.68rem}
   .drumrow{gap:1.6rem;margin:0}
   .beat{gap:0}
   .beat .bpy{font-size:.9rem}
@@ -852,7 +872,7 @@ rt.hid{visibility:hidden}
 @media (max-height:680px){.scene{height:104px;margin-bottom:6px}.scene .foem{top:66px;width:96px;height:26px}.scene .foe{top:10px}.scene .foe .portrait{width:64px;height:64px}
   .scene .me{width:52px;height:52px}.scene .mem{width:96px;height:28px;bottom:-10px}.plate{padding:2px 8px 4px;top:6px;left:6px}.plate .qn{display:none}
   .sayBig{width:56px;height:56px;font-size:1.6rem}.opts{margin:6px 0 2px}.opt{padding:6px 0}}
-@media (prefers-reduced-motion: reduce){.scene .foe{transition:none}}
+@media (prefers-reduced-motion: reduce){.scene .foe{transition:none}.madestage *{transition:none}}
 
 /* the name of a place, in the top right of the game screen for a moment when you arrive there (not the middle, where
    it could cover you) */

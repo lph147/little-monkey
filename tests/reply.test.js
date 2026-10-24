@@ -86,6 +86,7 @@ test('a phrase you don\'t know yet is taught on its own card first', async () =>
   assert.match(t.sheet.textContent, /再见/);
   t.run('pressA()');   // How it's made
   assert.match(t.sheet.textContent, /see you again/);
+  t.run('pressA()');   // (it comes together at once)
   t.run('pressA()');   // Got it
   await tick();
   assert.deepEqual(t.choices().sort(), ['你好', '再见'].sort());
@@ -120,6 +121,7 @@ test('at the shop, 我不要 turns everything down: taught the first time, then 
   await tick();
   assert.match(t.sheet.textContent, /我不要/, 'a new-word card for 我不要');
   t.run('pressA()');   // How it's made
+  t.run('pressA()');   // (it comes together at once)
   t.run('pressA()');   // Got it
   await tick();
   assert.deepEqual(JSON.parse(t.run('JSON.stringify(__said)')), ['我不要']);
