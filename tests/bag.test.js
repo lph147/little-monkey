@@ -60,16 +60,13 @@ test('once the hungry monkey has eaten, a fruit tree gives you one for your bag 
   assert.match(get('__said'), /Your bag has 3 桃子/);
 });
 
-test('a game that never learned 水果 (fruit), such as one past the meadow on 23 October 2026: A at a fruit tree teaches it, then picks', async () => {
+test('a game that never learned 水果 (fruit), such as one past the meadow on 23 October 2026: A at a fruit tree just picks (its word is its fruit, since 24 October 2026; the hungry monkey teaches 水果)', async () => {
   const {run, get} = game({w: knows(['石头', '山', '花', '草', '树', '桃子', '苹果', '河', '水']), pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}});
   run("globalThis.__cards = []; showNotice = async w => { __cards.push(w); setSeen(w); }");
-  assert.equal(get('promptFor(1, 6)'), 'Look', 'its word first');
-  await run('interact(1, 6)');
-  assert.deepEqual(get('__cards'), ['水果']);
-  assert.equal(get("S.bag['桃子'] || 0"), 0, 'nothing picked yet');
   assert.equal(get('promptFor(1, 6)'), 'Pick');
   await run('interact(1, 6)');
-  assert.equal(get("S.bag['桃子']"), 1, 'then it fills your bag');
+  assert.deepEqual(get('__cards'), [], 'no card: you know 桃子');
+  assert.equal(get("S.bag['桃子']"), 1, 'it fills your bag');
 });
 
 test('before the hungry monkey has eaten, the fruit trees are for him, not your bag', async () => {

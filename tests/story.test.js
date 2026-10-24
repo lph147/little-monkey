@@ -15,8 +15,8 @@ const AREA = JSON.parse(loadGame().run('JSON.stringify(AREA)'));
 const BANK = JSON.parse(loadGame().run('JSON.stringify(WORD_BANK)'));
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
 // The fewest words you can have at the waterfall: born from the stone, hello from the old monkey,
-// then both monkeys' requests, which open the way up.
-const FEWEST = ['石头', '你好', '吃', '桃子', '要', '我', '喝', '水', '瀑布'];
+// then both monkeys' requests, which open the way up (the hungry monkey's teach 水果 and 吃, and the thirsty monkey's 喝 and 要).
+const FEWEST = ['石头', '你好', '水果', '吃', '桃子', '要', '喝', '水', '瀑布'];
 
 test('with the fewest words, only questions whose answer you have caught are asked', () => {
   const qs = questionsFor(FEWEST);
@@ -117,11 +117,13 @@ test('in the prologue, the big monkey has nothing to ask (his flowers wait for c
     await g.run("talk(ALL_NPCS.find(n => n.id === 'big'))");
     return {said: JSON.parse(g.run('JSON.stringify(__said)')), bubble, flowers: g.run('here().flowers')};
   };
-  const now = await talkTo({});
-  assert.equal(now.bubble, null, 'no ! over him');
+  const first = await talkTo({});
+  assert.deepEqual([first.bubble, first.said], ['!', ['你好！我是大猴子。', '你好！']], 'he says who he is, teaching 我 (I), with a ! till he has (24 October 2026)');
+  const now = await talkTo({}, ['石头', '你好', '花', '我']);
+  assert.equal(now.bubble, null, 'then no ! over him');
   assert.deepEqual(now.said, ['你好！', '你好！'], 'he says hello, and you say it back');
   assert.equal(now.flowers, 'not asked');
-  const before = await talkTo({flowers: 'asked', holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}}, ['石头', '你好', '花', '红色', '黄色', '白色']);
+  const before = await talkTo({flowers: 'asked', holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}}, ['石头', '你好', '花', '我', '红色', '黄色', '白色']);
   assert.deepEqual([before.bubble, before.said, before.flowers], [null, ['你好！', '你好！'], 'not asked'], 'a game saved holding his flowers (before version 30) waits for chapter 1 too');
 });
 

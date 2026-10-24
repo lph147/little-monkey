@@ -112,12 +112,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // The hungry monkey wants fruit: whichever you bring first, he wants the other
   await pressAt(13, 6, 'up', 'meeting the hungry monkey');
+  assert.ok(knows('水果') && !knows('吃'), 'he asks for some fruit, teaching 水果 (fruit); 吃 (eat) waits');
   await pressAt(13, 6, 'up', 'talking to the hungry monkey again, before finding any fruit');   // (he used to say nothing)
   assert.equal(area().hungry, 'asked', 'the hungry monkey should ask for some fruit');
-  await pressAt(2, 6, 'left', 'looking at the peach tree');
-  assert.ok(knows('水果') && !knows('桃子') && area().holding.hungry === undefined, 'A at a fruit tree shows you its word first, 水果 (fruit), not the peach');
   await pressAt(2, 6, 'left', 'picking a peach');
-  assert.ok(knows('桃子'), 'picking it teaches 桃子');
+  assert.ok(knows('桃子'), 'picking it teaches 桃子: the tree teaches its own fruit');
   assert.equal(area().holding.hungry, '桃子', 'you should be holding the peach');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the peach');
   assert.equal(area().holding.hungry, undefined, 'the peach is given back');
@@ -127,7 +126,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('getTasks()').some(t => t.text === 'Give the 苹果 (apple) to the hungry monkey'), 'once caught, in Chinese and English');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
   assert.equal(area().hungry, 'done', 'the hungry monkey should take the apple');
-  assert.ok(knows('要') && !knows('不客气'), 'your first request teaches 要, so your reply 不客气 waits: one new word at a time');
+  assert.ok(knows('吃') && !knows('要') && !knows('不客气'), 'giving him the apple teaches 吃, so your reply 不客气 waits: one new word at a time');
   assert.ok(!knows('没关系'), 'he said 没关系 when you said sorry, but you haven’t said it yet');
   await pressAt(13, 6, 'up', 'talking to the hungry monkey once he has eaten: he says sorry for being fussy');
   assert.ok(knows('没关系'), 'you reply 没关系 (that’s OK), and catch it');
@@ -139,6 +138,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(11, 8, 'down', 'collecting water from the pond');
   await pressAt(2, 11, 'down', 'giving the thirsty monkey the water');
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
+  assert.ok(knows('要'), 'giving him the water teaches 要 (want)');
   assert.equal(area().gate, false, 'the rocks stay until the rest of the prologue is done');
 
   // The rest of the words for the meadow, which the old monkey asked you to learn: the river, and a bird
@@ -151,6 +151,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // The big monkey, in the middle meadow, has nothing to ask yet: his flowers wait for chapter 1 (decided 22 October 2026)
   await pressAt(4, 10, 'right', 'saying hello to the big monkey');
+  assert.ok(knows('我'), 'he says who he is, teaching 我 (I)');
   assert.equal(area().flowers, 'not asked', 'he doesn’t ask for flowers');
   for (const w of ['红色', '黄色', '白色']) assert.ok(!knows(w), `${w} waits for school`);
   assert.ok(!knows('不客气'), 'no one has thanked you with nothing else new yet, so 不客气 waits too');

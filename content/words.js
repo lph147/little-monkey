@@ -48,7 +48,7 @@ const WORD_BANK = {
   '苹果': {py:'píngguǒ', en:'apple', pic:'🍎', area:1, category:'food'},
   '河': {py:'hé', en:'river', pic:'🏞️', area:1, category:'nature', alike:['瀑布']},
   '水': {py:'shuǐ', en:'water', pic:'💧', area:1, category:'food', alike:['喝']},
-  '水果': {py:'shuǐguǒ', en:'fruit', pic:'🧺', area:1, category:'food', alike:['桃子', '苹果']},   // (the fruit trees teach it, since 23 October 2026: heard only till then)
+  '水果': {py:'shuǐguǒ', en:'fruit', pic:'🧺', area:1, category:'food', alike:['桃子', '苹果']},   // (the hungry monkey teaches it as he asks, since 24 October 2026; the fruit trees did for a day, and it was heard only till then)
   '鱼': {py:'yú', en:'fish', pic:'🐟', area:1, category:'animals'},
   '鸟': {py:'niǎo', en:'bird', pic:'🐦', area:1, category:'animals'},
   '动物': {py:'dòngwù', en:'animal', pic:'🐾', area:1, category:'animals', alike:['*animals']},

@@ -31,7 +31,7 @@ async function through(g){
 
 test('pressing A to clear the message after a conversation closes it, and doesn’t start the conversation again', async () => {
   const g = game({elder: 2}, HUNGRY_MONKEY);
-  g.run('pressA()');   // the hungry monkey asks for fruit, and teaches 吃
+  g.run('pressA()');   // the hungry monkey asks for fruit, and teaches 水果
   await through(g);
   assert.equal(g.el('#saybox').hidden, false, 'a message has come up where the speech box was');
   assert.deepEqual(label(g), ['OK', 'Close'], 'A says OK');
@@ -85,8 +85,8 @@ test('a monkey asking again for what it wants: Done, unless it teaches a word af
     }
     return seen;
   };
-  assert.deepEqual(await lines(['石头', '你好', '吃']), ['Done']);
-  assert.deepEqual(await lines(['石头', '你好']), ['▼', 'card'], '吃 is new: its card comes after');
+  assert.deepEqual(await lines(['石头', '你好', '水果']), ['Done']);
+  assert.deepEqual(await lines(['石头', '你好']), ['▼', 'card'], '水果 is new: its card comes after');
 });
 
 test('a message that came up since you last moved or turned: A closes it (not if pressed just as it came up), and B still does', async () => {

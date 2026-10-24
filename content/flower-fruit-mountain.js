@@ -223,7 +223,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'},   // until it has taught you both its words
       {if:{school:{atLeast:2}, new:'同学'}, show:'!'}],   // and at school, that you're classmates
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'},
-      {if:{hungry:'done', new:'没关系'}, show:'!'}],   // once he's eaten, he wants to say sorry for being fussy
+      {if:{hungry:'done', new:'没关系'}, show:'!'},   // once he's eaten, he wants to say sorry for being fussy
+      {if:{hungry:'done', new:'水果'}, show:'!'}],   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
@@ -234,7 +235,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the little monkeys building a tower of stones: once you know enough numbers to count its stones with them, till you have
     towerL: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}], towerR: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}],
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
-    big: [{if:{climb:1, new:'棍子'}, show:'!'},
+    big: [{if:{elder:{atLeast:1}, gate:false, new:'我'}, show:'!'}, {if:{climb:1, new:'棍子'}, show:'!'},   // in the meadow, to say who he is
       {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', holding:{stones:true}}, show:'?'},
       {if:{build:2, school:0}, show:'!'},   // chapter 1: the school
       {if:{coloursKnown:9, flowers:'not asked'}, show:'!'}, {if:{flowers:'asked', holding:{flowers:true}}, show:'?'}],   // and flowers for it
@@ -242,11 +243,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:
-  // they ask (teaching the verb), you find the thing (see gather in the legend), then you
+  // they ask (teaching a word), you find the thing (see gather in the legend), then you
   // fill the gap in a sentence to give it to them, and get the reward.
   //   from         the character who asks
   //   wants        the word for what they want (or choices: see the hungry monkey)
-  //   verb         a word taught when they ask (if it's new), and used in the sentence, such as 吃 or 花
+  //   verb         a word taught when they ask (if it's new), and used in the sentence, such as 喝 or 花
+  //   teach        or what they want, taught when they ask instead (if it's new), such as the hungry monkey's 水果
   //   ask          their line when asking, and asked: a message afterwards
   //   wrong        their line if you bring something else, and wrongMessage afterwards; wrongReply is the
   //                phrase that fits as your reply, and wrongAnswer their line after it
@@ -257,14 +259,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   reward       shells you get; thanks is their line afterwards, and thanksReply the phrase that fits as your reply
   requests: {
     // He wants fruit (水果), and is fussy: whichever you bring first, he wants the other (choices: each fruit's
-    // lines and sentence, for when you bring it).
-    hungry: {from:'hungry', verb:'吃', ask:'hungry', asked:'The hungry monkey wants some fruit. Check your tasks.',
+    // lines and sentence, for when you bring it). He teaches 水果 as he asks, and 吃 when you give him the one he wants,
+    // just before you say 我要吃… (decided 24 October 2026: he taught 吃 as he asked, and the fruit trees taught 水果; now each
+    // tree teaches its own fruit, as you pick it).
+    hungry: {from:'hungry', teach:'水果', ask:'hungry', asked:'The hungry monkey wants some fruit. Check your tasks.',
       choices: {
         '桃子': {wrong:'notPeach', offer:'havePeach', sentence:'我 要 吃 桃子', sentenceEn:'I want to eat a peach.'},
         '苹果': {wrong:'notApple', offer:'haveApple', sentence:'我 要 吃 苹果', sentenceEn:'I want to eat an apple.'}
       },
       wrongReply:'对不起', wrongAnswer:'noProblem', wrongMessage:'The monkey gives the fruit back. It wants the {wanted:hungry}.',
-      firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
+      firstTeach:[{word:'吃', note:'吃 means to eat.'}, {word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
       reward:3, thanks:'thanks', thanksReply:'不客气'},
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
@@ -331,8 +335,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {message:'A rumble from the {山}! The rocks north of the meadow have rolled away, and the troop gathers there.'}
     ]},
     // once you know every part of your home's name, you can read it: the sign by your stone sparkles, and shows how the name
-    // is made (decided 23 October 2026: Chinese is logical; a game past the meadow learns 水果 at a fruit tree, and the sign is
-    // there when it goes back)
+    // is made (decided 23 October 2026: Chinese is logical; a game past the meadow without 水果 learns it from the hungry
+    // monkey, and the sign is there when it goes back)
     {if:{nameParts:3, homeName:0}, do:[{set:{homeName:1}}, {message:'You know every part of your home’s name now! Read the sign by your stone, in the meadow.'}]},
     // the goat below the waterfall stops you as you walk past, to tell you the way down is quicker: once, on your way
     // down to tell the troop, or any time later (not on the way up with them)
@@ -792,9 +796,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'B': {look:'bridge', walk:true},
     'T': {look:'tree', word:'树'},
     'Y': {look:'tree', word:'树'},   // the forest round the edge of the map
-    'P': {look:'peachTree', word:'水果', note:'Ripe fruit hangs from its branches.', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'},
+    // each fruit tree teaches its own fruit (decided 24 October 2026: they taught 水果, fruit, first, which the hungry monkey
+    // teaches now, as he asks for some): looking at it, or as you pick one for him
+    'P': {look:'peachTree', word:'桃子', note:'Ripe peaches hang from its branches.', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'},
       pick:{item:'桃子', if:{hungry:'done'}}},   // once the hungry monkey has eaten, its fruit is for your bag
-    'Q': {look:'appleTree', word:'水果', note:'Ripe fruit hangs from its branches.', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'},
+    'Q': {look:'appleTree', word:'苹果', note:'Ripe apples hang from its branches.', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'},
       pick:{item:'苹果', if:{hungry:'done'}}},
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
@@ -987,7 +993,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   sparkles: [
     {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 7]},
     {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]},
-    {word:'水果', at:[1, 6], if:{knows:'水'}}, {word:'水果', at:[21, 17], if:{knows:'水'}},   // the fruit trees, once you know 水: then 水果
+    {word:'桃子', at:[1, 6]}, {word:'苹果', at:[21, 17]},   // the fruit trees: a peach tree and an apple tree
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
     {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
     {at:[11, 2], if:{homeName:1}},        // the sign by your stone, once you can read your home's name, till you have
@@ -1011,7 +1017,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '苹果': 'The apple tree in the south-east, across the river.',
     '河': 'The river that runs down the right of the mountain.',
     '水': 'You collected it for the thirsty monkey.',
-    '水果': 'The fruit trees: peaches and apples grow on them.',
+    '水果': 'The hungry monkey wanted some, from the fruit trees.',
     '鱼': 'Little fish in the pond in the middle of the meadow.',
     '鸟': 'Little birds that land on the grass near you.',
     '动物': 'The old monkey told you about the hidden animals.',
@@ -1023,7 +1029,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '吃': 'The hungry monkey wanted something to eat.',
     '喝': 'The thirsty monkey wanted something to drink.',
     '朋友': 'The little monkey became your friend.',
-    '我': 'You learned it to say what a monkey wanted.',
+    '我': 'The big monkey said it, telling you who he is.',
     '要': 'You learned it to say what a monkey wanted.',
     '瀑布': 'The waterfall at the top of the mountain path, where the river comes from.',
     '路': 'The mountain path, up beside the river from the meadow.',
@@ -1216,6 +1222,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     sorry: {zh:'对不起 ！', en:'Sorry!'},   // the hungry monkey, sorry for being fussy (draft, not checked yet: see CHINESE.md)
     // The prologue's guide (drafts, not checked yet: see CHINESE.md)
     iamOld: {zh:'我 是 老 猴子 。 这 是 花果山 。', en:'I’m the old monkey. This is Flower Fruit Mountain.'},
+    iamBig: {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.'},   // the big monkey in the meadow, teaching 我
     findMonkeys: {zh:'去 找 猴子 吧 ！', en:'Go and find the monkeys!'},
     hungryWants: {zh:'饿 猴子 要 吃 水果 。', en:'The hungry monkey wants to eat some fruit.'},
     thirstyWants: {zh:'渴 猴子 要 喝 水 。', en:'The thirsty monkey wants to drink some water.'},
@@ -1448,6 +1455,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
       // once he's eaten, he says sorry for being so fussy, and you say that's OK: 没关系, heard when you said sorry, to say now
       {if:{hungry:'done', new:'没关系'}, do:[{message:'The hungry monkey looks a little embarrassed about being so fussy.'}, {say:'sorry'}, {reply:'没关系'}]},
+      // a game that helped him before he taught 水果 as he asked (24 October 2026), and never learned it at a fruit tree
+      {if:{hungry:'done', new:'水果'}, do:[{say:'fruitOnTrees', teach:'水果'}, {newWord:'水果', note:'Peaches and apples are both fruit.'}]},
       {do:[{request:'hungry'}]}
     ],
     thirsty: [
@@ -1570,7 +1579,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cave:{atLeast:6}}, do:[{say:'king'}]},   // once you're king (the troop makes you king at the end of the prologue: the crowning scene)
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'dare'}]},
-      {do:[{say:'hi'}, {reply:'你好'}]}   // in the meadow: the troop's builder, with nothing to ask of you yet
+      // in the meadow: the troop's builder, with nothing to ask of you yet. He says who he is, teaching 我 (decided 24 October
+      // 2026: it was taught as you gave the hungry or thirsty monkey what they wanted, until 吃 took the hungry monkey's turn)
+      {if:{new:'我'}, do:[{say:'iamBig', teach:'我'}, {newWord:'我', note:'我 means I or me.'}, {reply:'你好'}]},
+      {do:[{say:'hi'}, {reply:'你好'}]}
     ]
   },
 

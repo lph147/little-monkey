@@ -58,9 +58,9 @@ const isOpen = e => (!e.when || matches(e.when)) && (!e.if || matches(e.if));   
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y);   // (an animal standing on open ground, such as a deer, is in the way)
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
-// Somewhere you collect something else (water, from the river or the pond; a peach or an apple, from a fruit tree, whose
-// word is 水果) whose own word you don't know yet: A looks first, teaching its word, and collects after that (decided 22
-// October 2026: you got the water, and never the word). The same when a fruit tree fills your bag (pick).
+// Somewhere you collect something else (water, from the river or the pond) whose own word you don't know yet: A looks
+// first, teaching its word, and collects after that (decided 22 October 2026: you got the water, and never the word). The
+// same when a tile fills your bag (pick). (A fruit tree's word was 水果 from 23 to 24 October 2026; now it's its fruit.)
 const looksFirst = t => !!t.word && lvl(t.word) === 0 && t.word !== (t.gather || t.pick || {}).item;
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
@@ -604,9 +604,9 @@ async function request(r, face, last = false){
     toast(`+${r.reward} 🐚. Task complete!`);
     await runEvents();
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
-    const verb = r.verb && lvl(r.verb) === 0 ? r.verb : null;   // a new word to teach, if there is one
-    await showDialog(face, L[r.ask], {teach:verb, last:last && !verb});
-    if (verb) await showNotice(verb, {quiet:true});
+    const nw = [r.teach, r.verb].find(w => w && lvl(w) === 0);   // a new word to teach, if there is one: what they want, or the verb
+    await showDialog(face, L[r.ask], {teach:nw, last:last && !nw});
+    if (nw) await showNotice(nw, {quiet:true});
     if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(fill(r.asked)); }
   } else await showDialog(face, L[r.thanks], {last});
 }

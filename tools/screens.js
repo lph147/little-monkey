@@ -31,6 +31,9 @@ SAVES.notYet = {...SAVES.born, tips: ALL_TIPS, w: knows(1, ['石头', '你好', 
 // facing the hungry monkey, who hasn't asked for anything yet
 SAVES.hungryAsks = {...SAVES.middle, areas: {1: {elder: 2, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', holding: {}, gate: false}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
 SAVES.bigHello = {...SAVES.hungryAsks, pos: {place: 'meadow', x: 4, y: 10, dir: 'right'}};   // facing the big monkey, in the middle meadow
+SAVES.bigIam = {...SAVES.bigHello, w: knows(1, MIDDLE_WORDS.filter(w => w !== '我'))};   // the same, before he has told you who he is
+// facing the hungry monkey, who hasn't asked for anything yet, and you don't know 水果 (fruit) or 吃 (eat)
+SAVES.hungryNew = {...SAVES.hungryAsks, w: knows(1, MIDDLE_WORDS.filter(w => !['水果', '吃', '桃子', '苹果'].includes(w)))};
 // the old monkey has told you about animals, and wants the meadow's words too: you know 山 and 树, not 河, 鱼 or 鸟; the
 // thirsty monkey has asked for water, and you're facing the river
 SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝']), met: [], friends: [],
@@ -134,8 +137,8 @@ SAVES.appleTree = {...SAVES.middle, pos: {place: 'meadow', x: 20, y: 17, dir: 'r
 SAVES.knowsSheep = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['羊'])}};
 SAVES.knowsFruit = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => w !== '苹果'))};
 SAVES.bySheep = {...SAVES.middle, pos: {place: 'meadow', x: 3, y: 6, dir: 'up'}};   // below the sheep, at the foot of the cliffs by your stone
-// by a peach tree, the hungry monkey asking for fruit, and you know 水 but not 水果 (fruit) or 桃子 (peach) yet
-SAVES.fruitTree = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => !['水果', '桃子'].includes(w))), areas: {1: {...SAVES.middle.areas[1], holding: {}}},
+// by a peach tree, the hungry monkey asking for fruit, and you don't know 桃子 (peach) yet
+SAVES.fruitTree = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => w !== '桃子')), areas: {1: {...SAVES.middle.areas[1], holding: {}}},
   pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}};
 // your home's name: you know every part of it (花, 山 and the 果 of 水果), below the sign by your stone; the message not
 // had yet (homeName 0), or had, the sign sparkling (1)
@@ -234,13 +237,19 @@ const SCREENS = [
   {id: 'gap-words', title: 'Fill the gap (words)', save: 'knowsWell', why: 'Once a word is recognised, the choices are Chinese and pinyin.', run: async () => {
     play(); await wait(100); gapQ({who: speaker('thirsty'), t: toks('我 要 喝 水'), en: 'I want to drink some water.', gap: '喝'}); await wait(400); }},
   {id: 'shop', title: 'The shop', save: 'middle', run: async () => { play(); await wait(100); shop(speaker('boss')); await wait(200); next(); await wait(400); }},
+  {id: 'big-iam', title: 'The big monkey says who he is', save: 'bigIam', why: 'In the meadow, with a ! till he has: 你好！我是大猴子。, teaching 我 (I).', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
   {id: 'big-hello', title: 'The big monkey says hello', save: 'bigHello', why: 'In the meadow, the big monkey has nothing to ask yet: his flowers wait for chapter 1.', run: async () => {
     play(); await wait(100); talk(npc('big')); await wait(500); }},
+  {id: 'hungry-asks', title: 'The hungry monkey asks for fruit', save: 'hungryNew', why: '我饿了。我要吃水果！, teaching 水果 (fruit): 吃 (eat) waits till you give him the fruit.', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(500); }},
+  {id: 'hungry-fruit', title: 'He teaches 水果 (fruit)', save: 'hungryNew', why: 'Its card, with how it’s made: 水 water + 果 fruit = fresh, juicy fruit.', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(400); }},
   {id: 'behind-tree', title: 'Behind a tree', save: 'middle', why: 'Its leaves cover you as you walk behind it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 12, y: 7, dir: 'left'}; placePlayer(); await wait(500); }},
   {id: 'stall', title: 'The shop owner’s stall', save: 'middle', why: 'Three squares wide, with the shop owner beside it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 9, y: 18, dir: 'up'}; placePlayer(); await wait(500); }},
   {id: 'apple-tree', title: 'The apple tree', save: 'appleTree', why: 'In the south-east, across the river, with yellow flowers nearby.', run: async () => { play(); await wait(500); }},
   {id: 'meadow-sheep', title: 'A sheep at the foot of the cliffs', save: 'bySheep', why: 'Near your stone, eating grass: 羊 (sheep), then the goat on its rock to the south, 山羊 (goat: a mountain sheep).', run: async () => { play(); await wait(500); }},
-  {id: 'fruit-tree', title: 'A fruit tree: 水果 first', save: 'fruitTree', why: 'It sparkles once you know 水 (water). A at a peach or apple tree shows its word, 水果 (fruit), first; picking teaches the fruit.', run: async () => {
+  {id: 'fruit-tree', title: 'A fruit tree teaches its fruit', save: 'fruitTree', why: 'It sparkles till you know its fruit. A at a peach tree, for the hungry monkey, picks one, teaching 桃子 (peach).', run: async () => {
     play(); await wait(100); interact(1, 6); await wait(400); }},
   {id: 'home-parts', title: 'You can read your home’s name', save: 'homeParts', why: 'Once you know 花 (flower), 山 (mountain) and 水果 (fruit), a message says so, and the sign by your stone sparkles until you read it.', run: async () => {
     play(); await wait(100); runEvents(); await wait(500); }},
