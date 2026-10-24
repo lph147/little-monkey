@@ -67,18 +67,29 @@ test('lines one after another change in place, without the box closing in betwee
   assert.equal(t.box.hidden, false, 'the box stays up for the next line');
 });
 
-test('tapping a word shows its meaning; the tip about it only shows for your first few lines', () => {
+test('tapping a word shows its meaning beside the line; the tip about it only shows for your first few lines', () => {
   const t = talkGame();
   t.say('go');
-  assert.match(t.box.querySelector('.gloss').textContent, /Tap any word/);
-  assert.ok(t.box.querySelector('.talkfoot').classList.contains('tip'), 'with the tip, Next goes on its own row under the English');
+  const gloss = () => t.box.querySelector('.talkline .gloss');
+  assert.match(gloss().textContent, /Tap any word/);
   t.box.querySelector('.tok[data-t="去"]').click();
-  assert.match(t.box.querySelector('.gloss').textContent, /去 qù · to go/);
+  assert.match(gloss().textContent, /去 qù · to go/, 'beside the line it’s in, not on a row of its own');
   const lines = Object.fromEntries(['a', 'b', 'c', 'd', 'e'].map(k => [k, 1]));   // five lines seen already
   const later = talkGame({version: 8, started: true, lines});
   later.say('go');
-  assert.equal(later.box.querySelector('.gloss').textContent, '', 'no tip once you\'ve seen a few lines');
-  assert.equal(later.box.querySelector('.talkfoot').classList.contains('tip'), false, 'and Next sits beside the English');
+  assert.equal(later.box.querySelector('.talkline .gloss').textContent, '', 'no tip once you\'ve seen a few lines');
+});
+
+test('Next sits beside the English, which is just as wide as its words (or beside the line, when the English waits behind its button)', () => {
+  const t = talkGame();
+  t.say('go');
+  const kids = [...t.box.children].filter(c => c.getAttribute).map(c => c.className.split(' ')[0]);   // (elements, not the spaces between them)
+  assert.deepEqual(kids, ['talkhead', 'talkline', 'sentence-en', 'btn'], 'the name, the line, then the English and Next, in the grid');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.match(css, /\.talk \.sentence-en\{grid-column:1;justify-self:start;/, 'the English as wide as its words, not a bar across the box');
+  assert.match(css, /\.talk > \.next\{grid-column:2;justify-self:end\}/, 'Next beside it');
+  assert.match(css, /\.talk:has\(> \.sentence-en\[hidden\]\):not\(:has\(> \.hintline\)\) > \.talkline\{grid-column:1\}/, 'and beside the line when there’s no English');
+  assert.match(css, /\.talk \.tok rt\{font-size:max\(\.8em,10\.5px\);font-weight:600;color:inherit\}/, 'the pinyin nearly as big as the characters, in its word’s colour');
 });
 
 test('a hint shows in the box, and a different button text', () => {

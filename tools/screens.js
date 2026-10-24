@@ -217,7 +217,7 @@ const SCREENS = [
   {id: 'hello-card', title: 'A new word in a conversation', save: 'born', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
   {id: 'first-reply', title: 'Your first reply', save: 'born', why: 'His line stays in sight: The old monkey says hello. Now you say it!', run: async () => {
-    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); click('[data-a=ok]'); await wait(400); }},
+    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(400); }},
   {id: 'reply-thanks', title: 'Replying to thanks', save: 'phrases', why: 'What you’re answering stays in sight (his line, 谢谢你！), with what’s happening in plain English: The hungry monkey thanks you. What do you say back?', run: async () => {
     play(); await wait(100); (async () => { await showDialog(speaker('hungry'), L.thanks); await replyWith('不客气'); })(); await wait(200); next(); await wait(400); }},
   {id: 'reply-not-fit', title: 'A reply that doesn’t fit', save: 'phrases', why: 'Why not, and the one that does (green), which your monkey says next.', run: async () => {
@@ -230,10 +230,10 @@ const SCREENS = [
   {id: 'shop-handed', title: 'Handed what you bought', save: 'phrases', why: 'The 老板 gives it to you: you say 谢谢 (and he says 不客气).', run: async () => {
     play(); await wait(100); gapQ = async () => true; buy(AREA.shop.items.find(i => i.item === '苹果'), speaker('boss')); await wait(400); }},
   {id: 'welcome', title: 'The old monkey’s welcome', save: 'born', why: 'A line of story, waiting in the speech box.', run: async () => {
-    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); click('[data-a=ok]'); await wait(200);
+    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
     next(); await wait(200); next(); await wait(500); }},
   {id: 'go-look', title: 'Off you go', save: 'born', why: 'His hint, and the tip about grey words.', run: async () => {
-    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); click('[data-a=ok]'); await wait(200);
+    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
     next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
   {id: 'playing', title: 'Playing', save: 'middle', why: 'The map, the task box, the header.', run: async () => { play(); await wait(600); }},
   {id: 'chapter-card', title: 'A new chapter', save: 'home', why: 'Its title card, when a chapter begins: chapter 1, once the whole troop is home and the prologue is over.', run: async () => { play(); await wait(100); STEPS.chapter({chapter: 1}); await wait(300); }},
@@ -587,6 +587,8 @@ function prepare(save, voices, phone){   // phone: as on a phone, with no keyboa
   window.addEventListener('unhandledrejection', e => window.__errors.push(String(e.reason && e.reason.message || e.reason)));
   window.wait = ms => new Promise(r => setTimeout(r, ms));
   window.click = sel => { const el = document.querySelector(sel); if (el) el.click(); return !!el; };
+  // Got it on a new word's card: through How it's made, if it has a story (once it has come together)
+  window.gotIt = async () => { if (click('[data-a=made]')){ await new Promise(r => setTimeout(r, 100)); click('[data-a=ok]'); } click('[data-a=ok]'); };
   window.next = () => { if (talkNext) talkNext(); };
   window.npc = id => NPCS.find(n => n.id === id);
   window.play = () => { click('#contBtn'); };   // Continue the game
