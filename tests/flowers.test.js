@@ -35,14 +35,14 @@ const bubble = g => get(g, "((AREA.bubbles.big || []).find(b => matches(b.if)) |
 const item = g => get(g, "areaChecklist().find(([t]) => /^Plant /.test(t))");
 const BEDS = [[9, 5], [10, 5], [12, 5], [13, 5]];   // either side of the path up to the school's door
 
-test('once the class has painted the school in every colour, the big monkey has a ! and wants flowers to plant in front of it', async () => {
+test('once you know every colour from the school’s lessons, the big monkey has a ! and wants flowers to plant in front of it', async () => {
   const before = game({}, undefined, [...KNOWN, ...COLOURS.slice(0, 8)]);   // (pink not learned yet)
   assert.equal(bubble(before), null, 'not before the last colour');
   await press(before, 15, 5, 'up');
   assert.deepEqual(get(before, '__said'), ['你是我们的王！'], 'he has nothing to ask yet');
   const g = game();
   assert.equal(bubble(g), '!');
-  assert.match(g.run('tasksHint()'), /painted in every colour! The big monkey has something to ask you/);
+  assert.match(g.run('tasksHint()'), /You know all nine colours! The big monkey has something to ask you/);
   assert.equal(item(g)[3], false, 'the checklist doesn’t show the flowers till he asks');
   await press(g, 15, 5, 'up');
   assert.deepEqual(get(g, '__said'), ['学校很好看！', '我们来种花吧！', '我要红色、黄色和白色的花！'], 'the school looks lovely, let’s plant flowers: red, yellow and white');

@@ -215,24 +215,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- |
 | 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
 | 海很大！ | hǎi hěn dà! | The sea is so big! |  |
-| 我们去刷门吧！ | wǒmen qù shuā mén ba! | Let’s go and paint the door! |  |
-| 门是黑色的！ | mén shì hēisè de! | The door is black! |  |
-| 我们去刷屋顶吧！ | wǒmen qù shuā wūdǐng ba! | Let’s go and paint the roof! |  |
-| 屋顶是蓝色的！ | wūdǐng shì lánsè de! | The roof is blue! |  |
-| 我们去刷窗户吧！ | wǒmen qù shuā chuānghu ba! | Let’s go and paint the windows! |  |
-| 窗户是绿色的！ | chuānghu shì lǜsè de! | The windows are green! |  |
-| 我们去刷墙吧！ | wǒmen qù shuā qiáng ba! | Let’s go and paint the walls! |  |
-| 墙是棕色的！ | qiáng shì zōngsè de! | The walls are brown! |  |
-| 我们去刷柱子吧！ | wǒmen qù shuā zhùzi ba! | Let’s go and paint the pillars! |  |
-| 柱子是橙色的！ | zhùzi shì chéngsè de! | The pillars are orange! |  |
-| 我们去画花吧！ | wǒmen qù huà huā ba! | Let’s go and paint some flowers! |  |
-| 花是粉色的！ | huā shì fěnsè de! | The flowers are pink! |  |
 | 我们去刷灯笼吧！ | wǒmen qù shuā dēnglong ba! | Let’s go and paint the lanterns! |  |
 | 灯笼是红色的！ | dēnglong shì hóngsè de! | The lanterns are red! |  |
-| 我们去刷牌子吧！ | wǒmen qù shuā páizi ba! | Let’s go and paint the sign! |  |
-| 牌子是黄色的！ | páizi shì huángsè de! | The sign is yellow! |  |
-| 我们去刷台阶吧！ | wǒmen qù shuā táijiē ba! | Let’s go and paint the step! |  |
-| 台阶是白色的！ | táijiē shì báisè de! | The step is white! |  |
 
 ### Names
 
@@ -429,15 +413,7 @@ check that each is true and simply put.
 | 很 | hěn | very |  |
 | 盖 | gài | to build (a house) |  |
 | 刷 | shuā | to paint (with a brush) |  |
-| 画 | huà | to paint (a picture), to draw |  |
-| 门 | mén | door |  |
-| 屋顶 | wūdǐng | roof |  |
-| 窗户 | chuānghu | window |  |
-| 墙 | qiáng | wall |  |
-| 柱子 | zhùzi | pillar |  |
 | 灯笼 | dēnglong | lantern |  |
-| 牌子 | páizi | sign, board |  |
-| 台阶 | táijiē | step, steps |  |
 | 好看 | hǎokàn | good-looking, lovely |  |
 | 种花 | zhòng huā | to plant flowers |  |
 | 几 | jǐ | how many |  |
@@ -575,22 +551,14 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 桌子上有几个桃子？ | zhuōzi shàng yǒu jǐ gè táozi? | How many peaches are on the table? | New on 21 October 2026 (in the game), the number lessons at school: The teacher, asking how many (几 jǐ and 个 gè are just for listening); the same with 苹果 (apples) and 碗 (bowls) |  |
 | 这里有几只猴子？ | zhèlǐ yǒu jǐ zhī hóuzi? | How many monkeys are there? | New on 21 October 2026 (in the game), the number lessons at school: The teacher, asking how many of something alive (几只); the same with 兔子 (rabbits) and 鸟 (birds) |  |
 | 这是黑色。 | zhè shì hēisè. | This is black. | New on 21 October 2026 (in the game), the colour lessons at school: The teacher opening a pot of paint, teaching 黑色 hēisè, black (and the same for 蓝色 lánsè blue, 绿色 lǜsè green, 棕色 zōngsè brown, 橙色 chéngsè orange and 粉色 fěnsè pink) |  |
-| 我们去刷门吧！ | wǒmen qù shuā mén ba! | Let’s go and paint the door! | New on 21 October 2026 (in the game), the colour lessons at school: The class, going out to paint a part of the school after a colour lesson (刷 shuā, to paint with a brush, and 门 mén, door, are just for listening); the same with 屋顶 wūdǐng (the roof), 窗户 chuānghu (the windows), 墙 qiáng (the walls) and 柱子 zhùzi (the pillars). Please check 刷 sounds natural for painting each of these |  |
-| 门是黑色的！ | mén shì hēisè de! | The door is black! | New on 21 October 2026 (in the game), the colour lessons at school: Once it’s painted; the same for the roof (蓝色, blue), the windows (绿色, green), the walls (棕色, brown) and the pillars (橙色, orange) |  |
-| 我们去画花吧！ | wǒmen qù huà huā ba! | Let’s go and paint some flowers! | New on 21 October 2026 (in the game), the colour lessons at school: The class, going out to paint peach blossom under the school’s windows (画 huà, to paint a picture, just for listening) |  |
-| 花是粉色的！ | huā shì fěnsè de! | The flowers are pink! | New on 21 October 2026 (in the game), the colour lessons at school: Once they’re painted |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | New on 21 October 2026 (in the game), the bigger pine wood: The example on 鹿 (lù, deer)’s page: a deer you make friends with, in a sunny clearing in the pine wood |  |
 | 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | New on 21 October 2026 (in the game), the bigger pine wood: The example on 狼 (láng, wolf)’s page: wolves jump out of the long grass in the pine wood, to fight |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | New on 21 October 2026 (in the game): the example on 蜘蛛 (zhīzhū, spider)’s page; the spider takes the bee’s place in the long grass on the way up the mountain path |  |
 | 对不起！ | duìbuqǐ! | Sorry! | New on 20 October 2026 (in the game): the hungry monkey, once he’s eaten, saying sorry for being so fussy; you reply 没关系 (méi guānxi, that’s OK) |  |
 | 这是红色。 | zhè shì hóngsè. | This is red. | New on 22 October 2026 (in the game), red, yellow and white at school: The teacher opening a pot of paint, teaching 红色 hóngsè, red (and the same for 黄色 huángsè, yellow, and 白色 báisè, white): the first three colours now, taught by the big monkey’s flowers in the prologue until now |  |
-| 我们去刷灯笼吧！ | wǒmen qù shuā dēnglong ba! | Let’s go and paint the lanterns! | New on 22 October 2026 (in the game), red, yellow and white at school: The class, going out to paint the school’s lanterns red (灯笼 dēnglong, lanterns, just for listening): see the question below |  |
+| 我们去刷灯笼吧！ | wǒmen qù shuā dēnglong ba! | Let’s go and paint the lanterns! | New on 22 October 2026 (in the game), red, yellow and white at school: The class, going out to paint the school’s lanterns red (灯笼 dēnglong, lanterns, and 刷 shuā, to paint with a brush, just for listening): see the question below. (Since 24 October 2026 the other colours paint nothing: the sign, the step, the door, the roof, the windows, the walls and the pillars stay as they were built.) |  |
 | 灯笼是红色的！ | dēnglong shì hóngsè de! | The lanterns are red! | New on 22 October 2026 (in the game), red, yellow and white at school: Once they’re painted |  |
-| 我们去刷牌子吧！ | wǒmen qù shuā páizi ba! | Let’s go and paint the sign! | New on 22 October 2026 (in the game), red, yellow and white at school: The class, going out to paint the school’s sign yellow (牌子 páizi, sign) |  |
-| 牌子是黄色的！ | páizi shì huángsè de! | The sign is yellow! | New on 22 October 2026 (in the game), red, yellow and white at school: Once it’s painted |  |
-| 我们去刷台阶吧！ | wǒmen qù shuā táijiē ba! | Let’s go and paint the step! | New on 22 October 2026 (in the game), red, yellow and white at school: The class, going out to paint the step at the school’s door white (台阶 táijiē, step) |  |
-| 台阶是白色的！ | táijiē shì báisè de! | The step is white! | New on 22 October 2026 (in the game), red, yellow and white at school: Once it’s painted |  |
-| 学校很好看！ | xuéxiào hěn hǎokàn! | The school looks lovely! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, once the class has painted the school in every colour (好看 hǎokàn, lovely, just for listening) |  |
+| 学校很好看！ | xuéxiào hěn hǎokàn! | The school looks lovely! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, once you know every colour from the school’s lessons (好看 hǎokàn, lovely, just for listening) |  |
 | 我们来种花吧！ | wǒmen lái zhòng huā ba! | Let’s plant some flowers! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey (种花 zhòng huā, to plant flowers, just for listening: written as one piece, so a voice saying it on its own can’t read 种 as zhǒng) |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, asking for flowers to plant in front of the school: see the question below about white flowers |  |
 | 红色的花 | hóngsè de huā | A red flower | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): What you see on a card when you pick a red flower for him (and 黄色的花, a yellow flower, and 白色的花, a white flower) |  |
@@ -607,6 +575,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 - A sheep in the meadow teaches 羊 (yáng) as sheep, before the goat teaches 山羊 (shānyáng), so players see that a goat is a mountain sheep. Strictly, 羊 means any sheep or goat, and 绵羊 (miányáng) is the exact word for sheep. Is 羊 natural for the sheep?
 - The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?
-- Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better? (White paints the step at the door, 台阶, not the paper in the windows: you paste window paper on, so 刷窗户纸 seemed wrong.)
+- Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better?
 - The goat’s tip says each Chinese character is one syllable (山 shān + 羊 yáng). 儿 in words such as 哪儿 (nǎr) joins the syllable before it: is the tip still fine for beginners as it is?
 - When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)

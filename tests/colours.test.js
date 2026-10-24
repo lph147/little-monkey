@@ -1,8 +1,9 @@
 // Chapter 1: the school's colour lessons (a lesson series of kind paint, AREA.lessons). The teacher teaches one new
 // colour a lesson, in order, the next once you've got the last one right twice: he opens a pot of paint (teaching it),
-// then wants paints, five times (colour questions), and right answers earn shells for colours that needed practice. Then
-// the class goes out and paints a part of the school with it (a scene), and there it is on the map. When there's a new
-// number and a new colour to learn, number and colour lessons take turns. Red, yellow and white come first (decided 22
+// then wants paints, five times (colour questions), and right answers earn shells for colours that needed practice. After
+// the red lesson, the class goes out and paints the school's paper lanterns red (a scene), and there they are on the map;
+// the rest of the school stays as it was built (decided 24 October 2026: each colour painted a part of it). When there's a
+// new number and a new colour to learn, number and colour lessons take turns. Red, yellow and white come first (decided 22
 // October 2026: the prologue's flowers taught them), so a game that learned them there starts at black.
 'use strict';
 const test = require('node:test');
@@ -62,10 +63,10 @@ test('the first colour lesson: the teacher opens a pot of paint, teaching 红色
   assert.equal(g.run('__lessons'), 0, 'a colour lesson, not practice');
   assert.equal(g.run('here().lastLesson'), 'colours');
   assert.deepEqual(get(g, 'AREA.scenes.paintLanterns.captions').map(c => c.zh.replace(/ /g, '')), ['我们去刷灯笼吧！', '灯笼是红色的！']);
-  assert.equal(get(g, 'areaChecklist().find(([t]) => /colours/.test(t))[0]'), 'Learn nine colours, and paint the 学校 (school) (1/9)');
+  assert.equal(get(g, 'areaChecklist().find(([t]) => /colours/.test(t))[0]'), 'Learn nine colours at the 学校 (school) (1/9)');
 });
 
-test('the second, knowing red: one other colour to choose from, then the sign is painted yellow; the third, white, paints the step', async () => {
+test('the second, knowing red: one other colour to choose from, and nothing more is painted; the third, white, the same', async () => {
   const g = game({'红色': 2});
   assert.equal(get(g, 'lessonNow().word'), '黄色');
   answering(g);
@@ -74,18 +75,18 @@ test('the second, knowing red: one other colour to choose from, then the sign is
   assert.deepEqual(qs.map(q => q.word).sort(), ['红色', '黄色', '黄色', '黄色', '黄色'], 'four of the new colour, and once the colour you know');
   const yellow = qs.find(q => q.word === '黄色');
   assert.ok(yellow.options.map(caps).includes('红色'), 'red, the colour you know, is an answer');
-  assert.deepEqual(get(g, '__scenes'), ['paintSign']);
-  assert.deepEqual(get(g, 'paintedParts()'), {lanterns: '红色', sign: '黄色'});
+  assert.deepEqual(get(g, '__scenes'), [], 'no painting (until 24 October 2026, the sign was painted yellow)');
+  assert.deepEqual(get(g, 'paintedParts()'), {lanterns: '红色'});
   const third = game({'红色': 2, '黄色': 2});
   assert.equal(get(third, 'lessonNow().word'), '白色');
   answering(third);
   await lesson(third);
   assert.ok(get(third, '__qs').every(q => /Which paint is it\?/.test(q.head)), 'two colours you know: all paints now');
-  assert.deepEqual(get(third, '__scenes'), ['paintSteps']);
-  assert.deepEqual(get(third, 'paintedParts()'), {lanterns: '红色', sign: '黄色', steps: '白色'});
+  assert.deepEqual(get(third, '__scenes'), []);
+  assert.deepEqual(get(third, 'paintedParts()'), {lanterns: '红色'});
 });
 
-test('a game that learned red, yellow and white in the prologue (before 22 October 2026) starts at 黑色, and the door is painted black', async () => {
+test('a game that learned red, yellow and white in the prologue (before 22 October 2026) starts at 黑色; its lanterns are red', async () => {
   const g = game(FIRST_THREE);
   assert.equal(get(g, 'lessonNow().word'), '黑色');
   answering(g);
@@ -93,9 +94,9 @@ test('a game that learned red, yellow and white in the prologue (before 22 Octob
   const qs = get(g, '__qs');
   assert.equal(qs.filter(q => q.word === '黑色').length, 3, 'three of them are the new colour');
   assert.ok(qs.filter(q => q.word !== '黑色').every(q => ['红色', '黄色', '白色'].includes(q.word)), 'and two are colours you know');
-  assert.deepEqual(get(g, '__scenes'), ['paintDoor']);
-  assert.deepEqual(get(g, 'paintedParts()'), {lanterns: '红色', sign: '黄色', steps: '白色', door: '黑色'}, 'the door, black; what they knew already painted');
-  assert.deepEqual(get(g, 'AREA.scenes.paintDoor.captions').map(c => c.zh.replace(/ /g, '')), ['我们去刷门吧！', '门是黑色的！']);
+  assert.deepEqual(get(g, '__scenes'), [], 'no painting');
+  assert.deepEqual(get(g, 'paintedParts()'), {lanterns: '红色'}, 'the lanterns red, as they knew red already');
+  assert.ok(!get(g, 'Object.keys(AREA.scenes)').some(id => /^paint(?!Lanterns)/.test(id)), 'no scenes of painting the rest of the school');
 });
 
 test('a colour question: you hear it while it’s new (the paints with their characters), and read it once you know it (the paints alone), from colours you know', async () => {
@@ -151,14 +152,16 @@ test('the next colour waits until you’ve got the last one right twice; with a 
   assert.deepEqual(get(both, '__scenes'), ['paintLanterns']);
 });
 
-test('the school on the home ground has every part painted so far, and is drawn again as you learn each colour', () => {
+test('the school on the home ground: its lanterns red once you know 红色, drawn again then; the rest as it was built', () => {
   const g = game({}, {place: 'homeGround', x: 11, y: 5, dir: 'up'});
-  assert.deepEqual(get(g, 'paintedParts()'), {}, 'no colours learned yet: bare wood');
+  assert.deepEqual(get(g, 'paintedParts()'), {}, 'no colours learned yet: paper lanterns');
   const before = g.run('mapStoryNow()');
   g.run('rec("黑色").lv = 1');
-  assert.notEqual(g.run('mapStoryNow()'), before, 'learning a colour changes the map, so it’s drawn again');
+  assert.equal(g.run('mapStoryNow()'), before, 'black paints nothing');
+  g.run('rec("红色").lv = 1');
+  assert.notEqual(g.run('mapStoryNow()'), before, 'red paints the lanterns, so the map is drawn again');
   const all = game(Object.fromEntries(COLOURS.map(c => [c, 2])), {place: 'homeGround', x: 11, y: 5, dir: 'up'});
-  assert.deepEqual(get(all, 'paintedParts()'), {lanterns: '红色', sign: '黄色', steps: '白色', door: '黑色', roof: '蓝色', windows: '绿色', walls: '棕色', pillars: '橙色', blossom: '粉色'});
+  assert.deepEqual(get(all, 'paintedParts()'), {lanterns: '红色'});
   assert.equal(get(all, 'lessonNow()'), null, 'all nine learned: no more colour lessons');
   assert.ok(get(all, 'areaChecklist().find(([t]) => /colours/.test(t))[1]'), 'the checklist is ticked: 9/9');
 });
@@ -175,4 +178,22 @@ test('each painting scene can be drawn at every moment, and saying Not now to a 
   assert.deepEqual(get(no, '__said'), ['上课！'], 'no 下课');
   assert.equal(no.run('lvl("红色")'), 0, 'nothing learned');
   assert.deepEqual(get(no, '__scenes'), [], 'and nothing painted');
+});
+
+test('A at the school’s lanterns, at its front corners: plain paper, then red once the class has painted them, showing you 红色 again (24 October 2026)', async () => {
+  for (const [x, y, dir] of [[8, 5, 'up'], [7, 3, 'right'], [14, 5, 'up'], [15, 3, 'left']]){   // from below or beside each corner
+    const g = game({}, {place: 'homeGround', x, y, dir});
+    g.run("globalThis.__notes = []; showNarration = toast = async t => { __notes.push(t); }");
+    assert.equal(g.run('promptFor(...facing())'), 'Look');
+    await play(g, 'interact(...facing())');
+    assert.deepEqual(get(g, '[__notes, __cards]'), [['Paper lanterns hang from the eaves of the 学校 (school).'], []]);
+    const red = game({'红色': 2}, {place: 'homeGround', x, y, dir});
+    red.run("showNotice = async (w, o = {}) => { __cards.push([w, o.note || null]); }");
+    await play(red, 'interact(...facing())');
+    assert.deepEqual(get(red, '__cards'), [['红色', 'The lanterns on the 学校 (school) are red: the class painted them.']]);
+  }
+  const g = game({'红色': 2}, {place: 'homeGround', x: 10, y: 5, dir: 'up'});
+  g.run("showNotice = async (w, o = {}) => { __cards.push(w); }");
+  await play(g, 'interact(10, 4)');
+  assert.deepEqual(get(g, '__cards'), ['学校'], 'the rest of the school is still the school');
 });

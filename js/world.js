@@ -113,6 +113,8 @@ function promptFor(x, y){
   if (BIRD_WORD && birdAt(x, y)) return 'Look';
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return way.label || 'Go';   // a way you go through by pressing A, such as jumping through the waterfall
+  const spot = spotLook(x, y);
+  if (spot) return spot.label || 'Look';
   const t = tileAt(x, y);
   const look = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
   if (look && look.label) return look.label;   // the tile's own steps say what A does, such as Sleep in a bed
@@ -739,6 +741,8 @@ async function interact(x, y){
   if (bd && BIRD_WORD){ await showNotice(BIRD_WORD, AREA.birds.note ? {note:fill(AREA.birds.note)} : {}); shooBird(bd); return; }
   const h = hiddenAt(x, y);
   if (h) return findHidden(h);
+  const spot = spotLook(x, y);
+  if (spot) return runSteps(spot.do);
   const t = tileAt(x, y);
   if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return runSteps(p.do); }   // the tile's own steps, while the story says
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return gather(t, x, y);
@@ -746,6 +750,12 @@ async function interact(x, y){
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
+}
+// Part of something bigger that A looks at on its own (the area's spots), here in the place you're in, such as the
+// lanterns at the school's front corners: what A does there now (the part of its onLook whose if matches), if anything.
+function spotLook(x, y){
+  const sp = (AREA.spots || []).find(s => s.at.some(a => placeOf(a) === PLACE && a[0] === x && a[1] === y));
+  return sp ? sp.onLook.find(p => !p.if || matches(p.if)) : null;
 }
 // Something hidden off the path (the area's hidden), not found yet, here in the place you're in; and finding it: shells, or a
 // fruit for your bag (with no room, it stays where it is), once.

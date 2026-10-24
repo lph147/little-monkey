@@ -21,6 +21,7 @@ const allSteps = () => [
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
   ...AREA.begin.map(s => ['begin', s, null]),
   ...allLegend.flatMap(([ch, t, from]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at ${from}, part ${i + 1}`, s, null]))),
+  ...(AREA.spots || []).flatMap((sp, n) => sp.onLook.flatMap((p, i) => p.do.map(s => [`looking at spot ${n + 1}, part ${i + 1}`, s, null]))),
   ...Object.entries(AREA.countGames || {}).flatMap(([id, g]) => (g.win || []).map(s => [`the counting game ${id}, if you win`, s, null]))
 ];
 const allIfs = () => [
@@ -32,6 +33,7 @@ const allIfs = () => [
   ...AREA.checklist.filter(c => c.show).map((c, i) => [`checklist item ${AREA.checklist.indexOf(c) + 1}'s show`, c.show]),
   ...Object.entries(AREA.bubbles).flatMap(([who, list]) => list.map(b => [`${who}'s bubble`, b.if])),
   ...AREA.sparkles.filter(s => s.if).map(s => [`the sparkle for ${s.word || 'what’s at ' + s.at}`, s.if]),
+  ...(AREA.spots || []).flatMap((sp, n) => sp.onLook.filter(p => p.if).map(p => [`spot ${n + 1}`, p.if])),
   ...(AREA.lessons || []).filter(l => l.if).map(l => [`the lessons ${l.id}`, l.if]),
   ...allLegend.filter(([, t]) => t.pick && t.pick.if).map(([, t, from]) => [`picking at ${from}`, t.pick.if]),
   ...allSteps().filter(([, s]) => s.if).map(([where, s]) => [`a step in ${where}`, s.if]),
@@ -591,13 +593,14 @@ test('each lesson series is one the engine can give, teaching words you can coll
     if (l.kind === 'count') assert.deepEqual(l.words, get('COUNTING').slice(get('COUNTING').indexOf(l.words[0]), get('COUNTING').indexOf(l.words[0]) + l.words.length), 'numbers are learned in order');
     if (l.kind === 'paint'){
       const PARTS = get('SCHOOL_PARTS');
-      for (const w of l.words){
-        assert.ok(BANK[w].category === 'colours' && get(`!!PAINT[${JSON.stringify(w)}]`), `the lessons ${l.id}: ${w} should be a colour, with its paint in PAINT (js/art.js)`);
-        assert.ok(PARTS.includes((l.paint || {})[w]), `the lessons ${l.id}: ${w} should paint a part of the school (paint), one of ${PARTS.join(', ')}`);
+      for (const w of l.words) assert.ok(BANK[w].category === 'colours' && get(`!!PAINT[${JSON.stringify(w)}]`), `the lessons ${l.id}: ${w} should be a colour, with its paint in PAINT (js/art.js)`);
+      for (const [w, part] of Object.entries(l.paint || {})){   // (a colour that paints a part of the school, such as red the lanterns)
+        assert.ok(l.words.includes(w) && PARTS.includes(part), `the lessons ${l.id}: ${w} should paint a part of the school (paint), one of ${PARTS.join(', ')}`);
         const sc = (AREA.scenes || {})[(l.scenes || {})[w]];
         assert.ok(sc && sc.paints === w, `the lessons ${l.id}: ${w} needs its scene (scenes), painting with it (paints)`);
       }
-      assert.equal(new Set(Object.values(l.paint)).size, l.words.length, `the lessons ${l.id}: each colour paints a different part`);
+      for (const w of Object.keys(l.scenes || {})) assert.ok((l.paint || {})[w], `the lessons ${l.id}: ${w} has a scene, but paints nothing`);
+      assert.equal(new Set(Object.values(l.paint || {})).size, Object.keys(l.paint || {}).length, `the lessons ${l.id}: each colour paints a different part`);
     }
   }
 });
