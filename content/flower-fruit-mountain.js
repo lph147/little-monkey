@@ -1277,9 +1277,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     comeLook: {zh:'来 看看 ！', en:'Come and take a look!'},   // the lookout's goat, walking you to its railing
     hungry: {zh:'我 饿 了 。 我 要 吃 水果 ！', en:"I'm hungry. I want to eat some fruit!"},
     thirsty: {zh:'我 渴 了 。 我 要 喝 水 ！', en:"I'm thirsty. I want to drink some water!"},
-    havePeach: {zh:'你 有 桃子 吗 ？', en:'Do you have a peach?'},
-    haveWater: {zh:'你 有 水 吗 ？', en:'Do you have water?'},
-    haveApple: {zh:'你 有 苹果 吗 ？', en:'Do you have an apple?'},
+    // what a monkey says when you bring what it asked for, before you give it (not 你有…吗？, do you have…?: 有 yǒu, in the
+    // same place just before 我要… yào, sounded too like it; decided 24 October 2026)
+    havePeach: {zh:'桃子 ！ 太 好 了 ！', en:'A peach! Wonderful!'},
+    haveWater: {zh:'水 ！ 太 好 了 ！', en:'Water! Wonderful!'},
+    haveApple: {zh:'苹果 ！ 太 好 了 ！', en:'An apple! Wonderful!'},
     thanks: {zh:'谢谢 你 ！', en:'Thank you!'},
     play: {zh:'我们 玩 吧 ！', en:"Let's play!"},
     weFriends: {zh:'我们 是 朋友 ！', en:'We are friends!'},
@@ -1291,7 +1293,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     whatWant: {zh:'你 要 什么 ？', en:'What do you want?'},
     bye: {zh:'再见 ！', en:'Goodbye!'},
     wantFlowers: {zh:'我 要 红色 、 黄色 和 白色 的 花 ！', en:'I want red, yellow and white flowers!'},
-    haveFlowers: {zh:'你 有 花 吗 ？', en:'Do you have flowers?'},
+    haveFlowers: {zh:'花 ！ 太 好 了 ！', en:'Flowers! Wonderful!'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'},
     welcome: {zh:'不客气 ！', en:'You’re welcome!'},   // the 老板, when you thank him for what you've bought
     sorry: {zh:'对不起 ！', en:'Sorry!'},   // the hungry monkey, sorry for being fussy (draft, not checked yet: see CHINESE.md)
@@ -1324,8 +1326,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     needWood: {zh:'我们 要 木头 和 小 石头 ！', en:'We need wood and small stones!'},   // the big monkey, building the school
     wantWood: {zh:'我们 要 木头 。', en:'We need wood.'},
     wantStones: {zh:'我们 也 要 小 石头 。', en:'We need small stones too.'},
-    haveWood: {zh:'你 有 木头 吗 ？', en:'Do you have the wood?'},
-    haveStones: {zh:'你 有 石头 吗 ？', en:'Do you have the stones?'},
+    haveWood: {zh:'木头 ！ 太 好 了 ！', en:'Wood! Wonderful!'},
+    haveStones: {zh:'石头 ！ 太 好 了 ！', en:'Stones! Wonderful!'},
     squirrelWood: {zh:'你 要 木头 吗 ？', en:'Do you want wood?'},   // the squirrel in the pine wood
     buildIt: {zh:'我们 来 盖 学校 吧 ！', en:'Let’s build the school!'},   // the big monkey, once the frame is up
     schoolLovely: {zh:'学校 很 好看 ！', en:'The school looks lovely!'},   // and once you know red, yellow and white from its lessons,
@@ -1507,7 +1509,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // lessons, so chapter 1 opens up; it waited till the flowers were planted, after every lesson)
       {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, do:[
         {say:'weHave', teach:'有'},
-        {newWord:'有', note:'Use 有 to say what you have.'},
+        {newWord:'有', note:'Use 有 to say what you have. (要 is for what you want.)'},
         {set:{feast:1}},
         {message:'Time for a great feast, for the whole troop! It will be at a big {桌子|table} under the big {树|tree}, in the middle of the home ground.'}
       ]},
@@ -1553,8 +1555,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'ourTable'},
         {say:'haveFruit'},
         {say:'noHoney', teach:'没有'},
-        {newWord:'没有', note:'Use 没有 to say what you don’t have.'},
-        {say:'wantHoney'},
+        {newWord:'没有', note:'Use 没有 to say what you don’t have.'},   // (ending on it: 我要… straight after sounded too like it)
         {set:{feast:3}},
         {message:'There’s no honey for the feast! Honey comes from bees: finding them is the next part of chapter 1, coming soon.'}
       ]},

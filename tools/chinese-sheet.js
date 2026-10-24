@@ -32,7 +32,7 @@ const DRAFTS = [
     .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part B (in the game): ' + where})),
   ...[['我 饿 了 。 我 要 吃 水果 ！', 'I’m hungry. I want to eat some fruit!', 'The hungry monkey now asks for fruit (水果), not a peach'],
     ['这 是 桃子 。 我 要 吃 苹果 ！', 'This is a peach. I want to eat an apple!', 'The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring)'],
-    ['你 有 苹果 吗 ？', 'Do you have an apple?', 'The hungry monkey, when you bring the apple he wants'],
+    ['苹果 ！ 太 好 了 ！', 'An apple! Wonderful!', 'The hungry monkey, when you bring the apple he wants (changed on 24 October 2026 from 你有苹果吗？: 有 yǒu sounded too like the 要 yào you say next; the same for the peach, 桃子！太好了！, and the water, 水！太好了！)'],
     ['我 要 吃 苹果 。', 'I want to eat an apple.', 'The sentence you finish when you give him the apple']]
     .map(([zh, en, where]) => ({zh, en, where:'The prologue, changed on 17 October 2026: ' + where})),
   ...[['草 里 有 蛇 。', 'There are snakes in the grass.', 'The rabbit, by the long grass on the mountain path'],
@@ -67,8 +67,8 @@ const DRAFTS = [
   ...[['我们 要 木头 和 小 石头 ！', 'We need wood and small stones!', 'The big monkey, who wants to build the school (木头 mùtou, wood, is just for listening until you find some)'],
     ['我们 要 木头 。', 'We need wood.', 'The big monkey, if you come back without the wood'],
     ['我们 也 要 小 石头 。', 'We need small stones too.', 'The big monkey, if you come back without the stones'],
-    ['你 有 木头 吗 ？', 'Do you have the wood?', 'The big monkey, when you bring the wood'],
-    ['你 有 石头 吗 ？', 'Do you have the stones?', 'The big monkey, when you bring the small stones'],
+    ['木头 ！ 太 好 了 ！', 'Wood! Wonderful!', 'The big monkey, when you bring the wood (it was 你有木头吗？ till 24 October 2026)'],
+    ['石头 ！ 太 好 了 ！', 'Stones! Wonderful!', 'The big monkey, when you bring the small stones (it was 你有石头吗？)'],
     ['我们 要 木头 。', 'We need wood.', 'The sentence you finish when you give him the wood (filling in 木头)'],
     ['我们 要 小 石头 。', 'We need small stones.', 'The sentence you finish when you give him the stones (filling in 石头)'],
     ['你 要 木头 吗 ？', 'Do you want wood?', 'A squirrel in the pine wood (the place is called 松林 sōnglín, pine wood: please check this name too), showing you the dry, dead pines']]
@@ -103,7 +103,7 @@ const DRAFTS = [
     ['我们 来 种花 吧 ！', 'Let’s plant some flowers!', 'The big monkey (种花 zhòng huā, to plant flowers, just for listening: written as one piece, so a voice saying it on its own can’t read 种 as zhǒng)'],
     ['我 要 红色 、 黄色 和 白色 的 花 ！', 'I want red, yellow and white flowers!', 'The big monkey, asking for flowers to plant in front of the school: see the question below about white flowers'],
     ['红色 的 花', 'A red flower', 'What you see on a card when you pick a red flower for him (and 黄色的花, a yellow flower, and 白色的花, a white flower)'],
-    ['你 有 花 吗 ？', 'Do you have flowers?', 'The big monkey, when you bring them'],
+    ['花 ！ 太 好 了 ！', 'Flowers! Wonderful!', 'The big monkey, when you bring them (it was 你有花吗？)'],
     ['我 要 红色 的 花 。', 'I want a red flower.', 'The sentence you finish when you give him the flowers (filling in 红色)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): ' + where})),
   {zh:'南天门', py:'Nán Tiān Mén', en:'the Southern Gate of Heaven', where:'New on 23 October 2026 (in the game): written on the plaque of the gate of heaven in the opening, when the light from the little monkey’s eyes reaches heaven and two gods step out of it to look (in the book, 千里眼 Qiānlǐ Yǎn, Thousand-Mile Eye, and 顺风耳 Shùnfēng Ěr, Wind-Following Ear; the game doesn’t name them). Written left to right, in simplified characters (门): please check that reads naturally on a gate of heaven'},

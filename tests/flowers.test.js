@@ -90,7 +90,7 @@ test('bring them to the big monkey: 我要红色的花, and he plants them in fr
   assert.deepEqual(BEDS.map(([x, y]) => g.run(`tileAt(${x}, ${y}).look`)), ['grass', 'grass', 'grass', 'grass'], 'grass in front of the school till then');
   g.run("globalThis.__gaps = []; gapQ = async q => { __gaps.push(q.t.join('') + ' / ' + q.gap); return true; }");
   await press(g, 15, 5, 'up');
-  assert.deepEqual(get(g, '__said'), ['你有花吗？', '谢谢你！']);
+  assert.deepEqual(get(g, '__said'), ['花！太好了！', '谢谢你！']);
   assert.deepEqual(get(g, '__gaps'), ['我要红色的花 / 红色'], 'you give them by filling the gap: I want a red flower');
   assert.deepEqual(get(g, '[here().flowers, here().schoolFlowers, S.shells]'), ['done', true, 3]);
   assert.deepEqual(get(g, '__sprouts'), [4, 4, 4, 4], 'the four squares of the beds come up one after another, as you watch');

@@ -20,9 +20,9 @@ shown where the word list has them.
 | 来看看！ | lái kànkan! | Come and take a look! | 山羊 (goat) |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I'm hungry. I want to eat some fruit! | 饿猴子 (Hungry monkey) |  |
 | 我渴了。我要喝水！ | wǒ kě le. wǒ yào hē shuǐ! | I'm thirsty. I want to drink some water! | 渴猴子 (Thirsty monkey) |  |
-| 你有桃子吗？ | nǐ yǒu táozi ma? | Do you have a peach? |  |  |
-| 你有水吗？ | nǐ yǒu shuǐ ma? | Do you have water? | 渴猴子 (Thirsty monkey) |  |
-| 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? |  |  |
+| 桃子！太好了！ | táozi! tài hǎo le! | A peach! Wonderful! |  |  |
+| 水！太好了！ | shuǐ! tài hǎo le! | Water! Wonderful! | 渴猴子 (Thirsty monkey) |  |
+| 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
@@ -34,7 +34,7 @@ shown where the word list has them.
 | 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey) |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
-| 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | 大猴子 (Big monkey) |  |
+| 花！太好了！ | huā! tài hǎo le! | Flowers! Wonderful! | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 老板 (Shop owner) |  |
 | 对不起！ | duìbuqǐ! | Sorry! | 饿猴子 (Hungry monkey) |  |
@@ -64,8 +64,8 @@ shown where the word list has them.
 | 我们要木头和小石头！ | wǒmen yào mùtou hé xiǎo shítou! | We need wood and small stones! | 大猴子 (Big monkey) |  |
 | 我们要木头。 | wǒmen yào mùtou. | We need wood. | 大猴子 (Big monkey) |  |
 | 我们也要小石头。 | wǒmen yě yào xiǎo shítou. | We need small stones too. | 大猴子 (Big monkey) |  |
-| 你有木头吗？ | nǐ yǒu mùtou ma? | Do you have the wood? | 大猴子 (Big monkey) |  |
-| 你有石头吗？ | nǐ yǒu shítou ma? | Do you have the stones? | 大猴子 (Big monkey) |  |
+| 木头！太好了！ | mùtou! tài hǎo le! | Wood! Wonderful! | 大猴子 (Big monkey) |  |
+| 石头！太好了！ | shítou! tài hǎo le! | Stones! Wonderful! | 大猴子 (Big monkey) |  |
 | 你要木头吗？ | nǐ yào mùtou ma? | Do you want wood? | 松鼠 (squirrel) |  |
 | 我们来盖学校吧！ | wǒmen lái gài xuéxiào ba! | Let’s build the school! | 大猴子 (Big monkey) |  |
 | 学校很好看！ | xuéxiào hěn hǎokàn! | The school looks lovely! | 大猴子 (Big monkey) |  |
@@ -511,7 +511,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 一，二，三！ | yī, èr, sān! | One, two, three! | Chapter 1, part B (in the game): The old monkey, counting (teaching 三; it was 三只猴子。) |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I’m hungry. I want to eat some fruit! | The prologue, changed on 17 October 2026: The hungry monkey now asks for fruit (水果), not a peach |  |
 | 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! | The prologue, changed on 17 October 2026: The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring) |  |
-| 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants |  |
+| 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants (changed on 24 October 2026 from 你有苹果吗？: 有 yǒu sounded too like the 要 yào you say next; the same for the peach, 桃子！太好了！, and the water, 水！太好了！) |  |
 | 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
 | 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 and 19 October 2026: The rabbit, by the long grass on the mountain path |  |
 | 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 and 19 October 2026: The sheep (the fox until 23 October 2026), at the fork in the river valley |  |
@@ -542,8 +542,8 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们要木头和小石头！ | wǒmen yào mùtou hé xiǎo shítou! | We need wood and small stones! | New on 21 October 2026 (in the game), building the school: The big monkey, who wants to build the school (木头 mùtou, wood, is just for listening until you find some) |  |
 | 我们要木头。 | wǒmen yào mùtou. | We need wood. | New on 21 October 2026 (in the game), building the school: The big monkey, if you come back without the wood |  |
 | 我们也要小石头。 | wǒmen yě yào xiǎo shítou. | We need small stones too. | New on 21 October 2026 (in the game), building the school: The big monkey, if you come back without the stones |  |
-| 你有木头吗？ | nǐ yǒu mùtou ma? | Do you have the wood? | New on 21 October 2026 (in the game), building the school: The big monkey, when you bring the wood |  |
-| 你有石头吗？ | nǐ yǒu shítou ma? | Do you have the stones? | New on 21 October 2026 (in the game), building the school: The big monkey, when you bring the small stones |  |
+| 木头！太好了！ | mùtou! tài hǎo le! | Wood! Wonderful! | New on 21 October 2026 (in the game), building the school: The big monkey, when you bring the wood (it was 你有木头吗？ till 24 October 2026) |  |
+| 石头！太好了！ | shítou! tài hǎo le! | Stones! Wonderful! | New on 21 October 2026 (in the game), building the school: The big monkey, when you bring the small stones (it was 你有石头吗？) |  |
 | 我们要木头。 | wǒmen yào mùtou. | We need wood. | New on 21 October 2026 (in the game), building the school: The sentence you finish when you give him the wood (filling in 木头) |  |
 | 我们要小石头。 | wǒmen yào xiǎo shítou. | We need small stones. | New on 21 October 2026 (in the game), building the school: The sentence you finish when you give him the stones (filling in 石头) |  |
 | 你要木头吗？ | nǐ yào mùtou ma? | Do you want wood? | New on 21 October 2026 (in the game), building the school: A squirrel in the pine wood (the place is called 松林 sōnglín, pine wood: please check this name too), showing you the dry, dead pines |  |
@@ -572,7 +572,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们来种花吧！ | wǒmen lái zhòng huā ba! | Let’s plant some flowers! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey (种花 zhòng huā, to plant flowers, just for listening: written as one piece, so a voice saying it on its own can’t read 种 as zhǒng) |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, asking for flowers to plant in front of the school: see the question below about white flowers |  |
 | 红色的花 | hóngsè de huā | A red flower | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): What you see on a card when you pick a red flower for him (and 黄色的花, a yellow flower, and 白色的花, a white flower) |  |
-| 你有花吗？ | nǐ yǒu huā ma? | Do you have flowers? | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, when you bring them |  |
+| 花！太好了！ | huā! tài hǎo le! | Flowers! Wonderful! | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The big monkey, when you bring them (it was 你有花吗？) |  |
 | 我要红色的花。 | wǒ yào hóngsè de huā. | I want a red flower. | New on 22 October 2026 (in the game), flowers for the school (the big monkey’s flowers were in the prologue until now): The sentence you finish when you give him the flowers (filling in 红色) |  |
 | 南天门 | Nán Tiān Mén | the Southern Gate of Heaven | New on 23 October 2026 (in the game): written on the plaque of the gate of heaven in the opening, when the light from the little monkey’s eyes reaches heaven and two gods step out of it to look (in the book, 千里眼 Qiānlǐ Yǎn, Thousand-Mile Eye, and 顺风耳 Shùnfēng Ěr, Wind-Following Ear; the game doesn’t name them). Written left to right, in simplified characters (门): please check that reads naturally on a gate of heaven |  |
 | 这里有几个石头？ | zhèlǐ yǒu jǐ gè shítou? | How many stones are there? | New on 23 October 2026 (in the game): two little monkeys on the hillside, building a tower of stones, as the troop does in the book (砌宝塔), ask you to count its stones with them. 块 (kuài) is the usual measure word for stones (几块石头): is 几个石头 natural for small stones, said by a child, or should it be 几块? |  |

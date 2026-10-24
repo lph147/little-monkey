@@ -63,7 +63,7 @@ test('after them, the old monkey has news before any lesson: 我们有家，也�
   assert.deepEqual(get(g, '__said'), ['我们有家，也有学校！ [有]'], 'no lesson this time: just his news, with 有 in bold');
   assert.equal(g.run('__lessons'), 0);
   const notes = get(g, '__notes');
-  assert.equal(notes[0], 'card: 有 (Use 有 to say what you have.)', 'its card, with no picture, like 要');
+  assert.equal(notes[0], 'card: 有 (Use 有 to say what you have. (要 is for what you want.))', 'its card, with no picture, like 要, and how they differ');
   assert.match(notes.join(' '), /Time for a great feast, for the whole troop! It will be at a big 桌子 \(table\) under the big 树 \(tree\), in the middle of the home ground/);
   assert.equal(g.run('here().feast'), 1);
   assert.ok(g.run("lvl('有') >= 1"), '有 is a word you know now');
@@ -111,8 +111,8 @@ test('by the table, the hungry monkey tells you what the troop has, and what it 
   const g = game({feast: 2}, {place: 'homeGround', x: 19, y: 8, dir: 'up'});
   assert.deepEqual(item(g, /still needs/), ['Hear from the hungry monkey what the feast still needs', false, false, true]);
   await press(g, 19, 8, 'up');
-  assert.deepEqual(get(g, '__said'), ['这是我们的大桌子！', '我们有桃子，也有苹果！', '我们没有蜂蜜！ [没有]', '我要吃蜂蜜！'],
-    'its big table, what the troop has (有, a word you know), what it hasn’t (没有 in bold), and what he’d love');
+  assert.deepEqual(get(g, '__said'), ['这是我们的大桌子！', '我们有桃子，也有苹果！', '我们没有蜂蜜！ [没有]'],
+    'its big table, what the troop has (有, a word you know), and what it hasn’t (没有 in bold): ending on it, as 我要… straight after sounded too like it');
   const notes = get(g, '__notes');
   assert.equal(notes[0], 'card: 没有 (Use 没有 to say what you don’t have.)', 'its card, with no picture, like 有');
   assert.match(notes.join(' '), /There’s no honey for the feast! Honey comes from bees: finding them is the next part of chapter 1, coming soon/);

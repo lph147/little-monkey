@@ -153,7 +153,7 @@ test('bring them to the big monkey: he takes both, and the troop builds the scho
   g.run("gapQ = async () => {}; __said.length = 0");   // (filling the gaps: their own tests)
   const shells = g.run('S.shells');
   await press(g, 14, 4, 'right');
-  assert.deepEqual(get(g, '__said'), ['你有木头吗？', '谢谢你！', '你有石头吗？', '谢谢你！', '我们来盖学校吧！'], 'and straight away: let’s build the school!');
+  assert.deepEqual(get(g, '__said'), ['木头！太好了！', '谢谢你！', '石头！太好了！', '谢谢你！', '我们来盖学校吧！'], 'and straight away: let’s build the school!');
   assert.deepEqual(get(g, '__scenes'), ['buildingSchool'], 'the troop builds it, in a scene: the frame goes up, then the walls, the roof and the sign');
   assert.deepEqual(get(g, '[here().wood, here().stones, here().build, here().school]'), ['done', 'done', 2, 1]);
   assert.equal(g.run('S.shells'), shells + 6);
