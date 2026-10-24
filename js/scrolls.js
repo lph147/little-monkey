@@ -150,13 +150,16 @@ const practiceWords = () => [...trainable(), ...unpictured()].filter(needsPracti
 const trainingCalls = () => trainable().length >= TRAINING_MIN && practiceWords().length > 0;   // the practice post shows a !
 // The words to practise: from the front of the review list (js/state.js), in a random order.
 const trainingWords = () => shuffle(nextWords(trainable(), TRAINING_WORDS));
-const SENTENCES = () => [...REQUESTS.flatMap(r => r.choices ? Object.values(r.choices) : [r]), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])];   // the area's sentences you complete
+// The area's sentences you complete: in requests, the shop and the wardrobe, and those just for practising a word without a
+// picture that none of them has (practiceSentences, such as 我有桃子 for 有).
+const SENTENCES = () => [...REQUESTS.flatMap(r => r.choices ? Object.values(r.choices) : [r]), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || []), ...(AREA.practiceSentences || [])];
 // A sentence for practising a word without a picture (such as 我 or 要): one you've met in a request, the
-// shop or the wardrobe, with every word caught, and that word missing (gap): the one nearest the front of the review
-// list, preferring a word that needs practice.
+// shop or the wardrobe (or one of the area's practice sentences), with every word caught, and that word missing (gap): of
+// its words without a picture, one that needs practice, the one nearest the front of the review list (decided 24 October
+// 2026: 我有桃子 could miss out 我, ahead of 有 in the list, while only 有 needed practice), preferring a sentence with one.
 function practiceSentence(){
   const all = SENTENCES().map(b => ({t:toks(b.sentence), en:b.sentenceEn})).filter(b => b.t.every(w => lvl(w) >= 1) && b.t.some(w => !WORDS[w].pic))
-    .map(b => ({...b, gap:reviewOrder(shuffle(b.t.filter(w => !WORDS[w].pic)))[0]}));
+    .map(b => { const ws = reviewOrder(shuffle(b.t.filter(w => !WORDS[w].pic))); return {...b, gap:ws.find(needsPractice) || ws[0]}; });
   const need = all.filter(b => needsPractice(b.gap));
   return shuffle(need.length ? need : all)[0] || null;
 }

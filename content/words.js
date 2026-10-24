@@ -108,6 +108,7 @@ const WORD_BANK = {
   '学校': {py:'xuéxiào', en:'school', pic:'🏫', area:1, category:'places'},
   '老师': {py:'lǎoshī', en:'teacher', pic:'🧑‍🏫', area:1, category:'people'},
   '同学': {py:'tóngxué', en:'classmate', pic:'🎒', area:1, category:'people'},
+  '有': {py:'yǒu', en:'to have, there is', area:1, category:'actions'},   // (the old monkey's news, chapter 1: heard till then, as in 里面有床; no picture, as 要 has none)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
@@ -161,7 +162,6 @@ const WORD_BANK = {
   '渴': {py:'kě', en:'thirsty'},
   '我们': {py:'wǒmen', en:'we, us'},
   '里': {py:'lǐ', en:'inside, in'},
-  '有': {py:'yǒu', en:'to have; there is'},
   '上': {py:'shàng', en:'on top of'},
   '一个': {py:'yí gè', en:'a, one'},
   '一只': {py:'yì zhī', en:'a, one (animal)'},

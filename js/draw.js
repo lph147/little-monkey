@@ -323,6 +323,13 @@ function drawMarking(cx, cy, now){
     R(b, sx, y, 2, 5, WOOD[1]); R(b, sx, y, 1, 5, WOOD[3]); R(b, sx, y, 2, 1, WOOD[0]);
   });
 }
+// Something being set up as you watch (the setUp step), such as the feast's big table: its pieces that are up so far,
+// drawn on the ground under the characters till it's all up and goes into the map.
+function drawSettingUp(cx, cy){
+  b.save(); b.translate(-cx, -cy);
+  for (const o of settingUp.objects) OBJECT_ART[o.look](b, {...o, stage:settingUp.stage});
+  b.restore();
+}
 // Chips flying off what you hit (burst, at the moment your stick strikes): wood or stone, falling as they fly.
 const chips = [];
 const CHIP_COLOURS = {wood:['#D2A46A', '#8A5A32', '#B98A55', '#6B4A2A'], stone:['#E6E2D6', '#A9A598', '#7C786D', '#D6D2C5']};
@@ -361,6 +368,7 @@ function drawWorld(now){
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
   drawGlimpse(cx, cy, now);
   if (marking) drawMarking(cx, cy, now);   // ground being marked out (the markOut step)
+  if (settingUp) drawSettingUp(cx, cy);    // something being set up, a piece at a time (the setUp step)
   // fish jumping out of the water (the area's fish), one after another, every other one the other way
   AREA.fish.forEach((f, i) => {
     const fp = ((now + i * 2300) % (5200 + i * 700)) / 900;

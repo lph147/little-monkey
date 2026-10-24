@@ -30,7 +30,7 @@ test('opening the Story Scroll counts every word in the story once', () => {
 const allCategories = game => game.run("scrollTabs().filter(([id]) => CATEGORIES[id]).map(([id]) => scrollPage(id)).join('')");
 
 test('the Word Scroll shows caught words, shadows of heard words, and ？ for the rest', () => {
-  const game = loadGame({save: {version: 5, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}}, heard: {'猴子': 3, '石头': 2, '有': 9}}});
+  const game = loadGame({save: {version: 5, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}}, heard: {'猴子': 3, '石头': 2, '也': 9}}});   // (也: heard, not a word you collect here)
   const html = allCategories(game), total = game.run('ORDER.length + PHRASES.length');   // words and phrases
   const stone = game.run("picHTML('石头')"), monkey = game.run("picHTML('猴子')");   // their pixel sprites
   assert.ok(html.includes(`<button class="card" data-w="石头" data-label="Open"><div class="c" aria-hidden="true">${stone}</div><div class="hz">石头</div><div class="p">shítou</div>`), 'a caught word shows its picture, characters and pinyin');
@@ -103,11 +103,11 @@ test('the Today tab shows the words you met today, and how many need practice', 
 });
 
 test('the Heard tab shows words this area doesn\'t teach, most heard first', () => {
-  const game = loadGame({save: {version: 5, started: true, heard: {'是': 4, '有': 9, '猴子': 3, '里': 5}}});
+  const game = loadGame({save: {version: 5, started: true, heard: {'是': 4, '也': 9, '猴子': 3, '里': 5}}});
   game.run("openScroll(null, 0, 'heard')");
   const html = game.el('#sheet').innerHTML, list = html.slice(html.indexOf('>Heard<'));
   assert.deepEqual([...list.matchAll(/data-h="([^"]+)" data-label="Hear it"><ruby>\1<rt[^>]*>([^<]+)<\/rt><\/ruby> <span class="small">(\d+)×/g)].map(m => m[1] + m[2] + m[3]),
-    ['有yǒu9', '里lǐ5', '是shì4'], 'with pinyin, most heard first');
+    ['也yě9', '里lǐ5', '是shì4'], 'with pinyin, most heard first');
   assert.ok(!list.includes('猴子'), 'a word you can collect here goes in its category, not the Heard list');
   const fresh = loadGame();
   fresh.run('openScroll()');

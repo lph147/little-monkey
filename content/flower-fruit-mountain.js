@@ -55,9 +55,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           (the first by the stepping stones, the second on the middle terrace), 2 once you've won its present
   //   tower   chapter 1: the little monkeys building a tower of stones at the home ground: 1 once they've said hello, 2 once
   //           you've counted its stones with them
+  //   feast   chapter 1, the great feast: 0 not yet, 1 the old monkey has told you about it (teaching 有), 2 the troop has set
+  //           up its big table under the big tree at the home ground, as you watched
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -169,6 +171,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'build', if:{build:2, school:0}, text:'Talk to the big monkey: the troop is ready to build the {学校}', arrow:'big'},
     {id:'goIn', if:{school:1}, text:'Go into the {学校}, and talk to the old monkey at the front of the class', arrow:'elder'},
     {id:'classmates', if:{school:{atLeast:2}, new:'同学'}, text:'Talk to the little monkey in the {学校}', arrow:'playful'},
+    // the feast: once the first two lessons have taught you 四 五 六 and 红色 黄色 白色, the old monkey has news
+    {id:'news', if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, text:'Talk to the old monkey at the {学校}: he has news', arrow:'elder'},
+    {id:'feastTable', if:{feast:1}, text:'Go to the big {树} in the middle of the home ground', arrow:[17, 7, 'homeGround']},
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
     {id:'count', if:{cave:{atLeast:5}, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
@@ -180,6 +185,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
+    {if:{feast:{atLeast:2}}, text:'The big {桌子} is ready for the feast, and more of chapter 1 is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -218,12 +224,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}},
     {chapter:1, text:'Learn to count to ten at {学校} ({numbersKnown}/7)', show:{school:{atLeast:2}}, done:{numbersKnown:7}},
     {chapter:1, text:'Learn nine colours at the {学校} ({coloursKnown}/9)', show:{school:{atLeast:2}}, done:{coloursKnown:9}},
-    {chapter:1, text:'Plant {花|flowers} in front of the {学校}', show:{flowers:'asked'}, done:{schoolFlowers:true}}
+    {chapter:1, text:'Plant {花|flowers} in front of the {学校}', show:{flowers:'asked'}, done:{schoolFlowers:true}},
+    {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
+    {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
-    elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, lesson:true}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
+    elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}, {if:{chapter:0, count:3}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
@@ -374,6 +382,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {set:{build:2, school:1}},
       {message:'The old monkey has gone in: he’s the teacher now. Walk in through the school’s door!'},
       {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}]},
+    // chapter 1: once the old monkey has told you about the feast, as you come up to the big tree at the home ground, the troop
+    // sets up the feast's big table under it, as you watch (the setUp step: its legs, its top with a red cloth, then a bowl
+    // at a time, each with a knock; things that just appear look odd), and the hungry monkey is there to look after it
+    {if:{feast:1, around:[17, 7, 'homeGround']}, do:[{setUp:{feast:2}},
+      {message:'The troop sets up a big {桌子|table} under the big tree for the feast, with peaches, apples, and an empty bowl, waiting for something…'}]},
     // you've brought the big monkey his flowers: he plants them in front of the school, as you watch (the plant step: each
     // square of the beds grows up out of the ground, one after another)
     {if:{place:'homeGround', flowers:'done', schoolFlowers:false}, do:[{plant:{schoolFlowers:true}},
@@ -560,7 +573,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
       legend: {
         'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'},   // the bridge over the stream (chapter 1's bridges teach 桥)
         'O': {look:'water', word:'水', note:'A little pool of clear water.'},   // its pool: just water, with no fish in it (decided 24 October 2026: it showed 鱼, fish, as the meadow's pond does)
-        '@': {look:'stoneTower', landmark:true, onLook:[{do:[{talkTo:'towerL'}]}]}   // the little monkeys' tower of stones: A talks to them
+        '@': {look:'stoneTower', landmark:true, onLook:[{do:[{talkTo:'towerL'}]}]},   // the little monkeys' tower of stones: A talks to them
+        // chapter 1: the big table for the feast, under the big tree in the middle, where the troop meets: open grass, until the
+        // troop sets it up as you watch (the setUp step, in events: its legs, its top with a red cloth, then stone bowls of
+        // peaches and apples, and an empty one, waiting for honey). Under the big tree, not in the cave's entrance (decided
+        // 23 October 2026: every quest comes back to the home ground; 桌子 and 碗 are the cave's words, heard again here)
+        '%': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:'&'}]},
+        '&': {look:'feastTable', word:'桌子', landmark:true, note:'The big table for the troop’s feast, under the big tree.'}
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
@@ -575,7 +594,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
-        "YgEFggggggg8gJggggggFg@gg.gggTgY",   // little monkeys building a tower of stones (@), beside the way up to the hillside
+        "YgEFggggggg8gJgg%%%gFg@gg.gggTgY",   // the feast's big table (%), under the big tree; little monkeys building a tower of stones (@), beside the way up to the hillside
         "Ygggggggggg8ggggggggggggg.gggggY",
         "...............................u",
         "...............................Y",
@@ -912,6 +931,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{gate:true}, x:16, y:1, facing:'down'}],   // in the way up once the rocks have rolled away, where he stops you with a stick for you, and stays (he used to jump there and back)
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
+      moves:[{if:{feast:{atLeast:1}}, place:'homeGround', x:19, y:7, facing:'left'}],   // chapter 1: he comes up from the meadow to look after the feast's big table
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
@@ -1100,7 +1120,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '棕色': 'A colour lesson at school: the teacher opened a pot of it.',
     '橙色': 'A colour lesson at school: the teacher opened a pot of it.',
     '粉色': 'A colour lesson at school: the teacher opened a pot of it.',
+    '有': 'The old monkey’s news at school: the troop has a home, and a school too.',
   },
+
+  // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
+  // (in a request, the shop or the wardrobe) has: 有 (decided 24 October 2026: without them, the teacher would have a !
+  // for it, with nothing to ask). Like those, each needs every word in it caught.
+  practiceSentences: [
+    {sentence:'我 有 桃子', sentenceEn:'I have peaches.'},
+    {sentence:'我 有 朋友', sentenceEn:'I have friends.'}
+  ],
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
   // the Word Scroll. (A word that only appears in a sentence you complete, such as 头带, shows that.)
@@ -1142,7 +1171,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     when: {knows:'棍子'},   // once the big monkey has given you the stick
     weapon: '棍子',
     restAt: [
-      {if:{home:{atLeast:2}}, at:[17, 7, 'homeGround'], facing:'up', lost:'You’re worn out. You crawl back down to the home ground and rest under the big tree until your hearts are full again.'},   // chapter 1: under the big tree
+      {if:{home:{atLeast:2}}, at:[17, 8, 'homeGround'], facing:'up', lost:'You’re worn out. You crawl back down to the home ground and rest under the big tree until your hearts are full again.'},   // chapter 1: under the big tree (in front of the feast's table, which stands where you rested till 24 October 2026)
       {if:{cave:{atLeast:2}}, at:[3, 2, 'cave'], facing:'up', lost:'You’re worn out. You crawl back to the Water Curtain Cave and sleep until your hearts are full again.'},   // once you've found the cave: by a bed
       {at:[15, 2], facing:'left', lost:'You’re worn out. You crawl back down to the meadow and rest until your hearts are full again.'}
     ]
@@ -1285,6 +1314,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     classHi: {zh:'同学 们 好 ！', en:'Hello, class!'},
     classEnd: {zh:'下课 ！', en:'Class is over!'},
     classmates: {zh:'我们 是 同学 ！', en:'We’re classmates!'},
+    weHave: {zh:'我们 有 家 ， 也 有 学校 ！', en:'We have a home, and a school too!'},   // the old monkey's news: time for a feast (teaching 有)
     count4: {zh:'一 ， 二 ， 三 ， 四 ！', en:'One, two, three, four!'},   // the teacher, counting peaches onto his table (number lessons)
     count5: {zh:'一 ， 二 ， 三 ， 四 ， 五 ！', en:'One, two, three, four, five!'},
     count6: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ！', en:'One, two, three, four, five, six!'},
@@ -1446,6 +1476,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'classHi'},
         {set:{school:2}},
         {message:'Lessons are where you practise your words now. Talk to the teacher when he has a ! and he’ll give you one.'}
+      ]},
+      // once the first two lessons have taught you 四 五 六 and 红色 黄色 白色, he has news, before any lesson: the troop has a
+      // home, and a school too (teaching 有), so it's time for a great feast (decided 24 October 2026: after the first two
+      // lessons, so chapter 1 opens up; it waited till the flowers were planted, after every lesson)
+      {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, do:[
+        {say:'weHave', teach:'有'},
+        {newWord:'有', note:'Use 有 to say what you have.'},
+        {set:{feast:1}},
+        {message:'Time for a great feast, for the whole troop! It will be at a big {桌子|table} under the big {树|tree}, in the middle of the home ground.'}
       ]},
       {if:{school:{atLeast:2}}, do:[{say:'classStart'}, {lesson:true}, {say:'classEnd'}]},
       // chapter 1: the troop's new home ground, beside the waterfall. He tells you about it, then follows you there.

@@ -675,6 +675,7 @@ const LOOKS = {
   pebble:    (g,X,Y,x,y) => pebble(g,X,Y,x,y),
   rubble:    (g,X,Y,x,y) => rubble(g,X,Y,x,y),
   school:    (g,X,Y,x,y) => grass(g,X,Y,x,y),   // the school, built on its plot: a big object (OBJECT_ART), on grass (no string or stakes round it any more)
+  feastTable:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // the big table for the feast: a big object (OBJECT_ART), on grass
   classFloor:(g,X,Y,x,y) => classFloor(g,X,Y,x,y),   // inside the school
   classWall: (g,X,Y,x,y) => classWall(g,X,Y,x,y),
   wallFace:  (g,X,Y,x,y) => wallFace(g,X,Y,x,y),
@@ -777,6 +778,7 @@ const OBJECT_ART = {
     for (let i = 0; i < o.w; i++) boulder(g, o.x*T + 8 + i*14, o.y*T + 15, 10 - i % 2, 8 - i % 2, false, true);
   },
   stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4),
+  feastTable: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.feastTable),   // (stage: how much of it is up, as it's set up)
   pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
   tablet: (g, o) => stoneTablet(g, o.x*T, (o.y + o.h - 1)*T, tileAt(o.x, o.y).sign.says.zh),   // (standing on its bottom square, with what it says carved down it)
@@ -962,6 +964,39 @@ function schoolFrame(g, o, k = 1){
   woodLine(g, lx, base, lx + 4, top + 2); woodLine(g, lx + 6, base, lx + 10, top + 2);
   for (let r = 1; r <= 4; r++){ const y = base - r * 6, f = (base - y) / (base - top - 2); R(g, Math.round(lx + 4 * f), y, 7, 1, WOOD[3]); }   // its rungs
 }
+// The big table for the troop's feast, w wide from X (three squares), under the big tree at the home ground, as much of it as
+// is up (stage, as the troop sets it up: 1 its legs, 2 its top, with a red cloth for the feast hanging over the front, then
+// a stone bowl from the cave at a time: 3 peaches, 4 apples, 5 an empty one, waiting for honey).
+function feastTable(g, X, Y, w, stage){
+  if (stage >= 1){
+    if (shadows) blob(g, X + w/2, Y + 15, w/2 - 1, 2, ROCK_SHADOW);
+    [[X + 7, Y + 7], [X + w - 10, Y + 7]].forEach(([x, y]) => { R(g, x, y, 3, 6, WOOD[0]); R(g, x + 1, y, 1, 5, WOOD[1]); });   // the back legs
+    [[X + 3, Y + 8], [X + w - 6, Y + 8]].forEach(([x, y]) => { R(g, x, y, 3, 8, WOOD[0]); R(g, x + 1, y, 1, 7, WOOD[2]); });   // the front legs
+  }
+  if (stage >= 2){
+    R(g, X + 1, Y, w - 2, 10, WOOD[0]);                                              // the top's outline
+    R(g, X + 2, Y + 1, w - 4, 4, WOOD[3]); R(g, X + 2, Y + 1, w - 4, 1, WOOD[4]);   // its planks, lit along the back
+    for (let x = X + 13; x < X + w - 4; x += 11) R(g, x, Y + 2, 1, 3, WOOD[2]);    // the gaps between them
+    R(g, X + 2, Y + 5, w - 4, 4, WOOD[1]); R(g, X + 2, Y + 5, w - 4, 1, WOOD[2]);   // its front edge
+    R(g, X + 15, Y + 1, w - 30, 4, '#C0392B'); R(g, X + 15, Y + 1, w - 30, 1, '#E05A4A');   // the red cloth down the middle,
+    R(g, X + 15, Y + 5, w - 30, 5, '#A93226'); R(g, X + 15, Y + 9, w - 30, 1, '#E8B84A');   // hanging over the front, with a gold hem
+  }
+  [[X + 9, PEACHES], [X + w/2, APPLES], [X + w - 9, null]].forEach(([cx, fruits], i) => {
+    if (stage < 3 + i) return;
+    tableBowl(g, cx, Y + 5);
+    if (fruits) [[-3, -6], [1, -6], [-1, -9]].forEach(([dx, dy]) => bigFruit(g, cx + dx, Y + 5 + dy, fruits));   // three, piled up
+  });
+}
+function tableBowl(g, cx, by){   // a stone bowl from the cave, its bottom at by
+  const OUT = '#2E2A26';
+  [5, 5, 4, 3].forEach((w, k) => { R(g, cx - w - 1, by - 4 + k, 2*w + 3, 1, OUT); R(g, cx - w, by - 4 + k, 2*w + 1, 1, k ? '#A39C8E' : '#C9C2B4'); });
+  R(g, cx - 3, by, 7, 1, OUT);
+  R(g, cx - 6, by - 5, 13, 1, OUT); R(g, cx - 5, by - 5, 11, 1, '#DDD6C8');   // its rim
+}
+function bigFruit(g, cx, cy, [col, shine]){   // a fruit a little bigger than on the trees, so it shows on the table
+  R(g, cx - 1, cy - 2, 3, 5, '#2E2A26'); R(g, cx - 2, cy - 1, 5, 3, '#2E2A26');
+  R(g, cx - 1, cy - 1, 3, 3, col); R(g, cx - 1, cy - 1, 1, 1, shine);
+}
 function stall(g, L, Y, w){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit
   const top = Y + 16 - Math.round(w * .66), cy = Y + 16 - Math.round(w * .26);
   groundShadow(g, L + w/2, Y+15, w/2, 2);
@@ -978,7 +1013,10 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
-const ROW_OBJECTS = ['rocks', 'stall', 'railing'];   // side by side, these make one object as wide as the row
+const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable'];   // side by side, these make one object as wide as the row
+// Big objects set up as you watch (the setUp step, js/world.js): how many pieces each goes up in, one after another (its
+// art draws stage of them, all of them if it's not given).
+const OBJECT_STAGES = {feastTable:5};
 const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of

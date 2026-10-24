@@ -111,6 +111,10 @@ const DRAFTS = [
   {zh:'我们 在 玩 水 ！', en:'We’re playing in the water!', where:'New on 23 October 2026 (in the game): two little monkeys splashing each other in the hillside’s brook, as the troop washes by the stream in the book (绿水涧边随洗濯), when you say hello'},
   {zh:'羊 吃 草 。', en:'Sheep eat grass.', where:'New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside'},
   {zh:'来 看看 ！', en:'Come and take a look!', where:'New on 24 October 2026 (in the game): the goat on the hillside’s lookout, the first time you come up beside it, before it walks you to its railing to show you the view (it said 去看看！, go and take a look, and a player walked on without looking)'},
+  ...[['我们 有 家 ， 也 有 学校 ！', 'We have a home, and a school too!', 'The old monkey at school, after your first two lessons, teaching 有 yǒu, to have (a word without a picture, as 要 is): then it’s time for a great feast, for the whole troop'],
+    ['我 有 桃子 。', 'I have peaches.', 'A sentence you finish in a lesson, to practise 有 (filling in 有)'],
+    ['我 有 朋友 。', 'I have friends.', 'Another, to practise 有 (also in the story at the waterfall)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 24 October 2026 (in the game), the feast announced: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 
@@ -152,7 +156,8 @@ function sheet(){
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name)];   // characters, the sign, the area and its places
-  const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe'])];
+  const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe']),
+    ...(AREA.practiceSentences || []).map(c => [c.sentence, c.sentenceEn, 'You, in a lesson at school'])];
   const notes = '';
   // how a word is made, in one line: its parts (each Chinese, pinyin, English) and what they add up to; or the clue inside it;
   // or the character it shares with another word

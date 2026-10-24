@@ -75,6 +75,7 @@ shown where the word list has them.
 | 同学们好！ | tóngxué men hǎo! | Hello, class! | 老猴子 (Old monkey) |  |
 | 下课！ | xiàkè! | Class is over! | 老猴子 (Old monkey) |  |
 | 我们是同学！ | wǒmen shì tóngxué! | We’re classmates! | 小猴子 (Little monkey) |  |
+| 我们有家，也有学校！ | wǒmen yǒu jiā, yě yǒu xuéxiào! | We have a home, and a school too! | 老猴子 (Old monkey) |  |
 | 一，二，三，四！ | yī, èr, sān, sì! | One, two, three, four! |  |  |
 | 一，二，三，四，五！ | yī, èr, sān, sì, wǔ! | One, two, three, four, five! |  |  |
 | 一，二，三，四，五，六！ | yī, èr, sān, sì, wǔ, liù! | One, two, three, four, five, six! |  |  |
@@ -121,6 +122,8 @@ shown where the word list has them.
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
+| 我有桃子 | wǒ yǒu táozi | I have peaches. | You, in a lesson at school |  |
+| 我有朋友 | wǒ yǒu péngyou | I have friends. | You, in a lesson at school |  |
 
 ### What you pick
 
@@ -326,6 +329,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 学校 | xuéxiào | school |  |
 | 老师 | lǎoshī | teacher |  |
 | 同学 | tóngxué | classmate |  |
+| 有 | yǒu | to have, there is |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -423,7 +427,6 @@ check that each is true and simply put.
 | 渴 | kě | thirsty |  |
 | 我们 | wǒmen | we, us |  |
 | 里 | lǐ | inside, in |  |
-| 有 | yǒu | to have; there is |  |
 | 上 | shàng | on top of |  |
 | 一个 | yí gè | a, one |  |
 | 一只 | yì zhī | a, one (animal) |  |
@@ -558,6 +561,9 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们在玩水！ | wǒmen zài wán shuǐ! | We’re playing in the water! | New on 23 October 2026 (in the game): two little monkeys splashing each other in the hillside’s brook, as the troop washes by the stream in the book (绿水涧边随洗濯), when you say hello |  |
 | 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | New on 23 October 2026 (in the game): the example on 羊 (yáng, sheep)’s page. A sheep you make friends with in the meadow takes the fox’s place in the prologue, so you meet 羊, then 山羊 (shānyáng, goat): a mountain sheep. The fox comes in chapter 1, on the hillside |  |
 | 来看看！ | lái kànkan! | Come and take a look! | New on 24 October 2026 (in the game): the goat on the hillside’s lookout, the first time you come up beside it, before it walks you to its railing to show you the view (it said 去看看！, go and take a look, and a player walked on without looking) |  |
+| 我们有家，也有学校！ | wǒmen yǒu jiā, yě yǒu xuéxiào! | We have a home, and a school too! | New on 24 October 2026 (in the game), the feast announced: The old monkey at school, after your first two lessons, teaching 有 yǒu, to have (a word without a picture, as 要 is): then it’s time for a great feast, for the whole troop |  |
+| 我有桃子。 | wǒ yǒu táozi. | I have peaches. | New on 24 October 2026 (in the game), the feast announced: A sentence you finish in a lesson, to practise 有 (filling in 有) |  |
+| 我有朋友。 | wǒ yǒu péngyou. | I have friends. | New on 24 October 2026 (in the game), the feast announced: Another, to practise 有 (also in the story at the waterfall) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

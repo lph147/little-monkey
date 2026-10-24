@@ -385,6 +385,21 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(['红色', '黄色', '白色'].every(knows) && !knows('黑色'), 'the first colour lesson teaches three: 红色, 黄色 and 白色');
   assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns'], 'the class paints the lanterns red');
   assert.equal(run("((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show"), '!', 'and the big monkey has something to ask: the flowers, a side quest');
+  // Then the old monkey's news, before any more lessons: 我们有家，也有学校！ teaches 有, and the troop will have a great
+  // feast, at a big table under the big tree at the home ground
+  await pressAt(7, 3, 'up', 'hearing the old monkey’s news');
+  assert.ok(get('__said').includes('我们有家，也有学校！') && knows('有'), 'the old monkey’s news teaches 有');
+  assert.equal(area().feast, 1);
+  // The feast's big table: as you come up to the big tree at the home ground, the troop sets it up under it, as you
+  // watch; then back to school for the rest of the lessons
+  stand(7, 8, 'down');
+  await act('arrive(7, 9).then(runEvents)', 'walking out of the school, to the big tree');
+  stand(14, 8, 'right');
+  await act('arrive(14, 8).then(runEvents)', 'coming up to the big tree');
+  assert.deepEqual([area().feast, run('tileAt(17, 7).look')], [2, 'feastTable'], 'the troop sets up the feast’s big table');
+  stand(11, 5, 'up');
+  await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
+  assert.equal(run('PLACE'), 'school');
   for (let i = 0; i < 25 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9); i++) await pressAt(7, 3, 'up', `lesson ${i + 3}`);
   for (const n of ['五', '六', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);
   for (const c of ['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']) assert.ok(knows(c), `the colour lessons teach ${c}`);

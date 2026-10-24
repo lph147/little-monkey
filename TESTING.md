@@ -321,6 +321,15 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The beds can't be walked on (the path between them can). Face one and press A: they're the flowers you picked, planted in front of the school.
 - [ ] A game that picked or brought the flowers in the prologue (before version 201) is asked for them again here, once the school is built (not in the prologue, though it knows the colours), and keeps the shells it had for them.
 
+**Chapter 1: the feast announced**
+- [ ] Before the first two lessons (四 五 六 and 红色 黄色 白色), talking to the teacher is a lesson as usual. After them, he has a !, TASKS says "Talk to the old monkey at the 学校 (school): he has news", and the checklist has "Hear the old monkey’s news at the 学校 (school)".
+- [ ] Talk to him: no lesson this time, but 我们有家，也有学校！ (We have a home, and a school too!), with 有 in bold green, then 有's card with no picture (to have, there is; Use 有 to say what you have.). A message says it’s time for a great feast at a big 桌子 (table) under the big 树 (tree), in the middle of the home ground. The new task: go to the big 树 (tree), its arrow pointing the way out of the school. Talk to him again: lessons as usual.
+- [ ] The hungry monkey has left the meadow: he stands right of the big tree at the home ground, facing it.
+- [ ] Walk out of the school and towards the big tree. About three squares from it, you stop and watch the table go up under it, each piece with a knock: its legs, its top with a red cloth hanging over the front, then a stone bowl of peaches, one of apples, and an empty one. Then a message: the troop sets up a big 桌子 (table) for the feast… waiting for something. Coming from anywhere else (the waterfall’s road, the bridge to the south), it’s the same, three squares away.
+- [ ] The table can’t be walked through. Face it and press A: the 桌子 card, "The big table for the troop’s feast, under the big tree." Both new checklist items are ticked, and with nothing else to do, TASKS says the big 桌子 (table) is ready for the feast.
+- [ ] In a lesson, when 有 needs practice, the gap sentence is 我＿桃子 or 我＿朋友 (I have peaches, I have friends), with 有 missing.
+- [ ] Lose a fight in chapter 1: you wake up just in front of the table, under the big tree.
+
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.
 - [ ] 词 Words (the Word Scroll) and 朋友 Friends open, and Back returns to the menu, on the same tile. In Friends, tap the goat (山羊): its page opens, "Friends · Animals", saying 山羊; press English, and its English appears, and the button becomes How it's made: press it, and its card shows 山 mountain + 羊 sheep = a mountain sheep; Back returns to its page, and Back again to Friends, on the goat. The words count out of 65 (蜜蜂, bee, waits for the troop's bees: a game that caught one in the long grass before 21 October 2026 counts it, out of 66), and every one of them can be caught.

@@ -386,10 +386,10 @@ test('wolves live in the long grass of the pine wood (and only there); lose a fi
   await play(g, 'arrive(15, 17)');
   assert.equal(get(g, '__fought'), 'wolf', 'a wolf jumps out');
   const rest = get(g, '[].concat(BATTLES.restAt).find(r => !r.if || matches(r.if))');
-  assert.deepEqual([rest.at, rest.facing], [[17, 7, 'homeGround'], 'up']);
+  assert.deepEqual([rest.at, rest.facing], [[17, 8, 'homeGround'], 'up'], 'in front of the feast’s table (where it stands, you rested till 24 October 2026)');
   assert.match(rest.lost, /rest under the big tree/);
-  g.run("S.pos = {place: 'homeGround', x: 17, y: 7, dir: 'up'}; placePlayer()");
-  assert.ok(g.run('walkable(17, 7)'), 'beside the big tree');
+  g.run("S.pos = {place: 'homeGround', x: 17, y: 8, dir: 'up'}; placePlayer(); here().feast = 2");
+  assert.ok(g.run('walkable(17, 8)'), 'beside the big tree, with the table set up');
   g.run("S.pos = {place: 'path', x: 14, y: 15, dir: 'down'}; placePlayer()");
   const wild = get(g, "(() => { const out = new Set(); MAP.forEach((r, y) => [...r].forEach((c, x) => (tileAt(x, y).wild || []).forEach(id => out.add(id)))); return [...out].sort(); })()");
   assert.deepEqual(wild, ['snake', 'spider'], 'none on the mountain path');

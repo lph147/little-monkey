@@ -357,7 +357,7 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'practice', 'lesson'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'practice', 'lesson'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -460,9 +460,9 @@ test('English text writes at most two words as 汉字 (English) in a sentence, n
 
 test('a sentence in your tasks, the checklist or hints that mentions words from the word bank writes one of them as 汉字 (English)', () => {
   // ({水} in the content: 水 (water), or just water till you've caught it. Names stay English, as do places' names, numbers,
-  // and want, which is what 要 means but isn't 要 in these sentences: the old monkey, the home ground, the pine wood, Flower
-  // Fruit Mountain, three pieces of wood.)
-  const names = /\b(monkeys?|home ground|pine wood|Flower Fruit Mountain|wants?|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi;
+  // and want and have, which are what 要 and 有 mean but aren't them in these sentences: the old monkey, the home ground, the
+  // pine wood, Flower Fruit Mountain, three pieces of wood, things that sparkle have words.)
+  const names = /\b(monkeys?|home ground|pine wood|Flower Fruit Mountain|wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi;
   const meanings = Object.entries(BANK).filter(([, b]) => b.area <= AREA.number).flatMap(([w, b]) => b.en.split(/,\s*/)
     .map(e => e.replace(/^(a|an|the|to) /, '')).filter(e => e.length > 2).map(e => [w, e]));
   const texts = [...AREA.tasks.map(t => t.text), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)];

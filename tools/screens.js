@@ -121,6 +121,11 @@ SAVES.flowersPicking = {...SAVES.schoolPainted, version: 30, areas: {1: {...SAVE
 SAVES.flowersBack = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}}},
   pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};
 SAVES.flowersPlanted = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], flowers: 'done', schoolFlowers: true}}, pos: {place: 'homeGround', x: 11, y: 7, dir: 'up'}};
+// the feast: the old monkey's news at school, once the first two lessons are done (四 五 六, 红色 黄色 白色); and the big table
+// at the home ground, under the big tree, being set up as you watch, then set up, with the hungry monkey beside it
+SAVES.feastNews = {...SAVES.coloursThree};
+SAVES.feastTable = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(1, ['有'])}, areas: {1: {...SAVES.coloursThree.areas[1], feast: 2}},
+  pos: {place: 'homeGround', x: 17, y: 9, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -522,6 +527,14 @@ const SCREENS = [
   {id: 'planting', title: 'Planting the flowers', save: 'flowersBack', why: 'Bring them to the big monkey, and he plants them in front of the school as you watch: each square of the beds comes up out of the ground in turn, with a little pop.', run: async () => {
     play(); await wait(100); const was = mapLooks(); Object.assign(here(), {flowers: 'done', schoolFlowers: true}); marking = {...markingOf(was), grow: true, hold: 900}; await wait(300); }},
   {id: 'school-flowers', title: 'Flowers in front of the school', save: 'flowersPlanted', why: 'Red, yellow and white, either side of the path up to the door: the flowers you picked.', run: async () => { play(); await wait(500); }},
+  {id: 'feast-news', title: 'We have a home, and a school too!', save: 'feastNews', why: 'After the first two lessons, the old monkey has news before any lesson: 我们有家，也有学校！, teaching 有 (bold). It’s time for a great feast!', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(500); }},
+  {id: 'you-card', title: '有, to have', save: 'feastNews', why: 'Its card, with no picture, like 要: Use 有 to say what you have.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
+  {id: 'table-setting-up', title: 'Setting up the table', save: 'feastTable', why: 'As you come up to the big tree, the troop sets up the feast’s big table under it, a piece at a time, each with a knock: its legs, then its top with a red cloth (here), then a bowl at a time.', run: async () => {
+    play(); await wait(100); here().feast = 1; buildMap(); settingUp = {objects: [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1}], stage: 2}; await wait(400); }},
+  {id: 'feast-table', title: 'The feast’s big table', save: 'feastTable', why: 'Under the big tree: peaches, apples and an empty bowl, waiting for something. The hungry monkey has come up from the meadow to look after it.', run: async () => {
+    play(); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

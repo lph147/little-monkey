@@ -170,6 +170,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'lesson') return !!lessonNow() === v;       // a lesson series at school has a new word ready for you
     if (k === 'near'){ const n = NPCS.find(c => c.id === v); return !!n && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) === 1; }   // you're right beside this character
     if (k === 'at') return placeOf(v) === PLACE && pl.x === v[0] && pl.y === v[1];   // you're standing here: [x, y], or [x, y, 'place']
+    if (k === 'around') return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= AROUND && Math.abs(pl.y - v[1]) <= AROUND;   // you're near here, as you come up to it
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
@@ -285,6 +286,11 @@ const MARK = {stakes:[150, 420, 690, 960], string:[1150, 1650], ground:[1750, 23
 // each growing up out of the ground in grow ms.
 const PLANT = {each:380, grow:450};
 let marking = null;
+// The troop setting something up as you watch (the setUp step): a new piece every each ms, then a moment to see it whole
+// (after); and what's going up: {objects: the new big objects, stage: how many of their pieces are up}.
+const SET_UP = {each:520, after:600};
+let settingUp = null;
+const AROUND = 3;   // how near a square you are for around (an if), as you come up to it: this many squares away, or nearer
 const mapLooks = () => MAP.map((r, y) => [...r].map((c, x) => tileAt(x, y).look));
 function markingOf(was){   // what's being marked out, now the story has changed (was: each square's look before)
   const now = mapLooks(), changed = [];
@@ -414,6 +420,19 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     for (let i = 0; i < marking.changed.length; i++){ if (i) await sleep(PLANT.each); SFX.sprout(); }
     await sleep(PLANT.grow + 150);
     marking = null; refreshMap();
+  },
+  // The troop sets something up as you watch (setUp: what the story becomes then), such as the feast's big table: each
+  // new big object that goes up in pieces (OBJECT_STAGES, js/art.js) is drawn a piece at a time, each with a knock: the
+  // table's legs, its top, then each bowl (decided 24 October 2026: things that just appear look odd).
+  async setUp(s){
+    const was = new Set(mapObjects().map(objectKey));
+    Object.assign(here(), s.setUp); save(); placeCharacters();
+    const objects = mapObjects().filter(o => !was.has(objectKey(o)) && OBJECT_STAGES[o.look]);
+    if (!objects.length){ refreshMap(); return; }
+    settingUp = {objects, stage:0};
+    for (let i = 1; i <= Math.max(...objects.map(o => OBJECT_STAGES[o.look])); i++){ settingUp.stage = i; SFX.tock(); await sleep(SET_UP.each); }
+    await sleep(SET_UP.after);
+    settingUp = null; refreshMap();
   },
   sound(s){ if (SFX[s.sound]) SFX[s.sound](); },   // a sound (one of SFX in js/sound.js), such as a wolf howling far off
   // You swing your stick at the square you're facing, like Cut and Rock Smash in Pokémon: a whack, and chips fly off it
