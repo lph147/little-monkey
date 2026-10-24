@@ -50,7 +50,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     run('pressA()');   // the main button: OK, Got it, Next, Start, Give it, Say it...
   }
   const caught = () => get('Object.keys(WORDS).filter(w => lvl(w) >= 1)');
-  async function act(code, what){   // start something, then answer its cards until it's finished
+  async function act(code, what, most = 1){   // start something, then answer its cards until it's finished (teaching at most this many words)
     const before = caught();
     let done = false, failed = null, last = '', same = 0;
     Promise.resolve(run(code)).then(() => { done = true; }, e => { failed = e; done = true; });
@@ -67,10 +67,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     await settle();
     assert.ok(!open(), `a card was left open after ${what}: ${cardText()}`);
     const learned = caught().filter(w => !before.includes(w));
-    assert.ok(learned.length <= 1, `one new word at a time, but ${what} taught ${learned.join(' and ')}`);
+    assert.ok(learned.length <= most, `one new word at a time, but ${what} taught ${learned.join(' and ')}`);
   }
   const stand = (x, y, dir) => run(`S.pos = {place:PLACE, x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // in the place you're in
-  const pressAt = (x, y, dir, what) => { stand(x, y, dir); return act('finishedAt = null; pressA()', what); };   // face something and press A (after a moment, as a player does: what you've just finished with rests)
+  const pressAt = (x, y, dir, what, most) => { stand(x, y, dir); return act('finishedAt = null; pressA()', what, most); };   // face something and press A (after a moment, as a player does: what you've just finished with rests)
   const stepOn = (x, y, what) => { stand(x, y, 'down'); return act(`arrive(${x}, ${y})`, what); };
   // A walk, one square after another (from to to, along a row or a column, then the next leg), as a player walks it,
   // with whatever happens as you arrive on each (someone stopping you, say)
@@ -374,12 +374,18 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().school, 2);
   await pressAt(4, 5, 'left', 'talking to the little monkey at school');
   assert.ok(knows('同学'), 'you’re classmates: 同学');
+  // The first lesson of each kind teaches three words, one after another (the school lessons are the exception to one new
+  // word at a time, decided 24 October 2026); after that, one a lesson
   const shellsBefore = get('S.shells');
-  await pressAt(7, 3, 'up', 'a lesson with the teacher');
+  await pressAt(7, 3, 'up', 'the first lesson with the teacher', 3);
   assert.ok(get('__said').includes('上课！') && get('__said').includes('下课！'), 'class begins, and is over');
-  assert.ok(get('S.shells') >= shellsBefore, 'shells for words that needed practice');
-  assert.ok(knows('四'), 'the first lesson teaches a new number: 四');
-  for (let i = 0; i < 25 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9); i++) await pressAt(7, 3, 'up', `lesson ${i + 2}`);
+  assert.ok(get('S.shells') > shellsBefore, 'shells for the words that needed practice');
+  assert.ok(['四', '五', '六'].every(knows) && !knows('七'), 'the first lesson teaches three new numbers: 四, 五 and 六');
+  await pressAt(7, 3, 'up', 'the first colour lesson', 3);
+  assert.ok(['红色', '黄色', '白色'].every(knows) && !knows('黑色'), 'the first colour lesson teaches three: 红色, 黄色 and 白色');
+  assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns'], 'the class paints the lanterns red');
+  assert.equal(run("((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show"), '!', 'and the big monkey has something to ask: the flowers, a side quest');
+  for (let i = 0; i < 25 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9); i++) await pressAt(7, 3, 'up', `lesson ${i + 3}`);
   for (const n of ['五', '六', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);
   for (const c of ['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']) assert.ok(knows(c), `the colour lessons teach ${c}`);
   assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns'], 'the red lesson ends with the class painting the lanterns (no other part of the school, since 24 October 2026)');
@@ -387,8 +393,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(7, 3, 'up', 'a lesson once you know the numbers to ten and the colours: practice');
   assert.ok(get('areaChecklist()').filter(([, , , found]) => found).every(([, done]) => done), 'chapter 1 so far is ticked off');
 
-  // Chapter 1: with every colour learned, the big monkey wants flowers to plant in front of the school, a red, a yellow
-  // and a white one, picked at the home ground; each shows what it is as you pick it, and he plants them as you watch
+  // Chapter 1: once you know red, yellow and white, the big monkey wants flowers to plant in front of the school, one of
+  // each colour, picked at the home ground (a side quest: this player has had every lesson first); each shows what it is
+  // as you pick it, and he plants them as you watch
   stand(7, 8, 'down');
   await act('arrive(7, 9).then(runEvents)', 'walking out of the school');
   assert.equal(run('PLACE'), 'homeGround');

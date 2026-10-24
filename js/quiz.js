@@ -66,29 +66,45 @@ async function countQ({who, thing, n}){
   if (ok) answer(num, true, listen ? 'listen' : 'read'); else reviewed(num, false);
   return ok;
 }
-// A number lesson (a lesson series of kind count, with the teacher: who): he counts things onto his table, teaching the
-// new number (his line for it, teach), then five counting questions: the new number three times, and twice another
-// you know. Each right answer earns a shell if that number needed practice. Gives whether you had the lesson
-// (you can say Not now at the start).
+// A number lesson (a lesson series of kind count, with the teacher: who): for each new number (words: one, or in your
+// first lesson a series' first few, one after another: lessonNow, js/world.js), he counts things onto his table, teaching
+// it (his line for it, teach); then counting questions: with one new number, five, the new number three times and twice
+// another you know; with several, three for each as it comes, and then two mixing them, so you learn to tell them apart.
+// Each right answer earns a shell if that number needed practice. Gives whether you had the lesson (you can say Not now
+// at the start).
 const LESSON_QUESTIONS = 5;   // (in a number or colour lesson)
+const EACH_NEW = 3, MIXED = 2;   // (in a first lesson teaching several: questions on each new word as it comes, then mixing them)
 // Numbers that never answer how many there are: two things are 两 (liǎng), not 二, so there are never two things to
 // count, and 二 is never an answer (decided 21 October 2026).
 const NOT_HOW_MANY = ['二'];
-async function countLesson(series, word, who){
+// What a lesson asks (the right answers, in order) for one new word (one), given the others it can mix in (others), or
+// for several, one after another (each new word's questions as it comes, then some mixing them).
+function lessonAsks(words, others){
+  if (words.length === 1) return [shuffle([...Array(LESSON_QUESTIONS - Math.min(2, others.length)).fill(words[0]), ...others.slice(0, 2)])];
+  return [...words.map(w => Array(EACH_NEW).fill(w)), shuffle([...words]).slice(0, MIXED)];
+}
+const lessonStart = (series, words) => fill(words.length > 1 && series.startFirst || series.start);
+async function countLesson(series, words, who){
   const face = speaker(who);
-  if (!await confirmBox(face, fill(series.start), 'Start', 'Not now')) return false;
-  await showDialog(face, L[series.teach[word]], {teach:word});
-  await showNotice(word, {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
-  const top = COUNTING.indexOf(word) + 1, others = shuffle([...Array(top - 1).keys()].map(i => i + 1).filter(n => !NOT_HOW_MANY.includes(COUNTING[n - 1])));
-  const counts = shuffle([...Array(LESSON_QUESTIONS - 2).fill(top), ...others.slice(0, 2)]);
-  let right = 0, shells = 0;
-  for (const n of counts){
-    const things = series.things.filter(t => lvl(t.word) >= 1), thing = things[Math.floor(Math.random() * things.length)] || series.things[0];
-    const need = needsPractice(COUNTING[n - 1]);
-    if (await countQ({who, thing, n})){ right++; if (need) shells++; }
+  if (!await confirmBox(face, lessonStart(series, words), 'Start', 'Not now')) return false;
+  const top = w => COUNTING.indexOf(w) + 1;
+  const others = shuffle([...Array(top(words[0]) - 1).keys()].map(i => COUNTING[i]).filter(w => !NOT_HOW_MANY.includes(w)));
+  const asks = lessonAsks(words, others);
+  let right = 0, shells = 0, asked = 0;
+  for (const [k, part] of asks.entries()){
+    if (k < words.length){   // (each new number, as it comes: he counts up to it)
+      await showDialog(face, L[series.teach[words[k]]], {teach:words[k]});
+      await showNotice(words[k], {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
+    }
+    for (const w of part){
+      const things = series.things.filter(t => lvl(t.word) >= 1), thing = things[Math.floor(Math.random() * things.length)] || series.things[0];
+      const need = needsPractice(w);
+      asked++;
+      if (await countQ({who, thing, n:top(w)})){ right++; if (need) shells++; }
+    }
   }
   S.shells += shells; save(); SFX.fanfare();
-  await infoBox(face, `<p class="label">Lesson over</p><p>You counted <b>${right} of ${counts.length}</b> right.${shells ? ` +${shells} 🐚` : ''}</p>`);
+  await infoBox(face, `<p class="label">Lesson over</p><p>You counted <b>${right} of ${asked}</b> right.${shells ? ` +${shells} 🐚` : ''}</p>`);
   return true;
 }
 // A colour question (a colour lesson): the teacher wants a paint, and you choose it from three colours you know, as in
@@ -112,25 +128,33 @@ async function colourQ({who, w}){
   if (ok) answer(w, true, listen ? 'listen' : 'read'); else reviewed(w, false);
   return ok;
 }
-// A colour lesson (a lesson series of kind paint, with the teacher: who): he opens a pot of the new colour, teaching it
-// (his line for it, teach), then wants paints, five times: the new colour three times, and twice another colour you
-// know (in your first lessons, the new colour instead, until you know two others). Each right answer earns a shell if that colour needed practice. Then the class goes out and paints a part of the
-// school with the new colour (its scene, in scenes). Gives whether you had the lesson (you can say Not now at the start).
-async function paintLesson(series, word, who){
+// A colour lesson (a lesson series of kind paint, with the teacher: who): for each new colour (words: one, or in your
+// first lesson a series' first few, one after another), he opens a pot of it, teaching it (his line for it, teach);
+// then he wants paints: with one new colour, five times, the new colour three times and twice another colour you know
+// (in your first lessons, the new colour instead, until you know two others); with several, three for each as it comes,
+// and then two mixing them. Each right answer earns a shell if that colour needed practice. Then the class goes out and
+// paints a part of the school with a new colour that paints one (its scene, in scenes). Gives whether you had the
+// lesson (you can say Not now at the start).
+async function paintLesson(series, words, who){
   const face = speaker(who);
-  if (!await confirmBox(face, fill(series.start), 'Start', 'Not now')) return false;
-  await showDialog(face, L[series.teach[word]], {teach:word});
-  await showNotice(word, {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
-  const others = shuffle(ORDER.filter(x => x !== word && WORDS[x].category === WORDS[word].category && lvl(x) >= 1)).slice(0, 2);   // (the first lessons: fewer, or none)
-  const asks = shuffle([...Array(LESSON_QUESTIONS - others.length).fill(word), ...others]);
-  let right = 0, shells = 0;
-  for (const w of asks){
-    const need = needsPractice(w);
-    if (await colourQ({who, w})){ right++; if (need) shells++; }
+  if (!await confirmBox(face, lessonStart(series, words), 'Start', 'Not now')) return false;
+  const others = shuffle(ORDER.filter(x => !words.includes(x) && WORDS[x].category === WORDS[words[0]].category && lvl(x) >= 1));   // (the first lessons: fewer, or none)
+  const asks = lessonAsks(words, others);
+  let right = 0, shells = 0, asked = 0;
+  for (const [k, part] of asks.entries()){
+    if (k < words.length){   // (each new colour, as it comes: he opens its pot)
+      await showDialog(face, L[series.teach[words[k]]], {teach:words[k]});
+      await showNotice(words[k], {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
+    }
+    for (const w of part){
+      const need = needsPractice(w);
+      asked++;
+      if (await colourQ({who, w})){ right++; if (need) shells++; }
+    }
   }
   S.shells += shells; save();
-  if ((series.scenes || {})[word]) await storyScene(series.scenes[word]);   // (with its own fanfare)
-  await infoBox(face, `<p class="label">Lesson over</p><p>You chose <b>${right} of ${asks.length}</b> paints right.${shells ? ` +${shells} 🐚` : ''}</p>`);
+  for (const w of words) if ((series.scenes || {})[w]) await storyScene(series.scenes[w]);   // (with its own fanfare)
+  await infoBox(face, `<p class="label">Lesson over</p><p>You chose <b>${right} of ${asked}</b> paints right.${shells ? ` +${shells} 🐚` : ''}</p>`);
   return true;
 }
 const picWords = () => ORDER.filter(w => WORDS[w].pic);

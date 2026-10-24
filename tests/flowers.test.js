@@ -1,7 +1,8 @@
-// Chapter 1: flowers for the school. Once the class has painted the school in every colour, the big monkey wants flowers to
-// plant in front of it, a red, a yellow and a white one (decided 22 October 2026: he wanted them in the prologue, for no
-// reason, before you knew the colours). Each one you pick shows what it is, 红色的花 (a red flower), with its own picture.
-// Bring them to him, and he plants them in front of the school as you watch.
+// Chapter 1: flowers for the school, a side quest. Once the first colour lesson has taught you red, yellow and white, the
+// big monkey wants flowers of those colours to plant in front of it (decided 22 October 2026: he wanted them in the
+// prologue, for no reason, before you knew the colours; and 24 October 2026: not once you know all nine). Each one you pick
+// shows what it is, 红色的花 (a red flower), with its own picture. Bring them to him, and he plants them in front of the
+// school as you watch.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -35,14 +36,14 @@ const bubble = g => get(g, "((AREA.bubbles.big || []).find(b => matches(b.if)) |
 const item = g => get(g, "areaChecklist().find(([t]) => /^Plant /.test(t))");
 const BEDS = [[9, 5], [10, 5], [12, 5], [13, 5]];   // either side of the path up to the school's door
 
-test('once you know every colour from the school’s lessons, the big monkey has a ! and wants flowers to plant in front of it', async () => {
-  const before = game({}, undefined, [...KNOWN, ...COLOURS.slice(0, 8)]);   // (pink not learned yet)
-  assert.equal(bubble(before), null, 'not before the last colour');
+test('once the first colour lesson has taught you red, yellow and white, the big monkey has a ! and wants flowers to plant in front of the school', async () => {
+  const before = game({}, undefined, [...KNOWN, ...COLOURS.slice(0, 2)]);   // (white not learned yet: an old save, from when the lessons taught one at a time)
+  assert.equal(bubble(before), null, 'not before white');
   await press(before, 15, 5, 'up');
   assert.deepEqual(get(before, '__said'), ['你是我们的王！'], 'he has nothing to ask yet');
-  const g = game();
+  const g = game({}, undefined, [...KNOWN, ...COLOURS.slice(0, 3)]);   // (the other six colours still to learn: it's a side quest)
   assert.equal(bubble(g), '!');
-  assert.match(g.run('tasksHint()'), /You know all nine colours! The big monkey has something to ask you/);
+  assert.match(g.run('tasksHint()'), /You know three colours now! The big monkey has something to ask you/);
   assert.equal(item(g)[3], false, 'the checklist doesn’t show the flowers till he asks');
   await press(g, 15, 5, 'up');
   assert.deepEqual(get(g, '__said'), ['学校很好看！', '我们来种花吧！', '我要红色、黄色和白色的花！'], 'the school looks lovely, let’s plant flowers: red, yellow and white');

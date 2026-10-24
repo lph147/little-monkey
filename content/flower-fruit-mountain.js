@@ -94,7 +94,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // the colour is for a part of the school, paint, the class goes out and paints it, in its scene, scenes); by: who
   // teaches it; start: what the card asking you to start says; note: on the new word's card.
   lessons: [
-    {id:'numbers', kind:'count', by:'elder', if:{school:{atLeast:2}}, words:['四', '五', '六', '七', '八', '九', '十'],
+    // The first lesson of each series teaches its first three words, one after another (first: decided 24 October 2026,
+    // school lessons are the exception to one new word at a time): two lessons, and you can count six bees and know the
+    // colours of the big monkey's flowers. After that, one a lesson.
+    {id:'numbers', kind:'count', by:'elder', if:{school:{atLeast:2}}, words:['四', '五', '六', '七', '八', '九', '十'], first:3,
+      startFirst:'Your first lesson: three new numbers, one at a time, then counting. Each right answer earns a 🐚 if that number needs practice.',
       start:'Today: a new number, then counting. Each right answer earns a 🐚 if that number needs practice.',
       note:'The teacher counts peaches onto his table, one by one.',
       teach:{'四':'count4', '五':'count5', '六':'count6', '七':'count7', '八':'count8', '九':'count9', '十':'count10'},
@@ -103,7 +107,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // red, yellow and white come first (decided 22 October 2026: they were the prologue's, taught by the flowers the big
     // monkey wanted, which wait for the colour lessons now). Red paints the school's lanterns; the rest of the school
     // stays as it was built (decided 24 October 2026: each colour painted a part of it, the roof blue, the door black…)
-    {id:'colours', kind:'paint', by:'elder', if:{school:{atLeast:2}}, words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'],
+    {id:'colours', kind:'paint', by:'elder', if:{school:{atLeast:2}}, words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'], first:3,
+      startFirst:'Your first colour lesson: three new colours, one at a time, then choosing paints. Each right answer earns a 🐚 if that colour needs practice.',
       start:'Today: a new colour, then choosing paints. Each right answer earns a 🐚 if that colour needs practice.',
       note:'The teacher opens a pot of paint.',
       teach:{'红色':'thisRed', '黄色':'thisYellow', '白色':'thisWhite', '黑色':'thisBlack', '蓝色':'thisBlue', '绿色':'thisGreen', '棕色':'thisBrown', '橙色':'thisOrange', '粉色':'thisPink'},
@@ -174,7 +179,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   hints: [
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
-    {if:{coloursKnown:9, flowers:'not asked'}, text:'You know all nine colours! The big monkey has something to ask you.'},
+    {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -240,7 +245,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     big: [{if:{elder:{atLeast:1}, gate:false, new:'我'}, show:'!'}, {if:{climb:1, new:'棍子'}, show:'!'},   // in the meadow, to say who he is
       {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', holding:{stones:true}}, show:'?'},
       {if:{build:2, school:0}, show:'!'},   // chapter 1: the school
-      {if:{coloursKnown:9, flowers:'not asked'}, show:'!'}, {if:{flowers:'asked', holding:{flowers:true}}, show:'?'}],   // and flowers for it
+      {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, show:'!'}, {if:{flowers:'asked', holding:{flowers:true}}, show:'?'}],   // and flowers for it, once you know their colours
     woodSquirrel: [{if:{new:'木头'}, show:'!'}]   // the squirrel in the pine wood, until you've found wood
   },
 
@@ -275,8 +280,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
       offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
       sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
-    // chapter 1: once you know every colour from the school's lessons, the big monkey wants flowers to plant in front of it,
-    // one of each of the first colours you learned, picked at the home ground (see gather in the legend). (They were the
+    // chapter 1, a side quest: once the school's first colour lesson has taught you red, yellow and white, the big monkey
+    // wants flowers to plant in front of it, one of each of those colours, picked at the home ground (see gather in the legend). (They were the
     // prologue's until 22 October 2026, wanted for no reason: the colours are taught at school now.)
     flowers: {from:'big', wants:'花', verb:'花', ask:'wantFlowers', asked:'The big monkey wants to plant {花|flowers} in front of the {学校}: a red, a yellow and a white one. Check your tasks.',
       offer:'haveFlowers', sentence:'我 要 红色 的 花', sentenceEn:'I want a red flower.', gap:'红色', reward:3, thanks:'thanks', thanksReply:'不客气'},
@@ -1273,7 +1278,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveStones: {zh:'你 有 石头 吗 ？', en:'Do you have the stones?'},
     squirrelWood: {zh:'你 要 木头 吗 ？', en:'Do you want wood?'},   // the squirrel in the pine wood
     buildIt: {zh:'我们 来 盖 学校 吧 ！', en:'Let’s build the school!'},   // the big monkey, once the frame is up
-    schoolLovely: {zh:'学校 很 好看 ！', en:'The school looks lovely!'},   // and once you know every colour from its lessons,
+    schoolLovely: {zh:'学校 很 好看 ！', en:'The school looks lovely!'},   // and once you know red, yellow and white from its lessons,
     plantFlowers: {zh:'我们 来 种花 吧 ！', en:'Let’s plant some flowers!'},   // he wants flowers in front of it (种花 in one piece: 种 has two readings)
     classStart: {zh:'上课 ！', en:'Class is starting!'},   // at school: the teacher starts a lesson, and the class greets him
     teacherHi: {zh:'老师 好 ！', en:'Hello, teacher!'},
@@ -1610,9 +1615,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'The old monkey has gone in: he’s the teacher now. Walk in through the school’s door!'},
         {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}
       ]},
-      // chapter 1: once you know every colour from the school's lessons, he wants flowers to plant in front of it (decided 22
-      // October 2026: he wanted them in the prologue, for no reason), then you bring them (or he asks again)
-      {if:{coloursKnown:9, flowers:'not asked'}, do:[{say:'schoolLovely'}, {say:'plantFlowers'}, {request:'flowers'}]},
+      // chapter 1: once you know red, yellow and white from the school's first colour lesson, he wants flowers of those colours
+      // to plant in front of it (decided 22 October 2026: he wanted them in the prologue, for no reason; and 24 October 2026:
+      // not once you know all nine colours, so it's a side quest you can do any time after), then you bring them (or he asks
+      // again). Only once the school is built: a game saved before version 30 knew those colours in the prologue.
+      {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, do:[{say:'schoolLovely'}, {say:'plantFlowers'}, {request:'flowers'}]},
       {if:{flowers:'asked'}, do:[{request:'flowers'}]},
       {if:{cave:{atLeast:6}}, do:[{say:'king'}]},   // once you're king (the troop makes you king at the end of the prologue: the crowning scene)
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall

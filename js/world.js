@@ -183,15 +183,22 @@ const COUNT_GAME = 3;   // counting questions in a counting game (the countGame 
 // How many things you could count with the numbers you know: never two (NOT_HOW_MANY, js/quiz.js).
 const countable = () => COUNTING.map((w, i) => i + 1).filter(n => !NOT_HOW_MANY.includes(COUNTING[n - 1]) && WORDS[COUNTING[n - 1]] && lvl(COUNTING[n - 1]) >= 1);
 // The area's lesson series (AREA.lessons) teach their words one at a time, one a lesson, in order: the next once you've
-// got the last one right twice (it no longer needs practice), so they don't all come at once. The series and word ready
-// now, if any (of the series whose if matches); when more than one has a word ready, they take turns, so it isn't the
-// same kind of lesson every time (here().lastLesson: the series of your last lesson).
+// got the last one right twice (it no longer needs practice), so they don't all come at once. Except a series' first
+// few (first): its first lesson teaches them all, one after another (decided 24 October 2026: school lessons are the
+// exception to one new word at a time, so two lessons teach 四 五 六 and 红色 黄色 白色, and chapter 1 opens up
+// sooner); a game that knew some of them already (from when the first lesson taught one) learns the rest one a lesson,
+// as it did, without waiting, so the first lesson's card (startFirst) is always right. The series and words ready now
+// ({series, words, word: the first of them}), if any (of the series whose if matches); when more than one has words
+// ready, they take turns, so it isn't the same kind of lesson every time (here().lastLesson: the series of your last).
 function lessonNow(){
   const ready = [];
   for (const series of AREA.lessons || []){
     if (series.if && !matches(series.if)) continue;
-    const i = series.words.findIndex(w => lvl(w) === 0);
-    if (i >= 0 && (i === 0 || !needsPractice(series.words[i - 1]))) ready.push({series, word:series.words[i]});
+    const i = series.words.findIndex(w => lvl(w) === 0), first = series.first || 1;
+    if (i < 0) continue;
+    const fresh = series.words.slice(0, first).every(w => lvl(w) === 0);   // (none of the first few known yet)
+    const words = fresh ? series.words.slice(0, first) : [series.words[i]];
+    if (i < first || !needsPractice(series.words[i - 1])) ready.push({series, words, word:words[0]});
   }
   return ready.find(l => l.series.id !== here().lastLesson) || ready[0] || null;
 }
@@ -447,7 +454,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // start, the conversation ends there.
   async lesson(s, who){
     const l = lessonNow();
-    if (!await (l ? LESSON_KINDS[l.series.kind](l.series, l.word, who) : practise(speaker(who), PRACTICE.lesson))) return STOP;
+    if (!await (l ? LESSON_KINDS[l.series.kind](l.series, l.words, who) : practise(speaker(who), PRACTICE.lesson))) return STOP;
     if (l){ here().lastLesson = l.series.id; save(); }
   },
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float

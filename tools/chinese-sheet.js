@@ -99,7 +99,7 @@ const DRAFTS = [
     ['我们 去 刷 灯笼 吧 ！', 'Let’s go and paint the lanterns!', 'The class, going out to paint the school’s lanterns red (灯笼 dēnglong, lanterns, and 刷 shuā, to paint with a brush, just for listening): see the question below. (Since 24 October 2026 the other colours paint nothing: the sign, the step, the door, the roof, the windows, the walls and the pillars stay as they were built.)'],
     ['灯笼 是 红色 的 ！', 'The lanterns are red!', 'Once they’re painted']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 22 October 2026 (in the game), red, yellow and white at school: ' + where})),
-  ...[['学校 很 好看 ！', 'The school looks lovely!', 'The big monkey, once you know every colour from the school’s lessons (好看 hǎokàn, lovely, just for listening)'],
+  ...[['学校 很 好看 ！', 'The school looks lovely!', 'The big monkey, once you know red, yellow and white from the school’s first colour lesson (好看 hǎokàn, lovely, just for listening)'],
     ['我们 来 种花 吧 ！', 'Let’s plant some flowers!', 'The big monkey (种花 zhòng huā, to plant flowers, just for listening: written as one piece, so a voice saying it on its own can’t read 种 as zhǒng)'],
     ['我 要 红色 、 黄色 和 白色 的 花 ！', 'I want red, yellow and white flowers!', 'The big monkey, asking for flowers to plant in front of the school: see the question below about white flowers'],
     ['红色 的 花', 'A red flower', 'What you see on a card when you pick a red flower for him (and 黄色的花, a yellow flower, and 白色的花, a white flower)'],

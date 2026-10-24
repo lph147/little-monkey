@@ -115,7 +115,7 @@ test('the little monkey: 我们是同学！ (同学); then lessons with the teac
   g.run('__said.length = 0; practise = async () => false');   // you don't start it, or stop
   await press(g, 7, 3, 'up');
   assert.deepEqual(get(g, '__said'), ['上课！'], 'no 下课 if you don’t have the lesson');
-  assert.match(g.run('tasksHint()'), /You know all nine colours! The big monkey has something to ask you/, 'with every colour learned, the big monkey wants flowers for the school');
+  assert.match(g.run('tasksHint()'), /You know three colours now! The big monkey has something to ask you/, 'with red, yellow and white learned, the big monkey wants flowers for the school');
   g.run("Object.assign(here(), {flowers: 'done', schoolFlowers: true})");
   assert.match(g.run('tasksHint()'), /gives you a lesson whenever there’s a new number or colour to learn, or your words need practice/);
 });

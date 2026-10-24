@@ -1,6 +1,7 @@
-// Chapter 1: the school's number lessons (a lesson series, AREA.lessons). The teacher teaches one new number a lesson,
-// four to ten, in order, the next once you've got the last one right twice: he counts peaches onto his table (teaching
-// it), then asks how many things there are, five times (counting questions), and right answers earn shells for numbers
+// Chapter 1: the school's number lessons (a lesson series, AREA.lessons). The first lesson teaches 四, 五 and 六, one
+// after another (decided 24 October 2026: school lessons are the exception to one new word at a time); after that, one
+// new number a lesson, in order, the next once you've got the last one right twice: he counts peaches onto his table
+// (teaching it), then asks how many things there are (counting questions), and right answers earn shells for numbers
 // that needed practice. When no number is ready, a lesson is practice, as at the practice post.
 'use strict';
 const test = require('node:test');
@@ -33,33 +34,45 @@ async function play(g, code){   // runs code in the game and waits for it, letti
 const answering = (g, right = true) => g.run(`pictureQ = async q => { if (q.onShow) q.onShow(); __qs.push({options: q.options, answerIdx: q.answerIdx, word: q.word, body: q.body, text: !!q.text}); return ${right}; }`);
 const lesson = g => play(g, "talk(ALL_NPCS.find(n => n.id === 'elder'))");
 
-test('the first number lesson: the teacher counts peaches onto his table, teaching 四, then five counting questions', async () => {
+test('the first number lesson teaches three, one after another: 四, then 五, then 六, each counted onto his table, with its card and three questions; then two mixing them', async () => {
   const g = game();
-  assert.deepEqual(get(g, 'lessonNow() && lessonNow().word'), '四');
+  assert.deepEqual(get(g, 'lessonNow() && lessonNow().words'), ['四', '五', '六']);
   assert.equal(get(g, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show"), '!', 'the teacher has a ! for you');
+  g.run("globalThis.__starts = []; confirmBox = async (face, text) => { __starts.push(text); return true; }");
   answering(g);
   await lesson(g);
-  assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四！ [四]', '下课！'], 'he counts, teaching 四 (bold)');
-  assert.deepEqual(get(g, '__cards'), ['四 (quiet)'], 'its card, not said again: he’s just said it');
-  assert.equal(get(g, '__qs').length, 5);
-  assert.equal(get(g, '__qs').filter(q => q.word === '四').length, 3, 'three of them are the new number');
+  assert.match(get(g, '__starts')[0], /^Your first lesson: three new numbers, one at a time/, 'it says so before you start');
+  assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四！ [四]', '一，二，三，四，五！ [五]', '一，二，三，四，五，六！ [六]', '下课！'], 'he counts up to each, teaching it (bold)');
+  assert.deepEqual(get(g, '__cards'), ['四 (quiet)', '五 (quiet)', '六 (quiet)'], 'each one’s card as it comes, not said again: he’s just said it');
+  const qs = get(g, '__qs').map(q => q.word);
+  assert.equal(qs.length, 11);
+  assert.deepEqual(qs.slice(0, 9), ['四', '四', '四', '五', '五', '五', '六', '六', '六'], 'three questions on each, as it comes');
+  assert.ok(qs.slice(9).every(w => ['四', '五', '六'].includes(w)) && new Set(qs.slice(9)).size === 2, 'then two mixing them');
+  assert.ok(get(g, '__qs').slice(0, 3).every(q => !q.options.some(o => /五|六/.test(o))), 'the answers to 四’s are numbers you know, not ones still to come');
   assert.equal(g.run('__lessons'), 0, 'a number lesson, not practice');
-  assert.equal(g.run('rec("四").ok'), 3, 'each right answer counts');
-  assert.equal(g.run('S.shells'), 2, 'a shell for each right answer while 四 needed practice (the first two)');
-  assert.equal(get(g, 'areaChecklist().find(([t]) => /count to ten/.test(t))[0]'), 'Learn to count to ten at 学校 (school) (1/7)');
+  assert.equal(g.run('S.shells'), 6, 'a shell for each right answer while its number needed practice (the first two of each)');
+  assert.equal(get(g, 'areaChecklist().find(([t]) => /count to ten/.test(t))[0]'), 'Learn to count to ten at 学校 (school) (3/7)');
+  assert.deepEqual(get(g, 'lessonNow().words'), ['七'], 'then one a lesson (with a colour to learn too, they take turns: tests/colours.test.js)');
 });
 
-test('the next number waits until you’ve got the last one right twice; until then, lessons are practice', async () => {
-  const g = game({'四': 1});
-  assert.equal(get(g, 'lessonNow()'), null, '四 still needs practice');
+test('after the first three, one a lesson: the next number waits until you’ve got the last one right twice; until then, lessons are practice', async () => {
+  const g = game({'四': 2, '五': 2, '六': 1});
+  assert.equal(get(g, 'lessonNow()'), null, '六 still needs practice');
   await lesson(g);
   assert.equal(g.run('__lessons'), 1, 'so the lesson is practice');
-  g.run('rec("四").ok = 2');
-  assert.equal(get(g, 'lessonNow().word'), '五', 'then 五');
+  g.run('rec("六").ok = 2');
+  assert.deepEqual(get(g, 'lessonNow().words'), ['七'], 'then 七, on its own');
   answering(g);
   g.run('__said.length = 0');
   await lesson(g);
-  assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四，五！ [五]', '下课！']);
+  assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四，五，六，七！ [七]', '下课！']);
+  assert.equal(get(g, '__qs').filter(q => q.word === '七').length, 3, 'five questions: three of them the new number');
+  assert.equal(get(g, '__qs').length, 5);
+  const one = game({'四': 1});   // (a game that learned 四 when the first lesson taught one)
+  assert.deepEqual(get(one, 'lessonNow().words'), ['五'], 'a game that knows 四 learns the rest of the first three one a lesson, as it did (the first lesson’s card says three new numbers)');
+  one.run("rec('五').lv = 1; rec('五').ok = 0");
+  assert.ok(get(one, "needsPractice('五')"));
+  assert.deepEqual(get(one, 'lessonNow().words'), ['六'], 'without waiting for 五 to be practised');
   const all = game(Object.fromEntries(['四', '五', '六', '七', '八', '九', '十'].map(n => [n, 2])));
   assert.equal(get(all, 'lessonNow()'), null, 'all ten learned: no more number lessons');
   assert.equal(get(all, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show || null"), null, 'and no ! unless words need practice');
@@ -110,9 +123,9 @@ test('a wrong count is practice, not a test: the number comes back soon and keep
   assert.equal(g.run('rec("四").ok'), 0, 'and it needs practice again');
   const noBirds = game();
   noBirds.run("delete S.w['鸟']; globalThis.__things = []; countQ = async ({thing}) => { __things.push(thing.word); return true; }");
-  for (let i = 0; i < 4; i++){ noBirds.run("rec('四').lv = 0; rec('四').ok = 0"); await lesson(noBirds); }   // (the first lesson, again and again)
+  for (let i = 0; i < 4; i++){ noBirds.run("for (const n of ['四', '五', '六']){ rec(n).lv = 0; rec(n).ok = 0; }"); await lesson(noBirds); }   // (the first lesson, again and again)
   const counted = get(noBirds, '__things');
-  assert.equal(counted.length, 20);
+  assert.equal(counted.length, 44);
   assert.ok(!counted.includes('鸟'), 'you’ve not caught 鸟, so there are never birds to count');
 });
 
