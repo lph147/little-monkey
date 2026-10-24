@@ -148,17 +148,18 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(O(11, 14, 5, 2.4), '#D6D2C5');
     p.flat(path([[17, 13], [16, 17], [18, 20], [17, 23]], .5), '#6E6A60'); p.flat(path([[18, 20], [21, 21]], .5), '#6E6A60');
   },
-  '你好': p => {   // hello: a waving hand, fingers spread
-    const S2 = '#F2C49A', LT = {light: '#FBDDBE', dark: '#D9A57E'};
-    p.fill(Rc(11, 26, 10, 6, 1), '#4F82B0');
-    p.fill(path([[8.5, 22.5], [4.5, 16.5]], 2.2), S2, {...LT, edge: true});
-    p.fill(O(15.5, 20.5, 7, 7), S2, LT);
-    [[[10.5, 15], [8.8, 5.5]], [[14.3, 14], [13.8, 3.5]], [[18.2, 14], [19, 4]], [[21.6, 16], [24, 8.5]]].forEach(([a, b]) => p.fill(Cp(...a, ...b, 2.1), S2, {...LT, edge: true}));
-    p.fill(O(15.5, 21.5, 6, 5), S2, LT);
-    [[8.4, 5.6], [13.4, 3.6], [18.6, 4], [23.4, 8.6]].forEach(([x, y]) => p.dot(Math.round(x), Math.round(y) + 1, '#FFE6CC'));   // fingernails
-    p.flat(path([[11, 22.5], [14, 24.5], [19, 23.5]], .5), '#C98F68');
-    p.flat(path([[26.5, 3], [28.8, 5.5], [29.3, 8.5]], .6), '#7FB6E8'); p.flat(path([[28.2, 11.5], [30, 14]], .6), '#7FB6E8');
-    p.flat(path([[4.8, 4.5], [3.2, 7.5]], .6), '#7FB6E8');
+  '你好': p => {   // hello: a monkey's paw waving, four fingers apart and the thumb out to the side, its furry wrist below
+    // (decided 24 October 2026: the fingers ran together, and the thumb was hard to see)
+    const PALM = '#E9B98E', LT = {light: '#F6D3AE', dark: '#C8936A'};
+    p.fill(Rc(11.5, 26, 10, 6, 1), '#9A5A2C');                                       // furry wrist
+    p.fill(Cp(11.5, 22, 5.5, 15.5, 1.9), PALM, {...LT, edge: true});                  // thumb
+    [[[12.6, 15], [11.6, 6]], [[16.2, 14], [16.2, 4]], [[19.8, 15], [20.6, 5.5]], [[23, 17], [24.6, 9.5]]]
+      .forEach(([a, b]) => p.fill(Cp(...a, ...b, 1.65), PALM, {...LT, edge: true}));  // four fingers, a gap between each
+    p.fill(Rc(10.5, 14, 14, 13, 5), PALM, LT);                                       // palm
+    [[11.6, 6], [16.2, 4], [20.6, 5.5], [24.6, 9.5]].forEach(([x, y]) => p.dot(Math.round(x - .5), Math.round(y), '#FFE6CC'));   // fingernails
+    p.flat(path([[13, 22.5], [16, 23.8], [20, 22.8]], .5), LT.dark);                  // a crease across the palm
+    p.flat(path([[26, 4], [28.5, 6.5], [29.2, 10]], .6), '#7FB6E8'); p.flat(path([[28.5, 13], [30, 16]], .6), '#7FB6E8');   // waving
+    p.flat(path([[6, 4], [3.6, 6.5], [3, 10]], .6), '#7FB6E8');
   },
 
   '猴子': p => {   // monkey
