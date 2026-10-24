@@ -1003,7 +1003,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]}
   ],
 
-  // While you learn your first words, the sparkles are bigger and never go out, so you can see what to look for.
+  // While you learn your first words, the sparkles twinkle bigger, so you can see what to look for.
   bigSparkles: {elder:1, newWords:{below:4}},
   // Things that sparkle until you learn their word: the word, where it is on the map, and
   // (optionally) an if that must match before it starts sparkling.

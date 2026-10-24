@@ -1,6 +1,6 @@
 // Your first words: the old monkey sends you off to learn 4, and a playtester got stuck finding them (24 October 2026).
 // So the task says what to look for (things that sparkle: walk up to one and press A), its arrow bobs over the nearest
-// one, and the sparkles are bigger and never go out until you've learned the 4.
+// one, and the sparkles twinkle bigger until you've learned the 4.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');

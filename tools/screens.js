@@ -207,7 +207,7 @@ const SCREENS = [
     play(); await wait(100); talk(npc('troop1')); await wait(300); next(); await wait(300); click('#talk .reply'); await wait(400); next(); await wait(600); }},
   {id: 'talk-top', title: 'Talking low on the screen', save: 'lowTalk', why: 'At the bottom of a map the speech box would cover you, so it’s at the top of the screen instead, for the whole conversation. The map never moves for it.', run: async () => {
     play(); await wait(100); talk(npc('playful')); await wait(600); }},
-  {id: 'first-words', title: 'Your first words: what to look for', save: 'firstWords', why: 'Sent off to learn 4 words: the arrow bobs over the nearest thing that sparkles (the cliff), and until you know 4, the sparkles are bigger and never go out.', run: async () => {
+  {id: 'first-words', title: 'Your first words: what to look for', save: 'firstWords', why: 'Sent off to learn 4 words: the arrow bobs over the nearest thing that sparkles (the cliff), and until you know 4, the sparkles twinkle a little bigger (each comes and goes, so some are out at any moment).', run: async () => {
     play(); await wait(800); }},
   {id: 'tasks-first-words', title: 'Tasks: your first words', save: 'firstWords', why: 'Walk up to things that sparkle, with the sparkle as on the map, and press A.', run: async () => {
     play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},

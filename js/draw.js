@@ -1,12 +1,13 @@
 // Drawing each frame: the world, characters, sparkles and task arrows, and the opening scene.
 
 /* ---- per-frame drawing ---- */
-let bigSparkles = false;   // bigger and never out, while the area's bigSparkles matches, such as while you learn your first words (set each frame)
+let bigSparkles = false;   // a twinkle that grows bigger, while the area's bigSparkles matches, such as while you learn your first words (set each frame)
 function sparkle(X, Y, now, ph){
   const s = (Math.sin(now/260 + ph) + 1) / 2;
-  if (bigSparkles){   // between the two sizes (decided 24 October 2026: twice as big was a bit much): arms of 2 or 3, a faint glow
-    const glow = `rgba(255,226,122,${(.15 + s * .2).toFixed(2)})`, n = s > .55 ? 3 : 2;
-    R(b, X-1, Y-1, 3, 3, glow);
+  if (bigSparkles){   // a twinkle (decided 24 October 2026: twice as big and never out was too much): out for over half the
+    if (s < .55) return;   // time, it grows to arms of 3, with a faint glow, just at its brightest
+    const k = (s - .55) / .45, n = k > .66 ? 3 : k > .33 ? 2 : 1;
+    if (n === 3) R(b, X-1, Y-1, 3, 3, 'rgba(255,226,122,.3)');
     for (let i = 1; i <= n; i++){ R(b, X-i, Y, 1, 1, '#FFE27A'); R(b, X+i, Y, 1, 1, '#FFE27A'); R(b, X, Y-i, 1, 1, '#FFE27A'); R(b, X, Y+i, 1, 1, '#FFE27A'); }
     R(b, X, Y, 1, 1, '#FFFFFF');
     return;
