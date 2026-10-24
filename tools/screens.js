@@ -13,7 +13,7 @@
 const knows = (lv, words) => Object.fromEntries(words.map(w => [w, {lv, due: 0, ok: 0}]));
 const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '水果', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
 const QUIET = {sound: false, music: false};
-const ALL_TIPS = {walk: 1, talk: 1, look: 1, grey: 1, menu: 1, syllables: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
+const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, menu: 1, syllables: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
 const SAVES = {
   // just born, with the old monkey waiting: no tips had yet
   born: {version: 19, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},

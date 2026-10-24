@@ -26,6 +26,7 @@ function bindTokens(root){
     const t = b.dataset.t, [py, en] = info(t);
     root.querySelectorAll('.tok.on').forEach(x => x.classList.remove('on'));
     b.classList.add('on'); const rt = b.querySelector('rt'); if (rt) rt.classList.remove('hid');
+    if (tip && tip.id === 'tap') tipDone('tap');   // (you've found out)
     if (g){ g.classList.remove('tip'); g.innerHTML = `<b>${esc(t)}</b> ${esc(py)} · ${esc(en)}${b.classList.contains('listen') ? ' <span class="small">(just listen)</span>' : ''}`; }   // (no longer a tip: shown on every phone)
     say(t);
   });
@@ -184,16 +185,16 @@ const talkBox = $('#talk');
 let talkNext = null;          // moves on to what comes after the line, while the speech box is showing one
 let talkMove = null;          // moves between reply choices with the D-pad, while the box shows them
 let lastLine = null;          // the line someone else said last ({id, line}), until the story moves on: what a reply answers
-const TAP_TIP_LINES = 5;      // "Tap any word" shows under your first few lines, then only a word's meaning when you tap it
+const TAP_TIP_LINES = 5;      // "Tap any word": a tip on your very first line (TIPS.tap), only for a new player
 // A line someone says (opts: teach, the word being taught, in bold green; hint, a note under it; ok, what A does, such
 // as Give it; last, the conversation's last line: its button says Done, not ▼ Next, so you can tell it's ending).
 function showDialog(who, line, opts = {}){
   return new Promise(res => {
     const key = line.t.join(''), firstTime = !S.lines[key];
     S.lines[key] = 1; hear(line.t); save();
-    const tip = Object.keys(S.lines).length <= TAP_TIP_LINES, again = !talkBox.hidden;   // again: the box is still up from the last line
+    const again = !talkBox.hidden;   // again: the box is still up from the last line
     talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
-      <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss${tip ? ' tip' : ''}">${tip ? 'Tap any word to see what it means.' : ''}</div></div><div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
+      <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
       <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
     talkBox.classList.toggle('again', again);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();   // at the top of the screen, if at the bottom it would cover you

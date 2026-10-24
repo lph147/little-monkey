@@ -67,17 +67,13 @@ test('lines one after another change in place, without the box closing in betwee
   assert.equal(t.box.hidden, false, 'the box stays up for the next line');
 });
 
-test('tapping a word shows its meaning beside the line; the tip about it only shows for your first few lines', () => {
+test('tapping a word shows its meaning beside the line (the tip about it is a bubble, on your very first line: tests/tips.test.js)', () => {
   const t = talkGame();
   t.say('go');
   const gloss = () => t.box.querySelector('.talkline .gloss');
-  assert.match(gloss().textContent, /Tap any word/);
+  assert.equal(gloss().textContent, '', 'nothing there till you tap a word');
   t.box.querySelector('.tok[data-t="去"]').click();
   assert.match(gloss().textContent, /去 qù · to go/, 'beside the line it’s in, not on a row of its own');
-  const lines = Object.fromEntries(['a', 'b', 'c', 'd', 'e'].map(k => [k, 1]));   // five lines seen already
-  const later = talkGame({version: 8, started: true, lines});
-  later.say('go');
-  assert.equal(later.box.querySelector('.talkline .gloss').textContent, '', 'no tip once you\'ve seen a few lines');
 });
 
 test('Next sits beside the English, which is just as wide as its words (or beside the line, when the English waits behind its button)', () => {

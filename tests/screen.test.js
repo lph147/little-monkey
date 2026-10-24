@@ -188,7 +188,7 @@ test('the game tells the page how small its screen is (data-screen), for the but
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
   assert.match(css, /data-screen=small\],\[data-screen=tiny\]\) :is\(#nextBtn,#beginBtn,\.talk \.next,\.titlecard \.btn\)\{padding-left:15px\}/, 'room for the A badge (OK read UK)');
   assert.match(css, /data-screen=tiny\]\) #skipBtn\{padding-right:15px\}/, 'and for B');
-  assert.match(css, /data-screen=tiny\]\) \.talk \.gloss\.tip\{display:none\}/, 'a shorter speech box: no "Tap any word…" there');
+  assert.doesNotMatch(css, /\.talk \.gloss\.tip/, 'no "Tap any word…" in the speech box (a bubble, once, instead)');
   assert.match(css, /\.screen:has\(> \.talk\.top:not\(\[hidden\]\)\) > \.hud\{top:auto;bottom:14px\}/, 'with the speech box at the top, your hearts go to the bottom');
 });
 

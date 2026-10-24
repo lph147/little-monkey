@@ -56,8 +56,26 @@ test('Tasks and Menu have no tips: the old monkey tells you about them instead',
   assert.match(said, /MENU shows the words/, 'and MENU');
 });
 
-test('the grey-words tip shows during a line, once', () => {
+test('your very first line: a tip says to tap any word, once, and goes when you tap one', () => {
   const game = playing({version: 17, started: true, tips: {walk: 1, talk: 1, look: 1}});
+  game.run("showDialog(speaker('elder'), L.hi, {teach: '你好'})");
+  game.run('updateTips(1000)');
+  assert.equal(showing(game), 'tap');
+  assert.equal(game.run("$('#tip').innerHTML"), 'Tap any word to see what it means');
+  assert.equal(game.run('TIPS.tap.at'), '#talk .tok', 'pointing at a word in the line');
+  assert.equal(get(game, 'S.tips.tap'), 1, 'it counts as seen straight away: just this line');
+  game.run(`talkBox.querySelector('.tok[data-t="你好"]').click()`);
+  assert.equal(showing(game), null, 'tapping a word: it goes');
+  assert.match(game.run("talkBox.querySelector('.talkline .gloss').textContent"), /你好 nǐ hǎo · hello/, 'and its meaning shows beside the line');
+  const lines = Object.fromEntries(['a', 'b', 'c', 'd', 'e', 'f'].map(k => [k, 1]));   // a game that has seen a few lines already
+  const old = playing({version: 17, started: true, tips: {walk: 1, talk: 1, look: 1, grey: 1}, lines});
+  old.run("showDialog(speaker('elder'), L.hi, {teach: '你好'})");
+  old.run('updateTips(1000)');
+  assert.equal(showing(old), null, 'not for a player who has been talking for a while');
+});
+
+test('the grey-words tip shows during a line, once', () => {
+  const game = playing({version: 17, started: true, tips: {walk: 1, talk: 1, look: 1, tap: 1}});
   game.run("showDialog(speaker('elder'), L.go)");
   game.run('updateTips(1000)');
   assert.equal(showing(game), 'grey');

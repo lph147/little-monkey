@@ -6,11 +6,14 @@
 /* ================= TIPS ================= */
 // Each tip, in the order they're checked: at, what it points at; text; when, is it time for it (checked
 // every frame); lasts, how long it shows before it counts as had (otherwise pressing what it points at
-// makes it had, or for walk, taking a step; grey counts as had as soon as it shows).
+// makes it had, or for walk, taking a step; tap and grey count as had as soon as they show, for that line: tap goes
+// when you tap a word).
 const TIPS = {
   walk: {at:'.dpad', text:'Hold an arrow to walk.<br>Tap to turn.', when:() => canAct()},
   talk: {at:'#btnA', text:'Press <b>A</b> to talk', when:() => aActs() && !!npcAt(...facing())},
   look: {at:'#btnA', text:'Press <b>A</b> to look', when:() => aActs() && !npcAt(...facing()) && promptFor(...facing()) === 'Look'},
+  // a word in your very first line (decided 24 October 2026: "Tap any word…" sat under each of your first few lines)
+  tap: {at:'#talk .tok', text:'Tap any word to see what it means', when:() => !!talkNext && !talkMove && Object.keys(S.lines).length <= TAP_TIP_LINES},
   grey: {at:'#talk .tok.listen', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove}
   // (Tasks and Menu had tips too; the old monkey tells you about them instead, decided 18 October 2026.)
 };
@@ -26,8 +29,9 @@ function tipPressed(sel){ if (tip && TIPS[tip.id].at === sel) tipDone(tip.id); }
 function placeTip(){   // the bubble above what it points at (below it, if there's no room above)
   const box = tipBox(), r = tip.target.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight;
   const talk = tip.target.closest && tip.target.closest('#talk:not(.top)');   // a word in the speech box at the bottom: the bubble above the box, so it never covers who's speaking
-  const top = talk ? talk.getBoundingClientRect().top : r.top;
-  const below = top < h + 20, left = clamp(r.left + r.width / 2 - w / 2, 6, window.innerWidth - w - 6);
+  const tr = talk && talk.getBoundingClientRect(), top = talk ? tr.top : r.top;
+  const lo = talk ? tr.left : 6, hi = (talk ? tr.right : window.innerWidth - 6) - w;   // (over the box, never over the D-pad beside the screen)
+  const below = top < h + 20, left = clamp(r.left + r.width / 2 - w / 2, lo, Math.max(lo, hi));
   box.classList.toggle('below', below);
   box.style.left = left + 'px'; box.style.top = (below ? r.bottom + 14 : top - h - 14) + 'px';
   box.style.setProperty('--ax', clamp(r.left + r.width / 2 - left, 14, w - 14) + 'px');   // the arrow, under the middle of what it points at
@@ -47,7 +51,7 @@ function updateTips(now){
     tip = {id, target, until:t.lasts ? now + t.lasts : 0};
     const box = tipBox(); box.innerHTML = t.text; box.hidden = false;
     target.classList.add('tipglow'); placeTip();
-    if (id === 'grey'){ S.tips.grey = 1; save(); }
+    if (id === 'grey' || id === 'tap'){ S.tips[id] = 1; save(); }
     return;
   }
 }

@@ -430,8 +430,7 @@ rt.hid{visibility:hidden}
 .talk:has(> .sentence-en[hidden]):not(:has(> .hintline)) > .talkline{grid-column:1}   /* no English under the line (you've seen it before): Next goes beside the line, not on a row of its own (decided 22 October 2026: the box covered you) */
 /* On a small phone's screen (data-screen, set by fit() in js/main.js), the speech box is shorter, so you and who you're
    talking to stay in sight above or below it (decided 22 October 2026: on the smallest, it took two thirds of the
-   screen): no "Tap any word…" (a word's meaning still shows when you tap it), and lower buttons */
-:root:is([data-screen=small],[data-screen=tiny]) .talk .gloss.tip{display:none}
+   screen): lower buttons */
 :root:is([data-screen=small],[data-screen=tiny]) .talk{padding:.2rem .5rem .3rem}
 :root:is([data-screen=small],[data-screen=tiny]) .tbtn{min-height:1.6rem}
 :root:is([data-screen=small],[data-screen=tiny]) .talk .next{min-height:1.75rem}
