@@ -144,10 +144,14 @@ test('Friends: tap a friend for its page, as in the Word Scroll, its English and
   assert.equal(sheet.querySelector('.big').textContent, '山羊');
   assert.deepEqual(run('JSON.stringify(__said)'), '["山羊"]', 'it says the word');
   const hidden = sel => sheet.querySelector(sel).hidden;
-  assert.ok(hidden('.word .en') && hidden('.madeabout'), 'English and how it’s made wait behind English');
+  assert.ok(hidden('.word .en') && !sheet.querySelector('[data-a=made]'), 'English, then how it’s made, wait behind English');
   sheet.querySelector('[data-a=en]').click();
-  assert.ok(!hidden('.word .en') && !hidden('.madeabout'));
-  assert.match(sheet.querySelector('.madeabout').textContent, /mountain sheep/);
+  assert.ok(!hidden('.word .en'));
+  sheet.querySelector('[data-a=made]').click();
+  assert.match(sheet.querySelector('.madestage').textContent, /mountain sheep/, 'how it’s made, on its own card');
+  run('pressB()');
+  assert.equal(sheet.querySelector('.label').textContent, 'Friends · Animals', 'Back: the word’s page again');
+  assert.deepEqual(run('JSON.stringify(__said)'), '["山羊"]', 'not said again');
   run('pressB()');
   assert.equal(sheet.querySelector('.label').textContent, 'Friends', 'Back to your friends');
   assert.equal(run('document.activeElement && document.activeElement.dataset.w'), '山羊', 'on the friend you opened');

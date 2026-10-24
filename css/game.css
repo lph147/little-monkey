@@ -237,6 +237,33 @@ rt.hid{visibility:hidden}
 .made .mlink{flex-basis:100%;font-size:.8rem;color:var(--muted)}
 .made .mlink ruby{font-size:1.05rem}
 .madeabout .made{margin-top:.15rem}
+/* how a word is made, on a card of its own (madeCard in js/cards.js): its parts in columns, each its picture (if it has one),
+   pinyin, character and English, lined up from the top so the characters are in a row, with + and = between them */
+.sheet:has(> .madestage){display:flex;flex-direction:column}
+.sheet:has(> .madestage) > .actions{margin-top:auto}
+.mhzlabel{font-family:var(--text);font-weight:700}
+.madestage{display:flex;align-items:flex-start;justify-content:center;gap:.55rem;margin:auto 0 .3rem;padding-top:.3rem}
+.madestage.drawn{align-items:center;gap:1rem}
+.mcol{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:7.5rem;line-height:1.2}
+.mcol .mcpic{height:var(--pic-mid);display:flex;align-items:flex-end;justify-content:center}
+.mcol .mcpic .pix{width:var(--pic-mid);height:var(--pic-mid)}
+.madestage.nopic .mcpic{display:none}
+.madestage.drawn .mcpic{height:auto}
+.madestage.drawn .mcpic .pix{width:var(--pic-big);height:var(--pic-big)}
+.mcol .mcpy{font-family:var(--text);font-size:.95rem;color:var(--muted);margin-top:.15rem;min-height:1.2em}
+.mcol .mchz{font-family:var(--text);font-size:2.6rem;line-height:1.1;font-weight:500;white-space:nowrap}
+.mcol .mcen{font-size:.9rem;margin-top:.1rem}
+.mcol.known .mchz,.mcol.known .mcpy{color:var(--jade)}
+.mcol.mword .mcen{font-weight:600}
+.mcol.big .mchz{font-size:3.6rem}
+.mcol.mop{color:var(--muted)}
+.mcol.mop .mchz{font-size:1.8rem;line-height:calc(2.6rem * 1.1)}
+.mcol.big ~ .mop .mchz{line-height:calc(3.6rem * 1.1)}
+.mwhy{text-align:center;font-size:1rem;margin:.1rem 0 0}
+.mnote{text-align:center;font-size:.85rem;color:var(--muted);margin:.15rem 0 0}
+.mnote.known{color:var(--jade);font-weight:600}
+.mnote ruby{font-family:var(--text);font-size:1.05rem;color:var(--jade);font-weight:600}
+.mnote rt{font-size:max(.55em,10.5px);color:var(--muted);font-weight:400}
 /* a tip about Chinese (learnTip in js/quiz.js): its example, a word's characters with their pinyin over them */
 .tiphead{display:flex;align-items:center;gap:.9rem}
 .tiphead .who{margin:0}
@@ -799,6 +826,18 @@ rt.hid{visibility:hidden}
   .made .mlink{font-size:.72rem}
   .made .mlink ruby{font-size:.9rem}
   .tiphead .portrait{width:var(--pic-small);height:var(--pic-small)}   /* a tip you try: a smaller animal, characters and drum */
+  .madestage{gap:.4rem;padding-top:0;margin-bottom:.1rem}   /* how a word is made: smaller pictures and characters */
+  .mcol .mcpic,.mcol .mcpic .pix{height:var(--pic-small)}
+  .mcol .mcpic .pix{width:var(--pic-small)}
+  .madestage.drawn .mcpic .pix{width:var(--pic-mid);height:var(--pic-mid)}
+  .mcol .mcpy{font-size:.85rem;margin-top:0}
+  .mcol .mchz{font-size:2rem}
+  .mcol .mcen{font-size:.8rem;margin-top:0}
+  .mcol.big .mchz{font-size:2.6rem}
+  .mcol.mop .mchz{font-size:1.4rem;line-height:calc(2rem * 1.1)}
+  .mcol.big ~ .mop .mchz{line-height:calc(2.6rem * 1.1)}
+  .mwhy{font-size:.88rem}
+  .mnote{font-size:.78rem;margin-top:.05rem}
   .drumrow{gap:1.6rem;margin:0}
   .beat{gap:0}
   .beat .bpy{font-size:.9rem}

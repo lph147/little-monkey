@@ -86,7 +86,7 @@ test('a monkey asking again for what it wants: Done, unless it teaches a word af
     return seen;
   };
   assert.deepEqual(await lines(['石头', '你好', '水果']), ['Done']);
-  assert.deepEqual(await lines(['石头', '你好']), ['▼', 'card'], '水果 is new: its card comes after');
+  assert.deepEqual(await lines(['石头', '你好']), ['▼', 'card', 'card'], '水果 is new: its card comes after, and how it’s made');
 });
 
 test('a message that came up since you last moved or turned: A closes it (not if pressed just as it came up), and B still does', async () => {

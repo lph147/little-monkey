@@ -295,7 +295,40 @@ function madeBox(m, w, hide = false){   // the box for how w is made (m: its ent
   const links = madeLinks(m, w).map(([zh, o]) => `<span class="mlink">${zh} is also in <ruby class="known">${o}<rt>${WORDS[o].py}</rt></ruby> (${esc(WORDS[o].en.split(',')[0])}), a word you know.</span>`);
   return `<div class="made"${hide ? ' hidden' : ''}>${story}${links.map(l => ' ' + l).join('')}</div>`;
 }
-const madeHTML = (w, hide = false) => MADE[w] && WORDS[w] ? madeBox(MADE[w], w, hide) : '';
+// How a word is made, on a card of its own (decided 24 October 2026: under the word, its English and a note, the box crowded
+// the card): the second step of a new word's card (How it's made ▸), and seen again, from the English button. A word made of
+// parts shows each in turn, with its picture if it's a word with one, its pinyin and English (green if it's a word you know),
+// then = the word itself, with its picture, and what they add up to. A clue shows the character big, with the clue beside
+// it and why; a picture shows what the character was drawn from, beside it. Under it, where you've met a part before, or
+// that you know every part already.
+const partPic = zh => PICTURES[zh] && WORDS[zh] ? picHTML(zh) : '';
+function madeStage(w){
+  const m = MADE[w], d = WORDS[w];
+  const col = (zh, py, en, cls = '', pic = '') => `<div class="mcol ${cls}"><div class="mcpic" aria-hidden="true">${pic}</div><span class="mcpy">${esc(py)}</span> <span class="mchz">${zh}</span> <span class="mcen">${esc(en)}</span></div>`;
+  const op = c => `<div class="mcol mop" aria-hidden="true"><div class="mcpic"></div><span class="mcpy"></span><span class="mchz">${c}</span></div>`;   // + and =, in line with the characters
+  const links = madeLinks(m, w).map(([zh, o]) => `<p class="mnote">${zh} is also in <ruby class="known">${o}<rt>${WORDS[o].py}</rt></ruby> (${esc(WORDS[o].en.split(',')[0])}), a word you know.</p>`).join('');
+  if (m.parts){
+    const parts = m.parts.map(([zh, py, en], i) => col(zh, py, en, `mpart${knownWord(zh, w) ? ' known' : ''}`, partPic(zh)).replace('<div class="mcol', `<div data-i="${i}" class="mcol`));
+    const all = m.parts.every(([zh]) => knownWord(zh, w)), pics = !!PICTURES[w] || m.parts.some(([zh]) => partPic(zh));
+    return `<div class="madestage parts${pics ? '' : ' nopic'}">${parts.join(op('+'))}${op('=')}${col(w, d.py, m.why, 'mword', PICTURES[w] ? picHTML(w) : '')}</div>`
+      + (all ? `<p class="mnote known">You know ${m.parts.length === 2 ? 'both' : 'all ' + m.parts.length} parts already!</p>` : links);
+  }
+  if (m.clue){
+    const [zh, py, en] = m.clue;
+    return `<div class="madestage clue nopic">${col(w, d.py, d.en.split(',')[0], 'mword big')}${op('◂')}${col(zh, py, en, 'mpart')}</div>`
+      + `<p class="mwhy">${zh} ${esc(m.why)}</p>${links}`;
+  }
+  return `<div class="madestage drawn"><div class="mcol mdrawn"><div class="mcpic" aria-hidden="true">${PICTURES[w] ? picHTML(w) : ''}</div></div><div class="mcol mop" aria-hidden="true"><span class="mchz">▸</span></div>${col(w, d.py, d.en.split(',')[0], 'mword big')}</div>`
+    + `<p class="mwhy">${esc(m.why)}</p>${links}`;
+}
+// The card: Back (B) goes back to the word's card; done is A's (Got it, for a new word; OK, seen again), or none, when
+// Back is A's too (from a word's page).
+function madeCard(w, back, done, doneLabel){
+  openCard(`<p class="label">How <span class="mhzlabel">${w}</span> is made</p>${madeStage(w)}
+    <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>◂ Back</button>${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
+  on('[data-a=back]', back);
+  if (done) on('[data-a=ok]', done);
+}
 // A name you can read now, such as your home's on the sign (says: its Chinese and English; m: how it's made, with its
 // title): its picture, characters, pinyin and English, and how it's made, as on a word's card. A name isn't a word to
 // learn, so nothing is caught.
@@ -314,20 +347,34 @@ function nameCard(says, m){
 }
 // A word's card. It says the word straight away when you discover it yourself; in a conversation
 // (opts.quiet) it doesn't, so the conversation isn't broken up by the word again: 🔊 Hear it is there. How the word is made
-// goes with its English (madeHTML).
+// goes with its English (madeCard): the first time, its own card comes next (How it's made ▸, then Got it); seen again,
+// the English button shows the English, then becomes How it's made.
 function showNotice(w, opts = {}){
   return new Promise(res => {
-    const d = WORDS[w], isNew = lvl(w) === 0;
+    const d = WORDS[w], isNew = lvl(w) === 0, made = !!MADE[w];
     if (isNew) SFX.word(); else SFX.blip();
-    openCard(`${isNew ? '<p class="label">⭐ New word to learn</p>' : `<p class="label">Word ${pips(w)}</p>`}
+    const done = () => { closeCard(); if (isNew){ setSeen(w); toast(`${wz(w)} added to your Word Scroll`); } res(); };
+    let en = isNew;   // the English shows (seen again: once you've pressed English)
+    const front = () => {   // the word's card: a new word with how it's made goes on to it (How it's made ▸), not Got it
+      const howFirst = isNew && made, howBtn = '<button class="btn" data-a="made">How it’s made</button>';
+      openCard(`${isNew ? '<p class="label">⭐ New word to learn</p>' : `<p class="label">Word ${pips(w)}</p>`}
 
-      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
-      <div class="en" ${isNew ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}${madeHTML(w, !isNew)}</div>
-      <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${isNew ? '' : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${isNew ? 'Got it' : 'OK'}</button></div>`);
+        <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
+        <div class="en" ${en ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}</div>
+        <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${howFirst ? '<button class="btn primary" data-a="made">How it’s made ▸</button>'
+          : `${isNew ? '' : en ? (made ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${isNew ? 'Got it' : 'OK'}</button>`}</div>`);
+      on('[data-a=say]', () => say(w));
+      on('[data-a=en]', e => {   // the English, and then how it's made from the same place
+        en = true; sheet.querySelector('.word .en').hidden = false;
+        const b = e.currentTarget; if (made){ b.setAttribute('data-a', 'made'); b.textContent = 'How it’s made'; b.onclick = how; } else b.remove();
+        const p = sheet.querySelector('.primary'); if (p) p.focus({preventScroll:true});
+      });
+      on('[data-a=made]', how);
+      on('[data-a=ok]', done);
+    };
+    const how = () => madeCard(w, front, done, isNew ? 'Got it' : 'OK');
+    front();
     if (!opts.quiet) say(w);
-    on('[data-a=say]', () => say(w));
-    on('[data-a=en]', () => { sheet.querySelectorAll('.word .en, .word .made').forEach(x => x.hidden = false); });
-    on('[data-a=ok]', () => { closeCard(); if (isNew){ setSeen(w); toast(`${wz(w)} added to your Word Scroll`); } res(); });
   });
 }
 // What you've picked (f: a few words you know together, such as 红色 的 花, with their English, en), with its own picture,
