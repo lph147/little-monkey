@@ -258,8 +258,11 @@ async function encounter(foe){
     if (ok) score++;
   }
   closeCard();
-  S.shells += score; S.encounters = (S.encounters || 0) + 1;
-  const won = score >= 2, already = S.friends.includes(foe.id), shells = score ? ` +${score} 🐚` : '';
+  // (a game just for practice, foe.practice, such as with a little monkey in training that has given you its present
+  // already, earns nothing: decided 24 October 2026, as you could play it again and again for shells)
+  if (!foe.practice) S.shells += score;
+  S.encounters = (S.encounters || 0) + 1;
+  const won = score >= 2, already = S.friends.includes(foe.id), shells = score && !foe.practice ? ` +${score} 🐚` : '';
   let label, msg;
   if (won){
     if (!already) S.friends.push(foe.id);

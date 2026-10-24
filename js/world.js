@@ -308,12 +308,12 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   set(s){ Object.assign(here(), s.set); save(); placeCharacters(); refreshMap(); },
   async request(s, who, last){ await request(REQUESTS.find(r => r.id === s.request), speaker(who), last); },
   async shop(s, who){ await shop(speaker(who)); },
-  async wordGame(s, who, last){   // win: what happens if you win, such as a present
+  async wordGame(s, who, last){   // win: what happens if you win, such as a present; practice: a game for nothing but practice
     const g = s.wordGame;
     if (!canEncounter()){ toast(g.notYet); return; }
     if (!(await confirmBox(speaker(who), fill(g.ask), 'Play', 'Not now'))) return;
     SFX.encounter();
-    if (await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}) && g.win) await runSteps(g.win, who, last);
+    if (await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who], practice:!!g.practice}) && g.win) await runSteps(g.win, who, last);
   },
   // Counting with the one you're talking to (countGame: one of the area's countGames), such as the stones in the little
   // monkeys' tower on the hillside: COUNT_GAME counting questions, as in a number lesson (js/quiz.js), each about a

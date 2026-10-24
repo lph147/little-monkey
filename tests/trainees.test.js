@@ -1,7 +1,9 @@
 // Chapter 1: two little monkeys in training on the hillside (decided 23 October 2026), practising with sticks like yours:
 // one by the stepping stones, one on the middle terrace. Each swings its stick now and then, with a soft swish as you come
-// near; stops you as you pass, the first time, for a word game, like a trainer in Pokémon; and gives you a present each
-// time you win: 3 shells, or a peach for your bag. After that, a ! shows over them when some of your words need practice.
+// near; stops you as you pass, the first time, for a word game, like a trainer in Pokémon, with a ! over it till then; and
+// gives you a present the first time you win: 3 shells, or a peach for your bag. After that, its games are just for
+// practice, earning nothing, and it has no ! (decided 24 October 2026: it gave a present every time you won, and had a !
+// whenever your words needed practice, so you could play again and again for shells and peaches).
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -65,7 +67,7 @@ test('the first time you pass one, it stops you: hello, then a word game; win, a
   assert.deepEqual(get(g, '__asks'), ['Play a word game with the monkey? If you win, it gives you 3 🐚.']);
   assert.ok(get(g, '__notes').includes('The monkey gives you 3 🐚.'));
   assert.equal(g.run('S.shells'), shells + 3);
-  assert.deepEqual([g.run('here().trainee1'), bubble(g, 'trainee1')], [1, ''], 'its ! goes (none of your words needs practice)');
+  assert.deepEqual([g.run('here().trainee1'), bubble(g, 'trainee1')], [2, ''], 'its present won, and its ! gone');
   g.run('__said.length = 0');
   face(g, 19, 38, 'up'); face(g, 19, 37, 'up');
   await play(g, 'arrive(19, 37).then(runEvents)');
@@ -81,22 +83,41 @@ test('the one on the middle terrace gives you a peach for your bag', async () =>
   assert.ok(get(g, '__notes').includes('The monkey gives you a 桃子 (peach) for your bag.'));
   assert.equal(g.run("S.bag['桃子']"), 1);
   assert.deepEqual(get(g, '__replies'), ['你好', '谢谢']);
-  assert.equal(g.run('here().trainee2'), 1);
+  assert.equal(g.run('here().trainee2'), 2, 'its present won');
 });
 
-test('after that, talk to it to play again: a present each time you win, none if you lose, and no game at all if you say Not now', async () => {
-  const g = game({trainee1: 1}, {place: 'hillside', x: 19, y: 37, dir: 'right'});
+test('after that, talk to it to play again: its present till you’ve won it, none if you lose, no game if you say Not now; then just for practice', async () => {
+  const g = game({trainee1: 1}, {place: 'hillside', x: 19, y: 37, dir: 'right'});   // (it stopped you, and you lost)
   const shells = g.run('S.shells'), talk = () => play(g, 'interact(20, 37)');
-  await talk();
-  assert.deepEqual(get(g, '__said'), ['我们玩吧！', '太好了！'], 'no hello this time: straight to the game');
-  assert.equal(g.run('S.shells'), shells + 3);
-  g.run('__win = false; __said.length = 0'); await talk();
-  assert.deepEqual([get(g, '__said'), g.run('S.shells')], [['我们玩吧！'], shells + 3], 'lost: no present');
+  g.run('__win = false'); await talk();
+  assert.deepEqual([get(g, '__said'), g.run('S.shells'), g.run('here().trainee1')], [['我们玩吧！'], shells, 1], 'lost: no present, still to win');
   g.run('__play = false; __win = true; __said.length = 0'); await talk();
-  assert.equal(g.run('S.shells'), shells + 3, 'Not now: no game');
+  assert.deepEqual([g.run('S.shells'), g.run('here().trainee1')], [shells, 1], 'Not now: no game');
+  g.run('__play = true; __said.length = 0'); await talk();
+  assert.deepEqual(get(g, '__said'), ['我们玩吧！', '太好了！'], 'no hello this time: straight to the game');
+  assert.deepEqual([g.run('S.shells'), g.run('here().trainee1')], [shells + 3, 2], 'won: its present, once');
+  g.run("__said.length = 0; __asks.length = 0; __replies.length = 0; globalThis.__games = []; encounter = async foe => { __games.push(foe); return true; }");
+  await talk();
+  assert.deepEqual(get(g, '[__asks, __said, __replies]'), [['Play a word game with the monkey, just for practice?'], ['我们玩吧！'], []], 'then a game just for practice: no 太好了！, no present, no thanks');
+  assert.equal(get(g, '__games[0].practice'), true);
+  assert.equal(g.run('S.shells'), shells + 3, 'nothing more');
 });
 
-test('once they’ve stopped you, a ! shows over them whenever some of your words need practice', () => {
-  assert.equal(bubble(game({trainee1: 1, trainee2: 1}), 'trainee2'), '');
-  assert.equal(bubble(game({trainee1: 1, trainee2: 1}, undefined, true), 'trainee2'), '!');
+test('a game just for practice earns nothing, not even a 🐚 for each right answer, and says so', async () => {
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: known(false), areas: {1: {...CHAPTER_ONE, trainee1: 2}}}});   // (the real word game)
+  g.run("mode = 'play'; save = () => {}; globalThis.__msg = ''; pictureQ = () => Promise.resolve(true); infoBox = async (who, html) => { __msg = html; }");
+  const run = async practice => JSON.parse(await g.run(`(async () => { const s = S.shells;
+    await encounter({id: 'trainee1', hz: '猴子', img: '', wild: false, name: NAMES.trainee1, practice: ${practice}}); return JSON.stringify([S.shells - s, __msg]); })()`));
+  const [paid, msg] = await run(false), [none, practised] = await run(true);
+  assert.ok(paid >= 2 && /🐚/.test(msg), `a game with a friend: a 🐚 for each right answer (${paid})`);
+  assert.equal(none, 0, 'just for practice: none');
+  assert.ok(!/🐚/.test(practised), 'and no 🐚 in what it says');
+});
+
+test('their ! is only the once, till they’ve stopped you: none after, even when some of your words need practice', () => {
+  assert.equal(bubble(game({trainee1: 0, trainee2: 0}), 'trainee2'), '!');
+  for (const met of [1, 2]){
+    assert.equal(bubble(game({trainee1: met, trainee2: met}), 'trainee2'), '');
+    assert.equal(bubble(game({trainee1: met, trainee2: met}, undefined, true), 'trainee2'), '', 'not even when a word needs practice');
+  }
 });

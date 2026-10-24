@@ -50,7 +50,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   homeName 1 once you know every part of your home's name (花, 果 in 水果, and 山): a message says so, and the sign by
   //           your stone sparkles; 2 once you've read it there, and seen how the name is made
   //   trainee1, trainee2  chapter 1: 1 once that little monkey in training on the hillside has stopped you for a word game
-  //           (the first by the stepping stones, the second on the middle terrace)
+  //           (the first by the stepping stones, the second on the middle terrace), 2 once you've won its present
   //   tower   chapter 1: the little monkeys building a tower of stones at the home ground: 1 once they've said hello, 2 once
   //           you've counted its stones with them
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
@@ -231,7 +231,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
     // the little monkeys in training on the hillside: until they've stopped you, and then whenever some of your words need
     // practice, for another word game
-    trainee1: [{if:{trainee1:0}, show:'!'}, {if:{practice:true}, show:'!'}], trainee2: [{if:{trainee2:0}, show:'!'}, {if:{practice:true}, show:'!'}],
+    trainee1: [{if:{trainee1:0}, show:'!'}], trainee2: [{if:{trainee2:0}, show:'!'}],   // (the once: they had one whenever your words needed practice till 24 October 2026)
     // the little monkeys building a tower of stones: once you know enough numbers to count its stones with them, till you have
     towerL: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}], towerR: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}],
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
@@ -1504,23 +1504,27 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {set:{ledgeTip:1}}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'Going down the mountain? Hop down the grassy banks: it’s quicker.'}]}
     ],
-    // the little monkeys in training on the hillside: a word game, the first time when they stop you, and a present each
-    // time you win (shells, or a peach for your bag, handy against the pine wood's wolves)
+    // the little monkeys in training on the hillside: a word game, the first time when they stop you, with a present if you
+    // win (shells, or a peach for your bag, handy against the pine wood's wolves), till you've won it; then their games are
+    // just for practice, earning nothing (decided 24 October 2026: they gave it every time you won, and a ! stayed over them
+    // whenever your words needed practice, so you could play again and again for shells and peaches)
     trainee1: [
       {if:{trainee1:0}, do:[{set:{trainee1:1}}, {say:'hi'}, {reply:'你好'},
         {message:'This little monkey is practising with a stick, just like yours. It wants to be like you, its king!'}, {say:'play'},
         {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you 3 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
-          win:[{say:'great'}, {shells:3, note:'The monkey gives you 3 🐚.'}, {reply:'谢谢', about:'The monkey gives you 3 🐚.'}]}}]},
-      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you 3 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
-        win:[{say:'great'}, {shells:3, note:'The monkey gives you 3 🐚.'}, {reply:'谢谢', about:'The monkey gives you 3 🐚.'}]}}]}
+          win:[{say:'great'}, {set:{trainee1:2}}, {shells:3, note:'The monkey gives you 3 🐚.'}, {reply:'谢谢', about:'The monkey gives you 3 🐚.'}]}}]},
+      {if:{trainee1:1}, do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you 3 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+        win:[{say:'great'}, {set:{trainee1:2}}, {shells:3, note:'The monkey gives you 3 🐚.'}, {reply:'谢谢', about:'The monkey gives you 3 🐚.'}]}}]},
+      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey, just for practice?', word:'猴子', practice:true, notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     trainee2: [
       {if:{trainee2:0}, do:[{set:{trainee2:1}}, {say:'hi'}, {reply:'你好'},
         {message:'This little monkey is practising too, swinging its stick at the air. It wants to be like you, its king!'}, {say:'play'},
         {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you a {桃子}.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
-          win:[{say:'great'}, {bag:'桃子', note:'The monkey gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The monkey gives you a {桃子}.', pic:'桃子'}]}}]},
-      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you a {桃子}.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
-        win:[{say:'great'}, {bag:'桃子', note:'The monkey gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The monkey gives you a {桃子}.', pic:'桃子'}]}}]}
+          win:[{say:'great'}, {set:{trainee2:2}}, {bag:'桃子', note:'The monkey gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The monkey gives you a {桃子}.', pic:'桃子'}]}}]},
+      {if:{trainee2:1}, do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you a {桃子}.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+        win:[{say:'great'}, {set:{trainee2:2}}, {bag:'桃子', note:'The monkey gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The monkey gives you a {桃子}.', pic:'桃子'}]}}]},
+      {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey, just for practice?', word:'猴子', practice:true, notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     // the little monkeys building a tower of stones at the home ground: hello, the first time; then they count its stones with
     // you (countGames, above), once you know enough numbers (四, at school); till then, they count as they put them on

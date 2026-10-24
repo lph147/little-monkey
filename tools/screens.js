@@ -72,6 +72,7 @@ SAVES.hillsideLookout = {...SAVES.pineWood, areas: {1: {...BUILDING, lookTip: 1}
 SAVES.hillsideGoat = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 22, dir: 'up'}};   // coming up the steps by the lookout, the first time
 SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
 SAVES.byTrainee = {...SAVES.pineWood, pos: {place: 'hillside', x: 17, y: 38, dir: 'right'}};   // coming up to the stepping stones, a little monkey in training beyond them
+SAVES.traineeDone = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 2, trainee2: 2}}, pos: {place: 'hillside', x: 19, y: 37, dir: 'right'}};   // beside the first, its present won
 SAVES.bagFull = {...SAVES.pineWood, bag: {'桃子': 3}, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 10, y: 20, dir: 'left'}};   // a full bag of peaches, by the other one, on the middle terrace
 SAVES.byHidden = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 22, y: 38, dir: 'down'}};   // above the tree with shells tucked behind it
 // below the little monkeys building a tower of stones, at the home ground beside the way up to the hillside: the first
@@ -375,9 +376,11 @@ const SCREENS = [
   {id: 'trainee-stops', title: 'It stops you for a word game', save: 'byTrainee', why: 'The first time you pass, like a trainer in Pokémon: a ! pops up, you turn to face it, and it says 你好！ Then, after your reply, that it wants to be like you, its king, and 我们玩吧！ (Let’s play!).', run: async () => {
     play(); await wait(100); S.pos = {place: 'hillside', x: 19, y: 37, dir: 'up'}; placePlayer(); arrive(19, 37).then(runEvents); await wait(1600); }},
   {id: 'gift-kept', title: 'Your bag is full', save: 'bagFull', why: 'Win its word game with 3 peaches in your bag: it offers you its 桃子, keeps it for you, and your thanks waits (Done), till you come back with room, when it has a ! for you.', run: async () => {
-    play(); await wait(100); talkingTo = 'trainee2'; STEPS.bag(AREA.talk.trainee2[1].do[1].wordGame.win[1], 'trainee2', false, true); await wait(500); }},
-  {id: 'trainee-game', title: 'Its word game', save: 'byTrainee', why: 'Its name plate: 猴子 hóuzi, Monkey, as the troop are called. Win, and it gives you 3 🐚 (the one on the middle terrace, a 桃子 for your bag), every time.', run: async () => {
+    play(); await wait(100); talkingTo = 'trainee2'; STEPS.bag(AREA.talk.trainee2[1].do[1].wordGame.win.find(s => s.bag), 'trainee2', false, true); await wait(500); }},
+  {id: 'trainee-game', title: 'Its word game', save: 'byTrainee', why: 'Its name plate: 猴子 hóuzi, Monkey, as the troop are called. Win, and it gives you 3 🐚 (the one on the middle terrace, a 桃子 for your bag), the first time.', run: async () => {
     play(); await wait(100); encounter({id: 'trainee1', hz: '猴子', img: portrait('trainee1'), wild: false, name: NAMES.trainee1}); await wait(500); }},
+  {id: 'trainee-practice', title: 'Just for practice', save: 'traineeDone', why: 'Once you’ve won its present: no ! over it, and its games are just for practice, earning nothing, not even a 🐚 for each right answer.', run: async () => {
+    play(); await wait(100); talk(npc('trainee1')); await wait(300); next(); await wait(500); }},
   {id: 'hidden-glint', title: 'Something hidden', save: 'byHidden', why: 'Three piles of shells and two apples are hidden on the hillside, at trees, a boulder and a pine. A tiny glint gives each away now and then, easy to miss (here, at the tree below you, held still).', run: async () => {
     play(); await wait(100); glintsNow = () => [[22, 39, 1]]; await wait(400); }},
   {id: 'hidden-found', title: 'Found it!', save: 'byHidden', why: 'A at it: 2 🐚 (or an apple for your bag), once.', run: async () => {
