@@ -640,9 +640,9 @@ test('writing in the world is real Chinese, in characters drawn for it: the scho
     blackboard(pen, {x: 4, y: 0, w: 7, h: 2});
     const sofar = __wrote.length; S.pos = {place: 'cave', x: 8, y: 8, dir: 'down'}; placePlayer(); __wrote.length = sofar;   // (going in draws it too)
     for (const o of mapObjects()) if (o.look === 'tablet') OBJECT_ART.tablet(pen, o);
-    drawLookout(2, 0);`);
+    drawScene(13.4, 0, 1);`);
   const wrote = JSON.parse(g.run('JSON.stringify(__wrote)'));
-  assert.deepEqual(wrote, ['学校', '一二三四五六七八九十', '水帘洞', '南天门'], 'the school’s sign, the blackboard, the cave’s tablet, the gate of heaven in the lookout’s view');
+  assert.deepEqual(wrote, ['学校', '一二三四五六七八九十', '水帘洞', '南天门'], 'the school’s sign, the blackboard, the cave’s tablet, the gate of heaven in the opening');
   const IN_THE_BOOK = {'南天门': 'the Southern Gate of Heaven, which the gods came out of to look at the light from your eyes'};
   for (const text of wrote){
     for (const c of text) assert.ok(HANZI[c], `${c} is drawn in HANZI (js/art.js)`);

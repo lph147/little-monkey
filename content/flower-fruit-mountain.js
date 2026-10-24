@@ -1641,7 +1641,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {at:7.2, zh:'石头 动 了 ！', en:'The stone moved!'},
     {at:9, zh:'一只 小 猴子 ！', en:'A little monkey!'},
     {at:10.6, zh:'它 的 眼睛 里 有 光 。', en:'Light shone from its eyes.'},
-    {at:13.2, zh:'你好 ， 小 猴子 ！', en:'Hello, little monkey!'}
+    {at:16.4, zh:'你好 ， 小 猴子 ！', en:'Hello, little monkey!'}
   ],
 
   // Other scenes told like the opening, played by the scene step: their captions, as the opening's (teach: the word

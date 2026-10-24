@@ -624,7 +624,9 @@ function drawScene(t, now, mid = 0){   // mid: from 0 (the mountain on the right
   const dawn = clamp((t - 2.8) / 2.6, 0, 1);
   // On the title screen the mountain and the stone are moved to the right, leaving the sky on the left for the title's
   // words; in the opening they're in the middle, with the story along the bottom.
-  const dx = Math.round(W * (.68 - .18 * mid) - 88);
+  const dx = Math.round(W * (.68 - .18 * mid) - 88), up = heavenUp(t);
+  if (up >= 1){ drawHeaven(t, now, dx); return; }
+  b.save(); b.translate(0, Math.round(up * H));   // (following the light up into the sky: heavenUp, below)
   drawMountain(dawn, now, dx);
   b.save(); b.translate(dx, 0);
   // stone, glow, cracks, birth
@@ -641,19 +643,48 @@ function drawScene(t, now, mid = 0){   // mid: from 0 (the mountain on the right
     b.drawImage(SPR.rock, 0, 0, 8, 16, 72 - off, 46, 16, 32);
     b.drawImage(SPR.rock, 8, 0, 8, 16, 88 + off, 46, 16, 32);
     const blink = t > 9.6 && t < 9.8;
-    const hop = t > 13 ? Math.round(Math.abs(Math.sin((t - 13) * 5)) * 4) : 0;
+    const hop = t > HEAVEN.hello - .2 ? Math.round(Math.abs(Math.sin((t - HEAVEN.hello + .2) * 5)) * 4) : 0;
     b.drawImage(monkeySprite('player', 'down', blink), 72, 38 - hop, 32, 32);
-    if (t > 10.6 && t < 13){
-      const k = clamp((t - 10.6) / .4, 0, 1) * (t > 12.5 ? (13 - t) / .5 : 1);
-      b.globalAlpha = k;
-      for (const [ex, dir] of [[85,-1],[91,1]]){
-        for (let y = 0; y < 49; y++){ const xx = ex + Math.round(dir * (49 - y) * .18); R(b, xx, y, 2, 1, '#FFE27A'); if (y % 3 === 0) R(b, xx - 1, y, 4, 1, 'rgba(255,246,216,.7)'); }
-      }
-      b.globalAlpha = 1;
-    }
+    const k = eyeLight(t);   // the light from its eyes, shooting up into the sky
+    if (k > 0){ b.globalAlpha = k; for (let y = 0; y < 49; y++) eyeBeams(0, y, 49 - y); b.globalAlpha = 1; }
   }
   b.restore();
+  b.restore();
+  if (up > 0){ b.save(); b.translate(0, Math.round((up - 1) * H)); drawHeaven(t, now, dx); b.restore(); }
   if (t > 8.6 && t < 9.4){ b.globalAlpha = clamp(1 - Math.abs(t - 8.8) / .6, 0, 1); R(b, 0, 0, W, H, '#FFFDF0'); b.globalAlpha = 1; }
+}
+// The light from the little monkey's eyes (it's born at 10.6, as the caption 它的眼睛里有光。 shows): two beams shooting up
+// into the sky. In the book, they reach heaven, and the Jade Emperor sends Thousand-Mile Eye and Wind-Following Ear out of
+// the Southern Gate of Heaven to look and listen (moved here from the lookout's view on 23 October 2026: the view is better
+// on its own, and this is when it happens). So the view follows the light up into the sky (up), the gods step out to look
+// (out), the view comes back down to the little monkey (down) and the light fades (fade); then you hear 你好，小猴子！
+// (hello: the opening's last caption, in the area's intro).
+const HEAVEN = {up:[11.3, 12.1], out:[12.4, 12.8], down:[14.8, 15.6], fade:[15.2, 15.9], hello:16.4};
+const smooth = k => k * k * (3 - 2 * k);
+function heavenUp(t){   // how far the view has gone up, following the light (0: the mountain, 1: heaven)
+  const [u0, u1] = HEAVEN.up, [d0, d1] = HEAVEN.down;
+  return t <= u0 || t >= d1 ? 0 : t < u1 ? smooth((t - u0) / (u1 - u0)) : t <= d0 ? 1 : smooth((d1 - t) / (d1 - d0));
+}
+const eyeLight = t => t <= 10.6 || t >= HEAVEN.fade[1] ? 0 : clamp((t - 10.6) / .4, 0, 1) * clamp((HEAVEN.fade[1] - t) / (HEAVEN.fade[1] - HEAVEN.fade[0]), 0, 1);
+function eyeBeams(X, y, h){   // a row of both beams, at y, h pixels above the little monkey's eyes (X: where the mountain's drawn from)
+  for (const [ex, dir] of [[85, -1], [91, 1]]){ const xx = X + ex + Math.round(dir * h * .18); R(b, xx, y, 2, 1, '#FFE27A'); if (y % 3 === 0) R(b, xx - 1, y, 4, 1, 'rgba(255,246,216,.7)'); }
+}
+// Heaven, high above the mountain, in the opening: the gate of heaven standing on the clouds, 南天门 on its plaque; the light
+// from below bursting up through the clouds in front of it, lighting them gold; and the two gods stepping out from behind
+// its pillars to look down at it (godsOut). Drawn twice as big as in a far-off view, so you can see them.
+const godsOut = t => clamp((t - HEAVEN.out[0]) / (HEAVEN.out[1] - HEAVEN.out[0]), 0, 1);
+function drawHeaven(t, now, dx){
+  const W = VW*T, H = VH*T, k = eyeLight(t), sea = 92;   // (sea: the top of the clouds the gate stands on)
+  for (let y = 0; y < H; y += 2) R(b, 0, y, W, 2, mix('#4F86CF', '#CFE9F6', y / sea));   // the sky, high above
+  cloudPuff(6 + t * 2, 18, .8); cloudPuff(196 - t * 1.5, 30, .7);   // far-off clouds, drifting
+  b.save(); b.scale(2, 2); heavenGate(godsOut(t), 35); b.restore();
+  for (let i = 0; i < 9; i++) cloudPuff(-14 + i * 30 + (i % 2) * 6, sea + 4 + (i % 3) * 5, 1.2);   // the sea of clouds below
+  for (let y = sea + 14; y < H; y += 2) R(b, 0, y, W, 2, mix('#FFFFFF', '#79BFE6', (y - sea - 14) / (H - sea - 14)));   // under them, thinning out to the morning sky below
+  if (k <= 0) return;
+  b.globalAlpha = k * .55; disc(b, dx + 88, sea + 6, 22, '#FFF1B8'); b.globalAlpha = 1;   // the clouds lit gold where it bursts through
+  b.globalAlpha = k;
+  for (let y = sea - 6; y < H; y++){ b.globalAlpha = k * clamp((y - sea + 6) / 14, 0, 1); eyeBeams(dx, y, 49 + H - y); }   // the light, from far below
+  b.globalAlpha = 1;
 }
 
 /* ---- the end of the prologue: becoming king ---- */
@@ -805,13 +836,7 @@ function drawPaintingSchool(t, now, def){
 function drawLookout(t, now){
   const W = VW*T, hz = 46;
   for (let y = 0; y < hz; y += 2) R(b, 0, y, W, 2, mix('#6AB4E2', '#D6EEF7', y / hz));   // the sky
-  const cloud = (cx, cy, s) => {
-    cx = Math.round(cx); const r = k => Math.round(k * s);
-    disc(b, cx, cy, r(5), '#FFFFFF'); disc(b, cx + r(7), cy - r(3), r(7), '#FFFFFF'); disc(b, cx + r(15), cy, r(5), '#FFFFFF');
-    R(b, cx - r(4), cy, r(24), r(5), '#FFFFFF'); R(b, cx - r(4), cy + r(5), r(24), 1, '#C9DFEC');
-  };
-  heavenGate(godsPeek(now), cloud);
-  const drift = t * 1.2;   // (the clouds drift slowly to the right)
+  const cloud = cloudPuff, drift = t * 1.2;   // (the clouds drift slowly to the right)
   cloud(18 + drift, 12, 1); cloud(140 + drift * .7, 8, 1.3); cloud(204 + drift * .5, 26, .7);
   for (const [k, by] of [[0, 20], [.12, 25]]){   // two birds flying past
     const bx = Math.round(-10 + ((t * 22 + k * 260) % 280)), flap = Math.sin(now / 90 + k * 9) > 0;
@@ -847,19 +872,19 @@ function drawLookout(t, now){
   for (const px of [4, 46, 88, 147, 189, 231]){ R(b, px, 88, 5, 40, WOOD[0]); R(b, px, 88, 4, 40, WOOD[2]); R(b, px, 88, 1, 40, WOOD[3]); R(b, px, 88, 5, 1, WOOD[4]); }   // the railing
   for (const ry of [92, 101]){ R(b, 0, ry, W, 4, WOOD[0]); R(b, 0, ry, W, 3, WOOD[2]); R(b, 0, ry, W, 1, WOOD[3]); }
 }
-// High in the sky over the lookout, the gate of heaven in the clouds, 南天门 (the Southern Gate of Heaven), and two gods
-// peeking out from behind its pillars for a moment now and then, then ducking back: a secret, with nothing said about it
-// (decided 23 October 2026). In the book, when you were born and light shone from your eyes, the Jade Emperor sent these
-// two out of this gate to see and hear what it was: Thousand-Mile Eye (千里眼) and Wind-Following Ear (顺风耳). The book
-// doesn't say how they look, so they're drawn as temples show them (redesigned 23 October 2026), in armour, each with a
-// horned helmet: Thousand-Mile Eye red-faced, his eyes wide and his mouth shut, a hand held flat over his brow to see far;
-// Wind-Following Ear green-faced, his mouth open, cupping a huge ear (temples pair one red face with one green; which is
-// which varies from place to place). How far out they are (0 to 1) now: every few seconds, whatever the scene's clock is
-// doing (it waits at each line until Next).
-function godsPeek(now){
-  const c = (now / 1000) % 5;
-  return clamp(c < .3 ? c / .3 : c < 1.4 ? 1 : c < 1.7 ? (1.7 - c) / .3 : 0, 0, 1);
+// A puffy white cloud in a scene's sky: its left end at cx, cy; s, its size.
+function cloudPuff(cx, cy, s){
+  cx = Math.round(cx); const r = k => Math.round(k * s);
+  disc(b, cx, cy, r(5), '#FFFFFF'); disc(b, cx + r(7), cy - r(3), r(7), '#FFFFFF'); disc(b, cx + r(15), cy, r(5), '#FFFFFF');
+  R(b, cx - r(4), cy, r(24), r(5), '#FFFFFF'); R(b, cx - r(4), cy + r(5), r(24), 1, '#C9DFEC');
 }
+// The gate of heaven in the clouds, 南天门 (the Southern Gate of Heaven), in the opening (drawHeaven), and the two gods who
+// step out from behind its pillars (k: how far out they are, 0 to 1; x0: where it's drawn from). In the book, when you were
+// born and light shone from your eyes, the Jade Emperor sent these two out of this gate to see and hear what it was:
+// Thousand-Mile Eye (千里眼) and Wind-Following Ear (顺风耳). The book doesn't say how they look, so they're drawn as temples
+// show them (decided 23 October 2026), in armour, each with a horned helmet: Thousand-Mile Eye red-faced, his eyes wide and
+// his mouth shut, a hand held flat over his brow to see far; Wind-Following Ear green-faced, his mouth open, cupping a huge
+// ear (temples pair one red face with one green; which is which varies from place to place).
 const GODS = {
   eye: sprite(["......Hh...hH.", "......hh...hH.", ".....ooooooooo", ".....ogggggggo", "oooooooooooRro", "opppppppppoRro", "ooooooooooorro",
     "orRo.orwkrwkro", "orRo.orwwrwwro", "orRo.orrrrrrro", ".orRoorbbbbbro", ".orRooRrrrrRo.", "..oaaaoyyyyyo.", "..oaAaaaaaAaao", "..oaaaaaaaaaao"],
@@ -868,8 +893,8 @@ const GODS = {
     "offfffffoeEEeocc", "ofnnnnnffoeEeocc", "oftnnntfooeeeoc.", ".offffffo.oooc..", "..oyyyyyo..cc...", ".ommmmmmmo......", "ommmmymmmmo....."],
     {o:'#1E2A1A', h:'#F2E6C4', H:'#C9B98E', g:'#E8B83E', f:'#4FA65A', e:'#5FBB6A', E:'#2F6E38', c:'#8FD88F', w:'#FFFFFF', k:'#141414', n:'#3A1010', t:'#FFFFFF', y:'#E8B83E', m:'#B8322A'})
 };
-function heavenGate(k, cloud){
-  const x0 = 70, red = '#B8322A', redD = '#7E1F18', gold = '#E8B83E', goldD = '#A8771E', goldL = '#F8DC80', jade = '#5FB49C';
+function heavenGate(k, x0){
+  const red = '#B8322A', redD = '#7E1F18', gold = '#E8B83E', goldD = '#A8771E', goldL = '#F8DC80', jade = '#5FB49C';
   b.save(); b.translate(0, 4);
   disc(b, x0 + 25, 25, 14, '#FFF3C8'); disc(b, x0 + 25, 25, 9, '#FFFBEA');   // the light of heaven, through the gateway
   const L = x0 + 6, Rx = x0 + 44, hide = Math.round((1 - k) * 15);   // the pillars' outer edges; how far in the gods still are
@@ -884,7 +909,7 @@ function heavenGate(k, cloud){
   R(b, x0 + 9, 0, 2, 1, goldD); R(b, x0 + 39, 0, 2, 1, goldD);
   R(b, x0 + 11, 15, 28, 13, gold); R(b, x0 + 12, 16, 26, 11, '#24365F');   // the plaque, hung under the beam
   write(b, '南天门', x0 + 14, 17, goldL);   // its name, the Southern Gate of Heaven
-  cloud(x0 - 8, 36, 1); cloud(x0 + 14, 38, .9); cloud(x0 + 36, 36, 1);   // the clouds it stands on
+  cloudPuff(x0 - 8, 36, 1); cloudPuff(x0 + 14, 38, .9); cloudPuff(x0 + 36, 36, 1);   // the clouds it stands on
   b.restore();
 }
 // The pictures for the area's scenes (AREA.scenes), by name (a scene's art, or else its id); the opening's are drawScene, above.
