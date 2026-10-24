@@ -86,3 +86,35 @@ test('win a word game with the squirrel and it gives you a peach; the goat gives
     assert.equal(get('__replied'), won ? '谢谢' : null, 'you say thank you for a present');
   }
 });
+
+test('a present for your bag when it’s full: they keep it for you, and your thanks waits till you come back with room (24 October 2026)', async () => {
+  const {run, get} = game({bag: {'桃子': 3}, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, chapter: 1, trainee2: 1}}});
+  run("globalThis.__narr = []; globalThis.__replied = []; globalThis.__games = 0; showDialog = async () => {}; showNarration = async (t, last) => { __narr.push([t, !!last]); }");
+  run("confirmBox = async () => true; encounter = async () => { __games++; return true; }; replyWith = async w => { __replied.push(w); return true; }");
+  const monkey = "ALL_NPCS.find(n => n.id === 'trainee2')";
+  await run(`talk(${monkey})`);
+  assert.deepEqual(get('__narr'), [['The monkey offers you a 桃子 (peach), but your bag is full. Come back for it when you have room.', true]], 'it offers you its peach, and that’s the end (Done)');
+  assert.deepEqual(get('[__replied, S.bag, here().kept]'), [[], {'桃子': 3}, {trainee2: '桃子'}], 'no thanks yet: it keeps the peach for you');
+  assert.equal(get(`keptFor(${monkey})`), null, 'no ! for it while there’s still no room');
+  run('__narr = []');
+  await run(`talk(${monkey})`);
+  assert.deepEqual(get('[__narr, __replied, __games]'), [[['The monkey still has a 桃子 (peach) for you, but your bag is full. Come back for it when you have room.', true]], [], 1],
+    'come back with no room: it still has it for you (and no new word game)');
+  run("S.bag['桃子'] = 2; __narr = []");
+  assert.ok(run(`hasNews(${monkey})`) && get(`keptFor(${monkey})`) === '桃子', 'eat one, and it has a ! for you');
+  await run(`talk(${monkey})`);
+  assert.deepEqual(get('[__narr, __replied, S.bag, here().kept, __games]'), [[['The monkey gives you a 桃子 (peach) for your bag.', false]], ['谢谢'], {'桃子': 3}, {}, 1],
+    'it gives it to you now, and you thank it');
+  assert.equal(get(`keptFor(${monkey})`), null);
+  await run(`talk(${monkey})`);
+  assert.equal(get('__games'), 2, 'then it plays a word game again');
+});
+
+test('a squirrel or goat’s present the same way, and a game saved before 24 October 2026 has no one keeping anything', async () => {
+  const {run, get} = game({bag: {'苹果': 3}});
+  run("globalThis.__narr = []; showDialog = async () => {}; showNarration = async t => { __narr.push(t); }; confirmBox = async () => true; encounter = async () => true; replyWith = async () => true");
+  await run("talk(ALL_NPCS.find(n => n.id === 'goat'))");
+  assert.deepEqual(get('[__narr, here().kept]'), [['The 山羊 (goat) offers you a 苹果 (apple), but your bag is full. Come back for it when you have room.'], {goat: '苹果'}]);
+  const old = game();
+  assert.deepEqual(old.get('here().kept'), {}, 'filled in for an old save');
+});

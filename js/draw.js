@@ -413,7 +413,7 @@ function drawWorld(now){
     }
     if (FOLLOWERS.includes(n)) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
     // a ! while they're stopping you (the stopsYou step), or a ! or ? from the area's bubbles
-    const bub = now < (n.calls || 0) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));
+    const bub = now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you)
     if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
   drawDragonflies(cx, cy, now);

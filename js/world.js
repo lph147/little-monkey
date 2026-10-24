@@ -308,12 +308,12 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   set(s){ Object.assign(here(), s.set); save(); placeCharacters(); refreshMap(); },
   async request(s, who, last){ await request(REQUESTS.find(r => r.id === s.request), speaker(who), last); },
   async shop(s, who){ await shop(speaker(who)); },
-  async wordGame(s, who){   // win: what happens if you win, such as a present
+  async wordGame(s, who, last){   // win: what happens if you win, such as a present
     const g = s.wordGame;
     if (!canEncounter()){ toast(g.notYet); return; }
     if (!(await confirmBox(speaker(who), fill(g.ask), 'Play', 'Not now'))) return;
     SFX.encounter();
-    if (await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}) && g.win) await runSteps(g.win, who);
+    if (await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who]}) && g.win) await runSteps(g.win, who, last);
   },
   // Counting with the one you're talking to (countGame: one of the area's countGames), such as the stones in the little
   // monkeys' tower on the hillside: COUNT_GAME counting questions, as in a number lesson (js/quiz.js), each about a
@@ -350,9 +350,22 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const text = fill(s.note || `You get ${s.shells} 🐚.`);
     if (who) await showNarration(text, last); else toast(text);
   },
-  async bag(s, who, last){   // food for your bag, if there's room (in a conversation, the message waits in the speech box)
-    const text = intoBag(s.bag) ? fill(s.note || `A {${s.bag}} for your bag.`) : `Your bag is full of ${wz(s.bag)}.`;
-    if (who) await showNarration(text, last); else toast(text);
+  // Food for your bag, if there's room (in a conversation, the message waits in the speech box). With no room, the one
+  // giving it keeps it for you (here().kept), and what comes after it (your thanks) waits until you come back with room
+  // (decided 24 October 2026: it said your bag was full, then you thanked them for it anyway). ends: whether the list
+  // it's in ends the conversation.
+  async bag(s, who, last, ends){
+    if (intoBag(s.bag)){
+      if (who && here().kept[who]){ delete here().kept[who]; save(); }
+      const text = fill(s.note || `A {${s.bag}} for your bag.`);
+      if (who) await showNarration(text, last); else toast(text);
+      return;
+    }
+    if (!who){ toast(`Your bag is full of ${wz(s.bag)}.`); return; }
+    const again = here().kept[who] === s.bag;
+    here().kept = {...here().kept, [who]:s.bag}; save();
+    await showNarration(`${cap(theName(who))} ${again ? 'still has' : 'offers you'} a ${wz(s.bag)}${again ? ' for you' : ''}, but your bag is full. Come back for it when you have room.`, ends);
+    return STOP;
   },
   async reply(s, who, last){ await replyWith(s.reply, {about:s.about, pic:s.pic, who, last}); },   // (about, pic: what you're answering, if it isn't a line just said)
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
@@ -535,7 +548,7 @@ const STOP = 'stop';
 const SLEEP_MS = 2400;   // how long you sleep in a bed (the sleep step)
 const stepKind = s => Object.keys(s).find(k => STEPS[k]);
 async function runSteps(steps, who, ends){
-  for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i)) === STOP) return STOP;
+  for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i), !!ends) === STOP) return STOP;
 }
 // Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map.
 const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep'];
@@ -595,10 +608,20 @@ const caughtCount = () => Object.keys(WORDS).filter(w => lvl(w) >= 1).length;
 const talkPart = n => (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
 let lastTalk = null;   // {id, part}
 // A character with something new for you: a ! or ? over them, and not what they've just said.
-const hasNews = n => !!(AREA.bubbles[n.id] || []).find(b => matches(b.if)) && !!talkPart(n) && !(lastTalk && lastTalk.id === n.id && lastTalk.part === talkPart(n));
+const hasNews = n => !!keptFor(n) || (!!(AREA.bubbles[n.id] || []).find(b => matches(b.if)) && !!talkPart(n) && !(lastTalk && lastTalk.id === n.id && lastTalk.part === talkPart(n)));
+// Food someone kept for you, when your bag was full (the bag step), now there's room for it: they have a ! for you.
+const keptFor = n => { const w = here().kept[n.id]; return w && !bagFull(w) ? w : null; };
+// What they do when you come back for it: the steps from where they gave it you (such as winning their word game: the
+// present, then your thanks), as the content has them.
+function keptSteps(who, w){
+  const lists = [], scan = steps => { lists.push(steps); for (const s of steps) for (const win of [s.win, (s.wordGame || {}).win]) if (win) scan(win); };
+  (AREA.talk[who] || []).forEach(p => scan(p.do));
+  for (const l of lists){ const i = l.findIndex(s => s.bag === w); if (i >= 0) return l.slice(i); }
+  return [{bag:w}];
+}
 async function talk(n){
   n.dir = OPP[pl.dir];
-  const part = talkPart(n);
+  const w = here().kept[n.id], part = w ? {do:keptSteps(n.id, w)} : talkPart(n);   // (something they kept for you comes first)
   if (!part) return;
   lastTalk = {id:n.id, part};
   const outer = caughtBefore, was = talkingTo;   // (a character can stop you during another conversation)
