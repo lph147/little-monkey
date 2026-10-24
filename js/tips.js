@@ -14,14 +14,15 @@ const TIPS = {
   look: {at:'#btnA', text:'Press <b>A</b> to look', when:() => aActs() && !npcAt(...facing()) && promptFor(...facing()) === 'Look'},
   // a word in your very first line (decided 24 October 2026: "Tap any word…" sat under each of your first few lines)
   tap: {at:'#talk .tok', text:'Tap any word to see what it means', when:() => !!talkNext && !talkMove && Object.keys(S.lines).length <= TAP_TIP_LINES},
-  grey: {at:'#talk .tok.listen', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove}
+  // every grey word in the line lit, not just the first (decided 24 October 2026); the bubble points at the first
+  grey: {at:'#talk .tok.listen', all:true, text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove}
   // (Tasks and Menu had tips too; the old monkey tells you about them instead, decided 18 October 2026.)
 };
-let tip = null;   // the tip showing: {id, target, until}
+let tip = null;   // the tip showing: {id, target, lit: what glows (target, or with all, every match), until}
 const tipBox = () => $('#tip') || document.body.appendChild(Object.assign(document.createElement('div'), {id:'tip', className:'tipb', hidden:true}));
 function hideTip(){
   if (!tip) return;
-  tip.target.classList.remove('tipglow'); tipBox().hidden = true; tip = null;
+  tip.lit.forEach(el => el.classList.remove('tipglow')); tipBox().hidden = true; tip = null;
 }
 function tipDone(id){ if (!S.tips[id]){ S.tips[id] = 1; save(); } if (tip && tip.id === id) hideTip(); }
 // You pressed a control (sel: '#btnA', '#startBtn' or '#selectBtn'): a tip pointing at it is done.
@@ -48,9 +49,10 @@ function updateTips(now){
     if (S.tips[id] || !t.when()) continue;
     const target = $(t.at);
     if (!target || target.offsetParent === null) continue;
-    tip = {id, target, until:t.lasts ? now + t.lasts : 0};
+    const [box0, ...inside] = t.at.split(' ');   // (with all: every match inside what its at starts with, such as #talk)
+    tip = {id, target, lit:t.all ? [...$(box0).querySelectorAll(inside.join(' '))] : [target], until:t.lasts ? now + t.lasts : 0};
     const box = tipBox(); box.innerHTML = t.text; box.hidden = false;
-    target.classList.add('tipglow'); placeTip();
+    tip.lit.forEach(el => el.classList.add('tipglow')); placeTip();
     if (id === 'grey' || id === 'tap'){ S.tips[id] = 1; save(); }
     return;
   }

@@ -4,11 +4,11 @@
 let bigSparkles = false;   // bigger and never out, while the area's bigSparkles matches, such as while you learn your first words (set each frame)
 function sparkle(X, Y, now, ph){
   const s = (Math.sin(now/260 + ph) + 1) / 2;
-  if (bigSparkles){
-    const glow = `rgba(255,226,122,${(.25 + s * .3).toFixed(2)})`, n = s > .5 ? 4 : 3;
-    R(b, X-2, Y-1, 5, 3, glow); R(b, X-1, Y-2, 3, 1, glow); R(b, X-1, Y+2, 3, 1, glow);   // a soft glow
-    for (let i = 2; i <= n; i++){ R(b, X-i, Y, 1, 1, '#FFE27A'); R(b, X+i, Y, 1, 1, '#FFE27A'); R(b, X, Y-i, 1, 1, '#FFE27A'); R(b, X, Y+i, 1, 1, '#FFE27A'); }
-    R(b, X-1, Y, 3, 1, '#FFFFFF'); R(b, X, Y-1, 1, 3, '#FFFFFF');
+  if (bigSparkles){   // between the two sizes (decided 24 October 2026: twice as big was a bit much): arms of 2 or 3, a faint glow
+    const glow = `rgba(255,226,122,${(.15 + s * .2).toFixed(2)})`, n = s > .55 ? 3 : 2;
+    R(b, X-1, Y-1, 3, 3, glow);
+    for (let i = 1; i <= n; i++){ R(b, X-i, Y, 1, 1, '#FFE27A'); R(b, X+i, Y, 1, 1, '#FFE27A'); R(b, X, Y-i, 1, 1, '#FFE27A'); R(b, X, Y+i, 1, 1, '#FFE27A'); }
+    R(b, X, Y, 1, 1, '#FFFFFF');
     return;
   }
   if (s < .25) return;

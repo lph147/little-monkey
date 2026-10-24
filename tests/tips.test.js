@@ -80,6 +80,10 @@ test('the grey-words tip shows during a line, once', () => {
   game.run('updateTips(1000)');
   assert.equal(showing(game), 'grey');
   assert.equal(get(game, 'S.tips.grey'), 1, 'it counts as seen straight away');
+  const grey = game.el('#talk').querySelectorAll('.tok.listen');
+  assert.ok(grey.length > 1 && grey.every(t => t.classList.contains('tipglow')), 'every grey word lit, not just the first');
+  game.run('hideTip()');
+  assert.ok(!game.el('#talk').querySelectorAll('.tipglow').length, 'and none once it goes');
 });
 
 test('no tips on the title screen or in the opening', () => {
