@@ -551,7 +551,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     homeGround: {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       legend: {
-        'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'}   // the bridge over the stream (chapter 1's bridges teach 桥)
+        'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'},   // the bridge over the stream (chapter 1's bridges teach 桥)
+        'O': {look:'water', word:'水', note:'A little pool of clear water.'}   // its pool: just water, with no fish in it (decided 24 October 2026: it showed 鱼, fish, as the meadow's pond does)
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall

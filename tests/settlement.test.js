@@ -88,3 +88,14 @@ test('chapter 1 begins with the old monkey: we have a home now; he follows you t
   assert.ok(get(g, "areaChecklist()[0][1]"), 'chapter 1’s first step is ticked off');
   assert.match(g.run('tasksHint()'), /school first/);
 });
+
+test('the home ground’s pool is just water: A at it shows 水 (water), as there are no fish in it (24 October 2026)', async () => {
+  const g = chapterOne({home: 2}, {place: 'homeGround', x: 18, y: 14, dir: 'down'});
+  g.run("globalThis.__cards = []; showNotice = async (w, o = {}) => { __cards.push([w, o.note || null]); }");
+  assert.deepEqual(get(g, '[tileAt(18, 15).look, tileAt(18, 15).word]'), ['water', '水']);
+  await play(g, 'interact(18, 15)');
+  assert.deepEqual(get(g, '__cards'), [['水', 'A little pool of clear water.']]);
+  assert.ok(!get(g, 'AREA.fish').some(f => f[2] === 'homeGround'), 'and no fish jump in it');
+  g.run("enterPlace('meadow')");
+  assert.equal(get(g, 'tileAt(11, 9).word'), '鱼', 'the meadow’s pond still has its fish');
+});

@@ -494,6 +494,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Fruit, from the monkey who wants it (24 October 2026): the hungry monkey teaches 水果 as he asks, and 吃 as you give him the fruit he wants; each fruit tree teaches its own fruit (桃子, 苹果); the big monkey in the meadow teaches 我, saying who he is; a game without 水果 learns it from the hungry monkey
 - [x] The lookout's goat walks you to its railing and shows you the view, the first time (24 October 2026): the leadTo step, which walks a character and you, a step at a time, the shortest way
 - [x] The colour lessons paint only the lanterns (24 October 2026): red paints them, as before; the other colours paint nothing, the school staying as it was built; A at a lantern shows 红色 again (spots: parts of something bigger that A looks at on their own)
+- [x] The home ground's pool shows 水 (water) when you look at it, not 鱼 (fish): no fish live in it (24 October 2026)
 - [x] Friends' pages (24 October 2026): tap a friend in the menu's Friends for its word's page, as in the Word Scroll, its English and how it's made behind English
 - [ ] The feast announced: the old monkey's 有, the big table under the home ground's big tree, the hungry monkey's 没有, and the table's checklist
 - [ ] The path east, with a butterfly (蝴蝶) among its flowers, its new word, and the bees' valley (百花谷): wasps (黄蜂) and six bee friends (蜜蜂)
