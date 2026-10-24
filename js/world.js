@@ -163,7 +163,7 @@ function matches(cond){   // does the game match everything in an if?
 const CALL_MS = 900;   // how long a character's ! shows before they talk to you, when they stop you (the stopsYou step)
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
-  change:['at'], collect:['for','count','note','each','full']};   // extra settings a step can have
+  change:['at'], collect:['for','count','note','each','full'], leadTo:['you']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 // How many things you could count with the numbers you know: never two (NOT_HOW_MANY, js/quiz.js).
@@ -448,6 +448,34 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const now = performance.now(), going = was.filter(n => !FOLLOWERS.includes(n) && n.place === PLACE);
     going.forEach((n, i) => { const [fx, fy] = from[was.indexOf(n)]; n.mv = {fx, fy, t0:now + i * 150, dur:LEAP_MS, far:true}; });
     if (going.length){ SFX.turn(); await sleep(LEAP_MS + 150 * (going.length - 1)); }
+  },
+  // The character you're talking to leads you somewhere, such as the lookout's goat walking you to its railing to show
+  // you the view (decided 24 October 2026: a player it told about the view walked on without seeing it): it walks to its
+  // square (leadTo), and you after it to yours (you, and the way you face there, such as at the railing), a step at a
+  // time, each the shortest way. Nothing happens on the squares you're led over, as when you walk.
+  async leadTo(s, who){
+    const n = NPCS.find(c => c.id === who), [yx, yy, dir] = s.you;
+    if (!n) return;
+    held = null; queued = null;
+    const theirs = pathTo([n.x, n.y], s.leadTo, {blocked:[pl.x, pl.y]}), yours = pathTo([pl.x, pl.y], [yx, yy], {free:n});
+    const at = (sq, x, y) => sq[0] === x && sq[1] === y;
+    while (theirs.length || yours.length){
+      const now = performance.now();
+      let moved = false;
+      if (theirs.length && !at(theirs[0], pl.x, pl.y)){   // it goes first, once you're not in its way
+        const [x, y] = theirs.shift();
+        n.mv = {fx:n.x, fy:n.y, t0:now, dur:STEP}; n.dir = dirOf(x - n.x, y - n.y); n.parity = (n.parity || 0) ^ 1; n.x = x; n.y = y; moved = true;
+      }
+      if (yours.length && !at(yours[0], n.x, n.y)){
+        const [x, y] = yours.shift();
+        pl.dir = dirOf(x - pl.x, y - pl.y); pl.mv = {fx:pl.x, fy:pl.y, tx:x, ty:y, t0:now, led:true}; pl.parity ^= 1; moved = true;
+      }
+      if (!moved) break;   // (in each other's way: you stop where you are)
+      await sleep(STEP);
+      if (pl.mv && pl.mv.led){ pl.x = pl.mv.tx; pl.y = pl.mv.ty; pl.px = pl.x * T; pl.py = pl.y * T; pl.mv = null; }   // (there, even if no frame has been drawn)
+    }
+    pl.dir = n.dir = dir || pl.dir; pl.turnT = performance.now();
+    S.pos = {place:PLACE, x:pl.x, y:pl.y, dir:pl.dir}; save();
   },
   // A character stops you as you walk past (in an event, near them), like a trainer in Pokémon: a ! pops up over them,
   // you turn to face them, and they talk to you.
@@ -757,6 +785,23 @@ async function goThrough(e){
   if (t.learnOnStep && lvl(t.word) === 0) await showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
 }
 // A little hop, in an arc, to (tx, ty) in the map (pixels), such as onto a bed and off it again.
+// The shortest way from one square to another (from and to: [x, y]), through squares you can walk on and not through
+// anyone (but free: a character who'll move out of the way), nor blocked (a square to keep off, such as yours, for someone
+// leading you): the squares after from, in order, or none if there's no way.
+function pathTo(from, to, {free = null, blocked = null} = {}){
+  const key = (x, y) => x + ',' + y, back = new Map([[key(...from), null]]), queue = [from];
+  const open = (x, y) => !!tileAt(x, y).walk && !(blocked && blocked[0] === x && blocked[1] === y) && !exitAt(x, y)
+    && (!npcAt(x, y) || npcAt(x, y) === free) && !animalAt(x, y);
+  while (queue.length){
+    const [x, y] = queue.shift();
+    if (x === to[0] && y === to[1]){ const path = []; for (let k = key(x, y); back.get(k); k = back.get(k)) path.unshift(k.split(',').map(Number)); return path; }
+    for (const [dx, dy] of Object.values(DV)){
+      const nx = x + dx, ny = y + dy;
+      if (!back.has(key(nx, ny)) && open(nx, ny)){ back.set(key(nx, ny), key(x, y)); queue.push([nx, ny]); }
+    }
+  }
+  return [];
+}
 async function hop(tx, ty, ms = 300){
   const fx = pl.px, fy = pl.py, n = Math.max(1, Math.round(ms / 17));
   for (let i = 1; i <= n; i++){ const p = i / n; pl.px = fx + (tx - fx) * p; pl.py = fy + (ty - fy) * p - Math.sin(p * Math.PI) * 6; await sleep(17); }

@@ -54,7 +54,9 @@ function update(now){
     const m = pl.mv, p = Math.min(1, (now - m.t0) / (m.hop ? STEP * 1.6 : STEP));   // a hop down a ledge takes a little longer
     pl.px = (m.fx + (m.tx - m.fx) * p) * T; pl.py = (m.fy + (m.ty - m.fy) * p) * T - (m.hop ? Math.sin(p * Math.PI) * 7 : 0);
     if (p >= 1){
-      pl.x = m.tx; pl.y = m.ty; pl.mv = null; busy = true; lastMoveEnd = now;
+      pl.x = m.tx; pl.y = m.ty; pl.mv = null;
+      if (m.led) return;   // (led there by someone, the leadTo step: nothing happens as you arrive)
+      busy = true; lastMoveEnd = now;
       const was = shownAt;   // (if arriving showed you something, such as someone stopping you to talk, it rests when it ends)
       Promise.resolve(arrive(pl.x, pl.y)).then(runEvents).finally(() => { busy = false; if (shownAt !== was) finished(); updateHUD(); });
     }

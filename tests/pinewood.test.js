@@ -283,7 +283,7 @@ test('the edges between the hillside’s terraces are one drop, as high all alon
 });
 
 test('A at the lookout’s railing shows you the view, a picture like the opening’s, with nothing new in it', async () => {
-  const g = game(BUILDING, {place: 'hillside', x: 21, y: 21, dir: 'down'}, KNOWS);
+  const g = game({...BUILDING, lookTip: 1}, {place: 'hillside', x: 21, y: 21, dir: 'down'}, KNOWS);   // (once its goat has shown you)
   g.run("globalThis.__scenes = []; storyScene = async id => { __scenes.push(id); }");
   await press(g, 21, 21, 'down');
   assert.deepEqual(get(g, '__scenes'), ['lookout']);
@@ -295,21 +295,42 @@ test('A at the lookout’s railing shows you the view, a picture like the openin
   assert.equal(get(g, '!!AREA.scenes.lookout.watch'), false, 'not one to watch again from Settings');
 });
 
-test('a goat on the lookout stops you as you come up the steps beside it, the first time, to tell you to look at the view', async () => {
+test('a goat on the lookout stops you as you come up the steps beside it, the first time, and walks you to its railing to show you the view (24 October 2026)', async () => {
   const bubble = g => get(g, "((AREA.bubbles.lookoutGoat || []).find(b => matches(b.if)) || {}).show || ''");
+  const goat = "(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'lookoutGoat'))";
   for (const x of [18, 19]){   // up either side of the steps
     const g = game(BUILDING, {place: 'hillside', x, y: 22, dir: 'up'}, KNOWS);
-    assert.deepEqual(get(g, "(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'lookoutGoat'))"), ['hillside', 20, 21], 'on the lookout, by its railing');
+    assert.deepEqual(get(g, goat), ['hillside', 20, 21], 'on the lookout, by its railing');
     assert.equal(bubble(g), '!');
     face(g, x, 21, 'up');
-    await play(g, `arrive(${x}, 21).then(runEvents)`);
-    assert.deepEqual(get(g, '__said'), ['你好！', '去看看！'], 'it stops you: hello, and go and take a look!');
-    assert.match(get(g, '__notes').join(' '), /Face the railing and press A/);
+    const walked = new Set();   // the squares you're seen on, or stepping to, as it goes
+    let done = false; const p = Promise.resolve(g.run(`arrive(${x}, 21).then(runEvents)`)).then(() => { done = true; });
+    for (let i = 0; i < 400 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); walked.add(g.run('JSON.stringify(pl.mv ? [pl.mv.tx, pl.mv.ty] : [pl.x, pl.y])')); }
+    await p;
+    assert.deepEqual(get(g, '__said'), ['你好！', '来看看！'], 'it stops you: hello, and come and take a look!');
+    assert.deepEqual(get(g, '[S.pos, [pl.x, pl.y, pl.dir]]'), [{place: 'hillside', x: 21, y: 21, dir: 'down'}, [21, 21, 'down']], 'it walks you to the railing, facing it');
+    assert.ok(walked.has('[20,21]') || walked.has('[20,20]') || walked.has('[19,20]'), `a step at a time (${[...walked].join(' ')})`);
+    assert.deepEqual(get(g, goat), ['hillside', 22, 21], 'and stands beside you');
+    assert.deepEqual(get(g, '__scenes'), ['lookout'], 'the view');
+    assert.match(get(g, '__notes').join(' '), /Wherever you find one, face its railing and press A/);
     assert.deepEqual([get(g, 'here().lookTip'), bubble(g)], [1, ''], 'its ! goes');
+    g.run('placeCharacters()');
+    assert.deepEqual(get(g, goat), ['hillside', 22, 21], 'where it stays');
     g.run('__said.length = 0');
     await play(g, `arrive(${x}, 21).then(runEvents)`);
     assert.deepEqual(get(g, '__said'), [], 'only the once');
   }
+});
+
+test('led by someone, nothing happens on the squares you’re led over; and the way is the shortest, round anyone in it', () => {
+  const g = game(BUILDING, {place: 'hillside', x: 19, y: 21, dir: 'up'}, KNOWS);
+  assert.deepEqual(get(g, 'pathTo([19, 21], [21, 21], {free: NPCS.find(n => n.id === "lookoutGoat")})'), [[20, 21], [21, 21]], 'through the goat leading you, which moves out of the way');
+  assert.deepEqual(get(g, 'pathTo([19, 21], [21, 21]).length'), 4, 'round it, if it stays');
+  assert.deepEqual(get(g, 'pathTo([20, 21], [22, 21], {blocked: [21, 21]})').length, 4, 'and round you');
+  assert.deepEqual(get(g, 'pathTo([19, 21], [21, 22])'), [], 'never onto the railing');
+  g.run('globalThis.__arrived = 0; arrive = async () => { __arrived++; }');
+  g.run('pl.mv = {fx: 19, fy: 21, tx: 20, ty: 21, t0: 0, led: true}; update(100000)');
+  assert.deepEqual(get(g, '[pl.x, pl.y, pl.mv, __arrived, busy]'), [20, 21, null, 0, false]);
 });
 
 test('the mushrooms under the pines are just to look at', async () => {

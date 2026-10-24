@@ -933,8 +933,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // down the banks (it stops you if you walk past: see events)
     {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
     // chapter 1: a goat on the hillside's lookout, by its railing, looking out (it stops you as you pass, the first time,
-    // to tell you to take a look: see events). Wherever there's something you might miss, a goat is there to tell you.
-    {id:'lookoutGoat', place:'hillside', x:20, y:21, facing:'down', look:'山羊'},
+    // and walks you to the railing to show you the view: see events). Wherever there's something you might miss, a goat is
+    // there to tell you. It stays where it showed you the view, a step along the railing.
+    {id:'lookoutGoat', place:'hillside', x:20, y:21, facing:'down', look:'山羊', moves:[{if:{lookTip:{atLeast:1}}, place:'hillside', x:22, y:21, facing:'down'}]},
     {id:'woodSquirrel', place:'pineWood', x:18, y:21, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, in the clearing by the way in
     // chapter 1: two little monkeys in training on the hillside, practising with sticks like yours (in the book, chapter 3,
     // the Monkey King trains the troop): one by the stepping stones, one on the middle terrace. Each stops you as you pass,
@@ -1200,6 +1201,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hi: {zh:'你好 ！', en:'Hello!'},
     iam: {zh:'我 是 猴子 。 你 也 是 猴子 ！', en:'I am a monkey. You are a monkey too!'},
     go: {zh:'去 看看 ！', en:'Go and take a look!'},
+    comeLook: {zh:'来 看看 ！', en:'Come and take a look!'},   // the lookout's goat, walking you to its railing
     hungry: {zh:'我 饿 了 。 我 要 吃 水果 ！', en:"I'm hungry. I want to eat some fruit!"},
     thirsty: {zh:'我 渴 了 。 我 要 喝 水 ！', en:"I'm thirsty. I want to drink some water!"},
     havePeach: {zh:'你 有 桃子 吗 ？', en:'Do you have a peach?'},
@@ -1530,10 +1532,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the little monkeys grooming each other under the hillside's pines: friends
     groomA: [{do:[{say:'hi'}, {reply:'你好'}, {say:'weFriends'}, {message:'They take turns to groom each other, picking through each other’s fur, as monkeys do with their friends.'}]}],
     groomB: [{do:[{say:'hi'}, {reply:'你好'}, {say:'weFriends'}, {message:'They take turns to groom each other, picking through each other’s fur, as monkeys do with their friends.'}]}],
-    // the goat on the hillside's lookout: have a look at the view
+    // the goat on the hillside's lookout: have a look at the view. The first time, it walks you to its railing and shows
+    // you (decided 24 October 2026: a player it told about the view walked on without seeing it), so you know what a
+    // lookout is when you find others
     lookoutGoat: [
-      {if:{lookTip:0}, do:[{say:'hi'}, {reply:'你好'}, {say:'go'},
-        {message:'You can see a long way from up here! Face the railing and press A to look out.'}, {set:{lookTip:1}}]},
+      {if:{lookTip:0}, do:[{say:'hi'}, {reply:'你好'}, {say:'comeLook'},
+        {leadTo:[22, 21], you:[21, 21, 'down']}, {set:{lookTip:1}},   // along the railing, you after it, to look out
+        {scene:'lookout'},
+        {message:'You can see a long way from a lookout like this! Wherever you find one, face its railing and press A to see the view.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {say:'go'}, {message:'Face the railing and press A to see the view.'}]}
     ],
     // two of the troop, across the river, give advice
