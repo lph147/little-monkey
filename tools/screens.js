@@ -263,8 +263,12 @@ const SCREENS = [
     play(); await wait(100); interact(1, 6); await wait(400); }},
   {id: 'home-parts', title: 'You can read your home’s name', save: 'homeParts', why: 'Once you know 花 (flower), 山 (mountain) and 水果 (fruit), a message says so, and the sign by your stone sparkles until you read it.', run: async () => {
     play(); await wait(100); runEvents(); await wait(500); }},
-  {id: 'home-name', title: 'Your home’s name', save: 'homeSign', why: 'A at the sign: how 花果山 is made, on a card like a word’s: 花 flower + 果 fruit + 山 mountain, the parts you know green, and the 果 of 水果.', run: async () => {
+  {id: 'home-name', title: 'Your home’s name', save: 'homeSign', why: 'A at the sign: 花果山, its characters as tiles with a ? on each. The next to find pulses, its box saying Tap 花 ▲; A is Next part.', run: async () => {
     play(); await wait(100); interact(11, 2); await wait(400); }},
+  {id: 'home-name-two', title: 'Your home’s name: two found', save: 'homeSign', why: 'Tap a character (or press A, left to right): its box shows its picture and English, and the tile turns green with a tick. 果 isn’t a word: fruit, as in 水果, with its picture.', run: async () => {
+    play(); await wait(100); interact(11, 2); await wait(300); click('.ntile[data-i="1"]'); click('.ntile[data-i="0"]'); await wait(400); }},
+  {id: 'home-name-all', title: 'Your home’s name: all found', save: 'homeSign', why: 'All three: = a mountain of flowers and fruit, and A is OK.', run: async () => {
+    play(); await wait(100); interact(11, 2); await wait(300); click('[data-a=ok]'); click('[data-a=ok]'); click('[data-a=ok]'); await wait(400); }},
   {id: 'wants-other', title: 'He wants the other fruit', save: 'wantsApple', why: 'After you bring the peach first.', run: async () => { play(); await wait(500); }},
   {id: 'animal-card', title: 'Meeting an animal', save: 'middle', why: 'The first time: its name on a new-word card.', run: async () => {
     play(); await wait(100); showNotice('羊', {note: 'A sheep is eating grass at the foot of the 山 (mountain). Answer its questions to make friends.'}); await wait(400); }},

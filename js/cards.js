@@ -272,9 +272,8 @@ function closeTalk(){ setTimeout(() => { if (!talkNext){ talkBox.hidden = true; 
 talkBox.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('button')) e.preventDefault(); });   // tapping its buttons doesn't take the keyboard's focus
 // How a word is made (MADE, in content/words.js): its parts, each with its pinyin over it and its English (green if it's a
 // word you know), and what they add up to; or the clue inside a character; or the picture it was drawn from. Then where
-// you've met a part before, in another word you know (just one, so the card stays small). It goes with a word's English:
-// on its first card, and behind the English button after that (hide). (Decided 23 October 2026: Chinese is logical.) A
-// name can have its own, such as your home's on the sign (nameCard).
+// you've met a part before, in another word you know (just one, so the card stays small). (Decided 23 October 2026:
+// Chinese is logical.) A name can have its own, such as your home's on the sign (nameCard).
 const madeParts = m => !m ? [] : m.parts || (m.clue ? [m.clue] : []);
 const PART_IN = {};   // each part, such as 果, to the words made with it (水果, 苹果), and others a part names (学: 学校)
 for (const [w, m] of Object.entries(MADE)) for (const [zh, , , also] of madeParts(m))
@@ -287,13 +286,6 @@ function madeLinks(m, w){   // [a part of w (or w itself, one character), a word
     if (other) return [[zh, other]];
   }
   return [];
-}
-function madeBox(m, w, hide = false){   // the box for how w is made (m: its entry in MADE, or a name's own)
-  const part = ([zh, py, en]) => `<span class="mpart"><ruby${knownWord(zh, w) ? ' class="known"' : ''}>${zh}<rt>${py}</rt></ruby> <span class="mden">${esc(en)}</span></span>`;
-  const story = m.parts ? `${m.parts.map(part).join(' <span class="mplus">+</span> ')} <span class="mwhy">= ${esc(m.why)}</span>`   // (spaces: for a screen reader)
-    : `${m.clue ? part(m.clue) + ' ' : ''}<span class="mwhy">${esc(m.why)}</span>`;
-  const links = madeLinks(m, w).map(([zh, o]) => `<span class="mlink">${zh} is also in <ruby class="known">${o}<rt>${WORDS[o].py}</rt></ruby> (${esc(WORDS[o].en.split(',')[0])}), a word you know.</span>`);
-  return `<div class="made"${hide ? ' hidden' : ''}>${story}${links.map(l => ' ' + l).join('')}</div>`;
 }
 // How a word is made, on a card of its own (decided 24 October 2026: under the word, its English and a note, the box crowded
 // the card): the second step of a new word's card (How it's made ▸), and seen again, from the English button. A word made of
@@ -388,19 +380,47 @@ function madeCard(w, back, done, doneLabel){
   if (done) on('[data-a=ok]', () => { if (anim && anim.playing()){ anim.finish(); shown(); return; } done(); });
 }
 // A name you can read now, such as your home's on the sign (says: its Chinese and English; m: how it's made, with its
-// title): its picture, characters, pinyin and English, and how it's made, as on a word's card. A name isn't a word to
-// learn, so nothing is caught.
+// title, parts and what they add up to). A name isn't a word to learn, so nothing is caught. Its characters are tiles to
+// find out about (decided 24 October 2026: the box was crowded): each with a ? until you tap it, or press A (Next part,
+// left to right), when the box under it shows its picture and English: a part that's no word, such as 果, has the picture
+// of a word you know with it (fruit, as in 水果). The next to find pulses, its box saying Tap 花 ▲. Once you've found them
+// all, what they add up to, and A is OK.
 function nameCard(says, m){
   return new Promise(res => {
-    const zh = says.zh;
+    const zh = says.zh, seen = new Set();
+    const parts = m.parts.map(([c, py, en]) => {
+      const from = PICTURES[c] && WORDS[c] ? null : (PART_IN[c] || []).find(o => knownWord(o, zh) && PICTURES[o]);
+      return {c, py, en, from, pic:from ? picHTML(from) : partPic(c)};
+    });
     SFX.word();
-    openCard(`<p class="label">${esc(m.title)}</p>
-      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(zh)}</div><div class="big">${zh}</div><div class="py">${info(zh)[0]}</div>
-      <div class="en">${esc(says.en)}</div>${madeBox(m, zh)}</div>
-      <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="ok">OK</button></div>`);
+    openCard(`<div class="namehead"><p class="label">${esc(m.title)}</p><span class="namechip">${info(zh)[0]} · ${esc(says.en)}</span></div>
+      <div class="namerow"><div class="pic" aria-hidden="true">${picHTML(zh)}</div><div class="ntiles">${parts.map((p, i) =>
+        `<div class="ncol"><button class="ntile" data-i="${i}" aria-label="What does ${p.c} mean?"><span class="npy">${p.py}</span> <span class="nhz">${p.c}</span> <span class="nmark" aria-hidden="true"></span></button><div class="nbox"></div></div>`).join('')}</div></div>
+      <p class="nsum"></p>
+      <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="ok"></button></div>`);
+    const tiles = [...sheet.querySelectorAll('.ntile')], boxes = [...sheet.querySelectorAll('.nbox')], ok = sheet.querySelector('[data-a=ok]');
+    const show = () => {
+      const next = parts.findIndex((p, i) => !seen.has(i));
+      parts.forEach((p, i) => {
+        const found = seen.has(i);
+        tiles[i].classList.toggle('found', found); tiles[i].classList.toggle('next', i === next);
+        tiles[i].querySelector('.nmark').textContent = found ? '✓' : '?';
+        boxes[i].classList.toggle('found', found);
+        boxes[i].innerHTML = found ? `<div class="npic" aria-hidden="true">${p.pic}</div><span class="nen">${esc(p.en)}${p.from ? `,</span> <span class="nfrom">as in ${p.from}</span>` : '</span>'}`
+          : i === next ? `<span class="ntap">▲ Tap <span class="nhzs">${p.c}</span></span>` : '<span class="nq" aria-hidden="true">?</span>';
+      });
+      const all = next < 0, sum = sheet.querySelector('.nsum');
+      sum.classList.toggle('all', all);
+      sum.textContent = all ? `= ${m.why}` : 'Each character means something. Tap one, or press A.';
+      ok.textContent = all ? 'OK' : 'Next part';
+      return next;
+    };
+    const find = i => { if (seen.has(i)) return; seen.add(i); if (show() < 0) shown(); };   // (all found: A is OK, a moment later)
+    show();
     say(zh);
+    tiles.forEach((t, i) => t.onclick = () => find(i));
     on('[data-a=say]', () => say(zh));
-    on('[data-a=ok]', () => { closeCard(); res(); });
+    ok.onclick = () => { const next = parts.findIndex((p, i) => !seen.has(i)); if (next >= 0) return find(next); closeCard(); res(); };
   });
 }
 // A word's card. It says the word straight away when you discover it yourself; in a conversation

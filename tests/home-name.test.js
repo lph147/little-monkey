@@ -35,20 +35,33 @@ test('once you know 花, 山 and 水果, a message says you can read your home�
   assert.deepEqual(get(g, '__msgs'), [], 'the message comes once');
 });
 
-test('reading the sign then shows how the name is made, on a card like a word’s: 花 and 山 green, and 果 is also in 水果', async () => {
+test('reading the sign then shows how the name is made: its characters are tiles to find out about, each with its picture and English', async () => {
   const g = meadow([...MEADOW, '水果'], 1);
   g.run('globalThis.__said = []; say = w => __said.push(w); globalThis.__read = interact(11, 2)');
-  const sheet = g.el('#sheet');
+  const sheet = g.el('#sheet'), tiles = () => sheet.querySelectorAll('.ntile'), boxes = () => sheet.querySelectorAll('.nbox');
+  const state = () => tiles().map(t => (t.classList.contains('found') ? 'found' : t.classList.contains('next') ? 'next' : '') + ' ' + text(t.querySelector('.nmark')));
   assert.equal(text(sheet.querySelector('.label')), 'Your home’s name');
-  assert.equal(text(sheet.querySelector('.big')), '花果山');
-  assert.equal(text(sheet.querySelector('.py')), 'Huāguǒ Shān');
-  assert.equal(text(sheet.querySelector('.word .en')), 'Flower Fruit Mountain', 'a name shows its English, always');
-  assert.equal(text(sheet.querySelector('.made')), '花huā flower + 果guǒ fruit + 山shān mountain = a mountain of flowers and fruit '
-    + '果 is also in 水果shuǐguǒ (fruit), a word you know.');
-  assert.deepEqual(sheet.querySelectorAll('.made .mpart ruby').map(r => r.className), ['known', '', 'known'], '花 and 山 are words you know');
-  assert.ok(sheet.querySelector('.pic').innerHTML.length > 0, 'with its picture');
+  assert.equal(text(sheet.querySelector('.namechip')), 'Huāguǒ Shān · Flower Fruit Mountain', 'a name shows its pinyin and English, always');
+  assert.deepEqual(tiles().map(text), ['huā 花 ?', 'guǒ 果 ?', 'shān 山 ?'], 'each character a tile, with its pinyin and a ?');
+  assert.deepEqual(state(), ['next ?', ' ?', ' ?'], 'the first to find pulses');
+  assert.equal(text(boxes()[0]), '▲ Tap 花', 'its box says what to do');
+  assert.equal(text(sheet.querySelector('.actions .primary')), 'Next part');
+  assert.ok(sheet.querySelector('.namerow .pic').innerHTML.length > 0, 'with its picture');
   assert.deepEqual(get(g, '__said'), ['花果山'], 'it says the name');
-  sheet.querySelector('[data-a=ok]').click();
+  tiles()[1].click();   // tap 果
+  assert.deepEqual(state(), ['next ?', 'found ✓', ' ?'], 'any one can be tapped');
+  assert.equal(text(boxes()[1]), 'fruit, as in 水果', '果 isn’t a word: the word you know it from');
+  assert.ok(boxes()[1].querySelector('.npic .pix'), 'with that word’s picture');
+  g.run('pressA()');   // Next part: the first still to find
+  assert.deepEqual(state(), ['found ✓', 'found ✓', 'next ?']);
+  assert.equal(text(boxes()[0]), 'flower');
+  assert.ok(!sheet.querySelector('.nsum').classList.contains('all'));
+  g.run('pressA()');
+  assert.equal(text(boxes()[2]), 'mountain');
+  assert.equal(text(sheet.querySelector('.nsum')), '= a mountain of flowers and fruit', 'all found: what they add up to');
+  assert.equal(text(sheet.querySelector('.actions .primary')), 'OK');
+  assert.equal(g.run('here().homeName'), 1, 'not read till OK');
+  g.run('pressA()');
   await g.run('__read');
   assert.equal(g.run('here().homeName'), 2);
   assert.ok(!signSparkles(g), 'read: it stops sparkling');
