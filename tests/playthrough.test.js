@@ -397,6 +397,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(14, 8, 'right');
   await act('arrive(14, 8).then(runEvents)', 'coming up to the big tree');
   assert.deepEqual([area().feast, run('tileAt(17, 7).look')], [2, 'feastTable'], 'the troop sets up the feast’s big table');
+  // The hungry monkey, beside it: what the troop has for the feast, and what it hasn't, 我们没有蜂蜜！, teaching 没有; then the
+  // feast's list, A at the table
+  await pressAt(19, 8, 'up', 'talking to the hungry monkey by the table');
+  assert.ok(get('__said').includes('我们没有蜂蜜！') && knows('没有'), 'the hungry monkey teaches 没有');
+  assert.equal(area().feast, 3);
+  await pressAt(17, 8, 'up', 'looking at the feast’s list');
+  assert.ok(get("!!S.lines['我们没有蜂蜜。'] && !!S.lines['我们有桃子。']"), 'the list shows what the troop has, and what the feast still needs');
   stand(11, 5, 'up');
   await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
   assert.equal(run('PLACE'), 'school');

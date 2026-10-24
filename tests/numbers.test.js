@@ -10,7 +10,7 @@ const {loadGame} = require('./fake-browser');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const AT_SCHOOL = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2,
-  build: 2, wood: 'done', stones: 'done', school: 2, feast: 2};   // (the feast's news heard, and its table set up: tests/feast.test.js)
+  build: 2, wood: 'done', stones: 'done', school: 2, feast: 3};   // (the feast's news heard, its table set up, and the hungry monkey has said what it needs: tests/feast.test.js)
 const KNOWN = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '猴子', '朋友', '河', '鱼', '木头', '桌子', '碗', '学校', '老师', '同学',
   '红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'];   // (all the colours: no colour lessons in the way, tests/colours.test.js)
 // A game at school, by the teacher, knowing these words (w: {word: ok}, how many times in a row each was right).

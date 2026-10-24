@@ -109,6 +109,8 @@ const WORD_BANK = {
   '老师': {py:'lǎoshī', en:'teacher', pic:'🧑‍🏫', area:1, category:'people'},
   '同学': {py:'tóngxué', en:'classmate', pic:'🎒', area:1, category:'people'},
   '有': {py:'yǒu', en:'to have, there is', area:1, category:'actions'},   // (the old monkey's news, chapter 1: heard till then, as in 里面有床; no picture, as 要 has none)
+  '没有': {py:'méiyǒu', en:'don’t have, there isn’t', area:1, category:'actions'},   // (the hungry monkey at the feast's table: no honey; no picture either)
+  '蜂蜜': {py:'fēngmì', en:'honey', pic:'🍯', area:1, category:'food', later:true},   // (heard at the feast's table; taught with the first honey, once the bees are built)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
@@ -230,6 +232,7 @@ const MADE = {
   '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']], why:'a wild pig'},
   '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']], why:'a honey bee'},
   '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']], why:'someone you learn with'},
+  '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']], why:'don’t have'},
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']], why:'hello'},
   '再见': {parts:[['再', 'zài', 'again'], ['见', 'jiàn', 'to see']], why:'goodbye: see you again'},

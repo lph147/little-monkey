@@ -384,6 +384,22 @@ rt.hid{visibility:hidden}
 .sent .tok{font-size:1.45rem}
 .sent .punct{font-size:1.45rem}
 .sent.reading{background:color-mix(in srgb,var(--gold) 22%,transparent)}
+/* the feast's list (A at its big table): each food's picture (a shadow till the troop has it), its sentence with its
+   English beside it (under it on a narrow card), and a tick; rows short enough for three to fit on the smallest phone */
+.flist{display:flex;flex-direction:column;gap:2px;margin:3px 0 2px}
+.frow{display:flex;align-items:center;gap:10px;padding:1px 8px;border-radius:8px}
+.frow.have{background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.frow.reading{background:color-mix(in srgb,var(--gold) 22%,transparent)}
+.fpic{flex:none}
+.fpic .pix{width:var(--pic-small);height:var(--pic-small);display:block}
+.fpic.sil .pix{filter:var(--sil);opacity:.45}
+.fline{display:flex;flex-wrap:wrap;align-items:center;column-gap:10px;min-width:0}
+.fline .line{margin:0}
+.fline .tok,.fline .punct{font-size:1.3rem}
+.fline .sentence-en{display:inline-block;font-size:.85rem;margin:0;padding:1px 7px}
+.fline .sentence-en[hidden]{display:none}
+.fmark{margin-left:auto;color:var(--ok);font-weight:800;font-size:1.3rem}
+.fnote{margin:4px 0 0;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .chip{border:2px solid var(--line);border-radius:4px;padding:2px 8px;font-size:1.2rem;background:var(--bg)}
 .small{font-size:.85rem;color:var(--muted)}
@@ -787,6 +803,15 @@ rt.hid{visibility:hidden}
 }
 /* the smallest phones, where the game screen is only about 210px tall: smaller pictures, speaker and text */
 @container (max-height:260px){
+  .fpic .pix{width:24px;height:24px}   /* the feast's list: its rows smaller, each English beside its sentence, and no note */
+  .flist{gap:1px;margin:2px 0 0}
+  .frow{padding:0 6px}
+  .fline .tok,.fline .punct{font-size:1.05rem}
+  .fline .sentence-en{font-size:.72rem;padding:0 6px}
+  .fnote{display:none}
+  .sheet:has(> .flist) > .label{margin-bottom:1px}
+  .sheet:has(> .flist) > .actions{margin-top:4px}
+  .sheet:has(> .flist) > .gloss:empty{display:none}   /* (till you tap a word: then its meaning shows there) */
   .slotcard{font-size:.82rem;line-height:1.3}
   .slotcard .face{width:var(--pic-small);height:var(--pic-small)}
   .slotcard .played{display:none}

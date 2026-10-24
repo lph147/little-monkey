@@ -470,6 +470,19 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(or(Rc(3, 29, 2, 3), Rc(27, 29, 2, 3)), '#5A3A20');
     for (const bx of [5, 19]){ p.fill(Rc(bx, 21, 8, 3), '#F4F0E4', {edge: true}); p.flat(Rc(bx + 4, 21, 1, 3), '#B8AE98'); }
   },
+  '蜂蜜': p => {   // honey: a round clay pot of it, honey dripping over its lip, a wooden dipper in it (chapter 1: the feast)
+    const HONEY = '#F2A81D', CLAY = '#B86A3C';
+    p.fill(O(25, 28.8, 3.2, 1.3), '#E8A21C');   // a drop of honey on the ground
+    p.fill(or(O(16, 21, 10.5, 9), Rc(8, 11, 16, 6, 2)), CLAY, {light: '#D98E5A', dark: '#8E4E2A'});   // the pot
+    p.flat(Rc(9, 26, 14, 1), '#8E4E2A');
+    p.fill(Rc(7.5, 9, 17, 4, 2), '#C97A48', {light: '#E3A06C', dark: '#8E4E2A', edge: true});          // its lip
+    p.flat(O(16, 10.4, 7.5, 1.6), '#7A3E20');                                          // inside
+    p.flat(O(16, 10.6, 6.5, 1.1), HONEY);                                              // honey, full to the top
+    p.fill(or(Rc(10, 12, 3, 6, 1.5), Rc(18.5, 12, 3, 9, 1.5), Rc(22, 12, 2.4, 4, 1.2)), HONEY, {light: '#FFD266', dark: '#C9820F'});   // dripping over the lip
+    p.fill(path([[20, 10], [26.5, 1.5]], 1.1), '#A0703E', {light: '#C99A63', dark: '#6E4A26', edge: true});   // the dipper's handle
+    p.fill(O(27, 2.6, 2.2, 2.2), '#A0703E', {light: '#C99A63', dark: '#6E4A26'});                        // its knob
+    p.flat(path([[11.5, 19], [13, 23]], .5), '#E3A06C');                                // a shine on the pot
+  },
   '木头': p => {   // wood: three cut logs in a little pile, their ends towards you showing the rings
     const log = (x, y) => {   // a log, its cut end at (x, y) and its bark going back to the right
       p.fill(Rc(x - 1, y - 6, 13, 12, 5), BARK, {light: '#B07A48', dark: '#5E3B1F', edge: true});

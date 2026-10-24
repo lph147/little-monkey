@@ -76,6 +76,10 @@ shown where the word list has them.
 | 下课！ | xiàkè! | Class is over! | 老猴子 (Old monkey) |  |
 | 我们是同学！ | wǒmen shì tóngxué! | We’re classmates! | 小猴子 (Little monkey) |  |
 | 我们有家，也有学校！ | wǒmen yǒu jiā, yě yǒu xuéxiào! | We have a home, and a school too! | 老猴子 (Old monkey) |  |
+| 这是我们的大桌子！ | zhè shì wǒmen de dà zhuōzi! | This is our big table! | 饿猴子 (Hungry monkey) |  |
+| 我们有桃子，也有苹果！ | wǒmen yǒu táozi, yě yǒu píngguǒ! | We have peaches, and apples too! | 饿猴子 (Hungry monkey) |  |
+| 我们没有蜂蜜！ | wǒmen méiyǒu fēngmì! | We don’t have any honey! | 饿猴子 (Hungry monkey) |  |
+| 我要吃蜂蜜！ | wǒ yào chī fēngmì! | I want to eat honey! | 饿猴子 (Hungry monkey) |  |
 | 一，二，三，四！ | yī, èr, sān, sì! | One, two, three, four! |  |  |
 | 一，二，三，四，五！ | yī, èr, sān, sì, wǔ! | One, two, three, four, five! |  |  |
 | 一，二，三，四，五，六！ | yī, èr, sān, sì, wǔ, liù! | One, two, three, four, five, six! |  |  |
@@ -124,6 +128,7 @@ shown where the word list has them.
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
 | 我有桃子 | wǒ yǒu táozi | I have peaches. | You, in a lesson at school |  |
 | 我有朋友 | wǒ yǒu péngyou | I have friends. | You, in a lesson at school |  |
+| 我没有苹果 | wǒ méiyǒu píngguǒ | I don’t have any apples. | You, in a lesson at school |  |
 
 ### What you pick
 
@@ -134,6 +139,16 @@ What a card shows when you pick a flower for the big monkey: a red flower, and s
 | 红色的花 | hóngsè de huā | A red flower |  |
 | 黄色的花 | huángsè de huā | A yellow flower |  |
 | 白色的花 | báisè de huā | A white flower |  |
+
+### The feast's list
+
+What A at the feast's big table shows: what the troop has, and what it still needs.
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 我们有桃子。 | wǒmen yǒu táozi. | We have peaches. |  |
+| 我们有苹果。 | wǒmen yǒu píngguǒ. | We have apples. |  |
+| 我们没有蜂蜜。 | wǒmen méiyǒu fēngmì. | We don’t have any honey. |  |
 
 ### The sign
 
@@ -330,6 +345,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 老师 | lǎoshī | teacher |  |
 | 同学 | tóngxué | classmate |  |
 | 有 | yǒu | to have, there is |  |
+| 没有 | méiyǒu | don’t have, there isn’t |  |
+| 蜂蜜 | fēngmì | honey |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -366,6 +383,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = a wild pig |  |
 | 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = a honey bee |  |
 | 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = someone you learn with |  |
+| 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = don’t have |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = hello |  |
 | 再见 | zàijiàn | 再 zài (again) + 见 jiàn (to see) = goodbye: see you again |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = I don’t want it |  |
@@ -564,6 +582,13 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们有家，也有学校！ | wǒmen yǒu jiā, yě yǒu xuéxiào! | We have a home, and a school too! | New on 24 October 2026 (in the game), the feast announced: The old monkey at school, after your first two lessons, teaching 有 yǒu, to have (a word without a picture, as 要 is): then it’s time for a great feast, for the whole troop |  |
 | 我有桃子。 | wǒ yǒu táozi. | I have peaches. | New on 24 October 2026 (in the game), the feast announced: A sentence you finish in a lesson, to practise 有 (filling in 有) |  |
 | 我有朋友。 | wǒ yǒu péngyou. | I have friends. | New on 24 October 2026 (in the game), the feast announced: Another, to practise 有 (also in the story at the waterfall) |  |
+| 这是我们的大桌子！ | zhè shì wǒmen de dà zhuōzi! | This is our big table! | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: The hungry monkey, by the feast’s big table under the big tree |  |
+| 我们有桃子，也有苹果！ | wǒmen yǒu táozi, yě yǒu píngguǒ! | We have peaches, and apples too! | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: The hungry monkey |  |
+| 我们没有蜂蜜！ | wǒmen méiyǒu fēngmì! | We don’t have any honey! | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: The hungry monkey, teaching 没有 méiyǒu, don’t have (蜂蜜 fēngmì, honey, just for listening till the bees) |  |
+| 我要吃蜂蜜！ | wǒ yào chī fēngmì! | I want to eat honey! | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: The hungry monkey |  |
+| 我们有桃子。 | wǒmen yǒu táozi. | We have peaches. | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: The feast’s list, A at the table (and 我们有苹果。, we have apples) |  |
+| 我们没有蜂蜜。 | wǒmen méiyǒu fēngmì. | We don’t have any honey. | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: The feast’s list |  |
+| 我没有苹果。 | wǒ méiyǒu píngguǒ. | I don’t have any apples. | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: A sentence you finish in a lesson, to practise 没有 (filling in 没有) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

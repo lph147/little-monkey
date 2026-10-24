@@ -2334,6 +2334,43 @@ const PICTURES = {
       "..zyyz....................zyyz.."
     ]
   },
+  '蜂蜜': {   // honey
+    palette: {a:'#4D3B26', b:'#C99A63', c:'#6E4A26', d:'#2F2113', e:'#A0703E', f:'#553D29', g:'#331D11', h:'#5D4124', i:'#2A1E12', j:'#E3A06C', k:'#7A3E20', l:'#8E4E2A', m:'#3A2214', n:'#F2A81D', o:'#C97A48', p:'#322014', q:'#75472A', r:'#FFD266', s:'#C9820F', t:'#4D330C', u:'#523724', v:'#D98E5A', w:'#B86A3C', x:'#594626', y:'#46320E', z:'#EFBE60', A:'#B57E16'},
+    rows: [
+      ".........................abcd...",
+      "........................abeecd..",
+      ".......................abbeecd..",
+      ".......................abceecd..",
+      "......................abecccd...",
+      ".....................abecddd....",
+      "....................abecd.......",
+      "....................abcd........",
+      "........ffgggggggggabehi........",
+      ".......fjjkkkkkkkkkhehjlm.......",
+      ".......fjknnnnnnnnnhhnklm.......",
+      ".......fjooknnnnnnnnkoolm.......",
+      ".......pqqrrsqqqqqqrsqrst.......",
+      ".......uvwrnswwwwwwrnrnst.......",
+      ".......uvwrnswwwwwwrnnnst.......",
+      ".......uvwrnswwwwwwrnnsst.......",
+      "......uvwwrnswwwwwwrnswwlm......",
+      ".....uvwwwssswwwwwwrnswwwlm.....",
+      ".....uvwwwwjwwwwwwwrnswwwlm.....",
+      ".....uvwwwwjwwwwwwwrnswwwlm.....",
+      ".....uvwwwwwjwwwwwwsswwwwlm.....",
+      ".....uvwwwwwjwwwwwwwwwwwwlm.....",
+      ".....uvwwwwwjwwwwwwwwwwwwlm.....",
+      ".....uvwwwwwwwwwwwwwwwwwwlm.....",
+      ".....mlwwwwwwwwwwwwwwwwwwlm.....",
+      "......mlwwwwwwwwwwwwwwwwlm......",
+      ".......mllllllllllllllllm.......",
+      "........mlwwwwwwwwwwwwlmxxxy....",
+      ".........mlllwwwwwwlllzzzzzAy...",
+      "..........mmmllllllmmyAAAAAAy...",
+      ".............mmmmmm...yyyyyy....",
+      "................................"
+    ]
+  },
   '木头': {   // wood
     palette: {a:'#5A503F', b:'#362D21', c:'#45311E', d:'#2A1C11', e:'#F2DDB0', f:'#836F52', g:'#B07A48', h:'#5E3B1F', i:'#E2C08E', j:'#8A5A32', k:'#B98A55', l:'#4B3926', m:'#C49461', n:'#50341D'},
     rows: [

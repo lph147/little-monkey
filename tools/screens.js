@@ -124,8 +124,12 @@ SAVES.flowersPlanted = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPic
 // the feast: the old monkey's news at school, once the first two lessons are done (四 五 六, 红色 黄色 白色); and the big table
 // at the home ground, under the big tree, being set up as you watch, then set up, with the hungry monkey beside it
 SAVES.feastNews = {...SAVES.coloursThree};
-SAVES.feastTable = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(1, ['有'])}, areas: {1: {...SAVES.coloursThree.areas[1], feast: 2}},
+SAVES.feastTable = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(1, ['有']), ...knows(2, ['没关系'])}, areas: {1: {...SAVES.coloursThree.areas[1], feast: 2}},
   pos: {place: 'homeGround', x: 17, y: 9, dir: 'up'}};
+// the hungry monkey by the table (his ! for what the feast still needs); and the feast's list, once he's told you: no honey
+SAVES.feastHungry = {...SAVES.feastTable, pos: {place: 'homeGround', x: 19, y: 8, dir: 'up'}};
+SAVES.feastList = {...SAVES.feastTable, w: {...SAVES.feastTable.w, ...knows(1, ['没有'])}, areas: {1: {...SAVES.feastTable.areas[1], feast: 3}},
+  pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -533,8 +537,18 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'table-setting-up', title: 'Setting up the table', save: 'feastTable', why: 'As you come up to the big tree, the troop sets up the feast’s big table under it, a piece at a time, each with a knock: its legs, then its top with a red cloth (here), then a bowl at a time.', run: async () => {
     play(); await wait(100); here().feast = 1; buildMap(); settingUp = {objects: [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1}], stage: 2}; await wait(400); }},
-  {id: 'feast-table', title: 'The feast’s big table', save: 'feastTable', why: 'Under the big tree: peaches, apples and an empty bowl, waiting for something. The hungry monkey has come up from the meadow to look after it.', run: async () => {
+  {id: 'feast-table', title: 'The feast’s big table', save: 'feastTable', why: 'Under the big tree: peaches, apples and an empty bowl, waiting for something. The hungry monkey has come up from the meadow to look after it, with a !.', run: async () => {
     play(); await wait(500); }},
+  {id: 'hungry-table', title: 'This is our big table!', save: 'feastHungry', why: 'The hungry monkey by the table: 这是我们的大桌子！ (桌子 green: you learned it in the cave), then 我们有桃子，也有苹果！', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(500); }},
+  {id: 'no-honey', title: 'We don’t have any honey!', save: 'feastHungry', why: 'Then 我们没有蜂蜜！, teaching 没有 (bold); 蜂蜜 is grey, just for listening, till the bees.', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(300); next(); await wait(500); }},
+  {id: 'meiyou-card', title: '没有, don’t have', save: 'feastHungry', why: 'Its card, with no picture, like 有: Use 没有 to say what you don’t have.', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(300); next(); await wait(300); next(); await wait(500); }},
+  {id: 'meiyou-made', title: 'How 没有 is made', save: 'feastList', why: '没 (not, as in 没关系, a word you know) + 有 (to have, green) = 没有, don’t have.', run: async () => {
+    play(); await wait(100); madeCard('没有', () => {}, () => {}, 'Got it'); await wait(400); }},
+  {id: 'feast-list', title: 'The feast’s list', save: 'feastList', why: 'A at the table: what the troop has, ticked, and what the feast still needs, the honey as a shadow; each sentence’s English the first time.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

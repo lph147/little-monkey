@@ -435,6 +435,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     settingUp = null; refreshMap();
   },
   sound(s){ if (SFX[s.sound]) SFX[s.sound](); },   // a sound (one of SFX in js/sound.js), such as a wolf howling far off
+  async feastList(){ await feastCard(); },   // the feast's list, such as at its big table: what the troop has, and what it still needs (js/cards.js)
   // You swing your stick at the square you're facing, like Cut and Rock Smash in Pokémon: a whack, and chips fly off it
   // (hit: what it's made of, 'wood' or 'stone').
   async hit(s){

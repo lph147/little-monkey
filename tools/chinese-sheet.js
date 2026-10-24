@@ -115,6 +115,14 @@ const DRAFTS = [
     ['我 有 桃子 。', 'I have peaches.', 'A sentence you finish in a lesson, to practise 有 (filling in 有)'],
     ['我 有 朋友 。', 'I have friends.', 'Another, to practise 有 (also in the story at the waterfall)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 24 October 2026 (in the game), the feast announced: ' + where})),
+  ...[['这 是 我们 的 大 桌子 ！', 'This is our big table!', 'The hungry monkey, by the feast’s big table under the big tree'],
+    ['我们 有 桃子 ， 也 有 苹果 ！', 'We have peaches, and apples too!', 'The hungry monkey'],
+    ['我们 没有 蜂蜜 ！', 'We don’t have any honey!', 'The hungry monkey, teaching 没有 méiyǒu, don’t have (蜂蜜 fēngmì, honey, just for listening till the bees)'],
+    ['我 要 吃 蜂蜜 ！', 'I want to eat honey!', 'The hungry monkey'],
+    ['我们 有 桃子 。', 'We have peaches.', 'The feast’s list, A at the table (and 我们有苹果。, we have apples)'],
+    ['我们 没有 蜂蜜 。', 'We don’t have any honey.', 'The feast’s list'],
+    ['我 没有 苹果 。', 'I don’t have any apples.', 'A sentence you finish in a lesson, to practise 没有 (filling in 没有)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 
@@ -189,6 +197,12 @@ ${table(['Chinese', 'Pinyin', 'English', 'Said to', 'Notes'], builds.map(([b, en
 What a card shows when you pick a flower for the big monkey: a red flower, and so on.
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], [...new Map(Object.values(AREA.legend).filter(t => t.gather && t.gather.picked).map(t => [t.gather.picked.zh, t.gather.picked])).values()].map(f => [chars(f.zh), py(f.zh), f.en, notes]))}
+
+### The feast's list
+
+What A at the feast's big table shows: what the troop has, and what it still needs.
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], (AREA.feastList ? AREA.feastList.foods : []).flatMap(f => [f.yes, f.no].filter(Boolean)).map(l => [chars(l.zh), py(l.zh), l.en, notes]))}
 
 ### The sign
 

@@ -56,7 +56,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   tower   chapter 1: the little monkeys building a tower of stones at the home ground: 1 once they've said hello, 2 once
   //           you've counted its stones with them
   //   feast   chapter 1, the great feast: 0 not yet, 1 the old monkey has told you about it (teaching 有), 2 the troop has set
-  //           up its big table under the big tree at the home ground, as you watched
+  //           up its big table under the big tree at the home ground, as you watched, 3 the hungry monkey has told you what
+  //           the feast still needs: honey (teaching 没有)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
   progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0},
@@ -174,6 +175,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the feast: once the first two lessons have taught you 四 五 六 and 红色 黄色 白色, the old monkey has news
     {id:'news', if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, text:'Talk to the old monkey at the {学校}: he has news', arrow:'elder'},
     {id:'feastTable', if:{feast:1}, text:'Go to the big {树} in the middle of the home ground', arrow:[17, 7, 'homeGround']},
+    {id:'hungryTable', if:{feast:2}, text:'Talk to the hungry monkey by the big {桌子}', arrow:'hungry'},
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
     {id:'count', if:{cave:{atLeast:5}, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
@@ -185,7 +187,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
-    {if:{feast:{atLeast:2}}, text:'The big {桌子} is ready for the feast, and more of chapter 1 is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
+    {if:{feast:{atLeast:3}}, text:'There’s no {蜂蜜} for the feast yet. It comes from {蜜蜂|bees}, the next part of chapter 1, coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -226,7 +228,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Learn nine colours at the {学校} ({coloursKnown}/9)', show:{school:{atLeast:2}}, done:{coloursKnown:9}},
     {chapter:1, text:'Plant {花|flowers} in front of the {学校}', show:{flowers:'asked'}, done:{schoolFlowers:true}},
     {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
-    {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}}
+    {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}},
+    {chapter:1, text:'Hear from the hungry monkey what the feast still needs', show:{feast:{atLeast:2}}, done:{feast:{atLeast:3}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -239,7 +242,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{school:{atLeast:2}, new:'同学'}, show:'!'}],   // and at school, that you're classmates
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'},
       {if:{hungry:'done', new:'没关系'}, show:'!'},   // once he's eaten, he wants to say sorry for being fussy
-      {if:{hungry:'done', new:'水果'}, show:'!'}],   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
+      {if:{hungry:'done', new:'水果'}, show:'!'},   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
+      {if:{feast:2}, show:'!'}],   // chapter 1: by the feast's big table, to tell you what it still needs
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
@@ -579,7 +583,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         // peaches and apples, and an empty one, waiting for honey). Under the big tree, not in the cave's entrance (decided
         // 23 October 2026: every quest comes back to the home ground; 桌子 and 碗 are the cave's words, heard again here)
         '%': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:'&'}]},
-        '&': {look:'feastTable', word:'桌子', landmark:true, note:'The big table for the troop’s feast, under the big tree.'}
+        '&': {look:'feastTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]}   // A at it: the feast's list
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
@@ -1121,6 +1125,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '橙色': 'A colour lesson at school: the teacher opened a pot of it.',
     '粉色': 'A colour lesson at school: the teacher opened a pot of it.',
     '有': 'The old monkey’s news at school: the troop has a home, and a school too.',
+    '没有': 'The hungry monkey, at the feast’s big table: there’s no honey.',
+    '蜂蜜': 'From the troop’s bees, for the feast.',   // (for later: the bees of chapter 1, to come)
   },
 
   // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
@@ -1128,8 +1134,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // for it, with nothing to ask). Like those, each needs every word in it caught.
   practiceSentences: [
     {sentence:'我 有 桃子', sentenceEn:'I have peaches.'},
-    {sentence:'我 有 朋友', sentenceEn:'I have friends.'}
+    {sentence:'我 有 朋友', sentenceEn:'I have friends.'},
+    {sentence:'我 没有 苹果', sentenceEn:'I don’t have any apples.'}   // (没有)
   ],
+
+  // The feast's list, shown by A at its big table (the feastList step): what the troop has for the feast and what it still
+  // needs, each food with its picture and a sentence in Chinese, yes once the troop has it (have: an if, {} for a food it
+  // has from the start; left out, not yet, till its part of the story gives it one), no till then. A food joins the list
+  // once its part of the story begins (show), so the list never gives away what's coming.
+  feastList: {
+    label:'For the feast, at the big {桌子}',
+    note:'More food goes on the list as the story goes on.',
+    foods: [
+      {word:'桃子', have:{}, yes:{zh:'我们 有 桃子 。', en:'We have peaches.'}},
+      {word:'苹果', have:{}, yes:{zh:'我们 有 苹果 。', en:'We have apples.'}},
+      {word:'蜂蜜', show:{feast:{atLeast:3}}, no:{zh:'我们 没有 蜂蜜 。', en:'We don’t have any honey.'}}   // (the bees: to come)
+    ]
+  },
 
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
   // the Word Scroll. (A word that only appears in a sentence you complete, such as 头带, shows that.)
@@ -1315,6 +1336,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     classEnd: {zh:'下课 ！', en:'Class is over!'},
     classmates: {zh:'我们 是 同学 ！', en:'We’re classmates!'},
     weHave: {zh:'我们 有 家 ， 也 有 学校 ！', en:'We have a home, and a school too!'},   // the old monkey's news: time for a feast (teaching 有)
+    ourTable: {zh:'这 是 我们 的 大 桌子 ！', en:'This is our big table!'},   // the hungry monkey at the feast's table: what the troop has,
+    haveFruit: {zh:'我们 有 桃子 ， 也 有 苹果 ！', en:'We have peaches, and apples too!'},
+    noHoney: {zh:'我们 没有 蜂蜜 ！', en:'We don’t have any honey!'},   // and hasn't (teaching 没有; 蜂蜜 just for listening, till the bees)
+    wantHoney: {zh:'我 要 吃 蜂蜜 ！', en:'I want to eat honey!'},
     count4: {zh:'一 ， 二 ， 三 ， 四 ！', en:'One, two, three, four!'},   // the teacher, counting peaches onto his table (number lessons)
     count5: {zh:'一 ， 二 ， 三 ， 四 ， 五 ！', en:'One, two, three, four, five!'},
     count6: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ！', en:'One, two, three, four, five, six!'},
@@ -1522,6 +1547,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{hungry:'done', new:'没关系'}, do:[{message:'The hungry monkey looks a little embarrassed about being so fussy.'}, {say:'sorry'}, {reply:'没关系'}]},
       // a game that helped him before he taught 水果 as he asked (24 October 2026), and never learned it at a fruit tree
       {if:{hungry:'done', new:'水果'}, do:[{say:'fruitOnTrees', teach:'水果'}, {newWord:'水果', note:'Peaches and apples are both fruit.'}]},
+      // chapter 1: by the feast's big table, once it's set up, he tells you what the troop has for the feast, and what it
+      // hasn't: no honey (teaching 没有, don't have), which he'd love to eat
+      {if:{feast:2}, do:[
+        {say:'ourTable'},
+        {say:'haveFruit'},
+        {say:'noHoney', teach:'没有'},
+        {newWord:'没有', note:'Use 没有 to say what you don’t have.'},
+        {say:'wantHoney'},
+        {set:{feast:3}},
+        {message:'There’s no honey for the feast! Honey comes from bees: finding them is the next part of chapter 1, coming soon.'}
+      ]},
+      {if:{feast:{atLeast:3}}, do:[{say:'wantHoney', hint:'Press A at the big {桌子} to see what there is for the feast, and what it still needs.'}]},
       {do:[{request:'hungry'}]}
     ],
     thirsty: [

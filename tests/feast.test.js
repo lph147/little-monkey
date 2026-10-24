@@ -3,7 +3,9 @@
 // (decided 24 October 2026: after the first two lessons, so chapter 1 opens up; it waited till the flowers were
 // planted, after every lesson). As you come up to the big tree at the home ground, the troop sets up the feast's big table
 // under it, as you watch: its legs, its top with a red cloth, then a bowl at a time, each with a knock. The hungry monkey
-// comes up from the meadow to look after it.
+// comes up from the meadow to look after it, and tells you what the troop has for the feast, and what it hasn't: 我们没有
+// 蜂蜜！ (teaching 没有, don't have). A at the table shows the feast's list: what the troop has, ticked, and what it still
+// needs, as a shadow.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -13,7 +15,7 @@ const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const AT_SCHOOL = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2,
   build: 2, wood: 'done', stones: 'done', school: 2};
 const KNOWN = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '猴子', '朋友', '河', '鱼', '木头', '桌子', '碗', '家', '学校', '老师', '同学',
-  '一', '二', '三', '谢谢', '不客气', '我', '要'];
+  '一', '二', '三', '谢谢', '不客气', '没关系', '水果', '我', '要'];
 const FIRST_TWO = ['四', '五', '六', '红色', '黄色', '白色'];   // what the first two lessons teach
 const BY_TEACHER = {place: 'school', x: 7, y: 3, dir: 'up'};
 // A game in chapter 1 (area: more progress), standing at pos, knowing these words (each right twice in a row).
@@ -21,7 +23,7 @@ function game(area = {}, pos = BY_TEACHER, words = [...KNOWN, ...FIRST_TWO]){
   const w = Object.fromEntries(words.map(x => [x, {lv: 1, ok: 2}]));
   const g = loadGame({dom: true, save: {version: 30, started: true, w, shells: 0, met: ['rabbit', 'fox', 'squirrel', 'goat', 'deer'], areas: {1: {...AT_SCHOOL, ...area}}, pos}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__lessons = 0; globalThis.__knocks = []");
-  g.run("showDialog = async (who, line, opts = {}) => { __said.push(line.t.join('') + (opts.teach ? ' [' + opts.teach + ']' : '')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
+  g.run("showDialog = async (who, line, opts = {}) => { __said.push(line.t.join('') + (opts.teach ? ' [' + opts.teach + ']' : '')); if (opts.hint) __notes.push(opts.hint); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");   // (a line's hint: what to do next, after it)
   g.run("showNotice = async (w, o = {}) => { __notes.push('card: ' + w + (o.note ? ' (' + o.note + ')' : '')); rec(w).lv = Math.max(rec(w).lv || 0, 1); }");
   g.run("LESSON_KINDS.count = LESSON_KINDS.paint = async () => { __lessons++; return true; }; practise = async () => { __lessons++; return true; }");   // (lessons: their own tests)
   g.run("SFX.tock = () => { __knocks.push(settingUp && settingUp.stage); }");   // (each piece of what's being set up)
@@ -88,11 +90,9 @@ test('as you come up to the big tree, the troop sets up the feast’s big table 
   assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'feastTable')"), [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1}], 'one table, three squares wide');
   assert.match(get(g, '__notes').join(' '), /The troop sets up a big 桌子 \(table\) under the big tree for the feast, with peaches, apples, and an empty bowl, waiting for something…/);
   assert.deepEqual(item(g, /set up/), ['See the big 桌子 (table) set up for the feast', true, false, true]);
-  assert.ok(!get(g, 'getTasks()').length, 'nothing more to do for now');
-  assert.match(g.run('tasksHint()'), /The big monkey has something to ask you/, 'the hint: his flowers first, while he has something to ask');
-  g.run("Object.assign(here(), {flowers: 'done', schoolFlowers: true})");
-  assert.match(g.run('tasksHint()'), /The big 桌子 \(table\) is ready for the feast, and more of chapter 1 is coming soon/, 'then the table');
   assert.deepEqual(hungry(g), ['homeGround', 19, 7, 'left'], 'the hungry monkey beside it');
+  assert.equal(bubble(g, 'hungry'), '!', 'with a !');
+  assert.deepEqual(get(g, 'getTasks().map(t => [t.text, t.target])'), [['Talk to the hungry monkey by the big 桌子 (table)', [19, 7]]]);
   g.run('__knocks.length = 0');
   await goTo(g, 15, 8);
   assert.deepEqual(get(g, '__knocks'), [], 'once');
@@ -107,14 +107,62 @@ test('a game that comes back to the home ground with the table still to set up s
   assert.equal(far.run('here().feast'), 1, 'not from the school');
 });
 
-test('A at the big table shows 桌子 (table): what it’s for', async () => {
-  const g = game({feast: 2}, {place: 'homeGround', x: 17, y: 8, dir: 'up'});
-  assert.equal(g.run('promptFor(17, 7)'), 'Look');
-  await press(g, 17, 8, 'up');
-  assert.deepEqual(get(g, '__notes'), ['card: 桌子 (The big table for the troop’s feast, under the big tree.)']);
+test('by the table, the hungry monkey tells you what the troop has, and what it hasn’t: 我们没有蜂蜜！ teaches 没有', async () => {
+  const g = game({feast: 2}, {place: 'homeGround', x: 19, y: 8, dir: 'up'});
+  assert.deepEqual(item(g, /still needs/), ['Hear from the hungry monkey what the feast still needs', false, false, true]);
+  await press(g, 19, 8, 'up');
+  assert.deepEqual(get(g, '__said'), ['这是我们的大桌子！', '我们有桃子，也有苹果！', '我们没有蜂蜜！ [没有]', '我要吃蜂蜜！'],
+    'its big table, what the troop has (有, a word you know), what it hasn’t (没有 in bold), and what he’d love');
+  const notes = get(g, '__notes');
+  assert.equal(notes[0], 'card: 没有 (Use 没有 to say what you don’t have.)', 'its card, with no picture, like 有');
+  assert.match(notes.join(' '), /There’s no honey for the feast! Honey comes from bees: finding them is the next part of chapter 1, coming soon/);
+  assert.equal(g.run('here().feast'), 3);
+  assert.equal(g.run("lvl('蜂蜜')"), 0, '蜂蜜 isn’t taught: just for listening, till the bees (one new word at a time)');
+  assert.equal(bubble(g, 'hungry'), null);
+  assert.equal(item(g, /still needs/)[1], true, 'ticked off');
+  assert.ok(!get(g, 'getTasks()').length, 'nothing more to do for now');
+  assert.match(g.run('tasksHint()'), /The big monkey has something to ask you/, 'the hint: his flowers first, while he has something to ask');
+  g.run("Object.assign(here(), {flowers: 'done', schoolFlowers: true})");
+  assert.match(g.run('tasksHint()'), /There’s no honey for the feast yet\. It comes from bees, the next part of chapter 1, coming soon/, 'then the honey');
+  g.run('__said.length = 0; __notes.length = 0');
+  await press(g, 19, 8, 'up');
+  assert.deepEqual(get(g, '__said'), ['我要吃蜂蜜！'], 'after that, he still wants honey');
+  assert.match(get(g, '__notes').join(' '), /Press A at the big 桌子 \(table\) to see what there is for the feast, and what it still needs/);
 });
 
-test('有 has no picture, so lessons practise it in a sentence: 我有桃子 or 我有朋友, with 有 missing (or the teacher’s ! would stay up for it)', () => {
+// A at the table: its list stays open till OK. Each row: its words, whether the troop has it (ticked), whether its picture
+// is a shadow, and whether its English shows.
+async function openList(g){
+  face(g, 17, 8, 'up');
+  g.run('globalThis.__listDone = false; interact(...facing()).then(() => { __listDone = true; })');
+  for (let i = 0; i < 20; i++){ await new Promise(r => setImmediate(r)); g.flush(); }
+}
+const rows = g => get(g, "[...sheet.querySelectorAll('.frow')].map(r => [[...r.querySelectorAll('[data-t]')].map(b => b.dataset.t).join(''), r.querySelector('.fmark').textContent === '✓', !!r.querySelector('.fpic.sil'), !r.querySelector('.sentence-en').hidden])");
+const closeList = async g => { g.run("sheet.querySelector('[data-a=ok]').click()"); for (let i = 0; i < 5; i++){ await new Promise(r => setImmediate(r)); g.flush(); } };
+
+test('A at the big table shows the feast’s list: what the troop has, ticked; and once the hungry monkey has said so, the honey it still needs, as a shadow', async () => {
+  const g = game({feast: 2}, {place: 'homeGround', x: 17, y: 8, dir: 'up'});
+  g.run("globalThis.__spoken = []; say = (t, end) => { __spoken.push(t); if (end) end(); }");
+  assert.equal(g.run('promptFor(17, 7)'), 'Look');
+  await openList(g);
+  assert.equal(g.run("sheet.querySelector('.label').textContent"), 'For the feast, at the big 桌子 (table)');
+  assert.deepEqual(rows(g), [['我们有桃子', true, false, true], ['我们有苹果', true, false, true]], 'peaches and apples, ticked, each with its English the first time');
+  assert.equal(g.run("!!sheet.querySelector('[data-a=en]')"), false, 'so no English button');
+  g.run("sheet.querySelector('[data-a=read]').click()");
+  for (let i = 0; i < 10; i++){ await new Promise(r => setImmediate(r)); g.flush(); }
+  assert.deepEqual(get(g, '__spoken'), ['我们有桃子。', '我们有苹果。'], 'Hear it reads them, one after another');
+  await closeList(g);
+  assert.equal(g.run('__listDone'), true, 'OK closes it');
+  g.run('here().feast = 3');   // (the hungry monkey has told you: no honey)
+  await openList(g);
+  assert.deepEqual(rows(g), [['我们有桃子', true, false, false], ['我们有苹果', true, false, false], ['我们没有蜂蜜', false, true, true]],
+    'then the honey: no tick, its picture a shadow, and its English, the first time; the others’ English behind English');
+  g.run("sheet.querySelector('[data-a=en]').click()");
+  assert.deepEqual(rows(g).map(r => r[3]), [true, true, true], 'English shows it all');
+  await closeList(g);
+});
+
+test('有 and 没有 have no pictures, so lessons practise them in a sentence: 我有桃子 or 我有朋友, with 有 missing, and 我没有苹果 (or the teacher’s ! would stay up for them)', () => {
   const g = game({feast: 2}, BY_TEACHER, [...KNOWN, ...FIRST_TWO, '七', '八', '九', '十', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']);
   g.run("setSeen('有')");   // (just learned, as the old monkey's news teaches it)
   assert.ok(get(g, "practiceWords().includes('有')"), '有 needs practice');
@@ -126,6 +174,8 @@ test('有 has no picture, so lessons practise it in a sentence: 我有桃子 or 
   }
   g.run("rec('有').ok = 2");
   assert.ok(!get(g, "practiceWords().includes('有')"), 'once it’s right twice, it doesn’t');
+  g.run("setSeen('没有')");   // (as the hungry monkey teaches it)
+  for (let i = 0; i < 20; i++) assert.deepEqual(get(g, '(s => [s.t.join(""), s.gap])(practiceSentence())'), ['我没有苹果', '没有'], '没有 too: 我没有苹果');
 });
 
 test('a game saved before the feast (with no feast in its save) that knows the first three of each gets the old monkey’s news straight away', () => {

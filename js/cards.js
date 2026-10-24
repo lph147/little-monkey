@@ -498,6 +498,40 @@ function showPicked(f, note){
     on('[data-a=ok]', () => { closeCard(); res(); });
   });
 }
+// The feast's list (A at its big table: the area's feastList): what the troop has for the feast, each food with its picture
+// and a sentence, 我们有桃子。, ticked, and what it still needs as a shadow, 我们没有蜂蜜。; a food joins the list once its
+// part of the story begins (show), so it never gives away what's coming. Each sentence's English shows the first time
+// you see it, then behind English; Hear it reads them to you, one after another.
+function feastCard(){
+  return new Promise(res => {
+    const list = AREA.feastList;
+    const rows = list.foods.filter(f => !f.show || matches(f.show)).map(f => {
+      const have = !!f.have && matches(f.have), s = have ? f.yes : f.no, t = toks(s.zh);
+      return {w:f.word, have, t, en:s.en, seen:!!S.lines[t.join('')]};
+    });
+    rows.forEach(r => { S.lines[r.t.join('')] = 1; hear(r.t); }); save();
+    openCard(`<p class="label">${esc(fill(list.label))}</p><div class="flist">${rows.map((r, i) => `<div class="frow${r.have ? ' have' : ''}" data-i="${i}">
+        <div class="fpic${r.have ? '' : ' sil'}" aria-hidden="true">${picHTML(r.w)}</div>
+        <div class="fline">${lineHTML(r.t)}<div class="sentence-en"${r.seen ? ' hidden' : ''}>${esc(r.en)}</div></div>
+        <span class="fmark" aria-label="${r.have ? 'We have it' : 'Not yet'}">${r.have ? '✓' : ''}</span></div>`).join('')}</div>
+      ${list.note ? `<p class="small fnote">${esc(fill(list.note))}</p>` : ''}<div class="gloss"></div>
+      <div class="actions"><button class="btn grow" data-a="read">🔊 Hear it</button>${rows.some(r => r.seen) ? '<button class="btn" data-a="en">English</button>' : ''}<button class="btn primary" data-a="ok" data-b>OK</button></div>`);
+    bindTokens(sheet);
+    on('[data-a=en]', e => { sheet.querySelectorAll('.frow .sentence-en').forEach(x => x.hidden = false); e.currentTarget.remove(); });
+    on('[data-a=read]', () => {   // (as the Story Scroll reads its story)
+      let i = 0;
+      const next = () => {
+        sheet.querySelectorAll('.frow').forEach(x => x.classList.remove('reading'));
+        if (i >= rows.length || modal.hidden) return;
+        const el = sheet.querySelector(`.frow[data-i="${i}"]`); if (el){ el.classList.add('reading'); el.scrollIntoView({block:'nearest'}); }
+        const text = rows[i].t.join(''); i++;
+        say(text, () => setTimeout(next, 250));
+      };
+      next();
+    });
+    on('[data-a=ok]', () => { stopSpeech(); closeCard(); res(); });
+  });
+}
 function confirmBox(who, html, yes, no){
   return new Promise(res => {
     openCard(`<div class="who" aria-hidden="true">${who}</div><p>${html}</p><div class="actions"><button class="btn" data-a="no" data-b>${no}</button><button class="btn primary" data-a="yes">${yes}</button></div>`);
