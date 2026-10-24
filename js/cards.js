@@ -186,15 +186,23 @@ let talkNext = null;          // moves on to what comes after the line, while th
 let talkMove = null;          // moves between reply choices with the D-pad, while the box shows them
 let lastLine = null;          // the line someone else said last ({id, line}), until the story moves on: what a reply answers
 const TAP_TIP_LINES = 5;      // "Tap any word": a tip on your very first line (TIPS.tap), only for a new player
-// A line someone says (opts: teach, the word being taught, in bold green; hint, a note under it; ok, what A does, such
-// as Give it; last, the conversation's last line: its button says Done, not ▼ Next, so you can tell it's ending).
-function showDialog(who, line, opts = {}){
+// A line someone says (opts: teach, the word being taught, in bold green; hint, what to do, such as where to go next; ok,
+// what A does, such as Give it; last, the conversation's last line: its button says Done, not ▼ Next, so you can tell it's
+// ending). The hint is a message of its own, after the line (decided 24 October 2026: under the line, it crowded it), and
+// takes the line's ok and Done with it.
+async function showDialog(who, line, opts = {}){
+  const {hint, ...said} = opts;
+  if (!hint) return sayLine(who, line, said);
+  await sayLine(who, line, {teach:said.teach});
+  await showNarration(hint, said.last, {ok:said.ok, note:true});
+}
+function sayLine(who, line, opts){
   return new Promise(res => {
     const key = line.t.join(''), firstTime = !S.lines[key];
     S.lines[key] = 1; hear(line.t); save();
     const again = !talkBox.hidden;   // again: the box is still up from the last line
     talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
-      <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>${opts.hint ? `<p class="small hintline">${esc(opts.hint)}</p>` : ''}
+      <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>
       <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
     talkBox.classList.toggle('again', again);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();   // at the top of the screen, if at the bottom it would cover you
@@ -214,12 +222,20 @@ function showDialog(who, line, opts = {}){
   });
 }
 // A line of the story in the speech box during a conversation, in English, said by no one: such as what
-// the old monkey does for baby monkeys. A moves on, so the next line can't cover it. The conversation's last (last): Done.
-function showNarration(text, last){
-  lastLine = null;   // (the story has moved on)
+// the old monkey does for baby monkeys. A moves on, so the next line can't cover it. The conversation's last (last): Done;
+// ok, what A does, such as Play. Beside it, so the box stays short. Or (note) what to do, after someone's line: its first
+// sentence in bold, the rest under it, and an icon it starts with, such as ✨, big beside it; the line before it is still
+// what a reply answers.
+function noteHTML(text){
+  const icon = (text.match(new RegExp(`^(?:${ICON_RE.source})\\s*`, 'u')) || [''])[0], rest = text.slice(icon.length);   // (ICON_RE: js/art.js)
+  const [, head, more] = rest.match(/^(.+?[\p{L}\p{N})][.!?])\s+(.+)$/su) || [, rest, ''];   // (a sentence ends after a word, not "a !")
+  return `<div class="talknote">${icon ? `<span class="noteicon">${pixelIcons(icon.trim())}</span>` : ''}<p><b>${pixelIcons(esc(head))}</b>${more ? ` <span>${pixelIcons(esc(more))}</span>` : ''}</p></div>`;
+}
+function showNarration(text, last, {ok, note} = {}){
+  if (!note) lastLine = null;   // (the story has moved on)
   return new Promise(res => {
-    talkBox.innerHTML = `<p class="narration">${pixelIcons(esc(text))}</p>
-      <div class="talkfoot"><span class="spacer"></span><button class="btn primary next" data-a="ok" data-label="${last ? 'Done' : 'Next'}">${last ? 'Done' : '▼'}</button></div>`;
+    talkBox.innerHTML = `${note ? noteHTML(text) : `<p class="narration">${pixelIcons(esc(text))}</p>`}
+      <button class="btn primary next" data-a="ok" data-label="${esc(ok || (last ? 'Done' : 'Next'))}">${ok ? esc(ok) + ' ▼' : last ? 'Done' : '▼'}</button>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();
     $('#saybox').hidden = true;

@@ -43,6 +43,9 @@ test('pressing A to clear the message after a conversation closes it, and doesn�
 test('the last line of a conversation says Done, not ▼ Next, so you can tell it’s ending', async () => {
   const g = game({elder: 1}, OLD_MONKEY);   // two words of four: he says to go and learn some more
   g.run("pressA()"); await tick();
+  assert.equal(g.el('#talk').querySelector('[data-a=ok]').textContent, '▼', 'his line: what to do comes after it');
+  g.run("pressA()"); await tick();
+  assert.ok(g.el('#talk').querySelector('.talknote'), 'what to do, the last thing in the conversation');
   const b = g.el('#talk').querySelector('[data-a=ok]');
   assert.equal(b.textContent, 'Done');
   assert.equal(b.dataset.label, 'Done');

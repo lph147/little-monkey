@@ -1320,8 +1320,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // does the first part whose if matches your progress (a part with no if always matches).
   // Steps in a do list:
   //   say       one of the lines above, said by the one you're talking to (or by, another character
-  //             nearby). teach makes that word bold; hint adds a note underneath;
-  //             showTasks puts your current tasks in the note instead (the hint if there are none)
+  //             nearby). teach makes that word bold; hint, what to do, is a message after it (its first
+  //             sentence in bold; an emoji it starts with, such as ✨, big beside it);
+  //             showTasks puts your current tasks in the message instead (the hint if there are none)
   //   newWord   a word's new-word card, only if you don't know the word yet (note: a line on it)
   //   card      a word's card, every time (note: a line on it)
   //   set       change what the area remembers, such as {elder:1}
@@ -1359,11 +1360,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {reply:'你好'},
         {say:'iamOld'},
         {message:'Every baby monkey explores the mountain to find out what things are called. Today it’s your turn!'},
-        {say:'go', hint:'Things that sparkle ✨ have words: walk up to one and press A. Learn 4, then come back.'},
+        {say:'go', hint:'✨ Things that sparkle have words. Walk up to one and press A. Learn 4, then come back to the old monkey.'},
         {set:{elder:1}}
       ]},
       {if:{elder:1, newWords:{below:4}}, do:[
-        {say:'go', hint:'Learn 4 words first, then come back ({newWords}/4). Things that sparkle ✨ have words: walk up to one and press A.'}
+        {say:'go', hint:'✨ Learn 4 words first, then come back ({newWords}/4). Things that sparkle have words: walk up to one and press A.'}
       ]},
       {if:{elder:1}, do:[
         {say:'letsLook'},   // he checks your first words: you match them to their pictures

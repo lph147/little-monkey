@@ -24,11 +24,11 @@ test('the task says what to look for: things that sparkle, walk up to one and pr
   assert.match(g.el('#sheet').innerHTML, /things that sparkle <img class="icon"[^>]*> and press A/, 'with the pixel sparkle, as on the map');
 });
 
-test('the old monkey says it too, when he sends you off and if you come back too soon', () => {
+test('the old monkey says it too, when he sends you off and if you come back too soon, in a message after his line with the sparkle beside it', () => {
   const g = game([], undefined, {elder: 0});
   const hints = get(g, "AREA.talk.elder.slice(0, 2).map(p => p.do.find(s => s.say === 'go').hint)");
-  assert.deepEqual(hints, ['Things that sparkle ✨ have words: walk up to one and press A. Learn 4, then come back.',
-    'Learn 4 words first, then come back ({newWords}/4). Things that sparkle ✨ have words: walk up to one and press A.']);
+  assert.deepEqual(hints, ['✨ Things that sparkle have words. Walk up to one and press A. Learn 4, then come back to the old monkey.',
+    '✨ Learn 4 words first, then come back ({newWords}/4). Things that sparkle have words: walk up to one and press A.']);
 });
 
 test('the arrow bobs over the nearest thing that sparkles, stays on it as you walk, and moves on once you know its word', () => {

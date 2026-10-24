@@ -210,8 +210,8 @@ const SCREENS = [
     play(); await wait(800); }},
   {id: 'tasks-first-words', title: 'Tasks: your first words', save: 'firstWords', why: 'Walk up to things that sparkle, with the sparkle as on the map, and press A.', run: async () => {
     play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
-  {id: 'talk-done', title: 'The last line: Done', save: 'notYet', why: 'A conversation’s last line says Done, not ▼ Next, so you can tell it’s ending.', run: async () => {
-    play(); await wait(100); talk(npc('elder')); await wait(500); }},
+  {id: 'talk-done', title: 'The last message: Done', save: 'notYet', why: 'A conversation’s last line, or here what to do after it, says Done, not ▼ Next, so you can tell it’s ending.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(400); }},
   {id: 'message-ok', title: 'A message after talking', save: 'hungryAsks', why: 'Where the speech box was: A says OK, and closes it, never starting the conversation again. Then what you’ve just finished with rests for 2 seconds.', run: async () => {
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); toast('New task: Find some fruit for the hungry monkey'); clearTimeout(msgT); await wait(400); }},
   {id: 'hello-card', title: 'A new word in a conversation', save: 'born', run: async () => {
@@ -232,9 +232,12 @@ const SCREENS = [
   {id: 'welcome', title: 'The old monkey’s welcome', save: 'born', why: 'A line of story, waiting in the speech box.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
     next(); await wait(200); next(); await wait(500); }},
-  {id: 'go-look', title: 'Off you go', save: 'born', why: 'His hint, and the tip about grey words.', run: async () => {
+  {id: 'go-look', title: 'Off you go', save: 'born', why: 'His line, and the tip about grey words.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
     next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
+  {id: 'go-look-note', title: 'Off you go: what to do', save: 'born', why: 'What to do is a message of its own, after his line (it crowded the line, under it): the sparkle big beside it, the first sentence in bold.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
+    next(); await wait(200); next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
   {id: 'playing', title: 'Playing', save: 'middle', why: 'The map, the task box, the header.', run: async () => { play(); await wait(600); }},
   {id: 'chapter-card', title: 'A new chapter', save: 'home', why: 'Its title card, when a chapter begins: chapter 1, once the whole troop is home and the prologue is over.', run: async () => { play(); await wait(100); STEPS.chapter({chapter: 1}); await wait(300); }},
   {id: 'place-name', title: 'Arriving in a place', save: 'middle', why: 'Its name for a moment, when you go from one place to another.', run: async () => { play(); await wait(100); showPlaceName(); clearTimeout(placeNameT); await wait(300); }},
@@ -272,8 +275,10 @@ const SCREENS = [
   {id: 'wants-other', title: 'He wants the other fruit', save: 'wantsApple', why: 'After you bring the peach first.', run: async () => { play(); await wait(500); }},
   {id: 'animal-card', title: 'Meeting an animal', save: 'middle', why: 'The first time: its name on a new-word card.', run: async () => {
     play(); await wait(100); showNotice('羊', {note: 'A sheep is eating grass at the foot of the 山 (mountain). Answer its questions to make friends.'}); await wait(400); }},
-  {id: 'animal-wants-to-play', title: 'It wants to play!', save: 'middle', why: 'An animal you’ve met jumps out of the grass and says 我们玩吧！ (Let’s play!), over its name, with what’s happening under it; Play starts its questions (the first time, its card says what’s happening). So its questions never just start.', run: async () => {
+  {id: 'animal-wants-to-play', title: 'It wants to play!', save: 'middle', why: 'An animal you’ve met jumps out of the grass and says 我们玩吧！ (Let’s play!), over its name, then what’s happening, as a message of its own (next screen); Play starts its questions (the first time, its card says what’s happening). So its questions never just start.', run: async () => {
     play(); await wait(100); rec('狐狸').lv = Math.max(rec('狐狸').lv || 0, 1); wildAppears(ANIMALS.find(a => a.id === 'fox')); await wait(2600); }},
+  {id: 'animal-play-note', title: 'It wants to play: what to do', save: 'middle', why: 'After 我们玩吧！, what’s happening, as a message of its own; Play starts its questions.', run: async () => {
+    play(); await wait(100); rec('狐狸').lv = Math.max(rec('狐狸').lv || 0, 1); wildAppears(ANIMALS.find(a => a.id === 'fox')); await wait(2400); next(); await wait(500); }},
   {id: 'encounter-listen', title: 'Animal: listen', save: 'middle', why: 'The question must never be about the animal itself.', run: async () => {
     play(); await wait(100); encounter({id: 'rabbit', hz: '兔子', img: portrait('rabbit'), wild: true}); await wait(500); }},
   {id: 'encounter-apple', title: 'Animal: with an apple to eat', save: 'withApple', why: 'Eating it takes away a wrong answer.', run: async () => {

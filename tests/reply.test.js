@@ -49,7 +49,7 @@ test('choosing the phrase that fits: you say it, and it counts as used', async (
   await tick();
   assert.match(t.box.querySelector('.spk-zh').textContent, /小猴子/, 'your monkey says it');
   assert.ok(t.box.querySelector('.tok.teach[data-t="谢谢"]'));
-  assert.equal(t.box.querySelector('.hintline'), null, 'no note: it fits');
+  assert.equal(t.box.querySelector('.talknote'), null, 'no note: it fits');
   assert.deepEqual([t.rec('谢谢').lv, t.rec('谢谢').used], [4, 1]);
   t.run('pressA()');
   await tick();

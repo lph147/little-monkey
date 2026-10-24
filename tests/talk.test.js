@@ -84,16 +84,52 @@ test('Next sits beside the English, which is just as wide as its words (or besid
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
   assert.match(css, /\.talk \.sentence-en\{grid-column:1;justify-self:start;/, 'the English as wide as its words, not a bar across the box');
   assert.match(css, /\.talk > \.next\{grid-column:2;justify-self:end\}/, 'Next beside it');
-  assert.match(css, /\.talk:has\(> \.sentence-en\[hidden\]\):not\(:has\(> \.hintline\)\) > \.talkline\{grid-column:1\}/, 'and beside the line when there’s no English');
+  assert.match(css, /\.talk:has\(> \.sentence-en\[hidden\]\) > \.talkline\{grid-column:1\}/, 'and beside the line when there’s no English');
   assert.match(css, /\.talk \.tok rt\{font-size:max\(\.8em,10\.5px\);font-weight:600;color:inherit\}/, 'the pinyin nearly as big as the characters, in its word’s colour');
 });
 
-test('a hint shows in the box, and a different button text', () => {
+test('a different button text', () => {
   const t = talkGame();
-  t.say('go', {hint: 'Learn 4 words first.', ok: 'Give it'});
-  assert.equal(t.box.querySelector('.hintline').textContent, 'Learn 4 words first.');
+  t.say('go', {ok: 'Give it'});
   assert.match(t.box.querySelector('[data-a=ok]').textContent, /Give it/);
   assert.equal(t.box.querySelector('[data-a=ok]').dataset.label, 'Give it');
+});
+
+test('what to do (a hint) is a message of its own after the line, taking its button with it (decided 24 October 2026: under the line, it crowded it)', async () => {
+  const t = talkGame();
+  t.say('go', {hint: '✨ Things that sparkle have words. Walk up to one and press A.', ok: 'Give it', last: true});
+  assert.ok(t.box.querySelector('.tok'), 'the line first');
+  assert.equal(t.box.querySelector('.talknote'), null, 'on its own');
+  assert.equal(t.box.querySelector('[data-a=ok]').dataset.label, 'Next', 'its ▼ goes on to what to do');
+  t.run('pressA()');
+  await tick();
+  assert.equal(t.box.querySelector('.tok'), null, 'then what to do, on its own');
+  const note = t.box.querySelector('.talknote');
+  assert.equal(note.querySelector('b').textContent, 'Things that sparkle have words.', 'its first sentence in bold');
+  assert.equal(note.querySelector('p span').textContent, 'Walk up to one and press A.', 'the rest under it');
+  assert.ok(note.querySelector('.noteicon img.icon'), 'and the icon it starts with, big beside it');
+  assert.match(t.box.querySelector('[data-a=ok]').textContent, /Give it/, 'the line’s button text');
+  assert.equal(t.box.querySelector('[data-a=ok]').dataset.label, 'Give it');
+  assert.equal(await t.said(), false, 'still waiting');
+  t.run('pressA()');
+  assert.equal(await t.said(), true, 'A moves on');
+  t.say('go', {hint: 'Look for a monkey with a ! over its head.', last: true});
+  t.run('pressA()');
+  await tick();
+  assert.equal(t.box.querySelector('.talknote b').textContent, 'Look for a monkey with a ! over its head.', 'a ! on its own doesn’t end a sentence');
+  assert.equal(t.box.querySelector('.noteicon'), null, 'no icon: it doesn’t start with one');
+  assert.equal(t.box.querySelector('[data-a=ok]').dataset.label, 'Done', 'the conversation’s last');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.match(css, /\.talk > :is\(\.narration,\.talknote\)\{grid-column:1;/, 'Next beside it, so the box stays short');
+});
+
+test('a reply answers the line before what to do', async () => {
+  const t = talkGame();
+  t.say('hi', {hint: 'Keep exploring, little monkey.'});
+  t.run('pressA()');
+  await tick();
+  assert.ok(t.box.querySelector('.talknote'));
+  assert.equal(t.run('lastLine && lastLine.line.t.join("")'), t.run('L.hi.t.join("")'), 'the old monkey’s line is still what you answer');
 });
 
 test('while someone is talking you can\'t walk off or open the menu', () => {
