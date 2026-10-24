@@ -51,7 +51,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           your stone sparkles; 2 once you've read it there, and seen how the name is made
   //   trainee1, trainee2  chapter 1: 1 once that little monkey in training on the hillside has stopped you for a word game
   //           (the first by the stepping stones, the second on the middle terrace)
-  //   tower   chapter 1: the little monkeys building a tower of stones on the hillside: 1 once they've said hello, 2 once
+  //   tower   chapter 1: the little monkeys building a tower of stones at the home ground: 1 once they've said hello, 2 once
   //           you've counted its stones with them
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
@@ -112,7 +112,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // they are, on, and the question, ask), what the card asking you to play says (start), a message while you know too few
   // numbers to count with (notYet), and what happens if you get them all right (win).
   countGames: {
-    // the little monkeys' tower of stones on the hillside
+    // the little monkeys' tower of stones at the home ground
     tower: {thing:{word:'石头', ask:'howManyStones', on:'tower'}, start:'Count the stones in their tower? Each right answer earns a 🐚 if that number needs practice.',
       notYet:'They count the stones as they put them on. Learn more numbers, then come back and count with them!', win:[{say:'great'}]}
   },
@@ -552,7 +552,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
       legend: {
         'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'},   // the bridge over the stream (chapter 1's bridges teach 桥)
-        'O': {look:'water', word:'水', note:'A little pool of clear water.'}   // its pool: just water, with no fish in it (decided 24 October 2026: it showed 鱼, fish, as the meadow's pond does)
+        'O': {look:'water', word:'水', note:'A little pool of clear water.'},   // its pool: just water, with no fish in it (decided 24 October 2026: it showed 鱼, fish, as the meadow's pond does)
+        '@': {look:'stoneTower', landmark:true, onLook:[{do:[{talkTo:'towerL'}]}]}   // the little monkeys' tower of stones: A talks to them
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
@@ -567,7 +568,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
-        "YgEFggggggg8gJggggggFgggg.gggTgY",
+        "YgEFggggggg8gJggggggFg@gg.gggTgY",   // little monkeys building a tower of stones (@), beside the way up to the hillside
         "Ygggggggggg8ggggggggggggg.gggggY",
         "...............................u",
         "...............................Y",
@@ -612,8 +613,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'A': {look:'archway', walk:true, says:'松林'},         // the way through the archway into the pine wood, with its name on the board over it
         'I': {look:'archPost'},                               // the archway's pillars
         'L': {look:'slabs', walk:true},                       // the lookout's stone platform
-        'R': {look:'railing', landmark:true, onLook:[{do:[{scene:'lookout'}]}]},  // its railing, at the top of the cliff: A shows you the view
-        't': {look:'stoneTower', landmark:true, onLook:[{do:[{talkTo:'towerL'}]}]}   // the little monkeys' tower of stones: A talks to them
+        'R': {look:'railing', landmark:true, onLook:[{do:[{scene:'lookout'}]}]}  // its railing, at the top of the cliff: A shows you the view
       },
       map: [
         "pppppppppppp..pppppppppppp",   // the way into the pine wood
@@ -648,7 +648,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYgTg..gggnnoggggggggTggYY",
         "MMMMM==MMMvvvvvvvvMMMMMMMM",   // stone steps (left), a bank (middle)
         "MMMMM==MMMvvvvvvvvMMMMMMMM",
-        "YYgfg...t.gfggfgggfgfggfYY",   // a slope of flowers, and little monkeys building a tower of stones by the steps; a peach tree in the corner
+        "YYgfg..fgfgfggfgggfgfggfYY",   // a slope of flowers; a peach tree in the corner
         "YYgPg..gfgfgfggffggfgffgYY",
         "YYfgg...............ggfgYY",
         "YYgffggggfgggfgggfWzWWWWYY",   // the brook, winding, and its stepping stones
@@ -946,13 +946,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#4A2C17', f:'#C8894A', s:'#F6D1A7', m:'#C98E6A', e:'#24160C'}},
     {id:'trainee2', place:'hillside', x:9, y:20, facing:'right', holds:'棍子', practises:true, name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#40250F', f:'#A56A3A', s:'#F0C89E', m:'#C08060', e:'#24160C'}},
-    // chapter 1: two little monkeys at play at the foot of the hillside's cliff, by the stone steps, piling stones into a
-    // tower between them (the t square), taking turns, as high as it will go, till it falls and they start again (in the
+    // chapter 1: two little monkeys at play at the home ground, beside the way up to the hillside, piling stones into a
+    // tower between them (the @ square), taking turns, as high as it will go, till it falls and they start again (in the
     // book, chapter 1, the troop plays under the pines and by the stream on a hot day: 跑沙窝，砌宝塔, they run about in the
     // sand and build pagodas). plays: what a monkey is doing, all the time, except while you're talking to it
-    {id:'towerL', place:'hillside', x:7, y:32, facing:'right', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+    {id:'towerL', place:'homeGround', x:21, y:7, facing:'right', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},   // (by the hillside's stone steps till 24 October 2026: in the way there)
       palette:{o:'#45291A', f:'#B98A5E', s:'#F4D3AE', m:'#C99272', e:'#24160C'}},
-    {id:'towerR', place:'hillside', x:9, y:32, facing:'left', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+    {id:'towerR', place:'homeGround', x:23, y:7, facing:'left', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#46240F', f:'#B4693A', s:'#F2CA9F', m:'#C2805E', e:'#24160C'}},
     // chapter 1: by the hillside's brook, a little monkey on the bank chasing a dragonfly, leaping at it, and two in the water
     // at the brook's end, splashing each other (in the book, chapter 1: 赶蜻蜓, they chase dragonflies, and 绿水涧边随洗濯, by
@@ -1286,7 +1286,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     howManyMonkeys: {zh:'这里 有 几 只 猴子 ？', en:'How many monkeys are there?'},
     howManyRabbits: {zh:'这里 有 几 只 兔子 ？', en:'How many rabbits are there?'},
     howManyBirds: {zh:'这里 有 几 只 鸟 ？', en:'How many birds are there?'},
-    howManyStones: {zh:'这里 有 几 个 石头 ？', en:'How many stones are there?'},   // the little monkeys on the hillside, counting the stones in their tower with you
+    howManyStones: {zh:'这里 有 几 个 石头 ？', en:'How many stones are there?'},   // the little monkeys at the home ground, counting the stones in their tower with you
     playWater: {zh:'我们 在 玩 水 ！', en:'We’re playing in the water!'},   // the little monkeys splashing in the hillside's brook
     thisBlack: {zh:'这 是 黑色 。', en:'This is black.'},   // the teacher, opening a pot of paint (colour lessons)
     thisBlue: {zh:'这 是 蓝色 。', en:'This is blue.'},
@@ -1522,7 +1522,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you a {桃子}.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
         win:[{say:'great'}, {bag:'桃子', note:'The monkey gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The monkey gives you a {桃子}.', pic:'桃子'}]}}]}
     ],
-    // the little monkeys building a tower of stones on the hillside: hello, the first time; then they count its stones with
+    // the little monkeys building a tower of stones at the home ground: hello, the first time; then they count its stones with
     // you (countGames, above), once you know enough numbers (四, at school); till then, they count as they put them on
     towerL: [
       {if:{tower:0}, do:[{set:{tower:1}}, {say:'hi'}, {reply:'你好'}, {message:'The little monkeys are building a tower of stones, as high as it will go, before it falls!'},

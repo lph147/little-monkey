@@ -74,9 +74,10 @@ SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, di
 SAVES.byTrainee = {...SAVES.pineWood, pos: {place: 'hillside', x: 17, y: 38, dir: 'right'}};   // coming up to the stepping stones, a little monkey in training beyond them
 SAVES.bagFull = {...SAVES.pineWood, bag: {'桃子': 3}, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 10, y: 20, dir: 'left'}};   // a full bag of peaches, by the other one, on the middle terrace
 SAVES.byHidden = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 22, y: 38, dir: 'down'}};   // above the tree with shells tucked behind it
-// below the little monkeys building a tower of stones, at the foot of the hillside's cliff: the first time, knowing just
-// 一, 二 and 三; and later, knowing the numbers to six from school (to count with them)
-SAVES.byTower = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 8, y: 33, dir: 'up'}};
+// below the little monkeys building a tower of stones, at the home ground beside the way up to the hillside: the first
+// time, knowing just 一, 二 and 三; and later, knowing the numbers to six from school (to count with them)
+SAVES.byTower = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'homeGround', x: 22, y: 8, dir: 'up'}};
+SAVES.hillsideFoot = {...SAVES.byTower, pos: {place: 'hillside', x: 6, y: 33, dir: 'up'}};   // at the foot of the hillside's cliff, by its stone steps
 // by the brook at the foot of the hillside: on the path above the little monkey chasing a dragonfly, and on the bank above
 // the two splashing in the water
 SAVES.byBrook = {...SAVES.byTower, pos: {place: 'hillside', x: 10, y: 34, dir: 'down'}};
@@ -381,7 +382,9 @@ const SCREENS = [
     play(); await wait(100); glintsNow = () => [[22, 39, 1]]; await wait(400); }},
   {id: 'hidden-found', title: 'Found it!', save: 'byHidden', why: 'A at it: 2 🐚 (or an apple for your bag), once.', run: async () => {
     play(); await wait(100); interact(22, 39); clearTimeout(msgT); await wait(400); }},   // (the message held)
-  {id: 'tower', title: 'Building a tower of stones', save: 'byTower', why: 'At the foot of the cliff, by the stone steps, two little monkeys pile stones into a tower, taking turns, as high as it will go (here, a stone on its way up), with a little clack as each goes on (in the book, chapter 1: 砌宝塔, they build pagodas).', run: async () => {
+  {id: 'hillside-steps', title: 'The way up the hillside', save: 'hillsideFoot', why: 'At the foot of the cliff, the stone steps, with the way to them clear: the little monkeys’ tower is at the home ground now.', run: async () => {
+    S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(500); }},
+  {id: 'tower', title: 'Building a tower of stones', save: 'byTower', why: 'At the home ground, beside the way up to the hillside (by the hillside’s stone steps till 24 October 2026, where they crowded the way up), two little monkeys pile stones into a tower, taking turns, as high as it will go (here, a stone on its way up), with a little clack as each goes on (in the book, chapter 1: 砌宝塔, they build pagodas).', run: async () => {
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); towerAt = () => ({h: 5, phase: 'build', k: .3, stones: 3, carried: 3, by: 1, lift: .55}); await wait(400); }},
   {id: 'tower-falls', title: 'Crash!', save: 'byTower', why: 'Then it sways, and falls, the stones tumbling down round it with a clatter (here, falling); the monkeys jump back, then jump about laughing, gather the stones up and start again.', run: async () => {
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); towerAt = () => ({h: 6, phase: 'fall', k: .45, stones: 6, carried: null}); await wait(400); }},

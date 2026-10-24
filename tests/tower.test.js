@@ -1,5 +1,6 @@
-// Chapter 1, the hillside (decided 23 October 2026, in place of the story carving, which isn't in the book): two little
-// monkeys at the foot of the cliff by the stone steps, building a tower of stones between them, as in the book's chapter 1,
+// Chapter 1 (decided 23 October 2026, in place of the story carving, which isn't in the book): two little monkeys at the
+// home ground, beside the way up to the hillside (by the hillside's stone steps till 24 October 2026, where they made the
+// way up crowded), building a tower of stones between them, as in the book's chapter 1,
 // where the troop plays on a hot day (跑沙窝，砌宝塔: they build pagodas). They take turns to put a stone on, as high as it
 // will go, till it sways and falls, and start again. Talk to them (or A at the tower): once you know enough numbers, they
 // count its stones with you, as in a number lesson; till then, they count as they put them on.
@@ -13,9 +14,9 @@ const CHAPTER_ONE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flow
   build: 1, wood: 'asked', stones: 'asked', woodIn: 1, lookTip: 1, trainee1: 1, trainee2: 1};
 const knows = (words, ok = 3) => Object.fromEntries(words.map(w => [w, {lv: 1, ok, next: 100}]));
 const BASICS = ['石头', '山', '花', '草', '树', '猴子', '你好', '谢谢', '一', '二', '三'];
-// A game on the hillside below the tower (area: more progress; words: what you know), with what's said, the messages, your
+// A game at the home ground below the tower (area: more progress; words: what you know), with what's said, the messages, your
 // replies, the cards asking you to play (played: play) and the counting questions asked (each answered: right) kept for the test
-function game({area = {}, words = knows(BASICS), pos = {place: 'hillside', x: 8, y: 33, dir: 'up'}} = {}){
+function game({area = {}, words = knows(BASICS), pos = {place: 'homeGround', x: 22, y: 8, dir: 'up'}} = {}){
   const g = loadGame({dom: true, save: {version: 29, started: true, w: words, areas: {1: {...CHAPTER_ONE, ...area}}, pos}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__replies = []; globalThis.__asks = []; globalThis.__counts = []; globalThis.__play = true; globalThis.__right = true");
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
@@ -27,15 +28,19 @@ function game({area = {}, words = knows(BASICS), pos = {place: 'hillside', x: 8,
 const tower = id => `NPCS.find(n => n.id === '${id}')`;
 const bubble = (g, id) => get(g, `((AREA.bubbles.${id} || []).find(b => matches(b.if)) || {}).show || ''`);
 
-test('two little monkeys stand at the foot of the cliff by the stone steps, a tower of stones between them, and you can’t walk through them', () => {
+test('two little monkeys stand at the home ground, beside the way up to the hillside, a tower of stones between them, and you can’t walk through them', () => {
   const g = game();
   assert.deepEqual(get(g, "ALL_NPCS.filter(n => PLAYS[n.id] === 'tower').map(n => [n.id, n.place, n.x, n.y, n.home.facing, PLAYS[n.id]])"),
-    [['towerL', 'hillside', 7, 32, 'right', 'tower'], ['towerR', 'hillside', 9, 32, 'left', 'tower']], 'facing each other, across the tower');
-  assert.equal(g.run('tileAt(8, 32).look'), 'stoneTower');
-  assert.ok([[7, 32], [8, 32], [9, 32]].every(([x, y]) => !g.run(`walkable(${x}, ${y})`)));
-  assert.equal(g.run("tileAt(6, 31).look"), 'steps', 'beside the stone steps');
+    [['towerL', 'homeGround', 21, 7, 'right', 'tower'], ['towerR', 'homeGround', 23, 7, 'left', 'tower']], 'facing each other, across the tower');
+  assert.equal(g.run('tileAt(22, 7).look'), 'stoneTower');
+  assert.ok([[21, 7], [22, 7], [23, 7]].every(([x, y]) => !g.run(`walkable(${x}, ${y})`)));
+  assert.ok([24, 25].every(x => g.run(`walkable(${x}, 7)`)) && g.run('tileAt(25, 7).look') === 'path' && get(g, 'exitAt(25, 0).to') === 'hillside',
+    'off the way up to the hillside, which stays clear');
   assert.deepEqual(get(g, "['towerL', 'towerR'].map(id => NAMES[id])"), [{zh: '猴子', py: 'hóuzi', en: 'Monkey'}, {zh: '猴子', py: 'hóuzi', en: 'Monkey'}]);
-  assert.equal(g.run('promptFor(8, 32)'), 'Look', 'A at the tower');
+  assert.equal(g.run('promptFor(22, 7)'), 'Look', 'A at the tower');
+  g.run("enterPlace('hillside')");
+  assert.deepEqual(get(g, '[[5, 32], [6, 32], [7, 32], [8, 32], [9, 32]].map(([x, y]) => tileAt(x, y).walk)'), [true, true, true, true, true], 'the way up the hillside, by its stone steps, is clear again');
+  assert.ok(!get(g, 'PLACES.hillside.map.join("")').includes('t'), 'with no tower there');
 });
 
 test('they take turns to put a stone on it, as high as it will go; then it sways, falls and lies there; and they start again', () => {
@@ -63,7 +68,7 @@ test('near them, a little clack as each stone goes on, and a clatter as it falls
     const T = TOWER, h = T.heights[0]; for (let t = 0; t < h * T.place + T.wobble + T.fall + 100; t += 16) playSounds(t); return heard.join(' '); })()`);
   const h = get(g, 'TOWER.heights[0]');
   assert.equal(sounds(), [...Array(h).fill('clack'), 'clatter'].join(' '));
-  g.run("S.pos = {place: 'hillside', x: 20, y: 43, dir: 'up'}; placePlayer()");
+  g.run("S.pos = {place: 'homeGround', x: 2, y: 16, dir: 'up'}; placePlayer()");
   assert.equal(sounds(), '', 'far off: nothing');
 });
 
@@ -78,7 +83,7 @@ test('the first time, they say hello; knowing just 一, 二 and 三, they count 
   assert.deepEqual(get(g, '[__asks, __counts]'), [[], []], 'no counting yet');
   assert.equal(g.run('here().tower'), 1);
   g.run('__said.length = 0; __notes.length = 0');
-  await g.run(`interact(8, 32)`);   // A at the tower: talking to them
+  await g.run(`interact(22, 7)`);   // A at the tower: talking to them
   assert.deepEqual(get(g, '__said'), ['一，二，三！'], 'no hello the second time');
 });
 
