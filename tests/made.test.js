@@ -34,10 +34,18 @@ test('every entry is a word here: its parts make the word, and their pinyin is t
     } else if (m.clue){
       assert.ok(isPart(m.clue), `${w}: its clue is [Chinese, pinyin, English] (and maybe words with it)`);
       assert.ok([...w].length === 1 || [...w].includes(m.clue[0]), `${w}: a clue is inside a word of one character, or one of a word’s characters`);
+    } else if (m.same){
+      assert.ok(isPart(m.same) && m.same.length === 3, `${w}: the character it shares is [Chinese, pinyin, English]`);
+      assert.ok(words[m.as] && m.as !== w && w.includes(m.same[0]) && m.as.includes(m.same[0]), `${w}: it shares ${m.same[0]} with ${m.as}, another word here`);
+      assert.ok(plain(words[w].py).includes(plain(m.same[1])) && plain(words[m.as].py).includes(plain(m.same[1])), `${w}: ${m.same[0]} is said ${m.same[1]} in both`);
     } else assert.equal([...w].length, 1, `${w}: a picture is what one character was drawn from`);
   }
   // decided 23 October 2026: only where it genuinely helps, never characters that just say the meaning again
   for (const w of ['朋友', '睡觉', '谢谢', '学校', '老师']) assert.ok(!made[w], `${w} has nothing that helps`);
+  // decided 24 October 2026, after playing it: only what's simple, useful and memorable, that you can picture (the 艹 of
+  // 花 and 草, plants, meant nothing; 苹 means nothing on its own; the rest needed explaining)
+  for (const w of ['花', '草', '桥', '床', '路', '跳', '碗', '家', '瀑布', '没关系', '不客气']) assert.ok(!made[w], `${w}: nothing simple enough`);
+  assert.equal(made['你好'].why, 'hello', '你好: just hello (not wishing you well)');
 });
 
 test('a new word with a story: its card is just the word, then How it’s made ▸ opens a card of its own; Back goes back, Got it catches it', () => {
@@ -102,8 +110,8 @@ test('each part has its pinyin and English, a part you know as a word is green, 
   assert.deepEqual(cols(goat), [['shān 山 mountain', 'mpart known'], ['yáng 羊 sheep', 'mpart'], ['shānyáng 山羊 a mountain sheep', 'mword']], '山 is a word you know; 羊 isn’t yet');
   assert.deepEqual(goat.querySelectorAll('.mop').map(text), ['+', '='], 'with + and = between them');
   assert.ok(goat.querySelectorAll('.mcol')[0].querySelector('.mcpic .pix') && goat.querySelectorAll('.mcol')[2].querySelector('.mcpic .pix'), 'a part that’s a word with a picture shows it, and so does the word');
-  const apple = made(['石头'], '苹果');
-  assert.ok(!apple.querySelectorAll('.mcol')[0].querySelector('.mcpic .pix'), '苹 isn’t a word: no picture');
+  const dontWant = made(['石头'], '我不要');
+  assert.ok(!dontWant.querySelectorAll('.mcol')[2].querySelector('.mcpic .pix'), '不 isn’t a word here: no picture');
   const eat = made(['石头'], '吃');
   assert.deepEqual(cols(eat), [['chī 吃 to eat', 'mword big'], ['kǒu 口 mouth', 'mpart']], 'a clue: the character, and the clue beside it');
   assert.equal(text(eat.querySelector('.mwhy')), '口 on its left: you eat with your mouth');
@@ -115,15 +123,12 @@ test('each part has its pinyin and English, a part you know as a word is green, 
 test('the card says where you’ve met a part before, in another word you know (whichever of the two you meet second), or that you know every part', () => {
   const note = (words, w) => { const n = made(words, w).querySelector('.mnote'); return n && text(n); };
   const from = (words, w) => { const n = made(words, w).querySelector('.mfrom'); return n && text(n); };   // (a part of a word made of parts: in its column)
-  assert.equal(from(['石头', '水果'], '苹果'), 'as in 水果 (fruit)', 'the 果 (fruit) of 苹果');
-  assert.equal(from(['石头', '苹果'], '水果'), 'as in 苹果 (apple)', 'and the other way round');
+  assert.equal(from(['石头', '苹果'], '水果'), 'as in 苹果 (apple)', 'the 果 (fruit) of 水果, in 苹果 (the other way round: tests below)');
   assert.equal(note(['石头', '山羊'], '羊'), '羊 is also in 山羊shānyáng (goat), a word you know.', 'meet the goat before the sheep, and the sheep says so');
   assert.equal(note(['石头', '吃'], '喝'), '口 is also in 吃chī (to eat), a word you know.', 'a clue: the mouth in eat and drink');
-  assert.equal(note(['石头', '草'], '花'), '艹 is also in 草cǎo (grass), a word you know.', 'the plants on top of flower and grass');
   assert.equal(note(['石头', '树'], '木头'), '木 is also in 树shù (tree), a word you know.', 'the 木 (tree) of 木头 (wood)');
   assert.equal(from(['石头', '学校'], '同学'), 'as in 学校 (school)', 'a word with nothing here, named by the part');
-  assert.equal(note(['石头'], '碗'), '石 is also in 石头shítou (stone), a word you know.', 'the 石 (stone) of 碗 (bowl): your very first word');
-  assert.ok(!note(['石头'], '苹果') && !from(['石头'], '苹果'), 'nothing, when you know no other word with its parts');
+  assert.ok(!note(['石头'], '喝') && !from(['石头'], '水果'), 'nothing, when you know no other word with its parts');
   assert.equal(note(['石头', '山', '羊'], '山羊'), 'You know both parts already!', 'its parts are words you know: they’re green, and it says so');
   assert.equal(from(['石头', '我', '不客气', '要'], '我不要'), 'as in 不客气 (you’re welcome)', 'three parts, not all of them words');
 });
@@ -147,18 +152,18 @@ test('a word made of parts comes together as you watch: the parts one by one, th
   assert.ok(!g.run('globalThis.__done'), 'not Got it yet');
   g.run('pressA()');
   assert.ok(g.run('globalThis.__done'), 'then A is Got it');
-  assert.equal(made(['石头'], '花').querySelector('[data-a=again]'), null, 'a clue or a picture stays still: nothing to watch again');
+  assert.equal(made(['石头'], '河').querySelector('[data-a=again]'), null, 'a clue or a picture stays still: nothing to watch again');
 });
 
 test('a part you know from another word: that word shows first, with its picture, and the part lifts out of it', () => {
-  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(['石头', '水', '水果'])}});
-  g.run("madeCard('苹果', () => {}, () => {}, 'Got it')");
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(['石头', '苹果'])}});
+  g.run("madeCard('水果', () => {}, () => {}, 'Got it')");
   const sheet = g.el('#sheet'), col = sheet.querySelector('.mpart.from');
-  assert.equal(col.dataset.i, '1', 'the 果 of 苹果');
-  assert.equal(text(col.querySelector('.mpyword')), 'shuǐguǒ', 'first, 水果, with its pinyin');
-  assert.deepEqual(col.querySelectorAll('.mchz span').map(x => [text(x), x.className]), [['水', 'mfade'], ['果', 'mpartch']], 'the rest of it fades as 果 lifts out');
+  assert.equal(col.dataset.i, '1', 'the 果 of 水果');
+  assert.equal(text(col.querySelector('.mpyword')), 'píngguǒ', 'first, 苹果, with its pinyin');
+  assert.deepEqual(col.querySelectorAll('.mchz span').map(x => [text(x), x.className]), [['苹', 'mfade'], ['果', 'mpartch']], 'the rest of it fades as 果 lifts out');
   assert.equal(text(col.querySelector('.mpypart')), 'guǒ', 'then the part’s own pinyin');
-  assert.ok(col.querySelector('.mcpic .pix'), 'with the picture of 水果');
+  assert.ok(col.querySelector('.mcpic .pix'), 'with the picture of 苹果');
   assert.ok(!col.classList.contains('lifted'));
   g.flush();
   assert.ok(col.classList.contains('lifted'), 'lifted out');
@@ -191,4 +196,28 @@ test('its parts aren’t new words: a card teaches just its own word', () => {
   g.flush();   // (it has come together)
   sheet.querySelector('[data-a=ok]').click();
   assert.deepEqual(get(g, "Object.keys(WORDS).filter(w => lvl(w) >= 1)").sort(), ['山羊', '石头'].sort(), '山 and 羊 aren’t caught by seeing them');
+});
+
+test('a word that shares a character with a word you know, and has nothing simpler: the two side by side, once you know the other (苹果 and 水果)', () => {
+  const first = card(['石头'], '苹果');
+  assert.equal(first.sheet.querySelector('[data-a=made]'), null, 'before you know 水果: nothing (苹 means nothing on its own)');
+  assert.equal(text(first.sheet.querySelector('.actions .primary')), 'Got it');
+  const {g, sheet} = card(['石头', '水果'], '苹果');
+  assert.equal(text(sheet.querySelector('.actions .primary')), 'How it’s made ▸', 'once you know 水果');
+  g.run('pressA()');
+  assert.equal(text(sheet.querySelector('.label')), '苹果 and 水果');
+  assert.deepEqual(cols(sheet), [['píngguǒ 苹果 apple', 'mword'], ['shuǐguǒ 水果 fruit', 'mword known']], 'the new word, then the one you know, green');
+  assert.deepEqual(sheet.querySelectorAll('.madestage .msame').map(text), ['果', '果'], 'the character they share, lit in each');
+  assert.equal(text(sheet.querySelector('.mwhy')), 'Both have 果 guǒ (fruit): an apple is a fruit.');
+  assert.ok(sheet.querySelector('.mwhy .msame'), 'lit there too');
+  assert.equal(sheet.querySelector('[data-a=again]'), null, 'nothing to watch come together');
+  g.run('pressA()');
+  assert.equal(g.run('lvl("苹果")'), 1, 'Got it: caught');
+  const page = loadGame({dom: true, save: {version: 29, started: true, w: knowing(['石头', '苹果'])}});
+  page.run("say = () => {}; wordPage('苹果', () => {})");
+  page.el('#sheet').querySelector('[data-a=en]').click();
+  assert.equal(page.el('#sheet').querySelector('[data-a=made]'), null, 'its page, before you know 水果: just the English');
+  page.run("setSeen('水果'); wordPage('苹果', () => {})");
+  page.el('#sheet').querySelector('[data-a=en]').click();
+  assert.ok(page.el('#sheet').querySelector('[data-a=made]'), 'and once you do, How it’s made');
 });

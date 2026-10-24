@@ -142,6 +142,7 @@ SAVES.appleTree = {...SAVES.middle, pos: {place: 'meadow', x: 20, y: 17, dir: 'r
 // how a word is made: you know 山 and 羊, but not 山羊 (goat); or 水果 (fruit), but not 苹果 (apple)
 SAVES.knowsSheep = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['羊'])}};
 SAVES.knowsFruit = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => w !== '苹果'))};
+SAVES.knowsApple = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => w !== '水果'))};
 SAVES.bySheep = {...SAVES.middle, pos: {place: 'meadow', x: 3, y: 6, dir: 'up'}};   // below the sheep, at the foot of the cliffs by your stone
 // by a peach tree, the hungry monkey asking for fruit, and you don't know 桃子 (peach) yet
 SAVES.fruitTree = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => w !== '桃子')), areas: {1: {...SAVES.middle.areas[1], holding: {}}},
@@ -535,16 +536,16 @@ const SCREENS = [
     play(); await wait(100); showNotice('山羊', {note: 'A goat stands on the cliff, chewing. Answer its questions to make friends.'}); await wait(400); }},
   {id: 'made-goat', title: 'How a word is made', save: 'knowsSheep', why: 'The second step, a card of its own, which comes together as you watch: its parts, each with its picture (if it’s a word with one), pinyin and English, green when it’s a word you know, then each flies into the word: 山 + 羊 = 山羊, a mountain sheep. Back (B) goes back to the word; Watch again plays it again; Got it (A) adds it to your Word Scroll.', run: async () => {
     play(); await wait(100); showNotice('山羊', {note: 'A goat stands on the cliff, chewing. Answer its questions to make friends.'}); await wait(300); click('[data-a=made]'); await wait(400); }},
-  {id: 'made-apple', title: 'How a word is made: a part you know', save: 'knowsFruit', why: 'Where you’ve met a part before: the 果 (fruit) of 苹果 (apple), as in 水果, a word you know, with its picture. 苹 has none: it’s only in this word.', run: async () => {
+  {id: 'made-same', title: 'Two words, one character', save: 'knowsFruit', why: '苹果 (apple), once you know 水果 (fruit): the two side by side, the 果 they share lit in each. 苹 means nothing on its own, so there’s nothing simpler to say (before you know 水果, 苹果’s card is just Got it).', run: async () => {
     play(); await wait(100); showNotice('苹果', {note: 'You pick one from the tree.'}); await wait(300); click('[data-a=made]'); await wait(400); }},
-  {id: 'made-apple-from', title: 'Coming together: out of a word you know', save: 'knowsFruit', why: 'As 苹果’s card comes together: 水果, a word you know, with its picture, and its 果 glowing, just before it lifts out of it and flies into 苹果 (held still here).', run: async () => {
-    play(); await wait(100); showNotice('苹果', {note: 'You pick one from the tree.'}); await wait(300); click('[data-a=made]'); await wait(4500);
+  {id: 'made-fruit-from', title: 'Coming together: out of a word you know', save: 'knowsApple', why: 'As 水果’s card comes together, when you know 苹果: 苹果, with its picture, and its 果 glowing, just before it lifts out of it and flies into 水果 (held still here).', run: async () => {
+    play(); await wait(100); showNotice('水果'); await wait(300); click('[data-a=made]'); await wait(4500);
     const st = document.querySelector('.madestage'); st.classList.add('anim'); st.querySelectorAll('.mpart').forEach(x => x.classList.add('in')); st.querySelectorAll('.mop').forEach(x => x.classList.add('in'));
     st.querySelector('.mpart.from').classList.remove('lifted'); st.querySelector('.mword').classList.remove('in'); st.querySelectorAll('.mch').forEach(x => x.classList.remove('in')); await wait(600); }},
   {id: 'made-three', title: 'How a word is made: three parts', save: 'phrases', why: 'The most parts there are: 我 + 不 + 要, I don’t want it. 我 and 要 are words you know.', run: async () => {
     play(); await wait(100); madeCard('我不要', () => {}, () => {}, 'Got it'); await wait(400); }},
-  {id: 'made-clue', title: 'How a word is made: a clue inside', save: 'middle', why: 'The character big, with the clue beside it, and why: 艹 (plants) on top of 花 (flower), as on top of 草 (grass).', run: async () => {
-    play(); await wait(100); madeCard('花', () => {}, () => {}, 'Got it'); await wait(400); }},
+  {id: 'made-clue', title: 'How a word is made: a clue inside', save: 'middle', why: 'Only one you can see: the character big, with the clue beside it, and why: 氵, three drops of water, on the left of 河 (river).', run: async () => {
+    play(); await wait(100); madeCard('河', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'made-drawn', title: 'How a word is made: drawn from a picture', save: 'middle', why: 'The picture beside the character it was drawn from: 山, drawn like three mountain peaks.', run: async () => {
     play(); await wait(100); madeCard('山', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'made-page', title: 'A word’s page: English, then How it’s made', save: 'middle', why: 'In the Word Scroll, the English button shows the English, then becomes How it’s made: here, after pressing it once.', run: async () => {

@@ -243,7 +243,7 @@ function exampleFor(w){
 // it's made, if it has a story (madeCard, js/cards.js), whose Back comes back here (en: with the English showing, and the
 // word not said again).
 function wordPage(w, back, from = 'Word Scroll', en = false){
-  const d = WORDS[w], ex = exampleFor(w), made = !!MADE[w];
+  const d = WORDS[w], ex = exampleFor(w), made = hasMade(w);
   if (!en) say(w);
   const howBtn = '<button class="btn" data-a="made">How it’s made</button>';
   openCard(`<p class="label">${from} · ${CATEGORIES[d.category].name}</p>

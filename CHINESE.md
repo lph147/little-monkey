@@ -349,34 +349,23 @@ simply put. A part's pinyin is as it's said in the word.
 | 一 | yī | One line, for one. |  |
 | 二 | èr | Two lines, for two. |  |
 | 三 | sān | Three lines, for three. |  |
-| 花 | huā | 艹 cǎo (plants): on top: a flower is a plant |  |
-| 草 | cǎo | 艹 cǎo (plants): on top: grass is a plant |  |
 | 树 | shù | 木 mù (tree): on its left, drawn like a tree |  |
 | 木头 | mùtou | 木 mù (tree): drawn like a tree: wood comes from trees |  |
-| 桥 | qiáo | 木 mù (wood): on its left: many bridges are made of wood |  |
-| 床 | chuáng | 木 mù (wood): under a roof: most beds are made of wood |  |
 | 河 | hé | 氵 shuǐ (water): three drops on its left: a river is water |  |
 | 吃 | chī | 口 kǒu (mouth): on its left: you eat with your mouth |  |
 | 喝 | hē | 口 kǒu (mouth): on its left: you drink with your mouth |  |
-| 路 | lù | 足 zú (foot): on its left: a path is where your feet go |  |
-| 跳 | tiào | 足 zú (foot): on its left: you jump with your feet |  |
-| 碗 | wǎn | 石 shí (stone): on its left: bowls can be made of stone, like the cave’s |  |
-| 家 | jiā | 豕 shǐ (pig): under a roof: long ago, families kept pigs at home |  |
 | 山羊 | shānyáng | 山 shān (mountain) + 羊 yáng (sheep) = a mountain sheep |  |
-| 水果 | shuǐguǒ | 水 shuǐ (water) + 果 guǒ (fruit) = fresh, juicy fruit |  |
-| 苹果 | píngguǒ | 苹 píng (only in this word) + 果 guǒ (fruit) = a kind of fruit |  |
+| 水果 | shuǐguǒ | 水 shuǐ (water) + 果 guǒ (fruit) = juicy fruit |  |
 | 动物 | dòngwù | 动 dòng (to move) + 物 wù (thing) = things that move |  |
 | 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = a pine mouse |  |
 | 头带 | tóudài | 头 tóu (head) + 带 dài (band) = a band for your head |  |
 | 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = a wild pig |  |
-| 瀑布 | pùbù | 瀑 pù (rushing water) + 布 bù (cloth) = water hanging down like a sheet of cloth |  |
 | 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = a honey bee |  |
 | 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = someone you learn with |  |
-| 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = hello, wishing you well |  |
+| 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = hello |  |
 | 再见 | zàijiàn | 再 zài (again) + 见 jiàn (to see) = goodbye: see you again |  |
-| 没关系 | méi guānxi | 没 méi (not) + 关系 guānxi (connection) = it doesn’t matter |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = I don’t want it |  |
-| 不客气 | bú kèqi | 不 bú (not) + 客气 kèqi (polite) = no need to be so polite |  |
+| 苹果 | píngguǒ | 果 guǒ (fruit), as in 水果: an apple is a fruit |  |
 | 花果山 | Huāguǒ Shān | 花 huā (flower) + 果 guǒ (fruit) + 山 shān (mountain) = a mountain of flowers and fruit (your home’s name, on the sign by your stone, once you know its parts) |  |
 
 ### Tips about Chinese

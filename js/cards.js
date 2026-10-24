@@ -291,8 +291,10 @@ talkBox.addEventListener('pointerdown', e => { if (e.target.closest && e.target.
 // How a word is made (MADE, in content/words.js): its parts, each with its pinyin over it and its English (green if it's a
 // word you know), and what they add up to; or the clue inside a character; or the picture it was drawn from. Then where
 // you've met a part before, in another word you know (just one, so the card stays small). (Decided 23 October 2026:
-// Chinese is logical.) A name can have its own, such as your home's on the sign (nameCard).
-const madeParts = m => !m ? [] : m.parts || (m.clue ? [m.clue] : []);
+// Chinese is logical.) Or a character it shares with a word you know (same), such as the 果 of 苹果 and 水果. A name can
+// have its own, such as your home's on the sign (nameCard).
+const madeParts = m => !m ? [] : m.parts || (m.clue ? [m.clue] : m.same ? [[...m.same, m.as]] : []);
+const hasMade = w => !!MADE[w] && (!MADE[w].as || lvl(MADE[w].as) >= 1);   // (one it shares with another word: once you know that word)
 const PART_IN = {};   // each part, such as 果, to the words made with it (水果, 苹果), and others a part names (学: 学校)
 for (const [w, m] of Object.entries(MADE)) for (const [zh, , , also] of madeParts(m))
   for (const o of [w, ...[].concat(also || [])]) if (!(PART_IN[zh] = PART_IN[zh] || []).includes(o)) PART_IN[zh].push(o);
@@ -310,12 +312,20 @@ function madeLinks(m, w){   // [a part of w (or w itself, one character), a word
 // parts shows each in turn, with its picture if it's a word with one, its pinyin and English (green if it's a word you know),
 // then = the word itself, with its picture, and what they add up to. A clue shows the character big, with the clue beside
 // it and why; a picture shows what the character was drawn from, beside it. Under it, where you've met a part before, or
-// that you know every part already.
+// that you know every part already. A character it shares with a word you know (same): the two words side by side, it lit
+// in each, and why (decided 24 October 2026: 苹 + 果 said 苹 meant nothing on its own).
 const partPic = zh => PICTURES[zh] && WORDS[zh] ? picHTML(zh) : '';
 function madeStage(w){
   const m = MADE[w], d = WORDS[w];
   const col = (zh, py, en, cls = '', pic = '') => `<div class="mcol ${cls}"><div class="mcpic" aria-hidden="true">${pic}</div><span class="mcpy">${esc(py)}</span> <span class="mchz">${zh}</span> <span class="mcen">${esc(en)}</span></div>`;
   const op = c => `<div class="mcol mop" aria-hidden="true"><div class="mcpic"></div><span class="mcpy"></span><span class="mchz">${c}</span></div>`;   // + and =, in line with the characters
+  if (m.same){   // the two words side by side, the character they share lit in each, the word you know green
+    const [zh, py, en] = m.same;
+    const word = (x, cls) => `<div class="mcol mword ${cls}"><div class="mcpic" aria-hidden="true">${PICTURES[x] ? picHTML(x) : ''}</div><span class="mcpy">${esc(WORDS[x].py)}</span> `
+      + `<span class="mchz">${[...x].map(c => c === zh ? `<span class="msame">${c}</span>` : c).join('')}</span> <span class="mcen">${esc(WORDS[x].en.split(',')[0])}</span></div>`;
+    return `<div class="madestage same">${word(w, '')}${word(m.as, 'known')}</div>`
+      + `<p class="mwhy">Both have <span class="msame">${zh}</span> ${esc(py)} (${esc(en)}): ${esc(m.why)}.</p>`;
+  }
   const links = madeLinks(m, w).map(([zh, o]) => `<p class="mnote">${zh} is also in <ruby class="known">${o}<rt>${WORDS[o].py}</rt></ruby> (${esc(WORDS[o].en.split(',')[0])}), a word you know.</p>`).join('');
   if (m.parts){
     // A part you've met inside another word you know shows that word, with its picture, until the part lifts out of it
@@ -388,8 +398,8 @@ function madeAnim(stage){
 // Back is A's too (from a word's page). A word made of parts comes together as you watch (Watch again plays it again);
 // A while it's moving shows the end at once, and a moment later it's Got it.
 function madeCard(w, back, done, doneLabel){
-  const parts = !!MADE[w].parts;
-  openCard(`<p class="label">How <span class="mhzlabel">${w}</span> is made</p>${madeStage(w)}
+  const m = MADE[w], parts = !!m.parts;
+  openCard(`<p class="label">${m.same ? `<span class="mhzlabel">${w}</span> and <span class="mhzlabel">${m.as}</span>` : `How <span class="mhzlabel">${w}</span> is made`}</p>${madeStage(w)}
     <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>◂ Back</button>${parts ? '<button class="btn" data-a="again">↻ Watch again</button>' : ''}${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
   const anim = parts ? madeAnim(sheet.querySelector('.madestage')) : null;
   if (anim && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) anim.play();
@@ -447,7 +457,7 @@ function nameCard(says, m){
 // the English button shows the English, then becomes How it's made.
 function showNotice(w, opts = {}){
   return new Promise(res => {
-    const d = WORDS[w], isNew = lvl(w) === 0, made = !!MADE[w];
+    const d = WORDS[w], isNew = lvl(w) === 0, made = hasMade(w);
     if (isNew) SFX.word(); else SFX.blip();
     const done = () => { closeCard(); if (isNew){ setSeen(w); toast(`${wz(w)} added to your Word Scroll`); } res(); };
     let en = isNew;   // the English shows (seen again: once you've pressed English)

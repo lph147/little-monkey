@@ -303,6 +303,10 @@ rt.hid{visibility:hidden}
 .mnote.known{color:var(--jade);font-weight:600}
 .mnote ruby{font-family:var(--text);font-size:1.05rem;color:var(--jade);font-weight:600}
 .mnote rt{font-size:max(.55em,10.5px);color:var(--muted);font-weight:400}
+/* the character two words share (苹果 and 水果: 果), lit in each and in why */
+.msame{border-radius:6px;background:color-mix(in srgb,var(--gold) 35%,transparent);padding:0 .06em}
+.madestage.same{gap:2rem}
+.mchz .msame{display:inline-block;line-height:1}   /* (just round the character, not over its pinyin and English) */
 /* a tip about Chinese (learnTip in js/quiz.js): its example, a word's characters with their pinyin over them */
 .tiphead{display:flex;align-items:center;gap:.9rem}
 .tiphead .who{margin:0}
@@ -890,6 +894,9 @@ rt.hid{visibility:hidden}
   .madestage.drawn .mcpic .pix{width:var(--pic-mid);height:var(--pic-mid)}
   .mcol .mcpy{font-size:.85rem;margin-top:0}
   .mcol .mchz{font-size:2rem}
+  .madestage.same{gap:1.4rem}
+  .madestage.same .mcpic{display:none}   /* (their English says what they are: then why fits under them) */
+  .madestage.same + .mwhy{font-size:.85rem;margin:0}
   .mcol .mcen{font-size:.8rem;margin-top:0}
   .mcol.big .mchz{font-size:2.6rem}
   .mcol.mop .mchz{font-size:1.4rem;line-height:calc(2rem * 1.1)}

@@ -154,9 +154,10 @@ function sheet(){
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name)];   // characters, the sign, the area and its places
   const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe'])];
   const notes = '';
-  // how a word is made, in one line: its parts (each Chinese, pinyin, English) and what they add up to; or the clue inside it
+  // how a word is made, in one line: its parts (each Chinese, pinyin, English) and what they add up to; or the clue inside it;
+  // or the character it shares with another word
   const part = ([zh, p, en]) => `${zh} ${p} (${en})`;
-  const made = m => m.parts ? `${m.parts.map(part).join(' + ')} = ${m.why}` : m.clue ? `${part(m.clue)}: ${m.why}` : m.why;
+  const made = m => m.parts ? `${m.parts.map(part).join(' + ')} = ${m.why}` : m.clue ? `${part(m.clue)}: ${m.why}` : m.same ? `${part(m.same)}, as in ${m.as}: ${m.why}` : m.why;
 
   return `# Chinese in Little Monkey: for checking
 

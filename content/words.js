@@ -191,12 +191,17 @@ const WORD_BANK = {
 
 // How a word is made, shown on its new-word card (with its English) and its page in the Word Scroll, for words where it
 // genuinely helps you understand or remember them (decided 23 October 2026): never for one whose characters just say the
-// meaning again (朋友: 朋 friend + 友 friend), and never a story that isn't true. A part you know as a word shows green, and
-// a card says where you've met a part before, in another word you know (such as the 果 of 苹果, in 水果).
+// meaning again (朋友: 朋 friend + 友 friend), and never a story that isn't true. Only where it's simple, useful and
+// memorable (decided 24 October 2026, after playing it: the 艹 of 花 and 草, plants, meant nothing): you get it in one
+// look, with no history lesson, and every part is something you can picture, a word or a shape that looks like what it
+// means. A part you know as a word shows green, and a card says where you've met a part before, in another word you know
+// (such as the 果 of 水果, in 苹果).
 //   parts  a word of two or more characters (or a phrase): each as [Chinese, pinyin, English], its pinyin as said in this
 //          word (so together they make the word's own), then why: what they add up to
 //   clue   a part that gives a clue, as [Chinese, pinyin, English]: inside a word of one character, or one of a word's
 //          characters (the 木 of 木头), then why
+//   same   a character it shares with another word (as), as [Chinese, pinyin, English], for a word with nothing simpler
+//          to say (苹 means nothing on its own): shown once you know the other word, the two side by side, then why
 //   why    on its own: the picture a character was drawn from
 // After its English, a part can name another word with it (or a list of them) that has nothing here, so a card can say
 // you've met it there (the 学 of 同学 is also in 学校, a word you know).
@@ -210,35 +215,25 @@ const MADE = {
   '一': {why:'One line, for one.'},
   '二': {why:'Two lines, for two.'},
   '三': {why:'Three lines, for three.'},
-  // a clue inside
-  '花': {clue:['艹', 'cǎo', 'plants'], why:'on top: a flower is a plant'},
-  '草': {clue:['艹', 'cǎo', 'plants'], why:'on top: grass is a plant'},
+  // a clue inside, that you can see
   '树': {clue:['木', 'mù', 'tree'], why:'on its left, drawn like a tree'},
   '木头': {clue:['木', 'mù', 'tree'], why:'drawn like a tree: wood comes from trees'},
-  '桥': {clue:['木', 'mù', 'wood'], why:'on its left: many bridges are made of wood'},
-  '床': {clue:['木', 'mù', 'wood'], why:'under a roof: most beds are made of wood'},
   '河': {clue:['氵', 'shuǐ', 'water'], why:'three drops on its left: a river is water'},
   '吃': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you eat with your mouth'},
   '喝': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you drink with your mouth'},
-  '路': {clue:['足', 'zú', 'foot'], why:'on its left: a path is where your feet go'},
-  '跳': {clue:['足', 'zú', 'foot'], why:'on its left: you jump with your feet'},
-  '碗': {clue:['石', 'shí', 'stone', '石头'], why:'on its left: bowls can be made of stone, like the cave’s'},
-  '家': {clue:['豕', 'shǐ', 'pig'], why:'under a roof: long ago, families kept pigs at home'},
   // made of words or characters
   '山羊': {parts:[['山', 'shān', 'mountain'], ['羊', 'yáng', 'sheep']], why:'a mountain sheep'},
-  '水果': {parts:[['水', 'shuǐ', 'water'], ['果', 'guǒ', 'fruit']], why:'fresh, juicy fruit'},
-  '苹果': {parts:[['苹', 'píng', 'only in this word'], ['果', 'guǒ', 'fruit']], why:'a kind of fruit'},
+  '水果': {parts:[['水', 'shuǐ', 'water'], ['果', 'guǒ', 'fruit']], why:'juicy fruit'},
   '动物': {parts:[['动', 'dòng', 'to move'], ['物', 'wù', 'thing']], why:'things that move'},
   '松鼠': {parts:[['松', 'sōng', 'pine'], ['鼠', 'shǔ', 'mouse']], why:'a pine mouse'},
   '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']], why:'a band for your head'},
   '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']], why:'a wild pig'},
-  '瀑布': {parts:[['瀑', 'pù', 'rushing water'], ['布', 'bù', 'cloth']], why:'water hanging down like a sheet of cloth'},
   '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']], why:'a honey bee'},
   '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']], why:'someone you learn with'},
   // phrases
-  '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']], why:'hello, wishing you well'},
+  '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']], why:'hello'},
   '再见': {parts:[['再', 'zài', 'again'], ['见', 'jiàn', 'to see']], why:'goodbye: see you again'},
-  '没关系': {parts:[['没', 'méi', 'not'], ['关系', 'guānxi', 'connection']], why:'it doesn’t matter'},
-  '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not'], ['要', 'yào', 'to want']], why:'I don’t want it'},
-  '不客气': {parts:[['不', 'bú', 'not'], ['客气', 'kèqi', 'polite']], why:'no need to be so polite'}
+  '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']], why:'I don’t want it'},
+  // the same character as in another word
+  '苹果': {same:['果', 'guǒ', 'fruit'], as:'水果', why:'an apple is a fruit'}
 };
