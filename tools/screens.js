@@ -170,6 +170,13 @@ SAVES.beesFollow = {...SAVES.queenOut, friends: [...SAVES.queenOut.friends, 'que
 SAVES.beesComing = {...SAVES.beesFollow, pos: {place: 'riverside', x: 1, y: 7, dir: 'left'}};
 SAVES.beesHome = {...SAVES.beesFollow, areas: {1: {...SAVES.beesFollow.areas[1], bees: 6}}, following: [], tasksSeen: {...SAVES.beesFollow.tasksSeen, bees6: 1},
   pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};
+// the bees' hive (25 October 2026): coming up to the bees by the wildflowers, as the troop builds it; the hive, its honey
+// for the hungry monkey; the honey in the feast's bowl; and honey in your bag
+SAVES.hiveSoon = {...SAVES.beesHome, areas: {1: {...SAVES.beesHome.areas[1], bees: 7}}, tasksSeen: {...SAVES.beesHome.tasksSeen, bees7: 1}, pos: {place: 'homeGround', x: 27, y: 7, dir: 'up'}};
+SAVES.hive = {...SAVES.hiveSoon, areas: {1: {...SAVES.hiveSoon.areas[1], bees: 10, honey: 'asked'}}, tasksSeen: {...SAVES.hiveSoon.tasksSeen, honey1: 1}, pos: {place: 'homeGround', x: 28, y: 5, dir: 'up'}};
+SAVES.honeyHeld = {...SAVES.hive, w: {...SAVES.hive.w, ...knows(1, ['蜂蜜'])}, areas: {1: {...SAVES.hive.areas[1], holding: {honey: '蜂蜜'}}}, tasksSeen: {...SAVES.hive.tasksSeen, honey2: 1},
+  pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};
+SAVES.honeyIn = {...SAVES.honeyHeld, areas: {1: {...SAVES.hive.areas[1], bees: 11, honey: 'done'}}, bag: {'蜂蜜': 2}, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -659,6 +666,23 @@ const SCREENS = [
     await wait(300); }},
   {id: 'bees-home', title: 'The bees are home', save: 'beesComing', why: 'Into the home ground with them: they fly over to the wildflowers below the cliff (where their hive will be), with a fanfare.', run: async () => {
     play(); await wait(100); arrive(0, 7).then(runEvents); await wait(1600); }},
+  {id: 'hive-build', title: 'The troop builds a hive', save: 'hiveSoon', why: 'Talk to the queen bee by the wildflowers, and the troop builds the bees a hive as you watch: its plot and sign marked out, then a stone base and three log hives with straw caps, a piece at a time.', run: async () => {
+    play(); await wait(100); talk(npc('queen')); await wait(300); next(); await wait(300); next(); await wait(3300); }},
+  {id: 'hive', title: 'The bees’ hive', save: 'hive', why: 'The queen bee and her swarm live in it, bees buzzing over it, by its sign; A takes honey for the hungry monkey (Take).', run: async () => {
+    play(); await wait(500); }},
+  {id: 'honey-card', title: 'Honey (蜂蜜)', save: 'hive', why: 'Your first honey from the hive teaches 蜂蜜 (fēngmì, honey), said straight away: 蜜蜂 (bee) the other way round.', run: async () => {
+    play(); await wait(100); pressA(); await wait(600); }},
+  {id: 'honey-give', title: 'Honey for the hungry monkey', save: 'honeyHeld', why: 'Honey! Wonderful!, then you complete 我要吃蜂蜜 to give it to him.', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(500); }},
+  {id: 'honey-bowl', title: 'Honey for the feast', save: 'honeyIn', why: 'He has poured it into the empty bowl on the big table: 我们有蜂蜜了！ (We have honey now!)', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(500); }},
+  {id: 'feast-list-honey', title: 'The feast’s list, with honey', save: 'honeyIn', why: 'A at the big table: honey ticked off too, 我们有蜂蜜。', run: async () => {
+    play(); await wait(100); pressA(); await wait(500); }},
+  {id: 'bag-honey', title: 'Honey in your bag', save: 'honeyIn', why: 'From the hive, two at most: tap it to eat it, and you walk faster for a minute.', run: async () => {
+    play(); await wait(100); bagPage(() => closeCard()); await wait(400); }},
+  {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
+    play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
+    pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)
   {id: 'hungry-has-bees', title: 'We have bees now!', save: 'beesHome', why: 'The hungry monkey, with a ! once the bees are home: 我们有蜜蜂了！ (the hive and the honey come next).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {

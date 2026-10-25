@@ -17,6 +17,13 @@ const slipLift = p => p < .4 ? SLIP_UP * Math.sin(p / .4 * Math.PI / 2) : SLIP_U
 // 2026, after playing it: the old monkey taught 家 and went straight on to counting the troop in, but A, after closing
 // each message, did nothing, as if you couldn't talk to him).
 const REST_MS = 2000;
+// Energy from food, such as honey (the area's food with fast: how many seconds): you walk faster, each step taking
+// FAST_STEP of the usual time, till it wears off, when a message says so (fastFood: what gave it you).
+const FAST_STEP = .6;
+let fastUntil = 0, fastFood = null;
+const isFast = (now = performance.now()) => now < fastUntil;
+const walkMs = () => isFast() ? Math.round(STEP * FAST_STEP) : STEP;   // how long a step takes now
+function energise(w, seconds){ fastUntil = performance.now() + seconds * 1000; fastFood = w; }
 let finishedAt = null;   // {place, x, y, t}: the square you were facing when something ended
 function finished(){ const [x, y] = facing(); finishedAt = {place:PLACE, x, y, t:performance.now()}; }
 const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && finishedAt.x === x && finishedAt.y === y
@@ -34,16 +41,17 @@ function tryStep(d, now){
   if (way && !way.by && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
   if (tileAt(nx, ny).ledge){   // a ledge: you hop down it, landing just below (below the whole of a bank two squares high), but can never climb it
     let ly = ny + 1; while (tileAt(nx, ly).ledge) ly++;
-    if (d === 'down' && walkable(nx, ly)){ followersStep(now, true); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ly, t0:now, hop:true}; pl.parity ^= 1; SFX.turn(); }
+    if (d === 'down' && walkable(nx, ly)){ followersStep(now, true); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ly, t0:now, hop:true, dur:walkMs() * 1.6}; pl.parity ^= 1; SFX.turn(); }
     else if (d === 'up' && now - lastBump > 300){ lastBump = now + SLIP_MS; pl.mv = {fx:pl.x, fy:pl.y, tx:pl.x, ty:pl.y, t0:now, slip:true}; pl.parity ^= 1; SFX.slip(); }   // up it: you slip back down
     else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
     return;
   }
-  if (walkable(nx, ny) || (way && !way.by && isOpen(way) && !npcAt(nx, ny))){ followersStep(now); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now}; pl.parity ^= 1; }   // (an open way you can always walk into, such as a building's door)
+  if (walkable(nx, ny) || (way && !way.by && isOpen(way) && !npcAt(nx, ny))){ followersStep(now); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now, dur:walkMs()}; pl.parity ^= 1; }   // (an open way you can always walk into, such as a building's door)
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
 }
 function update(now){
   if (mode !== 'play') return;
+  if (fastFood && !isFast(now) && !pl.mv && modal.hidden && !talkNext){ toast(`The energy from the ${wz(fastFood)} wears off.`); fastFood = null; }   // (once you've stopped)
   if (pl.mv && pl.mv.slip){   // trying to climb a ledge: up a little, and sliding back down where you were (not a step: nothing happens there)
     const m = pl.mv, p = Math.min(1, (now - m.t0) / SLIP_MS);
     pl.px = m.fx * T; pl.py = m.fy * T - slipLift(p);
@@ -51,7 +59,7 @@ function update(now){
     return;
   }
   if (pl.mv){
-    const m = pl.mv, p = Math.min(1, (now - m.t0) / (m.hop ? STEP * 1.6 : STEP));   // a hop down a ledge takes a little longer
+    const m = pl.mv, p = Math.min(1, (now - m.t0) / (m.dur || (m.hop ? STEP * 1.6 : STEP)));   // a hop down a ledge takes a little longer
     pl.px = (m.fx + (m.tx - m.fx) * p) * T; pl.py = (m.fy + (m.ty - m.fy) * p) * T - (m.hop ? Math.sin(p * Math.PI) * 7 : 0);
     if (p >= 1){
       pl.x = m.tx; pl.y = m.ty; pl.mv = null;

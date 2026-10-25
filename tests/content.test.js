@@ -575,10 +575,10 @@ test('every enemy is a collectible word with a picture and a map sprite, attacki
   for (const [, t] of allLegend.filter(([, t]) => t.wild)) for (const id of t.wild) assert.ok(AREA.enemies[id], `wild ground has ${id}, which isn't one of the enemies`);
 });
 
-test('food: each says what it does, how many you can carry, and heals or helps; fruit trees give food', () => {
+test('food: each says what it does, how many you can carry, and heals, helps or gives you energy; fruit trees give food', () => {
   for (const [w, f] of Object.entries(AREA.food || {})){
     assert.ok(collectible.includes(w), `${w} is a word you can collect here`);
-    assert.ok(f.does && f.carry > 0 && (f.heal > 0 || f.helps === true), `${w}: does, carry, and heal or helps`);
+    assert.ok(f.does && f.carry > 0 && [f.heal > 0, f.helps === true, f.fast > 0].filter(Boolean).length === 1, `${w}: does, carry, and heal, helps or fast (one thing each)`);
   }
   for (const [, t, from] of allLegend) if (t.pick) assert.ok((AREA.food || {})[t.pick.item], `picking at ${from} gives ${t.pick.item}, which isn't food`);
 });

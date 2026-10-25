@@ -62,7 +62,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           stream (the riverside) to find the bees, 2 you've found the bees' valley (百花谷), where the bees and the wasps
   //           hide in the tall flowers, 3 all six bees there are your friends, and the swarm in front of the queen's old tree
   //           has flown aside, 4 you've met the queen bee (蜂王), who wants you to win her word game, 5 you've won her over, and
-  //           she and her swarm are following you home, 6 they're home, by the wildflowers, 7 the hungry monkey has seen them
+  //           she and her swarm are following you home, 6 they're home, by the wildflowers, 7 the hungry monkey has seen them,
+  //           8 the troop has marked out a hive for them by the wildflowers, 9 it's built, 10 the queen and her swarm live in it
+  //           (and the hungry monkey's honey request is asked), 11 the honey you brought is in the bowl on the feast's table
   //   beeFriends chapter 1: how many of the bees in their valley you've made friends with, up to six
   //   queenOut chapter 1: the queen bee is out of her old tree (she goes back in if you don't win her word game)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
@@ -191,6 +193,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'bees4', if:{bees:4}, text:'Win over the {蜂王|queen bee} with her word game, at her old tree', arrow:[25, 5, 'flowerValley']},
     {id:'bees5', if:{bees:5}, text:'Lead the {蜂王|queen bee} and her bees home, back along the riverside', arrow:{place:'homeGround'}},
     {id:'bees6', if:{bees:6}, text:'Tell the hungry monkey the {蜜蜂|bees} are home', arrow:'hungry'},
+    {id:'bees7', if:{bees:7}, text:'Talk to the {蜂王|queen bee} by the wildflowers', arrow:'queen'},
+    {id:'honey1', if:{honey:'asked', holding:{honey:false}}, text:'Take some {蜂蜜|honey} from the bees’ hive, for the hungry monkey', arrow:[28, 4, 'homeGround']},
+    {id:'honey2', if:{honey:'asked', holding:{honey:true}}, text:'Take the {蜂蜜} to the hungry monkey', arrow:'hungry'},
     {id:'hideSeek', if:{hiding:true}, text:'Find where the little monkey is hiding', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
@@ -204,7 +209,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
-    {if:{bees:{atLeast:7}}, text:'The {蜜蜂|bees} are home! A hive for them, and {蜂蜜} for the feast, are the next part of chapter 1, coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
+    {if:{bees:{atLeast:11}}, text:'The feast has {蜂蜜|honey} now! Take more from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -252,7 +257,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Find the {动物} on the riverside', show:{bees:{atLeast:1}}, done:{riverAnimalsLeft:0}},
     {chapter:1, text:'Make friends with the six {蜜蜂|bees} in their valley ({beeCount}/6)', show:{bees:{atLeast:2}}, done:{beeFriends:6}},
     {chapter:1, text:'Win over the {蜂王|queen bee} with her word game', show:{bees:{atLeast:4}}, done:{bees:{atLeast:5}}},
-    {chapter:1, text:'Lead the {蜂王|queen bee} and her bees home', show:{bees:{atLeast:5}}, done:{bees:{atLeast:6}}}
+    {chapter:1, text:'Lead the {蜂王|queen bee} and her bees home', show:{bees:{atLeast:5}}, done:{bees:{atLeast:6}}},
+    {chapter:1, text:'Bring {蜂蜜|honey} to the feast’s big {桌子}', show:{bees:{atLeast:10}}, done:{bees:{atLeast:11}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -268,8 +274,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{hungry:'done', new:'水果'}, show:'!'},   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
       {if:{feast:2}, show:'!'},   // chapter 1: by the feast's big table, to tell you what it still needs,
       {if:{feast:{atLeast:3}, bees:0}, show:'!'},   // and (a game that heard it before the bees, 25 October 2026) to send you to find them,
-      {if:{bees:6}, show:'!'}],   // and once you've brought the bees home, to see them
-    queen: [{if:{bees:4}, show:'!'}],   // the queen bee, out of her old tree: she wants you to play her word game
+      {if:{bees:6}, show:'!'},   // and once you've brought the bees home, to see them,
+      {if:{honey:'asked', holding:{honey:true}}, show:'?'}],   // and honey from their hive
+    queen: [{if:{bees:4}, show:'!'}, {if:{bees:7}, show:'!'}],   // the queen bee, out of her old tree: she wants you to play her word game; and at home, for the hive
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
@@ -331,7 +338,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     wood: {from:'big', wants:'木头', ask:'wantWood', asked:'The big monkey wants three pieces of {木头}. Check your tasks.',
       offer:'haveWood', sentence:'我们 要 木头', sentenceEn:'We need wood.', reward:3, thanks:'thanks'},
     stones: {from:'big', wants:'石头', ask:'wantStones', asked:'The big monkey wants three small {石头|stones}. Check your tasks.',
-      offer:'haveStones', sentence:'我们 要 小 石头', sentenceEn:'We need small stones.', reward:3, thanks:'thanks'}
+      offer:'haveStones', sentence:'我们 要 小 石头', sentenceEn:'We need small stones.', reward:3, thanks:'thanks'},
+    // chapter 1: honey for the feast, from the bees' hive at the home ground, asked as the bees move in (he's wanted it since
+    // the feast's list said 我们没有蜂蜜。). You learn 蜂蜜 as you take it from the hive; he pours it into the table's bowl.
+    honey: {from:'hungry', wants:'蜂蜜', ask:'wantHoney', asked:'The hungry monkey wants honey for the feast. Take some from the bees’ hive!',
+      offer:'haveHoney', sentence:'我 要 吃 蜂蜜', sentenceEn:'I want to eat honey.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask); when you buy something, they give it to you (given, what's
@@ -361,7 +372,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // battle or with an animal, without using your turn. does: what your bag says it does.
   food: {
     '桃子': {heal:1, carry:3, does:'Brings a heart back'},
-    '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'}
+    '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'},
+    '蜂蜜': {fast:60, carry:2, does:'Walk faster for a minute'}   // fast: you walk faster for so many seconds (tap it in your bag)
   },
 
   // Things that happen by themselves when the time comes (checked after anything you do, such as a step or a
@@ -378,6 +390,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // you've brought the queen bee and her swarm home: they fly to the wildflowers by the cliff, where their hive will be
     {if:{place:'homeGround', bees:5}, do:[{set:{bees:6}}, {follow:[]}, {sound:'buzz'}, {sound:'fanfare'},
       {message:'The queen bee and her swarm fly over to the wildflowers by the cliff. The bees are home! Go and tell the hungry monkey.'}]},
+    // the honey you brought him: he pours it into the empty bowl on the feast's big table
+    {if:{bees:10, honey:'done'}, do:[{set:{bees:11}}, {sound:'chime'}, {say:'haveHoneyNow', by:'hungry'},
+      {message:'The hungry monkey pours the honey into the empty bowl on the big table. Now the feast has honey!'}]},
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
     // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)
@@ -620,8 +635,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         // cave's entrance (decided 23 October 2026: every quest comes back to the home ground; 桌子 and 碗 are the cave's words,
         // heard again here). Stone, with stone stools, as in the book (摆开石凳石桌: decided 25 October 2026; it was wood with a
         // red cloth); the square round the big tree is left open for the tables to come as the feast's quests are done
-        '%': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:'&'}]},
+        '%': {look:'grass', walk:true, becomes:[{if:{bees:{atLeast:11}}, to:'*'}, {if:{feast:{atLeast:2}}, to:'&'}]},
         '&': {look:'feastTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // A at it: the feast's list
+        '*': {look:'feastTableHoney', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // (and honey in its third bowl, once you've brought it)
         '!': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:';'}]},
         ';': {look:'stoneStool'},   // a stone stool at the table
         // chapter 1: the bushes at the east end of the road, until the troop clears the way east along the stream, to the bees
@@ -1012,10 +1028,20 @@ const FLOWER_FRUIT_MOUNTAIN = {
     't': {look:'school', word:'学校', landmark:true, note:'The troop’s school: the sign over its door says {学校}. Walk in through its door.'},   // (and then the school itself: its door is a way in)
     // where the other plots will be marked out, each when its story begins, with its sign (2 to 5): open grass till then
     'd': {look:'grass', walk:true},   // the new shop's (its sign: "The troop wants a new shop here.")
-    'h': {look:'grass', walk:true},   // the hive's ("The troop wants a hive here, by the flowers, for bees.")
+    // the hive's, by the flowers (its sign: 3): open grass, until the troop builds the bees a hive there as you watch (the
+    // markOut step, then setUp: its stone base, then a log hive at a time, each with its straw cap)
+    'h': {look:'grass', walk:true, becomes:[{if:{bees:{atLeast:9}}, to:'$'}, {if:{bees:8}, to:'6'}]},
+    // chapter 1: the bees' hive (three log hives with straw caps, on a stone base), where the queen bee and her swarm live:
+    // A at it takes honey (蜂蜜, taught as you take it the first time) for the hungry monkey; after that, honey for your bag,
+    // once each time you come to the home ground, 2 at most
+    '$': {look:'hive', landmark:true, word:'蜂蜜', note:'Bees buzz in and out of the hive, and golden honey drips inside.',
+      gather:{item:'蜂蜜', for:'honey', label:'Take', note:'Golden honey from the bees’ hive! 蜂蜜 is 蜜蜂 (bee) the other way round.', message:'You took some {蜂蜜}. Take it to the hungry monkey.'},
+      pick:{item:'蜂蜜', if:{bees:{atLeast:11}}, label:'Take', took:'You take some {蜂蜜}', none:'The bees are still making more honey. Come back another time.'}},
+    ':': {look:'sign', landmark:true, label:'Read', onLook:[{if:{bees:{atLeast:10}}, do:[{message:'The bees’ hive. The queen bee and her swarm live here, and make honey for the troop.'}]},
+      {do:[{message:'The troop is building the bees a hive here, by the flowers.'}]}]},
     'e': {look:'grass', walk:true},   // the garden's ("The troop wants to grow things here, in a garden by the stream.")
     'c': {look:'grass', walk:true},   // the cow pen's ("The troop wants a pen here, for a cow.")
-    '2': {look:'grass', walk:true}, '3': {look:'grass', walk:true}, '4': {look:'grass', walk:true}, '5': {look:'grass', walk:true},
+    '2': {look:'grass', walk:true}, '3': {look:'grass', walk:true, becomes:[{if:{bees:{atLeast:8}}, to:':'}]}, '4': {look:'grass', walk:true}, '5': {look:'grass', walk:true},
     '1': {look:'grass', walk:true, becomes:[{if:{build:{atLeast:1}}, to:'7'}]},   // the school's sign, put up when its plot is marked out
     '8': {look:'grass', walk:true, becomes:[{if:{build:{atLeast:1}}, to:'.'}]},   // the little path up to the school, trodden in then too
     // the beds either side of that path, in front of the school: grass, until the big monkey plants the flowers you've brought
@@ -1147,8 +1173,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the cliff (where their hive will be: step 5), their home here. They fly (flies), so they hover and the flowers never
     // hide them; the swarm is a cloud of tiny bees (look: swarm).
     {id:'queen', place:'homeGround', x:27, y:6, facing:'down', look:'蜂王', flies:true,
-      moves:[{if:{bees:{below:6}, queenOut:true}, place:'flowerValley', x:25, y:5, facing:'down'}, {if:{bees:{below:6}}, place:'gone', x:0, y:0}]},
-    {id:'beeSwarm', place:'homeGround', x:28, y:6, facing:'down', look:'swarm', flies:true, moves:[{if:{bees:{below:6}}, place:'gone', x:0, y:0}]}
+      moves:[{if:{bees:{atLeast:10}}, place:'gone', x:0, y:0}, {if:{bees:{below:6}, queenOut:true}, place:'flowerValley', x:25, y:5, facing:'down'}, {if:{bees:{below:6}}, place:'gone', x:0, y:0}]},   // (in the hive, once it's built)
+    {id:'beeSwarm', place:'homeGround', x:28, y:6, facing:'down', look:'swarm', flies:true, moves:[{if:{bees:{atLeast:10}}, place:'gone', x:0, y:0}, {if:{bees:{below:6}}, place:'gone', x:0, y:0}]}
   ],
 
   // Your name in the speech box when you reply: the first whose if matches (otherwise 小猴子, Little monkey). Its English
@@ -1236,6 +1262,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '蝴蝶': 'Fluttering over the wildflowers on the riverside, the way east to the bees.',
     '黄蜂': 'Zooming out of the tall flowers in the bees’ valley.',
     '蜂王': 'Out of her old hollow tree, in the bees’ valley.',   // (heard first as the sixth bee sends you to find her)
+    '蜂蜜': 'From the bees’ hive, by the wildflowers at the home ground.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -1297,7 +1324,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     foods: [
       {word:'桃子', have:{}, yes:{zh:'我们 有 桃子 。', en:'We have peaches.'}},
       {word:'苹果', have:{}, yes:{zh:'我们 有 苹果 。', en:'We have apples.'}},
-      {word:'蜂蜜', show:{feast:{atLeast:3}}, no:{zh:'我们 没有 蜂蜜 。', en:'We don’t have any honey.'}}   // (the bees: to come)
+      {word:'蜂蜜', show:{feast:{atLeast:3}}, have:{bees:{atLeast:11}}, no:{zh:'我们 没有 蜂蜜 。', en:'We don’t have any honey.'},
+        yes:{zh:'我们 有 蜂蜜 。', en:'We have honey.'}}   // (from the bees' hive)
     ]
   },
 
@@ -1322,8 +1350,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {id:'table', word:'桌子', say:'hideTable', where:'under the {桌子}', at:[[16, 7], [17, 7], [18, 7]], out:[17, 8], tail:[16, 7, 'left']},
       {id:'bridge', word:'桥', say:'hideBridge', where:'under the {桥}', at:[[15, 18], [16, 18], [17, 18]], out:[15, 17], tail:[16, 18, 'left']},
       {id:'water', word:'水', say:'hideWater', where:'in the {水}', at:[[18, 15], [19, 15], [20, 15], [18, 16], [19, 16], [20, 16]], out:[17, 15], tail:[19, 16, 'right']},
-      {id:'flowers', word:'花', say:'hideFlowers', where:'in the {花|flowers}', at:[[26, 2], [27, 2], [28, 2], [29, 2], [30, 2], [27, 3], [28, 3], [29, 3], [30, 3],
-        [26, 4], [27, 4], [28, 4], [29, 4], [30, 4], [26, 5], [27, 5], [28, 5], [29, 5], [30, 5]], out:[28, 3], tail:[28, 2, 'right']}
+      {id:'flowers', word:'花', say:'hideFlowers', where:'in the {花|flowers}', at:[[26, 2], [27, 2], [28, 2], [29, 2], [30, 2], [30, 3],
+        [26, 4], [30, 4], [26, 5], [27, 5], [28, 5], [29, 5], [30, 5]], out:[30, 3], tail:[28, 2, 'right']}   // (round the bees' hive and its sign, in the middle: chapter 1's bees)
     ]
   },
 
@@ -1545,6 +1573,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     queenYes: {zh:'好 ！ 我们 去 你 家 吧 ！', en:'OK! Let’s go to your home!'},   // the queen bee, won over by her word game
     queenHere: {zh:'这里 有 花 ！', en:'There are flowers here!'},   // the queen bee, home by the wildflowers
     haveBees: {zh:'我们 有 蜜蜂 了 ！', en:'We have bees now!'},   // the hungry monkey, once you've brought the bees home
+    ourHome: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},   // the queen bee, as the troop finishes her bees' hive
+    haveHoney: {zh:'蜂蜜 ！ 太 好 了 ！', en:'Honey! Wonderful!'},   // the hungry monkey, when you bring him honey
+    haveHoneyNow: {zh:'我们 有 蜂蜜 了 ！', en:'We have honey now!'},   // and once it's in the bowl on the feast's table
     // hide and seek with a little monkey (the area's hideSeek): its clues' English leaves the place's word in Chinese ({桌子})
     hideAsk: {zh:'我们 来 捉迷藏 吧 ！', en:'Let’s play hide and seek!'},
     hideCount: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ， 十 ！', en:'One, two, three, four, five, six, seven, eight, nine, ten!'},   // you, with your eyes covered
@@ -1774,7 +1805,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'There’s no honey for the feast! Honey comes from bees: the troop has cleared a way east, along the stream, to find them. Follow the road east!'}
       ]},
       // you've brought the bees home: he's thrilled (the hive, and honey for the feast, are step 5)
-      {if:{bees:6}, do:[{say:'haveBees'}, {set:{bees:7}}, {message:'The bees will need a hive, and then there’ll be honey for the feast. Coming soon!'}]},
+      {if:{bees:6}, do:[{say:'haveBees'}, {set:{bees:7}}, {message:'The bees need a home: the troop is going to build them a hive, by the wildflowers. Go and see!'}]},
+      {if:{bees:10}, do:[{request:'honey'}]},   // honey for the feast, from the hive: asked as the bees move in
+      {if:{bees:{atLeast:11}}, do:[{say:'haveHoneyNow'}]},
       // a game that heard what the feast needs before the bees came (25 October 2026): he sends you to find them now
       {if:{feast:{atLeast:3}, bees:0}, do:[{say:'wantHoney'}, {set:{bees:1}},
         {message:'Honey comes from bees: the troop has cleared a way east, along the stream, to find them. Follow the road east!'}]},
@@ -1805,6 +1838,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
           lost:[{leap:'queen', to:[25, 4]}, {set:{queenOut:false}}]}}
       ]},
       {if:{bees:5}, do:[{say:'queenYes'}, {follow:['queen', 'beeSwarm']}]},   // (on the way home with you)
+      // home, once you've told the hungry monkey: the troop builds the bees a hive, right by the wildflowers, as you watch (its
+      // plot marked out, with its sign, then the hive set up a piece at a time; decided 25 October 2026 to start as you talk to
+      // her, not as you come near, so the plot is in sight); she says it's their home, and she and her swarm fly in. The hungry
+      // monkey has wanted honey for the feast since its list said 我们没有蜂蜜。: his request is asked (take some from the hive)
+      {if:{bees:7}, do:[{say:'queenHere'}, {message:'The troop comes over to build the bees a hive, right here by the wildflowers!'},
+        {markOut:{bees:8}}, {setUp:{bees:9}}, {say:'ourHome'}, {sound:'buzz'},
+        {leap:'queen', to:[28, 4]}, {leap:'beeSwarm', to:[28, 4]}, {set:{bees:10, honey:'asked'}},
+        {message:'The queen bee and her swarm fly into their new hive. Take some honey from it, for the hungry monkey’s feast!'}]},
       {do:[{say:'queenHere'}]}   // home, by the wildflowers
     ],
     beeSwarm: [{do:[{sound:'buzz'}, {message:'A swarm of bees, buzzing round their queen.'}]}],

@@ -145,6 +145,12 @@ const DRAFTS = [
     ['这里 有 花 ！', 'There are flowers here!', 'The queen bee, at the troop’s home ground, by the wildflowers where their hive will be'],
     ['我们 有 蜜蜂 了 ！', 'We have bees now!', 'The hungry monkey, once you’ve brought the bees home (he wants honey for the feast)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 25 October 2026 (in the game), the queen bee: ' + where})),
+  ...[['这 是 我们 的 家 ！', 'This is our home!', 'The queen bee, as the troop finishes building the bees a hive by the wildflowers at the home ground (three log hives with straw caps); then she and her swarm fly in'],
+    ['我 要 吃 蜂蜜', 'I want to eat honey.', 'The sentence you complete (choosing 蜂蜜) to give the hungry monkey the honey you took from the hive. 蜂蜜 (fēngmì, honey) is taught as you take it; how it’s made: 蜂 bee + 蜜 honey = the bees’ honey (蜜蜂, the other way round, is a honey bee: is that true to say?)'],
+    ['蜂蜜 ！ 太 好 了 ！', 'Honey! Wonderful!', 'The hungry monkey, when you bring him the honey'],
+    ['我们 有 蜂蜜 了 ！', 'We have honey now!', 'The hungry monkey, as he pours the honey into the empty bowl on the feast’s table'],
+    ['我们 有 蜂蜜 。', 'We have honey.', 'The feast’s list at its big table, once the honey is in its bowl (before: 我们没有蜂蜜。)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 25 October 2026 (in the game), the bees’ hive and honey: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 

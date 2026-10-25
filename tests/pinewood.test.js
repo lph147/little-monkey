@@ -163,7 +163,7 @@ test('bring them to the big monkey: he takes both, and the troop builds the scho
   assert.ok(!get(g, 'OBJECT_PIECES.some(p => p.look === "frame")'), 'no frame on its own on the map');
   assert.ok(g.run('tileAt(pl.x, pl.y).walk'), 'you stepped off the plot as it went up');
   assert.match(get(g, '__notes').join(' '), /he’s the teacher now/);
-  assert.ok(get(g, 'areaChecklist().filter(([t]) => /^(Go with|Bring|Build)/.test(t)).every(([, done]) => done)'), 'chapter 1 so far is ticked off');
+  assert.ok(get(g, 'areaChecklist().filter(([t, , , found]) => found && /^(Go with|Bring|Build)/.test(t)).every(([, done]) => done)'), 'chapter 1 so far is ticked off');
 });
 
 test('a game saved with just the school’s frame up (before version 191) keeps it, and the big monkey builds the school when you talk to him', async () => {

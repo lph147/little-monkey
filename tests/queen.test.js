@@ -103,16 +103,15 @@ test('she and her swarm follow you home: at the home ground they fly to the wild
   assert.deepEqual(item(g, /Lead the/), ['Lead the 蜂王 (queen bee) and her bees home', true, false, true], 'the quest: done');
   assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Tell the hungry monkey the 蜜蜂 (bees) are home']);
   assert.equal(g.run("AREA.bubbles.hungry.find(b => matches(b.if)).show"), '!');
-  g.run('__notes.length = 0');
+  await press(g, 27, 7, 'up');
+  assert.deepEqual(get(g, '__said'), ['queen: 这里有花！'], 'the queen likes it here');
+  g.run('__notes.length = 0; __said.length = 0');
   await press(g, 20, 7, 'left');   // (he's by the big table)
   assert.deepEqual(get(g, '__said'), ['hungry: 我们有蜜蜂了！']);
-  assert.match(get(g, '__notes').join(' '), /The bees will need a hive, and then there’ll be honey for the feast\. Coming soon!/);
+  assert.match(get(g, '__notes').join(' '), /The bees need a home: the troop is going to build them a hive, by the wildflowers\. Go and see!/);
   assert.equal(get(g, 'here().bees'), 7);
   assert.equal(g.run("(AREA.bubbles.hungry.find(b => matches(b.if)) || {show: ''}).show"), '', 'his ! has gone');
-  assert.match(g.run('goalText()'), /The 蜜蜂 \(bees\) are home! A hive for them, and honey for the feast, are the next part of chapter 1, coming soon\./);
-  g.run('__said.length = 0');
-  await press(g, 27, 7, 'up');
-  assert.deepEqual(get(g, '__said'), ['queen: 这里有花！'], 'and the queen likes it here');
+  assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Talk to the 蜂王 (queen bee) by the wildflowers'], 'next, the hive (tests/hive.test.js)');
 });
 
 test('the queen and her swarm fly: they hover, and tall flowers never hide them as they follow you', () => {

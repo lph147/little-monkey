@@ -113,7 +113,7 @@ const WORD_BANK = {
   '同学': {py:'tóngxué', en:'classmate', pic:'🎒', area:1, category:'people'},
   '有': {py:'yǒu', en:'to have, there is', area:1, category:'actions'},   // (the old monkey's news, chapter 1: heard till then, as in 里面有床; no picture, as 要 has none)
   '没有': {py:'méiyǒu', en:'don’t have, there isn’t', area:1, category:'actions'},   // (the hungry monkey at the feast's table: no honey; no picture either)
-  '蜂蜜': {py:'fēngmì', en:'honey', pic:'🍯', area:1, category:'food', later:true},   // (heard at the feast's table; taught with the first honey, once the bees are built)
+  '蜂蜜': {py:'fēngmì', en:'honey', pic:'🍯', area:1, category:'food'},   // (heard at the feast's table; taught as you take the first honey from the bees' hive)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
@@ -236,6 +236,7 @@ const MADE = {
   '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']], why:'a wild pig'},
   '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']], why:'a honey bee'},
   '蜂王': {parts:[['蜂', 'fēng', 'bee'], ['王', 'wáng', 'king']], why:'the bees’ king: their queen'},
+  '蜂蜜': {parts:[['蜂', 'fēng', 'bee'], ['蜜', 'mì', 'honey']], why:'the bees’ honey'},   // (蜜蜂, the other way round, is a honey bee)
   '黄蜂': {parts:[['黄', 'huáng', 'yellow', '黄色'], ['蜂', 'fēng', 'bee']], why:'a yellow bee: a wasp'},
   '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']], why:'someone you learn with'},
   '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']], why:'don’t have'},

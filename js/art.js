@@ -740,6 +740,8 @@ const LOOKS = {
   blueBed:   (g,X,Y,x,y) => colourBed(g,X,Y,x,y,['#4F8FE8', '#7FB0F2']),
   orangeBed: (g,X,Y,x,y) => colourBed(g,X,Y,x,y,['#F28C28', '#F7A54E']),
   hollowTree:(g,X,Y,x,y) => grass(g,X,Y,x,y),        // the queen bee's old hollow tree: a big object (OBJECT_ART), on grass
+  hive:      (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the bees' hive at the home ground: a big object (OBJECT_ART), on grass
+  feastTableHoney:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // the feast's table once its third bowl has honey in it (OBJECT_ART)
   swarm:     (g,X,Y,x,y) => path(g,X,Y,x,y),         // a swarm of bees in the way, on sandy ground (the bees: js/draw.js)
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
@@ -815,6 +817,8 @@ const OBJECT_ART = {
   },
   stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4),
   feastTable: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.feastTable),   // (stage: how much of it is up, as it's set up)
+  feastTableHoney: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, 6),   // (and honey in its third bowl)
+  hive: (g, o) => hive(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.hive),
   stoneStool: (g, o) => { if ((o.stage ?? 1) >= 1) stoneStool(g, o.x*T, o.y*T); },
   pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
@@ -1019,7 +1023,8 @@ function schoolFrame(g, o, k = 1){
 }
 // The big table for the troop's feast, w wide from X (three squares), under the big tree at the home ground, as much of it as
 // is up (stage, as the troop sets it up: 1 its legs, 2 its top, with a red cloth for the feast hanging over the front, then
-// a stone bowl from the cave at a time: 3 peaches, 4 apples, 5 an empty one, waiting for honey).
+// a stone bowl from the cave at a time: 3 peaches, 4 apples, 5 an empty one, waiting for honey; and 6, once you've brought
+// it, honey in that bowl, with a wooden dipper).
 // The feast's big table: stone, like the book's (摆开石凳石桌, they set out stone stools and stone tables: decided 25 October
 // 2026, after the game's owner asked where the feast was held; it was wood with a red cloth), set up a piece at a time:
 // its two stone legs, then its slab, then a bowl at a time, peaches, apples, and an empty one, waiting for honey.
@@ -1039,6 +1044,30 @@ function feastTable(g, X, Y, w, stage){
     if (stage < 3 + i) return;
     tableBowl(g, cx, Y + 5);
     if (fruits) [[-3, -6], [1, -6], [-1, -9]].forEach(([dx, dy]) => bigFruit(g, cx + dx, Y + 5 + dy, fruits));   // three, piled up
+  });
+  if (stage >= 6){   // honey, up to the third bowl's rim, with a wooden dipper in it
+    const cx = X + w - 9, by = Y + 5;
+    R(g, cx - 5, by - 5, 11, 2, '#2E2A26'); R(g, cx - 4, by - 6, 9, 2, '#2E2A26');
+    R(g, cx - 4, by - 5, 9, 1, '#E8A93A'); R(g, cx - 3, by - 6, 7, 1, '#F7C95A'); R(g, cx - 1, by - 6, 2, 1, '#FFE9A8');
+    R(g, cx + 2, by - 12, 2, 8, '#2E2A26'); R(g, cx + 2, by - 12, 1, 7, WOOD[3]); R(g, cx + 1, by - 13, 4, 2, '#2E2A26'); R(g, cx + 2, by - 13, 2, 1, WOOD[2]);
+  }
+}
+// The bees' hive at the home ground, three squares by two, by the wildflowers, as much of it as is up (stage, as the troop
+// sets it up: 1 its low stone base, then a log hive at a time, each hollowed out of a log, with two bands round it, a little
+// door at its foot and a straw cap, the middle one the tallest).
+function hive(g, X, Y, stage){
+  if (stage >= 1){
+    if (shadows) groundShadow(g, X + 24, Y + 30, 22, 3);
+    R(g, X + 2, Y + 23, 44, 8, CAVE_OUT); R(g, X + 3, Y + 24, 42, 2, SLAB[3]); R(g, X + 3, Y + 26, 42, 4, SLAB[2]); R(g, X + 3, Y + 29, 42, 1, SLAB[1]);
+  }
+  [[10, 17], [24, 20], [38, 17]].forEach(([cx, h], i) => {
+    if (stage < 2 + i) return;
+    const top = Y + 24 - h;
+    R(g, X + cx - 6, top, 13, h, WOOD[0]); R(g, X + cx - 5, top, 11, h, WOOD[1]); R(g, X + cx - 5, top, 2, h, WOOD[2]); R(g, X + cx + 4, top, 1, h, '#5A3A22');
+    R(g, X + cx - 5, top + 5, 11, 1, '#5A3A22'); R(g, X + cx - 5, top + h - 7, 11, 1, '#5A3A22');   // bands round it
+    R(g, X + cx - 1, top + h - 4, 3, 3, '#1A100A');                                                 // its door
+    for (let k = 0; k < 8; k++){ const sw = 18 - 2*k; R(g, X + cx - sw/2 + .5, top - k, sw, 1, k === 0 ? '#8A6A2A' : k % 2 ? '#D9B45A' : '#C9A24A'); }   // its straw cap
+    R(g, X + cx - 9, top, 19, 1, '#7A5A22');
   });
 }
 function stoneStool(g, X, Y){   // a round stone stool beside the feast's table, for one monkey
@@ -1073,12 +1102,12 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
-const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable'];   // side by side, these make one object as wide as the row
+const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable', 'feastTableHoney'];   // side by side, these make one object as wide as the row
 // Big objects set up as you watch (the setUp step, js/world.js): how many pieces each goes up in, one after another (its
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
 // table and then its stools.
-const OBJECT_STAGES = {feastTable:5, stoneStool:1};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree'];   // and these one object as big as the block of them (such as the school's frame on its plot)
+const OBJECT_STAGES = {feastTable:5, stoneStool:1, hive:4};
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
 // stall letters one stall; a block of frame letters is one frame; anything else stands on its own square. They come from the top of the map down, the order they're drawn in.

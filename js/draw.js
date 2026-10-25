@@ -199,18 +199,32 @@ function drawFlutter(a, X, Y, now){
   if (shut) b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - hover, 8, 16); else b.drawImage(a.spr, X, Y - hover);
 }
 // A swarm of bees, buzzing round where it hangs in the way (a square that looks like a swarm, such as across the way to the
-// queen's old tree in the bees' valley): tiny bees looping about it, each its own way.
+// queen's old tree in the bees' valley): tiny bees looping about it, each its own way. And a few about the bees' hive at the
+// home ground, over its top, once they live there.
 function drawSwarms(cx, cy, now){
   const x0 = Math.max(0, Math.floor(cx / T)), y0 = Math.max(0, Math.floor(cy / T));
-  for (let y = y0; y <= Math.min(ROWS - 1, y0 + VH); y++) for (let x = x0; x <= Math.min(COLS - 1, x0 + VW); x++)
-    if (tileAt(x, y).look === 'swarm') drawSwarm(x*T - cx, y*T - cy, now, x);
+  for (let y = y0; y <= Math.min(ROWS - 1, y0 + VH); y++) for (let x = x0; x <= Math.min(COLS - 1, x0 + VW); x++){
+    const look = tileAt(x, y).look;
+    if (look === 'swarm') drawSwarm(x*T - cx, y*T - cy, now, x);
+    else if (look === 'hive' && tileAt(x, y - 1).look !== 'hive') drawSwarm(x*T - cx, y*T - cy - 9, now, x, 3);   // (its top row)
+  }
 }
-function drawSwarm(X, Y, now, k){   // (the square's top left corner on screen; k: so swarms side by side loop each their own way)
-  for (let i = 0; i < 9; i++){
+function drawSwarm(X, Y, now, k, n = 9){   // (the square's top left corner on screen; k: so swarms side by side loop each their own way; n bees)
+  for (let i = 0; i < n; i++){
     const t = now / 260 + i * 1.7 + k * 3.1;
     const bx = Math.round(X + 7 + Math.sin(t * (1 + i % 3 * .3) + i) * 8 + Math.cos(i * 2.3) * 3), by = Math.round(Y + 6 + Math.cos(t * .9 + i * .7) * 6 + Math.sin(i) * 2);
     R(b, bx, by, 3, 2, '#F2C14E'); R(b, bx + 1, by, 1, 2, '#2A2018'); R(b, bx, by - 1, 2, 1, i % 2 ? '#FFFFFF' : '#DDEFF8');
   }
+}
+// Full of energy, from honey (isFast, js/input.js): golden sparks fly off behind you as you walk, and one twinkles over
+// your head, most of the time.
+function drawEnergy(X, Y, now, moving, dir){
+  const [dx, dy] = DV[dir];
+  if (moving) for (let i = 0; i < 3; i++){
+    const k = (now / 90 + i * 1.3) % 3, bx = X + 7 - dx * (5 + k * 3) + (i - 1) * 3 * Math.abs(dy), by = Y + 12 - dy * (5 + k * 3) + (i - 1) * 2 * Math.abs(dx);
+    R(b, Math.round(bx), Math.round(by), 2, 2, i % 2 ? '#FFE27A' : '#F2C14E');
+  }
+  if (Math.floor(now / 400) % 3 !== 2){ const tw = (now / 120) % 2 < 1; R(b, X + 13, Y - 3, 1, 3, '#FFE27A'); R(b, X + 12, Y - 2, 3, 1, tw ? '#FFFFFF' : '#FFE27A'); }
 }
 // A character that flies (flies, such as the queen bee and her swarm, coming home with you): hovering over its square,
 // bobbing, its wings a blur as they beat, its shadow small on the ground below; or, for a swarm, a cloud of tiny bees.
@@ -445,12 +459,13 @@ function drawWorld(now){
     if (e.f){ drawFoe(cx, cy, now); continue; }
     if (e.p){
       if (sleepAt){ drawAsleep(sleepAt.x*T - cx, sleepAt.y*T - cy); continue; }   // asleep in a bed
-      const moving = !!pl.mv, p = moving ? (now - pl.mv.t0) / STEP : 0;
+      const moving = !!pl.mv, p = moving ? (now - pl.mv.t0) / (pl.mv.dur || STEP) : 0;
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
       else drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
       for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
+      if (isFast(now)) drawEnergy(PX, PY, now, moving, pl.dir);
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
       if (now - wakeT < 1000) [[-3, 2], [17, 4], [-1, -4], [15, -3], [7, -7]].forEach(([dx, dy], i) => {   // waking up with all your hearts: sparkles
         const tw = (now / 200 + i) % 2 < 1; R(b, PX + dx, PY + dy, 1, 3, '#FFE27A'); R(b, PX + dx - 1, PY + dy + 1, 3, 1, tw ? '#FFFFFF' : '#FFE27A'); });

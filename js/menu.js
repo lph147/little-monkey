@@ -44,14 +44,15 @@ function friendsPage(back, focus){
 }
 // 衣服 Wardrobe: the clothes you own. Tap one to put it on (your monkey says so, such as 我戴头带, which
 // teaches 戴 the first time and counts as using the words) or to take it off.
-// 包 Bag: what you carry. Food, how many and what it does (tap food that brings a heart back to eat it, if you're hurt),
-// your stick, and things you're carrying for someone. Tapping anything else says its word. note: what just happened.
+// 包 Bag: what you carry. Food, how many and what it does (tap food that brings a heart back to eat it, if you're hurt, or
+// food that gives you energy, such as honey, to walk faster for a while, unless you're full of energy already), your
+// stick, and things you're carrying for someone. Tapping anything else says its word. note: what just happened.
 function bagPage(back, focus, note){
   const card = (w, does, label, count) => `<button class="card bagitem" data-w="${w}" data-label="${label}"><div class="c" aria-hidden="true">${picHTML(w)}</div>`
     + `${count ? `<span class="count">×${count}</span>` : ''}<div class="hz">${w}</div><div class="p">${WORDS[w].py}</div><div class="small">${esc(does)}</div></button>`;
   const forWhom = id => `For the ${((NAMES[(AREA.requests[id] || {}).from] || {}).en || 'troop').toLowerCase()}`;
   const items = [
-    ...Object.keys(FOOD).filter(w => S.bag[w] > 0).map(w => card(w, FOOD[w].does, FOOD[w].heal ? 'Eat' : 'Hear', S.bag[w])),
+    ...Object.keys(FOOD).filter(w => S.bag[w] > 0).map(w => card(w, FOOD[w].does, FOOD[w].heal || FOOD[w].fast ? 'Eat' : 'Hear', S.bag[w])),
     ...(canBattle() && BATTLES.weapon ? [card(BATTLES.weapon, 'To fight with', 'Hear')] : []),
     ...Object.entries(here().holding).filter(([, w]) => w && WORDS[w]).map(([id, w]) => card(w, forWhom(id), 'Hear'))];
   openCard(`<div class="bag"><div class="baghead"><p class="label">包 bāo · Bag</p>
@@ -62,6 +63,12 @@ function bagPage(back, focus, note){
   on('[data-a=ok]', back);
   sheet.querySelectorAll('.bagitem').forEach(b => b.onclick = () => {
     const w = b.dataset.w, food = FOOD[w];
+    if (food && food.fast){
+      if (isFast()){ SFX.bump(); bagPage(back, w, 'You’re full of energy already: keep it for later.'); return; }
+      S.bag[w]--; energise(w, food.fast); useWord(w); save(); SFX.right();
+      bagPage(back, w, `You eat some ${wz(w)}: you’re full of energy! You walk faster for a while.`);
+      return;
+    }
     if (!food || !food.heal){ say(w); return; }
     if (hearts() >= HEARTS){ SFX.bump(); bagPage(back, w, 'Your hearts are full: keep it for when you’re hurt.'); return; }
     S.bag[w]--; S.hearts = Math.min(HEARTS, hearts() + food.heal); useWord(w); save(); SFX.right();

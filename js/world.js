@@ -133,7 +133,7 @@ function promptFor(x, y){
   const look = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
   if (look && look.label) return look.label;   // the tile's own steps say what A does, such as Sleep in a bed
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return t.gather.label;
-  if (canPick(t) && !looksFirst(t)) return 'Pick';
+  if (canPick(t) && !looksFirst(t)) return t.pick.label || 'Pick';
   if (t.landmark) return t.label || 'Look';
   const w = lookWord(t);
   return w && lvl(w) === 0 ? 'Look' : '';
@@ -658,7 +658,7 @@ function followersStep(now, hop){   // you're stepping off your square (hop: dow
     const to = trail[i];
     if (!to || (to[0] === n.x && to[1] === n.y)) return;
     const dx = to[0] - n.x, dy = to[1] - n.y;
-    n.mv = {fx:n.x, fy:n.y, t0:now, dur:hop ? STEP * 1.6 : STEP, far:Math.abs(dx) + Math.abs(dy) > 1};
+    n.mv = {fx:n.x, fy:n.y, t0:now, dur:walkMs() * (hop ? 1.6 : 1), far:Math.abs(dx) + Math.abs(dy) > 1};   // (as fast as you)
     n.dir = dirOf(dx, dy); n.parity = (n.parity || 0) ^ 1; n.x = to[0]; n.y = to[1];
   });
 }
@@ -794,15 +794,17 @@ async function gather(t, x, y){   // pick up something for a request, such as fr
   here().holding[g.for] = g.item; save(); SFX.right(); toast(fill(g.message));
 }
 // A fruit tree, once the content says (the legend's pick), gives you a fruit for your bag: one each time you come to
-// the place (it has no more ripe ones until then), up to as many as you can carry.
+// the place (it has no more ripe ones until then), up to as many as you can carry. So does anything else whose pick says,
+// such as the bees' hive, honey (label: what A says; took: what you do; none: what it says when it has no more for now),
+// one for the whole of it, however many squares it covers.
 const canPick = t => !!t.pick && matches(t.pick.if || {});
 const pickedHere = new Set();   // the trees you've picked from since you came into the place you're in
 function pick(t, x, y){
-  const w = t.pick.item;
-  if (pickedHere.has(x + ',' + y)){ SFX.bump(); toast('No more ripe ones. Come back another time.'); return; }
+  const w = t.pick.item, o = mapObjects().find(o => x >= o.x && x < o.x + o.w && y >= o.y && y < o.y + o.h), key = o ? o.x + ',' + o.y : x + ',' + y;
+  if (pickedHere.has(key)){ SFX.bump(); toast(fill(t.pick.none || 'No more ripe ones. Come back another time.')); return; }
   if (!intoBag(w)){ SFX.bump(); toast(`Your bag has ${FOOD[w].carry} ${wz(w)} already.`); return; }
-  pickedHere.add(x + ',' + y); SFX.right();
-  toast(`You pick a ${wz(w)} for your bag (${S.bag[w]} of ${FOOD[w].carry}). ${FOOD[w].does}.`);
+  pickedHere.add(key); SFX.right();
+  toast(`${t.pick.took ? fill(t.pick.took) : `You pick a ${wz(w)}`} for your bag (${S.bag[w]} of ${FOOD[w].carry}). ${FOOD[w].does}.`);
 }
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
   async story(t){ await lookAt(t); await storyScroll(); },

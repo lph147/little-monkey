@@ -475,6 +475,19 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual([area().bees, get('S.following')], [6, []], 'home: the bees fly to the wildflowers below the cliff');
   await pressAt(20, 7, 'left', 'telling the hungry monkey the bees are home');
   assert.ok(get('__said').includes('我们有蜜蜂了！') && area().bees === 7, 'we have bees now!');
+  // Talking to the queen by the wildflowers, the troop builds the bees a hive there (marked out, then set up a piece at a
+  // time): 这是我们的家！, and they fly in. A at the hive takes honey, teaching 蜂蜜; the hungry monkey takes it (我要吃蜂蜜) and
+  // pours it into the bowl on the feast's table: 我们有蜂蜜了！ After that, the hive fills your bag
+  await walk([[20, 7], [27, 7]], 'walking over to the bees by the wildflowers');
+  await pressAt(27, 7, 'up', 'talking to the queen bee: the troop builds the bees a hive');
+  assert.ok(get('__said').includes('这是我们的家！') && area().bees === 10 && run('tileAt(28, 3).look') === 'hive', 'the bees’ hive, built: this is our home!');
+  await pressAt(28, 5, 'up', 'taking honey from the hive', 1);
+  assert.ok(knows('蜂蜜') && area().holding.honey === '蜂蜜', 'honey: 蜂蜜');
+  await pressAt(20, 7, 'left', 'giving the hungry monkey the honey');
+  assert.ok(get('__said').includes('我们有蜂蜜了！') && area().honey === 'done' && area().bees === 11, 'honey in the bowl on the feast’s table: we have honey now!');
+  assert.equal(run('tileAt(17, 7).look'), 'feastTableHoney');
+  await pressAt(28, 5, 'up', 'taking honey from the hive, for your bag');
+  assert.equal(get("S.bag['蜂蜜']"), 1, 'honey in your bag');
   stand(11, 5, 'up');
   await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
   assert.equal(run('PLACE'), 'school');
