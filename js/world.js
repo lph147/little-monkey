@@ -434,8 +434,8 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     Object.assign(here(), s.setUp); save(); placeCharacters();
     const objects = mapObjects().filter(o => !was.has(objectKey(o)) && OBJECT_STAGES[o.look]);
     if (!objects.length){ refreshMap(); return; }
-    settingUp = {objects, stage:0};
-    for (let i = 1; i <= Math.max(...objects.map(o => OBJECT_STAGES[o.look])); i++){ settingUp.stage = i; SFX.tock(); await sleep(SET_UP.each); }
+    settingUp = {objects:objects.map(o => ({...o, stage:0})), stage:0};   // (one after another, from the top of the map down: each piece a knock)
+    for (const o of settingUp.objects) for (let i = 1; i <= OBJECT_STAGES[o.look]; i++){ o.stage = i; settingUp.stage++; SFX.tock(); await sleep(SET_UP.each); }
     await sleep(SET_UP.after);
     settingUp = null; refreshMap();
   },

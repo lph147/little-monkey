@@ -676,6 +676,7 @@ const LOOKS = {
   rubble:    (g,X,Y,x,y) => rubble(g,X,Y,x,y),
   school:    (g,X,Y,x,y) => grass(g,X,Y,x,y),   // the school, built on its plot: a big object (OBJECT_ART), on grass (no string or stakes round it any more)
   feastTable:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // the big table for the feast: a big object (OBJECT_ART), on grass
+  stoneStool:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // a stone stool beside it (OBJECT_ART), on grass
   classFloor:(g,X,Y,x,y) => classFloor(g,X,Y,x,y),   // inside the school
   classWall: (g,X,Y,x,y) => classWall(g,X,Y,x,y),
   wallFace:  (g,X,Y,x,y) => wallFace(g,X,Y,x,y),
@@ -779,6 +780,7 @@ const OBJECT_ART = {
   },
   stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4),
   feastTable: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.feastTable),   // (stage: how much of it is up, as it's set up)
+  stoneStool: (g, o) => { if ((o.stage ?? 1) >= 1) stoneStool(g, o.x*T, o.y*T); },
   pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
   tablet: (g, o) => stoneTablet(g, o.x*T, (o.y + o.h - 1)*T, tileAt(o.x, o.y).sign.says.zh),   // (standing on its bottom square, with what it says carved down it)
@@ -967,25 +969,32 @@ function schoolFrame(g, o, k = 1){
 // The big table for the troop's feast, w wide from X (three squares), under the big tree at the home ground, as much of it as
 // is up (stage, as the troop sets it up: 1 its legs, 2 its top, with a red cloth for the feast hanging over the front, then
 // a stone bowl from the cave at a time: 3 peaches, 4 apples, 5 an empty one, waiting for honey).
+// The feast's big table: stone, like the book's (摆开石凳石桌, they set out stone stools and stone tables: decided 25 October
+// 2026, after the game's owner asked where the feast was held; it was wood with a red cloth), set up a piece at a time:
+// its two stone legs, then its slab, then a bowl at a time, peaches, apples, and an empty one, waiting for honey.
+const SLAB = ['#7E776B', '#8C8478', '#A39C8E', '#C9C2B4', '#DDD6C8'];   // the feast's stone, darkest to lightest (its outline: CAVE_OUT)
 function feastTable(g, X, Y, w, stage){
   if (stage >= 1){
     if (shadows) blob(g, X + w/2, Y + 15, w/2 - 1, 2, ROCK_SHADOW);
-    [[X + 7, Y + 7], [X + w - 10, Y + 7]].forEach(([x, y]) => { R(g, x, y, 3, 6, WOOD[0]); R(g, x + 1, y, 1, 5, WOOD[1]); });   // the back legs
-    [[X + 3, Y + 8], [X + w - 6, Y + 8]].forEach(([x, y]) => { R(g, x, y, 3, 8, WOOD[0]); R(g, x + 1, y, 1, 7, WOOD[2]); });   // the front legs
+    for (const x of [X + 4, X + w - 10]){ R(g, x, Y + 9, 6, 7, CAVE_OUT); R(g, x + 1, Y + 9, 4, 6, SLAB[1]); R(g, x + 1, Y + 9, 1, 6, SLAB[2]); }   // its legs, blocks of stone
   }
   if (stage >= 2){
-    R(g, X + 1, Y, w - 2, 10, WOOD[0]);                                              // the top's outline
-    R(g, X + 2, Y + 1, w - 4, 4, WOOD[3]); R(g, X + 2, Y + 1, w - 4, 1, WOOD[4]);   // its planks, lit along the back
-    for (let x = X + 13; x < X + w - 4; x += 11) R(g, x, Y + 2, 1, 3, WOOD[2]);    // the gaps between them
-    R(g, X + 2, Y + 5, w - 4, 4, WOOD[1]); R(g, X + 2, Y + 5, w - 4, 1, WOOD[2]);   // its front edge
-    R(g, X + 15, Y + 1, w - 30, 4, '#C0392B'); R(g, X + 15, Y + 1, w - 30, 1, '#E05A4A');   // the red cloth down the middle,
-    R(g, X + 15, Y + 5, w - 30, 5, '#A93226'); R(g, X + 15, Y + 9, w - 30, 1, '#E8B84A');   // hanging over the front, with a gold hem
+    R(g, X + 1, Y, w - 2, 10, CAVE_OUT);                                                            // its slab's outline
+    R(g, X + 2, Y + 1, w - 4, 4, SLAB[3]); R(g, X + 2, Y + 1, w - 4, 1, SLAB[4]);                 // its top, lit along the back
+    R(g, X + 2, Y + 5, w - 4, 4, SLAB[2]); R(g, X + 2, Y + 8, w - 4, 1, SLAB[1]);                 // its front edge
+    for (let x = X + 6; x < X + w - 4; x += 9) R(g, x, Y + 2 + (x % 3), 1, 1, SLAB[2]);            // specks in the stone
   }
   [[X + 9, PEACHES], [X + w/2, APPLES], [X + w - 9, null]].forEach(([cx, fruits], i) => {
     if (stage < 3 + i) return;
     tableBowl(g, cx, Y + 5);
     if (fruits) [[-3, -6], [1, -6], [-1, -9]].forEach(([dx, dy]) => bigFruit(g, cx + dx, Y + 5 + dy, fruits));   // three, piled up
   });
+}
+function stoneStool(g, X, Y){   // a round stone stool beside the feast's table, for one monkey
+  if (shadows) blob(g, X + 8, Y + 15, 5, 1.5, ROCK_SHADOW);
+  R(g, X + 4, Y + 7, 8, 9, CAVE_OUT); R(g, X + 3, Y + 8, 10, 7, CAVE_OUT);
+  R(g, X + 4, Y + 8, 8, 2, SLAB[4]); R(g, X + 5, Y + 8, 6, 1, '#E8E2D6');   // its top
+  R(g, X + 4, Y + 10, 8, 4, SLAB[2]); R(g, X + 4, Y + 13, 8, 1, SLAB[1]);   // its side
 }
 function tableBowl(g, cx, by){   // a stone bowl from the cave, its bottom at by
   const OUT = '#2E2A26';
@@ -1015,8 +1024,9 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
 }
 const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable'];   // side by side, these make one object as wide as the row
 // Big objects set up as you watch (the setUp step, js/world.js): how many pieces each goes up in, one after another (its
-// art draws stage of them, all of them if it's not given).
-const OBJECT_STAGES = {feastTable:5};
+// art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
+// table and then its stools.
+const OBJECT_STAGES = {feastTable:5, stoneStool:1};
 const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of

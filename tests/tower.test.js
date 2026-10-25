@@ -16,7 +16,7 @@ const knows = (words, ok = 3) => Object.fromEntries(words.map(w => [w, {lv: 1, o
 const BASICS = ['石头', '山', '花', '草', '树', '猴子', '你好', '谢谢', '一', '二', '三'];
 // A game at the home ground below the tower (area: more progress; words: what you know), with what's said, the messages, your
 // replies, the cards asking you to play (played: play) and the counting questions asked (each answered: right) kept for the test
-function game({area = {}, words = knows(BASICS), pos = {place: 'homeGround', x: 22, y: 8, dir: 'up'}} = {}){
+function game({area = {}, words = knows(BASICS), pos = {place: 'homeGround', x: 27, y: 9, dir: 'up'}} = {}){
   const g = loadGame({dom: true, save: {version: 29, started: true, w: words, areas: {1: {...CHAPTER_ONE, ...area}}, pos}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__replies = []; globalThis.__asks = []; globalThis.__counts = []; globalThis.__play = true; globalThis.__right = true");
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
@@ -31,13 +31,13 @@ const bubble = (g, id) => get(g, `((AREA.bubbles.${id} || []).find(b => matches(
 test('two little monkeys stand at the home ground, beside the way up to the hillside, a tower of stones between them, and you can’t walk through them', () => {
   const g = game();
   assert.deepEqual(get(g, "ALL_NPCS.filter(n => PLAYS[n.id] === 'tower').map(n => [n.id, n.place, n.x, n.y, n.home.facing, PLAYS[n.id]])"),
-    [['towerL', 'homeGround', 21, 7, 'right', 'tower'], ['towerR', 'homeGround', 23, 7, 'left', 'tower']], 'facing each other, across the tower');
-  assert.equal(g.run('tileAt(22, 7).look'), 'stoneTower');
-  assert.ok([[21, 7], [22, 7], [23, 7]].every(([x, y]) => !g.run(`walkable(${x}, ${y})`)));
-  assert.ok([24, 25].every(x => g.run(`walkable(${x}, 7)`)) && g.run('tileAt(25, 7).look') === 'path' && get(g, 'exitAt(25, 0).to') === 'hillside',
-    'off the way up to the hillside, which stays clear');
+    [['towerL', 'homeGround', 26, 8, 'right', 'tower'], ['towerR', 'homeGround', 28, 8, 'left', 'tower']], 'facing each other, across the tower');
+  assert.equal(g.run('tileAt(27, 8).look'), 'stoneTower');
+  assert.ok([[26, 8], [27, 8], [28, 8]].every(([x, y]) => !g.run(`walkable(${x}, ${y})`)));
+  assert.ok([24, 25].every(x => g.run(`walkable(${x}, 8)`)) && g.run('tileAt(25, 8).look') === 'path' && get(g, 'exitAt(25, 0).to') === 'hillside',
+    'just past the way up to the hillside, which stays clear (west of it till 25 October 2026, where the feast’s tables go now)');
   assert.deepEqual(get(g, "['towerL', 'towerR'].map(id => NAMES[id])"), [{zh: '猴子', py: 'hóuzi', en: 'Monkey'}, {zh: '猴子', py: 'hóuzi', en: 'Monkey'}]);
-  assert.equal(g.run('promptFor(22, 7)'), 'Look', 'A at the tower');
+  assert.equal(g.run('promptFor(27, 8)'), 'Look', 'A at the tower');
   g.run("enterPlace('hillside')");
   assert.deepEqual(get(g, '[[5, 32], [6, 32], [7, 32], [8, 32], [9, 32]].map(([x, y]) => tileAt(x, y).walk)'), [true, true, true, true, true], 'the way up the hillside, by its stone steps, is clear again');
   assert.ok(!get(g, 'PLACES.hillside.map.join("")').includes('t'), 'with no tower there');
@@ -83,7 +83,7 @@ test('the first time, they say hello; knowing just 一, 二 and 三, they count 
   assert.deepEqual(get(g, '[__asks, __counts]'), [[], []], 'no counting yet');
   assert.equal(g.run('here().tower'), 1);
   g.run('__said.length = 0; __notes.length = 0');
-  await g.run(`interact(22, 7)`);   // A at the tower: talking to them
+  await g.run(`interact(27, 8)`);   // A at the tower: talking to them
   assert.deepEqual(get(g, '__said'), ['一，二，三！'], 'no hello the second time');
 });
 

@@ -2,7 +2,7 @@
 // the old monkey has news, before any lesson: 我们有家，也有学校！ (teaching 有, to have), so it's time for a great feast
 // (decided 24 October 2026: after the first two lessons, so chapter 1 opens up; it waited till the flowers were
 // planted, after every lesson). As you come up to the big tree at the home ground, the troop sets up the feast's big table
-// under it, as you watch: its legs, its top with a red cloth, then a bowl at a time, each with a knock. The hungry monkey
+// under it, as you watch: its stone legs, its stone slab, then a bowl at a time, then its stone stools, each with a knock. The hungry monkey
 // comes up from the meadow to look after it, and tells you what the troop has for the feast, and what it hasn't: 我们没有
 // 蜂蜜！ (teaching 没有, don't have). A at the table shows the feast's list: what the troop has, ticked, and what it still
 // needs, as a shadow.
@@ -83,7 +83,8 @@ test('as you come up to the big tree, the troop sets up the feast’s big table 
   await goTo(g, 10, 8);
   assert.equal(g.run('here().feast'), 1, 'not from across the home ground');
   await goTo(g, 14, 8);   // (three squares from the middle of the table)
-  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5], 'its legs, its top, then a bowl of peaches, a bowl of apples and an empty one');
+  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7], 'its stone legs, its slab, then a bowl of peaches, a bowl of apples and an empty one; then its two stone stools, one after another');
+  assert.deepEqual([g.run('tileAt(16, 8).look'), g.run('tileAt(18, 8).look'), g.run('walkable(17, 8)')], ['stoneStool', 'stoneStool', true], 'its stools either side of the square in front of it, where you stand to look at it');
   assert.equal(g.run('here().feast'), 2);
   assert.equal(g.run('settingUp'), null, 'and it’s all up');
   assert.deepEqual(get(g, '[16, 17, 18].map(x => [tileAt(x, 7).look, walkable(x, 7)])'), [['feastTable', false], ['feastTable', false], ['feastTable', false]]);
@@ -101,7 +102,7 @@ test('as you come up to the big tree, the troop sets up the feast’s big table 
 test('a game that comes back to the home ground with the table still to set up sees it go up there: only near the big tree', async () => {
   const g = game({feast: 1}, {place: 'homeGround', x: 17, y: 8, dir: 'up'});
   await play(g, 'runEvents()');
-  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5], 'resting in front of it after a lost fight, say');
+  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7], 'resting in front of it after a lost fight, say');
   const far = game({feast: 1}, {place: 'school', x: 7, y: 8, dir: 'down'});
   await play(far, 'runEvents()');
   assert.equal(far.run('here().feast'), 1, 'not from the school');

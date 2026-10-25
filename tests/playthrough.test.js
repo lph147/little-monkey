@@ -412,7 +412,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   const hidden = area().hide.spot, clue = get('L[hideSpot(here().hide.spot).say].t.join("")');
   assert.ok(hidden && get('__said').includes(clue), 'it calls out where it’s hiding');
   assert.ok(!get("NPCS.some(n => n.id === 'hider')"), 'and it’s gone from where it stood');
-  const LOOK = {tree: [19, 4, 'left'], table: [16, 8, 'up'], bridge: [16, 17, 'down'], water: [17, 15, 'right'], flowers: [25, 2, 'right']};   // where you stand to look at each place
+  const LOOK = {tree: [19, 4, 'left'], table: [17, 8, 'up'], bridge: [16, 17, 'down'], water: [17, 15, 'right'], flowers: [25, 2, 'right']};   // where you stand to look at each place
   const wrong = Object.keys(LOOK).filter(id => id !== hidden && get(`lvl(hideSpot('${id}').word)`) >= 1).slice(0, 2);
   for (const id of wrong) await pressAt(...LOOK[id], `looking for the little monkey: ${id}, the wrong place`);
   assert.equal(area().hide.wrong, 2, 'two wrong guesses: its tail pokes out now');

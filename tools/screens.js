@@ -77,9 +77,9 @@ SAVES.byTrainee = {...SAVES.pineWood, pos: {place: 'hillside', x: 17, y: 38, dir
 SAVES.traineeDone = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 2, trainee2: 2}}, pos: {place: 'hillside', x: 19, y: 37, dir: 'right'}};   // beside the first, its present won
 SAVES.bagFull = {...SAVES.pineWood, bag: {'桃子': 3}, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 10, y: 20, dir: 'left'}};   // a full bag of peaches, by the other one, on the middle terrace
 SAVES.byHidden = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 22, y: 38, dir: 'down'}};   // above the tree with shells tucked behind it
-// below the little monkeys building a tower of stones, at the home ground beside the way up to the hillside: the first
+// below the little monkeys building a tower of stones, at the home ground just past the way up to the hillside: the first
 // time, knowing just 一, 二 and 三; and later, knowing the numbers to six from school (to count with them)
-SAVES.byTower = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'homeGround', x: 22, y: 8, dir: 'up'}};
+SAVES.byTower = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'homeGround', x: 27, y: 9, dir: 'up'}};
 SAVES.hillsideFoot = {...SAVES.byTower, pos: {place: 'hillside', x: 6, y: 33, dir: 'up'}};   // at the foot of the hillside's cliff, by its stone steps
 // by the brook at the foot of the hillside: on the path above the little monkey chasing a dragonfly, and on the bank above
 // the two splashing in the water
@@ -137,7 +137,7 @@ const hidingIn = (spot, wrong) => ({...SAVES.hideSeek.areas[1], hide: {spot, wro
 SAVES.hiding = {...SAVES.hideSeek, areas: {1: hidingIn('table', 0)}, pos: {place: 'homeGround', x: 13, y: 9, dir: 'right'}};
 SAVES.hideTail = {...SAVES.hideSeek, areas: {1: hidingIn('table', 2)}, pos: {place: 'homeGround', x: 14, y: 9, dir: 'up'}};
 SAVES.hideNotHere = {...SAVES.hideSeek, areas: {1: hidingIn('table', 0)}, pos: {place: 'homeGround', x: 17, y: 15, dir: 'right'}};   // looking in the pool
-SAVES.hideFind = {...SAVES.hideSeek, areas: {1: hidingIn('table', 1)}, pos: {place: 'homeGround', x: 16, y: 8, dir: 'up'}};
+SAVES.hideFind = {...SAVES.hideSeek, areas: {1: hidingIn('table', 1)}, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -430,7 +430,7 @@ const SCREENS = [
     play(); await wait(100); interact(22, 39); clearTimeout(msgT); await wait(400); }},   // (the message held)
   {id: 'hillside-steps', title: 'The way up the hillside', save: 'hillsideFoot', why: 'At the foot of the cliff, the stone steps, with the way to them clear: the little monkeys’ tower is at the home ground now.', run: async () => {
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(500); }},
-  {id: 'tower', title: 'Building a tower of stones', save: 'byTower', why: 'At the home ground, beside the way up to the hillside (by the hillside’s stone steps till 24 October 2026, where they crowded the way up), two little monkeys pile stones into a tower, taking turns, as high as it will go (here, a stone on its way up), with a little clack as each goes on (in the book, chapter 1: 砌宝塔, they build pagodas).', run: async () => {
+  {id: 'tower', title: 'Building a tower of stones', save: 'byTower', why: 'At the home ground, just past the way up to the hillside (by the hillside’s stone steps till 24 October 2026, where they crowded the way up), two little monkeys pile stones into a tower, taking turns, as high as it will go (here, a stone on its way up), with a little clack as each goes on (in the book, chapter 1: 砌宝塔, they build pagodas).', run: async () => {
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); towerAt = () => ({h: 5, phase: 'build', k: .3, stones: 3, carried: 3, by: 1, lift: .55}); await wait(400); }},
   {id: 'tower-falls', title: 'Crash!', save: 'byTower', why: 'Then it sways, and falls, the stones tumbling down round it with a clatter (here, falling); the monkeys jump back, then jump about laughing, gather the stones up and start again.', run: async () => {
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); towerAt = () => ({h: 6, phase: 'fall', k: .45, stones: 6, carried: null}); await wait(400); }},
@@ -550,7 +550,7 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(500); }},
   {id: 'you-card', title: '有, to have', save: 'feastNews', why: 'Its card, with no picture, like 要: Use 有 to say what you have.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
-  {id: 'table-setting-up', title: 'Setting up the table', save: 'feastTable', why: 'As you come up to the big tree, the troop sets up the feast’s big table under it, a piece at a time, each with a knock: its legs, then its top with a red cloth (here), then a bowl at a time.', run: async () => {
+  {id: 'table-setting-up', title: 'Setting up the table', save: 'feastTable', why: 'As you come up to the big tree, the troop sets up the feast’s big table under it, a piece at a time, each with a knock: its stone legs, then its stone slab, then a bowl at a time (here), then its two stone stools.', run: async () => {
     play(); await wait(100); here().feast = 1; buildMap(); settingUp = {objects: [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1}], stage: 2}; await wait(400); }},
   {id: 'feast-table', title: 'The feast’s big table', save: 'feastTable', why: 'Under the big tree: peaches, apples and an empty bowl, waiting for something. The hungry monkey has come up from the meadow to look after it, with a !.', run: async () => {
     play(); await wait(500); }},

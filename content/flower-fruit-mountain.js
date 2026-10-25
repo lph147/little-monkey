@@ -390,8 +390,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {message:'The old monkey has gone in: he’s the teacher now. Walk in through the school’s door!'},
       {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}]},
     // chapter 1: once the old monkey has told you about the feast, as you come up to the big tree at the home ground, the troop
-    // sets up the feast's big table under it, as you watch (the setUp step: its legs, its top with a red cloth, then a bowl
-    // at a time, each with a knock; things that just appear look odd), and the hungry monkey is there to look after it
+    // sets up the feast's big table under it, as you watch (the setUp step: its stone legs, its stone slab, then a bowl at a
+    // time, then its two stone stools, each with a knock; things that just appear look odd), and the hungry monkey is there to look after it
     {if:{feast:1, around:[17, 7, 'homeGround']}, do:[{setUp:{feast:2}},
       {message:'The troop sets up a big {桌子|table} under the big tree for the feast, with peaches, apples, and an empty bowl, waiting for something…'}]},
     // you've brought the big monkey his flowers: he plants them in front of the school, as you watch (the plant step: each
@@ -582,11 +582,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'O': {look:'water', word:'水', note:'A little pool of clear water.'},   // its pool: just water, with no fish in it (decided 24 October 2026: it showed 鱼, fish, as the meadow's pond does)
         '@': {look:'stoneTower', landmark:true, onLook:[{do:[{talkTo:'towerL'}]}]},   // the little monkeys' tower of stones: A talks to them
         // chapter 1: the big table for the feast, under the big tree in the middle, where the troop meets: open grass, until the
-        // troop sets it up as you watch (the setUp step, in events: its legs, its top with a red cloth, then stone bowls of
-        // peaches and apples, and an empty one, waiting for honey). Under the big tree, not in the cave's entrance (decided
-        // 23 October 2026: every quest comes back to the home ground; 桌子 and 碗 are the cave's words, heard again here)
+        // troop sets it up as you watch (the setUp step, in events: its stone legs, its stone slab, then stone bowls of
+        // peaches and apples, and an empty one, waiting for honey; then its two stone stools). Under the big tree, not in the
+        // cave's entrance (decided 23 October 2026: every quest comes back to the home ground; 桌子 and 碗 are the cave's words,
+        // heard again here). Stone, with stone stools, as in the book (摆开石凳石桌: decided 25 October 2026; it was wood with a
+        // red cloth); the square round the big tree is left open for the tables to come as the feast's quests are done
         '%': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:'&'}]},
-        '&': {look:'feastTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]}   // A at it: the feast's list
+        '&': {look:'feastTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // A at it: the feast's list
+        '!': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:';'}]},
+        ';': {look:'stoneStool'}   // a stone stool at the table
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
@@ -601,8 +605,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
-        "YgEFggggggg8gJgg%%%gFg@gg.gggTgY",   // the feast's big table (%), under the big tree; little monkeys building a tower of stones (@), beside the way up to the hillside
-        "Ygggggggggg8ggggggggggggg.gggggY",
+        "YgEFggggggg8gJgg%%%gFgggg.gggTgY",   // the feast's big table (%), under the big tree
+        "Ygggggggggg8gggg!g!gggggg.g@gggY",   // its two stone stools (!); little monkeys building a tower of stones (@), just past the way up to the hillside
         "...............................u",
         "...............................Y",
         "Yggggggggggggggg.gggggggggggEggY",
@@ -984,9 +988,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // tower between them (the @ square), taking turns, as high as it will go, till it falls and they start again (in the
     // book, chapter 1, the troop plays under the pines and by the stream on a hot day: 跑沙窝，砌宝塔, they run about in the
     // sand and build pagodas). plays: what a monkey is doing, all the time, except while you're talking to it
-    {id:'towerL', place:'homeGround', x:21, y:7, facing:'right', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},   // (by the hillside's stone steps till 24 October 2026: in the way there)
+    {id:'towerL', place:'homeGround', x:26, y:8, facing:'right', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},   // (by the hillside's stone steps till 24 October 2026: in the way there; west of the way up till 25 October 2026, where the feast's tables will go)
       palette:{o:'#45291A', f:'#B98A5E', s:'#F4D3AE', m:'#C99272', e:'#24160C'}},
-    {id:'towerR', place:'homeGround', x:23, y:7, facing:'left', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+    {id:'towerR', place:'homeGround', x:28, y:8, facing:'left', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#46240F', f:'#B4693A', s:'#F2CA9F', m:'#C2805E', e:'#24160C'}},
     // chapter 1: a little monkey who plays hide and seek with you (the area's hideSeek), once the feast is announced, by the
     // path in the middle of the home ground
@@ -1178,7 +1182,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     again:'Talk to it again to play another game: it hides somewhere new each time.',
     spots: [
       {id:'tree', word:'树', say:'hideTree', where:'behind the big {树}', at:[[17, 4], [18, 4], [17, 5], [18, 5], [17, 6], [18, 6]], out:[19, 4], tail:[18, 4, 'right']},
-      {id:'table', word:'桌子', say:'hideTable', where:'under the {桌子}', at:[[16, 7], [17, 7], [18, 7]], out:[16, 8], tail:[16, 7, 'left']},
+      {id:'table', word:'桌子', say:'hideTable', where:'under the {桌子}', at:[[16, 7], [17, 7], [18, 7]], out:[17, 8], tail:[16, 7, 'left']},
       {id:'bridge', word:'桥', say:'hideBridge', where:'under the {桥}', at:[[15, 18], [16, 18], [17, 18]], out:[15, 17], tail:[16, 18, 'left']},
       {id:'water', word:'水', say:'hideWater', where:'in the {水}', at:[[18, 15], [19, 15], [20, 15], [18, 16], [19, 16], [20, 16]], out:[17, 15], tail:[19, 16, 'right']},
       {id:'flowers', word:'花', say:'hideFlowers', where:'in the {花|flowers}', at:[[26, 2], [27, 2], [28, 2], [29, 2], [30, 2], [27, 3], [28, 3], [29, 3], [30, 3],

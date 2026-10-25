@@ -333,7 +333,7 @@ function drawMarking(cx, cy, now){
 // drawn on the ground under the characters till it's all up and goes into the map.
 function drawSettingUp(cx, cy){
   b.save(); b.translate(-cx, -cy);
-  for (const o of settingUp.objects) OBJECT_ART[o.look](b, {...o, stage:settingUp.stage});
+  for (const o of settingUp.objects) OBJECT_ART[o.look](b, o);   // (each as far as it's up: stage)
   b.restore();
 }
 // Chips flying off what you hit (burst, at the moment your stick strikes): wood or stone, falling as they fly.

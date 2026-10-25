@@ -15,7 +15,7 @@ const AT_HOME = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', gate: tr
 const KNOWN = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '水', '猴子', '朋友', '河', '鱼', '木头', '桌子', '碗', '家', '学校', '桥',
   '一', '二', '三', '四', '五', '六', '谢谢', '不客气', '没关系', '我', '要', '有', '没有'];
 const BY_HIDER = {place: 'homeGround', x: 13, y: 9, dir: 'up'};
-const LOOK = {tree: [19, 4, 'left'], table: [16, 8, 'up'], bridge: [16, 17, 'down'], water: [17, 15, 'right'], flowers: [25, 2, 'right']};   // where you stand to look at each place
+const LOOK = {tree: [19, 4, 'left'], table: [17, 8, 'up'], bridge: [16, 17, 'down'], water: [17, 15, 'right'], flowers: [25, 2, 'right']};   // where you stand to look at each place
 // A game at the home ground (area: more progress), knowing these words; Play or Not now answered with play.
 function game(area = {}, words = KNOWN, play = true){
   const w = Object.fromEntries(words.map(x => [x, {lv: 1, ok: 2}]));

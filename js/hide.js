@@ -67,10 +67,11 @@ async function lookForHider(p){
   goHome(n);
 }
 // The nearest square to (x, y) you can walk on that's free (not yours, nor anyone's): where it jumps out to.
-function freeNear([x, y]){
-  const free = (a, b) => !!tileAt(a, b).walk && !(a === pl.x && b === pl.y) && !npcAt(a, b);
-  for (let r = 0; r < 4; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (free(x + dx, y + dy)) return [x + dx, y + dy];
-  return [x, y];
+function freeNear([x, y]){   // (the fewest steps away first, so it jumps out beside you, not on a slant)
+  const free = (a, b) => !!tileAt(a, b).walk && !(a === pl.x && b === pl.y) && !npcAt(a, b), near = [];
+  for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) near.push([dx, dy]);
+  const best = near.sort(([a, b], [c, d]) => (Math.abs(a) + Math.abs(b)) - (Math.abs(c) + Math.abs(d))).find(([dx, dy]) => free(x + dx, y + dy));
+  return best ? [x + best[0], y + best[1]] : [x, y];
 }
 // Back to where it stands, a step at a time (waiting if you're in its way), while you play on.
 async function goHome(n){
