@@ -50,12 +50,14 @@ function storyScroll(){
     });
   });
 }
-// The area's checklist (areaChecklist() in js/world.js), just what you've found so far, and a line saying there's
-// more if some hasn't been found yet. onlyLeft: just what's left before the exit test.
+// The area's checklist (areaChecklist() in js/world.js), just what you've found so far, what's still to do first and
+// then what you've done (decided 25 October 2026: in story order, what was left was far down the list), and a line
+// saying there's more if some hasn't been found yet. onlyLeft: just what's left before the exit test.
 function checklistHTML(onlyLeft){
   const all = areaChecklist(), items = all.filter(([t, done, exitTest, found]) => found && (!onlyLeft || (!done && !exitTest)));
   const more = all.some(([, , , found]) => !found);
-  return `<ul class="checklist">${items.map(([t, done]) => `<li class="${done ? 'done' : ''}"><span>${esc(t)}</span></li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
+  const ordered = [...items.filter(([, done]) => !done), ...items.filter(([, done]) => done)];
+  return `<ul class="checklist">${ordered.map(([t, done]) => `<li class="${done ? 'done' : ''}"><span>${esc(t)}</span></li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
 }
 function infoBox(who, html){   // who: a picture over it, or an animal's or a battle's scene, down its left as in the questions (or none)
   return new Promise(res => {

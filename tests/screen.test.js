@@ -70,7 +70,7 @@ test('Select opens your tasks: your words, friends and shells, what to do now, t
   assert.match(text, /4 words|0\/\d+ words/);
   const plain = s => s.replace(/\p{Extended_Pictographic}\uFE0F?/gu, '').replace(/\s+/g, ' ');   // (an emoji, such as ✨, is shown as its pixel icon)
   for (const t of tasks) assert.ok(plain(text).includes(plain(t)), `the task list should include "${t}"`);
-  assert.ok(plain(text).indexOf(plain(tasks[0])) < plain(text).indexOf('Prologue: The Water Curtain Cave'), 'what to do now comes first, then the checklist');
+  assert.ok(plain(text).indexOf(plain(tasks[0])) < plain(text).indexOf('Prologue: The Water Curtain Cave'), 'what to do now comes first, then the chapter');
   run('pressSelect()');
   assert.equal(run('modal.hidden'), true, 'Select again closes it');
   run('pressSelect(); pressB()');
@@ -79,7 +79,7 @@ test('Select opens your tasks: your words, friends and shells, what to do now, t
 
 test('your tasks only list what you’ve found: the flowers once the big monkey has asked for them', () => {
   const {sheet, run} = taskGame();   // the hungry and thirsty monkeys have asked; the big monkey hasn't
-  run('pressSelect()');
+  run("pressSelect(); sheet.querySelector('[data-a=list]').click()");
   let text = sheet.textContent;
   assert.match(text, /hungry monkey the fruit/);
   assert.match(text, /water to the thirsty monkey/);
@@ -165,14 +165,25 @@ test('a card with more than it shows has ▼ More by its buttons, and the D-pad 
   assert.equal(run('modal.hidden'), true);
 });
 
-test('the Tasks page: Tasks and your words on one line, then the chapter over its checklist, what you’ve done a line each', () => {
+test('the Tasks page: what to do now, full width, with the chapter’s progress; its checklist a page of its own, what’s still to do first', () => {
   const {sheet, run} = taskGame();
   run('pressSelect()');
   const top = sheet.querySelector('.cardtop');
   assert.ok(top.querySelector('.taskslabel') && top.querySelector('.stats'), 'one line at the top');
-  assert.ok(sheet.querySelectorAll('.twocol .label').some(l => l.textContent === 'Prologue: The Water Curtain Cave'), 'the chapter, over its checklist');
-  const done = sheet.querySelector('.checklist li.done');
-  assert.match(done.textContent, /Say hello to the old monkey/);   // (this game hasn't caught 你好)
+  assert.equal(sheet.querySelector('.checklist'), null, 'no checklist beside what to do now: the two said the same thing twice');
+  assert.match(sheet.querySelector('.taskprog').textContent, /^Prologue: The Water Curtain Cave · \d+ of \d+ done so far$/);
+  sheet.querySelector('[data-a=list]').click();
+  assert.equal(sheet.querySelector('.taskslabel').textContent, 'Prologue: The Water Curtain Cave', 'the checklist: the chapter at the top');
+  const items = sheet.querySelectorAll('.checklist li').filter(li => !li.classList.contains('more')), done = items.map(li => li.classList.contains('done'));
+  assert.ok(done.includes(true) && done.includes(false));
+  assert.deepEqual(done, [...done].sort((x, y) => x - y), 'what’s still to do first, then what you’ve done');
+  assert.match(sheet.querySelector('.checklist li.done').textContent, /Say hello to the old monkey/);   // (this game hasn't caught 你好)
+  assert.ok(sheet.querySelector('[data-a=now]'), '◂ Tasks goes back');
+  sheet.querySelector('[data-a=now]').click();
+  assert.ok(sheet.querySelector('.nowpage'), 'to what to do now');
+  sheet.querySelector('[data-a=list]').click();
+  run('pressSelect()');
+  assert.equal(run('modal.hidden'), true, 'Select closes the checklist too');
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
   assert.match(css, /\.checklist li\.done span\{[^}]*white-space:nowrap;text-overflow:ellipsis/, 'what you’ve done takes a line each');
 });

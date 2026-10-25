@@ -89,17 +89,28 @@ function wardrobePage(back, focus){
 }
 // Your words, friends and shells: at the top of the menu and your tasks.
 const statsHTML = () => `<div class="stats"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${S.friends.length} ${S.friends.length === 1 ? 'friend' : 'friends'}</span><span>🐚 ${S.shells}</span></div>`;
-// 任务 Tasks (Select, or the menu's tile): what to do now, then the chapter's checklist. back: what Back does.
+// 任务 Tasks (Select, or the menu's tile): what to do now, full width, with how much of the chapter you've done; its
+// checklist is a page of its own (Checklist ▸, and ◂ Tasks back), so the two lists are never side by side, saying the
+// same thing twice (decided 25 October 2026: they were). back: what Back does. page: 'list' for the checklist.
 // Opening it counts as looking at your tasks, so Select's red dot goes.
-function tasksPage(back){
+function tasksPage(back, page = 'now'){
   const tasks = getTasks();
   tasks.forEach(t => { S.tasksRead[t.id] = 1; }); save();
-  // (on one line at the top: Tasks and your words, friends and shells; the chapter over its checklist, and what it's
-  // done of it a line each, so as much as can be fits on a short screen: decided 22 October 2026)
+  const ch = AREA.chapters[chapterNow()], found = areaChecklist().filter(([, , , f]) => f);
+  const chapter = `${esc(ch.name)}: ${esc(ch.title)}`, progress = `${found.filter(([, done]) => done).length} of ${found.length} done so far`;
+  if (page === 'list'){
+    openCard(`<div class="cardtop"><p class="label taskslabel">${chapter}</p><span class="taskprog">${progress}</span></div>
+      <div class="checkpage">${checklistHTML(false)}</div>
+      <div class="actions"><button class="btn grow" data-a="now">◂ Tasks</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+    on('[data-a=now]', () => tasksPage(back));
+    on('[data-a=ok]', back);
+    return;
+  }
   openCard(`<div class="cardtop"><p class="label taskslabel">Tasks</p>${statsHTML()}</div>
-    <div class="twocol"><div><p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li><span>${esc(t.text)}</span>${t.clue ? clueTaskHTML(t.clue) : ''}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}</div>
-    <div><p class="label">${esc(AREA.chapters[chapterNow()].name)}: ${esc(AREA.chapters[chapterNow()].title)}</p>${checklistHTML(false)}</div></div>
-    <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+    <div class="nowpage"><p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li><span>${esc(t.text)}</span>${t.clue ? clueTaskHTML(t.clue) : ''}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
+    <p class="taskprog">${chapter} · ${progress}</p></div>
+    <div class="actions"><button class="btn grow" data-a="list">Checklist ▸</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  on('[data-a=list]', () => tasksPage(back, 'list'));
   on('[data-a=ok]', back);
   const clue = tasks.find(t => t.clue);
   if (clue){ bindTokens(sheet.querySelector('.taskclue')); on('[data-a=clue]', () => say(L[clue.clue.say].t.join(''), null, HIDE.by)); }
