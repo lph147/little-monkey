@@ -13,7 +13,7 @@
 const knows = (lv, words) => Object.fromEntries(words.map(w => [w, {lv, due: 0, ok: 0}]));
 const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '水果', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
 const QUIET = {sound: false, music: false};
-const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, menu: 1, syllables: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
+const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, english: 1, menu: 1, syllables: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
 const SAVES = {
   // just born, with the old monkey waiting: no tips had yet
   born: {version: 19, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},
@@ -167,6 +167,7 @@ SAVES.allFriends = {...SAVES.chapter1, friends: ['rabbit', 'sheep', 'squirrel', 
 SAVES.wantsApple = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], holding: {}, wanted: {hungry: '苹果'}}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
 SAVES.facing = {...SAVES.born, tips: {walk: 1}, pos: {x: 7, y: 2, dir: 'up'}};   // facing the old monkey, having walked
 SAVES.noMenuTip = {...SAVES.middle, tips: {...ALL_TIPS, menu: 0}};
+SAVES.englishTip = {...SAVES.middle, tips: {...ALL_TIPS, english: 0}, lines: {'去看看！': 1}};   // a line heard before, the English tip still to come
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
@@ -243,12 +244,18 @@ const SCREENS = [
   {id: 'welcome', title: 'The old monkey’s welcome', save: 'born', why: 'A line of story, waiting in the speech box.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
     next(); await wait(200); next(); await wait(500); }},
-  {id: 'go-look', title: 'Off you go', save: 'born', why: 'His line, and the tip about grey words.', run: async () => {
-    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
-    next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
-  {id: 'go-look-note', title: 'Off you go: what to do', save: 'born', why: 'What to do is a message of its own, after his line (it crowded the line, under it): the sparkle big beside it, the first sentence in bold.', run: async () => {
+  {id: 'grey-tip', title: 'Tip: grey words', save: 'born', why: 'His first line with grey words: every grey word glows, and a tip says they’re just for listening.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(200); await untilTip('grey'); }},
+  {id: 'tap-tip', title: 'Tip: tap a word', save: 'born', why: 'A on the tip about grey words: one grey word lit, and a tip to tap a word to see what it means. Then A moves on.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(200); await untilTip('grey'); next(); await wait(500); }},
+  {id: 'go-look', title: 'Off you go', save: 'born', why: 'His line: go and take a look.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
     next(); await wait(200); next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
+  {id: 'go-look-note', title: 'Off you go: what to do', save: 'born', why: 'What to do is a message of its own, after his line (it crowded the line, under it): the sparkle big beside it, the first sentence in bold.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
+    next(); await wait(200); next(); await wait(200); next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
+  {id: 'tip-english', title: 'Tip: the English button', save: 'englishTip', why: 'The first line you hear again, its English behind the English button: a tip points at it, once.', run: async () => {
+    play(); await wait(100); showDialog(speaker('elder'), L.go); await wait(500); }},
   {id: 'playing', title: 'Playing', save: 'middle', why: 'The map, the task box, the header.', run: async () => { play(); await wait(600); }},
   {id: 'chapter-card', title: 'A new chapter', save: 'home', why: 'Its title card, when a chapter begins: chapter 1, once the whole troop is home and the prologue is over.', run: async () => { play(); await wait(100); STEPS.chapter({chapter: 1}); await wait(300); }},
   {id: 'place-name', title: 'Arriving in a place', save: 'middle', why: 'Its name for a moment, when you go from one place to another.', run: async () => { play(); await wait(100); showPlaceName(); clearTimeout(placeNameT); await wait(300); }},
@@ -628,6 +635,14 @@ function prepare(save, voices, phone){   // phone: as on a phone, with no keyboa
   // Got it on a new word's card: through How it's made, if it has a story (once it has come together)
   window.gotIt = async () => { if (click('[data-a=made]')){ await new Promise(r => setTimeout(r, 100)); click('[data-a=ok]'); } click('[data-a=ok]'); };
   window.next = () => { if (talkNext) talkNext(); };
+  window.untilTip = async id => {   // on through the conversation (a card's main button, or the speech box's next) till a tip shows
+    for (let i = 0; i < 20 && !(tip && tip.id === id); i++){
+      const p = !modal.hidden && [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
+      if (p) p.click(); else next();
+      await wait(250);
+    }
+    await wait(300);
+  };
   window.npc = id => NPCS.find(n => n.id === id);
   window.play = () => { click('#contBtn'); };   // Continue the game
 }

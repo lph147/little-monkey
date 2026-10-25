@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 const {SCREENS, SAVES} = require('../tools/screens');
 
-const HELPERS = new Set(['wait', 'click', 'next', 'npc', 'play', 'gotIt']);   // the gallery's own, set up in each frame
+const HELPERS = new Set(['wait', 'click', 'next', 'npc', 'play', 'gotIt', 'untilTip']);   // the gallery's own, set up in each frame
 const NOT_CALLS = new Set(['async', 'await', 'if', 'for', 'while', 'return', 'function']);
 
 test('every screen has its own id and a title', () => {

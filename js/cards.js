@@ -217,7 +217,7 @@ function sayLine(who, line, opts){
     q('[data-a=say]').onclick = () => say(text, null, id);
     const en = q('[data-a=en]');
     if (en) en.onclick = () => { q('.sentence-en').hidden = false; en.remove(); };
-    const next = () => { talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };
+    const next = () => { if (tipStep()) return; talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };   // (A, B or ▼ with a tip showing that has a next tip: that tip first)
     q('[data-a=ok]').onclick = next;
     talkNext = next;
   });
