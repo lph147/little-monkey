@@ -46,6 +46,28 @@ const MAP_SPRITES = {
       "................"
     ]
   },
+  '黄蜂': {   // wasp, side on (chapter 1, in the tall flowers of the bees' valley)
+    faces: 'left',
+    palette: {a:'#565857', b:'#424A4D', c:'#E7F4FA', d:'#A9C9DA', e:'#DDEFF8', f:'#4D3B0C', g:'#5C4E25', h:'#C99A10', i:'#2E2925', j:'#17120D', k:'#5E5127', l:'#1A140E', m:'#F8D65D', n:'#F5C518', o:'#6A635D', p:'#211913', q:'#FFE066', r:'#2A2018', s:'#111111'},
+    rows: [
+      "................",
+      "................",
+      ".....aaaaaab....",
+      "....accccccdb...",
+      "...bdeeeedddb...",
+      "...fbddddbbb....",
+      ".gfhffijkklkl...",
+      "gmmnmhopqqrqrlf.",
+      "gmsnnhrrqnrnrqhf",
+      "fhhnhhrrqnrnrhhf",
+      ".ffhjppphhrhrlf.",
+      "...flrljfflfl...",
+      "....lrl.........",
+      ".....l..........",
+      "................",
+      "................"
+    ]
+  },
   '蝴蝶': {   // butterfly, its wings open, seen from above (it looks at nobody: no faces)
     palette: {a:'#4C2A0F', b:'#5E4427', c:'#C8641A', d:'#FFB866', e:'#F28C28', f:'#1A140E', g:'#2A2018', h:'#5C462D', i:'#F9BE77', j:'#C8741A', k:'#4C2F0F', l:'#F7A23C'},
     rows: [

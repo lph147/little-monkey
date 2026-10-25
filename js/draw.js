@@ -198,6 +198,19 @@ function drawFlutter(a, X, Y, now){
   R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
   if (shut) b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - hover, 8, 16); else b.drawImage(a.spr, X, Y - hover);
 }
+// A swarm of bees, buzzing round where it hangs in the way (a square that looks like a swarm, such as across the way to the
+// queen's old tree in the bees' valley): tiny bees looping about it, each its own way.
+function drawSwarms(cx, cy, now){
+  const x0 = Math.max(0, Math.floor(cx / T)), y0 = Math.max(0, Math.floor(cy / T));
+  for (let y = y0; y <= Math.min(ROWS - 1, y0 + VH); y++) for (let x = x0; x <= Math.min(COLS - 1, x0 + VW); x++){
+    if (tileAt(x, y).look !== 'swarm') continue;
+    for (let i = 0; i < 9; i++){
+      const t = now / 260 + i * 1.7 + x * 3.1;
+      const X = Math.round(x*T + 7 + Math.sin(t * (1 + i % 3 * .3) + i) * 8 + Math.cos(i * 2.3) * 3 - cx), Y = Math.round(y*T + 6 + Math.cos(t * .9 + i * .7) * 6 + Math.sin(i) * 2 - cy);
+      R(b, X, Y, 3, 2, '#F2C14E'); R(b, X + 1, Y, 1, 2, '#2A2018'); R(b, X, Y - 1, 2, 1, i % 2 ? '#FFFFFF' : '#DDEFF8');
+    }
+  }
+}
 function drawFoe(cx, cy, now){
   if (!foe || foe.spot) return;   // (one met at its own spot is drawn there: meetHop)
   const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x);   // (looking at you)
@@ -247,7 +260,7 @@ function placeTalk(cy = camY()){
 // Standing in tall or long grass hides your feet, as in Pokémon: the map where your feet are (the bottom FEET pixels of
 // your square, wherever you are, between two squares as you walk) is drawn again over you, where it's grass. Gives
 // those parts, each [x, y, w, h] in map pixels.
-const HIDES_FEET = ['tallGrass', 'longGrass'], FEET = 4;
+const HIDES_FEET = ['tallGrass', 'longGrass', 'tallFlowers'], FEET = 4;
 function feetInGrass(px = pl.px, py = pl.py){   // (anyone following you too: where they are, px and py)
   const left = Math.round(px), top = Math.round(py) + T - FEET, out = [];
   for (let ty = Math.floor(top / T); ty <= Math.floor((top + FEET - 1) / T); ty++)
@@ -450,6 +463,7 @@ function drawWorld(now){
     if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
   drawDragonflies(cx, cy, now);
+  drawSwarms(cx, cy, now);
   // the tops of big objects (a tree's leaves, the stall's awning), over anyone walking behind them
   b.drawImage(topCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.top, cx, cy, now);

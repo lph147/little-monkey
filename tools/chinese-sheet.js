@@ -135,7 +135,8 @@ const DRAFTS = [
     .map(([zh, en, where]) => ({zh, en, where:'New on 25 October 2026 (in the game), hide and seek: ' + where})),
   ...[['河边', 'The riverside', 'The name of the new path east from the home ground, along the stream, to the bees’ valley (shown and said as you arrive: is 河边 a good name for a place, or would 小河边 or another be better?)', 'hé biān'],
     ['蝴蝶 在 花 上 。', 'The butterfly is on the flower.', 'The example on 蝴蝶 (húdié, butterfly)’s page in the Word Scroll: a butterfly flutters over the wildflowers on the riverside'],
-    ['百花谷', 'Valley of a Hundred Flowers', 'The bees’ valley, coming next (not in the game yet: please check the name)', 'Bǎi huā gǔ']]
+    ['百花谷', 'Valley of a Hundred Flowers', 'The name of the bees’ valley, at the end of the riverside (in the game since v266: please check the name)', 'Bǎi huā gǔ'],
+    ['花 里 有 黄蜂 ！', 'There are wasps in the flowers!', 'The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = a yellow bee, a wasp']]
     .map(([zh, en, where, py]) => ({zh, en, py, where:'New on 25 October 2026 (in the game), the way to the bees: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];

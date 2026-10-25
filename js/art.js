@@ -636,6 +636,25 @@ const desk = (g, X, Y, x, y) => classTable(g, X, Y, x, y, '#D2A46A', '#9C6E3E', 
   R(g, X+4, Y+5, 8, 3, '#F4F0E4'); R(g, X+8, Y+5, 1, 3, '#B8AE98'); R(g, X+5, Y+6, 2, 1, '#9C9484'); R(g, X+10, Y+6, 1, 1, '#9C9484');   // an open book
 });
 function doorMat(g, X, Y, x, y){ classFloor(g, X, Y, x, y); R(g, X+1, Y+3, 14, 12, '#7A1F1A'); R(g, X+2, Y+4, 12, 10, '#B0352C'); R(g, X+4, Y+6, 8, 6, '#C9483C'); }
+// Tall flowers (the bees' valley's, where its bees and wasps hide): big blossoms on tall stems, over leaves like long grass's,
+// so they look nothing like a bed of low flowers.
+const TALL_BLOOMS = [['#F48FB1', '#FFD3E2'], ['#FFFFFF', '#FFF6C8'], ['#F7D23E', '#FFF0A0'], ['#F28C28', '#FFC48A'], ['#B98AE8', '#E2CCFF']];
+function tallFlowers(g, X, Y, x, y){
+  tall(g, X, Y, x, y, ['#4C9A48', '#22602C', '#7FC86E']);
+  [[3, 2], [10, 1], [6, 8], [12, 9]].forEach(([a, c], i) => {
+    if (rnd(x, y, i + 90) < .12) return;
+    const [col, lit] = TALL_BLOOMS[Math.floor(rnd(x, y, i + 95) * TALL_BLOOMS.length)];
+    R(g, X+a+1, Y+c+2, 1, 5, '#2B6A33');                                                   // its stem
+    R(g, X+a-1, Y+c, 5, 3, '#1E4A24'); R(g, X+a, Y+c-1, 3, 5, '#1E4A24');                 // (its outline)
+    R(g, X+a, Y+c, 3, 3, col); R(g, X+a-1, Y+c+1, 5, 1, col); R(g, X+a+1, Y+c-1, 1, 5, col);   // its petals
+    R(g, X+a, Y+c, 1, 1, lit); R(g, X+a+1, Y+c+1, 1, 1, '#D9962B');                      // lit, and its middle
+  });
+}
+// A bed of low flowers all of one colour (cols: two shades of it), thicker than the meadow's flowers.
+function colourBed(g, X, Y, x, y, cols){
+  grass(g, X, Y, x, y);
+  [[3,3],[10,2],[6,8],[13,9],[2,12],[9,13]].forEach(([a, c], i) => flower(g, X + a + Math.floor(rnd(x, y, i + 300) * 3) - 1, Y + c + (i % 2), cols[i % cols.length]));
+}
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
 function flowerBed(g, X, Y, x, y){   // flowers planted in a bed of earth, red, yellow and white, in two rows (beds side by side join up)
   grass(g, X, Y, x, y);
@@ -710,6 +729,15 @@ const LOOKS = {
   archway:   (g,X,Y,x,y) => path(g,X,Y,x,y),        // the way through an archway (the archway itself is a big object: OBJECT_ART)
   archPost:  (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // an archway's pillar, beside the way through (a big object)
   stoneTower:(g,X,Y,x,y) => path(g,X,Y,x,y),        // the little monkeys' tower of stones, on sandy ground (animated in js/draw.js)
+  tallFlowers:(g,X,Y,x,y) => tallFlowers(g,X,Y,x,y), // tall flowers, where the bees' valley's bees and wasps hide
+  redBed:    (g,X,Y,x,y) => colourBed(g,X,Y,x,y,['#E8343C', '#F05A5F']),   // the valley's beds of flowers, each its own colour (just to look at)
+  yellowBed: (g,X,Y,x,y) => colourBed(g,X,Y,x,y,['#F7D23E', '#FBE27A']),
+  whiteBed:  (g,X,Y,x,y) => colourBed(g,X,Y,x,y,['#FFFFFF', '#EDEDED']),
+  pinkBed:   (g,X,Y,x,y) => colourBed(g,X,Y,x,y,['#F48FB1', '#F7A9C4']),
+  blueBed:   (g,X,Y,x,y) => colourBed(g,X,Y,x,y,['#4F8FE8', '#7FB0F2']),
+  orangeBed: (g,X,Y,x,y) => colourBed(g,X,Y,x,y,['#F28C28', '#F7A54E']),
+  hollowTree:(g,X,Y,x,y) => grass(g,X,Y,x,y),        // the queen bee's old hollow tree: a big object (OBJECT_ART), on grass
+  swarm:     (g,X,Y,x,y) => path(g,X,Y,x,y),         // a swarm of bees in the way, on sandy ground (the bees: js/draw.js)
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
   waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js
@@ -795,6 +823,22 @@ const OBJECT_ART = {
     [[4,4],[5,3],[6,3],[11,3],[12,4],[3,6]].forEach(([a, c]) => dot(g, X+a, Y+c, '#5E8F3E'));
   },
   frame: (g, o) => schoolFrame(g, o),
+  // the queen bee's old hollow tree, two squares by two: a thick, gnarled trunk, lit from the left, with a dark hollow where
+  // honeycomb glints, roots spreading at its foot, and its crown high up
+  hollowTree: (g, o) => {
+    const X = o.x*T, Y = o.y*T, D = '#2E1D12', M = '#6B4A2E', L = '#8E6A44', H = '#A9825A';
+    if (shadows) groundShadow(g, X + 16, Y + 31, 15, 3);
+    leaves(g, [[16, -10, 12], [5, -3, 8], [27, -3, 8], [16, -1, 9]], X, Y, 977);
+    for (const [l, r, y0] of [[6, 33, 26], [7, 31, 22], [8, 30, 18], [9, 29, 12], [10, 28, 6], [10, 27, 2], [11, 26, -2]]) R(g, X + l, Y + y0, r - l, 32 - y0, D);   // wider at its foot
+    R(g, X + 3, Y + 26, 4, 6, D); R(g, X + 26, Y + 25, 5, 7, D); R(g, X + 4, Y + 27, 3, 4, M); R(g, X + 27, Y + 26, 3, 5, M);   // roots
+    R(g, X + 12, Y, 9, 31, M); R(g, X + 8, Y + 14, 17, 17, M); R(g, X + 10, Y + 6, 13, 9, M);
+    R(g, X + 12, Y, 2, 30, L); R(g, X + 9, Y + 15, 2, 15, L); R(g, X + 14, Y + 2, 1, 10, H);
+    [[16, 3, 6], [19, 8, 5], [11, 22, 6], [21, 23, 5]].forEach(([a, c, h]) => R(g, X + a, Y + c, 1, h, '#4E3420'));   // its bark
+    R(g, X + 13, Y + 14, 7, 12, D); R(g, X + 12, Y + 16, 9, 10, D); R(g, X + 14, Y + 13, 5, 1, D);                   // the hollow
+    R(g, X + 14, Y + 15, 5, 10, '#170E08'); R(g, X + 13, Y + 17, 7, 8, '#170E08');
+    [[14, 17], [17, 17], [15, 20], [18, 20], [14, 23], [17, 23]].forEach(([a, c]) => { R(g, X + a, Y + c, 2, 2, '#D9962B'); R(g, X + a, Y + c, 1, 1, '#F7D57A'); });   // honeycomb
+    R(g, X + 12, Y + 25, 9, 1, L);
+  },
   archway: (g, o) => archway(g, o),
   railing: (g, o) => {   // a wooden railing along the top of a cliff (the lookout's): a post at each end and between, two rails
     const X = o.x*T, Y = o.y*T, W = o.w*T;
@@ -1031,7 +1075,7 @@ const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable'];   // side by si
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
 // table and then its stools.
 const OBJECT_STAGES = {feastTable:5, stoneStool:1};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway'];   // and these one object as big as the block of them (such as the school's frame on its plot)
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
 // stall letters one stall; a block of frame letters is one frame; anything else stands on its own square. They come from the top of the map down, the order they're drawn in.
@@ -1196,6 +1240,18 @@ const BACKDROPS = {
       g.fillStyle = 'rgba(255,246,200,.16)'; g.beginPath(); g.moveTo(x, 0); g.lineTo(x + w, 0); g.lineTo(x + w + 22, 78); g.lineTo(x + 22, 78); g.closePath(); g.fill();
     }
     g.fillStyle = 'rgba(225,232,222,.22)'; g.fillRect(0, 55, W, 9);              // mist, low over the floor
+    return c;
+  },
+  flowers(){   // the bees' valley: a bright sky, its grey cliffs all round, and the ground thick with flowers
+    const W = 72, H = 128, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d'), sky = g.createLinearGradient(0, 0, 0, 40);
+    sky.addColorStop(0, '#7EC4F0'); sky.addColorStop(1, '#CDEBFA'); g.fillStyle = sky; g.fillRect(0, 0, W, 40);
+    R(g, 0, 30, W, 30, '#8E877E');                                               // the cliffs, far off
+    for (let x = 0; x < W; x += 6){ const h = 2 + Math.floor(rnd(x, 1, 5) * 4); R(g, x, 30 - h, 6, h + 1, '#A39C91'); R(g, x, 30 - h, 6, 1, '#C4BDB1'); }
+    for (let i = 0; i < 12; i++) R(g, Math.floor(rnd(i, 2, 6) * W), 34 + Math.floor(rnd(i, 3, 7) * 22), 1, 3, '#77706A');   // cracks
+    R(g, 0, 56, W, H - 56, '#6DBB5C');                                            // the meadow
+    const cols = ['#F48FB1', '#FFFFFF', '#F7D23E', '#E8343C', '#B98AE8', '#F28C28'];
+    for (let i = 0; i < 150; i++){ const x = Math.floor(rnd(i, 8, 3) * W), y = 58 + Math.floor(rnd(i, 9, 4) * (H - 58)); R(g, x, y + 1, 1, 2, '#3E8A3E'); R(g, x, y, 2, 1, cols[i % cols.length]); }
     return c;
   }
 };

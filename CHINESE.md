@@ -196,6 +196,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | 狼 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
+| 花里有黄蜂！ | huā lǐ yǒu huángfēng! | There are wasps in the flowers! | 黄蜂 |  |
 
 ### Questions after the story
 
@@ -280,6 +281,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 家园 | jiāyuán | Home ground |  |
 | 山坡 | shānpō | The hillside |  |
 | 河边 | hébiān | The riverside |  |
+| 百花谷 | Bǎihuā Gǔ | Valley of a Hundred Flowers |  |
 | 松林 | sōnglín | Pine wood |  |
 | 学校 | xuéxiào | School |  |
 
@@ -325,6 +327,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 狼 | láng | wolf |  |
 | 狐狸 | húli | fox |  |
 | 蝴蝶 | húdié | butterfly |  |
+| 黄蜂 | huángfēng | wasp |  |
 | 跳 | tiào | to jump |  |
 | 桥 | qiáo | bridge |  |
 | 床 | chuáng | bed |  |
@@ -392,6 +395,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 头带 | tóudài | 头 tóu (head) + 带 dài (band) = a band for your head |  |
 | 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = a wild pig |  |
 | 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = a honey bee |  |
+| 黄蜂 | huángfēng | 黄 huáng (yellow) + 蜂 fēng (bee) = a yellow bee: a wasp |  |
 | 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = someone you learn with |  |
 | 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = don’t have |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = hello |  |
@@ -613,7 +617,8 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 找到你了！ | zhǎodào nǐ le! | Found you! | New on 25 October 2026 (in the game), hide and seek: You, finding it (找到 zhǎodào, to find, just for listening) |  |
 | 河边 | hé biān | The riverside | New on 25 October 2026 (in the game), the way to the bees: The name of the new path east from the home ground, along the stream, to the bees’ valley (shown and said as you arrive: is 河边 a good name for a place, or would 小河边 or another be better?) |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | New on 25 October 2026 (in the game), the way to the bees: The example on 蝴蝶 (húdié, butterfly)’s page in the Word Scroll: a butterfly flutters over the wildflowers on the riverside |  |
-| 百花谷 | Bǎi huā gǔ | Valley of a Hundred Flowers | New on 25 October 2026 (in the game), the way to the bees: The bees’ valley, coming next (not in the game yet: please check the name) |  |
+| 百花谷 | Bǎi huā gǔ | Valley of a Hundred Flowers | New on 25 October 2026 (in the game), the way to the bees: The name of the bees’ valley, at the end of the riverside (in the game since v266: please check the name) |  |
+| 花里有黄蜂！ | huā lǐ yǒu huángfēng! | There are wasps in the flowers! | New on 25 October 2026 (in the game), the way to the bees: The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = a yellow bee, a wasp |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

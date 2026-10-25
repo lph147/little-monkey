@@ -81,6 +81,9 @@ const SFX = {
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.035, t + .5); g.gain.setValueAtTime(.035, t + 1.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
     o.connect(f); f.connect(g); g.connect(a.destination); [o, lfo].forEach(x => { x.start(t); x.stop(t + 2.6); });
   },
+  buzz: () => {   // bees buzzing somewhere in the flowers: a soft, wavering hum
+    for (let i = 0; i < 8; i++) tone(196 + (i % 2) * 14, .1, 'sawtooth', .008, i * .075, 8 - (i % 3) * 5);
+  },
   birds: () => {   // birdsong somewhere nearby: a few quick chirps, then a little trill
     [[2600, 900], [2850, 650], [2500, 1000]].forEach(([f, up], i) => tone(f, .07, 'sine', .02, i * .13, up));
     for (let i = 0; i < 5; i++) tone(3300 - i * 70, .04, 'sine', .015, .52 + i * .065, -450);

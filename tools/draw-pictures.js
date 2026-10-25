@@ -525,6 +525,20 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(16, 9, 2.2, 2), DARK);                                                                            // head
     p.flat(or(path([[15.3, 8], [12, 3], [10.5, 2.5]], .5), path([[16.7, 8], [20, 3], [21.5, 2.5]], .5), O(10.5, 2.5, 1.1), O(21.5, 2.5, 1.1)), DARK);   // feelers
   },
+  '黄蜂': p => {   // wasp: long and thin, unlike the bee's round body: sharp yellow and black bands, a pointed tail with its sting, narrow wings, a cross face
+    const DARK = '#2A2018', Y = '#F5C518', LT = {light: '#FFE066', dark: '#C99A10'};
+    p.fill(or(O(14, 8.5, 6, 2.6), O(20, 7.5, 5.5, 2.4)), '#DDEFF8', {light: '#FFFFFF', dark: '#A9C9DA'});      // narrow wings
+    for (const leg of [[[9, 21], [7, 27], [5, 28]], [[13, 21], [13, 27], [11, 29]], [[17, 21], [19, 27], [18, 29]]]) p.fill(path(leg, .6), DARK);   // legs
+    p.fill(O(12.5, 17, 4.5, 3.8), DARK, {light: '#5A4C40'});                                                  // its middle
+    const tail = Pg([[16, 14], [24, 13], [30, 18], [24, 23], [16, 21]]);
+    p.fill(tail, Y, LT);                                                                                        // its tail, pointed
+    p.flat(and(tail, or(Rc(18.5, 0, 2, 32), Rc(23, 0, 2, 32), Rc(27, 0, 1.5, 32))), DARK);                     // black bands
+    p.fill(Pg([[29, 17.5], [31.8, 18.2], [29, 19]]), DARK);                                                     // its sting
+    p.fill(O(7, 16, 4, 3.8), Y, LT);                                                                            // head
+    p.flat(Pg([[4, 13.5], [8.5, 14.6], [8, 15.6], [4, 14.6]]), DARK);                                           // a cross brow
+    p.eye(5, 15, '#111111', 2);
+    p.fill(path([[6, 12.5], [4, 8]], .55), DARK); p.fill(path([[8.5, 12.5], [9.5, 8]], .55), DARK);              // feelers
+  },
   '蜘蛛': p => {   // spider: a round body on eight bent legs, two big eyes, orange spots on its back
     const S = '#4A3D5C', LT = {light: '#6E5E84', dark: '#30263E'};
     const legs = [[[12, 13], [6, 7.5], [2.5, 12]], [[11.5, 15.5], [5, 12.5], [1.5, 18.5]], [[11.5, 18], [5, 18], [2, 24]], [[12.5, 20.5], [7, 23], [4.5, 28]]];

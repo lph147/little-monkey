@@ -435,6 +435,17 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('S.shells') > shellsRiver, 'a battle in the long grass, won: shells');
   await pressAt(18, 5, 'up', 'meeting the butterfly over the wildflowers', 1);
   assert.ok(knows('蝴蝶') && get('S.friends').includes('butterfly'), 'the butterfly: 蝴蝶, and a new friend');
+  // On, over the bridge and under the valley's rocks, through the long grass again, into the bees' valley (百花谷): tall
+  // flowers grown across the way in, where a wasp jumps out, teaching 黄蜂; a swarm of bees in front of the queen's old tree
+  await walk([[18, 5], [22, 5], [22, 7], [46, 7]], 'walking on along the riverside, over the bridge and under the rocks');
+  await act('arrive(47, 7).then(runEvents)', 'into the bees’ valley');
+  assert.deepEqual([run('PLACE'), area().bees], ['flowerValley', 2], 'the bees’ valley: found');
+  await walk([[1, 10], [8, 10], [8, 12], [12, 12], [12, 8], [25, 8]], 'walking into the valley, through the tall flowers grown across the way in');
+  assert.ok(knows('黄蜂'), 'a wasp jumps out of the tall flowers: 黄蜂');
+  await pressAt(25, 8, 'up', 'looking at the swarm in front of the old tree');
+  assert.ok(!run('walkable(25, 7)'), 'the swarm won’t let you by');
+  stand(1, 10, 'left');
+  await act('arrive(0, 10).then(runEvents)', 'back out of the valley');
   stand(1, 7, 'left');
   await act('arrive(0, 7).then(runEvents)', 'back along the riverside to the home ground');
   assert.equal(run('PLACE'), 'homeGround');

@@ -59,7 +59,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           up its big table under the big tree at the home ground, as you watched, 3 the hungry monkey has told you what
   //           the feast still needs: honey (teaching 没有)
   //   bees    chapter 1, the bees: 0 not yet, 1 the hungry monkey wants honey, and the troop has cleared the way east along the
-  //           stream (the riverside) to find the bees
+  //           stream (the riverside) to find the bees, 2 you've found the bees' valley (百花谷), where the bees and the wasps
+  //           hide in the tall flowers
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
   progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0},
@@ -179,7 +180,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'news', if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, text:'Talk to the old monkey at the {学校}: he has news', arrow:'elder'},
     {id:'feastTable', if:{feast:1}, text:'Go to the big {树} in the middle of the home ground', arrow:[17, 7, 'homeGround']},
     {id:'hungryTable', if:{feast:2}, text:'Talk to the hungry monkey by the big {桌子}', arrow:'hungry'},
-    {id:'bees1', if:{bees:1}, text:'Follow the stream east, along the riverside, to find where {蜜蜂|bees} live', arrow:{place:'riverside'}},
+    {id:'bees1', if:{bees:1}, text:'Follow the stream east, along the riverside, to find where {蜜蜂|bees} live', arrow:{place:'flowerValley'}},
     {id:'hideSeek', if:{hiding:true}, text:'Find where the little monkey is hiding', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
@@ -193,6 +194,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
+    {if:{bees:{atLeast:2}}, text:'The {蜜蜂|bees} are hiding in the tall flowers of their valley: making friends with them is the next part of chapter 1, coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -236,6 +238,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}},
     {chapter:1, text:'Hear from the hungry monkey what the feast still needs', show:{feast:{atLeast:2}}, done:{feast:{atLeast:3}}},
     {chapter:1, text:'Play hide and seek with a little monkey', show:{feast:{atLeast:1}}, done:{hidesFound:{atLeast:1}}},
+    {chapter:1, text:'Follow the stream east to find where {蜜蜂|bees} live', show:{bees:{atLeast:1}}, done:{bees:{atLeast:2}}},
     {chapter:1, text:'Find the {动物} on the riverside', show:{bees:{atLeast:1}}, done:{riverAnimalsLeft:0}}
   ],
 
@@ -351,6 +354,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // character) and at:[x, y, 'place'] (you're standing there). A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
     {if:{place:'pineWood', woodIn:0}, do:[{sound:'howl'}, {message:'It’s gloomy under the thick pines, and very still. Somewhere far off, a wolf howls…'}, {set:{woodIn:1}}]},   // into the pine wood for the first time
+    // chapter 1: into the bees' valley for the first time, at the end of the riverside: bees hum in the tall flowers
+    {if:{place:'flowerValley', bees:1}, do:[{set:{bees:2}}, {sound:'buzz'}, {message:'A valley full of flowers! Bees hum all round you, deep in the tall flowers… and wasps zoom about in them too. Watch out!'}]},
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
     // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)
@@ -716,17 +721,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // where long grass has grown over the way between the trees (you can't go round); up through a slope of wildflowers,
     // where a butterfly flutters, and back down to a wooden bridge over a brook; then under the valley's rocks, where the
     // stream comes close and long grass has grown over the way again. Tall grass where your friends hide, fish jumping in the
-    // stream, and shells and an apple tucked away. The valley itself comes next: thick bushes block the way in till then.
+    // stream, and shells and an apple tucked away. At its end, under the rocks, the way into the bees' valley.
     riverside: {
       name: {zh:'河边', py:'hébiān', en:'The riverside'},
       sounds: ['birds'],
       exits: [
-        {at:[0, 7], to:'homeGround', arrive:[30, 9], facing:'left'}, {at:[0, 8], to:'homeGround', arrive:[30, 9], facing:'left'}   // back to the home ground
+        {at:[0, 7], to:'homeGround', arrive:[30, 9], facing:'left'}, {at:[0, 8], to:'homeGround', arrive:[30, 9], facing:'left'},   // back to the home ground
+        {at:[47, 7], to:'flowerValley', arrive:[1, 10], facing:'right'}, {at:[47, 8], to:'flowerValley', arrive:[1, 11], facing:'right'}   // on into the bees' valley
       ],
       legend: {
         'f': {look:'wildFlowers', walk:true},   // wildflowers of all colours (not for picking)
-        'B': {look:'bridge', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the brook.'},   // over the brook (chapter 1's bridges teach 桥)
-        'u': {look:'bush', landmark:true, onLook:[{do:[{message:'The bees’ valley is just through here, but thick bushes block the way. The way in is coming soon!'}]}]}   // the way into the bees' valley: next
+        'B': {look:'bridge', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the brook.'}   // over the brook (chapter 1's bridges teach 桥)
       },
       map: [
         "YYYYYYYYYYYYYYYYYYYYYYYYYYYWWYYYY^^^^^^^^^^^^^^^",   // the brook comes down through the trees, under the bridge (B), into the stream
@@ -736,8 +741,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgGGGGGggYYYYggffffffffffggWWgfffMMMMMM^^^^^^^^^",
         "YggGGGgggYYYY..........fffgWWgfffgggoggMMMMMMMMM",   // the way up through the wildflowers, where the butterfly is
         "YggggggggYYYY..........ffffWWgggggnnngoMMMMMMMMM",
-        "........nnnnn..gggggg......BB............nnnn..u",   // in from the home ground; long grass grown over the way in the little wood, and under the rocks
-        ".........nnnnn.ggTffg......BB...........nnnn...u",
+        "........nnnnn..gggggg......BB............nnnn...",   // in from the home ground; long grass grown over the way in the little wood, and under the rocks;
+        ".........nnnnn.ggTffg......BB...........nnnn....",   // out into the bees' valley
         "YggTgfffgYYYYgggTggnnngggggWWggTggoggogWWWWWWWWW",
         "YggggfffgYYYYggggggnnngTgggWWgggggggogWWWWWWWWWW",
         "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",   // the stream, and its far bank
@@ -745,6 +750,53 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "gggggggggggggggggggggggggggggggggggggggggggggggg",
         "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
         "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"
+      ]
+    },
+    // Chapter 1: the bees' valley, 百花谷 (the Valley of a Hundred Flowers), at the end of the riverside (built 25 October 2026,
+    // the bees' step 2, from a mock-up). Rock all round, cliffs at the back, and flowers everywhere: beds of low flowers,
+    // each its own colour, just to look at, and tall flowers in patches all over, where the bees and the wasps both hide, so
+    // you never see either till it comes out (decided 25 October 2026 by the game's owner): wasps jump out to fight, by
+    // chance, as snakes do from long grass, and the bees (next) hide as the meadow's animals do, the flowers shaking where
+    // one is. Tall flowers have grown across the way in, between the rocks: no way round, so you meet a wasp or two. A pond
+    // under the cliff. In a nook of the cliff, top right, the queen's old hollow tree, a swarm of bees across the way to it.
+    flowerValley: {
+      name: {zh:'百花谷', py:'Bǎihuā Gǔ', en:'Valley of a Hundred Flowers'},
+      sounds: ['birds', 'buzz', 'buzz'],   // birdsong, and bees buzzing in the flowers
+      backdrop: 'flowers',   // a battle here: among the flowers, the valley's cliffs behind
+      exits: [
+        {at:[0, 10], to:'riverside', arrive:[46, 7], facing:'left'}, {at:[0, 11], to:'riverside', arrive:[46, 8], facing:'left'}   // back along the riverside
+      ],
+      legend: {
+        'n': {look:'tallFlowers', walk:true, wild:['wasp']},   // tall flowers: wasps jump out to fight (and the bees hide here: next)
+        'r': {look:'redBed', walk:true}, 'y': {look:'yellowBed', walk:true}, 'w': {look:'whiteBed', walk:true},   // beds of flowers, each its own colour
+        'p': {look:'pinkBed', walk:true}, 'b': {look:'blueBed', walk:true}, 'o': {look:'orangeBed', walk:true},
+        'O': {look:'water', word:'水', note:'A clear pond under the cliff.'},
+        'h': {look:'hollowTree', landmark:true, onLook:[{do:[{sound:'buzz'}, {message:'An old, hollow tree, humming with bees. Honeycomb glints inside!'}]}]},   // the queen's old hollow tree
+        's': {look:'swarm', landmark:true, onLook:[{do:[{sound:'buzz'}, {message:'A swarm of bees hangs in front of the old tree, buzzing. They won’t let you by. More bees hide all over the valley, in the tall flowers: making friends with them is coming soon!'}]}]}
+      },
+      map: [
+        "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "^^^^^^MMMMMMMMMMMMMMM^^^MMMM^^^^",   // the cliff all round, two squares high at the back; top right, a nook in it, where the queen’s old hollow tree (h) stands
+        "^^^^^^MMMMMMMMMMMMMMM^^^MMMM^^^^",
+        "^^^^^^ggggggOOOOggggg^^^ghhg^^^^",
+        "^^^^^^gTgrrOOOOOOgggg^^^ghhg^^^^",   // a pond under the cliff
+        "^^^^^^ggrrrrggggnyyyyMMMggggMM^^",
+        "^^^^^^ggrrrrggggngyyyMMMssssMM^^",   // the swarm (s), across the nook’s mouth
+        "MMMMMMggggg..........gggg..ggg^^",
+        "MMMMMMnnggg..........gggg..gTg^^",
+        ".....nnnn....gggggg..gggg..oog^^",   // in from the riverside: tall flowers grown across the way, between the rocks (no way round)
+        ".....nnnnn...gnnnng........oog^^",
+        "^^^^^^nnngggggnnnng........oog^^",
+        "^^^^^^gggggggggggTgggggggggggg^^",
+        "^^^^^^ggnnnngwwwggggggggnnnngg^^",   // tall flowers in patches all over, where the bees and the wasps hide; beds of flowers, each its own colour, just to look at
+        "^^^^^^ggnnnggwwwggnnnnggnnnngg^^",
+        "^^^^^^ppppgggggggnnnnnnggnnngg^^",
+        "^^^^^^ppppggngggggnnnbbbbbgggg^^",
+        "^^^^^^ppppnnnnnggggggbbbbbgnnT^^",
+        "^^^^^^gggggnnngggggggggggggggg^^",
+        "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
       ]
     },
     // Chapter 1: the pine wood, up the hillside from the home ground (the big monkey clears the way when he wants wood): thick, gloomy
@@ -1146,6 +1198,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '狼': 'In the long grass in the pine wood.',
     '狐狸': 'Hiding in the tall grass on the hillside.',
     '蝴蝶': 'Fluttering over the wildflowers on the riverside, the way east to the bees.',
+    '黄蜂': 'Zooming out of the tall flowers in the bees’ valley.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -1253,7 +1306,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
     '狼': {zh:'草 里 有 狼 。', en:'There is a wolf in the grass.'},
-    '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'}
+    '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'},
+    '黄蜂': {zh:'花 里 有 黄蜂 ！', en:'There are wasps in the flowers!'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now)
   },
 
@@ -1268,6 +1322,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       hide:'The {蜘蛛} scurries out of sight…', attack:'The {蜘蛛} jumps at you!', away:'The {蜘蛛} scurries off into the grass.', reward:1},   // (in the bee's place since 21 October 2026)
     wolf: {word:'狼', hearts:3, attacks:['树', '草', '石头', '木头'], meetNote:'A wolf leaps out of the long grass, growling!', meet:'A {狼} growls at you!',
       hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', reward:2},   // (chapter 1: in the pine wood)
+    wasp: {word:'黄蜂', hearts:2, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
+      hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
     boar: {word:'野猪', hearts:4, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
       meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },

@@ -146,6 +146,13 @@ SAVES.wayEast = {...SAVES.feastList, areas: {1: {...SAVES.feastList.areas[1], be
 SAVES.riverside = {...SAVES.wayEast, pos: {place: 'riverside', x: 15, y: 5, dir: 'right'}};
 SAVES.butterfly = {...SAVES.wayEast, pos: {place: 'riverside', x: 18, y: 5, dir: 'up'}};
 SAVES.riverEnd = {...SAVES.wayEast, pos: {place: 'riverside', x: 46, y: 7, dir: 'right'}};
+// the bees' valley (25 October 2026): coming in from the riverside, the first time and after; a wasp jumping out of the tall
+// flowers (its first meeting, then a battle among the flowers); and the swarm in front of the queen's old hollow tree
+SAVES.beeValley = {...SAVES.wayEast, w: {...SAVES.wayEast.w, ...knows(1, ['蝴蝶'])}, areas: {1: {...SAVES.wayEast.areas[1], bees: 2}}, pos: {place: 'flowerValley', x: 2, y: 10, dir: 'right'}};
+SAVES.beeValleyFirst = {...SAVES.beeValley, areas: {1: {...SAVES.beeValley.areas[1], bees: 1}}, pos: {place: 'riverside', x: 46, y: 7, dir: 'right'}};
+SAVES.beeValleyWasp = {...SAVES.beeValley, pos: {place: 'flowerValley', x: 6, y: 10, dir: 'right'}};
+SAVES.beeValleyWaspKnown = {...SAVES.beeValleyWasp, w: {...SAVES.beeValley.w, ...knows(1, ['黄蜂'])}};
+SAVES.beeValleySwarm = {...SAVES.beeValley, pos: {place: 'flowerValley', x: 25, y: 8, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -599,6 +606,16 @@ const SCREENS = [
   {id: 'butterfly-meet', title: 'A butterfly', save: 'butterfly', why: 'Over the wildflowers, beside the way: A teaches 蝴蝶 (húdié, butterfly), said straight away; then its questions, to make friends.', run: async () => {
     play(); await wait(100); pressA(); await wait(1600); }},
   {id: 'riverside-end', title: 'The way into the bees’ valley', save: 'riverEnd', why: 'At the riverside’s end, under the rocks: thick bushes block the way into the valley for now (it comes next).', run: async () => {
+    play(); await wait(100); pressA(); await wait(500); }},
+  {id: 'valley-first', title: 'Into the bees’ valley', save: 'beeValleyFirst', why: 'From the end of the riverside, the first time: bees hum in the tall flowers, and wasps zoom about in them too.', run: async () => {
+    play(); await wait(100); arrive(47, 7).then(runEvents); await wait(1500); }},
+  {id: 'bee-valley', title: 'The bees’ valley (百花谷)', save: 'beeValley', why: 'Rock all round, flowers everywhere: tall flowers grown across the way in (no way round), where wasps hide, and beds of flowers to look at.', run: async () => {
+    play(); await wait(100); showPlaceName(); clearTimeout(placeNameT); await wait(400); }},
+  {id: 'wasp-meet', title: 'A wasp jumps out', save: 'beeValleyWasp', why: 'Out of the tall flowers: its first meeting teaches 黄蜂 (huángfēng, wasp), said straight away.', run: async () => {
+    play(); await wait(100); battle('wasp'); await wait(600); }},
+  {id: 'battle-wasp', title: 'A battle with a wasp', save: 'beeValleyWaspKnown', why: 'Among the flowers, the valley’s cliffs behind (its own backdrop): two hearts, like a snake.', run: async () => {
+    play(); await wait(100); battle('wasp'); await wait(1200); }},
+  {id: 'valley-swarm', title: 'The swarm', save: 'beeValleySwarm', why: 'In front of the queen’s old hollow tree, right across the nook: it won’t let you by. A at it says why.', run: async () => {
     play(); await wait(100); pressA(); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
