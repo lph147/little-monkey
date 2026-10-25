@@ -282,7 +282,7 @@ const SCREENS = [
     play(); await wait(100); talk(npc('big')); await wait(500); }},
   {id: 'hungry-asks', title: 'The hungry monkey asks for fruit', save: 'hungryNew', why: '我饿了。我要吃水果！, teaching 水果 (fruit): 吃 (eat) waits till you give him the fruit.', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(500); }},
-  {id: 'hungry-fruit', title: 'He teaches 水果 (fruit)', save: 'hungryNew', why: 'Its card, with how it’s made: 水 water + 果 fruit = fresh, juicy fruit.', run: async () => {
+  {id: 'hungry-fruit', title: 'He teaches 水果 (fruit)', save: 'hungryNew', why: 'Its card: just Got it (no How it’s made).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(400); }},
   {id: 'behind-tree', title: 'Behind a tree', save: 'middle', why: 'Its leaves cover you as you walk behind it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 12, y: 7, dir: 'left'}; placePlayer(); await wait(500); }},
   {id: 'stall', title: 'The shop owner’s stall', save: 'middle', why: 'Three squares wide, with the shop owner beside it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 9, y: 18, dir: 'up'}; placePlayer(); await wait(500); }},
@@ -605,10 +605,6 @@ const SCREENS = [
     play(); await wait(100); showNotice('山羊', {note: 'A goat stands on the cliff, chewing. Answer its questions to make friends.'}); await wait(300); click('[data-a=made]'); await wait(400); }},
   {id: 'made-same', title: 'Two words, one character', save: 'knowsFruit', why: '苹果 (apple), once you know 水果 (fruit): the two side by side, the 果 they share lit in each. 苹 means nothing on its own, so there’s nothing simpler to say (before you know 水果, 苹果’s card is just Got it).', run: async () => {
     play(); await wait(100); showNotice('苹果', {note: 'You pick one from the tree.'}); await wait(300); click('[data-a=made]'); await wait(400); }},
-  {id: 'made-fruit-from', title: 'Coming together: out of a word you know', save: 'knowsApple', why: 'As 水果’s card comes together, when you know 苹果: 苹果, with its picture, and its 果 glowing, just before it lifts out of it and flies into 水果 (held still here).', run: async () => {
-    play(); await wait(100); showNotice('水果'); await wait(300); click('[data-a=made]'); await wait(4500);
-    const st = document.querySelector('.madestage'); st.classList.add('anim'); st.querySelectorAll('.mpart').forEach(x => x.classList.add('in')); st.querySelectorAll('.mop').forEach(x => x.classList.add('in'));
-    st.querySelector('.mpart.from').classList.remove('lifted'); st.querySelector('.mword').classList.remove('in'); st.querySelectorAll('.mch').forEach(x => x.classList.remove('in')); await wait(600); }},
   {id: 'made-three', title: 'How a word is made: three parts', save: 'phrases', why: 'The most parts there are: 我 + 不 + 要, I don’t want it. 我 and 要 are words you know.', run: async () => {
     play(); await wait(100); madeCard('我不要', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'made-clue', title: 'How a word is made: a clue inside', save: 'middle', why: 'Only one you can see: the character big, with the clue beside it, and why: 口, a mouth, on the left of 吃 (to eat).', run: async () => {

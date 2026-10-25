@@ -384,7 +384,6 @@ simply put. A part's pinyin is as it's said in the word.
 | 吃 | chī | 口 kǒu (mouth): on its left: you eat with your mouth |  |
 | 喝 | hē | 口 kǒu (mouth): on its left: you drink with your mouth |  |
 | 山羊 | shānyáng | 山 shān (mountain) + 羊 yáng (sheep) = a mountain sheep |  |
-| 水果 | shuǐguǒ | 水 shuǐ (water) + 果 guǒ (fruit) = juicy fruit |  |
 | 动物 | dòngwù | 动 dòng (to move) + 物 wù (thing) = things that move |  |
 | 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = a pine mouse |  |
 | 头带 | tóudài | 头 tóu (head) + 带 dài (band) = a band for your head |  |

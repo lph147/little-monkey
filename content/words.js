@@ -227,7 +227,6 @@ const MADE = {
   '喝': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you drink with your mouth'},
   // made of words or characters
   '山羊': {parts:[['山', 'shān', 'mountain'], ['羊', 'yáng', 'sheep']], why:'a mountain sheep'},
-  '水果': {parts:[['水', 'shuǐ', 'water'], ['果', 'guǒ', 'fruit']], why:'juicy fruit'},
   '动物': {parts:[['动', 'dòng', 'to move'], ['物', 'wù', 'thing']], why:'things that move'},
   '松鼠': {parts:[['松', 'sōng', 'pine'], ['鼠', 'shǔ', 'mouse']], why:'a pine mouse'},
   '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']], why:'a band for your head'},
