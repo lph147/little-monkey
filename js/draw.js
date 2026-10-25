@@ -414,10 +414,15 @@ function drawWorld(now){
     const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y, now);
     R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
   }
-  // tall grass rustling where an animal hides
+  // tall grass rustling where an animal hides; tall flowers shaking, their blossoms tossing, with little lines either side
   if (rustle && canWild() && Math.floor(now / 160) % 6 < 3){
     const X = rustle.x*T - cx, Y = rustle.y*T - cy;
-    for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(now/45 + i)*1.5); R(b, gx, Y + 9 - (i % 2), 1, 5, '#2F6E38'); R(b, gx, Y + 8 - (i % 2), 1, 1, '#94D883'); }
+    if (tileAt(rustle.x, rustle.y).look === 'tallFlowers'){
+      for (let i = 0; i < 4; i++){ const sx = X + 2 + i*4 + Math.round(Math.sin(now/45 + i*1.7) * 2), sy = Y + 3 + (i % 2) * 3;
+        R(b, sx, sy + 2, 1, 6, '#2B6A33'); R(b, sx - 1, sy, 3, 3, '#1E4A24'); R(b, sx - 1, sy, 3, 2, TALL_BLOOMS[i % TALL_BLOOMS.length][0]); R(b, sx, sy + 1, 1, 1, '#D9962B'); }
+      const k = Math.floor(now / 160) % 2;
+      for (const [dx, dy] of [[-3, 3], [-4, 7], [18, 3], [19, 7]]) R(b, X + dx + (dx < 0 ? -k : k), Y + dy, 2, 1, '#FFFFFF');
+    } else for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(now/45 + i)*1.5); R(b, gx, Y + 9 - (i % 2), 1, 5, '#2F6E38'); R(b, gx, Y + 8 - (i % 2), 1, 1, '#94D883'); }
   }
   drawBirds(cx, cy, now);
   // entities sorted by row (their ! and ? bubbles wait until after the over-layer)

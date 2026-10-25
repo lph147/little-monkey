@@ -444,6 +444,18 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('黄蜂'), 'a wasp jumps out of the tall flowers: 黄蜂');
   await pressAt(25, 8, 'up', 'looking at the swarm in front of the old tree');
   assert.ok(!run('walkable(25, 7)'), 'the swarm won’t let you by');
+  // The bees hide in the tall flowers, the flowers shaking where one is: step in and it buzzes out (the first teaches 蜜蜂),
+  // and its questions make it your friend, counted aloud, 一！ to 一，二，三，四，五，六！; the sixth sends you to find the
+  // queen (去找蜂王吧！), and the swarm in front of her old tree flies aside
+  for (let i = 0; i < 60 && area().beeFriends < 6; i++){
+    if (!run('!!rustle')){ for (const x of [12, 13, 12, 13]){ stand(x, 9, 'right'); await act(`arrive(${x}, 9).then(runEvents)`, 'walking about the valley'); } continue; }
+    const [rx, ry] = get('[rustle.x, rustle.y]');
+    stand(rx, ry, 'up');   // (stepping in where the flowers shake)
+    await act(`arrive(${rx}, ${ry}).then(runEvents)`, 'meeting a bee in the tall flowers', 1);
+  }
+  assert.ok(knows('蜜蜂') && area().beeFriends === 6, 'six bee friends');
+  assert.ok(['一！', '一，二！', '一，二，三，四，五，六！', '去找蜂王吧！'].every(t => get('__said').includes(t)), 'counted aloud, and the sixth: go and find the queen!');
+  assert.ok(area().bees === 3 && run('walkable(25, 7)'), 'the swarm has flown aside: the way to the old tree is open');
   stand(1, 10, 'left');
   await act('arrive(0, 10).then(runEvents)', 'back out of the valley');
   stand(1, 7, 'left');

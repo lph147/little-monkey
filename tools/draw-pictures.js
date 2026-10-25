@@ -525,6 +525,17 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(16, 9, 2.2, 2), DARK);                                                                            // head
     p.flat(or(path([[15.3, 8], [12, 3], [10.5, 2.5]], .5), path([[16.7, 8], [20, 3], [21.5, 2.5]], .5), O(10.5, 2.5, 1.1), O(21.5, 2.5, 1.1)), DARK);   // feelers
   },
+  '蜂王': p => {   // queen bee: a big bee with a long body and a little gold crown with red jewels
+    const DARK = '#3A2E22';
+    p.fill(or(O(13, 8.5, 6, 4.5), O(21, 8, 5.5, 4)), '#DDEFF8', {light: '#FFFFFF', dark: '#A9C9DA'});   // wings
+    p.fill(O(19, 21, 11, 7), '#E8B22E', {light: '#FFD866', dark: '#B5841A'});                          // her long body
+    p.flat(and(O(19, 21, 11, 7), or(Rc(15, 0, 2.5, 32), Rc(20.5, 0, 2.5, 32), Rc(26, 0, 2, 32))), DARK);   // stripes
+    p.fill(Pg([[29.5, 20.5], [31.8, 21.5], [29.5, 22.5]]), DARK);                                         // stinger
+    p.fill(O(8, 19.5, 5, 5), DARK, {light: '#5E5048'});                                                    // head
+    p.eye(6, 18, '#111111', 2); p.dot(6, 18, '#FFFFFF');
+    p.fill(Pg([[4, 14], [5, 9.5], [7, 12], [8.5, 8.5], [10, 12], [12, 9.5], [12.5, 14]]), GOLD, {light: '#FFE58A', dark: '#C99A2E'});   // her crown
+    p.flat(or(O(8.5, 12.2, .9), O(5.6, 12.6, .7), O(11.2, 12.6, .7)), '#D83A3A');                      // its jewels
+  },
   '黄蜂': p => {   // wasp: long and thin, unlike the bee's round body: sharp yellow and black bands, a pointed tail with its sting, narrow wings, a cross face
     const DARK = '#2A2018', Y = '#F5C518', LT = {light: '#FFE066', dark: '#C99A10'};
     p.fill(or(O(14, 8.5, 6, 2.6), O(20, 7.5, 5.5, 2.4)), '#DDEFF8', {light: '#FFFFFF', dark: '#A9C9DA'});      // narrow wings

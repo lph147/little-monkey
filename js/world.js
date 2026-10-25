@@ -139,6 +139,7 @@ function promptFor(x, y){
   return w && lvl(w) === 0 ? 'Look' : '';
 }
 const COUNTS = {   // what a counter in the content can count
+  progress: c => here()[c.key] || 0,   // a number the area remembers (key), such as how many bee friends you've made
   wordsLearned: () => learnedCount(),
   animalsFound: c => metCount(c.chapter || 0, c.place),   // (a chapter's animals: chapter, 0 if not given; or one place's in it)
   animals: c => chapterAnimals(c.chapter || 0, c.place).length,
@@ -944,13 +945,16 @@ function showPlaceName(){
   el.innerHTML = `<span class="pzh">${n.zh}</span> <span class="ppy">${n.py}</span><span class="pen">${esc(n.en)}</span>`;
   el.hidden = false; clearTimeout(placeNameT); placeNameT = setTimeout(() => { el.hidden = true; }, 2600);
 }
-function hideAnimal(){   // a grass animal hides in tall grass at least 3 steps from you (one that lives in one place, hides, only there)
+// A grass animal hides in tall grass at least 3 steps from you: one that lives in one place, hides, only there; and where
+// the grass says which hide in it (animals: their ids), only those, such as the bees in their valley's tall flowers.
+function hideAnimal(){
   const hiding = GRASS_ANIMALS.filter(a => !a.hides || a.hides === PLACE);
   if (rustle || !canWild() || !hiding.length || stepsSince < HIDE_AFTER) return;
   const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3);
   if (!far.length) return;
-  const [x, y] = far[Math.floor(Math.random() * far.length)];
-  rustle = {x, y, a:pickAnimal(hiding)};
+  const [x, y] = far[Math.floor(Math.random() * far.length)], only = tileAt(x, y).animals;
+  const pool = Array.isArray(only) ? hiding.filter(a => only.includes(a.id)) : hiding;
+  if (pool.length) rustle = {x, y, a:pickAnimal(pool)};
 }
 async function arrive(x, y){
   S.pos = {place:PLACE, x, y, dir:pl.dir}; save();
@@ -959,8 +963,8 @@ async function arrive(x, y){
   const t = tileAt(x, y);
   stepsSince++;
   if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
+  if (rustle && rustle.x === x && rustle.y === y && canWild()){ const a = rustle.a; rustle = null; stepsSince = 0; held = null; queued = null; return wildAppears(a); }   // (and nothing wild jumps out where one was hiding)
   if (t.wild && await wildStep(t)) return;   // a wild creature jumps out of the long grass
-  if (rustle && rustle.x === x && rustle.y === y && canWild()){ const a = rustle.a; rustle = null; stepsSince = 0; held = null; queued = null; return wildAppears(a); }
   hideAnimal();
 }
 
@@ -994,8 +998,12 @@ async function wildAppears(a, spot = findSpot()){
   if (play) await showDialog(speaker(a.id), L[play.say], {ok:'Play', hint:justTaught ? '' : fill(S.friends.includes(a.id) ? play.friendHint : play.hint)});   // it says it wants to play, so its questions never just start
   const all = chapterAnimals(a.chapter, a.place).length;   // (counted with its chapter's animals in the same place: one on its own, such as the deer, needs no count)
   if (firstMeet && all > 1) toast(`Animals found: ${metCount(a.chapter, a.place)}/${all}`);
-  const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home});
+  // one of several of its kind to make friends with, such as the bees in their valley (many: how many; counts: what the area
+  // remembers, how many so far)
+  const more = a.many && (here()[a.counts] || 0) < a.many;
+  const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home, another:more && S.friends.includes(a.id)});
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
   await sleep(won ? 1000 : 650);
   foe = null;
+  if (won && more){ const n = here()[a.counts] = (here()[a.counts] || 0) + 1; save(); await runSteps(a.counted[n - 1] || []); }   // counted aloud, one more friend
 }

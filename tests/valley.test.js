@@ -19,6 +19,7 @@ function game(pos, area = {}){
   g.run("mode = 'play'; save = () => {}; globalThis.__notes = []; globalThis.__sounds = []");
   g.run("showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }; showNotice = async (w, o = {}) => { __notes.push('card: ' + w + (o.note ? ' (' + o.note + ')' : '')); rec(w).lv = Math.max(rec(w).lv || 0, 1); }");
   g.run("SFX.buzz = () => { __sounds.push('buzz'); }");
+  g.run("globalThis.__said = []; showDialog = async (who, line) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('')); }");   // (who says what)
   g.run('placePlayer()');
   return g;
 }
@@ -39,11 +40,11 @@ test('at the end of the riverside, the way goes on into the bees’ valley; the 
   await play(g, 'arrive(47, 7).then(runEvents)');
   assert.deepEqual(get(g, '[PLACE, pl.x, pl.y, pl.dir, here().bees]'), ['flowerValley', 1, 10, 'right', 2], 'in the valley, at the way in, the bees’ valley found');
   assert.deepEqual(get(g, 'PLACES[PLACE].name'), {zh: '百花谷', py: 'Bǎihuā Gǔ', en: 'Valley of a Hundred Flowers'});
-  assert.match(get(g, '__notes').join(' '), /A valley full of flowers! Bees hum all round you, deep in the tall flowers… and wasps zoom about in them too\. Watch out!/);
+  assert.match(get(g, '__notes').join(' '), /A valley full of flowers! Bees hum all round you, deep in the tall flowers… and wasps zoom about in them too\. Watch out! Where the tall flowers shake, a bee is hiding: walk in to meet it\. Make friends with six bees!/);
   assert.deepEqual(get(g, '__sounds'), ['buzz'], 'with the hum of bees');
   assert.equal(item(g, /Follow the stream east/)[1], true, 'ticked off');
-  assert.deepEqual(get(g, 'getTasks()'), [], 'no task till the bees come (next)');
-  assert.match(g.run('tasksHint()'), /hiding in the tall flowers of their valley: making friends with them is the next part of chapter 1, coming soon/);
+  assert.deepEqual(get(g, 'getTasks().map(t => [t.text, t.target])'), [['Make friends with the six bees hiding in the tall flowers (0/6)', null]], 'the bees: no arrow, finding them is the game');
+  assert.deepEqual(item(g, /six/), ['Make friends with the six bees in their valley (0/6)', false, false, true]);
   g.run('__notes.length = 0');
   await play(g, 'runEvents()');
   assert.deepEqual(get(g, '__notes'), [], 'only the first time');
@@ -86,7 +87,50 @@ test('a swarm of bees hangs in front of the queen’s old hollow tree, and won�
   assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'hollowTree').map(o => [o.x, o.y, o.w, o.h])"), [[25, 4, 2, 2]], 'the old hollow tree: one big tree, two squares by two');
   await press(g, 25, 8, 'up');
   assert.deepEqual(get(g, '__sounds'), ['buzz']);
-  assert.match(get(g, '__notes').join(' '), /A swarm of bees hangs in front of the old tree, buzzing\. They won’t let you by\./);
+  assert.match(get(g, '__notes').join(' '), /A swarm of bees hangs in front of the old tree, buzzing\. They won’t let you by till the six bees hiding in the tall flowers are your friends \(0 of 6\)\./);
+});
+
+// A bee coming out of the tall flowers: its rustle set where it hides, then you step in (Math.random: what you answer)
+async function meetBee(g, right = true){
+  g.run(`rustle = {x: 15, y: 11, a: ANIMALS.find(a => a.id === 'bee')}`);
+  g.run(`encounter = async foe => { __notes.push('play: ' + foe.hz + (foe.another ? ', another' : '')); if (${right}) { if (!S.friends.includes(foe.id)) S.friends.push(foe.id); } return ${right}; }`);   // (the questions themselves: tests/encounter.test.js)
+  face(g, 15, 11, 'right');
+  await play(g, 'arrive(15, 11).then(runEvents)');
+}
+
+test('only bees hide in the valley’s tall flowers, the flowers shaking where one is; step in and it buzzes out, never a wasp there', async () => {
+  const g = game({place: 'flowerValley', x: 12, y: 13, dir: 'up'}, {bees: 2});
+  assert.deepEqual(get(g, "tileAt(15, 11).animals"), ['bee']);
+  g.run('Math.random = () => 0');
+  for (const [x, y] of [[12, 12], [12, 11], [12, 10], [12, 9]]){ face(g, x, y, 'up'); await play(g, `arrive(${x}, ${y})`); }   // (four steps: then one hides)
+  assert.equal(g.run('rustle && rustle.a.id'), 'bee', 'a bee hides, and only a bee: the rabbit hides in grass, not here');
+  assert.equal(g.run('tileAt(rustle.x, rustle.y).look'), 'tallFlowers');
+  assert.ok(g.run('Math.abs(rustle.x - pl.x) + Math.abs(rustle.y - pl.y) >= 3'), 'at least three steps away');
+  g.run("wildSteps = 99; fight = async id => { __notes.push('fight: ' + id); return 'won'; }");   // (a wasp would jump out on the very next step)
+  await meetBee(g);
+  assert.deepEqual(get(g, '__notes').slice(0, 2), ['card: 蜜蜂 (A bee buzzes out of the tall flowers! Answer its questions to make friends.)', 'play: 蜜蜂'],
+    'the first teaches 蜜蜂; then its questions; and no wasp on the square where it was hiding');
+});
+
+test('each bee you make friends with is counted aloud, 一！ to 一，二，三，四，五，六！; the sixth sends you to find the queen, and the swarm flies aside', async () => {
+  const g = game({place: 'flowerValley', x: 14, y: 11, dir: 'right'}, {bees: 2});
+  await meetBee(g, false);
+  assert.equal(get(g, 'here().beeFriends'), 0, 'lose its game, and it hides again: not a friend');
+  for (let n = 1; n <= 6; n++) await meetBee(g);
+  assert.deepEqual(get(g, '__said').filter(t => t.startsWith('player')), ['player: 一！', 'player: 一，二！', 'player: 一，二，三！', 'player: 一，二，三，四！', 'player: 一，二，三，四，五！', 'player: 一，二，三，四，五，六！'],
+    'you count your bee friends aloud, each time one more');
+  assert.match(get(g, '__notes').join(' '), /Your first 蜜蜂 \(bee\) friend! Five more are hiding in the tall flowers\..*Five 蜜蜂 \(bee\) friends! Just one more is hiding in the tall flowers\./);
+  assert.ok(get(g, '__notes').includes('play: 蜜蜂, another'), 'each one after the first: another bee, a new friend');
+  assert.ok(get(g, '__said').filter(t => t === 'bee: 我们玩吧！').length === 7, 'each bee says it wants to play, before its questions');
+  assert.deepEqual(get(g, '__said').filter(t => t.startsWith('bee') && t !== 'bee: 我们玩吧！'), ['bee: 去找蜂王吧！'], 'the sixth: go and find the queen!');
+  assert.deepEqual(get(g, '[here().beeFriends, here().bees, S.friends.filter(f => f === "bee").length]'), [6, 3, 1], 'six bee friends (one friend in your Friends list, the bee)');
+  assert.ok(g.run('walkable(25, 7) && walkable(26, 7)'), 'the swarm has flown aside: the way to the old tree is open');
+  assert.match(get(g, '__notes').join(' '), /Over by the old tree, the swarm of bees flies aside: the way to it is open!/);
+  assert.equal(item(g, /six/)[1], true, 'ticked off');
+  g.run('__said.length = 0');
+  await meetBee(g);
+  assert.deepEqual([get(g, 'here().beeFriends'), get(g, '__said')], [6, ['bee: 我们玩吧！']], 'after six, a bee comes out to play now and then, like your other friends: no more counting');
+  assert.match(g.run('tasksHint()'), /The way to the old tree in the 蜜蜂 \(bees\)’ valley is open|The way to the old tree in the bees’ valley is open/);
 });
 
 test('the valley’s flowers: tall flowers hide your feet; the beds are low flowers you walk on, each its own colour', () => {

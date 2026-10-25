@@ -2519,6 +2519,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '蜂王': {   // queen bee
+    palette: {a:'#5E5B58', b:'#424A4D', c:'#FFFFFF', d:'#A9C9DA', e:'#DDEFF8', f:'#4D3B16', g:'#C99A2E', h:'#5E5333', i:'#FFE58A', j:'#D83A3A', k:'#F2C14E', l:'#1F1812', m:'#5E4F27', n:'#2A231E', o:'#1B150F', p:'#3A2E22', q:'#FFD866', r:'#46340F', s:'#5E5048', t:'#2D241B', u:'#E8B22E', v:'#B5841A', w:'#111111'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "..........aaaaab..aaaaab........",
+      ".........acccccdbacccccdb.......",
+      "........aceeeeeecceeeeeedb......",
+      ".......aceeeeeeeeeeeeeeeedb.....",
+      "......aceeeeeeeeeeeeeeeeedb.....",
+      "......aceeeeeeeeeeeeeeeeedb.....",
+      ".....fbdgeeeeeeeeeeeeeeeedb.....",
+      "....fgffgeegeeeeedeeeeeedb......",
+      "....hiiijiigeeeedbddddddb.......",
+      "...hijkkjkkjddddb.bbbbbb........",
+      "...fggggggggfbblllmmmll.........",
+      "....fnnnnnofmmlpppqqqpplmr......",
+      "....nssssstmqqqpppuuuppqqvr.....",
+      "...nspppppptuuupppuuuppuuuplr...",
+      "..nspppppppptuupppuuuppuuuppvr..",
+      "..nsppcwpppptuupppuuuppuuuppvr..",
+      "..nsppwwpppptuupppuuuppuuuppuvr.",
+      "..nspppppppptuupppuuuppuuuppuvro",
+      "..otpppppppptuupppuuuppuuupputtt",
+      "...otpppppptuuupppuuuppuuuppuvro",
+      "....ottttttuuuupppuuuppuuuppvr..",
+      ".....ooorvvuuuupppuuuppuuuppvr..",
+      ".........rrvuuupppuuuppuuuplr...",
+      "...........rvvvpppuuuppvvvr.....",
+      "............rrlpppvvvpplrr......",
+      "...............lllrrrll.........",
+      "................................",
+      "................................",
+      "................................"
+    ]
+  },
   '黄蜂': {   // wasp
     palette: {a:'#5E5B58', b:'#424A4D', c:'#FFFFFF', d:'#A9C9DA', e:'#DDEFF8', f:'#17120D', g:'#211913', h:'#2E2925', i:'#6A635D', j:'#FFE066', k:'#29221B', l:'#1A140E', m:'#5E5127', n:'#F5C518', o:'#C99A10', p:'#5A4C40', q:'#2A2018', r:'#4D3B0C', s:'#111111'},
     rows: [

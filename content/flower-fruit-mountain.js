@@ -60,10 +60,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           the feast still needs: honey (teaching 没有)
   //   bees    chapter 1, the bees: 0 not yet, 1 the hungry monkey wants honey, and the troop has cleared the way east along the
   //           stream (the riverside) to find the bees, 2 you've found the bees' valley (百花谷), where the bees and the wasps
-  //           hide in the tall flowers
+  //           hide in the tall flowers, 3 all six bees there are your friends, and the swarm in front of the queen's old tree
+  //           has flown aside
+  //   beeFriends chapter 1: how many of the bees in their valley you've made friends with, up to six
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -78,6 +80,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hillAnimalsLeft: {count:'animalsLeft', chapter:1, place:'hillside'},   // chapter 1's animals: the fox hiding on the hillside, not met yet,
     woodAnimalsLeft: {count:'animalsLeft', chapter:1, place:'pineWood'},   // and the deer in the pine wood
     riverAnimalsLeft: {count:'animalsLeft', chapter:1, place:'riverside'},   // and the butterfly on the riverside, the way east to the bees
+    beeCount: {count:'progress', key:'beeFriends'},   // the bees in their valley you've made friends with (of six)
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
     caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (桥, bridge, is chapter 1's, on its bridges)
@@ -181,6 +184,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'feastTable', if:{feast:1}, text:'Go to the big {树} in the middle of the home ground', arrow:[17, 7, 'homeGround']},
     {id:'hungryTable', if:{feast:2}, text:'Talk to the hungry monkey by the big {桌子}', arrow:'hungry'},
     {id:'bees1', if:{bees:1}, text:'Follow the stream east, along the riverside, to find where {蜜蜂|bees} live', arrow:{place:'flowerValley'}},
+    {id:'bees2', if:{bees:2}, text:'Make friends with the six {蜜蜂|bees} hiding in the tall flowers ({beeCount}/6)', arrow:{place:'flowerValley'}},   // (no arrow in the valley: that's the game)
     {id:'hideSeek', if:{hiding:true}, text:'Find where the little monkey is hiding', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
@@ -194,7 +198,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
-    {if:{bees:{atLeast:2}}, text:'The {蜜蜂|bees} are hiding in the tall flowers of their valley: making friends with them is the next part of chapter 1, coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
+    {if:{bees:{atLeast:3}}, text:'The way to the old tree in the {蜜蜂|bees}’ valley is open: meeting who lives there is the next part of chapter 1, coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -239,7 +243,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Hear from the hungry monkey what the feast still needs', show:{feast:{atLeast:2}}, done:{feast:{atLeast:3}}},
     {chapter:1, text:'Play hide and seek with a little monkey', show:{feast:{atLeast:1}}, done:{hidesFound:{atLeast:1}}},
     {chapter:1, text:'Follow the stream east to find where {蜜蜂|bees} live', show:{bees:{atLeast:1}}, done:{bees:{atLeast:2}}},
-    {chapter:1, text:'Find the {动物} on the riverside', show:{bees:{atLeast:1}}, done:{riverAnimalsLeft:0}}
+    {chapter:1, text:'Find the {动物} on the riverside', show:{bees:{atLeast:1}}, done:{riverAnimalsLeft:0}},
+    {chapter:1, text:'Make friends with the six {蜜蜂|bees} in their valley ({beeCount}/6)', show:{bees:{atLeast:2}}, done:{beeFriends:6}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -355,7 +360,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   events: [
     {if:{place:'pineWood', woodIn:0}, do:[{sound:'howl'}, {message:'It’s gloomy under the thick pines, and very still. Somewhere far off, a wolf howls…'}, {set:{woodIn:1}}]},   // into the pine wood for the first time
     // chapter 1: into the bees' valley for the first time, at the end of the riverside: bees hum in the tall flowers
-    {if:{place:'flowerValley', bees:1}, do:[{set:{bees:2}}, {sound:'buzz'}, {message:'A valley full of flowers! Bees hum all round you, deep in the tall flowers… and wasps zoom about in them too. Watch out!'}]},
+    {if:{place:'flowerValley', bees:1}, do:[{set:{bees:2}}, {sound:'buzz'}, {message:'A valley full of flowers! Bees hum all round you, deep in the tall flowers… and wasps zoom about in them too. Watch out!'},
+      {message:'Where the tall flowers shake, a bee is hiding: walk in to meet it. Make friends with six bees!'}]},
+    // all six bees are your friends: the sixth sends you to find the queen (蜂王, just for listening till you meet her), and
+    // the swarm in front of her old tree flies aside
+    {if:{bees:2, beeFriends:6}, do:[{say:'findQueen', by:'bee'}, {set:{bees:3}}, {sound:'buzz'}, {message:'Over by the old tree, the swarm of bees flies aside: the way to it is open!'}]},
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
     // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)
@@ -767,12 +776,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[0, 10], to:'riverside', arrive:[46, 7], facing:'left'}, {at:[0, 11], to:'riverside', arrive:[46, 8], facing:'left'}   // back along the riverside
       ],
       legend: {
-        'n': {look:'tallFlowers', walk:true, wild:['wasp']},   // tall flowers: wasps jump out to fight (and the bees hide here: next)
+        'n': {look:'tallFlowers', walk:true, wild:['wasp'], animals:['bee']},   // tall flowers: wasps jump out to fight, and only the bees hide here
         'r': {look:'redBed', walk:true}, 'y': {look:'yellowBed', walk:true}, 'w': {look:'whiteBed', walk:true},   // beds of flowers, each its own colour
         'p': {look:'pinkBed', walk:true}, 'b': {look:'blueBed', walk:true}, 'o': {look:'orangeBed', walk:true},
         'O': {look:'water', word:'水', note:'A clear pond under the cliff.'},
-        'h': {look:'hollowTree', landmark:true, onLook:[{do:[{sound:'buzz'}, {message:'An old, hollow tree, humming with bees. Honeycomb glints inside!'}]}]},   // the queen's old hollow tree
-        's': {look:'swarm', landmark:true, onLook:[{do:[{sound:'buzz'}, {message:'A swarm of bees hangs in front of the old tree, buzzing. They won’t let you by. More bees hide all over the valley, in the tall flowers: making friends with them is coming soon!'}]}]}
+        'h': {look:'hollowTree', landmark:true, onLook:[{do:[{sound:'buzz'}, {message:'An old, hollow tree, humming with bees. Honeycomb glints inside, and deep in it, something big is buzzing… The queen bee! Meeting her is coming soon.'}]}]},   // the queen's old hollow tree
+        's': {look:'swarm', landmark:true, becomes:[{if:{bees:{atLeast:3}}, to:'.'}],   // the swarm, till all six bees are your friends
+          onLook:[{do:[{sound:'buzz'}, {message:'A swarm of bees hangs in front of the old tree, buzzing. They won’t let you by till the six bees hiding in the tall flowers are your friends ({beeCount} of 6).'}]}]}
       },
       map: [
         "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
@@ -1192,13 +1202,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '棍子': 'The big monkey gave it to you, before you set off up the mountain path.',
     '蛇': 'In the long grass on the mountain path.',
     '蜘蛛': 'In the long grass on the mountain path.',
-    '蜜蜂': 'In the long grass on the mountain path.',   // (until 21 October 2026; the bees of chapter 1 will change this)
+    '蜜蜂': 'Hiding in the tall flowers of the bees’ valley.',   // (in the long grass on the mountain path until 21 October 2026)
     '野猪': 'Blocking the narrow way at the top of the mountain path.',
     '鹿': 'In a sunny glade deep in the pine wood, behind a cracked rock.',
     '狼': 'In the long grass in the pine wood.',
     '狐狸': 'Hiding in the tall grass on the hillside.',
     '蝴蝶': 'Fluttering over the wildflowers on the riverside, the way east to the bees.',
     '黄蜂': 'Zooming out of the tall flowers in the bees’ valley.',
+    '蜂王': 'In her old hollow tree, in the bees’ valley.',   // (for later: heard as the sixth bee sends you to find her)
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -1365,7 +1376,20 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'fox', word:'狐狸', hides:'hillside', chapter:1, meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'},
     // chapter 1: a butterfly over the wildflowers on the riverside, beside the way east to the bees (it was to be the hillside's,
     // until the fox took its place, 23 October 2026). flutters: it hovers over its spot, its wings beating
-    {id:'butterfly', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'}
+    {id:'butterfly', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'},
+    // chapter 1: bees hiding in the tall flowers of their valley, only there (the flowers shake where one is hiding), six to make
+    // friends with (many: decided 25 October 2026 by the game's owner, hidden like the wasps; they were each over their own
+    // flower). counts: how many so far, in the area's progress; counted: what happens as each becomes your friend, you
+    // counting them aloud (the sixth: see events)
+    {id:'bee', word:'蜜蜂', hides:'flowerValley', home:'花', chapter:1, meetNote:'A bee buzzes out of the tall flowers! Answer its questions to make friends.',
+      many:6, counts:'beeFriends', counted:[
+        [{say:'count1', by:'player'}, {message:'Your first {蜜蜂|bee} friend! Five more are hiding in the tall flowers.'}],
+        [{say:'count2', by:'player'}, {message:'Two {蜜蜂|bee} friends! Four more are hiding in the tall flowers.'}],
+        [{say:'count3', by:'player'}, {message:'Three {蜜蜂|bee} friends! Three more are hiding in the tall flowers.'}],
+        [{say:'count4', by:'player'}, {message:'Four {蜜蜂|bee} friends! Two more are hiding in the tall flowers.'}],
+        [{say:'count5', by:'player'}, {message:'Five {蜜蜂|bee} friends! Just one more is hiding in the tall flowers.'}],
+        [{say:'count6', by:'player'}]
+      ]}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
   birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
@@ -1489,6 +1513,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveFruit: {zh:'我们 有 桃子 ， 也 有 苹果 ！', en:'We have peaches, and apples too!'},
     noHoney: {zh:'我们 没有 蜂蜜 ！', en:'We don’t have any honey!'},   // and hasn't (teaching 没有; 蜂蜜 just for listening, till the bees)
     wantHoney: {zh:'我 要 吃 蜂蜜 ！', en:'I want to eat honey!'},
+    findQueen: {zh:'去 找 蜂王 吧 ！', en:'Go and find the queen bee!'},   // the sixth bee you make friends with in their valley (蜂王 just for listening, till you meet her)
     // hide and seek with a little monkey (the area's hideSeek): its clues' English leaves the place's word in Chinese ({桌子})
     hideAsk: {zh:'我们 来 捉迷藏 吧 ！', en:'Let’s play hide and seek!'},
     hideCount: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ， 十 ！', en:'One, two, three, four, five, six, seven, eight, nine, ten!'},   // you, with your eyes covered

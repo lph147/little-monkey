@@ -153,6 +153,13 @@ SAVES.beeValleyFirst = {...SAVES.beeValley, areas: {1: {...SAVES.beeValley.areas
 SAVES.beeValleyWasp = {...SAVES.beeValley, pos: {place: 'flowerValley', x: 6, y: 10, dir: 'right'}};
 SAVES.beeValleyWaspKnown = {...SAVES.beeValleyWasp, w: {...SAVES.beeValley.w, ...knows(1, ['黄蜂'])}};
 SAVES.beeValleySwarm = {...SAVES.beeValley, pos: {place: 'flowerValley', x: 25, y: 8, dir: 'up'}};
+// the bees hiding in the tall flowers (25 October 2026): the flowers shaking where one hides; two bee friends made, and the
+// third one counted; all six, the sixth sending you to find the queen; and the swarm flown aside
+SAVES.beeHiding = {...SAVES.beeValley, pos: {place: 'flowerValley', x: 11, y: 13, dir: 'right'}};
+SAVES.beeFriends = {...SAVES.beeValley, w: {...SAVES.beeValley.w, ...knows(1, ['蜜蜂'])}, friends: [...(SAVES.beeValley.friends || []), 'bee'], met: [...(SAVES.beeValley.met || []), 'bee'],
+  areas: {1: {...SAVES.beeValley.areas[1], beeFriends: 2}}, pos: {place: 'flowerValley', x: 14, y: 11, dir: 'right'}};
+SAVES.beeSix = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], beeFriends: 6}}};
+SAVES.beeOpen = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], beeFriends: 6, bees: 3}}, pos: {place: 'flowerValley', x: 25, y: 9, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -617,6 +624,16 @@ const SCREENS = [
     play(); await wait(100); battle('wasp'); await wait(1200); }},
   {id: 'valley-swarm', title: 'The swarm', save: 'beeValleySwarm', why: 'In front of the queen’s old hollow tree, right across the nook: it won’t let you by. A at it says why.', run: async () => {
     play(); await wait(100); pressA(); await wait(500); }},
+  {id: 'bee-hiding', title: 'Where the flowers shake', save: 'beeHiding', why: 'A bee hides in the tall flowers (up and right of you): they shake where it is, with little lines either side. Walk in, and it buzzes out.', run: async () => {
+    play(); await wait(100); rustle = {x: 15, y: 11, a: ANIMALS.find(a => a.id === 'bee')}; await wait(400); }},
+  {id: 'bee-meet', title: 'A bee buzzes out', save: 'beeHiding', why: 'Out of the tall flowers: the first teaches 蜜蜂 (mìfēng, bee), said straight away; then 我们玩吧！ and its questions.', run: async () => {
+    play(); await wait(100); wildAppears(ANIMALS.find(a => a.id === 'bee')); await wait(1600); }},
+  {id: 'bee-count', title: 'Counting your bee friends', save: 'beeFriends', why: 'Each new bee friend, you count them all aloud: here the third, 一，二，三！ (then how many are still hiding).', run: async () => {
+    play(); await wait(100); here().beeFriends = 3; runSteps(ANIMALS.find(a => a.id === 'bee').counted[2]); await wait(500); }},
+  {id: 'bee-six', title: 'Go and find the queen!', save: 'beeSix', why: 'The sixth bee: 去找蜂王吧！ (蜂王, the queen bee, grey: just for listening till you meet her); then the swarm by the old tree flies aside.', run: async () => {
+    play(); await wait(100); runEvents(); await wait(500); }},
+  {id: 'bees-open', title: 'The way to the old tree', save: 'beeOpen', why: 'All six bees are your friends: the swarm has flown aside, and the way to the queen’s old hollow tree is open.', run: async () => {
+    play(); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

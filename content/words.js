@@ -71,7 +71,8 @@ const WORD_BANK = {
   '棍子': {py:'gùnzi', en:'stick', pic:'🪵', area:1, category:'items'},
   '蛇': {py:'shé', en:'snake', pic:'🐍', area:1, category:'animals'},
   '蜘蛛': {py:'zhīzhū', en:'spider', pic:'🕷️', area:1, category:'animals'},
-  '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals', later:true},   // (caught in the long grass until 21 October 2026; in chapter 1, a friend: till then, for later)
+  '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals'},   // (caught in the long grass until 21 October 2026; in chapter 1, six friends hiding in the tall flowers of their valley)
+  '蜂王': {py:'fēngwáng', en:'queen bee', pic:'👸', area:1, category:'animals', later:true, alike:['蜜蜂', '黄蜂', '王']},   // (heard as the sixth bee sends you to find her; met next, in her old tree; like the bee and the wasp a striped insect, and with a crown like 王's)
   '野猪': {py:'yězhū', en:'wild boar', pic:'🐗', area:1, category:'animals'},
   '鹿': {py:'lù', en:'deer', pic:'🦌', area:1, category:'animals'},   // (chapter 1: a friend in the pine wood)
   '狼': {py:'láng', en:'wolf', pic:'🐺', area:1, category:'animals'},   // (chapter 1: in the pine wood's long grass)

@@ -319,8 +319,8 @@ async function encounter(foe){
   if (won){
     if (!already) S.friends.push(foe.id);
     SFX.fanfare();
-    label = already ? '♥ Friends' : '⭐ New friend';
-    msg = already ? `You played with your ${wz('朋友')}, the ${wz(an)}!${shells}` : `The ${wz(an)} is now your ${wz('朋友')}!${shells}`;
+    label = already && !foe.another ? '♥ Friends' : '⭐ New friend';   // (another: one more of a kind you have friends among, such as another bee)
+    msg = foe.another ? `Another ${wz(an)} is now your ${wz('朋友')}!${shells}` : already ? `You played with your ${wz('朋友')}, the ${wz(an)}!${shells}` : `The ${wz(an)} is now your ${wz('朋友')}!${shells}`;
   } else {
     label = `${score} of 3`;
     msg = `The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.${shells}`;

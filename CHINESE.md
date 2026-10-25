@@ -80,6 +80,7 @@ shown where the word list has them.
 | 我们有桃子，也有苹果！ | wǒmen yǒu táozi, yě yǒu píngguǒ! | We have peaches, and apples too! | 饿猴子 (Hungry monkey) |  |
 | 我们没有蜂蜜！ | wǒmen méiyǒu fēngmì! | We don’t have any honey! | 饿猴子 (Hungry monkey) |  |
 | 我要吃蜂蜜！ | wǒ yào chī fēngmì! | I want to eat honey! | 饿猴子 (Hungry monkey) |  |
+| 去找蜂王吧！ | qù zhǎo fēngwáng ba! | Go and find the queen bee! |  |  |
 | 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
 | 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | you |  |
 | 我来了！ | wǒ lái le! | Here I come! | you |  |
@@ -322,6 +323,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 蛇 | shé | snake |  |
 | 蜘蛛 | zhīzhū | spider |  |
 | 蜜蜂 | mìfēng | bee |  |
+| 蜂王 | fēngwáng | queen bee |  |
 | 野猪 | yězhū | wild boar |  |
 | 鹿 | lù | deer |  |
 | 狼 | láng | wolf |  |
@@ -618,6 +620,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 河边 | hé biān | The riverside | New on 25 October 2026 (in the game), the way to the bees: The name of the new path east from the home ground, along the stream, to the bees’ valley (shown and said as you arrive: is 河边 a good name for a place, or would 小河边 or another be better?) |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | New on 25 October 2026 (in the game), the way to the bees: The example on 蝴蝶 (húdié, butterfly)’s page in the Word Scroll: a butterfly flutters over the wildflowers on the riverside |  |
 | 百花谷 | Bǎi huā gǔ | Valley of a Hundred Flowers | New on 25 October 2026 (in the game), the way to the bees: The name of the bees’ valley, at the end of the riverside (in the game since v266: please check the name) |  |
+| 去找蜂王吧！ | qù zhǎo fēngwáng ba! | Go and find the queen bee! | New on 25 October 2026 (in the game), the way to the bees: The sixth bee you make friends with in their valley (蜂王 fēngwáng, the queen bee, just for listening till you meet her: is 蜂王 right for a queen bee?). As each bee becomes your friend, you count them aloud: 一！, 一，二！ … up to 一，二，三，四，五，六！ (the counting lines the old monkey and the teacher say too) |  |
 | 花里有黄蜂！ | huā lǐ yǒu huángfēng! | There are wasps in the flowers! | New on 25 October 2026 (in the game), the way to the bees: The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = a yellow bee, a wasp |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 

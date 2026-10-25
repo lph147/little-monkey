@@ -22,7 +22,8 @@ const allSteps = () => [
   ...AREA.begin.map(s => ['begin', s, null]),
   ...allLegend.flatMap(([ch, t, from]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at ${from}, part ${i + 1}`, s, null]))),
   ...(AREA.spots || []).flatMap((sp, n) => sp.onLook.flatMap((p, i) => p.do.map(s => [`looking at spot ${n + 1}, part ${i + 1}`, s, null]))),
-  ...Object.entries(AREA.countGames || {}).flatMap(([id, g]) => (g.win || []).map(s => [`the counting game ${id}, if you win`, s, null]))
+  ...Object.entries(AREA.countGames || {}).flatMap(([id, g]) => (g.win || []).map(s => [`the counting game ${id}, if you win`, s, null])),
+  ...AREA.animals.flatMap(a => (a.counted || []).flatMap((c, i) => c.map(s => [`the ${a.id}, as friend ${i + 1} of ${a.many}`, s, null])))
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
