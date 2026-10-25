@@ -137,16 +137,16 @@ const DRAFTS = [
     ['蝴蝶 在 花 上 。', 'The butterfly is on the flower.', 'The example on 蝴蝶 (húdié, butterfly)’s page in the Word Scroll: a butterfly flutters over the wildflowers on the riverside'],
     ['百花谷', 'Valley of a Hundred Flowers', 'The name of the bees’ valley, at the end of the riverside (in the game since v266: please check the name)', 'Bǎi huā gǔ'],
     ['去 找 蜂王 吧 ！', 'Go and find the queen bee!', 'The sixth bee you make friends with in their valley (蜂王 fēngwáng, the queen bee, just for listening till you meet her: is 蜂王 right for a queen bee?). As each bee becomes your friend, you count them aloud: 一！, 一，二！ … up to 一，二，三，四，五，六！ (the counting lines the old monkey and the teacher say too)'],
-    ['花 里 有 黄蜂 ！', 'There are wasps in the flowers!', 'The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = a yellow bee, a wasp']]
+    ['花 里 有 黄蜂 ！', 'There are wasps in the flowers!', 'The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = 黄蜂 (wasp)']]
     .map(([zh, en, where, py]) => ({zh, en, py, where:'New on 25 October 2026 (in the game), the way to the bees: ' + where})),
-  ...[['你 要 什么 ？', 'What do you want?', 'The queen bee (蜂王 fēngwáng, taught on her card as she comes out of her old hollow tree; how it’s made: 蜂 bee + 王 king = the bees’ king, their queen: is that true to say?)'],
+  ...[['你 要 什么 ？', 'What do you want?', 'The queen bee (蜂王 fēngwáng, taught on her card as she comes out of her old hollow tree; how it’s made: 蜂 bee + 王 king = 蜂王 queen bee: is that true to say?)'],
     ['我们 要 蜂蜜 ！', 'We want honey!', 'You, answering the queen bee (蜂蜜 fēngmì, honey, just for listening till the first honey). Then you play her word game to win her over'],
     ['好 ！ 我们 去 你 家 吧 ！', 'OK! Let’s go to your home!', 'The queen bee, won over: she and her swarm follow you home to the troop'],
     ['这里 有 花 ！', 'There are flowers here!', 'The queen bee, at the troop’s home ground, by the wildflowers where their hive will be'],
     ['我们 有 蜜蜂 了 ！', 'We have bees now!', 'The hungry monkey, once you’ve brought the bees home (he wants honey for the feast)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 25 October 2026 (in the game), the queen bee: ' + where})),
   ...[['这 是 我们 的 家 ！', 'This is our home!', 'The queen bee, as the troop finishes building the bees a hive by the wildflowers at the home ground (three log hives with straw caps); then she and her swarm fly in'],
-    ['我 要 吃 蜂蜜', 'I want to eat honey.', 'The sentence you complete (choosing 蜂蜜) to give the hungry monkey the honey you took from the hive. 蜂蜜 (fēngmì, honey) is taught as you take it; how it’s made: 蜂 bee + 蜜 honey = the bees’ honey (蜜蜂, the other way round, is a honey bee: is that true to say?)'],
+    ['我 要 吃 蜂蜜', 'I want to eat honey.', 'The sentence you complete (choosing 蜂蜜) to give the hungry monkey the honey you took from the hive. 蜂蜜 (fēngmì, honey) is taught as you take it; how it’s made: 蜂 bee + 蜜 honey = 蜂蜜 honey (and 蜜蜂, the other way round, is a bee: is that true to say?)'],
     ['蜂蜜 ！ 太 好 了 ！', 'Honey! Wonderful!', 'The hungry monkey, when you bring him the honey'],
     ['我们 有 蜂蜜 了 ！', 'We have honey now!', 'The hungry monkey, as he pours the honey into the empty bowl on the feast’s table'],
     ['我们 有 蜂蜜 。', 'We have honey.', 'The feast’s list at its big table, once the honey is in its bowl (before: 我们没有蜂蜜。)']]
@@ -200,10 +200,11 @@ function sheet(){
   const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe']),
     ...(AREA.practiceSentences || []).map(c => [c.sentence, c.sentenceEn, 'You, in a lesson at school'])];
   const notes = '';
-  // how a word is made, in one line: its parts (each Chinese, pinyin, English) and what they add up to; or the clue inside it;
-  // or the character it shares with another word
+  // how a word is made, in one line: its parts (each Chinese, pinyin, English) and the word they make, with its English, as
+  // its card shows it (or, for your home's name, what they add up to); or the clue inside it; or the character it shares
+  // with another word
   const part = ([zh, p, en]) => `${zh} ${p} (${en})`;
-  const made = m => m.parts ? `${m.parts.map(part).join(' + ')} = ${m.why}` : m.clue ? `${part(m.clue)}: ${m.why}` : m.same ? `${part(m.same)}, as in ${m.as}: ${m.why}` : m.why;
+  const made = (m, w) => m.parts ? `${m.parts.map(part).join(' + ')} = ${w ? `${w} (${BANK[w].en.split(',')[0]})` : m.why}` : m.clue ? `${part(m.clue)}: ${m.why}` : m.same ? `${part(m.same)}, as in ${m.as}: ${m.why}` : m.why;
 
   return `# Chinese in Little Monkey: for checking
 
@@ -281,7 +282,7 @@ Shown on a word's new-word card and its page in the Word Scroll (new on 23 Octob
 what they add up to, the clue inside it, or the picture it was drawn from. Please check that each is true, well known and
 simply put. A part's pinyin is as it's said in the word.
 
-${table(['Word', 'Pinyin', 'How it’s made', 'Notes'], [...Object.entries(MADE).map(([w, m]) => [w, BANK[w].py, made(m), notes]),
+${table(['Word', 'Pinyin', 'How it’s made', 'Notes'], [...Object.entries(MADE).map(([w, m]) => [w, BANK[w].py, made(m, w), notes]),
   ...(AREA.sign.made ? [[AREA.sign.says.zh, AREA.name.py, `${made(AREA.sign.made)} (your home’s name, on the sign by your stone, once you know its parts)`, notes]] : [])])}
 
 ### Tips about Chinese

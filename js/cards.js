@@ -311,10 +311,11 @@ function madeLinks(m, w){   // [a part of w (or w itself, one character), a word
 // How a word is made, on a card of its own (decided 24 October 2026: under the word, its English and a note, the box crowded
 // the card): the second step of a new word's card (How it's made ▸), and seen again, from the English button. A word made of
 // parts shows each in turn, with its picture if it's a word with one, its pinyin and English (green if it's a word you know),
-// then = the word itself, with its picture, and what they add up to. A clue shows the character big, with the clue beside
-// it and why; a picture shows what the character was drawn from, beside it. Under it, where you've met a part before, or
-// that you know every part already. A character it shares with a word you know (same): the two words side by side, it lit
-// in each, and why (decided 24 October 2026: 苹 + 果 said 苹 meant nothing on its own).
+// then = the word itself, with its picture and its English, what it means (decided 25 October 2026 by the game's owner:
+// 山 mountain + 羊 sheep = 山羊 goat, not a mountain sheep, which isn't what it means). A clue shows the character big,
+// with the clue beside it and why; a picture shows what the character was drawn from, beside it. Under it, where you've
+// met a part before, or that you know every part already. A character it shares with a word you know (same): the two
+// words side by side, it lit in each, and why (decided 24 October 2026: 苹 + 果 said 苹 meant nothing on its own).
 const partPic = zh => PICTURES[zh] && WORDS[zh] ? picHTML(zh) : '';
 function madeStage(w){
   const m = MADE[w], d = WORDS[w];
@@ -342,7 +343,7 @@ function madeStage(w){
         + `<span class="mcen">${esc(en)}</span> <span class="mfrom">as in ${esc(wz(from))}</span></div>`;
     });
     const word = `<div class="mcol mword"><div class="mcpic" aria-hidden="true">${PICTURES[w] ? picHTML(w) : ''}</div><span class="mcpy">${esc(d.py)}</span> `
-      + `<span class="mchz">${m.parts.map(([zh], i) => `<span class="mch" data-i="${i}">${zh}</span>`).join('')}</span> <span class="mcen">${esc(m.why)}</span></div>`;
+      + `<span class="mchz">${m.parts.map(([zh], i) => `<span class="mch" data-i="${i}">${zh}</span>`).join('')}</span> <span class="mcen">${esc(d.en.split(',')[0])}</span></div>`;
     const all = m.parts.every(([zh]) => knownWord(zh, w)), pics = !!PICTURES[w] || m.parts.some(([zh]) => partPic(zh)) || !!(link && PICTURES[link[1]]);
     return `<div class="madestage parts${pics ? '' : ' nopic'}">${parts.join(op('+'))}${op('=')}${word}</div>`
       + (all ? `<p class="mnote known">You know ${m.parts.length === 2 ? 'both' : 'all ' + m.parts.length} parts already!</p>` : '');

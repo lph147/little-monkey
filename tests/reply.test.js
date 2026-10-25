@@ -85,7 +85,7 @@ test('a phrase you don\'t know yet is taught on its own card first', async () =>
   assert.equal(t.run('modal.hidden'), false, 'a new-word card');
   assert.match(t.sheet.textContent, /再见/);
   t.run('pressA()');   // How it's made
-  assert.match(t.sheet.textContent, /see you again/);
+  assert.match(t.sheet.textContent, /How 再见 is made/);
   t.run('pressA()');   // (it comes together at once)
   t.run('pressA()');   // Got it
   await tick();

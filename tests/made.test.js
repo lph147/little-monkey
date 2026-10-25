@@ -1,5 +1,6 @@
 // How a word is made (Chinese is logical, step 2, 23 October 2026): its parts, each with its pinyin and English (green if
-// it's a word you know), and what they add up to; or the clue inside a character, or the picture it was drawn from; and
+// it's a word you know), and the word they make, with its English (since 25 October 2026: what it means, goat, not what
+// the parts add up to, a mountain sheep); or the clue inside a character, or the picture it was drawn from; and
 // where you've met a part before, in another word you know. Since 24 October 2026 on a card of its own: a new word's card
 // goes on to it (How it's made ▸); seen again, and in the Word Scroll, the English button shows the English, then opens it.
 'use strict';
@@ -22,7 +23,8 @@ test('every entry is a word here: its parts make the word, and their pinyin is t
   const made = get(g, 'MADE'), words = get(g, 'WORDS'), plain = py => py.replace(/\s+/g, '').toLowerCase();
   for (const [w, m] of Object.entries(made)){
     assert.ok(words[w], `${w} is one of this area's words`);
-    assert.ok(typeof m.why === 'string' && m.why.length > 3, `${w} says what it adds up to, or the picture it was drawn from`);
+    if (m.parts) assert.ok(!('why' in m), `${w}: its card shows the word’s own English, what it means, not what its parts add up to`);
+    else assert.ok(typeof m.why === 'string' && m.why.length > 3, `${w} says why: its clue, the picture it was drawn from, or the character it shares`);
     // [Chinese, pinyin, English], and maybe other words with it that have nothing here (words of this area, each with it)
     const isPart = p => Array.isArray(p) && (p.length === 3 || p.length === 4) && p.slice(0, 3).every(x => typeof x === 'string' && x)
       && [].concat(p[3] || []).every(o => words[o] && !made[o] && o.includes(p[0]));
@@ -45,7 +47,6 @@ test('every entry is a word here: its parts make the word, and their pinyin is t
   // decided 24 October 2026, after playing it: only what's simple, useful and memorable, that you can picture (the 艹 of
   // 花 and 草, plants, meant nothing; 苹 means nothing on its own; the rest needed explaining)
   for (const w of ['花', '草', '桥', '床', '路', '跳', '碗', '家', '瀑布', '没关系', '不客气']) assert.ok(!made[w], `${w}: nothing simple enough`);
-  assert.equal(made['你好'].why, 'hello', '你好: just hello (not wishing you well)');
 });
 
 test('a new word with a story: its card is just the word, then How it’s made ▸ opens a card of its own; Back goes back, Got it catches it', () => {
@@ -105,9 +106,9 @@ function made(words, w){
 }
 const cols = sheet => sheet.querySelectorAll('.mcol').filter(c => !c.classList.contains('mop')).map(c => [text(c), c.className.replace('mcol', '').trim()]);
 
-test('each part has its pinyin and English, a part you know as a word is green, then = the word and what they add up to; a clue shows what’s inside', () => {
+test('each part has its pinyin and English, a part you know as a word is green, then = the word, with its English; a clue shows what’s inside', () => {
   const goat = made(['石头', '山'], '山羊');
-  assert.deepEqual(cols(goat), [['shān 山 mountain', 'mpart known'], ['yáng 羊 sheep', 'mpart'], ['shānyáng 山羊 a mountain sheep', 'mword']], '山 is a word you know; 羊 isn’t yet');
+  assert.deepEqual(cols(goat), [['shān 山 mountain', 'mpart known'], ['yáng 羊 sheep', 'mpart'], ['shānyáng 山羊 goat', 'mword']], '山 is a word you know; 羊 isn’t yet');
   assert.deepEqual(goat.querySelectorAll('.mop').map(text), ['+', '='], 'with + and = between them');
   assert.ok(goat.querySelectorAll('.mcol')[0].querySelector('.mcpic .pix') && goat.querySelectorAll('.mcol')[2].querySelector('.mcpic .pix'), 'a part that’s a word with a picture shows it, and so does the word');
   const dontWant = made(['石头'], '我不要');
@@ -118,6 +119,18 @@ test('each part has its pinyin and English, a part you know as a word is green, 
   const hill = made(['石头'], '山');
   assert.ok(hill.querySelector('.madestage.drawn .mcpic .pix'), 'a picture: what it was drawn from, beside it');
   assert.equal(text(hill.querySelector('.mwhy')), 'Drawn like three mountain peaks.');
+});
+
+// decided 25 October 2026 by the game's owner, after playing it: the goat's card said 山 mountain + 羊 sheep = 山羊 a
+// mountain sheep, which isn't what 山羊 means
+test('on every card of a word made of parts, the word itself has its own English, what it means: 山 mountain + 羊 sheep = 山羊 goat', () => {
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(['石头'])}});
+  const words = get(g, 'WORDS');
+  const right = w => { g.run(`madeCard('${w}', () => {}, () => {}, 'Got it')`); return text(g.el('#sheet').querySelector('.mword .mcen')); };
+  for (const [w, m] of Object.entries(get(g, 'MADE'))) if (m.parts) assert.equal(right(w), words[w].en.split(',')[0], `${w}: its English`);
+  assert.equal(right('山羊'), 'goat', 'not a mountain sheep');
+  assert.equal(right('蜂王'), 'queen bee', 'not the bees’ king');
+  assert.equal(right('你好'), 'hello', 'just hello (not wishing you well)');
 });
 
 test('the card says where you’ve met a part before, in another word you know (whichever of the two you meet second), or that you know every part', () => {

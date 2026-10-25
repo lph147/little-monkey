@@ -205,7 +205,9 @@ const WORD_BANK = {
 // means. A part you know as a word shows green, and a card says where you've met a part before, in another word you know
 // (such as the 果 of 水果, in 苹果).
 //   parts  a word of two or more characters (or a phrase): each as [Chinese, pinyin, English], its pinyin as said in this
-//          word (so together they make the word's own), then why: what they add up to
+//          word (so together they make the word's own). Its card shows them making the word, with its own English, what
+//          it means (山 mountain + 羊 sheep = 山羊 goat; decided 25 October 2026 by the game's owner: it said what they
+//          add up to, a mountain sheep, which isn't what 山羊 means), so there's no why
 //   clue   a part that gives a clue, as [Chinese, pinyin, English]: inside a word of one character, or one of a word's
 //          characters (the 木 of 木头), then why
 //   same   a character it shares with another word (as), as [Chinese, pinyin, English], for a word with nothing simpler
@@ -229,21 +231,21 @@ const MADE = {
   '吃': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you eat with your mouth'},
   '喝': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you drink with your mouth'},
   // made of words or characters
-  '山羊': {parts:[['山', 'shān', 'mountain'], ['羊', 'yáng', 'sheep']], why:'a mountain sheep'},
-  '动物': {parts:[['动', 'dòng', 'to move'], ['物', 'wù', 'thing']], why:'things that move'},
-  '松鼠': {parts:[['松', 'sōng', 'pine'], ['鼠', 'shǔ', 'mouse']], why:'a pine mouse'},
-  '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']], why:'a band for your head'},
-  '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']], why:'a wild pig'},
-  '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']], why:'a honey bee'},
-  '蜂王': {parts:[['蜂', 'fēng', 'bee'], ['王', 'wáng', 'king']], why:'the bees’ king: their queen'},
-  '蜂蜜': {parts:[['蜂', 'fēng', 'bee'], ['蜜', 'mì', 'honey']], why:'the bees’ honey'},   // (蜜蜂, the other way round, is a honey bee)
-  '黄蜂': {parts:[['黄', 'huáng', 'yellow', '黄色'], ['蜂', 'fēng', 'bee']], why:'a yellow bee: a wasp'},
-  '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']], why:'someone you learn with'},
-  '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']], why:'don’t have'},
+  '山羊': {parts:[['山', 'shān', 'mountain'], ['羊', 'yáng', 'sheep']]},
+  '动物': {parts:[['动', 'dòng', 'to move'], ['物', 'wù', 'thing']]},
+  '松鼠': {parts:[['松', 'sōng', 'pine'], ['鼠', 'shǔ', 'mouse']]},
+  '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']]},
+  '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']]},
+  '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']]},
+  '蜂王': {parts:[['蜂', 'fēng', 'bee'], ['王', 'wáng', 'king']]},
+  '蜂蜜': {parts:[['蜂', 'fēng', 'bee'], ['蜜', 'mì', 'honey']]},   // (蜜蜂, the other way round: honey + bee = bee)
+  '黄蜂': {parts:[['黄', 'huáng', 'yellow', '黄色'], ['蜂', 'fēng', 'bee']]},
+  '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']]},
+  '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']]},
   // phrases
-  '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']], why:'hello'},
-  '再见': {parts:[['再', 'zài', 'again'], ['见', 'jiàn', 'to see']], why:'goodbye: see you again'},
-  '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']], why:'I don’t want it'},
+  '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
+  '再见': {parts:[['再', 'zài', 'again'], ['见', 'jiàn', 'to see']]},
+  '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},
   // the same character as in another word
   '苹果': {same:['果', 'guǒ', 'fruit'], as:'水果', why:'an apple is a fruit'}
 };

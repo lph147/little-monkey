@@ -704,20 +704,20 @@ const SCREENS = [
   {id: 'word-page', title: 'A word’s page', save: 'middle', run: async () => { play(); await wait(100); wordPage('桃子', () => closeCard()); await wait(300); }},
   {id: 'made-goat-word', title: 'A new word with a story', save: 'knowsSheep', why: 'The first step: just the word, its picture, pinyin, English and the note. A is How it’s made ▸.', run: async () => {
     play(); await wait(100); showNotice('山羊', {note: 'A goat stands on the cliff, chewing. Answer its questions to make friends.'}); await wait(400); }},
-  {id: 'made-goat', title: 'How a word is made', save: 'knowsSheep', why: 'The second step, a card of its own, which comes together as you watch: its parts, each with its picture (if it’s a word with one), pinyin and English, green when it’s a word you know, then each flies into the word: 山 + 羊 = 山羊, a mountain sheep. Back (B) goes back to the word; Watch again plays it again; Got it (A) adds it to your Word Scroll.', run: async () => {
+  {id: 'made-goat', title: 'How a word is made', save: 'knowsSheep', why: 'The second step, a card of its own, which comes together as you watch: its parts, each with its picture (if it’s a word with one), pinyin and English, green when it’s a word you know, then each flies into the word: 山 (mountain) + 羊 (sheep) = 山羊, with its own English, goat. Back (B) goes back to the word; Watch again plays it again; Got it (A) adds it to your Word Scroll.', run: async () => {
     play(); await wait(100); showNotice('山羊', {note: 'A goat stands on the cliff, chewing. Answer its questions to make friends.'}); await wait(300); click('[data-a=made]'); await wait(400); }},
   {id: 'made-same', title: 'Two words, one character', save: 'knowsFruit', why: '苹果 (apple), once you know 水果 (fruit): the two side by side, the 果 they share lit in each. 苹 means nothing on its own, so there’s nothing simpler to say (before you know 水果, 苹果’s card is just Got it).', run: async () => {
     play(); await wait(100); showNotice('苹果', {note: 'You pick one from the tree.'}); await wait(300); click('[data-a=made]'); await wait(400); }},
-  {id: 'made-three', title: 'How a word is made: three parts', save: 'phrases', why: 'The most parts there are: 我 + 不 + 要, I don’t want it. 我 and 要 are words you know.', run: async () => {
+  {id: 'made-three', title: 'How a word is made: three parts', save: 'phrases', why: 'The most parts there are: 我 (I) + 不 (not) + 要 (to want) = 我不要, with its own English, no thanks. 我 and 要 are words you know.', run: async () => {
     play(); await wait(100); madeCard('我不要', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'made-clue', title: 'How a word is made: a clue inside', save: 'middle', why: 'Only one you can see: the character big, with the clue beside it, and why: 口, a mouth, on the left of 吃 (to eat).', run: async () => {
     play(); await wait(100); madeCard('吃', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'made-drawn', title: 'How a word is made: drawn from a picture', save: 'middle', why: 'The picture beside the character it was drawn from: 山, drawn like three mountain peaks.', run: async () => {
     play(); await wait(100); madeCard('山', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'made-page', title: 'A word’s page: English, then How it’s made', save: 'middle', why: 'In the Word Scroll, the English button shows the English, then becomes How it’s made: here, after pressing it once.', run: async () => {
-    play(); await wait(100); wordPage('水果', () => closeCard()); await wait(300); click('[data-a=en]'); await wait(300); }},
+    play(); await wait(100); wordPage('动物', () => closeCard()); await wait(300); click('[data-a=en]'); await wait(300); }},
   {id: 'made-page-how', title: 'How it’s made, from a word’s page', save: 'middle', why: 'Its card, with Back (A and B) to the word’s page.', run: async () => {
-    play(); await wait(100); wordPage('水果', () => closeCard()); await wait(300); click('[data-a=en]'); await wait(100); click('[data-a=made]'); await wait(400); }},
+    play(); await wait(100); wordPage('动物', () => closeCard()); await wait(300); click('[data-a=en]'); await wait(100); click('[data-a=made]'); await wait(400); }},
   {id: 'friends', title: 'Friends', save: 'allFriends', run: async () => { play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(300); }},
   {id: 'friend-page', title: 'A friend’s page', save: 'allFriends', why: 'Tap a friend: its page, as in the Word Scroll, with its English behind English (here, pressed), which then becomes How it’s made.', run: async () => {
     play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(200); click('.friends [data-w="山羊"]'); await wait(300); click('[data-a=en]'); await wait(300); }},

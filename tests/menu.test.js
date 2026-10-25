@@ -148,7 +148,7 @@ test('Friends: tap a friend for its page, as in the Word Scroll, its English and
   sheet.querySelector('[data-a=en]').click();
   assert.ok(!hidden('.word .en'));
   sheet.querySelector('[data-a=made]').click();
-  assert.match(sheet.querySelector('.madestage').textContent, /mountain sheep/, 'how it’s made, on its own card');
+  assert.match(sheet.querySelector('.madestage').textContent, /mountain.*sheep.*山羊.*goat/s, 'how it’s made, on its own card: 山 mountain + 羊 sheep = 山羊 goat');
   run('pressB()');
   assert.equal(sheet.querySelector('.label').textContent, 'Friends · Animals', 'Back: the word’s page again');
   assert.deepEqual(run('JSON.stringify(__said)'), '["山羊"]', 'not said again');

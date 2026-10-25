@@ -400,20 +400,20 @@ simply put. A part's pinyin is as it's said in the word.
 | 木头 | mùtou | 木 mù (tree): drawn like a tree: wood comes from trees |  |
 | 吃 | chī | 口 kǒu (mouth): on its left: you eat with your mouth |  |
 | 喝 | hē | 口 kǒu (mouth): on its left: you drink with your mouth |  |
-| 山羊 | shānyáng | 山 shān (mountain) + 羊 yáng (sheep) = a mountain sheep |  |
-| 动物 | dòngwù | 动 dòng (to move) + 物 wù (thing) = things that move |  |
-| 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = a pine mouse |  |
-| 头带 | tóudài | 头 tóu (head) + 带 dài (band) = a band for your head |  |
-| 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = a wild pig |  |
-| 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = a honey bee |  |
-| 蜂王 | fēngwáng | 蜂 fēng (bee) + 王 wáng (king) = the bees’ king: their queen |  |
-| 蜂蜜 | fēngmì | 蜂 fēng (bee) + 蜜 mì (honey) = the bees’ honey |  |
-| 黄蜂 | huángfēng | 黄 huáng (yellow) + 蜂 fēng (bee) = a yellow bee: a wasp |  |
-| 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = someone you learn with |  |
-| 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = don’t have |  |
-| 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = hello |  |
-| 再见 | zàijiàn | 再 zài (again) + 见 jiàn (to see) = goodbye: see you again |  |
-| 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = I don’t want it |  |
+| 山羊 | shānyáng | 山 shān (mountain) + 羊 yáng (sheep) = 山羊 (goat) |  |
+| 动物 | dòngwù | 动 dòng (to move) + 物 wù (thing) = 动物 (animal) |  |
+| 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = 松鼠 (squirrel) |  |
+| 头带 | tóudài | 头 tóu (head) + 带 dài (band) = 头带 (headband) |  |
+| 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = 野猪 (wild boar) |  |
+| 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = 蜜蜂 (bee) |  |
+| 蜂王 | fēngwáng | 蜂 fēng (bee) + 王 wáng (king) = 蜂王 (queen bee) |  |
+| 蜂蜜 | fēngmì | 蜂 fēng (bee) + 蜜 mì (honey) = 蜂蜜 (honey) |  |
+| 黄蜂 | huángfēng | 黄 huáng (yellow) + 蜂 fēng (bee) = 黄蜂 (wasp) |  |
+| 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = 同学 (classmate) |  |
+| 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = 没有 (don’t have) |  |
+| 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = 你好 (hello) |  |
+| 再见 | zàijiàn | 再 zài (again) + 见 jiàn (to see) = 再见 (goodbye) |  |
+| 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = 我不要 (no thanks) |  |
 | 苹果 | píngguǒ | 果 guǒ (fruit), as in 水果: an apple is a fruit |  |
 | 花果山 | Huāguǒ Shān | 花 huā (flower) + 果 guǒ (fruit) + 山 shān (mountain) = a mountain of flowers and fruit (your home’s name, on the sign by your stone, once you know its parts) |  |
 
@@ -632,14 +632,14 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | New on 25 October 2026 (in the game), the way to the bees: The example on 蝴蝶 (húdié, butterfly)’s page in the Word Scroll: a butterfly flutters over the wildflowers on the riverside |  |
 | 百花谷 | Bǎi huā gǔ | Valley of a Hundred Flowers | New on 25 October 2026 (in the game), the way to the bees: The name of the bees’ valley, at the end of the riverside (in the game since v266: please check the name) |  |
 | 去找蜂王吧！ | qù zhǎo fēngwáng ba! | Go and find the queen bee! | New on 25 October 2026 (in the game), the way to the bees: The sixth bee you make friends with in their valley (蜂王 fēngwáng, the queen bee, just for listening till you meet her: is 蜂王 right for a queen bee?). As each bee becomes your friend, you count them aloud: 一！, 一，二！ … up to 一，二，三，四，五，六！ (the counting lines the old monkey and the teacher say too) |  |
-| 花里有黄蜂！ | huā lǐ yǒu huángfēng! | There are wasps in the flowers! | New on 25 October 2026 (in the game), the way to the bees: The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = a yellow bee, a wasp |  |
-| 你要什么？ | nǐ yào shénme? | What do you want? | New on 25 October 2026 (in the game), the queen bee: The queen bee (蜂王 fēngwáng, taught on her card as she comes out of her old hollow tree; how it’s made: 蜂 bee + 王 king = the bees’ king, their queen: is that true to say?) |  |
+| 花里有黄蜂！ | huā lǐ yǒu huángfēng! | There are wasps in the flowers! | New on 25 October 2026 (in the game), the way to the bees: The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = 黄蜂 (wasp) |  |
+| 你要什么？ | nǐ yào shénme? | What do you want? | New on 25 October 2026 (in the game), the queen bee: The queen bee (蜂王 fēngwáng, taught on her card as she comes out of her old hollow tree; how it’s made: 蜂 bee + 王 king = 蜂王 queen bee: is that true to say?) |  |
 | 我们要蜂蜜！ | wǒmen yào fēngmì! | We want honey! | New on 25 October 2026 (in the game), the queen bee: You, answering the queen bee (蜂蜜 fēngmì, honey, just for listening till the first honey). Then you play her word game to win her over |  |
 | 好！我们去你家吧！ | hǎo! wǒmen qù nǐ jiā ba! | OK! Let’s go to your home! | New on 25 October 2026 (in the game), the queen bee: The queen bee, won over: she and her swarm follow you home to the troop |  |
 | 这里有花！ | zhèlǐ yǒu huā! | There are flowers here! | New on 25 October 2026 (in the game), the queen bee: The queen bee, at the troop’s home ground, by the wildflowers where their hive will be |  |
 | 我们有蜜蜂了！ | wǒmen yǒu mìfēng le! | We have bees now! | New on 25 October 2026 (in the game), the queen bee: The hungry monkey, once you’ve brought the bees home (he wants honey for the feast) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | New on 25 October 2026 (in the game), the bees’ hive and honey: The queen bee, as the troop finishes building the bees a hive by the wildflowers at the home ground (three log hives with straw caps); then she and her swarm fly in |  |
-| 我要吃蜂蜜 | wǒ yào chī fēngmì | I want to eat honey. | New on 25 October 2026 (in the game), the bees’ hive and honey: The sentence you complete (choosing 蜂蜜) to give the hungry monkey the honey you took from the hive. 蜂蜜 (fēngmì, honey) is taught as you take it; how it’s made: 蜂 bee + 蜜 honey = the bees’ honey (蜜蜂, the other way round, is a honey bee: is that true to say?) |  |
+| 我要吃蜂蜜 | wǒ yào chī fēngmì | I want to eat honey. | New on 25 October 2026 (in the game), the bees’ hive and honey: The sentence you complete (choosing 蜂蜜) to give the hungry monkey the honey you took from the hive. 蜂蜜 (fēngmì, honey) is taught as you take it; how it’s made: 蜂 bee + 蜜 honey = 蜂蜜 honey (and 蜜蜂, the other way round, is a bee: is that true to say?) |  |
 | 蜂蜜！太好了！ | fēngmì! tài hǎo le! | Honey! Wonderful! | New on 25 October 2026 (in the game), the bees’ hive and honey: The hungry monkey, when you bring him the honey |  |
 | 我们有蜂蜜了！ | wǒmen yǒu fēngmì le! | We have honey now! | New on 25 October 2026 (in the game), the bees’ hive and honey: The hungry monkey, as he pours the honey into the empty bowl on the feast’s table |  |
 | 我们有蜂蜜。 | wǒmen yǒu fēngmì. | We have honey. | New on 25 October 2026 (in the game), the bees’ hive and honey: The feast’s list at its big table, once the honey is in its bowl (before: 我们没有蜂蜜。) |  |
