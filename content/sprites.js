@@ -168,6 +168,11 @@ const MAP_SPRITES = {
     palette: {o:'#1F191E', l:'#3A2F48', b:'#4A3D5C', h:'#6E5E84', d:'#30263E', w:'#FFFFFF', s:'#E08A3C'},
     rows: ["................","................","................","...l...oo...l...","..l.l.ohdo.l.l..",".l..lowbbwol..l.","..l..ohbbdo..l..",".l.l.ohbbdo.l.l.",".l..ohbbbbdo..l.","l...ohbssbdo...l","..llohbssbdoll..",".l..odbbbbdo..l.",".l...oddddo...l.","l..ll.oooo.ll..l","..l..........l..","..l..........l.."]
   },
+  '蜂王': {   // queen bee, side on, with her little gold crown (chapter 1: out of her old tree in the bees' valley, and home with you)
+    faces: 'left',
+    palette: {a:'#5E5B58', b:'#424A4D', c:'#4D3B16', d:'#FFFFFF', e:'#A9C9DA', f:'#C99A2E', g:'#DDEFF8', h:'#511C19', i:'#D83A3A', j:'#FFE58A', k:'#1F1812', l:'#3A2E22', m:'#FFD866', n:'#2A231E', o:'#5E5048', p:'#2D241B', q:'#E8B22E', r:'#B5841A', s:'#46340F', t:'#1B150F'},
+    rows: ["................","................",".......aaaaaab..","....c.addddddeb.","..ccfadgggggggeb",".cfcfcfgggggggeb",".cfhijfeeeeeeeb.",".cfffffklmmlkk..","..noopmmlqqlmlk.",".nolllpqlqqlqlrs",".nolllpqlqqlqlrp",".tplllpqlqqlqlrs","..tppprqlqqlqlk.","...tttsrlrrlrs..",".......skssks...","................"]
+  },
   '蜜蜂': {   // bee
     faces: 'left',
     palette: {a:'#5E5B58', b:'#424A4D', c:'#FFFFFF', d:'#A9C9DA', e:'#DDEFF8', f:'#3A2E22', g:'#FFE58A', h:'#C99A2E', i:'#4D3B16', j:'#1B150F', k:'#2D241B', l:'#5E5333', m:'#F2C14E', n:'#322C27', o:'#756D64', p:'#1F1812'},

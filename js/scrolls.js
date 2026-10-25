@@ -159,8 +159,9 @@ const SENTENCES = () => [...REQUESTS.flatMap(r => r.choices ? Object.values(r.ch
 // shop or the wardrobe (or one of the area's practice sentences), with every word caught, and that word missing (gap): of
 // its words without a picture, one that needs practice, the one nearest the front of the review list (decided 24 October
 // 2026: 我有桃子 could miss out 我, ahead of 有 in the list, while only 有 needed practice), preferring a sentence with one.
-function practiceSentence(){
-  const all = SENTENCES().map(b => ({t:toks(b.sentence), en:b.sentenceEn})).filter(b => b.t.every(w => lvl(w) >= 1) && b.t.some(w => !WORDS[w].pic))
+// not: sentences already asked (their words, joined), such as in a big word game.
+function practiceSentence(not = []){
+  const all = SENTENCES().map(b => ({t:toks(b.sentence), en:b.sentenceEn})).filter(b => b.t.every(w => lvl(w) >= 1) && b.t.some(w => !WORDS[w].pic) && !not.includes(b.t.join('')))
     .map(b => { const ws = reviewOrder(shuffle(b.t.filter(w => !WORDS[w].pic))); return {...b, gap:ws.find(needsPractice) || ws[0]}; });
   const need = all.filter(b => needsPractice(b.gap));
   return shuffle(need.length ? need : all)[0] || null;

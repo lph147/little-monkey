@@ -202,14 +202,26 @@ function drawFlutter(a, X, Y, now){
 // queen's old tree in the bees' valley): tiny bees looping about it, each its own way.
 function drawSwarms(cx, cy, now){
   const x0 = Math.max(0, Math.floor(cx / T)), y0 = Math.max(0, Math.floor(cy / T));
-  for (let y = y0; y <= Math.min(ROWS - 1, y0 + VH); y++) for (let x = x0; x <= Math.min(COLS - 1, x0 + VW); x++){
-    if (tileAt(x, y).look !== 'swarm') continue;
-    for (let i = 0; i < 9; i++){
-      const t = now / 260 + i * 1.7 + x * 3.1;
-      const X = Math.round(x*T + 7 + Math.sin(t * (1 + i % 3 * .3) + i) * 8 + Math.cos(i * 2.3) * 3 - cx), Y = Math.round(y*T + 6 + Math.cos(t * .9 + i * .7) * 6 + Math.sin(i) * 2 - cy);
-      R(b, X, Y, 3, 2, '#F2C14E'); R(b, X + 1, Y, 1, 2, '#2A2018'); R(b, X, Y - 1, 2, 1, i % 2 ? '#FFFFFF' : '#DDEFF8');
-    }
+  for (let y = y0; y <= Math.min(ROWS - 1, y0 + VH); y++) for (let x = x0; x <= Math.min(COLS - 1, x0 + VW); x++)
+    if (tileAt(x, y).look === 'swarm') drawSwarm(x*T - cx, y*T - cy, now, x);
+}
+function drawSwarm(X, Y, now, k){   // (the square's top left corner on screen; k: so swarms side by side loop each their own way)
+  for (let i = 0; i < 9; i++){
+    const t = now / 260 + i * 1.7 + k * 3.1;
+    const bx = Math.round(X + 7 + Math.sin(t * (1 + i % 3 * .3) + i) * 8 + Math.cos(i * 2.3) * 3), by = Math.round(Y + 6 + Math.cos(t * .9 + i * .7) * 6 + Math.sin(i) * 2);
+    R(b, bx, by, 3, 2, '#F2C14E'); R(b, bx + 1, by, 1, 2, '#2A2018'); R(b, bx, by - 1, 2, 1, i % 2 ? '#FFFFFF' : '#DDEFF8');
   }
+}
+// A character that flies (flies, such as the queen bee and her swarm, coming home with you): hovering over its square,
+// bobbing, its wings a blur as they beat, its shadow small on the ground below; or, for a swarm, a cloud of tiny bees.
+// Long grass and tall flowers never hide it, as it's above them. (k: so two side by side bob each their own way)
+function drawFlying(n, X, Y, now, k){
+  const hover = 6 + Math.round(Math.sin(now / 300 + k) * 2);
+  R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
+  if (n.look === 'swarm'){ drawSwarm(X, Y - hover + 4, now, k); return; }
+  const spr = mapSprite(n.look), faces = MAP_SPRITES[n.look].faces, side = n.dir === 'left' || n.dir === 'right';
+  b.drawImage(faces && side && n.dir !== faces ? mirrored(spr) : spr, X, Y - hover);   // (facing the way it's going, or you)
+  if (Math.floor(now / 90) % 2) R(b, X + 5, Y - hover + 2, 6, 1, 'rgba(255,255,255,.7)');   // the wings' blur
 }
 function drawFoe(cx, cy, now){
   if (!foe || foe.spot) return;   // (one met at its own spot is drawn there: meetHop)
@@ -446,7 +458,9 @@ function drawWorld(now){
     }
     const n = e.n, X = Math.round(e.c.x) - cx, Y = Math.round(e.c.y) - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
+    if (n.flies){   // one that flies, such as the queen bee
+      drawFlying(n, X, Y, now, n.id.charCodeAt(0));
+    } else if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
       R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)'); b.drawImage(mapSprite(n.look), X, Y - Math.floor(Math.abs(Math.sin(now/400)) * 1));
     } else if (n.look === 'bird'){
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
@@ -462,7 +476,7 @@ function drawWorld(now){
       const idle = Math.floor(now/700 + n.x) % 2;
       drawEntityMonkey(n.kind, X, Y, n.dir, now, e.c.mid ? 1 : idle, e.c.mid ? 1 + (n.parity || 0) : 0, n.x + n.y);
     }
-    if (FOLLOWERS.includes(n)) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
+    if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
     // a ! while they're stopping you (the stopsYou step), or a ! or ? from the area's bubbles
     const bub = now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you)
     if (bub) bubbles.push([X+10, Y-8, bub.show]);

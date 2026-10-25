@@ -139,6 +139,12 @@ const DRAFTS = [
     ['去 找 蜂王 吧 ！', 'Go and find the queen bee!', 'The sixth bee you make friends with in their valley (蜂王 fēngwáng, the queen bee, just for listening till you meet her: is 蜂王 right for a queen bee?). As each bee becomes your friend, you count them aloud: 一！, 一，二！ … up to 一，二，三，四，五，六！ (the counting lines the old monkey and the teacher say too)'],
     ['花 里 有 黄蜂 ！', 'There are wasps in the flowers!', 'The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = a yellow bee, a wasp']]
     .map(([zh, en, where, py]) => ({zh, en, py, where:'New on 25 October 2026 (in the game), the way to the bees: ' + where})),
+  ...[['你 要 什么 ？', 'What do you want?', 'The queen bee (蜂王 fēngwáng, taught on her card as she comes out of her old hollow tree; how it’s made: 蜂 bee + 王 king = the bees’ king, their queen: is that true to say?)'],
+    ['我们 要 蜂蜜 ！', 'We want honey!', 'You, answering the queen bee (蜂蜜 fēngmì, honey, just for listening till the first honey). Then you play her word game to win her over'],
+    ['好 ！ 我们 去 你 家 吧 ！', 'OK! Let’s go to your home!', 'The queen bee, won over: she and her swarm follow you home to the troop'],
+    ['这里 有 花 ！', 'There are flowers here!', 'The queen bee, at the troop’s home ground, by the wildflowers where their hive will be'],
+    ['我们 有 蜜蜂 了 ！', 'We have bees now!', 'The hungry monkey, once you’ve brought the bees home (he wants honey for the feast)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 25 October 2026 (in the game), the queen bee: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 

@@ -160,6 +160,16 @@ SAVES.beeFriends = {...SAVES.beeValley, w: {...SAVES.beeValley.w, ...knows(1, ['
   areas: {1: {...SAVES.beeValley.areas[1], beeFriends: 2}}, pos: {place: 'flowerValley', x: 14, y: 11, dir: 'right'}};
 SAVES.beeSix = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], beeFriends: 6}}};
 SAVES.beeOpen = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], beeFriends: 6, bees: 3}}, pos: {place: 'flowerValley', x: 25, y: 9, dir: 'up'}};
+// the queen bee (25 October 2026): in front of her old tree, where A brings her out; out, waiting for you to play her word
+// game; won over, she and her swarm following you along the riverside; coming home with you; and home, by the wildflowers
+SAVES.queenTree = {...SAVES.beeOpen, tasksSeen: {...SAVES.beeOpen.tasksSeen, bees2: 1, bees3: 1}, pos: {place: 'flowerValley', x: 26, y: 6, dir: 'up'}};
+SAVES.queenOut = {...SAVES.queenTree, w: {...SAVES.queenTree.w, ...knows(1, ['蜂王'])}, areas: {1: {...SAVES.queenTree.areas[1], bees: 4, queenOut: true}},
+  tasksSeen: {...SAVES.queenTree.tasksSeen, bees4: 1}, pos: {place: 'flowerValley', x: 25, y: 6, dir: 'up'}};
+SAVES.beesFollow = {...SAVES.queenOut, friends: [...SAVES.queenOut.friends, 'queen'], areas: {1: {...SAVES.queenOut.areas[1], bees: 5}}, following: ['queen', 'beeSwarm'],
+  tasksSeen: {...SAVES.queenOut.tasksSeen, bees5: 1}, pos: {place: 'riverside', x: 36, y: 7, dir: 'left'}};
+SAVES.beesComing = {...SAVES.beesFollow, pos: {place: 'riverside', x: 1, y: 7, dir: 'left'}};
+SAVES.beesHome = {...SAVES.beesFollow, areas: {1: {...SAVES.beesFollow.areas[1], bees: 6}}, following: [], tasksSeen: {...SAVES.beesFollow.tasksSeen, bees6: 1},
+  pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -634,6 +644,23 @@ const SCREENS = [
     play(); await wait(100); runEvents(); await wait(500); }},
   {id: 'bees-open', title: 'The way to the old tree', save: 'beeOpen', why: 'All six bees are your friends: the swarm has flown aside, and the way to the queen’s old hollow tree is open.', run: async () => {
     play(); await wait(500); }},
+  {id: 'queen-meet', title: 'The queen bee comes out', save: 'queenTree', why: 'A at her old hollow tree: she buzzes out, her card teaching 蜂王 (fēngwáng, queen bee), said straight away as you meet her.', run: async () => {
+    play(); await wait(100); pressA(); await wait(1500); }},
+  {id: 'queen-ask', title: 'What do you want?', save: 'queenOut', why: 'The queen bee, hovering in front of her tree: 你要什么？ Then you say 我们要蜂蜜！ (蜂蜜 just for listening).', run: async () => {
+    play(); await wait(100); talk(npc('queen')); await wait(500); }},
+  {id: 'queen-game', title: 'The queen bee’s word game', save: 'queenOut', why: 'To win her over: six questions, a heart for each right answer, and three ✕ beside them; three wrong, and she flies back into her tree.', run: async () => {
+    play(); await wait(100); encounter({id: 'queen', hz: '蜂王', img: portrait('queen'), wild: false, questions: 6, misses: 3, gaps: 2}); await wait(800); }},
+  {id: 'queen-lost', title: 'Three wrong', save: 'queenOut', why: 'She buzzes back into her old tree: press A at it to try again.', run: async () => {
+    play(); await wait(100); pictureQ = async () => false; gapRound = async () => ({right: false, shells: 0});
+    encounter({id: 'queen', hz: '蜂王', img: portrait('queen'), wild: false, questions: 6, misses: 3, gaps: 2, lose: AREA.talk.queen[0].do.find(s => s.wordGame).wordGame.lose}); await wait(800); }},
+  {id: 'bees-follow', title: 'The bees follow you home', save: 'beesFollow', why: 'Won over, the queen bee and her swarm follow you home along the riverside, flying behind you (tall flowers and long grass never hide them).', run: async () => {
+    play(); await wait(200);
+    for (let i = 0; i < 4; i++){ pl.dir = 'left'; tryStep('left', performance.now()); await wait(450); }
+    await wait(300); }},
+  {id: 'bees-home', title: 'The bees are home', save: 'beesComing', why: 'Into the home ground with them: they fly over to the wildflowers below the cliff (where their hive will be), with a fanfare.', run: async () => {
+    play(); await wait(100); arrive(0, 7).then(runEvents); await wait(1600); }},
+  {id: 'hungry-has-bees', title: 'We have bees now!', save: 'beesHome', why: 'The hungry monkey, with a ! once the bees are home: 我们有蜜蜂了！ (the hive and the honey come next).', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

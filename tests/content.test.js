@@ -261,7 +261,7 @@ test('fish jump out of water', () => {
 
 test('characters are drawn as monkeys (with colours), birds or an animal with a map sprite, and sparkle on real words', () => {
   for (const c of AREA.characters){
-    assert.ok(c.look === undefined || ['monkey', 'bird'].includes(c.look) || MAP_SPRITES[c.look], `${c.id} has look "${c.look}"; it can be monkey, bird or a word with a map sprite`);
+    assert.ok(c.look === undefined || ['monkey', 'bird'].includes(c.look) || (c.look === 'swarm' && c.flies) || MAP_SPRITES[c.look], `${c.id} has look "${c.look}"; it can be monkey, bird, a swarm of bees (that flies) or a word with a map sprite`);
     if (!c.look || c.look === 'monkey') assert.ok(c.palette, `${c.id} is a monkey, so it needs a palette`);
     if (c.word) assert.ok(collectible.includes(c.word), `${c.id}'s word ${c.word} isn't a word you can collect in ${where}`);
   }

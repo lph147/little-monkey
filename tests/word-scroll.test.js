@@ -40,18 +40,18 @@ test('the Word Scroll shows caught words, shadows of heard words, and ？ for th
   assert.equal(count(html, 'class="card unseen"'), total - 2, 'every other word shows ？');
 });
 
-test('a word for later (蜂王, the queen bee, till you meet her) isn’t counted or in the Word Scroll, unless the game you’re playing caught it before', () => {
+test('a word for later (蜂蜜, honey, till the bees’ first honey) isn’t counted or in the Word Scroll, unless the game you’re playing caught it before', () => {
   const caught = {'石头': {lv: 1, ok: 0}};
   const now = loadGame({save: {version: 30, started: true, w: caught}});
   const n = now.run('ORDER.length');
-  assert.equal(now.run("ORDER.includes('蜂王')"), false, 'nothing has taught it yet');
+  assert.equal(now.run("ORDER.includes('蜂蜜')"), false, 'nothing has taught it yet');
   assert.match(now.run('statsHTML()'), new RegExp(`1/${n} words`), 'so it isn’t counted');
-  assert.equal(count(now.run("scrollPage('animals')"), 'class="card'), now.run("ORDER.filter(w => WORDS[w].category === 'animals').length"), 'nor a ？ in the Word Scroll');
-  const before = loadGame({save: {version: 30, started: true, w: {...caught, '蜂王': {lv: 2, ok: 1}}}});
-  assert.equal(before.run("ORDER.includes('蜂王')"), true, 'a game that has caught it keeps it');
+  assert.equal(count(now.run("scrollPage('food')"), 'class="card'), now.run("ORDER.filter(w => WORDS[w].category === 'food').length"), 'nor a ？ in the Word Scroll');
+  const before = loadGame({save: {version: 30, started: true, w: {...caught, '蜂蜜': {lv: 2, ok: 1}}}});
+  assert.equal(before.run("ORDER.includes('蜂蜜')"), true, 'a game that has caught it keeps it');
   assert.equal(before.run('ORDER.length'), n + 1);
   assert.match(before.run('statsHTML()'), new RegExp(`2/${n + 1} words`));
-  assert.equal(now.run("ORDER.includes('蜜蜂')"), true, 'the bee is counted now its valley’s bees are your friends to make (it was a word for later till 25 October 2026)');
+  assert.equal(now.run("['蜜蜂', '蜂王'].every(w => ORDER.includes(w))"), true, 'the bee and the queen bee are counted now you can meet them (words for later till 25 October 2026)');
 });
 
 test('a caught word without a picture shows its characters in the grid', () => {

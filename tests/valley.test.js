@@ -130,7 +130,7 @@ test('each bee you make friends with is counted aloud, 一！ to 一，二，三
   g.run('__said.length = 0');
   await meetBee(g);
   assert.deepEqual([get(g, 'here().beeFriends'), get(g, '__said')], [6, ['bee: 我们玩吧！']], 'after six, a bee comes out to play now and then, like your other friends: no more counting');
-  assert.match(g.run('tasksHint()'), /The way to the old tree in the 蜜蜂 \(bees\)’ valley is open|The way to the old tree in the bees’ valley is open/);
+  assert.match(g.run('goalText()'), /Find out who lives in the old hollow 树 \(tree\), up in the bees’ valley/, 'next: who lives in the old tree?');
 });
 
 test('the valley’s flowers: tall flowers hide your feet; the beds are low flowers you walk on, each its own colour', () => {

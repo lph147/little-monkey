@@ -665,6 +665,13 @@ rt.hid{visibility:hidden}
 .plate .engbtn{font-size:.7rem;padding:0 4px;margin-left:2px}
 .plate .heart{width:22px;height:20px}
 .plate .qn{font-family:var(--pixel);font-size:.8rem;color:var(--muted)}
+/* a big word game, such as the queen bee's: the wrong answers so far beside the hearts, grey till each is used, then red */
+.plate .lifeline{display:flex;flex-wrap:wrap;align-items:flex-end;column-gap:10px}   /* (on its own line under the hearts, where they don't fit beside them) */
+.plate .misses{display:flex;gap:3px;font:700 .95rem/1 var(--text)}
+.plate .miss{color:#C9C2BB}
+.plate .miss.on{color:#D03A2E}
+.sheet .plate .hearts.many{gap:2px}
+.sheet .plate .hearts.many .heart{width:.75rem;height:.7rem}   /* six hearts, small enough to fit on a small phone */
 .scene .plus{position:absolute;right:42px;top:14px;font:700 1.25rem var(--pixel);color:#E0443C;text-shadow:0 2px 0 #fff}
 
 /* Fill the gap: the speaker beside what to do, then the sentence and the answers, in the middle of the card. */

@@ -81,6 +81,11 @@ shown where the word list has them.
 | 我们没有蜂蜜！ | wǒmen méiyǒu fēngmì! | We don’t have any honey! | 饿猴子 (Hungry monkey) |  |
 | 我要吃蜂蜜！ | wǒ yào chī fēngmì! | I want to eat honey! | 饿猴子 (Hungry monkey) |  |
 | 去找蜂王吧！ | qù zhǎo fēngwáng ba! | Go and find the queen bee! |  |  |
+| 你要什么？ | nǐ yào shénme? | What do you want? | 蜂王 (queen bee) |  |
+| 我们要蜂蜜！ | wǒmen yào fēngmì! | We want honey! | 小猴子 (You) |  |
+| 好！我们去你家吧！ | hǎo! wǒmen qù nǐ jiā ba! | OK! Let’s go to your home! | 蜂王 (queen bee) |  |
+| 这里有花！ | zhèlǐ yǒu huā! | There are flowers here! | 蜂王 (queen bee) |  |
+| 我们有蜜蜂了！ | wǒmen yǒu mìfēng le! | We have bees now! | 饿猴子 (Hungry monkey) |  |
 | 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
 | 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | you |  |
 | 我来了！ | wǒ lái le! | Here I come! | you |  |
@@ -192,7 +197,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
 | 山上有路。 | shān shàng yǒu lù. | There is a path up the mountain. | 路 |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | 蜘蛛 |  |
-| 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | 蜜蜂 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | 狼 |  |
@@ -397,6 +401,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 头带 | tóudài | 头 tóu (head) + 带 dài (band) = a band for your head |  |
 | 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = a wild pig |  |
 | 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = a honey bee |  |
+| 蜂王 | fēngwáng | 蜂 fēng (bee) + 王 wáng (king) = the bees’ king: their queen |  |
 | 黄蜂 | huángfēng | 黄 huáng (yellow) + 蜂 fēng (bee) = a yellow bee: a wasp |  |
 | 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = someone you learn with |  |
 | 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = don’t have |  |
@@ -622,6 +627,11 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 百花谷 | Bǎi huā gǔ | Valley of a Hundred Flowers | New on 25 October 2026 (in the game), the way to the bees: The name of the bees’ valley, at the end of the riverside (in the game since v266: please check the name) |  |
 | 去找蜂王吧！ | qù zhǎo fēngwáng ba! | Go and find the queen bee! | New on 25 October 2026 (in the game), the way to the bees: The sixth bee you make friends with in their valley (蜂王 fēngwáng, the queen bee, just for listening till you meet her: is 蜂王 right for a queen bee?). As each bee becomes your friend, you count them aloud: 一！, 一，二！ … up to 一，二，三，四，五，六！ (the counting lines the old monkey and the teacher say too) |  |
 | 花里有黄蜂！ | huā lǐ yǒu huángfēng! | There are wasps in the flowers! | New on 25 October 2026 (in the game), the way to the bees: The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = a yellow bee, a wasp |  |
+| 你要什么？ | nǐ yào shénme? | What do you want? | New on 25 October 2026 (in the game), the queen bee: The queen bee (蜂王 fēngwáng, taught on her card as she comes out of her old hollow tree; how it’s made: 蜂 bee + 王 king = the bees’ king, their queen: is that true to say?) |  |
+| 我们要蜂蜜！ | wǒmen yào fēngmì! | We want honey! | New on 25 October 2026 (in the game), the queen bee: You, answering the queen bee (蜂蜜 fēngmì, honey, just for listening till the first honey). Then you play her word game to win her over |  |
+| 好！我们去你家吧！ | hǎo! wǒmen qù nǐ jiā ba! | OK! Let’s go to your home! | New on 25 October 2026 (in the game), the queen bee: The queen bee, won over: she and her swarm follow you home to the troop |  |
+| 这里有花！ | zhèlǐ yǒu huā! | There are flowers here! | New on 25 October 2026 (in the game), the queen bee: The queen bee, at the troop’s home ground, by the wildflowers where their hive will be |  |
+| 我们有蜜蜂了！ | wǒmen yǒu mìfēng le! | We have bees now! | New on 25 October 2026 (in the game), the queen bee: The hungry monkey, once you’ve brought the bees home (he wants honey for the feast) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

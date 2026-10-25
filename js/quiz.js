@@ -272,49 +272,60 @@ function tipCard(t, img){
     ok.onclick = () => { again.forEach(clearTimeout); closeCard(); res(); };
   });
 }
+// Questions from an animal you meet, or a character's word game: three, with a heart for each right answer, and two right
+// make friends. A big game, such as the queen bee's, can ask more (questions), with a heart for each; end as soon as you
+// get so many wrong (misses: marked ✕ under the hearts, and fewer than that wins it); and have sentences with a word
+// missing among them (gaps: how many, spread out, ending with one). It says what happens if you don't win (lose).
 async function encounter(foe){
   await learnTip(foe);
-  const an = foe.hz, img = foe.img;
+  const an = foe.hz, img = foe.img, n = foe.questions || 3, misses = foe.misses || 0;
   let showEn = false;
   const nameHTML = () => foe.name
     ? `<div class="spk-zh">${foe.name.zh} <span class="spk-py">${foe.name.py}</span></div><div class="spk-en">${foe.name.en}</div>`
     : `<div class="spk-zh">${an} <span class="spk-py">${WORDS[an].py}</span>${foe.justTaught ? '' : (showEn ? ` <span class="small">${esc(WORDS[an].en)}</span>` : ' <button class="engbtn" data-a="foeen">English</button>')}</div>`;
   // The scene: your monkey, from behind, facing the animal on the grass (or a cliff, if that's its home), and its
-  // name plate with hearts for the friendship won so far (filled: how many) and which question this is (n of 3).
+  // name plate with hearts for the friendship won so far (filled: how many), which question this is (q of n), and in a
+  // big game, the wrong answers so far (missed) of those it ends at.
   const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (no stick: these are friends)
-  const scene = (filled, n, look = '') => `<div class="scene${sceneLook(foe.home)}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
+  const hearts = filled => [...Array(n).keys()].map(k => heartHTML(k < filled)).join('');
+  const lifeline = (filled, missed) => { const h = `<div class="hearts${n > 3 ? ' many' : ''}" aria-label="Friendship: ${filled} of ${n}">${hearts(filled)}</div>`;   // (many: smaller, to fit)
+    return misses ? `<div class="lifeline">${h}<div class="misses" aria-label="Wrong: ${missed} of ${misses}">${[...Array(misses).keys()].map(k => `<span class="miss${k < missed ? ' on' : ''}">✕</span>`).join('')}</div></div>` : h; };
+  const scene = (filled, q, look = '', missed = 0) => `<div class="scene${sceneLook(foe.home)}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}"><div class="plate"><div class="name">${nameHTML()}</div>`
-    + `<div class="hearts" aria-label="Friendship: ${filled} of 3">${[0, 1, 2].map(k => heartHTML(k < filled)).join('')}</div>${n ? `<div class="qn">Question ${n} of 3</div>` : ''}</div>`
+    + `${lifeline(filled, missed)}${q ? `<div class="qn">Question ${q} of ${n}</div>` : ''}</div>`
     + '<div class="plus" aria-hidden="true" hidden>+♥</div></div>';
-  const targets = toAsk(an, 3);
-  let score = 0;
-  for (let i = 0; i < targets.length; i++){
-    // Sometimes, in an area that asks them, the last question is a sentence you know with a word missing.
-    const b = AREA.questions.includes('gap') && i === targets.length - 1 && Math.random() < GAP_CHANCE ? practiceSentence() : null;
-    if (b){ if ((await gapRound(b, img)).right) score++; continue; }
-    const w = targets[i], q = wordQuestion(w, an), {type, body, opts} = q;   // (never the animal, which is right there)
-    const head = scene(score, i + 1);
+  const targets = toAsk(an, n), gapAt = foe.gaps ? [...Array(foe.gaps).keys()].map(k => Math.round((k + 1) * n / foe.gaps) - 1) : [];
+  const sentences = [];   // (asked already: a big game's sentences are all different)
+  let score = 0, wrong = 0, next = 0;
+  for (let i = 0; i < n && !(misses && wrong >= misses); i++){
+    // Sometimes, in an area that asks them, the last question is a sentence you know with a word missing (or, in a big
+    // game, the ones it says).
+    const b = AREA.questions.includes('gap') && (foe.gaps ? gapAt.includes(i) : i === n - 1 && Math.random() < GAP_CHANCE) ? practiceSentence(sentences) : null;
+    if (b){ sentences.push(b.t.join('')); if ((await gapRound(b, img)).right) score++; else wrong++; continue; }
+    if (next >= targets.length) break;   // (not enough words you know to ask about)
+    const w = targets[next++], q = wordQuestion(w, an), {type, body, opts} = q;   // (never the animal, which is right there)
+    const head = scene(score, i + 1, '', wrong);
     const helper = foe.wild ? helperHTML() : '';   // in an animal encounter, food such as an apple takes away a wrong answer
     const ok = await pictureQ({head, body, word: w, type, helper, options: q.options, text: q.text,
-      answerIdx: q.answerIdx, onAnswer: ok => {   // right: the animal hops and a heart fills
-        if (!ok) return;
+      answerIdx: q.answerIdx, onAnswer: ok => {   // right: the animal hops and a heart fills; wrong, in a big game: a ✕
         const sc = sheet.querySelector('.scene'); if (!sc) return;
+        if (!ok){ const m = sc.querySelectorAll('.miss')[wrong]; if (m) m.classList.add('on'); return; }
         sc.querySelector('.foe').classList.add('hop');
-        sc.querySelector('.hearts').innerHTML = [0, 1, 2].map(k => heartHTML(k < score + 1)).join('');
+        sc.querySelector('.hearts').innerHTML = hearts(score + 1);
         sc.querySelector('.plus').hidden = false;
       }, onShow: () => {
         if (type !== 'read') setTimeout(() => say(w), 300);
         on('[data-a=foeen]', e => { showEn = true; e.currentTarget.outerHTML = ` <span class="small">${esc(WORDS[an].en)}</span>`; });
         wireHelper(opts.length, opts.indexOf(w));
       }});
-    if (ok) score++;
+    if (ok) score++; else wrong++;
   }
   closeCard();
   // (a game just for practice, foe.practice, such as with a little monkey in training that has given you its present
   // already, earns nothing: decided 24 October 2026, as you could play it again and again for shells)
   if (!foe.practice) S.shells += score;
   S.encounters = (S.encounters || 0) + 1;
-  const won = score >= 2, already = S.friends.includes(foe.id), shells = score && !foe.practice ? ` +${score} 🐚` : '';
+  const won = misses ? wrong < misses : score >= 2, already = S.friends.includes(foe.id), shells = score && !foe.practice ? ` +${score} 🐚` : '';
   let label, msg;
   if (won){
     if (!already) S.friends.push(foe.id);
@@ -322,11 +333,11 @@ async function encounter(foe){
     label = already && !foe.another ? '♥ Friends' : '⭐ New friend';   // (another: one more of a kind you have friends among, such as another bee)
     msg = foe.another ? `Another ${wz(an)} is now your ${wz('朋友')}!${shells}` : already ? `You played with your ${wz('朋友')}, the ${wz(an)}!${shells}` : `The ${wz(an)} is now your ${wz('朋友')}!${shells}`;
   } else {
-    label = `${score} of 3`;
-    msg = `The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}. Those words will come back soon.${shells}`;
+    label = misses ? `${wrong} wrong` : `${score} of ${n}`;
+    msg = `${foe.lose ? fill(foe.lose) : `The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}.`} Those words will come back soon.${shells}`;
   }
   save(); showEn = true;   // the English is in the message, so the name plate shows it too
-  await infoBox(scene(score, 0, won ? 'hop' : 'gone'), `<p class="label center">${label}</p><p class="endmsg">${msg}</p>`);
+  await infoBox(scene(score, 0, won ? 'hop' : 'gone', wrong), `<p class="label center">${label}</p><p class="endmsg">${msg}</p>`);
   return won;
 }
 

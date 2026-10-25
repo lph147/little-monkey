@@ -108,7 +108,7 @@ const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
 const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && a.at[0] === x && a.at[1] === y) : null;   // an animal living at this spot, once animals appear
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
-AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; });
+AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; else if (WORD_BANK[c.look]) FRIEND_NAMES[c.id] = c.look; });   // (one that looks like a creature with a word: by its word, such as 蜂王)
 
 // Pixel icons in text (pixelIcons), instead of emoji: the money symbol, a shell (the troop trades in shells from the
 // shore), small, wherever the text says 🐚.
@@ -149,9 +149,12 @@ NAMES.player = {zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey (you)'};
 // Your name: 小猴子 (Little monkey), or the first of the area's names for you (yourNames) whose if matches, such as 美猴王 once you're king.
 const yourName = () => (AREA.yourNames || []).find(n => matches(n.if)) || NAMES.player;
 // An animal friend met on the way (a character that looks like an animal: the animal itself, such as the goat in the
-// valley, or another of its kind, such as the goat below the waterfall) is called by its word, in Chinese and pinyin.
-const animalOf = id => ANIMALS.find(x => x.id === id) || ANIMALS.find(x => x.hz === (AREA.characters.find(c => c.id === id) || {}).look);
-const animalName = id => { const a = animalOf(id); return a && {zh:a.hz, py:WORD_BANK[a.hz].py}; };
+// valley, or another of its kind, such as the goat below the waterfall) is called by its word, in Chinese and pinyin; and
+// so is a character that looks like another creature with a word, such as the queen bee (蜂王), with its picture.
+const lookOf = id => (AREA.characters.find(c => c.id === id) || {}).look;
+const animalOf = id => ANIMALS.find(x => x.id === id) || ANIMALS.find(x => x.hz === lookOf(id));
+const creatureWord = id => { const a = animalOf(id); return a ? a.hz : WORD_BANK[lookOf(id)] && PICTURES[lookOf(id)] ? lookOf(id) : null; };
+const animalName = id => { const w = creatureWord(id); return w && {zh:w, py:WORD_BANK[w].py}; };
 function speaker(id){
   const n = id === 'player' ? yourName() : NAMES[id] || animalName(id);
   return `<div class="speaker" data-id="${esc(id)}">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
@@ -162,7 +165,7 @@ function portrait(id){
   let c;
   if (PALS[id]) c = monkeySprite(id, 'down', false, 0);
   else if (id === 'sign') c = SPR.sign;
-  else { const a = animalOf(id); c = a ? a.pic : SPR.rock; }
+  else { const a = animalOf(id), w = creatureWord(id); c = a ? a.pic : w ? sprite(PICTURES[w].rows, PICTURES[w].palette) : SPR.rock; }
   return portraitCache[key] = `<img class="portrait" alt="" src="${c.toDataURL()}">`;
 }
 const SPR = {

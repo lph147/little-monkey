@@ -182,7 +182,7 @@ function matches(cond){   // does the game match everything in an if?
 }
 const CALL_MS = 900;   // how long a character's ! shows before they talk to you, when they stop you (the stopsYou step)
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note'], card:['note'], give:['note'], battle:['win'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], card:['note'], give:['note'], battle:['win'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -333,17 +333,24 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
       on('[data-a=ok]', () => { closeCard(); res(); });
     });
   },
-  async newWord(s, who){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },   // quiet when a character teaches it
+  // (quiet when a character teaches it; but said straight away when it's theirs, as you meet them, met: such as the queen bee)
+  async newWord(s, who){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who && !s.met}); },
   async card(s, who){ await showNotice(s.card, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },
   set(s){ Object.assign(here(), s.set); save(); placeCharacters(); refreshMap(); },
   async request(s, who, last){ await request(REQUESTS.find(r => r.id === s.request), speaker(who), last); },
   async shop(s, who){ await shop(speaker(who)); },
-  async wordGame(s, who, last){   // win: what happens if you win, such as a present; practice: a game for nothing but practice
+  // win: what happens if you win, such as a present; lost: if you don't; practice: a game for nothing but practice. A big
+  // game, such as the queen bee's, can have more questions (questions), end at so many wrong answers (misses), have
+  // sentences with a word missing among them (gaps), and say what happens if you don't win (lose: a message).
+  async wordGame(s, who, last){
     const g = s.wordGame;
     if (!canEncounter()){ toast(g.notYet); return; }
     if (!(await confirmBox(speaker(who), fill(g.ask), 'Play', 'Not now'))) return;
     SFX.encounter();
-    if (await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who], practice:!!g.practice}) && g.win) await runSteps(g.win, who, last);
+    const justTaught = caughtBefore !== null && caughtCount() > caughtBefore;   // (its name, as you've just met it: no English on its plate)
+    const won = await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who], practice:!!g.practice, justTaught, questions:g.questions, misses:g.misses, gaps:g.gaps, lose:g.lose});
+    if (won && g.win) await runSteps(g.win, who, last);
+    if (!won && g.lost) await runSteps(g.lost, who, last);
   },
   // Counting with the one you're talking to (countGame: one of the area's countGames), such as the stones in the little
   // monkeys' tower on the hillside: COUNT_GAME counting questions, as in a number lesson (js/quiz.js), each about a
@@ -509,6 +516,17 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     going.forEach((n, i) => { const [fx, fy] = from[was.indexOf(n)]; n.mv = {fx, fy, t0:now + i * 150, dur:LEAP_MS, far:true}; });
     if (going.length){ SFX.turn(); await sleep(LEAP_MS + 150 * (going.length - 1)); }
   },
+  // A character leaps (or flies, for one that flies) out of a square to where the story has just put them (from), such as
+  // the queen bee out of her old tree; or from where they are into a square (to), such as back into it, before the story
+  // takes them off the map.
+  async leap(s){
+    const n = ALL_NPCS.find(c => c.id === s.leap);
+    if (!n || n.place !== PLACE) return;
+    const [fx, fy] = s.from || [n.x, n.y];
+    if (s.to){ n.x = s.to[0]; n.y = s.to[1]; n.dir = dirOf(n.x - fx, n.y - fy) || n.dir; }
+    n.mv = {fx, fy, t0:performance.now(), dur:LEAP_MS, far:true};
+    await sleep(LEAP_MS);
+  },
   // The character you're talking to leads you somewhere, such as the lookout's goat walking you to its railing to show
   // you the view (decided 24 October 2026: a player it told about the view walked on without seeing it): it walks to its
   // square (leadTo), and you after it to yours (you, and the way you face there, such as at the railing), a step at a
@@ -596,7 +614,7 @@ async function runSteps(steps, who, ends){
   for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i), !!ends) === STOP) return STOP;
 }
 // Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map.
-const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep'];
+const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap'];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){

@@ -36,7 +36,7 @@ let PLACE = null, MAP = [], COLS = 0, ROWS = 0;   // the place you're in, and it
 let LEGEND = AREA.legend;             // what each map letter is: the area's legend, and the place's own if it has one (setPlace)
 const REQUESTS = Object.entries(AREA.requests).map(([id, r]) => ({id, ...r}));   // characters asking you to bring something
 const requestFrom = who => REQUESTS.find(r => r.from === who);
-const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word,
+const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word, flies:!!c.flies,
   home:{place:placeOf(c), x:c.x, y:c.y, facing:c.facing}, moves:c.moves}));   // home: where the content puts them; moves: where they go as the story goes on (placeCharacters)
 let NPCS = [], SPARKLES = [];         // the characters and sparkles in the place you're in
 const TRAINING_TILES = [];            // where the practice posts are (the training action)

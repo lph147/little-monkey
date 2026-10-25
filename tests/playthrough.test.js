@@ -1,4 +1,5 @@
-// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school, its lessons and its flowers), the way a
+// Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school, its lessons and its flowers,
+// and the bees, home with their queen), the way a
 // player would: standing in front of things and pressing A, stepping into flowers and rustling grass,
 // pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
@@ -299,7 +300,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().home, 2, 'with the old monkey');
   assert.deepEqual(get("(({place, x, y}) => [place, x, y])(ALL_NPCS.find(n => n.id === 'elder'))"), ['homeGround', 10, 6], 'by the school’s plot');
   assert.ok(get('__said').includes('这里很大！'), 'he says how big it is');
-  assert.ok(get('areaChecklist()').filter(([, , , found]) => found).every(([, done]) => done), 'chapter 1 so far is ticked off');
+  assert.deepEqual(get('areaChecklist()').filter(([, done, , found]) => found && !done), [], 'chapter 1 so far is ticked off');
 
   // Chapter 1: the big monkey marks out the school's plot, and wants wood and small stones to build it, from the pine wood
   // up the hill
@@ -456,11 +457,24 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('蜜蜂') && area().beeFriends === 6, 'six bee friends');
   assert.ok(['一！', '一，二！', '一，二，三，四，五，六！', '去找蜂王吧！'].every(t => get('__said').includes(t)), 'counted aloud, and the sixth: go and find the queen!');
   assert.ok(area().bees === 3 && run('walkable(25, 7)'), 'the swarm has flown aside: the way to the old tree is open');
+  // The queen bee (蜂王) comes out of her old tree as you press A at it: her card, 你要什么？, and you say 我们要蜂蜜！; her
+  // word game (six questions, two of them sentences with a word missing) wins her over: 好！我们去你家吧！, and she and her
+  // swarm follow you home, back along the riverside, to the wildflowers below the cliff; the hungry monkey is thrilled:
+  // 我们有蜜蜂了！
+  stand(25, 8, 'up');
+  await walk([[25, 8], [25, 6]], 'up into the nook, where the swarm was, to the old tree');
+  await pressAt(26, 6, 'up', 'pressing A at the old hollow tree: the queen bee comes out, and plays her word game', 1);
+  assert.ok(knows('蜂王') && area().bees === 5, 'the queen bee: 蜂王, won over by her word game');
+  assert.ok(['你要什么？', '我们要蜂蜜！', '好！我们去你家吧！'].every(t => get('__said').includes(t)), 'what she asks, what you want, and she’s coming');
+  assert.deepEqual(get('S.following'), ['queen', 'beeSwarm'], 'she and her swarm follow you');
   stand(1, 10, 'left');
-  await act('arrive(0, 10).then(runEvents)', 'back out of the valley');
+  await act('arrive(0, 10).then(runEvents)', 'back out of the valley, the bees following');
   stand(1, 7, 'left');
-  await act('arrive(0, 7).then(runEvents)', 'back along the riverside to the home ground');
+  await act('arrive(0, 7).then(runEvents)', 'back along the riverside to the home ground, the bees following');
   assert.equal(run('PLACE'), 'homeGround');
+  assert.deepEqual([area().bees, get('S.following')], [6, []], 'home: the bees fly to the wildflowers below the cliff');
+  await pressAt(20, 7, 'left', 'telling the hungry monkey the bees are home');
+  assert.ok(get('__said').includes('我们有蜜蜂了！') && area().bees === 7, 'we have bees now!');
   stand(11, 5, 'up');
   await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
   assert.equal(run('PLACE'), 'school');
@@ -470,7 +484,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns'], 'the red lesson ends with the class painting the lanterns (no other part of the school, since 24 October 2026)');
   assert.deepEqual(get('paintedParts()'), {lanterns: '红色'}, 'and they’re red');
   await pressAt(7, 3, 'up', 'a lesson once you know the numbers to ten and the colours: practice');
-  assert.ok(get('areaChecklist()').filter(([, , , found]) => found).every(([, done]) => done), 'chapter 1 so far is ticked off');
+  assert.deepEqual(get('areaChecklist()').filter(([, done, , found]) => found && !done), [], 'chapter 1 so far is ticked off');
 
   // Chapter 1: once you know red, yellow and white, the big monkey wants flowers to plant in front of the school, one of
   // each colour, picked at the home ground (a side quest: this player has had every lesson first); each shows what it is

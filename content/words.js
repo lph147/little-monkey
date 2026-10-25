@@ -72,7 +72,7 @@ const WORD_BANK = {
   '蛇': {py:'shé', en:'snake', pic:'🐍', area:1, category:'animals'},
   '蜘蛛': {py:'zhīzhū', en:'spider', pic:'🕷️', area:1, category:'animals'},
   '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals'},   // (caught in the long grass until 21 October 2026; in chapter 1, six friends hiding in the tall flowers of their valley)
-  '蜂王': {py:'fēngwáng', en:'queen bee', pic:'👸', area:1, category:'animals', later:true, alike:['蜜蜂', '黄蜂', '王']},   // (heard as the sixth bee sends you to find her; met next, in her old tree; like the bee and the wasp a striped insect, and with a crown like 王's)
+  '蜂王': {py:'fēngwáng', en:'queen bee', pic:'👸', area:1, category:'animals', alike:['蜜蜂', '黄蜂', '王']},   // (heard as the sixth bee sends you to find her; met as she comes out of her old tree; like the bee and the wasp a striped insect, and with a crown like 王's)
   '野猪': {py:'yězhū', en:'wild boar', pic:'🐗', area:1, category:'animals'},
   '鹿': {py:'lù', en:'deer', pic:'🦌', area:1, category:'animals'},   // (chapter 1: a friend in the pine wood)
   '狼': {py:'láng', en:'wolf', pic:'🐺', area:1, category:'animals'},   // (chapter 1: in the pine wood's long grass)
@@ -235,6 +235,7 @@ const MADE = {
   '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']], why:'a band for your head'},
   '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']], why:'a wild pig'},
   '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']], why:'a honey bee'},
+  '蜂王': {parts:[['蜂', 'fēng', 'bee'], ['王', 'wáng', 'king']], why:'the bees’ king: their queen'},
   '黄蜂': {parts:[['黄', 'huáng', 'yellow', '黄色'], ['蜂', 'fēng', 'bee']], why:'a yellow bee: a wasp'},
   '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']], why:'someone you learn with'},
   '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']], why:'don’t have'},
