@@ -191,6 +191,13 @@ function meetHop(a, X, Y, now){
   heart(X + 6, Y - 6 - Math.round(e1 / 120));
   return Math.round(Math.abs(Math.sin(e1 / 130)) * 4);
 }
+// An animal that flutters over its spot, such as the butterfly over the riverside's flowers: hovering, bobbing gently, its
+// wings beating (narrow every third moment, as they close), its shadow small on the ground below.
+function drawFlutter(a, X, Y, now){
+  const hover = 5 + Math.round(Math.sin(now / 420 + a.at[0]) * 2) + meetHop(a, X, Y, now), shut = Math.floor(now / 170) % 3 === 0;
+  R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
+  if (shut) b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - hover, 8, 16); else b.drawImage(a.spr, X, Y - hover);
+}
 function drawFoe(cx, cy, now){
   if (!foe || foe.spot) return;   // (one met at its own spot is drawn there: meetHop)
   const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x);   // (looking at you)
@@ -390,6 +397,7 @@ function drawWorld(now){
   for (const a of spotAnimals.filter(a => !inTree(a))){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    if (a.flutters){ drawFlutter(a, X, Y, now); continue; }
     const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y, now);
     R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
   }

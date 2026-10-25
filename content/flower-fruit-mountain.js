@@ -58,9 +58,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   feast   chapter 1, the great feast: 0 not yet, 1 the old monkey has told you about it (teaching 有), 2 the troop has set
   //           up its big table under the big tree at the home ground, as you watched, 3 the hungry monkey has told you what
   //           the feast still needs: honey (teaching 没有)
+  //   bees    chapter 1, the bees: 0 not yet, 1 the hungry monkey wants honey, and the troop has cleared the way east along the
+  //           stream (the riverside) to find the bees
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -74,6 +76,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     animalsLeft: {count:'animalsLeft'},
     hillAnimalsLeft: {count:'animalsLeft', chapter:1, place:'hillside'},   // chapter 1's animals: the fox hiding on the hillside, not met yet,
     woodAnimalsLeft: {count:'animalsLeft', chapter:1, place:'pineWood'},   // and the deer in the pine wood
+    riverAnimalsLeft: {count:'animalsLeft', chapter:1, place:'riverside'},   // and the butterfly on the riverside, the way east to the bees
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
     caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (桥, bridge, is chapter 1's, on its bridges)
@@ -176,6 +179,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'news', if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, text:'Talk to the old monkey at the {学校}: he has news', arrow:'elder'},
     {id:'feastTable', if:{feast:1}, text:'Go to the big {树} in the middle of the home ground', arrow:[17, 7, 'homeGround']},
     {id:'hungryTable', if:{feast:2}, text:'Talk to the hungry monkey by the big {桌子}', arrow:'hungry'},
+    {id:'bees1', if:{bees:1}, text:'Follow the stream east, along the riverside, to find where {蜜蜂|bees} live', arrow:{place:'riverside'}},
     {id:'hideSeek', if:{hiding:true}, text:'Find where the little monkey is hiding', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
@@ -188,7 +192,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
-    {if:{feast:{atLeast:3}}, text:'There’s no {蜂蜜} for the feast yet. It comes from {蜜蜂|bees}, the next part of chapter 1, coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
+    {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -231,7 +235,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
     {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}},
     {chapter:1, text:'Hear from the hungry monkey what the feast still needs', show:{feast:{atLeast:2}}, done:{feast:{atLeast:3}}},
-    {chapter:1, text:'Play hide and seek with a little monkey', show:{feast:{atLeast:1}}, done:{hidesFound:{atLeast:1}}}
+    {chapter:1, text:'Play hide and seek with a little monkey', show:{feast:{atLeast:1}}, done:{hidesFound:{atLeast:1}}},
+    {chapter:1, text:'Find the {动物} on the riverside', show:{bees:{atLeast:1}}, done:{riverAnimalsLeft:0}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -245,7 +250,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'},
       {if:{hungry:'done', new:'没关系'}, show:'!'},   // once he's eaten, he wants to say sorry for being fussy
       {if:{hungry:'done', new:'水果'}, show:'!'},   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
-      {if:{feast:2}, show:'!'}],   // chapter 1: by the feast's big table, to tell you what it still needs
+      {if:{feast:2}, show:'!'},   // chapter 1: by the feast's big table, to tell you what it still needs,
+      {if:{feast:{atLeast:3}, bees:0}, show:'!'}],   // and (a game that heard it before the bees, 25 October 2026) to send you to find them
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'}],
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
@@ -590,12 +596,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
         '%': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:'&'}]},
         '&': {look:'feastTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // A at it: the feast's list
         '!': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:';'}]},
-        ';': {look:'stoneStool'}   // a stone stool at the table
+        ';': {look:'stoneStool'},   // a stone stool at the table
+        // chapter 1: the bushes at the east end of the road, until the troop clears the way east along the stream, to the bees
+        'q': {look:'bush', landmark:true, becomes:[{if:{bees:{atLeast:1}}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]}
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
         {at:[25, 0], to:'hillside', arrive:[12, 43], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up the hillside to the pine wood
-        {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}}   // the school's door, once it's built (when: not a way in till then)
+        {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}},   // the school's door, once it's built (when: not a way in till then)
+        {at:[31, 9], to:'riverside', arrive:[1, 7], facing:'right', if:{bees:{atLeast:1}}, closed:'Thick bushes block the way.'}   // east along the stream, to the bees
       ],
       map: [
         "YMMMMMMMMMMMMMMMMMMMMMMMYbYYYYYY",   // the cliff behind the school, rising out of sight
@@ -607,7 +616,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YggTggggggg8gggggTTgggggg.gggggY",
         "YgEFggggggg8gJgg%%%gFgggg.gggTgY",   // the feast's big table (%), under the big tree
         "Ygggggggggg8gggg!g!gggggg.g@gggY",   // its two stone stools (!); little monkeys building a tower of stones (@), just past the way up to the hillside
-        "...............................u",
+        "...............................q",   // the road: east to the riverside, once the bushes are cleared (q)
         "...............................Y",
         "Yggggggggggggggg.gggggggggggEggY",
         "Yggddd2ggEgggggg.ggggg5cccccgggY",
@@ -699,6 +708,43 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYgGGGGggggg....ggnnnnggYY",   // tall grass, where the fox hides (chapter 1's), and your friends
         "YYgGGGGgTggg..ggggnnnnggYY",
         "YYYYYYYYYYYY..YYYYYYYYYYYY"    // down to the home ground
+      ]
+    },
+    // Chapter 1: the riverside, the way east from the home ground along the stream, to the valley where the bees live (built 25
+    // October 2026, the bees' step 1, from a mock-up: the troop clears the bushes at the east end of the road once the hungry
+    // monkey wants honey). About 55 steps, in three parts that each look different: along the bank through a little wood,
+    // where long grass has grown over the way between the trees (you can't go round); up through a slope of wildflowers,
+    // where a butterfly flutters, and back down to a wooden bridge over a brook; then under the valley's rocks, where the
+    // stream comes close and long grass has grown over the way again. Tall grass where your friends hide, fish jumping in the
+    // stream, and shells and an apple tucked away. The valley itself comes next: thick bushes block the way in till then.
+    riverside: {
+      name: {zh:'河边', py:'hébiān', en:'The riverside'},
+      sounds: ['birds'],
+      exits: [
+        {at:[0, 7], to:'homeGround', arrive:[30, 9], facing:'left'}, {at:[0, 8], to:'homeGround', arrive:[30, 9], facing:'left'}   // back to the home ground
+      ],
+      legend: {
+        'f': {look:'wildFlowers', walk:true},   // wildflowers of all colours (not for picking)
+        'B': {look:'bridge', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the brook.'},   // over the brook (chapter 1's bridges teach 桥)
+        'u': {look:'bush', landmark:true, onLook:[{do:[{message:'The bees’ valley is just through here, but thick bushes block the way. The way in is coming soon!'}]}]}   // the way into the bees' valley: next
+      },
+      map: [
+        "YYYYYYYYYYYYYYYYYYYYYYYYYYYWWYYYY^^^^^^^^^^^^^^^",   // the brook comes down through the trees, under the bridge (B), into the stream
+        "YYYYYYYYYYYYYYYYYYYYYYYYYYYWWYYYY^^^^^^^^^^^^^^^",
+        "YgggggTggYYYYggggggTgfffgggWWgggg^^^^^^^^^^^^^^^",
+        "YggGGGgggYYYYggffffgfffffggWWgfffMMMMMM^^^^^^^^^",   // the valley’s rocks: a cliff, two squares high, coming forward over the way
+        "YgGGGGGggYYYYggffffffffffggWWgfffMMMMMM^^^^^^^^^",
+        "YggGGGgggYYYY..........fffgWWgfffgggoggMMMMMMMMM",   // the way up through the wildflowers, where the butterfly is
+        "YggggggggYYYY..........ffffWWgggggnnngoMMMMMMMMM",
+        "........nnnnn..gggggg......BB............nnnn..u",   // in from the home ground; long grass grown over the way in the little wood, and under the rocks
+        ".........nnnnn.ggTffg......BB...........nnnn...u",
+        "YggTgfffgYYYYgggTggnnngggggWWggTggoggogWWWWWWWWW",
+        "YggggfffgYYYYggggggnnngTgggWWgggggggogWWWWWWWWWW",
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",   // the stream, and its far bank
+        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "gggggggggggggggggggggggggggggggggggggggggggggggg",
+        "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
+        "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"
       ]
     },
     // Chapter 1: the pine wood, up the hillside from the home ground (the big monkey clears the way when he wants wood): thick, gloomy
@@ -1099,6 +1145,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '鹿': 'In a sunny glade deep in the pine wood, behind a cracked rock.',
     '狼': 'In the long grass in the pine wood.',
     '狐狸': 'Hiding in the tall grass on the hillside.',
+    '蝴蝶': 'Fluttering over the wildflowers on the riverside, the way east to the bees.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -1205,7 +1252,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
-    '狼': {zh:'草 里 有 狼 。', en:'There is a wolf in the grass.'}
+    '狼': {zh:'草 里 有 狼 。', en:'There is a wolf in the grass.'},
+    '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now)
   },
 
@@ -1236,7 +1284,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   },
 
   // Where fish jump out of the water now and then, one after another.
-  fish: [[11, 9], [9, 10], [12, 11], [10, 12]],
+  fish: [[11, 9], [9, 10], [12, 11], [10, 12], [6, 12, 'riverside'], [21, 11, 'riverside'], [35, 12, 'riverside'], [43, 10, 'riverside']],
   // Dragonflies darting about over the water, each in its own patch, from at to to (squares, in at's place): just to look at
   // (in the book, chapter 1, the troop chases them: 赶蜻蜓)
   dragonflies: [{at:[8, 36, 'hillside'], to:[16, 37]}, {at:[20, 35, 'hillside'], to:[23, 36]}],
@@ -1258,7 +1306,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
     // chapter 1: a fox hiding in the hillside's tall grass, only there (hides). It was the prologue's, in the meadow's tall grass, until
     // 23 October 2026, when the sheep took its place, for 羊 (sheep), then 山 + 羊 = 山羊 (goat).
-    {id:'fox', word:'狐狸', hides:'hillside', chapter:1, meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'}
+    {id:'fox', word:'狐狸', hides:'hillside', chapter:1, meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'},
+    // chapter 1: a butterfly over the wildflowers on the riverside, beside the way east to the bees (it was to be the hillside's,
+    // until the fox took its place, 23 October 2026). flutters: it hovers over its spot, its wings beating
+    {id:'butterfly', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
   birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
@@ -1273,7 +1324,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'hillBoulder', at:[8, 28, 'hillside'], shells:2, note:'Under the edge of the boulder: 2 🐚!'},
     {id:'hillHollow', at:[5, 22, 'hillside'], shells:2, note:'In a hollow in the tree: 2 🐚!'},
     {id:'hillSnack', at:[20, 14, 'hillside'], fruit:'苹果', note:'A little monkey’s hidden snack, behind the tree: a {苹果} for your bag!'},
-    {id:'hillPine', at:[19, 4, 'hillside'], fruit:'苹果', note:'Tucked among the pine’s roots: a {苹果} for your bag!'}
+    {id:'hillPine', at:[19, 4, 'hillside'], fruit:'苹果', note:'Tucked among the pine’s roots: a {苹果} for your bag!'},
+    // the riverside: shells under a boulder below the rocks, and an apple behind a tree by the stream
+    {id:'riverBoulder', at:[38, 6, 'riverside'], shells:2, note:'Under the edge of the boulder: 2 🐚!'},
+    {id:'riverTree', at:[23, 10, 'riverside'], fruit:'苹果', note:'Tucked behind the tree by the stream: a {苹果} for your bag!'}
   ],
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
@@ -1604,10 +1658,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'haveFruit'},
         {say:'noHoney', teach:'没有'},
         {newWord:'没有', note:'Use 没有 to say what you don’t have.'},   // (ending on it: 我要… straight after sounded too like it)
-        {set:{feast:3}},
-        {message:'There’s no honey for the feast! Honey comes from bees: finding them is the next part of chapter 1, coming soon.'}
+        {set:{feast:3, bees:1}},   // and the bees begin: the troop clears the way east (the bushes at the end of the road)
+        {message:'There’s no honey for the feast! Honey comes from bees: the troop has cleared a way east, along the stream, to find them. Follow the road east!'}
       ]},
-      {if:{feast:{atLeast:3}}, do:[{say:'wantHoney', hint:'Press A at the big {桌子} to see what there is for the feast, and what it still needs.'}]},
+      // a game that heard what the feast needs before the bees came (25 October 2026): he sends you to find them now
+      {if:{feast:{atLeast:3}, bees:0}, do:[{say:'wantHoney'}, {set:{bees:1}},
+        {message:'Honey comes from bees: the troop has cleared a way east, along the stream, to find them. Follow the road east!'}]},
+      {if:{feast:{atLeast:3}}, do:[{say:'wantHoney', hint:'Honey comes from bees: follow the road east, along the stream, to find them. Press A at the big {桌子} to see what the feast still needs.'}]},
       {do:[{request:'hungry'}]}
     ],
     thirsty: [

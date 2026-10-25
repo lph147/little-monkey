@@ -195,6 +195,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | 狼 |  |
+| 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 
 ### Questions after the story
 
@@ -278,6 +279,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 | 家园 | jiāyuán | Home ground |  |
 | 山坡 | shānpō | The hillside |  |
+| 河边 | hébiān | The riverside |  |
 | 松林 | sōnglín | Pine wood |  |
 | 学校 | xuéxiào | School |  |
 
@@ -322,6 +324,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鹿 | lù | deer |  |
 | 狼 | láng | wolf |  |
 | 狐狸 | húli | fox |  |
+| 蝴蝶 | húdié | butterfly |  |
 | 跳 | tiào | to jump |  |
 | 桥 | qiáo | bridge |  |
 | 床 | chuáng | bed |  |
@@ -608,6 +611,9 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我在水里！ | wǒ zài shuǐ lǐ! | I’m in the water! | New on 25 October 2026 (in the game), hide and seek: The little monkey, in the pool |  |
 | 我在花里！ | wǒ zài huā lǐ! | I’m in the flowers! | New on 25 October 2026 (in the game), hide and seek: The little monkey, in the patch of flowers (would 花丛里, in the flowerbed, be more natural? 花丛 isn’t a word in the game) |  |
 | 找到你了！ | zhǎodào nǐ le! | Found you! | New on 25 October 2026 (in the game), hide and seek: You, finding it (找到 zhǎodào, to find, just for listening) |  |
+| 河边 | hé biān | The riverside | New on 25 October 2026 (in the game), the way to the bees: The name of the new path east from the home ground, along the stream, to the bees’ valley (shown and said as you arrive: is 河边 a good name for a place, or would 小河边 or another be better?) |  |
+| 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | New on 25 October 2026 (in the game), the way to the bees: The example on 蝴蝶 (húdié, butterfly)’s page in the Word Scroll: a butterfly flutters over the wildflowers on the riverside |  |
+| 百花谷 | Bǎi huā gǔ | Valley of a Hundred Flowers | New on 25 October 2026 (in the game), the way to the bees: The bees’ valley, coming next (not in the game yet: please check the name) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

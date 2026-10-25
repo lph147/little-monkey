@@ -46,6 +46,27 @@ const MAP_SPRITES = {
       "................"
     ]
   },
+  '蝴蝶': {   // butterfly, its wings open, seen from above (it looks at nobody: no faces)
+    palette: {a:'#4C2A0F', b:'#5E4427', c:'#C8641A', d:'#FFB866', e:'#F28C28', f:'#1A140E', g:'#2A2018', h:'#5C462D', i:'#F9BE77', j:'#C8741A', k:'#4C2F0F', l:'#F7A23C'},
+    rows: [
+      "................",
+      "..a.........ba..",
+      ".aca.......bdca.",
+      "bdeca...f.bdeeca",
+      "bdeeca.fgbdeeeca",
+      "bdeeecafgdeeeeca",
+      "bdeeeecfgeeeeeca",
+      "accceeecgeeeccca",
+      ".aaaccccgcccaaa.",
+      "...hhiijgjkhk...",
+      "..hiilljgliijk..",
+      "..hillljgllljk..",
+      "..kjjljfgiljjk..",
+      "...kkjjfgjjkk...",
+      ".....kk.fkk.....",
+      "................"
+    ]
+  },
   '松鼠': {   // squirrel
     faces: 'left',
     palette: {o:'#3A2414', b:'#A0612E', l:'#C98A4E', c:'#F2DDBF', e:'#1E1E1E'},

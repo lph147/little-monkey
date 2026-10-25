@@ -20,7 +20,7 @@ function game(x, y, dir, save = {}){
 
 test('on the hillside, three piles of shells and two apples are hidden at trees, a boulder and a pine, each beside where you can stand', () => {
   const g = game(12, 43, 'up');
-  const hidden = get(g, 'AREA.hidden');
+  const hidden = get(g, "AREA.hidden.filter(h => h.at[2] === 'hillside')");
   assert.deepEqual(hidden.map(h => h.shells || h.fruit), [2, 2, 2, '苹果', '苹果']);
   for (const h of hidden){
     const [x, y] = h.at;
@@ -70,4 +70,15 @@ test('a tiny glint now and then gives each away, at its own time, until it’s f
 test('an old save has found nothing yet', () => {
   const g = loadGame({save: {version: 29, started: true, areas: {1: CHAPTER_ONE}}});
   assert.deepEqual(get(g, 'here().finds'), {});
+});
+
+test('on the riverside, shells under a boulder and an apple behind a tree, each beside where you can stand', () => {
+  const g = game(1, 7, 'right', {areas: {1: {...CHAPTER_ONE, feast: 3, bees: 1}}, pos: {place: 'riverside', x: 1, y: 7, dir: 'right'}});
+  const hidden = get(g, "AREA.hidden.filter(h => h.at[2] === 'riverside')");
+  assert.deepEqual(hidden.map(h => [h.shells || h.fruit, g.run(`tileAt(${h.at[0]}, ${h.at[1]}).look`)]), [[2, 'boulder'], ['苹果', 'tree']]);
+  for (const h of hidden){
+    const [x, y] = h.at;
+    assert.ok(!g.run(`walkable(${x}, ${y})`), `${h.id}: at something you can’t walk through`);
+    assert.ok([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => g.run(`walkable(${x + dx}, ${y + dy})`)), `${h.id}: you can stand beside it`);
+  }
 });

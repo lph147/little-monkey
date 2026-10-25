@@ -116,19 +116,32 @@ test('by the table, the hungry monkey tells you what the troop has, and what it 
     'its big table, what the troop has (有, a word you know), and what it hasn’t (没有 in bold): ending on it, as 我要… straight after sounded too like it');
   const notes = get(g, '__notes');
   assert.equal(notes[0], 'card: 没有 (Use 没有 to say what you don’t have.)', 'its card, with no picture, like 有');
-  assert.match(notes.join(' '), /There’s no honey for the feast! Honey comes from bees: finding them is the next part of chapter 1, coming soon/);
-  assert.equal(g.run('here().feast'), 3);
+  assert.match(notes.join(' '), /There’s no honey for the feast! Honey comes from bees: the troop has cleared a way east, along the stream, to find them\. Follow the road east!/);
+  assert.deepEqual(get(g, '[here().feast, here().bees]'), [3, 1], 'and the bees begin');
   assert.equal(g.run("lvl('蜂蜜')"), 0, '蜂蜜 isn’t taught: just for listening, till the bees (one new word at a time)');
   assert.equal(bubble(g, 'hungry'), null);
   assert.equal(item(g, /still needs/)[1], true, 'ticked off');
-  assert.ok(!get(g, 'getTasks()').length, 'nothing more to do for now');
-  assert.match(g.run('tasksHint()'), /The big monkey has something to ask you/, 'the hint: his flowers first, while he has something to ask');
-  g.run("Object.assign(here(), {flowers: 'done', schoolFlowers: true})");
-  assert.match(g.run('tasksHint()'), /There’s no honey for the feast yet\. It comes from bees, the next part of chapter 1, coming soon/, 'then the honey');
+  assert.deepEqual(get(g, 'getTasks().map(t => [t.text, t.target])'), [['Follow the stream east, along the riverside, to find where bees live', [31, 9]]],
+    'the task: east along the stream, its arrow at the east end of the road');
+  assert.deepEqual(get(g, '[tileAt(31, 9).look, isOpen(exitAt(31, 9))]'), ['path', true], 'where the troop has cleared the bushes away: the way east is open');
   g.run('__said.length = 0; __notes.length = 0');
   await press(g, 19, 8, 'up');
   assert.deepEqual(get(g, '__said'), ['我要吃蜂蜜！'], 'after that, he still wants honey');
-  assert.match(get(g, '__notes').join(' '), /Press A at the big 桌子 \(table\) to see what there is for the feast, and what it still needs/);
+  assert.match(get(g, '__notes').join(' '), /Honey comes from bees: follow the road east, along the stream, to find them\. Press A at the big 桌子 \(table\) to see what the feast still needs/);
+});
+
+test('a game that heard what the feast needs before the bees came: the hungry monkey has a !, and sends you east to find them', async () => {
+  const g = game({feast: 3, flowers: 'done', schoolFlowers: true}, {place: 'homeGround', x: 19, y: 8, dir: 'up'});
+  assert.equal(g.run('here().bees'), 0, 'a save from before the bees starts without them');
+  assert.equal(bubble(g, 'hungry'), '!');
+  assert.match(g.run('tasksHint()'), /The hungry monkey has something to ask you/);
+  assert.deepEqual(get(g, '[tileAt(31, 9).look, isOpen(exitAt(31, 9))]'), ['bush', false], 'the bushes still there');
+  await press(g, 19, 8, 'up');
+  assert.deepEqual(get(g, '__said'), ['我要吃蜂蜜！']);
+  assert.match(get(g, '__notes').join(' '), /Honey comes from bees: the troop has cleared a way east, along the stream, to find them\. Follow the road east!/);
+  assert.equal(g.run('here().bees'), 1);
+  assert.equal(bubble(g, 'hungry'), null);
+  assert.deepEqual(get(g, '[tileAt(31, 9).look, isOpen(exitAt(31, 9))]'), ['path', true]);
 });
 
 // A at the table: its list stays open till OK. Each row: its words, whether the troop has it (ticked), whether its picture

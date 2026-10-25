@@ -421,6 +421,23 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('__said').includes('找到你了！'), 'found you!');
   assert.deepEqual([area().hide.spot, area().hide.won, get('S.shells') - shellsNow], [null, 1, 3], 'found, with 3 shells the first time');
   run('placeCharacters()');
+  // The bees begin (25 October 2026): as the hungry monkey tells you there's no honey, the troop clears the bushes at the
+  // east end of the road, and the riverside leads east along the stream. You walk it: through the long grass grown over the
+  // way in the little wood (a snake jumps out), up through the wildflowers, where a butterfly flutters: A at it teaches
+  // 蝴蝶, and its questions make it your friend
+  assert.equal(area().bees, 1, 'the hungry monkey wants honey: the bees begin');
+  assert.equal(run('tileAt(31, 9).look'), 'path', 'the bushes at the east end of the road are cleared');
+  stand(30, 9, 'right');
+  await act('arrive(31, 9).then(runEvents)', 'going east along the road, to the riverside');
+  assert.equal(run('PLACE'), 'riverside');
+  const shellsRiver = get('S.shells');
+  await walk([[1, 7], [14, 7], [14, 5], [18, 5]], 'walking along the riverside, through the long grass in the little wood');
+  assert.ok(get('S.shells') > shellsRiver, 'a battle in the long grass, won: shells');
+  await pressAt(18, 5, 'up', 'meeting the butterfly over the wildflowers', 1);
+  assert.ok(knows('蝴蝶') && get('S.friends').includes('butterfly'), 'the butterfly: 蝴蝶, and a new friend');
+  stand(1, 7, 'left');
+  await act('arrive(0, 7).then(runEvents)', 'back along the riverside to the home ground');
+  assert.equal(run('PLACE'), 'homeGround');
   stand(11, 5, 'up');
   await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
   assert.equal(run('PLACE'), 'school');

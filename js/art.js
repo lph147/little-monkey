@@ -93,7 +93,7 @@ function asleepSprite(){
 // fox on the hillside), each in a chapter of the story (0 if not given). place: where it's counted (its spot's, the one it
 // hides in, or else the first place's). spr: how they look on the map (content/sprites.js, a square's size); pic: their
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
-const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0,
+const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette)}));
 // An animal (or a wild creature: spr, its map sprite, and faces, which way it looks) turned to face you, from where it is
 // (x): drawn the other way round when it would look away from you, such as a wolf jumping out on your left. Or away from
@@ -654,6 +654,10 @@ const LOOKS = {
   yellowFlowers: (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F7D23E'); flower(g,X+11,Y+7,'#F7D23E'); flower(g,X+6,Y+11,'#F7D23E'); },
   whiteFlowers:  (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#FFFFFF'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#FFFFFF'); },
   flowerBed:     (g,X,Y,x,y) => flowerBed(g,X,Y,x,y),   // flowers planted in a bed (the ones you brought the big monkey)
+  wildFlowers:   (g,X,Y,x,y) => {   // wildflowers of all colours, thick on a slope (the riverside's, where the butterfly is)
+    grass(g,X,Y,x,y); const cols = ['#F48FB1', '#FFFFFF', '#F7D23E', '#E8343C', '#B98AE8', '#FFFFFF'];
+    [[3,3],[10,2],[6,8],[13,9],[2,12],[9,13]].forEach(([a,c], i) => flower(g, X + a + Math.floor(rnd(x,y,i+50)*3) - 1, Y + c, cols[Math.floor(rnd(x,y,i+40)*cols.length)]));
+  },
   // trees, the fruit trees, your stone, the rocks and the stall: just the ground here; they're big objects (OBJECT_ART, below)
   tree:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
   peachTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),

@@ -138,6 +138,14 @@ SAVES.hiding = {...SAVES.hideSeek, areas: {1: hidingIn('table', 0)}, pos: {place
 SAVES.hideTail = {...SAVES.hideSeek, areas: {1: hidingIn('table', 2)}, pos: {place: 'homeGround', x: 14, y: 9, dir: 'up'}};
 SAVES.hideNotHere = {...SAVES.hideSeek, areas: {1: hidingIn('table', 0)}, pos: {place: 'homeGround', x: 17, y: 15, dir: 'right'}};   // looking in the pool
 SAVES.hideFind = {...SAVES.hideSeek, areas: {1: hidingIn('table', 1)}, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
+// the bees (25 October 2026): the hungry monkey sends you east (a game that heard what the feast needs before the bees
+// came, with his !); the way east, cleared; the riverside, along the stream; beside the butterfly over its wildflowers; and
+// at its end, where thick bushes block the way into the bees' valley for now
+SAVES.feastHungryBees = {...SAVES.feastList, pos: {place: 'homeGround', x: 19, y: 8, dir: 'up'}};
+SAVES.wayEast = {...SAVES.feastList, areas: {1: {...SAVES.feastList.areas[1], bees: 1}}, tasksSeen: {...SAVES.feastList.tasksSeen, bees1: 1}, pos: {place: 'homeGround', x: 28, y: 9, dir: 'right'}};   // (its task seen: no message)
+SAVES.riverside = {...SAVES.wayEast, pos: {place: 'riverside', x: 15, y: 5, dir: 'right'}};
+SAVES.butterfly = {...SAVES.wayEast, pos: {place: 'riverside', x: 18, y: 5, dir: 'up'}};
+SAVES.riverEnd = {...SAVES.wayEast, pos: {place: 'riverside', x: 46, y: 7, dir: 'right'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -582,6 +590,16 @@ const SCREENS = [
     play(); await wait(100); interact(...facing()); await wait(500); next(); await wait(500); }},
   {id: 'hide-tasks', title: 'Tasks while it hides', save: 'hiding', why: 'Your task, with its clue under it to read and hear again (no arrow: that’s the game).', run: async () => {
     play(); await wait(100); tasksPage(() => {}); await wait(400); }},
+  {id: 'hungry-bees', title: 'Honey comes from bees', save: 'feastHungryBees', why: 'The hungry monkey still wants honey (我要吃蜂蜜！), and the troop has cleared a way east, along the stream, to find the bees. (A new game hears this straight after 没有.)', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(500); }},
+  {id: 'way-east', title: 'The way east', save: 'wayEast', why: 'At the east end of the road, the bushes are gone: the way to the riverside, with the task’s arrow.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'riverside', title: 'The riverside (河边)', save: 'riverside', why: 'The way east along the stream to the bees: up through a slope of wildflowers, where a butterfly flutters, and down to a bridge over a brook.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'butterfly-meet', title: 'A butterfly', save: 'butterfly', why: 'Over the wildflowers, beside the way: A teaches 蝴蝶 (húdié, butterfly), said straight away; then its questions, to make friends.', run: async () => {
+    play(); await wait(100); pressA(); await wait(1600); }},
+  {id: 'riverside-end', title: 'The way into the bees’ valley', save: 'riverEnd', why: 'At the riverside’s end, under the rocks: thick bushes block the way into the valley for now (it comes next).', run: async () => {
+    play(); await wait(100); pressA(); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

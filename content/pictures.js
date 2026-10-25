@@ -2482,6 +2482,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '蝴蝶': {   // butterfly
+    palette: {a:'#1A140E', b:'#2A2018', c:'#241D16', d:'#17120D', e:'#4A3C30', f:'#211913', g:'#5E5B58', h:'#FFFFFF', i:'#FFB866', j:'#C8641A', k:'#F28C28', l:'#2E2925', m:'#6A635D', n:'#5A4C40', o:'#FFC67A', p:'#C8741A', q:'#F7A23C', r:'#29221B'},
+    rows: [
+      "..........a..........a..........",
+      ".........aba........aba.........",
+      "........abbba......abbba........",
+      ".....ccd.ababa....ababacccd.....",
+      "..ccceefd.aabba..abbagceeefdcd..",
+      ".ceeebbbfdg.aba..abaghebbbbeefd.",
+      ".cebbbiijfhg.abaaba.cebiijbbbfd.",
+      ".cehiikkkjfd.abbbbacebikkkijhfd.",
+      "cebbikkkkkjfdlmbbfcebikkkkkjbbfd",
+      "cebikkbbkkkjfdfbbfebikkkbbkkjbfd",
+      "cebjkkkkbbkkjfdffebikkbbkkkkjbfd",
+      "dfbbikkkkkbbkjfnfbikbbkkkkkjbbfd",
+      ".dfbjkkkkkkkbbjnfibbkkkkkkkjbfd.",
+      "..dfbjkkkkkkkkjnfikkkkkkkkjbfd..",
+      "...dfbjjjjjjkkjnfikkjjjjjjbfd...",
+      "....dfffffbbjjjnfjjjbbfffffd....",
+      ".....dddddfffffnffffffddddd.....",
+      "........cccceeenfeefdccd........",
+      ".......ceeeeoopnfoopeeefd.......",
+      "......ceboooqqbnfbqqoopbfd......",
+      "......ceoqqqqbpnfobqqqqpfd......",
+      ".....ceboqqqbqpnfpqbqqqpbfd.....",
+      ".....ceoqqbbqpfnfeoqbbqqpfd.....",
+      "....ceboqbbqqpfnfepqqbbqpbfd....",
+      "....dfbpqqqqpfrnffbpqqqqpbfd....",
+      ".....dfbpqqpbfrnfdfbpqqpbfd.....",
+      "......dfbppffddffddfbppbfd......",
+      ".......ghbfdd..dd..dffbhg.......",
+      "........dfd.........ddfd........",
+      ".........d............d.........",
+      "................................",
+      "................................"
+    ]
+  },
   '蜘蛛': {   // spider
     palette: {a:'#292229', b:'#1B1519', c:'#2F2831', d:'#1C161B', e:'#5A4C6C', f:'#2D2538', g:'#6E5E84', h:'#30263E', i:'#3A2F48', j:'#4A3D5C', k:'#5E5B58', l:'#FFFFFF', m:'#D8D4E0', n:'#514D4E', o:'#2B2335', p:'#1E1A16', q:'#1A1518', r:'#2A2236', s:'#E08A3C'},
     rows: [

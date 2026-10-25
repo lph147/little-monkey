@@ -512,6 +512,19 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.eye(5, 18, '#111111', 2); p.dot(5, 18, '#FFFFFF');
     p.fill(path([[6, 15.5], [4, 11.5]], .6), '#3A2E22'); p.fill(path([[9, 15.5], [10, 11.5]], .6), '#3A2E22');   // feelers
   },
+  '蝴蝶': p => {   // butterfly: wide orange wings edged in black with white spots, a thin dark body, curled feelers
+    const DARK = '#2A2018', side = pts => [pts, pts.map(([x, y]) => [32 - x, y])];   // (each wing and its other side)
+    const up = [[16, 12], [8, 4], [2, 5], [1, 11], [5, 16], [15, 17]], low = [[15.5, 17], [8, 18], [5, 24], [9, 29], [14, 26], [16, 20]];
+    for (const pts of [...side(up), ...side(low)]) p.fill(Pg(pts), DARK, {light: '#4A3C30'});                  // the wings' black edges
+    const upIn = [[15, 12.5], [8.5, 6], [4, 6.8], [3.2, 11], [6.3, 14.8], [14.5, 15.8]], lowIn = [[15, 18], [8.8, 19.2], [6.8, 23.8], [9.3, 27.2], [13.3, 25], [15, 20.5]];
+    for (const pts of side(upIn)) p.fill(Pg(pts), '#F28C28', {light: '#FFB866', dark: '#C8641A'});              // orange inside them
+    for (const pts of side(lowIn)) p.fill(Pg(pts), '#F7A23C', {light: '#FFC67A', dark: '#C8741A'});
+    p.flat(or(path([[14.5, 13], [6, 9]], .45), path([[17.5, 13], [26, 9]], .45), path([[14.5, 19.5], [9.5, 24]], .45), path([[17.5, 19.5], [22.5, 24]], .45)), DARK);   // veins
+    for (const [x, y] of [[3, 7], [2.5, 10], [5, 5.5], [8, 27], [6.5, 25]]){ p.dot(x, y, '#FFFFFF'); p.dot(32 - x - 1, y, '#FFFFFF'); }   // white spots on the edges
+    p.fill(Rc(15, 10, 2, 17, 1), DARK, {light: '#5A4C40'});                                                    // body
+    p.fill(O(16, 9, 2.2, 2), DARK);                                                                            // head
+    p.flat(or(path([[15.3, 8], [12, 3], [10.5, 2.5]], .5), path([[16.7, 8], [20, 3], [21.5, 2.5]], .5), O(10.5, 2.5, 1.1), O(21.5, 2.5, 1.1)), DARK);   // feelers
+  },
   '蜘蛛': p => {   // spider: a round body on eight bent legs, two big eyes, orange spots on its back
     const S = '#4A3D5C', LT = {light: '#6E5E84', dark: '#30263E'};
     const legs = [[[12, 13], [6, 7.5], [2.5, 12]], [[11.5, 15.5], [5, 12.5], [1.5, 18.5]], [[11.5, 18], [5, 18], [2, 24]], [[12.5, 20.5], [7, 23], [4.5, 28]]];
