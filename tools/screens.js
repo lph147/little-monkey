@@ -609,8 +609,8 @@ const SCREENS = [
     st.querySelector('.mpart.from').classList.remove('lifted'); st.querySelector('.mword').classList.remove('in'); st.querySelectorAll('.mch').forEach(x => x.classList.remove('in')); await wait(600); }},
   {id: 'made-three', title: 'How a word is made: three parts', save: 'phrases', why: 'The most parts there are: 我 + 不 + 要, I don’t want it. 我 and 要 are words you know.', run: async () => {
     play(); await wait(100); madeCard('我不要', () => {}, () => {}, 'Got it'); await wait(400); }},
-  {id: 'made-clue', title: 'How a word is made: a clue inside', save: 'middle', why: 'Only one you can see: the character big, with the clue beside it, and why: 氵, three drops of water, on the left of 河 (river).', run: async () => {
-    play(); await wait(100); madeCard('河', () => {}, () => {}, 'Got it'); await wait(400); }},
+  {id: 'made-clue', title: 'How a word is made: a clue inside', save: 'middle', why: 'Only one you can see: the character big, with the clue beside it, and why: 口, a mouth, on the left of 吃 (to eat).', run: async () => {
+    play(); await wait(100); madeCard('吃', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'made-drawn', title: 'How a word is made: drawn from a picture', save: 'middle', why: 'The picture beside the character it was drawn from: 山, drawn like three mountain peaks.', run: async () => {
     play(); await wait(100); madeCard('山', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'made-page', title: 'A word’s page: English, then How it’s made', save: 'middle', why: 'In the Word Scroll, the English button shows the English, then becomes How it’s made: here, after pressing it once.', run: async () => {

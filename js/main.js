@@ -120,7 +120,7 @@ function updateCtx(now){
   const [a, bl] = buttonLabels(now), key = a + '|' + bl;
   if (key === lastLabels) return;
   lastLabels = key; $('#aLabel').textContent = a; $('#bLabel').textContent = bl;
-  $('#aLabel').classList.toggle('long', a.length > 10); $('#bLabel').classList.toggle('long', bl.length > 10);   // (a little smaller, on one line)
+  $('#aLabel').classList.toggle('long', a.length > 10); $('#bLabel').classList.toggle('long', bl.length > 10);   // (on two lines)
   $('#btnA').classList.toggle('ready', mode === 'play' && modal.hidden && !talkNext && !!a);
 }
 // After anything happens. Select has a red dot while there's a task you haven't looked at in your task

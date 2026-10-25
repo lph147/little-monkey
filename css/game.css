@@ -134,7 +134,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 #btnB{background:var(--btnB);width:56px;height:56px;font-size:1.2rem}
 .ab .abwrap:last-child{margin-bottom:30px}   /* A higher than B, like a GBA */
 .ablabel{font-family:var(--pixel);font-size:.85rem;color:var(--muted);height:1.25rem;line-height:1.25rem;width:0;display:flex;justify-content:center;white-space:nowrap;transform:rotate(12deg)}   /* on one line, centred under its button, never moving the buttons however long it is (decided 22 October 2026) */
-.ablabel.long{font-size:.72rem}   /* a long one (more than 10 letters, such as I’ve added it), a little smaller, so it stays clear of B */
+.ablabel.long{display:block;width:4.4rem;margin:0 -2.2rem;white-space:normal;text-align:center;line-height:1.05;font-size:.78rem}   /* a long one (more than 10 letters, such as How it’s made), on two lines under its button (decided 25 October 2026: squashed onto one, it ran into the edge), still never moving it: as wide as nothing, and its second line hangs below */
 .keys{display:none;grid-area:keys;margin:6px 0 2px;font-size:.8rem;color:var(--muted);text-align:center}
 @media (hover:hover) and (pointer:fine){.keys{display:block}}
 

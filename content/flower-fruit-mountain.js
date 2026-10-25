@@ -1472,6 +1472,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'go', hint:'✨ Learn 4 words first, then come back ({newWords}/4). Things that sparkle have words: walk up to one and press A.'}
       ]},
       {if:{elder:1}, do:[
+        {message:'You’re back! The old monkey wants to hear which words you’ve learned.'},   // (decided 25 October 2026: 我们看看！ on its own said nothing of why)
         {say:'letsLook'},   // he checks your first words: you match them to their pictures
         {match:'Show the old monkey your words', stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him your words.'},
         {say:'great'},

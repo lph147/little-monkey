@@ -2,20 +2,26 @@
 
 /* ---- per-frame drawing ---- */
 let bigSparkles = false;   // a twinkle that grows bigger, while the area's bigSparkles matches, such as while you learn your first words (set each frame)
+// A sparkle on something whose word you don't know yet (ph: its own timing, so they don't all twinkle together): a twinkle
+// now and then, out for most of the time (decided 25 October 2026: on for two thirds of the time, a little over a second
+// and a half apart, was too much). Bigger while bigSparkles matches, such as till you know your first 4 words, and a
+// little more often.
+const SPARKLE = {every:3400, on:.28}, BIG_SPARKLE = {every:2600, on:.4};
 function sparkle(X, Y, now, ph){
-  const s = (Math.sin(now/260 + ph) + 1) / 2;
-  if (bigSparkles){   // a twinkle (decided 24 October 2026: twice as big and never out was too much): out for over half the
-    if (s < .55) return;   // time, it grows to arms of 3, with a faint glow, just at its brightest
-    const k = (s - .55) / .45, n = k > .66 ? 3 : k > .33 ? 2 : 1;
+  const c = bigSparkles ? BIG_SPARKLE : SPARKLE, p = ((now + ph * 613) % c.every) / c.every;
+  if (p >= c.on) return;
+  const k = Math.sin(p / c.on * Math.PI);   // (in, then out again)
+  if (bigSparkles){   // growing to arms of 3, with a faint glow, just at its brightest
+    const n = k > .8 ? 3 : k > .45 ? 2 : 1;
     if (n === 3) R(b, X-1, Y-1, 3, 3, 'rgba(255,226,122,.3)');
     for (let i = 1; i <= n; i++){ R(b, X-i, Y, 1, 1, '#FFE27A'); R(b, X+i, Y, 1, 1, '#FFE27A'); R(b, X, Y-i, 1, 1, '#FFE27A'); R(b, X, Y+i, 1, 1, '#FFE27A'); }
     R(b, X, Y, 1, 1, '#FFFFFF');
     return;
   }
-  if (s < .25) return;
   R(b, X, Y, 1, 1, '#FFFFFF');
+  if (k < .3) return;
   R(b, X-1, Y, 1, 1, '#FFE27A'); R(b, X+1, Y, 1, 1, '#FFE27A'); R(b, X, Y-1, 1, 1, '#FFE27A'); R(b, X, Y+1, 1, 1, '#FFE27A');
-  if (s > .7){ R(b, X-2, Y, 1, 1, '#FFE27A'); R(b, X+2, Y, 1, 1, '#FFE27A'); R(b, X, Y-2, 1, 1, '#FFE27A'); R(b, X, Y+2, 1, 1, '#FFE27A'); }
+  if (k > .8){ R(b, X-2, Y, 1, 1, '#FFE27A'); R(b, X+2, Y, 1, 1, '#FFE27A'); R(b, X, Y-2, 1, 1, '#FFE27A'); R(b, X, Y+2, 1, 1, '#FFE27A'); }
 }
 function bubble(X, Y, ch){
   R(b, X, Y, 7, 9, '#1E2B26'); R(b, X+1, Y+1, 5, 7, '#FFFFFF'); R(b, X+3, Y+9, 1, 1, '#1E2B26');

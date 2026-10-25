@@ -223,7 +223,6 @@ const MADE = {
   // a clue inside, that you can see
   '树': {clue:['木', 'mù', 'tree'], why:'on its left, drawn like a tree'},
   '木头': {clue:['木', 'mù', 'tree'], why:'drawn like a tree: wood comes from trees'},
-  '河': {clue:['氵', 'shuǐ', 'water'], why:'three drops on its left: a river is water'},
   '吃': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you eat with your mouth'},
   '喝': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you drink with your mouth'},
   // made of words or characters

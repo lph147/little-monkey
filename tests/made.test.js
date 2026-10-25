@@ -152,7 +152,7 @@ test('a word made of parts comes together as you watch: the parts one by one, th
   assert.ok(!g.run('globalThis.__done'), 'not Got it yet');
   g.run('pressA()');
   assert.ok(g.run('globalThis.__done'), 'then A is Got it');
-  assert.equal(made(['石头'], '河').querySelector('[data-a=again]'), null, 'a clue or a picture stays still: nothing to watch again');
+  assert.equal(made(['石头'], '吃').querySelector('[data-a=again]'), null, 'a clue or a picture stays still: nothing to watch again');
 });
 
 test('a part you know from another word: that word shows first, with its picture, and the part lifts out of it', () => {

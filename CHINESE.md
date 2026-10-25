@@ -381,7 +381,6 @@ simply put. A part's pinyin is as it's said in the word.
 | 三 | sān | Three lines, for three. |  |
 | 树 | shù | 木 mù (tree): on its left, drawn like a tree |  |
 | 木头 | mùtou | 木 mù (tree): drawn like a tree: wood comes from trees |  |
-| 河 | hé | 氵 shuǐ (water): three drops on its left: a river is water |  |
 | 吃 | chī | 口 kǒu (mouth): on its left: you eat with your mouth |  |
 | 喝 | hē | 口 kǒu (mouth): on its left: you drink with your mouth |  |
 | 山羊 | shānyáng | 山 shān (mountain) + 羊 yáng (sheep) = a mountain sheep |  |
