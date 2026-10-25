@@ -123,6 +123,16 @@ const DRAFTS = [
     ['我们 没有 蜂蜜 。', 'We don’t have any honey.', 'The feast’s list'],
     ['我 没有 苹果 。', 'I don’t have any apples.', 'A sentence you finish in a lesson, to practise 没有 (filling in 没有)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: ' + where})),
+  ...[['我们 来 捉迷藏 吧 ！', 'Let’s play hide and seek!', 'A little monkey at the home ground (捉迷藏 zhuō mícáng, hide and seek, just for listening)'],
+    ['一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ， 十 ！', 'One, two, three, four, five, six, seven, eight, nine, ten!', 'You, counting with your eyes covered'],
+    ['我 来 了 ！', 'Here I come!', 'You, when you’ve counted to ten (is this what children say in hide and seek?)'],
+    ['我 在 大 树 后面 ！', 'I’m behind the big tree!', 'The little monkey, calling out where it’s hiding'],
+    ['我 在 桌子 下面 ！', 'I’m under the table!', 'The little monkey (下面 xiàmiàn, under, just for listening)'],
+    ['我 在 桥 下面 ！', 'I’m under the bridge!', 'The little monkey'],
+    ['我 在 水 里 ！', 'I’m in the water!', 'The little monkey, in the pool'],
+    ['我 在 花 里 ！', 'I’m in the flowers!', 'The little monkey, in the patch of flowers (would 花丛里, in the flowerbed, be more natural? 花丛 isn’t a word in the game)'],
+    ['找到 你 了 ！', 'Found you!', 'You, finding it (找到 zhǎodào, to find, just for listening)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 25 October 2026 (in the game), hide and seek: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 
@@ -161,6 +171,11 @@ function sheet(){
   for (const r of Object.values(AREA.requests)) for (const k of [r.ask, r.offer, r.thanks, r.wrong]) if (k) add(k, name(r.from));
   if (AREA.shop) for (const k of [AREA.shop.ask, AREA.shop.welcome]) add(k, name(AREA.shop.who));
   for (const r of Object.values(AREA.requests)) if (r.wrongAnswer) add(r.wrongAnswer, name(r.from));
+  if (AREA.hideSeek){   // hide and seek: you count and find it; it calls out where it's hiding
+    const h = AREA.hideSeek;
+    for (const k of [h.count, h.coming, h.found]) add(k, 'you');
+    for (const p of h.spots) add(p.say, name(h.by));
+  }
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name)];   // characters, the sign, the area and its places
@@ -186,7 +201,7 @@ shown where the word list has them.
 
 ### Lines characters say
 
-${table(['Chinese', 'Pinyin', 'English', 'Said by', 'Notes'], Object.entries(AREA.lines).map(([k, l]) => [chars(l.zh), py(l.zh), l.en, [...(saidBy[k] || [])].join(', '), notes]))}
+${table(['Chinese', 'Pinyin', 'English', 'Said by', 'Notes'], Object.entries(AREA.lines).map(([k, l]) => [chars(l.zh), py(l.zh), l.en.replace(/\{([^}|]+)(?:\|([^}]*))?\}/g, (m, w, en) => en || BANK[w].en.split(',')[0]), [...(saidBy[k] || [])].join(', '), notes]))}
 
 ### Sentences the player completes (one word missing)
 

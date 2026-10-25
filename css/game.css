@@ -448,6 +448,19 @@ rt.hid{visibility:hidden}
 .talk .tok.tipglow{box-shadow:0 0 0 2px var(--gold),0 0 12px 3px color-mix(in srgb,var(--gold) 45%,transparent)!important}
 .talk .punct{align-self:flex-end;margin-top:0;padding-bottom:3px}
 .talk .sentence-en{grid-column:1;justify-self:start;font-size:.9rem;margin:0;padding:.15rem .6rem}
+.sentence-en.clue{display:flex;align-items:flex-end;flex-wrap:wrap;gap:.3em}   /* hide and seek's clue: its English, with the place's word in Chinese (js/hide.js) */
+.sentence-en.clue > span{padding-bottom:.15em}
+.sentence-en.clue > span:last-child{margin-left:-.25em}
+.sentence-en.clue .tok{font-size:1.15em}
+.tasks li:has(.taskclue){flex-wrap:wrap}
+.tasks li:has(.taskclue) > span{flex:1 1 0;min-width:0}
+.taskclue{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:.2rem .5rem;margin:.1rem 0 .3rem 17px}   /* under the task: the clue, its English and Hear it */
+.taskclue .line{margin:0}
+.taskclue .tok,.taskclue .punct{font-size:1.1rem}
+.taskclue [data-a=clue]{min-height:1.9rem}
+.taskclue .gloss{flex-basis:100%;margin:0;font-size:.85rem}
+.taskclue .gloss:empty{display:none}
+.taskclue .sentence-en{margin:0}
 .talk > .next{grid-column:2;justify-self:end}
 .talk:has(> .sentence-en[hidden]) > .talkline{grid-column:1}   /* no English under the line (you've seen it before): Next goes beside the line, not on a row of its own (decided 22 October 2026: the box covered you) */
 /* On a small phone's screen (data-screen, set by fit() in js/main.js), the speech box is shorter, so you and who you're

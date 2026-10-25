@@ -404,6 +404,23 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().feast, 3);
   await pressAt(17, 8, 'up', 'looking at the feast’s list');
   assert.ok(get("!!S.lines['我们没有蜂蜜。'] && !!S.lines['我们有桃子。']"), 'the list shows what the troop has, and what the feast still needs');
+  // A little monkey asks you to play hide and seek (a side quest): you count to ten with your eyes covered, and it calls
+  // out where it's hiding, its English with the place's word in Chinese; A at the wrong place, and it calls out again;
+  // after two wrong guesses its tail pokes out; found, it jumps out, with shells the first time
+  await pressAt(13, 9, 'up', 'playing hide and seek with a little monkey');
+  assert.ok(['我们来捉迷藏吧！', '一，二，三，四，五，六，七，八，九，十！', '我来了！'].every(t => get('__said').includes(t)), 'it asks you to play, and you count to ten');
+  const hidden = area().hide.spot, clue = get('L[hideSpot(here().hide.spot).say].t.join("")');
+  assert.ok(hidden && get('__said').includes(clue), 'it calls out where it’s hiding');
+  assert.ok(!get("NPCS.some(n => n.id === 'hider')"), 'and it’s gone from where it stood');
+  const LOOK = {tree: [19, 4, 'left'], table: [16, 8, 'up'], bridge: [16, 17, 'down'], water: [17, 15, 'right'], flowers: [25, 2, 'right']};   // where you stand to look at each place
+  const wrong = Object.keys(LOOK).filter(id => id !== hidden && get(`lvl(hideSpot('${id}').word)`) >= 1).slice(0, 2);
+  for (const id of wrong) await pressAt(...LOOK[id], `looking for the little monkey: ${id}, the wrong place`);
+  assert.equal(area().hide.wrong, 2, 'two wrong guesses: its tail pokes out now');
+  const shellsNow = get('S.shells');
+  await pressAt(...LOOK[hidden], 'finding the little monkey');
+  assert.ok(get('__said').includes('找到你了！'), 'found you!');
+  assert.deepEqual([area().hide.spot, area().hide.won, get('S.shells') - shellsNow], [null, 1, 3], 'found, with 3 shells the first time');
+  run('placeCharacters()');
   stand(11, 5, 'up');
   await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
   assert.equal(run('PLACE'), 'school');

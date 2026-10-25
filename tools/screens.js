@@ -130,6 +130,14 @@ SAVES.feastTable = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows
 SAVES.feastHungry = {...SAVES.feastTable, pos: {place: 'homeGround', x: 19, y: 8, dir: 'up'}};
 SAVES.feastList = {...SAVES.feastTable, w: {...SAVES.feastTable.w, ...knows(1, ['没有'])}, areas: {1: {...SAVES.feastTable.areas[1], feast: 3}},
   pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
+// hide and seek with a little monkey at the home ground: facing it; while it hides under the table (after two wrong
+// guesses, its tail pokes out)
+SAVES.hideSeek = {...SAVES.feastList, w: {...SAVES.feastList.w, ...knows(1, ['树', '水', '花', '桥', '桌子'])}, pos: {place: 'homeGround', x: 13, y: 9, dir: 'up'}};
+const hidingIn = (spot, wrong) => ({...SAVES.hideSeek.areas[1], hide: {spot, wrong, won: 0, last: spot}});
+SAVES.hiding = {...SAVES.hideSeek, areas: {1: hidingIn('table', 0)}, pos: {place: 'homeGround', x: 13, y: 9, dir: 'right'}};
+SAVES.hideTail = {...SAVES.hideSeek, areas: {1: hidingIn('table', 2)}, pos: {place: 'homeGround', x: 14, y: 9, dir: 'up'}};
+SAVES.hideNotHere = {...SAVES.hideSeek, areas: {1: hidingIn('table', 0)}, pos: {place: 'homeGround', x: 17, y: 15, dir: 'right'}};   // looking in the pool
+SAVES.hideFind = {...SAVES.hideSeek, areas: {1: hidingIn('table', 1)}, pos: {place: 'homeGround', x: 16, y: 8, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -556,6 +564,24 @@ const SCREENS = [
     play(); await wait(100); madeCard('没有', () => {}, () => {}, 'Got it'); await wait(400); }},
   {id: 'feast-list', title: 'The feast’s list', save: 'feastList', why: 'A at the table: what the troop has, ticked, and what the feast still needs, the honey as a shadow; each sentence’s English the first time.', run: async () => {
     play(); await wait(100); interact(...facing()); await wait(500); }},
+  {id: 'hide-ask', title: 'Hide and seek', save: 'hideSeek', why: 'A little monkey at the home ground, with a ! till you’ve found it once: 我们来捉迷藏吧！ (捉迷藏, just for listening).', run: async () => {
+    play(); await wait(100); talk(npc('hider')); await wait(500); }},
+  {id: 'hide-play', title: 'Hide and seek: Play?', save: 'hideSeek', why: 'Play or Not now.', run: async () => {
+    play(); await wait(100); talk(npc('hider')); await wait(200); next(); await wait(500); }},
+  {id: 'hide-count', title: 'Counting to ten', save: 'hideSeek', why: 'Your eyes covered, the screen dark: 一 to 十, the numbers you know green. It runs off to hide.', run: async () => {
+    play(); await wait(100); talk(npc('hider')); await wait(200); next(); await wait(300); click('[data-a=yes]'); await wait(700); }},
+  {id: 'hide-clue', title: 'Where it’s hiding', save: 'hiding', why: 'It calls out where it is: its English every time, with the place’s word in Chinese (I’m under the 桌子!), so finding it tests the word, never 下面.', run: async () => {
+    play(); await wait(100); hideClue(hideSpot('table')); await wait(500); }},
+  {id: 'hide-not-here', title: 'Not here', save: 'hideNotHere', why: 'A at the wrong place (the pool): not here, then it calls out again.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(500); }},
+  {id: 'hide-tail', title: 'Its tail', save: 'hideTail', why: 'After two wrong guesses, its tail pokes out from where it’s hiding, wagging now and then: here, under the end of the table.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'hide-found', title: 'Found you!', save: 'hideFind', why: 'A at the right place: it jumps out, and you say 找到你了！', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(700); }},
+  {id: 'hide-result', title: 'You found it', save: 'hideFind', why: 'Shells the first time; then just for fun, and it hides somewhere new each time.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(500); next(); await wait(500); }},
+  {id: 'hide-tasks', title: 'Tasks while it hides', save: 'hiding', why: 'Your task, with its clue under it to read and hear again (no arrow: that’s the game).', run: async () => {
+    play(); await wait(100); tasksPage(() => {}); await wait(400); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

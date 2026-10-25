@@ -86,7 +86,8 @@ function getTasks(){   // the tasks to show now: the area's tasks whose if match
     const toPlace = t.arrow && t.arrow.place;   // or {place}: the way to a place, and none once you're there
     const at = c ? [c.x, c.y, c.place] : toPlace ? null : t.arrow || null, there = toPlace || (at && placeOf(at));
     const target = toPlace ? (there === PLACE ? null : wayTo(there)) : !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
-    return {id:fill(t.id, true), text:fill(t.text, false, true), target, ...(c && there === PLACE ? {npc:true} : {})};
+    return {id:fill(t.id, true), text:fill(t.text, false, true), target, ...(c && there === PLACE ? {npc:true} : {}),
+      ...(t.clue && hiding() ? {clue:hideSpot(hideState().spot)} : {})};   // clue: hide and seek's, to hear again (js/hide.js)
   });
 }
 // Does a sparkle (AREA.sparkles) sparkle now? Until you know its word, while its if matches, and not on a square that
@@ -125,6 +126,7 @@ function promptFor(x, y){
   if (BIRD_WORD && birdAt(x, y)) return 'Look';
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return way.label || 'Go';   // a way you go through by pressing A, such as jumping through the waterfall
+  if (hideSpotAt(x, y)) return 'Look';   // where a little monkey playing hide and seek might be (js/hide.js)
   const spot = spotLook(x, y);
   if (spot) return spot.label || 'Look';
   const t = tileAt(x, y);
@@ -170,6 +172,8 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'lesson') return !!lessonNow() === v;       // a lesson series at school has a new word ready for you
     if (k === 'near'){ const n = NPCS.find(c => c.id === v); return !!n && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) === 1; }   // you're right beside this character
     if (k === 'at') return placeOf(v) === PLACE && pl.x === v[0] && pl.y === v[1];   // you're standing here: [x, y], or [x, y, 'place']
+    if (k === 'hiding') return hiding() === v;   // a little monkey is hiding, playing hide and seek with you (js/hide.js)
+    if (k === 'hidesFound') return compare(here().hide.won, v);   // how many times you've found it
     if (k === 'around') return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= AROUND && Math.abs(pl.y - v[1]) <= AROUND;   // you're near here, as you come up to it
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
@@ -361,6 +365,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const text = `You counted ${all ? `all ${right}` : `${right} of ${asks.length}`} right.${shells ? ` +${shells} 🐚` : ''}`;
     if (who) await showNarration(text, last); else toast(text);
   },
+  async hideSeek(s, who, last){ return hideSeek(who, last); },   // hide and seek with the one you're talking to (js/hide.js)
   async talkTo(s){ const n = NPCS.find(c => c.id === s.talkTo); if (n) await talk(n); },   // talking to someone, such as A at the little monkeys' tower talking to them
   // Match the words you've learned (with pictures) to their pictures, as at the practice post (title: its heading;
   // stop: the button to stop). Stopping ends the conversation there, with notYet as a message.
@@ -611,7 +616,7 @@ async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) awai
 function placeCharacters(){
   for (const n of ALL_NPCS){
     if (S.following.includes(n.id)) continue;
-    const m = (n.moves || []).find(m => matches(m.if)) || n.home;
+    const m = HIDE && n.id === HIDE.by && hiding() ? {place:'hiding', x:0, y:0} : (n.moves || []).find(m => matches(m.if)) || n.home;   // (off hiding: hide and seek, js/hide.js)
     const place = placeOf(m);
     if (n.place !== place || n.x !== m.x || n.y !== m.y){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; }
   }
@@ -803,6 +808,8 @@ async function interact(x, y){
   if (bd && BIRD_WORD){ await showNotice(BIRD_WORD, AREA.birds.note ? {note:fill(AREA.birds.note)} : {}); shooBird(bd); return; }
   const h = hiddenAt(x, y);
   if (h) return findHidden(h);
+  const hs = hideSpotAt(x, y);
+  if (hs) return lookForHider(hs);
   const spot = spotLook(x, y);
   if (spot) return runSteps(spot.do);
   const t = tileAt(x, y);

@@ -189,7 +189,7 @@ let lastLine = null;          // the line someone else said last ({id, line}), u
 const TAP_TIP_LINES = 5;      // "Tap any word": a tip on your very first line (TIPS.tap), only for a new player
 // A line someone says (opts: teach, the word being taught, in bold green; hint, what to do, such as where to go next; ok,
 // what A does, such as Give it; last, the conversation's last line: its button says Done, not ▼ Next, so you can tell it's
-// ending). The hint is a message of its own, after the line (decided 24 October 2026: under the line, it crowded it), and
+// ending; clue, a word its English leaves in Chinese, {word} in it, and shows every time, such as hide and seek's). The hint is a message of its own, after the line (decided 24 October 2026: under the line, it crowded it), and
 // takes the line's ok and Done with it.
 async function showDialog(who, line, opts = {}){
   const {hint, ...said} = opts;
@@ -202,8 +202,9 @@ function sayLine(who, line, opts){
     const key = line.t.join(''), firstTime = !S.lines[key];
     S.lines[key] = 1; hear(line.t); save();
     const again = !talkBox.hidden;   // again: the box is still up from the last line
-    talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${firstTime ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
-      <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en" ${firstTime ? '' : 'hidden'}>${esc(line.en)}</div>
+    const enShows = firstTime || !!opts.clue;   // (a clue: its English every time, the place's word in Chinese, js/hide.js)
+    talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${enShows ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
+      <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en${opts.clue ? ' clue' : ''}" ${enShows ? '' : 'hidden'}>${opts.clue ? cluedEn(line.en, opts.clue) : esc(line.en)}</div>
       <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
     talkBox.classList.toggle('again', again);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();   // at the top of the screen, if at the bottom it would cover you

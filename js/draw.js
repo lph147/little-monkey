@@ -440,6 +440,7 @@ function drawWorld(now){
   b.drawImage(topCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.top, cx, cy, now);
   drawFallingLeaves(cx, cy, now);
+  drawHideTail(cx, cy, now);   // a little monkey's tail, poking out of where it's hiding (js/hide.js)
   for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
@@ -458,6 +459,7 @@ function drawWorld(now){
     for (let i = 0; i < 80; i++){ const x = (i * 37) % (VW*T), y = Math.floor(i * 53 + now * (.25 + (i % 3) * .1)) % (VH*T); R(b, x, y, 1, 7 + i % 9, i % 3 ? '#FFFFFF' : '#BFE8FA'); }
     b.globalAlpha = 1;
   }
+  drawDim(now);   // counting with your eyes covered (js/hide.js)
   const sk = (now - sleepT) / SLEEP_MS;   // sleeping in a bed: the cave goes dim and Zs float up from you, then it's light again
   if (sk >= 0 && sk < 1){
     const a = Math.min(1, sk / .2, (1 - sk) / .2), PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);

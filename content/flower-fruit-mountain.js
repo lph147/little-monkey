@@ -176,6 +176,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'news', if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, text:'Talk to the old monkey at the {学校}: he has news', arrow:'elder'},
     {id:'feastTable', if:{feast:1}, text:'Go to the big {树} in the middle of the home ground', arrow:[17, 7, 'homeGround']},
     {id:'hungryTable', if:{feast:2}, text:'Talk to the hungry monkey by the big {桌子}', arrow:'hungry'},
+    {id:'hideSeek', if:{hiding:true}, text:'Find where the little monkey is hiding', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
     {id:'count', if:{cave:{atLeast:5}, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
@@ -229,7 +230,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Plant {花|flowers} in front of the {学校}', show:{flowers:'asked'}, done:{schoolFlowers:true}},
     {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
     {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}},
-    {chapter:1, text:'Hear from the hungry monkey what the feast still needs', show:{feast:{atLeast:2}}, done:{feast:{atLeast:3}}}
+    {chapter:1, text:'Hear from the hungry monkey what the feast still needs', show:{feast:{atLeast:2}}, done:{feast:{atLeast:3}}},
+    {chapter:1, text:'Play hide and seek with a little monkey', show:{feast:{atLeast:1}}, done:{hidesFound:{atLeast:1}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -252,6 +254,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // practice, for another word game
     trainee1: [{if:{trainee1:0}, show:'!'}], trainee2: [{if:{trainee2:0}, show:'!'}],   // (the once: they had one whenever your words needed practice till 24 October 2026)
     // the little monkeys building a tower of stones: once you know enough numbers to count its stones with them, till you have
+    hider: [{if:{hidesFound:0}, show:'!'}],   // until you've found it once, playing hide and seek
     towerL: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}], towerR: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}],
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
     big: [{if:{elder:{atLeast:1}, gate:false, new:'我'}, show:'!'}, {if:{climb:1, new:'棍子'}, show:'!'},   // in the meadow, to say who he is
@@ -985,6 +988,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#45291A', f:'#B98A5E', s:'#F4D3AE', m:'#C99272', e:'#24160C'}},
     {id:'towerR', place:'homeGround', x:23, y:7, facing:'left', plays:'tower', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#46240F', f:'#B4693A', s:'#F2CA9F', m:'#C2805E', e:'#24160C'}},
+    // chapter 1: a little monkey who plays hide and seek with you (the area's hideSeek), once the feast is announced, by the
+    // path in the middle of the home ground
+    {id:'hider', place:'homeGround', x:13, y:8, facing:'down', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      moves:[{if:{feast:0}, place:'gone', x:0, y:0}],
+      palette:{o:'#43260F', f:'#C98B4F', s:'#F6D4AC', m:'#CC9070', e:'#24160C'}},
     // chapter 1: by the hillside's brook, a little monkey on the bank chasing a dragonfly, leaping at it, and two in the water
     // at the brook's end, splashing each other (in the book, chapter 1: 赶蜻蜓, they chase dragonflies, and 绿水涧边随洗濯, by
     // the green stream they wash)
@@ -1152,6 +1160,32 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]
   },
 
+  // Hide and seek with a little monkey at the home ground (a side quest in chapter 1; the hideSeek step, js/hide.js): Play
+  // or Not now, then you count to ten with your eyes covered (count, your line: numbers you know green), say you're
+  // coming, and it calls out where it's hiding (each spot's say), its English every time with the place's word in Chinese
+  // ({word} in it), so finding it tests that word and never 下面 or 里. It only hides where you know the word (each spot's
+  // word), somewhere new each time. A at a spot (at: its squares) looks there: not there (notHere), and it calls out again;
+  // after two wrong guesses, its tail (tail) too. Found: it jumps out (to out, or the nearest free square), you say
+  // 找到你了！ (found), shells the first time (shells), and it goes back to where it stands.
+  hideSeek: {
+    by:'hider', place:'homeGround', shells:3,
+    ask:'Hide and seek! Cover your eyes and count to ten, then find where the little monkey is hiding. Listen to where it says it is.',
+    notYet:'The little monkey wants to play hide and seek, but you don’t know the words for enough places yet. Come back when you know more!',
+    count:'hideCount', coming:'hideComing', found:'hideFound',
+    notHere:'🐾 Not here! Listen again: where did it say it is?',
+    tail:'🐾 Not here! Listen again, and look out for a tail…',
+    result:'You found the little monkey! It was {where}.',
+    again:'Talk to it again to play another game: it hides somewhere new each time.',
+    spots: [
+      {id:'tree', word:'树', say:'hideTree', where:'behind the big {树}', at:[[17, 4], [18, 4], [17, 5], [18, 5], [17, 6], [18, 6]], out:[19, 4], tail:[18, 4, 'right']},
+      {id:'table', word:'桌子', say:'hideTable', where:'under the {桌子}', at:[[16, 7], [17, 7], [18, 7]], out:[16, 8], tail:[16, 7, 'left']},
+      {id:'bridge', word:'桥', say:'hideBridge', where:'under the {桥}', at:[[15, 18], [16, 18], [17, 18]], out:[15, 17], tail:[16, 18, 'left']},
+      {id:'water', word:'水', say:'hideWater', where:'in the {水}', at:[[18, 15], [19, 15], [20, 15], [18, 16], [19, 16], [20, 16]], out:[17, 15], tail:[19, 16, 'right']},
+      {id:'flowers', word:'花', say:'hideFlowers', where:'in the {花|flowers}', at:[[26, 2], [27, 2], [28, 2], [29, 2], [30, 2], [27, 3], [28, 3], [29, 3], [30, 3],
+        [26, 4], [27, 4], [28, 4], [29, 4], [30, 4], [26, 5], [27, 5], [28, 5], [29, 5], [30, 5]], out:[28, 3], tail:[28, 2, 'right']}
+    ]
+  },
+
   // Example sentences for words that no line or story sentence uses, shown on the word's page in
   // the Word Scroll. (A word that only appears in a sentence you complete, such as 头带, shows that.)
   // Checked by a native speaker on 16 October 2026.
@@ -1166,7 +1200,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '蜜蜂': {zh:'花 上 有 蜜蜂 。', en:'There is a bee on the flower.'},
     '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
-    '桥': {zh:'河 上 有 桥 。', en:'There is a bridge over the river.'},
     '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
     '狼': {zh:'草 里 有 狼 。', en:'There is a wolf in the grass.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now)
@@ -1342,6 +1375,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveFruit: {zh:'我们 有 桃子 ， 也 有 苹果 ！', en:'We have peaches, and apples too!'},
     noHoney: {zh:'我们 没有 蜂蜜 ！', en:'We don’t have any honey!'},   // and hasn't (teaching 没有; 蜂蜜 just for listening, till the bees)
     wantHoney: {zh:'我 要 吃 蜂蜜 ！', en:'I want to eat honey!'},
+    // hide and seek with a little monkey (the area's hideSeek): its clues' English leaves the place's word in Chinese ({桌子})
+    hideAsk: {zh:'我们 来 捉迷藏 吧 ！', en:'Let’s play hide and seek!'},
+    hideCount: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ， 十 ！', en:'One, two, three, four, five, six, seven, eight, nine, ten!'},   // you, with your eyes covered
+    hideComing: {zh:'我 来 了 ！', en:'Here I come!'},
+    hideTree: {zh:'我 在 大 树 后面 ！', en:'I’m behind the big {树}!'},
+    hideTable: {zh:'我 在 桌子 下面 ！', en:'I’m under the {桌子}!'},
+    hideBridge: {zh:'我 在 桥 下面 ！', en:'I’m under the {桥}!'},
+    hideWater: {zh:'我 在 水 里 ！', en:'I’m in the {水}!'},
+    hideFlowers: {zh:'我 在 花 里 ！', en:'I’m in the {花|flowers}!'},   // (花丛里, in the flowerbed, would be more natural; 花丛 isn't a word in the game)
+    hideFound: {zh:'找到 你 了 ！', en:'Found you!'},
     count4: {zh:'一 ， 二 ， 三 ， 四 ！', en:'One, two, three, four!'},   // the teacher, counting peaches onto his table (number lessons)
     count5: {zh:'一 ， 二 ， 三 ， 四 ， 五 ！', en:'One, two, three, four, five!'},
     count6: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ！', en:'One, two, three, four, five, six!'},
@@ -1632,6 +1675,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {if:{numbersKnown:0}, say:'count3'}, {if:{numbersKnown:{atLeast:1}}, say:'play'}, {countGame:'tower'}, {if:{numbersKnown:{atLeast:1}}, set:{tower:2}}]},
       {if:{numbersKnown:0}, do:[{say:'count3'}, {countGame:'tower'}]},
       {do:[{say:'play'}, {countGame:'tower'}, {set:{tower:2}}]}
+    ],
+    // the little monkey who plays hide and seek (the area's hideSeek)
+    hider: [
+      {do:[{say:'hideAsk'}, {hideSeek:true}]}
     ],
     towerR: [
       {if:{tower:0}, do:[{set:{tower:1}}, {say:'hi'}, {reply:'你好'}, {message:'The little monkeys are building a tower of stones, as high as it will go, before it falls!'},

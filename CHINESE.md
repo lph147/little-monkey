@@ -80,6 +80,15 @@ shown where the word list has them.
 | 我们有桃子，也有苹果！ | wǒmen yǒu táozi, yě yǒu píngguǒ! | We have peaches, and apples too! | 饿猴子 (Hungry monkey) |  |
 | 我们没有蜂蜜！ | wǒmen méiyǒu fēngmì! | We don’t have any honey! | 饿猴子 (Hungry monkey) |  |
 | 我要吃蜂蜜！ | wǒ yào chī fēngmì! | I want to eat honey! | 饿猴子 (Hungry monkey) |  |
+| 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
+| 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | you |  |
+| 我来了！ | wǒ lái le! | Here I come! | you |  |
+| 我在大树后面！ | wǒ zài dà shù hòumiàn! | I’m behind the big tree! | 猴子 (Monkey) |  |
+| 我在桌子下面！ | wǒ zài zhuōzi xiàmiàn! | I’m under the table! | 猴子 (Monkey) |  |
+| 我在桥下面！ | wǒ zài qiáo xiàmiàn! | I’m under the bridge! | 猴子 (Monkey) |  |
+| 我在水里！ | wǒ zài shuǐ lǐ! | I’m in the water! | 猴子 (Monkey) |  |
+| 我在花里！ | wǒ zài huā lǐ! | I’m in the flowers! | 猴子 (Monkey) |  |
+| 找到你了！ | zhǎodào nǐ le! | Found you! | you |  |
 | 一，二，三，四！ | yī, èr, sān, sì! | One, two, three, four! |  |  |
 | 一，二，三，四，五！ | yī, èr, sān, sì, wǔ! | One, two, three, four, five! |  |  |
 | 一，二，三，四，五，六！ | yī, èr, sān, sì, wǔ, liù! | One, two, three, four, five, six! |  |  |
@@ -184,7 +193,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | 蜘蛛 |  |
 | 花上有蜜蜂。 | huā shàng yǒu mìfēng. | There is a bee on the flower. | 蜜蜂 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
-| 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | 桥 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | 狼 |  |
 
@@ -250,6 +258,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 野猪 | yězhū | Wild boar |  |
+| 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
@@ -406,6 +415,9 @@ check that each is true and simply put.
 | 是 | shì | am, is, are |  |
 | 和 | hé | and |  |
 | 后面 | hòumiàn | behind |  |
+| 下面 | xiàmiàn | under |  |
+| 找到 | zhǎodào | to find |  |
+| 捉迷藏 | zhuō mícáng | hide and seek |  |
 | 大 | dà | big |  |
 | 从 | cóng | from |  |
 | 哪里 | nǎlǐ | where |  |
@@ -589,6 +601,15 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们有桃子。 | wǒmen yǒu táozi. | We have peaches. | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: The feast’s list, A at the table (and 我们有苹果。, we have apples) |  |
 | 我们没有蜂蜜。 | wǒmen méiyǒu fēngmì. | We don’t have any honey. | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: The feast’s list |  |
 | 我没有苹果。 | wǒ méiyǒu píngguǒ. | I don’t have any apples. | New on 24 October 2026 (in the game), the hungry monkey at the feast’s table: A sentence you finish in a lesson, to practise 没有 (filling in 没有) |  |
+| 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | New on 25 October 2026 (in the game), hide and seek: A little monkey at the home ground (捉迷藏 zhuō mícáng, hide and seek, just for listening) |  |
+| 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | New on 25 October 2026 (in the game), hide and seek: You, counting with your eyes covered |  |
+| 我来了！ | wǒ lái le! | Here I come! | New on 25 October 2026 (in the game), hide and seek: You, when you’ve counted to ten (is this what children say in hide and seek?) |  |
+| 我在大树后面！ | wǒ zài dà shù hòumiàn! | I’m behind the big tree! | New on 25 October 2026 (in the game), hide and seek: The little monkey, calling out where it’s hiding |  |
+| 我在桌子下面！ | wǒ zài zhuōzi xiàmiàn! | I’m under the table! | New on 25 October 2026 (in the game), hide and seek: The little monkey (下面 xiàmiàn, under, just for listening) |  |
+| 我在桥下面！ | wǒ zài qiáo xiàmiàn! | I’m under the bridge! | New on 25 October 2026 (in the game), hide and seek: The little monkey |  |
+| 我在水里！ | wǒ zài shuǐ lǐ! | I’m in the water! | New on 25 October 2026 (in the game), hide and seek: The little monkey, in the pool |  |
+| 我在花里！ | wǒ zài huā lǐ! | I’m in the flowers! | New on 25 October 2026 (in the game), hide and seek: The little monkey, in the patch of flowers (would 花丛里, in the flowerbed, be more natural? 花丛 isn’t a word in the game) |  |
+| 找到你了！ | zhǎodào nǐ le! | Found you! | New on 25 October 2026 (in the game), hide and seek: You, finding it (找到 zhǎodào, to find, just for listening) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions
