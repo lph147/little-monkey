@@ -1,5 +1,5 @@
 // Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school, its lessons and its flowers,
-// the bees, home with their queen, and the lost cow, found in the pasture), the way a
+// the bees, home with their queen, and the lost cow, brought home from the pasture), the way a
 // player would: standing in front of things and pressing A, stepping into flowers and rustling grass,
 // pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
@@ -525,10 +525,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气 to his thanks');
   assert.deepEqual([area().flowers, area().schoolFlowers, run('tileAt(10, 5).look')], ['done', true, 'flowerBed'], 'he plants them in front of the school');
 
-  // Chapter 1: the cow (its first part, 26 October 2026). Since the feast's quests began, the thirsty monkey has been by the
-  // road at the home ground, with news: 山上有牛！ (牛 just for listening); the troop clears the bushes past the bridge at the
-  // bottom of the home ground, the way south to the pasture (牧场). There, beyond the pines, a cow moos; by its spring,
-  // you find it: 牛, said as you meet it, and it's scared of the wolves: 我怕狼！
+  // Chapter 1: the cow (26 October 2026). Since the feast's quests began, the thirsty monkey has been by the road at the
+  // home ground, with news: 山上有牛！ (牛 just for listening); the troop clears the bushes past the bridge at the bottom of
+  // the home ground, the way south to the pasture (牧场). There, beyond the pines, a cow moos; by its spring, you find it:
+  // 牛, said as you meet it, and it's scared of the wolves: 我怕狼！ Its word game wins its trust: 好！我们去你家吧！, and
+  // it follows you home. As you come into the gap between the big rocks, a wolf leaps out at you (beaten, it runs off for
+  // good); and home, as you come up to the thirsty monkey, the cow stays by him
   await pressAt(21, 10, 'down', 'talking to the thirsty monkey, by the road');
   assert.ok(get('__said').includes('山上有牛！') && area().cow === 1, 'there’s a cow on the mountain!');
   assert.ok(!knows('牛'), '牛 is just for listening, till you find the cow');
@@ -536,11 +538,16 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(16, 20, 'down');
   await act('arrive(16, 21).then(runEvents)', 'going south, into the pasture');
   assert.deepEqual([run('PLACE'), area().cow], ['pasture', 2], 'the pasture: a cow moos, somewhere beyond the pines');
-  await pressAt(31, 17, 'down', 'finding the cow by its spring');
-  assert.ok(knows('牛') && get('__said').includes('我怕狼！') && area().cow === 3, 'the cow: 牛, and it’s scared of the wolves');
+  await pressAt(31, 17, 'down', 'finding the cow by its spring, and playing its word game');
+  assert.ok(knows('牛') && get('__said').includes('我怕狼！') && get('__said').includes('好！我们去你家吧！'), 'the cow: 牛, scared of the wolves, then won over');
+  assert.deepEqual([area().cow, get('S.following')], [4, ['cow']], 'it follows you home');
+  await walk([[31, 17], [31, 16], [21, 16], [21, 14]], 'leading the cow into the gap between the rocks, where a wolf leaps out');
+  assert.equal(area().cowWolf, 1, 'the wolf at the rocks, beaten');
   stand(16, 1, 'up');
-  await act('arrive(16, 0).then(runEvents)', 'back to the home ground');
-  assert.equal(run('PLACE'), 'homeGround');
+  await act('arrive(16, 0).then(runEvents)', 'back to the home ground, with the cow');
+  assert.deepEqual([run('PLACE'), get('S.following')], ['homeGround', ['cow']]);
+  await walk([[16, 20], [16, 10], [19, 10]], 'leading the cow to the thirsty monkey, by the road');
+  assert.deepEqual([area().cow, get('S.following'), get("[ALL_NPCS.find(n => n.id === 'cow')].map(n => [n.place, n.x, n.y])[0]")], [5, [], ['homeGround', 22, 11]], 'home: it stays by the thirsty monkey');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this

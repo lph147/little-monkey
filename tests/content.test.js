@@ -23,11 +23,13 @@ const allSteps = () => [
   ...allLegend.flatMap(([ch, t, from]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at ${from}, part ${i + 1}`, s, null]))),
   ...(AREA.spots || []).flatMap((sp, n) => sp.onLook.flatMap((p, i) => p.do.map(s => [`looking at spot ${n + 1}, part ${i + 1}`, s, null]))),
   ...Object.entries(AREA.countGames || {}).flatMap(([id, g]) => (g.win || []).map(s => [`the counting game ${id}, if you win`, s, null])),
-  ...AREA.animals.flatMap(a => (a.counted || []).flatMap((c, i) => c.map(s => [`the ${a.id}, as friend ${i + 1} of ${a.many}`, s, null])))
+  ...AREA.animals.flatMap(a => (a.counted || []).flatMap((c, i) => c.map(s => [`the ${a.id}, as friend ${i + 1} of ${a.many}`, s, null]))),
+  ...((AREA.battles || {}).afterLoss || []).flatMap((a, i) => a.do.map(s => [`after losing a battle, part ${i + 1}`, s, null]))
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
   ...AREA.events.map((e, i) => [`event ${i + 1}`, e.if]),
+  ...((AREA.battles || {}).afterLoss || []).filter(a => a.if).map((a, i) => [`after losing a battle, part ${i + 1}`, a.if]),
   ...AREA.tasks.map(t => [`task ${t.id}`, t.if]),
   ...AREA.hints.map((h, i) => [`hint ${i + 1}`, h.if]),
   ...AREA.checklist.map((c, i) => [`checklist item ${i + 1}`, c.done]),
@@ -358,7 +360,7 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -366,6 +368,7 @@ test('every if only checks things the game knows about', () => {
       if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id], `${where} checks holding for "${id}", which isn't a request`);
       if (k === 'place') assert.ok(AREA.places[v], `${where} checks place ${v}, which isn't a place`);
       if (k === 'near') assert.ok(AREA.characters.some(c => c.id === v), `${where} checks near "${v}", who isn't a character`);
+      if (k === 'following') for (const id of Object.keys(v)) assert.ok(AREA.characters.some(c => c.id === id), `${where} checks following for "${id}", who isn't a character`);
       if (k === 'at') assert.ok(onMap(v) && canWalk(v), `${where} checks at ${JSON.stringify(v)}, which isn't somewhere you can stand`);
       if (k === 'bought') for (const w of Object.keys(v)) assert.ok(AREA.shop.items.some(i => i.item === w), `${where} checks bought for ${w}, which the shop doesn't sell`);
     }

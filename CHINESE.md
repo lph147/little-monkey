@@ -84,7 +84,7 @@ shown where the word list has them.
 | 去找蜂王吧！ | qù zhǎo fēngwáng ba! | Go and find the queen bee! |  |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 蜂王 (queen bee) |  |
 | 我们要蜂蜜！ | wǒmen yào fēngmì! | We want honey! | 小猴子 (You) |  |
-| 好！我们去你家吧！ | hǎo! wǒmen qù nǐ jiā ba! | OK! Let’s go to your home! | 蜂王 (queen bee) |  |
+| 好！我们去你家吧！ | hǎo! wǒmen qù nǐ jiā ba! | OK! Let’s go to your home! | 牛 (cow), 蜂王 (queen bee) |  |
 | 这里有花！ | zhèlǐ yǒu huā! | There are flowers here! | 蜂王 (queen bee) |  |
 | 我们有蜜蜂了！ | wǒmen yǒu mìfēng le! | We have bees now! | 饿猴子 (Hungry monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 蜂王 (queen bee) |  |
@@ -126,7 +126,7 @@ shown where the word list has them.
 | 这是黄色。 | zhè shì huángsè. | This is yellow. |  |  |
 | 这是白色。 | zhè shì báisè. | This is white. |  |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
-| 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey), 猴子 (Monkey) |  |
+| 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
 | 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | 大猴子 (Big monkey) |  |
 | 一！ | yī! | One! | 老猴子 (Old monkey) |  |

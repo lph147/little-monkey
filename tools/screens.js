@@ -203,6 +203,12 @@ SAVES.pastureIn = {...SAVES.waySouth, pos: {place: 'homeGround', x: 16, y: 20, d
 SAVES.pasture = {...SAVES.waySouth, areas: {1: {...SAVES.waySouth.areas[1], cow: 2}}, pos: {place: 'pasture', x: 24, y: 16, dir: 'right'}};   // on the cow's trail
 SAVES.cowMeet = {...SAVES.pasture, pos: {place: 'pasture', x: 31, y: 17, dir: 'down'}};   // facing the cow, by its spring
 SAVES.cowFound = {...SAVES.cowMeet, w: {...SAVES.cowMeet.w, ...knows(1, ['牛'])}, areas: {1: {...SAVES.cowMeet.areas[1], cow: 3}}};
+// version 2: won over, the cow follows you home; the wolf at the rocks; the cow running back after a lost battle; and home
+SAVES.cowFollow = {...SAVES.cowFound, friends: [...SAVES.cowFound.friends, 'cow'], following: ['cow'], areas: {1: {...SAVES.cowFound.areas[1], cow: 4}},
+  tasksSeen: {...SAVES.cowFound.tasksSeen, cow3: 1, cow4: 1}, pos: {place: 'pasture', x: 26, y: 17, dir: 'left'}};   // on the cow's trail, by its spring
+SAVES.cowGap = {...SAVES.cowFollow, w: {...SAVES.cowFollow.w, ...knows(1, ['狼'])}, pos: {place: 'pasture', x: 21, y: 15, dir: 'up'}};   // just below the gap between the rocks (knowing 狼, from the pine wood)
+SAVES.cowRan = {...SAVES.cowFollow, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};   // resting under the big tree, after a lost battle
+SAVES.cowHome = {...SAVES.cowFollow, areas: {1: {...SAVES.cowFollow.areas[1], cowWolf: 1}}, pos: {place: 'homeGround', x: 18, y: 10, dir: 'right'}};   // on the road, nearly at the thirsty monkey
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -735,6 +741,18 @@ const SCREENS = [
     play(); await wait(100); pressA(); await wait(1600); }},
   {id: 'cow-scared', title: 'I’m scared of wolves!', save: 'cowFound', why: 'Then the cow says 我怕狼！ (I’m scared of wolves!): it’s too scared of the wolves in the pines to go anywhere.', run: async () => {
     play(); await wait(100); talk(npc('cow')); await wait(500); }},
+  {id: 'cow-game', title: 'The cow’s word game', save: 'cowFound', why: 'Then its word game, to win its trust: win, and it follows you home (Not now, or lose, and it waits by its spring with a !).', run: async () => {
+    play(); await wait(100); talk(npc('cow')); await wait(300); next(); await wait(600); }},
+  {id: 'cow-follows', title: 'The cow follows you home', save: 'cowFollow', why: 'Won over (好！我们去你家吧！ OK! Let’s go to your home!), the cow follows you, a step behind, back through the pines; the task’s arrow points the way home.', run: async () => {
+    play(); await wait(200);
+    for (let i = 0; i < 3; i++){ pl.dir = 'left'; tryStep('left', performance.now()); await wait(450); }
+    await wait(300); }},
+  {id: 'cow-wolf', title: 'The wolf at the rocks', save: 'cowGap', why: 'Leading the cow home, as you come into the gap between the big rocks, a wolf leaps out of the long grass at you (just the once): it wants the cow!', run: async () => {
+    play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(2600); }},
+  {id: 'cow-ran', title: 'The cow ran back', save: 'cowRan', why: 'Lose a battle on the way home, and the cow takes fright and runs back to its spring: talk to it there, and it follows you again.', run: async () => {
+    play(); await wait(100); runSteps(BATTLES.afterLoss[0].do); await wait(600); }},
+  {id: 'cow-home', title: 'The cow is home', save: 'cowHome', why: 'As you come up to the thirsty monkey by the road, the cow stops following you, and stands by him: 太好了！ (Great!)', run: async () => {
+    play(); await wait(200); pl.dir = 'right'; tryStep('right', performance.now()); await wait(1600); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)

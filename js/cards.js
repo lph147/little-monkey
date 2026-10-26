@@ -207,12 +207,13 @@ function sayLine(who, line, opts){
       <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en${opts.clue ? ' clue' : ''}" ${enShows ? '' : 'hidden'}>${opts.clue ? cluedEn(line.en, opts.clue) : esc(line.en)}</div>
       <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
     talkBox.classList.toggle('again', again);
+    const id = (who.match(/data-id="([^"]*)"/) || [])[1];   // who's speaking (from speaker()), for their own voice, and so the box doesn't cover them
+    talkWho = id;
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();   // at the top of the screen, if at the bottom it would cover you
     $('#saybox').hidden = true;   // the box covers the message spot
     held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
     bindTokens(talkBox);
     const text = line.t.join(''), q = sel => talkBox.querySelector(sel);
-    const id = (who.match(/data-id="([^"]*)"/) || [])[1];   // who's speaking (from speaker()), for their own voice
     lastLine = id && id !== 'player' ? {id, line} : null;
     say(text, null, id);
     q('[data-a=say]').onclick = () => say(text, null, id);

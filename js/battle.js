@@ -34,15 +34,15 @@ function pickFoe(wild){
   lastFoes.push(id); if (lastFoes.length > 2) lastFoes.shift();
   return id;
 }
-// It jumps out of the grass beside you, with a !, then the battle.
-async function wildBattle(id, spot = findSpot()){
+// It jumps out of the grass beside you, with a !, then the battle (opts: as for battle).
+async function wildBattle(id, spot = findSpot(), opts = {}){
   const f = ENEMIES[id];
   pl.dir = spot.d;
   foe = {a:{spr:mapSprite(f.word), faces:MAP_SPRITES[f.word].faces}, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
   alertUntil = performance.now() + 1000;
   SFX.encounter();
   await sleep(1100);
-  const r = await battle(id);
+  const r = await battle(id, opts);
   if (foe){   // beaten, it runs off; if you ran away (or it beat you), it ducks back down into the grass, and you've turned away
     foe.state = r === 'won' ? 'flee' : 'hide'; foe.t1 = performance.now();
     if (r === 'ran'){ pl.dir = dirOf(pl.x - foe.x, pl.y - foe.y); S.pos.dir = pl.dir; SFX.turn(); }
@@ -51,17 +51,24 @@ async function wildBattle(id, spot = findSpot()){
   return r;
 }
 
-// The battle itself, with its own music (the place's comes back afterwards). Gives 'won', 'lost' or 'ran'.
-async function battle(id){
+// The battle itself, with its own music (the place's comes back afterwards). Gives 'won', 'lost' or 'ran'. opts.meet: what's
+// said as it begins, instead of the enemy's own meet. Lost, and once you've come round where you rest, what the story says
+// happens then (the area's battles' afterLoss: the first whose if matches), such as the cow you were leading home
+// running back to its spring.
+async function battle(id, opts = {}){
   playSong(battleSong());   // (the place's own, if it has one)
-  try { return await fight(id); } finally { playSong(placeSong()); }
+  let r;
+  try { r = await fight(id, opts); } finally { playSong(placeSong()); }
+  const after = r === 'lost' && (BATTLES.afterLoss || []).find(a => !a.if || matches(a.if));
+  if (after) await runSteps(after.do);
+  return r;
 }
-async function fight(id){
+async function fight(id, opts = {}){
   const f = ENEMIES[id], img = `<img class="portrait" alt="" src="${sprite(PICTURES[f.word].rows, PICTURES[f.word].palette).toDataURL()}">`;
   if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
   else { say(f.word); await sleep(700); }
   const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (the scene's own stick is the one you swing)
-  let left = f.hearts, note = fill(f.meet || `A {${f.word}} blocks your way!`);
+  let left = f.hearts, note = fill(opts.meet || f.meet || `A {${f.word}} blocks your way!`);
   // The scene: the enemy on its mound, you from behind with your stick, and what the animations use (js below, css
   // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
   // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).

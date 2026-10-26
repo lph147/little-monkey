@@ -296,9 +296,12 @@ function drawFoe(cx, cy, now){
 }
 // The speech box covers the bottom of the screen. If you, or the square you face (whoever you're talking to), would
 // be under it, it goes at the top of the screen instead, and stays there for the whole conversation, through every
-// line, card and reply, so it doesn't jump about; the map never moves for it. Checked as each line shows (before it's
-// drawn: placeTalk() in js/cards.js) and on every frame, in case the box grows, such as when its English is shown.
-let talkTop = false, talkCover = 0;   // whether the box is at the top; how much of the view it covers, in map pixels (the most this conversation)
+// line, card and reply, so it doesn't jump about; the map never moves for it. So it does when whoever's speaking is
+// further off, on the screen, and would be under it (such as the thirsty monkey as you bring the cow home), if at the top
+// it would cover neither of you. Checked as each line shows (before it's drawn: placeTalk() in js/cards.js) and on
+// every frame, in case the box grows, such as when its English is shown.
+let talkTop = false, talkCover = 0, talkWho = null;   // whether the box is at the top; how much of the view it covers, in map pixels (the most this conversation); who's speaking (sayLine() in js/cards.js)
+const camX = () => Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));   // the left of the view: you in the middle, as far as the map goes
 const camY = () => Math.round(clamp((pl.mv && pl.mv.slip ? pl.mv.fy*T : pl.py) + 8 - VH*T/2, 0, ROWS*T - VH*T));   // the top of the view: you in the middle, as far as the map goes (still while you slip down a bank, so you can see yourself slip)
 function placeTalk(cy = camY()){
   if (talkBox.hidden){
@@ -310,7 +313,9 @@ function placeTalk(cy = camY()){
   if (h > 0) talkCover = Math.max(talkCover, Math.min(VH*T, bh * VH*T / h));
   const [, fy] = facing(), top = Math.min(pl.py, fy*T) - cy, low = Math.max(pl.py, fy*T) + T - cy;   // you and the square you face, on screen
   const under = low - (VH*T - talkCover), over = talkCover - top;   // how far you'd be under the box at the bottom, and at the top
-  if (under > 0 && over < under){ talkTop = true; talkBox.classList.add('top'); $('#placeName').hidden = true; }   // (the place's name would cover its buttons)
+  const who = talkWho && NPCS.find(n => n.id === talkWho), wx = who ? who.x*T - camX() : -T, wy = who ? who.y*T - cy : -T;   // whoever's speaking, on screen
+  const whoUnder = wx >= 0 && wx + T <= VW*T && wy >= talkCover && wy + T > VH*T - talkCover && wy + T <= VH*T;   // on the screen, under the box at the bottom, and not under it at the top
+  if ((under > 0 && over < under) || (under <= 0 && over <= 0 && whoUnder)){ talkTop = true; talkBox.classList.add('top'); $('#placeName').hidden = true; }   // (the place's name would cover its buttons)
 }
 // Standing in tall or long grass hides your feet, as in Pokémon: the map where your feet are (the bottom FEET pixels of
 // your square, wherever you are, between two squares as you walk) is drawn again over you, where it's grass. Gives
@@ -435,7 +440,7 @@ function charPos(n, now){
   return {x:(m.fx + (n.x - m.fx) * p) * T, y:ground - lift, ground, mid:p > .15 && p < .85};
 }
 function drawWorld(now){
-  let cx = Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));
+  let cx = camX();
   let cy = camY(); placeTalk(cy);
   bigSparkles = !!AREA.bigSparkles && matches(AREA.bigSparkles);
   if (now - shakeT < 600){ cx += Math.round((Math.random()-.5)*3); cy += Math.round((Math.random()-.5)*3); }

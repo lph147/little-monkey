@@ -88,7 +88,7 @@ test('A at the hive takes honey, teaching 蜂蜜 (said straight away); the hungr
     'the feast’s list: honey ticked off too');
   assert.deepEqual(item(g, /Bring 蜂蜜/), ['Bring 蜂蜜 (honey) to the feast’s big 桌子 (table)', true, false, true]);
   assert.match(g.run('goalText()'), /The thirsty monkey has news for you/, 'the cow’s news first, till you’ve heard it');
-  g.run('here().cow = 3');
+  g.run('here().cow = 5');   // (home with you)
   assert.match(g.run('goalText()'), /The feast has 蜂蜜 \(honey\) now! Take more from the hive for your bag, and 吃 \(eat\) it to walk faster for a while\./);
   g.run('__said.length = 0');
   await press(g, 20, 7, 'left');

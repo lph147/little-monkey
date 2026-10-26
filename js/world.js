@@ -210,7 +210,8 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'at') return placeOf(v) === PLACE && pl.x === v[0] && pl.y === v[1];   // you're standing here: [x, y], or [x, y, 'place']
     if (k === 'hiding') return hiding() === v;   // a little monkey is hiding, playing hide and seek with you (js/hide.js)
     if (k === 'hidesFound') return compare(here().hide.won, v);   // how many times you've found it
-    if (k === 'around') return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= AROUND && Math.abs(pl.y - v[1]) <= AROUND;   // you're near here, as you come up to it
+    if (k === 'around'){ const d = v[3] ?? AROUND; return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= d && Math.abs(pl.y - v[1]) <= d; }   // you're near here, as you come up to it (within so many squares: [x, y, 'place', squares])
+    if (k === 'following') return Object.entries(v).every(([id, want]) => S.following.includes(id) === want);   // who's following you (the follow step), such as {cow:true}
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
@@ -219,7 +220,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -551,7 +552,13 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     S.pos.dir = 'down'; save(); wakeT = performance.now(); SFX.chime();
     if (typeof s.sleep === 'string') toast(fill(s.sleep));
   },
-  async battle(s, who){ if (await battle(s.battle) === 'won' && s.win) await runSteps(s.win, who); },
+  // A battle with an enemy (battle: its id), and steps if you win (win). out: it jumps out at you first, as a wild one does
+  // from long grass, such as the wolf at the rocks as you lead the cow home; meet: what's said as it begins, instead of
+  // its own. (What happens if you lose: the area's battles' afterLoss.)
+  async battle(s, who){
+    const opts = s.meet ? {meet:s.meet} : {};
+    if (await (s.out ? wildBattle(s.battle, undefined, opts) : battle(s.battle, opts)) === 'won' && s.win) await runSteps(s.win, who);
+  },
   // Characters follow you (follow: their ids, in line, the first right behind you), like Pikachu in Pokémon Yellow; with
   // none, they stop, and each goes to its own place (where its moves say), with a leap if that's here, one after another.
   async follow(s){
