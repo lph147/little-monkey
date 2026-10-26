@@ -533,6 +533,8 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我怕！ | wǒ pà! | I’m scared! | Chapter 1, part A (in the game): The little monkey |  |
 | 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | Chapter 1, part A (in the game): The old monkey, when you come back out of the cave |  |
 | 里面有床。 | lǐmiàn yǒu chuáng. | There are beds inside. | Chapter 1, part A (in the game): Your answer (you choose 床 to fill the gap) |  |
+| 里面有桌子。 | lǐmiàn yǒu zhuōzi. | There is a table inside. | Chapter 1, part A (in the game): Then your second answer (桌子), since 26 October 2026: you tell him about each of the three things you found |  |
+| 里面有碗。 | lǐmiàn yǒu wǎn. | There are bowls inside. | Chapter 1, part A (in the game): And your third (碗) |  |
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | Chapter 1, part A (in the game): The old monkey |  |
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | Chapter 1, part A (in the game): The example on 桥 (bridge)’s page in the Word Scroll |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave | Chapter 1, part A (in the game): What the stone tablet (石碑 shíbēi: please check this name too) in the cave says |  |

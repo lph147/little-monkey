@@ -210,7 +210,7 @@ test('the troop follows you up to the waterfall, like Pikachu in Pokémon Yellow
 test('you lead the troop into the cave: they follow you once you’ve told the old monkey, come through the water curtain after you, then go to their places', async () => {
   const game = loadGame({dom: true, save: {version: 28, started: true, w: Object.fromEntries(['瀑布', '洞', '床', '碗', '桌子', '跳'].map(w => [w, {lv: 1, due: 0, ok: 0}])),
     areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 2}}, pos: {place: 'falls', x: 9, y: 2, dir: 'up'}}});
-  game.run("mode = 'play'; placePlayer(); toast = () => {}; showDialog = showNarration = showNotice = replyWith = async () => {}; gapQ = async () => true");
+  game.run("mode = 'play'; placePlayer(); toast = () => {}; showDialog = showNarration = showNotice = replyWith = async () => {}; globalThis.__gaps = []; gapQ = async q => { __gaps.push([q.t.join(''), q.gap, q.en]); return true; }");
   const finish = async code => {
     let done = false;
     game.run(code).then(() => { done = true; });
@@ -220,6 +220,8 @@ test('you lead the troop into the cave: they follow you once you’ve told the o
   assert.equal(get(game, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show"), '!', 'back from the cave, the old monkey has a ! for you');
   await finish("talk(NPCS.find(n => n.id === 'elder'))");
   assert.equal(get(game, 'here().cave'), 3);
+  assert.deepEqual(get(game, '__gaps'), [['里面有床', '床', 'There are beds inside.'], ['里面有桌子', '桌子', 'There is a table inside.'], ['里面有碗', '碗', 'There are bowls inside.']],
+    'you tell him what’s inside, filling the gap in a sentence for each of the three things you found (since 26 October 2026: it was the beds alone)');
   assert.deepEqual(get(game, 'S.following'), ['elder', 'big', 'playful', 'doorway'], 'the troop follows you');
   game.run("S.pos = {place: 'falls', x: 5, y: 1, dir: 'left'}; placePlayer()");
   await finish('interact(4, 1).then(runEvents)');   // you jump through the waterfall, and they come after you

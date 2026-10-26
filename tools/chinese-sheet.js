@@ -20,6 +20,8 @@ const DRAFTS = [
     ['我 怕 ！', 'I’m scared!', 'The little monkey'],
     ['里面 有 什么 ？', 'What’s inside?', 'The old monkey, when you come back out of the cave'],
     ['里面 有 床 。', 'There are beds inside.', 'Your answer (you choose 床 to fill the gap)'],
+    ['里面 有 桌子 。', 'There is a table inside.', 'Then your second answer (桌子), since 26 October 2026: you tell him about each of the three things you found'],
+    ['里面 有 碗 。', 'There are bowls inside.', 'And your third (碗)'],
     ['太 好 了 ！ 我们 去 看看 ！', 'Wonderful! Let’s go and see!', 'The old monkey'],
     ['河 上 有 桥 。', 'There is a bridge over the river.', 'The example on 桥 (bridge)’s page in the Word Scroll'],
     ['水帘洞', 'Water Curtain Cave', 'What the stone tablet (石碑 shíbēi: please check this name too) in the cave says']]

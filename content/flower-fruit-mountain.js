@@ -1781,9 +1781,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {set:{cave:1}}
       ]},
       {if:{cave:1}, do:[{say:'dare', by:'big', hint:'Jump through the waterfall!'}]},
+      // you tell him what's inside, a sentence for each of the three things you found there (decided 26 October 2026, after
+      // measuring the game's pacing: from the dare to becoming king, 10 new words came with just 7 questions)
       {if:{cave:2, caveThings:3}, do:[
         {say:'inside'},
         {gap:{sentence:'里面 有 床', en:'There are beds inside.', word:'床'}},
+        {gap:{sentence:'里面 有 桌子', en:'There is a table inside.', word:'桌子'}},
+        {gap:{sentence:'里面 有 碗', en:'There are bowls inside.', word:'碗'}},
         {say:'letsGo'},
         {set:{cave:3}},
         {follow:['elder', 'big', 'playful', 'doorway']}   // the troop follows you, to jump in after you
