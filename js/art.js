@@ -832,19 +832,19 @@ const OBJECT_ART = {
   },
   frame: (g, o) => schoolFrame(g, o),
   // the queen bee's old hollow tree, two squares by two: a thick, gnarled trunk, lit from the left, with a dark hollow where
-  // honeycomb glints, roots spreading at its foot, and its crown high up
+  // honeycomb glints, roots spreading at its foot, and a full, round crown over the top of its trunk, like the big trees'
+  // (decided 26 October 2026: its trunk poked up flat through a few small clumps of leaves)
   hollowTree: (g, o) => {
-    const X = o.x*T, Y = o.y*T, D = '#2E1D12', M = '#6B4A2E', L = '#8E6A44', H = '#A9825A';
+    const X = o.x*T, Y = o.y*T, D = '#2E1D12', M = '#6B4A2E', L = '#8E6A44';
     if (shadows) groundShadow(g, X + 16, Y + 31, 15, 3);
-    leaves(g, [[16, -10, 12], [5, -3, 8], [27, -3, 8], [16, -1, 9]], X, Y, 977);
-    for (const [l, r, y0] of [[6, 33, 26], [7, 31, 22], [8, 30, 18], [9, 29, 12], [10, 28, 6], [10, 27, 2], [11, 26, -2]]) R(g, X + l, Y + y0, r - l, 32 - y0, D);   // wider at its foot
+    for (const [l, r, y0] of [[6, 33, 26], [7, 31, 22], [8, 30, 18], [9, 29, 12]]) R(g, X + l, Y + y0, r - l, 32 - y0, D);   // wider at its foot
     R(g, X + 3, Y + 26, 4, 6, D); R(g, X + 26, Y + 25, 5, 7, D); R(g, X + 4, Y + 27, 3, 4, M); R(g, X + 27, Y + 26, 3, 5, M);   // roots
-    R(g, X + 12, Y, 9, 31, M); R(g, X + 8, Y + 14, 17, 17, M); R(g, X + 10, Y + 6, 13, 9, M);
-    R(g, X + 12, Y, 2, 30, L); R(g, X + 9, Y + 15, 2, 15, L); R(g, X + 14, Y + 2, 1, 10, H);
-    [[16, 3, 6], [19, 8, 5], [11, 22, 6], [21, 23, 5]].forEach(([a, c, h]) => R(g, X + a, Y + c, 1, h, '#4E3420'));   // its bark
-    R(g, X + 13, Y + 14, 7, 12, D); R(g, X + 12, Y + 16, 9, 10, D); R(g, X + 14, Y + 13, 5, 1, D);                   // the hollow
-    R(g, X + 14, Y + 15, 5, 10, '#170E08'); R(g, X + 13, Y + 17, 7, 8, '#170E08');
-    [[14, 17], [17, 17], [15, 20], [18, 20], [14, 23], [17, 23]].forEach(([a, c]) => { R(g, X + a, Y + c, 2, 2, '#D9962B'); R(g, X + a, Y + c, 1, 1, '#F7D57A'); });   // honeycomb
+    R(g, X + 8, Y + 12, 17, 19, M); R(g, X + 10, Y + 8, 13, 6, M); R(g, X + 9, Y + 13, 2, 17, L); R(g, X + 11, Y + 9, 2, 5, L);
+    [[19, 10, 5], [11, 22, 6], [21, 23, 5]].forEach(([a, c, h]) => R(g, X + a, Y + c, 1, h, '#4E3420'));   // its bark
+    leaves(g, [[16, -12, 13], [3, -4, 10], [29, -4, 10], [16, -2, 12], [8, 5, 7], [24, 5, 7]], X, Y, 977);   // its crown
+    R(g, X + 13, Y + 15, 7, 11, D); R(g, X + 12, Y + 17, 9, 9, D);                                                       // the hollow
+    R(g, X + 14, Y + 16, 5, 9, '#170E08'); R(g, X + 13, Y + 18, 7, 7, '#170E08');
+    [[14, 18], [17, 18], [15, 21], [18, 21]].forEach(([a, c]) => { R(g, X + a, Y + c, 2, 2, '#D9962B'); R(g, X + a, Y + c, 1, 1, '#F7D57A'); });   // honeycomb
     R(g, X + 12, Y + 25, 9, 1, L);
   },
   archway: (g, o) => archway(g, o),

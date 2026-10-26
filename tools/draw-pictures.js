@@ -71,14 +71,13 @@ function draw(word, drawing = DRAWINGS[word], size = 32){
   return out.map(k => k && k.toUpperCase());
 }
 
-// Numbers: a dice face (its dots, [x, y] each), up to six; from seven, a ten frame: two rows of five boxes, the dots
-// filling the top row, then the bottom one, the way children learn to see numbers up to ten.
+// Numbers: a dice face (its dots, [x, y] each), up to six; from seven, two dice side by side, the left one always five
+// (五 and 二 for 七, 五 and 三 for 八, and so on), with square dots (decided 26 October 2026: a ten frame's round counters
+// came out as little crosses at this size, and 七 looked a mess).
 function dice(p, dots){ p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); for (const [x, y] of dots) p.fill(O(x, y, 2.4), '#D83A3A'); }
-function tenFrame(p, n){
-  p.fill(Rc(1, 7, 30, 18, 2), '#FAFAF5', {dark: '#C9C6BC'});
-  p.flat(or(...[1, 2, 3, 4].map(i => Rc(1 + i * 6, 8, 1, 16)), Rc(2, 15, 28, 1)), '#C9C6BC');   // the boxes
-  for (let i = 0; i < n; i++) p.fill(O(4 + (i % 5) * 6, i < 5 ? 11.5 : 19.5, 2.3), '#D83A3A');
-}
+const PIPS = {2: [[0, 0], [2, 2]], 3: [[0, 0], [1, 1], [2, 2]], 4: [[0, 0], [2, 0], [0, 2], [2, 2]], 5: [[0, 0], [2, 0], [1, 1], [0, 2], [2, 2]]};   // a die's dots, on a grid of three
+function smallDie(p, x0, n){ p.fill(Rc(x0, 9, 14, 14, 3), '#FAFAF5', {dark: '#C9C6BC'}); for (const [i, j] of PIPS[n]) p.fill(Rc(x0 + 2 + i * 4, 11 + j * 4, 3, 3), '#D83A3A'); }
+function twoDice(p, n){ smallDie(p, 1, 5); smallDie(p, 17, n - 5); }
 // Colours used more than once
 const FUR = '#B8743E', SKIN = '#F6D2A8', WHITE = '#F4F0E8', LEAF = '#4FA34A', BARK = '#8A5A32', WOOD = '#B98A55', STONE = '#A9A598', BLUE = '#3F8FCB', RED = '#D83A3A', GOLD = '#F2C14E';
 
@@ -412,7 +411,7 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
   '四': p => dice(p, [[10.5, 10.5], [21.5, 10.5], [10.5, 21.5], [21.5, 21.5]]),
   '五': p => dice(p, [[10.5, 10.5], [21.5, 10.5], [16, 16], [10.5, 21.5], [21.5, 21.5]]),
   '六': p => dice(p, [[10.5, 9.5], [21.5, 9.5], [10.5, 16], [21.5, 16], [10.5, 22.5], [21.5, 22.5]]),
-  '七': p => tenFrame(p, 7), '八': p => tenFrame(p, 8), '九': p => tenFrame(p, 9), '十': p => tenFrame(p, 10),
+  '七': p => twoDice(p, 7), '八': p => twoDice(p, 8), '九': p => twoDice(p, 9), '十': p => twoDice(p, 10),
   '红色': p => splat(p, '#E0303A'),
   '黄色': p => splat(p, '#F2C93A'),
   '白色': p => splat(p, '#F8F6F0'),
