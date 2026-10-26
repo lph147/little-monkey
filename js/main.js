@@ -1,10 +1,10 @@
 // The screen size, the main loop, new tasks, the title screen, the intro, How to play, and starting the game.
 
 /* ================= SCREEN, LOOP, MODES ================= */
-// The console is a Game Boy Advance held sideways: the screen in the middle, the D-pad, Select and Start on
-// the left, A and B on the right. Each side is SIDE_WING wide (as .console is in css/game.css), and the
-// screen is as big as fits between them. When the window is taller than it is wide (a phone held
-// upright), a card asks you to turn it, and the game waits.
+// The console, held sideways: the screen in the middle, TASKS, the D-pad and a thumbstick on the left, MENU and four
+// buttons (X, Y, B and A) on the right. Each side is SIDE_WING wide (as .console is in css/game.css), and the
+// screen is as big as fits between them; on a short screen, the controls shrink to fit (fitControls). When the window
+// is taller than it is wide (a phone held upright), a card asks you to turn it, and the game waits.
 const SIDE_WING = 150;
 let upright = false;
 function fit(){
@@ -37,6 +37,22 @@ function fit(){
   if (root && root.dataset) root.dataset.screen = h < 232 ? 'tiny' : h < 282 ? 'small' : 'big';
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   sc.imageSmoothingEnabled = false;
+  fitControls(window.innerHeight - px(style(document.documentElement), 'paddingTop', 'paddingBottom') - px(style($('.app')), 'paddingTop', 'paddingBottom'));
+}
+// The controls beside the screen are taller than a short screen (a phone 360 points tall held sideways, or one with
+// its browser's bars showing): they shrink together (--ctl in css/game.css, never below CTL_MIN of their size) until
+// the console fits the room it has, and the speaker, just for looks, goes. Anywhere else, they're their full size.
+const CTL_MIN = .6;
+function fitControls(room, con = $('.console')){
+  if (!con || !con.style || !con.style.setProperty || !con.offsetHeight) return;   // (the tests' pretend page has no sizes)
+  const tall = k => { con.style.setProperty('--ctl', k.toFixed(3)); return con.offsetHeight; };
+  let k = 1;
+  if (tall(1) > room){   // the biggest size that fits, found by halving the difference (7 times: within a percent)
+    let lo = CTL_MIN, hi = 1;
+    for (let i = 0; i < 7; i++){ const mid = (lo + hi) / 2; if (tall(mid) <= room) lo = mid; else hi = mid; }
+    k = lo; tall(k);
+  }
+  con.dataset.ctl = k < 1 ? 'tight' : '';
 }
 // Text and pictures follow the screen's height, so the same layout fits a small phone and a computer: the
 // page's text size (everything in css/game.css sized in rem), from 13px to 18px (16px on a typical Android
@@ -69,7 +85,7 @@ let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}
 const MIN_FRAME_MS = 10;
 let lastFrame = -Infinity;
 const frameDue = now => now - lastFrame >= MIN_FRAME_MS;
-// Frames a second, under the power light when Settings has it on: the frames drawn in the last second, and the screen's
+// Frames a second, over the game's top right corner when Settings has it on (for testing): the frames drawn in the last second, and the screen's
 // own refreshes if it makes more (some of them skipped).
 const fpsCount = {from:0, drawn:0, ticks:0, shown:null};
 function countFps(now, drawn){
@@ -296,9 +312,10 @@ function howToPlay(){
     const pages = [
       `<p class="label">How to play · 1 of 3</p>
        <ul class="howto">
-         <li><span class="kbd pad">✚</span><span><b>Walk</b> by holding a direction. Tap it to turn on the spot. You can slide your thumb between directions.</span></li>
+         <li><span class="kbd pad">✚</span><span><b>Walk</b> by holding a direction, or pushing the thumbstick. Tap a direction to turn on the spot. You can slide your thumb between directions.</span></li>
          <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> When someone talks, A moves on. On cards, A presses the button with the red A badge.</span></li>
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
+         <li><span class="kbd x">X</span><span><b>Bag</b> opens your bag. <b>Y</b> will open the map, coming soon.</span></li>
          <li><span class="kbd menu">☰</span><span><b>Menu</b> opens the menu: the Word Scroll, friends and settings. <b>Tasks</b> shows your tasks.</span></li>
        </ul>`,
       `<p class="label">How to play · 2 of 3</p>

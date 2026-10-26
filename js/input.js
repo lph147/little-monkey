@@ -117,6 +117,15 @@ function pressSelect(){
   if (!modal.hidden){ if (sheet.querySelector('.taskslabel')) closeCard(); return; }
   if (mode === 'play' && canAct()) tasksPage(() => closeCard());
 }
+// X: your bag (again closes it). Y: the map, still to come (tried from 26 October 2026, with the four buttons).
+function pressBag(){
+  tipPressed('#btnX');
+  if (!modal.hidden){ if (sheet.querySelector('.bag')) closeCard(); return; }
+  if (mode === 'play' && canAct()) bagPage(() => closeCard());
+}
+function pressMap(){
+  if (modal.hidden && mode === 'play' && canAct()) toast('The map is coming soon!');
+}
 $('#startBtn').addEventListener('click', () => { getAC(); pressMenu(); });
 $('#selectBtn').addEventListener('click', () => { getAC(); pressSelect(); });
 const KEYS = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right',W:'up',S:'down',A:'left',D:'right'};
@@ -125,6 +134,7 @@ document.addEventListener('keydown', e => {
   const isB = e.key === 'x' || e.key === 'X' || (e.key === 'Escape' && (!modal.hidden || !!talkNext));
   const isMenu = e.key === 'm' || e.key === 'M' || (e.key === 'Escape' && modal.hidden && !talkNext);   // Start
   const isSelect = e.key === 't' || e.key === 'T';
+  const isBag = e.key === 'i' || e.key === 'I', isMap = e.key === 'p' || e.key === 'P';
   const isA = e.key === ' ' || e.key === 'Enter';
   if (!modal.hidden){
     const d = KEYS[e.key];
@@ -133,12 +143,15 @@ document.addEventListener('keydown', e => {
     else if (isB){ e.preventDefault(); pressB(e.timeStamp); }
     else if (isMenu){ e.preventDefault(); pressMenu(); }
     else if (isSelect){ e.preventDefault(); pressSelect(); }
+    else if (isBag){ e.preventDefault(); pressBag(); }
     else if (isA && !(e.target.matches && e.target.matches('button:focus-visible'))){ e.preventDefault(); if (!e.repeat) pressA(e.timeStamp); }   // (a button chosen with Tab or the arrows is pressed by the browser; one clicked with the mouse isn't: what A would press is, decided 22 October 2026)
     return;
   }
   if (isB){ e.preventDefault(); pressB(e.timeStamp); return; }
   if (isMenu){ e.preventDefault(); pressMenu(); return; }
   if (isSelect){ e.preventDefault(); pressSelect(); return; }
+  if (isBag){ e.preventDefault(); pressBag(); return; }
+  if (isMap){ e.preventDefault(); pressMap(); return; }
   if (mode === 'title' && KEYS[e.key] && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); if (!e.repeat) moveTitle(KEYS[e.key]); return; }   // the arrows move between the title's buttons
   if (mode !== 'play'){
     // The title screen and the intro: A chooses the game, or presses Next or Begin, unless you've moved to another button with Tab.
@@ -178,9 +191,28 @@ dpad.addEventListener('pointermove', e => { if (e.pointerId === dpadPointer) set
 const padEnd = e => { if (e.pointerId !== dpadPointer) return; dpadPointer = null; setPad(null); held = null; };
 ['pointerup','pointercancel','lostpointercapture'].forEach(t => dpad.addEventListener(t, padEnd));
 dpad.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('selectstart', e => { if (dpadPointer !== null) e.preventDefault(); });
-['btnA','btnB'].forEach(id => {
-  const el = $('#' + id), fn = id === 'btnA' ? pressA : pressB;
+// The thumbstick: its knob follows your thumb (as far as its rim), and once it's pushed a little way from the middle,
+// you walk (or turn, or move between a card's buttons) the way it points most, as with the D-pad; let go, and it
+// springs back. A tap that doesn't push it does nothing.
+const stick = $('.stick'), knob = stick && stick.querySelector('i');
+let stickPointer = null;
+function stickDir(e){
+  const r = stick.getBoundingClientRect(), x = e.clientX - (r.left + r.width/2), y = e.clientY - (r.top + r.height/2);
+  const reach = r.width * .3, far = Math.hypot(x, y), k = far > reach ? reach / far : 1;   // (the knob stops at the rim)
+  if (knob) knob.style.transform = `translate(${Math.round(x * k)}px, ${Math.round(y * k)}px)`;
+  if (far < r.width * .14) return null;   // (the dead zone in the middle)
+  return Math.abs(x) > Math.abs(y) ? (x < 0 ? 'left' : 'right') : (y < 0 ? 'up' : 'down');
+}
+if (stick){
+  stick.addEventListener('pointerdown', e => { e.preventDefault(); getAC(); stickPointer = e.pointerId; try { stick.setPointerCapture(e.pointerId); } catch(_) {} stick.classList.add('held'); setPad(stickDir(e)); });
+  stick.addEventListener('pointermove', e => { if (e.pointerId === stickPointer) setPad(stickDir(e)); });
+  const stickEnd = e => { if (e.pointerId !== stickPointer) return; stickPointer = null; stick.classList.remove('held'); if (knob) knob.style.transform = ''; setPad(null); held = null; };
+  ['pointerup','pointercancel','lostpointercapture'].forEach(t => stick.addEventListener(t, stickEnd));
+  stick.addEventListener('contextmenu', e => e.preventDefault());
+}
+document.addEventListener('selectstart', e => { if (dpadPointer !== null || stickPointer !== null) e.preventDefault(); });
+['btnA','btnB','btnX','btnY'].forEach(id => {
+  const el = $('#' + id), fn = {btnA:pressA, btnB:pressB, btnX:pressBag, btnY:pressMap}[id];
   el.addEventListener('pointerdown', e => { e.preventDefault(); getAC(); el.classList.add('held'); fn(e.timeStamp); });
   ['pointerup','pointercancel','pointerleave'].forEach(t => el.addEventListener(t, () => el.classList.remove('held')));
   el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); });

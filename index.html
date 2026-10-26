@@ -34,6 +34,7 @@
     <div class="display">
     <div class="screen" id="screenWrap">
       <canvas id="screen" aria-label="Game screen"></canvas>
+      <div class="fps" id="fps" hidden aria-hidden="true"></div>   <!-- frames a second, over the game's top right corner, when Settings has it on (js/main.js; for testing) -->
       <div class="titlecard" id="titlecard">
         <div class="titlehead"><h2 id="gameName">小猴子</h2><p id="gameEn">Little Monkey</p><div class="titletext" id="titleText" aria-live="polite"></div></div>
         <div class="placename titlearea" id="titleArea"></div>   <!-- the area's name, in the corner, as a place's name shows in the game (toTitle() in js/main.js) -->
@@ -50,8 +51,9 @@
     <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div><div class="morecue" id="more" hidden aria-hidden="true">▼ More</div></div>   <!-- (more: a card has more below; js/cards.js) -->
     </div>
     <div class="controls">
-      <div class="power" aria-hidden="true"><i></i>POWER</div>   <!-- just for looks -->
-      <div class="fps" id="fps" hidden aria-hidden="true"></div>   <!-- frames a second, when Settings has it on (js/main.js) -->
+      <!-- TASKS and MENU, at the top, one each side of the screen, like a Game Boy's Select and Start -->
+      <div class="sswrap tasks"><button class="pill" id="selectBtn" aria-label="Your tasks"><span class="dot" id="selectDot" hidden></span></button><span class="sslabel">TASKS</span></div>
+      <div class="sswrap menu"><button class="pill" id="startBtn" aria-label="The menu"></button><span class="sslabel">MENU</span></div>
       <div class="dpad" aria-label="Direction pad">
         <button class="u" data-dir="up" aria-label="Walk up"></button>   <!-- (their arrows are drawn in css/game.css: no emoji) -->
         <button class="l" data-dir="left" aria-label="Walk left"></button>
@@ -59,9 +61,10 @@
         <button class="r" data-dir="right" aria-label="Walk right"></button>
         <button class="d" data-dir="down" aria-label="Walk down"></button>
       </div>
-      <div class="ss">   <!-- Tasks and Menu: a Game Boy's Select and Start buttons -->
-        <div class="sswrap"><button class="pill" id="selectBtn" aria-label="Your tasks"><span class="dot" id="selectDot" hidden></span></button><span class="sslabel">TASKS</span></div>
-        <div class="sswrap"><button class="pill" id="startBtn" aria-label="The menu"></button><span class="sslabel">MENU</span></div>
+      <div class="stick" aria-label="Thumbstick"><i></i></div>   <!-- walks like the D-pad (js/input.js) -->
+      <div class="ab xy">   <!-- X and Y, above B and A, the same sizes, like an Xbox controller's -->
+        <div class="abwrap"><button class="round" id="btnX" aria-label="Your bag">X</button><span class="ablabel">Bag</span></div>
+        <div class="abwrap"><button class="round" id="btnY" aria-label="The map">Y</button><span class="ablabel">Map</span></div>
       </div>
       <div class="ab">
         <div class="abwrap"><button class="round" id="btnB" aria-label="Back or menu">B</button><span class="ablabel" id="bLabel"></span></div>
@@ -69,7 +72,7 @@
       </div>
       <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>   <!-- the speaker, just for looks -->
     </div>
-    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for the menu · T for your tasks</p>
+    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · I for your bag · P for the map · M or Esc for the menu · T for your tasks</p>
   </div>
 </div>
 <div class="turn" id="turn" hidden role="status">   <!-- held upright: the game is played sideways (fit() in js/main.js) -->
