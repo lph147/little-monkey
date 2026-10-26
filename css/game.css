@@ -3,7 +3,7 @@
   --jade:#2E7A57; --jade-ink:#FFFFFF; --gold:#D9A21E; --line:#C3D6C9;
   --ok:#2E8B57; --bad:#C2453D; --scrim:rgba(20,35,28,.45);
   --pic-face:28px; --pic-small:32px; --pic-mid:48px; --pic-scene:64px; --pic-big:96px; --pic-icon:16px;   /* picture sizes: fit() sets them from the screen's height */
-  --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA; --grille:#8AAA96; --led:#45D16A;
+  --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA; --led:#45D16A;
   --btnA:#B8323A; --btnB:#3D6A93;
   --tip:#FFF3B8; --tip-ink:#2A2215;   /* a tip bubble: the same in light and dark, like a sticky note */
   --sil:brightness(0);   /* the shadow of a word you have heard but not caught */
@@ -24,7 +24,7 @@
     --bg:#0F1D17; --paper:#1A3027; --ink:#E6F0EA; --muted:#A5B8AE;
     --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
     --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
-    --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --grille:#0E1C16; --led:#5BE07E;
+    --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --led:#5BE07E;
     --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); color-scheme:dark;
   }
 }
@@ -32,7 +32,7 @@
   --bg:#0F1D17; --paper:#1A3027; --ink:#E6F0EA; --muted:#A5B8AE;
   --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
   --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
-  --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --grille:#0E1C16; --led:#5BE07E;
+  --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --led:#5BE07E;
   --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
@@ -48,10 +48,10 @@ h1{font-weight:700;font-size:1.35rem;margin:0;letter-spacing:.05em}
 .iconbtn{background:none;border:2px solid var(--line);border-radius:6px;padding:2px 8px;font-size:1rem;min-height:34px}
 
 /* The console, like a Game Boy Advance: the screen in the middle, the D-pad, Select and Start on the left with
-   the power light, A and B on the right with the speaker. Each side is 150px (SIDE_WING in js/main.js), and
-   fit() makes the screen as big as fits between them. The power light and the speaker are just for looks. */
+   the power light, A and B on the right with Bag and Map. Each side is 150px (SIDE_WING in js/main.js), and
+   fit() makes the screen as big as fits between them. The power light is just for looks. */
 .console{display:grid;grid-template-columns:150px auto 150px;grid-template-rows:auto 1fr auto auto;
-  grid-template-areas:"power screen ." "dpad screen ab" "ss screen grille" "keys keys keys";align-items:center;width:max-content;
+  grid-template-areas:"power screen ." "dpad screen ab" "ss screen bm" "keys keys keys";align-items:center;width:max-content;
   background:var(--shell);border:2px solid var(--shell-edge);border-radius:46px;padding:6px max(6px, env(safe-area-inset-right,0px)) 6px max(6px, env(safe-area-inset-left,0px))}
 .display{grid-area:screen}
 .screen{position:relative;margin:0 auto;background:var(--bezel);padding:8px;border-radius:8px 8px 18px 8px;width:max-content;max-width:100%}
@@ -990,6 +990,10 @@ rt.hid{visibility:hidden}
    A red dot on Select while there's a task you haven't looked at. */
 .ss{grid-area:ss;justify-self:center;margin:0 8px 10px 0;display:flex;gap:16px}
 .sswrap{display:flex;flex-direction:column;align-items:center;gap:4px;transform:rotate(-22deg)}
+/* Bag and Map: two more of the same under B and A (decided 26 October 2026, instead of a thumbstick and four buttons),
+   tilted to mirror Select and Start */
+.ss.bm{grid-area:bm;margin:0 0 10px 8px}
+.ss.bm .sswrap{transform:rotate(22deg)}
 .pill{position:relative;width:50px;height:16px;border-radius:9px;background:var(--pad);border:none;box-shadow:0 2px 0 rgba(0,0,0,.35);touch-action:none}
 .pill:active{transform:translateY(2px);box-shadow:0 0 0 rgba(0,0,0,.35)}
 .sslabel{font:600 .72rem var(--pixel);color:var(--muted);letter-spacing:.08em}
@@ -1006,15 +1010,12 @@ rt.hid{visibility:hidden}
 .appicon{width:1.4em;height:1.4em;vertical-align:middle;border-radius:22%}
 .caprow .btn{font-size:.85rem;padding:.25rem .6rem;min-height:2.3rem}
 
-/* the power light, beside the screen's top-left corner, and the speaker's slots, under A and B */
+/* the power light, beside the screen's top-left corner */
 .power{grid-area:power;justify-self:end;align-self:start;margin:10px 10px 0 0;display:flex;align-items:center;gap:5px;font:600 .6rem var(--pixel);letter-spacing:.12em;color:var(--muted)}
 .power i{width:7px;height:7px;border-radius:50%;background:var(--led);box-shadow:0 0 6px var(--led)}
 /* frames a second (Settings), under the power light: on the console, so nothing on the screen ever covers it */
 .fps{grid-area:power;justify-self:end;align-self:start;margin:30px 10px 0 0;font:600 .6rem var(--pixel);letter-spacing:.08em;color:var(--muted);text-align:right;white-space:nowrap}
 .fps[hidden]{display:none}
-.grille{grid-area:grille;justify-self:end;display:flex;gap:6px;margin:0 22px 18px 0;transform:rotate(28deg)}
-.grille i{width:5px;height:30px;border-radius:3px;background:var(--grille);box-shadow:inset 0 2px 2px rgba(0,0,0,.3)}
-.grille i:first-child,.grille i:last-child{height:20px;margin-top:5px}
 
 /* Held upright: the game is played sideways, so a card asks you to turn the phone (fit() in js/main.js). */
 .turn{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center;background:var(--bg);color:var(--ink)}

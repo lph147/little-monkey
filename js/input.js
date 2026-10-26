@@ -117,14 +117,26 @@ function pressSelect(){
   if (!modal.hidden){ if (sheet.querySelector('.taskslabel')) closeCard(); return; }
   if (mode === 'play' && canAct()) tasksPage(() => closeCard());
 }
+// Bag: your bag (again closes it). Map: the map, still to come (decided 26 October 2026, under B and A).
+function pressBag(){
+  tipPressed('#bagBtn');
+  if (!modal.hidden){ if (sheet.querySelector('.bag')) closeCard(); return; }
+  if (mode === 'play' && canAct()) bagPage(() => closeCard());
+}
+function pressMap(){
+  if (modal.hidden && mode === 'play' && canAct()) toast('The map is coming soon!');
+}
 $('#startBtn').addEventListener('click', () => { getAC(); pressMenu(); });
 $('#selectBtn').addEventListener('click', () => { getAC(); pressSelect(); });
+$('#bagBtn').addEventListener('click', () => { getAC(); pressBag(); });
+$('#mapBtn').addEventListener('click', () => { getAC(); pressMap(); });
 const KEYS = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right',W:'up',S:'down',A:'left',D:'right'};
 document.addEventListener('keydown', e => {
   if (upright) return;   // the phone is upright: the game waits until it's turned
   const isB = e.key === 'x' || e.key === 'X' || (e.key === 'Escape' && (!modal.hidden || !!talkNext));
   const isMenu = e.key === 'm' || e.key === 'M' || (e.key === 'Escape' && modal.hidden && !talkNext);   // Start
   const isSelect = e.key === 't' || e.key === 'T';
+  const isBag = e.key === 'i' || e.key === 'I', isMap = e.key === 'p' || e.key === 'P';
   const isA = e.key === ' ' || e.key === 'Enter';
   if (!modal.hidden){
     const d = KEYS[e.key];
@@ -133,12 +145,15 @@ document.addEventListener('keydown', e => {
     else if (isB){ e.preventDefault(); pressB(e.timeStamp); }
     else if (isMenu){ e.preventDefault(); pressMenu(); }
     else if (isSelect){ e.preventDefault(); pressSelect(); }
+    else if (isBag){ e.preventDefault(); pressBag(); }
     else if (isA && !(e.target.matches && e.target.matches('button:focus-visible'))){ e.preventDefault(); if (!e.repeat) pressA(e.timeStamp); }   // (a button chosen with Tab or the arrows is pressed by the browser; one clicked with the mouse isn't: what A would press is, decided 22 October 2026)
     return;
   }
   if (isB){ e.preventDefault(); pressB(e.timeStamp); return; }
   if (isMenu){ e.preventDefault(); pressMenu(); return; }
   if (isSelect){ e.preventDefault(); pressSelect(); return; }
+  if (isBag){ e.preventDefault(); pressBag(); return; }
+  if (isMap){ e.preventDefault(); pressMap(); return; }
   if (mode === 'title' && KEYS[e.key] && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); if (!e.repeat) moveTitle(KEYS[e.key]); return; }   // the arrows move between the title's buttons
   if (mode !== 'play'){
     // The title screen and the intro: A chooses the game, or presses Next or Begin, unless you've moved to another button with Tab.

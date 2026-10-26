@@ -2,7 +2,7 @@
 
 /* ================= SCREEN, LOOP, MODES ================= */
 // The console is a Game Boy Advance held sideways: the screen in the middle, the D-pad, Select and Start on
-// the left, A and B on the right. Each side is SIDE_WING wide (as .console is in css/game.css), and the
+// the left, A and B, with Bag and Map, on the right. Each side is SIDE_WING wide (as .console is in css/game.css), and the
 // screen is as big as fits between them. When the window is taller than it is wide (a phone held
 // upright), a card asks you to turn it, and the game waits.
 const SIDE_WING = 150;
@@ -300,6 +300,7 @@ function howToPlay(){
          <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> When someone talks, A moves on. On cards, A presses the button with the red A badge.</span></li>
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
          <li><span class="kbd menu">☰</span><span><b>Menu</b> opens the menu: the Word Scroll, friends and settings. <b>Tasks</b> shows your tasks.</span></li>
+         <li><span class="kbd menu">☰</span><span><b>Bag</b> opens your bag. <b>Map</b> will open the map, coming soon.</span></li>
        </ul>`,
       `<p class="label">How to play · 2 of 3</p>
        <p>You’ll hear lots of Chinese, like a baby monkey listening to the forest. <b>You don’t need to understand or remember all of it.</b></p>

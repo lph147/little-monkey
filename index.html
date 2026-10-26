@@ -67,9 +67,12 @@
         <div class="abwrap"><button class="round" id="btnB" aria-label="Back or menu">B</button><span class="ablabel" id="bLabel"></span></div>
         <div class="abwrap"><button class="round" id="btnA" aria-label="Talk or look">A</button><span class="ablabel" id="aLabel"></span></div>
       </div>
-      <div class="grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>   <!-- the speaker, just for looks -->
+      <div class="ss bm">   <!-- Bag and Map: two more of the same, under B and A -->
+        <div class="sswrap"><button class="pill" id="bagBtn" aria-label="Your bag"></button><span class="sslabel">BAG</span></div>
+        <div class="sswrap"><button class="pill" id="mapBtn" aria-label="The map"></button><span class="sslabel">MAP</span></div>
+      </div>
     </div>
-    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for the menu · T for your tasks</p>
+    <p class="keys">Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for the menu · T for your tasks · I for your bag · P for the map</p>
   </div>
 </div>
 <div class="turn" id="turn" hidden role="status">   <!-- held upright: the game is played sideways (fit() in js/main.js) -->
