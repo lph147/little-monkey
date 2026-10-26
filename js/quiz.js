@@ -10,12 +10,17 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
       <div class="actions qfoot"><div class="feedback" aria-live="polite">${helper}</div><button class="btn primary" data-a="next" hidden>Next</button></div>`);
     bindTokens(sheet);
     if (onShow) onShow();
-    on('[data-a=say]', () => say(word || ''));
+    const next = sheet.querySelector('[data-a=next]');
+    on('[data-a=say]', () => { say(word || ''); if (!next.hidden) next.focus({preventScroll:true}); });   // (answered: Next keeps the gold outline)
     on('[data-a=py]', e => { e.currentTarget.outerHTML = `<div class="py">${WORDS[word].py}</div>`; });
     sheet.querySelectorAll('.opt').forEach(b => b.onclick = () => {
       const i = +b.dataset.i, ok = i === answerIdx;
       sheet.querySelectorAll('.opt').forEach(x => x.disabled = true);
       sheet.querySelector('.opts').classList.add('answered');
+      // Answered, it's a card like any other: A presses Next, whatever you've tapped since (🔊 to hear the word again, or an
+      // answer), and the D-pad no longer chooses between its buttons (decided 26 October 2026: after tapping 🔊, A played
+      // it again, and again, and you couldn't go on)
+      sheet.querySelector('.opts').removeAttribute('data-nav');
       b.classList.add(ok ? 'right' : 'wrong');
       sheet.querySelector(`.opt[data-i="${answerIdx}"]`).classList.add('right');
       ok ? SFX.right() : SFX.wrong();
@@ -25,8 +30,8 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
         setTimeout(() => say(word), 250); if (type) answer(word, ok, type);
       } else fb.textContent = ok ? 'Yes!' : 'Not quite.';
       if (onAnswer) onAnswer(ok);
-      const n = sheet.querySelector('[data-a=next]'); n.hidden = false; n.focus(); shown();   // (so A pressed again at once doesn't skip what it says)
-      n.onclick = () => res(ok);
+      next.hidden = false; next.focus(); shown();   // (so A pressed again at once doesn't skip what it says)
+      next.onclick = () => res(ok);
     });
   });
 }

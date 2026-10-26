@@ -54,6 +54,27 @@ test('the apple and 🔊 can be chosen too, in a battle or with an animal', asyn
   assert.equal(g.run('btnLabel(chosenBtn())'), 'Eat');
 });
 
+test('once you’ve answered, A goes on (Next), even after tapping 🔊 to hear the word again, or an answer again', async () => {
+  const g = game(), sheet = g.el('#sheet');
+  g.run("globalThis.__ok = null; globalThis.__spoken = []; say = t => { __spoken.push(t); }");
+  g.run("pictureQ({head: '', body: '<div class=\"askrow\"><p class=\"prompt\">Listen.</p><button class=\"sayBig\" data-a=\"say\">🔊</button></div>', word: '山', options: ['a', 'b', 'c'], answerIdx: 0}).then(ok => { __ok = ok; })");
+  sheet.querySelectorAll('.opt')[0].click();   // answered (right)
+  await settle(g);   // (it says the word)
+  const tap = el => g.run(`(el => { el.focus(); markNav(el); el.click(); })(${el})`);   // tapped: in a browser it takes the focus, and the gold outline, then its click
+  g.run('__spoken.length = 0');
+  tap("sheet.querySelector('.sayBig')");
+  assert.deepEqual(JSON.parse(g.run('JSON.stringify(__spoken)')), ['山'], '🔊 says the word again');
+  assert.equal(g.run("document.activeElement === sheet.querySelector('[data-a=next]')"), true, 'and Next keeps the gold outline');
+  tap("sheet.querySelectorAll('.opt')[1]");   // an answer again: nothing (you've answered)
+  g.run("sheet.querySelector('.sayBig').focus(); markNav(sheet.querySelector('.sayBig'))");   // (even with 🔊 chosen, as a phone can leave it)
+  g.run("navFocus('up')");   // (and the D-pad doesn't choose it either)
+  assert.equal(g.run('buttonLabels(0)[0]'), 'Next', 'the A button says Next');
+  g.run('pressA()');
+  await settle(g);
+  assert.equal(g.run('__ok'), true, 'A goes on');
+  assert.deepEqual(JSON.parse(g.run('JSON.stringify(__spoken)')), ['山'], 'without saying it again');
+});
+
 test('a matching game can be played with the D-pad and A: choose a word, then its picture; words you’ve matched are skipped', () => {
   const g = game(), sheet = g.el('#sheet');
   g.run("matchWords(['山', '花', '草', '树'], 'Word test', 'Stop test')");
