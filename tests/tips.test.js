@@ -115,3 +115,18 @@ test('no tips on the title screen or in the opening', () => {
   game.run('updateTips(1000)');
   assert.equal(showing(game), null);
 });
+
+test('with honey in your bag the first time, a tip by MENU says to eat it to walk faster, and how; pressing MENU is enough', () => {
+  // (decided 26 October 2026: honey made you faster, but nothing said so where you'd see it)
+  const all = {walk: 1, talk: 1, look: 1, grey: 1, tap: 1, english: 1};
+  const none = playing({version: 30, started: true, tips: all, bag: {'桃子': 1}, pos: {x: 9, y: 4, dir: 'down'}});
+  none.run('updateTips(1000)');
+  assert.equal(showing(none), null, 'a peach is for fights: no tip');
+  const game = playing({version: 30, started: true, tips: all, bag: {'蜂蜜': 1}, pos: {x: 9, y: 4, dir: 'down'}});
+  game.run('updateTips(1000)');
+  assert.equal(showing(game), 'eat');
+  assert.match(game.run("$('#tip').innerHTML"), /Eat the 蜂蜜 \(honey\) in your bag to walk faster for a minute: press <b>MENU<\/b>, then 包 Bag, and tap it\./);
+  assert.equal(game.run("tip.target === $('#startBtn')"), true, 'pointing at MENU');
+  game.run("tipPressed('#startBtn')");
+  assert.equal(get(game, 'S.tips.eat'), 1, 'it won’t show again');
+});

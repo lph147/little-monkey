@@ -396,8 +396,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{place:'homeGround', bees:5}, do:[{set:{bees:6}}, {follow:[]}, {sound:'buzz'}, {sound:'fanfare'},
       {message:'The queen bee and her swarm fly over to the wildflowers by the cliff. The bees are home! Go and tell the hungry monkey.'}]},
     // the honey you brought him: he pours it into the empty bowl on the feast's big table
+    // (and he gives you a little for your bag, saying what it does: decided 26 October 2026, when nothing said so)
     {if:{bees:10, honey:'done'}, do:[{set:{bees:11}}, {sound:'chime'}, {say:'haveHoneyNow', by:'hungry'},
-      {message:'The hungry monkey pours the honey into the empty bowl on the big table. Now the feast has honey!'}]},
+      {bag:'蜂蜜', note:'The hungry monkey pours the honey into the empty bowl on the big table: now the feast has honey! He gives you a little {蜂蜜} for your bag too: eat it, and you walk faster for a minute.'}]},
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
     // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)

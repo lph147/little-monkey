@@ -487,7 +487,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('__said').includes('我们有蜂蜜了！') && area().honey === 'done' && area().bees === 11, 'honey in the bowl on the feast’s table: we have honey now!');
   assert.equal(run('tileAt(17, 7).look'), 'feastTableHoney');
   await pressAt(28, 5, 'up', 'taking honey from the hive, for your bag');
-  assert.equal(get("S.bag['蜂蜜']"), 1, 'honey in your bag');
+  assert.equal(get("S.bag['蜂蜜']"), 2, 'honey in your bag: the hungry monkey’s, and the hive’s');
   stand(11, 5, 'up');
   await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
   assert.equal(run('PLACE'), 'school');

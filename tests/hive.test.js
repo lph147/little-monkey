@@ -80,7 +80,8 @@ test('A at the hive takes honey, teaching 蜂蜜 (said straight away); the hungr
   assert.deepEqual(get(g, '[here().honey, here().bees, here().holding.honey || null]'), ['done', 11, null]);
   assert.equal(g.run('S.shells'), shells + 3);
   assert.ok(get(g, '__sounds').includes('chime'));
-  assert.match(get(g, '__notes').join(' '), /The hungry monkey pours the honey into the empty bowl on the big table\. Now the feast has honey!/);
+  assert.match(get(g, '__notes').join(' '), /The hungry monkey pours the honey into the empty bowl on the big table: now the feast has honey! He gives you a little 蜂蜜 \(honey\) for your bag too: eat it, and you walk faster for a minute\./);
+  assert.equal(get(g, "S.bag['蜂蜜']"), 1, 'your first honey, from him, saying what it does (decided 26 October 2026: nothing said so where you’d see it)');
   assert.equal(g.run('tileAt(17, 7).look'), 'feastTableHoney', 'honey in the table’s third bowl');
   assert.deepEqual(get(g, "mapObjects().filter(o => /^feastTable/.test(o.look)).map(o => [o.look, o.x, o.w])"), [['feastTableHoney', 16, 3]], 'still one table, three squares wide');
   assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh)"), ['我们 有 桃子 。', '我们 有 苹果 。', '我们 有 蜂蜜 。'],

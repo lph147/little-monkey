@@ -13,7 +13,7 @@
 const knows = (lv, words) => Object.fromEntries(words.map(w => [w, {lv, due: 0, ok: 0}]));
 const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '水果', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
 const QUIET = {sound: false, music: false};
-const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, english: 1, menu: 1, syllables: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
+const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, english: 1, menu: 1, syllables: 1, eat: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
 const SAVES = {
   // just born, with the old monkey waiting: no tips had yet
   born: {version: 19, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},
@@ -683,6 +683,8 @@ const SCREENS = [
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)
+  {id: 'tip-eat', title: 'Tip: eating honey', save: 'honeyIn', why: 'The first time honey is in your bag (from the hungry monkey), a tip by MENU says to eat it to walk faster, and how.', run: async () => {
+    S.tips = {...S.tips}; delete S.tips.eat; play(); await wait(700); }},
   {id: 'hungry-has-bees', title: 'We have bees now!', save: 'beesHome', why: 'The hungry monkey, with a ! once the bees are home: 我们有蜜蜂了！ (the hive and the honey come next).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {

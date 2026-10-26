@@ -5,7 +5,7 @@
 
 /* ================= TIPS ================= */
 // Each tip, in the order they're checked: at, what it points at; text; when, is it time for it (checked
-// every frame); lasts, how long it shows before it counts as had (otherwise pressing what it points at
+// every frame), or a function giving it, made as it shows; lasts, how long it shows before it counts as had (otherwise pressing what it points at
 // makes it had, or for walk, taking a step); once, it counts as had as soon as it shows, for that line (tap goes
 // when you tap a word); then, the tip A (or B, or ▼) shows next, instead of moving on, while it's showing; after, it only
 // shows as the one before's then.
@@ -19,11 +19,16 @@ const TIPS = {
   // right under it, so there was nothing to find out)
   tap: {at:'#talk .tok.listen', once:true, after:true, text:'Tap a word to see what it means', when:() => !!talkNext && !talkMove},
   // the first line you hear again, its English behind the English button
-  english: {at:'#talk [data-a=en]', once:true, text:'A line’s English shows the first time you hear it. Tap <b>English</b> to see it again.', when:() => !!talkNext && !talkMove}
+  english: {at:'#talk [data-a=en]', once:true, text:'A line’s English shows the first time you hear it. Tap <b>English</b> to see it again.', when:() => !!talkNext && !talkMove},
+  // food in your bag that does something as you walk about, such as honey, the first time you have some: how to eat it
+  // (decided 26 October 2026: honey made you faster, but nothing said so where you'd see it)
+  eat: {at:'#startBtn', lasts:9000, text:() => { const w = walkFood(); return `Eat the ${esc(wz(w))} in your bag to ${esc(FOOD[w].does.toLowerCase())}: press <b>MENU</b>, then 包 Bag, and tap it.`; },
+    when:() => canAct() && !!walkFood()}
   // (Tasks and Menu had tips too; the old monkey tells you about them instead, decided 18 October 2026.)
 };
 let tip = null;   // the tip showing: {id, target, lit: what glows (target, or with all, every match), until}
 let tipThen = null;   // the tip to show next (a tip's then), once A has moved on from the one before
+const walkFood = () => Object.keys(FOOD).find(w => FOOD[w].fast && S.bag[w] > 0);   // food in your bag that makes you walk faster
 const tipBox = () => $('#tip') || document.body.appendChild(Object.assign(document.createElement('div'), {id:'tip', className:'tipb', hidden:true}));
 function hideTip(){
   if (!tip) return;
@@ -64,7 +69,7 @@ function updateTips(now){
     const target = inside.length ? box0el && box0el.querySelector(inside.join(' ')) : box0el;
     if (!target || target.offsetParent === null) continue;
     tip = {id, target, lit:t.all ? [...box0el.querySelectorAll(inside.join(' '))] : [target], until:t.lasts ? now + t.lasts : 0};
-    const box = tipBox(); box.innerHTML = t.text; box.hidden = false;
+    const box = tipBox(); box.innerHTML = typeof t.text === 'function' ? t.text() : t.text; box.hidden = false;
     tip.lit.forEach(el => el.classList.add('tipglow')); placeTip();
     if (t.after) tipThen = null;
     if (t.once){ S.tips[id] = 1; save(); }
