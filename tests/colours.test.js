@@ -90,7 +90,7 @@ test('a game that learned red when lessons taught one: yellow, then white, one a
   assert.ok(yellow.options.map(caps).includes('红色'), 'red, the colour you know, is an answer');
   assert.deepEqual(get(g, '__scenes'), [], 'no painting (until 24 October 2026, the sign was painted yellow)');
   assert.deepEqual(get(g, 'paintedParts()'), {lanterns: '红色'});
-  g.run("rec('黄色').ok = 0");
+  g.run("rec('黄色').ok = 0; S.turn += 8");   // (8 more questions answered: the next new word waits for them, tests/lesson-wait.test.js)
   assert.ok(get(g, "needsPractice('黄色')"));
   assert.deepEqual(get(g, 'lessonNow().words'), ['白色'], 'then white, without waiting for yellow to be practised');
   const fourth = game(FIRST_THREE);
@@ -157,8 +157,10 @@ test('the next colour waits until you’ve got the last one right twice; with a 
   answering(both);
   assert.deepEqual(get(both, 'lessonNow().words'), ['四', '五', '六'], 'a new number and a new colour to learn: the numbers first');
   await lesson(both);
+  both.run('S.turn += 8');   // (8 more questions answered: the next new word waits for them, tests/lesson-wait.test.js)
   assert.deepEqual(get(both, 'lessonNow().words'), ['红色', '黄色', '白色'], 'then a colour lesson');
   await lesson(both);
+  both.run('S.turn += 8');
   assert.deepEqual(get(both, 'lessonNow().words'), ['七'], 'then a number lesson again: they take turns, one a lesson now');
   assert.deepEqual(get(both, '__scenes'), ['paintLanterns']);
 });

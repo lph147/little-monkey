@@ -179,6 +179,7 @@ const COUNTS = {   // what a counter in the content can count
   animalsLeft: c => chapterAnimals(c.chapter || 0, c.place).length - metCount(c.chapter || 0, c.place),
   shells: () => S.shells,
   picked: c => (here().picked[c.request] || []).length,
+  practised: () => ((AREA.lessonGap || {}).questions || 0) - practiceLeft(),   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
   known: c => c.words.filter(w => lvl(w) >= 1).length   // how many of these words you've caught
 };
 function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count](c) - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
@@ -204,6 +205,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'hurt') return ((S.hearts ?? HEARTS) < HEARTS) === v;   // you've lost hearts in a battle
     if (k === 'practice') return trainingCalls() === v;   // some of your words need practice (the practice post's !)
     if (k === 'lesson') return !!lessonNow() === v;       // a lesson series at school has a new word ready for you
+    if (k === 'lessonWaits') return (!lessonNow() && !!lessonNow(false)) === v;   // it has, but it waits till you've practised (lessonGap)
     if (k === 'near'){ const n = NPCS.find(c => c.id === v); return !!n && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) === 1; }   // you're right beside this character
     if (k === 'at') return placeOf(v) === PLACE && pl.x === v[0] && pl.y === v[1];   // you're standing here: [x, y], or [x, y, 'place']
     if (k === 'hiding') return hiding() === v;   // a little monkey is hiding, playing hide and seek with you (js/hide.js)
@@ -231,7 +233,11 @@ const countable = () => COUNTING.map((w, i) => i + 1).filter(n => !NOT_HOW_MANY.
 // as it did, without waiting, so the first lesson's card (startFirst) is always right. The series and words ready now
 // ({series, words, word: the first of them}), if any (of the series whose if matches); when more than one has words
 // ready, they take turns, so it isn't the same kind of lesson every time (here().lastLesson: the series of your last).
-function lessonNow(){
+// After a lesson that teaches new words, the next waits till you've answered the area's lessonGap.questions more questions
+// anywhere (decided 26 October 2026: the school's sixteen words could all come in one sitting, each practised only in its
+// own lesson): till then the teacher gives you a practice lesson. (wait: false, whether one is ready, practice or not.)
+function lessonNow(wait = true){
+  if (wait && practiceLeft() > 0) return null;
   const ready = [];
   for (const series of AREA.lessons || []){
     if (series.if && !matches(series.if)) continue;
@@ -243,6 +249,9 @@ function lessonNow(){
   }
   return ready.find(l => l.series.id !== here().lastLesson) || ready[0] || null;
 }
+// How many more questions you need to answer before the teacher's next new word (here().lessonTurn: your question count when
+// your last lesson that taught one ended; none before your first).
+const practiceLeft = () => { const n = (AREA.lessonGap || {}).questions || 0, t = here().lessonTurn; return typeof t === 'number' ? Math.max(0, n - ((S.turn || 0) - t)) : 0; };
 const LESSON_KINDS = {count:countLesson, paint:paintLesson};   // how each kind of lesson series goes (js/quiz.js)
 // The parts of the school painted so far (a lesson series' paint: which part each of its colours paints), each with its
 // colour: those of the colours you've learned. (js/art.js draws them.)
@@ -525,8 +534,9 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // start, the conversation ends there.
   async lesson(s, who){
     const l = lessonNow();
+    if (!l && lessonNow(false)) await STEPS.message({message:AREA.lessonGap.wait}, who);   // a new word waits till you've practised: he says so
     if (!await (l ? LESSON_KINDS[l.series.kind](l.series, l.words, who) : practise(speaker(who), PRACTICE.lesson))) return STOP;
-    if (l){ here().lastLesson = l.series.id; save(); }
+    if (l){ here().lastLesson = l.series.id; here().lessonTurn = S.turn || 0; save(); }   // (and the next new word waits: lessonGap)
   },
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
   // up, then you hop down again, sparkling, with all your hearts (its text: the message then).

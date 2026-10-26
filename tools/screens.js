@@ -110,6 +110,10 @@ SAVES.coloursNew = {...SAVES.numbersNew, w: {...SAVES.numbersNew.w, ...knows(2, 
 SAVES.coloursRed = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['红色'])}};
 SAVES.coloursThree = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['红色', '黄色', '白色'])}};
 SAVES.coloursLater = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(2, ['黑色'])}};
+// after a lesson that taught a new word (黑色, right twice), the next waits till you've answered 8 more questions
+// (lessonGap): you've answered 3 (with the feast's news heard, so he goes straight to the lesson; the save's question count is 0 once it's brought
+// up to date, so the lesson ended at -3)
+SAVES.lessonWait = {...SAVES.coloursLater, w: {...SAVES.coloursLater.w, ...knows(1, ['有', '没有']), '黑色': {lv: 2, due: 0, ok: 2}}, areas: {1: {...SAVES.coloursLater.areas[1], feast: 3, lastLesson: 'colours', lessonTurn: -3, lessonWait: 1}}};
 SAVES.schoolHalf = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(2, ['黑色', '蓝色', '绿色'])}, pos: {place: 'homeGround', x: 11, y: 6, dir: 'up'}};
 SAVES.schoolPainted = {...SAVES.schoolHalf, w: {...SAVES.schoolHalf.w, ...knows(2, ['棕色', '橙色', '粉色'])}};
 // flowers for the school (version 30: they're chapter 1's): the big monkey asks for them once you know red, yellow and white,
@@ -710,6 +714,10 @@ const SCREENS = [
     play(); await wait(100); talk(npc('hungry')); await wait(500); }},
   {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
+  {id: 'lesson-wait', title: 'A new word is coming soon', save: 'lessonWait', why: 'After a lesson that teaches new words, the next waits till you’ve answered 8 more questions, anywhere (decided 26 October 2026): till then, 上课！, then the teacher says so, and gives you a practice lesson.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
+  {id: 'tasks-practise', title: 'Tasks: practise before your next lesson', save: 'lessonWait', why: 'While the teacher’s next new word waits, your tasks say how many questions you’ve answered since (of 8): in a practice lesson, an animal’s game or a battle, they all count.', run: async () => {
+    play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {
     play(); await wait(100); (async () => { await showDialog(speaker('troop1'), L.hi); await replyWith('你好'); })(); await wait(200); next(); await wait(200); click('#talk .reply'); await wait(400); }},
   {id: 'count-two', title: 'Counting the troop in', save: 'king', why: 'The card for 二 explains 两.', run: async () => {

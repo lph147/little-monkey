@@ -68,9 +68,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           (and the hungry monkey's honey request is asked), 11 the honey you brought is in the bowl on the feast's table
   //   beeFriends chapter 1: how many of the bees in their valley you've made friends with, up to six
   //   queenOut chapter 1: the queen bee is out of her old tree (she goes back in if you don't win her word game)
+  //   littleGame the prologue: the little monkey's word game, once it's your friend: 0 not played yet (it has a !), 1 played,
+  //           2 won (its present: once)
+  //   hungryGame the prologue: the hungry monkey's word game, once he's eaten: as littleGame
+  //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -98,7 +102,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
     stonesGot: {count:'picked', request:'stones'},   // and small stones
     numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']},   // the numbers you've learned at school
-    coloursKnown: {count:'known', words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']}   // and the colours
+    coloursKnown: {count:'known', words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},   // and the colours
+    practised: {count:'practised'}   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
   },
 
   // Lessons at school (the lesson step, with the teacher): each series teaches its words one at a time, one a lesson, in
@@ -108,6 +113,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // question about each of the things; paint: he opens a pot of the new colour, teaching it, then wants paints, and if
   // the colour is for a part of the school, paint, the class goes out and paints it, in its scene, scenes); by: who
   // teaches it; start: what the card asking you to start says; note: on the new word's card.
+  // After a lesson that teaches new words, the next new word waits till you've answered this many more questions anywhere:
+  // a practice lesson (8 words to match and a sentence), a few animals' games, a battle or two (decided 26 October 2026, after
+  // measuring the game's pacing: the school's sixteen words could all come in one sitting, each practised only in its own
+  // lesson). Till then, the teacher gives you a practice lesson, saying so first (wait), and your tasks say how far you are.
+  lessonGap: {questions:8, wait:'A new word is coming soon! Practise what you know first: {practised} of 8 questions done.'},
   lessons: [
     // The first lesson of each series teaches its first three words, one after another (first: decided 24 October 2026,
     // school lessons are the exception to one new word at a time): two lessons, and you can count six bees and know the
@@ -205,6 +215,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
     {id:'count', if:{cave:{atLeast:5}, count:{below:3}}, text:'Count the troop in with the old monkey ({troopIn}/3)', arrow:'elder'},
     {id:'king', if:{chapter:0, count:3}, text:'Talk to the old monkey: the whole troop is in the {洞}', arrow:'elder'},
+    // lessons at school: once one has taught you a new word, practise before the next (lessonGap; when you have, a message
+    // says so: see events)
+    {id:'practise', if:{school:{atLeast:2}, lessonWaits:true}, text:'Practise before your next lesson ({practised}/8): a practice lesson at the {学校}, or play with {动物|animals}', arrow:'elder'}
   ],
 
   // What the task box says when there are no tasks: the first whose if matches.
@@ -213,8 +226,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
-    {if:{bees:{atLeast:11}}, text:'The feast has {蜂蜜|honey} now! Take more from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice.'},
-    {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then. The rest of chapter 1 is coming soon.'},
+    {if:{bees:{atLeast:11}}, text:'The feast has {蜂蜜|honey} now! Take more from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},
+    {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then (after each new word, practise a little before the next). The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
     {if:{done:true}, text:'Flower Fruit Mountain is complete. Practise in the {草} or visit your {朋友|friends}.'}
@@ -410,6 +423,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
     // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)
     {if:{place:'cave', cave:3}, do:[{sound:'splash'}, {set:{cave:4}}, {follow:[]}, {message:'Splash, splash! The troop follows you through the water curtain!'}]},
+    // chapter 1: the teacher's next new word waits for you to practise (lessonGap): as it starts waiting, the game remembers
+    // (quietly), and once you've practised, a message says the teacher has a new word for you
+    {if:{lessonWaits:true, lessonWait:0}, do:[{set:{lessonWait:1}}]},
+    {if:{lessonWait:1, lesson:true}, do:[{set:{lessonWait:0}}, {sound:'chime'}, {message:'You’ve practised what you know: the {老师} has a new word for you at the {学校}!'}]},
     // the rocks roll away once everything else in the prologue is done: the hungry and thirsty monkeys helped, every animal
     // found, and the words for the meadow learned (the big monkey's flowers wait for chapter 1, decided 22 October 2026)
     {if:{hungry:'done', thirsty:'done', animalsLeft:0, meadowWords:5, gate:false}, do:[

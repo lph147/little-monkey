@@ -382,6 +382,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('__said').includes('上课！') && get('__said').includes('下课！'), 'class begins, and is over');
   assert.ok(get('S.shells') > shellsBefore, 'shells for the words that needed practice');
   assert.ok(['四', '五', '六'].every(knows) && !knows('七'), 'the first lesson teaches three new numbers: 四, 五 and 六');
+  // After a lesson that teaches new words, the next new word waits till you've answered 8 more questions, anywhere (decided
+  // 26 October 2026): your tasks say so, and the teacher gives you a practice lesson, saying so first
+  assert.match(get('getTasks().map(t => t.text).join(" / ")'), /Practise before your next lesson \(0\/8\)/);
+  await pressAt(7, 3, 'up', 'a lesson while the next new word waits: practice', 0);
+  assert.ok(!knows('红色'), 'practice: nothing new');
+  assert.ok(!get('getTasks().some(t => t.id === "practise")') && run('!!lessonNow()'), 'practised: the colours are ready');
   await pressAt(7, 3, 'up', 'the first colour lesson', 3);
   assert.ok(['红色', '黄色', '白色'].every(knows) && !knows('黑色'), 'the first colour lesson teaches three: 红色, 黄色 and 白色');
   assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns'], 'the class paints the lanterns red');
@@ -493,7 +499,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(11, 5, 'up');
   await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
   assert.equal(run('PLACE'), 'school');
-  for (let i = 0; i < 25 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9); i++) await pressAt(7, 3, 'up', `lesson ${i + 3}`);
+  for (let i = 0; i < 50 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9); i++) await pressAt(7, 3, 'up', `lesson ${i + 3}`);   // (a new word, or practice while the next waits)
   for (const n of ['五', '六', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);
   for (const c of ['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']) assert.ok(knows(c), `the colour lessons teach ${c}`);
   assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns'], 'the red lesson ends with the class painting the lanterns (no other part of the school, since 24 October 2026)');

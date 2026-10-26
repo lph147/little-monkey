@@ -358,7 +358,7 @@ test('every character has a talk script, and every script is for a character', (
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'practice', 'lesson', 'hiding', 'hidesFound'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);

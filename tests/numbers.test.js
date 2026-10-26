@@ -56,6 +56,8 @@ test('the first number lesson teaches three, one after another: 四, then 五, t
   assert.equal(g.run('__lessons'), 0, 'a number lesson, not practice');
   assert.equal(g.run('S.shells'), 6, 'a shell for each right answer while its number needed practice (the first two of each)');
   assert.equal(get(g, 'areaChecklist().find(([t]) => /count to ten/.test(t))[0]'), 'Learn to count to ten at 学校 (school) (3/7)');
+  assert.equal(get(g, 'lessonNow()'), null, 'the next waits till you’ve answered 8 more questions (tests/lesson-wait.test.js)');
+  g.run('S.turn += 8');
   assert.deepEqual(get(g, 'lessonNow().words'), ['七'], 'then one a lesson (with a colour to learn too, they take turns: tests/colours.test.js)');
 });
 
@@ -127,7 +129,7 @@ test('a wrong count is practice, not a test: the number comes back soon and keep
   assert.equal(g.run('rec("四").ok'), 0, 'and it needs practice again');
   const noBirds = game();
   noBirds.run("delete S.w['鸟']; globalThis.__things = []; countQ = async ({thing}) => { __things.push(thing.word); return true; }");
-  for (let i = 0; i < 4; i++){ noBirds.run("for (const n of ['四', '五', '六']){ rec(n).lv = 0; rec(n).ok = 0; }"); await lesson(noBirds); }   // (the first lesson, again and again)
+  for (let i = 0; i < 4; i++){ noBirds.run("for (const n of ['四', '五', '六']){ rec(n).lv = 0; rec(n).ok = 0; } delete here().lessonTurn"); await lesson(noBirds); }   // (the first lesson, again and again)
   const counted = get(noBirds, '__things');
   assert.equal(counted.length, 44);
   assert.ok(!counted.includes('鸟'), 'you’ve not caught 鸟, so there are never birds to count');
@@ -144,7 +146,7 @@ test('saying Not now to a number lesson ends it there: no 下课', async () => {
 test('there are never two things to count, and 二 is never an answer: two things are 两 (liǎng), a word of its own', async () => {
   const g = game();
   answering(g);
-  for (let i = 0; i < 6; i++){ g.run("rec('四').lv = 0; rec('四').ok = 0"); await lesson(g); }   // (the first lesson, again and again)
+  for (let i = 0; i < 6; i++){ g.run("rec('四').lv = 0; rec('四').ok = 0; delete here().lessonTurn"); await lesson(g); }   // (the first lesson, again and again)
   const qs = get(g, '__qs');
   assert.ok(qs.length >= 30);
   assert.ok(qs.every(q => q.word !== '二'), 'never two things');
