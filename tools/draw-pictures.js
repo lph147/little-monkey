@@ -611,6 +611,25 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(path([[8.3, 7.6], [5.2, 2.6]], .5), '#2A2A2E');                                   // its open mouth, howling
     p.dot(3, 1, '#2A2A2E'); p.dot(4, 1, '#2A2A2E'); p.dot(3, 2, '#2A2A2E');                 // nose
     p.flat(path([[10.4, 7.6], [12.6, 7]], .45), '#2A2A2E');                                  // eye, shut tight
+  },
+  '牛': p => {   // cow: a black-and-white cow, standing, head to the left, with short horns, a pink muzzle and udder (unlike the goat: all white, curled horns, a beard; unlike the sheep: woolly)
+    const W = '#F7F4EC', K = '#2B2724', LT = {light: '#FFFFFF', dark: '#D8D2C4'};
+    p.fill(or(Rc(15, 20, 2.6, 9), Rc(25.5, 20, 2.6, 9)), '#DCD6C8');                        // far legs
+    p.fill(path([[28.8, 13], [30.2, 19], [29.6, 23.5]], .7), '#DCD6C8');                     // tail
+    p.fill(O(29.6, 24.4, 1.4, 1.8), K);                                                      // and the tuft at its end
+    p.fill(Rc(10.5, 11, 19, 11, 4), W, LT);                                                  // body
+    p.flat(and(Rc(10.5, 11, 19, 11, 4), or(O(15.5, 13, 3.6, 2.6), O(24.5, 17, 3.4, 3.2), O(28.2, 12.2, 2.4, 2))), K);   // patches
+    p.fill(O(21, 22.2, 3, 1.6), '#F2A7A8', {dark: '#D8858A'});                               // udder
+    p.fill(or(Rc(12.5, 20, 2.7, 10), Rc(23, 20, 2.7, 10)), W, {...LT, edge: true});          // near legs
+    p.flat(or(Rc(12.5, 29, 2.7, 1.2), Rc(23, 29, 2.7, 1.2), Rc(15, 28.5, 2.6, 1), Rc(25.5, 28.5, 2.6, 1)), '#3A3430');   // hooves
+    p.fill(Pg([[7, 10], [12, 9], [13, 16], [9, 16]]), W, LT);                                // neck
+    p.fill(or(path([[7, 6], [5.6, 3.2]], .9), path([[10.6, 6], [12, 3.2]], .9)), '#E8DCC0', {dark: '#BFAF8C'});   // short horns
+    p.fill(Rc(4.2, 5, 8.4, 8.4, 3.2), W, {...LT, edge: true});                               // head
+    p.flat(and(Rc(4.2, 5, 8.4, 8.4, 3.2), O(10.8, 7, 2.4, 2.6)), K);                        // a patch round one eye
+    p.fill(O(12.9, 7.4, 1.9, 1.1), W, {dark: '#D8D2C4', edge: true});                        // ear
+    p.fill(Rc(2.6, 11, 7.4, 4.6, 2.2), '#F2A7A8', {light: '#F8C7C7', dark: '#D8858A', edge: true});   // muzzle
+    p.dot(4, 13, '#9A4C50'); p.dot(7, 13, '#9A4C50');                                         // nostrils
+    p.eye(6, 7);
   }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops

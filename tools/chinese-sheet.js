@@ -153,6 +153,10 @@ const DRAFTS = [
     ['我们 有 蜂蜜 了 ！', 'We have honey now!', 'The hungry monkey, as he pours the honey into the empty bowl on the feast’s table'],
     ['我们 有 蜂蜜 。', 'We have honey.', 'The feast’s list at its big table, once the honey is in its bowl (before: 我们没有蜂蜜。)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 25 October 2026 (in the game), the bees’ hive and honey: ' + where})),
+  ...[['牧场', 'The pasture', 'The name of the new place south of the home ground, past the bridge: a way down through pines, then a sunny, open pasture with a spring, where a cow is lost (shown and said as you arrive: is 牧场 right for a wild mountain pasture with no farmer, or would 草地 or another name be better?)', 'mù chǎng'],
+    ['山 上 有 牛 ！', 'There’s a cow on the mountain!', 'The thirsty monkey’s news (牛 niú, cow, just for listening till you find it). It’s one cow, lost and alone: would 山上有一头牛！ be more natural? (头 isn’t a word in the game yet)'],
+    ['我 怕 狼 ！', 'I’m scared of wolves!', 'The cow, as you find it by its spring in the pasture (牛 taught on its card as you meet it, and said straight away)']]
+    .map(([zh, en, where, py]) => ({zh, en, py, where:'New on 26 October 2026 (in the game), the lost cow: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 

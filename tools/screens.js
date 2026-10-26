@@ -194,6 +194,15 @@ SAVES.hive = {...SAVES.hiveSoon, areas: {1: {...SAVES.hiveSoon.areas[1], bees: 1
 SAVES.honeyHeld = {...SAVES.hive, w: {...SAVES.hive.w, ...knows(1, ['蜂蜜'])}, areas: {1: {...SAVES.hive.areas[1], holding: {honey: '蜂蜜'}}}, tasksSeen: {...SAVES.hive.tasksSeen, honey2: 1},
   pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};
 SAVES.honeyIn = {...SAVES.honeyHeld, areas: {1: {...SAVES.hive.areas[1], bees: 11, honey: 'done'}}, bag: {'蜂蜜': 2}, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
+// the cow (26 October 2026, its first part): the thirsty monkey's news, by the road at the home ground; the way south,
+// cleared; into the pasture for the first time (a cow moos, beyond the pines); the pasture, out between the rocks; and the
+// cow, found by its spring
+SAVES.cowNews = {...SAVES.honeyIn, pos: {place: 'homeGround', x: 21, y: 10, dir: 'down'}};   // facing the thirsty monkey, by the road
+SAVES.waySouth = {...SAVES.honeyIn, areas: {1: {...SAVES.honeyIn.areas[1], cow: 1}}, tasksSeen: {...SAVES.honeyIn.tasksSeen, cow1: 1}, pos: {place: 'homeGround', x: 16, y: 19, dir: 'down'}};   // (its task seen: no message)
+SAVES.pastureIn = {...SAVES.waySouth, pos: {place: 'homeGround', x: 16, y: 20, dir: 'down'}};   // just before the way in
+SAVES.pasture = {...SAVES.waySouth, areas: {1: {...SAVES.waySouth.areas[1], cow: 2}}, pos: {place: 'pasture', x: 24, y: 16, dir: 'right'}};   // on the cow's trail
+SAVES.cowMeet = {...SAVES.pasture, pos: {place: 'pasture', x: 31, y: 17, dir: 'down'}};   // facing the cow, by its spring
+SAVES.cowFound = {...SAVES.cowMeet, w: {...SAVES.cowMeet.w, ...knows(1, ['牛'])}, areas: {1: {...SAVES.cowMeet.areas[1], cow: 3}}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -714,6 +723,18 @@ const SCREENS = [
     play(); await wait(100); pressA(); await wait(500); }},
   {id: 'bag-honey', title: 'Honey in your bag', save: 'honeyIn', why: 'From the hive, two at most: tap it to eat it, and you walk faster for a minute.', run: async () => {
     play(); await wait(100); bagPage(() => closeCard()); await wait(400); }},
+  {id: 'cow-news', title: 'News of a cow', save: 'cowNews', why: 'The thirsty monkey, by the road at the home ground since the feast’s quests began, with a !: 山上有牛！ (There’s a cow on the mountain! 牛 just for listening). Then what he heard, and the way south.', run: async () => {
+    play(); await wait(100); talk(npc('thirsty')); await wait(500); }},
+  {id: 'way-south', title: 'The way south', save: 'waySouth', why: 'Past the bridge at the bottom of the home ground, the bushes are gone: the way south to the pasture, with the task’s arrow.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'pasture-first', title: 'Into the pasture (牧场)', save: 'pastureIn', why: 'The first time: dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos.', run: async () => {
+    play(); await wait(100); arrive(16, 21).then(runEvents); await wait(1500); }},
+  {id: 'pasture', title: 'The pasture', save: 'pasture', why: 'Out between two big rocks: open, sunny grass with flowers, big trees and boulders, and the spring where the cow drinks.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'cow-meet', title: 'The lost cow', save: 'cowMeet', why: 'By its spring: A teaches 牛 (niú, cow), said straight away as you find it.', run: async () => {
+    play(); await wait(100); pressA(); await wait(1600); }},
+  {id: 'cow-scared', title: 'I’m scared of wolves!', save: 'cowFound', why: 'Then the cow says 我怕狼！ (I’m scared of wolves!): it’s too scared of the wolves in the pines to go anywhere.', run: async () => {
+    play(); await wait(100); talk(npc('cow')); await wait(500); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)

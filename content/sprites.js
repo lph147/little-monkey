@@ -174,6 +174,11 @@ const MAP_SPRITES = {
     palette: {a:'#3E3122', b:'#9C7B55', c:'#302012', d:'#714724', e:'#DE9E62', f:'#1A130E', g:'#533C26', h:'#1E1A16', i:'#9A5A28', j:'#3E2614', k:'#2A1E16', l:'#D4A278', m:'#975F30', n:'#3D2816', o:'#C27A3E', p:'#FBF1DE', q:'#6F401E', r:'#301E10'},
     rows: [".aba..aba.......",".abbaaba........","abbbababa.......",".acdedca........",".fgehdij........","fklmidij.ggj....",".nmnjioigeeijj..","..n..geieoooeij.",".....jiiopopopij",".....jiooopopoij","......cdiooodij.","......cdqiiidqr.","......cdqrjcdqr.","......cdqr.cdqr.","......cdqr.cdqr.",".......cr...cr.."]
   },
+  '牛': {   // cow (chapter 1: lost in the pasture, south of the home ground; drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
+    faces: 'left',
+    palette: {a:'#464137', b:'#B5AC96', c:'#5E5B58', d:'#FFFFFF', e:'#8F8E89', f:'#3A3733', g:'#1E1A16', h:'#F7F4EC', i:'#D8D2C4', j:'#514D46', k:'#1A1612', l:'#2B2724', m:'#ACA79C', n:'#433F39', o:'#392926', p:'#8C6161', q:'#513433', r:'#D8858A', s:'#56524C', t:'#E7E2D9', u:'#BD8283', v:'#493331', w:'#5C5954', x:'#F9F7F2', y:'#1F1A16', z:'#3A3430'},
+    rows: ["................","..a..a..........",".abaaba.........","cdeddef.........","cdghhijkkccccj..","cdhhhelllddddij.","jihhhelllhhhhhmn","opppphllhhllllmn","qrrrphhhhhllllim",".qqcdhhhhhllllim","...feeeehhheeeij","...stmeeuuueemkl","...stmeijvwxemnk","...stmeij.wxemn.","...nmmeij.jiemn.","....nyzzy.yzzy.."]
+  },
   // wild creatures, which jump out of long grass to fight (drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
   '蛇': {   // snake
     faces: 'right',

@@ -393,6 +393,18 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Close the game with honey in your bag and open it again: it’s still there. Close it while you’re full of energy: when you come back, you walk at your usual speed.
 - [ ] Hide and seek: when the little monkey says 我在花里！, it’s in the flowers round the hive, and A at the hive itself takes honey, not a guess.
 
+**Chapter 1: the cow, version 1: the news, the way south and the pasture**
+- [ ] Once the hungry monkey has told you the feast needs honey, the thirsty monkey stands by the road at the home ground, south of it, a little left of the cow pen’s plot, with a !. With no tasks, TASKS’ hint says: The thirsty monkey has news for you: look for his ! at the home ground.
+- [ ] Talk to him: 山上有牛！ (There’s a cow on the mountain!; 牛 grey, just for listening), then two messages: he heard a cow mooing beyond the pines, lost and all alone, where wolves live; the troop has cleared a way south, over the bridge at the bottom of the home ground. Go and find the cow! A new task: Find the lost cow: south over the bridge, and through the pines (its arrow points the way). The checklist has Find the lost cow on the mountain.
+- [ ] Walk down the path past the pool, over the bridge: the bushes at the bottom are gone. Walk off the bottom edge: you arrive at 牧场 mùchǎng · The pasture, among dark pines, and a moo (with the sound on), with: Dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos, long and sad… Only the first time.
+- [ ] The way winds left, then down, then right, then down, two squares wide, with long grass grown over it three times: wolves, snakes and spiders jump out, the battles among pines, with the pine wood’s battle song. Off to the left of the first long grass, a sunny clearing with tall grass; mushrooms beside the way (A: Red mushrooms with white spots…).
+- [ ] With the sound on: crows and the wind under the pines; out in the pasture, birdsong.
+- [ ] Out through the gap between four big rocks (long grass in it) into a sunny pasture: flowers, big trees, boulders, a trail down to a pool with a stream out of it, dragonflies over the water, and a black-and-white cow on the far side of the pool, with a ! over it.
+- [ ] Walk round the pool to the cow and press A: 牛’s card (niú, cow, a black-and-white cow), said straight away: A cow, lost and all alone, by the spring… Then the cow says 我怕狼！ (I’m scared of wolves!), and: The 牛 (cow) is lost, and too scared of the wolves in the pines to go anywhere. The task is gone and the checklist item is ticked. A at the cow again: 我怕狼！
+- [ ] Talk to the thirsty monkey again: 山上有牛！, with: You found the cow by its spring, in the pasture…
+- [ ] Hidden in the pasture (a tiny glint now and then): press A at the boulder on the left, below the tall grass (2 🐚), and at the tree that juts out of the bottom edge, below the middle of the pasture (a 桃子, peach, for your bag).
+- [ ] Walk back up the way and off the top edge: you’re back at the bottom of the home ground’s path, below the bridge.
+
 **Menu**
 - [ ] 任务 Tasks shows the area checklist, all ticked.
 - [ ] 词 Words (the Word Scroll) and 朋友 Friends open, and Back returns to the menu, on the same tile. In Friends, tap the goat (山羊): its page opens, "Friends · Animals", saying 山羊; press English, and its English appears, and the button becomes How it's made: press it, and its card shows 山 mountain + 羊 sheep = 山羊 goat; Back returns to its page, and Back again to Friends, on the goat. The words count out of 74, and every one of them can be caught.

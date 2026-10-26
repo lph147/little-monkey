@@ -90,6 +90,8 @@ shown where the word list has them.
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 蜂王 (queen bee) |  |
 | 蜂蜜！太好了！ | fēngmì! tài hǎo le! | Honey! Wonderful! | 饿猴子 (Hungry monkey) |  |
 | 我们有蜂蜜了！ | wǒmen yǒu fēngmì le! | We have honey now! | 饿猴子 (Hungry monkey) |  |
+| 山上有牛！ | shān shàng yǒu niú! | There’s a cow on the mountain! | 渴猴子 (Thirsty monkey) |  |
+| 我怕狼！ | wǒ pà láng! | I’m scared of wolves! | 牛 (cow) |  |
 | 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
 | 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | you |  |
 | 我来了！ | wǒ lái le! | Here I come! | you |  |
@@ -208,7 +210,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | 蜘蛛 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
-| 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | 狼 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 
 ### Questions after the story
@@ -295,6 +296,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山坡 | shānpō | The hillside |  |
 | 河边 | hébiān | The riverside |  |
 | 百花谷 | Bǎihuā Gǔ | Valley of a Hundred Flowers |  |
+| 牧场 | mùchǎng | The pasture |  |
 | 松林 | sōnglín | Pine wood |  |
 | 学校 | xuéxiào | School |  |
 
@@ -342,6 +344,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 狐狸 | húli | fox |  |
 | 蝴蝶 | húdié | butterfly |  |
 | 黄蜂 | huángfēng | wasp |  |
+| 牛 | niú | cow |  |
 | 跳 | tiào | to jump |  |
 | 桥 | qiáo | bridge |  |
 | 床 | chuáng | bed |  |
@@ -647,6 +650,9 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 蜂蜜！太好了！ | fēngmì! tài hǎo le! | Honey! Wonderful! | New on 25 October 2026 (in the game), the bees’ hive and honey: The hungry monkey, when you bring him the honey |  |
 | 我们有蜂蜜了！ | wǒmen yǒu fēngmì le! | We have honey now! | New on 25 October 2026 (in the game), the bees’ hive and honey: The hungry monkey, as he pours the honey into the empty bowl on the feast’s table |  |
 | 我们有蜂蜜。 | wǒmen yǒu fēngmì. | We have honey. | New on 25 October 2026 (in the game), the bees’ hive and honey: The feast’s list at its big table, once the honey is in its bowl (before: 我们没有蜂蜜。) |  |
+| 牧场 | mù chǎng | The pasture | New on 26 October 2026 (in the game), the lost cow: The name of the new place south of the home ground, past the bridge: a way down through pines, then a sunny, open pasture with a spring, where a cow is lost (shown and said as you arrive: is 牧场 right for a wild mountain pasture with no farmer, or would 草地 or another name be better?) |  |
+| 山上有牛！ | shān shàng yǒu niú! | There’s a cow on the mountain! | New on 26 October 2026 (in the game), the lost cow: The thirsty monkey’s news (牛 niú, cow, just for listening till you find it). It’s one cow, lost and alone: would 山上有一头牛！ be more natural? (头 isn’t a word in the game yet) |  |
+| 我怕狼！ | wǒ pà láng! | I’m scared of wolves! | New on 26 October 2026 (in the game), the lost cow: The cow, as you find it by its spring in the pasture (牛 taught on its card as you meet it, and said straight away) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

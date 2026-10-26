@@ -119,5 +119,7 @@ test('the little monkey: 我们是同学！ (同学); then lessons with the teac
   g.run("Object.assign(here(), {flowers: 'done', schoolFlowers: true})");
   assert.match(g.run('tasksHint()'), /The hungry monkey has something to ask you/, 'then the honey: a game that heard what the feast needs before the bees came');
   g.run('here().bees = 1');
+  assert.match(g.run('tasksHint()'), /The thirsty monkey has news for you: look for his ! at the home ground/, 'and the cow: he’s heard of one on the mountain');
+  g.run('here().cow = 3');
   assert.match(g.run('tasksHint()'), /gives you a lesson whenever there’s a new number or colour to learn, or your words need practice/);
 });

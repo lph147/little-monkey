@@ -2814,6 +2814,43 @@ const PICTURES = {
       "............ccc.cclcfffffccc....",
       "....................ccccc......."
     ]
+  },
+  '牛': {   // cow
+    palette: {a:'#494234', b:'#59534A', c:'#BFAF8C', d:'#EFE7D3', e:'#5E5B58', f:'#3A3733', g:'#8F8E89', h:'#FFFFFF', i:'#2B2724', j:'#514D46', k:'#F7F4EC', l:'#D8D2C4', m:'#1E1A16', n:'#1A1612', o:'#5C4946', p:'#F8C7C7', q:'#8C6161', r:'#F2A7A8', s:'#9A4C50', t:'#ACA79C', u:'#433F39', v:'#513433', w:'#D8858A', x:'#E7E2D9', y:'#F6C1C2', z:'#DCD6C8', A:'#6B6866', B:'#221E1C', C:'#171310', D:'#1F1A16', E:'#3A3430'},
+    rows: [
+      "................................",
+      ".....a.....ba...................",
+      "....aca...bdca..................",
+      "....bdca..bdca..................",
+      "....accaebdca...................",
+      ".....fghhiicaj..................",
+      "....ehkkiiiiglj.................",
+      "....ehhmiiiggllj................",
+      "....ehmmkiiiinj.................",
+      "....ehkkkkiklj..................",
+      "...oehkkkkkkljnnnneeeeeeeen.....",
+      "..oppqqqqkklniiiiihhhhhhhhinn...",
+      "..oprrrrrqggiiiiiiikkkkkkkiiin..",
+      "..opsrrsrqkkliiiiiikkkkkkkiiitu.",
+      "..vwrrrrwqkkliiiiikkkkiiiiikltu.",
+      "...vwwwwjllllkkikkkkkiiiiiiiklj.",
+      "....vvvv.jehkkkkkkkkkiiiiiiiklj.",
+      "..........ehkkkkkkkkkiiiiiiikltu",
+      "..........ehkkkkkkkkkiiiiiiilxtu",
+      "..........ehkkkkkkkkkkiiiiiklxtu",
+      "..........jllgggkkkkkkkgggkllxtu",
+      "...........jehkgllyyyyygkglztxtu",
+      "............ehkgztwrrrrgkgxzttu.",
+      "............ehkgztvwwwwgkgxzAABC",
+      "............ehkgztuvvvehkgxzAiBC",
+      "............ehkgztu...ehkgxzBBBC",
+      "............ehkgztu...ehkgxztuC.",
+      "............ehkgztu...ehkgxztu..",
+      "............ehkgttu...ehkgtttu..",
+      "............DEEEEED...DEEEEEED..",
+      "............DEEEDD....DEEEDDD...",
+      ".............DDD.......DDD......"
+    ]
   }
 };
 

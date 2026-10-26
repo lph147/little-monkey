@@ -79,6 +79,7 @@ const WORD_BANK = {
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},   // (chapter 1: hiding on the hillside; in the meadow's tall grass until 23 October 2026)
   '蝴蝶': {py:'húdié', en:'butterfly', pic:'🦋', area:1, category:'animals'},   // (chapter 1: fluttering over the flowers on the riverside, the way east to the bees)
   '黄蜂': {py:'huángfēng', en:'wasp', pic:'🦟', area:1, category:'animals', alike:['蜜蜂']},   // (chapter 1: in the tall flowers of the bees' valley; its picture is a pixel wasp, a striped insect like the bee: there's no emoji for a wasp, so its stand-in is a mosquito)
+  '牛': {py:'niú', en:'cow', pic:'🐄', area:1, category:'animals'},   // (chapter 1: lost in the pasture south of the home ground, scared of the wolves; heard first in the thirsty monkey's news)
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
   '桥': {py:'qiáo', en:'bridge', pic:'🌉', area:1, category:'places'},
   '床': {py:'chuáng', en:'bed', pic:'🛏️', area:1, category:'items', alike:['睡觉']},

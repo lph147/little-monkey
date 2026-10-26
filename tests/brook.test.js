@@ -34,6 +34,7 @@ test('dragonflies dart about over the water, each in its own patch: hovering a m
   const flies = get(g, 'AREA.dragonflies');
   assert.ok(flies.length >= 1);
   flies.forEach((d, i) => {
+    g.run(`setPlace(placeOf(AREA.dragonflies[${i}].at))`);   // (each in its own place: the hillside's brook, the pasture's spring)
     assert.equal(g.run(`tileAt(${d.at[0]}, ${d.at[1]}).look`), 'water', 'over the water');
     const box = get(g, `dragonflyBox(AREA.dragonflies[${i}])`);
     const path = get(g, `Array.from({length: 1000}, (_, k) => dragonflyAt(dragonflyBox(AREA.dragonflies[${i}]), ${i}, 100000 + k * 20))`);   // twenty seconds
