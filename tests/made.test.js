@@ -47,6 +47,7 @@ test('every entry is a word here: its parts make the word, and their pinyin is t
   // decided 24 October 2026, after playing it: only what's simple, useful and memorable, that you can picture (the 艹 of
   // 花 and 草, plants, meant nothing; 苹 means nothing on its own; the rest needed explaining)
   for (const w of ['花', '草', '桥', '床', '路', '跳', '碗', '家', '瀑布', '没关系', '不客气']) assert.ok(!made[w], `${w}: nothing simple enough`);
+  assert.ok(!made['再见'], '再见: again + to see was no help (decided 26 October 2026, after playing it)');
 });
 
 test('a new word with a story: its card is just the word, then How it’s made ▸ opens a card of its own; Back goes back, Got it catches it', () => {

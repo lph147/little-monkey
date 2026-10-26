@@ -118,7 +118,7 @@ test('a new task is announced with a message once you’re free, and Select has 
 
 test('the pixel font never joins letters (it turned fi and fl into a letter like A: "Save Ales"), and only the opening’s captions have a shadow', () => {
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
-  assert.match(css, /\*\{font-variant-ligatures:none\}/, 'no joined letters anywhere');
+  assert.match(css, /\*,\*::before,\*::after\{font-variant-ligatures:none!important\}/, 'no joined letters anywhere, even where the font shorthand would turn them on again (the tip bubble: "the Arst time")');
   const cap = css.match(/^\.cap\{[^}]*\}/m)[0];   // the rule for every caption, under answers too
   assert.doesNotMatch(cap, /text-shadow/, 'a shadow there would smudge the captions under answers');
   assert.match(css, /\.capbox \.cap\{text-shadow/, 'the opening’s captions keep theirs, over the picture');

@@ -512,7 +512,10 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     SFX.right();
     const counted = !!num && lvl(num) >= 1;
     if (counted) say(num);
-    toast((counted ? `${wz(num)}! ` : '') + fill(all ? s.full : s.each));
+    // full: what it says once you have them all, or a list of {if, text}, the first that matches (such as the wood: take
+    // it back once you have the stones too, or else find them first, so you don't make two trips)
+    const full = [].concat(s.full).find(f => typeof f === 'string' || !f.if || matches(f.if));
+    toast((counted ? `${wz(num)}! ` : '') + fill(all ? full.text || full : s.each, false, true));
   },
   rest(){ S.hearts = HEARTS; save(); SFX.chime(); },   // your hearts are full again
   // A lesson with the character you're talking to (the teacher at school): a new word from one of the area's lesson
@@ -903,13 +906,17 @@ function enterPlace(id){
   setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; pickedHere.clear(); buildMap();
   playSong(placeSong());   // its own music, if it has some
 }
-// Through a way to another place: a quick fade, and you're there, with its name at the top of the screen.
+// Through a way to another place: a quick fade, and you're there, with its name at the top of the screen. The screen
+// fades to black in FADE_MS, and you're in the new place just as it's black, as it fades back in (decided 26 October 2026:
+// the fade took twice as long as the wait, so you saw the classroom, then black, then the classroom again).
+const FADE_MS = 350;
+const fadeDark = now => { const k = (now - fadeT) / FADE_MS; return k >= 0 && k < 2 ? (k < 1 ? k : 2 - k) : 0; };   // how dark the fade is now, 0 to 1
 async function goThrough(e){
   held = null; queued = null;
   const water = e.how === 'water' || e.how === 'jump';
   if (e.how === 'jump') await leap(e.at);   // a jump into the waterfall, with a splash
   if (water){ waterT = performance.now(); SFX.splash(); } else { fadeT = performance.now(); SFX.blip(); }
-  await sleep(water ? 600 : 350);           // (a rush of water covers the screen, or it fades to black)
+  await sleep(water ? 600 : FADE_MS);       // (a rush of water covers the screen, or it fades to black)
   enterPlace(e.to);
   S.pos = {place:e.to, x:e.arrive[0], y:e.arrive[1], dir:e.facing || pl.dir}; placePlayer(); stepClear(); save();
   if (water) dripUntil = performance.now() + 1500;   // you come through dripping

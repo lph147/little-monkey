@@ -244,7 +244,6 @@ const MADE = {
   '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']]},
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
-  '再见': {parts:[['再', 'zài', 'again'], ['见', 'jiàn', 'to see']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},
   // the same character as in another word
   '苹果': {same:['果', 'guǒ', 'fruit'], as:'水果', why:'an apple is a fruit'}

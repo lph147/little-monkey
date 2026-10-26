@@ -57,6 +57,8 @@ test('in the pine wood: a squirrel shows you the dry pines and warns you about t
   await press(g, 17, 21, 'right');
   assert.deepEqual(get(g, '__said').slice(-1), ['你要木头吗？'], 'it asks if you want wood');
   assert.match(get(g, '__notes').join(' '), /Wolves live in the long grass/, 'and warns you');
+  assert.equal(g.run("(AREA.bubbles.woodSquirrel || []).some(b => matches(b.if))"), false,
+    'its ! goes once it’s told you (decided 26 October 2026: it kept it, just to say it all again)');
   assert.equal(get(g, 'getTasks()[0].target'), null, 'no arrow once you’re in the pine wood');
   const sparkly = get(g, 'COLLECTABLE.filter(([x, y]) => { const t = tileAt(x, y), p = t.onLook.find(p => !p.if || matches(p.if)); return p && p.sparkle; })');
   assert.deepEqual(sparkly.sort(), [[2, 18], [2, 2], [31, 2], [29, 18], [3, 12], [30, 6], [23, 5]].sort(), 'three dead pines, three stones and the cracked rock');
@@ -136,12 +138,16 @@ test('the cracked rock shuts the sunny glade until you break it, any time in cha
   assert.equal(g.run('tileAt(23, 5).look'), 'rubble');
   await press(g, 30, 2, 'right');
   assert.deepEqual(get(g, '__spoken'), ['三'], 'the third piece of wood');
-  assert.match(get(g, '__notes').slice(-1)[0], /You have three pieces of 木头 \(wood\)\. Take them to the big monkey\./);
+  assert.match(get(g, '__notes').slice(-1)[0], /You have three pieces of 木头 \(wood\)\. Now find three small 石头 \(stones\)\./,
+    'with a stone still to find, it says to find it, not to take the wood back (decided 26 October 2026: you made two trips)');
+  assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Find three small 石头 (stones) in the pine wood (2/3)'], 'no task to take the wood back yet');
+  assert.equal(g.run("(AREA.bubbles.big || []).some(b => matches(b.if) && b.show === '?')"), false, 'and the big monkey has no ? for you yet');
   assert.equal(g.run('promptFor(30, 6)'), 'Pick up');
   await press(g, 30, 7, 'up');
   assert.equal(g.run('tileAt(30, 6).look'), 'needles', 'the stone is picked up');
   assert.deepEqual(get(g, 'here().holding'), {wood: '木头', stones: '石头'});
-  assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Take the 木头 (wood) to the big monkey', 'Take the small 石头 (stones) to the big monkey']);
+  assert.match(get(g, '__notes').slice(-1)[0], /You have three small 石头 \(stones\), and the 木头 \(wood\) too\. Take them all to the big monkey\./);
+  assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Take the 木头 (wood) and the small 石头 (stones) to the big monkey']);
   assert.ok(get(g, 'getTasks().every(t => t.target)'), 'with arrows the way back');
   const later = game({...BUILDING, build: 2, wood: 'done', stones: 'done'}, {place: 'pineWood', x: 22, y: 5, dir: 'right'});
   assert.equal(later.run('promptFor(23, 5)'), 'Hit', 'with the wood and stones brought already, you can still break it: the deer’s glade is behind it');

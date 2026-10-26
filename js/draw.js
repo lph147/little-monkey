@@ -532,8 +532,8 @@ function drawWorld(now){
     }
     b.globalAlpha = 1;
   }
-  const fk = (now - fadeT) / 700;
-  if (fk >= 0 && fk < 2){ b.globalAlpha = fk < 1 ? fk : 2 - fk; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
+  const dark = fadeDark(now);   // (going through a way to another place: js/world.js)
+  if (dark > 0){ b.globalAlpha = dark; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
 }
 // Things hidden off the path (the area's hidden) give themselves away with a tiny glint now and then, easy to miss: each
 // of them in the place you're in, not found yet, glinting now ([x, y, how bright, 0 to 1]), every GLINT_EVERY ms for

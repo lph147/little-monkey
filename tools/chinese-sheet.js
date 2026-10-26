@@ -64,13 +64,13 @@ const DRAFTS = [
   ...[['我们 有 家 了 ！', 'We have a home now!', 'The old monkey, at the start of chapter 1, before showing you the troop’s new home ground'],
     ['这里 很 大 ！', 'It’s so big here!', 'The old monkey, arriving at the home ground beside the waterfall (这里 zhèlǐ, here; the place is called 家园 jiāyuán, home ground: please check this name too)']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game): ' + where})),
-  ...[['我们 要 木头 和 小 石头 ！', 'We need wood and small stones!', 'The big monkey, who wants to build the school (木头 mùtou, wood, is just for listening until you find some)'],
-    ['我们 要 木头 。', 'We need wood.', 'The big monkey, if you come back without the wood'],
-    ['我们 也 要 小 石头 。', 'We need small stones too.', 'The big monkey, if you come back without the stones'],
+  ...[['我们 要 木头 和 小 石头 ！', 'We want wood and small stones!', 'The big monkey, who wants to build the school (木头 mùtou, wood, is just for listening until you find some)'],
+    ['我们 要 木头 。', 'We want wood.', 'The big monkey, if you come back without the wood'],
+    ['我们 也 要 小 石头 。', 'We want small stones too.', 'The big monkey, if you come back without the stones'],
     ['木头 ！ 太 好 了 ！', 'Wood! Wonderful!', 'The big monkey, when you bring the wood (it was 你有木头吗？ till 24 October 2026)'],
     ['石头 ！ 太 好 了 ！', 'Stones! Wonderful!', 'The big monkey, when you bring the small stones (it was 你有石头吗？)'],
-    ['我们 要 木头 。', 'We need wood.', 'The sentence you finish when you give him the wood (filling in 木头)'],
-    ['我们 要 小 石头 。', 'We need small stones.', 'The sentence you finish when you give him the stones (filling in 石头)'],
+    ['我们 要 木头 。', 'We want wood.', 'The sentence you finish when you give him the wood (filling in 木头)'],
+    ['我们 要 小 石头 。', 'We want small stones.', 'The sentence you finish when you give him the stones (filling in 石头)'],
     ['你 要 木头 吗 ？', 'Do you want wood?', 'A squirrel in the pine wood (the place is called 松林 sōnglín, pine wood: please check this name too), showing you the dry, dead pines']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 21 October 2026 (in the game), building the school: ' + where})),
   ...[['我们 来 盖 学校 吧 ！', 'Let’s build the school!', 'The big monkey, once the school’s frame is up (盖 gài, to build a house, is just for listening)'],

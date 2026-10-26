@@ -37,7 +37,7 @@
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{font-variant-ligatures:none}   /* the pixel font joins fi and fl into a letter like A ("Save Ales"), so no joined letters anywhere */
+*,*::before,*::after{font-variant-ligatures:none!important}   /* the pixel font joins fi and fl into a letter like A ("Save Ales"), so no joined letters anywhere (important: the font shorthand, as on the tip bubble, turned them on again: "the Arst time", 26 October 2026) */
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--en);line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}

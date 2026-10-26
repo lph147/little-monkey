@@ -48,6 +48,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   school  chapter 1: 0 not built yet, 1 the troop has built it (the scene), 2 you've been in, and the class has greeted
   //           its teacher, the old monkey
   //   woodIn  chapter 1: 1 once you've been into the pine wood (the first time, a wolf howls far off)
+  //   woodSquirrel chapter 1: 1 once the squirrel in the pine wood has shown you the dry pines (its ! goes then)
   //   schoolFlowers chapter 1: true once the big monkey has planted the flowers you brought him in front of the school
   //   homeName 1 once you know every part of your home's name (花, 果 in 水果, and 山): a message says so, and the sign by
   //           your stone sparkles; 2 once you've read it there, and seen how the name is made
@@ -69,7 +70,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   queenOut chapter 1: the queen bee is out of her old tree (she goes back in if you don't win her word game)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -178,8 +179,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'home1', if:{home:1}, text:'Lead the old monkey to the troop’s new home ground, along beside the {瀑布}', arrow:[19, 2, 'falls']},
     {id:'wood', if:{wood:'asked', holding:{wood:false}}, text:'Find three pieces of {木头} in the pine wood ({woodGot}/3)', arrow:{place:'pineWood'}},
     {id:'stones', if:{stones:'asked', holding:{stones:false}}, text:'Find three small {石头|stones} in the pine wood ({stonesGot}/3)', arrow:{place:'pineWood'}},
-    {id:'woodBack', if:{wood:'asked', holding:{wood:true}}, text:'Take the {木头} to the big monkey', arrow:'big'},
-    {id:'stonesBack', if:{stones:'asked', holding:{stones:true}}, text:'Take the small {石头|stones} to the big monkey', arrow:'big'},
+    // back to the big monkey once you have both, or the other's done (decided 26 October 2026: with just one, it sent you
+    // back, and you made two trips)
+    {id:'woodBack', if:{wood:'asked', holding:{wood:true}, stones:'done'}, text:'Take the {木头} to the big monkey', arrow:'big'},
+    {id:'stonesBack', if:{stones:'asked', holding:{stones:true}, wood:'done'}, text:'Take the small {石头|stones} to the big monkey', arrow:'big'},
+    {id:'buildBack', if:{wood:'asked', stones:'asked', holding:{wood:true, stones:true}}, text:'Take the {木头} and the small {石头|stones} to the big monkey', arrow:'big'},
     {id:'build', if:{build:2, school:0}, text:'Talk to the big monkey: the troop is ready to build the {学校}', arrow:'big'},
     {id:'goIn', if:{school:1}, text:'Go into the {学校}, and talk to the old monkey at the front of the class', arrow:'elder'},
     {id:'classmates', if:{school:{atLeast:2}, new:'同学'}, text:'Talk to the little monkey in the {学校}', arrow:'playful'},
@@ -289,10 +293,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     towerL: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}], towerR: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}],
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
     big: [{if:{elder:{atLeast:1}, gate:false, new:'我'}, show:'!'}, {if:{climb:1, new:'棍子'}, show:'!'},   // in the meadow, to say who he is
-      {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', holding:{stones:true}}, show:'?'},
+      {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', stones:'asked', holding:{wood:true, stones:true}}, show:'?'},
+      {if:{wood:'asked', stones:'done', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', wood:'done', holding:{stones:true}}, show:'?'},
       {if:{build:2, school:0}, show:'!'},   // chapter 1: the school
       {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, show:'!'}, {if:{flowers:'asked', holding:{flowers:true}}, show:'?'}],   // and flowers for it, once you know their colours
-    woodSquirrel: [{if:{new:'木头'}, show:'!'}]   // the squirrel in the pine wood, until you've found wood
+    woodSquirrel: [{if:{new:'木头', woodSquirrel:0}, show:'!'}]   // the squirrel in the pine wood, until it's shown you the dry pines (decided 26 October 2026: it kept its ! after, just to say it again)
   },
 
   // Characters who ask you to bring them something. The game handles each one the same way:
@@ -336,9 +341,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // (collect, in the legend). No reply to his thanks: once he has both, the troop builds the school at once, teaching
     // 学校, so 不客气 would come in the same go (decided 22 October 2026: it waits for his thanks for the flowers).
     wood: {from:'big', wants:'木头', ask:'wantWood', asked:'The big monkey wants three pieces of {木头}. Check your tasks.',
-      offer:'haveWood', sentence:'我们 要 木头', sentenceEn:'We need wood.', reward:3, thanks:'thanks'},
+      offer:'haveWood', sentence:'我们 要 木头', sentenceEn:'We want wood.', reward:3, thanks:'thanks'},
     stones: {from:'big', wants:'石头', ask:'wantStones', asked:'The big monkey wants three small {石头|stones}. Check your tasks.',
-      offer:'haveStones', sentence:'我们 要 小 石头', sentenceEn:'We need small stones.', reward:3, thanks:'thanks'},
+      offer:'haveStones', sentence:'我们 要 小 石头', sentenceEn:'We want small stones.', reward:3, thanks:'thanks'},
     // chapter 1: honey for the feast, from the bees' hive at the home ground, asked as the bees move in (he's wanted it since
     // the feast's list said 我们没有蜂蜜。). You learn 蜂蜜 as you take it from the hive; he pours it into the table's bowl.
     honey: {from:'hungry', wants:'蜂蜜', ask:'wantHoney', asked:'The hungry monkey wants honey for the feast. Take some from the bees’ hive!',
@@ -1060,12 +1065,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'p': {look:'pine', word:'树'},
     'q': {look:'deadPine', landmark:true, onLook:[
       {if:{wood:'asked', holding:{wood:false}}, label:'Hit', sparkle:true, do:[{hit:'wood'}, {change:'j'}, {collect:'木头', for:'wood', count:3,
-        note:'Dry wood from a dead pine, for building.', each:'Down comes the dry pine! You take a piece of {木头}.', full:'You have three pieces of {木头}. Take them to the big monkey.'}]},
+        note:'Dry wood from a dead pine, for building.', each:'Down comes the dry pine! You take a piece of {木头}.', full:[{if:{stones:'done'}, text:'You have three pieces of {木头}. Take them to the big monkey.'},
+          {if:{holding:{stones:true}}, text:'You have three pieces of {木头}, and the small {石头|stones} too. Take them all to the big monkey.'},
+          {text:'You have three pieces of {木头}. Now find three small {石头|stones}.'}]}]},   // (decided 26 October 2026: it said to take them back, so you made two trips)
       {do:[{message:'An old pine, long dead and dry.'}]}]},
     'j': {look:'stump'},   // what's left of a dead pine you've knocked down
     'm': {look:'pebble', word:'石头', onLook:[
       {if:{stones:'asked', holding:{stones:false}}, label:'Pick up', sparkle:true, do:[{change:'i'}, {collect:'石头', for:'stones', count:3,
-        each:'You pick up a small {石头}.', full:'You have three small {石头|stones}. Take them to the big monkey.'}]}]},
+        each:'You pick up a small {石头}.', full:[{if:{wood:'done'}, text:'You have three small {石头|stones}. Take them to the big monkey.'},
+          {if:{holding:{wood:true}}, text:'You have three small {石头|stones}, and the {木头} too. Take them all to the big monkey.'},
+          {text:'You have three small {石头|stones}. Now find three pieces of {木头}.'}]}]}]},
     'x': {look:'crackedRock', landmark:true, onLook:[
       {if:{build:{atLeast:1}}, label:'Hit', sparkle:true, do:[{hit:'stone'}, {change:'y'}, {message:'Crack! The rock breaks apart, and the way into the glade is open.'}]},
       {do:[{message:'A big rock with a deep crack down it. Behind it, between the pines, the sun shines into a glade.'}]}]},
@@ -1548,9 +1557,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     letsGo: {zh:'太 好 了 ！ 我们 去 看看 ！', en:'Wonderful! Let’s go and see!'},
     haveHome: {zh:'我们 有 家 了 ！', en:'We have a home now!'},   // chapter 1 (drafts, not checked yet: see CHINESE.md)
     bigHere: {zh:'这里 很 大 ！', en:'It’s so big here!'},
-    needWood: {zh:'我们 要 木头 和 小 石头 ！', en:'We need wood and small stones!'},   // the big monkey, building the school
-    wantWood: {zh:'我们 要 木头 。', en:'We need wood.'},
-    wantStones: {zh:'我们 也 要 小 石头 。', en:'We need small stones too.'},
+    needWood: {zh:'我们 要 木头 和 小 石头 ！', en:'We want wood and small stones!'},   // the big monkey, building the school
+    wantWood: {zh:'我们 要 木头 。', en:'We want wood.'},
+    wantStones: {zh:'我们 也 要 小 石头 。', en:'We want small stones too.'},
     haveWood: {zh:'木头 ！ 太 好 了 ！', en:'Wood! Wonderful!'},
     haveStones: {zh:'石头 ！ 太 好 了 ！', en:'Stones! Wonderful!'},
     squirrelWood: {zh:'你 要 木头 吗 ？', en:'Do you want wood?'},   // the squirrel in the pine wood
@@ -1866,7 +1875,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ],
     // the squirrel in the pine wood (chapter 1) shows you the dry pines; it loves the pines, as its name says
     woodSquirrel: [
-      {if:{new:'木头'}, do:[{say:'hi'}, {reply:'你好'}, {say:'squirrelWood'},
+      {if:{new:'木头'}, do:[{say:'hi'}, {reply:'你好'}, {say:'squirrelWood'}, {set:{woodSquirrel:1}},
         {message:'The squirrel points its nose at the grey, dead pines. Their wood is dry: one hit with your stick, and down they come!'},
         {message:'Its tail twitches. Wolves live in the long grass, and every way through the wood goes through it. Eating a {桃子} in a fight brings a heart back: pick some at the home ground.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'The squirrel loves the pine wood. Its name, {松鼠}, means pine mouse!'}]}

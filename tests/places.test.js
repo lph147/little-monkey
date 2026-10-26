@@ -395,3 +395,20 @@ test('once the rocks roll away, the way up is shut till the old monkey sends you
   const later = meadow({place: 'meadow', x: 16, y: 1, dir: 'up'}, 4);
   assert.ok(get(later, 'isOpen(PLACES.meadow.exits[1])'), 'it stays open');
 });
+
+test('through a way, you’re in the new place just as the screen is black, then it fades back in', async () => {
+  // (decided 26 October 2026: the fade took twice as long as the wait, so going into the school you saw the classroom,
+  // then black, then the classroom again)
+  const game = loadGame({dom: true, save: {version: 18, started: true, pos: {place: 'meadow', x: 9, y: 4, dir: 'down'}}});
+  withNook(game);
+  game.run(`globalThis.__now = 1000; performance.now = () => __now;
+    const later = setTimeout; setTimeout = (fn, ms) => later(() => { __now += ms || 0; fn(); }, ms);   // (time passes as each timer runs)
+    globalThis.__dark = []; const enter = enterPlace; enterPlace = id => { if (id !== PLACE) __dark.push(fadeDark(__now)); return enter(id); };`);
+  game.run('goThrough(PLACES.meadow.exits[0])');
+  for (let i = 0; i < 20 && game.run('PLACE') !== 'nook'; i++){ await tick(); game.flush(); }
+  assert.equal(game.run('PLACE'), 'nook');
+  assert.deepEqual(get(game, '__dark'), [1], 'the new place comes just as the screen is black');
+  assert.equal(game.run('fadeDark(fadeT + FADE_MS / 2)'), 0.5, 'fading out');
+  assert.equal(game.run('fadeDark(fadeT + FADE_MS * 1.5)'), 0.5, 'and back in');
+  assert.equal(game.run('fadeDark(fadeT + FADE_MS * 2)'), 0, 'then gone');
+});
