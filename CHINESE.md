@@ -24,7 +24,7 @@ shown where the word list has them.
 | 水！太好了！ | shuǐ! tài hǎo le! | Water! Wonderful! | 渴猴子 (Thirsty monkey) |  |
 | 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 饿猴子 (Hungry monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
 | 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |

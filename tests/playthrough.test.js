@@ -110,6 +110,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(15, 19, 'down', 'meeting the little monkey');
   await pressAt(15, 19, 'down', 'talking to the little monkey again');
   assert.ok(knows('猴子') && knows('朋友'), 'the little monkey should teach 猴子, then 朋友');
+  assert.ok(area().littleGame === 2 && get('S.friends').includes('playful'), 'then it wants to play a word game straight away (26 October 2026): won, its present');
 
   // The hungry monkey wants fruit: whichever you bring first, he wants the other
   await pressAt(13, 6, 'up', 'meeting the hungry monkey');
@@ -131,6 +132,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(!knows('没关系'), 'he said 没关系 when you said sorry, but you haven’t said it yet');
   await pressAt(13, 6, 'up', 'talking to the hungry monkey once he has eaten: he says sorry for being fussy');
   assert.ok(knows('没关系'), 'you reply 没关系 (that’s OK), and catch it');
+  assert.deepEqual([area().hungryGame, get("S.bag['桃子']")], [2, 1], 'then he wants to play a word game: won, a peach for your bag');
 
   // The thirsty monkey, then the rocks roll away
   await pressAt(2, 11, 'down', 'meeting the thirsty monkey');

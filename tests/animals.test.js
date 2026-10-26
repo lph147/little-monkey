@@ -36,13 +36,14 @@ test('with no animal’s name needing practice, every animal is as likely as the
   for (const id of ALL) assert.ok(Math.abs(share(got, id) - 0.25) < 0.06, `${id} was picked ${share(got, id)} of the time`);
 });
 
-test('the little monkey shows a ! until it has taught you 猴子 and 朋友', () => {
+test('the little monkey shows a ! until it has taught you 猴子 and 朋友, and played its word game', () => {
   const bubble = save => loadGame({save: {version: 5, started: true, ...save}}).run("(AREA.bubbles.playful.find(x => matches(x.if)) || {show: ''}).show");
   const area = elder => ({areas: {1: {elder, hungry: 'not asked', thirsty: 'not asked', gate: false, story: false, holding: {}, done: false}}});
   assert.equal(bubble(area(0)), '', 'not before you have said hello to the old monkey');
   assert.equal(bubble(area(1)), '!', 'it has 猴子 to teach');
   assert.equal(bubble({...area(1), w: {'猴子': word(0)}}), '!', 'it has 朋友 to teach');
-  assert.equal(bubble({...area(2), w: {'猴子': word(0), '朋友': word(0)}}), '', 'nothing left to teach');
+  assert.equal(bubble({...area(2), w: {'猴子': word(0), '朋友': word(0)}}), '!', 'then its word game, till you’ve played it (tests/meadow-games.test.js)');
+  assert.equal(bubble({areas: {1: {...area(2).areas[1], littleGame: 1}}, w: {'猴子': word(0), '朋友': word(0)}}), '', 'nothing left to teach, and its game played');
 });
 
 test('an animal never asks about its own name (it\'s on the screen), and friendship shows as hearts', async () => {

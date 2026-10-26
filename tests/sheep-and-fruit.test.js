@@ -98,7 +98,7 @@ test('when you give him the fruit he wants, he teaches 吃 (eat), just before yo
 
 test('a game that helped the hungry monkey without learning 水果: a ! over him, and he teaches it', async () => {
   const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing([...FIRST, '桃子', '苹果', '吃', '要', '我', '没关系']),
-    areas: {1: {elder: 2, hungry: 'done', thirsty: 'done'}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}}});
+    areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', hungryGame: 1}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}}});   // (his word game played: tests/meadow-games.test.js)
   g.run("mode = 'play'; save = () => {}; globalThis.__cards = []; globalThis.__said = []; showNotice = async (w, o) => { __cards.push([w, o && o.note || null]); setSeen(w); }; toast = () => {}");
   g.run("showDialog = async (who, line, o = {}) => { __said.push([line.t.join(''), o.teach || null]); }; showNarration = async () => {}");
   const hungry = "NPCS.find(n => n.id === 'hungry')";

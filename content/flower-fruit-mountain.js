@@ -284,10 +284,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}, {if:{chapter:0, count:3}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
-    playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'},   // until it has taught you both its words
+    playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'},   // until it has taught you both its words,
+      {if:{littleGame:0, knows:'朋友', gate:false}, show:'!'},   // then, in the meadow, till you've played its word game (once: win or lose)
       {if:{school:{atLeast:2}, new:'同学'}, show:'!'}],   // and at school, that you're classmates
     hungry: [{if:{elder:{atLeast:1}, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'},
-      {if:{hungry:'done', new:'没关系'}, show:'!'},   // once he's eaten, he wants to say sorry for being fussy
+      {if:{hungry:'done', new:'没关系'}, show:'!'},   // once he's eaten, he wants to say sorry for being fussy,
+      {if:{hungry:'done', hungryGame:0, knows:'没关系', gate:false}, show:'!'},   // then, in the meadow, to play his word game (once: win or lose)
       {if:{hungry:'done', new:'水果'}, show:'!'},   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
       {if:{feast:2}, show:'!'},   // chapter 1: by the feast's big table, to tell you what it still needs,
       {if:{feast:{atLeast:3}, bees:0}, show:'!'},   // and (a game that heard it before the bees, 25 October 2026) to send you to find them,
@@ -1835,9 +1837,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{school:{atLeast:2}}, do:[{say:'classmates'}]},
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'猴子'}, do:[{say:'iam', teach:'猴子'}, {newWord:'猴子'}]},
-      {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'Come back and play a word game with me any time.'}]},
+      // your friend now, it wants to play a word game straight away (decided 26 October 2026, after measuring the game's
+      // pacing: the meadow taught 22 words with just two questions between them), with a present the first time you win; say
+      // Not now, and it has a ! till you've played (bubbles)
+      {if:{new:'朋友'}, do:[{say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'The little monkey is your friend now.'}, {say:'play'},
+        {wordGame:{ask:'Play a word game with this little monkey? If you win, it gives you 2 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+          win:[{say:'great'}, {set:{littleGame:2}}, {shells:2, note:'The little monkey gives you 2 🐚.'}], lost:[{set:{littleGame:1}}]}}]},
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'scared'}]},
+      {if:{littleGame:{below:2}}, do:[{say:'play'},   // its word game again, till you've won its present
+        {wordGame:{ask:'Play a word game with this little monkey? If you win, it gives you 2 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+          win:[{say:'great'}, {set:{littleGame:2}}, {shells:2, note:'The little monkey gives you 2 🐚.'}], lost:[{set:{littleGame:1}}]}}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [
@@ -1849,8 +1859,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{hungry:'not asked'}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
       {if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
-      // once he's eaten, he says sorry for being so fussy, and you say that's OK: 没关系, heard when you said sorry, to say now
-      {if:{hungry:'done', new:'没关系'}, do:[{message:'The hungry monkey looks a little embarrassed about being so fussy.'}, {say:'sorry'}, {reply:'没关系'}]},
+      // once he's eaten, he says sorry for being so fussy, and you say that's OK: 没关系, heard when you said sorry, to say now;
+      // then he wants to play a word game (decided 26 October 2026, after measuring the game's pacing: the meadow taught 22
+      // words with just two questions between them), with a present the first time you win; say Not now, and he has a ! till
+      // you've played (bubbles)
+      {if:{hungry:'done', new:'没关系'}, do:[{message:'The hungry monkey looks a little embarrassed about being so fussy.'}, {say:'sorry'}, {reply:'没关系'}, {say:'play'},
+        {wordGame:{ask:'Play a word game with the hungry monkey? If you win, you get a {桃子} for your bag.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+          win:[{say:'great'}, {set:{hungryGame:2}}, {bag:'桃子', note:'The hungry monkey gives you a {桃子} for your bag.'}], lost:[{set:{hungryGame:1}}]}}]},
       // a game that helped him before he taught 水果 as he asked (24 October 2026), and never learned it at a fruit tree
       {if:{hungry:'done', new:'水果'}, do:[{say:'fruitOnTrees', teach:'水果'}, {newWord:'水果', note:'Peaches and apples are both fruit.'}]},
       // chapter 1: by the feast's big table, once it's set up, he tells you what the troop has for the feast, and what it
@@ -1872,6 +1887,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'Honey comes from bees: the troop has cleared a way east, along the stream, to find them. Follow the road east!'}]},
       {if:{bees:{atLeast:7}}, do:[{say:'haveBees'}]},
       {if:{feast:{atLeast:3}}, do:[{say:'wantHoney', hint:'Honey comes from bees: follow the road east, along the stream, to find them. Press A at the big {桌子} to see what the feast still needs.'}]},
+      {if:{hungry:'done', hungryGame:{below:2}}, do:[{say:'play'},   // his word game again, till you've won its present (after the feast's story, which comes first)
+        {wordGame:{ask:'Play a word game with the hungry monkey? If you win, you get a {桃子} for your bag.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
+          win:[{say:'great'}, {set:{hungryGame:2}}, {bag:'桃子', note:'The hungry monkey gives you a {桃子} for your bag.'}], lost:[{set:{hungryGame:1}}]}}]},
       {do:[{request:'hungry'}]}
     ],
     thirsty: [

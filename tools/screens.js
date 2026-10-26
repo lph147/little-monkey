@@ -25,6 +25,11 @@ const SAVES = {
 };
 SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};
 SAVES.meadowTasks = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}};   // (the rocks still there: every task in the meadow at once)
+// the little monkey once it's taught you 朋友, and the hungry monkey once you've told him 没关系, each wanting to play a word
+// game (decided 26 October 2026), with a present the first time you win: in the meadow, never played yet (each has a !)
+SAVES.littleGame = {...SAVES.meadowTasks, w: {...SAVES.meadowTasks.w, ...knows(1, ['朋友'])}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}};
+SAVES.hungryGame = {...SAVES.littleGame, w: {...SAVES.littleGame.w, ...knows(1, ['没关系'])}, areas: {1: {...SAVES.meadowTasks.areas[1], hungry: 'done', holding: {}}},
+  pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
 SAVES.phrases = {...SAVES.middle, w: {...SAVES.middle.w, ...knows(1, ['谢谢', '不客气', '再见', '对不起', '没关系', '松鼠'])}};   // the phrases you reply with, all caught
 // two words of the four the old monkey wants: he says to go and learn some more, in a conversation of one line (Done)
 SAVES.notYet = {...SAVES.born, tips: ALL_TIPS, w: knows(1, ['石头', '你好', '山']), areas: {1: {elder: 1}}, pos: {x: 7, y: 2, dir: 'up'}};
@@ -372,6 +377,10 @@ const SCREENS = [
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(400); click('.drum'); await wait(100); click('.drum'); await wait(500); }},
   {id: 'goat-read', title: 'The goat: read', save: 'knowsWell', why: 'On its cliff. Characters with pinyin, and just pictures to choose from.', run: async () => {
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
+  {id: 'little-game', title: 'The little monkey wants to play', save: 'littleGame', why: 'Straight after it teaches 朋友 (we’re friends!), 我们玩吧！ and its word game, with 2 🐚 the first time you win (26 October 2026). Not now, and it keeps a ! till you’ve played.', run: async () => {
+    play(); await wait(100); talk(npc('playful')); await wait(300); next(); await wait(500); }},
+  {id: 'hungry-game', title: 'The hungry monkey wants to play', save: 'hungryGame', why: 'Straight after you tell him 没关系, 我们玩吧！ and his word game, with a 桃子 for your bag the first time you win (26 October 2026).', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(500); }},
   {id: 'word-game', title: 'The little monkey’s word game', save: 'middle', why: 'A monkey’s name plate: Chinese, pinyin and English.', run: async () => {
     play(); await wait(100); encounter({id: 'playful', hz: '猴子', img: portrait('playful'), wild: false, name: NAMES.playful}); await wait(500); }},
   {id: 'new-friend', title: 'A new friend', save: 'middle', run: async () => {
