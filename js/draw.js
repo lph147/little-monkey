@@ -646,12 +646,12 @@ const ARROW = ["ooooooo","oyyyyyo",".oyyyo.","..oyo..","...o..."];
 function pix(rows, X, Y, pal){ rows.forEach((r, y) => [...r].forEach((ch, x) => { if (pal[ch]) R(b, X + x, Y + y, 1, 1, pal[ch]); })); }
 function drawMarkers(cx, cy, now){
   const W = VW*T, H = VH*T, pal = {o:'#1E2B26', y:'#F2C14E'};
+  const seen = ([x, y]) => { const X = x*T - cx, Y = y*T - cy; return X > -8 && X < W - 8 && Y > -4 && Y < H - 8; };
   for (const t of getTasks()){
     if (!t.target) continue;
-    const [tx, ty] = t.target, X = tx*T - cx, Y = ty*T - cy;
-    const onScreen = X > -8 && X < W - 8 && Y > -4 && Y < H - 8;
-    if (onScreen){ if (!t.npc) pix(ARROW, X + 4, Y - 7 + Math.round(Math.sin(now/180) * 2), pal); continue; }
-    // off-screen: a small arrow at the screen edge pointing towards the task
+    if (seen(t.target)){ if (!t.npc) pix(ARROW, t.target[0]*T - cx + 4, t.target[1]*T - cy - 7 + Math.round(Math.sin(now/180) * 2), pal); continue; }
+    // off-screen: a small arrow at the screen edge, where the way there leaves it (arrowAim, js/world.js)
+    const [ax, ay] = arrowAim(t.target, seen), X = ax*T - cx, Y = ay*T - cy;
     const mx = clamp(X + 8, 6, W - 6), my = clamp(Y + 8, 6, H - 6), pulse = (Math.sin(now/200) + 1) / 2 > .25;
     if (!pulse) continue;
     let rows;

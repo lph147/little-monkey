@@ -114,6 +114,39 @@ function wayTo(place){
   }
   return null;
 }
+// The squares of the way you'd walk from where you stand to a task's target in this place, until you're beside it: round
+// water and rock, down a bank but never up one, and through no other way out of the place; or null if there's none. Worked
+// out again only when you've moved, or the target or the map has changed.
+let routeMemo = {key:null, path:null};
+function routeTo([tx, ty]){
+  const key = `${PLACE}|${pl.x},${pl.y}|${tx},${ty}|${mapStory}`;
+  if (routeMemo.key === key) return routeMemo.path;
+  const back = new Map([[pl.x + ',' + pl.y, null]]), queue = [[pl.x, pl.y]];
+  let end = null;
+  for (let i = 0; i < queue.length && !end; i++){
+    const [x, y] = queue[i];
+    if (Math.abs(x - tx) + Math.abs(y - ty) <= 1){ end = [x, y]; break; }
+    for (const [d, [dx, dy]] of Object.entries(DV)){
+      let nx = x + dx, ny = y + dy;
+      if (tileAt(nx, ny).ledge){ if (d !== 'down') continue; while (tileAt(nx, ny).ledge) ny++; }   // down a bank in one hop
+      if (!tileAt(nx, ny).walk || exitAt(nx, ny) || back.has(nx + ',' + ny)) continue;
+      back.set(nx + ',' + ny, [x, y]); queue.push([nx, ny]);
+    }
+  }
+  const path = [];
+  for (let p = end; p; p = back.get(p[0] + ',' + p[1])) path.unshift(p);
+  routeMemo = {key, path:end ? path : null};
+  return routeMemo.path;
+}
+// Where a task's arrow points (seen: whether a square is on the screen): at the target, if it's on the screen; if not, where
+// the way you'd walk there leaves the screen (decided 26 October 2026: on the mountain path it pointed straight at the
+// way out, up the grassy banks you can't climb, when the way round is up the stone steps), or straight at it if there's
+// no way from here.
+function arrowAim(target, seen){
+  if (seen(target)) return target;
+  const path = routeTo(target);
+  return (path && path.find(p => !seen(p))) || target;
+}
 function tasksHint(){ const h = AREA.hints.find(h => matches(h.if)); return h ? fill(h.text, false, true) : ''; }
 // Where you practise your words now (the area's practiseAt: the first whose if matches), such as at the practice post.
 const practiseWhere = () => ((AREA.practiseAt || []).find(p => !p.if || matches(p.if)) || {}).text || '';
