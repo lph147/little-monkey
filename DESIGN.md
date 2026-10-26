@@ -533,6 +533,8 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
   - [x] The squirrel in the pine wood's ! goes once it's shown you the dry pines (it kept it, just to say it all again)
   - [x] The pine wood: with the wood found first, it says to find the stones next (and the other way round), and only once you have both does a task, and the big monkey's ?, send you back to him (it said to take them back, so some made two trips)
   - [x] The big monkey wants wood: "We want wood.", not "We need wood." (要 is to want; need would be 需要)
+  - [x] The butterfly is smaller on the map, three quarters of its size, drawn again so its wing tips stay pointed (on its card and in questions, its usual size)
+  - [x] Hide and seek: once found, the little monkey stays where it jumped out until you leave the place (it walked back to its spot, then jumped the rest of the way as you walked on)
   - [x] Through a way to another place, the new place comes just as the screen is black (the fade took twice as long as the wait, so going into the school you saw the classroom, then black, then the classroom again)
   - [x] Off the screen, a task's arrow points the way you'd walk there, at the edge where that way leaves the screen: on the mountain path, below the grassy banks, it pointed straight up them at the way out, when the way up is the stone steps on the left (on the screen, it's over the target itself, as before)
 - [ ] The new shop, with things in the school's colours

@@ -192,11 +192,13 @@ function meetHop(a, X, Y, now){
   return Math.round(Math.abs(Math.sin(e1 / 130)) * 4);
 }
 // An animal that flutters over its spot, such as the butterfly over the riverside's flowers: hovering, bobbing gently, its
-// wings beating (narrow every third moment, as they close), its shadow small on the ground below.
+// wings beating (narrow every third moment, as they close), its shadow small on the ground below. Its smaller look, if it
+// has one (small, content/sprites.js), such as the butterfly's.
 function drawFlutter(a, X, Y, now){
   const hover = 5 + Math.round(Math.sin(now / 420 + a.at[0]) * 2) + meetHop(a, X, Y, now), shut = Math.floor(now / 170) % 3 === 0;
-  R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
-  if (shut) b.drawImage(a.spr, 0, 0, 16, 16, X + 4, Y - hover, 8, 16); else b.drawImage(a.spr, X, Y - hover);
+  const spr = a.small || a.spr, s = spr.width, x = X + (16 - s) / 2, y = Y + 16 - s - 2 - hover;
+  R(b, X + 8 - s / 4, Y + 14, s / 2, 1, 'rgba(0,0,0,.16)');
+  if (shut) b.drawImage(spr, 0, 0, s, s, x + s / 4, y, s / 2, s); else b.drawImage(spr, x, y);
 }
 // A swarm of bees, buzzing round where it hangs in the way (a square that looks like a swarm, such as across the way to the
 // queen's old tree in the bees' valley): tiny bees looping about it, each its own way. And a few about the bees' hive at the

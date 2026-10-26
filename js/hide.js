@@ -56,6 +56,7 @@ async function lookForHider(p){
   const first = !st.won;
   Object.assign(st, {spot:null, wrong:0, won:(st.won || 0) + 1});
   const n = ALL_NPCS.find(c => c.id === HIDE.by), [ox, oy] = freeNear(p.out);
+  foundAt = {place:PLACE, x:ox, y:oy};
   Object.assign(n, {place:PLACE, x:ox, y:oy, dir:dirOf(pl.x - ox, pl.y - oy), mv:{fx:p.at[0][0], fy:p.at[0][1], t0:performance.now(), dur:STEP, far:true}});   // it jumps out
   NPCS = ALL_NPCS.filter(c => c.place === PLACE && !S.following.includes(c.id));
   pl.dir = dirOf(ox - pl.x, oy - pl.y); SFX.chime();
@@ -64,26 +65,18 @@ async function lookForHider(p){
   await showDialog(speaker('player'), L[HIDE.found]);
   SFX.fanfare();
   await showNarration(fill(HIDE.result.replace('{where}', p.where)) + (first ? ` +${HIDE.shells} 🐚` : '') + ' ' + fill(HIDE.again), true);
-  goHome(n);
 }
+// Where the little monkey is while you play: off hiding; once you've found it, where it jumped out, until you leave the
+// place (decided 26 October 2026: it walked back to its spot, and jumped the rest of the way as you walked on), then back
+// at its spot as usual; or null, for wherever the story puts it.
+let foundAt = null;
+const hiderAt = () => hiding() ? {place:'hiding', x:0, y:0} : foundAt && foundAt.place === PLACE ? foundAt : null;
 // The nearest square to (x, y) you can walk on that's free (not yours, nor anyone's): where it jumps out to.
 function freeNear([x, y]){   // (the fewest steps away first, so it jumps out beside you, not on a slant)
   const free = (a, b) => !!tileAt(a, b).walk && !(a === pl.x && b === pl.y) && !npcAt(a, b), near = [];
   for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) near.push([dx, dy]);
   const best = near.sort(([a, b], [c, d]) => (Math.abs(a) + Math.abs(b)) - (Math.abs(c) + Math.abs(d))).find(([dx, dy]) => free(x + dx, y + dy));
   return best ? [x + best[0], y + best[1]] : [x, y];
-}
-// Back to where it stands, a step at a time (waiting if you're in its way), while you play on.
-async function goHome(n){
-  for (let tries = 0; tries < 60; tries++){
-    const m = (n.moves || []).find(m => matches(m.if)) || n.home;
-    if (n.place !== PLACE || (n.x === m.x && n.y === m.y)) break;
-    const [x, y] = pathTo([n.x, n.y], [m.x, m.y], {blocked:[pl.x, pl.y]})[0] || [];
-    const busy = x === undefined || (x === pl.x && y === pl.y) || (pl.mv && x === pl.mv.tx && y === pl.mv.ty);
-    if (!busy){ n.mv = {fx:n.x, fy:n.y, t0:performance.now(), dur:STEP}; n.dir = dirOf(x - n.x, y - n.y); n.parity = (n.parity || 0) ^ 1; n.x = x; n.y = y; }
-    await sleep(STEP);
-  }
-  placeCharacters();
 }
 // Its tail, poking out of where it's hiding (spot.tail: [x, y, 'left' or 'right'], the side of that square it pokes out
 // of), once you've guessed wrong twice; it wags now and then.

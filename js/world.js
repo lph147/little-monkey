@@ -671,7 +671,7 @@ async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) awai
 function placeCharacters(){
   for (const n of ALL_NPCS){
     if (S.following.includes(n.id)) continue;
-    const m = HIDE && n.id === HIDE.by && hiding() ? {place:'hiding', x:0, y:0} : (n.moves || []).find(m => matches(m.if)) || n.home;   // (off hiding: hide and seek, js/hide.js)
+    const m = (HIDE && n.id === HIDE.by && hiderAt()) || (n.moves || []).find(m => matches(m.if)) || n.home;   // (off hiding, or where you found it: hide and seek, js/hide.js)
     const place = placeOf(m);
     if (n.place !== place || n.x !== m.x || n.y !== m.y){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; }
   }
@@ -903,6 +903,7 @@ findGrass();
 // hiding, birds, a meeting) is left behind.
 function enterPlace(id){
   if (id === PLACE) return;
+  foundAt = null;   // (the little monkey you found at hide and seek is back at its spot when you come back: js/hide.js)
   setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; pickedHere.clear(); buildMap();
   playSong(placeSong());   // its own music, if it has some
 }

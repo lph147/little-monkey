@@ -83,3 +83,14 @@ test('an animal says it wants to play before its questions, with what’s happen
   assert.deepEqual(await meet(true), [['我们玩吧！', 'It wants to play! Answer its questions to make friends.', 'Play', true], 'questions'], 'later: what’s happening, under its line');
   assert.deepEqual(await meet(true, ['fox']), [['我们玩吧！', 'Your 朋友 (friend) wants to play again! Answer its questions.', 'Play', true], 'questions'], 'and a friend');
 });
+
+test('the butterfly flutters on the map at three quarters of its size, drawn again small, and is full size on its card', () => {
+  // (decided 26 October 2026: as big as you, it looked too big; shrinking the big one lost its pointed wing tips)
+  const game = ready();
+  const small = get(game, "MAP_SPRITES['蝴蝶'].small");
+  assert.equal(small.length, 12);
+  assert.ok(small.every(r => r.length === 12), 'twelve by twelve');
+  assert.equal(game.run("ANIMALS.find(a => a.id === 'butterfly').small.width"), 12, 'on the map');
+  assert.equal(game.run("ANIMALS.find(a => a.id === 'butterfly').spr.width"), 16, 'its big look stays, for what else uses it');
+  assert.equal(game.run("ANIMALS.filter(a => a.small).map(a => a.id).join()"), 'butterfly', 'only the butterfly has a small look');
+});

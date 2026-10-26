@@ -87,6 +87,22 @@ const MAP_SPRITES = {
       "...kkjjfgjjkk...",
       ".....kk.fkk.....",
       "................"
+    ],
+    // and smaller, as it flutters over its flowers on the map: three quarters of its size, 12 × 12 (decided 26 October
+    // 2026: as big as you, it looked too big), drawn again so its wing tips stay pointed
+    small: [
+      "..a......a..",
+      ".ac.....bca.",
+      "bdea..fbdeca",
+      "bdeecfgeeeca",
+      "bdeeefgeeeca",
+      "acceecgeecca",
+      ".aacccgccaa.",
+      "...hijgkh...",
+      "..hiljgiik..",
+      "..kjlfgljk..",
+      "...kjfgjk...",
+      "....k.fk...."
     ]
   },
   '松鼠': {   // squirrel

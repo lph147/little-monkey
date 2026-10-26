@@ -90,15 +90,19 @@ test('the wrong place: not here, and it calls out again; after two wrong guesses
   assert.deepEqual(get(g, 'hideSpot(here().hide.spot).tail'), [16, 7, 'left'], 'its tail, poking out from under the end of the table');
 });
 
-test('found: it jumps out, you say 找到你了！, shells the first time only, and it goes back to where it stands', async () => {
+test('found: it jumps out, you say 找到你了！, shells the first time only; it stays there till you leave, then it’s back where it stands', async () => {
   const g = game({hide: {spot: 'table', wrong: 1, won: 0, last: 'table'}});
   g.run('placeCharacters()');
   await lookAt(g, 'table');
   assert.equal(get(g, '__said').at(-1), '找到你了！');
   assert.deepEqual([hide(g).spot, hide(g).wrong, hide(g).won, get(g, 'S.shells')], [null, 0, 1, 3]);
   assert.match(get(g, '__notes').at(-1), /You found the little monkey! It was under the 桌子 \(table\)\. \+3 🐚/);
+  const out = hider(g);
+  assert.notDeepEqual(out, [13, 8], 'out of hiding, beside you');
   g.run('placeCharacters()');
-  assert.deepEqual(hider(g), [13, 8], 'back where it stands');
+  assert.deepEqual(hider(g), out, 'it stays where it jumped out as you play on (decided 26 October 2026: it walked back, then jumped)');
+  g.run("enterPlace('hillside'); enterPlace('homeGround')");
+  assert.deepEqual(hider(g), [13, 8], 'leave and come back: it’s back where it stands');
   const again = game({hide: {spot: 'water', wrong: 0, won: 1, last: 'water'}});
   again.run('placeCharacters()');
   await lookAt(again, 'water');

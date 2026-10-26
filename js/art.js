@@ -94,7 +94,8 @@ function asleepSprite(){
 // hides in, or else the first place's). spr: how they look on the map (content/sprites.js, a square's size); pic: their
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [],
-  spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette)}));
+  spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
+  small:MAP_SPRITES[a.word].small ? sprite(MAP_SPRITES[a.word].small, MAP_SPRITES[a.word].palette) : null}));   // (smaller, fluttering on the map: the butterfly)
 // An animal (or a wild creature: spr, its map sprite, and faces, which way it looks) turned to face you, from where it is
 // (x): drawn the other way round when it would look away from you, such as a wolf jumping out on your left. Or away from
 // you (away), as it runs off.
