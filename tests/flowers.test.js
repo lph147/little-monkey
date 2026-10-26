@@ -85,6 +85,52 @@ test('the card for what you’ve picked: its picture, Chinese, pinyin and Englis
   assert.equal(g.run('modal.hidden'), true, 'A closes it');
 });
 
+test('every square of flowers is all one colour; A at one shows it once you know the colour, 红色的花 (a red flower), and till then 花, with that colour’s picture', async () => {
+  const g = game({flowers: 'done'}, {place: 'homeGround', x: 26, y: 3, dir: 'up'}, [...KNOWN, '红色', '黄色']);   // (white not learned yet)
+  g.run("globalThis.__cards = []; showNotice = async (w, o = {}) => { __cards.push([w, o.pic || w]); }; showPicked = async (f, note, o = {}) => { __cards.push([f.zh, f.en, o.label, o.pic]); }");
+  assert.equal(g.run('promptFor(26, 2)'), 'Look');
+  await press(g, 26, 3, 'up');   // a red one
+  await press(g, 28, 3, 'up');   // a white one
+  assert.deepEqual(get(g, '__cards'), [['红色 的 花', 'A red flower', 'You see', '红色 的 花'], ['花', '白色 的 花']],
+    'the red one: 红色的花, a red flower (after the big monkey’s, they all went back to being 花); the white one: 花, but white');
+  g.run('__cards.length = 0; rec("白色").lv = 1');
+  await press(g, 28, 3, 'up');
+  assert.deepEqual(get(g, '__cards'), [['白色 的 花', 'A white flower', 'You see', '白色 的 花']], 'once you know white');
+});
+
+test('pink, blue and orange flowers on the hillside’s and the riverside’s slopes (and the bees’ valley’s beds): 粉色的花 uses 花’s own picture, a pink flower', () => {
+  const g = game();
+  const shown = c => get(g, `(() => { const t = ${c}; return [coloured(t).zh, coloured(t).en, colourPic(t)]; })()`);
+  assert.deepEqual(shown('AREA.places.riverside.legend.k'), ['粉色 的 花', 'A pink flower', '花']);
+  assert.deepEqual(shown('AREA.places.riverside.legend.u'), ['蓝色 的 花', 'A blue flower', '蓝色 的 花']);
+  assert.deepEqual(shown('AREA.places.hillside.legend.e'), ['橙色 的 花', 'An orange flower', '橙色 的 花']);
+  assert.deepEqual(shown('AREA.places.flowerValley.legend.b'), ['蓝色 的 花', 'A blue flower', '蓝色 的 花'], 'the valley’s beds too');
+  assert.deepEqual(get(g, 'COLOURED().map(c => c.zh)'), ['红色 的 花', '黄色 的 花', '白色 的 花', '粉色 的 花', '蓝色 的 花', '橙色 的 花'], 'six colours of flowers in all');
+  assert.ok(get(g, "COLOURED().every(c => c.zh === '粉色 的 花' || (PICTURES[c.zh] && JSON.stringify(PICTURES[c.zh]) !== JSON.stringify(PICTURES['花'])))"), 'each with its own picture (pink: 花’s)');
+  assert.deepEqual(get(g, 'stepCard(AREA.places.riverside.legend.u)'), {pic: '蓝色 的 花'}, 'stepping onto one first teaches 花 with its colour’s picture');
+  // every square of flowers in the game is all one colour, with that colour (beds, and tall flowers where bees hide, aside)
+  const looks = {redFlowers: '红色', yellowFlowers: '黄色', whiteFlowers: '白色', pinkFlowers: '粉色', blueFlowers: '蓝色', orangeFlowers: '橙色',
+    redBed: '红色', yellowBed: '黄色', whiteBed: '白色', pinkBed: '粉色', blueBed: '蓝色', orangeBed: '橙色'};
+  for (const [id, p] of Object.entries(get(g, 'AREA.places'))){
+    const legend = {...get(g, 'AREA.legend'), ...(p.legend || {})};
+    for (const ch of new Set(p.map.join(''))){
+      const t = legend[ch];
+      assert.ok(!['flowers', 'wildFlowers'].includes(t.look), `${id}: ${ch} is flowers of all colours`);
+      if (looks[t.look]) assert.deepEqual([t.word, t.colour], ['花', looks[t.look]], `${id}: ${ch} (${t.look}) says its colour`);
+    }
+  }
+});
+
+test('the card for a flower you look at: You see, 粉色的花, its pinyin and English, said aloud', () => {
+  const g = loadGame({dom: true});
+  g.run("globalThis.__spoken = []; say = t => { __spoken.push(t); }; showPicked(coloured(AREA.places.riverside.legend.k), '', {label: 'You see', pic: colourPic(AREA.places.riverside.legend.k)})");
+  const sheet = g.el('#sheet'), text = sel => sheet.querySelector(sel).textContent.trim();
+  assert.deepEqual(['.label', '.big', '.py', '.en'].map(text), ['You see', '粉色的花', 'fěnsè de huā', 'A pink flower']);
+  assert.ok(sheet.querySelector('.pic img.pix'), 'its picture');
+  assert.equal(sheet.querySelector('.note'), null, 'no note');
+  assert.deepEqual(get(g, '__spoken'), ['粉色的花']);
+});
+
 test('bring them to the big monkey: 我要红色的花, and he plants them in front of the school as you watch', async () => {
   const g = game({flowers: 'asked', holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}});
   assert.deepEqual(BEDS.map(([x, y]) => g.run(`tileAt(${x}, ${y}).look`)), ['grass', 'grass', 'grass', 'grass'], 'grass in front of the school till then');

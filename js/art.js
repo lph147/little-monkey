@@ -190,7 +190,7 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
 const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones'];
 function grass(g, X, Y, x, y){
@@ -558,7 +558,7 @@ function plot(g, X, Y, x, y){
 // of a rock you've broken (small stones scattered about, walkable).
 // The pine wood's floor under something small, or where something was (a stone picked up, a stump): grass where it's
 // grassy round about (in the sunny glade), pine needles otherwise.
-const GRASS_FLOOR = ['grass','tallGrass','flowers','redFlowers','yellowFlowers','whiteFlowers'];
+const GRASS_FLOOR = ['grass','tallGrass','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers'];
 function woodFloor(g, X, Y, x, y){
   const grassy = Object.values(DV).filter(([dx, dy]) => GRASS_FLOOR.includes(tileAt(x + dx, y + dy).look)).length;
   (grassy >= 2 ? grass : needles)(g, X, Y, x, y);
@@ -667,6 +667,7 @@ function colourBed(g, X, Y, x, y, cols){
   [[3,3],[10,2],[6,8],[13,9],[2,12],[9,13]].forEach(([a, c], i) => flower(g, X + a + Math.floor(rnd(x, y, i + 300) * 3) - 1, Y + c + (i % 2), cols[i % cols.length]));
 }
 function flower(g, X, Y, col){ R(g, X, Y+3, 1, 2, '#3E8A3E'); R(g, X-1, Y, 3, 1, col); R(g, X, Y-1, 1, 3, col); R(g, X, Y, 1, 1, '#FFE07A'); }
+function flowers(g, X, Y, x, y, col){ grass(g, X, Y, x, y); flower(g, X+4, Y+4, col); flower(g, X+11, Y+7, col); flower(g, X+6, Y+11, col); }   // three of one colour on the grass
 function flowerBed(g, X, Y, x, y){   // flowers planted in a bed of earth, red, yellow and white, in two rows (beds side by side join up)
   grass(g, X, Y, x, y);
   R(g, X, Y+8, 16, 7, '#7A5230'); R(g, X, Y+8, 16, 1, '#946640'); R(g, X, Y+14, 16, 1, '#5E3E22');   // the earth
@@ -679,15 +680,15 @@ const LOOKS = {
   grass:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   path:      (g,X,Y,x,y) => path(g,X,Y,x,y),
   tallGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y),
-  flowers:   (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F48FB1'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#F48FB1'); },
-  redFlowers:    (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#E8343C'); flower(g,X+11,Y+7,'#E8343C'); flower(g,X+6,Y+11,'#E8343C'); },
-  yellowFlowers: (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#F7D23E'); flower(g,X+11,Y+7,'#F7D23E'); flower(g,X+6,Y+11,'#F7D23E'); },
-  whiteFlowers:  (g,X,Y,x,y) => { grass(g,X,Y,x,y); flower(g,X+4,Y+4,'#FFFFFF'); flower(g,X+11,Y+7,'#FFFFFF'); flower(g,X+6,Y+11,'#FFFFFF'); },
+  // flowers, each square all one colour (decided 26 October 2026: A at one shows its colour, such as 红色的花, a red flower,
+  // so a square of mixed colours couldn't say which), the same colours as the bees' valley's beds
+  redFlowers:    (g,X,Y,x,y) => flowers(g,X,Y,x,y,'#E8343C'),
+  yellowFlowers: (g,X,Y,x,y) => flowers(g,X,Y,x,y,'#F7D23E'),
+  whiteFlowers:  (g,X,Y,x,y) => flowers(g,X,Y,x,y,'#FFFFFF'),
+  pinkFlowers:   (g,X,Y,x,y) => flowers(g,X,Y,x,y,'#F48FB1'),
+  blueFlowers:   (g,X,Y,x,y) => flowers(g,X,Y,x,y,'#4F8FE8'),
+  orangeFlowers: (g,X,Y,x,y) => flowers(g,X,Y,x,y,'#F28C28'),
   flowerBed:     (g,X,Y,x,y) => flowerBed(g,X,Y,x,y),   // flowers planted in a bed (the ones you brought the big monkey)
-  wildFlowers:   (g,X,Y,x,y) => {   // wildflowers of all colours, thick on a slope (the riverside's, where the butterfly is)
-    grass(g,X,Y,x,y); const cols = ['#F48FB1', '#FFFFFF', '#F7D23E', '#E8343C', '#B98AE8', '#FFFFFF'];
-    [[3,3],[10,2],[6,8],[13,9],[2,12],[9,13]].forEach(([a,c], i) => flower(g, X + a + Math.floor(rnd(x,y,i+50)*3) - 1, Y + c, cols[Math.floor(rnd(x,y,i+40)*cols.length)]));
-  },
   // trees, the fruit trees, your stone, the rocks and the stall: just the ground here; they're big objects (OBJECT_ART, below)
   tree:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
   peachTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),

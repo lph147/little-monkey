@@ -709,7 +709,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider', 'spider', 'wolf']},   // long grass: snakes and spiders, and now and then a wolf
-        'f': {look:'flowers', walk:true},                     // flowers on the slope (not for picking)
+        // flowers on the slope, each square all one colour (F red, E yellow and J white, as in the meadow, and these): A shows its
+        // colour, such as 粉色的花 (a pink flower), once you know it
+        'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
+        'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
+        'e': {look:'orangeFlowers', walk:true, word:'花', learnOnStep:true, colour:'橙色'},
         'z': {look:'steppingStones', walk:true},              // stepping stones over the brook
         'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},   // mushrooms under the pines (just to look at)
         'A': {look:'archway', walk:true, says:'松林'},         // the way through the archway into the pine wood, with its name on the board over it
@@ -750,10 +754,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYgTg..gggnnoggggggggTggYY",
         "MMMMM==MMMvvvvvvvvMMMMMMMM",   // stone steps (left), a bank (middle)
         "MMMMM==MMMvvvvvvvvMMMMMMMM",
-        "YYgfg..fgfgfggfgggfgfggfYY",   // a slope of flowers; a peach tree in the corner
-        "YYgPg..gfgfgfggffggfgffgYY",
-        "YYfgg...............ggfgYY",
-        "YYgffggggfgggfgggfWzWWWWYY",   // the brook, winding, and its stepping stones
+        "YYgEg..egugkggEgggeguggkYY",   // a slope of flowers; a peach tree in the corner
+        "YYgPg..gugkgJggEFggegukgYY",
+        "YYkgg...............ggegYY",
+        "YYgkJggggFgggugggJWzWWWWYY",   // the brook, winding, and its stepping stones
         "YYgggggWWWWWWWWWWWWzWWWWYY",
         "YYWWWWWWWWWWWWWWWWg.ggggYY",
         "YYWWWWWgggTgggg.....ggggYY",
@@ -781,21 +785,25 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[47, 7], to:'flowerValley', arrive:[1, 10], facing:'right'}, {at:[47, 8], to:'flowerValley', arrive:[1, 11], facing:'right'}   // on into the bees' valley
       ],
       legend: {
-        'f': {look:'wildFlowers', walk:true},   // wildflowers of all colours (not for picking)
+        // wildflowers on the slope, each square all one colour (F red, E yellow and J white, as in the meadow, and these): A shows
+        // its colour, such as 蓝色的花 (a blue flower), once you know it (they were of all colours till 26 October 2026)
+        'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
+        'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
+        'e': {look:'orangeFlowers', walk:true, word:'花', learnOnStep:true, colour:'橙色'},
         'B': {look:'bridge', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the brook.'}   // over the brook (chapter 1's bridges teach 桥)
       },
       map: [
         "YYYYYYYYYYYYYYYYYYYYYYYYYYYWWYYYY^^^^^^^^^^^^^^^",   // the brook comes down through the trees, under the bridge (B), into the stream
         "YYYYYYYYYYYYYYYYYYYYYYYYYYYWWYYYY^^^^^^^^^^^^^^^",
-        "YgggggTggYYYYggggggTgfffgggWWgggg^^^^^^^^^^^^^^^",
-        "YggGGGgggYYYYggffffgfffffggWWgfffMMMMMM^^^^^^^^^",   // the valley’s rocks: a cliff, two squares high, coming forward over the way
-        "YgGGGGGggYYYYggffffffffffggWWgfffMMMMMM^^^^^^^^^",
-        "YggGGGgggYYYY..........fffgWWgfffgggoggMMMMMMMMM",   // the way up through the wildflowers, where the butterfly is
-        "YggggggggYYYY..........ffffWWgggggnnngoMMMMMMMMM",
+        "YgggggTggYYYYggggggTgukkgggWWgggg^^^^^^^^^^^^^^^",
+        "YggGGGgggYYYYggEFFeguukkJggWWgeeuMMMMMM^^^^^^^^^",   // the valley’s rocks: a cliff, two squares high, coming forward over the way
+        "YgGGGGGggYYYYggkJJEEFFeeuggWWgEEFMMMMMM^^^^^^^^^",
+        "YggGGGgggYYYY..........euugWWgEEFgggoggMMMMMMMMM",   // the way up through the wildflowers, where the butterfly is
+        "YggggggggYYYY..........EFFeWWgggggnnngoMMMMMMMMM",
         "........nnnnn..gggggg......BB............nnnn...",   // in from the home ground; long grass grown over the way in the little wood, and under the rocks;
-        ".........nnnnn.ggTffg......BB...........nnnn....",   // out into the bees' valley
-        "YggTgfffgYYYYgggTggnnngggggWWggTggoggogWWWWWWWWW",
-        "YggggfffgYYYYggggggnnngTgggWWgggggggogWWWWWWWWWW",
+        ".........nnnnn.ggTeeg......BB...........nnnn....",   // out into the bees' valley
+        "YggTgFeegYYYYgggTggnnngggggWWggTggoggogWWWWWWWWW",
+        "YggggJEEgYYYYggggggnnngTgggWWgggggggogWWWWWWWWWW",
         "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",   // the stream, and its far bank
         "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
         "gggggggggggggggggggggggggggggggggggggggggggggggg",
@@ -819,8 +827,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ],
       legend: {
         'n': {look:'tallFlowers', walk:true, wild:['wasp'], animals:['bee']},   // tall flowers: wasps jump out to fight, and only the bees hide here
-        'r': {look:'redBed', walk:true}, 'y': {look:'yellowBed', walk:true}, 'w': {look:'whiteBed', walk:true},   // beds of flowers, each its own colour
-        'p': {look:'pinkBed', walk:true}, 'b': {look:'blueBed', walk:true}, 'o': {look:'orangeBed', walk:true},
+        // beds of flowers, each its own colour: A shows it, such as 粉色的花 (a pink flower), once you know the colour (they were just
+        // to look at till 26 October 2026)
+        'r': {look:'redBed', walk:true, word:'花', colour:'红色'}, 'y': {look:'yellowBed', walk:true, word:'花', colour:'黄色'}, 'w': {look:'whiteBed', walk:true, word:'花', colour:'白色'},
+        'p': {look:'pinkBed', walk:true, word:'花', colour:'粉色'}, 'b': {look:'blueBed', walk:true, word:'花', colour:'蓝色'}, 'o': {look:'orangeBed', walk:true, word:'花', colour:'橙色'},
         'O': {look:'water', word:'水', note:'A clear pond under the cliff.'},
         // the queen's old hollow tree: once the swarm has flown aside, A brings the queen bee out to talk to you (and again, if
         // she went back in when you didn't win her word game)
@@ -974,16 +984,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
   legend: {
     'g': {look:'grass', walk:true},
     'G': {look:'tallGrass', walk:true, word:'草', learnOnStep:true, stepNote:'Tall grass. Animals hide in here.', animals:true},
-    // flowers: red, yellow and white, all over the meadow and the home ground. In chapter 1, you pick one of each for the big
-    // monkey to plant in front of the school: each shows you what you've picked, such as 红色的花, a red flower, with its
-    // picture (picked; decided 22 October 2026: the card just said 花, flower), and message under it
-    'F': {look:'redFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'红色', count:3, label:'Pick', note:'You pick a flower.',
+    // flowers: red, yellow and white, all over the meadow and the home ground, and on the slopes of flowers on the hillside and
+    // the riverside. In chapter 1, you pick one of each for the big monkey to plant in front of the school: each shows you
+    // what you've picked, such as 红色的花, a red flower, with its picture (picked; decided 22 October 2026: the card just said
+    // 花, flower), and message under it. colour: each is all one colour, so A at it, once you know that colour, shows it, such
+    // as 红色的花; till then, the 花 card, with that colour's picture (decided 26 October 2026: they all went back to being 花)
+    'F': {look:'redFlowers', walk:true, word:'花', learnOnStep:true, colour:'红色', gather:{item:'花', for:'flowers', kind:'红色', count:3, label:'Pick', note:'You pick a flower.',
       picked:{zh:'红色 的 花', en:'A red flower'}, message:'For the big monkey to plant ({flowersPicked}/3). Find the other colours.',
       full:'You have a red, a yellow and a white {花}. Take them to the big monkey.', again:'You have a red {花} already. Find another colour.'}},
-    'E': {look:'yellowFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'黄色', count:3, label:'Pick', note:'You pick a flower.',
+    'E': {look:'yellowFlowers', walk:true, word:'花', learnOnStep:true, colour:'黄色', gather:{item:'花', for:'flowers', kind:'黄色', count:3, label:'Pick', note:'You pick a flower.',
       picked:{zh:'黄色 的 花', en:'A yellow flower'}, message:'For the big monkey to plant ({flowersPicked}/3). Find the other colours.',
       full:'You have a red, a yellow and a white {花}. Take them to the big monkey.', again:'You have a yellow {花} already. Find another colour.'}},
-    'J': {look:'whiteFlowers', walk:true, word:'花', learnOnStep:true, gather:{item:'花', for:'flowers', kind:'白色', count:3, label:'Pick', note:'You pick a flower.',
+    'J': {look:'whiteFlowers', walk:true, word:'花', learnOnStep:true, colour:'白色', gather:{item:'花', for:'flowers', kind:'白色', count:3, label:'Pick', note:'You pick a flower.',
       picked:{zh:'白色 的 花', en:'A white flower'}, message:'For the big monkey to plant ({flowersPicked}/3). Find the other colours.',
       full:'You have a red, a yellow and a white {花}. Take them to the big monkey.', again:'You have a white {花} already. Find another colour.'}},
     '.': {look:'path', walk:true},   // (路 path waits for the mountain path: stepping off the stone was straight into a word)

@@ -150,15 +150,18 @@ shown where the word list has them.
 | 我有朋友 | wǒ yǒu péngyou | I have friends. | You, in a lesson at school |  |
 | 我没有苹果 | wǒ méiyǒu píngguǒ | I don’t have any apples. | You, in a lesson at school |  |
 
-### What you pick
+### What you pick and see
 
-What a card shows when you pick a flower for the big monkey: a red flower, and so on.
+What a card shows when you pick a flower for the big monkey (a red flower, and so on), and when you look at a flower whose colour you know (each square of flowers is all one colour).
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 红色的花 | hóngsè de huā | A red flower |  |
 | 黄色的花 | huángsè de huā | A yellow flower |  |
 | 白色的花 | báisè de huā | A white flower |  |
+| 粉色的花 | fěnsè de huā | A pink flower |  |
+| 蓝色的花 | lánsè de huā | A blue flower |  |
+| 橙色的花 | chéngsè de huā | An orange flower |  |
 
 ### The feast's list
 

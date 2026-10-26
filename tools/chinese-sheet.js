@@ -226,11 +226,11 @@ ${table(['Chinese', 'Pinyin', 'English', 'Said by', 'Notes'], Object.entries(ARE
 
 ${table(['Chinese', 'Pinyin', 'English', 'Said to', 'Notes'], builds.map(([b, en, who]) => [chars(b), py(b), en || '', who, notes]))}
 
-### What you pick
+### What you pick and see
 
-What a card shows when you pick a flower for the big monkey: a red flower, and so on.
+What a card shows when you pick a flower for the big monkey (a red flower, and so on), and when you look at a flower whose colour you know (each square of flowers is all one colour).
 
-${table(['Chinese', 'Pinyin', 'English', 'Notes'], [...new Map(Object.values(AREA.legend).filter(t => t.gather && t.gather.picked).map(t => [t.gather.picked.zh, t.gather.picked])).values()].map(f => [chars(f.zh), py(f.zh), f.en, notes]))}
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], [...new Map([...Object.values(AREA.legend).filter(t => t.gather && t.gather.picked).map(t => t.gather.picked), ...get('COLOURED()')].map(f => [f.zh, f])).values()].map(f => [chars(f.zh), py(f.zh), f.en, notes]))}
 
 ### The feast's list
 

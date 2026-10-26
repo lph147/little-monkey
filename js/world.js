@@ -169,7 +169,7 @@ function promptFor(x, y){
   if (canPick(t) && !looksFirst(t)) return t.pick.label || 'Pick';
   if (t.landmark) return t.label || 'Look';
   const w = lookWord(t);
-  return w && lvl(w) === 0 ? 'Look' : '';
+  return w && (lvl(w) === 0 || (w === t.word && t.colour && lvl(t.colour) >= 1)) ? 'Look' : '';   // (something new, or something of a colour you know: lookAt)
 }
 const COUNTS = {   // what a counter in the content can count
   progress: c => here()[c.key] || 0,   // a number the area remembers (key), such as how many bee friends you've made
@@ -818,14 +818,25 @@ async function buy(i, face){   // buying something from the shop by asking for i
 }
 async function lookAt(t){   // the card for the word you learn by looking at a tile
   const w = lookWord(t);
+  if (w === t.word && t.colour && lvl(w) >= 1 && lvl(t.colour) >= 1){ await showPicked(coloured(t), '', {label:'You see', pic:colourPic(t)}); return; }
   const note = w === t.word ? t.note || (lvl(w) === 0 ? t.newNote : '') : '';
-  await showNotice(w, note ? {note:fill(note)} : {});
+  await showNotice(w, {...(note ? {note:fill(note)} : {}), ...(w === t.word && t.colour ? {pic:colourPic(t)} : {})});
   if (t.message) toast(t.message);
 }
+// Something of one colour, such as a red flower (colour: its colour's word): once you know its word and its colour, A shows
+// the two together, such as 红色的花 (a red flower), on a card like a word's, with its own picture (a picture for a few words,
+// such as 红色 的 花, or its word's own if it's that colour already, such as 花's pink flower); till then, its word's card,
+// with that picture, so it's the colour you looked at (decided 26 October 2026: after you'd picked the big monkey's three
+// flowers, they all went back to being called 花).
+const coloured = t => { const c = WORDS[t.colour].en; return {zh:`${t.colour} 的 ${t.word}`, en:`${/^[aeiou]/.test(c) ? 'An' : 'A'} ${c} ${WORDS[t.word].en}`}; };
+const COLOURED = () => [...new Map([AREA.legend, ...Object.values(AREA.places).map(p => p.legend || {})].flatMap(l => Object.values(l))
+  .filter(t => t.colour && t.word).map(t => [coloured(t).zh, coloured(t)])).values()];   // every one there is, such as 粉色的花 (for the voices and CHINESE.md)
+const colourPic = t => PICTURES[coloured(t).zh] ? coloured(t).zh : t.word;
+const stepCard = t => ({...(t.stepNote ? {note:t.stepNote} : {}), ...(t.colour ? {pic:colourPic(t)} : {})});   // (stepping on it first, such as onto a red flower)
 async function gather(t, x, y){   // pick up something for a request, such as fruit or water
   const g = t.gather;
   // the request comes first: collecting water is where 水 is introduced
-  if (lvl(g.item) === 0) await showNotice(g.item, {note:g.note});
+  if (lvl(g.item) === 0) await showNotice(g.item, {note:g.note, ...(t.colour && g.item === t.word ? {pic:colourPic(t)} : {})});
   if (g.count){   // one at each patch (or one of each kind, such as a colour), until you have enough
     const p = here().picked[g.for] = here().picked[g.for] || [];
     const key = g.kind || `${x},${y}`;
@@ -934,7 +945,7 @@ async function goThrough(e){
   if (water) dripUntil = performance.now() + 1500;   // you come through dripping
   showPlaceName();
   const t = tileAt(pl.x, pl.y);   // arriving on something you learn by stepping on it, such as the mountain path, counts
-  if (t.learnOnStep && lvl(t.word) === 0) await showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
+  if (t.learnOnStep && lvl(t.word) === 0) await showNotice(t.word, stepCard(t));
 }
 // A little hop, in an arc, to (tx, ty) in the map (pixels), such as onto a bed and off it again.
 // The shortest way from one square to another (from and to: [x, y]), through squares you can walk on and not through
@@ -1037,7 +1048,7 @@ async function arrive(x, y){
   if (way && !way.by && isOpen(way)) return goThrough(way);   // a way you go through by stepping onto it
   const t = tileAt(x, y);
   stepsSince++;
-  if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, t.stepNote ? {note:t.stepNote} : {});
+  if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, stepCard(t));
   if (rustle && rustle.x === x && rustle.y === y && canWild()){ const a = rustle.a; rustle = null; stepsSince = 0; held = null; queued = null; return wildAppears(a); }   // (and nothing wild jumps out where one was hiding)
   if (t.wild && await wildStep(t)) return;   // a wild creature jumps out of the long grass
   hideAnimal();

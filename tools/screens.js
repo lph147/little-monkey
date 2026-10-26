@@ -121,6 +121,10 @@ SAVES.flowersPicking = {...SAVES.schoolPainted, version: 30, areas: {1: {...SAVE
 SAVES.flowersBack = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}}},
   pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};
 SAVES.flowersPlanted = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], flowers: 'done', schoolFlowers: true}}, pos: {place: 'homeGround', x: 11, y: 7, dir: 'up'}};
+// looking at flowers, each square all one colour (26 October 2026): a red one, its colour known; at the hillside's slope of
+// flowers; and a blue one on the riverside, before you know blue
+SAVES.flowerLook = {...SAVES.flowersPlanted, pos: {place: 'homeGround', x: 26, y: 3, dir: 'up'}};
+SAVES.hillsideFlowers = {...SAVES.flowersPlanted, pos: {place: 'hillside', x: 12, y: 34, dir: 'up'}};
 // the feast: the old monkey's news at school, once the first two lessons are done (四 五 六, 红色 黄色 白色); and the big table
 // at the home ground, under the big tree, being set up as you watch, then set up, with the hungry monkey beside it
 SAVES.feastNews = {...SAVES.coloursThree};
@@ -146,6 +150,7 @@ SAVES.wayEast = {...SAVES.feastList, areas: {1: {...SAVES.feastList.areas[1], be
 SAVES.riverside = {...SAVES.wayEast, pos: {place: 'riverside', x: 15, y: 5, dir: 'right'}};
 SAVES.butterfly = {...SAVES.wayEast, pos: {place: 'riverside', x: 18, y: 5, dir: 'up'}};
 SAVES.riverEnd = {...SAVES.wayEast, pos: {place: 'riverside', x: 46, y: 7, dir: 'right'}};
+SAVES.riverFlower = {...SAVES.wayEast, pos: {place: 'riverside', x: 24, y: 6, dir: 'up'}};   // facing a blue flower (blue not known yet)
 // the bees' valley (25 October 2026): coming in from the riverside, the first time and after; a wasp jumping out of the tall
 // flowers (its first meeting, then a battle among the flowers); and the swarm in front of the queen's old hollow tree
 SAVES.beeValley = {...SAVES.wayEast, w: {...SAVES.wayEast.w, ...knows(1, ['蝴蝶'])}, areas: {1: {...SAVES.wayEast.areas[1], bees: 2}}, pos: {place: 'flowerValley', x: 2, y: 10, dir: 'right'}};
@@ -588,6 +593,12 @@ const SCREENS = [
   {id: 'planting', title: 'Planting the flowers', save: 'flowersBack', why: 'Bring them to the big monkey, and he plants them in front of the school as you watch: each square of the beds comes up out of the ground in turn, with a little pop.', run: async () => {
     play(); await wait(100); const was = mapLooks(); Object.assign(here(), {flowers: 'done', schoolFlowers: true}); marking = {...markingOf(was), grow: true, hold: 900}; await wait(300); }},
   {id: 'school-flowers', title: 'Flowers in front of the school', save: 'flowersPlanted', why: 'Red, yellow and white, either side of the path up to the door: the flowers you picked.', run: async () => { play(); await wait(500); }},
+  {id: 'flower-look', title: 'A red flower, again', save: 'flowerLook', why: 'Each square of flowers is all one colour: A at one whose colour you know shows it, 红色的花 (a red flower), said aloud, any time (they went back to being 花 after the big monkey’s).', run: async () => {
+    play(); await wait(200); interact(...facing()); await wait(600); }},
+  {id: 'hillside-flowers', title: 'The hillside’s flowers', save: 'hillsideFlowers', why: 'The slope of flowers at the foot of the hillside, each square one colour: red, yellow, white, pink, blue and orange.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'flower-look-new', title: 'A blue 花', save: 'riverFlower', why: 'A blue flower on the riverside, before you know blue (蓝色): its card says 花, with a blue flower, so it’s the colour you looked at.', run: async () => {
+    play(); await wait(200); interact(...facing()); await wait(600); }},
   {id: 'feast-news', title: 'We have a home, and a school too!', save: 'feastNews', why: 'After the first two lessons, the old monkey has news before any lesson: 我们有家，也有学校！, teaching 有 (bold). It’s time for a great feast!', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(500); }},
   {id: 'you-card', title: '有, to have', save: 'feastNews', why: 'Its card, with no picture, like 要: Use 有 to say what you have.', run: async () => {

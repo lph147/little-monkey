@@ -467,7 +467,7 @@ function showNotice(w, opts = {}){
       const howFirst = isNew && made, howBtn = '<button class="btn" data-a="made">How it’s made</button>';
       openCard(`${isNew ? '<p class="label">⭐ New word to learn</p>' : `<p class="label">Word ${pips(w)}</p>`}
 
-        <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
+        <div class="word side"><div class="pic" aria-hidden="true">${picHTML(opts.pic || w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
         <div class="en" ${en ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}</div>
         <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${howFirst ? '<button class="btn primary" data-a="made">How it’s made ▸</button>'
           : `${isNew ? '' : en ? (made ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${isNew ? 'Got it' : 'OK'}</button>`}</div>`);
@@ -487,12 +487,13 @@ function showNotice(w, opts = {}){
 }
 // What you've picked (f: a few words you know together, such as 红色 的 花, with their English, en), with its own picture,
 // on a card like a word's (decided 22 October 2026: picking a red flower showed 花, flower): said straight away, as you
-// found it yourself, with a note under it (such as how many you have). (Picking it has its own sound.)
-function showPicked(f, note){
+// found it yourself, with a note under it (such as how many you have). (Picking it has its own sound.) Or what you see
+// (label), such as a red flower you look at, with a picture of another name (pic), such as 花's own for a pink one.
+function showPicked(f, note, {label = 'You picked', pic = f.zh} = {}){
   return new Promise(res => {
     const t = toks(f.zh), text = t.join('');
-    openCard(`<p class="label">You picked</p>
-      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(f.zh)}</div><div class="big">${text}</div><div class="py">${t.map(w => info(w)[0]).join(' ')}</div>
+    openCard(`<p class="label">${esc(label)}</p>
+      <div class="word side"><div class="pic" aria-hidden="true">${picHTML(pic)}</div><div class="big">${text}</div><div class="py">${t.map(w => info(w)[0]).join(' ')}</div>
       <div class="en">${esc(f.en)}</div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
       <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="ok">OK</button></div>`);
     say(text);

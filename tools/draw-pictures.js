@@ -204,6 +204,8 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
   '红色 的 花': p => flower(p, '#E8343C', '#FFD54A'),   // a red flower
   '黄色 的 花': p => flower(p, '#F7D23E', '#E0782A'),   // a yellow flower (its middle orange, to stand out)
   '白色 的 花': p => flower(p, '#FAFAF5', '#FFD54A'),   // a white flower
+  '蓝色 的 花': p => flower(p, '#4F8FE8', '#FFD54A'),   // a blue flower (a pink one is 花's own)
+  '橙色 的 花': p => flower(p, '#F28C28', '#8A4B1E'),   // an orange flower (its middle brown, to stand out)
   '草': p => {   // grass: a thick tuft
     const blades = [[3, 13, '#4FA34A'], [6, 8, '#6CC066'], [9, 14, '#3E8A3E'], [11, 5, '#5BB451'], [14, 10, '#6CC066'], [16, 3, '#4FA34A'],
       [19, 9, '#5BB451'], [21, 6, '#6CC066'], [24, 12, '#3E8A3E'], [26, 7, '#5BB451'], [29, 12, '#4FA34A'], [8, 18, '#5BB451'], [18, 17, '#4FA34A'], [27, 18, '#6CC066']];

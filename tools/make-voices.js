@@ -45,6 +45,7 @@ function wanted(){
     if (typeof o === 'string'){ if (CJK.test(o) && !/[A-Za-z]/.test(o)) all.add(said(o)); }
     else if (o && typeof o === 'object') for (const k in o) if (k !== 'made' && k !== 'example') walk(o[k]);
   })(AREA);
+  for (const c of get('COLOURED()')) all.add(said(c.zh));   // and what each thing of one colour is called, such as 粉色的花 (js/world.js)
 
   // Who says each line (the game's speaker(s.by || who)): a say step in a character's talk is theirs unless
   // it's `by` someone else; elsewhere (events, things you look at) only `by` says who. Requests are their asker's.
