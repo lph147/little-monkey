@@ -52,7 +52,10 @@ test('the first colour lesson teaches three, one after another: 红色, 黄色 a
   assert.deepEqual(get(g, '__cards'), ['红色 (quiet)', '黄色 (quiet)', '白色 (quiet)'], 'each one’s card as it comes, not said again: he’s just said it');
   const all = get(g, '__qs');
   assert.equal(all.length, 11);
-  assert.deepEqual(all.slice(0, 9).map(q => q.word), ['红色', '红色', '红色', '黄色', '黄色', '黄色', '白色', '白色', '白色'], 'three on each, as it comes');
+  const words = all.map(q => q.word), two = (a, w, others) => { const p = words.slice(a, a + 3); return p.filter(x => x === w).length === 2 && p.filter(x => x !== w).every(x => others.includes(x)); };
+  assert.deepEqual(words.slice(0, 3), ['红色', '红色', '红色'], 'three on red, the very first colour: there’s none to mix in');
+  assert.ok(two(3, '黄色', ['红色']), `then two on yellow, and red among them (${words.slice(3, 6)})`);
+  assert.ok(two(6, '白色', ['红色', '黄色']), `and two on white, with one you know (${words.slice(6, 9)})`);
   assert.ok(all.slice(9).every(q => ['红色', '黄色', '白色'].includes(q.word)), 'then two mixing them');
   assert.ok(all.slice(3, 6).filter(q => /Listen/.test(q.head)).every(q => q.options.map(caps).includes('红色')), '红色, which you know by then, is an answer beside 黄色');
   assert.ok(all.slice(6).every(q => /Which paint is it\?/.test(q.head)), 'and once you know two colours, all the answers are paints');

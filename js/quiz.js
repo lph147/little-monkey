@@ -78,10 +78,15 @@ const EACH_NEW = 3, MIXED = 2;   // (in a first lesson teaching several: questio
 // count, and 二 is never an answer (decided 21 October 2026).
 const NOT_HOW_MANY = ['二'];
 // What a lesson asks (the right answers, in order) for one new word (one), given the others it can mix in (others), or
-// for several, one after another (each new word's questions as it comes, then some mixing them).
+// for several, one after another: each new word's questions as it comes, one of them a word you know already (one you
+// knew before, or a new one before it), in any order, so you always have to count or look (decided 26 October 2026: it
+// was each new word three times running, so the answer never changed); then some mixing them.
 function lessonAsks(words, others){
   if (words.length === 1) return [shuffle([...Array(LESSON_QUESTIONS - Math.min(2, others.length)).fill(words[0]), ...others.slice(0, 2)])];
-  return [...words.map(w => Array(EACH_NEW).fill(w)), shuffle([...words]).slice(0, MIXED)];
+  return [...words.map((w, i) => {
+    const known = shuffle([...others, ...words.slice(0, i)]).slice(0, 1);   // (none for the very first colour: red)
+    return shuffle([...Array(EACH_NEW - known.length).fill(w), ...known]);
+  }), shuffle([...words]).slice(0, MIXED)];
 }
 const lessonStart = (series, words) => fill(words.length > 1 && series.startFirst || series.start);
 async function countLesson(series, words, who){

@@ -34,7 +34,7 @@ async function play(g, code){   // runs code in the game and waits for it, letti
 const answering = (g, right = true) => g.run(`pictureQ = async q => { if (q.onShow) q.onShow(); __qs.push({options: q.options, answerIdx: q.answerIdx, word: q.word, body: q.body, text: !!q.text}); return ${right}; }`);
 const lesson = g => play(g, "talk(ALL_NPCS.find(n => n.id === 'elder'))");
 
-test('the first number lesson teaches three, one after another: 四, then 五, then 六, each counted onto his table, with its card and three questions; then two mixing them', async () => {
+test('the first number lesson teaches three, one after another: 四, then 五, then 六, each counted onto his table, with its card and three questions, one of them a number you know; then two mixing them', async () => {
   const g = game();
   assert.deepEqual(get(g, 'lessonNow() && lessonNow().words'), ['四', '五', '六']);
   assert.equal(get(g, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show"), '!', 'the teacher has a ! for you');
@@ -46,7 +46,11 @@ test('the first number lesson teaches three, one after another: 四, then 五, t
   assert.deepEqual(get(g, '__cards'), ['四 (quiet)', '五 (quiet)', '六 (quiet)'], 'each one’s card as it comes, not said again: he’s just said it');
   const qs = get(g, '__qs').map(q => q.word);
   assert.equal(qs.length, 11);
-  assert.deepEqual(qs.slice(0, 9), ['四', '四', '四', '五', '五', '五', '六', '六', '六'], 'three questions on each, as it comes');
+  // (decided 26 October 2026: it was three on each running, so the answer never changed)
+  const part = (k, w, before) => { const p = qs.slice(k * 3, k * 3 + 3); return p.filter(x => x === w).length === 2 && p.filter(x => x !== w).every(x => before.includes(x)) && p.length === 3; };
+  assert.ok(part(0, '四', ['一', '三']), `two on 四, and one you knew before (${qs.slice(0, 3)})`);
+  assert.ok(part(1, '五', ['一', '三', '四']), `two on 五, and one you know (${qs.slice(3, 6)})`);
+  assert.ok(part(2, '六', ['一', '三', '四', '五']), `two on 六, and one you know (${qs.slice(6, 9)})`);
   assert.ok(qs.slice(9).every(w => ['四', '五', '六'].includes(w)) && new Set(qs.slice(9)).size === 2, 'then two mixing them');
   assert.ok(get(g, '__qs').slice(0, 3).every(q => !q.options.some(o => /五|六/.test(o))), 'the answers to 四’s are numbers you know, not ones still to come');
   assert.equal(g.run('__lessons'), 0, 'a number lesson, not practice');
