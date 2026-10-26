@@ -9,6 +9,9 @@
 //   error) gets all its files from the copy too.
 // - A page from the web whose own file can't come from the web (the connection dropped as it loaded) opens again
 //   from the copy, whole, rather than get that file from the copy.
+// - Every file is checked with the web (FRESH), never taken from the browser's own saved copy without asking: GitHub lets
+//   a browser use its copy of a file for 10 minutes without asking if it has changed, so the new page came with the old
+//   styles and code (decided 26 October 2026). A file that hasn't changed isn't sent again, so it costs next to nothing.
 // An error or a page that isn't the game (a Wi-Fi login page, which comes by a redirect) is never kept. Any of the
 // page's files not in the copy yet are fetched when it sends their list, so the game plays offline after its very
 // first visit. The voice clips (audio/) are all kept as soon as the game sends their list, so a line never heard yet
@@ -18,6 +21,7 @@
 const COPY = 'little-monkey', NEXT = 'little-monkey-next';   // the copy, and the files of a page from the web, waiting
 const WAIT = 3000;            // how long the game's page waits for a slow connection before opening from the copy
 const AGAIN = 10000;          // how soon after a page from the web couldn't get a file it opens again from the copy
+const FRESH = {cache:'no-cache'};   // ask the web whether a file has changed, never just take the browser's saved copy
 const fromCopy = new Set();   // pages opened from the copy (by their client id): their files come from the copy too
 const broken = new Set();     // pages from the web that couldn't get one of their files: they never change the copy
 let copyNext = 0;             // when the last of those couldn't (the next page opens from the copy)
@@ -37,13 +41,15 @@ const keep = (req, res, into = COPY) => caches.open(into).then(c => c.put(req, r
 async function copyFirst(req, clip){   // a clip, which never changes (kept when it comes), or a file for a page from the copy
   const hit = await inCopy(req);
   if (hit) return hit;
-  try { const res = await fetch(req); if (clip && good(res)) await keep(req, res.clone()); return res; } catch(e) { return Response.error(); }
+  try { const res = await fetch(req, clip ? undefined : FRESH); if (clip && good(res)) await keep(req, res.clone()); return res; } catch(e) { return Response.error(); }
 }
 async function networkFirst(req, e){
   const page = req.mode === 'navigate';   // the game's page (otherwise one of its files)
   if (page && Date.now() - copyNext < AGAIN){ copyNext = 0; const hit = await inCopy(req); if (hit) return opened(hit, e); }
   let late = false;   // the page has opened from the copy: this answer comes too late to keep
-  const net = fetch(req).then(async res => { if (good(res) && !late) await keep(req, res.clone(), NEXT); return res; });
+  const asked = page ? fetch(req.url, {...FRESH, credentials:'same-origin', redirect:'manual'}) : fetch(req, FRESH);   // (the page by its address: a
+  // navigation can't always be asked for with settings of its own; its redirects are left to the page, as a navigation's are)
+  const net = asked.then(async res => { if (good(res) && !late) await keep(req, res.clone(), NEXT); return res; });
   if (page){   // on a slow connection, the copy after WAIT
     const slow = await Promise.race([net.then(() => false, () => false), new Promise(r => setTimeout(() => r(true), WAIT))]);
     const hit = slow && await inCopy(req);
@@ -79,7 +85,7 @@ async function keepFiles(list){   // the game's own files: any the copy hasn't g
   const copy = await caches.open(COPY);
   for (const url of new Set(list.map(here))){
     if (await copy.match(url)) continue;
-    try { const res = await fetch(url); if (good(res)) await copy.put(url, res); } catch(e) { return; }   // offline: try again next time
+    try { const res = await fetch(url, FRESH); if (good(res)) await copy.put(url, res); } catch(e) { return; }   // offline: try again next time
   }
 }
 async function keepClips(list){

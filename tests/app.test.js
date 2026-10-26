@@ -60,7 +60,8 @@ test('the page links the app description, the icons, and the lines an iPhone nee
 const SITE = 'https://lph147.github.io/little-monkey/';
 function worker(){
   const server = {[SITE]: 'version 1', [SITE + 'js/main.js']: 'the game'}, stores = {}, on = {}, timers = [], waiting = [];
-  const web = {online: true, slow: false, server, fetched: {}, reopened: [],   // (reopened: pages told to open again)
+  const web = {online: true, slow: false, server, fetched: {}, reopened: [], saved: {},   // (reopened: pages told to open again;
+    // saved: the browser's own saved copy of a file, which GitHub lets it use for 10 minutes without asking if it's changed)
     get copy(){ return (stores['little-monkey'] || {}).map || new Map(); }, get next(){ return (stores['little-monkey-next'] || {}).map || new Map(); }};
   const response = (url, body, more = {}) => ({ok: true, status: 200, url, body, ...more, clone(){ return response(url, body, more); }});
   const reply = url => {
@@ -76,9 +77,10 @@ function worker(){
   vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8'), {
     self: {addEventListener: (type, fn) => { on[type] = fn; }, skipWaiting(){}, registration: {scope: SITE},
       clients: {claim: async () => {}, get: async id => ({id, url: SITE, navigate: async () => { web.reopened.push(id); }})}},
-    fetch: async req => {
+    fetch: async (req, init = {}) => {
       const url = typeof req === 'string' ? req : req.url;
       web.fetched[url] = (web.fetched[url] || 0) + 1;
+      if (web.saved[url] !== undefined && !['no-cache', 'reload', 'no-store'].includes(init.cache)) return response(url, web.saved[url]);   // (without asking)
       if (web.slow) await new Promise(r => waiting.push(r));   // a slow connection: it answers when the test says (web.answer())
       if (!web.online) throw new TypeError('No connection');
       return reply(url);
@@ -118,6 +120,17 @@ test('online, the app always loads the newest version, and keeps a copy once it 
   assert.deepEqual([web.copy.get(SITE).body, web.copy.get(SITE + 'js/main.js').body], ['version 1', 'the game'], 'the copy waits till it has loaded whole…');
   await web.send({keepFiles: [SITE, SITE + 'js/main.js']}, 'page 2');
   assert.deepEqual([web.copy.get(SITE).body, web.copy.get(SITE + 'js/main.js').body], ['version 2', 'the new game'], '…then it’s all updated together');
+});
+
+test('the browser’s own saved copy of a file is never used: every file is checked with the web, so a new version never mixes with the old (decided 26 October 2026: the new page came with the old styles and code)', async () => {
+  const web = worker();
+  await web.load();
+  web.saved = {[SITE + 'js/main.js']: 'the game'};   // the browser saved the old one a minute ago
+  web.server[SITE] = 'version 2'; web.server[SITE + 'js/main.js'] = 'the new game';   // an upload to GitHub
+  assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 2');
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 2')).body, 'the new game', 'the new file, not the saved old one');
+  await web.send({keepFiles: [SITE, SITE + 'js/main.js', SITE + 'css/game.css']}, 'page 2');
+  assert.equal(web.copy.get(SITE + 'js/main.js').body, 'the new game', 'and the copy has the new one');
 });
 
 test('offline, the app uses its copy', async () => {
