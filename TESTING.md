@@ -441,6 +441,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] After an update: open the game with a weak connection (or turn on airplane mode just as it starts loading). Either the new version opens, or the one before it does, whole (its version number on the title screen); never a mix of the two. With a good connection, the new version opens next time.
 - [ ] On an iPhone (iOS 17 or later): with the silent switch on, the music, sound effects and voices still play. Lock the phone (or switch to another app) for a moment and come back: the music starts again when you come back (or at your next tap).
 - [ ] Settings: Music, Sound effects and Pinyin switch on and off. With pinyin off, it's hidden over words in sentences. Back returns to the menu.
+- [ ] Settings, Frames a second On: within a second, a number appears under the POWER light, such as 60 FPS, and stays while you walk about, talk and answer questions. On a phone whose screen refreshes faster (120 times a second), it says 60 FPS · SCREEN 120, and walking is just as fast and smooth as on any other phone. Switch it Off: the number goes. It's kept with your game.
 - [ ] 保存 Save closes the menu and says "Saved: Game 1, just now".
 - [ ] Settings, Watch the opening plays the opening, then carries on where you were. Once you're king, Settings also has Watch becoming king, which plays that scene and then carries on where you were. Settings, Title screen: your games, then your game and Continue, puts you back where you were.
 

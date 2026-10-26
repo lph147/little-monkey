@@ -61,7 +61,31 @@ const SCENE_SOUNDS = {opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer'
   paintingSchool:[[.9, 'swish'], [1.5, 'swish'], [2.1, 'swish'], [2.7, 'swish'], [3.3, 'swish'], [4.4, 'fanfare'], [4.9, 'chime']], lookout:[[.3, 'wind']]};
 let scene = {id:'opening', caps:CAPS, last:'Begin', end:() => startGame()};
 let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}, advancedTo = 0;
+// At most about 60 frames a second (decided 26 October 2026): the browser calls frame() each time the screen refreshes,
+// 120 times a second on some phones, but the game's screen is so small (240 by 160) that a step moves about one of its
+// pixels each 60th of a second, so frames in between would look the same, and only use up the battery. A frame that
+// comes less than MIN_FRAME_MS after the last one drawn is skipped: 120 a second gives 60, 144 gives 72, and 60 or 90
+// stay as they are. Everything moves by the clock, never by the frame, so the game plays at the same speed either way.
+const MIN_FRAME_MS = 10;
+let lastFrame = -Infinity;
+const frameDue = now => now - lastFrame >= MIN_FRAME_MS;
+// Frames a second, under the power light when Settings has it on: the frames drawn in the last second, and the screen's
+// own refreshes if it makes more (some of them skipped).
+const fpsCount = {from:0, drawn:0, ticks:0, shown:null};
+function countFps(now, drawn){
+  const f = fpsCount; f.ticks++; if (drawn) f.drawn++;
+  if (now - f.from < 1000) return;
+  const el = $('#fps'), secs = (now - f.from) / 1000, fps = Math.round(f.drawn / secs), hz = Math.round(f.ticks / secs);
+  const text = S.fps ? `${fps} FPS` + (hz > fps + 5 ? ` · SCREEN ${hz}` : '') : '';
+  if (el && text !== f.shown){ el.textContent = text; el.hidden = !text; f.shown = text; }
+  Object.assign(f, {from:now, drawn:0, ticks:0});
+}
 function frame(now){
+  requestAnimationFrame(frame);
+  const due = frameDue(now);
+  countFps(now, due);
+  if (!due) return;
+  lastFrame = now;
   if (mode === 'title') drawScene(0, now);
   else if (mode === 'intro'){
     // The scene waits at each sentence until the player presses Next.
@@ -80,7 +104,6 @@ function frame(now){
   updateCtx(now); updateTips(now); moreCue();
   sc.imageSmoothingEnabled = false;
   sc.drawImage(buf, 0, 0, cv.width, cv.height);
-  requestAnimationFrame(frame);
 }
 // A caption of the opening, as subtitles over the bottom of the picture: the story in Chinese, read aloud, with pinyin
 // over each word (unless that's switched off; tap a word for its meaning) and its English; 🔊 reads it again. Skip is

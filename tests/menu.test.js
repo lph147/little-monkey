@@ -44,11 +44,11 @@ test('Save saves the game and says so; it saves by itself anyway', () => {
   assert.match(run("document.querySelector('#saybox').innerHTML"), /Saved: Game 1, just now/);
 });
 
-test('Settings has the sound, pinyin, English on replies, How to play, the opening and the title screen', () => {
+test('Settings has the sound, pinyin, English on replies, frames a second, How to play, the opening and the title screen', () => {
   const {sheet, run, items} = menuGame();
   run('openMenu()');
   sheet.querySelector('[data-m="settings"]').click();
-  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'howto', 'opening', 'title'], 'saving, loading and starting again are on the title screen');
+  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'fps', 'howto', 'opening', 'title'], 'saving, loading and starting again are on the title screen');
   const pinyin = run('S.pinyin');
   sheet.querySelector('[data-m="pinyin"]').click();
   assert.equal(run('S.pinyin'), !pinyin, 'Pinyin switches');
@@ -157,4 +157,39 @@ test('Friends: tap a friend for its page, as in the Word Scroll, its English and
   assert.equal(run('document.activeElement && document.activeElement.dataset.w'), '山羊', 'on the friend you opened');
   run('pressB()');
   assert.equal(run('document.activeElement && document.activeElement.dataset.m'), 'friends', 'and Back again to the menu');
+});
+
+test('Settings, Frames a second: a counter under the power light, off at first; the game draws at most about 60 frames a second', () => {
+  const {game, sheet, run} = menuGame();
+  const frames = (from, every, n) => { for (let i = 0; i < n; i++) game.runFrame(from + i * every); };
+  frames(0, 1000 / 60, 70);
+  const fps = game.el('#fps');
+  assert.equal(run('!!S.fps'), false);
+  assert.equal(fps.hidden, true, 'off in a game that never switched it on');
+  run('openMenu()');
+  sheet.querySelector('[data-m="settings"]').click();
+  sheet.querySelector('[data-m="fps"]').click();
+  assert.equal(run('S.fps'), true, 'switched on, and kept with the game');
+  assert.equal(JSON.parse(run('localStorage.getItem(KEY)')).fps, true);
+  assert.match(sheet.querySelector('[data-m="fps"]').textContent, /Frames a second On/);
+  frames(2000, 1000 / 60, 70);
+  assert.equal(fps.hidden, false);
+  assert.equal(fps.textContent, '60 FPS', 'a 60 Hz screen: every frame drawn');
+  frames(4000, 1000 / 120, 140);
+  assert.equal(fps.textContent, '60 FPS · SCREEN 120', 'a 120 Hz screen: every other frame skipped');
+  frames(6000, 1000 / 90, 100);
+  assert.equal(fps.textContent, '90 FPS', 'a 90 Hz screen: all drawn, never an uneven 45');
+  sheet.querySelector('[data-m="fps"]').click();
+  frames(8000, 1000 / 60, 70);
+  assert.equal(fps.hidden, true, 'switched off again');
+});
+
+test('a frame skipped (under 10ms after the last one drawn) draws nothing, and the next is asked for all the same', () => {
+  const {game, run} = menuGame();
+  game.runFrame(5000);
+  run('globalThis.__drew = 0; const d = drawWorld; drawWorld = (...a) => { __drew++; return d(...a); }');
+  game.runFrame(5008);
+  assert.equal(run('__drew'), 0, '8ms later: skipped');
+  game.runFrame(5017);
+  assert.equal(run('__drew'), 1, '17ms later: drawn');
 });

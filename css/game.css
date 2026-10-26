@@ -1009,6 +1009,9 @@ rt.hid{visibility:hidden}
 /* the power light, beside the screen's top-left corner, and the speaker's slots, under A and B */
 .power{grid-area:power;justify-self:end;align-self:start;margin:10px 10px 0 0;display:flex;align-items:center;gap:5px;font:600 .6rem var(--pixel);letter-spacing:.12em;color:var(--muted)}
 .power i{width:7px;height:7px;border-radius:50%;background:var(--led);box-shadow:0 0 6px var(--led)}
+/* frames a second (Settings), under the power light: on the console, so nothing on the screen ever covers it */
+.fps{grid-area:power;justify-self:end;align-self:start;margin:30px 10px 0 0;font:600 .6rem var(--pixel);letter-spacing:.08em;color:var(--muted);text-align:right;white-space:nowrap}
+.fps[hidden]{display:none}
 .grille{grid-area:grille;justify-self:end;display:flex;gap:6px;margin:0 22px 18px 0;transform:rotate(28deg)}
 .grille i{width:5px;height:30px;border-radius:3px;background:var(--grille);box-shadow:inset 0 2px 2px rgba(0,0,0,.3)}
 .grille i:first-child,.grille i:last-child{height:20px;margin-top:5px}

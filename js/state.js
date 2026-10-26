@@ -10,7 +10,7 @@ function areaStart(){   // a new game's progress in the area: the area's own lis
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], changed:{}, finds:{}, kept:{}, done:false,   // and no one keeping food for you (kept: who has what, the bag step),
     hide:{spot:null, wrong:0, won:0, last:null}, out:{}});   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js)
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -243,14 +243,14 @@ function summaryOf(s, n){
 function useSlot(n){ SLOT = n; S = loadSave(n); setSlotsInfo(d => ({...d, active:n})); }
 // A new game in slot n, keeping your sound and reading settings.
 function newGameIn(n){
-  const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn};
+  const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps};
   SLOT = n; S = Object.assign(fresh(), keep); setSlotsInfo(d => ({...d, active:n}));
 }
 // Deletes game n, keeping a copy in the browser just in case. Deleting the game you're playing leaves a new one.
 function deleteSlot(n){
   try { const raw = localStorage.getItem(slotKey(n)); if (raw) keepBackup(`deleted-game${n}-${Date.now()}`, raw); localStorage.removeItem(slotKey(n)); } catch(e) {}
   setSlotsInfo(d => { const played = {...d.played}; delete played[n]; return {...d, played}; });
-  if (n === SLOT){ const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn}; S = Object.assign(fresh(), keep); }
+  if (n === SLOT){ const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps}; S = Object.assign(fresh(), keep); }
 }
 // Game n as a file to download (Copy to a file), to keep it safe or carry it to another device.
 function saveFile(n = SLOT){

@@ -134,6 +134,7 @@ function openSettings(focusId){
       <button class="btn" data-m="sound" data-label="Sound">Sound effects <span class="val">${S.sound ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="pinyin" data-label="Pinyin">Pinyin over words <span class="val">${S.pinyin ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="replyEn" data-label="English">English on replies <span class="val">${S.replyEn ? 'On' : 'Off'}</span></button>
+      <button class="btn" data-m="fps" data-label="FPS">Frames a second <span class="val">${S.fps ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="howto">How to play</button>
       <button class="btn" data-m="opening">Watch the opening</button>
       ${Object.entries(AREA.scenes || {}).filter(([, sc]) => sc.watch && matches(sc.when)).map(([id, sc]) => `<button class="btn" data-m="scene" data-scene="${id}">${esc(sc.watch)}</button>`).join('')}
@@ -147,6 +148,7 @@ function openSettings(focusId){
     sound: () => { S.sound = !S.sound; save(); if (S.sound) SFX.blip(); openSettings('sound'); },
     pinyin: () => { S.pinyin = !S.pinyin; save(); openSettings('pinyin'); },
     replyEn: () => { S.replyEn = !S.replyEn; save(); openSettings('replyEn'); },
+    fps: () => { S.fps = !S.fps; save(); openSettings('fps'); },
     howto: () => howToPlay().then(() => openSettings('howto')),
     opening: () => { closeCard(); playIntro(); },
     scene: bt => { closeCard(); storyScene(bt.dataset.scene); },

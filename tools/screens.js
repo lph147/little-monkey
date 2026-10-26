@@ -854,6 +854,7 @@ const SCREENS = [
     play(); await wait(200); S.bag = {}; pressA(); await wait(900); }},
   {id: 'wardrobe', title: 'Wardrobe', save: 'middle', run: async () => { play(); await wait(100); wardrobePage(() => closeCard()); await wait(300); }},
   {id: 'settings', title: 'Settings', save: 'middle', run: async () => { play(); await wait(100); openSettings(); await wait(300); }},
+  {id: 'fps', title: 'Frames a second, under the power light', save: 'middle', why: 'Settings, Frames a second: how many frames the game draws each second (at most about 60).', run: async () => { S.fps = true; play(); await wait(1600); }},
   {id: 'howto-1', title: 'How to play, 1 of 3', save: 'middle', why: 'Now only in Settings.', run: async () => { play(); await wait(100); howToPlay(); await wait(300); }},
   {id: 'howto-2', title: 'How to play, 2 of 3', save: 'middle', run: async () => { play(); await wait(100); howToPlay(); await wait(100); click('[data-a=next]'); await wait(300); }},
   {id: 'howto-3', title: 'How to play, 3 of 3', save: 'middle', run: async () => { play(); await wait(100); howToPlay(); await wait(100); click('[data-a=next]'); await wait(100); click('[data-a=next]'); await wait(300); }},

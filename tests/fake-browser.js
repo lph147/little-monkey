@@ -66,7 +66,7 @@ function scriptsIn(page, root = ROOT){
 // screen showing (class loading).
 function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = false, html = false} = {}){
   const elements = {}, storage = new Map(Object.entries(stored)), frames = [], listeners = {};
-  const timers = new Map(); let nextTimer = 1;
+  const timers = new Map(); let nextTimer = 1, clock = 1000 - 1000 / 60;
   if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
   const document = {
     hidden: false,
@@ -107,7 +107,7 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = 
   return {
     el: sel => elements[sel],                     // a page element, by the same selector the game uses
     storage,                                      // the browser's saved data
-    runFrame(now = 1000){ const fn = frames.shift(); if (fn) fn(now); },   // draw one frame
+    runFrame(now = clock += 1000 / 60){ const fn = frames.shift(); if (fn) fn(now); },   // draw one frame (a 60th of a second after the last, unless it says when: the game skips one too soon after the last)
     flush(){ const due = [...timers.values()]; timers.clear(); due.forEach(fn => fn()); return due.length; },   // run waiting timers (with dom: true)
     run: code => vm.runInContext(code, win),     // run code inside the game, e.g. run('ORDER.length')
     // Press a key, such as ' ' or 'Enter'. repeat: the key is being held down. tabbedTo: a button
