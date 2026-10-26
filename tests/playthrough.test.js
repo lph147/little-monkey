@@ -441,6 +441,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[18, 5], [22, 5], [22, 7], [46, 7]], 'walking on along the riverside, over the bridge and under the rocks');
   await act('arrive(47, 7).then(runEvents)', 'into the bees’ valley');
   assert.deepEqual([run('PLACE'), area().bees], ['flowerValley', 2], 'the bees’ valley: found');
+  assert.ok(get('__said').includes('花里有蜜蜂，也有黄蜂！'), 'the butterfly flutters in after you: there are bees in the flowers, and wasps too!');
   await walk([[1, 10], [8, 10], [8, 12], [12, 12], [12, 8], [25, 8]], 'walking into the valley, through the tall flowers grown across the way in');
   assert.ok(knows('黄蜂'), 'a wasp jumps out of the tall flowers: 黄蜂');
   await pressAt(25, 8, 'up', 'looking at the swarm in front of the old tree');
@@ -455,6 +456,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     await act(`arrive(${rx}, ${ry}).then(runEvents)`, 'meeting a bee in the tall flowers', 1);
   }
   assert.ok(knows('蜜蜂') && area().beeFriends === 6, 'six bee friends');
+  assert.deepEqual(area().out, {}, 'each stayed out where you met it, till all six flew off to join the swarm');
   assert.ok(['一！', '一，二！', '一，二，三，四，五，六！', '去找蜂王吧！'].every(t => get('__said').includes(t)), 'counted aloud, and the sixth: go and find the queen!');
   assert.ok(area().bees === 3 && run('walkable(25, 7)'), 'the swarm has flown aside: the way to the old tree is open');
   // The queen bee (蜂王) comes out of her old tree as you press A at it: her card, 你要什么？, and you say 我们要蜂蜜！; her

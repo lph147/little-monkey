@@ -158,7 +158,10 @@ SAVES.beeValleySwarm = {...SAVES.beeValley, pos: {place: 'flowerValley', x: 25, 
 SAVES.beeHiding = {...SAVES.beeValley, pos: {place: 'flowerValley', x: 11, y: 13, dir: 'right'}};
 SAVES.beeFriends = {...SAVES.beeValley, w: {...SAVES.beeValley.w, ...knows(1, ['蜜蜂'])}, friends: [...(SAVES.beeValley.friends || []), 'bee'], met: [...(SAVES.beeValley.met || []), 'bee'],
   areas: {1: {...SAVES.beeValley.areas[1], beeFriends: 2}}, pos: {place: 'flowerValley', x: 14, y: 11, dir: 'right'}};
-SAVES.beeSix = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], beeFriends: 6}}};
+// each bee you meet stays out, hovering where it came out (26 October 2026): two friends, and one you didn't win over,
+// waiting with a !; and all six, about to fly off to join the swarm
+SAVES.beesOut = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], out: {bee: [[16, 11, 1], [12, 13, 1], [18, 12, 0]]}}}};
+SAVES.beeSix = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], beeFriends: 6, out: {bee: [[16, 11, 1], [12, 13, 1], [18, 12, 1], [15, 9, 1], [11, 10, 1], [19, 10, 1]]}}}};
 SAVES.beeOpen = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], beeFriends: 6, bees: 3}}, pos: {place: 'flowerValley', x: 25, y: 9, dir: 'up'}};
 // the queen bee (25 October 2026): in front of her old tree, where A brings her out; out, waiting for you to play her word
 // game; won over, she and her swarm following you along the riverside; coming home with you; and home, by the wildflowers
@@ -631,7 +634,7 @@ const SCREENS = [
     play(); await wait(100); pressA(); await wait(1600); }},
   {id: 'riverside-end', title: 'The way into the bees’ valley', save: 'riverEnd', why: 'At the riverside’s end, under the rocks: thick bushes block the way into the valley for now (it comes next).', run: async () => {
     play(); await wait(100); pressA(); await wait(500); }},
-  {id: 'valley-first', title: 'Into the bees’ valley', save: 'beeValleyFirst', why: 'From the end of the riverside, the first time: bees hum in the tall flowers, and wasps zoom about in them too.', run: async () => {
+  {id: 'valley-first', title: 'Into the bees’ valley', save: 'beeValleyFirst', why: 'From the end of the riverside, the first time: the butterfly from the wildflowers flutters in after you, 花里有蜜蜂，也有黄蜂！ (There are bees in the flowers, and wasps too!), then what to do, and it flutters back.', run: async () => {
     play(); await wait(100); arrive(47, 7).then(runEvents); await wait(1500); }},
   {id: 'bee-valley', title: 'The bees’ valley (百花谷)', save: 'beeValley', why: 'Rock all round, flowers everywhere: tall flowers grown across the way in (no way round), where wasps hide, and beds of flowers to look at.', run: async () => {
     play(); await wait(100); showPlaceName(); clearTimeout(placeNameT); await wait(400); }},
@@ -645,10 +648,17 @@ const SCREENS = [
     play(); await wait(100); rustle = {x: 15, y: 11, a: ANIMALS.find(a => a.id === 'bee')}; await wait(400); }},
   {id: 'bee-meet', title: 'A bee buzzes out', save: 'beeHiding', why: 'Out of the tall flowers: the first teaches 蜜蜂 (mìfēng, bee), said straight away; then 我们玩吧！ and its questions.', run: async () => {
     play(); await wait(100); wildAppears(ANIMALS.find(a => a.id === 'bee')); await wait(1600); }},
+  {id: 'bees-out', title: 'The bees you’ve met', save: 'beesOut', why: 'Each bee you meet stays out, hovering where it came out, so you can see they’re different bees: two friends, and one you didn’t win over, with a ! over it (A at it plays again).', run: async () => {
+    play(); await wait(500); }},
+  {id: 'bee-another', title: 'Another bee', save: 'beesOut', why: 'A new bee out of the flowers: “Another 蜜蜂 (bee), a new one!”, with how many of the six are your friends so far (never “your friend wants to play again”).', run: async () => {
+    play(); await wait(100); rustle = null; S.pos = {place: PLACE, x: 13, y: 11, dir: 'right'}; placePlayer(); wildAppears(ANIMALS.find(a => a.id === 'bee')); await wait(2400); }},
   {id: 'bee-count', title: 'Counting your bee friends', save: 'beeFriends', why: 'Each new bee friend, you count them all aloud: here the third, 一，二，三！ (then how many are still hiding).', run: async () => {
     play(); await wait(100); here().beeFriends = 3; runSteps(ANIMALS.find(a => a.id === 'bee').counted[2]); await wait(500); }},
-  {id: 'bee-six', title: 'Go and find the queen!', save: 'beeSix', why: 'The sixth bee: 去找蜂王吧！ (蜂王, the queen bee, grey: just for listening till you meet her); then the swarm by the old tree flies aside.', run: async () => {
+  {id: 'bee-six', title: 'Go and find the queen!', save: 'beeSix', why: 'The sixth bee: 去找蜂王吧！ (蜂王, the queen bee, grey: just for listening till you meet her); then your six bee friends fly off to join the swarm by the old tree, and it flies aside.', run: async () => {
     play(); await wait(100); runEvents(); await wait(500); }},
+  {id: 'bees-fly', title: 'Off to join the swarm', save: 'beeSix', why: 'Your six bee friends fly off together, one a little after another, to join the swarm by the old tree.', run: async () => {
+    play(); await wait(100); const from = here().out.bee.map(([x, y]) => [x, y]); here().out = {};
+    flyers = Object.defineProperty({a: ANIMALS.find(a => a.id === 'bee'), from, to: [26, 7]}, 't0', {get: () => performance.now() - 520}); await wait(300); }},   // (held halfway)
   {id: 'bees-open', title: 'The way to the old tree', save: 'beeOpen', why: 'All six bees are your friends: the swarm has flown aside, and the way to the queen’s old hollow tree is open.', run: async () => {
     play(); await wait(500); }},
   {id: 'queen-meet', title: 'The queen bee comes out', save: 'queenTree', why: 'A at her old hollow tree: she buzzes out, her card teaching 蜂王 (fēngwáng, queen bee), said straight away as you meet her.', run: async () => {

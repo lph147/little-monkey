@@ -386,12 +386,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // character) and at:[x, y, 'place'] (you're standing there). A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
     {if:{place:'pineWood', woodIn:0}, do:[{sound:'howl'}, {message:'It’s gloomy under the thick pines, and very still. Somewhere far off, a wolf howls…'}, {set:{woodIn:1}}]},   // into the pine wood for the first time
-    // chapter 1: into the bees' valley for the first time, at the end of the riverside: bees hum in the tall flowers
-    {if:{place:'flowerValley', bees:1}, do:[{set:{bees:2}}, {sound:'buzz'}, {message:'A valley full of flowers! Bees hum all round you, deep in the tall flowers… and wasps zoom about in them too. Watch out!'},
-      {message:'Where the tall flowers shake, a bee is hiding: walk in to meet it. Make friends with six bees!'}]},
+    // chapter 1: into the bees' valley for the first time, at the end of the riverside: the butterfly from the riverside's
+    // wildflowers flutters in after you (teaching 蝴蝶, if you passed it by), and tells you who lives in the tall flowers;
+    // what to do there; and it flutters back the way you came (decided 26 October 2026: what to do there wasn't clear)
+    {if:{place:'flowerValley', bees:1}, do:[{leap:'guide', to:[3, 10]},
+      {newWord:'蝴蝶', note:'A butterfly has fluttered after you, from the wildflowers on the riverside!'},
+      {say:'beesInFlowers', by:'guide'}, {sound:'buzz'},
+      {message:'A valley full of flowers! Six bees are hiding in the tall flowers, and wasps too. Where the tall flowers shake, a bee is hiding: walk in to meet it.'},
+      {message:'Make friends with all six bees! Each one stays out over the flowers once you’ve met it. Watch out for the wasps: they zoom out to fight.'},
+      {leap:'guide', to:[-1, 10]}, {set:{bees:2}}]},
     // all six bees are your friends: the sixth sends you to find the queen (蜂王, just for listening till you meet her), and
     // the swarm in front of her old tree flies aside
-    {if:{bees:2, beeFriends:6}, do:[{say:'findQueen', by:'bee'}, {set:{bees:3}}, {sound:'buzz'}, {message:'Over by the old tree, the swarm of bees flies aside: the way to it is open!'}]},
+    {if:{bees:2, beeFriends:6}, do:[{say:'findQueen', by:'bee'}, {fly:'bee', to:[26, 7]}, {set:{bees:3}}, {sound:'buzz'},
+      {message:'Your six {蜜蜂|bee} friends fly off to join the swarm by the old tree, and the swarm flies aside: the way to it is open!'}]},
     // you've brought the queen bee and her swarm home: they fly to the wildflowers by the cliff, where their hive will be
     {if:{place:'homeGround', bees:5}, do:[{set:{bees:6}}, {follow:[]}, {sound:'buzz'}, {sound:'fanfare'},
       {message:'The queen bee and her swarm fly over to the wildflowers by the cliff. The bees are home! Go and tell the hungry monkey.'}]},
@@ -1184,7 +1191,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // hide them; the swarm is a cloud of tiny bees (look: swarm).
     {id:'queen', place:'homeGround', x:27, y:6, facing:'down', look:'蜂王', flies:true,
       moves:[{if:{bees:{atLeast:10}}, place:'gone', x:0, y:0}, {if:{bees:{below:6}, queenOut:true}, place:'flowerValley', x:25, y:5, facing:'down'}, {if:{bees:{below:6}}, place:'gone', x:0, y:0}]},   // (in the hive, once it's built)
-    {id:'beeSwarm', place:'homeGround', x:28, y:6, facing:'down', look:'swarm', flies:true, moves:[{if:{bees:{atLeast:10}}, place:'gone', x:0, y:0}, {if:{bees:{below:6}}, place:'gone', x:0, y:0}]}
+    {id:'beeSwarm', place:'homeGround', x:28, y:6, facing:'down', look:'swarm', flies:true, moves:[{if:{bees:{atLeast:10}}, place:'gone', x:0, y:0}, {if:{bees:{below:6}}, place:'gone', x:0, y:0}]},
+    // chapter 1: the butterfly from the riverside's wildflowers (called 蝴蝶, by its word, as it looks like one), fluttering in
+    // after you the first time you come into the bees' valley, at its way in, to tell you about it (an event), then back to
+    // its flowers: only here till then (bees: 1)
+    {id:'guide', place:'flowerValley', x:0, y:10, facing:'right', look:'蝴蝶', flies:true,
+      moves:[{if:{bees:{below:1}}, place:'gone', x:0, y:0}, {if:{bees:{atLeast:2}}, place:'gone', x:0, y:0}]}
   ],
 
   // Your name in the speech box when you reply: the first whose if matches (otherwise 小猴子, Little monkey). Its English
@@ -1380,10 +1392,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
     '狼': {zh:'草 里 有 狼 。', en:'There is a wolf in the grass.'},
-    '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'},
-    '黄蜂': {zh:'花 里 有 黄蜂 ！', en:'There are wasps in the flowers!'}
-    // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now; and 蜜蜂, 花上有蜜蜂。,
-    // until 25 October 2026: the hungry monkey's 我们有蜜蜂了！ uses it now)
+    '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'}
+    // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now; 蜜蜂, 花上有蜜蜂。,
+    // until 25 October 2026: the hungry monkey's 我们有蜜蜂了！ uses it now; and 黄蜂, 花里有黄蜂！, until 26 October 2026: the
+    // butterfly's 花里有蜜蜂，也有黄蜂！ uses it now)
   },
 
   // Wild creatures you can fight, in battles (js/battle.js). Each: its word (taught on a card the first time you
@@ -1444,16 +1456,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: bees hiding in the tall flowers of their valley, only there (the flowers shake where one is hiding), six to make
     // friends with (many: decided 25 October 2026 by the game's owner, hidden like the wasps; they were each over their own
     // flower). counts: how many so far, in the area's progress; counted: what happens as each becomes your friend, you
-    // counting them aloud (the sixth: see events)
+    // counting them aloud (the sixth: see events). stays: each one you meet stays out, hovering where it came out, so you can
+    // see it's six different bees (decided 26 October 2026: the second said your friend wanted to play again, as if it were
+    // the first); one you don't win over waits there, with a !, till you play again (A); and once all six are your friends,
+    // they fly off to join the swarm. another: the hint before a new one's questions, after the first; again, before playing
+    // again with one that's waiting; lost, if you don't win it over.
     {id:'bee', word:'蜜蜂', hides:'flowerValley', home:'花', chapter:1, meetNote:'A bee buzzes out of the tall flowers! Answer its questions to make friends.',
       many:6, counts:'beeFriends', counted:[
-        [{say:'count1', by:'player'}, {message:'Your first {蜜蜂|bee} friend! Five more are hiding in the tall flowers.'}],
-        [{say:'count2', by:'player'}, {message:'Two {蜜蜂|bee} friends! Four more are hiding in the tall flowers.'}],
-        [{say:'count3', by:'player'}, {message:'Three {蜜蜂|bee} friends! Three more are hiding in the tall flowers.'}],
-        [{say:'count4', by:'player'}, {message:'Four {蜜蜂|bee} friends! Two more are hiding in the tall flowers.'}],
-        [{say:'count5', by:'player'}, {message:'Five {蜜蜂|bee} friends! Just one more is hiding in the tall flowers.'}],
+        [{say:'count1', by:'player'}, {message:'Your first {蜜蜂|bee} friend! It stays out over the flowers now. Five more bees to make friends with!'}],
+        [{say:'count2', by:'player'}, {message:'Two {蜜蜂|bee} friends! Four more to make friends with.'}],
+        [{say:'count3', by:'player'}, {message:'Three {蜜蜂|bee} friends! Three more to make friends with.'}],
+        [{say:'count4', by:'player'}, {message:'Four {蜜蜂|bee} friends! Two more to make friends with.'}],
+        [{say:'count5', by:'player'}, {message:'Five {蜜蜂|bee} friends! Just one more to make friends with.'}],
         [{say:'count6', by:'player'}]
-      ]}
+      ],
+      stays:{another:'Another {蜜蜂|bee}, a new one! Answer its questions to make friends with it too ({beeCount} of 6 so far).',
+        again:'This {蜜蜂|bee} still wants to play! Answer its questions to make friends ({beeCount} of 6 so far).',
+        lost:'The {蜜蜂|bee} hovers over the flowers: it still wants to play. Press A at it to try again.'}}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
   birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
@@ -1577,6 +1596,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveFruit: {zh:'我们 有 桃子 ， 也 有 苹果 ！', en:'We have peaches, and apples too!'},
     noHoney: {zh:'我们 没有 蜂蜜 ！', en:'We don’t have any honey!'},   // and hasn't (teaching 没有; 蜂蜜 just for listening, till the bees)
     wantHoney: {zh:'我 要 吃 蜂蜜 ！', en:'I want to eat honey!'},
+    beesInFlowers: {zh:'花 里 有 蜜蜂 ， 也 有 黄蜂 ！', en:'There are bees in the flowers, and wasps too!'},   // the butterfly, as you come into the bees' valley (蜜蜂 and 黄蜂 just for listening)
     findQueen: {zh:'去 找 蜂王 吧 ！', en:'Go and find the queen bee!'},   // the sixth bee you make friends with in their valley (蜂王 just for listening, till you meet her)
     queenAsk: {zh:'你 要 什么 ？', en:'What do you want?'},   // the queen bee, out of her old tree
     wantHoneyUs: {zh:'我们 要 蜂蜜 ！', en:'We want honey!'},   // you, to the queen bee (蜂蜜 just for listening, till the first honey)
@@ -1859,6 +1879,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'queenHere'}]}   // home, by the wildflowers
     ],
     beeSwarm: [{do:[{sound:'buzz'}, {message:'A swarm of bees, buzzing round their queen.'}]}],
+    guide: [{do:[{say:'beesInFlowers'}]}],   // (the butterfly at the bees' valley's way in, only there as it tells you about it)
     // the monkey by the cave's entrance: sleep in a bed to get your hearts back
     doorway: [
       {if:{new:'睡觉'}, do:[{say:'tired', teach:'睡觉'}, {newWord:'睡觉', note:'Sleep in a {床} and all your hearts come back.'}]},

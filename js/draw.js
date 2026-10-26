@@ -182,8 +182,8 @@ function drawFallingLeaves(cx, cy, now){
 function heart(X, Y){ [[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[2,3]].forEach(([a,c]) => R(b, X+a, Y+c, 1, 1, '#E0446A')); }
 // An animal at its own spot that you're meeting (it's drawn there, not as one jumping out): how far it hops up now. It hops
 // when it sees you; and if you make friends, it hops for joy, with a heart rising over it (at X, Y); if not, it stays put.
-function meetHop(a, X, Y, now){
-  if (!foe || foe.a !== a) return 0;
+function meetHop(a, X, Y, now, sq = a.at){   // (sq: its square, as there can be several of a kind out, such as bees)
+  if (!foe || foe.a !== a || (sq && (foe.x !== sq[0] || foe.y !== sq[1]))) return 0;
   const e = now - foe.t0;
   if (foe.state === 'in') return e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
   if (foe.state !== 'happy') return 0;
@@ -193,12 +193,37 @@ function meetHop(a, X, Y, now){
 }
 // An animal that flutters over its spot, such as the butterfly over the riverside's flowers: hovering, bobbing gently, its
 // wings beating (narrow every third moment, as they close), its shadow small on the ground below. Its smaller look, if it
-// has one (small, content/sprites.js), such as the butterfly's.
-function drawFlutter(a, X, Y, now){
-  const hover = 5 + Math.round(Math.sin(now / 420 + a.at[0]) * 2) + meetHop(a, X, Y, now), shut = Math.floor(now / 170) % 3 === 0;
+// has one (small, content/sprites.js), such as the butterfly's. (sq: its square, such as a character's that looks like it)
+function drawFlutter(a, X, Y, now, sq = a.at){
+  const hover = 5 + Math.round(Math.sin(now / 420 + sq[0]) * 2) + meetHop(a, X, Y, now, sq), shut = Math.floor(now / 170) % 3 === 0;
   const spr = a.small || a.spr, s = spr.width, x = X + (16 - s) / 2, y = Y + 16 - s - 2 - hover;
   R(b, X + 8 - s / 4, Y + 14, s / 2, 1, 'rgba(0,0,0,.16)');
   if (shut) b.drawImage(spr, 0, 0, s, s, x + s / 4, y, s / 2, s); else b.drawImage(spr, x, y);
+}
+// One of several of a kind out where it came out (stays), such as a bee over the flowers in their valley: hovering, bobbing,
+// looking your way, its wings a blur as they beat, its shadow on the ground below; hopping as you meet it, and for joy, with
+// a heart, as it becomes your friend (meetHop). Gives how high it hovers.
+function drawHover(a, x, y, X, Y, now){
+  const hover = 5 + Math.round(Math.sin(now / 300 + x * 1.7 + y) * 2) + meetHop(a, X, Y, now, [x, y]);
+  R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
+  b.drawImage(towardsYou(a, x), X, Y - hover);
+  if (Math.floor(now / 90 + x) % 2) R(b, X + 4, Y - hover + 3, 8, 1, 'rgba(255,255,255,.7)');   // the wings' blur
+  return hover;
+}
+// Those flying off together (the fly step, js/world.js), such as the six bees to join the swarm: each from where it was
+// to the square they're going to, one a little after another, in an arc, wobbling as bees do, and gone as it gets there.
+function drawFlyers(cx, cy, now){
+  if (!flyers) return;
+  const {a, from, to, t0} = flyers, each = FLY_MS - 120 * (from.length - 1);
+  from.forEach(([x, y], i) => {
+    const p = clamp((now - t0 - i * 120) / each, 0, 1);
+    if (p >= 1) return;
+    const X = Math.round((x + (to[0] - x) * p) * T - cx + Math.sin(now / 70 + i) * 1.5);
+    const Y = Math.round((y + (to[1] - y) * p) * T - cy - 6 - Math.sin(p * Math.PI) * 12);
+    b.globalAlpha = clamp((1 - p) / .25, 0, 1);   // (fading into the swarm)
+    b.drawImage(a.faces && (a.faces === 'left') !== (to[0] < x) ? mirrored(a.spr) : a.spr, X, Y);   // (facing the way it flies)
+    b.globalAlpha = 1;
+  });
 }
 // A swarm of bees, buzzing round where it hangs in the way (a square that looks like a swarm, such as across the way to the
 // queen's old tree in the bees' valley): tiny bees looping about it, each its own way. And a few about the bees' hive at the
@@ -232,6 +257,8 @@ function drawEnergy(X, Y, now, moving, dir){
 // bobbing, its wings a blur as they beat, its shadow small on the ground below; or, for a swarm, a cloud of tiny bees.
 // Long grass and tall flowers never hide it, as it's above them. (k: so two side by side bob each their own way)
 function drawFlying(n, X, Y, now, k){
+  const like = animalOf(n.id);
+  if (like && like.flutters && like.hz === n.look){ drawFlutter(like, X, Y, now, [n.x, n.y]); return; }   // (one that looks like a butterfly flutters, as the butterfly does)
   const hover = 6 + Math.round(Math.sin(now / 300 + k) * 2);
   R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
   if (n.look === 'swarm'){ drawSwarm(X, Y - hover + 4, now, k); return; }
@@ -442,6 +469,16 @@ function drawWorld(now){
     const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y, now);
     R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
   }
+  // several of a kind out where each came out (stays), such as the bees over the flowers in their valley, each hovering,
+  // looking your way, and one that still wants to play (not your friend yet) with a ! over it; and those flying off
+  const bubbles = [];
+  for (const o of outHere()){
+    const X = o.x*T - cx, Y = o.y*T - cy;
+    if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    const hover = drawHover(o.a, o.x, o.y, X, Y, now);
+    if (!o.friend && !(foe && foe.x === o.x && foe.y === o.y)) bubbles.push([X + 10, Y - 8 - hover, '!']);
+  }
+  drawFlyers(cx, cy, now);
   // tall grass rustling where an animal hides; tall flowers shaking, their blossoms tossing, with little lines either side
   if (rustle && canWild() && Math.floor(now / 160) % 6 < 3){
     const X = rustle.x*T - cx, Y = rustle.y*T - cy;
@@ -454,7 +491,6 @@ function drawWorld(now){
   }
   drawBirds(cx, cy, now);
   // entities sorted by row (their ! and ? bubbles wait until after the over-layer)
-  const bubbles = [];
   const ents = [...NPCS, ...FOLLOWERS].map(n => { const c = charPos(n, now); return {n, c, y:c.ground}; })   // (on your square, they're behind you)
     .concat([{p:true, y:pl.py}]).concat(foe ? [{f:true, y:foe.y*T}] : []).sort((a,c) => a.y - c.y);
   for (const e of ents){
@@ -629,7 +665,7 @@ function drawBirds(cx, cy, now){
     const spots = [];
     for (let y = Math.floor(cy/T); y < Math.floor(cy/T) + VH; y++) for (let x = Math.floor(cx/T); x < Math.floor(cx/T) + VW; x++){
       const t = tileAt(x, y);
-      if (t.look === 'grass' && !npcAt(x, y) && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3) spots.push([x, y]);
+      if (t.look === 'grass' && !npcAt(x, y) && !animalAt(x, y) && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3) spots.push([x, y]);   // (never under an animal, such as a bee out over the grass)
     }
     if (spots.length){ const [x, y] = spots[Math.floor(Math.random() * spots.length)]; birds.push({tx:x, ty:y, x:x*T + 4, y:y*T + 6, t0:now, until:now + 40000 + Math.random() * 30000, from:Math.random() < .5 ? -1 : 1}); }
   }

@@ -93,7 +93,7 @@ function asleepSprite(){
 // fox on the hillside), each in a chapter of the story (0 if not given). place: where it's counted (its spot's, the one it
 // hides in, or else the first place's). spr: how they look on the map (content/sprites.js, a square's size); pic: their
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
-const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [],
+const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
   small:MAP_SPRITES[a.word].small ? sprite(MAP_SPRITES[a.word].small, MAP_SPRITES[a.word].palette) : null}));   // (smaller, fluttering on the map: the butterfly)
 // An animal (or a wild creature: spr, its map sprite, and faces, which way it looks) turned to face you, from where it is
@@ -106,7 +106,14 @@ function mirrored(spr){
 }
 const towardsYou = (a, x, away = false) => { const want = pl.x < x ? 'left' : pl.x > x ? 'right' : null; return want && a.faces && (a.faces !== want) !== away ? mirrored(a.spr) : a.spr; };
 const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
-const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && a.at[0] === x && a.at[1] === y) : null;   // an animal living at this spot, once animals appear
+// One of several of a kind (many) that stays out once you've met it (stays), such as each bee in their valley, hovering where
+// it came out: the area's progress keeps where (out: by the animal's id, each [x, y, 1 once it's your friend, else 0]).
+// Those out in the place you're in, once animals appear: {a, x, y, friend}.
+const outOf = a => (here().out || {})[a.id] || [];
+const outHere = () => canWild() ? ANIMALS.filter(a => a.stays && a.place === PLACE).flatMap(a => outOf(a).map(([x, y, f]) => ({a, x, y, friend:!!f}))) : [];
+const outAt = (x, y) => outHere().find(o => o.x === x && o.y === y);
+// An animal living at this spot, or out there, once animals appear (you can't walk through it).
+const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && a.at[0] === x && a.at[1] === y) || (outAt(x, y) || {}).a || null : null;
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; else if (WORD_BANK[c.look]) FRIEND_NAMES[c.id] = c.look; });   // (one that looks like a creature with a word: by its word, such as 蜂王)

@@ -215,7 +215,9 @@ function matches(cond){   // does the game match everything in an if?
 }
 const CALL_MS = 900;   // how long a character's ! shows before they talk to you, when they stop you (the stopsYou step)
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], card:['note'], give:['note'], battle:['win'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
+const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
+let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -555,6 +557,15 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // A character leaps (or flies, for one that flies) out of a square to where the story has just put them (from), such as
   // the queen bee out of her old tree; or from where they are into a square (to), such as back into it, before the story
   // takes them off the map.
+  // Those of a kind that stay out once met (the animal's id: fly), such as the six bees once they're all your friends, fly
+  // off together to a square (to), such as to join the swarm by the queen's old tree, and are out no more.
+  async fly(s){
+    const a = ANIMALS.find(x => x.id === s.fly), from = outOf(a).map(([x, y]) => [x, y]);
+    delete here().out[s.fly]; save();
+    if (a.place !== PLACE || !from.length) return;
+    flyers = {a, from, to:s.to, t0:performance.now()}; SFX.buzz();
+    await sleep(FLY_MS); flyers = null;
+  },
   async leap(s){
     const n = ALL_NPCS.find(c => c.id === s.leap);
     if (!n || n.place !== PLACE) return;
@@ -650,7 +661,7 @@ async function runSteps(steps, who, ends){
   for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i), !!ends) === STOP) return STOP;
 }
 // Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map.
-const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap'];
+const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly'];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){
@@ -1007,11 +1018,14 @@ function showPlaceName(){
   el.hidden = false; clearTimeout(placeNameT); placeNameT = setTimeout(() => { el.hidden = true; }, 2600);
 }
 // A grass animal hides in tall grass at least 3 steps from you: one that lives in one place, hides, only there; and where
-// the grass says which hide in it (animals: their ids), only those, such as the bees in their valley's tall flowers.
+// the grass says which hide in it (animals: their ids), only those, such as the bees in their valley's tall flowers. Not
+// one of several of a kind whose rest are all out already, waiting for you to play again (such as a bee you didn't win
+// over: no more hide till you have), nor where one is out.
+const allOut = a => { const n = here()[a.counts] || 0; return !!a.stays && n < a.many && n + outOf(a).filter(o => !o[2]).length >= a.many; };
 function hideAnimal(){
-  const hiding = GRASS_ANIMALS.filter(a => !a.hides || a.hides === PLACE);
+  const hiding = GRASS_ANIMALS.filter(a => (!a.hides || a.hides === PLACE) && !allOut(a));
   if (rustle || !canWild() || !hiding.length || stepsSince < HIDE_AFTER) return;
-  const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3);
+  const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3 && !animalAt(x, y));
   if (!far.length) return;
   const [x, y] = far[Math.floor(Math.random() * far.length)], only = tileAt(x, y).animals;
   const pool = Array.isArray(only) ? hiding.filter(a => only.includes(a.id)) : hiding;
@@ -1044,10 +1058,12 @@ function pickAnimal(animals = ANIMALS){
   const pool = unmet.length && Math.random() < .75 ? unmet : soon.length && Math.random() < .75 ? soon : animals;
   return pool[Math.floor(Math.random() * pool.length)];
 }
-// Meeting an animal: it jumps out next to you (from the grass), or at its own spot (spot).
+// Meeting an animal: it jumps out next to you (from the grass), or at its own spot (spot), or where it's out already (one
+// of several of a kind that stays out once met, such as a bee you didn't win over the first time).
 async function wildAppears(a, spot = findSpot()){
   pl.dir = spot.d;
-  foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in', spot:!!a.at};   // (spot: one at its own spot stays there)
+  const was = outAt(spot.x, spot.y);
+  foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in', spot:!!a.at || !!was};   // (spot: one at its own spot, or out, stays there)
   alertUntil = performance.now() + 1000;
   SFX.encounter();
   await sleep(1100);
@@ -1056,15 +1072,44 @@ async function wildAppears(a, spot = findSpot()){
   const justTaught = lvl(a.hz) === 0, play = AREA.animalsPlay;
   if (justTaught) await showNotice(a.hz, {note:a.meetNote ? fill(a.meetNote) : `A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
   else { say(a.hz); await sleep(900); }
-  if (play) await showDialog(speaker(a.id), L[play.say], {ok:'Play', hint:justTaught ? '' : fill(S.friends.includes(a.id) ? play.friendHint : play.hint)});   // it says it wants to play, so its questions never just start
+  // one of several of its kind to make friends with, such as the bees in their valley (many: how many; counts: what the area
+  // remembers, how many so far): this one is one more, unless it's a friend already (one out, that you've won over). With
+  // stays, it stays out where it is (if that never shuts a way), so you can tell it from the next: another, the hint before
+  // a new one's questions, after the first; again, before playing again with one you didn't win over; lost, if you don't.
+  const more = a.many && (here()[a.counts] || 0) < a.many && !(was && was.friend), another = more && S.friends.includes(a.id);
+  const stay = !!a.stays && more && (!!was || keepsClear(spot.x, spot.y));
+  const hint = justTaught ? '' : was && more ? a.stays.again : another && a.stays ? a.stays.another : S.friends.includes(a.id) ? play && play.friendHint : play && play.hint;
+  if (play) await showDialog(speaker(a.id), L[play.say], {ok:'Play', hint:hint ? fill(hint) : ''});   // it says it wants to play, so its questions never just start
   const all = chapterAnimals(a.chapter, a.place).length;   // (counted with its chapter's animals in the same place: one on its own, such as the deer, needs no count)
   if (firstMeet && all > 1) toast(`Animals found: ${metCount(a.chapter, a.place)}/${all}`);
-  // one of several of its kind to make friends with, such as the bees in their valley (many: how many; counts: what the area
-  // remembers, how many so far)
-  const more = a.many && (here()[a.counts] || 0) < a.many;
-  const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home, another:more && S.friends.includes(a.id)});
+  const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home, another, ...(stay ? {lose:a.stays.lost} : {})});
+  if (stay){ stayOut(a, spot.x, spot.y, won); foe.spot = true; }   // (drawn where it stays, from now on)
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
   await sleep(won ? 1000 : 650);
   foe = null;
   if (won && more){ const n = here()[a.counts] = (here()[a.counts] || 0) + 1; save(); await runSteps(a.counted[n - 1] || []); }   // counted aloud, one more friend
+}
+// One of several of a kind stays out at (x, y) (stays), a friend now if you won it over (won).
+function stayOut(a, x, y, won){
+  const list = here().out[a.id] = here().out[a.id] || [], o = list.find(([ox, oy]) => ox === x && oy === y);
+  if (o) o[2] = o[2] || (won ? 1 : 0); else list.push([x, y, won ? 1 : 0]);
+  save();
+}
+// Whether something can stay at (x, y), such as a bee out over the flowers, and leave every square you can walk to now
+// still in reach: it never shuts a way.
+function keepsClear(x, y){
+  if (!walkable(x, y) || exitAt(x, y)) return false;
+  const reach = shut => {
+    const seen = new Set([pl.x + ',' + pl.y]), todo = [[pl.x, pl.y]];
+    while (todo.length){
+      const [a, c] = todo.pop();
+      for (const [dx, dy] of Object.values(DV)){
+        const nx = a + dx, ny = c + dy, k = nx + ',' + ny;
+        if (seen.has(k) || (shut && nx === x && ny === y) || !walkable(nx, ny)) continue;
+        seen.add(k); todo.push([nx, ny]);
+      }
+    }
+    return seen.size;
+  };
+  return reach(true) === reach(false) - 1;
 }

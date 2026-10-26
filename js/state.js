@@ -8,7 +8,7 @@ function areaStart(){   // a new game's progress in the area: the area's own lis
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
   for (const r of REQUESTS) p[r.id] = 'not asked';   // nothing hidden found yet (finds: the ids of AREA.hidden you've found),
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], changed:{}, finds:{}, kept:{}, done:false,   // and no one keeping food for you (kept: who has what, the bag step),
-    hide:{spot:null, wrong:0, won:0, last:null}});   // and no one hiding (hide and seek, js/hide.js)
+    hide:{spot:null, wrong:0, won:0, last:null}, out:{}});   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js)
 }
 function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
 
@@ -190,6 +190,7 @@ function upgradeSave(s){
   s.areas[AREA.number].changed = Object.assign({}, s.areas[AREA.number].changed);
   s.areas[AREA.number].finds = Object.assign({}, s.areas[AREA.number].finds);
   s.areas[AREA.number].kept = Object.assign({}, s.areas[AREA.number].kept);
+  s.areas[AREA.number].out = Object.assign({}, s.areas[AREA.number].out);
   s.areas[AREA.number].hide = Object.assign({spot:null, wrong:0, won:0, last:null}, s.areas[AREA.number].hide);
   if (!Array.isArray(s.met)) s.met = [];
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};

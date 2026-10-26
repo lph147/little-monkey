@@ -80,6 +80,7 @@ shown where the word list has them.
 | 我们有桃子，也有苹果！ | wǒmen yǒu táozi, yě yǒu píngguǒ! | We have peaches, and apples too! | 饿猴子 (Hungry monkey) |  |
 | 我们没有蜂蜜！ | wǒmen méiyǒu fēngmì! | We don’t have any honey! | 饿猴子 (Hungry monkey) |  |
 | 我要吃蜂蜜！ | wǒ yào chī fēngmì! | I want to eat honey! | 饿猴子 (Hungry monkey) |  |
+| 花里有蜜蜂，也有黄蜂！ | huā lǐ yǒu mìfēng, yě yǒu huángfēng! | There are bees in the flowers, and wasps too! | 蝴蝶 (butterfly) |  |
 | 去找蜂王吧！ | qù zhǎo fēngwáng ba! | Go and find the queen bee! |  |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 蜂王 (queen bee) |  |
 | 我们要蜂蜜！ | wǒmen yào fēngmì! | We want honey! | 小猴子 (You) |  |
@@ -206,7 +207,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 草里有狼。 | cǎo lǐ yǒu láng. | There is a wolf in the grass. | 狼 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
-| 花里有黄蜂！ | huā lǐ yǒu huángfēng! | There are wasps in the flowers! | 黄蜂 |  |
 
 ### Questions after the story
 
@@ -631,7 +631,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | New on 25 October 2026 (in the game), the way to the bees: The example on 蝴蝶 (húdié, butterfly)’s page in the Word Scroll: a butterfly flutters over the wildflowers on the riverside |  |
 | 百花谷 | Bǎi huā gǔ | Valley of a Hundred Flowers | New on 25 October 2026 (in the game), the way to the bees: The name of the bees’ valley, at the end of the riverside (in the game since v266: please check the name) |  |
 | 去找蜂王吧！ | qù zhǎo fēngwáng ba! | Go and find the queen bee! | New on 25 October 2026 (in the game), the way to the bees: The sixth bee you make friends with in their valley (蜂王 fēngwáng, the queen bee, just for listening till you meet her: is 蜂王 right for a queen bee?). As each bee becomes your friend, you count them aloud: 一！, 一，二！ … up to 一，二，三，四，五，六！ (the counting lines the old monkey and the teacher say too) |  |
-| 花里有黄蜂！ | huā lǐ yǒu huángfēng! | There are wasps in the flowers! | New on 25 October 2026 (in the game), the way to the bees: The example on 黄蜂 (huángfēng, wasp)’s page in the Word Scroll: wasps jump out of the valley’s tall flowers to fight. How it’s made: 黄 (yellow, as in 黄色) + 蜂 (bee) = 黄蜂 (wasp) |  |
+| 花里有蜜蜂，也有黄蜂！ | huā lǐ yǒu mìfēng, yě yǒu huángfēng! | There are bees in the flowers, and wasps too! | New on 26 October 2026 (in the game), the bees’ valley: the butterfly from the riverside’s wildflowers, fluttering in after you the first time you come into the valley, to tell you who lives in its tall flowers (蜜蜂 mìfēng, bee, and 黄蜂 huángfēng, wasp, just for listening till you meet them). It replaces 花里有黄蜂！, the example on 黄蜂’s page. Would 花丛里 (in the flowers) be more natural than 花里? |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | New on 25 October 2026 (in the game), the queen bee: The queen bee (蜂王 fēngwáng, taught on her card as she comes out of her old hollow tree; how it’s made: 蜂 bee + 王 king = 蜂王 queen bee: is that true to say?) |  |
 | 我们要蜂蜜！ | wǒmen yào fēngmì! | We want honey! | New on 25 October 2026 (in the game), the queen bee: You, answering the queen bee (蜂蜜 fēngmì, honey, just for listening till the first honey). Then you play her word game to win her over |  |
 | 好！我们去你家吧！ | hǎo! wǒmen qù nǐ jiā ba! | OK! Let’s go to your home! | New on 25 October 2026 (in the game), the queen bee: The queen bee, won over: she and her swarm follow you home to the troop |  |
