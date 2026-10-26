@@ -630,6 +630,31 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(Rc(2.6, 11, 7.4, 4.6, 2.2), '#F2A7A8', {light: '#F8C7C7', dark: '#D8858A', edge: true});   // muzzle
     p.dot(4, 13, '#9A4C50'); p.dot(7, 13, '#9A4C50');                                         // nostrils
     p.eye(6, 7);
+  },
+  '牛奶': p => {   // milk: a tall glass of it, full to the brim, a drop running down the side (unlike yoghurt: thick, in a jar, with a spoon; unlike 喝: a drink with a straw)
+    const MILK = '#FBFAF4';
+    p.fill(Pg([[8.5, 5], [23.5, 5], [22, 29], [10, 29]]), '#BFDCEC', {light: '#E6F3FA', dark: '#8EB4C9', edge: true});   // the glass
+    p.fill(Pg([[9.8, 8], [22.2, 8], [21, 27.4], [11, 27.4]]), MILK, {light: '#FFFFFF', dark: '#E2DED2'});               // the milk in it
+    p.flat(O(16, 8, 6.2, 1.2), '#FFFFFF');                                                    // its top
+    p.fill(or(Rc(19.5, 6, 2.4, 6, 1.2), O(20.7, 12.6, 1.4, 1.6)), MILK, {dark: '#E2DED2'});  // a drop over the brim
+    p.flat(or(Rc(11.5, 10, 1.4, 14), Rc(13.3, 12, .9, 6)), '#FFFFFF');                       // shine on the glass
+    p.fill(O(25.5, 28.8, 2.6, 1), MILK, {dark: '#E2DED2'});                                   // a little puddle
+  },
+  '酸奶': p => {   // yoghurt: a green-glazed jar of it, thick white yoghurt heaped at its top and a wooden spoon in it (unlike the bowl: white with a blue band; unlike honey: a brown pot, dripping gold)
+    p.fill(or(O(16, 21, 10, 8.4), Rc(10, 12, 12, 6, 2)), '#8FC4A6', {light: '#B8E0C8', dark: '#5E9478'});   // the jar
+    p.flat(and(O(16, 21, 10, 8.4), Rc(0, 19, 32, 1)), '#6FAA8A');                            // a line round it
+    p.flat(path([[10.5, 18], [11.8, 24]], .5), '#C6EAD4');                                   // a shine
+    p.fill(Rc(8.6, 9.5, 14.8, 3.4, 1.6), '#7DB696', {light: '#B8E0C8', dark: '#4E8468', edge: true});   // its lip
+    p.fill(or(O(16, 9.4, 6.4, 2.4), O(14.4, 7.6, 3.2, 2), O(17.6, 6.6, 2.2, 1.6)), '#FFFFFF', {dark: '#E4E0D4'});   // thick yoghurt, heaped up
+    p.fill(path([[19, 8], [25.8, 1.4]], 1.1), '#B9884E', {light: '#D9AE72', dark: '#86602F', edge: true});   // the spoon's handle
+  },
+  '奶酪': p => {   // cheese: a big yellow wedge of it with holes
+    const LT = {light: '#FFE58A', dark: '#C9952A'};
+    p.fill(Pg([[3, 19], [24, 8], [29, 13], [29, 26], [3, 26]]), '#F4C542', {...LT, edge: true});   // the wedge: its top
+    p.fill(Pg([[3, 19], [29, 13], [29, 26], [3, 26]]), '#EDB534', {...LT, edge: true});      // its front, cut
+    p.flat(Pg([[24, 8], [29, 13], [29, 14], [23.5, 9]]), '#D8A238');                          // the rind's edge
+    for (const [x, y, r] of [[9, 21.5, 1.8], [15.5, 19, 1.4], [21, 22.5, 2.2], [26, 18.4, 1.3], [13, 24.4, 1.1], [25.2, 24.6, 1]]) p.fill(O(x, y, r), '#C99328', {light: '#B07E1E'});   // holes
+    for (const [x, y, r] of [[17, 14.4, 1.2], [22, 12.2, 1]]) p.fill(O(x, y, r * 1.3, r * .7), '#D8A238');
   }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops

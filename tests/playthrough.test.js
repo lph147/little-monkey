@@ -1,5 +1,5 @@
 // Plays Flower Fruit Mountain from a new game to the end of what's built (chapter 1: the school, its lessons and its flowers,
-// the bees, home with their queen, and the lost cow, brought home from the pasture), the way a
+// the bees, home with their queen, and the lost cow, brought home from the pasture to its own pen), the way a
 // player would: standing in front of things and pressing A, stepping into flowers and rustling grass,
 // pressing A through what characters say, and answering every card. It catches a change that makes the area impossible to finish, such as a
 // task that never appears, a card that can't be closed or a door that never opens.
@@ -548,6 +548,19 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual([run('PLACE'), get('S.following')], ['homeGround', ['cow']]);
   await walk([[16, 20], [16, 10], [19, 10]], 'leading the cow to the thirsty monkey, by the road');
   assert.deepEqual([area().cow, get('S.following'), get("[ALL_NPCS.find(n => n.id === 'cow')].map(n => [n.place, n.x, n.y])[0]")], [5, [], ['homeGround', 22, 11]], 'home: it stays by the thirsty monkey');
+  // Its own home (version 3): the thirsty monkey's ! (the troop is ready), and the troop builds the cow a pen by the road
+  // as you watch; it follows you in through the gate: 这是你的家！ It thanks you (谢谢你！, and you reply 不客气), and gives
+  // you some of its milk (牛奶), which the thirsty monkey wants to drink: 我要喝牛奶！ Give it him (the gap in 我要喝牛奶),
+  // and the rest is for the feast, on a new table beside the first, set up as you come up to it: 我们有牛奶了！
+  await pressAt(21, 10, 'down', 'the troop building the cow a pen, by the road');
+  assert.deepEqual([area().cow, get('S.following'), run('tileAt(23, 11).look')], [7, ['cow'], 'pen'], 'built, and the cow follows you');
+  await walk([[21, 10], [24, 10], [24, 12]], 'leading the cow in through the gate of its new home');
+  assert.deepEqual([area().cow, get('S.following'), area().milk], [8, [], 'asked'], 'home, in its pen; and its milk, for the thirsty monkey');
+  assert.ok(knows('牛奶') && ['这是你的家！', '谢谢你！', '我要喝牛奶！'].every(t => get('__said').includes(t)), 'this is your home!');
+  await walk([[24, 12], [24, 10], [21, 10]], 'out through the gate, back to the thirsty monkey');
+  await pressAt(21, 10, 'down', 'giving the thirsty monkey the milk');
+  assert.deepEqual([area().milk, area().cow, area().milkTable], ['done', 9, 1], 'he drinks some, and the rest is on the feast’s new table');
+  assert.ok(get('__said').includes('我们有牛奶了！'));
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this

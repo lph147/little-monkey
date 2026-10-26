@@ -92,6 +92,11 @@ shown where the word list has them.
 | 我们有蜂蜜了！ | wǒmen yǒu fēngmì le! | We have honey now! | 饿猴子 (Hungry monkey) |  |
 | 山上有牛！ | shān shàng yǒu niú! | There’s a cow on the mountain! | 渴猴子 (Thirsty monkey) |  |
 | 我怕狼！ | wǒ pà láng! | I’m scared of wolves! | 牛 (cow) |  |
+| 这是你的家！ | zhè shì nǐ de jiā! | This is your home! |  |  |
+| 我有家了！ | wǒ yǒu jiā le! | I have a home now! | 牛 (cow) |  |
+| 我要喝牛奶！ | wǒ yào hē niúnǎi! | I want to drink milk! | 渴猴子 (Thirsty monkey) |  |
+| 牛奶！太好了！ | niúnǎi! tài hǎo le! | Milk! Wonderful! | 渴猴子 (Thirsty monkey) |  |
+| 我们有牛奶了！ | wǒmen yǒu niúnǎi le! | We have milk now! |  |  |
 | 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
 | 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | you |  |
 | 我来了！ | wǒ lái le! | Here I come! | you |  |
@@ -145,6 +150,7 @@ shown where the word list has them.
 | 我们要木头 | wǒmen yào mùtou | We want wood. | 大猴子 (Big monkey) |  |
 | 我们要小石头 | wǒmen yào xiǎo shítou | We want small stones. | 大猴子 (Big monkey) |  |
 | 我要吃蜂蜜 | wǒ yào chī fēngmì | I want to eat honey. | 饿猴子 (Hungry monkey) |  |
+| 我要喝牛奶 | wǒ yào hē niúnǎi | I want to drink milk. | 渴猴子 (Thirsty monkey) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
@@ -175,6 +181,7 @@ What A at the feast's big table shows: what the troop has, and what it still nee
 | 我们有苹果。 | wǒmen yǒu píngguǒ. | We have apples. |  |
 | 我们有蜂蜜。 | wǒmen yǒu fēngmì. | We have honey. |  |
 | 我们没有蜂蜜。 | wǒmen méiyǒu fēngmì. | We don’t have any honey. |  |
+| 我们有牛奶。 | wǒmen yǒu niúnǎi. | We have milk. |  |
 
 ### The sign
 
@@ -208,6 +215,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
 | 山上有路。 | shān shàng yǒu lù. | There is a path up the mountain. | 路 |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | 蜘蛛 |  |
+| 酸奶是白色的。 | suānnǎi shì báisè de. | Yoghurt is white. | 酸奶 |  |
+| 奶酪是黄色的。 | nǎilào shì huángsè de. | Cheese is yellow. | 奶酪 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
@@ -379,6 +388,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 有 | yǒu | to have, there is |  |
 | 没有 | méiyǒu | don’t have, there isn’t |  |
 | 蜂蜜 | fēngmì | honey |  |
+| 牛奶 | niúnǎi | milk |  |
+| 酸奶 | suānnǎi | yoghurt |  |
+| 奶酪 | nǎilào | cheese |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -417,9 +429,12 @@ simply put. A part's pinyin is as it's said in the word.
 | 黄蜂 | huángfēng | 黄 huáng (yellow) + 蜂 fēng (bee) = 黄蜂 (wasp) |  |
 | 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = 同学 (classmate) |  |
 | 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = 没有 (don’t have) |  |
+| 牛奶 | niúnǎi | 牛 niú (cow) + 奶 nǎi (milk) = 牛奶 (milk) |  |
+| 酸奶 | suānnǎi | 酸 suān (sour) + 奶 nǎi (milk) = 酸奶 (yoghurt) |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = 你好 (hello) |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = 我不要 (no thanks) |  |
 | 苹果 | píngguǒ | 果 guǒ (fruit), as in 水果: an apple is a fruit |  |
+| 奶酪 | nǎilào | 奶 nǎi (milk), as in 牛奶: cheese is made from milk |  |
 | 花果山 | Huāguǒ Shān | 花 huā (flower) + 果 guǒ (fruit) + 山 shān (mountain) = a mountain of flowers and fruit (your home’s name, on the sign by your stone, once you know its parts) |  |
 
 ### Tips about Chinese
@@ -653,6 +668,14 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 牧场 | mù chǎng | The pasture | New on 26 October 2026 (in the game), the lost cow: The name of the new place south of the home ground, past the bridge: a way down through pines, then a sunny, open pasture with a spring, where a cow is lost (shown and said as you arrive: is 牧场 right for a wild mountain pasture with no farmer, or would 草地 or another name be better?) |  |
 | 山上有牛！ | shān shàng yǒu niú! | There’s a cow on the mountain! | New on 26 October 2026 (in the game), the lost cow: The thirsty monkey’s news (牛 niú, cow, just for listening till you find it). It’s one cow, lost and alone: would 山上有一头牛！ be more natural? (头 isn’t a word in the game yet) |  |
 | 我怕狼！ | wǒ pà láng! | I’m scared of wolves! | New on 26 October 2026 (in the game), the lost cow: The cow, as you find it by its spring in the pasture (牛 taught on its card as you meet it, and said straight away) |  |
+| 这是你的家！ | zhè shì nǐ de jiā! | This is your home! | New on 26 October 2026 (in the game), the cow’s new home: You, to the cow, as you lead it into the pen the troop has built it, by the road |  |
+| 我有家了！ | wǒ yǒu jiā le! | I have a home now! | New on 26 October 2026 (in the game), the cow’s new home: The cow, in its pen, whenever you talk to it after that |  |
+| 我要喝牛奶！ | wǒ yào hē niúnǎi! | I want to drink milk! | New on 26 October 2026 (in the game), the cow’s new home: The thirsty monkey, as the cow gives you some of its milk (牛奶 niúnǎi), its thank-you; and the sentence you finish as you give it to him: 我要喝牛奶 |  |
+| 牛奶！太好了！ | niúnǎi! tài hǎo le! | Milk! Wonderful! | New on 26 October 2026 (in the game), the cow’s new home: The thirsty monkey, when you bring him the milk (as 水！太好了！ for water) |  |
+| 我们有牛奶了！ | wǒmen yǒu niúnǎi le! | We have milk now! | New on 26 October 2026 (in the game), the cow’s new home: The hungry monkey, as the troop sets up a second table for the feast, with the milk on it |  |
+| 我们有牛奶。 | wǒmen yǒu niúnǎi. | We have milk. | New on 26 October 2026 (in the game), the cow’s new home: The feast’s list, at its tables |  |
+| 酸奶是白色的。 | suānnǎi shì báisè de. | Yoghurt is white. | New on 26 October 2026 (in the game), the cow’s new home: The example on 酸奶 (suānnǎi, yoghurt)’s page in the Word Scroll (yoghurt comes next, made from the milk) |  |
+| 奶酪是黄色的。 | nǎilào shì huángsè de. | Cheese is yellow. | New on 26 October 2026 (in the game), the cow’s new home: The example on 奶酪 (nǎilào, cheese)’s page (and then cheese) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

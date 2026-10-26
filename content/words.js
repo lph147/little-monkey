@@ -115,6 +115,9 @@ const WORD_BANK = {
   '有': {py:'yǒu', en:'to have, there is', area:1, category:'actions'},   // (the old monkey's news, chapter 1: heard till then, as in 里面有床; no picture, as 要 has none)
   '没有': {py:'méiyǒu', en:'don’t have, there isn’t', area:1, category:'actions'},   // (the hungry monkey at the feast's table: no honey; no picture either)
   '蜂蜜': {py:'fēngmì', en:'honey', pic:'🍯', area:1, category:'food'},   // (heard at the feast's table; taught as you take the first honey from the bees' hive)
+  '牛奶': {py:'niúnǎi', en:'milk', pic:'🥛', area:1, category:'food', alike:['喝']},   // (the cow's thank-you for its new home; both pictures are a glass of something to drink)
+  '酸奶': {py:'suānnǎi', en:'yoghurt', pic:'🫙', area:1, category:'food', alike:['蜂蜜'], later:true},   // (made from the milk at the little dairy by the cow's pen; both pictures are a pot with a wooden spoon in it)
+  '奶酪': {py:'nǎilào', en:'cheese', pic:'🧀', area:1, category:'food', later:true},   // (and then cheese)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
@@ -243,9 +246,12 @@ const MADE = {
   '黄蜂': {parts:[['黄', 'huáng', 'yellow', '黄色'], ['蜂', 'fēng', 'bee']]},
   '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']]},
   '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']]},
+  '牛奶': {parts:[['牛', 'niú', 'cow'], ['奶', 'nǎi', 'milk']]},
+  '酸奶': {parts:[['酸', 'suān', 'sour'], ['奶', 'nǎi', 'milk']]},
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},
   // the same character as in another word
-  '苹果': {same:['果', 'guǒ', 'fruit'], as:'水果', why:'an apple is a fruit'}
+  '苹果': {same:['果', 'guǒ', 'fruit'], as:'水果', why:'an apple is a fruit'},
+  '奶酪': {same:['奶', 'nǎi', 'milk'], as:'牛奶', why:'cheese is made from milk'}
 };

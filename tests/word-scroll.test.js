@@ -52,8 +52,8 @@ test('a word for later (later, in the word bank) isn’t counted or in the Word 
   assert.equal(before.run("ORDER.includes('蜂蜜')"), true, 'a game that has caught it keeps it');
   assert.equal(before.run('ORDER.length'), n + 1);
   assert.match(before.run('statsHTML()'), new RegExp(`2/${n + 1} words`));
-  assert.equal(loadGame({save: {version: 30, started: true, w: caught}}).run("Object.keys(WORDS).filter(w => WORDS[w].later).length"), 0,
-    'every word counts now: the bees’ words, 蜜蜂, 蜂王 and 蜂蜜, were words for later till the bees came (25 October 2026)');
+  assert.deepEqual(JSON.parse(loadGame({save: {version: 30, started: true, w: caught}}).run("JSON.stringify(Object.keys(WORDS).filter(w => WORDS[w].later))")), ['酸奶', '奶酪'],
+    'every word counts now but the little dairy’s, yoghurt and cheese, made from the cow’s milk (to come); the bees’ words, 蜜蜂, 蜂王 and 蜂蜜, were words for later till the bees came (25 October 2026)');
 });
 
 test('a caught word without a picture shows its characters in the grid', () => {

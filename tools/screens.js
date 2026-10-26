@@ -209,6 +209,15 @@ SAVES.cowFollow = {...SAVES.cowFound, friends: [...SAVES.cowFound.friends, 'cow'
 SAVES.cowGap = {...SAVES.cowFollow, w: {...SAVES.cowFollow.w, ...knows(1, ['狼'])}, pos: {place: 'pasture', x: 21, y: 15, dir: 'up'}};   // just below the gap between the rocks (knowing 狼, from the pine wood)
 SAVES.cowRan = {...SAVES.cowFollow, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};   // resting under the big tree, after a lost battle
 SAVES.cowHome = {...SAVES.cowFollow, areas: {1: {...SAVES.cowFollow.areas[1], cowWolf: 1}}, pos: {place: 'homeGround', x: 18, y: 10, dir: 'right'}};   // on the road, nearly at the thirsty monkey
+// version 3: its safe home, built by the road as you watch (the thirsty monkey's ! starts it); leading it in through its
+// gate (这是你的家！); its thank-you, milk (牛奶), for the thirsty monkey; the feast's new table, with the milk on it; and
+// the cow at home (我有家了！)
+SAVES.cowBuild = {...SAVES.cowHome, following: [], areas: {1: {...SAVES.cowHome.areas[1], cow: 5}}, tasksSeen: {...SAVES.cowHome.tasksSeen, cow5: 1}, pos: {place: 'homeGround', x: 21, y: 10, dir: 'down'}};   // facing the thirsty monkey, from the road
+SAVES.penBuilt = {...SAVES.cowBuild, following: ['cow'], areas: {1: {...SAVES.cowBuild.areas[1], cow: 7}}, tasksSeen: {...SAVES.cowBuild.tasksSeen, cow7: 1}, pos: {place: 'homeGround', x: 24, y: 10, dir: 'down'}};   // on the road at its gate, the cow behind you
+SAVES.cowInPen = {...SAVES.penBuilt, following: [], w: {...SAVES.penBuilt.w, ...knows(1, ['牛奶'])}, areas: {1: {...SAVES.penBuilt.areas[1], cow: 8, milk: 'asked', holding: {milk: '牛奶'}}},
+  tasksSeen: {...SAVES.penBuilt.tasksSeen, milk: 1}, pos: {place: 'homeGround', x: 21, y: 10, dir: 'down'}};   // with its milk, facing the thirsty monkey
+SAVES.milkTable = {...SAVES.cowInPen, areas: {1: {...SAVES.cowInPen.areas[1], cow: 9, milk: 'done', holding: {}}}, tasksSeen: {...SAVES.cowInPen.tasksSeen, milkTable: 1}, pos: {place: 'homeGround', x: 22, y: 11, dir: 'up'}};   // coming up to where the feast's new table goes
+SAVES.cowAtHome = {...SAVES.milkTable, areas: {1: {...SAVES.milkTable.areas[1], milkTable: 1}}, pos: {place: 'homeGround', x: 27, y: 13, dir: 'right'}};   // in its pen, facing the cow
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -753,6 +762,22 @@ const SCREENS = [
     play(); await wait(100); runSteps(BATTLES.afterLoss[0].do); await wait(600); }},
   {id: 'cow-home', title: 'The cow is home', save: 'cowHome', why: 'As you come up to the thirsty monkey by the road, the cow stops following you, and stands by him: 太好了！ (Great!)', run: async () => {
     play(); await wait(200); pl.dir = 'right'; tryStep('right', performance.now()); await wait(1600); }},
+  {id: 'pen-build', title: 'Building the cow a home', save: 'cowBuild', why: 'The thirsty monkey’s ! (the troop is ready): the troop marks out a plot by the road, then builds the cow a pen as you watch, a piece at a time: its fences, with a gate facing the road, a shelter with hay, and a trough of fresh water fed by a bamboo pipe.', run: async () => {
+    play(); await wait(100); pressA(); await wait(400); next(); await wait(5200); }},   // (pressing A, as you would: no new task till it's over)
+  {id: 'pen-built', title: 'The cow’s new home', save: 'penBuilt', why: 'Built: the cow follows you, and your task’s arrow points at its gate. You can walk in, but not through its fences, its shelter or its trough.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'cow-your-home', title: 'This is your home!', save: 'penBuilt', why: 'Lead it in through the gate: it goes to its shelter, and you tell it 这是你的家！ (This is your home!). It says 谢谢你！, and you reply 不客气.', run: async () => {
+    play(); await wait(200);
+    for (let i = 0; i < 2; i++){ pl.dir = 'down'; tryStep('down', performance.now()); await wait(450); }
+    await wait(1400); }},
+  {id: 'milk-card', title: 'Its thank-you: milk (牛奶)', save: 'penBuilt', why: 'Then it gives you some of its milk: 牛奶 (niúnǎi, milk), said straight away. How it’s made: 牛 cow + 奶 milk.', run: async () => {
+    play(); await wait(100); here().cow = 8; runSteps([AREA.events.flatMap(e => e.do).find(s => s.newWord === '牛奶')]); await wait(600); }},
+  {id: 'milk-give', title: 'Milk for the thirsty monkey', save: 'cowInPen', why: 'He wants to drink some (我要喝牛奶！ I want to drink milk!): give it to him, and fill the gap in 我要喝牛奶.', run: async () => {
+    play(); await wait(100); talk(npc('thirsty')); await wait(600); }},
+  {id: 'milk-table', title: 'The feast’s new table', save: 'milkTable', why: 'The rest is for the feast: as you come up to it, the troop sets up a second table beside the first, with the cow’s milk on it, and its stools: 我们有牛奶了！ (We have milk now!)', run: async () => {
+    play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(4400); }},
+  {id: 'cow-have-home', title: 'I have a home now!', save: 'cowAtHome', why: 'The cow in its pen, in front of its shelter: A, and it says 我有家了！ (I have a home now!).', run: async () => {
+    play(); await wait(100); talk(npc('cow')); await wait(500); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)

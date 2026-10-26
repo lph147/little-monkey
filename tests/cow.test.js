@@ -6,7 +6,9 @@
 // find the cow: 牛, said as you meet it, and it says 我怕狼！ (I'm scared of wolves!). Win its word game, and it trusts
 // you: 好！我们去你家吧！, and it follows you home. As you come into the gap between the rocks, a wolf leaps out (just the
 // once); lose any battle on the way, and the cow runs back to its spring, till you fetch it. Home, it stays by the thirsty
-// monkey.
+// monkey, till the troop builds it a pen by the road as you watch (version 3), and you lead it in: 这是你的家！, it thanks
+// you, and gives you some of its milk (牛奶), which the thirsty monkey wants to drink (我要喝牛奶！); the rest is for the
+// feast, on a second table the troop sets up beside the first. In its pen: 我有家了！.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -29,6 +31,7 @@ function game(pos, area = {}, more = {}){
   g.run("for (const k of ['moo', 'howl', 'chime', 'bump', 'encounter', 'turn']) SFX[k] = () => { __sounds.push(k); }");
   g.run("globalThis.__said = []; showDialog = async (who, line) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('')); }");   // (who says what)
   g.run("confirmBox = async (who, text) => { __asks.push(text); return __play; }; encounter = async foe => { if (__win && !S.friends.includes(foe.id)) S.friends.push(foe.id); return __win; }");
+  g.run("replyWith = async best => { __said.push('player: ' + best); return true; }; gapQ = async o => { __said.push('gap: ' + o.t.join('') + ' (' + o.gap + ')'); return true; }");
   g.run("fight = async (id, opts) => { __fights.push([id, opts.meet || null]); if (__fight === 'lost'){ S.pos = {place: 'homeGround', x: 17, y: 8, dir: 'up'}; placePlayer(); } return __fight; }");
   g.run('placePlayer()');
   return g;
@@ -177,12 +180,100 @@ test('home: as you come up to the thirsty monkey by the road, the cow stops foll
   assert.ok(get(g, '__sounds').includes('moo'));
   assert.deepEqual(get(g, '__said'), ['thirsty: 太好了！'], 'he’s thrilled');
   assert.match(get(g, '__notes').join(' '), /You’ve brought the 牛 \(cow\) home, safe from the wolves! Now it needs a safe place to live: the troop is going to build it a home of its own, by the road\./);
-  assert.deepEqual(cowTasks(g), []);
+  assert.deepEqual(cowTasks(g), ['Talk to the thirsty monkey: the troop is ready to build the 牛 (cow) a home'], 'next, its own home (version 3)');
   assert.deepEqual(item(g, /past the wolves/), ['Lead the 牛 (cow) home, past the wolves', true, false, true]);
   g.run('__said.length = 0; __notes.length = 0; __sounds.length = 0');
   await press(g, 22, 10, 'down');
   assert.deepEqual([get(g, '__said'), get(g, '__sounds')], [[], ['moo']], 'A at it: a happy moo');
   assert.match(get(g, '__notes').join(' '), /The 牛 \(cow\) munches the grass by the road, safe from the wolves, waiting for a home of its own\./);
+  assert.equal(g.run("AREA.bubbles.thirsty.find(b => matches(b.if)).show"), '!', 'and the thirsty monkey has a !: the troop is ready to build it a home');
+});
+
+// Version 3: its own home, a pen by the road, built as you watch; leading it in; its thank-you, milk; the feast's new table
+test('its own home: the thirsty monkey’s ! (the troop is ready), and the troop builds the cow a pen by the road as you watch; it follows you to its gate', async () => {
+  const g = game({place: 'homeGround', x: 21, y: 10, dir: 'down'}, {cow: 5, cowWolf: 1}, {knows: ['牛'], friends: ['cow']});
+  assert.equal(g.run("AREA.bubbles.thirsty.find(b => matches(b.if)).show"), '!');
+  assert.deepEqual(cowTasks(g), ['Talk to the thirsty monkey: the troop is ready to build the 牛 (cow) a home']);
+  assert.deepEqual([g.run('tileAt(23, 11).look'), g.run('tileAt(22, 12).look')], ['grass', 'grass'], 'open grass, till then');
+  await press(g, 21, 10, 'down');
+  const notes = get(g, '__notes').join(' ');
+  assert.match(notes, /The troop is ready to build the 牛 \(cow\) a safe home of its own, here by the road\. Watch!/);
+  assert.match(notes, /A safe home for the 牛 \(cow\): a fence with a gate, a shelter with hay, and a trough of fresh water, fed by a bamboo pipe \(the thirsty monkey’s idea\)\. Lead the 牛 \(cow\) in through its gate!/);
+  assert.deepEqual(get(g, '[here().cow, S.following]'), [7, ['cow']], 'built, and the cow follows you');
+  assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'pen').map(o => [o.x, o.y, o.w, o.h])"), [[23, 11, 7, 4]], 'one pen, seven squares by four (its gate and inside part of it)');
+  assert.equal(g.run('tileAt(22, 12).look'), 'sign', 'its sign');
+  assert.deepEqual(cowTasks(g), ['Lead the 牛 (cow) in through the gate of its new home']);
+  assert.deepEqual(get(g, "getTasks().find(t => t.id === 'cow7').target"), [24, 11], 'the arrow: its gate');
+  assert.equal(g.run("(AREA.bubbles.cow.find(b => matches(b.if)) || {}).show || null"), null, 'no ! over it: it’s following you');
+});
+
+test('the pen: in through its gate, and about inside it, but not through its fences, its shelter or its trough', () => {
+  const g = game({place: 'homeGround', x: 24, y: 10, dir: 'down'}, {cow: 7, cowWolf: 1});
+  const open = (x, y) => g.run(`walkable(${x}, ${y})`);
+  assert.ok(open(24, 11), 'its gate');
+  for (const [x, y] of [[24, 12], [25, 12], [26, 12], [25, 13], [26, 13], [27, 13], [28, 13]]) assert.ok(open(x, y), `inside, at ${x},${y}`);
+  for (const [x, y] of [[23, 11], [25, 11], [29, 11], [23, 12], [29, 13], [23, 14], [26, 14], [29, 14]]) assert.ok(!open(x, y), `its fence, at ${x},${y}`);
+  assert.ok(!open(27, 12) && !open(28, 12), 'its shelter');
+  assert.ok(!open(24, 13), 'its trough');
+});
+
+test('if the cow isn’t following you to its new home, it has a !: talk to it, and it follows you', async () => {
+  const g = game({place: 'homeGround', x: 22, y: 10, dir: 'down'}, {cow: 7, cowWolf: 1}, {knows: ['牛'], friends: ['cow']});
+  assert.equal(g.run("AREA.bubbles.cow.find(b => matches(b.if)).show"), '!');
+  assert.deepEqual(cowTasks(g), ['Talk to the 牛 (cow), and lead it in through the gate of its new home']);
+  await press(g, 22, 10, 'down');
+  assert.deepEqual(get(g, 'S.following'), ['cow']);
+  assert.match(get(g, '__notes').join(' '), /The 牛 \(cow\) follows you\. Lead it in through the gate of its new home!/);
+  assert.equal(g.run('matches(BATTLES.afterLoss[0].if)'), false, 'losing a battle now, it doesn’t run back to the pasture: only on the way home from there');
+});
+
+test('into its home: lead it in through the gate, and 这是你的家！ It thanks you, and gives you some of its milk (牛奶, said straight away), and the thirsty monkey wants some: 我要喝牛奶！', async () => {
+  const g = game({place: 'homeGround', x: 24, y: 10, dir: 'down'}, {cow: 7, cowWolf: 1}, {knows: ['牛'], friends: ['cow'], following: ['cow']});
+  await walkTo(g, 24, 11, 'down');
+  assert.deepEqual(get(g, '[here().cow, S.following]'), [7, ['cow']], 'in its gate: not yet');
+  await walkTo(g, 24, 12, 'down');
+  assert.deepEqual(get(g, '[here().cow, S.following]'), [8, []], 'inside: home');
+  assert.deepEqual(npc(g, 'cow'), ['homeGround', 28, 13], 'it goes to its shelter');
+  assert.deepEqual(get(g, '__said'), ['player: 这是你的家！', 'cow: 谢谢你！', 'player: 不客气', 'thirsty: 我要喝牛奶！']);
+  assert.ok(get(g, '__notes').includes('card: 牛奶 (Safe and happy in its new home, the 牛 (cow) gives you some milk: its thank-you!), said'), 'said straight away: no one said it first');
+  assert.deepEqual(get(g, '[here().milk, here().holding.milk]'), ['asked', '牛奶']);
+  assert.deepEqual(get(g, "getTasks().filter(t => t.id === 'milk').map(t => t.text)"), ['Give the 牛奶 (milk) to the thirsty monkey']);
+  assert.equal(g.run("AREA.bubbles.thirsty.find(b => matches(b.if)).show"), '?');
+  assert.deepEqual(item(g, /into its new home/), ['Lead the 牛 (cow) into its new home', true, false, true]);
+  assert.deepEqual(item(g, /thirsty monkey some/), ['Give the thirsty monkey some 牛奶 (milk)', false, false, true]);
+});
+
+test('the milk for the thirsty monkey: 牛奶！太好了！, the gap in 我要喝牛奶, his thanks and your 不客气; the rest is for the feast, on a new table beside the first, set up as you come up to it: 我们有牛奶了！', async () => {
+  const g = game({place: 'homeGround', x: 21, y: 12, dir: 'up'}, {cow: 8, cowWolf: 1, milk: 'asked', holding: {milk: '牛奶'}}, {knows: ['牛', '牛奶'], friends: ['cow']});
+  await press(g, 21, 12, 'up');   // (from below him: off the road, not yet near the feast's table)
+  assert.deepEqual(get(g, '__said'), ['thirsty: 牛奶！太好了！', 'gap: 我要喝牛奶 (牛奶)', 'thirsty: 谢谢你！', 'player: 不客气']);
+  assert.deepEqual(get(g, '[here().milk, here().cow, here().holding.milk || null, here().milkTable]'), ['done', 9, null, 0]);
+  assert.match(get(g, '__notes').join(' '), /The thirsty monkey drinks some of the 牛奶 \(milk\)\. The rest is for the feast: the troop is setting up a new 桌子 \(table\) for it, beside the first one\./);
+  assert.deepEqual(get(g, "getTasks().filter(t => t.id === 'milkTable').map(t => [t.text, t.target])"), [['Go and see the feast’s new 桌子 (table), beside the first', [22, 8]]]);
+  assert.equal(g.run('tileAt(22, 7).look'), 'grass', 'not there yet');
+  g.run('__said.length = 0; __notes.length = 0');
+  await walkTo(g, 20, 10, 'up');   // on the road, coming up to it
+  assert.equal(g.run('here().milkTable'), 1);
+  assert.deepEqual(get(g, "mapObjects().filter(o => /^milkTable/.test(o.look)).map(o => [o.look, o.x, o.y, o.w])"), [['milkTable', 21, 7, 3]], 'three squares wide, beside the first');
+  assert.deepEqual([g.run('tileAt(21, 8).look'), g.run('tileAt(23, 8).look')], ['stoneStool', 'stoneStool'], 'with its two stools');
+  assert.deepEqual(get(g, '__said'), ['hungry: 我们有牛奶了！']);
+  assert.match(get(g, '__notes').join(' '), /The troop has set up a new 桌子 \(table\) for the feast, with the 牛 \(cow\)’s milk on it!/);
+  assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh)").slice(-1), ['我们 有 牛奶 。'], 'on the feast’s list');
+  assert.deepEqual(cowTasks(g).concat(get(g, "getTasks().filter(t => /^milk/.test(t.id)).map(t => t.id)")), []);
+  assert.deepEqual(item(g, /on the feast’s new/), ['See the 牛奶 (milk) on the feast’s new 桌子 (table)', true, false, true]);
+});
+
+test('at home: A at the cow in its pen, a moo and 我有家了！; A at its fence calls it too; its sign says whose home it is', async () => {
+  const g = game({place: 'homeGround', x: 27, y: 13, dir: 'right'}, {cow: 9, cowWolf: 1, milk: 'done', milkTable: 1}, {knows: ['牛', '牛奶'], friends: ['cow']});
+  assert.deepEqual(npc(g, 'cow'), ['homeGround', 28, 13]);
+  await press(g, 27, 13, 'right');
+  assert.deepEqual([get(g, '__said'), get(g, '__sounds')], [['cow: 我有家了！'], ['moo']]);
+  g.run('__said.length = 0');
+  await press(g, 26, 10, 'down');   // from the road, facing its fence
+  assert.deepEqual(get(g, '__said'), ['cow: 我有家了！'], 'over the fence');
+  g.run('__notes.length = 0');
+  await press(g, 21, 12, 'right');
+  assert.match(get(g, '__notes').join(' '), /The 牛 \(cow\)’s home\. Your friend the cow lives here, safe from the wolves\./);
   g.run('__said.length = 0');
   await press(g, 21, 10, 'down');
   assert.deepEqual(get(g, '__said'), ['thirsty: 太好了！']);

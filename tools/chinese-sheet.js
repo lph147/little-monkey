@@ -157,6 +157,15 @@ const DRAFTS = [
     ['山 上 有 牛 ！', 'There’s a cow on the mountain!', 'The thirsty monkey’s news (牛 niú, cow, just for listening till you find it). It’s one cow, lost and alone: would 山上有一头牛！ be more natural? (头 isn’t a word in the game yet)'],
     ['我 怕 狼 ！', 'I’m scared of wolves!', 'The cow, as you find it by its spring in the pasture (牛 taught on its card as you meet it, and said straight away)']]
     .map(([zh, en, where, py]) => ({zh, en, py, where:'New on 26 October 2026 (in the game), the lost cow: ' + where})),
+  ...[['这 是 你 的 家 ！', 'This is your home!', 'You, to the cow, as you lead it into the pen the troop has built it, by the road'],
+    ['我 有 家 了 ！', 'I have a home now!', 'The cow, in its pen, whenever you talk to it after that'],
+    ['我 要 喝 牛奶 ！', 'I want to drink milk!', 'The thirsty monkey, as the cow gives you some of its milk (牛奶 niúnǎi), its thank-you; and the sentence you finish as you give it to him: 我要喝牛奶'],
+    ['牛奶 ！ 太 好 了 ！', 'Milk! Wonderful!', 'The thirsty monkey, when you bring him the milk (as 水！太好了！ for water)'],
+    ['我们 有 牛奶 了 ！', 'We have milk now!', 'The hungry monkey, as the troop sets up a second table for the feast, with the milk on it'],
+    ['我们 有 牛奶 。', 'We have milk.', 'The feast’s list, at its tables'],
+    ['酸奶 是 白色 的 。', 'Yoghurt is white.', 'The example on 酸奶 (suānnǎi, yoghurt)’s page in the Word Scroll (yoghurt comes next, made from the milk)'],
+    ['奶酪 是 黄色 的 。', 'Cheese is yellow.', 'The example on 奶酪 (nǎilào, cheese)’s page (and then cheese)']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 26 October 2026 (in the game), the cow’s new home: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 

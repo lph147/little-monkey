@@ -547,6 +547,10 @@ function fallenTree(g, X, Y, x, y){
 function plot(g, X, Y, x, y){
   R(g, X, Y, T, T, '#A8794A');
   for (let i = 0; i < 6; i++){ const px = Math.floor(rnd(x,y,i+900)*15), py = Math.floor(rnd(x,y,i+910)*15); R(g, X+px, Y+py, 2, 1, i % 2 ? '#93683F' : '#BD8E5C'); }
+  plotString(g, X, Y, x, y);
+}
+function grassPlot(g, X, Y, x, y){ grass(g, X, Y, x, y); plotString(g, X, Y, x, y); }   // marked out on the grass, for a pen to graze in (the cow's)
+function plotString(g, X, Y, x, y){   // the string round a plot, along its edges, and a stake at each corner
   const me = tileAt(x, y).look, edge = (dx, dy) => tileAt(x+dx, y+dy).look !== me, up = edge(0, -1), down = edge(0, 1), left = edge(-1, 0), right = edge(1, 0);
   if (up) R(g, X, Y+1, T, 1, '#EFE6CF'); if (down) R(g, X, Y+14, T, 1, '#EFE6CF');
   if (left) R(g, X+1, Y, 1, T, '#EFE6CF'); if (right) R(g, X+14, Y, 1, T, '#EFE6CF');
@@ -701,6 +705,7 @@ const LOOKS = {
   longGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y,LONG),
   bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
   plot:      (g,X,Y,x,y) => plot(g,X,Y,x,y),   // ground marked out for building
+  grassPlot: (g,X,Y,x,y) => grassPlot(g,X,Y,x,y),   // or grass, marked out for a pen (where the grass stays)
   frame:     (g,X,Y,x,y) => plot(g,X,Y,x,y),   // the school's frame going up on its plot: a big object (OBJECT_ART), on the plot's earth
   needles:   (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // the pine wood's floor (grass in a sunny glade)
   pine:      (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // a pine, a dead one and a cracked rock: big objects, on the pine wood's floor
@@ -751,6 +756,14 @@ const LOOKS = {
   hollowTree:(g,X,Y,x,y) => grass(g,X,Y,x,y),        // the queen bee's old hollow tree: a big object (OBJECT_ART), on grass
   hive:      (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the bees' hive at the home ground: a big object (OBJECT_ART), on grass
   feastTableHoney:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // the feast's table once its third bowl has honey in it (OBJECT_ART)
+  milkTable: (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the feast's second table, with the cow's milk on it (OBJECT_ART), and then
+  milkTableYog:(g,X,Y,x,y) => grass(g,X,Y,x,y),      // with yoghurt too,
+  milkTableCheese:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // and cheese
+  pen:       (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the cow's pen at the home ground: a big object (OBJECT_ART), on grass,
+  penGround: (g,X,Y,x,y) => grass(g,X,Y,x,y),        // with the squares inside it you can walk on, its gate's too (part of it: partOf)
+  dairy:     (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the little dairy by the pen (OBJECT_ART), and then
+  dairyYog:  (g,X,Y,x,y) => grass(g,X,Y,x,y),        // with jars of yoghurt on its shelf,
+  dairyCheese:(g,X,Y,x,y) => grass(g,X,Y,x,y),       // and cheese
   swarm:     (g,X,Y,x,y) => path(g,X,Y,x,y),         // a swarm of bees in the way, on sandy ground (the bees: js/draw.js)
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // ripples are animated in js/draw.js
@@ -828,6 +841,13 @@ const OBJECT_ART = {
   feastTable: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.feastTable),   // (stage: how much of it is up, as it's set up)
   feastTableHoney: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, 6),   // (and honey in its third bowl)
   hive: (g, o) => hive(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.hive),
+  milkTable: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.milkTable, 1),
+  milkTableYog: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, OBJECT_STAGES.milkTable, (o.stage ?? 1) >= 1 ? 2 : 1),   // (going up: just the jar)
+  milkTableCheese: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, OBJECT_STAGES.milkTable, (o.stage ?? 1) >= 1 ? 3 : 2),
+  pen: (g, o) => cowPen(g, o.x*T, o.y*T, o.w*T, o.h*T, o.stage ?? OBJECT_STAGES.pen),
+  dairy: (g, o) => dairy(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.dairy, 1),
+  dairyYog: (g, o) => dairy(g, o.x*T, o.y*T, OBJECT_STAGES.dairy, (o.stage ?? 1) >= 1 ? 2 : 1),   // (going up: just the jars)
+  dairyCheese: (g, o) => dairy(g, o.x*T, o.y*T, OBJECT_STAGES.dairy, (o.stage ?? 1) >= 1 ? 3 : 2),
   stoneStool: (g, o) => { if ((o.stage ?? 1) >= 1) stoneStool(g, o.x*T, o.y*T); },
   pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
@@ -1038,7 +1058,7 @@ function schoolFrame(g, o, k = 1){
 // 2026, after the game's owner asked where the feast was held; it was wood with a red cloth), set up a piece at a time:
 // its two stone legs, then its slab, then a bowl at a time, peaches, apples, and an empty one, waiting for honey.
 const SLAB = ['#7E776B', '#8C8478', '#A39C8E', '#C9C2B4', '#DDD6C8'];   // the feast's stone, darkest to lightest (its outline: CAVE_OUT)
-function feastTable(g, X, Y, w, stage){
+function slabTable(g, X, Y, w, stage){   // a stone table for the feast, w wide from X: its legs (stage 1), then its slab (2)
   if (stage >= 1){
     if (shadows) blob(g, X + w/2, Y + 15, w/2 - 1, 2, ROCK_SHADOW);
     for (const x of [X + 4, X + w - 10]){ R(g, x, Y + 9, 6, 7, CAVE_OUT); R(g, x + 1, Y + 9, 4, 6, SLAB[1]); R(g, x + 1, Y + 9, 1, 6, SLAB[2]); }   // its legs, blocks of stone
@@ -1049,6 +1069,9 @@ function feastTable(g, X, Y, w, stage){
     R(g, X + 2, Y + 5, w - 4, 4, SLAB[2]); R(g, X + 2, Y + 8, w - 4, 1, SLAB[1]);                 // its front edge
     for (let x = X + 6; x < X + w - 4; x += 9) R(g, x, Y + 2 + (x % 3), 1, 1, SLAB[2]);            // specks in the stone
   }
+}
+function feastTable(g, X, Y, w, stage){
+  slabTable(g, X, Y, w, stage);
   [[X + 9, PEACHES], [X + w/2, APPLES], [X + w - 9, null]].forEach(([cx, fruits], i) => {
     if (stage < 3 + i) return;
     tableBowl(g, cx, Y + 5);
@@ -1095,6 +1118,131 @@ function bigFruit(g, cx, cy, [col, shine]){   // a fruit a little bigger than on
   R(g, cx - 1, cy - 2, 3, 5, '#2E2A26'); R(g, cx - 2, cy - 1, 5, 3, '#2E2A26');
   R(g, cx - 1, cy - 1, 3, 3, col); R(g, cx - 1, cy - 1, 1, 1, shine);
 }
+// The feast's second table, beside the first, for the cow's thank-you (chapter 1), as much of it as is up (stage, as the
+// troop sets it up: 1 its legs, 2 its slab, 3 a wooden pail of milk on it), and what else is on it (has: 2 a jar of
+// yoghurt too, 3 and a round cheese), made at the little dairy by the cow's pen.
+const MILK = '#FBFAF4';
+function milkTable(g, X, Y, w, stage, has){
+  slabTable(g, X, Y, w, stage);
+  if (stage >= 3) milkPail(g, X + 10, Y + 5);
+  if (has >= 2) yoghurtJar(g, X + w/2, Y + 5);
+  if (has >= 3) roundCheese(g, X + w - 10, Y + 5);
+}
+function milkPail(g, cx, by){   // a wooden pail of milk, full to the brim, its bottom at by: wider at the top, its handle arching over
+  const OUT = '#2E2A26';
+  R(g, cx - 4, by - 14, 9, 1, OUT); R(g, cx - 5, by - 13, 1, 3, OUT); R(g, cx + 5, by - 13, 1, 3, OUT);   // its handle
+  R(g, cx - 6, by - 10, 13, 1, OUT);                                                                      // its rim
+  R(g, cx - 6, by - 9, 13, 1, OUT); R(g, cx - 5, by - 9, 11, 1, MILK); R(g, cx - 4, by - 9, 3, 1, '#FFFFFF');   // milk, to the brim
+  [6, 6, 5, 5, 5, 5, 4, 4].forEach((hw, k) => {                                                          // its staves, narrowing to the bottom
+    const y = by - 8 + k;
+    R(g, cx - hw, y, 2*hw + 1, 1, OUT); R(g, cx - hw + 1, y, 2*hw - 1, 1, k === 1 || k === 5 ? '#5A3A22' : WOOD[2]);   // (two bands round it)
+    if (k !== 1 && k !== 5){ R(g, cx - hw + 1, y, 2, 1, WOOD[3]); R(g, cx + 1, y, 1, 1, WOOD[1]); }
+  });
+  R(g, cx - 3, by, 7, 1, OUT);
+}
+function yoghurtJar(g, cx, by){   // a green-glazed jar of yoghurt, white at the top, a wooden spoon in it
+  const OUT = '#2E2A26';
+  R(g, cx + 2, by - 14, 1, 5, WOOD[3]); R(g, cx + 3, by - 15, 1, 2, WOOD[2]);                           // the spoon
+  R(g, cx - 4, by - 9, 9, 10, OUT); R(g, cx - 3, by - 6, 7, 6, '#8FC4A6'); R(g, cx - 3, by - 6, 2, 6, '#B8E0C8'); R(g, cx - 3, by - 1, 7, 1, '#5E9478');
+  R(g, cx - 4, by - 8, 9, 2, '#7DB696');                                                                  // its lip
+  R(g, cx - 3, by - 10, 7, 2, OUT); R(g, cx - 2, by - 10, 5, 2, '#FFFFFF');                              // thick yoghurt, heaped up
+}
+function roundCheese(g, cx, by){   // a round cheese, a slice cut from it
+  const OUT = '#2E2A26';
+  R(g, cx - 5, by - 7, 11, 8, OUT); R(g, cx - 4, by - 6, 9, 6, '#F4C542'); R(g, cx - 4, by - 6, 9, 1, '#FFE58A');
+  R(g, cx + 1, by - 6, 3, 3, '#EDB534'); R(g, cx + 1, by - 6, 3, 1, OUT);                                // where the slice was cut
+  R(g, cx - 2, by - 3, 1, 1, '#C99328'); R(g, cx + 2, by - 2, 1, 1, '#C99328');                          // holes
+}
+// The cow's pen at the home ground, seven squares by four, south of the road (the cow, chapter 1), as much of it as is up
+// (stage, as the troop builds it: 1 the fence along its back, with its gate facing the road, standing open; 2 the fences
+// down its sides; 3 the fence along its front; 4 a shelter at the back on the right, with a thatched roof; 5 hay, heaped
+// up in it; 6 fresh water, a stone trough at the front on the left, fed by a bamboo pipe that comes in over the fence: the
+// thirsty monkey's idea). Its fences stand on the squares round its edge; you can walk in through its gate, and inside,
+// but for the shelter and the trough (the legend's partOf).
+function cowPen(g, X, Y, w, h, stage){
+  const OUT = '#2E2A26', EARTH = '#B39468', EARTH_DARK = '#9C7E55';
+  const post = (px, py, ph) => { R(g, px, py, 3, ph, WOOD[0]); R(g, px + 1, py, 1, ph, WOOD[2]); R(g, px, py, 3, 1, '#3A2214'); };   // a post, its top dark
+  const rails = (x0, y0, len) => { for (const dy of [2, 7]){ R(g, x0, y0 + dy, len, 2, WOOD[1]); R(g, x0, y0 + dy, len, 1, WOOD[3]); } };   // two rails along, from x0
+  const side = sx => { for (const dx of [0, 3]){ R(g, sx + dx, Y + 12, 2, h - 16, WOOD[1]); R(g, sx + dx, Y + 12, 1, h - 16, WOOD[3]); } for (const py of [Y + 24, Y + 38]) post(sx, py, 9); };   // a fence down one side
+  if (stage >= 1){
+    // trampled earth: in at the gate, along to the shelter, and in front of the trough
+    R(g, X + 17, Y + 10, 13, 26, EARTH); R(g, X + 30, Y + 30, 60, 8, EARTH); R(g, X + 64, Y + 32, 30, 12, EARTH); R(g, X + 32, Y + 38, 14, 6, EARTH);
+    for (const [ex, ey] of [[X + 20, Y + 18], [X + 26, Y + 27], [X + 44, Y + 33], [X + 70, Y + 37], [X + 84, Y + 40]]) R(g, ex, ey, 2, 1, EARTH_DARK);   // hoofprints
+    // the fence along the back, with the gate facing the road: its gateposts either side of the gate's square, the gate
+    // swung open, inside
+    rails(X + 7, Y + 2, 8); rails(X + 32, Y + 2, w - 39);
+    for (const px of [X + 6, X + 14, X + 30, X + 46, X + 62, X + 78, X + 94, X + w - 8]) post(px, Y + 1, 13);
+    R(g, X + 15, Y - 1, 1, 2, '#3A2214'); R(g, X + 31, Y - 1, 1, 2, '#3A2214');                          // the gateposts, a little taller
+    R(g, X + 26, Y + 6, 3, 16, OUT); R(g, X + 27, Y + 6, 1, 15, WOOD[3]); R(g, X + 24, Y + 8, 3, 2, WOOD[1]); R(g, X + 24, Y + 16, 3, 2, WOOD[1]);   // the gate, open
+  }
+  if (stage >= 2){ side(X + 6); side(X + w - 11); }
+  if (stage >= 3){
+    rails(X + 7, Y + 50, w - 14);
+    for (let px = X + 6; px < X + w - 8; px += 16) post(px, Y + 49, 13);
+    post(X + w - 8, Y + 49, 13);
+  }
+  if (stage >= 4){   // the shelter, two squares wide, against the back fence: plank walls, in shade inside, a thatched roof
+    const SX = X + 64, SW = 32;
+    R(g, SX + 1, Y + 6, SW - 2, 25, WOOD[1]); for (let k = 3; k < SW - 2; k += 5) R(g, SX + k, Y + 6, 1, 25, WOOD[0]);   // its back wall, planks
+    R(g, SX + 3, Y + 14, SW - 6, 17, '#3A2616');                                                         // inside, in shade
+    post(SX, Y + 8, 23); post(SX + SW - 3, Y + 8, 23);                                                   // its front posts
+    for (let k = 0; k < 13; k++){ const inset = Math.max(0, 5 - k); R(g, SX - 3 + inset, Y + k, SW + 6 - 2*inset, 1, k === 12 ? '#8A6A2A' : k % 2 ? '#D9B45A' : '#C9A24A'); }   // the thatch
+    for (let k = 4; k < SW + 4; k += 5) R(g, SX - 2 + k, Y + 3, 1, 7, '#B08A3A');                        // straw lines
+  }
+  if (stage >= 5){   // hay, heaped up in the shelter
+    const SX = X + 64;
+    for (let k = 0; k < 6; k++) R(g, SX + 4 + k, Y + 29 - k, 24 - 2*k, 2, k % 2 ? '#E8C35A' : '#D9AE44');
+    R(g, SX + 3, Y + 30, 26, 1, '#C99A3A');
+  }
+  if (stage >= 6){   // fresh water: a stone trough, filled by a bamboo pipe on a stand outside, over the fence
+    R(g, X + 17, Y + 38, 14, 10, OUT); R(g, X + 18, Y + 39, 12, 8, SLAB[2]); R(g, X + 18, Y + 46, 12, 1, SLAB[1]);   // the trough
+    R(g, X + 19, Y + 40, 10, 4, '#5DA6D9'); R(g, X + 19, Y + 40, 10, 1, '#9FD0EE'); R(g, X + 23, Y + 42, 4, 1, '#CFEAF8');   // its water
+    post(X - 8, Y + 34, 14);                                                                            // the pipe's stand
+    for (let k = 0; k < 30; k++){ const bx = X - 9 + k, by = Y + 33 + Math.floor(k / 8); R(g, bx, by, 1, 3, k % 8 === 7 ? '#4E7A2A' : '#7FA84A'); R(g, bx, by, 1, 1, '#A8CF6E'); }   // the bamboo pipe
+    R(g, X + 21, Y + 37, 1, 4, '#9FD0EE'); R(g, X + 22, Y + 37, 1, 3, '#CFEAF8');                         // water pouring in
+  }
+}
+// The little dairy by the cow's pen (chapter 1): a table under a thatched roof, two squares by two, where the thirsty
+// monkey makes things from the cow's milk, as much of it as is up (stage, as the troop sets it up: 1 its back posts, in
+// shade, with a shelf; 2 its table; 3 its front posts and thatched roof; 4 on the table, a wooden pail of milk and a clay pot
+// with a cloth tied over it: something being made), and what's been made (has: 2 jars of yoghurt on its shelf, 3 and a
+// round cheese beside them, with a slice of it on the table where the pot was).
+function dairy(g, X, Y, stage, has){
+  const OUT = '#2E2A26';
+  const post = (px, py, ph) => { R(g, px, py, 3, ph, WOOD[0]); R(g, px + 1, py, 1, ph, WOOD[2]); };
+  if (stage >= 1){
+    groundShadow(g, X + 16, Y + 30, 16, 3);
+    post(X + 3, Y + 4, 23); post(X + 26, Y + 4, 23);
+    R(g, X + 6, Y + 5, 20, 16, '#5A4030');                                                    // the shade under the roof
+    R(g, X + 3, Y + 14, 26, 3, WOOD[0]); R(g, X + 3, Y + 14, 26, 1, WOOD[3]);                // the shelf
+    if (has >= 2) for (const jx of [X + 6, X + 11, X + 16]){                                 // jars of yoghurt: green, white at the top
+      R(g, jx - 1, Y + 8, 6, 6, OUT); R(g, jx, Y + 9, 4, 5, '#8FC4A6'); R(g, jx, Y + 9, 1, 5, '#B8E0C8'); R(g, jx, Y + 8, 4, 1, '#FFFFFF'); }
+    if (has >= 3){                                                                            // a round cheese
+      R(g, X + 20, Y + 8, 8, 6, OUT); R(g, X + 21, Y + 9, 6, 5, '#F4C542'); R(g, X + 21, Y + 9, 6, 1, '#FFE58A');
+      R(g, X + 25, Y + 10, 1, 1, '#C99328'); R(g, X + 22, Y + 12, 1, 1, '#C99328'); }
+  }
+  if (stage >= 2){   // the table at the front: a plank top, its legs
+    R(g, X + 1, Y + 21, 30, 5, OUT); R(g, X + 2, Y + 22, 28, 2, WOOD[3]); R(g, X + 2, Y + 22, 28, 1, WOOD[4]); R(g, X + 2, Y + 24, 28, 1, WOOD[1]);
+    R(g, X + 3, Y + 26, 3, 5, OUT); R(g, X + 4, Y + 26, 1, 4, WOOD[1]); R(g, X + 26, Y + 26, 3, 5, OUT); R(g, X + 27, Y + 26, 1, 4, WOOD[1]);
+  }
+  if (stage >= 4){   // on it: a wooden pail of milk, and a clay pot with a white cloth tied over it, or a slice of cheese
+    R(g, X + 4, Y + 14, 10, 8, OUT); R(g, X + 5, Y + 15, 8, 7, WOOD[2]); R(g, X + 5, Y + 15, 2, 7, WOOD[3]);
+    R(g, X + 5, Y + 17, 8, 1, '#5A3A22'); R(g, X + 5, Y + 20, 8, 1, '#5A3A22');
+    R(g, X + 5, Y + 14, 8, 2, MILK); R(g, X + 6, Y + 14, 3, 1, '#FFFFFF');
+    if (has < 3){
+      R(g, X + 17, Y + 13, 11, 9, OUT); R(g, X + 18, Y + 15, 9, 7, '#C8784A'); R(g, X + 18, Y + 15, 2, 7, '#E09A66');   // the pot
+      R(g, X + 17, Y + 12, 11, 4, OUT); R(g, X + 18, Y + 12, 9, 3, '#F4F1EA'); R(g, X + 18, Y + 12, 9, 1, '#FFFFFF');   // its cloth
+      R(g, X + 18, Y + 15, 9, 1, '#C0392B');                                                  // tied with a red string
+    } else {
+      R(g, X + 18, Y + 16, 10, 6, OUT); R(g, X + 19, Y + 17, 8, 4, '#EDB534'); R(g, X + 19, Y + 17, 8, 1, '#FFE58A'); R(g, X + 21, Y + 18, 1, 1, '#C99328'); R(g, X + 24, Y + 19, 2, 1, '#C99328');
+    }
+  }
+  if (stage >= 3){   // the thatched roof, over the top, and its front posts
+    for (let k = 0; k < 8; k++){ const inset = Math.max(0, 4 - k); R(g, X - 3 + inset, Y + k, 38 - 2*inset, 1, k === 7 ? '#8A6A2A' : k % 2 ? '#D9B45A' : '#C9A24A'); }
+    for (let k = 4; k < 34; k += 5) R(g, X - 2 + k, Y + 2, 1, 4, '#B08A3A');
+    post(X + 1, Y + 7, 22); post(X + 28, Y + 7, 22);
+  }
+}
 function stall(g, L, Y, w){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit
   const top = Y + 16 - Math.round(w * .66), cy = Y + 16 - Math.round(w * .26);
   groundShadow(g, L + w/2, Y+15, w/2, 2);
@@ -1111,25 +1259,29 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
-const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable', 'feastTableHoney'];   // side by side, these make one object as wide as the row
+const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable', 'feastTableHoney', 'milkTable', 'milkTableYog', 'milkTableCheese'];   // side by side, these make one object as wide as the row
 // Big objects set up as you watch (the setUp step, js/world.js): how many pieces each goes up in, one after another (its
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
-// table and then its stools.
-const OBJECT_STAGES = {feastTable:5, stoneStool:1, hive:4};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive'];   // and these one object as big as the block of them (such as the school's frame on its plot)
+// table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
+// yoghurt on it, goes up in just that: the rest is there already.)
+const OBJECT_STAGES = {feastTable:5, stoneStool:1, hive:4, pen:6, milkTable:3, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1};
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
-// stall letters one stall; a block of frame letters is one frame; anything else stands on its own square. They come from the top of the map down, the order they're drawn in.
+// stall letters one stall; a block of frame letters is one frame, with any squares in it that are part of it but can be
+// walked on (a legend's partOf, such as the inside of the cow's pen, and its gate); anything else stands on its own square.
+// They come from the top of the map down, the order they're drawn in.
 function mapObjects(){
   const out = [], taken = new Set(), key = (x, y) => x + ',' + y;
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
     const t = tileAt(x, y);
     if (!OBJECT_ART[t.look] || taken.has(key(x, y))) continue;
     const same = (a, c) => tileAt(a, c) === t && !taken.has(key(a, c));
+    const part = (a, c) => (same(a, c) || (tileAt(a, c).partOf === t.look && !taken.has(key(a, c))));   // (or a square that's part of it, though you can walk on it, such as the inside of the cow's pen: partOf)
     let w = 1, h = 1;
     if (t.look === 'tree' && same(x+1, y) && same(x, y+1) && same(x+1, y+1)){ w = 2; h = 2; }
     else if (ROW_OBJECTS.includes(t.look)) while (same(x+w, y)) w++;
-    else if (BLOCK_OBJECTS.includes(t.look)){ while (same(x+w, y)) w++; while ([...Array(w).keys()].every(a => same(x+a, y+h))) h++; }
+    else if (BLOCK_OBJECTS.includes(t.look)){ while (part(x+w, y)) w++; while ([...Array(w).keys()].every(a => part(x+a, y+h))) h++; }
     for (let a = 0; a < w; a++) for (let c = 0; c < h; c++) taken.add(key(x+a, y+c));
     out.push({look:t.look, x, y, w, h});
   }

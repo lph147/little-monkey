@@ -72,7 +72,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           has cleared the way south, past the bridge at the bottom of the home ground, 2 you've been into the pasture
   //           (牧场; a moo, from beyond the pines), 3 you've found the cow by its spring (teaching 牛), scared of the wolves,
   //           4 you've won its trust with its word game, and it follows you home (lose a battle on the way, and it runs back
-  //           to its spring, till you fetch it: following), 5 it's home, standing by the thirsty monkey near the road
+  //           to its spring, till you fetch it: following), 5 it's home, standing by the thirsty monkey near the road,
+  //           6 the troop has marked out a plot for its home, by the road, 7 they've built it a pen there (the fences, a
+  //           shelter with hay, a trough of fresh water), and it follows you to its gate, 8 it's in its pen, its home, and it's
+  //           given you some of its milk, its thank-you (teaching 牛奶; the thirsty monkey's milk request is asked), 9 he's
+  //           drunk some, and the rest is for the feast
+  //   milkTable chapter 1: the feast's second table, beside the first: 1 the troop has set it up, with the cow's milk on it
   //   cowWolf chapter 1: 1 once you've beaten the wolf that leaps out at the big rocks in the pasture as you lead the cow home
   //   littleGame the prologue: the little monkey's word game, once it's your friend: 0 not played yet (it has a !), 1 played,
   //           2 won (its present: once)
@@ -80,7 +85,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, milkTable:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -221,6 +226,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'cow3', if:{cow:3}, text:'Win the {牛}’s trust with its word game, by its spring in the pasture', arrow:'cow'},
     {id:'cow4', if:{cow:4, following:{cow:true}}, text:'Lead the {牛} home to the thirsty monkey, back through the pines. Watch out for wolves!', arrow:'thirsty'},
     {id:'cowRan', if:{cow:4, following:{cow:false}}, text:'The {牛} ran back to its spring, frightened: go and fetch it', arrow:'cow'},
+    // its safe home: the troop builds it a pen by the road, and you lead it in; then its thank-you, milk
+    {id:'cow5', if:{cow:5}, text:'Talk to the thirsty monkey: the troop is ready to build the {牛} a home', arrow:'thirsty'},
+    {id:'cow7', if:{cow:7, following:{cow:true}}, text:'Lead the {牛} in through the gate of its new home', arrow:[24, 11, 'homeGround']},
+    {id:'cow7b', if:{cow:7, following:{cow:false}}, text:'Talk to the {牛}, and lead it in through the gate of its new home', arrow:'cow'},
+    {id:'milk', if:{milk:'asked', holding:{milk:true}}, text:'Give the {牛奶} to the thirsty monkey', arrow:'thirsty'},
+    {id:'milkTable', if:{cow:9, milkTable:0}, text:'Go and see the feast’s new {桌子}, beside the first', arrow:[22, 8, 'homeGround']},
     {id:'hideSeek', if:{hiding:true}, text:'Find where the little monkey is hiding', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
@@ -238,7 +249,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, cow:0}, text:'The thirsty monkey has news for you: look for his ! at the home ground.'},
-    {if:{bees:{atLeast:11}}, text:'The feast has {蜂蜜|honey} now! Take more from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},
+    {if:{bees:{atLeast:11}, milkTable:{atLeast:1}}, text:'The feast has {蜂蜜|honey} and {牛奶|milk} now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees and the cow are done: till then, they have tasks)
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then (after each new word, practise a little before the next). The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -290,7 +301,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Bring {蜂蜜|honey} to the feast’s big {桌子}', show:{bees:{atLeast:10}}, done:{bees:{atLeast:11}}},
     {chapter:1, text:'Find the lost {牛|cow} on the mountain', show:{cow:{atLeast:1}}, done:{cow:{atLeast:3}}},
     {chapter:1, text:'Win the {牛}’s trust with its word game', show:{cow:{atLeast:3}}, done:{cow:{atLeast:4}}},
-    {chapter:1, text:'Lead the {牛} home, past the wolves', show:{cow:{atLeast:4}}, done:{cow:{atLeast:5}}}
+    {chapter:1, text:'Lead the {牛} home, past the wolves', show:{cow:{atLeast:4}}, done:{cow:{atLeast:5}}},
+    {chapter:1, text:'Lead the {牛} into its new home', show:{cow:{atLeast:5}}, done:{cow:{atLeast:8}}},
+    {chapter:1, text:'Give the thirsty monkey some {牛奶|milk}', show:{cow:{atLeast:8}}, done:{milk:'done'}},
+    {chapter:1, text:'See the {牛奶|milk} on the feast’s new {桌子}', show:{milk:'done'}, done:{milkTable:{atLeast:1}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -312,8 +326,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{honey:'asked', holding:{honey:true}}, show:'?'}],   // and honey from their hive
     queen: [{if:{bees:4}, show:'!'}, {if:{bees:7}, show:'!'}],   // the queen bee, out of her old tree: she wants you to play her word game; and at home, for the hive
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'},
-      {if:{feast:{atLeast:3}, cow:0}, show:'!'}],   // chapter 1: by the road at the home ground, with news of a cow on the mountain
-    cow: [{if:{cow:{below:4}}, show:'!'}, {if:{cow:4, following:{cow:false}}, show:'!'}],   // the cow, lost and alone in the pasture, till you've won its trust; and if it ran back to its spring
+      {if:{feast:{atLeast:3}, cow:0}, show:'!'}, {if:{cow:5}, show:'!'}, {if:{milk:'asked', holding:{milk:true}}, show:'?'}],   // chapter 1: by the road at the home ground, with news of a cow on the mountain; then the troop's ready to build it a home; and he'd love some of its milk
+    cow: [{if:{cow:{below:4}}, show:'!'}, {if:{cow:4, following:{cow:false}}, show:'!'}, {if:{cow:7, following:{cow:false}}, show:'!'}],   // the cow, lost and alone in the pasture, till you've won its trust; and if it ran back to its spring, or isn't following you to its new home
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
@@ -379,7 +393,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: honey for the feast, from the bees' hive at the home ground, asked as the bees move in (he's wanted it since
     // the feast's list said 我们没有蜂蜜。). You learn 蜂蜜 as you take it from the hive; he pours it into the table's bowl.
     honey: {from:'hungry', wants:'蜂蜜', ask:'wantHoney', asked:'The hungry monkey wants honey for the feast. Take some from the bees’ hive!',
-      offer:'haveHoney', sentence:'我 要 吃 蜂蜜', sentenceEn:'I want to eat honey.', reward:3, thanks:'thanks', thanksReply:'不客气'}
+      offer:'haveHoney', sentence:'我 要 吃 蜂蜜', sentenceEn:'I want to eat honey.', reward:3, thanks:'thanks', thanksReply:'不客气'},
+    // chapter 1: the cow's milk, its thank-you for its new home: it gives you some, and the thirsty monkey wants to drink it
+    // (asked as he says so: the cow's events); the rest is for the feast
+    milk: {from:'thirsty', wants:'牛奶', ask:'wantMilk', asked:'The thirsty monkey wants to drink some {牛奶}!',
+      offer:'haveMilk', sentence:'我 要 喝 牛奶', sentenceEn:'I want to drink milk.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask); when you buy something, they give it to you (given, what's
@@ -451,6 +469,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{place:'homeGround', cow:4, following:{cow:true}, around:[21, 11, 'homeGround', 2]}, do:[
       {set:{cow:5}}, {follow:[]}, {sound:'moo'}, {say:'great', by:'thirsty'},
       {message:'You’ve brought the {牛} home, safe from the wolves! Now it needs a safe place to live: the troop is going to build it a home of its own, by the road.'}]},
+    // its new home: as you come into its pen with it, through the gate, it goes in, and you tell it this is its home. It
+    // thanks you, and gives you some of its milk (teaching 牛奶): its thank-you. The thirsty monkey would love some
+    {if:{place:'homeGround', cow:7, following:{cow:true}, around:[25, 13, 'homeGround', 1]}, do:[
+      {set:{cow:8}}, {follow:[]}, {sound:'moo'},
+      {say:'yourHome', by:'player'}, {say:'thanks', by:'cow'}, {reply:'不客气'},
+      {newWord:'牛奶', note:'Safe and happy in its new home, the {牛} gives you some milk: its thank-you!'},
+      {hold:'牛奶', for:'milk'}, {set:{milk:'asked'}}, {say:'wantMilk', by:'thirsty'},
+      {message:'The thirsty monkey wants to drink some {牛奶}! Take it to him.'}]},
+    // the milk you gave him: he drinks some, and the rest is for the feast, on a new table (next)
+    {if:{milk:'done', cow:8}, do:[{set:{cow:9}},
+      {message:'The thirsty monkey drinks some of the {牛奶}. The rest is for the feast: the troop is setting up a new {桌子} for it, beside the first one.'}]},   // (set up as you come up to it: at once, if you're on the road)
+    // the feast's second table, beside the first, as you come up to it: the troop sets it up as you watch, with the cow's
+    // milk on it (its stone legs, its slab, a pail of milk; then its two stools), and the hungry monkey, who looks after
+    // the feast, is thrilled
+    {if:{cow:{atLeast:9}, milkTable:0, around:[22, 7, 'homeGround']}, do:[
+      {setUp:{milkTable:1}}, {say:'haveMilkNow', by:'hungry'},
+      {message:'The troop has set up a new {桌子} for the feast, with the {牛}’s milk on it!'}]},
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
     // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)
@@ -706,7 +741,25 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'q': {look:'bush', landmark:true, becomes:[{if:{bees:{atLeast:1}}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
         // chapter 1: the bushes past the bridge, at the south end of the path, until the troop clears the way south to the
         // pasture, where the cow is lost (the thirsty monkey's news)
-        'u': {look:'bush', landmark:true, becomes:[{if:{cow:{atLeast:1}}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]}
+        'u': {look:'bush', landmark:true, becomes:[{if:{cow:{atLeast:1}}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
+        // chapter 1: the cow's pen, south of the road, seven squares by four: open grass, until the troop marks out its plot
+        // (cow 6: the markOut step) and builds it as you watch (cow 7: setUp): its fences round its edge (-), and inside,
+        // where you can walk (_), in at its gate, facing the road; a shelter with hay at the back, and a trough of fresh
+        // water at the front, fed by a bamboo pipe (bigger than the plot first planned, 5 by 3: decided 26 October 2026,
+        // when the cow came as a rescue). A at it, once the cow lives there, talks to the cow
+        '-': {look:'grass', walk:true, becomes:[{if:{cow:{atLeast:7}}, to:'#'}, {if:{cow:6}, to:'<'}]},
+        '_': {look:'grass', walk:true, becomes:[{if:{cow:{atLeast:7}}, to:'+'}, {if:{cow:6}, to:'<'}]},
+        '<': {look:'grassPlot', walk:true},   // its plot, marked out on the grass, which stays: grass for the cow to graze
+        '#': {look:'pen', word:'牛', landmark:true, onLook:[{if:{cow:{atLeast:8}}, do:[{talkTo:'cow'}]},
+          {do:[{message:'The {牛}’s new home: a shelter with hay, and fresh water from a bamboo pipe. Lead it in through the gate!'}]}]},
+        '+': {look:'penGround', walk:true, partOf:'pen'},
+        // chapter 1: the feast's second table, beside the first: open grass, until the troop sets it up as you watch, with the
+        // cow's milk on it (milkTable 1), then a jar of yoghurt too (2), and cheese (3), from the little dairy; its stools (~)
+        '(': {look:'grass', walk:true, becomes:[{if:{milkTable:{atLeast:3}}, to:']'}, {if:{milkTable:2}, to:'['}, {if:{milkTable:1}, to:')'}]},
+        ')': {look:'milkTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // A at it: the feast's list
+        '[': {look:'milkTableYog', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        ']': {look:'milkTableCheese', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        '~': {look:'grass', walk:true, becomes:[{if:{milkTable:{atLeast:1}}, to:';'}]}
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
@@ -723,14 +776,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
-        "YgEFggggggg8gJgg%%%gFgggg.gggTgY",   // the feast's big table (%), under the big tree
-        "Ygggggggggg8gggg!g!gggggg.g@gggY",   // its two stone stools (!); little monkeys building a tower of stones (@), just past the way up to the hillside
+        "YgEFggggggg8gJgg%%%gF(((g.gggTgY",   // the feast's big table (%), under the big tree; and its second, beside it (()
+        "Ygggggggggg8gggg!g!gg~g~g.g@gggY",   // their stone stools (! and ~); little monkeys building a tower of stones (@), just past the way up to the hillside
         "...............................q",   // the road: east to the riverside, once the bushes are cleared (q)
         "...............................Y",
-        "Yggggggggggggggg.gggggggggggEggY",
-        "Yggddd2ggEgggggg.ggggg5cccccgggY",
-        "YggdddggTgggggTg.gJFgTgcccccgggY",
-        "Yggggggggggggggg.ggggggcccccgggY",
+        "Yggggggggggggggg.gggggg-_-----EY",   // the cow's pen: its fences round its edge (-), inside it (_), in at its gate
+        "Yggddd2ggEgggggg.ggggg5-___---gY",   // (5: its sign)
+        "YggdddggTgggggTg.gJFgTg--____-gY",
+        "Yggggggggggggggg.gggggg-------gY",
         "Yggggeeeeeeee4gg.gOOOggggggggTgY",
         "YgTggeeeeeeeeggg.gOOOggTgggQgggY",
         "Yggggggggggggggg.ggggTgggggggggY",
@@ -1168,11 +1221,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '$': {look:'hive', landmark:true, word:'蜂蜜', note:'Bees buzz in and out of the hive, and golden honey drips inside.',
       gather:{item:'蜂蜜', for:'honey', label:'Take', note:'Golden honey from the bees’ hive! 蜂蜜 is 蜜蜂 (bee) the other way round.', message:'You took some {蜂蜜}. Take it to the hungry monkey.'},
       pick:{item:'蜂蜜', if:{bees:{atLeast:11}}, label:'Take', took:'You take some {蜂蜜}', none:'The bees are still making more honey. Come back another time.'}},
+    // chapter 1: the cow's pen's sign, put up when its plot is marked out
+    '|': {look:'sign', landmark:true, label:'Read', onLook:[{if:{cow:{atLeast:8}}, do:[{message:'The {牛}’s home. Your friend the cow lives here, safe from the wolves.'}]},
+      {do:[{message:'The {牛}’s new home, by the road, safe from the wolves.'}]}]},
     ':': {look:'sign', landmark:true, label:'Read', onLook:[{if:{bees:{atLeast:10}}, do:[{message:'The bees’ hive. The queen bee and her swarm live here, and make honey for the troop.'}]},
       {do:[{message:'The troop is building the bees a hive here, by the flowers.'}]}]},
     'e': {look:'grass', walk:true},   // the garden's ("The troop wants to grow things here, in a garden by the stream.")
-    'c': {look:'grass', walk:true},   // the cow pen's ("The troop wants a pen here, for a cow.")
-    '2': {look:'grass', walk:true}, '3': {look:'grass', walk:true, becomes:[{if:{bees:{atLeast:8}}, to:':'}]}, '4': {look:'grass', walk:true}, '5': {look:'grass', walk:true},
+    '2': {look:'grass', walk:true}, '3': {look:'grass', walk:true, becomes:[{if:{bees:{atLeast:8}}, to:':'}]}, '4': {look:'grass', walk:true}, '5': {look:'grass', walk:true, becomes:[{if:{cow:{atLeast:6}}, to:'|'}]},
     '1': {look:'grass', walk:true, becomes:[{if:{build:{atLeast:1}}, to:'7'}]},   // the school's sign, put up when its plot is marked out
     '8': {look:'grass', walk:true, becomes:[{if:{build:{atLeast:1}}, to:'.'}]},   // the little path up to the school, trodden in then too
     // the beds either side of that path, in front of the school: grass, until the big monkey plants the flowers you've brought
@@ -1319,7 +1374,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the cow (牛), called by its word, as an animal is: lost and all alone in the pasture, by its spring, scared
     // of the wolves in the pines
     {id:'cow', place:'pasture', x:31, y:18, facing:'left', look:'牛',
-      moves:[{if:{cow:{atLeast:5}}, place:'homeGround', x:22, y:11, facing:'left'}]}   // home with you, by the thirsty monkey near the road
+      moves:[{if:{cow:{atLeast:8}}, place:'homeGround', x:28, y:13, facing:'left'},   // in its pen, in front of its shelter
+        {if:{cow:{atLeast:5}}, place:'homeGround', x:22, y:11, facing:'left'}]}   // home with you, by the thirsty monkey near the road
   ],
 
   // Your name in the speech box when you reply: the first whose if matches (otherwise 小猴子, Little monkey). Its English
@@ -1409,6 +1465,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '蜂王': 'Out of her old hollow tree, in the bees’ valley.',   // (heard first as the sixth bee sends you to find her)
     '牛': 'Lost and all alone by its spring, in the pasture south of the home ground.',   // (heard first in the thirsty monkey's news)
     '蜂蜜': 'From the bees’ hive, by the wildflowers at the home ground.',
+    '牛奶': 'The cow’s thank-you, in its new home by the road.',
+    '酸奶': 'The thirsty monkey made it from the cow’s milk, at the little dairy by its pen.',
+    '奶酪': 'The thirsty monkey made it from the cow’s milk too, at the little dairy.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -1448,7 +1507,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '粉色': 'A colour lesson at school: the teacher opened a pot of it.',
     '有': 'The old monkey’s news at school: the troop has a home, and a school too.',
     '没有': 'The hungry monkey, at the feast’s big table: there’s no honey.',
-    '蜂蜜': 'From the troop’s bees, for the feast.',   // (for later: the bees of chapter 1, to come)
   },
 
   // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
@@ -1471,7 +1529,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {word:'桃子', have:{}, yes:{zh:'我们 有 桃子 。', en:'We have peaches.'}},
       {word:'苹果', have:{}, yes:{zh:'我们 有 苹果 。', en:'We have apples.'}},
       {word:'蜂蜜', show:{feast:{atLeast:3}}, have:{bees:{atLeast:11}}, no:{zh:'我们 没有 蜂蜜 。', en:'We don’t have any honey.'},
-        yes:{zh:'我们 有 蜂蜜 。', en:'We have honey.'}}   // (from the bees' hive)
+        yes:{zh:'我们 有 蜂蜜 。', en:'We have honey.'}},   // (from the bees' hive)
+      {word:'牛奶', show:{milkTable:{atLeast:1}}, have:{milkTable:{atLeast:1}}, yes:{zh:'我们 有 牛奶 。', en:'We have milk.'}}   // (the cow's thank-you; on the list once it's on the table, so the list never gives it away)
     ]
   },
 
@@ -1512,6 +1571,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'},
     '路': {zh:'山 上 有 路 。', en:'There is a path up the mountain.'},   // (drafts, not checked yet)
     '蜘蛛': {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.'},   // (a draft, not checked yet)
+    '酸奶': {zh:'酸奶 是 白色 的 。', en:'Yoghurt is white.'},   // (drafts, not checked yet)
+    '奶酪': {zh:'奶酪 是 黄色 的 。', en:'Cheese is yellow.'},
     '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
@@ -1550,7 +1611,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // What happens after you lose a battle and come round where you rest: the first whose if matches. (Chapter 1: the cow
     // you were leading home takes fright, and runs back to its spring in the pasture; fetch it again. Losing isn't
     // punished: it trusts you still.)
-    afterLoss: [{if:{following:{cow:true}}, do:[{follow:[]}, {message:'Frightened, the {牛} ran back to its spring in the pasture. Go and fetch it again!'}]}]
+    afterLoss: [{if:{cow:4, following:{cow:true}}, do:[{follow:[]}, {message:'Frightened, the {牛} ran back to its spring in the pasture. Go and fetch it again!'}]}]
   },
 
   // Where fish jump out of the water now and then, one after another.
@@ -1738,6 +1799,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveHoneyNow: {zh:'我们 有 蜂蜜 了 ！', en:'We have honey now!'},   // and once it's in the bowl on the feast's table
     cowNews: {zh:'山 上 有 牛 ！', en:'There’s a cow on the mountain!'},   // the thirsty monkey's news (牛 just for listening, till you find it)
     cowScared: {zh:'我 怕 狼 ！', en:'I’m scared of wolves!'},   // the cow, lost in the pasture
+    yourHome: {zh:'这 是 你 的 家 ！', en:'This is your home!'},   // you, to the cow, as you lead it into its pen
+    cowHasHome: {zh:'我 有 家 了 ！', en:'I have a home now!'},   // the cow, in its pen
+    wantMilk: {zh:'我 要 喝 牛奶 ！', en:'I want to drink milk!'},   // the thirsty monkey, as the cow gives you some
+    haveMilk: {zh:'牛奶 ！ 太 好 了 ！', en:'Milk! Wonderful!'},   // and when you bring it to him
+    haveMilkNow: {zh:'我们 有 牛奶 了 ！', en:'We have milk now!'},   // the hungry monkey, at the feast's new table
     // hide and seek with a little monkey (the area's hideSeek): its clues' English leaves the place's word in Chinese ({桌子})
     hideAsk: {zh:'我们 来 捉迷藏 吧 ！', en:'Let’s play hide and seek!'},
     hideCount: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ， 十 ！', en:'One, two, three, four, five, six, seven, eight, nine, ten!'},   // you, with your eyes covered
@@ -2010,7 +2076,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cow:{atLeast:1, below:3}}, do:[{say:'cowNews', hint:'Go south, over the bridge at the bottom of the home ground, and through the pines, to find the lost cow.'}]},
       {if:{cow:3}, do:[{say:'cowNews', hint:'You found the cow by its spring, in the pasture. Win its trust with its word game, and it will follow you home.'}]},
       {if:{cow:4}, do:[{say:'cowNews', hint:'The cow ran back to its spring in the pasture: go and fetch it, then lead it home past the wolves.'}]},   // (it ran back: leading it home, you'd meet him first, by the road)
-      {if:{cow:{atLeast:5}}, do:[{say:'great', hint:'The cow is home, safe from the wolves! The troop is going to build it a home of its own.'}]},
+      // home with the cow: the troop builds it a home as you watch, by the road: its plot marked out, then its pen, a piece at
+      // a time (the fences, with the gate facing the road, a shelter with hay, and a trough of fresh water fed by a bamboo
+      // pipe, his idea), and it follows you to its gate
+      {if:{cow:5}, do:[
+        {message:'The troop is ready to build the {牛} a safe home of its own, here by the road. Watch!'},
+        {markOut:{cow:6}}, {follow:['cow']}, {setUp:{cow:7}},   // (it follows you from now: once you walk, it's behind you)
+        {message:'A safe home for the {牛}: a fence with a gate, a shelter with hay, and a trough of fresh water, fed by a bamboo pipe (the thirsty monkey’s idea). Lead the {牛} in through its gate!'}]},
+      {if:{cow:7}, do:[{say:'great', hint:'Lead the cow in through the gate of its new home!'}]},
+      {if:{cow:8}, do:[{request:'milk'}]},   // the cow's milk, its thank-you: he'd love to drink some
+      {if:{cow:{atLeast:9}}, do:[{say:'great', hint:'The cow is safe and happy in its new home, and the feast has its milk!'}]},
       {do:[{request:'thirsty'}]}
     ],
     // chapter 1: the cow, lost and all alone in the pasture, by its spring. You find it (its word, said straight away as you
@@ -2018,7 +2093,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // Then, to win its trust, its word game (a heart for each right answer, three questions, as an animal's): win, and it
     // says 好！我们去你家吧！ (the queen bee's line), and follows you home, back through the pines (Not now, or lose, and it
     // has a ! till you've won it). Lose a battle on the way, and it runs back to its spring (battles' afterLoss): talk to it,
-    // and it follows you again. Home, it stays by the thirsty monkey (events).
+    // and it follows you again. Home, it stays by the thirsty monkey (events), till the troop has built it a home by the road
+    // (his talk) and you lead it in (events); there, it says 我有家了！ (I have a home now!).
     cow: [
       {if:{cow:{below:3}}, do:[
         {newWord:'牛', met:true, note:'A cow, lost and all alone, by the spring. It looks up at you, trembling.'}, {set:{cow:3}},
@@ -2035,7 +2111,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ]},
       {if:{cow:4, following:{cow:false}}, do:[{say:'queenYes'}, {follow:['cow']}, {message:'The {牛} follows you again. Lead it home to the thirsty monkey!'}]},   // (after it ran back to its spring)
       {if:{cow:4}, do:[{say:'queenYes'}]},   // following you home
-      {do:[{sound:'moo'}, {message:'The {牛} munches the grass by the road, safe from the wolves, waiting for a home of its own.'}]}   // home
+      {if:{cow:7, following:{cow:false}}, do:[{sound:'moo'}, {follow:['cow']}, {message:'The {牛} follows you. Lead it in through the gate of its new home!'}]},   // (its home is built)
+      {if:{cow:{atLeast:8}}, do:[{sound:'moo'}, {say:'cowHasHome'}]},   // in its home, safe and happy
+      {do:[{sound:'moo'}, {message:'The {牛} munches the grass by the road, safe from the wolves, waiting for a home of its own.'}]}   // home, waiting for its own
     ],
     boar: [{do:[{battle:'boar', win:[{set:{boar:1}}, {message:'The way to the top is clear.'}]}]}],
     // chapter 1: the queen bee, out of her old tree. You meet her (her word, said straight away as she's met, as an animal's

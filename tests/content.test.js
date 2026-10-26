@@ -417,6 +417,25 @@ test('every phrase can be caught: a reply, a card or a request teaches it', () =
   for (const p of collectible.filter(w => BANK[w].phrase)) assert.ok(taught.has(p), `${p} is a phrase you can never catch: nothing teaches it`);
 });
 
+// Two entries with the same name in one list can't both be right: JavaScript keeps the last, and the first is lost without a
+// word (26 October 2026: the cow's 我有家了！, called haveHome, quietly replaced the old monkey's 我们有家了！). Reads the
+// content files as text: each name at the start of a line, among those in the same braces.
+test('no two entries in the same list in the content have the same name', () => {
+  for (const name of fs.readdirSync(path.join(ROOT, 'content')).filter(f => f.endsWith('.js') && f !== 'pictures.js' && f !== 'voices.js')){
+    const seen = [new Map()];
+    fs.readFileSync(path.join(ROOT, 'content', name), 'utf8').split('\n').forEach((line, i) => {
+      const key = (line.match(/^\s*('(?:[^'\\]|\\.)*'|[A-Za-z_$][\w$]*)\s*:/) || [])[1];
+      const code = line.replace(/'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`/g, m => m.replace(/[{}[\]]/g, ' ')).replace(/\/\/.*$/, '');   // (brackets in its strings don't count)
+      if (key){
+        const here = seen[seen.length - 1];
+        assert.ok(!here.has(key), `content/${name}, line ${i + 1}: ${key} is there already, on line ${here.get(key)}: give one another name`);
+        here.set(key, i + 1);
+      }
+      for (const ch of code){ if (ch === '{' || ch === '[') seen.push(new Map()); else if ((ch === '}' || ch === ']') && seen.length > 1) seen.pop(); }
+    });
+  }
+});
+
 test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),

@@ -180,6 +180,7 @@ const COUNTS = {   // what a counter in the content can count
   shells: () => S.shells,
   picked: c => (here().picked[c.request] || []).length,
   practised: () => ((AREA.lessonGap || {}).questions || 0) - practiceLeft(),   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
+  since: c => Math.max(0, (S.turn || 0) - (here()[c.key] || 0)),   // questions you've answered anywhere since the countFrom step started counting them (key), such as the thirsty monkey's 8 making yoghurt
   known: c => c.words.filter(w => lvl(w) >= 1).length   // how many of these words you've caught
 };
 function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count](c) - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
@@ -221,7 +222,7 @@ const LEAP_MS = 450;   // how long a leap takes, when someone stops following yo
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
 const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
-  change:['at'], collect:['for','count','note','each','full'], leadTo:['you']};   // extra settings a step can have
+  change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 // How many things you could count with the numbers you know: never two (NOT_HOW_MANY, js/quiz.js).
@@ -348,7 +349,7 @@ function markingOf(was){   // what's being marked out, now the story has changed
   if (!changed.length) return null;
   const fresh = document.createElement('canvas'); fresh.width = COLS*T; fresh.height = ROWS*T;
   const fg = fresh.getContext('2d'); changed.forEach(([x, y]) => LOOKS[now[y][x]](fg, x*T, y*T, x, y));
-  const plot = changed.filter(([x, y]) => now[y][x] === 'plot'), xs = plot.map(p => p[0]), ys = plot.map(p => p[1]);
+  const plot = changed.filter(([x, y]) => now[y][x] === 'plot' || now[y][x] === 'grassPlot'), xs = plot.map(p => p[0]), ys = plot.map(p => p[1]);
   return {t0:performance.now(), changed, fresh, box:plot.length ? {x0:Math.min(...xs), y0:Math.min(...ys), x1:Math.max(...xs), y1:Math.max(...ys)} : null};
 }
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to; last, whether it's the last thing in the conversation (runSteps)
@@ -382,6 +383,12 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async newWord(s, who){ if (lvl(s.newWord) === 0) await showNotice(s.newWord, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who && !s.met}); },
   async card(s, who){ await showNotice(s.card, {...(s.note ? {note:fill(s.note)} : {}), quiet:!!who}); },
   set(s){ Object.assign(here(), s.set); save(); placeCharacters(); refreshMap(); },
+  // You're given something for a request (for), such as the cow's milk, its thank-you, for the thirsty monkey: you hold it
+  // till you take it to them.
+  hold(s){ here().holding[s.for] = s.hold; save(); },
+  // Starts counting the questions you answer from now on, anywhere (S.turn), kept in the area's progress (countFrom: its
+  // key), for a counter that counts them (since), such as the 8 questions the thirsty monkey's yoghurt takes to make.
+  countFrom(s){ here()[s.countFrom] = S.turn || 0; save(); },
   async request(s, who, last){ await request(REQUESTS.find(r => r.id === s.request), speaker(who), last); },
   async shop(s, who){ await shop(speaker(who)); },
   // win: what happens if you win, such as a present; lost: if you don't; practice: a game for nothing but practice. A big
