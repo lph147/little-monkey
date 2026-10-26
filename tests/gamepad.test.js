@@ -11,7 +11,7 @@ function withPad(){
   const g = loadGame({dom: true, save: {version: 29, started: true}});
   g.run("mode = 'play'; modal.hidden = true; upright = false");
   g.run("globalThis.__pad = {connected: true, buttons: Array.from({length: 17}, () => ({pressed: false})), axes: [0, 0, 0, 0]}; globalThis.navigator = {getGamepads: () => [__pad, null]}");
-  g.run("globalThis.__did = []; pressA = () => __did.push('A'); pressB = () => __did.push('B'); pressMenu = () => __did.push('MENU'); pressSelect = () => __did.push('TASKS'); pressBag = () => __did.push('BAG'); pressMap = () => __did.push('MAP')");
+  g.run("globalThis.__did = []; pressA = () => __did.push('A'); pressB = () => __did.push('B'); pressMenu = () => __did.push('MENU'); pressSelect = () => __did.push('TASKS')");
   return {
     g,
     press: i => g.run(`__pad.buttons[${i}].pressed = true`),
@@ -23,9 +23,9 @@ function withPad(){
   };
 }
 
-test('the bottom button is A and the right one B (as on an Xbox), the left one X (your bag) and the top one Y (the map); Start is MENU and View or Select is TASKS', () => {
+test('the bottom button is A and the right one B (as on an Xbox); Start is MENU and View or Select is TASKS', () => {
   const p = withPad();
-  for (const [i, name] of [[0, 'A'], [1, 'B'], [2, 'BAG'], [3, 'MAP'], [9, 'MENU'], [8, 'TASKS']]){
+  for (const [i, name] of [[0, 'A'], [1, 'B'], [9, 'MENU'], [8, 'TASKS']]){
     p.press(i); p.frame(1000);
     assert.deepEqual(p.did(), [name]);
     p.frame(1016); p.frame(1032);

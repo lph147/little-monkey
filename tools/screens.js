@@ -802,7 +802,7 @@ const SCREENS = [
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)
-  {id: 'tip-eat', title: 'Tip: eating honey', save: 'honeyIn', why: 'The first time honey is in your bag (from the hungry monkey), a tip by X (Bag) says to eat it to walk faster, and how.', run: async () => {
+  {id: 'tip-eat', title: 'Tip: eating honey', save: 'honeyIn', why: 'The first time honey is in your bag (from the hungry monkey), a tip by MENU says to eat it to walk faster, and how.', run: async () => {
     S.tips = {...S.tips}; delete S.tips.eat; play(); await wait(700); }},
   {id: 'hungry-has-bees', title: 'We have bees now!', save: 'beesHome', why: 'The hungry monkey, with a ! once the bees are home: 我们有蜜蜂了！ (the hive and the honey come next).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(500); }},
@@ -854,8 +854,7 @@ const SCREENS = [
     play(); await wait(200); S.bag = {}; pressA(); await wait(900); }},
   {id: 'wardrobe', title: 'Wardrobe', save: 'middle', run: async () => { play(); await wait(100); wardrobePage(() => closeCard()); await wait(300); }},
   {id: 'settings', title: 'Settings', save: 'middle', run: async () => { play(); await wait(100); openSettings(); await wait(300); }},
-  {id: 'fps', title: 'Frames a second, over the game', save: 'middle', why: 'Settings, Frames a second (for testing): how many frames the game draws each second (at most about 60), in the top right corner.', run: async () => { S.fps = true; play(); await wait(1600); }},
-  {id: 'map-soon', title: 'Y: the map, coming soon', save: 'middle', why: 'Y (or P) says so, until there is a map.', run: async () => { play(); await wait(1500); closeMessage(); pressMap(); await wait(300); }},
+  {id: 'fps', title: 'Frames a second, under the power light', save: 'middle', why: 'Settings, Frames a second: how many frames the game draws each second (at most about 60).', run: async () => { S.fps = true; play(); await wait(1600); }},
   {id: 'howto-1', title: 'How to play, 1 of 3', save: 'middle', why: 'Now only in Settings.', run: async () => { play(); await wait(100); howToPlay(); await wait(300); }},
   {id: 'howto-2', title: 'How to play, 2 of 3', save: 'middle', run: async () => { play(); await wait(100); howToPlay(); await wait(100); click('[data-a=next]'); await wait(300); }},
   {id: 'howto-3', title: 'How to play, 3 of 3', save: 'middle', run: async () => { play(); await wait(100); howToPlay(); await wait(100); click('[data-a=next]'); await wait(100); click('[data-a=next]'); await wait(300); }},

@@ -1,13 +1,12 @@
 // Game controllers (Xbox, PlayStation, Switch Pro and most Bluetooth ones), on a computer or a phone. Each of the
 // controller's buttons presses one of the game's own: its D-pad or left stick is the D-pad, the bottom button
-// (Xbox A, PlayStation ✕) is A and the right one (Xbox B, PlayStation ○) is B, as on an Xbox, the left one (Xbox X,
-// PlayStation □) your bag and the top one (Xbox Y, PlayStation △) the map; Start (Menu, Options)
+// (Xbox A, PlayStation ✕) is A and the right one (Xbox B, PlayStation ○) is B, as on an Xbox; Start (Menu, Options)
 // is MENU and Select (View, Share) is TASKS. The button on the screen lights up as you press it. A browser only
 // tells the page a controller is there once you press one of its buttons, and only while one is connected is it
 // looked at, every frame.
 
 /* ================= CONTROLLERS ================= */
-const PAD_BUTTONS = [[0, '#btnA', () => pressA(performance.now())], [1, '#btnB', () => pressB(performance.now())], [2, '#btnX', () => pressBag()], [3, '#btnY', () => pressMap()], [9, '#startBtn', () => pressMenu()], [8, '#selectBtn', () => pressSelect()]];
+const PAD_BUTTONS = [[0, '#btnA', () => pressA(performance.now())], [1, '#btnB', () => pressB(performance.now())], [9, '#startBtn', () => pressMenu()], [8, '#selectBtn', () => pressSelect()]];
 const PAD_DIRS = [[12, 'up'], [13, 'down'], [14, 'left'], [15, 'right']];
 const STICK = 0.5;                            // how far the stick must be pushed to count
 const PAD_WAIT = 400, PAD_REPEAT = 150;       // holding a direction on a card: it moves again after PAD_WAIT, then every PAD_REPEAT

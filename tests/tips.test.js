@@ -125,8 +125,8 @@ test('with honey in your bag the first time, a tip by MENU says to eat it to wal
   const game = playing({version: 30, started: true, tips: all, bag: {'蜂蜜': 1}, pos: {x: 9, y: 4, dir: 'down'}});
   game.run('updateTips(1000)');
   assert.equal(showing(game), 'eat');
-  assert.match(game.run("$('#tip').innerHTML"), /Eat the 蜂蜜 \(honey\) in your bag to walk faster for a minute: press <b>X<\/b> for your bag, and tap it\./);
-  assert.equal(game.run("tip.target === $('#btnX')"), true, 'pointing at X, your bag');
-  game.run("tipPressed('#btnX')");
+  assert.match(game.run("$('#tip').innerHTML"), /Eat the 蜂蜜 \(honey\) in your bag to walk faster for a minute: press <b>MENU<\/b>, then 包 Bag, and tap it\./);
+  assert.equal(game.run("tip.target === $('#startBtn')"), true, 'pointing at MENU');
+  game.run("tipPressed('#startBtn')");
   assert.equal(get(game, 'S.tips.eat'), 1, 'it won’t show again');
 });

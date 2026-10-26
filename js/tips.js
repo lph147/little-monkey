@@ -22,7 +22,7 @@ const TIPS = {
   english: {at:'#talk [data-a=en]', once:true, text:'A line’s English shows the first time you hear it. Tap <b>English</b> to see it again.', when:() => !!talkNext && !talkMove},
   // food in your bag that does something as you walk about, such as honey, the first time you have some: how to eat it
   // (decided 26 October 2026: honey made you faster, but nothing said so where you'd see it)
-  eat: {at:'#btnX', lasts:9000, text:() => { const w = walkFood(); return `Eat the ${esc(wz(w))} in your bag to ${esc(FOOD[w].does.toLowerCase())}: press <b>X</b> for your bag, and tap it.`; },
+  eat: {at:'#startBtn', lasts:9000, text:() => { const w = walkFood(); return `Eat the ${esc(wz(w))} in your bag to ${esc(FOOD[w].does.toLowerCase())}: press <b>MENU</b>, then 包 Bag, and tap it.`; },
     when:() => canAct() && !!walkFood()}
   // (Tasks and Menu had tips too; the old monkey tells you about them instead, decided 18 October 2026.)
 };
@@ -35,7 +35,7 @@ function hideTip(){
   tip.lit.forEach(el => el.classList.remove('tipglow')); tipBox().hidden = true; tip = null;
 }
 function tipDone(id){ if (!S.tips[id]){ S.tips[id] = 1; save(); } if (tip && tip.id === id) hideTip(); }
-// You pressed a control (sel: '#btnA', '#btnX', '#startBtn' or '#selectBtn'): a tip pointing at it is done.
+// You pressed a control (sel: '#btnA', '#startBtn' or '#selectBtn'): a tip pointing at it is done.
 function tipPressed(sel){ if (tip && TIPS[tip.id].at === sel) tipDone(tip.id); }
 // A, B or ▼ in the speech box, with a tip showing that has a then: the next tip instead of the next line. Gives
 // whether it did.

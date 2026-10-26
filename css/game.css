@@ -47,14 +47,11 @@ h1{font-weight:700;font-size:1.35rem;margin:0;letter-spacing:.05em}
 .spacer{flex:1}
 .iconbtn{background:none;border:2px solid var(--line);border-radius:6px;padding:2px 8px;font-size:1rem;min-height:34px}
 
-/* The console (tried from 26 October 2026, to see if it's better: the GBA layout before it is in git history): the
-   screen in the middle; on the left, TASKS at the top by the screen, the D-pad, and a thumbstick under it; on the
-   right, MENU at the top by the screen, X (your bag) and Y (the map) above B and A, like an Xbox controller's four
-   buttons, and the speaker. Each side is 150px (SIDE_WING in js/main.js), and fit() makes the screen as big as fits
-   between them. On a short screen, fit() shrinks the controls to fit (--ctl, from 1, their full size), and the
-   speaker, just for looks, goes (data-ctl="tight"). */
-.console{--ctl:1;position:relative;display:grid;grid-template-columns:150px auto 150px;grid-template-rows:auto auto auto 1fr auto;
-  grid-template-areas:"tasks screen menu" "dpad screen xy" "stick screen ab" ". screen ." "keys keys keys";align-items:center;width:max-content;
+/* The console, like a Game Boy Advance: the screen in the middle, the D-pad, Select and Start on the left with
+   the power light, A and B on the right with the speaker. Each side is 150px (SIDE_WING in js/main.js), and
+   fit() makes the screen as big as fits between them. The power light and the speaker are just for looks. */
+.console{display:grid;grid-template-columns:150px auto 150px;grid-template-rows:auto 1fr auto auto;
+  grid-template-areas:"power screen ." "dpad screen ab" "ss screen grille" "keys keys keys";align-items:center;width:max-content;
   background:var(--shell);border:2px solid var(--shell-edge);border-radius:46px;padding:6px max(6px, env(safe-area-inset-right,0px)) 6px max(6px, env(safe-area-inset-left,0px))}
 .display{grid-area:screen}
 .screen{position:relative;margin:0 auto;background:var(--bezel);padding:8px;border-radius:8px 8px 18px 8px;width:max-content;max-width:100%}
@@ -116,7 +113,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .caprow .spacer{flex:1}
 
 .controls{display:contents}   /* its buttons are placed by .console's grid */
-.dpad{grid-area:dpad;justify-self:start;align-self:end;margin:calc(6px * var(--ctl)) 0 0 4px;display:grid;grid-template-columns:repeat(3,calc(44px * var(--ctl)));grid-template-rows:repeat(3,calc(44px * var(--ctl)));touch-action:none}
+.dpad{grid-area:dpad;justify-self:start;margin-left:4px;display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);touch-action:none}
 .dpad button{background:var(--pad);color:var(--pad-ink);border:none;font-size:1.1rem;touch-action:none;display:flex;align-items:center;justify-content:center}
 .dpad .u{grid-column:2;grid-row:1;border-radius:8px 8px 0 0}
 .dpad .l{grid-column:1;grid-row:2;border-radius:8px 0 0 8px}
@@ -129,16 +126,13 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .dpad .d::before{border-bottom:0;border-top:.72rem solid var(--pad-ink)}
 .dpad .l::before{border-left:0;border-right:.72rem solid var(--pad-ink)}
 .dpad .r::before{border-right:0;border-left:.72rem solid var(--pad-ink)}
-.ab{grid-area:ab;align-self:start;justify-self:end;margin-right:6px;display:flex;gap:calc(10px * var(--ctl));align-items:flex-end;transform:rotate(-12deg)}
-.ab.xy{grid-area:xy;align-self:end}   /* X and Y, above B and A: the same sizes, and tilted the same way */
+.ab{grid-area:ab;justify-self:end;margin-right:6px;display:flex;gap:10px;align-items:flex-end;transform:rotate(-12deg)}
 .abwrap{display:flex;flex-direction:column;align-items:center;gap:4px}
-.round{width:calc(62px * var(--ctl));height:calc(62px * var(--ctl));border-radius:50%;border:none;color:#FFF;font-family:var(--pixel);font-size:1.4rem;box-shadow:0 4px 0 rgba(0,0,0,.3);touch-action:none}
+.round{width:62px;height:62px;border-radius:50%;border:none;color:#FFF;font-family:var(--pixel);font-size:1.4rem;box-shadow:0 4px 0 rgba(0,0,0,.3);touch-action:none}
 .round:active,.round.held{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
 #btnA{background:var(--btnA)}
-#btnB,#btnX{background:var(--btnB);width:calc(56px * var(--ctl));height:calc(56px * var(--ctl));font-size:1.2rem}
-#btnX{background:var(--jade)}
-#btnY{background:var(--gold);color:#3A2A00}
-.ab .abwrap:last-child{margin-bottom:calc(30px * var(--ctl))}   /* A higher than B, like a GBA */
+#btnB{background:var(--btnB);width:56px;height:56px;font-size:1.2rem}
+.ab .abwrap:last-child{margin-bottom:30px}   /* A higher than B, like a GBA */
 .ablabel{font-family:var(--pixel);font-size:.85rem;color:var(--muted);height:1.25rem;line-height:1.25rem;width:0;display:flex;justify-content:center;white-space:nowrap;transform:rotate(12deg)}   /* on one line, centred under its button, never moving the buttons however long it is (decided 22 October 2026) */
 .ablabel.long{display:block;width:4.4rem;margin:0 -2.2rem;white-space:normal;text-align:center;line-height:1.05;font-size:.78rem}   /* a long one (more than 10 letters, such as How it’s made), on two lines under its button (decided 25 October 2026: squashed onto one, it ran into the edge), still never moving it: as wide as nothing, and its second line hangs below */
 .keys{display:none;grid-area:keys;margin:6px 0 2px;font-size:.8rem;color:var(--muted);text-align:center}
@@ -550,7 +544,7 @@ rt.hid{visibility:hidden}
 .howto:has(.dot){grid-template-columns:1fr;gap:.2rem}   /* the three kinds of word: short, one line each */
 .howto li{display:flex;gap:10px;align-items:flex-start}
 .kbd{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;color:#FFF;font-family:var(--pixel);font-size:1rem}
-.kbd.a{background:var(--btnA)} .kbd.b{background:var(--btnB)} .kbd.x{background:var(--jade)} .kbd.pad{background:var(--pad);border-radius:6px} .kbd.menu{background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:6px}
+.kbd.a{background:var(--btnA)} .kbd.b{background:var(--btnB)} .kbd.pad{background:var(--pad);border-radius:6px} .kbd.menu{background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:6px}
 .dot{flex:none;width:30px;text-align:center;font-weight:700}
 .dot.learn::before{content:"字";color:var(--jade);font-weight:500}
 .dot.teach::before{content:"字";color:var(--jade);font-weight:800;background:color-mix(in srgb,var(--jade) 12%,transparent)}
@@ -992,19 +986,10 @@ rt.hid{visibility:hidden}
 .chaptercard{text-align:center;padding:14px 0 6px}
 .chaptercard h2{font-family:var(--pixel);font-size:1.7rem;margin:6px 0 0;line-height:1.2}
 
-/* Select (your tasks) and Start (the menu): two small pills, like a Game Boy's, at the top by the screen's corners,
-   tilted to mirror each other. A red dot on Select while there's a task you haven't looked at. */
-.sswrap{display:flex;flex-direction:column;align-items:center;gap:4px;transform:rotate(-22deg);align-self:start;margin-top:calc(14px * var(--ctl))}
-.sswrap.tasks{grid-area:tasks;justify-self:end;margin-right:6px}
-.sswrap.menu{grid-area:menu;justify-self:start;margin-left:6px;transform:rotate(22deg)}
-/* the thumbstick, under the D-pad and lined up with it: its knob follows your thumb (js/input.js) */
-.stick{grid-area:stick;justify-self:start;align-self:start;margin:calc(34px * var(--ctl)) 0 0 calc(4px + 22px * var(--ctl));position:relative;
-  width:calc(88px * var(--ctl));height:calc(88px * var(--ctl));border-radius:50%;touch-action:none;
-  background:radial-gradient(circle at 50% 50%, rgba(0,0,0,.35) 0 52%, var(--pad) 53% 100%);box-shadow:inset 0 3px 0 rgba(0,0,0,.25), 0 2px 0 var(--shell-edge)}
-.stick i{position:absolute;left:50%;top:50%;width:calc(50px * var(--ctl));height:calc(50px * var(--ctl));margin:calc(-27px * var(--ctl)) 0 0 calc(-25px * var(--ctl));border-radius:50%;pointer-events:none;transition:transform .12s ease-out;
-  background:radial-gradient(circle at 50% 50%, var(--pad) 0 38%, color-mix(in srgb, var(--pad) 70%, #fff) 40% 44%, var(--pad) 46% 100%);
-  box-shadow:0 4px 0 rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.18)}
-.stick.held i{transition:none;filter:brightness(1.2)}
+/* Select (your tasks) and Start (the menu): two small pills under the D-pad, like a Game Boy's.
+   A red dot on Select while there's a task you haven't looked at. */
+.ss{grid-area:ss;justify-self:center;margin:0 8px 10px 0;display:flex;gap:16px}
+.sswrap{display:flex;flex-direction:column;align-items:center;gap:4px;transform:rotate(-22deg)}
 .pill{position:relative;width:50px;height:16px;border-radius:9px;background:var(--pad);border:none;box-shadow:0 2px 0 rgba(0,0,0,.35);touch-action:none}
 .pill:active{transform:translateY(2px);box-shadow:0 0 0 rgba(0,0,0,.35)}
 .sslabel{font:600 .72rem var(--pixel);color:var(--muted);letter-spacing:.08em}
@@ -1021,13 +1006,13 @@ rt.hid{visibility:hidden}
 .appicon{width:1.4em;height:1.4em;vertical-align:middle;border-radius:22%}
 .caprow .btn{font-size:.85rem;padding:.25rem .6rem;min-height:2.3rem}
 
-/* frames a second (Settings, for testing): over the game, in its top right corner, over everything */
-.fps{position:absolute;top:10px;right:10px;z-index:30;padding:1px 5px;border-radius:4px;background:rgba(0,0,0,.6);color:#fff;font:600 .6rem var(--pixel);letter-spacing:.08em;white-space:nowrap;pointer-events:none}
+/* the power light, beside the screen's top-left corner, and the speaker's slots, under A and B */
+.power{grid-area:power;justify-self:end;align-self:start;margin:10px 10px 0 0;display:flex;align-items:center;gap:5px;font:600 .6rem var(--pixel);letter-spacing:.12em;color:var(--muted)}
+.power i{width:7px;height:7px;border-radius:50%;background:var(--led);box-shadow:0 0 6px var(--led)}
+/* frames a second (Settings), under the power light: on the console, so nothing on the screen ever covers it */
+.fps{grid-area:power;justify-self:end;align-self:start;margin:30px 10px 0 0;font:600 .6rem var(--pixel);letter-spacing:.08em;color:var(--muted);text-align:right;white-space:nowrap}
 .fps[hidden]{display:none}
-/* the speaker's slots, in the bottom right corner, under A and B, just for looks: out of the way of the buttons, and
-   gone when the controls are shrunk to fit a short screen */
-.grille{position:absolute;right:calc(max(6px, env(safe-area-inset-right,0px)) + 22px);bottom:20px;display:flex;gap:6px;transform:rotate(28deg);pointer-events:none}
-.console[data-ctl="tight"] .grille{display:none}
+.grille{grid-area:grille;justify-self:end;display:flex;gap:6px;margin:0 22px 18px 0;transform:rotate(28deg)}
 .grille i{width:5px;height:30px;border-radius:3px;background:var(--grille);box-shadow:inset 0 2px 2px rgba(0,0,0,.3)}
 .grille i:first-child,.grille i:last-child{height:20px;margin-top:5px}
 
