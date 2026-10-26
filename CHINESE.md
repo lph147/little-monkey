@@ -97,6 +97,8 @@ shown where the word list has them.
 | 我要喝牛奶！ | wǒ yào hē niúnǎi! | I want to drink milk! | 渴猴子 (Thirsty monkey) |  |
 | 牛奶！太好了！ | niúnǎi! tài hǎo le! | Milk! Wonderful! | 渴猴子 (Thirsty monkey) |  |
 | 我们有牛奶了！ | wǒmen yǒu niúnǎi le! | We have milk now! |  |  |
+| 我要做吃的！ | wǒ yào zuò chī de! | I’m going to make something to eat! | 渴猴子 (Thirsty monkey) |  |
+| 好了！ | hǎo le! | It’s ready! | 渴猴子 (Thirsty monkey) |  |
 | 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
 | 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | you |  |
 | 我来了！ | wǒ lái le! | Here I come! | you |  |
@@ -182,6 +184,8 @@ What A at the feast's big table shows: what the troop has, and what it still nee
 | 我们有蜂蜜。 | wǒmen yǒu fēngmì. | We have honey. |  |
 | 我们没有蜂蜜。 | wǒmen méiyǒu fēngmì. | We don’t have any honey. |  |
 | 我们有牛奶。 | wǒmen yǒu niúnǎi. | We have milk. |  |
+| 我们有酸奶。 | wǒmen yǒu suānnǎi. | We have yoghurt. |  |
+| 我们有奶酪。 | wǒmen yǒu nǎilào. | We have cheese. |  |
 
 ### The sign
 
@@ -508,6 +512,7 @@ check that each is true and simply put.
 | 找 | zhǎo | to look for |  |
 | 这 | zhè | this |  |
 | 累 | lèi | tired |  |
+| 做 | zuò | to make, to do |  |
 | 很久 | hěn jiǔ | a long time |  |
 | 以前 | yǐqián | before, ago |  |
 | 海 | hǎi | sea |  |
@@ -674,8 +679,12 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 牛奶！太好了！ | niúnǎi! tài hǎo le! | Milk! Wonderful! | New on 26 October 2026 (in the game), the cow’s new home: The thirsty monkey, when you bring him the milk (as 水！太好了！ for water) |  |
 | 我们有牛奶了！ | wǒmen yǒu niúnǎi le! | We have milk now! | New on 26 October 2026 (in the game), the cow’s new home: The hungry monkey, as the troop sets up a second table for the feast, with the milk on it |  |
 | 我们有牛奶。 | wǒmen yǒu niúnǎi. | We have milk. | New on 26 October 2026 (in the game), the cow’s new home: The feast’s list, at its tables |  |
-| 酸奶是白色的。 | suānnǎi shì báisè de. | Yoghurt is white. | New on 26 October 2026 (in the game), the cow’s new home: The example on 酸奶 (suānnǎi, yoghurt)’s page in the Word Scroll (yoghurt comes next, made from the milk) |  |
-| 奶酪是黄色的。 | nǎilào shì huángsè de. | Cheese is yellow. | New on 26 October 2026 (in the game), the cow’s new home: The example on 奶酪 (nǎilào, cheese)’s page (and then cheese) |  |
+| 酸奶是白色的。 | suānnǎi shì báisè de. | Yoghurt is white. | New on 26 October 2026 (in the game), the cow’s new home: The example on 酸奶 (suānnǎi, yoghurt)’s page in the Word Scroll |  |
+| 奶酪是黄色的。 | nǎilào shì huángsè de. | Cheese is yellow. | New on 26 October 2026 (in the game), the cow’s new home: The example on 奶酪 (nǎilào, cheese)’s page |  |
+| 我要做吃的！ | wǒ yào zuò chī de! | I’m going to make something to eat! | New on 26 October 2026 (in the game), the little dairy: The thirsty monkey, taking some of the cow’s milk to his little dairy by its pen (做 zuò, to make, just for listening). Is it natural? Would 我要做好吃的！ (I’m going to make something tasty!) be better? |  |
+| 好了！ | hǎo le! | It’s ready! | New on 26 October 2026 (in the game), the little dairy: The thirsty monkey, when what he’s made is ready: yoghurt (酸奶), then cheese (奶酪) |  |
+| 我们有酸奶。 | wǒmen yǒu suānnǎi. | We have yoghurt. | New on 26 October 2026 (in the game), the little dairy: The feast’s list, at its tables |  |
+| 我们有奶酪。 | wǒmen yǒu nǎilào. | We have cheese. | New on 26 October 2026 (in the game), the little dairy: The feast’s list, at its tables |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

@@ -561,6 +561,23 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(21, 10, 'down', 'giving the thirsty monkey the milk');
   assert.deepEqual([area().milk, area().cow, area().milkTable], ['done', 9, 1], 'he drinks some, and the rest is on the feast’s new table');
   assert.ok(get('__said').includes('我们有牛奶了！'));
+  // The little dairy (version 4): the thirsty monkey takes some of the milk to a little table by the pen, set up as you
+  // watch: 我要做吃的！ It's ready once you've answered 8 more questions, anywhere (practice lessons at school, here): 好了！,
+  // and 酸奶 (yoghurt); then the same again for cheese (奶酪). Each goes on the feast's new table too
+  await pressAt(21, 10, 'down', 'the thirsty monkey taking some milk to his little dairy');
+  assert.deepEqual([area().dairy, run('tileAt(19, 11).look')], [1, 'dairy'], 'he’s making something: 我要做吃的！');
+  for (const [word, done] of [['酸奶', 3], ['奶酪', 5]]){
+    stand(11, 5, 'up');
+    await act('arrive(11, 4).then(runEvents)', 'walking into the school, to practise');
+    for (let i = 0; i < 12 && run('counter("dairyWait")') < 8; i++) await pressAt(7, 3, 'up', 'a practice lesson, while he makes it', 0);
+    assert.equal(run('counter("dairyWait")'), 8, 'practised: 8 questions');
+    stand(7, 8, 'down');
+    await act('arrive(7, 9).then(runEvents)', 'walking out of the school');
+    assert.equal(area().dairy, done - 1, 'it’s ready: a chime, and a ! over him');
+    await pressAt(21, 10, 'down', `seeing what he’s made: ${word}`);
+    assert.ok(knows(word) && area().dairy === done && get('__said').includes('好了！'), `好了！ ${word}`);
+  }
+  assert.deepEqual([area().milkTable, run('tileAt(22, 7).look')], [3, 'milkTableCheese'], 'the yoghurt and the cheese on the feast’s new table');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this

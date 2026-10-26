@@ -77,7 +77,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           shelter with hay, a trough of fresh water), and it follows you to its gate, 8 it's in its pen, its home, and it's
   //           given you some of its milk, its thank-you (teaching 牛奶; the thirsty monkey's milk request is asked), 9 he's
   //           drunk some, and the rest is for the feast
-  //   milkTable chapter 1: the feast's second table, beside the first: 1 the troop has set it up, with the cow's milk on it
+  //   milkTable chapter 1: the feast's second table, beside the first: 1 the troop has set it up, with the cow's milk on it,
+  //           2 with a jar of yoghurt too, 3 and a round cheese, from the little dairy
+  //   dairy   chapter 1, the little dairy by the cow's pen: 0 not yet, 1 the thirsty monkey is making something from the milk
+  //           (8 questions: dairyWait), 2 it's ready, 3 you've seen it: yoghurt (teaching 酸奶), and he's making something
+  //           else, 4 that's ready, 5 you've seen it: cheese (teaching 奶酪)
+  //   dairyTurn chapter 1: your question count when he started making something (the countFrom step)
   //   cowWolf chapter 1: 1 once you've beaten the wolf that leaps out at the big rocks in the pasture as you lead the cow home
   //   littleGame the prologue: the little monkey's word game, once it's your friend: 0 not played yet (it has a !), 1 played,
   //           2 won (its present: once)
@@ -85,7 +90,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, milkTable:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, milkTable:0, dairy:0, dairyTurn:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -114,7 +119,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     stonesGot: {count:'picked', request:'stones'},   // and small stones
     numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']},   // the numbers you've learned at school
     coloursKnown: {count:'known', words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},   // and the colours
-    practised: {count:'practised'}   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
+    practised: {count:'practised'},   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
+    dairyWait: {count:'since', key:'dairyTurn', max:8}   // and since the thirsty monkey started making something at the little dairy (8 to make it)
   },
 
   // Lessons at school (the lesson step, with the teacher): each series teaches its words one at a time, one a lesson, in
@@ -232,6 +238,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'cow7b', if:{cow:7, following:{cow:false}}, text:'Talk to the {牛}, and lead it in through the gate of its new home', arrow:'cow'},
     {id:'milk', if:{milk:'asked', holding:{milk:true}}, text:'Give the {牛奶} to the thirsty monkey', arrow:'thirsty'},
     {id:'milkTable', if:{cow:9, milkTable:0}, text:'Go and see the feast’s new {桌子}, beside the first', arrow:[22, 8, 'homeGround']},
+    // the little dairy by the pen: the thirsty monkey makes something from the milk, ready once you've answered 8 more
+    // questions anywhere (a chime, a message and a ! say so), then something else
+    {id:'dairy', if:{milkTable:{atLeast:1}, dairy:0}, text:'Talk to the thirsty monkey: he wants to make something with the {牛奶}', arrow:'thirsty'},
+    {id:'dairyWait', if:{dairy:1}, text:'The thirsty monkey is making something from the {牛奶}: practise, then come back and see what it is ({dairyWait}/8)'},
+    {id:'dairyReady', if:{dairy:2}, text:'The thirsty monkey has made something from the {牛奶}: go and see what it is!', arrow:'thirsty'},
+    {id:'dairyWait2', if:{dairy:3}, text:'The thirsty monkey is making something else from the {牛奶}: practise, then come back and see what it is ({dairyWait}/8)'},
+    {id:'dairyReady2', if:{dairy:4}, text:'The thirsty monkey has made something else from the {牛奶}: go and see what it is!', arrow:'thirsty'},
+    {id:'yogTable', if:{dairy:{atLeast:3}, milkTable:1}, text:'Go and see the feast’s new {桌子}: there’s some {酸奶} for it', arrow:[22, 8, 'homeGround']},
+    {id:'cheeseTable', if:{dairy:{atLeast:5}, milkTable:2}, text:'Go and see the feast’s new {桌子}: there’s some {奶酪} for it', arrow:[22, 8, 'homeGround']},
     {id:'hideSeek', if:{hiding:true}, text:'Find where the little monkey is hiding', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
     {id:'flowersBack', if:{flowers:'asked', holding:{flowers:true}}, text:'Take the {花} to the big monkey', arrow:'big'},
@@ -249,7 +264,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, cow:0}, text:'The thirsty monkey has news for you: look for his ! at the home ground.'},
-    {if:{bees:{atLeast:11}, milkTable:{atLeast:1}}, text:'The feast has {蜂蜜|honey} and {牛奶|milk} now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees and the cow are done: till then, they have tasks)
+    {if:{bees:{atLeast:11}, milkTable:{atLeast:3}}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees, the cow and its dairy are done: till then, they have tasks)
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then (after each new word, practise a little before the next). The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -304,7 +319,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Lead the {牛} home, past the wolves', show:{cow:{atLeast:4}}, done:{cow:{atLeast:5}}},
     {chapter:1, text:'Lead the {牛} into its new home', show:{cow:{atLeast:5}}, done:{cow:{atLeast:8}}},
     {chapter:1, text:'Give the thirsty monkey some {牛奶|milk}', show:{cow:{atLeast:8}}, done:{milk:'done'}},
-    {chapter:1, text:'See the {牛奶|milk} on the feast’s new {桌子}', show:{milk:'done'}, done:{milkTable:{atLeast:1}}}
+    {chapter:1, text:'See the {牛奶|milk} on the feast’s new {桌子}', show:{milk:'done'}, done:{milkTable:{atLeast:1}}},
+    {chapter:1, text:'Find out what the thirsty monkey makes from the {牛奶}', show:{dairy:{atLeast:1}}, done:{dairy:{atLeast:3}}},
+    {chapter:1, text:'Find out what else he makes from the {牛奶}', show:{dairy:{atLeast:3}}, done:{dairy:{atLeast:5}}}
   ],
 
   // A ! or ? over a character's head: the first whose if matches.
@@ -326,7 +343,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{honey:'asked', holding:{honey:true}}, show:'?'}],   // and honey from their hive
     queen: [{if:{bees:4}, show:'!'}, {if:{bees:7}, show:'!'}],   // the queen bee, out of her old tree: she wants you to play her word game; and at home, for the hive
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'},
-      {if:{feast:{atLeast:3}, cow:0}, show:'!'}, {if:{cow:5}, show:'!'}, {if:{milk:'asked', holding:{milk:true}}, show:'?'}],   // chapter 1: by the road at the home ground, with news of a cow on the mountain; then the troop's ready to build it a home; and he'd love some of its milk
+      {if:{feast:{atLeast:3}, cow:0}, show:'!'}, {if:{cow:5}, show:'!'}, {if:{milk:'asked', holding:{milk:true}}, show:'?'},
+      {if:{milkTable:{atLeast:1}, dairy:0}, show:'!'}, {if:{dairy:2}, show:'!'}, {if:{dairy:4}, show:'!'}],   // chapter 1: by the road at the home ground, with news of a cow on the mountain; then the troop's ready to build it a home; and he'd love some of its milk
     cow: [{if:{cow:{below:4}}, show:'!'}, {if:{cow:4, following:{cow:false}}, show:'!'}, {if:{cow:7, following:{cow:false}}, show:'!'}],   // the cow, lost and alone in the pasture, till you've won its trust; and if it ran back to its spring, or isn't following you to its new home
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
@@ -486,6 +504,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{cow:{atLeast:9}, milkTable:0, around:[22, 7, 'homeGround']}, do:[
       {setUp:{milkTable:1}}, {say:'haveMilkNow', by:'hungry'},
       {message:'The troop has set up a new {桌子} for the feast, with the {牛}’s milk on it!'}]},
+    // and what the thirsty monkey makes from the milk at his little dairy goes on it too, as you come up to it: yoghurt,
+    // then cheese
+    {if:{dairy:{atLeast:3}, milkTable:1, around:[22, 7, 'homeGround']}, do:[{setUp:{milkTable:2}},
+      {message:'A jar of the thirsty monkey’s {酸奶} for the feast, on its new {桌子}!'}]},
+    {if:{dairy:{atLeast:5}, milkTable:2, around:[22, 7, 'homeGround']}, do:[{setUp:{milkTable:3}},
+      {message:'And a round {奶酪} for the feast, beside the yoghurt!'}]},
+    // the little dairy: what the thirsty monkey is making is ready once you've answered 8 more questions anywhere (as the
+    // teacher's next new word waits for you to: lessonGap), a chime and a message say so, and he has a !
+    {if:{dairy:1, dairyWait:{atLeast:8}}, do:[{set:{dairy:2}}, {sound:'chime'},
+      {message:'The thirsty monkey has finished making something from the {牛奶}. Go and see what it is!'}]},
+    {if:{dairy:3, dairyWait:{atLeast:8}}, do:[{set:{dairy:4}}, {sound:'chime'},
+      {message:'The thirsty monkey has made something else from the {牛奶}. Go and see what it is!'}]},
     {if:{place:'cave', cave:1}, do:[{card:'洞', note:'A big, dry cave, hidden behind the water!'}, {set:{cave:2}}]},   // inside for the first time
     // you lead the troop in: they come through the water curtain after you (they've followed you since you told the old
     // monkey about the cave), then go to their places (decided 22 October 2026: they had just been there already)
@@ -759,7 +789,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
         ')': {look:'milkTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // A at it: the feast's list
         '[': {look:'milkTableYog', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
         ']': {look:'milkTableCheese', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
-        '~': {look:'grass', walk:true, becomes:[{if:{milkTable:{atLeast:1}}, to:';'}]}
+        '~': {look:'grass', walk:true, becomes:[{if:{milkTable:{atLeast:1}}, to:';'}]},
+        // chapter 1: the little dairy (the game's owner's idea, 26 October 2026), between the road and the cow's pen's sign:
+        // open grass, until the thirsty monkey takes some of the cow's milk there, and the troop sets up a table under a
+        // thatched roof as you watch (dairy 1: a pail of milk on it, and a pot with a cloth tied over it, something being
+        // made), with jars of yoghurt on its shelf once he's made them (3), and cheese (5)
+        '?': {look:'grass', walk:true, becomes:[{if:{dairy:{atLeast:5}}, to:'}'}, {if:{dairy:{atLeast:3}}, to:'/'}, {if:{dairy:{atLeast:1}}, to:'>'}]},
+        '>': {look:'dairy', landmark:true, onLook:[{do:[{message:'The thirsty monkey’s little dairy: a pail of the {牛}’s milk, and a pot with a cloth tied over it. He’s making something!'}]}]},
+        '/': {look:'dairyYog', landmark:true, onLook:[{if:{dairy:4}, do:[{message:'Jars of {酸奶} on the shelf, and a pot with a cloth tied over it: something else is ready!'}]},
+          {do:[{message:'Jars of {酸奶} on the shelf, and a pot with a cloth tied over it: he’s making something else!'}]}]},
+        '}': {look:'dairyCheese', landmark:true, onLook:[{do:[{message:'Jars of {酸奶} and a round {奶酪} on the shelf, all made from the cow’s milk.'}]}]}
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
@@ -780,8 +819,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "Ygggggggggg8gggg!g!gg~g~g.g@gggY",   // their stone stools (! and ~); little monkeys building a tower of stones (@), just past the way up to the hillside
         "...............................q",   // the road: east to the riverside, once the bushes are cleared (q)
         "...............................Y",
-        "Yggggggggggggggg.gggggg-_-----EY",   // the cow's pen: its fences round its edge (-), inside it (_), in at its gate
-        "Yggddd2ggEgggggg.ggggg5-___---gY",   // (5: its sign)
+        "Yggggggggggggggg.gg??gg-_-----EY",   // the little dairy (?); the cow's pen: its fences round its edge (-), inside it (_), in at its gate
+        "Yggddd2ggEgggggg.gg??g5-___---gY",   // (5: its sign)
         "YggdddggTgggggTg.gJFgTg--____-gY",
         "Yggggggggggggggg.gggggg-------gY",
         "Yggggeeeeeeee4gg.gOOOggggggggTgY",
@@ -1288,7 +1327,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       moves:[{if:{feast:{atLeast:1}}, place:'homeGround', x:19, y:7, facing:'left'}],   // chapter 1: he comes up from the meadow to look after the feast's big table
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
-      moves:[{if:{feast:{atLeast:3}}, place:'homeGround', x:21, y:11, facing:'right'}],   // chapter 1: he comes up from the meadow with news of a cow, by the road near its pen's plot
+      moves:[{if:{dairy:{atLeast:1}}, place:'homeGround', x:21, y:11, facing:'left'},   // (at his little dairy, beside him)
+        {if:{feast:{atLeast:3}}, place:'homeGround', x:21, y:11, facing:'right'}],   // chapter 1: he comes up from the meadow with news of a cow, by the road near its pen's plot
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
     {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:5, y:8, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
       {if:{gate:true}, x:14, y:3, facing:'right'}],
@@ -1530,7 +1570,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {word:'苹果', have:{}, yes:{zh:'我们 有 苹果 。', en:'We have apples.'}},
       {word:'蜂蜜', show:{feast:{atLeast:3}}, have:{bees:{atLeast:11}}, no:{zh:'我们 没有 蜂蜜 。', en:'We don’t have any honey.'},
         yes:{zh:'我们 有 蜂蜜 。', en:'We have honey.'}},   // (from the bees' hive)
-      {word:'牛奶', show:{milkTable:{atLeast:1}}, have:{milkTable:{atLeast:1}}, yes:{zh:'我们 有 牛奶 。', en:'We have milk.'}}   // (the cow's thank-you; on the list once it's on the table, so the list never gives it away)
+      {word:'牛奶', show:{milkTable:{atLeast:1}}, have:{milkTable:{atLeast:1}}, yes:{zh:'我们 有 牛奶 。', en:'We have milk.'}},   // (the cow's thank-you; on the list once it's on the table, so the list never gives it away)
+      {word:'酸奶', show:{milkTable:{atLeast:2}}, have:{milkTable:{atLeast:2}}, yes:{zh:'我们 有 酸奶 。', en:'We have yoghurt.'}},   // (from the little dairy)
+      {word:'奶酪', show:{milkTable:{atLeast:3}}, have:{milkTable:{atLeast:3}}, yes:{zh:'我们 有 奶酪 。', en:'We have cheese.'}}
     ]
   },
 
@@ -1804,6 +1846,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     wantMilk: {zh:'我 要 喝 牛奶 ！', en:'I want to drink milk!'},   // the thirsty monkey, as the cow gives you some
     haveMilk: {zh:'牛奶 ！ 太 好 了 ！', en:'Milk! Wonderful!'},   // and when you bring it to him
     haveMilkNow: {zh:'我们 有 牛奶 了 ！', en:'We have milk now!'},   // the hungry monkey, at the feast's new table
+    makeFood: {zh:'我 要 做 吃 的 ！', en:'I’m going to make something to eat!'},   // the thirsty monkey, at his little dairy (做 just for listening)
+    foodReady: {zh:'好 了 ！', en:'It’s ready!'},   // and when what he's made is ready
     // hide and seek with a little monkey (the area's hideSeek): its clues' English leaves the place's word in Chinese ({桌子})
     hideAsk: {zh:'我们 来 捉迷藏 吧 ！', en:'Let’s play hide and seek!'},
     hideCount: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ， 十 ！', en:'One, two, three, four, five, six, seven, eight, nine, ten!'},   // you, with your eyes covered
@@ -2085,6 +2129,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'A safe home for the {牛}: a fence with a gate, a shelter with hay, and a trough of fresh water, fed by a bamboo pipe (the thirsty monkey’s idea). Lead the {牛} in through its gate!'}]},
       {if:{cow:7}, do:[{say:'great', hint:'Lead the cow in through the gate of its new home!'}]},
       {if:{cow:8}, do:[{request:'milk'}]},   // the cow's milk, its thank-you: he'd love to drink some
+      // the little dairy (the game's owner's idea, 26 October 2026): once the milk is on the feast's table, he takes some to a
+      // little table under a thatched roof, beside the pen, set up as you watch, to make something from it: ready once
+      // you've answered 8 more questions (dairyWait), yoghurt (酸奶), then the same again for cheese (奶酪)
+      {if:{milkTable:{atLeast:1}, dairy:0}, do:[
+        {message:'The thirsty monkey takes some of the {牛奶} to a little table by the pen. The troop sets it up for him, under a thatched roof.'},
+        {countFrom:'dairyTurn'}, {setUp:{dairy:1}}, {say:'makeFood'},
+        {message:'He’s making something from the {牛奶}! Practise your words (8 questions, anywhere), then come back and see what it is.'}]},
+      {if:{dairy:1}, do:[{say:'makeFood', hint:'Practise your words, then come back and see what he’s making: {dairyWait} of 8 questions done.'}]},
+      {if:{dairy:2}, do:[{say:'foodReady'}, {setUp:{dairy:3}},
+        {newWord:'酸奶', met:true, note:'The milk has gone thick and sour: the thirsty monkey has made yoghurt!'},
+        {countFrom:'dairyTurn'}, {say:'makeFood'},
+        {message:'Some of the {酸奶} is for the feast. Now he’s making something else from the {牛奶}: practise, then come back and see what it is!'}]},
+      {if:{dairy:3}, do:[{say:'makeFood', hint:'Practise your words, then come back and see what he’s making now: {dairyWait} of 8 questions done.'}]},
+      {if:{dairy:4}, do:[{say:'foodReady'}, {setUp:{dairy:5}},
+        {newWord:'奶酪', met:true, note:'Cheese! The thirsty monkey has made it from the cow’s milk too.'},
+        {message:'Some of the {奶酪} is for the feast too.'}]},
+      {if:{dairy:{atLeast:5}}, do:[{say:'great', hint:'The feast has milk, yoghurt and cheese now, from your friend the cow!'}]},
       {if:{cow:{atLeast:9}}, do:[{say:'great', hint:'The cow is safe and happy in its new home, and the feast has its milk!'}]},
       {do:[{request:'thirsty'}]}
     ],

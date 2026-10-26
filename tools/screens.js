@@ -218,6 +218,13 @@ SAVES.cowInPen = {...SAVES.penBuilt, following: [], w: {...SAVES.penBuilt.w, ...
   tasksSeen: {...SAVES.penBuilt.tasksSeen, milk: 1}, pos: {place: 'homeGround', x: 21, y: 10, dir: 'down'}};   // with its milk, facing the thirsty monkey
 SAVES.milkTable = {...SAVES.cowInPen, areas: {1: {...SAVES.cowInPen.areas[1], cow: 9, milk: 'done', holding: {}}}, tasksSeen: {...SAVES.cowInPen.tasksSeen, milkTable: 1}, pos: {place: 'homeGround', x: 22, y: 11, dir: 'up'}};   // coming up to where the feast's new table goes
 SAVES.cowAtHome = {...SAVES.milkTable, areas: {1: {...SAVES.milkTable.areas[1], milkTable: 1}}, pos: {place: 'homeGround', x: 27, y: 13, dir: 'right'}};   // in its pen, facing the cow
+// version 4: the little dairy by the pen: what the thirsty monkey makes from the milk, ready once you've answered 8 more
+// questions (yoghurt, then cheese), and the feast's new table with all three on it
+SAVES.dairyStart = {...SAVES.cowAtHome, tasksSeen: {...SAVES.cowAtHome.tasksSeen, dairy: 1}, pos: {place: 'homeGround', x: 21, y: 10, dir: 'down'}};   // facing the thirsty monkey, the milk on the feast's table
+SAVES.dairyWait = {...SAVES.dairyStart, turn: 43, areas: {1: {...SAVES.dairyStart.areas[1], dairy: 1, dairyTurn: 40}}, tasksSeen: {...SAVES.dairyStart.tasksSeen, dairyWait: 1}};   // 3 questions since he started
+SAVES.dairyReady = {...SAVES.dairyWait, turn: 48, areas: {1: {...SAVES.dairyWait.areas[1], dairy: 2}}, tasksSeen: {...SAVES.dairyWait.tasksSeen, dairyReady: 1}};
+SAVES.dairyDone = {...SAVES.dairyReady, w: {...SAVES.dairyReady.w, ...knows(1, ['酸奶', '奶酪'])}, areas: {1: {...SAVES.dairyReady.areas[1], dairy: 5, milkTable: 3}},
+  tasksSeen: {...SAVES.dairyReady.tasksSeen, dairyWait2: 1, dairyReady2: 1}, pos: {place: 'homeGround', x: 21, y: 9, dir: 'up'}};   // on the road, below the feast's tables
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, hearts: 2, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -778,6 +785,20 @@ const SCREENS = [
     play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(4400); }},
   {id: 'cow-have-home', title: 'I have a home now!', save: 'cowAtHome', why: 'The cow in its pen, in front of its shelter: A, and it says 我有家了！ (I have a home now!).', run: async () => {
     play(); await wait(100); talk(npc('cow')); await wait(500); }},
+  {id: 'dairy-start', title: 'The little dairy', save: 'dairyStart', why: 'The thirsty monkey takes some milk to a little table by the pen, set up as you watch (a pail of milk, a pot with a cloth tied over it): 我要做吃的！ (I’m going to make something to eat! 做 just for listening).', run: async () => {
+    play(); await wait(100); pressA(); await wait(400); next(); await wait(3400); }},
+  {id: 'tasks-dairy', title: 'Tasks: what is he making?', save: 'dairyWait', why: 'While it’s being made, your tasks count your questions since he started (of 8): any you answer, anywhere.', run: async () => {
+    play(); await wait(100); tasksPage(() => {}); await wait(400); }},
+  {id: 'dairy-ready', title: 'It’s ready!', save: 'dairyWait', why: 'Once you’ve answered 8 more questions: a chime, a message, and a ! over the thirsty monkey, as when the teacher has a new word for you.', run: async () => {
+    play(); await wait(100); S.turn = 48; runEvents(); await wait(600); }},
+  {id: 'dairy-yog', title: '好了！ Yoghurt', save: 'dairyReady', why: '好了！ (It’s ready!): jars of yoghurt go up on the dairy’s shelf, then its card, 酸奶 (suānnǎi, yoghurt), said straight away. How it’s made: 酸 sour + 奶 milk.', run: async () => {
+    play(); await wait(100); pressA(); await wait(400); next(); await wait(1800); }},
+  {id: 'cheese-card', title: 'Cheese (奶酪)', save: 'dairyReady', why: 'The same again, 8 questions later: 奶酪 (nǎilào, cheese), which shares 奶 with 牛奶.', run: async () => {
+    play(); await wait(100); here().dairy = 4; runSteps(AREA.talk.thirsty.find(p => p.if && p.if.dairy === 4).do.filter(s => s.newWord)); await wait(600); }},
+  {id: 'feast-milk-table', title: 'The feast’s new table, full', save: 'dairyDone', why: 'Milk, yoghurt and cheese on the feast’s second table, beside the first; and the little dairy by the pen, jars of yoghurt and a cheese on its shelf.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'feast-list-dairy', title: 'The feast’s list, with milk, yoghurt and cheese', save: 'dairyDone', why: 'A at either table: 我们有牛奶。我们有酸奶。我们有奶酪。, after the peaches, the apples and the honey.', run: async () => {
+    play(); await wait(100); feastCard(); await wait(500); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)

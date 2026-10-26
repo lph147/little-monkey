@@ -274,9 +274,83 @@ test('at home: A at the cow in its pen, a moo and 我有家了！; A at its fenc
   g.run('__notes.length = 0');
   await press(g, 21, 12, 'right');
   assert.match(get(g, '__notes').join(' '), /The 牛 \(cow\)’s home\. Your friend the cow lives here, safe from the wolves\./);
+});
+
+// Version 4: the little dairy (the game's owner's idea): yoghurt, then cheese, each ready once you've answered 8 more
+// questions, anywhere
+test('the little dairy: once the milk is on the feast’s table, the thirsty monkey has a !: the troop sets up a little table by the pen for him, and he says 我要做吃的！ (做 just for listening); your tasks count your questions', async () => {
+  const g = game({place: 'homeGround', x: 21, y: 10, dir: 'down'}, {cow: 9, cowWolf: 1, milk: 'done', milkTable: 1}, {knows: ['牛', '牛奶'], friends: ['cow']});
+  g.run('S.turn = 40');
+  assert.equal(g.run("AREA.bubbles.thirsty.find(b => matches(b.if)).show"), '!');
+  assert.deepEqual(get(g, "getTasks().filter(t => t.id === 'dairy').map(t => t.text)"), ['Talk to the thirsty monkey: he wants to make something with the 牛奶 (milk)']);
+  await press(g, 21, 10, 'down');
+  assert.deepEqual(get(g, '__said'), ['thirsty: 我要做吃的！']);
+  assert.match(get(g, '__notes').join(' '), /The thirsty monkey takes some of the 牛奶 \(milk\) to a little table by the pen\. The troop sets it up for him, under a thatched roof\..*He’s making something from the 牛奶 \(milk\)! Practise your words \(8 questions, anywhere\), then come back and see what it is\./);
+  assert.deepEqual(get(g, '[here().dairy, here().dairyTurn, counter("dairyWait")]'), [1, 40, 0], 'he starts counting your questions from now');
+  assert.deepEqual(get(g, "mapObjects().filter(o => /^dairy/.test(o.look)).map(o => [o.look, o.x, o.y, o.w, o.h])"), [['dairy', 19, 11, 2, 2]], 'the little dairy, two squares by two, beside him');
+  const later = game({place: 'homeGround', x: 21, y: 10, dir: 'down'}, {cow: 9, milk: 'done', milkTable: 1, dairy: 1});
+  assert.equal(get(later, "ALL_NPCS.find(n => n.id === 'thirsty').dir"), 'left', 'he stands facing it (once you’ve gone: talking, he faces you)');
+  assert.ok(get(g, "WORD_BANK['做']") && !get(g, "WORD_BANK['做'].area || null"), '做 is just for listening');
+  assert.deepEqual(get(g, "getTasks().filter(t => /^dairy/.test(t.id)).map(t => t.text)"), ['The thirsty monkey is making something from the 牛奶 (milk): practise, then come back and see what it is (0/8)']);
+  g.run('S.turn = 45');
+  assert.match(get(g, "getTasks().find(t => t.id === 'dairyWait').text"), /\(5\/8\)$/, 'every question you answer counts');
   g.run('__said.length = 0');
   await press(g, 21, 10, 'down');
+  assert.deepEqual(get(g, '[__said, here().dairy]'), [['thirsty: 我要做吃的！'], 1], 'not ready yet');
+  await press(g, 20, 10, 'down');
+  assert.match(get(g, '__notes').join(' '), /a pot with a cloth tied over it\. He’s making something!/, 'A at the dairy: what’s on it');
+});
+
+test('8 questions later: a chime, a message and a ! over him; 好了！, jars of yoghurt on his shelf, and 酸奶 (said straight away); then he makes something else, and the yoghurt goes on the feast’s table', async () => {
+  const g = game({place: 'homeGround', x: 21, y: 10, dir: 'down'}, {cow: 9, cowWolf: 1, milk: 'done', milkTable: 1, dairy: 1, dairyTurn: 40}, {knows: ['牛', '牛奶'], friends: ['cow']});
+  g.run('S.turn = 47; placePlayer()');
+  await play(g, 'runEvents()');
+  assert.equal(g.run('here().dairy'), 1, '7 questions: not yet');
+  g.run('S.turn = 48');
+  await play(g, 'runEvents()');
+  assert.equal(g.run('here().dairy'), 2, '8: ready');
+  assert.ok(get(g, '__sounds').includes('chime'));
+  assert.match(get(g, '__notes').join(' '), /The thirsty monkey has finished making something from the 牛奶 \(milk\)\. Go and see what it is!/);
+  assert.equal(g.run("AREA.bubbles.thirsty.find(b => matches(b.if)).show"), '!');
+  assert.deepEqual(get(g, "getTasks().filter(t => /^dairy/.test(t.id)).map(t => [t.text, t.target])"), [['The thirsty monkey has made something from the 牛奶 (milk): go and see what it is!', [21, 11]]]);
+  g.run('__notes.length = 0');
+  await press(g, 21, 10, 'down');
+  assert.deepEqual(get(g, '__said'), ['thirsty: 好了！', 'thirsty: 我要做吃的！']);
+  assert.ok(get(g, '__notes').includes('card: 酸奶 (The milk has gone thick and sour: the thirsty monkey has made yoghurt!), said'), 'said straight away: no one says it first');
+  assert.deepEqual(get(g, '[here().dairy, here().dairyTurn, counter("dairyWait")]'), [3, 48, 0], 'and he starts on something else, counting again');
+  assert.equal(g.run('tileAt(19, 11).look'), 'dairyYog', 'jars of yoghurt on the dairy’s shelf');
+  assert.equal(g.run('here().milkTable'), 2, 'on the road, near it: the yoghurt goes on the feast’s table at once');
+  assert.equal(g.run('tileAt(22, 7).look'), 'milkTableYog');
+  assert.match(get(g, '__notes').join(' '), /A jar of the thirsty monkey’s 酸奶 \(yoghurt\) for the feast, on its new 桌子 \(table\)!/);
+  assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh)").slice(-2), ['我们 有 牛奶 。', '我们 有 酸奶 。']);
+  assert.deepEqual(get(g, "getTasks().filter(t => /^dairy/.test(t.id)).map(t => t.text)"), ['The thirsty monkey is making something else from the 牛奶 (milk): practise, then come back and see what it is (0/8)']);
+  assert.deepEqual(item(g, /what the thirsty monkey makes/), ['Find out what the thirsty monkey makes from the 牛奶 (milk)', true, false, true]);
+});
+
+test('and again, 8 questions later: 好了！ and cheese (奶酪), on the dairy’s shelf and the feast’s table; the feast’s list has milk, yoghurt and cheese', async () => {
+  const g = game({place: 'homeGround', x: 21, y: 12, dir: 'up'}, {cow: 9, cowWolf: 1, milk: 'done', milkTable: 2, dairy: 3, dairyTurn: 48}, {knows: ['牛', '牛奶', '酸奶'], friends: ['cow']});
+  g.run('S.turn = 56; placePlayer()');
+  await play(g, 'runEvents()');
+  assert.equal(g.run('here().dairy'), 4);
+  assert.match(get(g, '__notes').join(' '), /The thirsty monkey has made something else from the 牛奶 \(milk\)\. Go and see what it is!/);
+  g.run('__notes.length = 0');
+  await press(g, 21, 12, 'up');   // (from below him: off the road)
+  assert.deepEqual(get(g, '__said'), ['thirsty: 好了！']);
+  assert.ok(get(g, '__notes').includes('card: 奶酪 (Cheese! The thirsty monkey has made it from the cow’s milk too.), said'));
+  assert.deepEqual(get(g, '[here().dairy, here().milkTable, tileAt(19, 11).look]'), [5, 2, 'dairyCheese']);
+  assert.deepEqual(get(g, "getTasks().filter(t => t.id === 'cheeseTable').map(t => t.text)"), ['Go and see the feast’s new 桌子 (table): there’s some 奶酪 (cheese) for it']);
+  g.run('__notes.length = 0');
+  await walkTo(g, 20, 10, 'up');
+  assert.deepEqual(get(g, '[here().milkTable, tileAt(22, 7).look]'), [3, 'milkTableCheese']);
+  assert.match(get(g, '__notes').join(' '), /And a round 奶酪 \(cheese\) for the feast, beside the yoghurt!/);
+  assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh)").slice(-3), ['我们 有 牛奶 。', '我们 有 酸奶 。', '我们 有 奶酪 。']);
+  assert.deepEqual(get(g, "getTasks().filter(t => /^(dairy|cheese|yog|milk|cow)/.test(t.id)).map(t => t.id)"), [], 'the cow’s story, done for now');
+  assert.deepEqual(item(g, /what else he makes/), ['Find out what else he makes from the 牛奶 (milk)', true, false, true]);
+  g.run('__said.length = 0');
+  await press(g, 21, 12, 'up');
   assert.deepEqual(get(g, '__said'), ['thirsty: 太好了！']);
+  await press(g, 20, 13, 'up');
+  assert.match(get(g, '__notes').join(' '), /Jars of 酸奶 \(yoghurt\) and a round 奶酪 \(cheese\) on the shelf, all made from the cow’s milk\./);
 });
 
 test('hidden in the pasture: shells under a boulder, and a peach behind a tree at its edge', () => {

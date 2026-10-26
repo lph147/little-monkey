@@ -163,9 +163,14 @@ const DRAFTS = [
     ['牛奶 ！ 太 好 了 ！', 'Milk! Wonderful!', 'The thirsty monkey, when you bring him the milk (as 水！太好了！ for water)'],
     ['我们 有 牛奶 了 ！', 'We have milk now!', 'The hungry monkey, as the troop sets up a second table for the feast, with the milk on it'],
     ['我们 有 牛奶 。', 'We have milk.', 'The feast’s list, at its tables'],
-    ['酸奶 是 白色 的 。', 'Yoghurt is white.', 'The example on 酸奶 (suānnǎi, yoghurt)’s page in the Word Scroll (yoghurt comes next, made from the milk)'],
-    ['奶酪 是 黄色 的 。', 'Cheese is yellow.', 'The example on 奶酪 (nǎilào, cheese)’s page (and then cheese)']]
+    ['酸奶 是 白色 的 。', 'Yoghurt is white.', 'The example on 酸奶 (suānnǎi, yoghurt)’s page in the Word Scroll'],
+    ['奶酪 是 黄色 的 。', 'Cheese is yellow.', 'The example on 奶酪 (nǎilào, cheese)’s page']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 26 October 2026 (in the game), the cow’s new home: ' + where})),
+  ...[['我 要 做 吃 的 ！', 'I’m going to make something to eat!', 'The thirsty monkey, taking some of the cow’s milk to his little dairy by its pen (做 zuò, to make, just for listening). Is it natural? Would 我要做好吃的！ (I’m going to make something tasty!) be better?'],
+    ['好 了 ！', 'It’s ready!', 'The thirsty monkey, when what he’s made is ready: yoghurt (酸奶), then cheese (奶酪)'],
+    ['我们 有 酸奶 。', 'We have yoghurt.', 'The feast’s list, at its tables'],
+    ['我们 有 奶酪 。', 'We have cheese.', 'The feast’s list, at its tables']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 26 October 2026 (in the game), the little dairy: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 

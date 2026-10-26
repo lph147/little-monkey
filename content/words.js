@@ -116,8 +116,8 @@ const WORD_BANK = {
   '没有': {py:'méiyǒu', en:'don’t have, there isn’t', area:1, category:'actions'},   // (the hungry monkey at the feast's table: no honey; no picture either)
   '蜂蜜': {py:'fēngmì', en:'honey', pic:'🍯', area:1, category:'food'},   // (heard at the feast's table; taught as you take the first honey from the bees' hive)
   '牛奶': {py:'niúnǎi', en:'milk', pic:'🥛', area:1, category:'food', alike:['喝']},   // (the cow's thank-you for its new home; both pictures are a glass of something to drink)
-  '酸奶': {py:'suānnǎi', en:'yoghurt', pic:'🫙', area:1, category:'food', alike:['蜂蜜'], later:true},   // (made from the milk at the little dairy by the cow's pen; both pictures are a pot with a wooden spoon in it)
-  '奶酪': {py:'nǎilào', en:'cheese', pic:'🧀', area:1, category:'food', later:true},   // (and then cheese)
+  '酸奶': {py:'suānnǎi', en:'yoghurt', pic:'🫙', area:1, category:'food', alike:['蜂蜜']},   // (made from the milk at the little dairy by the cow's pen; both pictures are a pot with a wooden spoon in it)
+  '奶酪': {py:'nǎilào', en:'cheese', pic:'🧀', area:1, category:'food'},   // (and then cheese)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
@@ -187,6 +187,7 @@ const WORD_BANK = {
   '找': {py:'zhǎo', en:'to look for'},
   '这': {py:'zhè', en:'this'},
   '累': {py:'lèi', en:'tired'},
+  '做': {py:'zuò', en:'to make, to do'},
 
   // Heard in the opening's story
   '很久': {py:'hěn jiǔ', en:'a long time'},
