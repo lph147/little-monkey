@@ -268,16 +268,16 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     [[15, 13], [18, 15], [21, 13], [18, 11]].forEach(([x, y]) => p.dot(x, y, '#FFB070'));
     p.fill(O(7.2, 14.5, 2.3), '#FFFFFF'); p.flat(Rc(7, 14, 2, 2), '#1E1A16');
   },
-  '鸟': p => {   // bird
-    p.fill(Pg([[22, 16], [31, 11.5], [30, 19.5]]), '#3F77C4');
-    p.flat(or(Cp(14, 25, 14, 29, .6), Cp(18, 25, 18, 29, .6)), '#F2A33A');
-    p.fill(O(17, 18, 8.4, 6.6), '#5AA0E6');
-    p.flat(O(14.5, 21.2, 5.2, 3.2), '#CDE6FA');
-    p.fill(O(19.5, 16.6, 5.5, 3.6), '#3F77C4', {edge: true});
-    p.fill(O(10, 12, 5.2, 4.8), '#5AA0E6', {edge: true});
-    p.fill(Pg([[2.5, 12.5], [6, 10.5], [6, 14]]), '#F2A33A');
-    p.eye(8, 10);
-  },
+  '鸟': p => bird(p, '#5AA0E6', '#3F77C4', '#CDE6FA', '#F2A33A'),   // bird
+  // the birds that land near you, each one colour (a blue one is 鸟's own): body, wing and tail, breast, beak and legs
+  '红色 的 鸟': p => bird(p, '#D9363E', '#A3242B', '#F7B5A8', '#F2A33A'),   // a red bird
+  '黄色 的 鸟': p => bird(p, '#F2C230', '#C9931C', '#FFF0A8', '#E07A2A'),   // a yellow bird
+  '白色 的 鸟': p => bird(p, '#F4F4EE', '#C2C6BE', '#FFFFFF', '#F2A33A'),   // a white bird
+  '黑色 的 鸟': p => bird(p, '#3A3A40', '#202024', '#6A6A72', '#F2C230'),   // a black bird (its beak yellow, as a blackbird's)
+  '绿色 的 鸟': p => bird(p, '#5BAE48', '#3C8530', '#D8F0A8', '#F2A33A'),   // a green bird
+  '棕色 的 鸟': p => bird(p, '#9A6A3E', '#6E4626', '#E8D0A8', '#F2A33A'),   // a brown bird
+  '橙色 的 鸟': p => bird(p, '#F28C28', '#C2621A', '#FFD7A8', '#8A4B1E'),   // an orange bird (its beak brown, to stand out)
+  '粉色 的 鸟': p => bird(p, '#F08BB0', '#C9648A', '#FFD6E4', '#F2A33A'),   // a pink bird
   '动物': p => {   // animal: a paw print
     p.fill(O(16, 21.5, 7.4, 6.4), '#8A5A3A');
     [[7.6, 12.6], [12.6, 7.8], [19.4, 7.8], [24.4, 12.6]].forEach(([x, y]) => p.fill(O(x, y, 2.9, 3.5), '#8A5A3A'));
@@ -691,6 +691,16 @@ function splat(p, c){   // a smooth, round dab of paint, for a colour, with two 
   p.fill(or(O(15.5, 17, 10.5, 9), O(23, 21.5, 4.6, 4)), c);
   p.fill(O(27, 8.5, 2), c); p.fill(O(5.5, 27, 1.6), c);
   p.flat(O(11.5, 12.5, 3.4, 2), mix(c, '#FFFFFF', .5)); p.flat(O(16.5, 11, 1.2, .8), mix(c, '#FFFFFF', .5));
+}
+function bird(p, body, wing, breast, beak){   // a little bird, side on, facing left: its tail and wing one colour, its body another
+  p.fill(Pg([[22, 16], [31, 11.5], [30, 19.5]]), wing);
+  p.flat(or(Cp(14, 25, 14, 29, .6), Cp(18, 25, 18, 29, .6)), beak);
+  p.fill(O(17, 18, 8.4, 6.6), body);
+  p.flat(O(14.5, 21.2, 5.2, 3.2), breast);
+  p.fill(O(19.5, 16.6, 5.5, 3.6), wing, {edge: true});
+  p.fill(O(10, 12, 5.2, 4.8), body, {edge: true});
+  p.fill(Pg([[2.5, 12.5], [6, 10.5], [6, 14]]), beak);
+  p.eye(8, 10);
 }
 function flower(p, petal, middle){   // a flower, its five petals one colour (petal), on a stem with two leaves
   p.fill(Cp(16, 18, 16, 30, 1), '#3E8A3E');

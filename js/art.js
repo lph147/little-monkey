@@ -196,6 +196,15 @@ const SPR = {
   post: sprite(POST, {o:'#4A2C17',w:'#B98A55',W:'#8A5A32'}),
   bird: sprite(BIRD, {o:'#2B3F66',b:'#5AA0E6',w:'#9CCBF5',e:'#111111',y:'#F2A33A'})
 };
+// The little birds that land near you, each one colour (the area's birds' colours), as their pictures are (蓝色 的 鸟 and so
+// on, in tools/draw-pictures.js): their outline, body, breast and beak, by the colour's word. A blue one is the bird above.
+const BIRD_PALS = {
+  '红色': {o:'#6E1A1E', b:'#D9363E', w:'#F58A7E', y:'#F2A33A'}, '黄色': {o:'#7A5A10', b:'#F2C230', w:'#FFF0A8', y:'#E07A2A'},
+  '白色': {o:'#7C8078', b:'#F4F4EE', w:'#FFFFFF', y:'#F2A33A'}, '黑色': {o:'#0E0E10', b:'#3A3A40', w:'#6A6A72', y:'#F2C230', e:'#E8E0C8'},
+  '绿色': {o:'#24521C', b:'#5BAE48', w:'#D8F0A8', y:'#F2A33A'}, '棕色': {o:'#3E2614', b:'#9A6A3E', w:'#E8D0A8', y:'#F2A33A'},
+  '橙色': {o:'#6E3008', b:'#F28C28', w:'#FFD7A8', y:'#8A4B1E'}, '粉色': {o:'#7A3050', b:'#F08BB0', w:'#FFD6E4', y:'#F2A33A'}};
+const birdSprites = {};
+const birdSprite = colour => !BIRD_PALS[colour] ? SPR.bird : birdSprites[colour] || (birdSprites[colour] = sprite(BIRD, {e:'#111111', ...BIRD_PALS[colour]}));
 
 /* ---- terrain tiles, pre-rendered once into a map canvas ---- */
 const mapCanvas = document.createElement('canvas'); mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T;

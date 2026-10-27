@@ -174,6 +174,15 @@ What a card shows when you pick a flower for the big monkey (a red flower, and s
 | 粉色的花 | fěnsè de huā | A pink flower |  |
 | 蓝色的花 | lánsè de huā | A blue flower |  |
 | 橙色的花 | chéngsè de huā | An orange flower |  |
+| 红色的鸟 | hóngsè de niǎo | A red bird |  |
+| 黄色的鸟 | huángsè de niǎo | A yellow bird |  |
+| 蓝色的鸟 | lánsè de niǎo | A blue bird |  |
+| 白色的鸟 | báisè de niǎo | A white bird |  |
+| 黑色的鸟 | hēisè de niǎo | A black bird |  |
+| 绿色的鸟 | lǜsè de niǎo | A green bird |  |
+| 棕色的鸟 | zōngsè de niǎo | A brown bird |  |
+| 橙色的鸟 | chéngsè de niǎo | An orange bird |  |
+| 粉色的鸟 | fěnsè de niǎo | A pink bird |  |
 
 ### The feast's list
 

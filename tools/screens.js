@@ -180,6 +180,8 @@ SAVES.beeSix = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], b
 SAVES.beeOpen = {...SAVES.beeFriends, areas: {1: {...SAVES.beeFriends.areas[1], beeFriends: 6, bees: 3}}, pos: {place: 'flowerValley', x: 25, y: 9, dir: 'up'}};
 // the queen bee (25 October 2026): in front of her old tree, where A brings her out; out, waiting for you to play her word
 // game; won over, she and her swarm following you along the riverside; coming home with you; and home, by the wildflowers
+// at the home ground, south of the road, knowing 鸟 (bird) and the colours: the birds that land are coloured
+SAVES.birdWatch = {...SAVES.wayEast, w: {...SAVES.wayEast.w, ...knows(1, ['鸟', '红色', '黄色', '白色', '黑色', '棕色', '绿色'])}, pos: {place: 'homeGround', x: 11, y: 13, dir: 'right'}};
 SAVES.queenTree = {...SAVES.beeOpen, tasksSeen: {...SAVES.beeOpen.tasksSeen, bees2: 1, bees3: 1}, pos: {place: 'flowerValley', x: 26, y: 6, dir: 'up'}};
 SAVES.queenOut = {...SAVES.queenTree, w: {...SAVES.queenTree.w, ...knows(1, ['蜂王'])}, areas: {1: {...SAVES.queenTree.areas[1], bees: 4, queenOut: true}},
   tasksSeen: {...SAVES.queenTree.tasksSeen, bees4: 1}, pos: {place: 'flowerValley', x: 25, y: 6, dir: 'up'}};
@@ -650,6 +652,13 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'flower-look-new', title: 'A blue 花', save: 'riverFlower', why: 'A blue flower on the riverside, before you know blue (蓝色): its card says 花, with a blue flower, so it’s the colour you looked at.', run: async () => {
     play(); await wait(200); interact(...facing()); await wait(600); }},
+  {id: 'birds', title: 'Coloured birds', save: 'birdWatch', why: 'Once you know 鸟 (bird), each little bird that lands near you is one colour: red, yellow, blue, white, black, green, brown, orange or pink (till then they’re all blue, as 鸟’s own picture).', run: async () => {
+    play(); await wait(100); nextBird = 1e15; birds.length = 0;
+    [[8, 11, '红色'], [9, 15, '黄色'], [6, 14, '棕色'], [14, 16, '绿色'], [4, 12, '黑色'], [10, 17, '白色']].forEach(([x, y, colour]) => birds.push({tx:x, ty:y, x:x*T + 4, y:y*T + 6, t0:-1e9, until:1e15, from:1, colour}));
+    await wait(400); }},
+  {id: 'bird-look', title: 'A yellow bird', save: 'birdWatch', why: 'A at a bird whose colour you know shows it, 黄色的鸟 (a yellow bird), with its own picture, said aloud; before you know its colour, 鸟’s card, with a yellow bird.', run: async () => {
+    play(); await wait(100); nextBird = 1e15; birds.length = 0; birds.push({tx:12, ty:14, x:12*T + 4, y:14*T + 6, t0:-1e9, until:1e15, from:1, colour:'黄色'});
+    S.pos = {place:'homeGround', x:12, y:13, dir:'down'}; placePlayer(); await wait(100); interact(12, 14); await wait(600); }},
   {id: 'feast-news', title: 'We have a home, and a school too!', save: 'feastNews', why: 'After the first two lessons, the old monkey has news before any lesson: 我们有家，也有学校！, teaching 有 (bold). It’s time for a great feast!', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(500); }},
   {id: 'you-card', title: '有, to have', save: 'feastNews', why: 'Its card, with no picture, like 要: Use 有 to say what you have.', run: async () => {

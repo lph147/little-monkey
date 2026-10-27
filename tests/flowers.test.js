@@ -105,8 +105,8 @@ test('pink, blue and orange flowers on the hillside’s and the riverside’s sl
   assert.deepEqual(shown('AREA.places.riverside.legend.u'), ['蓝色 的 花', 'A blue flower', '蓝色 的 花']);
   assert.deepEqual(shown('AREA.places.hillside.legend.e'), ['橙色 的 花', 'An orange flower', '橙色 的 花']);
   assert.deepEqual(shown('AREA.places.flowerValley.legend.b'), ['蓝色 的 花', 'A blue flower', '蓝色 的 花'], 'the valley’s beds too');
-  assert.deepEqual(get(g, 'COLOURED().map(c => c.zh)'), ['红色 的 花', '黄色 的 花', '白色 的 花', '粉色 的 花', '蓝色 的 花', '橙色 的 花'], 'six colours of flowers in all');
-  assert.ok(get(g, "COLOURED().every(c => c.zh === '粉色 的 花' || (PICTURES[c.zh] && JSON.stringify(PICTURES[c.zh]) !== JSON.stringify(PICTURES['花'])))"), 'each with its own picture (pink: 花’s)');
+  assert.deepEqual(get(g, "COLOURED().map(c => c.zh).filter(zh => zh.endsWith('花'))"), ['红色 的 花', '黄色 的 花', '白色 的 花', '粉色 的 花', '蓝色 的 花', '橙色 的 花'], 'six colours of flowers in all (and the birds: tests/birds.test.js)');
+  assert.ok(get(g, "COLOURED().filter(c => c.zh.endsWith('花')).every(c => c.zh === '粉色 的 花' || (PICTURES[c.zh] && JSON.stringify(PICTURES[c.zh]) !== JSON.stringify(PICTURES['花'])))"), 'each with its own picture (pink: 花’s)');
   assert.deepEqual(get(g, 'stepCard(AREA.places.riverside.legend.u)'), {pic: '蓝色 的 花'}, 'stepping onto one first teaches 花 with its colour’s picture');
   // every square of flowers in the game is all one colour, with that colour (beds, and tall flowers where bees hide, aside)
   const looks = {redFlowers: '红色', yellowFlowers: '黄色', whiteFlowers: '白色', pinkFlowers: '粉色', blueFlowers: '蓝色', orangeFlowers: '橙色',

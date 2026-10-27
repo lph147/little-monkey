@@ -1756,8 +1756,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         again:'This {蜜蜂|bee} still wants to play! Answer its questions to make friends ({beeCount} of 6 so far).',
         lost:'The {蜜蜂|bee} hovers over the flowers: it still wants to play. Press A at it to try again.'}}
   ],
-  // Little birds land near you now and then: face one and press A to see its word (word, with note on its card).
-  birds: {word:'鸟', note:'A little bird hops about on the grass, singing.'},
+  // Little birds land near you now and then: face one and press A to see its word (word, with note on its card). Once you
+  // know the word, each is one of these colours (colours), and A shows it, such as 黄色的鸟 (a yellow bird), once you know
+  // its colour too (decided 27 October 2026, as the flowers are); till then, its word's card with a picture of that colour
+  birds: {word:'鸟', note:'A little bird hops about on the grass, singing.', colours:['红色', '黄色', '蓝色', '白色', '黑色', '绿色', '棕色', '橙色', '粉色']},
   // Things hidden off the paths (decided 23 October 2026: paths have shells and fruit tucked away in nooks and behind
   // trees), each at something you can't walk through, such as a tree or a boulder, found by pressing A at it, once (the
   // save keeps which: here().finds). A tiny glint gives each away now and then, easy to miss. id: its name in the save;

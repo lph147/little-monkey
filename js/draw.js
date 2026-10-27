@@ -713,7 +713,9 @@ function drawAsleep(X, Y){
 }
 function zee(x, y, s, c){ R(b, x, y, s, 1, c); R(b, x, y + s - 1, s, 1, c); for (let i = 1; i < s - 1; i++) R(b, x + s - 1 - i, y + i, 1, 1, c); }   // a little Z, s pixels across
 // Little birds that land near you now and then and hop about for most of a minute. Walk up and face
-// one to look at it (A); it flies off then, or if you step right onto it.
+// one to look at it (A); it flies off then, or if you step right onto it. Each is one colour, one of the area's birds'
+// colours, once you know the word for a bird (decided 27 October 2026, as the flowers are): till then they're all blue, as
+// 鸟's own picture, so you learn the word from it.
 const birds = [];
 const birdAt = (x, y) => birds.find(bd => !bd.off && bd.tx === x && bd.ty === y);
 function shooBird(bd){ if (bd && !bd.off) bd.off = performance.now(); }
@@ -726,7 +728,9 @@ function drawBirds(cx, cy, now){
       const t = tileAt(x, y);
       if (t.look === 'grass' && !npcAt(x, y) && !animalAt(x, y) && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3) spots.push([x, y]);   // (never under an animal, such as a bee out over the grass)
     }
-    if (spots.length){ const [x, y] = spots[Math.floor(Math.random() * spots.length)]; birds.push({tx:x, ty:y, x:x*T + 4, y:y*T + 6, t0:now, until:now + 40000 + Math.random() * 30000, from:Math.random() < .5 ? -1 : 1}); }
+    const colours = BIRD_WORD && lvl(BIRD_WORD) >= 1 ? AREA.birds.colours || [] : [];
+    if (spots.length){ const [x, y] = spots[Math.floor(Math.random() * spots.length)]; birds.push({tx:x, ty:y, x:x*T + 4, y:y*T + 6, t0:now, until:now + 40000 + Math.random() * 30000, from:Math.random() < .5 ? -1 : 1,
+      colour:colours[Math.floor(Math.random() * colours.length)]}); }
   }
   for (let i = birds.length - 1; i >= 0; i--){
     const bd = birds[i], near = pl.x === bd.tx && pl.y === bd.ty;   // you stepped right onto it
@@ -735,7 +739,7 @@ function drawBirds(cx, cy, now){
     if (bd.off && k > 1){ birds.splice(i, 1); continue; }
     const X = Math.round(bd.x - cx + bd.from * k * 60), Y = Math.round(bd.y - cy - k * 70 - (k ? Math.abs(Math.sin(now/60)) * 2 : Math.floor(Math.abs(Math.sin(now/300 + i)) * 2)));
     if (!k) R(b, X+1, Y+7, 6, 1, 'rgba(0,0,0,.2)');
-    b.drawImage(SPR.bird, X, Y);
+    b.drawImage(birdSprite(bd.colour), X, Y);
     if (!k && BIRD_WORD && lvl(BIRD_WORD) === 0) sparkle(X + 9, Y - 2, now, i);   // it sparkles until you know its word
   }
 }

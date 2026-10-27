@@ -891,8 +891,8 @@ async function lookAt(t){   // the card for the word you learn by looking at a t
 // with that picture, so it's the colour you looked at (decided 26 October 2026: after you'd picked the big monkey's three
 // flowers, they all went back to being called 花).
 const coloured = t => { const c = WORDS[t.colour].en; return {zh:`${t.colour} 的 ${t.word}`, en:`${/^[aeiou]/.test(c) ? 'An' : 'A'} ${c} ${WORDS[t.word].en}`}; };
-const COLOURED = () => [...new Map([AREA.legend, ...Object.values(AREA.places).map(p => p.legend || {})].flatMap(l => Object.values(l))
-  .filter(t => t.colour && t.word).map(t => [coloured(t).zh, coloured(t)])).values()];   // every one there is, such as 粉色的花 (for the voices and CHINESE.md)
+const COLOURED = () => [...new Map([...[AREA.legend, ...Object.values(AREA.places).map(p => p.legend || {})].flatMap(l => Object.values(l)).filter(t => t.colour && t.word),
+  ...((AREA.birds || {}).colours || []).map(colour => ({word:AREA.birds.word, colour}))].map(t => [coloured(t).zh, coloured(t)])).values()];   // every one there is, such as 粉色的花 and 黄色的鸟 (for the voices and CHINESE.md)
 const colourPic = t => PICTURES[coloured(t).zh] ? coloured(t).zh : t.word;
 const stepCard = t => ({...(t.stepNote ? {note:t.stepNote} : {}), ...(t.colour ? {pic:colourPic(t)} : {})});   // (stepping on it first, such as onto a red flower)
 async function gather(t, x, y){   // pick up something for a request, such as fruit or water
@@ -946,7 +946,7 @@ async function interact(x, y){
   const a = animalAt(x, y);
   if (a) return wildAppears(a, {x, y, d:pl.dir});
   const bd = birdAt(x, y);
-  if (bd && BIRD_WORD){ await showNotice(BIRD_WORD, AREA.birds.note ? {note:fill(AREA.birds.note)} : {}); shooBird(bd); return; }
+  if (bd && BIRD_WORD){ await lookAt({word:BIRD_WORD, colour:bd.colour, note:AREA.birds.note}); shooBird(bd); return; }   // (such as 黄色的鸟, once you know its colour)
   const h = hiddenAt(x, y);
   if (h) return findHidden(h);
   const hs = hideSpotAt(x, y);
