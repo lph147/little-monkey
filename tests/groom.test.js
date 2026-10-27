@@ -32,17 +32,27 @@ test('at the home ground, south of the road, two little monkeys sit together und
   assert.ok(g.run('walkable(15, 5)') && g.run('walkable(16, 5)'), 'the hillside’s pines are clear of them');
 });
 
-test('they take turns: the groomer sits close, still, facing its friend, reaching up to pick through the fur on its head; the other faces you, eyes shut', () => {
+test('they take turns: both sit side-on, facing the same way; the one behind grooms, its hands in the fur of its friend’s back; the one in front shuts its eyes', () => {
   const g = game();
   const MS = get(g, 'GROOM_MS');
   assert.deepEqual(get(g, `[0, 1, 2, 3].map(i => groomAt(${MS} * (10 + i) + 5).who)`), [0, 1, 0, 1], 'taking turns');
-  const drawn = t => get(g, `(() => { const out = [], em = drawEntityMonkey, sp = monkeySprite, rr = R;
-    drawEntityMonkey = (kind, X, Y, dir, now, bob) => out.push(['groomer', kind, dir, X, bob]); monkeySprite = (kind, dir, blink) => { out.push(['groomed', kind, dir, blink]); return sp(kind, dir, blink); };
+  const drawn = t => get(g, `(() => { const out = {sat:[], fur:[]}, sp = sittingSprite, di = b.drawImage, fr = b.fillRect, skin = ['groomA', 'groomB'].map(k => (PALS[k] || PALS.player).s);
+    sittingSprite = (kind, dir, shut, lean) => { out.sat.push([kind, dir, shut]); return sp(kind, dir, shut, lean); };
+    b.drawImage = (img, x) => { out.sat[out.sat.length - 1].push(x); };
+    b.fillRect = (x, y, w, h) => { if (skin.includes(b.fillStyle)) out.fur.push([x, y, w, h]); };
     for (const n of NPCS.filter(n => PLAYS[n.id] === 'groom')) drawPlaying(n, n.x * T, n.y * T, ${t});
-    drawEntityMonkey = em; monkeySprite = sp; return out; })()`);
-  assert.deepEqual(drawn(MS * 10 + 5), [['groomer', 'groomA', 'right', 12 * 16 + 3, 0], ['groomed', 'groomB', 'down', true]], 'the one on the left grooms first, sitting close and still (no nodding)');
-  assert.deepEqual(drawn(MS * 11 + 5), [['groomed', 'groomA', 'down', true], ['groomer', 'groomB', 'left', 13 * 16 - 3, 0]], 'then the other');
-  assert.ok(get(g, 'GROOM_SPOTS.every(([x, y]) => y <= 7 && x <= 5)'), 'its hand only ever on its friend’s head, on the near side (by its ear, the side of its head, its crown): never low down');
+    sittingSprite = sp; b.drawImage = di; b.fillRect = fr; return out; })()`);
+  const first = drawn(MS * 10 + 5), then = drawn(MS * 11 + 5);
+  assert.deepEqual(first.sat, [['groomA', 'right', false, 12 * 16 + 4], ['groomB', 'right', true, 13 * 16 - 1]], 'the one on the left grooms first, shuffled up behind its friend; both face right, and the one in front has its eyes shut');
+  assert.deepEqual(then.sat, [['groomA', 'left', true, 12 * 16 + 1], ['groomB', 'left', false, 13 * 16 - 4]], 'then they turn round, and the other grooms');
+  const [top, low] = get(g, 'GROOM_BACK');
+  for (const [d, groomedX, right] of [[first, 13 * 16 - 1, true], [then, 12 * 16 + 1, false]]){
+    assert.equal(d.fur.length, 2, 'its two hands in the fur');
+    for (const [x, y, w, h] of d.fur){
+      assert.ok(y >= 13 * 16 + top && y + h <= 13 * 16 + low + 1, 'on its friend’s back, from below its ear to the middle of it, never lower');
+      assert.ok(right ? x + w <= groomedX + 7 : x >= groomedX + 9, 'on its back, never in front of it');
+    }
+  }
 });
 
 test('say hello: we are friends, 我们是朋友！', async () => {

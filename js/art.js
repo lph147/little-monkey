@@ -81,6 +81,20 @@ function monkeyRows(kind, dir, blink, step = 0, empty = false){
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return out;
 }
+// A monkey sitting, side-on, facing right (the left is the same, the other way round), as the little monkeys sit to
+// groom each other (drawGroomer in js/draw.js): its tail curled behind, a foot in front. shut: its eyes shut, enjoying it;
+// lean: its head leant in a pixel, to look closely.
+const SITTING = ["................","................","................",".....ooooo......","....offfffo.....","...offfffffo....","..osfffssssso...",
+  "..osffssesssso..","..ooffssssssmo..","...offsssssoo...","....offfffo.....","...offffffffo...",".o.offfssfffo...","ofooffssssffo...","offfffsssffffoo.",".oooooooooooooo."];
+function sittingSprite(kind, dir, shut = false, lean = false){
+  const k = 'sit' + kind + dir + (shut ? 's' : '') + (lean ? 'l' : ''); if (spriteCache[k]) return spriteCache[k];
+  const rows = SITTING.map(r => [...r]);
+  if (shut){ rows[7][7] = 'o'; rows[7][8] = 'o'; }   // its eyes shut: a line
+  if (lean){ for (let y = 9; y >= 3; y--) rows[y] = [...rows[y - 1]]; rows[2] = [...'................']; }   // its head down a pixel
+  let out = rows.map(r => r.join(''));
+  if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
+  return spriteCache[k] = sprite(out, PALS[kind] || PALS.player);
+}
 // Your monkey asleep in a bed: its head on the pillow, eyes shut (the rest is under the blanket: drawAsleep in js/draw.js).
 const ASLEEP = ["...oooooo...", "..offffffo..", ".offffffffo.", "oofssssssfoo", "osfmmssmmfso", "osfssssssfso", "oofssmmssfoo", ".offssssffo."];
 function asleepSprite(){
