@@ -221,7 +221,7 @@ async function nextArea(){
   here().done = true; save(); SFX.fanfare(); fadeT = performance.now();
   await sleep(700);
   await infoBox('⛰️', `<p class="label">${AREA.name.en} complete!</p>
-    <div class="stats"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${S.friends.length} friends</span><span>🐚 ${S.shells}</span></div>
+    <div class="stats"><span>${wordsCaught()} of ${ORDER.length} words caught</span><span>${S.friends.length} friends</span><span>🐚 ${S.shells}</span></div>
     <p>${AREA.exit.done}</p>
     <p class="small">${AREA.exit.notBuilt}</p>`);
   const back = AREA.exit.returnTo;   // until the next area is built, you're put back here
@@ -298,8 +298,7 @@ function openScroll(back, top, tab){   // top: where to scroll to, to come back 
   const tabs = scrollTabs();
   if (tab) scrollTab = tab;
   if (!tabs.some(([id]) => id === scrollTab)) scrollTab = tabs[0][0];
-  const seen = ORDER.filter(w => lvl(w) > 0).length;
-  openCard(`<p class="label">Word Scroll · ${seen} of ${ORDER.length}</p>
+  openCard(`<p class="label">Word Scroll · ${wordsCaught()} of ${ORDER.length} caught</p>
     <div class="scrolltabs" role="tablist">${tabs.map(([id, name]) => `<button class="tab" role="tab" data-tab="${id}" aria-selected="${id === scrollTab}">${name}</button>`).join('')}</div>
     ${scrollPage(scrollTab)}
     <div class="gloss">${scrollTab === 'heard' ? 'Tap a word to hear it.' : 'Tap a word to see its page.'}</div>

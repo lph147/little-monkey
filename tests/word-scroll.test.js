@@ -43,15 +43,15 @@ test('the Word Scroll shows caught words, shadows of heard words, and ？ for th
 test('a word for later (later, in the word bank) isn’t counted or in the Word Scroll, unless the game you’re playing caught it before', () => {
   const caught = {'石头': {lv: 1, ok: 0}};
   const later = g => g.run("WORDS['蜂蜜'].later = true; wordsForGame()");   // (as if nothing taught honey yet, as till 25 October 2026)
-  const now = loadGame({save: {version: 30, started: true, w: caught}}); later(now);
+  const now = loadGame({dom: true, save: {version: 30, started: true, w: caught}}); later(now);
   const n = now.run('ORDER.length');
   assert.equal(now.run("ORDER.includes('蜂蜜')"), false, 'nothing has taught it yet');
-  assert.match(now.run('statsHTML()'), new RegExp(`1/${n} words`), 'so it isn’t counted');
+  assert.match(now.run('openScroll(() => {}); $("#sheet").querySelector(".label").textContent'), new RegExp(`1 of ${n} caught`), 'so it isn’t counted');
   assert.equal(count(now.run("scrollPage('food')"), 'class="card'), now.run("ORDER.filter(w => WORDS[w].category === 'food').length"), 'nor a ？ in the Word Scroll');
   const before = loadGame({save: {version: 30, started: true, w: {...caught, '蜂蜜': {lv: 2, ok: 1}}}}); later(before);
   assert.equal(before.run("ORDER.includes('蜂蜜')"), true, 'a game that has caught it keeps it');
   assert.equal(before.run('ORDER.length'), n + 1);
-  assert.match(before.run('statsHTML()'), new RegExp(`2/${n + 1} words`));
+  assert.match(before.run('statsHTML()'), /2 words caught/);
   assert.equal(loadGame({save: {version: 30, started: true, w: caught}}).run("Object.keys(WORDS).filter(w => WORDS[w].later).length"), 0,
     'every word counts now: the bees’ words, 蜜蜂, 蜂王 and 蜂蜜, were words for later till the bees came (25 October 2026), and the little dairy’s, 酸奶 and 奶酪, till it made them (26 October 2026)');
 });

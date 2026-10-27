@@ -23,6 +23,17 @@ test('the menu has a tile each for the Word Scroll, tasks, the bag, friends, war
   assert.ok(!/Resume|Today/.test(sheet.textContent), 'no Resume or Today\'s words: B closes, and Today is in the Word Scroll');
 });
 
+test('the menu says how many words you have caught, plainly (the 81, all the area’s words, is on the Word Scroll)', () => {
+  const {sheet, run} = menuGame();
+  run("rec('山').lv = 1; rec('花').lv = 2; S.friends = ['松鼠']");
+  run('openMenu()');
+  assert.match(sheet.querySelector('.stats').textContent, /^2 words caught1 friend/, 'not 2/81 words, which was unclear');
+  run('openScroll(openMenu)');
+  assert.equal(sheet.querySelector('.label').textContent, `Word Scroll · 2 of ${run('ORDER.length')} caught`);
+  run("for (const w of Object.keys(S.w)) delete S.w[w]; rec('山').lv = 1; openMenu()");
+  assert.match(sheet.querySelector('.stats').textContent, /^1 word caught/);
+});
+
 test('the tiles open their pages, and Back comes back to the same tile', () => {
   const {sheet, run} = menuGame();
   for (const [m, title] of [['words', 'Word Scroll'], ['tasks', 'Tasks'], ['bag', '包 bāo · Bag'], ['friends', 'Friends']]){

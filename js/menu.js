@@ -104,7 +104,9 @@ function wardrobePage(back, focus){
   });
 }
 // Your words, friends and shells: at the top of the menu and your tasks.
-const statsHTML = () => `<div class="stats"><span>${ORDER.filter(w => lvl(w) > 0).length}/${ORDER.length} words</span><span>${S.friends.length} ${S.friends.length === 1 ? 'friend' : 'friends'}</span><span>🐚 ${S.shells}</span></div>`;
+// The words you've caught (decided 27 October 2026: 20/81 words was unclear; the 81, all the area's words, is on the Word Scroll)
+const wordsCaught = () => ORDER.filter(w => lvl(w) > 0).length;
+const statsHTML = () => `<div class="stats"><span>${wordsCaught()} ${wordsCaught() === 1 ? 'word' : 'words'} caught</span><span>${S.friends.length} ${S.friends.length === 1 ? 'friend' : 'friends'}</span><span>🐚 ${S.shells}</span></div>`;
 // 任务 Tasks (Select, or the menu's tile): what to do now, full width, with how much of the chapter you've done; its
 // checklist is a page of its own (Checklist ▸, and ◂ Tasks back), so the two lists are never side by side, saying the
 // same thing twice (decided 25 October 2026: they were). back: what Back does. page: 'list' for the checklist.
