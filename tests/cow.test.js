@@ -321,7 +321,7 @@ test('8 questions later: a chime, a message and a ! over him; 好了！, jars of
   assert.equal(g.run('tileAt(19, 11).look'), 'dairyYog', 'jars of yoghurt on the dairy’s shelf');
   assert.equal(g.run('here().milkTable'), 2, 'on the road, near it: the yoghurt goes on the feast’s table at once');
   assert.equal(g.run('tileAt(22, 7).look'), 'milkTableYog');
-  assert.match(get(g, '__notes').join(' '), /The thirsty monkey’s 酸奶 \(yoghurt\) goes in a bowl on the feast’s second table, with a wooden spoon in it!/);
+  assert.match(get(g, '__notes').join(' '), /The thirsty monkey’s 酸奶 \(yoghurt\) goes in a bowl on the feast’s second table, with a wooden spoon in it! The big monkey made the spoon, for the 酸奶 \(yoghurt\): go and see him!/, 'he made it: tests/bowls.test.js');
   assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh)").slice(-2), ['我们 有 牛奶 。', '我们 有 酸奶 。']);
   assert.deepEqual(get(g, "getTasks().filter(t => /^dairy/.test(t.id)).map(t => t.text)"), ['The thirsty monkey is making something else from the 牛奶 (milk): practise, then come back and see what it is (0/8)']);
   assert.deepEqual(item(g, /what the thirsty monkey makes/), ['Find out what the thirsty monkey makes from the 牛奶 (milk)', true, false, true]);

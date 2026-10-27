@@ -57,8 +57,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   tower   chapter 1: the little monkeys building a tower of stones at the home ground: 1 once they've said hello, 2 once
   //           you've counted its stones with them
   //   feast   chapter 1, the great feast: 0 not yet, 1 the old monkey has told you about it (teaching 有), 2 the troop has set
-  //           up its big table under the big tree at the home ground, as you watched, 3 the hungry monkey has told you what
-  //           the feast still needs: honey (teaching 没有)
+  //           up its tables under the big tree at the home ground, as you watched (with no bowls yet: tableware), 3 the hungry
+  //           monkey has told you what the feast still needs: honey (teaching 没有)
   //   bees    chapter 1, the bees: 0 not yet, 1 the hungry monkey wants honey, and the troop has cleared the way east along the
   //           stream (the riverside) to find the bees, 2 you've found the bees' valley (百花谷), where the bees and the wasps
   //           hide in the tall flowers, 3 all six bees there are your friends, and the swarm in front of the queen's old tree
@@ -77,7 +77,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           shelter with hay, a trough of fresh water), and it follows you to its gate, 8 it's in its pen, its home, and it's
   //           given you some of its milk, its thank-you (teaching 牛奶; the thirsty monkey's milk request is asked), 9 he's
   //           drunk some, and the rest is for the feast
-  //   milkTable chapter 1: the feast's second table, beside the first (set out with the first, its bowls empty): 1 the cow's
+  //   tableware chapter 1: the feast's tables, set out bare (feast 2), till you bring the bowls the hungry monkey wants from
+  //           the cave (the bowls request): 1 the bowls are on them, 2 the big monkey's chopsticks too (teaching 筷子; in a game
+  //           whose tables were out before 27 October 2026, 2 at once, and A at the big table teaches it)
+  //   spoons  chapter 1: 1 once the yoghurt's on the feast's second table, a spoon in it, which the big monkey made, 2 once he's
+  //           told you so (teaching 勺子)
+  //   milkTable chapter 1: the feast's second table, beside the first (set out with the first, bare): 1 the cow's
   //           milk is on it, 2 yoghurt too, 3 and a round cheese, from the little dairy
   //   dairy   chapter 1, the little dairy by the cow's pen: 0 not yet, 1 the thirsty monkey is making something from the milk
   //           (8 questions: dairyWait), 2 it's ready, 3 you've seen it: yoghurt (teaching 酸奶), and he's making something
@@ -94,7 +99,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, milkTable:0, dairy:0, dairyTurn:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -121,6 +126,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     nameParts: {count:'known', words:['花', '山', '水果']},   // the parts of your home's name you know: 花, 山, and the 果 of 水果
     woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
     stonesGot: {count:'picked', request:'stones'},   // and small stones
+    bowlsGot: {count:'picked', request:'bowls'},   // the bowls for the feast, from the cave
     numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']},   // the numbers you've learned at school
     coloursKnown: {count:'known', words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},   // and the colours
     practised: {count:'practised'},   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
@@ -221,7 +227,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the feast: once the first two lessons have taught you 四 五 六 and 红色 黄色 白色, the old monkey has news
     {id:'news', if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, text:'Talk to the old monkey at the {学校}: he has news', arrow:'elder'},
     {id:'feastTable', if:{feast:1}, text:'Go to the big {树} in the middle of the home ground', arrow:[17, 7, 'homeGround']},
-    {id:'hungryTable', if:{feast:2}, text:'Talk to the hungry monkey by the big {桌子}', arrow:'hungry'},
+    {id:'hungryTable', if:{feast:2, bowls:'not asked'}, text:'Talk to the hungry monkey by the big {桌子}', arrow:'hungry'},
+    {id:'bowls', if:{bowls:'asked', holding:{bowls:false}}, text:'Fetch six {碗|bowls} from the Water Curtain Cave ({bowlsGot}/6)', arrow:[9, 3, 'cave']},
+    {id:'bowlsBack', if:{bowls:'asked', holding:{bowls:true}}, text:'Take the {碗|bowls} to the hungry monkey, at the feast’s tables', arrow:'hungry'},
+    {id:'chopsticks', if:{tableware:1}, text:'The big monkey has made something for the feast: go and see him', arrow:'big'},
+    {id:'feastNeeds', if:{feast:2, tableware:{atLeast:2}}, text:'Ask the hungry monkey what the feast still needs', arrow:'hungry'},
     {id:'bees1', if:{bees:1}, text:'Follow the stream east, along the riverside, to find where {蜜蜂|bees} live', arrow:{place:'flowerValley'}},
     {id:'bees2', if:{bees:2}, text:'Make friends with the six {蜜蜂|bees} hiding in the tall flowers ({beeCount}/6)', arrow:{place:'flowerValley'}},   // (no arrow in the valley: that's the game)
     {id:'bees3', if:{bees:3}, text:'Find out who lives in the old hollow {树}, up in the bees’ valley', arrow:[25, 5, 'flowerValley']},
@@ -251,6 +261,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'dairyWait2', if:{dairy:3}, text:'The thirsty monkey is making something else from the {牛奶}: practise, then come back and see what it is ({dairyWait}/8)'},
     {id:'dairyReady2', if:{dairy:4}, text:'The thirsty monkey has made something else from the {牛奶}: go and see what it is!', arrow:'thirsty'},
     {id:'yogTable', if:{dairy:{atLeast:3}, milkTable:1}, text:'Go and see the {酸奶} go on the feast’s second {桌子}', arrow:[22, 8, 'homeGround']},
+    {id:'spoons', if:{spoons:1}, text:'The big monkey has made something for the {酸奶}: go and see him', arrow:'big'},
     {id:'cheeseTable', if:{dairy:{atLeast:5}, milkTable:2}, text:'Go and see the {奶酪} go on the feast’s second {桌子}', arrow:[22, 8, 'homeGround']},
     {id:'hideSeek', if:{hiding:true}, text:'Find where the little monkey is hiding', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'flowers', if:{flowers:'asked', holding:{flowers:false}}, text:'Pick a red, a yellow and a white {花} for the big monkey to plant ({flowersPicked}/3)', arrow:[27, 2, 'homeGround']},
@@ -311,6 +322,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Plant {花|flowers} in front of the {学校}', show:{flowers:'asked'}, done:{schoolFlowers:true}},
     {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
     {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}},
+    {chapter:1, text:'Fetch {碗|bowls} for the feast from the Water Curtain Cave', show:{feast:{atLeast:2}}, done:{bowls:'done'}},
     {chapter:1, text:'Hear from the hungry monkey what the feast still needs', show:{feast:{atLeast:2}}, done:{feast:{atLeast:3}}},
     {chapter:1, text:'Play hide and seek with a little monkey', show:{feast:{atLeast:1}}, done:{hidesFound:{atLeast:1}}},
     {chapter:1, text:'Follow the stream east to find where {蜜蜂|bees} live', show:{bees:{atLeast:1}}, done:{bees:{atLeast:2}}},
@@ -342,7 +354,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{hungry:'done', new:'没关系'}, show:'!'},   // once he's eaten, he wants to say sorry for being fussy,
       {if:{hungry:'done', hungryGame:0, knows:'没关系', gate:false}, show:'!'},   // then, in the meadow, to play his word game (once: win or lose)
       {if:{hungry:'done', new:'水果'}, show:'!'},   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
-      {if:{feast:2}, show:'!'},   // chapter 1: by the feast's big table, to tell you what it still needs,
+      {if:{feast:2, bowls:'not asked'}, show:'!'}, {if:{bowls:'asked', holding:{bowls:true}}, show:'?'},   // chapter 1: by the feast's tables, for bowls,
+      {if:{feast:2, tableware:{atLeast:2}}, show:'!'},   // then to tell you what the feast still needs,
       {if:{feast:{atLeast:3}, bees:0}, show:'!'},   // and (a game that heard it before the bees, 25 October 2026) to send you to find them,
       {if:{bees:6}, show:'!'},   // and once you've brought the bees home, to see them,
       {if:{honey:'asked', holding:{honey:true}}, show:'?'}],   // and honey from their hive
@@ -363,6 +376,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     towerL: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}], towerR: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}],
     doorway: [{if:{new:'睡觉'}, show:'!'}],   // until it has told you about sleeping
     big: [{if:{elder:{atLeast:1}, gate:false, new:'我'}, show:'!'}, {if:{climb:1, new:'棍子'}, show:'!'},   // in the meadow, to say who he is
+      {if:{tableware:1}, show:'!'}, {if:{spoons:1}, show:'!'},   // chapter 1: what he's made for the feast
       {if:{home:2, build:0}, show:'!'}, {if:{wood:'asked', stones:'asked', holding:{wood:true, stones:true}}, show:'?'},
       {if:{wood:'asked', stones:'done', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', wood:'done', holding:{stones:true}}, show:'?'},
       {if:{build:2, school:0}, show:'!'},   // chapter 1: the school
@@ -414,6 +428,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       offer:'haveWood', sentence:'我们 要 木头', sentenceEn:'We want wood.', reward:3, thanks:'thanks'},
     stones: {from:'big', wants:'石头', ask:'wantStones', asked:'The big monkey wants three small {石头|stones}. Check your tasks.',
       offer:'haveStones', sentence:'我们 要 小 石头', sentenceEn:'We want small stones.', reward:3, thanks:'thanks'},
+    // chapter 1: bowls for the feast's tables, which the troop sets out bare (decided 27 October 2026: they were set out with
+    // their bowls): the troop's bowls are in the cave, where they lived (collect, at their stacks in the legend), six of them
+    bowls: {from:'hungry', wants:'碗', ask:'wantBowls', asked:'The hungry monkey wants six {碗|bowls} for the feast. They’re in the Water Curtain Cave!',
+      offer:'haveBowls', sentence:'我们 要 碗', sentenceEn:'We want bowls.', reward:3, thanks:'thanks', thanksReply:'不客气'},
     // chapter 1: honey for the feast, from the bees' hive at the home ground, asked as the bees move in (he's wanted it since
     // the feast's list said 我们没有蜂蜜。). You learn 蜂蜜 as you take it from the hive; he pours it into the table's bowl.
     honey: {from:'hungry', wants:'蜂蜜', ask:'wantHoney', asked:'The hungry monkey wants honey for the feast. Take some from the bees’ hive!',
@@ -520,7 +538,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // and what the thirsty monkey makes from the milk at his little dairy goes in its bowls too, as you come up to it:
     // yoghurt, a wooden spoon in it, then cheese
     {if:{dairy:{atLeast:3}, milkTable:1, around:[22, 7, 'homeGround']}, do:[{setUp:{milkTable:2}},
-      {message:'The thirsty monkey’s {酸奶} goes in a bowl on the feast’s second table, with a wooden spoon in it!'}]},
+      {message:'The thirsty monkey’s {酸奶} goes in a bowl on the feast’s second table, with a wooden spoon in it!'},
+      // the big monkey made it (his talk, teaching 勺子; decided 27 October 2026: you found it in the yoghurt)
+      {set:{spoons:1}}, {message:'The big monkey made the spoon, for the {酸奶}: go and see him!'}]},
     {if:{dairy:{atLeast:5}, milkTable:2, around:[22, 7, 'homeGround']}, do:[{setUp:{milkTable:3}},
       {message:'And a round {奶酪} for the feast, in the last bowl!'}]},
     // the little dairy: what the thirsty monkey is making is ready once you've answered 8 more questions anywhere (as the
@@ -578,11 +598,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {message:'The old monkey has gone in: he’s the teacher now. Walk in through the school’s door!'},
       {message:'The troop used the practice post from the meadow to build it: from now on, you practise your words in lessons at school.'}]},
     // chapter 1: once the old monkey has told you about the feast, as you come up to the big tree at the home ground, the troop
-    // sets out the feast's two tables under it, as you watch (the setUp step: their stone legs, their stone slabs, then a
-    // bowl at a time and a cup of chopsticks, then their stone stools, each with a knock; things that just appear look odd),
-    // and the hungry monkey is there to look after them
+    // sets out the feast's two tables under it, as you watch (the setUp step: their stone legs, their stone slabs, then the
+    // peaches and apples, then their stone stools, each with a knock; things that just appear look odd), and the hungry
+    // monkey is there to look after them. No bowls yet: the hungry monkey wants you to fetch them from the cave
     {if:{feast:1, around:[17, 7, 'homeGround']}, do:[{setUp:{feast:2}},
-      {message:'The troop sets out two {桌子|tables} under the big tree for the feast: peaches, apples, chopsticks, and empty bowls, waiting for more food…'}]},
+      {message:'The troop sets out two {桌子|tables} under the big tree for the feast, with peaches and apples piled up on one. But there are no bowls!'}]},
+    // the bowls you brought from the cave: they go on the tables, one at a time; and the big monkey, who makes things for the
+    // troop, has made chopsticks for the feast out of wood (his talk, teaching 筷子; decided 27 October 2026: you found them
+    // on the table)
+    {if:{place:'homeGround', bowls:'done', tableware:0}, do:[{setUp:{tableware:1}}, {say:'haveBowlsNow', by:'hungry'},
+      {message:'The bowls go on the feast’s tables. And the big monkey has made something for the feast: go and see him!'}]},   // (a conversation of its own: 不客气 was new just now, in a game that hadn't said it before)
     // you've brought the big monkey his flowers: he plants them in front of the school, as you watch (the plant step: each
     // square of the beds grows up out of the ground, one after another)
     {if:{place:'homeGround', flowers:'done', schoolFlowers:false}, do:[{plant:{schoolFlowers:true}},
@@ -776,8 +801,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         // cave's entrance (decided 23 October 2026: every quest comes back to the home ground; 桌子 and 碗 are the cave's words,
         // heard again here). Stone, with stone stools, as in the book (摆开石凳石桌: decided 25 October 2026; it was wood with a
         // red cloth); the square round the big tree is left open for the tables to come as the feast's quests are done
-        '%': {look:'grass', walk:true, becomes:[{if:{bees:{atLeast:11}}, to:'*'}, {if:{feast:{atLeast:2}}, to:'&'}]},
-        // A at it: the feast's list (but first, the chopsticks in their cup at its end, 筷子, sparkling till you know them)
+        '%': {look:'grass', walk:true, becomes:[{if:{bees:{atLeast:11}}, to:'*'}, {if:{tableware:{atLeast:2}}, to:'&'}, {if:{tableware:1}, to:','}, {if:{feast:{atLeast:2}}, to:'c'}]},
+        // set out bare, peaches and apples piled on it (c); then the bowls from the cave on it (,); then the big monkey's
+        // chopsticks (&). A at it: the feast's list
+        'c': {look:'feastTableBare', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        ',': {look:'feastTableBowls', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
         '&': {look:'feastTable', word:'桌子', landmark:true, onLook:[{if:{new:'筷子'}, label:'Look', do:[{newWord:'筷子', note:'A bamboo cup of chopsticks for the feast, one pair for every monkey.'}]}, {label:'Look', do:[{feastList:true}]}]},
         '*': {look:'feastTableHoney', word:'桌子', landmark:true, onLook:[{if:{new:'筷子'}, label:'Look', do:[{newWord:'筷子', note:'A bamboo cup of chopsticks for the feast, one pair for every monkey.'}]}, {label:'Look', do:[{feastList:true}]}]},   // (and honey in its third bowl, once you've brought it)
         '!': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:';'}]},
@@ -799,14 +827,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
           {do:[{message:'The {牛}’s new home: a shelter with hay, and fresh water from a bamboo pipe. Lead it in through the gate!'}]}]},
         '+': {look:'penGround', walk:true, partOf:'pen'},
         // chapter 1: the feast's second table, beside the first: open grass, until the troop sets out both tables as you
-        // watch, its three bowls empty (decided 27 October 2026: it appeared once the milk came, and the feast got a new table
-        // each time); then the cow's milk goes in a bowl, with a jug of it (milkTable 1), then yoghurt, a spoon in it (2), and
-        // cheese (3), from the little dairy; its stools (~)
-        '(': {look:'grass', walk:true, becomes:[{if:{milkTable:{atLeast:3}}, to:']'}, {if:{milkTable:2}, to:'['}, {if:{milkTable:1}, to:')'}, {if:{feast:{atLeast:2}}, to:'{'}]},
-        '{': {look:'milkTableEmpty', word:'桌子', landmark:true, onLook:[{if:{new:'筷子'}, label:'Look', do:[{newWord:'筷子', note:'A bamboo cup of chopsticks for the feast, one pair for every monkey.'}]}, {label:'Look', do:[{feastList:true}]}]},   // A at it: the feast's list
-        ')': {look:'milkTable', word:'桌子', landmark:true, onLook:[{if:{new:'筷子'}, label:'Look', do:[{newWord:'筷子', note:'A bamboo cup of chopsticks for the feast, one pair for every monkey.'}]}, {label:'Look', do:[{feastList:true}]}]},
-        '[': {look:'milkTableYog', word:'桌子', landmark:true, onLook:[{if:{new:'筷子'}, label:'Look', do:[{newWord:'筷子', note:'A bamboo cup of chopsticks for the feast, one pair for every monkey.'}]}, {if:{new:'勺子', milkTable:{atLeast:2}}, label:'Look', do:[{newWord:'勺子', note:'A wooden spoon in the yoghurt, to eat it with.'}]}, {label:'Look', do:[{feastList:true}]}]},   // (and the spoon in the yoghurt, 勺子, sparkling till you know it)
-        ']': {look:'milkTableCheese', word:'桌子', landmark:true, onLook:[{if:{new:'筷子'}, label:'Look', do:[{newWord:'筷子', note:'A bamboo cup of chopsticks for the feast, one pair for every monkey.'}]}, {if:{new:'勺子', milkTable:{atLeast:2}}, label:'Look', do:[{newWord:'勺子', note:'A wooden spoon in the yoghurt, to eat it with.'}]}, {label:'Look', do:[{feastList:true}]}]},
+        // watch, bare (decided 27 October 2026: it appeared once the milk came, and the feast got a new table each time);
+        // then three bowls from the cave go on it, empty; then the cow's milk goes in a bowl, with a jug of it (milkTable 1),
+        // then yoghurt, the big monkey's spoon in it (2), and cheese (3), from the little dairy; its stools (~)
+        '(': {look:'grass', walk:true, becomes:[{if:{milkTable:{atLeast:3}}, to:']'}, {if:{milkTable:2}, to:'['}, {if:{milkTable:1}, to:')'}, {if:{tableware:{atLeast:1}}, to:'{'}, {if:{feast:{atLeast:2}}, to:'`'}]},
+        '`': {look:'milkTableBare', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // set out bare, till the bowls from the cave
+        '{': {look:'milkTableEmpty', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // A at it: the feast's list
+        ')': {look:'milkTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        '[': {look:'milkTableYog', word:'桌子', landmark:true, onLook:[{if:{new:'勺子', milkTable:{atLeast:2}}, label:'Look', do:[{newWord:'勺子', note:'A wooden spoon in the yoghurt, to eat it with.'}]}, {label:'Look', do:[{feastList:true}]}]},   // (and the spoon in the yoghurt, 勺子, sparkling till you know it)
+        ']': {look:'milkTableCheese', word:'桌子', landmark:true, onLook:[{if:{new:'勺子', milkTable:{atLeast:2}}, label:'Look', do:[{newWord:'勺子', note:'A wooden spoon in the yoghurt, to eat it with.'}]}, {label:'Look', do:[{feastList:true}]}]},
         '~': {look:'grass', walk:true, becomes:[{if:{feast:{atLeast:2}}, to:';'}]},
         // chapter 1: the little dairy (the game's owner's idea, 26 October 2026), between the road and the cow's pen's sign:
         // open grass, until the thirsty monkey takes some of the cow's milk there, and the troop sets up a table under a
@@ -1276,7 +1305,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{knows:'床', new:'睡觉'}, label:'Sleep', do:[{card:'睡觉', note:'You lie down on the stone bed and go to sleep.'}, {sleep:'You wake up with your health full.'}]},
       {if:{knows:'床'}, label:'Sleep', do:[{sleep:'You wake up with your health full.'}]}]},
     'A': {look:'stoneTable', word:'桌子', landmark:true, note:'A big table of stone.'},
-    'V': {look:'stoneBowls', word:'碗', landmark:true, note:'Bowls of stone, ready for the troop.'},
+    // the troop's bowls in the cave, stacked up; in chapter 1, the hungry monkey wants six for the feast's tables (bowls): A
+    // takes them one at a time, counting
+    'V': {look:'bowlStack', word:'碗', landmark:true, note:'Stacks of bowls, ready for the troop.',
+      onLook:[{if:{bowls:'asked', holding:{bowls:false}}, label:'Take', sparkle:true, do:[{collect:'碗', for:'bowls', count:6,
+        each:'You take a {碗} from the stack.', full:'You have six {碗|bowls}. Take them to the hungry monkey, at the feast’s tables!'}]}]},
     // chapter 1: the way from the waterfall to the home ground, and the home ground's plots, their signs, and the ways out
     'f': {look:'bush', becomes:[{if:{home:{atLeast:1}}, to:'.'}]},   // bushes, until the troop clears a way through them
     'u': {look:'bush', landmark:true, onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
@@ -1496,8 +1529,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
     {at:[11, 2], if:{homeName:1}},        // the sign by your stone, once you can read your home's name, till you have
     {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']},
-    {word:'筷子', at:[19, 7, 'homeGround'], if:{feast:{atLeast:2}}},      // the chopsticks in their cup at the end of the feast's big table
-    {word:'勺子', at:[22, 7, 'homeGround'], if:{milkTable:{atLeast:2}}}   // the spoon in the yoghurt on its second table
+    // a game whose feast tables were out before 27 October 2026 (the big monkey teaches these now): the chopsticks in their cup
+    // at the end of the big table, and the spoon in the yoghurt on the second
+    {word:'筷子', at:[19, 7, 'homeGround'], if:{tableware:2}},
+    {word:'勺子', at:[22, 7, 'homeGround'], if:{milkTable:{atLeast:2}, spoons:0}}
   ],
 
   // Where you found each word, shown on its page in the Word Scroll. Every word you can collect
@@ -1550,8 +1585,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '牛奶': 'The cow’s thank-you, in its new home by the road.',
     '酸奶': 'The thirsty monkey made it from the cow’s milk, at the little dairy by its pen.',
     '奶酪': 'The thirsty monkey made it from the cow’s milk too, at the little dairy.',
-    '筷子': 'In a bamboo cup at the end of each of the feast’s tables, a pair for every monkey.',
-    '勺子': 'In the bowl of yoghurt on the feast’s second table.',
+    '筷子': 'The big monkey made them for the feast, out of wood: in a bamboo cup at the end of its big table.',
+    '勺子': 'The big monkey made them, for the yoghurt on the feast’s second table.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -1565,7 +1600,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '桥': 'A bridge over the stream, at the home ground or in the pine wood.',   // (the iron bridge in the Water Curtain Cave until 21 October 2026)
     '床': 'The stone beds in the Water Curtain Cave.',
     '睡觉': 'The stone beds in the Water Curtain Cave: sleep there to get your health back.',
-    '碗': 'The stone bowls in the Water Curtain Cave.',
+    '碗': 'The troop’s bowls, stacked up in the Water Curtain Cave.',
     '桌子': 'The stone table in the Water Curtain Cave.',
     '家': 'The old monkey, when the troop moved into the Water Curtain Cave.',
     '王': 'The troop, when they made you their king.',
@@ -1663,8 +1698,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
     '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'},
-    '筷子': {zh:'桌子 上 有 筷子 。', en:'There are chopsticks on the table.'},   // (27 October 2026: the feast's tables)
-    '勺子': {zh:'酸奶 里 有 勺子 。', en:'There’s a spoon in the yoghurt.'},
     '熊': {zh:'山 上 有 熊 。', en:'There are bears on the mountain.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now; 蜜蜂, 花上有蜜蜂。,
     // until 25 October 2026: the hungry monkey's 我们有蜜蜂了！ uses it now; 黄蜂, 花里有黄蜂！, until 26 October 2026: the
@@ -1904,7 +1937,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     cowHasHome: {zh:'我 有 家 了 ！', en:'I have a home now!'},   // the cow, in its pen
     wantMilk: {zh:'我 要 喝 牛奶 ！', en:'I want to drink milk!'},   // the thirsty monkey, as the cow gives you some
     haveMilk: {zh:'牛奶 ！ 太 好 了 ！', en:'Milk! Wonderful!'},   // and when you bring it to him
-    haveMilkNow: {zh:'我们 有 牛奶 了 ！', en:'We have milk now!'},   // the hungry monkey, at the feast's new table
+    haveMilkNow: {zh:'我们 有 牛奶 了 ！', en:'We have milk now!'},
+    // the feast's bowls (27 October 2026): the hungry monkey wants them from the cave, and when you bring them; the big monkey's
+    // chopsticks and spoons
+    wantBowls: {zh:'我们 要 碗 ！ 碗 在 水帘洞 里 。', en:'We need bowls! The bowls are in the Water Curtain Cave.'},
+    haveBowls: {zh:'碗 ！ 太 好 了 ！', en:'Bowls! Wonderful!'},
+    haveBowlsNow: {zh:'我们 有 碗 了 ！', en:'We have bowls now!'},
+    madeChopsticks: {zh:'我 做 了 筷子 ！', en:'I made chopsticks!'},
+    madeSpoons: {zh:'我 做 了 勺子 ！', en:'I made spoons!'},   // the hungry monkey, at the feast's new table
     makeFood: {zh:'我 要 做 吃 的 ！', en:'I’m going to make something to eat!'},   // the thirsty monkey, at his little dairy (做 just for listening)
     foodReady: {zh:'好 了 ！', en:'It’s ready!'},   // and when what he's made is ready
     // hide and seek with a little monkey (the area's hideSeek): its clues' English leaves the place's word in Chinese ({桌子})
@@ -2142,9 +2182,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
           win:[{say:'great'}, {set:{hungryGame:2}}, {bag:'桃子', note:'The hungry monkey gives you a {桃子} for your bag.'}], lost:[{set:{hungryGame:1}}]}}]},
       // a game that helped him before he taught 水果 as he asked (24 October 2026), and never learned it at a fruit tree
       {if:{hungry:'done', new:'水果'}, do:[{say:'fruitOnTrees', teach:'水果'}, {newWord:'水果', note:'Peaches and apples are both fruit.'}]},
-      // chapter 1: by the feast's big table, once it's set up, he tells you what the troop has for the feast, and what it
-      // hasn't: no honey (teaching 没有, don't have), which he'd love to eat
-      {if:{feast:2}, do:[
+      // chapter 1: by the feast's tables, set out bare: they need bowls, and the troop's are in the cave (the bowls request);
+      // you bring them, and they go on the tables (events)
+      {if:{feast:2, bowls:'not asked'}, do:[{say:'ourTable'}, {request:'bowls'}]},
+      {if:{feast:2, bowls:'asked'}, do:[{request:'bowls'}]},
+      // then, once the bowls and the big monkey's chopsticks are on them, he tells you what the troop has for the feast, and
+      // what it hasn't: no honey (teaching 没有, don't have), which he'd love to eat
+      {if:{feast:2, tableware:{atLeast:2}}, do:[
         {say:'ourTable'},
         {say:'haveFruit'},
         {say:'noHoney', teach:'没有'},
@@ -2373,6 +2417,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],
     big: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
+      // chapter 1: he makes things for the troop (decided 27 October 2026): chopsticks out of wood, once the bowls are on the
+      // feast's tables (teaching 筷子), and a cup of them goes on the big one; and spoons, once the yoghurt's on the second
+      // (teaching 勺子). One new word at a time, so not both at once
+      {if:{tableware:1}, do:[{say:'madeChopsticks', teach:'筷子'}, {newWord:'筷子', note:'The big monkey has made chopsticks out of {木头}, a pair for every monkey.', if:{new:'筷子'}},
+        {setUp:{tableware:2}}, {message:'A bamboo cup of the big monkey’s chopsticks goes on the feast’s big table. Now ask the hungry monkey what else the feast needs!', if:{feast:2}}]},
+      {if:{spoons:1}, do:[{say:'madeSpoons', teach:'勺子'}, {newWord:'勺子', note:'The big monkey has made wooden spoons, for eating the {酸奶}.', if:{new:'勺子'}}, {set:{spoons:2}}]},
       {if:{climb:1, new:'棍子'}, do:[   // he stops you as you set off up the path
         {say:'stickHere', teach:'棍子'},
         {newWord:'棍子', note:'The big monkey gives you a stick, to chase wild animals off the path.'},

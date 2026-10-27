@@ -99,6 +99,11 @@ shown where the word list has them.
 | 我要喝牛奶！ | wǒ yào hē niúnǎi! | I want to drink milk! | 渴猴子 (Thirsty monkey) |  |
 | 牛奶！太好了！ | niúnǎi! tài hǎo le! | Milk! Wonderful! | 渴猴子 (Thirsty monkey) |  |
 | 我们有牛奶了！ | wǒmen yǒu niúnǎi le! | We have milk now! |  |  |
+| 我们要碗！碗在水帘洞里。 | wǒmen yào wǎn! wǎn zài Shuǐlián Dòng lǐ. | We need bowls! The bowls are in the Water Curtain Cave. | 饿猴子 (Hungry monkey) |  |
+| 碗！太好了！ | wǎn! tài hǎo le! | Bowls! Wonderful! | 饿猴子 (Hungry monkey) |  |
+| 我们有碗了！ | wǒmen yǒu wǎn le! | We have bowls now! |  |  |
+| 我做了筷子！ | wǒ zuò le kuàizi! | I made chopsticks! | 大猴子 (Big monkey) |  |
+| 我做了勺子！ | wǒ zuò le sháozi! | I made spoons! | 大猴子 (Big monkey) |  |
 | 我要做吃的！ | wǒ yào zuò chī de! | I’m going to make something to eat! | 渴猴子 (Thirsty monkey) |  |
 | 好了！ | hǎo le! | It’s ready! | 渴猴子 (Thirsty monkey) |  |
 | 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
@@ -153,6 +158,7 @@ shown where the word list has them.
 | 我要红色的花 | wǒ yào hóngsè de huā | I want a red flower. | 大猴子 (Big monkey) |  |
 | 我们要木头 | wǒmen yào mùtou | We want wood. | 大猴子 (Big monkey) |  |
 | 我们要小石头 | wǒmen yào xiǎo shítou | We want small stones. | 大猴子 (Big monkey) |  |
+| 我们要碗 | wǒmen yào wǎn | We want bowls. | 饿猴子 (Hungry monkey) |  |
 | 我要吃蜂蜜 | wǒ yào chī fēngmì | I want to eat honey. | 饿猴子 (Hungry monkey) |  |
 | 我要喝牛奶 | wǒ yào hē niúnǎi | I want to drink milk. | 渴猴子 (Thirsty monkey) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
@@ -235,8 +241,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
-| 桌子上有筷子。 | zhuōzi shàng yǒu kuàizi. | There are chopsticks on the table. | 筷子 |  |
-| 酸奶里有勺子。 | suānnǎi lǐ yǒu sháozi. | There’s a spoon in the yoghurt. | 勺子 |  |
 | 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
 
 ### Questions after the story

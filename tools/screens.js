@@ -143,7 +143,13 @@ SAVES.feastTable = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows
 SAVES.feastHungry = {...SAVES.feastTable, pos: {place: 'homeGround', x: 19, y: 8, dir: 'up'}};
 SAVES.feastList = {...SAVES.feastTable, w: {...SAVES.feastTable.w, ...knows(1, ['没有', '筷子'])}, areas: {1: {...SAVES.feastTable.areas[1], feast: 3}},
   pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
-SAVES.feastChopsticks = {...SAVES.feastTable, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};   // facing the big table, not knowing 筷子 yet
+// the feast's tables set out bare (27 October 2026): the hungry monkey wants bowls, from the cave; taking them there; and
+// bringing them back, and the big monkey's chopsticks
+SAVES.tablesBare = {...SAVES.feastTable, areas: {1: {...SAVES.feastTable.areas[1], tableware: 0, bowls: 'not asked'}}, pos: {place: 'homeGround', x: 19, y: 8, dir: 'up'}};
+SAVES.bowlsCave = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'asked'}}, tasksSeen: {bowls: 1}, pos: {place: 'cave', x: 9, y: 4, dir: 'up'}};
+SAVES.bowlsBack = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'asked', holding: {bowls: '碗'}}}, tasksSeen: {bowls: 1, bowlsBack: 1}};
+SAVES.bowlsOn = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'done', tableware: 1, flowers: 'done', schoolFlowers: true}}, tasksSeen: {bowls: 1, bowlsBack: 1, chopsticks: 1},
+  pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};   // facing the big monkey, with the bowls on the tables
 // hide and seek with a little monkey at the home ground: facing it; while it hides under the table (after two wrong
 // guesses, its tail pokes out)
 SAVES.hideSeek = {...SAVES.feastList, w: {...SAVES.feastList.w, ...knows(1, ['树', '水', '花', '桥', '桌子'])}, pos: {place: 'homeGround', x: 13, y: 9, dir: 'up'}};
@@ -663,12 +669,22 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(500); }},
   {id: 'you-card', title: '有, to have', save: 'feastNews', why: 'Its card, with no picture, like 要: Use 有 to say what you have.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
-  {id: 'table-setting-up', title: 'Setting out the tables', save: 'feastTable', why: 'As you come up to the big tree, the troop sets out the feast’s two tables under it, a piece at a time, each with a knock: the big one’s stone legs, its stone slab, a bowl at a time (here) and a cup of chopsticks, then the second one’s, then their stone stools.', run: async () => {
-    play(); await wait(100); here().feast = 1; buildMap(); settingUp = {objects: [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1, stage: 4}, {look: 'milkTableEmpty', x: 21, y: 7, w: 3, h: 1, stage: 0}], stage: 4}; await wait(400); }},
-  {id: 'feast-table', title: 'The feast’s tables', save: 'feastTable', why: 'Under the big tree, both tables from the start: on the big one, peaches, apples, an empty bowl, waiting for something, and a bamboo cup of chopsticks; on the second, three empty bowls, waiting for more food. The hungry monkey has come up from the meadow to look after them, with a !.', run: async () => {
+  {id: 'table-setting-up', title: 'Setting out the tables', save: 'tablesBare', why: 'As you come up to the big tree, the troop sets out the feast’s two tables under it, a piece at a time, each with a knock: the big one’s stone legs, its stone slab (here), then peaches and apples piled on it, then the second one’s legs and slab, then their stone stools. No bowls yet.', run: async () => {
+    play(); await wait(100); here().feast = 1; buildMap(); settingUp = {objects: [{look: 'feastTableBare', x: 16, y: 7, w: 3, h: 1, stage: 2}, {look: 'milkTableBare', x: 21, y: 7, w: 3, h: 1, stage: 0}], stage: 2}; await wait(400); }},
+  {id: 'tables-bare', title: 'No bowls!', save: 'tablesBare', why: 'The tables set out bare, peaches and apples piled on the big one: the hungry monkey has a !, and wants bowls (我们要碗！碗在水帘洞里。).', run: async () => {
     play(); await wait(500); }},
-  {id: 'chopsticks-card', title: 'Chopsticks (筷子)', save: 'feastChopsticks', why: 'The chopsticks in their cup at the end of the big table sparkle till you know them: A at the table, and 筷子 (kuàizi, chopsticks), said straight away; after that, A shows the feast’s list.', run: async () => {
-    play(); await wait(100); interact(...facing()); await wait(500); }},
+  {id: 'want-bowls', title: 'We need bowls!', save: 'tablesBare', why: 'The hungry monkey: 我们要碗！碗在水帘洞里。 (We need bowls! The bowls are in the Water Curtain Cave.), every word green.', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(500); }},
+  {id: 'bowls-cave', title: 'The troop’s bowls', save: 'bowlsCave', why: 'In the cave, the stacks of bowls (white, a blue band round each, as 碗’s picture and the tables’ bowls) sparkle; A says Take, and takes one, counting.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'bowls-going-on', title: 'The bowls go on', save: 'bowlsBack', why: 'Back at the tables with the bowls: they go on one at a time, each with a knock, the peaches and apples into the first two (here, the second’s going on).', run: async () => {
+    play(); await wait(100); settingUp = {objects: [{look: 'feastTableBowls', x: 16, y: 7, w: 3, h: 1, stage: 2}, {look: 'milkTableEmpty', x: 21, y: 7, w: 3, h: 1, stage: 0}], stage: 2}; await wait(400); }},
+  {id: 'chopsticks-made', title: 'I made chopsticks!', save: 'bowlsOn', why: 'Then the big monkey, who makes things for the troop, has a !: 我做了筷子！ (I made chopsticks!), teaching 筷子 (bold); then a cup of them goes on the table.', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(600); }},
+  {id: 'feast-table', title: 'The feast’s tables', save: 'feastTable', why: 'Under the big tree, once the bowls from the cave and the big monkey’s chopsticks are on them: on the big one, peaches, apples, an empty bowl, waiting for something, and a bamboo cup of chopsticks; on the second, three empty bowls, waiting for more food. The hungry monkey, with a !, to say what the feast still needs.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'chopsticks-card', title: 'Chopsticks (筷子)', save: 'bowlsOn', why: '筷子’s card (kuàizi, chopsticks): The big monkey has made chopsticks out of 木头 (wood), a pair for every monkey.', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(300); next(); await wait(600); }},
   {id: 'hungry-table', title: 'This is our big table!', save: 'feastHungry', why: 'The hungry monkey by the table: 这是我们的大桌子！ (桌子 green: you learned it in the cave), then 我们有桃子，也有苹果！', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(500); }},
   {id: 'no-honey', title: 'We don’t have any honey!', save: 'feastHungry', why: 'Then 我们没有蜂蜜！, teaching 没有 (bold); 蜂蜜 is grey, just for listening, till the bees.', run: async () => {

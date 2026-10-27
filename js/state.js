@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 31;
+const SAVE_VERSION = 32;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -183,6 +183,11 @@ function upgradeSave(s){
     s.maxHealth = 50;                                                  // story can make finer differences)
     delete s.hearts;
     s.version = 31;
+  }
+  if (s.version === 31){   // version 31: the feast's tables were set out with their bowls and chopsticks. Now you fetch the bowls
+    const a = (s.areas || {})[AREA.number];   // from the cave, and the big monkey makes the chopsticks (decided 27 October 2026), so
+    if (a && a.feast >= 2 && !('tableware' in a)){ a.bowls = 'done'; a.tableware = 2; }   // a game whose tables are out has them already
+    s.version = 32;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];

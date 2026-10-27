@@ -405,14 +405,31 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await act('arrive(7, 9).then(runEvents)', 'walking out of the school, to the big tree');
   stand(14, 8, 'right');
   await act('arrive(14, 8).then(runEvents)', 'coming up to the big tree');
-  assert.deepEqual([area().feast, run('tileAt(17, 7).look')], [2, 'feastTable'], 'the troop sets up the feast’s big table');
-  // The hungry monkey, beside it: what the troop has for the feast, and what it hasn't, 我们没有蜂蜜！, teaching 没有; then the
-  // feast's list, A at the table
+  assert.deepEqual([area().feast, run('tileAt(17, 7).look')], [2, 'feastTableBare'], 'the troop sets out the feast’s tables, with no bowls');
+  // The hungry monkey, beside it, wants bowls: they're in the cave, where the troop lived. You fetch six from its stacks,
+  // counting them, and bring them back; they go on the tables, and the big monkey has made chopsticks, teaching 筷子
+  await pressAt(19, 8, 'up', 'talking to the hungry monkey by the tables: no bowls');
+  assert.ok(get('__said').includes('我们要碗！碗在水帘洞里。'), 'he wants bowls, from the cave');
+  assert.equal(area().bowls, 'asked');
+  await stepOn(0, 9, 'going west, to the waterfall');
+  assert.equal(run('PLACE'), 'falls');
+  await pressAt(5, 1, 'left', 'jumping through the waterfall, into the cave');
+  assert.equal(run('PLACE'), 'cave');
+  for (let i = 0; i < 6; i++) await pressAt(9, 4, 'up', 'taking a bowl from the stack');
+  assert.equal(area().holding.bowls, '碗', 'six bowls, counted');
+  await stepOn(7, 13, 'going out through the waterfall');
+  assert.equal(run('PLACE'), 'falls');
+  await stepOn(19, 2, 'going back along beside the waterfall, to the home ground');
+  assert.equal(run('PLACE'), 'homeGround');
+  await pressAt(19, 8, 'up', 'giving the hungry monkey the bowls');
+  assert.equal(run('tileAt(17, 7).look'), 'feastTableBowls', 'the bowls go on the tables');
+  await pressAt(15, 5, 'up', 'seeing what the big monkey has made for the feast');
+  assert.ok(knows('筷子') && area().tableware === 2 && run('tileAt(17, 7).look') === 'feastTable', 'the big monkey’s chopsticks teach 筷子 (chopsticks), and a cup of them goes on the table');
+  // Then what the troop has for the feast, and what it hasn't, 我们没有蜂蜜！, teaching 没有; then the feast's list, A at the
+  // table
   await pressAt(19, 8, 'up', 'talking to the hungry monkey by the table');
   assert.ok(get('__said').includes('我们没有蜂蜜！') && knows('没有'), 'the hungry monkey teaches 没有');
   assert.equal(area().feast, 3);
-  await pressAt(17, 8, 'up', 'looking at the feast’s big table: the chopsticks in their cup, sparkling');
-  assert.ok(knows('筷子'), 'the first time, 筷子 (chopsticks), in a cup at the end of the table');
   await pressAt(17, 8, 'up', 'looking at the feast’s list');
   assert.ok(get("!!S.lines['我们没有蜂蜜。'] && !!S.lines['我们有桃子。']"), 'the list shows what the troop has, and what the feast still needs');
   // A little monkey asks you to play hide and seek (a side quest): you count to ten with your eyes covered, and it calls

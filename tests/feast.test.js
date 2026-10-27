@@ -2,8 +2,9 @@
 // the old monkey has news, before any lesson: 我们有家，也有学校！ (teaching 有, to have), so it's time for a great feast
 // (decided 24 October 2026: after the first two lessons, so chapter 1 opens up; it waited till the flowers were
 // planted, after every lesson). As you come up to the big tree at the home ground, the troop sets up the feast's big table
-// under it, as you watch: its stone legs, its stone slab, then a bowl at a time, then its stone stools, each with a knock. The hungry monkey
-// comes up from the meadow to look after it, and tells you what the troop has for the feast, and what it hasn't: 我们没有
+// under it, as you watch: its stone legs, its stone slab, the fruit, then its stone stools, each with a knock. The hungry monkey
+// comes up from the meadow to look after it, wants bowls from the cave (tests/bowls.test.js), and then tells you what the
+// troop has for the feast, and what it hasn't: 我们没有
 // 蜂蜜！ (teaching 没有, don't have). A at the table shows the feast's list: what the troop has, ticked, and what it still
 // needs, as a shadow.
 'use strict';
@@ -15,7 +16,7 @@ const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const AT_SCHOOL = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2,
   build: 2, wood: 'done', stones: 'done', school: 2};
 const KNOWN = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '猴子', '朋友', '河', '鱼', '木头', '桌子', '碗', '家', '学校', '老师', '同学',
-  '一', '二', '三', '谢谢', '不客气', '没关系', '水果', '我', '要'];
+  '一', '二', '三', '谢谢', '不客气', '没关系', '水果', '我', '要', '筷子'];   // (筷子: the big monkey's, once the bowls are on the tables: tests/bowls.test.js)
 const FIRST_TWO = ['四', '五', '六', '红色', '黄色', '白色'];   // what the first two lessons teach
 const BY_TEACHER = {place: 'school', x: 7, y: 3, dir: 'up'};
 // A game in chapter 1 (area: more progress), standing at pos, knowing these words (each right twice in a row).
@@ -83,16 +84,16 @@ test('as you come up to the big tree, the troop sets out the feast’s two table
   await goTo(g, 10, 8);
   assert.equal(g.run('here().feast'), 1, 'not from across the home ground');
   await goTo(g, 14, 8);   // (three squares from the middle of the table)
-  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-    'the big table’s stone legs, its slab, a bowl of peaches, a bowl of apples, and an empty one with a cup of chopsticks; the second table’s legs, slab and three empty bowls; then their four stone stools, one after another');
+  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    'the big table’s stone legs, its slab, and peaches and apples piled on it; the second table’s legs and slab; then their four stone stools, one after another (no bowls yet: you fetch them from the cave, tests/bowls.test.js)');
   assert.deepEqual([g.run('tileAt(16, 8).look'), g.run('tileAt(18, 8).look'), g.run('walkable(17, 8)')], ['stoneStool', 'stoneStool', true], 'its stools either side of the square in front of it, where you stand to look at it');
   assert.deepEqual([g.run('tileAt(21, 8).look'), g.run('tileAt(23, 8).look'), g.run('walkable(22, 8)')], ['stoneStool', 'stoneStool', true], 'and the second table’s');
   assert.equal(g.run('here().feast'), 2);
   assert.equal(g.run('settingUp'), null, 'and it’s all up');
-  assert.deepEqual(get(g, '[16, 17, 18].map(x => [tileAt(x, 7).look, walkable(x, 7)])'), [['feastTable', false], ['feastTable', false], ['feastTable', false]]);
-  assert.deepEqual(get(g, "mapObjects().filter(o => /^(feast|milk)Table/.test(o.look))"), [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1}, {look: 'milkTableEmpty', x: 21, y: 7, w: 3, h: 1}],
-    'two tables, each three squares wide: all the feast’s tables from the start, its second one’s bowls empty, waiting for more food (decided 27 October 2026: a new table appeared each time)');
-  assert.match(get(g, '__notes').join(' '), /The troop sets out two 桌子 \(tables\) under the big tree for the feast: peaches, apples, chopsticks, and empty bowls, waiting for more food…/);
+  assert.deepEqual(get(g, '[16, 17, 18].map(x => [tileAt(x, 7).look, walkable(x, 7)])'), [['feastTableBare', false], ['feastTableBare', false], ['feastTableBare', false]]);
+  assert.deepEqual(get(g, "mapObjects().filter(o => /^(feast|milk)Table/.test(o.look))"), [{look: 'feastTableBare', x: 16, y: 7, w: 3, h: 1}, {look: 'milkTableBare', x: 21, y: 7, w: 3, h: 1}],
+    'two tables, each three squares wide: all the feast’s tables from the start (decided 27 October 2026: a new table appeared each time), with no bowls yet');
+  assert.match(get(g, '__notes').join(' '), /The troop sets out two 桌子 \(tables\) under the big tree for the feast, with peaches and apples piled up on one\. But there are no bowls!/);
   assert.deepEqual(item(g, /set up/), ['See the big 桌子 (table) set up for the feast', true, false, true]);
   assert.deepEqual(hungry(g), ['homeGround', 19, 7, 'left'], 'the hungry monkey beside it');
   assert.equal(bubble(g, 'hungry'), '!', 'with a !');
@@ -105,7 +106,7 @@ test('as you come up to the big tree, the troop sets out the feast’s two table
 test('a game that comes back to the home ground with the table still to set up sees it go up there: only near the big tree', async () => {
   const g = game({feast: 1}, {place: 'homeGround', x: 17, y: 8, dir: 'up'});
   await play(g, 'runEvents()');
-  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 'resting in front of it after a lost fight, say');
+  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7, 8, 9], 'resting in front of it after a lost fight, say');
   const far = game({feast: 1}, {place: 'school', x: 7, y: 8, dir: 'down'});
   await play(far, 'runEvents()');
   assert.equal(far.run('here().feast'), 1, 'not from the school');
@@ -162,10 +163,7 @@ test('A at the big table shows the feast’s list: what the troop has, ticked; a
   g.run("globalThis.__spoken = []; say = (t, end) => { __spoken.push(t); if (end) end(); }");
   assert.equal(g.run('promptFor(17, 7)'), 'Look');
   await openList(g);
-  assert.deepEqual(get(g, '__notes'), ['card: 筷子 (A bamboo cup of chopsticks for the feast, one pair for every monkey.)'], 'the first time, the chopsticks in their cup at its end: 筷子, said straight away (no list yet: one thing at a time)');
-  assert.equal(g.run("sheet.querySelector('.frow')"), null);
-  await openList(g);
-  assert.equal(g.run("sheet.querySelector('.label').textContent"), 'For the feast, at the big 桌子 (table)');
+  assert.equal(g.run("sheet.querySelector('.label').textContent"), 'For the feast, at the big 桌子 (table)', 'its list (the big monkey teaches 筷子, chopsticks: tests/bowls.test.js)');
   assert.deepEqual(rows(g), [['我们有桃子', true, false, true], ['我们有苹果', true, false, true]], 'peaches and apples, ticked, each with its English the first time');
   assert.equal(g.run("!!sheet.querySelector('[data-a=en]')"), false, 'so no English button');
   g.run("sheet.querySelector('[data-a=read]').click()");
