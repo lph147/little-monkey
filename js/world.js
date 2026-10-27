@@ -81,15 +81,28 @@ const areaChecklist = () => chapterItems().map(c => { const done = matches(c.don
 const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
-    if (t.arrow && t.arrow.sparkle) return {id:fill(t.id, true), text:fill(t.text, false, true), target:sparkleToFind()};   // or {sparkle}: the nearest thing that sparkles
+    if (t.arrow && t.arrow.sparkle) return {id:fill(t.id, true), text:fill(t.text, false, true), target:sparkleToFind(), arrow:true};   // or {sparkle}: the nearest thing that sparkles
     const c = typeof t.arrow === 'string' && ALL_NPCS.find(n => n.id === t.arrow);   // an arrow to a character
     const toPlace = t.arrow && t.arrow.place;   // or {place}: the way to a place, and none once you're there
     const at = c ? [c.x, c.y, c.place] : toPlace ? null : t.arrow || null, there = toPlace || (at && placeOf(at));
     const target = toPlace ? (there === PLACE ? null : wayTo(there)) : !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
-    return {id:fill(t.id, true), text:fill(t.text, false, true), target, ...(c && there === PLACE ? {npc:true} : {}),
+    return {id:fill(t.id, true), text:fill(t.text, false, true), target, arrow:!!t.arrow, ...(c && there === PLACE ? {npc:true} : {}),
       ...(t.clue && hiding() ? {clue:hideSpot(hideState().spot)} : {})};   // clue: hide and seek's, to hear again (js/hide.js)
   });
 }
+// The one task the yellow arrow shows the way for: the newest, the last to come up (S.tasksSeen keeps the order they came
+// up in), or the one you chose on the Tasks page instead (followTask(): it counts as newest, till another comes up). None
+// if that one has no arrow, such as hide and seek, so an arrow never points somewhere else as if it were the way there
+// (decided 27 October 2026: playing hide and seek, a player followed the cow's arrow, thinking it was where the little
+// monkey had gone). (Tasks that came up together, or in a game saved before this: the first with an arrow.)
+function aimedTask(tasks = getTasks()){
+  const order = t => S.tasksSeen[t.id] || Infinity;   // (one not announced yet: the newest of all)
+  let best = null;
+  for (const t of tasks) if (!best || order(t) > order(best) || (order(t) === order(best) && !best.arrow && t.arrow)) best = t;
+  return best && best.arrow ? best : null;
+}
+const newestSeen = () => Math.max(1, ...Object.values(S.tasksSeen).map(Number).filter(n => n > 0));
+function followTask(id){ S.tasksSeen[id] = newestSeen() + 1; save(); }   // the arrow shows the way for this task now
 // Does a sparkle (AREA.sparkles) sparkle now? Until you know its word, while its if matches, and not on a square that
 // teaches another word first (such as the forest, which only sparkles once you know 树).
 const sparkling = s => !(s.word && lvl(s.word) > 0) && (!s.if || matches(s.if)) && !(tileAt(...s.at).learnFirst && lvl(tileAt(...s.at).learnFirst) === 0);
@@ -221,7 +234,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -351,6 +364,30 @@ function markingOf(was){   // what's being marked out, now the story has changed
   const fg = fresh.getContext('2d'); changed.forEach(([x, y]) => LOOKS[now[y][x]](fg, x*T, y*T, x, y));
   const plot = changed.filter(([x, y]) => now[y][x] === 'plot' || now[y][x] === 'grassPlot'), xs = plot.map(p => p[0]), ys = plot.map(p => p[1]);
   return {t0:performance.now(), changed, fresh, box:plot.length ? {x0:Math.min(...xs), y0:Math.min(...ys), x1:Math.max(...xs), y1:Math.max(...ys)} : null};
+}
+// You're standing where something is being set up (setUp): you step aside first, to the nearest square you can stand
+// on, and turn to watch it go up (decided 27 October 2026: the little dairy went up around you, and you were moved after).
+async function stepAside(objects){
+  if (tileAt(pl.x, pl.y).walk) return;
+  const seen = new Set([squareKey(pl.x, pl.y)]), queue = [[pl.x, pl.y]];
+  let to = null;
+  while (queue.length && !to){
+    const [x, y] = queue.shift();
+    for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0]]){   // (the nearest first: up, down, left, right)
+      const nx = x + dx, ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS || seen.has(squareKey(nx, ny))) continue;
+      seen.add(squareKey(nx, ny));
+      if (walkable(nx, ny)){ to = [nx, ny]; break; }
+      queue.push([nx, ny]);
+    }
+  }
+  if (!to) return;
+  const next = Math.abs(to[0] - pl.x) + Math.abs(to[1] - pl.y) === 1;
+  pl.dir = dirOf(to[0] - pl.x, to[1] - pl.y);
+  if (next){ pl.mv = {fx:pl.x, fy:pl.y, tx:to[0], ty:to[1], t0:performance.now(), dur:walkMs(), led:true}; await sleep(walkMs() + 40); }
+  else { pl.x = to[0]; pl.y = to[1]; pl.px = pl.x * T; pl.py = pl.y * T; }
+  const o = objects[0], cx = o.x + ((o.w || 1) - 1) / 2, cy = o.y + ((o.h || 1) - 1) / 2;   // then you turn to watch it
+  pl.dir = Math.abs(cx - pl.x) > Math.abs(cy - pl.y) ? (cx < pl.x ? 'left' : 'right') : (cy < pl.y ? 'up' : 'down');
 }
 const STEPS = {   // what each step in the content's do-lists does; who is the character you're talking to; last, whether it's the last thing in the conversation (runSteps)
   async say(s, who, last){
@@ -494,6 +531,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     Object.assign(here(), s.setUp); save(); placeCharacters();
     const objects = mapObjects().filter(o => !was.has(objectKey(o)) && OBJECT_STAGES[o.look]);
     if (!objects.length){ refreshMap(); return; }
+    await stepAside(objects);
     settingUp = {objects:objects.map(o => ({...o, stage:0})), stage:0};   // (one after another, from the top of the map down: each piece a knock)
     for (const o of settingUp.objects) for (let i = 1; i <= OBJECT_STAGES[o.look]; i++){ o.stage = i; settingUp.stage++; SFX.tock(); await sleep(SET_UP.each); }
     await sleep(SET_UP.after);
@@ -563,7 +601,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // from long grass, such as the wolf at the rocks as you lead the cow home; meet: what's said as it begins, instead of
   // its own. (What happens if you lose: the area's battles' afterLoss.)
   async battle(s, who){
-    const opts = s.meet ? {meet:s.meet} : {};
+    const opts = {...(s.meet ? {meet:s.meet} : {}), ...(s.boss ? {boss:true} : {})};   // (boss: one you can't run from, such as the one at the pasture's rocks)
     if (await (s.out ? wildBattle(s.battle, undefined, opts) : battle(s.battle, opts)) === 'won' && s.win) await runSteps(s.win, who);
   },
   // Characters follow you (follow: their ids, in line, the first right behind you), like Pikachu in Pokémon Yellow; with
@@ -708,7 +746,7 @@ function placeCharacters(){
     if (S.following.includes(n.id)) continue;
     const m = (HIDE && n.id === HIDE.by && hiderAt()) || (n.moves || []).find(m => matches(m.if)) || n.home;   // (off hiding, or where you found it: hide and seek, js/hide.js)
     const place = placeOf(m);
-    if (n.place !== place || n.x !== m.x || n.y !== m.y){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; }
+    if (n.place !== place || n.x !== m.x || n.y !== m.y || n.move !== m){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; n.move = m; }   // (a move to the same square can turn them, such as the thirsty monkey watching for you to bring the cow home)
   }
   NPCS = ALL_NPCS.filter(n => n.place === PLACE && !S.following.includes(n.id));
   FOLLOWERS = S.following.map(id => ALL_NPCS.find(n => n.id === id)).filter(Boolean);
@@ -938,8 +976,8 @@ function findHidden(h){
   if (h.shells) S.shells += h.shells;
   save(); SFX.chime(); toast(fill(h.note));
 }
-// An animal hiding in the tall grass, which rustles there: step in to meet it. After you meet one,
-// another hides a few steps later.
+// An animal hiding in the tall grass, which rustles there: face it from beside it, or step in, to meet it. After you meet
+// one, another hides a few steps later.
 const HIDE_AFTER = 4;   // steps before another animal hides
 let rustle = null, stepsSince = HIDE_AFTER;
 const GRASS_TILES = [];   // where animals can hide, in the place you're in
@@ -1066,6 +1104,15 @@ function hideAnimal(){
   const pool = Array.isArray(only) ? hiding.filter(a => only.includes(a.id)) : hiding;
   if (pool.length) rustle = {x, y, a:pickAnimal(pool)};
 }
+// The grass rustling just ahead of you, as you step up to it or turn to face it: the animal hiding there jumps out of it,
+// there (decided 27 October 2026, after playing it: walking up to it and stopping, you had to step in, and it jumped out
+// beside you, which looked confusing). Gives what happens then, or null if it isn't ahead of you.
+function rustleAhead(){
+  const [x, y] = facing();
+  if (!rustle || rustle.x !== x || rustle.y !== y || !canWild()) return null;
+  const a = rustle.a; rustle = null; stepsSince = 0; held = null; queued = null;
+  return wildAppears(a, {x, y, d:pl.dir});
+}
 async function arrive(x, y){
   S.pos = {place:PLACE, x, y, dir:pl.dir}; save();
   const way = exitAt(x, y);
@@ -1074,6 +1121,8 @@ async function arrive(x, y){
   stepsSince++;
   if (t.learnOnStep && lvl(t.word) === 0) return showNotice(t.word, stepCard(t));
   if (rustle && rustle.x === x && rustle.y === y && canWild()){ const a = rustle.a; rustle = null; stepsSince = 0; held = null; queued = null; return wildAppears(a); }   // (and nothing wild jumps out where one was hiding)
+  const ahead = rustleAhead();
+  if (ahead) return ahead;
   if (t.wild && await wildStep(t)) return;   // a wild creature jumps out of the long grass
   hideAnimal();
 }

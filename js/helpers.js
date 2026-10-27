@@ -29,7 +29,8 @@ function mix(a, b, k){ const A = hex(a), B = hex(b); return '#' + A.map((v,i) =>
 // A message, in a box at the bottom of the game screen, for a few seconds (msgAt: when the one showing came up).
 let msgT, msgAt = -1e9;
 function toast(msg){
-  const el = $('#saybox'); el.innerHTML = pixelIcons(esc(msg)); el.hidden = false; el.onclick = closeMessage; msgAt = performance.now();
+  const el = $('#saybox'), top = messageTop(); el.innerHTML = pixelIcons(esc(msg)); el.hidden = false; el.onclick = closeMessage; msgAt = performance.now();
+  el.classList.toggle('top', top); if (top) $('#placeName').hidden = true;   // where the speech box was (messageTop(), js/draw.js)
   el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
   clearTimeout(msgT); msgT = setTimeout(closeMessage, Math.max(3200, msg.length * 70));
 }

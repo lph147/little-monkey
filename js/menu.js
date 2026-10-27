@@ -99,11 +99,15 @@ const statsHTML = () => `<div class="stats"><span>${ORDER.filter(w => lvl(w) > 0
 // 任务 Tasks (Select, or the menu's tile): what to do now, full width, with how much of the chapter you've done; its
 // checklist is a page of its own (Checklist ▸, and ◂ Tasks back), so the two lists are never side by side, saying the
 // same thing twice (decided 25 October 2026: they were). back: what Back does. page: 'list' for the checklist.
-// Opening it counts as looking at your tasks, so Select's red dot goes.
-function tasksPage(back, page = 'now'){
+// Opening it counts as looking at your tasks, so Select's red dot goes. The yellow arrow shows the way for one task, marked
+// with an arrow here: the newest, or the one you tap (one with somewhere to show you), which it follows instead (aimedTask(),
+// js/world.js).
+function tasksPage(back, page = 'now', focus = null){
   const tasks = getTasks();
   tasks.forEach(t => { S.tasksRead[t.id] = 1; }); save();
   const ch = AREA.chapters[chapterNow()], found = areaChecklist().filter(([, , , f]) => f);
+  const aimed = aimedTask(tasks), choose = tasks.filter(t => t.arrow).length > 1;   // (a choice only with two or more to show the way for)
+  const taskHTML = t => `<li${t === aimed ? ' class="aim"' : ''}>${choose && t.arrow ? `<button class="taskbtn" data-t="${esc(t.id)}">${esc(t.text)}</button>` : `<span>${esc(t.text)}</span>`}${t.clue ? clueTaskHTML(t.clue) : ''}</li>`;
   const chapter = `${esc(ch.name)}: ${esc(ch.title)}`, progress = `${found.filter(([, done]) => done).length} of ${found.length} done so far`;
   if (page === 'list'){
     openCard(`<div class="cardtop"><p class="label taskslabel">${chapter}</p><span class="taskprog">${progress}</span></div>
@@ -114,11 +118,13 @@ function tasksPage(back, page = 'now'){
     return;
   }
   openCard(`<div class="cardtop"><p class="label taskslabel">Tasks</p>${statsHTML()}</div>
-    <div class="nowpage"><p class="label">Now</p>${tasks.length ? `<ul class="tasks">${tasks.map(t => `<li><span>${esc(t.text)}</span>${t.clue ? clueTaskHTML(t.clue) : ''}</li>`).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
+    <div class="nowpage"><p class="label">Now${choose ? ' <span class="aimhint">Tap a task for the yellow arrow to show its way</span>' : ''}</p>${tasks.length ? `<ul class="tasks"${choose ? ' data-nav' : ''}>${tasks.map(taskHTML).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
     <p class="taskprog">${chapter} · ${progress}</p></div>
     <div class="actions"><button class="btn grow" data-a="list">Checklist ▸</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=list]', () => tasksPage(back, 'list'));
   on('[data-a=ok]', back);
+  sheet.querySelectorAll('.taskbtn').forEach(b => b.onclick = () => { followTask(b.dataset.t); SFX.blip(); tasksPage(back, 'now', b.dataset.t); });
+  if (focus){ const f = [...sheet.querySelectorAll('.taskbtn')].find(b => b.dataset.t === focus); if (f) f.focus(); }
   const clue = tasks.find(t => t.clue);
   if (clue){ bindTokens(sheet.querySelector('.taskclue')); on('[data-a=clue]', () => say(L[clue.clue.say].t.join(''), null, HIDE.by)); }
 }

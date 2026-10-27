@@ -769,6 +769,10 @@ const SCREENS = [
     play(); await wait(100); runSteps(BATTLES.afterLoss[0].do); await wait(600); }},
   {id: 'cow-home', title: 'The cow is home', save: 'cowHome', why: 'As you come up to the thirsty monkey by the road, the cow stops following you, and stands by him: 太好了！ (Great!)', run: async () => {
     play(); await wait(200); pl.dir = 'right'; tryStep('right', performance.now()); await wait(1600); }},
+  {id: 'cow-home-task', title: 'A message where the speech box was', save: 'cowHome', why: 'Straight after a conversation whose speech box was at the top (here, so as not to hide the thirsty monkey), the next messages, such as a new task, show at the top too, till you move or turn, so they never jump from top to bottom.', run: async () => {
+    play(); await wait(200); pl.dir = 'right'; tryStep('right', performance.now()); await wait(1600);
+    for (let i = 0; i < 8 && $('#saybox').hidden; i++){ if (!talkBox.hidden) next(); await wait(600); }
+    await wait(300); }},
   {id: 'pen-build', title: 'Building the cow a home', save: 'cowBuild', why: 'The thirsty monkey’s ! (the troop is ready): the troop marks out a plot by the road, then builds the cow a pen as you watch, a piece at a time: its fences, with a gate facing the road, a shelter with hay, and a trough of fresh water fed by a bamboo pipe.', run: async () => {
     play(); await wait(100); pressA(); await wait(400); next(); await wait(5200); }},   // (pressing A, as you would: no new task till it's over)
   {id: 'pen-built', title: 'The cow’s new home', save: 'penBuilt', why: 'Built: the cow follows you, and your task’s arrow points at its gate. You can walk in, but not through its fences, its shelter or its trough.', run: async () => {

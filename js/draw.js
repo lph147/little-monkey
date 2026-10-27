@@ -253,6 +253,23 @@ function drawEnergy(X, Y, now, moving, dir){
   }
   if (Math.floor(now / 400) % 3 !== 2){ const tw = (now / 120) % 2 < 1; R(b, X + 13, Y - 3, 1, 3, '#FFE27A'); R(b, X + 12, Y - 2, 3, 1, tw ? '#FFFFFF' : '#FFE27A'); }
 }
+// A character that looks like an animal, such as the cow following you home: facing the way it last went sideways (its
+// picture mirrored if that faces the other way), and as it steps, a pixel up, its front and back legs swinging in turn;
+// standing, a gentle bob (decided 27 October 2026: the cow slid along backwards when it walked right).
+function drawAnimal(n, X, Y, now, c){
+  const def = MAP_SPRITES[n.look], spr = mapSprite(n.look);
+  if (n.dir === 'left' || n.dir === 'right') n.side = n.dir;
+  const side = n.side || def.faces, img = def.faces && side !== def.faces ? mirrored(spr) : spr;
+  R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)');
+  if (!c.mid){ b.drawImage(img, X, Y - Math.floor(Math.abs(Math.sin(now/400)) * 1)); return; }
+  const w = img.width, h = img.height, legs = legsFrom(n.look), half = w / 2, k = n.parity ? 1 : -1;
+  b.drawImage(img, 0, 0, w, legs, X, Y - 1, w, legs);   // its body
+  b.drawImage(img, 0, legs, half, h - legs, X - k, Y - 1 + legs, half, h - legs);   // its legs: front and back swinging in turn
+  b.drawImage(img, half, legs, half, h - legs, X + half + k, Y - 1 + legs, half, h - legs);
+}
+// The row an animal's legs start at, in its map picture: the three rows above the bottom of what's drawn.
+const legRows = {};
+const legsFrom = look => legRows[look] ?? (legRows[look] = Math.max(0, MAP_SPRITES[look].rows.reduce((last, r, i) => /[^.]/.test(r) ? i : last, 0) - 2));
 // A character that flies (flies, such as the queen bee and her swarm, coming home with you): hovering over its square,
 // bobbing, its wings a blur as they beat, its shadow small on the ground below; or, for a swarm, a cloud of tiny bees.
 // Long grass and tall flowers never hide it, as it's above them. (k: so two side by side bob each their own way)
@@ -301,11 +318,12 @@ function drawFoe(cx, cy, now){
 // it would cover neither of you. Checked as each line shows (before it's drawn: placeTalk() in js/cards.js) and on
 // every frame, in case the box grows, such as when its English is shown.
 let talkTop = false, talkCover = 0, talkWho = null;   // whether the box is at the top; how much of the view it covers, in map pixels (the most this conversation); who's speaking (sayLine() in js/cards.js)
+let talkTopEnd = -1e9;   // when a conversation last ended with the box at the top: a message straight after it shows there too (messageTop())
 const camX = () => Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));   // the left of the view: you in the middle, as far as the map goes
 const camY = () => Math.round(clamp((pl.mv && pl.mv.slip ? pl.mv.fy*T : pl.py) + 8 - VH*T/2, 0, ROWS*T - VH*T));   // the top of the view: you in the middle, as far as the map goes (still while you slip down a bank, so you can see yourself slip)
 function placeTalk(cy = camY()){
   if (talkBox.hidden){
-    if (!busy && (talkTop || talkCover)){ talkTop = false; talkCover = 0; talkBox.classList.remove('top'); }   // the conversation is over
+    if (!busy && (talkTop || talkCover)){ if (talkTop) talkTopEnd = performance.now(); talkTop = false; talkCover = 0; talkBox.classList.remove('top'); }   // the conversation is over
     return;
   }
   if (talkTop) return;
@@ -317,6 +335,10 @@ function placeTalk(cy = camY()){
   const whoUnder = wx >= 0 && wx + T <= VW*T && wy >= talkCover && wy + T > VH*T - talkCover && wy + T <= VH*T;   // on the screen, under the box at the bottom, and not under it at the top
   if ((under > 0 && over < under) || (under <= 0 && over <= 0 && whoUnder)){ talkTop = true; talkBox.classList.add('top'); $('#placeName').hidden = true; }   // (the place's name would cover its buttons)
 }
+// A message (toast(), js/helpers.js) goes where the speech box was: at the top while it's there, or straight after a
+// conversation that had it there, till you move or turn, so the two never jump from top to bottom (decided 27 October 2026,
+// after playing it: a speech box at the top, then a new task's message at the bottom).
+const messageTop = () => talkTop || talkTopEnd > Math.max(lastMoveEnd, pl.turnT);
 // Standing in tall or long grass hides your feet, as in Pokémon: the map where your feet are (the bottom FEET pixels of
 // your square, wherever you are, between two squares as you walk) is drawn again over you, where it's grass. Gives
 // those parts, each [x, y, w, h] in map pixels.
@@ -519,7 +541,7 @@ function drawWorld(now){
     if (n.flies){   // one that flies, such as the queen bee
       drawFlying(n, X, Y, now, n.id.charCodeAt(0));
     } else if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
-      R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)'); b.drawImage(mapSprite(n.look), X, Y - Math.floor(Math.abs(Math.sin(now/400)) * 1));
+      drawAnimal(n, X, Y, now, e.c);
     } else if (n.look === 'bird'){
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
       R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(SPR.bird, X+4, Y+6 - hop);
@@ -687,23 +709,25 @@ function drawBirds(cx, cy, now){
 }
 const ARROW = ["ooooooo","oyyyyyo",".oyyyo.","..oyo..","...o..."];
 function pix(rows, X, Y, pal){ rows.forEach((r, y) => [...r].forEach((ch, x) => { if (pal[ch]) R(b, X + x, Y + y, 1, 1, pal[ch]); })); }
+function taskArrow(t, seen, cx, cy, now, pal){
+  const W = VW*T, H = VH*T;
+  if (seen(t.target)){ if (!t.npc) pix(ARROW, t.target[0]*T - cx + 4, t.target[1]*T - cy - 7 + Math.round(Math.sin(now/180) * 2), pal); return; }
+  // off-screen: a small arrow at the screen edge, where the way there leaves it (arrowAim, js/world.js)
+  const [ax, ay] = arrowAim(t.target, seen), X = ax*T - cx, Y = ay*T - cy;
+  const mx = clamp(X + 8, 6, W - 6), my = clamp(Y + 8, 6, H - 6), pulse = (Math.sin(now/200) + 1) / 2 > .25;
+  if (!pulse) return;
+  let rows;
+  if (X + 8 < 6) rows = ["...oo","..oyo",".oyyo","oyyyo",".oyyo","..oyo","...oo"];
+  else if (X + 8 > W - 6) rows = ["oo...","oyo..","oyyo.","oyyyo","oyyo.","oyo..","oo..."];
+  else if (Y + 8 < 6) rows = ["...o...","..oyo..",".oyyyo.","oyyyyyo","ooooooo"];
+  else rows = ARROW;
+  pix(rows, Math.round(mx - rows[0].length / 2), Math.round(my - rows.length / 2), pal);
+}
 function drawMarkers(cx, cy, now){
   const W = VW*T, H = VH*T, pal = {o:'#1E2B26', y:'#F2C14E'};
   const seen = ([x, y]) => { const X = x*T - cx, Y = y*T - cy; return X > -8 && X < W - 8 && Y > -4 && Y < H - 8; };
-  for (const t of getTasks()){
-    if (!t.target) continue;
-    if (seen(t.target)){ if (!t.npc) pix(ARROW, t.target[0]*T - cx + 4, t.target[1]*T - cy - 7 + Math.round(Math.sin(now/180) * 2), pal); continue; }
-    // off-screen: a small arrow at the screen edge, where the way there leaves it (arrowAim, js/world.js)
-    const [ax, ay] = arrowAim(t.target, seen), X = ax*T - cx, Y = ay*T - cy;
-    const mx = clamp(X + 8, 6, W - 6), my = clamp(Y + 8, 6, H - 6), pulse = (Math.sin(now/200) + 1) / 2 > .25;
-    if (!pulse) continue;
-    let rows;
-    if (X + 8 < 6) rows = ["...oo","..oyo",".oyyo","oyyyo",".oyyo","..oyo","...oo"];
-    else if (X + 8 > W - 6) rows = ["oo...","oyo..","oyyo.","oyyyo","oyyo.","oyo..","oo..."];
-    else if (Y + 8 < 6) rows = ["...o...","..oyo..",".oyyyo.","oyyyyyo","ooooooo"];
-    else rows = ARROW;
-    pix(rows, Math.round(mx - rows[0].length / 2), Math.round(my - rows.length / 2), pal);
-  }
+  const t = aimedTask();   // one arrow, for the newest task, or the one you chose to follow
+  if (t && t.target) taskArrow(t, seen, cx, cy, now, pal);
   const lab = currentPrompt(now);
   if (lab && lab !== 'OK'){
     const [fx, fy] = facing(), X = fx*T - cx, Y = fy*T - cy;

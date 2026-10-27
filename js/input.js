@@ -35,7 +35,7 @@ const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && fin
 const newMessage = () => !$('#saybox').hidden && msgAt > Math.max(lastMoveEnd, pl.turnT);
 const aActs = () => canAct() && !newMessage() && !justFinished(...facing());   // A, pressed now, would do something with what you're facing (the tips to talk and look wait for it)
 function tryStep(d, now){
-  if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); return; }   // first turn to face the new way
+  if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); turnedTo(); return; }   // first turn to face the new way
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
   const [dx,dy] = DV[d], nx = pl.x + dx, ny = pl.y + dy, way = exitAt(nx, ny);
   if (way && !way.by && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
@@ -48,6 +48,13 @@ function tryStep(d, now){
   }
   if (walkable(nx, ny) || (way && !way.by && isOpen(way) && !npcAt(nx, ny))){ followersStep(now); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now, dur:walkMs()}; pl.parity ^= 1; }   // (an open way you can always walk into, such as a building's door)
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
+}
+// Turning to face the grass rustling beside you: the animal hiding there jumps out (rustleAhead(), js/world.js).
+function turnedTo(){
+  const met = rustleAhead();
+  if (!met) return;
+  busy = true;
+  Promise.resolve(met).then(runEvents).finally(() => { busy = false; finished(); updateHUD(); });
 }
 function update(now){
   if (mode !== 'play') return;

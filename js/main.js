@@ -158,7 +158,7 @@ function updateHUD(){
   const fresh = tasks.filter(t => !S.tasksSeen[t.id]);
   if (!fresh.length) return;
   if (!canAct() || !$('#saybox').hidden) return;
-  fresh.forEach(t => { S.tasksSeen[t.id] = 1; });
+  const n = newestSeen() + 1; fresh.forEach(t => { S.tasksSeen[t.id] = n; });   // in the order they came up: the arrow is for the newest (aimedTask(), js/world.js)
   try { localStorage.setItem(slotKey(SLOT), JSON.stringify(S)); } catch(e) {}
   if (S.started){ SFX.chime(); toast('New task: ' + fresh[0].text + (fresh.length > 1 ? ` (and ${fresh.length - 1} more)` : '')); }
 }

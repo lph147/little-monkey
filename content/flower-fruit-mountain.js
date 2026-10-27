@@ -343,7 +343,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{honey:'asked', holding:{honey:true}}, show:'?'}],   // and honey from their hive
     queen: [{if:{bees:4}, show:'!'}, {if:{bees:7}, show:'!'}],   // the queen bee, out of her old tree: she wants you to play her word game; and at home, for the hive
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'},
-      {if:{feast:{atLeast:3}, cow:0}, show:'!'}, {if:{cow:5}, show:'!'}, {if:{milk:'asked', holding:{milk:true}}, show:'?'},
+      {if:{feast:{atLeast:3}, cow:0}, show:'!'}, {if:{cow:4, following:{cow:true}}, show:'!'}, {if:{cow:5}, show:'!'}, {if:{milk:'asked', holding:{milk:true}}, show:'?'},
       {if:{milkTable:{atLeast:1}, dairy:0}, show:'!'}, {if:{dairy:2}, show:'!'}, {if:{dairy:4}, show:'!'}],   // chapter 1: by the road at the home ground, with news of a cow on the mountain; then the troop's ready to build it a home; and he'd love some of its milk
     cow: [{if:{cow:{below:4}}, show:'!'}, {if:{cow:4, following:{cow:false}}, show:'!'}, {if:{cow:7, following:{cow:false}}, show:'!'}],   // the cow, lost and alone in the pasture, till you've won its trust; and if it ran back to its spring, or isn't following you to its new home
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
@@ -480,7 +480,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // leading the cow home, as you come into the gap between the big rocks, a wolf leaps out of its long grass at you (just
     // the once: win, and it runs off into the pines for good; lose, and the cow runs back to its spring: battles' afterLoss)
     {if:{place:'pasture', cow:4, following:{cow:true}, cowWolf:0, around:[20, 13, 'pasture', 1]}, do:[
-      {battle:'wolf', out:true, meet:'A {狼} leaps out of the long grass between the rocks! It wants the {牛}!',
+      {battle:'wolf', out:true, boss:true, meet:'A {狼} leaps out of the long grass between the rocks! It wants the {牛}!',   // (a boss: no running away, decided 27 October 2026)
         win:[{set:{cowWolf:1}}, {message:'The {牛} is safe, and the way home is clear. Lead it on, back through the pines!'}]}]},
     // home with the cow: as you come up to the thirsty monkey by the road, it stops following you, and stands by him (its
     // own home, a pen, comes next)
@@ -1328,6 +1328,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
       moves:[{if:{dairy:{atLeast:1}}, place:'homeGround', x:21, y:11, facing:'left'},   // (at his little dairy, beside him)
+        {if:{cow:4, following:{cow:true}}, place:'homeGround', x:21, y:11, facing:'left'},   // watching for you to come up the path from the bridge with the cow
         {if:{feast:{atLeast:3}}, place:'homeGround', x:21, y:11, facing:'right'}],   // chapter 1: he comes up from the meadow with news of a cow, by the road near its pen's plot
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
     {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:5, y:8, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},

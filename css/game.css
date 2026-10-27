@@ -413,11 +413,18 @@ rt.hid{visibility:hidden}
 .checkpage .checklist{columns:2;column-gap:1.2rem}   /* the chapter's checklist: what's still to do first, in two columns */
 .checkpage .checklist li{break-inside:avoid}
 .tasks li::before{content:"";flex:none;width:9px;height:9px;border:2px solid var(--jade);border-radius:2px}
+/* the task the yellow arrow shows the way for: the map's arrow instead of its box; one with somewhere to show you can be
+   tapped for the arrow to follow it (tasksPage() in js/menu.js) */
+.tasks li.aim::before{width:14px;height:10px;margin-left:-2px;border:none;border-radius:0;align-self:center;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 5' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h7v1h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1h-1z' fill='%231E2B26'/%3E%3Cpath d='M1 1h5v1h-1v1h-1v1h-1v-1h-1v-1h-1z' fill='%23F2C14E'/%3E%3C/svg%3E") center/contain no-repeat;image-rendering:pixelated}
+.taskbtn{position:relative;background:none;border:none;padding:0;margin:0;min-height:0;text-align:left;text-decoration:underline dotted var(--line);text-underline-offset:3px}
+.sheet [data-nav] .taskbtn.navsel::before{content:none}   /* (chosen with the D-pad: its outline, no A badge on the words) */
+.aimhint{margin-left:.5em;font:400 .8rem var(--text);color:var(--muted);letter-spacing:0;text-transform:none}
 .hint{margin:0;color:var(--muted)}
 .warn{color:var(--bad);margin:6px 0 0}
 .linkbtn{background:none;border:none;padding:0;color:inherit;font:inherit;font-weight:700;text-decoration:underline;min-height:0}
 .saybox{position:absolute;left:14px;right:14px;bottom:14px;background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 4px var(--line);padding:8px 12px;font-size:.95rem;line-height:1.4;animation:rise .16s ease-out;pointer-events:auto}
 .saybox[hidden]{display:none}
+.saybox.top{top:14px;bottom:auto;animation-name:drop}   /* straight after a speech box at the top (messageTop() in js/draw.js) */
 /* the speech box: what characters say, across the bottom of the map (the view moves up so you stay in sight) */
 /* The speech box: kept short, so the map and the characters stay in sight. The name on one line, then the
    sentence, with a word's meaning beside it when you tap it, then its English, just as wide as its words, with Next
