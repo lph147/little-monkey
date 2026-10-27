@@ -8,7 +8,8 @@ function areaStart(){   // a new game's progress in the area: the area's own lis
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
   for (const r of REQUESTS) p[r.id] = 'not asked';   // nothing hidden found yet (finds: the ids of AREA.hidden you've found),
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], changed:{}, finds:{}, kept:{}, done:false,   // and no one keeping food for you (kept: who has what, the bag step),
-    hide:{spot:null, wrong:0, won:0, last:null}, out:{}});   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js)
+    hide:{spot:null, wrong:0, won:0, last:null}, out:{}, shooed:[]});   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js),
+                                                                           // nor shooed (shooed: birds you've shooed off for good, shooAway in js/world.js)
 }
 function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, lines:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
 

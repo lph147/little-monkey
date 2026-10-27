@@ -186,6 +186,7 @@ function promptFor(x, y){
 }
 const COUNTS = {   // what a counter in the content can count
   progress: c => here()[c.key] || 0,   // a number the area remembers (key), such as how many bee friends you've made
+  shooed: () => here().shooed.length,   // how many birds you've shooed off (shooAway), such as from the wild melons
   wordsLearned: () => learnedCount(),
   animalsFound: c => metCount(c.chapter || 0, c.place),   // (a chapter's animals: chapter, 0 if not given; or one place's in it)
   animals: c => chapterAnimals(c.chapter || 0, c.place).length,
@@ -226,6 +227,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'hidesFound') return compare(here().hide.won, v);   // how many times you've found it
     if (k === 'around'){ const d = v[3] ?? AROUND; return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= d && Math.abs(pl.y - v[1]) <= d; }   // you're near here, as you come up to it (within so many squares: [x, y, 'place', squares])
     if (k === 'following') return Object.entries(v).every(([id, want]) => S.following.includes(id) === want);   // who's following you (the follow step), such as {cow:true}
+    if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
@@ -362,7 +364,7 @@ function markingOf(was){   // what's being marked out, now the story has changed
   if (!changed.length) return null;
   const fresh = document.createElement('canvas'); fresh.width = COLS*T; fresh.height = ROWS*T;
   const fg = fresh.getContext('2d'); changed.forEach(([x, y]) => LOOKS[now[y][x]](fg, x*T, y*T, x, y));
-  const plot = changed.filter(([x, y]) => now[y][x] === 'plot' || now[y][x] === 'grassPlot'), xs = plot.map(p => p[0]), ys = plot.map(p => p[1]);
+  const plot = changed.filter(([x, y]) => PLOTS.includes(now[y][x])), xs = plot.map(p => p[0]), ys = plot.map(p => p[1]);
   return {t0:performance.now(), changed, fresh, box:plot.length ? {x0:Math.min(...xs), y0:Math.min(...ys), x1:Math.max(...xs), y1:Math.max(...ys)} : null};
 }
 // You're standing where something is being set up (setUp): you step aside first, to the nearest square you can stand
@@ -744,6 +746,7 @@ async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) awai
 function placeCharacters(){
   for (const n of ALL_NPCS){
     if (S.following.includes(n.id)) continue;
+    if (here().shooed.includes(n.id)){ n.place = 'gone'; continue; }   // (a bird you've shooed off: shooAway)
     const m = (HIDE && n.id === HIDE.by && hiderAt()) || (n.moves || []).find(m => matches(m.if)) || n.home;   // (off hiding, or where you found it: hide and seek, js/hide.js)
     const place = placeOf(m);
     if (n.place !== place || n.x !== m.x || n.y !== m.y || n.move !== m){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; n.move = m; }   // (a move to the same square can turn them, such as the thirsty monkey watching for you to bring the cow home)
@@ -940,7 +943,7 @@ const ACTIONS = {   // special things that happen when you press A at some tiles
 };
 async function interact(x, y){
   const n = npcAt(x, y) || followerAt(x, y);
-  if (n) return talk(n);
+  if (n) return n.shoo ? shooAway(n) : talk(n);
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return goThrough(way);
   const a = animalAt(x, y);
@@ -960,6 +963,16 @@ async function interact(x, y){
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
+}
+// A bird sitting somewhere (a character that looks like a bird, its colour, colour), such as one pecking at the wild melons:
+// A shows it, such as 红色的鸟 (a red bird) once you know its colour, as for a bird that lands near you, and it flies off,
+// gone for good (kept in the save's shooed), with what you're told then (shoo).
+async function shooAway(n){
+  await lookAt({word:BIRD_WORD, colour:n.colour});
+  const now = performance.now();
+  birds.push({tx:n.x, ty:n.y, x:n.x*T + 4, y:n.y*T + 2, t0:now, until:now, from:n.x*T < pl.px ? -1 : 1, colour:n.colour, off:now});   // (away from you)
+  here().shooed.push(n.id); save(); placeCharacters();
+  toast(fill(n.shoo));
 }
 // Part of something bigger that A looks at on its own (the area's spots), here in the place you're in, such as the
 // lanterns at the school's front corners: what A does there now (the part of its onLook whose if matches), if anything.

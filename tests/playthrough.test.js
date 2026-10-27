@@ -648,6 +648,31 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual([area().milkTable, run('tileAt(22, 7).look')], [3, 'milkTableCheese'], 'the yoghurt and the cheese in the bowls on the feast’s second table');
   await pressAt(22, 8, 'up', 'looking at the feast’s second table: the spoon in the yoghurt, sparkling');
   assert.ok(knows('勺子'), '勺子 (spoon)');
+  // Chapter 1: the big monkey's garden (version 1, 27 October 2026). With the feast's tables set, he wants seeds: 我们要种子！
+  // He walks you down to the stream, where the troop marks out a garden. Wild melons grow in a sunny field east off the
+  // south slope, where birds keep pecking at them: shoo them all away (A at each shows it, such as 红色的鸟), take a melon's
+  // seeds (西瓜), and give them to him (这是西瓜的种子): the troop plants them in the garden as you watch
+  await pressAt(15, 5, 'up', 'talking to the big monkey: he made the spoon');
+  assert.ok(get('__said').includes('我做了勺子！') && area().spoons === 2, 'I made spoons!');
+  await pressAt(15, 5, 'up', 'talking to the big monkey again: he wants seeds, for a garden');
+  assert.ok(get('__said').includes('我们要种子！') && knows('种子'), 'we want seeds!');
+  assert.deepEqual([area().garden, area().melonSeeds, run('tileAt(3, 16).look')], [1, 'asked', 'gardenBed'], 'the garden, marked out by the stream');
+  stand(16, 20, 'down');
+  await act('arrive(16, 21).then(runEvents)', 'going south, over the bridge');
+  await walk([[12, 1], [12, 8], [12, 13], [24, 13]], 'down the south slope and east, where the troop has cleared the bushes');
+  await act('arrive(25, 13).then(runEvents)', 'into the melon field');
+  assert.equal(run('PLACE'), 'melonField', 'the melon field (瓜田)');
+  for (const [x, y, dir] of [[13, 4, 'right'], [23, 5, 'right'], [16, 9, 'down'], [20, 11, 'right'], [12, 14, 'down']]) await pressAt(x, y, dir, 'shooing a bird off the melons');
+  assert.equal(area().shooed.length, 5, 'the birds, all shooed away');
+  await pressAt(12, 11, 'right', 'taking a melon’s seeds');
+  assert.ok(knows('西瓜') && area().holding.melonSeeds === '种子', 'a wild watermelon, and its seeds');
+  stand(1, 9, 'left');
+  await act('arrive(0, 9).then(runEvents)', 'back out of the melon field');
+  await walk([[24, 13], [3, 13], [3, 6], [12, 6], [12, 1]], 'back up the south slope, by its steps');
+  await act('arrive(12, 0).then(runEvents)', 'back to the home ground');
+  await pressAt(10, 13, 'left', 'giving the big monkey the seeds');
+  assert.ok(get('__said').includes('这是西瓜的种子'), 'these are watermelon seeds');
+  assert.deepEqual([area().melonSeeds, area().melonPlanted, run('tileAt(11, 14).look')], ['done', 1, 'gardenVines'], 'planted in the garden');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this

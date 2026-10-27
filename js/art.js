@@ -213,7 +213,7 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','melonVines','melon','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
 const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','logBridge'];
 function grass(g, X, Y, x, y){
@@ -573,12 +573,44 @@ function plot(g, X, Y, x, y){
   plotString(g, X, Y, x, y);
 }
 function grassPlot(g, X, Y, x, y){ grass(g, X, Y, x, y); plotString(g, X, Y, x, y); }   // marked out on the grass, for a pen to graze in (the cow's)
-function plotString(g, X, Y, x, y){   // the string round a plot, along its edges, and a stake at each corner
-  const me = tileAt(x, y).look, edge = (dx, dy) => tileAt(x+dx, y+dy).look !== me, up = edge(0, -1), down = edge(0, 1), left = edge(-1, 0), right = edge(1, 0);
+// The string round a plot, along its edges, and a stake at each corner (inside: the looks inside the string; just its own,
+// if not given).
+function plotString(g, X, Y, x, y, inside = [tileAt(x, y).look]){
+  const edge = (dx, dy) => !inside.includes(tileAt(x+dx, y+dy).look), up = edge(0, -1), down = edge(0, 1), left = edge(-1, 0), right = edge(1, 0);
   if (up) R(g, X, Y+1, T, 1, '#EFE6CF'); if (down) R(g, X, Y+14, T, 1, '#EFE6CF');
   if (left) R(g, X+1, Y, 1, T, '#EFE6CF'); if (right) R(g, X+14, Y, 1, T, '#EFE6CF');
   const stake = (sx, sy) => { R(g, X+sx, Y+sy-2, 2, 5, WOOD[1]); R(g, X+sx, Y+sy-2, 1, 5, WOOD[3]); R(g, X+sx, Y+sy-2, 2, 1, WOOD[0]); };
   if (up && left) stake(0, 1); if (up && right) stake(14, 1); if (down && left) stake(0, 12); if (down && right) stake(14, 12);
+}
+const PLOTS = ['plot', 'grassPlot', 'gardenBed'];   // ground marked out with stakes and string, as you watch (the markOut step)
+// The troop's garden by the stream (chapter 1, planned 27 October 2026): its beds, dug and raked into rows, the string it was
+// marked out with still round its edge, a stake at each corner; and what grows in it (GARDEN), such as melon vines.
+const GARDEN = ['gardenBed', 'gardenVines'];
+function gardenBed(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#6E4A2C');   // the earth, dug
+  for (let r = 1; r < 16; r += 5) for (let i = 0; i < T; i++){   // its rows, earthed up into ridges (a little uneven)
+    const j = rnd(x * T + i, y * 4 + r, 931) < .25 ? 1 : 0;
+    R(g, X + i, Y + r + j, 1, 3 - j, '#94673F'); R(g, X + i, Y + r + j, 1, 1, '#B07E52'); R(g, X + i, Y + r + 3, 1, 1, '#523420');
+  }
+  for (let i = 0; i < 5; i++) R(g, X + Math.floor(rnd(x,y,i+930)*15), Y + Math.floor(rnd(x,y,i+940)*15), 1, 1, i % 2 ? '#C49268' : '#4A2E1A');   // clods
+  plotString(g, X, Y, x, y, GARDEN);
+}
+// Watermelons: their vines sprawling over the ground, leaves and tendrils and little yellow flowers; and the melons
+// themselves, big and striped. Wild in the melon field (on grass), and grown in the garden (on its beds).
+function melonVines(g, X, Y, x, y){
+  for (let i = 0; i < 5; i++){
+    const cx = 1 + Math.floor(rnd(x, y, 500 + i) * 14), cy = 1 + Math.floor(rnd(x, y, 520 + i) * 14);
+    oval(g, X + cx, Y + cy, 3, 2, '#2F6E2C'); oval(g, X + cx, Y + cy - 1, 2, 1, '#4E9A3F'); R(g, X + cx - 1, Y + cy - 2, 1, 1, '#7CC46B');
+  }
+  for (let i = 0; i < 10; i++){ const t = i / 9; R(g, X + Math.round(t * 15), Y + 8 + Math.round(Math.sin(t * 6 + x) * 3), 1, 1, '#3E7E34'); }   // a tendril
+  if (rnd(x, y, 540) < .5) R(g, X + 3 + Math.floor(rnd(x, y, 541) * 9), Y + 3 + Math.floor(rnd(x, y, 542) * 9), 2, 2, '#F2D24A');   // a yellow flower
+}
+function melon(g, X, Y){
+  oval(g, X + 8, Y + 14, 7, 2, 'rgba(0,0,0,.18)');
+  oval(g, X + 8, Y + 9, 8, 6, '#123516'); oval(g, X + 8, Y + 9, 7, 5, '#5DB24E');
+  for (const sx of [-5, -2, 1, 4]) for (let dy = -4; dy <= 4; dy++) R(g, X + 8 + sx + (Math.abs(dy) > 2 ? Math.sign(sx + .5) : 0), Y + 9 + dy, 2, 1, '#1F6A26');   // dark stripes
+  R(g, X + 3, Y + 6, 3, 1, '#B8EBA0'); R(g, X + 3, Y + 7, 1, 1, '#B8EBA0');   // the light on it
+  R(g, X + 8, Y + 2, 1, 2, '#6B4A2A');   // its stalk
 }
 // The pine wood: its floor (grass a shade darker, strewn with fallen pine needles); what's left of a dry tree you've knocked
 // down (a stump, its cut top showing the rings, chips round it); a small stone to pick up, by the stream; and what's left
@@ -729,6 +761,10 @@ const LOOKS = {
   bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
   plot:      (g,X,Y,x,y) => plot(g,X,Y,x,y),   // ground marked out for building
   grassPlot: (g,X,Y,x,y) => grassPlot(g,X,Y,x,y),   // or grass, marked out for a pen (where the grass stays)
+  gardenBed: (g,X,Y,x,y) => gardenBed(g,X,Y,x,y),   // or the troop's garden, its beds dug
+  gardenVines: (g,X,Y,x,y) => { gardenBed(g,X,Y,x,y); melonVines(g,X,Y,x,y); },   // melons growing in it
+  melonVines: (g,X,Y,x,y) => { grass(g,X,Y,x,y); melonVines(g,X,Y,x,y); },        // wild watermelons' vines, in the melon field
+  melon:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); melonVines(g,X,Y,x,y); melon(g,X,Y); },   // and a melon on them
   frame:     (g,X,Y,x,y) => plot(g,X,Y,x,y),   // the school's frame going up on its plot: a big object (OBJECT_ART), on the plot's earth
   needles:   (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // the pine wood's floor (grass in a sunny glade)
   pine:      (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // a pine, a dead one and a cracked rock: big objects, on the pine wood's floor

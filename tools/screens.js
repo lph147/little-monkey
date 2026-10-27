@@ -256,6 +256,18 @@ SAVES.dairyWait = {...SAVES.dairyStart, turn: 43, areas: {1: {...SAVES.dairyStar
 SAVES.dairyReady = {...SAVES.dairyWait, turn: 48, areas: {1: {...SAVES.dairyWait.areas[1], dairy: 2}}, tasksSeen: {...SAVES.dairyWait.tasksSeen, dairyReady: 1}};
 SAVES.dairyDone = {...SAVES.dairyReady, w: {...SAVES.dairyReady.w, ...knows(1, ['酸奶', '奶酪'])}, areas: {1: {...SAVES.dairyReady.areas[1], dairy: 5, milkTable: 3}},
   tasksSeen: {...SAVES.dairyReady.tasksSeen, dairyWait2: 1, dairyReady2: 1}, pos: {place: 'homeGround', x: 21, y: 9, dir: 'up'}};   // on the road, below the feast's tables
+// the big monkey's garden (version 1, 27 October 2026): his ! for seeds, once the feast's tables are set; the garden marked
+// out by the stream; the melon field east off the south slope, birds pecking at its melons; and the seeds planted (version
+// 30: the flowers are done, which an older save's upgrade would undo)
+SAVES.gardenAsk = {...SAVES.dairyDone, version: 30, w: {...SAVES.dairyDone.w, ...knows(1, ['勺子', '鸟', '红色', '黄色', '白色', '蓝色', '黑色'])}, areas: {1: {...SAVES.dairyDone.areas[1], spoons: 2, flowers: 'done', schoolFlowers: true}}, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};   // facing the big monkey
+SAVES.gardenMarked = {...SAVES.gardenAsk, w: {...SAVES.gardenAsk.w, ...knows(1, ['种子'])}, areas: {1: {...SAVES.gardenAsk.areas[1], garden: 1, melonSeeds: 'asked'}},
+  tasksSeen: {...SAVES.gardenAsk.tasksSeen, melonSeeds: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};   // by the garden, facing the big monkey
+SAVES.melonField = {...SAVES.gardenMarked, pos: {place: 'melonField', x: 13, y: 4, dir: 'right'}};   // facing the red bird
+SAVES.melonsSafe = {...SAVES.gardenMarked, areas: {1: {...SAVES.gardenMarked.areas[1], shooed: [1, 2, 3, 4, 5].map(n => 'melonBird' + n)}},
+  tasksSeen: {...SAVES.gardenMarked.tasksSeen, melonSeeds2: 1}, pos: {place: 'melonField', x: 12, y: 11, dir: 'right'}};   // facing a melon
+SAVES.seedsBack = {...SAVES.melonsSafe, w: {...SAVES.melonsSafe.w, ...knows(1, ['西瓜'])}, areas: {1: {...SAVES.melonsSafe.areas[1], holding: {melonSeeds: '种子'}}},
+  tasksSeen: {...SAVES.melonsSafe.tasksSeen, melonSeedsBack: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};
+SAVES.melonsPlanted = {...SAVES.seedsBack, areas: {1: {...SAVES.seedsBack.areas[1], holding: {}, melonSeeds: 'done', melonPlanted: 1}}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'down'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, health: 20, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -888,6 +900,22 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'homeGround', x: 22, y: 8, dir: 'up'}; placePlayer(); interact(...facing()); await wait(500); }},
   {id: 'feast-list-dairy', title: 'The feast’s list, with milk, yoghurt and cheese', save: 'dairyDone', why: 'A at either table: 我们有牛奶。我们有酸奶。我们有奶酪。, after the peaches, the apples and the honey.', run: async () => {
     play(); await wait(100); feastCard(); await wait(500); }},
+  {id: 'garden-ask', title: 'We want seeds!', save: 'gardenAsk', why: 'Once the feast’s tables are set (the spoons too), the big monkey has a !: 我们要种子！ (We want seeds!), teaching 种子 (zhǒngzi, seeds). He walks you down to the stream, where the troop marks out a garden.', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
+  {id: 'garden-marked', title: 'The garden, marked out', save: 'gardenMarked', why: 'Dug beds by the stream, string round them on stakes, and its sign; the big monkey stays by it. The rest of the garden waits for seeds.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'melon-field', title: 'The melon field (瓜田)', save: 'melonField', why: 'East off the south slope, where the troop has cleared the bushes: wild melons in the sun, and five birds pecking at them, each one colour.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'tasks-melons', title: 'Tasks: shoo the birds', save: 'melonField', why: 'Your task counts the birds you’ve shooed away (of 5).', run: async () => {
+    play(); await wait(100); tasksPage(() => {}); await wait(400); }},
+  {id: 'bird-shoo', title: 'Shoo!', save: 'melonField', why: 'A at a bird (its button says Shoo) shows what it is, 红色的鸟 (a red bird), said aloud; then it flies off for good.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(600); }},
+  {id: 'melon-card', title: 'A watermelon (西瓜)', save: 'melonsSafe', why: 'With the birds gone, the melons sparkle: A at one, and 西瓜 (xīguā, watermelon), said straight away. You eat some and keep its seeds.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(600); }},
+  {id: 'seeds-give', title: 'Seeds! Wonderful!', save: 'seedsBack', why: 'Give the big monkey the seeds: 种子！太好了！, then finish 这是西瓜的种子 (These are watermelon seeds), the fruit missing.', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
+  {id: 'melons-planted', title: 'Melons in the garden', save: 'melonsPlanted', why: 'The troop plants the seeds, each square coming up out of the ground in turn: little melon vines, in a corner of the garden.', run: async () => {
+    play(); await wait(500); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)

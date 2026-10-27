@@ -574,9 +574,12 @@ function drawWorld(now){
       drawFlying(n, X, Y, now, n.id.charCodeAt(0));
     } else if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
       drawAnimal(n, X, Y, now, e.c);
-    } else if (n.look === 'bird'){
+    } else if (n.look === 'bird' && n.pecks){   // a bird pecking at what's on its square, such as a wild melon: its head down now and then
+      const peck = Math.floor(now / 220 + n.x * 5 + n.y) % 7 < 2;
+      b.drawImage(birdSprite(n.colour), X+4, Y+1 + (peck ? 1 : 0));
+    } else if (n.look === 'bird'){   // a little bird (its colour: colour), hopping
       const hop = Math.floor(Math.abs(Math.sin(now/300)) * 3);
-      R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(SPR.bird, X+4, Y+6 - hop);
+      R(b, X+5, Y+14, 6, 1, 'rgba(0,0,0,.2)'); b.drawImage(birdSprite(n.colour), X+4, Y+6 - hop);
       if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
     } else if (PLAYS[n.id]){   // a monkey of the troop at play, such as building a tower of stones (or stopped to talk to you)
       drawPlaying(n, X, Y, now);

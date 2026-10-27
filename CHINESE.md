@@ -94,6 +94,8 @@ shown where the word list has them.
 | 我怕狼！ | wǒ pà láng! | I’m scared of wolves! | 牛 (cow) |  |
 | 我饿了。 | wǒ è le. | I’m hungry. | 牛 (cow) |  |
 | 草！太好了！ | cǎo! tài hǎo le! | Grass! Wonderful! | 牛 (cow) |  |
+| 我们要种子！ | wǒmen yào zhǒngzi! | We want seeds! | 大猴子 (Big monkey) |  |
+| 种子！太好了！ | zhǒngzi! tài hǎo le! | Seeds! Wonderful! | 大猴子 (Big monkey) |  |
 | 你找牛吗？ | nǐ zhǎo niú ma? | Are you looking for the cow? | 兔子 (rabbit) |  |
 | 牛在那里！ | niú zài nàlǐ! | The cow is over there! | 兔子 (rabbit) |  |
 | 这是你的家！ | zhè shì nǐ de jiā! | This is your home! |  |  |
@@ -164,6 +166,7 @@ shown where the word list has them.
 | 我们要碗 | wǒmen yào wǎn | We want bowls. | 饿猴子 (Hungry monkey) |  |
 | 我要吃蜂蜜 | wǒ yào chī fēngmì | I want to eat honey. | 饿猴子 (Hungry monkey) |  |
 | 我要喝牛奶 | wǒ yào hē niúnǎi | I want to drink milk. | 渴猴子 (Thirsty monkey) |  |
+| 这是西瓜的种子 | zhè shì xīguā de zhǒngzi | These are watermelon seeds. | 大猴子 (Big monkey) |  |
 | 我要吃草 | wǒ yào chī cǎo | I want to eat grass. | 牛 (cow) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
@@ -335,6 +338,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 河边 | hébiān | The riverside |  |
 | 百花谷 | Bǎihuā Gǔ | Valley of a Hundred Flowers |  |
 | 南坡 | nánpō | The south slope |  |
+| 瓜田 | guātián | The melon field |  |
 | 黑松林 | hēi sōnglín | The dark pines |  |
 | 牧场 | mùchǎng | The pasture |  |
 | 松林 | sōnglín | Pine wood |  |
@@ -425,6 +429,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 奶酪 | nǎilào | cheese |  |
 | 筷子 | kuàizi | chopsticks |  |
 | 勺子 | sháozi | spoon |  |
+| 种子 | zhǒngzi | seeds |  |
+| 西瓜 | xīguā | watermelon |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |

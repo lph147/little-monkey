@@ -45,8 +45,8 @@ test('the south slope: four terraces, with stone steps (the long way) and a bank
 
 test('the home ground’s way south leads down the slope to the dark pines, and back', () => {
   const g = game({place: 'homeGround', x: 16, y: 20, dir: 'down'});
-  assert.deepEqual(get(g, "exitAt(16, 21)"), {at: [16, 21], to: 'southSlope', arrive: [12, 1], facing: 'down', if: {cow: {atLeast: 1}}, closed: 'Thick bushes block the way.'});
-  assert.deepEqual(get(g, "PLACES.southSlope.exits.map(e => [e.at, e.to])"), [[[12, 0], 'homeGround'], [[13, 0], 'homeGround'], [[12, 39], 'darkPines'], [[13, 39], 'darkPines']]);
+  assert.deepEqual(get(g, "exitAt(16, 21)"), {at: [16, 21], to: 'southSlope', arrive: [12, 1], facing: 'down', if: {any: [{cow: {atLeast: 1}}, {garden: {atLeast: 1}}]}, closed: 'Thick bushes block the way.'});
+  assert.deepEqual(get(g, "PLACES.southSlope.exits.map(e => [e.at, e.to])"), [[[12, 0], 'homeGround'], [[13, 0], 'homeGround'], [[12, 39], 'darkPines'], [[13, 39], 'darkPines'], [[25, 13], 'melonField'], [[25, 14], 'melonField']]);
 });
 
 test('the lookout: its railing sparkles; A shows you the lost cow, far below by its spring, and a moo', async () => {

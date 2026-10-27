@@ -191,12 +191,13 @@ test('you start on a tile you can walk on', () => {
   assert.ok(onMap(at) && canWalk(at), `the start ${at} isn't a walkable tile`);
 });
 
-test('characters stand on the map, on walkable tiles (or in the water, splashing about), one per tile', () => {
+test('characters stand on the map, on walkable tiles (or in the water, splashing about, or on what they peck at), one per tile', () => {
   const taken = new Set([String([AREA.start.x, AREA.start.y, AREA.start.place || FIRST])]);
   for (const c of AREA.characters){
     const at = [c.x, c.y, c.place || FIRST];
     assert.ok(onMap(at), `${c.id} at ${at} is off the map`);
     if (c.plays === 'splash') assert.equal((legendOf(at[2])[tile(at)] || {}).look, 'water', `${c.id} splashes about in the water, not on "${tile(at)}" at ${at}`);
+    else if (c.pecks) assert.ok((legendOf(at[2])[tile(at)] || {}).word, `${c.id} pecks at "${tile(at)}" at ${at}, which has no word: what is it?`);   // (a bird on a wild melon)
     else assert.ok(canWalk(at), `${c.id} stands on "${tile(at)}" at ${at}, which isn't walkable`);
     assert.ok(!taken.has(String(at)), `${c.id} at ${at} shares a tile with someone else or the start`);
     taken.add(String(at));
@@ -354,13 +355,13 @@ test('everything you can gather is for a request, and the wrong thing has a line
   }
 });
 
-test('every character has a talk script, and every script is for a character', () => {
-  for (const c of AREA.characters) assert.ok(AREA.talk[c.id] && AREA.talk[c.id].length, `${c.id} has nothing in talk`);
+test('every character has a talk script (or, a bird, is shooed away: shoo), and every script is for a character', () => {
+  for (const c of AREA.characters) assert.ok((AREA.talk[c.id] && AREA.talk[c.id].length) || c.shoo, `${c.id} has nothing in talk`);
   for (const who of Object.keys(AREA.talk)) assert.ok(AREA.characters.some(c => c.id === who), `talk has a script for "${who}", who isn't a character`);
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound', 'any'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);

@@ -48,7 +48,7 @@ test('the home ground: open ground when you first come (each plot is marked out 
   assert.deepEqual(get(g, 'PLACES.homeGround.name'), {zh: '家园', py: 'jiāyuán', en: 'Home ground'});
   const map = get(g, 'MAP'), looks = () => get(g, 'MAP.flatMap((r, y) => [...r].map((c, x) => tileAt(x, y).look))');
   assert.ok(!looks().some(l => l === 'plot' || l === 'sign'), 'no plots or signs yet: nobody has planned them');
-  for (const ch of ['s', 'd', 'h', 'e', '-']) assert.ok(map.join('').split(ch).length - 1 >= 6, `the map has room for the plot "${ch}", marked out when its story begins`);
+  for (const ch of ['s', 'd', 'h', 'ζ', '-']) assert.ok(map.join('').split(ch).length - 1 >= 6, `the map has room for the plot "${ch}", marked out when its story begins`);
   g.run('here().build = 1; refreshMap()');   // once the big monkey has marked out the school's plot (its own test, in pinewood.test.js)
   assert.equal(g.run('tileAt(8, 2).look'), 'plot');
   assert.equal(g.run('promptFor(6, 3)'), 'Read');

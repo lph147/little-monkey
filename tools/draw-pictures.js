@@ -685,6 +685,23 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(10.5, 10.5, 7.4, 6.4), '#C99A62', {light: '#E2BC88', dark: '#9A6A3A', edge: true});            // its bowl
     p.fill(O(10, 10, 5, 4), '#AE7E48', {light: '#9A6A3A', dark: '#D2A46A'});                                  // hollowed out
     p.flat(O(8.4, 8.6, 1.6, 1), '#E8C898');                                                                   // a shine
+  },
+  // chapter 1: the big monkey's garden (planned 27 October 2026): seeds from wild fruit, and the fruit itself
+  '种子': p => {   // seeds: five big brown seeds, each a teardrop with a pale stripe, lying apart, a green shoot coming out of the middle one (unlike 草: a tuft of grass)
+    const seed = (x, y, k) => { p.fill(Pg([[x, y - 5.5 * k], [x + 3.4 * k, y + 1], [x + 2 * k, y + 3.6 * k], [x - 2 * k, y + 3.6 * k], [x - 3.4 * k, y + 1]]), '#7A4A26', {light: '#A8703E', dark: '#4E2C14', edge: true}); p.flat(Cp(x - .6 * k, y - 2.6 * k, x - 1.2 * k, y + 1.6 * k, .5), '#C8955E'); };
+    seed(3.5, 24.5, .75); seed(9, 27.5, .75); seed(23, 27.5, .75); seed(28.5, 24.5, .75);
+    p.fill(path([[16, 22], [15.6, 14], [16.6, 8]], 1.2), '#5DAE4E', {light: '#86D06E', dark: '#3E8A34'});   // the shoot
+    p.fill(O(12, 9.5, 4, 2.2), '#5DAE4E', {light: '#86D06E', dark: '#3E8A34', edge: true});                // and its two little leaves
+    p.fill(O(20.6, 7.5, 4, 2.2), '#5DAE4E', {light: '#86D06E', dark: '#3E8A34', edge: true});
+    seed(16, 25, 1);                                                                                        // the seed it's growing from
+  },
+  '西瓜': p => {   // watermelon: a whole one, dark green and striped, and a slice of it in front, red with black seeds (unlike 苹果: small and round)
+    p.fill(O(18, 12.5, 12.5, 10.5), '#3E9A3F', {light: '#6CC45A', dark: '#1F6A26'});   // the whole one, behind
+    for (const x of [9, 14, 19, 24]) p.flat(and(O(18, 12.5, 12.5, 10.5), path([[x, 2.5], [x - 1.5, 12.5], [x, 22.5]], 1.1)), '#1F5A22');   // its stripes
+    p.flat(O(12, 6.5, 3, 1.4), '#9ED98A');                                                                   // a shine
+    p.fill(Pg([[12, 14], [23, 28.5], [1, 28.5]]), '#E84848', {light: '#FF7A72', dark: '#B82E34', edge: true});   // a slice, in front, its point up
+    p.flat(Rc(1, 28, 22, 1), '#F2F0E0'); p.fill(Rc(0, 29, 24, 2.5, 1), '#2E8A3A', {light: '#5CB44E', dark: '#1F6A26'});   // its white, and its rind
+    for (const [x, y] of [[12, 19], [9, 23], [15, 23], [6, 26], [12, 26], [18, 26]]) p.flat(O(x, y, .9, 1.3), '#1A1410');   // its seeds
   }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops

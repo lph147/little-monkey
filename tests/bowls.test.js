@@ -105,7 +105,7 @@ test('when the yoghurt goes on the second table, the big monkey has made spoons 
   await press(g, 15, 5, 'up');
   assert.deepEqual(get(g, '__said'), ['big: 我做了勺子！ [勺子]']);
   assert.ok(get(g, '__notes').includes('card: 勺子 (The big monkey has made wooden spoons, for eating the 酸奶 (yoghurt).)'));
-  assert.equal(bubble(g, 'big'), null);
+  assert.equal(get(g, "AREA.bubbles.big.filter(b => matches(b.if)).some(b => 'spoons' in b.if)"), false, 'his ! for the spoons has gone (one now is for the garden: tests/garden.test.js)');
   assert.equal(g.run('here().spoons'), 2);
 });
 
