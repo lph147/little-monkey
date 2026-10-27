@@ -142,3 +142,72 @@ test('give the big monkey the seeds: 种子！太好了！, you finish 这是西
   assert.deepEqual(tasks(g), []);
   assert.deepEqual(get(g, "areaChecklist().find(([t]) => /wild melons/.test(t))"), ['Bring the big monkey 种子 (seeds) from wild melons, for the garden', true, false, true]);
 });
+
+// Version 2: the cliffs (山崖), west off the hillside's second terrace, where wild grapes hang down a cliff over a ledge:
+// out of reach from the top; hop down the right bank and pick them (葡萄); the big monkey's trellis for them.
+const grapeTasks = g => get(g, "getTasks().filter(t => /^grape/.test(t.id)).map(t => t.text)");
+test('once the garden begins, the troop clears the bushes west off the hillside’s second terrace: the cliffs (山崖)', async () => {
+  const before = game({place: 'hillside', x: 2, y: 26, dir: 'left'});
+  assert.deepEqual([before.run('tileAt(1, 26).look'), before.run('walkable(1, 26)')], ['bush', false], 'thick bushes, till the garden begins');
+  const g = game({place: 'hillside', x: 2, y: 26, dir: 'left'}, {garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked'});
+  assert.deepEqual([g.run('tileAt(1, 26).look'), g.run('tileAt(0, 27).look')], ['path', 'path'], 'cleared');
+  assert.deepEqual(grapeTasks(g), ['Wild grapes grow on the cliffs west off the hillside, halfway up: find a way down to them'], 'grapes in plain English, till you know them');
+  g.run("S.pos = {place: PLACE, x: 1, y: 26, dir: 'left'}; placePlayer()");
+  await play(g, 'arrive(0, 26).then(runEvents)');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['cliffs', [24, 5]]);
+  assert.deepEqual(get(g, 'PLACES.cliffs.name'), {zh: '山崖', py: 'shānyá', en: 'The cliffs'});
+  assert.match(get(g, '__notes').join(' '), /Steep cliffs, one ledge below another\. Somewhere down here, wild grapes grow!/, 'the first time');
+  assert.equal(get(g, 'here().cliffsSeen'), 1);
+  assert.deepEqual(npc(g, 'cliffGoat'), ['cliffs', 16, 6], 'a goat at the top');
+  await play(g, 'arrive(25, 5).then(runEvents)');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['hillside', [1, 26]], 'and back');
+});
+
+test('the grapes hang down the cliff, out of reach from the top; hop down the bank beside them, and pick them: 葡萄', async () => {
+  const g = game({place: 'cliffs', x: 15, y: 8, dir: 'down'}, {garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked', cliffsSeen: 1});
+  g.run("rec('种子').lv = 1");   // (the big monkey taught it as he asked)
+  assert.deepEqual([g.run('tileAt(15, 9).look'), g.run('walkable(15, 9)'), g.run('promptFor(15, 9)')], ['grapeCliff', false, 'Look']);
+  await press(g, 15, 8, 'down');
+  assert.deepEqual(get(g, '__notes'), ['Grapes! They hang down the cliff below you, out of reach. Find a way down to them.'], 'no card: you can’t reach them');
+  assert.equal(g.run("lvl('葡萄')"), 0);
+  // two banks to hop down from the top (they can't be climbed): the one beside the grapes lands you under them; the other, on
+  // a ledge with a boulder; rock between the ledges
+  for (const x of [3, 4, 5, 11, 12]) assert.equal(g.run(`!!tileAt(${x}, 9).ledge && !!tileAt(${x}, 10).ledge`), true, `a bank at ${x}`);
+  for (const y of [11, 16]) assert.equal(g.run(`walkable(9, ${y}) || walkable(18, ${y})`), false, 'rock between the ledges');
+  assert.equal(g.run("tileAt(2, 13).look"), 'boulder');
+  assert.equal(g.run('promptFor(15, 10)'), 'Pick');
+  assert.ok(get(g, "tileAt(15, 10).onLook.find(p => !p.if || matches(p.if)).sparkle"), 'they sparkle');
+  reset(g);
+  await press(g, 15, 11, 'up');
+  assert.deepEqual(get(g, '__notes'), ['card: 葡萄, said', 'You pick a bunch of 葡萄 (grapes) and eat some: sweet! You keep their little 种子 (seeds) for the big monkey’s garden.'],
+    '葡萄, said straight away: you found them');
+  assert.equal(get(g, 'here().holding.grapeSeeds'), '种子');
+  assert.deepEqual(grapeTasks(g), ['Take the 种子 (seeds) from the wild 葡萄 (grapes) to the big monkey, at the garden by the stream']);
+  reset(g);
+  await press(g, 15, 11, 'up');
+  assert.deepEqual(get(g, '__notes'), ['Wild 葡萄 (grapes), hanging down the cliff.'], 'once you have them');
+});
+
+test('the goat at the top of the cliffs: 你好！, then 水果在下面！', async () => {
+  const g = game({place: 'cliffs', x: 17, y: 6, dir: 'left'}, {garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked', cliffsSeen: 1});
+  await press(g, 17, 6, 'left');
+  assert.deepEqual(get(g, '__said'), ['cliffGoat: 你好！', 'player: 你好', 'cliffGoat: 水果在下面！'], 'The fruit is down below!');
+  assert.match(get(g, '__notes').join(' '), /look before you hop!/);
+});
+
+test('give the big monkey the grape seeds: 这是葡萄的种子, and the troop sets up a trellis for them as you watch', async () => {
+  const g = game({place: 'homeGround', x: 10, y: 13, dir: 'left'}, {garden: 1, melonSeeds: 'done', melonPlanted: 1, grapeSeeds: 'asked', holding: {grapeSeeds: '种子'}});
+  g.run("rec('葡萄').lv = 1; rec('种子').lv = 1; rec('西瓜').lv = 1");
+  assert.equal(bubble(g, 'big'), '?');
+  for (const [x, y] of [[7, 14], [10, 15]]) assert.equal(g.run(`tileAt(${x}, ${y}).look`), 'gardenBed');
+  await press(g, 10, 13, 'left');
+  assert.deepEqual(get(g, '__said'), ['big: 种子！太好了！', 'gap: 这是葡萄的种子 (葡萄)', 'big: 谢谢你！', 'player: 不客气'], 'These are grape seeds, the grapes missing');
+  assert.deepEqual(get(g, '[here().grapeSeeds, here().grapePlanted]'), ['done', 1]);
+  for (const [x, y] of [[7, 14], [10, 14], [7, 15], [10, 15]]) assert.equal(g.run(`tileAt(${x}, ${y}).look`), 'trellis', `the trellis at ${x},${y}`);
+  assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'trellis').map(o => [o.x, o.y, o.w, o.h])"), [[7, 14, 4, 2]], 'one trellis, four squares by two');
+  assert.ok(get(g, '__sounds').filter(s => s === 'tock').length >= 3, 'set up a piece at a time');
+  assert.match(get(g, '__notes').join(' '), /The troop plants the 葡萄 \(grapes\) seeds in the garden, with a trellis for them to climb\. Vines come up at once, and climb all over it!/);
+  assert.equal(g.run('walkable(8, 14)'), false);
+  assert.deepEqual(grapeTasks(g), []);
+  assert.deepEqual(get(g, "areaChecklist().find(([t]) => /wild grapes/.test(t))"), ['Bring the big monkey 种子 (seeds) from wild grapes, for the garden', true, false, true]);
+});

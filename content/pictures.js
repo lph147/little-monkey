@@ -3443,6 +3443,43 @@ const PICTURES = {
       "fttttttttttttttttttttttfc.......",
       "cffffffffffffffffffffffc........"
     ]
+  },
+  '葡萄': {   // grapes
+    palette: {a:'#3D3229', b:'#271C11', c:'#97806A', d:'#533A21', e:'#374C2A', f:'#203617', g:'#86D06E', h:'#3E8A34', i:'#5BAA4B', j:'#6B4A2A', k:'#3F2D49', l:'#221429', m:'#A070D0', n:'#45206A', o:'#40225C', p:'#6E3A9E', q:'#D6B8F0', r:'#211424'},
+    rows: [
+      "..............ab................",
+      ".............acdb....eeeeeef....",
+      ".............acdb...egggggghf...",
+      ".............acdb..egiiiiiiihf..",
+      ".............acjdbegiiiiiihhhhf.",
+      ".............acjdegiiiiihhhiihf.",
+      "........kl...acdegiiihhhiiiiihf.",
+      ".......kmnl.kmoofhhhhiiiiiiiihf.",
+      "......kmppnkmqppnrooooiiiiiihf..",
+      ".....kmpqppopppppoppppoiiiiihf..",
+      ".....kmppppopppppoppppoiihhhf...",
+      ".....lnppppnopppnoppppohhfff....",
+      "......lnppooonnooooppporl.......",
+      ".......lnoqppoopqppooopmnl......",
+      ".......ropppppoppppnopppnl......",
+      ".......lnpppppoppppopppppnl.....",
+      "......kronpppnoppppnopppnl......",
+      ".....kmmpoonoooonnnonnpnnl......",
+      ".....kmqppnopqppooopoonll.......",
+      "....lnpppppoppppnopppnl.........",
+      ".....kmpppnoppppopppppnl........",
+      ".....lnnpnnoppppnopppnl.........",
+      "......llnoooonnooonpnnl.........",
+      ".......ropqppooqpponll..........",
+      ".......kmppppopppppor...........",
+      ".......kmppppopppppnl...........",
+      ".......lnppppoopppnl............",
+      "........lnnoopoonnl.............",
+      ".........lkmpppnll..............",
+      ".........lnpppppnl..............",
+      "..........kmpppnl...............",
+      "..........lnnnnnl..............."
+    ]
   }
 };
 

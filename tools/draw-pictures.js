@@ -702,6 +702,14 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(Pg([[12, 14], [23, 28.5], [1, 28.5]]), '#E84848', {light: '#FF7A72', dark: '#B82E34', edge: true});   // a slice, in front, its point up
     p.flat(Rc(1, 28, 22, 1), '#F2F0E0'); p.fill(Rc(0, 29, 24, 2.5, 1), '#2E8A3A', {light: '#5CB44E', dark: '#1F6A26'});   // its white, and its rind
     for (const [x, y] of [[12, 19], [9, 23], [15, 23], [6, 26], [12, 26], [18, 26]]) p.flat(O(x, y, .9, 1.3), '#1A1410');   // its seeds
+  },
+  '葡萄': p => {   // grapes: one big bunch of round purple grapes hanging from a stalk, a green vine leaf beside it (unlike 水果: a basket of all sorts)
+    p.fill(Pg([[17, 7], [21, 2], [27, 1.5], [30.5, 5], [29, 10], [24, 12], [19, 10]]), '#5BAA4B', {light: '#86D06E', dark: '#3E8A34', edge: true});   // the leaf
+    p.flat(path([[18, 8], [24, 6], [29, 4]], .5), '#3E8A34');                                                                                  // its vein
+    p.fill(path([[15, 1.5], [15.5, 5], [15, 8]], 1.1), '#6B4A2A');                                                                             // the stalk
+    for (const [x, y] of [[9, 10.5], [14.5, 10], [20, 11], [11.5, 15], [17, 15], [22.5, 15.5], [8.5, 19.5], [14, 20], [19.5, 20.5], [11, 25], [16.5, 25], [13.5, 29.5]])
+      p.fill(O(x, y, 3.1), '#6E3A9E', {light: '#A070D0', dark: '#45206A', edge: true});                                                       // the grapes, front ones lowest
+    for (const [x, y] of [[8, 9], [13, 8], [10, 13], [16, 13], [7, 18], [13, 18], [10, 23], [15, 23]]) p.dot(x, y, '#D6B8F0');                // a shine on some
   }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops

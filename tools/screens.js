@@ -260,14 +260,22 @@ SAVES.dairyDone = {...SAVES.dairyReady, w: {...SAVES.dairyReady.w, ...knows(1, [
 // out by the stream; the melon field east off the south slope, birds pecking at its melons; and the seeds planted (version
 // 30: the flowers are done, which an older save's upgrade would undo)
 SAVES.gardenAsk = {...SAVES.dairyDone, version: 30, w: {...SAVES.dairyDone.w, ...knows(1, ['勺子', '鸟', '红色', '黄色', '白色', '蓝色', '黑色'])}, areas: {1: {...SAVES.dairyDone.areas[1], spoons: 2, flowers: 'done', schoolFlowers: true}}, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};   // facing the big monkey
-SAVES.gardenMarked = {...SAVES.gardenAsk, w: {...SAVES.gardenAsk.w, ...knows(1, ['种子'])}, areas: {1: {...SAVES.gardenAsk.areas[1], garden: 1, melonSeeds: 'asked'}},
-  tasksSeen: {...SAVES.gardenAsk.tasksSeen, melonSeeds: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};   // by the garden, facing the big monkey
+SAVES.gardenMarked = {...SAVES.gardenAsk, w: {...SAVES.gardenAsk.w, ...knows(1, ['种子'])}, areas: {1: {...SAVES.gardenAsk.areas[1], garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked'}},
+  tasksSeen: {...SAVES.gardenAsk.tasksSeen, melonSeeds: 1, grapeSeeds: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};   // by the garden, facing the big monkey
 SAVES.melonField = {...SAVES.gardenMarked, pos: {place: 'melonField', x: 13, y: 4, dir: 'right'}};   // facing the red bird
 SAVES.melonsSafe = {...SAVES.gardenMarked, areas: {1: {...SAVES.gardenMarked.areas[1], shooed: [1, 2, 3, 4, 5].map(n => 'melonBird' + n)}},
   tasksSeen: {...SAVES.gardenMarked.tasksSeen, melonSeeds2: 1}, pos: {place: 'melonField', x: 12, y: 11, dir: 'right'}};   // facing a melon
 SAVES.seedsBack = {...SAVES.melonsSafe, w: {...SAVES.melonsSafe.w, ...knows(1, ['西瓜'])}, areas: {1: {...SAVES.melonsSafe.areas[1], holding: {melonSeeds: '种子'}}},
   tasksSeen: {...SAVES.melonsSafe.tasksSeen, melonSeedsBack: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};
 SAVES.melonsPlanted = {...SAVES.seedsBack, areas: {1: {...SAVES.seedsBack.areas[1], holding: {}, melonSeeds: 'done', melonPlanted: 1}}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'down'}};
+// version 2: the cliffs (山崖) west off the hillside, the grapes hanging down them, and the grapes' trellis at home
+SAVES.hillsideWest = {...SAVES.gardenMarked, pos: {place: 'hillside', x: 3, y: 26, dir: 'left'}};   // on the hillside's second terrace, the way west open
+SAVES.cliffsTop = {...SAVES.gardenMarked, areas: {1: {...SAVES.gardenMarked.areas[1], cliffsSeen: 1}}, pos: {place: 'cliffs', x: 15, y: 8, dir: 'down'}};   // at the top, above the grapes
+SAVES.cliffsGoat = {...SAVES.cliffsTop, pos: {place: 'cliffs', x: 17, y: 6, dir: 'left'}};
+SAVES.cliffsLedge = {...SAVES.cliffsTop, pos: {place: 'cliffs', x: 15, y: 11, dir: 'up'}};   // on the ledge under the grapes
+SAVES.grapesBack = {...SAVES.cliffsTop, w: {...SAVES.cliffsTop.w, ...knows(1, ['葡萄'])}, areas: {1: {...SAVES.cliffsTop.areas[1], holding: {grapeSeeds: '种子'}}},
+  tasksSeen: {...SAVES.cliffsTop.tasksSeen, grapeSeedsBack: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};
+SAVES.trellisUp = {...SAVES.grapesBack, areas: {1: {...SAVES.grapesBack.areas[1], holding: {}, grapeSeeds: 'done', grapePlanted: 1}}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'down'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, health: 20, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -915,6 +923,22 @@ const SCREENS = [
   {id: 'seeds-give', title: 'Seeds! Wonderful!', save: 'seedsBack', why: 'Give the big monkey the seeds: 种子！太好了！, then finish 这是西瓜的种子 (These are watermelon seeds), the fruit missing.', run: async () => {
     play(); await wait(100); talk(npc('big')); await wait(500); }},
   {id: 'melons-planted', title: 'Melons in the garden', save: 'melonsPlanted', why: 'The troop plants the seeds, each square coming up out of the ground in turn: little melon vines, in a corner of the garden.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'hillside-west', title: 'The way west to the cliffs', save: 'hillsideWest', why: 'Once the garden begins, the troop clears the bushes at the west end of the hillside’s second terrace: the way to the cliffs.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'cliffs', title: 'The cliffs (山崖)', save: 'cliffsTop', why: 'Ledge below ledge: wild grapes hang down the cliff below the top, out of reach. Two banks to hop down, and stone steps.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'cliffs-above', title: 'Out of reach', save: 'cliffsTop', why: 'A at the grapes from the top: they hang down the cliff below you, out of reach. Find a way down to them.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(500); }},
+  {id: 'cliffs-goat', title: 'The fruit is down below!', save: 'cliffsGoat', why: 'The goat at the top: 你好！, then 水果在下面！ (The fruit is down below!), and a hint to look before you hop.', run: async () => {
+    play(); await wait(100); talk(npc('cliffGoat')); await wait(300); next(); await wait(400); }},
+  {id: 'cliffs-ledge', title: 'Under the grapes', save: 'cliffsLedge', why: 'The right bank lands you on the ledge under the grapes: they sparkle, and A picks them.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'grape-card', title: 'Grapes (葡萄)', save: 'cliffsLedge', why: 'A at the grapes from the ledge: 葡萄 (pútáo, grapes), said straight away. You eat some and keep the seeds.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(600); }},
+  {id: 'grapes-give', title: 'Grape seeds', save: 'grapesBack', why: 'Give the big monkey the seeds: 种子！太好了！, then finish 这是葡萄的种子 (These are grape seeds).', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
+  {id: 'trellis', title: 'The grapes’ trellis', save: 'trellisUp', why: 'The troop sets up a trellis in the garden as you watch (its posts, its wires, then the vines climbing it), beside the melons.', run: async () => {
     play(); await wait(500); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
