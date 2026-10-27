@@ -216,7 +216,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
-    if (k === 'hurt') return ((S.hearts ?? HEARTS) < HEARTS) === v;   // you've lost hearts in a battle
+    if (k === 'hurt') return hurt() === v;   // you've lost health in a battle
     if (k === 'practice') return trainingCalls() === v;   // some of your words need practice (the practice post's !)
     if (k === 'lesson') return !!lessonNow() === v;       // a lesson series at school has a new word ready for you
     if (k === 'lessonWaits') return (!lessonNow() && !!lessonNow(false)) === v;   // it has, but it waits till you've practised (lessonGap)
@@ -574,7 +574,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const full = [].concat(s.full).find(f => typeof f === 'string' || !f.if || matches(f.if));
     toast((counted ? `${wz(num)}! ` : '') + fill(all ? full.text || full : s.each, false, true));
   },
-  rest(){ S.hearts = HEARTS; save(); SFX.chime(); },   // your hearts are full again
+  rest(){ S.health = maxHealth(); save(); SFX.chime(); },   // your health is full again
   // A lesson with the character you're talking to (the teacher at school): a new word from one of the area's lesson
   // series, if one's ready (lessonNow), or else practising your words, as at the practice post. If you stop, or don't
   // start, the conversation ends there.
@@ -585,12 +585,12 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (l){ here().lastLesson = l.series.id; here().lessonTurn = S.turn || 0; save(); }   // (and the next new word waits: lessonGap)
   },
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
-  // up, then you hop down again, sparkling, with all your hearts (its text: the message then).
+  // up, then you hop down again, sparkling, with your health full (its text: the message then).
   async sleep(s){
     const [bx, by] = facing(), from = [pl.px, pl.py];
     await hop(bx * T, by * T - 3);   // up onto the bed
     sleepAt = {x:bx, y:by}; pl.py = by * T; sleepT = performance.now();
-    await sleep(SLEEP_MS / 2); S.hearts = HEARTS; save();
+    await sleep(SLEEP_MS / 2); S.health = maxHealth(); save();
     await sleep(SLEEP_MS / 2);
     sleepAt = null; pl.py = by * T - 3; pl.dir = 'down';
     await hop(...from);   // and down again, facing the room

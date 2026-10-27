@@ -2,15 +2,15 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 30;
-const HEARTS = 5;   // the most hearts you can have in a battle (the story can raise it later)
+const SAVE_VERSION = 31;
+const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
   for (const r of REQUESTS) p[r.id] = 'not asked';   // nothing hidden found yet (finds: the ids of AREA.hidden you've found),
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], changed:{}, finds:{}, kept:{}, done:false,   // and no one keeping food for you (kept: who has what, the bag step),
     hide:{spot:null, wrong:0, won:0, last:null}, out:{}});   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js)
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, lines:{}, heard:{}, hearts:HEARTS, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, lines:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -131,7 +131,7 @@ function upgradeSave(s){
     s.version = 23;
   }
   if (s.version === 23){   // version 23: there were no battles. Your hearts start full.
-    if (typeof s.hearts !== 'number') s.hearts = HEARTS;
+    if (typeof s.hearts !== 'number') s.hearts = 5;
     s.version = 24;
   }
   if (s.version === 24){   // version 24: the way up the stream was one place, the path, with the waterfall at its top. It's three
@@ -178,6 +178,12 @@ function upgradeSave(s){
     }
     s.version = 30;
   }
+  if (s.version === 30){   // version 30: you had hearts in battles, 5 at most. Now you have health, 10 for each heart, 50 at
+    if (typeof s.health !== 'number') s.health = (typeof s.hearts === 'number' ? s.hearts : 5) * 10;   // most (decided 27 October 2026, so weapons, food and the
+    s.maxHealth = 50;                                                  // story can make finer differences)
+    delete s.hearts;
+    s.version = 31;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
@@ -192,6 +198,8 @@ function upgradeSave(s){
   s.areas[AREA.number].kept = Object.assign({}, s.areas[AREA.number].kept);
   s.areas[AREA.number].out = Object.assign({}, s.areas[AREA.number].out);
   s.areas[AREA.number].hide = Object.assign({spot:null, wrong:0, won:0, last:null}, s.areas[AREA.number].hide);
+  if (typeof s.maxHealth !== 'number' || !(s.maxHealth > 0)) s.maxHealth = HEALTH;
+  s.health = typeof s.health === 'number' ? Math.max(0, Math.min(s.maxHealth, s.health)) : s.maxHealth;
   if (!Array.isArray(s.met)) s.met = [];
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};
   s.following = Array.isArray(s.following) ? s.following.filter(id => AREA.characters.some(c => c.id === id)) : [];   // who's following you (characters still here)

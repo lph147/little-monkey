@@ -232,11 +232,21 @@ test('a version 22 save that has read the story at the waterfall has been up the
   assert.equal(before.areas[1].climb, 0, 'not read yet: the climb is still to come');
 });
 
-test('a version 23 save gets full hearts, for the battles on the mountain path', () => {
+test('a version 23 save gets full hearts, for the battles on the mountain path (now full health)', () => {
   const s = saveOf(loadGame({save: {version: 23, started: true, shells: 4}}));
   assert.equal(s.version, VERSION);
-  assert.equal(s.hearts, 5);
+  assert.deepEqual([s.health, s.maxHealth, s.hearts], [50, 50, undefined]);
   assert.equal(s.shells, 4, 'everything else stays');
+});
+
+test('a version 30 save’s hearts become health, 10 for each, 50 at most: as hurt as you were', () => {
+  const hurt = saveOf(loadGame({save: {version: 30, started: true, shells: 4, hearts: 3}}));
+  assert.equal(hurt.version, VERSION);
+  assert.deepEqual([hurt.health, hurt.maxHealth, 'hearts' in hurt], [30, 50, false]);
+  assert.equal(hurt.shells, 4, 'everything else stays');
+  assert.deepEqual([0, 5].map(h => saveOf(loadGame({save: {version: 30, started: true, hearts: h}})).health), [0, 50]);
+  const odd = saveOf(loadGame({save: {version: VERSION, started: true, health: 80, maxHealth: 50}}));
+  assert.equal(odd.health, 50, 'never more than the most you can have');
 });
 
 test('a version 24 save on the old mountain path is put where it was on the new way up: by the waterfall, or at the bottom', () => {

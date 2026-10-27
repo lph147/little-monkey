@@ -607,7 +607,7 @@ rt.hid{visibility:hidden}
 .menu.grid{display:grid}
 .card.wear.on{border-color:var(--jade);background:color-mix(in srgb,var(--jade) 14%,var(--bg))}
 .card.wear .small{margin-top:2px}
-/* the bag: two columns of things, each its picture beside its name, how many, and what it does; and your hearts */
+/* the bag: two columns of things, each its picture beside its name, how many, and what it does; and your health */
 .bag .menu.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem;margin:.2rem 0}
 .bag .card{position:relative;display:grid;grid-template-columns:auto 1fr;column-gap:.6rem;align-items:center;justify-items:start;text-align:left;padding:.3rem 1.8rem .3rem .5rem}
 .bag .card .c{grid-row:span 3;height:auto}
@@ -619,8 +619,7 @@ rt.hid{visibility:hidden}
 .bag .baghead{display:flex;flex-wrap:wrap;align-items:center;gap:0 1.2rem}
 .bag .baghead .label{margin:0}
 .bag .stats{align-items:center;margin:.2rem 0}
-.bag .stats .hearts{display:flex;gap:2px}
-.bag .stats .heart{width:.95rem;height:.85rem}
+.bag .stats .hp{margin:0;min-width:150px}
 .bag .baghead .note{flex-basis:100%;margin:0 0 .1rem;color:var(--ink);font-size:inherit;text-align:left}   /* what just happened (You eat a 桃子 (peach)…), on its own line under your hearts */
 
 /* the money symbol (a pixel shell), and the shop's cards */
@@ -670,7 +669,7 @@ rt.hid{visibility:hidden}
 .plate .spk-zh{font-size:1.1rem;white-space:nowrap}
 .plate .spk-en{font-size:.85rem}
 .plate .engbtn{font-size:.7rem;padding:0 4px;margin-left:2px}
-.plate .heart{width:22px;height:20px}
+.plate .hearts .heart{width:22px;height:20px}
 .plate .qn{font-family:var(--pixel);font-size:.8rem;color:var(--muted)}
 /* a big word game, such as the queen bee's: the wrong answers so far beside the hearts, grey till each is used, then red */
 .plate .lifeline{display:flex;flex-wrap:wrap;align-items:flex-end;column-gap:10px}   /* (on its own line under the hearts, where they don't fit beside them) */
@@ -711,7 +710,7 @@ rt.hid{visibility:hidden}
 .sheet:has(> .scene) > .scene::before{inset:52% 0 0}
 .sheet:has(> .scene) .plate{left:5px;right:5px;top:5px;min-width:0;max-width:none;font-size:.85rem;padding:.2rem .5rem .3rem}
 .sheet:has(> .scene) .plate .spk-zh{font-size:1rem;white-space:normal}
-.sheet:has(> .scene) .plate .heart{width:1.2rem;height:1.1rem}
+.sheet:has(> .scene) .plate .hearts .heart{width:1.2rem;height:1.1rem}
 .sheet:has(> .scene) .foe{right:8%;top:44%}
 .sheet:has(> .scene) .foe .portrait{width:var(--pic-scene);height:var(--pic-scene)}
 .sheet:has(> .scene) .foem{right:2%;top:calc(44% + var(--pic-scene) - 12px);width:58%;height:22px}
@@ -723,7 +722,7 @@ rt.hid{visibility:hidden}
 .sheet:has(> .scene) > .actions{margin-top:.3rem}
 .sheet:has(> .scene) > .endmsg ~ .actions{grid-row:-2;align-self:end}   /* a result (a new friend, a battle won): OK at the bottom */
 .endmsg{text-align:center;font-size:1.1rem}
-/* A battle: the scene also shows your hearts, in a plate at its bottom right; your turn is a menu of what to do. */
+/* A battle: the scene also shows your health, in a plate at its bottom right; your turn is a menu of what to do. */
 .scene .plate.mine{top:auto;bottom:5px;left:auto;right:5px;max-width:62%}
 .sheet:has(> .scene) .plate.mine{top:auto;bottom:5px;left:auto;right:5px}
 /* A battle's animations. Your turn (.swing): you lunge and swing your stick; a hit (.hit) knocks the enemy back with a
@@ -763,9 +762,19 @@ rt.hid{visibility:hidden}
 @keyframes sidejump{40%{translate:-16px -24px}70%{translate:-10px -8px}}
 @keyframes hurt{0%,100%{translate:0;filter:none}20%{translate:-6px 0;filter:brightness(.7) sepia(1) saturate(6) hue-rotate(-35deg)}40%{translate:6px 0}60%{translate:-4px 0;filter:brightness(.7) sepia(1) saturate(6) hue-rotate(-35deg)}}
 @media (prefers-reduced-motion: reduce){.scene .me,.scene .stick,.scene .foe,.scene .pow,.scene .striker{animation:none!important}.scene.hiding .foe{opacity:0}.scene.strike .from{opacity:1}.scene .fx{animation:none!important;opacity:1}}
-.plate.mine .name{font:600 .8rem var(--pixel);color:var(--jade)}
-.sheet:has(> .scene) .plate.mine .heart{width:.95rem;height:.85rem}
-.plate.mine .hearts{gap:2px}
+.plate.mine .name{font:600 .8rem var(--pixel);color:var(--jade);display:flex;justify-content:space-between;align-items:baseline;gap:10px}   /* You, and your health's number */
+.plate.mine .hpnum{font-size:.8rem}
+/* Health, yours and an enemy's (js/battle.js): a heart, then a bar, green, yellow under half, red at a fifth or less, that
+   slides when it changes; your number beside it (or beside You, in a battle). */
+.hp{display:flex;align-items:center;gap:5px;margin-top:5px}
+.hp .heart{width:15px;height:13px;flex:none}
+.hpbar{flex:1;min-width:64px;height:11px;background:#46524D;border:2px solid #1E2B26;border-radius:3px;overflow:hidden;box-shadow:inset 0 2px 0 rgba(0,0,0,.35)}
+.hpbar i{display:block;height:100%;transition:width .5s ease-out}
+.hpbar i.g{background:linear-gradient(#8BE59A 0 38%,#3DA858 38%)}
+.hpbar i.y{background:linear-gradient(#FFE58A 0 38%,#DDA91C 38%)}
+.hpbar i.r{background:linear-gradient(#FF9B8A 0 38%,#CC3B2C 38%)}
+.hpnum{font:700 .85rem/1 var(--text);font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap;min-width:3.2em;text-align:right}   /* (the plain font: in the pixel one, 50 read as S0) */
+@media (prefers-reduced-motion: reduce){.hpbar i{transition:none}}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin:.2rem 0}
 .act{display:flex;flex-direction:column;align-items:center;padding:.3rem 0;background:var(--bg);border:2px solid var(--ink);border-radius:6px;box-shadow:0 3px 0 var(--ink);color:var(--ink)}
 .act .z{font-family:var(--text);font-size:1.5rem;font-weight:700;line-height:1.1}
@@ -773,8 +782,10 @@ rt.hid{visibility:hidden}
 .act .e{font:.75rem var(--pixel);color:var(--jade);text-align:center}
 .hud{position:absolute;left:14px;top:14px;display:flex;gap:3px;padding:4px 6px;background:rgba(14,26,51,.75);border-radius:6px;z-index:4;pointer-events:none}
 .hud[hidden]{display:none}
-.screen:has(> .talk.top:not([hidden])) > .hud{top:auto;bottom:14px}   /* (with the speech box at the top, your hearts go to the bottom corner, not under it) */
-.hud .heart{width:18px;height:16px}
+.screen:has(> .talk.top:not([hidden])) > .hud{top:auto;bottom:14px}   /* (with the speech box at the top, your health goes to the bottom corner, not under it) */
+.hud .hp{margin:0;gap:6px}
+.hud .hpbar{min-width:90px;border-color:#0B1410}
+.hud .hpnum{color:#fff}
 /* A question (an animal's, or filling a gap): from the top down, with the bottom row (what happened, or a helper,
    and Next) at the bottom, its space kept, so nothing moves when you answer. */
 .sheet:has(> .scene):has(> .opts),.sheet:has(> .scene):has(> .acts){grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr);grid-template-rows:auto auto 1fr auto;row-gap:.4rem}
@@ -915,7 +926,12 @@ rt.hid{visibility:hidden}
   .menu.twocol{gap:.3rem .5rem;margin-top:3px}   /* Settings: every row */
   .menu.twocol .btn{min-height:28px;padding:3px 5px 3px 15px}   /* (room for the A badge, which goes from one to another) */
   .menu.twocol > .btn:last-child:nth-child(odd){grid-column:1 / -1}   /* (a last one on its own takes the whole row, on one line) */
-  .sheet:has(> .scene) .plate.mine .heart{width:.62rem;height:.58rem}   /* your hearts, inside the scene */
+  .hpbar{min-width:0;height:9px}   /* health, inside the scene: smaller, and your plate wider, so the bar and your number fit */
+  .plate .hp{gap:3px;margin-top:3px}
+  .plate .hp .heart{width:11px;height:10px}
+  .sheet:has(> .scene) .plate.mine{min-width:62%;padding:.15rem .35rem .3rem}
+  .plate.mine .name{gap:4px;font-size:.7rem}
+  .plate.mine .hpnum{font-size:.7rem;min-width:0}
   .sheet:has(> .qhead) .line rt{font-size:max(.6em,10.5px)}   /* pinyin over a sentence you fill: big enough to read */
   .plate .engbtn{font-size:.75rem;padding:2px 6px}   /* English, on an animal's name plate: big enough to tap */
   .word.side{padding:0 .3rem;column-gap:1rem}   /* a word's page: a smaller word and picture, and its example closer */

@@ -224,7 +224,7 @@ function wordQuestion(w, avoid){
 }
 // The words to ask about (n of them, avoiding avoid): from the front of the review list, at random (nextWords, js/state.js).
 const toAsk = (avoid, n) => nextWords(picWords().filter(w => w !== avoid && lvl(w) >= 1), n);
-// Food: what's in your bag to eat (AREA.food says what each does). Some brings hearts back (heal: eaten on your turn in a
+// Food: what's in your bag to eat (AREA.food says what each does). Some brings health back (heal: eaten on your turn in a
 // battle, or from your bag), and some takes away a wrong answer in a question (helps: no turn used).
 const FOOD = AREA.food || {};
 const foodThat = does => Object.keys(FOOD).find(w => FOOD[w][does] && (S.bag[w] || 0) > 0);   // food in your bag that heals, or helps

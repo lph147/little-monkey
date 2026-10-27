@@ -446,11 +446,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]
   },
 
-  // Food you carry in your bag (up to carry of each), and what eating it does. heal: how many hearts come back (in a battle,
+  // Food you carry in your bag (up to carry of each), and what eating it does. heal: how much health comes back (in a battle,
   // 吃 eats it on your turn; outside one, tap it in your bag). helps: it takes away a wrong answer in a question, in a
   // battle or with an animal, without using your turn. does: what your bag says it does.
   food: {
-    '桃子': {heal:1, carry:3, does:'Brings a heart back'},
+    '桃子': {heal:10, carry:3, does:'Brings back 10 health'},
     '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'},
     '蜂蜜': {fast:60, carry:2, does:'Walk faster for a minute'}   // fast: you walk faster for so many seconds (tap it in your bag)
   },
@@ -1273,8 +1273,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'U': {look:'water'},   // the stream through the cave
     'I': {look:'ironBridge', walk:true},   // (it taught 桥 until 21 October 2026: the word waits for chapter 1, so the cave has three new words)
     'D': {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.', onLook:[   // once you know 床, A sleeps in it
-      {if:{knows:'床', new:'睡觉'}, label:'Sleep', do:[{card:'睡觉', note:'You lie down on the stone bed and go to sleep.'}, {sleep:'You wake up with all your hearts.'}]},
-      {if:{knows:'床'}, label:'Sleep', do:[{sleep:'You wake up with all your hearts.'}]}]},
+      {if:{knows:'床', new:'睡觉'}, label:'Sleep', do:[{card:'睡觉', note:'You lie down on the stone bed and go to sleep.'}, {sleep:'You wake up with your health full.'}]},
+      {if:{knows:'床'}, label:'Sleep', do:[{sleep:'You wake up with your health full.'}]}]},
     'A': {look:'stoneTable', word:'桌子', landmark:true, note:'A big table of stone.'},
     'V': {look:'stoneBowls', word:'碗', landmark:true, note:'Bowls of stone, ready for the troop.'},
     // chapter 1: the way from the waterfall to the home ground, and the home ground's plots, their signs, and the ways out
@@ -1564,7 +1564,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '跳': 'The big monkey dared the troop to jump through the waterfall.',
     '桥': 'A bridge over the stream, at the home ground or in the pine wood.',   // (the iron bridge in the Water Curtain Cave until 21 October 2026)
     '床': 'The stone beds in the Water Curtain Cave.',
-    '睡觉': 'The stone beds in the Water Curtain Cave: sleep there to get your hearts back.',
+    '睡觉': 'The stone beds in the Water Curtain Cave: sleep there to get your health back.',
     '碗': 'The stone bowls in the Water Curtain Cave.',
     '桌子': 'The stone table in the Water Curtain Cave.',
     '家': 'The old monkey, when the troop moved into the Water Curtain Cave.',
@@ -1672,32 +1672,35 @@ const FLOWER_FRUIT_MOUNTAIN = {
   },
 
   // Wild creatures you can fight, in battles (js/battle.js). Each: its word (taught on a card the first time you
-  // meet it, with meetNote), its hearts (hits to chase it away), where it attacks from (attacks: you hear one and
+  // meet it, with meetNote), its health (chase it away by hitting it till there's none left: battles.hits each time),
+  // how much health it takes when it hits you (hits), where it attacks from (attacks: you hear one and
   // pick it to jump aside; only words you've caught are used), what it does (meet; hide, then attack, on its turn), the message when it
   // runs off (away) with a reward in shells, and boss: true for a big enemy you can't run from.
   enemies: {
-    snake: {word:'蛇', hearts:2, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
+    snake: {word:'蛇', health:20, hits:10, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
       hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
-    spider: {word:'蜘蛛', hearts:2, attacks:['树', '草', '石头', '山'], meetNote:'A spider scuttles out of the long grass!', meet:'A {蜘蛛} scuttles at you!',
+    spider: {word:'蜘蛛', health:20, hits:10, attacks:['树', '草', '石头', '山'], meetNote:'A spider scuttles out of the long grass!', meet:'A {蜘蛛} scuttles at you!',
       hide:'The {蜘蛛} scurries out of sight…', attack:'The {蜘蛛} jumps at you!', away:'The {蜘蛛} scurries off into the grass.', reward:1},   // (in the bee's place since 21 October 2026)
-    wolf: {word:'狼', hearts:3, attacks:['树', '草', '石头', '木头'], meetNote:'A wolf leaps out of the long grass, growling!', meet:'A {狼} growls at you!',
+    wolf: {word:'狼', health:30, hits:10, attacks:['树', '草', '石头', '木头'], meetNote:'A wolf leaps out of the long grass, growling!', meet:'A {狼} growls at you!',
       hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', reward:2},   // (chapter 1: in the pine wood)
-    wasp: {word:'黄蜂', hearts:2, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
+    wasp: {word:'黄蜂', health:20, hits:10, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
       hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
-    bear: {word:'熊', hearts:5, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
+    bear: {word:'熊', health:50, hits:10, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
       meet:'The {熊} roars!', hide:'The {熊} drops down out of sight…', attack:'The {熊} swipes at you!', away:'The {熊} lumbers off into the pines, and doesn’t come back.', reward:3},   // (chapter 1: at the pasture's rocks, as you lead the cow home: in the wolf's place since 27 October 2026)
-    boar: {word:'野猪', hearts:4, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
+    boar: {word:'野猪', health:40, hits:10, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
       meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },
-  // Battles: when you can fight (when), what you hit with (weapon), and what happens if you lose: you rest, with full
-  // hearts, at the first restAt whose if matches (lost: the message then).
+  // Battles: when you can fight (when), what you hit with (weapon) and how much health a hit takes (hits), and what
+  // happens if you lose: you rest, till your health is full, at the first restAt whose if matches (lost: the message then).
+  // Your health starts at 50 (HEALTH in js/state.js); a fight is set by how many right answers it takes, the numbers
+  // chosen to match (decided 27 October 2026: about 2 to 5 for a wild creature, more for a boss).
   battles: {
     when: {knows:'棍子'},   // once the big monkey has given you the stick
-    weapon: '棍子',
+    weapon: '棍子', hits: 10,
     restAt: [
-      {if:{home:{atLeast:2}}, at:[17, 8, 'homeGround'], facing:'up', lost:'You’re worn out. You crawl back down to the home ground and rest under the big tree until your hearts are full again.'},   // chapter 1: under the big tree (in front of the feast's table, which stands where you rested till 24 October 2026)
-      {if:{cave:{atLeast:2}}, at:[3, 2, 'cave'], facing:'up', lost:'You’re worn out. You crawl back to the Water Curtain Cave and sleep until your hearts are full again.'},   // once you've found the cave: by a bed
-      {at:[15, 2], facing:'left', lost:'You’re worn out. You crawl back down to the meadow and rest until your hearts are full again.'}
+      {if:{home:{atLeast:2}}, at:[17, 8, 'homeGround'], facing:'up', lost:'You’re worn out. You crawl back down to the home ground and rest under the big tree until your health is full again.'},   // chapter 1: under the big tree (in front of the feast's table, which stands where you rested till 24 October 2026)
+      {if:{cave:{atLeast:2}}, at:[3, 2, 'cave'], facing:'up', lost:'You’re worn out. You crawl back to the Water Curtain Cave and sleep until your health is full again.'},   // once you've found the cave: by a bed
+      {at:[15, 2], facing:'left', lost:'You’re worn out. You crawl back down to the meadow and rest until your health is full again.'}
     ],
     // What happens after you lose a battle and come round where you rest: the first whose if matches. (Chapter 1: the cow
     // you were leading home takes fright, and runs back to its spring in the pasture; fetch it again. Losing isn't
@@ -1770,7 +1773,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the riverside: shells under a boulder below the rocks, and an apple behind a tree by the stream
     {id:'riverBoulder', at:[38, 6, 'riverside'], shells:2, note:'Under the edge of the boulder: 2 🐚!'},
     {id:'riverTree', at:[23, 10, 'riverside'], fruit:'苹果', note:'Tucked behind the tree by the stream: a {苹果} for your bag!'},
-    // the pasture: shells under a boulder, and a peach behind a tree at its edge (for a heart back, after the wolves)
+    // the pasture: shells under a boulder, and a peach behind a tree at its edge (for some health back, after the wolves)
     {id:'pastureBoulder', at:[4, 18, 'pasture'], shells:2, note:'Under the edge of the boulder: 2 🐚!'},
     {id:'pastureTree', at:[20, 23, 'pasture'], fruit:'桃子', note:'Tucked behind the tree at the edge of the pasture: a {桃子} for your bag!'},
     // at the ends of the ways through the pasture's pines that go nowhere (the cow didn't go that way, but they're worth it)
@@ -1967,8 +1970,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //             you…), or else about (what's happening), with pic (a picture), such as a gift. One that doesn't
   //             fit shows why, with the one that does, and your monkey says that one.
   //   bag       put food in your bag (if there's room), with a note saying so
-  //   rest      your hearts are full again
-  //   sleep     you sleep (in a bed): the screen goes dark, and you wake with all your hearts (its text: the message then)
+  //   rest      your health is full again
+  //   sleep     you sleep (in a bed): the screen goes dark, and you wake with your health full (its text: the message then)
   //   match     match the words you've learned to their pictures (its heading), as at the practice post; stop
   //             is its button to stop, which ends the conversation there (notYet: the message then)
   //   wordGame  offer a word game. ask: the question; word: who you're playing with; win: steps if you win;
@@ -2021,7 +2024,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {reply:'再见'},   // goodbye, as you set off (taught here, 19 October 2026: it means more now you're leaving)
         {message:'You set off for the path, on your own.'}   // (the big monkey stops you on the way, with a stick: its own new word)
       ]},
-      {if:{hurt:true}, do:[{rest:true}, {message:'You rest with the old monkey. Your hearts are full again.'}]},
+      {if:{hurt:true}, do:[{rest:true}, {message:'You rest with the old monkey. Your health is full again.'}]},
       {if:{story:false, climb:1}, do:[{say:'go', hint:'Follow the path up beside the river, and find where the water comes from.'}]},
       {if:{story:false, climb:2}, do:[
         {say:'foundFall', by:'player'},
@@ -2267,10 +2270,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ],
     beeSwarm: [{do:[{sound:'buzz'}, {message:'A swarm of bees, buzzing round their queen.'}]}],
     guide: [{do:[{say:'beesInFlowers'}]}],   // (the butterfly at the bees' valley's way in, only there as it tells you about it)
-    // the monkey by the cave's entrance: sleep in a bed to get your hearts back
+    // the monkey by the cave's entrance: sleep in a bed to get your health back
     doorway: [
-      {if:{new:'睡觉'}, do:[{say:'tired', teach:'睡觉'}, {newWord:'睡觉', note:'Sleep in a {床} and all your hearts come back.'}]},
-      {do:[{say:'tired', hint:'Face a {床} and press A to sleep. You wake up with all your hearts.'}]}
+      {if:{new:'睡觉'}, do:[{say:'tired', teach:'睡觉'}, {newWord:'睡觉', note:'Sleep in a {床} and your health is full again.'}]},
+      {do:[{say:'tired', hint:'Face a {床} and press A to sleep. You wake up with your health full.'}]}
     ],
     rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
     sheep: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
@@ -2286,7 +2289,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     woodSquirrel: [
       {if:{new:'木头'}, do:[{say:'hi'}, {reply:'你好'}, {say:'squirrelWood'}, {set:{woodSquirrel:1}},
         {message:'The squirrel points its nose at the grey, dead pines. Their wood is dry: one hit with your stick, and down they come!'},
-        {message:'Its tail twitches. Wolves live in the long grass, and every way through the wood goes through it. Eating a {桃子} in a fight brings a heart back: pick some at the home ground.'}]},
+        {message:'Its tail twitches. Wolves live in the long grass, and every way through the wood goes through it. Eating a {桃子} in a fight brings back some health: pick some at the home ground.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'The squirrel loves the pine wood. Its name, {松鼠}, means pine mouse!'}]}
     ],
     goat: [
@@ -2372,7 +2375,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'stickHere', teach:'棍子'},
         {newWord:'棍子', note:'The big monkey gives you a stick, to chase wild animals off the path.'},
         {message:'The big monkey shows you how to fight. When something jumps out of the long grass, choose 打 (dǎ, hit) and answer to hit it. When it attacks, listen for where it’s coming from, and pick that to jump aside.'},
-        {message:'A wrong answer when it attacks costs a heart, and you have 5. Eat something to get one back, or come back to the old monkey to rest.'}
+        {message:'A wrong answer when it attacks costs you 10 health, and you have 50. Eat something to get some back, or come back to the old monkey to rest.'}
       ]},
       // chapter 1: he wants wood and small stones to build the school (both at once), and has cleared the way to the pine wood
       {if:{home:2, build:0}, do:[

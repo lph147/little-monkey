@@ -44,7 +44,7 @@ function friendsPage(back, focus){
 }
 // 衣服 Wardrobe: the clothes you own. Tap one to put it on (your monkey says so, such as 我戴头带, which
 // teaches 戴 the first time and counts as using the words) or to take it off.
-// 包 Bag: what you carry. Food, how many and what it does (tap food that brings a heart back to eat it, if you're hurt, or
+// 包 Bag: what you carry. Food, how many and what it does (tap food that brings health back to eat it, if you're hurt, or
 // food that gives you energy, such as honey, to walk faster for a while, unless you're full of energy already), your
 // stick, and things you're carrying for someone. Tapping anything else says its word. note: what just happened.
 function bagPage(back, focus, note){
@@ -56,7 +56,7 @@ function bagPage(back, focus, note){
     ...(canBattle() && BATTLES.weapon ? [card(BATTLES.weapon, 'To fight with', 'Hear')] : []),
     ...Object.entries(here().holding).filter(([, w]) => w && WORDS[w]).map(([id, w]) => card(w, forWhom(id), 'Hear'))];
   openCard(`<div class="bag"><div class="baghead"><p class="label">包 bāo · Bag</p>
-    <div class="stats"><span class="hearts" aria-label="Your hearts: ${hearts()} of ${HEARTS}">${heartsHTML(hearts(), HEARTS)}</span><span>🐚 ${S.shells}</span></div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
+    <div class="stats">${healthHTML(health(), maxHealth(), true)}<span>🐚 ${S.shells}</span></div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
     ${items.length ? `<div class="menu grid">${items.join('')}</div>` : '<p class="hint">Nothing in your bag yet. Fruit trees, friends and the shop have things to put in it.</p>'}</div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);   // (outside the bag, so Back stays at the card's bottom however full it is)
   const f = sheet.querySelector(`.bagitem[data-w="${focus}"]`) || sheet.querySelector('.bagitem'); if (f) f.focus();
@@ -70,9 +70,9 @@ function bagPage(back, focus, note){
       return;
     }
     if (!food || !food.heal){ say(w); return; }
-    if (hearts() >= HEARTS){ SFX.bump(); bagPage(back, w, 'Your hearts are full: keep it for when you’re hurt.'); return; }
-    S.bag[w]--; S.hearts = Math.min(HEARTS, hearts() + food.heal); useWord(w); save(); SFX.right();
-    bagPage(back, w, `You eat a ${wz(w)}: a heart comes back.`);
+    if (!hurt()){ SFX.bump(); bagPage(back, w, 'Your health is full: keep it for when you’re hurt.'); return; }
+    S.bag[w]--; S.health = Math.min(maxHealth(), health() + food.heal); useWord(w); save(); SFX.right();
+    bagPage(back, w, `You eat a ${wz(w)}: +${food.heal} health.`);
   });
 }
 function wardrobePage(back, focus){

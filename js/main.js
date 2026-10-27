@@ -150,8 +150,8 @@ function updateCtx(now){
 // list, and a new task is announced with a message once you're free and the last message has gone (this
 // runs again when it goes: see toast in js/helpers.js).
 function updateHUD(){
-  const hud = $('#hud');   // your hearts, at the top of the screen while you're hurt
-  if (hud){ hud.hidden = mode !== 'play' || (S.hearts ?? HEARTS) >= HEARTS; if (!hud.hidden) hud.innerHTML = heartsHTML(S.hearts, HEARTS); }
+  const hud = $('#hud');   // your health, at the top of the screen while you're hurt
+  if (hud){ hud.hidden = mode !== 'play' || !hurt(); if (!hud.hidden) hud.innerHTML = healthHTML(health(), maxHealth(), true); }
   if (mode !== 'play') return;
   const tasks = getTasks();
   $('#selectDot').hidden = !tasks.some(t => !S.tasksRead[t.id]);

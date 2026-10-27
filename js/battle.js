@@ -1,7 +1,8 @@
 // Battles: with wild creatures from the end of the prologue, and (later) demons. A battle looks like an animal
-// encounter, but both sides have hearts. On your turn you hit (a question: right hits, wrong misses), eat something
-// (food that brings a heart back) or run away; on the enemy's turn it attacks from somewhere you hear (草！ 石头！) and you pick it to jump aside
-// (wrong: you lose a heart). Every hit or miss depends on whether you know the word: no levels, no luck, no timers.
+// encounter, but both sides have health, a bar on each name plate. On your turn you hit (a question: right hits, wrong
+// misses), eat something (food that brings health back) or run away; on the enemy's turn it attacks from somewhere you hear
+// (草！ 石头！) and you pick it to jump aside (wrong: it hits you). Every hit or miss depends on whether you know the word: no
+// levels, no luck, no timers. How much a hit takes is content: your weapon's (AREA.battles.hits) and each enemy's (hits).
 // The enemies are content (AREA.enemies); wild ones jump out of ground whose legend says wild (AREA.battles).
 
 /* ================= BATTLES ================= */
@@ -10,8 +11,22 @@ const BATTLES = AREA.battles || {};
 const canBattle = () => !!BATTLES.when && matches(BATTLES.when);   // you can fight (you have the stick)
 const WILD_AFTER = 5, WILD_CHANCE = .2;   // at least this many steps on wild ground between battles, then this chance a step
 let wildSteps = 0;
-const hearts = () => S.hearts ?? HEARTS;
-const heartsHTML = (n, of) => [...Array(of)].map((_, i) => heartHTML(i < n)).join('');
+// Your health (decided 27 October 2026: hearts, 5 at most, were too few to tell weapons, food and enemies apart), and the
+// most you can have, which the story can raise.
+const maxHealth = () => S.maxHealth || HEALTH;
+const health = () => Math.min(S.health ?? maxHealth(), maxHealth());
+const hurt = () => health() < maxHealth();
+// A health bar: a heart, then the bar, green, yellow under half, red at a fifth or less; with its number (num) for yours.
+// setHealth changes one already there, so the bar slides down (or up) rather than jumping.
+const healthCls = (n, max) => n > max / 2 ? 'g' : n > max / 5 ? 'y' : 'r';
+const healthHTML = (n, max, num) => `<div class="hp" role="img" aria-label="Health: ${n} of ${max}">${heartHTML(true)}`
+  + `<span class="hpbar"><i class="${healthCls(n, max)}" style="width:${Math.max(0, n / max * 100)}%"></i></span>${num ? `<span class="hpnum">${n}/${max}</span>` : ''}</div>`;
+function setHealth(el, n, max){
+  const bar = el.querySelector('.hpbar i'), hp = el.querySelector('.hp'), num = el.querySelector('.hpnum');
+  if (bar){ bar.style.width = Math.max(0, n / max * 100) + '%'; bar.className = healthCls(n, max); }
+  if (hp) hp.setAttribute('aria-label', `Health: ${n} of ${max}`);
+  if (num) num.textContent = `${n}/${max}`;
+}
 const mapSpriteCache = {};
 const mapSprite = w => mapSpriteCache[w] || (mapSpriteCache[w] = sprite(MAP_SPRITES[w].rows, MAP_SPRITES[w].palette));
 
@@ -68,7 +83,7 @@ async function fight(id, opts = {}){
   if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
   else { say(f.word); await sleep(700); }
   const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (the scene's own stick is the one you swing)
-  let left = f.hearts, note = fill(opts.meet || f.meet || `A {${f.word}} blocks your way!`);
+  let left = f.health, note = fill(opts.meet || f.meet || `A {${f.word}} blocks your way!`);
   // The scene: the enemy on its mound, you from behind with your stick, and what the animations use (js below, css
   // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
   // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).
@@ -77,16 +92,16 @@ async function fight(id, opts = {}){
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}">${stick}`
     + `<div class="from" aria-hidden="true"></div><div class="striker" aria-hidden="true">${img}</div><div class="pow" aria-hidden="true"></div><div class="fx" aria-hidden="true"></div>`
     + `<div class="plate"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div></div>`
-    + `<div class="hearts" aria-label="Its hearts: ${left} of ${f.hearts}">${heartsHTML(left, f.hearts)}</div></div>`
-    + `<div class="plate mine"><div class="name">You</div><div class="hearts" aria-label="Your hearts: ${hearts()} of ${HEARTS}">${heartsHTML(hearts(), HEARTS)}</div></div></div>`;
-  while (left > 0 && hearts() > 0){
+    + `${healthHTML(left, f.health)}</div>`
+    + `<div class="plate mine"><div class="name"><span>You</span><span class="hpnum">${health()}/${maxHealth()}</span></div>${healthHTML(health(), maxHealth())}</div></div>`;   // (your number beside You)
+  while (left > 0 && health() > 0){
     const act = await battleTurn(f, scene(), note);
     note = '';
     if (act === 'run'){ closeCard(); toast(fill(f.ran || `You run away from the {${f.word}}.`)); return 'ran'; }
     if (act === 'eat'){
       const w = foodThat('heal');
-      S.bag[w]--; S.hearts = Math.min(HEARTS, hearts() + FOOD[w].heal); useWord(w); save(); SFX.right();
-      note = `You eat a ${wz(w)}: a heart comes back.`;
+      S.bag[w]--; S.health = Math.min(maxHealth(), health() + FOOD[w].heal); useWord(w); save(); SFX.right();
+      note = `You eat a ${wz(w)}: +${FOOD[w].heal} health.`;
     } else {
       const w = toAsk(f.word, 1)[0], q = wordQuestion(w, f.word);
       const ok = await pictureQ({head:scene(), body:`<p class="label">You swing your ${wz(BATTLES.weapon || '棍子')}!</p>` + q.body, word:w, type:q.type,
@@ -95,7 +110,7 @@ async function fight(id, opts = {}){
         onAnswer:ok => {   // you swing: a hit knocks it back, or it hops aside
           const fb = sheet.querySelector('.feedback'), sc = sheet.querySelector('.scene');
           sc.classList.add('swing'); sc.classList.add(ok ? 'hit' : 'miss'); sc.querySelector('.fx').textContent = ok ? 'Hit!' : 'Miss!';
-          if (ok){ left--; sc.querySelector('.plate .hearts').innerHTML = heartsHTML(left, f.hearts); SFX.thwack(.2); } else SFX.swish(.1);
+          if (ok){ left = Math.max(0, left - BATTLES.hits); setHealth(sc.querySelector('.plate'), left, f.health); SFX.thwack(.2); } else SFX.swish(.1);
           fb.innerHTML += ok ? ' <b>A hit!</b>' : ' You miss.';
         }});
       if (!ok) note = `The ${wz(f.word)} dodges.`;
@@ -110,8 +125,8 @@ async function fight(id, opts = {}){
     await infoBox(scene('gone'), `<p class="label center">You win!</p><p class="endmsg">${esc(fill(f.away || `The {${f.word}} runs away.`))}${f.reward ? ` +${f.reward} 🐚` : ''}</p>`);
     return 'won';
   }
-  // Lost: no game over. You're carried back to rest, with full hearts; the words you missed come back sooner.
-  S.hearts = HEARTS;
+  // Lost: no game over. You're carried back to rest, with your health full; the words you missed come back sooner.
+  S.health = maxHealth();
   const at = [].concat(BATTLES.restAt || []).find(r => !r.if || matches(r.if)) || {};   // the first place to rest whose if matches
   if (at.at){ S.pos = {place:placeOf(at.at), x:at.at[0], y:at.at[1], dir:at.facing || 'down'}; }
   save();
@@ -119,11 +134,11 @@ async function fight(id, opts = {}){
   if (at.at){ foe = null; placePlayer(); showPlaceName(); }
   return 'lost';
 }
-// Your turn: hit, eat something (food that brings a heart back, if you're hurt) or run away (not from a big enemy).
+// Your turn: hit, eat something (food that brings health back, if you're hurt) or run away (not from a big enemy).
 // Gives 'hit', 'eat' or 'run'.
 function battleTurn(f, head, note){
   return new Promise(res => {
-    const food = hearts() < HEARTS && foodThat('heal');
+    const food = hurt() && foodThat('heal');
     const acts = [['hit', '打', 'dǎ', 'Hit'],
       food && ['eat', '吃', 'chī', `Eat: ${wz(food)} ×${S.bag[food]}`],
       !f.boss && ['run', '跑', 'pǎo', 'Run away']].filter(Boolean);
@@ -154,8 +169,8 @@ async function dodge(f, head, note){
       SFX.swish(.25); sheet.querySelector('.label').textContent = strikes;   // it strikes!
       if (ok) fb.innerHTML += ' <b>You jump aside!</b>';
       else {
-        S.hearts = Math.max(0, hearts() - 1); save(); SFX.thwack(.5);
-        sc.querySelector('.plate.mine .hearts').innerHTML = heartsHTML(hearts(), HEARTS);
+        S.health = Math.max(0, health() - f.hits); save(); SFX.thwack(.5);
+        setHealth(sc.querySelector('.plate.mine'), health(), maxHealth());
         fb.innerHTML += ' <b>Ouch!</b>';
       }
     }});

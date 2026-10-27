@@ -1,5 +1,6 @@
 // Battles (18 October 2026): from the end of the prologue, wild creatures jump out of the long grass on the mountain
-// path. Both sides have hearts; every hit or miss depends on knowing the word. Losing isn't punished.
+// path. Both sides have health (hearts, 5 at most, till 27 October 2026), a bar on each name plate; every hit or miss
+// depends on knowing the word. Losing isn't punished.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -30,18 +31,22 @@ test('you can only fight once the big monkey has given you the stick', () => {
   assert.equal(without.run('canBattle()'), false);
 });
 
-test('your turn: hit, eat (a peach, when you’re hurt) or run; a hit takes one of its hearts; it runs off when they are gone', async () => {
-  const g = fighting({hearts: 4, bag: {'桃子': 1}});
+test('your turn: hit, eat (a peach, when you’re hurt) or run; a hit takes 10 of its health; it runs off when it has none left', async () => {
+  const g = fighting({health: 40, bag: {'桃子': 1}});
   g.run("globalThis.__r = null; battle('snake').then(r => { __r = r; })"); await g.flush();
   assert.deepEqual(g.sheet.querySelectorAll('.act').map(b => b.dataset.act), ['hit', 'eat', 'run']);
   assert.match(g.sheet.textContent, /蛇/, 'the snake’s name on its plate');
+  const bars = () => g.sheet.querySelectorAll('.plate .hp').map(h => h.getAttribute('aria-label'));
+  assert.deepEqual(bars(), ['Health: 20 of 20', 'Health: 40 of 50'], 'a health bar on each plate: the snake’s, then yours');
+  assert.equal(g.sheet.querySelector('.plate.mine .name .hpnum').textContent, '40/50', 'your number beside You');
   await g.choose('hit'); await g.answer(true);   // a hit
+  assert.deepEqual(bars(), ['Health: 10 of 20', 'Health: 40 of 50'], 'its bar half gone');
   await g.answer(true);                         // its turn: you dodge
   await g.choose('hit'); await g.answer(true);   // a second hit: it runs off
   assert.match(g.sheet.textContent, /You win!/);
   g.run("document.querySelector('#sheet [data-a=ok]') || 0"); g.sheet.querySelector('[data-a=ok]').click(); await g.flush();
   assert.equal(g.run('__r'), 'won');
-  assert.equal(g.run('S.hearts'), 4, 'no hearts lost');
+  assert.equal(g.run('S.health'), 40, 'no health lost');
   assert.equal(g.run('S.shells'), 1, 'a shell for chasing it off');
 });
 
@@ -61,29 +66,30 @@ test('Run away chosen with the D-pad: A presses it, even when the phone drops th
   assert.equal(g.run('modal.hidden'), true);
 });
 
-test('a wrong dodge costs a heart, and your hearts stay down after the battle', async () => {
+test('a wrong dodge costs you 10 health (the snake’s hits), and it stays down after the battle', async () => {
   const g = fighting();
   g.run("battle('snake')"); await g.flush();
   await g.choose('hit'); await g.answer(false);   // a miss
   await g.answer(false);                          // its turn: you don't dodge
-  assert.equal(g.run('S.hearts'), 4);
+  assert.equal(g.run('S.health'), 40);
+  assert.equal(g.sheet.querySelector('.plate.mine .hpnum').textContent, '40/50', 'your number goes down as it hits you');
   await g.choose('run');
   assert.equal(g.run('modal.hidden'), true, 'running away ends the battle');
-  assert.equal(JSON.parse(g.run('localStorage.getItem(KEY)')).hearts, 4, 'saved');
+  assert.equal(JSON.parse(g.run('localStorage.getItem(KEY)')).health, 40, 'saved');
 });
 
-test('eating a peach brings a heart back, on your turn', async () => {
-  const g = fighting({hearts: 3, bag: {'桃子': 2}});
+test('eating a peach brings back 10 health, on your turn', async () => {
+  const g = fighting({health: 30, bag: {'桃子': 2}});
   g.run("battle('snake')"); await g.flush();
   assert.match(g.sheet.querySelector('.act[data-act=eat]').textContent, /Eat: 桃子 \(peach\) ×2/);
   await g.choose('eat');
-  assert.equal(g.run('S.hearts'), 4);
+  assert.equal(g.run('S.health'), 40);
   assert.equal(g.run("S.bag['桃子']"), 1);
-  assert.match(g.sheet.textContent, /a heart comes back/);
+  assert.match(g.sheet.textContent, /You eat a 桃子 \(peach\): \+10 health\./);
 });
 
-test('with full hearts, or only an apple, there’s nothing to eat on your turn', async () => {
-  for (const save of [{hearts: 5, bag: {'桃子': 2}}, {hearts: 3, bag: {'苹果': 2}}]){
+test('with your health full, or only an apple, there’s nothing to eat on your turn', async () => {
+  for (const save of [{health: 50, bag: {'桃子': 2}}, {health: 30, bag: {'苹果': 2}}]){
     const g = fighting(save);
     g.run("battle('snake')"); await g.flush();
     assert.deepEqual(g.sheet.querySelectorAll('.act').map(b => b.dataset.act), ['hit', 'run']);
@@ -111,37 +117,48 @@ test('the wild boar is a big enemy: you can’t run from it', async () => {
   assert.deepEqual(g.sheet.querySelectorAll('.act').map(b => b.dataset.act), ['hit']);
 });
 
-test('losing isn’t punished: you rest in the meadow with full hearts', async () => {
-  const g = fighting({hearts: 1, pos: {place: 'path', x: 8, y: 13, dir: 'down'}});
+test('losing isn’t punished: you rest in the meadow, till your health is full', async () => {
+  const g = fighting({health: 10, pos: {place: 'path', x: 8, y: 13, dir: 'down'}});
   g.run("globalThis.__r = null; battle('snake').then(r => { __r = r; })"); await g.flush();
   await g.choose('hit'); await g.answer(false);
-  await g.answer(false);   // the last heart
+  await g.answer(false);   // the last of your health
   assert.match(g.sheet.textContent, /Ouch!/);
   g.sheet.querySelector('[data-a=ok]').click(); await g.flush();
   assert.equal(g.run('__r'), 'lost');
-  assert.equal(g.run('S.hearts'), 5);
+  assert.equal(g.run('S.health'), 50);
   assert.equal(g.run('S.pos.place'), 'meadow');
 });
 
 test('once you’ve found the cave, losing puts you by a bed in the cave instead', async () => {
-  const g = fighting({hearts: 1, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 3, story: true, cave: 2}}, pos: {place: 'path', x: 8, y: 13, dir: 'down'}});
+  const g = fighting({health: 10, areas: {1: {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 3, story: true, cave: 2}}, pos: {place: 'path', x: 8, y: 13, dir: 'down'}});
   g.run("globalThis.__r = null; battle('snake').then(r => { __r = r; })"); await g.flush();
   await g.choose('hit'); await g.answer(false);
-  await g.answer(false);   // the last heart
+  await g.answer(false);   // the last of your health
   assert.match(g.sheet.textContent, /Water Curtain Cave/, 'it says where you go');
   g.sheet.querySelector('[data-a=ok]').click(); await g.flush();
   assert.equal(g.run('__r'), 'lost');
-  assert.equal(g.run('S.hearts'), 5);
+  assert.equal(g.run('S.health'), 50);
   assert.deepEqual(JSON.parse(g.run('JSON.stringify(S.pos)')), {place: 'cave', x: 3, y: 2, dir: 'up'}, 'by a bed');
   assert.equal(g.run('PLACE'), 'cave');
 });
 
 test('when you’re hurt, the old monkey lets you rest', () => {
-  const g = fighting({hearts: 2});
+  const g = fighting({health: 20});
   const part = g.run("JSON.stringify(AREA.talk.elder.find(p => !p.if || matches(p.if)).do.map(s => Object.keys(s)[0]))");
   assert.deepEqual(JSON.parse(part), ['rest', 'message']);
   g.run('STEPS.rest({})');
-  assert.equal(g.run('S.hearts'), 5);
+  assert.equal(g.run('S.health'), 50);
+});
+
+test('your health on the map while you’re hurt: a bar with its number, green, yellow under half, red at a fifth or less', () => {
+  const g = fighting({health: 20});
+  g.run('updateHUD()');
+  const hud = g.game.el('#hud');
+  assert.equal(hud.hidden, false);
+  assert.match(hud.innerHTML, /<span class="hpbar"><i class="y" style="width:40%"><\/i><\/span><span class="hpnum">20\/50<\/span>/, 'a yellow bar, 40% of the way, and 20/50');
+  assert.deepEqual([50, 26, 25, 11, 10, 0].map(n => g.run(`healthCls(${n}, 50)`)), ['g', 'g', 'y', 'y', 'r', 'r']);
+  g.run('S.health = 50; updateHUD()');
+  assert.equal(hud.hidden, true, 'full: no bar');
 });
 
 test('wild creatures jump out of the long grass, now and then, not every step', async () => {

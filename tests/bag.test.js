@@ -1,4 +1,4 @@
-// The bag (包) and fruit (18 October 2026): a peach brings a heart back, an apple takes away a wrong answer. Fruit trees
+// The bag (包) and fruit (18 October 2026): a peach brings back 10 health, an apple takes away a wrong answer. Fruit trees
 // fill your bag once the hungry monkey has eaten, and friends give fruit when you win their word games.
 'use strict';
 const test = require('node:test');
@@ -19,22 +19,25 @@ test('the bag shows your food (how many, and what it does), your stick, and what
   sheet.querySelector('[data-m="bag"]').click();
   assert.deepEqual(sheet.querySelectorAll('.bagitem').map(b => b.dataset.w), ['桃子', '苹果', '棍子', '水']);
   const text = sheet.textContent;
-  for (const s of ['×2', '×1', 'Brings a heart back', 'Takes away a wrong answer', 'To fight with', 'For the thirsty monkey']) assert.ok(text.includes(s), `it says ${s}`);
+  for (const s of ['×2', '×1', 'Brings back 10 health', 'Takes away a wrong answer', 'To fight with', 'For the thirsty monkey']) assert.ok(text.includes(s), `it says ${s}`);
   assert.equal(sheet.querySelector('.bagitem').dataset.label, 'Eat', 'A eats a peach');
 });
 
-test('tapping a peach when you’re hurt eats it, and a heart comes back; with full hearts it stays in the bag', () => {
-  const {run, sheet, get} = game({hearts: 3, bag: {'桃子': 2}});
+test('tapping a peach when you’re hurt eats it, and 10 health comes back; with your health full it stays in the bag', () => {
+  const {run, sheet, get} = game({health: 30, bag: {'桃子': 2}});
+  run('bagPage(() => {})');
+  assert.equal(sheet.querySelector('.stats .hpnum').textContent, '30/50', 'your health in the bag, with its number');
   run('bagPage(() => {})');
   sheet.querySelector('.bagitem[data-w="桃子"]').click();
-  assert.equal(get('S.hearts'), 4);
+  assert.equal(get('S.health'), 40);
   assert.equal(get("S.bag['桃子']"), 1);
-  assert.match(sheet.textContent, /You eat a 桃子 \(peach\): a heart comes back/);
-  const full = game({hearts: 5, bag: {'桃子': 2}});
+  assert.match(sheet.textContent, /You eat a 桃子 \(peach\): \+10 health\./);
+  assert.equal(sheet.querySelector('.stats .hpnum').textContent, '40/50');
+  const full = game({health: 50, bag: {'桃子': 2}});
   full.run('bagPage(() => {})');
   full.sheet.querySelector('.bagitem[data-w="桃子"]').click();
   assert.equal(full.get("S.bag['桃子']"), 2, 'not eaten');
-  assert.match(full.sheet.textContent, /Your hearts are full/);
+  assert.match(full.sheet.textContent, /Your health is full/);
 });
 
 test('an empty bag says where things come from', () => {
