@@ -34,7 +34,7 @@ const BEARDED = new Set(AREA.characters.filter(c => c.beard).map(c => c.id));   
 const wearing = item => S.wardrobe.wearing.includes(item);   // is your monkey wearing this?
 function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (const k in portraitCache) delete portraitCache[k]; }   // draw your monkey again in what it wears
 // What your monkey holds in its hand once it can fight (the area's battles: their weapon, once their when matches): a
-// small stick (棍子), short, so that the staff (金箍棒, Area 4) can be longer without the stick ever having looked too big.
+// small stick (棍子), short, so that the staff (金箍棒, Area 3) can be longer without the stick ever having looked too big.
 // Each: how many pixels long it is, and its colours (l the wood, k its dark edge and ends), reddish so it stands out
 // against your fur.
 const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}};
