@@ -411,6 +411,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(19, 8, 'up', 'talking to the hungry monkey by the table');
   assert.ok(get('__said').includes('我们没有蜂蜜！') && knows('没有'), 'the hungry monkey teaches 没有');
   assert.equal(area().feast, 3);
+  await pressAt(17, 8, 'up', 'looking at the feast’s big table: the chopsticks in their cup, sparkling');
+  assert.ok(knows('筷子'), 'the first time, 筷子 (chopsticks), in a cup at the end of the table');
   await pressAt(17, 8, 'up', 'looking at the feast’s list');
   assert.ok(get("!!S.lines['我们没有蜂蜜。'] && !!S.lines['我们有桃子。']"), 'the list shows what the troop has, and what the feast still needs');
   // A little monkey asks you to play hide and seek (a side quest): you count to ten with your eyes covered, and it calls
@@ -551,7 +553,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // Its own home (version 3): the thirsty monkey's ! (the troop is ready), and the troop builds the cow a pen by the road
   // as you watch; it follows you in through the gate: 这是你的家！ It thanks you (谢谢你！, and you reply 不客气), and gives
   // you some of its milk (牛奶), which the thirsty monkey wants to drink: 我要喝牛奶！ Give it him (the gap in 我要喝牛奶),
-  // and the rest is for the feast, on a new table beside the first, set up as you come up to it: 我们有牛奶了！
+  // and the rest is for the feast, in a bowl on its second table, with a jug of it, as you come up to it: 我们有牛奶了！
   await pressAt(21, 10, 'down', 'the troop building the cow a pen, by the road');
   assert.deepEqual([area().cow, get('S.following'), run('tileAt(23, 11).look')], [7, ['cow'], 'pen'], 'built, and the cow follows you');
   await walk([[21, 10], [24, 10], [24, 12]], 'leading the cow in through the gate of its new home');
@@ -577,7 +579,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     await pressAt(21, 10, 'down', `seeing what he’s made: ${word}`);
     assert.ok(knows(word) && area().dairy === done && get('__said').includes('好了！'), `好了！ ${word}`);
   }
-  assert.deepEqual([area().milkTable, run('tileAt(22, 7).look')], [3, 'milkTableCheese'], 'the yoghurt and the cheese on the feast’s new table');
+  assert.deepEqual([area().milkTable, run('tileAt(22, 7).look')], [3, 'milkTableCheese'], 'the yoghurt and the cheese in the bowls on the feast’s second table');
+  await pressAt(22, 8, 'up', 'looking at the feast’s second table: the spoon in the yoghurt, sparkling');
+  assert.ok(knows('勺子'), '勺子 (spoon)');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this

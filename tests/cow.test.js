@@ -243,24 +243,24 @@ test('into its home: lead it in through the gate, and 这是你的家！ It than
   assert.deepEqual(item(g, /thirsty monkey some/), ['Give the thirsty monkey some 牛奶 (milk)', false, false, true]);
 });
 
-test('the milk for the thirsty monkey: 牛奶！太好了！, the gap in 我要喝牛奶, his thanks and your 不客气; the rest is for the feast, on a new table beside the first, set up as you come up to it: 我们有牛奶了！', async () => {
+test('the milk for the thirsty monkey: 牛奶！太好了！, the gap in 我要喝牛奶, his thanks and your 不客气; the rest is for the feast, in a bowl on its second table, with a jug of it, as you come up to it: 我们有牛奶了！', async () => {
   const g = game({place: 'homeGround', x: 21, y: 12, dir: 'up'}, {cow: 8, cowWolf: 1, milk: 'asked', holding: {milk: '牛奶'}}, {knows: ['牛', '牛奶'], friends: ['cow']});
   await press(g, 21, 12, 'up');   // (from below him: off the road, not yet near the feast's table)
   assert.deepEqual(get(g, '__said'), ['thirsty: 牛奶！太好了！', 'gap: 我要喝牛奶 (牛奶)', 'thirsty: 谢谢你！', 'player: 不客气']);
   assert.deepEqual(get(g, '[here().milk, here().cow, here().holding.milk || null, here().milkTable]'), ['done', 9, null, 0]);
-  assert.match(get(g, '__notes').join(' '), /The thirsty monkey drinks some of the 牛奶 \(milk\)\. The rest is for the feast: the troop is setting up a new 桌子 \(table\) for it, beside the first one\./);
-  assert.deepEqual(get(g, "getTasks().filter(t => t.id === 'milkTable').map(t => [t.text, t.target])"), [['Go and see the feast’s new 桌子 (table), beside the first', [22, 8]]]);
-  assert.equal(g.run('tileAt(22, 7).look'), 'grass', 'not there yet');
+  assert.match(get(g, '__notes').join(' '), /The thirsty monkey drinks some of the 牛奶 \(milk\)\. The rest is for the feast, in a bowl on its second 桌子 \(table\)\./);
+  assert.deepEqual(get(g, "getTasks().filter(t => t.id === 'milkTable').map(t => [t.text, t.target])"), [['Go and see the 牛奶 (milk) go on the feast’s second 桌子 (table)', [22, 8]]]);
+  assert.equal(g.run('tileAt(22, 7).look'), 'milkTableEmpty', 'not there yet: the feast’s second table, set out with the first, its bowls empty');
   g.run('__said.length = 0; __notes.length = 0');
   await walkTo(g, 20, 10, 'up');   // on the road, coming up to it
   assert.equal(g.run('here().milkTable'), 1);
   assert.deepEqual(get(g, "mapObjects().filter(o => /^milkTable/.test(o.look)).map(o => [o.look, o.x, o.y, o.w])"), [['milkTable', 21, 7, 3]], 'three squares wide, beside the first');
   assert.deepEqual([g.run('tileAt(21, 8).look'), g.run('tileAt(23, 8).look')], ['stoneStool', 'stoneStool'], 'with its two stools');
   assert.deepEqual(get(g, '__said'), ['hungry: 我们有牛奶了！']);
-  assert.match(get(g, '__notes').join(' '), /The troop has set up a new 桌子 \(table\) for the feast, with the 牛 \(cow\)’s milk on it!/);
+  assert.match(get(g, '__notes').join(' '), /The 牛 \(cow\)’s milk goes on the feast’s second 桌子 \(table\): a bowl full, and a jug of it!/);
   assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh)").slice(-1), ['我们 有 牛奶 。'], 'on the feast’s list');
   assert.deepEqual(cowTasks(g).concat(get(g, "getTasks().filter(t => /^milk/.test(t.id)).map(t => t.id)")), []);
-  assert.deepEqual(item(g, /on the feast’s new/), ['See the 牛奶 (milk) on the feast’s new 桌子 (table)', true, false, true]);
+  assert.deepEqual(item(g, /on the feast’s second/), ['See the 牛奶 (milk) go on the feast’s second 桌子 (table)', true, false, true]);
 });
 
 test('at home: A at the cow in its pen, a moo and 我有家了！; A at its fence calls it too; its sign says whose home it is', async () => {
@@ -321,7 +321,7 @@ test('8 questions later: a chime, a message and a ! over him; 好了！, jars of
   assert.equal(g.run('tileAt(19, 11).look'), 'dairyYog', 'jars of yoghurt on the dairy’s shelf');
   assert.equal(g.run('here().milkTable'), 2, 'on the road, near it: the yoghurt goes on the feast’s table at once');
   assert.equal(g.run('tileAt(22, 7).look'), 'milkTableYog');
-  assert.match(get(g, '__notes').join(' '), /A jar of the thirsty monkey’s 酸奶 \(yoghurt\) for the feast, on its new 桌子 \(table\)!/);
+  assert.match(get(g, '__notes').join(' '), /The thirsty monkey’s 酸奶 \(yoghurt\) goes in a bowl on the feast’s second table, with a wooden spoon in it!/);
   assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh)").slice(-2), ['我们 有 牛奶 。', '我们 有 酸奶 。']);
   assert.deepEqual(get(g, "getTasks().filter(t => /^dairy/.test(t.id)).map(t => t.text)"), ['The thirsty monkey is making something else from the 牛奶 (milk): practise, then come back and see what it is (0/8)']);
   assert.deepEqual(item(g, /what the thirsty monkey makes/), ['Find out what the thirsty monkey makes from the 牛奶 (milk)', true, false, true]);
@@ -338,11 +338,11 @@ test('and again, 8 questions later: 好了！ and cheese (奶酪), on the dairy�
   assert.deepEqual(get(g, '__said'), ['thirsty: 好了！']);
   assert.ok(get(g, '__notes').includes('card: 奶酪 (Cheese! The thirsty monkey has made it from the cow’s milk too.), said'));
   assert.deepEqual(get(g, '[here().dairy, here().milkTable, tileAt(19, 11).look]'), [5, 2, 'dairyCheese']);
-  assert.deepEqual(get(g, "getTasks().filter(t => t.id === 'cheeseTable').map(t => t.text)"), ['Go and see the feast’s new 桌子 (table): there’s some 奶酪 (cheese) for it']);
+  assert.deepEqual(get(g, "getTasks().filter(t => t.id === 'cheeseTable').map(t => t.text)"), ['Go and see the 奶酪 (cheese) go on the feast’s second 桌子 (table)']);
   g.run('__notes.length = 0');
   await walkTo(g, 20, 10, 'up');
   assert.deepEqual(get(g, '[here().milkTable, tileAt(22, 7).look]'), [3, 'milkTableCheese']);
-  assert.match(get(g, '__notes').join(' '), /And a round 奶酪 \(cheese\) for the feast, beside the yoghurt!/);
+  assert.match(get(g, '__notes').join(' '), /And a round 奶酪 \(cheese\) for the feast, in the last bowl!/);
   assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh)").slice(-3), ['我们 有 牛奶 。', '我们 有 酸奶 。', '我们 有 奶酪 。']);
   assert.deepEqual(get(g, "getTasks().filter(t => /^(dairy|cheese|yog|milk|cow)/.test(t.id)).map(t => t.id)"), [], 'the cow’s story, done for now');
   assert.deepEqual(item(g, /what else he makes/), ['Find out what else he makes from the 牛奶 (milk)', true, false, true]);

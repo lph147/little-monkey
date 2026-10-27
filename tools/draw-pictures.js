@@ -655,6 +655,19 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(Pg([[24, 8], [29, 13], [29, 14], [23.5, 9]]), '#D8A238');                          // the rind's edge
     for (const [x, y, r] of [[9, 21.5, 1.8], [15.5, 19, 1.4], [21, 22.5, 2.2], [26, 18.4, 1.3], [13, 24.4, 1.1], [25.2, 24.6, 1]]) p.fill(O(x, y, r), '#C99328', {light: '#B07E1E'});   // holes
     for (const [x, y, r] of [[17, 14.4, 1.2], [22, 12.2, 1]]) p.fill(O(x, y, r * 1.3, r * .7), '#D8A238');
+  },
+  '筷子': p => {   // chopsticks: a pair, side by side, lying across a little white rest, their back ends red (unlike 吃: a bowl of rice with chopsticks in it)
+    p.fill(Rc(5, 21, 9, 5, 2.4), '#F4F1EA', {dark: '#C9C3B4'});                                     // the rest
+    for (const dx of [0, 4.2]){
+      p.fill(Pg([[24.6 + dx, 2.5], [27.4 + dx, 4.5], [8 + dx, 30], [6.6 + dx, 29]]), '#C99A62', {light: '#E2BC88', dark: '#9A6A3A', edge: true});   // a chopstick, tapering to its tip
+      p.fill(Pg([[24.6 + dx, 2.5], [27.4 + dx, 4.5], [24.6 + dx, 8.4], [22 + dx, 6.6]]), '#C8343A', {light: '#E8606A', dark: '#8E1E24', edge: true});   // its back end, red
+    }
+  },
+  '勺子': p => {   // spoon: a wooden spoon, its round bowl up on the left, its handle down to the right (unlike yoghurt and honey: a jar or a pot, with a spoon in it)
+    p.fill(path([[13, 14], [27, 28]], 1.7), '#C99A62', {light: '#E2BC88', dark: '#9A6A3A', edge: true});   // the handle
+    p.fill(O(10.5, 10.5, 7.4, 6.4), '#C99A62', {light: '#E2BC88', dark: '#9A6A3A', edge: true});            // its bowl
+    p.fill(O(10, 10, 5, 4), '#AE7E48', {light: '#9A6A3A', dark: '#D2A46A'});                                  // hollowed out
+    p.flat(O(8.4, 8.6, 1.6, 1), '#E8C898');                                                                   // a shine
   }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops

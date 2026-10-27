@@ -224,6 +224,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
+| 桌子上有筷子。 | zhuōzi shàng yǒu kuàizi. | There are chopsticks on the table. | 筷子 |  |
+| 酸奶里有勺子。 | suānnǎi lǐ yǒu sháozi. | There’s a spoon in the yoghurt. | 勺子 |  |
 
 ### Questions after the story
 
@@ -395,6 +397,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 牛奶 | niúnǎi | milk |  |
 | 酸奶 | suānnǎi | yoghurt |  |
 | 奶酪 | nǎilào | cheese |  |
+| 筷子 | kuàizi | chopsticks |  |
+| 勺子 | sháozi | spoon |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |

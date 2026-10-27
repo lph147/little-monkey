@@ -141,8 +141,9 @@ SAVES.feastTable = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows
   pos: {place: 'homeGround', x: 17, y: 9, dir: 'up'}};
 // the hungry monkey by the table (his ! for what the feast still needs); and the feast's list, once he's told you: no honey
 SAVES.feastHungry = {...SAVES.feastTable, pos: {place: 'homeGround', x: 19, y: 8, dir: 'up'}};
-SAVES.feastList = {...SAVES.feastTable, w: {...SAVES.feastTable.w, ...knows(1, ['没有'])}, areas: {1: {...SAVES.feastTable.areas[1], feast: 3}},
+SAVES.feastList = {...SAVES.feastTable, w: {...SAVES.feastTable.w, ...knows(1, ['没有', '筷子'])}, areas: {1: {...SAVES.feastTable.areas[1], feast: 3}},
   pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
+SAVES.feastChopsticks = {...SAVES.feastTable, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};   // facing the big table, not knowing 筷子 yet
 // hide and seek with a little monkey at the home ground: facing it; while it hides under the table (after two wrong
 // guesses, its tail pokes out)
 SAVES.hideSeek = {...SAVES.feastList, w: {...SAVES.feastList.w, ...knows(1, ['树', '水', '花', '桥', '桌子'])}, pos: {place: 'homeGround', x: 13, y: 9, dir: 'up'}};
@@ -647,10 +648,12 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(500); }},
   {id: 'you-card', title: '有, to have', save: 'feastNews', why: 'Its card, with no picture, like 要: Use 有 to say what you have.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
-  {id: 'table-setting-up', title: 'Setting up the table', save: 'feastTable', why: 'As you come up to the big tree, the troop sets up the feast’s big table under it, a piece at a time, each with a knock: its stone legs, then its stone slab, then a bowl at a time (here), then its two stone stools.', run: async () => {
-    play(); await wait(100); here().feast = 1; buildMap(); settingUp = {objects: [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1}], stage: 2}; await wait(400); }},
-  {id: 'feast-table', title: 'The feast’s big table', save: 'feastTable', why: 'Under the big tree: peaches, apples and an empty bowl, waiting for something. The hungry monkey has come up from the meadow to look after it, with a !.', run: async () => {
+  {id: 'table-setting-up', title: 'Setting out the tables', save: 'feastTable', why: 'As you come up to the big tree, the troop sets out the feast’s two tables under it, a piece at a time, each with a knock: the big one’s stone legs, its stone slab, a bowl at a time (here) and a cup of chopsticks, then the second one’s, then their stone stools.', run: async () => {
+    play(); await wait(100); here().feast = 1; buildMap(); settingUp = {objects: [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1, stage: 4}, {look: 'milkTableEmpty', x: 21, y: 7, w: 3, h: 1, stage: 0}], stage: 4}; await wait(400); }},
+  {id: 'feast-table', title: 'The feast’s tables', save: 'feastTable', why: 'Under the big tree, both tables from the start: on the big one, peaches, apples, an empty bowl, waiting for something, and a bamboo cup of chopsticks; on the second, three empty bowls, waiting for more food. The hungry monkey has come up from the meadow to look after them, with a !.', run: async () => {
     play(); await wait(500); }},
+  {id: 'chopsticks-card', title: 'Chopsticks (筷子)', save: 'feastChopsticks', why: 'The chopsticks in their cup at the end of the big table sparkle till you know them: A at the table, and 筷子 (kuàizi, chopsticks), said straight away; after that, A shows the feast’s list.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(500); }},
   {id: 'hungry-table', title: 'This is our big table!', save: 'feastHungry', why: 'The hungry monkey by the table: 这是我们的大桌子！ (桌子 green: you learned it in the cave), then 我们有桃子，也有苹果！', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(500); }},
   {id: 'no-honey', title: 'We don’t have any honey!', save: 'feastHungry', why: 'Then 我们没有蜂蜜！, teaching 没有 (bold); 蜂蜜 is grey, just for listening, till the bees.', run: async () => {
@@ -785,7 +788,7 @@ const SCREENS = [
     play(); await wait(100); here().cow = 8; runSteps([AREA.events.flatMap(e => e.do).find(s => s.newWord === '牛奶')]); await wait(600); }},
   {id: 'milk-give', title: 'Milk for the thirsty monkey', save: 'cowInPen', why: 'He wants to drink some (我要喝牛奶！ I want to drink milk!): give it to him, and fill the gap in 我要喝牛奶.', run: async () => {
     play(); await wait(100); talk(npc('thirsty')); await wait(600); }},
-  {id: 'milk-table', title: 'The feast’s new table', save: 'milkTable', why: 'The rest is for the feast: as you come up to it, the troop sets up a second table beside the first, with the cow’s milk on it, and its stools: 我们有牛奶了！ (We have milk now!)', run: async () => {
+  {id: 'milk-table', title: 'Milk for the feast', save: 'milkTable', why: 'The rest is for the feast: as you come up to it, it goes on the feast’s second table, a bowl of it and a white jug of milk at its end: 我们有牛奶了！ (We have milk now!)', run: async () => {
     play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(4400); }},
   {id: 'cow-have-home', title: 'I have a home now!', save: 'cowAtHome', why: 'The cow in its pen, in front of its shelter: A, and it says 我有家了！ (I have a home now!).', run: async () => {
     play(); await wait(100); talk(npc('cow')); await wait(500); }},
@@ -799,8 +802,10 @@ const SCREENS = [
     play(); await wait(100); pressA(); await wait(400); next(); await wait(1800); }},
   {id: 'cheese-card', title: 'Cheese (奶酪)', save: 'dairyReady', why: 'The same again, 8 questions later: 奶酪 (nǎilào, cheese), which shares 奶 with 牛奶.', run: async () => {
     play(); await wait(100); here().dairy = 4; runSteps(AREA.talk.thirsty.find(p => p.if && p.if.dairy === 4).do.filter(s => s.newWord)); await wait(600); }},
-  {id: 'feast-milk-table', title: 'The feast’s new table, full', save: 'dairyDone', why: 'Milk, yoghurt and cheese on the feast’s second table, beside the first; and the little dairy by the pen, jars of yoghurt and a cheese on its shelf.', run: async () => {
+  {id: 'feast-milk-table', title: 'The feast’s second table, full', save: 'dairyDone', why: 'Milk (and its jug), yoghurt with a wooden spoon in it, and a round cheese in the bowls of the feast’s second table; and the little dairy by the pen, jars of yoghurt and a cheese on its shelf.', run: async () => {
     play(); await wait(500); }},
+  {id: 'spoon-card', title: 'A spoon (勺子)', save: 'dairyDone', why: 'Once the yoghurt’s on the table, the spoon in it sparkles till you know it: A at the second table, and 勺子 (sháozi, spoon), said straight away.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'homeGround', x: 22, y: 8, dir: 'up'}; placePlayer(); interact(...facing()); await wait(500); }},
   {id: 'feast-list-dairy', title: 'The feast’s list, with milk, yoghurt and cheese', save: 'dairyDone', why: 'A at either table: 我们有牛奶。我们有酸奶。我们有奶酪。, after the peaches, the apples and the honey.', run: async () => {
     play(); await wait(100); feastCard(); await wait(500); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {

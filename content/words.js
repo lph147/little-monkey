@@ -118,6 +118,8 @@ const WORD_BANK = {
   '牛奶': {py:'niúnǎi', en:'milk', pic:'🥛', area:1, category:'food', alike:['喝']},   // (the cow's thank-you for its new home; both pictures are a glass of something to drink)
   '酸奶': {py:'suānnǎi', en:'yoghurt', pic:'🫙', area:1, category:'food', alike:['蜂蜜']},   // (made from the milk at the little dairy by the cow's pen; both pictures are a pot with a wooden spoon in it)
   '奶酪': {py:'nǎilào', en:'cheese', pic:'🧀', area:1, category:'food'},   // (and then cheese)
+  '筷子': {py:'kuàizi', en:'chopsticks', pic:'🥢', area:1, category:'items', alike:['吃']},   // (in a cup at the end of each of the feast's tables; 吃's picture is a bowl of rice with chopsticks)
+  '勺子': {py:'sháozi', en:'spoon', pic:'🥄', area:1, category:'items', alike:['酸奶', '蜂蜜']},   // (in the yoghurt on the feast's second table; the pictures of both have a wooden spoon in them)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},

@@ -77,19 +77,22 @@ test('after them, the old monkey has news before any lesson: 我们有家，也�
   assert.deepEqual(get(g, '__said'), ['上课！', '下课！'], 'then lessons, as before');
 });
 
-test('as you come up to the big tree, the troop sets up the feast’s big table under it as you watch, a piece at a time, each with a knock', async () => {
+test('as you come up to the big tree, the troop sets out the feast’s two tables under it as you watch, a piece at a time, each with a knock', async () => {
   const g = game({feast: 1}, {place: 'homeGround', x: 10, y: 8, dir: 'right'});
   assert.equal(g.run('tileAt(17, 7).look'), 'grass', 'open grass under the big tree');
   await goTo(g, 10, 8);
   assert.equal(g.run('here().feast'), 1, 'not from across the home ground');
   await goTo(g, 14, 8);   // (three squares from the middle of the table)
-  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7], 'its stone legs, its slab, then a bowl of peaches, a bowl of apples and an empty one; then its two stone stools, one after another');
+  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    'the big table’s stone legs, its slab, a bowl of peaches, a bowl of apples, and an empty one with a cup of chopsticks; the second table’s legs, slab and three empty bowls; then their four stone stools, one after another');
   assert.deepEqual([g.run('tileAt(16, 8).look'), g.run('tileAt(18, 8).look'), g.run('walkable(17, 8)')], ['stoneStool', 'stoneStool', true], 'its stools either side of the square in front of it, where you stand to look at it');
+  assert.deepEqual([g.run('tileAt(21, 8).look'), g.run('tileAt(23, 8).look'), g.run('walkable(22, 8)')], ['stoneStool', 'stoneStool', true], 'and the second table’s');
   assert.equal(g.run('here().feast'), 2);
   assert.equal(g.run('settingUp'), null, 'and it’s all up');
   assert.deepEqual(get(g, '[16, 17, 18].map(x => [tileAt(x, 7).look, walkable(x, 7)])'), [['feastTable', false], ['feastTable', false], ['feastTable', false]]);
-  assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'feastTable')"), [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1}], 'one table, three squares wide');
-  assert.match(get(g, '__notes').join(' '), /The troop sets up a big 桌子 \(table\) under the big tree for the feast, with peaches, apples, and an empty bowl, waiting for something…/);
+  assert.deepEqual(get(g, "mapObjects().filter(o => /^(feast|milk)Table/.test(o.look))"), [{look: 'feastTable', x: 16, y: 7, w: 3, h: 1}, {look: 'milkTableEmpty', x: 21, y: 7, w: 3, h: 1}],
+    'two tables, each three squares wide: all the feast’s tables from the start, its second one’s bowls empty, waiting for more food (decided 27 October 2026: a new table appeared each time)');
+  assert.match(get(g, '__notes').join(' '), /The troop sets out two 桌子 \(tables\) under the big tree for the feast: peaches, apples, chopsticks, and empty bowls, waiting for more food…/);
   assert.deepEqual(item(g, /set up/), ['See the big 桌子 (table) set up for the feast', true, false, true]);
   assert.deepEqual(hungry(g), ['homeGround', 19, 7, 'left'], 'the hungry monkey beside it');
   assert.equal(bubble(g, 'hungry'), '!', 'with a !');
@@ -102,7 +105,7 @@ test('as you come up to the big tree, the troop sets up the feast’s big table 
 test('a game that comes back to the home ground with the table still to set up sees it go up there: only near the big tree', async () => {
   const g = game({feast: 1}, {place: 'homeGround', x: 17, y: 8, dir: 'up'});
   await play(g, 'runEvents()');
-  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7], 'resting in front of it after a lost fight, say');
+  assert.deepEqual(get(g, '__knocks'), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 'resting in front of it after a lost fight, say');
   const far = game({feast: 1}, {place: 'school', x: 7, y: 8, dir: 'down'});
   await play(far, 'runEvents()');
   assert.equal(far.run('here().feast'), 1, 'not from the school');
@@ -158,6 +161,9 @@ test('A at the big table shows the feast’s list: what the troop has, ticked; a
   const g = game({feast: 2}, {place: 'homeGround', x: 17, y: 8, dir: 'up'});
   g.run("globalThis.__spoken = []; say = (t, end) => { __spoken.push(t); if (end) end(); }");
   assert.equal(g.run('promptFor(17, 7)'), 'Look');
+  await openList(g);
+  assert.deepEqual(get(g, '__notes'), ['card: 筷子 (A bamboo cup of chopsticks for the feast, one pair for every monkey.)'], 'the first time, the chopsticks in their cup at its end: 筷子, said straight away (no list yet: one thing at a time)');
+  assert.equal(g.run("sheet.querySelector('.frow')"), null);
   await openList(g);
   assert.equal(g.run("sheet.querySelector('.label').textContent"), 'For the feast, at the big 桌子 (table)');
   assert.deepEqual(rows(g), [['我们有桃子', true, false, true], ['我们有苹果', true, false, true]], 'peaches and apples, ticked, each with its English the first time');

@@ -756,7 +756,8 @@ const LOOKS = {
   hollowTree:(g,X,Y,x,y) => grass(g,X,Y,x,y),        // the queen bee's old hollow tree: a big object (OBJECT_ART), on grass
   hive:      (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the bees' hive at the home ground: a big object (OBJECT_ART), on grass
   feastTableHoney:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // the feast's table once its third bowl has honey in it (OBJECT_ART)
-  milkTable: (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the feast's second table, with the cow's milk on it (OBJECT_ART), and then
+  milkTableEmpty:(g,X,Y,x,y) => grass(g,X,Y,x,y),    // the feast's second table, its bowls empty (OBJECT_ART), and then
+  milkTable: (g,X,Y,x,y) => grass(g,X,Y,x,y),        // with the cow's milk on it,
   milkTableYog:(g,X,Y,x,y) => grass(g,X,Y,x,y),      // with yoghurt too,
   milkTableCheese:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // and cheese
   pen:       (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the cow's pen at the home ground: a big object (OBJECT_ART), on grass,
@@ -841,9 +842,10 @@ const OBJECT_ART = {
   feastTable: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.feastTable),   // (stage: how much of it is up, as it's set up)
   feastTableHoney: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, 6),   // (and honey in its third bowl)
   hive: (g, o) => hive(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.hive),
-  milkTable: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.milkTable, 1),
-  milkTableYog: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, OBJECT_STAGES.milkTable, (o.stage ?? 1) >= 1 ? 2 : 1),   // (going up: just the jar)
-  milkTableCheese: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, OBJECT_STAGES.milkTable, (o.stage ?? 1) >= 1 ? 3 : 2),
+  milkTableEmpty: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.milkTableEmpty, 0),
+  milkTable: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, 5, (o.stage ?? 1) >= 1 ? 1 : 0),   // (going on it: the milk)
+  milkTableYog: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, 5, (o.stage ?? 1) >= 1 ? 2 : 1),   // (the yoghurt)
+  milkTableCheese: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, 5, (o.stage ?? 1) >= 1 ? 3 : 2),
   pen: (g, o) => cowPen(g, o.x*T, o.y*T, o.w*T, o.h*T, o.stage ?? OBJECT_STAGES.pen),
   dairy: (g, o) => dairy(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.dairy, 1),
   dairyYog: (g, o) => dairy(g, o.x*T, o.y*T, OBJECT_STAGES.dairy, (o.stage ?? 1) >= 1 ? 2 : 1),   // (going up: just the jars)
@@ -1070,19 +1072,36 @@ function slabTable(g, X, Y, w, stage){   // a stone table for the feast, w wide 
     for (let x = X + 6; x < X + w - 4; x += 9) R(g, x, Y + 2 + (x % 3), 1, 1, SLAB[2]);            // specks in the stone
   }
 }
-function feastTable(g, X, Y, w, stage){
+// The feast's tables (chapter 1), set out under the big tree from the feast's start, each with three bowls: the big one with
+// peaches, apples and an empty bowl, waiting for honey, and a bamboo cup of chopsticks at its end; the second with three
+// empty bowls, waiting for the cow's milk, yoghurt and cheese (decided 27 October 2026: a new table appeared each time).
+// Their bowls' middles, from the table's left.
+const TABLE_BOWLS = [8, 21, 34], SECOND_BOWLS = [16, 28, 40];   // (the second's leave room for a jug at its left end)
+function feastTable(g, X, Y, w, stage){   // (stage, as it's set up: 1 its legs, 2 its slab, 3 to 5 its bowls, 6 honey in the third)
   slabTable(g, X, Y, w, stage);
-  [[X + 9, PEACHES], [X + w/2, APPLES], [X + w - 9, null]].forEach(([cx, fruits], i) => {
+  [PEACHES, APPLES, null].forEach((fruits, i) => {
     if (stage < 3 + i) return;
+    const cx = X + TABLE_BOWLS[i];
     tableBowl(g, cx, Y + 5);
     if (fruits) [[-3, -6], [1, -6], [-1, -9]].forEach(([dx, dy]) => bigFruit(g, cx + dx, Y + 5 + dy, fruits));   // three, piled up
   });
+  if (stage >= 5) chopstickCup(g, X + w - 6, Y + 5);
   if (stage >= 6){   // honey, up to the third bowl's rim, with a wooden dipper in it
-    const cx = X + w - 9, by = Y + 5;
-    R(g, cx - 5, by - 5, 11, 2, '#2E2A26'); R(g, cx - 4, by - 6, 9, 2, '#2E2A26');
-    R(g, cx - 4, by - 5, 9, 1, '#E8A93A'); R(g, cx - 3, by - 6, 7, 1, '#F7C95A'); R(g, cx - 1, by - 6, 2, 1, '#FFE9A8');
+    const cx = X + TABLE_BOWLS[2], by = Y + 5;
+    bowlFull(g, cx, by, '#E8A93A', '#F7C95A', '#FFE9A8');
     R(g, cx + 2, by - 12, 2, 8, '#2E2A26'); R(g, cx + 2, by - 12, 1, 7, WOOD[3]); R(g, cx + 1, by - 13, 4, 2, '#2E2A26'); R(g, cx + 2, by - 13, 2, 1, WOOD[2]);
   }
+}
+// A bowl filled to its rim (its bottom at by), the top domed a little: honey or milk.
+function bowlFull(g, cx, by, col, top, shine){
+  R(g, cx - 5, by - 5, 11, 2, '#2E2A26'); R(g, cx - 4, by - 6, 9, 2, '#2E2A26');
+  R(g, cx - 4, by - 5, 9, 1, col); R(g, cx - 3, by - 6, 7, 1, top); R(g, cx - 1, by - 6, 2, 1, shine);
+}
+// A bamboo cup of chopsticks at the end of a table, its bottom at by: a short green cup, a bundle of chopsticks sticking up.
+function chopstickCup(g, cx, by){
+  const OUT = '#2E2A26';
+  for (const [dx, h] of [[-1, 6], [0, 7], [1, 5], [2, 6]]){ R(g, cx + dx, by - 6 - h, 1, h, '#E2C08A'); R(g, cx + dx, by - 6 - h, 1, 1, '#9A6A3A'); }   // the chopsticks
+  R(g, cx - 3, by - 7, 7, 8, OUT); R(g, cx - 2, by - 6, 5, 6, '#7FAF48'); R(g, cx - 2, by - 6, 1, 6, '#B4DB7A'); R(g, cx - 2, by - 3, 5, 1, '#5E8A30');   // the cup, a joint round it
 }
 // The bees' hive at the home ground, three squares by two, by the wildflowers, as much of it as is up (stage, as the troop
 // sets it up: 1 its low stone base, then a log hive at a time, each hollowed out of a log, with two bands round it, a little
@@ -1108,44 +1127,51 @@ function stoneStool(g, X, Y){   // a round stone stool beside the feast's table,
   R(g, X + 4, Y + 8, 8, 2, SLAB[4]); R(g, X + 5, Y + 8, 6, 1, '#E8E2D6');   // its top
   R(g, X + 4, Y + 10, 8, 4, SLAB[2]); R(g, X + 4, Y + 13, 8, 1, SLAB[1]);   // its side
 }
-function tableBowl(g, cx, by){   // a stone bowl from the cave, its bottom at by
+function tableBowl(g, cx, by){   // a white bowl with a blue band round it (as 碗's picture), its bottom at by, seen a little from above: you can see into it
   const OUT = '#2E2A26';
-  [5, 5, 4, 3].forEach((w, k) => { R(g, cx - w - 1, by - 4 + k, 2*w + 3, 1, OUT); R(g, cx - w, by - 4 + k, 2*w + 1, 1, k ? '#A39C8E' : '#C9C2B4'); });
-  R(g, cx - 3, by, 7, 1, OUT);
-  R(g, cx - 6, by - 5, 13, 1, OUT); R(g, cx - 5, by - 5, 11, 1, '#DDD6C8');   // its rim
+  R(g, cx - 5, by - 6, 11, 1, OUT);                                                                           // its rim's back
+  R(g, cx - 6, by - 5, 13, 2, OUT); R(g, cx - 5, by - 5, 11, 2, '#FFFFFF'); R(g, cx - 4, by - 5, 9, 1, '#C9C3B4');   // its rim, and inside it
+  [4, 3, 2].forEach((w, k) => { R(g, cx - w - 1, by - 3 + k, 2*w + 3, 1, OUT); R(g, cx - w, by - 3 + k, 2*w + 1, 1, k === 0 ? '#4F82B0' : '#F4F1EA'); });   // its sides, the band round the top
+  R(g, cx - 2, by, 5, 1, OUT);
 }
 function bigFruit(g, cx, cy, [col, shine]){   // a fruit a little bigger than on the trees, so it shows on the table
   R(g, cx - 1, cy - 2, 3, 5, '#2E2A26'); R(g, cx - 2, cy - 1, 5, 3, '#2E2A26');
   R(g, cx - 1, cy - 1, 3, 3, col); R(g, cx - 1, cy - 1, 1, 1, shine);
 }
-// The feast's second table, beside the first, for the cow's thank-you (chapter 1), as much of it as is up (stage, as the
-// troop sets it up: 1 its legs, 2 its slab, 3 a wooden pail of milk on it), and what else is on it (has: 2 a jar of
-// yoghurt too, 3 and a round cheese), made at the little dairy by the cow's pen.
+// The feast's second table, beside the first (chapter 1), as much of it as is up (stage, as the troop sets it up: 1 its
+// legs, 2 its slab, 3 to 5 its empty bowls), and what's in its bowls (has: 1 the cow's milk, its thank-you, with a white jug
+// of it at the table's end; 2 yoghurt too, heaped up, a wooden spoon in it; 3 and a round cheese), from the little dairy by
+// the cow's pen.
 const MILK = '#FBFAF4';
 function milkTable(g, X, Y, w, stage, has){
   slabTable(g, X, Y, w, stage);
-  if (stage >= 3) milkPail(g, X + 10, Y + 5);
-  if (has >= 2) yoghurtJar(g, X + w/2, Y + 5);
-  if (has >= 3) roundCheese(g, X + w - 10, Y + 5);
+  const [mx, yx, cx] = SECOND_BOWLS.map(b => X + b), by = Y + 5;
+  if (has >= 1) milkJug(g, X + 6, by);   // (at its left end)
+  SECOND_BOWLS.forEach((b, i) => { if (stage >= 3 + i) tableBowl(g, X + b, by); });
+  if (has >= 1) bowlFull(g, mx, by, '#EDEBE2', MILK, '#FFFFFF');
+  if (has >= 2){   // yoghurt, thick, heaped up in its bowl, a wooden spoon in it
+    R(g, yx - 4, by - 8, 9, 3, '#2E2A26'); R(g, yx - 3, by - 9, 7, 2, '#2E2A26');
+    R(g, yx - 3, by - 7, 7, 2, '#FFFFFF'); R(g, yx - 2, by - 8, 5, 1, '#FFFFFF'); R(g, yx - 3, by - 6, 7, 1, '#E4E0D4');
+    R(g, yx + 2, by - 14, 2, 8, '#2E2A26'); R(g, yx + 2, by - 14, 1, 7, WOOD[3]); R(g, yx + 1, by - 15, 4, 3, '#2E2A26'); R(g, yx + 2, by - 14, 2, 1, WOOD[3]);   // the spoon
+  }
+  if (has >= 3) roundCheese(g, cx, by - 3);
 }
-function milkPail(g, cx, by){   // a wooden pail of milk, full to the brim, its bottom at by: wider at the top, its handle arching over
-  const OUT = '#2E2A26';
-  R(g, cx - 4, by - 14, 9, 1, OUT); R(g, cx - 5, by - 13, 1, 3, OUT); R(g, cx + 5, by - 13, 1, 3, OUT);   // its handle
-  R(g, cx - 6, by - 10, 13, 1, OUT);                                                                      // its rim
-  R(g, cx - 6, by - 9, 13, 1, OUT); R(g, cx - 5, by - 9, 11, 1, MILK); R(g, cx - 4, by - 9, 3, 1, '#FFFFFF');   // milk, to the brim
-  [6, 6, 5, 5, 5, 5, 4, 4].forEach((hw, k) => {                                                          // its staves, narrowing to the bottom
-    const y = by - 8 + k;
-    R(g, cx - hw, y, 2*hw + 1, 1, OUT); R(g, cx - hw + 1, y, 2*hw - 1, 1, k === 1 || k === 5 ? '#5A3A22' : WOOD[2]);   // (two bands round it)
-    if (k !== 1 && k !== 5){ R(g, cx - hw + 1, y, 2, 1, WOOD[3]); R(g, cx + 1, y, 1, 1, WOOD[1]); }
-  });
-  R(g, cx - 3, by, 7, 1, OUT);
-}
-function yoghurtJar(g, cx, by){   // a green-glazed jar of yoghurt, white at the top, a wooden spoon in it
-  const OUT = '#2E2A26';
-  R(g, cx + 2, by - 14, 1, 5, WOOD[3]); R(g, cx + 3, by - 15, 1, 2, WOOD[2]);                           // the spoon
-  R(g, cx - 4, by - 9, 9, 10, OUT); R(g, cx - 3, by - 6, 7, 6, '#8FC4A6'); R(g, cx - 3, by - 6, 2, 6, '#B8E0C8'); R(g, cx - 3, by - 1, 7, 1, '#5E9478');
-  R(g, cx - 4, by - 8, 9, 2, '#7DB696');                                                                  // its lip
-  R(g, cx - 3, by - 10, 7, 2, OUT); R(g, cx - 2, by - 10, 5, 2, '#FFFFFF');                              // thick yoghurt, heaped up
+// A white clay jug of milk, its bottom at by and its middle at cx: its spout on the left, its handle on the right, a blue
+// band round its belly, milk at its top.
+const MILK_JUG = [
+  "oo.ooooo...",
+  "oMoMMMMMo..",
+  ".oowwwwwooo",
+  "..owwwwwo.o",
+  ".olwwwwwwoo",
+  ".olbbbbbbo.",
+  ".olwwwwwwo.",
+  ".olwwwwwwo.",
+  "..owwwwwo..",
+  "...ooooo..."];
+function milkJug(g, cx, by){
+  const pal = {o:'#2E2A26', w:'#F4F1EA', l:'#FFFFFF', b:'#4F7FBF', M:MILK}, X = cx - 5, Y = by - MILK_JUG.length + 1;
+  MILK_JUG.forEach((r, y) => [...r].forEach((ch, x) => { if (pal[ch]) R(g, X + x, Y + y, 1, 1, pal[ch]); }));
 }
 function roundCheese(g, cx, by){   // a round cheese, a slice cut from it
   const OUT = '#2E2A26';
@@ -1284,12 +1310,12 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
-const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable', 'feastTableHoney', 'milkTable', 'milkTableYog', 'milkTableCheese'];   // side by side, these make one object as wide as the row
+const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTable', 'feastTableHoney', 'milkTableEmpty', 'milkTable', 'milkTableYog', 'milkTableCheese'];   // side by side, these make one object as wide as the row
 // Big objects set up as you watch (the setUp step, js/world.js): how many pieces each goes up in, one after another (its
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
 // table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
 // yoghurt on it, goes up in just that: the rest is there already.)
-const OBJECT_STAGES = {feastTable:5, stoneStool:1, hive:4, pen:6, milkTable:3, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1};
+const OBJECT_STAGES = {feastTable:5, stoneStool:1, hive:4, pen:6, milkTableEmpty:5, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1};
 const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese'];   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
