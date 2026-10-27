@@ -67,7 +67,7 @@ test('Select opens your tasks: your words, friends and shells, what to do now, t
   const text = sheet.textContent;
   assert.match(text, /friends/);
   assert.doesNotMatch(text, /Level|XP/, 'no levels or XP');
-  assert.match(text, /4 words|0\/\d+ words/);
+  assert.match(text, /\d+ words? caught/);
   const plain = s => s.replace(/\p{Extended_Pictographic}\uFE0F?/gu, '').replace(/\s+/g, ' ');   // (an emoji, such as ✨, is shown as its pixel icon)
   for (const t of tasks) assert.ok(plain(text).includes(plain(t)), `the task list should include "${t}"`);
   assert.ok(plain(text).indexOf(plain(tasks[0])) < plain(text).indexOf('Prologue: The Water Curtain Cave'), 'what to do now comes first, then the chapter');
