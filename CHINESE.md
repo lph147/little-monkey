@@ -103,6 +103,9 @@ shown where the word list has them.
 | 我要喝牛奶！ | wǒ yào hē niúnǎi! | I want to drink milk! | 渴猴子 (Thirsty monkey) |  |
 | 牛奶！太好了！ | niúnǎi! tài hǎo le! | Milk! Wonderful! | 渴猴子 (Thirsty monkey) |  |
 | 我们有牛奶了！ | wǒmen yǒu niúnǎi le! | We have milk now! |  |  |
+| 我们有西瓜了！ | wǒmen yǒu xīguā le! | We have watermelon now! |  |  |
+| 我们有葡萄了！ | wǒmen yǒu pútáo le! | We have grapes now! |  |  |
+| 我们有香蕉了！ | wǒmen yǒu xiāngjiāo le! | We have bananas now! |  |  |
 | 我们要碗！碗在水帘洞里。 | wǒmen yào wǎn! wǎn zài Shuǐlián Dòng lǐ. | We need bowls! The bowls are in the Water Curtain Cave. | 饿猴子 (Hungry monkey) |  |
 | 碗！太好了！ | wǎn! tài hǎo le! | Bowls! Wonderful! | 饿猴子 (Hungry monkey) |  |
 | 我们有碗了！ | wǒmen yǒu wǎn le! | We have bowls now! |  |  |
@@ -111,7 +114,7 @@ shown where the word list has them.
 | 牛在下面！ | niú zài xiàmiàn! | The cow is down below! | 山羊 (goat) |  |
 | 水果在下面！ | shuǐguǒ zài xiàmiàn! | The fruit is down below! | 山羊 (goat) |  |
 | 我要做吃的！ | wǒ yào zuò chī de! | I’m going to make something to eat! | 渴猴子 (Thirsty monkey) |  |
-| 好了！ | hǎo le! | It’s ready! | 渴猴子 (Thirsty monkey) |  |
+| 好了！ | hǎo le! | It’s ready! | 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
 | 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | you |  |
 | 我来了！ | wǒ lái le! | Here I come! | you |  |
@@ -213,6 +216,12 @@ What A at the feast's big table shows: what the troop has, and what it still nee
 | 我们有牛奶。 | wǒmen yǒu niúnǎi. | We have milk. |  |
 | 我们有酸奶。 | wǒmen yǒu suānnǎi. | We have yoghurt. |  |
 | 我们有奶酪。 | wǒmen yǒu nǎilào. | We have cheese. |  |
+| 我们有西瓜。 | wǒmen yǒu xīguā. | We have watermelon. |  |
+| 我们没有西瓜。 | wǒmen méiyǒu xīguā. | We don’t have any watermelon. |  |
+| 我们有葡萄。 | wǒmen yǒu pútáo. | We have grapes. |  |
+| 我们没有葡萄。 | wǒmen méiyǒu pútáo. | We don’t have any grapes. |  |
+| 我们有香蕉。 | wǒmen yǒu xiāngjiāo. | We have bananas. |  |
+| 我们没有香蕉。 | wǒmen méiyǒu xiāngjiāo. | We don’t have any bananas. |  |
 
 ### The sign
 

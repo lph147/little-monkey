@@ -711,6 +711,20 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(10, 13, 'left', 'giving the big monkey the banana seeds');
   assert.ok(get('__said').includes('这是香蕉的种子'), 'these are banana seeds');
   assert.deepEqual([area().bananaSeeds, area().bananaPlanted, run('tileAt(3, 14).look')], ['done', 1, 'bananaHome'], 'two banana plants in the garden');
+  // The garden, version 4: each fruit is ripe 8 questions after it was planted (practice lessons at school, here); the big
+  // monkey picks each (好了！), and as you come up to the big tree they go on the feast's new table for the garden's fruit
+  stand(11, 5, 'up');
+  await act('arrive(11, 4).then(runEvents)', 'walking into the school, to practise while the fruit grows');
+  for (let i = 0; i < 12 && run('counter("bananaWait")') < 8; i++) await pressAt(7, 3, 'up', 'a practice lesson, while the fruit grows', 0);
+  assert.deepEqual([area().melonPlanted, area().grapePlanted, area().bananaPlanted], [2, 2, 2], 'all three ripe');
+  stand(7, 8, 'down');
+  await act('arrive(7, 9).then(runEvents)', 'walking out of the school');
+  for (const fruit of ['西瓜', '葡萄', '香蕉']) await pressAt(10, 13, 'left', `the big monkey picking the ripe ${fruit}`);
+  assert.deepEqual([area().melonPlanted, area().grapePlanted, area().bananaPlanted], [3, 3, 3], 'picked, for the feast');
+  await walk([[10, 13], [10, 10], [13, 10]], 'walking up to the big tree');
+  assert.deepEqual([area().fruitTable, area().melonPlanted, area().grapePlanted, area().bananaPlanted], [1, 4, 4, 4], 'on the feast’s new table');
+  assert.deepEqual(get('[12, 13, 14].map(x => tileAt(x, 7).look)'), ['fruitTableMelon', 'fruitTableGrapes', 'fruitTableBananas']);
+  assert.ok(['我们有西瓜了！', '我们有葡萄了！', '我们有香蕉了！'].every(t => get('__said').includes(t)), 'we have watermelon, grapes and bananas now!');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this

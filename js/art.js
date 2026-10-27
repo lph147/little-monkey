@@ -585,7 +585,7 @@ function plotString(g, X, Y, x, y, inside = [tileAt(x, y).look]){
 const PLOTS = ['plot', 'grassPlot', 'gardenBed'];   // ground marked out with stakes and string, as you watch (the markOut step)
 // The troop's garden by the stream (chapter 1, planned 27 October 2026): its beds, dug and raked into rows, the string it was
 // marked out with still round its edge, a stake at each corner; and what grows in it (GARDEN), such as melon vines.
-const GARDEN = ['gardenBed', 'gardenVines', 'trellis', 'bananaHome'];
+const GARDEN = ['gardenBed', 'gardenVines', 'gardenMelon', 'trellis', 'trellisRipe', 'bananaHome', 'bananaHomeRipe'];
 function gardenBed(g, X, Y, x, y){
   R(g, X, Y, T, T, '#6E4A2C');   // the earth, dug
   for (let r = 1; r < 16; r += 5) for (let i = 0; i < T; i++){   // its rows, earthed up into ridges (a little uneven)
@@ -872,6 +872,14 @@ const LOOKS = {
   fern:      (g,X,Y,x,y) => fern(g,X,Y,x,y),                                        // its ferns,
   bananaPlant: (g,X,Y,x,y) => grass(g,X,Y,x,y),                                     // and the grass under its banana plants (big objects)
   bananaHome: (g,X,Y,x,y) => gardenBed(g,X,Y,x,y),                                  // and the garden's beds under the troop's
+  // ripe in the garden (8 questions after they're planted): a melon on its vines; the trellis and the banana plants are
+  // big objects, their grapes and bananas hanging from them
+  gardenMelon: (g,X,Y,x,y) => { gardenBed(g,X,Y,x,y); melonVines(g,X,Y,x,y); melon(g,X,Y); },
+  trellisRipe: (g,X,Y,x,y) => gardenBed(g,X,Y,x,y),
+  bananaHomeRipe: (g,X,Y,x,y) => gardenBed(g,X,Y,x,y),
+  // the feast's table for the garden's fruit, a square at a time (OBJECT_ART), on the grass
+  fruitTableL: (g,X,Y,x,y) => grass(g,X,Y,x,y), fruitTableM: (g,X,Y,x,y) => grass(g,X,Y,x,y), fruitTableR: (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  fruitTableMelon: (g,X,Y,x,y) => grass(g,X,Y,x,y), fruitTableGrapes: (g,X,Y,x,y) => grass(g,X,Y,x,y), fruitTableBananas: (g,X,Y,x,y) => grass(g,X,Y,x,y),
   frame:     (g,X,Y,x,y) => plot(g,X,Y,x,y),   // the school's frame going up on its plot: a big object (OBJECT_ART), on the plot's earth
   needles:   (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // the pine wood's floor (grass in a sunny glade)
   pine:      (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // a pine, a dead one and a cracked rock: big objects, on the pine wood's floor
@@ -1037,6 +1045,14 @@ const OBJECT_ART = {
   trellis: (g, o) => trellis(g, o.x*T, o.y*T, o.w*T, o.h, o.stage ?? OBJECT_STAGES.trellis, false),
   bananaPlant: (g, o) => bananaPlant(g, o.x*T, o.y*T, 3, true),   // wild, with bananas
   bananaHome: (g, o) => bananaPlant(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.bananaHome, false),   // the troop's, in the garden
+  trellisRipe: (g, o) => trellis(g, o.x*T, o.y*T, o.w*T, o.h, 3, true),   // ripe
+  bananaHomeRipe: (g, o) => bananaPlant(g, o.x*T, o.y*T, 3, true),
+  fruitTableL: (g, o) => fruitTableSquare(g, o.x*T, o.y*T, 0, o.stage ?? 1, null),   // (each square of it going up with a knock)
+  fruitTableM: (g, o) => fruitTableSquare(g, o.x*T, o.y*T, 1, o.stage ?? 1, null),
+  fruitTableR: (g, o) => fruitTableSquare(g, o.x*T, o.y*T, 2, o.stage ?? 1, null),
+  fruitTableMelon: (g, o) => fruitTableSquare(g, o.x*T, o.y*T, 0, 1, (o.stage ?? 1) >= 1 ? 'melon' : null),   // (then its fruit going in its bowl)
+  fruitTableGrapes: (g, o) => fruitTableSquare(g, o.x*T, o.y*T, 1, 1, (o.stage ?? 1) >= 1 ? 'grapes' : null),
+  fruitTableBananas: (g, o) => fruitTableSquare(g, o.x*T, o.y*T, 2, 1, (o.stage ?? 1) >= 1 ? 'bananas' : null),
   stoneStool: (g, o) => { if ((o.stage ?? 1) >= 1) stoneStool(g, o.x*T, o.y*T); },
   pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
@@ -1346,6 +1362,28 @@ function milkTable(g, X, Y, w, stage, has){
   }
   if (has >= 3) roundCheese(g, cx, by - 3);
 }
+// The feast's table for the garden's fruit (chapter 1), beside the big one: a stone table three squares wide, drawn a
+// square at a time (part: 0 its left end, 1 its middle, 2 its right end, from the whole table's picture), each square with
+// its own bowl, so each fills on its own, in whatever order the fruit ripens: slices of watermelon (left), a bunch of
+// grapes (middle) and bananas (right).
+function fruitTableSquare(g, X, Y, part, stage, fruit){
+  if (stage < 1) return;
+  g.save(); g.beginPath(); g.rect(X - (part === 0 ? 4 : 0), Y - 24, T + (part === 0 || part === 2 ? 4 : 0), 60); g.clip();
+  slabTable(g, X - part * T, Y, 3 * T, 2);
+  g.restore();
+  const cx = X + 8, by = Y + 5, OUT = '#2E2A26';
+  tableBowl(g, cx, by);
+  if (fruit === 'melon') for (const [dx, h] of [[-4, 6], [0, 8], [4, 6]]){   // slices standing in the bowl, red, rind down
+    R(g, cx + dx - 2, by - 4 - h, 5, h, OUT);
+    for (let k = 0; k < h - 2; k++){ const w = Math.max(1, Math.round((k + 1) * 3 / (h - 2))); R(g, cx + dx - Math.floor(w / 2), by - 3 - h + k, w, 1, k < 1 ? '#FF7A72' : '#E84848'); }
+    R(g, cx + dx - 1, by - 5, 3, 1, '#2E8A3A');
+  }
+  if (fruit === 'grapes'){ grapes(g, cx - 5, by - 11); grapes(g, cx, by - 10); }
+  if (fruit === 'bananas') for (const [dy, c] of [[0, '#E9C53A'], [-2, '#F2D24A'], [-4, '#F7DC5C']]){   // a hand of bananas, curving up out of it
+    for (let i = 0; i < 10; i++){ const px = cx - 5 + i, py = by - 6 + dy - Math.round(Math.sin(i / 9 * Math.PI) * -2) - (i > 6 ? i - 6 : 0); R(g, px, py - 1, 1, 3, OUT); R(g, px, py, 1, 1, c); }
+    R(g, cx + 5, by - 12 + dy, 1, 1, '#5A3A1E');
+  }
+}
 // A white clay jug of milk, its bottom at by and its middle at cx: its spout on the left, its handle on the right, a blue
 // band round its belly, milk at its top.
 const MILK_JUG = [
@@ -1518,8 +1556,8 @@ const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTableBare', 'feastTableB
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
 // table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
 // yoghurt on it, goes up in just that: the rest is there already.)
-const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'bananaPlant', 'bananaHome'];
+const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe'];
 const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of

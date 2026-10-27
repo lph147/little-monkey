@@ -22,7 +22,7 @@ function game(pos, area = {}){
   g.run("mode = 'play'; save = () => {}; globalThis.__notes = []; globalThis.__sounds = []");
   g.run("showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }; showNotice = async (w, o = {}) => { __notes.push('card: ' + w + (o.quiet ? ', quiet' : ', said')); rec(w).lv = Math.max(rec(w).lv, 1); }");
   g.run("showPicked = async p => { __notes.push('card: ' + p.zh.replace(/ /g, '')); }");
-  g.run("for (const k of ['tock', 'sprout', 'right', 'fanfare', 'bump']) SFX[k] = () => { __sounds.push(k); }");
+  g.run("for (const k of ['tock', 'sprout', 'right', 'fanfare', 'bump', 'chime']) SFX[k] = () => { __sounds.push(k); }");
   g.run("globalThis.__said = []; showDialog = async (who, line, o = {}) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('') + (o.teach ? ' [' + o.teach + ']' : '')); }");   // (who says what)
   g.run("replyWith = async best => { __said.push('player: ' + best); return true; }; gapQ = async o => { __said.push('gap: ' + o.t.join('') + ' (' + o.gap + ')'); return true; }");
   g.run('placePlayer()');
@@ -139,7 +139,7 @@ test('give the big monkey the seeds: 种子！太好了！, you finish 这是西
   assert.equal(g.run('tileAt(3, 16).look'), 'gardenBed', 'the rest of the garden waits for other seeds');
   assert.ok(get(g, '__sounds').filter(s => s === 'sprout').length >= 6, 'each square comes up out of the ground in turn');
   assert.match(get(g, '__notes').join(' '), /The troop plants the 西瓜 \(watermelon\) seeds in the garden, and waters them from the stream\. Little vines come up at once: on Flower Fruit Mountain, everything grows fast!/);
-  assert.deepEqual(tasks(g), []);
+  assert.deepEqual(get(g, "getTasks().filter(t => /^melon/.test(t.id)).map(t => t.id)"), ['melonGrow'], 'growing now (version 4: ripe after 8 more questions)');
   assert.deepEqual(get(g, "areaChecklist().find(([t]) => /wild melons/.test(t))"), ['Bring the big monkey 种子 (seeds) from wild melons, for the garden', true, false, true]);
 });
 
@@ -208,7 +208,7 @@ test('give the big monkey the grape seeds: 这是葡萄的种子, and the troop 
   assert.ok(get(g, '__sounds').filter(s => s === 'tock').length >= 3, 'set up a piece at a time');
   assert.match(get(g, '__notes').join(' '), /The troop plants the 葡萄 \(grapes\) seeds in the garden, with a trellis for them to climb\. Vines come up at once, and climb all over it!/);
   assert.equal(g.run('walkable(8, 14)'), false);
-  assert.deepEqual(grapeTasks(g), []);
+  assert.deepEqual(grapeTasks(g), ['The 葡萄 (grapes) on the trellis are growing: practise your words, and they’ll soon be ripe (0/8)']);
   assert.deepEqual(get(g, "areaChecklist().find(([t]) => /wild grapes/.test(t))"), ['Bring the big monkey 种子 (seeds) from wild grapes, for the garden', true, false, true]);
 });
 
@@ -276,4 +276,71 @@ test('give the big monkey the banana seeds: 这是香蕉的种子, and two banan
   assert.match(get(g, '__notes').join(' '), /Two banana plants shoot up at once, their big leaves unfolding!/);
   assert.equal(g.run('tileAt(3, 16).look'), 'gardenBed', 'the bottom of the garden stays dug, waiting');
   assert.deepEqual(get(g, "areaChecklist().filter(([t]) => /from wild/.test(t)).map(([, done]) => done)"), [true, true, true], 'all three fruit, planted');
+});
+
+// Version 4: each fruit in the garden is ripe once you've answered 8 more questions since it was planted; the big monkey
+// picks it (好了！), and as you come up to the big tree it goes on the feast's table for the garden's fruit, each in its own
+// bowl, in whatever order they ripen: 我们有西瓜了！; and the feast's list says 我们有西瓜。
+const feastHas = g => get(g, "AREA.feastList.foods.filter(f => (!f.show || matches(f.show)) && f.have && matches(f.have)).map(f => f.yes.zh.replace(/ /g, ''))");
+const feastShows = g => get(g, "AREA.feastList.foods.filter(f => !f.show || matches(f.show)).map(f => f.word)");
+const PLANTED = {...SPRINGS, melonSeeds: 'done', grapeSeeds: 'done', bananaSeeds: 'done', melonPlanted: 1, grapePlanted: 1, bananaPlanted: 1, melonTurn: 40, grapeTurn: 44, bananaTurn: 46};
+test('planted, each fruit grows: your task counts the questions you answer, anywhere (8), then it’s ripe: a chime, and a ! over the big monkey', async () => {
+  const g = game({place: 'homeGround', x: 13, y: 13, dir: 'down'}, PLANTED);
+  g.run("for (const w of ['西瓜', '葡萄', '香蕉', '种子']) rec(w).lv = 1; S.turn = 47");
+  assert.deepEqual(get(g, "getTasks().filter(t => /Grow$/.test(t.id)).map(t => t.text)"), [
+    'The 西瓜 (watermelon) in the garden are growing: practise your words, and they’ll soon be ripe (7/8)',
+    'The 葡萄 (grapes) on the trellis are growing: practise your words, and they’ll soon be ripe (3/8)',
+    'The 香蕉 (banana) in the garden are growing: practise your words, and they’ll soon be ripe (1/8)']);
+  assert.deepEqual(feastShows(g).slice(-3), ['西瓜', '葡萄', '香蕉'], 'on the feast’s list, once planted');
+  assert.deepEqual(get(g, "AREA.feastList.foods.slice(-3).map(f => f.no.zh.replace(/ /g, ''))"), ['我们没有西瓜。', '我们没有葡萄。', '我们没有香蕉。'], 'not had yet');
+  assert.equal(bubble(g, 'big'), null);
+  g.run('S.turn = 48'); await play(g, 'runEvents()');
+  assert.deepEqual(get(g, '[here().melonPlanted, here().grapePlanted, here().bananaPlanted]'), [2, 1, 1], 'the melons first');
+  assert.ok(get(g, '__sounds').includes('chime'));
+  assert.match(get(g, '__notes').join(' '), /The 西瓜 \(watermelon\) in the garden are ripe! Go and see the big monkey\./);
+  assert.deepEqual([g.run('tileAt(11, 15).look'), g.run('tileAt(11, 14).look')], ['gardenMelon', 'gardenVines'], 'ripe melons on the vines');
+  assert.equal(bubble(g, 'big'), '!');
+  g.run('S.turn = 54'); await play(g, 'runEvents()');
+  assert.deepEqual(get(g, '[here().melonPlanted, here().grapePlanted, here().bananaPlanted]'), [2, 2, 2], 'and then the grapes and the bananas');
+  assert.deepEqual(get(g, "mapObjects().filter(o => /Ripe$/.test(o.look)).map(o => [o.look, o.x, o.y].join())").sort(), ['bananaHomeRipe,3,14', 'bananaHomeRipe,5,14', 'trellisRipe,7,14'],
+    'grapes on the trellis, and bananas on the plants');
+});
+
+test('the big monkey picks each ripe fruit (好了！), and as you come up to the big tree it goes on the feast’s table: 我们有西瓜了！', async () => {
+  const g = game({place: 'homeGround', x: 10, y: 13, dir: 'left'}, {...PLANTED, melonPlanted: 2, grapePlanted: 2, bananaPlanted: 1});
+  g.run("for (const w of ['西瓜', '葡萄', '香蕉', '种子']) rec(w).lv = 1; S.turn = 47");
+  await press(g, 10, 13, 'left');
+  assert.deepEqual(get(g, '__said'), ['big: 好了！'], 'It’s ready!');
+  assert.match(get(g, '__notes').join(' '), /The big monkey picks the ripe 西瓜 \(watermelon\): they’re for the feast!/);
+  assert.equal(get(g, 'here().melonPlanted'), 3);
+  assert.deepEqual(get(g, "getTasks().filter(t => /Table$/.test(t.id)).map(t => [t.text, t.target])"), [['Go and see the 西瓜 (watermelon) go on the feast’s 桌子 (table), by the big tree', [13, 8]]]);
+  for (const [x, y] of [[12, 7], [13, 7], [14, 7], [12, 8], [14, 8]]) assert.ok(['grass', 'whiteFlowers'].includes(g.run(`tileAt(${x}, ${y}).look`)), `open ground at ${x},${y}, till then`);
+  reset(g);
+  g.run("S.pos = {place: PLACE, x: 13, y: 10, dir: 'up'}; placePlayer()"); await play(g, 'runEvents()');
+  assert.deepEqual(get(g, '[here().fruitTable, here().melonPlanted]'), [1, 4]);
+  assert.deepEqual(get(g, '[12, 13, 14].map(x => tileAt(x, 7).look)'), ['fruitTableMelon', 'fruitTableM', 'fruitTableR'], 'a new table, the melon in its first bowl');
+  assert.deepEqual(get(g, '[12, 14].map(x => tileAt(x, 8).look)'), ['stoneStool', 'stoneStool'], 'and two stools');
+  assert.ok(get(g, '__sounds').filter(s => s === 'tock').length >= 6, 'set up a square at a time, then the melon');
+  assert.ok(get(g, '__said').includes('hungry: 我们有西瓜了！'), 'We have watermelon now!');
+  assert.deepEqual(feastHas(g).slice(-1), ['我们有西瓜。'], 'on the feast’s list');
+  assert.equal(bubble(g, 'big'), '!', 'the grapes are ripe too');
+  reset(g);
+  await press(g, 10, 13, 'left');
+  g.run("S.pos = {place: PLACE, x: 13, y: 10, dir: 'up'}; placePlayer()"); await play(g, 'runEvents()');
+  assert.deepEqual(get(g, '[12, 13, 14].map(x => tileAt(x, 7).look)'), ['fruitTableMelon', 'fruitTableGrapes', 'fruitTableR'], 'the grapes in the middle bowl');
+  assert.ok(get(g, '__said').includes('hungry: 我们有葡萄了！'));
+  assert.ok(!get(g, '__notes').some(n => /new stone/.test(n)), 'the table is out already');
+  const b = game({place: 'homeGround', x: 13, y: 10, dir: 'up'}, {...PLANTED, bananaPlanted: 3});
+  await play(b, 'runEvents()');
+  assert.deepEqual(get(b, '[12, 13, 14].map(x => tileAt(x, 7).look)'), ['fruitTableL', 'fruitTableM', 'fruitTableBananas'], 'bananas first, in their own bowl');
+  assert.equal(b.run('promptFor(13, 7)'), 'Look', 'A at it: the feast’s list');
+});
+
+test('with all three fruit on the table, the feast’s list says so, and the checklist is ticked', () => {
+  const g = game({place: 'homeGround', x: 13, y: 9, dir: 'up'}, {...PLANTED, melonPlanted: 4, grapePlanted: 4, bananaPlanted: 4, fruitTable: 1, bees: 11, honey: 'done'});
+  assert.deepEqual(feastHas(g).slice(-3), ['我们有西瓜。', '我们有葡萄。', '我们有香蕉。']);
+  assert.deepEqual(get(g, "areaChecklist().filter(([t]) => /the garden’s .* go on the feast/.test(t)).map(([t, done]) => [t, done])"), [
+    ['See the garden’s watermelons go on the feast’s table, once they’re ripe', true],
+    ['See the garden’s grapes go on the feast’s table, once they’re ripe', true],
+    ['See the garden’s bananas go on the feast’s table, once they’re ripe', true]]);
 });

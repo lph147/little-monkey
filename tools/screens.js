@@ -287,6 +287,15 @@ SAVES.bananasBack = {...SAVES.springs, w: {...SAVES.springs.w, ...knows(1, ['香
   tasksSeen: {...SAVES.springs.tasksSeen, bananaSeedsBack: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};
 SAVES.gardenPlanted = {...SAVES.bananasBack, w: {...SAVES.bananasBack.w, ...knows(1, ['西瓜', '葡萄'])}, areas: {1: {...SAVES.bananasBack.areas[1], holding: {},
   melonSeeds: 'done', melonPlanted: 1, grapeSeeds: 'done', grapePlanted: 1, bananaSeeds: 'done', bananaPlanted: 1}}, pos: {place: 'homeGround', x: 10, y: 12, dir: 'down'}};
+// version 4: the fruit growing (your task counts the questions), ripe in the garden, the big monkey picking it (好了！), and
+// the feast's new table for it, each fruit in its own bowl
+SAVES.fruitGrowing = {...SAVES.gardenPlanted, turn: 50, areas: {1: {...SAVES.gardenPlanted.areas[1], melonTurn: 45, grapeTurn: 47, bananaTurn: 49}}, tasksSeen: {...SAVES.gardenPlanted.tasksSeen, melonGrow: 1, grapeGrow: 1, bananaGrow: 1}};
+SAVES.fruitRipe = {...SAVES.fruitGrowing, turn: 60, areas: {1: {...SAVES.fruitGrowing.areas[1], melonPlanted: 2, grapePlanted: 2, bananaPlanted: 2}},
+  tasksSeen: {...SAVES.fruitGrowing.tasksSeen, melonRipe: 1, grapeRipe: 1, bananaRipe: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};   // facing the big monkey
+SAVES.fruitPicked = {...SAVES.fruitRipe, areas: {1: {...SAVES.fruitRipe.areas[1], melonPlanted: 3, grapePlanted: 2, bananaPlanted: 2}}, tasksSeen: {...SAVES.fruitRipe.tasksSeen, melonTable: 1},
+  pos: {place: 'homeGround', x: 13, y: 11, dir: 'up'}};   // on the road, just short of the big tree
+SAVES.fruitTable = {...SAVES.fruitRipe, areas: {1: {...SAVES.fruitRipe.areas[1], melonPlanted: 4, grapePlanted: 4, bananaPlanted: 4, fruitTable: 1, bees: 11, honey: 'done'}},
+  pos: {place: 'homeGround', x: 13, y: 9, dir: 'up'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, health: 20, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -967,6 +976,18 @@ const SCREENS = [
     play(); await wait(100); talk(npc('big')); await wait(500); }},
   {id: 'garden-planted', title: 'The garden, planted', save: 'gardenPlanted', why: 'Two banana plants, the grapes’ trellis and the melons, all growing in the troop’s garden by the stream.', run: async () => {
     play(); await wait(500); }},
+  {id: 'tasks-fruit', title: 'Tasks: the fruit growing', save: 'fruitGrowing', why: 'Planted, each fruit grows: its task counts the questions you’ve answered since, anywhere (of 8), as the little dairy’s do.', run: async () => {
+    play(); await wait(100); tasksPage(() => {}); await wait(400); }},
+  {id: 'garden-ripe', title: 'Ripe!', save: 'fruitRipe', why: 'After 8 more questions each is ripe, a chime and a message each, and a ! over the big monkey: melons on the vines, grapes on the trellis, bananas on the plants.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'fruit-ready', title: 'It’s ready!', save: 'fruitRipe', why: 'The big monkey picks each ripe fruit for the feast: 好了！ (It’s ready!), one at a time.', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
+  {id: 'fruit-table', title: 'The garden’s fruit, for the feast', save: 'fruitPicked', why: 'As you come up to the big tree, the troop sets out a new stone table for the garden’s fruit, a square at a time, and the melon goes in its bowl: 我们有西瓜了！ (We have watermelon now!).', run: async () => {
+    play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(4000); }},
+  {id: 'fruit-table-full', title: 'All three on the table', save: 'fruitTable', why: 'Slices of watermelon, a bunch of grapes and bananas, each in its own bowl, whatever order they ripened in.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'feast-list-fruit', title: 'The feast’s list, with the fruit', save: 'fruitTable', why: 'A at any of the tables: 我们有西瓜。我们有葡萄。我们有香蕉。 at the end of the list (we don’t have it, while it grows: 我们没有西瓜。).', run: async () => {
+    play(); await wait(100); feastCard(); await wait(500); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)

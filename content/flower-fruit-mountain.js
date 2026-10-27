@@ -96,11 +96,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //          dark pines (scared of the wolves in it), 'slope' on the south slope (hungry); 0 while it follows you
   //   pinesWolf chapter 1: 1 once you've gone first into the long grass in the dark pines, and chased off its wolf
   //   garden   chapter 1: 1 once the big monkey has asked for seeds for a garden by the stream, and marked it out
-  //   melonPlanted chapter 1: 1 once the troop has planted the wild watermelon seeds you brought, in the garden
+  //   melonPlanted chapter 1: 1 once the troop has planted the wild watermelon seeds you brought, in the garden, 2 once
+  //           they're ripe (8 questions later: melonWait), 3 once the big monkey has picked them, for the feast, 4 once
+  //           they're on the feast's table for the garden's fruit (and the same for the grapes and the bananas)
   //   grapePlanted chapter 1: 1 once the troop has set up a trellis in the garden and planted the wild grape seeds by it
   //   cliffsSeen chapter 1: 1 once you've been to the cliffs (山崖), where the wild grapes grow
   //   bananaPlanted chapter 1: 1 once the troop has planted the wild banana seeds you brought: two banana plants in the garden
   //   springsSeen chapter 1: 1 once you've been to the hot spring valley (温泉谷), where the wild bananas grow
+  //   melonTurn, grapeTurn, bananaTurn chapter 1: your question count when each was planted (the countFrom step)
+  //   fruitTable chapter 1: 1 once the troop has set out the feast's table for the garden's fruit, beside the big one
   //   pastureTracks, streamSeen, pastureLog, rabbitTold  chapter 1, the way through the dark pines (the pasture's, till 27 October 2026): 1 once you've seen the
   //           cow's hoofprints; once you've come to the stream they go into; once you've knocked the dead pine down across it,
   //           a bridge; once the rabbit by the way has told you where the cow went (its word game won)
@@ -110,7 +114,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -143,7 +147,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']},   // the numbers you've learned at school
     coloursKnown: {count:'known', words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},   // and the colours
     practised: {count:'practised'},   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
-    dairyWait: {count:'since', key:'dairyTurn', max:8}   // and since the thirsty monkey started making something at the little dairy (8 to make it)
+    dairyWait: {count:'since', key:'dairyTurn', max:8},   // and since the thirsty monkey started making something at the little dairy (8 to make it)
+    melonWait: {count:'since', key:'melonTurn', max:8}, grapeWait: {count:'since', key:'grapeTurn', max:8}, bananaWait: {count:'since', key:'bananaTurn', max:8}   // and since each fruit was planted in the garden (8 to ripen)
   },
 
   // Lessons at school (the lesson step, with the teacher): each series teaches its words one at a time, one a lesson, in
@@ -276,6 +281,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'grapeSeedsBack', if:{grapeSeeds:'asked', holding:{grapeSeeds:true}}, text:'Take the {种子} from the wild {葡萄} to the big monkey, at the garden by the stream', arrow:'big'},
     {id:'bananaSeeds', if:{bananaSeeds:'asked', holding:{bananaSeeds:false}}, text:'Wild {香蕉|bananas} grow in a valley of hot springs, up the brook from the riverside', arrow:{place:'hotSprings'}},
     {id:'bananaSeedsBack', if:{bananaSeeds:'asked', holding:{bananaSeeds:true}}, text:'Take the {种子} from the wild {香蕉} to the big monkey, at the garden by the stream', arrow:'big'},
+    // each fruit in the garden, growing (8 questions, anywhere), ripe, and going on the feast's table
+    {id:'melonGrow', if:{melonPlanted:1}, text:'The {西瓜} in the garden are growing: practise your words, and they’ll soon be ripe ({melonWait}/8)'},
+    {id:'melonRipe', if:{melonPlanted:2}, text:'The {西瓜} in the garden are ripe: go and see the big monkey', arrow:'big'},
+    {id:'melonTable', if:{melonPlanted:3}, text:'Go and see the {西瓜} go on the feast’s {桌子}, by the big tree', arrow:[13, 8, 'homeGround']},
+    {id:'grapeGrow', if:{grapePlanted:1}, text:'The {葡萄} on the trellis are growing: practise your words, and they’ll soon be ripe ({grapeWait}/8)'},
+    {id:'grapeRipe', if:{grapePlanted:2}, text:'The {葡萄} on the trellis are ripe: go and see the big monkey', arrow:'big'},
+    {id:'grapeTable', if:{grapePlanted:3}, text:'Go and see the {葡萄} go on the feast’s {桌子}, by the big tree', arrow:[13, 8, 'homeGround']},
+    {id:'bananaGrow', if:{bananaPlanted:1}, text:'The {香蕉} in the garden are growing: practise your words, and they’ll soon be ripe ({bananaWait}/8)'},
+    {id:'bananaRipe', if:{bananaPlanted:2}, text:'The {香蕉} in the garden are ripe: go and see the big monkey', arrow:'big'},
+    {id:'bananaTable', if:{bananaPlanted:3}, text:'Go and see the {香蕉} go on the feast’s {桌子}, by the big tree', arrow:[13, 8, 'homeGround']},
     {id:'milk', if:{milk:'asked', holding:{milk:true}}, text:'Give the {牛奶} to the thirsty monkey', arrow:'thirsty'},
     {id:'milkTable', if:{cow:9, milkTable:0}, text:'Go and see the {牛奶} go on the feast’s second {桌子}', arrow:[22, 8, 'homeGround']},
     // the little dairy by the pen: the thirsty monkey makes something from the milk, ready once you've answered 8 more
@@ -305,6 +320,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, cow:0}, text:'The thirsty monkey has news for you: look for his ! at the home ground.'},
+    {if:{bees:{atLeast:11}, milkTable:{atLeast:3}, melonPlanted:4, grapePlanted:4, bananaPlanted:4}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese, and fruit from the garden now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the garden's fruit is on the table too)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees, the cow and its dairy are done: till then, they have tasks)
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then (after each new word, practise a little before the next). The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
@@ -362,6 +378,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Bring the big monkey {种子|seeds} from wild melons, for the garden', show:{garden:{atLeast:1}}, done:{melonSeeds:'done'}},
     {chapter:1, text:'Bring the big monkey {种子|seeds} from wild grapes, for the garden', show:{garden:{atLeast:1}}, done:{grapeSeeds:'done'}},
     {chapter:1, text:'Bring the big monkey {种子|seeds} from wild bananas, for the garden', show:{garden:{atLeast:1}}, done:{bananaSeeds:'done'}},
+    {chapter:1, text:'See the garden’s {西瓜|watermelons} go on the feast’s table, once they’re ripe', show:{melonPlanted:{atLeast:1}}, done:{melonPlanted:{atLeast:4}}},
+    {chapter:1, text:'See the garden’s {葡萄|grapes} go on the feast’s table, once they’re ripe', show:{grapePlanted:{atLeast:1}}, done:{grapePlanted:{atLeast:4}}},
+    {chapter:1, text:'See the garden’s {香蕉|bananas} go on the feast’s table, once they’re ripe', show:{bananaPlanted:{atLeast:1}}, done:{bananaPlanted:{atLeast:4}}},
     {chapter:1, text:'Lead the {牛} into its new home', show:{cow:{atLeast:5}}, done:{cow:{atLeast:8}}},
     {chapter:1, text:'Give the thirsty monkey some {牛奶|milk}', show:{cow:{atLeast:8}}, done:{milk:'done'}},
     {chapter:1, text:'See the {牛奶|milk} go on the feast’s second {桌子}', show:{milk:'done'}, done:{milkTable:{atLeast:1}}},
@@ -409,7 +428,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{wood:'asked', stones:'done', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', wood:'done', holding:{stones:true}}, show:'?'},
       {if:{build:2, school:0}, show:'!'},   // chapter 1: the school
       {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, show:'!'}, {if:{flowers:'asked', holding:{flowers:true}}, show:'?'},   // and flowers for it, once you know their colours
-      {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, show:'!'}, {if:{melonSeeds:'asked', holding:{melonSeeds:true}}, show:'?'}, {if:{grapeSeeds:'asked', holding:{grapeSeeds:true}}, show:'?'}, {if:{bananaSeeds:'asked', holding:{bananaSeeds:true}}, show:'?'}],   // and then a garden: he wants seeds
+      {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, show:'!'}, {if:{melonSeeds:'asked', holding:{melonSeeds:true}}, show:'?'}, {if:{grapeSeeds:'asked', holding:{grapeSeeds:true}}, show:'?'}, {if:{bananaSeeds:'asked', holding:{bananaSeeds:true}}, show:'?'},
+      {if:{any:[{melonPlanted:2}, {grapePlanted:2}, {bananaPlanted:2}]}, show:'!'}],   // and then a garden: he wants seeds
     woodSquirrel: [{if:{new:'木头', woodSquirrel:0}, show:'!'}]   // the squirrel in the pine wood, until it's shown you the dry pines (decided 26 October 2026: it kept its ! after, just to say it again)
   },
 
@@ -567,14 +587,27 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{cow:4, cowWaits:'slope', cowFood:'done'}, do:[{set:{cowWaits:0}}, {follow:['cow']},
       {message:'The {牛} munches the {草|grass} happily, and follows you again. On up the slope, by its steps, and home!'}]},
     // chapter 1: the garden: once you've given the big monkey seeds, the troop plants them as you watch, in their own part of it
-    {if:{place:'homeGround', melonSeeds:'done', melonPlanted:0}, do:[{plant:{melonPlanted:1}},
+    {if:{place:'homeGround', melonSeeds:'done', melonPlanted:0}, do:[{plant:{melonPlanted:1}}, {countFrom:'melonTurn'},
       {message:'The troop plants the {西瓜} seeds in the garden, and waters them from the stream. Little vines come up at once: on Flower Fruit Mountain, everything grows fast!'}]},
     // the grapes: the troop sets up a trellis for them as you watch (its posts, its wires, then the vines growing up it)
-    {if:{place:'homeGround', grapeSeeds:'done', grapePlanted:0}, do:[{setUp:{grapePlanted:1}},
+    {if:{place:'homeGround', grapeSeeds:'done', grapePlanted:0}, do:[{setUp:{grapePlanted:1}}, {countFrom:'grapeTurn'},
       {message:'The troop plants the {葡萄} seeds in the garden, with a trellis for them to climb. Vines come up at once, and climb all over it!'}]},
+    // each fruit in the garden is ripe once you've answered 8 more questions since it was planted (as the little dairy's
+    // yoghurt is: a chime, a message, and a ! over the big monkey); he picks it for the feast, and as you come up to the
+    // big tree, it goes on the feast's table for the garden's fruit (set out with the first, beside the big one), each in
+    // its own bowl, whatever order they ripen in, and the hungry monkey is thrilled
+    {if:{melonPlanted:1, melonWait:{atLeast:8}}, do:[{set:{melonPlanted:2}}, {sound:'chime'}, {message:'The {西瓜} in the garden are ripe! Go and see the big monkey.'}]},
+    {if:{grapePlanted:1, grapeWait:{atLeast:8}}, do:[{set:{grapePlanted:2}}, {sound:'chime'}, {message:'The {葡萄} on the trellis are ripe! Go and see the big monkey.'}]},
+    {if:{bananaPlanted:1, bananaWait:{atLeast:8}}, do:[{set:{bananaPlanted:2}}, {sound:'chime'}, {message:'The {香蕉} in the garden are ripe! Go and see the big monkey.'}]},
+    {if:{melonPlanted:3, around:[13, 7, 'homeGround']}, do:[{message:'The troop sets out a new stone {桌子} for the garden’s fruit, beside the big one.', if:{fruitTable:0}},
+      {setUp:{fruitTable:1}, if:{fruitTable:0}}, {setUp:{melonPlanted:4}}, {say:'haveMelonNow', by:'hungry'}, {message:'Slices of {西瓜} in a bowl, for the feast!'}]},
+    {if:{grapePlanted:3, around:[13, 7, 'homeGround']}, do:[{message:'The troop sets out a new stone {桌子} for the garden’s fruit, beside the big one.', if:{fruitTable:0}},
+      {setUp:{fruitTable:1}, if:{fruitTable:0}}, {setUp:{grapePlanted:4}}, {say:'haveGrapesNow', by:'hungry'}, {message:'Bunches of {葡萄} in a bowl, for the feast!'}]},
+    {if:{bananaPlanted:3, around:[13, 7, 'homeGround']}, do:[{message:'The troop sets out a new stone {桌子} for the garden’s fruit, beside the big one.', if:{fruitTable:0}},
+      {setUp:{fruitTable:1}, if:{fruitTable:0}}, {setUp:{bananaPlanted:4}}, {say:'haveBananasNow', by:'hungry'}, {message:'{香蕉} in a bowl, for the feast!'}]},
     {if:{place:'cliffs', cliffsSeen:0}, do:[{set:{cliffsSeen:1}}, {message:'Steep cliffs, one ledge below another. Somewhere down here, wild grapes grow!'}]},
     // the bananas: two banana plants come up in the garden as you watch (a shoot, its stem and lower leaves, then the rest)
-    {if:{place:'homeGround', bananaSeeds:'done', bananaPlanted:0}, do:[{setUp:{bananaPlanted:1}},
+    {if:{place:'homeGround', bananaSeeds:'done', bananaPlanted:0}, do:[{setUp:{bananaPlanted:1}}, {countFrom:'bananaTurn'},
       {message:'The troop plants the {香蕉} seeds in the garden. Two banana plants shoot up at once, their big leaves unfolding!'}]},
     {if:{place:'hotSprings', springsSeen:0}, do:[{set:{springsSeen:1}}, {message:'A warm, sheltered valley, full of steaming hot springs! Wild bananas grow at the top, past the steam.'}]},
     // leading the cow home, as you come into the gap between the big rocks, a bear rears up out of its long grass at you
@@ -884,17 +917,35 @@ const FLOWER_FRUIT_MOUNTAIN = {
         // (the plant step): the melons (δ and μ: their vines, ψ). The banana plants (α, β) and the grapes' trellis (γ) come
         // with their places
         'ζ': {look:'grass', walk:true, becomes:[{if:{garden:{atLeast:1}}, to:'ε'}]},
-        'α': {look:'grass', walk:true, becomes:[{if:{bananaPlanted:1}, to:'ρ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
-        'β': {look:'grass', walk:true, becomes:[{if:{bananaPlanted:1}, to:'σ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
-        'γ': {look:'grass', walk:true, becomes:[{if:{grapePlanted:1}, to:'τ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
-        'δ': {look:'grass', walk:true, becomes:[{if:{melonPlanted:1}, to:'ψ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
-        'μ': {look:'grass', walk:true, becomes:[{if:{melonPlanted:1}, to:'ψ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
+        'α': {look:'grass', walk:true, becomes:[{if:{bananaPlanted:{atLeast:2}}, to:'φ'}, {if:{bananaPlanted:{atLeast:1}}, to:'ρ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
+        'β': {look:'grass', walk:true, becomes:[{if:{bananaPlanted:{atLeast:2}}, to:'χ'}, {if:{bananaPlanted:{atLeast:1}}, to:'σ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
+        'γ': {look:'grass', walk:true, becomes:[{if:{grapePlanted:{atLeast:2}}, to:'υ'}, {if:{grapePlanted:{atLeast:1}}, to:'τ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
+        'δ': {look:'grass', walk:true, becomes:[{if:{melonPlanted:{atLeast:1}}, to:'ψ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
+        'μ': {look:'grass', walk:true, becomes:[{if:{melonPlanted:{atLeast:2}}, to:'ξ'}, {if:{melonPlanted:{atLeast:1}}, to:'ψ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},   // (a ripe melon, once they're ripe)
         'ε': {look:'gardenBed', walk:true},   // the garden's beds, dug
         'ψ': {look:'gardenVines', walk:true, word:'西瓜', note:'Watermelon vines, growing in the garden.'},   // the melons' vines
         '4': {look:'grass', walk:true, becomes:[{if:{garden:{atLeast:1}}, to:'ω'}]},
         'τ': {look:'trellis', word:'葡萄', onLook:[{do:[{message:'The {葡萄} vines climb all over the trellis, green and leafy.'}]}]},   // the grapes' trellis
         'ρ': {look:'bananaHome', word:'香蕉', onLook:[{do:[{message:'A banana plant, its big leaves rustling. No {香蕉} on it yet!'}]}]},   // the troop's two banana plants
         'σ': {look:'bananaHome', word:'香蕉', onLook:[{do:[{message:'A banana plant, its big leaves rustling. No {香蕉} on it yet!'}]}]},
+        // ripe in the garden (8 questions after they're planted): melons on the vines, grapes on the trellis, bananas on the plants
+        'ξ': {look:'gardenMelon', word:'西瓜', onLook:[{do:[{message:'A big ripe {西瓜}, growing in the garden.'}]}]},
+        'υ': {look:'trellisRipe', word:'葡萄', onLook:[{do:[{message:'Bunches of ripe {葡萄} hang from the trellis.'}]}]},
+        'φ': {look:'bananaHomeRipe', word:'香蕉', onLook:[{do:[{message:'A banana plant, a bunch of ripe {香蕉} hanging under its leaves.'}]}]},
+        'χ': {look:'bananaHomeRipe', word:'香蕉', onLook:[{do:[{message:'A banana plant, a bunch of ripe {香蕉} hanging under its leaves.'}]}]},
+        // the feast's table for the garden's fruit, left of the big one, set out with the first fruit to go on it (fruitTable),
+        // a square at a time, each with its own bowl, filled as each fruit goes on, in any order: watermelon (η), grapes (θ),
+        // bananas (ι); and its stools (κ), either side of the little monkey who plays hide and seek. A at it: the feast's list
+        'η': {look:'grass', walk:true, becomes:[{if:{melonPlanted:{atLeast:4}}, to:'λ'}, {if:{fruitTable:{atLeast:1}}, to:'ν'}]},
+        'θ': {look:'whiteFlowers', walk:true, word:'花', learnOnStep:true, colour:'白色', becomes:[{if:{grapePlanted:{atLeast:4}}, to:'π'}, {if:{fruitTable:{atLeast:1}}, to:'ο'}]},
+        'ι': {look:'grass', walk:true, becomes:[{if:{bananaPlanted:{atLeast:4}}, to:'Φ'}, {if:{fruitTable:{atLeast:1}}, to:'Σ'}]},
+        'κ': {look:'grass', walk:true, becomes:[{if:{fruitTable:{atLeast:1}}, to:';'}]},
+        'ν': {look:'fruitTableL', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        'ο': {look:'fruitTableM', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        'Σ': {look:'fruitTableR', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        'λ': {look:'fruitTableMelon', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        'π': {look:'fruitTableGrapes', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        'Φ': {look:'fruitTableBananas', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
         'ω': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop’s garden. The big monkey grows fruit here for the feast.'}]}]},
         ';': {look:'stoneStool'},   // a stone stool at the table
         // chapter 1: the bushes at the east end of the road, until the troop clears the way east along the stream, to the bees
@@ -949,8 +1000,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
-        "YgEFggggggg8gJgg%%%gF(((g.gggTgY",   // the feast's big table (%), under the big tree; and its second, beside it (()
-        "Ygggggggggg8gggg!g!gg~g~g.g@gggY",   // their stone stools (! and ~); little monkeys building a tower of stones (@), just past the way up to the hillside
+        "YgEFggggggg8ηθιg%%%gF(((g.gggTgY",   // the feast's big table (%), under the big tree; and its second, beside it (()
+        "Ygggggggggg8κgκg!g!gg~g~g.g@gggY",   // their stone stools (! and ~); little monkeys building a tower of stones (@), just past the way up to the hillside
         "...............................q",   // the road: east to the riverside, once the bushes are cleared (q)
         "...............................Y",
         "Yggggggggggggggg.gg??gg-_-----EY",   // the little dairy (?); the cow's pen: its fences round its edge (-), inside it (_), in at its gate
@@ -2053,7 +2104,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         yes:{zh:'我们 有 蜂蜜 。', en:'We have honey.'}},   // (from the bees' hive)
       {word:'牛奶', show:{milkTable:{atLeast:1}}, have:{milkTable:{atLeast:1}}, yes:{zh:'我们 有 牛奶 。', en:'We have milk.'}},   // (the cow's thank-you; on the list once it's on the table, so the list never gives it away)
       {word:'酸奶', show:{milkTable:{atLeast:2}}, have:{milkTable:{atLeast:2}}, yes:{zh:'我们 有 酸奶 。', en:'We have yoghurt.'}},   // (from the little dairy)
-      {word:'奶酪', show:{milkTable:{atLeast:3}}, have:{milkTable:{atLeast:3}}, yes:{zh:'我们 有 奶酪 。', en:'We have cheese.'}}
+      {word:'奶酪', show:{milkTable:{atLeast:3}}, have:{milkTable:{atLeast:3}}, yes:{zh:'我们 有 奶酪 。', en:'We have cheese.'}},
+      // the garden's fruit: on the list once it's planted (you know its word by then), had once it's on the table
+      {word:'西瓜', show:{melonPlanted:{atLeast:1}}, have:{melonPlanted:{atLeast:4}}, no:{zh:'我们 没有 西瓜 。', en:'We don’t have any watermelon.'}, yes:{zh:'我们 有 西瓜 。', en:'We have watermelon.'}},
+      {word:'葡萄', show:{grapePlanted:{atLeast:1}}, have:{grapePlanted:{atLeast:4}}, no:{zh:'我们 没有 葡萄 。', en:'We don’t have any grapes.'}, yes:{zh:'我们 有 葡萄 。', en:'We have grapes.'}},
+      {word:'香蕉', show:{bananaPlanted:{atLeast:1}}, have:{bananaPlanted:{atLeast:4}}, no:{zh:'我们 没有 香蕉 。', en:'We don’t have any bananas.'}, yes:{zh:'我们 有 香蕉 。', en:'We have bananas.'}}
     ]
   },
 
@@ -2352,6 +2407,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     wantMilk: {zh:'我 要 喝 牛奶 ！', en:'I want to drink milk!'},   // the thirsty monkey, as the cow gives you some
     haveMilk: {zh:'牛奶 ！ 太 好 了 ！', en:'Milk! Wonderful!'},   // and when you bring it to him
     haveMilkNow: {zh:'我们 有 牛奶 了 ！', en:'We have milk now!'},
+    haveMelonNow: {zh:'我们 有 西瓜 了 ！', en:'We have watermelon now!'},   // the hungry monkey, as the garden's fruit goes on the feast's table
+    haveGrapesNow: {zh:'我们 有 葡萄 了 ！', en:'We have grapes now!'},
+    haveBananasNow: {zh:'我们 有 香蕉 了 ！', en:'We have bananas now!'},
     // the feast's bowls (27 October 2026): the hungry monkey wants them from the cave, and when you bring them; the big monkey's
     // chopsticks and spoons
     wantBowls: {zh:'我们 要 碗 ！ 碗 在 水帘洞 里 。', en:'We need bowls! The bowls are in the Water Curtain Cave.'},
@@ -2895,6 +2953,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{holding:{melonSeeds:true}}, do:[{request:'melonSeeds'}]},
       {if:{holding:{grapeSeeds:true}}, do:[{request:'grapeSeeds'}]},
       {if:{holding:{bananaSeeds:true}}, do:[{request:'bananaSeeds'}]},
+      {if:{melonPlanted:2}, do:[{say:'foodReady'}, {set:{melonPlanted:3}}, {message:'The big monkey picks the ripe {西瓜}: they’re for the feast! Go and see them go on its {桌子}, by the big tree.'}]},
+      {if:{grapePlanted:2}, do:[{say:'foodReady'}, {set:{grapePlanted:3}}, {message:'The big monkey picks the ripe {葡萄}: they’re for the feast! Go and see them go on its {桌子}, by the big tree.'}]},
+      {if:{bananaPlanted:2}, do:[{say:'foodReady'}, {set:{bananaPlanted:3}}, {message:'The big monkey picks the ripe {香蕉}: they’re for the feast! Go and see them go on its {桌子}, by the big tree.'}]},
       {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, do:[{say:'wantSeeds', teach:'种子'}, {newWord:'种子', note:'The big monkey wants to grow fruit for the feast, in a garden.'},
         {message:'He wants to make a garden by the stream. Come and see!'}, {leadTo:[9, 13], you:[10, 13, 'left']},
         {markOut:{garden:1, melonSeeds:'asked', grapeSeeds:'asked', bananaSeeds:'asked'}},   // as you watch: stakes, string, the beds dug, its sign
