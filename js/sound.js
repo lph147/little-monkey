@@ -53,6 +53,14 @@ const SFX = {
     f.type = 'bandpass'; f.frequency.value = 1800; f.Q.value = .7; g.gain.value = v; s.buffer = buf;
     s.connect(f); f.connect(g); g.connect(a.destination); s.start();
   },
+  hiss: (v = .1) => {   // steam puffing out of the ground: a soft rush of noise, high and breathy, fading away
+    const a = ac(); if (!a) return;
+    const buf = a.createBuffer(1, a.sampleRate * .7, a.sampleRate), ch = buf.getChannelData(0);
+    for (let i = 0; i < ch.length; i++) ch[i] = (Math.random() * 2 - 1) * Math.min(1, i / (ch.length * .1)) * (1 - i / ch.length);
+    const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+    f.type = 'highpass'; f.frequency.value = 2600; g.gain.value = v; s.buffer = buf;
+    s.connect(f); f.connect(g); g.connect(a.destination); s.start();
+  },
   swish: (when = 0) => tone(900, .18, 'triangle', .025, when, -650),   // something cutting through the air: a stick, a leap
   thwack: (when = 0) => { tone(150, .09, 'square', .05, when, -60); tone(90, .14, 'triangle', .06, when); },   // a hit
   tock: (when = 0) => { tone(620, .045, 'square', .025, when, -220); tone(240, .09, 'triangle', .05, when, -40); },   // a stake hammered into the ground

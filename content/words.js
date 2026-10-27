@@ -48,7 +48,7 @@ const WORD_BANK = {
   '苹果': {py:'píngguǒ', en:'apple', pic:'🍎', area:1, category:'food'},
   '河': {py:'hé', en:'river', pic:'🏞️', area:1, category:'nature', alike:['瀑布']},
   '水': {py:'shuǐ', en:'water', pic:'💧', area:1, category:'food', alike:['喝']},
-  '水果': {py:'shuǐguǒ', en:'fruit', pic:'🧺', area:1, category:'food', alike:['桃子', '苹果', '西瓜', '葡萄']},   // (the hungry monkey teaches it as he asks, since 24 October 2026; the fruit trees did for a day, and it was heard only till then)
+  '水果': {py:'shuǐguǒ', en:'fruit', pic:'🧺', area:1, category:'food', alike:['桃子', '苹果', '西瓜', '葡萄', '香蕉']},   // (the hungry monkey teaches it as he asks, since 24 October 2026; the fruit trees did for a day, and it was heard only till then)
   '鱼': {py:'yú', en:'fish', pic:'🐟', area:1, category:'animals'},
   '鸟': {py:'niǎo', en:'bird', pic:'🐦', area:1, category:'animals'},
   '动物': {py:'dòngwù', en:'animal', pic:'🐾', area:1, category:'animals', alike:['*animals']},
@@ -123,7 +123,8 @@ const WORD_BANK = {
   '勺子': {py:'sháozi', en:'spoon', pic:'🥄', area:1, category:'items', alike:['酸奶', '蜂蜜']},   // (in the yoghurt on the feast's second table; the pictures of both have a wooden spoon in them)
   '种子': {py:'zhǒngzi', en:'seeds', pic:'🌱', area:1, category:'nature', alike:['草']},   // (the big monkey's garden: he asks for seeds from wild fruit; 草's picture is green too, a tuft of grass)
   '西瓜': {py:'xīguā', en:'watermelon', pic:'🍉', area:1, category:'food'},
-  '葡萄': {py:'pútáo', en:'grapes', pic:'🍇', area:1, category:'food'},   // (wild in the melon field, east off the south slope: you take its seeds for the garden)
+  '葡萄': {py:'pútáo', en:'grapes', pic:'🍇', area:1, category:'food'},
+  '香蕉': {py:'xiāngjiāo', en:'banana', pic:'🍌', area:1, category:'food'},   // (wild in the melon field, east off the south slope: you take its seeds for the garden)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},

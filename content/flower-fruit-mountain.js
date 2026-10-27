@@ -99,6 +99,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   melonPlanted chapter 1: 1 once the troop has planted the wild watermelon seeds you brought, in the garden
   //   grapePlanted chapter 1: 1 once the troop has set up a trellis in the garden and planted the wild grape seeds by it
   //   cliffsSeen chapter 1: 1 once you've been to the cliffs (山崖), where the wild grapes grow
+  //   bananaPlanted chapter 1: 1 once the troop has planted the wild banana seeds you brought: two banana plants in the garden
+  //   springsSeen chapter 1: 1 once you've been to the hot spring valley (温泉谷), where the wild bananas grow
   //   pastureTracks, streamSeen, pastureLog, rabbitTold  chapter 1, the way through the dark pines (the pasture's, till 27 October 2026): 1 once you've seen the
   //           cow's hoofprints; once you've come to the stream they go into; once you've knocked the dead pine down across it,
   //           a bridge; once the rabbit by the way has told you where the cow went (its word game won)
@@ -108,7 +110,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -272,6 +274,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'melonSeedsBack', if:{melonSeeds:'asked', holding:{melonSeeds:true}}, text:'Take the {种子} to the big monkey, at the garden by the stream', arrow:'big'},
     {id:'grapeSeeds', if:{grapeSeeds:'asked', holding:{grapeSeeds:false}}, text:'Wild {葡萄|grapes} grow on the cliffs west off the hillside, halfway up: find a way down to them', arrow:{place:'cliffs'}},
     {id:'grapeSeedsBack', if:{grapeSeeds:'asked', holding:{grapeSeeds:true}}, text:'Take the {种子} from the wild {葡萄} to the big monkey, at the garden by the stream', arrow:'big'},
+    {id:'bananaSeeds', if:{bananaSeeds:'asked', holding:{bananaSeeds:false}}, text:'Wild {香蕉|bananas} grow in a valley of hot springs, up the brook from the riverside', arrow:{place:'hotSprings'}},
+    {id:'bananaSeedsBack', if:{bananaSeeds:'asked', holding:{bananaSeeds:true}}, text:'Take the {种子} from the wild {香蕉} to the big monkey, at the garden by the stream', arrow:'big'},
     {id:'milk', if:{milk:'asked', holding:{milk:true}}, text:'Give the {牛奶} to the thirsty monkey', arrow:'thirsty'},
     {id:'milkTable', if:{cow:9, milkTable:0}, text:'Go and see the {牛奶} go on the feast’s second {桌子}', arrow:[22, 8, 'homeGround']},
     // the little dairy by the pen: the thirsty monkey makes something from the milk, ready once you've answered 8 more
@@ -357,6 +361,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Lead the {牛} home, past the wolves', show:{cow:{atLeast:4}}, done:{cow:{atLeast:5}}},
     {chapter:1, text:'Bring the big monkey {种子|seeds} from wild melons, for the garden', show:{garden:{atLeast:1}}, done:{melonSeeds:'done'}},
     {chapter:1, text:'Bring the big monkey {种子|seeds} from wild grapes, for the garden', show:{garden:{atLeast:1}}, done:{grapeSeeds:'done'}},
+    {chapter:1, text:'Bring the big monkey {种子|seeds} from wild bananas, for the garden', show:{garden:{atLeast:1}}, done:{bananaSeeds:'done'}},
     {chapter:1, text:'Lead the {牛} into its new home', show:{cow:{atLeast:5}}, done:{cow:{atLeast:8}}},
     {chapter:1, text:'Give the thirsty monkey some {牛奶|milk}', show:{cow:{atLeast:8}}, done:{milk:'done'}},
     {chapter:1, text:'See the {牛奶|milk} go on the feast’s second {桌子}', show:{milk:'done'}, done:{milkTable:{atLeast:1}}},
@@ -404,7 +409,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{wood:'asked', stones:'done', holding:{wood:true}}, show:'?'}, {if:{stones:'asked', wood:'done', holding:{stones:true}}, show:'?'},
       {if:{build:2, school:0}, show:'!'},   // chapter 1: the school
       {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, show:'!'}, {if:{flowers:'asked', holding:{flowers:true}}, show:'?'},   // and flowers for it, once you know their colours
-      {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, show:'!'}, {if:{melonSeeds:'asked', holding:{melonSeeds:true}}, show:'?'}, {if:{grapeSeeds:'asked', holding:{grapeSeeds:true}}, show:'?'}],   // and then a garden: he wants seeds
+      {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, show:'!'}, {if:{melonSeeds:'asked', holding:{melonSeeds:true}}, show:'?'}, {if:{grapeSeeds:'asked', holding:{grapeSeeds:true}}, show:'?'}, {if:{bananaSeeds:'asked', holding:{bananaSeeds:true}}, show:'?'}],   // and then a garden: he wants seeds
     woodSquirrel: [{if:{new:'木头', woodSquirrel:0}, show:'!'}]   // the squirrel in the pine wood, until it's shown you the dry pines (decided 26 October 2026: it kept its ! after, just to say it again)
   },
 
@@ -472,6 +477,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       sentence:'这 是 西瓜 的 种子', sentenceEn:'These are watermelon seeds.', gap:'西瓜', reward:2, thanks:'thanks', thanksReply:'不客气'},
     grapeSeeds: {from:'big', wants:'种子', ask:'wantSeeds', asked:'The big monkey wants seeds from wild fruit, to grow in the garden!', offer:'haveSeeds',
       sentence:'这 是 葡萄 的 种子', sentenceEn:'These are grape seeds.', gap:'葡萄', reward:2, thanks:'thanks', thanksReply:'不客气'},
+    bananaSeeds: {from:'big', wants:'种子', ask:'wantSeeds', asked:'The big monkey wants seeds from wild fruit, to grow in the garden!', offer:'haveSeeds',
+      sentence:'这 是 香蕉 的 种子', sentenceEn:'These are banana seeds.', gap:'香蕉', reward:2, thanks:'thanks', thanksReply:'不客气'},
     cowFood: {from:'cow', wants:'草', ask:'cowHungry', asked:'The {牛} is hungry. Pick it some fresh {草} by the brook!',
       offer:'haveGrass', sentence:'我 要 吃 草', sentenceEn:'I want to eat grass.', reward:2, thanks:'thanks', thanksReply:'不客气'}
   },
@@ -566,6 +573,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{place:'homeGround', grapeSeeds:'done', grapePlanted:0}, do:[{setUp:{grapePlanted:1}},
       {message:'The troop plants the {葡萄} seeds in the garden, with a trellis for them to climb. Vines come up at once, and climb all over it!'}]},
     {if:{place:'cliffs', cliffsSeen:0}, do:[{set:{cliffsSeen:1}}, {message:'Steep cliffs, one ledge below another. Somewhere down here, wild grapes grow!'}]},
+    // the bananas: two banana plants come up in the garden as you watch (a shoot, its stem and lower leaves, then the rest)
+    {if:{place:'homeGround', bananaSeeds:'done', bananaPlanted:0}, do:[{setUp:{bananaPlanted:1}},
+      {message:'The troop plants the {香蕉} seeds in the garden. Two banana plants shoot up at once, their big leaves unfolding!'}]},
+    {if:{place:'hotSprings', springsSeen:0}, do:[{set:{springsSeen:1}}, {message:'A warm, sheltered valley, full of steaming hot springs! Wild bananas grow at the top, past the steam.'}]},
     // leading the cow home, as you come into the gap between the big rocks, a bear rears up out of its long grass at you
     // (just the once: a boss, with no running away; win, and it lumbers off into the pines for good; lose, and the cow runs
     // back to its spring: battles' afterLoss). A wolf until 27 October 2026 (cowWolf), which you could run from
@@ -873,8 +884,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         // (the plant step): the melons (δ and μ: their vines, ψ). The banana plants (α, β) and the grapes' trellis (γ) come
         // with their places
         'ζ': {look:'grass', walk:true, becomes:[{if:{garden:{atLeast:1}}, to:'ε'}]},
-        'α': {look:'grass', walk:true, becomes:[{if:{garden:{atLeast:1}}, to:'ε'}]},
-        'β': {look:'grass', walk:true, becomes:[{if:{garden:{atLeast:1}}, to:'ε'}]},
+        'α': {look:'grass', walk:true, becomes:[{if:{bananaPlanted:1}, to:'ρ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
+        'β': {look:'grass', walk:true, becomes:[{if:{bananaPlanted:1}, to:'σ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
         'γ': {look:'grass', walk:true, becomes:[{if:{grapePlanted:1}, to:'τ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
         'δ': {look:'grass', walk:true, becomes:[{if:{melonPlanted:1}, to:'ψ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
         'μ': {look:'grass', walk:true, becomes:[{if:{melonPlanted:1}, to:'ψ'}, {if:{garden:{atLeast:1}}, to:'ε'}]},
@@ -882,6 +893,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'ψ': {look:'gardenVines', walk:true, word:'西瓜', note:'Watermelon vines, growing in the garden.'},   // the melons' vines
         '4': {look:'grass', walk:true, becomes:[{if:{garden:{atLeast:1}}, to:'ω'}]},
         'τ': {look:'trellis', word:'葡萄', onLook:[{do:[{message:'The {葡萄} vines climb all over the trellis, green and leafy.'}]}]},   // the grapes' trellis
+        'ρ': {look:'bananaHome', word:'香蕉', onLook:[{do:[{message:'A banana plant, its big leaves rustling. No {香蕉} on it yet!'}]}]},   // the troop's two banana plants
+        'σ': {look:'bananaHome', word:'香蕉', onLook:[{do:[{message:'A banana plant, its big leaves rustling. No {香蕉} on it yet!'}]}]},
         'ω': {look:'sign', landmark:true, label:'Read', onLook:[{do:[{message:'The troop’s garden. The big monkey grows fruit here for the feast.'}]}]},
         ';': {look:'stoneStool'},   // a stone stool at the table
         // chapter 1: the bushes at the east end of the road, until the troop clears the way east along the stream, to the bees
@@ -1052,7 +1065,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       sounds: ['birds'],
       exits: [
         {at:[0, 7], to:'homeGround', arrive:[30, 9], facing:'left'}, {at:[0, 8], to:'homeGround', arrive:[30, 9], facing:'left'},   // back to the home ground
-        {at:[47, 7], to:'flowerValley', arrive:[1, 10], facing:'right'}, {at:[47, 8], to:'flowerValley', arrive:[1, 11], facing:'right'}   // on into the bees' valley
+        {at:[47, 7], to:'flowerValley', arrive:[1, 10], facing:'right'}, {at:[47, 8], to:'flowerValley', arrive:[1, 11], facing:'right'},   // on into the bees' valley
+        {at:[25, 0], to:'hotSprings', arrive:[13, 22], facing:'up', if:{garden:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up the brook to the hot spring valley, once the garden begins
+        {at:[26, 0], to:'hotSprings', arrive:[14, 22], facing:'up', if:{garden:{atLeast:1}}, closed:'Thick bushes block the way.'}
       ],
       legend: {
         // wildflowers on the slope, each square all one colour (F red, E yellow and J white, as in the meadow, and these): A shows
@@ -1060,16 +1075,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
         'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
         'e': {look:'orangeFlowers', walk:true, word:'花', learnOnStep:true, colour:'橙色'},
-        'B': {look:'bridge', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the brook.'}   // over the brook (chapter 1's bridges teach 桥)
+        'B': {look:'bridge', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the brook.'},   // over the brook (chapter 1's bridges teach 桥)
+        // thick bushes beside the brook, at the top, till the garden begins: the way up it to the hot spring valley
+        'q': {look:'bush', landmark:true, becomes:[{if:{garden:{atLeast:1}}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]}
       },
       map: [
-        "YYYYYYYYYYYYYYYYYYYYYYYYYYYWWYYYY^^^^^^^^^^^^^^^",   // the brook comes down through the trees, under the bridge (B), into the stream
-        "YYYYYYYYYYYYYYYYYYYYYYYYYYYWWYYYY^^^^^^^^^^^^^^^",
-        "YgggggTggYYYYggggggTgukkgggWWgggg^^^^^^^^^^^^^^^",
-        "YggGGGgggYYYYggEFFeguukkJggWWgeeuMMMMMM^^^^^^^^^",   // the valley’s rocks: a cliff, two squares high, coming forward over the way
-        "YgGGGGGggYYYYggkJJEEFFeeuggWWgEEFMMMMMM^^^^^^^^^",
-        "YggGGGgggYYYY..........euugWWgEEFgggoggMMMMMMMMM",   // the way up through the wildflowers, where the butterfly is
-        "YggggggggYYYY..........EFFeWWgggggnnngoMMMMMMMMM",
+        "YYYYYYYYYYYYYYYYYYYYYYYYYqqWWYYYY^^^^^^^^^^^^^^^",   // the brook comes down through the trees, under the bridge (B), into the stream; beside it, the way up it (q)
+        "YYYYYYYYYYYYYYYYYYYYYYYYYqqWWYYYY^^^^^^^^^^^^^^^",
+        "YgggggTggYYYYggggggTgukkg..WWgggg^^^^^^^^^^^^^^^",
+        "YggGGGgggYYYYggEFFeguukkJ..WWgeeuMMMMMM^^^^^^^^^",   // the valley’s rocks: a cliff, two squares high, coming forward over the way
+        "YgGGGGGggYYYYggkJJEEFFeeu..WWgEEFMMMMMM^^^^^^^^^",
+        "YggGGGgggYYYY..........eu..WWgEEFgggoggMMMMMMMMM",   // the way up through the wildflowers, where the butterfly is
+        "YggggggggYYYY..........EF..WWgggggnnngoMMMMMMMMM",
         "........nnnnn..gggggg......BB............nnnn...",   // in from the home ground; long grass grown over the way in the little wood, and under the rocks;
         ".........nnnnn.ggTeeg......BB...........nnnn....",   // out into the bees' valley
         "YggTgFeegYYYYgggTggnnngggggWWggTggoggogWWWWWWWWW",
@@ -1268,6 +1285,58 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YggGGGGgggggEgggTgnnnnnggY",
         "YggggggggggggggggggggggggY",
         "YYYYYYYYYYYYYYYYYYYYYYYYYY"
+      ]
+    },
+    // Chapter 1: the hot spring valley (温泉谷 wēnquán gǔ, a name for the native speaker), up the brook from the riverside,
+    // through bushes the troop clears once the garden begins: a warm, sheltered valley of steaming blue-green pools (too hot
+    // to touch), ferns, and two monkeys of the troop bathing in a warm one, as monkeys do in hot springs. Wild bananas grow in
+    // the warm corner at the top, past a narrow way between two big pools where steam puffs out of the ground now and then:
+    // wait for it to stop, then go (the vents: puffing, js/world.js). A at one picks a banana (teaching 香蕉): its seeds are
+    // for the big monkey's garden.
+    hotSprings: {
+      name: {zh:'温泉谷', py:'wēnquán gǔ', en:'The hot spring valley'},
+      sounds: ['birds', 'birds', 'wind'],
+      exits: [
+        {at:[13, 23], to:'riverside', arrive:[25, 1], facing:'down'}, {at:[14, 23], to:'riverside', arrive:[26, 1], facing:'down'}   // back down to the riverside
+      ],
+      legend: {
+        'H': {look:'hotPool', landmark:true, onLook:[{do:[{message:'A hot spring, steaming. Too hot to touch!'}]}]},
+        'h': {look:'hotPool', landmark:true, onLook:[{do:[{message:'A warm pool, just right for a bath. The monkeys love it!'}]}]},
+        'f': {look:'fern', walk:true},
+        // steam vents on the narrow way: each row puffs in turn (every 3 seconds, for a second and a bit)
+        's': {look:'vent', walk:true, vent:{every:3000, puff:1300, at:0, hot:'Too hot! Wait for the steam to stop.', pushed:'Too hot! The steam pushes you back.'}},
+        'z': {look:'vent', walk:true, vent:{every:3000, puff:1300, at:1500, hot:'Too hot! Wait for the steam to stop.', pushed:'Too hot! The steam pushes you back.'}},
+        // wild banana plants: A takes a banana's seeds for the garden
+        'B': {look:'bananaPlant', word:'香蕉', onLook:[
+          {if:{bananaSeeds:'asked', holding:{bananaSeeds:false}}, label:'Pick', sparkle:true, do:[{newWord:'香蕉', note:'Wild bananas, growing in the warm valley.'}, {hold:'种子', for:'bananaSeeds'},
+            {message:'You climb up and pick a {香蕉}. Wild ones are full of hard black {种子|seeds}: you eat round them, and keep them for the big monkey’s garden.'}]},
+          {label:'Look', do:[{message:'Wild {香蕉}, in a bunch under the big leaves.'}]}]}
+      },
+      map: [
+        "^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        "^^gBBggggBBgggggfggggBBggg^^",   // wild banana plants (B, each two squares by two) in the warm corner at the top
+        "^^gBBgg..BB..........BBggg^^",
+        "^^ggggg..............ggggf^^",
+        "^^gggBBgggggg..gBBgggggBBg^^",
+        "^^fggBBggggfg..gBBgggggBBg^^",
+        "^^gfggggggggg..gggggggggfg^^",
+        "^^HHHHHHHHHHHssHHHHHHHHHHH^^",   // the narrow way between the hot pools (H), steam puffing out of it (s, then z)
+        "^^HHHHHHHHHHH..HHHHHHHHHHH^^",
+        "^^HHHHHHHHHHHzzHHHHHHHHHHH^^",
+        "^^ggggggggggg..WWggggggggg^^",   // the warm brook, out of the pool
+        "^^gfggogggfgg..WWgggggoggg^^",
+        "^^ggggggggggg..WWgggggggfg^^",
+        "^^gghhhhhgggg..WWggggggggg^^",   // a warm pool (h), where two monkeys of the troop bathe
+        "^^gghhhhhgggg..WWgggHHHHgg^^",
+        "^^gghhhhhgggg..WWgggHHHHgg^^",
+        "^^ggggggggggg..WWgggHHHHgg^^",
+        "^^ggggggEgogg..WWggggggggg^^",
+        "MMgEgfggggggg..WWgggfgggggMM",
+        "MMgggggggfggg..WWgggggggEgMM",
+        "YYYYYYYYYYYYY..WWYYYYYYYYYYY",   // in from the riverside, beside the brook
+        "YYYYYYYYYYYYY..WWYYYYYYYYYYY"
       ]
     },
     // Chapter 1: the dark pines (黑松林 hēi sōnglín, a name for the native speaker to check; there's a 黑松林 in the book, chapter
@@ -1741,7 +1810,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // there to tell you. It stays where it showed you the view, a step along the railing.
     {id:'lookoutGoat', place:'hillside', x:20, y:21, facing:'down', look:'山羊', moves:[{if:{lookTip:{atLeast:1}}, place:'hillside', x:22, y:21, facing:'down'}]},
     {id:'slopeGoat', place:'southSlope', x:11, y:16, facing:'left', look:'山羊'},
-    {id:'cliffGoat', place:'cliffs', x:16, y:6, facing:'left', look:'山羊'},   // chapter 1: a goat at the top of the cliffs   // chapter 1: a goat on the south slope, by its lookout
+    {id:'cliffGoat', place:'cliffs', x:16, y:6, facing:'left', look:'山羊'},   // chapter 1: a goat at the top of the cliffs
+    // chapter 1: two monkeys of the troop bathing in a warm pool in the hot spring valley, as monkeys do in hot springs
+    {id:'bather1', place:'hotSprings', x:5, y:17, facing:'down', plays:'bathe', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#43260F', f:'#B5804C', s:'#F2CDA4', m:'#C48C68', e:'#24160C'}},
+    {id:'bather2', place:'hotSprings', x:7, y:17, facing:'down', plays:'bathe', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#4A2A14', f:'#C8884E', s:'#F5D3AC', m:'#CC9070', e:'#24160C'}},   // chapter 1: a goat on the south slope, by its lookout
     {id:'woodSquirrel', place:'pineWood', x:18, y:21, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, in the clearing by the way in
     // chapter 1: two little monkeys in training on the hillside, practising with sticks like yours (in the book, chapter 3,
     // the Monkey King trains the troop): one by the stepping stones, one on the middle terrace. Each stops you as you pass,
@@ -1914,6 +1988,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '种子': 'The big monkey wants them for his garden by the stream: seeds from wild fruit.',
     '西瓜': 'Wild in the melon field, east off the south slope, where birds peck at them.',
     '葡萄': 'Wild on the cliffs west off the hillside, hanging down a cliff over a ledge.',
+    '香蕉': 'Wild in the hot spring valley, up the brook from the riverside, past the steam.',
     '老板': 'The shop owner at the market stall in the south meadow.',
     '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
     '谢谢': 'You said it to the {老板} after buying from the stall.',
@@ -2147,7 +2222,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'pastureWestEnd', at:[3, 10, 'darkPines'], shells:2, note:'The way goes nowhere, but under the boulder at its end: 2 🐚!'},
     {id:'pastureEastEnd', at:[30, 27, 'darkPines'], shells:2, note:'The cow didn’t come this way, but tucked under the boulder: 2 🐚!'},
     {id:'melonBoulder', at:[3, 11, 'melonField'], shells:2, note:'Under the boulder by the way in: 2 🐚!'},
-    {id:'cliffsBoulder', at:[2, 13, 'cliffs'], shells:2, note:'Under the boulder on the ledge: 2 🐚!'}
+    {id:'cliffsBoulder', at:[2, 13, 'cliffs'], shells:2, note:'Under the boulder on the ledge: 2 🐚!'},
+    {id:'springsBoulder', at:[22, 13, 'hotSprings'], shells:2, note:'Under the warm boulder by the pools: 2 🐚!'}
   ],
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
@@ -2745,6 +2821,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // you (decided 24 October 2026: a player it told about the view walked on without seeing it), so you know what a
     // lookout is when you find others
     // the goat on the south slope, while the cow is lost: it's down there (and the lookout shows you where)
+    bather1: [{do:[{say:'hi'}, {reply:'你好'}, {message:'It’s soaking in the warm water up to its shoulders, eyes shut. Bliss!'}]}],   // chapter 1: in a warm pool in the hot spring valley
+    bather2: [{do:[{say:'hi'}, {reply:'你好'}, {message:'It’s soaking in the warm water up to its shoulders, eyes shut. Bliss!'}]}],
     cliffGoat: [   // chapter 1: a goat at the top of the cliffs, while you look for the grapes
       {if:{grapeSeeds:'asked', holding:{grapeSeeds:false}}, do:[{say:'hi'}, {reply:'你好'}, {say:'fruitBelow'},
         {message:'The goat looks down over the edge. The banks can’t be climbed back up: look before you hop!'}]},
@@ -2816,12 +2894,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // the mountain, and you bring him its seeds (each with its own request), which the troop plants there (events)
       {if:{holding:{melonSeeds:true}}, do:[{request:'melonSeeds'}]},
       {if:{holding:{grapeSeeds:true}}, do:[{request:'grapeSeeds'}]},
+      {if:{holding:{bananaSeeds:true}}, do:[{request:'bananaSeeds'}]},
       {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, do:[{say:'wantSeeds', teach:'种子'}, {newWord:'种子', note:'The big monkey wants to grow fruit for the feast, in a garden.'},
         {message:'He wants to make a garden by the stream. Come and see!'}, {leadTo:[9, 13], you:[10, 13, 'left']},
-        {markOut:{garden:1, melonSeeds:'asked', grapeSeeds:'asked'}},   // as you watch: stakes, string, the beds dug, its sign
+        {markOut:{garden:1, melonSeeds:'asked', grapeSeeds:'asked', bananaSeeds:'asked'}},   // as you watch: stakes, string, the beds dug, its sign
         {message:'Wild fruit grows on the mountain, in places the troop has found. Bring the big monkey its {种子}, and the troop will plant them here!'}]},
       {if:{melonSeeds:'asked'}, do:[{request:'melonSeeds'}]},   // (he asks again)
       {if:{grapeSeeds:'asked'}, do:[{request:'grapeSeeds'}]},
+      {if:{bananaSeeds:'asked'}, do:[{request:'bananaSeeds'}]},
       {if:{cave:{atLeast:6}}, do:[{say:'king'}]},   // once you're king (the troop makes you king at the end of the prologue: the crowning scene)
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'dare'}]},

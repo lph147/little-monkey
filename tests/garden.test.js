@@ -211,3 +211,69 @@ test('give the big monkey the grape seeds: 这是葡萄的种子, and the troop 
   assert.deepEqual(grapeTasks(g), []);
   assert.deepEqual(get(g, "areaChecklist().find(([t]) => /wild grapes/.test(t))"), ['Bring the big monkey 种子 (seeds) from wild grapes, for the garden', true, false, true]);
 });
+
+// Version 3: the hot spring valley (温泉谷), up the brook from the riverside: steam puffing across the narrow way between
+// its big pools, two monkeys of the troop bathing in a warm one, and wild bananas (香蕉) in the warm corner at the top.
+const bananaTasks = g => get(g, "getTasks().filter(t => /^banana/.test(t.id)).map(t => t.text)");
+const SPRINGS = {garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked', bananaSeeds: 'asked', springsSeen: 1};
+test('once the garden begins, the troop clears the bushes beside the riverside’s brook: the way up it to the hot spring valley (温泉谷)', async () => {
+  const before = game({place: 'riverside', x: 25, y: 2, dir: 'up'});
+  assert.deepEqual([before.run('tileAt(25, 1).look'), before.run('walkable(25, 1)')], ['bush', false], 'thick bushes, till the garden begins');
+  const g = game({place: 'riverside', x: 25, y: 2, dir: 'up'}, {...SPRINGS, springsSeen: 0});
+  assert.deepEqual([g.run('tileAt(25, 0).look'), g.run('tileAt(26, 1).look')], ['path', 'path'], 'cleared');
+  assert.deepEqual(bananaTasks(g), ['Wild bananas grow in a valley of hot springs, up the brook from the riverside']);
+  g.run("S.pos = {place: PLACE, x: 25, y: 1, dir: 'up'}; placePlayer()");
+  await play(g, 'arrive(25, 0).then(runEvents)');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['hotSprings', [13, 22]]);
+  assert.deepEqual(get(g, 'PLACES.hotSprings.name'), {zh: '温泉谷', py: 'wēnquán gǔ', en: 'The hot spring valley'});
+  assert.match(get(g, '__notes').join(' '), /A warm, sheltered valley, full of steaming hot springs! Wild bananas grow at the top, past the steam\./, 'the first time');
+  assert.deepEqual([npc(g, 'bather1'), npc(g, 'bather2')], [['hotSprings', 5, 17], ['hotSprings', 7, 17]], 'two monkeys bathing');
+  assert.deepEqual([g.run('tileAt(6, 16).look'), g.run('walkable(6, 16)')], ['hotPool', false], 'in a warm pool');
+  await play(g, 'arrive(13, 23).then(runEvents)');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['riverside', [25, 1]], 'and back');
+});
+
+test('steam puffs out of the narrow way between the big pools, one row and then the other: too hot to step on, and it pushes you off', async () => {
+  const g = game({place: 'hotSprings', x: 13, y: 10, dir: 'up'}, SPRINGS);
+  for (const [x, y] of [[12, 10], [15, 10], [13, 8], [6, 15]]) assert.equal(g.run(`walkable(${x}, ${y})`), x === 13, `${x},${y}`);   // (pools either side)
+  assert.deepEqual(get(g, '[0, 1000, 1400, 2900].map(t => puffing(13, 9, 300000 + t))'), [true, true, false, false], 'the first row: a second and a bit, every 3 seconds');
+  assert.deepEqual(get(g, '[0, 1000, 1500, 2700].map(t => puffing(14, 11, 300000 + t))'), [false, false, true, true], 'the second, half a turn later');
+  g.run("tryStep('up', 300000)");
+  assert.deepEqual([get(g, 'pl.mv'), get(g, '__notes')], [null, ['Too hot! Wait for the steam to stop.']], 'too hot to step onto');
+  g.run("tryStep('up', 301500)");
+  assert.deepEqual(get(g, '[pl.mv.tx, pl.mv.ty]'), [13, 9], 'once it stops, on you go');
+  const h = game({place: 'hotSprings', x: 13, y: 9, dir: 'up'}, SPRINGS);
+  h.run("pl.from = {x: 13, y: 10}; update(300000)");
+  assert.deepEqual([get(h, '[pl.mv.tx, pl.mv.ty]'), get(h, 'pl.dir'), get(h, '__notes')], [[13, 10], 'up', ['Too hot! The steam pushes you back.']], 'standing on it as it puffs: pushed back the way you came');
+});
+
+test('the monkeys bathing: 你好！; and the wild bananas at the top: 香蕉', async () => {
+  const g = game({place: 'hotSprings', x: 5, y: 18, dir: 'up'}, SPRINGS);
+  g.run("rec('种子').lv = 1");
+  await press(g, 5, 18, 'up');
+  assert.deepEqual(get(g, '__said'), ['bather1: 你好！', 'player: 你好']);
+  assert.match(get(g, '__notes').join(' '), /soaking in the warm water up to its shoulders, eyes shut\. Bliss!/);
+  assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'bananaPlant').map(o => [o.x, o.y, o.w, o.h])"),
+    [[3, 3, 2, 2], [9, 3, 2, 2], [21, 3, 2, 2], [5, 6, 2, 2], [16, 6, 2, 2], [23, 6, 2, 2]], 'six banana plants, each two squares by two');
+  assert.equal(g.run('promptFor(9, 4)'), 'Pick');
+  reset(g);
+  await press(g, 9, 5, 'up');
+  assert.deepEqual(get(g, '__notes'), ['card: 香蕉, said', 'You climb up and pick a 香蕉 (banana). Wild ones are full of hard black 种子 (seeds): you eat round them, and keep them for the big monkey’s garden.'],
+    '香蕉, said straight away: you found it');
+  assert.equal(get(g, 'here().holding.bananaSeeds'), '种子');
+  assert.deepEqual(bananaTasks(g), ['Take the 种子 (seeds) from the wild 香蕉 (banana) to the big monkey, at the garden by the stream']);
+});
+
+test('give the big monkey the banana seeds: 这是香蕉的种子, and two banana plants come up in the garden as you watch', async () => {
+  const g = game({place: 'homeGround', x: 10, y: 13, dir: 'left'}, {...SPRINGS, melonSeeds: 'done', melonPlanted: 1, grapeSeeds: 'done', grapePlanted: 1, holding: {bananaSeeds: '种子'}});
+  g.run("rec('香蕉').lv = 1; rec('种子').lv = 1");
+  assert.equal(bubble(g, 'big'), '?');
+  await press(g, 10, 13, 'left');
+  assert.deepEqual(get(g, '__said'), ['big: 种子！太好了！', 'gap: 这是香蕉的种子 (香蕉)', 'big: 谢谢你！', 'player: 不客气'], 'These are banana seeds, the banana missing');
+  assert.deepEqual(get(g, '[here().bananaSeeds, here().bananaPlanted]'), ['done', 1]);
+  assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'bananaHome').map(o => [o.x, o.y, o.w, o.h])"), [[3, 14, 2, 2], [5, 14, 2, 2]], 'two banana plants, each two squares by two');
+  assert.ok(get(g, '__sounds').filter(s => s === 'tock').length >= 6, 'each comes up in three steps');
+  assert.match(get(g, '__notes').join(' '), /Two banana plants shoot up at once, their big leaves unfolding!/);
+  assert.equal(g.run('tileAt(3, 16).look'), 'gardenBed', 'the bottom of the garden stays dug, waiting');
+  assert.deepEqual(get(g, "areaChecklist().filter(([t]) => /from wild/.test(t)).map(([, done]) => done)"), [true, true, true], 'all three fruit, planted');
+});

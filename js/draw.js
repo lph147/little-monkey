@@ -76,6 +76,7 @@ function drawTower(X, Y, now){
 function drawPlaying(n, X, Y, now){
   const kind = PLAYS[n.id];
   if (kind === 'splash') drawSplasher(n, X, Y, now);
+  else if (kind === 'bathe') drawBather(n, X, Y, now);
   else if (!playing(n)) drawEntityMonkey(n.kind, X, Y, n.dir, now, Math.floor(now/700 + n.x) % 2, 0, n.x + n.y);
   else if (kind === 'tower') drawTowerBuilder(n, X, Y, now);
   else if (kind === 'dragonflies') drawChaser(n, X, Y, now);
@@ -145,6 +146,15 @@ function drawSplasher(n, X, Y, now){
     if (k <= 0 || k >= 1) continue;
     R(b, Math.round(x0 + (x1 - x0) * k + (j - 4.5) * 2 * k), Math.round(y0 + (y1 - y0) * k - Math.sin(k * Math.PI) * (6 + (j % 4) * 3)), sz, sz, j % 3 ? '#FFFFFF' : '#BFE8FA');
   }
+}
+// A monkey of the troop bathing in a warm pool (plays: 'bathe'), as monkeys do in hot springs: in up to its shoulders, its
+// eyes shut, bobbing a little, a ripple spreading round it; talking to you, it opens them and looks your way.
+function drawBather(n, X, Y, now){
+  const at = playing(n), line = 11, sink = 2 + Math.floor(now / 1300 + n.x) % 2;
+  const ph = (now / 1700 + n.x * .37) % 1, rx = 6 + Math.round(ph * 4);
+  b.globalAlpha = .7 * (1 - ph); R(b, X + 8 - rx, Y + line, 3, 1, '#A8E6DE'); R(b, X + 6 + rx, Y + line, 3, 1, '#A8E6DE'); b.globalAlpha = 1;
+  b.drawImage(monkeySprite(n.kind, at ? 'down' : n.dir, at), 0, 0, 16, line - sink, X, Y + sink, 16, line - sink);
+  R(b, X + 2, Y + line, 12, 1, '#A8E6DE');   // the water round it
 }
 // The dragonflies (the area's, and those the little monkeys chase), little and bright, their wings a flicker.
 const DRAGONFLY = [['#E0483A', '#9E2C24'], ['#F2A33A', '#A8641C'], ['#E0483A', '#9E2C24']];   // body, head: red and orange, bright over the water
@@ -602,6 +612,7 @@ function drawWorld(now){
   b.drawImage(topCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.top, cx, cy, now);
   drawFallingLeaves(cx, cy, now);
+  drawSteam(cx, cy, now);
   drawHideTail(cx, cy, now);   // a little monkey's tail, poking out of where it's hiding (js/hide.js)
   for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
@@ -634,6 +645,30 @@ function drawWorld(now){
   }
   const dark = fadeDark(now);   // (going through a way to another place: js/world.js)
   if (dark > 0){ b.globalAlpha = dark; R(b, 0, 0, VW*T, VH*T, '#000000'); b.globalAlpha = 1; }
+}
+// Steam: puffing out of a vent (puffing, js/world.js), a column of it billowing up over the way, with a hiss as it starts
+// (a wisp or two just before, so you can see it coming); and over the hot pools, now and then a wisp drifting up.
+const ventCycle = {};   // (the last puff of each vent you heard: one hiss a puff)
+function steamCloud(x, y, r, a){ b.globalAlpha = a; oval(b, Math.round(x), Math.round(y), r + 1, Math.max(1, r - 1), '#E4EEF0'); oval(b, Math.round(x) - 1, Math.round(y) - 1, r, Math.max(1, r - 2), '#FFFFFF'); b.globalAlpha = 1; }
+function drawSteam(cx, cy, now){
+  const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
+  for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++){
+    const t = tileAt(x, y), X = x*T - cx, Y = y*T - cy;
+    if (t.vent){
+      const v = t.vent, k = (now + (v.at || 0)) % v.every, cyc = Math.floor((now + (v.at || 0)) / v.every);
+      if (k < v.puff){
+        if (ventCycle[x + ',' + y] !== cyc){ ventCycle[x + ',' + y] = cyc; if (Math.abs(x - pl.x) + Math.abs(y - pl.y) <= 5) SFX.hiss(.05); }
+        const p = k / v.puff, fade = p < .8 ? 1 : (1 - p) / .2;
+        for (let i = 0; i < 6; i++){
+          const rise = ((p * 1.6 + i / 6) % 1), r = 3 + Math.round(rise * 5);
+          steamCloud(X + 8 + Math.sin(i * 2.1 + now / 300) * 3, Y + 10 - rise * 20, r, (.85 - rise * .5) * fade);
+        }
+      } else if (v.every - k < 450){ const p = 1 - (v.every - k) / 450; steamCloud(X + 8, Y + 9 - p * 4, 2, .5 * p); }
+    } else if (t.look === 'hotPool' && rnd(x, y, 640) < .3){
+      const ph = (now / 2800 + rnd(x, y, 641)) % 1;
+      steamCloud(X + 4 + rnd(x, y, 642) * 8 + Math.sin(now / 700 + x) * 2, Y + 8 - ph * 16, 2 + Math.round(ph * 2), .45 * (1 - ph));
+    }
+  }
 }
 // Things hidden off the path (the area's hidden) give themselves away with a tiny glint now and then, easy to miss: each
 // of them in the place you're in, not found yet, glinting now ([x, y, how bright, 0 to 1]), every GLINT_EVERY ms for

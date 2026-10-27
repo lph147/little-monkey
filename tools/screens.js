@@ -260,8 +260,8 @@ SAVES.dairyDone = {...SAVES.dairyReady, w: {...SAVES.dairyReady.w, ...knows(1, [
 // out by the stream; the melon field east off the south slope, birds pecking at its melons; and the seeds planted (version
 // 30: the flowers are done, which an older save's upgrade would undo)
 SAVES.gardenAsk = {...SAVES.dairyDone, version: 30, w: {...SAVES.dairyDone.w, ...knows(1, ['勺子', '鸟', '红色', '黄色', '白色', '蓝色', '黑色'])}, areas: {1: {...SAVES.dairyDone.areas[1], spoons: 2, flowers: 'done', schoolFlowers: true}}, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};   // facing the big monkey
-SAVES.gardenMarked = {...SAVES.gardenAsk, w: {...SAVES.gardenAsk.w, ...knows(1, ['种子'])}, areas: {1: {...SAVES.gardenAsk.areas[1], garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked'}},
-  tasksSeen: {...SAVES.gardenAsk.tasksSeen, melonSeeds: 1, grapeSeeds: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};   // by the garden, facing the big monkey
+SAVES.gardenMarked = {...SAVES.gardenAsk, w: {...SAVES.gardenAsk.w, ...knows(1, ['种子'])}, areas: {1: {...SAVES.gardenAsk.areas[1], garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked', bananaSeeds: 'asked'}},
+  tasksSeen: {...SAVES.gardenAsk.tasksSeen, melonSeeds: 1, grapeSeeds: 1, bananaSeeds: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};   // by the garden, facing the big monkey
 SAVES.melonField = {...SAVES.gardenMarked, pos: {place: 'melonField', x: 13, y: 4, dir: 'right'}};   // facing the red bird
 SAVES.melonsSafe = {...SAVES.gardenMarked, areas: {1: {...SAVES.gardenMarked.areas[1], shooed: [1, 2, 3, 4, 5].map(n => 'melonBird' + n)}},
   tasksSeen: {...SAVES.gardenMarked.tasksSeen, melonSeeds2: 1}, pos: {place: 'melonField', x: 12, y: 11, dir: 'right'}};   // facing a melon
@@ -276,6 +276,17 @@ SAVES.cliffsLedge = {...SAVES.cliffsTop, pos: {place: 'cliffs', x: 15, y: 11, di
 SAVES.grapesBack = {...SAVES.cliffsTop, w: {...SAVES.cliffsTop.w, ...knows(1, ['葡萄'])}, areas: {1: {...SAVES.cliffsTop.areas[1], holding: {grapeSeeds: '种子'}}},
   tasksSeen: {...SAVES.cliffsTop.tasksSeen, grapeSeedsBack: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};
 SAVES.trellisUp = {...SAVES.grapesBack, areas: {1: {...SAVES.grapesBack.areas[1], holding: {}, grapeSeeds: 'done', grapePlanted: 1}}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'down'}};
+// version 3: the hot spring valley (温泉谷) up the brook from the riverside, its steam vents, the monkeys bathing, the
+// bananas; and the garden with all three planted
+SAVES.riversideNorth = {...SAVES.gardenMarked, pos: {place: 'riverside', x: 25, y: 3, dir: 'up'}};   // by the brook, the way up it open
+SAVES.springs = {...SAVES.gardenMarked, areas: {1: {...SAVES.gardenMarked.areas[1], springsSeen: 1}}, pos: {place: 'hotSprings', x: 13, y: 16, dir: 'up'}};
+SAVES.springsVent = {...SAVES.springs, pos: {place: 'hotSprings', x: 13, y: 10, dir: 'up'}};   // between the vents, facing the next
+SAVES.springsBath = {...SAVES.springs, pos: {place: 'hotSprings', x: 5, y: 18, dir: 'up'}};   // facing a monkey in the warm pool
+SAVES.springsBananas = {...SAVES.springs, pos: {place: 'hotSprings', x: 9, y: 5, dir: 'up'}};   // facing a banana plant
+SAVES.bananasBack = {...SAVES.springs, w: {...SAVES.springs.w, ...knows(1, ['香蕉'])}, areas: {1: {...SAVES.springs.areas[1], holding: {bananaSeeds: '种子'}}},
+  tasksSeen: {...SAVES.springs.tasksSeen, bananaSeedsBack: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};
+SAVES.gardenPlanted = {...SAVES.bananasBack, w: {...SAVES.bananasBack.w, ...knows(1, ['西瓜', '葡萄'])}, areas: {1: {...SAVES.bananasBack.areas[1], holding: {},
+  melonSeeds: 'done', melonPlanted: 1, grapeSeeds: 'done', grapePlanted: 1, bananaSeeds: 'done', bananaPlanted: 1}}, pos: {place: 'homeGround', x: 10, y: 12, dir: 'down'}};
 SAVES.caveTop = {...SAVES.home, pos: {place: 'cave', x: 7, y: 5, dir: 'up'}};   // by the beds, the table and the bowls
 SAVES.atDoor = {...SAVES.ledIn, pos: {place: 'cave', x: 8, y: 12, dir: 'right'}};   // beside the monkey just inside the entrance
 SAVES.byBed = {...SAVES.home, w: {...SAVES.home.w, ...knows(1, ['睡觉'])}, health: 20, pos: {place: 'cave', x: 12, y: 2, dir: 'up'}};   // hurt, facing a bed
@@ -939,6 +950,22 @@ const SCREENS = [
   {id: 'grapes-give', title: 'Grape seeds', save: 'grapesBack', why: 'Give the big monkey the seeds: 种子！太好了！, then finish 这是葡萄的种子 (These are grape seeds).', run: async () => {
     play(); await wait(100); talk(npc('big')); await wait(500); }},
   {id: 'trellis', title: 'The grapes’ trellis', save: 'trellisUp', why: 'The troop sets up a trellis in the garden as you watch (its posts, its wires, then the vines climbing it), beside the melons.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'riverside-north', title: 'The way up the brook', save: 'riversideNorth', why: 'Once the garden begins, the troop clears the bushes beside the riverside’s brook, at the top: the way up it to the hot spring valley.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'springs', title: 'The hot spring valley (温泉谷)', save: 'springs', why: 'A warm, sheltered valley: steaming blue-green pools with a pale crust round them, ferns, the warm brook, and two monkeys of the troop bathing.', run: async () => {
+    play(); await wait(900); }},
+  {id: 'springs-steam', title: 'Steam!', save: 'springsVent', why: 'On the narrow way between the big pools, steam puffs out of the ground, one row and then the other: step onto it and it’s too hot; wait, and go.', run: async () => {
+    play(); while (!puffing(13, 9)) await wait(40); await wait(250); tryStep('up', performance.now()); await wait(150); }},
+  {id: 'springs-bath', title: 'Bathing monkeys', save: 'springsBath', why: 'Two monkeys of the troop soak in a warm pool up to their shoulders, eyes shut, as monkeys do in hot springs. Talk to one: 你好！, and it’s bliss.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'springs-bananas', title: 'Wild bananas', save: 'springsBananas', why: 'Past the steam, banana plants in the warm corner at the top, their bunches sparkling.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'banana-card', title: 'Bananas (香蕉)', save: 'springsBananas', why: 'A at a banana plant: 香蕉 (xiāngjiāo, banana), said straight away. Wild ones are full of hard black seeds: you keep them.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(600); }},
+  {id: 'bananas-give', title: 'Banana seeds', save: 'bananasBack', why: 'Give the big monkey the seeds: 种子！太好了！, then finish 这是香蕉的种子 (These are banana seeds).', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
+  {id: 'garden-planted', title: 'The garden, planted', save: 'gardenPlanted', why: 'Two banana plants, the grapes’ trellis and the melons, all growing in the troop’s garden by the stream.', run: async () => {
     play(); await wait(500); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();

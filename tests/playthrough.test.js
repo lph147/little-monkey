@@ -694,6 +694,23 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(10, 13, 'left', 'giving the big monkey the grape seeds');
   assert.ok(get('__said').includes('这是葡萄的种子'), 'these are grape seeds');
   assert.deepEqual([area().grapeSeeds, area().grapePlanted, run('tileAt(7, 14).look')], ['done', 1, 'trellis'], 'planted in the garden, with a trellis');
+  // The garden, version 3: wild bananas in the hot spring valley (温泉谷), up the brook from the riverside, past the steam
+  // vents between its big pools; pick one (香蕉) and give the big monkey its seeds (这是香蕉的种子): two banana plants
+  stand(30, 9, 'right');
+  await act('arrive(31, 9).then(runEvents)', 'going east along the road, to the riverside');
+  await walk([[1, 7], [14, 7], [14, 5], [22, 5], [22, 7], [25, 7], [25, 1]], 'along the riverside, and up beside the brook');
+  await act('arrive(25, 0).then(runEvents)', 'up the brook, through the cleared bushes, to the hot spring valley');
+  assert.deepEqual([run('PLACE'), area().springsSeen], ['hotSprings', 1], 'the hot spring valley (温泉谷)');
+  await walk([[13, 22], [13, 5], [9, 5]], 'up between the hot pools, past the steam, to the banana plants');
+  await pressAt(9, 5, 'up', 'picking a banana');
+  assert.ok(knows('香蕉') && area().holding.bananaSeeds === '种子', 'a banana (香蕉), and its seeds');
+  await walk([[9, 5], [13, 5], [13, 22]], 'back down the valley');
+  await act('arrive(13, 23).then(runEvents)', 'back down to the riverside');
+  await walk([[25, 1], [25, 7], [1, 7]], 'back along the riverside');
+  await act('arrive(0, 7).then(runEvents)', 'back to the home ground');
+  await pressAt(10, 13, 'left', 'giving the big monkey the banana seeds');
+  assert.ok(get('__said').includes('这是香蕉的种子'), 'these are banana seeds');
+  assert.deepEqual([area().bananaSeeds, area().bananaPlanted, run('tileAt(3, 14).look')], ['done', 1, 'bananaHome'], 'two banana plants in the garden');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this

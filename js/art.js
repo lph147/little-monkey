@@ -213,7 +213,7 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','melonVines','melon','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
 const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','logBridge'];
 function grass(g, X, Y, x, y){
@@ -585,7 +585,7 @@ function plotString(g, X, Y, x, y, inside = [tileAt(x, y).look]){
 const PLOTS = ['plot', 'grassPlot', 'gardenBed'];   // ground marked out with stakes and string, as you watch (the markOut step)
 // The troop's garden by the stream (chapter 1, planned 27 October 2026): its beds, dug and raked into rows, the string it was
 // marked out with still round its edge, a stake at each corner; and what grows in it (GARDEN), such as melon vines.
-const GARDEN = ['gardenBed', 'gardenVines', 'trellis'];
+const GARDEN = ['gardenBed', 'gardenVines', 'trellis', 'bananaHome'];
 function gardenBed(g, X, Y, x, y){
   R(g, X, Y, T, T, '#6E4A2C');   // the earth, dug
   for (let r = 1; r < 16; r += 5) for (let i = 0; i < T; i++){   // its rows, earthed up into ridges (a little uneven)
@@ -623,6 +623,77 @@ function grapeCliff(g, X, Y, x, y){
   leaves(g, [[4, 2, 4], [12, 4, 4], [7, 9, 4], [14, 12, 3], [3, 13, 3]], X, Y, x * 7 + y);
   for (let i = 0; i < 16; i += 3) R(g, X + 8 + Math.round(Math.sin(i / 3 + x) * 2), Y + i, 1, 2, '#4E6E25');   // the vine
   grapes(g, X + 2, Y + 6 + (x % 2) * 3); if ((x + y) % 2) grapes(g, X + 10, Y + 9);
+}
+// The hot spring valley: hot pools, blue-green, with a pale crust of minerals round their edges and their outer corners
+// rounded off, grass showing in them (the steam over them, and puffing out of the vents, is drawn as you play: drawSteam,
+// js/draw.js); steam vents, crusted holes in the path; ferns.
+function hotPool(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#56BDB2');
+  for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x, y, i + 620) * 14), py = Math.floor(rnd(x, y, i + 630) * 16); R(g, X + px, Y + py, 2, 1, '#7FD6CB'); }
+  const pool = (a, b) => tileAt(a, b).look === 'hotPool';
+  if (!pool(x, y - 1)){ R(g, X, Y, T, 3, '#E9DDB8'); R(g, X, Y + 3, T, 1, '#C79A5A'); }
+  if (!pool(x, y + 1)){ R(g, X, Y + 13, T, 3, '#E9DDB8'); R(g, X, Y + 12, T, 1, '#3E9E94'); }
+  if (!pool(x - 1, y)){ R(g, X, Y, 3, T, '#E9DDB8'); R(g, X + 3, Y, 1, T, '#C79A5A'); }
+  if (!pool(x + 1, y)){ R(g, X + 13, Y, 3, T, '#E9DDB8'); R(g, X + 12, Y, 1, T, '#3E9E94'); }
+  const corner = (cx, cy, sx, sy) => {
+    for (const [a, b] of [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[0,2],[0,3]]) R(g, cx + a*sx, cy + b*sy, 1, 1, '#7CC46B');
+    for (const [a, b] of [[4,0],[2,1],[3,1],[1,2],[1,3],[0,4]]) R(g, cx + a*sx, cy + b*sy, 1, 1, '#E9DDB8');
+  };
+  if (!pool(x, y - 1) && !pool(x - 1, y)) corner(X, Y, 1, 1);
+  if (!pool(x, y - 1) && !pool(x + 1, y)) corner(X + 15, Y, -1, 1);
+  if (!pool(x, y + 1) && !pool(x - 1, y)) corner(X, Y + 15, 1, -1);
+  if (!pool(x, y + 1) && !pool(x + 1, y)) corner(X + 15, Y + 15, -1, -1);
+}
+function vent(g, X, Y, x, y){
+  path(g, X, Y, x, y);
+  oval(g, X + 8, Y + 9, 6, 3, '#E9DDB8'); oval(g, X + 8, Y + 9, 4, 2, '#C79A5A'); oval(g, X + 8, Y + 9, 2, 1, '#2E2620');
+}
+function fern(g, X, Y, x, y){
+  grass(g, X, Y, x, y);
+  for (const [dx, dy] of [[-6, -5], [6, -6], [-7, 1], [7, 0], [0, -8]]) for (let i = 1; i <= 6; i++){
+    const px = X + 8 + Math.round(dx * i / 6), py = Y + 12 + Math.round(dy * i / 6 + (i * i) / 12);
+    R(g, px, py, 1, 1, '#2E6E2E'); if (i % 2) R(g, px + (dx > 0 ? 0 : -1), py - 1, 2, 1, '#5DAE4E');
+  }
+}
+// A long leaf, such as a banana plant's: a polygon filled pixel by pixel (polyFill), along a spine from (sx, sy) to (ex, ey),
+// w wide at its widest, drooping at its tip; outlined, lit along one side, with its midrib.
+function polyFill(g, pts, col){
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  g.fillStyle = col;
+  for (let y = Math.floor(Math.min(...ys)); y <= Math.ceil(Math.max(...ys)); y++) for (let x = Math.floor(Math.min(...xs)); x <= Math.ceil(Math.max(...xs)); x++){
+    const px = x + .5, py = y + .5; let inside = false;
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++){ const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > py) !== (yj > py) && px < (xj - xi) * (py - yi) / (yj - yi) + xi) inside = !inside; }
+    if (inside) g.fillRect(x, y, 1, 1);
+  }
+}
+function leafPts(sx, sy, ex, ey, w, droop = 0){
+  const n = 12, dx = ex - sx, dy = ey - sy, len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len, a = [], b = [];
+  for (let i = 0; i <= n; i++){
+    const t = i / n, cx = sx + dx * t, cy = sy + dy * t + droop * t * t, hw = w * Math.sin(Math.PI * Math.min(1, .08 + t * .95));
+    a.push([cx + nx * hw, cy + ny * hw]); b.unshift([cx - nx * hw, cy - ny * hw]);
+  }
+  return a.concat(b);
+}
+function bigLeaf(g, sx, sy, ex, ey, w, droop, dark = false){
+  polyFill(g, leafPts(sx, sy, ex, ey, w + 1, droop), '#1F4A1C');
+  polyFill(g, leafPts(sx, sy, ex, ey, w, droop), dark ? '#3E8A34' : '#4FA03F');
+  polyFill(g, leafPts(sx, sy, ex, ey, w * .45, droop).slice(0, 13).concat([[ex, ey + droop]]), dark ? '#4FA03F' : '#74C25A');
+  for (let i = 1; i < 12; i++){ const t = i / 12; R(g, Math.round(sx + (ex - sx) * t), Math.round(sy + (ey - sy) * t + droop * t * t), 1, 1, '#A6D877'); }
+}
+// A banana plant, two squares by two (its top left at X, Y), reaching up: a thick stem, huge paddle leaves arching out and
+// drooping; and, with fruit, a bunch of bananas hanging under them, a dark red bud at its end. Planted in the garden, it
+// comes up as you watch (stage 1, a shoot; 2, its stem and lower leaves; 3, the rest).
+function bananaPlant(g, X, Y, stage, fruit){
+  const cx = X + 16;
+  if (stage === 1){ R(g, cx - 1, Y + 20, 3, 10, '#4E6E25'); bigLeaf(g, cx, Y + 22, cx - 9, Y + 15, 3, 2); bigLeaf(g, cx, Y + 21, cx + 9, Y + 14, 3, 2); return; }
+  groundShadow(g, cx, Y + 29, 13, 3);
+  bigLeaf(g, cx - 2, Y + 6, X - 14, Y + 2, 8, 11, true); bigLeaf(g, cx + 2, Y + 6, X + 46, Y + 4, 8, 11, true);
+  R(g, cx - 3, Y + 4, 7, 26, '#4E6E25'); R(g, cx - 3, Y + 4, 2, 26, '#8FB04A'); R(g, cx + 2, Y + 4, 2, 26, '#3A5A1C');   // the stem
+  if (stage >= 3){ bigLeaf(g, cx, Y + 4, X - 10, Y - 20, 9, 13); bigLeaf(g, cx, Y + 4, X + 42, Y - 18, 9, 13); bigLeaf(g, cx, Y + 3, cx + 4, Y - 30, 5, 4); }
+  if (!fruit) return;
+  R(g, cx + 5, Y + 6, 1, 12, '#5E7E2A');   // the bunch, hanging from under the leaves
+  for (let r = 0; r < 4; r++) for (let i = 0; i < 4 - (r >> 1); i++){ const bx = cx + 2 + i * 2, by = Y + 8 + r * 3; R(g, bx, by, 2, 3, '#E8C93A'); R(g, bx, by, 1, 2, '#FBE98A'); R(g, bx + 1, by + 2, 1, 1, '#8A6A1A'); }
+  oval(g, cx + 5, Y + 22, 2, 3, '#5A1A2E'); R(g, cx + 4, Y + 20, 1, 2, '#8A2E4A');   // its bud
 }
 // The grapes' trellis in the garden, w wide and h rows deep: a row of posts with two wires along them in each of its rows
 // (stage 1, the posts; 2, the wires), then the vines along the wires, leafy (3); ripe, bunches of grapes hanging from them.
@@ -796,6 +867,11 @@ const LOOKS = {
   melon:     (g,X,Y,x,y) => { grass(g,X,Y,x,y); melonVines(g,X,Y,x,y); melon(g,X,Y); },   // and a melon on them
   grapeCliff: (g,X,Y,x,y) => grapeCliff(g,X,Y,x,y),                                 // wild grapes hanging down a cliff
   trellis:   (g,X,Y,x,y) => gardenBed(g,X,Y,x,y),                                   // the garden's beds under the grapes' trellis (a big object)
+  hotPool:   (g,X,Y,x,y) => hotPool(g,X,Y,x,y),                                     // the hot spring valley's pools,
+  vent:      (g,X,Y,x,y) => vent(g,X,Y,x,y),                                        // its steam vents,
+  fern:      (g,X,Y,x,y) => fern(g,X,Y,x,y),                                        // its ferns,
+  bananaPlant: (g,X,Y,x,y) => grass(g,X,Y,x,y),                                     // and the grass under its banana plants (big objects)
+  bananaHome: (g,X,Y,x,y) => gardenBed(g,X,Y,x,y),                                  // and the garden's beds under the troop's
   frame:     (g,X,Y,x,y) => plot(g,X,Y,x,y),   // the school's frame going up on its plot: a big object (OBJECT_ART), on the plot's earth
   needles:   (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // the pine wood's floor (grass in a sunny glade)
   pine:      (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // a pine, a dead one and a cracked rock: big objects, on the pine wood's floor
@@ -959,6 +1035,8 @@ const OBJECT_ART = {
   dairyYog: (g, o) => dairy(g, o.x*T, o.y*T, OBJECT_STAGES.dairy, (o.stage ?? 1) >= 1 ? 2 : 1),   // (going up: just the jars)
   dairyCheese: (g, o) => dairy(g, o.x*T, o.y*T, OBJECT_STAGES.dairy, (o.stage ?? 1) >= 1 ? 3 : 2),
   trellis: (g, o) => trellis(g, o.x*T, o.y*T, o.w*T, o.h, o.stage ?? OBJECT_STAGES.trellis, false),
+  bananaPlant: (g, o) => bananaPlant(g, o.x*T, o.y*T, 3, true),   // wild, with bananas
+  bananaHome: (g, o) => bananaPlant(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.bananaHome, false),   // the troop's, in the garden
   stoneStool: (g, o) => { if ((o.stage ?? 1) >= 1) stoneStool(g, o.x*T, o.y*T); },
   pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
@@ -1440,8 +1518,8 @@ const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTableBare', 'feastTableB
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
 // table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
 // yoghurt on it, goes up in just that: the rest is there already.)
-const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis'];
+const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3};
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'bananaPlant', 'bananaHome'];
 const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of

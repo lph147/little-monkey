@@ -46,8 +46,19 @@ function tryStep(d, now){
     else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
     return;
   }
+  if (puffing(nx, ny, now)){ if (now - lastBump > 600){ lastBump = now; SFX.hiss(); toast(fill(tileAt(nx, ny).vent.hot)); } return; }   // steam puffing out of a vent: too hot!
   if (walkable(nx, ny) || (way && !way.by && isOpen(way) && !npcAt(nx, ny))){ followersStep(now); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now, dur:walkMs()}; pl.parity ^= 1; }   // (an open way you can always walk into, such as a building's door)
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
+}
+// Standing on a steam vent as it puffs (puffing, js/world.js): it pushes you back off it, the way you came if it can (or
+// any way off it that isn't puffing too), still facing it.
+function steamedOff(now){
+  if (now - lastBump < 600) return;
+  lastBump = now;
+  const off = [pl.from, ...Object.values(DV).map(([dx, dy]) => ({x:pl.x + dx, y:pl.y + dy}))]
+    .find(p => p && Math.abs(p.x - pl.x) + Math.abs(p.y - pl.y) === 1 && walkable(p.x, p.y) && !puffing(p.x, p.y, now));
+  SFX.hiss(); toast(fill(tileAt(pl.x, pl.y).vent.pushed));
+  if (off) pl.mv = {fx:pl.x, fy:pl.y, tx:off.x, ty:off.y, t0:now, dur:walkMs()};
 }
 // Turning to face the grass rustling beside you: the animal hiding there jumps out (rustleAhead(), js/world.js).
 function turnedTo(){
@@ -69,7 +80,7 @@ function update(now){
     const m = pl.mv, p = Math.min(1, (now - m.t0) / (m.dur || (m.hop ? STEP * 1.6 : STEP)));   // a hop down a ledge takes a little longer
     pl.px = (m.fx + (m.tx - m.fx) * p) * T; pl.py = (m.fy + (m.ty - m.fy) * p) * T - (m.hop ? Math.sin(p * Math.PI) * 7 : 0);
     if (p >= 1){
-      pl.x = m.tx; pl.y = m.ty; pl.mv = null;
+      pl.x = m.tx; pl.y = m.ty; pl.mv = null; pl.from = {x:m.fx, y:m.fy};
       if (m.led) return;   // (led there by someone, the leadTo step: nothing happens as you arrive)
       busy = true; lastMoveEnd = now;
       const was = shownAt;   // (if arriving showed you something, such as someone stopping you to talk, it rests when it ends)
@@ -78,6 +89,7 @@ function update(now){
     return;
   }
   if (!canAct()) return;
+  if (puffing(pl.x, pl.y, now)){ steamedOff(now); return; }
   const tapped = queued; queued = null;
   if (tapped && tapped !== pl.dir){ tryStep(tapped, now); return; }
   const d = held || tapped;

@@ -56,6 +56,11 @@ const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
 const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && e.at[1] === y && (!e.when || matches(e.when)));   // a way to another place (when: only there once the story says)
 const isOpen = e => (!e.when || matches(e.when)) && (!e.if || matches(e.if));   // (a way that isn't there yet isn't open either)
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y);   // (an animal standing on open ground, such as a deer, is in the way)
+// Steam vents (a legend's vent: {every, puff, at}, in ms, such as the hot spring valley's): every so often, steam puffs out
+// of one for a moment (puff ms of every, at: where in the cycle it starts), and while it does, you can't step onto it (its
+// hot), and standing on it, it pushes you back off it (its pushed): the hot spring valley's twist, timing your way between
+// its pools (decided 27 October 2026).
+const puffing = (x, y, now = performance.now()) => { const v = tileAt(x, y).vent; return !!v && (now + (v.at || 0)) % v.every < v.puff; };
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
 // Somewhere you collect something else (water, from the river or the pond) whose own word you don't know yet: A looks

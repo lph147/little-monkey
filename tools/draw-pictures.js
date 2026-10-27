@@ -703,6 +703,15 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(Rc(1, 28, 22, 1), '#F2F0E0'); p.fill(Rc(0, 29, 24, 2.5, 1), '#2E8A3A', {light: '#5CB44E', dark: '#1F6A26'});   // its white, and its rind
     for (const [x, y] of [[12, 19], [9, 23], [15, 23], [6, 26], [12, 26], [18, 26]]) p.flat(O(x, y, .9, 1.3), '#1A1410');   // its seeds
   },
+  '香蕉': p => {   // bananas: a bunch of three, curving up from their stalk, yellow with brown tips (unlike 水果: a basket of all sorts)
+    p.fill(path([[4, 15], [3.5, 11.5], [5, 9]], 1.6), '#6B8A2A', {dark: '#4E6E25'});   // the stalk they hang from
+    for (const [k, c, l, d] of [[-1, '#E9C53A', '#FBE27A', '#C49A22'], [0, '#F2D24A', '#FFF09A', '#C9A22A'], [1, '#F7DC5C', '#FFF4B0', '#CFA830']]){
+      const pts = [[5, 15 + k * 1.5], [11, 22 + k * 4], [19, 24 + k * 4.5], [26.5, 20 + k * 5], [29, 14.5 + k * 5.5]];
+      p.fill(path(pts, 2.9), c, {light: l, dark: d, edge: true});                                       // a banana
+      p.flat(O(29, 14.5 + k * 5.5, 1.3, 1.1), '#5A3A1E');                                            // its brown tip
+    }
+    p.flat(O(5, 15, 2.2, 3.2), '#8A6A2A');                                                            // where they join
+  },
   '葡萄': p => {   // grapes: one big bunch of round purple grapes hanging from a stalk, a green vine leaf beside it (unlike 水果: a basket of all sorts)
     p.fill(Pg([[17, 7], [21, 2], [27, 1.5], [30.5, 5], [29, 10], [24, 12], [19, 10]]), '#5BAA4B', {light: '#86D06E', dark: '#3E8A34', edge: true});   // the leaf
     p.flat(path([[18, 8], [24, 6], [29, 4]], .5), '#3E8A34');                                                                                  // its vein
