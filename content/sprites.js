@@ -204,6 +204,10 @@ const MAP_SPRITES = {
     palette: {a:'#201710', b:'#3E2A1C', c:'#A07250', d:'#3F2E20', e:'#7A5236', f:'#563826', g:'#281B13', h:'#47301F', i:'#1E1A16', j:'#D3AD97', k:'#966C53', l:'#C08A6A', m:'#3C2C21', n:'#5A5651', o:'#F4F0E8', p:'#352D27', q:'#806E64', r:'#3A251B', s:'#1F150F'},
     rows: ["................","................","................",".......aaaa.....","....aaabbbbaaa..","...abbbbcccbbba.","..dddceeeeeeefg.",".dccchheeeeeeefg","dceeieeheeeeeefg","jjkeeeeheeeeeefg","jlkeeeeheeeeeefg","kkkffhheeeeeefg.","mnonpqfffffffg..","..n.pqrsggpqrs..","....srrs..srrs..",".....ss....ss..."]
   },
+  '熊': {   // bear (chapter 1, at the pasture's big rocks): standing up on its hind legs, facing you, its front paws raised
+    palette: {a:'#2A1C12', b:'#8A5A34', c:'#5E3A20', d:'#A87448', e:'#D2A982', f:'#120C08', g:'#1E1A16'},
+    rows: ["................","..aa.......aa...",".abca.....abca..",".acbaaaaaaabca..","..abbbbbbbbba...","a.abfbbbbfbba..a","ba.abbeeebba..ab","bba.abegebba.abb",".bbaabbeebbaabb.","..bbbbbbbbbbbb..","...abbddddbba...","...abddddddba...","...abbddddbba...","...abbbaabbba...","..abbba..abbba..","..aaaaa..aaaaa.."]
+  },
   '狼': {   // wolf (chapter 1, in the pine wood's long grass)
     faces: 'left',
     palette: {a:'#2A2A29', b:'#5E656C', c:'#454444', d:'#B0B7BE', e:'#505459', f:'#262423', g:'#2B2A2A', h:'#1A1716', i:'#2F2E2D', j:'#6C7177', k:'#8A9199', l:'#F2C14E', m:'#5F666E', n:'#2A2A2E', o:'#ADB2B8', p:'#4E5359', q:'#93979C', r:'#252423'},

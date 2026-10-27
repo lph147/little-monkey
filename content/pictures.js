@@ -2963,6 +2963,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '熊': {   // bear
+    palette: {a:'#422F1E', b:'#2A1C11', c:'#A87448', d:'#5E3A20', e:'#8A5A34', f:'#50341E', g:'#5A564F', h:'#F4EEE2', i:'#FFFFFF', j:'#1E1A16', k:'#E6C29C', l:'#A8805A', m:'#D2A982', n:'#7A5034', o:'#261A10', p:'#9C6A40'},
+    rows: [
+      "................................",
+      ".........aab........aab.........",
+      "........accdb......accdb........",
+      ".......aceeedbaaaaaceeedb.......",
+      ".......acddddfccccfcddddb.......",
+      ".......acddffeeeeeeffdddb.......",
+      "...gaggbddfeeeeeeeeeefddb.ggbg..",
+      "..ghchhgbaceeeeeeeeeedbb.ghhdhg.",
+      ".aceeedbaceeijeeeeeeeedbaceeedb.",
+      ".aceeedbaceejjeeeeeeeedbaceeedb.",
+      ".bdeeeedaceeekkjjkleeedaceeeedb.",
+      "..bdeeeedfeeekmjjmleeefceeeedb..",
+      "...aceeeedfekmmmmmmlefceeeedb...",
+      "...bdeeeedfelmmmnmmlefceeeedb...",
+      "....bdeeeeffflllnllfffeeeedb....",
+      ".....bdeeeefeffffffefeeeedb.....",
+      "......aceeefeeeeeeeefeeedb......",
+      "......bdeeefeeeeeeeefeeedb......",
+      ".......offfeeeppppeeefffo.......",
+      ".......aceeeeppppppeeeedb.......",
+      "......aceeeeppppppppeeeedb......",
+      "......bdeeeeppppppppeeeedb......",
+      ".......aceeppppppppppeedb.......",
+      ".......aceeppppppppppeedb.......",
+      ".......bdeeeppppppppeeedb.......",
+      "........aceeppppppppeedb........",
+      "........bddeeppppppeeddb........",
+      ".........acdeeppppeededb........",
+      ".........aceddddddddeedb........",
+      ".........aceeedbbaceedb.........",
+      ".........bddddb..bddddb.........",
+      "..........bbbb....bbbb.........."
+    ]
+  },
   '筷子': {   // chopsticks
     palette: {a:'#562829', b:'#3A1312', c:'#E8606A', d:'#8E1E24', e:'#C8343A', f:'#755939', g:'#741E22', h:'#311312', i:'#554632', j:'#E2BC88', k:'#C99A62', l:'#9A6A3A', m:'#3E2B19', n:'#5B5854', o:'#F7F5F0', p:'#F4F1EA', q:'#C9C3B4', r:'#4D4840', s:'#322619'},
     rows: [

@@ -76,6 +76,7 @@ const WORD_BANK = {
   '野猪': {py:'yězhū', en:'wild boar', pic:'🐗', area:1, category:'animals'},
   '鹿': {py:'lù', en:'deer', pic:'🦌', area:1, category:'animals'},   // (chapter 1: a friend in the pine wood)
   '狼': {py:'láng', en:'wolf', pic:'🐺', area:1, category:'animals'},   // (chapter 1: in the pine wood's long grass)
+  '熊': {py:'xióng', en:'bear', pic:'🐻', area:1, category:'animals'},   // (chapter 1: at the big rocks, as you lead the cow home)
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},   // (chapter 1: hiding on the hillside; in the meadow's tall grass until 23 October 2026)
   '蝴蝶': {py:'húdié', en:'butterfly', pic:'🦋', area:1, category:'animals'},   // (chapter 1: fluttering over the flowers on the riverside, the way east to the bees)
   '黄蜂': {py:'huángfēng', en:'wasp', pic:'🦟', area:1, category:'animals', alike:['蜜蜂']},   // (chapter 1: in the tall flowers of the bees' valley; its picture is a pixel wasp, a striped insect like the bee: there's no emoji for a wasp, so its stand-in is a mosquito)
@@ -164,6 +165,7 @@ const WORD_BANK = {
   '上课': {py:'shàngkè', en:'class begins'},
   '下课': {py:'xiàkè', en:'class is over'},
   '这里': {py:'zhèlǐ', en:'here'},
+  '那里': {py:'nàlǐ', en:'there'},   // (the rabbit in the pasture's pines: 牛在那里！)
   '勇敢': {py:'yǒnggǎn', en:'brave'},
   '从此': {py:'cóngcǐ', en:'from then on'},
   '快乐': {py:'kuàilè', en:'happy'},

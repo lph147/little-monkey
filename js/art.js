@@ -192,7 +192,7 @@ const mg = mapCanvas.getContext('2d');
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
 const GRASSY = ['grass','tallGrass','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
-const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones'];
+const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','logBridge'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
   for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i)*16), py = Math.floor(rnd(x,y,i+20)*16); R(g, X+px, Y+py, 1, 1, i % 3 ? '#6CB35C' : '#93D67F'); }
@@ -773,6 +773,16 @@ const LOOKS = {
     waterBase(g,X,Y,x,y);
     R(g,X+2,Y,12,T,'#5A616B'); for (let i = 0; i < 16; i += 3) R(g,X+2,Y+i,12,1,'#454B54');
     R(g,X+1,Y,1,T,'#2F3338'); R(g,X+14,Y,1,T,'#2F3338');
+  },
+  hoofprints:(g,X,Y,x,y) => {   // the pine wood's floor, with a cow's hoofprints in it, two cloven marks to a print, going down the way
+    woodFloor(g,X,Y,x,y);
+    for (const [hx, hy] of [[3, 2], [9, 9]]){ R(g,X+hx,Y+hy,1,3,'#5A4630'); R(g,X+hx+2,Y+hy,1,3,'#5A4630'); R(g,X+hx,Y+hy+3,3,1,'#8C7350'); }
+  },
+  logBridge:(g,X,Y,x,y) => {   // a dead pine fallen across a stream that runs from side to side: its trunk, lying across from bank to bank
+    waterBase(g,X,Y,x,y);
+    R(g,X+11,Y,2,T,'#2C6B9E');                                                                  // its shadow on the water
+    R(g,X+3,Y,9,T,'#3A2214'); R(g,X+4,Y,7,T,WOOD[1]); R(g,X+4,Y,2,T,WOOD[3]); R(g,X+9,Y,1,T,WOOD[0]);   // the trunk, lit on the left, its bark furrowed
+    for (const ky of [3, 11]) R(g,X+6,Y+ky,2,2,'#3A2214');                                      // knots where its branches were
   },
   bridgeAcross:(g,X,Y,x,y) => {   // a bridge over a river that runs from side to side: its planks go across
     waterBase(g,X,Y,x,y);

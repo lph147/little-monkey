@@ -81,15 +81,17 @@ const SFX = {
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.035, t + .5); g.gain.setValueAtTime(.035, t + 1.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
     o.connect(f); f.connect(g); g.connect(a.destination); [o, lfo].forEach(x => { x.start(t); x.stop(t + 2.6); });
   },
-  moo: () => {   // a cow mooing: low and long, opening out from a hum (mm) into the moo (oo), then falling away
+  moo: (far = false) => {   // a cow mooing: low and long, opening out from a hum (mm) into the moo (oo), then falling away (far: faint and muffled, a long way off)
     const a = ac(); if (!a) return;
     const t = a.currentTime, o = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain();
     o.type = 'sawtooth'; o.frequency.setValueAtTime(118, t); o.frequency.linearRampToValueAtTime(140, t + .35);
     o.frequency.linearRampToValueAtTime(128, t + 1); o.frequency.linearRampToValueAtTime(102, t + 1.4);
-    f.type = 'lowpass'; f.Q.value = 5; f.frequency.setValueAtTime(250, t); f.frequency.linearRampToValueAtTime(650, t + .4); f.frequency.linearRampToValueAtTime(380, t + 1.4);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.05, t + .25); g.gain.setValueAtTime(.05, t + 1); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
+    const k = far ? .5 : 1, v = far ? .014 : .05;
+    f.type = 'lowpass'; f.Q.value = 5; f.frequency.setValueAtTime(250 * k, t); f.frequency.linearRampToValueAtTime(650 * k, t + .4); f.frequency.linearRampToValueAtTime(380 * k, t + 1.4);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .25); g.gain.setValueAtTime(v, t + 1); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
     o.connect(f); f.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 1.55);
   },
+  mooFar: () => SFX.moo(true),   // the cow mooing a long way off, the wrong way (the pasture's pines)
   buzz: () => {   // bees buzzing somewhere in the flowers: a soft, wavering hum
     for (let i = 0; i < 8; i++) tone(196 + (i % 2) * 14, .1, 'sawtooth', .008, i * .075, 8 - (i % 3) * 5);
   },

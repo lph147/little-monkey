@@ -640,8 +640,10 @@ test('a place’s own songs, backdrop, gloom and sounds, and every sound a step 
     for (const s of (p.sounds || []).flatMap(s => typeof s === 'string' ? [s] : s.sounds)) assert.ok(SFX.includes(s), `${id}'s sound ${s} isn't one of the sound effects (js/sound.js)`);
     if (parts.length){
       assert.equal(parts.length, p.sounds.length, `${id}'s sounds: all of them by part of the place, or none`);
-      parts.forEach((q, i) => assert.equal(q.rows[0], i ? parts[i - 1].rows[1] + 1 : 0, `${id}'s sounds: each part starts where the one before it ends, from the top`));
-      assert.equal(parts[parts.length - 1].rows[1], p.map.length - 1, `${id}'s sounds: the parts go right down to its bottom row`);
+      const whole = parts.filter(q => !q.cols && !q.if);   // (rows right across, always: some columns, or while the story says, go before them)
+      whole.forEach((q, i) => assert.equal(q.rows[0], i ? whole[i - 1].rows[1] + 1 : 0, `${id}'s sounds: each part starts where the one before it ends, from the top`));
+      assert.equal(whole[whole.length - 1].rows[1], p.map.length - 1, `${id}'s sounds: the parts go right down to its bottom row`);
+      parts.forEach((q, i) => { if (q.cols || q.if) assert.ok(parts.slice(i + 1).some(w => !w.cols && !w.if && w.rows[0] <= q.rows[0] && w.rows[1] >= q.rows[1]), `${id}'s sounds: a part for some columns, or with an if, needs a part for the whole rows after it`); });
     }
     if (p.gloom){
       assert.ok(p.gloom.deep > p.gloom.open && p.gloom.open >= 0 && p.gloom.deep < 1, `${id}'s gloom: deep (${p.gloom.deep}) should be darker than open (${p.gloom.open}), and never black`);

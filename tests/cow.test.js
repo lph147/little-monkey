@@ -89,7 +89,7 @@ test('south, over the bridge: the pasture (牧场), where a cow moos beyond the 
   assert.deepEqual([get(g, '__sounds'), get(g, '__notes')], [[], []], 'only the first time');
   assert.deepEqual(get(g, "LEGEND.n.wild"), ['wolf', 'wolf', 'snake', 'spider'], 'its long grass: wolves come down from the pines');
   assert.deepEqual(get(g, '[PLACES.pasture.battleMusic, PLACES.pasture.backdrop]'), ['pineBattle', 'pines'], 'battles among the pines, as in the pine wood');
-  for (const [x, y] of [[8, 5], [9, 6], [15, 8], [16, 9], [20, 12], [21, 13]]) assert.equal(g.run(`tileAt(${x}, ${y}).look`), 'longGrass', `long grass grown over the way at ${x},${y}`);
+  for (const [x, y] of [[20, 9], [21, 10], [24, 8], [20, 12], [21, 13]]) assert.equal(g.run(`tileAt(${x}, ${y}).look`), 'longGrass', `long grass grown over the way at ${x},${y}`);
   for (const [x, y] of [[19, 13], [22, 13], [19, 14], [22, 14]]) assert.ok(!g.run(`walkable(${x}, ${y})`), `the big rocks either side of the gap, at ${x},${y}`);
   assert.equal(g.run('tileAt(28, 18).look'), 'water', 'the spring');
   assert.deepEqual(npc(g, 'cow'), ['pasture', 31, 18], 'the cow, by its spring');
@@ -134,15 +134,15 @@ test('win the cow’s word game, and it trusts you: 好！我们去你家吧！,
   assert.deepEqual(get(g, '__said'), [`cow: ${COW_HOME}`]);
 });
 
-test('leading the cow home: a wolf leaps out at the gap between the rocks (just the once), and the way is clear', async () => {
+test('leading the cow home: a bear rears up at the gap between the rocks (just the once), and the way is clear', async () => {
   const g = game({place: 'pasture', x: 20, y: 16, dir: 'up'}, {cow: 4}, {knows: ['牛'], following: ['cow'], friends: ['cow']});
   await walkTo(g, 20, 15, 'up');
   assert.deepEqual(get(g, '__fights'), [], 'not yet, on the trail below the rocks');
   await walkTo(g, 20, 14, 'up');
-  assert.deepEqual(get(g, '__fights'), [['wolf', 'A {狼} leaps out of the long grass between the rocks! It wants the {牛}!']], 'into the gap: a wolf leaps out at you');
+  assert.deepEqual(get(g, '__fights'), [['bear', 'A {熊} rears up out of the long grass between the rocks! It wants the {牛}!']], 'into the gap: a bear rears up at you (a wolf till 27 October 2026)');
   assert.ok(get(g, '__sounds').includes('encounter'), 'with a !, as a wild one does from long grass');
   assert.equal(get(g, 'here().cowWolf'), 1);
-  assert.match(get(g, '__notes').join(' '), /The 牛 \(cow\) is safe, and the way home is clear\. Lead it on, back through the pines!/);
+  assert.match(get(g, '__notes').join(' '), /The 熊 \(bear\) is gone\. The 牛 \(cow\) is safe, and the way home is clear\. Lead it on, back through the pines!/);
   assert.deepEqual(get(g, 'S.following'), ['cow'], 'still following you');
   await walkTo(g, 20, 13, 'up');
   assert.equal(get(g, '__fights').length, 1, 'gone for good');
@@ -353,8 +353,9 @@ test('and again, 8 questions later: 好了！ and cheese (奶酪), on the dairy�
   assert.match(get(g, '__notes').join(' '), /Jars of 酸奶 \(yoghurt\) and a round 奶酪 \(cheese\) on the shelf, all made from the cow’s milk\./);
 });
 
-test('hidden in the pasture: shells under a boulder, and a peach behind a tree at its edge', () => {
+test('hidden in the pasture: shells under a boulder, a peach behind a tree at its edge, and shells at the ends of the ways that go nowhere', () => {
   const g = game({place: 'pasture', x: 16, y: 1, dir: 'down'}, {cow: 3});
   const finds = get(g, "AREA.hidden.filter(h => h.at[2] === 'pasture').map(h => [h.id, h.at[0], h.at[1], tileAt(h.at[0], h.at[1]).look])");
-  assert.deepEqual(finds, [['pastureBoulder', 4, 18, 'boulder'], ['pastureTree', 20, 23, 'tree']], 'at things you can’t walk through');
+  assert.deepEqual(finds, [['pastureBoulder', 4, 18, 'boulder'], ['pastureTree', 20, 23, 'tree'], ['pastureWestEnd', 3, 4, 'boulder'], ['pastureEastEnd', 28, 7, 'boulder']],
+    'at things you can’t walk through: two more at the ends of the ways through the pines that go nowhere');
 });

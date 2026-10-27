@@ -656,6 +656,23 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     for (const [x, y, r] of [[9, 21.5, 1.8], [15.5, 19, 1.4], [21, 22.5, 2.2], [26, 18.4, 1.3], [13, 24.4, 1.1], [25.2, 24.6, 1]]) p.fill(O(x, y, r), '#C99328', {light: '#B07E1E'});   // holes
     for (const [x, y, r] of [[17, 14.4, 1.2], [22, 12.2, 1]]) p.fill(O(x, y, r * 1.3, r * .7), '#D8A238');
   },
+  '熊': p => {   // bear: a big brown bear standing up on its hind legs, its front paws raised, round ears (unlike the wild boar: on all fours, with tusks; unlike the wolf: grey, howling)
+    const B = '#8A5A34', LT = {light: '#A87448', dark: '#5E3A20'}, MUZ = '#D2A982';
+    p.fill(or(Rc(9.4, 25, 5.4, 6, 2.2), Rc(17.2, 25, 5.4, 6, 2.2)), B, {...LT, edge: true});   // its hind legs
+    p.fill(O(16, 21, 8.6, 8.4), B, LT);                                                       // its big body
+    p.flat(O(16, 23, 4.6, 5), '#9C6A40');                                                    // its belly, a little lighter
+    p.fill(path([[9.5, 16.5], [4.6, 9.6]], 2.4), B, {...LT, edge: true});                     // its front legs, raised
+    p.fill(path([[22.5, 16.5], [27.4, 9.6]], 2.4), B, {...LT, edge: true});
+    for (const x of [3.2, 4.6, 6]) p.dot(Math.round(x), 7, '#F4EEE2');                       // claws
+    for (const x of [26, 27.4, 28.8]) p.dot(Math.round(x), 7, '#F4EEE2');
+    p.fill(or(O(10.4, 4.8, 2.6), O(21.6, 4.8, 2.6)), B, {...LT, edge: true});                // round ears
+    p.flat(or(O(10.4, 4.8, 1.2), O(21.6, 4.8, 1.2)), '#5E3A20');
+    p.fill(O(16, 10, 6.8, 6.2), B, {...LT, edge: true});                                     // its head
+    p.fill(O(16, 12.6, 3.8, 2.8), MUZ, {light: '#E6C29C', dark: '#A8805A'});                 // its muzzle
+    p.flat(O(16, 11.4, 1.5, 1.1), '#1E1A16');                                                // its nose
+    p.flat(Rc(15.5, 13, 1, 1.6), '#7A5034');
+    p.eye(12, 8); p.eye(18.6, 8);
+  },
   '筷子': p => {   // chopsticks: a pair, side by side, lying across a little white rest, their back ends red (unlike 吃: a bowl of rice with chopsticks in it)
     p.fill(Rc(5, 21, 9, 5, 2.4), '#F4F1EA', {dark: '#C9C3B4'});                                     // the rest
     for (const dx of [0, 4.2]){

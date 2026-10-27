@@ -202,6 +202,11 @@ SAVES.cowNews = {...SAVES.honeyIn, pos: {place: 'homeGround', x: 21, y: 10, dir:
 SAVES.waySouth = {...SAVES.honeyIn, areas: {1: {...SAVES.honeyIn.areas[1], cow: 1}}, tasksSeen: {...SAVES.honeyIn.tasksSeen, cow1: 1}, pos: {place: 'homeGround', x: 16, y: 19, dir: 'down'}};   // (its task seen: no message)
 SAVES.pastureIn = {...SAVES.waySouth, pos: {place: 'homeGround', x: 16, y: 20, dir: 'down'}};   // just before the way in
 SAVES.pasture = {...SAVES.waySouth, areas: {1: {...SAVES.waySouth.areas[1], cow: 2}}, pos: {place: 'pasture', x: 24, y: 16, dir: 'right'}};   // on the cow's trail
+// the way through the pines (27 October 2026): where it forks, the cow's hoofprints; the stream, and the dead pine on its
+// bank; over it, the rabbit by the way
+SAVES.pastureFork = {...SAVES.pasture, pos: {place: 'pasture', x: 18, y: 2, dir: 'right'}};   // just before the first hoofprints
+SAVES.pastureStream = {...SAVES.pasture, areas: {1: {...SAVES.pasture.areas[1], pastureTracks: 1, streamSeen: 1}}, tasksSeen: {...SAVES.pasture.tasksSeen, cowStream: 9}, pos: {place: 'pasture', x: 20, y: 4, dir: 'right'}};   // facing the dead pine
+SAVES.pastureRabbit = {...SAVES.pastureStream, areas: {1: {...SAVES.pastureStream.areas[1], pastureLog: 1}}, pos: {place: 'pasture', x: 19, y: 7, dir: 'left'}};   // facing the rabbit, over the stream
 SAVES.cowMeet = {...SAVES.pasture, pos: {place: 'pasture', x: 31, y: 17, dir: 'down'}};   // facing the cow, by its spring
 SAVES.cowFound = {...SAVES.cowMeet, w: {...SAVES.cowMeet.w, ...knows(1, ['牛'])}, areas: {1: {...SAVES.cowMeet.areas[1], cow: 3}}};
 // version 2: won over, the cow follows you home; the wolf at the rocks; the cow running back after a lost battle; and home
@@ -754,6 +759,14 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'pasture-first', title: 'Into the pasture (牧场)', save: 'pastureIn', why: 'The first time: dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos.', run: async () => {
     play(); await wait(100); arrive(16, 21).then(runEvents); await wait(1500); }},
+  {id: 'pasture-fork', title: 'Hoofprints', save: 'pastureFork', why: 'The way through the pines forks: west, it goes nowhere (but there are shells under the boulder at its end); east, the cow’s hoofprints, and the first time you come to them, which way it went. Its moo, now and then, is louder the right way.', run: async () => {
+    play(); await wait(100); pl.dir = 'right'; tryStep('right', performance.now()); await wait(700); }},
+  {id: 'pasture-stream', title: 'Too deep to wade', save: 'pastureStream', why: 'The hoofprints go into a stream, too deep for a little monkey; a dead pine leans over it from the bank, sparkling, and your task’s arrow is on it. A: Hit.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'pasture-log', title: 'A bridge', save: 'pastureStream', why: 'Knock the dead pine down with your stick, and it falls right across the stream: a bridge.', run: async () => {
+    play(); await wait(100); pressA(); await wait(1600); }},
+  {id: 'pasture-rabbit', title: 'Are you looking for the cow?', save: 'pastureRabbit', why: 'Over the stream, where the way forks three ways, a rabbit saw the cow go by: 你找牛吗？ (Are you looking for the cow?), then its word game; win, and 牛在那里！ (The cow is over there! 那里 just for listening), its ears pointing the way.', run: async () => {
+    play(); await wait(100); talk(npc('pastureRabbit')); await wait(500); }},
   {id: 'pasture', title: 'The pasture', save: 'pasture', why: 'Out between two big rocks: open, sunny grass with flowers, big trees and boulders, and the spring where the cow drinks.', run: async () => {
     play(); await wait(500); }},
   {id: 'cow-meet', title: 'The lost cow', save: 'cowMeet', why: 'By its spring: A teaches 牛 (niú, cow), said straight away as you find it.', run: async () => {
@@ -766,7 +779,7 @@ const SCREENS = [
     play(); await wait(200);
     for (let i = 0; i < 3; i++){ pl.dir = 'left'; tryStep('left', performance.now()); await wait(450); }
     await wait(300); }},
-  {id: 'cow-wolf', title: 'The wolf at the rocks', save: 'cowGap', why: 'Leading the cow home, as you come into the gap between the big rocks, a wolf leaps out of the long grass at you (just the once): it wants the cow!', run: async () => {
+  {id: 'cow-wolf', title: 'The bear at the rocks', save: 'cowGap', why: 'Leading the cow home, as you come into the gap between the big rocks, a bear (熊, taught on its card the first time) rears up out of the long grass at you (just the once): it wants the cow! A boss: no running away. (A wolf till 27 October 2026.)', run: async () => {
     play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(2600); }},
   {id: 'cow-ran', title: 'The cow ran back', save: 'cowRan', why: 'Lose a battle on the way home, and the cow takes fright and runs back to its spring: talk to it there, and it follows you again.', run: async () => {
     play(); await wait(100); runSteps(BATTLES.afterLoss[0].do); await wait(600); }},

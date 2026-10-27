@@ -14,7 +14,7 @@ shown where the word list has them.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey), 大猴子 (Big monkey) |  |
+| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 兔子 (rabbit), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey), 大猴子 (Big monkey) |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
 | 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey), 山羊 (goat) |  |
 | 来看看！ | lái kànkan! | Come and take a look! | 山羊 (goat) |  |
@@ -92,6 +92,8 @@ shown where the word list has them.
 | 我们有蜂蜜了！ | wǒmen yǒu fēngmì le! | We have honey now! | 饿猴子 (Hungry monkey) |  |
 | 山上有牛！ | shān shàng yǒu niú! | There’s a cow on the mountain! | 渴猴子 (Thirsty monkey) |  |
 | 我怕狼！ | wǒ pà láng! | I’m scared of wolves! | 牛 (cow) |  |
+| 你找牛吗？ | nǐ zhǎo niú ma? | Are you looking for the cow? | 兔子 (rabbit) |  |
+| 牛在那里！ | niú zài nàlǐ! | The cow is over there! | 兔子 (rabbit) |  |
 | 这是你的家！ | zhè shì nǐ de jiā! | This is your home! |  |  |
 | 我有家了！ | wǒ yǒu jiā le! | I have a home now! | 牛 (cow) |  |
 | 我要喝牛奶！ | wǒ yào hē niúnǎi! | I want to drink milk! | 渴猴子 (Thirsty monkey) |  |
@@ -226,6 +228,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 | 桌子上有筷子。 | zhuōzi shàng yǒu kuàizi. | There are chopsticks on the table. | 筷子 |  |
 | 酸奶里有勺子。 | suānnǎi lǐ yǒu sháozi. | There’s a spoon in the yoghurt. | 勺子 |  |
+| 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
 
 ### Questions after the story
 
@@ -356,6 +359,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 野猪 | yězhū | wild boar |  |
 | 鹿 | lù | deer |  |
 | 狼 | láng | wolf |  |
+| 熊 | xióng | bear |  |
 | 狐狸 | húli | fox |  |
 | 蝴蝶 | húdié | butterfly |  |
 | 黄蜂 | huángfēng | wasp |  |
@@ -491,6 +495,7 @@ check that each is true and simply put.
 | 上课 | shàngkè | class begins |  |
 | 下课 | xiàkè | class is over |  |
 | 这里 | zhèlǐ | here |  |
+| 那里 | nàlǐ | there |  |
 | 勇敢 | yǒnggǎn | brave |  |
 | 从此 | cóngcǐ | from then on |  |
 | 快乐 | kuàilè | happy |  |

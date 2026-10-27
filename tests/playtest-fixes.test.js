@@ -46,14 +46,15 @@ test('the cow following you faces the way it walks, and walks with its legs, not
   assert.ok(legs > rows / 2 && legs < rows, `its legs, the bottom of its picture, step as it walks (from row ${legs})`);
 });
 
-test('the wolf at the gap between the rocks is a boss: you can’t run from it', async () => {
+test('what leaps out at the gap between the rocks is a boss: you can’t run from it (a wolf, then a bear)', async () => {
   const g = game({place: 'pasture', x: 20, y: 15, dir: 'up'}, {cow: 4}, {following: ['cow'], friends: ['cow']});
   await walkTo(g, 20, 14, 'up');
-  assert.deepEqual(get(g, '__fights.map(([id, o]) => [id, !!o.boss])'), [['wolf', true]]);
+  assert.deepEqual(get(g, '__fights.map(([id]) => id)'), ['bear']);
+  assert.equal(g.run('ENEMIES.bear.boss'), true, 'a boss');
   const b = loadGame({dom: true, save: {version: 30, started: true, w: Object.fromEntries(['石头', '山', '狼', '棍子'].map(x => [x, {lv: 1, ok: 2}])), areas: {1: {...FEAST}}}});
   b.run("mode = 'play'; say = () => {}; fight('wolf', {boss: true})");
   for (let i = 0; i < 20 && !b.el('#sheet').querySelectorAll('.act').length; i++){ await tick(); b.flush(); }
-  assert.deepEqual(b.el('#sheet').querySelectorAll('.act').map(x => x.dataset.act), ['hit'], 'no Run away');
+  assert.deepEqual(b.el('#sheet').querySelectorAll('.act').map(x => x.dataset.act), ['hit'], 'a battle step’s boss: no Run away');
   assert.equal(b.run('ENEMIES.wolf.boss'), undefined, 'wolves in the long grass you can still run from');
 });
 

@@ -1068,12 +1068,13 @@ function playSounds(now){
   splashWas = s;
 }
 // The sounds of the part of the place you're in: the place's own (sounds: some of SFX's names), or, where they change from
-// one part of it to another (each part: its rows, from and to, and its sounds), the part you're in, such as the hillside's
-// as you climb. A sound comes soon after you come into a part, then every so often.
+// one part of it to another (each part: its rows, from and to, its columns too if it says, cols, its sounds, and an if,
+// while the story says), the first part you're in, such as the hillside's as you climb, or the pasture's pines, where a
+// lost cow's moo is louder the right way. A sound comes soon after you come into a part, then every so often.
 function placeSounds(){
   const sounds = PLACES[PLACE].sounds;
   if (!sounds || typeof sounds[0] === 'string') return sounds;
-  const part = sounds.find(p => pl.y >= p.rows[0] && pl.y <= p.rows[1]);
+  const part = sounds.find(p => pl.y >= p.rows[0] && pl.y <= p.rows[1] && (!p.cols || (pl.x >= p.cols[0] && pl.x <= p.cols[1])) && (!p.if || matches(p.if)));   // (and while its if matches)
   return part ? part.sounds : null;
 }
 function ambience(now){
