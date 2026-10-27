@@ -1181,26 +1181,51 @@ function cowPen(g, X, Y, w, h, stage){
     for (let px = X + 6; px < X + w - 8; px += 16) post(px, Y + 49, 13);
     post(X + w - 8, Y + 49, 13);
   }
-  if (stage >= 4){   // the shelter, two squares wide, against the back fence: plank walls, in shade inside, a thatched roof
+  if (stage >= 4){   // the shelter, two squares wide, against the back fence: an open front, a plank back wall in shade, an earth floor, its posts on stones, a thatched roof
     const SX = X + 64, SW = 32;
-    R(g, SX + 1, Y + 6, SW - 2, 25, WOOD[1]); for (let k = 3; k < SW - 2; k += 5) R(g, SX + k, Y + 6, 1, 25, WOOD[0]);   // its back wall, planks
-    R(g, SX + 3, Y + 14, SW - 6, 17, '#3A2616');                                                         // inside, in shade
-    post(SX, Y + 8, 23); post(SX + SW - 3, Y + 8, 23);                                                   // its front posts
+    R(g, SX + 1, Y + 10, SW - 2, 21, '#2E1E10');                                                          // its outline
+    R(g, SX + 3, Y + 12, SW - 6, 13, '#5A3B22'); for (let k = SX + 6; k < SX + SW - 4; k += 5) R(g, k, Y + 12, 1, 13, '#46301B');   // its back wall, planks
+    R(g, SX + 3, Y + 12, SW - 6, 3, '#3A2616');                                                          // in shade under the roof
+    R(g, SX + 3, Y + 12, 2, 19, '#6E4A2A'); R(g, SX + SW - 5, Y + 12, 2, 19, '#6E4A2A');                  // its side walls, seen inside
+    R(g, SX + 5, Y + 25, SW - 10, 6, '#A88A5E'); R(g, SX + 5, Y + 25, SW - 10, 1, '#7E6440');              // its earth floor, where the wall meets it dark
+    for (const [fx, fy] of [[8, 28], [13, 29], [21, 27], [25, 29]]) R(g, SX + fx, Y + fy, 2, 1, '#D9B45A');   // a few straws on it
+    for (const px of [SX, SX + SW - 3]){ post(px, Y + 8, 23); R(g, px - 1, Y + 30, 5, 2, '#8C8A84'); R(g, px - 1, Y + 30, 5, 1, '#B4B2AA'); }   // its front posts, on stones
     for (let k = 0; k < 13; k++){ const inset = Math.max(0, 5 - k); R(g, SX - 3 + inset, Y + k, SW + 6 - 2*inset, 1, k === 12 ? '#8A6A2A' : k % 2 ? '#D9B45A' : '#C9A24A'); }   // the thatch
     for (let k = 4; k < SW + 4; k += 5) R(g, SX - 2 + k, Y + 3, 1, 7, '#B08A3A');                        // straw lines
   }
-  if (stage >= 5){   // hay, heaped up in the shelter
-    const SX = X + 64;
-    for (let k = 0; k < 6; k++) R(g, SX + 4 + k, Y + 29 - k, 24 - 2*k, 2, k % 2 ? '#E8C35A' : '#D9AE44');
-    R(g, SX + 3, Y + 30, 26, 1, '#C99A3A');
+  if (stage >= 5){   // hay, heaped up in a mound on the shelter's floor, against its back wall, stalks sticking out
+    const SX = X + 64, cx = SX + 16, rows = [10, 12, 13, 13, 13, 12];   // (half its width, from its top down)
+    rows.forEach((hw, k) => { const y = Y + 23 + k; R(g, cx - hw - 1, y, 2*hw + 2, 1, '#9C7A2C'); R(g, cx - hw, y, 2*hw, 1, k === 0 ? '#F2D27A' : k % 2 ? '#E8C35A' : '#D9AE44'); });
+    R(g, cx - 9, Y + 22, 18, 1, '#9C7A2C');
+    for (const [hx, h] of [[-7, 3], [-2, 4], [3, 3], [8, 2]]) R(g, cx + hx, Y + 22 - h, 1, h, '#E8C35A');   // stalks
+    for (const hx of [-6, 0, 5]) R(g, cx + hx, Y + 26, 2, 1, '#C99A3A');
   }
-  if (stage >= 6){   // fresh water: a stone trough, filled by a bamboo pipe on a stand outside, over the fence
+  if (stage >= 6){   // fresh water: a stone trough, filled by a bamboo pipe that comes in over the fence, on a stand of crossed sticks
     R(g, X + 17, Y + 38, 14, 10, OUT); R(g, X + 18, Y + 39, 12, 8, SLAB[2]); R(g, X + 18, Y + 46, 12, 1, SLAB[1]);   // the trough
     R(g, X + 19, Y + 40, 10, 4, '#5DA6D9'); R(g, X + 19, Y + 40, 10, 1, '#9FD0EE'); R(g, X + 23, Y + 42, 4, 1, '#CFEAF8');   // its water
-    post(X - 8, Y + 34, 14);                                                                            // the pipe's stand
-    for (let k = 0; k < 30; k++){ const bx = X - 9 + k, by = Y + 33 + Math.floor(k / 8); R(g, bx, by, 1, 3, k % 8 === 7 ? '#4E7A2A' : '#7FA84A'); R(g, bx, by, 1, 1, '#A8CF6E'); }   // the bamboo pipe
-    R(g, X + 21, Y + 37, 1, 4, '#9FD0EE'); R(g, X + 22, Y + 37, 1, 3, '#CFEAF8');                         // water pouring in
+    bambooPole(g, X + 1, Y + 26, 19);                                                                    // an upright bamboo, bringing the water up, outside the fence
+    bambooPipe(g, X + 4, Y + 29, X + 24, Y + 33);                                                        // and its spout, over the fence
+    R(g, X + 24, Y + 36, 1, 5, '#9FD0EE'); R(g, X + 25, Y + 36, 1, 4, '#CFEAF8');                          // water pouring in
   }
+}
+// An upright bamboo pole, at x, from y down h pixels to the ground: four pixels wide, outlined, lit on its left, its joints
+// every few pixels, its top cut open.
+function bambooPole(g, x, y, h){
+  R(g, x - 1, y - 1, 6, h + 1, '#2F4A1A');
+  for (let k = 0; k < h; k++){ const joint = k % 6 === 5; R(g, x, y + k, 4, 1, joint ? '#5E8A30' : '#7FAF48'); R(g, x, y + k, 1, 1, joint ? '#8FBF58' : '#B4DB7A'); }
+  R(g, x, y, 4, 1, '#E2D6A0');                                                                           // its open top
+  groundShadow(g, x + 2, y + h, 4, 1);
+}
+// A bamboo pipe from (x0, y0) to (x1, y1), going a little downhill: a round green stem, outlined, with a light stripe along
+// its top, a joint every few pixels, and its open end cut across.
+function bambooPipe(g, x0, y0, x1, y1){
+  const len = x1 - x0;
+  for (let k = 0; k <= len; k++){
+    const x = x0 + k, y = Math.round(y0 + (y1 - y0) * k / len), joint = k % 7 === 6;
+    R(g, x, y - 1, 1, 5, '#2F4A1A');                                                                     // its outline
+    R(g, x, y, 1, 3, joint ? '#5E8A30' : '#7FAF48'); R(g, x, y, 1, 1, joint ? '#8FBF58' : '#B4DB7A');       // the stem, lit along its top
+  }
+  R(g, x1, Math.round(y1), 1, 3, '#E2D6A0');                                                             // its open end
 }
 // The little dairy by the cow's pen (chapter 1): a table under a thatched roof, two squares by two, where the thirsty
 // monkey makes things from the cow's milk, as much of it as is up (stage, as the troop sets it up: 1 its back posts, in

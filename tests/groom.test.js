@@ -32,16 +32,17 @@ test('at the home ground, south of the road, two little monkeys sit together und
   assert.ok(g.run('walkable(15, 5)') && g.run('walkable(16, 5)'), 'the hillside’s pines are clear of them');
 });
 
-test('they take turns: the groomer sits close, facing its friend, nodding as it picks; the other faces you, eyes shut, a hand on its shoulder', () => {
+test('they take turns: the groomer sits close, still, facing its friend, reaching up to pick through the fur on its head; the other faces you, eyes shut', () => {
   const g = game();
   const MS = get(g, 'GROOM_MS');
   assert.deepEqual(get(g, `[0, 1, 2, 3].map(i => groomAt(${MS} * (10 + i) + 5).who)`), [0, 1, 0, 1], 'taking turns');
   const drawn = t => get(g, `(() => { const out = [], em = drawEntityMonkey, sp = monkeySprite, rr = R;
-    drawEntityMonkey = (kind, X, Y, dir) => out.push(['groomer', kind, dir, X]); monkeySprite = (kind, dir, blink) => { out.push(['groomed', kind, dir, blink]); return sp(kind, dir, blink); };
+    drawEntityMonkey = (kind, X, Y, dir, now, bob) => out.push(['groomer', kind, dir, X, bob]); monkeySprite = (kind, dir, blink) => { out.push(['groomed', kind, dir, blink]); return sp(kind, dir, blink); };
     for (const n of NPCS.filter(n => PLAYS[n.id] === 'groom')) drawPlaying(n, n.x * T, n.y * T, ${t});
     drawEntityMonkey = em; monkeySprite = sp; return out; })()`);
-  assert.deepEqual(drawn(MS * 10 + 5), [['groomer', 'groomA', 'right', 12 * 16 + 2], ['groomed', 'groomB', 'down', true]], 'the one on the left grooms first, sitting close');
-  assert.deepEqual(drawn(MS * 11 + 5), [['groomed', 'groomA', 'down', true], ['groomer', 'groomB', 'left', 13 * 16 - 2]], 'then the other');
+  assert.deepEqual(drawn(MS * 10 + 5), [['groomer', 'groomA', 'right', 12 * 16 + 3, 0], ['groomed', 'groomB', 'down', true]], 'the one on the left grooms first, sitting close and still (no nodding)');
+  assert.deepEqual(drawn(MS * 11 + 5), [['groomed', 'groomA', 'down', true], ['groomer', 'groomB', 'left', 13 * 16 - 3, 0]], 'then the other');
+  assert.ok(get(g, 'GROOM_SPOTS.every(([x, y]) => y <= 7 && x <= 5)'), 'its hand only ever on its friend’s head, on the near side (by its ear, the side of its head, its crown): never low down');
 });
 
 test('say hello: we are friends, 我们是朋友！', async () => {

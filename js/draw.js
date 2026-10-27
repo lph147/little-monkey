@@ -81,14 +81,32 @@ function drawPlaying(n, X, Y, now){
   else if (kind === 'dragonflies') drawChaser(n, X, Y, now);
   else if (kind === 'groom') drawGroomer(n, X, Y, now);
 }
-// Grooming the other one, or being groomed, taking turns: the groomer sits facing its friend, nodding as it picks through
-// its fur; the one being groomed sits facing you, eyes shut, enjoying it, its friend's hand moving over its shoulder.
+// Grooming the other one, or being groomed, taking turns, side by side: the groomer sits close beside its friend, still,
+// turned towards it, and reaches up to pick through the fur on its head, by its ear and on its crown, a while at each,
+// its fingers working; the one being groomed sits facing you, eyes shut, enjoying it (decided 27 October 2026: the groomer
+// used to nod at its friend, its hand moving low down by its lap, which could be taken for something rude).
+const GROOM_SPOTS = [[2, 5], [4, 3], [1, 7], [5, 1]];   // where the hand picks, on the friend's near side (from its square's near edge, and down): by its ear, the side of its head, below its ear, its crown
+const GROOM_AT = 1600, GROOM_MOVE = 350, GROOM_CLOSE = 3;   // how long at each spot, and moving to the next (ms); how far the groomer sits in from its square, towards its friend
 function drawGroomer(n, X, Y, now){
   const friend = NPCS.find(c => c !== n && PLAYS[c.id] === 'groom'), left = !friend || n.x < friend.x;
-  if (groomAt(now).who === (left ? 0 : 1)){ drawEntityMonkey(n.kind, X + (left ? 2 : -2), Y, left ? 'right' : 'left', now, Math.round(Math.abs(Math.sin(now / 260))), 0, n.x + n.y); return; }   // (sitting close)
+  if (groomAt(now).who === (left ? 0 : 1)){ drawEntityMonkey(n.kind, X + (left ? GROOM_CLOSE : -GROOM_CLOSE), Y, left ? 'right' : 'left', now, 0, 0, n.x + n.y); return; }   // (sitting close, still)
   R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
   b.drawImage(monkeySprite(n.kind, 'down', true), X, Y);
-  if (friend && playing(friend)) R(b, X + (left ? 12 : 2) + Math.round(Math.sin(now / 180)), Y + 10 + (Math.sin(now / 260) > 0 ? 1 : 0), 2, 2, (PALS[friend.kind] || PALS.player).s);
+  if (friend && playing(friend)) groomingArm(friend, X, Y, now, !left);
+}
+// The groomer's arm (fromLeft: it sits on the left), from its chest up to its hand on its friend at X, Y: fur two pixels
+// thick, outlined, as the monkeys' own arms are.
+function groomingArm(g, X, Y, now, fromLeft){
+  const pal = PALS[g.kind] || PALS.player, t = now % (GROOM_SPOTS.length * GROOM_AT), i = Math.floor(t / GROOM_AT), k = clamp((t - i * GROOM_AT) / GROOM_MOVE, 0, 1);
+  const [ax, ay] = GROOM_SPOTS[(i + GROOM_SPOTS.length - 1) % GROOM_SPOTS.length], [bx, by] = GROOM_SPOTS[i];
+  const hx = Math.round(ax + (bx - ax) * k), hy = Math.round(ay + (by - ay) * k) + (k === 1 && Math.floor(now / 220) % 2 ? 1 : 0);   // (its fingers working, once it's there)
+  const side = x => fromLeft ? X + x : X + 15 - x;   // (from the near side)
+  const sx = side(GROOM_CLOSE - 5), sy = Y + 10, ex = side(hx), ey = Y + hy, steps = Math.max(Math.abs(ex - sx), Math.abs(ey - sy), 1);
+  const fur = new Map();
+  for (let j = 0; j <= steps; j++){ const x = Math.round(sx + (ex - sx) * j / steps), y = Math.round(sy + (ey - sy) * j / steps); fur.set(x + ',' + y, [x, y]); fur.set(x + ',' + (y + 1), [x, y + 1]); }
+  for (const [x, y] of fur.values()) for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) if (!fur.has((x + dx) + ',' + (y + dy))) R(b, x + dx, y + dy, 1, 1, pal.o);
+  for (const [x, y] of fur.values()) R(b, x, y, 1, 1, pal.f);
+  R(b, ex, ey, 1, 2, pal.s);   // its hand, in the fur
 }
 // Chasing a dragonfly: it leaps up at it now and then, turning to face it, and the dragonfly darts off just out of reach
 // (drawn with the others: drawDragonflies).
