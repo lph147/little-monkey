@@ -592,10 +592,26 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[21, 14], [21, 9], [20, 9], [20, 5], [16, 5], [16, 1]], 'on up, through the long grass, to the edge of the pines');
   await act('arrive(16, 0).then(runEvents)', 'back into the dark pines, with the cow');
   assert.deepEqual([run('PLACE'), get('S.following')], ['darkPines', ['cow']]);
-  await walk([[16, 28], [16, 20], [23, 20], [23, 16], [28, 16], [28, 4], [16, 4], [16, 1]], 'back through the dark pines, over the fallen pine and through the hollow one, with the cow');
+  // The way home (version 3, 27 October 2026): at the long grass in the dark pines, the cow stops, scared of the wolves
+  // in it: 我怕狼！ You go first, and a wolf leaps out at you; chase it off, and it follows you through
+  await walk([[16, 28], [16, 27]], 'leading the cow up to the long grass in the dark pines');
+  assert.deepEqual([area().cowWaits, get('S.following')], ['grass', []], 'it won’t go into the long grass: it waits for you');
+  await walk([[16, 27], [16, 26]], 'going first into the long grass, where a wolf leaps out');
+  assert.deepEqual([area().pinesWolf, area().cowWaits, get('S.following')], [1, 0, ['cow']], 'the wolf chased off, the cow follows you through');
+  await walk([[16, 26], [16, 20], [23, 20], [23, 16], [28, 16], [28, 4], [16, 4], [16, 1]], 'back through the dark pines, over the fallen pine and through the hollow one, with the cow');
   await act('arrive(16, 0).then(runEvents)', 'back up to the south slope, with the cow');
   assert.deepEqual([run('PLACE'), get('S.following')], ['southSlope', ['cow']]);
-  await walk([[12, 38], [12, 33], [3, 33], [3, 27], [13, 27], [13, 21], [21, 21], [21, 13], [3, 13], [3, 6], [12, 6], [12, 1]], 'up the south slope the long way, by its steps, with the cow');
+  // Up the south slope, at the top of the steps from the pines, it stops again, hungry: 我饿了。 Pick it three handfuls of
+  // fresh grass by the brook (counted 一 二 三), give it it (我要吃草), and it follows you on, up the steps
+  await walk([[12, 38], [12, 33], [3, 33], [3, 27]], 'leading the cow up the steps from the pines');
+  assert.ok(area().cowWaits === 'slope' && get('__said').includes('我饿了。'), 'the cow is hungry: it waits for you');
+  await walk([[3, 27], [12, 27], [12, 25]], 'going to the fresh grass by the brook');
+  for (let i = 0; i < 3; i++) await pressAt(12, 25, 'left', 'picking a handful of fresh grass for the cow');
+  assert.equal(area().holding.cowFood, '草', 'three handfuls');
+  await walk([[12, 25], [12, 27], [3, 27]], 'taking the grass back to the cow');
+  await pressAt(3, 27, 'left', 'giving the cow the grass');
+  assert.deepEqual([area().cowFood, area().cowWaits, get('S.following')], ['done', 0, ['cow']], 'fed, it follows you on');
+  await walk([[3, 27], [13, 27], [13, 21], [21, 21], [21, 13], [3, 13], [3, 6], [12, 6], [12, 1]], 'up the south slope the long way, by its steps, with the cow');
   await act('arrive(12, 0).then(runEvents)', 'back to the home ground, with the cow');
   assert.deepEqual([run('PLACE'), get('S.following')], ['homeGround', ['cow']]);
   await walk([[16, 20], [16, 10], [19, 10]], 'leading the cow to the thirsty monkey, by the road');

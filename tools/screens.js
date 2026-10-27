@@ -231,6 +231,15 @@ SAVES.cowFollow = {...SAVES.cowFound, friends: [...SAVES.cowFound.friends, 'cow'
 SAVES.cowGap = {...SAVES.cowFollow, w: {...SAVES.cowFollow.w, ...knows(1, ['狼'])}, pos: {place: 'pasture', x: 21, y: 15, dir: 'up'}};   // just below the gap between the rocks (knowing 狼, from the pine wood)
 SAVES.cowRan = {...SAVES.cowFollow, pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};   // resting under the big tree, after a lost battle
 SAVES.cowHome = {...SAVES.cowFollow, areas: {1: {...SAVES.cowFollow.areas[1], cowWolf: 1}}, pos: {place: 'homeGround', x: 18, y: 10, dir: 'right'}};   // on the road, nearly at the thirsty monkey
+// the way home (27 October 2026): leading the cow up to the long grass in the dark pines, where it stops, scared; and up
+// the south slope's steps from the pines, where it stops, hungry; the fresh grass by the brook, sparkling; and the grass
+// picked, for it
+SAVES.cowPines = {...SAVES.cowFollow, areas: {1: {...SAVES.cowFollow.areas[1], cowWolf: 1, pastureTracks: 1, logSeen: 1, streamSeen: 1, pastureLog: 1}}, pos: {place: 'darkPines', x: 16, y: 28, dir: 'up'}};
+SAVES.cowSlope = {...SAVES.cowPines, areas: {1: {...SAVES.cowPines.areas[1], pinesWolf: 1}}, w: {...SAVES.cowPines.w, ...knows(1, ['一', '二', '三'])}, pos: {place: 'southSlope', x: 3, y: 28, dir: 'up'}};
+SAVES.cowGrass = {...SAVES.cowSlope, following: [], areas: {1: {...SAVES.cowSlope.areas[1], cowWaits: 'slope', cowFood: 'asked'}}, tasksSeen: {...SAVES.cowSlope.tasksSeen, cowFood: 9},
+  pos: {place: 'southSlope', x: 12, y: 25, dir: 'left'}};   // facing the fresh grass by the brook
+SAVES.cowFed = {...SAVES.cowGrass, areas: {1: {...SAVES.cowGrass.areas[1], picked: {cowFood: ['11,25', '11,25', '11,25']}, holding: {cowFood: '草'}}}, tasksSeen: {...SAVES.cowGrass.tasksSeen, cowFed: 9},
+  pos: {place: 'southSlope', x: 3, y: 27, dir: 'left'}};   // back with the grass, facing the cow
 // version 3: its safe home, built by the road as you watch (the thirsty monkey's ! starts it); leading it in through its
 // gate (这是你的家！); its thank-you, milk (牛奶), for the thirsty monkey; the feast's new table, with the milk on it; and
 // the cow at home (我有家了！)
@@ -833,6 +842,14 @@ const SCREENS = [
     play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(2600); }},
   {id: 'cow-ran', title: 'The cow ran back', save: 'cowRan', why: 'Lose a battle on the way home, and the cow takes fright and runs back to its spring: talk to it there, and it follows you again.', run: async () => {
     play(); await wait(100); runSteps(BATTLES.afterLoss[0].do); await wait(600); }},
+  {id: 'cow-long-grass', title: 'Not into the long grass!', save: 'cowPines', why: 'Leading the cow home through the dark pines, it stops at the long grass: 我怕狼！ (I’m scared of wolves!). Go first, and chase them off: a wolf leaps out of the grass at you.', run: async () => {
+    play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(1600); }},
+  {id: 'cow-hungry', title: 'I’m hungry.', save: 'cowSlope', why: 'Up the south slope, at the top of the steps from the pines, the cow stops again: 我饿了。 (I’m hungry.). Pick it some fresh grass by the brook.', run: async () => {
+    play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(1600); }},
+  {id: 'cow-grass', title: 'Fresh grass', save: 'cowGrass', why: 'Tall, fresh grass by the brook, sparkling: A picks a handful, three times, counted 一 二 三, with the task’s arrow on it. The cow waits at the top of the steps.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'cow-fed', title: 'Grass for the cow', save: 'cowFed', why: 'Give the cow the grass: 草！太好了！ (Grass! Wonderful!), then you finish 我要吃草 (I want to eat grass), and it follows you on, up the steps.', run: async () => {
+    play(); await wait(100); pressA(); await wait(800); }},
   {id: 'cow-home', title: 'The cow is home', save: 'cowHome', why: 'As you come up to the thirsty monkey by the road, the cow stops following you, and stands by him: 太好了！ (Great!)', run: async () => {
     play(); await wait(200); pl.dir = 'right'; tryStep('right', performance.now()); await wait(1600); }},
   {id: 'cow-home-task', title: 'A message where the speech box was', save: 'cowHome', why: 'Straight after a conversation whose speech box was at the top (here, so as not to hide the thirsty monkey), the next messages, such as a new task, show at the top too, till you move or turn, so they never jump from top to bottom.', run: async () => {

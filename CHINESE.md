@@ -23,7 +23,7 @@ shown where the word list has them.
 | 桃子！太好了！ | táozi! tài hǎo le! | A peach! Wonderful! |  |  |
 | 水！太好了！ | shuǐ! tài hǎo le! | Water! Wonderful! | 渴猴子 (Thirsty monkey) |  |
 | 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! |  |  |
-| 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
+| 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 牛 (cow) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 饿猴子 (Hungry monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
@@ -92,6 +92,8 @@ shown where the word list has them.
 | 我们有蜂蜜了！ | wǒmen yǒu fēngmì le! | We have honey now! | 饿猴子 (Hungry monkey) |  |
 | 山上有牛！ | shān shàng yǒu niú! | There’s a cow on the mountain! | 渴猴子 (Thirsty monkey) |  |
 | 我怕狼！ | wǒ pà láng! | I’m scared of wolves! | 牛 (cow) |  |
+| 我饿了。 | wǒ è le. | I’m hungry. | 牛 (cow) |  |
+| 草！太好了！ | cǎo! tài hǎo le! | Grass! Wonderful! | 牛 (cow) |  |
 | 你找牛吗？ | nǐ zhǎo niú ma? | Are you looking for the cow? | 兔子 (rabbit) |  |
 | 牛在那里！ | niú zài nàlǐ! | The cow is over there! | 兔子 (rabbit) |  |
 | 这是你的家！ | zhè shì nǐ de jiā! | This is your home! |  |  |
@@ -162,6 +164,7 @@ shown where the word list has them.
 | 我们要碗 | wǒmen yào wǎn | We want bowls. | 饿猴子 (Hungry monkey) |  |
 | 我要吃蜂蜜 | wǒ yào chī fēngmì | I want to eat honey. | 饿猴子 (Hungry monkey) |  |
 | 我要喝牛奶 | wǒ yào hē niúnǎi | I want to drink milk. | 渴猴子 (Thirsty monkey) |  |
+| 我要吃草 | wǒ yào chī cǎo | I want to eat grass. | 牛 (cow) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |

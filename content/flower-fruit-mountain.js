@@ -92,6 +92,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //           pasture as you lead the cow home
   //   cowSeen chapter 1: 1 once you've seen the lost cow, far below, from the lookout on the south slope
   //   logSeen chapter 1: 1 once you've come to the hollow pine fallen along the gully in the dark pines
+  //   cowWaits chapter 1: where the cow you're leading home has stopped, waiting for you: 'grass' by the long grass in the
+  //          dark pines (scared of the wolves in it), 'slope' on the south slope (hungry); 0 while it follows you
+  //   pinesWolf chapter 1: 1 once you've gone first into the long grass in the dark pines, and chased off its wolf
   //   pastureTracks, streamSeen, pastureLog, rabbitTold  chapter 1, the way through the dark pines (the pasture's, till 27 October 2026): 1 once you've seen the
   //           cow's hoofprints; once you've come to the stream they go into; once you've knocked the dead pine down across it,
   //           a bridge; once the rabbit by the way has told you where the cow went (its word game won)
@@ -101,7 +104,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -129,6 +132,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     woodGot: {count:'picked', request:'wood'},       // pieces of wood you've got for the school, from the dry pines
     stonesGot: {count:'picked', request:'stones'},   // and small stones
     bowlsGot: {count:'picked', request:'bowls'},   // the bowls for the feast, from the cave
+    cowGrass: {count:'picked', request:'cowFood'},   // the handfuls of grass for the hungry cow
     numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']},   // the numbers you've learned at school
     coloursKnown: {count:'known', words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},   // and the colours
     practised: {count:'practised'},   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
@@ -249,7 +253,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'cowStream', if:{streamSeen:1, pastureLog:0, cow:{below:3}}, text:'Get over the stream in the pines: knock the dead pine on its bank down with your {棍子}, so it falls across', arrow:[24, 17, 'darkPines']},
     {id:'cow3', if:{cow:3}, text:'Win the {牛}’s trust with its word game, by its spring in the pasture', arrow:'cow'},
     {id:'cow4', if:{cow:4, following:{cow:true}}, text:'Lead the {牛} home to the thirsty monkey, back through the pines. Watch out for wolves!', arrow:'thirsty'},
-    {id:'cowRan', if:{cow:4, following:{cow:false}}, text:'The {牛} ran back to its spring, frightened: go and fetch it', arrow:'cow'},
+    {id:'cowWolf', if:{cow:4, cowWaits:'grass'}, text:'The {牛} won’t go into the long grass in the dark pines: go first, and chase the wolves off', arrow:[16, 25, 'darkPines']},
+    {id:'cowFood', if:{cow:4, cowWaits:'slope', holding:{cowFood:false}}, text:'The {牛} is hungry: pick it some fresh {草} by the brook, on the south slope ({cowGrass}/3)', arrow:[11, 25, 'southSlope']},
+    {id:'cowFed', if:{cow:4, cowWaits:'slope', holding:{cowFood:true}}, text:'Give the {草} to the {牛}', arrow:'cow'},
+    {id:'cowRan', if:{cow:4, following:{cow:false}, cowWaits:0}, text:'The {牛} ran back to its spring, frightened: go and fetch it', arrow:'cow'},
     // its safe home: the troop builds it a pen by the road, and you lead it in; then its thank-you, milk
     {id:'cow5', if:{cow:5}, text:'Talk to the thirsty monkey: the troop is ready to build the {牛} a home', arrow:'thirsty'},
     {id:'cow7', if:{cow:7, following:{cow:true}}, text:'Lead the {牛} in through the gate of its new home', arrow:[24, 11, 'homeGround']},
@@ -367,7 +374,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{feast:{atLeast:3}, cow:0}, show:'!'}, {if:{cow:4, following:{cow:true}}, show:'!'}, {if:{cow:5}, show:'!'}, {if:{milk:'asked', holding:{milk:true}}, show:'?'},
       {if:{milkTable:{atLeast:1}, dairy:0}, show:'!'}, {if:{dairy:2}, show:'!'}, {if:{dairy:4}, show:'!'}],   // chapter 1: by the road at the home ground, with news of a cow on the mountain; then the troop's ready to build it a home; and he'd love some of its milk
     pastureRabbit: [{if:{cow:{below:3}, rabbitTold:0}, show:'!'}],   // until it has told you where the cow went
-    cow: [{if:{cow:{below:4}}, show:'!'}, {if:{cow:4, following:{cow:false}}, show:'!'}, {if:{cow:7, following:{cow:false}}, show:'!'}],   // the cow, lost and alone in the pasture, till you've won its trust; and if it ran back to its spring, or isn't following you to its new home
+    cow: [{if:{cow:{below:4}}, show:'!'}, {if:{cowFood:'asked', holding:{cowFood:true}}, show:'?'}, {if:{cow:4, following:{cow:false}}, show:'!'}, {if:{cow:7, following:{cow:false}}, show:'!'}],   // the cow, lost and alone in the pasture, till you've won its trust; and if it ran back to its spring, or isn't following you to its new home
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
@@ -442,7 +449,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the cow's milk, its thank-you for its new home: it gives you some, and the thirsty monkey wants to drink it
     // (asked as he says so: the cow's events); the rest is for the feast
     milk: {from:'thirsty', wants:'牛奶', ask:'wantMilk', asked:'The thirsty monkey wants to drink some {牛奶}!',
-      offer:'haveMilk', sentence:'我 要 喝 牛奶', sentenceEn:'I want to drink milk.', reward:3, thanks:'thanks', thanksReply:'不客气'}
+      offer:'haveMilk', sentence:'我 要 喝 牛奶', sentenceEn:'I want to drink milk.', reward:3, thanks:'thanks', thanksReply:'不客气'},
+    // chapter 1: leading the cow home, it stops on the south slope, tired and hungry (asked as it says so: an event); you
+    // pick it three handfuls of fresh grass by the brook
+    cowFood: {from:'cow', wants:'草', ask:'cowHungry', asked:'The {牛} is hungry. Pick it some fresh {草} by the brook!',
+      offer:'haveGrass', sentence:'我 要 吃 草', sentenceEn:'I want to eat grass.', reward:2, thanks:'thanks', thanksReply:'不客气'}
   },
 
   // The shop. who runs it, their line when you visit (ask); when you buy something, they give it to you (given, what's
@@ -514,6 +525,20 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {message:'A great pine has fallen along the gully, hollow inside. The cow stepped over it, but a little monkey can crawl right through!'}]},
     {if:{place:'darkPines', streamSeen:0, pastureLog:0, cow:{below:3}, around:[23, 17, 'darkPines', 1]}, do:[{set:{streamSeen:1}},
       {message:'The hoofprints go right down into a stream, deep and fast. A big cow can wade across, but a little monkey can’t! A dead pine leans out over the water…'}]},
+    // the way home with the cow (27 October 2026: the way there was an adventure, the way back just a walk): as you come up
+    // to the long grass in the dark pines, it stops, scared of the wolves in it (我怕狼！); go first, and a wolf leaps out
+    // at you; chase it off, and the cow follows you through. (Lose, and you rest at home, the cow still waiting.)
+    {if:{place:'darkPines', cow:4, following:{cow:true}, pinesWolf:0, around:[16, 26, 'darkPines', 1]}, do:[{set:{cowWaits:'grass'}}, {follow:[]},
+      {say:'cowScared', by:'cow'}, {message:'The {牛} won’t go into the long grass: wolves hide in it! Go first, and chase them off.'}]},
+    {if:{place:'darkPines', cow:4, cowWaits:'grass', around:[16, 25, 'darkPines', 1]}, do:[
+      {battle:'wolf', out:true, meet:'A {狼} leaps out of the long grass at you!', win:[{set:{pinesWolf:1, cowWaits:0}}, {follow:['cow']}, {sound:'moo'},
+        {message:'The {狼} runs off into the pines. The {牛} isn’t scared now: it follows you through the long grass!'}]}]},
+    // and up the south slope, at the top of the steps from the pines, it stops again, tired and hungry (我饿了。): pick it
+    // some fresh grass by the brook, give it it (我要吃草), and it follows you on, up the steps (the banks are too steep)
+    {if:{place:'southSlope', cow:4, following:{cow:true}, cowFood:'not asked', around:[3, 26, 'southSlope', 1]}, do:[{set:{cowWaits:'slope', cowFood:'asked'}}, {follow:[]},
+      {sound:'moo'}, {say:'cowHungry', by:'cow'}, {message:'The {牛} is tired and hungry after the long walk. Pick it some fresh {草} by the brook!'}]},
+    {if:{cow:4, cowWaits:'slope', cowFood:'done'}, do:[{set:{cowWaits:0}}, {follow:['cow']},
+      {message:'The {牛} munches the {草|grass} happily, and follows you again. On up the slope, by its steps, and home!'}]},
     // leading the cow home, as you come into the gap between the big rocks, a bear rears up out of its long grass at you
     // (just the once: a boss, with no running away; win, and it lumbers off into the pines for good; lose, and the cow runs
     // back to its spring: battles' afterLoss). A wolf until 27 October 2026 (cowWolf), which you could run from
@@ -1088,6 +1113,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'z': {look:'steppingStones', walk:true},              // stepping stones over the brook
         'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},
         'L': {look:'slabs', walk:true},                       // the lookout's stone platform
+        // fresh, juicy grass by the brook: leading the cow home, it's hungry, and you pick it three handfuls here
+        'c': {look:'tallGrass', walk:true, word:'草', note:'Fresh, juicy grass by the brook.', onLook:[{if:{cowFood:'asked', holding:{cowFood:false}}, label:'Pick', sparkle:true,
+          do:[{collect:'草', for:'cowFood', count:3, each:'You pick a handful of fresh {草}.', full:'You have three handfuls of fresh {草}. Take them to the {牛}!'}]}]},
         // its railing, at the top of the cliff: A shows you the view, and the first time, the lost cow, far below
         'R': {look:'railing', landmark:true, onLook:[
           {if:{cow:{atLeast:1, below:3}, cowSeen:0}, label:'Look', sparkle:true, do:[{scene:'cowView'}, {set:{cowSeen:1}}, {sound:'mooFar'},
@@ -1121,7 +1149,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYgggggggWWgg.........ogYY",
         "YYWWWWWWWWWWWzzWWWWWWWWWYY",   // the brook, and its stepping stones
         "YYWWWWWWWWWWWzzWWWWWWWWWYY",
-        "YYggnnnnnnggg..WgggoggggYY",
+        "YYggnnnnnngcg..WgggoggggYY",   // fresh grass by the brook (c), for the hungry cow
         "YYggnnnnnnggg..gnnnnnnggYY",
         "YYg............gnnnnnnggYY",   // west to the steps
         "YYg...T.......ggnnnnnnggYY",
@@ -1621,7 +1649,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // of the wolves in the pines
     {id:'cow', place:'pasture', x:31, y:18, facing:'left', look:'牛',
       moves:[{if:{cow:{atLeast:8}}, place:'homeGround', x:28, y:13, facing:'left'},   // in its pen, in front of its shelter
-        {if:{cow:{atLeast:5}}, place:'homeGround', x:22, y:11, facing:'left'}]},   // home with you, by the thirsty monkey near the road
+        {if:{cow:{atLeast:5}}, place:'homeGround', x:22, y:11, facing:'left'},   // home with you, by the thirsty monkey near the road
+        // leading it home, it stops, waiting for you: by the long grass in the dark pines, scared of the wolves in it; and
+        // on the south slope, hungry, at the top of the steps up from the pines
+        {if:{cow:4, cowWaits:'grass'}, place:'darkPines', x:16, y:28, facing:'up'}, {if:{cow:4, cowWaits:'slope'}, place:'southSlope', x:2, y:27, facing:'right'}]},
     // a rabbit in a nook by the way through the pasture's pines, over the stream, where the way forks three ways: it saw the
     // cow go by (decided 27 October 2026, with the forks; 兔子 you know from the prologue, so it's a word game, not a new word)
     {id:'pastureRabbit', place:'darkPines', x:20, y:23, facing:'up', look:'兔子'}
@@ -1875,7 +1906,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // What happens after you lose a battle and come round where you rest: the first whose if matches. (Chapter 1: the cow
     // you were leading home takes fright, and runs back to its spring in the pasture; fetch it again. Losing isn't
     // punished: it trusts you still.)
-    afterLoss: [{if:{cow:4, following:{cow:true}}, do:[{follow:[]}, {message:'Frightened, the {牛} ran back to its spring in the pasture. Go and fetch it again!'}]}]
+    afterLoss: [{if:{cow:4, following:{cow:true}}, do:[{follow:[]}, {message:'Frightened, the {牛} ran back to its spring in the pasture. Go and fetch it again!'}]},
+      // (and if it's waiting for you, it still is)
+      {if:{cow:4, cowWaits:'grass'}, do:[{message:'The {牛} is still waiting for you by the long grass in the dark pines. Go first, and chase the wolves off!'}]},
+      {if:{cow:4, cowWaits:'slope'}, do:[{message:'The {牛} is still waiting for you on the south slope, hungry.'}]}]
   },
 
   // Where fish jump out of the water now and then, one after another.
@@ -2069,7 +2103,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveHoney: {zh:'蜂蜜 ！ 太 好 了 ！', en:'Honey! Wonderful!'},   // the hungry monkey, when you bring him honey
     haveHoneyNow: {zh:'我们 有 蜂蜜 了 ！', en:'We have honey now!'},   // and once it's in the bowl on the feast's table
     cowNews: {zh:'山 上 有 牛 ！', en:'There’s a cow on the mountain!'},   // the thirsty monkey's news (牛 just for listening, till you find it)
-    cowScared: {zh:'我 怕 狼 ！', en:'I’m scared of wolves!'},   // the cow, lost in the pasture
+    cowScared: {zh:'我 怕 狼 ！', en:'I’m scared of wolves!'},   // the cow, lost in the pasture (and at the long grass in the dark pines)
+    cowHungry: {zh:'我 饿 了 。', en:'I’m hungry.'},   // the cow, on the south slope, on the way home
+    haveGrass: {zh:'草 ！ 太 好 了 ！', en:'Grass! Wonderful!'},   // and as you bring it some
     lookForCow: {zh:'你 找 牛 吗 ？', en:'Are you looking for the cow?'},   // the rabbit by the way through the pasture's pines (drafts, 27 October 2026)
     cowThere: {zh:'牛 在 那里 ！', en:'The cow is over there!'},   // (and it points its ears that way: 那里 just for listening)
     yourHome: {zh:'这 是 你 的 家 ！', en:'This is your home!'},   // you, to the cow, as you lead it into its pen
@@ -2362,6 +2398,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'The troop has cleared a way south, over the bridge at the bottom of the home ground. Go and find the cow!'}]},
       {if:{cow:{atLeast:1, below:3}}, do:[{say:'cowNews', hint:'Go south, over the bridge at the bottom of the home ground, and through the pines, to find the lost cow.'}]},
       {if:{cow:3}, do:[{say:'cowNews', hint:'You found the cow by its spring, in the pasture. Win its trust with its word game, and it will follow you home.'}]},
+      {if:{cow:4, cowWaits:'grass'}, do:[{say:'cowNews', hint:'The cow is waiting for you by the long grass in the dark pines: go first, and chase the wolves off!'}]},
+      {if:{cow:4, cowWaits:'slope'}, do:[{say:'cowNews', hint:'The cow is waiting for you on the south slope, hungry: pick it some fresh grass by the brook.'}]},
       {if:{cow:4}, do:[{say:'cowNews', hint:'The cow ran back to its spring in the pasture: go and fetch it, then lead it home past the wolves.'}]},   // (it ran back: leading it home, you'd meet him first, by the road)
       // home with the cow: the troop builds it a home as you watch, by the road: its plot marked out, then its pen, a piece at
       // a time (the fences, with the gate facing the road, a shelter with hay, and a trough of fresh water fed by a bamboo
@@ -2421,6 +2459,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
           word:'牛', notYet:'Learn a few more words first, then come back to play.',
           win:[{say:'queenYes'}, {set:{cow:4}}, {follow:['cow']}, {message:'The {牛} trusts you, and follows you! Lead it home to the thirsty monkey, back through the pines. Watch out for wolves!'}]}}
       ]},
+      {if:{cow:4, cowWaits:'grass'}, do:[{say:'cowScared'}, {message:'The {牛} won’t go into the long grass: wolves hide in it! Go first, and chase them off.'}]},   // (waiting by the long grass)
+      {if:{cow:4, cowWaits:'slope'}, do:[{request:'cowFood'}]},   // (hungry, on the south slope: give it the grass you've picked)
       {if:{cow:4, following:{cow:false}}, do:[{say:'queenYes'}, {follow:['cow']}, {message:'The {牛} follows you again. Lead it home to the thirsty monkey!'}]},   // (after it ran back to its spring)
       {if:{cow:4}, do:[{say:'queenYes'}]},   // following you home
       {if:{cow:7, following:{cow:false}}, do:[{sound:'moo'}, {follow:['cow']}, {message:'The {牛} follows you. Lead it in through the gate of its new home!'}]},   // (its home is built)
