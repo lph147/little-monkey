@@ -209,6 +209,10 @@ SAVES.honeyIn = {...SAVES.honeyHeld, areas: {1: {...SAVES.hive.areas[1], bees: 1
 SAVES.cowNews = {...SAVES.honeyIn, pos: {place: 'homeGround', x: 21, y: 10, dir: 'down'}};   // facing the thirsty monkey, by the road
 SAVES.waySouth = {...SAVES.honeyIn, areas: {1: {...SAVES.honeyIn.areas[1], cow: 1}}, tasksSeen: {...SAVES.honeyIn.tasksSeen, cow1: 1}, pos: {place: 'homeGround', x: 16, y: 19, dir: 'down'}};   // (its task seen: no message)
 SAVES.pastureIn = {...SAVES.waySouth, pos: {place: 'homeGround', x: 16, y: 20, dir: 'down'}};   // just before the way in
+// the south slope (27 October 2026): at the top; on its lookout, facing the railing; and by its goat
+SAVES.slopeTop = {...SAVES.waySouth, tasksSeen: {...SAVES.waySouth.tasksSeen, cowLook: 1}, pos: {place: 'southSlope', x: 12, y: 3, dir: 'down'}};
+SAVES.slopeLookout = {...SAVES.slopeTop, pos: {place: 'southSlope', x: 6, y: 16, dir: 'down'}};
+SAVES.slopeSteps = {...SAVES.slopeTop, areas: {1: {...SAVES.slopeTop.areas[1], cowSeen: 1}}, tasksSeen: {...SAVES.slopeTop.tasksSeen, cow1: 2}, pos: {place: 'southSlope', x: 21, y: 21, dir: 'left'}};
 SAVES.pasture = {...SAVES.waySouth, areas: {1: {...SAVES.waySouth.areas[1], cow: 2}}, pos: {place: 'pasture', x: 24, y: 16, dir: 'right'}};   // on the cow's trail
 // the way through the pines (27 October 2026): where it forks, the cow's hoofprints; the stream, and the dead pine on its
 // bank; over it, the rabbit by the way
@@ -783,8 +787,20 @@ const SCREENS = [
     play(); await wait(100); talk(npc('thirsty')); await wait(500); }},
   {id: 'way-south', title: 'The way south', save: 'waySouth', why: 'Past the bridge at the bottom of the home ground, the bushes are gone: the way south to the pasture, with the task’s arrow.', run: async () => {
     play(); await wait(500); }},
-  {id: 'pasture-first', title: 'Into the pasture (牧场)', save: 'pastureIn', why: 'The first time: dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos.', run: async () => {
+  {id: 'south-slope', title: 'The south slope (南坡)', save: 'pastureIn', why: 'South over the bridge, the way goes down the south slope: its name at the top, said aloud; four terraces with a cliff between each, stone steps at one end (the long way) and a grassy bank to hop down in the middle (the quick way).', run: async () => {
     play(); await wait(100); arrive(16, 21).then(runEvents); await wait(1500); }},
+  {id: 'slope-top', title: 'Down the slope', save: 'slopeTop', why: 'The top terrace: the way winds west to the steps, or hop down the bank in the middle; a wild apple tree, long grass. Your task: look for the cow from the lookout on the way.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'slope-lookout', title: 'The lookout', save: 'slopeLookout', why: 'On the second terrace, a lookout at the top of the cliff: its railing sparkles (A: Look), and a goat stands by it.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'cow-view', title: 'There’s a cow over there!', save: 'slopeLookout', why: 'From the railing: hills far off, a sunny pasture far below with a spring, the cow by it (an arrow over it), and the dark pines between: 那里有一只牛！ (There’s a cow over there!), then 我要去找牛！ (I’m going to find the cow!).', run: async () => {
+    play(); await wait(100); storyScene('cowView'); introClock = .8; advancedTo = 0; await wait(400); }},
+  {id: 'slope-goat', title: 'The cow is down below!', save: 'slopeLookout', why: 'The goat by the lookout: 你好！, your reply, then 牛在下面！ (The cow is down below!).', run: async () => {
+    play(); await wait(100); S.pos = {place: 'southSlope', x: 10, y: 16, dir: 'right'}; placePlayer(); talk(npc('slopeGoat')); await wait(300); next(); await wait(300); next(); await wait(500); }},
+  {id: 'slope-steps', title: 'Stepping stones', save: 'slopeSteps', why: 'The third terrace: a brook across it, and stepping stones over it; a peach tree in the corner; then more steps down, into the pines.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'pasture-first', title: 'Into the pasture (牧场)', save: 'pastureIn', why: 'The first time: dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'southSlope', x: 12, y: 38, dir: 'down'}; placePlayer(); arrive(12, 39).then(runEvents); await wait(1500); }},
   {id: 'pasture-fork', title: 'Hoofprints', save: 'pastureFork', why: 'The way through the pines forks: west, it goes nowhere (but there are shells under the boulder at its end); east, the cow’s hoofprints, and the first time you come to them, which way it went. Its moo, now and then, is louder the right way.', run: async () => {
     play(); await wait(100); pl.dir = 'right'; tryStep('right', performance.now()); await wait(700); }},
   {id: 'pasture-stream', title: 'Too deep to wade', save: 'pastureStream', why: 'The hoofprints go into a stream, too deep for a little monkey; a dead pine leans over it from the bank, sparkling, and your task’s arrow is on it. A: Hit.', run: async () => {

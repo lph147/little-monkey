@@ -69,16 +69,19 @@ test('once the feast’s quests begin, the thirsty monkey is by the road at the 
   assert.match(get(g, '__notes').join(' '), /The troop has cleared a way south, over the bridge at the bottom of the home ground\. Go and find the cow!/);
   assert.equal(g.run('tileAt(16, 21).look'), 'path', 'the bushes are gone');
   assert.equal(g.run("AREA.bubbles.thirsty.find(b => matches(b.if))"), undefined, 'his ! has gone');
-  assert.deepEqual(cowTasks(g), ['Find the lost cow: south over the bridge, and through the pines'], 'cow: just its English, till you’ve caught it');
+  assert.deepEqual(cowTasks(g), ['Find the lost cow: south over the bridge, and down the slope. On the way, look for it from the lookout!'], 'cow: just its English, till you’ve caught it');
   assert.deepEqual(item(g, /lost cow/), ['Find the lost cow on the mountain', false, false, true]);
   g.run('__said.length = 0');
   await press(g, 21, 10, 'down');
   assert.deepEqual(get(g, '__said'), ['thirsty: 山上有牛！'], 'again, with what to do under it');
 });
 
-test('south, over the bridge: the pasture (牧场), where a cow moos beyond the pines the first time you go in', async () => {
+test('south, over the bridge and down the south slope: the pasture (牧场), where a cow moos beyond the pines the first time you go in', async () => {
   const g = game({place: 'homeGround', x: 16, y: 20, dir: 'down'}, {cow: 1});
   await play(g, 'arrive(16, 21).then(runEvents)');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y, S.pos.dir]')], ['southSlope', [12, 1, 'down']], 'first the south slope (tests/south-slope.test.js)');
+  g.run("S.pos = {place: PLACE, x: 12, y: 38, dir: 'down'}; placePlayer()");
+  await play(g, 'arrive(12, 39).then(runEvents)');
   assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y, S.pos.dir]')], ['pasture', [16, 1, 'down']], 'in at the top, among the pines');
   assert.deepEqual(get(g, 'PLACES.pasture.name'), {zh: '牧场', py: 'mùchǎng', en: 'The pasture'});
   assert.ok(get(g, '__sounds').includes('moo'), 'a moo, from beyond the pines');
@@ -96,7 +99,10 @@ test('south, over the bridge: the pasture (牧场), where a cow moos beyond the 
   assert.equal(g.run("AREA.bubbles.cow.find(b => matches(b.if)).show"), '!');
   g.run("S.pos = {place: PLACE, x: 16, y: 1, dir: 'up'}; placePlayer()");
   await play(g, 'arrive(16, 0).then(runEvents)');
-  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['homeGround', [16, 20]], 'back up to the home ground, below the bridge');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['southSlope', [12, 38]], 'back up the south slope');
+  g.run("S.pos = {place: PLACE, x: 12, y: 1, dir: 'up'}; placePlayer()");
+  await play(g, 'arrive(12, 0).then(runEvents)');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['homeGround', [16, 20]], 'to the home ground, below the bridge');
 });
 
 test('by its spring, you find the cow: 牛, said as you meet it, then 我怕狼！ and its word game, to win its trust', async () => {

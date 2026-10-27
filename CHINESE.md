@@ -104,6 +104,7 @@ shown where the word list has them.
 | 我们有碗了！ | wǒmen yǒu wǎn le! | We have bowls now! |  |  |
 | 我做了筷子！ | wǒ zuò le kuàizi! | I made chopsticks! | 大猴子 (Big monkey) |  |
 | 我做了勺子！ | wǒ zuò le sháozi! | I made spoons! | 大猴子 (Big monkey) |  |
+| 牛在下面！ | niú zài xiàmiàn! | The cow is down below! | 山羊 (goat) |  |
 | 我要做吃的！ | wǒ yào zuò chī de! | I’m going to make something to eat! | 渴猴子 (Thirsty monkey) |  |
 | 好了！ | hǎo le! | It’s ready! | 渴猴子 (Thirsty monkey) |  |
 | 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 猴子 (Monkey) |  |
@@ -288,6 +289,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- |
 | 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
 | 海很大！ | hǎi hěn dà! | The sea is so big! |  |
+| 那里有一只牛！ | nàlǐ yǒu yì zhī niú! | There’s a cow over there! |  |
+| 我要去找牛！ | wǒ yào qù zhǎo niú! | I’m going to find the cow! |  |
+| 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
 | 我们去刷灯笼吧！ | wǒmen qù shuā dēnglong ba! | Let’s go and paint the lanterns! |  |
 | 灯笼是红色的！ | dēnglong shì hóngsè de! | The lanterns are red! |  |
 
@@ -327,6 +331,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山坡 | shānpō | The hillside |  |
 | 河边 | hébiān | The riverside |  |
 | 百花谷 | Bǎihuā Gǔ | Valley of a Hundred Flowers |  |
+| 南坡 | nánpō | The south slope |  |
 | 牧场 | mùchǎng | The pasture |  |
 | 松林 | sōnglín | Pine wood |  |
 | 学校 | xuéxiào | School |  |

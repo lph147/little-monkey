@@ -1055,6 +1055,42 @@ function drawLookout(t, now){
   for (const px of [4, 46, 88, 147, 189, 231]){ R(b, px, 88, 5, 40, WOOD[0]); R(b, px, 88, 4, 40, WOOD[2]); R(b, px, 88, 1, 40, WOOD[3]); R(b, px, 88, 5, 1, WOOD[4]); }   // the railing
   for (const ry of [92, 101]){ R(b, 0, ry, W, 4, WOOD[0]); R(b, 0, ry, W, 3, WOOD[2]); R(b, 0, ry, W, 1, WOOD[3]); }
 }
+/* ---- the view from the south slope's lookout ---- */
+// What you see from the lookout on the south slope (chapter 1, decided 27 October 2026: you see where you're going): hills far
+// off; below, a sunny pasture with trees and flowers, and a spring with a little stream out of it; between, the dark pines,
+// a stream glinting through them; the slope going down either side; and you, at the railing, looking out. While the cow is
+// lost (till it's home: the scene's def.home says it's just the view), it's there, by its spring, small and far off, with an
+// arrow over it, so you see it.
+function drawCowView(t, now, def = {}){
+  const W = VW*T;
+  for (let y = 0; y < 40; y += 2) R(b, 0, y, W, 2, mix('#6AB4E2', '#D6EEF7', y / 40));   // the sky
+  cloudPuff(20 + t * 1.2, 10, 1); cloudPuff(150 + t * .8, 6, 1.2);
+  for (let x = 0; x < W; x += 2){ const h = Math.round(30 + Math.sin(x / 23) * 4 + Math.sin(x / 9) * 2); R(b, x, h, 2, 60 - h, '#8FB7A4'); }   // hills far off
+  for (let y = 36; y < 70; y += 2) R(b, 0, y, W, 2, mix('#7FC46A', '#6CB85A', (y - 36) / 34));   // the pasture
+  for (const [tx, ty] of [[24, 46], [60, 40], [196, 44], [222, 52], [104, 42], [168, 38]]){ disc(b, tx, ty, 3, '#3F8A44'); disc(b, tx - 1, ty - 1, 1, '#5FAE58'); }   // its trees
+  for (const [fx, fy, c] of [[40, 54, '#F2F2EC'], [44, 56, '#F2A6C8'], [140, 60, '#F2F2EC'], [146, 58, '#6FA3E8'], [80, 62, '#F2F2EC']]) R(b, fx, fy, 2, 1, c);   // flowers
+  disc(b, 128, 52, 5, '#4F9BD8'); R(b, 123, 50, 10, 4, '#4F9BD8'); R(b, 125, 50, 4, 1, '#A9D7F0');   // the spring
+  for (let x = 132; x < 200; x++) R(b, x, 53 + Math.round(Math.sin(x / 8) * 2), 1, 1, '#4F9BD8');   // and its little stream
+  if (!def.home && here().cow < 4){   // the cow, by its spring, and an arrow over it
+    ["......bb", ".wwwwbwo", "wbbwwwww", "wwwwbbw.", ".w.w.w.w"].forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') R(b, 110 + x, 47 + y, 1, 1, {w:'#FFFFFF', b:'#5A3A22', o:'#E8A0A0'}[c]); }));
+    pix(ARROW, 111, 37 + Math.round(Math.sin(now / 180) * 1.5), {o:'#1E2B26', y:'#F2C14E'});
+  }
+  for (let x = 0; x < W; x += 2){ const top = Math.round(66 + Math.sin(x / 13) * 2 + rnd(x >> 1, 41) * 3); R(b, x, top, 2, 40, '#1F4A35'); }   // the dark pines
+  for (let i = 0; i < 70; i++){ const px = Math.floor(rnd(i, 43) * W), py = 66 + Math.floor(rnd(i, 44) * 28); R(b, px, py, 1, 3, '#15382A'); R(b, px - 1, py + 2, 3, 2, '#15382A'); }
+  for (let x = 0; x < W; x++) if (Math.sin(x / 5) > -.2) R(b, x, 80 + Math.round(Math.sin(x / 20) * 1.5), 1, 1, '#4F86A8');   // a stream glinting through them
+  const side = (from, to, top, bot, col, seed) => {   // the slope going down, either side of the view
+    for (let x = from; x !== to; x += Math.sign(to - from) * 2){
+      const k = Math.abs(x - from) / Math.abs(to - from), h = Math.round(top + (bot - top) * Math.pow(k, .8) + rnd(x >> 1, seed) * 2);
+      R(b, Math.min(x, x - 1), h, 2, 120 - h, col); R(b, Math.min(x, x - 1), h, 2, 1, mix(col, '#A9E08F', .5));
+    }
+  };
+  side(0, 70, 70, 112, '#4F9A55', 51); side(W, 170, 74, 112, '#468F4D', 61);
+  R(b, 0, 100, W, 60, '#B9B3A5'); R(b, 0, 100, W, 1, '#D6D1C4');   // the lookout's flat rock
+  for (let i = 0; i < 30; i++) R(b, Math.floor(rnd(i, 71) * W), 102 + Math.floor(rnd(i, 72) * 20), 2, 1, i % 3 ? '#A7A193' : '#CFCABD');
+  b.drawImage(monkeySprite('player', 'up', false), 104, 74, 32, 32);   // you, looking out
+  for (const px of [4, 46, 88, 147, 189, 231]){ R(b, px, 88, 5, 40, WOOD[0]); R(b, px, 88, 4, 40, WOOD[2]); R(b, px, 88, 1, 40, WOOD[3]); R(b, px, 88, 5, 1, WOOD[4]); }   // the railing
+  for (const ry of [92, 101]){ R(b, 0, ry, W, 4, WOOD[0]); R(b, 0, ry, W, 3, WOOD[2]); R(b, 0, ry, W, 1, WOOD[3]); }
+}
 // A puffy white cloud in a scene's sky: its left end at cx, cy; s, its size.
 function cloudPuff(cx, cy, s){
   cx = Math.round(cx); const r = k => Math.round(k * s);
@@ -1096,4 +1132,4 @@ function heavenGate(k, x0){
   b.restore();
 }
 // The pictures for the area's scenes (AREA.scenes), by name (a scene's art, or else its id); the opening's are drawScene, above.
-const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout};
+const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout, cowView: drawCowView};

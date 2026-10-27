@@ -90,6 +90,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   dairyTurn chapter 1: your question count when he started making something (the countFrom step)
   //   cowWolf chapter 1: 1 once you've beaten the bear (a wolf till 27 October 2026) that rears up at the big rocks in the
   //           pasture as you lead the cow home
+  //   cowSeen chapter 1: 1 once you've seen the lost cow, far below, from the lookout on the south slope
   //   pastureTracks, streamSeen, pastureLog, rabbitTold  chapter 1, the way through the pasture's pines: 1 once you've seen the
   //           cow's hoofprints; once you've come to the stream they go into; once you've knocked the dead pine down across it,
   //           a bridge; once the rabbit by the way has told you where the cow went (its word game won)
@@ -99,7 +100,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -242,7 +243,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'honey1', if:{honey:'asked', holding:{honey:false}}, text:'Take some {蜂蜜|honey} from the bees’ hive, for the hungry monkey', arrow:[28, 4, 'homeGround']},
     {id:'honey2', if:{honey:'asked', holding:{honey:true}}, text:'Take the {蜂蜜} to the hungry monkey', arrow:'hungry'},
     // the cow: find it, lost in the pasture south of the home ground (no arrow in the pasture: finding it is the game)
-    {id:'cow1', if:{cow:{atLeast:1, below:3}}, text:'Find the lost {牛|cow}: south over the bridge, and through the pines', arrow:{place:'pasture'}},
+    {id:'cowLook', if:{cow:{atLeast:1, below:3}, cowSeen:0}, text:'Find the lost {牛|cow}: south over the bridge, and down the slope. On the way, look for it from the lookout!', arrow:[6, 17, 'southSlope']},
+    {id:'cow1', if:{cow:{atLeast:1, below:3}, cowSeen:1}, text:'Find the lost {牛|cow}: you saw it far below, by a spring beyond the dark pines', arrow:{place:'pasture'}},
     {id:'cowStream', if:{streamSeen:1, pastureLog:0, cow:{below:3}}, text:'Get over the stream in the pines: knock the dead pine on its bank down with your {棍子}, so it falls across', arrow:[21, 4, 'pasture']},
     {id:'cow3', if:{cow:3}, text:'Win the {牛}’s trust with its word game, by its spring in the pasture', arrow:'cow'},
     {id:'cow4', if:{cow:4, following:{cow:true}}, text:'Lead the {牛} home to the thirsty monkey, back through the pines. Watch out for wolves!', arrow:'thirsty'},
@@ -852,7 +854,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[25, 0], to:'hillside', arrive:[12, 43], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up the hillside to the pine wood
         {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}},   // the school's door, once it's built (when: not a way in till then)
         {at:[31, 9], to:'riverside', arrive:[1, 7], facing:'right', if:{bees:{atLeast:1}}, closed:'Thick bushes block the way.'},   // east along the stream, to the bees
-        {at:[16, 21], to:'pasture', arrive:[16, 1], facing:'down', if:{cow:{atLeast:1}}, closed:'Thick bushes block the way.'}   // south, over the bridge, to the pasture (the cow)
+        {at:[16, 21], to:'southSlope', arrive:[12, 1], facing:'down', if:{cow:{atLeast:1}}, closed:'Thick bushes block the way.'}   // south, over the bridge, down the south slope to the pasture (the cow)
       ],
       map: [
         "YMMMMMMMMMMMMMMMMMMMMMMMYbYYYYYY",   // the cliff behind the school, rising out of sight
@@ -1059,6 +1061,79 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
       ]
     },
+    // Chapter 1: the south slope (南坡 nánpō, a name for the native speaker to check), the way down from the home ground's
+    // bridge to the pines and the pasture, where the cow is lost (decided 27 October 2026, after playing the cow's story: the
+    // way there was short, easy and boring). Four terraces, a cliff between each, the hillside's way: stone steps at one
+    // end, the long way, and a grassy bank in the middle to hop down, the quick way, which you can't climb, so the way back
+    // up, with the cow, is the long way round. On the second terrace, a lookout at the top of the cliff: from its railing
+    // you see the cow far below, by its spring beyond the dark pines (the cowView scene). A goat; a brook with stepping
+    // stones; long grass with snakes and spiders; a wild apple tree and a peach tree for your bag; then the pines begin.
+    southSlope: {
+      name: {zh:'南坡', py:'nánpō', en:'The south slope'},
+      sounds: [{rows:[0, 30], sounds:['birds', 'wind']}, {rows:[31, 39], sounds:['crow', 'wind']}],
+      exits: [
+        {at:[12, 0], to:'homeGround', arrive:[16, 20], facing:'up'}, {at:[13, 0], to:'homeGround', arrive:[16, 20], facing:'up'},   // up to the home ground
+        {at:[12, 39], to:'pasture', arrive:[16, 1], facing:'down'}, {at:[13, 39], to:'pasture', arrive:[17, 1], facing:'down'}   // down into the pines
+      ],
+      legend: {
+        'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider']},   // long grass: snakes and spiders
+        // flowers on the slope, each square all one colour, as on the hillside
+        'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
+        'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
+        'e': {look:'orangeFlowers', walk:true, word:'花', learnOnStep:true, colour:'橙色'},
+        'z': {look:'steppingStones', walk:true},              // stepping stones over the brook
+        'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},
+        'L': {look:'slabs', walk:true},                       // the lookout's stone platform
+        // its railing, at the top of the cliff: A shows you the view, and the first time, the lost cow, far below
+        'R': {look:'railing', landmark:true, onLook:[
+          {if:{cow:{atLeast:1, below:3}, cowSeen:0}, label:'Look', sparkle:true, do:[{scene:'cowView'}, {set:{cowSeen:1}}, {sound:'mooFar'},
+            {message:'There’s the cow, far below, by a spring beyond the dark pines! Go on down the slope to find it.'}]},
+          {if:{cow:{below:4}}, label:'Look', do:[{scene:'cowView'}]},
+          {label:'Look', do:[{scene:'southView'}]}]}
+      },
+      map: [
+        "YYYYYYYYYYYY..YYYYYYYYYYYY",   // up to the home ground, over the bridge
+        "YYggwwgggggg..gggggwwgggYY",
+        "YYgggQgggggg..gggogggTggYY",
+        "YYgTgggg......ggggggggggYY",   // a wild apple tree (Q); the way winds west to the steps
+        "YYgggggg......gnnnnnngggYY",
+        "YYgggggg..gg..gnnnnnngogYY",
+        "YYg.......gg..gnnnnnngggYY",
+        "YYT......ggg..ggggggggTgYY",
+        "YYg..goggggg..ggggggggggYY",
+        "MMM==MMMMMMvvvvvMMMMMMMMMM",   // a cliff: stone steps (left), the long way, and a bank to hop down (middle), the quick way
+        "MMM==MMMMMMvvvvvMMMMMMMMMM",
+        "YYg..gggggggnnnnnngoggTgYY",
+        "YYg..gggggggnnnnnnggggggYY",
+        "YYg....................gYY",   // along the terrace, past the lookout
+        "YYg....................gYY",
+        "YYggLLLLLLokggguggkgg..gYY",   // the lookout: a stone platform at the top of the cliff (L), its railing (R)
+        "YYogLLLLLLggggTgggggg..oYY",
+        "YYggRRRRRRguggggggkgg..gYY",
+        "MMMMMMMMMMMMvvvvvMMMM==MMM",   // steps (right), a bank (middle)
+        "MMMMMMMMMMMMvvvvvMMMM==MMM",
+        "YYggggggoggggggggTggg..gYY",
+        "YYggPgggggggg..........gYY",   // a peach tree in the corner
+        "YYgggggggWWgg.........ogYY",
+        "YYWWWWWWWWWWWzzWWWWWWWWWYY",   // the brook, and its stepping stones
+        "YYWWWWWWWWWWWzzWWWWWWWWWYY",
+        "YYggnnnnnnggg..WgggoggggYY",
+        "YYggnnnnnnggg..gnnnnnnggYY",
+        "YYg............gnnnnnnggYY",   // west to the steps
+        "YYg...T.......ggnnnnnnggYY",
+        "MMM==MMMMMMMMvvvvvvMMMMMMM",   // steps (left), a bank (middle)
+        "MMM==MMMMMMMMvvvvvvMMMMMMM",
+        "YYgiigpppggpgggggggggggpYY",   // the pines begin
+        "YYgiigpgpgpppgggggggpgpgYY",
+        "YYpiiiiiiiiiiippppgpggppYY",
+        "YYpiiiiiimiiiigpppgpppppYY",
+        "YYppppppppppiippppppppppYY",
+        "YYppppppppppiipmppppppppYY",
+        "YYppppppppppiippppppppppYY",
+        "YYppppppppppiippppppppppYY",
+        "YYppppppppppiippppppppppYY"    // down into the pines, to the pasture
+      ]
+    },
     // Chapter 1: the pasture (牧场 mùchǎng, a draft for the native speaker), where the cow is lost: south from the home ground,
     // over the bridge at the bottom of its path, once the troop has cleared the bushes there (built 26 October 2026, the cow's
     // version 1, from a mock-up). About 45 steps from the way in to the cow, in two parts that look different: first a way
@@ -1077,7 +1152,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {rows:[0, 12], sounds:['crow', 'crow', 'wind']}, {rows:[13, 25], sounds:['birds']}],
       battleMusic: 'pineBattle', backdrop: 'pines',
       exits: [
-        {at:[16, 0], to:'homeGround', arrive:[16, 20], facing:'up'}, {at:[17, 0], to:'homeGround', arrive:[16, 20], facing:'up'}   // back to the home ground
+        {at:[16, 0], to:'southSlope', arrive:[12, 38], facing:'up'}, {at:[17, 0], to:'southSlope', arrive:[13, 38], facing:'up'}   // back up the south slope to the home ground
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass under the pines: wolves too, as in the pine wood
@@ -1428,6 +1503,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // and walks you to the railing to show you the view: see events). Wherever there's something you might miss, a goat is
     // there to tell you. It stays where it showed you the view, a step along the railing.
     {id:'lookoutGoat', place:'hillside', x:20, y:21, facing:'down', look:'山羊', moves:[{if:{lookTip:{atLeast:1}}, place:'hillside', x:22, y:21, facing:'down'}]},
+    {id:'slopeGoat', place:'southSlope', x:11, y:16, facing:'left', look:'山羊'},   // chapter 1: a goat on the south slope, by its lookout
     {id:'woodSquirrel', place:'pineWood', x:18, y:21, facing:'left', look:'松鼠'},   // chapter 1: a squirrel in the pine wood, in the clearing by the way in
     // chapter 1: two little monkeys in training on the hillside, practising with sticks like yours (in the book, chapter 3,
     // the Monkey King trains the troop): one by the stepping stones, one on the middle terrace. Each stops you as you pass,
@@ -1799,6 +1875,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // shells: how many it gives you, or fruit: which, for your bag (with no room, it stays till you come back); note: what
   // you find.
   hidden: [
+    // the south slope: shells under a boulder by the brook
+    {id:'slopeBoulder', at:[22, 22, 'southSlope'], shells:2, note:'Under the edge of the boulder: 2 🐚!'},
     // the hillside: shells at the foot, on the lowest terrace and on the middle one; apples on the top terrace and under the pines
     {id:'hillTree', at:[22, 39, 'hillside'], shells:2, note:'Tucked behind the tree: 2 🐚!'},
     {id:'hillBoulder', at:[8, 28, 'hillside'], shells:2, note:'Under the edge of the boulder: 2 🐚!'},
@@ -1944,7 +2022,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveBowls: {zh:'碗 ！ 太 好 了 ！', en:'Bowls! Wonderful!'},
     haveBowlsNow: {zh:'我们 有 碗 了 ！', en:'We have bowls now!'},
     madeChopsticks: {zh:'我 做 了 筷子 ！', en:'I made chopsticks!'},
-    madeSpoons: {zh:'我 做 了 勺子 ！', en:'I made spoons!'},   // the hungry monkey, at the feast's new table
+    madeSpoons: {zh:'我 做 了 勺子 ！', en:'I made spoons!'},
+    cowBelow: {zh:'牛 在 下面 ！', en:'The cow is down below!'},   // the goat on the south slope, while the cow is lost   // the hungry monkey, at the feast's new table
     makeFood: {zh:'我 要 做 吃 的 ！', en:'I’m going to make something to eat!'},   // the thirsty monkey, at his little dairy (做 just for listening)
     foodReady: {zh:'好 了 ！', en:'It’s ready!'},   // and when what he's made is ready
     // hide and seek with a little monkey (the area's hideSeek): its clues' English leaves the place's word in Chinese ({桌子})
@@ -2400,6 +2479,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the goat on the hillside's lookout: have a look at the view. The first time, it walks you to its railing and shows
     // you (decided 24 October 2026: a player it told about the view walked on without seeing it), so you know what a
     // lookout is when you find others
+    // the goat on the south slope, while the cow is lost: it's down there (and the lookout shows you where)
+    slopeGoat: [
+      {if:{cow:{atLeast:1, below:3}}, do:[{say:'hi'}, {reply:'你好'}, {say:'cowBelow'},
+        {message:'The goat nods down the mountain. From the lookout’s railing, you can see a long way.', if:{cowSeen:0}}]},
+      {do:[{say:'hi'}, {reply:'你好'}]}
+    ],
     lookoutGoat: [
       {if:{lookTip:0}, do:[{say:'hi'}, {reply:'你好'}, {say:'comeLook'},
         {leadTo:[22, 21], you:[21, 21, 'down']}, {set:{lookTip:1}},   // along the railing, you after it, to look out
@@ -2552,6 +2637,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     lookout: {captions: [
       {at:0, zh:'这里 很 好看 ！', en:'It’s lovely up here!'},
       {at:3, zh:'海 很 大 ！', en:'The sea is so big!'}
+    ]},
+    // chapter 1: the view from the south slope's lookout, south over the dark pines to the pasture, where the lost cow is,
+    // far below by its spring (decided 27 October 2026: you see where you're going); once it's home, just the view
+    cowView: {captions: [
+      {at:0, zh:'那里 有 一只 牛 ！', en:'There’s a cow over there!'},
+      {at:3, zh:'我 要 去 找 牛 ！', en:'I’m going to find the cow!'}
+    ]},
+    southView: {art:'cowView', home:true, captions: [
+      {at:0, zh:'这里 很 好看 ！', en:'It’s lovely up here!'}
     ]},
     // chapter 1: the troop builds the school, at the home ground: the walls go up, then the roof, then its sign
     buildingSchool: {watch:'Watch the school being built', when:{school:{atLeast:1}}, captions: [
