@@ -621,6 +621,8 @@ rt.hid{visibility:hidden}
 .bag .stats{align-items:center;margin:.2rem 0}
 .bag .stats .hp{margin:0;min-width:150px}
 .bag .baghead .note{flex-basis:100%;margin:0 0 .1rem;color:var(--ink);font-size:inherit;text-align:left}   /* what just happened (You eat a 桃子 (peach)…), on its own line under your hearts */
+.bag .bagtabs{margin:.15rem 0 .35rem}   /* its tabs (Food, For someone, To fight with), as the Word Scroll's */
+.sheet:has(.bagtabs) > :first-child{margin-top:0}   /* (at the top of the card, so a tab with fewer things never moves the tabs) */
 
 /* the money symbol (a pixel shell), and the shop's cards */
 .money{width:1em;height:1em;image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:-.12em}
@@ -906,6 +908,10 @@ rt.hid{visibility:hidden}
   .mp .pix{width:var(--pic-small);height:var(--pic-small)}
   .scrolltabs{margin:4px 0 0}   /* the Word Scroll: a whole row of words */
   .scrolltabs .tab{min-height:26px;font-size:.72rem}
+  .bag .bagtabs{margin:0 0 .2rem}   /* the bag's tabs, and a little less room round them, so a tab's two rows fit */
+  .bag .stats{margin:0}
+  .bag .card .small{line-height:1.05}
+  .bag .card .p{line-height:1.1}
   .cathead{margin:4px 0 0}
   .cathead + .grid{margin-top:3px}
   .grid{grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:4px}

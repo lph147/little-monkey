@@ -13,14 +13,50 @@ function game(save = {}){
   return {g, run: code => g.run(code), sheet: g.el('#sheet'), get: expr => JSON.parse(g.run(`JSON.stringify(${expr})`))};
 }
 
-test('the bag shows your food (how many, and what it does), your stick, and what you’re carrying for someone', () => {
+test('the bag is in tabs: it opens on Food (how many, and what it does), with For someone and To fight with beside it', () => {
   const {run, sheet} = game({bag: {'桃子': 2, '苹果': 1}, areas: {1: {elder: 2, hungry: 'done', thirsty: 'asked', gate: true, climb: 1, holding: {thirsty: '水'}}}});
   run('openMenu()');
   sheet.querySelector('[data-m="bag"]').click();
-  assert.deepEqual(sheet.querySelectorAll('.bagitem').map(b => b.dataset.w), ['桃子', '苹果', '棍子', '水']);
-  const text = sheet.textContent;
-  for (const s of ['×2', '×1', 'Brings back 10 health', 'Takes away a wrong answer', 'To fight with', 'For the thirsty monkey']) assert.ok(text.includes(s), `it says ${s}`);
+  const tabs = () => sheet.querySelectorAll('.bagtabs .tab').map(t => (t.getAttribute('aria-selected') === 'true' ? '*' : '') + t.textContent);
+  const things = () => sheet.querySelectorAll('.bagitem').map(b => b.dataset.w);
+  assert.deepEqual(tabs(), ['*Food', 'For someone', 'To fight with']);
+  assert.deepEqual(things(), ['桃子', '苹果'], 'just the food');
+  for (const s of ['×2', '×1', 'Brings back 10 health', 'Takes away a wrong answer']) assert.ok(sheet.textContent.includes(s), `it says ${s}`);
   assert.equal(sheet.querySelector('.bagitem').dataset.label, 'Eat', 'A eats a peach');
+  sheet.querySelector('.bagtabs [data-tab="someone"]').click();
+  assert.deepEqual([tabs(), things()], [['Food', '*For someone', 'To fight with'], ['水']]);
+  assert.match(sheet.textContent, /The thirsty monkey/, 'who it’s for (the tab says it’s for someone)');
+  sheet.querySelector('.bagtabs [data-tab="fight"]').click();
+  assert.deepEqual([tabs(), things()], [['Food', 'For someone', '*To fight with'], ['棍子']]);
+  assert.match(sheet.textContent, /Hits for 10/, 'your stick, and how hard it hits');
+});
+
+test('only tabs with something in them show (none at all for just one), and it opens on Food, or the first with something', () => {
+  const tabsOf = save => { const {run, sheet} = game(save); run('bagPage(() => {})');
+    return [sheet.querySelectorAll('.bagtabs .tab').map(t => t.dataset.tab), sheet.querySelectorAll('.bagitem').map(b => b.dataset.w)]; };
+  assert.deepEqual(tabsOf({}), [[], ['棍子']], 'just your stick: no row of tabs');
+  assert.deepEqual(tabsOf({areas: {1: {elder: 2, hungry: 'done', thirsty: 'asked', gate: true, climb: 1, holding: {thirsty: '水'}}}}), [['someone', 'fight'], ['水']], 'no food: For someone first');
+  assert.deepEqual(tabsOf({bag: {'苹果': 1}}), [['food', 'fight'], ['苹果']]);
+  const {run, sheet} = game({w: knows(['石头', '山'])});
+  run('bagPage(() => {})');
+  assert.match(sheet.textContent, /Nothing in your bag yet/, 'nothing at all (no stick yet): where things come from');
+  assert.equal(sheet.querySelector('.bagtabs'), null);
+});
+
+test('left and right on the D-pad switch the bag’s tabs, as in the Word Scroll; eating keeps you on Food; the tabs sit at the top of the card', () => {
+  const {run, sheet, get} = game({health: 30, bag: {'桃子': 2, '苹果': 1}, areas: {1: {elder: 2, hungry: 'done', thirsty: 'asked', gate: true, climb: 1, holding: {thirsty: '水'}}}});
+  run('bagPage(() => {})');
+  const on = () => sheet.querySelector('.bagtabs .tab[aria-selected="true"]').dataset.tab;
+  run("navFocus('right')");
+  assert.deepEqual([on(), sheet.querySelectorAll('.bagitem').map(b => b.dataset.w)], ['someone', ['水']]);
+  run("navFocus('right')");
+  assert.equal(on(), 'fight');
+  run("navFocus('left'); navFocus('left')");
+  assert.equal(on(), 'food');
+  sheet.querySelector('.bagitem[data-w="桃子"]').click();
+  assert.deepEqual([on(), get('S.health')], ['food', 40], 'eaten, and still on Food');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.match(css, /\.sheet:has\(\.bagtabs\) > :first-child\{margin-top:0\}/, 'at the top of the card, so a tab with fewer things never moves them');
 });
 
 test('tapping a peach when you’re hurt eats it, and 10 health comes back; with your health full it stays in the bag', () => {
