@@ -213,12 +213,16 @@ SAVES.pastureIn = {...SAVES.waySouth, pos: {place: 'homeGround', x: 16, y: 20, d
 SAVES.slopeTop = {...SAVES.waySouth, tasksSeen: {...SAVES.waySouth.tasksSeen, cowLook: 1}, pos: {place: 'southSlope', x: 12, y: 3, dir: 'down'}};
 SAVES.slopeLookout = {...SAVES.slopeTop, pos: {place: 'southSlope', x: 6, y: 16, dir: 'down'}};
 SAVES.slopeSteps = {...SAVES.slopeTop, areas: {1: {...SAVES.slopeTop.areas[1], cowSeen: 1}}, tasksSeen: {...SAVES.slopeTop.tasksSeen, cow1: 2}, pos: {place: 'southSlope', x: 21, y: 21, dir: 'left'}};
-SAVES.pasture = {...SAVES.waySouth, areas: {1: {...SAVES.waySouth.areas[1], cow: 2}}, pos: {place: 'pasture', x: 24, y: 16, dir: 'right'}};   // on the cow's trail
-// the way through the pines (27 October 2026): where it forks, the cow's hoofprints; the stream, and the dead pine on its
-// bank; over it, the rabbit by the way
-SAVES.pastureFork = {...SAVES.pasture, pos: {place: 'pasture', x: 18, y: 2, dir: 'right'}};   // just before the first hoofprints
-SAVES.pastureStream = {...SAVES.pasture, areas: {1: {...SAVES.pasture.areas[1], pastureTracks: 1, streamSeen: 1}}, tasksSeen: {...SAVES.pasture.tasksSeen, cowStream: 9}, pos: {place: 'pasture', x: 20, y: 4, dir: 'right'}};   // facing the dead pine
-SAVES.pastureRabbit = {...SAVES.pastureStream, areas: {1: {...SAVES.pastureStream.areas[1], pastureLog: 1}}, pos: {place: 'pasture', x: 19, y: 7, dir: 'left'}};   // facing the rabbit, over the stream
+SAVES.pasture = {...SAVES.waySouth, areas: {1: {...SAVES.waySouth.areas[1], cow: 2, cowSeen: 1}}, pos: {place: 'pasture', x: 24, y: 16, dir: 'right'}};   // on the cow's trail
+// the dark pines (27 October 2026), between the south slope and the pasture: where the way forks, the cow's hoofprints;
+// the top of the gully, where a great hollow pine lies along it; the stream, and the dead pine on its bank; over it, the
+// rabbit by the way
+SAVES.pastureFork = {...SAVES.pasture, pos: {place: 'darkPines', x: 20, y: 4, dir: 'right'}};   // just before the first hoofprints
+SAVES.pinesLog = {...SAVES.pasture, areas: {1: {...SAVES.pasture.areas[1], pastureTracks: 1}}, pos: {place: 'darkPines', x: 28, y: 4, dir: 'down'}};   // at the top of the gully
+SAVES.pinesInLog = {...SAVES.pinesLog, areas: {1: {...SAVES.pinesLog.areas[1], logSeen: 1}}, pos: {place: 'darkPines', x: 28, y: 9, dir: 'down'}};   // crawling through the hollow pine
+SAVES.pastureStream = {...SAVES.pasture, areas: {1: {...SAVES.pasture.areas[1], pastureTracks: 1, logSeen: 1, streamSeen: 1}}, tasksSeen: {...SAVES.pasture.tasksSeen, cowStream: 9},
+  pos: {place: 'darkPines', x: 23, y: 17, dir: 'right'}};   // facing the dead pine
+SAVES.pastureRabbit = {...SAVES.pastureStream, areas: {1: {...SAVES.pastureStream.areas[1], pastureLog: 1}}, pos: {place: 'darkPines', x: 20, y: 22, dir: 'down'}};   // facing the rabbit, over the stream
 SAVES.cowMeet = {...SAVES.pasture, pos: {place: 'pasture', x: 31, y: 17, dir: 'down'}};   // facing the cow, by its spring
 SAVES.cowFound = {...SAVES.cowMeet, w: {...SAVES.cowMeet.w, ...knows(1, ['牛'])}, areas: {1: {...SAVES.cowMeet.areas[1], cow: 3}}};
 // version 2: won over, the cow follows you home; the wolf at the rocks; the cow running back after a lost battle; and home
@@ -799,10 +803,14 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'southSlope', x: 10, y: 16, dir: 'right'}; placePlayer(); talk(npc('slopeGoat')); await wait(300); next(); await wait(300); next(); await wait(500); }},
   {id: 'slope-steps', title: 'Stepping stones', save: 'slopeSteps', why: 'The third terrace: a brook across it, and stepping stones over it; a peach tree in the corner; then more steps down, into the pines.', run: async () => {
     play(); await wait(500); }},
-  {id: 'pasture-first', title: 'Into the pasture (牧场)', save: 'pastureIn', why: 'The first time: dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos.', run: async () => {
+  {id: 'pasture-first', title: 'Into the dark pines (黑松林)', save: 'pastureIn', why: 'Down the south slope, into the dark pines: their name, said aloud; gloomy, misty, eyes in the dark; the first time, long grass where wolves hide, and somewhere beyond, a cow moos.', run: async () => {
     play(); await wait(100); S.pos = {place: 'southSlope', x: 12, y: 38, dir: 'down'}; placePlayer(); arrive(12, 39).then(runEvents); await wait(1500); }},
-  {id: 'pasture-fork', title: 'Hoofprints', save: 'pastureFork', why: 'The way through the pines forks: west, it goes nowhere (but there are shells under the boulder at its end); east, the cow’s hoofprints, and the first time you come to them, which way it went. Its moo, now and then, is louder the right way.', run: async () => {
+  {id: 'pasture-fork', title: 'Hoofprints', save: 'pastureFork', why: 'The way through the dark pines forks: west, it goes nowhere (but there are shells under the boulder at its end); east, the cow’s hoofprints, and the first time you come to them, which way it went. Its moo, now and then, is louder the right way.', run: async () => {
     play(); await wait(100); pl.dir = 'right'; tryStep('right', performance.now()); await wait(700); }},
+  {id: 'pines-log', title: 'A hollow pine', save: 'pinesLog', why: 'Following the hoofprints east, down a narrow gully: a great pine has fallen along it, hollow inside. The cow stepped over it, but a little monkey can crawl right through.', run: async () => {
+    play(); await wait(100); pl.dir = 'down'; tryStep('down', performance.now()); await wait(700); }},
+  {id: 'pines-in-log', title: 'Inside the hollow pine', save: 'pinesInLog', why: 'Crawling through: the log is drawn over you, so you vanish inside it, and come out at its other end.', run: async () => {
+    play(); await wait(500); }},
   {id: 'pasture-stream', title: 'Too deep to wade', save: 'pastureStream', why: 'The hoofprints go into a stream, too deep for a little monkey; a dead pine leans over it from the bank, sparkling, and your task’s arrow is on it. A: Hit.', run: async () => {
     play(); await wait(500); }},
   {id: 'pasture-log', title: 'A bridge', save: 'pastureStream', why: 'Knock the dead pine down with your stick, and it falls right across the stream: a bridge.', run: async () => {

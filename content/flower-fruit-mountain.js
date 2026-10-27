@@ -91,7 +91,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   cowWolf chapter 1: 1 once you've beaten the bear (a wolf till 27 October 2026) that rears up at the big rocks in the
   //           pasture as you lead the cow home
   //   cowSeen chapter 1: 1 once you've seen the lost cow, far below, from the lookout on the south slope
-  //   pastureTracks, streamSeen, pastureLog, rabbitTold  chapter 1, the way through the pasture's pines: 1 once you've seen the
+  //   logSeen chapter 1: 1 once you've come to the hollow pine fallen along the gully in the dark pines
+  //   pastureTracks, streamSeen, pastureLog, rabbitTold  chapter 1, the way through the dark pines (the pasture's, till 27 October 2026): 1 once you've seen the
   //           cow's hoofprints; once you've come to the stream they go into; once you've knocked the dead pine down across it,
   //           a bridge; once the rabbit by the way has told you where the cow went (its word game won)
   //   littleGame the prologue: the little monkey's word game, once it's your friend: 0 not played yet (it has a !), 1 played,
@@ -100,7 +101,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -245,7 +246,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the cow: find it, lost in the pasture south of the home ground (no arrow in the pasture: finding it is the game)
     {id:'cowLook', if:{cow:{atLeast:1, below:3}, cowSeen:0}, text:'Find the lost {牛|cow}: south over the bridge, and down the slope. On the way, look for it from the lookout!', arrow:[6, 17, 'southSlope']},
     {id:'cow1', if:{cow:{atLeast:1, below:3}, cowSeen:1}, text:'Find the lost {牛|cow}: you saw it far below, by a spring beyond the dark pines', arrow:{place:'pasture'}},
-    {id:'cowStream', if:{streamSeen:1, pastureLog:0, cow:{below:3}}, text:'Get over the stream in the pines: knock the dead pine on its bank down with your {棍子}, so it falls across', arrow:[21, 4, 'pasture']},
+    {id:'cowStream', if:{streamSeen:1, pastureLog:0, cow:{below:3}}, text:'Get over the stream in the pines: knock the dead pine on its bank down with your {棍子}, so it falls across', arrow:[24, 17, 'darkPines']},
     {id:'cow3', if:{cow:3}, text:'Win the {牛}’s trust with its word game, by its spring in the pasture', arrow:'cow'},
     {id:'cow4', if:{cow:4, following:{cow:true}}, text:'Lead the {牛} home to the thirsty monkey, back through the pines. Watch out for wolves!', arrow:'thirsty'},
     {id:'cowRan', if:{cow:4, following:{cow:false}}, text:'The {牛} ran back to its spring, frightened: go and fetch it', arrow:'cow'},
@@ -500,15 +501,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // (and he gives you a little for your bag, saying what it does: decided 26 October 2026, when nothing said so)
     {if:{bees:10, honey:'done'}, do:[{set:{bees:11}}, {sound:'chime'}, {say:'haveHoneyNow', by:'hungry'},
       {bag:'蜂蜜', note:'The hungry monkey pours the honey into the empty bowl on the big table: now the feast has honey! He gives you a little {蜂蜜} for your bag too: eat it, and you walk faster for a minute.'}]},
-    // chapter 1: into the pasture (牧场) for the first time, south of the home ground: somewhere beyond the pines, the lost
-    // cow moos
-    {if:{place:'pasture', cow:1}, do:[{sound:'moo'}, {message:'Dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos, long and sad…'}, {set:{cow:2}}]},
+    // chapter 1: into the dark pines (黑松林) for the first time, down the south slope: somewhere beyond them, the lost cow
+    // moos
+    {if:{place:'darkPines', cow:1}, do:[{sound:'moo'}, {message:'Dark pines, and long grass where wolves hide. Somewhere beyond them, a cow moos, long and sad…'}, {set:{cow:2}}]},
     // the way through the pines (decided 27 October 2026, after playing it: it was easy and dull): as you come to the cow's
     // hoofprints, where the way forks, they show you which way it went; where they go down into a stream, too deep to wade,
     // a dead pine leans over it from the bank (its legend: knock it down, and it falls across)
-    {if:{place:'pasture', pastureTracks:0, cow:{below:3}, around:[19, 2, 'pasture', 1]}, do:[{set:{pastureTracks:1}},
+    {if:{place:'darkPines', pastureTracks:0, cow:{below:3}, around:[21, 5, 'darkPines', 1]}, do:[{set:{pastureTracks:1}},
       {message:'Hoofprints in the soft earth, going east: the cow came this way! Follow them.'}]},
-    {if:{place:'pasture', streamSeen:0, pastureLog:0, cow:{below:3}, around:[20, 4, 'pasture', 1]}, do:[{set:{streamSeen:1}},
+    // as you come to the hollow pine, along the gully: crawl through!
+    {if:{place:'darkPines', logSeen:0, cow:{below:3}, around:[28, 6, 'darkPines', 1]}, do:[{set:{logSeen:1}},
+      {message:'A great pine has fallen along the gully, hollow inside. The cow stepped over it, but a little monkey can crawl right through!'}]},
+    {if:{place:'darkPines', streamSeen:0, pastureLog:0, cow:{below:3}, around:[23, 17, 'darkPines', 1]}, do:[{set:{streamSeen:1}},
       {message:'The hoofprints go right down into a stream, deep and fast. A big cow can wade across, but a little monkey can’t! A dead pine leans out over the water…'}]},
     // leading the cow home, as you come into the gap between the big rocks, a bear rears up out of its long grass at you
     // (just the once: a boss, with no running away; win, and it lumbers off into the pines for good; lose, and the cow runs
@@ -1073,7 +1077,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       sounds: [{rows:[0, 30], sounds:['birds', 'wind']}, {rows:[31, 39], sounds:['crow', 'wind']}],
       exits: [
         {at:[12, 0], to:'homeGround', arrive:[16, 20], facing:'up'}, {at:[13, 0], to:'homeGround', arrive:[16, 20], facing:'up'},   // up to the home ground
-        {at:[12, 39], to:'pasture', arrive:[16, 1], facing:'down'}, {at:[13, 39], to:'pasture', arrive:[17, 1], facing:'down'}   // down into the pines
+        {at:[12, 39], to:'darkPines', arrive:[16, 1], facing:'down'}, {at:[13, 39], to:'darkPines', arrive:[17, 1], facing:'down'}   // down into the dark pines
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider']},   // long grass: snakes and spiders
@@ -1134,6 +1138,77 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYppppppppppiippppppppppYY"    // down into the pines, to the pasture
       ]
     },
+    // Chapter 1: the dark pines (黑松林 hēi sōnglín, a name for the native speaker to check; there's a 黑松林 in the book, chapter
+    // 80), between the south slope and the pasture, where the cow is lost: the pasture's pines till 27 October 2026, made a
+    // place of their own, bigger and gloomy, as the pine wood is (after playing it: the way to the cow was short, easy and
+    // boring). The way forks; the cow's hoofprints show which way it went, and its moo is louder that way; down a narrow
+    // gully a great hollow pine lies along it, to crawl through (drawn over you: you vanish inside it); the hoofprints go into
+    // a stream too deep for a little monkey, where a dead pine on the bank, knocked down with your stick, falls across, a
+    // bridge; over it, a rabbit saw the cow go by; then south, through long grass (wolves), out to the pasture. The ways the
+    // cow didn't go end at boulders, with shells under them.
+    darkPines: {
+      name: {zh:'黑松林', py:'hēi sōnglín', en:'The dark pines'},
+      gloom: {deep:.62, open:.2, mist:true, eyes:true},
+      // till you find the cow, it moos now and then, louder the right way and faint up the ways that go nowhere
+      sounds: [{rows:[3, 10], cols:[0, 12], if:{cow:{below:3}}, sounds:['crow', 'wind', 'mooFar']}, {rows:[20, 26], cols:[0, 9], if:{cow:{below:3}}, sounds:['crow', 'mooFar']},
+        {rows:[20, 29], cols:[29, 35], if:{cow:{below:3}}, sounds:['crow', 'mooFar']}, {rows:[0, 29], if:{cow:{below:3}}, sounds:['crow', 'wind', 'moo']},
+        {rows:[0, 29], sounds:['crow', 'crow', 'wind']}],
+      battleMusic: 'pineBattle', backdrop: 'pines',
+      exits: [
+        {at:[16, 0], to:'southSlope', arrive:[12, 38], facing:'up'}, {at:[17, 0], to:'southSlope', arrive:[13, 38], facing:'up'},   // back up the south slope
+        {at:[16, 29], to:'pasture', arrive:[16, 1], facing:'down'}, {at:[17, 29], to:'pasture', arrive:[17, 1], facing:'down'}   // out to the pasture
+      ],
+      legend: {
+        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass under the pines: wolves too, as in the pine wood
+        'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},
+        // the cow's hoofprints in the needles, the right way (the way forks, and the other ways go nowhere)
+        'h': {look:'hoofprints', walk:true, landmark:true, onLook:[{do:[{message:'Hoofprints in the soft earth, two marks to each: the cow came this way!'}]}]},
+        // a great pine, fallen along the gully, hollow inside: you crawl through it (it's drawn over you)
+        'O': {look:'hollowLog', walk:true, landmark:true, onLook:[{do:[{message:'A great hollow pine, fallen along the gully. The cow stepped over it, but a little monkey can crawl right through!'}]}]},
+        // a stream across the pines, too deep for a little monkey (the cow waded it), and where its hoofprints go in: water,
+        // till you knock the dead pine on its bank down with your stick, and it falls across (pastureLog), a bridge (in a game
+        // that found the cow before 27 October 2026, it's down already)
+        'c': {look:'water', word:'水'},
+        '4': {look:'water', word:'水', becomes:[{if:{pastureLog:1}, to:'5'}, {if:{cow:{atLeast:3}}, to:'5'}],
+          onLook:[{do:[{message:'The stream is deep and fast. The cow’s hoofprints go right into it: a big cow can wade across, but not a little monkey!'}]}]},
+        '5': {look:'logBridge', walk:true, word:'桥'},   // the dead pine, fallen across it
+        'q': {look:'deadPine', landmark:true, becomes:[{if:{pastureLog:1}, to:'j'}, {if:{cow:{atLeast:3}}, to:'j'}],
+          onLook:[{label:'Hit', sparkle:true, do:[{hit:'wood'}, {set:{pastureLog:1}}, {sound:'rumble'}, {sound:'splash'},
+            {message:'Crack! The dead pine topples over, right across the stream: a bridge! Over you go.'}]}]}
+      },
+      map: [
+        "ppppppppppppppppiipppppppppppppppppp",   // in from the south slope
+        "ppppppppppppppppiipppppppppppppppppp",
+        "ppppppppppppppppiipppppppppppppppppp",
+        "ppppiiiiiiiiiiiiiiiiiiiiiiiiiipppppp",   // the first fork (a row taller: a pine’s top hides the square above it): west, a hollow that goes nowhere (shells under its boulder); east, hoofprints
+        "ppppiiiiiiiiiiiiiiiiiiiiihiiiipppppp",
+        "ppppiiiiiiiiiiiiiiiiihiiiiiiiipppppp",
+        "ppppiiipppppppppppppppppppppiipppppp",   // down a narrow gully...
+        "ppppiiipppppppppppppppppppppiipppppp",
+        "pppiiiiimpppppppppppppppppppOOpppppp",   // ...where a great hollow pine lies along it (O): crawl through
+        "pppiimiiipppppppppppppppppppOOpppppp",
+        "pppoppppppppppppppppppppppppOOpppppp",
+        "ppppppppppppppppppppppppppppOOpppppp",
+        "ppppppppppppppppppppppppppppiipppppp",
+        "ppppppppppppppppppppppppppppiipppppp",
+        "ppppppppppppppppppppppppppppihpppppp",
+        "pppppppppppppppppppppiiiiimiiipppppp",   // west along the stream’s bank, to a dead pine (q): knock it down, and it falls across
+        "pppppppppppppppppppppihiiiiiiipppppp",
+        "pppppppppppppppppppppiiiqppppppppppp",
+        "ccccccccccccccccccccccc4cccccccccccc",   // the stream, too deep to wade, where the hoofprints go in (4)
+        "ccccccccccccccccccccccc4cccccccccccc",
+        "ppppppiiiiiiiiiiiiiiiiihiiiiiiiipppp",   // over it, the way forks three ways (the rabbit, in its nook below, saw the cow go by)
+        "ppGGGGGGiiiiiiiiiiiiiiiiiiiiiiiipppp",   // west: a clearing of tall grass, where your friends hide
+        "ppGGGGGGiiiimiiiiiiiiiiiiiiiiiiipppp",
+        "ppGGGGGGppppppppihppipppppppppiipppp",
+        "ppGGGGGGppppppppnnppppppppppppnnpppp",   // south, the cow’s way, long grass grown over it (wolves); east, long grass to nowhere (shells)
+        "ppGGGGGGppppppppnnppppppppppppnnpppp",
+        "ppppppppppppppppnnppppppppppppiipppp",
+        "ppppppppppppppppiippppppppppppoopppp",
+        "ppppppppppppppppiipppppppppppppppppp",
+        "ppppppppppppppppiipppppppppppppppppp"    // out to the pasture
+      ]
+    },
     // Chapter 1: the pasture (牧场 mùchǎng, a draft for the native speaker), where the cow is lost: south from the home ground,
     // over the bridge at the bottom of its path, once the troop has cleared the bushes there (built 26 October 2026, the cow's
     // version 1, from a mock-up). About 45 steps from the way in to the cow, in two parts that look different: first a way
@@ -1144,31 +1219,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // pines, the pasture birdsong; battles are among the pines, as in the pine wood (all the long grass is under them).
     pasture: {
       name: {zh:'牧场', py:'mùchǎng', en:'The pasture'},
-      // the pines: till you find the cow, it moos now and then, louder the right way and faint up the ways that go nowhere
-      // (decided 27 October 2026, with forks and its hoofprints, after playing it: the way was easy and dull); then birds
-      // in the pasture
-      sounds: [{rows:[0, 4], cols:[0, 15], if:{cow:{below:3}}, sounds:['crow', 'wind', 'mooFar']}, {rows:[7, 10], cols:[0, 16], if:{cow:{below:3}}, sounds:['crow', 'mooFar']},
-        {rows:[7, 10], cols:[22, 35], if:{cow:{below:3}}, sounds:['crow', 'mooFar']}, {rows:[0, 12], if:{cow:{below:3}}, sounds:['crow', 'wind', 'moo']},
-        {rows:[0, 12], sounds:['crow', 'crow', 'wind']}, {rows:[13, 25], sounds:['birds']}],
+      // the edge of the pines: till you find the cow, it moos now and then, close now; then birds in the pasture
+      sounds: [{rows:[0, 12], if:{cow:{below:3}}, sounds:['crow', 'wind', 'moo']}, {rows:[0, 12], sounds:['crow', 'crow', 'wind']}, {rows:[13, 25], sounds:['birds']}],
       battleMusic: 'pineBattle', backdrop: 'pines',
       exits: [
-        {at:[16, 0], to:'southSlope', arrive:[12, 38], facing:'up'}, {at:[17, 0], to:'southSlope', arrive:[13, 38], facing:'up'}   // back up the south slope to the home ground
+        {at:[16, 0], to:'darkPines', arrive:[16, 28], facing:'up'}, {at:[17, 0], to:'darkPines', arrive:[17, 28], facing:'up'}   // back into the dark pines
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass under the pines: wolves too, as in the pine wood
         'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},   // mushrooms under the pines (just to look at)
-        // the cow's hoofprints in the needles, the right way (the way forks, and the other ways go nowhere)
+        // the cow's hoofprints in the needles
         'h': {look:'hoofprints', walk:true, landmark:true, onLook:[{do:[{message:'Hoofprints in the soft earth, two marks to each: the cow came this way!'}]}]},
-        // a stream across the pines, too deep for a little monkey (the cow waded it), and where its hoofprints go in: water,
-        // till you knock the dead pine on its bank down with your stick, and it falls across (pastureLog), a bridge (in a game
-        // that found the cow before 27 October 2026, it's down already)
-        'c': {look:'water', word:'水'},
-        '4': {look:'water', word:'水', becomes:[{if:{pastureLog:1}, to:'5'}, {if:{cow:{atLeast:3}}, to:'5'}],
-          onLook:[{do:[{message:'The stream is deep and fast. The cow’s hoofprints go right into it: a big cow can wade across, but not a little monkey!'}]}]},
-        '5': {look:'logBridge', walk:true, word:'桥'},   // the dead pine, fallen across it
-        'q': {look:'deadPine', landmark:true, becomes:[{if:{pastureLog:1}, to:'j'}, {if:{cow:{atLeast:3}}, to:'j'}],
-          onLook:[{label:'Hit', sparkle:true, do:[{hit:'wood'}, {set:{pastureLog:1}}, {sound:'rumble'}, {sound:'splash'},
-            {message:'Crack! The dead pine topples over, right across the stream: a bridge! Over you go.'}]}]},
         // flowers in the pasture, each square all one colour (F red, E yellow and J white, as in the meadow, and these): A shows
         // its colour, such as 粉色的花 (a pink flower), once you know it
         'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
@@ -1176,17 +1237,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'O': {look:'water', word:'水', note:'A spring of clear, fresh water, bubbling up out of the ground.'}   // the cow's spring (just water: no fish in it)
       },
       map: [
-        "ppppppppppppppppiippppppp^^^^^^^^^^^",   // in from the home ground, over the bridge and through its bushes
+        "ppppppppppppppppiippppppp^^^^^^^^^^^",   // in from the dark pines
         "ppppppppppppppppiippppppp^^^^^^^^^^^",
-        "ppppiiiiiiiiiiiiiiihiippp^^^^^^^^^^^",   // the way forks (two squares wide: a pine's top hides the square above it): west, it goes nowhere (shells under the boulder at its end); east, hoofprints
-        "ppppiiiiiiiiiiiiiiiihppppMMMMMMMMMMM",
-        "pppoimpppppppppppppphqpppMMMMMMMMMMM",   // down to a stream, and a dead pine on its bank (q): knock it down, and it falls across
-        "cccccccccccccccccccc4ccccccccccccccc",   // the stream, too deep to wade, where the hoofprints go in (4)
-        "cccccccccccccccccccc4ccccccccccccccc",
-        "ppgGGGgiiiiiiiiiiiiihiinniiioppppppp",   // over it, the way forks three ways (a rabbit by it saw the cow go by): west to a clearing with tall grass, where your friends hide; east, past long grass, to nowhere (shells again); south, the cow's way
-        "ppgGGGgiiiiiiiiiiiiiiiinniiipppppppp",
-        "ppggGGgpppppppppppppnnpppppppppppppp",   // long grass grown over it (wolves too)
-        "ppggggppppppppppppppnnpppppppppppppp",
+        "pppppppppppppppmiippppppp^^^^^^^^^^^",
+        "ppppppppppppppppiiiiiipppMMMMMMMMMMM",   // the edge of the pines: a short way down to the big rocks
+        "ppppppppppppppppiiiihipppMMMMMMMMMMM",
+        "ppppppppppppppppiiiiiipppppppppppppp",
+        "ppppppppppppppppppppiipppppppppppppp",
+        "ppppppppppppppppppppnnpppppppppppppp",   // long grass grown over it (wolves)
+        "ppppppppppppppppppppnnpppppppppppppp",
+        "ppppppppppppppppppppihmppppppppppppp",
+        "ppppppppppppppppppppiipppppppppppppp",
         "pppppppppppppppppppphipppTTpggggggYY",   // down to the gap between two big rocks
         "ppppppppppgggppgppppnnpggTTpggggggYY",   // long grass in the gap, where wolves come down from the pines
         "YYpppppppgggggggppgonnogggggggogggYY",   // out into the pasture: sunny, open grass, with flowers, big trees and boulders
@@ -1563,7 +1624,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {if:{cow:{atLeast:5}}, place:'homeGround', x:22, y:11, facing:'left'}]},   // home with you, by the thirsty monkey near the road
     // a rabbit in a nook by the way through the pasture's pines, over the stream, where the way forks three ways: it saw the
     // cow go by (decided 27 October 2026, with the forks; 兔子 you know from the prologue, so it's a word game, not a new word)
-    {id:'pastureRabbit', place:'pasture', x:18, y:7, facing:'down', look:'兔子'}
+    {id:'pastureRabbit', place:'darkPines', x:20, y:23, facing:'up', look:'兔子'}
   ],
 
   // Your name in the speech box when you reply: the first whose if matches (otherwise 小猴子, Little monkey). Its English
@@ -1890,8 +1951,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'pastureBoulder', at:[4, 18, 'pasture'], shells:2, note:'Under the edge of the boulder: 2 🐚!'},
     {id:'pastureTree', at:[20, 23, 'pasture'], fruit:'桃子', note:'Tucked behind the tree at the edge of the pasture: a {桃子} for your bag!'},
     // at the ends of the ways through the pasture's pines that go nowhere (the cow didn't go that way, but they're worth it)
-    {id:'pastureWestEnd', at:[3, 4, 'pasture'], shells:2, note:'The way goes nowhere, but under the boulder at its end: 2 🐚!'},
-    {id:'pastureEastEnd', at:[28, 7, 'pasture'], shells:2, note:'The cow didn’t come this way, but tucked under the boulder: 2 🐚!'}
+    {id:'pastureWestEnd', at:[3, 10, 'darkPines'], shells:2, note:'The way goes nowhere, but under the boulder at its end: 2 🐚!'},
+    {id:'pastureEastEnd', at:[30, 27, 'darkPines'], shells:2, note:'The cow didn’t come this way, but tucked under the boulder: 2 🐚!'}
   ],
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},

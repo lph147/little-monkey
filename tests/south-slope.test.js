@@ -43,10 +43,10 @@ test('the south slope: four terraces, with stone steps (the long way) and a bank
   assert.ok(down.length < up.length - 15, `the way down, hopping the banks, is much quicker than the way back up (${down.length} squares, ${up.length} back)`);
 });
 
-test('the home ground’s way south leads down the slope to the pasture, and back', () => {
+test('the home ground’s way south leads down the slope to the dark pines, and back', () => {
   const g = game({place: 'homeGround', x: 16, y: 20, dir: 'down'});
   assert.deepEqual(get(g, "exitAt(16, 21)"), {at: [16, 21], to: 'southSlope', arrive: [12, 1], facing: 'down', if: {cow: {atLeast: 1}}, closed: 'Thick bushes block the way.'});
-  assert.deepEqual(get(g, "PLACES.southSlope.exits.map(e => [e.at, e.to])"), [[[12, 0], 'homeGround'], [[13, 0], 'homeGround'], [[12, 39], 'pasture'], [[13, 39], 'pasture']]);
+  assert.deepEqual(get(g, "PLACES.southSlope.exits.map(e => [e.at, e.to])"), [[[12, 0], 'homeGround'], [[13, 0], 'homeGround'], [[12, 39], 'darkPines'], [[13, 39], 'darkPines']]);
 });
 
 test('the lookout: its railing sparkles; A shows you the lost cow, far below by its spring, and a moo', async () => {

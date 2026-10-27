@@ -739,6 +739,7 @@ const LOOKS = {
   rubble:    (g,X,Y,x,y) => rubble(g,X,Y,x,y),
   school:    (g,X,Y,x,y) => grass(g,X,Y,x,y),   // the school, built on its plot: a big object (OBJECT_ART), on grass (no string or stakes round it any more)
   feastTable:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // the big table for the feast: a big object (OBJECT_ART), on grass
+  hollowLog: (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),  // a hollow pine fallen along the dark pines' gully: a big object (OBJECT_ART), on the needles
   feastTableBare:(g,X,Y,x,y) => grass(g,X,Y,x,y),    // as it's first set out, peaches and apples piled on it (OBJECT_ART),
   feastTableBowls:(g,X,Y,x,y) => grass(g,X,Y,x,y),   // with the bowls from the cave on it, and then (feastTable) its chopsticks
   milkTableBare:(g,X,Y,x,y) => grass(g,X,Y,x,y),     // the feast's second table, as it's first set out, bare
@@ -886,6 +887,7 @@ const OBJECT_ART = {
   milkTableYog: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, 5, (o.stage ?? 1) >= 1 ? 2 : 1),   // (the yoghurt)
   milkTableCheese: (g, o) => milkTable(g, o.x*T, o.y*T, o.w*T, 5, (o.stage ?? 1) >= 1 ? 3 : 2),
   pen: (g, o) => cowPen(g, o.x*T, o.y*T, o.w*T, o.h*T, o.stage ?? OBJECT_STAGES.pen),
+  hollowLog: (g, o) => hollowLog(g, o.x*T, o.y*T, o.w*T, o.h*T),
   dairy: (g, o) => dairy(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.dairy, 1),
   dairyYog: (g, o) => dairy(g, o.x*T, o.y*T, OBJECT_STAGES.dairy, (o.stage ?? 1) >= 1 ? 2 : 1),   // (going up: just the jars)
   dairyCheese: (g, o) => dairy(g, o.x*T, o.y*T, OBJECT_STAGES.dairy, (o.stage ?? 1) >= 1 ? 3 : 2),
@@ -1221,6 +1223,19 @@ function roundCheese(g, cx, by){   // a round cheese, a slice cut from it
   R(g, cx + 1, by - 6, 3, 3, '#EDB534'); R(g, cx + 1, by - 6, 3, 1, OUT);                                // where the slice was cut
   R(g, cx - 2, by - 3, 1, 1, '#C99328'); R(g, cx + 2, by - 2, 1, 1, '#C99328');                          // holes
 }
+// A great pine fallen along the dark pines' gully (the cow, chapter 1), hollow inside, its round end towards you: you crawl
+// in at its far end and out of this one, and it's drawn over you, so you vanish inside it (OVER_OBJECTS).
+function hollowLog(g, X, Y, w, h){
+  const bark = ['#3B2616', '#5E3D22', '#7A5232', '#93683F'];
+  if (shadows) groundShadow(g, X + w/2, Y + h - 2, w/2 + 2, 4);
+  R(g, X + 1, Y + 2, w - 2, h - 8, bark[0]); R(g, X + 2, Y + 3, w - 4, h - 10, bark[1]);
+  for (let i = 0; i < 5; i++) R(g, X + 5 + i * 5, Y + 4, 2, h - 14, i % 2 ? bark[2] : bark[0]);   // the bark's ridges
+  R(g, X + 3, Y + 3, w - 6, 1, bark[3]); R(g, X + 8, Y + 22, 3, 2, '#5FA85A'); R(g, X + 20, Y + 40, 3, 2, '#4E9A55');   // moss
+  const cx = X + w/2, cy = Y + h - 12;   // its round end: a rim of pale wood, rings, and the dark hollow
+  for (let y = -10; y <= 10; y++){ const half = Math.round(Math.sqrt(1 - (y/10.5)**2) * (w/2 - 1)); R(g, cx - half, cy + y, half*2, 1, '#C9A06A'); }
+  for (let y = -8; y <= 8; y++){ const half = Math.round(Math.sqrt(1 - (y/8.5)**2) * (w/2 - 4)); R(g, cx - half, cy + y, half*2, 1, '#A47A48'); }
+  for (let y = -6; y <= 6; y++){ const half = Math.round(Math.sqrt(1 - (y/6.5)**2) * (w/2 - 7)); R(g, cx - half, cy + y, half*2, 1, '#1A110A'); }
+}
 // The cow's pen at the home ground, seven squares by four, south of the road (the cow, chapter 1), as much of it as is up
 // (stage, as the troop builds it: 1 the fence along its back, with its gate facing the road, standing open; 2 the fences
 // down its sides; 3 the fence along its front; 4 a shelter at the back on the right, with a thatched roof; 5 hay, heaped
@@ -1358,7 +1373,8 @@ const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTableBare', 'feastTableB
 // table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
 // yoghurt on it, goes up in just that: the rest is there already.)
 const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese'];   // and these one object as big as the block of them (such as the school's frame on its plot)
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog'];
+const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
 // stall letters one stall; a block of frame letters is one frame, with any squares in it that are part of it but can be
@@ -1395,7 +1411,7 @@ const objectKey = o => `${o.look}@${o.x},${o.y},${o.w},${o.h}`;
 function pieceOf(o){
   const x0 = o.x*T - PIECE_SIDE, y0 = o.y*T - PIECE_UP, pw = o.w*T + 2*PIECE_SIDE, ph = PIECE_UP + o.h*T + 4, right = PIECE_SIDE + o.w*T;
   const wide = LEAFY.includes(o.look), beside = wide ? [[0, PIECE_UP, PIECE_SIDE, ph - PIECE_UP], [right, PIECE_UP, pw - right, ph - PIECE_UP]] : [];
-  const p = {...o, key:objectKey(o), x0, y0, pw, ph, under:[[0, PIECE_UP, pw, ph - PIECE_UP]], over:[[0, 0, pw, PIECE_UP], ...beside], rustle:-1e9,
+  const p = {...o, key:objectKey(o), x0, y0, pw, ph, under:[[0, PIECE_UP, pw, ph - PIECE_UP]], over:OVER_OBJECTS.includes(o.look) ? [[0, 0, pw, ph]] : [[0, 0, pw, PIECE_UP], ...beside], rustle:-1e9,
     leafy: wide && o.look !== 'tree' ? [[o.x-1, o.y], [o.x+1, o.y]] : null};   // (where walking in makes a wide fruit tree rustle: the squares right beside it)
   if (p.leafy) for (const [k, parts, over] of [['base', p.under, false], ['top', p.over, true]]){   // its own pictures
     const c = p[k] = document.createElement('canvas'); c.width = pw; c.height = ph;

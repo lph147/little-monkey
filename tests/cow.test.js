@@ -76,27 +76,33 @@ test('once the feast’s quests begin, the thirsty monkey is by the road at the 
   assert.deepEqual(get(g, '__said'), ['thirsty: 山上有牛！'], 'again, with what to do under it');
 });
 
-test('south, over the bridge and down the south slope: the pasture (牧场), where a cow moos beyond the pines the first time you go in', async () => {
+test('south, over the bridge, down the south slope and through the dark pines (黑松林): the pasture (牧场), where the cow is; a cow moos in the pines the first time you go in', async () => {
   const g = game({place: 'homeGround', x: 16, y: 20, dir: 'down'}, {cow: 1});
   await play(g, 'arrive(16, 21).then(runEvents)');
   assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y, S.pos.dir]')], ['southSlope', [12, 1, 'down']], 'first the south slope (tests/south-slope.test.js)');
   g.run("S.pos = {place: PLACE, x: 12, y: 38, dir: 'down'}; placePlayer()");
   await play(g, 'arrive(12, 39).then(runEvents)');
-  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y, S.pos.dir]')], ['pasture', [16, 1, 'down']], 'in at the top, among the pines');
-  assert.deepEqual(get(g, 'PLACES.pasture.name'), {zh: '牧场', py: 'mùchǎng', en: 'The pasture'});
-  assert.ok(get(g, '__sounds').includes('moo'), 'a moo, from beyond the pines');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y, S.pos.dir]')], ['darkPines', [16, 1, 'down']], 'then the dark pines (tests/pasture-way.test.js)');
+  assert.ok(get(g, '__sounds').includes('moo'), 'a moo, from somewhere in the pines');
   assert.match(get(g, '__notes').join(' '), /Dark pines, and long grass where wolves hide\. Somewhere beyond them, a cow moos, long and sad…/);
   assert.equal(get(g, 'here().cow'), 2);
   g.run('__sounds.length = 0; __notes.length = 0');
   await play(g, 'runEvents()');
   assert.deepEqual([get(g, '__sounds'), get(g, '__notes')], [[], []], 'only the first time');
+  g.run("S.pos = {place: PLACE, x: 16, y: 28, dir: 'down'}; placePlayer()");
+  await play(g, 'arrive(16, 29).then(runEvents)');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y, S.pos.dir]')], ['pasture', [16, 1, 'down']], 'out to the pasture, at the edge of the pines');
+  assert.deepEqual(get(g, 'PLACES.pasture.name'), {zh: '牧场', py: 'mùchǎng', en: 'The pasture'});
   assert.deepEqual(get(g, "LEGEND.n.wild"), ['wolf', 'wolf', 'snake', 'spider'], 'its long grass: wolves come down from the pines');
   assert.deepEqual(get(g, '[PLACES.pasture.battleMusic, PLACES.pasture.backdrop]'), ['pineBattle', 'pines'], 'battles among the pines, as in the pine wood');
-  for (const [x, y] of [[20, 9], [21, 10], [24, 8], [20, 12], [21, 13]]) assert.equal(g.run(`tileAt(${x}, ${y}).look`), 'longGrass', `long grass grown over the way at ${x},${y}`);
+  for (const [x, y] of [[20, 7], [21, 8], [20, 12], [21, 13]]) assert.equal(g.run(`tileAt(${x}, ${y}).look`), 'longGrass', `long grass grown over the way at ${x},${y}`);
   for (const [x, y] of [[19, 13], [22, 13], [19, 14], [22, 14]]) assert.ok(!g.run(`walkable(${x}, ${y})`), `the big rocks either side of the gap, at ${x},${y}`);
   assert.equal(g.run('tileAt(28, 18).look'), 'water', 'the spring');
   assert.deepEqual(npc(g, 'cow'), ['pasture', 31, 18], 'the cow, by its spring');
   assert.equal(g.run("AREA.bubbles.cow.find(b => matches(b.if)).show"), '!');
+  g.run("S.pos = {place: PLACE, x: 16, y: 1, dir: 'up'}; placePlayer()");
+  await play(g, 'arrive(16, 0).then(runEvents)');
+  assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['darkPines', [16, 28]], 'back into the dark pines');
   g.run("S.pos = {place: PLACE, x: 16, y: 1, dir: 'up'}; placePlayer()");
   await play(g, 'arrive(16, 0).then(runEvents)');
   assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['southSlope', [12, 38]], 'back up the south slope');
@@ -359,9 +365,8 @@ test('and again, 8 questions later: 好了！ and cheese (奶酪), on the dairy�
   assert.match(get(g, '__notes').join(' '), /Jars of 酸奶 \(yoghurt\) and a round 奶酪 \(cheese\) on the shelf, all made from the cow’s milk\./);
 });
 
-test('hidden in the pasture: shells under a boulder, a peach behind a tree at its edge, and shells at the ends of the ways that go nowhere', () => {
+test('hidden in the pasture: shells under a boulder, and a peach behind a tree at its edge (more in the dark pines: tests/pasture-way.test.js)', () => {
   const g = game({place: 'pasture', x: 16, y: 1, dir: 'down'}, {cow: 3});
   const finds = get(g, "AREA.hidden.filter(h => h.at[2] === 'pasture').map(h => [h.id, h.at[0], h.at[1], tileAt(h.at[0], h.at[1]).look])");
-  assert.deepEqual(finds, [['pastureBoulder', 4, 18, 'boulder'], ['pastureTree', 20, 23, 'tree'], ['pastureWestEnd', 3, 4, 'boulder'], ['pastureEastEnd', 28, 7, 'boulder']],
-    'at things you can’t walk through: two more at the ends of the ways through the pines that go nowhere');
+  assert.deepEqual(finds, [['pastureBoulder', 4, 18, 'boulder'], ['pastureTree', 20, 23, 'tree']], 'at things you can’t walk through');
 });

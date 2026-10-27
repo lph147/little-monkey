@@ -546,7 +546,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // Chapter 1: the cow (26 October 2026). Since the feast's quests began, the thirsty monkey has been by the road at the
   // home ground, with news: 山上有牛！ (牛 just for listening); the troop clears the bushes past the bridge at the bottom of
-  // the home ground, the way south to the pasture (牧场). There, beyond the pines, a cow moos; by its spring, you find it:
+  // the home ground, the way south, down the south slope and through the dark pines, to the pasture (牧场). In the pines, a
+  // cow moos; by its spring in the pasture, you find it:
   // 牛, said as you meet it, and it's scared of the wolves: 我怕狼！ Its word game wins its trust: 好！我们去你家吧！, and
   // it follows you home. As you come into the gap between the big rocks, a bear rears up at you (beaten, it lumbers off
   // for good); and home, as you come up to the thirsty monkey, the cow stays by him
@@ -562,28 +563,36 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[12, 1], [12, 8], [12, 13], [6, 13], [6, 16]], 'down the south slope, hopping down a bank, to the lookout');
   await pressAt(6, 16, 'down', 'looking out from the lookout’s railing');
   assert.ok(area().cowSeen === 1 && get('__scenes').includes('cowView'), 'the cow, far below, by its spring');
-  await walk([[6, 16], [6, 13], [21, 13], [21, 21], [13, 21], [13, 27], [3, 27], [3, 33], [12, 33], [12, 38]], 'down the steps, over the stepping stones and down more steps, into the pines');
-  await act('arrive(12, 39).then(runEvents)', 'going on down, into the pasture');
-  assert.deepEqual([run('PLACE'), area().cow], ['pasture', 2], 'the pasture: a cow moos, somewhere beyond the pines');
-  // The way through the pines (27 October 2026): it forks; the cow's hoofprints show which way it went, down to a stream too
-  // deep to wade, where a dead pine on the bank, knocked down with your stick, falls across it; over it, a rabbit by the way
-  // saw the cow go by (its word game won, it shows you which way); and on, through long grass, to the gap between the rocks
-  await walk([[16, 1], [16, 2], [20, 2]], 'coming to where the way forks: hoofprints, going east');
+  await walk([[6, 16], [6, 13], [21, 13], [21, 21], [13, 21], [13, 27], [3, 27], [3, 33], [12, 33], [12, 38]], 'down the steps, over the stepping stones and down more steps, to the pines');
+  await act('arrive(12, 39).then(runEvents)', 'going on down, into the dark pines');
+  assert.deepEqual([run('PLACE'), area().cow], ['darkPines', 2], 'the dark pines (黑松林): a cow moos, somewhere beyond them');
+  // The way through the dark pines (27 October 2026): it forks; the cow's hoofprints show which way it went, down a narrow
+  // gully where a great hollow pine lies along it, to crawl through; to a stream too deep to wade, where a dead pine on the
+  // bank, knocked down with your stick, falls across it; over it, a rabbit by the way saw the cow go by (its word game won,
+  // it shows you which way); and on, south, through long grass, out to the pasture
+  await walk([[16, 1], [16, 4], [21, 4]], 'coming to where the way forks: hoofprints, going east');
   assert.equal(area().pastureTracks, 1, 'the hoofprints, seen');
-  await walk([[20, 2], [20, 4]], 'following them down to the stream');
-  assert.deepEqual([area().streamSeen, run('walkable(20, 5)')], [1, false], 'the stream, too deep for a little monkey to wade');
-  await pressAt(20, 4, 'right', 'knocking the dead pine on its bank down with the stick');
-  assert.deepEqual([area().pastureLog, run('tileAt(20, 5).look'), run('walkable(20, 5)'), run('walkable(20, 6)')], [1, 'logBridge', true, true], 'it falls across the stream: a bridge');
-  await walk([[20, 4], [20, 8]], 'over the fallen pine, to where the way forks again');
-  await pressAt(18, 8, 'up', 'the rabbit by the way, and its word game');
+  await walk([[21, 4], [28, 4], [28, 6]], 'following them east, to the top of a narrow gully');
+  assert.equal(area().logSeen, 1, 'a great hollow pine, fallen along it');
+  await walk([[28, 6], [28, 16], [23, 16], [23, 17]], 'crawling through the hollow pine, and along the stream’s bank');
+  assert.deepEqual([area().streamSeen, run('walkable(23, 18)')], [1, false], 'the stream, too deep for a little monkey to wade');
+  await pressAt(23, 17, 'right', 'knocking the dead pine on its bank down with the stick');
+  assert.deepEqual([area().pastureLog, run('tileAt(23, 18).look'), run('walkable(23, 18)'), run('walkable(23, 19)')], [1, 'logBridge', true, true], 'it falls across the stream: a bridge');
+  await walk([[23, 17], [23, 20], [20, 20], [20, 22]], 'over the fallen pine, to where the way forks again');
+  await pressAt(20, 22, 'down', 'the rabbit by the way, and its word game');
   assert.ok(area().rabbitTold === 1 && ['你找牛吗？', '牛在那里！'].every(t => get('__said').includes(t)), 'the rabbit saw the cow, and shows you which way');
-  await walk([[20, 8], [20, 11]], 'on, south, through the long grass');
+  await walk([[20, 22], [16, 22], [16, 28]], 'on, south, through the long grass');
+  await act('arrive(16, 29).then(runEvents)', 'out of the pines, into the pasture');
+  assert.equal(run('PLACE'), 'pasture', 'the pasture (牧场)');
   await pressAt(31, 17, 'down', 'finding the cow by its spring, and playing its word game');
   assert.ok(knows('牛') && get('__said').includes('我怕狼！') && get('__said').includes('好！我们去你家吧！'), 'the cow: 牛, scared of the wolves, then won over');
   assert.deepEqual([area().cow, get('S.following')], [4, ['cow']], 'it follows you home');
   await walk([[31, 17], [31, 16], [21, 16], [21, 14]], 'leading the cow into the gap between the rocks, where a bear rears up');
   assert.ok(area().cowWolf === 1 && knows('熊'), 'the bear at the rocks (熊, taught as you meet it), beaten');
-  stand(16, 1, 'up');
+  await walk([[21, 14], [21, 9], [20, 9], [20, 5], [16, 5], [16, 1]], 'on up, through the long grass, to the edge of the pines');
+  await act('arrive(16, 0).then(runEvents)', 'back into the dark pines, with the cow');
+  assert.deepEqual([run('PLACE'), get('S.following')], ['darkPines', ['cow']]);
+  await walk([[16, 28], [16, 20], [23, 20], [23, 16], [28, 16], [28, 4], [16, 4], [16, 1]], 'back through the dark pines, over the fallen pine and through the hollow one, with the cow');
   await act('arrive(16, 0).then(runEvents)', 'back up to the south slope, with the cow');
   assert.deepEqual([run('PLACE'), get('S.following')], ['southSlope', ['cow']]);
   await walk([[12, 38], [12, 33], [3, 33], [3, 27], [13, 27], [13, 21], [21, 21], [21, 13], [3, 13], [3, 6], [12, 6], [12, 1]], 'up the south slope the long way, by its steps, with the cow');
