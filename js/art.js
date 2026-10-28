@@ -1410,15 +1410,38 @@ function roundCheese(g, cx, by){   // a round cheese, a slice cut from it
 // A great pine fallen along the dark pines' gully (the cow, chapter 1), hollow inside, its round end towards you: you crawl
 // in at its far end and out of this one, and it's drawn over you, so you vanish inside it (OVER_OBJECTS).
 function hollowLog(g, X, Y, w, h){
-  const bark = ['#3B2616', '#5E3D22', '#7A5232', '#93683F'];
-  if (shadows) groundShadow(g, X + w/2, Y + h - 2, w/2 + 2, 4);
-  R(g, X + 1, Y + 2, w - 2, h - 8, bark[0]); R(g, X + 2, Y + 3, w - 4, h - 10, bark[1]);
-  for (let i = 0; i < 5; i++) R(g, X + 5 + i * 5, Y + 4, 2, h - 14, i % 2 ? bark[2] : bark[0]);   // the bark's ridges
-  R(g, X + 3, Y + 3, w - 6, 1, bark[3]); R(g, X + 8, Y + 22, 3, 2, '#5FA85A'); R(g, X + 20, Y + 40, 3, 2, '#4E9A55');   // moss
-  const cx = X + w/2, cy = Y + h - 12;   // its round end: a rim of pale wood, rings, and the dark hollow
-  for (let y = -10; y <= 10; y++){ const half = Math.round(Math.sqrt(1 - (y/10.5)**2) * (w/2 - 1)); R(g, cx - half, cy + y, half*2, 1, '#C9A06A'); }
-  for (let y = -8; y <= 8; y++){ const half = Math.round(Math.sqrt(1 - (y/8.5)**2) * (w/2 - 4)); R(g, cx - half, cy + y, half*2, 1, '#A47A48'); }
-  for (let y = -6; y <= 6; y++){ const half = Math.round(Math.sqrt(1 - (y/6.5)**2) * (w/2 - 7)); R(g, cx - half, cy + y, half*2, 1, '#1A110A'); }
+  const BK = ['#2B1B0F', '#45301B', '#634428', '#835D38', '#A07448'];   // its bark, dark to light (lit from the upper left)
+  const WD = ['#6E4B2C', '#9C7346', '#C29A66', '#DDBB86'];   // the wood inside it, dark to pale
+  const x0 = X + 3, x1 = X + w - 3, cw = x1 - x0, cx = X + w / 2, top = Y + 5, bot = Y + h - 5;   // the trunk, lying along the gully
+  if (shadows) groundShadow(g, cx, bot + 1, w / 2 + 2, 4);
+  // the trunk, round: light along its top left, dark down its right
+  for (let x = x0; x < x1; x++){
+    const k = (x - x0 + .5) / cw, c = k < .1 ? BK[1] : k < .3 ? BK[3] : k < .42 ? BK[4] : k < .7 ? BK[2] : k < .9 ? BK[1] : BK[0];
+    const jag = Math.floor(rnd(x, 7, 903) * 3) + (x % 5 === 2 ? 2 : 0);   // its far end, broken off: jagged
+    R(g, x, top + jag, 1, bot - top - jag, c);
+  }
+  for (let i = 0; i < 12; i++){   // the bark's long furrows, with a lit edge, broken here and there
+    const fx = x0 + 2 + Math.floor(rnd(i, 1, 900) * (cw - 4)), fy = top + 8 + Math.floor(rnd(i, 2, 901) * (bot - top - 34)), fl = 7 + Math.floor(rnd(i, 3, 902) * 12);
+    R(g, fx, fy, 1, fl, BK[0]); if (fx > x0 + 3 && fx < cx) R(g, fx - 1, fy + 1, 1, fl - 2, BK[4]);
+  }
+  for (const [mx, my, mw] of [[x0 + 3, top + 14, 7], [x0 + 5, top + 31, 5], [x0 + 2, top + 44, 4]]){   // moss along its top
+    R(g, mx, my, mw, 2, '#5E9E4E'); R(g, mx + 1, my - 1, mw - 2, 1, '#7CC46B'); R(g, mx + 1, my + 2, mw - 3, 1, '#4C8A42');
+  }
+  for (const [fy, fw] of [[top + 21, 5], [top + 26, 4], [top + 30, 3]]){   // shelf fungus on its shady side, in tiers
+    R(g, x1 - 1, fy, fw, 2, '#D9B57A'); R(g, x1, fy - 1, fw - 2, 1, '#EBCF98'); R(g, x1 - 1, fy + 2, fw, 1, '#8E6A3C');
+  }
+  R(g, x0 - 5, top + 36, 6, 3, BK[2]); R(g, x0 - 5, top + 36, 6, 1, BK[3]); R(g, x0 - 6, top + 36, 2, 3, WD[2]); R(g, x0 - 6, top + 37, 1, 1, WD[0]);   // a broken branch
+  // its far end: the dark hollow inside, splinters of pale wood round it
+  const fy = top + 4;
+  for (let y = -2; y <= 2; y++){ const half = Math.round(Math.sqrt(1 - (y / 2.6) ** 2) * (cw / 2 - 4)); R(g, cx - half, fy + y, half * 2, 1, '#140C06'); }
+  for (let i = 0; i < 7; i++) R(g, cx - cw / 2 + 4 + Math.floor(rnd(i, 4, 904) * (cw - 8)), fy - 3 + (i % 2) * 6, 2, 1, WD[2 + (i % 2)]);
+  // its near end, cut round, facing you: rings of pale wood round the hollow you crawl out of
+  const ny = bot - 9, rx = cw / 2, ry = 9;
+  const disc = (rx_, ry_, c) => { for (let y = -ry_; y <= ry_; y++){ const half = Math.round(Math.sqrt(Math.max(0, 1 - (y / (ry_ + .5)) ** 2)) * rx_); R(g, cx - half, ny + y, half * 2, 1, c); } };
+  disc(rx, ry, BK[1]); disc(rx - 1, ry - 1, WD[3]); disc(rx - 3, ry - 2, WD[2]); disc(rx - 4, ry - 3, WD[3]); disc(rx - 5, ry - 4, WD[1]);
+  disc(rx - 6, ry - 5, '#24160B'); disc(rx - 8, ry - 6, '#140C06');
+  R(g, cx - rx + 3, ny - ry + 2, 4, 1, '#EED3A0'); R(g, cx - 3, ny + ry - 2, 6, 1, WD[0]);   // a glint on its rim; earth in its mouth
+  R(g, cx - rx - 1, bot - 2, 3, 2, '#5E9E4E'); R(g, cx + rx - 1, bot - 3, 3, 3, '#4C8A42'); R(g, cx + rx, bot - 5, 1, 2, '#7CC46B');   // ferns at its foot
 }
 // The cow's pen at the home ground, seven squares by four, south of the road (the cow, chapter 1), as much of it as is up
 // (stage, as the troop builds it: 1 the fence along its back, with its gate facing the road, standing open; 2 the fences
@@ -1558,7 +1581,7 @@ const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTableBare', 'feastTableB
 // yoghurt on it, goes up in just that: the rest is there already.)
 const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
 const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe'];
-const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through)   // and these one object as big as the block of them (such as the school's frame on its plot)
+const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through: it shakes as you do)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
 // stall letters one stall; a block of frame letters is one frame, with any squares in it that are part of it but can be
@@ -1596,8 +1619,9 @@ function pieceOf(o){
   const x0 = o.x*T - PIECE_SIDE, y0 = o.y*T - PIECE_UP, pw = o.w*T + 2*PIECE_SIDE, ph = PIECE_UP + o.h*T + 4, right = PIECE_SIDE + o.w*T;
   const wide = LEAFY.includes(o.look), beside = wide ? [[0, PIECE_UP, PIECE_SIDE, ph - PIECE_UP], [right, PIECE_UP, pw - right, ph - PIECE_UP]] : [];
   const p = {...o, key:objectKey(o), x0, y0, pw, ph, under:[[0, PIECE_UP, pw, ph - PIECE_UP]], over:OVER_OBJECTS.includes(o.look) ? [[0, 0, pw, ph]] : [[0, 0, pw, PIECE_UP], ...beside], rustle:-1e9,
-    leafy: wide && o.look !== 'tree' ? [[o.x-1, o.y], [o.x+1, o.y]] : null};   // (where walking in makes a wide fruit tree rustle: the squares right beside it)
-  if (p.leafy) for (const [k, parts, over] of [['base', p.under, false], ['top', p.over, true]]){   // its own pictures
+    leafy: wide && o.look !== 'tree' ? [[o.x-1, o.y], [o.x+1, o.y]] : null,   // (where walking in makes a wide fruit tree rustle: the squares right beside it)
+    crawl: OVER_OBJECTS.includes(o.look)};   // (one you crawl through, which shakes as you do: crawlThrough, js/draw.js)
+  if (p.leafy || p.crawl) for (const [k, parts, over] of [['base', p.under, false], ['top', p.over, true]]){   // its own pictures
     const c = p[k] = document.createElement('canvas'); c.width = pw; c.height = ph;
     drawObject(c.getContext('2d'), p, parts, over, null, x0, y0);
   }
@@ -1617,7 +1641,7 @@ function bakeObjects(clip){
   const bg = baseCanvas.getContext('2d'), tg = topCanvas.getContext('2d');
   if (clip){ bg.clearRect(...clip); tg.clearRect(...clip); }
   for (const p of OBJECT_PIECES){
-    if (p.leafy || (clip && !overlaps([p.x0, p.y0, p.pw, p.ph], clip))) continue;
+    if (p.leafy || p.crawl || (clip && !overlaps([p.x0, p.y0, p.pw, p.ph], clip))) continue;
     drawObject(bg, p, p.under, false, clip); drawObject(tg, p, p.over, true, clip); p.baked = true;
   }
 }

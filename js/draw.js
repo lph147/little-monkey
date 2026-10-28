@@ -212,13 +212,25 @@ function touchLeaves(now){
     for (let i = 0; i < 2; i++) fallingLeaves.push({x: m.tx*T + 2 + Math.random()*12, y: m.ty*T - 4 + Math.random()*6, t0: now + i*90, s: Math.random() < .5 ? -1 : 1});
   }
 }
+// Crawling through a hollow log (OVER_OBJECTS, js/art.js): with each step you take inside it, it gives a little shake, a
+// couple of crumbs of bark fall off its sides, and you hear yourself scuffling along (decided 28 October 2026: you just
+// vanished into it).
+function crawlThrough(now){
+  const m = pl.mv;
+  if (!m || m.crawled || now - m.t0 < STEP * .3) return;
+  const inside = p => [[m.fx, m.fy], [m.tx, m.ty]].some(([x, y]) => x >= p.x && x < p.x + p.w && y >= p.y && y < p.y + p.h);
+  const p = OBJECT_PIECES.find(p => p.crawl && inside(p));
+  if (!p) return;
+  m.crawled = true; p.rustle = now; SFX.scuffle();
+  for (const side of [-1, 1]) fallingLeaves.push({x: p.x*T + (side < 0 ? 2 : p.w*T - 4), y: m.ty*T + 2 + Math.random()*8, t0: now + (side > 0 ? 70 : 0), s: side, bark: true});
+}
 function drawFallingLeaves(cx, cy, now){
   for (let i = fallingLeaves.length - 1; i >= 0; i--){
     const f = fallingLeaves[i], t = (now - f.t0) / 800;
     if (t > 1){ fallingLeaves.splice(i, 1); continue; }
     if (t < 0) continue;
     const X = Math.round(f.x - cx + Math.sin(t*7) * 2 * f.s), Y = Math.round(f.y - cy + t*14);   // drifting from side to side as it falls
-    R(b, X, Y, 2, 1, '#8FC85A'); R(b, X + (f.s > 0 ? 1 : 0), Y + 1, 1, 1, LEAF[1]);
+    R(b, X, Y, 2, 1, f.bark ? '#835D38' : '#8FC85A'); R(b, X + (f.s > 0 ? 1 : 0), Y + 1, 1, 1, f.bark ? '#45301B' : LEAF[1]);   // (or a crumb of bark)
   }
 }
 function heart(X, Y){ [[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[2,3]].forEach(([a,c]) => R(b, X+a, Y+c, 1, 1, '#E0446A')); }
@@ -512,7 +524,7 @@ function drawWorld(now){
   if (sh < VH*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');
   b.drawImage(mapCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
   b.drawImage(baseCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);   // big objects, under the characters: those that never move, all at once
-  touchLeaves(now);
+  touchLeaves(now); crawlThrough(now);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.base, cx, cy, now);   // and the fruit trees, which rustle
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);

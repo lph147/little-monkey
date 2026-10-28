@@ -29,3 +29,18 @@ test('in a battle, both health bars are drawn to one scale: a snake’s (20) les
   assert.equal(k(g.run('healthHTML(50, 50)')), 1, 'you, or a bear');
   assert.equal(k(g.run('healthHTML(10, 50)')), 1, 'how long the bar is depends on the most you can have, not what you have now');
 });
+
+test('crawling through the hollow pine in the dark pines: it shakes with each step you take inside it, crumbs of bark fall, and you hear yourself scuffling', () => {
+  const g = loadGame({dom: true, save: {version: 30, started: true, areas: {1: {chapter: 1, cow: 1}}, pos: {place: 'darkPines', x: 28, y: 7, dir: 'down'}}});
+  g.run("mode = 'play'; globalThis.__sfx = []; SFX.scuffle = () => __sfx.push('scuffle'); placePlayer()");
+  const log = get(g, "OBJECT_PIECES.filter(p => p.crawl).map(p => [p.look, p.x, p.y, p.w, p.h, !!p.top, !!p.baked])");
+  assert.deepEqual(log, [['hollowLog', 28, 8, 2, 4, true, false]], 'its own pictures, drawn each moment (so it can shake), not baked into the map');
+  g.run('pl.mv = {fx: 28, fy: 7, tx: 28, ty: 8, t0: performance.now() - STEP * .5, dur: STEP}; crawlThrough(performance.now())');
+  assert.deepEqual(get(g, '__sfx'), ['scuffle'], 'in at its far end');
+  assert.ok(get(g, 'performance.now() - OBJECT_PIECES.find(p => p.crawl).rustle') < 100, 'it shakes');
+  assert.equal(get(g, 'fallingLeaves.filter(f => f.bark).length'), 2, 'a crumb of bark off each side');
+  g.run('crawlThrough(performance.now())');
+  assert.deepEqual(get(g, '__sfx'), ['scuffle'], 'once a step');
+  g.run('pl.mv = {fx: 26, fy: 4, tx: 27, ty: 4, t0: performance.now() - STEP * .5, dur: STEP}; crawlThrough(performance.now())');
+  assert.deepEqual(get(g, '__sfx'), ['scuffle'], 'walking anywhere else: nothing');
+});

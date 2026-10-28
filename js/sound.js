@@ -43,6 +43,7 @@ const SFX = {
   call: () => { tone(988, .06, 'square', .04); tone(1319, .12, 'square', .04, .08); },   // someone calls you over: a ! pops up over them
   fanfare: () => [523,659,784,1047,784,1047].forEach((f,i) => tone(f, .13, 'square', .04, i*.1)),
   rumble: () => noise(.9, .16),
+  scuffle: () => noise(.09, .03),   // crawling along inside a hollow log
   chime: () => [1047,1319,1568,2093].forEach((f,i) => tone(f, .35, 'triangle', .05, i*.08)),
   shimmer: () => tone(520, 1.1, 'triangle', .04, 0, 900),
   splash: (v = .22) => {   // a splash of water: a burst of noise, bright and quick (v: how loud)
