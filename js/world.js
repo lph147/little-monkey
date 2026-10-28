@@ -243,38 +243,13 @@ const LEAP_MS = 450;   // how long a leap takes, when someone stops following yo
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
 const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
-  change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for']};   // extra settings a step can have
+  change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 // How many things you could count with the numbers you know: never two (NOT_HOW_MANY, js/quiz.js).
 const countable = () => COUNTING.map((w, i) => i + 1).filter(n => !NOT_HOW_MANY.includes(COUNTING[n - 1]) && WORDS[COUNTING[n - 1]] && lvl(COUNTING[n - 1]) >= 1);
-// The area's lesson series (AREA.lessons) teach their words one at a time, one a lesson, in order: the next once you've
-// got the last one right twice (it no longer needs practice), so they don't all come at once. Except a series' first
-// few (first): its first lesson teaches them all, one after another (decided 24 October 2026: school lessons are the
-// exception to one new word at a time, so two lessons teach 四 五 六 and 红色 黄色 白色, and chapter 1 opens up
-// sooner); a game that knew some of them already (from when the first lesson taught one) learns the rest one a lesson,
-// as it did, without waiting, so the first lesson's card (startFirst) is always right. The series and words ready now
-// ({series, words, word: the first of them}), if any (of the series whose if matches); when more than one has words
-// ready, they take turns, so it isn't the same kind of lesson every time (here().lastLesson: the series of your last).
-// After a lesson that teaches new words, the next waits till you've answered the area's lessonGap.questions more questions
-// anywhere (decided 26 October 2026: the school's sixteen words could all come in one sitting, each practised only in its
-// own lesson): till then the teacher gives you a practice lesson. (wait: false, whether one is ready, practice or not.)
-function lessonNow(wait = true){
-  if (wait && practiceLeft() > 0) return null;
-  const ready = [];
-  for (const series of AREA.lessons || []){
-    if (series.if && !matches(series.if)) continue;
-    const i = series.words.findIndex(w => lvl(w) === 0), first = series.first || 1;
-    if (i < 0) continue;
-    const fresh = series.words.slice(0, first).every(w => lvl(w) === 0);   // (none of the first few known yet)
-    const words = fresh ? series.words.slice(0, first) : [series.words[i]];
-    if (i < first || !needsPractice(series.words[i - 1])) ready.push({series, words, word:words[0]});
-  }
-  return ready.find(l => l.series.id !== here().lastLesson) || ready[0] || null;
-}
-// How many more questions you need to answer before the teacher's next new word (here().lessonTurn: your question count when
-// your last lesson that taught one ended; none before your first).
-const practiceLeft = () => { const n = (AREA.lessonGap || {}).questions || 0, t = here().lessonTurn; return typeof t === 'number' ? Math.max(0, n - ((S.turn || 0) - t)) : 0; };
+// The area's lesson series (AREA.lessons) are the school's subjects, chosen on its timetable (js/timetable.js), where
+// lessonNow and practiceLeft are.
 const LESSON_KINDS = {count:countLesson, paint:paintLesson};   // how each kind of lesson series goes (js/quiz.js)
 // The parts of the school painted so far (a lesson series' paint: which part each of its colours paints), each with its
 // colour: those of the colours you've learned. (js/art.js draws them.)
@@ -583,15 +558,10 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     toast((counted ? `${wz(num)}! ` : '') + fill(all ? full.text || full : s.each, false, true));
   },
   rest(){ S.health = maxHealth(); save(); SFX.chime(); },   // your health is full again
-  // A lesson with the character you're talking to (the teacher at school): a new word from one of the area's lesson
-  // series, if one's ready (lessonNow), or else practising your words, as at the practice post. If you stop, or don't
-  // start, the conversation ends there.
-  async lesson(s, who){
-    const l = lessonNow();
-    if (!l && lessonNow(false)) await STEPS.message({message:AREA.lessonGap.wait}, who);   // a new word waits till you've practised: he says so
-    if (!await (l ? LESSON_KINDS[l.series.kind](l.series, l.words, who) : practise(speaker(who), PRACTICE.lesson))) return STOP;
-    if (l){ here().lastLesson = l.series.id; here().lessonTurn = S.turn || 0; save(); }   // (and the next new word waits: lessonGap)
-  },
+  // A class with the character you're talking to (the teacher at school), or with by (from the chart on the classroom
+  // wall): the timetable, where you choose a lesson, new or again, or practice (js/timetable.js). If you close it without
+  // doing anything, the conversation ends there.
+  async lesson(s, who){ if (!await timetable(s.by || who)) return STOP; },
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
   // up, then you hop down again, sparkling, with your health full (its text: the message then).
   async sleep(s){

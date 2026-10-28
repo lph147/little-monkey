@@ -362,6 +362,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 牧场 | mùchǎng | The pasture |  |
 | 松林 | sōnglín | Pine wood |  |
 | 学校 | xuéxiào | School |  |
+| 数学 | shùxué | Maths |  |
+| 美术 | měishù | Art |  |
 
 ### Words to collect
 
@@ -746,6 +748,10 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 好了！ | hǎo le! | It’s ready! | New on 26 October 2026 (in the game), the little dairy: The thirsty monkey, when what he’s made is ready: yoghurt (酸奶), then cheese (奶酪) |  |
 | 我们有酸奶。 | wǒmen yǒu suānnǎi. | We have yoghurt. | New on 26 October 2026 (in the game), the little dairy: The feast’s list, at its tables |  |
 | 我们有奶酪。 | wǒmen yǒu nǎilào. | We have cheese. | New on 26 October 2026 (in the game), the little dairy: The feast’s list, at its tables |  |
+| 课程表 | kè chéng biǎo | Timetable | New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: The title of the card where you choose a lesson at school, and the chart on the classroom wall |  |
+| 数学 | shù xué | Maths | New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: The number lessons’ subject, a tab on the timetable |  |
+| 美术 | měi shù | Art | New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: The colour lessons’ subject (the class paints, and chooses paints): is 美术 right, or would another name suit lessons about colours better? |  |
+| 练习 | liàn xí | Practice | New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: The timetable’s tab for a practice lesson, which asks about the words you know |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

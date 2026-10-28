@@ -19,6 +19,7 @@ const cap = s => s && s[0].toUpperCase() + s.slice(1);   // (a sentence's first 
 const fill = (text, raw, plain) => String(text).replace(/\{([^}|]+)(?:\|([^}]+))?\}/g, (m, k, en) => {
   if (AREA.counters[k]) return counter(k);
   if (k.startsWith('left:')) return stillToFind(k.slice(5));
+  if (k.startsWith('lessons:')) return lessonsText(k.slice(8));   // the lessons at school ready now, or waiting (js/timetable.js)
   const w = k.startsWith('holding:') ? here().holding[k.slice(8)] : k.startsWith('wanted:') ? (here().wanted || {})[k.slice(7)] : k;
   return raw ? w : plain && lvl(w) < 1 ? en || enOf(w).split(',')[0] : wz(w, en);
 });

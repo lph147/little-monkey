@@ -71,12 +71,12 @@ async function countQ({who, thing, n}){
   if (ok) answer(num, true, listen ? 'listen' : 'read'); else reviewed(num, false);
   return ok;
 }
-// A number lesson (a lesson series of kind count, with the teacher: who): for each new number (words: one, or in your
-// first lesson a series' first few, one after another: lessonNow, js/world.js), he counts things onto his table, teaching
-// it (his line for it, teach); then counting questions: with one new number, five, the new number three times and twice
-// another you know; with several, three for each as it comes, and then two mixing them, so you learn to tell them apart.
-// Each right answer earns a shell if that number needed practice. Gives whether you had the lesson (you can say Not now
-// at the start).
+// A number lesson (a lesson series of kind count, with the teacher: who): for each of its numbers (words: one, or in your
+// first lesson a series' first few, one after another: js/timetable.js), he counts things onto his table, teaching it
+// (his line for it, teach); then counting questions: with one number, five, it three times and twice another you know;
+// with several, three for each as it comes, and then two mixing them, so you learn to tell them apart. Each right answer
+// earns a shell if that number needed practice. Done again (again), he counts as before, but nothing is new: no card.
+// Gives how you did: {right, asked, shells} (the timetable's end card says it).
 const LESSON_QUESTIONS = 5;   // (in a number or colour lesson)
 const EACH_NEW = 3, MIXED = 2;   // (in a first lesson teaching several: questions on each new word as it comes, then mixing them)
 // Numbers that never answer how many there are: two things are 两 (liǎng), not 二, so there are never two things to
@@ -93,18 +93,16 @@ function lessonAsks(words, others){
     return shuffle([...Array(EACH_NEW - known.length).fill(w), ...known]);
   }), shuffle([...words]).slice(0, MIXED)];
 }
-const lessonStart = (series, words) => fill(words.length > 1 && series.startFirst || series.start);
-async function countLesson(series, words, who){
+async function countLesson(series, words, who, {again = false} = {}){
   const face = speaker(who);
-  if (!await confirmBox(face, lessonStart(series, words), 'Start', 'Not now')) return false;
   const top = w => COUNTING.indexOf(w) + 1;
   const others = shuffle([...Array(top(words[0]) - 1).keys()].map(i => COUNTING[i]).filter(w => !NOT_HOW_MANY.includes(w)));
   const asks = lessonAsks(words, others);
   let right = 0, shells = 0, asked = 0;
   for (const [k, part] of asks.entries()){
-    if (k < words.length){   // (each new number, as it comes: he counts up to it)
-      await showDialog(face, L[series.teach[words[k]]], {teach:words[k]});
-      await showNotice(words[k], {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
+    if (k < words.length){   // (each number, as it comes: he counts up to it)
+      await showDialog(face, L[series.teach[words[k]]], again ? {} : {teach:words[k]});
+      if (!again) await showNotice(words[k], {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
     }
     for (const w of part){
       const things = series.things.filter(t => lvl(t.word) >= 1), thing = things[Math.floor(Math.random() * things.length)] || series.things[0];
@@ -113,9 +111,8 @@ async function countLesson(series, words, who){
       if (await countQ({who, thing, n:top(w)})){ right++; if (need) shells++; }
     }
   }
-  S.shells += shells; save(); SFX.fanfare();
-  await infoBox(face, `<p class="label">Lesson over</p><p>You counted <b>${right} of ${asked}</b> right.${shells ? ` +${shells} 🐚` : ''}</p>`);
-  return true;
+  S.shells += shells; save();
+  return {right, asked, shells};
 }
 // A colour question (a colour lesson): the teacher wants a paint, and you choose it from three colours you know, as in
 // any picture question: you hear it while it's new, and the paints have their characters (and their pinyin once you've
@@ -143,18 +140,17 @@ async function colourQ({who, w}){
 // then he wants paints: with one new colour, five times, the new colour three times and twice another colour you know
 // (in your first lessons, the new colour instead, until you know two others); with several, three for each as it comes,
 // and then two mixing them. Each right answer earns a shell if that colour needed practice. Then the class goes out and
-// paints a part of the school with a new colour that paints one (its scene, in scenes). Gives whether you had the
-// lesson (you can say Not now at the start).
-async function paintLesson(series, words, who){
+// paints a part of the school with a new colour that paints one (its scene, in scenes). Done again (again), he opens
+// the pots as before, with nothing new, and nothing painted. Gives how you did: {right, asked, shells}.
+async function paintLesson(series, words, who, {again = false} = {}){
   const face = speaker(who);
-  if (!await confirmBox(face, lessonStart(series, words), 'Start', 'Not now')) return false;
   const others = shuffle(ORDER.filter(x => !words.includes(x) && WORDS[x].category === WORDS[words[0]].category && lvl(x) >= 1));   // (the first lessons: fewer, or none)
   const asks = lessonAsks(words, others);
   let right = 0, shells = 0, asked = 0;
   for (const [k, part] of asks.entries()){
-    if (k < words.length){   // (each new colour, as it comes: he opens its pot)
-      await showDialog(face, L[series.teach[words[k]]], {teach:words[k]});
-      await showNotice(words[k], {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
+    if (k < words.length){   // (each colour, as it comes: he opens its pot)
+      await showDialog(face, L[series.teach[words[k]]], again ? {} : {teach:words[k]});
+      if (!again) await showNotice(words[k], {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
     }
     for (const w of part){
       const need = needsPractice(w);
@@ -163,9 +159,8 @@ async function paintLesson(series, words, who){
     }
   }
   S.shells += shells; save();
-  for (const w of words) if ((series.scenes || {})[w]) await storyScene(series.scenes[w]);   // (with its own fanfare)
-  await infoBox(face, `<p class="label">Lesson over</p><p>You chose <b>${right} of ${asked}</b> paints right.${shells ? ` +${shells} 🐚` : ''}</p>`);
-  return true;
+  if (!again) for (const w of words) if ((series.scenes || {})[w]) await storyScene(series.scenes[w]);   // (with its own fanfare)
+  return {right, asked, shells};
 }
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 // A word's pinyin without its tones (ü as u, no spaces): the words that sound alike, to anyone just hearing them.

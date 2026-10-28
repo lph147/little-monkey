@@ -43,7 +43,8 @@ const allIfs = () => [
   ['animalsAppear', AREA.animalsAppear]
 ];
 const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]) || (w.startsWith('wanted:') && (AREA.requests[w.slice(7)] || {}).choices)
-  || (w.startsWith('left:') && (AREA.counters[w.slice(5)] || {}).count === 'known');   // (what a counter of words you know still waits for)
+  || (w.startsWith('left:') && (AREA.counters[w.slice(5)] || {}).count === 'known')   // (what a counter of words you know still waits for)
+  || ['lessons:ready', 'lessons:waiting'].includes(w);   // (the lessons at school ready now, or waiting: js/timetable.js)
 // A request's sentences: its own, or each of its choices' (a fussy request, such as the hungry monkey's fruit).
 const asked = r => (r.choices ? Object.entries(r.choices).map(([wants, c]) => ({...r, ...c, wants})) : [r]);
 const collectible = Object.keys(BANK).filter(w => BANK[w].area === AREA.number);
@@ -612,7 +613,10 @@ test('each lesson series is one the engine can give, teaching words you can coll
   const KINDS = get('Object.keys(LESSON_KINDS)');
   for (const l of AREA.lessons || []){
     assert.ok(KINDS.includes(l.kind), `the lessons ${l.id} are of kind "${l.kind}"; the kinds are ${KINDS.join(', ')}`);
-    assert.ok(l.start && AREA.characters.some(c => c.id === l.by), `the lessons ${l.id} need start, and by: the character who teaches them`);
+    assert.ok(AREA.characters.some(c => c.id === l.by), `the lessons ${l.id} need by: the character who teaches them`);
+    assert.ok(l.subject && l.subject.zh && l.subject.py && l.subject.en && l.about && l.about.one && (l.about.first || (l.first || 1) === 1),
+      `the lessons ${l.id} are a subject on the timetable: its name (subject: zh, py, en) and what a lesson is (about: one, and first if its first teaches several)`);
+    assert.ok(get(`!!CHART_ICONS[${JSON.stringify(l.icon)}]`), `the lessons ${l.id} need an icon for the chart on the classroom wall (CHART_ICONS, js/art.js)`);
     for (const w of l.words){
       assert.ok(collectible.includes(w), `the lessons ${l.id} teach ${w}, which isn't a word you can collect in ${where}`);
       if (l.teach) assert.ok(AREA.lines[l.teach[w]] && AREA.lines[l.teach[w]].zh.split(' ').includes(w), `the lessons ${l.id}: the line teaching ${w} should be a line with ${w} in it`);

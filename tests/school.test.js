@@ -17,7 +17,7 @@ function game(area = {}, pos = {place: 'homeGround', x: 15, y: 5, dir: 'up'}, mo
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__scenes = []; globalThis.__lessons = 0");
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }; replyWith = async () => {}");
   g.run("showNotice = async w => { __notes.push('card: ' + w); rec(w).lv = Math.max(rec(w).lv || 0, 1); }; storyScene = async id => { __scenes.push(id); }");
-  g.run("practise = async () => { __lessons++; return true; }");   // (a lesson itself: the practice post's own tests)
+  g.run("practise = async () => { __lessons++; return true; }; ttCard = async at => ttAction(at || ttDefault()); lessonEnd = async () => false");   // (a lesson itself: the practice post's own tests)
   g.run('placePlayer()');
   return g;
 }

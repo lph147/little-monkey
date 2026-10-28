@@ -777,7 +777,7 @@ function classFloor(g, X, Y, x, y){
   }
 }
 function classWall(g, X, Y, x, y){ R(g, X, Y, T, T, CLASS.wall); R(g, X, Y, T, 1, '#7A5232'); R(g, X, Y+15, T, 1, '#462E1B'); R(g, X+3+(x*5+y*3)%9, Y+4+(x+y)%7, 3, 1, '#4E3320'); }
-const BACK_WALL = ['wallFace', 'blackboard', 'classWindow'];   // the back wall's looks: the blackboard and windows are on it
+const BACK_WALL = ['wallFace', 'blackboard', 'classWindow', 'timetable'];   // the back wall's looks: the blackboard and windows are on it
 function wallFace(g, X, Y, x, y){   // (a beam along its top, and a rail along its bottom, where the wall ends)
   R(g, X, Y, T, T, CLASS.plaster);
   for (let i = 0; i < 3; i++) R(g, X + Math.floor(rnd(x,y,i+970)*15), Y + 2 + Math.floor(rnd(x,y,i+980)*11), 1, 1, '#E0D3B6');
@@ -797,6 +797,34 @@ function blackboard(g, o){   // the blackboard, as big as its block: a wooden fr
   const [nw, nh] = writtenSize('一二三四五六七八九十', 3);
   write(g, '一二三四五六七八九十', X + Math.round((w - nw) / 2), Y + Math.round((h - nh) / 2), '#E8F0E8', {gap: 3});   // the numbers, in the middle
   R(g, X+1, Y+h, w-2, 2, '#5A3A20'); R(g, X + Math.round(w * .7), Y+h-1, 3, 1, '#FFFFFF'); R(g, X + Math.round(w * .3), Y+h-1, 2, 1, '#F4D0D0');   // the tray, with chalk
+}
+// The timetable on the classroom wall (the lesson series, js/timetable.js), like a sticker chart, with no writing: a row
+// for each subject, its little picture (its icon: dots for counting, paint, a runner), then a gold star for each lesson
+// done, a green square round the one that's ready, and grey for the rest. The card says it all in words.
+const STAR = ["..#..", ".###.", "#####", ".###.", ".#.#."];
+const CHART_ICONS = {
+  dots: (g, x, y) => [[0,4],[2,2],[2,4],[4,0],[4,2],[4,4]].forEach(([a, b]) => R(g, x + a, y + b, 1, 1, '#1E2B26')),   // dots, 1 2 3
+  paint: (g, x, y) => [['#E04A3A', 0, 3], ['#F2C230', 2, 1], ['#3E7FD0', 4, 3]].forEach(([c, a, b]) => R(g, x + a, y + b, 2, 2, c)),   // blobs of paint
+  runner: (g, x, y) => { const c = '#8A5A32'; R(g, x + 2, y, 2, 2, c); R(g, x + 2, y + 2, 1, 2, c); R(g, x + 1, y + 4, 1, 1, c); R(g, x + 3, y + 4, 1, 1, c); R(g, x, y + 2, 2, 1, c); R(g, x + 3, y + 2, 2, 1, c); }   // a little runner
+};
+function timetableChart(g, o){
+  const X = o.x*T, Y = o.y*T, x0 = X + Math.round((o.w*T - 46) / 2), y0 = Y + 2, w = 46, h = 29;
+  R(g, x0 + 1, y0 + h, w - 2, 2, 'rgba(0,0,0,.18)');                          // its shadow on the wall
+  R(g, x0, y0, w, h, '#5A3A22'); R(g, x0 + 1, y0 + 1, w - 2, h - 2, '#8A5A32');   // its wooden frame
+  R(g, x0 + 2, y0 + 2, w - 4, h - 4, '#F4EEDC');                                  // the paper
+  R(g, x0 + 2, y0 + 2, w - 4, 3, '#C0392B');                                      // a red band along its top
+  R(g, x0 + 22, Y, 2, 3, '#3A2A1E');                                              // the peg it hangs on
+  chartRows().slice(0, 3).forEach((r, i) => {
+    const ry = y0 + 6 + i * 7, ix = x0 + 3;
+    if (i) R(g, x0 + 2, ry - 1, w - 4, 1, '#DCCFAE');                             // a line between the rows
+    if (CHART_ICONS[r.icon]) CHART_ICONS[r.icon](g, ix, ry);
+    for (let k = 0; k < r.n && k < 7; k++){
+      const cx = x0 + 10 + k * 5, cy = ry;
+      if (k < r.done) STAR.forEach((row, b) => [...row].forEach((ch, a) => { if (ch === '#') R(g, cx + a, cy + b, 1, 1, '#E3A51C'); }));
+      else if (k === r.done && r.ready){ R(g, cx, cy, 5, 5, '#2E7A57'); R(g, cx + 1, cy + 1, 3, 3, '#F4EEDC'); }
+      else R(g, cx + 1, cy + 1, 3, 3, '#CFC6AE');
+    }
+  });
 }
 function classTable(g, X, Y, x, y, top, front, book){   // a table as long as its row (the teacher's, or a pupils' desk)
   classFloor(g, X, Y, x, y);
@@ -909,6 +937,7 @@ const LOOKS = {
   wallFace:  (g,X,Y,x,y) => wallFace(g,X,Y,x,y),
   classWindow:(g,X,Y,x,y) => wallFace(g,X,Y,x,y),   // a window and the blackboard: big objects on the back wall
   blackboard:(g,X,Y,x,y) => wallFace(g,X,Y,x,y),
+  timetable:(g,X,Y,x,y) => wallFace(g,X,Y,x,y),   // the timetable, a chart on the back wall
   teacherTable:(g,X,Y,x,y) => teacherTable(g,X,Y,x,y),
   desk:      (g,X,Y,x,y) => desk(g,X,Y,x,y),
   doorMat:   (g,X,Y,x,y) => doorMat(g,X,Y,x,y),
@@ -1106,6 +1135,7 @@ const OBJECT_ART = {
   },
   school: (g, o) => schoolHouse(g, o.x*T, o.y*T, o.w*T, o.h*T, {walls:1, roof:1, sign:true, paint:paintedParts()}),   // (painted as you learn colours)
   blackboard: (g, o) => blackboard(g, o),
+  timetable: (g, o) => timetableChart(g, o),
   classWindow: (g, o) => classWindow(g, o)
 };
 // An archway over the way into a place (the hillside's, into the pine wood): a stone beam across its two pillars
@@ -1590,7 +1620,7 @@ const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTableBare', 'feastTableB
 // table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
 // yoghurt on it, goes up in just that: the rest is there already.)
 const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe'];
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'timetable', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe'];
 const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through: it shakes as you do)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of

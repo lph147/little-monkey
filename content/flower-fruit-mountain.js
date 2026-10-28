@@ -152,25 +152,26 @@ const FLOWER_FRUIT_MOUNTAIN = {
     melonWait: {count:'since', key:'melonTurn', max:8}, grapeWait: {count:'since', key:'grapeTurn', max:8}, bananaWait: {count:'since', key:'bananaTurn', max:8}   // and since each fruit was planted in the garden (8 to ripen)
   },
 
-  // Lessons at school (the lesson step, with the teacher): each series teaches its words one at a time, one a lesson, in
-  // order, the next once you've got the last one right twice; when two series have a word ready, they take turns, and
-  // when none has, a lesson is practice, as at the practice post. kind: what its lessons are (count: the teacher counts
+  // Lessons at school: each series is a subject on the timetable (js/timetable.js), its name (subject), its little picture
+  // on the chart on the classroom wall (icon), and what a lesson is (about: its first, and one of the rest), teaching its
+  // words in lessons, in order: its first few in the first (first), then one a lesson, the next once you've got the last
+  // one right twice. You choose the lesson (decided 28 October 2026; the teacher took turns between them till then), or
+  // practice, as at the practice post. kind: what its lessons are (count: the teacher counts
   // things onto his table, teaching the new number with his line for it, teach, then asks how many there are, with his
   // question about each of the things; paint: he opens a pot of the new colour, teaching it, then wants paints, and if
   // the colour is for a part of the school, paint, the class goes out and paints it, in its scene, scenes); by: who
-  // teaches it; start: what the card asking you to start says; note: on the new word's card.
+  // teaches it; note: on the new word's card.
   // After a lesson that teaches new words, the next new word waits till you've answered this many more questions anywhere:
   // a practice lesson (8 words to match and a sentence), a few animals' games, a battle or two (decided 26 October 2026, after
   // measuring the game's pacing: the school's sixteen words could all come in one sitting, each practised only in its own
-  // lesson). Till then, the teacher gives you a practice lesson, saying so first (wait), and your tasks say how far you are.
-  lessonGap: {questions:8, wait:'A new word is coming soon! Practise what you know first: {practised} of 8 questions done.'},
+  // lesson). Till then, the timetable and your tasks say how far you are; doing a lesson again or practising never waits.
+  lessonGap: {questions:8},
   lessons: [
     // The first lesson of each series teaches its first three words, one after another (first: decided 24 October 2026,
     // school lessons are the exception to one new word at a time): two lessons, and you can count six bees and know the
     // colours of the big monkey's flowers. After that, one a lesson.
     {id:'numbers', kind:'count', by:'elder', if:{school:{atLeast:2}}, words:['四', '五', '六', '七', '八', '九', '十'], first:3,
-      startFirst:'Your first lesson: three new numbers, one at a time, then counting. Each right answer earns a 🐚 if that number needs practice.',
-      start:'Today: a new number, then counting. Each right answer earns a 🐚 if that number needs practice.',
+      subject:{zh:'数学', py:'shùxué', en:'Maths'}, icon:'dots', about:{first:'Three new numbers, then counting', one:'A new number, then counting'},
       note:'The teacher counts peaches onto his table, one by one.',
       teach:{'四':'count4', '五':'count5', '六':'count6', '七':'count7', '八':'count8', '九':'count9', '十':'count10'},
       things:[{word:'桃子', ask:'howManyPeaches', on:'table'}, {word:'苹果', ask:'howManyApples', on:'table'}, {word:'碗', ask:'howManyBowls', on:'table'},
@@ -179,8 +180,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // monkey wanted, which wait for the colour lessons now). Red paints the school's lanterns; the rest of the school
     // stays as it was built (decided 24 October 2026: each colour painted a part of it, the roof blue, the door black…)
     {id:'colours', kind:'paint', by:'elder', if:{school:{atLeast:2}}, words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'], first:3,
-      startFirst:'Your first colour lesson: three new colours, one at a time, then choosing paints. Each right answer earns a 🐚 if that colour needs practice.',
-      start:'Today: a new colour, then choosing paints. Each right answer earns a 🐚 if that colour needs practice.',
+      subject:{zh:'美术', py:'měishù', en:'Art'}, icon:'paint', about:{first:'Three new colours, then choosing paints', one:'A new colour, then choosing paints'},
       note:'The teacher opens a pot of paint.',
       teach:{'红色':'thisRed', '黄色':'thisYellow', '白色':'thisWhite', '黑色':'thisBlack', '蓝色':'thisBlue', '绿色':'thisGreen', '棕色':'thisBrown', '橙色':'thisOrange', '粉色':'thisPink'},
       paint:{'红色':'lanterns'}, scenes:{'红色':'paintLanterns'}}
@@ -311,7 +311,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'king', if:{chapter:0, count:3}, text:'Talk to the old monkey: the whole troop is in the {洞}', arrow:'elder'},
     // lessons at school: once one has taught you a new word, practise before the next (lessonGap; when you have, a message
     // says so: see events)
-    {id:'practise', if:{school:{atLeast:2}, lessonWaits:true}, text:'Practise before your next lesson ({practised}/8): a practice lesson at the {学校}, or play with {动物|animals}', arrow:'elder'}
+    {id:'practise', if:{school:{atLeast:2}, lessonWaits:true}, text:'Practise before your next lesson, {lessons:waiting}: answer questions anywhere ({practised}/8)', arrow:'elder'}
   ],
 
   // What the task box says when there are no tasks: the first whose if matches.
@@ -324,7 +324,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, text:'The big monkey has an idea for the feast: look for his ! at the home ground.'},   // (decided 28 October 2026: once the cow was home, nothing said so)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}, melonPlanted:4, grapePlanted:4, bananaPlanted:4}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese, and fruit from the garden now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the garden's fruit is on the table too)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees, the cow and its dairy are done: till then, they have tasks)
-    {if:{school:{atLeast:2}, lesson:true}, text:'A new lesson is ready: talk to the {老师} at the {学校}.'},   // (decided 28 October 2026: it said the rest of chapter 1 was coming soon)
+    {if:{school:{atLeast:2}, lesson:true}, text:'A new lesson is ready at the {学校}: {lessons:ready}. Talk to the {老师}, or look at the timetable on the classroom wall.'},   // (decided 28 October 2026: it said the rest of chapter 1 was coming soon)
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then (after each new word, practise a little before the next). The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -662,7 +662,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the teacher's next new word waits for you to practise (lessonGap): as it starts waiting, the game remembers
     // (quietly), and once you've practised, a message says the teacher has a new word for you
     {if:{lessonWaits:true, lessonWait:0}, do:[{set:{lessonWait:1}}]},
-    {if:{lessonWait:1, lesson:true}, do:[{set:{lessonWait:0}}, {sound:'chime'}, {message:'You’ve practised what you know: the {老师} has a new word for you at the {学校}!'}]},
+    {if:{lessonWait:1, lesson:true}, do:[{set:{lessonWait:0}}, {sound:'chime'}, {message:'You’ve practised enough: a new lesson is ready at the {学校}, {lessons:ready}!'}]},
     // the rocks roll away once everything else in the prologue is done: the hungry and thirsty monkeys helped, every animal
     // found, and the words for the meadow learned (the big monkey's flowers wait for chapter 1, decided 22 October 2026)
     {if:{hungry:'done', thirsty:'done', animalsLeft:0, meadowWords:5, gate:false}, do:[
@@ -1638,11 +1638,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
         't': {look:'teacherTable', word:'桌子', landmark:true, note:'The teacher’s table, with books and a cup on it.'},
         'd': {look:'desk', word:'桌子', note:'A desk for two, with books on it.'},
         '_': {look:'classFloor', walk:true},
-        'm': {look:'doorMat', walk:true}
+        'm': {look:'doorMat', walk:true},
+        // the timetable (课程表), where the right-hand window was (decided 28 October 2026): a chart, a row a subject, a star for
+        // each lesson done (js/art.js); A at it opens the timetable, as the teacher does, to choose a lesson
+        'k': {look:'timetable', landmark:true, onLook:[{if:{school:{atLeast:2}}, label:'Look', do:[{lesson:true, by:'elder'}]},
+          {do:[{message:'The timetable, for lessons. Say hello to the {老师} first!'}]}]}
       },
       map: [
-        "#=+=bbbbbbb=+=#",
-        "#=+=bbbbbbb=+=#",
+        "#=+=bbbbbbbkkk#",
+        "#=+=bbbbbbbkkk#",
         "#________tt___#",
         "#_____________#",
         "#_dd__dd__dd__#",
@@ -2618,7 +2622,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {newWord:'老师', note:'The class greets the old monkey: he’s their teacher now.'},
         {say:'classHi'},
         {set:{school:2}},
-        {message:'Lessons are where you practise your words now. Talk to the teacher when he has a ! and he’ll give you one.'}
+        {message:'Lessons are where you practise your words now. Talk to the teacher, or look at the timetable on the wall, to choose one.'}
       ]},
       // once the first two lessons have taught you 四 五 六 and 红色 黄色 白色, he has news, before any lesson: the troop has a
       // home, and a school too (teaching 有), so it's time for a great feast (decided 24 October 2026: after the first two

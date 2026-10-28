@@ -394,7 +394,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(['四', '五', '六'].every(knows) && !knows('七'), 'the first lesson teaches three new numbers: 四, 五 and 六');
   // After a lesson that teaches new words, the next new word waits till you've answered 8 more questions, anywhere (decided
   // 26 October 2026): your tasks say so, and the teacher gives you a practice lesson, saying so first
-  assert.match(get('getTasks().map(t => t.text).join(" / ")'), /Practise before your next lesson \(0\/8\)/);
+  assert.match(get('getTasks().map(t => t.text).join(" / ")'), /Practise before your next lesson, Maths lesson 2 or Art lesson 1: answer questions anywhere \(0\/8\)/);
   await pressAt(7, 3, 'up', 'a lesson while the next new word waits: practice', 0);
   assert.ok(!knows('红色'), 'practice: nothing new');
   assert.ok(!get('getTasks().some(t => t.id === "practise")') && run('!!lessonNow()'), 'practised: the colours are ready');

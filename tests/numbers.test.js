@@ -21,6 +21,7 @@ function game(w = {}, area = {}){
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__cards = []; globalThis.__qs = []; globalThis.__lessons = 0");
   g.run("showDialog = async (who, line, opts = {}) => { __said.push(line.t.join('') + (opts.teach ? ' [' + opts.teach + ']' : '')); }; showNarration = async () => {}; toast = () => {}");
   g.run("showNotice = async (w, o = {}) => { __cards.push(w + (o.quiet ? ' (quiet)' : '')); rec(w).lv = Math.max(rec(w).lv || 0, 1); }; infoBox = async () => {}; confirmBox = async () => true");
+  g.run("ttCard = async at => ttAction(at || ttDefault()); lessonEnd = async () => false");   // (the timetable: its own tests, tests/timetable.test.js; here, what it offers first)
   g.run("practise = async () => { __lessons++; return true; }");   // (a practice lesson: the practice post's own tests)
   g.run('placePlayer()');
   return g;
@@ -38,10 +39,10 @@ test('the first number lesson teaches three, one after another: 四, then 五, t
   const g = game();
   assert.deepEqual(get(g, 'lessonNow() && lessonNow().words'), ['四', '五', '六']);
   assert.equal(get(g, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show"), '!', 'the teacher has a ! for you');
-  g.run("globalThis.__starts = []; confirmBox = async (face, text) => { __starts.push(text); return true; }");
+  assert.deepEqual(get(g, '[ttDefault(), ttAction(ttDefault()).label]'), [{tab: 'numbers', n: 1}, 'Start lesson 1'], 'the timetable opens on Maths, its first lesson ready');
+  assert.match(get(g, "lessonDetail(AREA.lessons[0], 1)"), /Ready: Three new numbers, then counting/, 'it says what the lesson is');
   answering(g);
   await lesson(g);
-  assert.match(get(g, '__starts')[0], /^Your first lesson: three new numbers, one at a time/, 'it says so before you start');
   assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四！ [四]', '一，二，三，四，五！ [五]', '一，二，三，四，五，六！ [六]', '下课！'], 'he counts up to each, teaching it (bold)');
   assert.deepEqual(get(g, '__cards'), ['四 (quiet)', '五 (quiet)', '六 (quiet)'], 'each one’s card as it comes, not said again: he’s just said it');
   const qs = get(g, '__qs').map(q => q.word);
@@ -75,10 +76,7 @@ test('after the first three, one a lesson: the next number waits until you’ve 
   assert.equal(get(g, '__qs').filter(q => q.word === '七').length, 3, 'five questions: three of them the new number');
   assert.equal(get(g, '__qs').length, 5);
   const one = game({'四': 1});   // (a game that learned 四 when the first lesson taught one)
-  assert.deepEqual(get(one, 'lessonNow().words'), ['五'], 'a game that knows 四 learns the rest of the first three one a lesson, as it did (the first lesson’s card says three new numbers)');
-  one.run("rec('五').lv = 1; rec('五').ok = 0");
-  assert.ok(get(one, "needsPractice('五')"));
-  assert.deepEqual(get(one, 'lessonNow().words'), ['六'], 'without waiting for 五 to be practised');
+  assert.deepEqual(get(one, '[lessonNow().n, lessonNow().words]'), [1, ['五', '六']], 'a game that knows 四 learns the rest of the first lesson’s three in it (28 October 2026: one a lesson till then)');
   const all = game(Object.fromEntries(['四', '五', '六', '七', '八', '九', '十'].map(n => [n, 2])));
   assert.equal(get(all, 'lessonNow()'), null, 'all ten learned: no more number lessons');
   assert.equal(get(all, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show || null"), null, 'and no ! unless words need practice');
@@ -135,9 +133,9 @@ test('a wrong count is practice, not a test: the number comes back soon and keep
   assert.ok(!counted.includes('鸟'), 'you’ve not caught 鸟, so there are never birds to count');
 });
 
-test('saying Not now to a number lesson ends it there: no 下课', async () => {
+test('closing the timetable without choosing a lesson ends the class there: no 下课', async () => {
   const g = game();
-  g.run('confirmBox = async () => false');
+  g.run('ttCard = async () => null');
   await lesson(g);
   assert.deepEqual(get(g, '__said'), ['上课！']);
   assert.equal(g.run('lvl("四")'), 0, 'nothing learned');

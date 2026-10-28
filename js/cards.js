@@ -49,6 +49,7 @@ function tooSoon(at, since = shownAt){   // at: when the press was made, if know
   return at < since + READ_MS;
 }
 function openCard(html){
+  if (lessonBar) html = `<p class="lessonbar">${lessonBar}</p>` + html;   // (in a lesson: its name, js/timetable.js)
   sheet.innerHTML = pixelIcons(html); modal.hidden = false; sheet.scrollTop = 0; shown(); cardsOpened++;
   if (markGloss.length){ markGloss.forEach(t => S.gloss[t] = 1); markGloss = []; save(); }
   held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));

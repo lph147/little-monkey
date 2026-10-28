@@ -171,6 +171,11 @@ const DRAFTS = [
     ['我们 有 酸奶 。', 'We have yoghurt.', 'The feast’s list, at its tables'],
     ['我们 有 奶酪 。', 'We have cheese.', 'The feast’s list, at its tables']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 26 October 2026 (in the game), the little dairy: ' + where})),
+  ...[['课程表', 'kè chéng biǎo', 'Timetable', 'The title of the card where you choose a lesson at school, and the chart on the classroom wall'],
+    ['数学', 'shù xué', 'Maths', 'The number lessons’ subject, a tab on the timetable'],
+    ['美术', 'měi shù', 'Art', 'The colour lessons’ subject (the class paints, and chooses paints): is 美术 right, or would another name suit lessons about colours better?'],
+    ['练习', 'liàn xí', 'Practice', 'The timetable’s tab for a practice lesson, which asks about the words you know']]
+    .map(([zh, py, en, where]) => ({zh, py, en, where:'New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 
@@ -216,7 +221,7 @@ function sheet(){
   }
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
-  const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name)];   // characters, the sign, the area and its places
+  const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name), ...(AREA.lessons || []).map(s => s.subject)];   // characters, the sign, the area, its places and the school's subjects
   const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe']),
     ...(AREA.practiceSentences || []).map(c => [c.sentence, c.sentenceEn, 'You, in a lesson at school'])];
   const notes = '';

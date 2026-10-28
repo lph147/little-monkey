@@ -26,7 +26,7 @@ function game(area = {}, pos = BY_TEACHER, words = [...KNOWN, ...FIRST_TWO]){
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__lessons = 0; globalThis.__knocks = []");
   g.run("showDialog = async (who, line, opts = {}) => { __said.push(line.t.join('') + (opts.teach ? ' [' + opts.teach + ']' : '')); if (opts.hint) __notes.push(opts.hint); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");   // (a line's hint: what to do next, after it)
   g.run("showNotice = async (w, o = {}) => { __notes.push('card: ' + w + (o.note ? ' (' + o.note + ')' : '')); rec(w).lv = Math.max(rec(w).lv || 0, 1); }");
-  g.run("LESSON_KINDS.count = LESSON_KINDS.paint = async () => { __lessons++; return true; }; practise = async () => { __lessons++; return true; }");   // (lessons: their own tests)
+  g.run("LESSON_KINDS.count = LESSON_KINDS.paint = async () => { __lessons++; return true; }; practise = async () => { __lessons++; return true; }; ttCard = async at => ttAction(at || ttDefault()); lessonEnd = async () => false");   // (lessons: their own tests)
   g.run("SFX.tock = () => { __knocks.push(settingUp && settingUp.stage); }");   // (each piece of what's being set up)
   g.run('placePlayer()');
   return g;

@@ -21,6 +21,7 @@ function game(w = {}, area = {}){
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__lessons = 0");
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
   g.run("showNotice = async w => { rec(w).lv = Math.max(rec(w).lv || 0, 1); }; infoBox = async () => {}; confirmBox = async () => true; storyScene = async () => {}");
+  g.run("ttCard = async at => ttAction(at || ttDefault()); lessonEnd = async () => false");   // (the timetable: its own tests, tests/timetable.test.js; here, what it offers first)
   g.run("practise = async () => { __lessons++; return true; }");   // (a practice lesson: the practice post's own tests; the playthrough plays a real one)
   g.run('pictureQ = async q => { if (q.onShow) q.onShow(); return true; }');   // (every question answered right)
   g.run('placePlayer()');
@@ -34,7 +35,7 @@ async function play(g, code){   // runs code in the game and waits for it, letti
 const lesson = g => play(g, "talk(ALL_NPCS.find(n => n.id === 'elder'))");
 const task = g => get(g, '(getTasks().find(t => t.id === "practise") || {}).text || null');
 
-test('after a lesson that teaches new words, the next waits till you’ve answered 8 more questions: till then a lesson is practice, and the teacher says so first', async () => {
+test('after a lesson that teaches new words, the next waits till you’ve answered 8 more questions: till then the timetable says so, and offers practice', async () => {
   const g = game();
   assert.deepEqual(get(g, 'lessonNow().words'), ['四', '五', '六'], 'nothing to wait for before your first lesson');
   assert.equal(task(g), null);
@@ -44,16 +45,17 @@ test('after a lesson that teaches new words, the next waits till you’ve answer
   assert.equal(get(g, 'lessonNow()'), null, 'the first colour lesson waits too');
   assert.deepEqual(get(g, 'lessonNow(false).words'), ['红色', '黄色', '白色'], 'it’s ready, once you’ve practised');
   assert.ok(get(g, 'matches({lessonWaits: true}) && !matches({lesson: true})'), 'so the teacher has no ! for it');
-  assert.equal(task(g), 'Practise before your next lesson (0/8): a practice lesson at the 学校 (school), or play with 动物 (animals)', 'your tasks say what to do');
+  assert.equal(task(g), 'Practise before your next lesson, Maths lesson 2 or Art lesson 1: answer questions anywhere (0/8)', 'your tasks say what to do');
+  assert.match(get(g, 'lessonDetail(AREA.lessons[1], 1)'), /Opens after 8 more questions, answered anywhere/, 'and the timetable');
+  assert.equal(get(g, 'ttAction(ttDefault()).label'), 'Practise', 'its main button practises, while you wait');
   assert.equal(get(g, 'here().lessonWait'), 1, 'the game remembers it’s waiting, to tell you when it’s ready');
   g.run('__said.length = 0; __notes.length = 0');
   await lesson(g);
   assert.deepEqual(get(g, '__said'), ['上课！', '下课！']);
-  assert.deepEqual(get(g, '__notes'), ['A new word is coming soon! Practise what you know first: 0 of 8 questions done.'], 'he says so, before the lesson');
-  assert.equal(g.run('__lessons'), 1, 'and the lesson is practice');
+  assert.equal(g.run('__lessons'), 1, 'the lesson is practice');
   assert.ok(!get(g, "lvl('红色')"), 'nothing new');
   g.run('S.turn += 5');   // (5 questions answered: in the practice lesson, say, or an animal's game)
-  assert.equal(task(g), 'Practise before your next lesson (5/8): a practice lesson at the 学校 (school), or play with 动物 (animals)');
+  assert.equal(task(g), 'Practise before your next lesson, Maths lesson 2 or Art lesson 1: answer questions anywhere (5/8)');
   g.run('__notes.length = 0');
   await play(g, 'runEvents()');
   assert.deepEqual(get(g, '__notes'), [], 'not ready yet: no message');
@@ -62,7 +64,7 @@ test('after a lesson that teaches new words, the next waits till you’ve answer
   assert.equal(task(g), null, 'the task is done');
   assert.equal(get(g, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show"), '!', 'and the teacher has a ! for you');
   await play(g, 'runEvents()');
-  assert.deepEqual(get(g, '__notes'), ['You’ve practised what you know: the 老师 (teacher) has a new word for you at the 学校 (school)!'], 'a message says so, wherever you are');
+  assert.deepEqual(get(g, '__notes'), ['You’ve practised enough: a new lesson is ready at the 学校 (school), Maths lesson 2 or Art lesson 1!'], 'a message says so, wherever you are');
   await play(g, 'runEvents()');
   assert.equal(get(g, '__notes').length, 1, 'once');
   assert.equal(get(g, 'here().lessonWait'), 0);

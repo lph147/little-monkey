@@ -674,12 +674,16 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(300); next(); await wait(500); }},
   {id: 'classroom', title: 'The classroom', save: 'classroom', why: 'Inside the school: the blackboard, the teacher’s table, double desks, and the troop at them.', run: async () => {
     play(); await wait(500); }},
-  {id: 'number-lesson', title: 'The first number lesson', save: 'numbersNew', why: 'With a new number to learn, a lesson is a number lesson: 上课！, then this card. The first teaches three, 四 五 六, one after another (the school’s first lessons are the one exception to one new word at a time).', run: async () => {
+  {id: 'number-lesson', title: 'The timetable: the first lessons', save: 'numbersNew', why: 'Talk to the teacher: 上课！, then the timetable (课程表, 28 October 2026), on Maths, its first lesson ready (⭐), the rest locked. The first teaches three, 四 五 六, one after another (the school’s first lessons are the one exception to one new word at a time). A ⭐ on Art: its first lesson is ready too.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
-  {id: 'teacher-counts', title: 'One, two, three, four!', save: 'numbersNew', why: 'The teacher counts peaches onto his table, teaching 四 (bold).', run: async () => {
-    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('[data-a=yes]'); await wait(500); }},
+  {id: 'teacher-counts', title: 'One, two, three, four!', save: 'numbersNew', why: 'Start lesson 1: the teacher counts peaches onto his table, teaching 四 (bold).', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('[data-a=ok]'); await wait(500); }},
+  {id: 'lesson-bar', title: 'Maths · Lesson 1', save: 'numbersNew', why: 'Every card in a lesson says which: 数学 shùxué Maths · Lesson 1, over 四’s card, and over its questions.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('[data-a=ok]'); await wait(400); next(); await wait(600); }},
   {id: 'teacher-five', title: 'One, two, three, four, five!', save: 'numbersNew', why: 'In the first lesson, after three questions on 四, he counts on to 五 (bold), then its card and three questions, then the same for 六, then two mixed.', run: async () => {
     play(); await wait(100); rec('四').lv = 1; showDialog(speaker('elder'), L[AREA.lessons[0].teach['五']], {teach: '五'}); await wait(500); }},
+  {id: 'count-bar', title: 'Which has 四? (in a lesson)', save: 'numbersNew', why: 'A counting question in Maths lesson 1, its name over it, still fitting a small phone.', run: async () => {
+    play(); await wait(100); lessonBar = `${subjectName(AREA.lessons[0])} · Lesson 1`; countQ({who: 'elder', thing: AREA.lessons[0].things[0], n: 4}); lessonBar = null; await wait(500); }},
   {id: 'count-new', title: 'Which has 四?', save: 'numbersNew', why: 'A counting question while 四 is new: you hear it, and choose the one with that many peaches, each with its characters. Never a picture of a number, such as a die: you could count its dots.', run: async () => {
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[0], n: 4}); await wait(500); }},
   {id: 'count-six', title: 'Which has 六?', save: 'numbersLater', why: 'While 六 is new: six apples beside five and four, the tables all the same size, so the things are too.', run: async () => {
@@ -690,10 +694,10 @@ const SCREENS = [
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[3], n: 5}); await wait(500); }},
   {id: 'count-ten', title: 'Which has 十?', save: 'numbersTen', why: 'Ten, the most there are, while 十 is new: ten, nine and eight birds, two rows of five each, answered (the right one, and each answer’s pinyin), still fitting a small phone.', run: async () => {
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[5], n: 10}); await wait(400); [...document.querySelectorAll('.opt')].find(b => b.textContent.includes('十')).click(); await wait(500); }},
-  {id: 'colour-lesson', title: 'The first colour lesson', save: 'coloursNew', why: 'With a new colour to learn (taking turns with the numbers), a lesson is a colour lesson: 上课！, then this card. The first teaches three, 红色 黄色 白色, one after another.', run: async () => {
+  {id: 'colour-lesson', title: 'The timetable: Art', save: 'coloursNew', why: 'With every Maths lesson done (✓ on its tab), the timetable opens on Art, its first lesson ready: three new colours, 红色 黄色 白色, one after another.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
   {id: 'teacher-paint', title: 'This is red.', save: 'coloursNew', why: 'The teacher opens a pot of paint, teaching 红色 (bold): red, yellow and white come first.', run: async () => {
-    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('[data-a=yes]'); await wait(500); }},
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('[data-a=ok]'); await wait(500); }},
   {id: 'paint-first', title: 'The first colour', save: 'coloursNew', why: 'While 红色 is the only colour you know, the other answers are things you know: Which is it?', run: async () => {
     play(); await wait(100); rec('红色').lv = 1; colourQ({who: 'elder', w: '红色'}); await wait(600); }},
   {id: 'paint-yellow', title: 'The second colour', save: 'coloursNew', why: 'In the first lesson, after three questions on 红色, the teacher opens a pot of 黄色: with one other colour known, the answers are 黄色, 红色 and a thing you know.', run: async () => {
@@ -1016,11 +1020,17 @@ const SCREENS = [
     S.tips = {...S.tips}; delete S.tips.eat; play(); await wait(700); }},
   {id: 'hungry-has-bees', title: 'We have bees now!', save: 'beesHome', why: 'The hungry monkey, with a ! once the bees are home: 我们有蜜蜂了！ (the hive and the honey come next).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(500); }},
-  {id: 'lesson', title: 'A lesson', save: 'classroom', why: 'Talk to the teacher: 上课！, then a lesson (matching words to pictures, then a gap), the practice post’s job now.', run: async () => {
-    play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(500); }},
-  {id: 'lesson-wait', title: 'A new word is coming soon', save: 'lessonWait', why: 'After a lesson that teaches new words, the next waits till you’ve answered 8 more questions, anywhere (decided 26 October 2026): till then, 上课！, then the teacher says so, and gives you a practice lesson.', run: async () => {
+  {id: 'lesson', title: 'Practice', save: 'lessonWait', why: 'The timetable’s 练习 Practice tab: the words that need practice, and a practice lesson (matching words to pictures, then a gap), the practice post’s job now, any time.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('.tab[data-tab=practice]'); await wait(400); }},
+  {id: 'lesson-wait', title: 'A new lesson opens after 5 more questions', save: 'lessonWait', why: 'After a lesson that teaches new words, the next new lesson, in any subject, waits till you’ve answered 8 more questions, anywhere (decided 26 October 2026): the timetable says how many more, with a bar, and its main button is Practise.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
-  {id: 'tasks-practise', title: 'Tasks: practise before your next lesson', save: 'lessonWait', why: 'While the teacher’s next new word waits, your tasks say how many questions you’ve answered since (of 8): in a practice lesson, an animal’s game or a battle, they all count.', run: async () => {
+  {id: 'lesson-again', title: 'Lesson 1 again', save: 'lessonWait', why: 'Choose a lesson you’ve done (✓, with the D-pad or a tap): the words it taught, and the button says Lesson 1 again, with nothing new, never waiting.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); click('.tab[data-tab=numbers]'); await wait(200); click('.tile[data-lesson="1"]'); await wait(400); }},
+  {id: 'lesson-done', title: 'Lesson 3 done!', save: 'numbersTen', why: 'The end of a lesson: what it taught, how you did, and what’s next in the subject (here, the next new lesson waits for 8 more questions). Timetable goes back to choose another.', run: async () => {
+    play(); await wait(100); here().lessonTurn = S.turn || 0; lessonEnd(AREA.lessons[0], 3, ['八'], false, {right: 5, asked: 5, shells: 2}); await wait(500); }},
+  {id: 'timetable-wall', title: 'The timetable on the wall', save: 'lessonWait', why: 'Where the right-hand window was: a chart with no writing, a row a subject, a gold star for each lesson done, a green square round one that’s ready. A at it opens the timetable.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'school', x: 12, y: 2, dir: 'up'}; placePlayer(); await wait(500); }},
+  {id: 'tasks-practise', title: 'Tasks: your next new lesson', save: 'lessonWait', why: 'While the next new lesson waits, your tasks say which, and how many more questions it waits for: in a practice lesson, an animal’s game or a battle, they all count.', run: async () => {
     play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {
     play(); await wait(100); (async () => { await showDialog(speaker('troop1'), L.hi); await replyWith('你好'); })(); await wait(200); next(); await wait(200); click('#talk .reply'); await wait(400); }},
