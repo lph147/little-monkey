@@ -1049,7 +1049,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
         'e': {look:'orangeFlowers', walk:true, word:'花', learnOnStep:true, colour:'橙色'},
         'z': {look:'steppingStones', walk:true},              // stepping stones over the brook
-        'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},   // mushrooms under the pines (just to look at)
+        'm': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},   // mushrooms under the pines: A teaches 蘑菇 (decided 28 October 2026: they were just to look at)
         'A': {look:'archway', walk:true, says:'松林'},         // the way through the archway into the pine wood, with its name on the board over it
         'I': {look:'archPost'},                               // the archway's pillars
         'L': {look:'slabs', walk:true},                       // the lookout's stone platform
@@ -1230,7 +1230,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
         'e': {look:'orangeFlowers', walk:true, word:'花', learnOnStep:true, colour:'橙色'},
         'z': {look:'steppingStones', walk:true},              // stepping stones over the brook
-        'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},
+        'm': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},
         'L': {look:'slabs', walk:true},                       // the lookout's stone platform
         // thick bushes at the east end of the second terrace, till the garden begins: the way east to the melon field
         'q': {look:'bush', landmark:true, becomes:[{if:{garden:{atLeast:1}}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
@@ -1458,7 +1458,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass under the pines: wolves too, as in the pine wood
-        'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},
+        'm': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},
         // the cow's hoofprints in the needles, the right way (the way forks, and the other ways go nowhere)
         'h': {look:'hoofprints', walk:true, landmark:true, onLook:[{do:[{message:'Hoofprints in the soft earth, two marks to each: the cow came this way!'}]}]},
         // a great pine, fallen along the gully, hollow inside: you crawl through it (it's drawn over you)
@@ -1525,7 +1525,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass under the pines: wolves too, as in the pine wood
-        'm': {look:'mushrooms', walk:true, landmark:true, onLook:[{do:[{message:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}]}]},   // mushrooms under the pines (just to look at)
+        'm': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},   // mushrooms under the pines: A teaches 蘑菇 (decided 28 October 2026: they were just to look at)
         // the cow's hoofprints in the needles
         'h': {look:'hoofprints', walk:true, landmark:true, onLook:[{do:[{message:'Hoofprints in the soft earth, two marks to each: the cow came this way!'}]}]},
         // flowers in the pasture, each square all one colour (F red, E yellow and J white, as in the meadow, and these): A shows
@@ -1999,6 +1999,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '黄色': 'A colour lesson at school: the teacher opened a pot of it.',
     '白色': 'A colour lesson at school: the teacher opened a pot of it.',
     '草': 'The tall grass, where animals hide.',
+    '蘑菇': 'Under the pines: at the top of the hillside, and on the way south to the pasture.',
     '树': 'The trees on the mountain.',
     '桃子': 'The peach trees at the far left end of the long path.',
     '苹果': 'The apple tree in the south-east, across the river.',
@@ -2157,6 +2158,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
+    '蘑菇': {zh:'这里 有 蘑菇 。', en:'There are mushrooms here.'},   // (a draft, 28 October 2026)
     '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'},
     '熊': {zh:'山 上 有 熊 。', en:'There are bears on the mountain.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now; 蜜蜂, 花上有蜜蜂。,

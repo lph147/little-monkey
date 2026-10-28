@@ -213,6 +213,16 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(Rc(1, 26, 30, 5, 2), '#3E8A3E');
   },
 
+  '蘑菇': p => {   // mushrooms: a big red one with white spots, as under the pines, and a little brown one behind it
+    p.fill(O(16, 29, 13.5, 2.6), '#5DA651');   // a mossy patch
+    p.fill(Rc(23, 20, 3, 9, 1), '#EFE6D2');   // the little brown one
+    p.fill(and(O(24.5, 20.5, 5.5, 4), Rc(18, 15, 13, 6)), '#A9703E', {edge: true});
+    p.fill(Pg([[11, 30], [12.6, 18], [18.4, 18], [20, 30]]), '#F4EDDE', {dark: '#D8CBB0'});   // the big red one: its stem,
+    p.flat(Rc(12, 22, 7, 1), '#DCCDAF');   // a little ring round it,
+    p.fill(and(O(15.5, 18, 12, 11), Rc(2, 6, 27, 12)), '#E0383A', {edge: true});   // and its cap
+    p.flat(Rc(6, 17, 19, 1), '#B82A2C');
+    [[9.5, 12, 1.8], [15.5, 9, 2.2], [21.5, 12.5, 1.8], [12.8, 15, 1.2], [19, 15.3, 1.2], [6.5, 15.5, 1], [25, 15.5, 1]].forEach(([x, y, r]) => p.flat(O(x, y, r, r * .85), '#FFFFFF'));   // its white spots
+  },
   '树': p => {   // tree
     p.fill(Rc(14, 19, 5, 11), BARK); p.fill(O(16.5, 30, 6, 1.5), '#5DA651');
     p.fill(or(O(16, 11, 9.5, 8), O(9, 15.5, 6.2, 5.5), O(24, 15.5, 6.2, 5.5), O(16.5, 17.5, 8, 4.6)), LEAF);

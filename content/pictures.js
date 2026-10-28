@@ -632,6 +632,43 @@ const PICTURES = {
       "..jjjjjjjjjjjjjjjjjjjjjjjjjjjj.."
     ]
   },
+  '蘑菇': {   // mushroom
+    palette: {a:'#572F2C', b:'#5E5B58', c:'#441815', d:'#E97475', e:'#FFFFFF', f:'#AF2C2D', g:'#E0383A', h:'#B82A2C', i:'#822022', j:'#845730', k:'#362516', l:'#471715', m:'#5B5751', n:'#F7F2E8', o:'#D8CBB0', p:'#514A3F', q:'#4B3B2D', r:'#C39B78', s:'#A9703E', t:'#F4EDDE', u:'#624124', v:'#5A564E', w:'#F4EEE0', x:'#EFE6D2', y:'#BAB3A4', z:'#48433B', A:'#534B3F', B:'#DCCDAF', C:'#3A4731', D:'#8EC185', E:'#49813F', F:'#24331B', G:'#5DA651'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "............aabbbac.............",
+      ".........aaaddeeedfcac..........",
+      "........adddgeeeeegddfc.........",
+      ".......adggggeeeeeggggfc........",
+      "......adgeggggeeeggggggfc.......",
+      ".....adgeeegggggggggeeegfc......",
+      "....adggeeegggggggggeeeggfc.....",
+      "....adgggeggggggggggeeeggfc.....",
+      "...adgggggggeeggggeeggggggfc....",
+      "...adeeeggggeeggggeeggggeefc....",
+      "...adgggggggggggggggggggggfc....",
+      "...cffhhhhhhhhhhhhhhhhhhhiijk...",
+      "....ccllllllmnnnnopqrsssssssjk..",
+      "...........mntttttorsssssssssjk.",
+      "...........mntttttojjjjuuujjjjk.",
+      "...........mntttttopkkvwxyzkkk..",
+      "...........ABBBBBBBA..vwxyz.....",
+      "...........mntttttop..vwxyz.....",
+      "...........mntttttop..vwxyz.....",
+      "...........mntttttop..vwxyz.....",
+      ".....CCCCCmntttttttopCvwxyz.....",
+      "...CCDDDDDDntttttttoDDDwxyEFF...",
+      "..CDDGGGGGGntttttttoGGGyyyGDEF..",
+      "..FEEGGGGGGoooooooooGGGGGGGEEF..",
+      "...FFEEEEEEEGGGGGGGGEEEEEEEFF...",
+      ".....FFFFFFFEEEEEEEEFFFFFFF....."
+    ]
+  },
   '树': {   // tree
     palette: {a:'#364730', b:'#203219', c:'#84BF80', d:'#3E7F3A', e:'#4FA34A', f:'#7CC46B', g:'#2F7A3E', h:'#44362B', i:'#AD8C70', j:'#8A5A32', k:'#6C4627', l:'#2F2013', m:'#3A4731', n:'#49813F', o:'#24331B', p:'#8EC185', q:'#5DA651'},
     rows: [

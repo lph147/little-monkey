@@ -43,6 +43,7 @@ const WORD_BANK = {
   '山': {py:'shān', en:'mountain', pic:'⛰️', area:1, category:'nature'},
   '花': {py:'huā', en:'flower', pic:'🌸', area:1, category:'nature'},
   '草': {py:'cǎo', en:'grass', pic:'🌿', area:1, category:'nature'},
+  '蘑菇': {py:'mógu', en:'mushroom', pic:'🍄', area:1, category:'nature'},   // under the pines: on the hillside, the south slope, the dark pines and the pine wood (decided 28 October 2026)
   '树': {py:'shù', en:'tree', pic:'🌳', area:1, category:'nature', alike:['木头', '棍子']},
   '桃子': {py:'táozi', en:'peach', pic:'🍑', area:1, category:'food'},
   '苹果': {py:'píngguǒ', en:'apple', pic:'🍎', area:1, category:'food'},

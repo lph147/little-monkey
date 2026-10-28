@@ -259,6 +259,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 奶酪是黄色的。 | nǎilào shì huángsè de. | Cheese is yellow. | 奶酪 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
+| 这里有蘑菇。 | zhèlǐ yǒu mógu. | There are mushrooms here. | 蘑菇 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 | 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
 
@@ -369,6 +370,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山 | shān | mountain |  |
 | 花 | huā | flower |  |
 | 草 | cǎo | grass |  |
+| 蘑菇 | mógu | mushroom |  |
 | 树 | shù | tree |  |
 | 桃子 | táozi | peach |  |
 | 苹果 | píngguǒ | apple |  |

@@ -328,6 +328,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     'walking up the hillside: through the gap in the hedge, over the brook, up the stone steps and through its long grass');
   assert.ok(get('__fights') >= 1, `something jumps out of the long grass on the way up (${get('__fights')})`);
   assert.equal(area().lookTip, 1, 'the goat on the lookout stopped you on the way up, to tell you about the view');
+  await pressAt(9, 4, 'left', 'looking at the mushrooms under the first pines');
+  assert.ok(knows('蘑菇'), 'the mushrooms teach 蘑菇');
   await stepOn(12, 0, 'going into the pine wood, through the archway');
   assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [16, 26], 'at the way in, at the bottom');

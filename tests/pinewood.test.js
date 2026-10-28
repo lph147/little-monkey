@@ -339,14 +339,18 @@ test('led by someone, nothing happens on the squares you’re led over; and the 
   assert.deepEqual(get(g, '[pl.x, pl.y, pl.mv, __arrived, busy]'), [20, 21, null, 0, false]);
 });
 
-test('the mushrooms under the pines are just to look at', async () => {
+test('the mushrooms under the pines teach 蘑菇 (decided 28 October 2026: they were just to look at)', async () => {
   const g = game(BUILDING, {place: 'hillside', x: 9, y: 4, dir: 'left'}, KNOWS);
   assert.equal(g.run('promptFor(8, 4)'), 'Look');
   await press(g, 9, 4, 'left');
-  assert.match(get(g, '__notes').join(' '), /mushrooms/);
+  assert.deepEqual(get(g, '__notes'), ['card: 蘑菇']);
+  assert.equal(g.run("lvl('蘑菇')"), 1);
+  const all = get(g, `Object.entries(PLACES).flatMap(([id, p]) => { const legend = {...AREA.legend, ...(p.legend || {})};
+    return [...new Set(p.map.join(''))].filter(c => legend[c] && legend[c].look === 'mushrooms').map(c => [id, legend[c].word]); })`);
+  assert.ok(all.length >= 4 && all.every(([, w]) => w === '蘑菇'), 'every place’s mushrooms teach it: ' + JSON.stringify(all));
 });
 
-test('the hillside teaches nothing new: everything there is a word from the prologue; a peach tree fills your bag, and your friends hide in its tall grass', () => {
+test('the hillside teaches nothing new but its mushrooms (蘑菇): everything else there is a word from the prologue; a peach tree fills your bag, and your friends hide in its tall grass', () => {
   const g = game(BUILDING, {place: 'hillside', x: 12, y: 43, dir: 'up'}, KNOWS);
   const words = get(g, '[...new Set(MAP.flatMap((r, y) => [...r].map((c, x) => tileAt(x, y).word)).filter(Boolean))].sort()');
   const prologue = get(g, "ORDER.filter(w => WORD_BANK[w].area === 1)");
