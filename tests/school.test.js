@@ -121,5 +121,7 @@ test('the little monkey: 我们是同学！ (同学); then lessons with the teac
   g.run('here().bees = 1');
   assert.match(g.run('tasksHint()'), /The thirsty monkey has news for you: look for his ! at the home ground/, 'and the cow: he’s heard of one on the mountain');
   g.run('here().cow = 3');
+  assert.match(g.run('tasksHint()'), /The big monkey has an idea for the feast: look for his ! at the home ground/, 'and the garden (decided 28 October 2026: once the cow was home, nothing said so)');
+  g.run('here().garden = 1');
   assert.match(g.run('tasksHint()'), /gives you a lesson whenever there’s a new number or colour to learn, or your words need practice/);
 });

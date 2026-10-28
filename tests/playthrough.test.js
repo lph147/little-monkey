@@ -69,7 +69,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     assert.ok(!open(), `a card was left open after ${what}: ${cardText()}`);
     const learned = caught().filter(w => !before.includes(w));
     assert.ok(learned.length <= most, `one new word at a time, but ${what} taught ${learned.join(' and ')}`);
+    if (!get('getTasks().length') && /coming soon/.test(get('tasksHint()'))) deadEnds.push(what);   // nothing to do, it seems
   }
+  const deadEnds = [];   // the moments your tasks were empty and the hint said the rest is coming soon
   const stand = (x, y, dir) => run(`S.pos = {place:PLACE, x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // in the place you're in
   const pressAt = (x, y, dir, what, most) => { stand(x, y, dir); return act('finishedAt = null; pressA()', what, most); };   // face something and press A (after a moment, as a player does: what you've just finished with rests)
   const stepOn = (x, y, what) => { stand(x, y, 'down'); return act(`arrive(${x}, ${y})`, what); };
@@ -726,6 +728,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(get('[12, 13, 14].map(x => tileAt(x, 7).look)'), ['fruitTableMelon', 'fruitTableGrapes', 'fruitTableBananas']);
   assert.ok(['我们有西瓜了！', '我们有葡萄了！', '我们有香蕉了！'].every(t => get('__said').includes(t)), 'we have watermelon, grapes and bananas now!');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
+  // Till everything built is done, there's always a task to say what's next (28 October 2026: once the cow was home, the
+  // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
+  assert.deepEqual([...new Set(deadEnds)], ['walking up to the big tree'], 'your tasks were empty, with more to do');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
   // player, jumps out on the hillside.)

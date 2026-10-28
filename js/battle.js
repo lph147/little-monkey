@@ -17,9 +17,12 @@ const maxHealth = () => S.maxHealth || HEALTH;
 const health = () => Math.min(S.health ?? maxHealth(), maxHealth());
 const hurt = () => health() < maxHealth();
 // A health bar: a heart, then the bar, green, yellow under half, red at a fifth or less; with its number (num) for yours.
+// In a battle, both bars are drawn to one scale, as long as the most health each can have (--hpk: that, as a share of
+// yours to start with), so a snake's (20) is less than half as long as yours (50), and a bear's (50) as long (decided
+// 28 October 2026: the enemy's bar filled its wider name plate, so a snake looked twice as strong as you).
 // setHealth changes one already there, so the bar slides down (or up) rather than jumping.
 const healthCls = (n, max) => n > max / 2 ? 'g' : n > max / 5 ? 'y' : 'r';
-const healthHTML = (n, max, num) => `<div class="hp" role="img" aria-label="Health: ${n} of ${max}">${heartHTML(true)}`
+const healthHTML = (n, max, num) => `<div class="hp" role="img" aria-label="Health: ${n} of ${max}" style="--hpk:${max / HEALTH}">${heartHTML(true)}`
   + `<span class="hpbar"><i class="${healthCls(n, max)}" style="width:${Math.max(0, n / max * 100)}%"></i></span>${num ? `<span class="hpnum">${n}/${max}</span>` : ''}</div>`;
 function setHealth(el, n, max){
   const bar = el.querySelector('.hpbar i'), hp = el.querySelector('.hp'), num = el.querySelector('.hpnum');

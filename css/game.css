@@ -701,7 +701,7 @@ rt.hid{visibility:hidden}
 .sheet:has(> .scene){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);grid-template-rows:1fr repeat(7,auto) 1fr;column-gap:.8rem}
 .sheet:has(> .scene)::before{content:"";grid-column:2;grid-row:1}   /* an empty first row, so the question sits in the middle */
 .sheet:has(> .scene) > *{grid-column:2}
-.sheet:has(> .scene) > .scene{grid-column:1;grid-row:1 / -1;height:auto;min-height:13rem;margin:0;background:linear-gradient(#9FD4F0 0 48%,#BDE6F7 48% 52%,#7DC15A 52%)}
+.sheet:has(> .scene) > .scene{container-type:inline-size;grid-column:1;grid-row:1 / -1;height:auto;min-height:13rem;margin:0;background:linear-gradient(#9FD4F0 0 48%,#BDE6F7 48% 52%,#7DC15A 52%)}
 .sheet:has(> .scene) > .scene.cliff{background:linear-gradient(#9FD4F0 0 48%,#BDE6F7 48% 52%,#A49F8E 52%)}
 .scene.pines,.sheet:has(> .scene) > .scene.pines{background:var(--backdrop-pines) center / cover;image-rendering:pixelated;image-rendering:crisp-edges}   /* a gloomy pine wood (js/art.js: BACKDROPS) */
 .scene.pines::before{display:none}
@@ -772,6 +772,7 @@ rt.hid{visibility:hidden}
 .hp .heart{width:15px;height:13px;flex:none}
 .hpbar{flex:1;min-width:64px;height:11px;background:#46524D;border:2px solid #1E2B26;border-radius:3px;overflow:hidden;box-shadow:inset 0 2px 0 rgba(0,0,0,.35)}
 .hpbar i{display:block;height:100%;transition:width .5s ease-out}
+.plate .hpbar{flex:none;width:calc(28cqi * var(--hpk, 1));min-width:0}   /* in a battle, both bars to one scale (healthHTML, js/battle.js): your 50 health to start with, 28% of the battle's picture, as long as yours was */
 .hpbar i.g{background:linear-gradient(#8BE59A 0 38%,#3DA858 38%)}
 .hpbar i.y{background:linear-gradient(#FFE58A 0 38%,#DDA91C 38%)}
 .hpbar i.r{background:linear-gradient(#FF9B8A 0 38%,#CC3B2C 38%)}

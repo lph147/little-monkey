@@ -320,8 +320,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, cow:0}, text:'The thirsty monkey has news for you: look for his ! at the home ground.'},
+    {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, text:'The big monkey has an idea for the feast: look for his ! at the home ground.'},   // (decided 28 October 2026: once the cow was home, nothing said so)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}, melonPlanted:4, grapePlanted:4, bananaPlanted:4}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese, and fruit from the garden now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the garden's fruit is on the table too)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees, the cow and its dairy are done: till then, they have tasks)
+    {if:{school:{atLeast:2}, lesson:true}, text:'A new lesson is ready: talk to the {老师} at the {学校}.'},   // (decided 28 October 2026: it said the rest of chapter 1 was coming soon)
     {if:{school:{atLeast:2}}, text:'The {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: he has a ! then (after each new word, practise a little before the next). The rest of chapter 1 is coming soon.'},
     {if:{build:2}, text:'The troop is ready to build the {学校}: talk to the big monkey.'},
     {if:{home:2}, text:'The troop wants to build a {学校} first. The big monkey has something to ask you.'},
@@ -1444,6 +1446,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     darkPines: {
       name: {zh:'黑松林', py:'hēi sōnglín', en:'The dark pines'},
       gloom: {deep:.62, open:.2, mist:true, eyes:true},
+      music: 'pineWood',   // the pine wood's song: the same gloomy pines (decided 28 October 2026: it had the home ground's)
       // till you find the cow, it moos now and then, louder the right way and faint up the ways that go nowhere
       sounds: [{rows:[3, 10], cols:[0, 12], if:{cow:{below:3}}, sounds:['crow', 'wind', 'mooFar']}, {rows:[20, 26], cols:[0, 9], if:{cow:{below:3}}, sounds:['crow', 'mooFar']},
         {rows:[20, 29], cols:[29, 35], if:{cow:{below:3}}, sounds:['crow', 'mooFar']}, {rows:[0, 29], if:{cow:{below:3}}, sounds:['crow', 'wind', 'moo']},
@@ -1496,7 +1499,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "ppGGGGGGiiiiiiiiiiiiiiiiiiiiiiiipppp",   // west: a clearing of tall grass, where your friends hide
         "ppGGGGGGiiiimiiiiiiiiiiiiiiiiiiipppp",
         "ppGGGGGGppppppppihppipppppppppiipppp",
-        "ppGGGGGGppppppppnnppppppppppppnnpppp",   // south, the cow’s way, long grass grown over it (wolves); east, long grass to nowhere (shells)
+        "ppGGGGGGppppppppnnppipppppppppnnpppp",   // south, the cow’s way, long grass grown over it (wolves); east, long grass to nowhere (shells); the rabbit’s nook goes in a square further, so no pine’s top hides it (decided 28 October 2026)
         "ppGGGGGGppppppppnnppppppppppppnnpppp",
         "ppppppppppppppppnnppppppppppppiipppp",
         "ppppppppppppppppiippppppppppppoopppp",
