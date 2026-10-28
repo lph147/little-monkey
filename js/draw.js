@@ -81,6 +81,15 @@ function drawPlaying(n, X, Y, now){
   else if (kind === 'tower') drawTowerBuilder(n, X, Y, now);
   else if (kind === 'dragonflies') drawChaser(n, X, Y, now);
   else if (kind === 'groom') drawGroomer(n, X, Y, now);
+  else if (kind === 'peer') drawPeerer(n, X, Y, now);
+}
+// A monkey of the troop looking for mushrooms under the pines (plays: 'peer'), facing them: now and then it crouches to look
+// closely, its head and body lower, over its legs, its feet where they were.
+function drawPeerer(n, X, Y, now){
+  const spr = monkeySprite(n.kind, n.home.facing, (now + n.x * 977) % 3600 < 130);
+  R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
+  if ((now + n.x * 613) % 2600 >= 1000){ b.drawImage(spr, X, Y); return; }
+  b.drawImage(spr, 0, 0, 16, 12, X, Y + 2, 16, 12); b.drawImage(spr, 0, 12, 16, 4, X, Y + 12, 16, 4);   // (crouching)
 }
 // Grooming the other one, or being groomed, taking turns (groomAt): both sit side-on, facing the same way, one behind the
 // other, as monkeys groom. The one in front sits still, eyes shut, enjoying it, a little heart rising from it now and then;
@@ -155,6 +164,29 @@ function drawBather(n, X, Y, now){
   b.globalAlpha = .7 * (1 - ph); R(b, X + 8 - rx, Y + line, 3, 1, '#A8E6DE'); R(b, X + 6 + rx, Y + line, 3, 1, '#A8E6DE'); b.globalAlpha = 1;
   b.drawImage(monkeySprite(n.kind, at ? 'down' : n.dir, at), 0, 0, 16, line - sink, X, Y + sink, 16, line - sink);
   R(b, X + 2, Y + line, 12, 1, '#A8E6DE');   // the water round it
+}
+// You, in a brook up to your shoulders, as a bather is: off a stepping stone that tipped (hopAcross, js/world.js), sinking
+// as the water closes round you.
+function drawDunked(PX, PY, now){
+  const line = 12, sink = Math.min(3, Math.round((now - dunkT) / 40));   // (in up to its shoulders, its face out of the water)
+  b.drawImage(monkeySprite('player', pl.dir, true, 0, true), 0, 0, 16, line - sink, PX, PY + sink, 16, line - sink);   // (eyes shut, as you go in)
+  R(b, PX + 2, PY + line, 12, 1, '#D6F2FF');
+}
+// The pictures over the row of stepping stones you're facing (hopAhead, js/world.js), one over each stone, bobbing a
+// little: drawn onto the screen itself, over the map, so they're as sharp as a word's picture on a card. Not while
+// you're hopping, or answering its question.
+const hopPics = {};
+function drawHopPics(now){
+  const row = mode === 'play' && !busy && !pl.mv && modal.hidden && hopAhead(), q = row && hopQuestion(row);
+  if (!q) return;
+  const k = cv.width / (VW*T), size = Math.max(32, Math.round(13 * k / 32) * 32), cx = camX(), cy = camY();   // (each of a picture's pixels a whole number of the screen's)
+  sc.imageSmoothingEnabled = false;
+  row.forEach(([x, y], i) => {
+    const w = q.opts[i], p = PICTURES[w];
+    if (!p) return;
+    const bob = Math.sin(now / 380 + i * 2.1) * .8;
+    sc.drawImage(hopPics[w] || (hopPics[w] = sprite(p.rows, p.palette)), Math.round((x*T - cx + 8) * k - size / 2), Math.round((y*T - cy + 4 + bob) * k - size / 2), size, size);
+  });
 }
 // The dragonflies (the area's, and those the little monkeys chase), little and bright, their wings a flicker.
 const DRAGONFLY = [['#E0483A', '#9E2C24'], ['#F2A33A', '#A8641C'], ['#E0483A', '#9E2C24']];   // body, head: red and orange, bright over the water
@@ -542,7 +574,7 @@ function drawWorld(now){
   // animals at their own spots, once animals appear: standing on open ground (the deer), or a little up a cliff, bobbing;
   // those up a tree come after the leaves. While you're meeting one, it stays where it is (meetHop).
   const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE) : [];
-  const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree';
+  const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree' || a.perch;   // (up a tree, or perched up on something: over its top)
   for (const a of spotAnimals.filter(a => !inTree(a))){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
@@ -581,6 +613,7 @@ function drawWorld(now){
       const moving = !!pl.mv, p = moving ? (now - pl.mv.t0) / (pl.mv.dur || STEP) : 0;
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
+      if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
       if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
       else drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
       for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
@@ -629,9 +662,11 @@ function drawWorld(now){
   for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    if (a.perch){ b.drawImage(towardsYou(a, a.at[0]), X, Y - a.perch - meetHop(a, X, Y - a.perch, now)); continue; }   // perched up on something, still, such as the owl on its dead pine
     b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5 - bob - meetHop(a, X, Y - 8, now), 10, 10);
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
+  for (const a of spotAnimals.filter(a => a.glints && GLOOM)) glinting(a, a.at[0]*T - cx, a.at[1]*T - cy - a.perch, now);   // (an owl's eyes, in the gloom)
   for (const [x, y, k] of glintsNow(now)) glint(x*T - cx + 8, y*T - cy + 11, k);   // things hidden off the path
   for (const [x, y, show] of bubbles) bubble(x, y, show);
   if (trainingCalls()) for (const [x, y] of TRAINING_TILES) if (tileAt(x, y).action === 'training') bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice (while the post stands)
@@ -737,6 +772,12 @@ function mistStrip(){   // soft wisps of mist, in a strip twice the screen's wid
 }
 // Eyes glinting between the trees, deep in the shade and well away from you: they blink twice and are gone, and after a
 // while another pair glints somewhere else. Gone at once if you come near.
+// An animal's eyes (glints: [x, y, w] each, in its sprite) glinting in the gloom over it, such as the owl's on its dead
+// pine: the same yellow as the eyes that look out from deep in the trees, blinking now and then.
+function glinting(a, X, Y, now){
+  if ((now + a.at[0] * 431) % 3900 < 150 || X < -T || Y < -T || X > VW*T || Y > VH*T) return;
+  for (const [gx, gy, w] of a.glints) R(b, X + gx, Y + gy, w || 1, 1, '#F5E36A');
+}
 const EYES_MS = 2600;
 let eyes = null, eyesNext = 0;
 function drawEyes(cx, cy, now){
@@ -815,7 +856,7 @@ function drawMarkers(cx, cy, now){
   const t = aimedTask();   // one arrow, for the newest task, or the one you chose to follow
   if (t && t.target) taskArrow(t, seen, cx, cy, now, pal);
   const lab = currentPrompt(now);
-  if (lab && lab !== 'OK'){
+  if (lab && lab !== 'OK' && !(lab === 'Hop' && hopQuestion(hopAhead()))){   // (not over stepping stones with their pictures)
     const [fx, fy] = facing(), X = fx*T - cx, Y = fy*T - cy;
     const bx = X + 12, by = Y + 2 + Math.round(Math.sin(now/220));
     pix(["..ooooo..",".orrrrro.","orrwwwrro","orwrrrwro","orwwwwwro","orwrrrwro","orwrrrwro",".orrrrro.","..ooooo.."], bx, by, {o:'#3A0F12', r:'#C0303A', w:'#FFFFFF'});

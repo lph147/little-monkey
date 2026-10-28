@@ -28,7 +28,7 @@ let finishedAt = null;   // {place, x, y, t}: the square you were facing when so
 function finished(){ const [x, y] = facing(); finishedAt = {place:PLACE, x, y, t:performance.now()}; }
 const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && finishedAt.x === x && finishedAt.y === y
   && performance.now() - finishedAt.t < REST_MS && lastMoveEnd < finishedAt.t && pl.turnT < finishedAt.t
-  && !(n => n && hasNews(n))(npcAt(x, y) || followerAt(x, y));
+  && !(n => n && hasNews(n))(npcAt(x, y) || followerAt(x, y)) && !tileAt(x, y).hop;   // (nor stepping stones: each row a new question, hop after hop)
 // A message that has come up (toast, js/helpers.js) since you last moved or turned: A closes it, as B does, never
 // reaching past it to whoever you're facing (decided 22 October 2026: it's where the speech box was, and looks like it,
 // and A, pressed to clear it, started the conversation you'd just had all over again). Once you've moved on, A is as ever.

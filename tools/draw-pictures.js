@@ -604,6 +604,22 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.dot(3, 10, '#2A1E16'); p.dot(3, 11, '#2A1E16');                                        // nose
     p.eye(8, 8);
   },
+  '猫头鹰': p => {   // owl: facing you, perched on a branch, with ear tufts and big round orange eyes (unlike the birds: side on, little)
+    const B = '#8A6440', LT = {light: '#A88158', dark: '#6A4A2C'}, PALE = '#EFE0C2';
+    p.fill(Rc(1, 27, 30, 3, 1.5), '#6B4A2A', {light: '#8C6640', dark: '#4A3220'});           // the branch
+    p.fill(O(16, 19.5, 9, 9.5), B, LT);                                                      // body
+    p.flat(O(16, 21.5, 5.6, 6.6), PALE);                                                     // pale front,
+    [[14, 18], [18, 18], [16, 20.5], [13, 22.5], [19, 22.5], [16, 25]].forEach(([x, y]) => p.flat(Rc(x - .5, y, 2, 1), '#A07A52'));   // with its streaks
+    p.fill(or(O(8, 20, 3.4, 7.2), O(24, 20, 3.4, 7.2)), '#6E4A2A', {light: '#8A6440', dark: '#4E3420', edge: true});   // folded wings
+    p.fill(or(Pg([[7, 8], [7.5, 1.5], [12.5, 6]]), Pg([[25, 8], [24.5, 1.5], [19.5, 6]])), B, LT);   // ear tufts
+    p.fill(O(16, 10.5, 9.4, 7), B, LT);                                                      // head
+    p.flat(or(O(11.6, 11, 4.4, 4.4), O(20.4, 11, 4.4, 4.4)), PALE);                          // the pale discs round its eyes
+    p.fill(or(O(11.6, 11, 2.8, 2.8), O(20.4, 11, 2.8, 2.8)), '#F29A1E', {light: '#FFC24A', dark: '#C9741A'});   // its big orange eyes
+    p.flat(or(O(11.6, 11, 1.3, 1.3), O(20.4, 11, 1.3, 1.3)), '#1E1A16');                     // their pupils
+    p.dot(11, 10, '#FFFFFF'); p.dot(20, 10, '#FFFFFF');
+    p.fill(Pg([[14.6, 13], [17.4, 13], [16, 16.6]]), '#D9A030', {dark: '#A8741E'});            // beak
+    p.flat(or(Rc(12, 27, 2.4, 2), Rc(17.6, 27, 2.4, 2)), '#D9A030');                          // its feet, gripping the branch
+  },
   '狼': p => {   // wolf: grey, sitting, howling with its head up (unlike the fox: orange, sitting facing you)
     const G = '#8A9199', LT = {light: '#B0B7BE', dark: '#5E656C'}, PALE = '#DCE0E3';
     p.fill(path([[21, 28.6], [26.5, 28], [30.4, 24.5]], 2.3), G, LT);                        // bushy tail

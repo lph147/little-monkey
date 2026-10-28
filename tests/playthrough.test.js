@@ -330,6 +330,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().lookTip, 1, 'the goat on the lookout stopped you on the way up, to tell you about the view');
   await pressAt(9, 4, 'left', 'looking at the mushrooms under the first pines');
   assert.ok(knows('蘑菇'), 'the mushrooms teach 蘑菇');
+  // A little monkey looking for mushrooms beside the way up (28 October 2026): 我在找蘑菇。, and its word game, with 蘑菇
+  // among the questions, 3 shells for winning
+  await pressAt(12, 4, 'left', 'talking to the little monkey looking for mushrooms, and playing its word game');
+  assert.ok(get('__said').includes('我在找蘑菇。') && area().mushroomGame === 2, 'it’s looking for mushrooms, and its word game is won');
   await stepOn(12, 0, 'going into the pine wood, through the archway');
   assert.equal(run('PLACE'), 'pineWood', 'you should be in the pine wood');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [16, 26], 'at the way in, at the bottom');
@@ -567,9 +571,23 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[12, 1], [12, 8], [12, 13], [6, 13], [6, 16]], 'down the south slope, hopping down a bank, to the lookout');
   await pressAt(6, 16, 'down', 'looking out from the lookout’s railing');
   assert.ok(area().cowSeen === 1 && get('__scenes').includes('cowView'), 'the cow, far below, by its spring');
-  await walk([[6, 16], [6, 13], [21, 13], [21, 21], [13, 21], [13, 27], [3, 27], [3, 33], [12, 33], [12, 38]], 'down the steps, over the stepping stones and down more steps, to the pines');
+  await walk([[6, 16], [6, 13], [21, 13], [21, 21], [13, 21], [13, 22]], 'down the steps, to the brook');
+  // Over the brook (28 October 2026): its stepping stones, two rows of three, can't be walked onto, only hopped onto: at
+  // each row, you hear a word, and hop onto the stone with its picture
+  stand(13, 22, 'down');
+  assert.deepEqual([run('walkable(13, 23)'), run('promptFor(13, 23)')], [false, 'Hop'], 'stepping stones: hop onto them');
+  await pressAt(13, 22, 'down', 'hopping onto a stepping stone, the one with the picture of the word you hear');
+  assert.equal(get('pl.y'), 23, 'on a stone in the first row');
+  await act('finishedAt = null; pressA()', 'hopping onto a stone in the next row');
+  assert.equal(get('pl.y'), 24, 'on a stone in the second row');
+  const brookX = get('pl.x');
+  await walk([[brookX, 24], [brookX, 27], [3, 27], [3, 33], [12, 33], [12, 38]], 'off the stones, and down more steps, to the pines');
   await act('arrive(12, 39).then(runEvents)', 'going on down, into the dark pines');
   assert.deepEqual([run('PLACE'), area().cow], ['darkPines', 2], 'the dark pines (黑松林): a cow moos, somewhere beyond them');
+  // An owl up on a dead pine just inside (28 October 2026): 猫头鹰, taught as you meet it, and its questions
+  await walk([[16, 1], [16, 3], [11, 3]], 'going west, to the owl on its dead pine');
+  await pressAt(11, 3, 'up', 'meeting the owl, and answering its questions');
+  assert.ok(knows('猫头鹰') && get('S.friends').includes('owl'), 'the owl (猫头鹰) is your friend');
   // The way through the dark pines (27 October 2026): it forks; the cow's hoofprints show which way it went, down a narrow
   // gully where a great hollow pine lies along it, to crawl through; to a stream too deep to wade, where a dead pine on the
   // bank, knocked down with your stick, falls across it; over it, a rabbit by the way saw the cow go by (its word game won,
@@ -615,7 +633,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[12, 25], [12, 27], [3, 27]], 'taking the grass back to the cow');
   await pressAt(3, 27, 'left', 'giving the cow the grass');
   assert.deepEqual([area().cowFood, area().cowWaits, get('S.following')], ['done', 0, ['cow']], 'fed, it follows you on');
-  await walk([[3, 27], [13, 27], [13, 21], [21, 21], [21, 13], [3, 13], [3, 6], [12, 6], [12, 1]], 'up the south slope the long way, by its steps, with the cow');
+  await walk([[3, 27], [13, 27], [13, 25]], 'leading the cow to the stepping stones');
+  await pressAt(13, 25, 'up', 'hopping onto a stepping stone, the cow behind you');
+  await act('finishedAt = null; pressA()', 'hopping on, over the brook');
+  assert.deepEqual([get('pl.y'), get('S.following'), get("FOLLOWERS.map(n => n.y)")], [23, ['cow'], [24]], 'over the brook, the cow hopping after you');
+  const backX = get('pl.x');
+  await walk([[backX, 23], [backX, 21], [21, 21], [21, 13], [3, 13], [3, 6], [12, 6], [12, 1]], 'up the south slope the long way, by its steps, with the cow');
   await act('arrive(12, 0).then(runEvents)', 'back to the home ground, with the cow');
   assert.deepEqual([run('PLACE'), get('S.following')], ['homeGround', ['cow']]);
   await walk([[16, 20], [16, 10], [19, 10]], 'leading the cow to the thirsty monkey, by the road');

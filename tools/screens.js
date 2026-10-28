@@ -13,7 +13,7 @@
 const knows = (lv, words) => Object.fromEntries(words.map(w => [w, {lv, due: 0, ok: 0}]));
 const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '水果', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
 const QUIET = {sound: false, music: false};
-const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, english: 1, menu: 1, syllables: 1, eat: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
+const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, english: 1, menu: 1, syllables: 1, eat: 1, hop: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
 const SAVES = {
   // just born, with the old monkey waiting: no tips had yet
   born: {version: 19, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},
@@ -78,6 +78,7 @@ SAVES.hillside = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 37, dir:
 SAVES.hillsideLookout = {...SAVES.pineWood, areas: {1: {...BUILDING, lookTip: 1}}, pos: {place: 'hillside', x: 21, y: 21, dir: 'down'}};   // (the goat has told you)
 SAVES.hillsideGoat = {...SAVES.pineWood, pos: {place: 'hillside', x: 19, y: 22, dir: 'up'}};   // coming up the steps by the lookout, the first time
 SAVES.hillsideTop = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 5, dir: 'up'}};
+SAVES.byMushrooms = {...SAVES.pineWood, pos: {place: 'hillside', x: 12, y: 4, dir: 'left'}};   // beside the little monkey looking for mushrooms (28 October 2026)
 SAVES.byTrainee = {...SAVES.pineWood, pos: {place: 'hillside', x: 17, y: 38, dir: 'right'}};   // coming up to the stepping stones, a little monkey in training beyond them
 SAVES.traineeDone = {...SAVES.pineWood, areas: {1: {...BUILDING, trainee1: 2, trainee2: 2}}, pos: {place: 'hillside', x: 19, y: 37, dir: 'right'}};   // beside the first, its present won
 SAVES.bagFull = {...SAVES.pineWood, bag: {'桃子': 3}, areas: {1: {...BUILDING, trainee1: 1, trainee2: 1}}, pos: {place: 'hillside', x: 10, y: 20, dir: 'left'}};   // a full bag of peaches, by the other one, on the middle terrace
@@ -213,11 +214,15 @@ SAVES.pastureIn = {...SAVES.waySouth, pos: {place: 'homeGround', x: 16, y: 20, d
 SAVES.slopeTop = {...SAVES.waySouth, tasksSeen: {...SAVES.waySouth.tasksSeen, cowLook: 1}, pos: {place: 'southSlope', x: 12, y: 3, dir: 'down'}};
 SAVES.slopeLookout = {...SAVES.slopeTop, pos: {place: 'southSlope', x: 6, y: 16, dir: 'down'}};
 SAVES.slopeSteps = {...SAVES.slopeTop, areas: {1: {...SAVES.slopeTop.areas[1], cowSeen: 1}}, tasksSeen: {...SAVES.slopeTop.tasksSeen, cow1: 2}, pos: {place: 'southSlope', x: 21, y: 21, dir: 'left'}};
+// at the brook's stepping stones (28 October 2026), facing the first row, and with the hop tip not yet seen
+SAVES.slopeBrook = {...SAVES.slopeSteps, pos: {place: 'southSlope', x: 13, y: 22, dir: 'down'}};
+SAVES.slopeBrookTip = {...SAVES.slopeBrook, tips: {...ALL_TIPS, hop: 0}};
 SAVES.pasture = {...SAVES.waySouth, areas: {1: {...SAVES.waySouth.areas[1], cow: 2, cowSeen: 1}}, pos: {place: 'pasture', x: 24, y: 16, dir: 'right'}};   // on the cow's trail
 // the dark pines (27 October 2026), between the south slope and the pasture: where the way forks, the cow's hoofprints;
 // the top of the gully, where a great hollow pine lies along it; the stream, and the dead pine on its bank; over it, the
 // rabbit by the way
 SAVES.pastureFork = {...SAVES.pasture, pos: {place: 'darkPines', x: 20, y: 4, dir: 'right'}};   // just before the first hoofprints
+SAVES.pinesOwl = {...SAVES.pasture, pos: {place: 'darkPines', x: 13, y: 3, dir: 'left'}};   // just inside the dark pines, the owl on its dead pine nearby (28 October 2026)
 SAVES.pinesLog = {...SAVES.pasture, areas: {1: {...SAVES.pasture.areas[1], pastureTracks: 1}}, pos: {place: 'darkPines', x: 28, y: 4, dir: 'down'}};   // at the top of the gully
 SAVES.pinesInLog = {...SAVES.pinesLog, areas: {1: {...SAVES.pinesLog.areas[1], logSeen: 1}}, pos: {place: 'darkPines', x: 28, y: 9, dir: 'down'}};   // crawling through the hollow pine
 SAVES.pastureStream = {...SAVES.pasture, areas: {1: {...SAVES.pasture.areas[1], pastureTracks: 1, logSeen: 1, streamSeen: 1}}, tasksSeen: {...SAVES.pasture.tasksSeen, cowStream: 9},
@@ -626,6 +631,11 @@ const SCREENS = [
     play(); await wait(100); storyScene('lookout'); introClock = 3.6; advancedTo = 1; await wait(400); }},
   {id: 'hillside-top', title: 'The hillside: under the first pines', save: 'hillsideTop', why: 'Mushrooms, long grass grown over the way under the pines, and a stone archway with the pine wood’s name, 松林, on its board: the way into the wood.', run: async () => {
     play(); await wait(500); }},
+  {id: 'mushroom-monkey', title: 'Looking for mushrooms', save: 'byMushrooms', why: 'At the top of the hillside, on the way up to the pine wood: a little monkey looking for mushrooms under the pines, facing them, crouching now and then to look closely, with a ! the first time.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'mushroom-hello', title: '我在找蘑菇。', save: 'byMushrooms', why: 'Talking to it: 你好！ and your reply, then 我在找蘑菇。 (I’m looking for mushrooms.), teaching 蘑菇 if you haven’t looked at the mushrooms yet; then its word game, with 蘑菇 among the questions.', run: async () => {
+    play(); await wait(100); talk(npc('mushroomer')); await wait(400);
+    for (let i = 0; i < 8 && !/蘑菇/.test(document.querySelector('#talk').textContent); i++){ const p = !modal.hidden && [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled); if (p) p.click(); else next(); await wait(500); } await wait(300); }},
   {id: 'pine-wood-first', title: 'Into the pine wood', save: 'pineFirst', why: 'The first time you go in: gloomy under the thick pines (but in the daytime: sunbeams, never night), with mist, and a wolf howling far off.', run: async () => {
     play(); await wait(100); arrive(12, 0).then(runEvents); await wait(1500); }},
   {id: 'pine-wood-meadow', title: 'Long grass, below the bridge', save: 'pineMeadow', why: 'A meadow of long grass right across the way to the only bridge over the stream: wolves, snakes and spiders jump out of it.', run: async () => {
@@ -852,10 +862,21 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'southSlope', x: 10, y: 16, dir: 'right'}; placePlayer(); talk(npc('slopeGoat')); await wait(300); next(); await wait(300); next(); await wait(500); }},
   {id: 'slope-steps', title: 'Stepping stones', save: 'slopeSteps', why: 'The third terrace: a brook across it, and stepping stones over it; a peach tree in the corner; then more steps down, into the pines.', run: async () => {
     play(); await wait(500); }},
+  {id: 'hop-stones', title: 'Hop!', save: 'slopeBrookTip', why: 'Facing the stepping stones over the brook (28 October 2026): a picture floats over each stone in the row in front of you, and the first time, a tip: press A to hop onto a stepping stone.', run: async () => {
+    play(); await wait(900); }},
+  {id: 'hop-question', title: 'Which stone?', save: 'slopeBrook', why: 'A at the stepping stones: you hear a word, and choose its picture, in the same order as on the stones, left to right.', run: async () => {
+    play(); await wait(300); pressA(); await wait(800); }},
+  {id: 'hop-splash', title: 'Splash!', save: 'slopeBrook', why: 'A wrong stone tips: in you go, up to your shoulders, with a splash, and you climb back out onto the bank, dripping, the stones with new pictures.', run: async () => {
+    play(); await wait(300); const pq = pictureQ; pictureQ = async o => { o.onAnswer(false, (o.answerIdx + 1) % 3); return false; };
+    pressA(); await wait(1300); pictureQ = pq; }},
   {id: 'pasture-first', title: 'Into the dark pines (黑松林)', save: 'pastureIn', why: 'Down the south slope, into the dark pines: their name, said aloud; gloomy, misty, eyes in the dark; the first time, long grass where wolves hide, and somewhere beyond, a cow moos.', run: async () => {
     play(); await wait(100); S.pos = {place: 'southSlope', x: 12, y: 38, dir: 'down'}; placePlayer(); arrive(12, 39).then(runEvents); await wait(1500); }},
   {id: 'pasture-fork', title: 'Hoofprints', save: 'pastureFork', why: 'The way through the dark pines forks: west, it goes nowhere (but there are shells under the boulder at its end); east, the cow’s hoofprints, and the first time you come to them, which way it went. Its moo, now and then, is louder the right way.', run: async () => {
     play(); await wait(100); pl.dir = 'right'; tryStep('right', performance.now()); await wait(700); }},
+  {id: 'pines-owl', title: 'An owl', save: 'pinesOwl', why: 'Just inside the dark pines, west of the way in: an owl perched up on an old dead pine, its eyes glinting in the gloom (A: Meet).', run: async () => {
+    play(); await wait(600); }},
+  {id: 'owl-meet', title: '猫头鹰', save: 'pinesOwl', why: 'Meeting the owl: its word, 猫头鹰 (māotóuyīng, owl), on a new-word card, said straight away; then How it’s made: 猫 cat + 头 head + 鹰 eagle.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'darkPines', x: 11, y: 3, dir: 'up'}; placePlayer(); pressA(); await wait(1500); }},
   {id: 'pines-log', title: 'A hollow pine', save: 'pinesLog', why: 'Following the hoofprints east, down a narrow gully: a great pine has fallen along it, hollow inside. The cow stepped over it, but a little monkey can crawl right through.', run: async () => {
     play(); await wait(100); pl.dir = 'down'; tryStep('down', performance.now()); await wait(700); }},
   {id: 'pines-in-log', title: 'Inside the hollow pine', save: 'pinesInLog', why: 'Crawling through: the log is drawn over you, so you vanish inside it, and come out at its other end.', run: async () => {

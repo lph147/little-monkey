@@ -13,6 +13,8 @@ const TIPS = {
   walk: {at:'.dpad', text:'Hold an arrow to walk.<br>Tap to turn.', when:() => canAct()},
   talk: {at:'#btnA', text:'Press <b>A</b> to talk', when:() => aActs() && !!npcAt(...facing())},
   look: {at:'#btnA', text:'Press <b>A</b> to look', when:() => aActs() && !npcAt(...facing()) && promptFor(...facing()) === 'Look'},
+  // stepping stones (hopAcross, js/world.js), the first time you face some
+  hop: {at:'#btnA', text:'Press <b>A</b> to hop onto a stepping stone', when:() => aActs() && promptFor(...facing()) === 'Hop'},
   // every grey word in the line lit, not just the first (decided 24 October 2026); the bubble points at the first
   grey: {at:'#talk .tok.listen', all:true, once:true, then:'tap', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove},
   // then A lights one of them, to tap (decided 24 October 2026: it was on your very first line, 你好, with its English

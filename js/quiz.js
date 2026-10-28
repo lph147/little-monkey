@@ -29,7 +29,7 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
         fb.innerHTML = `${ok ? 'Yes!' : 'Not quite.'}<span class="hz">${word}</span>${WORDS[word].py} · ${esc(WORDS[word].en)}`;   // (the English either way, in case a picture wasn't clear)
         setTimeout(() => say(word), 250); if (type) answer(word, ok, type);
       } else fb.textContent = ok ? 'Yes!' : 'Not quite.';
-      if (onAnswer) onAnswer(ok);
+      if (onAnswer) onAnswer(ok, i);   // (and which you chose)
       next.hidden = false; next.focus(); shown();   // (so A pressed again at once doesn't skip what it says)
       next.onclick = () => res(ok);
     });
@@ -206,12 +206,12 @@ function questionType(w){
     : asks('hear') ? (Math.random() < .6 ? 'hear' : 'read') : (Math.random() < .6 ? 'read' : 'listen');
   return asks(want) ? want : 'listen';
 }
-// A question about word w, of the kind its level calls for: what to show (body), and the answers (opts, as HTML in
-// options), never with avoid among them (such as an animal that's right there). Only words you've already met.
-function wordQuestion(w, avoid){
-  const type = questionType(w);
+// A question about word w, of the kind its level calls for (or type), with n answers (3 unless it says): what to show
+// (body), and the answers (opts, as HTML in options), never with avoid among them (such as an animal that's right
+// there). Only words you've already met.
+function wordQuestion(w, avoid, type = questionType(w), n = 3){
   const others = shuffle(picWords().filter(x => x !== w && x !== avoid && lvl(x) >= 1));
-  const opts = shuffle([w].concat(apart(w, others, 2, type !== 'read')));   // (no look-alikes; listening, none that sound alike)
+  const opts = shuffle([w].concat(apart(w, others, n - 1, type !== 'read')));   // (no look-alikes; listening, none that sound alike)
   let body;
   if (type === 'listen') body = `<div class="askrow"><p class="prompt">Listen. Which picture is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
   else if (type === 'read') body = `<div class="askrow"><p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div></div>`;   // (the word to read where a listening question has its 🔊: above the answers)
@@ -224,6 +224,13 @@ function wordQuestion(w, avoid){
 }
 // The words to ask about (n of them, avoiding avoid): from the front of the review list, at random (nextWords, js/state.js).
 const toAsk = (avoid, n) => nextWords(picWords().filter(w => w !== avoid && lvl(w) >= 1), n);
+// A word game's own word (own), such as the mushroom monkey's 蘑菇, among the words it asks about (words, n of them), once
+// you've caught it: in place of one of them, wherever it falls.
+function withOwn(words, own, n){
+  if (!own || lvl(own) < 1 || !WORDS[own].pic) return words;
+  const rest = words.filter(w => w !== own).slice(0, n - 1), at = Math.floor(Math.random() * (rest.length + 1));
+  return [...rest.slice(0, at), own, ...rest.slice(at)];
+}
 // Food: what's in your bag to eat (AREA.food says what each does). Some brings health back (heal: eaten on your turn in a
 // battle, or from your bag), and some takes away a wrong answer in a question (helps: no turn used).
 const FOOD = AREA.food || {};
@@ -304,7 +311,7 @@ async function encounter(foe){
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}"><div class="plate"><div class="name">${nameHTML()}</div>`
     + `${lifeline(filled, missed)}${q ? `<div class="qn">Question ${q} of ${n}</div>` : ''}</div>`
     + '<div class="plus" aria-hidden="true" hidden>+♥</div></div>';
-  const targets = toAsk(an, n), gapAt = foe.gaps ? [...Array(foe.gaps).keys()].map(k => Math.round((k + 1) * n / foe.gaps) - 1) : [];
+  const targets = withOwn(toAsk(an, n), foe.asks, n), gapAt = foe.gaps ? [...Array(foe.gaps).keys()].map(k => Math.round((k + 1) * n / foe.gaps) - 1) : [];
   const sentences = [];   // (asked already: a big game's sentences are all different)
   let score = 0, wrong = 0, next = 0;
   for (let i = 0; i < n && !(misses && wrong >= misses); i++){

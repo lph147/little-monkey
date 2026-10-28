@@ -109,7 +109,8 @@ function asleepSprite(){
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
-  small:MAP_SPRITES[a.word].small ? sprite(MAP_SPRITES[a.word].small, MAP_SPRITES[a.word].palette) : null}));   // (smaller, fluttering on the map: the butterfly)
+  small:MAP_SPRITES[a.word].small ? sprite(MAP_SPRITES[a.word].small, MAP_SPRITES[a.word].palette) : null,   // (smaller, fluttering on the map: the butterfly)
+  perch:a.perch || 0, glints:a.glints || null}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
 // An animal (or a wild creature: spr, its map sprite, and faces, which way it looks) turned to face you, from where it is
 // (x): drawn the other way round when it would look away from you, such as a wolf jumping out on your left. Or away from
 // you (away), as it runs off.
@@ -215,7 +216,7 @@ const mg = mapCanvas.getContext('2d');
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
 const GRASSY = ['grass','tallGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
-const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','logBridge'];
+const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','hopStone','logBridge'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
   for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i)*16), py = Math.floor(rnd(x,y,i+20)*16); R(g, X+px, Y+py, 1, 1, i % 3 ? '#6CB35C' : '#93D67F'); }
@@ -414,6 +415,14 @@ function steppingStones(g, X, Y, x, y){
     oval(g, X+cx, Y+cy+1, 5, 3, '#2C6B9E');
     oval(g, X+cx, Y+cy, 5, 3, '#6F6B61'); oval(g, X+cx, Y+cy-1, 4, 2, '#B4AE9F'); R(g, X+cx-2, Y+cy-2, 2, 1, '#D2CCBE');
   }
+}
+// A stepping stone to hop onto (a legend's hop, js/world.js), one to a square: big, flat and round, a little low in its
+// square, so the picture floating over it is clear of it, with its shadow in the water and a ripple round it.
+function hopStone(g, X, Y, x, y){
+  waterBase(g, X, Y, x, y);
+  oval(g, X+8, Y+11, 7, 4, '#2C6B9E');
+  oval(g, X+8, Y+10, 6, 4, '#6F6B61'); oval(g, X+8, Y+9, 5, 3, '#B4AE9F'); oval(g, X+7, Y+8, 3, 1, '#D2CCBE');
+  R(g, X+1, Y+13, 3, 1, '#BFE8FA'); R(g, X+12, Y+13, 3, 1, '#BFE8FA');
 }
 // A few little mushrooms on the floor under the pines: one red with white spots, and two small brown ones.
 function mushrooms(g, X, Y, x, y){
@@ -920,6 +929,7 @@ const LOOKS = {
   slabs:     (g,X,Y,x,y) => slabs(g,X,Y,x,y),        // a stone platform (the lookout's)
   railing:   (g,X,Y,x,y) => slabs(g,X,Y,x,y),        // its railing stands on it (a big object: OBJECT_ART)
   steppingStones:(g,X,Y,x,y) => steppingStones(g,X,Y,x,y),   // flat stones across a brook, to step on
+  hopStone:(g,X,Y,x,y) => hopStone(g,X,Y,x,y),   // a stepping stone to hop onto, one to a square
   mushrooms: (g,X,Y,x,y) => { woodFloor(g,X,Y,x,y); mushrooms(g,X,Y,x,y); },   // little mushrooms under the pines
   archway:   (g,X,Y,x,y) => path(g,X,Y,x,y),        // the way through an archway (the archway itself is a big object: OBJECT_ART)
   archPost:  (g,X,Y,x,y) => woodFloor(g,X,Y,x,y),   // an archway's pillar, beside the way through (a big object)

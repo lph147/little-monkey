@@ -80,6 +80,7 @@ const WORD_BANK = {
   '熊': {py:'xióng', en:'bear', pic:'🐻', area:1, category:'animals'},   // (chapter 1: at the big rocks, as you lead the cow home)
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},   // (chapter 1: hiding on the hillside; in the meadow's tall grass until 23 October 2026)
   '蝴蝶': {py:'húdié', en:'butterfly', pic:'🦋', area:1, category:'animals'},   // (chapter 1: fluttering over the flowers on the riverside, the way east to the bees)
+  '猫头鹰': {py:'māotóuyīng', en:'owl', pic:'🦉', area:1, category:'animals', alike:['鸟']},   // (chapter 1: perched on a dead pine in the dark pines)
   '黄蜂': {py:'huángfēng', en:'wasp', pic:'🦟', area:1, category:'animals', alike:['蜜蜂']},   // (chapter 1: in the tall flowers of the bees' valley; its picture is a pixel wasp, a striped insect like the bee: there's no emoji for a wasp, so its stand-in is a mosquito)
   '牛': {py:'niú', en:'cow', pic:'🐄', area:1, category:'animals'},   // (chapter 1: lost in the pasture south of the home ground, scared of the wolves; heard first in the thirsty monkey's news)
   '跳': {py:'tiào', en:'to jump', pic:'🦘', area:1, category:'actions'},
@@ -258,6 +259,7 @@ const MADE = {
   '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']]},
   '牛奶': {parts:[['牛', 'niú', 'cow'], ['奶', 'nǎi', 'milk']]},
   '酸奶': {parts:[['酸', 'suān', 'sour'], ['奶', 'nǎi', 'milk']]},
+  '猫头鹰': {parts:[['猫', 'māo', 'cat'], ['头', 'tóu', 'head'], ['鹰', 'yīng', 'eagle']]},   // (a bird of prey with a face like a cat's)
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},

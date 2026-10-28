@@ -104,6 +104,7 @@ function frame(now){
   updateCtx(now); updateTips(now); moreCue();
   sc.imageSmoothingEnabled = false;
   sc.drawImage(buf, 0, 0, cv.width, cv.height);
+  drawHopPics(now);   // (over the map, sharp: pictures over stepping stones)
 }
 // A caption of the opening, as subtitles over the bottom of the picture: the story in Chinese, read aloud, with pinyin
 // over each word (unless that's switched off; tap a word for its meaning) and its English; 🔊 reads it again. Skip is

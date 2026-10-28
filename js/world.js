@@ -147,7 +147,7 @@ function routeTo([tx, ty]){
     for (const [d, [dx, dy]] of Object.entries(DV)){
       let nx = x + dx, ny = y + dy;
       if (tileAt(nx, ny).ledge){ if (d !== 'down') continue; while (tileAt(nx, ny).ledge) ny++; }   // down a bank in one hop
-      if (!tileAt(nx, ny).walk || exitAt(nx, ny) || back.has(nx + ',' + ny)) continue;
+      if (!(tileAt(nx, ny).walk || tileAt(nx, ny).hop) || exitAt(nx, ny) || back.has(nx + ',' + ny)) continue;   // (over stepping stones, hopping)
       back.set(nx + ',' + ny, [x, y]); queue.push([nx, ny]);
     }
   }
@@ -181,6 +181,7 @@ function promptFor(x, y){
   const spot = spotLook(x, y);
   if (spot) return spot.label || 'Look';
   const t = tileAt(x, y);
+  if (t.hop) return hopAhead() ? 'Hop' : '';   // stepping stones, up or down in front of you
   const look = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
   if (look && look.label) return look.label;   // the tile's own steps say what A does, such as Sleep in a bed
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return t.gather.label;
@@ -444,7 +445,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (!(await confirmBox(speaker(who), fill(g.ask), 'Play', 'Not now'))) return;
     SFX.encounter();
     const justTaught = caughtBefore !== null && caughtCount() > caughtBefore;   // (its name, as you've just met it: no English on its plate)
-    const won = await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who], practice:!!g.practice, justTaught, questions:g.questions, misses:g.misses, gaps:g.gaps, lose:g.lose});
+    const won = await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who], practice:!!g.practice, justTaught, questions:g.questions, misses:g.misses, gaps:g.gaps, lose:g.lose, asks:g.asks});
     if (won && g.win) await runSteps(g.win, who, last);
     if (!won && g.lost) await runSteps(g.lost, who, last);
   },
@@ -962,6 +963,7 @@ async function interact(x, y){
   const spot = spotLook(x, y);
   if (spot) return runSteps(spot.do);
   const t = tileAt(x, y);
+  if (t.hop){ const row = hopAhead(); return row ? hopAcross(row) : SFX.bump(); }   // stepping stones: hop onto the row in front of you
   if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return runSteps(p.do); }   // the tile's own steps, while the story says
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return gather(t, x, y);
   if (canPick(t) && !looksFirst(t)) return pick(t, x, y);
@@ -1007,6 +1009,7 @@ function enterPlace(id){
   if (id === PLACE) return;
   foundAt = null;   // (the little monkey you found at hide and seek is back at its spot when you come back: js/hide.js)
   setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; pickedHere.clear(); buildMap();
+  for (const k in hopQs) delete hopQs[k];   // (new pictures on the stepping stones each time you come)
   playSong(placeSong());   // its own music, if it has some
 }
 // Through a way to another place: a quick fade, and you're there, with its name at the top of the screen. The screen
@@ -1049,6 +1052,55 @@ async function hop(tx, ty, ms = 300){
   const fx = pl.px, fy = pl.py, n = Math.max(1, Math.round(ms / 17));
   for (let i = 1; i <= n; i++){ const p = i / n; pl.px = fx + (tx - fx) * p; pl.py = fy + (ty - fy) * p - Math.sin(p * Math.PI) * 6; await sleep(17); }
   SFX.turn();
+}
+// Stepping stones across a brook (a legend's hop: the card's label, what it asks, ask, and what you're told when you slip,
+// splash), such as the south slope's (decided 28 October 2026, after playtesting: the walk south was longer, with nothing
+// to practise on the way): you can't walk onto them, only hop, a row at a time, up or down, pressing A at the row you're
+// facing. Over each stone of it floats a picture (drawHopPics, js/draw.js), and you hear a word: hop onto the stone with
+// its picture. The right one holds. A wrong one tips, in you go, and you climb out onto the bank you came from, dripping,
+// the card having shown you the right one. The pictures are a question about a word you know (from the front of the
+// review list), kept for the row till you answer it, so they don't change as you look; a new one each time after that.
+const HOP_MS = 380, DUNK_MS = 700;   // how long a hop from stone to stone takes; how long you're in the brook when you slip
+const hopQs = {};   // each row's question, by place and row, till you've answered it
+let hopBank = null, dunkT = -9999;   // the bank you last hopped from ({place, x, y}); when you last fell in (js/draw.js)
+function hopAhead(){   // the row of stones you're facing, up or down ([x, y] each, left to right), if you are
+  const [x, y] = facing();
+  if ((pl.dir !== 'up' && pl.dir !== 'down') || !tileAt(x, y).hop) return null;
+  let x0 = x, x1 = x;
+  while (tileAt(x0 - 1, y).hop) x0--;
+  while (tileAt(x1 + 1, y).hop) x1++;
+  return Array.from({length:x1 - x0 + 1}, (_, i) => [x0 + i, y]);
+}
+function hopQuestion(row){   // its question: a listening one with an answer for each stone (none if you don't know enough words)
+  const key = PLACE + ',' + row[0][1];
+  if (hopQs[key] !== undefined) return hopQs[key];
+  const w = toAsk(null, 1)[0], q = w && wordQuestion(w, null, 'listen', row.length);
+  return hopQs[key] = q && q.opts.length === row.length ? {...q, w} : null;
+}
+async function hopAcross(row){
+  const t = tileAt(...row[0]), hp = typeof t.hop === 'object' ? t.hop : {}, q = hopQuestion(row);
+  let at = row.findIndex(([x]) => x === pl.x), ok = true;   // (with no question, onto the stone in front of you)
+  if (q){
+    ok = await pictureQ({head:`<p class="label">${esc(hp.label || 'Stepping stones')}</p>`,
+      body:`<div class="askrow"><p class="prompt">${esc(hp.ask || 'Listen. Which stone has its picture?')}</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`,
+      options:q.options, answerIdx:q.answerIdx, word:q.w, type:'listen', onShow:() => setTimeout(() => say(q.w), 300), onAnswer:(right, i) => { at = i; }});
+    closeCard();
+    delete hopQs[PLACE + ',' + row[0][1]];
+  }
+  if (!tileAt(pl.x, pl.y).hop) hopBank = {place:PLACE, x:pl.x, y:pl.y};
+  const from = {x:pl.x, y:pl.y}, [tx, ty] = row[at];
+  if (ok) followersStep(performance.now(), true);   // (anyone following you hops too, onto where you were)
+  await hop(tx * T, ty * T, HOP_MS);
+  pl.px = tx * T; pl.py = ty * T;
+  if (ok){ pl.x = tx; pl.y = ty; S.pos = {...S.pos, x:tx, y:ty}; save(); SFX.clack(); return; }
+  splashes.push({x:tx * T + 8, y:ty * T + 10, t0:performance.now()}); SFX.splash(); dunkT = performance.now();   // it tips: in you go
+  await sleep(DUNK_MS);
+  const bank = hopBank && hopBank.place === PLACE ? hopBank : from;
+  await hop(bank.x * T, bank.y * T, HOP_MS);   // and you climb out, back where you started
+  pl.px = bank.x * T; pl.py = bank.y * T; pl.x = bank.x; pl.y = bank.y; S.pos = {...S.pos, x:bank.x, y:bank.y}; save();
+  dripUntil = performance.now() + 1500;
+  if (FOLLOWERS.some(n => tileAt(n.x, n.y).hop)) lineUp();   // (anyone following you, if on a stone, back with you)
+  toast(fill(hp.splash || 'Splash! Try again.'));
 }
 // You leap from where you stand into the square at (the waterfall), in an arc, landing with a splash.
 async function leap([tx, ty]){

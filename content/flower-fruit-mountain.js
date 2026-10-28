@@ -114,7 +114,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -129,6 +129,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hillAnimalsLeft: {count:'animalsLeft', chapter:1, place:'hillside'},   // chapter 1's animals: the fox hiding on the hillside, not met yet,
     woodAnimalsLeft: {count:'animalsLeft', chapter:1, place:'pineWood'},   // and the deer in the pine wood
     riverAnimalsLeft: {count:'animalsLeft', chapter:1, place:'riverside'},   // and the butterfly on the riverside, the way east to the bees
+    pinesAnimalsLeft: {count:'animalsLeft', chapter:1, place:'darkPines'},   // and the owl in the dark pines, the way south to the cow
     beeCount: {count:'progress', key:'beeFriends'},   // the bees in their valley you've made friends with (of six)
     flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
@@ -377,6 +378,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Find the lost {牛|cow} on the mountain', show:{cow:{atLeast:1}}, done:{cow:{atLeast:3}}},
     {chapter:1, text:'Win the {牛}’s trust with its word game', show:{cow:{atLeast:3}}, done:{cow:{atLeast:4}}},
     {chapter:1, text:'Lead the {牛} home, past the wolves', show:{cow:{atLeast:4}}, done:{cow:{atLeast:5}}},
+    {chapter:1, text:'Find the {动物} in the dark pines', show:{cow:{atLeast:2}}, done:{pinesAnimalsLeft:0}},
     {chapter:1, text:'Bring the big monkey {种子|seeds} from wild melons, for the garden', show:{garden:{atLeast:1}}, done:{melonSeeds:'done'}},
     {chapter:1, text:'Bring the big monkey {种子|seeds} from wild grapes, for the garden', show:{garden:{atLeast:1}}, done:{grapeSeeds:'done'}},
     {chapter:1, text:'Bring the big monkey {种子|seeds} from wild bananas, for the garden', show:{garden:{atLeast:1}}, done:{bananaSeeds:'done'}},
@@ -419,7 +421,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
     // the little monkeys in training on the hillside: until they've stopped you, and then whenever some of your words need
     // practice, for another word game
-    trainee1: [{if:{trainee1:0}, show:'!'}], trainee2: [{if:{trainee2:0}, show:'!'}],   // (the once: they had one whenever your words needed practice till 24 October 2026)
+    trainee1: [{if:{trainee1:0}, show:'!'}], trainee2: [{if:{trainee2:0}, show:'!'}], mushroomer: [{if:{mushroomGame:0}, show:'!'}],   // (the once: they had one whenever your words needed practice till 24 October 2026)
     // the little monkeys building a tower of stones: once you know enough numbers to count its stones with them, till you have
     hider: [{if:{hidesFound:0}, show:'!'}],   // until you've found it once, playing hide and seek
     towerL: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}], towerR: [{if:{tower:{below:2}, numbersKnown:{atLeast:1}}, show:'!'}],
@@ -1062,7 +1064,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "ppppppppppii..iipppppppppp",
         "ppppppppppiIAAIipppppppppp",   // the archway, with 松林 on its board
         "pppppppppiii..iimipppppppp",
-        "ppppppppmiii..iiiiippppppp",
+        "ppppppppmimi..iiiiippppppp",
         "pppppppiiimi..iiiipppppppp",
         "ppppppp......iiiimpppppppp",
         "pppppppnnnnppppppppppppppp",   // long grass grown over the way under the pines
@@ -1229,7 +1231,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
         'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
         'e': {look:'orangeFlowers', walk:true, word:'花', learnOnStep:true, colour:'橙色'},
-        'z': {look:'steppingStones', walk:true},              // stepping stones over the brook
+        // stepping stones over the brook, one to a square, to hop onto: hear a word, and hop onto the stone with its picture
+        'z': {look:'hopStone', hop:{label:'Stepping stones', ask:'Listen, and hop onto the stone with its picture.',
+          splash:'Splash! The stone tips, and in you go. You climb back out onto the bank. Try again!'}},
         'm': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},
         'L': {look:'slabs', walk:true},                       // the lookout's stone platform
         // thick bushes at the east end of the second terrace, till the garden begins: the way east to the melon field
@@ -1249,9 +1253,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYggwwgggggg..gggggwwgggYY",
         "YYgggQgggggg..gggogggTggYY",
         "YYgTgggg......ggggggggggYY",   // a wild apple tree (Q); the way winds west to the steps
-        "YYgggggg......gnnnnnngggYY",
-        "YYgggggg..gg..gnnnnnngogYY",
-        "YYg.......gg..gnnnnnngggYY",
+        "YYggggggnnnnnnnnnnnnngggYY",   // long grass across the path (28 October 2026: snakes and spiders on the way)
+        "YYggggggnnnnnnnnnnnnngogYY",
+        "YYg.....nnnnnnnnnnnnngggYY",
         "YYT......ggg..ggggggggTgYY",
         "YYg..goggggg..ggggggggggYY",
         "MMM==MMMMMMvvvvvMMMMMMMMMM",   // a cliff: stone steps (left), the long way, and a bank to hop down (middle), the quick way
@@ -1265,15 +1269,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYggRRRRRRguggggggkgg..gYY",
         "MMMMMMMMMMMMvvvvvMMMM==MMM",   // steps (right), a bank (middle)
         "MMMMMMMMMMMMvvvvvMMMM==MMM",
-        "YYggggggoggggggggTggg..gYY",
-        "YYggPgggggggg..........gYY",   // a peach tree in the corner
-        "YYgggggggWWgg.........ogYY",
-        "YYWWWWWWWWWWWzzWWWWWWWWWYY",   // the brook, and its stepping stones
-        "YYWWWWWWWWWWWzzWWWWWWWWWYY",
+        "YYggggggoggggggggTnnn..gYY",
+        "YYggPgggggggg.....nnn..gYY",   // a peach tree in the corner; long grass between the steps and the brook
+        "YYgggggggWWgg.....nnn.ogYY",
+        "YYWWWWWWWWWWzzzWWWWWWWWWYY",   // the brook, and its stepping stones, a row of three, and another
+        "YYWWWWWWWWWWzzzWWWWWWWWWYY",
         "YYggnnnnnngcg..WgggoggggYY",   // fresh grass by the brook (c), for the hungry cow
-        "YYggnnnnnnggg..gnnnnnnggYY",
-        "YYg............gnnnnnnggYY",   // west to the steps
-        "YYg...T.......ggnnnnnnggYY",
+        "YYggnnnnnnnnnnngnnnnnnggYY",
+        "YYg....nnnnnnnngnnnnnnggYY",   // west to the steps, through long grass
+        "YYg...TnnnnnnnngnnnnnnggYY",
         "MMM==MMMMMMMMvvvvvvMMMMMMM",   // steps (left), a bank (middle)
         "MMM==MMMMMMMMvvvvvvMMMMMMM",
         "YYgiigpppggpgggggggggggpYY",   // the pines begin
@@ -1470,6 +1474,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         '4': {look:'water', word:'水', becomes:[{if:{pastureLog:1}, to:'5'}, {if:{cow:{atLeast:3}}, to:'5'}],
           onLook:[{do:[{message:'The stream is deep and fast. The cow’s hoofprints go right into it: a big cow can wade across, but not a little monkey!'}]}]},
         '5': {look:'logBridge', walk:true, word:'桥'},   // the dead pine, fallen across it
+        '&': {look:'deadPine'},   // an old dead pine just west of the way in, where an owl (猫头鹰) perches (the area's animals)
         'q': {look:'deadPine', landmark:true, becomes:[{if:{pastureLog:1}, to:'j'}, {if:{cow:{atLeast:3}}, to:'j'}],
           onLook:[{label:'Hit', sparkle:true, do:[{hit:'wood'}, {set:{pastureLog:1}}, {sound:'rumble'}, {sound:'splash'},
             {message:'Crack! The dead pine topples over, right across the stream: a bridge! Over you go.'}]}]}
@@ -1477,7 +1482,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       map: [
         "ppppppppppppppppiipppppppppppppppppp",   // in from the south slope
         "ppppppppppppppppiipppppppppppppppppp",
-        "ppppppppppppppppiipppppppppppppppppp",
+        "ppppppppppp&ppppiipppppppppppppppppp",
         "ppppiiiiiiiiiiiiiiiiiiiiiiiiiipppppp",   // the first fork (a row taller: a pine’s top hides the square above it): west, a hollow that goes nowhere (shells under its boulder); east, hoofprints
         "ppppiiiiiiiiiiiiiiiiiiiiihiiiipppppp",
         "ppppiiiiiiiiiiiiiiiiihiiiiiiiipppppp",
@@ -1879,6 +1884,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#4A2C17', f:'#C8894A', s:'#F6D1A7', m:'#C98E6A', e:'#24160C'}},
     {id:'trainee2', place:'hillside', x:9, y:20, facing:'right', holds:'棍子', practises:true, name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#40250F', f:'#A56A3A', s:'#F0C89E', m:'#C08060', e:'#24160C'}},
+    // chapter 1: a little monkey looking for mushrooms under the first pines, at the top of the hillside, beside the way up to
+    // the pine wood (28 October 2026: something to practise on the way, as you go for wood and small stones): facing them,
+    // crouching down to look closely now and then (plays: 'peer')
+    {id:'mushroomer', place:'hillside', x:11, y:4, facing:'left', plays:'peer', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      palette:{o:'#4A2C17', f:'#BD8046', s:'#F4CFA6', m:'#C78C66', e:'#24160C'}},
     // chapter 1: two little monkeys at play at the home ground, beside the way up to the hillside, piling stones into a
     // tower between them (the @ square), taking turns, as high as it will go, till it falls and they start again (in the
     // book, chapter 1, the troop plays under the pines and by the stream on a hot day: 跑沙窝，砌宝塔, they run about in the
@@ -2027,6 +2037,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '蜜蜂': 'Hiding in the tall flowers of the bees’ valley.',   // (in the long grass on the mountain path until 21 October 2026)
     '野猪': 'Blocking the narrow way at the top of the mountain path.',
     '鹿': 'In a sunny glade deep in the pine wood, behind a cracked rock.',
+    '猫头鹰': 'Up on a dead pine in the dark pines, just inside the way in from the south slope.',
     '狼': 'In the long grass in the pine wood.',
     '熊': 'Rearing up out of the long grass between the big rocks in the pasture, as you led the cow home.',
     '狐狸': 'Hiding in the tall grass on the hillside.',
@@ -2158,7 +2169,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '野猪': {zh:'山 上 有 野猪 。', en:'There is a wild boar on the mountain.'},
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     '鹿': {zh:'鹿 在 吃 草 。', en:'The deer is eating grass.'},
-    '蘑菇': {zh:'这里 有 蘑菇 。', en:'There are mushrooms here.'},   // (a draft, 28 October 2026)
+    '猫头鹰': {zh:'猫头鹰 在 树 上 。', en:'The owl is in the tree.'},
     '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'},
     '熊': {zh:'山 上 有 熊 。', en:'There are bears on the mountain.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now; 蜜蜂, 花上有蜜蜂。,
@@ -2227,6 +2238,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
     {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
+    // chapter 1: an owl in the dark pines, up on an old dead pine just west of the way in (perch: how high it sits, in
+    // pixels), its eyes glinting in the gloom (glints: where they are in its map sprite); 28 October 2026, after playtesting,
+    // for something to practise on the long way south
+    {id:'owl', word:'猫头鹰', at:[11, 2, 'darkPines'], home:'树', chapter:1, perch:9, glints:[[4, 5, 2], [10, 5, 2]],
+      meetNote:'Two big round eyes blink at you from the dead pine: an owl! Answer its questions to make friends.'},
     // chapter 1: a fox hiding in the hillside's tall grass, only there (hides). It was the prologue's, in the meadow's tall grass, until
     // 23 October 2026, when the sheep took its place, for 羊 (sheep), then 山 + 羊 = 山羊 (goat).
     {id:'fox', word:'狐狸', hides:'hillside', chapter:1, meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'},
@@ -2331,6 +2347,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveApple: {zh:'苹果 ！ 太 好 了 ！', en:'An apple! Wonderful!'},
     thanks: {zh:'谢谢 你 ！', en:'Thank you!'},
     play: {zh:'我们 玩 吧 ！', en:"Let's play!"},
+    lookingMushrooms: {zh:'我 在 找 蘑菇 。', en:'I’m looking for mushrooms.'},   // the little monkey at the top of the hillside
     weFriends: {zh:'我们 是 朋友 ！', en:'We are friends!'},
     animals: {zh:'草 里 有 动物 。 去 找 动物 吧 ！', en:'There are animals in the grass. Go and find them!'},
     findElder: {zh:'你好 ！ 去 找 老 猴子 吧 ！', en:'Hello! Go and find the old monkey!'},
@@ -2854,6 +2871,20 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{trainee2:1}, do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you a {桃子}.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
         win:[{say:'great'}, {set:{trainee2:2}}, {bag:'桃子', note:'The monkey gives you a {桃子} for your bag.'}, {reply:'谢谢', about:'The monkey gives you a {桃子}.', pic:'桃子'}]}}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey, just for practice?', word:'猴子', practice:true, notYet:'Learn a few more words first, then come back to play.'}}]}
+    ],
+    // the little monkey looking for mushrooms at the top of the hillside: hello, and it shows you the mushrooms, teaching 蘑菇
+    // if you haven't looked at them yet; then a word game, with 蘑菇 among its questions (asks), and its present the first time
+    // you win; after that, just for practice
+    mushroomer: [
+      {if:{mushroomGame:0}, do:[{set:{mushroomGame:1}}, {say:'hi'}, {reply:'你好'},
+        {if:{new:'蘑菇'}, say:'lookingMushrooms', teach:'蘑菇'}, {if:{knows:'蘑菇'}, say:'lookingMushrooms'},
+        {newWord:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},
+        {message:'This little monkey loves finding {蘑菇|mushrooms} under the pines, just to look at. They’re not for eating!'}, {say:'play'},
+        {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you 3 🐚.', word:'猴子', asks:'蘑菇', notYet:'Learn a few more words first, then come back to play.',
+          win:[{say:'great'}, {set:{mushroomGame:2}}, {shells:3, note:'The monkey gives you 3 🐚.'}, {reply:'谢谢', about:'The monkey gives you 3 🐚.'}]}}]},
+      {if:{mushroomGame:1}, do:[{say:'play'}, {wordGame:{ask:'Play a word game with the monkey? If you win, it gives you 3 🐚.', word:'猴子', asks:'蘑菇', notYet:'Learn a few more words first, then come back to play.',
+        win:[{say:'great'}, {set:{mushroomGame:2}}, {shells:3, note:'The monkey gives you 3 🐚.'}, {reply:'谢谢', about:'The monkey gives you 3 🐚.'}]}}]},
+      {do:[{say:'lookingMushrooms'}, {say:'play'}, {wordGame:{ask:'Play a word game with the monkey, just for practice?', word:'猴子', asks:'蘑菇', practice:true, notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     // the little monkeys building a tower of stones at the home ground: hello, the first time; then they count its stones with
     // you (countGames, above), once you know enough numbers (四, at school); till then, they count as they put them on

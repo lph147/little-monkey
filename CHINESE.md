@@ -25,6 +25,7 @@ shown where the word list has them.
 | 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 牛 (cow) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 饿猴子 (Hungry monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
+| 我在找蘑菇。 | wǒ zài zhǎo mógu. | I’m looking for mushrooms. | 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
 | 你好！去找老猴子吧！ | nǐ hǎo! qù zhǎo lǎo hóuzi ba! | Hello! Go and find the old monkey! | 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey), 大猴子 (Big monkey) |  |
@@ -259,7 +260,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 奶酪是黄色的。 | nǎilào shì huángsè de. | Cheese is yellow. | 奶酪 |  |
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
-| 这里有蘑菇。 | zhèlǐ yǒu mógu. | There are mushrooms here. | 蘑菇 |  |
+| 猫头鹰在树上。 | māotóuyīng zài shù shàng. | The owl is in the tree. | 猫头鹰 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 | 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
 
@@ -340,6 +341,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
 | 老板 | lǎobǎn | Shop owner |  |
 | 牌子 | páizi | Sign |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
@@ -406,6 +408,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 熊 | xióng | bear |  |
 | 狐狸 | húli | fox |  |
 | 蝴蝶 | húdié | butterfly |  |
+| 猫头鹰 | māotóuyīng | owl |  |
 | 黄蜂 | huángfēng | wasp |  |
 | 牛 | niú | cow |  |
 | 跳 | tiào | to jump |  |
@@ -491,6 +494,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = 没有 (don’t have) |  |
 | 牛奶 | niúnǎi | 牛 niú (cow) + 奶 nǎi (milk) = 牛奶 (milk) |  |
 | 酸奶 | suānnǎi | 酸 suān (sour) + 奶 nǎi (milk) = 酸奶 (yoghurt) |  |
+| 猫头鹰 | māotóuyīng | 猫 māo (cat) + 头 tóu (head) + 鹰 yīng (eagle) = 猫头鹰 (owl) |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = 你好 (hello) |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = 我不要 (no thanks) |  |
 | 苹果 | píngguǒ | 果 guǒ (fruit), as in 水果: an apple is a fruit |  |
