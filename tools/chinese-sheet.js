@@ -176,6 +176,13 @@ const DRAFTS = [
     ['美术', 'měi shù', 'Art', 'The colour lessons’ subject (the class paints, and chooses paints): is 美术 right, or would another name suit lessons about colours better?'],
     ['练习', 'liàn xí', 'Practice', 'The timetable’s tab for a practice lesson, which asks about the words you know']]
     .map(([zh, py, en, where]) => ({zh, py, en, where:'New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: ' + where})),
+  ...[['体育', 'tǐ yù', 'PE', 'PE’s subject on the timetable: is 体育 what a Chinese primary school would call it?'],
+    ['操场', 'cāo chǎng', 'Sports ground', 'The yard where PE happens: a sandy running track, a war drum, banners, practice staffs, stone padlocks and plum-blossom poles. Is 操场 right for an ancient one, or would 练武场 (liànwǔchǎng, martial arts practice ground) suit better?']]
+    .map(([zh, py, en, where]) => ({zh, py, en, where:'New on 28 October 2026 (in the game), PE: ' + where})),
+  ...[['一 ， 二 ， 三 ， 跑 ！', 'One, two, three, run!', 'The teacher, starting a race, teaching 跑 (to run). Is this what children say at the start of a race? (预备，跑！ is the other common one, but it has a new word.)'],
+    ['很 好 ！', 'Very good!', 'The teacher at the finish of the race, however you did, and after the jog'],
+    ['我们 去 跑步 吧 ！', 'Let’s go running!', 'The teacher, starting PE’s second lesson, teaching 跑步 (to go running, to jog): the class jogs once round the track']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 28 October 2026 (in the game), PE: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 

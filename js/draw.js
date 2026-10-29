@@ -331,6 +331,13 @@ function drawSwarm(X, Y, now, k, n = 9){   // (the square's top left corner on s
 }
 // Full of energy, from honey (isFast, js/input.js): golden sparks fly off behind you as you walk, and one twinkles over
 // your head, most of the time.
+// Running (holding B, or racing): puffs of dust kicked up behind, and speed lines.
+function drawRunDust(X, Y, now, dir){
+  const [dx, dy] = DV[dir], bx = X + 8 - dx * 9, by = Y + 13 - dy * 4;
+  for (let i = 0; i < 3; i++){ const k = (now / 260 + i / 3) % 1; b.globalAlpha = .75 * (1 - k); oval(b, Math.round(bx - dx * k * 7 + (i - 1) * 2 * dy), Math.round(by - k * 3), 2 + Math.round(k * 2), 1 + Math.round(k), '#E6D8BC'); }
+  b.globalAlpha = 1;
+  if (dx) for (let i = 0; i < 3; i++) R(b, X + 8 - dx * (11 + i % 2 * 2), Y + 5 + i * 3, 3, 1, 'rgba(255,255,255,.75)');
+}
 function drawEnergy(X, Y, now, moving, dir){
   const [dx, dy] = DV[dir];
   if (moving) for (let i = 0; i < 3; i++){
@@ -615,7 +622,7 @@ function drawWorld(now){
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
       if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
-      else drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
+      else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
       for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
       if (isFast(now)) drawEnergy(PX, PY, now, moving, pl.dir);
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
@@ -625,6 +632,7 @@ function drawWorld(now){
     }
     const n = e.n, X = Math.round(e.c.x) - cx, Y = Math.round(e.c.y) - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    if (n.mv && n.mv.run && now - n.mv.t0 < n.mv.dur) drawRunDust(X, Y, now, n.dir);   // (racing you)
     if (n.flies){   // one that flies, such as the queen bee
       drawFlying(n, X, Y, now, n.id.charCodeAt(0));
     } else if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
@@ -648,7 +656,7 @@ function drawWorld(now){
     }
     if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
     // a ! while they're stopping you (the stopsYou step), or a ! or ? from the area's bubbles
-    const bub = now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you)
+    const bub = inClass.has(n.id) ? null : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you; none in a lesson, such as PE's)
     if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
   drawDragonflies(cx, cy, now);

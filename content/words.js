@@ -127,6 +127,8 @@ const WORD_BANK = {
   '西瓜': {py:'xīguā', en:'watermelon', pic:'🍉', area:1, category:'food'},
   '葡萄': {py:'pútáo', en:'grapes', pic:'🍇', area:1, category:'food'},
   '香蕉': {py:'xiāngjiāo', en:'banana', pic:'🍌', area:1, category:'food'},   // (wild in the melon field, east off the south slope: you take its seeds for the garden)
+  '跑': {py:'pǎo', en:'to run', pic:'🏃', area:1, category:'actions', alike:['猴子', '跳']},   // (PE at school: the old monkey starts a race on the sports ground with it, and from then on you can run; the pictures of all three are a monkey)
+  '跑步': {py:'pǎobù', en:'to go running, to jog', pic:'👟', area:1, category:'actions', alike:['跑', '猴子', '跳']},   // (PE's second lesson: the class goes jogging round the sports ground)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
@@ -258,6 +260,7 @@ const MADE = {
   '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']]},
   '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']]},
   '牛奶': {parts:[['牛', 'niú', 'cow'], ['奶', 'nǎi', 'milk']]},
+  '跑步': {parts:[['跑', 'pǎo', 'run'], ['步', 'bù', 'step']]},   // (running, step after step: for exercise)
   '酸奶': {parts:[['酸', 'suān', 'sour'], ['奶', 'nǎi', 'milk']]},
   '猫头鹰': {parts:[['猫', 'māo', 'cat'], ['头', 'tóu', 'head'], ['鹰', 'yīng', 'eagle']]},   // (a bird of prey with a face like a cat's)
   // phrases

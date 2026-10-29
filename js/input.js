@@ -22,8 +22,16 @@ const REST_MS = 2000;
 const FAST_STEP = .6;
 let fastUntil = 0, fastFood = null;
 const isFast = (now = performance.now()) => now < fastUntil;
-const walkMs = () => isFast() ? Math.round(STEP * FAST_STEP) : STEP;   // how long a step takes now
 function energise(w, seconds){ fastUntil = performance.now() + seconds * 1000; fastFood = w; }
+// Running: holding B as you walk, once you can (the area's running: its if, such as once PE has taught you 跑; decided 28
+// October 2026), each step takes RUN_STEP of the time, a third faster; with energy from food too, both, about twice as fast
+// as walking. B is still back or dismiss: a tap of it closes a message, as ever. bHeld: B held down, on the screen, the
+// keyboard (X) or a controller.
+const RUN_STEP = .75;
+let bHeld = false;
+const canRun = () => !!AREA.running && matches(AREA.running);
+const running = () => bHeld && canRun();
+const walkMs = () => Math.round(STEP * (isFast() ? FAST_STEP : 1) * (running() ? RUN_STEP : 1));   // how long a step takes now
 let finishedAt = null;   // {place, x, y, t}: the square you were facing when something ended
 function finished(){ const [x, y] = facing(); finishedAt = {place:PLACE, x, y, t:performance.now()}; }
 const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && finishedAt.x === x && finishedAt.y === y
@@ -38,6 +46,7 @@ function tryStep(d, now){
   if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); turnedTo(); return; }   // first turn to face the new way
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
   const [dx,dy] = DV[d], nx = pl.x + dx, ny = pl.y + dy, way = exitAt(nx, ny);
+  if (race && dy){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); } return; }   // in a race (js/pe.js), along your lane
   if (way && !way.by && !isOpen(way)){ if (now - lastBump > 300){ lastBump = now; SFX.bump(); toast(fill(way.closed || 'The way is shut.')); } return; }   // a way the story hasn't opened yet
   if (tileAt(nx, ny).ledge){   // a ledge: you hop down it, landing just below (below the whole of a bank two squares high), but can never climb it
     let ly = ny + 1; while (tileAt(nx, ly).ledge) ly++;
@@ -47,7 +56,7 @@ function tryStep(d, now){
     return;
   }
   if (puffing(nx, ny, now)){ if (now - lastBump > 600){ lastBump = now; SFX.hiss(); toast(fill(tileAt(nx, ny).vent.hot)); } return; }   // steam puffing out of a vent: too hot!
-  if (walkable(nx, ny) || (way && !way.by && isOpen(way) && !npcAt(nx, ny))){ followersStep(now); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now, dur:walkMs()}; pl.parity ^= 1; }   // (an open way you can always walk into, such as a building's door)
+  if (walkable(nx, ny) || (way && !way.by && isOpen(way) && !npcAt(nx, ny))){ followersStep(now); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now, dur:walkMs(), run:running()}; pl.parity ^= 1; }   // (an open way you can always walk into, such as a building's door)
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
 }
 // Standing on a steam vent as it puffs (puffing, js/world.js): it pushes you back off it, the way you came if it can (or
@@ -114,12 +123,14 @@ async function pressA(at){   // at: when it was pressed, if known (tooSoon, js/c
   if (talkNext){ if (!tooSoon(at)) talkNext(); return; }   // the speech box: on to what comes next
   if (!canAct()) return;
   if (newMessage()){ if (!tooSoon(at, msgAt)){ closeMessage(); finished(); } return; }   // (not if pressed just as it came up; and then what you're facing rests, as after anything A does)
+  if (race) return;   // (in a race, js/pe.js: just run)
   const [fx, fy] = facing();
   if (justFinished(fx, fy)) return;
   busy = true;
   try { await interact(fx, fy); await runEvents(); } finally { busy = false; finished(); updateHUD(); }
 }
 function pressB(at){
+  tipPressed('#btnB');
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null && !tooSoon(at)) b.click(); return; }
   if (talkNext && !talkMove){ if (!tooSoon(at)) talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
@@ -189,8 +200,9 @@ document.addEventListener('keydown', e => {
   if (d){ e.preventDefault(); if (!e.repeat) queued = d; held = d; return; }
   if (isA){ e.preventDefault(); pressA(e.timeStamp); }
 });
-document.addEventListener('keyup', e => { const d = KEYS[e.key]; if (d && held === d) held = null; });
-window.addEventListener('blur', () => { held = null; });
+document.addEventListener('keydown', e => { if (e.key === 'x' || e.key === 'X') bHeld = true; });   // (running: B held)
+document.addEventListener('keyup', e => { const d = KEYS[e.key]; if (d && held === d) held = null; if (e.key === 'x' || e.key === 'X') bHeld = false; });
+window.addEventListener('blur', () => { held = null; bHeld = false; });
 const dpad = $('.dpad');
 let dpadPointer = null, padDir = null;
 function dirFromPoint(e){
@@ -215,8 +227,8 @@ dpad.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('selectstart', e => { if (dpadPointer !== null) e.preventDefault(); });
 ['btnA','btnB'].forEach(id => {
   const el = $('#' + id), fn = id === 'btnA' ? pressA : pressB;
-  el.addEventListener('pointerdown', e => { e.preventDefault(); getAC(); el.classList.add('held'); fn(e.timeStamp); });
-  ['pointerup','pointercancel','pointerleave'].forEach(t => el.addEventListener(t, () => el.classList.remove('held')));
+  el.addEventListener('pointerdown', e => { e.preventDefault(); getAC(); el.classList.add('held'); if (id === 'btnB') bHeld = true; fn(e.timeStamp); });
+  ['pointerup','pointercancel','pointerleave'].forEach(t => el.addEventListener(t, () => { el.classList.remove('held'); if (id === 'btnB') bHeld = false; }));
   el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); });
   el.addEventListener('click', e => { if (e.detail === 0) fn(e.timeStamp); });
   el.addEventListener('contextmenu', e => e.preventDefault());

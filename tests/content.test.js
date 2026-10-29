@@ -444,7 +444,7 @@ test('every line is said somewhere', () => {
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
     ...(AREA.shop ? [AREA.shop.ask, AREA.shop.welcome] : []),
-    ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask)]),
+    ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask), ...[l.race, l.jog].filter(Boolean).flatMap(x => [x.start, x.end])]),
     ...Object.values(AREA.countGames || {}).map(g => g.thing.ask),
     ...(AREA.hideSeek ? [AREA.hideSeek.count, AREA.hideSeek.coming, AREA.hideSeek.found, ...AREA.hideSeek.spots.map(p => p.say)] : [])
   ]);
@@ -614,14 +614,23 @@ test('each lesson series is one the engine can give, teaching words you can coll
   for (const l of AREA.lessons || []){
     assert.ok(KINDS.includes(l.kind), `the lessons ${l.id} are of kind "${l.kind}"; the kinds are ${KINDS.join(', ')}`);
     assert.ok(AREA.characters.some(c => c.id === l.by), `the lessons ${l.id} need by: the character who teaches them`);
-    assert.ok(l.subject && l.subject.zh && l.subject.py && l.subject.en && l.about && l.about.one && (l.about.first || (l.first || 1) === 1),
-      `the lessons ${l.id} are a subject on the timetable: its name (subject: zh, py, en) and what a lesson is (about: one, and first if its first teaches several)`);
+    const first = l.first || 1, lessons = [l.words.slice(0, first), ...l.words.slice(first).map(w => [w])];
+    assert.ok(l.subject && l.subject.zh && l.subject.py && l.subject.en && l.about && lessons.every((ws, i) => l.about[ws[0]] || (i === 0 && ws.length > 1 ? l.about.first : l.about.one)),
+      `the lessons ${l.id} are a subject on the timetable: its name (subject: zh, py, en) and what each lesson is (about: one, and first if its first teaches several, or a word's own)`);
     assert.ok(get(`!!CHART_ICONS[${JSON.stringify(l.icon)}]`), `the lessons ${l.id} need an icon for the chart on the classroom wall (CHART_ICONS, js/art.js)`);
     for (const w of l.words){
       assert.ok(collectible.includes(w), `the lessons ${l.id} teach ${w}, which isn't a word you can collect in ${where}`);
       if (l.teach) assert.ok(AREA.lines[l.teach[w]] && AREA.lines[l.teach[w]].zh.split(' ').includes(w), `the lessons ${l.id}: the line teaching ${w} should be a line with ${w} in it`);
     }
     for (const t of l.things || []) assert.ok(collectible.includes(t.word) && BANK[t.word].pic && AREA.lines[t.ask] && AREA.lines[t.ask].zh.split(' ').includes(t.word), `the lessons ${l.id}: ${t.word} should be a word with a picture, asked about in a line with it`);
+    if (l.kind === 'pe'){   // (PE: out on its place, a race or a jog for each word, its lines teaching it)
+      assert.ok(AREA.places[l.at], `the lessons ${l.id} are out on a place (at)`);
+      for (const id of [...Object.keys(l.class || {}), ...Object.keys((l.race || {}).racers || {})]) assert.ok(AREA.characters.some(c => c.id === id), `the lessons ${l.id}: ${id} isn't a character`);
+      for (const w of l.words){
+        const x = [l.race, l.jog].find(r => r && r.word === w);
+        assert.ok(x && AREA.lines[x.start] && AREA.lines[x.start].zh.split(' ').includes(w) && AREA.lines[x.end], `the lessons ${l.id}: ${w} needs a race or a jog, its start a line with ${w} in it, and its end a line`);
+      }
+    }
     if (l.kind === 'count') assert.deepEqual(l.words, get('COUNTING').slice(get('COUNTING').indexOf(l.words[0]), get('COUNTING').indexOf(l.words[0]) + l.words.length), 'numbers are learned in order');
     if (l.kind === 'paint'){
       const PARTS = get('SCHOOL_PARTS');

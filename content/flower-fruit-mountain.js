@@ -147,6 +147,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     birdsShooed: {count:'shooed'},   // the birds you've shooed off the wild melons, in the melon field
     numbersKnown: {count:'known', words:['四', '五', '六', '七', '八', '九', '十']},   // the numbers you've learned at school
     coloursKnown: {count:'known', words:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},   // and the colours
+    firstLessons: {count:'known', words:['四', '五', '六', '红色', '黄色', '白色']},   // the words of the first two lessons, Maths and Art (all six: PE opens)
     practised: {count:'practised'},   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
     dairyWait: {count:'since', key:'dairyTurn', max:8},   // and since the thirsty monkey started making something at the little dairy (8 to make it)
     melonWait: {count:'since', key:'melonTurn', max:8}, grapeWait: {count:'since', key:'grapeTurn', max:8}, bananaWait: {count:'since', key:'bananaTurn', max:8}   // and since each fruit was planted in the garden (8 to ripen)
@@ -166,6 +167,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // measuring the game's pacing: the school's sixteen words could all come in one sitting, each practised only in its own
   // lesson). Till then, the timetable and your tasks say how far you are; doing a lesson again or practising never waits.
   lessonGap: {questions:8},
+  // When you can run, holding B as you walk (decided 28 October 2026): once PE has taught you 跑.
+  running: {knows:'跑'},
   lessons: [
     // The first lesson of each series teaches its first three words, one after another (first: decided 24 October 2026,
     // school lessons are the exception to one new word at a time): two lessons, and you can count six bees and know the
@@ -183,7 +186,25 @@ const FLOWER_FRUIT_MOUNTAIN = {
       subject:{zh:'美术', py:'měishù', en:'Art'}, icon:'paint', about:{first:'Three new colours, then choosing paints', one:'A new colour, then choosing paints'},
       note:'The teacher opens a pot of paint.',
       teach:{'红色':'thisRed', '黄色':'thisYellow', '白色':'thisWhite', '黑色':'thisBlack', '蓝色':'thisBlue', '绿色':'thisGreen', '棕色':'thisBrown', '橙色':'thisOrange', '粉色':'thisPink'},
-      paint:{'红色':'lanterns'}, scenes:{'红色':'paintLanterns'}}
+      paint:{'红色':'lanterns'}, scenes:{'红色':'paintLanterns'}},
+    // PE (体育, decided 28 October 2026), once the first two lessons are done: out on the sports ground (操场, at), through
+    // a gap in the trees at the home ground's back left (out: what you're told as the class goes out, and back, as it comes
+    // back in; class: where the teacher and the troop stand to watch, each [x, y, facing]). Its first lesson is a race
+    // (race): you and two classmates (racers, each at the start of its lane; you, yours and the way you face) to the finish
+    // (to: its column). The teacher starts it (start, teaching 跑: you know 一 二 三), and they run a step every ms, faster
+    // than you walk and slower than you run (setting off when you do, so you can't lose for being slow to start); at the
+    // finish he says end, however you did, and the first time you win, there's a prize of shells (go, won and lost: what
+    // you're told). Its second is a jog round the track (jog): he says start (teaching 跑步) and leads the class round it
+    // (loop: its corners), a step every ms, you behind him and your classmates behind you. Then questions on the new word,
+    // as in every lesson.
+    {id:'pe', kind:'pe', by:'elder', if:{firstLessons:6}, words:['跑', '跑步'],
+      subject:{zh:'体育', py:'tǐyù', en:'PE'}, icon:'runner', about:{'跑':'A race, out on the sports ground', '跑步':'Going running round the sports ground'},
+      note:{'跑':'The teacher starts a race on the sports ground.', '跑步':'The class goes running round the sports ground.'},
+      at:'sportsGround', out:'The class goes out to the sports ground.', back:'The class goes back in.',
+      class:{elder:[1, 4, 'right'], troop1:[5, 2, 'down'], troop3:[9, 2, 'down'], hungry:[12, 2, 'down']},
+      race:{word:'跑', you:[2, 4, 'right'], racers:{playful:[2, 3], troop2:[2, 5]}, to:12, ms:235, start:'readyRun', end:'veryGood',
+        go:'Race to the red ribbon: hold B as you walk, to run!', won:'You won the race!', lost:'Your classmates won this time. Hold B as you walk, to run!', prize:3},
+      jog:{word:'跑步', start:'letsGoRunning', end:'veryGood', loop:[[2, 3], [12, 3], [12, 5], [2, 5]], ms:300}}
   ],
 
   // Counting games with characters (the countGame step), as in a number lesson: what you count (thing: its word, where
@@ -987,19 +1008,22 @@ const FLOWER_FRUIT_MOUNTAIN = {
         '>': {look:'dairy', landmark:true, onLook:[{do:[{message:'The thirsty monkey’s little dairy: a pail of the {牛}’s milk, and a pot with a cloth tied over it. He’s making something!'}]}]},
         '/': {look:'dairyYog', landmark:true, onLook:[{if:{dairy:4}, do:[{message:'Jars of {酸奶} on the shelf, and a pot with a cloth tied over it: something else is ready!'}]},
           {do:[{message:'Jars of {酸奶} on the shelf, and a pot with a cloth tied over it: he’s making something else!'}]}]},
-        '}': {look:'dairyCheese', landmark:true, onLook:[{do:[{message:'Jars of {酸奶} and a round {奶酪} on the shelf, all made from the cow’s milk.'}]}]}
+        '}': {look:'dairyCheese', landmark:true, onLook:[{do:[{message:'Jars of {酸奶} and a round {奶酪} on the shelf, all made from the cow’s milk.'}]}]},
+        // a gap in the trees at the back left, under the cliff: the way to the sports ground, once PE is on the timetable
+        'Ω': {look:'tree', becomes:[{if:{firstLessons:6}, to:'g'}]}
       },
       exits: [
         {at:[0, 9], to:'falls', arrive:[18, 2], facing:'left'}, {at:[0, 10], to:'falls', arrive:[18, 2], facing:'left'},   // back to the waterfall
         {at:[25, 0], to:'hillside', arrive:[12, 43], facing:'up', if:{build:{atLeast:1}}, closed:'Thick bushes block the way.'},   // up the hillside to the pine wood
         {at:[11, 4], to:'school', arrive:[7, 8], facing:'up', when:{school:{atLeast:1}}},   // the school's door, once it's built (when: not a way in till then)
         {at:[31, 9], to:'riverside', arrive:[1, 7], facing:'right', if:{bees:{atLeast:1}}, closed:'Thick bushes block the way.'},   // east along the stream, to the bees
-        {at:[16, 21], to:'southSlope', arrive:[12, 1], facing:'down', if:{any:[{cow:{atLeast:1}}, {garden:{atLeast:1}}]}, closed:'Thick bushes block the way.'}   // south, over the bridge, down the south slope to the pasture (the cow) and the melon field (the garden)
+        {at:[16, 21], to:'southSlope', arrive:[12, 1], facing:'down', if:{any:[{cow:{atLeast:1}}, {garden:{atLeast:1}}]}, closed:'Thick bushes block the way.'},   // south, over the bridge, down the south slope to the pasture (the cow) and the melon field (the garden)
+        {at:[0, 2], to:'sportsGround', arrive:[13, 2], facing:'left', when:{firstLessons:6}},   // through the gap in the trees at the back left, to the sports ground (PE)
       ],
       map: [
         "YMMMMMMMMMMMMMMMMMMMMMMMYbYYYYYY",   // the cliff behind the school, rising out of sight
         "YMMMMMMMMMMMMMMMMMMMMMMMg.gYYYYY",
-        "Ygggggggsssssssgggggggggg.FEJFFY",
+        "Ωgggggggsssssssgggggggggg.FEJFFY",
         "YgTggg1gsssssssgggggTgggg.3hhhgY",
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
@@ -1656,6 +1680,38 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "#_____________#",
         "#######m#######"
       ]
+    },
+    // the sports ground (操场, decided 28 October 2026), for PE: through a gap in the trees at the home ground's back left,
+    // under the cliff, a yard exactly one screen big, so you see the whole race. A sandy track with three lanes, numbered
+    // 一 二 三 at the start, and a red ribbon at the finish (raked sand: the book's troop runs about in the sand hollows); a
+    // big war drum the teacher beats to start a race; red army banners (in chapter 3 of the book, Sun Wukong drills the
+    // troop like an army); a rack of practice staffs and a spear; stone padlocks to lift; and plum-blossom poles for kung
+    // fu footwork, a little monkey balancing on the tallest. A at each says what it is.
+    sportsGround: {
+      name: {zh:'操场', py:'cāochǎng', en:'Sports ground'},
+      exits: [
+        {at:[14, 2], to:'homeGround', arrive:[1, 2], facing:'right'}   // back through the gap in the trees
+      ],
+      legend: {
+        '_': {look:'sandTrack', walk:true},
+        'D': {look:'bigDrum', landmark:true, onLook:[{do:[{message:'A big war drum. The {老师} beats it to start a race.'}]}]},
+        'f': {look:'banner', onLook:[{do:[{message:'A red banner, like an army’s, flying over the sports ground.'}]}]},
+        'p': {look:'plumPoles', landmark:true, onLook:[{do:[{message:'Plum-blossom poles, for kung fu: you step from one to another. A little monkey is balancing on the tallest.'}]}]},
+        'S': {look:'stoneLock', onLook:[{do:[{message:'A stone padlock, lifted to make you strong.'}]}]},
+        'W': {look:'weaponRack', landmark:true, onLook:[{do:[{message:'A rack of wooden staffs for practice, one banded with gold, and a spear with a red tassel.'}]}]}
+      },
+      map: [
+        "MMMMMMMMMMMMMMM",
+        "MMMMMMMMMMMMMMM",
+        "Yggfgggfgggfgg8",
+        "YD___________gY",
+        "Yg___________gY",
+        "Yg___________gY",
+        "YgggggggggggppY",
+        "YgSSgWWgggggppY",
+        "YgggggggggggggY",
+        "YYYYYYYYYYYYYYY"
+      ]
     }
   },
 
@@ -2098,6 +2154,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '粉色': 'A colour lesson at school: the teacher opened a pot of it.',
     '有': 'The old monkey’s news at school: the troop has a home, and a school too.',
     '没有': 'The hungry monkey, at the feast’s big table: there’s no honey.',
+    '跑': 'PE at school: the teacher started a race with it, on the sports ground.',
+    '跑步': 'PE at school: the class went running round the sports ground.',
   },
 
   // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
@@ -2457,6 +2515,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hideWater: {zh:'我 在 水 里 ！', en:'I’m in the {水}!'},
     hideFlowers: {zh:'我 在 花 里 ！', en:'I’m in the {花|flowers}!'},   // (花丛里, in the flowerbed, would be more natural; 花丛 isn't a word in the game)
     hideFound: {zh:'找到 你 了 ！', en:'Found you!'},
+    readyRun: {zh:'一 ， 二 ， 三 ， 跑 ！', en:'One, two, three, run!'},   // the teacher, starting a race (PE), with a beat of the big drum
+    veryGood: {zh:'很 好 ！', en:'Very good!'},   // and at the finish, however you did (and after the jog)
+    letsGoRunning: {zh:'我们 去 跑步 吧 ！', en:'Let’s go running!'},   // his second PE lesson: the class jogs round the track
     count4: {zh:'一 ， 二 ， 三 ， 四 ！', en:'One, two, three, four!'},   // the teacher, counting peaches onto his table (number lessons)
     count5: {zh:'一 ， 二 ， 三 ， 四 ， 五 ！', en:'One, two, three, four, five!'},
     count6: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ！', en:'One, two, three, four, five, six!'},

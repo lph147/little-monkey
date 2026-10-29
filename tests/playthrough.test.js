@@ -27,6 +27,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   const tick = () => new Promise(r => setImmediate(r));
   async function settle(){   // let the game finish what it's doing, including anything it waits for (timers)
     for (let i = 0; i < 1000; i++){
+      if (run('!!race && !busy')) run('bHeld = true; pl.x = race.to; bHeld = false');   // a race, in PE: you run to the finish (holding B), and win
       await tick();
       if (game.flush()) continue;
       await tick();
@@ -531,6 +532,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   for (let i = 0; i < 50 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9); i++) await pressAt(7, 3, 'up', `lesson ${i + 3}`);   // (a new word, or practice while the next waits)
   for (const n of ['五', '六', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);
   for (const c of ['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']) assert.ok(knows(c), `the colour lessons teach ${c}`);
+  // PE (decided 28 October 2026), once the first two lessons are done: a race on the sports ground teaches 跑 (you run, and
+  // win), and a jog round it 跑步; and you're back in the classroom after each
+  assert.ok(knows('跑') && knows('跑步'), 'PE teaches 跑 and 跑步');
+  assert.equal(area().raceWon, 1, 'you won the race, running');
+  assert.equal(run('PLACE'), 'school');
   assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns'], 'the red lesson ends with the class painting the lanterns (no other part of the school, since 24 October 2026)');
   assert.deepEqual(get('paintedParts()'), {lanterns: '红色'}, 'and they’re red');
   await pressAt(7, 3, 'up', 'a lesson once you know the numbers to ten and the colours: practice');

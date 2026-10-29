@@ -13,7 +13,7 @@
 const knows = (lv, words) => Object.fromEntries(words.map(w => [w, {lv, due: 0, ok: 0}]));
 const MIDDLE_WORDS = ['石头', '你好', '山', '花', '草', '树', '水果', '桃子', '苹果', '动物', '兔子', '水', '吃', '喝', '要', '我', '猴子', '老板', '河', '鱼', '头带'];
 const QUIET = {sound: false, music: false};
-const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, english: 1, menu: 1, syllables: 1, eat: 1, hop: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
+const ALL_TIPS = {walk: 1, talk: 1, look: 1, tap: 1, grey: 1, english: 1, menu: 1, syllables: 1, eat: 1, hop: 1, run: 1};   // tips already had (js/tips.js; and the goat's about Chinese, the area's tips)
 const SAVES = {
   // just born, with the old monkey waiting: no tips had yet
   born: {version: 19, started: true, tips: {}, ...QUIET, w: knows(1, ['石头']), pos: {x: 9, y: 2, dir: 'up'}},
@@ -120,6 +120,10 @@ SAVES.coloursLater = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...kno
 // (lessonGap): you've answered 3 (with the feast's news heard, so he goes straight to the lesson; the save's question count is 0 once it's brought
 // up to date, so the lesson ended at -3)
 SAVES.lessonWait = {...SAVES.coloursLater, w: {...SAVES.coloursLater.w, ...knows(1, ['有', '没有']), '黑色': {lv: 2, due: 0, ok: 2}}, areas: {1: {...SAVES.coloursLater.areas[1], feast: 3, lastLesson: 'colours', lessonTurn: -3, lessonWait: 1}}};
+// PE (体育, 28 October 2026): the first two lessons done (numbers to ten, and red, yellow and white), so PE is on the
+// timetable, ready, and the gap in the trees to the sports ground is open; then knowing 跑, so you can run
+SAVES.peNew = {...SAVES.coloursThree, areas: {1: {...SAVES.coloursThree.areas[1], feast: 3, lastLesson: 'colours'}}};
+SAVES.peRun = {...SAVES.peNew, w: {...SAVES.peNew.w, '跑': {lv: 2, due: 0, ok: 2}}, areas: {1: {...SAVES.peNew.areas[1], lastLesson: 'pe', lessonTurn: -8}}, pos: {place: 'homeGround', x: 2, y: 2, dir: 'left'}};
 SAVES.schoolHalf = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(2, ['黑色', '蓝色', '绿色'])}, pos: {place: 'homeGround', x: 11, y: 6, dir: 'up'}};
 SAVES.schoolPainted = {...SAVES.schoolHalf, w: {...SAVES.schoolHalf.w, ...knows(2, ['棕色', '橙色', '粉色'])}};
 // flowers for the school (version 30: they're chapter 1's): the big monkey asks for them once you know red, yellow and white,
@@ -1030,6 +1034,24 @@ const SCREENS = [
     play(); await wait(100); here().lessonTurn = S.turn || 0; lessonEnd(AREA.lessons[0], 3, ['八'], false, {right: 5, asked: 5, shells: 2}); await wait(500); }},
   {id: 'timetable-wall', title: 'The timetable on the wall', save: 'lessonWait', why: 'Where the right-hand window was: a chart with no writing, a row a subject, a gold star for each lesson done, a green square round one that’s ready. A at it opens the timetable.', run: async () => {
     play(); await wait(100); S.pos = {place: 'school', x: 12, y: 2, dir: 'up'}; placePlayer(); await wait(500); }},
+  {id: 'pe-timetable', title: 'PE on the timetable', save: 'peNew', why: 'Once the first two lessons are done (四 五 六, and 红色 黄色 白色), a third subject: 体育 tǐyù PE, two lessons, a race (跑) and a jog (跑步), out on the sports ground.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(500); }},
+  {id: 'pe-out', title: 'The class goes out', save: 'peNew', why: 'Start PE’s lesson 1: the class goes out to the sports ground, and the teacher, by the big drum, starts a race: 一，二，三，跑！ (One, two, three, run!), teaching 跑. You in the middle lane, your classmates either side, the troop watching under the banners.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(400); click('[data-a=ok]'); await wait(300); next(); await wait(1500); }},
+  {id: 'pe-run-card', title: '跑 pǎo · to run', save: 'peNew', why: '跑’s card, after the teacher’s line: a monkey running hard, speed lines and dust behind it (unlike 跳, leaping up).', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(400); click('[data-a=ok]'); await wait(300); next(); await wait(1500); next(); await wait(800); }},
+  {id: 'pe-race', title: 'The race: 很好！', save: 'peNew', why: 'Hold B as you walk, to run: a third faster, dust behind you. Your classmates set off when you do, faster than you walk and slower than you run, to the red ribbon; you run, and win. At the finish the teacher says 很好！ (Very good!), however you did, and the first time you win, 3 🐚.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(400); click('[data-a=ok]'); await wait(300); next(); await wait(1500); next(); await wait(800);
+    await gotIt(); await wait(400); bHeld = true; held = 'right'; await wait(550); }},
+  {id: 'sports-ground', title: '操场 cāochǎng · Sports ground', save: 'peNew', why: 'Through a gap in the trees at the home ground’s back left: one screen, a sandy track of three lanes (一 二 三 at the start, a red ribbon at the finish), the big drum, red banners, a rack of staffs and a spear, stone padlocks, and plum-blossom poles with a little monkey on the tallest.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'sportsGround', x: 7, y: 8, dir: 'up'}; placePlayer(); await wait(500); }},
+  {id: 'home-gap', title: 'The way to the sports ground', save: 'peNew', why: 'Once PE is on the timetable, a gap in the trees at the home ground’s back left, under the cliff, by the school.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'homeGround', x: 3, y: 3, dir: 'left'}; placePlayer(); await wait(500); }},
+  {id: 'run-tip', title: 'Tip: hold B to run', save: 'peRun', why: 'Once PE has taught you 跑, a tip points at B: hold it as you walk, to run (and the label under B says Run).', run: async () => {
+    play(); S.tips = {...S.tips, run: 0}; delete S.tips.run; await wait(1200); }},
+  {id: 'pe-jog', title: 'Going running', save: 'peRun', why: 'PE’s lesson 2: 我们去跑步吧！ (Let’s go running!), teaching 跑步, and the teacher leads the class once round the track, you behind him and your classmates behind you.', run: async () => {
+    play(); await wait(100); S.pos = {place: 'school', x: 7, y: 3, dir: 'up'}; placePlayer(); talk(npc('elder')); await wait(300); next(); await wait(400); click('.tab[data-tab=pe]'); await wait(200);
+    click('[data-a=ok]'); await wait(300); next(); await wait(1500); next(); await wait(800); await gotIt(); await wait(1600); }},
   {id: 'tasks-practise', title: 'Tasks: your next new lesson', save: 'lessonWait', why: 'While the next new lesson waits, your tasks say which, and how many more questions it waits for: in a practice lesson, an animal’s game or a battle, they all count.', run: async () => {
     play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {

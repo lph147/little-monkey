@@ -125,6 +125,9 @@ shown where the word list has them.
 | 我在水里！ | wǒ zài shuǐ lǐ! | I’m in the water! | 猴子 (Monkey) |  |
 | 我在花里！ | wǒ zài huā lǐ! | I’m in the flowers! | 猴子 (Monkey) |  |
 | 找到你了！ | zhǎodào nǐ le! | Found you! | you |  |
+| 一，二，三，跑！ | yī, èr, sān, pǎo! | One, two, three, run! |  |  |
+| 很好！ | hěn hǎo! | Very good! |  |  |
+| 我们去跑步吧！ | wǒmen qù pǎobù ba! | Let’s go running! |  |  |
 | 一，二，三，四！ | yī, èr, sān, sì! | One, two, three, four! |  |  |
 | 一，二，三，四，五！ | yī, èr, sān, sì, wǔ! | One, two, three, four, five! |  |  |
 | 一，二，三，四，五，六！ | yī, èr, sān, sì, wǔ, liù! | One, two, three, four, five, six! |  |  |
@@ -362,8 +365,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 牧场 | mùchǎng | The pasture |  |
 | 松林 | sōnglín | Pine wood |  |
 | 学校 | xuéxiào | School |  |
+| 操场 | cāochǎng | Sports ground |  |
 | 数学 | shùxué | Maths |  |
 | 美术 | měishù | Art |  |
+| 体育 | tǐyù | PE |  |
 
 ### Words to collect
 
@@ -456,6 +461,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 西瓜 | xīguā | watermelon |  |
 | 葡萄 | pútáo | grapes |  |
 | 香蕉 | xiāngjiāo | banana |  |
+| 跑 | pǎo | to run |  |
+| 跑步 | pǎobù | to go running, to jog |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -495,6 +502,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = 同学 (classmate) |  |
 | 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = 没有 (don’t have) |  |
 | 牛奶 | niúnǎi | 牛 niú (cow) + 奶 nǎi (milk) = 牛奶 (milk) |  |
+| 跑步 | pǎobù | 跑 pǎo (run) + 步 bù (step) = 跑步 (to go running) |  |
 | 酸奶 | suānnǎi | 酸 suān (sour) + 奶 nǎi (milk) = 酸奶 (yoghurt) |  |
 | 猫头鹰 | māotóuyīng | 猫 māo (cat) + 头 tóu (head) + 鹰 yīng (eagle) = 猫头鹰 (owl) |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = 你好 (hello) |  |
@@ -752,6 +760,11 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 数学 | shù xué | Maths | New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: The number lessons’ subject, a tab on the timetable |  |
 | 美术 | měi shù | Art | New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: The colour lessons’ subject (the class paints, and chooses paints): is 美术 right, or would another name suit lessons about colours better? |  |
 | 练习 | liàn xí | Practice | New on 28 October 2026 (in the game), the school’s timetable, names shown with pinyin and English, not words to learn: The timetable’s tab for a practice lesson, which asks about the words you know |  |
+| 体育 | tǐ yù | PE | New on 28 October 2026 (in the game), PE: PE’s subject on the timetable: is 体育 what a Chinese primary school would call it? |  |
+| 操场 | cāo chǎng | Sports ground | New on 28 October 2026 (in the game), PE: The yard where PE happens: a sandy running track, a war drum, banners, practice staffs, stone padlocks and plum-blossom poles. Is 操场 right for an ancient one, or would 练武场 (liànwǔchǎng, martial arts practice ground) suit better? |  |
+| 一，二，三，跑！ | yī, èr, sān, pǎo! | One, two, three, run! | New on 28 October 2026 (in the game), PE: The teacher, starting a race, teaching 跑 (to run). Is this what children say at the start of a race? (预备，跑！ is the other common one, but it has a new word.) |  |
+| 很好！ | hěn hǎo! | Very good! | New on 28 October 2026 (in the game), PE: The teacher at the finish of the race, however you did, and after the jog |  |
+| 我们去跑步吧！ | wǒmen qù pǎobù ba! | Let’s go running! | New on 28 October 2026 (in the game), PE: The teacher, starting PE’s second lesson, teaching 跑步 (to go running, to jog): the class jogs once round the track |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

@@ -719,9 +719,10 @@ function showsMore(steps, i){
 async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); refreshMap(); }
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
 // where the content first puts them. Someone following you is wherever you've been instead (FOLLOWERS, below).
+const inClass = new Set();   // characters out of their places for a lesson, such as PE's (js/pe.js): left where it puts them
 function placeCharacters(){
   for (const n of ALL_NPCS){
-    if (S.following.includes(n.id)) continue;
+    if (S.following.includes(n.id) || inClass.has(n.id)) continue;
     if (here().shooed.includes(n.id)){ n.place = 'gone'; continue; }   // (a bird you've shooed off: shooAway)
     const m = (HIDE && n.id === HIDE.by && hiderAt()) || (n.moves || []).find(m => matches(m.if)) || n.home;   // (off hiding, or where you found it: hide and seek, js/hide.js)
     const place = placeOf(m);

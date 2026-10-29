@@ -1123,7 +1123,7 @@ rt.hid{visibility:hidden}
 .ldone{display:flex;align-items:center;gap:12px;margin:4px 0} .ldone .pics{height:56px;min-width:56px} .ldone .pics .pix{width:56px;height:56px}
 .ldone .pics.three .pix{width:40px;height:40px;margin:0 -8px} .ldone .pics.three .pix:nth-child(2){margin-top:-14px}
 .ldone .big{font-family:var(--pixel);font-size:1.2rem;color:var(--ok)} .ldone .w{font-size:1.15rem} .ldone .w .py{font-size:max(.8rem,10.5px);color:var(--muted)}
-@container (max-height:200px){ .tt .label{display:none} }   /* (where the card is too short for it) */
+@container (max-height:200px){ .tt .label,.sheet > .lessonbar + .label{display:none} }   /* (where the card is too short for them: the timetable's title, and a new word's "New word to learn" under a lesson's name) */
 :root:is([data-screen=small],[data-screen=tiny]) .tt .scrolltabs{margin:1px 0 4px}
 :root:is([data-screen=small],[data-screen=tiny]) .tt .tile{padding:2px 1px 2px;border-radius:7px}
 :root:is([data-screen=small],[data-screen=tiny]) .tt .tile .pics{height:24px} :root:is([data-screen=small],[data-screen=tiny]) .tt .tile .pics .pix{width:24px;height:24px}

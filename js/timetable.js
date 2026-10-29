@@ -47,8 +47,9 @@ function lessonsText(which){
 // done, and whether the next is ready.
 const chartRows = () => subjects().map(s => { const n = nextLessonOf(s); return {icon:s.icon, n:lessonsOf(s).length, done:n ? n - 1 : lessonsOf(s).length, ready:!!n && lessonState(s, n).state === 'ready'}; });
 
-// What a lesson is, in words: its first ("Three new numbers, then counting") or one of the rest.
-const lessonAbout = (s, n) => n === 1 && lessonsOf(s)[0].length > 1 ? s.about.first : s.about.one;
+// What a lesson is, in words: its first ("Three new numbers, then counting") or one of the rest, or its word's own (such
+// as PE's race, for 跑).
+const lessonAbout = (s, n) => s.about[lessonsOf(s)[n - 1][0]] || (n === 1 && lessonsOf(s)[0].length > 1 ? s.about.first : s.about.one);
 // Why lesson n isn't open, or what it is if it is (the card's detail under the lessons), short enough for a small phone.
 const wordsPy = ws => ws.map(w => `<span class="hz">${w}</span>${S.pinyin ? ` <span class="py">${WORDS[w].py}</span>` : ''}`).join(' · ');
 function lessonDetail(s, n){

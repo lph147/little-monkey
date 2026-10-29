@@ -64,6 +64,7 @@ const SFX = {
   },
   swish: (when = 0) => tone(900, .18, 'triangle', .025, when, -650),   // something cutting through the air: a stick, a leap
   thwack: (when = 0) => { tone(150, .09, 'square', .05, when, -60); tone(90, .14, 'triangle', .06, when); },   // a hit
+  drum: (when = 0) => { tone(72, .38, 'triangle', .13, when, -22); tone(140, .07, 'square', .035, when, -60); },   // the big war drum, starting a race
   tock: (when = 0) => { tone(620, .045, 'square', .025, when, -220); tone(240, .09, 'triangle', .05, when, -40); },   // a stake hammered into the ground
   clack: (when = 0) => { tone(1500, .03, 'square', .012, when, -600); tone(520, .06, 'triangle', .03, when, -120); },   // a stone put down on another
   clatter: () => [0, .07, .15, .19, .3, .42].forEach(w => SFX.clack(w + Math.random() * .03)),   // stones tumbling down

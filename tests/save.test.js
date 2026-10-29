@@ -183,7 +183,7 @@ test('a save from before version 16 had peaches for money: they become the same 
 test('a version 16 save is converted: a game already started has had all its tips (it had How to play instead)', () => {
   const s = saveOf(loadGame({save: {version: 16, started: true, shells: 5, w: {'山': {lv: 2, due: 0, ok: 1}}}}));
   assert.equal(s.version, VERSION);
-  assert.deepEqual(Object.keys(s.tips).sort(), ['eat', 'english', 'grey', 'hop', 'look', 'talk', 'tap', 'walk']);
+  assert.deepEqual(Object.keys(s.tips).sort(), ['eat', 'english', 'grey', 'hop', 'look', 'run', 'talk', 'tap', 'walk']);
   assert.ok(Object.values(s.tips).every(v => v === 1));
   assert.equal(s.shells, 5, 'everything else stays');
   assert.deepEqual(saveOf(loadGame({save: {version: 16, started: false, w: {}}})).tips, {}, 'a game not started yet gets every tip');

@@ -874,6 +874,8 @@ function flowerBed(g, X, Y, x, y){   // flowers planted in a bed of earth, red, 
 // How each look is painted. Each area's legend picks a look for each map letter.
 const LOOKS = {
   grass:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  sandTrack: (g,X,Y,x,y) => grass(g,X,Y,x,y), bigDrum: (g,X,Y,x,y) => grass(g,X,Y,x,y), banner: (g,X,Y,x,y) => grass(g,X,Y,x,y),   // the sports ground's things, on grass (each drawn as an object)
+  plumPoles: (g,X,Y,x,y) => grass(g,X,Y,x,y), stoneLock: (g,X,Y,x,y) => grass(g,X,Y,x,y), weaponRack: (g,X,Y,x,y) => grass(g,X,Y,x,y),
   path:      (g,X,Y,x,y) => path(g,X,Y,x,y),
   tallGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y),
   // flowers, each square all one colour (decided 26 October 2026: A at one shows its colour, such as 红色的花, a red flower,
@@ -1058,6 +1060,8 @@ const OBJECT_ART = {
     if (o.w === 2){ groundShadow(g, X+16, Y+29, 13, 3); trunk(g, X+13, Y+21, 6, 9); leaves(g, [[16,6,10],[8,13,8],[24,13,8],[16,15,9]], X, Y, seed); }   // two squares by two
     else { groundShadow(g, X+8, Y+14, 7, 2); trunk(g, X+7, Y+8, 3, 7); leaves(g, [[8,-1,6],[8,5,7]], X, Y, seed); }                                       // tall
   },
+  sandTrack: (g, o) => sandTrack(g, o.x*T, o.y*T, o.w*T, o.h*T), bigDrum: (g, o) => bigDrum(g, o.x*T, o.y*T), banner: (g, o) => banner(g, o.x*T, o.y*T),   // the sports ground's things
+  plumPoles: (g, o) => plumPoles(g, o.x*T, o.y*T), stoneLock: (g, o) => stoneLock(g, o.x*T, o.y*T), weaponRack: (g, o) => weaponRack(g, o.x*T, o.y*T, o.w),
   peachTree: (g, o) => fruitTree(g, o, PEACHES),
   appleTree: (g, o) => fruitTree(g, o, APPLES),
   stone: (g, o) => boulder(g, o.x*T + 8, o.y*T + 15, 11, 9, true),
@@ -1614,13 +1618,83 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
   fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
 }
-const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'feastTableBare', 'feastTableBowls', 'feastTable', 'feastTableHoney', 'milkTableBare', 'milkTableEmpty', 'milkTable', 'milkTableYog', 'milkTableCheese'];   // side by side, these make one object as wide as the row
+/* ---------- the sports ground (操场), for PE at school: a sandy track and things for an ancient school's PE ---------- */
+const LACQ = '#B0352A', LACQ_D = '#7A1F18', BRASS = '#E3A51C', CHALK = '#F4EEDC', POLE = '#8A5A32', POLE_D = '#5A3A22', POLE_L = '#B98A4E';
+// The track: raked sand, three lanes a square wide (their numbers, 一 二 三, painted at the start: real characters you
+// know), a line of white pebbles between them, the start line, and the finish: a red silk ribbon between two red posts.
+// (W, H: its size in pixels, as big as its block.) The book's troop "runs about in the sand hollows" (跑沙窝).
+function sandTrack(g, X, Y, W, H){
+  R(g, X, Y + H, W, 2, 'rgba(0,0,0,.12)');
+  R(g, X, Y, W, H, '#DDBF86');
+  for (let i = 0; i < W * H / 10; i++){ const px = X + Math.floor(rnd(i, 1, 830) * W), py = Y + Math.floor(rnd(i, 2, 831) * H); R(g, px, py, 1, 1, i % 3 ? '#C9A86F' : '#EBD3A2'); }
+  for (let py = Y + 3; py < Y + H; py += 4) for (let px = X + 16; px < X + W - 8; px += 7) R(g, px + (py % 8 ? 3 : 0), py, 3, 1, 'rgba(160,120,70,.25)');   // raked
+  R(g, X, Y, W, 1, '#A9844F'); R(g, X, Y + H - 1, W, 1, '#A9844F');
+  for (let k = 1; k < H / T; k++) for (let px = X + 2; px < X + W - 2; px += 4) R(g, px, Y + T * k, 2, 1, CHALK);   // pebbles between the lanes
+  ['一', '二', '三'].slice(0, Math.round(H / T)).forEach((c, k) => write(g, c, X + 3, Y + T * k + 4, '#8A2A20'));
+  R(g, X + 12, Y + 1, 2, H - 2, CHALK);                                                                   // the start line
+  const fx = X + W - 5;
+  R(g, fx - 1, Y + 1, 2, H - 2, CHALK);                                                                   // the finish line
+  const post = (bx, by, h) => { R(g, bx, by - h, 3, h, LACQ); R(g, bx + 2, by - h, 1, h, LACQ_D); R(g, bx - 1, by - h - 2, 5, 2, BRASS); R(g, bx - 1, by - 1, 5, 2, '#5A4636'); };
+  post(fx + 1, Y + 1, 20); post(fx + 1, Y + H + 3, 16);
+  for (let py = Y - 15; py < Y + H - 9; py++){ const sg = Math.round(Math.sin((py - Y + 15) / (H + 6) * Math.PI) * 2); R(g, fx + 2 + sg, py, 1, 1, '#D8302A'); R(g, fx + 3 + sg, py, 1, 1, '#9E1F1A'); }   // the ribbon, sagging a little
+  const by = Y + Math.round(H / 2) - 12; R(g, fx + 2, by, 4, 3, '#D8302A'); R(g, fx + 5, by - 2, 3, 3, '#D8302A'); R(g, fx + 5, by + 2, 3, 3, '#D8302A'); R(g, fx + 3, by + 3, 1, 5, '#9E1F1A');   // its bow
+}
+// A big war drum on a wooden stand, its head on top, brass studs round it: the old monkey beats it to start a race.
+function bigDrum(g, X, Y){
+  R(g, X + 2, Y + 14, 12, 2, 'rgba(0,0,0,.2)');
+  for (let i = 0; i < 12; i++){ R(g, X + 2 + Math.round(i * .6), Y + 4 + i, 2, 1, POLE_D); R(g, X + 12 - Math.round(i * .6), Y + 4 + i, 2, 1, POLE); }   // the stand
+  R(g, X + 1, Y - 6, 14, 12, LACQ); R(g, X, Y - 4, 16, 8, LACQ); R(g, X + 11, Y - 5, 4, 10, LACQ_D);      // the barrel
+  for (const sy of [Y - 6, Y + 5]) for (let sx = X + 2; sx < X + 15; sx += 3) R(g, sx, sy, 1, 1, BRASS);   // brass studs
+  oval(g, X + 8, Y - 7, 7, 2, '#E8D4A8'); R(g, X + 3, Y - 7, 10, 1, '#D4BC8A');                           // the head
+  R(g, X + 12, Y - 13, 1, 7, POLE_L); R(g, X + 11, Y - 14, 3, 2, LACQ);                                   // a drumstick resting on it
+}
+// A red army banner on a pole, with a flame-toothed edge (and no writing on it): in chapter 3 of the book, Sun Wukong drills
+// the troop like an army, with banners and flags.
+function banner(g, X, Y){
+  R(g, X + 5, Y + 12, 7, 3, '#8D8D84'); R(g, X + 7, Y - 26, 2, 39, POLE_D); R(g, X + 6, Y - 29, 4, 3, BRASS);
+  for (let r = 0; r < 13; r++){ const w = 10 - Math.round(r / 3) + (r % 4 === 1 ? 1 : 0); R(g, X + 9, Y - 24 + r, w, 1, LACQ); R(g, X + 9 + w, Y - 24 + r, 1, 1, r % 2 ? '#1E2B26' : BRASS); }
+  R(g, X + 9, Y - 24, 10, 1, BRASS); R(g, X + 9, Y - 12, 6, 1, '#1E2B26');
+}
+// Plum-blossom poles (梅花桩), wooden posts of different heights, placed like a plum blossom's five petals, for kung fu
+// footwork: a little monkey of the troop balancing on the tallest. (A block of them, two squares by two.)
+function plumPoles(g, X, Y){
+  const posts = [[7, 6, 11], [25, 6, 13], [16, 15, 15], [7, 24, 9], [25, 24, 17]];
+  for (const [px, py, h] of posts.sort((a, c) => a[1] - c[1])){
+    const bx = X + px, by = Y + py + 6;
+    R(g, bx - 3, by, 7, 2, 'rgba(0,0,0,.2)'); R(g, bx - 3, by - h, 7, h, POLE); R(g, bx + 2, by - h, 2, h, POLE_D); R(g, bx - 3, by - h, 1, h, POLE_L);
+    oval(g, bx, by - h, 3, 1, POLE_L); R(g, bx - 1, by - h, 2, 1, '#D9B47A');
+  }
+  g.drawImage(monkeySprite('chaser', 'left', false, 0), X + 17, Y + 30 - 17 - 14);   // on the tallest, at the front
+}
+// A stone padlock (石锁), lifted to make you strong, in old Chinese martial arts.
+function stoneLock(g, X, Y){
+  R(g, X + 3, Y + 14, 11, 2, 'rgba(0,0,0,.2)');
+  R(g, X + 3, Y + 7, 10, 8, '#8E8E85'); R(g, X + 2, Y + 8, 12, 6, '#8E8E85'); R(g, X + 3, Y + 7, 10, 2, '#B4B4AA'); R(g, X + 3, Y + 13, 10, 2, '#6E6E66');
+  R(g, X + 5, Y + 2, 6, 2, '#9E9E95'); R(g, X + 4, Y + 3, 2, 5, '#9E9E95'); R(g, X + 10, Y + 3, 2, 5, '#7E7E76');   // its handle
+}
+// A red rack of wooden staffs (w squares wide), one banded with gold (a nod to the golden-hooped staff he'll get from the
+// Dragon King), and a spear with a red tassel: the book's troop made spears of bamboo and swords of wood.
+function weaponRack(g, X, Y, w){
+  const W = w * T;
+  R(g, X + 1, Y + 13, W - 2, 2, 'rgba(0,0,0,.2)');
+  R(g, X + 2, Y - 8, W - 4, 2, LACQ); R(g, X + 2, Y - 7, W - 4, 1, LACQ_D);                               // the back rail
+  for (const [sx, col, gold] of [[6, POLE_L], [10, POLE], [14, POLE_D, true], [19, POLE_L], [24, null]]){
+    if (!col){ R(g, X + sx, Y - 22, 1, 35, POLE_D); R(g, X + sx - 1, Y - 28, 3, 1, '#C9CFD4'); R(g, X + sx, Y - 31, 1, 4, '#E2E7EA'); R(g, X + sx - 1, Y - 27, 3, 2, '#C9CFD4');   // the spear's blade
+      R(g, X + sx - 2, Y - 25, 5, 3, '#D8302A'); R(g, X + sx - 1, Y - 22, 3, 2, '#9E1F1A'); continue; }   // and its red tassel
+    R(g, X + sx, Y - 26, 2, 39, col);
+    if (gold){ R(g, X + sx, Y - 26, 2, 3, BRASS); R(g, X + sx, Y + 9, 2, 3, BRASS); }
+  }
+  for (const ux of [X + 2, X + W - 4]){ R(g, ux, Y - 10, 2, 24, LACQ); R(g, ux + 1, Y - 10, 1, 24, LACQ_D); R(g, ux - 1, Y - 11, 4, 2, BRASS); }   // its uprights
+  R(g, X + 2, Y + 3, W - 4, 2, LACQ); R(g, X + 2, Y + 4, W - 4, 1, LACQ_D);                                // the front rail
+  R(g, X + 1, Y + 11, W - 2, 3, POLE_D);
+}
+const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'weaponRack', 'feastTableBare', 'feastTableBowls', 'feastTable', 'feastTableHoney', 'milkTableBare', 'milkTableEmpty', 'milkTable', 'milkTableYog', 'milkTableCheese'];   // side by side, these make one object as wide as the row
 // Big objects set up as you watch (the setUp step, js/world.js): how many pieces each goes up in, one after another (its
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
 // table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
 // yoghurt on it, goes up in just that: the rest is there already.)
 const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'timetable', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe'];
+const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'timetable', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe', 'sandTrack', 'plumPoles'];
 const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through: it shakes as you do)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of

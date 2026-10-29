@@ -25,7 +25,9 @@ const TIPS = {
   // food in your bag that does something as you walk about, such as honey, the first time you have some: how to eat it
   // (decided 26 October 2026: honey made you faster, but nothing said so where you'd see it)
   eat: {at:'#bagBtn', lasts:9000, text:() => { const w = walkFood(); return `Eat the ${esc(wz(w))} in your bag to ${esc(FOOD[w].does.toLowerCase())}: press <b>BAG</b>, and tap it.`; },
-    when:() => canAct() && !!walkFood()}
+    when:() => canAct() && !!walkFood()},
+  // running, once you can (the area's running, such as once PE has taught you 跑): hold B (decided 28 October 2026)
+  run: {at:'#btnB', lasts:9000, text:'Hold <b>B</b> as you walk, to run.', when:() => canAct() && canRun()}
   // (Tasks and Menu had tips too; the old monkey tells you about them instead, decided 18 October 2026.)
 };
 let tip = null;   // the tip showing: {id, target, lit: what glows (target, or with all, every match), until}

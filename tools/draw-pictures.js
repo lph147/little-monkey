@@ -745,6 +745,35 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     for (const [x, y] of [[9, 10.5], [14.5, 10], [20, 11], [11.5, 15], [17, 15], [22.5, 15.5], [8.5, 19.5], [14, 20], [19.5, 20.5], [11, 25], [16.5, 25], [13.5, 29.5]])
       p.fill(O(x, y, 3.1), '#6E3A9E', {light: '#A070D0', dark: '#45206A', edge: true});                                                       // the grapes, front ones lowest
     for (const [x, y] of [[8, 9], [13, 8], [10, 13], [16, 13], [7, 18], [13, 18], [10, 23], [15, 23]]) p.dot(x, y, '#D6B8F0');                // a shine on some
+  },
+  '跑': p => {   // to run: a monkey running hard, mid-stride, leaning forward, speed lines and dust behind it (unlike 跳: leaping up, arms up)
+    p.flat(O(17, 30.5, 8, 1.2), '#5DA651');                                                      // its shadow
+    for (const [y, x0, x1] of [[11, 1, 6], [16, 0, 5], [21, 2, 6]]) p.flat(path([[x0, y], [x1, y]], .6), '#9FD0E8');   // speed lines
+    p.fill(O(7, 28, 2.6, 1.7), '#E6D8BC', {edge: true}); p.fill(O(3.5, 26.5, 1.8, 1.3), '#E6D8BC', {edge: true});   // dust from its back foot
+    p.fill(path([[14, 21], [11, 25], [8, 27.5]], 1.7), FUR);                                      // back leg, kicking back
+    p.fill(path([[19, 21.5], [23, 25], [22.5, 29]], 1.7), FUR);                                   // front leg, reaching forward
+    p.fill(path([[13.5, 16.5], [10, 16], [7.5, 13]], 1.4), FUR);                                // back arm, swinging back
+    p.fill(path([[20.5, 16.5], [24, 19], [27, 17]], 1.4), FUR);                                 // front arm, bent, swinging forward
+    p.fill(O(17, 18.5, 5, 4.4), FUR, {edge: true}); p.flat(O(17.8, 19.2, 2.8, 3), SKIN);          // its body, leaning forward
+    p.fill(O(13, 9.5, 2.3, 2.4), FUR); p.fill(O(24, 9.5, 2.3, 2.4), FUR);                         // ears
+    p.fill(O(18.5, 9.5, 5.6, 5), FUR, {edge: true});                                             // head
+    p.flat(or(O(16.7, 9.5, 2.1, 2.3), O(20.3, 9.5, 2.1, 2.3), O(18.5, 12.1, 2.9, 1.8)), SKIN);
+    p.eye(16, 8); p.eye(20, 8); p.flat(path([[17, 12.8], [18.5, 13.6], [20, 12.8]], .5), '#A86A48');
+  },
+  '跑步': p => {   // running, as exercise: a monkey jogging along a path, upright and steady, its footprints behind it (步, steps; unlike 跑: sprinting, speed lines and dust)
+    p.fill(Rc(0, 27, 32, 4, 2), '#D9C08E', {dark: '#C2A672'});                                   // a path
+    for (const [x, y] of [[2.5, 29.2], [6.5, 28.4], [10.5, 29.3]]) p.flat(or(O(x, y, 1.4, .8), O(x + 1.6, y - .9, .5, .4)), '#8A6A3E');   // footprints behind it
+    p.flat(O(18, 29.2, 5, 1), '#B89A68');                                                        // its shadow
+    p.fill(path([[15.5, 22], [12.8, 24.6], [10.8, 22.8]], 1.6), FUR);                            // back leg, lifted behind
+    p.fill(path([[18.5, 22], [20.6, 25.2], [20, 28.3]], 1.6), FUR);                              // front leg, on the path
+    p.fill(path([[20, 16.5], [22.4, 18.6], [24, 16.6]], 1.3), FUR);                              // arms bent, swinging: one back,
+    p.fill(O(17.2, 18.4, 4.6, 4.6), FUR, {edge: true}); p.flat(O(17.6, 19.2, 2.6, 2.9), SKIN);   // its body, upright
+    p.fill(path([[14.2, 16.6], [12.6, 19.2], [14.8, 21]], 1.3), FUR, {edge: true});              // one forward
+    p.fill(O(12, 9.5, 2.3, 2.4), FUR); p.fill(O(23, 9.5, 2.3, 2.4), FUR);                        // ears
+    p.fill(O(17.5, 9.5, 5.6, 5), FUR, {edge: true});                                              // head
+    p.flat(or(O(15.7, 9.5, 2.1, 2.3), O(19.3, 9.5, 2.1, 2.3), O(17.5, 12.1, 2.9, 1.8)), SKIN);
+    p.eye(15, 8); p.eye(19, 8); p.flat(path([[16.1, 12.6], [17.5, 13.4], [18.9, 12.6]], .5), '#A86A48');
+    p.fill(O(25, 6.5, 1, 1.5), '#9FD0E8');                                                        // a drop of sweat
   }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops

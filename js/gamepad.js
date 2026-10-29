@@ -33,6 +33,7 @@ function readPads(now){
     const isDown = pads.some(p => padDown(p, i));
     if (isDown !== !!padWas[i]) $(sel).classList.toggle('held', isDown);
     if (isDown && !padWas[i]){ getAC(); press(); }
+    if (i === 1 && isDown !== !!padWas[i]) bHeld = isDown;   // (B held: running)
     padWas[i] = isDown;
   }
   const d = pads.map(padDirOf).find(Boolean) || null;
@@ -50,7 +51,7 @@ function readPads(now){
 // stop walking (decided 22 October 2026: you walked on, with nothing pressed).
 function letGo(){
   if (padHeldDir){ padHeldDir = null; setPad(null); held = null; }
-  for (const [i, sel] of PAD_BUTTONS) if (padWas[i]){ $(sel).classList.remove('held'); padWas[i] = false; }
+  for (const [i, sel] of PAD_BUTTONS) if (padWas[i]){ $(sel).classList.remove('held'); padWas[i] = false; if (i === 1) bHeld = false; }
 }
 const watchPads = () => { if (!padLoop && padsNow().length) padLoop = requestAnimationFrame(readPads); };
 window.addEventListener('gamepadconnected', watchPads);
