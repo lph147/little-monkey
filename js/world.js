@@ -678,7 +678,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const missed = await matchWords(words, e.title, 'Stop');
     if (!missed) return STOP;
     const right = words.length - missed.size, pass = right >= need;
-    missed.forEach(w => reviewed(w, false)); save();
+    for (const w of words){ reviewed(w, !missed.has(w)); addToday(w); } save();   // (every word counts as practice: matched first time, it moves back in the review list; missed, near the front)
     if (pass) SFX.fanfare(); else SFX.wrong();
     await new Promise(res => {
       openCard(`<div class="who" aria-hidden="true">${face}</div><p class="label">${esc(pass ? e.passed : e.notYet)}</p>

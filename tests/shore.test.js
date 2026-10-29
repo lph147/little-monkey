@@ -197,11 +197,13 @@ test('with every food on the tables, the teacher has an exam for you (我们考�
   assert.ok(get(g, '__sounds').includes('wrong'));
   assert.equal(g.run('tileAt(3, 1).look'), 'wallFace');
   // Missing six: passed
-  g.run("matchWords = async words => new Set(words.slice(0, 6))");
+  g.run("matchWords = async words => { __words = words; return new Set(words.slice(0, 6)); }");
   g.run('__said.length = 0; __notes.length = 0; finishedAt = null');
-  const shells = g.run('S.shells');
+  const shells = g.run('S.shells'), turn = g.run('S.turn || 0');
   await press(g, 7, 3, 'up', '[data-a=yes], [data-a=ok]');
   assert.equal(get(g, 'here().exam'), 1, '24 of 30: passed');
+  assert.equal(g.run('S.turn') - turn, 30, 'every word in the exam counts as a question answered (it counted only the ones you missed)');
+  assert.ok(get(g, 'rec(__words[6]).ok >= 1 && rec(__words[0]).ok === 0'), 'matched first time: counted right; missed: back to none');
   assert.deepEqual(get(g, '__said'), ['elder: 我们考试吧！', 'elder: 很好！'], 'very good!');
   assert.equal(g.run('S.shells'), shells + 10);
   assert.equal(g.run('tileAt(3, 1).look'), 'certificate', 'your certificate on the classroom wall');
