@@ -561,13 +561,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // The 老板's new shop (29 October 2026): with the flowers planted, he comes up from the meadow (his old stall there empty);
   // talk to him by the way in, and the troop builds him a shop there as you watch: 我来了！ 这里很好！ It sells headbands
   // in every colour you know (asked for as 我要蓝色的头带, the colour missing), and food
-  assert.deepEqual([area().shop, get("[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]")], [1, ['homeGround', 6, 13]], 'the 老板 has come up to the home ground');
-  await pressAt(7, 13, 'left', 'talking to the 老板, by the way in: the troop builds his new shop');
-  assert.deepEqual([area().shop, run('tileAt(3, 12).look'), run('tileAt(6, 12).look')], [3, 'shop', 'sign'], 'his shop, built, with its sign');
+  assert.deepEqual([area().shop, get("[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]")], [1, ['homeGround', 7, 8]], 'the 老板 has come up to the home ground');
+  await pressAt(7, 9, 'up', 'talking to the 老板, by the way in: the troop builds his new shop');
+  assert.deepEqual([area().shop, run('tileAt(4, 7).look'), run('tileAt(7, 7).look')], [3, 'shop', 'sign'], 'his shop, built, with its sign');
   assert.ok(['我来了！', '这里很好！'].every(t => get('__said').includes(t)), 'here I am! it’s nice here!');
   assert.ok(get('S.shells') >= 10, 'shells enough for a headband');
   plan.buy = '蓝色的头带';
-  await pressAt(7, 13, 'left', 'buying a blue headband: 我要蓝色的头带');
+  await pressAt(7, 9, 'up', 'buying a blue headband: 我要蓝色的头带');
   plan.buy = null;
   assert.deepEqual([get('S.wardrobe.owned'), get('S.wardrobe.wearing'), run('headband()')], [['头带', '蓝色 的 头带'], ['蓝色 的 头带'], '#3A6DD0'], 'you tie it on, instead of the red one');
   assert.ok(get('__said').includes('我要蓝色的头带'), 'asked for with its colour');
@@ -795,7 +795,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('__said').includes('这是小鱼'), 'this is a little fish');
   run('Math.random = () => 0');
   plan.buy = '鱼饵';
-  await pressAt(7, 13, 'left', 'buying bait at the 老板’s shop', 1);
+  await pressAt(7, 9, 'up', 'buying bait at the 老板’s shop', 1);
   plan.buy = null;
   assert.ok(knows('鱼饵') && get("S.bag['鱼饵']") === 1, 'bait (鱼饵) in your bag');
   run('Math.random = () => .99');

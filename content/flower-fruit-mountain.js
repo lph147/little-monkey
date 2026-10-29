@@ -1102,13 +1102,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
-        "YgEFggggggg8ηθιg%%%gF(((Γ.gggTgY",   // the feast's big table (%), under the big tree; and its second, beside it ((), with the fish's at its end (Γ)
-        "Ygggggggggg8κgκg!g!gg~g~g.g@gggY",   // their stone stools (! and ~); little monkeys building a tower of stones (@), just past the way up to the hillside
+        "YgEFddd2ggg8ηθιg%%%gF(((Γ.gggTgY",   // the 老板's shop (d), by the way in from the waterfall, with its sign (2); the feast's big table (%), under the big tree; and its second, beside it ((), with the fish's at its end (Γ)
+        "Ygggdddgggg8κgκg!g!gg~g~g.g@gggY",   // their stone stools (! and ~); little monkeys building a tower of stones (@), just past the way up to the hillside
         "...............................q",   // the road: east to the riverside, once the bushes are cleared (q)
         "...............................Y",
         "Yggggggggggggggg.gg??gg-_-----EY",   // the little dairy (?); the cow's pen: its fences round its edge (-), inside it (_), in at its gate
-        "Yggddd2ggEgggggg.gg??g5-___---gY",   // (5: its sign)
-        "YggdddggTgggggTg.gJFgTg--____-gY",
+        "YggggggggEgggggg.gg??g5-___---gY",   // (5: its sign)
+        "YgggggggTgggggTg.gJFgTg--____-gY",
         "Yggααββγγγγδδggg.gggggg-------gY",   // the garden by the stream (α to μ): banana plants, a trellis of grapes, melons, and beds; its sign (4)
         "Yggααββγγγγμδ4gg.gOOOggggggggTgY",
         "YgTζζζζζζζζδμggg.gOOOggTgggQgggY",
@@ -2058,7 +2058,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'groomB', place:'homeGround', x:13, y:13, facing:'down', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#4A2B13', f:'#C99558', s:'#F6D6B0', m:'#D09A76', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
-      moves:[{if:{shop:{atLeast:1}}, place:'homeGround', x:6, y:13, facing:'down'}],   // (chapter 1: up at the home ground, by his new shop, once the school's flowers are planted)
+      moves:[{if:{shop:{atLeast:1}}, place:'homeGround', x:7, y:8, facing:'down'}],   // (chapter 1: up at the home ground, by his new shop, once the school's flowers are planted)
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}},
     // chapter 1: the queen bee (蜂王), called by her word, as an animal is: in her old hollow tree in the bees' valley till
     // she comes out, hovering in front of it while she's out; then home with you, with her swarm, by the wildflowers below

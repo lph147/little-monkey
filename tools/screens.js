@@ -347,7 +347,7 @@ SAVES.englishTip = {...SAVES.middle, tips: {...ALL_TIPS, english: 0}, lines: {'�
 // The 老板's new shop at the home ground (29 October 2026): with the flowers planted, he comes up from the meadow; the troop
 // builds his shop by the way in as you watch; headbands in every colour you know, and food
 SAVES.shopComes = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.areas[1], shop: 0}}, tasksSeen: {...SAVES.flowersPlanted.tasksSeen, news: 1}, pos: {place: 'homeGround', x: 11, y: 7, dir: 'down'}};
-SAVES.shopMoved = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.areas[1], shop: 1}}, tasksSeen: {...SAVES.flowersPlanted.tasksSeen, shopMoved: 1, news: 1}, pos: {place: 'homeGround', x: 7, y: 13, dir: 'left'}};   // facing him, by the way in
+SAVES.shopMoved = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.areas[1], shop: 1}}, tasksSeen: {...SAVES.flowersPlanted.tasksSeen, shopMoved: 1, news: 1}, pos: {place: 'homeGround', x: 7, y: 9, dir: 'up'}};   // facing him, on the road by the way in
 SAVES.shopOpen = {...SAVES.shopMoved, shells: 24, w: {...SAVES.shopMoved.w, ...knows(1, ['头带', '蓝色', '绿色'])}, areas: {1: {...SAVES.shopMoved.areas[1], shop: 3, bought: ['头带']}},
   wardrobe: {owned: ['头带', '蓝色 的 头带'], wearing: ['蓝色 的 头带']}};
 SAVES.oldStall = {...SAVES.shopOpen, pos: {place: 'meadow', x: 9, y: 17, dir: 'up'}};   // below his old stall in the meadow
