@@ -82,6 +82,31 @@ function drawPlaying(n, X, Y, now){
   else if (kind === 'dragonflies') drawChaser(n, X, Y, now);
   else if (kind === 'groom') drawGroomer(n, X, Y, now);
   else if (kind === 'peer') drawPeerer(n, X, Y, now);
+  else if (kind === 'fish') drawFisher(n, X, Y, now);
+}
+// A monkey fishing (plays: 'fish'), such as the fishing monkey by the home ground's stream: facing the water, its rod held
+// out over it, the line down to its float in the water in front of it, bobbing.
+function drawFisher(n, X, Y, now){
+  const d = n.home.facing;
+  drawEntityMonkey(n.kind, X, Y, d, now, 0, 0, n.x + n.y);
+  drawRod(X, Y, d, now + n.x * 500, false);
+}
+// A fishing rod held out over the water by a monkey at X, Y facing dir (yours as you fish, js/fishing.js, and the fishing
+// monkey's): bamboo from its hand out over the water in front of it, and the line hanging from its tip to the float on the
+// water, bobbing gently; or, with a fish biting (bite), pulled under, rings spreading round it.
+const ROD = {down:{hand:[12, 10], tip:[15, 19], float:[15, 25]}, up:{hand:[3, 10], tip:[1, -13], float:[1, -6]},
+  left:{hand:[3, 10], tip:[-10, 1], float:[-10, 11]}, right:{hand:[12, 10], tip:[25, 1], float:[25, 11]}};   // from the monkey's top-left
+function drawRod(X, Y, dir, now, bite){
+  const r = ROD[dir], [hx, hy] = [X + r.hand[0], Y + r.hand[1]], [tx, ty] = [X + r.tip[0], Y + r.tip[1]], [fx, fy] = [X + r.float[0], Y + r.float[1]];
+  const line = (x0, y0, x1, y1, c, w = 1) => { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) || 1; for (let i = 0; i <= n; i++) R(b, Math.round(x0 + (x1 - x0) * i / n), Math.round(y0 + (y1 - y0) * i / n), w, w, c); };
+  line(hx, hy, tx, ty, '#6E5220', 2); line(hx, hy, tx, ty, '#D8B860');   // the bamboo, with its shine
+  const bob = bite ? 0 : Math.round(Math.sin(now / 320));
+  line(tx, ty, fx, fy - 3 + bob, 'rgba(244,241,234,.8)');                   // the line
+  if (bite){
+    const k = (now / 90) % 6;   // rings spreading round where it's gone under
+    for (const rr of [k, (k + 3) % 6]){ const w = 4 + Math.round(rr) * 2; R(b, fx - w/2, fy, w, 1, 'rgba(255,255,255,.75)'); }
+    R(b, fx - 1, fy - 1, 3, 1, '#E8343C');
+  } else { R(b, fx - 1, fy - 4 + bob, 3, 2, '#E8343C'); R(b, fx - 1, fy - 2 + bob, 3, 1, '#F4F1EA'); R(b, fx - 2, fy - 1 + bob, 5, 1, 'rgba(255,255,255,.45)'); }
 }
 // A monkey of the troop looking for mushrooms under the pines (plays: 'peer'), facing them: now and then it crouches to look
 // closely, its head and body lower, over its legs, its feet where they were.
@@ -623,6 +648,10 @@ function drawWorld(now){
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
       if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
       else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
+      if (fishing){   // your line in the water (js/fishing.js), and a ! when a fish bites
+        drawRod(PX, PY, pl.dir, now, !!fishing.bite && !fishing.hooked);
+        if (fishing.bite && !fishing.hooked) bubbles.push([PX + 5, PY - 10, '!']);
+      }
       for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
       if (isFast(now)) drawEnergy(PX, PY, now, moving, pl.dir);
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);

@@ -32,6 +32,11 @@ const LEGS = {
 };
 const BEARDED = new Set(AREA.characters.filter(c => c.beard).map(c => c.id));   // characters drawn with a white beard
 const wearing = item => S.wardrobe.wearing.includes(item);   // is your monkey wearing this?
+// The headband your monkey has on (a 头带, in any colour: CLOTHES, js/data.js), as its colour on your monkey, or null: each
+// colour a little brighter than its paint, to show against your fur.
+const BAND = {'红色':'#C0392B', '黄色':'#F8E04A', '白色':'#F7F5EE', '黑色':'#26201C', '蓝色':'#3A6DD0', '绿色':'#2FA350', '棕色':'#6A3A1C', '橙色':'#F06A1A', '粉色':'#F59AC6'};
+const headband = () => { const c = CLOTHES.find(c => c.word === '头带' && wearing(c.item)); return c ? BAND[c.colour] || BAND['红色'] : null; };
+const bandPal = pal => { const b = headband(); return b ? {...pal, b} : pal; };
 function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (const k in portraitCache) delete portraitCache[k]; }   // draw your monkey again in what it wears
 // What your monkey holds in its hand once it can fight (the area's battles: their weapon, once their when matches): a
 // small stick (棍子), short, so that the staff (金箍棒, Area 3) can be longer without the stick ever having looked too big.
@@ -53,8 +58,10 @@ const HAND = {
 // empty: with nothing in its hands (in a battle the scene holds the stick itself; meeting an animal, you hold nothing).
 function monkeySprite(kind, dir, blink, step = 0, empty = false){
   const stick = heldBy(kind, empty);
-  const k = kind + dir + (blink ? 'b' : '') + step + (stick || ''); if (spriteCache[k]) return spriteCache[k];
-  return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step, empty), stick ? {...PALS[kind], ...HELD[stick].pal} : PALS[kind]);
+  const band = kind === 'player' ? headband() : null;
+  const k = kind + dir + (blink ? 'b' : '') + step + (stick || '') + (band || ''); if (spriteCache[k]) return spriteCache[k];
+  const pal = band ? {...PALS[kind], b:band} : PALS[kind];
+  return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step, empty), stick ? {...pal, ...HELD[stick].pal} : pal);
 }
 // A monkey's pixel rows, as letters (PALS says each letter's colour). The app's icons use them too (tools/make-icons.js).
 function monkeyRows(kind, dir, blink, step = 0, empty = false){
@@ -70,7 +77,7 @@ function monkeyRows(kind, dir, blink, step = 0, empty = false){
     if (blink) rows[5][8] = 's';
     if (BEARDED.has(kind)){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
   }
-  if (kind === 'player' && wearing('头带')){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the red headband
+  if (kind === 'player' && headband()){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the headband (b: its colour)
   const stick = heldBy(kind, empty);
   if (stick){   // the stick in its hand
     const h = HAND[side ? 'side' : dir], top = h.y - HELD[stick].len + 1;
@@ -98,10 +105,10 @@ function sittingSprite(kind, dir, shut = false, lean = false){
 // Your monkey asleep in a bed: its head on the pillow, eyes shut (the rest is under the blanket: drawAsleep in js/draw.js).
 const ASLEEP = ["...oooooo...", "..offffffo..", ".offffffffo.", "oofssssssfoo", "osfmmssmmfso", "osfssssssfso", "oofssmmssfoo", ".offssssffo."];
 function asleepSprite(){
-  const band = wearing('头带'), k = 'asleep' + (band ? 'b' : ''); if (spriteCache[k]) return spriteCache[k];
+  const band = headband(), k = 'asleep' + (band || ''); if (spriteCache[k]) return spriteCache[k];
   const rows = ASLEEP.map(r => [...r]);
-  if (band) for (let x = 1; x <= 10; x++) if (rows[2][x] === 'f') rows[2][x] = 'b';   // the red headband
-  return spriteCache[k] = sprite(rows.map(r => r.join('')), PALS.player);
+  if (band) for (let x = 1; x <= 10; x++) if (rows[2][x] === 'f') rows[2][x] = 'b';   // the headband
+  return spriteCache[k] = sprite(rows.map(r => r.join('')), bandPal(PALS.player));
 }
 // The area's animals: at their own spot (at), or hiding in the tall grass, anywhere or in one place's only (hides, such as the
 // fox on the hillside), each in a chapter of the story (0 if not given). place: where it's counted (its spot's, the one it
@@ -214,7 +221,7 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','stallEmpty','shop','fishTable','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
 const WATERY = ['water','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','hopStone','logBridge'];
 function grass(g, X, Y, x, y){
@@ -895,6 +902,9 @@ const LOOKS = {
   stone:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
   stall:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  stallEmpty:(g,X,Y,x,y) => grass(g,X,Y,x,y),        // the meadow's stall, once the 老板 has moved to the home ground
+  shop:      (g,X,Y,x,y) => grass(g,X,Y,x,y),        // his new shop there: a big object (OBJECT_ART), on grass
+  fishTable: (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the feast's fish, on a stone table of its own
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },   // the practice post, one square
   longGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y,LONG),
   bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
@@ -1070,6 +1080,9 @@ const OBJECT_ART = {
     for (let i = 0; i < o.w; i++) boulder(g, o.x*T + 8 + i*14, o.y*T + 15, 10 - i % 2, 8 - i % 2, false, true);
   },
   stall: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4),
+  stallEmpty: (g, o) => stall(g, o.x*T + 2, o.y*T, o.w*T - 4, true),
+  shop: (g, o) => shopHut(g, o.x*T, o.y*T, o.w*T, o.h*T, o.stage ?? OBJECT_STAGES.shop),
+  fishTable: (g, o) => fishTable(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.fishTable),
   feastTableBare: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? 3),   // (stage: how much of it is up, as it's set up)
   feastTableBowls: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, 3 + (o.stage ?? 3)),   // (then the bowls go on it, one at a time,
   feastTable: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, 6 + (o.stage ?? 1)),         // then the cup of chopsticks)
@@ -1602,15 +1615,68 @@ function dairy(g, X, Y, stage, has){
     post(X + 1, Y + 7, 22); post(X + 28, Y + 7, 22);
   }
 }
-function stall(g, L, Y, w){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit
+function stall(g, L, Y, w, empty = false){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit (empty: none, once he's moved)
   const top = Y + 16 - Math.round(w * .66), cy = Y + 16 - Math.round(w * .26);
   groundShadow(g, L + w/2, Y+15, w/2, 2);
   R(g, L+1, top+5, 2, Y+10-top, WOOD[1]); R(g, L+w-3, top+5, 2, Y+10-top, WOOD[1]);   // posts
   for (let i = 0; i < w; i += 4){ const c = (i/4) % 2 ? '#F4F1EA' : '#C0392B'; R(g, L+i, top, Math.min(4, w-i), 5, c); R(g, L+i+1, top+5, 2, 1, c); }   // the awning's stripes and scalloped edge
   R(g, L, top, w, 1, '#8E241D');
   R(g, L+1, cy, w-2, Y+14-cy, WOOD[0]); R(g, L+2, cy+1, w-4, Y+12-cy, WOOD[3]); R(g, L+2, cy+1, w-4, 1, WOOD[4]);   // the counter
+  if (empty) return;
   const a = Math.round(w*.25), b2 = Math.round(w*.6);
   fruit(g, [[a,-3],[a+3,-3]], L, cy, PEACHES); fruit(g, [[b2,-3],[b2+3,-3]], L, cy, APPLES);
+}
+// The 老板's new shop at the home ground (chapter 1), three squares by two (W by H pixels), as much of it as is up (stage, as
+// the troop sets it up: 1 its posts and its back of woven bamboo, 2 its counter, 3 its roof, an awning striped red and white
+// as his old stall's was, 4 what he sells: headbands of every colour hanging from a pole, a basket of peaches and one of
+// apples, and a pot of honey).
+// The feast's fish (chapter 1): a small square stone table at the end of the second one, as much of it as is up (stage, as
+// the troop sets it up: 1 its stone, a slab on a block; 2 a white plate on it, and the big fish you caught lying across
+// it, a grey-green carp, its tail over the edge).
+function fishTable(g, X, Y, stage){
+  const OUT = '#2E2A26';
+  if (stage >= 1){
+    if (shadows) blob(g, X + 8, Y + 15, 7, 1.5, ROCK_SHADOW);
+    R(g, X + 4, Y + 8, 8, 8, CAVE_OUT); R(g, X + 5, Y + 8, 6, 7, SLAB[2]); R(g, X + 5, Y + 14, 6, 1, SLAB[1]);   // its block
+    R(g, X, Y + 3, 16, 6, CAVE_OUT); R(g, X + 1, Y + 4, 14, 2, SLAB[4]); R(g, X + 1, Y + 6, 14, 2, SLAB[2]);       // its slab
+  }
+  if (stage >= 2){
+    R(g, X + 1, Y + 1, 14, 5, OUT); R(g, X + 2, Y + 2, 12, 3, '#F4F1EA'); R(g, X + 3, Y + 4, 10, 1, '#C9C3B4');   // a white plate
+    R(g, X + 1, Y - 3, 11, 6, OUT); R(g, X + 2, Y - 2, 9, 4, '#7E9A6E'); R(g, X + 2, Y - 2, 9, 1, '#A8C090');      // the fish's body
+    R(g, X + 3, Y + 1, 7, 1, '#D8D0A0');                                                                              // its pale belly
+    R(g, X + 11, Y - 4, 4, 8, OUT); R(g, X + 12, Y - 3, 2, 6, '#5E7A5A');                                             // its tail
+    R(g, X + 6, Y - 4, 3, 2, OUT); R(g, X + 3, Y - 1, 2, 2, '#FFFFFF'); R(g, X + 3, Y - 1, 1, 1, '#1E1A16');          // a fin, and its eye
+    [[6, -1], [8, 0]].forEach(([dx, dy]) => R(g, X + dx, Y + dy, 1, 1, '#5A7650'));                                   // scales
+  }
+}
+const SHOP_BANDS = ['#C0392B', '#F8E04A', '#3A6DD0', '#2FA350', '#F59AC6', '#F7F5EE', '#F06A1A'];
+function shopHut(g, X, Y, W, H, stage){
+  const OUT = '#2E2A26', post = (px, py, ph) => { R(g, px, py, 3, ph, OUT); R(g, px + 1, py, 1, ph - 1, WOOD[2]); };
+  if (stage >= 1){
+    if (shadows) groundShadow(g, X + W/2, Y + H - 1, W/2 - 1, 3);
+    R(g, X + 4, Y + 5, W - 8, 17, '#6A4A2E');                                               // its back, woven bamboo
+    for (let px = X + 6; px < X + W - 5; px += 3) R(g, px, Y + 5, 1, 17, '#7E5A38');
+    for (let py = Y + 8; py < Y + 22; py += 4) R(g, X + 4, py, W - 8, 1, '#56391F');
+    post(X + 3, Y + 4, 20); post(X + W - 6, Y + 4, 20);                                     // its back posts
+  }
+  if (stage >= 2){   // its counter, a plank on two stone blocks
+    R(g, X + 1, Y + 20, W - 2, 5, OUT); R(g, X + 2, Y + 21, W - 4, 2, WOOD[3]); R(g, X + 2, Y + 21, W - 4, 1, WOOD[4]); R(g, X + 2, Y + 23, W - 4, 1, WOOD[1]);
+    for (const bx of [X + 4, X + W - 12]){ R(g, bx, Y + 25, 8, H - 26, CAVE_OUT); R(g, bx + 1, Y + 25, 6, H - 27, SLAB[2]); R(g, bx + 1, Y + 25, 6, 1, SLAB[3]); }
+  }
+  if (stage >= 4){   // what he sells
+    R(g, X + 6, Y + 8, W - 12, 1, WOOD[0]);                                                 // a pole across, under the roof
+    SHOP_BANDS.forEach((c, k) => { const bx = X + 8 + k * 5; R(g, bx - 1, Y + 9, 5, 6, OUT); R(g, bx, Y + 9, 3, 5, c); R(g, bx + 1, Y + 10, 1, 3, OUT); });   // headbands, a loop of cloth each
+    const basket = (bx, col) => { R(g, bx - 1, Y + 16, 11, 5, OUT); R(g, bx, Y + 17, 9, 3, '#B07A3A'); R(g, bx, Y + 18, 9, 1, '#8A5A2A');
+      [[1, 14], [4, 13], [6, 14]].forEach(([dx, dy]) => bigFruit(g, bx + dx + 1, Y + dy + 1, col)); };
+    basket(X + 6, PEACHES); basket(X + 19, APPLES);
+    R(g, X + 33, Y + 13, 9, 8, OUT); R(g, X + 34, Y + 14, 7, 6, '#C8784A'); R(g, X + 34, Y + 14, 2, 6, '#E09A66'); R(g, X + 34, Y + 13, 7, 2, '#F2B632'); R(g, X + 35, Y + 13, 3, 1, '#FFE07A');   // a clay pot of honey
+  }
+  if (stage >= 3){   // its roof: a striped awning, wider than it, with a scalloped edge, and its front posts under it
+    for (let k = 0; k < 6; k++){ const inset = Math.max(0, 3 - k); for (let i = 0; i < W + 4 - 2*inset; i += 4){ const c = Math.floor(i / 4) % 2 ? '#F4F1EA' : '#C0392B'; R(g, X - 2 + inset + i, Y - 2 + k, Math.min(4, W + 4 - 2*inset - i), 1, c); } }
+    R(g, X - 2, Y - 3, W + 4, 1, '#8E241D');
+    for (let i = 0; i < W + 4; i += 4){ const c = Math.floor(i / 4) % 2 ? '#F4F1EA' : '#C0392B'; R(g, X - 1 + i, Y + 4, 2, 1, c); }
+    post(X, Y + 4, H - 4); post(X + W - 3, Y + 4, H - 4);
+  }
 }
 function fruitTree(g, o, colours){   // a square and a half wide, reaching up, full of fruit
   const X = o.x*T, Y = o.y*T;
@@ -1688,13 +1754,13 @@ function weaponRack(g, X, Y, w){
   R(g, X + 2, Y + 3, W - 4, 2, LACQ); R(g, X + 2, Y + 4, W - 4, 1, LACQ_D);                                // the front rail
   R(g, X + 1, Y + 11, W - 2, 3, POLE_D);
 }
-const ROW_OBJECTS = ['rocks', 'stall', 'railing', 'weaponRack', 'feastTableBare', 'feastTableBowls', 'feastTable', 'feastTableHoney', 'milkTableBare', 'milkTableEmpty', 'milkTable', 'milkTableYog', 'milkTableCheese'];   // side by side, these make one object as wide as the row
+const ROW_OBJECTS = ['rocks', 'stall', 'stallEmpty', 'railing', 'weaponRack', 'feastTableBare', 'feastTableBowls', 'feastTable', 'feastTableHoney', 'milkTableBare', 'milkTableEmpty', 'milkTable', 'milkTableYog', 'milkTableCheese'];   // side by side, these make one object as wide as the row
 // Big objects set up as you watch (the setUp step, js/world.js): how many pieces each goes up in, one after another (its
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
 // table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
 // yoghurt on it, goes up in just that: the rest is there already.)
-const OBJECT_STAGES = {feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
-const BLOCK_OBJECTS = ['frame', 'school', 'blackboard', 'timetable', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe', 'sandTrack', 'plumPoles'];
+const OBJECT_STAGES = {shop:4, fishTable:2, feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
+const BLOCK_OBJECTS = ['shop', 'frame', 'school', 'blackboard', 'timetable', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe', 'sandTrack', 'plumPoles'];
 const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through: it shakes as you do)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of

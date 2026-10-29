@@ -36,6 +36,15 @@ let PLACE = null, MAP = [], COLS = 0, ROWS = 0;   // the place you're in, and it
 let LEGEND = AREA.legend;             // what each map letter is: the area's legend, and the place's own if it has one (setPlace)
 const REQUESTS = Object.entries(AREA.requests).map(([id, r]) => ({id, ...r}));   // characters asking you to bring something
 const requestFrom = who => REQUESTS.find(r => r.from === who);
+// Something that comes in colours, in the shop or your wardrobe (colours: the colour words it comes in; colour: its own, the
+// colour of its word's picture), such as a headband: each colour a thing of its own, named as the content writes a few
+// words, 蓝色 的 头带 (a blue headband), and in its own colour just its word (头带: the red one, as a save has always called
+// it). Each: item (that name), word (头带) and colour.
+function inColours(i){
+  if (!i.colours) return [{...i, word:i.item}];
+  return i.colours.map(c => ({...i, word:i.item, colour:c, item:c === i.colour ? i.item : `${c} 的 ${i.item}`}));
+}
+const CLOTHES = (AREA.wardrobe || []).flatMap(inColours);   // everything you could wear (the wardrobe's), in each of its colours
 const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word, flies:!!c.flies,
   colour:c.colour, pecks:!!c.pecks, shoo:c.shoo,   // (a bird: its colour; pecking at its square; what you're told as you shoo it off: shooAway, js/world.js)
   home:{place:placeOf(c), x:c.x, y:c.y, facing:c.facing}, moves:c.moves}));   // home: where the content puts them; moves: where they go as the story goes on (placeCharacters)

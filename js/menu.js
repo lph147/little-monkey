@@ -56,7 +56,9 @@ const BAG_TABS = [
     .map(w => ({w, does:FOOD[w].does, label:FOOD[w].heal || FOOD[w].fast ? 'Eat' : 'Hear', count:S.bag[w]}))},
   {id:'someone', name:'For someone', things:() => Object.entries(here().holding).filter(([, w]) => w && WORDS[w])
     .map(([id, w]) => ({w, does:`The ${((NAMES[(AREA.requests[id] || {}).from] || {}).en || 'troop').toLowerCase()}`, label:'Hear'}))},
-  {id:'fight', name:'To fight with', things:() => canBattle() && BATTLES.weapon ? [{w:BATTLES.weapon, does:`Hits for ${BATTLES.hits}`, label:'Hear'}] : []}
+  {id:'fight', name:'To fight with', things:() => canBattle() && BATTLES.weapon ? [{w:BATTLES.weapon, does:`Hits for ${BATTLES.hits}`, label:'Hear'}] : []},
+  {id:'fishing', name:'For fishing', things:() => !canFish() ? [] : [{w:FISH.rod, does:'A at water with fish in it', label:'Hear'},   // (js/fishing.js)
+    ...(FISH.bait && S.bag[FISH.bait] > 0 ? [{w:FISH.bait, does:'A big fish bites next', label:'Hear', count:S.bag[FISH.bait]}] : [])]}
 ];
 function bagPage(back, focus, note, tab){
   const card = ({w, does, label, count}) => `<button class="card bagitem" data-w="${w}" data-label="${label}"><div class="c" aria-hidden="true">${picHTML(w)}</div>`
@@ -85,22 +87,23 @@ function bagPage(back, focus, note, tab){
   });
 }
 function wardrobePage(back, focus){
-  const own = (AREA.wardrobe || []).filter(c => S.wardrobe.owned.includes(c.item)), more = (AREA.wardrobe || []).length - own.length;
+  // what you own, in each colour you have it (CLOTHES, js/data.js); still to find: what the shop could sell you now
+  const own = CLOTHES.filter(c => S.wardrobe.owned.includes(c.item)), more = CLOTHES.filter(c => !S.wardrobe.owned.includes(c.item) && (c.item === c.word || lvl(c.colour) >= 1)).length;
   openCard(`<p class="label">衣服 yīfu · Clothes</p>
-    ${own.length ? `<p class="small">Tap something to put it on or take it off.</p><div class="menu grid">${own.map(c => { const on = wearing(c.item);
-      return `<button class="card wear${on ? ' on' : ''}" data-w="${c.item}" data-label="${on ? 'Take off' : 'Put on'}"><div class="c" aria-hidden="true">${picHTML(c.item)}</div><div class="hz">${c.item}</div><div class="p">${WORDS[c.item].py}</div><div class="small">${on ? 'Wearing' : 'Put on'}</div></button>`; }).join('')}</div>`
+    ${own.length ? `<p class="small">Tap something to put it on or take it off.</p><div class="menu grid">${own.map(c => { const on = wearing(c.item), a = asSaid(c);
+      return `<button class="card wear${on ? ' on' : ''}" data-w="${c.item}" data-label="${on ? 'Take off' : 'Put on'}"><div class="c" aria-hidden="true">${picHTML(a.pic)}</div><div class="hz">${a.zh}</div><div class="p">${a.py}</div><div class="small">${on ? 'Wearing' : 'Put on'}</div></button>`; }).join('')}</div>`
       : '<p class="hint">Nothing to wear yet. Clothes come from the shop and from friends.</p>'}
     ${more ? `<p class="small">${more} more to find.</p>` : ''}
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   if (focus){ const f = sheet.querySelector(`.wear[data-w="${focus}"]`); if (f) f.focus(); }
   on('[data-a=ok]', back);
   sheet.querySelectorAll('.wear').forEach(b => b.onclick = async () => {
-    const c = AREA.wardrobe.find(x => x.item === b.dataset.w), w = S.wardrobe.wearing;
+    const c = CLOTHES.find(x => x.item === b.dataset.w), w = S.wardrobe.wearing, a = asSaid(c);
     if (wearing(c.item)){ w.splice(w.indexOf(c.item), 1); save(); redress(); SFX.blip(); wardrobePage(back, c.item); return; }
-    w.push(c.item); save(); redress(); closeCard();
+    putOn(c.item); save(); redress(); closeCard();   // (another headband comes off first: one at a time)
     if (c.teach && lvl(c.teach) === 0) await showNotice(c.teach, {...(c.note ? {note:fill(c.note)} : {}), quiet:true});   // such as 戴, the first time
-    toks(c.sentence).forEach(t => { if (WORDS[t]) useWord(t); });
-    await showDialog(speaker('player'), {t:[...toks(c.sentence), '。'], en:c.sentenceEn}, {teach:c.teach || c.item});
+    toks(a.sentence).forEach(t => { if (WORDS[t]) useWord(t); });
+    await showDialog(speaker('player'), {t:[...toks(a.sentence), '。'], en:a.sentenceEn}, {teach:c.teach || c.word});
   });
 }
 // Your words, friends and shells: at the top of the menu and your tasks.

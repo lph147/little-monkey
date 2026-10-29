@@ -10,7 +10,7 @@ const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
-const SIX_BEES = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', schoolFlowers: true, gate: true, climb: 4, boar: 1, story: true, cave: 6,
+const SIX_BEES = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', schoolFlowers: true, shop: 3, gate: true, climb: 4, boar: 1, story: true, cave: 6,
   count: 3, home: 2, build: 2, wood: 'done', stones: 'done', school: 2, feast: 3, bees: 3, beeFriends: 6};
 const KNOWN = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水果', '动物', '水', '河', '猴子', '朋友', '桥', '蝴蝶', '同学', '棍子', '蜜蜂', '有', '没有', '我', '要', '没关系'];
 // A game where all six bees are your friends (area: more progress; more: more of the save), standing at pos

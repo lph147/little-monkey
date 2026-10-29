@@ -114,7 +114,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -246,6 +246,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'climb3', if:{climb:3}, text:'Lead the troop up the path beside the river, to the {瀑布}', arrow:[7, 2, 'falls']},
     {id:'fall', if:{climb:4, story:false}, text:'Read the story at the {瀑布}', arrow:[5, 1, 'falls']},
     {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
+    {id:'fishRod', if:{fish:'asked', fishing:0}, text:'Ask the fishing monkey by the stream how to catch a big {鱼}', arrow:'fisher'},
+    {id:'fishCatch', if:{fish:'asked', fishing:{atLeast:1}, holding:{fish:false}}, text:'Catch a big {鱼} for the feast: face the stream and press A', arrow:[22, 18, 'homeGround']},   // (its arrow on the stream, by the fishing monkey: not over you as you fish)
+    {id:'fishBack', if:{fish:'asked', holding:{fish:true}}, text:'Take the big {鱼} to the hungry monkey', arrow:'hungry'},
+    {id:'shopMoved', if:{shop:1}, text:'The {老板} has come up to the home ground: go and see him, by the way in from the {瀑布}', arrow:'boss'},
     {id:'dare', if:{story:true, cave:0}, text:'Talk to the old monkey: what could be behind the {瀑布}?', arrow:'elder'},
     {id:'jump', if:{cave:1}, text:'{跳} through the {瀑布}', arrow:[4, 1, 'falls']},
     {id:'explore', if:{cave:2, caveThings:{below:3}}, text:'Look around the {洞} ({caveThings}/3)'},
@@ -343,6 +347,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, cow:0}, text:'The thirsty monkey has news for you: look for his ! at the home ground.'},
     {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, text:'The big monkey has an idea for the feast: look for his ! at the home ground.'},   // (decided 28 October 2026: once the cow was home, nothing said so)
+    {if:{bees:{atLeast:11}, fish:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (a big fish)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}, melonPlanted:4, grapePlanted:4, bananaPlanted:4}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese, and fruit from the garden now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the garden's fruit is on the table too)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees, the cow and its dairy are done: till then, they have tasks)
     {if:{school:{atLeast:2}, lesson:true}, text:'A new lesson is ready at the {学校}: {lessons:ready}. Talk to the {老师}, or look at the timetable on the classroom wall.'},   // (decided 28 October 2026: it said the rest of chapter 1 was coming soon)
@@ -385,6 +390,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Learn to count to ten at {学校} ({numbersKnown}/7)', show:{school:{atLeast:2}}, done:{numbersKnown:7}},
     {chapter:1, text:'Learn nine colours at the {学校} ({coloursKnown}/9)', show:{school:{atLeast:2}}, done:{coloursKnown:9}},
     {chapter:1, text:'Plant {花|flowers} in front of the {学校}', show:{flowers:'asked'}, done:{schoolFlowers:true}},
+    {chapter:1, text:'Help the {老板} open his new shop at the home ground', show:{shop:{atLeast:1}}, done:{shop:{atLeast:3}}},
+    {chapter:1, text:'Catch a big {鱼} for the feast', show:{fish:'asked'}, done:{fish:'done'}},
     {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
     {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}},
     {chapter:1, text:'Fetch {碗|bowls} for the feast from the Water Curtain Cave', show:{feast:{atLeast:2}}, done:{bowls:'done'}},
@@ -417,8 +424,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   bubbles: {
     elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}, {if:{chapter:0, count:3}, show:'!'}],
-    boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
-      {if:{bought:{'头带':false}, shells:{atLeast:10}}, show:'?'}],   // ? once you can afford the headband
+    boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{shop:1}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
+      {if:{canBuy:true}, show:'?'}],   // up at the home ground, to have his shop built; ? once you can afford something new, such as a headband
     playful: [{if:{elder:{atLeast:1}, new:'猴子'}, show:'!'}, {if:{elder:{atLeast:1}, new:'朋友'}, show:'!'},   // until it has taught you both its words,
       {if:{littleGame:0, knows:'朋友', gate:false}, show:'!'},   // then, in the meadow, till you've played its word game (once: win or lose)
       {if:{school:{atLeast:2}, new:'同学'}, show:'!'}],   // and at school, that you're classmates
@@ -430,7 +437,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{feast:2, tableware:{atLeast:2}}, show:'!'},   // then to tell you what the feast still needs,
       {if:{feast:{atLeast:3}, bees:0}, show:'!'},   // and (a game that heard it before the bees, 25 October 2026) to send you to find them,
       {if:{bees:6}, show:'!'},   // and once you've brought the bees home, to see them,
-      {if:{honey:'asked', holding:{honey:true}}, show:'?'}],   // and honey from their hive
+      {if:{honey:'asked', holding:{honey:true}}, show:'?'},   // and honey from their hive;
+      {if:{bees:{atLeast:11}, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'}],   // and then, with honey on the table, a big fish
+    fisher: [{if:{fish:'asked', fishing:0}, show:'!'}],   // the fishing monkey by the stream, once the hungry monkey wants a big fish: a rod for you
     queen: [{if:{bees:4}, show:'!'}, {if:{bees:7}, show:'!'}],   // the queen bee, out of her old tree: she wants you to play her word game; and at home, for the hive
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'},
       {if:{feast:{atLeast:3}, cow:0}, show:'!'}, {if:{cow:4, following:{cow:true}}, show:'!'}, {if:{cow:5}, show:'!'}, {if:{milk:'asked', holding:{milk:true}}, show:'?'},
@@ -524,6 +533,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       sentence:'这 是 葡萄 的 种子', sentenceEn:'These are grape seeds.', gap:'葡萄', reward:2, thanks:'thanks', thanksReply:'不客气'},
     bananaSeeds: {from:'big', wants:'种子', ask:'wantSeeds', asked:'The big monkey wants seeds from wild fruit, to grow in the garden!', offer:'haveSeeds',
       sentence:'这 是 香蕉 的 种子', sentenceEn:'These are banana seeds.', gap:'香蕉', reward:2, thanks:'thanks', thanksReply:'不客气'},
+    // a big fish for the feast (chapter 1): the fishing monkey gives you a rod, and you catch one in the stream (fishing, below)
+    fish: {from:'hungry', wants:'鱼', ask:'wantFish', asked:'The hungry monkey wants a big {鱼} for the feast! The fishing monkey by the stream can help.',
+      offer:'haveFish', sentence:'这 是 大 鱼', sentenceEn:'This is a big fish.', gap:'大', others:['小'], reward:3, thanks:'thanks', thanksReply:'不客气'},
     cowFood: {from:'cow', wants:'草', ask:'cowHungry', asked:'The {牛} is hungry. Pick it some fresh {草} by the brook!',
       offer:'haveGrass', sentence:'我 要 吃 草', sentenceEn:'I want to eat grass.', reward:2, thanks:'thanks', thanksReply:'不客气'}
   },
@@ -538,16 +550,56 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // after you buy it (bought), and wear: true if your monkey wears it from then on (bought once), or
   // eat: true for food you can buy again and eat in an animal encounter to take away a wrong answer,
   // with carry: the most you can carry.
+  // An item can be sold only while its if matches (such as the peaches, once his shop is at the home ground); bag: true for
+  // something you can buy again that goes in your bag but isn't food, such as bait (carry: the most you can carry). And
+  // one that comes in colours (colours: its colour words; colour: its own, the colour of its word's picture) is sold in each
+  // colour you know, as a thing of its own (colourSentence, colourSentenceEn, colourNote and colourBought, {colour} where the
+  // colour goes: in the sentence its word, the missing one; in English its English), and as it is till you know its own.
   shop: {
     who:'boss', ask:'whatWant', given:'The {老板} gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
     earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and practising your words.',
     soldOut:'You have everything the {老板} sells. Come back another time.',
     items: [
-      {item:'头带', price:10, sentence:'我 要 头带', sentenceEn:'I want the headband.',
-        note:'A red cloth headband.', bought:'You tie on the red {头带}. It suits you!', wear:true},
       {item:'苹果', price:2, sentence:'我 要 苹果', sentenceEn:'I want an apple.',
-        note:'A crunchy apple.', bought:'You put the {苹果} in your bag. In a battle or with an animal, eat it to take away a wrong answer.', eat:true}
+        note:'A crunchy apple.', bought:'You put the {苹果} in your bag. In a battle or with an animal, eat it to take away a wrong answer.', eat:true},
+      {item:'桃子', price:2, if:{shop:{atLeast:3}}, sentence:'我 要 桃子', sentenceEn:'I want a peach.',
+        note:'A ripe peach.', bought:'You put the {桃子} in your bag. Eat it to get 10 health back.', eat:true},
+      {item:'蜂蜜', price:4, if:{shop:{atLeast:3}, bees:{atLeast:11}}, sentence:'我 要 蜂蜜', sentenceEn:'I want some honey.',   // (once the bees make honey at the home ground)
+        note:'Golden honey from the bees’ hive.', bought:'You put the {蜂蜜} in your bag. Eat it to walk faster for a minute.', eat:true},
+      {item:'鱼饵', price:2, if:{shop:{atLeast:3}, fishing:{atLeast:1}}, sentence:'我 要 鱼饵', sentenceEn:'I want some bait.',   // (once you can fish)
+        note:'Wriggly worms in a little clay pot. Big fish love them!', bought:'You put the {鱼饵} in your bag. The next time you fish, a big fish bites!', bag:true, carry:3},
+      // headbands in every colour you know (decided 29 October 2026: things monkeys could make on the mountain, cloth dyed
+      // with what grows there; never people's clothes): which one you wear shows on your monkey (the wardrobe, below)
+      {item:'头带', price:10, colour:'红色', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'],
+        sentence:'我 要 头带', sentenceEn:'I want the headband.', colourSentence:'我 要 {colour} 的 头带', colourSentenceEn:'I want the {colour} headband.',
+        note:'A red cloth headband.', colourNote:'A headband of {colour} cloth.', bought:'You tie on the red {头带}. It suits you!', colourBought:'You tie on the {colour} {头带}. It suits you!', wear:true}
     ]
+  },
+
+  // Fishing (js/fishing.js), once you have a rod (rod; has: when you have it): A at water where fish live (a legend's
+  // fishing) casts your line; you wait for a bite, press A, and reel it in by answering questions on words you know (each
+  // size's questions, in a row). A little fish bites till bigIf matches (you know 小, from your first catch); then a big one
+  // gets likelier each bite, sure by the bigWithin-th, or bites straight away with bait (in your bag: one goes on your
+  // hook). What you catch: a card with its picture (pic) and caught, then its steps, the first part whose if matches.
+  // What you're told: cast, bite, missed (too slow), slipped (a wrong answer), stop (B), baited, and reel (over a question).
+  fishing: {
+    rod:'鱼竿', has:{fishing:{atLeast:1}}, bait:'鱼饵', bigIf:{knows:'小'}, bigWithin:4,
+    cast:'You cast your line. Wait for the float to go under, then press A!', bite:'A bite! Press A!',
+    missed:'Too slow: it got away! Cast again.', slipped:'It slipped off the hook! Cast again.', stop:'You reel in your line.',
+    baited:'You put some {鱼饵} on your hook: a big one bites!', reel:'Reel it in!',
+    small:{questions:1, pic:'小 鱼', caught:'You caught a fish! It’s tiny.', steps:[
+      // the first: too small to keep! You say so (teaching 小), and let it go
+      {if:{new:'小'}, do:[{say:'tooSmall', by:'player', teach:'小'}, {newWord:'小', note:'A little fish: too small to keep. You let it go back into the water.'},
+        {message:'You let the little fish go. Cast again, for a bigger one!'}]},
+      // once you know 大 too: which is it? (and let it go)
+      {if:{knows:'大'}, do:[{gap:{sentence:'这 是 小 鱼', en:'This is a little fish.', word:'小', others:['大'], pic:'小 鱼'}}, {message:'You let the little fish go.'}]},
+      {do:[{say:'tooSmall', by:'player'}, {message:'You let the little fish go. Cast again, for a bigger one!'}]}]},
+    big:{questions:3, pic:'大 鱼', caught:'You caught a fish! It’s huge!', steps:[
+      // the first: a big one (teaching 大), for the feast: take it to the hungry monkey
+      {if:{new:'大'}, do:[{say:'bigFish', by:'player', teach:'大'}, {newWord:'大', note:'A big fish, just right for the feast!'}, {hold:'鱼', for:'fish'},
+        {message:'Take the big {鱼} to the hungry monkey, at the feast’s tables!'}]},
+      // after that, which is it? And the troop has it for supper
+      {do:[{gap:{sentence:'这 是 大 鱼', en:'This is a big fish.', word:'大', others:['小'], pic:'大 鱼'}}, {shells:2, note:'The troop has a big {鱼} for supper! +2 🐚'}]}]}
   },
 
   // Food you carry in your bag (up to carry of each), and what eating it does. heal: how much health comes back (in a battle,
@@ -717,6 +769,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: you arrive at the home ground with the old monkey, who goes to his place there and tells you about it
     {if:{home:1, place:'homeGround'}, do:[{set:{home:2}}, {follow:[]}, {say:'bigHere', by:'elder'},
       {message:'A wide, open valley, all their own! The troop dreams of building a school here, and a new shop, a hive, a garden and a pen. First, a school!'}]},
+    // chapter 1: you've brought the hungry monkey a big fish: the troop sets it out at the end of the feast's second table, on a
+    // stone table of its own, as you watch (its stone, then a big leaf with the fish on it)
+    {if:{place:'homeGround', fish:'done', fishTable:0}, do:[{setUp:{fishTable:1}}, {say:'haveFishNow', by:'hungry'}, {message:'A big {鱼} on a leaf, for the feast!'}]},
+    // chapter 1: once you know three colours (the first Art lesson), and the flowers you picked with them are planted, the
+    // 老板 comes up from the meadow to the home ground, to open a new shop by the way in, with headbands in every colour you
+    // know (decided 29 October 2026: by the time his shop had anything worth buying, you'd left the meadow for good). Talk
+    // to him, and the troop builds it as you watch.
+    {if:{shop:0, schoolFlowers:true, place:'homeGround'}, do:[{set:{shop:1}},
+      {message:'The {老板} has come up from the meadow! He wants a new shop at the home ground. Go and see him, by the way in from the {瀑布}.'}]},
     // you've brought the big monkey the wood and the small stones: the troop builds the school at once (a scene, told like
     // the opening: on its plot, the frame goes up, then the walls, the roof and the sign), and you learn 学校 (decided 22
     // October 2026: the frame had just popped up on the map, and you had to talk to him again)
@@ -1009,6 +1070,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
         '/': {look:'dairyYog', landmark:true, onLook:[{if:{dairy:4}, do:[{message:'Jars of {酸奶} on the shelf, and a pot with a cloth tied over it: something else is ready!'}]},
           {do:[{message:'Jars of {酸奶} on the shelf, and a pot with a cloth tied over it: he’s making something else!'}]}]},
         '}': {look:'dairyCheese', landmark:true, onLook:[{do:[{message:'Jars of {酸奶} and a round {奶酪} on the shelf, all made from the cow’s milk.'}]}]},
+        // chapter 1: the feast's fish, on a stone table of its own at the end of the second one: open grass, till you bring the
+        // hungry monkey a big fish (fishTable 1: the setUp step, its stone, then a big leaf with the fish on it). A at it: the
+        // feast's list
+        'Γ': {look:'grass', walk:true, becomes:[{if:{fishTable:{atLeast:1}}, to:'Λ'}]},
+        'Λ': {look:'fishTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        // chapter 1: the 老板's new shop, by the way in from the waterfall, three squares by two: open grass till he comes up from
+        // the meadow (shop 1); its plot marked out as you watch (2: the markOut step), with its sign (Θ), and then his shop
+        // built on it (3: setUp), posts, counter, striped roof and what he sells (Δ). A at it talks to him
+        'd': {look:'grass', walk:true, becomes:[{if:{shop:{atLeast:3}}, to:'Δ'}, {if:{shop:2}, to:'6'}]},
+        'Δ': {look:'shop', landmark:true, onLook:[{do:[{talkTo:'boss'}]}]},
+        '2': {look:'grass', walk:true, becomes:[{if:{shop:{atLeast:2}}, to:'Θ'}]},
+        'Θ': {look:'sign', landmark:true, label:'Read', onLook:[{if:{shop:{atLeast:3}}, do:[{message:'The {老板}’s shop: {头带|headbands} in every colour you know, and food for your bag.'}]},
+          {do:[{message:'The troop is building the {老板} a new shop here, by the way in.'}]}]},
         // a gap in the trees at the back left, under the cliff: the way to the sports ground, once PE is on the timetable
         'Ω': {look:'tree', becomes:[{if:{firstLessons:6}, to:'g'}]}
       },
@@ -1028,7 +1102,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
-        "YgEFggggggg8ηθιg%%%gF(((g.gggTgY",   // the feast's big table (%), under the big tree; and its second, beside it (()
+        "YgEFggggggg8ηθιg%%%gF(((Γ.gggTgY",   // the feast's big table (%), under the big tree; and its second, beside it ((), with the fish's at its end (Γ)
         "Ygggggggggg8κgκg!g!gg~g~g.g@gggY",   // their stone stools (! and ~); little monkeys building a tower of stones (@), just past the way up to the hillside
         "...............................q",   // the road: east to the riverside, once the bushes are cleared (q)
         "...............................Y",
@@ -1772,15 +1846,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
     'K': {look:'post', landmark:true, label:'Train', action:'training', becomes:[{if:{school:{atLeast:1}}, to:'g'}]},   // the training ground (the troop uses the post to build the school: lessons take its place)
-    'H': {look:'stall'},   // the shop owner's stall: as wide as its row of H (three squares)
+    'H': {look:'stall', becomes:[{if:{shop:{atLeast:1}}, to:'Ħ'}]},   // the shop owner's stall: as wide as its row of H (three squares)
+    'Ħ': {look:'stallEmpty', landmark:true, onLook:[{do:[{message:'The {老板}’s old stall, empty now. He has moved his shop up to the troop’s home ground.'}]}]},   // (once he's moved)
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', becomes:[{if:{gate:true}, to:'.'}]},
     // the rock all round the mountain: its top, seen from above (^), and at its front a cliff two squares high (M), as
     // between the hillside's terraces; grassy banks as high, that you hop down (v); and stone steps up them (=)
     'M': {look:'cliffFace', word:'山'},
     '^': {look:'heights', word:'山'},
     '=': {look:'steps', walk:true},
-    'W': {look:'water', word:'河', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
-    'O': {look:'water', word:'鱼', newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
+    'W': {look:'water', word:'河', fishing:true, gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the river.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
+    'O': {look:'water', word:'鱼', fishing:true, newNote:'Little fish dart about in the pond.', gather:{item:'水', for:'thirsty', label:'Collect', note:'You scoop up some water from the pond.', message:'You collected some {水}. Take it to the thirsty monkey.'}},
     'X': {look:'waterfall', word:'瀑布', note:'Water crashes down the 山 (mountain). What could be behind it?', landmark:true, action:'story', onLook:[
       {if:{climb:1}, do:[{card:'瀑布', note:'Water crashes down from high on the 山 (mountain). This is where the river comes from!'}, {set:{climb:2}},
         {message:'You found where the water comes from! Go back down the path and tell the troop.'}]},
@@ -1817,7 +1892,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'a': {look:'frame', landmark:true, onLook:[{do:[{message:'The frame of the school is up. The troop is busy building.'}]}]},   // (the school going up on it)
     't': {look:'school', word:'学校', landmark:true, note:'The troop’s school: the sign over its door says {学校}. Walk in through its door.'},   // (and then the school itself: its door is a way in)
     // where the other plots will be marked out, each when its story begins, with its sign (2 to 5): open grass till then
-    'd': {look:'grass', walk:true},   // the new shop's (its sign: "The troop wants a new shop here.")
+    'd': {look:'grass', walk:true},   // the new shop's (the home ground's legend has what it becomes)
     // the hive's, by the flowers (its sign: 3): open grass, until the troop builds the bees a hive there as you watch (the
     // markOut step, then setUp: its stone base, then a log hive at a time, each with its straw cap)
     'h': {look:'grass', walk:true, becomes:[{if:{bees:{atLeast:9}}, to:'$'}, {if:{bees:8}, to:'6'}]},
@@ -1974,11 +2049,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: at the home ground, south of the road, under the tree beside the way down to the bridge, two little monkeys
     // grooming each other, taking turns (in the book, chapter 1: 捉虱子…理毛衣, they pick out fleas and tidy their fur, in the
     // shade of the pines). Under the hillside's first pines till 24 October 2026: the home ground's south was empty
+    // chapter 1: a monkey fishing in the stream at the home ground, its rod out over the water (plays: 'fish'); it gives you a
+    // rod once the hungry monkey wants a big fish for the feast (decided 29 October 2026)
+    {id:'fisher', place:'homeGround', x:24, y:17, facing:'down', plays:'fish', name:{zh:'钓鱼猴子', py:'diàoyú hóuzi', en:'Fishing monkey'},
+      palette:{o:'#3E2814', f:'#A86E3A', s:'#EFC7A0', m:'#BC8460', e:'#24160C'}},
     {id:'groomA', place:'homeGround', x:12, y:13, facing:'right', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#43260F', f:'#B07A48', s:'#F2CDA4', m:'#C48A64', e:'#24160C'}},
     {id:'groomB', place:'homeGround', x:13, y:13, facing:'down', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#4A2B13', f:'#C99558', s:'#F6D6B0', m:'#D09A76', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
+      moves:[{if:{shop:{atLeast:1}}, place:'homeGround', x:6, y:13, facing:'down'}],   // (chapter 1: up at the home ground, by his new shop, once the school's flowers are planted)
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}},
     // chapter 1: the queen bee (蜂王), called by her word, as an animal is: in her old hollow tree in the bees' valley till
     // she comes out, hovering in front of it while she's out; then home with you, with her swarm, by the wildflowers below
@@ -2156,6 +2236,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '没有': 'The hungry monkey, at the feast’s big table: there’s no honey.',
     '跑': 'PE at school: the teacher started a race with it, on the sports ground.',
     '跑步': 'PE at school: the class went running round the sports ground.',
+    '鱼竿': 'The fishing monkey gave it to you, by the stream at the home ground.',
+    '鱼饵': 'You bought it at the {老板}’s shop, at the home ground.',
+    '小': 'You said it as you let your first fish go: too small!',
+    '大': 'You said it when you caught a big fish for the feast.',
   },
 
   // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
@@ -2164,7 +2248,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   practiceSentences: [
     {sentence:'我 有 桃子', sentenceEn:'I have peaches.'},
     {sentence:'我 有 朋友', sentenceEn:'I have friends.'},
-    {sentence:'我 没有 苹果', sentenceEn:'I don’t have any apples.'}   // (没有)
+    {sentence:'我 没有 苹果', sentenceEn:'I don’t have any apples.'},   // (没有)
+    {sentence:'我 要 大 桃子', sentenceEn:'I want a big peach.'},   // (大 and 小: drafts, not checked yet)
+    {sentence:'我 有 小 鱼', sentenceEn:'I have a little fish.'}
   ],
 
   // The feast's list, shown by A at its big table (the feastList step): what the troop has for the feast and what it still
@@ -2182,6 +2268,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {word:'牛奶', show:{milkTable:{atLeast:1}}, have:{milkTable:{atLeast:1}}, yes:{zh:'我们 有 牛奶 。', en:'We have milk.'}},   // (the cow's thank-you; on the list once it's on the table, so the list never gives it away)
       {word:'酸奶', show:{milkTable:{atLeast:2}}, have:{milkTable:{atLeast:2}}, yes:{zh:'我们 有 酸奶 。', en:'We have yoghurt.'}},   // (from the little dairy)
       {word:'奶酪', show:{milkTable:{atLeast:3}}, have:{milkTable:{atLeast:3}}, yes:{zh:'我们 有 奶酪 。', en:'We have cheese.'}},
+      {word:'鱼', show:{fish:'asked'}, have:{fish:'done'}, no:{zh:'我们 没有 鱼 。', en:'We don’t have any fish.'}, yes:{zh:'我们 有 鱼 。', en:'We have fish.'}},   // (a big one, from the stream)
       // the garden's fruit: on the list once it's planted (you know its word by then), had once it's on the table
       {word:'西瓜', show:{melonPlanted:{atLeast:1}}, have:{melonPlanted:{atLeast:4}}, no:{zh:'我们 没有 西瓜 。', en:'We don’t have any watermelon.'}, yes:{zh:'我们 有 西瓜 。', en:'We have watermelon.'}},
       {word:'葡萄', show:{grapePlanted:{atLeast:1}}, have:{grapePlanted:{atLeast:4}}, no:{zh:'我们 没有 葡萄 。', en:'We don’t have any grapes.'}, yes:{zh:'我们 有 葡萄 。', en:'We have grapes.'}},
@@ -2391,7 +2478,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // word it teaches the first time (teach, with a note on its card). You get them from the shop
   // (wear: true there) or with a give step.
   wardrobe: [
-    {item:'头带', sentence:'我 戴 头带', sentenceEn:'I wear my headband.', teach:'戴', note:'Use 戴 for things you wear on your head.'}
+    {item:'头带', colour:'红色', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'],   // (in each colour the 老板 sells: one at a time)
+      sentence:'我 戴 头带', sentenceEn:'I wear my headband.', colourSentence:'我 戴 {colour} 的 头带', colourSentenceEn:'I wear my {colour} headband.', teach:'戴', note:'Use 戴 for things you wear on your head.'}
   ],
 
   // What the characters say. The English shows under a sentence the first time you see it.
@@ -2422,6 +2510,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveFlowers: {zh:'花 ！ 太 好 了 ！', en:'Flowers! Wonderful!'},
     noProblem: {zh:'没关系 ！', en:'That’s OK!'},
     welcome: {zh:'不客气 ！', en:'You’re welcome!'},   // the 老板, when you thank him for what you've bought
+    bossCame: {zh:'我 来 了 ！', en:'Here I am!'},
+    wantFish: {zh:'我 要 吃 大 鱼 ！', en:'I want to eat a big fish!'},   // the hungry monkey, for the feast (chapter 1; 大 just for listening, till you catch one)
+    haveFish: {zh:'鱼 ！ 太 好 了 ！', en:'A fish! Wonderful!'}, haveFishNow: {zh:'我们 有 鱼 了 ！', en:'We have fish now!'},
+    fishInRiver: {zh:'河 里 有 鱼 ！', en:'There are fish in the river!'},   // the fishing monkey by the stream
+    thisRod: {zh:'这 是 鱼竿 。', en:'This is a fishing rod.'},
+    tooSmall: {zh:'太 小 了 ！', en:'It’s too small!'},   // you, as you catch a little fish, and let it go
+    bigFish: {zh:'鱼 很 大 ！', en:'The fish is so big!'},   // and a big one   // the 老板, come up to the home ground (chapter 1), to open a new shop there
+    bossLikesHere: {zh:'这里 很 好 ！', en:'It’s nice here!'},
     sorry: {zh:'对不起 ！', en:'Sorry!'},   // the hungry monkey, sorry for being fussy (draft, not checked yet: see CHINESE.md)
     // The prologue's guide (drafts, not checked yet: see CHINESE.md)
     iamOld: {zh:'我 是 老 猴子 。 这 是 花果山 。', en:'I’m the old monkey. This is Flower Fruit Mountain.'},
@@ -2591,6 +2687,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // In an if: elder:0 checks what the area remembers; new:'猴子' is true while you don't know
   // a word yet, knows:'朋友' once you do; a counter, such as newWords:{below:4} or {atLeast:4}.
   talk: {
+    // the fishing monkey by the stream (chapter 1): once the hungry monkey wants a big fish, a rod for you
+    fisher: [
+      {if:{fish:'asked', fishing:0}, do:[{say:'fishInRiver'}, {say:'thisRod', teach:'鱼竿'}, {newWord:'鱼竿', note:'A bamboo fishing rod, with a line, a float and a hook.'},
+        {set:{fishing:1}}, {message:'The fishing monkey gives you a {鱼竿}! Stand by the stream, face the water, and press A to fish.'}]},
+      {if:{fishing:{atLeast:1}}, do:[{say:'fishInRiver', hint:'Face the water and press A to fish. The {老板} sells {鱼饵|bait}: with some in your bag, a big fish bites next.'}]},
+      {do:[{say:'fishInRiver'}]}
+    ],
     elder: [
       {if:{elder:0}, do:[
         {say:'hi', teach:'你好'},
@@ -2728,6 +2831,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     boss: [
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'老板'}, do:[{say:'boss', teach:'老板'}, {newWord:'老板', note:'The {老板} owns the shop. Come back to see what they sell.'}, {reply:'你好'}]},
+      // chapter 1: come up to the home ground, he likes it there, and the troop builds him a new shop, as you watch: its plot
+      // marked out by the way in, then its posts, counter, striped roof, and what he sells (decided 29 October 2026)
+      {if:{shop:1}, do:[{say:'bossCame'}, {say:'bossLikesHere'},
+        {message:'The {老板} wants his new shop here, by the way in, where every monkey goes past. The troop comes to build it!'},
+        {markOut:{shop:2}}, {setUp:{shop:3}}, {say:'great'},
+        {message:'The {老板}’s new shop! He sells {头带|headbands} in every colour you know, and food for your bag. Talk to him to buy something.'}]},
       {do:[{shop:true}]}
     ],
     hungry: [
@@ -2757,9 +2866,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {set:{feast:3, bees:1}},   // and the bees begin: the troop clears the way east (the bushes at the end of the road)
         {message:'There’s no honey for the feast! Honey comes from bees: the troop has cleared a way east, along the stream, to find them. Follow the road east!'}
       ]},
+      {if:{fish:'asked', holding:{fish:true}}, do:[{request:'fish'}]},   // you've caught him a big fish
       // you've brought the bees home: he's thrilled (the hive, and honey for the feast, are step 5)
       {if:{bees:6}, do:[{say:'haveBees'}, {set:{bees:7}}, {message:'The bees need a home: the troop is going to build them a hive, by the wildflowers. Go and see!'}]},
       {if:{bees:10}, do:[{request:'honey'}]},   // honey for the feast, from the hive: asked as the bees move in
+      // a big fish for the feast (decided 29 October 2026), once the honey's on its table: the fishing monkey by the stream
+      // has a rod for you
+      {if:{bees:{atLeast:11}, fish:'not asked'}, do:[{say:'haveHoneyNow'}, {request:'fish'}]},
+      {if:{fish:'asked'}, do:[{request:'fish'}]},
       {if:{bees:{atLeast:11}}, do:[{say:'haveHoneyNow'}]},
       // a game that heard what the feast needs before the bees came (25 October 2026): he sends you to find them now
       {if:{feast:{atLeast:3}, bees:0}, do:[{say:'wantHoney'}, {set:{bees:1}},

@@ -134,7 +134,7 @@ SAVES.byLanterns = {...SAVES.schoolHalf, pos: {place: 'homeGround', x: 8, y: 5, 
 SAVES.flowersPicking = {...SAVES.schoolPainted, version: 30, areas: {1: {...SAVES.schoolPainted.areas[1], flowers: 'asked'}}, pos: {place: 'homeGround', x: 26, y: 3, dir: 'up'}};
 SAVES.flowersBack = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], holding: {flowers: '花'}, picked: {flowers: ['红色', '黄色', '白色']}}},
   pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};
-SAVES.flowersPlanted = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], flowers: 'done', schoolFlowers: true}}, pos: {place: 'homeGround', x: 11, y: 7, dir: 'up'}};
+SAVES.flowersPlanted = {...SAVES.flowersPicking, areas: {1: {...SAVES.flowersPicking.areas[1], flowers: 'done', schoolFlowers: true, shop: 3}}, pos: {place: 'homeGround', x: 11, y: 7, dir: 'up'}};   // (the 老板's shop built: below)
 // looking at flowers, each square all one colour (26 October 2026): a red one, its colour known; at the hillside's slope of
 // flowers; and a blue one on the riverside, before you know blue
 SAVES.flowerLook = {...SAVES.flowersPlanted, pos: {place: 'homeGround', x: 26, y: 3, dir: 'up'}};
@@ -153,7 +153,7 @@ SAVES.feastList = {...SAVES.feastTable, w: {...SAVES.feastTable.w, ...knows(1, [
 SAVES.tablesBare = {...SAVES.feastTable, areas: {1: {...SAVES.feastTable.areas[1], tableware: 0, bowls: 'not asked'}}, pos: {place: 'homeGround', x: 19, y: 8, dir: 'up'}};
 SAVES.bowlsCave = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'asked'}}, tasksSeen: {bowls: 1}, pos: {place: 'cave', x: 9, y: 4, dir: 'up'}};
 SAVES.bowlsBack = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'asked', holding: {bowls: '碗'}}}, tasksSeen: {bowls: 1, bowlsBack: 1}};
-SAVES.bowlsOn = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'done', tableware: 1, flowers: 'done', schoolFlowers: true}}, tasksSeen: {bowls: 1, bowlsBack: 1, chopsticks: 1},
+SAVES.bowlsOn = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'done', tableware: 1, flowers: 'done', schoolFlowers: true, shop: 3}}, tasksSeen: {bowls: 1, bowlsBack: 1, chopsticks: 1},
   pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};   // facing the big monkey, with the bowls on the tables
 // hide and seek with a little monkey at the home ground: facing it; while it hides under the table (after two wrong
 // guesses, its tail pokes out)
@@ -268,7 +268,7 @@ SAVES.dairyDone = {...SAVES.dairyReady, w: {...SAVES.dairyReady.w, ...knows(1, [
 // the big monkey's garden (version 1, 27 October 2026): his ! for seeds, once the feast's tables are set; the garden marked
 // out by the stream; the melon field east off the south slope, birds pecking at its melons; and the seeds planted (version
 // 30: the flowers are done, which an older save's upgrade would undo)
-SAVES.gardenAsk = {...SAVES.dairyDone, version: 30, w: {...SAVES.dairyDone.w, ...knows(1, ['勺子', '鸟', '红色', '黄色', '白色', '蓝色', '黑色'])}, areas: {1: {...SAVES.dairyDone.areas[1], spoons: 2, flowers: 'done', schoolFlowers: true}}, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};   // facing the big monkey
+SAVES.gardenAsk = {...SAVES.dairyDone, version: 30, w: {...SAVES.dairyDone.w, ...knows(1, ['勺子', '鸟', '红色', '黄色', '白色', '蓝色', '黑色'])}, areas: {1: {...SAVES.dairyDone.areas[1], spoons: 2, flowers: 'done', schoolFlowers: true, shop: 3}}, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}};   // facing the big monkey
 SAVES.gardenMarked = {...SAVES.gardenAsk, w: {...SAVES.gardenAsk.w, ...knows(1, ['种子'])}, areas: {1: {...SAVES.gardenAsk.areas[1], garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked', bananaSeeds: 'asked'}},
   tasksSeen: {...SAVES.gardenAsk.tasksSeen, melonSeeds: 1, grapeSeeds: 1, bananaSeeds: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};   // by the garden, facing the big monkey
 SAVES.melonField = {...SAVES.gardenMarked, pos: {place: 'melonField', x: 13, y: 4, dir: 'right'}};   // facing the red bird
@@ -343,6 +343,21 @@ SAVES.wantsApple = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], holdi
 SAVES.facing = {...SAVES.born, tips: {walk: 1}, pos: {x: 7, y: 2, dir: 'up'}};   // facing the old monkey, having walked
 SAVES.noMenuTip = {...SAVES.middle, tips: {...ALL_TIPS, menu: 0}};
 SAVES.englishTip = {...SAVES.middle, tips: {...ALL_TIPS, english: 0}, lines: {'去看看！': 1}};   // a line heard before, the English tip still to come
+
+// The 老板's new shop at the home ground (29 October 2026): with the flowers planted, he comes up from the meadow; the troop
+// builds his shop by the way in as you watch; headbands in every colour you know, and food
+SAVES.shopComes = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.areas[1], shop: 0}}, tasksSeen: {...SAVES.flowersPlanted.tasksSeen, news: 1}, pos: {place: 'homeGround', x: 11, y: 7, dir: 'down'}};
+SAVES.shopMoved = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.areas[1], shop: 1}}, tasksSeen: {...SAVES.flowersPlanted.tasksSeen, shopMoved: 1, news: 1}, pos: {place: 'homeGround', x: 7, y: 13, dir: 'left'}};   // facing him, by the way in
+SAVES.shopOpen = {...SAVES.shopMoved, shells: 24, w: {...SAVES.shopMoved.w, ...knows(1, ['头带', '蓝色', '绿色'])}, areas: {1: {...SAVES.shopMoved.areas[1], shop: 3, bought: ['头带']}},
+  wardrobe: {owned: ['头带', '蓝色 的 头带'], wearing: ['蓝色 的 头带']}};
+SAVES.oldStall = {...SAVES.shopOpen, pos: {place: 'meadow', x: 9, y: 17, dir: 'up'}};   // below his old stall in the meadow
+// A big fish for the feast (29 October 2026): with honey on the table, the hungry monkey wants one; the fishing monkey by
+// the stream gives you a rod; your first catch is tiny (小), then a big one (大), for the feast
+SAVES.fishAsk = {...SAVES.fruitTable, areas: {1: {...SAVES.fruitTable.areas[1], shop: 3, fish: 'not asked'}}, pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};   // facing the hungry monkey
+SAVES.fishRod = {...SAVES.fishAsk, areas: {1: {...SAVES.fishAsk.areas[1], fish: 'asked'}}, tasksSeen: {...SAVES.fishAsk.tasksSeen, fishRod: 1}, pos: {place: 'homeGround', x: 23, y: 17, dir: 'right'}};   // facing the fishing monkey
+SAVES.fishing = {...SAVES.fishRod, w: {...SAVES.fishRod.w, ...knows(1, ['鱼竿'])}, areas: {1: {...SAVES.fishRod.areas[1], fishing: 1}}, tasksSeen: {...SAVES.fishRod.tasksSeen, fishCatch: 1}, pos: {place: 'homeGround', x: 23, y: 17, dir: 'down'}};
+SAVES.fishBoth = {...SAVES.fishing, w: {...SAVES.fishing.w, ...knows(1, ['小', '大', '鱼饵'])}, bag: {'鱼饵': 2}, areas: {1: {...SAVES.fishing.areas[1], fish: 'done', fishTable: 1}}};
+SAVES.fishTable = {...SAVES.fishBoth, pos: {place: 'homeGround', x: 24, y: 8, dir: 'up'}};
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
@@ -1017,6 +1032,44 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'feast-list-fruit', title: 'The feast’s list, with the fruit', save: 'fruitTable', why: 'A at any of the tables: 我们有西瓜。我们有葡萄。我们有香蕉。 at the end of the list (we don’t have it, while it grows: 我们没有西瓜。).', run: async () => {
     play(); await wait(100); feastCard(); await wait(500); }},
+  {id: 'shop-comes', title: 'The 老板 comes up to the home ground', save: 'shopComes', why: 'With the flowers planted, he comes up from the meadow: a message, and a task with an arrow to him, by the way in.', run: async () => {
+    play(); await wait(900); }},
+  {id: 'shop-plot', title: 'His shop, going up', save: 'shopMoved', why: 'Talk to him (我来了！ 这里很好！): the troop marks out a plot by the way in, with its sign, then builds his shop a piece at a time: posts and a woven back, a counter, a striped roof as his old stall had, then what he sells.', run: async () => {
+    play(); await wait(100); here().shop = 2; refreshMap(); here().shop = 3; settingUp = {objects: mapObjects().filter(o => o.look === 'shop').map(o => ({...o, stage: 2})), stage: 2}; await wait(300); }},   // (held as its counter goes up, on its plot)
+  {id: 'shop-home', title: 'The 老板’s new shop', save: 'shopOpen', why: 'By the way in from the waterfall, with his sign; A at the shop or at him opens it. You’re wearing the blue headband you bought there.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'shop-colours', title: 'Headbands in every colour you know', save: 'shopOpen', why: 'One for each colour you know (you have the red and the blue), with its own picture, peaches as well as apples, and honey once the bees make it.', run: async () => {
+    play(); await wait(100); shop(speaker('boss')); await wait(200); next(); await wait(400); }},
+  {id: 'shop-gap-colour', title: 'Asking for a green one', save: 'shopOpen', why: 'You ask for it: 我要绿色的头带, the colour missing, the other colours you know the wrong answers.', run: async () => {
+    play(); await wait(100); buy(forSale().find(i => i.colour === '绿色'), speaker('boss')); await wait(500); }},
+  {id: 'wardrobe-colours', title: 'Your headbands', save: 'shopOpen', why: 'Each colour you’ve bought, one on at a time: putting one on takes the other off (我戴蓝色的头带).', run: async () => {
+    play(); await wait(100); wardrobePage(() => closeCard()); await wait(300); }},
+  {id: 'stall-empty', title: 'His old stall, empty', save: 'oldStall', why: 'Once he’s moved, the meadow’s stall is empty: A at it says where he’s gone.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'fish-want', title: 'A big fish for the feast', save: 'fishAsk', why: 'With honey on the table, the hungry monkey wants a big fish: 我要吃大鱼！ (大 just for listening, till you catch one).', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(500); }},
+  {id: 'fisher', title: 'The fishing monkey', save: 'fishRod', why: 'By the stream at the home ground, his rod out over the water, its float bobbing, with a ! once the hungry monkey wants a fish.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'fisher-rod', title: 'A fishing rod', save: 'fishRod', why: '河里有鱼！ 这是鱼竿。 (This is a fishing rod), and its card.', run: async () => {
+    play(); await wait(100); talk(npc('fisher')); await wait(300); next(); await wait(300); next(); await wait(500); }},
+  {id: 'fishing-wait', title: 'Fishing: waiting for a bite', save: 'fishing', why: 'A at the stream casts your line: the float bobs on the water. B stops.', run: async () => {
+    play(); await wait(100); Math.random = () => .5; goFishing(23, 18); await wait(600); }},
+  {id: 'fishing-bite', title: 'A bite!', save: 'fishing', why: 'The float goes under, rings spreading, a ! over you: press A (Hook it) before it gets away.', run: async () => {
+    play(); await wait(100); Math.random = () => 0; goFishing(23, 18); await wait(1900); }},
+  {id: 'fishing-reel', title: 'Reeling it in', save: 'fishing', why: 'Hooked: reel it in by answering questions on words you know (one for a little fish, three in a row for a big one).', run: async () => {
+    play(); await wait(100); Math.random = () => 0; goFishing(23, 18); await wait(1800); fishPress('a'); await wait(600); }},
+  {id: 'fish-caught', title: 'A tiny fish', save: 'fishing', why: 'Your first catch is always a little one.', run: async () => {
+    play(); await wait(100); infoBox(`<span class="ico">${picHTML(FISH.small.pic)}</span>`, `<p>${esc(fill(FISH.small.caught))}</p>`); await wait(400); }},
+  {id: 'fish-too-small', title: 'Too small!', save: 'fishing', why: 'You say so, 太小了！, teaching 小 (little), and let it go.', run: async () => {
+    play(); await wait(100); runSteps(FISH.small.steps[0].do); await wait(600); }},
+  {id: 'fish-gap', title: 'Which is it?', save: 'fishBoth', why: 'Once you know 小 and 大, each catch asks: 这是＿鱼, its picture over it.', run: async () => {
+    play(); await wait(100); runSteps(FISH.big.steps[1].do); await wait(600); }},
+  {id: 'fish-table', title: 'The feast’s fish', save: 'fishTable', why: 'At the end of the feast’s second table, on a stone of its own, on a big leaf.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'scroll-describing', title: 'Word Scroll: describing words', save: 'fishBoth', why: '小 (little) and 大 (big), from fishing, on a tab of their own.', run: async () => {
+    play(); await wait(100); openScroll(() => closeCard(), 0, 'describing'); await wait(400); }},
+  {id: 'bag-fishing', title: 'The bag: For fishing', save: 'fishBoth', why: 'Your rod, and bait from the 老板: with some in your bag, a big fish bites next.', run: async () => {
+    play(); await wait(100); bagPage(() => closeCard()); await wait(100); click('.bagtabs [data-tab=fishing]'); await wait(300); }},
   {id: 'honey-energy', title: 'Full of energy', save: 'honeyIn', why: 'After eating honey, you walk faster for a minute, golden sparks flying off behind you.', run: async () => {
     play(); await wait(100); energise('蜂蜜', 60); S.pos = {place: 'homeGround', x: 20, y: 9, dir: 'right'}; placePlayer();
     pl.mv = {fx: 20, fy: 9, tx: 21, ty: 9, t0: performance.now() - 5e8, dur: 1e9}; await wait(300); }},   // (held in the middle of a step, as you look)

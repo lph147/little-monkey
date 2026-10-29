@@ -24,12 +24,16 @@ const allSteps = () => [
   ...(AREA.spots || []).flatMap((sp, n) => sp.onLook.flatMap((p, i) => p.do.map(s => [`looking at spot ${n + 1}, part ${i + 1}`, s, null]))),
   ...Object.entries(AREA.countGames || {}).flatMap(([id, g]) => (g.win || []).map(s => [`the counting game ${id}, if you win`, s, null])),
   ...AREA.animals.flatMap(a => (a.counted || []).flatMap((c, i) => c.map(s => [`the ${a.id}, as friend ${i + 1} of ${a.many}`, s, null]))),
-  ...((AREA.battles || {}).afterLoss || []).flatMap((a, i) => a.do.map(s => [`after losing a battle, part ${i + 1}`, s, null]))
+  ...((AREA.battles || {}).afterLoss || []).flatMap((a, i) => a.do.map(s => [`after losing a battle, part ${i + 1}`, s, null])),
+  ...['small', 'big'].flatMap(size => ((AREA.fishing || {})[size] || {}).steps || []).flatMap((p, i) => p.do.map(s => [`catching a fish, part ${i + 1}`, s, null]))   // (js/fishing.js)
 ];
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
   ...AREA.events.map((e, i) => [`event ${i + 1}`, e.if]),
   ...((AREA.battles || {}).afterLoss || []).filter(a => a.if).map((a, i) => [`after losing a battle, part ${i + 1}`, a.if]),
+  ...['small', 'big'].flatMap(size => ((AREA.fishing || {})[size] || {}).steps || []).filter(p => p.if).map((p, i) => [`catching a fish, part ${i + 1}`, p.if]),
+  ...(AREA.fishing ? [['fishing', AREA.fishing.has], ['fishing', AREA.fishing.bigIf]] : []),
+  ...(AREA.shop ? AREA.shop.items.filter(i => i.if).map(i => [`the shop's ${i.item}`, i.if]) : []),
   ...AREA.tasks.map(t => [`task ${t.id}`, t.if]),
   ...AREA.hints.map((h, i) => [`hint ${i + 1}`, h.if]),
   ...AREA.checklist.map((c, i) => [`checklist item ${i + 1}`, c.done]),
@@ -363,7 +367,7 @@ test('every character has a talk script (or, a bird, is shooed away: shoo), and 
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound', 'any'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound', 'any', 'canBuy'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -489,7 +493,7 @@ test('a sentence in your tasks, the checklist or hints that mentions words from 
   // ({水} in the content: 水 (water), or just water till you've caught it. Names stay English, as do places' names, numbers,
   // and want and have, which are what 要 and 有 mean but aren't them in these sentences: the old monkey, the home ground, the
   // pine wood, Flower Fruit Mountain, three pieces of wood, things that sparkle have words.)
-  const names = /\b(monkeys?|home ground|pine wood|Flower Fruit Mountain|wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi;
+  const names = /\b(big monkey|little monkeys?|a little|monkeys?|home ground|pine wood|Flower Fruit Mountain|wants?|have|one|two|three|four|five|six|seven|eight|nine|ten)\b/gi;
   const meanings = Object.entries(BANK).filter(([, b]) => b.area <= AREA.number).flatMap(([w, b]) => b.en.split(/,\s*/)
     .map(e => e.replace(/^(a|an|the|to) /, '')).filter(e => e.length > 2).map(e => [w, e]));
   const texts = [...AREA.tasks.map(t => t.text), ...AREA.hints.map(h => h.text), ...AREA.checklist.map(c => c.text)];

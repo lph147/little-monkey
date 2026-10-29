@@ -183,6 +183,27 @@ const DRAFTS = [
     ['很 好 ！', 'Very good!', 'The teacher at the finish of the race, however you did, and after the jog'],
     ['我们 去 跑步 吧 ！', 'Let’s go running!', 'The teacher, starting PE’s second lesson, teaching 跑步 (to go running, to jog): the class jogs once round the track']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 28 October 2026 (in the game), PE: ' + where})),
+  ...[['我 来 了 ！', 'Here I am!', 'The 老板 (shop owner), come up from the meadow to the troop’s home ground to open a new shop'],
+    ['这里 很 好 ！', 'It’s nice here!', 'The 老板, by the way in, where the troop builds his new shop'],
+    ['我 要 蓝色 的 头带', 'I want the blue headband.', 'The sentence you finish to buy a headband at his shop (filling in the colour): one for each colour you know, 红色 黄色 白色 黑色 蓝色 绿色 棕色 橙色 粉色. Is 我要蓝色的头带 natural, or would 我要一条蓝色的头带 be better (条 isn’t a word in the game yet)?'],
+    ['我 戴 蓝色 的 头带', 'I wear my blue headband.', 'Your monkey, putting a headband on in your wardrobe (one for each colour)'],
+    ['我 要 桃子', 'I want a peach.', 'The sentence you finish to buy a peach at his shop'],
+    ['我 要 蜂蜜', 'I want some honey.', 'The sentence you finish to buy honey at his shop'],
+    ['我 要 鱼饵', 'I want some bait.', 'The sentence you finish to buy bait (鱼饵 yú’ěr, worms for fishing) at his shop']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 29 October 2026 (in the game), the 老板’s new shop: ' + where})),
+  ...[['我 要 吃 大 鱼 ！', 'I want to eat a big fish!', 'The hungry monkey, wanting a big fish for the feast (大 just for listening, till you catch one)'],
+    ['河 里 有 鱼 ！', 'There are fish in the river!', 'The fishing monkey by the stream at the home ground (钓鱼猴子 diàoyú hóuzi, his name in the game: is that a natural name?)'],
+    ['这 是 鱼竿 。', 'This is a fishing rod.', 'The fishing monkey, giving you a rod (鱼竿 yúgān). How it’s made: 鱼 yú (fish) + 竿 gān (pole) = 鱼竿 fishing rod'],
+    ['太 小 了 ！', 'It’s too small!', 'You, catching your first fish, a tiny one, and letting it go: teaching 小 (xiǎo, little)'],
+    ['鱼 很 大 ！', 'The fish is so big!', 'You, catching a big fish: teaching 大 (dà, big). How it’s made: drawn like someone stretching their arms out wide, to show how big something is (is that a fair way to explain 大?)'],
+    ['这 是 小 鱼', 'This is a little fish.', 'The sentence you finish (choosing 小 or 大) each time you catch a little fish, once you know both'],
+    ['这 是 大 鱼', 'This is a big fish.', 'The sentence you finish as you give the hungry monkey the big fish, and each time you catch one'],
+    ['鱼 ！ 太 好 了 ！', 'A fish! Wonderful!', 'The hungry monkey, as you bring him the fish'],
+    ['我们 有 鱼 了 ！', 'We have fish now!', 'The hungry monkey, as the fish goes on the feast’s table'],
+    ['我们 没有 鱼 。', 'We don’t have any fish.', 'The feast’s list, till you’ve caught one'],
+    ['我 要 大 桃子', 'I want a big peach.', 'A sentence you finish in a lesson, to practise 大 (or 要, 我)'],
+    ['我 有 小 鱼', 'I have a little fish.', 'A sentence you finish in a lesson, to practise 小']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 29 October 2026 (in the game), fishing: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 
@@ -230,7 +251,8 @@ function sheet(){
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name), ...(AREA.lessons || []).map(s => s.subject)];   // characters, the sign, the area, its places and the school's subjects
   const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe']),
-    ...(AREA.practiceSentences || []).map(c => [c.sentence, c.sentenceEn, 'You, in a lesson at school'])];
+    ...(AREA.practiceSentences || []).map(c => [c.sentence, c.sentenceEn, 'You, in a lesson at school']),
+    ...get('COLOUR_SENTENCES()').map(c => [c.zh, c.en, /要/.test(c.zh) ? `${name(AREA.shop.who)} (a headband in each colour you know)` : 'You, in the wardrobe (a headband in each colour)'])];   // (js/world.js)
   const notes = '';
   // how a word is made, in one line: its parts (each Chinese, pinyin, English) and the word they make, with its English, as
   // its card shows it (or, for your home's name, what they add up to); or the clue inside it; or the character it shares

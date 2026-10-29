@@ -143,7 +143,7 @@ test('an animal\'s last question is sometimes a sentence you know with a word mi
   for (let i = 0; i < 5; i++) await tick();
   const built = JSON.parse(t.run('JSON.stringify(__built)'));
   assert.equal(built.length, 1, 'the last question was a sentence with a gap');
-  assert.ok(['我要吃桃子', '我要花'].includes(built[0]), `${built[0]} should be a sentence you know`);
+  assert.ok(['我要吃桃子', '我要桃子', '我要花'].includes(built[0]), `${built[0]} should be a sentence you know`);
   assert.equal(t.run('__won'), true, 'filled right, it counts as a right answer');
 });
 

@@ -30,6 +30,7 @@ const CATEGORIES = {
   places: {tab:'Places', name:'Places'},
   items: {tab:'Items', name:'Items'},
   actions: {tab:'Actions', name:'Actions'},
+  describing: {tab:'Describing', name:'Describing words'},
   people: {tab:'People', name:'People'},
   colours: {tab:'Colours', name:'Colours'},
   numbers: {tab:'Numbers', name:'Numbers'},
@@ -129,6 +130,10 @@ const WORD_BANK = {
   '香蕉': {py:'xiāngjiāo', en:'banana', pic:'🍌', area:1, category:'food'},   // (wild in the melon field, east off the south slope: you take its seeds for the garden)
   '跑': {py:'pǎo', en:'to run', pic:'🏃', area:1, category:'actions', alike:['猴子', '跳']},   // (PE at school: the old monkey starts a race on the sports ground with it, and from then on you can run; the pictures of all three are a monkey)
   '跑步': {py:'pǎobù', en:'to go running, to jog', pic:'👟', area:1, category:'actions', alike:['跑', '猴子', '跳']},   // (PE's second lesson: the class goes jogging round the sports ground)
+  '鱼饵': {py:"yú'ěr", en:'bait', pic:'🪱', area:1, category:'items', alike:['蜂蜜', '酸奶']},   // (the 老板 sells it, once you can fish: a big fish bites; all three pictures are a pot)
+  '鱼竿': {py:'yúgān', en:'fishing rod', pic:'🎣', area:1, category:'items', alike:['棍子']},   // (the fishing monkey's, by the stream at the home ground, for the feast's fish; both pictures are a long, thin stick)
+  '小': {py:'xiǎo', en:'little, small', area:1, category:'describing'},   // (the first fish you catch: too small, you let it go; heard till then, as in 小石头)
+  '大': {py:'dà', en:'big', area:1, category:'describing'},   // (and then a big one, for the feast; heard till then, as in 大猴子)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
@@ -146,7 +151,6 @@ const WORD_BANK = {
   '下面': {py:'xiàmiàn', en:'under'},
   '找到': {py:'zhǎodào', en:'to find'},
   '捉迷藏': {py:'zhuō mícáng', en:'hide and seek'},
-  '大': {py:'dà', en:'big'},
   '从': {py:'cóng', en:'from'},
   '哪里': {py:'nǎlǐ', en:'where'},
   '来': {py:'lái', en:'to come'},
@@ -208,7 +212,6 @@ const WORD_BANK = {
   '一座': {py:'yí zuò', en:'a, one (mountain, building)'},
   '叫': {py:'jiào', en:'to be called'},
   '动': {py:'dòng', en:'to move'},
-  '小': {py:'xiǎo', en:'little, small'},
   '它': {py:'tā', en:'it'},
   '眼睛': {py:'yǎnjing', en:'eyes'},
   '光': {py:'guāng', en:'light'}
@@ -238,6 +241,7 @@ const MADE = {
   '山': {why:'Drawn like three mountain peaks.'},
   '水': {why:'Drawn like flowing water, splashing out either side.'},
   '鱼': {why:'Drawn like a fish: its head at the top, its tail at the bottom.'},
+  '大': {why:'Drawn like someone stretching their arms out wide, to show how big something is.'},
   '羊': {why:'Drawn like a sheep’s head: its two horns are at the top.'},
   '一': {why:'One line, for one.'},
   '二': {why:'Two lines, for two.'},
@@ -252,6 +256,7 @@ const MADE = {
   '动物': {parts:[['动', 'dòng', 'to move'], ['物', 'wù', 'thing']]},
   '松鼠': {parts:[['松', 'sōng', 'pine'], ['鼠', 'shǔ', 'mouse']]},
   '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']]},
+  '鱼竿': {parts:[['鱼', 'yú', 'fish'], ['竿', 'gān', 'pole']]},
   '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']]},
   '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']]},
   '蜂王': {parts:[['蜂', 'fēng', 'bee'], ['王', 'wáng', 'king']]},

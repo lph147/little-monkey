@@ -136,6 +136,7 @@ function buttonLabels(now){
   if (talkNext){ const ok = talkBox.querySelector('[data-a=ok]'); return [ok ? btnLabel(ok) : 'Say it', '']; }
   if (mode === 'title'){ const s = $('#titleButtons').querySelector('.sel'); return [s ? btnLabel(s) : 'Choose', '']; }
   if (mode === 'intro') return [$('#beginBtn') ? scene.last : 'Next', 'Skip'];
+  if (fishing) return [fishing.bite && !fishing.hooked ? 'Hook it' : '', fishing.hooked ? '' : 'Stop'];   // fishing (js/fishing.js): A hooks a fish that's biting, B stops
   if (canAct() && newMessage()) return ['OK', 'Close'];   // A closes a message that's just come up
   return [currentPrompt(now), !$('#saybox').hidden ? 'Close' : canRun() ? 'Run' : ''];   // (held as you walk, once you can run)
 }

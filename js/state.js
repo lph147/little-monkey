@@ -209,7 +209,7 @@ function upgradeSave(s){
   if (!Array.isArray(s.met)) s.met = [];
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};
   s.following = Array.isArray(s.following) ? s.following.filter(id => AREA.characters.some(c => c.id === id)) : [];   // who's following you (characters still here)
-  const clothes = w => [...(w || [])].filter(i => (AREA.wardrobe || []).some(c => c.item === i));   // only what the wardrobe has now
+  const clothes = w => [...(w || [])].filter(i => CLOTHES.some(c => c.item === i));   // only what the wardrobe has now
   s.wardrobe = {owned:clothes((s.wardrobe || {}).owned), wearing:clothes((s.wardrobe || {}).wearing)};
   return s;
 }

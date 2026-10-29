@@ -278,6 +278,38 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     [[15, 13], [18, 15], [21, 13], [18, 11]].forEach(([x, y]) => p.dot(x, y, '#FFB070'));
     p.fill(O(7.2, 14.5, 2.3), '#FFFFFF'); p.flat(Rc(7, 14, 2, 2), '#1E1A16');
   },
+  // fishing at the home ground (chapter 1): the fishing monkey's rod, bait from the 老板, and what you catch
+  '鱼竿': p => {   // fishing rod: a long bamboo rod, from the bottom left up to the top right, its line hanging down to a red and white float (unlike 棍子: a short branch with a leaf)
+    p.fill(path([[3, 29], [27, 4]], 1.5), '#C9B25A', {light: '#E8D488', dark: '#8E7A30'});
+    [[9, 22.8], [15, 16.5], [21, 10.2]].forEach(([x, y]) => p.flat(Cp(x - 1.2, y - 1.2, x + 1.2, y + 1.2, .7), '#7E6A26'));   // its joints
+    p.fill(O(5.5, 26.5, 2.6), '#8A5A32', {edge: true});                                     // its reel, wound with line
+    p.flat(path([[27, 4], [27.5, 12], [27.5, 18]], .45), '#F4F1EA');                          // the line
+    p.fill(and(O(27.5, 21, 2.6, 3.2), Rc(0, 0, 32, 21)), '#E8343C', {edge: true}); p.fill(and(O(27.5, 21, 2.6, 3.2), Rc(0, 21, 32, 11)), '#F4F1EA', {edge: true});   // the float
+    p.flat(path([[27.5, 24], [27.5, 28], [26, 29.5], [24.8, 28]], .45), '#9AA2AA');           // and the hook under it
+  },
+  '鱼饵': p => {   // bait: a little clay pot of wriggly pink worms, two hanging over its rim (unlike 蜂蜜: a pot of honey with a dipper)
+    p.fill(Rc(7, 15, 18, 14, 4), '#B8683A', {light: '#D88A56', dark: '#8A4A24', edge: true});     // the pot
+    p.fill(O(16, 15.5, 9.5, 3), '#8A4A24'); p.flat(O(16, 15.6, 7.6, 1.9), '#4A2C17');              // its rim, and the dark inside
+    p.flat(Rc(8, 21, 16, 1.4), '#8A4A24');
+    const worm = pts => p.fill(path(pts, 1.4), '#F08FA0', {light: '#FFB8C4', dark: '#C0607A', edge: true});
+    worm([[10, 15], [9, 11], [12, 8], [14.5, 10]]); worm([[17, 15], [19, 10.5], [22, 9], [23.5, 12]]); worm([[22, 15], [25.5, 16], [27, 20], [25.5, 23]]);   // worms, wriggling up and over the rim
+  },
+  '小 鱼': p => {   // a little fish: a tiny one, alone in a lot of water, ripples round it (unlike 鱼: a fish as big as its picture)
+    p.flat(O(16, 16, 15, 13), '#BFE2F2'); p.flat(and(O(16, 16, 11, 9), not(O(16, 16, 10, 8))), '#DDF0F8'); p.flat(and(O(16, 16, 15, 13), not(O(16, 16, 14, 12))), '#A8D4EA');
+    p.fill(Pg([[19, 16], [23, 12.5], [22, 16], [23, 19.5]]), '#E8772A');
+    p.fill(O(15, 16, 4.6, 3.2), '#F28C38', {edge: true}); p.flat(O(14.5, 17.4, 2.6, 1), '#FFC58A');
+    p.fill(O(12.2, 15.4, 1.1), '#FFFFFF'); p.dot(12, 15, '#1E1A16');
+  },
+  '大 鱼': p => {   // a big fish: a great grey-green carp, too big for its picture, its tail cut off by the edge, whiskers and big scales (unlike 鱼: a little orange one)
+    p.fill(Pg([[24, 16], [33, 5], [33, 27]]), '#5E7A5A', {edge: true});
+    p.fill(Pg([[9, 7], [17, 1], [22, 7]]), '#5E7A5A', {edge: true});
+    p.fill(O(15, 16, 15, 10.5), '#7E9A6E', {light: '#A8C090', dark: '#54704E', edge: true});
+    p.flat(O(13, 21.5, 10, 3.6), '#D8D0A0');
+    [[12, 12], [17, 11], [22, 12.5], [15, 16], [20, 16.5], [25, 16], [18, 20.5], [23, 20]].forEach(([x, y]) => p.flat(and(O(x, y, 2.6, 2.2), not(O(x - .8, y - .6, 2.2, 1.8))), '#5A7650'));   // scales
+    p.flat(path([[2, 18.5], [1, 22], [2.5, 25]], .5), '#3E4A30'); p.flat(path([[4, 19.5], [4.5, 23.5]], .5), '#3E4A30');   // whiskers
+    p.fill(O(6.2, 13.5, 2.4), '#FFFFFF'); p.flat(Rc(5.5, 13, 2, 2), '#1E1A16');
+    p.fill(Pg([[14, 24], [19, 30], [20, 24]]), '#5E7A5A', {edge: true});
+  },
   '鸟': p => bird(p, '#5AA0E6', '#3F77C4', '#CDE6FA', '#F2A33A'),   // bird
   // the birds that land near you, each one colour (a blue one is 鸟's own): body, wing and tail, breast, beak and legs
   '红色 的 鸟': p => bird(p, '#D9363E', '#A3242B', '#F7B5A8', '#F2A33A'),   // a red bird
@@ -347,12 +379,16 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(Rc(1, 22, 30, 9), WOOD, {edge: true}); p.flat(Rc(2, 25, 28, 1), '#8A5A32');
     p.fill(O(8, 21, 2, 1.8), '#F7A08F'); p.fill(O(12, 21, 2, 1.8), '#F7A08F'); p.fill(O(21, 21, 2, 1.8), '#E0303A'); p.fill(O(25, 21, 2, 1.8), '#E0303A');
   },
-  '头带': p => {   // headband: a red cloth band, tied with a knot, its ends hanging
-    p.fill(path([[23.5, 20], [26.5, 25.5], [28.5, 30.5]], 1.8), '#A82E22', {edge: true}); p.fill(path([[22, 20.5], [22, 26], [23.5, 31]], 1.8), '#C0392B', {edge: true});
-    p.fill(and(O(16, 15.5, 13.4, 7.6), not(O(16, 13.8, 10, 4.2))), '#C0392B');
-    p.flat(and(O(16, 15.5, 12.4, 6.6), not(O(16, 14.8, 11.4, 5.4)), Rc(0, 17, 32, 15)), '#E25A4C');   // a fold of the cloth
-    p.fill(O(23.5, 20, 2.8, 2.6), '#A82E22', {edge: true});
-  },
+  '头带': p => headband(p, '#C0392B', '#A82E22', '#E25A4C'),   // headband: a red cloth band, tied with a knot, its ends hanging
+  // the 老板's headbands in every other colour (a red one is 头带's own): the cloth, its knot and ends, and a fold of it
+  '黄色 的 头带': p => headband(p, '#F2CC2E', '#C9A21C', '#FFE57A'),
+  '白色 的 头带': p => headband(p, '#F4F2EA', '#C9C5B8', '#FFFFFF'),
+  '黑色 的 头带': p => headband(p, '#3A3438', '#221E22', '#5E565C'),
+  '蓝色 的 头带': p => headband(p, '#3A6DD0', '#2A52A0', '#6E9AE8'),
+  '绿色 的 头带': p => headband(p, '#2FA350', '#227A3A', '#62C47E'),
+  '棕色 的 头带': p => headband(p, '#8A5A32', '#643E20', '#B07E50'),
+  '橙色 的 头带': p => headband(p, '#F07A22', '#C25A14', '#FFA45A'),
+  '粉色 的 头带': p => headband(p, '#F59AC6', '#D06E9E', '#FFC4DE'),
 
   '跳': p => {   // to jump: a monkey leaping, arms up
     p.flat(O(16, 30, 7, 1.4), '#5DA651');
@@ -780,6 +816,12 @@ function splat(p, c){   // a smooth, round dab of paint, for a colour, with two 
   p.fill(or(O(15.5, 17, 10.5, 9), O(23, 21.5, 4.6, 4)), c);
   p.fill(O(27, 8.5, 2), c); p.fill(O(5.5, 27, 1.6), c);
   p.flat(O(11.5, 12.5, 3.4, 2), mix(c, '#FFFFFF', .5)); p.flat(O(16.5, 11, 1.2, .8), mix(c, '#FFFFFF', .5));
+}
+function headband(p, cloth, knot, fold){   // a cloth headband, tied with a knot, its ends hanging (头带, and the 老板's in other colours)
+  p.fill(path([[23.5, 20], [26.5, 25.5], [28.5, 30.5]], 1.8), knot, {edge: true}); p.fill(path([[22, 20.5], [22, 26], [23.5, 31]], 1.8), cloth, {edge: true});
+  p.fill(and(O(16, 15.5, 13.4, 7.6), not(O(16, 13.8, 10, 4.2))), cloth);
+  p.flat(and(O(16, 15.5, 12.4, 6.6), not(O(16, 14.8, 11.4, 5.4)), Rc(0, 17, 32, 15)), fold);   // a fold of the cloth
+  p.fill(O(23.5, 20, 2.8, 2.6), knot, {edge: true});
 }
 function bird(p, body, wing, breast, beak){   // a little bird, side on, facing left: its tail and wing one colour, its body another
   p.fill(Pg([[22, 16], [31, 11.5], [30, 19.5]]), wing);

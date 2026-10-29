@@ -28,9 +28,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   async function settle(){   // let the game finish what it's doing, including anything it waits for (timers)
     for (let i = 0; i < 1000; i++){
       if (run('!!race && !busy')) run('bHeld = true; pl.x = race.to; bHeld = false');   // a race, in PE: you run to the finish (holding B), and win
-      await tick();
+      const bites = () => { if (run('!!fishing && !!fishing.bite && !fishing.hooked')) run("fishPress('a')"); };   // fishing: a fish bites, and you press A at once
+      await tick(); bites();
       if (game.flush()) continue;
-      await tick();
+      await tick(); bites();
       if (!game.flush()) return;
     }
     throw new Error('the game kept setting timers');
@@ -557,6 +558,19 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(15, 5, 'up', 'giving the big monkey the flowers');
   assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气 to his thanks');
   assert.deepEqual([area().flowers, area().schoolFlowers, run('tileAt(10, 5).look')], ['done', true, 'flowerBed'], 'he plants them in front of the school');
+  // The 老板's new shop (29 October 2026): with the flowers planted, he comes up from the meadow (his old stall there empty);
+  // talk to him by the way in, and the troop builds him a shop there as you watch: 我来了！ 这里很好！ It sells headbands
+  // in every colour you know (asked for as 我要蓝色的头带, the colour missing), and food
+  assert.deepEqual([area().shop, get("[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]")], [1, ['homeGround', 6, 13]], 'the 老板 has come up to the home ground');
+  await pressAt(7, 13, 'left', 'talking to the 老板, by the way in: the troop builds his new shop');
+  assert.deepEqual([area().shop, run('tileAt(3, 12).look'), run('tileAt(6, 12).look')], [3, 'shop', 'sign'], 'his shop, built, with its sign');
+  assert.ok(['我来了！', '这里很好！'].every(t => get('__said').includes(t)), 'here I am! it’s nice here!');
+  assert.ok(get('S.shells') >= 10, 'shells enough for a headband');
+  plan.buy = '蓝色的头带';
+  await pressAt(7, 13, 'left', 'buying a blue headband: 我要蓝色的头带');
+  plan.buy = null;
+  assert.deepEqual([get('S.wardrobe.owned'), get('S.wardrobe.wearing'), run('headband()')], [['头带', '蓝色 的 头带'], ['蓝色 的 头带'], '#3A6DD0'], 'you tie it on, instead of the red one');
+  assert.ok(get('__said').includes('我要蓝色的头带'), 'asked for with its colour');
 
   // Chapter 1: the cow (26 October 2026). Since the feast's quests began, the thirsty monkey has been by the road at the
   // home ground, with news: 山上有牛！ (牛 just for listening); the troop clears the bushes past the bridge at the bottom of
@@ -758,10 +772,41 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual([area().fruitTable, area().melonPlanted, area().grapePlanted, area().bananaPlanted], [1, 4, 4, 4], 'on the feast’s new table');
   assert.deepEqual(get('[12, 13, 14].map(x => tileAt(x, 7).look)'), ['fruitTableMelon', 'fruitTableGrapes', 'fruitTableBananas']);
   assert.ok(['我们有西瓜了！', '我们有葡萄了！', '我们有香蕉了！'].every(t => get('__said').includes(t)), 'we have watermelon, grapes and bananas now!');
+  // A big fish for the feast (29 October 2026): with honey on its table, the hungry monkey wants one: 我要吃大鱼！ (大 just for
+  // listening). The fishing monkey by the stream gives you a rod (鱼竿); cast it, wait for a bite, press A, and reel it in by
+  // answering a question. Your first fish is tiny: 太小了！ (小), and you let it go. Then a big one, three questions to reel
+  // in: 鱼很大！ (大). The hungry monkey takes it (这是大鱼), and the troop sets it out at the end of the feast's second table
+  await pressAt(20, 7, 'left', 'talking to the hungry monkey: he wants a big fish for the feast');
+  assert.ok(get('__said').includes('我要吃大鱼！') && area().fish === 'asked' && !knows('大'), 'I want to eat a big fish! (大 just for listening)');
+  await pressAt(23, 17, 'right', 'the fishing monkey by the stream gives you a rod');
+  assert.ok(knows('鱼竿') && area().fishing === 1 && get('__said').includes('河里有鱼！'), 'a fishing rod (鱼竿)');
+  stand(23, 17, 'down');
+  assert.equal(run('promptFor(23, 18)'), 'Fish', 'A at the stream: fish');
+  await pressAt(23, 17, 'down', 'fishing: the first fish, a tiny one');
+  assert.ok(knows('小') && get('__said').includes('太小了！') && !knows('大'), 'too small! (小), and you let it go');
+  await pressAt(23, 17, 'down', 'fishing again: a big one, three questions to reel it in');
+  assert.ok(knows('大') && get('__said').includes('鱼很大！') && area().holding.fish === '鱼', 'the fish is big! (大): for the feast');
+  await pressAt(20, 7, 'left', 'giving the hungry monkey the big fish: 这是大鱼');
+  assert.deepEqual([area().fish, area().fishTable, run('tileAt(24, 7).look')], ['done', 1, 'fishTable'], 'on a stone table of its own, at the end of the feast’s second');
+  assert.ok(get('__said').includes('这是大鱼') && get('__said').includes('我们有鱼了！'), 'this is a big fish; we have fish now!');
+  // Once you know 小 and 大, each fish you catch asks which it is (这是小鱼); bait from the 老板 makes the next bite a big one
+  run('Math.random = () => .99');
+  await pressAt(23, 17, 'down', 'fishing once you know 小 and 大: a little one');
+  assert.ok(get('__said').includes('这是小鱼'), 'this is a little fish');
+  run('Math.random = () => 0');
+  plan.buy = '鱼饵';
+  await pressAt(7, 13, 'left', 'buying bait at the 老板’s shop', 1);
+  plan.buy = null;
+  assert.ok(knows('鱼饵') && get("S.bag['鱼饵']") === 1, 'bait (鱼饵) in your bag');
+  run('Math.random = () => .99');
+  const shellsFish = get('S.shells');
+  await pressAt(23, 17, 'down', 'fishing with bait: a big one');
+  run('Math.random = () => 0');
+  assert.ok(get("S.bag['鱼饵']") === 0 && get('S.shells') >= shellsFish + 2 && get('__said').filter(t => t === '这是大鱼').length === 2, 'the bait brings a big one: this is a big fish, and shells for it');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Till everything built is done, there's always a task to say what's next (28 October 2026: once the cow was home, the
   // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
-  assert.deepEqual([...new Set(deadEnds)], ['walking up to the big tree'], 'your tasks were empty, with more to do');
+  assert.equal(deadEnds[0], 'giving the hungry monkey the big fish: 这是大鱼', 'your tasks were empty, with more to do (only once everything built is done: the feast’s fish, last)');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
   // player, jumps out on the hillside.)

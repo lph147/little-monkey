@@ -38,6 +38,15 @@ shown where the word list has them.
 | 花！太好了！ | huā! tài hǎo le! | Flowers! Wonderful! | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 老板 (Shop owner) |  |
+| 我来了！ | wǒ lái le! | Here I am! | 老板 (Shop owner) |  |
+| 我要吃大鱼！ | wǒ yào chī dà yú! | I want to eat a big fish! | 饿猴子 (Hungry monkey) |  |
+| 鱼！太好了！ | yú! tài hǎo le! | A fish! Wonderful! | 饿猴子 (Hungry monkey) |  |
+| 我们有鱼了！ | wǒmen yǒu yú le! | We have fish now! |  |  |
+| 河里有鱼！ | hé lǐ yǒu yú! | There are fish in the river! | 钓鱼猴子 (Fishing monkey) |  |
+| 这是鱼竿。 | zhè shì yúgān. | This is a fishing rod. | 钓鱼猴子 (Fishing monkey) |  |
+| 太小了！ | tài xiǎo le! | It’s too small! |  |  |
+| 鱼很大！ | yú hěn dà! | The fish is so big! |  |  |
+| 这里很好！ | zhèlǐ hěn hǎo! | It’s nice here! | 老板 (Shop owner) |  |
 | 对不起！ | duìbuqǐ! | Sorry! | 饿猴子 (Hungry monkey) |  |
 | 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | 老猴子 (Old monkey) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | 大猴子 (Big monkey) |  |
@@ -153,7 +162,7 @@ shown where the word list has them.
 | 这是黄色。 | zhè shì huángsè. | This is yellow. |  |  |
 | 这是白色。 | zhè shì báisè. | This is white. |  |  |
 | 我们看看！ | wǒmen kànkan! | Let’s have a look! | 老猴子 (Old monkey) |  |
-| 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey), 渴猴子 (Thirsty monkey), 猴子 (Monkey) |  |
+| 太好了！ | tài hǎo le! | Great! | 老猴子 (Old monkey), 老板 (Shop owner), 渴猴子 (Thirsty monkey), 猴子 (Monkey) |  |
 | 这是我们的家！ | zhè shì wǒmen de jiā! | This is our home! | 老猴子 (Old monkey) |  |
 | 你是我们的王！ | nǐ shì wǒmen de wáng! | You are our king! | 大猴子 (Big monkey) |  |
 | 一！ | yī! | One! | 老猴子 (Old monkey) |  |
@@ -177,13 +186,37 @@ shown where the word list has them.
 | 这是西瓜的种子 | zhè shì xīguā de zhǒngzi | These are watermelon seeds. | 大猴子 (Big monkey) |  |
 | 这是葡萄的种子 | zhè shì pútáo de zhǒngzi | These are grape seeds. | 大猴子 (Big monkey) |  |
 | 这是香蕉的种子 | zhè shì xiāngjiāo de zhǒngzi | These are banana seeds. | 大猴子 (Big monkey) |  |
+| 这是大鱼 | zhè shì dà yú | This is a big fish. | 饿猴子 (Hungry monkey) |  |
 | 我要吃草 | wǒ yào chī cǎo | I want to eat grass. | 牛 (cow) |  |
-| 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
+| 我要桃子 | wǒ yào táozi | I want a peach. | 老板 (Shop owner) |  |
+| 我要蜂蜜 | wǒ yào fēngmì | I want some honey. | 老板 (Shop owner) |  |
+| 我要鱼饵 | wǒ yào yú'ěr | I want some bait. | 老板 (Shop owner) |  |
+| 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
 | 我有桃子 | wǒ yǒu táozi | I have peaches. | You, in a lesson at school |  |
 | 我有朋友 | wǒ yǒu péngyou | I have friends. | You, in a lesson at school |  |
 | 我没有苹果 | wǒ méiyǒu píngguǒ | I don’t have any apples. | You, in a lesson at school |  |
+| 我要大桃子 | wǒ yào dà táozi | I want a big peach. | You, in a lesson at school |  |
+| 我有小鱼 | wǒ yǒu xiǎo yú | I have a little fish. | You, in a lesson at school |  |
+| 我要红色的头带 | wǒ yào hóngsè de tóudài | I want the red headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要黄色的头带 | wǒ yào huángsè de tóudài | I want the yellow headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要白色的头带 | wǒ yào báisè de tóudài | I want the white headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要黑色的头带 | wǒ yào hēisè de tóudài | I want the black headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要蓝色的头带 | wǒ yào lánsè de tóudài | I want the blue headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要绿色的头带 | wǒ yào lǜsè de tóudài | I want the green headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要棕色的头带 | wǒ yào zōngsè de tóudài | I want the brown headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要橙色的头带 | wǒ yào chéngsè de tóudài | I want the orange headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要粉色的头带 | wǒ yào fěnsè de tóudài | I want the pink headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴黑色的头带 | wǒ dài hēisè de tóudài | I wear my black headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴蓝色的头带 | wǒ dài lánsè de tóudài | I wear my blue headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴绿色的头带 | wǒ dài lǜsè de tóudài | I wear my green headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴棕色的头带 | wǒ dài zōngsè de tóudài | I wear my brown headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴橙色的头带 | wǒ dài chéngsè de tóudài | I wear my orange headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴粉色的头带 | wǒ dài fěnsè de tóudài | I wear my pink headband. | You, in the wardrobe (a headband in each colour) |  |
 
 ### What you pick and see
 
@@ -220,6 +253,8 @@ What A at the feast's big table shows: what the troop has, and what it still nee
 | 我们有牛奶。 | wǒmen yǒu niúnǎi. | We have milk. |  |
 | 我们有酸奶。 | wǒmen yǒu suānnǎi. | We have yoghurt. |  |
 | 我们有奶酪。 | wǒmen yǒu nǎilào. | We have cheese. |  |
+| 我们有鱼。 | wǒmen yǒu yú. | We have fish. |  |
+| 我们没有鱼。 | wǒmen méiyǒu yú. | We don’t have any fish. |  |
 | 我们有西瓜。 | wǒmen yǒu xīguā. | We have watermelon. |  |
 | 我们没有西瓜。 | wǒmen méiyǒu xīguā. | We don’t have any watermelon. |  |
 | 我们有葡萄。 | wǒmen yǒu pútáo. | We have grapes. |  |
@@ -343,6 +378,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
+| 钓鱼猴子 | diàoyú hóuzi | Fishing monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 老板 | lǎobǎn | Shop owner |  |
@@ -463,6 +499,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 香蕉 | xiāngjiāo | banana |  |
 | 跑 | pǎo | to run |  |
 | 跑步 | pǎobù | to go running, to jog |  |
+| 鱼饵 | yú'ěr | bait |  |
+| 鱼竿 | yúgān | fishing rod |  |
+| 小 | xiǎo | little, small |  |
+| 大 | dà | big |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -482,6 +522,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 山 | shān | Drawn like three mountain peaks. |  |
 | 水 | shuǐ | Drawn like flowing water, splashing out either side. |  |
 | 鱼 | yú | Drawn like a fish: its head at the top, its tail at the bottom. |  |
+| 大 | dà | Drawn like someone stretching their arms out wide, to show how big something is. |  |
 | 羊 | yáng | Drawn like a sheep’s head: its two horns are at the top. |  |
 | 一 | yī | One line, for one. |  |
 | 二 | èr | Two lines, for two. |  |
@@ -494,6 +535,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 动物 | dòngwù | 动 dòng (to move) + 物 wù (thing) = 动物 (animal) |  |
 | 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = 松鼠 (squirrel) |  |
 | 头带 | tóudài | 头 tóu (head) + 带 dài (band) = 头带 (headband) |  |
+| 鱼竿 | yúgān | 鱼 yú (fish) + 竿 gān (pole) = 鱼竿 (fishing rod) |  |
 | 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = 野猪 (wild boar) |  |
 | 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = 蜜蜂 (bee) |  |
 | 蜂王 | fēngwáng | 蜂 fēng (bee) + 王 wáng (king) = 蜂王 (queen bee) |  |
@@ -530,7 +572,6 @@ check that each is true and simply put.
 | 下面 | xiàmiàn | under |  |
 | 找到 | zhǎodào | to find |  |
 | 捉迷藏 | zhuō mícáng | hide and seek |  |
-| 大 | dà | big |  |
 | 从 | cóng | from |  |
 | 哪里 | nǎlǐ | where |  |
 | 来 | lái | to come |  |
@@ -590,7 +631,6 @@ check that each is true and simply put.
 | 一座 | yí zuò | a, one (mountain, building) |  |
 | 叫 | jiào | to be called |  |
 | 动 | dòng | to move |  |
-| 小 | xiǎo | little, small |  |
 | 它 | tā | it |  |
 | 眼睛 | yǎnjing | eyes |  |
 | 光 | guāng | light |  |
@@ -765,6 +805,25 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 一，二，三，跑！ | yī, èr, sān, pǎo! | One, two, three, run! | New on 28 October 2026 (in the game), PE: The teacher, starting a race, teaching 跑 (to run). Is this what children say at the start of a race? (预备，跑！ is the other common one, but it has a new word.) |  |
 | 很好！ | hěn hǎo! | Very good! | New on 28 October 2026 (in the game), PE: The teacher at the finish of the race, however you did, and after the jog |  |
 | 我们去跑步吧！ | wǒmen qù pǎobù ba! | Let’s go running! | New on 28 October 2026 (in the game), PE: The teacher, starting PE’s second lesson, teaching 跑步 (to go running, to jog): the class jogs once round the track |  |
+| 我来了！ | wǒ lái le! | Here I am! | New on 29 October 2026 (in the game), the 老板’s new shop: The 老板 (shop owner), come up from the meadow to the troop’s home ground to open a new shop |  |
+| 这里很好！ | zhèlǐ hěn hǎo! | It’s nice here! | New on 29 October 2026 (in the game), the 老板’s new shop: The 老板, by the way in, where the troop builds his new shop |  |
+| 我要蓝色的头带 | wǒ yào lánsè de tóudài | I want the blue headband. | New on 29 October 2026 (in the game), the 老板’s new shop: The sentence you finish to buy a headband at his shop (filling in the colour): one for each colour you know, 红色 黄色 白色 黑色 蓝色 绿色 棕色 橙色 粉色. Is 我要蓝色的头带 natural, or would 我要一条蓝色的头带 be better (条 isn’t a word in the game yet)? |  |
+| 我戴蓝色的头带 | wǒ dài lánsè de tóudài | I wear my blue headband. | New on 29 October 2026 (in the game), the 老板’s new shop: Your monkey, putting a headband on in your wardrobe (one for each colour) |  |
+| 我要桃子 | wǒ yào táozi | I want a peach. | New on 29 October 2026 (in the game), the 老板’s new shop: The sentence you finish to buy a peach at his shop |  |
+| 我要蜂蜜 | wǒ yào fēngmì | I want some honey. | New on 29 October 2026 (in the game), the 老板’s new shop: The sentence you finish to buy honey at his shop |  |
+| 我要鱼饵 | wǒ yào yú'ěr | I want some bait. | New on 29 October 2026 (in the game), the 老板’s new shop: The sentence you finish to buy bait (鱼饵 yú’ěr, worms for fishing) at his shop |  |
+| 我要吃大鱼！ | wǒ yào chī dà yú! | I want to eat a big fish! | New on 29 October 2026 (in the game), fishing: The hungry monkey, wanting a big fish for the feast (大 just for listening, till you catch one) |  |
+| 河里有鱼！ | hé lǐ yǒu yú! | There are fish in the river! | New on 29 October 2026 (in the game), fishing: The fishing monkey by the stream at the home ground (钓鱼猴子 diàoyú hóuzi, his name in the game: is that a natural name?) |  |
+| 这是鱼竿。 | zhè shì yúgān. | This is a fishing rod. | New on 29 October 2026 (in the game), fishing: The fishing monkey, giving you a rod (鱼竿 yúgān). How it’s made: 鱼 yú (fish) + 竿 gān (pole) = 鱼竿 fishing rod |  |
+| 太小了！ | tài xiǎo le! | It’s too small! | New on 29 October 2026 (in the game), fishing: You, catching your first fish, a tiny one, and letting it go: teaching 小 (xiǎo, little) |  |
+| 鱼很大！ | yú hěn dà! | The fish is so big! | New on 29 October 2026 (in the game), fishing: You, catching a big fish: teaching 大 (dà, big). How it’s made: drawn like someone stretching their arms out wide, to show how big something is (is that a fair way to explain 大?) |  |
+| 这是小鱼 | zhè shì xiǎo yú | This is a little fish. | New on 29 October 2026 (in the game), fishing: The sentence you finish (choosing 小 or 大) each time you catch a little fish, once you know both |  |
+| 这是大鱼 | zhè shì dà yú | This is a big fish. | New on 29 October 2026 (in the game), fishing: The sentence you finish as you give the hungry monkey the big fish, and each time you catch one |  |
+| 鱼！太好了！ | yú! tài hǎo le! | A fish! Wonderful! | New on 29 October 2026 (in the game), fishing: The hungry monkey, as you bring him the fish |  |
+| 我们有鱼了！ | wǒmen yǒu yú le! | We have fish now! | New on 29 October 2026 (in the game), fishing: The hungry monkey, as the fish goes on the feast’s table |  |
+| 我们没有鱼。 | wǒmen méiyǒu yú. | We don’t have any fish. | New on 29 October 2026 (in the game), fishing: The feast’s list, till you’ve caught one |  |
+| 我要大桃子 | wǒ yào dà táozi | I want a big peach. | New on 29 October 2026 (in the game), fishing: A sentence you finish in a lesson, to practise 大 (or 要, 我) |  |
+| 我有小鱼 | wǒ yǒu xiǎo yú | I have a little fish. | New on 29 October 2026 (in the game), fishing: A sentence you finish in a lesson, to practise 小 |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

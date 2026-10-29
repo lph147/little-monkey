@@ -71,7 +71,7 @@ const gapSave = () => ({version: 9, started: true, shells: 0, w: {
 test('the practice sentence is one you know, with a word without a picture missing, one that needs practice first', () => {
   for (let i = 0; i < 20; i++){
     const b = get(loadGame({save: gapSave()}), 'practiceSentence()');
-    assert.ok(['我要吃桃子', '我要吃苹果', '我要吃草', '我要苹果', '我要红花'].includes(b.t.join('')), `${b.t.join('')} has a word you haven't caught`);
+    assert.ok(['我要吃桃子', '我要吃苹果', '我要吃草', '我要苹果', '我要桃子', '我要红花'].includes(b.t.join('')), `${b.t.join('')} has a word you haven't caught`);
     assert.equal(b.gap, '要', '要 needs practice, so it is the missing word');
     assert.ok(b.en, 'with its English');
   }

@@ -10,7 +10,7 @@ const {loadGame} = require('./fake-browser');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const BARE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2,
-  build: 2, wood: 'done', stones: 'done', school: 2, feast: 2, flowers: 'done', schoolFlowers: true};   // (the big monkey's flowers planted: his ! is for what he's made)
+  build: 2, wood: 'done', stones: 'done', school: 2, feast: 2, flowers: 'done', schoolFlowers: true, shop: 3};   // (the big monkey's flowers planted: his ! is for what he's made)
 const KNOWN = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '动物', '兔子', '水', '猴子', '朋友', '河', '鱼', '木头', '桌子', '碗', '家', '学校', '老师', '同学',
   '一', '二', '三', '四', '五', '六', '红色', '黄色', '白色', '谢谢', '不客气', '没关系', '水果', '我', '要', '有', '酸奶'];
 function game(area = {}, pos = {place: 'homeGround', x: 19, y: 8, dir: 'up'}, version = 32){

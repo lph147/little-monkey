@@ -116,7 +116,7 @@ test('the little monkey: 我们是同学！ (同学); then lessons with the teac
   await press(g, 7, 3, 'up');
   assert.deepEqual(get(g, '__said'), ['上课！'], 'no 下课 if you don’t have the lesson');
   assert.match(g.run('tasksHint()'), /You know three colours now! The big monkey has something to ask you/, 'with red, yellow and white learned, the big monkey wants flowers for the school');
-  g.run("Object.assign(here(), {flowers: 'done', schoolFlowers: true})");
+  g.run("Object.assign(here(), {flowers: 'done', schoolFlowers: true, shop: 3})");
   assert.match(g.run('tasksHint()'), /The hungry monkey has something to ask you/, 'then the honey: a game that heard what the feast needs before the bees came');
   g.run('here().bees = 1');
   assert.match(g.run('tasksHint()'), /The thirsty monkey has news for you: look for his ! at the home ground/, 'and the cow: he’s heard of one on the mountain');

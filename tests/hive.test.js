@@ -11,7 +11,7 @@ const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
-const BEES_HOME = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', schoolFlowers: true, gate: true, climb: 4, boar: 1, story: true, cave: 6,
+const BEES_HOME = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', schoolFlowers: true, shop: 3, gate: true, climb: 4, boar: 1, story: true, cave: 6,
   count: 3, home: 2, build: 2, wood: 'done', stones: 'done', school: 2, feast: 3, bees: 7, beeFriends: 6, queenOut: true};
 const KNOWN = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水果', '动物', '水', '河', '猴子', '朋友', '桥', '蝴蝶', '同学', '棍子', '蜜蜂', '蜂王', '有', '没有',
   '我', '要', '吃', '桌子', '家', '没关系', '谢谢', '不客气'];
@@ -93,6 +93,8 @@ test('A at the hive takes honey, teaching 蜂蜜 (said straight away); the hungr
   g.run("here().dairy = 5; here().milkTable = 3");   // (its yoghurt and cheese on the table too)
   assert.match(g.run('goalText()'), /The big monkey has an idea for the feast: look for his ! at the home ground/, 'then the garden (decided 28 October 2026: nothing said so)');
   g.run('here().garden = 1');
+  assert.match(g.run('goalText()'), /The hungry monkey has something to ask you: look for his ! by the feast’s 桌子 \(tables\)/, 'then a big fish for the feast (tests/fishing.test.js)');
+  g.run("here().fish = 'done'; here().fishTable = 1");
   assert.match(g.run('goalText()'), /The feast has 蜂蜜 \(honey\), milk, yoghurt and cheese now! Take more honey from the hive for your bag, and 吃 \(eat\) it to walk faster for a while\./);
   g.run('__said.length = 0');
   await press(g, 20, 7, 'left');

@@ -121,6 +121,7 @@ async function pressA(at){   // at: when it was pressed, if known (tooSoon, js/c
     return;
   }
   if (talkNext){ if (!tooSoon(at)) talkNext(); return; }   // the speech box: on to what comes next
+  if (fishPress('a')) return;   // fishing: hooking a fish that's biting (js/fishing.js)
   if (!canAct()) return;
   if (newMessage()){ if (!tooSoon(at, msgAt)){ closeMessage(); finished(); } return; }   // (not if pressed just as it came up; and then what you're facing rests, as after anything A does)
   if (race) return;   // (in a race, js/pe.js: just run)
@@ -134,6 +135,7 @@ function pressB(at){
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null && !tooSoon(at)) b.click(); return; }
   if (talkNext && !talkMove){ if (!tooSoon(at)) talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
+  if (fishPress('b')) return;   // fishing: reeling your line back in (js/fishing.js)
   if (!$('#saybox').hidden){ closeMessage(); return; }
 }
 // Start: the menu (pressing it again closes it). Select: your tasks (again closes them).

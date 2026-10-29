@@ -183,3 +183,72 @@ test('the game’s icons are pixel art: every emoji the game shows has a pixel i
   game.run("fullscreenHTML = () => '<button class=\"linkbtn\">⛶ Play full screen</button>'; titleText()");   // (as on a phone's browser)
   assert.doesNotMatch(game.el('#titleText').innerHTML, /\p{Extended_Pictographic}|⛶/u, 'the title screen’s icons are pixel art too');
 });
+
+// The 老板's new shop at the home ground (29 October 2026): with the school's flowers planted (you know three colours by
+// then), he comes up from the meadow, by the way in; talk to him, and the troop builds his shop there as you watch. It
+// sells headbands in every colour you know (我要蓝色的头带, the colour missing), peaches as well as apples, honey once the
+// bees make it, and bait once you can fish. Your monkey wears one headband at a time, in its colour.
+const COLOURED = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', schoolFlowers: true, gate: true, climb: 4, boar: 1, story: true, cave: 6,
+  count: 3, home: 2, build: 2, wood: 'done', stones: 'done', school: 2, feast: 1, bought: ['头带']};
+const seen = ws => Object.fromEntries(ws.map(w => [w, {lv: 1, due: 0, ok: 2}]));
+function homeGame(area = {}, more = {}){
+  const g = loadGame({dom: true, save: {version: VERSION, started: true, areas: {1: {...COLOURED, ...area}}, pos: {place: 'homeGround', x: 7, y: 13, dir: 'left'},
+    wardrobe: {owned: ['头带'], wearing: ['头带']}, ...more, w: {...seen(['老板', '头带', '戴', '红色', '黄色', '白色', '我', '要', '谢谢', '不客气', '桃子', '苹果']), ...more.w}}});
+  g.run("mode = 'play'; save = () => {}; globalThis.__notes = []; globalThis.__said = []; globalThis.__sounds = []");
+  g.run("showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }; showNotice = async (w, o = {}) => { __notes.push('card: ' + w); }; infoBox = async () => {}");
+  g.run("showDialog = async (who, line) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('')); }; replyWith = async () => true");
+  g.run("gapQ = async o => { __said.push('gap: ' + o.t.join('') + ' (' + o.gap + (o.wrong ? ' or ' + o.wrong.join(' ') : '') + ')'); return true; }");
+  g.run("for (const k of ['tock', 'fanfare']) SFX[k] = () => { __sounds.push(k); }; placePlayer()");
+  return g;
+}
+async function settle(g, code){ let done = false; const p = Promise.resolve(g.run(code)).then(() => { done = true; }); for (let i = 0; i < 400 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); } await p; }
+
+test('with the school’s flowers planted, the 老板 comes up to the home ground, and the troop builds his shop by the way in as you watch', async () => {
+  const g = homeGame({shop: 0});
+  assert.deepEqual(get(g, "[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]"), ['meadow', 11, 16], 'still at his stall in the meadow');
+  await settle(g, 'runEvents()');
+  assert.equal(get(g, 'here().shop'), 1);
+  assert.match(get(g, '__notes').join(' '), /The 老板 \(shop owner\) has come up from the meadow! He wants a new shop at the home ground\./);
+  assert.deepEqual(get(g, "[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]"), ['homeGround', 6, 13], 'by the way in');
+  assert.equal(g.run("(AREA.bubbles.boss.find(b => matches(b.if)) || {}).show"), '!');
+  assert.deepEqual(get(g, "getTasks().filter(t => /老板/.test(t.text)).map(t => [t.text, t.target])"), [['The 老板 (shop owner) has come up to the home ground: go and see him, by the way in from the waterfall', [6, 13]]], 'a task, its arrow at him');
+  assert.equal(g.run('tileAt(4, 12).look'), 'grass', 'open grass till then');
+  await settle(g, 'interact(6, 13).then(runEvents)');
+  assert.deepEqual(get(g, '__said'), ['boss: 我来了！', 'boss: 这里很好！', 'boss: 太好了！'], 'here I am! it’s nice here! (and, once it’s built) great!');
+  assert.deepEqual([get(g, 'here().shop'), g.run('tileAt(4, 12).look'), g.run('tileAt(6, 12).look')], [3, 'shop', 'sign'], 'his shop, with its sign');
+  assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'shop').map(o => [o.x, o.y, o.w, o.h])"), [[3, 12, 3, 2]], 'one big object, three squares by two');
+  assert.equal(g.run('OBJECT_STAGES.shop'), 4, 'set up in four pieces: posts and a woven back, a counter, a striped roof, and what he sells');
+  assert.ok(get(g, '__sounds').filter(s => s === 'tock').length >= 8, 'stakes round its plot, then each piece, with a knock');
+  assert.ok(get(g, "areaChecklist().find(([t]) => /new shop/.test(t))")[1], 'on the checklist, ticked off');
+  g.run("S.pos = {place: 'meadow', x: 9, y: 17, dir: 'up'}; setPlace('meadow')");
+  assert.equal(g.run('tileAt(9, 16).look'), 'stallEmpty', 'his old stall in the meadow, empty');
+});
+
+test('his shop sells a headband in each colour you know, asked for with its colour missing: 我要蓝色的头带', async () => {
+  const g = homeGame({shop: 3}, {shells: 30, w: seen(['蓝色'])});
+  const sale = get(g, 'forSale().map(i => [i.item, asSaid(i).zh, asSaid(i).en, asSaid(i).pic])');
+  assert.deepEqual(sale.map(([item]) => item), ['苹果', '桃子', '黄色 的 头带', '白色 的 头带', '蓝色 的 头带'],
+    'food first; then a headband in each colour you know, but the red one you have (honey and bait come later)');
+  assert.deepEqual(sale[4].slice(1), ['蓝色的头带', 'blue headband', '蓝色 的 头带'], 'called by its colour, with its own picture');
+  assert.equal(g.run("(AREA.bubbles.boss.find(b => matches(b.if)) || {}).show"), '?', 'a ? over him: you can afford one');
+  await settle(g, "buy(forSale().find(i => i.colour === '蓝色'), '')");
+  assert.ok(get(g, '__said').includes('gap: 我要蓝色的头带 (蓝色 or 红色 黄色 白色 黑色 绿色 棕色 橙色 粉色)'), 'the colour missing, the other colours the wrong answers (those you know: gapQ)');
+  assert.deepEqual([get(g, 'S.shells'), get(g, 'here().bought'), get(g, 'S.wardrobe')], [20, ['头带', '蓝色 的 头带'], {owned: ['头带', '蓝色 的 头带'], wearing: ['蓝色 的 头带']}],
+    'ten shells; you take the red one off and tie the blue one on');
+  assert.equal(g.run('headband()'), g.run("BAND['蓝色']"), 'your monkey’s headband is blue');
+  assert.ok(get(g, '__notes').includes('You tie on the blue 头带 (headband). It suits you!'));
+  assert.ok(!get(g, "forSale().some(i => i.item === '蓝色 的 头带')"), 'one of each');
+  g.run('putOn("头带")');
+  assert.deepEqual(get(g, 'S.wardrobe.wearing'), ['头带'], 'putting the red one back on takes the blue one off: one at a time');
+  assert.equal(g.run('headband()'), g.run("BAND['红色']"));
+  assert.deepEqual(get(g, "COLOUR_SENTENCES().filter(c => /蓝色/.test(c.zh))"), [{zh: '我 要 蓝色 的 头带', en: 'I want the blue headband.'}, {zh: '我 戴 蓝色 的 头带', en: 'I wear my blue headband.'}],
+    'every colour’s sentences, for the voices and CHINESE.md');
+  const saved = loadGame({save: {version: VERSION, started: true, wardrobe: {owned: ['头带', '蓝色 的 头带', '紫色 的 头带'], wearing: ['蓝色 的 头带']}}});
+  assert.deepEqual(get(saved, 'S.wardrobe'), {owned: ['头带', '蓝色 的 头带'], wearing: ['蓝色 的 头带']}, 'a save keeps its coloured headbands (and only what there is)');
+});
+
+test('at the home ground he sells peaches too, and honey once the bees make it', () => {
+  const g = homeGame({shop: 3, bees: 11});
+  assert.deepEqual(get(g, "forSale().filter(i => i.eat).map(i => [i.item, i.price])"), [['苹果', 2], ['桃子', 2], ['蜂蜜', 4]]);
+  assert.deepEqual(get(homeGame({shop: 0}), "forSale().filter(i => i.eat).map(i => i.item)"), ['苹果'], 'just apples at his stall in the meadow');
+});
