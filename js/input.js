@@ -36,7 +36,8 @@ let finishedAt = null;   // {place, x, y, t}: the square you were facing when so
 function finished(){ const [x, y] = facing(); finishedAt = {place:PLACE, x, y, t:performance.now()}; }
 const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && finishedAt.x === x && finishedAt.y === y
   && performance.now() - finishedAt.t < REST_MS && lastMoveEnd < finishedAt.t && pl.turnT < finishedAt.t
-  && !(n => n && hasNews(n))(npcAt(x, y) || followerAt(x, y)) && !tileAt(x, y).hop;   // (nor stepping stones: each row a new question, hop after hop)
+  && !(n => n && hasNews(n))(npcAt(x, y) || followerAt(x, y)) && !tileAt(x, y).hop   // (nor stepping stones: each row a new question, hop after hop;
+  && !(tileAt(x, y).fishing && canFish());   // nor water you fish in: cast after cast, decided 29 October 2026)
 // A message that has come up (toast, js/helpers.js) since you last moved or turned: A closes it, as B does, never
 // reaching past it to whoever you're facing (decided 22 October 2026: it's where the speech box was, and looks like it,
 // and A, pressed to clear it, started the conversation you'd just had all over again). Once you've moved on, A is as ever.
@@ -132,11 +133,11 @@ async function pressA(at){   // at: when it was pressed, if known (tooSoon, js/c
 }
 function pressB(at){
   tipPressed('#btnB');
-  if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null && !tooSoon(at)) b.click(); return; }
-  if (talkNext && !talkMove){ if (!tooSoon(at)) talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
+  if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null && !tooSoon(at, shownAt, B_READ_MS)) b.click(); return; }
+  if (talkNext && !talkMove){ if (!tooSoon(at, shownAt, B_READ_MS)) talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
   if (fishPress('b')) return;   // fishing: reeling your line back in (js/fishing.js)
-  if (!$('#saybox').hidden){ closeMessage(); return; }
+  if (!$('#saybox').hidden){ if (!tooSoon(at, msgAt, B_READ_MS)) closeMessage(); return; }   // (not one that's only just come up, as you run)
 }
 // Start: the menu (pressing it again closes it). Select: your tasks (again closes them).
 function pressMenu(){
@@ -172,7 +173,7 @@ document.addEventListener('keydown', e => {
   const isA = e.key === ' ' || e.key === 'Enter';
   if (!modal.hidden){
     const d = KEYS[e.key];
-    if ((isA || isB) && tooSoon(e.timeStamp)){ e.preventDefault(); return; }   // (not even pressing the card's chosen button)
+    if ((isA && tooSoon(e.timeStamp)) || (isB && tooSoon(e.timeStamp, shownAt, B_READ_MS))){ e.preventDefault(); return; }   // (not even pressing the card's chosen button)
     if (d && !e.key.match(/^[wasdWASD]$/)){ e.preventDefault(); navFocus(d); }
     else if (isB){ e.preventDefault(); pressB(e.timeStamp); }
     else if (isMenu){ e.preventDefault(); pressMenu(); }

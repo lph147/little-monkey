@@ -256,3 +256,22 @@ test('three shrimp, counted; the hungry monkey takes them (这是虾, 虾 or 鱼
   assert.deepEqual(get(g, '__said'), ['gap: 这是虾 (虾 or 鱼)'], 'this is a shrimp');
   assert.ok(get(g, '__notes').includes('You let the 虾 (shrimp) go back into the water.'));
 });
+
+// After fishing, you can cast again at once (decided 29 October 2026, after playing it: A at the water rested for 2 seconds,
+// as anything just finished with does, and pressing it seemed to do nothing); and no task arrow while you fish, nor over
+// the water you're facing, where it hid the float.
+test('cast after cast: the water you fish in doesn’t rest; and no arrow over your float', async () => {
+  const g = game({place: 'riverside', x: 26, y: 4, dir: 'right'}, {...FISH_IN, shrimp: 'asked'});
+  g.run('finished()');
+  assert.equal(g.run('justFinished(27, 4)'), false, 'A at the water casts again straight away');
+  g.run("S.pos = {place: PLACE, x: 26, y: 8, dir: 'right'}; placePlayer(); finished()");
+  assert.equal(g.run('justFinished(27, 8)'), true, 'the bridge, beside it, rests as ever');
+  face(g, 26, 4, 'right');
+  const t = 'aimedTask()';
+  assert.deepEqual(get(g, `${t}.target`).slice(0, 2), [27, 4], 'the task’s arrow is for the shallows');
+  assert.equal(g.run(`arrowHidden(${t})`), true, 'not while you’re facing them');
+  face(g, 26, 6, 'down');
+  assert.equal(g.run(`arrowHidden(${t})`), false, 'turned away, it shows');
+  g.run('fishing = {x: 27, y: 6, t0: 0, bite: null, nibble: false, hooked: false, press: null}');
+  assert.equal(g.run(`arrowHidden(${t})`), true, 'and none while you fish');
+});

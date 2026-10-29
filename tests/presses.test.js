@@ -63,3 +63,24 @@ test('a press with a time that can’t be right (from an odd browser) counts as 
   g.run('__now = 5400; pressA(0)');
   assert.equal(g.run('modal.hidden'), true);
 });
+
+// B waits longer (B_READ_MS): you might be holding or tapping it to run just as something comes up, and a line, a card or a
+// message would be gone before you'd read it (decided 29 October 2026, after playing it).
+test('B, the run button, waits a whole second before it skips a line, closes a card or a message that’s just come up', () => {
+  const g = game();
+  g.run("showDialog(speaker('elder'), L.hi)");
+  g.run('__now = 5600; pressB(5600)');
+  assert.ok(g.run('!!talkNext'), 'B half a second after the line came up: still there');
+  g.run('__now = 6100; pressB(6100)');
+  assert.ok(!g.run('talkNext'), 'B a second after: on, as always');
+  g.run("__now = 7000; showNotice('石头'); __now = 7500; pressB(7500)");
+  assert.equal(g.run('modal.hidden'), false, 'a card');
+  g.run("closeCard(); __now = 8000; toast('New task: Find some fruit for the hungry monkey'); __now = 8500; pressB(8500)");
+  assert.equal(g.run("$('#saybox').hidden"), false, 'a message, as you run');
+  g.run('__now = 9100; pressB(9100)');
+  assert.equal(g.run("$('#saybox').hidden"), true, 'a second later, B closes it');
+  const k = loadGame({dom: true, save: {version: 24, started: true}});
+  k.run("mode = 'play'; globalThis.__now = 5000; performance.now = () => __now; showNotice('石头'); __now = 5500");
+  k.key('x', {at: 5500});
+  assert.equal(k.run('modal.hidden'), false, 'the keyboard’s B (X) too');
+});

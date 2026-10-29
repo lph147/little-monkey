@@ -38,15 +38,17 @@ const pips = w => `<span class="pips" aria-label="Level ${lvl(w)} of 4">${[1,2,3
 const modal = $('#modal'), sheet = $('#sheet');
 // When the card, or the line in the speech box, showing now appeared (shown()). For a moment after (READ_MS), A and B
 // don't press it, nor do presses made before it appeared, while the game was busy: so A pressed again and again while
-// waiting can't skip it unread (decided 22 October 2026).
-const READ_MS = 300;
+// waiting can't skip it unread (decided 22 October 2026). B waits longer (B_READ_MS), as you might be holding or
+// tapping it to run just as something comes up (decided 29 October 2026, after playing it: a line that came up as you ran
+// was gone before you could read it).
+const READ_MS = 300, B_READ_MS = 1000;
 let shownAt = -1e9;
 const shown = () => { shownAt = performance.now(); };
-function tooSoon(at, since = shownAt){   // at: when the press was made, if known (not in the tests or the screens gallery); since: when what it would press appeared
+function tooSoon(at, since = shownAt, ms = READ_MS){   // at: when the press was made, if known (not in the tests or the screens gallery); since: when what it would press appeared; ms: how long it waits (B_READ_MS for B)
   if (at === undefined) return false;
   const now = performance.now();
   if (!(at > now - 5000 && at <= now + 50)) at = now;   // (a time that can't be right, from an odd browser: as if pressed now, so A never stops working)
-  return at < since + READ_MS;
+  return at < since + ms;
 }
 function openCard(html){
   if (lessonBar) html = `<p class="lessonbar">${lessonBar}</p>` + html;   // (in a lesson: its name, js/timetable.js)

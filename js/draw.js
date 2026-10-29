@@ -902,11 +902,14 @@ function taskArrow(t, seen, cx, cy, now, pal){
   else rows = ARROW;
   pix(rows, Math.round(mx - rows[0].length / 2), Math.round(my - rows.length / 2), pal);
 }
+// No task arrow while you fish, nor over the square you're facing: you're there, and it would hide what's there, such as
+// your float (decided 29 October 2026, after playing it: it hid the float in the riverside brook's shallows).
+const arrowHidden = t => !!fishing || (Array.isArray(t.target) && String(t.target.slice(0, 2)) === String(facing()));   // (its target: a square in the place you're in)
 function drawMarkers(cx, cy, now){
   const W = VW*T, H = VH*T, pal = {o:'#1E2B26', y:'#F2C14E'};
   const seen = ([x, y]) => { const X = x*T - cx, Y = y*T - cy; return X > -8 && X < W - 8 && Y > -4 && Y < H - 8; };
   const t = aimedTask();   // one arrow, for the newest task, or the one you chose to follow
-  if (t && t.target) taskArrow(t, seen, cx, cy, now, pal);
+  if (t && t.target && !arrowHidden(t)) taskArrow(t, seen, cx, cy, now, pal);
   const lab = currentPrompt(now);
   if (lab && lab !== 'OK' && !(lab === 'Hop' && hopQuestion(hopAhead()))){   // (not over stepping stones with their pictures)
     const [fx, fy] = facing(), X = fx*T - cx, Y = fy*T - cy;
