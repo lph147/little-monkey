@@ -64,3 +64,12 @@ test('the sparkles are bigger only while you learn your first words: not before 
   assert.equal(big(game(['山', '花', '草', '树'])), false, 'all four: back to the usual sparkles');
   assert.equal(big(game(['山', '花', '草', '树'], undefined, {elder: 2})), false, 'and for the rest of the game');
 });
+
+test('showing the old monkey your first words counts each one as practice, as the exam does (it counted none)', async () => {
+  const g = game(['山', '树', '花', '草']);
+  g.run("save = () => {}; closeCard = () => {}; SFX.fanfare = () => {}; matchWords = async words => new Set([words[0]])");
+  const before = g.run('S.turn || 0');
+  await g.run("STEPS.match({match: 'Show the old monkey your words'})");
+  assert.equal(g.run('S.turn') - before, 5, 'all five words with pictures you know: 石头 山 树 花 草 (你好 is a phrase)');
+  assert.equal(get(g, "ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1).filter(w => rec(w).ok === 1).length"), 4, 'four matched first time, one missed');
+});

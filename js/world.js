@@ -456,6 +456,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const words = shuffle(ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));
     const missed = await matchWords(words, s.match, s.stop || 'Not now');
     if (!missed){ if (s.notYet) toast(fill(s.notYet)); return STOP; }
+    for (const w of words){ reviewed(w, !missed.has(w)); addToday(w); } save();   // (each word counts as practice, as in the exam)
     closeCard(); SFX.fanfare();   // all matched: on with the conversation
   },
   async shells(s, who, last){   // shells for you, such as a present (in a conversation, the message waits in the speech box)
