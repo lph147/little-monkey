@@ -684,8 +684,9 @@ function drawWorld(now){
       drawEntityMonkey(n.kind, X, Y, n.dir, now, e.c.mid ? 1 : idle, e.c.mid ? 1 + (n.parity || 0) : 0, n.x + n.y);
     }
     if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
-    // a ! while they're stopping you (the stopsYou step), or a ! or ? from the area's bubbles
-    const bub = inClass.has(n.id) ? null : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you; none in a lesson, such as PE's)
+    // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
+    // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
+    const bub = inClass.has(n.id) ? null : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you; none in a lesson, such as PE's)
     if (bub) bubbles.push([X+10, Y-8, bub.show]);
   }
   drawDragonflies(cx, cy, now);

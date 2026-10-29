@@ -1042,6 +1042,10 @@ const SCREENS = [
     play(); await wait(100); shop(speaker('boss')); await wait(200); next(); await wait(400); }},
   {id: 'shop-gap-colour', title: 'Asking for a green one', save: 'shopOpen', why: 'You ask for it: 我要绿色的头带, the colour missing, the other colours you know the wrong answers.', run: async () => {
     play(); await wait(100); buy(forSale().find(i => i.colour === '绿色'), speaker('boss')); await wait(500); }},
+  {id: 'shop-puzzled', title: 'Asking for something you didn’t point at', save: 'shopOpen', why: 'Choose the wrong word, and he’s puzzled, a ? over him: you pointed at the apples but asked for something else. He asks again (你要什么？), and the same choices come again, the right one somewhere else, till you ask for what you pointed at. Only then do you pay.', run: async () => {
+    play(); await wait(100); const real = gapQ; let first = true;
+    gapQ = async o => { if (!first) return real(o); first = false; if (o.seen) o.seen.options = ['苹果', '山', '水']; return false; };
+    buy(forSale().find(i => i.item === '苹果'), speaker('boss')); await wait(500); }},
   {id: 'wardrobe-colours', title: 'Your headbands', save: 'shopOpen', why: 'Each colour you’ve bought, one on at a time: putting one on takes the other off (我戴蓝色的头带).', run: async () => {
     play(); await wait(100); wardrobePage(() => closeCard()); await wait(300); }},
   {id: 'stall-empty', title: 'His old stall, empty', save: 'oldStall', why: 'Once he’s moved, the meadow’s stall is empty: A at it says where he’s gone.', run: async () => {

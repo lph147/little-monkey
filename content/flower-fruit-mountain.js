@@ -558,6 +558,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   shop: {
     who:'boss', ask:'whatWant', given:'The {老板} gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
     earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and practising your words.',
+    // asking for something you didn't point at (the wrong word in the gap): he's puzzled, and asks again (ask)
+    puzzled:'The {老板} looks puzzled: you pointed at the {item}, but asked for something else! Ask him again.',
     soldOut:'You have everything the {老板} sells. Come back another time.',
     items: [
       {item:'苹果', price:2, sentence:'我 要 苹果', sentenceEn:'I want an apple.',

@@ -360,11 +360,13 @@ async function encounter(foe){
 // picture. Only words you've caught are offered: the gap and up to 2 others (from wrong, best first, or
 // any not in the sentence), unless options gives them all. Choosing fills the gap and reads the sentence
 // aloud. A right choice counts for the word; a wrong one shows the right word and play carries on.
-// Gives true if you chose right.
-async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, options}){
+// Asking again (again: just after a wrong one, such as in the shop) counts for nothing either way, as you've just seen
+// the answer; seen, if given, is told the choices shown (seen.options). Gives true if you chose right.
+async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, options, again = false, seen}){
   const pics = !!WORDS[gap].pic && lvl(gap) <= 1;
   const fits = w => w !== gap && WORDS[w] && !WORDS[w].phrase && lvl(w) >= 1 && !t.includes(w) && (!pics || WORDS[w].pic);
   const opts = options || shuffle([gap, ...apart(gap, wrong ? wrong.filter(fits) : shuffle(ORDER.filter(fits)), 2, false)]);   // (no look-alikes)
+  if (seen) seen.options = opts;
   const shown = PUNCT.has(t.at(-1)) ? t : [...t, '。'];
   hear(t);
   // The speaker beside what to do, then the sentence and its English (and, for your first few lines, how to see a word's meaning).
@@ -375,7 +377,10 @@ async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, option
     text:!pics, answerIdx:opts.indexOf(gap),
     onAnswer:() => { sheet.querySelector('.line').outerHTML = lineHTML(shown, gap); bindTokens(sheet); say(t.join('')); }});
   closeCard();
+  if (again) return ok;
   if (ok) answer(gap, true, !WORDS[gap].pic ? 'fill' : pics ? 'gap' : 'read');
   else reviewed(gap, false);   // missed: it comes back soon (its gold squares stay: filling a gap is practice, not a test)
   return ok;
 }
+// The same choices in another order, the right one (gap) somewhere else: asking again is finding it, not tapping where it was.
+const reshuffled = (opts, gap) => { if (opts.length < 2) return opts; let o; do o = shuffle(opts); while (o.indexOf(gap) === opts.indexOf(gap)); return o; };

@@ -874,8 +874,21 @@ async function buy(i, face){   // buying something from the shop by asking for i
   if (lvl(i.word) === 0) await showNotice(i.word, {note:fill(a.note), quiet:true, ...(a.pic !== i.word ? {pic:a.pic} : {})});
   if (toBag(i) && bagFull(i.item)){ await infoBox(face, `<p>You can carry ${(FOOD[i.item] || i).carry || 3} ${esc(wz(i.item))}, and your bag is full. ${i.eat ? 'Eat one first.' : 'Use one first.'}</p>`); return false; }
   if (S.shells < i.price){ await infoBox(face, `<p>The ${esc(i.item === i.word ? wz(i.item) : `${a.zh} (${a.en})`)} costs ${i.price} 🐚, and you have ${S.shells}. ${esc(fill(sh.earnMore))}</p>`); return false; }
-  const sentence = toks(a.sentence);
-  await gapQ({who:face, t:sentence, en:a.sentenceEn, gap:a.gap, ...(i.colour && a.gap === i.colour ? {wrong:i.colours.filter(c => c !== i.colour)} : {})});   // (the other colours as the wrong answers)
+  const sentence = toks(a.sentence), q = {who:face, t:sentence, en:a.sentenceEn, gap:a.gap, ...(i.colour && a.gap === i.colour ? {wrong:i.colours.filter(c => c !== i.colour)} : {})}, seen = {};   // (the other colours as the wrong answers)
+  // Ask for something else, and you've pointed at one thing and asked for another (decided 29 October 2026: he handed it
+  // over all the same): he's puzzled, a ? over him (puzzled, in js/draw.js), and asks again (the shop's puzzled, then its
+  // ask); the same choices come again, the right one somewhere else, till you've asked for what you pointed at, and only
+  // then do you pay. (The right one is shown each time, so you can't get stuck; asking again counts for nothing: gapQ's again.)
+  if (!await gapQ({...q, seen}) && sh.puzzled){
+    const who = NPCS.find(n => n.id === sh.who);
+    if (who) who.puzzled = true;
+    try {
+      do {
+        await showNarration(fill(sh.puzzled.replace('{item}', a.given)));
+        await showDialog(face, L[sh.ask]);
+      } while (!await gapQ({...q, options:reshuffled(seen.options || [a.gap], a.gap), again:true, seen}));
+    } finally { if (who) delete who.puzzled; }
+  }
   sentence.filter(w => lvl(w) >= 1).forEach(useWord);
   S.shells -= i.price;
   if (toBag(i)) intoBag(i.item);   // food (or bait) goes in your bag: you can buy it again and again

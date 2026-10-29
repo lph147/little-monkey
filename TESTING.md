@@ -525,6 +525,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Choose a blue one (with 10 🐚): you ask for it, 我要＿的头带 (I want the blue headband.), choosing 蓝色 from colours you know. He gives it you (谢谢, then 不客气), and: You tie on the blue 头带 (headband). It suits you! Your monkey's headband is blue on the map (and in bed, asleep). It isn't for sale again.
 - [ ] MENU, 衣服 Clothes: each headband you have, called by its colour (红色的头带, 蓝色的头带); tap the red one: your monkey says 我戴红色的头带。, and the blue one comes off (one at a time). Tap the one you're wearing: it comes off.
 - [ ] A ? over the 老板 whenever there's something new you can afford.
+- [ ] Buy an apple, and choose a wrong word in 我要＿: the right one shows in green, then a ? over the 老板 and: The 老板 (shop owner) looks puzzled: you pointed at the 苹果 (apple), but asked for something else! Ask him again. He says 你要什么？ and the same question comes again, the same three choices, the apple somewhere else. Wrong again: the same again. Right: only now do your shells go down (by 2), the apple goes in your bag, 谢谢 and 不客气, and his ? goes.
 
 **Chapter 1: fishing, and a big fish for the feast**
 - [ ] Once honey is on the feast's table, a ! over the hungry monkey, and with no other task, the hint: The hungry monkey has something to ask you: look for his ! by the feast’s 桌子 (tables). Talk to him: 我们有蜂蜜了！, then 我要吃大鱼！ (I want to eat a big fish!; 大 grey, just for listening). TASKS: Ask the fishing monkey by the stream how to catch a big 鱼 (fish). The feast's list has 我们没有鱼。 (a shadow).

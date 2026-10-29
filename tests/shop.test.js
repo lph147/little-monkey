@@ -192,7 +192,7 @@ const COLOURED = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers
   count: 3, home: 2, build: 2, wood: 'done', stones: 'done', school: 2, feast: 1, bought: ['头带']};
 const seen = ws => Object.fromEntries(ws.map(w => [w, {lv: 1, due: 0, ok: 2}]));
 function homeGame(area = {}, more = {}){
-  const g = loadGame({dom: true, save: {version: VERSION, started: true, areas: {1: {...COLOURED, ...area}}, pos: {place: 'homeGround', x: 7, y: 13, dir: 'left'},
+  const g = loadGame({dom: true, save: {version: VERSION, started: true, areas: {1: {...COLOURED, ...area}}, pos: {place: 'homeGround', x: 7, y: 9, dir: 'up'},
     wardrobe: {owned: ['头带'], wearing: ['头带']}, ...more, w: {...seen(['老板', '头带', '戴', '红色', '黄色', '白色', '我', '要', '谢谢', '不客气', '桃子', '苹果']), ...more.w}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__notes = []; globalThis.__said = []; globalThis.__sounds = []");
   g.run("showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }; showNotice = async (w, o = {}) => { __notes.push('card: ' + w); }; infoBox = async () => {}");
@@ -251,4 +251,55 @@ test('at the home ground he sells peaches too, and honey once the bees make it',
   const g = homeGame({shop: 3, bees: 11});
   assert.deepEqual(get(g, "forSale().filter(i => i.eat).map(i => [i.item, i.price])"), [['苹果', 2], ['桃子', 2], ['蜂蜜', 4]]);
   assert.deepEqual(get(homeGame({shop: 0}), "forSale().filter(i => i.eat).map(i => i.item)"), ['苹果'], 'just apples at his stall in the meadow');
+});
+
+// Asking for something you didn't point at (29 October 2026: he handed it over all the same): the 老板 is puzzled, a ? over
+// him, and asks again; the same choices come again, the right one somewhere else, till you've asked for what you pointed
+// at, and only then do you pay. Asking again counts for nothing, as you've just seen the answer.
+test('ask for something you didn’t point at, and the 老板 is puzzled: he asks again, and you pay only once you’ve asked for it', async () => {
+  const g = homeGame({shop: 3}, {shells: 10});
+  g.run(`globalThis.__asked = []; globalThis.__tries = [false, false, true];
+    gapQ = async o => { const boss = NPCS.find(n => n.id === 'boss');
+      __asked.push({gap: o.gap, again: !!o.again, options: o.options || null, puzzled: !!boss.puzzled, shells: S.shells});
+      if (o.seen) o.seen.options = o.options || ['苹果', '桃子', '我'];
+      return __tries.shift(); }`);
+  await settle(g, "buy(AREA.shop.items.find(i => i.item === '苹果'), speaker('boss'))");
+  const asked = get(g, '__asked');
+  assert.deepEqual(asked.map(q => [q.gap, q.again, q.puzzled, q.shells]), [['苹果', false, false, 10], ['苹果', true, true, 10], ['苹果', true, true, 10]],
+    'asked three times, the second and third time again, with a ? over him; nothing paid till then');
+  for (const [before, after] of [[['苹果', '桃子', '我'], asked[1].options], [asked[1].options, asked[2].options]]){
+    assert.deepEqual([...after].sort(), [...before].sort(), 'the same choices');
+    assert.notEqual(after.indexOf('苹果'), before.indexOf('苹果'), 'the right one somewhere else');
+  }
+  const notes = get(g, '__notes').filter(n => /puzzled/.test(n));
+  assert.deepEqual(notes, Array(2).fill('The 老板 (shop owner) looks puzzled: you pointed at the 苹果 (apple), but asked for something else! Ask him again.'), 'each wrong answer');
+  assert.deepEqual(get(g, '__said').filter(l => /什么/.test(l)), Array(2).fill('boss: 你要什么？'), 'and he asks again what you want');
+  assert.deepEqual([get(g, 'S.shells'), get(g, "S.bag['苹果']")], [8, 1], 'then you pay, once, and it’s yours');
+  assert.equal(g.run("!!NPCS.find(n => n.id === 'boss').puzzled"), false, 'his ? goes once you’ve asked for it');
+  const blue = homeGame({shop: 3}, {shells: 10, w: seen(['蓝色'])});
+  blue.run(`globalThis.__tries = [false, true]; gapQ = async o => { if (o.seen) o.seen.options = o.options || ['蓝色', '黄色', '白色']; return __tries.shift(); }`);
+  await settle(blue, "buy(forSale().find(i => i.colour === '蓝色'), speaker('boss'))");
+  assert.ok(get(blue, '__notes').includes('The 老板 (shop owner) looks puzzled: you pointed at the blue 头带 (headband), but asked for something else! Ask him again.'));
+  assert.deepEqual(get(blue, 'S.wardrobe.wearing'), ['蓝色 的 头带'], 'the one you pointed at');
+});
+
+test('asking again just after a wrong answer counts for nothing: the word still needs practice', async () => {
+  const g = homeGame({shop: 3});
+  g.run("gapQ = " + base.run('gapQ.toString()'));   // (the real one: the home ground's games fake it)
+  g.run("pictureQ = async () => true; closeCard = () => {}; hear = () => {}");
+  const w = () => get(g, "S.w['苹果']");
+  const before = w();
+  assert.equal(await g.run("gapQ({t: toks('我 要 苹果'), en: 'I want an apple.', gap: '苹果', again: true})"), true);
+  assert.deepEqual(w(), before, 'right, asking again: nothing changes');
+  g.run('pictureQ = async () => false');
+  assert.equal(await g.run("gapQ({t: toks('我 要 苹果'), en: 'I want an apple.', gap: '苹果', again: true})"), false);
+  assert.deepEqual(w(), before, 'nor wrong');
+  g.run('pictureQ = async () => true');
+  await g.run("gapQ({t: toks('我 要 苹果'), en: 'I want an apple.', gap: '苹果'})");
+  assert.notDeepEqual(w(), before, 'but the first time, it counts');
+  for (let i = 0; i < 30; i++){
+    const opts = get(g, "reshuffled(['苹果', '桃子', '我'], '苹果')");
+    assert.deepEqual([...opts].sort(), ['我', '桃子', '苹果'].sort());
+    assert.notEqual(opts.indexOf('苹果'), 0, 'never where it was');
+  }
 });
