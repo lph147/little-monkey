@@ -204,6 +204,13 @@ const DRAFTS = [
     ['我 要 大 桃子', 'I want a big peach.', 'A sentence you finish in a lesson, to practise 大 (or 要, 我)'],
     ['我 有 小 鱼', 'I have a little fish.', 'A sentence you finish in a lesson, to practise 小']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 29 October 2026 (in the game), fishing: ' + where})),
+  ...[['我 要 吃 虾 ！', 'I want to eat shrimp!', 'The hungry monkey, wanting shrimp for the feast (虾 xiā just for listening, till you catch one)'],
+    ['虾 ！ 太 好 了 ！', 'Shrimp! Wonderful!', 'The hungry monkey, as you bring him three shrimp'],
+    ['这 是 虾', 'This is a shrimp.', 'The sentence you finish (choosing 虾 or 鱼) as you give him the shrimp, and each time you catch one after that'],
+    ['我们 有 虾 了 ！', 'We have shrimp now!', 'The hungry monkey, as a bowl of shrimp goes on the feast’s table'],
+    ['我们 没有 虾 。', 'We don’t have any shrimp.', 'The feast’s list, till you’ve brought them'],
+    ['我们 有 虾 。', 'We have shrimp.', 'The feast’s list, once they’re on the table']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 

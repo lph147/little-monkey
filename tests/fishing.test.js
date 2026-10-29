@@ -176,3 +176,83 @@ test('bait from the 老板, once you have a rod: with some in your bag, a big fi
   assert.deepEqual([get(g, "S.bag['鱼饵']"), get(g, '__said')], [0, ['gap: 这是大鱼 (大 or 小)']], 'the bait brings a big one, however unlikely');
   assert.match(get(g, '__notes').join(' '), /You put some 鱼饵 \(bait\) on your hook: a big one bites!/);
 });
+
+// Three shrimp for the feast (29 October 2026): with the fish on its table, the hungry monkey wants shrimp: 我要吃虾！ (虾
+// just for listening). They live in the clear shallows of the riverside's brook, above the bridge (a legend's fishing names
+// what lives there): a shrimp nibbles first, the float twitching once or twice; pull on a twitch, and it lets go. Then it
+// bites, and one question reels it in. The first teaches 虾, each is counted, and he takes the three (这是虾, 虾 or 鱼);
+// a bowl of them goes on the fish's table, and the feast's list has them.
+const FISH_IN = {fish: 'done', fishing: 1, fishTable: 1};
+// Fishing in the riverside's clear shallows, from the path beside them at (26, 4): press A at once on a nibble (too soon),
+// or wait (hook: press A as soon as it bites)
+async function shrimp(g, {tooSoon = false} = {}){
+  face(g, 26, 4, 'right');
+  let done = false; const p = Promise.resolve(g.run('interact(...facing()).then(runEvents)')).then(() => { done = true; });
+  for (let i = 0; i < 400 && !done; i++){
+    await tick();
+    if (tooSoon && g.run('!!fishing && fishing.nibble')) g.run("fishPress('a')");
+    if (g.run('!!fishing && !!fishing.bite && !fishing.hooked')) g.run("fishPress('a')");
+    g.flush();
+  }
+  await p;
+}
+
+test('with the fish on its table, the hungry monkey wants shrimp: 我要吃虾！, 虾 just for listening', async () => {
+  const g = game({place: 'homeGround', x: 20, y: 7, dir: 'left'}, FISH_IN);
+  assert.equal(bubble(g, 'hungry'), '!', 'a ! over him');
+  assert.match(g.run('goalText()'), /The hungry monkey has something to ask you/);
+  await press(g, 20, 7, 'left');
+  assert.deepEqual(get(g, '__said'), ['hungry: 我要吃虾！'], 'I want to eat shrimp!');
+  assert.equal(get(g, 'here().shrimp'), 'asked');
+  assert.equal(g.run("lvl('虾')"), 0, '虾 just for listening');
+  assert.ok(get(g, '__notes').some(n => /wants three 虾 \(shrimp\) for the feast! Shrimp live in the clear shallows of the brook on the riverside/.test(n)));
+  const task = get(g, "getTasks().find(t => /riverside/.test(t.text))");
+  assert.equal(task.text, 'Catch three shrimp in the clear brook on the riverside, above the bridge (0/3)', 'a task (虾 in plain English till you catch one)');
+  assert.ok(item(g, /shrimp/), 'on the checklist');
+  const list = get(g, "AREA.feastList.foods.filter(f => !f.show || matches(f.show)).map(f => f.word)");
+  assert.equal(list[list.indexOf('鱼') + 1], '虾', 'and on the feast’s list, after the fish: 我们没有虾');
+  assert.ok(get(g, "AREA.feastList.foods.filter(f => !f.show || matches(f.show)).map(f => f.word)").includes('鱼'), 'the fish stays on it once it’s on the table');
+});
+
+test('shrimp live only in the riverside brook’s clear shallows: a shrimp nibbles first, and pulling on a twitch is too soon', async () => {
+  const g = game({place: 'riverside', x: 26, y: 4, dir: 'right'}, {...FISH_IN, shrimp: 'asked'});
+  assert.deepEqual(get(g, '[2, 3, 4, 5, 6].map(y => tileAt(27, y).look + tileAt(28, y).look)'), Array(5).fill('shallowsshallows'), 'the brook above the bridge');
+  assert.equal(get(g, 'tileAt(27, 4).fishing'), 'shrimp', 'what lives in it');
+  assert.equal(g.run('promptFor(27, 4)'), 'Fish');
+  g.run('Math.random = () => .99');   // (two nibbles)
+  await shrimp(g, {tooSoon: true});
+  assert.ok(get(g, '__notes').includes('A nibble! Wait for the float to go right under…'), 'a nibble: the float twitches');
+  assert.ok(get(g, '__notes').includes('Too soon! The shrimp let go. Wait for the float to go right under.'), 'pull on a twitch, and it lets go');
+  assert.equal(get(g, '__asked'), 0, 'nothing to reel in');
+  assert.equal(g.run("lvl('虾')"), 0);
+  await shrimp(g);
+  assert.equal(get(g, '__asked'), 1, 'wait for the bite: one question reels it in');
+  assert.ok(get(g, '__notes').some(n => /You caught a shrimp!/.test(n)), 'a shrimp, never a fish, in the shallows');
+  assert.ok(get(g, '__notes').includes('card: 虾 (A shrimp, from the clear shallows of the brook.)'), 'the first teaches 虾');
+  assert.deepEqual(get(g, 'here().picked.shrimp.length'), 1);
+  const big = game({place: 'homeGround', x: 23, y: 17, dir: 'down'}, {...FISH_IN, shrimp: 'asked'}, {w: {'小': {lv: 1, ok: 2}}});
+  big.run('Math.random = () => .99');
+  await fish(big);
+  assert.ok(get(big, '__notes').some(n => /You caught a fish!/.test(n)) && !get(big, '__notes').some(n => /nibble/.test(n)), 'in the stream, fish, which don’t nibble');
+});
+
+test('three shrimp, counted; the hungry monkey takes them (这是虾, 虾 or 鱼), and a bowl of them goes on the fish’s table: 我们有虾了！', async () => {
+  const g = game({place: 'riverside', x: 26, y: 4, dir: 'right'}, {...FISH_IN, shrimp: 'asked'}, {w: {'一': {lv: 1}, '二': {lv: 1}, '三': {lv: 1}}});
+  g.run('Math.random = () => 0');
+  for (let n = 0; n < 3; n++) await shrimp(g);
+  assert.equal(get(g, 'here().holding.shrimp'), '虾', 'three: for the feast');
+  assert.ok(get(g, '__notes').some(n => /^二 \(two\)! A 虾 \(shrimp\) for the feast \(2\/3\)\. Cast again!/.test(n)), 'each counted');
+  assert.ok(get(g, '__notes').some(n => /^三 \(three\)! Three 虾 \(shrimp\)! Take them to the hungry monkey\./.test(n)));
+  assert.equal(get(g, "getTasks().map(t => t.text).find(t => /hungry monkey/.test(t))"), 'Take the 虾 (shrimp) to the hungry monkey');
+  g.run("enterPlace('homeGround')");
+  assert.equal(bubble(g, 'hungry'), '?');
+  await press(g, 20, 7, 'left');
+  assert.deepEqual(get(g, '__said'), ['hungry: 虾！太好了！', 'gap: 这是虾 (虾 or 鱼)', 'hungry: 谢谢你！', 'player: 不客气', 'hungry: 我们有虾了！']);
+  assert.deepEqual([get(g, 'here().shrimp'), get(g, 'here().shrimpTable'), g.run('tileAt(24, 7).look')], ['done', 1, 'fishTableShrimp'], 'a bowl of shrimp in front of the fish');
+  assert.ok(item(g, /shrimp/)[1], 'ticked off');
+  // and after that, each one you catch asks which it is, and you let it go
+  g.run("enterPlace('riverside')"); g.run('__said.length = 0');
+  await shrimp(g);
+  assert.deepEqual(get(g, '__said'), ['gap: 这是虾 (虾 or 鱼)'], 'this is a shrimp');
+  assert.ok(get(g, '__notes').includes('You let the 虾 (shrimp) go back into the water.'));
+});

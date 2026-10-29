@@ -42,6 +42,9 @@ shown where the word list has them.
 | 我要吃大鱼！ | wǒ yào chī dà yú! | I want to eat a big fish! | 饿猴子 (Hungry monkey) |  |
 | 鱼！太好了！ | yú! tài hǎo le! | A fish! Wonderful! | 饿猴子 (Hungry monkey) |  |
 | 我们有鱼了！ | wǒmen yǒu yú le! | We have fish now! |  |  |
+| 我要吃虾！ | wǒ yào chī xiā! | I want to eat shrimp! | 饿猴子 (Hungry monkey) |  |
+| 虾！太好了！ | xiā! tài hǎo le! | Shrimp! Wonderful! | 饿猴子 (Hungry monkey) |  |
+| 我们有虾了！ | wǒmen yǒu xiā le! | We have shrimp now! |  |  |
 | 河里有鱼！ | hé lǐ yǒu yú! | There are fish in the river! | 钓鱼猴子 (Fishing monkey) |  |
 | 这是鱼竿。 | zhè shì yúgān. | This is a fishing rod. | 钓鱼猴子 (Fishing monkey) |  |
 | 太小了！ | tài xiǎo le! | It’s too small! |  |  |
@@ -187,6 +190,7 @@ shown where the word list has them.
 | 这是葡萄的种子 | zhè shì pútáo de zhǒngzi | These are grape seeds. | 大猴子 (Big monkey) |  |
 | 这是香蕉的种子 | zhè shì xiāngjiāo de zhǒngzi | These are banana seeds. | 大猴子 (Big monkey) |  |
 | 这是大鱼 | zhè shì dà yú | This is a big fish. | 饿猴子 (Hungry monkey) |  |
+| 这是虾 | zhè shì xiā | This is a shrimp. | 饿猴子 (Hungry monkey) |  |
 | 我要吃草 | wǒ yào chī cǎo | I want to eat grass. | 牛 (cow) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我要桃子 | wǒ yào táozi | I want a peach. | 老板 (Shop owner) |  |
@@ -255,6 +259,8 @@ What A at the feast's big table shows: what the troop has, and what it still nee
 | 我们有奶酪。 | wǒmen yǒu nǎilào. | We have cheese. |  |
 | 我们有鱼。 | wǒmen yǒu yú. | We have fish. |  |
 | 我们没有鱼。 | wǒmen méiyǒu yú. | We don’t have any fish. |  |
+| 我们有虾。 | wǒmen yǒu xiā. | We have shrimp. |  |
+| 我们没有虾。 | wǒmen méiyǒu xiā. | We don’t have any shrimp. |  |
 | 我们有西瓜。 | wǒmen yǒu xīguā. | We have watermelon. |  |
 | 我们没有西瓜。 | wǒmen méiyǒu xīguā. | We don’t have any watermelon. |  |
 | 我们有葡萄。 | wǒmen yǒu pútáo. | We have grapes. |  |
@@ -501,6 +507,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 跑步 | pǎobù | to go running, to jog |  |
 | 鱼饵 | yú'ěr | bait |  |
 | 鱼竿 | yúgān | fishing rod |  |
+| 虾 | xiā | shrimp |  |
 | 小 | xiǎo | little, small |  |
 | 大 | dà | big |  |
 | 你好 | nǐ hǎo | hello |  |
@@ -824,6 +831,12 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们没有鱼。 | wǒmen méiyǒu yú. | We don’t have any fish. | New on 29 October 2026 (in the game), fishing: The feast’s list, till you’ve caught one |  |
 | 我要大桃子 | wǒ yào dà táozi | I want a big peach. | New on 29 October 2026 (in the game), fishing: A sentence you finish in a lesson, to practise 大 (or 要, 我) |  |
 | 我有小鱼 | wǒ yǒu xiǎo yú | I have a little fish. | New on 29 October 2026 (in the game), fishing: A sentence you finish in a lesson, to practise 小 |  |
+| 我要吃虾！ | wǒ yào chī xiā! | I want to eat shrimp! | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The hungry monkey, wanting shrimp for the feast (虾 xiā just for listening, till you catch one) |  |
+| 虾！太好了！ | xiā! tài hǎo le! | Shrimp! Wonderful! | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The hungry monkey, as you bring him three shrimp |  |
+| 这是虾 | zhè shì xiā | This is a shrimp. | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The sentence you finish (choosing 虾 or 鱼) as you give him the shrimp, and each time you catch one after that |  |
+| 我们有虾了！ | wǒmen yǒu xiā le! | We have shrimp now! | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The hungry monkey, as a bowl of shrimp goes on the feast’s table |  |
+| 我们没有虾。 | wǒmen méiyǒu xiā. | We don’t have any shrimp. | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The feast’s list, till you’ve brought them |  |
+| 我们有虾。 | wǒmen yǒu xiā. | We have shrimp. | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The feast’s list, once they’re on the table |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions

@@ -358,6 +358,10 @@ SAVES.fishRod = {...SAVES.fishAsk, areas: {1: {...SAVES.fishAsk.areas[1], fish: 
 SAVES.fishing = {...SAVES.fishRod, w: {...SAVES.fishRod.w, ...knows(1, ['鱼竿'])}, areas: {1: {...SAVES.fishRod.areas[1], fishing: 1}}, tasksSeen: {...SAVES.fishRod.tasksSeen, fishCatch: 1}, pos: {place: 'homeGround', x: 23, y: 17, dir: 'down'}};
 SAVES.fishBoth = {...SAVES.fishing, w: {...SAVES.fishing.w, ...knows(1, ['小', '大', '鱼饵'])}, bag: {'鱼饵': 2}, areas: {1: {...SAVES.fishing.areas[1], fish: 'done', fishTable: 1}}};
 SAVES.fishTable = {...SAVES.fishBoth, pos: {place: 'homeGround', x: 24, y: 8, dir: 'up'}};
+SAVES.shrimpAsk = {...SAVES.fishBoth, areas: {1: {...SAVES.fishBoth.areas[1], shrimp: 'not asked'}}, pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};   // facing the hungry monkey
+SAVES.shrimping = {...SAVES.shrimpAsk, areas: {1: {...SAVES.shrimpAsk.areas[1], shrimp: 'asked'}}, tasksSeen: {...SAVES.shrimpAsk.tasksSeen, shrimpCatch: 1}, pos: {place: 'riverside', x: 26, y: 4, dir: 'right'}};   // by the brook's clear shallows
+SAVES.shrimpTwo = {...SAVES.shrimping, w: {...SAVES.shrimping.w, ...knows(1, ['虾'])}, areas: {1: {...SAVES.shrimping.areas[1], picked: {shrimp: ['riverside:27,4', 'riverside:27,4']}}}};
+SAVES.shrimpTable = {...SAVES.shrimpTwo, areas: {1: {...SAVES.shrimpTwo.areas[1], shrimp: 'done', shrimpTable: 1, picked: {shrimp: ['riverside:27,4', 'riverside:27,4', 'riverside:27,4']}}}, pos: {place: 'homeGround', x: 24, y: 8, dir: 'down'}};
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
@@ -1069,6 +1073,18 @@ const SCREENS = [
   {id: 'fish-gap', title: 'Which is it?', save: 'fishBoth', why: 'Once you know 小 and 大, each catch asks: 这是＿鱼, its picture over it.', run: async () => {
     play(); await wait(100); runSteps(FISH.big.steps[1].do); await wait(600); }},
   {id: 'fish-table', title: 'The feast’s fish', save: 'fishTable', why: 'At the end of the feast’s second table, on a stone of its own, on a big leaf.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'shrimp-want', title: 'Shrimp for the feast', save: 'shrimpAsk', why: 'With the fish on its table, the hungry monkey wants shrimp: 我要吃虾！ (虾 just for listening, till you catch one).', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(500); }},
+  {id: 'shrimp-brook', title: 'The clear brook', save: 'shrimping', why: 'Above the riverside’s bridge, the brook runs shallow and clear over pebbles: little see-through shrimp drift about in it, flicking backwards now and then.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'shrimp-nibble', title: 'A nibble', save: 'shrimping', why: 'A shrimp nibbles first: the float twitches, tiny rings round it, once or twice. Wait! Pull now, and it lets go.', run: async () => {
+    play(); await wait(100); fishing = {x: 27, y: 4, t0: performance.now(), bite: null, nibble: true, hooked: false, press: null}; toast(fill(FISH.shrimp.nibble)); await wait(400); }},   // (held as it twitches)
+  {id: 'shrimp-word', title: 'Your first shrimp: 虾', save: 'shrimping', why: 'The first one you catch teaches 虾, said straight away; each is counted (一, 二, 三).', run: async () => {
+    play(); await wait(100); showNotice('虾', {note:'A shrimp, from the clear shallows of the brook.'}); await wait(600); }},
+  {id: 'shrimp-gap', title: 'This is a shrimp', save: 'shrimpTwo', why: 'Giving him the shrimp, and each one you catch after: 这是虾, 虾 or 鱼.', run: async () => {
+    play(); await wait(100); runSteps(FISH.shrimp.steps[2].do); await wait(600); }},
+  {id: 'shrimp-table', title: 'Shrimp on the feast’s table', save: 'shrimpTable', why: 'A white bowl of shrimp in front of the big fish, on its table at the end of the feast’s second.', run: async () => {
     play(); await wait(500); }},
   {id: 'scroll-describing', title: 'Word Scroll: describing words', save: 'fishBoth', why: '小 (little) and 大 (big), from fishing, on a tab of their own.', run: async () => {
     play(); await wait(100); openScroll(() => closeCard(), 0, 'describing'); await wait(400); }},

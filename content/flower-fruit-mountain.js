@@ -114,7 +114,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -131,7 +131,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     riverAnimalsLeft: {count:'animalsLeft', chapter:1, place:'riverside'},   // and the butterfly on the riverside, the way east to the bees
     pinesAnimalsLeft: {count:'animalsLeft', chapter:1, place:'darkPines'},   // and the owl in the dark pines, the way south to the cow
     beeCount: {count:'progress', key:'beeFriends'},   // the bees in their valley you've made friends with (of six)
-    flowersPicked: {count:'picked', request:'flowers'},   // flowers picked for the big monkey (one of each colour)
+    flowersPicked: {count:'picked', request:'flowers'},
+    shrimpCaught: {count:'picked', request:'shrimp'},   // shrimp caught for the hungry monkey (three)   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
     caveThings: {count:'known', words:['床', '碗', '桌子']},   // things you've found in the Water Curtain Cave (桥, bridge, is chapter 1's, on its bridges)
     // the words for the meadow the old monkey wants you to learn, which nothing else makes you learn, each as the task
@@ -249,6 +250,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'fishRod', if:{fish:'asked', fishing:0}, text:'Ask the fishing monkey by the stream how to catch a big {鱼}', arrow:'fisher'},
     {id:'fishCatch', if:{fish:'asked', fishing:{atLeast:1}, holding:{fish:false}}, text:'Catch a big {鱼} for the feast: face the stream and press A', arrow:[22, 18, 'homeGround']},   // (its arrow on the stream, by the fishing monkey: not over you as you fish)
     {id:'fishBack', if:{fish:'asked', holding:{fish:true}}, text:'Take the big {鱼} to the hungry monkey', arrow:'hungry'},
+    {id:'shrimpCatch', if:{shrimp:'asked', holding:{shrimp:false}}, text:'Catch three {虾} in the clear brook on the riverside, above the bridge ({shrimpCaught}/3)', arrow:[27, 4, 'riverside']},
+    {id:'shrimpBack', if:{shrimp:'asked', holding:{shrimp:true}}, text:'Take the {虾} to the hungry monkey', arrow:'hungry'},
     {id:'shopMoved', if:{shop:1}, text:'The {老板} has come up to the home ground: go and see him, by the way in from the {瀑布}', arrow:'boss'},
     {id:'dare', if:{story:true, cave:0}, text:'Talk to the old monkey: what could be behind the {瀑布}?', arrow:'elder'},
     {id:'jump', if:{cave:1}, text:'{跳} through the {瀑布}', arrow:[4, 1, 'falls']},
@@ -348,6 +351,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{feast:{atLeast:3}, cow:0}, text:'The thirsty monkey has news for you: look for his ! at the home ground.'},
     {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, text:'The big monkey has an idea for the feast: look for his ! at the home ground.'},   // (decided 28 October 2026: once the cow was home, nothing said so)
     {if:{bees:{atLeast:11}, fish:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (a big fish)
+    {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (shrimp)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}, melonPlanted:4, grapePlanted:4, bananaPlanted:4}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese, and fruit from the garden now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the garden's fruit is on the table too)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees, the cow and its dairy are done: till then, they have tasks)
     {if:{school:{atLeast:2}, lesson:true}, text:'A new lesson is ready at the {学校}: {lessons:ready}. Talk to the {老师}, or look at the timetable on the classroom wall.'},   // (decided 28 October 2026: it said the rest of chapter 1 was coming soon)
@@ -392,6 +396,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Plant {花|flowers} in front of the {学校}', show:{flowers:'asked'}, done:{schoolFlowers:true}},
     {chapter:1, text:'Help the {老板} open his new shop at the home ground', show:{shop:{atLeast:1}}, done:{shop:{atLeast:3}}},
     {chapter:1, text:'Catch a big {鱼} for the feast', show:{fish:'asked'}, done:{fish:'done'}},
+    {chapter:1, text:'Catch three {虾|shrimp} for the feast', show:{shrimp:'asked'}, done:{shrimp:'done'}},
     {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
     {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}},
     {chapter:1, text:'Fetch {碗|bowls} for the feast from the Water Curtain Cave', show:{feast:{atLeast:2}}, done:{bowls:'done'}},
@@ -438,7 +443,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{feast:{atLeast:3}, bees:0}, show:'!'},   // and (a game that heard it before the bees, 25 October 2026) to send you to find them,
       {if:{bees:6}, show:'!'},   // and once you've brought the bees home, to see them,
       {if:{honey:'asked', holding:{honey:true}}, show:'?'},   // and honey from their hive;
-      {if:{bees:{atLeast:11}, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'}],   // and then, with honey on the table, a big fish
+      {if:{bees:{atLeast:11}, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'},   // and then, with honey on the table, a big fish,
+      {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, show:'!'}, {if:{shrimp:'asked', holding:{shrimp:true}}, show:'?'}],   // and with the fish on its table, three shrimp
     fisher: [{if:{fish:'asked', fishing:0}, show:'!'}],   // the fishing monkey by the stream, once the hungry monkey wants a big fish: a rod for you
     queen: [{if:{bees:4}, show:'!'}, {if:{bees:7}, show:'!'}],   // the queen bee, out of her old tree: she wants you to play her word game; and at home, for the hive
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'},
@@ -536,6 +542,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // a big fish for the feast (chapter 1): the fishing monkey gives you a rod, and you catch one in the stream (fishing, below)
     fish: {from:'hungry', wants:'鱼', ask:'wantFish', asked:'The hungry monkey wants a big {鱼} for the feast! The fishing monkey by the stream can help.',
       offer:'haveFish', sentence:'这 是 大 鱼', sentenceEn:'This is a big fish.', gap:'大', others:['小'], reward:3, thanks:'thanks', thanksReply:'不客气'},
+    // chapter 1: three shrimp for the feast (decided 29 October 2026), once the big fish is on its table: they live in the
+    // clear shallows of the riverside's brook, and you catch them with your rod (a shrimp nibbles first: AREA.fishing.shrimp),
+    // counted as you catch them (the collect step); 虾 just for listening till you catch one
+    shrimp: {from:'hungry', wants:'虾', ask:'wantShrimp', asked:'The hungry monkey wants three {虾|shrimp} for the feast! Shrimp live in the clear shallows of the brook on the riverside, above the bridge. Catch them with your {鱼竿}.',
+      offer:'haveShrimp', sentence:'这 是 虾', sentenceEn:'This is a shrimp.', gap:'虾', others:['鱼'], reward:3, thanks:'thanks', thanksReply:'不客气'},
     cowFood: {from:'cow', wants:'草', ask:'cowHungry', asked:'The {牛} is hungry. Pick it some fresh {草} by the brook!',
       offer:'haveGrass', sentence:'我 要 吃 草', sentenceEn:'I want to eat grass.', reward:2, thanks:'thanks', thanksReply:'不客气'}
   },
@@ -601,7 +612,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{new:'大'}, do:[{say:'bigFish', by:'player', teach:'大'}, {newWord:'大', note:'A big fish, just right for the feast!'}, {hold:'鱼', for:'fish'},
         {message:'Take the big {鱼} to the hungry monkey, at the feast’s tables!'}]},
       // after that, which is it? And the troop has it for supper
-      {do:[{gap:{sentence:'这 是 大 鱼', en:'This is a big fish.', word:'大', others:['小'], pic:'大 鱼'}}, {shells:2, note:'The troop has a big {鱼} for supper! +2 🐚'}]}]}
+      {do:[{gap:{sentence:'这 是 大 鱼', en:'This is a big fish.', word:'大', others:['小'], pic:'大 鱼'}}, {shells:2, note:'The troop has a big {鱼} for supper! +2 🐚'}]}]},
+    // shrimp, in clear shallow water (a legend's fishing:'shrimp', such as the riverside's brook): each nibbles first, the
+    // float twitching once or twice (nibbles), before it bites; pull on a twitch, and it lets go
+    shrimp:{questions:1, pic:'虾', nibbles:[1, 2], nibble:'A nibble! Wait for the float to go right under…', tooSoon:'Too soon! The shrimp let go. Wait for the float to go right under.',
+      caught:'You caught a shrimp! It’s tiny, and you can see right through it.', steps:[
+      // for the hungry monkey: counted as you catch them, three (the first teaches 虾)
+      {if:{shrimp:'asked', holding:{shrimp:false}}, do:[{collect:'虾', for:'shrimp', count:3, note:'A shrimp, from the clear shallows of the brook.',
+        each:'A {虾|shrimp} for the feast ({shrimpCaught}/3). Cast again!', full:'Three {虾|shrimp}! Take them to the hungry monkey.'}]},
+      // one you find before he asks
+      {if:{new:'虾'}, do:[{newWord:'虾', note:'A shrimp, from the clear shallows of the brook.'}, {message:'You let the {虾|shrimp} go back into the water.'}]},
+      // after that: which is it? And you let it go
+      {do:[{gap:{sentence:'这 是 虾', en:'This is a shrimp.', word:'虾', others:['鱼'], pic:'虾'}}, {message:'You let the {虾|shrimp} go back into the water.'}]}]}
   },
 
   // Food you carry in your bag (up to carry of each), and what eating it does. heal: how much health comes back (in a battle,
@@ -774,6 +796,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: you've brought the hungry monkey a big fish: the troop sets it out at the end of the feast's second table, on a
     // stone table of its own, as you watch (its stone, then a big leaf with the fish on it)
     {if:{place:'homeGround', fish:'done', fishTable:0}, do:[{setUp:{fishTable:1}}, {say:'haveFishNow', by:'hungry'}, {message:'A big {鱼} on a leaf, for the feast!'}]},
+    // and the shrimp, in a white bowl in front of it
+    {if:{place:'homeGround', shrimp:'done', shrimpTable:0}, do:[{setUp:{shrimpTable:1}}, {say:'haveShrimpNow', by:'hungry'}, {message:'A bowl of {虾|shrimp} for the feast, beside the big fish!'}]},
     // chapter 1: once you know three colours (the first Art lesson), and the flowers you picked with them are planted, the
     // 老板 comes up from the meadow to the home ground, to open a new shop by the way in, with headbands in every colour you
     // know (decided 29 October 2026: by the time his shop had anything worth buying, you'd left the meadow for good). Talk
@@ -1075,8 +1099,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
         // chapter 1: the feast's fish, on a stone table of its own at the end of the second one: open grass, till you bring the
         // hungry monkey a big fish (fishTable 1: the setUp step, its stone, then a big leaf with the fish on it). A at it: the
         // feast's list
-        'Γ': {look:'grass', walk:true, becomes:[{if:{fishTable:{atLeast:1}}, to:'Λ'}]},
+        'Γ': {look:'grass', walk:true, becomes:[{if:{shrimpTable:{atLeast:1}}, to:'Ш'}, {if:{fishTable:{atLeast:1}}, to:'Λ'}]},
         'Λ': {look:'fishTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
+        'Ш': {look:'fishTableShrimp', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // (and a bowl of shrimp on it)
         // chapter 1: the 老板's new shop, by the way in from the waterfall, three squares by two: open grass till he comes up from
         // the meadow (shop 1); its plot marked out as you watch (2: the markOut step), with its sign (Θ), and then his shop
         // built on it (3: setUp), posts, counter, striped roof and what he sells (Δ). A at it talks to him
@@ -1230,6 +1255,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
         'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
         'e': {look:'orangeFlowers', walk:true, word:'花', learnOnStep:true, colour:'橙色'},
+        'ш': {look:'shallows', word:'水', fishing:'shrimp', note:'Clear, shallow water over pebbles. Little shrimp dart about in it!'},   // the brook above the bridge, where shrimp live (chapter 1)
         'B': {look:'bridge', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the brook.'},   // over the brook (chapter 1's bridges teach 桥)
         // thick bushes beside the brook, at the top, till the garden begins: the way up it to the hot spring valley
         'q': {look:'bush', landmark:true, becomes:[{if:{garden:{atLeast:1}}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]}
@@ -1237,11 +1263,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       map: [
         "YYYYYYYYYYYYYYYYYYYYYYYYYqqWWYYYY^^^^^^^^^^^^^^^",   // the brook comes down through the trees, under the bridge (B), into the stream; beside it, the way up it (q)
         "YYYYYYYYYYYYYYYYYYYYYYYYYqqWWYYYY^^^^^^^^^^^^^^^",
-        "YgggggTggYYYYggggggTgukkg..WWgggg^^^^^^^^^^^^^^^",
-        "YggGGGgggYYYYggEFFeguukkJ..WWgeeuMMMMMM^^^^^^^^^",   // the valley’s rocks: a cliff, two squares high, coming forward over the way
-        "YgGGGGGggYYYYggkJJEEFFeeu..WWgEEFMMMMMM^^^^^^^^^",
-        "YggGGGgggYYYY..........eu..WWgEEFgggoggMMMMMMMMM",   // the way up through the wildflowers, where the butterfly is
-        "YggggggggYYYY..........EF..WWgggggnnngoMMMMMMMMM",
+        "YgggggTggYYYYggggggTgukkg..шшgggg^^^^^^^^^^^^^^^",
+        "YggGGGgggYYYYggEFFeguukkJ..шшgeeuMMMMMM^^^^^^^^^",   // the valley’s rocks: a cliff, two squares high, coming forward over the way
+        "YgGGGGGggYYYYggkJJEEFFeeu..шшgEEFMMMMMM^^^^^^^^^",
+        "YggGGGgggYYYY..........eu..шшgEEFgggoggMMMMMMMMM",   // the way up through the wildflowers, where the butterfly is
+        "YggggggggYYYY..........EF..шшgggggnnngoMMMMMMMMM",
         "........nnnnn..gggggg......BB............nnnn...",   // in from the home ground; long grass grown over the way in the little wood, and under the rocks;
         ".........nnnnn.ggTeeg......BB...........nnnn....",   // out into the bees' valley
         "YggTgFeegYYYYgggTggnnngggggWWggTggoggogWWWWWWWWW",
@@ -2242,6 +2268,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '鱼饵': 'You bought it at the {老板}’s shop, at the home ground.',
     '小': 'You said it as you let your first fish go: too small!',
     '大': 'You said it when you caught a big fish for the feast.',
+    '虾': 'You caught it in the clear shallows of the brook on the riverside.',
   },
 
   // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
@@ -2270,7 +2297,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {word:'牛奶', show:{milkTable:{atLeast:1}}, have:{milkTable:{atLeast:1}}, yes:{zh:'我们 有 牛奶 。', en:'We have milk.'}},   // (the cow's thank-you; on the list once it's on the table, so the list never gives it away)
       {word:'酸奶', show:{milkTable:{atLeast:2}}, have:{milkTable:{atLeast:2}}, yes:{zh:'我们 有 酸奶 。', en:'We have yoghurt.'}},   // (from the little dairy)
       {word:'奶酪', show:{milkTable:{atLeast:3}}, have:{milkTable:{atLeast:3}}, yes:{zh:'我们 有 奶酪 。', en:'We have cheese.'}},
-      {word:'鱼', show:{fish:'asked'}, have:{fish:'done'}, no:{zh:'我们 没有 鱼 。', en:'We don’t have any fish.'}, yes:{zh:'我们 有 鱼 。', en:'We have fish.'}},   // (a big one, from the stream)
+      {word:'鱼', show:{any:[{fish:'asked'}, {fish:'done'}]}, have:{fish:'done'}, no:{zh:'我们 没有 鱼 。', en:'We don’t have any fish.'}, yes:{zh:'我们 有 鱼 。', en:'We have fish.'}},   // (a big one, from the stream)
+      {word:'虾', show:{any:[{shrimp:'asked'}, {shrimp:'done'}]}, have:{shrimp:'done'}, no:{zh:'我们 没有 虾 。', en:'We don’t have any shrimp.'}, yes:{zh:'我们 有 虾 。', en:'We have shrimp.'}},   // (three, from the riverside's brook)
       // the garden's fruit: on the list once it's planted (you know its word by then), had once it's on the table
       {word:'西瓜', show:{melonPlanted:{atLeast:1}}, have:{melonPlanted:{atLeast:4}}, no:{zh:'我们 没有 西瓜 。', en:'We don’t have any watermelon.'}, yes:{zh:'我们 有 西瓜 。', en:'We have watermelon.'}},
       {word:'葡萄', show:{grapePlanted:{atLeast:1}}, have:{grapePlanted:{atLeast:4}}, no:{zh:'我们 没有 葡萄 。', en:'We don’t have any grapes.'}, yes:{zh:'我们 有 葡萄 。', en:'We have grapes.'}},
@@ -2515,6 +2543,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     bossCame: {zh:'我 来 了 ！', en:'Here I am!'},
     wantFish: {zh:'我 要 吃 大 鱼 ！', en:'I want to eat a big fish!'},   // the hungry monkey, for the feast (chapter 1; 大 just for listening, till you catch one)
     haveFish: {zh:'鱼 ！ 太 好 了 ！', en:'A fish! Wonderful!'}, haveFishNow: {zh:'我们 有 鱼 了 ！', en:'We have fish now!'},
+    wantShrimp: {zh:'我 要 吃 虾 ！', en:'I want to eat shrimp!'},   // and then shrimp (虾 just for listening, till you catch one)
+    haveShrimp: {zh:'虾 ！ 太 好 了 ！', en:'Shrimp! Wonderful!'}, haveShrimpNow: {zh:'我们 有 虾 了 ！', en:'We have shrimp now!'},
     fishInRiver: {zh:'河 里 有 鱼 ！', en:'There are fish in the river!'},   // the fishing monkey by the stream
     thisRod: {zh:'这 是 鱼竿 。', en:'This is a fishing rod.'},
     tooSmall: {zh:'太 小 了 ！', en:'It’s too small!'},   // you, as you catch a little fish, and let it go
@@ -2876,6 +2906,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // has a rod for you
       {if:{bees:{atLeast:11}, fish:'not asked'}, do:[{say:'haveHoneyNow'}, {request:'fish'}]},
       {if:{fish:'asked'}, do:[{request:'fish'}]},
+      // then, with the fish on its table, three shrimp, from the clear shallows of the riverside's brook
+      {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, do:[{request:'shrimp'}]},
+      {if:{shrimp:'asked'}, do:[{request:'shrimp'}]},
       {if:{bees:{atLeast:11}}, do:[{say:'haveHoneyNow'}]},
       // a game that heard what the feast needs before the bees came (25 October 2026): he sends you to find them now
       {if:{feast:{atLeast:3}, bees:0}, do:[{say:'wantHoney'}, {set:{bees:1}},

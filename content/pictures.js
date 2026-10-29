@@ -928,6 +928,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '虾': {   // shrimp
+    palette: {a:'#421A14', b:'#A8322A', c:'#5B3E39', d:'#492923', e:'#8E4842', f:'#F7A39C', g:'#BE6159', h:'#3A211C', i:'#F47C72', j:'#171411', k:'#625F5C', l:'#1E1A16', m:'#46211D', n:'#593734', o:'#B54A46', p:'#EF8F8C', q:'#471F19', r:'#E85F5A', s:'#B8443A', t:'#873734', u:'#371B17', v:'#FFC7B8', w:'#5E4942'},
+    rows: [
+      "....aabbbbbbbba.................",
+      "...abbaaaabbbbbaa...............",
+      "..abaa....aabbabba..............",
+      ".aba........aababba.............",
+      "..a...........abbbba............",
+      "...............ababacccd........",
+      "................abeffffgd.......",
+      "................heiiiiiigd......",
+      "...............cfijiiiiiigd.....",
+      "...............cfkljiiiiiigd....",
+      "..............dgijjiiiiiiigd....",
+      "...............cfiiiiiiiigd.....",
+      "...............dgiiiiiiiieh.....",
+      "................dgiiiiiiegd.....",
+      ".................heeeeeeiigd....",
+      ".mnm.............cfiiiiiiigd....",
+      "mopomnmm......q.qcfiiiiiiiigd...",
+      ".nprppoom....qsqsssiiiiiiiigd...",
+      ".nprrtum.cd..qssqseiiiiiiiigd...",
+      ".mortrpocfgdhqsqsfieiiiiiigd....",
+      "..utrrrefiigeqsfeeiveiiiieh.....",
+      "...npooeiieviefeieiiveeeegd.....",
+      "...momcfiievieveiveiiviiigd.....",
+      "....m.dggevieiveiveeiivggd......",
+      ".......ddgvieivieivieegvw.......",
+      "........wvgiievieeviigdw........",
+      ".........wdggegiigvggd..........",
+      "...........ddhdggdwdd...........",
+      "...............dd...............",
+      "................................",
+      "................................",
+      "................................"
+    ]
+  },
   '鱼竿': {   // fishing rod
     palette: {a:'#564D32', b:'#3A3116', c:'#E8D488', d:'#8E7A30', e:'#C9B25A', f:'#F4F1EA', g:'#5A5752', h:'#352B13', i:'#7E6A26', j:'#592E2D', k:'#EF7177', l:'#871E23', m:'#B5292F', n:'#461716', o:'#E8343C', p:'#3A3632', q:'#8E8C88', r:'#494641', s:'#BEBCB7', t:'#44362B', u:'#AD8C70', v:'#50341D', w:'#3E3D3D', x:'#9AA2AA', y:'#8A5A32', z:'#261A10', A:'#6C4627', B:'#2F2013'},
     rows: [

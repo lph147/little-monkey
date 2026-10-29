@@ -36,6 +36,15 @@ function animTile(x, y, X, Y, now){
       if (s > .55){ const px = 2 + Math.floor(rnd(x,y,k+210)*10), py = 3 + Math.floor(rnd(x,y,k+220)*10); R(b, X+px, Y+py, 3, 1, '#BFE8FA'); }
     }
     if (tileAt(x, y-1).look === 'waterfall'){ for (let i = 0; i < 6; i++){ const px = Math.floor(rnd(x, i, Math.floor(now/120))*15); R(b, X+px, Y+1+(i%3), 2, 1, '#FFFFFF'); } }
+  } else if (look === 'shallows'){   // shrimp in clear water, one every other square: drifting over the pebbles, flicking backwards now and then
+    if ((x * 7 + y * 3) % 2) return;
+    const k = ((now + x * 997 + y * 577) % 4000) / 4000, flick = k > .85 ? (k - .85) / .15 : 0, dir = (x + y) % 2 ? 1 : -1;
+    const sx = Math.round(X + 5 + dir * (Math.sin(k * 6.28) * 2 - flick * 5)), sy = Math.round(Y + 6 + Math.cos(k * 6.28) * 2);
+    const h = dir > 0 ? sx + 4 : sx - 1, t = dir > 0 ? sx - 1 : sx + 5;   // its head end, and its tail end
+    R(b, sx, sy, 5, 2, 'rgba(244,150,130,.9)'); R(b, sx, sy, 5, 1, 'rgba(255,205,190,.9)');   // its body, see-through pink
+    R(b, t, sy + 1, 1, 2, 'rgba(220,110,95,.9)');                                            // its tail, curled under
+    R(b, h, sy - 1, 1, 1, 'rgba(40,30,30,.8)');                                              // its eye
+    R(b, dir > 0 ? h + 1 : h - 3, sy - 2, 3, 1, 'rgba(150,80,70,.55)');                      // its feelers
   } else if (look === 'waterfall' || look === 'curtain'){
     R(b, X, Y, T, T, '#8FD0EE');
     for (let i = 0; i < 5; i++){ const xx = X + 1 + i*3, off = (now/18 + i*7) % 22 - 6; R(b, xx, Y + Math.max(0, off), 1, Math.min(7, 16 - Math.max(0, off)), '#FFFFFF'); R(b, xx+1, Y, 1, T, '#B9E4F7'); }
@@ -102,6 +111,11 @@ function drawRod(X, Y, dir, now, bite){
   line(hx, hy, tx, ty, '#6E5220', 2); line(hx, hy, tx, ty, '#D8B860');   // the bamboo, with its shine
   const bob = bite ? 0 : Math.round(Math.sin(now / 320));
   line(tx, ty, fx, fy - 3 + bob, 'rgba(244,241,234,.8)');                   // the line
+  if (fishing && fishing.nibble && !bite){   // a nibble (a shrimp's, before it bites): the float twitches, tiny rings round it
+    const k = (now / 140) % 4, dip = k < 1 ? 1 : 0;
+    R(b, fx - 3 - Math.round(k), fy + 1, 7 + Math.round(k) * 2, 1, 'rgba(255,255,255,.6)');
+    R(b, fx - 1, fy - 3 + dip, 3, 2, '#E8343C'); R(b, fx - 1, fy - 1 + dip, 3, 1, '#F4F1EA'); return;
+  }
   if (bite){
     const k = (now / 90) % 6;   // rings spreading round where it's gone under
     for (const rr of [k, (k + 3) % 6]){ const w = 4 + Math.round(rr) * 2; R(b, fx - w/2, fy, w, 1, 'rgba(255,255,255,.75)'); }

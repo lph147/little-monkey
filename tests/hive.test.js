@@ -95,6 +95,8 @@ test('A at the hive takes honey, teaching 蜂蜜 (said straight away); the hungr
   g.run('here().garden = 1');
   assert.match(g.run('goalText()'), /The hungry monkey has something to ask you: look for his ! by the feast’s 桌子 \(tables\)/, 'then a big fish for the feast (tests/fishing.test.js)');
   g.run("here().fish = 'done'; here().fishTable = 1");
+  assert.match(g.run('goalText()'), /The hungry monkey has something to ask you: look for his ! by the feast’s 桌子 \(tables\)/, 'then three shrimp for the feast (tests/fishing.test.js)');
+  g.run("here().shrimp = 'done'; here().shrimpTable = 1");
   assert.match(g.run('goalText()'), /The feast has 蜂蜜 \(honey\), milk, yoghurt and cheese now! Take more honey from the hive for your bag, and 吃 \(eat\) it to walk faster for a while\./);
   g.run('__said.length = 0');
   await press(g, 20, 7, 'left');

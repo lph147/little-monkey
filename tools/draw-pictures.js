@@ -279,6 +279,19 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(7.2, 14.5, 2.3), '#FFFFFF'); p.flat(Rc(7, 14, 2, 2), '#1E1A16');
   },
   // fishing at the home ground (chapter 1): the fishing monkey's rod, bait from the 老板, and what you catch
+  '虾': p => {   // shrimp, from the riverside brook's clear shallows: curled like a C, coral pink with pale bands, its head up on the right, long thin feelers, little legs, a fan tail
+    const at = (deg, r = 8) => [15 + r * Math.cos(deg * Math.PI / 180), 16 + r * Math.sin(deg * Math.PI / 180)];
+    for (let t = 0; t <= 1; t += .02){   // its two long feelers, thin, sweeping forward and back over its head
+      const a = [17 - 15 * t, 6 - 6 * Math.sin(t * 2.6)], b = [18 - 12 * t, 5.5 - 5 * Math.sin(t * 2.2) - 1];
+      p.dot(Math.round(a[0]), Math.round(a[1]), '#A8322A'); p.dot(Math.round(b[0]), Math.round(b[1]), '#A8322A');
+    }
+    [[150, 0], [172, 1]].forEach(([d], i) => { const [x, y] = at(d); p.fill(Pg([[x + 1, y], [x - 6, y - 4 + i * 3], [x - 4, y + 3 + i]]), '#E85F5A', {edge: true}); });   // its fan tail
+    for (const [d, r] of [[132, 2.7], [108, 3.2], [83, 3.7], [58, 4.1], [33, 4.5], [8, 4.8]]){ const [x, y] = at(d); p.fill(O(x, y, r), '#F47C72', {edge: true}); }   // its body, in segments
+    for (const d of [45, 70, 95, 120]){ const [x0, y0] = at(d, 12), [x1, y1] = at(d, 6.5); p.flat(path([[x0, y0], [x1, y1]], .4), '#FFC7B8'); }   // pale bands between them
+    for (const d of [20, 45, 70, 95]){ const [x0, y0] = at(d, 4.2), [x1, y1] = at(d + 10, 2); p.flat(path([[x0, y0], [x1, y1]], .45), '#B8443A'); }   // little legs
+    const [hx, hy] = at(-35); p.fill(O(hx - .5, hy - 1, 5.6, 4.6), '#F47C72', {edge: true});   // its head
+    p.fill(O(hx - 3.2, hy - 1.8, 1.4), '#1E1A16');   // its eye
+  },
   '鱼竿': p => {   // fishing rod: a long bamboo rod, from the bottom left up to the top right, its line hanging down to a red and white float (unlike 棍子: a short branch with a leaf)
     p.fill(path([[3, 29], [27, 4]], 1.5), '#C9B25A', {light: '#E8D488', dark: '#8E7A30'});
     [[9, 22.8], [15, 16.5], [21, 10.2]].forEach(([x, y]) => p.flat(Cp(x - 1.2, y - 1.2, x + 1.2, y + 1.2, .7), '#7E6A26'));   // its joints

@@ -803,10 +803,27 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(23, 17, 'down', 'fishing with bait: a big one');
   run('Math.random = () => 0');
   assert.ok(get("S.bag['鱼饵']") === 0 && get('S.shells') >= shellsFish + 2 && get('__said').filter(t => t === '这是大鱼').length === 2, 'the bait brings a big one: this is a big fish, and shells for it');
+  // Three shrimp for the feast (29 October 2026): with the fish on its table, the hungry monkey wants shrimp: 我要吃虾！ (虾
+  // just for listening). They live in the clear shallows of the riverside's brook, above the bridge; a shrimp nibbles first
+  // (the float twitches: pull then, and it lets go), then bites. The first teaches 虾, each is counted, and he takes the
+  // three (这是虾); a bowl of them goes on the fish's table
+  await pressAt(20, 7, 'left', 'talking to the hungry monkey: he wants shrimp for the feast');
+  assert.ok(get('__said').includes('我要吃虾！') && area().shrimp === 'asked' && !knows('虾'), 'I want to eat shrimp! (虾 just for listening)');
+  stand(30, 9, 'right');
+  await act('arrive(31, 9).then(runEvents)', 'going east along the road, to the riverside, for shrimp');
+  stand(26, 4, 'right');
+  assert.equal(run('promptFor(27, 4)'), 'Fish', 'A at the clear shallows: fish');
+  for (let n = 1; n <= 3; n++) await pressAt(26, 4, 'right', `catching a shrimp in the shallows (${n} of 3)`);
+  assert.ok(knows('虾') && area().holding.shrimp === '虾', 'three shrimp (虾), for the feast');
+  stand(1, 7, 'left');
+  await act('arrive(0, 7).then(runEvents)', 'back along the riverside to the home ground, with the shrimp');
+  await pressAt(20, 7, 'left', 'giving the hungry monkey the shrimp: 这是虾');
+  assert.deepEqual([area().shrimp, area().shrimpTable, run('tileAt(24, 7).look')], ['done', 1, 'fishTableShrimp'], 'a bowl of shrimp on the fish’s table');
+  assert.ok(get('__said').includes('这是虾') && get('__said').includes('我们有虾了！'), 'this is a shrimp; we have shrimp now!');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Till everything built is done, there's always a task to say what's next (28 October 2026: once the cow was home, the
   // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
-  assert.equal(deadEnds[0], 'giving the hungry monkey the big fish: 这是大鱼', 'your tasks were empty, with more to do (only once everything built is done: the feast’s fish, last)');
+  assert.equal(deadEnds[0], 'giving the hungry monkey the shrimp: 这是虾', 'your tasks were empty, with more to do (only once everything built is done: the feast’s shrimp, last)');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
   // player, jumps out on the hillside.)
