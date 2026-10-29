@@ -362,6 +362,17 @@ SAVES.shrimpAsk = {...SAVES.fishBoth, areas: {1: {...SAVES.fishBoth.areas[1], sh
 SAVES.shrimping = {...SAVES.shrimpAsk, areas: {1: {...SAVES.shrimpAsk.areas[1], shrimp: 'asked'}}, tasksSeen: {...SAVES.shrimpAsk.tasksSeen, shrimpCatch: 1}, pos: {place: 'riverside', x: 26, y: 4, dir: 'right'}};   // by the brook's clear shallows
 SAVES.shrimpTwo = {...SAVES.shrimping, w: {...SAVES.shrimping.w, ...knows(1, ['虾'])}, areas: {1: {...SAVES.shrimping.areas[1], picked: {shrimp: ['riverside:27,4', 'riverside:27,4']}}}};
 SAVES.shrimpTable = {...SAVES.shrimpTwo, areas: {1: {...SAVES.shrimpTwo.areas[1], shrimp: 'done', shrimpTable: 1, picked: {shrimp: ['riverside:27,4', 'riverside:27,4', 'riverside:27,4']}}}, pos: {place: 'homeGround', x: 24, y: 8, dir: 'down'}};
+// the end of chapter 1: a crab from the shore below the meadow, the school's exam, the feast, and your raft
+SAVES.crabAsk = {...SAVES.shrimpTable, areas: {1: {...SAVES.shrimpTable.areas[1], crab: 'not asked'}}, pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};   // facing the hungry monkey
+SAVES.shore = {...SAVES.crabAsk, w: {...SAVES.crabAsk.w, ...knows(1, ['海'])}, areas: {1: {...SAVES.crabAsk.areas[1], crab: 'asked', seaSeen: 1}}, tasksSeen: {...SAVES.crabAsk.tasksSeen, crabCatch: 1}, pos: {place: 'shore', x: 9, y: 9, dir: 'down'}};
+SAVES.crabTable = {...SAVES.shore, w: {...SAVES.shore.w, ...knows(1, ['螃蟹'])}, areas: {1: {...SAVES.shore.areas[1], crab: 'done', crabTable: 1}}, tasksSeen: {...SAVES.shore.tasksSeen, crabBack: 1, exam: 1}, pos: {place: 'homeGround', x: 15, y: 9, dir: 'up'}};
+SAVES.examReady = {...SAVES.crabTable, pos: {place: 'school', x: 7, y: 3, dir: 'up'}};   // facing the teacher
+SAVES.examPassed = {...SAVES.examReady, areas: {1: {...SAVES.examReady.areas[1], exam: 1}}, tasksSeen: {...SAVES.examReady.tasksSeen, feastGo: 1}, pos: {place: 'school', x: 3, y: 2, dir: 'up'}};   // facing the certificate
+SAVES.feastSeats = {...SAVES.examPassed, pos: {place: 'homeGround', x: 17, y: 11, dir: 'up'}};   // (a step from the feast starting)
+SAVES.raftWalk = {...SAVES.examPassed, w: {...SAVES.examPassed.w, ...knows(1, ['快乐'])}, areas: {1: {...SAVES.examPassed.areas[1], feastHeld: 1, raft: 1}}, following: ['elder', 'big', 'playful'],
+  tasksSeen: {...SAVES.examPassed.tasksSeen, raftWalk: 1}, pos: {place: 'shore', x: 11, y: 8, dir: 'down'}};
+SAVES.raftReady = {...SAVES.raftWalk, w: {...SAVES.raftWalk.w, ...knows(1, ['木筏'])}, areas: {1: {...SAVES.raftWalk.areas[1], raft: 2}}, following: [], tasksSeen: {...SAVES.raftWalk.tasksSeen, raftBoard: 1}, pos: {place: 'shore', x: 11, y: 11, dir: 'down'}};
+SAVES.chapterDone = {...SAVES.raftReady, areas: {1: {...SAVES.raftReady.areas[1], raft: 3, done: true}}, pos: {place: 'shore', x: 11, y: 12, dir: 'down'}};
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
@@ -1086,6 +1097,54 @@ const SCREENS = [
     play(); await wait(100); runSteps(FISH.shrimp.steps[2].do); await wait(600); }},
   {id: 'shrimp-table', title: 'Shrimp on the feast’s table', save: 'shrimpTable', why: 'A white bowl of shrimp in front of the big fish, on its table at the end of the feast’s second.', run: async () => {
     play(); await wait(500); }},
+  {id: 'crab-want', title: 'A crab for the feast', save: 'crabAsk', why: 'With the shrimp on the table, the hungry monkey wants a crab: 我要吃螃蟹！ (螃蟹 just for listening, till you catch one). The troop clears the bushes at the bottom of the meadow.', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(500); }},
+  {id: 'shore', title: 'The shore', save: 'shore', why: 'Below the meadow, where the river from the waterfall runs into the sea (海): sand, rocks and rock pools, a little bridge, and crabs scuttling sideways.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'shore-sea', title: 'The sea', save: 'shore', why: 'The first time you come down, you see the sea: 海, said straight away, and 海很大！', run: async () => {
+    play(); await wait(100); showNotice('海', {note:'The sea! Water as far as you can see. The river from the waterfall runs into it here.'}); await wait(600); }},
+  {id: 'crab-grab', title: 'Pick it up!', save: 'shore', why: 'A at a crab from in front or behind (beside it, it scuttles away): one question on a word you know, as in reeling in a fish. Wrong, and it pinches you and gets away.', run: async () => {
+    play(); await wait(100); catchQ(nextWords(trainable(), 1)[0], 1, 1, '螃蟹', 'Pick it up!'); await wait(600); }},
+  {id: 'crab-word', title: 'A crab: 螃蟹', save: 'shore', why: 'The first crab you catch teaches 螃蟹, said straight away.', run: async () => {
+    play(); await wait(100); showNotice('螃蟹', {note:'A crab! It can only walk sideways.'}); await wait(600); }},
+  {id: 'crab-table', title: 'The feast’s crab', save: 'crabTable', why: 'A big red crab on a plate, on a stone table of its own between the garden’s fruit and the big table.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'exam-ask', title: 'The exam', save: 'examReady', why: 'With every food on the tables, the teacher: 我们考试吧！ (Let’s have an exam!)', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(500); }},
+  {id: 'exam-start', title: 'Start the exam?', save: 'examReady', why: '30 words from all over Flower Fruit Mountain to match to their pictures, those you know least well first: 24 right first time to pass. Not now, and he asks again next time.', run: async () => {
+    play(); await wait(100); STEPS.exam({exam: true}, 'elder'); await wait(400); }},
+  {id: 'exam-match', title: 'Matching', save: 'examReady', why: 'The exam: a word, then its picture, round by round.', run: async () => {
+    play(); await wait(100); confirmBox = async () => true; STEPS.exam({exam: true}, 'elder'); await wait(500); }},
+  {id: 'exam-passed', title: 'You passed!', save: 'examReady', why: 'How many you matched right first time, and the words you missed, to tap and hear.', run: async () => {
+    play(); await wait(100); confirmBox = async () => true; matchWords = async words => new Set(words.slice(0, 3)); STEPS.exam({exam: true}, 'elder'); await wait(500); }},
+  {id: 'exam-not-yet', title: 'Not quite yet', save: 'examReady', why: 'Fewer than 24: practise the words you missed, and take the exam again whenever you’re ready.', run: async () => {
+    play(); await wait(100); confirmBox = async () => true; matchWords = async words => new Set(words.slice(0, 8)); STEPS.exam({exam: true}, 'elder'); await wait(500); }},
+  {id: 'certificate', title: 'Your certificate', save: 'examPassed', why: 'On the classroom wall, beside the window, once you’ve passed (no writing on it).', run: async () => {
+    play(); await wait(500); }},
+  {id: 'feast-seats', title: 'The troop at the feast', save: 'feastSeats', why: 'With the exam passed, the old, big and little monkeys sit down at the tables: come to the big tree, and the feast begins.', run: async () => {
+    play(); await wait(500); }},
+  // the feast, told like the opening: each screen is held where it waits for Next (introClock: just after its caption's
+  // time, in scenes.feast; advancedTo: which caption)
+  {id: 'feast-food', title: 'The great feast', save: 'feastSeats', why: 'The whole troop round the tables, with everything you brought: 我们有桃子，有蜂蜜，有鱼！', run: async () => {
+    play(); await wait(100); storyScene('feast'); introClock = .05; advancedTo = 0; await wait(400); }},
+  {id: 'feast-story', title: 'The old monkey’s story', save: 'feastSeats', why: 'The old monkey tells the story of your first days, from the book’s opening: 山上有一个大石头。…', run: async () => {
+    play(); await wait(100); storyScene('feast'); introClock = 3.05; advancedTo = 1; await wait(400); }},
+  {id: 'feast-happy', title: 'Happy', save: 'feastSeats', why: '小猴子很快乐！ (快乐 in bold green, taught after the scene): the troop hops for joy.', run: async () => {
+    play(); await wait(100); storyScene('feast'); introClock = 21.5; advancedTo = 7; await wait(400); }},
+  {id: 'feast-sad', title: 'But the king isn’t happy', save: 'feastSeats', why: 'Dusk, alone on a rock: 可是美猴王不快乐。 我们会老…… (We’ll all grow old), told gently.', run: async () => {
+    play(); await wait(100); storyScene('feast'); introClock = 27.05; advancedTo = 9; await wait(400); }},
+  {id: 'feast-immortals', title: 'Across the sea', save: 'feastSeats', why: 'The old monkey: 海那边有神仙。 神仙不会老！ (immortals, who never grow old), their mountain glowing far off.', run: async () => {
+    play(); await wait(100); storyScene('feast'); introClock = 30.05; advancedTo = 10; await wait(400); }},
+  {id: 'feast-find', title: 'I’m going to find them!', save: 'feastSeats', why: 'Sunrise: 我要去找神仙！', run: async () => {
+    play(); await wait(100); storyScene('feast'); introClock = 36.05; advancedTo = 12; await wait(400); }},
+  {id: 'raft-walk', title: 'Down to the shore', save: 'raftWalk', why: 'The big monkey: 我们来做木筏吧！ The old, big and little monkeys follow you down to the shore, where the rest of the troop is waiting.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'raft-ready', title: 'Your raft', save: 'raftReady', why: 'At the water’s edge, the troop builds your raft (木筏) as you watch, from logs, rope and a pole, and says goodbye: 再见！ 我们等你！', run: async () => {
+    play(); await wait(600); }},
+  {id: 'sail-away', title: 'Sailing away', save: 'raftReady', why: 'A at your raft: you sail away, the troop waving from the shore: 美猴王坐木筏走了。', run: async () => {
+    play(); await wait(100); storyScene('sailAway'); introClock = 6.05; advancedTo = 2; await wait(400); }},
+  {id: 'chapter-end', title: 'Chapter 1 complete!', save: 'chapterDone', why: 'The end of chapter 1: how many words you caught, your friends and shells, and what comes next. You’re back on the shore.', run: async () => {
+    play(); await wait(100); STEPS.areaEnd(); await wait(500); }},
   {id: 'scroll-describing', title: 'Word Scroll: describing words', save: 'fishBoth', why: '小 (little) and 大 (big), from fishing, on a tab of their own.', run: async () => {
     play(); await wait(100); openScroll(() => closeCard(), 0, 'describing'); await wait(400); }},
   {id: 'bag-fishing', title: 'The bag: For fishing', save: 'fishBoth', why: 'Your rod, and bait from the 老板: with some in your bag, a big fish bites next.', run: async () => {

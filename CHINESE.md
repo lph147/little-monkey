@@ -33,7 +33,7 @@ shown where the word list has them.
 | 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! |  |  |
 | 你好！我是老板。 | nǐ hǎo! wǒ shì lǎobǎn. | Hello! I'm the shop owner. | 老板 (Shop owner) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
-| 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey) |  |
+| 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey), 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
 | 花！太好了！ | huā! tài hǎo le! | Flowers! Wonderful! | 大猴子 (Big monkey) |  |
 | 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
@@ -45,6 +45,13 @@ shown where the word list has them.
 | 我要吃虾！ | wǒ yào chī xiā! | I want to eat shrimp! | 饿猴子 (Hungry monkey) |  |
 | 虾！太好了！ | xiā! tài hǎo le! | Shrimp! Wonderful! | 饿猴子 (Hungry monkey) |  |
 | 我们有虾了！ | wǒmen yǒu xiā le! | We have shrimp now! |  |  |
+| 我要吃螃蟹！ | wǒ yào chī pángxiè! | I want to eat crab! | 饿猴子 (Hungry monkey) |  |
+| 螃蟹！太好了！ | pángxiè! tài hǎo le! | A crab! Wonderful! | 饿猴子 (Hungry monkey) |  |
+| 我们有螃蟹了！ | wǒmen yǒu pángxiè le! | We have crab now! |  |  |
+| 海很大！ | hǎi hěn dà! | The sea is so big! |  |  |
+| 我们考试吧！ | wǒmen kǎoshì ba! | Let’s have an exam! | 老猴子 (Old monkey) |  |
+| 我们来做木筏吧！ | wǒmen lái zuò mùfá ba! | Let’s make a raft! |  |  |
+| 我们等你！ | wǒmen děng nǐ! | We’ll wait for you! | 老猴子 (Old monkey) |  |
 | 河里有鱼！ | hé lǐ yǒu yú! | There are fish in the river! | 钓鱼猴子 (Fishing monkey) |  |
 | 这是鱼竿。 | zhè shì yúgān. | This is a fishing rod. | 钓鱼猴子 (Fishing monkey) |  |
 | 太小了！ | tài xiǎo le! | It’s too small! |  |  |
@@ -138,7 +145,7 @@ shown where the word list has them.
 | 我在花里！ | wǒ zài huā lǐ! | I’m in the flowers! | 猴子 (Monkey) |  |
 | 找到你了！ | zhǎodào nǐ le! | Found you! | you |  |
 | 一，二，三，跑！ | yī, èr, sān, pǎo! | One, two, three, run! |  |  |
-| 很好！ | hěn hǎo! | Very good! |  |  |
+| 很好！ | hěn hǎo! | Very good! | 老猴子 (Old monkey) |  |
 | 我们去跑步吧！ | wǒmen qù pǎobù ba! | Let’s go running! |  |  |
 | 一，二，三，四！ | yī, èr, sān, sì! | One, two, three, four! |  |  |
 | 一，二，三，四，五！ | yī, èr, sān, sì, wǔ! | One, two, three, four, five! |  |  |
@@ -191,6 +198,7 @@ shown where the word list has them.
 | 这是香蕉的种子 | zhè shì xiāngjiāo de zhǒngzi | These are banana seeds. | 大猴子 (Big monkey) |  |
 | 这是大鱼 | zhè shì dà yú | This is a big fish. | 饿猴子 (Hungry monkey) |  |
 | 这是虾 | zhè shì xiā | This is a shrimp. | 饿猴子 (Hungry monkey) |  |
+| 这是螃蟹 | zhè shì pángxiè | This is a crab. | 饿猴子 (Hungry monkey) |  |
 | 我要吃草 | wǒ yào chī cǎo | I want to eat grass. | 牛 (cow) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我要桃子 | wǒ yào táozi | I want a peach. | 老板 (Shop owner) |  |
@@ -259,6 +267,8 @@ What A at the feast's big table shows: what the troop has, and what it still nee
 | 我们有奶酪。 | wǒmen yǒu nǎilào. | We have cheese. |  |
 | 我们有鱼。 | wǒmen yǒu yú. | We have fish. |  |
 | 我们没有鱼。 | wǒmen méiyǒu yú. | We don’t have any fish. |  |
+| 我们有螃蟹。 | wǒmen yǒu pángxiè. | We have crab. |  |
+| 我们没有螃蟹。 | wǒmen méiyǒu pángxiè. | We don’t have any crab. |  |
 | 我们有虾。 | wǒmen yǒu xiā. | We have shrimp. |  |
 | 我们没有虾。 | wǒmen méiyǒu xiā. | We don’t have any shrimp. |  |
 | 我们有西瓜。 | wǒmen yǒu xīguā. | We have watermelon. |  |
@@ -293,6 +303,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | For the word | Notes |
 | --- | --- | --- | --- | --- |
+| 小猴子很快乐。 | xiǎo hóuzi hěn kuàilè. | The little monkey is very happy. | 快乐 |  |
 | 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
 | 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | 羊 |  |
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
@@ -347,6 +358,24 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 太好了！ | tài hǎo le! | Wonderful! |  |
 | 这是我们的学校！ | zhè shì wǒmen de xuéxiào! | This is our school! |  |
 
+### Scene: the feast
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 我们有桃子，有蜂蜜，有鱼！ | wǒmen yǒu táozi, yǒu fēngmì, yǒu yú! | We have peaches, honey and fish! |  |
+| 山上有一个大石头。 | shān shàng yǒu yí gè dà shítou. | On the mountain there was a big stone. |  |
+| 石头里有一只小猴子。 | shítou lǐ yǒu yì zhī xiǎo hóuzi. | In the stone there was a little monkey. |  |
+| 小猴子有很多朋友。 | xiǎo hóuzi yǒu hěn duō péngyou. | The little monkey had lots of friends. |  |
+| 猴子吃桃子，喝水。 | hóuzi chī táozi, hē shuǐ. | The monkeys ate peaches and drank water. |  |
+| 鸟在树上玩。 | niǎo zài shù shàng wán. | The birds played in the trees. |  |
+| 河里有鱼，山上有瀑布。 | hé lǐ yǒu yú, shān shàng yǒu pùbù. | There were fish in the river, and a waterfall on the mountain. |  |
+| 小猴子很快乐！ | xiǎo hóuzi hěn kuàilè! | The little monkey was very happy! |  |
+| 可是美猴王不快乐。 | kěshì Měi Hóuwáng bù kuàilè. | But the Monkey King isn’t happy. |  |
+| 我们会老…… | wǒmen huì lǎo… | We’ll all grow old… |  |
+| 海那边有神仙。 | hǎi nàbiān yǒu shénxiān. | Across the sea, there are immortals. |  |
+| 神仙不会老！ | shénxiān bú huì lǎo! | Immortals never grow old! |  |
+| 我要去找神仙！ | wǒ yào qù zhǎo shénxiān! | I’m going to find them! |  |
+
 ### Scenes after lessons (the class painting the school)
 
 | Chinese | Pinyin | English | Notes |
@@ -356,6 +385,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 那里有一只牛！ | nàlǐ yǒu yì zhī niú! | There’s a cow over there! |  |
 | 我要去找牛！ | wǒ yào qù zhǎo niú! | I’m going to find the cow! |  |
 | 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
+| 再见！ | zàijiàn! | Goodbye! |  |
+| 我们等你！ | wǒmen děng nǐ! | We’ll wait for you! |  |
+| 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. |  |
 | 我们去刷灯笼吧！ | wǒmen qù shuā dēnglong ba! | Let’s go and paint the lanterns! |  |
 | 灯笼是红色的！ | dēnglong shì hóngsè de! | The lanterns are red! |  |
 
@@ -396,6 +428,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 深山 | shēnshān | Deep in the mountains |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
 | 家园 | jiāyuán | Home ground |  |
+| 海边 | hǎibiān | The shore |  |
 | 山坡 | shānpō | The hillside |  |
 | 河边 | hébiān | The riverside |  |
 | 百花谷 | Bǎihuā Gǔ | Valley of a Hundred Flowers |  |
@@ -507,6 +540,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 跑步 | pǎobù | to go running, to jog |  |
 | 鱼饵 | yú'ěr | bait |  |
 | 鱼竿 | yúgān | fishing rod |  |
+| 快乐 | kuàilè | happy |  |
+| 木筏 | mùfá | raft |  |
+| 海 | hǎi | sea |  |
+| 螃蟹 | pángxiè | crab |  |
 | 虾 | xiā | shrimp |  |
 | 小 | xiǎo | little, small |  |
 | 大 | dà | big |  |
@@ -543,6 +580,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = 松鼠 (squirrel) |  |
 | 头带 | tóudài | 头 tóu (head) + 带 dài (band) = 头带 (headband) |  |
 | 鱼竿 | yúgān | 鱼 yú (fish) + 竿 gān (pole) = 鱼竿 (fishing rod) |  |
+| 木筏 | mùfá | 木 mù (wood) + 筏 fá (raft) = 木筏 (raft) |  |
 | 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = 野猪 (wild boar) |  |
 | 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = 蜜蜂 (bee) |  |
 | 蜂王 | fēngwáng | 蜂 fēng (bee) + 王 wáng (king) = 蜂王 (queen bee) |  |
@@ -608,7 +646,6 @@ check that each is true and simply put.
 | 那里 | nàlǐ | there |  |
 | 勇敢 | yǒnggǎn | brave |  |
 | 从此 | cóngcǐ | from then on |  |
-| 快乐 | kuàilè | happy |  |
 | 你 | nǐ | you |  |
 | 也 | yě | also, too |  |
 | 去 | qù | to go |  |
@@ -629,12 +666,22 @@ check that each is true and simply put.
 | 吧 | ba | (let’s…) |  |
 | 老 | lǎo | old |  |
 | 找 | zhǎo | to look for |  |
+| 考试 | kǎoshì | exam, test |  |
+| 等 | děng | to wait |  |
+| 那边 | nàbiān | over there, the other side |  |
+| 神仙 | shénxiān | immortal |  |
+| 会 | huì | will |  |
+| 不会 | bú huì | won’t |  |
+| 不 | bù | not |  |
+| 可是 | kěshì | but |  |
+| 很多 | hěn duō | lots of, many |  |
+| 坐 | zuò | to sit; to go by |  |
+| 走 | zǒu | to walk; to leave |  |
 | 这 | zhè | this |  |
 | 累 | lèi | tired |  |
 | 做 | zuò | to make, to do |  |
 | 很久 | hěn jiǔ | a long time |  |
 | 以前 | yǐqián | before, ago |  |
-| 海 | hǎi | sea |  |
 | 一座 | yí zuò | a, one (mountain, building) |  |
 | 叫 | jiào | to be called |  |
 | 动 | dòng | to move |  |
@@ -837,6 +884,24 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们有虾了！ | wǒmen yǒu xiā le! | We have shrimp now! | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The hungry monkey, as a bowl of shrimp goes on the feast’s table |  |
 | 我们没有虾。 | wǒmen méiyǒu xiā. | We don’t have any shrimp. | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The feast’s list, till you’ve brought them |  |
 | 我们有虾。 | wǒmen yǒu xiā. | We have shrimp. | New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: The feast’s list, once they’re on the table |  |
+| 我要吃螃蟹！ | wǒ yào chī pángxiè! | I want to eat crab! | New on 29 October 2026 (in the game), a crab from the shore below the meadow: The hungry monkey, wanting a crab for the feast (螃蟹 pángxiè just for listening, till you catch one) |  |
+| 海很大！ | hǎi hěn dà! | The sea is so big! | New on 29 October 2026 (in the game), a crab from the shore below the meadow: You, the first time you come down to the shore (海边 hǎibiān, a draft name) and see the sea (海) |  |
+| 螃蟹！太好了！ | pángxiè! tài hǎo le! | A crab! Wonderful! | New on 29 October 2026 (in the game), a crab from the shore below the meadow: The hungry monkey, as you bring him a crab |  |
+| 这是螃蟹 | zhè shì pángxiè | This is a crab. | New on 29 October 2026 (in the game), a crab from the shore below the meadow: The sentence you finish (choosing 螃蟹, 虾 or 鱼) as you give him the crab, and each time you catch one after that |  |
+| 我们有螃蟹了！ | wǒmen yǒu pángxiè le! | We have crab now! | New on 29 October 2026 (in the game), a crab from the shore below the meadow: The hungry monkey, as the crab goes on a table of its own |  |
+| 我们没有螃蟹。 | wǒmen méiyǒu pángxiè. | We don’t have any crab. | New on 29 October 2026 (in the game), a crab from the shore below the meadow: The feast’s list, till you’ve brought one |  |
+| 我们有螃蟹。 | wǒmen yǒu pángxiè. | We have crab. | New on 29 October 2026 (in the game), a crab from the shore below the meadow: The feast’s list, once it’s on the table |  |
+| 我们考试吧！ | wǒmen kǎoshì ba! | Let’s have an exam! | New on 29 October 2026 (in the game), the end of chapter 1: The teacher (the old monkey), once every food is on the feast’s tables: the area’s word test, before the feast (考试 kǎoshì just for listening) |  |
+| 我们有桃子，有蜂蜜，有鱼！ | wǒmen yǒu táozi, yǒu fēngmì, yǒu yú! | We have peaches, honey and fish! | New on 29 October 2026 (in the game), the end of chapter 1: The feast scene, as it begins: the whole troop round the tables |  |
+| 小猴子很快乐！ | xiǎo hóuzi hěn kuàilè! | The little monkey was very happy! | New on 29 October 2026 (in the game), the end of chapter 1: The feast scene, after the old monkey’s story of your first days (the story checked before): teaches 快乐; also the Word Scroll’s example for 快乐, as 小猴子很快乐。 |  |
+| 可是美猴王不快乐。 | kěshì Měi Hóuwáng bù kuàilè. | But the Monkey King isn’t happy. | New on 29 October 2026 (in the game), the end of chapter 1: The feast scene: you, at dusk, alone on a rock |  |
+| 我们会老…… | wǒmen huì lǎo… | We’ll all grow old… | New on 29 October 2026 (in the game), the end of chapter 1: The feast scene: why he’s sad (told gently, for children) |  |
+| 海那边有神仙。 | hǎi nàbiān yǒu shénxiān. | Across the sea, there are immortals. | New on 29 October 2026 (in the game), the end of chapter 1: The feast scene: the old monkey, by the sea (in the book an old gibbon tells him) |  |
+| 神仙不会老！ | shénxiān bú huì lǎo! | Immortals never grow old! | New on 29 October 2026 (in the game), the end of chapter 1: The feast scene: the old monkey |  |
+| 我要去找神仙！ | wǒ yào qù zhǎo shénxiān! | I’m going to find them! | New on 29 October 2026 (in the game), the end of chapter 1: The feast scene: you, at sunrise |  |
+| 我们来做木筏吧！ | wǒmen lái zuò mùfá ba! | Let’s make a raft! | New on 29 October 2026 (in the game), the end of chapter 1: The big monkey, after the feast (木筏 mùfá just for listening, till it’s built) |  |
+| 我们等你！ | wǒmen děng nǐ! | We’ll wait for you! | New on 29 October 2026 (in the game), the end of chapter 1: The old monkey, seeing you off on the shore, after the troop’s 再见！ |  |
+| 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
 
 ## Questions
@@ -845,4 +910,8 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 - The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?
 - Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better?
 - The goat’s tip says each Chinese character is one syllable (山 shān + 羊 yáng). 儿 in words such as 哪儿 (nǎr) joins the syllable before it: is the tip still fine for beginners as it is?
+- The end of chapter 1: the old monkey tells you of 神仙 (shénxiān) across the sea, who never grow old (神仙不会老！). Is 神仙 right for the immortals Sun Wukong goes to find (in the book, the gibbon names buddhas, immortals and sages), or would 仙人 be better? And is 海那边有神仙。 natural for “across the sea, there are immortals”?
+- The feast tells your sadness gently, for children: 可是美猴王不快乐。我们会老…… (But the Monkey King isn’t happy. We’ll all grow old…). Is 我们会老 natural, or would 我们都会老 be better (all of us)? We kept it to words the player knows or can hear.
+- As you sail away: 美猴王坐木筏走了。 (The Monkey King sailed away on his raft.) Is 坐木筏走了 natural, or would 坐着木筏走了 or 乘木筏走了 be better?
+- The shore below the meadow is called 海边 (hǎibiān), the seaside. Is that the natural name for a place on the shore where a river runs into the sea?
 - When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)

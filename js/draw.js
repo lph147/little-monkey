@@ -36,6 +36,15 @@ function animTile(x, y, X, Y, now){
       if (s > .55){ const px = 2 + Math.floor(rnd(x,y,k+210)*10), py = 3 + Math.floor(rnd(x,y,k+220)*10); R(b, X+px, Y+py, 3, 1, '#BFE8FA'); }
     }
     if (tileAt(x, y-1).look === 'waterfall'){ for (let i = 0; i < 6; i++){ const px = Math.floor(rnd(x, i, Math.floor(now/120))*15); R(b, X+px, Y+1+(i%3), 2, 1, '#FFFFFF'); } }
+  } else if (look === 'sea'){   // the sea: glints, and where it laps the sand, foam washing up and back
+    for (let k = 0; k < 2; k++){
+      const ph = rnd(x, y, k+230) * 6.28, s = Math.sin(now/600 + ph);
+      if (s > .6){ const px = 2 + Math.floor(rnd(x,y,k+240)*10), py = 3 + Math.floor(rnd(x,y,k+250)*10); R(b, X+px, Y+py, 3, 1, '#9CCDEB'); }
+    }
+    if (y > 0 && tileAt(x, y-1).look === 'sand'){
+      const w = Math.round((Math.sin(now/700 + x * .6) + 1) * 2);   // the wave runs up the sand, and back
+      R(b, X, Y - w, T, 2, '#F4FBFF'); R(b, X, Y - w + 2, T, 1, 'rgba(244,251,255,.5)');
+    }
   } else if (look === 'shallows'){   // shrimp in clear water, one every other square: drifting over the pebbles, flicking backwards now and then
     if ((x * 7 + y * 3) % 2) return;
     const k = ((now + x * 997 + y * 577) % 4000) / 4000, flick = k > .85 ? (k - .85) / .15 : 0, dir = (x + y) % 2 ? 1 : -1;
@@ -1278,4 +1287,84 @@ function heavenGate(k, x0){
   b.restore();
 }
 // The pictures for the area's scenes (AREA.scenes), by name (a scene's art, or else its id); the opening's are drawScene, above.
-const SCENE_ART = {becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout, cowView: drawCowView};
+/* ---- the feast, and sailing away (the end of chapter 1) ---- */
+// The feast (told like the opening; its captions in the area's scenes): the troop round the feast's tables at the home
+// ground, close up, drawn as on the map at twice the size, eating; from 3, the old monkey stands at the end of the table,
+// telling the story of your first days, and at 21 (小猴子很快乐！) the troop jumps for joy. At 24 (可是美猴王不快乐。),
+// dusk, and you, sitting alone on a rock, a tear falling: you'll grow old. At 30 (海那边有神仙。), the old monkey shows
+// you the sea, and far across it a mountain in the clouds, glowing gold, where the immortals live. From 36 (我要去找神仙！),
+// sunrise, and you, standing on the rock, looking out to sea.
+const feastCv = document.createElement('canvas');
+function drawFeast(t, now){
+  const W = VW*T, H = VH*T, blink = now % 3200 < 130;
+  if (t < 24){
+    feastCv.width = 120; feastCv.height = 80;
+    const g = feastCv.getContext('2d'); g.imageSmoothingEnabled = false;
+    g.save(); g.translate(-4, 3);
+    for (let y = -1; y < 6; y++) for (let x = 0; x < 9; x++) LOOKS.grass(g, x*T, y*T, x, y + 40);
+    const joy = t >= 21, hop = (i) => joy ? Math.round(Math.abs(Math.sin(now / 160 + i)) * 4) : 0;
+    [['troop2', 0], ['hungry', 1], ['thirsty', 2], ['big', 4], ['boss', 5], ['fisher', 6]].forEach(([id, x], i) =>   // behind the tables, facing you
+      g.drawImage(monkeySprite(id, 'down', blink && i % 2 === 0), x*T, T - 6 - hop(i)));   // (their faces over the food)
+    OBJECT_ART.fruitTableMelon(g, {x:0, y:2, stage:1}); OBJECT_ART.fruitTableGrapes(g, {x:1, y:2, stage:1}); OBJECT_ART.fruitTableBananas(g, {x:2, y:2, stage:1});
+    OBJECT_ART.crabTable(g, {x:3, y:2, stage:2}); OBJECT_ART.feastTableHoney(g, {x:4, y:2, w:3});
+    OBJECT_ART.stoneStool(g, {x:1, y:3}); OBJECT_ART.stoneStool(g, {x:5, y:3});
+    [['playful', 1], ['player', 3], ['hider', 5]].forEach(([id, x], i) =>   // in front, on the stools, facing the table
+      g.drawImage(monkeySprite(id, 'up', false), x*T, 3*T - 3 - hop(i + 3)));
+    const tell = t >= 3, bob = tell && !joy ? Math.round(Math.sin(now / 260)) : 0;   // the old monkey, at the end, telling your story
+    g.drawImage(monkeySprite('elder', tell ? 'left' : 'down', blink), 7*T - 10, 2*T + 2 + bob - hop(7));
+    g.restore();
+    b.drawImage(feastCv, 0, 0, 120, 80, 0, 0, W, H);
+    return;
+  }
+  if (t < 30){   // dusk: you, alone on a rock, sad
+    for (let y = 0; y < H; y += 2) R(b, 0, y, W, 2, mix('#3B3160', '#E0946E', y / H));
+    for (let i = 0; i < 12; i++) if (Math.sin(now / 500 + i) > .3) R(b, Math.floor(rnd(i, 91) * W), Math.floor(rnd(i, 92) * 50), 1, 1, '#FFF4C8');   // the first stars
+    for (let x = 0; x < W; x += 2){ const h = Math.round(88 + Math.sin(x / 23) * 3); R(b, x, h, 2, H - h, '#3E5A3C'); }   // the hill, dark
+    disc(b, 120, 98, 22, '#6E685C'); R(b, 98, 98, 45, 62, '#6E685C'); disc(b, 116, 92, 10, '#857E70');   // your rock
+    b.drawImage(monkeySprite('player', 'down', true), 104, 52, 32, 32);   // (eyes down)
+    const k = (now % 1500) / 1500; R(b, 114, Math.round(68 + k * 16), 1, 2, '#9CD3F5'); R(b, 114, Math.round(68 + k * 16) + 2, 1, 1, '#D6EEFA');   // a tear
+    return;
+  }
+  // the sea, by day: far across it, a mountain in the clouds, glowing gold (from 36, sunrise: you, standing, looking out)
+  const hz = 70, rise = clamp((t - 36) / 2, 0, 1);
+  for (let y = 0; y < hz; y += 2) R(b, 0, y, W, 2, t < 36 ? mix('#6AB4E2', '#D6EEF7', y / hz) : mix(mix('#F2A866', '#6AB4E2', rise), '#FFE8B8', y / hz));
+  if (t >= 36){ disc(b, 40, hz - 4 - Math.round(rise * 10), 9, '#FFD27A'); }   // the sun coming up
+  const glow = .55 + .25 * Math.sin(now / 500), gl = b.createRadialGradient(186, 44, 2, 186, 44, 34);
+  gl.addColorStop(0, `rgba(255,224,130,${glow})`); gl.addColorStop(1, 'rgba(255,224,130,0)'); b.fillStyle = gl; b.fillRect(140, 8, 92, 70);
+  for (let x = 160; x < 214; x++){ const h = Math.max(0, Math.round(30 * (1 - Math.abs(x - 187) / 27) ** 1.3)); if (h) R(b, x, hz - h, 1, h, '#8FA9C4'); }   // the immortals' mountain
+  cloudPuff(176 + Math.sin(now / 900) * 3, 50, 1); cloudPuff(198 - Math.sin(now / 1100) * 3, 46, .8); cloudPuff(187, 36, .7);
+  for (let y = hz; y < H; y += 2) R(b, 0, y, W, 2, mix('#68B0DE', '#2F78B4', (y - hz) / (H - hz)));   // the sea
+  R(b, 0, hz, W, 1, '#A9D7F0');
+  for (let i = 0; i < 18; i++){ const sx = Math.floor(rnd(i, 93) * W), sy = hz + 4 + Math.floor(rnd(i, 94) * 30); if (Math.sin(now / 420 + i) > .3) R(b, sx, sy, 3, 1, '#D6F2FF'); }
+  disc(b, 52, 130, 40, '#7D7668'); R(b, 0, 104, 92, 56, '#7D7668'); R(b, 0, 104, 92, 1, '#9A9384');   // the rock you stand on, by the sea
+  if (t < 36){
+    b.drawImage(monkeySprite('elder', 'right', blink), 18, 74, 32, 32);   // the old monkey, showing you
+    b.drawImage(monkeySprite('player', 'right', blink), 54, 74, 32, 32);
+  } else {
+    b.drawImage(monkeySprite('player', 'right', false), 40, 72, 32, 32);   // you, standing, looking out to sea
+    for (let i = 0; i < 6; i++){ const a = now / 700 + i, r = 22; if (Math.sin(now / 200 + i * 2) > .4) R(b, Math.round(56 + Math.cos(a) * r), Math.round(86 + Math.sin(a) * r * .6), 1, 1, '#FFE27A'); }
+  }
+}
+// Sailing away: the troop on the shore, waving, at the foot of Flower Fruit Mountain, and you on your raft, sailing out
+// across the sea, getting smaller.
+function drawSailAway(t, now){
+  const W = VW*T, H = VH*T, hz = 56, blink = now % 3200 < 130;
+  for (let y = 0; y < hz; y += 2) R(b, 0, y, W, 2, mix('#6AB4E2', '#D6EEF7', y / hz));
+  cloudPuff(60 + t * 1.5, 16, 1); cloudPuff(170 + t, 24, .8);
+  for (let y = hz; y < H; y += 2) R(b, 0, y, W, 2, mix('#68B0DE', '#2F78B4', (y - hz) / (H - hz)));
+  R(b, 0, hz, W, 1, '#A9D7F0');
+  for (let i = 0; i < 20; i++){ const sx = Math.floor(rnd(i, 95) * W), sy = hz + 4 + Math.floor(rnd(i, 96) * 90); if (Math.sin(now / 420 + i) > .4) R(b, sx, sy, 3, 1, '#D6F2FF'); }
+  for (let x = 0; x < 120; x++){ const h = Math.max(0, Math.round(70 * (1 - (x / 120) ** 1.6))); R(b, x, hz + 40 - h, 1, h, x % 7 ? '#4F9A55' : '#468F4D'); }   // Flower Fruit Mountain, behind the shore
+  for (let i = 0; i < 14; i++) disc(b, Math.floor(rnd(i, 97) * 90), hz + 40 - Math.floor(rnd(i, 98) * 50), 3, '#2F7A3E');   // its trees
+  R(b, 0, hz + 40, 130, 14, '#EAD49C'); for (let x = 0; x < 130; x += 2) R(b, x, hz + 53 + Math.round(Math.sin(now / 500 + x / 9)), 2, 2, '#F4FBFF');   // the shore, foam along it
+  [['elder', 10], ['big', 30], ['playful', 50], ['hungry', 70], ['thirsty', 90]].forEach(([id, x], i) => {   // the troop, waving
+    const hop = Math.round(Math.abs(Math.sin(now / 200 + i)) * 3);
+    b.drawImage(monkeySprite(id, 'right', blink && i % 2 === 0), x, hz + 26 - hop, 16, 16);
+  });
+  const k = clamp(t / 9, 0, 1), s = 1 - k * .6, rx = Math.round(120 + k * 90), ry = Math.round(hz + 70 - k * 52);   // the raft, sailing out
+  const rw = Math.round(30 * s), rh = Math.round(9 * s), bobY = Math.round(Math.sin(now / 400) * 1.5);
+  R(b, rx - rw/2, ry + bobY, rw, rh, '#6E4A28'); for (let i = 0; i < 4; i++) R(b, rx - rw/2, ry + bobY + Math.round(i * rh / 4), rw, 1, '#9C6A3C');
+  b.drawImage(monkeySprite('player', 'right', false), Math.round(rx - 12 * s), Math.round(ry + bobY - 22 * s), Math.round(24 * s), Math.round(24 * s));
+  R(b, rx - rw/2 - 3, ry + bobY + rh, rw + 6, 1, 'rgba(255,255,255,.6)');   // its wake
+}
+const SCENE_ART = {feast: drawFeast, sailAway: drawSailAway, becomingKing: drawBecomingKing, buildingSchool: drawBuildingSchool, paintingSchool: drawPaintingSchool, lookout: drawLookout, cowView: drawCowView};

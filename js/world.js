@@ -245,7 +245,7 @@ const LEAP_MS = 450;   // how long a leap takes, when someone stops following yo
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
 const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
-  change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by']};   // extra settings a step can have
+  change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 // How many things you could count with the numbers you know: never two (NOT_HOW_MANY, js/quiz.js).
@@ -656,8 +656,79 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     await sleep(CALL_MS);
     await talk(n);
   },   // a battle (an enemy in AREA.enemies), and what happens if you win
-  async message(s, who, last){ if (who) await showNarration(fill(s.message), last); else toast(fill(s.message)); }   // in a conversation, it waits in the speech box
+  async message(s, who, last){ if (who) await showNarration(fill(s.message), last); else toast(fill(s.message)); },   // in a conversation, it waits in the speech box
+  // Picking up the creature you're facing, such as a crab (grab: its picture; label: what to do): one question on a word you
+  // know, as in reeling in a little fish. Get it wrong (missed: what you're told), and it gets away (the scuttle step), and
+  // that's the end of it.
+  async grab(s, who){
+    const w = nextWords(trainable(), 1)[0];
+    if (!w) return;
+    if (await catchQ(w, 1, 1, s.grab, fill(s.label))) return;
+    SFX.wrong(); toast(fill(s.missed)); STEPS.scuttle({}, who);
+    return STOP;
+  },
+  // The area's exam (AREA.exam), given by the one you're talking to, such as the teacher before the feast (decided 29
+  // October 2026): asked first (ask, with start or Not now), then words from the whole area to match to their pictures,
+  // those you know least well first (words: how many), so many right first time to pass (pass). Not passed (notYet): the
+  // words you missed, to tap and hear, and what to do (tryAgain), and that's the end of it; take it again any time.
+  async exam(s, who){
+    const e = AREA.exam, face = speaker(who);
+    if (!await confirmBox(face, esc(fill(e.ask)), e.start, 'Not now')) return STOP;
+    const words = shuffle(nextWords(trainable(), e.words)), need = Math.min(e.pass, words.length);
+    const missed = await matchWords(words, e.title, 'Stop');
+    if (!missed) return STOP;
+    const right = words.length - missed.size, pass = right >= need;
+    missed.forEach(w => reviewed(w, false)); save();
+    if (pass) SFX.fanfare(); else SFX.wrong();
+    await new Promise(res => {
+      openCard(`<div class="who" aria-hidden="true">${face}</div><p class="label">${esc(pass ? e.passed : e.notYet)}</p>
+        <p>You matched <b>${right} of ${words.length}</b> words right first time. You needed ${need}.</p>
+        ${missedHTML(missed)}${pass ? '' : `<p>${esc(fill(e.tryAgain))}</p>`}
+        <div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
+      bindMissed(); on('[data-a=ok]', () => { closeCard(); res(); });
+    });
+    if (!pass) return STOP;
+  },
+  // The end of the area's story (AREA.areaEnd): its card, with how many words you caught, your friends and your shells,
+  // and what comes next.
+  async areaEnd(){
+    SFX.fanfare();
+    await infoBox('⛰️', `<p class="label">${esc(AREA.areaEnd.title)}</p>
+      <div class="stats"><span>${wordsCaught()} of ${ORDER.length} words caught</span><span>${S.friends.length} friends</span><span>🐚 ${S.shells}</span></div>
+      ${AREA.areaEnd.text.map(t => `<p>${esc(fill(t))}</p>`).join('')}`);
+  },
+  // The creature you're talking to scuttles off, out of reach: to somewhere else on the ground it lives on, well away from
+  // you, such as a crab you've caught and let go, or one that pinched you.
+  scuttle(s, who){
+    const n = NPCS.find(c => c.id === who);
+    if (!n) return;
+    const look = tileAt(n.x, n.y).look, spots = [];
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++)
+      if (tileAt(x, y).look === look && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 5 && !npcAt(x, y) && !exitAt(x, y)) spots.push([x, y]);
+    if (!spots.length) return;
+    [n.x, n.y] = spots[Math.floor(Math.random() * spots.length)]; n.mv = null;
+  }
 };
+// Characters that scuttle sideways (scuttles), such as the crabs on the shore's sand (decided 29 October 2026): now and then
+// one scuttles a square left or right, over the ground it's on; come up beside it in its row, within SCUTTLE_NEAR, and it
+// scuttles away from you, out of reach, till it's cornered. From in front or behind, it can't run: A at it, its talk, can
+// catch it. Not while you're busy (talking to one, say).
+const SCUTTLE_MS = 150, SCUTTLE_NEAR = 2;
+function scuttle(now){
+  if (busy || !modal.hidden) return;
+  for (const n of NPCS){
+    if (!n.scuttles || (n.mv && now - n.mv.t0 < n.mv.dur)) continue;
+    const look = tileAt(n.x, n.y).look;
+    const free = x => tileAt(x, n.y).look === look && !npcAt(x, n.y) && !(pl.x === x && pl.y === n.y) && !exitAt(x, n.y);
+    let dx = 0;
+    if (pl.y === n.y && Math.abs(pl.x - n.x) <= SCUTTLE_NEAR) dx = Math.sign(n.x - pl.x) || 1;   // you, beside it: away it goes
+    else if (now > (n.wander || 0)){
+      n.wander = now + 1400 + Math.random() * 2600;
+      if (!(pl.x === n.x && Math.abs(pl.y - n.y) === 1)) dx = Math.random() < .5 ? -1 : 1;   // (not while you're right in front of it, or behind)
+    }
+    if (dx && free(n.x + dx)){ n.mv = {fx:n.x, fy:n.y, t0:now, dur:SCUTTLE_MS}; n.x += dx; }
+  }
+}
 // You reply: choose what to say from the phrases you know, with best the one that fits (taught on its own card the first
 // time, saying when you say it). What you're answering stays in sight (chooseReply, js/cards.js): the line someone has
 // just said, or else what's happening (about, in English, with who: whose face, and pic: a picture of what they've given
@@ -729,7 +800,7 @@ function placeCharacters(){
     if (here().shooed.includes(n.id)){ n.place = 'gone'; continue; }   // (a bird you've shooed off: shooAway)
     const m = (HIDE && n.id === HIDE.by && hiderAt()) || (n.moves || []).find(m => matches(m.if)) || n.home;   // (off hiding, or where you found it: hide and seek, js/hide.js)
     const place = placeOf(m);
-    if (n.place !== place || n.x !== m.x || n.y !== m.y || n.move !== m){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; n.move = m; }   // (a move to the same square can turn them, such as the thirsty monkey watching for you to bring the cow home)
+    if (n.place !== place || n.move !== m || (!n.scuttles && (n.x !== m.x || n.y !== m.y))){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; n.move = m; }   // (a move to the same square can turn them, such as the thirsty monkey watching for you to bring the cow home; a crab stays wherever it has scuttled to)
   }
   NPCS = ALL_NPCS.filter(n => n.place === PLACE && !S.following.includes(n.id));
   FOLLOWERS = S.following.map(id => ALL_NPCS.find(n => n.id === id)).filter(Boolean);

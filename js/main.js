@@ -56,7 +56,7 @@ function sizeText(h){
 // Scenes told with pictures and captions: the opening, and the area's other scenes (AREA.scenes), such as becoming king.
 // Each has its captions, its pictures (drawn by js/draw.js to match the captions' times), its sounds (at those times), the
 // label on its last button, and what happens when it ends (Skip, or that last button).
-const SCENE_SOUNDS = {opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer'], [12.4, 'call']], becomingKing:[[5.5, 'chime'], [8, 'fanfare'], [11, 'shimmer']],
+const SCENE_SOUNDS = {feast:[[.3, 'fanfare'], [21, 'chime'], [30, 'shimmer'], [36, 'fanfare']], sailAway:[[.3, 'splash'], [6, 'chime']], opening:[[7.2, 'rumble'], [8.7, 'chime'], [10.6, 'shimmer'], [12.4, 'call']], becomingKing:[[5.5, 'chime'], [8, 'fanfare'], [11, 'shimmer']],
   buildingSchool:[[1, 'tock'], [1.3, 'tock'], [1.6, 'tock'], [1.9, 'tock'], [2.3, 'tock'], [2.7, 'tock'], [3.6, 'thwack'], [4.2, 'thwack'], [4.8, 'thwack'], [5.4, 'thwack'], [6.6, 'thwack'], [7.3, 'thwack'], [8, 'thwack'], [9.05, 'fanfare'], [9.6, 'chime']],
   paintingSchool:[[.9, 'swish'], [1.5, 'swish'], [2.1, 'swish'], [2.7, 'swish'], [3.3, 'swish'], [4.4, 'fanfare'], [4.9, 'chime']], lookout:[[.3, 'wind']]};
 let scene = {id:'opening', caps:CAPS, last:'Begin', end:() => startGame()};

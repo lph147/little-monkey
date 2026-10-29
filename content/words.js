@@ -132,6 +132,10 @@ const WORD_BANK = {
   '跑步': {py:'pǎobù', en:'to go running, to jog', pic:'👟', area:1, category:'actions', alike:['跑', '猴子', '跳']},   // (PE's second lesson: the class goes jogging round the sports ground)
   '鱼饵': {py:"yú'ěr", en:'bait', pic:'🪱', area:1, category:'items', alike:['蜂蜜', '酸奶']},   // (the 老板 sells it, once you can fish: a big fish bites; all three pictures are a pot)
   '鱼竿': {py:'yúgān', en:'fishing rod', pic:'🎣', area:1, category:'items', alike:['棍子']},   // (the fishing monkey's, by the stream at the home ground, for the feast's fish; both pictures are a long, thin stick)
+  '快乐': {py:'kuàilè', en:'happy', pic:'😊', area:1, category:'describing'},   // (the feast, at the end of chapter 1: 小猴子很快乐！ heard since becoming king)
+  '木筏': {py:'mùfá', en:'raft', pic:'🛶', area:1, category:'items', alike:['木头']},   // (the troop builds it on the shore, at the end of chapter 1: you leave on it, as in the book)
+  '海': {py:'hǎi', en:'sea', pic:'🌊', area:1, category:'nature', alike:['河', '水']},   // (the shore, below the meadow, where the river meets the sea; heard in the opening, 海里有一座山)
+  '螃蟹': {py:'pángxiè', en:'crab', pic:'🦀', area:1, category:'animals'},   // (on the shore's sand, for the feast)
   '虾': {py:'xiā', en:'shrimp', pic:'🦐', area:1, category:'animals'},   // (caught in the riverside brook's clear shallows, for the feast)
   '小': {py:'xiǎo', en:'little, small', area:1, category:'describing'},   // (the first fish you catch: too small, you let it go; heard till then, as in 小石头)
   '大': {py:'dà', en:'big', area:1, category:'describing'},   // (and then a big one, for the feast; heard till then, as in 大猴子)
@@ -181,7 +185,7 @@ const WORD_BANK = {
   '那里': {py:'nàlǐ', en:'there'},   // (the rabbit in the pasture's pines: 牛在那里！)
   '勇敢': {py:'yǒnggǎn', en:'brave'},
   '从此': {py:'cóngcǐ', en:'from then on'},
-  '快乐': {py:'kuàilè', en:'happy'},
+
   '你': {py:'nǐ', en:'you'},
   '也': {py:'yě', en:'also, too'},
   '去': {py:'qù', en:'to go'},
@@ -202,6 +206,17 @@ const WORD_BANK = {
   '吧': {py:'ba', en:'(let’s…)'},
   '老': {py:'lǎo', en:'old'},
   '找': {py:'zhǎo', en:'to look for'},
+  '考试': {py:'kǎoshì', en:'exam, test'},   // (the teacher's exam, at the end of chapter 1)
+  '等': {py:'děng', en:'to wait'},
+  '那边': {py:'nàbiān', en:'over there, the other side'},
+  '神仙': {py:'shénxiān', en:'immortal'},   // (who never grow old: in the book, they live far across the sea; chapter 1's feast)
+  '会': {py:'huì', en:'will'},
+  '不会': {py:'bú huì', en:'won’t'},
+  '不': {py:'bù', en:'not'},
+  '可是': {py:'kěshì', en:'but'},
+  '很多': {py:'hěn duō', en:'lots of, many'},
+  '坐': {py:'zuò', en:'to sit; to go by'},
+  '走': {py:'zǒu', en:'to walk; to leave'},
   '这': {py:'zhè', en:'this'},
   '累': {py:'lèi', en:'tired'},
   '做': {py:'zuò', en:'to make, to do'},
@@ -209,7 +224,7 @@ const WORD_BANK = {
   // Heard in the opening's story
   '很久': {py:'hěn jiǔ', en:'a long time'},
   '以前': {py:'yǐqián', en:'before, ago'},
-  '海': {py:'hǎi', en:'sea'},
+
   '一座': {py:'yí zuò', en:'a, one (mountain, building)'},
   '叫': {py:'jiào', en:'to be called'},
   '动': {py:'dòng', en:'to move'},
@@ -258,6 +273,7 @@ const MADE = {
   '松鼠': {parts:[['松', 'sōng', 'pine'], ['鼠', 'shǔ', 'mouse']]},
   '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']]},
   '鱼竿': {parts:[['鱼', 'yú', 'fish'], ['竿', 'gān', 'pole']]},
+  '木筏': {parts:[['木', 'mù', 'wood'], ['筏', 'fá', 'raft']]},   // (木, as in 木头)
   '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']]},
   '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']]},
   '蜂王': {parts:[['蜂', 'fēng', 'bee'], ['王', 'wáng', 'king']]},

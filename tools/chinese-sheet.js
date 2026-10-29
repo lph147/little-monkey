@@ -211,6 +211,26 @@ const DRAFTS = [
     ['我们 没有 虾 。', 'We don’t have any shrimp.', 'The feast’s list, till you’ve brought them'],
     ['我们 有 虾 。', 'We have shrimp.', 'The feast’s list, once they’re on the table']]
     .map(([zh, en, where]) => ({zh, en, where:'New on 29 October 2026 (in the game), shrimp in the riverside’s clear brook: ' + where})),
+  ...[['我 要 吃 螃蟹 ！', 'I want to eat crab!', 'The hungry monkey, wanting a crab for the feast (螃蟹 pángxiè just for listening, till you catch one)'],
+    ['海 很 大 ！', 'The sea is so big!', 'You, the first time you come down to the shore (海边 hǎibiān, a draft name) and see the sea (海)'],
+    ['螃蟹 ！ 太 好 了 ！', 'A crab! Wonderful!', 'The hungry monkey, as you bring him a crab'],
+    ['这 是 螃蟹', 'This is a crab.', 'The sentence you finish (choosing 螃蟹, 虾 or 鱼) as you give him the crab, and each time you catch one after that'],
+    ['我们 有 螃蟹 了 ！', 'We have crab now!', 'The hungry monkey, as the crab goes on a table of its own'],
+    ['我们 没有 螃蟹 。', 'We don’t have any crab.', 'The feast’s list, till you’ve brought one'],
+    ['我们 有 螃蟹 。', 'We have crab.', 'The feast’s list, once it’s on the table']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 29 October 2026 (in the game), a crab from the shore below the meadow: ' + where})),
+  ...[['我们 考试 吧 ！', 'Let’s have an exam!', 'The teacher (the old monkey), once every food is on the feast’s tables: the area’s word test, before the feast (考试 kǎoshì just for listening)'],
+    ['我们 有 桃子 ， 有 蜂蜜 ， 有 鱼 ！', 'We have peaches, honey and fish!', 'The feast scene, as it begins: the whole troop round the tables'],
+    ['小 猴子 很 快乐 ！', 'The little monkey was very happy!', 'The feast scene, after the old monkey’s story of your first days (the story checked before): teaches 快乐; also the Word Scroll’s example for 快乐, as 小猴子很快乐。'],
+    ['可是 美猴王 不 快乐 。', 'But the Monkey King isn’t happy.', 'The feast scene: you, at dusk, alone on a rock'],
+    ['我们 会 老 ……', 'We’ll all grow old…', 'The feast scene: why he’s sad (told gently, for children)'],
+    ['海 那边 有 神仙 。', 'Across the sea, there are immortals.', 'The feast scene: the old monkey, by the sea (in the book an old gibbon tells him)'],
+    ['神仙 不会 老 ！', 'Immortals never grow old!', 'The feast scene: the old monkey'],
+    ['我 要 去 找 神仙 ！', 'I’m going to find them!', 'The feast scene: you, at sunrise'],
+    ['我们 来 做 木筏 吧 ！', 'Let’s make a raft!', 'The big monkey, after the feast (木筏 mùfá just for listening, till it’s built)'],
+    ['我们 等 你 ！', 'We’ll wait for you!', 'The old monkey, seeing you off on the shore, after the troop’s 再见！'],
+    ['美猴王 坐 木筏 走 了 。', 'The Monkey King sailed away on his raft.', 'The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！']]
+    .map(([zh, en, where]) => ({zh, en, where:'New on 29 October 2026 (in the game), the end of chapter 1: ' + where})),
   {zh:'你好 ！ 我 是 大 猴子 。', en:'Hello! I’m the big monkey.', where:'New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果'}
 ];
 
@@ -221,6 +241,10 @@ const QUESTIONS = ['A sheep in the meadow teaches 羊 (yáng) as sheep, before t
   'The big monkey wants red, yellow and white flowers to plant in front of the school. White flowers can be for funerals: are white ones all right in a flower bed in front of a school, or would pink (粉色 fěnsè) be better?',
   'Lanterns are usually made of red paper or cloth, not painted. Is 我们去刷灯笼吧！ (let’s go and paint the lanterns) natural for a class making the school’s lanterns red, or would something else be better?',
   'The goat’s tip says each Chinese character is one syllable (山 shān + 羊 yáng). 儿 in words such as 哪儿 (nǎr) joins the syllable before it: is the tip still fine for beginners as it is?',
+  'The end of chapter 1: the old monkey tells you of 神仙 (shénxiān) across the sea, who never grow old (神仙不会老！). Is 神仙 right for the immortals Sun Wukong goes to find (in the book, the gibbon names buddhas, immortals and sages), or would 仙人 be better? And is 海那边有神仙。 natural for “across the sea, there are immortals”?',
+  'The feast tells your sadness gently, for children: 可是美猴王不快乐。我们会老…… (But the Monkey King isn’t happy. We’ll all grow old…). Is 我们会老 natural, or would 我们都会老 be better (all of us)? We kept it to words the player knows or can hear.',
+  'As you sail away: 美猴王坐木筏走了。 (The Monkey King sailed away on his raft.) Is 坐木筏走了 natural, or would 坐着木筏走了 or 乘木筏走了 be better?',
+  'The shore below the meadow is called 海边 (hǎibiān), the seaside. Is that the natural name for a place on the shore where a river runs into the sea?',
   'When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)'];
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
 function sheet(){

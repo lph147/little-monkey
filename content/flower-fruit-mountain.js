@@ -4,6 +4,18 @@
 // This file is only data: the engine in js/ reads it. Chinese sentences are written with a space
 // between words, like '我 饿 了 。', because each word is coloured and can be tapped on its own.
 // Every word must be in the word bank (content/words.js); the tests check.
+// What A at a crab on the shore does (chapter 1), each crab the same: pick it up, with a question on a word you know (the
+// grab step: get it wrong, and it pinches you and scuttles off). The first is the hungry monkey's, for the feast, teaching
+// 螃蟹; after that, you say which it is (这是螃蟹), and let it go.
+const CRAB_TALK = [
+  {if:{crab:'asked', holding:{crab:false}}, do:[{grab:'螃蟹', label:'Pick it up!', missed:'Ouch! The crab pinched you, and scuttled off. Try another: come at it from the front or behind.'},
+    {newWord:'螃蟹', met:true, note:'A crab! It can only walk sideways.'}, {hold:'螃蟹', for:'crab'}, {scuttle:true},
+    {message:'You caught a {螃蟹}! Take it to the hungry monkey, at the feast’s tables.'}]},
+  {if:{new:'螃蟹'}, do:[{grab:'螃蟹', label:'Pick it up!', missed:'Ouch! The crab pinched you, and scuttled off.'},
+    {newWord:'螃蟹', met:true, note:'A crab! It can only walk sideways.'}, {scuttle:true}, {message:'You let the {螃蟹|crab} go, and it scuttles off.'}]},
+  {do:[{grab:'螃蟹', label:'Pick it up!', missed:'Ouch! The crab pinched you, and scuttled off.'},
+    {gap:{sentence:'这 是 螃蟹', en:'This is a crab.', word:'螃蟹', others:['虾', '鱼'], pic:'螃蟹'}}, {scuttle:true}, {message:'You let the {螃蟹|crab} go, and it scuttles off.'}]}
+];
 const FLOWER_FRUIT_MOUNTAIN = {
   number: 1,
   name: {zh:'花果山', py:'Huāguǒ Shān', en:'Flower Fruit Mountain'},
@@ -114,7 +126,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -252,6 +264,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'fishBack', if:{fish:'asked', holding:{fish:true}}, text:'Take the big {鱼} to the hungry monkey', arrow:'hungry'},
     {id:'shrimpCatch', if:{shrimp:'asked', holding:{shrimp:false}}, text:'Catch three {虾} in the clear brook on the riverside, above the bridge ({shrimpCaught}/3)', arrow:[27, 4, 'riverside']},
     {id:'shrimpBack', if:{shrimp:'asked', holding:{shrimp:true}}, text:'Take the {虾} to the hungry monkey', arrow:'hungry'},
+    {id:'crabCatch', if:{crab:'asked', holding:{crab:false}}, text:'Catch a {螃蟹} on the shore, below the meadow: come at one from the front or behind', arrow:{place:'shore'}},
+    {id:'crabBack', if:{crab:'asked', holding:{crab:true}}, text:'Take the {螃蟹} to the hungry monkey', arrow:'hungry'},
+    {id:'exam', if:{crabTable:{atLeast:1}, exam:0}, text:'Every food is on the feast’s {桌子|tables}! Your {老师} has an exam for you at school', arrow:'elder'},
+    {id:'feastGo', if:{exam:1, feastHeld:0}, text:'The troop is ready for the feast: go to the big {树} in the middle of the home ground', arrow:[17, 8, 'homeGround']},
+    {id:'raftWalk', if:{raft:1}, text:'Lead the troop down to the shore, below the meadow, to the edge of the {海}', arrow:[11, 12, 'shore']},
+    {id:'raftBoard', if:{raft:2}, text:'Your {木筏} is ready at the edge of the {海|sea}: press A at it when you’re ready to go', arrow:[11, 13, 'shore']},
     {id:'shopMoved', if:{shop:1}, text:'The {老板} has come up to the home ground: go and see him, by the way in from the {瀑布}', arrow:'boss'},
     {id:'dare', if:{story:true, cave:0}, text:'Talk to the old monkey: what could be behind the {瀑布}?', arrow:'elder'},
     {id:'jump', if:{cave:1}, text:'{跳} through the {瀑布}', arrow:[4, 1, 'falls']},
@@ -344,6 +362,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // What the task box says when there are no tasks: the first whose if matches.
   hints: [
+    {if:{raft:{atLeast:3}}, text:'Chapter 1 is complete! The next part of the journey is still to come. Until then, practise your words at the {学校}, or visit your {朋友|friends}.'},   // (after you sail away)
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
@@ -352,6 +371,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, text:'The big monkey has an idea for the feast: look for his ! at the home ground.'},   // (decided 28 October 2026: once the cow was home, nothing said so)
     {if:{bees:{atLeast:11}, fish:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (a big fish)
     {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (shrimp)
+    {if:{shrimpTable:{atLeast:1}, crab:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (a crab)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}, melonPlanted:4, grapePlanted:4, bananaPlanted:4}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese, and fruit from the garden now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the garden's fruit is on the table too)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees, the cow and its dairy are done: till then, they have tasks)
     {if:{school:{atLeast:2}, lesson:true}, text:'A new lesson is ready at the {学校}: {lessons:ready}. Talk to the {老师}, or look at the timetable on the classroom wall.'},   // (decided 28 October 2026: it said the rest of chapter 1 was coming soon)
@@ -397,6 +417,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Help the {老板} open his new shop at the home ground', show:{shop:{atLeast:1}}, done:{shop:{atLeast:3}}},
     {chapter:1, text:'Catch a big {鱼} for the feast', show:{fish:'asked'}, done:{fish:'done'}},
     {chapter:1, text:'Catch three {虾|shrimp} for the feast', show:{shrimp:'asked'}, done:{shrimp:'done'}},
+    {chapter:1, text:'Catch a {螃蟹|crab} for the feast', show:{crab:'asked'}, done:{crab:'done'}},
+    {chapter:1, text:'Pass your {老师}’s exam at the {学校}', show:{crabTable:{atLeast:1}}, done:{exam:1}},
+    {chapter:1, text:'Sit down to the great feast with the troop', show:{exam:1}, done:{feastHeld:1}},
+    {chapter:1, text:'Sail away on your {木筏|raft}', show:{feastHeld:1}, done:{raft:{atLeast:3}}},
     {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
     {chapter:1, text:'See the big {桌子} set up for the feast', show:{feast:{atLeast:1}}, done:{feast:{atLeast:2}}},
     {chapter:1, text:'Fetch {碗|bowls} for the feast from the Water Curtain Cave', show:{feast:{atLeast:2}}, done:{bowls:'done'}},
@@ -427,7 +451,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
-    elder: [{if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true}, show:'!'}, {if:{school:{atLeast:2}, practice:true}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
+    // (the old monkey's lessons and practice: only while he's at school, not at the feast's tables or seeing you off on the shore)
+    elder: [{if:{crabTable:{atLeast:1}, exam:0}, show:'!'}, {if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{school:{atLeast:2}, practice:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}, {if:{chapter:0, count:3}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{shop:1}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{canBuy:true}, show:'?'}],   // up at the home ground, to have his shop built; ? once you can afford something new, such as a headband
@@ -444,7 +469,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{bees:6}, show:'!'},   // and once you've brought the bees home, to see them,
       {if:{honey:'asked', holding:{honey:true}}, show:'?'},   // and honey from their hive;
       {if:{bees:{atLeast:11}, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'},   // and then, with honey on the table, a big fish,
-      {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, show:'!'}, {if:{shrimp:'asked', holding:{shrimp:true}}, show:'?'}],   // and with the fish on its table, three shrimp
+      {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, show:'!'}, {if:{shrimp:'asked', holding:{shrimp:true}}, show:'?'},   // and with the fish on its table, three shrimp,
+      {if:{shrimpTable:{atLeast:1}, crab:'not asked'}, show:'!'}, {if:{crab:'asked', holding:{crab:true}}, show:'?'}],   // and then a crab, from the shore
     fisher: [{if:{fish:'asked', fishing:0}, show:'!'}],   // the fishing monkey by the stream, once the hungry monkey wants a big fish: a rod for you
     queen: [{if:{bees:4}, show:'!'}, {if:{bees:7}, show:'!'}],   // the queen bee, out of her old tree: she wants you to play her word game; and at home, for the hive
     thirsty: [{if:{elder:{atLeast:1}, thirsty:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, thirsty:'asked', holding:{thirsty:true}}, show:'?'},
@@ -547,6 +573,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // counted as you catch them (the collect step); 虾 just for listening till you catch one
     shrimp: {from:'hungry', wants:'虾', ask:'wantShrimp', asked:'The hungry monkey wants three {虾|shrimp} for the feast! Shrimp live in the clear shallows of the brook on the riverside, above the bridge. Catch them with your {鱼竿}.',
       offer:'haveShrimp', sentence:'这 是 虾', sentenceEn:'This is a shrimp.', gap:'虾', others:['鱼'], reward:3, thanks:'thanks', thanksReply:'不客气'},
+    // chapter 1: last, so it's fresh for the feast, a crab (decided 29 October 2026), once the shrimp are on the table: crabs
+    // live on the shore, below the meadow, where the river meets the sea; the troop clears the way down (the meadow's ч)
+    crab: {from:'hungry', wants:'螃蟹', ask:'wantCrab', asked:'The hungry monkey wants a {螃蟹|crab} for the feast! Crabs live on the shore, below the meadow, where the river meets the sea. The troop has cleared a way down.',
+      offer:'haveCrab', sentence:'这 是 螃蟹', sentenceEn:'This is a crab.', gap:'螃蟹', others:['虾', '鱼'], reward:3, thanks:'thanks', thanksReply:'不客气'},
     cowFood: {from:'cow', wants:'草', ask:'cowHungry', asked:'The {牛} is hungry. Pick it some fresh {草} by the brook!',
       offer:'haveGrass', sentence:'我 要 吃 草', sentenceEn:'I want to eat grass.', reward:2, thanks:'thanks', thanksReply:'不客气'}
   },
@@ -595,6 +625,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // gets likelier each bite, sure by the bigWithin-th, or bites straight away with bait (in your bag: one goes on your
   // hook). What you catch: a card with its picture (pic) and caught, then its steps, the first part whose if matches.
   // What you're told: cast, bite, missed (too slow), slipped (a wrong answer), stop (B), baited, and reel (over a question).
+  // The exam (the exam step, js/world.js), the area's word test, from the teacher before the feast (decided 29 October
+  // 2026): words from the whole area, the ones you know least well first (words), pass right first time to pass.
+  exam: {words:30, pass:24, title:'The exam', start:'Start the exam', passed:'You passed the exam!', notYet:'Not quite yet',
+    ask:'The exam: match 30 words from all over Flower Fruit Mountain to their pictures, the ones you know least well first. Get 24 right first time to pass.',
+    tryAgain:'Practise the words you missed, at school or with your friends, then come back and try again. Your teacher is ready whenever you are.'},
+  // The end of the area's story (the areaEnd step): its card, after you sail away
+  areaEnd: {title:'Chapter 1 complete!', text:['You sailed away from Flower Fruit Mountain on your {木筏}, to find the immortals across the sea.',
+    'The next part of the journey is still to come. Until then, you’re back on the shore: keep practising your words, and visit your friends.']},
+
   fishing: {
     rod:'鱼竿', has:{fishing:{atLeast:1}}, bait:'鱼饵', bigIf:{knows:'小'}, bigWithin:4,
     cast:'You cast your line. Wait for the float to go under, then press A!', bite:'A bite! Press A!',
@@ -798,6 +837,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{place:'homeGround', fish:'done', fishTable:0}, do:[{setUp:{fishTable:1}}, {say:'haveFishNow', by:'hungry'}, {message:'A big {鱼} on a leaf, for the feast!'}]},
     // and the shrimp, in a white bowl in front of it
     {if:{place:'homeGround', shrimp:'done', shrimpTable:0}, do:[{setUp:{shrimpTable:1}}, {say:'haveShrimpNow', by:'hungry'}, {message:'A bowl of {虾|shrimp} for the feast, beside the big fish!'}]},
+    // and the crab, on a stone table of its own, between the garden's fruit and the big table
+    {if:{place:'homeGround', crab:'done', crabTable:0}, do:[{setUp:{crabTable:1}}, {say:'haveCrabNow', by:'hungry'}, {message:'A big red {螃蟹} on a plate, for the feast!'}]},
+    // chapter 1's end: once you've passed the exam, the troop sits down to the feast, round its tables, and it's told like
+    // the opening (the feast scene): the old monkey tells the story of your first days, you're happy (快乐), then sad, as
+    // you'll grow old; he tells you of the immortals across the sea, who never grow old, and you'll go and find them. The
+    // big monkey: let's make you a raft! The old, big and little monkeys go down to the shore with you
+    {if:{exam:1, feastHeld:0, around:[17, 7, 'homeGround']}, do:[{scene:'feast'}, {newWord:'快乐', note:'Happy: how you felt as a little monkey, with all your friends.'},
+      {set:{feastHeld:1, raft:1}}, {say:'makeRaft', by:'big'}, {follow:['elder', 'big', 'playful']},
+      {message:'The troop will build you a raft, down on the shore. Lead the old monkey, the big monkey and the little monkey down there, past the waterfall and through the meadow!'}]},
+    // and at the water's edge, the troop builds your raft as you watch, and says goodbye
+    {if:{place:'shore', raft:1, around:[11, 12, 'shore']}, do:[{follow:[]}, {setUp:{raft:2}},
+      {newWord:'木筏', note:'Your raft, from dead pines tied together with rope, and a long pole to push it along.'},
+      {say:'bye', by:'hungry'}, {say:'bye', by:'thirsty'}, {say:'bye', by:'playful'}, {say:'bye', by:'big'}, {say:'waitForYou', by:'elder'}, {reply:'再见'},
+      {message:'Your {木筏} is ready at the water’s edge. When you’re ready to go, press A at it.'}]},
+    // chapter 1: down on the shore for the first time, you see the sea (海, said straight away, as you found it)
+    {if:{place:'shore', seaSeen:0}, do:[{set:{seaSeen:1}}, {newWord:'海', note:'The sea! Water as far as you can see. The river from the waterfall runs into it here.'}, {say:'seaBig', by:'player'},
+      {message:'Crabs scuttle about on the sand. A crab can only walk sideways: come at one from the front or behind to catch it!'}]},
     // chapter 1: once you know three colours (the first Art lesson), and the flowers you picked with them are planted, the
     // 老板 comes up from the meadow to the home ground, to open a new shop by the way in, with headbands in every colour you
     // know (decided 29 October 2026: by the time his shop had anything worth buying, you'd left the meadow for good). Talk
@@ -853,7 +909,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       exits: [
         // up the mountain path (in the same column: the two maps line up), once the old monkey has sent you off up it
         {at:[15, 0], to:'path', arrive:[15, 18], facing:'up', if:{climb:{atLeast:1}}, closed:'The old monkey wants to talk to you first.'},
-        {at:[16, 0], to:'path', arrive:[16, 18], facing:'up', if:{climb:{atLeast:1}}, closed:'The old monkey wants to talk to you first.'}
+        {at:[16, 0], to:'path', arrive:[16, 18], facing:'up', if:{climb:{atLeast:1}}, closed:'The old monkey wants to talk to you first.'},
+        // chapter 1: down beside the river to the shore, once the troop has cleared the bushes (for the crab)
+        {at:[17, 21], to:'shore', arrive:[18, 1], facing:'down', if:{any:[{crab:'asked'}, {crab:'done'}]}, closed:'Thick bushes block the way.'}
       ],
       map: [
         "^^^^^^^MMMMM^^M..MWWMMMM",
@@ -877,7 +935,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "Y^^MMgg.GGGGgTggggWWgggY",
         "YMMMggg...........BBgEgY",
         "YMMgEggGGGggggggggWWgggY",
-        "YYYYYYYYYYYYYYYYYYWWYYYY"
+        "YYYYYYYYYYYYYYYYYчWWYYYY"
       ]
     },
     // The way up the stream, from the meadow to the waterfall (the end of the prologue), in three places that follow the
@@ -1102,6 +1160,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'Γ': {look:'grass', walk:true, becomes:[{if:{shrimpTable:{atLeast:1}}, to:'Ш'}, {if:{fishTable:{atLeast:1}}, to:'Λ'}]},
         'Λ': {look:'fishTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
         'Ш': {look:'fishTableShrimp', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},   // (and a bowl of shrimp on it)
+        // chapter 1: the feast's crab, on a stone table of its own, between the garden's fruit and the big table: open grass, till
+        // you bring the hungry monkey a crab (crabTable 1: its stone, then the crab on a plate). A at it: the feast's list
+        'Ж': {look:'grass', walk:true, becomes:[{if:{crabTable:{atLeast:1}}, to:'Щ'}]},
+        'Щ': {look:'crabTable', word:'桌子', landmark:true, onLook:[{label:'Look', do:[{feastList:true}]}]},
         // chapter 1: the 老板's new shop, by the way in from the waterfall, three squares by two: open grass till he comes up from
         // the meadow (shop 1); its plot marked out as you watch (2: the markOut step), with its sign (Θ), and then his shop
         // built on it (3: setUp), posts, counter, striped roof and what he sells (Δ). A at it talks to him
@@ -1129,7 +1191,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggsssssssggggggPggg.ghhhEY",
         "Ygggggggg99899gggTTgggggg.JEFgJY",   // the beds in front of the school (9), where the big monkey plants your flowers
         "YggTggggggg8gggggTTgggggg.gggggY",
-        "YgEFddd2ggg8ηθιg%%%gF(((Γ.gggTgY",   // the 老板's shop (d), by the way in from the waterfall, with its sign (2); the feast's big table (%), under the big tree; and its second, beside it ((), with the fish's at its end (Γ)
+        "YgEFddd2ggg8ηθιЖ%%%gF(((Γ.gggTgY",   // the 老板's shop (d), by the way in from the waterfall, with its sign (2); the feast's big table (%), under the big tree; and its second, beside it ((), with the fish's at its end (Γ)
         "Ygggdddgggg8κgκg!g!gg~g~g.g@gggY",   // their stone stools (! and ~); little monkeys building a tower of stones (@), just past the way up to the hillside
         "...............................q",   // the road: east to the riverside, once the bushes are cleared (q)
         "...............................Y",
@@ -1144,6 +1206,48 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYYYYYYYYYYYYYYY.YYYYYYYYYYYYYYY",
         "YYYYYYYYYYYYYYYY.YYYYYYYYYYYYYYY",
         "YYYYYYYYYYYYYYYYuYYYYYYYYYYYYYYY"    // the way south to the pasture, once the bushes are cleared (u)
+      ]
+    },
+    // Chapter 1: the shore (海边), below the meadow, where the river from the waterfall runs into the sea (decided 29 October
+    // 2026: last of the feast's quests, a crab, so it's fresh; and where you leave from, on a raft, at the end of chapter 1).
+    // A path down from the meadow beside the river, through a little grass, then sand, with rocks and rock pools, a bridge
+    // over the river, and the sea along the bottom, its waves washing up the sand. Crabs scuttle about on the sand: only
+    // sideways, so come at one from the front or behind to catch it.
+    shore: {
+      name: {zh:'海边', py:'hǎibiān', en:'The shore'},
+      sounds: ['wind', 'birds'],
+      legend: {
+        'с': {look:'sand', walk:true},
+        'м': {look:'sea', word:'海', note:'The sea, as far as you can see. Waves wash up the sand.'},
+        'л': {look:'rockPool', word:'水', note:'A rock pool: clear water left by the sea, with a little red starfish in it.'},
+        'к': {look:'shoreRock', word:'石头'},
+        // where the troop builds your raft, at the water's edge, at the end of chapter 1 (raft 2: the setUp step)
+        'ф': {look:'sea', word:'海', becomes:[{if:{raft:{atLeast:2}}, to:'Ф'}]},
+        'Ф': {look:'raft', word:'木筏', landmark:true, label:'Board', onLook:[{if:{raft:2}, do:[{scene:'sailAway'}, {set:{raft:3, done:true}}, {areaEnd:true}]},
+          {do:[{scene:'sailAway'}, {message:'Your {木筏}, waiting at the water’s edge. The next part of the journey is still to come!'}]}]}
+      },
+      exits: [
+        {at:[18, 0], to:'meadow', arrive:[17, 20], facing:'up'}   // back up to the meadow
+      ],
+      map: [
+        "YYYYYYYYYYYYYYYYYY.WWYYYYYYY",   // the path down from the meadow, beside the river
+        "YYYgggTgggYYYYYggg.WWggggYYY",
+        "YYggggggEggggFgggg.WWgTgggYY",
+        "YgggTggggggJgggggg.WWggggggY",
+        "Ygggggggggggggg....WWggggTgY",
+        "YYсссссссссссссссссWWссссссY",   // the sand begins
+        "YксссссссссссккссссWWсссссYY",
+        "YссссссссссссссссссBBссссскY",   // a little bridge over the river
+        "YссслссссссссссссссWWссссссY",   // rock pools (л) on the sand, and rocks (к), shells hidden by some
+        "YссссссссссссксссссWWссслссY",
+        "YссссссссссссссссссWWссссссY",
+        "YксссссссксссссссссWWссксссY",
+        "кссссссссссссссссссWWсссссск",   // the water’s edge
+        "ммммммммммффмммммммммммммммм",   // the sea (м), where the troop builds your raft (ф), at the end of chapter 1
+        "мммммммммммммммммммммммммммм",
+        "мммммммммммммммммммммммммммм",
+        "мммммммммммммммммммммммммммм",
+        "мммммммммммммммммммммммммммм"
       ]
     },
     // Chapter 1: the hillside, the way from the home ground up to the pine wood (decided 23 October 2026: the wood was
@@ -1758,6 +1862,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ],
       legend: {
         '#': {look:'classWall'},
+        // chapter 1: your certificate, on the wall beside the window, once you've passed the exam (no writing on it)
+        'Ц': {look:'wallFace', becomes:[{if:{exam:{atLeast:1}}, to:'Ч'}]},
+        'Ч': {look:'certificate', landmark:true, label:'Look', onLook:[{do:[{message:'Your certificate, on the classroom wall: you passed the exam!'}]}]},
         '=': {look:'wallFace'},
         '+': {look:'classWindow'},
         'b': {look:'blackboard', landmark:true, onLook:[{do:[{message:'The blackboard: the teacher has written the numbers on it, {一} to {十}.'}]}]},   // (the numbers in chalk: js/art.js)
@@ -1772,7 +1879,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       },
       map: [
         "#=+=bbbbbbbkkk#",
-        "#=+=bbbbbbbkkk#",
+        "#=+Цbbbbbbbkkk#",
         "#________tt___#",
         "#_____________#",
         "#_dd__dd__dd__#",
@@ -1913,6 +2020,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       onLook:[{if:{bowls:'asked', holding:{bowls:false}}, label:'Take', sparkle:true, do:[{collect:'碗', for:'bowls', count:6,
         each:'You take a {碗} from the stack.', full:'You have six {碗|bowls}. Take them to the hungry monkey, at the feast’s tables!'}]}]},
     // chapter 1: the way from the waterfall to the home ground, and the home ground's plots, their signs, and the ways out
+    // chapter 1: the bushes at the bottom of the meadow, beside the river, till the troop clears the way down to the shore (for
+    // the hungry monkey's crab)
+    'ч': {look:'bush', landmark:true, becomes:[{if:{any:[{crab:'asked'}, {crab:'done'}]}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The river runs on down past them, towards the sea.'}]}]},
     'f': {look:'bush', becomes:[{if:{home:{atLeast:1}}, to:'.'}]},   // bushes, until the troop clears a way through them
     'u': {look:'bush', landmark:true, onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
     's': {look:'grass', walk:true, becomes:[{if:{school:{atLeast:1}}, to:'t'}, {if:{build:{atLeast:2}}, to:'a'}, {if:{build:{atLeast:1}}, to:'6'}]},   // the school's plot: open grass, until the big monkey marks it out
@@ -1987,22 +2097,26 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // (with x, y, facing, and place if it's another place), instead of where they start. Someone following you
   // (the follow step) is wherever you've been instead, until they stop.
   characters: [
-    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:7, y:2, facing:'down'}, {if:{home:{atLeast:2}}, place:'homeGround', x:10, y:6, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:9, y:1, facing:'left'},
+    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{exam:1, feastHeld:0}, place:'homeGround', x:16, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}}, place:'shore', x:12, y:12, facing:'left'},   // (chapter 1's end: at the feast's table, then on the shore by your raft)
+      {if:{school:{atLeast:1}}, place:'school', x:7, y:2, facing:'down'}, {if:{home:{atLeast:2}}, place:'homeGround', x:10, y:6, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:9, y:1, facing:'left'},
       {if:{gate:true}, x:14, y:2, facing:'right'}],   // by the waterfall once the troop is up there; where the rocks were till then
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
-    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{garden:{atLeast:1}}, place:'homeGround', x:9, y:13, facing:'down'},   // (chapter 1: by his garden)
+    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{exam:1, feastHeld:0}, place:'homeGround', x:18, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}}, place:'shore', x:8, y:12, facing:'right'},
+      {if:{garden:{atLeast:1}}, place:'homeGround', x:9, y:13, facing:'down'},   // (chapter 1: by his garden)
       {if:{home:{atLeast:1}}, place:'homeGround', x:15, y:4, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:10, y:2, facing:'left'},
       {if:{gate:true}, x:16, y:1, facing:'down'}],   // in the way up once the rocks have rolled away, where he stops you with a stick for you, and stays (he used to jump there and back)
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
-      moves:[{if:{feast:{atLeast:1}}, place:'homeGround', x:19, y:7, facing:'left'}],   // chapter 1: he comes up from the meadow to look after the feast's big table
+      moves:[{if:{raft:{atLeast:1, below:3}}, place:'shore', x:13, y:11, facing:'down'},   // (seeing you off, on the shore)
+        {if:{feast:{atLeast:1}}, place:'homeGround', x:19, y:7, facing:'left'}],   // chapter 1: he comes up from the meadow to look after the feast's big table
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
-      moves:[{if:{dairy:{atLeast:1}}, place:'homeGround', x:21, y:11, facing:'left'},   // (at his little dairy, beside him)
+      moves:[{if:{raft:{atLeast:1, below:3}}, place:'shore', x:7, y:11, facing:'down'},   // (seeing you off, on the shore)
+        {if:{dairy:{atLeast:1}}, place:'homeGround', x:21, y:11, facing:'left'},   // (at his little dairy, beside him)
         {if:{cow:4, following:{cow:true}}, place:'homeGround', x:21, y:11, facing:'left'},   // watching for you to come up the path from the bridge with the cow
         {if:{feast:{atLeast:3}}, place:'homeGround', x:21, y:11, facing:'right'}],   // chapter 1: he comes up from the meadow with news of a cow, by the road near its pen's plot
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
-    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:5, y:8, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
+    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{exam:1, feastHeld:0}, place:'homeGround', x:14, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}}, place:'shore', x:9, y:11, facing:'down'}, {if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:5, y:8, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
       {if:{gate:true}, x:14, y:3, facing:'right'}],
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
     // the rest of the troop, in the meadow until they're counted into the cave
@@ -2086,7 +2200,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'groomB', place:'homeGround', x:13, y:13, facing:'down', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#4A2B13', f:'#C99558', s:'#F6D6B0', m:'#D09A76', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
-      moves:[{if:{shop:{atLeast:1}}, place:'homeGround', x:7, y:8, facing:'down'}],   // (chapter 1: up at the home ground, by his new shop, once the school's flowers are planted)
+      moves:[{if:{raft:{atLeast:1, below:3}}, place:'shore', x:14, y:12, facing:'left'},   // (seeing you off, on the shore)
+        {if:{shop:{atLeast:1}}, place:'homeGround', x:7, y:8, facing:'down'}],   // (chapter 1: up at the home ground, by his new shop, once the school's flowers are planted)
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}},
     // chapter 1: the queen bee (蜂王), called by her word, as an animal is: in her old hollow tree in the bees' valley till
     // she comes out, hovering in front of it while she's out; then home with you, with her swarm, by the wildflowers below
@@ -2098,6 +2213,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: the butterfly from the riverside's wildflowers (called 蝴蝶, by its word, as it looks like one), fluttering in
     // after you the first time you come into the bees' valley, at its way in, to tell you about it (an event), then back to
     // its flowers: only here till then (bees: 1)
+    // chapter 1: crabs on the shore's sand, scuttling sideways (scuttles); A at one, from in front or behind, catches it
+    {id:'crab1', place:'shore', x:7, y:10, facing:'down', look:'螃蟹', scuttles:true, label:'Catch'},
+    {id:'crab2', place:'shore', x:16, y:8, facing:'down', look:'螃蟹', scuttles:true, label:'Catch'},
+    {id:'crab3', place:'shore', x:24, y:10, facing:'down', look:'螃蟹', scuttles:true, label:'Catch'},
     {id:'guide', place:'flowerValley', x:0, y:10, facing:'right', look:'蝴蝶', flies:true,
       moves:[{if:{bees:{below:1}}, place:'gone', x:0, y:0}, {if:{bees:{atLeast:2}}, place:'gone', x:0, y:0}]},
     // chapter 1: the cow (牛), called by its word, as an animal is: lost and all alone in the pasture, by its spring, scared
@@ -2269,6 +2388,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '小': 'You said it as you let your first fish go: too small!',
     '大': 'You said it when you caught a big fish for the feast.',
     '虾': 'You caught it in the clear shallows of the brook on the riverside.',
+    '海': 'You saw it from the shore, below the meadow, where the river runs into it.',
+    '螃蟹': 'You caught one on the shore’s sand, for the feast.',
+    '快乐': 'You heard it at the great feast: the little monkey was very happy.',
+    '木筏': 'The troop built it on the shore, for you to sail away on.',
   },
 
   // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
@@ -2298,6 +2421,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {word:'酸奶', show:{milkTable:{atLeast:2}}, have:{milkTable:{atLeast:2}}, yes:{zh:'我们 有 酸奶 。', en:'We have yoghurt.'}},   // (from the little dairy)
       {word:'奶酪', show:{milkTable:{atLeast:3}}, have:{milkTable:{atLeast:3}}, yes:{zh:'我们 有 奶酪 。', en:'We have cheese.'}},
       {word:'鱼', show:{any:[{fish:'asked'}, {fish:'done'}]}, have:{fish:'done'}, no:{zh:'我们 没有 鱼 。', en:'We don’t have any fish.'}, yes:{zh:'我们 有 鱼 。', en:'We have fish.'}},   // (a big one, from the stream)
+      {word:'螃蟹', show:{any:[{crab:'asked'}, {crab:'done'}]}, have:{crab:'done'}, no:{zh:'我们 没有 螃蟹 。', en:'We don’t have any crab.'}, yes:{zh:'我们 有 螃蟹 。', en:'We have crab.'}},   // (from the shore)
       {word:'虾', show:{any:[{shrimp:'asked'}, {shrimp:'done'}]}, have:{shrimp:'done'}, no:{zh:'我们 没有 虾 。', en:'We don’t have any shrimp.'}, yes:{zh:'我们 有 虾 。', en:'We have shrimp.'}},   // (three, from the riverside's brook)
       // the garden's fruit: on the list once it's planted (you know its word by then), had once it's on the table
       {word:'西瓜', show:{melonPlanted:{atLeast:1}}, have:{melonPlanted:{atLeast:4}}, no:{zh:'我们 没有 西瓜 。', en:'We don’t have any watermelon.'}, yes:{zh:'我们 有 西瓜 。', en:'We have watermelon.'}},
@@ -2336,6 +2460,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // the Word Scroll. (A word that only appears in a sentence you complete, such as 头带, shows that.)
   // Checked by a native speaker on 16 October 2026.
   examples: {
+    '快乐': {zh:'小 猴子 很 快乐 。', en:'The little monkey is very happy.'},   // (a draft, not checked yet)
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
     '羊': {zh:'羊 吃 草 。', en:'Sheep eat grass.'},   // (a draft, not checked yet)
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
@@ -2477,6 +2602,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'pastureWestEnd', at:[3, 10, 'darkPines'], shells:2, note:'The way goes nowhere, but under the boulder at its end: 2 🐚!'},
     {id:'pastureEastEnd', at:[30, 27, 'darkPines'], shells:2, note:'The cow didn’t come this way, but tucked under the boulder: 2 🐚!'},
     {id:'melonBoulder', at:[3, 11, 'melonField'], shells:2, note:'Under the boulder by the way in: 2 🐚!'},
+    {id:'shoreRock', at:[13, 9, 'shore'], shells:3, note:'Washed up by the sea, behind a rock on the sand: 3 🐚!'},   // (where the troop's shells come from)
+    {id:'shoreBridge', at:[26, 7, 'shore'], shells:2, note:'Tucked in by a rock, over the little bridge: 2 🐚!'},
     {id:'cliffsBoulder', at:[2, 13, 'cliffs'], shells:2, note:'Under the boulder on the ledge: 2 🐚!'},
     {id:'springsBoulder', at:[22, 13, 'hotSprings'], shells:2, note:'Under the warm boulder by the pools: 2 🐚!'}
   ],
@@ -2545,6 +2672,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveFish: {zh:'鱼 ！ 太 好 了 ！', en:'A fish! Wonderful!'}, haveFishNow: {zh:'我们 有 鱼 了 ！', en:'We have fish now!'},
     wantShrimp: {zh:'我 要 吃 虾 ！', en:'I want to eat shrimp!'},   // and then shrimp (虾 just for listening, till you catch one)
     haveShrimp: {zh:'虾 ！ 太 好 了 ！', en:'Shrimp! Wonderful!'}, haveShrimpNow: {zh:'我们 有 虾 了 ！', en:'We have shrimp now!'},
+    wantCrab: {zh:'我 要 吃 螃蟹 ！', en:'I want to eat crab!'},   // and last, a crab (螃蟹 just for listening, till you catch one)
+    haveCrab: {zh:'螃蟹 ！ 太 好 了 ！', en:'A crab! Wonderful!'}, haveCrabNow: {zh:'我们 有 螃蟹 了 ！', en:'We have crab now!'},
+    seaBig: {zh:'海 很 大 ！', en:'The sea is so big!'},   // you, seeing the sea from the shore
+    examTime: {zh:'我们 考试 吧 ！', en:'Let’s have an exam!'},   // the teacher, before the feast (考试 just for listening)
+    makeRaft: {zh:'我们 来 做 木筏 吧 ！', en:'Let’s make a raft!'},   // the big monkey, after the feast (木筏 just for listening, till it's built)
+    waitForYou: {zh:'我们 等 你 ！', en:'We’ll wait for you!'},   // the old monkey, seeing you off
     fishInRiver: {zh:'河 里 有 鱼 ！', en:'There are fish in the river!'},   // the fishing monkey by the stream
     thisRod: {zh:'这 是 鱼竿 。', en:'This is a fishing rod.'},
     tooSmall: {zh:'太 小 了 ！', en:'It’s too small!'},   // you, as you catch a little fish, and let it go
@@ -2719,6 +2852,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // In an if: elder:0 checks what the area remembers; new:'猴子' is true while you don't know
   // a word yet, knows:'朋友' once you do; a counter, such as newWords:{below:4} or {atLeast:4}.
   talk: {
+    crab1: CRAB_TALK, crab2: CRAB_TALK, crab3: CRAB_TALK,   // the crabs on the shore (CRAB_TALK, above)
     // the fishing monkey by the stream (chapter 1): once the hungry monkey wants a big fish, a rod for you
     fisher: [
       {if:{fish:'asked', fishing:0}, do:[{say:'fishInRiver'}, {say:'thisRod', teach:'鱼竿'}, {newWord:'鱼竿', note:'A bamboo fishing rod, with a line, a float and a hook.'},
@@ -2823,12 +2957,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // once the first two lessons have taught you 四 五 六 and 红色 黄色 白色, he has news, before any lesson: the troop has a
       // home, and a school too (teaching 有), so it's time for a great feast (decided 24 October 2026: after the first two
       // lessons, so chapter 1 opens up; it waited till the flowers were planted, after every lesson)
+      // chapter 1's end: seeing you off on the shore; at the feast's table, ready for it
+      {if:{raft:{atLeast:1, below:3}}, do:[{say:'waitForYou'}]},
+      {if:{exam:1, feastHeld:0}, do:[{say:'great'}]},
       {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, do:[
         {say:'weHave', teach:'有'},
         {newWord:'有', note:'Use 有 to say what you have. (要 is for what you want.)'},
         {set:{feast:1}},
         {message:'Time for a great feast, for the whole troop! It will be at a big {桌子|table} under the big {树|tree}, in the middle of the home ground.'}
       ]},
+      // chapter 1: once every food is on the feast's tables, the exam (the area's word test), before the feast
+      {if:{crabTable:{atLeast:1}, exam:0}, do:[{say:'examTime'}, {exam:true}, {set:{exam:1}}, {say:'veryGood'}, {shells:10, note:'Your certificate goes up on the classroom wall! +10 🐚'},
+        {message:'The troop is getting ready for the feast! Go to the big {树} in the middle of the home ground.'}]},
       {if:{school:{atLeast:2}}, do:[{say:'classStart'}, {lesson:true}, {say:'classEnd'}]},
       // chapter 1: the troop's new home ground, beside the waterfall. He tells you about it, then follows you there.
       {if:{chapter:1, home:0}, do:[
@@ -2843,6 +2983,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
+      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{school:{atLeast:2}, new:'同学'}, do:[{say:'classmates', teach:'同学'}, {newWord:'同学', note:'The little monkeys at school with you.'}]},
       {if:{school:{atLeast:2}}, do:[{say:'classmates'}]},
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
@@ -2861,6 +3002,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [
+      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'老板'}, do:[{say:'boss', teach:'老板'}, {newWord:'老板', note:'The {老板} owns the shop. Come back to see what they sell.'}, {reply:'你好'}]},
       // chapter 1: come up to the home ground, he likes it there, and the troop builds him a new shop, as you watch: its plot
@@ -2872,6 +3014,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{shop:true}]}
     ],
     hungry: [
+      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{hungry:'not asked'}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
       {if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
@@ -2909,6 +3052,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // then, with the fish on its table, three shrimp, from the clear shallows of the riverside's brook
       {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, do:[{request:'shrimp'}]},
       {if:{shrimp:'asked'}, do:[{request:'shrimp'}]},
+      // and last, with the shrimp on the table, a crab, from the shore below the meadow
+      {if:{shrimpTable:{atLeast:1}, crab:'not asked'}, do:[{request:'crab'}]},
+      {if:{crab:'asked'}, do:[{request:'crab'}]},
       {if:{bees:{atLeast:11}}, do:[{say:'haveHoneyNow'}]},
       // a game that heard what the feast needs before the bees came (25 October 2026): he sends you to find them now
       {if:{feast:{atLeast:3}, bees:0}, do:[{say:'wantHoney'}, {set:{bees:1}},
@@ -2921,6 +3067,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{request:'hungry'}]}
     ],
     thirsty: [
+      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{thirsty:'not asked'}, do:[{request:'thirsty'}, {say:'waterInRiver'}]},
       {if:{thirsty:'asked', holding:{thirsty:false}}, do:[{request:'thirsty'}, {say:'waterInRiver'}]},
@@ -3157,6 +3304,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi'}, {reply:'你好'}, {say:'bossHasApples'}, {message:'Earn shells by helping the troop, making friends and practising. The {老板} sells {苹果}: in a question, one takes away a wrong answer.'}]}],
     troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],
     big: [
+      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       // chapter 1: he makes things for the troop (decided 27 October 2026): chopsticks out of wood, once the bowls are on the
       // feast's tables (teaching 筷子), and a cup of them goes on the big one; and spoons, once the yoghurt's on the second
@@ -3330,6 +3478,30 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: after the red lesson, the class goes out and paints the school's paper lanterns red (the colours lesson
     // series says which part, and which scene; until 24 October 2026 every colour painted a part of the school, each scene
     // with the same pictures, art, in its colour, paints)
+    // chapter 1's end: the great feast, round the tables at the home ground (art: the feast, js/draw.js); the old monkey tells
+    // the story of your first days (from the book's opening, checked by the native speaker, saved for chapter 1), you're
+    // happy (快乐), then sad: you'll grow old; across the sea are immortals, who never do, and you'll go and find them
+    feast: {watch:'Watch the feast', when:{feastHeld:1}, captions: [
+      {at:0, zh:'我们 有 桃子 ， 有 蜂蜜 ， 有 鱼 ！', en:'We have peaches, honey and fish!'},
+      {at:3, zh:'山 上 有 一个 大 石头 。', en:'On the mountain there was a big stone.'},
+      {at:6, zh:'石头 里 有 一只 小 猴子 。', en:'In the stone there was a little monkey.'},
+      {at:9, zh:'小 猴子 有 很多 朋友 。', en:'The little monkey had lots of friends.'},
+      {at:12, zh:'猴子 吃 桃子 ， 喝 水 。', en:'The monkeys ate peaches and drank water.'},
+      {at:15, zh:'鸟 在 树 上 玩 。', en:'The birds played in the trees.'},
+      {at:18, zh:'河 里 有 鱼 ， 山 上 有 瀑布 。', en:'There were fish in the river, and a waterfall on the mountain.'},
+      {at:21, zh:'小 猴子 很 快乐 ！', en:'The little monkey was very happy!', teach:'快乐'},
+      {at:24, zh:'可是 美猴王 不 快乐 。', en:'But the Monkey King isn’t happy.'},
+      {at:27, zh:'我们 会 老 ……', en:'We’ll all grow old…'},
+      {at:30, zh:'海 那边 有 神仙 。', en:'Across the sea, there are immortals.'},
+      {at:33, zh:'神仙 不会 老 ！', en:'Immortals never grow old!'},
+      {at:36, zh:'我 要 去 找 神仙 ！', en:'I’m going to find them!'}
+    ]},
+    // and sailing away on your raft, the troop waving from the shore
+    sailAway: {captions: [   // (A at your raft afterwards plays it again)
+      {at:0, zh:'再见 ！', en:'Goodbye!'},
+      {at:3, zh:'我们 等 你 ！', en:'We’ll wait for you!'},
+      {at:6, zh:'美猴王 坐 木筏 走 了 。', en:'The Monkey King sailed away on his raft.'}
+    ]},
     paintLanterns: {art:'paintingSchool', paints:'红色', captions: [
       {at:0, zh:'我们 去 刷 灯笼 吧 ！', en:'Let’s go and paint the lanterns!'},
       {at:4.4, zh:'灯笼 是 红色 的 ！', en:'The lanterns are red!'}

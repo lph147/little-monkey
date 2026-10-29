@@ -79,6 +79,7 @@ function turnedTo(){
 }
 function update(now){
   if (mode !== 'play') return;
+  scuttle(now);   // (crabs, on the shore: js/world.js)
   if (fastFood && !isFast(now) && !pl.mv && modal.hidden && !talkNext){ toast(`The energy from the ${wz(fastFood)} wears off.`); fastFood = null; }   // (once you've stopped)
   if (pl.mv && pl.mv.slip){   // trying to climb a ledge: up a little, and sliding back down where you were (not a step: nothing happens there)
     const m = pl.mv, p = Math.min(1, (now - m.t0) / SLIP_MS);

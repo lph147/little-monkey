@@ -820,10 +820,42 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(20, 7, 'left', 'giving the hungry monkey the shrimp: 这是虾');
   assert.deepEqual([area().shrimp, area().shrimpTable, run('tileAt(24, 7).look')], ['done', 1, 'fishTableShrimp'], 'a bowl of shrimp on the fish’s table');
   assert.ok(get('__said').includes('这是虾') && get('__said').includes('我们有虾了！'), 'this is a shrimp; we have shrimp now!');
+  // The end of chapter 1 (29 October 2026). A crab for the feast: the hungry monkey wants one (我要吃螃蟹！), and the troop
+  // clears the way down from the meadow to the shore (海边), where the river meets the sea: 海, as you first see it. Crabs
+  // scuttle sideways on the sand; from in front, you catch one (螃蟹), and he takes it (这是螃蟹), on a table of its own.
+  const goTo = (place, x, y, dir) => run(`S.pos = {place:'${place}', x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // (the long walk, past the waterfall)
+  await pressAt(20, 7, 'left', 'talking to the hungry monkey: he wants a crab for the feast');
+  assert.ok(get('__said').includes('我要吃螃蟹！') && area().crab === 'asked' && !knows('螃蟹'), 'I want to eat crab! (螃蟹 just for listening)');
+  goTo('meadow', 17, 20, 'down');
+  assert.equal(run('tileAt(17, 21).look'), 'path', 'the troop has cleared the way down from the meadow');
+  await act('arrive(17, 21).then(runEvents)', 'going down beside the river to the shore');
+  assert.ok(run("PLACE === 'shore'") && knows('海') && get('__said').includes('海很大！'), 'the sea (海): the sea is so big!');
+  run("NPCS.find(n => n.id === 'crab1').x = 7; NPCS.find(n => n.id === 'crab1').y = 10");
+  await pressAt(7, 9, 'down', 'catching a crab, from in front of it');
+  assert.ok(knows('螃蟹') && area().holding.crab === '螃蟹', 'a crab (螃蟹), for the feast');
+  goTo('homeGround', 20, 8, 'up');
+  await pressAt(20, 7, 'left', 'giving the hungry monkey the crab: 这是螃蟹');
+  assert.deepEqual([area().crab, area().crabTable, run('tileAt(15, 7).look')], ['done', 1, 'crabTable'], 'on a table of its own');
+  // The exam: with every food on the tables, the teacher has one for you (我们考试吧！): 30 words, 24 to pass
+  goTo('school', 7, 3, 'up');
+  await pressAt(7, 3, 'up', 'taking the teacher’s exam');
+  assert.ok(get('__said').includes('我们考试吧！') && area().exam === 1 && run('tileAt(3, 1).look') === 'certificate', 'passed: a certificate on the classroom wall');
+  // The feast: the troop at the tables, and the story told like the opening (快乐); then the big monkey: 我们来做木筏吧！,
+  // and the old, big and little monkeys follow you down to the shore, where the troop builds your raft (木筏) and says
+  // goodbye (再见！ 我们等你！); you sail away, and chapter 1 ends
+  goTo('homeGround', 17, 9, 'up');
+  await act('runEvents()', 'sitting down to the feast: the story of your first days, then the immortals across the sea');
+  assert.ok(knows('快乐') && area().feastHeld === 1 && area().raft === 1 && get('__said').includes('我们来做木筏吧！'), 'happy (快乐); let’s make a raft!');
+  assert.deepEqual(get('S.following'), ['elder', 'big', 'playful'], 'the old, big and little monkeys come with you');
+  goTo('shore', 11, 11, 'down');
+  await act('runEvents()', 'at the water’s edge: the troop builds your raft, and says goodbye');
+  assert.ok(knows('木筏') && area().raft === 2 && run('tileAt(10, 13).look') === 'raft' && get('__said').includes('我们等你！'), 'your raft (木筏); we’ll wait for you!');
+  await pressAt(11, 12, 'down', 'sailing away on your raft');
+  assert.deepEqual([area().raft, area().done], [3, true], 'chapter 1 is complete');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
   // Till everything built is done, there's always a task to say what's next (28 October 2026: once the cow was home, the
   // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
-  assert.equal(deadEnds[0], 'giving the hungry monkey the shrimp: 这是虾', 'your tasks were empty, with more to do (only once everything built is done: the feast’s shrimp, last)');
+  assert.deepEqual(deadEnds, [], 'your tasks were never empty while there was more to do');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
   // player, jumps out on the hillside.)

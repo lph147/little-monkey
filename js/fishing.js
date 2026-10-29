@@ -40,9 +40,12 @@ function whatBites(kind){
 // A question while you reel it in (n of total), on a word you know: you hear it while it's new, and choose its picture
 // from three you know, with their characters; once you know it, you read it, and choose from the pictures alone, as in PE
 // (js/pe.js). Gives whether you were right.
-async function fishQ(w, n, total){
+const fishQ = (w, n, total) => catchQ(w, n, total, FISH.rod, fill(FISH.reel));
+// The same, for anything caught (pic: its picture, or the rod's; label: what to do, such as Reel it in!), such as a crab,
+// picked up (the grab step, js/world.js).
+async function catchQ(w, n, total, pic, label){
   const listen = lvl(w) <= 1, q = wordQuestion(w, null, listen ? 'listen' : 'read');
-  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${picHTML(FISH.rod)}</div><p class="label">${esc(fill(FISH.reel))}${total > 1 ? ` (${n} of ${total})` : ''} ${listen ? 'Listen.' : 'Read it.'} Which is it?</p></div>`,
+  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${picHTML(pic)}</div><p class="label">${esc(label)}${total > 1 ? ` (${n} of ${total})` : ''} ${listen ? 'Listen.' : 'Read it.'} Which is it?</p></div>`,
     body:listen ? '<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>'
       : `<div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`,
     options:q.options, answerIdx:q.answerIdx, word:w, onShow:() => { if (listen) setTimeout(() => say(w), 300); }});

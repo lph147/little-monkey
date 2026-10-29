@@ -279,6 +279,46 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(7.2, 14.5, 2.3), '#FFFFFF'); p.flat(Rc(7, 14, 2, 2), '#1E1A16');
   },
   // fishing at the home ground (chapter 1): the fishing monkey's rod, bait from the 老板, and what you catch
+  '快乐': p => {   // happy: a beaming yellow face, eyes shut with joy, a big open smile, little sparkles round it
+    p.fill(O(16, 16.5, 12, 12), '#FFD34E', {edge: true});
+    for (const sx of [-1, 1]) p.flat(path([[16 + sx * 7, 13.5], [16 + sx * 4.5, 11.5], [16 + sx * 2, 13.5]], .8), '#3A2A10');   // eyes, shut tight with joy
+    p.fill(and(O(16, 19, 7.5, 6.5), Rc(0, 19, 32, 13)), '#7A2E1C');                                     // a big open smile
+    p.flat(and(O(16, 23, 4, 2.5), Rc(0, 19, 32, 13)), '#E8706A');
+    for (const sx of [-1, 1]) p.flat(O(16 + sx * 8.5, 19, 2.2, 1.5), '#F7A35C');                        // rosy cheeks
+    for (const [x, y] of [[3, 5], [28, 4], [29, 26], [2, 25]]){ p.flat(Rc(x, y - 1.5, 1, 4), '#E3A51C'); p.flat(Rc(x - 1.5, y, 4, 1), '#E3A51C'); }   // sparkles
+  },
+  '木筏': p => {   // raft: five logs side by side, tied with rope, afloat on blue water, a long pole lying across it (unlike 木头: cut logs in a pile)
+    p.fill(Rc(1, 1, 30, 30, 4), '#3F8FCB');                                                                       // the water
+    [[4, 6], [20, 9], [9, 27], [24, 26]].forEach(([x, y]) => p.flat(Rc(x, y, 4, 1), '#8ACFF0'));
+    for (let i = 0; i < 5; i++){ const y = 9 + i * 3.4; p.fill(Rc(4, y, 24, 3.4, 1.6), '#9C6A3C', {light: '#C99A62', dark: '#5E3B1F', edge: true}); p.fill(O(27, y + 1.7, 1.4, 1.6), '#E2C08E'); }   // the logs, their cut ends on the right
+    for (const x of [9, 22]) p.flat(Rc(x, 8.5, 2, 18), '#E4D49C');                                                // rope round them
+    p.flat(path([[3, 25], [29, 9]], .9), '#6E5220');                                                              // the pole
+  },
+  '海': p => {   // the sea: water to the horizon, under a sky, white-topped waves rolling in, a strip of sand (unlike 河: a river between grassy banks)
+    p.fill(Rc(1, 1, 30, 30, 4), '#BFE6FA');                                                                   // the sky
+    p.flat(and(Rc(1, 1, 30, 30, 4), O(24, 7, 3.5)), '#FFE27A');                                               // the sun
+    p.fill(and(Rc(1, 1, 30, 30, 4), Rc(1, 11, 30, 20)), '#2F78B4');                                           // the sea, to the horizon
+    p.flat(and(Rc(1, 1, 30, 30, 4), Rc(1, 11, 30, 1)), '#7DBEE6');
+    for (const [y, sh] of [[15, 0], [19, 4], [23, 1]]) for (let x = 2 + sh; x < 30; x += 8){   // waves, each a curl of white
+      p.flat(and(Rc(1, 1, 30, 30, 4), path([[x, y + 1], [x + 2, y - .5], [x + 4, y + 1]], .55)), '#F4FBFF');
+    }
+    p.fill(and(Rc(1, 1, 30, 30, 4), Pg([[1, 27], [12, 25.5], [22, 27], [31, 26], [31, 31], [1, 31]])), '#EBD49A');   // the sand
+    p.flat(and(Rc(1, 1, 30, 30, 4), path([[1, 26.6], [12, 25.1], [22, 26.6], [31, 25.6]], .5)), '#FFFFFF');      // foam along it
+  },
+  '螃蟹': p => {   // crab: a round red shell, two big claws held up, eyes on stalks, four legs each side (unlike 虾: curled, with feelers)
+    for (const [sx, d] of [[1, -1], [-1, 1]]){   // its legs, either side
+      for (const [k, y] of [[0, 19], [1, 22], [2, 25]]){ const x0 = 16 + sx * 8, x1 = 16 + sx * (12 + k); p.flat(path([[x0, y], [x1, y - 2], [x1 + sx * 2, y + 3]], .7), '#B8332B'); }
+    }
+    for (const sx of [1, -1]){   // its claws, up on their arms
+      p.flat(path([[16 + sx * 8, 17], [16 + sx * 11, 12], [16 + sx * 11, 9]], 1), '#C83A30');
+      p.fill(or(O(16 + sx * 10.5, 6.5, 3.6, 3.2), O(16 + sx * 13.5, 6, 1.8, 3)), '#E04A3C', {edge: true});
+      p.flat(path([[16 + sx * 12.5, 4.5], [16 + sx * 12, 7]], .45), '#7E1E18');   // the gap in its pincers
+    }
+    p.fill(O(16, 19, 10, 7), '#E04A3C', {edge: true});                                                         // its shell
+    p.flat(O(13.5, 17, 4.5, 2.2), '#F47C66');
+    for (const sx of [1, -1]){ p.flat(path([[16 + sx * 2.5, 13], [16 + sx * 3, 9.5]], .6), '#B8332B'); p.fill(O(16 + sx * 3, 9, 1.6), '#1E1A16'); p.dot(16 + sx * 3 - 1, 8, '#FFFFFF'); }   // eyes on stalks
+    p.flat(path([[13, 22.5], [16, 23.5], [19, 22.5]], .5), '#9E2A22');                                         // its mouth
+  },
   '虾': p => {   // shrimp, from the riverside brook's clear shallows: curled like a C, coral pink with pale bands, its head up on the right, long thin feelers, little legs, a fan tail
     const at = (deg, r = 8) => [15 + r * Math.cos(deg * Math.PI / 180), 16 + r * Math.sin(deg * Math.PI / 180)];
     for (let t = 0; t <= 1; t += .02){   // its two long feelers, thin, sweeping forward and back over its head

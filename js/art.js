@@ -221,9 +221,9 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','stallEmpty','shop','fishTable','fishTableShrimp','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','stallEmpty','shop','fishTable','fishTableShrimp','crabTable','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
-const WATERY = ['water','shallows','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','hopStone','logBridge'];
+const WATERY = ['water','shallows','sea','raft','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','hopStone','logBridge'];
 function grass(g, X, Y, x, y){
   R(g, X, Y, T, T, '#7CC46B');
   for (let i = 0; i < 7; i++){ const px = Math.floor(rnd(x,y,i)*16), py = Math.floor(rnd(x,y,i+20)*16); R(g, X+px, Y+py, 1, 1, i % 3 ? '#6CB35C' : '#93D67F'); }
@@ -252,6 +252,18 @@ function tall(g, X, Y, x, y, [ground, blade, tip] = TALL){   // tufts of tall gr
     R(g, X+ox, Y+oy+4, 7, 1, blade);
   };
   tuft(0,1); tuft(8,0); tuft(4,6); tuft(9,9); tuft(0,10);
+}
+// The shore (chapter 1): sand, pale and speckled, a little pink shell here and there; and the sea, deep blue, its waves
+// rolling in (animTile, js/draw.js), foam along the sand.
+function sand(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#EAD49C');
+  for (let i = 0; i < 8; i++){ const px = Math.floor(rnd(x,y,i+160)*15), py = Math.floor(rnd(x,y,i+170)*15); R(g, X+px, Y+py, 1, 1, i % 3 ? '#D8BE84' : '#F6E6BC'); }
+  if (rnd(x,y,180) < .18){ const px = 3 + Math.floor(rnd(x,y,181)*9), py = 3 + Math.floor(rnd(x,y,182)*9); R(g, X+px, Y+py, 2, 1, '#F2B6A8'); R(g, X+px, Y+py+1, 1, 1, '#D9917F'); }
+}
+function seaBase(g, X, Y, x, y){
+  R(g, X, Y, T, T, '#2C6EAA');
+  for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x,y,i+190)*13), py = Math.floor(rnd(x,y,i+200)*15); R(g, X+px, Y+py, 3, 1, '#3A80BE'); }
+  if (y > 0 && tileAt(x, y-1).look === 'sand'){ R(g, X, Y, T, 2, '#5E9FD2'); R(g, X, Y, T, 1, '#CFE9F7'); }   // where it laps the sand
 }
 function waterBase(g, X, Y, x, y){
   R(g, X, Y, T, T, '#3F8FCB');
@@ -906,6 +918,7 @@ const LOOKS = {
   shop:      (g,X,Y,x,y) => grass(g,X,Y,x,y),        // his new shop there: a big object (OBJECT_ART), on grass
   fishTable: (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the feast's fish, on a stone table of its own
   fishTableShrimp: (g,X,Y,x,y) => grass(g,X,Y,x,y),  // and a bowl of shrimp in front of it
+  crabTable: (g,X,Y,x,y) => grass(g,X,Y,x,y),        // the feast's crab, on a stone table of its own
   post:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); R(g,X+4,Y+14,8,2,'#5DA651'); g.drawImage(SPR.post,X,Y); },   // the practice post, one square
   longGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y,LONG),
   bush:      (g,X,Y,x,y) => bush(g,X,Y,x,y),
@@ -948,6 +961,10 @@ const LOOKS = {
   classFloor:(g,X,Y,x,y) => classFloor(g,X,Y,x,y),   // inside the school
   classWall: (g,X,Y,x,y) => classWall(g,X,Y,x,y),
   wallFace:  (g,X,Y,x,y) => wallFace(g,X,Y,x,y),
+  certificate: (g,X,Y,x,y) => { wallFace(g,X,Y,x,y);   // your certificate on the classroom wall, once you've passed the exam: paper in a red frame, a gold star, a red seal (no writing)
+    R(g, X+2, Y+1, 12, 11, '#8A2A20'); R(g, X+3, Y+2, 10, 9, '#FBF5E2'); R(g, X+3, Y+2, 10, 1, '#FFFFFF');
+    [[7, 3], [6, 4], [7, 4], [8, 4], [5, 5], [6, 5], [7, 5], [8, 5], [9, 5], [6, 6], [7, 6], [8, 6], [6, 7], [8, 7]].forEach(([dx, dy]) => R(g, X+dx, Y+dy, 1, 1, '#E3A51C'));
+    R(g, X+10, Y+8, 2, 2, '#C0303A'); R(g, X+4, Y+9, 3, 1, '#C9BFA4'); },
   classWindow:(g,X,Y,x,y) => wallFace(g,X,Y,x,y),   // a window and the blackboard: big objects on the back wall
   blackboard:(g,X,Y,x,y) => wallFace(g,X,Y,x,y),
   timetable:(g,X,Y,x,y) => wallFace(g,X,Y,x,y),   // the timetable, a chart on the back wall
@@ -999,6 +1016,14 @@ const LOOKS = {
 
   water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),
   // clear, shallow water, pebbles showing on its bottom, where shrimp live (drawn in it: animTile, js/draw.js)
+  sand:      (g,X,Y,x,y) => sand(g,X,Y,x,y),
+  sea:       (g,X,Y,x,y) => seaBase(g,X,Y,x,y),   // its waves are animated in js/draw.js
+  rockPool:  (g,X,Y,x,y) => { sand(g,X,Y,x,y);    // a rock pool on the sand: rocks round clear water, a little red starfish in it
+    for (const [px, py, r] of [[3, 4, 3], [12, 3, 3], [2, 11, 3], [13, 12, 3], [8, 2, 2], [8, 14, 2]]) disc(g, X+px, Y+py, r, (px + py) % 2 ? '#8E8778' : '#A7A08F');
+    disc(g, X+8, Y+8, 5, '#3F8FCB'); disc(g, X+7, Y+7, 3, '#5FB3D6'); R(g, X+6, Y+6, 2, 1, '#CFEFFA');
+    R(g, X+9, Y+9, 1, 3, '#E0603C'); R(g, X+8, Y+10, 3, 1, '#E0603C'); },
+  shoreRock: (g,X,Y,x,y) => { sand(g,X,Y,x,y); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a rock on the sand
+  raft:      (g,X,Y,x,y) => seaBase(g,X,Y,x,y),    // the raft's square of sea, till it's built on it (OBJECT_ART)
   shallows:  (g,X,Y,x,y) => { waterBase(g,X,Y,x,y); R(g, X, Y, T, T, 'rgba(150,225,235,.42)');
     for (let i = 0; i < 4; i++){ const px = 1 + Math.floor(rnd(x,y,i+140)*12), py = 1 + Math.floor(rnd(x,y,i+150)*13), c = ['#A89F8C','#C2B9A6','#8E8574'][i%3];
       R(g, X+px, Y+py, 3, 2, c); R(g, X+px, Y+py, 2, 1, 'rgba(255,255,255,.35)'); }
@@ -1090,6 +1115,8 @@ const OBJECT_ART = {
   shop: (g, o) => shopHut(g, o.x*T, o.y*T, o.w*T, o.h*T, o.stage ?? OBJECT_STAGES.shop),
   fishTable: (g, o) => fishTable(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.fishTable),
   fishTableShrimp: (g, o) => fishTable(g, o.x*T, o.y*T, 2 + (o.stage ?? 1)),   // (the shrimp: one more thing on it)
+  crabTable: (g, o) => crabTable(g, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.crabTable),
+  raft: (g, o) => raft(g, o.x*T, o.y*T, o.w*T, o.stage ?? OBJECT_STAGES.raft),
   feastTableBare: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, o.stage ?? 3),   // (stage: how much of it is up, as it's set up)
   feastTableBowls: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, 3 + (o.stage ?? 3)),   // (then the bowls go on it, one at a time,
   feastTable: (g, o) => feastTable(g, o.x*T, o.y*T, o.w*T, 6 + (o.stage ?? 1)),         // then the cup of chopsticks)
@@ -1661,6 +1688,33 @@ function fishTable(g, X, Y, stage){
     R(g, X + 14, Y, 1, 2, '#C8483E'); R(g, X + 7, Y + 1, 1, 1, '#C8483E');   // tails over its rim
   }
 }
+// The feast's crab (chapter 1), on a stone table of its own: its block and slab (1), then a white plate with a big red crab
+// on it, claws up (2).
+function crabTable(g, X, Y, stage){
+  const OUT = '#2E2A26';
+  if (stage >= 1){
+    if (shadows) blob(g, X + 8, Y + 15, 7, 1.5, ROCK_SHADOW);
+    R(g, X + 4, Y + 8, 8, 8, CAVE_OUT); R(g, X + 5, Y + 8, 6, 7, SLAB[2]); R(g, X + 5, Y + 14, 6, 1, SLAB[1]);
+    R(g, X, Y + 3, 16, 6, CAVE_OUT); R(g, X + 1, Y + 4, 14, 2, SLAB[4]); R(g, X + 1, Y + 6, 14, 2, SLAB[2]);
+  }
+  if (stage >= 2){
+    R(g, X + 1, Y + 1, 14, 5, OUT); R(g, X + 2, Y + 2, 12, 3, '#F4F1EA'); R(g, X + 3, Y + 4, 10, 1, '#C9C3B4');   // a white plate
+    R(g, X + 3, Y - 2, 10, 6, OUT); R(g, X + 4, Y - 1, 8, 4, '#E04A3C'); R(g, X + 5, Y - 1, 4, 1, '#F48A72');      // the crab's shell
+    for (const sx of [0, 1]){ const cx = sx ? X + 12 : X + 1; R(g, cx, Y - 5, 3, 3, OUT); R(g, cx + (sx ? 0 : 1), Y - 4, 2, 2, '#E04A3C'); }   // its claws
+    R(g, X + 6, Y - 3, 1, 2, OUT); R(g, X + 9, Y - 3, 1, 2, OUT);                                                    // its eyes
+    [[2, 2], [2, 3], [13, 2], [13, 3]].forEach(([dx, dy]) => R(g, X + dx, Y + dy, 1, 1, '#A8322A'));               // its legs
+  }
+}
+// The raft (chapter 1), on the sea at the water's edge, w wide: logs from dead pines side by side (1), tied with rope (2),
+// and a long pole lying on it (3).
+function raft(g, X, Y, w, stage){
+  if (stage >= 1){
+    R(g, X + 1, Y + 13, w - 2, 2, 'rgba(10,40,80,.35)');   // its shadow in the water
+    for (let ly = Y + 2; ly < Y + 13; ly += 3){ R(g, X + 1, ly, w - 2, 3, '#4A3420'); R(g, X + 2, ly, w - 4, 2, WOOD[2]); R(g, X + 2, ly, w - 4, 1, WOOD[3]); R(g, X + 1, ly, 2, 3, WOOD[1]); R(g, X + w - 3, ly, 2, 3, WOOD[1]); }
+  }
+  if (stage >= 2) for (const rx of [X + 6, X + w - 8]){ R(g, rx, Y + 1, 2, 13, '#C9B57A'); R(g, rx, Y + 1, 1, 13, '#E4D49C'); }   // rope round them
+  if (stage >= 3){ R(g, X + 3, Y + 6, w - 5, 2, '#3A2A18'); R(g, X + 4, Y + 6, w - 7, 1, '#B89A5E'); }   // the long pole
+}
 const SHOP_BANDS = ['#C0392B', '#F8E04A', '#3A6DD0', '#2FA350', '#F59AC6', '#F7F5EE', '#F06A1A'];
 function shopHut(g, X, Y, W, H, stage){
   const OUT = '#2E2A26', post = (px, py, ph) => { R(g, px, py, 3, ph, OUT); R(g, px + 1, py, 1, ph - 1, WOOD[2]); };
@@ -1766,12 +1820,12 @@ function weaponRack(g, X, Y, w){
   R(g, X + 2, Y + 3, W - 4, 2, LACQ); R(g, X + 2, Y + 4, W - 4, 1, LACQ_D);                                // the front rail
   R(g, X + 1, Y + 11, W - 2, 3, POLE_D);
 }
-const ROW_OBJECTS = ['rocks', 'stall', 'stallEmpty', 'railing', 'weaponRack', 'feastTableBare', 'feastTableBowls', 'feastTable', 'feastTableHoney', 'milkTableBare', 'milkTableEmpty', 'milkTable', 'milkTableYog', 'milkTableCheese'];   // side by side, these make one object as wide as the row
+const ROW_OBJECTS = ['rocks', 'stall', 'stallEmpty', 'railing', 'weaponRack', 'feastTableBare', 'feastTableBowls', 'feastTable', 'feastTableHoney', 'milkTableBare', 'milkTableEmpty', 'milkTable', 'milkTableYog', 'milkTableCheese', 'raft'];   // side by side, these make one object as wide as the row
 // Big objects set up as you watch (the setUp step, js/world.js): how many pieces each goes up in, one after another (its
 // art draws stage of them, all of them if it's not given, none at 0); several go up one after another, such as the feast's
 // table and then its stools. (One that's the same thing with something more, such as the milk's table with a jar of
 // yoghurt on it, goes up in just that: the rest is there already.)
-const OBJECT_STAGES = {shop:4, fishTable:2, fishTableShrimp:1, feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
+const OBJECT_STAGES = {shop:4, fishTable:2, fishTableShrimp:1, crabTable:2, raft:3, feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
 const BLOCK_OBJECTS = ['shop', 'frame', 'school', 'blackboard', 'timetable', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe', 'sandTrack', 'plumPoles'];
 const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through: it shakes as you do)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they

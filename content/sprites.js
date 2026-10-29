@@ -184,6 +184,27 @@ const MAP_SPRITES = {
     rows: ["................","..a..a..........",".abaaba.........","cdeddef.........","cdghhijkkccccj..","cdhhhelllddddij.","jihhhelllhhhhhmn","opppphllhhllllmn","qrrrphhhhhllllim",".qqcdhhhhhllllim","...feeeehhheeeij","...stmeeuuueemkl","...stmeijvwxemnk","...stmeij.wxemn.","...nmmeij.jiemn.","....nyzzy.yzzy.."]
   },
   // wild creatures, which jump out of long grass to fight (drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
+  '螃蟹': {   // crab (chapter 1, on the shore's sand): facing you, its claws up, eyes on stalks; it walks sideways
+    palette: {o:'#5A1A14', r:'#E04A3C', d:'#A8322A', l:'#F48A72', e:'#1E1A16'},
+    rows: [
+      "................",
+      "..oo........oo..",
+      ".orro......orro.",
+      ".orrdo....odrro.",
+      "..oro......oro..",
+      "...or.o..o.ro...",
+      "....ooeooeoo....",
+      "...orrrrrrrro...",
+      "..orrlrrrrlrro..",
+      ".orrrrrrrrrrrro.",
+      ".odrrrrrrrrrrdo.",
+      "o.odddddddddo..o",
+      ".o.o.o....o.o.o.",
+      "o.o.o......o.o.o",
+      "................",
+      "................"
+    ]
+  },
   '蛇': {   // snake
     faces: 'right',
     palette: {a:'#414F29', b:'#233113', c:'#A6D86A', d:'#477A26', e:'#6CA83E', f:'#1E1A16', g:'#511C19', h:'#D83A3A', i:'#3F6124'},

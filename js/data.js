@@ -46,7 +46,8 @@ function inColours(i){
 }
 const CLOTHES = (AREA.wardrobe || []).flatMap(inColours);   // everything you could wear (the wardrobe's), in each of its colours
 const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word, flies:!!c.flies,
-  colour:c.colour, pecks:!!c.pecks, shoo:c.shoo,   // (a bird: its colour; pecking at its square; what you're told as you shoo it off: shooAway, js/world.js)
+  colour:c.colour, pecks:!!c.pecks, shoo:c.shoo, scuttles:!!c.scuttles,   // (scuttles: sideways, as a crab does: scuttle, js/world.js)
+     // (a bird: its colour; pecking at its square; what you're told as you shoo it off: shooAway, js/world.js)
   home:{place:placeOf(c), x:c.x, y:c.y, facing:c.facing}, moves:c.moves}));   // home: where the content puts them; moves: where they go as the story goes on (placeCharacters)
 let NPCS = [], SPARKLES = [];         // the characters and sparkles in the place you're in
 const TRAINING_TILES = [];            // where the practice posts are (the training action)
