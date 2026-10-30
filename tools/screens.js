@@ -239,6 +239,7 @@ SAVES.pastureFork = {...SAVES.pasture, pos: {place: 'darkPines', x: 20, y: 4, di
 SAVES.pinesOwl = {...SAVES.pasture, pos: {place: 'darkPines', x: 13, y: 3, dir: 'left'}};   // just inside the dark pines, the owl on its dead pine nearby (28 October 2026)
 SAVES.homeDuck = {...SAVES.pasture, pos: {place: 'homeGround', x: 27, y: 17, dir: 'down'}};   // on the bank of the home ground's stream, the duck swimming below you (30 October 2026)
 SAVES.pastureHorse = {...SAVES.pasture, pos: {place: 'pasture', x: 11, y: 18, dir: 'left'}};   // on the pasture's grass, the horse grazing just west of you (30 October 2026)
+SAVES.slopeFrog = {...SAVES.slopeBrook, pos: {place: 'southSlope', x: 11, y: 22, dir: 'left'}};   // on the brook's bank, the frog on its lily pad beside you, the stepping stones on your right (30 October 2026)
 SAVES.pinesLog = {...SAVES.pasture, areas: {1: {...SAVES.pasture.areas[1], pastureTracks: 1}}, pos: {place: 'darkPines', x: 28, y: 4, dir: 'down'}};   // at the top of the gully
 SAVES.pinesInLog = {...SAVES.pinesLog, areas: {1: {...SAVES.pinesLog.areas[1], logSeen: 1}}, pos: {place: 'darkPines', x: 28, y: 9, dir: 'down'}};   // crawling through the hollow pine
 SAVES.pastureStream = {...SAVES.pasture, areas: {1: {...SAVES.pasture.areas[1], pastureTracks: 1, logSeen: 1, streamSeen: 1}}, tasksSeen: {...SAVES.pasture.tasksSeen, cowStream: 9},
@@ -962,6 +963,10 @@ const SCREENS = [
     play(); await wait(700); }},
   {id: 'horse-meet', title: '马', save: 'pastureHorse', why: 'Meeting the horse: its word, 马 (mǎ, horse), on a new-word card, said straight away; then How it’s made: drawn from a horse, seen from the side.', run: async () => {
     play(); await wait(100); S.pos = {place: 'pasture', x: 10, y: 18, dir: 'left'}; placePlayer(); pressA(); await wait(1500); }},
+  {id: 'frog', title: 'A frog', save: 'slopeFrog', why: 'Chapter 1: a tiny frog on a lily pad on the south slope’s brook, just west of the stepping stones, floating and bobbing. From the bank, A: Meet.', run: async () => {
+    play(); await wait(700); }},
+  {id: 'frog-meet', title: '青蛙', save: 'slopeFrog', why: 'Meeting the frog: its word, 青蛙 (qīngwā, frog), on a new-word card, said straight away; then its questions.', run: async () => {
+    play(); await wait(100); pressA(); await wait(1500); }},
   {id: 'owl-meet', title: '猫头鹰', save: 'pinesOwl', why: 'Meeting the owl: its word, 猫头鹰 (māotóuyīng, owl), on a new-word card, said straight away; then How it’s made: 猫 cat + 头 head + 鹰 eagle.', run: async () => {
     play(); await wait(100); S.pos = {place: 'darkPines', x: 11, y: 3, dir: 'up'}; placePlayer(); pressA(); await wait(1500); }},
   {id: 'pines-log', title: 'A hollow pine', save: 'pinesLog', why: 'Following the hoofprints east, down a narrow gully: a great pine has fallen along it, hollow inside. The cow stepped over it, but a little monkey can crawl right through.', run: async () => {
