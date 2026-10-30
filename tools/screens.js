@@ -616,6 +616,10 @@ const SCREENS = [
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
   {id: 'led-in', title: 'The troop follows you in', save: 'ledIn', why: 'In the cave, with a ! over the old monkey.', run: async () => { play(); await wait(500); }},
   {id: 'home', title: 'Our home', save: 'ledIn', why: 'The old monkey teaches 家.', run: async () => { play(); await wait(100); talk(npc('elder')); await wait(400); }},
+  {id: 'sounds-drink', title: 'Same sound, different tone', save: 'middle', why: 'Catching 喝 hē after 河 hé: after How it’s made, Sounds like ▸ shows the two side by side, each with how its tone moves; Hear both says one, then the other.', run: async () => {
+    play(); await wait(100); S.w['喝'] = {lv: 0, due: 0, ok: 0}; showNotice('喝', {quiet: true}); await wait(200); click('[data-a=made]'); await wait(200); click('#sheet .primary'); await wait(400); }},
+  {id: 'sounds-deer', title: 'Sounds the same', save: 'middle', why: 'Catching 鹿 lù after 路 lù: straight to Sounds like ▸, and they sound exactly the same.', run: async () => {
+    play(); await wait(100); S.w['路'] = {lv: 1, due: 0, ok: 0}; showNotice('鹿', {quiet: true}); await wait(200); click('#sheet .primary'); await wait(400); }},
   {id: 'made-king', title: 'You are our king', save: 'toBeKing', why: 'The big monkey teaches 王.', run: async () => { play(); await wait(100); talk(npc('big')); await wait(400); }},
   // becoming king, the scene that ends the prologue: each screen is held where it waits for Next (introClock: just after
   // its caption's time, in scenes.becomingKing; advancedTo: which caption)

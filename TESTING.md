@@ -602,6 +602,12 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] An animal you've met but not won over stays at home: it never jumps out anywhere else.
 - [ ] MENU, then 朋友 Friends: "N of M animals" beside the title; your friends in colour; one you've met but not won over in colour, marked Not a friend yet; the rest as shadows with ？ and a clue, such as The meadow, up a big tree. In the prologue, only its four animals; in chapter 1, its animals too, the bees as one card with how many of the six are your friends. Under them, The troop and others (once you have some). Tap a shadow: A friend to find, its clue, and Back returns to that shadow. Make a new friend and come back: it's in colour now.
 
+## Sounds alike
+
+- [ ] In a new game, look at the river (河 hé), then give the thirsty monkey water. When 喝 hē is taught: How it's made ▸, then Sounds like ▸, then 河 and 喝 side by side ("Same sound, different tone"): pictures, characters, pinyin, a red line for each tone (rising, flat) with its name, and their English, then "Listen to the tone: hé goes up, hē stays high." Hear both says hé then hē, each outlined in gold as it's said; tap either side to hear just it. Got it carries on; Back goes back a card. It all fits on a small phone, with no ▼ More.
+- [ ] In chapter 1, meet the deer (鹿 lù), having walked the mountain path (路 lù): Sounds like ▸ straight after its card: "Sounds the same", both 4th tone, falling.
+- [ ] In the Word Scroll, open 河 and press English: the button becomes Sounds like, and Back from the card returns to 河's page. On 喝's page: English, How it's made, then Sounds like ▸.
+
 ## Quick practice
 
 - [ ] On the title screen, for a game that knows at least 4 words with pictures: Practise beside Continue, saying how many words need it (none for a new game, or one that knows fewer). Tap it: no music, and the 练习 Practice card: your words caught, how many need practice, and how many at each level, with − 10 questions + and Back and Start.

@@ -332,24 +332,25 @@ function exampleFor(w){
 // it's made, if it has a story (madeCard, js/cards.js), whose Back comes back here (en: with the English showing, and the
 // word not said again).
 function wordPage(w, back, from = 'Word Scroll', en = false){
-  const d = WORDS[w], ex = exampleFor(w), made = hasMade(w);
+  const d = WORDS[w], ex = exampleFor(w), made = hasMade(w), alike = !!soundsLike(w), more = made ? 'How it’s made' : alike ? 'Sounds like' : '';   // (what English becomes: then how it's made, then the word that sounds like it)
   if (!en) say(w);
-  const howBtn = '<button class="btn" data-a="made">How it’s made</button>';
+  const howBtn = `<button class="btn" data-a="made">${more}</button>`;
   openCard(`<p class="label">${from} · ${CATEGORIES[d.category].name}</p>
     <div class="word side"><div class="pic" aria-hidden="true">${picHTML(w)}</div><div class="big">${w}</div><div class="py">${d.py}</div><div class="en"${en ? '' : ' hidden'}>${esc(d.en)}</div>
       <p class="mastery">${pips(w)} ${MASTERY[lvl(w) - 1]}</p>
       <div class="wordmore"><p class="note">Found: ${esc(fill(AREA.found[w] || AREA.name.en))}</p>
       ${ex ? `<p class="label examplehead">Example</p>${lineHTML(ex.t, w)}<div class="sentence-en"${en ? '' : ' hidden'}>${esc(ex.en)}</div>${Object.keys(S.lines).length <= TAP_TIP_LINES ? '<div class="gloss tip">Tap any word to see what it means.</div>' : ''}` : ''}</div></div>
-    <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${en ? (made ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+    <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${en ? (more ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   bindTokens(sheet);
-  const how = () => madeCard(w, () => wordPage(w, back, from, true));
+  const page = () => wordPage(w, back, from, true), sounds = () => soundsCard(w, made ? how : page);
+  const how = () => madeCard(w, page, alike ? sounds : null, 'Sounds like ▸'), next = () => made ? how() : sounds();
   on('[data-a=say]', () => say(w));
   on('[data-a=en]', e => {
     sheet.querySelectorAll('.word .en, .sentence-en').forEach(x => x.hidden = false);
-    const b = e.currentTarget; if (made){ b.setAttribute('data-a', 'made'); b.textContent = 'How it’s made'; b.onclick = how; } else b.remove();
+    const b = e.currentTarget; if (more){ b.setAttribute('data-a', 'made'); b.textContent = more; b.onclick = next; } else b.remove();
     const p = sheet.querySelector('.primary'); if (p) p.focus();
   });
-  on('[data-a=made]', how);
+  on('[data-a=made]', next);
   on('[data-a=ok]', back);
 }
 const heardWords = () => Object.keys(GLOSS).filter(w => S.heard[w]).sort((a, b) => S.heard[b] - S.heard[a]);   // words this area doesn't teach, most heard first

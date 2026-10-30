@@ -609,6 +609,21 @@ rt.hid{visibility:hidden}
 .fclue{display:flex;gap:14px;align-items:center}
 .fclue p{margin:.15rem 0}
 .fclue .portrait{width:64px;height:64px}
+.sa{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0}
+.sa-side{display:grid;justify-items:center;gap:2px;background:var(--bg);border:2px solid var(--line);border-radius:8px;padding:5px;font-family:var(--text);color:var(--ink)}
+.sa-side.playing{border-color:var(--gold);box-shadow:0 0 0 3px rgba(217,162,27,.35)}
+.sa-top{display:flex;align-items:center;gap:8px}
+.sa-side .pic,.sa-side .pic img,.sa-side .pic canvas{width:38px;height:38px}
+.sa-side .big{font-size:1.45rem;line-height:1.1}
+.sa-side .py{font-size:1.1rem;font-weight:700;color:var(--ink)}
+.sa-tone{display:flex;align-items:center;gap:6px}
+.sa-side .contour{width:44px;height:28px}
+.sa-side .contour .grid{stroke:var(--line);stroke-width:1;fill:none;stroke-dasharray:2 2}
+.sa-side .contour .line{stroke:var(--btnA);stroke-width:3.5;fill:none;stroke-linecap:round}
+.sa-side .tone{font-size:.76rem;font-weight:700;line-height:1.15;text-align:left}
+.sa-side .tone span{font-weight:400}
+.sa-side .en{font-size:.76rem;color:var(--muted);text-align:left;background:none;padding:0;margin:0;line-height:1.2}
+.sa-note{margin:2px 0}
 .stats{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--pixel);font-size:.85rem;color:var(--muted);margin:.1rem 0 .2rem}
 .portrait{width:56px;height:56px;image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 .toggles{display:flex;gap:6px}
@@ -863,6 +878,7 @@ rt.hid{visibility:hidden}
 }
 /* the smallest phones, where the game screen is only about 210px tall: smaller pictures, speaker and text */
 @container (max-height:260px){
+  .sa-side{padding:3px;gap:0} .sa-side .pic,.sa-side .pic img,.sa-side .pic canvas{width:30px;height:30px} .sa-side .big{font-size:1.2rem} .sa-side .contour{height:22px} .sa .sa-tone{gap:4px}   /* (sounds alike: the two words smaller, so it all fits) */
   .fpic .pix{width:24px;height:24px}   /* the feast's list: its rows smaller, each English beside its sentence, and no note */
   .flist{gap:1px;margin:2px 0 0}
   .frow{padding:0 6px}

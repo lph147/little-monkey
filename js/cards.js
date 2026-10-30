@@ -413,6 +413,36 @@ function madeCard(w, back, done, doneLabel){
   on('[data-a=again]', () => anim.play());
   if (done) on('[data-a=ok]', () => { if (anim && anim.playing()){ anim.finish(); shown(); return; } done(); });
 }
+// Two words that sound alike (decided 30 October 2026: a word spelt the same in pinyin as one you know, such as 喝 hē after
+// 河 hé, is confusing): the word you knew and this one side by side, each with its picture, characters, pinyin, a drawing of
+// how its tone moves and its name, and its English; Hear both says one, then the other, the one being said lit up, and
+// tapping a side says just it. It comes after the word's card, and How it's made if it has one (Sounds like ▸), the first
+// time, and from the same place as How it's made after that. Back (B) goes back; done is A's, or none, when Back is A's too.
+const TONE_MARKS = {'̄':1, '́':2, '̌':3, '̀':4};
+const tonesOf = py => [...py.normalize('NFD')].filter(c => TONE_MARKS[c]).map(c => TONE_MARKS[c]);
+const soundsLike = w => (WORDS[w] && Object.keys(WORDS).find(x => x !== w && lvl(x) > 0 && toneless(x) === toneless(w))) || null;   // (toneless, js/quiz.js: as listening questions keep them apart)
+const TONES = [{n:'Neutral tone', how:'short and light', d:'M14 15 L26 15', hear:'is short and light'},
+  {n:'1st tone', how:'high and flat', d:'M4 6 L36 6', hear:'stays high'}, {n:'2nd tone', how:'rising', d:'M4 22 L36 5', hear:'goes up'},
+  {n:'3rd tone', how:'low, dipping', d:'M4 12 Q16 32 36 6', hear:'dips down'}, {n:'4th tone', how:'falling', d:'M4 4 L36 25', hear:'falls'}];
+function soundsCard(w, back, done, doneLabel){
+  const other = soundsLike(w), tones = x => { const t = tonesOf(WORDS[x].py); return t.length ? t : [0]; };
+  const side = x => { const t = tones(x), one = t.length === 1 ? TONES[t[0]] : null;
+    return `<button class="sa-side" data-w="${x}" aria-label="Hear ${x}"><div class="sa-top"><div class="pic" aria-hidden="true">${picHTML(x)}</div><div><div class="big">${x}</div><div class="py">${WORDS[x].py}</div><div class="en">${esc(WORDS[x].en)}</div></div></div>
+      <div class="sa-tone">${t.map(n => `<svg class="contour" viewBox="0 0 40 30" aria-hidden="true"><path d="M2 2 H38 M2 15 H38 M2 28 H38" class="grid"/><path d="${TONES[n].d}" class="line"/></svg>`).join('')}
+      <div class="tone">${one ? `${one.n}<br><span>${one.how}</span>` : t.map(n => TONES[n].n).join(' + ')}</div></div></button>`; };
+  const same = tones(w).join() === tones(other).join(), one = tones(w).length === 1;
+  const note = same ? 'Exactly the same sound: their characters, and what’s being said, tell them apart.'
+    : one ? `Listen to the tone: ${WORDS[other].py} ${TONES[tones(other)[0]].hear}, ${WORDS[w].py} ${TONES[tones(w)[0]].hear}.` : 'Listen to the tones.';
+  openCard(`<p class="label">${same ? 'Sounds the same' : 'Same sound, different tone'}</p><div class="sa">${side(other)}${side(w)}</div><p class="small sa-note">${note}</p>
+    <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>◂ Back</button><button class="btn" data-a="both">🔊 Hear both</button>${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
+  const card = sheet.querySelector('.sa'), lit = x => card.querySelectorAll('.sa-side').forEach(b => b.classList.toggle('playing', b.dataset.w === x));
+  const open = () => sheet.querySelector('.sa') === card;   // (still showing: not closed or moved on)
+  const hear = (x, then) => { if (!open()) return; lit(x); say(x, () => { if (!open()) return; lit(null); if (then) setTimeout(then, 250); }); };
+  card.querySelectorAll('.sa-side').forEach(b => b.onclick = () => hear(b.dataset.w));
+  on('[data-a=both]', () => hear(other, () => hear(w)));
+  on('[data-a=back]', back);
+  if (done) on('[data-a=ok]', done);
+}
 // A name you can read now, such as your home's on the sign (says: its Chinese and English; m: how it's made, with its
 // title, parts and what they add up to). A name isn't a word to learn, so nothing is caught. Its characters are tiles to
 // find out about (decided 24 October 2026: the box was crowded): each with a ? until you tap it, or press A (Next part,
@@ -466,25 +496,28 @@ function showNotice(w, opts = {}){
     const d = WORDS[w], isNew = lvl(w) === 0, made = hasMade(w);
     if (isNew) SFX.word(); else SFX.blip();
     const done = () => { closeCard(); if (isNew){ setSeen(w); toast(`${wz(w)} added to your Word Scroll`); } res(); };
+    const alike = !!soundsLike(w), label = isNew ? 'Got it' : 'OK', more = made ? 'How it’s made' : alike ? 'Sounds like' : '';   // (what the English button becomes, and a new word's card goes on to)
     let en = isNew;   // the English shows (seen again: once you've pressed English)
     const front = () => {   // the word's card: a new word with how it's made goes on to it (How it's made ▸), not Got it
-      const howFirst = isNew && made, howBtn = '<button class="btn" data-a="made">How it’s made</button>';
+      const howFirst = isNew && more, howBtn = `<button class="btn" data-a="made">${more}</button>`;
       openCard(`${isNew ? '<p class="label">⭐ New word to learn</p>' : `<p class="label">Word ${pips(w)}</p>`}
 
         <div class="word side"><div class="pic" aria-hidden="true">${picHTML(opts.pic || w)}</div><div class="big">${w}</div><div class="py">${d.py}</div>
         <div class="en" ${en ? '' : 'hidden'}>${esc(d.en)}</div>${opts.note ? `<p class="note">${esc(opts.note)}</p>` : ''}</div>
-        <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${howFirst ? '<button class="btn primary" data-a="made">How it’s made ▸</button>'
-          : `${isNew ? '' : en ? (made ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${isNew ? 'Got it' : 'OK'}</button>`}</div>`);
+        <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${howFirst ? `<button class="btn primary" data-a="made">${more} ▸</button>`
+          : `${isNew ? '' : en ? (more ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok">${label}</button>`}</div>`);
       on('[data-a=say]', () => say(w));
       on('[data-a=en]', e => {   // the English, and then how it's made from the same place
         en = true; sheet.querySelector('.word .en').hidden = false;
-        const b = e.currentTarget; if (made){ b.setAttribute('data-a', 'made'); b.textContent = 'How it’s made'; b.onclick = how; } else b.remove();
+        const b = e.currentTarget; if (more){ b.setAttribute('data-a', 'made'); b.textContent = more; b.onclick = next; } else b.remove();
         const p = sheet.querySelector('.primary'); if (p) p.focus({preventScroll:true});
       });
-      on('[data-a=made]', how);
+      on('[data-a=made]', next);
       on('[data-a=ok]', done);
     };
-    const how = () => madeCard(w, front, done, isNew ? 'Got it' : 'OK');
+    const sounds = () => soundsCard(w, made ? how : front, done, label);
+    const how = () => madeCard(w, front, alike ? sounds : done, alike ? 'Sounds like ▸' : label);
+    const next = () => made ? how() : sounds();
     front();
     if (!opts.quiet) say(w);
   });
