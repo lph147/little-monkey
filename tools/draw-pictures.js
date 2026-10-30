@@ -693,6 +693,19 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.dot(3, 10, '#2A1E16'); p.dot(3, 11, '#2A1E16');                                        // nose
     p.eye(8, 8);
   },
+  '青蛙': p => {   // frog: green, sitting facing you, big eyes on top, a wide smile, on a lily pad
+    const G = '#5DB34A', LT = {light: '#8AD46A', dark: '#3F8A34'};
+    p.fill(O(16, 27.5, 14, 3.4), '#3E8E46', {light: '#5FB060', dark: '#2C6A34'});           // lily pad
+    p.fill(or(O(6.5, 23, 5, 4), O(25.5, 23, 5, 4)), G, LT);                                   // back legs
+    p.fill(O(16, 19, 10, 8), G, LT);                                                          // body
+    p.flat(O(16, 22.5, 6.4, 4.6), '#D2EAA2');                                                 // pale belly
+    p.fill(or(Rc(9, 22, 3, 6, 1.5), Rc(20, 22, 3, 6, 1.5)), G, {...LT, edge: true});           // front legs
+    p.fill(or(O(10, 10.5, 4.2, 4), O(22, 10.5, 4.2, 4)), G, LT);                              // eye bumps
+    p.flat(or(O(10, 10, 2.6, 2.6), O(22, 10, 2.6, 2.6)), '#FFFFFF');                          // eyes
+    p.flat(or(Rc(9, 9, 2, 3), Rc(21, 9, 2, 3)), '#1E1A16');                                   // pupils
+    p.flat(path([[11, 17], [16, 19], [21, 17]], .5), '#2C6A2C');                              // its smile
+    p.dot(15, 14, '#2C6A2C'); p.dot(17, 14, '#2C6A2C');                                       // nostrils
+  },
   '马': p => {   // horse: brown, standing, head to the left, a dark mane and tail (unlike the deer: no antlers, no spots; unlike the cow: brown, no horns)
     const H = '#A8683A', LT = {light: '#C98A58', dark: '#7E4A24'}, MANE = '#3A2416';
     p.fill(or(Rc(15.5, 20, 2.2, 9), Rc(26, 20, 2.2, 9)), '#7E4A24');                           // far legs

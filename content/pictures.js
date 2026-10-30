@@ -3740,6 +3740,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '青蛙': {   // frog
+    palette: {a:'#384D29', b:'#5E5B58', c:'#203617', d:'#8AD46A', e:'#FFFFFF', f:'#3F8A34', g:'#5DB34A', h:'#1E1A16', i:'#2C6A2C', j:'#D2EAA2', k:'#36682B', l:'#2B4226', m:'#5FB060', n:'#3E8E46', o:'#2C6A34', p:'#1A2B17'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      ".......aabbac......aabbac.......",
+      "......addeedfc....addeedfc......",
+      ".....adgeeeegfc..adgeeeegfc.....",
+      ".....adeehheefc..adeehheefc.....",
+      ".....adeehheefcaaadeehheefc.....",
+      ".....adgehhegfdddddgehhegfc.....",
+      ".....cfggeeggfggggfggeeggfc.....",
+      "......cffffffggggggffffffc......",
+      ".......adggggggigigggggfc.......",
+      "......adggggggggggggggggfc......",
+      "......adggggggggggggggggfc......",
+      ".....adggggiiiggggiiiggggfc.....",
+      "....aadggggggiiiiiiggggggfcc....",
+      "...adddggggjjjjjjjjjjggggfdfc...",
+      "..adggfgggjjjjjjjjjjjjgggfggfc..",
+      ".adggggdggjjjjjjjjjjjjggfggggfc.",
+      ".adggggfgkkkjjjjjjjjkkkgfggggfc.",
+      ".adgggggfkgkjjjjjjjjkgkfgggggfc.",
+      ".cfggggggkgkjjjjjjjjkgkggggggfc.",
+      "..cfgggggkgkjjjjjjjjkgkgggggfc..",
+      "..lmfffffkgknjjjjjjnkgkfffffop..",
+      ".ponnnnnnkkknnnnnnnnkkknnnnnnop.",
+      "..poonnnnnnnnnnnnnnnnnnnnnnoop..",
+      "...ppoooonnnnnnnnnnnnnnoooopp...",
+      ".....ppppoooooooooooooopppp.....",
+      ".........pppppppppppppp........."
+    ]
+  },
   '马': {   // horse
     palette: {a:'#352112', b:'#4D3623', c:'#7E4A24', d:'#C98A58', e:'#A8683A', f:'#F4E8D4', g:'#613C22', h:'#2D1C11', i:'#1B120C', j:'#FFFFFF', k:'#1E1A16', l:'#3A2416', m:'#75665C', n:'#322A24', o:'#A58066', p:'#5E3418', q:'#413227', r:'#2A1E16', s:'#2A1A0E', t:'#2B1D12', u:'#623A1C', v:'#2C1C10', w:'#1A130E'},
     rows: [

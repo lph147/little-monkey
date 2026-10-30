@@ -599,6 +599,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(6, 16, 'down', 'looking out from the lookout’s railing');
   assert.ok(area().cowSeen === 1 && get('__scenes').includes('cowView'), 'the cow, far below, by its spring');
   await walk([[6, 16], [6, 13], [21, 13], [21, 21], [13, 21], [13, 22]], 'down the steps, to the brook');
+  // A frog on a lily pad on the brook, just west of the stepping stones (30 October 2026: a chapter 1 friend where there were none)
+  await pressAt(11, 22, 'left', 'meeting the frog on its lily pad');
+  assert.ok(knows('青蛙') && get('S.friends').includes('frog'), 'the frog teaches 青蛙, and becomes your friend');
   // Over the brook (28 October 2026): its stepping stones, two rows of three, can't be walked onto, only hopped onto: at
   // each row, you hear a word, and hop onto the stone with its picture
   stand(13, 22, 'down');

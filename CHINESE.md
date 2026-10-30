@@ -318,6 +318,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 猫头鹰在树上。 | māotóuyīng zài shù shàng. | The owl is in the tree. | 猫头鹰 |  |
 | 鸭子在水里。 | yāzi zài shuǐ lǐ. | The duck is in the water. | 鸭子 |  |
 | 马在吃草。 | mǎ zài chī cǎo. | The horse is eating grass. | 马 |  |
+| 青蛙很小。 | qīngwā hěn xiǎo. | The frog is very small. | 青蛙 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 | 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
 
@@ -492,6 +493,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 熊 | xióng | bear |  |
 | 狐狸 | húli | fox |  |
 | 蝴蝶 | húdié | butterfly |  |
+| 青蛙 | qīngwā | frog |  |
 | 马 | mǎ | horse |  |
 | 鸭子 | yāzi | duck |  |
 | 猫头鹰 | māotóuyīng | owl |  |

@@ -81,6 +81,7 @@ const WORD_BANK = {
   '熊': {py:'xióng', en:'bear', pic:'🐻', area:1, category:'animals'},   // (chapter 1: at the big rocks, as you lead the cow home)
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},   // (chapter 1: hiding on the hillside; in the meadow's tall grass until 23 October 2026)
   '蝴蝶': {py:'húdié', en:'butterfly', pic:'🦋', area:1, category:'animals'},   // (chapter 1: fluttering over the flowers on the riverside, the way east to the bees)
+  '青蛙': {py:'qīngwā', en:'frog', pic:'🐸', area:1, category:'animals'},   // (chapter 1: on a lily pad by the south slope's stepping stones)
   '马': {py:'mǎ', en:'horse', pic:'🐴', area:1, category:'animals'},   // (chapter 1: out on the pasture's grass)
   '鸭子': {py:'yāzi', en:'duck', pic:'🦆', area:1, category:'animals', alike:['鸟']},   // (chapter 1: swimming on the home ground's stream)
   '猫头鹰': {py:'māotóuyīng', en:'owl', pic:'🦉', area:1, category:'animals', alike:['鸟']},   // (chapter 1: perched on a dead pine in the dark pines)

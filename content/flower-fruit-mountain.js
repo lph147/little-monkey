@@ -2342,6 +2342,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '猫头鹰': 'Up on a dead pine in the dark pines, just inside the way in from the south slope.',
     '鸭子': 'Swimming on the home ground’s stream, east of the fishing monkey.',
     '马': 'Out on the pasture’s grass, west of the way in from the dark pines.',
+    '青蛙': 'On a lily pad on the south slope’s brook, just west of the stepping stones.',
     '狼': 'In the long grass in the pine wood.',
     '熊': 'Rearing up out of the long grass between the big rocks in the pasture, as you led the cow home.',
     '狐狸': 'Hiding in the tall grass on the hillside.',
@@ -2493,6 +2494,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '猫头鹰': {zh:'猫头鹰 在 树 上 。', en:'The owl is in the tree.'},
     '鸭子': {zh:'鸭子 在 水 里 。', en:'The duck is in the water.'},
     '马': {zh:'马 在 吃 草 。', en:'The horse is eating grass.'},
+    '青蛙': {zh:'青蛙 很 小 。', en:'The frog is very small.'},
     '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'},
     '熊': {zh:'山 上 有 熊 。', en:'There are bears on the mountain.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now; 蜜蜂, 花上有蜜蜂。,
@@ -2602,7 +2604,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: a horse grazing out on the pasture's grass, west of the way in from the dark pines (big: it stands up out
     // of its square, taller than you, as the cow does)
     {id:'horse', word:'马', at:[9, 18, 'pasture'], home:'草', chapter:1, clue:'The pasture, out on the grass',
-      meetNote:'A horse looks up from the grass and swishes its tail. Answer its questions to make friends.'}
+      meetNote:'A horse looks up from the grass and swishes its tail. Answer its questions to make friends.'},
+    // chapter 1: a frog on a lily pad on the south slope's brook, just west of the stepping stones (swims: it floats there,
+    // bobbing, and you meet it from the bank beside it, or from the tall grass above it)
+    {id:'frog', word:'青蛙', at:[10, 22, 'southSlope'], home:'水', chapter:1, swims:true, clue:'The south slope, by the stepping stones',
+      meetNote:'A frog sits on a lily pad on the brook, croaking. Answer its questions to make friends.'}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card). Once you
   // know the word, each is one of these colours (colours), and A shows it, such as 黄色的鸟 (a yellow bird), once you know

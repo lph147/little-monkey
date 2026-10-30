@@ -131,6 +131,11 @@ const MAP_SPRITES = {
     palette: {a:'#33281C', b:'#7A6042', c:'#533C26', d:'#3E2614', e:'#302012', f:'#714724', g:'#DE9E62', h:'#9A5A28', i:'#FFFFFF', j:'#1E1A16', k:'#C27A3E', l:'#1A130E', m:'#2A1E16', n:'#5B5853', o:'#494541', p:'#FBF1DE', q:'#F7F5EF', r:'#BEBBB5', s:'#E9C79C', t:'#B08667', u:'#6F401E', v:'#301E10', w:'#574939', x:'#1F1710', y:'#3A2A1E'},
     rows: [".aba...aba............","..aba.aba.............",".abbbaabba............","..aababacd............","...efgfcghd...........",".ccgijkfhd............","cggfjjkfhd............","lmkkfhfkhd.cccd.......",".dhhddhkkhcggghddnno..","..dd..cgkhgpkpkphqqro.","......dhhkkkkkkkkhrro.","......cgkkkpkpkpkphd..","......dhkkkkkkkkkhd...",".......dhkkkkkkkhhd...",".......effsssssfftuv..",".......cgfuvwwcgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgfuuv..",".......xyyx...xyyxv...","........xx.....xx....."]
   },
+  '青蛙': {   // frog, facing you, on a lily pad (chapter 1: on the brook by the south slope's stepping stones)
+    // tiny: 9 pixels, drawn with the shape kit from its own map drawing, its eyes by hand
+    palette: {a:'#384D29', b:'#203617', c:'#8AD46A', d:'#3F8A34', e:'#1E1A16', f:'#FFFFFF', h:'#5DB34A', i:'#D2EAA2', j:'#78B07E', k:'#1A2B17', l:'#2C6A34'},
+    rows: ["................", "................", "................", "................", "................", "................", "................", "................", ".....ab.ab......", "....acdacdb.....", "....bfecefb.....", "....achhhdb.....", "...acciiiddb....", "...dhdiiidhd....", "...bdjjijjdb....", "...klllllllk...."]
+  },
   '马': {   // horse, side on, head to the left (chapter 1: out on the pasture's grass)
     // big: 22 pixels, on a 22 × 22 canvas, standing up out of its square, drawn with the shape kit from its picture in tools/draw-pictures.js
     faces: 'left',
