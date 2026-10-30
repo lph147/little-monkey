@@ -117,7 +117,10 @@ function asleepSprite(){
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
-  perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || ''}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
+  perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
+// Whether an animal is out yet: once the story has reached its chapter (decided 30 October 2026, so a chapter's new
+// friends, such as the duck on the home ground's stream, aren't there in the prologue).
+const inChapter = a => a.chapter <= ((here() || {}).chapter || 0);
 // An animal (or a wild creature: spr, its map sprite, and faces, which way it looks) turned to face you, from where it is
 // (x): drawn the other way round when it would look away from you, such as a wolf jumping out on your left. Or away from
 // you (away), as it runs off.
@@ -135,7 +138,7 @@ const outOf = a => (here().out || {})[a.id] || [];
 const outHere = () => canWild() ? ANIMALS.filter(a => a.stays && a.place === PLACE).flatMap(a => outOf(a).map(([x, y, f]) => ({a, x, y, friend:!!f}))) : [];
 const outAt = (x, y) => outHere().find(o => o.x === x && o.y === y);
 // An animal living at this spot, or out there, once animals appear (you can't walk through it).
-const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && a.at[0] === x && a.at[1] === y) || (outAt(x, y) || {}).a || null : null;
+const animalAt = (x, y) => canWild() ? ANIMALS.find(a => a.at && a.place === PLACE && inChapter(a) && a.at[0] === x && a.at[1] === y) || (outAt(x, y) || {}).a || null : null;
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; else if (WORD_BANK[c.look]) FRIEND_NAMES[c.id] = c.look; });   // (one that looks like a creature with a word: by its word, such as 蜂王)

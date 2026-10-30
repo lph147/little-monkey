@@ -562,6 +562,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(15, 5, 'up', 'giving the big monkey the flowers');
   assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气 to his thanks');
   assert.deepEqual([area().flowers, area().schoolFlowers, run('tileAt(10, 5).look')], ['done', true, 'flowerBed'], 'he plants them in front of the school');
+  // The duck swimming on the home ground's stream (30 October 2026: a chapter 1 friend where there were none), met from the bank
+  await pressAt(27, 17, 'down', 'meeting the duck on the stream');
+  assert.ok(knows('鸭子') && get('S.friends').includes('duck'), 'the duck teaches 鸭子, and becomes your friend');
   // The 老板's new shop (29 October 2026): with the flowers planted, he comes up from the meadow (his old stall there empty);
   // talk to him by the way in, and the troop builds him a shop there as you watch: 我来了！ 这里很好！ It sells headbands
   // in every colour you know (asked for as 我要蓝色的头带, the colour missing), and food

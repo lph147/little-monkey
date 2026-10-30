@@ -1270,7 +1270,7 @@ function showPlaceName(){
 const roamsHere = a => a.roams.includes(PLACE) && a.place !== PLACE && S.friends.includes(a.id);
 const allOut = a => { const n = here()[a.counts] || 0; return !!a.stays && n < a.many && n + outOf(a).filter(o => !o[2]).length >= a.many; };
 function hideAnimal(){
-  const hiding = ANIMALS.filter(a => (!a.at && (!a.hides || a.hides === PLACE) || roamsHere(a)) && !allOut(a));
+  const hiding = ANIMALS.filter(a => (!a.at && (!a.hides || a.hides === PLACE) || roamsHere(a)) && inChapter(a) && !allOut(a));
   if (rustle || !canWild() || !hiding.length || stepsSince < HIDE_AFTER) return;
   const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3 && !animalAt(x, y));
   if (!far.length) return;

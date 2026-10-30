@@ -81,6 +81,7 @@ const WORD_BANK = {
   '熊': {py:'xióng', en:'bear', pic:'🐻', area:1, category:'animals'},   // (chapter 1: at the big rocks, as you lead the cow home)
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},   // (chapter 1: hiding on the hillside; in the meadow's tall grass until 23 October 2026)
   '蝴蝶': {py:'húdié', en:'butterfly', pic:'🦋', area:1, category:'animals'},   // (chapter 1: fluttering over the flowers on the riverside, the way east to the bees)
+  '鸭子': {py:'yāzi', en:'duck', pic:'🦆', area:1, category:'animals', alike:['鸟']},   // (chapter 1: swimming on the home ground's stream)
   '猫头鹰': {py:'māotóuyīng', en:'owl', pic:'🦉', area:1, category:'animals', alike:['鸟']},   // (chapter 1: perched on a dead pine in the dark pines)
   '黄蜂': {py:'huángfēng', en:'wasp', pic:'🦟', area:1, category:'animals', alike:['蜜蜂']},   // (chapter 1: in the tall flowers of the bees' valley; its picture is a pixel wasp, a striped insect like the bee: there's no emoji for a wasp, so its stand-in is a mosquito)
   '牛': {py:'niú', en:'cow', pic:'🐄', area:1, category:'animals'},   // (chapter 1: lost in the pasture south of the home ground, scared of the wolves; heard first in the thirsty monkey's news)
@@ -266,6 +267,7 @@ const MADE = {
   '树': {clue:['木', 'mù', 'tree'], why:'on its left, drawn like a tree'},
   '木头': {clue:['木', 'mù', 'tree'], why:'drawn like a tree: wood comes from trees'},
   '吃': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you eat with your mouth'},
+  '鸭子': {clue:['鸟', 'niǎo', 'bird'], why:'is on the right of 鸭: a duck is a bird'},
   '喝': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you drink with your mouth'},
   // made of words or characters
   '山羊': {parts:[['山', 'shān', 'mountain'], ['羊', 'yáng', 'sheep']]},

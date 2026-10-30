@@ -11,6 +11,7 @@ const ready = () => loadGame({save: {version: 10, started: true, areas: {1: {eld
 
 test('animals with a spot live where you can face them: up a tree, on a cliff, or standing in a clearing, where you can\'t walk through them', () => {
   const game = ready();
+  game.run('here().chapter = 1');   // (so chapter 1's are there too)
   for (const a of get(game, 'ANIMALS.filter(a => a.at)')){
     const [x, y] = a.at;
     game.run(`setPlace('${a.place}')`);
@@ -95,7 +96,7 @@ test('animals on the map at their sizes: tiny, small, medium and big, at the bot
   const size = ([canvas, px]) => canvas > 16 ? 'big' : px <= 10 ? 'tiny' : px <= 12 ? 'small' : 'medium';
   const by = {}; for (const [w, s] of Object.entries(sizes)) (by[size(s)] = by[size(s)] || []).push(w);
   assert.deepEqual(Object.fromEntries(Object.entries(by).map(([k, ws]) => [k, ws.sort()])), {
-    tiny: ['蜘蛛', '蜜蜂', '蝴蝶', '螃蟹'].sort(), small: ['兔子', '猫头鹰'].sort(), big: ['熊', '牛', '野猪', '鹿'].sort(),
+    tiny: ['蜘蛛', '蜜蜂', '蝴蝶', '螃蟹'].sort(), small: ['兔子', '猫头鹰', '鸭子'].sort(), big: ['熊', '牛', '野猪', '鹿'].sort(),
     medium: ['松鼠', '山羊', '狐狸', '狼', '羊', '蛇', '蜂王', '黄蜂'].sort()});
   for (const w of [...by.tiny, ...by.small]) assert.ok(sizes[w][2] <= 1, `${w} stands at the bottom of its square`);
   assert.equal(game.run("ANIMALS.find(a => a.id === 'deer').spr.height"), 22, 'the deer, big');

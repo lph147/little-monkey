@@ -316,6 +316,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山上有野猪。 | shān shàng yǒu yězhū. | There is a wild boar on the mountain. | 野猪 |  |
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 猫头鹰在树上。 | māotóuyīng zài shù shàng. | The owl is in the tree. | 猫头鹰 |  |
+| 鸭子在水里。 | yāzi zài shuǐ lǐ. | The duck is in the water. | 鸭子 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 | 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
 
@@ -490,6 +491,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 熊 | xióng | bear |  |
 | 狐狸 | húli | fox |  |
 | 蝴蝶 | húdié | butterfly |  |
+| 鸭子 | yāzi | duck |  |
 | 猫头鹰 | māotóuyīng | owl |  |
 | 黄蜂 | huángfēng | wasp |  |
 | 牛 | niú | cow |  |
@@ -574,6 +576,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 树 | shù | 木 mù (tree): on its left, drawn like a tree |  |
 | 木头 | mùtou | 木 mù (tree): drawn like a tree: wood comes from trees |  |
 | 吃 | chī | 口 kǒu (mouth): on its left: you eat with your mouth |  |
+| 鸭子 | yāzi | 鸟 niǎo (bird): is on the right of 鸭: a duck is a bird |  |
 | 喝 | hē | 口 kǒu (mouth): on its left: you drink with your mouth |  |
 | 山羊 | shānyáng | 山 shān (mountain) + 羊 yáng (sheep) = 山羊 (goat) |  |
 | 动物 | dòngwù | 动 dòng (to move) + 物 wù (thing) = 动物 (animal) |  |

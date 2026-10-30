@@ -131,6 +131,12 @@ const MAP_SPRITES = {
     palette: {a:'#33281C', b:'#7A6042', c:'#533C26', d:'#3E2614', e:'#302012', f:'#714724', g:'#DE9E62', h:'#9A5A28', i:'#FFFFFF', j:'#1E1A16', k:'#C27A3E', l:'#1A130E', m:'#2A1E16', n:'#5B5853', o:'#494541', p:'#FBF1DE', q:'#F7F5EF', r:'#BEBBB5', s:'#E9C79C', t:'#B08667', u:'#6F401E', v:'#301E10', w:'#574939', x:'#1F1710', y:'#3A2A1E'},
     rows: [".aba...aba............","..aba.aba.............",".abbbaabba............","..aababacd............","...efgfcghd...........",".ccgijkfhd............","cggfjjkfhd............","lmkkfhfkhd.cccd.......",".dhhddhkkhcggghddnno..","..dd..cgkhgpkpkphqqro.","......dhhkkkkkkkkhrro.","......cgkkkpkpkpkphd..","......dhkkkkkkkkkhd...",".......dhkkkkkkkhhd...",".......effsssssfftuv..",".......cgfuvwwcgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgfuuv..",".......xyyx...xyyxv...","........xx.....xx....."]
   },
+  '鸭子': {   // duck, side on, floating (chapter 1: swimming on the home ground's stream)
+    // small: 11 pixels, drawn with the shape kit from its own map drawing
+    faces: 'left',
+    palette: {a:'#524D46', b:'#D9D3C4', c:'#5E5B58', d:'#FFFFFF', e:'#1E1A16', f:'#4D2F0F', g:'#C9741A', h:'#F7F5EE', i:'#8F8E8A', j:'#4A4742', k:'#C1BFBA', l:'#87837B', m:'#424F55', n:'#A8D8F5'},
+    rows: ["................", "................", "................", "................", "................", "................", ".....a..........", "....aba.........", "...cdeba....a...", "..fgdhbaca.ab...", "...abiiddbcdb...", "....jkdhlllbb...", "....jkhllllba...", "....abhhhhhba...", "....mabbbbba....", "...mnnmaaaa....."]
+  },
   '猫头鹰': {   // owl, facing you (chapter 1: perched on a dead pine in the dark pines)
     // small: 11 pixels, drawn with the shape kit from its picture in tools/draw-pictures.js, its eyes by hand
     palette: {a:'#2E2115', b:'#423323', c:'#6A4A2C', d:'#A88158', e:'#EFE0C2', f:'#8A6440', g:'#FFFFFF', h:'#C9741A', i:'#FFC24A', j:'#A8741E', k:'#382A1B', l:'#402B18', m:'#4E3420', n:'#251A11', o:'#A07A52', p:'#21170E', q:'#241A11', r:'#4A3220', s:'#D9A030', t:'#523D16', u:'#595145', v:'#1E1A16'},

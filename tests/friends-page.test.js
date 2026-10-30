@@ -29,11 +29,11 @@ test('in the prologue: its four animals, a friend, one met but not won over, and
 test('in chapter 1: its animals join, the bees as one card with how many of the six are your friends', () => {
   const g = friends({friends: ['rabbit', 'sheep', 'squirrel', 'goat', 'deer', 'bee', 'playful', 'cow'], met: ['rabbit', 'sheep', 'squirrel', 'goat', 'deer', 'fox', 'bee'],
     areas: {1: {elder: 2, chapter: 1, beeFriends: 3}}});
-  assert.equal(g.el('#sheet').querySelector('.label').textContent, 'Friends 5 of 9 animals', 'the bees count once all six are friends');
+  assert.equal(g.el('#sheet').querySelector('.label').textContent, 'Friends 5 of 10 animals', 'the bees count once all six are friends');
   const c = cards(g);
-  assert.deepEqual(c.slice(4, 9).map(([id, k]) => [id, k]), [['鹿', 'friend'], ['owl', 'fshadow'], ['狐狸', 'fmet'], ['butterfly', 'fshadow'], ['蜜蜂', 'fmet']]);
+  assert.deepEqual(c.slice(4, 10).map(([id, k]) => [id, k]), [['鹿', 'friend'], ['owl', 'fshadow'], ['狐狸', 'fmet'], ['butterfly', 'fshadow'], ['蜜蜂', 'fmet'], ['duck', 'fshadow']]);
   assert.match(c[8][2], /3\/6/);
-  assert.deepEqual(c.slice(9).map(([w]) => w), ['小猴子', '牛'], 'then the troop and others, only your friends');
+  assert.deepEqual(c.slice(10).map(([w]) => w), ['小猴子', '牛'], 'then the troop and others, only your friends');
   assert.equal(g.el('#sheet').querySelectorAll('.fsub').length, 1);
 });
 

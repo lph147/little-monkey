@@ -35,7 +35,7 @@ test('every entry is a word here: its parts make the word, and their pinyin is t
       assert.ok(!m.clue, `${w}: parts or a clue, not both`);
     } else if (m.clue){
       assert.ok(isPart(m.clue), `${w}: its clue is [Chinese, pinyin, English] (and maybe words with it)`);
-      assert.ok([...w].length === 1 || [...w].includes(m.clue[0]), `${w}: a clue is inside a word of one character, or one of a word’s characters`);
+      assert.ok([...w].length === 1 || [...w].includes(m.clue[0]) || [...w].some(c => m.why.includes(`of ${c}`)), `${w}: a clue is inside a word of one character, one of a word’s characters, or inside the one its why names (鸟 on the right of 鸭)`);
     } else if (m.same){
       assert.ok(isPart(m.same) && m.same.length === 3, `${w}: the character it shares is [Chinese, pinyin, English]`);
       assert.ok(words[m.as] && m.as !== w && w.includes(m.same[0]) && m.as.includes(m.same[0]), `${w}: it shares ${m.same[0]} with ${m.as}, another word here`);

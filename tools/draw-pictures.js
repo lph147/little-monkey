@@ -693,6 +693,18 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.dot(3, 10, '#2A1E16'); p.dot(3, 11, '#2A1E16');                                        // nose
     p.eye(8, 8);
   },
+  '鸭子': p => {   // duck: white, floating on the water, an orange bill (unlike the birds: little, perched, blue or coloured)
+    const W = '#F7F5EE', LT = {light: '#FFFFFF', dark: '#D9D3C4'};
+    p.fill(Rc(1, 24, 30, 6, 3), '#6FB7E8', {light: '#A8D8F5', dark: '#4A93CC'});             // the water
+    p.flat(or(Rc(4, 26, 5, 1), Rc(21, 27, 6, 1)), '#C9E8FA');                                 // ripples
+    p.fill(Pg([[24, 17], [31, 12], [29, 20]]), W, LT);                                        // tail
+    p.fill(O(18, 20, 10, 6), W, LT);                                                          // body
+    p.fill(O(20, 19, 6, 3.2), '#E8E2D4', {light: '#F7F3EA', dark: '#C9C1AE', edge: true});    // wing
+    p.fill(Pg([[8, 14], [12, 13], [14, 20], [9, 20]]), W, LT);                                 // neck
+    p.fill(O(10, 10, 5, 4.6), W, {...LT, edge: true});                                        // head
+    p.fill(Rc(1.5, 10, 6.5, 3.4, 1.6), '#F29A2E', {light: '#FFC060', dark: '#C9741A', edge: true});   // bill
+    p.eye(9, 8);
+  },
   '猫头鹰': p => {   // owl: facing you, perched on a branch, with ear tufts and big round orange eyes (unlike the birds: side on, little)
     const B = '#8A6440', LT = {light: '#A88158', dark: '#6A4A2C'}, PALE = '#EFE0C2';
     p.fill(Rc(1, 27, 30, 3, 1.5), '#6B4A2A', {light: '#8C6640', dark: '#4A3220'});           // the branch

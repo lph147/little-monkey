@@ -3740,6 +3740,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '鸭子': {   // duck
+    palette: {a:'#5E5B58', b:'#524D46', c:'#FFFFFF', d:'#D9D3C4', e:'#F7F5EE', f:'#1E1A16', g:'#5E4726', h:'#FFC060', i:'#8C591B', j:'#F29A2E', k:'#4D2F0F', l:'#C9741A', m:'#8F8E8A', n:'#87837B', o:'#E8E2D4', p:'#424F55', q:'#243948', r:'#A8D8F5', s:'#4A93CC', t:'#6FB7E8', u:'#C9E8FA'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      ".........ab.....................",
+      ".......aacdbb...................",
+      "......acceecdb..................",
+      ".....aceeeeeedb.................",
+      "....aceeecfeeedb................",
+      "..ggaceeeffeeedb................",
+      ".ghhhiiieeeeeedb................",
+      ".ghjjjjieeeeeedb..............b.",
+      ".klllllieeeeedb..............bdb",
+      "..kkkkbdmeemdbaaaaaaab.....aacdb",
+      ".......acmmdbacccccccdbab.accdb.",
+      ".......aceeedceeeeeeeeccdaceedb.",
+      ".......bdeeedeeennnnnnnnedeeedb.",
+      "........aceedeenoooooooonedeedb.",
+      ".......acceeednooooooooooneddb..",
+      ".......acdddddnooooooooooneddb..",
+      ".......aceeeeeenooooooooneedb...",
+      ".......bdeeeeeeennnnnnnneeedb...",
+      "........bdeeeeeeeeeeeeeeeedb....",
+      "..pppppppbdeeeeeeeeeeeeeedbppq..",
+      ".prrrrrrrrrdddeeeeeeeedddrrrrsq.",
+      "prttttttttttttddddddddttttttttsq",
+      "prttuuuuutttttttttttttttttttttsq",
+      "prtttttttttttttttttttuuuuuutttsq",
+      "qsttttttttttttttttttttttttttttsq",
+      ".qssssssssssssssssssssssssssssq.",
+      "..qqqqqqqqqqqqqqqqqqqqqqqqqqqq..",
+      "................................"
+    ]
+  },
   '猫头鹰': {   // owl
     palette: {a:'#423323', b:'#2E2115', c:'#A88158', d:'#6A4A2C', e:'#8A6440', f:'#EFE0C2', g:'#FFC24A', h:'#C9741A', i:'#595145', j:'#F29A1E', k:'#1E1A16', l:'#FFFFFF', m:'#382A1B', n:'#E4BD6E', o:'#A8741E', p:'#4E3420', q:'#251A11', r:'#6E4A2A', s:'#402B18', t:'#A07A52', u:'#392A1B', v:'#21170E', w:'#241A11', x:'#8C6640', y:'#D9A030', z:'#4A3220', A:'#6B4A2A'},
     rows: [

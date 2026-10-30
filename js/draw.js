@@ -343,6 +343,13 @@ function drawFlutter(a, X, Y, now, sq = a.at){
   R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
   if (shut) b.drawImage(spr, 0, 0, s, s, x + s / 4, y, s / 2, s); else b.drawImage(spr, x, y);
 }
+// An animal that swims on the water at its spot (swims), such as the duck on the home ground's stream: floating, bobbing
+// gently up and down, ripples spreading either side of it now and then; hopping as you meet it, and for joy (meetHop).
+function drawSwimmer(a, X, Y, now){
+  const bob = Math.floor(now / 520 + a.at[0]) % 2, up = meetHop(a, X, Y, now), k = Math.floor(now / 260) % 4;
+  if (k < 3){ const w = 2 + k * 2; R(b, X + 5 - w, Y + 14, w, 1, 'rgba(255,255,255,.55)'); R(b, X + 12, Y + 14, w, 1, 'rgba(255,255,255,.55)'); }
+  drawFigure(towardsYou(a, a.at[0]), X, Y + bob - up);
+}
 // One of several of a kind out where it came out (stays), such as a bee over the flowers in their valley: hovering, bobbing,
 // looking your way, its wings a blur as they beat, its shadow on the ground below; hopping as you meet it, and for joy, with
 // a heart, as it becomes your friend (meetHop). Gives how high it hovers.
@@ -639,12 +646,13 @@ function drawWorld(now){
   if (!GLOOM) drawSparkles(cx, cy, now);   // (in a gloomy place, over its shade instead, so they shine)
   // animals at their own spots, once animals appear: standing on open ground (the deer), or a little up a cliff, bobbing;
   // those up a tree come after the leaves. While you're meeting one, it stays where it is (meetHop).
-  const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE) : [];
+  const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE && inChapter(a)) : [];
   const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree' || a.perch;   // (up a tree, or perched up on something: over its top)
   for (const a of spotAnimals.filter(a => !inTree(a))){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
     if (a.flutters){ drawFlutter(a, X, Y, now); continue; }
+    if (a.swims){ drawSwimmer(a, X, Y, now); continue; }
     const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y - (a.spr.height - T), now);   // (its heart over its head)
     figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
   }

@@ -40,7 +40,7 @@ function openMenu(focusId){
 // behind the English button (decided 24 October 2026); a monkey's name isn't a word, so tapping it says the name. focus:
 // the friend to come back to.
 const isFriend = a => S.friends.includes(a.id) && !(a.many && (here()[a.counts] || 0) < a.many);   // (the bees: all six)
-const friendAnimals = () => ANIMALS.filter(a => a.chapter <= (here().chapter || 0));
+const friendAnimals = () => ANIMALS.filter(inChapter);
 function friendsPage(back, focus){
   const page = w => !!WORDS[w] && lvl(w) > 0, animals = friendAnimals();
   const named = (a, note = '') => `<button data-w="${a.hz}" data-label="${page(a.hz) ? 'Open' : 'Hear it'}"${note ? ' class="fmet"' : ''}>${portrait(a.id)}<span class="fz">${a.hz}</span><span class="small">${WORDS[a.hz].py}</span>${note ? `<span class="fnote">${note}</span>` : ''}</button>`;
