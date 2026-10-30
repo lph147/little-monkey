@@ -111,13 +111,14 @@ function asleepSprite(){
   return spriteCache[k] = sprite(rows.map(r => r.join('')), bandPal(PALS.player));
 }
 // The area's animals: at their own spot (at), or hiding in the tall grass, anywhere or in one place's only (hides, such as the
-// fox on the hillside), each in a chapter of the story (0 if not given). place: where it's counted (its spot's, the one it
+// fox on the hillside), each in a chapter of the story (0 if not given); and once it's your friend, hiding in the tall grass
+// of other places too (roams, such as the deer on the south slope). place: where it's counted (its spot's, the one it
 // hides in, or else the first place's). spr: how they look on the map (content/sprites.js, a square's size); pic: their
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
   small:MAP_SPRITES[a.word].small ? sprite(MAP_SPRITES[a.word].small, MAP_SPRITES[a.word].palette) : null,   // (smaller, fluttering on the map: the butterfly)
-  perch:a.perch || 0, glints:a.glints || null}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
+  perch:a.perch || 0, glints:a.glints || null, roams:a.roams || []}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
 // An animal (or a wild creature: spr, its map sprite, and faces, which way it looks) turned to face you, from where it is
 // (x): drawn the other way round when it would look away from you, such as a wolf jumping out on your left. Or away from
 // you (away), as it runs off.
@@ -221,7 +222,7 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','stallEmpty','shop','fishTable','fishTableShrimp','crabTable','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','woodGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','stallEmpty','shop','fishTable','fishTableShrimp','crabTable','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
 const WATERY = ['water','shallows','sea','raft','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','hopStone','logBridge'];
 function grass(g, X, Y, x, y){
@@ -243,7 +244,7 @@ function path(g, X, Y, x, y){
     }
   });
 }
-const TALL = ['#5BA552', '#2F6E38', '#94D883'], LONG = ['#479147', '#1D4F27', '#7CC46B'];   // the ground, the blades and their tips
+const TALL = ['#5BA552', '#2F6E38', '#94D883'], LONG = ['#479147', '#1D4F27', '#7CC46B'], WOOD_TALL = ['#68A759', '#2F6E38', '#94D883'];   // the ground, the blades and their tips (WOOD_TALL: tall grass on the pine wood's floor)
 function tall(g, X, Y, x, y, [ground, blade, tip] = TALL){   // tufts of tall grass (the meadow's), or long grass (LONG: where wild animals live)
   R(g, X, Y, T, T, ground);
   const tuft = (ox, oy) => {
@@ -897,6 +898,7 @@ const LOOKS = {
   plumPoles: (g,X,Y,x,y) => grass(g,X,Y,x,y), stoneLock: (g,X,Y,x,y) => grass(g,X,Y,x,y), weaponRack: (g,X,Y,x,y) => grass(g,X,Y,x,y),
   path:      (g,X,Y,x,y) => path(g,X,Y,x,y),
   tallGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y),
+  woodGrass: (g,X,Y,x,y) => tall(g,X,Y,x,y,WOOD_TALL),   // tall grass on the pine wood's floor (not grass under it: GRASS_FLOOR)
   // flowers, each square all one colour (decided 26 October 2026: A at one shows its colour, such as 红色的花, a red flower,
   // so a square of mixed colours couldn't say which), the same colours as the bees' valley's beds
   redFlowers:    (g,X,Y,x,y) => flowers(g,X,Y,x,y,'#E8343C'),

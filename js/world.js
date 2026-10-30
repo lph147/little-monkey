@@ -1262,12 +1262,15 @@ function showPlaceName(){
   el.hidden = false; clearTimeout(placeNameT); placeNameT = setTimeout(() => { el.hidden = true; }, 2600);
 }
 // A grass animal hides in tall grass at least 3 steps from you: one that lives in one place, hides, only there; and where
-// the grass says which hide in it (animals: their ids), only those, such as the bees in their valley's tall flowers. Not
+// the grass says which hide in it (animals: their ids), only those, such as the bees in their valley's tall flowers. A
+// friend can hide in the tall grass of the places it roams too, never where it lives (decided 30 October 2026: outside
+// the hillside and the bees' valley, every rustle was the rabbit), so you never see two of it at once. Not
 // one of several of a kind whose rest are all out already, waiting for you to play again (such as a bee you didn't win
 // over: no more hide till you have), nor where one is out.
+const roamsHere = a => a.roams.includes(PLACE) && a.place !== PLACE && S.friends.includes(a.id);
 const allOut = a => { const n = here()[a.counts] || 0; return !!a.stays && n < a.many && n + outOf(a).filter(o => !o[2]).length >= a.many; };
 function hideAnimal(){
-  const hiding = GRASS_ANIMALS.filter(a => (!a.hides || a.hides === PLACE) && !allOut(a));
+  const hiding = ANIMALS.filter(a => (!a.at && (!a.hides || a.hides === PLACE) || roamsHere(a)) && !allOut(a));
   if (rustle || !canWild() || !hiding.length || stepsSince < HIDE_AFTER) return;
   const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3 && !animalAt(x, y));
   if (!far.length) return;
@@ -1318,7 +1321,8 @@ function pickAnimal(animals = ANIMALS){
 async function wildAppears(a, spot = findSpot()){
   pl.dir = spot.d;
   const was = outAt(spot.x, spot.y);
-  foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in', spot:!!a.at || !!was};   // (spot: one at its own spot, or out, stays there)
+  const atHome = !!a.at && a.place === PLACE && a.at[0] === spot.x && a.at[1] === spot.y;   // (not a friend jumping out of the grass somewhere it roams)
+  foe = {a, x:spot.x, y:spot.y, t0:performance.now(), state:'in', spot:atHome || !!was};   // (spot: one at its own spot, or out, stays there)
   alertUntil = performance.now() + 1000;
   SFX.encounter();
   await sleep(1100);

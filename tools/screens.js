@@ -225,6 +225,11 @@ SAVES.slopeSteps = {...SAVES.slopeTop, areas: {1: {...SAVES.slopeTop.areas[1], c
 // at the brook's stepping stones (28 October 2026), facing the first row, and with the hop tip not yet seen
 SAVES.slopeBrook = {...SAVES.slopeSteps, pos: {place: 'southSlope', x: 13, y: 22, dir: 'down'}};
 SAVES.slopeBrookTip = {...SAVES.slopeBrook, tips: {...ALL_TIPS, hop: 0}};
+// friends in the grass (30 October 2026): a friend you've made hides in the tall grass of the places it roams too
+const befriend = (save, ids, words) => ({...save, met: [...new Set([...(save.met || []), ...ids])], friends: [...new Set([...(save.friends || []), ...ids])], w: {...save.w, ...knows(2, words)}});
+SAVES.pathFriends = {...befriend(SAVES.homeGround, ['sheep', 'squirrel', 'goat'], ['动物', '羊', '松鼠', '山羊']), pos: {place: 'path', x: 4, y: 3, dir: 'up'}};   // by the peach tree's clearing
+SAVES.slopeFriends = {...befriend(SAVES.slopeBrook, ['deer', 'fox'], ['鹿', '狐狸']), pos: {place: 'southSlope', x: 10, y: 21, dir: 'left'}};   // in the tall grass by the peach tree, above the brook
+SAVES.pineFriends = {...befriend(SAVES.pineWood, ['squirrel'], ['松鼠']), pos: {place: 'pineWood', x: 5, y: 4, dir: 'up'}};   // in the clearing by the old stump
 SAVES.pasture = {...SAVES.waySouth, areas: {1: {...SAVES.waySouth.areas[1], cow: 2, cowSeen: 1}}, pos: {place: 'pasture', x: 24, y: 16, dir: 'right'}};   // on the cow's trail
 // the dark pines (27 October 2026), between the south slope and the pasture: where the way forks, the cow's hoofprints;
 // the top of the gully, where a great hollow pine lies along it; the stream, and the dead pine on its bank; over it, the
@@ -865,6 +870,12 @@ const SCREENS = [
     play(); await wait(100); rustle = {x: 15, y: 11, a: ANIMALS.find(a => a.id === 'bee')}; await wait(400); }},
   {id: 'bee-meet', title: 'A bee buzzes out', save: 'beeHiding', why: 'Out of the tall flowers: the first teaches 蜜蜂 (mìfēng, bee), said straight away; then 我们玩吧！ and its questions.', run: async () => {
     play(); await wait(100); wildAppears(ANIMALS.find(a => a.id === 'bee')); await wait(1600); }},
+  {id: 'friend-path', title: 'A friend in the path’s grass', save: 'pathFriends', why: 'The mountain path’s new tall grass, round the peach tree’s clearing: once the meadow’s goat is your friend, it can jump out here too, to play again (never where it lives).', run: async () => {
+    play(); await wait(100); wildAppears(ANIMALS.find(a => a.id === 'goat'), {x: 4, y: 2, d: 'up'}); await wait(2600); }},
+  {id: 'friend-slope', title: 'The deer on the south slope', save: 'slopeFriends', why: 'The south slope’s new tall grass by the peach tree, above the brook: the deer you made friends with in the pine wood jumps out to play.', run: async () => {
+    play(); await wait(100); wildAppears(ANIMALS.find(a => a.id === 'deer'), {x: 9, y: 21, d: 'left'}); await wait(700); }},
+  {id: 'friend-pines', title: 'Tall grass in the pine wood', save: 'pineFriends', why: 'In the clearing by the old stump, tall grass on the wood’s own floor; the squirrel from the meadow jumps out (the deer never does here, where it lives).', run: async () => {
+    play(); await wait(100); wildAppears(ANIMALS.find(a => a.id === 'squirrel'), {x: 5, y: 3, d: 'up'}); await wait(700); }},
   {id: 'bees-out', title: 'The bees you’ve met', save: 'beesOut', why: 'Each bee you meet stays out, hovering where it came out, so you can see they’re different bees: two friends, and one you didn’t win over, with a ! over it (A at it plays again).', run: async () => {
     play(); await wait(500); }},
   {id: 'bee-another', title: 'Another bee', save: 'beesOut', why: 'A new bee out of the flowers: “Another 蜜蜂 (bee), a new one!”, with how many of the six are your friends so far (never “your friend wants to play again”).', run: async () => {

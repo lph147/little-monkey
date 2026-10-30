@@ -964,10 +964,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       map: [
         "YYYYYYYYYYYYYYYYrrWW^^^^",
         "YYYYYYYYYYYYYYYgrrWW^^^^",
-        "YYYggggYYYYYYYYgrgWW^^^^",
+        "YYYGGGGYYYYYYYYgrgWW^^^^",
         "YYgPgggJYYYYYYYgrgWW^^^^",
         "YYggggJggrrrrrrrrgWW^^^^",
-        "YYYggggwwYYYYYYgrgWW^^^^",
+        "YYYGGGGwwYYYYYYgrgWW^^^^",
         "YYYYwwwYYYYYYYYgrgWW^^^^",
         "^^wwwwwwwwwwwwwgrwWW^^^^",
         "^^gggggnnnnnnggrrgWW^^^^",
@@ -977,8 +977,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "^^==MMMMMvvMMMMvvvWW^^^^",
         "^^rrggnnnnnnnnngggWW^^^^",
         "^^rrrrnnnnnnnnrrrgWW^^^^",
-        "^^ggggnnnnnnnngrrgWW^^^^",
-        "^^^gggnnnnnnnngrrgWW^^^^",
+        "^^GGGgnnnnnnnngrrgWW^^^^",
+        "^^^GGgnnnnnnnngrrgWW^^^^",
         "^^^^^^nnnnnnnngrrgWW^^^^",
         "^^^^^^^^^^^^^^^rr^WW^^^^",
         "^^^^^^^^^^^^^^^rr^WW^^^^"
@@ -998,15 +998,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "^^MWWrrMMMMMM^^MMMMMMMMMM^",
         "^^YWWrrgYYYYY^^YYYYYYYYYM^",
         "^^YWWnnnnnnYY^^YggggJgQgY^",
-        "^^YWWnnnnnnnY^^YgJggggggY^",
-        "^^wWWnnnnnnnwMMwggggggggw^",
+        "^^YWWnnnnnnnY^^YgJgGGGGGY^",
+        "^^wWWnnnnnnnwMMwggggGGGgw^",
         "^^wWWgrgggggwMMwwggrggwww^",
         "^^wWWWkWWWWWWWWWWWWkWWWww^",
         "^^wWWWkWWWWWWWWWWWWkWWWww^",
         "^^wgggrgnnnnnnnngggrgWWww^",
         "^^wwgrrrnnnnnnnnrrrrgWWww^",
-        "^^wPggggnnnnnnnngggrgWWww^",
-        "^^wwwgTgnnnnnnnngTgrgWWww^",
+        "^^wPGGGgnnnnnnnngggrgWWww^",
+        "^^wwwGTgnnnnnnnngTgrgWWww^",
         "^^^^^^^^^^^^^^^^^^^rrWW^^^"
       ]
     },
@@ -1492,14 +1492,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
       },
       map: [
         "YYYYYYYYYYYY..YYYYYYYYYYYY",   // up to the home ground, over the bridge
-        "YYggwwgggggg..gggggwwgggYY",
-        "YYgggQgggggg..gggogggTggYY",
+        "YYggwwgGGGGG..gggggwwgggYY",
+        "YYgggQgGGGGg..gggogggTggYY",
         "YYgTgggg......ggggggggggYY",   // a wild apple tree (Q); the way winds west to the steps
         "YYggggggnnnnnnnnnnnnngggYY",   // long grass across the path (28 October 2026: snakes and spiders on the way)
         "YYggggggnnnnnnnnnnnnngogYY",
         "YYg.....nnnnnnnnnnnnngggYY",
         "YYT......ggg..ggggggggTgYY",
-        "YYg..goggggg..ggggggggggYY",
+        "YYg..goggggg..gGGGGGGgggYY",
         "MMM==MMMMMMvvvvvMMMMMMMMMM",   // a cliff: stone steps (left), the long way, and a bank to hop down (middle), the quick way
         "MMM==MMMMMMvvvvvMMMMMMMMMM",
         "YYg..gggggggnnnnnngoggTgYY",
@@ -1511,8 +1511,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YYggRRRRRRguggggggkgg..gYY",
         "MMMMMMMMMMMMvvvvvMMMM==MMM",   // steps (right), a bank (middle)
         "MMMMMMMMMMMMvvvvvMMMM==MMM",
-        "YYggggggoggggggggTnnn..gYY",
-        "YYggPgggggggg.....nnn..gYY",   // a peach tree in the corner; long grass between the steps and the brook
+        "YYggggggoGGGgggggTnnn..gYY",
+        "YYggPggGGGGGg.....nnn..gYY",   // a peach tree in the corner; long grass between the steps and the brook
         "YYgggggggWWgg.....nnn.ogYY",
         "YYWWWWWWWWWWzzzWWWWWWWWWYY",   // the brook, and its stepping stones, a row of three, and another
         "YYWWWWWWWWWWzzzWWWWWWWWWYY",
@@ -1829,15 +1829,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ],
       legend: {
         'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass: here, wolves too
-        'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'}   // the only way over the stream (chapter 1's bridges teach 桥)
+        'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'},   // the only way over the stream (chapter 1's bridges teach 桥)
+        'ĝ': {look:'woodGrass', walk:true, word:'草', animals:true}   // tall grass on the wood's floor, in the clearings by the stumps (friends hide in it, 30 October 2026)
       },
       map: [
         "pppppppppppppppppppppppppppppppppp",
-        "pppiiippppppppppppppppppppggggpppp",
-        "ppqiiiippppppppppppppppppggggggqpp",
-        "ppiiiiipppppppppppppppppggJgggggpp",
-        "ppiipiippppppppppppppppogggggggggp",
-        "ppiiiiippppppppppppppiixgggggggggp",
+        "pppiiippppppppppppppppppppGGGgpppp",
+        "ppqiĝĝĝppppppppppppppppppgGGGggqpp",
+        "ppiiĝĝĝpppppppppppppppppggJgggggpp",
+        "ppiipiippppppppppppppppogggggGGGgp",
+        "ppiiiiippppppppppppppiixggggGGGGgp",
         "pppppiippppppppppppppniopggJggmgpp",
         "pppppnnppppppppppnnnnnippppggggppp",
         "pppppnnppppppppppnnnnnippppppppppp",
@@ -1852,8 +1853,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "ppppiipppppnnnnnnnnnpppppppOOOOppp",
         "ppqiiiipppppnnnnnnnppppppoiiimpppp",
         "piiiiipppppppppnnnpppppiiiiiiipppp",
-        "piiiiiiiinnpppiiiiippppiiiiiippppp",
-        "ppiiiiiiinnpoipiiiippppnippppppppp",
+        "piĝĝĝiiiinnpppiiiiippppiiiiiippppp",
+        "ppiĝĝĝiiinnpoipiiiippppnippppppppp",
         "ppppiipppnnpniiiiiiipppnippppppppp",
         "pppppppppnnnniiiiiiinnnnippppppppp",
         "pppppppppnnnniiiippinnnnippppppppp",
@@ -2548,13 +2549,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // new-word card the first time. chapter: the chapter it's found in (0, the prologue, if not given),
   // for the counters that count animals (a counter's place counts just those in one place).
   animals: [
+    // roams: once it's your friend, where else it hides in the tall grass, never where it lives (decided 30 October 2026, after
+    // playing it: outside the hillside and the bees' valley, every rustle in the grass was the rabbit)
     {id:'rabbit', word:'兔子'},
-    {id:'sheep', word:'羊', at:[3, 4], home:'草', meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
-    {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
-    {id:'goat', word:'山羊', at:[4, 16], home:'山', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
+    {id:'sheep', word:'羊', at:[3, 4], home:'草', roams:['valley', 'pasture'], meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
+    {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', roams:['path', 'hillside', 'pineWood'], meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
+    {id:'goat', word:'山羊', at:[4, 16], home:'山', roams:['path', 'valley', 'hillside', 'southSlope', 'cliffs'], meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
-    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
+    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, roams:['southSlope', 'darkPines', 'pasture'], meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
     // chapter 1: an owl in the dark pines, up on an old dead pine just west of the way in (perch: how high it sits, in
     // pixels), its eyes glinting in the gloom (glints: where they are in its map sprite); 28 October 2026, after playtesting,
     // for something to practise on the long way south
@@ -2562,10 +2565,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       meetNote:'Two big round eyes blink at you from the dead pine: an owl! Answer its questions to make friends.'},
     // chapter 1: a fox hiding in the hillside's tall grass, only there (hides). It was the prologue's, in the meadow's tall grass, until
     // 23 October 2026, when the sheep took its place, for 羊 (sheep), then 山 + 羊 = 山羊 (goat).
-    {id:'fox', word:'狐狸', hides:'hillside', chapter:1, meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'},
+    {id:'fox', word:'狐狸', hides:'hillside', chapter:1, roams:['pineWood', 'riverside', 'southSlope', 'darkPines'], meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'},
     // chapter 1: a butterfly over the wildflowers on the riverside, beside the way east to the bees (it was to be the hillside's,
     // until the fox took its place, 23 October 2026). flutters: it hovers over its spot, its wings beating
-    {id:'butterfly', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'},
+    {id:'butterfly', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, roams:['melonField'], meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'},
     // chapter 1: bees hiding in the tall flowers of their valley, only there (the flowers shake where one is hiding), six to make
     // friends with (many: decided 25 October 2026 by the game's owner, hidden like the wasps; they were each over their own
     // flower). counts: how many so far, in the area's progress; counted: what happens as each becomes your friend, you

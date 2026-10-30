@@ -595,6 +595,12 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The menu's Save button closes the menu and says "Saved: Game 1, just now".
 - [ ] Settings, Watch the opening plays the opening, then carries on where you were. Once you're king, Settings also has Watch becoming king, which plays that scene and then carries on where you were. Settings, Title screen: your games, then your game and Continue, puts you back where you were.
 
+## Friends in the grass
+
+- [ ] With a game that has made friends with the meadow's goat or squirrel: walk up the mountain path. Tall grass round the peach tree's clearing at the top left, and in the bottom-left corner, with plain grass between it and the long grass. Now and then it rustles: face it, and sometimes the rabbit jumps out, sometimes the goat or squirrel ("Your 朋友 wants to play again!"). In the river valley, the sheep or goat.
+- [ ] In chapter 1, with the deer as your friend: tall grass on the south slope by the apple tree at the top, along the first terrace and round the peach tree above the brook; the deer or the fox jumps out of it, drawn jumping out of the grass. In the pine wood, tall grass in the deer's glade and in the clearings by the two old stumps (on the wood's own floor, not a square of meadow): the squirrel or fox, never a second deer.
+- [ ] An animal you've met but not won over stays at home: it never jumps out anywhere else.
+
 ## Quick practice
 
 - [ ] On the title screen, for a game that knows at least 4 words with pictures: Practise beside Continue, saying how many words need it (none for a new game, or one that knows fewer). Tap it: no music, and the 练习 Practice card: your words caught, how many need practice, and how many at each level, with − 10 questions + and Back and Start.

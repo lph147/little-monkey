@@ -424,6 +424,7 @@ function drawFlying(n, X, Y, now, k){
   b.drawImage(faces && side && n.dir !== faces ? mirrored(spr) : spr, X, Y - hover);   // (facing the way it's going, or you)
   if (Math.floor(now / 90) % 2) R(b, X + 5, Y - hover + 2, 6, 1, 'rgba(255,255,255,.7)');   // the wings' blur
 }
+const TALL_LOOKS = ['tallGrass', 'woodGrass'];   // tall grass animals hide in (the meadow's, or on the pine wood's floor)
 function drawFoe(cx, cy, now){
   if (!foe || foe.spot) return;   // (one met at its own spot is drawn there: meetHop)
   const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x);   // (looking at you)
@@ -431,13 +432,13 @@ function drawFoe(cx, cy, now){
     const k = clamp(e / 280, 0, 1), h = Math.max(1, Math.round(16 * k)), jump = e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
     R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)');
     b.drawImage(spr, 0, 0, 16, h, X, Y + 16 - h - jump, 16, h);
-    if (e < 600 && tileAt(foe.x, foe.y).look === 'tallGrass'){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
+    if (e < 600 && TALL_LOOKS.includes(tileAt(foe.x, foe.y).look)){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
   } else {
     const e1 = now - foe.t1;
     if (foe.state === 'hide'){   // ducking back down into the grass where it came from (you ran away from it)
       const h = Math.round(16 * clamp(1 - e1 / 450, 0, 1));
       if (h > 0){ R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)'); b.drawImage(spr, 0, 0, 16, h, X, Y + 16 - h, 16, h); }
-      if (e1 < 600 && tileAt(foe.x, foe.y).look === 'tallGrass'){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e1/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
+      if (e1 < 600 && TALL_LOOKS.includes(tileAt(foe.x, foe.y).look)){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e1/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
     } else if (foe.state === 'happy'){
       const hop = Math.round(Math.abs(Math.sin(e1 / 130)) * 4);
       b.globalAlpha = clamp(1 - (e1 - 700) / 300, 0, 1);
@@ -483,7 +484,7 @@ const messageTop = () => talkTop || talkTopEnd > Math.max(lastMoveEnd, pl.turnT)
 // Standing in tall or long grass hides your feet, as in Pokémon: the map where your feet are (the bottom FEET pixels of
 // your square, wherever you are, between two squares as you walk) is drawn again over you, where it's grass. Gives
 // those parts, each [x, y, w, h] in map pixels.
-const HIDES_FEET = ['tallGrass', 'longGrass', 'tallFlowers'], FEET = 4;
+const HIDES_FEET = ['tallGrass', 'woodGrass', 'longGrass', 'tallFlowers'], FEET = 4;
 function feetInGrass(px = pl.px, py = pl.py){   // (anyone following you too: where they are, px and py)
   const left = Math.round(px), top = Math.round(py) + T - FEET, out = [];
   for (let ty = Math.floor(top / T); ty <= Math.floor((top + FEET - 1) / T); ty++)
