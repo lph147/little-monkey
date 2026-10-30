@@ -118,7 +118,7 @@ function asleepSprite(){
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
   small:MAP_SPRITES[a.word].small ? sprite(MAP_SPRITES[a.word].small, MAP_SPRITES[a.word].palette) : null,   // (smaller, fluttering on the map: the butterfly)
-  perch:a.perch || 0, glints:a.glints || null, roams:a.roams || []}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
+  perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || ''}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
 // An animal (or a wild creature: spr, its map sprite, and faces, which way it looks) turned to face you, from where it is
 // (x): drawn the other way round when it would look away from you, such as a wolf jumping out on your left. Or away from
 // you (away), as it runs off.

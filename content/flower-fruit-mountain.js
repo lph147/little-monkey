@@ -2550,25 +2550,26 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // for the counters that count animals (a counter's place counts just those in one place).
   animals: [
     // roams: once it's your friend, where else it hides in the tall grass, never where it lives (decided 30 October 2026, after
-    // playing it: outside the hillside and the bees' valley, every rustle in the grass was the rabbit)
-    {id:'rabbit', word:'兔子'},
-    {id:'sheep', word:'羊', at:[3, 4], home:'草', roams:['valley', 'pasture'], meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
-    {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', roams:['path', 'hillside', 'pineWood'], meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
-    {id:'goat', word:'山羊', at:[4, 16], home:'山', roams:['path', 'valley', 'hillside', 'southSlope', 'cliffs'], meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
+    // playing it: outside the hillside and the bees' valley, every rustle in the grass was the rabbit). clue: where to look for
+    // it, under its shadow on the Friends page until you've met it (decided 30 October 2026), plain English, never its name
+    {id:'rabbit', word:'兔子', clue:'In tall grass, almost anywhere'},
+    {id:'sheep', word:'羊', at:[3, 4], home:'草', roams:['valley', 'pasture'], clue:'The meadow, by the cliffs near your stone', meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
+    {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', roams:['path', 'hillside', 'pineWood'], clue:'The meadow, up a big tree', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
+    {id:'goat', word:'山羊', at:[4, 16], home:'山', roams:['path', 'valley', 'hillside', 'southSlope', 'cliffs'], clue:'The meadow, on a cliff', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
-    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, roams:['southSlope', 'darkPines', 'pasture'], meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
+    {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, roams:['southSlope', 'darkPines', 'pasture'], clue:'The pine wood, in a sunny glade deep inside', meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
     // chapter 1: an owl in the dark pines, up on an old dead pine just west of the way in (perch: how high it sits, in
     // pixels), its eyes glinting in the gloom (glints: where they are in its map sprite); 28 October 2026, after playtesting,
     // for something to practise on the long way south
-    {id:'owl', word:'猫头鹰', at:[11, 2, 'darkPines'], home:'树', chapter:1, perch:9, glints:[[4, 5, 2], [10, 5, 2]],
+    {id:'owl', word:'猫头鹰', at:[11, 2, 'darkPines'], home:'树', chapter:1, clue:'The dark pines, up an old dead pine', perch:9, glints:[[4, 5, 2], [10, 5, 2]],
       meetNote:'Two big round eyes blink at you from the dead pine: an owl! Answer its questions to make friends.'},
     // chapter 1: a fox hiding in the hillside's tall grass, only there (hides). It was the prologue's, in the meadow's tall grass, until
     // 23 October 2026, when the sheep took its place, for 羊 (sheep), then 山 + 羊 = 山羊 (goat).
-    {id:'fox', word:'狐狸', hides:'hillside', chapter:1, roams:['pineWood', 'riverside', 'southSlope', 'darkPines'], meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'},
+    {id:'fox', word:'狐狸', hides:'hillside', chapter:1, roams:['pineWood', 'riverside', 'southSlope', 'darkPines'], clue:'The hillside’s tall grass', meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'},
     // chapter 1: a butterfly over the wildflowers on the riverside, beside the way east to the bees (it was to be the hillside's,
     // until the fox took its place, 23 October 2026). flutters: it hovers over its spot, its wings beating
-    {id:'butterfly', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, roams:['melonField'], meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'},
+    {id:'butterfly', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, roams:['melonField'], clue:'By the riverside, over the wildflowers', meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'},
     // chapter 1: bees hiding in the tall flowers of their valley, only there (the flowers shake where one is hiding), six to make
     // friends with (many: decided 25 October 2026 by the game's owner, hidden like the wasps; they were each over their own
     // flower). counts: how many so far, in the area's progress; counted: what happens as each becomes your friend, you
@@ -2577,7 +2578,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the first); one you don't win over waits there, with a !, till you play again (A); and once all six are your friends,
     // they fly off to join the swarm. another: the hint before a new one's questions, after the first; again, before playing
     // again with one that's waiting; lost, if you don't win it over.
-    {id:'bee', word:'蜜蜂', hides:'flowerValley', home:'花', chapter:1, meetNote:'A bee buzzes out of the tall flowers! Answer its questions to make friends.',
+    {id:'bee', word:'蜜蜂', hides:'flowerValley', home:'花', chapter:1, clue:'A valley of flowers, in the tall flowers', meetNote:'A bee buzzes out of the tall flowers! Answer its questions to make friends.',
       many:6, counts:'beeFriends', counted:[
         [{say:'count1', by:'player'}, {message:'Your first {蜜蜂|bee} friend! It stays out over the flowers now. Five more bees to make friends with!'}],
         [{say:'count2', by:'player'}, {message:'Two {蜜蜂|bee} friends! Four more to make friends with.'}],

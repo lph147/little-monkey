@@ -32,16 +32,36 @@ function openMenu(focusId){
   sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](); });
 }
 
-// 朋友 Friends: the animals (and monkeys) you've made friends with. Tap one whose name is a word you know, and its page
-// opens, as in the Word Scroll, with its English and how it's made behind the English button (decided 24 October 2026: it
-// only said its name); a monkey's name isn't a word, so tapping it says the name. focus: the friend to come back to.
+// 朋友 Friends: every animal of the chapters you've reached (decided 30 October 2026, so there's something to look for as you
+// explore): your friends in colour, one you've met but not won over in colour too (Not a friend yet; the bees, how many of
+// the six are your friends), and the rest as shadows with a clue to where they live; tap one for its clue. Then the troop
+// and others, friends you make through the story, only once they're your friends, so the story's never given away. Tap a
+// friend whose name is a word you know, and its page opens, as in the Word Scroll, with its English and how it's made
+// behind the English button (decided 24 October 2026); a monkey's name isn't a word, so tapping it says the name. focus:
+// the friend to come back to.
+const isFriend = a => S.friends.includes(a.id) && !(a.many && (here()[a.counts] || 0) < a.many);   // (the bees: all six)
+const friendAnimals = () => ANIMALS.filter(a => a.chapter <= (here().chapter || 0));
 function friendsPage(back, focus){
-  const page = w => !!WORDS[w] && lvl(w) > 0;
-  openCard(`<p class="label">Friends</p>${S.friends.length ? `<div class="friends" data-nav>${S.friends.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}" data-label="${page(hz) ? 'Open' : 'Hear it'}">${portrait(id)}<span style="font-size:1.2rem">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : '<p class="hint">No friends yet. Answer the questions of animals in the tall grass to make friends.</p>'}
+  const page = w => !!WORDS[w] && lvl(w) > 0, animals = friendAnimals();
+  const named = (a, note = '') => `<button data-w="${a.hz}" data-label="${page(a.hz) ? 'Open' : 'Hear it'}"${note ? ' class="fmet"' : ''}>${portrait(a.id)}<span class="fz">${a.hz}</span><span class="small">${WORDS[a.hz].py}</span>${note ? `<span class="fnote">${note}</span>` : ''}</button>`;
+  const card = a => isFriend(a) ? named(a)
+    : S.met.includes(a.id) ? named(a, a.many ? `<b>${here()[a.counts] || 0}/${a.many}</b>` : 'Not a friend yet')
+    : `<button class="fshadow" data-clue="${a.id}" data-label="Where?"><span class="sil">${portrait(a.id)}</span><span class="fz">？</span><span class="fnote">${esc(a.clue)}</span></button>`;
+  const others = S.friends.filter(id => !ANIMALS.some(a => a.id === id));
+  openCard(`<p class="label">Friends <span class="fcount">${animals.filter(isFriend).length} of ${animals.length} animals</span></p>
+    <div class="friends" data-nav>${animals.map(card).join('')}</div>
+    ${others.length ? `<p class="label fsub">The troop and others</p><div class="friends" data-nav>${others.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}" data-label="${page(hz) ? 'Open' : 'Hear it'}">${portrait(id)}<span class="fz">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : ''}
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
-  sheet.querySelectorAll('.friends button').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; if (page(w)){ SFX.blip(); wordPage(w, () => friendsPage(back, w), 'Friends'); } else say(w); });
+  sheet.querySelectorAll('.friends button[data-w]').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; if (page(w)){ SFX.blip(); wordPage(w, () => friendsPage(back, w), 'Friends'); } else say(w); });
+  sheet.querySelectorAll('.friends button[data-clue]').forEach(bt => bt.onclick = () => { SFX.blip(); friendClue(ANIMALS.find(a => a.id === bt.dataset.clue), () => friendsPage(back, bt.dataset.clue)); });
   on('[data-a=ok]', back);
-  const f = focus && sheet.querySelector(`.friends [data-w="${focus}"]`); if (f) f.focus();
+  const f = focus && sheet.querySelector(`.friends [data-w="${focus}"], .friends [data-clue="${focus}"]`); if (f) f.focus();
+}
+// A friend still to find: its shadow, bigger, and where it lives.
+function friendClue(a, back){
+  openCard(`<p class="label">A friend to find</p><div class="fclue"><span class="sil">${portrait(a.id)}</span><div><p class="fz">？</p><p>${esc(a.clue)}.</p><p class="small">Find it, and answer its questions to make friends.</p></div></div>
+    <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  on('[data-a=ok]', back);
 }
 // 衣服 Wardrobe: the clothes you own. Tap one to put it on (your monkey says so, such as 我戴头带, which
 // teaches 戴 the first time and counts as using the words) or to take it off.

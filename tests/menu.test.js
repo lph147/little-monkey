@@ -149,7 +149,7 @@ test('Friends: tap a friend for its page, as in the Word Scroll, its English and
   const sheet = game.el('#sheet'), run = code => game.run(code);
   run('openMenu()');
   sheet.querySelector('[data-m="friends"]').click();
-  assert.deepEqual(sheet.querySelectorAll('.friends button').map(b => [b.dataset.w, b.dataset.label]), [['兔子', 'Open'], ['山羊', 'Open']]);
+  assert.deepEqual(sheet.querySelectorAll('.friends button[data-w]').map(b => [b.dataset.w, b.dataset.label]), [['兔子', 'Open'], ['山羊', 'Open']]);
   sheet.querySelector('.friends [data-w="山羊"]').click();
   assert.equal(sheet.querySelector('.label').textContent, 'Friends · Animals', 'the word’s page');
   assert.equal(sheet.querySelector('.big').textContent, '山羊');
@@ -164,7 +164,7 @@ test('Friends: tap a friend for its page, as in the Word Scroll, its English and
   assert.equal(sheet.querySelector('.label').textContent, 'Friends · Animals', 'Back: the word’s page again');
   assert.deepEqual(run('JSON.stringify(__said)'), '["山羊"]', 'not said again');
   run('pressB()');
-  assert.equal(sheet.querySelector('.label').textContent, 'Friends', 'Back to your friends');
+  assert.equal(sheet.querySelector('.label').textContent, 'Friends 2 of 4 animals', 'Back to your friends');
   assert.equal(run('document.activeElement && document.activeElement.dataset.w'), '山羊', 'on the friend you opened');
   run('pressB()');
   assert.equal(run('document.activeElement && document.activeElement.dataset.m'), 'friends', 'and Back again to the menu');
