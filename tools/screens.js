@@ -285,6 +285,7 @@ SAVES.gardenAsk = {...SAVES.dairyDone, version: 30, w: {...SAVES.dairyDone.w, ..
 SAVES.gardenMarked = {...SAVES.gardenAsk, w: {...SAVES.gardenAsk.w, ...knows(1, ['种子'])}, areas: {1: {...SAVES.gardenAsk.areas[1], garden: 1, melonSeeds: 'asked', grapeSeeds: 'asked', bananaSeeds: 'asked'}},
   tasksSeen: {...SAVES.gardenAsk.tasksSeen, melonSeeds: 1, grapeSeeds: 1, bananaSeeds: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};   // by the garden, facing the big monkey
 SAVES.melonField = {...SAVES.gardenMarked, pos: {place: 'melonField', x: 13, y: 4, dir: 'right'}};   // facing the red bird
+SAVES.melonMouse = {...SAVES.melonField, pos: {place: 'melonField', x: 5, y: 14, dir: 'left'}};   // beside the melon field's tall grass, in its south-west corner (30 October 2026)
 SAVES.melonsSafe = {...SAVES.gardenMarked, areas: {1: {...SAVES.gardenMarked.areas[1], shooed: [1, 2, 3, 4, 5].map(n => 'melonBird' + n)}},
   tasksSeen: {...SAVES.gardenMarked.tasksSeen, melonSeeds2: 1}, pos: {place: 'melonField', x: 12, y: 11, dir: 'right'}};   // facing a melon
 SAVES.seedsBack = {...SAVES.melonsSafe, w: {...SAVES.melonsSafe.w, ...knows(1, ['西瓜'])}, areas: {1: {...SAVES.melonsSafe.areas[1], holding: {melonSeeds: '种子'}}},
@@ -967,6 +968,10 @@ const SCREENS = [
     play(); await wait(700); }},
   {id: 'frog-meet', title: '青蛙', save: 'slopeFrog', why: 'Meeting the frog: its word, 青蛙 (qīngwā, frog), on a new-word card, said straight away; then its questions.', run: async () => {
     play(); await wait(100); pressA(); await wait(1500); }},
+  {id: 'mouse', title: 'Rustling in the melon field', save: 'melonMouse', why: 'Chapter 1: a tiny mouse hides in the melon field’s tall grass, only there; the grass rustles where it is, and it jumps out as you face it, as the fox does on the hillside.', run: async () => {
+    play(); await wait(100); rustle = {x: 2, y: 14, a: ANIMALS.find(a => a.id === 'mouse')}; await wait(700); }},
+  {id: 'mouse-meet', title: '老鼠', save: 'melonMouse', why: 'Meeting the mouse: its word, 老鼠 (lǎoshǔ, mouse), on a new-word card, said straight away; then its questions.', run: async () => {
+    play(); await wait(100); wildAppears(ANIMALS.find(a => a.id === 'mouse'), {x: 4, y: 14, d: 'left'}); await wait(1800); }},
   {id: 'owl-meet', title: '猫头鹰', save: 'pinesOwl', why: 'Meeting the owl: its word, 猫头鹰 (māotóuyīng, owl), on a new-word card, said straight away; then How it’s made: 猫 cat + 头 head + 鹰 eagle.', run: async () => {
     play(); await wait(100); S.pos = {place: 'darkPines', x: 11, y: 3, dir: 'up'}; placePlayer(); pressA(); await wait(1500); }},
   {id: 'pines-log', title: 'A hollow pine', save: 'pinesLog', why: 'Following the hoofprints east, down a narrow gully: a great pine has fallen along it, hollow inside. The cow stepped over it, but a little monkey can crawl right through.', run: async () => {
