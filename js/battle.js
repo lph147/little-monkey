@@ -56,7 +56,7 @@ function pickFoe(wild){
 async function wildBattle(id, spot = findSpot(), opts = {}){
   const f = ENEMIES[id];
   pl.dir = spot.d;
-  foe = {a:{spr:mapSprite(f.word), faces:MAP_SPRITES[f.word].faces}, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
+  foe = {a:{spr:mapSprite(f.word), faces:MAP_SPRITES[f.word].faces, hz:f.word}, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
   alertUntil = performance.now() + 1000;
   SFX.encounter();
   await sleep(1100);

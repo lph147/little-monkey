@@ -2563,7 +2563,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: an owl in the dark pines, up on an old dead pine just west of the way in (perch: how high it sits, in
     // pixels), its eyes glinting in the gloom (glints: where they are in its map sprite); 28 October 2026, after playtesting,
     // for something to practise on the long way south
-    {id:'owl', word:'猫头鹰', at:[11, 2, 'darkPines'], home:'树', chapter:1, clue:'The dark pines, up an old dead pine', perch:9, glints:[[4, 5, 2], [10, 5, 2]],
+    {id:'owl', word:'猫头鹰', at:[11, 2, 'darkPines'], home:'树', chapter:1, clue:'The dark pines, up an old dead pine', perch:9, glints:[[5, 8, 2], [8, 8, 2]],
       meetNote:'Two big round eyes blink at you from the dead pine: an owl! Answer its questions to make friends.'},
     // chapter 1: a fox hiding in the hillside's tall grass, only there (hides). It was the prologue's, in the meadow's tall grass, until
     // 23 October 2026, when the sheep took its place, for 羊 (sheep), then 山 + 羊 = 山羊 (goat).

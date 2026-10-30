@@ -310,6 +310,20 @@ function drawFallingLeaves(cx, cy, now){
   }
 }
 function heart(X, Y){ [[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,2],[2,3]].forEach(([a,c]) => R(b, X+a, Y+c, 1, 1, '#E0446A')); }
+// An animal on the map at its size (content/sprites.js): one bigger than a square, such as a deer or a cow, stands up out
+// of its square, centred on it, its feet on the square's bottom, as a tree does (decided 30 October 2026). Gives how much
+// taller than a square it is, for what goes over its head.
+function drawFigure(img, X, Y){ b.drawImage(img, X - (img.width - T) / 2, Y - (img.height - T)); return img.height - T; }
+// And its shadow on the ground under it, as wide as it is: a bee's small, a cow's big. (w: the word for its map sprite)
+const shadowWidths = {};
+function figureShadow(w, X, Y, alpha = .2){
+  const s = shadowWidths[w] ?? (shadowWidths[w] = (() => {
+    let x0 = 99, x1 = -1;
+    for (const r of MAP_SPRITES[w].rows) [...r].forEach((c, x) => { if (c !== '.'){ x0 = Math.min(x0, x); x1 = Math.max(x1, x); } });
+    return Math.max(5, Math.round((x1 - x0 + 1) * .65));
+  })());
+  R(b, X + 8 - Math.floor(s / 2), Y + 14, s, 2, `rgba(0,0,0,${alpha})`);
+}
 // An animal at its own spot that you're meeting (it's drawn there, not as one jumping out): how far it hops up now. It hops
 // when it sees you; and if you make friends, it hops for joy, with a heart rising over it (at X, Y); if not, it stays put.
 function meetHop(a, X, Y, now, sq = a.at){   // (sq: its square, as there can be several of a kind out, such as bees)
@@ -322,12 +336,11 @@ function meetHop(a, X, Y, now, sq = a.at){   // (sq: its square, as there can be
   return Math.round(Math.abs(Math.sin(e1 / 130)) * 4);
 }
 // An animal that flutters over its spot, such as the butterfly over the riverside's flowers: hovering, bobbing gently, its
-// wings beating (narrow every third moment, as they close), its shadow small on the ground below. Its smaller look, if it
-// has one (small, content/sprites.js), such as the butterfly's. (sq: its square, such as a character's that looks like it)
+// wings beating (narrow every third moment, as they close), its shadow small on the ground below. (sq: its square, such as a character's that looks like it)
 function drawFlutter(a, X, Y, now, sq = a.at){
   const hover = 5 + Math.round(Math.sin(now / 420 + sq[0]) * 2) + meetHop(a, X, Y, now, sq), shut = Math.floor(now / 170) % 3 === 0;
-  const spr = a.small || a.spr, s = spr.width, x = X + (16 - s) / 2, y = Y + 16 - s - 2 - hover;
-  R(b, X + 8 - s / 4, Y + 14, s / 2, 1, 'rgba(0,0,0,.16)');
+  const spr = a.spr, s = spr.width, x = X + (16 - s) / 2, y = Y + 16 - s - 2 - hover;
+  R(b, X + 5, Y + 14, 6, 1, 'rgba(0,0,0,.16)');
   if (shut) b.drawImage(spr, 0, 0, s, s, x + s / 4, y, s / 2, s); else b.drawImage(spr, x, y);
 }
 // One of several of a kind out where it came out (stays), such as a bee over the flowers in their valley: hovering, bobbing,
@@ -397,7 +410,8 @@ function drawAnimal(n, X, Y, now, c){
   const def = MAP_SPRITES[n.look], spr = mapSprite(n.look);
   if (n.dir === 'left' || n.dir === 'right') n.side = n.dir;
   const side = n.side || def.faces, img = def.faces && side !== def.faces ? mirrored(spr) : spr;
-  R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)');
+  figureShadow(n.look, X, Y, .18);
+  X -= (img.width - T) / 2; Y -= img.height - T;   // (one bigger than a square standing up out of it: drawFigure)
   if (!c.mid){ b.drawImage(img, X, Y - Math.floor(Math.abs(Math.sin(now/400)) * 1)); return; }
   const w = img.width, h = img.height, legs = legsFrom(n.look), half = w / 2, k = n.parity ? 1 : -1;
   b.drawImage(img, 0, 0, w, legs, X, Y - 1, w, legs);   // its body
@@ -425,26 +439,26 @@ function drawFoe(cx, cy, now){
   if (!foe || foe.spot) return;   // (one met at its own spot is drawn there: meetHop)
   const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x);   // (looking at you)
   if (foe.state === 'in'){
-    const k = clamp(e / 280, 0, 1), h = Math.max(1, Math.round(16 * k)), jump = e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
-    R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)');
-    b.drawImage(spr, 0, 0, 16, h, X, Y + 16 - h - jump, 16, h);
+    const k = clamp(e / 280, 0, 1), h = Math.max(1, Math.round(spr.height * k)), jump = e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
+    figureShadow(foe.a.hz, X, Y, .18);
+    b.drawImage(spr, 0, 0, spr.width, h, X - (spr.width - T) / 2, Y + 16 - h - jump, spr.width, h);   // (rising out of the grass, at its size: drawFigure)
     if (e < 600 && TALL_LOOKS.includes(tileAt(foe.x, foe.y).look)){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
   } else {
     const e1 = now - foe.t1;
     if (foe.state === 'hide'){   // ducking back down into the grass where it came from (you ran away from it)
-      const h = Math.round(16 * clamp(1 - e1 / 450, 0, 1));
-      if (h > 0){ R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.18)'); b.drawImage(spr, 0, 0, 16, h, X, Y + 16 - h, 16, h); }
+      const h = Math.round(spr.height * clamp(1 - e1 / 450, 0, 1));
+      if (h > 0){ figureShadow(foe.a.hz, X, Y, .18); b.drawImage(spr, 0, 0, spr.width, h, X - (spr.width - T) / 2, Y + 16 - h, spr.width, h); }
       if (e1 < 600 && TALL_LOOKS.includes(tileAt(foe.x, foe.y).look)){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e1/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
     } else if (foe.state === 'happy'){
       const hop = Math.round(Math.abs(Math.sin(e1 / 130)) * 4);
       b.globalAlpha = clamp(1 - (e1 - 700) / 300, 0, 1);
-      b.drawImage(spr, X, Y - hop); heart(X + 6, Y - 6 - Math.round(e1 / 120));
+      const tall = drawFigure(spr, X, Y - hop); heart(X + 6, Y - 6 - tall - Math.round(e1 / 120));
       b.globalAlpha = 1;
     } else {
       const [dx, dy] = DV[OPP[pl.dir]] ? DV[pl.dir] : [0, 1];
       const d = e1 / 650 * 20;
       b.globalAlpha = clamp(1 - e1 / 650, 0, 1);
-      b.drawImage(towardsYou(foe.a, foe.x, true), Math.round(X + dx * d), Math.round(Y + dy * d - Math.abs(Math.sin(e1 / 70)) * 2));   // (running off, away from you)
+      drawFigure(towardsYou(foe.a, foe.x, true), Math.round(X + dx * d), Math.round(Y + dy * d - Math.abs(Math.sin(e1 / 70)) * 2));   // (running off, away from you)
       b.globalAlpha = 1;
     }
   }
@@ -631,8 +645,8 @@ function drawWorld(now){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
     if (a.flutters){ drawFlutter(a, X, Y, now); continue; }
-    const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y, now);
-    R(b, X+3, Y+14, 10, 2, 'rgba(0,0,0,.2)'); b.drawImage(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
+    const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y - (a.spr.height - T), now);   // (its heart over its head)
+    figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - up);   // (looking your way)
   }
   // several of a kind out where each came out (stays), such as the bees over the flowers in their valley, each hovering,
   // looking your way, and one that still wants to play (not your friend yet) with a ! over it; and those flying off
@@ -707,7 +721,7 @@ function drawWorld(now){
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
     const bub = inClass.has(n.id) ? null : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you; none in a lesson, such as PE's)
-    if (bub) bubbles.push([X+10, Y-8, bub.show]);
+    if (bub) bubbles.push([X+10, Y - 8 - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0), bub.show]);   // (over a big one's head, such as the cow's)
   }
   drawDragonflies(cx, cy, now);
   drawSwarms(cx, cy, now);

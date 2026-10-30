@@ -96,7 +96,7 @@ test('the first time you face stepping stones, a tip: press A to hop', () => {
 test('an owl (猫头鹰) perched on a dead pine in the dark pines, its eyes glinting in the gloom: A meets it', () => {
   const g = game({place: 'darkPines', x: 11, y: 3, dir: 'up'}, {cow: 2});
   assert.deepEqual(get(g, "[tileAt(11, 2).look, !!tileAt(11, 2).walk]"), ['deadPine', false], 'an old dead pine');
-  assert.deepEqual(get(g, "(a => [a.hz, a.at, a.perch, a.glints, a.chapter])(animalAt(11, 2))"), ['猫头鹰', [11, 2, 'darkPines'], 9, [[4, 5, 2], [10, 5, 2]], 1]);
+  assert.deepEqual(get(g, "(a => [a.hz, a.at, a.perch, a.glints, a.chapter])(animalAt(11, 2))"), ['猫头鹰', [11, 2, 'darkPines'], 9, [[5, 8, 2], [8, 8, 2]], 1]);
   assert.equal(g.run('promptFor(11, 2)'), 'Meet');
   assert.deepEqual(get(g, "[WORDS['猫头鹰'].py, WORDS['猫头鹰'].en, !!PICTURES['猫头鹰'], !!MAP_SPRITES['猫头鹰']]"), ['māotóuyīng', 'owl', true, true]);
   assert.deepEqual(get(g, "MADE['猫头鹰'].parts.map(p => p.slice(0, 3))"), [['猫', 'māo', 'cat'], ['头', 'tóu', 'head'], ['鹰', 'yīng', 'eagle']], 'cat + head + eagle');

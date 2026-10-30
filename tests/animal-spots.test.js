@@ -84,13 +84,34 @@ test('an animal says it wants to play before its questions, with what’s happen
   assert.deepEqual(await meet(true, ['fox']), [['我们玩吧！', 'Your 朋友 (friend) wants to play again! Answer its questions.', 'Play', true], 'questions'], 'and a friend');
 });
 
-test('the butterfly flutters on the map at three quarters of its size, drawn again small, and is full size on its card', () => {
-  // (decided 26 October 2026: as big as you, it looked too big; shrinking the big one lost its pointed wing tips)
+test('animals on the map at their sizes: tiny, small, medium and big, at the bottom of their square, the big ones standing up out of it', () => {
+  // (decided 30 October 2026: a bee as big as a bear, or a frog as a horse, looked odd; pictures on cards stay one size)
   const game = ready();
-  const small = get(game, "MAP_SPRITES['蝴蝶'].small");
-  assert.equal(small.length, 12);
-  assert.ok(small.every(r => r.length === 12), 'twelve by twelve');
-  assert.equal(game.run("ANIMALS.find(a => a.id === 'butterfly').small.width"), 12, 'on the map');
-  assert.equal(game.run("ANIMALS.find(a => a.id === 'butterfly').spr.width"), 16, 'its big look stays, for what else uses it');
-  assert.equal(game.run("ANIMALS.filter(a => a.small).map(a => a.id).join()"), 'butterfly', 'only the butterfly has a small look');
+  const sizes = get(game, `Object.fromEntries(Object.entries(MAP_SPRITES).map(([w, s]) => {
+    let x0 = 99, x1 = -1, y0 = 99, y1 = -1;
+    s.rows.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.'){ x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); } }));
+    return [w, [s.rows.length, Math.max(x1 - x0, y1 - y0) + 1, s.rows.length - 1 - y1]];
+  }))`);
+  const size = ([canvas, px]) => canvas > 16 ? 'big' : px <= 10 ? 'tiny' : px <= 12 ? 'small' : 'medium';
+  const by = {}; for (const [w, s] of Object.entries(sizes)) (by[size(s)] = by[size(s)] || []).push(w);
+  assert.deepEqual(Object.fromEntries(Object.entries(by).map(([k, ws]) => [k, ws.sort()])), {
+    tiny: ['蜘蛛', '蜜蜂', '蝴蝶', '螃蟹'].sort(), small: ['兔子', '猫头鹰'].sort(), big: ['熊', '牛', '野猪', '鹿'].sort(),
+    medium: ['松鼠', '山羊', '狐狸', '狼', '羊', '蛇', '蜂王', '黄蜂'].sort()});
+  for (const w of [...by.tiny, ...by.small]) assert.ok(sizes[w][2] <= 1, `${w} stands at the bottom of its square`);
+  assert.equal(game.run("ANIMALS.find(a => a.id === 'deer').spr.height"), 22, 'the deer, big');
+  assert.equal(get(game, "ANIMALS.filter(a => a.small).length"), 0, 'no second, smaller look: the butterfly is tiny anyway');
+});
+
+test('a big animal stands up out of its square, centred on it, and its shadow is as wide as it is', () => {
+  const game = ready();
+  game.run(`globalThis.__drawn = []; { const was = b.drawImage.bind(b); b.drawImage = (img, ...a) => { __drawn.push([img.width, img.height, ...a]); return was(img, ...a); }; }
+    globalThis.__rects = []; { const was = b.fillRect.bind(b); b.fillRect = (...a) => { __rects.push(a); return was(...a); }; }`);
+  game.run("drawFigure(ANIMALS.find(a => a.id === 'deer').spr, 100, 50)");
+  assert.deepEqual(get(game, '__drawn.at(-1)'), [22, 22, 97, 44], 'three pixels to the left and six up: its feet on its square');
+  game.run("drawFigure(ANIMALS.find(a => a.id === 'rabbit').spr, 100, 50)");
+  assert.deepEqual(get(game, '__drawn.at(-1)'), [16, 16, 100, 50], 'one a square’s size, where it was');
+  game.run("__rects = []; figureShadow('牛', 0, 0); figureShadow('蜜蜂', 0, 0); figureShadow('狐狸', 0, 0)");
+  const [cow, bee, fox] = get(game, '__rects.map(r => r[2])');
+  assert.ok(cow > fox && fox > bee, `a cow’s shadow (${cow}) is bigger than a fox’s (${fox}), and a bee’s (${bee}) smaller`);
+  assert.equal(fox, 10, 'a medium one’s, as before');
 });

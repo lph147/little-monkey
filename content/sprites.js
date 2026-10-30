@@ -1,29 +1,17 @@
 // The animals as they look walking about on the map: 16 × 16 pixels, the size of a square, one letter per
-// pixel ('.' is see-through) and each letter's colour in its palette. Every animal and wild creature in an area
+// pixel ('.' is see-through) and each letter's colour in its palette. Each is drawn at its size (decided 30 October
+// 2026: a bee as big as a bear looked odd), at the bottom of its square: tiny, about half a square (a bee, a frog);
+// small, about two-thirds (a rabbit, an owl); medium, the whole square (a fox, a sheep); and big, on a bigger canvas
+// (22 × 22) that stands up out of its square, taller than you, as a tree does (a deer, a cow, a bear), still taking up
+// just the one square: drawFigure() in js/draw.js. Their pictures, on cards and in questions, are all one size. Every animal and wild creature in an area
 // needs one (the tests check). Their pictures everywhere else, bigger and sharper, are in content/pictures.js.
 // faces: which way it looks, 'left' or 'right' (none if it looks at you), so it can be turned to face you when it jumps
 // out or you meet it.
 const MAP_SPRITES = {
   '兔子': {   // rabbit
-    palette: {o:'#4A3B33', w:'#F2EEE6', g:'#CFC7BA', p:'#F4A6B0', e:'#1E1E1E'},
-    rows: [
-      "...oo....oo.....",
-      "..owpo..owpo....",
-      "..owpo..owpo....",
-      "..owpo..owpo....",
-      "..owwoooowwo....",
-      ".owwwwwwwwwwo...",
-      ".owwewwwwewwo...",
-      ".owwwwppwwwwo...",
-      "..owwwwwwwwo....",
-      "..owwwwwwwwwo...",
-      ".owwwwwwwwwwwo..",
-      ".owgwwwwwwgwwoo.",
-      ".owgwwwwwwgwwwwo",
-      "..owwwwwwwwwwwo.",
-      "..oggo..ogggo...",
-      "...oo....ooo...."
-    ]
+    // small: 11 pixels, drawn with the shape kit from its picture in tools/draw-pictures.js
+    palette: {a:'#494541', b:'#BEBBB5', c:'#5B5853', d:'#F7F5EF', e:'#5A3F3F', f:'#F4A6B0', g:'#8E8B87', h:'#3A3632', i:'#F4F0E8', j:'#1E1A16', k:'#5C4A49', l:'#F8C8CE', m:'#B48A82', n:'#C7C7C7', o:'#4C4946', p:'#37332E', q:'#85817A'},
+    rows: ["................","................","................","................","................","....abaaba......","....cdbefba.....","....efbefba.....","....efbgfba.....","....hggigh......","....cdjijba.....","....klgmgh......","....cdigiba.....","....cdiiibno....","....abbbbbno....","....pqqpqqp....."]
   },
   '狐狸': {   // fox
     palette: {o:'#3B2416', r:'#E07B39', d:'#B85A22', w:'#F7F1E8', e:'#1E1E1E', k:'#2B1A10'},
@@ -69,41 +57,9 @@ const MAP_SPRITES = {
     ]
   },
   '蝴蝶': {   // butterfly, its wings open, seen from above (it looks at nobody: no faces)
-    palette: {a:'#4C2A0F', b:'#5E4427', c:'#C8641A', d:'#FFB866', e:'#F28C28', f:'#1A140E', g:'#2A2018', h:'#5C462D', i:'#F9BE77', j:'#C8741A', k:'#4C2F0F', l:'#F7A23C'},
-    rows: [
-      "................",
-      "..a.........ba..",
-      ".aca.......bdca.",
-      "bdeca...f.bdeeca",
-      "bdeeca.fgbdeeeca",
-      "bdeeecafgdeeeeca",
-      "bdeeeecfgeeeeeca",
-      "accceeecgeeeccca",
-      ".aaaccccgcccaaa.",
-      "...hhiijgjkhk...",
-      "..hiilljgliijk..",
-      "..hillljgllljk..",
-      "..kjjljfgiljjk..",
-      "...kkjjfgjjkk...",
-      ".....kk.fkk.....",
-      "................"
-    ],
-    // and smaller, as it flutters over its flowers on the map: three quarters of its size, 12 × 12 (decided 26 October
-    // 2026: as big as you, it looked too big), drawn again so its wing tips stay pointed
-    small: [
-      "..a......a..",
-      ".ac.....bca.",
-      "bdea..fbdeca",
-      "bdeecfgeeeca",
-      "bdeeefgeeeca",
-      "acceecgeecca",
-      ".aacccgccaa.",
-      "...hijgkh...",
-      "..hiljgiik..",
-      "..kjlfgljk..",
-      "...kjfgjk...",
-      "....k.fk...."
-    ]
+    // tiny: 9 pixels, drawn with the shape kit from its picture in tools/draw-pictures.js
+    palette: {a:'#5E5B58', b:'#17120D', c:'#241D16', d:'#FFFFFF', e:'#211913', f:'#4A3C30', g:'#FFB866', h:'#C8641A', i:'#4C2A0F', j:'#2A2018', k:'#5E492E', l:'#FFC67A', m:'#C8741A', n:'#4C2F0F'},
+    rows: ["................","................","................","................","................","................","................","....ab...ca.....","...adebbcfda....","...dgheefghd....","...ihhjejhhi....","...beeeeeeeb....","....klmelmn.....","....nmmemmn.....","...addeeedda....","....aabbbaa....."]
   },
   '松鼠': {   // squirrel
     faces: 'left',
@@ -169,41 +125,28 @@ const MAP_SPRITES = {
       "..oo......oo...."
     ]
   },
-  '鹿': {   // deer (chapter 1, in the pine wood; drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
+  '鹿': {   // deer (chapter 1, in the pine wood)
+    // big: 22 pixels, on a 22 × 22 canvas, standing up out of its square, drawn with the shape kit from its picture in tools/draw-pictures.js
     faces: 'left',
-    palette: {a:'#3E3122', b:'#9C7B55', c:'#302012', d:'#714724', e:'#DE9E62', f:'#1A130E', g:'#533C26', h:'#1E1A16', i:'#9A5A28', j:'#3E2614', k:'#2A1E16', l:'#D4A278', m:'#975F30', n:'#3D2816', o:'#C27A3E', p:'#FBF1DE', q:'#6F401E', r:'#301E10'},
-    rows: [".aba..aba.......",".abbaaba........","abbbababa.......",".acdedca........",".fgehdij........","fklmidij.ggj....",".nmnjioigeeijj..","..n..geieoooeij.",".....jiiopopopij",".....jiooopopoij","......cdiooodij.","......cdqiiidqr.","......cdqrjcdqr.","......cdqr.cdqr.","......cdqr.cdqr.",".......cr...cr.."]
+    palette: {a:'#33281C', b:'#7A6042', c:'#533C26', d:'#3E2614', e:'#302012', f:'#714724', g:'#DE9E62', h:'#9A5A28', i:'#FFFFFF', j:'#1E1A16', k:'#C27A3E', l:'#1A130E', m:'#2A1E16', n:'#5B5853', o:'#494541', p:'#FBF1DE', q:'#F7F5EF', r:'#BEBBB5', s:'#E9C79C', t:'#B08667', u:'#6F401E', v:'#301E10', w:'#574939', x:'#1F1710', y:'#3A2A1E'},
+    rows: [".aba...aba............","..aba.aba.............",".abbbaabba............","..aababacd............","...efgfcghd...........",".ccgijkfhd............","cggfjjkfhd............","lmkkfhfkhd.cccd.......",".dhhddhkkhcggghddnno..","..dd..cgkhgpkpkphqqro.","......dhhkkkkkkkkhrro.","......cgkkkpkpkpkphd..","......dhkkkkkkkkkhd...",".......dhkkkkkkkhhd...",".......effsssssfftuv..",".......cgfuvwwcgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgfuuv..",".......xyyx...xyyxv...","........xx.....xx....."]
   },
-  '猫头鹰': {   // owl, facing you (chapter 1: perched on a dead pine in the dark pines; drawn with the shape kit in tools/draw-pictures.js, at 16 × 16, its face by hand)
-    palette: {a:'#2E2115', b:'#6A4A2C', c:'#423323', d:'#A88158', e:'#8A6440', f:'#595145', g:'#EFE0C2', h:'#F29A1E', i:'#1E1A16', j:'#D9A030', k:'#382A1B', l:'#402B18', m:'#4E3420', n:'#251A11', o:'#6E4A2A', p:'#A07A52', q:'#523D16'},
-    rows: ["...a........a...","..aba......aba..","..cdbacccccdba..","..cdbdddddbbba..","..adggeeeeggda..","..aghhgeeghhga..","..aghigjjgihga..","...abgeeeegba...","..kelbbbbbblmn..","..keoleggelomn..","..keolgggglomn..","..keolgpgglomn..","..keolgggplomn..","..nmlegpggelmn..","...nabbggbban...",".....qjqqjq....."]
+  '猫头鹰': {   // owl, facing you (chapter 1: perched on a dead pine in the dark pines)
+    // small: 11 pixels, drawn with the shape kit from its picture in tools/draw-pictures.js, its eyes by hand
+    palette: {a:'#2E2115', b:'#423323', c:'#6A4A2C', d:'#A88158', e:'#EFE0C2', f:'#8A6440', g:'#FFFFFF', h:'#C9741A', i:'#FFC24A', j:'#A8741E', k:'#382A1B', l:'#402B18', m:'#4E3420', n:'#251A11', o:'#A07A52', p:'#21170E', q:'#241A11', r:'#4A3220', s:'#D9A030', t:'#523D16', u:'#595145', v:'#1E1A16'},
+    rows: ["................","................","................","................","................",".....abbaa......","....acddcca.....","...aceefeeca....","...bdivjvica....","...aceejeeca....","...kflcjclmn....","...kfleeolmn....","...kfleoelmn....","...plleeellpq...","..qrrrsesrrrr...","...qqqtutqqqq..."]
   },
-  '牛': {   // cow (chapter 1: lost in the pasture, south of the home ground; drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
+  '牛': {   // cow (chapter 1: lost in the pasture, south of the home ground)
+    // big: 22 pixels, on a 22 × 22 canvas, standing up out of its square, drawn with the shape kit from its picture in tools/draw-pictures.js
     faces: 'left',
-    palette: {a:'#464137', b:'#B5AC96', c:'#5E5B58', d:'#FFFFFF', e:'#8F8E89', f:'#3A3733', g:'#1E1A16', h:'#F7F4EC', i:'#D8D2C4', j:'#514D46', k:'#1A1612', l:'#2B2724', m:'#ACA79C', n:'#433F39', o:'#392926', p:'#8C6161', q:'#513433', r:'#D8858A', s:'#56524C', t:'#E7E2D9', u:'#BD8283', v:'#493331', w:'#5C5954', x:'#F9F7F2', y:'#1F1A16', z:'#3A3430'},
-    rows: ["................","..a..a..........",".abaaba.........","cdeddef.........","cdghhijkkccccj..","cdhhhelllddddij.","jihhhelllhhhhhmn","opppphllhhllllmn","qrrrphhhhhllllim",".qqcdhhhhhllllim","...feeeehhheeeij","...stmeeuuueemkl","...stmeijvwxemnk","...stmeij.wxemn.","...nmmeij.jiemn.","....nyzzy.yzzy.."]
+    palette: {a:'#494234', b:'#BFAF8C', c:'#59534A', d:'#EFE7D3', e:'#5E5B58', f:'#FFFFFF', g:'#1E1A16', h:'#2B2724', i:'#1A1612', j:'#514D46', k:'#8F8E89', l:'#D8D2C4', m:'#F7F4EC', n:'#5C4946', o:'#F8C7C7', p:'#8C6161', q:'#9A4C50', r:'#F2A7A8', s:'#513433', t:'#D8858A', u:'#392926', v:'#ACA79C', w:'#433F39', x:'#3A3733', y:'#F6C1C2', z:'#E7E2D9', A:'#221E1C', B:'#171310', C:'#1F1A16', D:'#3A3430'},
+    rows: ["..aa...a..............",".abba.aba.............","..abacdba.............",".effghhhij............",".efgghhkllj...........",".efmmmhhij............",".efmmmmljiiieeeeeei...","noppppmkhhhhffffffhi..","noqrqpklhhhhhmmmmmhhi.","sttttpllhhhhmmmhhhmlj.",".ssssuefmmmmmmhhhhhlvw","......efmmmmmmhhhhhlvw","......efmmmmmmmhhhhlvw","......jlmmmmmmmmhmmlvw",".......xkkllyyytkklvvw",".......efkzvttttkkzvAB",".......efkzvwssefkzAAB",".......efkzvw..efkzvAB",".......efkzvw..efkzvw.",".......efkvvw..efkvvw.",".......CDDDDC..CDDDDC.","........CCCC....CCCC.."]
   },
   // wild creatures, which jump out of long grass to fight (drawn with the shape kit in tools/draw-pictures.js, at 16 × 16)
   '螃蟹': {   // crab (chapter 1, on the shore's sand): facing you, its claws up, eyes on stalks; it walks sideways
-    palette: {o:'#5A1A14', r:'#E04A3C', d:'#A8322A', l:'#F48A72', e:'#1E1A16'},
-    rows: [
-      "................",
-      "..oo........oo..",
-      ".orro......orro.",
-      ".orrdo....odrro.",
-      "..oro......oro..",
-      "...or.o..o.ro...",
-      "....ooeooeoo....",
-      "...orrrrrrrro...",
-      "..orrlrrrrlrro..",
-      ".orrrrrrrrrrrro.",
-      ".odrrrrrrrrrrdo.",
-      "o.odddddddddo..o",
-      ".o.o.o....o.o.o.",
-      "o.o.o......o.o.o",
-      "................",
-      "................"
-    ]
+    // tiny: 9 pixels, drawn with the shape kit from its picture in tools/draw-pictures.js
+    palette: {a:'#441C16', b:'#57322D', c:'#AF3A2F', d:'#5E5B58', e:'#E98077', f:'#361712', g:'#822B23', h:'#FFFFFF', i:'#4C1C16', j:'#C83A30', k:'#F47C66', l:'#471A15', m:'#E04A3C', n:'#B8332B', o:'#9E2A22', p:'#3F1712'},
+    rows: ["................","................","................","................","................","................","................","................","...aa.....ba....","...ccad.dbec....","...fgdhdhfgf....","...ijiacaiji....","....bekkeca.....","...lbemmmcal....","...naccoccln....","...l.aapaa.l...."]
   },
   '蛇': {   // snake
     faces: 'right',
@@ -211,8 +154,9 @@ const MAP_SPRITES = {
     rows: ["................","................",".........aab....","......aaaccdb...",".....accceefdb..","....aceddeeedbg.","...acedbbdddghhg","..aceedb.bbb.gg.","..acedb.........","..bdedb.........","...acdbaaaaab...","..aciiccccccdb..",".aceiieeeeeeedb.",".bdeeeeeeeeeedb.","..bddddddddddb..","...bbbbbbbbbb..."]
   },
   '蜘蛛': {   // spider
-    palette: {o:'#1F191E', l:'#3A2F48', b:'#4A3D5C', h:'#6E5E84', d:'#30263E', w:'#FFFFFF', s:'#E08A3C'},
-    rows: ["................","................","................","...l...oo...l...","..l.l.ohdo.l.l..",".l..lowbbwol..l.","..l..ohbbdo..l..",".l.l.ohbbdo.l.l.",".l..ohbbbbdo..l.","l...ohbssbdo...l","..llohbssbdoll..",".l..odbbbbdo..l.",".l...oddddo...l.","l..ll.oooo.ll..l","..l..........l..","..l..........l.."]
+    // tiny: 9 pixels, drawn with the shape kit from its picture in tools/draw-pictures.js
+    palette: {a:'#1B1519', b:'#2F2831', c:'#16120E', d:'#2D2538', e:'#6E5E84', f:'#1E1A16', g:'#1A1518', h:'#2B2335', i:'#30263E', j:'#1C161B', k:'#4A3D5C', l:'#E08A3C'},
+    rows: ["................","................","................","................","................","................","................","................","....a.bcc.a.....","...adbeffada....","...ddghffadd....","...aabehijaa....","...ajiklkija....","...dajiiijad....","...adajjjada....","....a.....a....."]
   },
   '蜂王': {   // queen bee, side on, with her little gold crown (chapter 1: out of her old tree in the bees' valley, and home with you)
     faces: 'left',
@@ -220,18 +164,21 @@ const MAP_SPRITES = {
     rows: ["................","................",".......aaaaaab..","....c.addddddeb.","..ccfadgggggggeb",".cfcfcfgggggggeb",".cfhijfeeeeeeeb.",".cfffffklmmlkk..","..noopmmlqqlmlk.",".nolllpqlqqlqlrs",".nolllpqlqqlqlrp",".tplllpqlqqlqlrs","..tppprqlqqlqlk.","...tttsrlrrlrs..",".......skssks...","................"]
   },
   '蜜蜂': {   // bee
+    // tiny: 8 pixels, drawn with the shape kit from its picture in tools/draw-pictures.js
     faces: 'left',
-    palette: {a:'#5E5B58', b:'#424A4D', c:'#FFFFFF', d:'#A9C9DA', e:'#DDEFF8', f:'#3A2E22', g:'#FFE58A', h:'#C99A2E', i:'#4D3B16', j:'#1B150F', k:'#2D241B', l:'#5E5333', m:'#F2C14E', n:'#322C27', o:'#756D64', p:'#1F1812'},
-    rows: ["................","................","....aaaaaaab....","...acccccccdb...","..aceeeeeeedb...","..bdeeeeddddb...","...bdddfghii....","..jklggfmmfhi...",".nofkmmfmmfmhi..","jkfcfkmfmmfmhip.",".jkfkmmfmmfmhpfp","..jkhmmfmmfmhip.","...jihhfmmfhi...",".....ipfhhii....",".......pii......","................"]
+    palette: {a:'#5E5B58', b:'#424A4D', c:'#FFFFFF', d:'#A9C9DA', e:'#1F1812', f:'#3A2E22', g:'#FFE58A', h:'#2D241B', i:'#F2C14E', j:'#C99A2E', k:'#4D3B16', l:'#1B150F'},
+    rows: ["................","................","................","................","................","................","................","................","......aaab......",".....acccdb.....",".....bddddb.....",".....aefgfe.....","....achfifjk....","....lhhfifjk....",".....lefjfe.....",".......eke......"]
   },
   '野猪': {   // wild boar
+    // big: 20 pixels, on a 22 × 22 canvas, standing up out of its square, drawn with the shape kit from its picture in tools/draw-pictures.js
     faces: 'left',
-    palette: {a:'#201710', b:'#3E2A1C', c:'#A07250', d:'#3F2E20', e:'#7A5236', f:'#563826', g:'#281B13', h:'#47301F', i:'#1E1A16', j:'#D3AD97', k:'#966C53', l:'#C08A6A', m:'#3C2C21', n:'#5A5651', o:'#F4F0E8', p:'#352D27', q:'#806E64', r:'#3A251B', s:'#1F150F'},
-    rows: ["................","................","................",".......aaaa.....","....aaabbbbaaa..","...abbbbcccbbba.","..dddceeeeeeefg.",".dccchheeeeeeefg","dceeieeheeeeeefg","jjkeeeeheeeeeefg","jlkeeeeheeeeeefg","kkkffhheeeeeefg.","mnonpqfffffffg..","..n.pqrsggpqrs..","....srrs..srrs..",".....ss....ss..."]
+    palette: {a:'#201710', b:'#3E2A1C', c:'#221810', d:'#432C1E', e:'#A07250', f:'#7A5236', g:'#3F2E20', h:'#231911', i:'#47301F', j:'#563826', k:'#281B13', l:'#FFFFFF', m:'#1E1A16', n:'#BEBBB5', o:'#966C53', p:'#3C2C21', q:'#494541', r:'#241911', s:'#352D27', t:'#806E64', u:'#3A251B', v:'#372417', w:'#49301F', x:'#1E150E', y:'#1F150F'},
+    rows: ["......................","......................","......................","......................","......................","......................",".........aaaaa........","......aaabbbbbaaa.....",".....abbbbbbbbbbbaa...",".....cdeeffffffebbba..","....ghidfffffffffjka..","...geefiiiffffffffjba.","..geflmffiffffffffjk..","..gefmmfffifffffffjk..",".abnofffffifffffffjk..",".ponoffffiffffffffjk..","..pqnjjjiffffffffjk...","....qkkkjjjffjjjjkr...","......stuvkjjkstuvwr..","......stuvxkk.stuvwr..","......yurwr...yurwwr..",".......y.r.....y.rr..."]
   },
   '熊': {   // bear (chapter 1, at the pasture's big rocks): standing up on its hind legs, facing you, its front paws raised
-    palette: {a:'#2A1C12', b:'#8A5A34', c:'#5E3A20', d:'#A87448', e:'#D2A982', f:'#120C08', g:'#1E1A16'},
-    rows: ["................","..aa.......aa...",".abca.....abca..",".acbaaaaaaabca..","..abbbbbbbbba...","a.abfbbbbfbba..a","ba.abbeeebba..ab","bba.abegebba.abb",".bbaabbeebbaabb.","..bbbbbbbbbbbb..","...abbddddbba...","...abddddddba...","...abbddddbba...","...abbbaabbba...","..abbba..abbba..","..aaaaa..aaaaa.."]
+    // big: 22 pixels, on a 22 × 22 canvas, standing up out of its square, drawn with the shape kit from its picture in tools/draw-pictures.js
+    palette: {a:'#422F1E', b:'#2A1C11', c:'#A87448', d:'#5E3A20', e:'#50341E', f:'#5A564F', g:'#8A5A34', h:'#F4EEE2', i:'#261A10', j:'#FFFFFF', k:'#1E1A16', l:'#E6C29C', m:'#A8805A', n:'#D2A982', o:'#7A5034', p:'#9C6A40'},
+    rows: [".....aab.....aab......","....accdbaaaaccdb.....","....acddecccecddb.....",".fffbddegggggeddb.fbf.","fhhhfiejkgggjkei.fhdhf","acgdbackkgggkkdbacgdb.","acggdacgglkmggdacggdb.","bdgggdeglnknmgecgggdb.",".bdggdegmnnnmgecggdb..","..acggeeemomeeeggdb...","..bdgggegeeegegggdb...","...bdgegggggggegdb....","....iegggpppgggei.....","...acgggpppppgggdb....","...acggpppppppggdb....","...bdggpppppppggdb....","....acgpppppppgdb.....","....bdggpppppggdb.....",".....bddgpppgddb......",".....acgdddddgdb......",".....bdddbbbdddb......","......bbb...bbb......."]
   },
   '狼': {   // wolf (chapter 1, in the pine wood's long grass)
     faces: 'left',

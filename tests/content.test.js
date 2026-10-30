@@ -296,9 +296,10 @@ test('every word with a picture has its own pixel picture, and so does what you 
 });
 
 // Each picture's rows of letters: the right size, and every letter with a colour.
-const checkPixels = (file, pics, size) => {
+const checkPixels = (file, pics, sizes) => {
   for (const [w, s] of Object.entries(pics)){
     assert.ok(BANK[w] || w.split(' ').every(x => BANK[x]), `${file} has a picture for ${w}, which isn't in the word bank (nor a few words from it, with spaces between)`);
+    const size = [].concat(sizes).includes(s.rows.length) ? s.rows.length : [].concat(sizes)[0];   // (a big animal on the map: 22 × 22)
     assert.equal(s.rows.length, size, `${w}'s picture in ${file} has ${s.rows.length} rows, not ${size}`);
     s.rows.forEach((r, y) => {
       assert.equal(r.length, size, `${w}'s picture in ${file}: row ${y} is ${r.length} pixels wide, not ${size}`);
@@ -307,7 +308,7 @@ const checkPixels = (file, pics, size) => {
   }
 };
 test('word pictures are 32 × 32 and every letter has a colour', () => checkPixels('content/pictures.js', PICTURES, 32));
-test('animals on the map are 16 × 16 and every letter has a colour', () => checkPixels('content/sprites.js', MAP_SPRITES, 16));
+test('animals on the map are 16 × 16 (or 22 × 22, a big one) and every letter has a colour', () => checkPixels('content/sprites.js', MAP_SPRITES, [16, 22]));
 
 test('content/pictures.js is up to date with tools/draw-pictures.js', () => {
   const made = require('../tools/draw-pictures.js').text();
