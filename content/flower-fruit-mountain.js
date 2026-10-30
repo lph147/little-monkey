@@ -2202,16 +2202,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#3F2614', f:'#A9784C', s:'#F0CBA2', m:'#BE8A66', e:'#24160C'}},
     {id:'splash2', place:'hillside', x:5, y:37, facing:'left', plays:'splash', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#4B2A12', f:'#C27A45', s:'#F3CFA8', m:'#C98C68', e:'#24160C'}},
-    // chapter 1: at the home ground, south of the road, under the tree beside the way down to the bridge, two little monkeys
+    // chapter 1: at the home ground, east of the way down to the bridge, under the tree below the pool, two little monkeys
     // grooming each other, taking turns (in the book, chapter 1: 捉虱子…理毛衣, they pick out fleas and tidy their fur, in the
-    // shade of the pines). Under the hillside's first pines till 24 October 2026: the home ground's south was empty
+    // shade of the pines). Under the hillside's first pines till 24 October 2026: the home ground's south was empty; then
+    // under the tree west of the way down, till 30 October 2026, when they were moved away from the garden's fruit
     // chapter 1: a monkey fishing in the stream at the home ground, its rod out over the water (plays: 'fish'); it gives you a
     // rod once the hungry monkey wants a big fish for the feast (decided 29 October 2026)
     {id:'fisher', place:'homeGround', x:24, y:17, facing:'down', plays:'fish', name:{zh:'钓鱼猴子', py:'diàoyú hóuzi', en:'Fishing monkey'},
       palette:{o:'#3E2814', f:'#A86E3A', s:'#EFC7A0', m:'#BC8460', e:'#24160C'}},
-    {id:'groomA', place:'homeGround', x:12, y:13, facing:'right', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+    {id:'groomA', place:'homeGround', x:19, y:17, facing:'right', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#43260F', f:'#B07A48', s:'#F2CDA4', m:'#C48A64', e:'#24160C'}},
-    {id:'groomB', place:'homeGround', x:13, y:13, facing:'down', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+    {id:'groomB', place:'homeGround', x:20, y:17, facing:'down', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#4A2B13', f:'#C99558', s:'#F6D6B0', m:'#D09A76', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       moves:[{if:{raft:{atLeast:1, below:3}}, place:'shore', x:14, y:12, facing:'left'},   // (seeing you off, on the shore)

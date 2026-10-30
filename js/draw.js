@@ -140,14 +140,14 @@ function drawPeerer(n, X, Y, now){
   b.drawImage(spr, 0, 0, 16, 12, X, Y + 2, 16, 12); b.drawImage(spr, 0, 12, 16, 4, X, Y + 12, 16, 4);   // (crouching)
 }
 // Grooming the other one, or being groomed, taking turns (groomAt): both sit side-on, facing the same way, one behind the
-// other, as monkeys groom. The one in front sits still, eyes shut, enjoying it, a little heart rising from it now and then;
+// other, as monkeys groom. The one in front sits still, eyes shut, enjoying it (a heart rose from it now and then till 30 October 2026, taken out after playing it);
 // the one behind shuffles up close, its two hands in the fur of its friend's back, picking through it in turn, its head
 // dipping in to look closely, and now and then a hand goes up to its mouth (a flea!: in the book, 捉虱子, they pick out
 // each other's fleas). Decided 27 October 2026, from a mock-up: the groomer stood beside its friend, its arm a long thin
 // line up to its head, which looked like a stick, and before that its hand was low down by its lap, which could be taken
 // for something rude. Its hands are only ever on its friend's back (GROOM_BACK), never in front of it.
 const GROOM_CLOSE = 4, GROOM_LEAN = 520, GROOM_PICK = 260;   // how far the groomer shuffles up (pixels); how often its head dips, and its hands pick (ms)
-const GROOM_EAT = [4200, 3400], GROOM_HEART = [5000, 3700];   // every so often (ms), and from when: a flea to its mouth; a heart rising
+const GROOM_EAT = [4200, 3400];   // every so often (ms), and from when: a flea to its mouth
 const GROOM_BACK = [8, 12];   // how far down the friend's back its hands go: from below its ear to the middle of its back
 function groomRoles(n, now){   // who's who: the groomer, the one it grooms, and which way they both face
   const friend = NPCS.find(c => c !== n && PLAYS[c.id] === 'groom'), left = !friend || n.x < friend.x, leftGrooms = groomAt(now).who === 0;
@@ -160,7 +160,7 @@ function drawGroomer(n, X, Y, now){
   b.drawImage(sittingSprite(n.kind, dir, !grooming && both, grooming && both && Math.floor(t / GROOM_LEAN) % 2 === 1), X + dx, Y);   // (eyes shut, or its head dipping)
   if (both && NPCS.indexOf(n) > NPCS.indexOf(friend)) groomingHands(grooming ? n : friend, grooming ? friend : n, X, Y, now, n);   // (by the one drawn last, over both)
 }
-// The groomer's hands in the fur of its friend's back, and its arms, short, fur, reaching from its chest; and the heart.
+// The groomer's hands in the fur of its friend's back, and its arms, short, fur, reaching from its chest.
 // X, Y: where the one drawing them (me) is.
 function groomingHands(g, f, X, Y, now, me){
   const {dir} = groomRoles(g, now), right = dir === 'right', t = now % GROOM_MS, pal = PALS[g.kind] || PALS.player;
@@ -175,10 +175,6 @@ function groomingHands(g, f, X, Y, now, me){
   if (!eat) hand(back - (right ? 1 : 0), Y + GROOM_BACK[0] + pick);
   hand(back + (right ? 1 : -1), Y + GROOM_BACK[1] - 1 - pick);
   if (eat){ const mx = right ? gX + 12 : gX + 2; R(b, mx, Y + 8, 2, 2, pal.s); }   // the other at its mouth: a flea!
-  if (t % GROOM_HEART[0] > GROOM_HEART[1]){   // a little heart rising from the one being groomed
-    const k = (t % GROOM_HEART[0] - GROOM_HEART[1]) / (GROOM_HEART[0] - GROOM_HEART[1]);
-    b.globalAlpha = k > .7 ? (1 - k) / .3 : 1; heart(fX + 6, Math.round(Y - 1 - k * 8)); b.globalAlpha = 1;
-  }
 }
 // Chasing a dragonfly: it leaps up at it now and then, turning to face it, and the dragonfly darts off just out of reach
 // (drawn with the others: drawDragonflies).

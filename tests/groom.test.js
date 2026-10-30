@@ -20,14 +20,14 @@ function game(pos = {place: 'homeGround', x: 11, y: 13, dir: 'right'}){   // bes
 }
 const npc = id => `NPCS.find(n => n.id === '${id}')`;
 
-test('at the home ground, south of the road, two little monkeys sit together under a tree, grooming each other', () => {
+test('at the home ground, east of the way down to the bridge, two little monkeys sit together under a tree, grooming each other, away from the garden', () => {
   const g = game();
-  assert.deepEqual(get(g, "ALL_NPCS.filter(n => PLAYS[n.id] === 'groom').map(n => [n.id, n.place, n.x, n.y])"), [['groomA', 'homeGround', 12, 13], ['groomB', 'homeGround', 13, 13]]);
-  assert.deepEqual(get(g, '[tileAt(12, 13).look, tileAt(13, 13).look, tileAt(14, 13).look]'), ['grass', 'grass', 'tree'], 'on the grass, beside a tree');
-  assert.ok(!g.run('walkable(12, 13)') && !g.run('walkable(13, 13)'));
+  assert.deepEqual(get(g, "ALL_NPCS.filter(n => PLAYS[n.id] === 'groom').map(n => [n.id, n.place, n.x, n.y])"), [['groomA', 'homeGround', 19, 17], ['groomB', 'homeGround', 20, 17]]);
+  assert.deepEqual(get(g, '[tileAt(19, 17).look, tileAt(20, 17).look, tileAt(21, 17).look]'), ['grass', 'grass', 'tree'], 'on the grass, beside a tree');
+  assert.ok(!g.run('walkable(19, 17)') && !g.run('walkable(20, 17)'));
   assert.ok([[16, 12], [16, 13], [16, 14]].every(([x, y]) => g.run(`walkable(${x}, ${y})`) && g.run(`tileAt(${x}, ${y}).look`) === 'path'), 'off the way down to the bridge, which stays clear');
   const plots = get(g, "PLACES.homeGround.map.flatMap((row, y) => [...row].map((c, x) => 'de24'.includes(c) ? [x, y] : null)).filter(Boolean)");
-  assert.ok(plots.length && plots.every(([x, y]) => Math.abs(x - 12.5) + Math.abs(y - 13) > 1), 'and not on (or right by) the plots the troop wants for its new shop and garden');
+  assert.ok(plots.length && plots.every(([x, y]) => Math.abs(x - 19.5) + Math.abs(y - 17) > 4), 'and well away from the plots the troop wants for its new shop and garden, where the fruit grows');
   g.run("enterPlace('hillside')");
   assert.ok(g.run('walkable(15, 5)') && g.run('walkable(16, 5)'), 'the hillside’s pines are clear of them');
 });
@@ -43,13 +43,13 @@ test('they take turns: both sit side-on, facing the same way; the one behind gro
     for (const n of NPCS.filter(n => PLAYS[n.id] === 'groom')) drawPlaying(n, n.x * T, n.y * T, ${t});
     sittingSprite = sp; b.drawImage = di; b.fillRect = fr; return out; })()`);
   const first = drawn(MS * 10 + 5), then = drawn(MS * 11 + 5);
-  assert.deepEqual(first.sat, [['groomA', 'right', false, 12 * 16 + 4], ['groomB', 'right', true, 13 * 16 - 1]], 'the one on the left grooms first, shuffled up behind its friend; both face right, and the one in front has its eyes shut');
-  assert.deepEqual(then.sat, [['groomA', 'left', true, 12 * 16 + 1], ['groomB', 'left', false, 13 * 16 - 4]], 'then they turn round, and the other grooms');
+  assert.deepEqual(first.sat, [['groomA', 'right', false, 19 * 16 + 4], ['groomB', 'right', true, 20 * 16 - 1]], 'the one on the left grooms first, shuffled up behind its friend; both face right, and the one in front has its eyes shut');
+  assert.deepEqual(then.sat, [['groomA', 'left', true, 19 * 16 + 1], ['groomB', 'left', false, 20 * 16 - 4]], 'then they turn round, and the other grooms');
   const [top, low] = get(g, 'GROOM_BACK');
-  for (const [d, groomedX, right] of [[first, 13 * 16 - 1, true], [then, 12 * 16 + 1, false]]){
+  for (const [d, groomedX, right] of [[first, 20 * 16 - 1, true], [then, 19 * 16 + 1, false]]){
     assert.equal(d.fur.length, 2, 'its two hands in the fur');
     for (const [x, y, w, h] of d.fur){
-      assert.ok(y >= 13 * 16 + top && y + h <= 13 * 16 + low + 1, 'on its friend’s back, from below its ear to the middle of it, never lower');
+      assert.ok(y >= 17 * 16 + top && y + h <= 17 * 16 + low + 1, 'on its friend’s back, from below its ear to the middle of it, never lower');
       assert.ok(right ? x + w <= groomedX + 7 : x >= groomedX + 9, 'on its back, never in front of it');
     }
   }
