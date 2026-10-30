@@ -131,6 +131,12 @@ const MAP_SPRITES = {
     palette: {a:'#33281C', b:'#7A6042', c:'#533C26', d:'#3E2614', e:'#302012', f:'#714724', g:'#DE9E62', h:'#9A5A28', i:'#FFFFFF', j:'#1E1A16', k:'#C27A3E', l:'#1A130E', m:'#2A1E16', n:'#5B5853', o:'#494541', p:'#FBF1DE', q:'#F7F5EF', r:'#BEBBB5', s:'#E9C79C', t:'#B08667', u:'#6F401E', v:'#301E10', w:'#574939', x:'#1F1710', y:'#3A2A1E'},
     rows: [".aba...aba............","..aba.aba.............",".abbbaabba............","..aababacd............","...efgfcghd...........",".ccgijkfhd............","cggfjjkfhd............","lmkkfhfkhd.cccd.......",".dhhddhkkhcggghddnno..","..dd..cgkhgpkpkphqqro.","......dhhkkkkkkkkhrro.","......cgkkkpkpkpkphd..","......dhkkkkkkkkkhd...",".......dhkkkkkkkhhd...",".......effsssssfftuv..",".......cgfuvwwcgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgfuuv..",".......xyyx...xyyxv...","........xx.....xx....."]
   },
+  '马': {   // horse, side on, head to the left (chapter 1: out on the pasture's grass)
+    // big: 22 pixels, on a 22 × 22 canvas, standing up out of its square, drawn with the shape kit from its picture in tools/draw-pictures.js
+    faces: 'left',
+    palette: {a:'#352112', b:'#4D3623', c:'#5A544B', d:'#7E4A24', e:'#C98A58', f:'#F4E8D4', g:'#613C22', h:'#FFFFFF', i:'#1E1A16', j:'#A8683A', k:'#2D1C11', l:'#1B120C', m:'#75665C', n:'#3A2416', o:'#413227', p:'#A58066', q:'#5E3418', r:'#2A1A0E', s:'#2A1E16', t:'#322A24', u:'#2B1D12', v:'#623A1C', w:'#2C1C10', x:'#1A130E'},
+    rows: ["........a.............", ".....bcada............", "....befgda............", "...behijgkl...........", "..bejiijgkl...........", "..bejfjgjmkl..........", ".bejfjgjjknklbbba..l..", ".bejfjgjjdkkeeeedalkl.", "oppqjdbejjdkjjjjjedkl.", "rqsdqraddddjjjjjjjjdkl", ".rqqr.bejjjjjjjjjjjdkl", "..rr..adjjjjjjjjjjjdmk", ".......adjjjjjjjjjddmk", "........adddjjjdddatmk", "........ugpvddduggpvmk", "........ugpvwaabegpvmk", "........ugpvw..begpvkl", "........ugpvw..begpvkl", "........ugpvw..begpvw.", "........ugssx..begssx.", "........xsxx...xssxx..", ".........x......xx...."]
+  },
   '鸭子': {   // duck, side on, floating (chapter 1: swimming on the home ground's stream)
     // small: 11 pixels, drawn with the shape kit from its own map drawing
     faces: 'left',

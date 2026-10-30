@@ -3740,6 +3740,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '马': {   // horse
+    palette: {a:'#352112', b:'#4D3623', c:'#7E4A24', d:'#C98A58', e:'#A8683A', f:'#F4E8D4', g:'#613C22', h:'#2D1C11', i:'#1B120C', j:'#FFFFFF', k:'#1E1A16', l:'#3A2416', m:'#75665C', n:'#322A24', o:'#A58066', p:'#5E3418', q:'#413227', r:'#2A1E16', s:'#2A1A0E', t:'#2B1D12', u:'#623A1C', v:'#2C1C10', w:'#1A130E'},
+    rows: [
+      "................................",
+      "................................",
+      "............a...................",
+      ".........baaca..................",
+      ".......bbdcbdca.................",
+      "......bddefdgca.................",
+      ".....bdeefeeeghi................",
+      ".....bdeefjkgllhi...............",
+      "....bdeefekkghlhi...............",
+      "....bdeefeegeemlhi..............",
+      "...bdeefeegeeehlhibbbba.........",
+      "...bdeefeegeeeehlhddddcaba.nni..",
+      "..bdopeeecbdeeecmlheeeeddcnmmhi.",
+      "..qoccopcabdeeeehhheeeeeeedclhi.",
+      "..qorccps.aceeccceeeeeeeeeeechi.",
+      "..spppps...acceeeeeeeeeeeeeeclhi",
+      "...ssss...aceeeeeeeeeeeeeeeeechi",
+      "...........bdeeeeeeeeeeeeeeecmhi",
+      "...........aceeeeeeeeeeeeeeecmlh",
+      "............acceeeeeeeeeeeccnmlh",
+      "............tgggcceeeeecggooumlh",
+      "............bdegoucccccbdgocumlh",
+      "............bdegouvaaaabdgocumhi",
+      "............bdegouv....bdgocumhi",
+      "............bdegouv....bdgocumhi",
+      "............bdegouv....bdgocuhhi",
+      "............bdegouv....bdgocuvi.",
+      "............bdegouv....bdgocuv..",
+      "............bdegrrw....bdgrrrw..",
+      "............wrrrww.....wrrwww...",
+      ".............www........ww......",
+      "................................"
+    ]
+  },
   '鸭子': {   // duck
     palette: {a:'#5E5B58', b:'#524D46', c:'#FFFFFF', d:'#D9D3C4', e:'#F7F5EE', f:'#1E1A16', g:'#5E4726', h:'#FFC060', i:'#8C591B', j:'#F29A2E', k:'#4D2F0F', l:'#C9741A', m:'#8F8E8A', n:'#87837B', o:'#E8E2D4', p:'#424F55', q:'#243948', r:'#A8D8F5', s:'#4A93CC', t:'#6FB7E8', u:'#C9E8FA'},
     rows: [

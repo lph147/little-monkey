@@ -317,6 +317,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鹿在吃草。 | lù zài chī cǎo. | The deer is eating grass. | 鹿 |  |
 | 猫头鹰在树上。 | māotóuyīng zài shù shàng. | The owl is in the tree. | 猫头鹰 |  |
 | 鸭子在水里。 | yāzi zài shuǐ lǐ. | The duck is in the water. | 鸭子 |  |
+| 马在吃草。 | mǎ zài chī cǎo. | The horse is eating grass. | 马 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 | 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
 
@@ -491,6 +492,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 熊 | xióng | bear |  |
 | 狐狸 | húli | fox |  |
 | 蝴蝶 | húdié | butterfly |  |
+| 马 | mǎ | horse |  |
 | 鸭子 | yāzi | duck |  |
 | 猫头鹰 | māotóuyīng | owl |  |
 | 黄蜂 | huángfēng | wasp |  |
@@ -570,6 +572,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 鱼 | yú | Drawn like a fish: its head at the top, its tail at the bottom. |  |
 | 大 | dà | Drawn like someone stretching their arms out wide, to show how big something is. |  |
 | 羊 | yáng | Drawn like a sheep’s head: its two horns are at the top. |  |
+| 马 | mǎ | Drawn from a horse, seen from the side: its head and mane along the top, its legs and tail below. |  |
 | 一 | yī | One line, for one. |  |
 | 二 | èr | Two lines, for two. |  |
 | 三 | sān | Three lines, for three. |  |

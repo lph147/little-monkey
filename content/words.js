@@ -81,6 +81,7 @@ const WORD_BANK = {
   '熊': {py:'xióng', en:'bear', pic:'🐻', area:1, category:'animals'},   // (chapter 1: at the big rocks, as you lead the cow home)
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},   // (chapter 1: hiding on the hillside; in the meadow's tall grass until 23 October 2026)
   '蝴蝶': {py:'húdié', en:'butterfly', pic:'🦋', area:1, category:'animals'},   // (chapter 1: fluttering over the flowers on the riverside, the way east to the bees)
+  '马': {py:'mǎ', en:'horse', pic:'🐴', area:1, category:'animals'},   // (chapter 1: out on the pasture's grass)
   '鸭子': {py:'yāzi', en:'duck', pic:'🦆', area:1, category:'animals', alike:['鸟']},   // (chapter 1: swimming on the home ground's stream)
   '猫头鹰': {py:'māotóuyīng', en:'owl', pic:'🦉', area:1, category:'animals', alike:['鸟']},   // (chapter 1: perched on a dead pine in the dark pines)
   '黄蜂': {py:'huángfēng', en:'wasp', pic:'🦟', area:1, category:'animals', alike:['蜜蜂']},   // (chapter 1: in the tall flowers of the bees' valley; its picture is a pixel wasp, a striped insect like the bee: there's no emoji for a wasp, so its stand-in is a mosquito)
@@ -260,6 +261,7 @@ const MADE = {
   '鱼': {why:'Drawn like a fish: its head at the top, its tail at the bottom.'},
   '大': {why:'Drawn like someone stretching their arms out wide, to show how big something is.'},
   '羊': {why:'Drawn like a sheep’s head: its two horns are at the top.'},
+  '马': {why:'Drawn from a horse, seen from the side: its head and mane along the top, its legs and tail below.'},
   '一': {why:'One line, for one.'},
   '二': {why:'Two lines, for two.'},
   '三': {why:'Three lines, for three.'},

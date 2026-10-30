@@ -693,6 +693,22 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.dot(3, 10, '#2A1E16'); p.dot(3, 11, '#2A1E16');                                        // nose
     p.eye(8, 8);
   },
+  '马': p => {   // horse: brown, standing, head to the left, a dark mane and tail (unlike the deer: no antlers, no spots; unlike the cow: brown, no horns)
+    const H = '#A8683A', LT = {light: '#C98A58', dark: '#7E4A24'}, MANE = '#3A2416';
+    p.fill(or(Rc(15.5, 20, 2.2, 9), Rc(26, 20, 2.2, 9)), '#7E4A24');                           // far legs
+    p.fill(path([[28.5, 13], [30.6, 19], [30, 25]], 1.2), MANE);                               // tail
+    p.fill(O(20.5, 16.5, 9, 5.2), H, LT);                                                     // body
+    p.fill(or(Rc(13, 20, 2.4, 10), Rc(23.5, 20, 2.4, 10)), H, {...LT, edge: true});           // near legs
+    p.flat(or(Rc(13, 29, 2.4, 1), Rc(23.5, 29, 2.4, 1), Rc(15.5, 28, 2.2, 1), Rc(26, 28, 2.2, 1)), '#2A1E16');   // hooves
+    p.fill(Pg([[9, 8], [13.5, 6], [17, 14.5], [12, 16]]), H, LT);                             // neck
+    p.fill(path([[12.5, 5.5], [15, 9], [17.5, 13]], 1.3), MANE);                               // mane
+    p.fill(Pg([[11.4, 5.4], [12.8, 2], [14, 5.8]]), H, LT);                                    // ear
+    p.fill(Pg([[3.2, 13], [6.5, 6], [10.5, 3.8], [14, 6.4], [11.5, 10.5], [7.5, 15.5], [4, 16]]), H, {...LT, edge: true});   // head, long, nose down
+    p.fill(O(5.2, 14.4, 2.6, 2), '#7E4A24', {dark: '#5E3418'});                               // muzzle
+    p.dot(4, 14, '#2A1E16');                                                                   // nostril
+    p.flat(path([[10.4, 5.2], [7, 12]], .55), '#F4E8D4');                                      // a blaze down its face
+    p.eye(10, 7);
+  },
   '鸭子': p => {   // duck: white, floating on the water, an orange bill (unlike the birds: little, perched, blue or coloured)
     const W = '#F7F5EE', LT = {light: '#FFFFFF', dark: '#D9D3C4'};
     p.fill(Rc(1, 24, 30, 6, 3), '#6FB7E8', {light: '#A8D8F5', dark: '#4A93CC'});             // the water

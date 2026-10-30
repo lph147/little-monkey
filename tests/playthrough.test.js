@@ -633,6 +633,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[20, 22], [16, 22], [16, 28]], 'on, south, through the long grass');
   await act('arrive(16, 29).then(runEvents)', 'out of the pines, into the pasture');
   assert.equal(run('PLACE'), 'pasture', 'the pasture (牧场)');
+  // A horse grazing out on the pasture's grass (30 October 2026: a chapter 1 friend where there were none)
+  await pressAt(10, 18, 'left', 'meeting the horse on the pasture');
+  assert.ok(knows('马') && get('S.friends').includes('horse'), 'the horse teaches 马, and becomes your friend');
   await pressAt(31, 17, 'down', 'finding the cow by its spring, and playing its word game');
   assert.ok(knows('牛') && get('__said').includes('我怕狼！') && get('__said').includes('好！我们去你家吧！'), 'the cow: 牛, scared of the wolves, then won over');
   assert.deepEqual([area().cow, get('S.following')], [4, ['cow']], 'it follows you home');
