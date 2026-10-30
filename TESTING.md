@@ -615,6 +615,11 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] In a prologue game, the duck isn't there yet, and the Friends page has no shadow for it.
 - [ ] MENU, then 朋友 Friends, in chapter 1 before meeting it: a shadow with the clue The home ground, on the stream.
 
+## The horse
+
+- [ ] In chapter 1, go south through the dark pines into the pasture, then west across the grass: a big brown horse grazes there, taller than you. Stand beside it and press A (Meet): its card teaches 马 (mǎ, horse), said straight away, then How it's made: drawn from a horse, seen from the side. Answer its questions to make friends.
+- [ ] You can't walk through its square, but you can walk all round it.
+
 ## Sounds alike
 
 - [ ] In a new game, look at the river (河 hé), then give the thirsty monkey water. When 喝 hē is taught: How it's made ▸, then Sounds like ▸, then 河 and 喝 side by side ("Same sound, different tone"): pictures, characters, pinyin, a red line for each tone (rising, flat) with its name, and their English, then "Listen to the tone: hé goes up, hē stays high." Hear both says hé then hē, each outlined in gold as it's said; tap either side to hear just it. Got it carries on; Back goes back a card. It all fits on a small phone, with no ▼ More.
