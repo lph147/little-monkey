@@ -372,6 +372,9 @@ SAVES.crabAsk = {...SAVES.shrimpTable, areas: {1: {...SAVES.shrimpTable.areas[1]
 SAVES.shore = {...SAVES.crabAsk, w: {...SAVES.crabAsk.w, ...knows(1, ['海'])}, areas: {1: {...SAVES.crabAsk.areas[1], crab: 'asked', seaSeen: 1}}, tasksSeen: {...SAVES.crabAsk.tasksSeen, crabCatch: 1}, pos: {place: 'shore', x: 9, y: 9, dir: 'down'}};
 SAVES.crabTable = {...SAVES.shore, w: {...SAVES.shore.w, ...knows(1, ['螃蟹'])}, areas: {1: {...SAVES.shore.areas[1], crab: 'done', crabTable: 1}}, tasksSeen: {...SAVES.shore.tasksSeen, crabBack: 1, exam: 1}, pos: {place: 'homeGround', x: 15, y: 9, dir: 'up'}};
 SAVES.examReady = {...SAVES.crabTable, pos: {place: 'school', x: 7, y: 3, dir: 'up'}};   // facing the teacher
+// quick practice (练习): a game near the end of chapter 1, its words at every level
+SAVES.practise = {...SAVES.examReady, w: Object.fromEntries(Object.entries(SAVES.examReady.w).map(([w, r], i) => [w, {...r, lv: 1 + i % 4, ok: i % 3 ? 2 : 0}]))};
+SAVES.practiseFew = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花'])};   // only three words with pictures
 SAVES.examPassed = {...SAVES.examReady, areas: {1: {...SAVES.examReady.areas[1], exam: 1}}, tasksSeen: {...SAVES.examReady.tasksSeen, feastGo: 1}, pos: {place: 'school', x: 3, y: 2, dir: 'up'}};   // facing the certificate
 SAVES.feastSeats = {...SAVES.examPassed, pos: {place: 'homeGround', x: 17, y: 11, dir: 'up'}};   // (a step from the feast starting)
 SAVES.raftWalk = {...SAVES.examPassed, w: {...SAVES.examPassed.w, ...knows(1, ['快乐'])}, areas: {1: {...SAVES.examPassed.areas[1], feastHeld: 1, raft: 1}}, following: ['elder', 'big', 'playful'],
@@ -400,6 +403,14 @@ const SCREENS = [
   {id: 'title-games', title: 'Title, two games', save: 'middle', why: 'Continue goes to the game played last (Game 1); Save files has both.', run: async () => {
     localStorage.setItem(KEY + '-game2', JSON.stringify({...S, started: true, w: {'石头': {lv: 1, due: 0, ok: 0}, '你好': {lv: 1, due: 0, ok: 0}}, friends: []}));
     setSlotsInfo(d => ({...d, played: {1: Date.now(), 2: Date.now() - 3 * 86400000}})); toTitle(); await wait(300); }},
+  {id: 'title-practise', title: 'Title, with Practise', save: 'practise', why: 'Beside Continue, once the game knows 4 words with pictures: questions on your words without walking anywhere, and how many need practice.'},
+  {id: 'practise', title: 'Quick practice', save: 'practise', why: 'Your words, how many need practice and how many at each level. Choose how many questions with − and +, in fives, up to 50 or as many as there are; no shells, it’s just practice.', run: async () => { click('#pracBtn'); await wait(300); }},
+  {id: 'practise-most', title: 'Quick practice, as many as it goes', save: 'practise', why: '+ goes no further at 50 (or at as many as you can be asked about).', run: async () => { click('#pracBtn'); for (let i = 0; i < 12; i++) click('[data-a=more]'); await wait(300); }},
+  {id: 'practise-few', title: 'Quick practice, too few words', save: 'practiseFew', why: 'From the menu, before you know 4 words with pictures: learn some first.', run: async () => { play(); await wait(100); openMenu(); await wait(200); click('[data-m=practice]'); await wait(300); }},
+  {id: 'practise-question', title: 'Quick practice, a question', save: 'practise', why: 'The lesson bar says how far you are; Stop (or B) ends it where you are.', run: async () => { click('#pracBtn'); await wait(200); click('[data-a=go]'); await wait(600); }},
+  {id: 'practise-end', title: 'Quick practice, the end', save: 'practise', why: 'How you did, the words that moved up a level, the ones to practise, and Done or 10 more.', run: async () => {
+    let i = 0; pictureQ = async o => { const ok = i++ % 4 !== 1; answer(o.word, ok, o.type); return ok; }; gapQ = async o => { answer(o.gap, true, 'fill'); return true; };
+    click('#pracBtn'); await wait(200); click('[data-a=go]'); await wait(600); }},
   {id: 'game-card', title: 'A game’s card', save: 'middle', why: 'Continue, copy it to a file, or delete it.', run: async () => { slotCard(1); await wait(300); }},
   {id: 'game-empty', title: 'An empty game’s card', why: 'A new game, or one from a file.', run: async () => { slotCard(1); await wait(300); }},
   {id: 'game-delete', title: 'Deleting a game', save: 'middle', why: 'Asked once more; Keep it is the main button.', run: async () => { slotCard(1); click('[data-a=del]'); await wait(300); }},
@@ -1206,7 +1217,7 @@ const SCREENS = [
   {id: 'bed', title: 'Ready to sleep', save: 'byBed', why: 'Facing a bed (once you know 床): A says Sleep.', run: async () => { play(); await wait(500); }},
   {id: 'sleeping', title: 'Sleeping', save: 'byBed', why: 'You hop into the bed and lie under the leaf blanket; the cave goes dim and Zs float up (held still here). Then you hop down with your health full.', run: async () => { play(); await wait(200); sleepAt = {x: 12, y: 1}; pl.px = 12 * T; pl.py = T; setInterval(() => { sleepT = performance.now() - SLEEP_MS * .45; }, 30); await wait(300); }},
   {id: 'menu', title: 'Menu', save: 'middle', run: async () => { play(); await wait(100); openMenu(); await wait(300); }},
-  {id: 'saved', title: 'Saved', save: 'middle', why: 'The menu’s Save tile: it saves by itself anyway, and this says so.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(100); openMenu(); click('[data-m=save]'); clearTimeout(msgT); await wait(300); }},
+  {id: 'saved', title: 'Saved', save: 'middle', why: 'The menu’s Save button: it saves by itself anyway, and this says so.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(100); openMenu(); click('[data-m=save]'); clearTimeout(msgT); await wait(300); }},
   {id: 'tasks', title: 'Tasks', save: 'meadowTasks', why: 'The most there are at once: in the meadow, before the rocks roll away. Just what to do now, full width, with how much of the chapter you’ve done; Checklist ▸ opens the checklist.', run: async () => { play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'tasks-list', title: 'The chapter’s checklist', save: 'meadowTasks', why: 'Checklist ▸ on the Tasks page: what’s still to do first, then what you’ve done, a line each, in two columns. ◂ Tasks goes back.', run: async () => { play(); await wait(100); tasksPage(() => closeCard(), 'list'); await wait(300); }},
   {id: 'tasks-list-ch1', title: 'Chapter 1’s checklist', save: 'feastTable', why: 'Chapter 1, at the feast’s table: more done than still to do.', run: async () => { play(); await wait(100); tasksPage(() => closeCard(), 'list'); await wait(300); }},

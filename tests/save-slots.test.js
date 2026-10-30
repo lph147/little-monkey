@@ -13,7 +13,7 @@ test('your game is Game 1, just where it was; Games 2 and 3 are empty', () => {
   assert.equal(game.run('SLOT'), 1);
   game.run('filesCard()');
   const [one, two, three] = game.el('#sheet').querySelectorAll('.slotrow');
-  assert.match(one.textContent, /Game 1.*2 words · 0 friends/);
+  assert.match(one.textContent, /Game 1.*1 word · 0 friends/, 'as the menu counts them: 你好 is a phrase, not a word caught');
   assert.ok(two.classList.contains('empty') && three.classList.contains('empty'));
   game.run('save()');
   assert.equal(JSON.parse(game.storage.get(SAVE_KEY)).shells, 5, 'it saves under the same name as before');

@@ -197,11 +197,15 @@ function toTitle(){
   $('#titleArea').innerHTML = `<span class="pzh">${AREA.name.zh}</span> <span class="ppy">${AREA.name.py}</span><span class="pen">${esc(AREA.name.en)}</span>`;
   $('#version').textContent = 'v' + VERSION;
   const n = lastPlayed(), g = n && slotSummary(n), empty = SLOTS.find(k => !slotSummary(k));
+  const qp = g && g.canPractise;   // quick practice, for the game you'd continue, once it knows enough words (js/scrolls.js)
+  $('#titleButtons').classList.toggle('qp', !!qp);
   $('#titleButtons').innerHTML = (g ? `<button class="btn big primary" id="contBtn" data-label="Continue">Continue<span class="sub">Game ${n} · ${g.words} ${g.words === 1 ? 'word' : 'words'}${g.played ? ' · played ' + ago(g.played) : ''}</span></button>` : '')
+    + (qp ? `<button class="btn big" id="pracBtn" data-label="Practise">Practise<span class="sub">${g.practise ? `${g.practise} ${g.practise === 1 ? 'word needs' : 'words need'} it` : 'Your words'}</span></button>` : '')
     + `<button class="btn big${g ? '' : ' primary'}" id="newBtn" data-label="New game">New game<span class="sub">${!g ? 'Start the story' : empty ? 'In an empty game' : 'Your 3 games are in use'}</span></button>`
     + `<button class="btn big" id="filesBtn" data-label="Save files">Save files<span class="sub">${g ? 'Your 3 games' : 'Load a game from a file'}</span></button>`;
   const tb = $('#titleButtons');
   if (g) tb.querySelector('#contBtn').onclick = go(() => continueGame(n));
+  if (qp) tb.querySelector('#pracBtn').onclick = () => { getAC(); unlockSpeech(); keepSaves(); SFX.blip(); if (n !== SLOT){ useSlot(n); setUpGame(); } quickPractice(() => { closeCard(); toTitle(); }); };   // (no music: it's not the game)
   tb.querySelector('#newBtn').onclick = () => { SFX.blip(); if (empty) go(() => { newGameIn(empty); setUpGame(); playIntro(); })(); else filesCard('full'); };
   tb.querySelector('#filesBtn').onclick = () => { SFX.blip(); filesCard(); };
   titleSel = 0; markTitle();

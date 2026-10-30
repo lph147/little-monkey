@@ -11,10 +11,10 @@ function menuGame(){
   return {game, sheet, run: code => game.run(code), items: () => sheet.querySelectorAll('[data-m]').map(b => b.dataset.m)};
 }
 
-test('the menu has a tile each for the Word Scroll, tasks, the bag, friends, wardrobe and saving, then Settings', () => {
+test('the menu has a tile each for the Word Scroll, practice, tasks, the bag, friends and wardrobe, then Settings and Save', () => {
   const {sheet, run, items} = menuGame();
   run('pressMenu()');
-  assert.deepEqual(items(), ['words', 'tasks', 'bag', 'friends', 'wardrobe', 'save', 'settings']);
+  assert.deepEqual(items(), ['words', 'practice', 'tasks', 'bag', 'friends', 'wardrobe', 'settings', 'save']);
   const tile = sheet.querySelector('.mtile[data-m="tasks"]');
   assert.equal(tile.querySelector('.mzh').textContent, '任务');
   assert.equal(tile.querySelector('.mpy').textContent, 'rènwu');
@@ -65,7 +65,7 @@ test('Settings has the sound, pinyin, English on replies, frames a second, How t
   assert.equal(run('S.pinyin'), !pinyin, 'Pinyin switches');
   assert.equal(run('document.activeElement.dataset.m'), 'pinyin', 'and stays chosen');
   run('pressB()');
-  assert.deepEqual(items(), ['words', 'tasks', 'bag', 'friends', 'wardrobe', 'save', 'settings'], 'B from Settings goes back to the menu');
+  assert.deepEqual(items(), ['words', 'practice', 'tasks', 'bag', 'friends', 'wardrobe', 'settings', 'save'], 'B from Settings goes back to the menu');
   assert.equal(run('document.activeElement.dataset.m'), 'settings');
 });
 
@@ -83,21 +83,21 @@ test('B or the Menu button closes the menu, from the menu or Settings', () => {
 test('the D-pad moves around the menu on screen: up and down between rows, left and right along them', () => {
   const {sheet, run} = menuGame();
   run('openMenu()');
-  // the menu, laid out as a 3 × 2 grid of tiles, then Settings across the width, then Close
-  const place = {words: [0, 0, 150, 100], tasks: [160, 0, 150, 100], bag: [320, 0, 150, 100], friends: [0, 110, 150, 100], wardrobe: [160, 110, 150, 100], save: [320, 110, 150, 100], settings: [0, 220, 310, 40]};
+  // the menu, laid out as a 3 × 2 grid of tiles, then Settings and Save side by side, then Close
+  const place = {words: [0, 0, 150, 100], practice: [160, 0, 150, 100], tasks: [320, 0, 150, 100], bag: [0, 110, 150, 100], friends: [160, 110, 150, 100], wardrobe: [320, 110, 150, 100],
+    settings: [0, 220, 150, 40], save: [160, 220, 150, 40]};
   for (const [m, [left, top, width, height]] of Object.entries(place)) sheet.querySelector(`[data-m="${m}"]`).rect = {left, top, width, height};
-  sheet.querySelector('[data-a=close]').rect = {left: 230, top: 280, width: 80, height: 40};
+  sheet.querySelector('[data-a=close]').rect = {left: 320, top: 280, width: 80, height: 40};
   const on = () => run("document.activeElement.dataset.m || document.activeElement.dataset.a");
   assert.equal(on(), 'words');
-  run("navFocus('down')"); assert.equal(on(), 'friends', 'down goes to the tile below, not the one beside');
-  run("navFocus('right')"); assert.equal(on(), 'wardrobe');
-  run("navFocus('up')"); assert.equal(on(), 'tasks', 'up goes to the tile above');
-  run("navFocus('up')"); assert.equal(on(), 'tasks', 'at the top, up stays put');
+  run("navFocus('down')"); assert.equal(on(), 'bag', 'down goes to the tile below, not the one beside');
+  run("navFocus('right')"); assert.equal(on(), 'friends');
+  run("navFocus('up')"); assert.equal(on(), 'practice', 'up goes to the tile above');
+  run("navFocus('up')"); assert.equal(on(), 'practice', 'at the top, up stays put');
   run("navFocus('left')"); assert.equal(on(), 'words');
   run("navFocus('down'); navFocus('down')"); assert.equal(on(), 'settings', 'down from the grid goes to Settings');
+  run("navFocus('right')"); assert.equal(on(), 'save', 'and Save beside it');
   run("navFocus('down')"); assert.equal(on(), 'close', 'then to Close');
-  run("navFocus('up'); navFocus('up')"); assert.equal(on(), 'friends', 'and back up to the grid');
-  run("navFocus('right'); navFocus('right'); navFocus('right')"); assert.equal(on(), 'settings', 'right at the end of a row (past Save) carries on to the next');
 });
 
 test('How to play is three pages, each short enough for a phone held sideways: the controls, the kinds of word, the rest', () => {

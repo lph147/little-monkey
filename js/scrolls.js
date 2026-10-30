@@ -217,6 +217,84 @@ async function practise(who, kind = PRACTICE.post){
   });
   return true;
 }
+// Quick practice (练习, decided 30 October 2026): questions on the words you know, from the title screen (Practise, for the
+// game you'd continue) or the menu's 练习 tile, without walking anywhere. You choose how many with − and +, in fives, up to
+// QUICK.most or as many as you can be asked about (askable: your words with pictures, and those without that a sentence
+// you've met can ask about, with its gap), 10 to start with. The words that need it most come first (the review list),
+// each asked about as its level calls for (listen while it's new, read once you recognise it), and every QUICK.gapEvery-th
+// a sentence with a word missing, as the word games do; never a new word. Every answer counts in your game, as practice
+// anywhere does (moving words on, and towards the waits), but earns no shells: it's a tool beside the game, not part of it.
+// Stop, or B, ends it where you are. The end card says how you did, the words that moved up a level, and those you missed;
+// again: the same number again. back: where Back and Done go (the title, or the menu).
+const QUICK = {step:5, most:50, first:10, gapEvery:5};
+const QUICK_NAME = () => `<span class="hz">练习</span>${S.pinyin ? ' <span class="spy">liànxí</span>' : ''} Practice`;
+const sentenceWords = () => [...new Set(SENTENCES().map(b => toks(b.sentence)).filter(t => t.every(w => lvl(w) >= 1)).flat().filter(w => !WORDS[w].pic))];
+const askable = () => trainable().length + sentenceWords().length;
+function quickSizes(){   // the numbers − and + step through: fives, up to the most you can be asked about
+  const top = Math.min(QUICK.most, askable()), sizes = [];
+  for (let k = QUICK.step; k <= top; k += QUICK.step) sizes.push(k);
+  if (!sizes.length || sizes.at(-1) !== top) sizes.push(top);
+  return sizes;
+}
+function quickPractice(back){
+  const have = trainable().length;
+  if (have < TRAINING_MIN){
+    openCard(`<p class="label">${QUICK_NAME()}</p><p>Learn ${TRAINING_MIN} words with pictures first (${have}/${TRAINING_MIN}): things that sparkle ✨ have words.</p><div class="actions"><button class="btn primary" data-a="back" data-b>OK</button></div>`);
+    on('[data-a=back]', back); return;
+  }
+  const sizes = quickSizes();
+  let at = Math.max(0, sizes.findIndex(k => k >= Math.min(QUICK.first, sizes.at(-1))));
+  const all = wordsCaught(), need = practiceWords().length, lv = [1, 2, 3, 4].map(i => ORDER.filter(w => lvl(w) === i).length);
+  const sq = i => `<span class="pips">${[1, 2, 3, 4].map(j => `<i class="${i >= j ? 'on' : ''}"></i>`).join('')}</span>`;
+  openCard(`<p class="label">${QUICK_NAME()}</p>
+    <div class="stats"><span>${all} ${all === 1 ? 'word' : 'words'} caught</span><span><b>${need}</b> need${need === 1 ? 's' : ''} practice</span></div>
+    <div class="qplevels">${MASTERY.map((m, i) => `<span>${sq(i + 1)} ${m} <b>${lv[i]}</b></span>`).join('')}</div>
+    <div class="qpcount" data-nav><button class="btn" data-a="less" aria-label="Fewer">−</button><span class="qpn" aria-live="polite"></span><button class="btn" data-a="more" aria-label="More">+</button>
+      <span class="small">on the words that need it most first</span></div>
+    <div class="actions"><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" data-a="go" data-label="Start">Start</button></div>`);
+  const show = () => {
+    sheet.querySelector('.qpn').innerHTML = `<b>${sizes[at]}</b> ${sizes[at] === 1 ? 'question' : 'questions'}`;
+    sheet.querySelector('[data-a=less]').disabled = at === 0; sheet.querySelector('[data-a=more]').disabled = at === sizes.length - 1;
+  };
+  show();
+  on('[data-a=less]', () => { if (at > 0){ at--; SFX.blip(); show(); } });
+  on('[data-a=more]', () => { if (at < sizes.length - 1){ at++; SFX.blip(); show(); } });
+  on('[data-a=back]', back);
+  on('[data-a=go]', () => quickRun(sizes[at], back));
+}
+async function quickRun(n, back){
+  const before = Object.fromEntries(ORDER.map(w => [w, lvl(w)]));
+  const pics = nextWords(trainable(), n);   // (more than it needs: every QUICK.gapEvery-th is a sentence, when there is one)
+  const missed = new Set(), sentences = [];
+  let right = 0, asked = 0, stopped = false, stop;
+  const stopping = new Promise(res => { stop = () => { stopped = true; res(null); }; });
+  for (let i = 0, p = 0; i < n && !stopped; i++){
+    lessonBar = `${QUICK_NAME()} · ${i + 1} of ${n}`;
+    const gapHere = (i % QUICK.gapEvery === QUICK.gapEvery - 1 || p >= pics.length), b = gapHere ? practiceSentence(sentences) : null;
+    let ok, w;
+    if (b){ sentences.push(b.t.join('')); w = b.gap; ok = await Promise.race([gapQ({t:b.t, en:b.en, gap:b.gap, stop}), stopping]); }
+    else {
+      if (p >= pics.length) break;   // (nothing left to ask about)
+      w = pics[p++];
+      const q = wordQuestion(w);
+      ok = await Promise.race([pictureQ({head:'', body:q.body, word:w, type:q.type, options:q.options, text:q.text, answerIdx:q.answerIdx, stop,
+        onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); }}), stopping]);
+    }
+    if (stopped) break;
+    asked++; if (ok) right++; else missed.add(w);
+  }
+  lessonBar = null; closeCard(); save();
+  const up = ORDER.filter(x => lvl(x) > before[x]);
+  if (asked) SFX.fanfare();
+  openCard(`<p class="label">${stopped && asked < n ? 'Practice stopped' : 'Practice done!'}</p>
+    <p>${asked ? `You got <b>${right} of ${asked}</b> right first time.` : 'No questions answered this time.'}</p>
+    ${up.length ? `<p class="small">Moved up: ${up.map(x => `<span class="hz">${x}</span> ${pips(x)} ${MASTERY[lvl(x) - 1]}`).join(', ')}</p>` : ''}
+    ${missedHTML(missed)}
+    <div class="actions"><button class="btn" data-a="done" data-b>Done</button><button class="btn primary" data-a="again" data-label="${n} more">${n} more</button></div>`);
+  bindMissed();
+  on('[data-a=done]', back);
+  on('[data-a=again]', () => quickRun(n, back));
+}
 async function nextArea(){
   here().done = true; save(); SFX.fanfare(); fadeT = performance.now();
   await sleep(700);

@@ -4,17 +4,17 @@
 // The menu's tiles, with Chinese, pinyin and English (the Chinese is on the review sheet, CHINESE.md).
 const MENU_TILES = [
   {m:'words', icon:'📜', zh:'词', py:'cí', en:'Words'},   // each tile's English is what its Chinese means
+  {m:'practice', icon:'🎯', zh:'练习', py:'liànxí', en:'Practice'},   // quick practice (js/scrolls.js), beside your words
   {m:'tasks', icon:'📋', zh:'任务', py:'rènwu', en:'Tasks'},
   {m:'bag', icon:'👝', zh:'包', py:'bāo', en:'Bag'},
   {m:'friends', icon:'🐾', zh:'朋友', py:'péngyou', en:'Friends'},
-  {m:'wardrobe', icon:'👕', zh:'衣服', py:'yīfu', en:'Clothes'},
-  {m:'save', icon:'💾', zh:'保存', py:'bǎocún', en:'Save'}   // it saves by itself anyway: this says so
-];
+  {m:'wardrobe', icon:'👕', zh:'衣服', py:'yīfu', en:'Clothes'}
+];   // (Save is a small button by Settings since 30 October 2026, so the tiles fit one row on a phone: it saves by itself anyway)
 function openMenu(focusId){
   openCard(`<p class="label">Menu</p>${statsHTML()}
     <div class="menu">
       <div class="tiles">${MENU_TILES.map(t => `<button class="mtile" data-m="${t.m}" data-label="${t.en}"><span class="micon" aria-hidden="true">${t.icon}</span><span class="mzh">${t.zh}</span><span class="mpy">${t.py}</span><span class="men">${t.en}</span></button>`).join('')}</div>
-      <button class="btn" data-m="settings">⚙ Settings</button>
+      <div class="menurow"><button class="btn" data-m="settings">⚙ Settings</button><button class="btn" data-m="save">💾 Save</button></div>
     </div>
     <div class="actions"><button class="btn" data-a="close" data-b>Close</button></div>`);
   const f = sheet.querySelector(`[data-m="${focusId || MENU_TILES[0].m}"]`); if (f) f.focus();
@@ -25,6 +25,7 @@ function openMenu(focusId){
     bag: () => bagPage(() => openMenu('bag')),
     save: () => { save(); closeCard(); toast(`💾 Saved: Game ${SLOT}, just now. It also saves by itself as you play.`); },
     words: () => openScroll(() => openMenu('words')),
+    practice: () => quickPractice(() => openMenu('practice')),
     friends: () => friendsPage(() => openMenu('friends')),
     settings: () => openSettings()
   };

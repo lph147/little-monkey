@@ -934,6 +934,12 @@ const ICON_DRAWINGS = {
     const teeth = [...Array(8)].map((_, i) => { const a = i * Math.PI / 4; return Cp(8, 8, 8 + 6.6 * Math.cos(a), 8 + 6.6 * Math.sin(a), 1.5); });
     p.fill(and(or(O(8, 8, 5), ...teeth), not(O(8, 8, 2))), '#A9B4BC', {light: '#DDE4E8'});
   },
+  '🎯': p => {   // a target: quick practice
+    p.fill(O(8, 8, 7), '#D9483B', {light: '#F07A6A'});
+    p.flat(O(8, 8, 5), '#FAF6EC');
+    p.flat(O(8, 8, 3.2), '#D9483B');
+    p.flat(O(8, 8, 1.4), '#FAF6EC');
+  },
   '💾': p => {   // a floppy disk: the save file
     p.fill(Rc(1.5, 1.5, 13, 13, 1), '#3F6FB0', {light: '#6E97D0'});
     p.fill(Rc(4.5, 1.5, 7, 4.5), '#B9C2C9'); p.flat(Rc(9, 2.5, 1.5, 2.5), '#3F6FB0');

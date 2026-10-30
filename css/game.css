@@ -576,7 +576,8 @@ rt.hid{visibility:hidden}
 .sheet:has(.tiles) > *{grid-column:1 / -1}
 .sheet:has(.tiles) .menu{display:contents}
 .sheet:has(.tiles) .tiles{grid-column:1 / -1;grid-template-columns:repeat(6,1fr);gap:.4rem;margin:.4rem 0 .5rem}
-.sheet:has(.tiles) .menu > .btn{grid-column:1;justify-self:start}
+.sheet:has(.tiles) .menu > .btn, .sheet:has(.tiles) .menu > .menurow{grid-column:1;justify-self:start}
+.menurow{display:flex;gap:.5rem;flex-wrap:wrap}
 .sheet:has(.tiles) > .actions{grid-column:2;position:static;margin:0;padding:0;box-shadow:none}
 .checklist{list-style:none;margin:4px 0 6px;padding:0;line-height:1.3}
 .checklist li{display:flex;gap:8px;align-items:baseline;padding:1px 0}
@@ -1080,6 +1081,7 @@ rt.hid{visibility:hidden}
    files; the chosen one has a gold outline and the A badge */
 #titleButtons{display:grid;grid-template-columns:auto auto;justify-content:start;gap:.5rem;pointer-events:auto}
 #titleButtons #contBtn{grid-column:1 / -1}
+#titleButtons.qp #contBtn{grid-column:auto}   /* Practise beside it */
 .titlecard .btn.big{font-size:1rem;padding:.4rem .9rem;display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;line-height:1.15;white-space:normal;text-align:left}
 .titlecard .btn.big .sub{font:500 .72rem var(--text);opacity:.8}
 .titlecard .btn.sel{outline:3px solid var(--gold);outline-offset:2px}
@@ -1135,3 +1137,9 @@ rt.hid{visibility:hidden}
 :root:is([data-screen=small],[data-screen=tiny]) .tt .ttpractice{font-size:.8rem;line-height:1.25;gap:3px}
 :root:is([data-screen=small],[data-screen=tiny]) .ldone{gap:8px;margin:0} :root:is([data-screen=small],[data-screen=tiny]) .ldone .big{font-size:.95rem} :root:is([data-screen=small],[data-screen=tiny]) .ldone .w{font-size:1rem}
 :root:is([data-screen=small],[data-screen=tiny]) .ldone + .small{margin:2px 0 0}
+/* Quick practice (练习, js/scrolls.js): its card, with your words at each level and how many questions, − and + */
+.qplevels{display:grid;grid-template-columns:repeat(2,auto);gap:.15rem .9rem;justify-content:start;font-size:.8rem;margin:.3rem 0 .4rem}
+.qpcount{display:flex;align-items:center;gap:.5rem;margin:.2rem 0 .1rem}
+.qpcount .qpn{min-width:6.5em;text-align:center;font-size:.9rem}
+.qpcount .small{flex:1 1 8em;min-width:0;line-height:1.25}
+.qpcount [data-a=less],.qpcount [data-a=more]{min-width:2.4rem;font-size:1.1rem}
