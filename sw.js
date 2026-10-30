@@ -8,7 +8,11 @@
 // - A page opened from the copy (on a slow connection, after WAIT; with no connection; or when the web sends an
 //   error) gets all its files from the copy too.
 // - A page from the web whose own file can't come from the web (the connection dropped as it loaded) opens again
-//   from the copy, whole, rather than get that file from the copy.
+//   from the copy, whole, rather than get that file from the copy. Only while it loads, and only for the game's own
+//   files: once it has loaded whole, or for a file from another site (a piece of a font, which never changes), a file
+//   the web can't send comes from the copy if it has it, and the game is never reopened while you play (decided 30
+//   October 2026: meeting the turtle needed a new piece of the Chinese font, the signal dropped, and the game went back
+//   to its title, in other fonts).
 // - Every file is checked with the web (FRESH), never taken from the browser's own saved copy without asking: GitHub lets
 //   a browser use its copy of a file for 10 minutes without asking if it has changed, so the new page came with the old
 //   styles and code (decided 26 October 2026). A file that hasn't changed isn't sent again, so it costs next to nothing.
@@ -24,6 +28,7 @@ const AGAIN = 10000;          // how soon after a page from the web couldn't get
 const FRESH = {cache:'no-cache'};   // ask the web whether a file has changed, never just take the browser's saved copy
 const fromCopy = new Set();   // pages opened from the copy (by their client id): their files come from the copy too
 const broken = new Set();     // pages from the web that couldn't get one of their files: they never change the copy
+const loaded = new Set();     // pages that have loaded whole (they've sent the list of their files): never reopened
 let copyNext = 0;             // when the last of those couldn't (the next page opens from the copy)
 
 self.addEventListener('install', () => self.skipWaiting());   // a new version of this file takes over straight away
@@ -60,6 +65,7 @@ async function networkFirst(req, e){
   const hit = await inCopy(req);   // no connection, an error or a login page: the copy, if it has it
   if (!hit) return res || Response.error();
   if (page) return opened(hit, e);
+  if (loaded.has(e.clientId) || !req.url.startsWith(self.registration.scope)) return hit;   // playing, or a font: never reopened
   broken.add(e.clientId); copyNext = Date.now(); e.waitUntil(openAgain(e.clientId));   // a file for a page from the web: the page opens again from the copy
   return Response.error();
 }
@@ -77,6 +83,7 @@ let keeping = Promise.resolve();
 self.addEventListener('message', e => {
   const d = e.data || {}, id = e.source && e.source.id;
   const fromWeb = !fromCopy.has(id) && !broken.has(id);   // (a page from the copy, or one that couldn't load whole, changes nothing)
+  if (Array.isArray(d.keepFiles) && id) loaded.add(id);
   if (Array.isArray(d.keepFiles) && fromWeb) e.waitUntil(keeping = keeping.then(() => update()).then(() => keepFiles(d.keepFiles)));
   if (Array.isArray(d.keepClips)) e.waitUntil(keeping = keeping.then(() => keepClips(d.keepClips)));
 });

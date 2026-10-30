@@ -201,6 +201,31 @@ test('if the connection drops as a new version loads, the page opens again from 
   assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 4')).body, 'the new game');
 });
 
+test('once the game is playing, a file the web can’t send never reopens it: it comes from the copy (decided 30 October 2026: a piece of the font, for the turtle’s card, and the game went back to its title)', async () => {
+  const FONT = 'https://fonts.gstatic.com/s/notosanssc/v37/piece-42.woff2';
+  const web = worker();
+  web.server[FONT] = 'a piece of the font';
+  await web.load(); await web.get(FONT, 'cors');   // played before, with a character from that piece
+  await web.send({keepFiles: [SITE, SITE + 'js/main.js']});
+  assert.equal(web.copy.get(FONT).body, 'a piece of the font', 'the copy has it');
+  await web.load('page 2');   // playing today: loaded whole
+  web.online = false;         // a moment with no signal, as a card needs that piece for the first time today
+  assert.equal((await web.get(FONT, 'cors', 'page 2')).body, 'a piece of the font', 'from the copy');
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 2')).body, 'the game', 'and so is any of its own files');
+  assert.deepEqual(web.reopened, [], 'the game carries on');
+});
+
+test('a font from another site never reopens a page, even as it loads: a piece of a font never changes', async () => {
+  const FONT = 'https://fonts.gstatic.com/s/pixelifysans/v1/piece-1.woff2';
+  const web = worker();
+  web.server[FONT] = 'pixel font';
+  await web.load(); await web.get(FONT, 'cors'); await web.send({keepFiles: [SITE, SITE + 'js/main.js']});
+  assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 1');
+  web.online = false;
+  assert.equal((await web.get(FONT, 'cors', 'page 2')).body, 'pixel font');
+  assert.deepEqual(web.reopened, []);
+});
+
 test('opened from the copy with no connection, a page gets all its files from the copy, even if the connection comes back as it loads', async () => {
   const web = worker();
   await web.load();
@@ -226,10 +251,11 @@ test('an error, or a Wi-Fi login page, is never kept: the copy is used instead',
   const web = worker();
   await web.load();
   web.server[SITE + 'js/main.js'] = {status: 500};
-  assert.equal((await web.get(SITE + 'js/main.js')).error, true, 'a server error for a file: not the copy’s, which could be older…');
-  assert.deepEqual(web.reopened, ['page 1'], '…the page opens again from the copy, whole');
-  assert.equal((await web.get(SITE, 'navigate', 'page 2')).body, 'version 1');
-  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 2')).body, 'the game', 'all of it');
+  await web.get(SITE, 'navigate', 'page 2');   // a page loading
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 2')).error, true, 'a server error for a file: not the copy’s, which could be older…');
+  assert.deepEqual(web.reopened, ['page 2'], '…the page opens again from the copy, whole');
+  assert.equal((await web.get(SITE, 'navigate', 'page 3')).body, 'version 1');
+  assert.equal((await web.get(SITE + 'js/main.js', 'no-cors', 'page 3')).body, 'the game', 'all of it');
   web.server[SITE] = {login: 'Log in to the hotel Wi-Fi'};
   assert.equal((await web.get(SITE, 'navigate')).body, 'version 1', 'sent on to a login page: the game, from the copy');
   assert.equal(web.copy.get(SITE).body, 'version 1', 'and the login page isn’t kept');
