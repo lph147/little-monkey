@@ -630,6 +630,12 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] In chapter 1, go into the melon field and walk about by the tall grass in its south-west corner. Now and then it rustles: face it from beside it, and sometimes a tiny grey mouse jumps out (sometimes the rabbit, or the butterfly if it's your friend). Its card teaches 老鼠 (lǎoshǔ, mouse), said straight away, then its questions.
 - [ ] It never jumps out anywhere else, and not in the prologue.
 
+## The turtles
+
+- [ ] In chapter 1, in the hot spring valley, a small turtle sits up on the boulder between the pools, west of the way up. Stand beside it and press A (Meet): its card teaches 乌龟 (wūguī, turtle), then its questions.
+- [ ] On the shore, at the water's edge on its west side, a sea turtle lies on the sand. Press A beside it: its card teaches 海龟 (hǎiguī, sea turtle), then How it's made: 海 sea + 龟, as in 乌龟 (once you know the turtle). The crabs, the raft and the troop's goodbye are as before.
+- [ ] In questions, the turtle and the sea turtle are never two answers together.
+
 ## Sounds alike
 
 - [ ] In a new game, look at the river (河 hé), then give the thirsty monkey water. When 喝 hē is taught: How it's made ▸, then Sounds like ▸, then 河 and 喝 side by side ("Same sound, different tone"): pictures, characters, pinyin, a red line for each tone (rising, flat) with its name, and their English, then "Listen to the tone: hé goes up, hē stays high." Hear both says hé then hē, each outlined in gold as it's said; tap either side to hear just it. Got it carries on; Back goes back a card. It all fits on a small phone, with no ▼ More.

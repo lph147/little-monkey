@@ -306,6 +306,7 @@ SAVES.springs = {...SAVES.gardenMarked, areas: {1: {...SAVES.gardenMarked.areas[
 SAVES.springsVent = {...SAVES.springs, pos: {place: 'hotSprings', x: 13, y: 10, dir: 'up'}};   // between the vents, facing the next
 SAVES.springsBath = {...SAVES.springs, pos: {place: 'hotSprings', x: 5, y: 18, dir: 'up'}};   // facing a monkey in the warm pool
 SAVES.springsBananas = {...SAVES.springs, pos: {place: 'hotSprings', x: 9, y: 5, dir: 'up'}};   // facing a banana plant
+SAVES.springsTurtle = {...SAVES.springs, pos: {place: 'hotSprings', x: 6, y: 12, dir: 'down'}};   // facing the turtle on its warm boulder (30 October 2026)
 SAVES.bananasBack = {...SAVES.springs, w: {...SAVES.springs.w, ...knows(1, ['香蕉'])}, areas: {1: {...SAVES.springs.areas[1], holding: {bananaSeeds: '种子'}}},
   tasksSeen: {...SAVES.springs.tasksSeen, bananaSeedsBack: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};
 SAVES.gardenPlanted = {...SAVES.bananasBack, w: {...SAVES.bananasBack.w, ...knows(1, ['西瓜', '葡萄'])}, areas: {1: {...SAVES.bananasBack.areas[1], holding: {},
@@ -380,6 +381,7 @@ SAVES.shrimpTable = {...SAVES.shrimpTwo, areas: {1: {...SAVES.shrimpTwo.areas[1]
 // the end of chapter 1: a crab from the shore below the meadow, the school's exam, the feast, and your raft
 SAVES.crabAsk = {...SAVES.shrimpTable, areas: {1: {...SAVES.shrimpTable.areas[1], crab: 'not asked'}}, pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};   // facing the hungry monkey
 SAVES.shore = {...SAVES.crabAsk, w: {...SAVES.crabAsk.w, ...knows(1, ['海'])}, areas: {1: {...SAVES.crabAsk.areas[1], crab: 'asked', seaSeen: 1}}, tasksSeen: {...SAVES.crabAsk.tasksSeen, crabCatch: 1}, pos: {place: 'shore', x: 9, y: 9, dir: 'down'}};
+SAVES.shoreTurtle = {...SAVES.shore, pos: {place: 'shore', x: 4, y: 11, dir: 'down'}};   // facing the sea turtle at the water's edge (30 October 2026)
 SAVES.crabTable = {...SAVES.shore, w: {...SAVES.shore.w, ...knows(1, ['螃蟹'])}, areas: {1: {...SAVES.shore.areas[1], crab: 'done', crabTable: 1}}, tasksSeen: {...SAVES.shore.tasksSeen, crabBack: 1, exam: 1}, pos: {place: 'homeGround', x: 15, y: 9, dir: 'up'}};
 SAVES.examReady = {...SAVES.crabTable, pos: {place: 'school', x: 7, y: 3, dir: 'up'}};   // facing the teacher
 // quick practice (练习): a game near the end of chapter 1, its words at every level
@@ -972,6 +974,12 @@ const SCREENS = [
     play(); await wait(100); rustle = {x: 2, y: 14, a: ANIMALS.find(a => a.id === 'mouse')}; await wait(700); }},
   {id: 'mouse-meet', title: '老鼠', save: 'melonMouse', why: 'Meeting the mouse: its word, 老鼠 (lǎoshǔ, mouse), on a new-word card, said straight away; then its questions.', run: async () => {
     play(); await wait(100); wildAppears(ANIMALS.find(a => a.id === 'mouse'), {x: 4, y: 14, d: 'left'}); await wait(1800); }},
+  {id: 'turtle', title: 'A turtle', save: 'springsTurtle', why: 'Chapter 1: a small turtle warming itself up on the boulder by the hot spring pools. Beside it, A: Meet.', run: async () => {
+    play(); await wait(700); }},
+  {id: 'sea-turtle', title: 'A sea turtle', save: 'shoreTurtle', why: 'Chapter 1: a sea turtle on the shore’s sand at the water’s edge, west of the crabs. Beside it, A: Meet.', run: async () => {
+    play(); await wait(700); }},
+  {id: 'sea-turtle-made', title: '海龟: how it’s made', save: 'shoreTurtle', why: 'Its new-word card, then How it’s made: 海 sea + 龟 (turtle, as in 乌龟) = 海龟 sea turtle, the 龟 lifting out of 乌龟 once you know it.', run: async () => {
+    play(); await wait(100); S.w['乌龟'] = {lv: 1, due: 0, ok: 1}; pressA(); await wait(1500); click('[data-a=made]'); await wait(2500); }},
   {id: 'owl-meet', title: '猫头鹰', save: 'pinesOwl', why: 'Meeting the owl: its word, 猫头鹰 (māotóuyīng, owl), on a new-word card, said straight away; then How it’s made: 猫 cat + 头 head + 鹰 eagle.', run: async () => {
     play(); await wait(100); S.pos = {place: 'darkPines', x: 11, y: 3, dir: 'up'}; placePlayer(); pressA(); await wait(1500); }},
   {id: 'pines-log', title: 'A hollow pine', save: 'pinesLog', why: 'Following the hoofprints east, down a narrow gully: a great pine has fallen along it, hollow inside. The cow stepped over it, but a little monkey can crawl right through.', run: async () => {
