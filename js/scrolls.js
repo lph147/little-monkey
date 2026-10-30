@@ -122,7 +122,8 @@ function matchWords(words, title, stopLabel){
   });
 }
 // The words you missed, as chips you can tap to hear.
-const missedHTML = missed => missed.size ? `<p class="small">Words to practise:</p><div class="chips">${[...missed].map(w => `<button class="chip" data-w="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${WORDS[w].py}</rt></ruby></button>`).join('')}</div><div class="gloss">Tap a word to hear it.</div>` : '';
+const chipHTML = w => `<button class="chip" data-w="${w}"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${WORDS[w].py}</rt></ruby></button>`;   // a word to tap and hear
+const missedHTML = missed => missed.size ? `<p class="small">Words to practise:</p><div class="chips">${[...missed].map(chipHTML).join('')}</div><div class="gloss">Tap a word to hear it.</div>` : '';
 const bindMissed = () => sheet.querySelectorAll('.chip').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; say(w); sheet.querySelector('.gloss').innerHTML = `<b>${w}</b> ${WORDS[w].py} · ${esc(WORDS[w].en)}`; });
 async function wordTest(){   // the exit test at the cave door: every word with a picture you've caught
   const words = shuffle(ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));
@@ -236,6 +237,7 @@ function quickSizes(){   // the numbers − and + step through: fives, up to the
   if (!sizes.length || sizes.at(-1) !== top) sizes.push(top);
   return sizes;
 }
+const levelPips = i => `<span class="pips">${[1, 2, 3, 4].map(j => `<i class="${i >= j ? 'on' : ''}"></i>`).join('')}</span>`;   // a level's gold squares
 function quickPractice(back){
   const have = trainable().length;
   if (have < TRAINING_MIN){
@@ -245,15 +247,15 @@ function quickPractice(back){
   const sizes = quickSizes();
   let at = Math.max(0, sizes.findIndex(k => k >= Math.min(QUICK.first, sizes.at(-1))));
   const all = wordsCaught(), need = practiceWords().length, lv = [1, 2, 3, 4].map(i => ORDER.filter(w => lvl(w) === i).length);
-  const sq = i => `<span class="pips">${[1, 2, 3, 4].map(j => `<i class="${i >= j ? 'on' : ''}"></i>`).join('')}</span>`;
   openCard(`<p class="label">${QUICK_NAME()}</p>
     <div class="stats"><span>${all} ${all === 1 ? 'word' : 'words'} caught</span><span><b>${need}</b> need${need === 1 ? 's' : ''} practice</span></div>
-    <div class="qplevels">${MASTERY.map((m, i) => `<span>${sq(i + 1)} ${m} <b>${lv[i]}</b></span>`).join('')}</div>
-    <div class="qpcount" data-nav><button class="btn" data-a="less" aria-label="Fewer">−</button><span class="qpn" aria-live="polite"></span><button class="btn" data-a="more" aria-label="More">+</button>
-      <span class="small">on the words that need it most first</span></div>
+    <div class="qplevels">${MASTERY.map((m, i) => `<span>${levelPips(i + 1)} ${m} <b>${lv[i]}</b></span>`).join('')}</div>
+    <div class="qpcount" data-nav><button class="btn" data-a="less" aria-label="Fewer">−</button><b class="qpn" aria-live="polite"></b><button class="btn" data-a="more" aria-label="More">+</button>
+      <span class="qpq"></span></div>
+    <p class="small">The words that need it most come first.</p>
     <div class="actions"><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" data-a="go" data-label="Start">Start</button></div>`);
   const show = () => {
-    sheet.querySelector('.qpn').innerHTML = `<b>${sizes[at]}</b> ${sizes[at] === 1 ? 'question' : 'questions'}`;
+    sheet.querySelector('.qpn').textContent = sizes[at]; sheet.querySelector('.qpq').textContent = sizes[at] === 1 ? 'question' : 'questions';
     sheet.querySelector('[data-a=less]').disabled = at === 0; sheet.querySelector('[data-a=more]').disabled = at === sizes.length - 1;
   };
   show();
@@ -288,9 +290,12 @@ async function quickRun(n, back){
   if (asked) SFX.fanfare();
   openCard(`<p class="label">${stopped && asked < n ? 'Practice stopped' : 'Practice done!'}</p>
     <p>${asked ? `You got <b>${right} of ${asked}</b> right first time.` : 'No questions answered this time.'}</p>
-    ${up.length ? `<p class="small">Moved up: ${up.map(x => `<span class="hz">${x}</span> ${pips(x)} ${MASTERY[lvl(x) - 1]}`).join(', ')}</p>` : ''}
-    ${missedHTML(missed)}
-    <div class="actions"><button class="btn" data-a="done" data-b>Done</button><button class="btn primary" data-a="again" data-label="${n} more">${n} more</button></div>`);
+    ${up.length ? `<p class="small">${up.length === 1 ? 'A word' : `${up.length} words`} moved up a level:</p>
+      <div class="qpup">${[4, 3, 2, 1].map(l => [l, up.filter(x => lvl(x) === l)]).filter(([, ws]) => ws.length)
+        .map(([l, ws]) => `<div class="qprow"><span class="qplv">${levelPips(l)} ${MASTERY[l - 1]}</span><div class="chips">${ws.map(chipHTML).join('')}</div></div>`).join('')}</div>` : ''}
+    ${missed.size ? `<p class="small">Words to practise:</p><div class="chips">${[...missed].map(chipHTML).join('')}</div>` : ''}
+    ${up.length || missed.size ? '<div class="gloss">Tap a word to hear it.</div>' : ''}
+    <div class="actions"><button class="btn" data-a="again" data-b data-label="${n} more">${n} more</button><button class="btn primary" data-a="done">Done</button></div>`);   // (Done is A: you chose how many, so you'll most likely stop there)
   bindMissed();
   on('[data-a=done]', back);
   on('[data-a=again]', () => quickRun(n, back));

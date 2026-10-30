@@ -1139,7 +1139,12 @@ rt.hid{visibility:hidden}
 :root:is([data-screen=small],[data-screen=tiny]) .ldone + .small{margin:2px 0 0}
 /* Quick practice (练习, js/scrolls.js): its card, with your words at each level and how many questions, − and + */
 .qplevels{display:grid;grid-template-columns:repeat(2,auto);gap:.15rem .9rem;justify-content:start;font-size:.8rem;margin:.3rem 0 .4rem}
-.qpcount{display:flex;align-items:center;gap:.5rem;margin:.2rem 0 .1rem}
-.qpcount .qpn{min-width:6.5em;text-align:center;font-size:.9rem}
-.qpcount .small{flex:1 1 8em;min-width:0;line-height:1.25}
-.qpcount [data-a=less],.qpcount [data-a=more]{min-width:2.4rem;font-size:1.1rem}
+.qpcount{display:flex;align-items:center;gap:.5rem;margin:.3rem 0 .1rem}
+.qpcount .qpn{min-width:1.6em;text-align:center;font-size:1.3rem}
+.qpcount .qpq{font-size:1rem}
+.qpcount [data-a=less],.qpcount [data-a=more]{width:2rem;height:2rem;min-height:0;padding:0;border-radius:50%;font-size:1rem;line-height:1;box-shadow:0 2px 0 var(--ink);display:grid;place-items:center}
+.qpcount [data-a=less]:disabled,.qpcount [data-a=more]:disabled{opacity:.35}
+.qpup{display:grid;gap:.1rem}
+.qprow{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.qprow .qplv{font-size:.8rem;min-width:8.5em;white-space:nowrap}
+.qprow .chips{margin:3px 0}

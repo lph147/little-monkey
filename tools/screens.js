@@ -409,6 +409,7 @@ const SCREENS = [
   {id: 'practise-few', title: 'Quick practice, too few words', save: 'practiseFew', why: 'From the menu, before you know 4 words with pictures: learn some first.', run: async () => { play(); await wait(100); openMenu(); await wait(200); click('[data-m=practice]'); await wait(300); }},
   {id: 'practise-question', title: 'Quick practice, a question', save: 'practise', why: 'The lesson bar says how far you are; Stop (or B) ends it where you are.', run: async () => { click('#pracBtn'); await wait(200); click('[data-a=go]'); await wait(600); }},
   {id: 'practise-end', title: 'Quick practice, the end', save: 'practise', why: 'How you did, the words that moved up a level, the ones to practise, and Done or 10 more.', run: async () => {
+    for (const w of trainable().slice(0, 30)) Object.assign(rec(w), {n: 1, ok: 0});   // (a right answer moves these up a level)
     let i = 0; pictureQ = async o => { const ok = i++ % 4 !== 1; answer(o.word, ok, o.type); return ok; }; gapQ = async o => { answer(o.gap, true, 'fill'); return true; };
     click('#pracBtn'); await wait(200); click('[data-a=go]'); await wait(600); }},
   {id: 'game-card', title: 'A game’s card', save: 'middle', why: 'Continue, copy it to a file, or delete it.', run: async () => { slotCard(1); await wait(300); }},

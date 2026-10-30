@@ -598,8 +598,8 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 ## Quick practice
 
 - [ ] On the title screen, for a game that knows at least 4 words with pictures: Practise beside Continue, saying how many words need it (none for a new game, or one that knows fewer). Tap it: no music, and the 练习 Practice card: your words caught, how many need practice, and how many at each level, with − 10 questions + and Back and Start.
-- [ ] Tap + and −: it goes up and down in fives, no higher than 50 (or as many as you can be asked about: with 7 words, 5 then 7), never below 5, the button greyed out at each end. On a small phone it all fits, with no ▼ More.
-- [ ] Start: the questions on your words, "练习 Practice · 1 of 10" over each, every fifth a sentence with a word missing; Stop (or B) ends it. At the end: how many you got right first time, the words that moved up a level and those to practise; no shells. 10 more plays again; Done goes back to the title screen. Continue: your game is where you left it, and the words you practised count (the Word Scroll's squares).
+- [ ] The number sits between two small round buttons, − and +, with "questions" after them. Tap + and −: it goes up and down in fives, no higher than 50 (or as many as you can be asked about: with 7 words, 5 then 7), never below 5, the button greyed out at each end. On a small phone it all fits, with no ▼ More.
+- [ ] Start: the questions on your words, "练习 Practice · 1 of 10" over each, every fifth a sentence with a word missing; Stop (or B) ends it. At the end: how many you got right first time, then the words that moved up a level in a row for each level (its squares and name, then the words; tap one to hear it), and those to practise; no shells. A is Done, back to the title screen; B is 10 more, which plays again. Continue: your game is where you left it, and the words you practised count (the Word Scroll's squares).
 - [ ] In the game, MENU, then 练习 Practice: the same card, and Back or Done returns to the menu, on the 练习 tile. In a game that knows fewer than 4 words with pictures, it says to learn some first.
 
 ## Saved games

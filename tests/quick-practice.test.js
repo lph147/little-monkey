@@ -25,26 +25,27 @@ const tick = () => new Promise(r => setImmediate(r));
 async function settle(g){ for (let i = 0; i < 200; i++){ await tick(); g.flush(); } }
 const click = (g, sel) => g.run(`sheet.querySelector('${sel}').click()`);
 const text = g => g.run('sheet.textContent').replace(/\s+/g, ' ');
+const count = g => g.run("sheet.querySelector('.qpn').textContent + ' ' + sheet.querySelector('.qpq').textContent");   // − 10 + questions
 
 test('how many: in fives, up to 50 or as many as you can be asked about, 10 to start with', () => {
   assert.deepEqual(get(game(), 'quickSizes()'), [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], 'plenty of words: up to 50');
   const few = game(['石头', '山', '花', '草', '树', '桃子', '苹果']);
   assert.deepEqual(get(few, 'quickSizes()'), [5, 7], 'seven words: 5, then all 7');
   few.run('quickPractice(() => {})');
-  assert.match(text(few), /7 questions/, 'fewer than 10: it starts at all of them');
+  assert.equal(count(few), '7 questions', 'fewer than 10: it starts at all of them');
   assert.equal(few.run("sheet.querySelector('[data-a=more]').disabled"), true, 'and + goes no further');
   const four = game(['石头', '山', '花', '草']);
   assert.deepEqual(get(four, 'quickSizes()'), [4], 'four words: just 4');
   const g = game();
   g.run('quickPractice(() => {})');
-  assert.match(text(g), /10 questions/);
+  assert.equal(count(g), '10 questions');
   assert.equal(g.run("sheet.querySelector('[data-a=less]').disabled"), false);
   click(g, '[data-a=more]'); click(g, '[data-a=more]');
-  assert.match(text(g), /20 questions/, '+ adds five');
+  assert.equal(count(g), '20 questions', '+ adds five');
   click(g, '[data-a=less]');
-  assert.match(text(g), /15 questions/, '− takes five away');
+  assert.equal(count(g), '15 questions', '− takes five away');
   for (let i = 0; i < 20; i++) click(g, '[data-a=less]');
-  assert.match(text(g), /5 questions/);
+  assert.equal(count(g), '5 questions');
   assert.equal(g.run("sheet.querySelector('[data-a=less]').disabled"), true, 'and no further');
 });
 
@@ -81,6 +82,8 @@ test('a practice: the words that need it most, every fifth a sentence, every ans
   assert.equal(g.run('S.shells'), 7, 'but earns no shells');
   assert.match(text(g), /Practice done! You got 10 of 10 right first time\./);
   assert.equal(g.run("sheet.querySelector('[data-a=again]').textContent"), '10 more');
+  assert.ok(g.run("sheet.querySelector('[data-a=done]').classList.contains('primary')"), 'Done is the main button (A): you chose how many');
+  assert.ok(g.run("sheet.querySelector('[data-a=again]').hasAttribute('data-b')"), 'and B plays again');
 });
 
 test('Stop ends it where you are, and what you answered still counts', async () => {
@@ -99,7 +102,8 @@ test('a word that moves up a level is on the end card', async () => {
   g.run('quickPractice(() => {})');
   click(g, '[data-a=go]');
   await settle(g);
-  assert.match(text(g), /Moved up: .*Recognised/);
+  assert.match(text(g), /6 words moved up a level: Recognised/, 'grouped by the level they moved up to');
+  assert.equal(g.run("sheet.querySelectorAll('.qprow .chip').length"), 6, 'each a word to tap and hear');
 });
 
 test('on the title screen: Practise beside Continue, for a game that knows 4 words with pictures, and back to the title after', async () => {
