@@ -244,7 +244,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss'], bag:['note'], shells:['note'], match:['stop','notYet'], reply:['about','pic'],
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -453,7 +453,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // Match the words you've learned (with pictures) to their pictures, as at the practice post (title: its heading;
   // stop: the button to stop). Stopping ends the conversation there, with notYet as a message.
   async match(s){
-    const words = shuffle(ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));
+    const words = shuffle(s.words || ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));   // (words: just these, such as the meadow's)
     const missed = await matchWords(words, s.match, s.stop || 'Not now');
     if (!missed){ if (s.notYet) toast(fill(s.notYet)); return STOP; }
     for (const w of words){ reviewed(w, !missed.has(w)); addToday(w); } save();   // (each word counts as practice, as in the exam)
@@ -833,6 +833,10 @@ const caughtCount = () => Object.keys(WORDS).filter(w => lvl(w) >= 1).length;
 // The part of a character's talk you'd hear now (the first whose if matches), and the one you heard last (lastTalk), so
 // A can tell when talking again would say something new (js/input.js).
 const talkPart = n => (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
+// How many more questions you need to answer before a character gives you another new word (the area's wordGap: so many
+// after the last new word you caught, anywhere; here().wordTurn, when you caught it). A talk part that teaches one says
+// so (waits): till then, the character first offers you a quick word game, just for practice, sized to what's left.
+const wordLeft = () => { const n = (AREA.wordGap || {}).questions || 0, t = here().wordTurn; return typeof t === 'number' ? Math.max(0, n - ((S.turn || 0) - t)) : 0; };
 let lastTalk = null;   // {id, part}
 // A character with something new for you: a ! or ? over them, and not what they've just said.
 const hasNews = n => !!keptFor(n) || (!!(AREA.bubbles[n.id] || []).find(b => matches(b.if)) && !!talkPart(n) && !(lastTalk && lastTalk.id === n.id && lastTalk.part === talkPart(n)));
@@ -853,7 +857,14 @@ async function talk(n){
   lastTalk = {id:n.id, part};
   const outer = caughtBefore, was = talkingTo;   // (a character can stop you during another conversation)
   caughtBefore = caughtCount(); lastLine = null; talkingTo = n.id;   // (nothing said yet to reply to)
-  try { await runSteps(part.do, n.id, true); } finally { caughtBefore = outer; talkingTo = was; }
+  try {
+    if (part.waits && wordLeft() && canEncounter()){   // practise a little first, then on to the new word (never while you know too few words to)
+      const g = AREA.wordGap;
+      await STEPS.wordGame({wordGame:{ask:g.ask, word:g.word, practice:true, questions:Math.max(2, wordLeft()), notYet:g.notYet}}, n.id);
+      if (wordLeft()) return;
+    }
+    await runSteps(part.do, n.id, true);
+  } finally { caughtBefore = outer; talkingTo = was; }
 }
 // A character asking you to bring something (the area's requests). A request with choices (such as the
 // hungry monkey's fruit) is fussy: whichever you bring first, they want the other (remembered in wanted),

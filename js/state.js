@@ -300,7 +300,7 @@ function todayKey(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMont
 function addToday(w){ const k = todayKey(); if (S.today.d !== k) S.today = {d:k, ids:[]}; if (!S.today.ids.includes(w)) S.today.ids.push(w); }
 // A sentence was shown: each word in it (not punctuation) counts as heard once more.
 function hear(words, heard = S.heard){ for (const t of words) if (WORDS[t] || GLOSS[t]) heard[t] = (heard[t] || 0) + 1; }
-function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.ok = 0; slotIn(w, NEW_PLACE); } addToday(w); save(); }   // a new word goes near the front of the review list
+function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.ok = 0; slotIn(w, NEW_PLACE); if (S.areas[AREA.number]) here().wordTurn = S.turn || 0; } addToday(w); save(); }   // a new word goes near the front of the review list (wordTurn: when you caught it, for the area's wordGap)
 // You used w in a sentence (a request or a shop order). It's Used once you can read it as well.
 function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; addToday(w); save(); }
 // Questions get harder slowly. A word moves up from Caught to Recognised after STEP_UP right answers in a

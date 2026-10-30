@@ -210,7 +210,9 @@ test('with every food on the tables, the teacher has an exam for you (我们考�
   assert.equal(g.run('promptFor(3, 1)'), 'Look');
   assert.deepEqual(item(g, /exam/), ['Pass your 老师 (teacher)’s exam at the 学校 (school)', true]);
   assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['The troop is ready for the feast: go to the big 树 (tree) in the middle of the home ground']);
-  assert.deepEqual([npc(g, 'elder'), npc(g, 'big'), npc(g, 'playful')], [['homeGround', 16, 8], ['homeGround', 18, 8], ['homeGround', 14, 8]], 'the troop at the feast’s tables');
+  assert.deepEqual([npc(g, 'elder'), npc(g, 'playful')].map(n => n[0]), ['school', 'school'], 'the teacher you’re talking to, and your classmate, stay in the classroom (the teacher vanished as you passed)');
+  goTo(g, 'homeGround', 17, 12, 'up');
+  assert.deepEqual([npc(g, 'elder'), npc(g, 'big'), npc(g, 'playful')], [['homeGround', 16, 8], ['homeGround', 18, 8], ['homeGround', 14, 8]], 'at the home ground, the troop is at the feast’s tables');
 });
 
 test('the exam’s result card: how many you matched, how many you needed, and the words you missed', async () => {

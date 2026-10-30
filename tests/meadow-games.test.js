@@ -72,7 +72,7 @@ test('once you’ve told the hungry monkey 没关系, he wants to play a word ga
   const g = game({hungry: 'done'}, ['朋友', '桃子', '苹果', '水果', '吃']);
   assert.equal(bubble(g, 'hungry'), '!', 'he wants to say sorry for being fussy');
   await talk(g, 'hungry');
-  assert.deepEqual(get(g, '__replies'), ['没关系'], 'you say that’s OK');
+  assert.deepEqual(get(g, '__replies'), ['没关系'], 'you say it doesn’t matter');
   assert.deepEqual(get(g, '__said'), ['对不起！', '我们玩吧！', '太好了！']);
   assert.deepEqual(get(g, '__asks'), ['Play a word game with the hungry monkey? If you win, you get a 桃子 (peach) for your bag.']);
   assert.deepEqual([get(g, 'here().hungryGame'), get(g, "S.bag['桃子'] || 0")], [2, 1], 'its present: a peach');

@@ -24,7 +24,7 @@ shown where the word list has them.
 | 水！太好了！ | shuǐ! tài hǎo le! | Water! Wonderful! | 渴猴子 (Thirsty monkey) |  |
 | 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 牛 (cow) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 饿猴子 (Hungry monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
 | 我在找蘑菇。 | wǒ zài zhǎo mógu. | I’m looking for mushrooms. | 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
@@ -36,7 +36,7 @@ shown where the word list has them.
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey), 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
 | 花！太好了！ | huā! tài hǎo le! | Flowers! Wonderful! | 大猴子 (Big monkey) |  |
-| 没关系！ | méi guānxi! | That’s OK! | 饿猴子 (Hungry monkey) |  |
+| 没关系！ | méi guānxi! | It doesn’t matter! | 饿猴子 (Hungry monkey) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 老板 (Shop owner) |  |
 | 我来了！ | wǒ lái le! | Here I am! | 老板 (Shop owner) |  |
 | 我要吃大鱼！ | wǒ yào chī dà yú! | I want to eat a big fish! | 饿猴子 (Hungry monkey) |  |
@@ -551,7 +551,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
 | 对不起 | duìbuqǐ | sorry |  |
-| 没关系 | méi guānxi | that’s OK |  |
+| 没关系 | méi guānxi | it doesn’t matter |  |
 | 再见 | zàijiàn | goodbye |  |
 | 我不要 | wǒ bú yào | no thanks, I don’t want it |  |
 

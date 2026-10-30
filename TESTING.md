@@ -546,6 +546,16 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Give them to him: 虾！太好了！, then 这是＿ (This is a shrimp.): choose 虾 (鱼 the other answer); 谢谢你！, reply 不客气, 3 🐚. A white bowl of shrimp goes on in front of the big fish, with a knock: 我们有虾了！ The checklist line is ticked, and the feast's list says 我们有虾。
 - [ ] After that, a shrimp you catch asks 这是＿ (虾 or 鱼), the shrimp's picture over it, and you let it go.
 
+**Pacing: practice between new words (30 October 2026)**
+- [ ] A new game: show the old monkey your first 4 words, and the matching counts as practice (no change on screen).
+- [ ] Bring the thirsty monkey water: after his thanks, Play a word game with the thirsty monkey? If you win, he gives you 2 🐚. Say Not now: a ! over him till you've played.
+- [ ] Learn all five words for the meadow (山 河 树 鱼 鸟): the task becomes Show the old monkey the words for the meadow, with a ! over him. Talk to him: You know all the words for the meadow!, 我们看看！, and a matching card with just those five. The rocks roll away only after that (with the hungry and thirsty monkeys helped and every animal found).
+- [ ] Count the troop into the cave, then talk to the old monkey straight away: Something new is coming! But first, a few words to practise. Play a quick word game? Play it, and the troop makes you king straight after. Not now: nothing happens.
+- [ ] In chapter 1, after a new word, talk to someone with another (the teacher, your classmate, the old monkey's news, the big monkey's chopsticks, the hungry monkey's 没有) before answering 4 questions: the same quick word game first. Answer 4 questions somewhere else first (an animal in the grass), and they carry straight on.
+- [ ] Pass the exam: the teacher stays in the classroom while you talk to him; at the home ground, he, the big monkey and the little monkey are at the feast's tables.
+- [ ] In the river valley, at the bottom left by the river, the peach tree is no longer blocked by a fallen tree: walk up to it and pick a peach.
+- [ ] A monkey says sorry, then reply: 没关系 says it doesn’t matter (not that's OK), and 不客气 you’re welcome.
+
 **Chapter 1: a crab, from the shore**
 - [ ] Once the shrimp are on the table, a ! over the hungry monkey. Talk to him: 我要吃螃蟹！ (I want to eat crab!), 螃蟹 grey, and a message: crabs live on the shore, below the meadow, where the river meets the sea; the troop has cleared a way down. Task: Catch a crab on the shore, below the meadow: come at one from the front or behind, its arrow pointing the way.
 - [ ] In the meadow, the thick bushes at the very bottom, beside the river, are gone (before he asks, A at them: Thick bushes…, and you can't get through): a path down. Walk down it: the shore (海边 hǎibiān, The shore), the path beside the river, a little grass, then sand with rocks and rock pools, a little bridge over the river, and the sea along the bottom, its waves washing up the sand, glinting.

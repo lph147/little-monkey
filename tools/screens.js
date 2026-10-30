@@ -45,6 +45,10 @@ SAVES.hungryNew = {...SAVES.hungryAsks, w: knows(1, MIDDLE_WORDS.filter(w => !['
 // thirsty monkey has asked for water, and you're facing the river
 SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝']), met: [], friends: [],
   areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {}, gate: false}}, pos: {place: 'meadow', x: 17, y: 10, dir: 'right'}};
+// all five words for the meadow learned, facing the old monkey: he wants to hear them (30 October 2026)
+SAVES.meadowCheck = {...SAVES.meadowWords, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝', '河', '鱼', '鸟', '水', '要']),
+  areas: {1: {...SAVES.meadowWords.areas[1], hungry: 'done', thirsty: 'done'}}, pos: {place: 'meadow', x: 7, y: 2, dir: 'up'}};
+SAVES.thirstyGame = {...SAVES.meadowCheck, pos: {place: 'meadow', x: 2, y: 11, dir: 'down'}};   // facing the thirsty monkey, water given
 SAVES.lowTalk = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}};   // on the path at the bottom of the meadow, facing the little monkey (before the gate, it's there)   // every word Recognised: animals ask you to read
 // chapter 1 has begun: the prologue is done (your home's name read on the sign too), and the troop is at the waterfall;
 // you're beside the old monkey
@@ -313,6 +317,7 @@ SAVES.settingOff = {...SAVES.rocksGone, version: 29, w: {...SAVES.rocksGone.w, .
   pos: {place: 'meadow', x: 15, y: 2, dir: 'up'}};   // said goodbye to the old monkey, about to walk up past the big monkey (no stick yet)
 SAVES.climbing = {...SAVES.rocksGone, version: 25, w: {...SAVES.rocksGone.w, ...knows(1, ['路'])}, areas: {1: {...SAVES.rocksGone.areas[1], climb: 1}}, pos: {place: 'path', x: 15, y: 14, dir: 'left'}};   // (version 25: older saves on the path are moved off it)
 SAVES.fighting = {...SAVES.climbing, w: {...SAVES.climbing.w, ...knows(1, ['棍子', '蛇'])}, health: 40, bag: {'桃子': 2, '苹果': 1}};   // on the path, with the stick, a snake met before, and fruit
+SAVES.bowlsWait = {...SAVES.bowlsOn, turn: 0, areas: {1: {...SAVES.bowlsOn.areas[1], wordTurn: 0}}};   // (a new word just caught: the chopsticks wait 4 questions)
 SAVES.packed = {...SAVES.fighting, health: 30, areas: {1: {...SAVES.fighting.areas[1], thirsty: 'asked', holding: {thirsty: '水'}}}};   // hurt, with fruit, and water for the thirsty monkey
 SAVES.byPeaches = {...SAVES.fighting, pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}};   // by a peach tree, the hungry monkey fed
 SAVES.hurt = {...SAVES.fighting, health: 20, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};
@@ -522,6 +527,10 @@ const SCREENS = [
     play(); await wait(100); talk(npc('playful')); await wait(300); next(); await wait(500); }},
   {id: 'hungry-game', title: 'The hungry monkey wants to play', save: 'hungryGame', why: 'Straight after you tell him 没关系, 我们玩吧！ and his word game, with a 桃子 for your bag the first time you win (26 October 2026).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(500); }},
+  {id: 'thirsty-game', title: 'The thirsty monkey’s word game', save: 'thirstyGame', why: 'Once you’ve brought him water, he wants to play a word game too, with 2 🐚 the first time you win (30 October 2026).', run: async () => {
+    play(); await wait(100); runSteps([THIRSTY_GAME], 'thirsty'); await wait(500); }},
+  {id: 'meadow-check', title: 'Show me the meadow’s words', save: 'meadowCheck', why: 'With all five words for the meadow learned, the old monkey checks them, as he did your first words: the rocks wait for it (30 October 2026).', run: async () => {
+    play(); await wait(100); STEPS.match({match: 'Show the old monkey the meadow’s words', words: ['山', '河', '树', '鱼', '鸟'], stop: 'Not now'}); await wait(500); }},
   {id: 'word-game', title: 'The little monkey’s word game', save: 'middle', why: 'A monkey’s name plate: Chinese, pinyin and English.', run: async () => {
     play(); await wait(100); encounter({id: 'playful', hz: '猴子', img: portrait('playful'), wild: false, name: NAMES.playful}); await wait(500); }},
   {id: 'new-friend', title: 'A new friend', save: 'middle', run: async () => {
@@ -788,6 +797,8 @@ const SCREENS = [
     play(); await wait(100); talk(npc('big')); await wait(600); }},
   {id: 'feast-table', title: 'The feast’s tables', save: 'feastTable', why: 'Under the big tree, once the bowls from the cave and the big monkey’s chopsticks are on them: on the big one, peaches, apples, an empty bowl, waiting for something, and a bamboo cup of chopsticks; on the second, three empty bowls, waiting for more food. The hungry monkey, with a !, to say what the feast still needs.', run: async () => {
     play(); await wait(500); }},
+  {id: 'practise-first', title: 'Practise first', save: 'bowlsWait', why: 'A new word from a character waits till you’ve answered 4 questions since your last one (30 October 2026): talk to them sooner, and they offer a quick word game first, then carry on.', run: async () => {
+    play(); await wait(100); talk(npc('big')); await wait(500); }},
   {id: 'chopsticks-card', title: 'Chopsticks (筷子)', save: 'bowlsOn', why: '筷子’s card (kuàizi, chopsticks): The big monkey has made chopsticks out of 木头 (wood), a pair for every monkey.', run: async () => {
     play(); await wait(100); talk(npc('big')); await wait(300); next(); await wait(600); }},
   {id: 'hungry-table', title: 'This is our big table!', save: 'feastHungry', why: 'The hungry monkey by the table: 这是我们的大桌子！ (桌子 green: you learned it in the cave), then 我们有桃子，也有苹果！', run: async () => {

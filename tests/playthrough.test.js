@@ -135,7 +135,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('吃') && !knows('要') && !knows('不客气'), 'giving him the apple teaches 吃, so your reply 不客气 waits: one new word at a time');
   assert.ok(!knows('没关系'), 'he said 没关系 when you said sorry, but you haven’t said it yet');
   await pressAt(13, 6, 'up', 'talking to the hungry monkey once he has eaten: he says sorry for being fussy');
-  assert.ok(knows('没关系'), 'you reply 没关系 (that’s OK), and catch it');
+  assert.ok(knows('没关系'), 'you reply 没关系 (it doesn’t matter), and catch it');
   assert.deepEqual([area().hungryGame, get("S.bag['桃子']")], [2, 1], 'then he wants to play a word game: won, a peach for your bag');
 
   // The thirsty monkey, then the rocks roll away
@@ -146,6 +146,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(2, 11, 'down', 'giving the thirsty monkey the water');
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
   assert.ok(knows('要'), 'giving him the water teaches 要 (want)');
+  assert.deepEqual([area().thirstyGame, get('S.shells') > 0], [2, true], 'then he wants to play a word game too (30 October 2026): won, 2 shells');
   assert.equal(area().gate, false, 'the rocks stay until the rest of the prologue is done');
 
   // The rest of the words for the meadow, which the old monkey asked you to learn: the river, and a bird
@@ -155,6 +156,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(9, 6, 'down', 'looking at the little bird');
   for (const w of ['河', '鸟']) assert.ok(knows(w), `${w} should be learned`);
   assert.ok(!get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow')), 'with all five, that task is done');
+  assert.ok(get('getTasks()').some(t => t.text === 'Show the old monkey the words for the meadow'), 'and he wants to hear them');
+  await pressAt(7, 2, 'up', 'showing the old monkey the words for the meadow');
+  assert.equal(area().meadowCheck, 1, 'matched: the rocks no longer wait for them');
 
   // The big monkey, in the middle meadow, has nothing to ask yet: his flowers wait for chapter 1 (decided 22 October 2026)
   await pressAt(4, 10, 'right', 'saying hello to the big monkey');

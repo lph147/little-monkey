@@ -145,7 +145,7 @@ const WORD_BANK = {
   '谢谢': {py:'xièxie', en:'thank you', area:1, category:'phrases', phrase:true, use:'when someone gives you something or helps you', cue:'helps you'},
   '不客气': {py:'bú kèqi', en:'you’re welcome', area:1, category:'phrases', phrase:true, use:'when someone thanks you', cue:'thanks you'},
   '对不起': {py:'duìbuqǐ', en:'sorry', area:1, category:'phrases', phrase:true, use:'when you’ve got something wrong', cue:'isn’t happy'},
-  '没关系': {py:'méi guānxi', en:'that’s OK', area:1, category:'phrases', phrase:true, use:'when someone says sorry', cue:'says sorry'},
+  '没关系': {py:'méi guānxi', en:'it doesn’t matter', area:1, category:'phrases', phrase:true, use:'when someone says sorry', cue:'says sorry'},
   '再见': {py:'zàijiàn', en:'goodbye', area:1, category:'phrases', phrase:true, use:'when you leave', cue:'says goodbye'},
   '我不要': {py:'wǒ bú yào', en:'no thanks, I don’t want it', area:1, category:'phrases', phrase:true, use:'when you don’t want something'},
 
