@@ -24,7 +24,7 @@ I'm new to coding. Please:
 - Run the automated tests before every commit, once they exist. Add or update a test when you add a feature.
 - Keep saved games working. If the save format changes, migrate old saves instead of wiping them.
 - The game must work on a phone browser held sideways (touch) and on desktop (keyboard). Held upright, it asks you to turn the phone.
-- No build tools or frameworks unless we agree. Plain HTML, CSS and JavaScript, loadable from a static web host (GitHub Pages).
+- Build tools are fine where they clearly help; agree them first. Prefer tools that make files we commit (like `npm run pictures`), so the game still runs straight from its files: plain HTML, CSS and JavaScript, loadable from a static web host (GitHub Pages).
 - Keep DESIGN.md's "Next steps" checklist up to date when a step is finished.
 
 ## Tools
