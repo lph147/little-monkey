@@ -693,6 +693,17 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.dot(3, 10, '#2A1E16'); p.dot(3, 11, '#2A1E16');                                        // nose
     p.eye(8, 8);
   },
+  '老鼠': p => {   // mouse: small and grey, side on, facing left, big round ears, a long pink tail (unlike the squirrel: brown, bushy tail)
+    const M = '#9E9A94', LT = {light: '#C2BEB8', dark: '#77736D'};
+    p.fill(path([[27, 21], [30.5, 17], [29, 11], [25, 9]], .7), '#E8A0A8');                   // tail
+    p.fill(O(18.5, 20.5, 9.5, 6.5), M, LT);                                                   // body
+    p.flat(and(O(18.5, 20.5, 9.5, 6.5), Rc(0, 24, 32, 4)), '#D9D4CC');                         // pale belly
+    p.fill(or(O(13, 27, 2, 1.2), O(22, 27, 2, 1.2)), '#E8A0A8', {dark: '#C47C86'});             // feet
+    p.fill(Pg([[2, 19.5], [8, 13.5], [13, 15], [13, 22.5], [6, 22.5]]), M, {...LT, edge: true});   // head
+    p.fill(O(11.5, 11.5, 4.2, 4.2), M, LT); p.flat(O(11.5, 11.8, 2.6, 2.6), '#F2B8C0');           // ear, pink inside
+    p.dot(2, 19, '#C2606E'); p.dot(3, 19, '#C2606E');                                          // nose
+    p.eye(7, 16);
+  },
   '青蛙': p => {   // frog: green, sitting facing you, big eyes on top, a wide smile, on a lily pad
     const G = '#5DB34A', LT = {light: '#8AD46A', dark: '#3F8A34'};
     p.fill(O(16, 27.5, 14, 3.4), '#3E8E46', {light: '#5FB060', dark: '#2C6A34'});           // lily pad

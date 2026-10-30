@@ -22,7 +22,7 @@ test('a friend hides in the tall grass of the places it roams; before you’re f
   assert.deepEqual(hiding(g, 'valley'), ['goat', 'rabbit', 'sheep'], 'the river valley: the sheep and goat');
   assert.deepEqual(hiding(g, 'southSlope'), ['deer', 'fox', 'goat', 'rabbit'], 'the south slope');
   assert.deepEqual(hiding(g, 'pineWood'), ['fox', 'rabbit', 'squirrel'], 'the pine wood: never a second deer, where it lives');
-  assert.deepEqual(hiding(g, 'melonField'), ['butterfly', 'rabbit']);
+  assert.deepEqual(hiding(g, 'melonField'), ['butterfly', 'mouse', 'rabbit'], 'and the mouse, which lives there (chapter 1)');
   assert.deepEqual(hiding(g, 'meadow'), ['rabbit'], 'the meadow’s animals live there, at their own spots');
   assert.deepEqual(hiding(g, 'riverside'), ['fox', 'rabbit'], 'not the butterfly, which lives there');
   const met = game([]);

@@ -726,6 +726,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().shooed.length, 5, 'the birds, all shooed away');
   await pressAt(12, 11, 'right', 'taking a melon’s seeds');
   assert.ok(knows('西瓜') && area().holding.melonSeeds === '种子', 'a wild watermelon, and its seeds');
+  // A mouse hiding in the melon field's tall grass, only there (30 October 2026: a chapter 1 friend where there were none)
+  for (let i = 0; i < 40 && !get('S.met').includes('mouse'); i++){   // walk about until its tall grass rustles, then step in
+    const r = get('rustle');
+    if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass in the melon field'); else await stepOn(6, 14 + i % 2, 'walking about by the melon field’s tall grass');
+  }
+  assert.ok(knows('老鼠') && get('S.friends').includes('mouse'), 'a mouse jumps out of the melon field’s tall grass, teaching 老鼠, and becomes your friend');
   stand(1, 9, 'left');
   await act('arrive(0, 9).then(runEvents)', 'back out of the melon field');
   await walk([[24, 13], [3, 13], [3, 6], [12, 6], [12, 1]], 'back up the south slope, by its steps');

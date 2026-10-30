@@ -3740,6 +3740,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '老鼠': {   // mouse
+    palette: {a:'#4A4642', b:'#322E2A', c:'#C2BEB8', d:'#77736D', e:'#463231', f:'#9E9A94', g:'#B57D83', h:'#F2B8C0', i:'#EFBDC2', j:'#594645', k:'#FFFFFF', l:'#1E1A16', m:'#5C5956', n:'#4A282A', o:'#C2606E', p:'#524D48', q:'#D9D4CC', r:'#C47C86', s:'#4B3132'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "..........aab...................",
+      ".........accdb...........e......",
+      "........acfffdb.........egee....",
+      ".......acfhhhfdb........egige...",
+      "......acfhhhhhfdb........eggge..",
+      "......acfhhhhhfdb.........eegge.",
+      "......bdfhhhhhfdb...........ege.",
+      ".......bdfhhhfdbaaaaab......ege.",
+      "......accdfffdaccccccdbab...jige",
+      ".....acfffdddccfffffffccdb..egge",
+      "....acfklfffmffffffffffffdb..ege",
+      "...acffllfffmfffffffffffffdbjige",
+      "..acffffffffmffffffffffffffdige.",
+      ".nooffffffffmffffffffffffffdge..",
+      "..bddfffffffmffffffffffffffdb...",
+      "...bbddddmmmmffffffffffffffdb...",
+      ".....bbbbdfffffffffffffffffdb...",
+      ".........bdfffffffffffffffdb....",
+      "..........pqqqqqqqqqqqqqqqp.....",
+      "...........pqqqqqqqqqqqqqp......",
+      "..........jiiirqqqqqiiirs.......",
+      "..........srrrrspppsrrrrs.......",
+      "...........ssss.....ssss........",
+      "................................",
+      "................................",
+      "................................"
+    ]
+  },
   '青蛙': {   // frog
     palette: {a:'#384D29', b:'#5E5B58', c:'#203617', d:'#8AD46A', e:'#FFFFFF', f:'#3F8A34', g:'#5DB34A', h:'#1E1A16', i:'#2C6A2C', j:'#D2EAA2', k:'#36682B', l:'#2B4226', m:'#5FB060', n:'#3E8E46', o:'#2C6A34', p:'#1A2B17'},
     rows: [
