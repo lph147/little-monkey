@@ -609,6 +609,12 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] The cow is big wherever it is: in the pasture, following you home (its legs stepping), and in its pen, with its ! or ? over its head. The bear jumps out of the gap between the pasture's rocks big, standing up. The owl on its dead pine in the dark pines is small, its yellow eyes glinting in the gloom.
 - [ ] Pictures on cards, in questions, in battles and on the Friends page are all the same size as before.
 
+## The duck
+
+- [ ] In chapter 1, at the home ground, walk east along the stream past the fishing monkey: a small white duck floats on the water, bobbing, with ripples either side. Stand on the bank above it and face down: A says Meet. Its card teaches 鸭子 (yāzi, duck), said straight away, then How it's made: the 鸟 (bird) on the right of 鸭. Answer its questions to make friends.
+- [ ] In a prologue game, the duck isn't there yet, and the Friends page has no shadow for it.
+- [ ] MENU, then 朋友 Friends, in chapter 1 before meeting it: a shadow with the clue The home ground, on the stream.
+
 ## Sounds alike
 
 - [ ] In a new game, look at the river (河 hé), then give the thirsty monkey water. When 喝 hē is taught: How it's made ▸, then Sounds like ▸, then 河 and 喝 side by side ("Same sound, different tone"): pictures, characters, pinyin, a red line for each tone (rising, flat) with its name, and their English, then "Listen to the tone: hé goes up, hē stays high." Hear both says hé then hē, each outlined in gold as it's said; tap either side to hear just it. Got it carries on; Back goes back a card. It all fits on a small phone, with no ▼ More.
