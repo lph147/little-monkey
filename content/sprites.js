@@ -131,6 +131,17 @@ const MAP_SPRITES = {
     palette: {a:'#33281C', b:'#7A6042', c:'#533C26', d:'#3E2614', e:'#302012', f:'#714724', g:'#DE9E62', h:'#9A5A28', i:'#FFFFFF', j:'#1E1A16', k:'#C27A3E', l:'#1A130E', m:'#2A1E16', n:'#5B5853', o:'#494541', p:'#FBF1DE', q:'#F7F5EF', r:'#BEBBB5', s:'#E9C79C', t:'#B08667', u:'#6F401E', v:'#301E10', w:'#574939', x:'#1F1710', y:'#3A2A1E'},
     rows: [".aba...aba............","..aba.aba.............",".abbbaabba............","..aababacd............","...efgfcghd...........",".ccgijkfhd............","cggfjjkfhd............","lmkkfhfkhd.cccd.......",".dhhddhkkhcggghddnno..","..dd..cgkhgpkpkphqqro.","......dhhkkkkkkkkhrro.","......cgkkkpkpkpkphd..","......dhkkkkkkkkkhd...",".......dhkkkkkkkhhd...",".......effsssssfftuv..",".......cgfuvwwcgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgftuv..",".......cgfuv..cgfuuv..",".......xyyx...xyyxv...","........xx.....xx....."]
   },
+  '乌龟': {   // turtle, side on, head to the left (chapter 1: on a warm rock in the hot spring valley)
+    // small: 11 pixels, drawn with the shape kit from its own map drawing
+    faces: 'left',
+    palette: {a:'#3A3B21', b:'#252613', c:'#35361E', d:'#8E9C52', e:'#4E5826', f:'#7E8A48', g:'#6E7A3A', h:'#1E1A16'},
+    rows: ["................", "................", "................", "................", "................", "................", "................", "................", ".....aaaab......", "...caddddeb.....", "..cfdgdgdgeb....", "..fhdggggdgeb...", "..cfeeeeeeeeb...", "...ccfcbbcfc....", "....cfc..cfc....", ".....c....c....."]
+  },
+  '海龟': {   // sea turtle, seen from above, its flippers out (chapter 1: on the shore's sand)
+    // medium: 14 pixels, drawn with the shape kit from its own map drawing, its eyes by hand
+    palette: {a:'#444F45', b:'#2A3C2F', c:'#AFD8C2', d:'#5E9E7E', e:'#1E1A16', f:'#8CC7A8', h:'#264239', i:'#4FB09E', j:'#1E6A5C', k:'#162B24', l:'#2F8F7E', m:'#5FB8A6'},
+    rows: ["................", "................", "................", ".......ab.......", "......acdb......", "..b..beffeb..b..", ".bdb.hiiijk.bdb.", ".bddhilllljacdb.", "..bddillmljddb..", "...hilllllljk...", "...hilllllljk...", "...kjlmlllmjk...", "....hilllljk....", "...acjjlmjjk....", "...bddkjjbddb...", "....bb.kk.bb...."]
+  },
   '老鼠': {   // mouse, side on, head to the left, a long pink tail (chapter 1: hiding in the melon field's tall grass)
     // tiny: 9 pixels, drawn with the shape kit from its own map drawing
     faces: 'left',

@@ -320,6 +320,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 马在吃草。 | mǎ zài chī cǎo. | The horse is eating grass. | 马 |  |
 | 青蛙很小。 | qīngwā hěn xiǎo. | The frog is very small. | 青蛙 |  |
 | 老鼠在草里。 | lǎoshǔ zài cǎo lǐ. | The mouse is in the grass. | 老鼠 |  |
+| 乌龟在石头上。 | wūguī zài shítou shàng. | The turtle is on the stone. | 乌龟 |  |
+| 海龟很大。 | hǎiguī hěn dà. | The sea turtle is very big. | 海龟 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 | 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
 
@@ -494,6 +496,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 熊 | xióng | bear |  |
 | 狐狸 | húli | fox |  |
 | 蝴蝶 | húdié | butterfly |  |
+| 乌龟 | wūguī | turtle |  |
+| 海龟 | hǎiguī | sea turtle |  |
 | 老鼠 | lǎoshǔ | mouse |  |
 | 青蛙 | qīngwā | frog |  |
 | 马 | mǎ | horse |  |
@@ -597,6 +601,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 蜂蜜 | fēngmì | 蜂 fēng (bee) + 蜜 mì (honey) = 蜂蜜 (honey) |  |
 | 黄蜂 | huángfēng | 黄 huáng (yellow) + 蜂 fēng (bee) = 黄蜂 (wasp) |  |
 | 同学 | tóngxué | 同 tóng (together) + 学 xué (to learn) = 同学 (classmate) |  |
+| 海龟 | hǎiguī | 海 hǎi (sea) + 龟 guī (turtle) = 海龟 (sea turtle) |  |
 | 没有 | méiyǒu | 没 méi (not) + 有 yǒu (to have) = 没有 (don’t have) |  |
 | 牛奶 | niúnǎi | 牛 niú (cow) + 奶 nǎi (milk) = 牛奶 (milk) |  |
 | 跑步 | pǎobù | 跑 pǎo (run) + 步 bù (step) = 跑步 (to go running) |  |

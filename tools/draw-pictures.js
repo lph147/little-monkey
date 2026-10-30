@@ -693,6 +693,26 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.dot(3, 10, '#2A1E16'); p.dot(3, 11, '#2A1E16');                                        // nose
     p.eye(8, 8);
   },
+  '乌龟': p => {   // turtle: side on, facing left, a high domed brown-green shell with plates, its head and legs out (unlike the sea turtle: flippers, from above)
+    const S = '#6E7A3A', SK = '#A8B46A', LT = {light: '#8E9C52', dark: '#4E5826'};
+    p.fill(or(Rc(8, 22, 3.6, 6, 1.5), Rc(21, 22, 3.6, 6, 1.5)), SK, {light: '#C2CC88', dark: '#7E8A48', edge: true});   // legs
+    p.fill(Pg([[26, 21], [31, 23], [26, 24]]), SK, {dark: '#7E8A48'});                         // tail
+    p.fill(O(3.6, 18.5, 3.6, 3), SK, {light: '#C2CC88', dark: '#7E8A48'});                     // head
+    p.fill(Rc(5, 19, 4, 3), SK, {dark: '#7E8A48'});                                           // neck
+    p.eye(2, 17);
+    p.fill(and(O(16.5, 22, 11.5, 11), Rc(0, 0, 32, 22)), S, LT);                              // shell
+    p.fill(Rc(5, 21, 23, 2.6, 1.2), '#C9B26A', {dark: '#9A8344'});                            // its rim
+    [[11, 15], [16.5, 13], [22, 15], [13.5, 19], [19.5, 19]].forEach(([x, y]) => p.flat(O(x, y, 2.4, 2), '#8E9C52'));   // plates
+  },
+  '海龟': p => {   // sea turtle: seen from above, swimming, a flat teal shell and four big flippers (unlike the turtle: domed, side on, legs)
+    const S = '#2F8F7E', FL = '#8CC7A8', LT = {light: '#4FB09E', dark: '#1E6A5C'};
+    p.fill(or(Pg([[11, 11], [2.5, 4.5], [1, 9], [8, 15]]), Pg([[21, 11], [29.5, 4.5], [31, 9], [24, 15]])), FL, {light: '#B6E0C6', dark: '#5E9E7E', edge: true});   // front flippers, big paddles
+    p.fill(or(Pg([[11, 22], [5, 27], [8, 29], [13, 25]]), Pg([[21, 22], [27, 27], [24, 29], [19, 25]])), FL, {light: '#B6E0C6', dark: '#5E9E7E', edge: true});   // back flippers
+    p.fill(O(16, 5.8, 3.4, 3.6), FL, {light: '#B6E0C6', dark: '#5E9E7E'});                    // head
+    p.dot(14, 5, '#1E1A16'); p.dot(18, 5, '#1E1A16');
+    p.fill(O(16, 17, 8, 9.5), S, LT);                                                         // shell
+    [[16, 12], [12.5, 16], [19.5, 16], [16, 18], [13, 21], [19, 21]].forEach(([x, y]) => p.flat(O(x, y, 1.9, 1.6), '#5FB8A6'));   // plates
+  },
   '老鼠': p => {   // mouse: small and grey, side on, facing left, big round ears, a long pink tail (unlike the squirrel: brown, bushy tail)
     const M = '#9E9A94', LT = {light: '#C2BEB8', dark: '#77736D'};
     p.fill(path([[27, 21], [30.5, 17], [29, 11], [25, 9]], .7), '#E8A0A8');                   // tail

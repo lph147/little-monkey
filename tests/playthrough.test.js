@@ -770,6 +770,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[13, 22], [13, 5], [9, 5]], 'up between the hot pools, past the steam, to the banana plants');
   await pressAt(9, 5, 'up', 'picking a banana');
   assert.ok(knows('香蕉') && area().holding.bananaSeeds === '种子', 'a banana (香蕉), and its seeds');
+  // A turtle warming itself on the boulder by the hot spring pools (30 October 2026: a chapter 1 friend where there were none)
+  await pressAt(6, 12, 'down', 'meeting the turtle on its warm rock');
+  assert.ok(knows('乌龟') && get('S.friends').includes('turtle'), 'the turtle teaches 乌龟, and becomes your friend');
   await walk([[9, 5], [13, 5], [13, 22]], 'back down the valley');
   await act('arrive(13, 23).then(runEvents)', 'back down to the riverside');
   await walk([[25, 1], [25, 7], [1, 7]], 'back along the riverside');
@@ -849,6 +852,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('tileAt(17, 21).look'), 'path', 'the troop has cleared the way down from the meadow');
   await act('arrive(17, 21).then(runEvents)', 'going down beside the river to the shore');
   assert.ok(run("PLACE === 'shore'") && knows('海') && get('__said').includes('海很大！'), 'the sea (海): the sea is so big!');
+  // A sea turtle on the sand at the water's edge (30 October 2026): 海 sea + 龟, as in 乌龟 (turtle)
+  await pressAt(4, 11, 'down', 'meeting the sea turtle on the sand');
+  assert.ok(knows('海龟') && get('S.friends').includes('seaTurtle'), 'the sea turtle teaches 海龟, and becomes your friend');
   run("NPCS.find(n => n.id === 'crab1').x = 7; NPCS.find(n => n.id === 'crab1').y = 10");
   await pressAt(7, 9, 'down', 'catching a crab, from in front of it');
   assert.ok(knows('螃蟹') && area().holding.crab === '螃蟹', 'a crab (螃蟹), for the feast');

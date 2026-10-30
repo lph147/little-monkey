@@ -81,6 +81,8 @@ const WORD_BANK = {
   '熊': {py:'xióng', en:'bear', pic:'🐻', area:1, category:'animals'},   // (chapter 1: at the big rocks, as you lead the cow home)
   '狐狸': {py:'húli', en:'fox', pic:'🦊', area:1, category:'animals'},   // (chapter 1: hiding on the hillside; in the meadow's tall grass until 23 October 2026)
   '蝴蝶': {py:'húdié', en:'butterfly', pic:'🦋', area:1, category:'animals'},   // (chapter 1: fluttering over the flowers on the riverside, the way east to the bees)
+  '乌龟': {py:'wūguī', en:'turtle', pic:'🐢', area:1, category:'animals', alike:['海龟']},   // (chapter 1: on a warm rock in the hot spring valley)
+  '海龟': {py:'hǎiguī', en:'sea turtle', pic:'🌊🐢', area:1, category:'animals'},   // (chapter 1: on the shore's sand)
   '老鼠': {py:'lǎoshǔ', en:'mouse', pic:'🐭', area:1, category:'animals'},   // (chapter 1: hiding in the melon field's tall grass)
   '青蛙': {py:'qīngwā', en:'frog', pic:'🐸', area:1, category:'animals'},   // (chapter 1: on a lily pad by the south slope's stepping stones)
   '马': {py:'mǎ', en:'horse', pic:'🐴', area:1, category:'animals'},   // (chapter 1: out on the pasture's grass)
@@ -286,6 +288,7 @@ const MADE = {
   '蜂蜜': {parts:[['蜂', 'fēng', 'bee'], ['蜜', 'mì', 'honey']]},   // (蜜蜂, the other way round: honey + bee = bee)
   '黄蜂': {parts:[['黄', 'huáng', 'yellow', '黄色'], ['蜂', 'fēng', 'bee']]},
   '同学': {parts:[['同', 'tóng', 'together'], ['学', 'xué', 'to learn', '学校']]},
+  '海龟': {parts:[['海', 'hǎi', 'sea'], ['龟', 'guī', 'turtle', '乌龟']]},   // (a turtle of the sea)
   '没有': {parts:[['没', 'méi', 'not', '没关系'], ['有', 'yǒu', 'to have']]},
   '牛奶': {parts:[['牛', 'niú', 'cow'], ['奶', 'nǎi', 'milk']]},
   '跑步': {parts:[['跑', 'pǎo', 'run'], ['步', 'bù', 'step']]},   // (running, step after step: for exercise)

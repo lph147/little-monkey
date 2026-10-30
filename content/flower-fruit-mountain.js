@@ -2344,6 +2344,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '马': 'Out on the pasture’s grass, west of the way in from the dark pines.',
     '青蛙': 'On a lily pad on the south slope’s brook, just west of the stepping stones.',
     '老鼠': 'Hiding in the tall grass at the melon field’s south-west corner.',
+    '乌龟': 'Warming itself on the boulder by the hot spring pools.',
+    '海龟': 'On the shore’s sand, at the water’s edge by the cliff.',
     '狼': 'In the long grass in the pine wood.',
     '熊': 'Rearing up out of the long grass between the big rocks in the pasture, as you led the cow home.',
     '狐狸': 'Hiding in the tall grass on the hillside.',
@@ -2497,6 +2499,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '马': {zh:'马 在 吃 草 。', en:'The horse is eating grass.'},
     '青蛙': {zh:'青蛙 很 小 。', en:'The frog is very small.'},
     '老鼠': {zh:'老鼠 在 草 里 。', en:'The mouse is in the grass.'},
+    '乌龟': {zh:'乌龟 在 石头 上 。', en:'The turtle is on the stone.'},
+    '海龟': {zh:'海龟 很 大 。', en:'The sea turtle is very big.'},
     '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'},
     '熊': {zh:'山 上 有 熊 。', en:'There are bears on the mountain.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now; 蜜蜂, 花上有蜜蜂。,
@@ -2613,7 +2617,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
       meetNote:'A frog sits on a lily pad on the brook, croaking. Answer its questions to make friends.'},
     // chapter 1: a mouse hiding in the melon field's tall grass, only there (hides), as the fox does on the hillside
     {id:'mouse', word:'老鼠', hides:'melonField', chapter:1, clue:'The melon field’s tall grass',
-      meetNote:'A mouse pops out of the {草}, its whiskers twitching! Answer its questions to make friends.'}
+      meetNote:'A mouse pops out of the {草}, its whiskers twitching! Answer its questions to make friends.'},
+    // chapter 1: a turtle warming itself up on the boulder by the hot spring pools (perch: how high it sits, in pixels)
+    {id:'turtle', word:'乌龟', at:[6, 13, 'hotSprings'], home:'石头', chapter:1, perch:5, clue:'The hot springs, on a warm rock',
+      meetNote:'A turtle is warming itself on a rock by the pools. Answer its questions to make friends.'},
+    // chapter 1: a sea turtle on the shore's sand, at the water's edge on its west side, away from the crabs and the raft
+    {id:'seaTurtle', word:'海龟', at:[4, 12, 'shore'], home:'海', chapter:1, clue:'The shore, on the sand by the sea',
+      meetNote:'A sea turtle crawls slowly up the sand from the sea. Answer its questions to make friends.'}
   ],
   // Little birds land near you now and then: face one and press A to see its word (word, with note on its card). Once you
   // know the word, each is one of these colours (colours), and A shows it, such as 黄色的鸟 (a yellow bird), once you know
