@@ -314,15 +314,18 @@ function heart(X, Y){ [[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[1,2],[2,2],[3,
 // of its square, centred on it, its feet on the square's bottom, as a tree does (decided 30 October 2026). Gives how much
 // taller than a square it is, for what goes over its head.
 function drawFigure(img, X, Y){ b.drawImage(img, X - (img.width - T) / 2, Y - (img.height - T)); return img.height - T; }
-// And its shadow on the ground under it, as wide as it is: a bee's small, a cow's big. (w: the word for its map sprite)
-const shadowWidths = {};
+// And its shadow on the ground under its feet, as wide as it is: a bee's small, a cow's big. A small one stands a few
+// pixels up its square, in the middle of it (decided 31 October 2026: on its bottom edge, it looked sunk), its shadow with
+// it. (w: the word for its map sprite; feet: the row its feet are on, its lowest, counted up from the bottom of its square)
+const figureBoxes = {};
+const figureBox = w => figureBoxes[w] ?? (figureBoxes[w] = (() => {
+  const rows = MAP_SPRITES[w].rows; let x0 = 99, x1 = -1, y1 = -1;
+  rows.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.'){ x0 = Math.min(x0, x); x1 = Math.max(x1, x); y1 = Math.max(y1, y); } }));
+  return {shadow:Math.max(5, Math.round((x1 - x0 + 1) * .65)), up:rows.length - 1 - y1};
+})());
 function figureShadow(w, X, Y, alpha = .2){
-  const s = shadowWidths[w] ?? (shadowWidths[w] = (() => {
-    let x0 = 99, x1 = -1;
-    for (const r of MAP_SPRITES[w].rows) [...r].forEach((c, x) => { if (c !== '.'){ x0 = Math.min(x0, x); x1 = Math.max(x1, x); } });
-    return Math.max(5, Math.round((x1 - x0 + 1) * .65));
-  })());
-  R(b, X + 8 - Math.floor(s / 2), Y + 14, s, 2, `rgba(0,0,0,${alpha})`);
+  const {shadow:s, up} = figureBox(w);
+  R(b, X + 8 - Math.floor(s / 2), Y + 14 - (up >= 2 ? up - 1 : 0), s, 2, `rgba(0,0,0,${alpha})`);   // (one a pixel up, such as the fox, as it always was)
 }
 // An animal at its own spot that you're meeting (it's drawn there, not as one jumping out): how far it hops up now. It hops
 // when it sees you; and if you make friends, it hops for joy, with a heart rising over it (at X, Y); if not, it stays put.
@@ -347,7 +350,8 @@ function drawFlutter(a, X, Y, now, sq = a.at){
 // gently up and down, ripples spreading either side of it now and then; hopping as you meet it, and for joy (meetHop).
 function drawSwimmer(a, X, Y, now){
   const bob = Math.floor(now / 520 + a.at[0]) % 2, up = meetHop(a, X, Y, now), k = Math.floor(now / 260) % 4;
-  if (k < 3){ const w = 2 + k * 2; R(b, X + 5 - w, Y + 14, w, 1, 'rgba(255,255,255,.55)'); R(b, X + 12, Y + 14, w, 1, 'rgba(255,255,255,.55)'); }
+  const wy = Y + 15 - figureBox(a.hz).up;   // (at its waterline)
+  if (k < 3){ const w = 2 + k * 2; R(b, X + 5 - w, wy, w, 1, 'rgba(255,255,255,.55)'); R(b, X + 12, wy, w, 1, 'rgba(255,255,255,.55)'); }
   drawFigure(towardsYou(a, a.at[0]), X, Y + bob - up);
 }
 // One of several of a kind out where it came out (stays), such as a bee over the flowers in their valley: hovering, bobbing,

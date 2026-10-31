@@ -98,7 +98,9 @@ test('animals on the map at their sizes: tiny, small, medium and big, at the bot
   assert.deepEqual(Object.fromEntries(Object.entries(by).map(([k, ws]) => [k, ws.sort()])), {
     tiny: ['蜘蛛', '蜜蜂', '蝴蝶', '螃蟹', '青蛙', '老鼠'].sort(), small: ['兔子', '猫头鹰', '鸭子', '乌龟'].sort(), big: ['熊', '牛', '野猪', '鹿', '马'].sort(),
     medium: ['松鼠', '山羊', '狐狸', '狼', '羊', '蛇', '蜂王', '黄蜂', '海龟'].sort()});
-  for (const w of [...by.tiny, ...by.small]) assert.ok(sizes[w][2] <= 1, `${w} stands at the bottom of its square`);
+  for (const w of [...by.tiny, ...by.small]) assert.ok(sizes[w][2] <= 3, `${w} stands low in its square`);
+  for (const w of ['兔子', '老鼠', '青蛙', '鸭子', '螃蟹', '蜘蛛', '蜜蜂', '蝴蝶']) assert.ok(sizes[w][2] >= 2, `${w} is lifted into the middle of its square, not on its bottom edge, where it looked sunk (31 October 2026)`);
+  for (const w of ['乌龟', '猫头鹰']) assert.equal(sizes[w][2], 0, `${w} sits on what it’s perched on`);
   assert.equal(game.run("ANIMALS.find(a => a.id === 'deer').spr.height"), 22, 'the deer, big');
   assert.equal(get(game, "ANIMALS.filter(a => a.small).length"), 0, 'no second, smaller look: the butterfly is tiny anyway');
 });
@@ -115,4 +117,6 @@ test('a big animal stands up out of its square, centred on it, and its shadow is
   const [cow, bee, fox] = get(game, '__rects.map(r => r[2])');
   assert.ok(cow > fox && fox > bee, `a cow’s shadow (${cow}) is bigger than a fox’s (${fox}), and a bee’s (${bee}) smaller`);
   assert.equal(fox, 10, 'a medium one’s, as before');
+  game.run("__rects = []; figureShadow('狐狸', 0, 0); figureShadow('青蛙', 0, 0)");
+  assert.deepEqual(get(game, '__rects.map(r => r[1])'), [14, 12], 'under its feet: a fox’s where it was, a frog’s up with it');
 });
