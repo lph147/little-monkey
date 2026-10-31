@@ -161,7 +161,7 @@ function pressMap(){   // the map (js/map.js), once you have it; and again close
   tipPressed('#mapBtn');
   if (!modal.hidden){ if (sheet.querySelector('.mapview')) closeCard(); return; }
   if (mode !== 'play' || !canAct()) return;
-  if (hasMap()) openMap();
+  if (hasMap()) lookAtMap();
   else toast(AREA.areaMap ? AREA.areaMap.notYet : 'There’s no map here.');
 }
 $('#startBtn').addEventListener('click', () => { getAC(); pressMenu(); });

@@ -71,6 +71,7 @@ const WORD_BANK = {
   // Chapter 1: the Water Curtain Cave
   '路': {py:'lù', en:'path, road', pic:'🛤️', area:1, category:'places'},
   '棍子': {py:'gùnzi', en:'stick', pic:'🪵', area:1, category:'items'},
+  '地图': {py:'dìtú', en:'map', pic:'🗺️', area:1, category:'items'},   // (the old monkey gives you one as you set off: caught the first time you open it)
   '蛇': {py:'shé', en:'snake', pic:'🐍', area:1, category:'animals'},
   '蜘蛛': {py:'zhīzhū', en:'spider', pic:'🕷️', area:1, category:'animals'},
   '蜜蜂': {py:'mìfēng', en:'bee', pic:'🐝', area:1, category:'animals'},   // (caught in the long grass until 21 October 2026; in chapter 1, six friends hiding in the tall flowers of their valley)
@@ -281,6 +282,7 @@ const MADE = {
   '松鼠': {parts:[['松', 'sōng', 'pine'], ['鼠', 'shǔ', 'mouse']]},
   '头带': {parts:[['头', 'tóu', 'head'], ['带', 'dài', 'band']]},
   '鱼竿': {parts:[['鱼', 'yú', 'fish'], ['竿', 'gān', 'pole']]},
+  '地图': {parts:[['地', 'dì', 'ground'], ['图', 'tú', 'picture']]},   // (a picture of the ground)
   '木筏': {parts:[['木', 'mù', 'wood'], ['筏', 'fá', 'raft']]},   // (木, as in 木头)
   '野猪': {parts:[['野', 'yě', 'wild'], ['猪', 'zhū', 'pig']]},
   '蜜蜂': {parts:[['蜜', 'mì', 'honey'], ['蜂', 'fēng', 'bee']]},

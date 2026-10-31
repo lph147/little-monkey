@@ -211,6 +211,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await stepOn(15, 0, 'going up the mountain path');
   assert.equal(run('PLACE'), 'path', 'you should be on the mountain path');
   assert.ok(knows('路'), 'arriving on the mountain path should teach 路');
+  await act('lookAtMap().then(closeCard)', 'opening the map for the first time (MAP)');
+  assert.ok(knows('地图'), 'the first time you open the map, its word (地图, map) should be caught');
   for (const [x, y] of [[13, 14], [12, 14], [11, 14], [10, 14], [9, 14]]) await stepOn(x, y, 'walking through the long grass');
   assert.ok(knows('蛇'), 'a snake should jump out of the long grass, and be chased away');
   assert.equal(get('S.health'), 50, 'every dodge right: no health lost');

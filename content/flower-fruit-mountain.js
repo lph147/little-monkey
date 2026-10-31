@@ -198,8 +198,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // When you can run, holding B as you walk (decided 28 October 2026): once PE has taught you 跑.
   running: {knows:'跑'},
   // The map (地图, js/map.js; decided 31 October 2026, from mockups): MAP opens it once you have it (has), as you set off up
-  // the mountain path; till then it says notYet. It shows the places you've been, each where its onMap says (below).
-  areaMap: {has:{climb:{atLeast:1}}, notYet:'You don’t have a map yet.'},
+  // the mountain path (the old monkey gives it to you); till then it says notYet. It shows the places you've been, each
+  // where its onMap says (below). Its word (地图) is caught the first time you open it, a word you find yourself, with its note.
+  areaMap: {has:{climb:{atLeast:1}}, notYet:'You don’t have a map yet.', word:'地图', note:'Every place you go is drawn on your map.'},
   lessons: [
     // The first lesson of each series teaches its first three words, one after another (first: decided 24 October 2026,
     // school lessons are the exception to one new word at a time): two lessons, and you can count six bees and know the
@@ -2365,6 +2366,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '瀑布': 'The waterfall at the top of the mountain path, where the river comes from.',
     '路': 'The mountain path, up beside the river from the meadow.',
     '棍子': 'The big monkey gave it to you, before you set off up the mountain path.',
+    '地图': 'The old monkey gave it to you as you set off up the mountain path: every place you go is drawn on it.',
     '蛇': 'In the long grass on the mountain path.',
     '蜘蛛': 'In the long grass on the mountain path.',
     '蜜蜂': 'Hiding in the tall flowers of the bees’ valley.',   // (in the long grass on the mountain path until 21 October 2026)
@@ -2515,6 +2517,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '快乐': {zh:'小 猴子 很 快乐 。', en:'The little monkey is very happy.'},   // (a draft, not checked yet)
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
     '羊': {zh:'羊 吃 草 。', en:'Sheep eat grass.'},   // (a draft, not checked yet)
+    '地图': {zh:'这 是 我 的 地图 。', en:'This is my map.'},   // (a draft, not checked yet)
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
     '山羊': {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.'},
     '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'},
@@ -2982,6 +2985,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'snakes'},
         {message:'The path up beside the river is wild, and nobody has been to the top. Someone brave should go and see where the water comes from.'},
         {set:{climb:1}},
+        {message:'The old monkey gives you a map of the mountain. Each place you go will be drawn on it. Press MAP to look at it.'},
         {say:'bye'},
         {reply:'再见'},   // goodbye, as you set off (taught here, 19 October 2026: it means more now you're leaving)
         {message:'You set off for the path, on your own.'}   // (the big monkey stops you on the way, with a stick: its own new word)

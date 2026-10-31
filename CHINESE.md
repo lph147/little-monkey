@@ -306,6 +306,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 小猴子很快乐。 | xiǎo hóuzi hěn kuàilè. | The little monkey is very happy. | 快乐 |  |
 | 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
 | 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | 羊 |  |
+| 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | 地图 |  |
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
 | 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
 | 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
@@ -486,6 +487,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 粉色 | fěnsè | pink |  |
 | 路 | lù | path, road |  |
 | 棍子 | gùnzi | stick |  |
+| 地图 | dìtú | map |  |
 | 蛇 | shé | snake |  |
 | 蜘蛛 | zhīzhū | spider |  |
 | 蜜蜂 | mìfēng | bee |  |
@@ -594,6 +596,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 松鼠 | sōngshǔ | 松 sōng (pine) + 鼠 shǔ (mouse) = 松鼠 (squirrel) |  |
 | 头带 | tóudài | 头 tóu (head) + 带 dài (band) = 头带 (headband) |  |
 | 鱼竿 | yúgān | 鱼 yú (fish) + 竿 gān (pole) = 鱼竿 (fishing rod) |  |
+| 地图 | dìtú | 地 dì (ground) + 图 tú (picture) = 地图 (map) |  |
 | 木筏 | mùfá | 木 mù (wood) + 筏 fá (raft) = 木筏 (raft) |  |
 | 野猪 | yězhū | 野 yě (wild) + 猪 zhū (pig) = 野猪 (wild boar) |  |
 | 蜜蜂 | mìfēng | 蜜 mì (honey) + 蜂 fēng (bee) = 蜜蜂 (bee) |  |
@@ -918,6 +921,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 我们等你！ | wǒmen děng nǐ! | We’ll wait for you! | New on 29 October 2026 (in the game), the end of chapter 1: The old monkey, seeing you off on the shore, after the troop’s 再见！ |  |
 | 美猴王坐木筏走了。 | Měi Hóuwáng zuò mùfá zǒu le. | The Monkey King sailed away on his raft. | New on 29 October 2026 (in the game), the end of chapter 1: The scene of you sailing away, the troop waving from the shore, after 再见！ and 我们等你！ |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | New on 24 October 2026 (in the game): the big monkey in the meadow (大猴子 dà hóuzi, his name in the game), saying who he is, teaching 我 (wǒ, I). The hungry monkey now teaches 水果 (fruit) as he asks for some (我饿了。我要吃水果！), and 吃 (eat) when you give him the fruit, just before you finish 我要吃苹果。; each fruit tree teaches its own fruit, 桃子 or 苹果 |  |
+| 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | New on 31 October 2026 (in the game): the example on 地图 (dìtú, map)’s page. The old monkey gives you a map as you set off up the mountain path, and you catch 地图 the first time you open it. Its How it’s made card says 地 (dì, ground) + 图 (tú, picture) = 地图, a picture of the ground: is that a fair way to explain it? |  |
 
 ## Questions
 

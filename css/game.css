@@ -1037,6 +1037,8 @@ rt.hid{visibility:hidden}
 .placename .pzh{font-family:var(--text);font-size:1.3rem;font-weight:700}
 .placename .ppy{color:var(--muted);font-size:.9rem}
 .placename .pen{display:block;font-family:var(--pixel);font-size:.85rem;color:var(--jade)}
+.placename .pnew{display:flex;align-items:center;justify-content:center;gap:.3rem;margin-top:.15rem;font-size:.75rem;color:var(--muted)}   /* (somewhere new: now on your map) */
+.placename .pnew .mappin{width:.6rem;height:.75rem}
 @media (prefers-reduced-motion: reduce){.placename{animation:none}}
 
 /* the card when a new chapter of the story begins */

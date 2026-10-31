@@ -7,10 +7,12 @@ const {loadGame} = require('./fake-browser');
 
 const json = s => JSON.parse(s);
 const saveOf = game => json(game.storage.get('xiaohouzi-v2'));
-// A game you're playing: progress in the area (on top of a new game's), and where you are.
-function playing(progress = {}, pos = {place: 'meadow', x: 9, y: 3, dir: 'down'}){
+// A game you're playing: progress in the area (on top of a new game's), and where you are; having caught 地图 (map), as
+// you do the first time you open it, unless mapWord is false.
+function playing(progress = {}, pos = {place: 'meadow', x: 9, y: 3, dir: 'down'}, {mapWord = true} = {}){
   const game = loadGame({dom: true, save: {version: 33, started: true, pos, areas: {1: progress}}});
   game.run("mode = 'play'");
+  if (mapWord) game.run("S.w['地图'] = {lv: 1, ok: 0}");
   return {game, run: code => game.run(code), sheet: game.el('#sheet')};
 }
 
@@ -133,4 +135,35 @@ test('a new game, a deleted one or a loaded one forgets the pictures of the game
   assert.deepEqual(json(run('JSON.stringify(Object.keys(KEPT))')), [run("pictureKey('meadow', 1)"), run("pictureKey('path', 3)")]);
   run('deleteSlot(3)');
   assert.deepEqual(json(run('JSON.stringify(Object.keys(KEPT))')), [run("pictureKey('meadow', 1)")]);
+});
+
+test('the first time you open the map, you catch its word, 地图 (map), said straight away; then the map opens', async () => {
+  const {run, sheet} = playing({gate: true, climb: 1, visited: ['meadow', 'path']}, {place: 'path', x: 16, y: 10, dir: 'up'}, {mapWord: false});
+  run("globalThis.__said = []; say = w => __said.push(w)");
+  run('pressMap()');
+  assert.match(sheet.querySelector('.word .big').textContent, /地图/, 'its new-word card');
+  assert.match(sheet.textContent, /Every place you go is drawn on your map/);
+  assert.deepEqual(json(run('JSON.stringify(__said)')), ['地图'], 'said straight away: a word you find yourself');
+  assert.equal(sheet.querySelector('.mapview'), null, 'the map comes after it');
+  while (!sheet.querySelector('.mapview')){ sheet.querySelector('.primary').click(); await new Promise(r => setTimeout(r, 0)); }
+  assert.ok(run("lvl('地图') > 0"), 'caught');
+  run('closeCard(); pressMap()');
+  assert.ok(sheet.querySelector('.mapview'), 'next time, straight to the map');
+});
+
+test('arriving somewhere new says it’s now on your map, once you have one', async () => {
+  const banner = run => run("document.querySelector('#placeName').innerHTML");
+  const walk = async (game, from, to) => {   // through the way from one place to another (its fade's timers run as they come)
+    game.run(`goThrough(PLACES.${from}.exits.find(e => e.to === '${to}'))`);
+    for (let i = 0; i < 20 && game.run('PLACE') !== to; i++){ await new Promise(r => setImmediate(r)); game.flush(); }
+    assert.equal(game.run('PLACE'), to);
+  };
+  const {game, run} = playing({gate: true, climb: 1, visited: ['meadow']});
+  await walk(game, 'meadow', 'path');
+  assert.match(banner(run), /山路[\s\S]*New on your map/, 'somewhere new');
+  await walk(game, 'path', 'meadow');
+  assert.doesNotMatch(banner(run), /New on your map/, 'not where you’ve been before');
+  const before = playing({gate: true, climb: 0, visited: ['meadow']});
+  await walk(before.game, 'meadow', 'path');
+  assert.doesNotMatch(banner(before.run), /New on your map/, 'not before you have a map');
 });

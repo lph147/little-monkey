@@ -1125,10 +1125,11 @@ async function goThrough(e){
   if (e.how === 'jump') await leap(e.at);   // a jump into the waterfall, with a splash
   if (water){ waterT = performance.now(); SFX.splash(); } else { fadeT = performance.now(); SFX.blip(); }
   await sleep(water ? 600 : FADE_MS);       // (a rush of water covers the screen, or it fades to black)
+  const first = !here().visited.includes(e.to);   // (somewhere new: now on your map, if you have one)
   enterPlace(e.to);
   S.pos = {place:e.to, x:e.arrive[0], y:e.arrive[1], dir:e.facing || pl.dir}; placePlayer(); stepClear(); save();
   if (water) dripUntil = performance.now() + 1500;   // you come through dripping
-  showPlaceName();
+  showPlaceName(first && hasMap());
   const t = tileAt(pl.x, pl.y);   // arriving on something you learn by stepping on it, such as the mountain path, counts
   if (t.learnOnStep && lvl(t.word) === 0) await showNotice(t.word, stepCard(t));
 }
@@ -1258,9 +1259,9 @@ function ambience(now){
   ambientAt = now + 12000 + Math.random() * 18000;
 }
 let placeNameT;
-function showPlaceName(){
+function showPlaceName(newOnMap = false){   // newOnMap: you've never been here, and it's drawn on your map now (js/map.js)
   const n = PLACES[PLACE].name, el = $('#placeName');
-  el.innerHTML = `<span class="pzh">${n.zh}</span> <span class="ppy">${n.py}</span><span class="pen">${esc(n.en)}</span>`;
+  el.innerHTML = `<span class="pzh">${n.zh}</span> <span class="ppy">${n.py}</span><span class="pen">${esc(n.en)}</span>${newOnMap ? `<span class="pnew">${PIN_SVG}New on your map</span>` : ''}`;
   el.hidden = false; clearTimeout(placeNameT); placeNameT = setTimeout(() => { el.hidden = true; }, 2600);
 }
 // A grass animal hides in tall grass at least 3 steps from you: one that lives in one place, hides, only there; and where

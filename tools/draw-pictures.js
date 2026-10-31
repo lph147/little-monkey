@@ -340,6 +340,15 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(and(O(27.5, 21, 2.6, 3.2), Rc(0, 0, 32, 21)), '#E8343C', {edge: true}); p.fill(and(O(27.5, 21, 2.6, 3.2), Rc(0, 21, 32, 11)), '#F4F1EA', {edge: true});   // the float
     p.flat(path([[27.5, 24], [27.5, 28], [26, 29.5], [24.8, 28]], .45), '#9AA2AA');           // and the hook under it
   },
+  '地图': p => {   // map: a paper map folded in three, a blue river winding across it, green hills, a dotted path to a red pin (no writing)
+    p.fill(Pg([[3, 8], [12, 6], [12, 26], [3, 28]]), '#F2E2B8', {light: '#FFF4D6', dark: '#C9B07A', edge: true});   // its three panels, the middle one in shade
+    p.fill(Pg([[12, 6], [21, 8], [21, 28], [12, 26]]), '#DCC896', {light: '#ECDCAE', dark: '#B39A62', edge: true});
+    p.fill(Pg([[21, 8], [30, 6], [30, 26], [21, 28]]), '#F2E2B8', {light: '#FFF4D6', dark: '#C9B07A', edge: true});
+    p.fill(O(8, 13, 3.2, 2.4), '#7CC46B'); p.fill(O(25.5, 21, 3.4, 2.4), '#7CC46B'); p.fill(O(17, 11, 2.4, 1.8), '#6AAE5A');   // green hills
+    p.flat(path([[4, 21], [9, 19], [13, 22], [18, 18], [22, 15], [29, 13]], .9), '#4F9BD9');                        // the river
+    [[6, 25], [9, 24], [12, 22.5], [15, 21], [18, 23], [21, 24]].forEach(([x, y]) => p.dot(Math.round(x), Math.round(y), '#8A4A24'));   // a dotted path
+    p.fill(O(24, 10.5, 2.6), '#E0443C', {edge: true}); p.flat(Cp(24, 12.5, 24, 15.5, .6), '#5A4126'); p.dot(23, 9, '#FFB0A8');   // to a red pin
+  },
   '鱼饵': p => {   // bait: a little clay pot of wriggly pink worms, two hanging over its rim (unlike 蜂蜜: a pot of honey with a dipper)
     p.fill(Rc(7, 15, 18, 14, 4), '#B8683A', {light: '#D88A56', dark: '#8A4A24', edge: true});     // the pot
     p.fill(O(16, 15.5, 9.5, 3), '#8A4A24'); p.flat(O(16, 15.6, 7.6, 1.9), '#4A2C17');              // its rim, and the dark inside

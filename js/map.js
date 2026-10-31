@@ -9,6 +9,12 @@
 const MAP_W = 240, MAP_H = 160;   // the map's size, in pixels, as the screen is
 const MAP_PAPER = '#EEDFB6', MAP_PAPER2 = '#E5D3A3', MAP_EDGE = '#CDB27A', MAP_INK = '#5A4126', MAP_SHADOW = '#C9B07A';
 const hasMap = () => !!AREA.areaMap && matches(AREA.areaMap.has);
+// MAP: the map, and the first time, its word (the area's areaMap: word), a word you find yourself, said straight away.
+async function lookAtMap(){
+  const w = AREA.areaMap.word;
+  if (w && WORDS[w] && lvl(w) === 0) await showNotice(w, {note:AREA.areaMap.note});
+  openMap();
+}
 const placesBeen = () => (here().visited || []).filter(id => PLACES[id] && PLACES[id].onMap);
 // Where a place's little picture goes on the map: [x, y, w, h], its top-left corner and its size.
 function onMapAt(id){

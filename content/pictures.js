@@ -1150,6 +1150,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '地图': {   // map
+    palette: {a:'#5E584B', b:'#4D422E', c:'#352F23', d:'#463B26', e:'#FFF4D6', f:'#C9B07A', g:'#807457', h:'#B39A62', i:'#58503E', j:'#F2E2B8', k:'#DCC896', l:'#ECDCAE', m:'#393329', n:'#8C836B', o:'#822723', p:'#97C68C', q:'#538846', r:'#FFB0A8', s:'#E0443C', t:'#6AAE5A', u:'#A3D697', v:'#619953', w:'#7CC46B', x:'#5A4126', y:'#4F9BD9', z:'#263B4C', A:'#8A4A24'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "..........abcd..............ab..",
+      ".....aaaaaefghdiiid....aaaaaefb.",
+      "...aaeeeeejfgkllllhddmaeeeeejfb.",
+      "..aeejjjjjjfgkkkkkklhnoooojjjfb.",
+      "..aejjjjjjjfgkkkpqkkhnorsojjjfb.",
+      "..aejjjjjjjfgkkpttqkhossssojjfb.",
+      "..aejjuuuvjfgkkqttqkhnossojjjfb.",
+      "..aejuwwwwvfgkkkqqkkhnoxxojyyyz.",
+      "..aejvwwwwvfgkkkkkkkhnjxxyyyyyz.",
+      "..aejjvvvvjfgkkkkkkkhyyxxyyjjfb.",
+      "..aejjjjjjjfgkkkkkkkyyyxxjjjjfb.",
+      "..aejjjjjjjfgkkkkkyyyyjjjjjjjfb.",
+      "..aejjjjjjjfgkkkkyyyhnjjjjjjjfb.",
+      "..aejjjjyyjfgkkkyyykhnjjjjjjjfb.",
+      "..aejyyyyyyfgkkyyykkhnjuuuuvjfb.",
+      "..zyyyyyjyyyyyyykkkkhnuwwwwwvfb.",
+      "..zyyjjjjjjyyyyAkkkkhnvwwwwwvfb.",
+      "..aejjjjjjjfyykkkkkkhnjvvvvvjfb.",
+      "..aejjjjjjjfAkkkkkAkhnjjjjjjjfb.",
+      "..aejjjjjAjfgkkkkkkkhAjjjjjjjfb.",
+      "..aejjAjjjffghkkkkkkhnjjjjjjffb.",
+      "..aejfffffbbcdhhhhhkhnjfffffbb..",
+      "..bffbbbbb....dddddhhnfbbbbb....",
+      "...bb..............ddmb.........",
+      "................................",
+      "................................",
+      "................................"
+    ]
+  },
   '鱼饵': {   // bait
     palette: {a:'#5E4446', b:'#4A282E', c:'#FFB8C4', d:'#C0607A', e:'#F08FA0', f:'#443227', g:'#8B535D', h:'#392425', i:'#AD8066', j:'#6C3A1C', k:'#2F1C10', l:'#4A2C17', m:'#8A4A24', n:'#513622', o:'#D88A56', p:'#B8683A', q:'#382112'},
     rows: [
