@@ -205,10 +205,10 @@ async function settle(g, code){ let done = false; const p = Promise.resolve(g.ru
 
 test('with the school’s flowers planted, the 老板 comes up to the home ground, and the troop builds his shop by the way in as you watch', async () => {
   const g = homeGame({shop: 0});
-  assert.deepEqual(get(g, "[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]"), ['meadow', 11, 16], 'still at his stall in the meadow');
+  assert.deepEqual(get(g, "[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]"), ['gone', 0, 0], 'not on the mountain yet');
   await settle(g, 'runEvents()');
   assert.equal(get(g, 'here().shop'), 1);
-  assert.match(get(g, '__notes').join(' '), /The 老板 \(shop owner\) has come up from the meadow! He wants a new shop at the home ground\./);
+  assert.match(get(g, '__notes').join(' '), /A shop owner has come up the mountain! He wants to open a shop at the troop’s home ground\./);
   assert.deepEqual(get(g, "[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]"), ['homeGround', 7, 8], 'by the way in');
   assert.equal(g.run("(AREA.bubbles.boss.find(b => matches(b.if)) || {}).show"), '!');
   assert.deepEqual(get(g, "getTasks().filter(t => /老板/.test(t.text)).map(t => [t.text, t.target])"), [['The 老板 (shop owner) has come up to the home ground: go and see him, by the way in from the waterfall', [7, 8]]], 'a task, its arrow at him');
@@ -221,7 +221,7 @@ test('with the school’s flowers planted, the 老板 comes up to the home groun
   assert.ok(get(g, '__sounds').filter(s => s === 'tock').length >= 8, 'stakes round its plot, then each piece, with a knock');
   assert.ok(get(g, "areaChecklist().find(([t]) => /new shop/.test(t))")[1], 'on the checklist, ticked off');
   g.run("S.pos = {place: 'meadow', x: 9, y: 17, dir: 'up'}; setPlace('meadow')");
-  assert.equal(g.run('tileAt(9, 16).look'), 'stallEmpty', 'his old stall in the meadow, empty');
+  assert.equal(g.run('tileAt(9, 16).look'), 'grass', 'no stall in the meadow: he was never there (decided 31 October 2026)');
 });
 
 test('his shop sells a headband in each colour you know, asked for with its colour missing: 我要蓝色的头带', async () => {

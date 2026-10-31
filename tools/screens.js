@@ -366,7 +366,6 @@ SAVES.shopComes = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.
 SAVES.shopMoved = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.areas[1], shop: 1}}, tasksSeen: {...SAVES.flowersPlanted.tasksSeen, shopMoved: 1, news: 1}, pos: {place: 'homeGround', x: 7, y: 9, dir: 'up'}};   // facing him, on the road by the way in
 SAVES.shopOpen = {...SAVES.shopMoved, shells: 24, w: {...SAVES.shopMoved.w, ...knows(1, ['头带', '蓝色', '绿色'])}, areas: {1: {...SAVES.shopMoved.areas[1], shop: 3, bought: ['头带']}},
   wardrobe: {owned: ['头带', '蓝色 的 头带'], wearing: ['蓝色 的 头带']}};
-SAVES.oldStall = {...SAVES.shopOpen, pos: {place: 'meadow', x: 9, y: 17, dir: 'up'}};   // below his old stall in the meadow
 // A big fish for the feast (29 October 2026): with honey on the table, the hungry monkey wants one; the fishing monkey by
 // the stream gives you a rod; your first catch is tiny (小), then a big one (大), for the feast
 SAVES.fishAsk = {...SAVES.fruitTable, areas: {1: {...SAVES.fruitTable.areas[1], shop: 3, fish: 'not asked'}}, pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};   // facing the hungry monkey
@@ -511,7 +510,6 @@ const SCREENS = [
   {id: 'hungry-fruit', title: 'He teaches 水果 (fruit)', save: 'hungryNew', why: 'Its card: just Got it (no How it’s made).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(400); }},
   {id: 'behind-tree', title: 'Behind a tree', save: 'middle', why: 'Its leaves cover you as you walk behind it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 12, y: 7, dir: 'left'}; placePlayer(); await wait(500); }},
-  {id: 'stall', title: 'The shop owner’s stall', save: 'middle', why: 'Three squares wide, with the shop owner beside it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 9, y: 18, dir: 'up'}; placePlayer(); await wait(500); }},
   {id: 'apple-tree', title: 'The apple tree', save: 'appleTree', why: 'In the south-east, across the river, with yellow flowers nearby.', run: async () => { play(); await wait(500); }},
   {id: 'meadow-sheep', title: 'A sheep at the foot of the cliffs', save: 'bySheep', why: 'Near your stone, eating grass: 羊 (sheep), then the goat on its rock to the south, 山羊 (goat: a mountain sheep).', run: async () => { play(); await wait(500); }},
   {id: 'fruit-tree', title: 'A fruit tree teaches its fruit', save: 'fruitTree', why: 'It sparkles till you know its fruit. A at a peach tree, for the hungry monkey, picks one, teaching 桃子 (peach).', run: async () => {
@@ -1130,8 +1128,6 @@ const SCREENS = [
     buy(forSale().find(i => i.item === '苹果'), speaker('boss')); await wait(500); }},
   {id: 'wardrobe-colours', title: 'Your headbands', save: 'shopOpen', why: 'Each colour you’ve bought, one on at a time: putting one on takes the other off (我戴蓝色的头带).', run: async () => {
     play(); await wait(100); wardrobePage(() => closeCard()); await wait(300); }},
-  {id: 'stall-empty', title: 'His old stall, empty', save: 'oldStall', why: 'Once he’s moved, the meadow’s stall is empty: A at it says where he’s gone.', run: async () => {
-    play(); await wait(500); }},
   {id: 'fish-want', title: 'A big fish for the feast', save: 'fishAsk', why: 'With honey on the table, the hungry monkey wants a big fish: 我要吃大鱼！ (大 just for listening, till you catch one).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(500); }},
   {id: 'fisher', title: 'The fishing monkey', save: 'fishRod', why: 'By the stream at the home ground, his rod out over the water, its float bobbing, with a ! once the hungry monkey wants a fish.', run: async () => {

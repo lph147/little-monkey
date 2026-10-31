@@ -167,9 +167,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   for (const w of ['红色', '黄色', '白色']) assert.ok(!knows(w), `${w} waits for school`);
   assert.ok(!knows('不客气'), 'no one has thanked you with nothing else new yet, so 不客气 waits too');
 
-  // The shop owner, and the animals in the tall grass
-  await pressAt(11, 15, 'down', 'meeting the shop owner');
-  assert.ok(knows('老板'), 'the shop owner should teach 老板');
+  // The animals (no shop owner in the meadow: he comes up the mountain in chapter 1, decided 31 October 2026)
+  assert.ok(!get("NPCS.some(n => n.id === 'boss')"), 'no shop owner in the meadow');
   await pressAt(3, 5, 'up', 'meeting the sheep at the foot of the cliffs, near your stone');
   assert.ok(knows('羊'), 'the sheep teaches 羊');
   await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
@@ -185,16 +184,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(13, 10, 'up', 'training at the practice post');
   assert.ok(get("S.w['要'].n || S.w['我'].n"), 'a word without a picture was heard right');
 
-  // The headband, then an apple to eat in an animal encounter
-  plan.buy = '头带';
-  await pressAt(11, 15, 'down', 'buying the headband');
-  assert.deepEqual(area().bought, ['头带'], 'you should have bought the headband');
-  assert.ok(!knows('谢谢'), 'the headband was new, so your reply 谢谢 waits');
-  plan.buy = '苹果';
-  await pressAt(11, 15, 'down', 'buying an apple');
-  plan.buy = null;
-  assert.equal(get('S.bag')['苹果'], 1, 'you should have an apple in your bag');
-  assert.ok(knows('谢谢'), 'buying something you know, you say 谢谢');
+  // An apple to eat in an animal encounter (from the meadow's apple tree)
+  run("S.bag['苹果'] = 1");
   plan.eat = true;
   await pressAt(13, 19, 'up', 'meeting the squirrel with an apple in your bag');
   assert.equal(get('S.bag')['苹果'], 0, 'the apple should be eaten');
@@ -567,18 +558,22 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // The duck swimming on the home ground's stream (30 October 2026: a chapter 1 friend where there were none), met from the bank
   await pressAt(27, 17, 'down', 'meeting the duck on the stream');
   assert.ok(knows('鸭子') && get('S.friends').includes('duck'), 'the duck teaches 鸭子, and becomes your friend');
-  // The 老板's new shop (29 October 2026): with the flowers planted, he comes up from the meadow (his old stall there empty);
-  // talk to him by the way in, and the troop builds him a shop there as you watch: 我来了！ 这里很好！ It sells headbands
-  // in every colour you know (asked for as 我要蓝色的头带, the colour missing), and food
+  // The 老板's new shop (29 October 2026): with the flowers planted, a shop owner comes up the mountain (since 31 October
+  // 2026 the first time you see him: the prologue had too much to take in); talk to him by the way in (老板), then again,
+  // and the troop builds him a shop there as you watch: 我来了！ 这里很好！ It sells headbands in every colour you know
+  // (asked for as 我要蓝色的头带, the colour missing), and food
   assert.deepEqual([area().shop, get("[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]")], [1, ['homeGround', 7, 8]], 'the 老板 has come up to the home ground');
-  await pressAt(7, 9, 'up', 'talking to the 老板, by the way in: the troop builds his new shop');
+  await pressAt(7, 9, 'up', 'meeting the shop owner, by the way in');
+  assert.ok(knows('老板') && area().shop === 1, 'he teaches 老板, the first time');
+  await pressAt(7, 9, 'up', 'talking to the 老板 again: the troop builds his new shop');
   assert.deepEqual([area().shop, run('tileAt(4, 7).look'), run('tileAt(7, 7).look')], [3, 'shop', 'sign'], 'his shop, built, with its sign');
   assert.ok(['我来了！', '这里很好！'].every(t => get('__said').includes(t)), 'here I am! it’s nice here!');
   assert.ok(get('S.shells') >= 10, 'shells enough for a headband');
   plan.buy = '蓝色的头带';
   await pressAt(7, 9, 'up', 'buying a blue headband: 我要蓝色的头带');
   plan.buy = null;
-  assert.deepEqual([get('S.wardrobe.owned'), get('S.wardrobe.wearing'), run('headband()')], [['头带', '蓝色 的 头带'], ['蓝色 的 头带'], '#3A6DD0'], 'you tie it on, instead of the red one');
+  assert.deepEqual([get('S.wardrobe.owned'), get('S.wardrobe.wearing'), run('headband()')], [['蓝色 的 头带'], ['蓝色 的 头带'], '#3A6DD0'], 'you tie it on: your first headband');
+  assert.ok(knows('头带'), 'teaching 头带');
   assert.ok(get('__said').includes('我要蓝色的头带'), 'asked for with its colour');
 
   // Chapter 1: the cow (26 October 2026). Since the feast's quests began, the thirsty monkey has been by the road at the

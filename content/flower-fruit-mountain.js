@@ -278,7 +278,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'climb2', if:{climb:2}, text:'Go back down and tell the old monkey what you found', arrow:'elder'},
     {id:'climb3', if:{climb:3}, text:'Lead the troop up the path beside the river, to the {瀑布}', arrow:[7, 2, 'falls']},
     {id:'fall', if:{climb:4, story:false}, text:'Read the story at the {瀑布}', arrow:[5, 1, 'falls']},
-    {id:'shop1', if:{knows:'老板', new:'头带'}, text:'See what the {老板} sells', arrow:'boss'},
+    {id:'shop1', if:{knows:'老板', new:'头带', shop:{atLeast:3}}, text:'See what the {老板} sells', arrow:'boss'},
     {id:'fishRod', if:{fish:'asked', fishing:0}, text:'Ask the fishing monkey by the stream how to catch a big {鱼}', arrow:'fisher'},
     {id:'fishCatch', if:{fish:'asked', fishing:{atLeast:1}, holding:{fish:false}}, text:'Catch a big {鱼} for the feast: face the stream and press A', arrow:[22, 18, 'homeGround']},   // (its arrow on the stream, by the fishing monkey: not over you as you fish)
     {id:'fishBack', if:{fish:'asked', holding:{fish:true}}, text:'Take the big {鱼} to the hungry monkey', arrow:'hungry'},
@@ -880,7 +880,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // know (decided 29 October 2026: by the time his shop had anything worth buying, you'd left the meadow for good). Talk
     // to him, and the troop builds it as you watch.
     {if:{shop:0, schoolFlowers:true, place:'homeGround'}, do:[{set:{shop:1}},
-      {message:'The {老板} has come up from the meadow! He wants a new shop at the home ground. Go and see him, by the way in from the {瀑布}.'}]},
+      {message:'A shop owner has come up the mountain! He wants to open a shop at the troop’s home ground. Go and see him, by the way in from the {瀑布}.'}]},
     // you've brought the big monkey the wood and the small stones: the troop builds the school at once (a scene, told like
     // the opening: on its plot, the frame goes up, then the walls, the roof and the sign), and you learn 学校 (decided 22
     // October 2026: the frame had just popped up on the map, and you had to talk to him again)
@@ -955,7 +955,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "YgggggggggggggggggWWgGgY",
         "YTgGGGggggggggFgggWWGGgY",
         "YTggggg.ggggggTgggWWgggY",
-        "Y^^^^gg.HHHgggggggWWgggY",
+        "Y^^^^gg.ggggggggggWWgggY",
         "Y^^^Mgg.gggEggggggWWgQgY",
         "Y^^MMgg.GGGGgTggggWWgggY",
         "YMMMggg...........BBgEgY",
@@ -2026,8 +2026,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
     'K': {look:'post', landmark:true, label:'Train', action:'training', becomes:[{if:{school:{atLeast:1}}, to:'g'}]},   // the training ground (the troop uses the post to build the school: lessons take its place)
-    'H': {look:'stall', becomes:[{if:{shop:{atLeast:1}}, to:'Ħ'}]},   // the shop owner's stall: as wide as its row of H (three squares)
-    'Ħ': {look:'stallEmpty', landmark:true, onLook:[{do:[{message:'The {老板}’s old stall, empty now. He has moved his shop up to the troop’s home ground.'}]}]},   // (once he's moved)
     'R': {look:'rocks', word:'石头', landmark:true, message:'Big rocks block the way up. Maybe they will move once the monkeys are happy.', becomes:[{if:{gate:true}, to:'.'}]},
     // the rock all round the mountain: its top, seen from above (^), and at its front a cliff two squares high (M), as
     // between the hillside's terraces; grassy banks as high, that you hop down (v); and stone steps up them (=)
@@ -2248,7 +2246,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       palette:{o:'#4A2B13', f:'#C99558', s:'#F6D6B0', m:'#D09A76', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
       moves:[{if:{raft:{atLeast:1, below:3}}, place:'shore', x:14, y:12, facing:'left'},   // (seeing you off, on the shore)
-        {if:{shop:{atLeast:1}}, place:'homeGround', x:7, y:8, facing:'down'}],   // (chapter 1: up at the home ground, by his new shop, once the school's flowers are planted)
+        {if:{shop:{atLeast:1}}, place:'homeGround', x:7, y:8, facing:'down'},   // (chapter 1: up at the home ground, by his new shop, once the school's flowers are planted)
+        {if:{shop:0}, place:'gone', x:0, y:0}],   // (till then, he isn't on the mountain: decided 31 October 2026, the prologue had too much to take in, and his stall in the meadow went)
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}},
     // chapter 1: the queen bee (蜂王), called by her word, as an animal is: in her old hollow tree in the bees' valley till
     // she comes out, hovering in front of it while she's out; then home with you, with her swarm, by the wildflowers below
@@ -2396,14 +2395,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '西瓜': 'Wild in the melon field, east off the south slope, where birds peck at them.',
     '葡萄': 'Wild on the cliffs west off the hillside, hanging down a cliff over a ledge.',
     '香蕉': 'Wild in the hot spring valley, up the brook from the riverside, past the steam.',
-    '老板': 'The shop owner at the market stall in the south meadow.',
-    '头带': 'You bought it from the {老板} at the market stall in the south meadow.',
-    '谢谢': 'You said it to the {老板} after buying from the stall.',
+    '老板': 'He came up the mountain to open a shop at the troop’s home ground.',
+    '头带': 'You bought it from the {老板}, at his shop at the troop’s home ground.',
+    '谢谢': 'You said it to thank a friend for a present.',
     '不客气': 'You said it when a monkey thanked you for your help.',
     '对不起': 'You said it when you brought the hungry monkey the wrong fruit.',
     '没关系': 'You said it when the hungry monkey said sorry for being so fussy.',
     '再见': 'You said it to the old monkey as you set off up the mountain path.',
-    '我不要': 'You said it at the {老板}’s stall when you didn’t want anything.',
+    '我不要': 'You said it at the {老板}’s shop when you didn’t want anything.',
     '戴': 'You said it when you put something on from your wardrobe.',
     '跳': 'The big monkey dared the troop to jump through the waterfall.',
     '桥': 'A bridge over the stream, at the home ground or in the pine wood.',   // (the iron bridge in the Water Curtain Cave until 21 October 2026)

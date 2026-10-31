@@ -58,7 +58,7 @@ test('a bird that lands stays for most of a minute; face it and A shows 鸟, the
 });
 
 test('if the map changed under your saved spot, you start at the stone', () => {
-  const game = loadGame({save: {version: 12, started: true, pos: {x: 10, y: 16, dir: 'down'}}});   // where the stall stands now
+  const game = loadGame({save: {version: 12, started: true, pos: {x: 2, y: 16, dir: 'down'}}});   // up on the rock now
   const start = get(game, 'START');
   assert.deepEqual(get(game, '[S.pos.x, S.pos.y]'), [start.x, start.y]);
   const fine = loadGame({save: {version: 12, started: true, pos: {x: 9, y: 7, dir: 'left'}}});
