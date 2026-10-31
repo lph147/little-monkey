@@ -19,6 +19,11 @@ const CRAB_TALK = [
   {do:[{grab:'螃蟹', label:'Pick it up!', missed:'Ouch! The crab pinched you, and scuttled off.'},
     {gap:{sentence:'这 是 螃蟹', en:'This is a crab.', word:'螃蟹', others:['虾', '鱼'], pic:'螃蟹'}}, {scuttle:true}, {message:'You let the {螃蟹|crab} go, and it scuttles off.'}]}
 ];
+// Every food on the feast's tables (decided 31 October 2026: the exam and the feast waited only for the crab, the end of the
+// hungry monkey's requests, so a game that did those first sat down to the feast with the cow still lost and no garden):
+// honey; milk, yoghurt and cheese; the garden's watermelon, grapes and bananas; the big fish, the shrimp and the crab.
+const FEAST_READY = {bees:{atLeast:11}, milkTable:{atLeast:3}, melonPlanted:{atLeast:4}, grapePlanted:{atLeast:4}, bananaPlanted:{atLeast:4},
+  fishTable:{atLeast:1}, shrimpTable:{atLeast:1}, crabTable:{atLeast:1}};
 const FLOWER_FRUIT_MOUNTAIN = {
   number: 1,
   name: {zh:'花果山', py:'Huāguǒ Shān', en:'Flower Fruit Mountain'},
@@ -277,7 +282,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'shrimpBack', if:{shrimp:'asked', holding:{shrimp:true}}, text:'Take the {虾} to the hungry monkey', arrow:'hungry'},
     {id:'crabCatch', if:{crab:'asked', holding:{crab:false}}, text:'Catch a {螃蟹} on the shore, below the meadow: come at one from the front or behind', arrow:{place:'shore'}},
     {id:'crabBack', if:{crab:'asked', holding:{crab:true}}, text:'Take the {螃蟹} to the hungry monkey', arrow:'hungry'},
-    {id:'exam', if:{crabTable:{atLeast:1}, exam:0}, text:'Every food is on the feast’s {桌子|tables}! Your {老师} has an exam for you at school', arrow:'elder'},
+    {id:'exam', if:{...FEAST_READY, exam:0}, text:'Every food is on the feast’s {桌子|tables}! Your {老师} has an exam for you at school', arrow:'elder'},
     {id:'feastGo', if:{exam:1, feastHeld:0}, text:'The troop is ready for the feast: go to the big {树} in the middle of the home ground', arrow:[17, 8, 'homeGround']},
     {id:'raftWalk', if:{raft:1}, text:'Lead the troop down to the shore, below the meadow, to the edge of the {海}', arrow:[11, 12, 'shore']},
     {id:'raftBoard', if:{raft:2}, text:'Your {木筏} is ready at the edge of the {海|sea}: press A at it when you’re ready to go', arrow:[11, 13, 'shore']},
@@ -380,9 +385,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{feast:{atLeast:3}, bees:0}, text:'The hungry monkey has something to ask you.'},
     {if:{feast:{atLeast:3}, cow:0}, text:'The thirsty monkey has news for you: look for his ! at the home ground.'},
     {if:{tableware:{atLeast:2}, feast:{atLeast:3}, garden:0}, text:'The big monkey has an idea for the feast: look for his ! at the home ground.'},   // (decided 28 October 2026: once the cow was home, nothing said so)
-    {if:{bees:{atLeast:11}, fish:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (a big fish)
+    {if:{bees:{atLeast:2}, fish:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (a big fish, once you've found the bees' valley)
     {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (shrimp)
     {if:{shrimpTable:{atLeast:1}, crab:'not asked'}, text:'The hungry monkey has something to ask you: look for his ! by the feast’s {桌子|tables}.'},   // (a crab)
+    {if:{crabTable:{atLeast:1}, exam:0}, text:'The feast still needs more food before the troop can sit down to it: press A at the big {桌子} to see what it doesn’t have yet.'},   // (the hungry monkey has all he asked for, but not the cow's milk or the garden's fruit)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}, melonPlanted:4, grapePlanted:4, bananaPlanted:4}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese, and fruit from the garden now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the garden's fruit is on the table too)
     {if:{bees:{atLeast:11}, milkTable:{atLeast:3}}, text:'The feast has {蜂蜜|honey}, milk, yoghurt and cheese now! Take more honey from the hive for your bag, and {吃|eat} it to walk faster for a while. The rest of the feast’s food is coming soon. Until then, the {老师} gives you a lesson whenever there’s a new number or colour to learn, or your words need practice: after each new word, practise a little before the next.'},   // (once the bees, the cow and its dairy are done: till then, they have tasks)
     {if:{school:{atLeast:2}, lesson:true}, text:'A new lesson is ready at the {学校}: {lessons:ready}. Talk to the {老师}, or look at the timetable on the classroom wall.'},   // (decided 28 October 2026: it said the rest of chapter 1 was coming soon)
@@ -429,7 +435,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, text:'Catch a big {鱼} for the feast', show:{fish:'asked'}, done:{fish:'done'}},
     {chapter:1, text:'Catch three {虾|shrimp} for the feast', show:{shrimp:'asked'}, done:{shrimp:'done'}},
     {chapter:1, text:'Catch a {螃蟹|crab} for the feast', show:{crab:'asked'}, done:{crab:'done'}},
-    {chapter:1, text:'Pass your {老师}’s exam at the {学校}', show:{crabTable:{atLeast:1}}, done:{exam:1}},
+    {chapter:1, text:'Pass your {老师}’s exam at the {学校}', show:FEAST_READY, done:{exam:1}},
     {chapter:1, text:'Sit down to the great feast with the troop', show:{exam:1}, done:{feastHeld:1}},
     {chapter:1, text:'Sail away on your {木筏|raft}', show:{feastHeld:1}, done:{raft:{atLeast:3}}},
     {chapter:1, text:'Hear the old monkey’s news at the {学校}', show:{school:{atLeast:2}, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, done:{feast:{atLeast:1}}},
@@ -463,7 +469,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
     // (the old monkey's lessons and practice: only while he's at school, not at the feast's tables or seeing you off on the shore)
-    elder: [{if:{crabTable:{atLeast:1}, exam:0}, show:'!'}, {if:{elder:2, chapter:0, gate:false, meadowWords:5, meadowCheck:0}, show:'!'}, {if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{school:{atLeast:2}, practice:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
+    elder: [{if:{...FEAST_READY, exam:0}, show:'!'}, {if:{elder:2, chapter:0, gate:false, meadowWords:5, meadowCheck:0}, show:'!'}, {if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{school:{atLeast:2}, practice:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}, {if:{chapter:0, count:3}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{shop:1}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{canBuy:true}, show:'?'}],   // up at the home ground, to have his shop built; ? once you can afford something new, such as a headband
@@ -479,7 +485,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{feast:{atLeast:3}, bees:0}, show:'!'},   // and (a game that heard it before the bees, 25 October 2026) to send you to find them,
       {if:{bees:6}, show:'!'},   // and once you've brought the bees home, to see them,
       {if:{honey:'asked', holding:{honey:true}}, show:'?'},   // and honey from their hive;
-      {if:{bees:{atLeast:11}, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'},   // and then, with honey on the table, a big fish,
+      {if:{bees:{atLeast:2}, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'},   // and then, once you've found the bees' valley, a big fish,
       {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, show:'!'}, {if:{shrimp:'asked', holding:{shrimp:true}}, show:'?'},   // and with the fish on its table, three shrimp,
       {if:{shrimpTable:{atLeast:1}, crab:'not asked'}, show:'!'}, {if:{crab:'asked', holding:{crab:true}}, show:'?'}],   // and then a crab, from the shore
     fisher: [{if:{fish:'asked', fishing:0}, show:'!'}],   // the fishing monkey by the stream, once the hungry monkey wants a big fish: a rod for you
@@ -3028,7 +3034,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'Time for a great feast, for the whole troop! It will be at a big {桌子|table} under the big {树|tree}, in the middle of the home ground.'}
       ]},
       // chapter 1: once every food is on the feast's tables, the exam (the area's word test), before the feast
-      {if:{crabTable:{atLeast:1}, exam:0}, do:[{say:'examTime'}, {exam:true}, {set:{exam:1}}, {say:'veryGood'}, {shells:10, note:'Your certificate goes up on the classroom wall! +10 🐚'},
+      {if:{...FEAST_READY, exam:0}, do:[{say:'examTime'}, {exam:true}, {set:{exam:1}}, {say:'veryGood'}, {shells:10, note:'Your certificate goes up on the classroom wall! +10 🐚'},
         {message:'The troop is getting ready for the feast! Go to the big {树} in the middle of the home ground.'}]},
       {if:{school:{atLeast:2}}, do:[{say:'classStart'}, {lesson:true}, {say:'classEnd'}]},
       // chapter 1: the troop's new home ground, beside the waterfall. He tells you about it, then follows you there.
@@ -3109,6 +3115,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // a big fish for the feast (decided 29 October 2026), once the honey's on its table: the fishing monkey by the stream
       // has a rod for you
       {if:{bees:{atLeast:11}, fish:'not asked'}, do:[{say:'haveHoneyNow'}, {request:'fish'}]},
+      {if:{bees:{atLeast:2}, fish:'not asked'}, do:[{request:'fish'}]},   // (or, decided 31 October 2026, once you've found the bees' valley: no need to wait for the honey; not as soon as he's asked for it, two requests on top of each other)
       {if:{fish:'asked'}, do:[{request:'fish'}]},
       // then, with the fish on its table, three shrimp, from the clear shallows of the riverside's brook
       {if:{fishTable:{atLeast:1}, shrimp:'not asked'}, do:[{request:'shrimp'}]},

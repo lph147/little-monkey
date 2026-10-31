@@ -63,7 +63,9 @@ test('with honey on the feast’s table, the hungry monkey wants a big fish: 我
   assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Ask the fishing monkey by the stream how to catch a big 鱼 (fish)']);
   assert.deepEqual(item(g, /big 鱼/).slice(0, 2), ['Catch a big 鱼 (fish) for the feast', false], 'on the checklist');
   const before = game({place: 'homeGround', x: 20, y: 7, dir: 'left'}, {bees: 10, honey: 'asked', fish: 'not asked'});
-  assert.equal(before.run("AREA.bubbles.hungry.some(b => b.if.fish === 'not asked' && matches(b.if))"), false, 'not before the honey');
+  assert.equal(before.run("AREA.bubbles.hungry.some(b => b.if.fish === 'not asked' && matches(b.if))"), true, 'before the honey too, once you’ve found the bees’ valley (decided 31 October 2026)');
+  const sent = game({place: 'homeGround', x: 20, y: 7, dir: 'left'}, {bees: 1, fish: 'not asked'});
+  assert.equal(sent.run("AREA.bubbles.hungry.some(b => b.if.fish === 'not asked' && matches(b.if))"), false, 'but not just as he’s sent you for the bees');
 });
 
 test('the fishing monkey gives you a rod (鱼竿): A at water where fish live fishes, and the bag has it, For fishing', async () => {

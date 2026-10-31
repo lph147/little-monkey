@@ -110,7 +110,8 @@ test('she and her swarm follow you home: at the home ground they fly to the wild
   assert.deepEqual(get(g, '__said'), ['hungry: 我们有蜜蜂了！']);
   assert.match(get(g, '__notes').join(' '), /The bees need a home: the troop is going to build them a hive, by the wildflowers\. Go and see!/);
   assert.equal(get(g, 'here().bees'), 7);
-  assert.equal(g.run("(AREA.bubbles.hungry.find(b => matches(b.if)) || {show: ''}).show"), '', 'his ! has gone');
+  assert.equal(g.run("(AREA.bubbles.hungry.find(b => matches(b.if)) || {show: ''}).show"), '!', 'his ! now is for a big fish (decided 31 October 2026: once you’ve found the bees’ valley)');
+  assert.equal(g.run("AREA.bubbles.hungry.find(b => matches(b.if)).if.fish"), 'not asked', 'not the bees: those he’s seen');
   assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Talk to the 蜂王 (queen bee) by the wildflowers'], 'next, the hive (tests/hive.test.js)');
 });
 
