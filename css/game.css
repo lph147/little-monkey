@@ -1193,3 +1193,25 @@ rt.hid{visibility:hidden}
 .mapname .mapen{font:400 .8rem var(--pixel);color:var(--jade)}
 .maphere{display:flex;align-items:center;gap:.3rem;font-size:.75rem;margin-top:.1rem}
 .maphere .mappin{width:.65rem;height:.8rem}
+/* a place's close-up, on the map (closeUp in js/map.js): its picture, its name, the words you found there and Back.
+   On the map's paper, which is the same in the dark, so is its ink. */
+.closepic{position:absolute;outline:2px solid #5A4126;box-shadow:3px 3px 0 3px #C9B07A;background:#7CC46B}
+.closepic .closeart{display:block;width:100%;height:100%}
+.closepic .blocky{image-rendering:pixelated;image-rendering:crisp-edges}
+.closename{display:flex;align-items:baseline;gap:.35rem;white-space:nowrap;font-family:var(--text);color:var(--ink)}
+.closename .mapzh{font-size:1rem;font-weight:700}
+.closename .mapen{font:400 .8rem var(--pixel);color:var(--jade)}
+.closename .maphere{margin:0 0 0 .25rem;align-self:center}
+.mapwords{position:absolute;left:64%;right:2.5%;top:2.7rem;bottom:3.4rem;display:flex;flex-direction:column;min-height:0}
+:root:is([data-screen=small],[data-screen=tiny]) .mapwords{left:52%}
+.stickers{flex:0 1 auto;min-height:0;overflow:hidden auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(3.1rem,1fr));grid-auto-rows:max-content;gap:.3rem;align-content:start;padding:3px 3px 5px}
+.sheet .sticker{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;margin:0;padding:.15rem 0 .1rem;background:#FBF4DF;color:#2A1E10;border:2px solid #8A6A3A;border-radius:4px;box-shadow:0 2px 0 #8A6A3A;font-family:var(--text);cursor:pointer}
+.sheet .sticker.navsel::before{display:none}
+.sheet .sticker.navsel{outline:3px solid var(--gold);outline-offset:1px}
+.sticker .c{line-height:0}
+.sticker .pix{width:1.6rem;height:1.6rem}
+.sticker .hz{font-size:.85rem;line-height:1.2;white-space:nowrap}
+.sticker .p{font-size:10.5px;line-height:1.2;color:#6B5434;white-space:nowrap}
+.mapwords .gloss{flex:none;margin:0 0 .2rem;font-size:.75rem;min-height:0;line-height:1.2;color:#6B5434}
+.mapwords .gloss b{color:#2A1E10}
+.mapback{position:absolute;right:.4rem;bottom:.4rem;margin:0}

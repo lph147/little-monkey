@@ -62,9 +62,6 @@ test('MAP opens the map on the place you’re in, with a button for each place y
   const places = sheet.querySelectorAll('.mapplace').map(b => b.dataset.place);
   assert.deepEqual(places.sort(), ['meadow', 'path', 'valley']);
   assert.match(sheet.querySelector('.mapname').textContent, /山路[\s\S]*shānlù[\s\S]*The mountain path[\s\S]*You are here/);
-  sheet.querySelector('.mapplace[data-place="valley"]').click();
-  assert.match(sheet.querySelector('.mapname').textContent, /河谷[\s\S]*The river valley/, 'tapping a place chooses it');
-  assert.doesNotMatch(sheet.querySelector('.mapname').textContent, /You are here/, 'you aren’t there');
   run('pressMap()');
   assert.equal(run('modal.hidden'), true, 'MAP again closes it');
   game.key('p');
@@ -82,4 +79,58 @@ test('the map joins the places you’ve been, and shows a ? only on a way that�
   const ways = json(run(`JSON.stringify(here().visited.flatMap(a => PLACES[a].exits.filter(e => !here().visited.includes(e.to)).map(e => [a, e.to, isOpen(e)])))`));
   assert.ok(ways.some(([, , open]) => !open), 'some ways out are still shut here (the shore, the home ground)');
   for (const [a, b, open] of ways) assert.equal(ends.some(e => key(e) === key([a, b])), open || ways.some(([x, y, o]) => key([x, y]) === key([a, b]) && o), `${a} to ${b}`);
+});
+
+// A place's close-up (closeUp, js/map.js): A on it, or a tap, on the map.
+test('a tap on a place shows its close-up: its name and the words you know from there; Back goes back to the map', () => {
+  const words = {'河': {lv: 2}, '鱼': {lv: 1}, '羊': {lv: 1}, '山路': {lv: 1}};
+  const {run, sheet} = playing({gate: true, climb: 2, visited: ['meadow', 'path', 'valley']}, {place: 'path', x: 16, y: 10, dir: 'up'});
+  run(`Object.assign(S.w, ${JSON.stringify(words)})`);
+  run('pressMap()');
+  sheet.querySelector('.mapplace[data-place="valley"]').click();
+  assert.ok(sheet.querySelector('.closeup'), 'the close-up');
+  assert.match(sheet.querySelector('.closename').textContent, /河谷[\s\S]*The river valley/);
+  assert.doesNotMatch(sheet.querySelector('.closename').textContent, /You are here/, 'you aren’t there');
+  const stickers = sheet.querySelectorAll('.sticker').map(b => b.dataset.w);
+  assert.deepEqual(stickers, json(run("JSON.stringify(placeWords('valley'))")));
+  assert.ok(stickers.includes('河') && stickers.includes('羊'), 'the river there, and the sheep that lives there');
+  assert.ok(!stickers.includes('山羊'), 'not a word you don’t know yet');
+  run("globalThis.__said = []; say = w => __said.push(w)");
+  sheet.querySelector('.sticker[data-w="河"]').click();
+  assert.deepEqual(json(run('JSON.stringify(__said)')), ['河'], 'a tap says it');
+  assert.match(sheet.querySelector('.gloss').textContent, /河 hé · river/, 'with what it means');
+  sheet.querySelector('[data-a=back]').click();
+  assert.ok(sheet.querySelector('.mapplaces'), 'back to the map');
+  assert.match(sheet.querySelector('.mapname').textContent, /河谷/, 'on the place you looked at');
+  run('pressMap()');
+  assert.equal(sheet.querySelector('.mapview'), null, 'MAP closes it');
+});
+
+test('a close-up with no words you know there says so', () => {
+  const {run, sheet} = playing({gate: true, climb: 2, visited: ['meadow', 'cave']}, {place: 'meadow', x: 9, y: 3, dir: 'down'});
+  run("closeUp('cave')");
+  assert.equal(sheet.querySelectorAll('.sticker').length, 0);
+  assert.match(sheet.querySelector('.mapwords').textContent, /No words found here yet/);
+});
+
+test('every place’s words are words in the word bank, each once, and the ones you know', () => {
+  const run = loadGame().run;
+  run('for (const w in WORDS) S.w[w] = {lv: 1}');
+  const all = json(run('JSON.stringify(Object.fromEntries(Object.keys(PLACES).map(id => [id, placeWords(id)])))'));
+  for (const [id, ws] of Object.entries(all)){
+    assert.ok(ws.length, `${id} has words`);
+    assert.equal(new Set(ws).size, ws.length, `${id}: each once`);
+    for (const w of ws) assert.ok(json(run(`JSON.stringify(!!WORDS[${JSON.stringify(w)}])`)), `${id}: ${w} is a word`);
+  }
+  run('S.w = {}');
+  assert.deepEqual(json(run("JSON.stringify(placeWords('homeGround'))")), [], 'none you don’t know');
+});
+
+test('a new game, a deleted one or a loaded one forgets the pictures of the game that was there', () => {
+  const run = loadGame().run;
+  run("KEPT[pictureKey('meadow', 2)] = 'a'; KEPT[pictureKey('meadow', 1)] = 'b'; KEPT[pictureKey('path', 3)] = 'c'");
+  run('newGameIn(2)');
+  assert.deepEqual(json(run('JSON.stringify(Object.keys(KEPT))')), [run("pictureKey('meadow', 1)"), run("pictureKey('path', 3)")]);
+  run('deleteSlot(3)');
+  assert.deepEqual(json(run('JSON.stringify(Object.keys(KEPT))')), [run("pictureKey('meadow', 1)")]);
 });

@@ -1108,6 +1108,7 @@ findGrass();
 function enterPlace(id){
   const been = here().visited; if (!been.includes(id)) been.push(id);   // (the places you've been, for the map: js/map.js)
   if (id === PLACE) return;
+  keepPicture();   // (the one you're leaving, as you saw it, for its close-up on the map: js/map.js)
   foundAt = null;   // (the little monkey you found at hide and seek is back at its spot when you come back: js/hide.js)
   setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; pickedHere.clear(); buildMap();
   for (const k in hopQs) delete hopQs[k];   // (new pictures on the stepping stones each time you come)

@@ -282,11 +282,13 @@ function useSlot(n){ SLOT = n; S = loadSave(n); setSlotsInfo(d => ({...d, active
 function newGameIn(n){
   const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps};
   SLOT = n; S = Object.assign(fresh(), keep); setSlotsInfo(d => ({...d, active:n}));
+  forgetPictures(n);   // (the map's pictures of the game that was there: js/map.js)
 }
 // Deletes game n, keeping a copy in the browser just in case. Deleting the game you're playing leaves a new one.
 function deleteSlot(n){
   try { const raw = localStorage.getItem(slotKey(n)); if (raw) keepBackup(`deleted-game${n}-${Date.now()}`, raw); localStorage.removeItem(slotKey(n)); } catch(e) {}
   setSlotsInfo(d => { const played = {...d.played}; delete played[n]; return {...d, played}; });
+  forgetPictures(n);
   if (n === SLOT){ const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps}; S = Object.assign(fresh(), keep); }
 }
 // Game n as a file to download (Copy to a file), to keep it safe or carry it to another device.
@@ -307,7 +309,7 @@ function readSaveFile(text){
 // Plays on from a loaded save in game n (an empty slot), keeping a copy of anything that was there.
 function useSave(s, n = SLOT){
   try { const raw = localStorage.getItem(slotKey(n)); if (raw) keepBackup(`before-load-${n === 1 ? '' : 'game' + n + '-'}${Date.now()}`, raw); } catch(e) {}
-  SLOT = n; S = s; setSlotsInfo(d => ({...d, active:n})); save();
+  SLOT = n; S = s; setSlotsInfo(d => ({...d, active:n})); forgetPictures(n); save();
 }
 let SLOT = SLOTS.includes(slotsInfo().active) ? slotsInfo().active : 1;   // the game you're playing
 let S = loadSave(SLOT);
