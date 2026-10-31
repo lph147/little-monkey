@@ -834,6 +834,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // is made (decided 23 October 2026: Chinese is logical; a game past the meadow without 水果 learns it from the hungry
     // monkey, and the sign is there when it goes back)
     {if:{nameParts:3, homeName:0}, do:[{set:{homeName:1}}, {message:'You know every part of your home’s name now! Read the sign by your stone, in the meadow.'}]},
+    // just born, the first step you take (or the first thing you look at), the old monkey by your stone calls you over and
+    // says hello, as a trainer stops you in Pokémon (decided 31 October 2026, after playing it: a new player walked off
+    // and talked to everyone else first)
+    {if:{elder:0, place:'meadow'}, do:[{stopsYou:'elder'}]},
     // the goat on the river valley's rocks, once it's your friend: it hops down off them and away over the bridge to its
     // clearing, where it wants to play (a game that made friends with it before it moved there has it there already)
     {if:{place:'valley', friends:{goat:true}, goatHop:0, goatPlayed:0}, do:[{set:{goatHop:1}}, {leap:'goat', from:[18, 12]},
