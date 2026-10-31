@@ -306,7 +306,7 @@ function howToPlay(){
          <li><span class="kbd a">A</span><span><b>Talk, look and choose.</b> When someone talks, A moves on. On cards, A presses the button with the red A badge.</span></li>
          <li><span class="kbd b">B</span><span><b>Back.</b> Closes a card or message, pressing the button with the blue B badge.</span></li>
          <li><span class="kbd menu">☰</span><span><b>Menu</b> opens the menu: the Word Scroll, friends and settings. <b>Tasks</b> shows your tasks.</span></li>
-         <li><span class="kbd menu">☰</span><span><b>Bag</b> opens your bag. <b>Map</b> will open the map, coming soon.</span></li>
+         <li><span class="kbd menu">☰</span><span><b>Bag</b> opens your bag. <b>Map</b> opens your map, once the old monkey has given you one.</span></li>
        </ul>`,
       `<p class="label">How to play · 2 of 3</p>
        <p>You’ll hear lots of Chinese, like a baby monkey listening to the forest. <b>You don’t need to understand or remember all of it.</b></p>

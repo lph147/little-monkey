@@ -1,5 +1,5 @@
 // BAG and MAP (decided 26 October 2026): two more pills like TASKS and MENU, under B and A. BAG opens your bag and MAP
-// says the map is coming soon, with I and P on a keyboard.
+// your map (tests/map.test.js), with I and P on a keyboard.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -34,12 +34,13 @@ test('BAG opens your bag, and pressing it again closes it; I on a keyboard does 
   assert.match(sheet.querySelector('.label').textContent, /^Menu$/, 'on another card (the menu), BAG leaves it as it is');
 });
 
-test('MAP says the map is coming soon (P on a keyboard too), but not over a card', () => {
+test('MAP says you don’t have a map yet till you have one (P on a keyboard too), but not over a card', () => {
   const {game, run} = playing();
   run('globalThis.__said = []; toast = m => __said.push(m)');   // (the messages it would show)
   run('pressMap()');
   game.key('p');
-  assert.deepEqual(JSON.parse(run('JSON.stringify(__said)')), ['The map is coming soon!', 'The map is coming soon!']);
+  const notYet = run('AREA.areaMap.notYet');
+  assert.deepEqual(JSON.parse(run('JSON.stringify(__said)')), [notYet, notYet]);
   run('pressMenu(); pressMap()');
   assert.equal(run('__said.length'), 2, 'not while the menu is open');
 });

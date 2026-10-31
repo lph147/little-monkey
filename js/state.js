@@ -2,14 +2,27 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 32;
+const SAVE_VERSION = 33;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
   for (const r of REQUESTS) p[r.id] = 'not asked';   // nothing hidden found yet (finds: the ids of AREA.hidden you've found),
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], changed:{}, finds:{}, kept:{}, done:false,   // and no one keeping food for you (kept: who has what, the bag step),
-    hide:{spot:null, wrong:0, won:0, last:null}, out:{}, shooed:[]});   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js),
-                                                                           // nor shooed (shooed: birds you've shooed off for good, shooAway in js/world.js)
+    hide:{spot:null, wrong:0, won:0, last:null}, out:{}, shooed:[], visited:[]});   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js),
+                                                                           // nor shooed (shooed: birds you've shooed off for good, shooAway in js/world.js),
+                                                                           // and no place been to yet (visited: the places you've been, for the map, js/map.js)
+}
+// The places on the way from the area's first place to place, by its ways (exits), however they open: the ones you must
+// have walked through to be there (an old save, from before the game remembered where you'd been, starts its map with them).
+function placesOnWayTo(place){
+  const from = {[FIRST_PLACE]:null}, queue = [FIRST_PLACE];
+  while (queue.length && !(place in from)){
+    const p = queue.shift();
+    for (const e of PLACES[p].exits || []) if (PLACES[e.to] && !(e.to in from)){ from[e.to] = p; queue.push(e.to); }
+  }
+  const way = [];
+  for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
+  return way;
 }
 function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, lines:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
 
@@ -189,6 +202,15 @@ function upgradeSave(s){
     const a = (s.areas || {})[AREA.number];   // from the cave, and the big monkey makes the chopsticks (decided 27 October 2026), so
     if (a && a.feast >= 2 && !('tableware' in a)){ a.bowls = 'done'; a.tableware = 2; }   // a game whose tables are out has them already
     s.version = 32;
+  }
+  if (s.version === 32){   // version 32 didn't remember the places you'd been. Your map starts with those you must have walked
+    const a = (s.areas || {})[AREA.number];   // through to be where you are, and those where you've changed a square for good
+    if (a){                                   // (others are drawn in when you next go there)
+      const here = s.pos && PLACES[s.pos.place] ? s.pos.place : FIRST_PLACE;
+      const changed = Object.keys(a.changed || {}).map(k => k.split(':')[0]).filter(p => PLACES[p]);
+      a.visited = [...new Set([...placesOnWayTo(here), ...changed.flatMap(placesOnWayTo)])];
+    }
+    s.version = 33;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   const f = fresh(), start = f.areas[AREA.number];

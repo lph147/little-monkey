@@ -1292,6 +1292,12 @@ const SCREENS = [
     play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(200); click('.friends [data-w="山羊"]'); await wait(300); click('[data-a=en]'); await wait(300); }},
   {id: 'bag', title: 'The bag', save: 'packed', why: 'In tabs: it opens on Food (how many of each, and what it does), with For someone and To fight with beside it. Your health and shells at the top.', run: async () => {
     play(); await wait(100); openMenu('bag'); await wait(100); click('[data-m=bag]'); await wait(300); }},
+  {id: 'map', title: 'The map', save: 'feastTable', why: 'MAP: every place you’ve been, roughly where it lies, joined by paths; a ? where an open way leads somewhere new. It opens on where you are, with your pin.', run: async () => {
+    play(); await wait(100); here().visited = ['meadow', 'path', 'valley', 'falls', 'cave', 'homeGround', 'school', 'sportsGround', 'hillside', 'riverside', 'southSlope', 'shore']; pressMap(); await wait(300); }},
+  {id: 'map-chosen', title: 'The map: another place chosen', save: 'feastTable', why: 'The D-pad, or a tap, chooses another place: the box says which (no “You are here”).', run: async () => {
+    play(); await wait(100); here().visited = ['meadow', 'path', 'valley', 'falls', 'cave', 'homeGround', 'school', 'sportsGround', 'hillside', 'riverside', 'southSlope', 'shore']; pressMap(); await wait(100); click('.mapplace[data-place=riverside]'); await wait(300); }},
+  {id: 'map-not-yet', title: 'MAP before you have a map', save: 'middle', why: 'Till the old monkey gives you a map as you set off up the mountain path.', run: async () => {
+    play(); await wait(1500); pressMap(); clearTimeout(msgT); await wait(300); }},
   {id: 'bag-someone', title: 'The bag: For someone', save: 'packed', why: 'What you’re carrying for someone, and who for (◀ ▶ on the D-pad, or a tap, switches tab). The tabs stay where they were.', run: async () => {
     play(); await wait(100); bagPage(() => closeCard()); await wait(100); click('.bagtabs [data-tab=someone]'); await wait(300); }},
   {id: 'bag-fight', title: 'The bag: To fight with', save: 'packed', why: 'Your stick, and how hard it hits.', run: async () => {

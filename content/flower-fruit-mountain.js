@@ -197,6 +197,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   wordGap: {questions:4, word:'猴子', ask:'Something new is coming! But first, a few words to practise. Play a quick word game?', notYet:'Learn a few more words first, then come back.'},
   // When you can run, holding B as you walk (decided 28 October 2026): once PE has taught you 跑.
   running: {knows:'跑'},
+  // The map (地图, js/map.js; decided 31 October 2026, from mockups): MAP opens it once you have it (has), as you set off up
+  // the mountain path; till then it says notYet. It shows the places you've been, each where its onMap says (below).
+  areaMap: {has:{climb:{atLeast:1}}, notYet:'You don’t have a map yet.'},
   lessons: [
     // The first lesson of each series teaches its first three words, one after another (first: decided 24 October 2026,
     // school lessons are the exception to one new word at a time): two lessons, and you can count six bees and know the
@@ -903,6 +906,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // The area's places: small maps you move between. The first is where the game starts. Each has
   //   name    Chinese, pinyin and English, shown when you arrive (names aren't vocabulary)
+  //   onMap   where its little picture goes on the map (js/map.js): its middle, [x, y], on the map's 240 x 160 pixels,
+  //           roughly where it lies on the mountain (places don't fit together exactly, so this is chosen by hand), and its
+  //           width and height if not the usual size (24 x 17, or 16 x 12 for a small place such as the school)
   //   exits   ways to other places: step onto at and you go to the place to, arriving at arrive and
   //           facing facing. An exit with an if stays shut until it matches, and says closed instead. by:'A'
   //           goes when you face it and press A (label: what A says). how: 'water' goes through falling water
@@ -923,6 +929,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   places: {
     meadow: {
       name: {zh:'草地', py:'cǎodì', en:'The meadow'},
+      onMap: [42, 125],
       exits: [
         // up the mountain path (in the same column: the two maps line up), once the old monkey has sent you off up it
         {at:[15, 0], to:'path', arrive:[15, 18], facing:'up', if:{climb:{atLeast:1}}, closed:'The old monkey wants to talk to you first.'},
@@ -963,6 +970,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // A clearing on the left has a peach tree and the squirrel.
     path: {
       name: {zh:'山路', py:'shānlù', en:'The mountain path'},
+      onMap: [42, 104],
       exits: [
         {at:[15, 19], to:'meadow', arrive:[15, 1], facing:'down'}, {at:[16, 19], to:'meadow', arrive:[16, 1], facing:'down'},   // back down to the meadow
         {at:[16, 0], to:'valley', arrive:[19, 11], facing:'up'}, {at:[17, 0], to:'valley', arrive:[19, 11], facing:'up'}       // on up to the river valley
@@ -996,6 +1004,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // way for the troop to move it: taken out).
     valley: {
       name: {zh:'河谷', py:'hégǔ', en:'The river valley'},
+      onMap: [42, 83],
       exits: [
         {at:[19, 12], to:'path', arrive:[16, 1], facing:'down'}, {at:[20, 12], to:'path', arrive:[16, 1], facing:'down'},   // back down the mountain path
         {at:[5, 0], to:'falls', arrive:[5, 11], facing:'up'}, {at:[6, 0], to:'falls', arrive:[5, 11], facing:'up'}           // on up, deep into the mountains
@@ -1021,6 +1030,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // Jump through it into the Water Curtain Cave.
     falls: {
       name: {zh:'深山', py:'shēnshān', en:'Deep in the mountains'},
+      onMap: [42, 62],
       exits: [
         {at:[5, 12], to:'valley', arrive:[5, 1], facing:'down'}, {at:[6, 12], to:'valley', arrive:[5, 1], facing:'down'},   // back down to the river valley
         {at:[4, 1], by:'A', label:'Jump', how:'jump', to:'cave', arrive:[7, 12], facing:'up', if:{cave:{atLeast:1}}},   // jumping through the waterfall
@@ -1047,6 +1057,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // through it again.
     cave: {
       name: {zh:'水帘洞', py:'Shuǐlián Dòng', en:'Water Curtain Cave'},
+      onMap: [14, 50],
       music: 'cave',   // slower, echoing, with drips of water
       exits: [
         {at:[6, 13], how:'water', to:'falls', arrive:[5, 1], facing:'right'},
@@ -1081,6 +1092,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the hillside to the pine wood (once the big monkey wants wood), east to the bees, south over the stream.
     homeGround: {
       name: {zh:'家园', py:'jiāyuán', en:'Home ground'},
+      onMap: [116, 62, 30, 21],   // (bigger: the middle of it all)
       legend: {
         'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'},   // the bridge over the stream (chapter 1's bridges teach 桥)
         'O': {look:'water', word:'水', note:'A little pool of clear water.'},   // its pool: just water, with no fish in it (decided 24 October 2026: it showed 鱼, fish, as the meadow's pond does)
@@ -1233,6 +1245,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // sideways, so come at one from the front or behind to catch it.
     shore: {
       name: {zh:'海边', py:'hǎibiān', en:'The shore'},
+      onMap: [42, 146],
       sounds: ['wind', 'birds'],
       legend: {
         'с': {look:'sand', walk:true},
@@ -1281,6 +1294,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the pines, practising words you know. A peach tree in a corner, and tall grass where your friends hide.
     hillside: {
       name: {zh:'山坡', py:'shānpō', en:'The hillside'},
+      onMap: [128, 34],
       // sounds that change as you climb (decided 23 October 2026): crows under the pines at the top, the wind on the terraces,
       // and birdsong at the foot, by the flowers and the brook
       sounds: [{rows:[0, 15], sounds:['crow', 'crow', 'wind']}, {rows:[16, 31], sounds:['wind']}, {rows:[32, 45], sounds:['birds']}],
@@ -1364,6 +1378,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // stream, and shells and an apple tucked away. At its end, under the rocks, the way into the bees' valley.
     riverside: {
       name: {zh:'河边', py:'hébiān', en:'The riverside'},
+      onMap: [168, 62],
       sounds: ['birds'],
       exits: [
         {at:[0, 7], to:'homeGround', arrive:[30, 9], facing:'left'}, {at:[0, 8], to:'homeGround', arrive:[30, 9], facing:'left'},   // back to the home ground
@@ -1410,6 +1425,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // under the cliff. In a nook of the cliff, top right, the queen's old hollow tree, a swarm of bees across the way to it.
     flowerValley: {
       name: {zh:'百花谷', py:'Bǎihuā Gǔ', en:'Valley of a Hundred Flowers'},
+      onMap: [206, 62],
       sounds: ['birds', 'buzz', 'buzz'],   // birdsong, and bees buzzing in the flowers
       backdrop: 'flowers',   // a battle here: among the flowers, the valley's cliffs behind
       exits: [
@@ -1466,6 +1482,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // stones; long grass with snakes and spiders; a wild apple tree and a peach tree for your bag; then the pines begin.
     southSlope: {
       name: {zh:'南坡', py:'nánpō', en:'The south slope'},
+      onMap: [116, 100],
       sounds: [{rows:[0, 30], sounds:['birds', 'wind']}, {rows:[31, 39], sounds:['crow', 'wind']}],
       exits: [
         {at:[12, 0], to:'homeGround', arrive:[16, 20], facing:'up'}, {at:[13, 0], to:'homeGround', arrive:[16, 20], facing:'up'},   // up to the home ground
@@ -1546,6 +1563,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // and from either, hop on down to the bottom and walk back up the stone steps. A goat at the top, and an apple tree.
     cliffs: {
       name: {zh:'山崖', py:'shānyá', en:'The cliffs'},
+      onMap: [94, 34],
       sounds: [{rows:[0, 10], sounds:['wind', 'wind', 'birds']}, {rows:[11, 27], sounds:['birds', 'wind']}],
       exits: [
         {at:[25, 5], to:'hillside', arrive:[1, 26], facing:'right'}, {at:[25, 6], to:'hillside', arrive:[1, 27], facing:'right'}   // back east to the hillside
@@ -1600,6 +1618,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // for the big monkey's garden.
     hotSprings: {
       name: {zh:'温泉谷', py:'wēnquán gǔ', en:'The hot spring valley'},
+      onMap: [166, 34],
       sounds: ['birds', 'birds', 'wind'],
       exits: [
         {at:[13, 23], to:'riverside', arrive:[25, 1], facing:'down'}, {at:[14, 23], to:'riverside', arrive:[26, 1], facing:'down'}   // back down to the riverside
@@ -1659,6 +1678,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // hide, flowers, and shells under a boulder.
     melonField: {
       name: {zh:'瓜田', py:'guātián', en:'The melon field'},
+      onMap: [156, 104],
       sounds: ['birds', 'birds', 'wind'],
       exits: [
         {at:[0, 9], to:'southSlope', arrive:[24, 13], facing:'left'}, {at:[0, 10], to:'southSlope', arrive:[24, 14], facing:'left'}   // back west to the south slope
@@ -1697,6 +1717,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     },
     darkPines: {
       name: {zh:'黑松林', py:'hēi sōnglín', en:'The dark pines'},
+      onMap: [116, 122],
       gloom: {deep:.62, open:.2, mist:true, eyes:true},
       music: 'pineWood',   // the pine wood's song: the same gloomy pines (decided 28 October 2026: it had the home ground's)
       // till you find the cow, it moos now and then, louder the right way and faint up the ways that go nowhere
@@ -1770,6 +1791,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // pines, the pasture birdsong; battles are among the pines, as in the pine wood (all the long grass is under them).
     pasture: {
       name: {zh:'牧场', py:'mùchǎng', en:'The pasture'},
+      onMap: [116, 146],
       // the edge of the pines: till you find the cow, it moos now and then, close now; then birds in the pasture
       sounds: [{rows:[0, 12], if:{cow:{below:3}}, sounds:['crow', 'wind', 'moo']}, {rows:[0, 12], sounds:['crow', 'crow', 'wind']}, {rows:[13, 25], sounds:['birds']}],
       battleMusic: 'pineBattle', backdrop: 'pines',
@@ -1825,6 +1847,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the first wood on a phone: you could walk in, pick everything up and never meet a thing).
     pineWood: {
       name: {zh:'松林', py:'sōnglín', en:'Pine wood'},
+      onMap: [128, 12],
       music: 'pineWood',   // slow, quiet and gloomy
       battleMusic: 'pineBattle', backdrop: 'pines',   // a battle here: in the wood's minor key, among the pines
       gloom: {deep:.7, open:.24, mist:true, eyes:true},
@@ -1876,6 +1899,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // mean this here.
     school: {
       name: {zh:'学校', py:'xuéxiào', en:'School'},
+      onMap: [88, 80],
       exits: [
         {at:[7, 9], to:'homeGround', arrive:[11, 5], facing:'down'}   // back out through the door
       ],
@@ -1917,6 +1941,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // fu footwork, a little monkey balancing on the tallest. A at each says what it is.
     sportsGround: {
       name: {zh:'操场', py:'cāochǎng', en:'Sports ground'},
+      onMap: [76, 52],
       exits: [
         {at:[14, 2], to:'homeGround', arrive:[1, 2], facing:'right'}   // back through the gap in the trees
       ],

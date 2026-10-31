@@ -157,8 +157,12 @@ function pressBag(){
   if (!modal.hidden){ if (sheet.querySelector('.bag')) closeCard(); return; }
   if (mode === 'play' && canAct()) bagPage(() => closeCard());
 }
-function pressMap(){
-  if (modal.hidden && mode === 'play' && canAct()) toast('The map is coming soon!');
+function pressMap(){   // the map (js/map.js), once you have it; and again closes it
+  tipPressed('#mapBtn');
+  if (!modal.hidden){ if (sheet.querySelector('.mapview')) closeCard(); return; }
+  if (mode !== 'play' || !canAct()) return;
+  if (hasMap()) openMap();
+  else toast(AREA.areaMap ? AREA.areaMap.notYet : 'There’s no map here.');
 }
 $('#startBtn').addEventListener('click', () => { getAC(); pressMenu(); });
 $('#selectBtn').addEventListener('click', () => { getAC(); pressSelect(); });
@@ -180,6 +184,7 @@ document.addEventListener('keydown', e => {
     else if (isMenu){ e.preventDefault(); pressMenu(); }
     else if (isSelect){ e.preventDefault(); pressSelect(); }
     else if (isBag){ e.preventDefault(); pressBag(); }
+    else if (isMap){ e.preventDefault(); pressMap(); }
     else if (isA && !(e.target.matches && e.target.matches('button:focus-visible'))){ e.preventDefault(); if (!e.repeat) pressA(e.timeStamp); }   // (a button chosen with Tab or the arrows is pressed by the browser; one clicked with the mouse isn't: what A would press is, decided 22 October 2026)
     return;
   }

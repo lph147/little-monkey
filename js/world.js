@@ -1106,6 +1106,7 @@ findGrass();
 // Going into another place: its map is drawn, and whatever was happening in the last one (an animal
 // hiding, birds, a meeting) is left behind.
 function enterPlace(id){
+  const been = here().visited; if (!been.includes(id)) been.push(id);   // (the places you've been, for the map: js/map.js)
   if (id === PLACE) return;
   foundAt = null;   // (the little monkey you found at hide and seek is back at its spot when you come back: js/hide.js)
   setPlace(id); placeCharacters(); findGrass(); rustle = null; stepsSince = HIDE_AFTER; foe = null; birds.length = 0; pickedHere.clear(); buildMap();
