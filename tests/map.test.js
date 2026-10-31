@@ -48,13 +48,15 @@ test('an old save (version 32) starts its map with the places on the way to wher
   assert.deepEqual(saveOf(fresh).areas[1].visited, ['meadow']);
 });
 
-test('MAP says you don’t have a map yet, till you set off up the mountain path', () => {
-  const {run, sheet} = playing();
+test('MAP says you don’t have a map yet, till the big monkey gives you one in chapter 1 (or you’ve opened it already)', () => {
+  const {run, sheet} = playing(undefined, undefined, {mapWord: false});
   assert.equal(run('hasMap()'), false);
   run('globalThis.__said = []; toast = m => __said.push(m); pressMap()');
   assert.deepEqual(json(run('JSON.stringify(__said)')), [run('AREA.areaMap.notYet')]);
   assert.equal(sheet.querySelector('.mapview'), null, 'no map');
-  assert.equal(playing({gate: true, climb: 1}).run('hasMap()'), true);
+  assert.equal(playing({gate: true, climb: 1}, undefined, {mapWord: false}).run('hasMap()'), false, 'not as you set off up the path any more');
+  assert.equal(playing({gate: true, climb: 1}).run('hasMap()'), true, 'a save that has opened it keeps it');
+  assert.equal(playing({chapter: 1, home: 2, build: 1}, undefined, {mapWord: false}).run('hasMap()'), true, 'he gives it to you as he sends you for wood and stones');
 });
 
 test('MAP opens the map on the place you’re in, with a button for each place you’ve been; MAP or Back closes it', () => {
@@ -138,7 +140,7 @@ test('a new game, a deleted one or a loaded one forgets the pictures of the game
 });
 
 test('the first time you open the map, you catch its word, 地图 (map), said straight away; then the map opens', async () => {
-  const {run, sheet} = playing({gate: true, climb: 1, visited: ['meadow', 'path']}, {place: 'path', x: 16, y: 10, dir: 'up'}, {mapWord: false});
+  const {run, sheet} = playing({gate: true, climb: 2, build: 1, visited: ['meadow', 'path']}, {place: 'path', x: 16, y: 10, dir: 'up'}, {mapWord: false});
   run("globalThis.__said = []; say = w => __said.push(w)");
   run('pressMap()');
   assert.match(sheet.querySelector('.word .big').textContent, /地图/, 'its new-word card');
@@ -163,7 +165,7 @@ test('arriving somewhere new says it’s now on your map, once you have one', as
   assert.match(banner(run), /山路[\s\S]*New on your map/, 'somewhere new');
   await walk(game, 'path', 'meadow');
   assert.doesNotMatch(banner(run), /New on your map/, 'not where you’ve been before');
-  const before = playing({gate: true, climb: 0, visited: ['meadow']});
+  const before = playing({gate: true, climb: 0, visited: ['meadow']}, undefined, {mapWord: false});
   await walk(before.game, 'meadow', 'path');
   assert.doesNotMatch(banner(before.run), /New on your map/, 'not before you have a map');
 });

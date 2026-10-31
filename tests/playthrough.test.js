@@ -202,8 +202,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await stepOn(15, 0, 'going up the mountain path');
   assert.equal(run('PLACE'), 'path', 'you should be on the mountain path');
   assert.ok(knows('路'), 'arriving on the mountain path should teach 路');
-  await act('lookAtMap().then(closeCard)', 'opening the map for the first time (MAP)');
-  assert.ok(knows('地图'), 'the first time you open the map, its word (地图, map) should be caught');
+  assert.equal(run('hasMap()'), false, 'no map in the prologue: the big monkey gives it to you in chapter 1');
   for (const [x, y] of [[13, 14], [12, 14], [11, 14], [10, 14], [9, 14]]) await stepOn(x, y, 'walking through the long grass');
   assert.ok(knows('蛇'), 'a snake should jump out of the long grass, and be chased away');
   assert.equal(get('S.health'), 50, 'every dodge right: no health lost');
@@ -312,6 +311,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('tileAt(8, 2).look'), 'plot', 'he marks out the school’s plot as you watch');
   assert.equal(area().build, 1, 'he wants wood and small stones');
   assert.deepEqual([area().wood, area().stones], ['asked', 'asked']);
+  assert.equal(run('hasMap()'), true, 'and gives you a map of the mountain');
+  await act('lookAtMap().then(closeCard)', 'opening the map for the first time (MAP)');
+  assert.ok(knows('地图'), 'the first time you open the map, its word (地图, map) should be caught');
   stand(25, 0, 'up');
   await act('arrive(25, 0).then(runEvents)', 'going up through the bushes he cleared');
   assert.equal(run('PLACE'), 'hillside', 'up the hillside to the pine wood');

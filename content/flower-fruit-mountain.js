@@ -197,10 +197,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   wordGap: {questions:4, word:'猴子', ask:'Something new is coming! But first, a few words to practise. Play a quick word game?', notYet:'Learn a few more words first, then come back.'},
   // When you can run, holding B as you walk (decided 28 October 2026): once PE has taught you 跑.
   running: {knows:'跑'},
-  // The map (地图, js/map.js; decided 31 October 2026, from mockups): MAP opens it once you have it (has), as you set off up
-  // the mountain path (the old monkey gives it to you); till then it says notYet. It shows the places you've been, each
+  // The map (地图, js/map.js; decided 31 October 2026, from mockups): MAP opens it once you have it (has): in chapter 1, when
+  // the big monkey sends you up to the pine wood for wood and stones, he gives it to you (moved out of the prologue, decided
+  // 31 October 2026, so there's less to take in at the start; a save that has opened it already keeps it); till then it says notYet. It shows the places you've been, each
   // where its onMap says (below). Its word (地图) is caught the first time you open it, a word you find yourself, with its note.
-  areaMap: {has:{climb:{atLeast:1}}, notYet:'You don’t have a map yet.', word:'地图', note:'Every place you go is drawn on your map.'},
+  areaMap: {has:{any:[{build:{atLeast:1}}, {knows:'地图'}]}, notYet:'You don’t have a map yet.', word:'地图', note:'Every place you go is drawn on your map.'},
   lessons: [
     // The first lesson of each series teaches its first three words, one after another (first: decided 24 October 2026,
     // school lessons are the exception to one new word at a time): two lessons, and you can count six bees and know the
@@ -2365,7 +2366,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '瀑布': 'The waterfall at the top of the mountain path, where the river comes from.',
     '路': 'The mountain path, up beside the river from the meadow.',
     '棍子': 'The big monkey gave it to you, before you set off up the mountain path.',
-    '地图': 'The old monkey gave it to you as you set off up the mountain path: every place you go is drawn on it.',
+    '地图': 'The big monkey gave it to you when he sent you up to the pine wood: every place you go is drawn on it.',
     '蛇': 'In the long grass on the mountain path.',
     '蜘蛛': 'In the long grass on the mountain path.',
     '蜜蜂': 'Hiding in the tall flowers of the bees’ valley.',   // (in the long grass on the mountain path until 21 October 2026)
@@ -2984,7 +2985,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'snakes'},
         {message:'The path up beside the river is wild, and nobody has been to the top. Someone brave should go and see where the water comes from.'},
         {set:{climb:1}},
-        {message:'The old monkey gives you a map of the mountain. Each place you go will be drawn on it. Press MAP to look at it.'},
         {say:'bye'},
         {reply:'再见'},   // goodbye, as you set off (taught here, 19 October 2026: it means more now you're leaving)
         {message:'You set off for the path, on your own.'}   // (the big monkey stops you on the way, with a stick: its own new word)
@@ -3424,7 +3424,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'First, he marks out the ground for the school, right here beside him.'},
         {markOut:{build:1, wood:'asked', stones:'asked'}},   // as you watch: stakes, string, the plot, its sign and path (and the way up to the pine wood opens)
         {message:'To build it, the troop needs wood and small stones. The big monkey has cleared a way through the bushes at the top of the home ground, up to the pine wood.'},
-        {message:'Look there for dead, dry pines: one hit with your stick knocks them down. Small stones lie by the water.'}
+        {message:'Look there for dead, dry pines: one hit with your stick knocks them down. Small stones lie by the water.'},
+        {message:'The mountain is big, so the big monkey gives you a map of it. Every place you’ve been is drawn on it, and each place you go will be too. Press MAP to look at it.'}
       ]},
       {if:{build:1, wood:'asked', stones:'asked'}, do:[{request:'wood'}, {request:'stones'}]},   // you bring them (or he asks again)
       {if:{build:1, wood:'asked'}, do:[{request:'wood'}]},
