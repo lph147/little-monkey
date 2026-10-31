@@ -110,10 +110,43 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().elder, 2, 'once you know 4 words, the old monkey should tell you about the animals');
   assert.ok(knows('动物'), 'the old monkey should teach 动物');
 
+  // Then the meadow in order (decided 31 October 2026): the animals and the meadow's words, then the troop. Till then the
+  // troop's monkeys have no ! and send you back to the old monkey
+  assert.ok(!get("['hungry', 'thirsty', 'playful', 'big'].some(id => (AREA.bubbles[id] || []).some(b => matches(b.if)))"), 'no ! over the troop yet');
+  await pressAt(13, 6, 'up', 'talking to the hungry monkey too soon');
+  assert.equal(area().hungry, 'not asked', 'he waits till the old monkey sends you to the troop');
+
+  // The animals (no shop owner in the meadow: he comes up the mountain in chapter 1, decided 31 October 2026)
+  assert.ok(!get("NPCS.some(n => n.id === 'boss')"), 'no shop owner in the meadow');
+  await pressAt(3, 5, 'up', 'meeting the sheep at the foot of the cliffs, near your stone');
+  assert.ok(knows('羊'), 'the sheep teaches 羊');
+  await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
+  assert.equal(get('animalAt(4, 16)'), null, 'no goat on the meadow’s cliff: it lives in the river valley now (31 October 2026)');
+  for (let i = 0; i < 30 && get('S.met').length < 3; i++){   // walk about until the grass rustles, then step in
+    const r = get('rustle');
+    if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass'); else await stepOn(9, 7, 'walking about');
+  }
+  assert.equal(get('S.met').length, 3, 'all three of the meadow’s animals should be found');
+  assert.ok(['rabbit', 'sheep', 'squirrel'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
+
+  // The rest of the words for the meadow, which the old monkey asked you to learn: the fish in the pond, the river, and a bird
+  assert.ok(get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow (2/5). Still to find: the river, the fish in the pond and a bird.')), 'your tasks say which are left');
+  await pressAt(11, 8, 'down', 'looking at the pond');
+  await pressAt(17, 10, 'right', 'looking at the river');
+  run('birds.push({tx:9, ty:7, x:9*T + 4, y:7*T + 6, t0:performance.now(), until:performance.now() + 60000, from:1})');   // a little bird lands on the grass
+  await pressAt(9, 6, 'down', 'looking at the little bird');
+  for (const w of ['鱼', '河', '鸟']) assert.ok(knows(w), `${w} should be learned`);
+  assert.ok(!get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow')), 'with all five, that task is done');
+  assert.ok(get('getTasks()').some(t => t.text === 'Show the old monkey the words for the meadow'), 'and he wants to hear them');
+  await pressAt(7, 2, 'up', 'showing the old monkey the words for the meadow, and being sent to meet the troop');
+  assert.equal(area().meadowCheck, 1, 'matched: the rocks no longer wait for them');
+  assert.ok(knows('猴子'), 'he sends you to meet the troop, teaching 猴子 (31 October 2026: the little monkey taught it, then 朋友, back to back)');
+  assert.ok(!knows('朋友'), 'one new word at a time');
+  assert.ok(get('getTasks()').some(t => t.text.startsWith('Meet the troop')), 'your tasks say to meet the troop');
+
   // The little monkey
   await pressAt(15, 19, 'down', 'meeting the little monkey');
-  await pressAt(15, 19, 'down', 'talking to the little monkey again');
-  assert.ok(knows('猴子') && knows('朋友'), 'the little monkey should teach 猴子, then 朋友');
+  assert.ok(knows('朋友'), 'the little monkey teaches 朋友, its only word');
   assert.ok(area().littleGame === 2 && get('S.friends').includes('playful'), 'then it wants to play a word game straight away (26 October 2026): won, its present');
 
   // The hungry monkey wants fruit: whichever you bring first, he wants the other
@@ -138,27 +171,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('没关系'), 'you reply 没关系 (it doesn’t matter), and catch it');
   assert.deepEqual([area().hungryGame, get("S.bag['桃子']")], [2, 1], 'then he wants to play a word game: won, a peach for your bag');
 
-  // The thirsty monkey, then the rocks roll away
+  // The thirsty monkey
   await pressAt(2, 11, 'down', 'meeting the thirsty monkey');
-  await pressAt(11, 8, 'down', 'looking at the pond');
-  assert.ok(knows('鱼') && area().holding.thirsty === undefined, 'A at the pond shows you its fish first, not the water');
   await pressAt(11, 8, 'down', 'collecting water from the pond');
   await pressAt(2, 11, 'down', 'giving the thirsty monkey the water');
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
   assert.ok(knows('要'), 'giving him the water teaches 要 (want)');
   assert.deepEqual([area().thirstyGame, get('S.shells') > 0], [2, true], 'then he wants to play a word game too (30 October 2026): won, 2 shells');
-  assert.equal(area().gate, false, 'the rocks stay until the rest of the prologue is done');
-
-  // The rest of the words for the meadow, which the old monkey asked you to learn: the river, and a bird
-  assert.ok(get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow (3/5). Still to find: the river and a bird.')), 'your tasks say which are left');
-  await pressAt(17, 10, 'right', 'looking at the river');
-  run('birds.push({tx:9, ty:7, x:9*T + 4, y:7*T + 6, t0:performance.now(), until:performance.now() + 60000, from:1})');   // a little bird lands on the grass
-  await pressAt(9, 6, 'down', 'looking at the little bird');
-  for (const w of ['河', '鸟']) assert.ok(knows(w), `${w} should be learned`);
-  assert.ok(!get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow')), 'with all five, that task is done');
-  assert.ok(get('getTasks()').some(t => t.text === 'Show the old monkey the words for the meadow'), 'and he wants to hear them');
-  await pressAt(7, 2, 'up', 'showing the old monkey the words for the meadow');
-  assert.equal(area().meadowCheck, 1, 'matched: the rocks no longer wait for them');
 
   // The big monkey, in the middle meadow, has nothing to ask yet: his flowers wait for chapter 1 (decided 22 October 2026)
   await pressAt(4, 10, 'right', 'saying hello to the big monkey');
@@ -166,19 +185,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().flowers, 'not asked', 'he doesn’t ask for flowers');
   for (const w of ['红色', '黄色', '白色']) assert.ok(!knows(w), `${w} waits for school`);
   assert.ok(!knows('不客气'), 'no one has thanked you with nothing else new yet, so 不客气 waits too');
-
-  // The animals (no shop owner in the meadow: he comes up the mountain in chapter 1, decided 31 October 2026)
-  assert.ok(!get("NPCS.some(n => n.id === 'boss')"), 'no shop owner in the meadow');
-  await pressAt(3, 5, 'up', 'meeting the sheep at the foot of the cliffs, near your stone');
-  assert.ok(knows('羊'), 'the sheep teaches 羊');
-  await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
-  assert.equal(get('animalAt(4, 16)'), null, 'no goat on the meadow’s cliff: it lives in the river valley now (31 October 2026)');
-  for (let i = 0; i < 30 && get('S.met').length < 3; i++){   // walk about until the grass rustles, then step in
-    const r = get('rustle');
-    if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass'); else await stepOn(9, 7, 'walking about');
-  }
-  assert.equal(get('S.met').length, 3, 'all three of the meadow’s animals should be found');
-  assert.ok(['rabbit', 'sheep', 'squirrel'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
+  assert.ok(!get('getTasks()').some(t => t.text.startsWith('Meet the troop')), 'the troop met');
 
   // The practice post: matching pictures, then listening for words without pictures
   const unpicturedOk = () => get("unpictured().reduce((n, w) => n + S.w[w].ok, 0)"), okBefore = unpicturedOk();

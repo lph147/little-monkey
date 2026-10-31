@@ -91,8 +91,8 @@ test('the story shows each sentence\'s English the first time, then behind the E
   assert.equal(game.run('modal.hidden'), true);
 });
 
-test('the rocks roll away only once the rest of the prologue is done: the hungry and thirsty monkeys helped, every animal found, and the words for the meadow learned', async () => {
-  const meadow = ['山', '河', '树', '鱼', '鸟'];
+test('the rocks roll away only once the rest of the prologue is done: the hungry and thirsty monkeys helped, every animal found, the words for the meadow learned, and the little and big monkeys met', async () => {
+  const meadow = ['山', '河', '树', '鱼', '鸟', '朋友', '我'];
   const gate = async (area, met, words = meadow) => {
     const w = Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0, ok: 0}]));
     const g = loadGame({save: {version: 24, started: true, met, w, areas: {1: {elder: 2, ...area}}}});
@@ -100,10 +100,12 @@ test('the rocks roll away only once the rest of the prologue is done: the hungry
     await g.run('runEvents()');
     return g.run('here().gate');
   };
-  const all = ['rabbit', 'sheep', 'squirrel', 'goat'], helped = {hungry: 'done', thirsty: 'done', meadowCheck: 1};
+  const all = ['rabbit', 'sheep', 'squirrel'], helped = {hungry: 'done', thirsty: 'done', meadowCheck: 1};
   assert.equal(await gate({hungry: 'done'}, all), false, 'not before the thirsty monkey has its water');
   assert.equal(await gate(helped, ['rabbit', 'sheep']), false, 'not before every animal is found');
-  assert.equal(await gate(helped, all, ['山', '河', '树', '鱼']), false, 'not before the meadow’s words are learned (here, all but 鸟)');
+  assert.equal(await gate(helped, all, ['山', '河', '树', '鱼', '朋友', '我']), false, 'not before the meadow’s words are learned (here, all but 鸟)');
+  assert.equal(await gate(helped, all, ['山', '河', '树', '鱼', '鸟', '朋友']), false, 'not before you’ve met the big monkey (31 October 2026)');
+  assert.equal(await gate(helped, all, ['山', '河', '树', '鱼', '鸟', '我']), false, 'nor the little monkey');
   assert.equal(await gate({...helped, meadowCheck: 0}, all), false, 'not before you’ve shown the old monkey the meadow’s words (decided 30 October 2026)');
   assert.equal(await gate(helped, all), true, 'and not waiting for the big monkey’s flowers: they’re in chapter 1 now (decided 22 October 2026)');
 });
@@ -111,7 +113,7 @@ test('the rocks roll away only once the rest of the prologue is done: the hungry
 test('in the prologue, the big monkey has nothing to ask (his flowers wait for chapter 1): he says hello, even to a game saved in the middle of them', async () => {
   const talkTo = async (area, words = ['石头', '你好', '花']) => {
     const w = Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0, ok: 2}]));
-    const g = loadGame({save: {version: 29, started: true, w, areas: {1: {elder: 2, ...area}}}});
+    const g = loadGame({save: {version: 29, started: true, w, areas: {1: {elder: 2, meadowCheck: 1, ...area}}}});
     g.run("globalThis.__said = []; showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = showNotice = async () => {}; toast = () => {}");
     g.run("chooseReply = async choices => choices[0]; gapQ = async () => true");
     const bubble = g.run("((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show || null");

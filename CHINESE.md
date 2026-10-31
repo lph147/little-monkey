@@ -14,7 +14,7 @@ shown where the word list has them.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 兔子 (rabbit), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey), 大猴子 (Big monkey) |  |
+| 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 小猴子 (Little monkey), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 兔子 (rabbit), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey), 大猴子 (Big monkey) |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
 | 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey), 山羊 (goat) |  |
 | 来看看！ | lái kànkan! | Come and take a look! | 山羊 (goat) |  |

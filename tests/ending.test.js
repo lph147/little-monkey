@@ -30,7 +30,7 @@ async function through(g){
 }
 
 test('pressing A to clear the message after a conversation closes it, and doesn’t start the conversation again', async () => {
-  const g = game({elder: 2}, HUNGRY_MONKEY);
+  const g = game({elder: 2, meadowCheck: 1}, HUNGRY_MONKEY);
   g.run('pressA()');   // the hungry monkey asks for fruit, and teaches 水果
   await through(g);
   assert.equal(g.el('#saybox').hidden, false, 'a message has come up where the speech box was');
@@ -136,7 +136,7 @@ test('what you’ve just finished with rests: A there does nothing, with its lab
 
 test('closing a message with A, what you face rests too, so a second A doesn’t start a conversation, unless they have something new for you', async () => {
   const second = pos => {
-    const g = game({elder: 2}, pos);
+    const g = game({elder: 2, meadowCheck: 1}, pos);
     g.run("globalThis.__talks = 0; talk = async () => { __talks++; }");
     g.run("__now = 9000; toast('New task: Find some fruit for the hungry monkey'); __now = 12000");   // (read for a while)
     g.run('pressA()');

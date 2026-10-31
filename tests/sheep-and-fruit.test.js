@@ -59,7 +59,7 @@ test('a game already in chapter 1 when the sheep came (it met the fox in the mea
 });
 
 test('the hungry monkey teaches 水果 (fruit) as he asks; each fruit tree teaches its own fruit, sparkling till you know it (24 October 2026)', async () => {
-  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(FIRST), areas: {1: {elder: 2, hungry: 'not asked', thirsty: 'asked', holding: {}}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}}});
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(FIRST), areas: {1: {elder: 2, meadowCheck: 1, hungry: 'not asked', thirsty: 'asked', holding: {}}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__cards = []; globalThis.__said = []; showNotice = async (w, o) => { __cards.push([w, o && o.note || null]); setSeen(w); }; toast = () => {}");
   g.run("showDialog = async (who, line, o = {}) => { __said.push([line.t.join(''), o.teach || null]); }");
   const sparkles = () => get(g, "AREA.sparkles.filter(s => ['水果', '桃子', '苹果'].includes(s.word) && lvl(s.word) === 0 && (!s.if || matches(s.if))).map(s => [s.word, s.at])");
@@ -108,8 +108,8 @@ test('a game that helped the hungry monkey without learning 水果: a ! over him
   assert.ok(!g.run(`(lastTalk = null, hasNews(${hungry}))`), 'then the ! goes');
 });
 
-test('the big monkey in the meadow says who he is, teaching 我 (I), once you’ve met the old monkey', async () => {
-  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(FIRST), areas: {1: {elder: 2}}, pos: {place: 'meadow', x: 4, y: 10, dir: 'right'}}});
+test('the big monkey in the meadow says who he is, teaching 我 (I), once the old monkey has sent you to meet the troop', async () => {
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(FIRST), areas: {1: {elder: 2, meadowCheck: 1}}, pos: {place: 'meadow', x: 4, y: 10, dir: 'right'}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__cards = []; globalThis.__said = []; globalThis.__replies = []; showNotice = async (w, o) => { __cards.push([w, o && o.note || null]); setSeen(w); }; toast = () => {}");
   g.run("showDialog = async (who, line, o = {}) => { __said.push([line.t.join(''), o.teach || null]); }; replyWith = async w => { __replies.push(w); return true; }");
   const big = "NPCS.find(n => n.id === 'big')";

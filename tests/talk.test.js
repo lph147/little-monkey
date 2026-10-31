@@ -182,11 +182,12 @@ test('the old monkey introduces himself and the mountain, after your first 你�
 
 test('the old monkey checks in on what the troop has asked you for, then sends you to whoever still needs help', () => {
   const said = save => { const g = loadGame({save: {version: 22, started: true, ...save}}); return g.run("(AREA.talk.elder.find(p => !p.if || matches(p.if)).do[0] || {}).say"); };
-  const area = more => ({areas: {1: {chapter: 0, elder: 2, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', ...more}}});
+  const area = more => ({areas: {1: {chapter: 0, elder: 2, meadowCheck: 1, hungry: 'not asked', thirsty: 'not asked', flowers: 'not asked', ...more}}});
   assert.equal(said(area({hungry: 'asked'})), 'hungryWants');
   assert.equal(said(area({hungry: 'done', thirsty: 'asked'})), 'thirstyWants');
   assert.equal(said(area({hungry: 'done'})), 'findMonkeys', 'someone still needs help');
   assert.equal(said(area({hungry: 'done', thirsty: 'done'})), 'hi', 'nobody needs help: hello, and your tasks (the big monkey’s flowers wait for chapter 1)');
+  assert.equal(said(area({meadowCheck: 0})), 'go', 'before he sends you to the troop, he reminds you to find the animals and learn the meadow’s words (31 October 2026)');
 });
 
 test('the hungry and thirsty monkeys say where to look, and each of the troop has something to say', () => {

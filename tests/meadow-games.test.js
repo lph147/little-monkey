@@ -15,7 +15,7 @@ const known = extra => Object.fromEntries([...WORDS, ...extra].map(w => [w, {lv:
 // with what's said, the messages, your replies, the word games offered (each played: play) and their result (win) kept
 // for the test.
 function game(area = {}, extra = []){
-  const g = loadGame({dom: true, save: {version: 29, started: true, w: known(extra), met: [], areas: {1: {elder: 2, ...area}}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}}});
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: known(extra), met: [], areas: {1: {elder: 2, meadowCheck: 1, ...area}}, pos: {place: 'meadow', x: 15, y: 19, dir: 'down'}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__replies = []; globalThis.__asks = []; globalThis.__play = true; globalThis.__win = true");
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
   g.run("showNotice = async w => { rec(w).lv = Math.max(rec(w).lv || 0, 1); }; replyWith = async best => { __replies.push(best); rec(best).lv = Math.max(rec(best).lv || 0, 1); return true; }");
@@ -37,7 +37,7 @@ test('once the little monkey has taught you 朋友, it wants to play a word game
   assert.equal(bubble(g, 'playful'), '!');
   await talk(g, 'playful');
   assert.ok(get(g, "lvl('朋友') >= 1"), 'it teaches 朋友');
-  assert.deepEqual(get(g, '__said'), ['我们是朋友！', '我们玩吧！', '太好了！'], 'we’re friends! let’s play! (and, as you win) great!');
+  assert.deepEqual(get(g, '__said'), ['我是猴子。你也是猴子！', '我们是朋友！', '我们玩吧！', '太好了！'], 'I’m a monkey, you’re a monkey too! we’re friends! let’s play! (and, as you win) great!');
   assert.deepEqual(get(g, '__asks'), [PRESENT], 'Play, or Not now');
   assert.deepEqual([get(g, 'here().littleGame'), get(g, 'S.shells')], [2, 2], 'its present: 2 shells');
   assert.ok(get(g, '__notes').includes('The little monkey gives you 2 🐚.'));

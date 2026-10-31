@@ -50,8 +50,8 @@ test('after converting, the game shows the same progress', () => {
   const stats = game.run('statsHTML()');
   assert.match(stats, /🐚 7/);
   assert.ok(stats.includes(`2 words caught`), '石头 and 路 (路 left the words for a while, and is back on the mountain path)');
-  // Said hello, learned about animals, 1 of 3 animals found, hungry monkey helped, thirsty not yet, no story (the headband is optional now; the goat in the river valley, since 31 October 2026)
-  assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false]);   // (chapter 1's checklist: no word test there any more; the meadow's words, not learned yet; the flowers, in chapter 1 now)
+  // Said hello, learned about animals, 1 of 3 animals found, hungry monkey helped, thirsty not yet, no story (the headband is optional now; the goat in the river valley, and meeting the little and big monkeys, since 31 October 2026)
+  assert.deepEqual(json(game.run('areaChecklist().map(([, done]) => done)')), [true, true, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false]);   // (chapter 1's checklist: no word test there any more; the meadow's words, not learned yet; the flowers, in chapter 1 now)
 });
 
 test('a finished area stays finished', () => {

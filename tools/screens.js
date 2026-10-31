@@ -21,8 +21,10 @@ const SAVES = {
   middle: {version: 19, started: true, tips: ALL_TIPS, ...QUIET, shells: 6, w: knows(1, MIDDLE_WORDS),
     met: ['rabbit'], friends: ['rabbit'], pos: {x: 13, y: 6, dir: 'up'},
     wardrobe: {owned: ['头带'], wearing: []},
-    areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false, homeName: 2}}},
+    areas: {1: {elder: 2, meadowCheck: 1, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {hungry: '桃子'}, gate: true, story: false, homeName: 2}}},
 };
+// learning your first words, the troop not met yet: they send you back to what the old monkey asked (31 October 2026)
+SAVES.troopWaits = {...SAVES.born, tips: ALL_TIPS, w: knows(1, ['石头', '你好', '山']), areas: {1: {elder: 1}}, pos: {x: 13, y: 6, dir: 'up'}};
 SAVES.knowsWell = {...SAVES.middle, w: knows(2, MIDDLE_WORDS)};
 SAVES.meadowTasks = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], gate: false}}};   // (the rocks still there: every task in the meadow at once)
 // the little monkey once it's taught you 朋友, and the hungry monkey once you've told him 没关系, each wanting to play a word
@@ -443,6 +445,8 @@ const SCREENS = [
   {id: 'tip-menu', title: 'Tip: the Menu', save: 'noMenuTip', why: 'Once you know 3 words, for 8 seconds.', run: async () => { play(); await wait(500); }},
   {id: 'hello', title: 'The old monkey says hello', save: 'born', why: 'The speech box, teaching a word.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
+  {id: 'troop-waits', title: 'The troop waits its turn', save: 'troopWaits', why: 'Before the old monkey sends you to meet the troop, no ! over them; talk to one and it says hello and sends you back to what he asked (decided 31 October 2026: the meadow in order).', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); for (let i = 0; i < 3; i++){ await wait(1200); pressA(); } await wait(600); }},
   {id: 'elder-checks-in', title: 'The old monkey checks in', save: 'middle', why: 'He reminds you what the troop asked for, in words you know.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
   {id: 'meadow-ask', title: 'The words for the meadow', save: 'meadowWords', why: 'Telling you about animals, the old monkey wants the meadow’s words too: just those you don’t know yet.', run: async () => {

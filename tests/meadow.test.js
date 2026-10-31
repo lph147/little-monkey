@@ -18,7 +18,7 @@ test('telling you about animals, the old monkey asks you to learn the meadow’s
   };
   assert.ok((await told(['山', '树'])).includes('The old monkey wants you to learn the words for the meadow too: the river, the fish in the pond and a bird. Things that sparkle ✨ have words.'),
     'he names the three you haven’t found');
-  assert.ok(!(await told(['山', '树', '河', '鱼', '鸟'])).some(t => /words for the meadow/.test(t)), 'if you know them all already, he doesn’t ask');
+  assert.ok(!(await told(['山', '树', '河', '鱼', '鸟'])).some(t => /wants you to learn the words for the meadow too/.test(t)), 'if you know them all already, he doesn’t ask');
 });
 
 test('your tasks say which of the meadow’s words are still to find, until you know all five; then the checklist ticks it off', () => {
