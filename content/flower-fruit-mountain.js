@@ -59,6 +59,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   count   how many of the troop you've counted into the cave
   //   squirrelPlayed, goatPlayed  1 once that friend on the way up the stream has played a word game with you, 2 once
   //           you've won its present (a peach from the squirrel, an apple from the goat)
+  //   goatHop 1 once the goat you made friends with on the river valley's rocks has hopped down to its clearing
   //   ledgeTip 1 once the goat below the waterfall has told you that you can hop down the banks
   //   home    chapter 1, the troop's home ground beside the waterfall: 0 not yet, 1 the old monkey is going there with you,
   //           2 you've been there with him
@@ -136,7 +137,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, thirstyGame:0, meadowCheck:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, goatHop:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, thirstyGame:0, meadowCheck:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked
@@ -145,9 +146,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // minus takes some away; max is the most it can be.
   counters: {
     newWords: {count:'wordsLearned', minus:1, max:4},   // words learned apart from one (you're born knowing 石头), up to 4
-    animals: {count:'animals'},
-    found: {count:'animalsFound'},
-    animalsLeft: {count:'animalsLeft'},
+    animals: {count:'animals', place:'meadow'},   // the prologue's animals in the meadow, which the rocks wait for (the goat is up
+    found: {count:'animalsFound', place:'meadow'},   // in the river valley, on its own)
+    animalsLeft: {count:'animalsLeft', place:'meadow'},
     hillAnimalsLeft: {count:'animalsLeft', chapter:1, place:'hillside'},   // chapter 1's animals: the fox hiding on the hillside, not met yet,
     woodAnimalsLeft: {count:'animalsLeft', chapter:1, place:'pineWood'},   // and the deer in the pine wood
     riverAnimalsLeft: {count:'animalsLeft', chapter:1, place:'riverside'},   // and the butterfly on the riverside, the way east to the bees
@@ -266,7 +267,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'elder2', if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
     {id:'learn4', if:{elder:1, newWords:{below:4}}, text:'Learn 4 words: walk up to things that sparkle ✨ and press A ({newWords}/4)', arrow:{sparkle:true}},   // (the arrow over the nearest thing that sparkles)
     // (the prologue's animals: a game already in chapter 1 when the sheep came, 23 October 2026, can still meet it in the meadow)
-    {id:'animals', if:{chapter:0, elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the {动物|animals}: in rustling grass, out in the open, up a tree, on a cliff ({found}/{animals})'},
+    {id:'animals', if:{chapter:0, elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the {动物|animals}: in rustling grass, out in the open, up a tree ({found}/{animals})'},
     {id:'meadowCheck', if:{elder:{atLeast:2}, chapter:0, gate:false, meadowWords:5, meadowCheck:0}, text:'Show the old monkey the words for the meadow', arrow:'elder'},
     {id:'meadow', if:{elder:{atLeast:2}, chapter:0, meadowWords:{below:5}}, text:'Learn the words for the meadow ({meadowWords}/5). Still to find: {left:meadowWords}. Things that sparkle ✨ have words.'},
     {id:'h1', if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, text:'Find some {水果|fruit} for the hungry monkey'},
@@ -416,6 +417,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {text:'Bring the hungry monkey the {水果|fruit} it wants', show:{hungry:'asked'}, done:{hungry:'done'}},
     {text:'Bring {水} to the thirsty monkey', show:{thirsty:'asked'}, done:{thirsty:'done'}},
     {text:'Find where the {河} comes from', show:{gate:true}, done:{climb:{atLeast:2}}},
+    {text:'Make friends with the {山羊|goat} in the river valley', show:{climb:{atLeast:1}}, done:{friends:{goat:true}}},
     {text:'Bring the troop up to the {瀑布}', show:{climb:{atLeast:2}}, done:{climb:{atLeast:4}}},
     {text:'Read the story at the {瀑布}', show:{climb:{atLeast:4}}, done:{story:true}},
     {text:'{跳} through the {瀑布}', show:{cave:{atLeast:1}}, done:{cave:{atLeast:2}}},
@@ -832,6 +834,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // is made (decided 23 October 2026: Chinese is logical; a game past the meadow without 水果 learns it from the hungry
     // monkey, and the sign is there when it goes back)
     {if:{nameParts:3, homeName:0}, do:[{set:{homeName:1}}, {message:'You know every part of your home’s name now! Read the sign by your stone, in the meadow.'}]},
+    // the goat on the river valley's rocks, once it's your friend: it hops down off them and away over the bridge to its
+    // clearing, where it wants to play (a game that made friends with it before it moved there has it there already)
+    {if:{place:'valley', friends:{goat:true}, goatHop:0, goatPlayed:0}, do:[{set:{goatHop:1}}, {leap:'goat', from:[18, 12]},
+      {message:'The {山羊} hops down off its rocks, and away over the bridge to the clearing. It wants to play with you!'}]},
     // the goat below the waterfall stops you as you walk past, to tell you the way down is quicker: once, on your way
     // down to tell the troop, or any time later (not on the way up with them)
     {if:{climb:2, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]},
@@ -2182,7 +2188,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'rabbit', place:'path', x:14, y:15, facing:'left', look:'兔子'},      // by the first long grass
     {id:'squirrel', place:'path', x:5, y:3, facing:'down', look:'松鼠'},      // in the clearing, by the peach tree
     {id:'sheep', place:'valley', x:18, y:8, facing:'down', look:'羊'},        // at the fork
-    {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊'},       // in the clearing over the first bridge
+    {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊', moves:[{if:{friends:{goat:false}}, place:'gone', x:0, y:0}]},   // in the clearing over the first bridge, once it's your friend (till then, on the rocks by the way in: see animals)
     // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
     // down the banks (it stops you if you walk past: see events)
     {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
@@ -2602,7 +2608,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'rabbit', word:'兔子', clue:'In tall grass, almost anywhere'},
     {id:'sheep', word:'羊', at:[3, 4], home:'草', roams:['valley', 'pasture'], clue:'The meadow, by the cliffs near your stone', meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', roams:['path', 'hillside', 'pineWood'], clue:'The meadow, up a big tree', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
-    {id:'goat', word:'山羊', at:[4, 16], home:'山', roams:['path', 'valley', 'hillside', 'southSlope', 'cliffs'], clue:'The meadow, on a cliff', meetNote:'A goat stands on the cliff, chewing. Answer its questions to make friends.'},
+    // the goat: on the rocks at the river valley's edge, beside the way in from the mountain path (moved from the meadow's
+    // cliff on 31 October 2026, so the meadow has three animals to find while you're learning to play, and you find one more
+    // on the way up). Once it's your friend, it leaves its rocks (leaves) and hops down to the clearing over the first
+    // bridge, the goat character there, to play its word game (see events), so you never see two goats at once.
+    {id:'goat', word:'山羊', at:[18, 12, 'valley'], leaves:true, home:'山', roams:['path', 'hillside', 'southSlope', 'cliffs'], clue:'The river valley, on the rocks', meetNote:'A goat stands on the rocks, chewing. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
     {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, roams:['southSlope', 'darkPines', 'pasture'], clue:'The pine wood, in a sunny glade deep inside', meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
@@ -2964,7 +2974,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {match:'Show the old monkey your words', stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him your words.'},
         {say:'great'},
         {say:'animals', teach:'动物', hint:'Animals live in rustling grass, out in the open, up a tree and on the cliffs to the south.'},
-        {newWord:'动物', note:'There are {animals} different animals on the mountain. Can you find them all?'},
+        {newWord:'动物', note:'There are {animals} different animals here in the meadow. Can you find them all?'},
         {message:'The old monkey wants you to learn the words for the meadow too: {left:meadowWords}. Things that sparkle ✨ have words.', if:{meadowWords:{below:5}}},
         {say:'findMonkeys'},
         {message:'Some of the troop need help too. A ! over a monkey means it wants something. If you forget what to do, press TASKS. MENU shows the words you’ve learned.'},

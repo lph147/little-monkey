@@ -49,7 +49,7 @@ test('the fox hides only in the hillside’s tall grass, as chapter 1’s animal
 test('a game already in chapter 1 when the sheep came (it met the fox in the meadow): no prologue task, the fox still a friend, the hillside’s animal ticked off', () => {
   const g = loadGame({save: {version: 29, started: true, w: knowing([...FIRST, '兔子', '狐狸', '松鼠', '山羊']), met: ['rabbit', 'fox', 'squirrel', 'goat'],
     friends: ['rabbit', 'fox', 'squirrel', 'goat'], areas: {1: CHAPTER_ONE}, pos: {place: 'homeGround', x: 15, y: 5, dir: 'up'}}});
-  assert.deepEqual(get(g, '[counter("found"), counter("animals")]'), [3, 4], 'the sheep is new to it');
+  assert.deepEqual(get(g, '[counter("found"), counter("animals")]'), [2, 3], 'the sheep is new to it (and the meadow’s animals are three, the goat in the river valley since 31 October 2026)');
   assert.ok(!get(g, 'getTasks().map(t => t.id)').includes('animals'), 'but the prologue’s task to find the animals stays in the prologue');
   assert.ok(!get(g, "AREA.talk.troop1.find(p => !p.if || matches(p.if)).do.map(s => s.say)").includes('findAnimals'), 'and no monkey sends you to look for animals');
   assert.equal(get(g, 'FRIEND_NAMES.fox'), '狐狸', 'the fox is still a friend, with its name');

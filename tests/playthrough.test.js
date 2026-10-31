@@ -172,17 +172,18 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(3, 5, 'up', 'meeting the sheep at the foot of the cliffs, near your stone');
   assert.ok(knows('羊'), 'the sheep teaches 羊');
   await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
-  await pressAt(5, 16, 'left', 'meeting the goat on top of its rock');
-  for (let i = 0; i < 30 && get('S.met').length < 4; i++){   // walk about until the grass rustles, then step in
+  assert.equal(get('animalAt(4, 16)'), null, 'no goat on the meadow’s cliff: it lives in the river valley now (31 October 2026)');
+  for (let i = 0; i < 30 && get('S.met').length < 3; i++){   // walk about until the grass rustles, then step in
     const r = get('rustle');
     if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass'); else await stepOn(9, 7, 'walking about');
   }
-  assert.equal(get('S.met').length, 4, 'all four animals should be found');
-  assert.ok(['rabbit', 'sheep', 'squirrel', 'goat'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
+  assert.equal(get('S.met').length, 3, 'all three of the meadow’s animals should be found');
+  assert.ok(['rabbit', 'sheep', 'squirrel'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
 
   // The practice post: matching pictures, then listening for words without pictures
+  const unpicturedOk = () => get("unpictured().reduce((n, w) => n + S.w[w].ok, 0)"), okBefore = unpicturedOk();
   await pressAt(13, 10, 'up', 'training at the practice post');
-  assert.ok(get("S.w['要'].n || S.w['我'].n"), 'a word without a picture was heard right');
+  assert.ok(unpicturedOk() > okBefore, 'a word without a picture (我 or 要) was heard right, filling the gap in a sentence');
 
   // An apple to eat in an animal encounter (from the meadow's apple tree)
   run("S.bag['苹果'] = 1");
@@ -209,6 +210,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(15, 15, 'left', 'meeting the rabbit by the long grass');
   await stepOn(16, 0, 'going on up to the river valley');
   assert.equal(run('PLACE'), 'valley', 'you should be in the river valley');
+  assert.equal(get("ALL_NPCS.find(n => n.id === 'goat').place"), 'gone', 'the goat isn’t in its clearing yet');
+  await pressAt(18, 11, 'down', 'meeting the goat on the rocks by the way in');
+  assert.ok(knows('山羊') && get('S.friends').includes('goat'), 'the goat teaches 山羊, and becomes a friend');
+  assert.equal(get('animalAt(18, 12)'), null, 'then it hops down off its rocks');
+  assert.deepEqual(get("(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'goat'))"), ['valley', 19, 3], 'to its clearing, to play');
   await pressAt(19, 4, 'up', 'playing with the goat over the first bridge');
   assert.equal(area().goatPlayed, 2, 'the goat should have played a word game with you, and given you its apple');
   await stepOn(5, 0, 'going on up, deep into the mountains');

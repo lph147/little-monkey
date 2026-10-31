@@ -120,9 +120,10 @@ test('rock all round the mountain: its top, and at its front a cliff two squares
   assert.equal(get(game, 'dropOf(0, 3).up'), 0, 'its cliff starts at a lip, with the top of the rock above');
   assert.deepEqual(get(game, '(d => [d.up, d.H])(dropOf(8, 0))'), [1, 2 * get(game, 'T')], 'behind the nook your stone is in, the cliff carries on above the map');
   assert.equal(get(game, 'tileAt(-1, 5).look'), 'heights', 'beyond the edge of the map, more rock');
-  const goat = get(game, "AREA.animals.find(a => a.id === 'goat').at");
-  assert.equal(get(game, `tileAt(${goat}).look`), 'heights', 'the goat stands on top of its rock');
-  assert.ok(get(game, `walkable(${goat[0] + 1}, ${goat[1]})`), 'beside it, ground you can stand on to meet it');
+  const [gx, gy, gp] = get(game, "AREA.animals.find(a => a.id === 'goat').at");   // (in the river valley, on its rocks)
+  game.run(`S.pos = {place: '${gp}', x: ${gx}, y: ${gy - 1}, dir: 'down'}; placePlayer()`);
+  assert.equal(get(game, `tileAt(${gx}, ${gy}).look`), 'heights', 'the goat stands on top of its rock');
+  assert.ok(get(game, `walkable(${gx}, ${gy - 1})`), 'beside it, ground you can stand on to meet it');
 
   game.run("S.pos = {place: 'path', x: 3, y: 13, dir: 'up'}; placePlayer(); tryStep('up', 10000)");   // the mountain path: stone steps up beside its bank
   assert.deepEqual(get(game, '[tileAt(3, 12).look, pl.mv.ty, !!pl.mv.slip]'), ['steps', 12, false], 'up the steps');
@@ -273,7 +274,10 @@ test('animal friends on the way up: the rabbit and the sheep give advice, the sq
   const steps = id => get(game, `AREA.talk.${id}[0].do.map(s => Object.keys(s)[0])`);
   for (const id of ['rabbit', 'sheep']) assert.ok(!steps(id).includes('wordGame') && steps(id)[0] === 'say', `the ${id} says something useful`);
   for (const id of ['squirrel', 'goat']) assert.ok(steps(id).includes('wordGame'), `the ${id} plays a word game`);
-  assert.deepEqual(get(game, "['rabbit', 'squirrel', 'sheep', 'goat'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'valley', 'valley']);
+  assert.deepEqual(get(game, "['rabbit', 'squirrel', 'sheep', 'goat'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'valley', 'gone'],
+    'the goat isn’t in its clearing till it’s your friend: it’s on the rocks by the way in');
+  game.run("S.friends.push('goat'); placeCharacters()");
+  assert.equal(get(game, "ALL_NPCS.find(n => n.id === 'goat').place"), 'valley', 'then it plays in the clearing');
   const name = get(game, "speaker('squirrel')");
   assert.match(name, /松鼠 <span class="spk-py">sōngshǔ<\/span>/, 'called by its word, with pinyin');
   assert.doesNotMatch(name, /spk-en/, 'and no English: it’s a word you know');

@@ -234,6 +234,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'hiding') return hiding() === v;   // a little monkey is hiding, playing hide and seek with you (js/hide.js)
     if (k === 'hidesFound') return compare(here().hide.won, v);   // how many times you've found it
     if (k === 'around'){ const d = v[3] ?? AROUND; return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= d && Math.abs(pl.y - v[1]) <= d; }   // you're near here, as you come up to it (within so many squares: [x, y, 'place', squares])
+    if (k === 'friends') return Object.entries(v).every(([id, want]) => S.friends.includes(id) === want);   // who's your friend, such as {goat:true}
     if (k === 'following') return Object.entries(v).every(([id, want]) => S.following.includes(id) === want);   // who's following you (the follow step), such as {cow:true}
     if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
     if (AREA.counters[k]) return compare(counter(k), v);

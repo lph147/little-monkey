@@ -372,7 +372,7 @@ test('a deer lives in the sunny glade: chapter 1’s animal, counted on its own,
   assert.equal(g.run('promptFor(30, 3)'), 'Meet');
   assert.ok(!g.run('walkable(30, 3)'), 'you can’t walk through it');
   g.run("S.met = ['rabbit', 'sheep', 'squirrel', 'goat']");   // (a game that met the sheep in the meadow, since 23 October 2026)
-  assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft")]'), [4, 4, 0], 'the prologue’s four animals, all found');
+  assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft")]'), [3, 3, 0], 'the meadow’s three animals, all found (the goat, up in the river valley, on its own since 31 October 2026)');
   const item = () => get(g, 'areaChecklist().find(([t]) => /that lives in the pine wood/.test(t))');
   assert.equal(item()[1], false, 'on the checklist, to find');
   g.run("encounter = async () => { globalThis.__met = {spot: foe.spot, at: [foe.x, foe.y]}; return true; }");   // (making friends: tests/animals.test.js)
@@ -381,11 +381,11 @@ test('a deer lives in the sunny glade: chapter 1’s animal, counted on its own,
   assert.ok(get(g, '__notes').includes('card: 鹿'), 'meeting it teaches 鹿');
   assert.ok(!get(g, '__notes').some(n => /Animals found/.test(n)), 'the only animal to find here: no count');
   assert.deepEqual(get(g, 'S.met'), ['rabbit', 'sheep', 'squirrel', 'goat', 'deer']);
-  assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft"), counter("woodAnimalsLeft")]'), [4, 4, 0, 0]);
+  assert.deepEqual(get(g, '[counter("found"), counter("animals"), counter("animalsLeft"), counter("woodAnimalsLeft")]'), [3, 3, 0, 0]);
   assert.equal(item()[1], true, 'found');
-  const early = loadGame({save: {version: 29, started: true, met: ['rabbit', 'sheep', 'squirrel', 'deer'], areas: {1: {elder: 2}}, w: KNOWS}});
-  assert.deepEqual(JSON.parse(early.run('JSON.stringify([counter("found"), counter("animals"), counter("animalsLeft")])')), [3, 4, 1],
-    'in the prologue, the deer doesn’t count: the rocks wait for the goat');
+  const early = loadGame({save: {version: 29, started: true, met: ['rabbit', 'sheep', 'deer'], areas: {1: {elder: 2}}, w: KNOWS}});
+  assert.deepEqual(JSON.parse(early.run('JSON.stringify([counter("found"), counter("animals"), counter("animalsLeft")])')), [2, 3, 1],
+    'in the prologue, the deer doesn’t count: the rocks wait for the squirrel');
 });
 
 test('wolves live in the long grass of the pine wood (and only there); lose a fight in chapter 1, and you rest under the big tree at the home ground', async () => {

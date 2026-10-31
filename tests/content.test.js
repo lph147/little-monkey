@@ -368,7 +368,7 @@ test('every character has a talk script (or, a bird, is shooed away: shoo), and 
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound', 'any', 'canBuy'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'hiding', 'hidesFound', 'any', 'canBuy'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -376,6 +376,7 @@ test('every if only checks things the game knows about', () => {
       if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id], `${where} checks holding for "${id}", which isn't a request`);
       if (k === 'place') assert.ok(AREA.places[v], `${where} checks place ${v}, which isn't a place`);
       if (k === 'near') assert.ok(AREA.characters.some(c => c.id === v), `${where} checks near "${v}", who isn't a character`);
+      if (k === 'friends') for (const id of Object.keys(v)) assert.ok(AREA.animals.some(a => a.id === id) || AREA.characters.some(c => c.id === id), `${where} checks friends for "${id}", who isn't an animal or a character`);
       if (k === 'following') for (const id of Object.keys(v)) assert.ok(AREA.characters.some(c => c.id === id), `${where} checks following for "${id}", who isn't a character`);
       if (k === 'at') assert.ok(onMap(v) && canWalk(v), `${where} checks at ${JSON.stringify(v)}, which isn't somewhere you can stand`);
       if (k === 'bought') for (const w of Object.keys(v)) assert.ok(AREA.shop.items.some(i => i.item === w), `${where} checks bought for ${w}, which the shop doesn't sell`);

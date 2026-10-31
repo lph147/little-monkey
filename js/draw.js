@@ -650,7 +650,7 @@ function drawWorld(now){
   if (!GLOOM) drawSparkles(cx, cy, now);   // (in a gloomy place, over its shade instead, so they shine)
   // animals at their own spots, once animals appear: standing on open ground (the deer), or a little up a cliff, bobbing;
   // those up a tree come after the leaves. While you're meeting one, it stays where it is (meetHop).
-  const spotAnimals = canWild() ? ANIMALS.filter(a => a.at && a.place === PLACE && inChapter(a)) : [];
+  const spotAnimals = canWild() ? ANIMALS.filter(atSpot) : [];
   const inTree = a => tileAt(a.at[0], a.at[1]).look === 'tree' || a.perch;   // (up a tree, or perched up on something: over its top)
   for (const a of spotAnimals.filter(a => !inTree(a))){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;

@@ -29,6 +29,28 @@ test('the squirrel and goat only appear once you know about animals; then A meet
   assert.equal(get(game, 'promptFor(13, 18)'), 'Meet');
 });
 
+test('the goat lives on the rocks at the river valley’s edge, by the way in; once it’s your friend it hops down to its clearing to play (31 October 2026)', async () => {
+  const game = loadGame({dom: true, save: {version: 10, started: true, areas: {1: {elder: 2}},
+    w: Object.fromEntries(['动物', '石头', '山', '树', '花', '草'].map(w => [w, {lv: 1, due: 0, ok: 0}]))}});
+  game.run("here().climb = 1; S.pos = {place: 'valley', x: 19, y: 11, dir: 'up'}; placePlayer(); mode = 'play'");   // (arriving from the mountain path)
+  assert.equal(get(game, 'animalAt(18, 12).hz'), '山羊', 'on the rocks beside you as you come in');
+  assert.equal(get(game, "ALL_NPCS.find(n => n.id === 'goat').place"), 'gone', 'and not in its clearing yet: never two goats at once');
+  assert.equal(get(game, 'counter("animals")'), 3, 'the meadow’s animals, which the rocks wait for, are three');
+  const item = () => get(game, 'areaChecklist().find(([t]) => /goat/.test(t))');
+  assert.equal(item()[1], false, 'on the checklist, to find');
+  game.run("S.pos = {place: 'valley', x: 18, y: 11, dir: 'down'}; placePlayer()");
+  assert.equal(get(game, 'promptFor(18, 12)'), 'Meet');
+  game.run("S.met.push('goat'); S.friends.push('goat'); globalThis.__said = []; toast = m => __said.push(m)");   // (made friends: tests/animals.test.js)
+  const done = game.run('runEvents().then(() => globalThis.__done = true)');
+  for (let i = 0; i < 20 && !game.run('globalThis.__done'); i++){ await new Promise(r => setImmediate(r)); game.flush(); }   // (as it leaps)
+  await done;
+  assert.equal(get(game, 'animalAt(18, 12)'), null, 'it has left its rocks');
+  assert.deepEqual(get(game, "(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'goat'))"), ['valley', 19, 3], 'for its clearing, over the bridge');
+  assert.match(get(game, '__said.join(" ")'), /hops down off its rocks/);
+  assert.equal(get(game, "AREA.bubbles.goat.find(b => matches(b.if)).show"), '!', 'where it wants to play');
+  assert.equal(item()[1], true, 'ticked off');
+});
+
 test('an animal hides in tall grass at least 3 steps away, and stepping there meets it', async () => {
   const game = ready();
   game.run("S.pos = {x:9, y:7, dir:'down'}; placePlayer(); hideAnimal()");
