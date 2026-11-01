@@ -147,6 +147,8 @@ test('bring them to the big monkey: 我要红色的花, and he plants them in fr
   assert.match(get(g, '__notes').join(' '), /The big monkey plants your flowers in front of the 学校 \(school\): red, yellow and white/);
   assert.equal(item(g)[1], true, 'the checklist is ticked');
   assert.equal(bubble(g), null);
+  await play(g, 'runEvents()');   // (your next step: the shop owner comes up the mountain, now the flowers are planted)
+  assert.match(get(g, '__notes').join(' '), /A shop owner has come up the mountain/);
   g.run('__notes.length = 0');
   await press(g, 10, 6, 'up');
   assert.deepEqual(get(g, '__notes'), ['Red, yellow and white flowers: the ones you picked, planted in front of the 学校 (school).']);

@@ -76,3 +76,17 @@ test('the little monkey teaches just 朋友; the troop’s monkey across the riv
   assert.deepEqual(steps.filter(s => s.newWord).map(s => s.newWord), ['朋友']);
   assert.ok(!partFor(g, 'troop2').includes('bossHasApples'), 'no 老板 in the prologue');
 });
+
+test('the rocks rolling away waits till the conversation you’re in has ended (1 November 2026: they rolled away unseen while the thirsty monkey thanked you)', async () => {
+  const g = loadGame({dom: true, save: {version: 33, started: true, met: ['rabbit', 'sheep', 'squirrel'],
+    w: Object.fromEntries(['石头', '你好', '山', '河', '树', '鱼', '鸟', '动物', '猴子', '朋友', '我', '水果', '桃子', '苹果', '吃', '喝'].map(w => [w, {lv: 1, ok: 2}])),
+    areas: {1: {elder: 2, meadowCheck: 1, hungry: 'done', thirsty: 'asked', holding: {thirsty: '水'}}}, pos: {place: 'meadow', x: 2, y: 11, dir: 'down'}}});
+  g.run("mode = 'play'; save = () => {}; globalThis.__log = []; showDialog = async () => {}; replyWith = async () => true; gapQ = async () => true; showNotice = async w => setSeen(w)");
+  g.run("toast = m => __log.push(['toast', m, here().gate]); confirmBox = async () => { __log.push(['game', here().gate]); return false; }");
+  let done = false; Promise.resolve(g.run("talk(ALL_NPCS.find(n => n.id === 'thirsty')).then(runEvents)")).then(() => { done = true; });
+  for (let i = 0; i < 200 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); }
+  const log = get(g, '__log');
+  assert.equal(get(g, 'here().gate'), true, 'the rocks roll away');
+  assert.ok(log.some(e => e[0] === 'game' && e[1] === false), 'not while he’s still talking to you (his word game)');
+  assert.ok(log.some(e => e[0] === 'toast' && /rocks north of the meadow have rolled away/.test(e[1])), 'and you’re told');
+});

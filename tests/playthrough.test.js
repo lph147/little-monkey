@@ -133,7 +133,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
 
   // The animals (no shop owner in the meadow: he comes up the mountain in chapter 1, decided 31 October 2026)
   assert.ok(!get("NPCS.some(n => n.id === 'boss')"), 'no shop owner in the meadow');
-  await pressAt(3, 5, 'up', 'meeting the sheep at the foot of the cliffs, near your stone');
+  await pressAt(5, 19, 'up', 'meeting the sheep at the foot of the cliffs in the south of the meadow');
   assert.ok(knows('羊'), 'the sheep teaches 羊');
   await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
   assert.equal(get('animalAt(4, 16)'), null, 'no goat on the meadow’s cliff: it lives in the river valley now (31 October 2026)');
@@ -233,9 +233,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await stepOn(16, 0, 'going on up to the river valley');
   assert.equal(run('PLACE'), 'valley', 'you should be in the river valley');
   assert.equal(get("ALL_NPCS.find(n => n.id === 'goat').place"), 'gone', 'the goat isn’t in its clearing yet');
-  await pressAt(19, 9, 'right', 'meeting the goat on its boulder by the path');
+  await pressAt(19, 9, 'right', 'meeting the goat grazing beside the path');
   assert.ok(knows('山羊') && get('S.friends').includes('goat'), 'the goat teaches 山羊, and becomes a friend');
-  assert.equal(get('animalAt(20, 9)'), null, 'then it hops down off its boulder');
+  assert.equal(get('animalAt(20, 9)'), null, 'then it hops away');
   assert.deepEqual(get("(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'goat'))"), ['valley', 19, 3], 'to its clearing, to play');
   await pressAt(19, 4, 'up', 'playing with the goat over the first bridge');
   assert.equal(area().goatPlayed, 2, 'the goat should have played a word game with you, and given you its apple');

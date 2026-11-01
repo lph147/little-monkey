@@ -894,7 +894,7 @@ async function request(r, face, last = false){
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
     toast(`+${r.reward} 🐚. Task complete!`);
-    await runEvents();
+    if (!talkingTo) await runEvents();   // (in a conversation, what happens next waits till it's over: decided 1 November 2026, when the rocks rolled away unseen while the thirsty monkey thanked you and played his word game)
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
     const nw = [r.teach, r.verb].find(w => w && lvl(w) === 0);   // a new word to teach, if there is one: what they want, or the verb
     await showDialog(face, L[r.ask], {teach:nw, last:last && !nw});
@@ -984,7 +984,7 @@ async function buy(i, face){   // buying something from the shop by asking for i
   // you thanked them, which made it a puzzle why a monkey's thanks wanted 不客气)
   if (sh.reply && await replyWith(sh.reply, {about:sh.given.replace('{item}', a.given), pic:a.pic, who:sh.who}) && sh.welcome) await showDialog(face, L[sh.welcome]);
   toast(fill(a.bought));
-  await runEvents();
+  if (!talkingTo) await runEvents();   // (as for a request: after the conversation)
   return true;
 }
 async function lookAt(t){   // the card for the word you learn by looking at a tile

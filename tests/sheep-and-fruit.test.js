@@ -23,12 +23,12 @@ test('the prologue’s four animals: the rabbit in the tall grass, a sheep at th
   const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(FIRST), areas: {1: {elder: 2}}, pos: {place: 'meadow', x: 3, y: 5, dir: 'up'}}});
   assert.deepEqual(get(g, 'chapterAnimals(0).map(a => a.id)'), ['rabbit', 'sheep', 'squirrel', 'goat']);
   assert.deepEqual(get(g, 'GRASS_ANIMALS.filter(a => a.chapter === 0).map(a => a.id)'), ['rabbit'], 'only the rabbit hides in the grass now');
-  assert.equal(get(g, 'animalAt(3, 4).hz'), '羊', 'the sheep stands at its own spot');
-  assert.equal(g.run('promptFor(3, 4)'), 'Meet');
-  assert.ok(!g.run('walkable(3, 4)'), 'you can’t walk through it');
+  assert.equal(get(g, 'animalAt(5, 18).hz'), '羊', 'the sheep stands at its own spot, at the foot of the cliffs in the south (1 November 2026: by your stone, it popped up beside you as the old monkey told you about animals)');
+  assert.equal(g.run('promptFor(5, 18)'), 'Meet');
+  assert.ok(!g.run('walkable(5, 18)'), 'you can’t walk through it');
   assert.ok(get(g, 'alike("羊", "山羊") && alike("山羊", "羊")'), 'a sheep and a goat are look-alikes: never two answers in the same question');
   g.run("globalThis.__cards = []; showNotice = async (w, o) => { __cards.push([w, o && o.note]); setSeen(w); }; showDialog = async () => {}; encounter = async () => true");
-  await play(g, 'interact(3, 4)');
+  await play(g, 'interact(5, 18)');
   assert.deepEqual(get(g, '__cards'), [['羊', 'A sheep is eating grass at the foot of the 山 (mountain). Answer its questions to make friends.']], 'meeting it teaches 羊');
   assert.deepEqual(get(g, 'S.met'), ['sheep']);
 });
@@ -55,7 +55,7 @@ test('a game already in chapter 1 when the sheep came (it met the fox in the mea
   assert.equal(get(g, 'FRIEND_NAMES.fox'), '狐狸', 'the fox is still a friend, with its name');
   assert.equal(get(g, 'areaChecklist().find(([t]) => /hiding on the hillside/.test(t))[1]'), true, 'and it counts as the hillside’s animal');
   g.run("enterPlace('meadow')");
-  assert.equal(get(g, 'animalAt(3, 4).hz'), '羊', 'go back down to the meadow, and the sheep is there to meet');
+  assert.equal(get(g, 'animalAt(5, 18).hz'), '羊', 'go back down to the meadow, and the sheep is there to meet');
 });
 
 test('the hungry monkey teaches 水果 (fruit) as he asks; each fruit tree teaches its own fruit, sparkling till you know it (24 October 2026)', async () => {

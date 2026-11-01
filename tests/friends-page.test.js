@@ -23,7 +23,7 @@ test('in the prologue: its four animals, a friend, one met but not won over, and
     ['兔子', 'friend', '兔子tùzi'],
     ['羊', 'fmet', '羊yángNot a friend yet'],
     ['squirrel', 'fshadow', '？The meadow, up a big tree'],
-    ['goat', 'fshadow', '？The river valley, on a boulder by the path']], 'chapter 1’s animals aren’t there yet');
+    ['goat', 'fshadow', '？The river valley, beside the path']], 'chapter 1’s animals aren’t there yet');
 });
 
 test('in chapter 1: its animals join, the bees as one card with how many of the six are your friends', () => {
@@ -41,7 +41,7 @@ test('tap a shadow: its clue, then Back to the page, on that shadow', () => {
   const g = friends({friends: [], met: [], areas: {1: {elder: 2}}});
   g.el('#sheet').querySelector('.friends [data-clue="goat"]').click();
   const text = g.run('sheet.textContent').replace(/\s+/g, ' ');
-  assert.match(text, /A friend to find.*？.*The river valley, on a boulder by the path\..*Find it, and answer its questions to make friends\./);
+  assert.match(text, /A friend to find.*？.*The river valley, beside the path\..*Find it, and answer its questions to make friends\./);
   assert.ok(!text.includes('山羊') && !text.includes('goat'), 'never its name');
   g.run('pressB()');
   assert.equal(g.run('document.activeElement && document.activeElement.dataset.clue'), 'goat');

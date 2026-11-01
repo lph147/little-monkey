@@ -120,9 +120,9 @@ test('rock all round the mountain: its top, and at its front a cliff two squares
   assert.equal(get(game, 'dropOf(0, 3).up'), 0, 'its cliff starts at a lip, with the top of the rock above');
   assert.deepEqual(get(game, '(d => [d.up, d.H])(dropOf(8, 0))'), [1, 2 * get(game, 'T')], 'behind the nook your stone is in, the cliff carries on above the map');
   assert.equal(get(game, 'tileAt(-1, 5).look'), 'heights', 'beyond the edge of the map, more rock');
-  const [gx, gy, gp] = get(game, "AREA.animals.find(a => a.id === 'goat').at");   // (in the river valley, on its boulder by the path)
+  const [gx, gy, gp] = get(game, "AREA.animals.find(a => a.id === 'goat').at");   // (in the river valley, grazing beside the path)
   game.run(`S.pos = {place: '${gp}', x: ${gx}, y: ${gy - 1}, dir: 'down'}; placePlayer()`);
-  assert.equal(get(game, `tileAt(${gx}, ${gy}).look`), 'boulder', 'the goat stands on top of its boulder (moved up from the bottom row, 1 November 2026: a message could hide it)');
+  assert.equal(get(game, `tileAt(${gx}, ${gy}).look`), 'grass', 'the goat grazes on the grass (moved up from the rocks on the bottom row, 1 November 2026: a message could hide it)');
   assert.ok(get(game, `walkable(${gx}, ${gy - 1})`), 'beside it, ground you can stand on to meet it');
 
   game.run("S.pos = {place: 'path', x: 3, y: 13, dir: 'up'}; placePlayer(); tryStep('up', 10000)");   // the mountain path: stone steps up beside its bank
@@ -275,7 +275,7 @@ test('animal friends on the way up: the rabbit and the sheep give advice, the sq
   for (const id of ['rabbit', 'sheep']) assert.ok(!steps(id).includes('wordGame') && steps(id)[0] === 'say', `the ${id} says something useful`);
   for (const id of ['squirrel', 'goat']) assert.ok(steps(id).includes('wordGame'), `the ${id} plays a word game`);
   assert.deepEqual(get(game, "['rabbit', 'squirrel', 'sheep', 'goat'].map(id => ALL_NPCS.find(n => n.id === id).place)"), ['path', 'path', 'valley', 'gone'],
-    'the goat isn’t in its clearing till it’s your friend: it’s on its boulder by the path');
+    'the goat isn’t in its clearing till it’s your friend: it’s grazing beside the path');
   game.run("S.friends.push('goat'); placeCharacters()");
   assert.equal(get(game, "ALL_NPCS.find(n => n.id === 'goat').place"), 'valley', 'then it plays in the clearing');
   const name = get(game, "speaker('squirrel')");
