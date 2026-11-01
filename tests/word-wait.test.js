@@ -57,8 +57,9 @@ test('a game from before this (no wordTurn yet) never waits, and a part that tea
   const g = game({chapter: 1, elder: 2, gate: true, home: 2, build: 2, school: 2, feast: 2, tableware: 1}, {place: 'homeGround', x: 5, y: 9, dir: 'up'});
   assert.equal(get(g, 'wordLeft()'), 0);
   const parts = get(g, "Object.entries(AREA.talk).flatMap(([id, ps]) => ps.filter(p => p.waits).map(p => id))");
-  assert.deepEqual(parts.sort(), ['big', 'elder', 'elder', 'elder', 'hungry', 'playful'], 'the parts that wait: the teacher (老师), his news (有), becoming king (王), the chopsticks (筷子), 没有 and 同学');
-  assert.ok(get(g, "Object.values(AREA.talk).flat().filter(p => p.waits).every(p => JSON.stringify(p.do).includes('newWord'))"), 'each teaches a new word');
+  assert.deepEqual(parts.sort(), ['big', 'boss', 'elder', 'elder', 'elder', 'elder', 'elder', 'elder', 'hungry', 'playful'],
+    'the parts that wait: counting the troop in (一 二 三), becoming king (王), the teacher (老师), his news (有), the chopsticks (筷子), 没有, 同学, and your first headband from the shop (头带)');
+  assert.ok(get(g, "Object.values(AREA.talk).flat().filter(p => p.waits).every(p => JSON.stringify(p.do).includes('newWord') || (p.do.some(s => s.shop) && p.if.new))"), 'each teaches a new word (the shop: something new to buy)');
 });
 
 test('the thirsty monkey: bring him water, and he wants to play a word game, with 2 shells the first time you win', async () => {

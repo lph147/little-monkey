@@ -53,8 +53,16 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     run('pressA()');   // the main button: OK, Got it, Next, Start, Give it, Say it...
   }
   const caught = () => get('Object.keys(WORDS).filter(w => lvl(w) >= 1)');
+  // Who you talk to (each act notes them), to catch one character teaching you new words back to back: a word, then the next
+  // time you talk to them another, with no questions answered in between (decided 31 October 2026, after the little monkey
+  // taught 猴子 and then, with a ! straight away, 朋友)
+  run("globalThis.__talkedTo = []; (() => { const t = talk; talk = n => { __talkedTo.push(n.id); return t(n); }; })()");
+  run("globalThis.__caughtAt = {}; (() => { const s = setSeen; setSeen = w => { if (lvl(w) < 1) __caughtAt[w] = S.turn || 0; return s(w); }; })()");   // (the questions you'd answered when you caught each word)
+  let lastTeacher = null;
+  const backToBack = [];
   async function act(code, what, most = 1){   // start something, then answer its cards until it's finished (teaching at most this many words)
     const before = caught();
+    run('__talkedTo = []');
     let done = false, failed = null, last = '', same = 0;
     Promise.resolve(run(code)).then(() => { done = true; }, e => { failed = e; done = true; });
     for (let i = 0; i < 2000 && !done; i++){
@@ -72,6 +80,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     const learned = caught().filter(w => !before.includes(w));
     assert.ok(learned.length <= most, `one new word at a time, but ${what} taught ${learned.join(' and ')}`);
     if (!get('getTasks().length') && /coming soon/.test(get('tasksHint()'))) deadEnds.push(what);   // nothing to do, it seems
+    const talkedTo = get('__talkedTo');
+    if (learned.length && talkedTo.length){
+      const who = talkedTo[0], at = get('__caughtAt');
+      if (lastTeacher && lastTeacher.who === who && lastTeacher.bang && at[learned[0]] === lastTeacher.turn) backToBack.push(`${who}: ${lastTeacher.words.join(' ')}, then ${learned.join(' ')}`);
+      const bang = get(`(n => !!n && ((AREA.bubbles[n.id] || []).find(b => matches(b.if)) || {}).show === '!')(ALL_NPCS.find(n => n.id === '${who}'))`);   // (a ! over them straight after)
+      lastTeacher = {who, words: learned, turn: at[learned[learned.length - 1]], bang};
+    }
   }
   const deadEnds = [];   // the moments your tasks were empty and the hint said the rest is coming soon
   const stand = (x, y, dir) => run(`S.pos = {place:PLACE, x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // in the place you're in
@@ -893,6 +908,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // Till everything built is done, there's always a task to say what's next (28 October 2026: once the cow was home, the
   // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
   assert.deepEqual(deadEnds, [], 'your tasks were never empty while there was more to do');
+  assert.deepEqual(backToBack, [], 'no one teaches you a new word, then another the next time you talk to them, with no questions in between');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
   // player, jumps out on the hillside.)

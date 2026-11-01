@@ -9,7 +9,12 @@ const THIRSTY_GAME = {wordGame:{ask:'Play a word game with the thirsty monkey? I
   win:[{say:'great'}, {set:{thirstyGame:2}}, {shells:2, note:'The thirsty monkey gives you 2 🐚.'}], lost:[{set:{thirstyGame:1}}]}};
 // What the troop's monkeys in the meadow say before the old monkey sends you to meet them (decided 31 October 2026: the meadow
 // in order, first words, then the animals and the meadow's words, then the troop), so each part comes one at a time.
-const TROOP_WAITS = [{say:'hi'}, {reply:'你好'}, {message:'Do what the old monkey asked first: TASKS shows what it is. Then come back!'}];
+// Each says what the old monkey asked for, as it is now, rather than just pointing at TASKS.
+const TROOP_WAITS = [{say:'hi'}, {reply:'你好'},
+  {message:'First, learn 4 words, as the old monkey asked: walk up to things that sparkle ✨ and press A. Then come back!', if:{elder:1, newWords:{below:4}}},
+  {message:'First, go back to the old monkey: he wants to see the words you’ve learned. Then come back!', if:{elder:1, newWords:{atLeast:4}}},
+  {message:'First, find the {动物|animals} and learn the words for the meadow, as the old monkey asked. Then come back!', if:{elder:2, any:[{animalsLeft:{atLeast:1}}, {meadowWords:{below:5}}]}},
+  {message:'First, go back to the old monkey: he wants to hear the words for the meadow. Then come back!', if:{elder:2, animalsLeft:0, meadowWords:5}}];
 // What A at a crab on the shore does (chapter 1), each crab the same: pick it up, with a question on a word you know (the
 // grab step: get it wrong, and it pinches you and scuttles off). The first is the hungry monkey's, for the feast, teaching
 // 螃蟹; after that, you say which it is (这是螃蟹), and let it go.
@@ -3056,9 +3061,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cave:3}, do:[{say:'letsGo', hint:'Lead the way: jump through the waterfall.'}]},
       // the troop moves in. One new word each time you talk to him.
       {if:{cave:4}, do:[{say:'home', teach:'家'}, {newWord:'家'}, {set:{cave:5}}]},
-      {if:{cave:{atLeast:5}, count:0}, do:[{message:'A monkey comes in through the water curtain.'}, {say:'count1', teach:'一'}, {newWord:'一'}, {set:{count:1}}]},
-      {if:{cave:{atLeast:5}, count:1}, do:[{message:'Another monkey comes in.'}, {say:'count2', teach:'二'}, {newWord:'二'}, {set:{count:2}}]},
-      {if:{cave:{atLeast:5}, count:2}, do:[{message:'And another!'}, {say:'count3', teach:'三'}, {newWord:'三'}, {set:{count:3}}, {message:'The whole troop is home.'}]},
+      // counting the troop in, a number each (waits: a few questions first, if the last new word was just now, decided 1 November
+      // 2026: 家, 一, 二 and 三 came back to back, the old monkey's ! straight after each)
+      {if:{cave:{atLeast:5}, count:0}, waits:true, do:[{message:'A monkey comes in through the water curtain.'}, {say:'count1', teach:'一'}, {newWord:'一'}, {set:{count:1}}]},
+      {if:{cave:{atLeast:5}, count:1}, waits:true, do:[{message:'Another monkey comes in.'}, {say:'count2', teach:'二'}, {newWord:'二'}, {set:{count:2}}]},
+      {if:{cave:{atLeast:5}, count:2}, waits:true, do:[{message:'And another!'}, {say:'count3', teach:'三'}, {newWord:'三'}, {set:{count:3}}, {message:'The whole troop is home.'}]},
       // the whole troop is home: the next time you talk to him, the prologue ends with the troop making you king (a scene,
       // told like the opening; as in the book, they move in, then make him king), and chapter 1 begins (its title card).
       // (It came straight after the third monkey until 22 October 2026: 三 and 王 in one go.)
@@ -3134,6 +3141,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'The {老板} wants his new shop here, by the way in, where every monkey goes past. The troop comes to build it!'},
         {markOut:{shop:2}}, {setUp:{shop:3}}, {say:'great'},
         {message:'The {老板}’s new shop! He sells {头带|headbands} in every colour you know, and food for your bag. Talk to him to buy something.'}]},
+      // your first headband, his ! over him: a few questions first if he's only just taught you 老板 (decided 1 November 2026)
+      {if:{shop:{atLeast:3}, new:'头带'}, waits:true, do:[{shop:true}]},
       {do:[{shop:true}]}
     ],
     hungry: [

@@ -36,16 +36,27 @@ const bubbles = g => get(g, "['hungry', 'thirsty', 'playful', 'big'].map(id => (
 const partFor = (g, id) => get(g, `AREA.talk.${id}.find(p => !p.if || matches(p.if)).do.map(s => s.say || s.reply || s.message || s.request || Object.keys(s)[0])`);
 
 test('the troop waits till the old monkey sends you to meet them: no ! over them, and they send you back to what he asked', () => {
-  for (const elder of [1, 2]){
-    const g = meadow({elder});
-    assert.deepEqual(bubbles(g), ['', '', '', ''], `no ! over the troop (elder ${elder})`);
-    for (const id of ['hungry', 'thirsty', 'playful', 'big']) assert.deepEqual(partFor(g, id), ['hi', '你好', 'Do what the old monkey asked first: TASKS shows what it is. Then come back!'], id);
+  // what they say names what the old monkey asked for, as it is now (the message whose if matches)
+  const says = g => get(g, "AREA.talk.hungry.find(p => matches(p.if)).do.filter(s => !s.if || matches(s.if)).map(s => s.say || s.reply || fill(s.message))");
+  const stages = [
+    [{elder: 1}, [], /^First, learn 4 words/],
+    [{elder: 1}, ['山', '花', '草', '树'], /^First, go back to the old monkey: he wants to see the words you’ve learned/],
+    [{elder: 2}, ['动物'], /^First, find the 动物 \(animals\) and learn the words for the meadow/],
+    [{elder: 2}, ['动物', '山', '河', '树', '鱼', '鸟'], /^First, go back to the old monkey: he wants to hear the words for the meadow/, ['rabbit', 'sheep', 'squirrel']]];
+  for (const [area, words, line, met] of stages){
+    const g = meadow(area, words);
+    if (met) g.run(`S.met = ${JSON.stringify(met)}`);
+    assert.deepEqual(bubbles(g), ['', '', '', ''], `no ! over the troop (${JSON.stringify(area)})`);
+    for (const id of ['hungry', 'thirsty', 'playful', 'big']) assert.deepEqual(partFor(g, id).slice(0, 2), ['hi', '你好'], id);
+    const said = says(g);
+    assert.equal(said.length, 3, 'hello, your hello, and one message: ' + said.join(' / '));
+    assert.match(said[2], line);
   }
   const g = meadow({elder: 2, meadowCheck: 1}, ['猴子']);
   assert.deepEqual(bubbles(g), ['!', '!', '!', '!'], 'then each has a !');
   assert.ok(get(g, 'getTasks().some(t => t.id === "troop")'), 'and your tasks say to meet them');
   const started = meadow({elder: 1, hungry: 'asked', holding: {}});
-  assert.notDeepEqual(partFor(started, 'hungry'), ['hi', '你好', 'Do what the old monkey asked first: TASKS shows what it is. Then come back!'], 'a game that has started his request carries on');
+  assert.notEqual(partFor(started, 'hungry')[0], 'hi', 'a game that has started his request carries on');
 });
 
 test('the old monkey checks the meadow’s words once you’ve found its animals too, then sends you to the troop, teaching 猴子', () => {
