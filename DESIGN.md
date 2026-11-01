@@ -80,8 +80,8 @@ A spaced-repetition scheduler sits behind everything and decides which words com
 | Channel | How the scheduler uses it |
 | --- | --- |
 | Animals in the grass | Animals whose names need practice, or are near the front of the review list, appear more often; their questions come from the front of the list |
-| Shops | Items near the front of the list are stocked and highlighted |
-| Quests | Requests ("我要…") ask for words near the front of the list |
+| Shops | Not used (decided 1 November 2026): what the shop sells follows the story |
+| Quests | Not used (decided 1 November 2026): the story's requests ask for what the story needs |
 | Conversations | Characters' lines reuse caught words from earlier areas |
 | Training ground | The rolling word test takes words from the front of the list |
 | Transformations | Turning into a caught animal says and shows its name |
@@ -367,7 +367,7 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Agree this design and answer the open questions
 - [x] Split the engine from the content and move Area 1 into data
 - [x] Turn the Word Scroll into a collection with heard and caught words and categories
-- [ ] Add the scheduler to animal appearances, quests and shop stock
+- [x] The scheduler: animals in the grass and every question already come from the review list (the animals you haven't met first, then those whose names need practice); for shop stock and quests, decided 1 November 2026 not to (no ★ or discounts in the shop, no extra errands), unless the game's owner brings it up again
 - [x] Add XP, peaches (now shells) as money, an Area 1 shop and the training ground
 - [x] Replace emoji with pixel sprites for Area 1's collectibles
 - [x] Add save export and import
