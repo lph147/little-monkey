@@ -67,7 +67,7 @@ shown where the word list has them.
 | 河里有水。 | hé lǐ yǒu shuǐ. | There’s water in the river. | 渴猴子 (Thirsty monkey) |  |
 | 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | 猴子 (Monkey) |  |
 | 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | 猴子 (Monkey) |  |
-| 树上有鸟。 | shù shàng yǒu niǎo. | There are birds in the trees. | 猴子 (Monkey) |  |
+| 草上有鸟。 | cǎo shàng yǒu niǎo. | There are birds on the grass. | 猴子 (Monkey) |  |
 | 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 小猴子 (Little monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
 | 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | 兔子 (rabbit) |  |
@@ -726,6 +726,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 草上有鸟。 | cǎo shàng yǒu niǎo. | There are birds on the grass. | New on 1 November 2026: a monkey in the meadow, telling you where to find birds (they land on the grass near you; it said 树上有鸟, in the trees, where you never find them). Is 草上有鸟 natural, or should it be 草地上有鸟 (草地 would be a new word, just for listening)? |  |
 | 石头里有猴子。 | shítou lǐ yǒu hóuzi. | There is a monkey inside the stone. | The new, shorter story at the waterfall (in the game) |  |
 | 我是猴子。 | wǒ shì hóuzi. | I am a monkey. | The new, shorter story at the waterfall (in the game) |  |
 | 我有朋友。 | wǒ yǒu péngyou. | I have friends. | The new, shorter story at the waterfall (in the game) |  |

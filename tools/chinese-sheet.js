@@ -10,6 +10,7 @@ const {loadGame, ROOT} = require('../tests/fake-browser');
 // in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
 // into the content and delete them from here.
 const DRAFTS = [
+  {zh:'草 上 有 鸟 。', en:'There are birds on the grass.', where:'New on 1 November 2026: a monkey in the meadow, telling you where to find birds (they land on the grass near you; it said 树上有鸟, in the trees, where you never find them). Is 草上有鸟 natural, or should it be 草地上有鸟 (草地 would be a new word, just for listening)?'},
   ...[['石头 里 有 猴子 。', 'There is a monkey inside the stone.'], ['我 是 猴子 。', 'I am a monkey.'], ['我 有 朋友 。', 'I have friends.'],
     ['我 吃 桃子 ， 喝 水 。', 'I eat peaches and drink water.'], ['草 里 有 动物 。', 'There are animals in the grass.'],
     ['树 上 有 鸟 。', 'There are birds in the trees.'], ['河 里 有 鱼 。', 'There are fish in the river.'],

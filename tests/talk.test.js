@@ -195,7 +195,7 @@ test('the hungry and thirsty monkeys say where to look, and each of the troop ha
   const parts = who => JSON.parse(g.run(`JSON.stringify(AREA.talk.${who})`));
   assert.ok(parts('hungry').some(p => p.do.some(s => s.say === 'fruitOnTrees')));
   assert.ok(parts('thirsty').some(p => p.do.some(s => s.say === 'waterInRiver')));
-  assert.equal(parts('troop3').at(-1).do.at(-1).say, 'birdsInTrees');
+  assert.equal(parts('troop3').at(-1).do.at(-1).say, 'birdsOnGrass', 'where you find birds: they land on the grass near you');
   // the two across the river give advice (19 October 2026): where the animals are, then practising; the shop's apples
   const says = who => parts(who).flatMap(p => p.do.map(s => s.say || (s.message ? 'message' : ''))).filter(Boolean);
   assert.ok(says('troop1').includes('findAnimals') && says('troop1').includes('message'));

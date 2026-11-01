@@ -2804,7 +2804,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     waterInRiver: {zh:'河 里 有 水 。', en:'There’s water in the river.'},
     findAnimals: {zh:'去 找 动物 吧 ！', en:'Go and find the animals!'},
     bossHasApples: {zh:'老板 有 苹果 。', en:'The shop owner has apples.'},
-    birdsInTrees: {zh:'树 上 有 鸟 。', en:'There are birds in the trees.'},
+    birdsOnGrass: {zh:'草 上 有 鸟 。', en:'There are birds on the grass.'},   // (birds land on the grass near you: decided 1 November 2026, it said 树上有鸟, in the trees, where you never find them)
     // Up the stream (drafts, not checked yet: see CHINESE.md)
     whereFrom: {zh:'水 从 哪里 来 ？', en:'Where does the water come from?'},
     snakes: {zh:'山 上 有 蛇 。', en:'There are snakes up the mountain.'},
@@ -3442,7 +3442,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     troop2: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{shop:{atLeast:3}}, do:[{say:'hi'}, {reply:'你好'}, {say:'bossHasApples'}, {message:'Earn shells by helping the troop, making friends and practising. The {老板} sells {苹果}: in a question, one takes away a wrong answer.'}]},
       {do:[{say:'hi'}, {reply:'你好'}, {message:'Earn shells by helping the troop, making friends and practising.'}]}],   // (the 老板 comes up the mountain in chapter 1)
-    troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsInTrees'}]}],
+    troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsOnGrass', hint:'Now and then a little bird lands on the grass near you: walk up to it and press A.'}]}],
     big: [
       {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
