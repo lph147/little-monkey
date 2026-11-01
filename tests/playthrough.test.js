@@ -233,9 +233,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await stepOn(16, 0, 'going on up to the river valley');
   assert.equal(run('PLACE'), 'valley', 'you should be in the river valley');
   assert.equal(get("ALL_NPCS.find(n => n.id === 'goat').place"), 'gone', 'the goat isn’t in its clearing yet');
-  await pressAt(18, 11, 'down', 'meeting the goat on the rocks by the way in');
+  await pressAt(19, 9, 'right', 'meeting the goat on its boulder by the path');
   assert.ok(knows('山羊') && get('S.friends').includes('goat'), 'the goat teaches 山羊, and becomes a friend');
-  assert.equal(get('animalAt(18, 12)'), null, 'then it hops down off its rocks');
+  assert.equal(get('animalAt(20, 9)'), null, 'then it hops down off its boulder');
   assert.deepEqual(get("(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'goat'))"), ['valley', 19, 3], 'to its clearing, to play');
   await pressAt(19, 4, 'up', 'playing with the goat over the first bridge');
   assert.equal(area().goatPlayed, 2, 'the goat should have played a word game with you, and given you its apple');

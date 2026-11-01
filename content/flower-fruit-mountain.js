@@ -849,10 +849,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // says hello, as a trainer stops you in Pokémon (decided 31 October 2026, after playing it: a new player walked off
     // and talked to everyone else first)
     {if:{elder:0, place:'meadow'}, do:[{stopsYou:'elder'}]},
-    // the goat on the river valley's rocks, once it's your friend: it hops down off them and away over the bridge to its
+    // the goat on the river valley's boulder, once it's your friend: it hops down off it and away over the bridge to its
     // clearing, where it wants to play (a game that made friends with it before it moved there has it there already)
-    {if:{place:'valley', friends:{goat:true}, goatHop:0, goatPlayed:0}, do:[{set:{goatHop:1}}, {leap:'goat', from:[18, 12]},
-      {message:'The {山羊} hops down off its rocks, and away over the bridge to the clearing. It wants to play with you!'}]},
+    {if:{place:'valley', friends:{goat:true}, goatHop:0, goatPlayed:0}, do:[{set:{goatHop:1}}, {leap:'goat', from:[20, 9]},
+      {message:'The {山羊} hops down off its boulder, and away over the bridge to the clearing. It wants to play with you!'}]},
     // the goat below the waterfall stops you as you walk past, to tell you the way down is quicker: once, on your way
     // down to tell the troop, or any time later (not on the way up with them)
     {if:{climb:2, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]},
@@ -1042,7 +1042,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "^^wWWWkWWWWWWWWWWWWkWWWww^",
         "^^wWWWkWWWWWWWWWWWWkWWWww^",
         "^^wgggrgnnnnnnnngggrgWWww^",
-        "^^wwgrrrnnnnnnnnrrrrgWWww^",
+        "^^wwgrrrnnnnnnnnrrrroWWww^",   // (a boulder beside the path, the goat on it till it's your friend)
         "^^wPGGGgnnnnnnnngggrgWWww^",
         "^^wwwGTgnnnnnnnngTgrgWWww^",
         "^^^^^^^^^^^^^^^^^^^rrWW^^^"
@@ -2203,7 +2203,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'rabbit', place:'path', x:14, y:15, facing:'left', look:'兔子'},      // by the first long grass
     {id:'squirrel', place:'path', x:5, y:3, facing:'down', look:'松鼠'},      // in the clearing, by the peach tree
     {id:'sheep', place:'valley', x:18, y:8, facing:'down', look:'羊'},        // at the fork
-    {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊', moves:[{if:{friends:{goat:false}}, place:'gone', x:0, y:0}]},   // in the clearing over the first bridge, once it's your friend (till then, on the rocks by the way in: see animals)
+    {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊', moves:[{if:{friends:{goat:false}}, place:'gone', x:0, y:0}]},   // in the clearing over the first bridge, once it's your friend (till then, on its boulder by the path: see animals)
     // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
     // down the banks (it stops you if you walk past: see events)
     {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
@@ -2623,11 +2623,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'rabbit', word:'兔子', clue:'In tall grass, almost anywhere'},
     {id:'sheep', word:'羊', at:[3, 4], home:'草', roams:['valley', 'pasture'], clue:'The meadow, by the cliffs near your stone', meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', roams:['path', 'hillside', 'pineWood'], clue:'The meadow, up a big tree', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
-    // the goat: on the rocks at the river valley's edge, beside the way in from the mountain path (moved from the meadow's
+    // the goat: on a boulder beside the path, a few steps into the river valley from the mountain path (moved from the meadow's
     // cliff on 31 October 2026, so the meadow has three animals to find while you're learning to play, and you find one more
-    // on the way up). Once it's your friend, it leaves its rocks (leaves) and hops down to the clearing over the first
+    // on the way up). Once it's your friend, it leaves its boulder (leaves) and hops down to the clearing over the first
     // bridge, the goat character there, to play its word game (see events), so you never see two goats at once.
-    {id:'goat', word:'山羊', at:[18, 12, 'valley'], leaves:true, home:'山', roams:['path', 'hillside', 'southSlope', 'cliffs'], clue:'The river valley, on the rocks', meetNote:'A goat stands on the rocks, chewing. Answer its questions to make friends.'},
+    {id:'goat', word:'山羊', at:[20, 9, 'valley'], leaves:true, home:'山', roams:['path', 'hillside', 'southSlope', 'cliffs'], clue:'The river valley, on a boulder by the path', meetNote:'A goat stands on a boulder, chewing. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
     {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, roams:['southSlope', 'darkPines', 'pasture'], clue:'The pine wood, in a sunny glade deep inside', meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},

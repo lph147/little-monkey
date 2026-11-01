@@ -335,7 +335,7 @@ SAVES.packed = {...SAVES.fighting, health: 30, areas: {1: {...SAVES.fighting.are
 SAVES.byPeaches = {...SAVES.fighting, pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}};   // by a peach tree, the hungry monkey fed
 SAVES.hurt = {...SAVES.fighting, health: 20, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};
 SAVES.valley = {...SAVES.fighting, pos: {place: 'valley', x: 18, y: 9, dir: 'up'}};   // at the fork in the river valley, by the sheep
-SAVES.valleyGoat = {...befriend(SAVES.fighting, ['sheep', 'squirrel'], ['羊', '松鼠']), pos: {place: 'valley', x: 19, y: 11, dir: 'left'}};   // just in from the mountain path, the goat on its rocks beside you
+SAVES.valleyGoat = {...befriend(SAVES.fighting, ['sheep', 'squirrel'], ['羊', '松鼠']), pos: {place: 'valley', x: 19, y: 11, dir: 'up'}};   // just in from the mountain path, the goat on its rocks beside you
 SAVES.valleyGoatFriend = (s => ({...s, areas: {1: {...s.areas[1], goatHop: 1}}}))(befriend(SAVES.valley, ['goat'], ['山羊']));   // it has hopped down to its clearing
 SAVES.deepIn = {...SAVES.fighting, pos: {place: 'falls', x: 7, y: 5, dir: 'up'}};   // below the wild boar, deep in the mountains
 SAVES.atTheTop = {...SAVES.climbing, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
@@ -519,7 +519,7 @@ const SCREENS = [
     play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(400); }},
   {id: 'behind-tree', title: 'Behind a tree', save: 'middle', why: 'Its leaves cover you as you walk behind it.', run: async () => { play(); await wait(100); S.pos = {place: 'meadow', x: 12, y: 7, dir: 'left'}; placePlayer(); await wait(500); }},
   {id: 'apple-tree', title: 'The apple tree', save: 'appleTree', why: 'In the south-east, across the river, with yellow flowers nearby.', run: async () => { play(); await wait(500); }},
-  {id: 'meadow-sheep', title: 'A sheep at the foot of the cliffs', save: 'bySheep', why: 'Near your stone, eating grass: 羊 (sheep). Later, up in the river valley, the goat on its rocks: 山羊 (goat: a mountain sheep).', run: async () => { play(); await wait(500); }},
+  {id: 'meadow-sheep', title: 'A sheep at the foot of the cliffs', save: 'bySheep', why: 'Near your stone, eating grass: 羊 (sheep). Later, up in the river valley, the goat on its boulder: 山羊 (goat: a mountain sheep).', run: async () => { play(); await wait(500); }},
   {id: 'fruit-tree', title: 'A fruit tree teaches its fruit', save: 'fruitTree', why: 'It sparkles till you know its fruit. A at a peach tree, for the hungry monkey, picks one, teaching 桃子 (peach).', run: async () => {
     play(); await wait(100); interact(1, 6); await wait(400); }},
   {id: 'home-parts', title: 'You can read your home’s name', save: 'homeParts', why: 'Once you know 花 (flower), 山 (mountain) and 水果 (fruit), a message says so, and the sign by your stone sparkles until you read it.', run: async () => {
@@ -551,7 +551,7 @@ const SCREENS = [
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
   {id: 'syllable-tip-heard', title: 'The tip, tried', save: 'goatTip', why: 'Both beats heard: 2 beats you hear = 2 characters you see, and the tip. Now A is OK, and the drum plays them again.', run: async () => {
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(400); click('.drum'); await wait(100); click('.drum'); await wait(500); }},
-  {id: 'goat-read', title: 'The goat: read', save: 'knowsWell', why: 'On its rocks. Characters with pinyin, and just pictures to choose from.', run: async () => {
+  {id: 'goat-read', title: 'The goat: read', save: 'knowsWell', why: 'On its boulder. Characters with pinyin, and just pictures to choose from.', run: async () => {
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
   {id: 'little-game', title: 'The little monkey wants to play', save: 'littleGame', why: 'Straight after it teaches 朋友 (we’re friends!), 我们玩吧！ and its word game, with 2 🐚 the first time you win (26 October 2026). Not now, and it keeps a ! till you’ve played.', run: async () => {
     play(); await wait(100); talk(npc('playful')); await wait(300); next(); await wait(500); }},
@@ -582,9 +582,9 @@ const SCREENS = [
     play(); await wait(200); S.pos = {place: 'path', x: 15, y: 15, dir: 'left'}; placePlayer(); await wait(200); talk(npc('rabbit')); await wait(500); }},
   {id: 'river-fork', title: 'The fork in the river valley', save: 'valley', why: 'Over the bridge, away from the river, or along it? The sheep gives a hint.', run: async () => {
     play(); await wait(200); talk(npc('sheep')); await wait(500); }},
-  {id: 'goat-rocks', title: 'The goat on its rocks', save: 'valleyGoat', why: 'Coming up into the river valley from the mountain path: a goat stands on the rocks beside the way in (moved from the meadow on 31 October 2026), and A meets it. Its clearing over the bridge is empty till it’s your friend.', run: async () => {
+  {id: 'goat-rocks', title: 'The goat on its boulder', save: 'valleyGoat', why: 'Coming up into the river valley from the mountain path: a goat stands on a boulder beside the path, a few steps up, clear of messages at the bottom (moved from the meadow on 31 October 2026), and A meets it. Its clearing over the bridge is empty till it’s your friend.', run: async () => {
     play(); await wait(500); closeMessage(); await wait(100); }},
-  {id: 'goat-play', title: 'The goat wants to play', save: 'valleyGoatFriend', why: 'Once it’s your friend, it has hopped down off its rocks to the clearing over the first bridge (a dead end): a word game.', run: async () => {
+  {id: 'goat-play', title: 'The goat wants to play', save: 'valleyGoatFriend', why: 'Once it’s your friend, it has hopped down off its boulder to the clearing over the first bridge (a dead end): a word game.', run: async () => {
     play(); await wait(200); S.pos = {place: 'valley', x: 19, y: 4, dir: 'up'}; placePlayer(); await wait(200); talk(npc('goat')); await wait(300); pressA(); await wait(500); }},
   {id: 'deep-mountains', title: 'Deep in the mountains', save: 'deepIn', why: 'The wild boar blocks the narrow way to the waterfall.', run: async () => { play(); await wait(500); }},
   {id: 'long-grass', title: 'In the long grass', save: 'climbing', why: 'Standing in the long grass hides your feet; a ledge above, to hop down.', run: async () => {
