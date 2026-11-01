@@ -215,6 +215,18 @@ Built 29 October 2026, as the game's owner agreed (from a plan with game-drawn m
 
 **Coming home.** At the end of Area 2, Sun Wukong flies home and finds a demon bullying the troop, so Flower Fruit Mountain's places come back then, with your old words and friends.
 
+### Area 2: Across the sea
+
+**The prologue: the human world** (planned 1 November 2026; mock-ups to come, then the game's owner's go-ahead before any of it is built). As in the book's first chapter: the raft lands, the fishermen run from a monkey, he dresses as a person and lives among people for years, learning their talk and ways, but nobody is looking for how to live forever; he sails across another sea, and a woodcutter's song points him to the immortal teacher. No battles, as in the book.
+
+- **Five places:** 海边 the shore where the raft lands (fishermen, boats, nets); 渔村 the fishing village (houses, a well, washing drying, chickens, a dog, children); 田边 the fields along the road (rice, a farmer, a water buffalo, a scarecrow); 小镇 the market town (stalls, a teahouse, a little school where children read aloud); 码头 the harbour (a boat across the western sea), then the far shore and the woodcutter (樵夫), whose song ends the prologue.
+- **In order, one thing at a time:** land, and the fishermen run; get clothes (decided: the gentler way, an old fisherman drops his coat and hat as he runs, not the book's, where he catches one and takes his); once dressed, people stop running; a child is the first to talk (你是谁？ 我是人！ 你不是人，你是猴子！), teaching 人 and later 不, and shows you how to ask 这是什么？; the village; the fields; the town; years pass (a scene); the harbour; the woodcutter.
+- **Learning by asking** (decided): in the human world you learn a thing's name by asking a person beside it 这是什么？, and they tell you, as he learned their talk from people; sparkles still show what's new.
+- **Coins** (decided): people use 钱 (money), copper coins; a money changer in town swaps your shells.
+- **Sentence patterns:** questions with 吗 (你有鱼吗？), 什么 (这是什么？) and 哪里 (神仙在哪里？), and 不 on its own (不是, 不要); you answer yes and no with 是/不是, 要/不要, 有/没有.
+- **About 40 new words:** 什么 哪里 谁 不 是 (heard in Area 1, caught here); 人 孩子; 衣服 帽子 鞋; 房子 门 船 网 井; 狗 猫 鸡 鹅 (animals to make friends with, for practice without battles); 钱 买 包子 茶 饭 书; 说 听 看 学; 风 歌.
+- **New to build:** the engine running more than one area (first); people (the game has only animals and monkeys so far), houses, boats, stalls, rice fields; a picture for each new word; asking 这是什么？; people running from you till you're dressed.
+
 ## Progression and economy
 
 Money comes mainly from learning, so progress in the game and progress in Chinese move together.
