@@ -101,7 +101,16 @@ const SFX = {
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .25); g.gain.setValueAtTime(v, t + 1); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
     o.connect(f); f.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 1.55);
   },
-  mooFar: () => SFX.moo(true),   // the cow mooing a long way off, the wrong way (the pasture's pines)
+  mooFar: () => SFX.moo(true),
+  bleat: () => {   // a goat bleating: a short, wavering maa-aa, higher than a cow's moo
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), lfo = a.createOscillator(), lg = a.createGain(), f = a.createBiquadFilter(), g = a.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(330, t); o.frequency.linearRampToValueAtTime(390, t + .12); o.frequency.linearRampToValueAtTime(350, t + .6);
+    lfo.frequency.value = 18; lg.gain.value = 22; lfo.connect(lg); lg.connect(o.frequency);   // (the bleat's wobble)
+    f.type = 'bandpass'; f.Q.value = 3; f.frequency.setValueAtTime(900, t); f.frequency.linearRampToValueAtTime(1300, t + .15); f.frequency.linearRampToValueAtTime(800, t + .6);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.06, t + .06); g.gain.setValueAtTime(.06, t + .4); g.gain.exponentialRampToValueAtTime(0.0001, t + .7);
+    o.connect(f); f.connect(g); g.connect(a.destination); o.start(t); lfo.start(t); o.stop(t + .75); lfo.stop(t + .75);
+  },   // the cow mooing a long way off, the wrong way (the pasture's pines)
   buzz: () => {   // bees buzzing somewhere in the flowers: a soft, wavering hum
     for (let i = 0; i < 8; i++) tone(196 + (i % 2) * 14, .1, 'sawtooth', .008, i * .075, 8 - (i % 3) * 5);
   },
@@ -166,6 +175,24 @@ const BATTLE_EVENTS = (() => {
     ev.push({b:i*4, k:'drum', v:.05}); ev.push({b:i*4 + 2, k:'drum', v:.035});
     ev.push({b:i*4 + 1, k:'wood', v:.022}); ev.push({b:i*4 + 3, k:'wood', v:.022});
     if (i % 2) ev.push({b:i*4 + 3.5, k:'wood', v:.014});
+  });
+  return ev.sort((a,c) => a.b - c.b);
+})();
+// A boss's song (decided 3 November 2026, for the bear at the pasture's rocks): quicker than a battle's and darker, in a
+// minor key (D F G A C, every note one of the five, so nothing clashes), the tune on the guzheng then the dizi, over
+// rolling low guzheng and a pounding drum on every beat.
+const BOSS_MEL = [[62,.5],[65,.5],[67,1],[69,1],[67,1], [65,.5],[62,.5],[60,1],[62,2],
+                  [69,.5],[72,.5],[74,1],[72,1],[69,1], [67,.5],[69,.5],[67,.5],[65,.5],[62,2],
+                  [74,1],[72,.5],[69,.5],[72,1],[74,1], [77,1],[74,.5],[72,.5],[69,2],
+                  [67,.5],[69,.5],[72,.5],[69,.5],[67,1],[65,1], [62,1],[60,1],[62,2]];
+const BOSS_ROOTS = [38,38,36,38, 41,36,43,38];   // D D C D, F C G D
+const BOSS_EVENTS = (() => {
+  const ev = []; let bt = 0;
+  BOSS_MEL.forEach(([m,d]) => { ev.push({b:bt, m, d, k:'mel'}); bt += d; });
+  BOSS_ROOTS.forEach((r,i) => {
+    [r+12, r+19, r+24, r+19, r+12, r+19, r+24, r+19].forEach((m,j) => ev.push({b:i*4 + j*.5, m, k:'roll'}));   // quavers
+    ev.push({b:i*4, m:r, k:'bass'}); ev.push({b:i*4 + 2, m:r + 7, k:'bass'});
+    [[0, .08], [1, .05], [1.5, .035], [2, .07], [3, .05], [3.5, .04]].forEach(([o, v]) => ev.push({b:i*4 + o, k:'drum', v}));   // pounding
   });
   return ev.sort((a,c) => a.b - c.b);
 })();
@@ -348,6 +375,15 @@ function playBattleEvent(a, ev, t, pass){
   else if (ev.k === 'drum') drum(a, t, ev.v);
   else if (ev.k === 'wood') wood(a, t, ev.v);
 }
+function playBossEvent(a, ev, t, pass){
+  const beat = 60 / SONGS.boss.bpm;
+  if (ev.k === 'mel'){
+    if (pass === 0) zheng(a, midi(ev.m), t, .075, Math.min(ev.d * beat + .3, 1), false);
+    else dizi(a, midi(ev.m + 12), t, ev.d * beat * .88, 0, 0);
+  } else if (ev.k === 'roll') zheng(a, midi(ev.m), t, .02, .35, false);
+  else if (ev.k === 'bass') zheng(a, midi(ev.m), t, .06, .8, false);
+  else if (ev.k === 'drum') drum(a, t, ev.v);
+}
 function playCaveEvent(a, ev, t, pass){
   const beat = 60 / SONGS.cave.bpm;
   if (ev.k === 'mel'){
@@ -392,11 +428,12 @@ const SONGS = {
   battle: {bpm:116, beats:32, events:BATTLE_EVENTS, play:playBattleEvent, echo:[.32, .3]},
   cave: {bpm:54, beats:32, events:CAVE_EVENTS, play:playCaveEvent, echo:[.52, .55]},
   pineWood: {bpm:50, beats:32, events:PINE_EVENTS, play:playPineEvent, echo:[.45, .45]},
-  pineBattle: {bpm:100, beats:32, events:PINE_BATTLE_EVENTS, play:playPineBattleEvent, echo:[.26, .22]}   // (less echo, so the tune stays clear)
+  pineBattle: {bpm:100, beats:32, events:PINE_BATTLE_EVENTS, play:playPineBattleEvent, echo:[.26, .22]},   // (less echo, so the tune stays clear)
+  boss: {bpm:132, beats:32, events:BOSS_EVENTS, play:playBossEvent, echo:[.24, .2]}
 };
 const placeSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].music]) ? PLACES[PLACE].music : 'home';   // the place you're in's own song, if it has one
 const battleSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].battleMusic]) ? PLACES[PLACE].battleMusic : 'battle';   // and its own battle song
-const isBattleSong = name => name === 'battle' || Object.values(PLACES).some(p => p.battleMusic === name);
+const isBattleSong = name => name === 'battle' || Object.values(PLACES).some(p => p.battleMusic === name) || Object.values(AREA.enemies || {}).some(e => e.song === name);   // (or a boss's own)
 let song = 'home';   // the song playing (or that will, once the music is on)
 function musicTick(){
   const a = AC; if (!a || !mBus) return;

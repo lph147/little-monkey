@@ -336,7 +336,7 @@ SAVES.byPeaches = {...SAVES.fighting, pos: {place: 'meadow', x: 2, y: 6, dir: 'l
 SAVES.hurt = {...SAVES.fighting, health: 20, pos: {place: 'meadow', x: 15, y: 2, dir: 'left'}};
 SAVES.valley = {...SAVES.fighting, pos: {place: 'valley', x: 18, y: 9, dir: 'up'}};   // at the fork in the river valley, by the sheep
 SAVES.valleyGoat = {...befriend(SAVES.fighting, ['sheep', 'squirrel'], ['羊', '松鼠']), pos: {place: 'valley', x: 19, y: 11, dir: 'up'}};   // just in from the mountain path, the goat on its rocks beside you
-SAVES.valleyGoatFriend = (s => ({...s, areas: {1: {...s.areas[1], goatHop: 1}}}))(befriend(SAVES.valley, ['goat'], ['山羊']));   // it has hopped down to its clearing
+SAVES.valleyGoatFriend = (s => ({...s, areas: {1: {...s.areas[1], goatHop: 1, climb: 2}}}))(befriend(SAVES.valley, ['goat'], ['山羊']));   // your friend, beside the path where you met it, and you've been up to the waterfall
 SAVES.deepIn = {...SAVES.fighting, pos: {place: 'falls', x: 7, y: 5, dir: 'up'}};   // below the wild boar, deep in the mountains
 SAVES.atTheTop = {...SAVES.climbing, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
 SAVES.foundFall = {...SAVES.fighting, w: {...SAVES.fighting.w, ...knows(1, ['瀑布', '野猪', '山羊', '朋友'])}, areas: {1: {...SAVES.fighting.areas[1], flowers: 'done', climb: 2, boar: 1}},
@@ -582,10 +582,10 @@ const SCREENS = [
     play(); await wait(200); S.pos = {place: 'path', x: 15, y: 15, dir: 'left'}; placePlayer(); await wait(200); talk(npc('rabbit')); await wait(500); }},
   {id: 'river-fork', title: 'The fork in the river valley', save: 'valley', why: 'Over the bridge, away from the river, or along it? The sheep gives a hint.', run: async () => {
     play(); await wait(200); talk(npc('sheep')); await wait(500); }},
-  {id: 'goat-rocks', title: 'The goat beside the path', save: 'valleyGoat', why: 'Coming up into the river valley from the mountain path: a goat grazes beside the path, a few steps up, clear of messages at the bottom (moved from the meadow on 31 October 2026), and A meets it. Its clearing over the bridge is empty till it’s your friend.', run: async () => {
-    play(); await wait(500); closeMessage(); await wait(100); }},
-  {id: 'goat-play', title: 'The goat wants to play', save: 'valleyGoatFriend', why: 'Once it’s your friend, it has hopped away to the clearing over the first bridge (a dead end): a word game.', run: async () => {
-    play(); await wait(200); S.pos = {place: 'valley', x: 19, y: 4, dir: 'up'}; placePlayer(); await wait(200); talk(npc('goat')); await wait(300); pressA(); await wait(500); }},
+  {id: 'goat-rocks', title: 'The goat calls you over', save: 'valleyGoat', why: 'Coming up into the river valley from the mountain path: a goat grazes beside the path, a few steps up (moved from the meadow on 31 October 2026). Your first step up, it bleats and calls you over (3 November 2026: easy to walk past): you turn to it, and meet it.', run: async () => {
+    play(); await wait(500); closeMessage(); await wait(100); pl.dir = 'up'; tryStep('up', performance.now()); await wait(1300); }},
+  {id: 'goat-play', title: 'The goat wants to play', save: 'valleyGoatFriend', why: 'Once it’s your friend, it stays grazing where you met it (it hopped to the clearing over the bridge till 3 November 2026), and once you’ve been up to the waterfall it has a !: a word game.', run: async () => {
+    play(); await wait(200); S.pos = {place: 'valley', x: 19, y: 9, dir: 'right'}; placePlayer(); await wait(200); talk(npc('goat')); await wait(300); pressA(); await wait(500); }},
   {id: 'deep-mountains', title: 'Deep in the mountains', save: 'deepIn', why: 'The wild boar blocks the narrow way to the waterfall.', run: async () => { play(); await wait(500); }},
   {id: 'long-grass', title: 'In the long grass', save: 'climbing', why: 'Standing in the long grass hides your feet; a ledge above, to hop down.', run: async () => {
     play(); await wait(200); S.pos = {place: 'path', x: 8, y: 11, dir: 'up'}; placePlayer(); await wait(400); }},
@@ -1023,8 +1023,27 @@ const SCREENS = [
     await wait(300); }},
   {id: 'cow-wolf', title: 'The bear at the rocks', save: 'cowGap', why: 'Leading the cow home, as you come into the gap between the big rocks, a bear (熊, taught on its card the first time) rears up out of the long grass at you (just the once): it wants the cow! A boss: no running away. (A wolf till 27 October 2026.)', run: async () => {
     play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(2600); }},
-  {id: 'bear-fight', title: 'The bear: a boss fight', save: 'cowGap', why: 'Its health right across the top, dark and gold: 80, eight hits (or fewer with power hits). No running away, and it asks the words you know least well.', run: async () => {
-    play(); await wait(100); S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle('bear'); await wait(1200); }},
+  {id: 'bear-name', title: 'The bear: its name across the screen', save: 'cowGap', why: 'A big boss: its name in Chinese and pinyin (never its English, as at any animal’s meeting) across the screen as the fight begins, with two drum beats and its own song.', run: async () => {
+    play(); await wait(100); S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle('bear'); await wait(1100); }},
+  {id: 'bear-fight', title: 'The bear: a boss fight', save: 'cowGap', why: 'It rears up, ROAR!, and the card shakes as it lands; it says 我饿了！我要牛！ (said aloud, its English the first time). Its health right across the top, dark and gold, 80, with a mark at half; no running away, and it asks the words you know least well.', run: async () => {
+    play(); await wait(100); S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle('bear'); await wait(3600); }},
+  {id: 'bear-angry', title: 'The bear gets angry', save: 'cowGap', why: 'At half its health it rears up again, bigger and glowing red: 我不怕你！ From then on it attacks twice a turn.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const right = async () => { click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };
+    S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle('bear'); await wait(3600);
+    for (let i = 0; i < 2; i++){ click('.act[data-act=hit]'); await wait(400); await right(); await right(); }
+    click('.act[data-act=hit]'); await wait(400); await right(); await wait(600); }},
+  {id: 'bear-twice', title: 'Angry, it attacks twice', save: 'cowGap', why: 'Two listening questions in a row, Attack 1 of 2 and 2 of 2; Angry! on its plate.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const right = async () => { click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };
+    S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle('bear'); await wait(3600);
+    for (let i = 0; i < 2; i++){ click('.act[data-act=hit]'); await wait(400); await right(); await right(); }
+    click('.act[data-act=hit]'); await wait(400); await right(); await wait(600); click('[data-a=ok]'); await wait(1200); }},
+  {id: 'bear-beaten', title: 'The bear beaten', save: 'cowGap', why: '我怕你！ It lumbers off into the pines: +10 shells.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const right = async () => { click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };
+    S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle('bear'); await wait(3600);
+    for (let i = 0; i < 2; i++){ click('.act[data-act=hit]'); await wait(400); await right(); await right(); }
+    click('.act[data-act=hit]'); await wait(400); await right(); await wait(600); click('[data-a=ok]'); await wait(1200);
+    await right(); await right(); click('.act[data-act=hit]'); await wait(400); await right(); await right(); await right();
+    click('.act[data-act=hit]'); await wait(400); await right(); await wait(800); }},
   {id: 'bear-try-again', title: 'Beaten by the bear: try again', save: 'cowGap', why: 'No long walk back: your health is full again and the cow is still with you. Try again starts it over on the spot; Not now steps you back down the trail, to come back when you’re ready.', run: async () => {
     play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const wrong = async () => { click('.opt[data-i="' + ((__q.answerIdx + 1) % 3) + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };
     S.w['熊'] = {lv: 1, due: 0, ok: 0}; S.health = 10; battle('bear', {lost: 'The {熊} is too strong for you this time. The {牛} is still with you, hiding behind you.', back: {at: [21, 16, 'pasture'], facing: 'up'}});

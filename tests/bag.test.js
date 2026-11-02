@@ -160,7 +160,7 @@ test('a squirrel or goat’s present the same way, and a game saved before 24 Oc
 
 test('the squirrel and the goat give their fruit the first time you win, then their games are just for practice, earning nothing (24 October 2026)', async () => {
   for (const [who, fruit, flag] of [['squirrel', '桃子', 'squirrelPlayed'], ['goat', '苹果', 'goatPlayed']]){
-    const {run, get} = game();
+    const {run, get} = game(who === 'goat' ? {areas: {1: {elder: 2, hungry: 'done', thirsty: 'asked', gate: true, climb: 2}}} : {});   // (the goat wants to play once you've been up to the waterfall)
     run("globalThis.__asks = []; globalThis.__games = []; globalThis.__win = false; showDialog = showNarration = async () => {}; replyWith = async () => true");
     run("confirmBox = async (who, text) => { __asks.push(text); return true; }; encounter = async foe => { __games.push(!!foe.practice); return __win; }");
     const npc = `ALL_NPCS.find(n => n.id === '${who}')`, bubble = () => get(`((AREA.bubbles.${who} || []).find(b => matches(b.if)) || {}).show || ''`);

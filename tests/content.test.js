@@ -452,6 +452,7 @@ test('every line is said somewhere', () => {
     ...(AREA.shop ? [AREA.shop.ask, AREA.shop.welcome] : []),
     ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask), ...[l.race, l.jog].filter(Boolean).flatMap(x => [x.start, x.end])]),
     ...Object.values(AREA.countGames || {}).map(g => g.thing.ask),
+    ...Object.values(AREA.enemies || {}).flatMap(e => Object.values(e.says || {})),
     ...(AREA.hideSeek ? [AREA.hideSeek.count, AREA.hideSeek.coming, AREA.hideSeek.found, ...AREA.hideSeek.spots.map(p => p.say)] : [])
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);

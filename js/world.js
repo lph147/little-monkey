@@ -650,9 +650,12 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     S.pos = {place:PLACE, x:pl.x, y:pl.y, dir:pl.dir}; save();
   },
   // A character stops you as you walk past (in an event, near them), like a trainer in Pokémon: a ! pops up over them,
-  // you turn to face them, and they talk to you.
+  // you turn to face them, and they talk to you. Or an animal at its spot calls you over, so you can't miss it, such as
+  // the goat beside the river valley's path: you turn to face it, and meet it, as A at it does.
   async stopsYou(s){
     const n = NPCS.find(c => c.id === s.stopsYou);
+    const a = !n && ANIMALS.find(x => x.id === s.stopsYou && atSpot(x));
+    if (a){ held = null; queued = null; return wildAppears(a, {x:a.at[0], y:a.at[1], d:dirOf(a.at[0] - pl.x, a.at[1] - pl.y)}); }
     if (!n) return;
     held = null; queued = null;
     pl.dir = dirOf(n.x - pl.x, n.y - pl.y); S.pos.dir = pl.dir; save();
@@ -1352,6 +1355,7 @@ async function wildAppears(a, spot = findSpot()){
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
   await sleep(won ? 1000 : 650);
   foe = null;
+  if (won) placeCharacters();   // (one who takes its place once it's your friend, such as the goat beside the river valley's path)
   if (won && more){ const n = here()[a.counts] = (here()[a.counts] || 0) + 1; save(); await runSteps(a.counted[n - 1] || []); }   // counted aloud, one more friend
 }
 // One of several of a kind stays out at (x, y) (stays), a friend now if you won it over (won).

@@ -25,6 +25,9 @@ shown where the word list has them.
 | 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 牛 (cow) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let's play! | 小猴子 (Little monkey), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey) |  |
+| 我饿了！我要牛！ | wǒ è le! wǒ yào niú! | I’m hungry! I want the cow! |  |  |
+| 我不怕你！ | wǒ bù pà nǐ! | I’m not scared of you! |  |  |
+| 我怕你！ | wǒ pà nǐ! | I’m scared of you! |  |  |
 | 我在找蘑菇。 | wǒ zài zhǎo mógu. | I’m looking for mushrooms. | 猴子 (Monkey) |  |
 | 我们是朋友！ | wǒmen shì péngyou! | We are friends! | 小猴子 (Little monkey), 猴子 (Monkey) |  |
 | 草里有动物。去找动物吧！ | cǎo lǐ yǒu dòngwù. qù zhǎo dòngwù ba! | There are animals in the grass. Go and find them! | 老猴子 (Old monkey) |  |
@@ -726,6 +729,9 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 我饿了！我要牛！ | wǒ è le! wǒ yào niú! | I’m hungry! I want the cow! | New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten |  |
+| 我不怕你！ | wǒ bù pà nǐ! | I’m not scared of you! | New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten |  |
+| 我怕你！ | wǒ pà nǐ! | I’m scared of you! | New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten |  |
 | 草上有鸟。 | cǎo shàng yǒu niǎo. | There are birds on the grass. | New on 1 November 2026: a monkey in the meadow, telling you where to find birds (they land on the grass near you; it said 树上有鸟, in the trees, where you never find them). Is 草上有鸟 natural, or should it be 草地上有鸟 (草地 would be a new word, just for listening)? |  |
 | 石头里有猴子。 | shítou lǐ yǒu hóuzi. | There is a monkey inside the stone. | The new, shorter story at the waterfall (in the game) |  |
 | 我是猴子。 | wǒ shì hóuzi. | I am a monkey. | The new, shorter story at the waterfall (in the game) |  |

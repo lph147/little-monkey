@@ -29,26 +29,30 @@ test('the squirrel and goat only appear once you know about animals; then A meet
   assert.equal(get(game, 'promptFor(13, 18)'), 'Meet');
 });
 
-test('the goat grazes beside the path, a few steps into the river valley, clear of the messages at the bottom; once it’s your friend it hops down to its clearing to play (31 October 2026)', async () => {
+test('the goat grazes beside the path, a few steps into the river valley, and calls you over the first time; once it’s your friend it stays there, and wants to play once you’ve been up to the waterfall (3 November 2026)', async () => {
   const game = loadGame({dom: true, save: {version: 10, started: true, areas: {1: {elder: 2}},
     w: Object.fromEntries(['动物', '石头', '山', '树', '花', '草'].map(w => [w, {lv: 1, due: 0, ok: 0}]))}});
   game.run("here().climb = 1; S.pos = {place: 'valley', x: 19, y: 11, dir: 'up'}; placePlayer(); mode = 'play'");   // (arriving from the mountain path)
   assert.equal(get(game, 'animalAt(20, 9).hz'), '山羊', 'grazing beside the path as you come in');
   assert.ok(get(game, 'pl.y') - 9 >= 2, 'above where you arrive, never on the bottom row a message covers');
-  assert.equal(get(game, "ALL_NPCS.find(n => n.id === 'goat').place"), 'gone', 'and not in its clearing yet: never two goats at once');
+  assert.equal(get(game, "ALL_NPCS.find(n => n.id === 'goat').place"), 'gone', 'and no goat character yet: never two goats at once');
   assert.equal(get(game, 'counter("animals")'), 3, 'the meadow’s animals, which the rocks wait for, are three');
   const item = () => get(game, 'areaChecklist().find(([t]) => /goat/.test(t))');
   assert.equal(item()[1], false, 'on the checklist, to find');
+  game.run("globalThis.__met = []; globalThis.__sounds = []; SFX.bleat = () => __sounds.push('bleat'); wildAppears = async (a, spot) => { __met.push([a.id, spot.x, spot.y, spot.d]); }");
+  const run = async () => { const done = game.run('runEvents().then(() => globalThis.__done = true)'); for (let i = 0; i < 20 && !game.run('globalThis.__done'); i++){ await new Promise(r => setImmediate(r)); game.flush(); } await done; game.run('globalThis.__done = false'); };
+  await run();
+  assert.deepEqual(get(game, '[__met, __sounds]'), [[['goat', 20, 9, 'up']], ['bleat']], 'it bleats and calls you over: you turn to face it and meet it');
+  await run();
+  assert.equal(get(game, '__met.length'), 1, 'just the once');
   game.run("S.pos = {place: 'valley', x: 19, y: 9, dir: 'right'}; placePlayer()");
-  assert.equal(get(game, 'promptFor(20, 9)'), 'Meet');
-  game.run("S.met.push('goat'); S.friends.push('goat'); globalThis.__said = []; toast = m => __said.push(m)");   // (made friends: tests/animals.test.js)
-  const done = game.run('runEvents().then(() => globalThis.__done = true)');
-  for (let i = 0; i < 20 && !game.run('globalThis.__done'); i++){ await new Promise(r => setImmediate(r)); game.flush(); }   // (as it leaps)
-  await done;
-  assert.equal(get(game, 'animalAt(20, 9)'), null, 'it has left its spot');
-  assert.deepEqual(get(game, "(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'goat'))"), ['valley', 19, 3], 'for its clearing, over the bridge');
-  assert.match(get(game, '__said.join(" ")'), /hops away over the bridge/);
-  assert.equal(get(game, "AREA.bubbles.goat.find(b => matches(b.if)).show"), '!', 'where it wants to play');
+  assert.equal(get(game, 'promptFor(20, 9)'), 'Meet', 'and A at it meets it, any time');
+  game.run("S.met.push('goat'); S.friends.push('goat'); placeCharacters()");   // (made friends: tests/animals.test.js)
+  assert.equal(get(game, 'animalAt(20, 9)'), null, 'the animal has left its spot...');
+  assert.deepEqual(get(game, "(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'goat'))"), ['valley', 20, 9], '...for the goat character, on the same square: no hop');
+  assert.equal(get(game, "(AREA.bubbles.goat.find(b => matches(b.if)) || {show: null}).show"), null, 'no ! straight away');
+  game.run('here().climb = 2');
+  assert.equal(get(game, "AREA.bubbles.goat.find(b => matches(b.if)).show"), '!', 'it wants to play once you’ve found the waterfall');
   assert.equal(item()[1], true, 'ticked off');
 });
 

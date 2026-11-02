@@ -232,12 +232,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(15, 15, 'left', 'meeting the rabbit by the long grass');
   await stepOn(16, 0, 'going on up to the river valley');
   assert.equal(run('PLACE'), 'valley', 'you should be in the river valley');
-  assert.equal(get("ALL_NPCS.find(n => n.id === 'goat').place"), 'gone', 'the goat isn’t in its clearing yet');
-  await pressAt(19, 9, 'right', 'meeting the goat grazing beside the path');
-  assert.ok(knows('山羊') && get('S.friends').includes('goat'), 'the goat teaches 山羊, and becomes a friend');
-  assert.equal(get('animalAt(20, 9)'), null, 'then it hops away');
-  assert.deepEqual(get("(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'goat'))"), ['valley', 19, 3], 'to its clearing, to play');
-  await pressAt(19, 4, 'up', 'playing with the goat over the first bridge');
+  await walk([[19, 11], [19, 10]], 'walking up the path into the river valley');
+  assert.ok(knows('山羊') && get('S.friends').includes('goat'), 'the goat grazing beside the path calls you over as you come in: it teaches 山羊, and becomes a friend');
+  assert.equal(get('animalAt(20, 9)'), null, 'the animal leaves its spot...');
+  assert.deepEqual(get("(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === 'goat'))"), ['valley', 20, 9], '...for the goat character, on the same square (no hop)');
+  assert.equal(get("(AREA.bubbles.goat.find(b => matches(b.if)) || {show: null}).show"), null, 'with no ! straight away');
+  await pressAt(19, 9, 'right', 'playing with the goat beside the path');
   assert.equal(area().goatPlayed, 2, 'the goat should have played a word game with you, and given you its apple');
   await stepOn(5, 0, 'going on up, deep into the mountains');
   assert.equal(run('PLACE'), 'falls', 'you should be deep in the mountains');

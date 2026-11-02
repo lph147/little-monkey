@@ -133,3 +133,32 @@ test('a battle the story lets you try again (retry), such as the wolf the cow is
   assert.equal(g.foeHealth(), 'Health: 30 of 30', 'it starts over');
   assert.equal(g.run('__r'), null);
 });
+
+test('the bear: its name across the screen, it rears up roaring and says 我饿了！我要牛！; at half its health it gets angry (我不怕你！) and attacks twice a turn; beaten, 我怕你！ (3 November 2026)', async () => {
+  const g = fighting();
+  g.run("globalThis.__said = []; say = t => __said.push(t)");
+  g.run("battle('bear')"); await g.flush();
+  const zh = () => g.sheet.querySelector('.bossline .line').textContent.replace(/[a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]/gi, '');   // (its characters, without the pinyin over them)
+  assert.equal(zh(), '我饿了！我要牛！', 'what it says, at the top of your turn');
+  assert.match(g.sheet.querySelector('.bossline').textContent, /I’m hungry! I want the cow!/, 'with its English, the first time');
+  assert.ok(g.run("__said.includes('我饿了！我要牛！')"), 'said aloud');
+  assert.ok(g.sheet.querySelector('.scene').classList.contains('rear'), 'it rears up...');
+  assert.equal(g.sheet.querySelector('.fx').textContent, 'ROAR!', '...roaring');
+  assert.ok(g.sheet.querySelector('.plate.bossplate .notch'), 'a mark on its bar, where it gets angry');
+  await g.choose('hit'); await g.answer(true); await g.answer(true);
+  await g.choose('hit'); await g.answer(true); await g.answer(true);
+  await g.choose('hit'); await g.answer(true);   // a power hit: 30 of its 80 left
+  assert.match(g.sheet.textContent, /The 熊 \(bear\) stands up tall, angry!/);
+  assert.equal(zh(), '我不怕你！');
+  assert.ok(g.sheet.querySelector('.scene').classList.contains('rage'));
+  g.sheet.querySelector('[data-a=ok]').click(); await g.flush();
+  assert.match(g.sheet.querySelector('.label').textContent, /Attack 1 of 2/);
+  await g.answer(true);
+  assert.match(g.sheet.querySelector('.label').textContent, /Attack 2 of 2/, 'it attacks twice in a row');
+  await g.answer(true);
+  assert.equal(g.sheet.querySelector('.plate.bossplate .tag').textContent, 'Angry!');
+  await g.choose('hit'); await g.answer(true); await g.answer(true); await g.answer(true);
+  await g.choose('hit'); await g.answer(true);   // a power hit: beaten
+  assert.match(g.sheet.textContent, /You win!/);
+  assert.equal(zh(), '我怕你！', 'beaten, it says so as it lumbers off');
+});

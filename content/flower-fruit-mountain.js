@@ -67,7 +67,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   count   how many of the troop you've counted into the cave
   //   squirrelPlayed, goatPlayed  1 once that friend on the way up the stream has played a word game with you, 2 once
   //           you've won its present (a peach from the squirrel, an apple from the goat)
-  //   goatHop 1 once the goat you made friends with on the river valley's rocks has hopped down to its clearing
+  //   goatHop 1 once the goat beside the river valley's path has called you over (named for when it hopped down to its
+  //           clearing once it was your friend, till 3 November 2026)
   //   ledgeTip 1 once the goat below the waterfall has told you that you can hop down the banks
   //   home    chapter 1, the troop's home ground beside the waterfall: 0 not yet, 1 the old monkey is going there with you,
   //           2 you've been there with him
@@ -512,7 +513,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{milkTable:{atLeast:1}, dairy:0}, show:'!'}, {if:{dairy:2}, show:'!'}, {if:{dairy:4}, show:'!'}],   // chapter 1: by the road at the home ground, with news of a cow on the mountain; then the troop's ready to build it a home; and he'd love some of its milk
     pastureRabbit: [{if:{cow:{below:3}, rabbitTold:0}, show:'!'}],   // until it has told you where the cow went
     cow: [{if:{cow:{below:4}}, show:'!'}, {if:{cowFood:'asked', holding:{cowFood:true}}, show:'?'}, {if:{cow:4, following:{cow:false}}, show:'!'}, {if:{cow:7, following:{cow:false}}, show:'!'}],   // the cow, lost and alone in the pasture, till you've won its trust; and if it ran back to its spring, or isn't following you to its new home
-    squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0}, show:'!'}],   // they want to play (the once, till they have)
+    squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0, climb:{atLeast:2}}, show:'!'}],   // they want to play (the once, till they have; the goat once you've been up to the waterfall, so not the moment it's your friend)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
     // the little monkeys in training on the hillside: until they've stopped you, and then whenever some of your words need
@@ -854,10 +855,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // says hello, as a trainer stops you in Pokémon (decided 31 October 2026, after playing it: a new player walked off
     // and talked to everyone else first)
     {if:{elder:0, place:'meadow'}, do:[{stopsYou:'elder'}]},
-    // the goat beside the river valley's path, once it's your friend: it hops away over the bridge to its
-    // clearing, where it wants to play (a game that made friends with it before it moved there has it there already)
-    {if:{place:'valley', friends:{goat:true}, goatHop:0, goatPlayed:0}, do:[{set:{goatHop:1}}, {leap:'goat', from:[20, 9]},
-      {message:'The {山羊} hops away over the bridge to the clearing. It wants to play with you!'}]},
+    // the goat beside the river valley's path: as you come up into the valley the first time, it bleats and calls you over,
+    // so you can't walk past it (decided 3 November 2026, after playing it: easy to miss). Once it's your friend, it stays
+    // where it was, grazing (the goat character, on its square), and wants to play once you've been up to the waterfall
+    // (its ! in bubbles). Till 3 November 2026 it hopped all the way over the bridge to its clearing, with a ! straight away.
+    {if:{place:'valley', friends:{goat:false}, goatHop:0, around:[20, 9, 'valley', 2]}, do:[{set:{goatHop:1}}, {sound:'bleat'}, {stopsYou:'goat'}]},
     // the goat below the waterfall stops you as you walk past, to tell you the way down is quicker: once, on your way
     // down to tell the troop, or any time later (not on the way up with them)
     {if:{climb:2, ledgeTip:0, near:'ledgeGoat'}, do:[{stopsYou:'ledgeGoat'}]},
@@ -1027,7 +1029,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       ]
     },
     // The river valley: the river turns, coming from the west. At the first bridge the way forks: over it, away from the
-    // river, is a clearing with the goat and an apple tree (a dead end); along the river, through long grass, is the second
+    // river, is a clearing with an apple tree (a dead end; the goat played there till 3 November 2026); along the river, through long grass, is the second
     // bridge and the way on up. Beside the long grass, a peach tree (a fallen tree blocked it till 30 October 2026, with no
     // way for the troop to move it: taken out).
     valley: {
@@ -2208,7 +2210,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'rabbit', place:'path', x:14, y:15, facing:'left', look:'兔子'},      // by the first long grass
     {id:'squirrel', place:'path', x:5, y:3, facing:'down', look:'松鼠'},      // in the clearing, by the peach tree
     {id:'sheep', place:'valley', x:18, y:8, facing:'down', look:'羊'},        // at the fork
-    {id:'goat', place:'valley', x:19, y:3, facing:'down', look:'山羊', moves:[{if:{friends:{goat:false}}, place:'gone', x:0, y:0}]},   // in the clearing over the first bridge, once it's your friend (till then, grazing beside the path: see animals)
+    {id:'goat', place:'valley', x:20, y:9, facing:'left', look:'山羊', moves:[{if:{friends:{goat:false}}, place:'gone', x:0, y:0}]},   // beside the path, where you met it, once it's your friend (till then, the animal there: see animals)
     // a goat on the rocks beside the narrow way below the waterfall, once you've found it: going down is quicker, hopping
     // down the banks (it stops you if you walk past: see events)
     {id:'ledgeGoat', place:'falls', x:6, y:4, facing:'right', look:'山羊', moves:[{if:{climb:{below:2}}, place:'gone', x:0, y:0}]},
@@ -2574,7 +2576,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // pick it to jump aside; only words you've caught are used), what it does (meet; hide, then attack, on its turn), the message when it
   // runs off (away) with a reward in shells, and boss: true for a big enemy you can't run from. bossFight: a boss fight
   // (js/battle.js), such as the bear's: its health across the top, the words you know least well, and if it beats you,
-  // Try again on the spot (lost: what you're told then, unless the battle step says).
+  // Try again on the spot (lost: what you're told then, unless the battle step says); it rears up as it begins, with its
+  // cry (such as ROAR!), the card shaking as it lands. A big boss can also have its name across the screen (nameCard), its
+  // own song (song: one of SONGS in js/sound.js), what it says (says: meet, as it begins; angry; beaten, each one of the
+  // area's lines), and get angry with so much of its health left (angry: at, a share of it; twice, attacking twice a turn
+  // from then on; note and then, what you're told).
   enemies: {
     snake: {word:'蛇', health:20, hits:10, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
       hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
@@ -2584,9 +2590,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', reward:2},   // (chapter 1: in the pine wood)
     wasp: {word:'黄蜂', health:20, hits:10, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
       hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
-    bear: {word:'熊', health:80, hits:10, boss:true, bossFight:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
+    bear: {word:'熊', health:80, hits:10, boss:true, bossFight:true, nameCard:true, song:'boss', cry:'ROAR!', says:{meet:'bearHungry', angry:'bearAngry', beaten:'bearBeaten'},
+      angry:{at:.5, twice:true, note:'The {熊} stands up tall, angry!', then:'From now on it attacks twice in a row. Listen hard!'}, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
       meet:'The {熊} roars!', hide:'The {熊} drops down out of sight…', attack:'The {熊} swipes at you!', away:'The {熊} lumbers off into the pines, and doesn’t come back.', reward:10},   // (chapter 1: at the pasture's rocks, as you lead the cow home: in the wolf's place since 27 October 2026)
-    boar: {word:'野猪', health:40, hits:10, boss:true, bossFight:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
+    boar: {word:'野猪', health:40, hits:10, boss:true, bossFight:true, cry:'SNORT!', attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
       meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },
   // Battles: when you can fight (when), what you hit with (weapon) and how much health a hit takes (hits), and what
@@ -2632,8 +2639,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', roams:['path', 'hillside', 'pineWood'], clue:'The meadow, up a big tree', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
     // the goat: grazing beside the path, a few steps into the river valley from the mountain path (moved from the meadow's
     // cliff on 31 October 2026, so the meadow has three animals to find while you're learning to play, and you find one more
-    // on the way up). Once it's your friend, it leaves its spot (leaves) and hops down to the clearing over the first
-    // bridge, the goat character there, to play its word game (see events), so you never see two goats at once.
+    // on the way up). It calls you over as you come up into the valley (see events). Once it's your friend, it leaves its
+    // spot (leaves) for the goat character on the same square, who plays its word game, so you never see two goats at once.
     {id:'goat', word:'山羊', at:[20, 9, 'valley'], leaves:true, home:'山', roams:['path', 'hillside', 'southSlope', 'cliffs'], clue:'The river valley, beside the path', meetNote:'A goat is grazing beside the path. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
@@ -2771,6 +2778,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     haveApple: {zh:'苹果 ！ 太 好 了 ！', en:'An apple! Wonderful!'},
     thanks: {zh:'谢谢 你 ！', en:'Thank you!'},
     play: {zh:'我们 玩 吧 ！', en:"Let's play!"},
+    bearHungry: {zh:'我 饿 了 ！ 我 要 牛 ！', en:'I’m hungry! I want the cow!'},   // the bear at the pasture's rocks, as it rears up (its says)
+    bearAngry: {zh:'我 不 怕 你 ！', en:'I’m not scared of you!'},   // ...at half its health, angry
+    bearBeaten: {zh:'我 怕 你 ！', en:'I’m scared of you!'},   // ...beaten, as it lumbers off (as the cow's 我怕狼！)
     lookingMushrooms: {zh:'我 在 找 蘑菇 。', en:'I’m looking for mushrooms.'},   // the little monkey at the top of the hillside
     weFriends: {zh:'我们 是 朋友 ！', en:'We are friends!'},
     animals: {zh:'草 里 有 动物 。 去 找 动物 吧 ！', en:'There are animals in the grass. Go and find them!'},

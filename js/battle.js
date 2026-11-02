@@ -83,7 +83,7 @@ async function battle(id, opts = {}){
   let r;
   try {
     for (;;){
-      playSong(battleSong());   // (the place's own, if it has one)
+      playSong(ENEMIES[id] && SONGS[ENEMIES[id].song] ? ENEMIES[id].song : battleSong());   // (a boss's own song, or the place's battle song, if it has one)
       r = await fight(id, opts);
       if (r !== 'again') break;
       opts = {...opts, again:true};
@@ -102,6 +102,8 @@ async function fight(id, opts = {}){
   if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
   else { say(f.word); await sleep(700); }
   const big = !!f.bossFight;   // (a boss fight: its health across the top)
+  if (f.nameCard && !opts.again) await bossNameCard(f, img);   // (a big boss: its name across the screen, the first time each fight)
+  let angry = false;   // (a boss that gets angry at so much health left, angry.at: from then on, it attacks twice)
   let streak = 0;   // right answers in a row: STREAK of them, and your next hit counts POWER times over
   const charged = () => streak >= STREAK;
   const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (the scene's own stick is the one you swing)
@@ -110,16 +112,18 @@ async function fight(id, opts = {}){
   // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
   // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).
   const stick = BATTLES.weapon && PICTURES[BATTLES.weapon] ? `<img class="stick" alt="" src="${sprite(PICTURES[BATTLES.weapon].rows, PICTURES[BATTLES.weapon].palette).toDataURL()}">` : '';
-  const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${big ? ' boss' : ''}${charged() ? ' charged' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
+  const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${big ? ' boss' : ''}${angry ? ' rage' : ''}${charged() ? ' charged' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}">${stick}`
     + `<div class="from" aria-hidden="true"></div><div class="striker" aria-hidden="true">${img}</div><div class="pow" aria-hidden="true"></div><div class="fx" aria-hidden="true"></div>`
-    + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div></div>`
-    + `${healthHTML(left, f.health)}</div>`
+    + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div>${angry ? '<span class="tag">Angry!</span>' : ''}</div>`
+    + `${big && f.angry ? healthHTML(left, f.health).replace('<span class="hpbar">', `<span class="hpbar"><b class="notch" style="left:${f.angry.at * 100}%"></b>`) : healthHTML(left, f.health)}</div>`
     + `<div class="plate mine"><div class="name"><span>You</span><span class="hpnum">${health()}/${maxHealth()}</span></div>${healthHTML(health(), maxHealth())}${streakHTML(streak)}</div></div>`;   // (your number beside You)
-  let first = big && !opts.again;   // (a boss fight begins with a rumble, and the card shakes)
+  let first = big && !opts.again;   // (a boss fight begins with it rearing up, a cry and a rumble, and the card shakes as it lands)
   while (left > 0 && health() > 0){
-    const turn = battleTurn(f, scene(), note || (charged() ? `Your ${wz(BATTLES.weapon || '棍子')} glows: your next hit counts ×${POWER}!` : ''));
-    if (first){ first = false; SFX.rumble(); shake(); }
+    const said = first && !opts.again && bossLine(f, 'meet');   // (what a boss says as it begins, instead of the note)
+    const turn = battleTurn(f, scene('', first ? 'rear' : ''), said ? '' : note || (charged() ? `Your ${wz(BATTLES.weapon || '棍子')} glows: your next hit counts ×${POWER}!` : ''), said ? bossLineHTML(said, img) : '');
+    if (first){ first = false; rears(f); }
+    if (said) speakLine(said);
     const act = await turn;
     note = '';
     if (act === 'run'){ closeCard(); toast(fill(f.ran || `You run away from the {${f.word}}.`)); return 'ran'; }
@@ -145,13 +149,27 @@ async function fight(id, opts = {}){
       if (!ok) note = `The ${wz(f.word)} dodges.`;
     }
     if (left <= 0) break;
-    await dodge(f, scene('', 'hiding'), note, (ok, sc) => { streak = ok ? streak + 1 : 0; showStreak(sc, streak); });
-    note = '';
+    if (f.angry && !angry && left <= f.health * f.angry.at){   // half its health gone: it gets angry
+      angry = true;
+      const line = bossLine(f, 'angry');
+      const open = infoBox(scene('', 'rear'), `${line ? bossLineHTML(line, img) : ''}<p class="label">${esc(fill(f.angry.note || `The {${f.word}} is angry!`))}</p>`
+        + `<p class="prompt">${esc(fill(f.angry.then || ''))}</p>`);
+      rears(f); if (line) speakLine(line);
+      await open; note = '';
+    }
+    const times = angry && f.angry.twice ? 2 : 1;   // (angry, it attacks twice in a row)
+    for (let i = 1; i <= times && health() > 0; i++){
+      await dodge(f, scene('', 'hiding'), note, (ok, sc) => { streak = ok ? streak + 1 : 0; showStreak(sc, streak); }, times > 1 ? [i, times] : null);
+      note = '';
+    }
   }
   closeCard(); playSong(placeSong());
   if (left <= 0){
     S.shells += f.reward || 0; save(); SFX.fanfare();
-    await infoBox(scene('gone'), `<p class="label center">You win!</p><p class="endmsg">${esc(fill(f.away || `The {${f.word}} runs away.`))}${f.reward ? ` +${f.reward} 🐚` : ''}</p>`);
+    const beaten = bossLine(f, 'beaten');
+    const won = infoBox(scene('gone'), `${beaten ? bossLineHTML(beaten, img) : ''}<p class="label center">You win!</p><p class="endmsg">${esc(fill(f.away || `The {${f.word}} runs away.`))}${f.reward ? ` +${f.reward} 🐚` : ''}</p>`);
+    if (beaten) speakLine(beaten);
+    await won;
     return 'won';
   }
   // Lost: no game over. You're carried back to rest, with your health full; the words you missed come back sooner. A boss
@@ -167,13 +185,13 @@ async function fight(id, opts = {}){
 }
 // Your turn: hit, eat something (food that brings health back, if you're hurt) or run away (not from a big enemy).
 // Gives 'hit', 'eat' or 'run'.
-function battleTurn(f, head, note){
+function battleTurn(f, head, note, said = ''){
   return new Promise(res => {
     const food = hurt() && foodThat('heal');
     const acts = [['hit', '打', 'dǎ', 'Hit'],
       food && ['eat', '吃', 'chī', `Eat: ${wz(food)} ×${S.bag[food]}`],
       !f.boss && ['run', '跑', 'pǎo', 'Run away']].filter(Boolean);
-    openCard(`${head}<p class="label">${note ? esc(note) : 'Your turn'}</p><p class="prompt">What will you do?</p>
+    openCard(`${head}${said || `<p class="label">${note ? esc(note) : 'Your turn'}</p><p class="prompt">What will you do?</p>`}
       <div class="menu acts">${acts.map(([id, zh, py, en]) => `<button class="act" data-act="${id}" data-label="${en.split(':')[0]}"><span class="z">${zh}</span><span class="p">${py}</span><span class="e">${esc(en)}</span></button>`).join('')}</div>
       <div class="actions qfoot"><div class="feedback"></div><span class="btn qspace" aria-hidden="true">Next</span></div>`);   // (a question's bottom row, kept empty, so nothing jumps between them)
     const first = sheet.querySelector('.act'); if (first) first.focus();
@@ -182,14 +200,14 @@ function battleTurn(f, head, note){
 }
 // The enemy's turn: it hides (head: the scene, with it hiding), then attacks from somewhere (one of its attacks you've
 // caught); hear it and pick it to jump aside. Then it leaps out of there: you jump aside, or it hits you.
-async function dodge(f, head, note, after = () => {}){
+async function dodge(f, head, note, after = () => {}, nth = null){   // (nth: [this attack, of how many], when it attacks more than once a turn)
   const known = w => lvl(w) >= 1 && WORDS[w] && WORDS[w].pic && w !== f.word;
   const mine = shuffle((f.attacks || []).filter(known)), any = shuffle(picWords().filter(known));
   const a = mine[0] || any[0];
   const others = soundApart(a, [...mine.slice(1), ...any.filter(w => w !== a && !mine.includes(w))], 2);   // (you hear it: no look-alikes, and none that sound alike)
   const opts = shuffle([a, ...others]);
   const strikes = fill(f.attack || `The {${f.word}} attacks!`);
-  return pictureQ({head, body:`<p class="label">${esc(note ? note + ' ' : '')}${esc(fill(f.hide || `The {${f.word}} hides!`))}</p>`
+  return pictureQ({head, body:`<p class="label">${esc(note ? note + ' ' : '')}${esc(fill(f.hide || `The {${f.word}} hides!`))}${nth ? ` <b class="twice">Attack ${nth[0]} of ${nth[1]}</b>` : ''}</p>`
       + `<div class="askrow"><p class="prompt">${esc(f.dodge || 'Listen. Where is it coming from? Pick it to jump aside.')}</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`,
     word:a, type:'listen', options:opts.map(o => `<span class="ico">${picHTML(o)}</span><span class="cap">${o}</span>${laterPy(o)}`), answerIdx:opts.indexOf(a),
     helper:helperHTML(), onShow:() => { setTimeout(() => say(a), 300); wireHelper(opts.length, opts.indexOf(a)); },
@@ -243,4 +261,38 @@ function tryAgain(head, f, opts){
     on('[data-a=ok]', () => { closeCard(); res(true); });
     on('[data-a=back]', () => { closeCard(); res(false); });
   });
+}
+
+// A boss rears up (the scene's .rear: it leaps up big and lands), with its cry (cry, such as ROAR!) and a rumble, and the
+// card shakes as it lands, so the shake goes with something you see (decided 3 November 2026, after playing it: a shake
+// on its own, as the battle began, looked odd).
+function rears(f){
+  const sc = sheet.querySelector('.scene'); if (!sc) return;
+  sc.querySelector('.fx').textContent = f.cry || '';
+  SFX.rumble(); setTimeout(shake, 380);
+}
+// What a boss says (its says: meet, angry, beaten, each a line of the area's lines), shown at the top of its card, its
+// English the first time (then behind English), and said aloud; tap 🔊 to hear it again.
+const bossLine = (f, when) => f.says && f.says[when] && L[f.says[when]] || null;
+function bossLineHTML(line, img){
+  const key = line.t.join(''), first = !S.lines[key];
+  S.lines[key] = 1; hear(line.t); save();
+  return `<div class="bossline">${lineHTML(line.t)}<div class="gloss"></div>`
+    + `<div class="blfoot"><div class="sentence-en"${first ? '' : ' hidden'}>${esc(line.en)}</div><button class="tbtn" data-a="sayline" aria-label="Hear it again">🔊</button>${first ? '' : '<button class="tbtn" data-a="blen">English</button>'}</div></div>`;
+}
+function speakLine(line){
+  const text = line.t.join('');
+  say(text);
+  const b = sheet.querySelector('[data-a=sayline]'); if (b) b.onclick = () => say(text);
+  const en = sheet.querySelector('[data-a=blen]'); if (en) en.onclick = () => { sheet.querySelector('.bossline .sentence-en').hidden = false; en.remove(); };
+}
+// A big boss's name across the screen as the fight begins (nameCard), over the map, as in Pokémon: its picture, and its
+// name in Chinese and pinyin (never its English, as at any animal's meeting).
+async function bossNameCard(f, img){
+  const wrap = document.querySelector('#screenWrap'); if (!wrap || typeof document.createElement !== 'function') return;
+  const d = document.createElement('div'); d.className = 'bosstitle';
+  d.innerHTML = `<div class="band">${img}<div class="bt"><div class="bk">Boss fight!</div><div class="bz">${f.word} <span>${WORDS[f.word].py}</span></div></div></div>`;
+  wrap.appendChild(d); SFX.drum(); setTimeout(() => SFX.drum(), 180);
+  await sleep(1700);
+  d.classList.add('out'); await sleep(260); d.remove();
 }
