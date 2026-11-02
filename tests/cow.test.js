@@ -163,10 +163,20 @@ test('leading the cow home: a bear rears up at the gap between the rocks (just t
   assert.deepEqual(get(off, '__fights'), [], 'only while the cow is following you');
 });
 
-test('lose a battle while leading the cow home, and it runs back to its spring; talk to it there, and it follows you again', async () => {
+test('beaten by the bear at the rocks: Not now steps you back down the trail, the cow still with you (no long walk back)', async () => {
+  const g = game({place: 'pasture', x: 20, y: 15, dir: 'up'}, {cow: 4}, {knows: ['牛'], following: ['cow'], friends: ['cow']});
+  g.run("fight = async (id, opts) => { __fights.push([id, opts.lost, JSON.stringify(opts.back)]); return 'back'; }");
+  await walkTo(g, 20, 14, 'up');
+  assert.deepEqual(get(g, '__fights'), [['bear', 'The {熊} is too strong for you this time. The {牛} is still with you, hiding behind you.', '{"at":[21,16,"pasture"],"facing":"up"}']]);
+  assert.deepEqual([g.run('PLACE'), get(g, '[pl.x, pl.y, pl.dir]')], ['pasture', [21, 16, 'up']], 'back down the trail, out of the gap');
+  assert.deepEqual(get(g, '[S.following, here().cow, here().cowWolf]'), [['cow'], 4, 0], 'the cow still with you, and the bear still there');
+  assert.deepEqual(npc(g, 'cow'), ['pasture', 21, 16], 'right behind you');
+});
+
+test('lose a battle while leading the cow home (a wolf in the long grass), and it runs back to its spring; talk to it there, and it follows you again', async () => {
   const g = game({place: 'pasture', x: 20, y: 15, dir: 'up'}, {cow: 4}, {knows: ['牛'], following: ['cow'], friends: ['cow']});
   g.run("__fight = 'lost'");
-  await walkTo(g, 20, 14, 'up');
+  await play(g, "battle('wolf')");
   assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['homeGround', [17, 8]], 'you rest under the big tree');
   assert.deepEqual(get(g, '[S.following, here().cow, here().cowWolf]'), [[], 4, 0], 'without the cow: it still trusts you, and the wolf’s still there');
   assert.deepEqual(npc(g, 'cow'), ['pasture', 31, 18], 'back by its spring');

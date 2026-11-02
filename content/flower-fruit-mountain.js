@@ -785,10 +785,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {message:'The troop plants the {香蕉} seeds in the garden. Two banana plants shoot up at once, their big leaves unfolding!'}]},
     {if:{place:'hotSprings', springsSeen:0}, do:[{set:{springsSeen:1}}, {message:'A warm, sheltered valley, full of steaming hot springs! Wild bananas grow at the top, past the steam.'}]},
     // leading the cow home, as you come into the gap between the big rocks, a bear rears up out of its long grass at you
-    // (just the once: a boss, with no running away; win, and it lumbers off into the pines for good; lose, and the cow runs
-    // back to its spring: battles' afterLoss). A wolf until 27 October 2026 (cowWolf), which you could run from
+    // (just the once: a boss fight, with no running away; win, and it lumbers off into the pines for good; lose, and you can
+    // try again on the spot, the cow still with you (decided 2 November 2026: till then, it ran back to its spring, and you
+    // fetched it again), or step back down the trail (back) and come back when you're ready). A wolf until 27 October 2026
+    // (cowWolf), which you could run from
     {if:{place:'pasture', cow:4, following:{cow:true}, cowWolf:0, around:[20, 13, 'pasture', 1]}, do:[
       {battle:'bear', out:true, meet:'A {熊} rears up out of the long grass between the rocks! It wants the {牛}!',
+        lost:'The {熊} is too strong for you this time. The {牛} is still with you, hiding behind you.', back:{at:[21, 16, 'pasture'], facing:'up'},
         win:[{set:{cowWolf:1}}, {message:'The {熊} is gone. The {牛} is safe, and the way home is clear. Lead it on, back through the pines!'}]}]},
     // home with the cow: as you come up to the thirsty monkey by the road, it stops following you, and stands by him (its
     // own home, a pen, comes next)
@@ -2567,7 +2570,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // meet it, with meetNote), its health (chase it away by hitting it till there's none left: battles.hits each time),
   // how much health it takes when it hits you (hits), where it attacks from (attacks: you hear one and
   // pick it to jump aside; only words you've caught are used), what it does (meet; hide, then attack, on its turn), the message when it
-  // runs off (away) with a reward in shells, and boss: true for a big enemy you can't run from.
+  // runs off (away) with a reward in shells, and boss: true for a big enemy you can't run from. bossFight: a boss fight
+  // (js/battle.js), such as the bear's: its health across the top, the words you know least well, and if it beats you,
+  // Try again on the spot (lost: what you're told then, unless the battle step says).
   enemies: {
     snake: {word:'蛇', health:20, hits:10, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
       hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
@@ -2577,15 +2582,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
       hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', reward:2},   // (chapter 1: in the pine wood)
     wasp: {word:'黄蜂', health:20, hits:10, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
       hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
-    bear: {word:'熊', health:50, hits:10, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
-      meet:'The {熊} roars!', hide:'The {熊} drops down out of sight…', attack:'The {熊} swipes at you!', away:'The {熊} lumbers off into the pines, and doesn’t come back.', reward:3},   // (chapter 1: at the pasture's rocks, as you lead the cow home: in the wolf's place since 27 October 2026)
+    bear: {word:'熊', health:80, hits:10, boss:true, bossFight:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
+      meet:'The {熊} roars!', hide:'The {熊} drops down out of sight…', attack:'The {熊} swipes at you!', away:'The {熊} lumbers off into the pines, and doesn’t come back.', reward:10},   // (chapter 1: at the pasture's rocks, as you lead the cow home: in the wolf's place since 27 October 2026)
     boar: {word:'野猪', health:40, hits:10, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
       meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },
   // Battles: when you can fight (when), what you hit with (weapon) and how much health a hit takes (hits), and what
   // happens if you lose: you rest, till your health is full, at the first restAt whose if matches (lost: the message then).
   // Your health starts at 50 (HEALTH in js/state.js); a fight is set by how many right answers it takes, the numbers
-  // chosen to match (decided 27 October 2026: about 2 to 5 for a wild creature, more for a boss).
+  // chosen to match (decided 27 October 2026: about 2 to 5 for a wild creature, more for a boss: the bear’s 80, eight hits, or five with two power hits, each after three right answers in a row).
   battles: {
     when: {knows:'棍子'},   // once the big monkey has given you the stick
     weapon: '棍子', hits: 10,

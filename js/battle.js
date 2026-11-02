@@ -2,7 +2,10 @@
 // encounter, but both sides have health, a bar on each name plate. On your turn you hit (a question: right hits, wrong
 // misses), eat something (food that brings health back) or run away; on the enemy's turn it attacks from somewhere you hear
 // (草！ 石头！) and you pick it to jump aside (wrong: it hits you). Every hit or miss depends on whether you know the word: no
-// levels, no luck, no timers. How much a hit takes is content: your weapon's (AREA.battles.hits) and each enemy's (hits).
+// levels, no luck, no timers. Three right answers in a row (hitting or jumping aside) make your stick glow, and your next
+// hit counts three times over (decided 2 November 2026). A boss fight (an enemy's bossFight, such as the bear at the
+// pasture's rocks) has its health across the top of the scene, asks the words you know least well, and if it beats you, you
+// can try again on the spot. How much a hit takes is content: your weapon's (AREA.battles.hits) and each enemy's (hits).
 // The enemies are content (AREA.enemies); wild ones jump out of ground whose legend says wild (AREA.battles).
 
 /* ================= BATTLES ================= */
@@ -73,10 +76,22 @@ async function wildBattle(id, spot = findSpot(), opts = {}){
 // said as it begins, instead of the enemy's own meet. Lost, and once you've come round where you rest, what the story says
 // happens then (the area's battles' afterLoss: the first whose if matches), such as the cow you were leading home
 // running back to its spring.
+// A boss fight (bossFight) that beats you gives 'again' (Try again: it starts over, your health full) or 'back' (Not now:
+// you step back to where opts.back says, the one following you still with you, and nothing else happens).
 async function battle(id, opts = {}){
-  playSong(battleSong());   // (the place's own, if it has one)
   let r;
-  try { r = await fight(id, opts); } finally { playSong(placeSong()); }
+  try {
+    for (;;){
+      playSong(battleSong());   // (the place's own, if it has one)
+      r = await fight(id, opts);
+      if (r !== 'again') break;
+      opts = {...opts, again:true};
+    }
+  } finally { playSong(placeSong()); }
+  if (r === 'back' && opts.back && opts.back.at){
+    const at = opts.back.at;
+    S.pos = {place:placeOf(at), x:at[0], y:at[1], dir:opts.back.facing || S.pos.dir}; save(); placePlayer();
+  }
   const after = r === 'lost' && (BATTLES.afterLoss || []).find(a => !a.if || matches(a.if));
   if (after) await runSteps(after.do);
   return r;
@@ -85,20 +100,23 @@ async function fight(id, opts = {}){
   const f = opts.boss ? {...ENEMIES[id], boss:true} : ENEMIES[id], img = `<img class="portrait" alt="" src="${sprite(PICTURES[f.word].rows, PICTURES[f.word].palette).toDataURL()}">`;
   if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
   else { say(f.word); await sleep(700); }
+  const big = !!f.bossFight;   // (a boss fight: its health across the top)
+  let streak = 0;   // right answers in a row: STREAK of them, and your next hit counts POWER times over
+  const charged = () => streak >= STREAK;
   const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (the scene's own stick is the one you swing)
-  let left = f.health, note = fill(opts.meet || f.meet || `A {${f.word}} blocks your way!`);
+  let left = f.health, note = fill((!opts.again && opts.meet) || f.meet || `A {${f.word}} blocks your way!`);
   // The scene: the enemy on its mound, you from behind with your stick, and what the animations use (js below, css
   // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
   // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).
   const stick = BATTLES.weapon && PICTURES[BATTLES.weapon] ? `<img class="stick" alt="" src="${sprite(PICTURES[BATTLES.weapon].rows, PICTURES[BATTLES.weapon].palette).toDataURL()}">` : '';
-  const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
+  const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${big ? ' boss' : ''}${charged() ? ' charged' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}">${stick}`
     + `<div class="from" aria-hidden="true"></div><div class="striker" aria-hidden="true">${img}</div><div class="pow" aria-hidden="true"></div><div class="fx" aria-hidden="true"></div>`
-    + `<div class="plate"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div></div>`
+    + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div></div>`
     + `${healthHTML(left, f.health)}</div>`
-    + `<div class="plate mine"><div class="name"><span>You</span><span class="hpnum">${health()}/${maxHealth()}</span></div>${healthHTML(health(), maxHealth())}</div></div>`;   // (your number beside You)
+    + `<div class="plate mine"><div class="name"><span>You</span><span class="hpnum">${health()}/${maxHealth()}</span></div>${healthHTML(health(), maxHealth())}${streakHTML(streak)}</div></div>`;   // (your number beside You)
   while (left > 0 && health() > 0){
-    const act = await battleTurn(f, scene(), note);
+    const act = await battleTurn(f, scene(), note || (charged() ? `Your ${wz(BATTLES.weapon || '棍子')} glows: your next hit counts ×${POWER}!` : ''));
     note = '';
     if (act === 'run'){ closeCard(); toast(fill(f.ran || `You run away from the {${f.word}}.`)); return 'ran'; }
     if (act === 'eat'){
@@ -106,20 +124,24 @@ async function fight(id, opts = {}){
       S.bag[w]--; S.health = Math.min(maxHealth(), health() + FOOD[w].heal); useWord(w); save(); SFX.right();
       note = `You eat a ${wz(w)}: +${FOOD[w].heal} health.`;
     } else {
-      const w = toAsk(f.word, 1)[0], q = wordQuestion(w, f.word);
-      const ok = await pictureQ({head:scene(), body:`<p class="label">You swing your ${wz(BATTLES.weapon || '棍子')}!</p>` + q.body, word:w, type:q.type,
+      const w = big ? weakest(f.word) : toAsk(f.word, 1)[0], q = wordQuestion(w, f.word), stick = wz(BATTLES.weapon || '棍子');
+      const ok = await pictureQ({head:scene(), body:`<p class="label">${charged() ? `Your ${stick} glows! Swing it: ×${POWER}!` : `You swing your ${stick}!`}</p>` + q.body, word:w, type:q.type,
         options:q.options, text:q.text, answerIdx:q.answerIdx, helper:helperHTML(),
         onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); wireHelper(q.options.length, q.answerIdx); },
         onAnswer:ok => {   // you swing: a hit knocks it back, or it hops aside
           const fb = sheet.querySelector('.feedback'), sc = sheet.querySelector('.scene');
-          sc.classList.add('swing'); sc.classList.add(ok ? 'hit' : 'miss'); sc.querySelector('.fx').textContent = ok ? 'Hit!' : 'Miss!';
-          if (ok){ left = Math.max(0, left - BATTLES.hits); setHealth(sc.querySelector('.plate'), left, f.health); SFX.thwack(.2); } else SFX.swish(.1);
-          fb.innerHTML += ok ? ' <b>A hit!</b>' : ' You miss.';
+          const power = ok && charged();
+          sc.classList.add('swing'); sc.classList.add(ok ? 'hit' : 'miss'); if (power) sc.classList.add('powerhit');
+          sc.querySelector('.fx').textContent = power ? `Power hit! ×${POWER}` : ok ? 'Hit!' : 'Miss!';
+          if (ok){ left = Math.max(0, left - BATTLES.hits * (power ? POWER : 1)); setHealth(sc.querySelector('.plate'), left, f.health); SFX.thwack(power ? .5 : .2); } else SFX.swish(.1);
+          if (power) shake();
+          fb.innerHTML += power ? ' <b>A power hit!</b>' : ok ? ' <b>A hit!</b>' : ' You miss.';
+          streak = ok && !power ? streak + 1 : 0; showStreak(sc, streak);
         }});
       if (!ok) note = `The ${wz(f.word)} dodges.`;
     }
     if (left <= 0) break;
-    await dodge(f, scene('', 'hiding'), note);
+    await dodge(f, scene('', 'hiding'), note, (ok, sc) => { streak = ok ? streak + 1 : 0; showStreak(sc, streak); });
     note = '';
   }
   closeCard(); playSong(placeSong());
@@ -128,8 +150,10 @@ async function fight(id, opts = {}){
     await infoBox(scene('gone'), `<p class="label center">You win!</p><p class="endmsg">${esc(fill(f.away || `The {${f.word}} runs away.`))}${f.reward ? ` +${f.reward} 🐚` : ''}</p>`);
     return 'won';
   }
-  // Lost: no game over. You're carried back to rest, with your health full; the words you missed come back sooner.
+  // Lost: no game over. You're carried back to rest, with your health full; the words you missed come back sooner. A boss
+  // fight beats you, and you can try again on the spot, your health full (or step back, and come back when you're ready).
   S.health = maxHealth();
+  if (big){ save(); return await tryAgain(scene(), f, opts) ? 'again' : 'back'; }
   const at = [].concat(BATTLES.restAt || []).find(r => !r.if || matches(r.if)) || {};   // the first place to rest whose if matches
   if (at.at){ S.pos = {place:placeOf(at.at), x:at.at[0], y:at.at[1], dir:at.facing || 'down'}; }
   save();
@@ -154,7 +178,7 @@ function battleTurn(f, head, note){
 }
 // The enemy's turn: it hides (head: the scene, with it hiding), then attacks from somewhere (one of its attacks you've
 // caught); hear it and pick it to jump aside. Then it leaps out of there: you jump aside, or it hits you.
-async function dodge(f, head, note){
+async function dodge(f, head, note, after = () => {}){
   const known = w => lvl(w) >= 1 && WORDS[w] && WORDS[w].pic && w !== f.word;
   const mine = shuffle((f.attacks || []).filter(known)), any = shuffle(picWords().filter(known));
   const a = mine[0] || any[0];
@@ -170,6 +194,7 @@ async function dodge(f, head, note){
       sc.querySelector('.from').innerHTML = picHTML(a);
       sc.classList.add('strike'); sc.classList.add(ok ? 'dodged' : 'struck'); sc.querySelector('.fx').textContent = ok ? 'Missed you!' : 'Ouch!';
       SFX.swish(.25); sheet.querySelector('.label').textContent = strikes;   // it strikes!
+      after(ok, sc);
       if (ok) fb.innerHTML += ' <b>You jump aside!</b>';
       else {
         S.health = Math.max(0, health() - f.hits); save(); SFX.thwack(.5);
@@ -177,4 +202,41 @@ async function dodge(f, head, note){
         fb.innerHTML += ' <b>Ouch!</b>';
       }
     }});
+}
+
+// Your streak: STREAK dots under your health, one lit for each right answer in a row; all lit, your stick glows (.charged)
+// and your next right hit counts POWER times over, then they go out again, as they do with a wrong answer.
+const STREAK = 3, POWER = 3;
+const streakHTML = n => `<div class="streak" role="img" aria-label="Right in a row: ${Math.min(n, STREAK)} of ${STREAK}">`
+  + Array.from({length:STREAK}, (_, i) => `<i class="pip${i < n ? ' on' : ''}"></i>`).join('') + '</div>';
+function showStreak(sc, n){
+  const el = sc.querySelector('.streak'); if (el) el.outerHTML = streakHTML(n);
+  if (n === STREAK){ sc.classList.add('charged'); SFX.chime(); }
+  if (n === 0) sc.classList.remove('charged');
+}
+// The card shakes (a power hit; on the map, a boss rearing up), unless you'd rather things didn't move.
+function shake(){
+  if (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  sheet.classList.remove('shaking'); void sheet.offsetWidth; sheet.classList.add('shaking');
+  setTimeout(() => sheet.classList.remove('shaking'), 500);
+}
+// A boss asks the words you know least well (the front of the review list), as the school's exam does: not the same
+// one twice running.
+let lastWeakest = null;
+function weakest(avoid){
+  const ws = reviewOrder(picWords().filter(w => w !== avoid && lvl(w) >= 1));
+  const w = ws.find(x => x !== lastWeakest) || ws[0];
+  return lastWeakest = w;
+}
+// A boss fight has beaten you: Try again (true), straight away, your health full; or Not now (false). What it says: the
+// battle's lost (from the story), or the enemy's, and a tip on eating, once you know 吃.
+function tryAgain(head, f, opts){
+  return new Promise(res => {
+    const said = opts.lost || f.lost || `The {${f.word}} is too strong for you this time.`;
+    const tip = lvl('吃') >= 1 ? `<p class="prompt">${esc(fill('When your health is low, {吃|eat} something from your bag on your turn.'))}</p>` : '';
+    openCard(`${head}<p class="label center">Ouch!</p><p class="endmsg">${esc(fill(said))} Your health is full again.</p>${tip}
+      <div class="actions"><button class="btn" data-a="back" data-b>Not now</button><button class="btn primary" data-a="ok">Try again</button></div>`);
+    on('[data-a=ok]', () => { closeCard(); res(true); });
+    on('[data-a=back]', () => { closeCard(); res(false); });
+  });
 }

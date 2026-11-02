@@ -610,6 +610,15 @@ const SCREENS = [
     click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(1500); }},
   {id: 'battle-boar', title: 'The wild boar', save: 'fighting', why: 'A big enemy: no running away.', run: async () => {
     play(); await wait(100); S.w['野猪'] = {lv: 1, due: 0, ok: 0}; battle('boar'); await wait(1200); }},
+  {id: 'battle-glows', title: 'Three right in a row: your stick glows', save: 'fighting', why: 'In every battle, a dot under your health for each right answer in a row (hitting or jumping aside); all three lit, your stick glows, and your next hit counts ×3. A wrong answer puts them out.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const right = async () => { click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };
+    S.w['野猪'] = {lv: 1, due: 0, ok: 0}; battle('boar'); await wait(1200);
+    click('.act[data-act=hit]'); await wait(400); await right(); await right(); click('.act[data-act=hit]'); await wait(400); await right(); await right(); }},
+  {id: 'battle-power', title: 'A power hit', save: 'fighting', why: 'With your stick glowing, a right answer is a power hit: three times as hard, a bigger burst, and the card shakes. Then the dots start again.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const right = async () => { click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };
+    S.w['野猪'] = {lv: 1, due: 0, ok: 0}; battle('boar'); await wait(1200);
+    click('.act[data-act=hit]'); await wait(400); await right(); await right(); click('.act[data-act=hit]'); await wait(400); await right(); await right();
+    click('.act[data-act=hit]'); await wait(400); click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(600); }},
   {id: 'hurt-map', title: 'Hurt: your health on the map', save: 'hurt', why: 'While you’re hurt, your health shows at the top left: a bar (yellow, under half) and its number, 20/50. Full again, it goes.', run: async () => { play(); await wait(300); }},
   {id: 'hurt', title: 'Hurt: your health, and resting', save: 'hurt', why: 'Your health shows while you’re hurt (a bar, with its number); the old monkey lets you rest.', run: async () => {
     play(); await wait(300); talk(npc('elder')); await wait(600); }},
@@ -1014,7 +1023,13 @@ const SCREENS = [
     await wait(300); }},
   {id: 'cow-wolf', title: 'The bear at the rocks', save: 'cowGap', why: 'Leading the cow home, as you come into the gap between the big rocks, a bear (熊, taught on its card the first time) rears up out of the long grass at you (just the once): it wants the cow! A boss: no running away. (A wolf till 27 October 2026.)', run: async () => {
     play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(2600); }},
-  {id: 'cow-ran', title: 'The cow ran back', save: 'cowRan', why: 'Lose a battle on the way home, and the cow takes fright and runs back to its spring: talk to it there, and it follows you again.', run: async () => {
+  {id: 'bear-fight', title: 'The bear: a boss fight', save: 'cowGap', why: 'Its health right across the top, dark and gold: 80, eight hits (or fewer with power hits). No running away, and it asks the words you know least well.', run: async () => {
+    play(); await wait(100); S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle('bear'); await wait(1200); }},
+  {id: 'bear-try-again', title: 'Beaten by the bear: try again', save: 'cowGap', why: 'No long walk back: your health is full again and the cow is still with you. Try again starts it over on the spot; Not now steps you back down the trail, to come back when you’re ready.', run: async () => {
+    play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const wrong = async () => { click('.opt[data-i="' + ((__q.answerIdx + 1) % 3) + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };
+    S.w['熊'] = {lv: 1, due: 0, ok: 0}; S.health = 10; battle('bear', {lost: 'The {熊} is too strong for you this time. The {牛} is still with you, hiding behind you.', back: {at: [21, 16, 'pasture'], facing: 'up'}});
+    await wait(1200); click('.act[data-act=hit]'); await wait(400); await wrong(); await wrong(); }},
+  {id: 'cow-ran', title: 'The cow ran back', save: 'cowRan', why: 'Lose a battle on the way home (a wolf in the long grass: the bear lets you try again), and the cow takes fright and runs back to its spring: talk to it there, and it follows you again.', run: async () => {
     play(); await wait(100); runSteps(BATTLES.afterLoss[0].do); await wait(600); }},
   {id: 'cow-long-grass', title: 'Not into the long grass!', save: 'cowPines', why: 'Leading the cow home through the dark pines, it stops at the long grass: 我怕狼！ (I’m scared of wolves!). Go first, and chase them off: a wolf leaps out of the grass at you.', run: async () => {
     play(); await wait(200); pl.dir = 'up'; tryStep('up', performance.now()); await wait(1600); }},

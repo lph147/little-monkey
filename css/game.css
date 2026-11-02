@@ -790,6 +790,23 @@ rt.hid{visibility:hidden}
 @keyframes sidejump{40%{translate:-16px -24px}70%{translate:-10px -8px}}
 @keyframes hurt{0%,100%{translate:0;filter:none}20%{translate:-6px 0;filter:brightness(.7) sepia(1) saturate(6) hue-rotate(-35deg)}40%{translate:6px 0}60%{translate:-4px 0;filter:brightness(.7) sepia(1) saturate(6) hue-rotate(-35deg)}}
 @media (prefers-reduced-motion: reduce){.scene .me,.scene .stick,.scene .foe,.scene .pow,.scene .striker{animation:none!important}.scene.hiding .foe{opacity:0}.scene.strike .from{opacity:1}.scene .fx{animation:none!important;opacity:1}}
+/* Your streak (js/battle.js): a dot under your health for each right answer in a row; all three lit, your stick glows and
+   your next hit counts ×3 (.powerhit: a bigger burst, and the card shakes). */
+.streak{display:flex;gap:4px;margin-top:3px;justify-content:flex-end}
+.streak .pip{display:block;width:10px;height:10px;border-radius:50%;background:#C9C2BB;border:2px solid #1E2B26}
+.streak .pip.on{background:#FFD23F;box-shadow:0 0 4px #FFD23F}
+.scene.charged .streak .pip.on{background:#FFB800}
+.scene.charged .stick{filter:drop-shadow(0 0 2px #FFE14A) drop-shadow(0 0 5px #FFB800)}
+.scene.powerhit .pow{background:#FFB800;animation:powbig .55s .15s}
+.scene.powerhit .fx{color:#FFE14A}
+@keyframes powbig{0%{opacity:1;scale:.3}60%{opacity:1;scale:1.6}100%{opacity:0;scale:1.9}}
+.sheet.shaking{animation:shake .12s 4}
+/* A boss fight: its name plate dark and gold, its health a bar right across the top. */
+.scene .plate.bossplate{background:#2A2320;color:#FFE9B0;border-color:#120E0C;box-shadow:0 3px 0 #120E0C}
+.scene .plate.bossplate .spk-py{color:#E9C77A}
+.scene .plate.bossplate .hp{margin-top:3px}
+.scene .plate.bossplate .hpbar{flex:1;width:auto;border-color:#120E0C}
+@media (prefers-reduced-motion: reduce){.sheet.shaking{animation:none}}
 .plate.mine .name{font:600 .8rem var(--pixel);color:var(--jade);display:flex;justify-content:space-between;align-items:baseline;gap:10px}   /* You, and your health's number */
 .plate.mine .hpnum{font-size:.8rem}
 /* Health, yours and an enemy's (js/battle.js): a heart, then a bar, green, yellow under half, red at a fifth or less, that
