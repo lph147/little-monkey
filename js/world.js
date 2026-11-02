@@ -245,7 +245,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -582,10 +582,11 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   },
   // A battle with an enemy (battle: its id), and steps if you win (win). out: it jumps out at you first, as a wild one does
   // from long grass, such as the wolf at the rocks as you lead the cow home; meet: what's said as it begins, instead of
-  // its own. (What happens if you lose: the area's battles' afterLoss.) In a boss fight (its enemy's bossFight), lost: what
-  // you're told then, as you can try again on the spot; back: where Not now puts you ({at, facing}), out of the way.
+  // its own. (What happens if you lose: the area's battles' afterLoss.) In a boss fight (its enemy's bossFight), or one
+  // that says retry (losing it would undo a long walk), you can try again on the spot: lost, what you're told then; back,
+  // where Not now puts you ({at, facing}), out of the way.
   async battle(s, who){
-    const opts = {...(s.meet ? {meet:s.meet} : {}), ...(s.boss ? {boss:true} : {}), ...(s.back ? {back:s.back} : {}), ...(s.lost ? {lost:s.lost} : {})};   // (boss: one you can't run from)
+    const opts = {...(s.meet ? {meet:s.meet} : {}), ...(s.boss ? {boss:true} : {}), ...(s.back ? {back:s.back} : {}), ...(s.lost ? {lost:s.lost} : {}), ...(s.retry ? {retry:true} : {})};   // (boss: one you can't run from)
     if (await (s.out ? wildBattle(s.battle, undefined, opts) : battle(s.battle, opts)) === 'won' && s.win) await runSteps(s.win, who);
   },
   // Characters follow you (follow: their ids, in line, the first right behind you), like Pikachu in Pokémon Yellow; with

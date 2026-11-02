@@ -748,11 +748,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {message:'The hoofprints go right down into a stream, deep and fast. A big cow can wade across, but a little monkey can’t! A dead pine leans out over the water…'}]},
     // the way home with the cow (27 October 2026: the way there was an adventure, the way back just a walk): as you come up
     // to the long grass in the dark pines, it stops, scared of the wolves in it (我怕狼！); go first, and a wolf leaps out
-    // at you; chase it off, and the cow follows you through. (Lose, and you rest at home, the cow still waiting.)
+    // at you; chase it off, and the cow follows you through. (Lose, and you can try again on the spot, or step back out of
+    // the grass, the cow still waiting: decided 2 November 2026, as till then you rested at home and walked all the way back.)
     {if:{place:'darkPines', cow:4, following:{cow:true}, pinesWolf:0, around:[16, 26, 'darkPines', 1]}, do:[{set:{cowWaits:'grass'}}, {follow:[]},
       {say:'cowScared', by:'cow'}, {message:'The {牛} won’t go into the long grass: wolves hide in it! Go first, and chase them off.'}]},
     {if:{place:'darkPines', cow:4, cowWaits:'grass', around:[16, 25, 'darkPines', 1]}, do:[
-      {battle:'wolf', out:true, meet:'A {狼} leaps out of the long grass at you!', win:[{set:{pinesWolf:1, cowWaits:0}}, {follow:['cow']}, {sound:'moo'},
+      {battle:'wolf', out:true, meet:'A {狼} leaps out of the long grass at you!', retry:true, back:{at:[17, 28, 'darkPines'], facing:'up'},
+        lost:'The {狼} is too strong for you this time. The {牛} is still waiting for you.', win:[{set:{pinesWolf:1, cowWaits:0}}, {follow:['cow']}, {sound:'moo'},
         {message:'The {狼} runs off into the pines. The {牛} isn’t scared now: it follows you through the long grass!'}]}]},
     // and up the south slope, at the top of the steps from the pines, it stops again, tired and hungry (我饿了。): pick it
     // some fresh grass by the brook, give it it (我要吃草), and it follows you on, up the steps (the banks are too steep)
@@ -2584,7 +2586,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
     bear: {word:'熊', health:80, hits:10, boss:true, bossFight:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
       meet:'The {熊} roars!', hide:'The {熊} drops down out of sight…', attack:'The {熊} swipes at you!', away:'The {熊} lumbers off into the pines, and doesn’t come back.', reward:10},   // (chapter 1: at the pasture's rocks, as you lead the cow home: in the wolf's place since 27 October 2026)
-    boar: {word:'野猪', health:40, hits:10, boss:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
+    boar: {word:'野猪', health:40, hits:10, boss:true, bossFight:true, attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',
       meet:'The {野猪} snorts and paws the ground!', hide:'The {野猪} crashes off into the trees…', attack:'The {野猪} charges!', away:'The {野猪} squeals and runs off into the trees.', reward:3}
   },
   // Battles: when you can fight (when), what you hit with (weapon) and how much health a hit takes (hits), and what
@@ -3292,7 +3294,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cow:{atLeast:8}}, do:[{sound:'moo'}, {say:'cowHasHome'}]},   // in its home, safe and happy
       {do:[{sound:'moo'}, {message:'The {牛} munches the grass by the road, safe from the wolves, waiting for a home of its own.'}]}   // home, waiting for its own
     ],
-    boar: [{do:[{battle:'boar', win:[{set:{boar:1}}, {message:'The way to the top is clear.'}]}]}],
+    boar: [{do:[{battle:'boar', back:{at:[7, 6, 'falls'], facing:'up'}, win:[{set:{boar:1}}, {message:'The way to the top is clear.'}]}]}],   // (a boss fight: beaten, try again, or step back down the path)
     // chapter 1: the queen bee, out of her old tree. You meet her (her word, said straight away as she's met, as an animal's
     // is: met), she asks what you want, you say honey, and to win her over you play her big word game: six questions, two
     // of them sentences; three wrong, and she buzzes back into her tree, to try again. Win, and she and her swarm follow

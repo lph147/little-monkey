@@ -608,7 +608,7 @@ const SCREENS = [
     play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); };
     battle('snake'); await wait(1200); click('.act[data-act=hit]'); await wait(300); click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(200); click('[data-a=next]'); await wait(900);
     click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(1500); }},
-  {id: 'battle-boar', title: 'The wild boar', save: 'fighting', why: 'A big enemy: no running away.', run: async () => {
+  {id: 'battle-boar', title: 'The wild boar', save: 'fighting', why: 'A smaller boss fight: no running away, its health right across the top, dark and gold, and (if it beats you) try again on the spot.', run: async () => {
     play(); await wait(100); S.w['野猪'] = {lv: 1, due: 0, ok: 0}; battle('boar'); await wait(1200); }},
   {id: 'battle-glows', title: 'Three right in a row: your stick glows', save: 'fighting', why: 'In every battle, a dot under your health for each right answer in a row (hitting or jumping aside); all three lit, your stick glows, and your next hit counts ×3. A wrong answer puts them out.', run: async () => {
     play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const right = async () => { click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };

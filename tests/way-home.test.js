@@ -75,10 +75,20 @@ test('in the dark pines, the cow won’t go into the long grass: 我怕狼！ It
   assert.deepEqual(get(back, '[__said, S.following]'), [[], ['cow']], 'once the wolf is chased off, it doesn’t stop again (after running back to its spring, say)');
 });
 
-test('lose to the wolf in the long grass, and you rest at home; the cow is still waiting by the long grass for you', async () => {
+test('beaten by the wolf in the long grass: try again on the spot, or Not now steps you back out of the grass, beside the cow', async () => {
+  const g = game({place: 'darkPines', x: 16, y: 27, dir: 'up'}, {cowWaits: 'grass'}, []);
+  g.run("fight = async (id, opts) => { __fights.push([id, !!opts.retry, opts.lost, JSON.stringify(opts.back)]); return 'back'; }");
+  await walkTo(g, 16, 26, 'up');
+  assert.deepEqual(get(g, '__fights'), [['wolf', true, 'The {狼} is too strong for you this time. The {牛} is still waiting for you.', '{"at":[17,28,"darkPines"],"facing":"up"}']], 'a battle you can try again');
+  assert.deepEqual([g.run('PLACE'), get(g, '[pl.x, pl.y, pl.dir]')], ['darkPines', [17, 28, 'up']], 'back out of the long grass');
+  assert.deepEqual(get(g, '[here().cowWaits, here().pinesWolf]'), ['grass', 0]);
+  assert.deepEqual(npc(g, 'cow'), ['darkPines', 16, 28], 'the cow still waiting, beside you');
+});
+
+test('lose to a wolf in the dark pines’ long grass (not the one the cow is scared of), and you rest at home; the cow is still waiting by the long grass for you', async () => {
   const g = game({place: 'darkPines', x: 16, y: 27, dir: 'up'}, {cowWaits: 'grass'}, []);
   g.run("__fight = 'lost'");
-  await walkTo(g, 16, 26, 'up');
+  await play(g, "battle('wolf')");
   assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y]')], ['homeGround', [17, 8]], 'you rest under the big tree');
   assert.deepEqual(get(g, '[here().cowWaits, here().pinesWolf, S.following]'), ['grass', 0, []]);
   assert.deepEqual(npc(g, 'cow'), ['darkPines', 16, 28], 'still waiting by the long grass, not back at its spring');

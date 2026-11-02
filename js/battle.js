@@ -76,8 +76,9 @@ async function wildBattle(id, spot = findSpot(), opts = {}){
 // said as it begins, instead of the enemy's own meet. Lost, and once you've come round where you rest, what the story says
 // happens then (the area's battles' afterLoss: the first whose if matches), such as the cow you were leading home
 // running back to its spring.
-// A boss fight (bossFight) that beats you gives 'again' (Try again: it starts over, your health full) or 'back' (Not now:
-// you step back to where opts.back says, the one following you still with you, and nothing else happens).
+// A boss fight (bossFight), or a battle the story lets you try again (opts.retry), that beats you gives 'again' (Try again:
+// it starts over, your health full) or 'back' (Not now: you step back to where opts.back says, the one following you still
+// with you, and nothing else happens).
 async function battle(id, opts = {}){
   let r;
   try {
@@ -115,8 +116,11 @@ async function fight(id, opts = {}){
     + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div></div>`
     + `${healthHTML(left, f.health)}</div>`
     + `<div class="plate mine"><div class="name"><span>You</span><span class="hpnum">${health()}/${maxHealth()}</span></div>${healthHTML(health(), maxHealth())}${streakHTML(streak)}</div></div>`;   // (your number beside You)
+  let first = big && !opts.again;   // (a boss fight begins with a rumble, and the card shakes)
   while (left > 0 && health() > 0){
-    const act = await battleTurn(f, scene(), note || (charged() ? `Your ${wz(BATTLES.weapon || '棍子')} glows: your next hit counts ×${POWER}!` : ''));
+    const turn = battleTurn(f, scene(), note || (charged() ? `Your ${wz(BATTLES.weapon || '棍子')} glows: your next hit counts ×${POWER}!` : ''));
+    if (first){ first = false; SFX.rumble(); shake(); }
+    const act = await turn;
     note = '';
     if (act === 'run'){ closeCard(); toast(fill(f.ran || `You run away from the {${f.word}}.`)); return 'ran'; }
     if (act === 'eat'){
@@ -153,7 +157,7 @@ async function fight(id, opts = {}){
   // Lost: no game over. You're carried back to rest, with your health full; the words you missed come back sooner. A boss
   // fight beats you, and you can try again on the spot, your health full (or step back, and come back when you're ready).
   S.health = maxHealth();
-  if (big){ save(); return await tryAgain(scene(), f, opts) ? 'again' : 'back'; }
+  if (big || opts.retry){ save(); return await tryAgain(scene(), f, opts) ? 'again' : 'back'; }
   const at = [].concat(BATTLES.restAt || []).find(r => !r.if || matches(r.if)) || {};   // the first place to rest whose if matches
   if (at.at){ S.pos = {place:placeOf(at.at), x:at.at[0], y:at.at[1], dir:at.facing || 'down'}; }
   save();

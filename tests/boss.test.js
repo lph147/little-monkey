@@ -107,3 +107,29 @@ test('beaten by a boss: Try again starts it over on the spot, your health full; 
   assert.equal(g.run('__r'), 'back');
   assert.deepEqual(g.get('[PLACE, pl.x, pl.y, pl.dir, S.health]'), ['pasture', 21, 16, 'up', 50], 'stepped back down the trail');
 });
+
+test('the wild boar is a smaller boss fight: its health across the top, and try again on the spot, or step back down the path', async () => {
+  const g = fighting({health: 10, pos: {place: 'falls', x: 7, y: 4, dir: 'up'}});
+  g.run("placePlayer(); globalThis.__r = null; battle('boar', {back: AREA.talk.boar[0].do[0].back}).then(r => { __r = r; })");
+  await g.flush();
+  assert.ok(g.sheet.querySelector('.scene.boss .plate.bossplate'), 'its dark and gold plate');
+  assert.equal(g.foeHealth(), 'Health: 40 of 40', 'still 40 health');
+  await g.choose('hit'); await g.answer(false);
+  await g.answer(false);
+  assert.match(g.sheet.textContent, /The 野猪 \(wild boar\) is too strong for you this time\. Your health is full again\./);
+  g.sheet.querySelector('[data-a=back]').click(); await g.flush();
+  assert.deepEqual(g.get('[__r, PLACE, pl.x, pl.y, pl.dir]'), ['back', 'falls', 7, 6, 'up'], 'a step back down the path, below it');
+});
+
+test('a battle the story lets you try again (retry), such as the wolf the cow is scared of: no boss look, but Try again', async () => {
+  const g = fighting({health: 10, w: {...WORDS, '狼': {lv: 1, due: 0, ok: 0}}});
+  g.run("globalThis.__r = null; battle('wolf', {retry: true}).then(r => { __r = r; })"); await g.flush();
+  assert.equal(g.sheet.querySelector('.plate.bossplate'), null);
+  assert.deepEqual(g.sheet.querySelectorAll('.act').map(b => b.dataset.act), ['hit', 'run'], 'you can still run away from it');
+  await g.choose('hit'); await g.answer(false);
+  await g.answer(false);
+  assert.match(g.sheet.textContent, /Ouch!/);
+  g.sheet.querySelector('[data-a=ok]').click(); await g.flush();
+  assert.equal(g.foeHealth(), 'Health: 30 of 30', 'it starts over');
+  assert.equal(g.run('__r'), null);
+});
