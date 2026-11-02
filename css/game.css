@@ -724,7 +724,7 @@ rt.hid{visibility:hidden}
 .sheet:has(> .qhead) .gloss{min-height:0;margin:0;font-size:.85rem}
 
 /* An animal (or a monkey's word game): its scene down the left, the question beside it, in the middle. */
-.sheet:has(> .scene){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);grid-template-rows:1fr repeat(7,auto) 1fr;column-gap:.8rem}
+.sheet:has(> .scene){height:100%;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr);grid-template-rows:1fr repeat(7,auto) 1fr;column-gap:.8rem}
 .sheet:has(> .scene)::before{content:"";grid-column:2;grid-row:1}   /* an empty first row, so the question sits in the middle */
 .sheet:has(> .scene) > *{grid-column:2}
 .sheet:has(> .scene) > .scene{container-type:inline-size;grid-column:1;grid-row:1 / -1;height:auto;min-height:13rem;margin:0;background:linear-gradient(#9FD4F0 0 48%,#BDE6F7 48% 52%,#7DC15A 52%)}
@@ -861,10 +861,18 @@ rt.hid{visibility:hidden}
 .hud .hpbar{min-width:90px;border-color:#0B1410}
 .hud .hpnum{color:#fff}
 /* A question (an animal's, or filling a gap): from the top down, with the bottom row (what happened, or a helper,
-   and Next) at the bottom, its space kept, so nothing moves when you answer. */
+   and Next) at the bottom, its space kept, so nothing moves when you answer: the answers just under the question (not in
+   the middle of the space left, which moved them when what happened took two lines), Next at the very bottom, what happened's
+   word a little smaller, so two lines of it still fit, and the line over a battle's question kept as tall as it was when
+   the creature strikes (js/battle.js: dodge) (decided 3 November 2026, after playing it). Every card with a scene has the same columns, so the scene never changes width between them
+   (a result card's was wider), and fills the screen's height, so it never changes height either. */
 .sheet:has(> .scene):has(> .opts),.sheet:has(> .scene):has(> .acts){grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr);grid-template-rows:auto auto 1fr auto;row-gap:.4rem}
 .sheet:has(> .scene):has(> .opts)::before,.sheet:has(> .scene):has(> .acts)::before{display:none}
-.sheet:has(> .scene):has(> .opts) > .opts,.sheet:has(> .scene):has(> .acts) > .acts{grid-row:3;align-self:center}
+.sheet:has(> .scene):has(> .opts) > .opts,.sheet:has(> .scene):has(> .acts) > .acts{grid-row:3;align-self:start}
+.sheet:has(> .scene):has(> .opts) > .qfoot,.sheet:has(> .scene):has(> .acts) > .qfoot{align-items:flex-end}
+.sheet:has(> .scene) .qfoot .feedback{line-height:1.25}
+.sheet:has(> .scene):has(> .opts) > .label{min-height:2.9em}   /* (room for two lines over a battle's question, so its answers are in the same place on your turn and its; not on your turn's card, where Run away needs the room) */
+.sheet:has(> .scene) .qfoot .feedback .hz{font-size:1.1rem}   /* (two lines of what happened fit, with its word a little smaller) */
 .sheet:has(> .scene):has(> .opts) > .qfoot,.sheet:has(> .scene):has(> .acts) > .qfoot{grid-row:4;align-self:end}
 /* (your turn in a battle is laid out as its questions are: the scene as wide, what to do where the answers go, and the
    bottom row's space kept, by an invisible Next) */
@@ -937,6 +945,9 @@ rt.hid{visibility:hidden}
   .slotcard .face{width:var(--pic-small);height:var(--pic-small)}
   .slotcard .played{display:none}
   .sheet{padding:8px 10px 8px}
+  .sheet:has(> .scene){grid-template-columns:minmax(0,.7fr) minmax(0,1.4fr)}
+  .sheet:has(> .scene):has(> .opts) > .label{min-height:0}   /* (too little room to keep a second line, on a small phone) */
+  .sheet:has(> .scene) .qfoot .feedback{font-size:.82rem}
   .sheet:has(> .scene):has(> .opts),.sheet:has(> .scene):has(> .acts){grid-template-columns:minmax(0,.7fr) minmax(0,1.4fr);row-gap:.25rem}
   .sheet:has(> .scene) .opt .pix,.sheet:has(> .qhead) .opt .pix{width:var(--pic-small);height:var(--pic-small)}
   .askrow .prompt{font-size:.85rem}

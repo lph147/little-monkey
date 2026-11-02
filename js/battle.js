@@ -218,7 +218,8 @@ async function dodge(f, head, note, after = () => {}, nth = null){   // (nth: [t
       const fb = sheet.querySelector('.feedback'), sc = sheet.querySelector('.scene');
       sc.querySelector('.from').innerHTML = picHTML(a);
       sc.classList.add('strike'); sc.classList.add(ok ? 'dodged' : 'struck'); sc.querySelector('.fx').textContent = ok ? 'Missed you!' : 'Ouch!';
-      SFX.swish(.25); sheet.querySelector('.label').textContent = strikes;   // it strikes!
+      SFX.swish(.25);
+      const lb = sheet.querySelector('.label'); lb.style.minHeight = lb.offsetHeight + 'px'; lb.textContent = strikes;   // it strikes! (the line kept as tall, so nothing under it moves)
       after(ok, sc);
       if (ok) fb.innerHTML += ' <b>You jump aside!</b>';
       else {
