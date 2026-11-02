@@ -28,7 +28,7 @@ function game(pos, area = {}, more = {}){
   g.run("mode = 'play'; save = () => {}; globalThis.__notes = []; globalThis.__sounds = []; globalThis.__asks = []; globalThis.__fights = []");
   g.run("globalThis.__play = false; globalThis.__win = true; globalThis.__fight = 'won'");
   g.run("showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }; showNotice = async (w, o = {}) => { __notes.push('card: ' + w + (o.note ? ' (' + o.note + ')' : '') + (o.quiet ? ', quiet' : ', said')); rec(w).lv = Math.max(rec(w).lv, 1); }");
-  g.run("for (const k of ['moo', 'howl', 'chime', 'bump', 'encounter', 'turn']) SFX[k] = () => { __sounds.push(k); }");
+  g.run("for (const k of ['moo', 'howl', 'chime', 'bump', 'encounter', 'turn', 'roar']) SFX[k] = () => { __sounds.push(k); }");
   g.run("globalThis.__said = []; showDialog = async (who, line) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('')); }");   // (who says what)
   g.run("confirmBox = async (who, text) => { __asks.push(text); return __play; }; encounter = async foe => { if (__win && !S.friends.includes(foe.id)) S.friends.push(foe.id); return __win; }");
   g.run("replyWith = async best => { __said.push('player: ' + best); return true; }; gapQ = async o => { __said.push('gap: ' + o.t.join('') + ' (' + o.gap + ')'); return true; }");
@@ -152,8 +152,9 @@ test('leading the cow home: a bear rears up at the gap between the rocks (just t
   assert.deepEqual(get(g, '__fights'), [], 'not yet, on the trail below the rocks');
   await walkTo(g, 20, 14, 'up');
   assert.deepEqual(get(g, '__fights'), [['bear', 'A {熊} rears up out of the long grass between the rocks! It wants the {牛}!']], 'into the gap: a bear rears up at you (a wolf till 27 October 2026)');
-  assert.ok(get(g, '__sounds').includes('encounter'), 'with a !, as a wild one does from long grass');
+  assert.ok(get(g, '__sounds').includes('roar'), 'roaring as it rears up (a big one: 3 November 2026)');
   assert.equal(get(g, 'here().cowWolf'), 1);
+  assert.ok(get(g, '__said').includes('cow: 谢谢你！'), 'the cow, safe, thanks you');
   assert.match(get(g, '__notes').join(' '), /The 熊 \(bear\) is gone\. The 牛 \(cow\) is safe, and the way home is clear\. Lead it on, back through the pines!/);
   assert.deepEqual(get(g, 'S.following'), ['cow'], 'still following you');
   await walkTo(g, 20, 13, 'up');

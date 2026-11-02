@@ -450,7 +450,8 @@ function drawFoe(cx, cy, now){
   if (!foe || foe.spot) return;   // (one met at its own spot is drawn there: meetHop)
   const X = foe.x*T - cx, Y = foe.y*T - cy, e = now - foe.t0, spr = towardsYou(foe.a, foe.x);   // (looking at you)
   if (foe.state === 'in'){
-    const k = clamp(e / 280, 0, 1), h = Math.max(1, Math.round(spr.height * k)), jump = e > 280 && e < 520 ? Math.round(Math.sin((e - 280) / 240 * Math.PI) * 4) : 0;
+    const rise = foe.big ? RISE_MS : 280;   // (a big one rears up slowly, twice your size)
+    const k = clamp(e / rise, 0, 1), h = Math.max(1, Math.round(spr.height * k)), jump = e > rise && e < rise + 240 ? Math.round(Math.sin((e - rise) / 240 * Math.PI) * (foe.big ? 2 : 4)) : 0;
     figureShadow(foe.a.hz, X, Y, .18);
     b.drawImage(spr, 0, 0, spr.width, h, X - (spr.width - T) / 2, Y + 16 - h - jump, spr.width, h);   // (rising out of the grass, at its size: drawFigure)
     if (e < 600 && TALL_LOOKS.includes(tileAt(foe.x, foe.y).look)){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
@@ -467,9 +468,9 @@ function drawFoe(cx, cy, now){
       b.globalAlpha = 1;
     } else {
       const [dx, dy] = DV[OPP[pl.dir]] ? DV[pl.dir] : [0, 1];
-      const d = e1 / 650 * 20;
-      b.globalAlpha = clamp(1 - e1 / 650, 0, 1);
-      drawFigure(towardsYou(foe.a, foe.x, true), Math.round(X + dx * d), Math.round(Y + dy * d - Math.abs(Math.sin(e1 / 70)) * 2));   // (running off, away from you)
+      const ms = foe.big ? LUMBER_MS : 650, d = e1 / ms * (foe.big ? 32 : 20);   // (a big one lumbers off, slowly and heavily)
+      b.globalAlpha = clamp(1 - Math.max(0, e1 - ms * .4) / (ms * .6), 0, 1);
+      drawFigure(towardsYou(foe.a, foe.x, true), Math.round(X + dx * d), Math.round(Y + dy * d - Math.abs(Math.sin(e1 / (foe.big ? 160 : 70))) * 2));   // (running off, away from you)
       b.globalAlpha = 1;
     }
   }
@@ -705,7 +706,8 @@ function drawWorld(now){
         const tw = (now / 200 + i) % 2 < 1; R(b, PX + dx, PY + dy, 1, 3, '#FFE27A'); R(b, PX + dx - 1, PY + dy + 1, 3, 1, tw ? '#FFFFFF' : '#FFE27A'); });
       continue;
     }
-    const n = e.n, X = Math.round(e.c.x) - cx, Y = Math.round(e.c.y) - cy;
+    const n = e.n, scared = !!(foe && foe.big) && FOLLOWERS.includes(n);   // (whoever's following you, trembling, as a big one rears up: wildBattle, js/battle.js)
+    const X = Math.round(e.c.x) - cx + (scared && Math.floor(now / 70) % 2 ? 1 : 0), Y = Math.round(e.c.y) - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
     if (n.mv && n.mv.run && now - n.mv.t0 < n.mv.dur) drawRunDust(X, Y, now, n.dir);   // (racing you)
     if (n.flies){   // one that flies, such as the queen bee
@@ -732,7 +734,7 @@ function drawWorld(now){
     if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
-    const bub = inClass.has(n.id) ? null : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you; none in a lesson, such as PE's)
+    const bub = inClass.has(n.id) ? null : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you; none in a lesson, such as PE's)
     if (bub) bubbles.push([X+10, Y - 8 - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0), bub.show]);   // (over a big one's head, such as the cow's)
   }
   drawDragonflies(cx, cy, now);

@@ -795,7 +795,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {if:{place:'pasture', cow:4, following:{cow:true}, cowWolf:0, around:[20, 13, 'pasture', 1]}, do:[
       {battle:'bear', out:true, meet:'A {熊} rears up out of the long grass between the rocks! It wants the {牛}!',
         lost:'The {熊} is too strong for you this time. The {牛} is still with you, hiding behind you.', back:{at:[21, 16, 'pasture'], facing:'up'},
-        win:[{set:{cowWolf:1}}, {message:'The {熊} is gone. The {牛} is safe, and the way home is clear. Lead it on, back through the pines!'}]}]},
+        win:[{set:{cowWolf:1}}, {sound:'moo'}, {say:'thanks', by:'cow'}, {message:'The {熊} is gone. The {牛} is safe, and the way home is clear. Lead it on, back through the pines!'}]}]},   // (the cow, safe, thanks you)
     // home with the cow: as you come up to the thirsty monkey by the road, it stops following you, and stands by him (its
     // own home, a pen, comes next)
     {if:{place:'homeGround', cow:4, following:{cow:true}, around:[21, 11, 'homeGround', 2]}, do:[
@@ -2590,7 +2590,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', reward:2},   // (chapter 1: in the pine wood)
     wasp: {word:'黄蜂', health:20, hits:10, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
       hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
-    bear: {word:'熊', health:80, hits:10, boss:true, bossFight:true, nameCard:true, song:'boss', cry:'ROAR!', says:{meet:'bearHungry', angry:'bearAngry', beaten:'bearBeaten'},
+    bear: {word:'熊', health:80, hits:10, boss:true, bossFight:true, big:true, nameCard:true, song:'boss', cry:'ROAR!', says:{meet:'bearHungry', angry:'bearAngry', beaten:'bearBeaten'},
       angry:{at:.5, twice:true, note:'The {熊} stands up tall, angry!', then:'From now on it attacks twice in a row. Listen hard!'}, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
       meet:'The {熊} roars!', hide:'The {熊} drops down out of sight…', attack:'The {熊} swipes at you!', away:'The {熊} lumbers off into the pines, and doesn’t come back.', reward:10},   // (chapter 1: at the pasture's rocks, as you lead the cow home: in the wolf's place since 27 October 2026)
     boar: {word:'野猪', health:40, hits:10, boss:true, bossFight:true, cry:'SNORT!', attacks:['石头', '树', '草', '山', '河'], meetNote:'A wild boar blocks the narrow way to the top!',

@@ -102,6 +102,16 @@ const SFX = {
     o.connect(f); f.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 1.55);
   },
   mooFar: () => SFX.moo(true),
+  roar: () => {   // a bear roaring: a deep, rough growl that swells and falls away, under a rush of breath
+    const a = ac(); if (!a) return;
+    const t = a.currentTime, o = a.createOscillator(), o2 = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain();
+    o.type = 'sawtooth'; o2.type = 'square'; o2.detune.value = 30;
+    [o, o2].forEach(x => { x.frequency.setValueAtTime(70, t); x.frequency.linearRampToValueAtTime(110, t + .35); x.frequency.linearRampToValueAtTime(60, t + 1.2); });
+    f.type = 'lowpass'; f.Q.value = 4; f.frequency.setValueAtTime(300, t); f.frequency.linearRampToValueAtTime(900, t + .35); f.frequency.linearRampToValueAtTime(250, t + 1.2);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.09, t + .15); g.gain.setValueAtTime(.09, t + .7); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.3);
+    o.connect(f); o2.connect(f); f.connect(g); g.connect(a.destination); [o, o2].forEach(x => { x.start(t); x.stop(t + 1.35); });
+    noise(.7, .05);   // (its breath)
+  },
   bleat: () => {   // a goat bleating: a short, wavering maa-aa, higher than a cow's moo
     const a = ac(); if (!a) return;
     const t = a.currentTime, o = a.createOscillator(), lfo = a.createOscillator(), lg = a.createGain(), f = a.createBiquadFilter(), g = a.createGain();

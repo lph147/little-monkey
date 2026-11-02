@@ -162,3 +162,12 @@ test('the bear: its name across the screen, it rears up roaring and says 我饿�
   assert.match(g.sheet.textContent, /You win!/);
   assert.equal(zh(), '我怕你！', 'beaten, it says so as it lumbers off');
 });
+
+test('on the map, the bear rears up out of the grass twice your size, roaring, the screen shaking (3 November 2026)', async () => {
+  const g = fighting({pos: {place: 'pasture', x: 21, y: 14, dir: 'up'}});
+  g.run("placePlayer(); globalThis.__sounds = []; SFX.roar = () => __sounds.push('roar'); SFX.encounter = () => __sounds.push('encounter'); battle = () => new Promise(() => {}); wildBattle('bear')");
+  await g.flush();
+  assert.deepEqual(g.get('[foe.big, foe.a.spr.width, __sounds]'), [true, 32, ['roar']], 'its picture (32 pixels), not its little map sprite (16), and a roar');
+  g.run("foe = null; wildBattle('snake')"); await g.flush();
+  assert.deepEqual(g.get('[foe.big, foe.a.spr.width, __sounds.slice(-1)]'), [false, 16, ['encounter']], 'a snake jumps out as before');
+});

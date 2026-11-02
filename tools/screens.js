@@ -1048,6 +1048,10 @@ const SCREENS = [
     play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; const wrong = async () => { click('.opt[data-i="' + ((__q.answerIdx + 1) % 3) + '"]'); await wait(250); click('[data-a=next]'); await wait(1500); };
     S.w['熊'] = {lv: 1, due: 0, ok: 0}; S.health = 10; battle('bear', {lost: 'The {熊} is too strong for you this time. The {牛} is still with you, hiding behind you.', back: {at: [21, 16, 'pasture'], facing: 'up'}});
     await wait(1200); click('.act[data-act=hit]'); await wait(400); await wrong(); await wrong(); }},
+  {id: 'bear-rears', title: 'The bear rears up', save: 'cowGap', why: 'Into the gap between the rocks with the cow: the bear rears up out of the long grass twice your size (its picture, not its little map sprite), roaring, the screen shaking as it stands; the cow behind you takes fright, a ! over it, trembling.', run: async () => {
+    play(); await wait(200); S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle = () => new Promise(() => {}); pl.dir = 'up'; tryStep('up', performance.now()); await wait(1500); }},
+  {id: 'cow-thanks', title: 'The cow thanks you', save: 'cowGap', why: 'The bear beaten, it lumbers off into the pines, slowly; the cow, safe, moos and thanks you: 谢谢你！', run: async () => {
+    play(); await wait(200); S.w['熊'] = {lv: 1, due: 0, ok: 0}; battle = async () => 'won'; pl.dir = 'up'; tryStep('up', performance.now()); await wait(4500); }},
   {id: 'cow-ran', title: 'The cow ran back', save: 'cowRan', why: 'Lose a battle on the way home (a wolf in the long grass: the bear lets you try again), and the cow takes fright and runs back to its spring: talk to it there, and it follows you again.', run: async () => {
     play(); await wait(100); runSteps(BATTLES.afterLoss[0].do); await wait(600); }},
   {id: 'cow-long-grass', title: 'Not into the long grass!', save: 'cowPines', why: 'Leading the cow home through the dark pines, it stops at the long grass: 我怕狼！ (I’m scared of wolves!). Go first, and chase them off: a wolf leaps out of the grass at you.', run: async () => {

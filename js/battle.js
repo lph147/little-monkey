@@ -55,22 +55,25 @@ function pickFoe(wild){
   lastFoes.push(id); if (lastFoes.length > 2) lastFoes.shift();
   return id;
 }
-// It jumps out of the grass beside you, with a !, then the battle (opts: as for battle).
+// It jumps out of the grass beside you, with a !, then the battle (opts: as for battle). A big one (big, such as the bear)
+// rears up out of it twice your size (its picture, not its little map sprite), roaring, the screen shaking as it stands
+// up, and whoever is following you takes fright (a ! over them, trembling: js/draw.js); beaten, it lumbers off, slowly.
 async function wildBattle(id, spot = findSpot(), opts = {}){
-  const f = ENEMIES[id];
+  const f = ENEMIES[id], big = !!f.big && !!PICTURES[f.word];
   pl.dir = spot.d;
-  foe = {a:{spr:mapSprite(f.word), faces:MAP_SPRITES[f.word].faces, hz:f.word}, x:spot.x, y:spot.y, t0:performance.now(), state:'in'};
+  foe = {a:{spr:big ? sprite(PICTURES[f.word].rows, PICTURES[f.word].palette) : mapSprite(f.word), faces:MAP_SPRITES[f.word].faces, hz:f.word}, x:spot.x, y:spot.y, t0:performance.now(), state:'in', big};
   alertUntil = performance.now() + 1000;
-  SFX.encounter();
-  await sleep(1100);
+  if (big){ SFX.roar(); setTimeout(() => { shakeT = performance.now(); SFX.rumble(); }, RISE_MS); } else SFX.encounter();
+  await sleep(big ? 1700 : 1100);
   const r = await battle(id, opts);
   if (foe){   // beaten, it runs off; if you ran away (or it beat you), it ducks back down into the grass, and you've turned away
     foe.state = r === 'won' ? 'flee' : 'hide'; foe.t1 = performance.now();
     if (r === 'ran'){ pl.dir = dirOf(pl.x - foe.x, pl.y - foe.y); S.pos.dir = pl.dir; SFX.turn(); }
-    await sleep(650); foe = null;
+    await sleep(r === 'won' && big ? LUMBER_MS : 650); foe = null;
   }
   return r;
 }
+const RISE_MS = 500, LUMBER_MS = 1600;   // how long a big one takes to stand up out of the grass, and to lumber off, beaten
 
 // The battle itself, with its own music (the place's comes back afterwards). Gives 'won', 'lost' or 'ran'. opts.meet: what's
 // said as it begins, instead of the enemy's own meet. Lost, and once you've come round where you rest, what the story says
