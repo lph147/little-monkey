@@ -302,12 +302,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(6, 10, 'up', 'hearing what the old monkey calls the cave');
   assert.ok(knows('家'), 'the old monkey should teach 家');
   run("globalThis.__scenes = []; storyScene = async id => { __scenes.push(id); }");   // (the scene plays by itself, with its pictures; its own test plays it)
-  for (const n of [1, 2, 3]){
-    await pressAt(6, 10, 'up', `counting monkey ${n} into the cave`);
-    assert.equal(area().count, n);
-  }
+  await pressAt(6, 10, 'up', 'counting the troop into the cave, a monkey at a time (一, 二, 三), then matching the numbers', 3);   // (in one go, like the school's first lessons: 3 November 2026)
+  assert.equal(area().count, 3);
   for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
-  assert.deepEqual(get('__scenes'), [], 'the third monkey teaches 三: becoming king waits till you talk to him again');
+  assert.deepEqual(get('__scenes'), [], 'becoming king waits till you talk to him again');
   await pressAt(6, 10, 'up', 'talking to the old monkey, with the whole troop home');
   assert.deepEqual(get('__scenes'), ['becomingKing'], 'with the whole troop home, they make you king: the scene, told like the opening');
   assert.ok(knows('王'), 'becoming king teaches 王');

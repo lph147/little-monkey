@@ -3078,17 +3078,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cave:3}, do:[{say:'letsGo', hint:'Lead the way: jump through the waterfall.'}]},
       // the troop moves in. One new word each time you talk to him.
       {if:{cave:4}, do:[{say:'home', teach:'家'}, {newWord:'家'}, {set:{cave:5}}]},
-      // counting the troop in, a number each (waits: a few questions first, if the last new word was just now, decided 1 November
-      // 2026: 家, 一, 二 and 三 came back to back, the old monkey's ! straight after each)
-      {if:{cave:{atLeast:5}, count:0}, waits:true, do:[{message:'A monkey comes in through the water curtain.'}, {say:'count1', teach:'一'}, {newWord:'一'}, {set:{count:1}}]},
-      {if:{cave:{atLeast:5}, count:1}, waits:true, do:[{message:'Another monkey comes in.'}, {say:'count2', teach:'二'}, {newWord:'二'}, {set:{count:2}}]},
-      {if:{cave:{atLeast:5}, count:2}, waits:true, do:[{message:'And another!'}, {say:'count3', teach:'三'}, {newWord:'三'}, {set:{count:3}}, {message:'The whole troop is home.'}]},
+      // counting the troop in: in one go, a monkey at a time, a number each (一, 二, 三, each its own card), then one matching
+      // game on the three (decided 3 November 2026, after playing it: a quick word game before each monkey came in, from 1
+      // November, felt like an interruption every time; like the school's first lessons, the numbers come one after another
+      // and are practised together straight after). (waits: a few questions first, as 家 was just now.) A game that had
+      // counted some in before carries on from the next.
+      {if:{cave:{atLeast:5}, count:{below:3}}, waits:true, do:[
+        {if:{count:0}, message:'A monkey comes in through the water curtain.'}, {if:{count:0}, say:'count1', teach:'一'}, {if:{count:0}, newWord:'一'}, {if:{count:0}, set:{count:1}},
+        {if:{count:1}, message:'Another monkey comes in.'}, {if:{count:1}, say:'count2', teach:'二'}, {if:{count:1}, newWord:'二'}, {if:{count:1}, set:{count:2}},
+        {if:{count:2}, message:'And another!'}, {if:{count:2}, say:'count3', teach:'三'}, {if:{count:2}, newWord:'三'}, {if:{count:2}, set:{count:3}},
+        {message:'The whole troop is home.'},
+        {match:'Show the old monkey the troop’s numbers', words:['一', '二', '三'], stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him the numbers.'}]},
       // the whole troop is home: the next time you talk to him, the prologue ends with the troop making you king (a scene,
       // told like the opening; as in the book, they move in, then make him king), and chapter 1 begins (its title card).
       // (It came straight after the third monkey until 22 October 2026: 三 and 王 in one go.)
-      // (waits: 4 questions after the last new word, 三, so it isn't straight after counting the troop in: a quick word game
-      // with him first, decided 30 October 2026)
-      {if:{chapter:0, count:3}, waits:true, do:[{scene:'becomingKing'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}]},
+      // (no word game first: matching the numbers, straight after counting the troop in, was the practice; with waits, from
+      // 30 October to 3 November 2026, a quick word game came first)
+      {if:{chapter:0, count:3}, do:[{scene:'becomingKing'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}]},
       // chapter 1: at school, he's the teacher. The first time you talk to him there, the class greets him the way children
       // in China do; after that, he gives you a lesson whenever you like (he has a ! when words need practice).
       {if:{school:1}, waits:true, do:[
