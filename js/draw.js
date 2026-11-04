@@ -504,6 +504,13 @@ function placeTalk(cy = camY()){
 // conversation that had it there, till you move or turn, so the two never jump from top to bottom (decided 27 October 2026,
 // after playing it: a speech box at the top, then a new task's message at the bottom).
 const messageTop = () => talkTop || talkTopEnd > Math.max(lastMoveEnd, pl.turnT);
+// Whether a message bh pixels high (on the page), at the bottom of the screen, would cover you or the square you face
+// (decided 4 November 2026: fishing off the pier, near the bottom of the map, a bite's message hid you and your float).
+function underMessage(bh){
+  const h = +cv.clientHeight || 0; if (!h || !bh || typeof pl === 'undefined') return false;
+  const cover = bh * VH*T / h, [, fy] = facing(), low = Math.max(pl.py, fy*T) + T - camY();
+  return low > VH*T - cover;
+}
 // Standing in tall or long grass hides your feet, as in Pokémon: the map where your feet are (the bottom FEET pixels of
 // your square, wherever you are, between two squares as you walk) is drawn again over you, where it's grass. Gives
 // those parts, each [x, y, w, h] in map pixels.

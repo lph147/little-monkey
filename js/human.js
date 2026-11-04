@@ -63,7 +63,19 @@ function rice(g, X, Y, x, y){   // a paddy: shallow muddy water, and rows of you
   if (tileAt(x - 1, y).look !== 'rice' && tileAt(x - 1, y).look !== 'scarecrow') R(g, X, Y, 2, T, '#8E6F44');
 }
 function pier(g, X, Y, x, y){ seaBase(g, X, Y, x, y); R(g, X, Y, 16, 16, '#8A5A30'); for (let i = 0; i < 16; i += 4){ R(g, X, Y + i, 16, 1, '#5E3A1C'); R(g, X, Y + i + 1, 16, 1, '#A8743E'); } }
-function slab(g, X, Y, x, y){ canal(g, X, Y, x, y); R(g, X, Y + 2, T, 12, HW.stone); R(g, X, Y + 2, T, 1, '#B8B3A8'); R(g, X, Y + 13, T, 1, HW.plinth); R(g, X + 7, Y + 2, 1, 12, HW.plinth); }   // a flat stone slab across a stream
+// A bridge of flat stone slabs over a stream: its deck right across its squares, with no water between them (decided 4
+// November 2026: each square was a slab of its own, and the water between them looked like a gap across the bridge),
+// slabs in staggered rows, and a low kerb along each side that has water beside it.
+const WET = ['canal', 'hopStone', 'water', 'sea'];
+function slab(g, X, Y, x, y){
+  R(g, X, Y, T, T, HW.stone);
+  for (let r = 0; r < T; r += 8){ R(g, X, Y + r, T, 1, HW.plinth); R(g, X, Y + r + 1, T, 1, '#ADA89D'); R(g, X + ((x + y * 2 + r / 8) % 2 ? 4 : 11), Y + r, 1, 8, HW.plinth); }
+  const wet = (dx, dy) => WET.includes(tileAt(x + dx, y + dy).look);
+  if (wet(-1, 0)){ R(g, X, Y, 3, T, '#7E796F'); R(g, X, Y, 3, 1, '#B8B3A8'); R(g, X + 1, Y, 1, T, '#B8B3A8'); }
+  if (wet(1, 0)){ R(g, X + T - 3, Y, 3, T, '#7E796F'); R(g, X + T - 2, Y, 1, T, '#B8B3A8'); R(g, X + T - 1, Y, 1, T, '#5E5A52'); }
+  if (wet(0, -1)){ R(g, X, Y, T, 3, '#7E796F'); R(g, X, Y + 1, T, 1, '#B8B3A8'); }
+  if (wet(0, 1)){ R(g, X, Y + T - 3, T, 3, '#7E796F'); R(g, X, Y + T - 2, T, 1, '#B8B3A8'); R(g, X, Y + T - 1, T, 1, '#5E5A52'); }
+}
 Object.assign(LOOKS, {
   earth, lawn, paving, canal, veg, rice, pier, slab,
   scarecrow: rice, coatOnSand: sand, hatOnSand: sand, boat: seaBase, bigBoat: seaBase, netRack: sand,
@@ -191,13 +203,25 @@ Object.assign(OBJECT_ART, {
     R(g, X + 6, Y + 9, 1, 1, '#E0B050'); R(g, X + 10, Y + 9, 1, 1, '#E0B050');
   },
   bambooFence: (g, o) => { const X = o.x * T, Y = o.y * T, W = o.w * T; for (let i = X + 1; i < X + W; i += 3){ R(g, i, Y - 2, 2, 15, '#B9A35A'); R(g, i, Y + 3, 2, 1, '#8E7A3A'); } R(g, X, Y + 1, W, 2, '#8E7A3A'); R(g, X, Y + 8, W, 2, '#8E7A3A'); },
-  bamboo: (g, o) => {   // a clump of bamboo: tall jointed stalks, sprays of thin leaves
-    const X = o.x * T, Y = o.y * T;
-    for (const [dx, hgt, c] of [[3, 34, '#5E8F3A'], [7, 40, '#78A848'], [11, 30, '#5E8F3A'], [13, 37, '#86B556']]){
-      const h = hgt - Math.floor(rnd(o.x, o.y, dx) * 8);
-      R(g, X + dx, Y + 15 - h, 2, h, c); for (let j = Y + 15 - h + 5; j < Y + 15; j += 7) R(g, X + dx, j, 2, 1, '#3E6A26');
-      for (let k = 0; k < 3; k++){ const ly = Y + 15 - h + 2 + k * 8; R(g, X + dx - 4, ly, 4, 1, '#4E8A32'); R(g, X + dx + 2, ly + 2, 5, 1, '#6FA544'); }
+  bamboo: (g, o) => {   // a grove of bamboo: long, straight green stalks with dark joints at even steps, lit down one side, in the shade between them, with sprays of thin leaves, and leafy tops along its edge. Each square keeps to itself, its stalks lining up with those above and below it (decided 4 November 2026: stalks rising over the square above hung over paths, so they looked blocked, and a grove of them was a muddle of green)
+    const X = o.x * T, Y = o.y * T, inGrove = (dx, dy) => tileAt(o.x + dx, o.y + dy).look === 'bamboo';
+    R(g, X, Y, T, T, '#2F5A26');   // the shade among the stalks
+    const leaf = (x, y, dir, c) => { for (let i = 0; i < 5; i++){ const lx = x + dir * i; if (lx >= X && lx < X + T) R(g, lx, y + (i >> 1), 1, 1, c); } };
+    const STALKS = [[0, '#4E8236', '#6FA444'], [4, '#6FA444', '#A6D068'], [8, '#5E9A3C', '#86B556'], [12, '#6FA444', '#A6D068']];
+    STALKS.forEach(([sx, c, lt], k) => {
+      const x = X + sx + Math.floor(rnd(o.x, k, 601) * 2), j0 = Math.floor(rnd(o.x, k, 602) * 9);   // (by column only, so it lines up with the squares above and below)
+      R(g, x, Y, 3, T, c); R(g, x, Y, 1, T, lt); R(g, x + 2, Y, 1, T, '#3E6A26');
+      for (let j = 0; j < T; j++) if ((Y + j + j0) % 9 === 0){ R(g, x - 1, Y + j, 5, 1, '#2A4A20'); R(g, x, Y + j + 1, 3, 1, lt); }   // its joints, a little wider than it
+    });
+    for (let n = 0; n < 2; n++) if (rnd(o.x, o.y, 610 + n) < .6){   // a spray of leaves or two
+      const sx = X + 2 + Math.floor(rnd(o.x, o.y, 612 + n) * 12), sy = Y + 2 + Math.floor(rnd(o.x, o.y, 614 + n) * 10), d = rnd(o.x, o.y, 616 + n) < .5 ? -1 : 1;
+      leaf(sx, sy, d, '#3F7A2E'); leaf(sx, sy + 2, d, '#5E9A3C'); leaf(sx, sy + 4, d, '#3F7A2E');
     }
+    if (!inGrove(0, -1)){   // its edge: a leafy top
+      R(g, X, Y, T, 3, '#3F7A2E');
+      for (let i = 0; i < T; i += 3){ leaf(X + i, Y + 1, -1, '#5E9A3C'); leaf(X + i + 1, Y + 2, 1, '#86B556'); }
+    }
+    if (!inGrove(0, 1)) R(g, X, Y + T - 1, T, 1, '#24451E');   // (its foot, in shadow)
   },
   willow: (g, o) => {   // a weeping willow by the water: a dark trunk, a crown of pale green, long strands hanging down
     const X = o.x * T, Y = o.y * T;
