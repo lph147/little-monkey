@@ -63,7 +63,10 @@ Object.assign(LOOKS, {
 });
 // (what's under them, where the map is of other ground: the village's houses and things on earth, the town's on flagstones)
 const HUMAN_GROUND = {earth, paving, lawn, sand};
-const groundUnder = (look, near) => (g, X, Y, x, y) => (HUMAN_GROUND[tileAt(x, y + 1).look] || HUMAN_GROUND[tileAt(x - 1, y).look] || near)(g, X, Y, x, y);
+// (looking past the object's own squares, so every square under a big one has the same ground: the village's old tree, two
+// squares by two, had a square of the town's flagstones under it, 4 November 2026)
+const groundNear = (x, y, dx, dy) => { const look = tileAt(x, y).look; let k = 1; while (k < 6 && tileAt(x + dx * k, y + dy * k).look === look) k++; return HUMAN_GROUND[tileAt(x + dx * k, y + dy * k).look]; };
+const groundUnder = (look, near) => (g, X, Y, x, y) => (groundNear(x, y, 0, 1) || groundNear(x, y, -1, 0) || groundNear(x, y, 1, 0) || near)(g, X, Y, x, y);
 for (const k of ['jHouse', 'mudHouse', 'whiteWall', 'wallGate', 'jars', 'baskets', 'sacks', 'cart', 'woodpile', 'fishRack', 'teahouse', 'townSchool', 'stallBuns', 'stallShoes', 'stallFruit', 'stallChanger', 'well', 'washLine', 'bookTable', 'oldTree'])
   LOOKS[k] = groundUnder(k, LOOKS[k]);
 
@@ -145,8 +148,11 @@ Object.assign(OBJECT_ART, {
   oldTree: (g, o) => {   // a big old tree, broad and dark, with a ring of stone round it to sit on
     const X = o.x * T, Y = o.y * T, W = o.w * T;
     oval(g, X + W / 2, Y + 25, 15, 6, '#8C877D'); oval(g, X + W / 2, Y + 24, 13, 5, '#B3ADA2'); oval(g, X + W / 2, Y + 24, 9, 3, '#6B4A2E');
-    R(g, X + W / 2 - 3, Y + 4, 6, 20, '#4E3624'); R(g, X + W / 2 - 1, Y + 4, 2, 20, '#6B4A30');
+    // its trunk, reaching right up into its leaves, with two branches spreading under them (so no gap shows between them)
+    R(g, X + W / 2 - 3, Y - 6, 6, 30, '#4E3624'); R(g, X + W / 2 - 1, Y - 6, 2, 30, '#6B4A30'); R(g, X + W / 2 - 4, Y + 20, 8, 4, '#4E3624');   // (wider at its foot)
+    for (const s of [-1, 1]) for (let i = 0; i < 7; i++) R(g, X + W / 2 + s * (2 + i), Y + 1 - i, 2, 2, '#4E3624');
     for (const [dx, dy, r, c] of [[-10, -6, 12, '#2F5A2E'], [10, -8, 13, '#2F5A2E'], [0, -16, 15, '#3A6E36'], [-6, -10, 10, '#4A8040'], [8, -14, 9, '#4A8040']]) oval(g, X + W / 2 + dx, Y + dy, r, Math.round(r * .8), c);
+    for (const dx of [-7, 0, 7]) R(g, X + W / 2 + dx - 1, Y - 1, 3, 1, '#24452A');   // shade under its leaves, where the branches go in
   },
   jars: (g, o) => { const X = o.x * T, Y = o.y * T; for (const [dx, s] of [[4, 6], [11, 5]]){ oval(g, X + dx, Y + 10, s, s + 1, '#6A3A22'); oval(g, X + dx, Y + 8, s - 1, s - 1, '#8A4E2C'); oval(g, X + dx, Y + 4, s - 2, 1, '#2A1A10'); R(g, X + dx - 2, Y + 7, 1, 3, '#B07048'); } },
   baskets: (g, o) => { const X = o.x * T, Y = o.y * T; for (const [dx, dy] of [[1, 6], [8, 7], [4, 0]]){ R(g, X + dx, Y + dy, 7, 7, '#B8904A'); for (let i = 0; i < 7; i += 2) R(g, X + dx + i, Y + dy, 1, 7, '#8E6A30'); R(g, X + dx, Y + dy, 7, 1, '#D8B068'); } },
