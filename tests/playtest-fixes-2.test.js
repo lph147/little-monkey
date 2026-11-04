@@ -34,7 +34,7 @@ test('crawling through the hollow pine in the dark pines: it shakes with each st
   const g = loadGame({dom: true, save: {version: 30, started: true, areas: {1: {chapter: 1, cow: 1}}, pos: {place: 'darkPines', x: 28, y: 7, dir: 'down'}}});
   g.run("mode = 'play'; globalThis.__sfx = []; SFX.scuffle = () => __sfx.push('scuffle'); placePlayer()");
   const log = get(g, "OBJECT_PIECES.filter(p => p.crawl).map(p => [p.look, p.x, p.y, p.w, p.h, !!p.top, !!p.baked])");
-  assert.deepEqual(log, [['hollowLog', 28, 8, 2, 4, true, false]], 'its own pictures, drawn each moment (so it can shake), not baked into the map');
+  assert.deepEqual(log, [['hollowLog', 27, 8, 3, 4, true, false]], 'its own pictures, drawn each moment (so it can shake), not baked into the map');
   g.run('pl.mv = {fx: 28, fy: 7, tx: 28, ty: 8, t0: performance.now() - STEP * .5, dur: STEP}; crawlThrough(performance.now())');
   assert.deepEqual(get(g, '__sfx'), ['scuffle'], 'in at its far end');
   assert.ok(get(g, 'performance.now() - OBJECT_PIECES.find(p => p.crawl).rustle') < 100, 'it shakes');

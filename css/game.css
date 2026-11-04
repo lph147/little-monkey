@@ -738,7 +738,8 @@ rt.hid{visibility:hidden}
 .scene.flowers .mound{background:#5FA84F;box-shadow:inset 0 -6px 0 #4B8A3E}
 .sheet:has(> .scene) > .scene::before{inset:52% 0 0}
 .sheet:has(> .scene) .plate{left:5px;right:5px;top:5px;min-width:0;max-width:none;font-size:.85rem;padding:.2rem .5rem .3rem}
-.sheet:has(> .scene) .plate .spk-zh{font-size:1rem;white-space:normal}
+.sheet:has(> .scene) .plate .spk-zh{font-size:1rem;white-space:normal;word-break:keep-all}   /* (a long name, such as 猫头鹰, kept on one line: its pinyin goes under it) */
+.plate .spk-py{white-space:nowrap}
 .sheet:has(> .scene) .plate .hearts .heart{width:1.2rem;height:1.1rem}
 .sheet:has(> .scene) .foe{right:8%;top:44%}
 .sheet:has(> .scene) .foe .portrait{width:var(--pic-scene);height:var(--pic-scene)}
@@ -946,10 +947,13 @@ rt.hid{visibility:hidden}
   .slotcard .face{width:var(--pic-small);height:var(--pic-small)}
   .slotcard .played{display:none}
   .sheet{padding:8px 10px 8px}
-  .sheet:has(> .scene){grid-template-columns:minmax(0,.7fr) minmax(0,1.4fr)}
+  .sheet:has(> .scene){grid-template-columns:minmax(6.6rem,.7fr) minmax(0,1.4fr)}   /* (never too narrow for a long name's plate, such as 猫头鹰 māotóuyīng) */
+  .sheet:has(> .scene) .plate{left:3px;right:3px;padding:.15rem .35rem .25rem}
+  .sheet:has(> .scene) .plate .spk-py{font-size:max(.8rem,10.5px)}
   .sheet:has(> .scene):has(> .opts) > .label{min-height:0}   /* (too little room to keep a second line, on a small phone) */
   .sheet:has(> .scene) .qfoot .feedback{font-size:.82rem}
-  .sheet:has(> .scene):has(> .opts),.sheet:has(> .scene):has(> .acts){grid-template-columns:minmax(0,.7fr) minmax(0,1.4fr);row-gap:.25rem}
+  .sheet:has(> .scene):has(> .opts),.sheet:has(> .scene):has(> .acts){grid-template-columns:minmax(6.6rem,.7fr) minmax(0,1.4fr);row-gap:.25rem}
+  .sheet:has(> .scene):has(> .acts){grid-template-columns:minmax(0,.7fr) minmax(0,1.4fr)}   /* (a battle's choices need the room; its foes' names are short, such as 蛇) */
   .sheet:has(> .scene) .opt .pix,.sheet:has(> .qhead) .opt .pix{width:var(--pic-small);height:var(--pic-small)}
   .askrow .prompt{font-size:.85rem}
   .askrow .sayBig{width:2.3rem;height:2.3rem;font-size:1rem}

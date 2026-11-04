@@ -1774,8 +1774,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'm': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},
         // the cow's hoofprints in the needles, the right way (the way forks, and the other ways go nowhere)
         'h': {look:'hoofprints', walk:true, landmark:true, onLook:[{do:[{message:'Hoofprints in the soft earth, two marks to each: the cow came this way!'}]}]},
-        // a great pine, fallen along the gully, hollow inside: you crawl through it (it's drawn over you)
-        'O': {look:'hollowLog', walk:true, landmark:true, onLook:[{do:[{message:'A great hollow pine, fallen along the gully. The cow stepped over it, but a little monkey can crawl right through!'}]}]},
+        // a great pine, fallen along the gully, hollow inside, three squares wide: you crawl through its middle (O), and it's
+        // drawn over you; its sides (U) are solid, so you never seem to crawl along its edge (decided 4 November 2026, after
+        // playing it: two squares wide, you were always on one side of it)
+        'O': {look:'hollowLog', partOf:'hollowLog', walk:true, landmark:true, onLook:[{do:[{message:'A great hollow pine, fallen along the gully. The cow stepped over it, but a little monkey can crawl right through!'}]}]},
+        'U': {look:'hollowLog', landmark:true, onLook:[{do:[{message:'A great hollow pine, fallen along the gully. The cow stepped over it, but a little monkey can crawl right through!'}]}]},
         // a stream across the pines, too deep for a little monkey (the cow waded it), and where its hoofprints go in: water,
         // till you knock the dead pine on its bank down with your stick, and it falls across (pastureLog), a bridge (in a game
         // that found the cow before 27 October 2026, it's down already)
@@ -1797,10 +1800,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
         "ppppiiiiiiiiiiiiiiiiihiiiiiiiipppppp",
         "ppppiiipppppppppppppppppppppiipppppp",   // down a narrow gully...
         "ppppiiipppppppppppppppppppppiipppppp",
-        "pppiiiiimpppppppppppppppppppOOpppppp",   // ...where a great hollow pine lies along it (O): crawl through
-        "pppiimiiipppppppppppppppppppOOpppppp",
-        "pppoppppppppppppppppppppppppOOpppppp",
-        "ppppppppppppppppppppppppppppOOpppppp",
+        "pppiiiiimppppppppppppppppppUOUpppppp",   // ...where a great hollow pine lies along it: crawl through its middle (O)
+        "pppiimiiippppppppppppppppppUOUpppppp",
+        "pppopppppppppppppppppppppppUOUpppppp",
+        "pppppppppppppppppppppppppppUOUpppppp",
         "ppppppppppppppppppppppppppppiipppppp",
         "ppppppppppppppppppppppppppppiipppppp",
         "ppppppppppppppppppppppppppppihpppppp",

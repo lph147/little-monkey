@@ -250,3 +250,13 @@ test('a word’s page: where you found it and its example go across the card, un
   const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
   assert.match(css, /\.word\.side > \.wordmore\{grid-column:1 \/ -1/, 'across both columns, so they take fewer lines');
 });
+
+test('an animal’s name plate on its question card never cuts off a long name, such as 猫头鹰 māotóuyīng, on a small phone (4 November 2026)', () => {
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'css', 'game.css'), 'utf8');
+  assert.match(css, /\.sheet:has\(> \.scene\) \.plate \.spk-zh\{[^}]*word-break:keep-all/, 'its characters kept on one line');
+  assert.match(css, /\.plate \.spk-py\{white-space:nowrap\}/, 'its pinyin never broken');
+  const small = css.slice(css.indexOf('@container (max-height:260px)'));
+  assert.match(small, /\.sheet:has\(> \.scene\)\{grid-template-columns:minmax\(6\.6rem,\.7fr\)/, 'on a small phone, the picture with the plate is never too narrow for it');
+  assert.match(small, /\.sheet:has\(> \.scene\):has\(> \.opts\),\.sheet:has\(> \.scene\):has\(> \.acts\)\{grid-template-columns:minmax\(6\.6rem,\.7fr\)/, 'with answers too');
+  assert.match(small, /\.sheet:has\(> \.scene\):has\(> \.acts\)\{grid-template-columns:minmax\(0,\.7fr\)/, 'but a battle’s choices keep their room (its foes’ names are short)');
+});

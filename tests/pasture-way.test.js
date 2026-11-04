@@ -54,8 +54,10 @@ test('the dark pines, a gloomy place of their own between the south slope and th
 
 test('down the gully, a great hollow pine lies along the way: you crawl through it, and it’s drawn over you', async () => {
   const g = game({place: 'darkPines', x: 28, y: 4, dir: 'down'}, {cow: 2});
-  assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'hollowLog')"), [{look: 'hollowLog', x: 28, y: 8, w: 2, h: 4}]);
-  assert.ok([[28, 8], [29, 11]].every(([x, y]) => g.run(`walkable(${x}, ${y})`)), 'you can walk into it');
+  assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'hollowLog')"), [{look: 'hollowLog', x: 27, y: 8, w: 3, h: 4}], 'three squares wide, one object');
+  assert.ok([8, 9, 10, 11].every(y => g.run(`walkable(28, ${y})`)), 'you crawl through its middle');
+  assert.ok([8, 9, 10, 11].every(y => !g.run(`walkable(27, ${y})`) && !g.run(`walkable(29, ${y})`)), 'its sides are solid, so you never crawl along its edge (4 November 2026)');
+  assert.ok(way(g, [28, 6], [28, 13]).length, 'a way through it');
   assert.ok(get(g, "OVER_OBJECTS.includes('hollowLog') && OBJECT_PIECES.find(p => p.look === 'hollowLog').over[0][3] === OBJECT_PIECES.find(p => p.look === 'hollowLog').ph"), 'all of it over you: you vanish inside');
   await goTo(g, 28, 6);
   assert.match(get(g, '__notes').join(' '), /A great pine has fallen along the gully, hollow inside\. The cow stepped over it, but a little monkey can crawl right through!/);
