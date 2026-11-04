@@ -290,3 +290,20 @@ test('the title screen continues a game in another area by loading the page agai
   assert.equal(g.reloads.count, 1);
   assert.equal(JSON.parse(g.storage.get('xiaohouzi-v2-slots')).active, 2, 'game 2 is the one you’re playing now');
 });
+
+test('pacing: in Area 2, everything that teaches a new word waits for six questions’ practice first, so no two come back to back', () => {
+  const g = game({place: 'shore', x: 13, y: 11, dir: 'up'});
+  const A = get(g, 'AREA');
+  assert.equal(A.wordGap.questions, 6);
+  const teaches = steps => steps.some(s => s.newWord || (s.say && s.teach) || s.shop || s.request || s.isIt);
+  for (const [who, parts] of Object.entries(A.talk)) parts.forEach((p, i) => {
+    const news = p.do.filter(s => s.newWord).map(s => s.newWord);
+    if (news.length) assert.ok(p.waits, `${who}'s talk, part ${i + 1}, teaches ${news.join(' ')}: it waits`);
+    assert.ok(news.length <= 1, `${who}'s talk, part ${i + 1}: one new word at a time`);
+  });
+  for (const [ch, t] of Object.entries(A.legend)) for (const p of t.onLook || []) if (p.do.some(s => s.newWord)) assert.ok(p.waits, `legend "${ch}" teaches a word: it waits`);
+  assert.ok(A.animals.every(a => a.waits), 'animals you meet the first time wait too');
+  for (const sh of Object.values(A.shops)) assert.ok(A.talk[sh.who].filter(p => teaches(p.do) && p.if && p.if.new).every(p => p.waits), `${sh.who}'s stall waits before a new word`);
+  // the words: 31, one after another, and the first (人) as you land
+  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 31);
+});
