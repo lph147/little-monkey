@@ -103,7 +103,7 @@ async function battle(id, opts = {}){
 async function fight(id, opts = {}){
   const f = opts.boss ? {...ENEMIES[id], boss:true} : ENEMIES[id], img = `<img class="portrait" alt="" src="${sprite(PICTURES[f.word].rows, PICTURES[f.word].palette).toDataURL()}">`;
   if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
-  else { say(f.word); await sleep(700); }
+  else await sayFully(f.word, 700);   // (its name, said in full before the fight goes on)
   const big = !!f.bossFight;   // (a boss fight: its health across the top)
   if (f.nameCard && !opts.again) await bossNameCard(f, img);   // (a big boss: its name across the screen, the first time each fight)
   let angry = false;   // (a boss that gets angry at so much health left, angry.at: from then on, it attacks twice)

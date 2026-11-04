@@ -1443,7 +1443,7 @@ async function wildAppears(a, spot = findSpot()){
   if (firstMeet){ S.met.push(a.id); save(); }
   const justTaught = lvl(a.hz) === 0, play = AREA.animalsPlay;
   if (justTaught) await showNotice(a.hz, {note:a.meetNote ? fill(a.meetNote) : `A wild ${a.name} jumped out of the ${wz(HIDING_WORD)}! Answer its questions to make friends.`});
-  else { say(a.hz); await sleep(900); }
+  else await sayFully(a.hz, 900);   // (its name, said in full before its line)
   // one of several of its kind to make friends with, such as the bees in their valley (many: how many; counts: what the area
   // remembers, how many so far): this one is one more, unless it's a friend already (one out, that you've won over). With
   // stays, it stays out where it is (if that never shuts a way), so you can tell it from the next: another, the hint before

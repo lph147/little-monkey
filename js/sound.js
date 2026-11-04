@@ -551,6 +551,17 @@ function say(text, onend, who){
     clipSrc = s; s.start(0, ...(buf.span || []));   // just the speech, without the silence around it
   }).catch(() => { if (uttRef === me) sayDevice(text, onend); });   // the clip didn't load (offline before it was kept): the device's voice
 }
+// Say a word, such as an animal's name as it jumps out, and wait till it's said: at least least ms, and if it's still
+// being said then (a long one, such as 猫头鹰, or a clip still loading), till it ends and a moment more, so what comes
+// next never cuts it off (4 November 2026: the owl's name was cut off by its line). Never more than 4 seconds more.
+async function sayFully(text, least){
+  let said = false, wake = null;
+  say(text, () => { said = true; if (wake) wake(); });
+  await sleep(least);
+  if (said || !speechBusy()) return;
+  await new Promise(r => { wake = r; setTimeout(r, 4000); });
+  await sleep(200);
+}
 function sayDevice(text, onend){
   try {
     if (!('speechSynthesis' in window)) { onend && onend(); return; }

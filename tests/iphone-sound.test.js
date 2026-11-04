@@ -34,3 +34,23 @@ test('without audioSession (older phones, other browsers), the sound still start
   game.run("globalThis.navigator = {}; window.AudioContext = class { constructor(){ this.state = 'running'; } }; AC = null");
   assert.equal(game.run('getAC() !== null'), true);
 });
+
+// An animal's name as it jumps out (or an enemy's as a battle begins) is said in full before what comes next, which would
+// otherwise cut it off (4 November 2026: the owl's name, 猫头鹰, was cut off by its line, after a fixed 0.9 seconds).
+test('a name is said in full before the game goes on: a long one waits till it ends, a short one the usual pause', async () => {
+  const game = loadGame({dom: true});
+  const tick = () => new Promise(r => setImmediate(r));
+  game.run(`globalThis.__end = null; globalThis.__done = false;
+    say = (t, onend) => { __end = onend; speaking = true; speakSafety = performance.now() + 5000; };
+    sayFully('猫头鹰', 900).then(() => { __done = true; })`);
+  game.flush(); await tick();
+  assert.equal(game.run('__done'), false, 'after the usual pause, still saying it: it waits');
+  game.run('speaking = false; __end()'); await tick();
+  game.flush(); await tick();
+  assert.equal(game.run('__done'), true, 'said: a moment more, and on');
+  game.run(`__done = false; say = (t, onend) => { onend(); }; sayFully('蛇', 700).then(() => { __done = true; })`);
+  await tick(); assert.equal(game.run('__done'), false, 'a short one: still the usual pause');
+  game.flush(); await tick();
+  assert.equal(game.run('__done'), true);
+  assert.match(game.run("wildAppears.toString() + fight.toString()"), /sayFully\(a\.hz, 900\)[\s\S]*sayFully\(f\.word, 700\)/, 'used as an animal jumps out, and as a battle begins');
+});
