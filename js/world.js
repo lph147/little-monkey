@@ -182,6 +182,7 @@ function promptFor(x, y){
   if (spot) return spot.label || 'Look';
   const t = tileAt(x, y);
   if (t.hop) return hopAhead() ? 'Hop' : '';   // stepping stones, up or down in front of you
+  if (t.ask && lvl(t.word) === 0) return AREA.asking && matches({knows:AREA.asking.word}) && nearestPerson() ? AREA.asking.label : 'Look';   // (something to ask about)
   const look = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
   if (look && look.label) return look.label;   // the tile's own steps say what A does, such as Sleep in a bed
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return t.gather.label;
@@ -199,6 +200,7 @@ const COUNTS = {   // what a counter in the content can count
   animals: c => chapterAnimals(c.chapter || 0, c.place).length,
   animalsLeft: c => chapterAnimals(c.chapter || 0, c.place).length - metCount(c.chapter || 0, c.place),
   shells: () => S.shells,
+  coins: () => S.coins || 0,
   picked: c => (here().picked[c.request] || []).length,
   practised: () => ((AREA.lessonGap || {}).questions || 0) - practiceLeft(),   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
   since: c => Math.max(0, (S.turn || 0) - (here()[c.key] || 0)),   // questions you've answered anywhere since the countFrom step started counting them (key), such as the thirsty monkey's 8 making yoghurt
@@ -222,7 +224,8 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'holding') return Object.entries(v).every(([id, want]) => { const h = here().holding[id]; return want === true ? !!h : want === false ? !h : h === want; });
     if (k === 'wanted') return Object.entries(v).every(([id, want]) => { const h = (here().wanted || {})[id]; return want === true ? !!h : want === false ? !h : h === want; });
     if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
-    if (k === 'canBuy') return canBuy() === v;   // there's something in the shop you could buy now, that you don't have (the 老板's ?)
+    if (k === 'canBuy') return canBuy() === v;
+    if (k === 'inBag') return Object.entries(v).every(([w, want]) => ((S.bag[w] || 0) > 0) === want);   // what's in your bag, such as {'饭':true}   // there's something in the shop you could buy now, that you don't have (the 老板's ?)
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
     if (k === 'hurt') return hurt() === v;   // you've lost health in a battle
@@ -246,7 +249,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {sail:['ask','go'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -427,7 +430,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // key), for a counter that counts them (since), such as the 8 questions the thirsty monkey's yoghurt takes to make.
   countFrom(s){ here()[s.countFrom] = S.turn || 0; save(); },
   async request(s, who, last){ await request(REQUESTS.find(r => r.id === s.request), speaker(who), last); },
-  async shop(s, who){ await shop(speaker(who)); },
+  async shop(s, who){ await shop(speaker(who), typeof s.shop === 'string' ? SHOPS[s.shop] : Object.values(SHOPS).find(sh => sh.who === who) || Object.values(SHOPS)[0]); },   // (shop: which, for an area with several)
   // win: what happens if you win, such as a present; lost: if you don't; practice: a game for nothing but practice. A big
   // game, such as the queen bee's, can have more questions (questions), end at so many wrong answers (misses), have
   // sentences with a word missing among them (gaps), and say what happens if you don't win (lose: a message).
@@ -456,10 +459,10 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
       const need = needsPractice(COUNTING[n - 1]);
       if (await countQ({who, thing:g.thing, n})){ right++; if (need) shells++; }
     }
-    S.shells += shells; save();
+    earn(shells); save();
     const all = right === asks.length;
     if (all){ SFX.fanfare(); if (g.win) await runSteps(g.win, who); }
-    const text = `You counted ${all ? `all ${right}` : `${right} of ${asks.length}`} right.${shells ? ` +${shells} 🐚` : ''}`;
+    const text = `You counted ${all ? `all ${right}` : `${right} of ${asks.length}`} right.${shells ? ` +${shells} ${MONEY()}` : ''}`;
     if (who) await showNarration(text, last); else toast(text);
   },
   async hideSeek(s, who, last){ return hideSeek(who, last); },   // hide and seek with the one you're talking to (js/hide.js)
@@ -473,9 +476,9 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     for (const w of words){ reviewed(w, !missed.has(w)); addToday(w); } save();   // (each word counts as practice, as in the exam)
     closeCard(); SFX.fanfare();   // all matched: on with the conversation
   },
-  async shells(s, who, last){   // shells for you, such as a present (in a conversation, the message waits in the speech box)
-    S.shells += s.shells; save(); SFX.right();
-    const text = fill(s.note || `You get ${s.shells} 🐚.`);
+  async shells(s, who, last){   // shells for you, such as a present (in a conversation, the message waits in the speech box); coins, once they're your money
+    earn(s.shells); save(); SFX.right();
+    const text = fill(s.note || `You get ${s.shells} ${MONEY()}.`);
     if (who) await showNarration(text, last); else toast(text);
   },
   // Food for your bag, if there's room (in a conversation, the message waits in the speech box). With no room, the one
@@ -715,8 +718,52 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async areaEnd(){
     SFX.fanfare();
     await infoBox('⛰️', `<p class="label">${esc(AREA.areaEnd.title)}</p>
-      <div class="stats"><span>${wordsCaught()} of ${ORDER.length} words caught</span><span>${S.friends.length} friends</span><span>🐚 ${S.shells}</span></div>
+      <div class="stats"><span>${wordsCaught()} of ${ORDER.length} words caught</span><span>${S.friends.length} friends</span>${moneyHTML()}</div>
       ${AREA.areaEnd.text.map(t => `<p>${esc(fill(t))}</p>`).join('')}`);
+  },
+  // Something to wear, put on now (wear: its item in the wardrobe), such as the old fisherman's coat: it's yours, and on.
+  wear(s){ if (!S.wardrobe.owned.includes(s.wear)) S.wardrobe.owned.push(s.wear); putOn(s.wear); save(); redress(); },
+  // Coins for you (Area 2's money), such as the fisherman paying you for a fish (note: what you're told).
+  async coins(s, who, last){
+    S.coins = (S.coins || 0) + s.coins; save(); SFX.right();
+    const text = fill(s.note || `You get ${s.coins} 🪙.`);
+    if (who) await showNarration(text, last); else toast(text);
+  },
+  // The money changer changes all your shells for coins, one for one (decided 4 November 2026).
+  async exchange(s, who, last){
+    const n = S.shells;
+    S.coins = (S.coins || 0) + n; S.shells = 0; save(); if (n) SFX.right();
+    const text = n ? `You give the money changer your ${n} 🐚, and he gives you ${n} 🪙, one for each. You have ${S.coins} 🪙.` : `You have no shells to change. You have ${S.coins || 0} 🪙.`;
+    if (who) await showNarration(text, last); else toast(text);
+  },
+  // Paying someone (pay: how much, in the money you have now), such as the boatman's fare; if you can't, you're told how
+  // much you have, and that's the end of it.
+  async pay(s, who){
+    if (money() < s.pay){ await showNarration(`It costs ${s.pay} ${MONEY()}, and you have ${money()}. Help people, and play with your friends, to earn more.`, true); return STOP; }
+    spend(s.pay); save(); SFX.blip();
+    await showNarration(fill(s.note || `You pay ${s.pay} ${MONEY()}.`));
+  },
+  // Off to another place (goTo: its id), arriving at at, facing facing, as through a way there: such as across the sea.
+  async goTo(s){ await goThrough({to:s.goTo, arrive:s.at, facing:s.facing}); },
+  // The child's game (Area 2), 是不是？: so many questions (isIt), each a picture of something you know and 这是…吗？ about
+  // it, which you answer 是 (yes) or 不是 (no). The word asked about is one of the area's isIt you know, half the time the
+  // picture's own, otherwise another, never a look-alike of it.
+  async isIt(s, who){
+    const pool = (AREA.isIt || []).filter(w => WORDS[w] && WORDS[w].pic && lvl(w) >= 1);
+    if (pool.length < 3) return;
+    for (let i = 0; i < s.isIt; i++){
+      const pic = nextWords(pool, 1)[0], others = pool.filter(w => w !== pic && !alike(w, pic) && toneless(w) !== toneless(pic));
+      await isItQ({who:speaker(who), pic, said:Math.random() < .5 || !others.length ? pic : shuffle(others)[0]});
+    }
+  },
+  // On to the next area (sail: its number), such as across the sea on your raft at the end of Area 1 (decided 4 November
+  // 2026): ask first (ask: what the card says, with Go and Not now), then the game is saved and the page loads again in that
+  // area (toArea, js/main.js), where its begin steps run. Your words, friends, shells, bag and clothes come with you.
+  async sail(s){
+    if (s.ask && !await confirmBox(`<span class="ico">${picHTML(PICTURES['木筏'] ? '木筏' : '海')}</span>`, esc(fill(s.ask)), s.go || 'Go', 'Not now')) return STOP;
+    S.area = s.sail; save();
+    toArea(s.sail, SLOT, 'arrive');
+    return STOP;
   },
   // The creature you're talking to scuttles off, out of reach: to somewhere else on the ground it lives on, well away from
   // you, such as a crab you've caught and let go, or one that pinched you.
@@ -796,7 +843,7 @@ async function runSteps(steps, who, ends){
   for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i), !!ends) === STOP) return STOP;
 }
 // Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map.
-const QUIET_STEPS = ['set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly'];
+const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly'];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){
@@ -858,6 +905,18 @@ const talkPart = n => (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
 // so (waits): till then, the character first offers you a quick word game, just for practice, sized to what's left.
 const wordLeft = () => { const n = (AREA.wordGap || {}).questions || 0, t = here().wordTurn; return typeof t === 'number' ? Math.max(0, n - ((S.turn || 0) - t)) : 0; };
 let lastTalk = null;   // {id, part}
+// Before a new word that waits (a talk part, a square's steps or asking what something is: waits), while you've answered
+// fewer than the area's wordGap questions since your last: a quick word game first, just for practice, sized to what's
+// left (never while you know too few words to play). Gives whether to carry on to the new word.
+// who: the character offering it (or, for an animal you haven't met, or something new with nobody near, your own monkey:
+// player, who never becomes your friend for it).
+async function practiseFirst(who){
+  if (!wordLeft() || !canEncounter()) return true;
+  const g = AREA.wordGap, by = AREA.characters.some(c => c.id === who) ? who : 'player', was = S.friends.includes(by);
+  await STEPS.wordGame({wordGame:{ask:g.ask, word:g.word, practice:true, questions:Math.max(2, wordLeft()), notYet:g.notYet}}, by);
+  if (by === 'player' && !was) S.friends = S.friends.filter(f => f !== 'player');
+  return !wordLeft();
+}
 // A character with something new for you: a ! or ? over them, and not what they've just said.
 const hasNews = n => !!keptFor(n) || (!!(AREA.bubbles[n.id] || []).find(b => matches(b.if)) && !!talkPart(n) && !(lastTalk && lastTalk.id === n.id && lastTalk.part === talkPart(n)));
 // Food someone kept for you, when your bag was full (the bag step), now there's room for it: they have a ! for you.
@@ -878,11 +937,7 @@ async function talk(n){
   const outer = caughtBefore, was = talkingTo;   // (a character can stop you during another conversation)
   caughtBefore = caughtCount(); lastLine = null; talkingTo = n.id;   // (nothing said yet to reply to)
   try {
-    if (part.waits && wordLeft() && canEncounter()){   // practise a little first, then on to the new word (never while you know too few words to)
-      const g = AREA.wordGap;
-      await STEPS.wordGame({wordGame:{ask:g.ask, word:g.word, practice:true, questions:Math.max(2, wordLeft()), notYet:g.notYet}}, n.id);
-      if (wordLeft()) return;
-    }
+    if (part.waits && !await practiseFirst(n.id)) return;
     await runSteps(part.do, n.id, true);
   } finally { caughtBefore = outer; talkingTo = was; }
 }
@@ -891,7 +946,7 @@ async function talk(n){
 // and each choice has its own lines and sentence. (last: the request ends the conversation, so its last line says
 // Done, where nothing can come after it.)
 async function request(r, face, last = false){
-  const p = here(), has = p.holding[r.id];
+  const p = here(), has = r.fromBag ? ((S.bag[r.wants] || 0) > 0 ? r.wants : null) : p.holding[r.id];   // (fromBag: what they want is from your bag, such as the granny's rice)
   const want = r.choices ? (p.wanted || {})[r.id] : r.wants;
   const c = has && r.choices ? r.choices[has] : r;   // the lines and sentence for what you've brought
   if (p[r.id] === 'asked' && has && has !== want){   // you brought the wrong thing
@@ -909,10 +964,11 @@ async function request(r, face, last = false){
     const sentence = toks(c.sentence);
     await gapQ({who:face, t:sentence, en:c.sentenceEn, gap:c.gap || has, ...(c.others ? {wrong:c.others} : {})});   // (others: its wrong answers, such as 小 for 大)
     sentence.filter(x => lvl(x) >= 1).forEach(useWord);
-    p[r.id] = 'done'; delete p.holding[r.id]; S.shells += r.reward; save(); SFX.fanfare();
+    p[r.id] = 'done'; if (r.fromBag) S.bag[r.wants]--; else delete p.holding[r.id]; earn(r.reward); save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
-    toast(`+${r.reward} 🐚. Task complete!`);
+    toast(r.reward ? `+${r.reward} ${MONEY()}. Task complete!` : 'Task complete!');
+    if (r.after) await runSteps(r.after, r.from);   // (after: what happens next, such as being paid, in coins)
     if (!talkingTo) await runEvents();   // (in a conversation, what happens next waits till it's over: decided 1 November 2026, when the rocks rolled away unseen while the thirsty monkey thanked you and played his word game)
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
     const nw = [r.teach, r.verb].find(w => w && lvl(w) === 0);   // a new word to teach, if there is one: what they want, or the verb
@@ -924,7 +980,11 @@ async function request(r, face, last = false){
 // What the shop sells now: each thing whose if matches (such as bait, once you have a fishing rod), and something that
 // comes in colours (inColours, js/data.js) in each colour you know, such as a blue headband once you know 蓝色 (and in
 // its own colour, as it is, till you know that); food can be bought again and again, other things once.
-const forSale = () => AREA.shop.items.filter(i => !i.if || matches(i.if)).flatMap(inColours)
+// The area's shops: its one shop (Flower Fruit Mountain's 老板), or several, by their id (Area 2's market stalls: shops), each
+// run by its who.
+const SHOPS = AREA.shops || (AREA.shop ? {shop:AREA.shop} : {});
+const SHOP_ITEMS = () => Object.values(SHOPS).flatMap(sh => sh.items);
+const forSale = (sh = Object.values(SHOPS)[0]) => sh.items.filter(i => !i.if || matches(i.if)).flatMap(inColours)
   .filter(i => (i.item === i.word || lvl(i.colour) >= 1) && (i.eat || i.bag || !here().bought.includes(i.item)));
 const toBag = i => !!(i.eat || i.bag);   // food, or something else for your bag, such as bait
 // Something that comes in colours, as it's called and said once you know its colour's word: 蓝色的头带 (a blue headband),
@@ -939,44 +999,47 @@ function asSaid(i){
     note:c && i.colourNote ? put(i.colourNote) : i.note, bought:c && i.colourBought ? put(i.colourBought) : i.bought, given:c ? `${en} {${i.word}}` : `{${i.word}}`};
 }
 // Every sentence said with a colour in it (asSaid), whatever colours you know: for the voices and CHINESE.md.
-const COLOUR_SENTENCES = () => [...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].filter(i => i.colours && i.colourSentence)
+const COLOUR_SENTENCES = () => [...SHOP_ITEMS(), ...(AREA.wardrobe || [])].filter(i => i.colours && i.colourSentence)
   .flatMap(i => i.colours.map(c => ({zh:i.colourSentence.replace('{colour}', c), en:i.colourSentenceEn.replace(/\{colour\}/g, WORDS[c].en)})));
+// Every sentence of the child's game, 是不是 (AREA.isIt: 这是…吗？ about each of its words), for the voices and CHINESE.md.
+const IS_IT_SENTENCES = () => (AREA.isIt || []).map(w => ({zh:`这 是 ${w} 吗 ？`, en:`Is this ${aWord(w)}?`}));
 // Is there something in the shop you could buy now, that you don't have (not food or for your bag)? (The 老板's ?.)
-const canBuy = () => !!AREA.shop && forSale().some(i => !toBag(i) && S.shells >= i.price);
-async function shop(face){   // the area's shop: what it sells, and buying it by asking for it with 我要…
-  const sh = AREA.shop, items = forSale();
-  await showDialog(face, L[sh.ask]);
+const canBuy = () => Object.values(SHOPS).some(sh => forSale(sh).some(i => !toBag(i) && money() >= i.price));
+async function shop(face, sh = Object.values(SHOPS)[0]){   // a shop: what it sells, and buying it by asking for it with 我要…
+  const items = forSale(sh), nw = sh.teach && lvl(sh.teach) === 0 ? sh.teach : null;   // (its question can teach a word, such as 买)
+  await showDialog(face, L[sh.ask], nw ? {teach:nw} : {});
+  if (nw) await showNotice(nw, {quiet:true});
   if (!items.length){ toast(fill(sh.soldOut)); return; }
   const food = sh.items.filter(i => toBag(i) && S.bag[i.item]).map(i => `${S.bag[i.item]} ${esc(wz(i.item))}`);
   // 我不要, as a reply choice shows it: Chinese, pinyin and English (unless it's switched off). (It had no pinyin till 22
   // October 2026.)
   const no = sh.no ? `<span class="nzh">${sh.no}</span><span class="npy">${WORDS[sh.no].py}</span>${S.replyEn ? `<span class="nen">· ${esc(WORDS[sh.no].en.split(',')[0])}</span>` : ''}` : 'Not now';
   const i = await new Promise(res => {   // a card for each thing for sale: its picture, Chinese, pinyin, English and price
-    openCard(`<div class="qhead">${face}<p class="prompt">You have 🐚 ${S.shells}${food.length ? ' and ' + food.join(', ') : ''}.</p></div>
-      <div class="menu shopgrid">${items.map((it, n) => { const a = asSaid(it); return `<button class="shopitem${S.shells < it.price ? ' dear' : ''}" data-n="${n}" data-label="Choose">
+    openCard(`<div class="qhead">${face}<p class="prompt">You have ${MONEY()} ${money()}${food.length ? ' and ' + food.join(', ') : ''}.</p></div>
+      <div class="menu shopgrid">${items.map((it, n) => { const a = asSaid(it); return `<button class="shopitem${money() < it.price ? ' dear' : ''}" data-n="${n}" data-label="Choose">
         <span class="spic" aria-hidden="true">${picHTML(a.pic)}</span><span class="szh">${a.zh}</span><span class="spy">${a.py}</span>
-        <span class="sen">${esc(a.en)}</span><span class="sprice">🐚 ${it.price}</span></button>`; }).join('')}</div>
+        <span class="sen">${esc(a.en)}</span><span class="sprice">${MONEY()} ${it.price}</span></button>`; }).join('')}</div>
       <div class="actions"><button class="btn" data-a="no" data-b data-label="${sh.no || 'Not now'}">${no}</button></div>`);
     const first = sheet.querySelector('.shopitem'); if (first) first.focus();
     on('[data-a=no]', () => { closeCard(); res(null); });
     sheet.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { closeCard(); res(items[+b.dataset.n]); });
   });
-  if (i) await buy(i, face);
+  if (i) await buy(i, face, sh);
   else if (sh.no){ if (lvl(sh.no) === 0) await showNotice(sh.no, {quiet:true}); await iSay(sh.no); }   // you say 我不要
 }
 // Putting something on (an item of CLOTHES, js/data.js): anything else on with the same word comes off first, such as
-// another headband (one at a time).
+// another headband (one at a time), or worn in the same place (on), such as a headband when you put on a hat.
 function putOn(item){
   const c = CLOTHES.find(x => x.item === item), w = S.wardrobe.wearing;
-  if (c) for (const o of CLOTHES) if (o.word === c.word && o.item !== item && w.includes(o.item)) w.splice(w.indexOf(o.item), 1);
+  if (c) for (const o of CLOTHES) if ((o.word === c.word || (c.on && o.on === c.on)) && o.item !== item && w.includes(o.item)) w.splice(w.indexOf(o.item), 1);
   if (!w.includes(item)) w.push(item);
 }
-async function buy(i, face){   // buying something from the shop by asking for it (forSale's, or the content's own). Gives true if you bought it.
+async function buy(i, face, sh = Object.values(SHOPS)[0]){   // buying something from a shop by asking for it (forSale's, or the content's own). Gives true if you bought it.
   if (!i.word) i = {...i, word:i.item};
-  const sh = AREA.shop, a = asSaid(i);
+  const a = asSaid(i);
   if (lvl(i.word) === 0) await showNotice(i.word, {note:fill(a.note), quiet:true, ...(a.pic !== i.word ? {pic:a.pic} : {})});
   if (toBag(i) && bagFull(i.item)){ await infoBox(face, `<p>You can carry ${(FOOD[i.item] || i).carry || 3} ${esc(wz(i.item))}, and your bag is full. ${i.eat ? 'Eat one first.' : 'Use one first.'}</p>`); return false; }
-  if (S.shells < i.price){ await infoBox(face, `<p>The ${esc(i.item === i.word ? wz(i.item) : `${a.zh} (${a.en})`)} costs ${i.price} 🐚, and you have ${S.shells}. ${esc(fill(sh.earnMore))}</p>`); return false; }
+  if (money() < i.price){ await infoBox(face, `<p>The ${esc(i.item === i.word ? wz(i.item) : `${a.zh} (${a.en})`)} costs ${i.price} ${MONEY()}, and you have ${money()}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const sentence = toks(a.sentence), q = {who:face, t:sentence, en:a.sentenceEn, gap:a.gap, ...(i.colour && a.gap === i.colour ? {wrong:i.colours.filter(c => c !== i.colour)} : {})}, seen = {};   // (the other colours as the wrong answers)
   // Ask for something else, and you've pointed at one thing and asked for another (decided 29 October 2026: he handed it
   // over all the same): he's puzzled, a ? over him (puzzled, in js/draw.js), and asks again (the shop's puzzled, then its
@@ -996,7 +1059,7 @@ async function buy(i, face){   // buying something from the shop by asking for i
     } finally { if (who) delete who.puzzled; }
   }
   sentence.filter(w => lvl(w) >= 1).forEach(useWord);
-  S.shells -= i.price;
+  spend(i.price);
   if (toBag(i)) intoBag(i.item);   // food (or bait) goes in your bag: you can buy it again and again
   else here().bought.push(i.item);
   if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); putOn(i.item); }   // you put it on
@@ -1075,6 +1138,7 @@ async function interact(x, y){
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return goThrough(way);
   const a = animalAt(x, y);
+  if (a && a.waits && lvl(a.hz) === 0 && !await practiseFirst(a.id)) return;   // (an animal whose word is new waits for a little practice: waits)
   if (a) return wildAppears(a, {x, y, d:pl.dir});
   const bd = birdAt(x, y);
   if (bd && BIRD_WORD){ await lookAt({word:BIRD_WORD, colour:bd.colour, note:AREA.birds.note}); shooBird(bd); return; }   // (such as 黄色的鸟, once you know its colour)
@@ -1086,13 +1150,36 @@ async function interact(x, y){
   if (spot) return runSteps(spot.do);
   const t = tileAt(x, y);
   if (t.hop){ const row = hopAhead(); return row ? hopAcross(row) : SFX.bump(); }   // stepping stones: hop onto the row in front of you
-  if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return runSteps(p.do); }   // the tile's own steps, while the story says
+  if (t.ask && lvl(t.word) === 0) return askAbout(t);   // something new to ask a person about (这是什么？)
+  if (t.onLook){ const p = t.onLook.find(p => !p.if || matches(p.if)); if (p) return p.waits && !await practiseFirst(nearestPerson() ? nearestPerson().id : 'player') ? null : runSteps(p.do); }   // the tile's own steps, while the story says (waits: a new word, after a little practice)
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return gather(t, x, y);
   if (canPick(t) && !looksFirst(t)) return pick(t, x, y);
   if (t.fishing && canFish() && !looksFirst(t)) return goFishing(x, y);   // water where fish live, once you have a rod (js/fishing.js)
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
+}
+// Asking a person what something is (Area 2, decided 4 November 2026: the human world's way of finding words; the area's
+// asking): once you know its word (什么), A at something new with a person within ASK_NEAR squares of you has your monkey ask
+// 这是什么？, and they turn to you and tell you (its ask: their line), teaching its word, its card quiet, as in a
+// conversation. A new word waits for a little practice first (practiseFirst), as a character's does. Till you know how to
+// ask, or with nobody near, a message says so.
+const ASK_NEAR = 3;
+const nearestPerson = () => NPCS.filter(n => PEOPLE.has(n.id) && Math.max(Math.abs(n.x - pl.x), Math.abs(n.y - pl.y)) <= ASK_NEAR)
+  .sort((a, c) => (Math.abs(a.x - pl.x) + Math.abs(a.y - pl.y)) - (Math.abs(c.x - pl.x) + Math.abs(c.y - pl.y)))[0] || null;
+async function askAbout(t){
+  const A = AREA.asking, who = nearestPerson();
+  if (!A || !matches({knows:A.word})){ SFX.bump(); toast(fill((A || {}).cantYet || 'You don’t know what this is yet.')); return; }
+  if (!who){ SFX.bump(); toast(fill(A.nobody)); return; }
+  if (!await practiseFirst(who.id)) return;
+  const outer = caughtBefore; caughtBefore = caughtCount();
+  try {
+    await showDialog(speaker('player'), L[A.line]);
+    who.dir = dirOf(pl.x - who.x, pl.y - who.y) || who.dir;   // (they turn to you)
+    await showDialog(speaker(who.id), L[t.ask], {teach:t.word});
+    await showNotice(t.word, {quiet:true, ...(t.note ? {note:fill(t.note)} : {})});
+  } finally { caughtBefore = outer; }
+  if (!talkingTo) await runEvents();
 }
 // A bird sitting somewhere (a character that looks like a bird, its colour, colour), such as one pecking at the wild melons:
 // A shows it, such as 红色的鸟 (a red bird) once you know its colour, as for a bird that lands near you, and it flies off,
@@ -1116,7 +1203,7 @@ const hiddenAt = (x, y) => (AREA.hidden || []).find(h => placeOf(h.at) === PLACE
 function findHidden(h){
   if (h.fruit && !intoBag(h.fruit)){ SFX.bump(); toast(`There’s a ${wz(h.fruit)} here, but your bag has no room for it. Come back for it.`); return; }
   here().finds[h.id] = 1;
-  if (h.shells) S.shells += h.shells;
+  if (h.shells) earn(h.shells);
   save(); SFX.chime(); toast(fill(h.note));
 }
 // An animal hiding in the tall grass, which rustles there: face it from beside it, or step in, to meet it. After you meet

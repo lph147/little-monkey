@@ -123,11 +123,11 @@ test('animals on the map at their sizes: tiny, small, medium and big, at the bot
   const size = ([canvas, px]) => canvas > 16 ? 'big' : px <= 10 ? 'tiny' : px <= 12 ? 'small' : 'medium';
   const by = {}; for (const [w, s] of Object.entries(sizes)) (by[size(s)] = by[size(s)] || []).push(w);
   assert.deepEqual(Object.fromEntries(Object.entries(by).map(([k, ws]) => [k, ws.sort()])), {
-    tiny: ['蜘蛛', '蜜蜂', '蝴蝶', '螃蟹', '青蛙', '老鼠'].sort(), small: ['兔子', '猫头鹰', '鸭子', '乌龟'].sort(), big: ['熊', '牛', '野猪', '鹿', '马'].sort(),
-    medium: ['松鼠', '山羊', '狐狸', '狼', '羊', '蛇', '蜂王', '黄蜂', '海龟'].sort()});
+    tiny: ['蜘蛛', '蜜蜂', '蝴蝶', '螃蟹', '青蛙', '老鼠'].sort(), small: ['兔子', '猫头鹰', '鸭子', '乌龟', '猫'].sort(), big: ['熊', '牛', '野猪', '鹿', '马', '水 牛'].sort(),
+    medium: ['松鼠', '山羊', '狐狸', '狼', '羊', '蛇', '蜂王', '黄蜂', '海龟', '鹅', '鸡', '狗'].sort()});   // (Area 2's: the goose, chicken, dog, cat and water buffalo)
   for (const w of [...by.tiny, ...by.small]) assert.ok(sizes[w][2] <= 3, `${w} stands low in its square`);
   for (const w of ['兔子', '老鼠', '青蛙', '鸭子', '螃蟹', '蜘蛛', '蜜蜂', '蝴蝶']) assert.ok(sizes[w][2] >= 2, `${w} is lifted into the middle of its square, not on its bottom edge, where it looked sunk (31 October 2026)`);
-  for (const w of ['乌龟', '猫头鹰']) assert.equal(sizes[w][2], 0, `${w} sits on what it’s perched on`);
+  for (const w of ['乌龟', '猫头鹰', '猫']) assert.equal(sizes[w][2], 0, `${w} sits on what it’s perched on`);
   assert.equal(game.run("ANIMALS.find(a => a.id === 'deer').spr.height"), 22, 'the deer, big');
   assert.equal(get(game, "ANIMALS.filter(a => a.small).length"), 0, 'no second, smaller look: the butterfly is tiny anyway');
 });

@@ -33,9 +33,10 @@ const short = name => name.replace(/^zh-CN-|Neural$/g, '').replace(/^cmn-CN-/, '
 const code = (voice, text) => crypto.createHash('sha1').update(`${voice.name}|${voice.style || ''}|tidy|${text}|${SAY_AS[text] ? JSON.stringify(SAY_AS[text]) : ''}`).digest('hex').slice(0, 10);
 const settings = voice => ({...voice, rate: null, tidy: true});   // as tools/try-voices.js makes them
 
-// What each of the area's voices says: {role: {voice, texts}}, from the content (role: words, everyone or a character's id).
-function wanted(){
-  const game = loadGame();
+// What each of an area's voices says: {role: {voice, texts}}, from the content (role: words, everyone or a character's id),
+// for the area numbered n, as the page plays it (js/data.js: the area of the save it's given).
+function wantedIn(n){
+  const game = loadGame(n === 1 ? {} : {save:{version:34, area:n, w:{}, started:true}});
   const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
   const AREA = get('AREA'), BANK = get('WORD_BANK');
   const all = new Set();
@@ -47,6 +48,7 @@ function wanted(){
   })(AREA);
   for (const c of get('COLOURED()')) all.add(said(c.zh));   // and what each thing of one colour is called, such as 粉色的花 (js/world.js)
   for (const c of get('COLOUR_SENTENCES()')) all.add(said(c.zh));   // and sentences with a colour in them, such as 我要蓝色的头带 at the shop (js/world.js)
+  for (const c of get('IS_IT_SENTENCES()')) all.add(said(c.zh));   // and the child's game, 这是…吗？ about each word it asks about (Area 2: js/world.js)
 
   // Who says each line (the game's speaker(s.by || who)): a say step in a character's talk is theirs unless
   // it's `by` someone else; elsewhere (events, things you look at) only `by` says who. Requests are their asker's.
@@ -70,6 +72,15 @@ function wanted(){
   const out = {words: {voice: AREA.voices.words, texts: words}, everyone: {voice: AREA.voices.everyone, texts: [...all].filter(t => !BANK[t])}};
   for (const [key, ids] of Object.entries(sayers)) for (const id of ids) if (AREA.voices[id] && !out[id] && AREA.lines[key]) out[id] = {voice: AREA.voices[id], texts: []};
   for (const [key, ids] of Object.entries(sayers)) for (const id of ids) if (out[id] && id !== 'words' && id !== 'everyone' && AREA.lines[key]) out[id].texts.push(said(AREA.lines[key].zh));
+  return out;
+}
+// What every area's voices say, together: each role's texts from all the areas (a role keeps the first area's voice).
+function wanted(){
+  const out = {};
+  for (const n of JSON.parse(loadGame().run('JSON.stringify(AREAS.map(a => a.number))'))) for (const [role, {voice, texts}] of Object.entries(wantedIn(n))){
+    if (!out[role]) out[role] = {voice, texts: []};
+    out[role].texts = [...new Set([...out[role].texts, ...texts])];
+  }
   return out;
 }
 

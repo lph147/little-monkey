@@ -944,7 +944,197 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(or(O(15.7, 9.5, 2.1, 2.3), O(19.3, 9.5, 2.1, 2.3), O(17.5, 12.1, 2.9, 1.8)), SKIN);
     p.eye(15, 8); p.eye(19, 8); p.flat(path([[16.1, 12.6], [17.5, 13.4], [18.9, 12.6]], .5), '#A86A48');
     p.fill(O(25, 6.5, 1, 1.5), '#9FD0E8');                                                        // a drop of sweat
-  }
+  },
+  // Area 2, across the sea: the human world (decided 4 November 2026)
+  '人': p => {   // person: a man standing, facing you, in a blue jacket and dark trousers (unlike the child: smaller, a round head, a bright jacket)
+    const SK = '#F2C9A0';
+    p.fill(or(Rc(12, 22, 3.4, 8), Rc(17.6, 22, 3.4, 8)), '#3A3A44', {edge: true});        // legs
+    p.flat(or(Rc(11.4, 29, 4.4, 2), Rc(17, 29, 4.4, 2)), '#1E1A16');                        // shoes
+    p.fill(Rc(9, 11, 15, 13, 3), '#4F78A8');                                                 // jacket
+    p.fill(or(Rc(5.6, 12, 3.6, 10, 1.6), Rc(23.8, 12, 3.6, 10, 1.6)), '#4F78A8', {edge: true});   // arms
+    p.fill(or(O(7.4, 23, 1.8), O(25.6, 23, 1.8)), SK);                                       // hands
+    p.flat(Rc(9, 19, 15, 1.6), '#2A2A30');                                                   // belt
+    p.flat(Rc(16, 11, 1, 8), '#3E6290');                                                     // the jacket's front
+    p.fill(O(16.5, 6.6, 5, 5.4), SK, {edge: true});                                          // head
+    p.flat(and(O(16.5, 6.6, 5, 5.4), Rc(0, 0, 32, 4.2)), '#2A1E16');                         // hair
+    p.eye(14, 6, '#1E1A16', 1); p.eye(18, 6, '#1E1A16', 1); p.flat(Rc(15.5, 9, 2, 1), '#C4826A');
+  },
+  '鹅': p => {   // goose: white, standing, a long neck and an orange beak with a knob (unlike the duck: floating, a short neck)
+    const W = '#F7F5EE', LT = {light: '#FFFFFF', dark: '#D8D2C4'};
+    p.fill(or(Rc(16, 25, 1.6, 5), Rc(20, 25, 1.6, 5)), '#E8902A');                           // legs
+    p.flat(or(Rc(14, 29.5, 4, 1.4), Rc(18, 29.5, 4, 1.4)), '#C9741A');                        // feet
+    p.fill(Pg([[24, 16], [31, 12], [29.6, 21]]), W, LT);                                      // tail
+    p.fill(O(19, 20, 9.6, 6.4), W, LT);                                                       // body
+    p.fill(O(21, 19, 6, 3.4), '#E2DCCE', {light: '#F2EEE4', dark: '#C4BCA8', edge: true});    // wing
+    p.fill(path([[11, 18], [9.6, 11], [10, 6]], 2.2), W, LT);                                // long neck
+    p.fill(O(10.4, 5.4, 3.8, 3.4), W, {...LT, edge: true});                                   // head
+    p.fill(Pg([[1.4, 6.6], [7, 4.4], [7.4, 8]]), '#E8902A', {dark: '#C9741A'});               // beak
+    p.fill(O(7, 4.4, 1.2), '#D86A1A');                                                       // the knob on it
+    p.eye(9, 4);
+  },
+  '衣服': p => {   // clothes: a padded coat, buttoned at the side, its sleeves out (unlike the hat, the shoes)
+    p.fill(Pg([[9, 4], [23, 4], [31, 14], [27, 18], [24, 14], [24, 30], [8, 30], [8, 14], [5, 18], [1, 14]]), '#7A6A55', {edge: true});
+    p.fill(Pg([[12.5, 4], [19.5, 4], [16, 8.6]]), '#E8D8B8');                                // collar
+    p.flat(path([[16, 8.6], [21, 13], [21, 30]], .6), '#5A4C3C');                            // its edge, across to the side
+    for (const y of [12, 17, 22]) p.flat(Rc(20.6, y, 2, 1.2), '#D9B866');                    // knotted buttons
+    p.flat(Rc(8, 30, 16, 1), '#5A4C3C');
+  },
+  '帽子': p => {   // hat: a wide straw hat, pointed in the middle (unlike the headband: cloth, tied)
+    p.fill(O(16, 21, 15, 5), '#C8A050', {light: '#E2C478', dark: '#9E7A32'});                  // brim
+    p.fill(Pg([[8, 20], [16, 6], [24, 20]]), '#D9B866', {light: '#EED68A', dark: '#B08E44', edge: true});   // crown
+    for (const x of [11, 14, 17, 20]) p.flat(path([[16, 7.4], [x, 19.6]], .4), '#B8964A');     // the weave
+    p.flat(and(O(16, 21, 15, 5), not(O(16, 21, 13.4, 3.6))), '#A88440');
+    p.flat(Rc(8.6, 19, 14.8, 1.6), '#6A4A2A');                                               // its band
+  },
+  '井': p => {   // well: a round stone well with a little tiled roof and a bucket (unlike the house: walls and a door)
+    p.fill(Rc(5, 6, 3, 18), '#8A5A32'); p.fill(Rc(24, 6, 3, 18), '#8A5A32');                 // posts
+    p.fill(Pg([[1, 8], [16, 2], [31, 8], [28, 10], [4, 10]]), '#56616C', {edge: true});       // roof
+    p.fill(Rc(15, 9, 2, 6), '#5A4630'); p.fill(Rc(12, 14, 8, 6, 1), '#A8743E', {edge: true});   // rope and bucket
+    p.fill(and(O(16, 25, 13, 6), Rc(0, 21, 32, 11)), '#9A9488');
+    p.fill(Rc(3, 22, 26, 6), '#B7B1A4', {edge: true});                                       // stone sides
+    for (const x of [7, 13, 19, 25]) p.flat(Rc(x, 22, 1, 6), '#8A847A');
+    p.fill(O(16, 22, 13, 3), '#C9C3B4'); p.flat(O(16, 22, 10, 2), '#2A3A4A');                 // its dark water
+  },
+  '房子': p => {   // house: white walls and a dark tiled roof, curling up at its ends (unlike 家: a little house with a red roof)
+    p.fill(Rc(4, 15, 24, 14), '#F0ECE2', {dark: '#D0C9BA'});                                   // walls
+    p.fill(Rc(4, 26, 24, 3), '#8C877D');                                                       // stone base
+    p.fill(Rc(13, 18, 6, 11), '#5E3B22', {edge: true}); p.dot(17, 23, '#E0B050');             // door
+    for (const x of [6, 21]){ p.fill(Rc(x, 18, 5, 5), '#6E4A2A', {edge: true}); p.flat(or(Rc(x + 1, 19, 1, 3), Rc(x + 3, 19, 1, 3)), '#D9C49A'); }   // lattice windows
+    p.fill(Pg([[0, 16], [3, 9], [29, 9], [32, 16]]), '#3C4347', {light: '#5B6369', dark: '#272C2F'});   // roof
+    for (const x of [5, 9, 13, 17, 21, 25]) p.flat(Rc(x, 10, 1, 5), '#272C2F');
+    p.fill(or(Rc(1, 6.6, 30, 2.4), O(1.6, 6.4, 1.6), O(30.4, 6.4, 1.6)), '#272C2F', {light: '#4A5257'});   // the ridge, its ends curling up
+  },
+  '门': p => {   // door: a pair of wooden doors in a frame, with round rings (unlike the house: only its door)
+    p.fill(Rc(5, 3, 22, 28), '#8A5A34', {edge: true});                                         // frame
+    p.fill(Rc(7, 5, 18, 26), '#6A3A22');
+    p.fill(Rc(7.6, 5.6, 8, 25), '#7A4428', {light: '#965A36', dark: '#5A3018'}); p.fill(Rc(16.4, 5.6, 8, 25), '#7A4428', {light: '#965A36', dark: '#5A3018'});
+    for (const y of [9, 15, 21, 27]) p.flat(Rc(7.6, y, 17, 1), '#5A3018');                     // its planks' battens
+    p.fill(and(O(13.6, 17, 2.4), not(O(13.6, 17, 1.2))), '#E0B050'); p.fill(and(O(18.4, 17, 2.4), not(O(18.4, 17, 1.2))), '#E0B050');   // rings
+    p.fill(Rc(3, 1, 26, 3), '#3C4347');                                                       // a strip of roof over it
+  },
+  '鸡': p => {   // chicken: a white hen, side on, with a red comb (unlike the bird: little, blue; unlike the goose: a long neck)
+    const W = '#F7F5EE', LT = {light: '#FFFFFF', dark: '#D8D2C4'};
+    p.fill(or(Rc(14, 24, 1.6, 6), Rc(18, 24, 1.6, 6)), '#E8A030');
+    p.flat(or(Rc(12, 29.6, 4, 1.4), Rc(16, 29.6, 4, 1.4)), '#C98020');
+    p.fill(Pg([[22, 18], [30, 6], [31, 16], [27, 22]]), W, LT);                                // tail feathers, up
+    p.fill(O(17, 19, 9, 7), W, LT);                                                           // body
+    p.fill(O(19, 19, 5.6, 3.6), '#E2DCCE', {dark: '#C4BCA8', edge: true});                    // wing
+    p.fill(O(9.4, 10, 4.6, 4.4), W, {...LT, edge: true});                                     // head
+    p.fill(or(O(8, 5, 1.6), O(10.4, 4.6, 1.6), O(12.6, 5.6, 1.4)), '#D8342C');               // comb
+    p.fill(O(6.6, 14, 1.4, 2), '#D8342C');                                                    // wattle
+    p.fill(Pg([[1.6, 10.6], [5.6, 9], [5.6, 12.2]]), '#E8A030');                              // beak
+    p.eye(7, 8);
+  },
+  '饭': p => {   // rice: a bowl heaped with white rice, and chopsticks (unlike the bowl: empty, blue-striped)
+    p.fill(or(path([[18, 2], [27, 15]], .9), path([[22, 2], [29, 14]], .9)), '#C08A50', {dark: '#8A5A30'});   // chopsticks
+    p.fill(O(16, 15, 11.5, 6.4), '#FAF8F2', {light: '#FFFFFF', dark: '#E2DCCE'});               // the heap of rice
+    for (const [x, y] of [[10, 13], [14, 11], [19, 12], [22, 15], [13, 16], [17, 15]]) p.flat(Rc(x, y, 2, 1), '#E8E2D4');   // its grains
+    p.fill(Rc(12, 26, 8, 3), '#C9C3B4');
+    p.fill(and(O(16, 17, 13, 11), Rc(0, 17, 32, 16)), '#B8483A', {light: '#D06050', dark: '#8A3028'});   // a red bowl
+    p.flat(and(O(16, 17, 13, 11), Rc(0, 21, 32, 1.4)), '#E0B050');
+  },
+  '钱': p => {   // money: a string of copper coins with square holes (unlike the shells)
+    p.fill(path([[4, 4], [8, 10], [12, 16], [18, 20], [24, 24]], .6), '#B03A2A');               // the red string through them
+    for (const [x, y] of [[8, 10], [13, 16], [19, 20], [25, 25]]){ p.fill(O(x, y, 5.4, 5.4), '#C89A3E', {light: '#E8C060', dark: '#9A7020', edge: true}); p.flat(Rc(x - 1.4, y - 1.4, 3, 3), '#3A2A1E'); }
+  },
+  '网': p => {   // net: a fishing net hung between two poles, its mesh in squares, floats along the top
+    p.fill(or(Rc(3, 2, 2.6, 29), Rc(26.4, 2, 2.6, 29)), '#8A5A32', {edge: true});              // poles
+    p.flat(and(Rc(5.6, 6, 20.8, 22), or(...[8, 12, 16, 20, 24].map(x => Rc(x, 6, 1, 22)), ...[6, 10, 14, 18, 22, 26].map(y => Rc(5.6, y, 20.8, 1)))), '#D8CDA8');   // the mesh
+    for (const x of [9, 14, 19, 24]) p.fill(O(x, 5.6, 1.6), '#E8902A');                       // floats
+    p.flat(Rc(5.6, 5, 20.8, 1), '#6A5A38');
+  },
+  '船': p => {   // boat: a little wooden fishing boat with a woven roof, on the water (unlike the raft: logs tied together)
+    p.fill(Rc(0, 25, 32, 6, 2), '#6FB7E8', {light: '#A8D8F5', dark: '#4A93CC'});
+    p.fill(Pg([[1, 17], [31, 17], [27, 26], [5, 26]]), '#8A5A30', {light: '#A8743E', dark: '#5E3A1C', edge: true});   // hull
+    p.flat(Rc(3, 20, 26, 1), '#6A4220');
+    p.fill(and(O(16, 17, 8.6, 7), Rc(0, 9, 32, 8)), '#B8A270', {dark: '#8C7A50'});              // the woven roof
+    for (const x of [10, 13, 16, 19, 22]) p.flat(Rc(x, 11, 1, 6), '#8C7A50');
+  },
+  '狗': p => {   // dog: a brown dog, sitting, ears flopped down, its tongue out (unlike the wolf: grey, howling; unlike the fox: orange, pointed ears)
+    const B = '#B5793F', LT = {light: '#D49A5E', dark: '#8A5A2A'};
+    p.fill(path([[23, 26], [28, 22], [29, 17]], 1.6), B, LT);                                 // tail, up
+    p.fill(O(18, 23, 7.6, 7), B, LT);                                                         // body
+    p.flat(O(14, 24, 3.6, 5), '#E2B67A');                                                     // chest
+    p.fill(or(Rc(11, 22, 3, 9), Rc(16, 23, 3, 8)), B, {...LT, edge: true});                    // front legs
+    p.fill(O(13, 12, 7, 6.4), B, {...LT, edge: true});                                        // head
+    p.fill(or(O(6.6, 13, 2.4, 5), O(19.4, 13, 2.4, 5)), '#7A4A22', {edge: true});             // floppy ears
+    p.fill(O(13, 15.6, 3.6, 2.6), '#E2B67A');                                                 // muzzle
+    p.fill(O(13, 14, 1.4, 1), '#2A1A10');                                                     // nose
+    p.fill(Rc(12.4, 17, 2, 2.6, 1), '#E0607A');                                               // tongue
+    p.eye(10, 10); p.eye(15, 10);
+  },
+  '包子': p => {   // steamed bun: round and white, pleated on top, in a bamboo steamer (unlike the rice: in a bowl)
+    p.fill(Rc(2, 21, 28, 9, 2), '#C9A060', {light: '#E0BC78', dark: '#9E7A40'});              // the steamer
+    for (const x of [5, 9, 13, 17, 21, 25]) p.flat(Rc(x, 22, 1, 7), '#A8844A');
+    p.fill(O(16, 17, 11, 7.4), '#F6EFE2', {light: '#FFFFFF', dark: '#E0D6C2'});                // the bun
+    for (let i = 0; i < 5; i++) p.flat(Cp(16, 11, 8 + i * 4, 16, .5), '#D9CDB4');            // its pleats
+    p.fill(O(16, 11, 2.4, 1.6), '#EDE3D0');
+    for (const x of [9, 15, 21]) p.flat(path([[x, 7], [x + 1, 4], [x, 1]], .5), '#DCE4EA');    // steam
+  },
+  '鞋': p => {   // shoes: a pair of black cloth shoes with white soles
+    for (const [x, y] of [[2, 13], [13, 20]]){
+      p.fill(Pg([[x, y + 6], [x + 4, y], [x + 13, y], [x + 17, y + 4], [x + 17, y + 8], [x, y + 8]]), '#2A2A2A', {light: '#4A4A4A', dark: '#141414', edge: true});
+      p.fill(Rc(x, y + 7, 17, 2.4), '#F2EEE4', {dark: '#C9C3B4'});                              // the sole
+      p.flat(O(x + 9, y + 2, 3.4, 1.4), '#5A5A5A');                                           // the opening
+    }
+  },
+  '茶': p => {   // tea: a teapot and a little cup of green tea (unlike water: a drop; unlike 喝: a drink with a straw)
+    p.fill(path([[22, 15], [28, 11], [30, 8]], 1.2), '#5E8F8A', {dark: '#3E6F6A'});            // spout
+    p.fill(and(O(16, 18, 10, 9), Rc(0, 10, 32, 22)), '#7AB0A8', {light: '#9AD0C8', dark: '#4E8A82'});   // pot
+    p.fill(and(O(5.6, 17, 4, 4.4), not(O(5.6, 17, 2.2, 2.6))), '#5E8F8A');                    // handle
+    p.fill(Rc(10, 8, 12, 3, 1), '#5E8F8A', {edge: true}); p.fill(O(16, 7, 2, 1.4), '#4E7A74'); // lid
+    p.fill(Rc(21, 23, 9, 7, 2), '#F4F1EA', {dark: '#D0C9BA', edge: true});                    // cup
+    p.flat(Rc(22, 23.6, 7, 1.6), '#8AB050');                                                  // the green tea in it
+  },
+  '孩子': p => {   // child: a small child, a round head with two bunches of hair, a bright orange jacket (unlike the person: grown up, blue)
+    const SK = '#F4D0A8';
+    p.fill(or(Rc(12.6, 24, 3, 6), Rc(17.4, 24, 3, 6)), '#5A4632', {edge: true});
+    p.flat(or(Rc(12, 29, 4, 2), Rc(17, 29, 4, 2)), '#1E1A16');
+    p.fill(Rc(10, 17, 13, 9, 3), '#E8A33C');                                                  // jacket
+    p.fill(or(Rc(7, 18, 3.4, 6, 1.6), Rc(22.6, 18, 3.4, 6, 1.6)), '#E8A33C', {edge: true});
+    p.fill(or(O(8.6, 24.6, 1.6), O(24.4, 24.6, 1.6)), SK);
+    p.fill(O(16.5, 10.6, 6.6, 6.6), SK, {edge: true});                                        // a big round head
+    p.flat(and(O(16.5, 10.6, 6.6, 6.6), Rc(0, 0, 32, 7.4)), '#2A1E16');                      // hair,
+    p.fill(or(O(9.4, 5, 2.4), O(23.6, 5, 2.4)), '#2A1E16');                                    // in two bunches
+    p.eye(13, 10, '#1E1A16', 1); p.eye(18, 10, '#1E1A16', 1);
+    p.flat(or(O(11.6, 13.6, 1.2, .8), O(21.4, 13.6, 1.2, .8)), '#F2A0A0');                   // rosy cheeks
+    p.flat(Rc(15.5, 14, 2, 1), '#C4826A');
+  },
+  '书': p => {   // book: a stack of string-bound books, one open on top
+    for (const [y, c] of [[23, '#3E5A86'], [17, '#C23A2E']]){
+      p.fill(Rc(4, y, 24, 6), c, {edge: true}); p.flat(Rc(6, y + 1, 21, 4), '#F2EEE4');       // cover and pages
+      p.flat(Rc(4, y, 3, 6), c); for (const dy of [1, 3, 5]) p.flat(Rc(4.6, y + dy, 1.6, .8), '#F2EEE4');   // bound with string
+    }
+    p.fill(Pg([[3, 8], [16, 11], [16, 17], [3, 14]]), '#F4F1EA', {dark: '#D0C9BA', edge: true});   // an open book on top
+    p.fill(Pg([[16, 11], [29, 8], [29, 14], [16, 17]]), '#F4F1EA', {dark: '#D0C9BA', edge: true});
+    for (const x of [6, 9, 12, 19, 22, 25]) p.flat(path([[x, 10.4], [x, 14]], .4), '#4A4A4A');   // its writing, in columns
+  },
+  '猫': p => {   // cat: a grey tabby, sitting, facing you, green eyes, its tail curled round (unlike the fox: orange, a pointed snout)
+    const G = '#A39C92', LT = {light: '#C2BCB2', dark: '#7E776E'};
+    p.fill(path([[22, 29], [28, 27], [29, 21]], 1.5), G, LT);                                 // tail
+    p.fill(O(16, 23, 8, 7.4), G, LT);                                                         // body
+    p.flat(O(16, 25, 3.6, 4.6), '#ECE8E0');                                                   // pale chest
+    p.fill(or(Rc(11.6, 26, 3, 4.4, 1), Rc(17.4, 26, 3, 4.4, 1)), '#ECE8E0', {edge: true});   // white paws
+    p.fill(or(Pg([[7.6, 10], [8.6, 2], [13.6, 7]]), Pg([[24.4, 10], [23.4, 2], [18.4, 7]])), G, LT);   // pointed ears
+    p.flat(or(Pg([[9, 8.6], [9.4, 4.4], [12, 7]]), Pg([[23, 8.6], [22.6, 4.4], [20, 7]])), '#F2A0A8');
+    p.fill(O(16, 12, 8, 6.4), G, {...LT, edge: true});                                        // head
+    for (const x of [13, 16, 19]) p.flat(Rc(x, 6.6, 1, 2.4), '#6E675E');                     // stripes
+    p.fill(or(O(12.4, 11.4, 1.6, 1.8), O(19.6, 11.4, 1.6, 1.8)), '#3FA34F');                  // green eyes
+    p.flat(or(Rc(12, 10.4, 1, 2.4), Rc(19.2, 10.4, 1, 2.4)), '#1E1A16');
+    p.fill(O(16, 14.4, 1.2, .8), '#F2A0A8');                                                  // nose
+    p.flat(or(path([[4, 13], [10, 14]], .3), path([[4, 16], [10, 15]], .3), path([[22, 14], [28, 13]], .3), path([[22, 15], [28, 16]], .3)), '#F4F1EA');   // whiskers
+  },
+  '风': p => {   // wind: swirling gusts, and leaves blown along on them
+    for (const [y, r] of [[8, 9], [16, 11], [24, 8]]) p.fill(path([[2, y], [8, y - 1.6], [16, y], [16 + r * .6, y - 2], [16 + r * .8, y - 5], [16 + r * .4, y - 6.4], [16 + r * .1, y - 4.6]], 1), '#CFE9F7', {light: '#FFFFFF', dark: '#8FC0DE'});
+    for (const [x, y, c] of [[26, 22, '#E07B39'], [22, 28, '#D9B03A'], [29, 9, LEAF]]) p.fill(O(x, y, 2.6, 1.6), c, {edge: true});   // leaves
+  },
+  '歌': p => {   // song: musical notes floating up, as when someone sings
+    p.fill(O(8, 25, 3.8, 3), '#3A3A44', {light: '#5A5A66'}); p.fill(Rc(10.4, 8, 1.8, 17), '#3A3A44');   // a note
+    p.fill(O(20, 22, 3.8, 3), '#3A3A44', {light: '#5A5A66'}); p.fill(Rc(22.4, 5, 1.8, 17), '#3A3A44');   // joined to another
+    p.fill(Pg([[10.4, 8], [24.2, 5], [24.2, 9], [10.4, 12]]), '#3A3A44');
+    p.fill(O(28, 13, 2.4, 1.8), '#C23A2E'); p.fill(Rc(29.4, 4, 1.2, 9), '#C23A2E');           // and a little red one
+    p.flat(path([[30.6, 4], [32, 7]], .5), '#C23A2E');
+  },
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops
   p.fill(or(O(15.5, 17, 10.5, 9), O(23, 21.5, 4.6, 4)), c);

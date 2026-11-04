@@ -7,12 +7,26 @@ const VW = 15, VH = 10;
 
 /* ================= DATA ================= */
 // The rest of the engine uses these names. They are filled in from the content files.
-const AREA = FLOWER_FRUIT_MOUNTAIN;   // the area being played (the only one so far)
+// The areas, in story order. The game plays one at a time (AREA): the one the game you're playing is in (its save's area),
+// chosen as the page loads, so everything below is built from it. Going to another (sailing on, or continuing a game that's
+// in another area) saves, notes where to go (GO_KEY, for this tab only) and loads the page again: toArea in js/main.js
+// (decided 4 November 2026: the human world, Area 2's prologue).
+const AREAS = [FLOWER_FRUIT_MOUNTAIN, ACROSS_THE_SEA];
+const GO_KEY = 'xiaohouzi-v2-go';
+function areaToPlay(){
+  try { const go = JSON.parse(sessionStorage.getItem(GO_KEY) || 'null'); if (go && go.area) return go.area; } catch(e) {}
+  try {
+    const slots = JSON.parse(localStorage.getItem('xiaohouzi-v2-slots') || '{}'), n = [1, 2, 3].includes(slots.active) ? slots.active : 1;
+    const s = JSON.parse(localStorage.getItem(n === 1 ? 'xiaohouzi-v2' : `xiaohouzi-v2-game${n}`) || 'null');
+    return (s && s.area) || 1;
+  } catch(e) { return 1; }
+}
+const AREA = AREAS.find(a => a.number === areaToPlay()) || AREAS[0];   // the area being played
 const toks = zh => zh.split(' ');     // '我 饿 了 。' becomes ['我','饿','了','。']
-const WORDS = {};                     // the words and phrases you can collect here
+const WORDS = {};                     // the words and phrases you can collect here, and those of the areas before it (still yours)
 const GLOSS = {};                     // every other word, as [pinyin, English], for tapping on
 for (const [w, d] of Object.entries(WORD_BANK)){
-  if (d.area === AREA.number){ const {area, ...word} = d; WORDS[w] = word; }
+  if (d.area && d.area <= AREA.number){ const {area, ...word} = d; WORDS[w] = word; }
   else GLOSS[w] = [d.py, d.en];
 }
 // The area's words, in Word Scroll order. A word for later (later: in the word bank, such as 蜜蜂 till the troop's bees) only

@@ -39,7 +39,7 @@ shown where the word list has them.
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey), 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
 | 花！太好了！ | huā! tài hǎo le! | Flowers! Wonderful! | 大猴子 (Big monkey) |  |
-| 没关系！ | méi guānxi! | It doesn’t matter! | 猴子 (Monkey) |  |
+| 没关系！ | méi guānxi! | It doesn’t matter! | 猴子 (Monkey), 老板 (Shop owner) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 老板 (Shop owner) |  |
 | 我来了！ | wǒ lái le! | Here I am! | 老板 (Shop owner) |  |
 | 我要吃大鱼！ | wǒ yào chī dà yú! | I want to eat a big fish! | 饿猴子 (Hungry monkey) |  |
@@ -628,20 +628,273 @@ check that each is true and simply put.
 | --- | --- | --- | --- |
 | Tip: one character, one syllable | 山 shān + 羊 yáng | 2 beats you hear = 2 characters you see. When you hear a new word, count its beats: that’s how many characters to look for. |  |
 
+## 海的那边 Across the sea
+
+### Lines characters say
+
+| Chinese | Pinyin | English | Said by | Notes |
+| --- | --- | --- | --- | --- |
+| 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 农民 (Farmer), 老板 (Stallholder), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman) |  |
+| 谢谢！ | xièxie! | Thank you! | 渔夫 (Fisherman), 农民 (Farmer) |  |
+| 不客气！ | bú kèqi! | You’re welcome! | 老板 (Stallholder) |  |
+| 没关系！ | méi guānxi! | It doesn’t matter! | 老板 (Stallholder) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child) |  |
+| 猴子！猴子！ | hóuzi! hóuzi! | A monkey! A monkey! | 渔夫 (Fisherman) |  |
+| 这是我的衣服！ | zhè shì wǒ de yīfu! | Those are my clothes! | 老渔夫 (Old fisherman) |  |
+| 你是谁？ | nǐ shì shéi? | Who are you? | 小孩 (Child) |  |
+| 你不是人！你是猴子！ | nǐ bù shì rén! nǐ shì hóuzi! | You’re not a person! You’re a monkey! | 小孩 (Child) |  |
+| 这是什么？ | zhè shì shénme? | What’s this? | 小孩 (Child), 小猴子 (You) |  |
+| 这是井。 | zhè shì jǐng. | It’s a well. | A person near, when you ask what it is |  |
+| 这是房子。 | zhè shì fángzi. | It’s a house. | A person near, when you ask what it is |  |
+| 这是门。 | zhè shì mén. | It’s a gate. | A person near, when you ask what it is |  |
+| 这是网。 | zhè shì wǎng. | It’s a net. | A person near, when you ask what it is |  |
+| 这是船。 | zhè shì chuán. | It’s a boat. | A person near, when you ask what it is |  |
+| 这是书。 | zhè shì shū. | They’re books. | A person near, when you ask what it is |  |
+| 谁啊？ | shéi a? | Who is it? |  |  |
+| 我！ | wǒ! | Me! |  |  |
+| 你是小猴子！你好！ | nǐ shì xiǎo hóuzi! nǐ hǎo! | You’re a little monkey! Hello! | 阿姨 (Auntie) |  |
+| 你饿吗？吃饭吧！ | nǐ è ma? chī fàn ba! | Are you hungry? Have something to eat! | 老奶奶 (Granny) |  |
+| 你有鱼吗？ | nǐ yǒu yú ma? | Do you have a fish? | 渔夫 (Fisherman) |  |
+| 这是钱。 | zhè shì qián. | Here’s some money. | 渔夫 (Fisherman) |  |
+| 你看！鸟！ | nǐ kàn! niǎo! | Look! Birds! | 农民 (Farmer) |  |
+| 我饿了。你有饭吗？ | wǒ è le. nǐ yǒu fàn ma? | I’m hungry. Do you have any rice? | 农民 (Farmer) |  |
+| 这是牛吗？ | zhè shì niú ma? | Is this a cow? | 小猴子 (You) |  |
+| 是！ | shì! | Yes! | 农民 (Farmer) |  |
+| 你要换钱吗？ | nǐ yào huàn qián ma? | Do you want to change money? | 换钱的 (Money changer) |  |
+| 这是你的钱。 | zhè shì nǐ de qián. | Here’s your money. | 换钱的 (Money changer) |  |
+| 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Stallholder) |  |
+| 喝茶吧！ | hē chá ba! | Have some tea! | 茶馆老板 (Teahouse keeper) |  |
+| 我说，你听。 | wǒ shuō, nǐ tīng. | I talk, you listen. | 说书人 (Storyteller) |  |
+| 神仙在哪里？ | shénxiān zài nǎlǐ? | Where are the immortals? | 小猴子 (You) |  |
+| 我不知道。 | wǒ bù zhīdào. | I don’t know. | 说书人 (Storyteller) |  |
+| 你听！ | nǐ tīng! | Listen! | 老师 (Teacher) |  |
+| 他们是孩子。 | tāmen shì háizi. | They’re children. | 老师 (Teacher) |  |
+| 孩子们在学。 | háizi men zài xué. | The children are learning. | 老师 (Teacher) |  |
+| 今天没有风。 | jīntiān méiyǒu fēng. | There’s no wind today. | 船夫 (Boatman) |  |
+| 有风了！ | yǒu fēng le! | The wind’s come! | 船夫 (Boatman) |  |
+| 我们走吧！ | wǒmen zǒu ba! | Let’s go! | 船夫 (Boatman) |  |
+| 这是神仙的歌。 | zhè shì shénxiān de gē. | It’s the immortal’s song. | 樵夫 (Woodcutter) |  |
+| 神仙在山上！ | shénxiān zài shān shàng! | The immortal lives up on the mountain! | 樵夫 (Woodcutter) |  |
+
+### Sentences the player completes (one word missing)
+
+| Chinese | Pinyin | English | Said to | Notes |
+| --- | --- | --- | --- | --- |
+| 我有鱼 | wǒ yǒu yú | I have a fish. | 渔夫 (Fisherman) |  |
+| 我有饭 | wǒ yǒu fàn | I have some rice. | 农民 (Farmer) |  |
+| 我要买苹果 | wǒ yào mǎi píngguǒ | I want to buy an apple. | 老板 (Stallholder) |  |
+| 我要买桃子 | wǒ yào mǎi táozi | I want to buy a peach. | 老板 (Stallholder) |  |
+| 我要买包子 | wǒ yào mǎi bāozi | I want to buy a steamed bun. | 老板 (Stallholder) |  |
+| 我要买鞋 | wǒ yào mǎi xié | I want to buy shoes. | 老板 (Stallholder) |  |
+| 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
+| 这是我的衣服 | zhè shì wǒ de yīfu | These are my clothes. | You, in the wardrobe |  |
+| 我戴帽子 | wǒ dài màozi | I wear my hat. | You, in the wardrobe |  |
+| 这是我的鞋 | zhè shì wǒ de xié | These are my shoes. | You, in the wardrobe |  |
+| 我不是鱼 | wǒ bù shì yú | I’m not a fish. | You, in a lesson at school |  |
+| 这是井 | zhè shì jǐng | This is a well. | You, in a lesson at school |  |
+| 这是什么 | zhè shì shénme | What’s this? | You, in a lesson at school |  |
+| 你是谁 | nǐ shì shéi | Who are you? | You, in a lesson at school |  |
+| 你看鸟 | nǐ kàn niǎo | Look at the birds. | You, in a lesson at school |  |
+| 我要买包子 | wǒ yào mǎi bāozi | I want to buy a steamed bun. | You, in a lesson at school |  |
+| 我说你听 | wǒ shuō nǐ tīng | I talk, you listen. | You, in a lesson at school |  |
+| 神仙在哪里 | shénxiān zài nǎlǐ | Where are the immortals? | You, in a lesson at school |  |
+| 我们在学 | wǒmen zài xué | We’re learning. | You, in a lesson at school |  |
+| 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴黑色的头带 | wǒ dài hēisè de tóudài | I wear my black headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴蓝色的头带 | wǒ dài lánsè de tóudài | I wear my blue headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴绿色的头带 | wǒ dài lǜsè de tóudài | I wear my green headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴棕色的头带 | wǒ dài zōngsè de tóudài | I wear my brown headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴橙色的头带 | wǒ dài chéngsè de tóudài | I wear my orange headband. | You, in the wardrobe (a headband in each colour) |  |
+| 我戴粉色的头带 | wǒ dài fěnsè de tóudài | I wear my pink headband. | You, in the wardrobe (a headband in each colour) |  |
+
+### What you pick and see
+
+What a card shows when you pick a flower for the big monkey (a red flower, and so on), and when you look at a flower whose colour you know (each square of flowers is all one colour).
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 红色的鸟 | hóngsè de niǎo | A red bird |  |
+| 黄色的鸟 | huángsè de niǎo | A yellow bird |  |
+| 白色的鸟 | báisè de niǎo | A white bird |  |
+| 黑色的鸟 | hēisè de niǎo | A black bird |  |
+| 蓝色的鸟 | lánsè de niǎo | A blue bird |  |
+| 绿色的鸟 | lǜsè de niǎo | A green bird |  |
+| 棕色的鸟 | zōngsè de niǎo | A brown bird |  |
+| 橙色的鸟 | chéngsè de niǎo | An orange bird |  |
+| 粉色的鸟 | fěnsè de niǎo | A pink bird |  |
+
+### The sign
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 海 | hǎi | The sea |  |
+
+### Example sentences on word pages
+
+For words that no line or story sentence uses, shown on the word's page in the Word Scroll.
+
+| Chinese | Pinyin | English | For the word | Notes |
+| --- | --- | --- | --- | --- |
+| 鹅在水里。 | é zài shuǐ lǐ. | The goose is in the water. | 鹅 |  |
+| 鸡吃草。 | jī chī cǎo. | Chickens eat grass. | 鸡 |  |
+| 狗是我的朋友。 | gǒu shì wǒ de péngyou. | The dog is my friend. | 狗 |  |
+| 猫很小。 | māo hěn xiǎo. | The cat is very small. | 猫 |  |
+
+### Scene: the raft drifting
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 木筏在海上。 | mùfá zài hǎi shàng. | The raft is out on the sea. |  |
+| 有山！有树！ | yǒu shān! yǒu shù! | Mountains! Trees! |  |
+| 有人！ | yǒu rén! | People! |  |
+
+### Scene: the years go by
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 小猴子看，小猴子听。 | xiǎo hóuzi kàn, xiǎo hóuzi tīng. | The little monkey watches, and listens. |  |
+| 小猴子学说话。 | xiǎo hóuzi xué shuō huà. | The little monkey learns to talk like people. |  |
+| 神仙在哪里？我不知道。 | shénxiān zài nǎlǐ? wǒ bù zhīdào. | Where are the immortals? Nobody knows. |  |
+
+### Scene: the crossing
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 有风了！ | yǒu fēng le! | The wind’s come! |  |
+| 船在海上走。 | chuán zài hǎi shàng zǒu. | The boat sails over the sea. |  |
+| 有山！ | yǒu shān! | Mountains! |  |
+
+### Names
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 渔夫 | yúfū | Fisherman |  |
+| 渔夫 | yúfū | Fisherman |  |
+| 老渔夫 | lǎo yúfū | Old fisherman |  |
+| 小孩 | xiǎohái | Child |  |
+| 老奶奶 | lǎo nǎinai | Granny |  |
+| 渔夫 | yúfū | Fisherman |  |
+| 阿姨 | āyí | Auntie |  |
+| 村民 | cūnmín | Villager |  |
+| 农民 | nóngmín | Farmer |  |
+| 换钱的 | huàn qián de | Money changer |  |
+| 老板 | lǎobǎn | Stallholder |  |
+| 老板 | lǎobǎn | Stallholder |  |
+| 老板 | lǎobǎn | Stallholder |  |
+| 茶馆老板 | cháguǎn lǎobǎn | Teahouse keeper |  |
+| 说书人 | shuōshūrén | Storyteller |  |
+| 老师 | lǎoshī | Teacher |  |
+| 学生 | xuésheng | Pupil |  |
+| 学生 | xuésheng | Pupil |  |
+| 路人 | lùrén | Passer-by |  |
+| 路人 | lùrén | Passer-by |  |
+| 路人 | lùrén | Passer-by |  |
+| 船夫 | chuánfū | Boatman |  |
+| 樵夫 | qiáofū | Woodcutter |  |
+| 牌子 | páizi | Sign |  |
+| 海的那边 | hǎi de nàbiān | Across the sea |  |
+| 海边 | hǎibiān | The shore |  |
+| 渔村 | yúcūn | The fishing village |  |
+| 田边 | tiánbiān | The fields |  |
+| 小镇 | xiǎozhèn | The market town |  |
+| 码头 | mǎtou | The harbour |  |
+| 西边的海边 | xībiān de hǎibiān | The far shore |  |
+
+### Words to collect
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 人 | rén | person, people |  |
+| 鹅 | é | goose |  |
+| 衣服 | yīfu | clothes |  |
+| 帽子 | màozi | hat |  |
+| 不 | bù | not, no |  |
+| 是 | shì | am, is, are; yes |  |
+| 什么 | shénme | what |  |
+| 井 | jǐng | well (for water) |  |
+| 房子 | fángzi | house |  |
+| 门 | mén | door, gate |  |
+| 谁 | shéi | who |  |
+| 鸡 | jī | chicken |  |
+| 饭 | fàn | rice, a meal |  |
+| 钱 | qián | money |  |
+| 网 | wǎng | net |  |
+| 船 | chuán | boat |  |
+| 看 | kàn | to look, to see |  |
+| 狗 | gǒu | dog |  |
+| 买 | mǎi | to buy |  |
+| 包子 | bāozi | steamed bun |  |
+| 鞋 | xié | shoes |  |
+| 茶 | chá | tea |  |
+| 说 | shuō | to say, to talk |  |
+| 哪里 | nǎlǐ | where |  |
+| 听 | tīng | to listen |  |
+| 孩子 | háizi | child, children |  |
+| 学 | xué | to learn |  |
+| 书 | shū | book |  |
+| 猫 | māo | cat |  |
+| 风 | fēng | wind |  |
+| 歌 | gē | song |  |
+
+### The child's game: is it?
+
+Asked about a picture of something you know (the word asked about is one of these, which you know), and answered 是 (yes) or 不是 (no).
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 这是猴子吗？ | zhè shì hóuzi ma? | Is this a monkey? |  |
+| 这是鱼吗？ | zhè shì yú ma? | Is this a fish? |  |
+| 这是鸟吗？ | zhè shì niǎo ma? | Is this a bird? |  |
+| 这是树吗？ | zhè shì shù ma? | Is this a tree? |  |
+| 这是花吗？ | zhè shì huā ma? | Is this a flower? |  |
+| 这是山吗？ | zhè shì shān ma? | Is this a mountain? |  |
+| 这是石头吗？ | zhè shì shítou ma? | Is this a stone? |  |
+| 这是桃子吗？ | zhè shì táozi ma? | Is this a peach? |  |
+| 这是苹果吗？ | zhè shì píngguǒ ma? | Is this an apple? |  |
+| 这是水吗？ | zhè shì shuǐ ma? | Is this water? |  |
+| 这是河吗？ | zhè shì hé ma? | Is this the river? |  |
+| 这是草吗？ | zhè shì cǎo ma? | Is this grass? |  |
+| 这是人吗？ | zhè shì rén ma? | Is this a person? |  |
+| 这是鹅吗？ | zhè shì é ma? | Is this a goose? |  |
+| 这是鸡吗？ | zhè shì jī ma? | Is this a chicken? |  |
+| 这是狗吗？ | zhè shì gǒu ma? | Is this a dog? |  |
+| 这是猫吗？ | zhè shì māo ma? | Is this a cat? |  |
+| 这是牛吗？ | zhè shì niú ma? | Is this a cow? |  |
+| 这是羊吗？ | zhè shì yáng ma? | Is this a sheep? |  |
+| 这是兔子吗？ | zhè shì tùzi ma? | Is this a rabbit? |  |
+| 这是房子吗？ | zhè shì fángzi ma? | Is this a house? |  |
+| 这是井吗？ | zhè shì jǐng ma? | Is this a well (for water)? |  |
+| 这是门吗？ | zhè shì mén ma? | Is this a door? |  |
+| 这是船吗？ | zhè shì chuán ma? | Is this a boat? |  |
+| 这是网吗？ | zhè shì wǎng ma? | Is this a net? |  |
+| 这是衣服吗？ | zhè shì yīfu ma? | Is this clothes? |  |
+| 这是帽子吗？ | zhè shì màozi ma? | Is this a hat? |  |
+| 这是书吗？ | zhè shì shū ma? | Is this a book? |  |
+| 这是茶吗？ | zhè shì chá ma? | Is this tea? |  |
+| 这是包子吗？ | zhè shì bāozi ma? | Is this a steamed bun? |  |
+| 这是鞋吗？ | zhè shì xié ma? | Is this shoes? |  |
+| 这是海吗？ | zhè shì hǎi ma? | Is this the sea? |  |
+| 这是饭吗？ | zhè shì fàn ma? | Is this rice? |  |
+
 ### Words only heard in sentences
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 是 | shì | am, is, are |  |
+| 知道 | zhīdào | to know |  |
+| 换 | huàn | to change, to swap |  |
+| 今天 | jīntiān | today |  |
+| 啊 | a | (softens a question: 谁啊？ who is it?) |  |
+| 他们 | tāmen | they, them |  |
+| 话 | huà | speech, words (说话, to talk) |  |
 | 和 | hé | and |  |
 | 后面 | hòumiàn | behind |  |
 | 下面 | xiàmiàn | under |  |
 | 找到 | zhǎodào | to find |  |
 | 捉迷藏 | zhuō mícáng | hide and seek |  |
 | 从 | cóng | from |  |
-| 哪里 | nǎlǐ | where |  |
 | 来 | lái | to come |  |
-| 谁 | shéi | who, whoever |  |
 | 进去 | jìnqù | to go in |  |
 | 就 | jiù | then |  |
 | 怕 | pà | to be scared |  |
@@ -681,7 +934,6 @@ check that each is true and simply put.
 | 一只 | yì zhī | a, one (animal) |  |
 | 在 | zài | at, in, on; doing now (在玩, playing) |  |
 | 玩 | wán | to play |  |
-| 什么 | shénme | what |  |
 | 吗 | ma | (yes/no question) |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
 | 吧 | ba | (let’s…) |  |
@@ -693,7 +945,6 @@ check that each is true and simply put.
 | 神仙 | shénxiān | immortal |  |
 | 会 | huì | will |  |
 | 不会 | bú huì | won’t |  |
-| 不 | bù | not |  |
 | 可是 | kěshì | but |  |
 | 很多 | hěn duō | lots of, many |  |
 | 坐 | zuò | to sit; to go by |  |

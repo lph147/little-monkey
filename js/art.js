@@ -57,12 +57,42 @@ const HAND = {
 };
 // empty: with nothing in its hands (in a battle the scene holds the stick itself; meeting an animal, you hold nothing).
 function monkeySprite(kind, dir, blink, step = 0, empty = false){
+  if (PEOPLE.has(kind)) return personSprite(kind, dir, blink, step);
   const stick = heldBy(kind, empty);
-  const band = kind === 'player' ? headband() : null;
-  const k = kind + dir + (blink ? 'b' : '') + step + (stick || '') + (band || ''); if (spriteCache[k]) return spriteCache[k];
-  const pal = band ? {...PALS[kind], b:band} : PALS[kind];
+  const band = kind === 'player' ? headband() : null, worn = kind === 'player' ? CLOTHES_ON.filter(c => wearing(c)).join('') : '';
+  const k = kind + dir + (blink ? 'b' : '') + step + (stick || '') + (band || '') + worn; if (spriteCache[k]) return spriteCache[k];
+  const pal = {...(band ? {...PALS[kind], b:band} : PALS[kind]), ...(worn ? CLOTHES_PAL : {})};
   return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step, empty), stick ? {...pal, ...HELD[stick].pal} : pal);
 }
+// People (Area 2, the human world: decided 4 November 2026), drawn like the monkeys, a character with person in the area's
+// characters, in its palette's colours: o outline, h hair, s skin, e eyes, m mouth, c clothes, b belt, p trousers, and a, d a
+// straw hat, if it has those. small: a child, a little shorter. Their legs step as they walk, as a monkey's do.
+const PEOPLE = new Set(AREA.characters.filter(c => c.person).map(c => c.id));
+const SMALL_PEOPLE = new Set(AREA.characters.filter(c => c.person && c.small).map(c => c.id));
+const HUMAN = ["................",".....oooooo.....","....ohhhhhho....","...ohhhhhhhho...","...ohssssssho...","...osesssseso...","...osssmmssso...","......osso......",
+  "..occccccccccco.","..occccccccccco.","..oscccccccccso.","...ocbbbbbbbco..","...occccccccco..","....oppppppo....","....oppo.oppo...","....ooo...ooo..."];
+const HUMAN_LEGS = [["....oppo.oppo...","....ooo...ooo..."], ["....oppo..ooo...","....ooo........."], ["....ooo..oppo...","..........ooo..."]];
+const HAT = ["......dddd......","....daaaaaad....","..daaaaaaaaaad..","...dddddddddd..."];   // a straw hat, over the top of the head
+function personRows(kind, dir, blink, step = 0){
+  let rows = HUMAN.map((r, y) => [...(dir === 'up' && y >= 4 && y <= 6 ? r.replace(/[sem]/g, 'h') : r)]);   // (the back of the head)
+  [rows[14], rows[15]] = HUMAN_LEGS[step].map(r => [...r]);
+  if (dir === 'left' || dir === 'right'){ rows[5] = [...'...osssssesso...']; rows[6] = [...'...osssssmsso...']; }
+  else if (dir === 'down' && blink){ rows[5][5] = 's'; rows[5][10] = 's'; }
+  if ((PALS[kind] || {}).a) HAT.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') rows[y][x] = c; }));
+  if (SMALL_PEOPLE.has(kind)){ rows = [rows[0], rows[0], ...rows.slice(1, 7), ...rows.slice(8, 11), ...rows.slice(12)]; rows = rows.slice(0, 16); while (rows.length < 16) rows.unshift([...'................']); }
+  let out = rows.map(r => r.join(''));
+  if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
+  return out;
+}
+function personSprite(kind, dir, blink, step = 0){
+  const k = 'P' + kind + dir + (blink ? 'b' : '') + step; if (spriteCache[k]) return spriteCache[k];
+  return spriteCache[k] = sprite(personRows(kind, dir, blink, step), PALS[kind]);
+}
+// Clothes on your monkey (the wardrobe's on: body, head, feet): a coat over its body and arms, belted (C, D), a straw hat
+// (a, d, as people's), shoes on its feet (S). One thing at a time in each place (putOn, js/world.js).
+const CLOTHES_PAL = {C:'#7A6A55', D:'#3A2A1E', a:'#D9B866', d:'#A88A3E', S:'#2A2A2A'};
+const CLOTHES_ON = CLOTHES.filter(c => c.on).map(c => c.item);
+const wornOn = where => CLOTHES.some(c => c.on === where && c.item === c.word && wearing(c.item) && c.word !== '头带');   // (a headband is drawn as one: headband())
 // A monkey's pixel rows, as letters (PALS says each letter's colour). The app's icons use them too (tools/make-icons.js).
 function monkeyRows(kind, dir, blink, step = 0, empty = false){
   const side = dir === 'left' || dir === 'right';
@@ -78,6 +108,9 @@ function monkeyRows(kind, dir, blink, step = 0, empty = false){
     if (BEARDED.has(kind)){ [9,10,11].forEach(x => rows[7][x] = 'w'); rows[8][8] = 'w'; rows[8][9] = 'w'; }
   }
   if (kind === 'player' && headband()){ for (let x = 3; x <= 12; x++) if (rows[3][x] === 'f') rows[3][x] = 'b'; }   // the headband (b: its colour)
+  if (kind === 'player' && wornOn('body')) for (let y = 8; y <= 13; y++) for (let x = 0; x < 16; x++) if ('fsb'.includes(rows[y][x])) rows[y][x] = y === 11 ? 'D' : 'C';   // a coat
+  if (kind === 'player' && wornOn('feet')) for (let y = 14; y <= 15; y++) for (let x = 0; x < 16; x++) if (rows[y][x] === 'f') rows[y][x] = 'S';   // shoes
+  if (kind === 'player' && wornOn('head')) HAT.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') rows[y][x] = c; }));   // a hat
   const stick = heldBy(kind, empty);
   if (stick){   // the stick in its hand
     const h = HAND[side ? 'side' : dir], top = h.y - HELD[stick].len + 1;
@@ -117,7 +150,7 @@ function asleepSprite(){
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
-  perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, leaves:!!a.leaves}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
+  waits:!!a.waits, perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, leaves:!!a.leaves}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
 // Whether an animal is out yet: once the story has reached its chapter (decided 30 October 2026, so a chapter's new
 // friends, such as the duck on the home ground's stream, aren't there in the prologue).
 const inChapter = a => a.chapter <= ((here() || {}).chapter || 0);
@@ -145,6 +178,10 @@ const animalAt = (x, y) => canWild() ? ANIMALS.find(a => atSpot(a) && a.at[0] ==
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; else if (WORD_BANK[c.look]) FRIEND_NAMES[c.id] = c.look; });   // (one that looks like a creature with a word: by its word, such as 蜂王)
+// Friends from the areas before this one, who come with you (decided 4 November 2026): by their word, with their picture.
+const PAST_FRIENDS = Object.fromEntries(AREAS.filter(a => a.number < AREA.number).flatMap(a => [...a.animals.map(x => [x.id, x.word]),
+  ...a.characters.filter(c => WORD_BANK[c.look]).map(c => [c.id, c.look])]));
+for (const [id, w] of Object.entries(PAST_FRIENDS)) if (!(id in FRIEND_NAMES)) FRIEND_NAMES[id] = w;
 
 // Pixel icons in text (pixelIcons), instead of emoji: the money symbol, a shell (the troop trades in shells from the
 // shore), small, wherever the text says 🐚.
@@ -154,8 +191,13 @@ let shellImg = null;
 const SPEAKER = ["................","................","......oo........",".....owo........","....owwo.....b..","oooowwwo..b...b.","owwwwwwo...b..b.","owlwwwwo...b..b.",
   "owlwwwwo...b..b.","owwwwwwo...b..b.","oooowwwo..b...b.","....owwo.....b..",".....owo........","......oo........","................","................"];
 let speakerImg = null;
+// A coin (Area 2, the human world's money, 钱), round with a square hole, wherever the text says 🪙.
+const COIN = ["................","................",".....oooooo.....","....oyyyyyyo....","...oyllyyyyyo...","..oyly....yyyo..","..oyyy.oo.yyyo..","..oyyy.oo.yyyo..",
+  "..oyyy....yyyo..","..oyyyyyyyyyyo..","...oyyyyyyyyo...","....oyyyyyyo....",".....oooooo.....","................","................","................"];
+let coinImg = null;
 const pixelIcons = html => String(html)
   .replace(/🐚/g, () => shellImg || (shellImg = `<img class="money" alt="shells" src="${sprite(SHELL, {o:'#8A5A3A', w:'#F7E7CF', r:'#D9A77C'}).toDataURL()}">`))
+  .replace(/🪙/g, () => coinImg || (coinImg = `<img class="money" alt="coins" src="${sprite(COIN, {o:'#7A5A1A', y:'#E0B040', l:'#FFF0A0'}).toDataURL()}">`))
   .replace(/🔊/g, () => speakerImg || (speakerImg = `<img class="speakericon" alt="" src="${sprite(SPEAKER, {o:'#2A2622', w:'#E2DDD2', l:'#FFFFFF', b:'#4F9FDB'}).toDataURL()}">`))
   .replace(ICON_RE, m => { const k = m.replace(/\uFE0F/g, ''); return k === '♥' ? heartHTML(true) : iconHTML(k); });
 // The game's other icons (content/pictures.js), wherever the text has their emoji (⭐, 📜 and so on), and ♥ as the pixel heart.
@@ -189,7 +231,7 @@ const yourName = () => (AREA.yourNames || []).find(n => matches(n.if)) || NAMES.
 // so is a character that looks like another creature with a word, such as the queen bee (蜂王), with its picture.
 const lookOf = id => (AREA.characters.find(c => c.id === id) || {}).look;
 const animalOf = id => ANIMALS.find(x => x.id === id) || ANIMALS.find(x => x.hz === lookOf(id));
-const creatureWord = id => { const a = animalOf(id); return a ? a.hz : WORD_BANK[lookOf(id)] && PICTURES[lookOf(id)] ? lookOf(id) : null; };
+const creatureWord = id => { const a = animalOf(id); return a ? a.hz : WORD_BANK[lookOf(id)] && PICTURES[lookOf(id)] ? lookOf(id) : PICTURES[PAST_FRIENDS[id]] ? PAST_FRIENDS[id] : null; };
 const animalName = id => { const w = creatureWord(id); return w && {zh:w, py:WORD_BANK[w].py}; };
 function speaker(id){
   const n = id === 'player' ? yourName() : NAMES[id] || animalName(id);

@@ -323,3 +323,30 @@ test('a version 31 save whose feast tables are out keeps them with their bowls a
   const notYet = saveOf(loadGame({save: {version: 31, started: true, areas: {1: {chapter: 1, feast: 1}}}}));
   assert.deepEqual([notYet.areas[1].bowls, notYet.areas[1].tableware], ['not asked', 0], 'one before the tables fetches the bowls from the cave');
 });
+
+test('a version 33 save is in Area 1, with no coins yet (version 34: a save says which area it’s in, and coins start at 0)', () => {
+  const s = saveOf(loadGame({save: {version: 33, started: true, shells: 7, areas: {1: {chapter: 1, raft: 2}}}}));
+  assert.equal(s.version, VERSION);
+  assert.equal(s.area, 1);
+  assert.equal(s.coins, 0);
+  assert.equal(s.shells, 7, 'your shells stay');
+  assert.equal(s.areas[1].raft, 2, 'everything else stays');
+});
+
+test('a game in Area 2 loads in Area 2, keeping what it had from Area 1; seen from Area 1 (the title screen), it’s left as it is', () => {
+  const save = {version: VERSION, started: true, area: 2, shells: 4, coins: 3, w: {'人': {lv: 1, ok: 0}}, wardrobe: {owned: ['衣服', '头带'], wearing: ['衣服']},
+    areas: {1: {chapter: 1, raft: 3, done: true}, 2: {landed: 1, dressed: 1}}};
+  const two = loadGame({save});
+  assert.equal(two.run('AREA.number'), 2, 'the page plays Area 2');
+  const s = saveOf(two);
+  assert.deepEqual([s.area, s.shells, s.coins], [2, 4, 3]);
+  assert.deepEqual(s.wardrobe, {owned: ['衣服', '头带'], wearing: ['衣服']}, 'its clothes from both areas');
+  assert.equal(s.areas[1].raft, 3, 'and Area 1 as you left it');
+  assert.equal(s.areas[2].dressed, 1);
+  const one = loadGame({save: {version: VERSION, started: true, area: 1, w: {}}, storage: {'xiaohouzi-v2-game2': JSON.stringify(save), 'xiaohouzi-v2-slots': JSON.stringify({active: 1, played: {}})}});
+  assert.equal(one.run('AREA.number'), 1);
+  const seen = JSON.parse(one.run('JSON.stringify(upgradeSave(JSON.parse(localStorage.getItem("xiaohouzi-v2-game2"))))'));
+  assert.deepEqual(seen.wardrobe, save.wardrobe, 'the coat isn’t dropped for not being in Area 1’s wardrobe');
+  assert.equal(seen.areas[2].dressed, 1);
+  assert.equal(JSON.parse(one.run('JSON.stringify(slotSummary(2))')).area.en, 'Across the sea', 'its card says where it is');
+});

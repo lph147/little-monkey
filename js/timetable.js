@@ -151,7 +151,7 @@ function lessonEnd(s, n, words, again, r){
     openCard(`<p class="lessonbar">${subjectName(s)} · Lesson ${n}${again ? ', again' : ''}</p>
       <div class="ldone"><span class="pics${words.length > 1 ? ' three' : ''}">${words.map(picHTML).join('')}</span><div><div class="big">${again ? '✓ Done again!' : `✓ Lesson ${n} done!`}</div>
         <div class="w">${wordsPy(words)}</div>
-        <div class="small">${r.right} of ${r.asked} right${r.shells ? ` · +${r.shells} 🐚` : ''}</div></div></div>
+        <div class="small">${r.right} of ${r.asked} right${r.shells ? ` · +${r.shells} ${MONEY()}` : ''}</div></div></div>
       <p class="small">${next}</p>
       <div class="actions"><button class="btn" data-a="tt">Timetable</button><button class="btn primary" data-a="ok" data-b>OK</button></div>`);
     SFX.fanfare();

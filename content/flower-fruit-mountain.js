@@ -396,7 +396,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
 
   // What the task box says when there are no tasks: the first whose if matches.
   hints: [
-    {if:{raft:{atLeast:3}}, text:'Chapter 1 is complete! The next part of the journey is still to come. Until then, practise your words at the {学校}, or visit your {朋友|friends}.'},   // (after you sail away)
+    {if:{raft:{atLeast:3}}, text:'Chapter 1 is complete! Your {木筏} is waiting at the water’s edge, on the shore below the meadow: press A at it to sail on across the sea.'},   // (a game that sailed away before Area 2 was built, 4 November 2026)
     {if:{elder:{atLeast:1}, hungry:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{elder:{atLeast:1}, thirsty:'not asked'}, text:'Monkeys with a ! need help. Go and talk to them.'},
     {if:{school:{atLeast:2}, coloursKnown:{atLeast:3}, flowers:'not asked'}, text:'You know three colours now! The big monkey has something to ask you.'},
@@ -669,8 +669,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ask:'The exam: match 30 words from all over Flower Fruit Mountain to their pictures, the ones you know least well first. Get 24 right first time to pass.',
     tryAgain:'Practise the words you missed, at school or with your friends, then come back and try again. Your teacher is ready whenever you are.'},
   // The end of the area's story (the areaEnd step): its card, after you sail away
-  areaEnd: {title:'Chapter 1 complete!', text:['You sailed away from Flower Fruit Mountain on your {木筏}, to find the immortals across the sea.',
-    'The next part of the journey is still to come. Until then, you’re back on the shore: keep practising your words, and visit your friends.']},
+  areaEnd: {title:'Chapter 1 complete!', text:['You sail away from Flower Fruit Mountain on your {木筏}, to find the immortals across the sea.',
+    'Your words, your friends and your shells come with you. On to the next part of the journey!']},
 
   fishing: {
     rod:'鱼竿', has:{fishing:{atLeast:1}}, bait:'鱼饵', bigIf:{knows:'小'}, bigWithin:4,
@@ -1295,8 +1295,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'к': {look:'shoreRock', word:'石头'},
         // where the troop builds your raft, at the water's edge, at the end of chapter 1 (raft 2: the setUp step)
         'ф': {look:'sea', word:'海', becomes:[{if:{raft:{atLeast:2}}, to:'Ф'}]},
-        'Ф': {look:'raft', word:'木筏', landmark:true, label:'Board', onLook:[{if:{raft:2}, do:[{scene:'sailAway'}, {set:{raft:3, done:true}}, {areaEnd:true}]},
-          {do:[{scene:'sailAway'}, {message:'Your {木筏}, waiting at the water’s edge. The next part of the journey is still to come!'}]}]}
+        'Ф': {look:'raft', word:'木筏', landmark:true, label:'Board', onLook:[{if:{raft:2}, do:[{scene:'sailAway'}, {set:{raft:3, done:true}}, {areaEnd:true}, {sail:2}]}, {if:{raft:3}, do:[{sail:2, ask:'Sail away on your {木筏} across the sea, to find the immortals? Your words, friends and shells come with you.', go:'Sail away'}]}]}
       },
       exits: [
         {at:[18, 0], to:'meadow', arrive:[17, 20], facing:'up'}   // back up to the meadow
@@ -2770,7 +2769,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // word it teaches the first time (teach, with a note on its card). You get them from the shop
   // (wear: true there) or with a give step.
   wardrobe: [
-    {item:'头带', colour:'红色', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'],   // (in each colour the 老板 sells: one at a time)
+    {item:'头带', on:'head', colour:'红色', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'],   // (in each colour the 老板 sells: one at a time)
       sentence:'我 戴 头带', sentenceEn:'I wear my headband.', colourSentence:'我 戴 {colour} 的 头带', colourSentenceEn:'I wear my {colour} headband.', teach:'戴', note:'Use 戴 for things you wear on your head.'}
   ],
 

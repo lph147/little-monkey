@@ -51,7 +51,7 @@ async function runRace(s, r, face, again){
   const won = you === 1;
   closeMessage();
   await showDialog(face, L[r.end]);
-  if (won && !here().raceWon){ here().raceWon = 1; S.shells += r.prize; save(); SFX.fanfare(); await showNarration(`${fill(r.won)} +${r.prize} 🐚`); }
+  if (won && !here().raceWon){ here().raceWon = 1; earn(r.prize); save(); SFX.fanfare(); await showNarration(`${fill(r.won)} +${r.prize} ${MONEY()}`); }
   else await showNarration(fill(won ? r.won : r.lost));
   return won;
 }
@@ -117,7 +117,7 @@ async function peLesson(series, words, who, {again = false} = {}){
       asked++;
       if (await peQ({who, w:x})){ right++; if (need) shells++; }
     }
-    S.shells += shells; save();
+    earn(shells); save();
   } finally {
     inClass.clear();
     if (series.back) toast(fill(series.back));

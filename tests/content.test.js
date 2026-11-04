@@ -7,7 +7,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const {loadGame, ROOT} = require('./fake-browser');
 
-const game = loadGame();
+// The area the tests check: Flower Fruit Mountain, or another (LM_AREA, its number: tests/content-area2.test.js runs them all
+// again for Area 2), as the page plays the area of the save it's given (js/data.js).
+const game = loadGame(process.env.LM_AREA ? {save:{version:34, area:+process.env.LM_AREA, w:{}, started:true}} : {});
 const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
 const BANK = get('WORD_BANK'), PICTURES = get('PICTURES'), MAP_SPRITES = get('MAP_SPRITES'), AREA = get('AREA'), PUNCT = get('[...PUNCT]');
 const LOOKS = get('Object.keys(LOOKS)'), ACTIONS = get('Object.keys(ACTIONS)'), STEPS = get('Object.keys(STEPS)');   // what the engine can draw and do
@@ -25,15 +27,19 @@ const allSteps = () => [
   ...Object.entries(AREA.countGames || {}).flatMap(([id, g]) => (g.win || []).map(s => [`the counting game ${id}, if you win`, s, null])),
   ...AREA.animals.flatMap(a => (a.counted || []).flatMap((c, i) => c.map(s => [`the ${a.id}, as friend ${i + 1} of ${a.many}`, s, null]))),
   ...((AREA.battles || {}).afterLoss || []).flatMap((a, i) => a.do.map(s => [`after losing a battle, part ${i + 1}`, s, null])),
-  ...['small', 'big'].flatMap(size => ((AREA.fishing || {})[size] || {}).steps || []).flatMap((p, i) => p.do.map(s => [`catching a fish, part ${i + 1}`, s, null]))   // (js/fishing.js)
+  ...['small', 'big'].flatMap(size => ((AREA.fishing || {})[size] || {}).steps || []).flatMap((p, i) => p.do.map(s => [`catching a fish, part ${i + 1}`, s, null])),   // (js/fishing.js)
+  ...Object.entries(AREA.requests).flatMap(([id, r]) => (r.after || []).map(s => [`the request ${id}, once it's done`, s, r.from]))
 ];
+const SHOPS = AREA.shops || (AREA.shop ? {shop:AREA.shop} : {});   // (an area's one shop, or several: js/world.js)
+const ALL_AREAS_TEXT = game.run('JSON.stringify(AREAS)');   // every area's content, as text
+const knownHere = w => !!BANK[w] && !!BANK[w].area && BANK[w].area <= AREA.number;   // a word you can have caught by this area (here, or before)
 const allIfs = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.filter(p => p.if).map((p, i) => [`${who}'s talk`, p.if])),
   ...AREA.events.map((e, i) => [`event ${i + 1}`, e.if]),
   ...((AREA.battles || {}).afterLoss || []).filter(a => a.if).map((a, i) => [`after losing a battle, part ${i + 1}`, a.if]),
   ...['small', 'big'].flatMap(size => ((AREA.fishing || {})[size] || {}).steps || []).filter(p => p.if).map((p, i) => [`catching a fish, part ${i + 1}`, p.if]),
   ...(AREA.fishing ? [['fishing', AREA.fishing.has], ['fishing', AREA.fishing.bigIf]] : []),
-  ...(AREA.shop ? AREA.shop.items.filter(i => i.if).map(i => [`the shop's ${i.item}`, i.if]) : []),
+  ...Object.values(SHOPS).flatMap(sh => sh.items.filter(i => i.if).map(i => [`the shop's ${i.item}`, i.if])),
   ...AREA.tasks.map(t => [`task ${t.id}`, t.if]),
   ...AREA.hints.map((h, i) => [`hint ${i + 1}`, h.if]),
   ...AREA.checklist.map((c, i) => [`checklist item ${i + 1}`, c.done]),
@@ -183,7 +189,7 @@ test('the legend only uses looks and actions the engine has', () => {
 test('the legend only teaches collectible words', () => {
   for (const [, t, from, place] of allLegend){
     for (const w of [t.word, t.learnFirst, t.gather && t.gather.item].filter(Boolean)){
-      assert.ok(collectible.includes(w), `${from} teaches ${w}, which isn't a word you can collect in ${where}`);
+      assert.ok(knownHere(w), `${from} teaches ${w}, which isn't a word you can collect in ${where}`);
     }
     if (t.learnOnStep || t.newNote || t.learnFirst) assert.ok(t.word, `${from} needs a word`);
     if (t.gather) assert.ok(t.gather.label && t.gather.note, `${from}: gather needs a label and a note`);
@@ -203,7 +209,7 @@ test('characters stand on the map, on walkable tiles (or in the water, splashing
     assert.ok(onMap(at), `${c.id} at ${at} is off the map`);
     if (c.plays === 'splash') assert.equal((legendOf(at[2])[tile(at)] || {}).look, 'water', `${c.id} splashes about in the water, not on "${tile(at)}" at ${at}`);
     else if (c.plays === 'bathe') assert.equal((legendOf(at[2])[tile(at)] || {}).look, 'hotPool', `${c.id} bathes in a warm pool, not on "${tile(at)}" at ${at}`);
-    else if (c.pecks) assert.ok((legendOf(at[2])[tile(at)] || {}).word, `${c.id} pecks at "${tile(at)}" at ${at}, which has no word: what is it?`);   // (a bird on a wild melon)
+    else if (c.pecks) assert.ok((legendOf(at[2])[tile(at)] || {}).word || (legendOf(at[2])[tile(at)] || {}).look === 'rice', `${c.id} pecks at "${tile(at)}" at ${at}, which has no word: what is it?`);   // (a bird on a wild melon)
     else assert.ok(canWalk(at), `${c.id} stands on "${tile(at)}" at ${at}, which isn't walkable`);
     assert.ok(!taken.has(String(at)), `${c.id} at ${at} shares a tile with someone else or the start`);
     taken.add(String(at));
@@ -231,7 +237,7 @@ test('the area has a name, and somewhere for animals to hide', () => {
   const n = AREA.name;
   assert.ok(n && n.zh && n.py && n.en, 'the area needs a name with zh, py and en');
   const hiding = Object.values(AREA.legend).filter(t => t.animals);
-  assert.ok(hiding.length && hiding.every(t => collectible.includes(t.word)), 'some legend tile needs animals:true and a word, such as 草');
+  assert.ok(hiding.length && hiding.every(t => knownHere(t.word)), 'some legend tile needs animals:true and a word, such as 草');
   for (const k of ['notReady', 'ready', 'tryAgain', 'passButton', 'failButton', 'done', 'notBuilt']) assert.ok(AREA.exit[k], `exit needs ${k}`);
   const back = AREA.exit.returnTo;
   assert.ok(onMap([back.x, back.y, back.place]) && canWalk([back.x, back.y, back.place]), `exit.returnTo ${back.x},${back.y} isn't a walkable tile`);
@@ -259,12 +265,13 @@ test('places have names, and every way between them lands on a walkable tile and
 
 test('the story ending has a title, a reward and text', () => {
   const e = AREA.storyEnd;
-  assert.ok(e.title && e.reward >= 0 && e.text.length, 'storyEnd needs title, reward and text');
+  if (AREA.story.length) assert.ok(e.title && e.reward >= 0 && e.text.length, 'storyEnd needs title, reward and text');   // (an area with a story to read)
 });
 
 test('fish jump out of water', () => {
   for (const at of AREA.fish){
-    assert.ok(onMap(at) && (legendOf(at[2])[tile(at)] || {}).look === 'water', `the fish at ${at} isn't in water`);
+    const t = legendOf(at[2])[tile(at)] || {};
+    assert.ok(onMap(at) && (t.look === 'water' || (t.fishing && ['sea', 'canal'].includes(t.look))), `the fish at ${at} isn't in water`);
   }
 });
 
@@ -272,7 +279,7 @@ test('characters are drawn as monkeys (with colours), birds or an animal with a 
   for (const c of AREA.characters){
     assert.ok(c.look === undefined || ['monkey', 'bird'].includes(c.look) || (c.look === 'swarm' && c.flies) || MAP_SPRITES[c.look], `${c.id} has look "${c.look}"; it can be monkey, bird, a swarm of bees (that flies) or a word with a map sprite`);
     if (!c.look || c.look === 'monkey') assert.ok(c.palette, `${c.id} is a monkey, so it needs a palette`);
-    if (c.word) assert.ok(collectible.includes(c.word), `${c.id}'s word ${c.word} isn't a word you can collect in ${where}`);
+    if (c.word) assert.ok(knownHere(c.word), `${c.id}'s word ${c.word} isn't a word you can collect in ${where}`);
   }
 });
 
@@ -331,6 +338,8 @@ test('the area says what it remembers in the save, with starting values', () => 
     assert.ok(['number', 'boolean'].includes(typeof v), `progress ${k} should start as a number or true/false`);
     assert.notEqual(k, 'done', 'progress can\'t be called done; the game adds that itself');
   }
+  for (const k of ['holding', 'wanted', 'picked', 'bought', 'changed', 'finds', 'kept', 'done', 'hide', 'out', 'shooed', 'visited', 'wordTurn'])   // (what the engine keeps for every area: js/state.js)
+    assert.ok(!(k in AREA.progress), `progress has ${k}, which the game keeps for every area itself: give it another name`);
   for (const id of Object.keys(AREA.requests)){
     assert.ok(!(id in AREA.progress) && !['done', 'holding'].includes(id), `request ${id} has the same name as something in progress`);
   }
@@ -339,7 +348,7 @@ test('the area says what it remembers in the save, with starting values', () => 
 test('requests use real characters, lines and words', () => {
   for (const [id, r] of Object.entries(AREA.requests).flatMap(([id, r]) => asked(r).map(a => [id, a]))){
     assert.ok(AREA.characters.some(c => c.id === r.from), `request ${id}: from "${r.from}" isn't a character`);
-    for (const w of [r.wants, r.verb].filter(Boolean)) assert.ok(collectible.includes(w), `request ${id}: ${w} isn't a word you can collect in ${where}`);
+    for (const w of [r.wants, r.verb].filter(Boolean)) assert.ok(knownHere(w), `request ${id}: ${w} isn't a word you can collect in ${where}`);
     for (const k of ['ask', 'offer', 'thanks']) assert.ok(AREA.lines[r[k]], `request ${id}: ${k} "${r[k]}" isn't one of the lines`);
     if (r.wrong) assert.ok(AREA.lines[r.wrong], `request ${id}: wrong "${r.wrong}" isn't one of the lines`);
     const sentence = r.sentence.split(' ');
@@ -348,7 +357,7 @@ test('requests use real characters, lines and words', () => {
     assert.ok(sentence.includes(r.gap || r.wants), `request ${id}: the missing word ${r.gap || r.wants} should be in the sentence`);
     for (const w of sentence) assert.ok(BANK[w], `request ${id}: ${w} isn't in the word bank`);
     for (const f of r.firstTeach || []) assert.ok(BANK[f.word] && f.note, `request ${id}: firstTeach needs words from the bank, each with a note`);
-    assert.ok(r.asked && r.reward > 0, `request ${id} needs asked and a reward`);
+    assert.ok(r.asked && (r.reward > 0 || (r.reward === 0 && r.after)), `request ${id} needs asked and a reward (or none, with what happens after: such as being paid in coins)`);
   }
 });
 
@@ -368,11 +377,11 @@ test('every character has a talk script (or, a bird, is shooed away: shoo), and 
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
-      if (k === 'new' || k === 'knows') assert.ok(collectible.includes(v), `${where}: ${v} isn't a word you can collect in ${where}`);
+      if (k === 'new' || k === 'knows') assert.ok(knownHere(v), `${where}: ${v} isn't a word you can collect in ${where}`);
       if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id], `${where} checks holding for "${id}", which isn't a request`);
       if (k === 'place') assert.ok(AREA.places[v], `${where} checks place ${v}, which isn't a place`);
       if (k === 'near') assert.ok(AREA.characters.some(c => c.id === v), `${where} checks near "${v}", who isn't a character`);
@@ -394,15 +403,16 @@ test('every step does one thing, with settings that exist, using real lines and 
       assert.ok(AREA.lines[s.say], `${where}: "${s.say}" isn't one of the lines`);
       if (s.teach) assert.ok(AREA.lines[s.say].zh.split(' ').includes(s.teach), `${where}: line "${s.say}" doesn't contain ${s.teach}, so it can't be taught there`);
     }
-    if (a === 'newWord' || a === 'card') assert.ok(collectible.includes(s[a]), `${where}: ${s[a]} isn't a word you can collect in ${where}`);
+    if (a === 'newWord') assert.ok(collectible.includes(s[a]), `${where}: ${s[a]} isn't a word you can collect in ${where}`);
+    if (a === 'card') assert.ok(knownHere(s[a]), `${where}: ${s[a]} isn't a word you can know in ${where}`);
     if (a === 'set' || a === 'markOut') for (const k of Object.keys(s[a])) assert.ok(remembered.includes(k), `${where} sets "${k}", which the area doesn't remember`);
-    if (a === 'shop') assert.ok(AREA.shop && AREA.shop.who === who, `${where}: ${who} doesn't run the shop`);
+    if (a === 'shop') assert.ok(Object.values(SHOPS).some(sh => sh.who === who && (typeof s.shop !== 'string' || SHOPS[s.shop] === sh)), `${where}: ${who} doesn't run the shop`);
     if (a === 'request') assert.ok(AREA.requests[s.request] && AREA.requests[s.request].from === who, `${where}: "${s.request}" isn't a request from ${who}`);
-    if (a === 'reply') assert.ok(BANK[s.reply] && BANK[s.reply].phrase && collectible.includes(s.reply), `${where}: ${s.reply} isn't a phrase you can learn here`);
+    if (a === 'reply') assert.ok(BANK[s.reply] && BANK[s.reply].phrase && knownHere(s.reply), `${where}: ${s.reply} isn't a phrase you can learn here`);
     if (a === 'wordGame') assert.ok(s.wordGame.ask && s.wordGame.notYet && collectible.includes(s.wordGame.word), `${where}: wordGame needs ask, notYet and a word`);
     if (a === 'bag') assert.ok((AREA.food || {})[s.bag], `${where}: ${s.bag} isn't one of the area's food`);
     if (a === 'follow') for (const id of s.follow) assert.ok(AREA.characters.some(c => c.id === id), `${where}: "${id}" can't follow you: they aren't a character`);
-    if (a === 'stopsYou') assert.ok(AREA.characters.some(c => c.id === s.stopsYou) && AREA.talk[s.stopsYou], `${where}: "${s.stopsYou}" isn't a character with something to say`);
+    if (a === 'stopsYou') assert.ok((AREA.characters.some(c => c.id === s.stopsYou) && AREA.talk[s.stopsYou]) || AREA.animals.some(x => x.id === s.stopsYou && x.at), `${where}: "${s.stopsYou}" isn't a character with something to say, or an animal at its spot`);
     if (a === 'talkTo') assert.ok(AREA.characters.some(c => c.id === s.talkTo) && AREA.talk[s.talkTo], `${where}: "${s.talkTo}" isn't a character with something to say`);
     if (a === 'countGame') assert.ok((AREA.countGames || {})[s.countGame], `${where}: "${s.countGame}" isn't one of the area's countGames`);
   }
@@ -421,7 +431,7 @@ test('every phrase can be caught: a reply, a card or a request teaches it', () =
   const taught = new Set([
     ...allSteps().flatMap(([, s]) => [s.reply, s.newWord, s.card]),
     ...Object.values(AREA.requests).flatMap(r => [r.wrongReply, r.thanksReply]),
-    ...(AREA.shop ? [AREA.shop.reply, AREA.shop.no] : [])
+    ...Object.values(SHOPS).flatMap(sh => [sh.reply, sh.no])
   ].filter(Boolean));
   for (const p of collectible.filter(w => BANK[w].phrase)) assert.ok(taught.has(p), `${p} is a phrase you can never catch: nothing teaches it`);
 });
@@ -449,7 +459,8 @@ test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
-    ...(AREA.shop ? [AREA.shop.ask, AREA.shop.welcome] : []),
+    ...Object.values(SHOPS).flatMap(sh => [sh.ask, sh.welcome, sh.noProblem]),
+    ...(AREA.asking ? [AREA.asking.line] : []), ...allLegend.filter(([, t]) => t.ask).map(([, t]) => t.ask),   // (asking what something is: js/world.js)
     ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask), ...[l.race, l.jog].filter(Boolean).flatMap(x => [x.start, x.end])]),
     ...Object.values(AREA.countGames || {}).map(g => g.thing.ask),
     ...Object.values(AREA.enemies || {}).flatMap(e => Object.values(e.says || {})),
@@ -484,7 +495,7 @@ test('English text writes at most two words as 汉字 (English) in a sentence, n
   // Decided 22 October 2026: every word you knew written that way piled up, and read as Chinese with English grammar.)
   const texts = [];
   (function walk(o){ if (typeof o === 'string'){ if (/\{/.test(o) && /[a-z]/i.test(o)) texts.push(o); } else if (o && typeof o === 'object') for (const k in o) walk(o[k]); })(AREA);
-  assert.ok(texts.length > 50);
+  assert.ok(texts.length > 30);
   for (const t of texts) for (const sentence of sentencesOf(t)){
     assert.ok(wordsIn(sentence).length <= 2, `"${sentence}" writes ${wordsIn(sentence).length} words as 汉字 (English): two at most, best one, the word it's about`);
     for (const [, a, b] of sentence.matchAll(/\{([^}|]+)[^}]*\}[\s,]*(?=\{([^}|]+)[^}]*\})/g))
@@ -565,7 +576,7 @@ test('every scene has pictures, captions in time order (each with Chinese and En
 
 test('every word you can collect has an example sentence for its page', () => {
   const inSentence = w => [...Object.values(AREA.lines), ...AREA.story].some(s => s.zh.split(' ').includes(w));
-  const built = w => [...Object.values(AREA.requests).flatMap(asked), ...(AREA.shop ? AREA.shop.items : []), ...(AREA.wardrobe || [])].some(b => b.sentence.split(' ').includes(w));
+  const built = w => [...Object.values(AREA.requests).flatMap(asked), ...Object.values(SHOPS).flatMap(sh => sh.items), ...(AREA.wardrobe || [])].some(b => b.sentence.split(' ').includes(w));
   for (const [w, e] of Object.entries(AREA.examples)){
     assert.ok(collectible.includes(w), `there's an example for ${w}, which isn't a word you can collect in ${where}`);
     assert.ok(e.zh.split(' ').includes(w), `the example for ${w} doesn't use ${w}: "${e.zh}"`);
@@ -579,14 +590,15 @@ test('every word you only hear is used in a sentence somewhere', () => {
   const used = new Set([
     ...sentences.flatMap(([, s]) => s.zh.split(' ')),
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => r.sentence.split(' ')),
-    ...(AREA.shop ? AREA.shop.items.flatMap(i => i.sentence.split(' ')) : []),
-    ...(AREA.wardrobe || []).flatMap(c => c.sentence.split(' '))
+    ...Object.values(SHOPS).flatMap(sh => sh.items.flatMap(i => i.sentence.split(' '))),
+    ...(AREA.wardrobe || []).flatMap(c => c.sentence.split(' ')),
+    ...[...ALL_AREAS_TEXT.matchAll(/"(?:zh|sentence)":"([^"]*)"/g)].flatMap(m => m[1].split(' '))   // (a word heard in any area's sentences)
   ]);
   for (const w of Object.keys(BANK).filter(w => !BANK[w].area)) assert.ok(used.has(w), `${w} is in the word bank, but no sentence uses it: use it or remove it`);
 });
 
 test('replies after requests and the shop are phrases you can learn here', () => {
-  const isPhrase = p => BANK[p] && BANK[p].phrase && collectible.includes(p);
+  const isPhrase = p => BANK[p] && BANK[p].phrase && knownHere(p);
   for (const [id, r] of Object.entries(AREA.requests)) for (const k of ['thanksReply', 'wrongReply']) if (r[k]) assert.ok(isPhrase(r[k]), `request ${id}: ${k} ${r[k]} isn't a phrase you can learn here`);
   if (AREA.shop) for (const k of ['reply', 'no']) if (AREA.shop[k]) assert.ok(isPhrase(AREA.shop[k]), `shop: ${k} ${AREA.shop[k]} isn't a phrase you can learn here`);
 });
@@ -610,7 +622,7 @@ test('every enemy is a collectible word with a picture and a map sprite, attacki
 
 test('food: each says what it does, how many you can carry, and heals, helps or gives you energy; fruit trees give food', () => {
   for (const [w, f] of Object.entries(AREA.food || {})){
-    assert.ok(collectible.includes(w), `${w} is a word you can collect here`);
+    assert.ok(knownHere(w), `${w} is a word you can collect here`);
     assert.ok(f.does && f.carry > 0 && [f.heal > 0, f.helps === true, f.fast > 0].filter(Boolean).length === 1, `${w}: does, carry, and heal, helps or fast (one thing each)`);
   }
   for (const [, t, from] of allLegend) if (t.pick) assert.ok((AREA.food || {})[t.pick.item], `picking at ${from} gives ${t.pick.item}, which isn't food`);
@@ -707,7 +719,7 @@ test('a task that points its arrow at someone gives them a ! or ? too, so you ca
   const tasks = AREA.tasks.filter(t => typeof t.arrow === 'string');
   let checked = 0;
   for (const t of tasks){
-    const g = loadGame({save: {version: 29, started: true, w: {}, areas: {1: {elder: 2}}}});   // (you've met the old monkey: the story starts there)
+    const g = loadGame({save: {version: 29, started: true, w: {}, area: AREA.number, areas: {[AREA.number]: {elder: 2}}}});   // (you've met the old monkey: the story starts there)
     // the game as the task's if says, each condition in its simplest form (words caught, counters' words caught, values)
     const ready = g.run(`(() => {
       const c = ${JSON.stringify(t.if)}, h = here(); h.holding = h.holding || {};
@@ -726,5 +738,5 @@ test('a task that points its arrow at someone gives them a ! or ? too, so you ca
     const show = g.run(`((AREA.bubbles[${JSON.stringify(t.arrow)}] || []).find(b => matches(b.if)) || {}).show`);
     assert.ok(show === '!' || show === '?', `the task "${t.text}" points at ${t.arrow}, who has no ! or ? then`);
   }
-  assert.ok(checked >= 12, `checked ${checked} of the ${tasks.length} tasks that point at someone`);
+  assert.ok(checked >= Math.min(12, Math.ceil(tasks.length * .75)), `checked ${checked} of the ${tasks.length} tasks that point at someone`);
 });

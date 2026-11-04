@@ -8,6 +8,23 @@
 // faces: which way it looks, 'left' or 'right' (none if it looks at you), so it can be turned to face you when it jumps
 // out or you meet it.
 const MAP_SPRITES = {
+  // Area 2, the human world (decided 4 November 2026)
+  '鹅': {   // goose, side on, head to the left (on the shore's sand, and at the harbour)
+    faces:'left', palette:{o:'#3A3530', w:'#F7F5EE', g:'#D8D2C4', y:'#E8902A', e:'#1E1A16'},
+    rows:["................","................","....oo..........","...owwo.........","..yyowe.........","....owo.........","....owo.........","....owo.........","....owwo....oo..","....owwwooooowo.","....owwwwwwwwgo.",".....owwwwwwggo.","......owwwwwgo..",".......ooooo....","........y.y.....",".......yy.yy...."]
+  },
+  '鸡': {   // chicken, side on, head to the left (in the village)
+    faces:'left', palette:{o:'#3A2E24', w:'#F7F5EE', g:'#D8D2C4', r:'#D8342C', y:'#E8A030', e:'#1E1A16'},
+    rows:["................","................","................","................","................","....rr..........","...owwo.........","..yowewo....oo..","...owwwo...owwo.","....owwwwoowwwo.","....owwwwwwwggo.",".....owwwwwwgo..","......owwwwwo...",".......oooo.....",".......y..y.....","......yy.yy....."]
+  },
+  '狗': {   // dog, side on, head to the left (guarding the road through the fields)
+    faces:'left', palette:{o:'#3A2614', b:'#B5793F', l:'#E2B67A', e:'#1E1A16', n:'#2A1A10'},
+    rows:["................","................","................","..oo............",".obbo...........",".obbbo..........","obebbbo.......o.","nbbbbbo......ob.","oobbbbbooooooob.","..obbbbbbbbbbbo.","..obllllbbbbbbo.","..obllllbbbbbo..","...obbo..obbo...","...obo....obo...","...oo.....oo....","................"]
+  },
+  '猫': {   // cat, sitting, facing you (on the sacks at the market)
+    palette:{o:'#2E2A26', c:'#A39C92', d:'#6E675E', e:'#3FA34F', p:'#F2A0A8', w:'#ECE8E0'},
+    rows:["................","................","................","................","....o....o......","...oco..oco.....","...occoooco.....","...occcccco.....","...ocecceco.....","...occcpcco.....","....occcco...o..","...occdcdco..co.","...occcccco.oco.","...occdcdccooo..","...owwoowwo.....","....oo..oo......"]
+  },
   '兔子': {   // rabbit
     // small: 11 pixels, lifted 2 pixels into the middle of its square, drawn with the shape kit from its picture in tools/draw-pictures.js
     palette: {a:'#494541', b:'#BEBBB5', c:'#5B5853', d:'#F7F5EF', e:'#5A3F3F', f:'#F4A6B0', g:'#8E8B87', h:'#3A3632', i:'#F4F0E8', j:'#1E1A16', k:'#5C4A49', l:'#F8C8CE', m:'#B48A82', n:'#C7C7C7', o:'#4C4946', p:'#37332E', q:'#85817A'},
@@ -220,3 +237,8 @@ const MAP_SPRITES = {
     rows: ["................",".....a..........","....aba.........","....aba.........","...cabba........","..cddeef.gg.....","hijklkbagmmggg..","nojjkbemmmmmmmg.","jjiabcdkkkkkkbba","ii..acdkkkkkkbba",".....febbkkebbba",".....fepabbeqpdb",".....feprafeqpbb",".....fepr.feqpra",".....fepr.feppr.","......fr...frr.."]
   }
 };
+// A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, in dark slate greys.
+MAP_SPRITES['水 牛'] = {...MAP_SPRITES['牛'], palette:Object.fromEntries(Object.entries(MAP_SPRITES['牛'].palette).map(([k, c]) => {
+  const v = [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)), l = Math.round((v[0] * .3 + v[1] * .59 + v[2] * .11) * .55 + 30);
+  return [k, '#' + [l, l + 4, l + 10].map(x => Math.min(255, x).toString(16).padStart(2, '0')).join('')];
+}))};

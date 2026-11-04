@@ -40,10 +40,10 @@ function storyScroll(){
       const qs = storyQuestions();
       for (const q of qs) if (await gapQ({label:'Story question', t:q.t, en:q.en, gap:q.answer, options:q.options})) right++;
       const firstTime = !here().story, end = AREA.storyEnd;
-      here().story = true; if (firstTime) S.shells += end.reward; save(); buildMap();
+      here().story = true; if (firstTime) earn(end.reward); save(); buildMap();
       SFX.fanfare();
       openCard(`<div class="who" aria-hidden="true">📖</div><p class="label">${end.title}</p>
-        <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${firstTime ? ` +${end.reward} 🐚` : ''}</p>
+        <p>${qs.length ? `You got ${right} of ${qs.length} story questions.` : ''}${firstTime ? ` +${end.reward} ${MONEY()}` : ''}</p>
         ${end.text.map(p => `<p>${p}</p>`).join('\n        ')}
         <div class="actions"><button class="btn primary" data-a="done">Keep playing</button></div>`);
       on('[data-a=done]', () => { closeCard(); if (firstTime && end.rumble){ SFX.rumble(); shakeT = performance.now(); } res(); });
@@ -172,7 +172,7 @@ function practiceSentence(not = []){
 async function gapRound(b, who){
   const need = needsPractice(b.gap), right = await gapQ({who, t:b.t, en:b.en, gap:b.gap});
   const shells = right && need ? 1 : 0;
-  S.shells += shells; save();
+  earn(shells); save();
   return {right, shells};
 }
 // After a session: a word matched first time moves back in the review list, a missed one goes near the front (the
@@ -185,7 +185,7 @@ function trained(words, missed){
     reviewed(w, ok);
     addToday(w);
   }
-  S.shells += shells; save();
+  earn(shells); save();
   return shells;
 }
 // A practice session: match words to their pictures, then fill the gap in a sentence. At the practice post, or in a
@@ -201,8 +201,8 @@ async function practise(who, kind = PRACTICE.post){
   const words = trainingWords(), sentence = practiceSentence();
   const need = [...words, ...(sentence ? [sentence.gap] : [])].filter(needsPractice).length;
   const ask = 'Practise matching words to their pictures' + (sentence ? `, then fill the gap in a sentence with ${wz(sentence.gap)}. ` : '. ') + (need
-    ? `${need} of them ${need === 1 ? 'needs' : 'need'} practice: each one you get right first time earns a 🐚.`
-    : 'None of these words need practice right now, so there are no 🐚 shells this time.');
+    ? `${need} of them ${need === 1 ? 'needs' : 'need'} practice: each one you get right first time earns a ${MONEY()}.`
+    : 'None of these words need practice right now, so there’s no ' + (coinsNow() ? '🪙 money' : '🐚 shells') + ' this time.');
   if (!await confirmBox(who, ask, kind.start, 'Not now')) return false;
   const missed = await matchWords(words, kind.title, 'Stop');
   if (!missed) return false;
@@ -210,7 +210,7 @@ async function practise(who, kind = PRACTICE.post){
   SFX.fanfare();
   await new Promise(res => {
     openCard(`<div class="who" aria-hidden="true">${who}</div><p class="label">${kind.done}</p>
-      <p>You matched <b>${right} of ${words.length}</b> words right first time.${filled ? (filled.right ? ' You filled the gap right.' : ' You filled the gap.') : ''}${shells ? ` +${shells} 🐚` : ''}</p>
+      <p>You matched <b>${right} of ${words.length}</b> words right first time.${filled ? (filled.right ? ' You filled the gap right.' : ' You filled the gap.') : ''}${shells ? ` +${shells} ${MONEY()}` : ''}</p>
       ${missedHTML(missed)}
       <div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
     bindMissed();
@@ -307,7 +307,7 @@ async function nextArea(){
   here().done = true; save(); SFX.fanfare(); fadeT = performance.now();
   await sleep(700);
   await infoBox('⛰️', `<p class="label">${AREA.name.en} complete!</p>
-    <div class="stats"><span>${wordsCaught()} of ${ORDER.length} words caught</span><span>${S.friends.length} friends</span><span>🐚 ${S.shells}</span></div>
+    <div class="stats"><span>${wordsCaught()} of ${ORDER.length} words caught</span><span>${S.friends.length} friends</span>${moneyHTML()}</div>
     <p>${AREA.exit.done}</p>
     <p class="small">${AREA.exit.notBuilt}</p>`);
   const back = AREA.exit.returnTo;   // until the next area is built, you're put back here

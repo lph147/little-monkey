@@ -112,7 +112,7 @@ async function countLesson(series, words, who, {again = false} = {}){
       if (await countQ({who, thing, n:top(w)})){ right++; if (need) shells++; }
     }
   }
-  S.shells += shells; save();
+  earn(shells); save();
   return {right, asked, shells};
 }
 // A colour question (a colour lesson): the teacher wants a paint, and you choose it from three colours you know, as in
@@ -159,7 +159,7 @@ async function paintLesson(series, words, who, {again = false} = {}){
       if (await colourQ({who, w})){ right++; if (need) shells++; }
     }
   }
-  S.shells += shells; save();
+  earn(shells); save();
   if (!again) for (const w of words) if ((series.scenes || {})[w]) await storyScene(series.scenes[w]);   // (with its own fanfare)
   return {right, asked, shells};
 }
@@ -340,9 +340,9 @@ async function encounter(foe){
   closeCard();
   // (a game just for practice, foe.practice, such as with a little monkey in training that has given you its present
   // already, earns nothing: decided 24 October 2026, as you could play it again and again for shells)
-  if (!foe.practice) S.shells += score;
+  if (!foe.practice) earn(score);
   S.encounters = (S.encounters || 0) + 1;
-  const won = misses ? wrong < misses : score >= 2, already = S.friends.includes(foe.id), shells = score && !foe.practice ? ` +${score} 🐚` : '';
+  const won = misses ? wrong < misses : score >= 2, already = S.friends.includes(foe.id), shells = score && !foe.practice ? ` +${score} ${MONEY()}` : '';
   let label, msg;
   if (won){
     if (!already) S.friends.push(foe.id);
@@ -385,6 +385,26 @@ async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, option
   if (again) return ok;
   if (ok) answer(gap, true, !WORDS[gap].pic ? 'fill' : pics ? 'gap' : 'read');
   else reviewed(gap, false);   // missed: it comes back soon (its gold squares stay: filling a gap is practice, not a test)
+  return ok;
+}
+/* ================= IS IT? ================= */
+// The child's game in Area 2, 是不是？ (decided 4 November 2026): a picture of something you know (pic) and a question about
+// it, 这是…吗？ (Is this a…?), read aloud, the word asked about (said) the picture's own or another's. You answer 是 (yes) or
+// 不是 (no): it's understanding the word, never grammar. Its English shows once you've answered. Counts as practice of the
+// word asked about. Gives whether you were right.
+const IS_IT_NO_A = ['衣服', '鞋', '茶', '饭', '水', '草'], IS_IT_THE = ['海', '河'];   // (clothes, tea; the sea)
+const aWord = w => { const e = enOf(w).split(',')[0].trim(); return IS_IT_THE.includes(w) ? 'the ' + e : IS_IT_NO_A.includes(w) ? e : (/^[aeiou]/.test(e) ? 'an ' : 'a ') + e; };
+async function isItQ({who = '', pic, said}){
+  const t = toks(`这 是 ${said} 吗 ？`), yes = pic === said, en = `Is this ${aWord(said)}?`;
+  hear(t);
+  const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">Is it?</p><p class="prompt">Listen, and answer 是 (yes) or 不是 (no).</p></div></div>`,
+    body:`<div class="ispic" aria-hidden="true">${picHTML(pic)}</div>${lineHTML(t)}<div class="sentence-en"></div><div class="gloss"></div>`,
+    options:[`是<span class="cap">${S.pinyin ? 'shì' : ''}</span><span class="cap">yes</span>`, `不是<span class="cap">${S.pinyin ? 'bú shì' : ''}</span><span class="cap">no</span>`],
+    text:true, answerIdx:yes ? 0 : 1,
+    onShow:() => say(t.join('')),
+    onAnswer:() => { const e = sheet.querySelector('.sentence-en'); if (e) e.textContent = `${en} ${yes ? 'Yes!' : `No: it’s ${aWord(pic)}.`}`; }});
+  closeCard();
+  answer(said, ok, lvl(said) === 1 ? 'listen' : 'read');
   return ok;
 }
 /* ================= WHAT DO YOU SAY? ================= */

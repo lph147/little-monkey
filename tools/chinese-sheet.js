@@ -251,8 +251,9 @@ const QUESTIONS = ['A sheep in the meadow teaches 羊 (yáng) as sheep, before t
   'The shore below the meadow is called 海边 (hǎibiān), the seaside. Is that the natural name for a place on the shore where a river runs into the sea?',
   'When the troop is counted into the cave, the old monkey said 一只猴子。两只猴子。三只猴子。 while the cards taught 一, 二 and 三, which was muddling (two monkeys is 两只, not 二只). Now he counts them, as each one comes in: 一！ 一，二！ 一，二，三！ Is that natural? (两, for two of something, will be taught later as a word of its own, such as 两个苹果 at the shop. Until then, the number lessons never ask how many there are when there are two.)'];
 const PUNCT = {'。':'.', '！':'!', '，':',', '？':'?', '、':',', '……':'…'};
-function sheet(){
-  const game = loadGame();
+// The sheet for each area (n: its number), as the page plays it (js/data.js: the area of the save it's given).
+function sheetFor(n){
+  const game = loadGame(n === 1 ? {} : {save:{version:34, area:n, w:{}, started:true}});
   const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
   const AREA = get('AREA'), BANK = get('WORD_BANK'), MENU = get('MENU_TILES'), MADE = get('MADE');
   // Pinyin for a sentence written with spaces between words, from the word bank.
@@ -275,7 +276,11 @@ function sheet(){
     for (const k of [g.thing.ask, ...(g.win || []).map(w => w.say)]) if (k) add(k, name(who));
   }
   for (const r of Object.values(AREA.requests)) for (const k of [r.ask, r.offer, r.thanks, r.wrong]) if (k) add(k, name(r.from));
-  if (AREA.shop) for (const k of [AREA.shop.ask, AREA.shop.welcome]) add(k, name(AREA.shop.who));
+  const SHOPS = AREA.shops || (AREA.shop ? {shop:AREA.shop} : {});   // (an area's one shop, or several: js/world.js)
+  for (const sh of Object.values(SHOPS)) for (const k of [sh.ask, sh.welcome, sh.noProblem]) if (k) add(k, name(sh.who));
+  for (const r of Object.values(AREA.requests)) for (const s of r.after || []) if (s.say) add(s.say, name(s.by || r.from));   // (what happens once it's done)
+  for (const s of AREA.begin) if (s.say) add(s.say, name(s.by));   // (as you arrive)
+  if (AREA.asking){ add(AREA.asking.line, name('player')); for (const t of Object.values(AREA.legend)) if (t.ask) add(t.ask, 'A person near, when you ask what it is'); }   // asking what something is
   for (const r of Object.values(AREA.requests)) if (r.wrongAnswer) add(r.wrongAnswer, name(r.from));
   if (AREA.hideSeek){   // hide and seek: you count and find it; it calls out where it's hiding
     const h = AREA.hideSeek;
@@ -285,7 +290,7 @@ function sheet(){
 
   const collect = Object.keys(BANK).filter(w => BANK[w].area === AREA.number), heard = Object.keys(BANK).filter(w => !BANK[w].area);
   const names = [...AREA.characters.filter(c => c.name).map(c => c.name), AREA.sign.name, AREA.name, ...Object.values(AREA.places).map(p => p.name), ...(AREA.lessons || []).map(s => s.subject)];   // characters, the sign, the area, its places and the school's subjects
-  const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...(AREA.shop ? AREA.shop.items.map(i => [i.sentence, i.sentenceEn, name(AREA.shop.who)]) : []), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe']),
+  const builds = [...Object.values(AREA.requests).flatMap(r => (r.choices ? Object.values(r.choices) : [r]).map(c => [c.sentence, c.sentenceEn, name(r.from)])), ...Object.values(SHOPS).flatMap(sh => sh.items.map(i => [i.sentence, i.sentenceEn, name(sh.who)])), ...(AREA.wardrobe || []).map(c => [c.sentence, c.sentenceEn, 'You, in the wardrobe']),
     ...(AREA.practiceSentences || []).map(c => [c.sentence, c.sentenceEn, 'You, in a lesson at school']),
     ...get('COLOUR_SENTENCES()').map(c => [c.zh, c.en, /要/.test(c.zh) ? `${name(AREA.shop.who)} (a headband in each colour you know)` : 'You, in the wardrobe (a headband in each colour)'])];   // (js/world.js)
   const notes = '';
@@ -371,7 +376,7 @@ Shown on a word's new-word card and its page in the Word Scroll (new on 23 Octob
 what they add up to, the clue inside it, or the picture it was drawn from. Please check that each is true, well known and
 simply put. A part's pinyin is as it's said in the word.
 
-${table(['Word', 'Pinyin', 'How it’s made', 'Notes'], [...Object.entries(MADE).map(([w, m]) => [w, BANK[w].py, made(m, w), notes]),
+${table(['Word', 'Pinyin', 'How it’s made', 'Notes'], [...Object.entries(MADE).filter(([w]) => (BANK[w].area || 1) === AREA.number).map(([w, m]) => [w, BANK[w].py, made(m, w), notes]),
   ...(AREA.sign.made ? [[AREA.sign.says.zh, AREA.name.py, `${made(AREA.sign.made)} (your home’s name, on the sign by your stone, once you know its parts)`, notes]] : [])])}
 
 ### Tips about Chinese
@@ -381,7 +386,13 @@ check that each is true and simply put.
 
 ${table(['Tip', 'Example', 'Text', 'Notes'], Object.values(AREA.tips || {}).map(t => [t.title, t.example.map(([c, p]) => `${c} ${p}`).join(' + '), [t.heard, t.text].filter(Boolean).join('. '), notes]))}
 
-### Words only heard in sentences
+${(AREA.isIt || []).length ? `### The child's game: is it?
+
+Asked about a picture of something you know (the word asked about is one of these, which you know), and answered 是 (yes) or 不是 (no).
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], get('IS_IT_SENTENCES()').map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
+
+` : ''}### Words only heard in sentences
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], heard.map(w => [w, BANK[w].py, BANK[w].en, notes]))}
 
@@ -401,6 +412,17 @@ ${DRAFTS.length ? table(['Chinese', 'Pinyin', 'English', 'Where', 'Notes'], DRAF
 
 ${QUESTIONS.map(q => '- ' + q).join('\n')}
 `;
+}
+
+// The whole sheet: the first area's, with each other area's own part (from its name to the words only heard, which are
+// everyone's) after it, leaving out what it doesn't have (tables with nothing in them).
+function sheet(){
+  const first = sheetFor(1), at = first.indexOf('### Words only heard in sentences');
+  const others = JSON.parse(loadGame().run('JSON.stringify(AREAS.map(a => a.number))')).slice(1).map(n => {
+    const s = sheetFor(n);
+    return s.slice(s.indexOf('\n## ') + 1, s.indexOf('### Words only heard in sentences')).replace(/### [^\n]*\n\n(?:[^\n|#][^\n]*\n)*\n?\| [^\n]*\|\n\| ---[^\n]*\|\n+(?=###|$)/g, '');
+  });
+  return first.slice(0, at) + others.join('') + first.slice(at);
 }
 
 module.exports = {sheet, DRAFTS, QUESTIONS, FILE: path.join(ROOT, 'CHINESE.md')};

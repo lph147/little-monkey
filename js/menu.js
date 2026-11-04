@@ -86,7 +86,7 @@ function bagPage(back, focus, note, tab){
     + `${count ? `<span class="count">×${count}</span>` : ''}<div class="hz">${w}</div><div class="p">${WORDS[w].py}</div><div class="small">${esc(does)}</div></button>`;
   const tabs = BAG_TABS.map(t => ({...t, list:t.things()})).filter(t => t.list.length), now = tabs.find(t => t.id === tab) || tabs[0];
   openCard(`<div class="bag"><div class="baghead"><p class="label">包 bāo · Bag</p>
-    <div class="stats">${healthHTML(health(), maxHealth(), true)}<span>🐚 ${S.shells}</span></div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
+    <div class="stats">${healthHTML(health(), maxHealth(), true)}${moneyHTML()}</div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
     ${tabs.length > 1 ? `<div class="scrolltabs bagtabs" role="tablist">${tabs.map(t => `<button class="tab" role="tab" data-tab="${t.id}" aria-selected="${t === now}">${t.name}</button>`).join('')}</div>` : ''}
     ${now ? `<div class="menu grid" data-nav>${now.list.map(card).join('')}</div>` : '<p class="hint">Nothing in your bag yet. Fruit trees, friends and the shop have things to put in it.</p>'}</div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);   // (outside the bag, so Back stays at the card's bottom however full it is)
@@ -130,7 +130,7 @@ function wardrobePage(back, focus){
 // Your words, friends and shells: at the top of the menu and your tasks.
 // The words you've caught (decided 27 October 2026: 20/81 words was unclear; the 81, all the area's words, is on the Word Scroll)
 const wordsCaught = () => ORDER.filter(w => lvl(w) > 0).length;
-const statsHTML = () => `<div class="stats"><span>${wordsCaught()} ${wordsCaught() === 1 ? 'word' : 'words'} caught</span><span>${S.friends.length} ${S.friends.length === 1 ? 'friend' : 'friends'}</span><span>🐚 ${S.shells}</span></div>`;
+const statsHTML = () => `<div class="stats"><span>${wordsCaught()} ${wordsCaught() === 1 ? 'word' : 'words'} caught</span><span>${S.friends.length} ${S.friends.length === 1 ? 'friend' : 'friends'}</span>${moneyHTML()}</div>`;
 // 任务 Tasks (Select, or the menu's tile): what to do now, full width, with how much of the chapter you've done; its
 // checklist is a page of its own (Checklist ▸, and ◂ Tasks back), so the two lists are never side by side, saying the
 // same thing twice (decided 25 October 2026: they were). back: what Back does. page: 'list' for the checklist.

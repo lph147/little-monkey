@@ -87,7 +87,7 @@ async function goFishing(x, y){
       if (!await fishQ(words[i], i + 1, words.length)){ SFX.splash(); toast(fill(FISH.slipped)); return; }
       if (need) shells++;
     }
-    if (shells){ S.shells += shells; save(); }
+    if (shells){ earn(shells); save(); }
     if (size === 'big') here().fishCasts = 0;
     got = size;
   } finally { fishing = null; }

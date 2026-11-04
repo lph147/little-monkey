@@ -168,9 +168,9 @@ async function fight(id, opts = {}){
   }
   closeCard(); playSong(placeSong());
   if (left <= 0){
-    S.shells += f.reward || 0; save(); SFX.fanfare();
+    earn(f.reward || 0); save(); SFX.fanfare();
     const beaten = bossLine(f, 'beaten');
-    const won = infoBox(scene('gone'), `${beaten ? bossLineHTML(beaten, img) : ''}<p class="label center">You win!</p><p class="endmsg">${esc(fill(f.away || `The {${f.word}} runs away.`))}${f.reward ? ` +${f.reward} 🐚` : ''}</p>`);
+    const won = infoBox(scene('gone'), `${beaten ? bossLineHTML(beaten, img) : ''}<p class="label center">You win!</p><p class="endmsg">${esc(fill(f.away || `The {${f.word}} runs away.`))}${f.reward ? ` +${f.reward} ${MONEY()}` : ''}</p>`);
     if (beaten) speakLine(beaten);
     await won;
     return 'won';

@@ -165,6 +165,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .tok.learn{color:var(--jade);font-weight:500}
 .tok.teach{font-weight:800;background:color-mix(in srgb,var(--jade) 12%,transparent)}
 .tok.listen{color:var(--muted)}
+.ispic{display:flex;justify-content:center;margin:2px 0 4px}.ispic .pix{width:var(--pic-mid);height:var(--pic-mid);image-rendering:pixelated}
 .sentence-en{font-size:1rem;color:var(--ink);background:color-mix(in srgb,var(--gold) 16%,transparent);border-radius:4px;padding:4px 8px;margin:6px 0 8px}
 ruby{ruby-position:over;ruby-align:center}   /* a word's characters stay together under a wider pinyin (not 动 物) */
 .tok .rb{display:inline-block}   /* (and on browsers without ruby-align, its characters in a box of their own: cards.js) */

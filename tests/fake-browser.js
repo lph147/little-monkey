@@ -64,8 +64,8 @@ function scriptsIn(page, root = ROOT){
 // and timers wait until the test calls flush().
 // {html: true} gives the page its <html> element (game.el('html')), starting as index.html's does, with the start-up
 // screen showing (class loading).
-function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = false, html = false} = {}){
-  const elements = {}, storage = new Map(Object.entries(stored)), frames = [], listeners = {};
+function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, page = ENTRY, dom = false, html = false} = {}){
+  const elements = {}, storage = new Map(Object.entries(stored)), session = new Map(Object.entries(tab)), frames = [], listeners = {}, reloads = {count: 0};
   const timers = new Map(); let nextTimer = 1, clock = 1000 - 1000 / 60;
   if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
   const document = {
@@ -94,6 +94,14 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = 
       setItem: (k, v) => { storage.set(k, String(v)); },
       removeItem: k => { storage.delete(k); }
     },
+    // this tab's own storage (a note of where to go, as the page loads again for another area: js/main.js), and the page's
+    // address, whose reload() is counted (reloads), not done
+    sessionStorage: {
+      getItem: k => (session.has(k) ? session.get(k) : null),
+      setItem: (k, v) => { session.set(k, String(v)); },
+      removeItem: k => { session.delete(k); }
+    },
+    location: {href: 'http://127.0.0.1:8000/', origin: 'http://127.0.0.1:8000', reload(){ reloads.count++; }},
     performance: {now: () => 1000},
     requestAnimationFrame: fn => { frames.push(fn); return frames.length; },
     setTimeout: dom ? fn => { const id = nextTimer++; timers.set(id, fn); return id; } : () => 0,
@@ -107,6 +115,8 @@ function loadGame({save, storage: stored = {}, root = ROOT, page = ENTRY, dom = 
   return {
     el: sel => elements[sel],                     // a page element, by the same selector the game uses
     storage,                                      // the browser's saved data
+    session,                                      // this tab's (sessionStorage)
+    reloads,                                      // how many times the page asked to load again (reloads.count)
     runFrame(now = clock += 1000 / 60){ const fn = frames.shift(); if (fn) fn(now); },   // draw one frame (a 60th of a second after the last, unless it says when: the game skips one too soon after the last)
     flush(){ const due = [...timers.values()]; timers.clear(); due.forEach(fn => fn()); return due.length; },   // run waiting timers (with dom: true)
     run: code => vm.runInContext(code, win),     // run code inside the game, e.g. run('ORDER.length')

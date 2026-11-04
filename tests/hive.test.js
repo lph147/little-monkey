@@ -99,7 +99,7 @@ test('A at the hive takes honey, teaching 蜂蜜 (said straight away); the hungr
   g.run("here().shrimp = 'done'; here().shrimpTable = 1");
   assert.match(g.run('goalText()'), /The hungry monkey has something to ask you: look for his ! by the feast’s 桌子 \(tables\)/, 'then a crab, from the shore (tests/shore.test.js)');
   g.run("here().crab = 'done'; here().crabTable = 1; here().exam = 1; here().feastHeld = 1; here().raft = 3");   // (then the exam, the feast and the raft: tests/shore.test.js)
-  assert.match(g.run('goalText()'), /Chapter 1 is complete! The next part of the journey is still to come\./, 'and once you’ve sailed away, chapter 1 is complete');
+  assert.match(g.run('goalText()'), /Chapter 1 is complete! Your (木筏 \(raft\)|raft) is waiting/, 'and once you’ve sailed away, chapter 1 is complete');
   g.run('__said.length = 0');
   await press(g, 20, 7, 'left');
   assert.deepEqual(get(g, '__said'), ['hungry: 我们有蜂蜜了！']);

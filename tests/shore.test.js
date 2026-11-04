@@ -277,15 +277,21 @@ test('at the water’s edge, the troop builds your raft (木筏) and says goodby
   await press(g, 11, 12, 'down');
   assert.deepEqual(get(g, '__scenes'), ['sailAway'], 'sailing away, the troop waving from the shore');
   assert.deepEqual(get(g, '[here().raft, here().done]'), [3, true], 'chapter 1 is complete');
-  assert.match(get(g, '__notes').join(' '), /box: ⛰️ Chapter 1 complete! \d+ of \d+ words caught \d+ friends 🐚 \d+ You sailed away from Flower Fruit Mountain on your 木筏 \(raft\)/);
+  assert.match(get(g, '__notes').join(' '), /box: ⛰️ Chapter 1 complete! \d+ of \d+ words caught \d+ friends 🐚 \d+ You sail away from Flower Fruit Mountain on your 木筏 \(raft\)/);
   assert.deepEqual(item(g, /Sail away/), ['Sail away on your 木筏 (raft)', true]);
-  assert.deepEqual(get(g, 'getTasks()'), [], 'no tasks');
-  assert.match(g.run('tasksHint()'), /Chapter 1 is complete! The next part of the journey is still to come/);
-  // back on the shore: the troop goes home, and A at your raft watches it again
-  assert.deepEqual(['elder', 'hungry'].map(id => npc(g, id)[0]), ['school', 'homeGround'], 'the troop, back home');
-  g.run('__scenes.length = 0; __notes.length = 0; finishedAt = null');
+  // and on across the sea: the game is saved in Area 2, and the page loads again to play it, where you arrive
+  assert.equal(get(g, 'S.area'), 2, 'your game is in Area 2 now');
+  assert.deepEqual(JSON.parse(g.session.get('xiaohouzi-v2-go')), {area: 2, slot: 1, action: 'arrive'}, 'a note to arrive there');
+  assert.equal(g.reloads.count, 1, 'the page loads again');
+});
+
+test('a game that sailed away before Area 2 was built: its raft waits at the water’s edge, and A at it sails on', async () => {
+  const g = game({place: 'shore', x: 11, y: 12, dir: 'down'}, {crab: 'done', crabTable: 1, seaSeen: 1, exam: 1, feastHeld: 1, raft: 3, done: true},
+    {w: {'螃蟹': {lv: 1, ok: 0}, '海': {lv: 1, ok: 0}, '快乐': {lv: 1, ok: 0}, '木筏': {lv: 1, ok: 0}}});
+  assert.match(g.run('tasksHint()'), /Chapter 1 is complete! Your 木筏 \(raft\) is waiting at the water’s edge.*sail on across the sea/);
+  assert.equal(g.run('promptFor(11, 13)'), 'Board');
+  g.run('confirmBox = async () => true');
   await press(g, 11, 12, 'down');
-  assert.deepEqual(get(g, '__scenes'), ['sailAway']);
-  assert.match(get(g, '__notes').join(' '), /The next part of the journey is still to come!/);
-  assert.equal(get(g, 'here().raft'), 3);
+  assert.equal(get(g, 'S.area'), 2);
+  assert.deepEqual(JSON.parse(g.session.get('xiaohouzi-v2-go')), {area: 2, slot: 1, action: 'arrive'});
 });
