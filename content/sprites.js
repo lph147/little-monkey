@@ -237,8 +237,12 @@ const MAP_SPRITES = {
     rows: ["................",".....a..........","....aba.........","....aba.........","...cabba........","..cddeef.gg.....","hijklkbagmmggg..","nojjkbemmmmmmmg.","jjiabcdkkkkkkbba","ii..acdkkkkkkbba",".....febbkkebbba",".....fepabbeqpdb",".....feprafeqpbb",".....fepr.feqpra",".....fepr.feppr.","......fr...frr.."]
   }
 };
-// A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, in dark slate greys.
-MAP_SPRITES['水 牛'] = {...MAP_SPRITES['牛'], palette:Object.fromEntries(Object.entries(MAP_SPRITES['牛'].palette).map(([k, c]) => {
-  const v = [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)), l = Math.round((v[0] * .3 + v[1] * .59 + v[2] * .11) * .55 + 30);
-  return [k, '#' + [l, l + 4, l + 10].map(x => Math.min(255, x).toString(16).padStart(2, '0')).join('')];
-}))};
+// A water buffalo (Area 2, in the fields: not a word of its own): the cow's drawing, dark slate grey all over, with no
+// patches (decided 4 November 2026: in the cow's light and dark it was a grey cow with spots), a grey muzzle, and wide
+// pale horns sweeping out and back.
+MAP_SPRITES['水 牛'] = {...MAP_SPRITES['牛'],
+  rows:["aa.........aa.........", "abaa.....aaba.........", ".abbaaaaabba..........", ...MAP_SPRITES['牛'].rows.slice(3)],
+  palette:{...MAP_SPRITES['牛'].palette, a:'#2A2622', b:'#CFC4AA', e:'#3A3B3E', f:'#6A6D72', g:'#1A1612', h:'#55575C', i:'#2E2E30', j:'#44464A', k:'#4E5054', l:'#72757C',
+    m:'#5E6065', n:'#4E4A46', o:'#6E6863', p:'#5E5853', q:'#4E4A46', r:'#7A746E', s:'#3E3A36', t:'#6A645F', u:'#2E2A26', v:'#4A4C50', w:'#2E2E30', x:'#2E2E30',
+    y:'#6E6863', z:'#4A4C50', A:'#1E1E20', B:'#1E1E20', C:'#1E1E20', D:'#2A2A2C'}
+};

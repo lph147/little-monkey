@@ -71,60 +71,113 @@ for (const k of ['jHouse', 'mudHouse', 'whiteWall', 'wallGate', 'jars', 'baskets
   LOOKS[k] = groundUnder(k, LOOKS[k]);
 
 /* ---- buildings and things ---- */
-const roofTiles = (g, x, y, w, h) => {   // dark grey tiles in rows, a ridge along the top, curling up at both ends
+// Each thing is drawn with a dark outline round it (inked), as Area 1's are (decided 4 November 2026, after playing it: the
+// rice sacks, the firewood and the mud house couldn't be told from the ground they stood on): drawn on a canvas of its own,
+// then its shape a pixel out each way in ink, under it. Thin things (a rope, a washing line, a net) are drawn after, without
+// one, and a shadow on the ground before.
+const INK = '#2E2218';
+function inked(g, o, draw, col = INK){
+  const bx = o.x * T - 24, by = o.y * T - 48, w = o.w * T + 48, h = o.h * T + 60;
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const t = c.getContext('2d'); t.translate(-bx, -by); draw(t);
+  const s = document.createElement('canvas'); s.width = w; s.height = h; const sg = s.getContext('2d');
+  sg.drawImage(c, 0, 0); sg.globalCompositeOperation = 'source-in'; sg.fillStyle = col; sg.fillRect(0, 0, w, h);
+  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) g.drawImage(s, bx + dx, by + dy);
+  g.drawImage(c, bx, by);
+}
+const ink = draw => (g, o) => inked(g, o, t => draw(t, o));
+const shadowUnder = (g, cx, cy, rx) => { if (shadows) blob(g, cx, cy, rx, 1.5, ROCK_SHADOW); };
+const roofTiles = (g, x, y, w, h) => {   // dark grey tiles: rows of half-round tiles running down the roof, a ridge along the top curling up at both ends, and the tiles' round ends along the eave
   R(g, x, y, w, h, HW.tile);
-  for (let r = y + 2; r < y + h; r += 3) R(g, x, r, w, 1, HW.tileDk);
-  for (let c = x + 1; c < x + w; c += 3) for (let r = y + 1; r < y + h; r += 3) R(g, c, r, 1, 1, HW.tileLt);
+  for (let c = x + 1; c < x + w - 1; c += 3){ R(g, c, y, 1, h, HW.tileLt); R(g, c + 1, y, 1, h, '#4A5257'); }
+  for (let r = y + 4; r < y + h; r += 4) R(g, x, r, w, 1, HW.tileDk);
   R(g, x - 2, y - 2, w + 4, 3, HW.tileDk); R(g, x - 2, y - 2, w + 4, 1, HW.tileLt);
-  R(g, x - 4, y - 4, 3, 2, HW.tileDk); R(g, x + w + 1, y - 4, 3, 2, HW.tileDk);
-  R(g, x - 2, y + h, w + 4, 2, HW.tileDk);
+  R(g, x - 4, y - 3, 3, 2, HW.tileDk); R(g, x - 5, y - 5, 2, 2, HW.tileDk); R(g, x + w + 1, y - 3, 3, 2, HW.tileDk); R(g, x + w + 3, y - 5, 2, 2, HW.tileDk);
+  R(g, x - 2, y + h, w + 4, 2, HW.tileDk); for (let c = x - 1; c < x + w + 2; c += 3) R(g, c, y + h + 1, 2, 1, HW.tileLt);
 };
-const woodDoor = (g, x, y, w = 8, h = 12) => { R(g, x - 1, y - 1, w + 2, h + 1, HW.woodLt); R(g, x, y, w, h, HW.wood); R(g, x + w / 2, y, 1, h, '#3E2614'); R(g, x + 2, y + 6, 1, 1, '#E0B050'); R(g, x + w - 3, y + 6, 1, 1, '#E0B050'); };
-const lattice = (g, x, y, w = 8, h = 6) => { R(g, x, y, w, h, '#6E4A2A'); for (let i = 1; i < w; i += 2) R(g, x + i, y + 1, 1, h - 2, '#D9C49A'); R(g, x + 1, y + h / 2, w - 2, 1, '#6E4A2A'); };
-const lantern = (g, x, y) => { R(g, x + 1, y - 3, 1, 3, '#3A2A1E'); oval(g, x + 1, y + 3, 3, 4, '#D8342C'); R(g, x - 1, y, 5, 1, '#F2C04A'); R(g, x - 1, y + 6, 5, 1, '#F2C04A'); };
-function jHouse(g, o, sign){   // a white-walled house with a dark tiled roof, a wooden door and lattice windows
+const woodDoor = (g, x, y, w = 8, h = 12) => { R(g, x - 1, y - 1, w + 2, h + 1, HW.woodLt); R(g, x, y, w, h, HW.wood); R(g, x + w / 2, y, 1, h, '#3E2614'); R(g, x + 1, y + 2, w / 2 - 2, 3, '#4E3018'); R(g, x + w / 2 + 2, y + 2, w / 2 - 3, 3, '#4E3018'); R(g, x + 2, y + 7, 1, 1, '#E0B050'); R(g, x + w - 3, y + 7, 1, 1, '#E0B050'); };
+const lattice = (g, x, y, w = 8, h = 6) => { R(g, x - 1, y - 1, w + 2, h + 2, HW.woodLt); R(g, x, y, w, h, '#6E4A2A'); for (let i = 1; i < w; i += 2) R(g, x + i, y + 1, 1, h - 2, '#D9C49A'); R(g, x + 1, y + h / 2, w - 2, 1, '#6E4A2A'); };
+const lantern = (g, x, y) => { R(g, x + 1, y - 3, 1, 3, '#3A2A1E'); oval(g, x + 1, y + 3, 3, 4, '#D8342C'); R(g, x, y + 1, 1, 4, '#F06A50'); R(g, x - 1, y, 5, 1, '#F2C04A'); R(g, x - 1, y + 6, 5, 1, '#F2C04A'); };
+function jHouse(g, o, sign){   // a white-walled house with a dark tiled roof, wooden posts at its corners, a wooden door and lattice windows
   const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T, roofH = Math.round(H * .45);
-  R(g, X + 1, Y + roofH, W - 2, H - roofH, HW.white); R(g, X + 1, Y + roofH, W - 2, 2, HW.whiteSh);
-  R(g, X + 1, Y + H - 3, W - 2, 3, HW.plinth);
+  R(g, X + 1, Y + roofH, W - 2, H - roofH, HW.white); R(g, X + 1, Y + roofH, W - 2, 3, HW.whiteSh);   // (the eave's shadow)
+  for (const px of [X + 1, X + W - 4]){ R(g, px, Y + roofH, 3, H - roofH - 3, HW.woodLt); R(g, px + 2, Y + roofH, 1, H - roofH - 3, HW.wood); }
+  R(g, X + 1, Y + H - 3, W - 2, 3, HW.plinth); R(g, X + 1, Y + H - 3, W - 2, 1, '#A8A398'); for (let c = X + 4; c < X + W - 2; c += 7) R(g, c, Y + H - 2, 1, 2, '#6E6A62');
   roofTiles(g, X + 1, Y - 6, W - 2, roofH + 4);
-  woodDoor(g, X + W / 2 - 4, Y + H - 14);
-  if (W >= 48) for (const wx of [X + 5, X + W - 13]) lattice(g, wx, Y + roofH + 6);
+  woodDoor(g, X + W / 2 - 4, Y + H - 15, 8, 12);
+  if (W >= 48) for (const wx of [X + 7, X + W - 15, ...(W >= 112 ? [X + Math.round(W / 4) - 4, X + Math.round(W * 3 / 4) - 4] : [])]) lattice(g, wx, Y + roofH + 6);
   if (sign) sign(g, X, Y, W, H);
 }
-function mudHouse(g, o){   // a fisherman's house: mud-brick walls under a thick thatched roof
-  const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T, roofH = Math.round(H * .5);
-  R(g, X + 2, Y + roofH, W - 4, H - roofH, HW.mud);
-  for (let r = Y + roofH + 3; r < Y + H; r += 4) for (let c = X + 2 + ((r / 4) % 2) * 4; c < X + W - 2; c += 8) R(g, c, r, 7, 1, HW.mudDk);
-  for (let i = 0; i < roofH + 8; i++){ const inset = Math.max(0, 6 - i); R(g, X - 2 + inset, Y - 8 + i, W + 4 - inset * 2, 1, i % 3 ? HW.thatch : HW.thatchDk); }
-  for (let c = X; c < X + W; c += 3) R(g, c, Y + roofH - 1, 1, 3, HW.thatchDk);
-  woodDoor(g, X + W / 2 - 4, Y + H - 13, 8, 13);
+function mudHouse(g, o){   // a fisherman's house: mud-brick walls on a stone footing, under a thick thatched roof tied along its ridge
+  const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T, roofH = Math.round(H * .5), L = X - 3, RW = W + 6;
+  inked(g, o, t => {
+    R(t, X + 2, Y + roofH, W - 4, H - roofH, HW.mud); R(t, X + 2, Y + roofH, W - 4, 4, HW.mudDk);   // (the thatch's shadow)
+    for (let r = Y + roofH + 6, k = 0; r < Y + H - 3; r += 4, k++) for (let c = X + 2 - (k % 2) * 4; c < X + W - 2; c += 8){   // the bricks' joints, inside the wall
+      const a = Math.max(c, X + 3), b = Math.min(c + 7, X + W - 3); if (b > a) R(t, a, r, b - a, 1, HW.mudDk);
+      if (c + 7 > X + 3 && c + 7 < X + W - 3) R(t, c + 7, r - 3, 1, 3, HW.mudDk);
+    }
+    R(t, X + 2, Y + H - 3, W - 4, 3, '#8C877D'); for (let c = X + 5; c < X + W - 3; c += 6) R(t, c, Y + H - 3, 1, 3, '#6E6A62');   // its footing of stones
+    lattice(t, X + 6, Y + roofH + 7, 7, 5);   // a little window
+    woodDoor(t, X + W / 2 - 4, Y + H - 14, 8, 11);
+    for (let i = 0; i < roofH + 8; i++){ const inset = Math.max(0, Math.round((7 - i) * 1.4)); R(t, L + inset, Y - 8 + i, RW - inset * 2, 1, HW.thatch); }   // the thatch, rounded at its top
+    for (let c = L + 1; c < L + RW - 1; c += 2){   // its straw, streaked, hanging in a ragged fringe at the eave
+      const top = Y - 8 + Math.max(0, 7 - Math.floor((Math.min(c - L, L + RW - c)) / 1.4)) + 2;
+      R(t, c, top + Math.floor(rnd(c, o.y, 510) * 4), 1, 3 + Math.floor(rnd(c, o.y, 511) * 6), (c >> 1) % 3 ? HW.thatchDk : '#E2C47A');
+      R(t, c, Y + roofH - 1, 1, 2 + Math.floor(rnd(c, o.y, 512) * 3), c % 4 ? HW.thatchDk : HW.thatch);
+    }
+    R(t, L + 10, Y - 8, RW - 20, 3, '#9A7A3A'); for (let c = L + 14; c < L + RW - 12; c += 10) R(t, c, Y - 8, 2, 4, '#5E4A2A');   // the ridge, tied down
+  });
+  for (let k = 0; k < 4; k++) R(g, X + W / 2 + 6, Y + roofH + 4 + k * 2, 2, 2, k % 2 ? '#C23A2E' : '#E0503A');   // a string of red chillies drying by the door
 }
 function marketStall(g, o, awn, goods, sign){   // a stall: a cloth awning on poles over a counter of goods, a sign hanging at its side
   const X = o.x * T, Y = o.y * T, W = o.w * T;
-  R(g, X + 1, Y - 12, 2, 26, HW.wood); R(g, X + W - 3, Y - 12, 2, 26, HW.wood);
-  for (let i = 0; i < W; i++) R(g, X + i, Y - 14 + (i % 8 < 4 ? 0 : 1), 1, 5, i % 8 < 4 ? awn : '#F2EEE4');
-  R(g, X + 2, Y + 3, W - 4, 10, HW.woodLt); R(g, X + 2, Y + 3, W - 4, 1, '#B07A48'); R(g, X + 2, Y + 12, W - 4, 1, HW.wood);
-  goods(g, X + 4, Y - 1, W - 8);
+  shadowUnder(g, X + W / 2, Y + 14, W / 2);
+  inked(g, o, t => {
+    R(t, X + 1, Y - 12, 2, 26, HW.wood); R(t, X + W - 3, Y - 12, 2, 26, HW.wood);
+    for (let i = 0; i < W; i++) R(t, X + i, Y - 14 + (i % 8 < 4 ? 0 : 1), 1, 5, i % 8 < 4 ? awn : '#F2EEE4');
+    for (let i = 0; i < W; i += 4) R(t, X + i, Y - 9, 2, 1, i % 8 < 4 ? awn : '#F2EEE4');   // (its scalloped edge)
+    R(t, X + 2, Y + 3, W - 4, 10, HW.woodLt); R(t, X + 2, Y + 3, W - 4, 1, '#B07A48'); R(t, X + 2, Y + 12, W - 4, 1, HW.wood);
+    for (let c = X + 8; c < X + W - 4; c += 8) R(t, c, Y + 4, 1, 8, HW.wood);   // (its boards)
+    goods(t, X + 4, Y - 1, W - 8);
+  });
   if (sign) sign(g, X + W - 1, Y - 8);
 }
 const vSign = text => (g, x, y) => { const n = [...text].length; R(g, x - 1, y - 1, 14, n * 12 + 3, HW.wood); R(g, x, y, 12, n * 12 + 1, '#F2E6C4'); write(g, text, x + 1, y + 1, '#2A1A10', {down: true}); };
+// A sack of rice: closed, tied at its neck with its two corners sticking up; or open, its top rolled down, full of rice.
+const SACK = ['#E6D6AE', '#CDB98A', '#A8925F', '#BFA977'];
+function sack(g, x, y, w, h, open){
+  const m = x + (w >> 1);
+  R(g, x + 1, y, w - 2, h, SACK[1]); R(g, x, y + 1, w, h - 2, SACK[1]);
+  R(g, x + 1, y + 1, 1, h - 2, SACK[0]); R(g, x + w - 2, y + 1, 1, h - 2, SACK[2]); R(g, x + 1, y + h - 2, w - 2, 1, SACK[2]);
+  for (let r = y + 3; r < y + h - 2; r += 2) R(g, x + 2, r, w - 4, 1, SACK[3]);   // (the sacking's weave)
+  if (open){ R(g, x, y, w, 2, SACK[0]); R(g, x, y + 2, w, 1, SACK[2]); R(g, x + 1, y - 1, w - 2, 2, '#F6F3EA'); R(g, x + 2, y - 2, w - 4, 1, '#F6F3EA'); R(g, x + 3, y - 1, 1, 1, '#D9D3C2'); R(g, x + 5, y, 1, 1, '#D9D3C2'); }
+  else { R(g, m - 1, y - 2, 3, 2, SACK[1]); R(g, m - 1, y - 1, 3, 1, '#6E5A3A'); R(g, m - 3, y - 4, 2, 1, SACK[0]); R(g, m - 2, y - 3, 5, 1, SACK[1]); R(g, m + 2, y - 4, 2, 1, SACK[1]); }
+}
+function basket(g, x, y, w, h, inside){   // a round bamboo basket, from the front and a little above: woven sides, a rim, and what's in it
+  R(g, x + 1, y + 1, w - 2, h, '#C9A25A'); R(g, x, y + 1, w, h - 1, '#C9A25A');
+  for (let r = y + 3; r < y + h; r++) for (let c = x + 1 + (r % 2); c < x + w - 1; c += 2) R(g, c, r, 1, 1, '#A8823E');
+  R(g, x, y, w, 2, '#E8C682'); R(g, x + 1, y + 2, w - 2, 1, '#8E6A30');
+  if (inside === 'fish') for (const [dx, dy] of [[1, -2], [3, -3]]){ R(g, x + dx, y + dy, 2, 3, '#AEBBC2'); R(g, x + dx, y + dy, 1, 3, '#7F8E98'); R(g, x + dx + 1, y + dy, 1, 1, '#1E1A16'); }
+  else if (inside === 'greens'){ oval(g, x + 2, y - 1, 2, 1, '#5E9A3C'); oval(g, x + w - 3, y - 1, 2, 1, '#86C25A'); }
+  else R(g, x + 1, y, w - 2, 1, '#5A3E1E');
+}
 Object.assign(OBJECT_ART, {
-  jHouse: (g, o) => jHouse(g, o),
+  jHouse: ink((g, o) => jHouse(g, o)),
   mudHouse,
-  townSchool: (g, o) => jHouse(g, o, (g, X, Y, W) => { const sx = X + W / 2 - 13; R(g, sx - 1, Y + 9, 28, 15, HW.wood); R(g, sx, Y + 10, 26, 13, '#1E2A3A'); write(g, '学校', sx + 2, Y + 11, '#F2D27A'); }),
-  teahouse: (g, o) => {   // the teahouse: a red flag with 茶 on a pole, two red lanterns and a little balcony
+  townSchool: ink((g, o) => jHouse(g, o, (g, X, Y, W) => { const sx = X + W / 2 - 13; R(g, sx - 1, Y + 9, 28, 15, HW.wood); R(g, sx, Y + 10, 26, 13, '#1E2A3A'); write(g, '学校', sx + 2, Y + 11, '#F2D27A'); })),
+  teahouse: ink((g, o) => {   // the teahouse: a red flag with 茶 on a pole, two red lanterns and a little balcony
     jHouse(g, o);
     const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T;
     R(g, X + 3, Y + H - 18, W - 6, 2, HW.woodLt); for (let i = X + 4; i < X + W - 4; i += 4) R(g, i, Y + H - 16, 1, 3, HW.woodLt);
     lantern(g, X + 10, Y + H - 26); lantern(g, X + W - 12, Y + H - 26);
     const fx = X + W - 4, fy = Y - 6; R(g, fx, fy, 2, 42, HW.wood); R(g, fx - 16, fy + 2, 16, 20, '#C23A2E'); R(g, fx - 16, fy + 2, 16, 2, '#E8605A'); R(g, fx - 16, fy + 20, 16, 2, '#8E241C');
     write(g, '茶', fx - 14, fy + 6, '#F6E7C4');
-  },
-  whiteWall: (g, o) => { const X = o.x * T, Y = o.y * T, W = o.w * T; R(g, X, Y + 2, W, 14, HW.white); R(g, X, Y + 13, W, 3, HW.plinth); roofTiles(g, X + 2, Y - 2, W - 4, 3); },
+  }),
+  whiteWall: (g, o) => { const X = o.x * T, Y = o.y * T, W = o.w * T; R(g, X, Y + 2, W, 14, HW.white); R(g, X, Y + 2, W, 2, HW.whiteSh); R(g, X, Y + 13, W, 3, HW.plinth); R(g, X, Y + 13, W, 1, '#A8A398'); roofTiles(g, X + 2, Y - 2, W - 4, 3); },   // (no outline: a wall runs on into the next, and lines between its squares showed)
   wallGate: (g, o) => {   // a wooden gate in the white wall, with a little tiled roof over it
     const X = o.x * T, Y = o.y * T;
     R(g, X, Y + 2, T, 14, HW.white); R(g, X, Y + 13, T, 3, HW.plinth); roofTiles(g, X + 1, Y - 4, T - 2, 3);
     R(g, X + 2, Y + 2, 12, 14, HW.woodLt); R(g, X + 3, Y + 3, 10, 13, HW.wood); R(g, X + 8, Y + 3, 1, 13, '#3E2614');
+    for (let r = Y + 5; r < Y + 15; r += 4) R(g, X + 3, r, 10, 1, '#4E3018');
     R(g, X + 6, Y + 9, 1, 1, '#E0B050'); R(g, X + 10, Y + 9, 1, 1, '#E0B050');
   },
   bambooFence: (g, o) => { const X = o.x * T, Y = o.y * T, W = o.w * T; for (let i = X + 1; i < X + W; i += 3){ R(g, i, Y - 2, 2, 15, '#B9A35A'); R(g, i, Y + 3, 2, 1, '#8E7A3A'); } R(g, X, Y + 1, W, 2, '#8E7A3A'); R(g, X, Y + 8, W, 2, '#8E7A3A'); },
@@ -154,51 +207,140 @@ Object.assign(OBJECT_ART, {
     for (const [dx, dy, r, c] of [[-10, -6, 12, '#2F5A2E'], [10, -8, 13, '#2F5A2E'], [0, -16, 15, '#3A6E36'], [-6, -10, 10, '#4A8040'], [8, -14, 9, '#4A8040']]) oval(g, X + W / 2 + dx, Y + dy, r, Math.round(r * .8), c);
     for (const dx of [-7, 0, 7]) R(g, X + W / 2 + dx - 1, Y - 1, 3, 1, '#24452A');   // shade under its leaves, where the branches go in
   },
-  jars: (g, o) => { const X = o.x * T, Y = o.y * T; for (const [dx, s] of [[4, 6], [11, 5]]){ oval(g, X + dx, Y + 10, s, s + 1, '#6A3A22'); oval(g, X + dx, Y + 8, s - 1, s - 1, '#8A4E2C'); oval(g, X + dx, Y + 4, s - 2, 1, '#2A1A10'); R(g, X + dx - 2, Y + 7, 1, 3, '#B07048'); } },
-  baskets: (g, o) => { const X = o.x * T, Y = o.y * T; for (const [dx, dy] of [[1, 6], [8, 7], [4, 0]]){ R(g, X + dx, Y + dy, 7, 7, '#B8904A'); for (let i = 0; i < 7; i += 2) R(g, X + dx + i, Y + dy, 1, 7, '#8E6A30'); R(g, X + dx, Y + dy, 7, 1, '#D8B068'); } },
-  sacks: (g, o) => { const X = o.x * T, Y = o.y * T; for (const [dx, dy] of [[1, 6], [8, 6], [5, 1]]){ oval(g, X + dx + 3, Y + dy + 4, 4, 4, '#D8C9A0'); R(g, X + dx + 2, Y + dy - 1, 3, 2, '#B8A980'); R(g, X + dx + 1, Y + dy + 4, 5, 1, '#C23A2E'); } },
-  cart: (g, o) => { const X = o.x * T, Y = o.y * T; R(g, X - 2, Y + 3, 18, 7, HW.woodLt); R(g, X - 2, Y + 3, 18, 1, '#B07A48'); oval(g, X + 4, Y + 11, 4, 4, '#3E2614'); oval(g, X + 4, Y + 11, 2, 2, HW.woodLt); oval(g, X + 9, Y + 4, 3, 2, '#7FB050'); oval(g, X + 3, Y + 4, 3, 2, '#E0A040'); },
-  woodpile: (g, o) => { const X = o.x * T, Y = o.y * T; for (let r = 0; r < 3; r++) for (let c = 0; c < 4 - r; c++){ const cx = X + 3 + c * 4 + r * 2, cy = Y + 12 - r * 4; oval(g, cx, cy, 2, 2, '#8A5A30'); R(g, cx, cy, 1, 1, '#D8B070'); } },
-  fishRack: (g, o) => { const X = o.x * T, Y = o.y * T, W = o.w * T; R(g, X + 1, Y - 6, 2, 21, HW.wood); R(g, X + W - 3, Y - 6, 2, 21, HW.wood); R(g, X + 1, Y - 6, W - 2, 2, HW.woodLt); for (let i = X + 4; i < X + W - 3; i += 3){ R(g, i, Y - 4, 1, 3, '#7A6A55'); oval(g, i, Y + 1, 1, 3, '#9AA7B0'); } },
+  jars: (g, o) => {   // two big glazed water jars, one with a wooden lid, the other full of water
+    const X = o.x * T, Y = o.y * T; shadowUnder(g, X + 8, Y + 15, 8);
+    inked(g, o, t => { for (const [cx, s, lid] of [[5, 5, true], [12, 4, false]]){
+      const top = Y + 14 - s * 2 - 1;
+      blob(t, X + cx, Y + 14 - s, s, s, '#6A3A22'); blob(t, X + cx - 1, Y + 13 - s, s - 1, s - 1, '#8A4E2C'); R(t, X + cx - s + 2, Y + 12 - s, 1, 3, '#C88A60');
+      R(t, X + cx - s + 1, top, s * 2 - 1, 2, '#4A2614'); R(t, X + cx - s + 1, top, s * 2 - 1, 1, '#9A5E3A');
+      if (lid){ R(t, X + cx - s, top - 2, s * 2 + 1, 2, WOODS[3]); R(t, X + cx - s, top - 2, s * 2 + 1, 1, WOODS[4]); R(t, X + cx - 1, top - 3, 2, 1, WOODS[2]); }
+      else R(t, X + cx - s + 2, top + 1, s * 2 - 3, 1, '#4F8E95');
+    } });
+  },
+  baskets: (g, o) => {   // round bamboo baskets: one with fish in it, one with greens, an empty one behind
+    const X = o.x * T, Y = o.y * T; shadowUnder(g, X + 8, Y + 15, 8);
+    inked(g, o, t => { basket(t, X + 4, Y + 2, 8, 5, 'empty'); basket(t, X + 1, Y + 8, 7, 6, 'fish'); basket(t, X + 9, Y + 9, 7, 5, 'greens'); });
+  },
+  sacks: (g, o) => {   // sacks of rice: two tied up behind, one open in front, full of rice, a few grains spilt
+    const X = o.x * T, Y = o.y * T; shadowUnder(g, X + 8, Y + 15, 8);
+    inked(g, o, t => { sack(t, X + 1, Y + 5, 7, 8); sack(t, X + 8, Y + 4, 7, 8); sack(t, X + 4, Y + 9, 8, 6, true); });
+    for (const [dx, dy] of [[2, 15], [13, 15], [14, 14]]) R(g, X + dx, Y + dy, 1, 1, '#F6F3EA');
+  },
+  cart: (g, o) => {   // a wooden handcart, side on: its bed of planks, a big spoked wheel, a handle, and cabbages and a pumpkin on it
+    const X = o.x * T, Y = o.y * T; shadowUnder(g, X + 7, Y + 15, 9);
+    inked(g, o, t => {
+      R(t, X - 6, Y + 6, 8, 2, WOODS[2]); R(t, X - 6, Y + 6, 8, 1, WOODS[3]);   // its handle
+      R(t, X + 1, Y + 9, 2, 6, WOODS[1]);   // its leg
+      blob(t, X + 4, Y + 3, 2, 2, '#5E9A3C'); R(t, X + 3, Y + 2, 2, 1, '#86C25A'); blob(t, X + 9, Y + 2, 3, 2, '#E0902A'); R(t, X + 8, Y + 1, 2, 1, '#F2B860'); R(t, X + 9, Y - 1, 1, 1, '#5E7A2A'); blob(t, X + 13, Y + 3, 2, 2, '#6FAA48');
+      R(t, X, Y + 5, 16, 5, WOODS[2]); R(t, X, Y + 5, 16, 1, WOODS[4]); R(t, X, Y + 9, 16, 1, WOODS[1]); for (let c = X + 4; c < X + 16; c += 4) R(t, c, Y + 6, 1, 3, WOODS[1]);
+      blob(t, X + 9, Y + 11, 4, 4, WOODS[0]); blob(t, X + 9, Y + 11, 3, 3, WOODS[3]);   // the wheel
+      R(t, X + 9, Y + 8, 1, 7, WOODS[0]); R(t, X + 6, Y + 11, 7, 1, WOODS[0]); for (const [dx, dy] of [[-2, -2], [2, -2], [-2, 2], [2, 2]]) R(t, X + 9 + dx, Y + 11 + dy, 1, 1, WOODS[0]);
+      R(t, X + 8, Y + 10, 3, 3, WOODS[1]); R(t, X + 9, Y + 11, 1, 1, WOODS[4]);
+    });
+  },
+  woodpile: (g, o) => {   // firewood, stacked: logs seen end on, their bark dark, the cut ends pale with rings, each log's length going back
+    const X = o.x * T, Y = o.y * T, logs = [[3, 13], [8, 13], [13, 13], [5, 9], [10, 9], [7, 5]];
+    shadowUnder(g, X + 9, Y + 15, 8);
+    inked(g, o, t => {
+      for (const [cx, cy] of logs) for (let k = 3; k >= 1; k--) blob(t, X + cx + k, Y + cy - k, 2, 2, k === 3 ? '#4E321C' : '#6E4626');
+      for (const [cx, cy] of logs) for (let k = 1; k <= 2; k++) R(t, X + cx + k - 1, Y + cy - k - 2, 2, 1, '#8A5E36');   // (the bark lit along the top)
+      for (const [cx, cy] of logs){ blob(t, X + cx, Y + cy, 2, 2, '#5A3A1E'); blob(t, X + cx, Y + cy, 1, 1, '#E8C88E'); R(t, X + cx, Y + cy, 1, 1, '#B08850'); }
+    });
+  },
+  fishRack: (g, o) => {   // a rack of fish drying in the sun, hung by their tails from a pole
+    const X = o.x * T, Y = o.y * T, W = o.w * T, at = [];
+    for (let i = X + 5; i < X + W - 6; i += 5) at.push(i);
+    inked(g, o, t => {
+      R(t, X + 1, Y - 7, 2, 22, HW.wood); R(t, X + W - 3, Y - 7, 2, 22, HW.wood); R(t, X, Y - 8, W, 2, HW.woodLt); R(t, X, Y - 7, W, 1, HW.wood);
+      for (const i of at){
+        R(t, i, Y - 3, 1, 1, '#7F8E98'); R(t, i + 2, Y - 3, 1, 1, '#7F8E98'); R(t, i + 1, Y - 2, 1, 1, '#7F8E98');   // its tail, at the top
+        R(t, i, Y - 1, 3, 6, '#AEBBC2'); R(t, i, Y - 1, 1, 6, '#7F8E98'); R(t, i + 2, Y - 1, 1, 6, '#D6DEE2'); R(t, i + 1, Y + 5, 1, 1, '#AEBBC2'); R(t, i + 1, Y + 3, 1, 1, '#1E1A16');
+      }
+    });
+    for (const i of at) R(g, i + 1, Y - 6, 1, 3, '#7A6A55');   // (the strings)
+  },
   archBridge: (g, o) => {   // a stone bridge arching over the canal, with low railings
     const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T;
     R(g, X, Y, W, H, '#ADA79C'); for (let r = Y + 2; r < Y + H; r += 4) R(g, X, r, W, 1, '#968F84');
     for (const sx of [X, X + W - 3]){ R(g, sx, Y - 4, 3, H + 4, '#8C877D'); R(g, sx, Y - 4, 3, 1, '#C6C0B5'); for (let r = Y; r < Y + H; r += 8) R(g, sx - 1, r - 6, 5, 3, '#C6C0B5'); }
   },
-  well: (g, o) => { const X = o.x * T, Y = o.y * T; oval(g, X + 8, Y + 11, 7, 4, '#8C877D'); oval(g, X + 8, Y + 10, 6, 3, '#B3ADA2'); oval(g, X + 8, Y + 10, 4, 2, '#24363A'); R(g, X + 12, Y + 2, 4, 6, HW.woodLt); R(g, X + 12, Y + 2, 4, 1, '#B07A48'); R(g, X + 13, Y - 1, 1, 3, '#5A4630'); },
-  washLine: (g, o) => { const X = o.x * T, Y = o.y * T, W = o.w * T, cols = ['#3E5A86', '#F2EEE4', '#2F4E78', '#C7902F', '#F2EEE4']; R(g, X + 1, Y - 6, 2, 21, '#B9A35A'); R(g, X + W - 3, Y - 6, 2, 21, '#B9A35A'); R(g, X + 2, Y - 5, W - 4, 1, '#E8E0C8'); for (let i = 0, cx = X + 5; cx < X + W - 8; i++, cx += 8) R(g, cx, Y - 4, 6, 7 + (i % 2) * 2, cols[i % cols.length]); },
-  bookTable: (g, o) => {   // a little table of books by the school, open and stacked
+  well: (g, o) => {   // a village well: a round wall of stones, a little tiled roof on two posts over it, a winch with its rope, and the bucket on its rim
+    const X = o.x * T, Y = o.y * T; shadowUnder(g, X + 8, Y + 15, 8);
+    inked(g, o, t => {
+      R(t, X + 1, Y - 9, 2, 20, WOODS[1]); R(t, X + 13, Y - 9, 2, 20, WOODS[1]); R(t, X + 1, Y - 9, 1, 20, WOODS[2]); R(t, X + 13, Y - 9, 1, 20, WOODS[2]);
+      for (let i = 0; i < 4; i++) R(t, X + 4 - i, Y - 14 + i, 8 + i * 2, 1, i === 3 ? HW.tileDk : i ? HW.tile : HW.tileLt);   // its little roof
+      R(t, X + 1, Y - 6, 14, 2, WOODS[2]); R(t, X + 6, Y - 7, 4, 4, WOODS[3]); R(t, X + 6, Y - 6, 4, 1, '#C8B890'); R(t, X + 6, Y - 4, 4, 1, '#C8B890');   // the winch, the rope wound round it
+      blob(t, X + 8, Y + 11, 7, 4, '#8C877D'); blob(t, X + 8, Y + 10, 7, 3, '#B3ADA2'); blob(t, X + 8, Y + 9, 4, 1, '#24363A');
+      for (const [dx, dy] of [[-5, 1], [-2, 2], [1, 2], [4, 2], [6, 0], [-6, -1]]) R(t, X + 8 + dx, Y + 11 + dy, 1, 2, '#8C877D');   // (the stones' joints)
+      R(t, X + 11, Y + 3, 4, 4, WOODS[3]); R(t, X + 11, Y + 4, 4, 1, WOODS[1]); R(t, X + 11, Y + 3, 4, 1, WOODS[4]);   // the bucket
+    });
+    R(g, X + 8, Y - 3, 1, 12, '#C8B890');   // (the rope, down into the water)
+  },
+  washLine: (g, o) => {   // washing on a line between two bamboo poles: shirts and trousers, pegged up
+    const X = o.x * T, Y = o.y * T, W = o.w * T, cols = [['#3E5A86', '#2F4570'], ['#F2EEE4', '#CFC8B8'], ['#C7902F', '#9E7024'], ['#5E8F3A', '#47702C'], ['#F2EEE4', '#CFC8B8']], at = [];
+    for (let i = 0, cx = X + 5; cx + 8 < X + W - 3; i++, cx += 10) at.push([cx, i]);
+    R(g, X + 2, Y - 5, W - 4, 1, '#E8E0C8');   // (the line)
+    inked(g, o, t => {
+      R(t, X + 1, Y - 7, 2, 22, '#B9A35A'); R(t, X + W - 3, Y - 7, 2, 22, '#B9A35A'); for (let r = Y - 2; r < Y + 15; r += 6){ R(t, X + 1, r, 2, 1, '#8E7A3A'); R(t, X + W - 3, r, 2, 1, '#8E7A3A'); }
+      for (const [cx, i] of at){ const [c, dk] = cols[i % cols.length];
+        if (i % 2 === 0){ R(t, cx, Y - 4, 8, 3, c); R(t, cx + 2, Y - 1, 4, 6, c); R(t, cx + 3, Y - 4, 2, 1, dk); R(t, cx + 2, Y + 4, 4, 1, dk); }   // a shirt, its sleeves out
+        else { R(t, cx + 1, Y - 4, 6, 3, c); R(t, cx + 1, Y - 1, 2, 6, c); R(t, cx + 5, Y - 1, 2, 6, c); R(t, cx + 1, Y - 4, 6, 1, dk); }   // trousers
+      }
+    });
+    for (const [cx] of at){ R(g, cx + 1, Y - 6, 1, 2, '#8E6A30'); R(g, cx + 6, Y - 6, 1, 2, '#8E6A30'); }   // (the pegs)
+  },
+  bookTable: ink((g, o) => {   // a little table of books by the school, open and stacked
     const X = o.x * T, Y = o.y * T;
     R(g, X + 1, Y + 6, 14, 3, HW.woodLt); R(g, X + 1, Y + 6, 14, 1, '#B07A48'); R(g, X + 2, Y + 9, 2, 6, HW.wood); R(g, X + 12, Y + 9, 2, 6, HW.wood);
     R(g, X + 2, Y + 4, 6, 2, '#C23A2E'); R(g, X + 2, Y + 2, 6, 2, '#3E5A86'); R(g, X + 3, Y + 0, 5, 2, '#5E8F3A');
     R(g, X + 9, Y + 4, 5, 2, '#F2EEE4'); R(g, X + 11, Y + 4, 1, 2, '#9E988C');   // an open book
-  },
-  netRack: (g, o) => {   // a fishing net hung up to dry between two poles
+  }),
+  netRack: (g, o) => {   // a fishing net hung up to dry between two poles, red and white floats along its top
     const X = o.x * T, Y = o.y * T;
-    R(g, X + 1, Y - 6, 2, 21, WOODS[1]); R(g, X + 13, Y - 6, 2, 21, WOODS[1]); R(g, X + 1, Y - 6, 14, 2, WOODS[2]);
-    for (let i = 0; i < 12; i += 3) R(g, X + 3 + i, Y - 4, 1, 14, '#C8BFA0'); for (let j = 0; j < 14; j += 3) R(g, X + 3, Y - 4 + j, 10, 1, '#C8BFA0');
+    inked(g, o, t => { R(t, X + 1, Y - 7, 2, 22, WOODS[1]); R(t, X + 13, Y - 7, 2, 22, WOODS[1]); R(t, X, Y - 8, 16, 2, WOODS[2]); });
+    for (let j = 0; j < 14; j += 3) R(g, X + 3, Y - 5 + j + (j > 6 ? 1 : 0), 10, 1, '#C8BFA0');
+    for (let i = 0; i < 11; i += 3) R(g, X + 3 + i, Y - 5, 1, 15, '#C8BFA0');
+    for (let i = 0; i < 3; i++) R(g, X + 4 + i * 3, Y - 6, 2, 2, i % 2 ? '#F2EEE4' : '#C23A2E');
   },
-  boat: (g, o) => {   // a little fishing boat with a woven roof
-    const X = o.x * T, Y = o.y * T, W = o.w * T;
-    for (let i = 0; i < 6; i++) R(g, X + 2 + (i >= 3 ? 3 : i), Y + 8 + i, W - 4 - (i < 3 ? 2 * i : 6), 1, i % 2 ? WOODS[1] : WOODS[2]);
-    R(g, X + 1, Y + 8, W - 2, 1, WOODS[3]); R(g, X + 9, Y + 2, 14, 6, '#8C7A50'); for (let k = 0; k < 14; k += 3) R(g, X + 9 + k, Y + 2, 1, 6, '#6A5A38'); R(g, X + 9, Y + 2, 14, 1, '#B8A270');
+  boat: (g, o) => {   // a little fishing boat with a roof of dark woven matting, its ends curving up
+    const X = o.x * T, Y = o.y * T, W = o.w * T, rx = X + Math.round(W * .3), rw = Math.round(W * .45);
+    inked(g, o, t => {
+      for (let r = 0; r < 6; r++){ const inset = r < 2 ? 2 - r : 0; R(t, rx + inset, Y + 2 + r, rw - inset * 2, 1, r < 2 ? '#55504A' : '#3A3530'); }
+      for (let k = 2; k < rw - 1; k += 3) R(t, rx + k, Y + 3, 1, 5, '#2A2622');
+      R(t, X + 1, Y + 7, 3, 2, WOODS[2]); R(t, X + W - 4, Y + 7, 3, 2, WOODS[2]);
+      for (let i = 0; i < 5; i++){ const inset = [0, 1, 2, 3, 5][i]; R(t, X + 1 + inset, Y + 8 + i, W - 2 - inset * 2, 1, i === 0 ? WOODS[4] : i % 2 ? WOODS[1] : WOODS[2]); }
+    });
   },
-  bigBoat: (g, o) => {   // a boat to cross the sea: a mast and a battened sail
+  bigBoat: ink((g, o) => {   // a boat to cross the sea: a mast and a battened sail, a cabin at its stern, and an eye on its bow
     const X = o.x * T, Y = o.y * T, W = o.w * T;
+    R(g, X + W - 14, Y - 2, 10, 8, WOODS[2]); R(g, X + W - 15, Y - 3, 12, 2, WOODS[1]); R(g, X + W - 11, Y + 1, 3, 3, '#3A2A1E');
     for (let i = 0; i < 7; i++) R(g, X + i, Y + 7 + i, W - 2 * i, 1, i % 2 ? WOODS[1] : WOODS[2]);
-    R(g, X, Y + 6, W, 2, WOODS[3]); R(g, X + 21, Y - 30, 2, 37, WOODS[0]);
+    R(g, X, Y + 6, W, 2, WOODS[3]); R(g, X + 3, Y + 8, 3, 3, '#F2EEE4'); R(g, X + 4, Y + 9, 1, 1, '#1E1A16');
+    R(g, X + 21, Y - 30, 2, 37, WOODS[0]);
     for (let r = 0; r < 26; r++) R(g, X + 8 + Math.round(r / 6), Y - 28 + r, 12 - Math.round(r / 8), 1, r % 5 === 0 ? '#6A2A1A' : '#B5462E');
-  },
-  scarecrow: (g, o) => {   // a scarecrow in the rice, in a patched coat and a straw hat
+  }),
+  scarecrow: ink((g, o) => {   // a scarecrow in the rice, in a patched coat and a straw hat
     const X = o.x * T, Y = o.y * T;
     R(g, X + 7, Y - 8, 2, 22, WOODS[1]); R(g, X + 1, Y - 2, 14, 2, WOODS[1]); R(g, X + 3, Y - 2, 10, 9, '#5A6E8A'); R(g, X + 5, Y + 1, 3, 3, '#C0504D');
-    oval(g, X + 8, Y - 7, 3, 3, '#E8D8A0'); R(g, X + 1, Y - 11, 14, 2, '#D9B866'); R(g, X + 4, Y - 13, 8, 2, '#D9B866');
-  },
-  coatOnSand: (g, o) => { const X = o.x * T, Y = o.y * T; R(g, X + 3, Y + 6, 10, 7, '#7A6A55'); R(g, X + 1, Y + 7, 3, 3, '#7A6A55'); R(g, X + 12, Y + 7, 3, 3, '#7A6A55'); R(g, X + 3, Y + 6, 10, 1, '#9A8A70'); R(g, X + 7, Y + 6, 1, 7, '#5A4C3C'); R(g, X + 3, Y + 10, 10, 1, '#3A2A1E'); },
-  hatOnSand: (g, o) => { const X = o.x * T, Y = o.y * T; oval(g, X + 8, Y + 10, 7, 3, '#A88A3E'); oval(g, X + 8, Y + 9, 6, 2, '#D9B866'); oval(g, X + 8, Y + 7, 3, 2, '#D9B866'); R(g, X + 5, Y + 8, 6, 1, '#A88A3E'); },
-  stallBuns: (g, o) => marketStall(g, o, HW.indigo, (g, x, y, w) => { for (let i = 0; i + 14 <= w; i += 15){ R(g, x + i, y + 2, 13, 5, '#C9A060'); R(g, x + i, y + 2, 13, 1, '#E0BC78'); for (let k = 0; k < 3; k++) oval(g, x + i + 2 + k * 4, y + 1, 2, 2, '#F6EFE2'); } }, vSign('包子')),
-  stallShoes: (g, o) => marketStall(g, o, HW.red, (g, x, y, w) => { for (let i = 0; i + 6 <= w; i += 7){ const c = ['#2A2A2A', '#3E5A86', '#7A3A2A'][i / 7 % 3]; R(g, x + i, y + 3, 3, 3, c); R(g, x + i + 3, y + 3, 3, 3, c); R(g, x + i, y + 3, 6, 1, '#E8E0D0'); } }),
-  stallFruit: (g, o) => marketStall(g, o, HW.ochre, (g, x, y, w) => { const c = ['#D8342C', '#F2A0A0', '#5E9A3C', '#E8D27A', '#D8642C']; for (let i = 0; i + 5 <= w; i += 6) oval(g, x + i + 2, y + 4, 3, 2, c[i / 6 % 5]); }),
+    oval(g, X + 8, Y - 7, 3, 3, '#E8D8A0'); R(g, X + 6, Y - 8, 1, 1, '#3A2A1E'); R(g, X + 9, Y - 8, 1, 1, '#3A2A1E'); R(g, X + 1, Y - 11, 14, 2, '#D9B866'); R(g, X + 4, Y - 13, 8, 2, '#D9B866');
+  }),
+  coatOnSand: ink((g, o) => {   // a coat left on the sand, laid out flat: its sleeves spread, a collar, a belt and toggles down its front
+    const X = o.x * T, Y = o.y * T, c = '#7A6A55', lt = '#9A8A70', dk = '#5A4C3C';
+    R(g, X + 4, Y + 3, 8, 11, c); R(g, X + 3, Y + 11, 10, 3, c); R(g, X + 1, Y + 4, 3, 7, c); R(g, X + 12, Y + 4, 3, 7, c);
+    R(g, X + 4, Y + 3, 8, 1, lt); R(g, X + 1, Y + 4, 3, 1, lt); R(g, X + 12, Y + 4, 3, 1, lt); R(g, X + 1, Y + 10, 3, 1, dk); R(g, X + 12, Y + 10, 3, 1, dk);
+    R(g, X + 6, Y + 3, 4, 2, dk); R(g, X + 7, Y + 5, 2, 1, dk); R(g, X + 8, Y + 5, 1, 9, dk); R(g, X + 4, Y + 9, 8, 1, '#3A2A1E');
+    for (const dy of [6, 8, 11]) R(g, X + 7, Y + dy, 1, 1, '#D8C9A0');
+  }),
+  hatOnSand: ink((g, o) => {   // a straw hat left on the sand: a wide cone, woven
+    const X = o.x * T, Y = o.y * T;
+    R(g, X + 7, Y + 3, 2, 1, '#A88A3E');
+    for (let r = 0; r < 7; r++){ const w = 3 + r * 2; R(g, X + 8 - (w >> 1), Y + 4 + r, w, 1, r % 2 ? '#C9A452' : '#D9B866'); }
+    R(g, X + 1, Y + 11, 14, 1, '#A88A3E');
+    for (const [dx, dy] of [[-1, 2], [-3, 4], [-5, 6], [1, 2], [3, 4], [5, 6]]) R(g, X + 8 + dx, Y + 4 + dy, 1, 1, '#B8963E');
+  }),
+  stallBuns: (g, o) => marketStall(g, o, HW.indigo, (g, x, y, w) => { for (let i = 0; i + 14 <= w; i += 15){ R(g, x + i, y + 2, 13, 5, '#C9A060'); R(g, x + i, y + 2, 13, 1, '#E0BC78'); for (let k = 0; k < 3; k++){ oval(g, x + i + 2 + k * 4, y + 1, 2, 2, '#F6EFE2'); R(g, x + i + 2 + k * 4, y, 1, 1, '#D9CDB8'); } } }, vSign('包子')),
+  stallShoes: (g, o) => marketStall(g, o, HW.red, (g, x, y, w) => { for (let i = 0; i + 7 <= w; i += 8){ const c = ['#2A2A2A', '#3E5A86', '#7A3A2A'][i / 8 % 3]; for (const dx of [0, 4]){ R(g, x + i + dx, y + 3, 3, 3, c); R(g, x + i + dx, y + 5, 3, 1, '#E8E0D0'); } } }),
+  stallFruit: (g, o) => marketStall(g, o, HW.ochre, (g, x, y, w) => { const c = [['#D8342C', '#FF8A80'], ['#F2A0A0', '#FFE0CF'], ['#5E9A3C', '#9ACD52'], ['#E8D27A', '#FFF2B0'], ['#D8642C', '#F2A060']]; for (let i = 0, k = 0; i + 7 <= w; i += 8, k++){ const [f, s] = c[k % 5]; R(g, x + i, y + 4, 7, 3, '#B8904A'); R(g, x + i, y + 4, 7, 1, '#E0BE78'); for (const [dx, dy] of [[1, 2], [4, 2], [2, 0]]){ R(g, x + i + dx, y + dy, 2, 2, f); R(g, x + i + dx, y + dy, 1, 1, s); } } }),
   stallChanger: (g, o) => marketStall(g, o, '#5E3B22', (g, x, y, w) => { R(g, x + 2, y + 1, 12, 6, HW.wood); for (let r = 0; r < 2; r++) for (let c = 0; c < 5; c++) R(g, x + 3 + c * 2, y + 2 + r * 3, 1, 1, '#E0C080'); for (let i = 0; i < 3; i++){ oval(g, x + 20 + i * 5, y + 5, 2, 2, '#C89A3E'); R(g, x + 20 + i * 5, y + 5, 1, 1, '#3A2A1E'); } })
 });
 BLOCK_OBJECTS.push('jHouse', 'mudHouse', 'townSchool', 'teahouse', 'oldTree', 'archBridge', 'boat', 'bigBoat');
