@@ -204,7 +204,8 @@ const COUNTS = {   // what a counter in the content can count
   picked: c => (here().picked[c.request] || []).length,
   practised: () => ((AREA.lessonGap || {}).questions || 0) - practiceLeft(),   // questions you've answered since your last lesson that taught a new word (up to its lessonGap)
   since: c => Math.max(0, (S.turn || 0) - (here()[c.key] || 0)),   // questions you've answered anywhere since the countFrom step started counting them (key), such as the thirsty monkey's 8 making yoghurt
-  known: c => c.words.filter(w => lvl(w) >= 1).length   // how many of these words you've caught
+  known: c => c.words.filter(w => lvl(w) >= 1).length,   // how many of these words you've caught
+  flags: c => c.keys.filter(k => !!here()[k]).length   // how many of these things the area remembers have happened (keys), such as the hens you've carried back to their yard
 };
 function counter(name){ const c = AREA.counters[name], n = COUNTS[c.count](c) - (c.minus || 0); return c.max === undefined ? n : Math.min(n, c.max); }
 // What a counter of words you know (count: known) still waits for: those you haven't caught, as the counter calls them in
@@ -249,7 +250,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {sail:['ask','go'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {sail:['ask','go'], practise:['label','pic'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -437,7 +438,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async wordGame(s, who, last){
     const g = s.wordGame;
     if (!canEncounter()){ toast(g.notYet); return; }
-    if (!(await confirmBox(speaker(who), fill(g.ask), 'Play', 'Not now'))) return;
+    if (!(await confirmBox(speaker(who), fill(g.ask), g.yes || 'Play', 'Not now'))) return;   // (yes: its button, Play unless it says)
     SFX.encounter();
     const justTaught = caughtBefore !== null && caughtCount() > caughtBefore;   // (its name, as you've just met it: no English on its plate)
     const won = await encounter({id:who, hz:g.word, img:portrait(who), wild:false, name:NAMES[who], practice:!!g.practice, justTaught, questions:g.questions, misses:g.misses, gaps:g.gaps, lose:g.lose, asks:g.asks});
@@ -691,6 +692,15 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     SFX.wrong(); toast(fill(s.missed)); STEPS.scuttle({}, who);
     return STOP;
   },
+  // A question or two on words you know as you do something (practise: how many; label: what you're doing; pic: its
+  // picture), such as lifting each sack onto the boat at the harbour: right or wrong, you carry on, as practice.
+  async practise(s){
+    for (let i = 1; i <= (s.practise || 1); i++){
+      const w = nextWords(trainable(), 1)[0];
+      if (!w) return;
+      await catchQ(w, i, s.practise || 1, s.pic, fill(s.label));
+    }
+  },
   // The area's exam (AREA.exam), given by the one you're talking to, such as the teacher before the feast (decided 29
   // October 2026): asked first (ask, with start or Not now), then words from the whole area to match to their pictures,
   // those you know least well first (words: how many), so many right first time to pass (pass). Not passed (notYet): the
@@ -913,7 +923,7 @@ let lastTalk = null;   // {id, part}
 async function practiseFirst(who){
   if (!wordLeft() || !canEncounter()) return true;
   const g = AREA.wordGap, by = AREA.characters.some(c => c.id === who) ? who : 'player', was = S.friends.includes(by);
-  await STEPS.wordGame({wordGame:{ask:g.ask, word:g.word, practice:true, questions:Math.max(2, wordLeft()), notYet:g.notYet}}, by);
+  await STEPS.wordGame({wordGame:{ask:g.ask.replace('{left}', wordLeft()), yes:g.yes, word:g.word, practice:true, questions:Math.max(2, wordLeft()), notYet:g.notYet}}, by);   // (its ask can say how many questions are left: {left})
   if (by === 'player' && !was) S.friends = S.friends.filter(f => f !== 'player');
   return !wordLeft();
 }
@@ -1412,6 +1422,20 @@ async function arrive(x, y){
   if (ahead) return ahead;
   if (t.wild && await wildStep(t)) return;   // a wild creature jumps out of the long grass
   hideAnimal();
+  callOut();
+}
+// Stallholders calling out what they sell as you walk past (a character's calls: one of the area's lines), within
+// CALL_NEAR squares, one at a time and not too often: just for listening, nothing to answer, a note over them as they do
+// (decided 4 November 2026, so the market feels busy, and you hear its words without being asked about them).
+const CALL_NEAR = 4, CALL_EVERY = 14000, CALL_SHOWS = 1800;
+let lastCallT = -1e9;
+function callOut(){
+  const now = performance.now();
+  if (now - lastCallT < CALL_EVERY || !S.sound) return;
+  const n = NPCS.find(c => c.calls && L[c.calls] && Math.abs(c.x - pl.x) + Math.abs(c.y - pl.y) <= CALL_NEAR);
+  if (!n) return;
+  lastCallT = now; n.callingT = now + CALL_SHOWS;
+  say(L[n.calls].t.join(''), null, n.id);
 }
 
 let foe = null, alertUntil = 0;

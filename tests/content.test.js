@@ -464,7 +464,8 @@ test('every line is said somewhere', () => {
     ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask), ...[l.race, l.jog].filter(Boolean).flatMap(x => [x.start, x.end])]),
     ...Object.values(AREA.countGames || {}).map(g => g.thing.ask),
     ...Object.values(AREA.enemies || {}).flatMap(e => Object.values(e.says || {})),
-    ...(AREA.hideSeek ? [AREA.hideSeek.count, AREA.hideSeek.coming, AREA.hideSeek.found, ...AREA.hideSeek.spots.map(p => p.say)] : [])
+    ...(AREA.hideSeek ? [AREA.hideSeek.count, AREA.hideSeek.coming, AREA.hideSeek.found, ...AREA.hideSeek.spots.map(p => p.say)] : []),
+    ...AREA.characters.filter(c => c.calls).map(c => c.calls)   // (calling out what they sell as you walk past: callOut, js/world.js)
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
 });
@@ -728,7 +729,13 @@ test('a task that points its arrow at someone gives them a ! or ? too, so you ca
         if (k === 'new') delete S.w[v];
         else if (k === 'knows') S.w[v] = {lv: 1, ok: 0};
         else if (k === 'holding') for (const [id, want] of Object.entries(v)) h.holding[id] = want === true ? 'it' : want;
-        else if (AREA.counters[k]){ const cn = AREA.counters[k]; if (cn.count !== 'known') return false; cn.words.slice(0, n).forEach(w => { S.w[w] = {lv: 1, ok: 0}; }); }
+        else if (AREA.counters[k]){
+          const cn = AREA.counters[k];
+          if (cn.count === 'known') cn.words.slice(0, n).forEach(w => { S.w[w] = {lv: 1, ok: 0}; });
+          else if (cn.count === 'picked') h.picked = {...h.picked, [cn.request]: Array.from({length: n}, (_, i) => 'x' + i)};
+          else if (cn.count === 'flags') cn.keys.forEach((key, i) => { h[key] = i < n ? 1 : 0; });
+          else return false;
+        }
         else h[k] = n;
       }
       return matches(c);

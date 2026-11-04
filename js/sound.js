@@ -102,6 +102,21 @@ const SFX = {
     o.connect(f); f.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 1.55);
   },
   mooFar: () => SFX.moo(true),
+  // The woodcutter singing in the woods on the far shore, a short folk tune (song), and the same a long way off (songFar):
+  // faint and muffled, so you can tell which way he is.
+  song: (far = false) => {
+    const a = ac(); if (!a) return;
+    const t0 = a.currentTime, k = far ? .45 : 1, v = far ? .012 : .035;
+    [[67, .5], [69, .25], [71, .25], [74, .75], [71, .25], [69, .5], [67, 1]].reduce((t, [m, d]) => {
+      const f = 440 * Math.pow(2, (m - 12 - 69) / 12), o = a.createOscillator(), lp = a.createBiquadFilter(), g = a.createGain(), lfo = a.createOscillator(), lg = a.createGain();
+      o.type = 'triangle'; o.frequency.setValueAtTime(f, t); lfo.frequency.value = 5; lg.gain.value = f * .012; lfo.connect(lg); lg.connect(o.frequency);
+      lp.type = 'lowpass'; lp.frequency.value = 1400 * k;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .06); g.gain.setValueAtTime(v * .85, t + d * .7); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(lp); lp.connect(g); g.connect(a.destination); [o, lfo].forEach(x => { x.start(t); x.stop(t + d + .05); });
+      return t + d;
+    }, t0);
+  },
+  songFar: () => SFX.song(true),
   roar: () => {   // a bear roaring: a deep, rough growl that swells and falls away, under a rush of breath
     const a = ac(); if (!a) return;
     const t = a.currentTime, o = a.createOscillator(), o2 = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain();

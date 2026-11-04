@@ -634,11 +634,29 @@ check that each is true and simply put.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 农民 (Farmer), 老板 (Stallholder), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman) |  |
-| 谢谢！ | xièxie! | Thank you! | 渔夫 (Fisherman), 农民 (Farmer) |  |
-| 不客气！ | bú kèqi! | You’re welcome! | 老板 (Stallholder) |  |
-| 没关系！ | méi guānxi! | It doesn’t matter! | 老板 (Stallholder) |  |
+| 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman) |  |
+| 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
+| 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder) |  |
+| 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child) |  |
+| 你要什么？ | nǐ yào shénme? | What do you want? | 货郎 (Peddler) |  |
+| 包子！包子！ | bāozi! bāozi! | Steamed buns! Steamed buns! |  |  |
+| 苹果！桃子！ | píngguǒ! táozi! | Apples! Peaches! | 老板 (Stallholder) |  |
+| 我要包子。 | wǒ yào bāozi. | I want some steamed buns. | 老奶奶 (Granny) |  |
+| 你有包子吗？ | nǐ yǒu bāozi ma? | Do you have a steamed bun? | 老奶奶 (Granny) |  |
+| 我要苹果。 | wǒ yào píngguǒ. | I want an apple. | 老奶奶 (Granny) |  |
+| 你有苹果吗？ | nǐ yǒu píngguǒ ma? | Do you have an apple? | 老奶奶 (Granny) |  |
+| 我要桃子。 | wǒ yào táozi. | I want a peach. | 老奶奶 (Granny) |  |
+| 你有桃子吗？ | nǐ yǒu táozi ma? | Do you have a peach? | 老奶奶 (Granny) |  |
+| 我们来捉迷藏吧！ | wǒmen lái zhuō mícáng ba! | Let’s play hide and seek! | 小孩 (Child) |  |
+| 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! | you |  |
+| 我来了！ | wǒ lái le! | Here I come! | you |  |
+| 找到你了！ | zhǎodào nǐ le! | Found you! | you |  |
+| 我在大树后面！ | wǒ zài dà shù hòumiàn! | I’m behind the big tree! | 小孩 (Child) |  |
+| 我在井后面！ | wǒ zài jǐng hòumiàn! | I’m behind the well (for water)! | 小孩 (Child) |  |
+| 我在房子后面！ | wǒ zài fángzi hòumiàn! | I’m behind the house! | 小孩 (Child) |  |
+| 我在门后面！ | wǒ zài mén hòumiàn! | I’m behind the door! | 小孩 (Child) |  |
+| 我在衣服后面！ | wǒ zài yīfu hòumiàn! | I’m behind the washing! | 小孩 (Child) |  |
 | 猴子！猴子！ | hóuzi! hóuzi! | A monkey! A monkey! | 渔夫 (Fisherman) |  |
 | 这是我的衣服！ | zhè shì wǒ de yīfu! | Those are my clothes! | 老渔夫 (Old fisherman) |  |
 | 你是谁？ | nǐ shì shéi? | Who are you? | 小孩 (Child) |  |
@@ -680,8 +698,15 @@ check that each is true and simply put.
 
 | Chinese | Pinyin | English | Said to | Notes |
 | --- | --- | --- | --- | --- |
+| 我有包子 | wǒ yǒu bāozi | I have a steamed bun. | 老奶奶 (Granny) |  |
+| 我有苹果 | wǒ yǒu píngguǒ | I have an apple. | 老奶奶 (Granny) |  |
+| 我有桃子 | wǒ yǒu táozi | I have a peach. | 老奶奶 (Granny) |  |
+| 我有鱼 | wǒ yǒu yú | I have some fish. | 渔夫 (Fisherman) |  |
 | 我有鱼 | wǒ yǒu yú | I have a fish. | 渔夫 (Fisherman) |  |
 | 我有饭 | wǒ yǒu fàn | I have some rice. | 农民 (Farmer) |  |
+| 我要苹果 | wǒ yào píngguǒ | I want an apple. | 货郎 (Peddler) |  |
+| 我要桃子 | wǒ yào táozi | I want a peach. | 货郎 (Peddler) |  |
+| 我要包子 | wǒ yào bāozi | I want a steamed bun. | 货郎 (Peddler) |  |
 | 我要买苹果 | wǒ yào mǎi píngguǒ | I want to buy an apple. | 老板 (Stallholder) |  |
 | 我要买桃子 | wǒ yào mǎi táozi | I want to buy a peach. | 老板 (Stallholder) |  |
 | 我要买包子 | wǒ yào mǎi bāozi | I want to buy a steamed bun. | 老板 (Stallholder) |  |
@@ -778,6 +803,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 渔夫 | yúfū | Fisherman |  |
 | 阿姨 | āyí | Auntie |  |
 | 村民 | cūnmín | Villager |  |
+| 小孩 | xiǎohái | Child |  |
+| 小孩 | xiǎohái | Child |  |
 | 农民 | nóngmín | Farmer |  |
 | 换钱的 | huàn qián de | Money changer |  |
 | 老板 | lǎobǎn | Stallholder |  |
@@ -791,14 +818,26 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 路人 | lùrén | Passer-by |  |
 | 路人 | lùrén | Passer-by |  |
 | 路人 | lùrén | Passer-by |  |
+| 路人 | lùrén | Traveller |  |
+| 路人 | lùrén | Traveller |  |
+| 路人 | lùrén | Traveller |  |
+| 货郎 | huòláng | Peddler |  |
+| 渔夫 | yúfū | Fisherman |  |
+| 老奶奶 | lǎo nǎinai | Granny |  |
+| 老板 | lǎobǎn | Stallholder |  |
+| 工人 | gōngrén | Docker |  |
 | 船夫 | chuánfū | Boatman |  |
 | 樵夫 | qiáofū | Woodcutter |  |
 | 牌子 | páizi | Sign |  |
 | 海的那边 | hǎi de nàbiān | Across the sea |  |
 | 海边 | hǎibiān | The shore |  |
+| 海边的小路 | hǎibiān de xiǎolù | The path up from the shore |  |
 | 渔村 | yúcūn | The fishing village |  |
+| 乡间小路 | xiāngjiān xiǎolù | The country lane |  |
 | 田边 | tiánbiān | The fields |  |
+| 大路 | dàlù | The high road |  |
 | 小镇 | xiǎozhèn | The market town |  |
+| 河边小路 | hébiān xiǎolù | The canal path |  |
 | 码头 | mǎtou | The harbour |  |
 | 西边的海边 | xībiān de hǎibiān | The far shore |  |
 

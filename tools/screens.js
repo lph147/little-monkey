@@ -400,18 +400,26 @@ SAVES.chapterDone = {...SAVES.raftReady, areas: {1: {...SAVES.raftReady.areas[1]
 // Flower Fruit Mountain, at each part of the prologue
 const A2 = (area, more = {}) => ({...SAVES.chapterDone, area: 2, coins: 0, shells: 12, wardrobe: {owned: ['头带', '衣服', '帽子'], wearing: ['衣服', '帽子']}, tasksSeen: {}, tasksRead: {},
   areas: {...SAVES.chapterDone.areas, 2: area}, ...more, w: {...SAVES.chapterDone.w, ...(more.w || {})}});
-SAVES.a2landed = A2({landed: 1}, {wardrobe: {owned: ['头带'], wearing: ['头带']}, w: knows(1, ['人']), pos: {place: 'shore', x: 19, y: 8, dir: 'right'}});
-SAVES.a2dressed = A2({landed: 1, dressed: 2, back: 1}, {w: knows(1, ['人', '鹅', '衣服', '帽子']), friends: ['goose'], pos: {place: 'shore', x: 13, y: 4, dir: 'up'}});
-SAVES.a2child = A2({landed: 1, dressed: 2, back: 1}, {w: knows(1, ['人', '鹅', '衣服', '帽子']), friends: ['goose'], pos: {place: 'village', x: 10, y: 5, dir: 'right'}});
-SAVES.a2asking = A2({landed: 1, dressed: 2, back: 1, child: 3}, {w: knows(1, ['人', '鹅', '衣服', '帽子', '不', '是', '什么']), friends: ['goose'], turn: 40, pos: {place: 'village', x: 16, y: 8, dir: 'up'}});
-SAVES.a2knock = A2({landed: 1, dressed: 2, back: 1, child: 3}, {w: knows(1, ['人', '鹅', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门']), friends: ['goose'], turn: 80, pos: {place: 'village', x: 19, y: 5, dir: 'up'}});
+SAVES.a2landed = A2({landed: 1}, {wardrobe: {owned: ['头带'], wearing: ['头带']}, w: knows(1, ['人']), pos: {place: 'shore', x: 22, y: 10, dir: 'right'}});
+SAVES.a2dressed = A2({landed: 1, dressed: 2, back: 1}, {w: knows(1, ['人', '鹅', '衣服', '帽子']), friends: ['goose'], pos: {place: 'shore', x: 17, y: 2, dir: 'up'}});
+SAVES.a2child = A2({landed: 1, dressed: 2, back: 1}, {w: knows(1, ['人', '鹅', '衣服', '帽子']), friends: ['goose'], pos: {place: 'village', x: 17, y: 12, dir: 'left'}});
+SAVES.a2asking = A2({landed: 1, dressed: 2, back: 1, child: 3}, {w: knows(1, ['人', '鹅', '衣服', '帽子', '不', '是', '什么']), friends: ['goose'], turn: 40, pos: {place: 'village', x: 22, y: 12, dir: 'up'}});
+SAVES.a2knock = A2({landed: 1, dressed: 2, back: 1, child: 3}, {w: knows(1, ['人', '鹅', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门']), friends: ['goose'], turn: 80, pos: {place: 'village', x: 31, y: 5, dir: 'up'}});
 const A2_VILLAGE = ['人', '鹅', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门', '谁', '鸡', '饭', '钱', '网', '船'];
-SAVES.a2fields = A2({landed: 1, dressed: 2, back: 1, child: 3, knock: 1, fish: 'done', farmer: 1}, {w: knows(1, [...A2_VILLAGE, '看']), coins: 3, friends: ['goose', 'chicken'], turn: 200, pos: {place: 'fields', x: 8, y: 5, dir: 'up'}});
+SAVES.a2fields = A2({landed: 1, dressed: 2, back: 1, child: 3, knock: 1, fish: 'done', farmer: 1}, {w: knows(1, [...A2_VILLAGE, '看']), coins: 3, friends: ['goose', 'chicken'], turn: 200, pos: {place: 'fields', x: 11, y: 7, dir: 'up'}});
 SAVES.a2town = A2({landed: 1, dressed: 2, back: 1, child: 3, knock: 1, fish: 'done', farmer: 2, lunch: 'done', exchanged: 1}, {w: knows(1, [...A2_VILLAGE, '看', '狗']), coins: 18, shells: 0,
-  friends: ['goose', 'chicken', 'dog'], turn: 300, pos: {place: 'town', x: 6, y: 10, dir: 'left'}});
+  friends: ['goose', 'chicken', 'dog'], turn: 300, pos: {place: 'town', x: 5, y: 14, dir: 'left'}});
 SAVES.a2harbour = A2({landed: 1, dressed: 2, back: 1, child: 3, knock: 1, fish: 'done', farmer: 2, lunch: 'done', exchanged: 1, years: 1}, {w: knows(1, [...A2_VILLAGE, '看', '狗', '买', '包子', '鞋', '茶', '说', '哪里', '听', '孩子', '学', '书', '猫']),
-  coins: 10, shells: 0, friends: ['goose', 'chicken', 'dog', 'cat'], turn: 500, wardrobe: {owned: ['头带', '衣服', '帽子', '鞋'], wearing: ['衣服', '帽子', '鞋']}, pos: {place: 'harbour', x: 13, y: 8, dir: 'down'}});
-SAVES.a2far = {...SAVES.a2harbour, areas: {...SAVES.a2harbour.areas, 2: {...SAVES.a2harbour.areas[2], boat: 2}}, w: {...SAVES.a2harbour.w, ...knows(1, ['风'])}, pos: {place: 'farShore', x: 14, y: 5, dir: 'right'}};
+  coins: 10, shells: 0, friends: ['goose', 'chicken', 'dog', 'cat'], turn: 500, wardrobe: {owned: ['头带', '衣服', '帽子', '鞋'], wearing: ['衣服', '帽子', '鞋']}, pos: {place: 'harbour', x: 16, y: 16, dir: 'right'}});
+SAVES.a2far = {...SAVES.a2harbour, areas: {...SAVES.a2harbour.areas, 2: {...SAVES.a2harbour.areas[2], boat: 2}}, w: {...SAVES.a2harbour.w, ...knows(1, ['风'])}, pos: {place: 'farShore', x: 10, y: 10, dir: 'left'}};
+// (4 November 2026: the human world bigger, with paths between its places, and more to do in each)
+SAVES.a2pier = {...SAVES.a2dressed, areas: {...SAVES.a2dressed.areas, 2: {...SAVES.a2dressed.areas[2], oldFisher: 1, pierFish: 'asked'}}, pos: {place: 'shore', x: 18, y: 20, dir: 'down'}};
+SAVES.a2shorePath = {...SAVES.a2dressed, pos: {place: 'shorePath', x: 12, y: 16, dir: 'up'}};
+SAVES.a2hens = {...SAVES.a2knock, w: {...SAVES.a2knock.w, ...knows(1, ['谁', '鸡'])}, friends: ['goose', 'chicken'], pos: {place: 'village', x: 13, y: 8, dir: 'left'}};
+SAVES.a2lane = {...SAVES.a2fields, pos: {place: 'villageLane', x: 8, y: 8, dir: 'down'}};
+SAVES.a2highRoad = {...SAVES.a2town, pos: {place: 'highRoad', x: 16, y: 9, dir: 'up'}};
+SAVES.a2canal = {...SAVES.a2harbour, pos: {place: 'canalPath', x: 9, y: 12, dir: 'left'}};
+SAVES.a2docker = {...SAVES.a2harbour, areas: {...SAVES.a2harbour.areas, 2: {...SAVES.a2harbour.areas[2], boat: 1, cargo: 1}}, pos: {place: 'harbour', x: 9, y: 5, dir: 'up'}};
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
@@ -1290,6 +1298,10 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'a2-dressed', title: 'Area 2: dressed like a person', save: 'a2dressed', why: 'In the old fisherman’s coat (衣服) and straw hat (帽子): the fishermen come out again, and the way up to the village is open.', run: async () => {
     play(); await wait(600); }},
+  {id: 'a2-pier', title: 'Area 2: fishing with the fishermen', save: 'a2pier', why: 'Dressed, you can fish beside the fishermen on their pier: three fish for their basket, each reeled in with questions.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a2-shore-path', title: 'Area 2: the path up from the shore', save: 'a2shorePath', why: 'A path of its own up to the village, winding through grass and seaside pines, with long grass beside it where your friends hide.', run: async () => {
+    play(); await wait(600); }},
   {id: 'a2-child', title: 'Area 2: the child in the village', save: 'a2child', why: '你是谁？ You fill 我是＿ with 人, and the child laughs: 你不是人！你是猴子！ (不).', run: async () => {
     play(); await wait(100); talk(npc('child')); await wait(500); }},
   {id: 'a2-isit', title: 'Area 2: the child’s game, 是不是？', save: 'a2asking', why: 'A picture of something you know and 这是…吗？, answered 是 (yes) or 不是 (no): understanding a word, never grammar.', run: async () => {
@@ -1298,7 +1310,13 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'a2-knock', title: 'Area 2: knocking at the gate', save: 'a2knock', why: 'Once you know 门, A at the gate in the white wall knocks: 谁啊？ (Who is it?), and you say 我！', run: async () => {
     play(); await wait(600); }},
+  {id: 'a2-hens', title: 'Area 2: the hens are out!', save: 'a2hens', why: 'The yard’s gate was left open: four hens are loose about the village. Catch each (a question) and carry it back.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a2-lane', title: 'Area 2: the country lane', save: 'a2lane', why: 'Between bamboo groves, from the village to the fields: a brook with stepping stones over to a quiet corner of long grass, a traveller who says hello.', run: async () => {
+    play(); await wait(600); }},
   {id: 'a2-fields', title: 'Area 2: the fields', save: 'a2fields', why: 'Birds eating the farmer’s rice: shoo them off (看, 你看！鸟！). The water buffalo, and the dog guarding the road.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a2-high-road', title: 'Area 2: the high road', save: 'a2highRoad', why: 'Wide and busy, from the fields to the town: a peddler with his cart (A: buy), travellers, an old tree and a well to rest by.', run: async () => {
     play(); await wait(600); }},
   {id: 'a2-town', title: 'Area 2: the market town', save: 'a2town', why: 'White walls and dark tiles along a flagstone street: the teahouse with its 茶 flag, the school with its 学校 board, the market’s stalls.', run: async () => {
     play(); await wait(600); }},
@@ -1306,6 +1324,10 @@ const SCREENS = [
     play(); await wait(100); shop(speaker('fruitSeller'), SHOPS.fruit); await wait(100); next(); await wait(500); }},
   {id: 'a2-years', title: 'Area 2: years go by', save: 'a2harbour', why: 'You live among people for years, learning to talk like them, through the seasons. But nobody knows where the immortals are.', run: async () => {
     play(); await wait(100); storyScene('yearsPass'); introClock = 4.05; advancedTo = 1; await wait(400); }},
+  {id: 'a2-canal', title: 'Area 2: the canal path', save: 'a2canal', why: 'From the town down to the harbour, along the canal under willows: an angler, a little bridge, long grass.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a2-docker', title: 'Area 2: loading the boat', save: 'a2docker', why: 'Waiting for the wind, you help the docker: face a sack and press A to lift it (a question), and carry it down to the boat. Four of them.', run: async () => {
+    play(); await wait(600); }},
   {id: 'a2-harbour', title: 'Area 2: the harbour', save: 'a2harbour', why: 'The boatman, by his big boat: 今天没有风。 (风). Once you’ve practised, the wind comes, and he takes you across for your fare.', run: async () => {
     play(); await wait(600); }},
   {id: 'a2-crossing', title: 'Area 2: crossing the western sea', save: 'a2harbour', why: 'The wind in the sail, the town falling behind, then mountains ahead.', run: async () => {

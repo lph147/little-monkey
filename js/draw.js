@@ -26,6 +26,7 @@ function sparkle(X, Y, now, ph){
 function bubble(X, Y, ch){
   R(b, X, Y, 7, 9, '#1E2B26'); R(b, X+1, Y+1, 5, 7, '#FFFFFF'); R(b, X+3, Y+9, 1, 1, '#1E2B26');
   if (ch === '!'){ R(b, X+3, Y+2, 1, 3, '#C0392B'); R(b, X+3, Y+6, 1, 1, '#C0392B'); }
+  else if (ch === 'note'){ R(b, X+4, Y+2, 1, 4, '#2E5E9A'); R(b, X+5, Y+2, 1, 1, '#2E5E9A'); R(b, X+2, Y+5, 2, 2, '#2E5E9A'); R(b, X+3, Y+5, 1, 1, '#2E5E9A'); }   // a note: someone calling out, or singing
   else { R(b, X+2, Y+2, 3, 1, '#2E7A57'); R(b, X+4, Y+3, 1, 1, '#2E7A57'); R(b, X+3, Y+4, 1, 1, '#2E7A57'); R(b, X+3, Y+6, 1, 1, '#2E7A57'); }
 }
 function animTile(x, y, X, Y, now){
@@ -734,7 +735,7 @@ function drawWorld(now){
     if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
-    const bub = inClass.has(n.id) ? null : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (and something they kept for you; none in a lesson, such as PE's)
+    const bub = inClass.has(n.id) ? null : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : now < (n.callingT || 0) ? {show:'note'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (a note: calling out what they sell, callOut in js/world.js)   // (and something they kept for you; none in a lesson, such as PE's)
     if (bub) bubbles.push([X+10, Y - 8 - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0), bub.show]);   // (over a big one's head, such as the cow's)
   }
   drawDragonflies(cx, cy, now);
