@@ -806,6 +806,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 小孩 | xiǎohái | Child |  |
 | 小孩 | xiǎohái | Child |  |
 | 农民 | nóngmín | Farmer |  |
+| 农民 | nóngmín | Farmer |  |
 | 换钱的 | huàn qián de | Money changer |  |
 | 老板 | lǎobǎn | Stallholder |  |
 | 老板 | lǎobǎn | Stallholder |  |

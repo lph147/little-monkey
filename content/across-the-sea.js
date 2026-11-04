@@ -48,7 +48,7 @@ const ACROSS_THE_SEA = {
   //   years    1 once the years have passed, in the town
   //   boat     1 the boatman has no wind (风), 2 you've crossed the western sea
   //   song     1 once you've heard the woodcutter's song (歌): the end of the prologue
-  progress: {chapter:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0},
+  progress: {chapter:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
 
   // Numbers that text can show as {name}, and that an if can check (as Flower Fruit Mountain's).
   counters: {
@@ -157,6 +157,7 @@ const ACROSS_THE_SEA = {
     oldFisher: [{if:{back:1, oldFisher:0}, show:'!'}],
     fisher1: [{if:{back:1, oldFisher:1, pierFish:'not asked'}, show:'!'}, {if:{pierFish:'asked', holding:{pierFish:true}}, show:'?'}],
     kid2: [{if:{child:3, hidesFound:0}, show:'!'}],
+    planter: [{if:{planter:0}, show:'!'}],
     farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', inBag:{'饭':true}}, show:'?'}],
     changer: [{if:{exchanged:0}, show:'!'}],
     fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}],
@@ -432,8 +433,8 @@ const ACROSS_THE_SEA = {
         "........................................",
         "........................................",
         "b,,,,,,,,,,,,,,,,,,,..,,,,,,,,,,,T,,,,,b",
-        "b~~~~~~~h~~~~~~~~~~~II~~~~~~~~~~~~~~~~,b",
-        "b~~~~~~~h~~~~~~~~~~~II~~~~~~~~~~~~~~~~,b",
+        "b~~~~~~~hh~~~~~~~~~~II~~~~~~~~~~~~~~~~,b",
+        "b~~~~~~~hh~~~~~~~~~~II~~~~~~~~~~~~~~~~,b",
         "b,GGGGGGGGGGGbbbbbb,..,vvvv,,,,,,bbbbb,b",
         "b,GGkGGGGGGGGbbbbbb,..,vvvv,c,,,,bbbbb,b",
         "b,GGGGGGGGGGGbbbbbb,..,,,,,,,,,,,bbbbb,b",
@@ -466,14 +467,14 @@ const ACROSS_THE_SEA = {
         "............................................",
         "............................................",
         "b,,,,,,,T,,,,,,,,,,T,,,,,,,,,,T,,,,,,,,,,,,b",
-        "bRRRRRRRR,RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRb",
-        "bRRRRRRRR,RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRb",
-        "b~~~~~~~~h~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~b",
-        "b~~~~~~~~h~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~b",
+        "bRRRRRRRR,,RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRb",
+        "bRRRRRRRR,,RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRb",
+        "b~~~~~~~~hh~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~b",
+        "b~~~~~~~~hh~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~b",
         "b,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,b",
         "bRRRRRRRRRRRRRRR,RRRRRRRRRRRR,RRRRGGGGGGGGRb",
         "bRRRRRRRRRRRRRRR,RRRRRRRRRRRR,RRRRGGGGGGGGRb",
-        "bRRRRRRRRRRRRRRR,RRRRRRRRRRRR,RRRRGGGGGGGGRb",
+        "bRRRRRRRRRRRRRRR,RRRRRRRRRRRRXRRRRGGGGGGGGRb",
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       ]
     },
@@ -683,8 +684,9 @@ const ACROSS_THE_SEA = {
   // What each letter on the maps is (as Flower Fruit Mountain's legend). ask: a person near tells you its word when you ask
   // (这是什么？): their answer, one of the lines.
   legend: {
-    // stepping stones, one to a square, to hop onto: hear a word, and hop onto the stone with its picture (as on Flower
-    // Fruit Mountain's south slope)
+    // stepping stones, to hop onto a row at a time: hear a word, and hop onto the stone with its picture, the other tipping
+    // you into the water (as on Flower Fruit Mountain's south slope); two to a row, so there's always a choice (decided 4
+    // November 2026, after playing it: one to a row, there was nothing to choose)
     'h': {look:'hopStone', hop:{label:'Stepping stones', ask:'Listen, and hop onto the stone with its picture.',
       splash:'Splash! The stone tips, and in you go. You climb back out onto the bank. Try again!'}},
     '.': {look:'earth', walk:true},
@@ -782,6 +784,9 @@ const ACROSS_THE_SEA = {
     {id:'farmer', place:'fields', person:true, wear:'vest', x:11, y:6, facing:'down', name:{zh:'农民', py:'nóngmín', en:'Farmer'},
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#E0B088', e:'#1E140C', m:'#C4826A', c:'#8A7A5A', b:'#3A2A1E', p:'#4A4434', a:'#D9B866', d:'#A88A3E'}},
     {id:'buffalo', place:'fields', look:'水 牛', x:22, y:4, facing:'down'},
+    // over the channel, in the far rice (a reason to cross the stepping stones): a woman planting rice, glad of the company
+    {id:'planter', place:'fields', person:true, hair:'scarf', x:16, y:16, facing:'up', name:{zh:'农民', py:'nóngmín', en:'Farmer'},
+      palette:{k:'#C7902F', o:'#3A2A1E', h:'#2A1E16', s:'#E8BC90', e:'#1E140C', m:'#C4826A', c:'#4F78A8', b:'#3A2A1E', p:'#3A3446'}},
     {id:'bird1', place:'fields', look:'bird', colour:'红色', pecks:true, x:6, y:6, facing:'left', shoo:'The bird flies off the rice ({birdsShooed}/5).'},
     {id:'bird2', place:'fields', look:'bird', colour:'黄色', pecks:true, x:19, y:16, facing:'left', shoo:'The bird flies off the rice ({birdsShooed}/5).'},
     {id:'bird3', place:'fields', look:'bird', colour:'白色', pecks:true, x:24, y:16, facing:'right', shoo:'The bird flies off the rice ({birdsShooed}/5).'},
@@ -936,6 +941,7 @@ const ACROSS_THE_SEA = {
     {id:'laneRock', at:[4, 12, 'villageLane'], fruit:'桃子', note:'Tucked behind a rock in the long grass: a {桃子} for your bag!'},
     {id:'shoreRock2', at:[14, 11], shells:2, note:'Washed up behind a rock on the sand: 2 🐚!'},
     {id:'villageJars', at:[18, 18, 'village'], fruit:'苹果', note:'Tucked behind the jars: a {苹果} for your bag!'},
+    {id:'fieldsScarecrow', at:[29, 17, 'fields'], shells:2, note:'Tucked in the straw of the scarecrow’s coat: 2 🐚!'},
     {id:'townSacks', at:[4, 16, 'town'], fruit:'桃子', note:'In a basket that nobody wants: a {桃子} for your bag!'}
   ],
   animalsAppear: {knows:'动物'},
@@ -1080,6 +1086,10 @@ const ACROSS_THE_SEA = {
       {if:{farmer:1, birdsShooed:{below:5}}, do:[{say:'look'}, {message:'Shoo the birds off the rice ({birdsShooed}/5).'}]},
       {if:{lunch:'not asked'}, do:[{request:'lunch'}]},
       {if:{lunch:'asked'}, do:[{request:'lunch'}]},
+      {do:[{say:'hi'}, {reply:'你好'}]}
+    ],
+    planter: [
+      {if:{planter:0}, do:[{say:'hi'}, {reply:'你好'}, {set:{planter:1}}, {bag:'苹果', note:'She’s planting rice over here, all on her own, and glad of the company. She gives you an {苹果} from her lunch basket.'}]},
       {do:[{say:'hi'}, {reply:'你好'}]}
     ],
     buffalo: [{do:[{say:'isThisCow', by:'player'}, {say:'yes', by:'farmer'}, {message:'A water buffalo: a big grey cow that works in the rice fields.'}]}],

@@ -152,6 +152,13 @@ test('the map of every place is a rectangle', () => {
   }
 });
 
+test('every row of stepping stones has two stones or more, so hopping across is always a choice (one to a row, there was nothing to choose)', () => {
+  for (const [id, map] of allMaps) map.forEach((row, y) => {
+    const hop = x => !!(legendOf(id)[row[x]] || {}).hop;
+    [...row].forEach((ch, x) => { if (hop(x) && !hop(x - 1)){ let n = 0; while (hop(x + n)) n++; assert.ok(n >= 2, `${id}: the stepping stones at ${x}, ${y} are only ${n} wide`); } });
+  });
+});
+
 test('cliffs and banks are two squares high, so every level looks as high as the next (at the top of the map, the rest is out of sight); steps climb all of one, between walls of rock', () => {
   const EDGES = ['cliffFace', 'bank', 'steps'], ROCK = ['heights', 'cliffFace', 'bank'];
   for (const [id, map] of allMaps){

@@ -33,7 +33,7 @@ function paving(g, X, Y, x, y){   // grey flagstones, laid in rows, a few darker
     if (x1 > x0){ R(g, x0, sy + 1, x1 - x0, 7, k < .2 ? HW.paving[1] : k > .85 ? HW.paving[2] : HW.paving[0]); R(g, x0, sy + 1, x1 - x0, 1, HW.paving[2]); }
   }
 }
-const CANAL_LIKE = ['canal', 'slab', 'archBridge'];
+const CANAL_LIKE = ['canal', 'slab', 'archBridge', 'hopStone'];
 function canal(g, X, Y, x, y){   // a canal's water, greener than the mountain's streams, with stone edges where it meets the ground
   R(g, X, Y, T, T, HW.water);
   for (let i = 0; i < 3; i++){ const px = Math.floor(rnd(x, y, i + 420) * 12), py = 4 + Math.floor(rnd(x, y, i + 430) * 9); R(g, X + px, Y + py, 4, 1, HW.waterLt); }
@@ -42,6 +42,16 @@ function canal(g, X, Y, x, y){   // a canal's water, greener than the mountain's
     R(g, X, Y + row, T, 3, HW.stone); for (let i = 0; i < 16; i += 4) R(g, X + i + (y % 2) * 2, Y + row, 1, 3, HW.plinth); R(g, X, Y + (row ? row : 2), T, 1, HW.plinth);
   }
 }
+// Stepping stones in a canal or a channel through the fields: the canal's water under them, not the mountain's bright
+// blue (decided 4 November 2026: the stones sat in a square of other water). The stone itself as on the mountain.
+const mountainHopStone = LOOKS.hopStone;
+LOOKS.hopStone = (g, X, Y, x, y) => {
+  let k = x; while (tileAt(k, y).look === 'hopStone') k--;
+  if (tileAt(k, y).look !== 'canal') return mountainHopStone(g, X, Y, x, y);
+  canal(g, X, Y, x, y);
+  oval(g, X + 8, Y + 11, 7, 4, '#2F5E63'); oval(g, X + 8, Y + 10, 6, 4, '#6F6B61'); oval(g, X + 8, Y + 9, 5, 3, '#B4AE9F'); oval(g, X + 7, Y + 8, 3, 1, '#D2CCBE');
+  R(g, X + 1, Y + 13, 3, 1, HW.waterLt); R(g, X + 12, Y + 13, 3, 1, HW.waterLt);
+};
 function veg(g, X, Y){   // a vegetable plot: dark soil, rows of greens
   R(g, X, Y, T, T, '#6B4A2E');
   for (let r = 0; r < 3; r++){ R(g, X, Y + 2 + r * 5, T, 1, '#5A3D25'); for (let c = 0; c < 4; c++){ const cx = X + 2 + c * 4, cy = Y + 4 + r * 5; oval(g, cx, cy, 2, 1, '#5E9A3C'); R(g, cx - 1, cy - 1, 2, 1, '#86C25A'); } }
