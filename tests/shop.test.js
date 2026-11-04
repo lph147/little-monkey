@@ -272,14 +272,14 @@ test('ask for something you didn’t point at, and the 老板 is puzzled: he ask
     assert.notEqual(after.indexOf('苹果'), before.indexOf('苹果'), 'the right one somewhere else');
   }
   const notes = get(g, '__notes').filter(n => /puzzled/.test(n));
-  assert.deepEqual(notes, Array(2).fill('The 老板 (shop owner) looks puzzled: you pointed at the 苹果 (apple), but asked for something else! Ask him again.'), 'each wrong answer');
+  assert.deepEqual(notes, Array(2).fill('The 老板 (shop owner) looks puzzled: you pointed at the 苹果 (apple), but asked for something else!'), 'each wrong answer');
   assert.deepEqual(get(g, '__said').filter(l => /什么/.test(l)), Array(2).fill('boss: 你要什么？'), 'and he asks again what you want');
   assert.deepEqual([get(g, 'S.shells'), get(g, "S.bag['苹果']")], [8, 1], 'then you pay, once, and it’s yours');
   assert.equal(g.run("!!NPCS.find(n => n.id === 'boss').puzzled"), false, 'his ? goes once you’ve asked for it');
   const blue = homeGame({shop: 3}, {shells: 10, w: seen(['蓝色'])});
   blue.run(`globalThis.__tries = [false, true]; gapQ = async o => { if (o.seen) o.seen.options = o.options || ['蓝色', '黄色', '白色']; return __tries.shift(); }`);
   await settle(blue, "buy(forSale().find(i => i.colour === '蓝色'), speaker('boss'))");
-  assert.ok(get(blue, '__notes').includes('The 老板 (shop owner) looks puzzled: you pointed at the blue 头带 (headband), but asked for something else! Ask him again.'));
+  assert.ok(get(blue, '__notes').includes('The 老板 (shop owner) looks puzzled: you pointed at the blue 头带 (headband), but asked for something else!'));
   assert.deepEqual(get(blue, 'S.wardrobe.wearing'), ['蓝色 的 头带'], 'the one you pointed at');
 });
 

@@ -11,6 +11,7 @@
 //         count towards the area's words, and you use them by choosing them as replies.
 //   use   a phrase's: when you say it ("when someone thanks you"), on its card and when another reply fits better
 //   cue   a phrase's: what someone does that you answer with it ("thanks you"), to say what's happening when you reply
+//   situation  a phrase's: a moment you'd say it in, for a What do you say? question ("You meet a friend."): phraseQ in js/quiz.js
 //   later true for a word the area will teach later, but nothing does yet (such as 蜜蜂, till the troop's bees): it isn't
 //         counted, or in the Word Scroll, unless the game you're playing has caught it already
 //   alike its look-alikes: words whose pictures share their main thing (床 and 睡觉, both a bed), or whose meanings
@@ -148,13 +149,13 @@ const WORD_BANK = {
   '大': {py:'dà', en:'big', area:1, category:'describing'},   // (and then a big one, for the feast; heard till then, as in 大猴子)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
-  '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello'},
-  '谢谢': {py:'xièxie', en:'thank you', area:1, category:'phrases', phrase:true, use:'when someone gives you something or helps you', cue:'helps you'},
-  '不客气': {py:'bú kèqi', en:'you’re welcome', area:1, category:'phrases', phrase:true, use:'when someone thanks you', cue:'thanks you'},
-  '对不起': {py:'duìbuqǐ', en:'sorry', area:1, category:'phrases', phrase:true, use:'when you’ve got something wrong', cue:'isn’t happy'},
-  '没关系': {py:'méi guānxi', en:'it doesn’t matter', area:1, category:'phrases', phrase:true, use:'when someone says sorry', cue:'says sorry'},
-  '再见': {py:'zàijiàn', en:'goodbye', area:1, category:'phrases', phrase:true, use:'when you leave', cue:'says goodbye'},
-  '我不要': {py:'wǒ bú yào', en:'no thanks, I don’t want it', area:1, category:'phrases', phrase:true, use:'when you don’t want something'},
+  '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello', situation:'You meet a friend.'},
+  '谢谢': {py:'xièxie', en:'thank you', area:1, category:'phrases', phrase:true, use:'when someone gives you something or helps you', cue:'helps you', situation:'A friend gives you a peach.'},
+  '不客气': {py:'bú kèqi', en:'you’re welcome', area:1, category:'phrases', phrase:true, use:'when someone thanks you', cue:'thanks you', situation:'You help a friend, and they thank you.'},
+  '对不起': {py:'duìbuqǐ', en:'sorry', area:1, category:'phrases', phrase:true, use:'when you’ve made a mistake', cue:'isn’t happy', situation:'You bump into a friend by mistake.'},
+  '没关系': {py:'méi guānxi', en:'it doesn’t matter', area:1, category:'phrases', phrase:true, use:'when someone says sorry', cue:'says sorry', situation:'A friend bumps into you, and says sorry.'},
+  '再见': {py:'zàijiàn', en:'goodbye', area:1, category:'phrases', phrase:true, use:'when you leave', cue:'says goodbye', situation:'You’re leaving your friends to go home.'},
+  '我不要': {py:'wǒ bú yào', en:'no thanks, I don’t want it', area:1, category:'phrases', phrase:true, use:'when you don’t want something', situation:'A friend offers you something you don’t want.'},
 
   // Heard in sentences
   '是': {py:'shì', en:'am, is, are'},

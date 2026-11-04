@@ -39,7 +39,7 @@ shown where the word list has them.
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey), 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
 | 花！太好了！ | huā! tài hǎo le! | Flowers! Wonderful! | 大猴子 (Big monkey) |  |
-| 没关系！ | méi guānxi! | It doesn’t matter! | 饿猴子 (Hungry monkey) |  |
+| 没关系！ | méi guānxi! | It doesn’t matter! | 猴子 (Monkey) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 老板 (Shop owner) |  |
 | 我来了！ | wǒ lái le! | Here I am! | 老板 (Shop owner) |  |
 | 我要吃大鱼！ | wǒ yào chī dà yú! | I want to eat a big fish! | 饿猴子 (Hungry monkey) |  |
@@ -60,7 +60,7 @@ shown where the word list has them.
 | 太小了！ | tài xiǎo le! | It’s too small! |  |  |
 | 鱼很大！ | yú hěn dà! | The fish is so big! |  |  |
 | 这里很好！ | zhèlǐ hěn hǎo! | It’s nice here! | 老板 (Shop owner) |  |
-| 对不起！ | duìbuqǐ! | Sorry! | 饿猴子 (Hungry monkey) |  |
+| 对不起！ | duìbuqǐ! | Sorry! | 猴子 (Monkey) |  |
 | 我是老猴子。这是花果山。 | wǒ shì lǎo hóuzi. zhè shì Huāguǒ Shān. | I’m the old monkey. This is Flower Fruit Mountain. | 老猴子 (Old monkey) |  |
 | 你好！我是大猴子。 | nǐ hǎo! wǒ shì dà hóuzi. | Hello! I’m the big monkey. | 大猴子 (Big monkey) |  |
 | 去找猴子吧！ | qù zhǎo hóuzi ba! | Go and find the monkeys! | 老猴子 (Old monkey) |  |

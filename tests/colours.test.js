@@ -25,6 +25,7 @@ function game(w = {}, pos = {place: 'school', x: 7, y: 3, dir: 'up'}){
   const g = loadGame({dom: true, save: {version: 29, started: true, w: words, shells: 0, met: ['rabbit', 'fox', 'squirrel', 'goat'], areas: {1: {...AT_SCHOOL}}, pos}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__cards = []; globalThis.__qs = []; globalThis.__scenes = []; globalThis.__lessons = 0");
   g.run("showDialog = async (who, line, opts = {}) => { __said.push(line.t.join('') + (opts.teach ? ' [' + opts.teach + ']' : '')); }; showNarration = async () => {}; toast = () => {}");
+  g.run("replyWith = async () => true");   // (your reply, such as 再见 after class: tests/sorry.test.js)
   g.run("showNotice = async (w, o = {}) => { __cards.push(w + (o.quiet ? ' (quiet)' : '')); rec(w).lv = Math.max(rec(w).lv || 0, 1); }; infoBox = async () => {}; confirmBox = async () => true");
   g.run("ttCard = async at => ttAction(at || ttDefault()); lessonEnd = async () => false");   // (the timetable: its own tests, tests/timetable.test.js; here, what it offers first)
   g.run("practise = async () => { __lessons++; return true; }; storyScene = async id => { __scenes.push(id); }");   // (a practice lesson: the practice post's own tests; a scene: tests/story.test.js)
@@ -48,7 +49,7 @@ test('the first colour lesson teaches three, one after another: 红色, 黄色 a
   assert.match(get(g, "lessonDetail(AREA.lessons[1], 1)"), /Ready: Three new colours, then choosing paints/, 'the timetable says what the lesson is');
   answering(g);
   await lesson(g);
-  assert.deepEqual(get(g, '__said'), ['上课！', '这是红色。 [红色]', '这是黄色。 [黄色]', '这是白色。 [白色]', '下课！'], 'he opens each paint, teaching it (bold)');
+  assert.deepEqual(get(g, '__said'), ['上课！', '这是红色。 [红色]', '这是黄色。 [黄色]', '这是白色。 [白色]', '下课！', '再见！'], 'he opens each paint, teaching it (bold)');
   assert.deepEqual(get(g, '__cards'), ['红色 (quiet)', '黄色 (quiet)', '白色 (quiet)'], 'each one’s card as it comes, not said again: he’s just said it');
   const all = get(g, '__qs');
   assert.equal(all.length, 11);

@@ -228,6 +228,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'hurt') return hurt() === v;   // you've lost health in a battle
     if (k === 'practice') return trainingCalls() === v;   // some of your words need practice (the practice post's !)
     if (k === 'lesson') return !!lessonNow() === v;       // a lesson series at school has a new word ready for you
+    if (k === 'wordReady') return !wordLeft() === v;   // you've answered the area's wordGap questions since your last new word (as a talk part's waits), so an event can teach one
     if (k === 'lessonWaits') return (!lessonNow() && !!lessonNow(false)) === v;   // it has, but it waits till you've practised (lessonGap)
     if (k === 'near'){ const n = NPCS.find(c => c.id === v); return !!n && Math.abs(n.x - pl.x) + Math.abs(n.y - pl.y) === 1; }   // you're right beside this character
     if (k === 'at') return placeOf(v) === PLACE && pl.x === v[0] && pl.y === v[1];   // you're standing here: [x, y], or [x, y, 'place']
@@ -287,9 +288,10 @@ const playing = n => !!PLAYS[n.id] && !n.mv && talkingTo !== n.id;
 // how many stones are on it (stones), and while building, the stone on its way up (carried: which, by: whose turn, 0 the
 // monkey on the left, 1 the one on the right, and lift: how far it's gone, 0 to 1).
 const TOWER = {place:850, land:.6, wobble:1000, fall:650, rest:1500, heights:[4, 6, 5]};
+let towerShift = 0;   // moves the tower's cycle on, so it can fall just as the story says (topple)
 function towerAt(now){
   const lens = TOWER.heights.map(h => h * TOWER.place + TOWER.wobble + TOWER.fall + TOWER.rest);
-  let t = now % lens.reduce((a, b) => a + b, 0), i = 0;
+  let t = (now + towerShift) % lens.reduce((a, b) => a + b, 0), i = 0;
   while (t >= lens[i]){ t -= lens[i]; i++; }
   const h = TOWER.heights[i], built = h * TOWER.place;
   if (t < built){
@@ -301,6 +303,17 @@ function towerAt(now){
     if (t < TOWER[phase]) return {h, phase, k:t / TOWER[phase], stones:h, carried:null};
     t -= TOWER[phase];
   }
+}
+// The tower falls now (the topple step: knocked over, such as by your tail): its cycle moves on to the start of the fall
+// of a tower about as tall as it is (the tallest of its heights no taller, or else the shortest).
+function topple(now = performance.now()){
+  const t = towerAt(now), have = t.phase === 'build' ? t.stones : t.h;
+  if (t.phase === 'fall') return;
+  const lens = TOWER.heights.map(h => h * TOWER.place + TOWER.wobble + TOWER.fall + TOWER.rest), total = lens.reduce((a, b) => a + b, 0);
+  const fits = TOWER.heights.map((h, i) => [h, i]).sort((a, b) => b[0] - a[0]), fit = fits.find(([h]) => h <= have) || fits.at(-1);
+  const i = fit[1];
+  const at = lens.slice(0, i).reduce((a, b) => a + b, 0) + TOWER.heights[i] * TOWER.place + TOWER.wobble;   // (the start of its fall)
+  towerShift = ((at - now) % total + total) % total;
 }
 // A dragonfly darting about (the area's dragonflies, each over the water in its own patch, and the one a little monkey
 // chases, round it): it hovers a moment, then darts to another spot in its box (x0, y0 to x1, y1, in map pixels), every
@@ -525,7 +538,8 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     await sleep(SET_UP.after);
     settingUp = null; refreshMap();
   },
-  sound(s){ if (SFX[s.sound]) SFX[s.sound](); },   // a sound (one of SFX in js/sound.js), such as a wolf howling far off
+  sound(s){ if (SFX[s.sound]) SFX[s.sound](); },
+  async topple(){ topple(); SFX.clatter(); await sleep(TOWER.fall + 250); },   // the little monkeys' tower falls, now (such as knocked by your tail)   // a sound (one of SFX in js/sound.js), such as a wolf howling far off
   async feastList(){ await feastCard(); },   // the feast's list, such as at its big table: what the troop has, and what it still needs (js/cards.js)
   // You swing your stick at the square you're facing, like Cut and Rock Smash in Pokémon: a whack, and chips fly off it
   // (hit: what it's made of, 'wood' or 'stone').
@@ -782,7 +796,7 @@ async function runSteps(steps, who, ends){
   for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i), !!ends) === STOP) return STOP;
 }
 // Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map.
-const QUIET_STEPS = ['set', 'sound', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly'];
+const QUIET_STEPS = ['set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly'];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){
@@ -974,6 +988,9 @@ async function buy(i, face){   // buying something from the shop by asking for i
     try {
       do {
         await showNarration(fill(sh.puzzled.replace('{item}', a.given)));
+        // once you know it, you say sorry, and he says it doesn't matter (the shop's sorry and noProblem: decided 4 November
+        // 2026, as 对不起 and 没关系 were met just once)
+        if (sh.sorry && lvl(sh.sorry) >= 1 && await replyWith(sh.sorry, {about:sh.sorryAbout, who:sh.who}) && sh.noProblem) await showDialog(face, L[sh.noProblem]);
         await showDialog(face, L[sh.ask]);
       } while (!await gapQ({...q, options:reshuffled(seen.options || [a.gap], a.gap), again:true, seen}));
     } finally { if (who) delete who.puzzled; }

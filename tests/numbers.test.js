@@ -20,6 +20,7 @@ function game(w = {}, area = {}){
     pos: {place: 'school', x: 7, y: 3, dir: 'up'}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__cards = []; globalThis.__qs = []; globalThis.__lessons = 0");
   g.run("showDialog = async (who, line, opts = {}) => { __said.push(line.t.join('') + (opts.teach ? ' [' + opts.teach + ']' : '')); }; showNarration = async () => {}; toast = () => {}");
+  g.run("replyWith = async () => true");   // (your reply, such as 再见 after class: tests/sorry.test.js)
   g.run("showNotice = async (w, o = {}) => { __cards.push(w + (o.quiet ? ' (quiet)' : '')); rec(w).lv = Math.max(rec(w).lv || 0, 1); }; infoBox = async () => {}; confirmBox = async () => true");
   g.run("ttCard = async at => ttAction(at || ttDefault()); lessonEnd = async () => false");   // (the timetable: its own tests, tests/timetable.test.js; here, what it offers first)
   g.run("practise = async () => { __lessons++; return true; }");   // (a practice lesson: the practice post's own tests)
@@ -43,7 +44,7 @@ test('the first number lesson teaches three, one after another: 四, then 五, t
   assert.match(get(g, "lessonDetail(AREA.lessons[0], 1)"), /Ready: Three new numbers, then counting/, 'it says what the lesson is');
   answering(g);
   await lesson(g);
-  assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四！ [四]', '一，二，三，四，五！ [五]', '一，二，三，四，五，六！ [六]', '下课！'], 'he counts up to each, teaching it (bold)');
+  assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四！ [四]', '一，二，三，四，五！ [五]', '一，二，三，四，五，六！ [六]', '下课！', '再见！'], 'he counts up to each, teaching it (bold)');
   assert.deepEqual(get(g, '__cards'), ['四 (quiet)', '五 (quiet)', '六 (quiet)'], 'each one’s card as it comes, not said again: he’s just said it');
   const qs = get(g, '__qs').map(q => q.word);
   assert.equal(qs.length, 11);
@@ -72,7 +73,7 @@ test('after the first three, one a lesson: the next number waits until you’ve 
   answering(g);
   g.run('__said.length = 0');
   await lesson(g);
-  assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四，五，六，七！ [七]', '下课！']);
+  assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四，五，六，七！ [七]', '下课！', '再见！']);
   assert.equal(get(g, '__qs').filter(q => q.word === '七').length, 3, 'five questions: three of them the new number');
   assert.equal(get(g, '__qs').length, 5);
   const one = game({'四': 1});   // (a game that learned 四 when the first lesson taught one)

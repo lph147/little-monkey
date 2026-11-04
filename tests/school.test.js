@@ -110,7 +110,7 @@ test('the little monkey: 我们是同学！ (同学); then lessons with the teac
   assert.equal(bubble(g, 'elder'), g.run('trainingCalls()') ? '!' : null, 'a ! over the teacher when words need practice');
   g.run('__said.length = 0');
   await press(g, 7, 3, 'up');
-  assert.deepEqual(get(g, '__said'), ['上课！', '下课！']);
+  assert.deepEqual(get(g, '__said'), ['上课！', '下课！', '再见！']);
   assert.equal(g.run('__lessons'), 1, 'a lesson');
   g.run('__said.length = 0; practise = async () => false');   // you don't start it, or stop
   await press(g, 7, 3, 'up');

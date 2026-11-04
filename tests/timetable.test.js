@@ -21,6 +21,7 @@ function game(w = {}, area = {}){
     pos: {place: 'school', x: 7, y: 3, dir: 'up'}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__lessons = []; globalThis.__practised = 0");
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
+  g.run("replyWith = async () => true");   // (your reply, such as 再见 after class: tests/sorry.test.js)
   g.run(`LESSON_KINDS.count = LESSON_KINDS.paint = async (s, words, who, {again}) => {
     openCard('<p>a question</p>'); const bar = sheet.querySelector('.lessonbar'); closeCard();
     __lessons.push({id: s.id, words, again, bar: bar ? bar.textContent : null});
@@ -90,7 +91,7 @@ test('a lesson: its name over every card in it, then a card saying what it taugh
   assert.equal(sheet(g).querySelectorAll('.tab')[0].querySelector('.st'), null, 'no star on Maths now');
   await press(g, '[data-a=no]');
   assert.ok(g.run('__done'));
-  assert.deepEqual(get(g, '__said'), ['上课！', '下课！'], 'a lesson done: class is over');
+  assert.deepEqual(get(g, '__said'), ['上课！', '下课！', '再见！'], 'a lesson done: class is over');
 });
 
 test('a lesson done can be done again, any time: all its words, as before, and it doesn’t start the wait', async () => {
@@ -108,7 +109,7 @@ test('a lesson done can be done again, any time: all its words, as before, and i
   assert.equal(text(g, 'p.small'), 'Next in Maths: lesson 2, ready now!');
   await press(g, '[data-a=ok]');   // OK
   assert.ok(g.run('__done'));
-  assert.deepEqual(get(g, '__said'), ['上课！', '下课！']);
+  assert.deepEqual(get(g, '__said'), ['上课！', '下课！', '再见！']);
 });
 
 test('a subject’s next lesson waits till you know the last one’s word well, and says which; another subject’s can go first', () => {
@@ -132,7 +133,7 @@ test('the practice tab: the words that need practice, and a practice lesson, any
   await press(g, '[data-a=ok]');
   assert.equal(g.run('__practised'), 1);
   assert.ok(g.run('__done'));
-  assert.deepEqual(get(g, '__said'), ['上课！', '下课！']);
+  assert.deepEqual(get(g, '__said'), ['上课！', '下课！', '再见！']);
 });
 
 test('the timetable on the classroom wall: a row for each subject, a star for each lesson done; A at it opens the timetable', async () => {

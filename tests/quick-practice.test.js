@@ -65,15 +65,17 @@ test('fewer than 4 words with pictures: it says to learn some first', () => {
   assert.match(text(g), /Learn 4 words with pictures first \(2\/4\)/);
 });
 
-test('a practice: the words that need it most, every fifth a sentence, every answer counted, and no shells', async () => {
+test('a practice: the words that need it most, every fifth a sentence, the third of every six What do you say?, every answer counted, and no shells', async () => {
   const g = game();
   const turn = g.run('S.turn'), need = get(g, 'reviewOrder(trainable()).slice(0, 10 + PICK_FROM - 1)');
   g.run('quickPractice(() => {})');
   click(g, '[data-a=go]');
   await settle(g);
-  const asked = get(g, '__asked');
+  const asked = get(g, "__asked.map(a => a[0] === 'pic' && WORDS[a[1]].phrase ? ['phrase', a[1]] : a)");
   assert.equal(asked.length, 10);
-  assert.deepEqual(asked.map(a => a[0]), ['pic', 'pic', 'pic', 'pic', 'gap', 'pic', 'pic', 'pic', 'pic', 'gap'], 'every fifth a sentence');
+  assert.deepEqual(asked.map(a => a[0]), ['pic', 'pic', 'phrase', 'pic', 'gap', 'pic', 'pic', 'pic', 'phrase', 'gap'], 'every fifth a sentence, and a phrase the third of every six (you know 你好, 谢谢 and 不客气)');
+  const said = asked.filter(a => a[0] === 'phrase').map(a => a[1]);
+  assert.ok(said.every(w => ['你好', '谢谢', '不客气'].includes(w)) && said[0] !== said[1], `phrases you know, a different one each time (${said})`);
   const pics = asked.filter(a => a[0] === 'pic').map(a => a[1]);
   assert.ok(pics.every(w => need.includes(w)), 'from the front of the review list');
   assert.equal(new Set(pics).size, pics.length, 'each word once');

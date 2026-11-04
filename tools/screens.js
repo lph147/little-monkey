@@ -1174,6 +1174,18 @@ const SCREENS = [
     play(); await wait(100); const real = gapQ; let first = true;
     gapQ = async o => { if (!first) return real(o); first = false; if (o.seen) o.seen.options = ['苹果', '山', '水']; return false; };
     buy(forSale().find(i => i.item === '苹果'), speaker('boss')); await wait(500); }},
+  {id: 'shop-sorry', title: 'Sorry, and it doesn’t matter, at the shop', save: 'shopOpen', why: 'Once you know 对不起: ask for something you didn’t point at, and you say sorry (what’s happening, in plain English); he says 没关系 and asks again (decided 4 November 2026).', run: async () => {
+    play(); await wait(100); rec('对不起').lv = Math.max(rec('对不起').lv || 0, 1); const real = gapQ; let first = true;
+    gapQ = async o => { if (!first) return real(o); first = false; if (o.seen) o.seen.options = ['苹果', '山', '水']; return false; };
+    buy(forSale().find(i => i.item === '苹果'), speaker('boss')); await wait(300); next(); await wait(400); }},
+  {id: 'tower-knocked', title: 'Knocking over the little monkeys’ tower', save: 'shopOpen', why: 'Chapter 1, once, as you go by on the road: your tail knocks their tower of stones down, and you say 对不起 (taught here); they say 没关系 (decided 4 November 2026).', run: async () => {
+    S.pos = {place: 'homeGround', x: 27, y: 9, dir: 'up'}; placePlayer(); play(); await wait(100); here().bumped = 1; here().knocked = 0; delete here().wordTurn; talk(npc('towerL')); await wait(300); next(); await wait(500); }},
+  {id: 'say-what', title: 'What do you say?', save: 'shopOpen', why: 'A phrase question, in monkeys’ word games and quick practice: a moment in plain English, three phrases you know in Chinese and pinyin; their English once you’ve answered (decided 4 November 2026).', run: async () => {
+    play(); await wait(100); for (const p of ['你好', '谢谢', '不客气']) rec(p).lv = Math.max(rec(p).lv || 0, 1); phraseQ({phrase: '不客气', who: speaker('hungry')}); await wait(400); }},
+  {id: 'say-what-answered', title: 'What do you say?, answered', save: 'shopOpen', why: 'Each phrase’s English shows once you’ve answered, and the one that fits is said.', run: async () => {
+    play(); await wait(100); for (const p of ['你好', '谢谢', '不客气']) rec(p).lv = Math.max(rec(p).lv || 0, 1);
+    const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); }; phraseQ({phrase: '不客气', who: speaker('hungry')}); await wait(300);
+    click('.opt[data-i="' + __q.answerIdx + '"]'); await wait(400); }},
   {id: 'wardrobe-colours', title: 'Your headbands', save: 'shopOpen', why: 'Each colour you’ve bought, one on at a time: putting one on takes the other off (我戴蓝色的头带).', run: async () => {
     play(); await wait(100); wardrobePage(() => closeCard()); await wait(300); }},
   {id: 'fish-want', title: 'A big fish for the feast', save: 'fishAsk', why: 'With honey on the table, the hungry monkey wants a big fish: 我要吃大鱼！ (大 just for listening, till you catch one).', run: async () => {

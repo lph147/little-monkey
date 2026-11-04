@@ -8,7 +8,7 @@ const {loadGame} = require('./fake-browser');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const CHAPTER_ONE = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2,
-  build: 1, wood: 'asked', stones: 'asked', woodIn: 1, lookTip: 1, trainee1: 1, trainee2: 1};
+  build: 1, wood: 'asked', stones: 'asked', woodIn: 1, lookTip: 1, trainee1: 1, trainee2: 1, bumped: 1};   // (bumped: the chaser has bumped into you, tests/sorry.test.js)
 const KNOWS = Object.fromEntries(['石头', '山', '花', '草', '树', '水', '河', '猴子', '你好'].map(w => [w, {lv: 1, ok: 3, next: 100}]));
 function game(pos = {place: 'hillside', x: 10, y: 34, dir: 'down'}){   // on the path above the brook
   const g = loadGame({dom: true, save: {version: 29, started: true, w: KNOWS, areas: {1: CHAPTER_ONE}, pos}});

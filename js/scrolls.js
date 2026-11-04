@@ -223,11 +223,12 @@ async function practise(who, kind = PRACTICE.post){
 // QUICK.most or as many as you can be asked about (askable: your words with pictures, and those without that a sentence
 // you've met can ask about, with its gap), 10 to start with. The words that need it most come first (the review list),
 // each asked about as its level calls for (listen while it's new, read once you recognise it), and every QUICK.gapEvery-th
-// a sentence with a word missing, as the word games do; never a new word. Every answer counts in your game, as practice
+// a sentence with a word missing, as the word games do, and the third of every QUICK.phraseEvery a What do you say?
+// question on a phrase, once you know enough (phraseQ, js/quiz.js); never a new word. Every answer counts in your game, as practice
 // anywhere does (moving words on, and towards the waits), but earns no shells: it's a tool beside the game, not part of it.
 // Stop, or B, ends it where you are. The end card says how you did, the words that moved up a level, and those you missed;
 // again: the same number again. back: where Back and Done go (the title, or the menu).
-const QUICK = {step:5, most:50, first:10, gapEvery:5};
+const QUICK = {step:5, most:50, first:10, gapEvery:5, phraseEvery:6};   // (phraseEvery: a What do you say? question, js/quiz.js, the third of each six)
 const QUICK_NAME = () => `<span class="hz">练习</span>${S.pinyin ? ' <span class="spy">liànxí</span>' : ''} Practice`;
 const sentenceWords = () => [...new Set(SENTENCES().map(b => toks(b.sentence)).filter(t => t.every(w => lvl(w) >= 1)).flat().filter(w => !WORDS[w].pic))];
 const askable = () => trainable().length + sentenceWords().length;
@@ -267,14 +268,16 @@ function quickPractice(back){
 async function quickRun(n, back){
   const before = Object.fromEntries(ORDER.map(w => [w, lvl(w)]));
   const pics = nextWords(trainable(), n);   // (more than it needs: every QUICK.gapEvery-th is a sentence, when there is one)
-  const missed = new Set(), sentences = [];
+  const missed = new Set(), sentences = [], phrases = [];
   let right = 0, asked = 0, stopped = false, stop;
   const stopping = new Promise(res => { stop = () => { stopped = true; res(null); }; });
   for (let i = 0, p = 0; i < n && !stopped; i++){
     lessonBar = `${QUICK_NAME()} · ${i + 1} of ${n}`;
     const gapHere = (i % QUICK.gapEvery === QUICK.gapEvery - 1 || p >= pics.length), b = gapHere ? practiceSentence(sentences) : null;
+    const ph = !b && i % QUICK.phraseEvery === 2 ? phraseToAsk(phrases) : null;
     let ok, w;
     if (b){ sentences.push(b.t.join('')); w = b.gap; ok = await Promise.race([gapQ({t:b.t, en:b.en, gap:b.gap, stop}), stopping]); }
+    else if (ph){ phrases.push(ph); w = ph; ok = await Promise.race([phraseQ({phrase:ph, stop}), stopping]); }
     else {
       if (p >= pics.length) break;   // (nothing left to ask about)
       w = pics[p++];

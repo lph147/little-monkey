@@ -308,13 +308,17 @@ async function encounter(foe){
     + `${lifeline(filled, missed)}${q ? `<div class="qn">Question ${q} of ${n}</div>` : ''}</div>`
     + '<div class="plus" aria-hidden="true" hidden>+♥</div></div>';
   const targets = withOwn(toAsk(an, n), foe.asks, n), gapAt = foe.gaps ? [...Array(foe.gaps).keys()].map(k => Math.round((k + 1) * n / foe.gaps) - 1) : [];
-  const sentences = [];   // (asked already: a big game's sentences are all different)
+  const sentences = [], phraseAt = n >= 3 ? n - 2 : -1;   // (asked already: a big game's sentences are all different)
   let score = 0, wrong = 0, next = 0;
   for (let i = 0; i < n && !(misses && wrong >= misses); i++){
     // Sometimes, in an area that asks them, the last question is a sentence you know with a word missing (or, in a big
     // game, the ones it says).
     const b = AREA.questions.includes('gap') && (foe.gaps ? gapAt.includes(i) : i === n - 1 && Math.random() < GAP_CHANCE) ? practiceSentence(sentences) : null;
     if (b){ sentences.push(b.t.join('')); if ((await gapRound(b, img)).right) score++; else wrong++; continue; }
+    // In a monkey's word game (not an animal's), one question near the end can be What do you say?: always while a phrase
+    // you know needs practice, and now and then after that.
+    const ph = i === phraseAt && foe.name && !foe.wild ? phraseToAsk([], Math.random() >= PHRASE_CHANCE) : null;
+    if (ph){ if (await phraseQ({phrase:ph, who:img})) score++; else wrong++; continue; }
     if (next >= targets.length) break;   // (not enough words you know to ask about)
     const w = targets[next++], q = wordQuestion(w, an), {type, body, opts} = q;   // (never the animal, which is right there)
     const head = scene(score, i + 1, '', wrong);
@@ -381,6 +385,30 @@ async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, option
   if (again) return ok;
   if (ok) answer(gap, true, !WORDS[gap].pic ? 'fill' : pics ? 'gap' : 'read');
   else reviewed(gap, false);   // missed: it comes back soon (its gold squares stay: filling a gap is practice, not a test)
+  return ok;
+}
+/* ================= WHAT DO YOU SAY? ================= */
+// A phrase question (decided 4 November 2026: phrases were only ever replies, so 对不起 and 没关系 were met once): a moment
+// in plain English (the phrase's situation, in content/words.js), such as "A friend bumps into you, and says sorry.", and
+// What do you say?, with three phrases you know to choose from, in Chinese and pinyin, and their English once you've
+// answered. It's vocabulary, never grammar: which phrase fits, not how to put one together. Counts as practice of it.
+const PHRASE_MIN = 3;   // the phrases you must know (with a situation) before you're asked
+const PHRASE_CHANCE = .25;   // in a monkey's word game, how likely one of its questions is a phrase, once no phrase needs practice
+const askablePhrases = () => PHRASES.filter(p => WORDS[p].situation && lvl(p) >= 1);
+// The phrase to ask about, if you know enough of them: one that needs practice, nearest the front of the review list, or
+// any (not: those asked already, such as in this quick practice). needed: only one that needs practice.
+function phraseToAsk(not = [], needed = false){
+  const all = askablePhrases();
+  if (all.length < PHRASE_MIN) return null;
+  const left = all.filter(p => !not.includes(p)), need = reviewOrder(left.filter(needsPractice));
+  return need[0] || (needed ? null : shuffle(left)[0] || null);
+}
+async function phraseQ({phrase, who = '', stop}){
+  const opts = shuffle([phrase, ...shuffle(askablePhrases().filter(p => p !== phrase)).slice(0, 2)]);
+  const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">What do you say?</p><p class="prompt">${esc(WORDS[phrase].situation)}</p></div></div>`,
+    body:'', options:opts.map(w => `${w}<span class="cap">${WORDS[w].py}</span><span class="cap later">${esc(WORDS[w].en.split(',')[0])}</span>`),
+    text:true, answerIdx:opts.indexOf(phrase), word:phrase, type:'read', stop});
+  closeCard();
   return ok;
 }
 // The same choices in another order, the right one (gap) somewhere else: asking again is finding it, not tapping where it was.

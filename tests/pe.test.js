@@ -20,6 +20,7 @@ function game(w = {}, area = {}, known = KNOWN){
     pos: {place: 'school', x: 7, y: 3, dir: 'up'}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__qs = []; globalThis.__t = 1000; performance.now = () => __t");
   g.run("showDialog = async (who, line, opts = {}) => { __said.push(line.t.join('') + (opts.teach ? ' [' + opts.teach + ']' : '')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
+  g.run("replyWith = async () => true");   // (your reply, such as 再见 after class: tests/sorry.test.js)
   g.run("showNotice = async (w, o = {}) => { __notes.push('card: ' + w + (o.note ? ' (' + o.note + ')' : '')); rec(w).lv = Math.max(rec(w).lv || 0, 1); }");
   g.run("pictureQ = async q => { __qs.push({w: q.word, place: PLACE, you: [pl.x, pl.y], elder: (n => [n.x, n.y])(ALL_NPCS.find(n => n.id === 'elder')), racers: ['playful', 'troop2'].map(id => ALL_NPCS.find(n => n.id === id).x)}); return true; }");   // (every question answered right)
   g.run('placePlayer()');

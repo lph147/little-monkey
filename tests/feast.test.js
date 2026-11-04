@@ -25,6 +25,7 @@ function game(area = {}, pos = BY_TEACHER, words = [...KNOWN, ...FIRST_TWO]){
   const g = loadGame({dom: true, save: {version: 30, started: true, w, shells: 0, met: ['rabbit', 'fox', 'squirrel', 'goat', 'deer'], areas: {1: {...AT_SCHOOL, ...area}}, pos}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__lessons = 0; globalThis.__knocks = []");
   g.run("showDialog = async (who, line, opts = {}) => { __said.push(line.t.join('') + (opts.teach ? ' [' + opts.teach + ']' : '')); if (opts.hint) __notes.push(opts.hint); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");   // (a line's hint: what to do next, after it)
+  g.run("replyWith = async () => true");   // (your reply, such as 再见 after class: tests/sorry.test.js)
   g.run("showNotice = async (w, o = {}) => { __notes.push('card: ' + w + (o.note ? ' (' + o.note + ')' : '')); rec(w).lv = Math.max(rec(w).lv || 0, 1); }");
   g.run("LESSON_KINDS.count = LESSON_KINDS.paint = async () => { __lessons++; return true; }; practise = async () => { __lessons++; return true; }; ttCard = async at => ttAction(at || ttDefault()); lessonEnd = async () => false");   // (lessons: their own tests)
   g.run("SFX.tock = () => { __knocks.push(settingUp && settingUp.stage); }");   // (each piece of what's being set up)
@@ -48,7 +49,7 @@ test('before the first two lessons, the old monkey has no news: a lesson, as usu
   assert.ok(!get(g, 'getTasks().some(t => /news/.test(t.text))'));
   assert.equal(item(g, /news/)[3], false, 'not on the checklist yet');
   await press(g, 7, 3, 'up');
-  assert.deepEqual(get(g, '__said'), ['上课！', '下课！']);
+  assert.deepEqual(get(g, '__said'), ['上课！', '下课！', '再见！']);
   assert.equal(g.run('__lessons'), 1);
   assert.equal(g.run('here().feast'), 0);
   assert.deepEqual(hungry(g), ['meadow', 13, 5, 'down'], 'the hungry monkey is still in the meadow');
@@ -75,7 +76,7 @@ test('after them, the old monkey has news before any lesson: 我们有家，也�
   assert.deepEqual(get(g, "AREA.tasks.find(t => t.id === 'feastTable').arrow"), [17, 7, 'homeGround'], 'its arrow points at the big tree');
   g.run('__said.length = 0');
   await press(g, 7, 3, 'up');
-  assert.deepEqual(get(g, '__said'), ['上课！', '下课！'], 'then lessons, as before');
+  assert.deepEqual(get(g, '__said'), ['上课！', '下课！', '再见！'], 'then lessons, as before');
 });
 
 test('as you come up to the big tree, the troop sets out the feast’s two tables under it as you watch, a piece at a time, each with a knock', async () => {

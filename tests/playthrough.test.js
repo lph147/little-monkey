@@ -172,7 +172,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(2, 6, 'left', 'picking a peach');
   assert.ok(knows('桃子'), 'picking it teaches 桃子: the tree teaches its own fruit');
   assert.equal(area().holding.hungry, '桃子', 'you should be holding the peach');
+  const turnAtPeach = get('S.turn');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the peach');
+  assert.ok(get('S.turn') - turnAtPeach >= 2, 'just after a new word (桃子), he plays a quick word game first (decided 4 November 2026: 水果, 桃子, 苹果 and 吃 came one after another)');
   assert.equal(area().holding.hungry, undefined, 'the peach is given back');
   assert.deepEqual(area().wanted, {hungry: '苹果'}, 'he wants the apple instead');
   assert.ok(get('getTasks()').some(t => t.text === 'Find the apple the hungry monkey wants'), 'a task names a word you haven’t caught in plain English');
@@ -181,9 +183,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
   assert.equal(area().hungry, 'done', 'the hungry monkey should take the apple');
   assert.ok(knows('吃') && !knows('要') && !knows('不客气'), 'giving him the apple teaches 吃, so your reply 不客气 waits: one new word at a time');
-  assert.ok(!knows('没关系'), 'he said 没关系 when you said sorry, but you haven’t said it yet');
-  await pressAt(13, 6, 'up', 'talking to the hungry monkey once he has eaten: he says sorry for being fussy');
-  assert.ok(knows('没关系'), 'you reply 没关系 (it doesn’t matter), and catch it');
+  assert.ok(!knows('对不起') && !knows('没关系'), 'no sorry in the prologue: 对不起 and 没关系 come in chapter 1 (decided 4 November 2026)');
+  await pressAt(13, 6, 'up', 'talking to the hungry monkey once he has eaten');
   assert.deepEqual([area().hungryGame, get("S.bag['桃子']")], [2, 1], 'then he wants to play a word game: won, a peach for your bag');
 
   // The thirsty monkey

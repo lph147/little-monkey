@@ -68,12 +68,12 @@ test('say Not now, and the little monkey has a ! till you’ve played, in the me
   assert.deepEqual(get(later, '__asks'), [PRESENT], 'but its present is still there to play for');
 });
 
-test('once you’ve told the hungry monkey 没关系, he wants to play a word game; win, and you get a peach for your bag, the once', async () => {
+test('once the hungry monkey has eaten, he wants to play a word game (no sorry: 对不起 and 没关系 come in chapter 1); win, and you get a peach for your bag, the once', async () => {
   const g = game({hungry: 'done'}, ['朋友', '桃子', '苹果', '水果', '吃']);
-  assert.equal(bubble(g, 'hungry'), '!', 'he wants to say sorry for being fussy');
+  assert.equal(bubble(g, 'hungry'), '!', 'he wants to play');
   await talk(g, 'hungry');
-  assert.deepEqual(get(g, '__replies'), ['没关系'], 'you say it doesn’t matter');
-  assert.deepEqual(get(g, '__said'), ['对不起！', '我们玩吧！', '太好了！']);
+  assert.deepEqual(get(g, '__replies'), [], 'nothing to reply to');
+  assert.deepEqual(get(g, '__said'), ['我们玩吧！', '太好了！']);
   assert.deepEqual(get(g, '__asks'), ['Play a word game with the hungry monkey? If you win, you get a 桃子 (peach) for your bag.']);
   assert.deepEqual([get(g, 'here().hungryGame'), get(g, "S.bag['桃子'] || 0")], [2, 1], 'its present: a peach');
   assert.ok(get(g, '__notes').includes('The hungry monkey gives you a 桃子 (peach) for your bag.'));
@@ -92,7 +92,7 @@ test('say Not now, and the hungry monkey has a ! till you’ve played, in the me
   assert.equal(bubble(g, 'hungry'), '!', 'so he has a !');
   g.run('__play = true; __win = false; __asks.length = 0; __said.length = 0');
   await talk(g, 'hungry');
-  assert.deepEqual(get(g, '__said'), ['我们玩吧！'], 'no sorry again: straight to the game');
+  assert.deepEqual(get(g, '__said'), ['我们玩吧！'], 'straight to the game');
   assert.equal(get(g, '__asks').length, 1);
   assert.deepEqual([get(g, 'here().hungryGame'), get(g, "S.bag['桃子'] || 0")], [1, 0], 'lost: played, but no present');
   assert.equal(bubble(g, 'hungry'), '', 'played once: his ! has gone');

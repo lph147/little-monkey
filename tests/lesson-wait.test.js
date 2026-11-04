@@ -20,6 +20,7 @@ function game(w = {}, area = {}){
     pos: {place: 'school', x: 7, y: 3, dir: 'up'}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__said = []; globalThis.__notes = []; globalThis.__lessons = 0");
   g.run("showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNarration = async t => { __notes.push(t); }; toast = t => { __notes.push(t); }");
+  g.run("replyWith = async () => true");   // (your reply, such as 再见 after class: tests/sorry.test.js)
   g.run("showNotice = async w => { rec(w).lv = Math.max(rec(w).lv || 0, 1); }; infoBox = async () => {}; confirmBox = async () => true; storyScene = async () => {}");
   g.run("ttCard = async at => ttAction(at || ttDefault()); lessonEnd = async () => false");   // (the timetable: its own tests, tests/timetable.test.js; here, what it offers first)
   g.run("practise = async () => { __lessons++; return true; }");   // (a practice lesson: the practice post's own tests; the playthrough plays a real one)
@@ -51,7 +52,7 @@ test('after a lesson that teaches new words, the next waits till you’ve answer
   assert.equal(get(g, 'here().lessonWait'), 1, 'the game remembers it’s waiting, to tell you when it’s ready');
   g.run('__said.length = 0; __notes.length = 0');
   await lesson(g);
-  assert.deepEqual(get(g, '__said'), ['上课！', '下课！']);
+  assert.deepEqual(get(g, '__said'), ['上课！', '下课！', '再见！']);
   assert.equal(g.run('__lessons'), 1, 'the lesson is practice');
   assert.ok(!get(g, "lvl('红色')"), 'nothing new');
   g.run('S.turn += 5');   // (5 questions answered: in the practice lesson, say, or an animal's game)
