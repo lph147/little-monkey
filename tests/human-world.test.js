@@ -307,3 +307,13 @@ test('pacing: in Area 2, everything that teaches a new word waits for six questi
   // the words: 31, one after another, and the first (人) as you land
   assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 31);
 });
+
+test('the human world has a song of its own, a village tune, in every place (not Flower Fruit Mountain’s)', () => {
+  const g = game({place: 'village', x: 11, y: 8, dir: 'down'});
+  assert.equal(g.run("[...new Set(Object.values(PLACES).map(p => p.music))].join()"), 'village', 'every place');
+  assert.equal(g.run('placeSong()'), 'village');
+  assert.equal(g.run('SONGS.village.events.filter(e => e.k === "mel").reduce((s, e) => s + e.d, 0)'), g.run('SONGS.village.beats'), 'its tune fills its loop exactly');
+  assert.ok(g.run('SONGS.village.events.filter(e => e.m).every(e => [7, 9, 11, 2, 4].includes(e.m % 12))'), 'every note one of its five (G A B D E), so nothing clashes');
+  g.run('S.pos = {place: "shore", x: 11, y: 10, dir: "up"}; PLACE = "shore"');
+  assert.equal(g.run('placeSong()'), 'village', 'the shore too');
+});

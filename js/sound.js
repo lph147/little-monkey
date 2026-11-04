@@ -257,6 +257,28 @@ const PINE_EVENTS = (() => {
   [6, 22].forEach(b => ev.push({b, k:'sigh'}));
   return ev.sort((a,c) => a.b - c.b);
 })();
+// The human world's song (Area 2, decided 4 November 2026: it had Flower Fruit Mountain's): a village tune, brighter and
+// busier than home's, in another key (G A B D E, every note one of those five, so nothing clashes). The tune on the erhu,
+// the two-stringed fiddle of towns and teahouses, sliding between near notes; the second time round on the yangqin,
+// hammered, its long notes trembling. Under it a plucked bass that bounces, root and fifth, a clapper at each bar's start
+// and a woodblock on the off-beats. Four phrases of four bars: the tune, again with a new ending, the market's, higher
+// and quicker, and the tune coming home.
+const VILLAGE_MEL = [[74,1],[76,.5],[74,.5],[71,1],[69,1], [67,1.5],[69,.5],[71,2], [74,.5],[76,.5],[79,1],[76,.5],[74,.5],[71,1], [69,4],
+                     [74,1],[76,.5],[74,.5],[71,1],[69,1], [67,1.5],[69,.5],[71,1],[74,1], [76,.5],[74,.5],[71,.5],[69,.5],[67,1],[64,1], [67,4],
+                     [79,.5],[81,.5],[79,.5],[76,.5],[74,1],[76,1], [79,1],[76,.5],[74,.5],[71,2], [74,.5],[76,.5],[74,.5],[71,.5],[69,1],[71,1], [74,4],
+                     [71,1],[74,.5],[76,.5],[74,1],[71,1], [69,.5],[71,.5],[69,.5],[67,.5],[64,2], [62,1],[64,.5],[67,.5],[69,1],[71,1], [67,4]];
+const VILLAGE_ROOTS = [43,40,43,50, 43,40,45,43, 43,40,50,43, 40,45,50,43];   // G E G D, G E A G, G E D G, E A D G
+const VILLAGE_EVENTS = (() => {
+  const ev = []; let bt = 0, prev = 0;
+  VILLAGE_MEL.forEach(([m,d]) => { ev.push({b:bt, m, d, k:'mel', prev}); prev = m; bt += d; });
+  VILLAGE_ROOTS.forEach((r,i) => {
+    [[0, r, .05], [1, r + 19, .02], [2, r + 7, .04], [3, r + 19, .02]].forEach(([o, m, v]) => ev.push({b:i*4 + o, m, k:'bass', v}));   // oom-pa, oom-pa
+    ev.push({b:i*4, k:'clap', v:.026});
+    ev.push({b:i*4 + 1.5, k:'wood', v:.016}); ev.push({b:i*4 + 3.5, k:'wood', v:.016});
+    if (i % 4 === 3) ev.push({b:i*4 + 3, k:'drum', v:.04});   // into the next phrase
+  });
+  return ev.sort((a,c) => a.b - c.b);
+})();
 const midi = m => 440 * Math.pow(2, (m - 69) / 12);
 // The music's volume (mMain), and the song playing's own way out to it (mBus: its notes go into it, and its echo, half a
 // beat later, into mBus.echoIn). Each song gets a new mBus, and the last one fades away at once with everything it was
@@ -345,6 +367,27 @@ function xun(a, f, t, dur){   // the xun, an ancient clay flute: a deep, hollow 
   o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(g); g.connect(mBus); g.connect(mBus.echoIn);
   [o, o2, lfo].forEach(x => { x.start(t); x.stop(end + .35); });
 }
+function erhu(a, f, t, dur, fromF){   // the erhu: a bowed string, reedy and warm, sliding up from a near note, its vibrato growing
+  const o = a.createOscillator(), bp = a.createBiquadFilter(), lp = a.createBiquadFilter(), g = a.createGain(), lfo = a.createOscillator(), lg = a.createGain();
+  o.type = 'sawtooth';
+  if (fromF){ o.frequency.setValueAtTime(fromF, t); o.frequency.exponentialRampToValueAtTime(f, t + .12); }
+  else o.frequency.setValueAtTime(f, t);
+  lfo.frequency.value = 5.6; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(dur > .6 ? f * .013 : f * .004, t + Math.min(dur, .45));
+  lfo.connect(lg); lg.connect(o.frequency);
+  bp.type = 'peaking'; bp.frequency.value = 1100; bp.Q.value = 1.4; bp.gain.value = 7;   // its nasal body
+  lp.type = 'lowpass'; lp.frequency.value = 2600; lp.Q.value = .7;
+  const end = t + dur, hold = Math.max(t + .1, end - .07);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.03, t + .07); g.gain.setValueAtTime(.027, hold); g.gain.exponentialRampToValueAtTime(0.0001, end + .12);
+  o.connect(bp); bp.connect(lp); lp.connect(g); g.connect(mBus); g.connect(mBus.echoIn);
+  [o, lfo].forEach(x => { x.start(t); x.stop(end + .2); });
+}
+function clap(a, t, v){   // a clapper (the 板, two pieces of hard wood): a short, bright crack
+  if (!noiseBuf) return;
+  const n = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain();
+  n.buffer = noiseBuf; bp.type = 'bandpass'; bp.frequency.value = 2400; bp.Q.value = 2.5;
+  g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + .06);
+  n.connect(bp); bp.connect(g); g.connect(mBus); n.start(t); n.stop(t + .08);
+}
 function drip(a, t, f){   // a drop of water falling into a pool: a little plink, rising, that echoes
   const o = a.createOscillator(), g = a.createGain();
   o.type = 'sine'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 1.9, t + .06);
@@ -423,6 +466,22 @@ function playPineEvent(a, ev, t, pass){
   else if (ev.k === 'plink') bell(a, midi(ev.m), t, .013, 1.6);
   else if (ev.k === 'sigh') sigh(a, t);
 }
+function playVillageEvent(a, ev, t, pass){
+  const beat = 60 / SONGS.village.bpm;
+  if (ev.k === 'mel'){
+    const f = midi(ev.m), len = ev.d * beat;
+    if (pass === 0){
+      const slide = ev.prev && ev.prev !== ev.m && Math.abs(ev.m - ev.prev) <= 3 && ev.d >= 1 ? midi(ev.prev) : 0;
+      erhu(a, f, t, len * .95, slide);
+    } else {   // the yangqin: struck, and a long note trembles (struck again and again, softly)
+      zheng(a, f, t, .07, Math.min(len + .5, 1.3), false); bell(a, f * 2, t, .014, .5);
+      if (ev.d >= 2) for (let tt = t + .2; tt < t + len - .15; tt += .1) zheng(a, f, tt, .022, .3, false);
+    }
+  } else if (ev.k === 'bass') zheng(a, midi(ev.m), t, ev.v, .7, false);
+  else if (ev.k === 'clap') clap(a, t, ev.v);
+  else if (ev.k === 'wood') wood(a, t, ev.v);
+  else if (ev.k === 'drum') drum(a, t, ev.v);
+}
 function sigh(a, t){   // the wind sighing through the trees, very softly, into the song's echo
   const d = 2.6, buf = a.createBuffer(1, a.sampleRate * d, a.sampleRate), ch = buf.getChannelData(0);
   for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
@@ -439,7 +498,8 @@ const SONGS = {
   cave: {bpm:54, beats:32, events:CAVE_EVENTS, play:playCaveEvent, echo:[.52, .55]},
   pineWood: {bpm:50, beats:32, events:PINE_EVENTS, play:playPineEvent, echo:[.45, .45]},
   pineBattle: {bpm:100, beats:32, events:PINE_BATTLE_EVENTS, play:playPineBattleEvent, echo:[.26, .22]},   // (less echo, so the tune stays clear)
-  boss: {bpm:132, beats:32, events:BOSS_EVENTS, play:playBossEvent, echo:[.24, .2]}
+  boss: {bpm:132, beats:32, events:BOSS_EVENTS, play:playBossEvent, echo:[.24, .2]},
+  village: {bpm:92, beats:64, events:VILLAGE_EVENTS, play:playVillageEvent, echo:[.22, .2]}   // (the human world's, Area 2)
 };
 const placeSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].music]) ? PLACES[PLACE].music : 'home';   // the place you're in's own song, if it has one
 const battleSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].battleMusic]) ? PLACES[PLACE].battleMusic : 'battle';   // and its own battle song

@@ -235,6 +235,7 @@ const ACROSS_THE_SEA = {
   places: {
     shore: {
       name: {zh:'海边', py:'hǎibiān', en:'The shore'},
+      music: 'village',   // the human world's song (js/sound.js), not Flower Fruit Mountain's
       onMap: [46, 132],
       sounds: ['wind', 'birds'],
       exits: [
@@ -261,6 +262,7 @@ const ACROSS_THE_SEA = {
     },
     village: {
       name: {zh:'渔村', py:'yúcūn', en:'The fishing village'},
+      music: 'village',
       onMap: [46, 104],
       sounds: ['birds'],
       exits: [
@@ -290,6 +292,7 @@ const ACROSS_THE_SEA = {
     },
     fields: {
       name: {zh:'田边', py:'tiánbiān', en:'The fields'},
+      music: 'village',
       onMap: [90, 100],
       sounds: ['birds', 'wind'],
       exits: [
@@ -313,6 +316,7 @@ const ACROSS_THE_SEA = {
     },
     town: {
       name: {zh:'小镇', py:'xiǎozhèn', en:'The market town'},
+      music: 'village',
       onMap: [136, 102],
       sounds: ['birds'],
       exits: [
@@ -343,6 +347,7 @@ const ACROSS_THE_SEA = {
     },
     harbour: {
       name: {zh:'码头', py:'mǎtou', en:'The harbour'},
+      music: 'village',
       onMap: [136, 128],
       sounds: ['wind', 'birds'],
       exits: [
@@ -366,6 +371,7 @@ const ACROSS_THE_SEA = {
     },
     farShore: {
       name: {zh:'西边的海边', py:'xībiān de hǎibiān', en:'The far shore'},
+      music: 'village',
       onMap: [206, 40],
       sounds: ['wind', 'birds'],
       exits: [
