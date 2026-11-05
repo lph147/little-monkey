@@ -541,6 +541,7 @@ test('tasks have different ids, and their arrows point at a character, a place o
     if (typeof t.arrow === 'string') assert.ok(AREA.characters.some(c => c.id === t.arrow), `task ${t.id} points at "${t.arrow}", who isn't a character`);
     else if (t.arrow && t.arrow.place) assert.ok(AREA.places[t.arrow.place], `task ${t.id} points the way to "${t.arrow.place}", which isn't a place`);
     else if (t.arrow && t.arrow.sparkle) assert.equal(t.arrow.sparkle, true, `task ${t.id}'s arrow says {sparkle:true}`);
+    else if (t.arrow && t.arrow.nearest) for (const e of t.arrow.nearest) assert.ok(AREA.characters.some(c => c.id === e.who), `task ${t.id} points at the nearest of several, but "${e.who}" isn't a character`);
     else if (t.arrow) assert.ok(onMap(t.arrow), `task ${t.id} points at ${t.arrow}, which is off the map`);
   }
 });
@@ -750,6 +751,13 @@ test('writing in the world is real Chinese, in characters drawn for it: the scho
   for (const text of wrote){
     for (const c of text) assert.ok(HANZI[c], `${c} is drawn in HANZI (js/art.js)`);
     assert.ok(BANK[text] || [...text].every(c => BANK[c]) || Object.values(AREA.places).some(p => p.name.zh === text) || IN_THE_BOOK[text], `${text}: a word, words, or a name (a place’s, or one in the book), never made up`);
+  }
+});
+
+test('a task says where it’s done: its arrow’s place, or its own where (a place, or a few words)', () => {
+  for (const t of AREA.tasks.filter(t => t.where)){
+    assert.ok(AREA.places[t.where] || /^[A-Z]/.test(t.where), `task ${t.id}'s where, "${t.where}", should be a place's id, or a few words starting with a capital`);
+    assert.ok(!t.arrow || t.arrow.sparkle, `task ${t.id} has an arrow, which says where it is: it needs no where`);
   }
 });
 

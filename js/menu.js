@@ -78,7 +78,7 @@ const BAG_TABS = [
     .map(w => ({w, does:FOOD[w].does, label:FOOD[w].heal || FOOD[w].fast ? 'Eat' : 'Hear', count:S.bag[w]}))},
   {id:'someone', name:'For someone', things:() => Object.entries(here().holding).filter(([, w]) => w && WORDS[w])
     .map(([id, w]) => ({w, does:`The ${((NAMES[(AREA.requests[id] || {}).from] || {}).en || 'troop').toLowerCase()}`, label:'Hear'}))},
-  {id:'fight', name:'To fight with', things:() => canBattle() && BATTLES.weapon ? [{w:BATTLES.weapon, does:`Hits for ${BATTLES.hits}`, label:'Hear'}] : []},
+  {id:'fight', name:'To fight with', things:() => canBattle() && weaponNow() ? [{w:weaponNow(), does:`Hits for ${weaponHits()}`, label:'Hear'}] : []},   // (your weapon now, such as the Demon of Havoc's broadsword)
   {id:'fishing', name:'For fishing', things:() => !canFish() ? [] : [{w:FISH.rod, does:'A at water with fish in it', label:'Hear'},   // (js/fishing.js)
     ...(FISH.bait && S.bag[FISH.bait] > 0 ? [{w:FISH.bait, does:'A big fish bites next', label:'Hear', count:S.bag[FISH.bait]}] : [])]}
 ];
@@ -143,7 +143,8 @@ function tasksPage(back, page = 'now', focus = null){
   tasks.forEach(t => { S.tasksRead[t.id] = 1; }); save();
   const ch = AREA.chapters[chapterNow()], found = areaChecklist().filter(([, , , f]) => f);
   const aimed = aimedTask(tasks), choose = tasks.filter(t => t.arrow).length > 1;   // (a choice only with two or more to show the way for)
-  const taskHTML = t => `<li class="${[t === aimed ? 'aim' : '', t.main ? 'main' : ''].join(' ').trim()}">${t.main ? '<span class="star" aria-hidden="true"></span>' : ''}${choose && t.arrow ? `<button class="taskbtn" data-t="${esc(t.id)}">${esc(t.text)}</button>` : `<span>${esc(t.text)}</span>`}${t.clue ? clueTaskHTML(t.clue) : ''}</li>`;
+  const whereHTML = t => t.where ? `<span class="where">${esc(t.where)}</span>` : '';   // (where it's done, when that's not where you are)
+  const taskHTML = t => `<li class="${[t === aimed ? 'aim' : '', t.main ? 'main' : ''].join(' ').trim()}">${t.main ? '<span class="star" aria-hidden="true"></span>' : ''}${choose && t.arrow ? `<button class="taskbtn" data-t="${esc(t.id)}">${esc(t.text)}${whereHTML(t)}</button>` : `<span>${esc(t.text)}${whereHTML(t)}</span>`}${t.clue ? clueTaskHTML(t.clue) : ''}</li>`;
   const chapter = `${esc(ch.name)}: ${esc(ch.title)}`, progress = `${found.filter(([, done]) => done).length} of ${found.length} done so far`;
   if (page === 'list'){
     openCard(`<div class="cardtop"><p class="label taskslabel">${chapter}</p><span class="taskprog">${progress}</span></div>

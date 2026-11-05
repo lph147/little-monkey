@@ -205,4 +205,5 @@ test('the Demon of Havoc: a boss fight; at under half his health, the hair trick
   assert.equal(get(g, 'here().weapon'), '刀', 'the broadsword is yours from now on');
   assert.ok(hits.some(([w]) => w === '刀'), 'and you fought on with it');
   assert.equal(get(g, 'weaponHits()'), 15, 'hitting for 15, not 10');
+  assert.deepEqual(get(g, 'BAG_TABS.find(t => t.id === "fight").things().map(t => [t.w, t.does])'), [['刀', 'Hits for 15']], 'and in your bag, To fight with');
 });

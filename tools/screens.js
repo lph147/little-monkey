@@ -431,6 +431,7 @@ SAVES.c1home = {...SAVES.c1fly, areas: {...SAVES.c1fly.areas, 2: {...SAVES.c1fly
 SAVES.a2pier = {...SAVES.a2dressed, areas: {...SAVES.a2dressed.areas, 2: {...SAVES.a2dressed.areas[2], oldFisher: 1, pierFish: 'asked'}}, pos: {place: 'shore', x: 18, y: 20, dir: 'down'}};
 SAVES.a2shorePath = {...SAVES.a2dressed, pos: {place: 'shorePath', x: 12, y: 16, dir: 'up'}};
 SAVES.a2hens = {...SAVES.a2knock, w: {...SAVES.a2knock.w, ...knows(1, ['谁', '鸡'])}, friends: ['goose', 'chicken'], pos: {place: 'village', x: 13, y: 8, dir: 'left'}};
+SAVES.a2hensShore = {...SAVES.a2hens, areas: {...SAVES.a2hens.areas, 2: {...SAVES.a2hens.areas[2], fish: 'asked'}}, pos: {place: 'shore', x: 13, y: 11, dir: 'up'}};
 SAVES.a2lane = {...SAVES.a2fields, pos: {place: 'villageLane', x: 8, y: 8, dir: 'down'}};
 SAVES.a2highRoad = {...SAVES.a2town, pos: {place: 'highRoad', x: 16, y: 9, dir: 'up'}};
 SAVES.a2canal = {...SAVES.a2harbour, pos: {place: 'canalPath', x: 9, y: 12, dir: 'left'}};
@@ -1348,6 +1349,8 @@ const SCREENS = [
     play(); await wait(100); here().part = 0; partsCheck(); await wait(400); }},
   {id: 'tasks-journey', title: 'Tasks: your journey', save: 'journey', why: 'At the top, where the story is going and the part you’re in; then the story’s tasks first, ★, and the rest under Also. Chapter 1, getting ready for the feast.', run: async () => {
     play(); await wait(100); here().part = PARTS.findIndex(p => p.id === 'feast'); tasksPage(() => closeCard()); await wait(400); }},
+  {id: 'tasks-where', title: 'Tasks: where each one is', save: 'a2hensShore', why: 'Down on the shore, with the hens still loose in the village: under each task done somewhere else, a red pin and the place.', run: async () => {
+    play(); await wait(100); tasksPage(() => closeCard()); await wait(400); }},
   {id: 'a2-part', title: 'A part of the story begins', save: 'a2child', why: 'Each part of the story has a card as it begins, saying what it’s about: here, Part 2, learning to talk. The first, as you land, says why you’re here: to find an immortal.', run: async () => {
     play(); await wait(100); here().part = 0; partsCheck(); await wait(400); }},
   {id: 'a2-tasks', title: 'Tasks: your journey', save: 'a2asking', why: 'At the top, your journey’s goal and the part you’re in, with what you’re doing in it; then the story’s main task, ★, and the rest under Also.', run: async () => {

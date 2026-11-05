@@ -110,14 +110,30 @@ const areaChecklist = () => shownItems().map(c => { const done = matches(c.done)
 const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
-    if (t.arrow && t.arrow.sparkle) return {id:fill(t.id, true), text:fill(t.text, false, true), target:sparkleToFind(), arrow:true, main:!!t.main};   // or {sparkle}: the nearest thing that sparkles
-    const c = typeof t.arrow === 'string' && ALL_NPCS.find(n => n.id === t.arrow);   // an arrow to a character
+    if (t.arrow && t.arrow.sparkle) return {id:fill(t.id, true), text:fill(t.text, false, true), target:sparkleToFind(), arrow:true, main:!!t.main, where:whereText(t.where)};   // or {sparkle}: the nearest thing that sparkles
+    const c = typeof t.arrow === 'string' ? ALL_NPCS.find(n => n.id === t.arrow) : t.arrow && t.arrow.nearest ? nearestOf(t.arrow.nearest) : null;   // an arrow to a character (or the nearest of several)
     const toPlace = t.arrow && t.arrow.place;   // or {place}: the way to a place, and none once you're there
-    const at = c ? [c.x, c.y, c.place] : toPlace ? null : t.arrow || null, there = toPlace || (at && placeOf(at));
+    const at = c ? [c.x, c.y, c.place] : toPlace || (t.arrow && t.arrow.nearest) ? null : t.arrow || null, there = toPlace || (at && placeOf(at));
     const target = toPlace ? (there === PLACE ? null : wayTo(there)) : !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
     return {id:fill(t.id, true), text:fill(t.text, false, true), target, arrow:!!t.arrow, main:!!t.main, ...(c && there === PLACE ? {npc:true} : {}),
+      where:whereText(t.where || there),
       ...(t.clue && hiding() ? {clue:hideSpot(hideState().spot)} : {})};   // clue: hide and seek's, to hear again (js/hide.js)
   });
+}
+// Where a task is done, under it on the Tasks page (decided 5 November 2026: the hens to catch were somewhere, but where?):
+// the place its arrow points at, or its own where (a place's id, or a few words, such as the sea or the village's stream);
+// a place only while you're somewhere else.
+function whereText(w){
+  if (!w || w === 'hut') return null;
+  if (!PLACES[w]) return fill(w, false, true);
+  return w === PLACE ? null : PLACES[w].name.en;
+}
+// The nearest of several characters (nearest: each {who, if}, those whose if matches), such as the hens still loose about
+// the village: here, the closest; or else the first, wherever they are.
+function nearestOf(list){
+  const ns = list.filter(e => !e.if || matches(e.if)).map(e => ALL_NPCS.find(n => n.id === e.who)).filter(n => n && n.place !== 'hut' && n.place !== 'gone');
+  const here_ = ns.filter(n => n.place === PLACE).sort((a, b) => (Math.abs(a.x - pl.x) + Math.abs(a.y - pl.y)) - (Math.abs(b.x - pl.x) + Math.abs(b.y - pl.y)));
+  return here_[0] || ns[0] || null;
 }
 // The one task the yellow arrow shows the way for: the newest, the last to come up (S.tasksSeen keeps the order they came
 // up in), or the one you chose on the Tasks page instead (followTask(): it counts as newest, till another comes up). None
