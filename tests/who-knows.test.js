@@ -92,3 +92,21 @@ test('a game from before this: past the boatman’s news, he’s told you; and o
   const v = game({child: 3, farmer: 1});
   assert.equal(v.run('isOpen(PLACES.village.exits[2])'), true, 'not shut behind you');
 });
+
+test('after the years, the teacher (grey now) still teaches the town’s words you missed, and the task stays till you know all ten', async () => {
+  const g = game({child: 3, askChild: 1, fish: 'done', askFisher: 1, askVillager: 1, askFarmer: 1, lunch: 'done', exchanged: 1, years: 1}, {place: 'town', x: 13, y: 5, dir: 'up'}, {words: ['买', '说']});
+  assert.equal(get(g, 'ALL_NPCS.find(n => n.id === "teacher").place'), 'hut', 'the young teacher has gone');
+  assert.ok(get(g, 'getTasks().map(t => t.id)').includes('a2townWords'), 'the town’s words, still on your list');
+  assert.equal(get(g, '(AREA.bubbles.teacherOld.find(b => matches(b.if)) || {}).show'), '!', 'a ! over him');
+  g.run('S.turn = (S.turn || 0) + 10');
+  await press(g, 13, 5, 'up');
+  assert.deepEqual(said(g), ['teacherOld: 你听！']);
+  assert.equal(get(g, 'lvl("听") >= 1'), true, '听, from the teacher years on');
+});
+
+test('the sun and moon go round faster at first, then never faster than a day every two and a half seconds', () => {
+  const g = game({});
+  const speed = t => g.run(`laterTurn(${t + 0.01}) - laterTurn(${t})`) / 0.01;
+  assert.ok(speed(1) > speed(0) && speed(2) > speed(1), 'faster and faster at first');
+  for (const t of [3, 10, 60, 600]) assert.ok(Math.abs(speed(t) - 2.4) < 0.01, `steady at ${t}s`);
+});

@@ -440,9 +440,16 @@ function drawCrossSea(t, now){
   b.drawImage(monkeySprite('boatman', 'right', false), bx + 4, by - 10, 16, 16);
 }
 // A card for a jump in time (the manyYearsLater scene: 很多年以后……, its caption): the sun and the moon going over and
-// over, faster and faster, above a quiet street, the sky turning from day to night and back, leaves falling.
+// over, faster and faster for its first few seconds, then steadily (a day about every two and a half seconds: decided
+// 5 November 2026, after playing it: left on the card, it got faster without end), above a quiet street, the sky turning
+// from day to night and back, leaves falling.
+const LATER_SPIN = {from:0.6, grows:0.7, most:2.4};   // how fast the sun and moon go round at first (in radians a second: 2.4 is a day every 2.6 seconds), how fast that grows, and the most
+function laterTurn(t){
+  const {from, grows, most} = LATER_SPIN, top = (most - from) / grows;   // the moment it's as fast as it goes
+  return t < top ? from * t + grows / 2 * t * t : from * top + grows / 2 * top * top + most * (t - top);
+}
 function drawLaterCard(t, now){
-  const W = VW*T, H = VH*T, turn = t * (0.6 + t * 0.35), k = (Math.sin(turn) + 1) / 2;   // (1 day, 0 night)
+  const W = VW*T, H = VH*T, turn = laterTurn(t), k = (Math.sin(turn) + 1) / 2;   // (1 day, 0 night)
   for (let y = 0; y < H; y += 2) R(b, 0, y, W, 2, mix(mix('#1C2440', '#8FC4E8', k), '#E8EEF2', y / H * .35));
   const a = turn % (Math.PI * 2), sx = W / 2 - Math.cos(a) * W * .45, sy = H * .62 - Math.sin(a) * H * .5;
   if (k > .5) disc(b, Math.round(sx), Math.round(sy), 9, '#F6D86A'); else { disc(b, Math.round(W - sx), Math.round(sy), 7, '#F2F2E6'); disc(b, Math.round(W - sx) + 3, Math.round(sy) - 2, 6, mix('#1C2440', '#8FC4E8', k)); }
