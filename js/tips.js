@@ -21,7 +21,7 @@ const TIPS = {
   // right under it, so there was nothing to find out)
   tap: {at:'#talk .tok.listen', once:true, after:true, text:'Tap a word to see what it means', when:() => !!talkNext && !talkMove},
   // the first line you hear again, its English behind the English button
-  english: {at:'#talk [data-a=en]', once:true, text:'A line’s English shows the first time you hear it. Tap <b>English</b> to see it again.', when:() => !!talkNext && !talkMove},
+  english: {at:'#talk [data-a=en]', once:true, text:'A line’s English shows the first few times you hear it. Tap <b>English</b> to see it again.', when:() => !!talkNext && !talkMove},
   // food in your bag that does something as you walk about, such as honey, the first time you have some: how to eat it
   // (decided 26 October 2026: honey made you faster, but nothing said so where you'd see it)
   eat: {at:'#bagBtn', lasts:9000, text:() => { const w = walkFood(); return `Eat the ${esc(wz(w))} in your bag to ${esc(FOOD[w].does.toLowerCase())}: press <b>BAG</b>, and tap it.`; },

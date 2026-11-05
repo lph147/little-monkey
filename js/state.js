@@ -24,7 +24,7 @@ function placesOnWayTo(place){
   for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
   return way;
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, lines:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -341,6 +341,18 @@ function spend(n){ if (coinsNow()) S.coins = (S.coins || 0) - n; else S.shells -
 const moneyHTML = () => [coinsNow() || S.coins ? `<span>🪙 ${S.coins || 0}</span>` : '', !coinsNow() || S.shells ? `<span>🐚 ${S.shells}</span>` : ''].join('');
 const lvl = w => (S.w[w] && S.w[w].lv) || 0;
 function rec(w){ if (!S.w[w]) S.w[w] = {lv:0, ok:0}; return S.w[w]; }
+// A line you hear (sayLine, js/cards.js; a boss's, js/battle.js): it's noted as heard (S.lines: how many times; S.lineDay:
+// the day you last heard it), and its English shows the first EN_TIMES times you hear it, and again whenever you last
+// heard it on an earlier day (decided 5 November 2026, after playing it: hide and seek's lines had no English, though
+// it had been ages; it showed only the very first time). Returns whether its English shows.
+const EN_TIMES = 3;
+function heardLine(t){
+  const key = t.join(''), n = S.lines[key] || 0, day = todayKey();
+  S.lineDay = S.lineDay || {};
+  const last = S.lineDay[key], shows = n < EN_TIMES || last !== day;   // (a line heard before days were kept: an earlier day)
+  S.lines[key] = n + 1; S.lineDay[key] = day; hear(t); save();
+  return shows;
+}
 function todayKey(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
 function addToday(w){ const k = todayKey(); if (S.today.d !== k) S.today = {d:k, ids:[]}; if (!S.today.ids.includes(w)) S.today.ids.push(w); }
 // A sentence was shown: each word in it (not punctuation) counts as heard once more.

@@ -276,11 +276,10 @@ function rears(f){
   SFX.rumble(); setTimeout(shake, 380);
 }
 // What a boss says (its says: meet, angry, beaten, each a line of the area's lines), shown at the top of its card, its
-// English the first time (then behind English), and said aloud; tap 🔊 to hear it again.
+// English as a line's is (heardLine, js/state.js: then behind English), and said aloud; tap 🔊 to hear it again.
 const bossLine = (f, when) => f.says && f.says[when] && L[f.says[when]] || null;
 function bossLineHTML(line, img){
-  const key = line.t.join(''), first = !S.lines[key];
-  S.lines[key] = 1; hear(line.t); save();
+  const first = heardLine(line.t);   // (its English the first three times, and after a day away)
   return `<div class="bossline">${lineHTML(line.t)}<div class="gloss"></div>`
     + `<div class="blfoot"><div class="sentence-en"${first ? '' : ' hidden'}>${esc(line.en)}</div><button class="tbtn" data-a="sayline" aria-label="Hear it again">🔊</button>${first ? '' : '<button class="tbtn" data-a="blen">English</button>'}</div></div>`;
 }

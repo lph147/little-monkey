@@ -202,10 +202,9 @@ async function showDialog(who, line, opts = {}){
 }
 function sayLine(who, line, opts){
   return new Promise(res => {
-    const key = line.t.join(''), firstTime = !S.lines[key];
-    S.lines[key] = 1; hear(line.t); save();
+    const enNow = heardLine(line.t);   // (its English the first three times, and after a day away: heardLine, js/state.js)
     const again = !talkBox.hidden;   // again: the box is still up from the last line
-    const enShows = (firstTime && !opts.noEn) || !!opts.clue;   // (a clue: its English every time, the place's word in Chinese, js/hide.js; noEn: never at first, such as something to fetch by its word)
+    const enShows = (enNow && !opts.noEn) || !!opts.clue;   // (a clue: its English every time, the place's word in Chinese, js/hide.js; noEn: never shown at first, such as something to fetch by its word)
     talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${enShows ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en${opts.clue ? ' clue' : ''}" ${enShows ? '' : 'hidden'}>${opts.clue ? cluedEn(line.en, opts.clue) : esc(line.en)}</div>
       <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
@@ -549,7 +548,7 @@ function feastCard(){
       const have = !!f.have && matches(f.have), s = have ? f.yes : f.no, t = toks(s.zh);
       return {w:f.word, have, t, en:s.en, seen:!!S.lines[t.join('')]};
     });
-    rows.forEach(r => { S.lines[r.t.join('')] = 1; hear(r.t); }); save();
+    rows.forEach(r => { const k = r.t.join(''); S.lines[k] = S.lines[k] || 1; hear(r.t); }); save();
     openCard(`<p class="label">${esc(fill(list.label))}</p><div class="flist">${rows.map((r, i) => `<div class="frow${r.have ? ' have' : ''}" data-i="${i}">
         <div class="fpic${r.have ? '' : ' sil'}" aria-hidden="true">${picHTML(r.w)}</div>
         <div class="fline">${lineHTML(r.t)}<div class="sentence-en"${r.seen ? ' hidden' : ''}>${esc(r.en)}</div></div>

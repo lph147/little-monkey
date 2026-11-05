@@ -30,14 +30,16 @@ test('talk appears in the speech box, with the map still showing', () => {
   assert.equal(t.box.querySelector('[data-a=ok]').dataset.label, 'Next');
 });
 
-test('a line\'s English shows the first time, then behind the English button', () => {
+test('a line\'s English shows the first three times, then behind the English button', () => {
   const t = talkGame();
+  for (let i = 0; i < 3; i++){
+    t.say('go');
+    assert.equal(t.box.querySelector('.sentence-en').hidden, false, 'English underneath the first three times');
+    assert.equal(t.box.querySelector('[data-a=en]'), null, 'no English button');
+    t.run('pressA()');
+  }
   t.say('go');
-  assert.equal(t.box.querySelector('.sentence-en').hidden, false, 'English underneath the first time');
-  assert.equal(t.box.querySelector('[data-a=en]'), null, 'no English button the first time');
-  t.run('pressA()');
-  t.say('go');
-  assert.equal(t.box.querySelector('.sentence-en').hidden, true, 'English hidden the second time');
+  assert.equal(t.box.querySelector('.sentence-en').hidden, true, 'English hidden the fourth time, the same day');
   t.box.querySelector('[data-a=en]').click();
   assert.equal(t.box.querySelector('.sentence-en').hidden, false, 'the English button shows it');
   assert.equal(t.box.querySelector('[data-a=en]'), null, 'and goes away');

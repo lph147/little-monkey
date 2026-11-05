@@ -97,11 +97,11 @@ test('the tip to tap a word only comes after the grey-words tip', () => {
 
 test('the first line you hear again, without its English: a tip points at the English button, once', () => {
   const tips = {walk: 1, talk: 1, look: 1, grey: 1, tap: 1};
-  const game = playing({version: 17, started: true, tips, lines: {'去看看！': 1}});
-  game.run("showDialog(speaker('elder'), L.go)");
+  const game = playing({version: 17, started: true, tips, lines: {'去看看！': 3}});
+  game.run("S.lineDay = {'去看看！': todayKey()}; showDialog(speaker('elder'), L.go)");   // (heard three times already, today)
   game.run('updateTips(1000)');
   assert.equal(showing(game), 'english');
-  assert.match(game.run("$('#tip').innerHTML"), /shows the first time you hear it\. Tap <b>English<\/b> to see it again/);
+  assert.match(game.run("$('#tip').innerHTML"), /shows the first few times you hear it\. Tap <b>English<\/b> to see it again/);
   assert.ok(game.el('#talk').querySelector('[data-a=en]').classList.contains('tipglow'), 'pointing at the English button');
   assert.equal(get(game, 'S.tips.english'), 1, 'it counts as seen straight away');
   const first = playing({version: 17, started: true, tips});
