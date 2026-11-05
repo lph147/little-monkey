@@ -13,21 +13,21 @@ function game(save = {}){
   return {g, run: code => g.run(code), sheet: g.el('#sheet'), get: expr => JSON.parse(g.run(`JSON.stringify(${expr})`))};
 }
 
-test('the bag is in tabs: it opens on Food (how many, and what it does), with For someone and To fight with beside it', () => {
+test('the bag is in tabs: it opens on 零食 Snacks (how many, and what it does), with For someone and To fight with beside it', () => {
   const {run, sheet} = game({bag: {'桃子': 2, '苹果': 1}, areas: {1: {elder: 2, hungry: 'done', thirsty: 'asked', gate: true, climb: 1, holding: {thirsty: '水'}}}});
   run('openMenu()');
   sheet.querySelector('[data-m="bag"]').click();
   const tabs = () => sheet.querySelectorAll('.bagtabs .tab').map(t => (t.getAttribute('aria-selected') === 'true' ? '*' : '') + t.textContent);
   const things = () => sheet.querySelectorAll('.bagitem').map(b => b.dataset.w);
-  assert.deepEqual(tabs(), ['*Food', 'For someone', 'To fight with']);
-  assert.deepEqual(things(), ['桃子', '苹果'], 'just the food');
+  assert.deepEqual(tabs(), ['*零食 língshí Snacks', 'For someone', 'To fight with']);
+  assert.deepEqual(things(), ['桃子', '苹果'], 'just the snacks');
   for (const s of ['×2', '×1', 'Brings back 10 health', 'Takes away a wrong answer']) assert.ok(sheet.textContent.includes(s), `it says ${s}`);
   assert.equal(sheet.querySelector('.bagitem').dataset.label, 'Eat', 'A eats a peach');
   sheet.querySelector('.bagtabs [data-tab="someone"]').click();
-  assert.deepEqual([tabs(), things()], [['Food', '*For someone', 'To fight with'], ['水']]);
+  assert.deepEqual([tabs(), things()], [['零食 língshí Snacks', '*For someone', 'To fight with'], ['水']]);
   assert.match(sheet.textContent, /The thirsty monkey/, 'who it’s for (the tab says it’s for someone)');
   sheet.querySelector('.bagtabs [data-tab="fight"]').click();
-  assert.deepEqual([tabs(), things()], [['Food', 'For someone', '*To fight with'], ['棍子']]);
+  assert.deepEqual([tabs(), things()], [['零食 língshí Snacks', 'For someone', '*To fight with'], ['棍子']]);
   assert.match(sheet.textContent, /Hits for 10/, 'your stick, and how hard it hits');
 });
 

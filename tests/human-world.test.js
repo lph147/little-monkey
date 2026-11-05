@@ -118,10 +118,12 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.equal(g.run('counter("hensBack")'), 4, 'all four caught');
   assert.deepEqual(npc(g, 'hen1'), ['village', 4, 15], 'back in their yard');
   assert.equal(get(g, 'here().hensDone'), 1, 'and the villager thanks you');
-  // the granny's lunch: rice for your bag (饭)
+  // the granny's lunch: a bowl of rice (饭), eaten there and then (a meal, not a snack for your bag), your health full
+  g.run('S.health = 20');
   await press(g, 22, 12, 'right');
   assert.deepEqual(said(g).slice(-2), ['granny: 你饿吗？吃饭吧！', 'player: 谢谢']);
-  assert.equal(get(g, "S.bag['饭']"), 1);
+  assert.deepEqual([get(g, "S.bag['饭'] || 0"), get(g, 'S.health'), get(g, 'S.health === maxHealth()'), get(g, 'pl.eating')], [0, get(g, 'maxHealth()'), true, null], 'eaten, and your health full');
+  assert.ok(notes(g).some(n => /eat the whole bowl/.test(n)));
   // the fisherman wants a fish: caught with your rod, he pays you in coins (钱)
   await press(g, 12, 4, 'left');
   assert.equal(get(g, 'here().fish'), 'asked');
@@ -142,7 +144,7 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   goTo(g, 'village', 38, 12, 'right');
   assert.equal(g.run("isOpen(PLACES.village.exits[2])"), true, 'and the lane east opens');
   assert.deepEqual(get(g, '[...new Set(PLACES.villageLane.exits.map(e => e.to))]'), ['village', 'fields'], 'the country lane, to the fields');
-  // the fields: look, birds! (看); shoo them off his rice; his lunch, from your bag
+  // the fields: look, birds! (看); shoo them off his rice; his lunch, a bowl of rice the granny gives you for him
   goTo(g, 'fields', 1, 8, 'right');
   await press(g, 11, 7, 'up');
   assert.deepEqual(said(g), ['farmer: 你看！鸟！']);
@@ -155,10 +157,14 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.ok(get(g, "S.friends.includes('dog')"), 'on the road, the dog stopped you, and played its word game');
   await press(g, 11, 7, 'up');
   assert.equal(get(g, 'here().lunch'), 'asked');
+  goTo(g, 'village', 21, 12, 'right');
+  await press(g, 22, 12, 'right');
+  assert.equal(get(g, 'here().holding.lunch'), '饭', 'the granny gives you a bowl for him');
+  assert.equal(get(g, "S.bag['饭'] || 0"), 0, 'carried for him, not in your snacks');
+  goTo(g, 'fields', 11, 8, 'up');
   const before = get(g, 'S.coins');
   await press(g, 11, 7, 'up');
   assert.equal(get(g, 'here().lunch'), 'done', 'he eats your rice');
-  assert.equal(get(g, "S.bag['饭']"), 0);
   assert.equal(get(g, 'S.coins'), before + 3, 'and pays you 3 coins');
   said(g);
   await press(g, 22, 5, 'up');

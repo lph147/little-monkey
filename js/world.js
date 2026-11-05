@@ -250,7 +250,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -581,6 +581,15 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     toast((counted ? `${wz(num)}! ` : '') + fill(all ? full.text || full : s.each, false, true));
   },
   rest(){ S.health = maxHealth(); save(); SFX.chime(); },   // your health is full again
+  // Eating a meal there and then (decided 5 November 2026, after playing it: a bowl of rice is a meal, too big to carry;
+  // snacks, 零食, are what goes in your bag): your monkey sits and eats it, munching, a little steam rising, and your health
+  // is full again (eat: what; note: what you're told, after).
+  async eat(s){
+    pl.eating = {w:s.eat, t0:performance.now()};
+    for (let i = 0; i < 4; i++){ SFX.scuffle(); await sleep(EAT_MS / 4); }
+    pl.eating = null; S.health = maxHealth(); save(); SFX.chime();
+    if (s.note) toast(fill(s.note));
+  },
   // A class with the character you're talking to (the teacher at school), or with by (from the chart on the classroom
   // wall): the timetable, where you choose a lesson, new or again, or practice (js/timetable.js). If you close it without
   // doing anything, the conversation ends there.
@@ -1272,6 +1281,7 @@ async function spyFind(x, y){
 // Your monkey turned into something (the turnInto step), for a moment, in a puff of smoke (pl.form: its word; puffAt: when
 // the last puff was, js/draw.js).
 let puffAt = -1e9;
+const EAT_MS = 1600;   // how long eating a meal takes (the eat step)
 async function becomeForm(w, hold = 1600){
   puffAt = performance.now(); SFX.shimmer(); pl.form = w; await sleep(hold);
   puffAt = performance.now(); SFX.swish(); pl.form = null; await sleep(350);

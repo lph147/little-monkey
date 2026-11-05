@@ -224,7 +224,8 @@ const ACROSS_THE_SEA = {
     {id:'a2hide', if:{hiding:true}, text:'Find the {孩子|child}: they’re hiding somewhere in the village', clue:true},   // (its clue under it, to hear again; no arrow: that's the game)
     {id:'a2east', if:{villageWords:12, farmer:0}, text:'Follow the {路|road} east, to the fields', arrow:'farmer'},
     {id:'a2birds', if:{farmer:1, birdsShooed:{below:5}}, text:'Shoo the {鸟|birds} off the farmer’s rice ({birdsShooed}/5)'},
-    {id:'a2lunch', if:{lunch:'asked'}, text:'Give the farmer some {饭} from your bag. No {饭|rice}? The granny by the well has more', arrow:'farmer'},
+    {id:'a2lunch', if:{lunch:'asked', holding:{lunch:false}}, text:'The farmer is hungry: ask the granny by the well for some {饭|rice} for him', arrow:'granny'},
+    {id:'a2lunchBack', if:{lunch:'asked', holding:{lunch:true}}, text:'Take the {饭|rice} to the farmer in the fields', arrow:'farmer'},
     {id:'a2dog', if:{farmer:{atLeast:1}, friends:{dog:false}}, text:'Make {朋友|friends} with the dog by the road', arrow:[36, 9, 'fields']},
     {id:'a2town', if:{lunch:'done', friends:{dog:true}, exchanged:0}, text:'Follow the {路|road} east, to the town', arrow:'changer'},
     {id:'a2change', if:{exchanged:0, place:'town'}, text:'Change your {钱|money}: talk to the money changer at the market', arrow:'changer'},
@@ -307,13 +308,13 @@ const ACROSS_THE_SEA = {
   ],
   bubbles: {
     child: [{if:{dressed:2, child:0}, show:'!'}, {if:{child:{atLeast:1, below:3}}, show:'!'}],
-    granny: [{if:{child:3, new:'饭'}, show:'!'}, {if:{lunch:'asked', inBag:{'饭':false}}, show:'!'}],
+    granny: [{if:{child:3, new:'饭'}, show:'!'}, {if:{lunch:'asked', holding:{lunch:false}}, show:'!'}],
     fisherman: [{if:{child:3, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'}],
     oldFisher: [{if:{back:1, oldFisher:0}, show:'!'}],
     fisher1: [{if:{back:1, oldFisher:1, pierFish:'not asked'}, show:'!'}, {if:{pierFish:'asked', holding:{pierFish:true}}, show:'?'}],
     kid2: [{if:{child:3, hidesFound:0}, show:'!'}],
     planter: [{if:{planter:0}, show:'!'}],
-    farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', inBag:{'饭':true}}, show:'?'}],
+    farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}],
     changer: [{if:{exchanged:0}, show:'!'}],
     fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}],
     bunSeller: [{if:{knows:'买', new:'包子'}, show:'!'}],
@@ -354,8 +355,9 @@ const ACROSS_THE_SEA = {
     fish: {from:'fisherman', wants:'鱼', ask:'haveFish', asked:'The fisherman wants a fish. Catch one with your {鱼竿}: face the sea or the stream, and press A.',
       offer:'haveFish', sentence:'我 有 鱼', sentenceEn:'I have a fish.', reward:0, thanks:'thanks', thanksReply:'不客气',
       after:[{say:'thisIsMoney', teach:'钱'}, {newWord:'钱', note:'Coins: the money people use. The fisherman pays you for the fish!'}, {coins:3, note:'The fisherman gives you 3 🪙. Now you have coins!'}]},
-    // the farmer is hungry once you've shooed the birds off his rice: give him the granny's rice from your bag
-    lunch: {from:'farmer', wants:'饭', fromBag:true, ask:'hungryFarmer', asked:'The farmer is hungry. Give him some {饭|rice} from your bag!',
+    // the farmer is hungry once you've shooed the birds off his rice: the granny gives you a bowl of rice for him (a meal,
+    // carried for him: not a snack in your bag, decided 5 November 2026)
+    lunch: {from:'farmer', wants:'饭', ask:'hungryFarmer', asked:'The farmer is hungry, but his lunch is back in the village. Ask the granny by the well for some {饭|rice} for him!',
       offer:'hungryFarmer', sentence:'我 有 饭', sentenceEn:'I have some rice.', reward:3, thanks:'thanks', thanksReply:'不客气'}
   },
 
@@ -411,16 +413,18 @@ const ACROSS_THE_SEA = {
       {do:[{gap:{sentence:'这 是 大 鱼', en:'This is a big fish.', word:'大', others:['小'], pic:'大 鱼'}}, {coins:1, note:'You sell the big fish at the market: +1 🪙', if:{knows:'钱'}}, {message:'You let the big fish go.', if:{new:'钱'}}]}]}
   },
 
-  // Food you carry in your bag: Flower Fruit Mountain's, and the human world's.
+  // Snacks (零食) you carry in your bag: Flower Fruit Mountain's, and the human world's. (A meal, such as the granny's rice,
+  // you eat there and then: the eat step.)
   food: {
     '桃子': {heal:10, carry:3, does:'Brings back 10 health'},
     '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'},
     '蜂蜜': {fast:60, carry:2, does:'Walk faster for a minute'},
-    '饭': {helps:true, carry:2, does:'Takes away a wrong answer'},
     '包子': {helps:true, carry:3, does:'Takes away a wrong answer'}
   },
 
   events: [
+    // a game from before rice was a meal (5 November 2026), with rice in its bag for the farmer: it's his lunch now
+    {if:{lunch:'asked', holding:{lunch:false}, inBag:{'饭':true}}, do:[{hold:'饭', for:'lunch'}]},
     // all four hens back in their yard: the villager thanks you
     {if:{hensBack:4, hensDone:0}, do:[{set:{hensDone:1}}, {sound:'chime'}, {shells:3, if:{new:'钱'}, note:'All four hens are back in their yard! The villager gives you 3 🐚 for your help.'},
       {shells:3, if:{knows:'钱'}, note:'All four hens are back in their yard! The villager gives you 3 🪙 for your help.'}]},
@@ -1517,9 +1521,10 @@ const ACROSS_THE_SEA = {
     granny: [
       {if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]},
       {if:{new:'饭'}, waits:true, do:[{say:'areYouHungry', teach:'饭'}, {newWord:'饭', note:'饭 is rice, or a meal.'},
-        {bag:'饭', note:'The granny gives you a bowl of {饭|rice} for your bag. In a word game, eat it to take away a wrong answer.'}, {reply:'谢谢'}]},
-      {if:{inBag:{'饭':false}}, do:[{say:'areYouHungry'}, {bag:'饭', note:'The granny gives you another bowl of {饭|rice}.'}, {reply:'谢谢'}]},
-      {do:[{say:'hi'}, {reply:'你好'}]}
+        {reply:'谢谢'}, {eat:'饭', note:'You sit down by the well and eat the whole bowl of {饭|rice}. Your health is full!'}]},
+      // the farmer's lunch: she gives you a bowl for him (a meal: not a snack for your bag)
+      {if:{lunch:'asked', holding:{lunch:false}}, do:[{say:'hi'}, {hold:'饭', for:'lunch'}, {message:'The granny gives you a bowl of {饭|rice} for the farmer. Take it to him, in the fields!'}]},
+      {do:[{say:'areYouHungry'}, {reply:'谢谢'}, {eat:'饭', note:'Another bowl of {饭|rice}! You eat it all up. Your health is full!'}]},
     ],
     fisherman: [
       {if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]},
@@ -1550,7 +1555,7 @@ const ACROSS_THE_SEA = {
       {do:[{gap:{sentence:'这 是 鸡', en:'This is a chicken.', word:'鸡', others:['鹅', '鱼', '猫'], pic:'鸡'}}]}],
     kid2: [{if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]}, {do:[{say:'hideAsk'}, {hideSeek:true}]}],
     kid3: [{do:[{say:'hi'}, {reply:'你好'}]}],
-    // the farmer: look, birds! (看); shoo them off his rice; then he's hungry (his lunch, from your bag)
+    // the farmer: look, birds! (看); shoo them off his rice; then he's hungry (his lunch, from the granny)
     farmer: [
       {if:{farmer:0}, waits:true, do:[{say:'look', teach:'看'}, {newWord:'看', note:'看 means to look.'}, {set:{farmer:1}},
         {message:'Birds are eating the farmer’s rice! Shoo them off: walk up to each one, and press A.'}]},

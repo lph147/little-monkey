@@ -1335,6 +1335,8 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'a2-town', title: 'Area 2: the market town', save: 'a2town', why: 'White walls and dark tiles along a flagstone street: the teahouse with its 茶 flag, the school with its 学校 board, the market’s stalls.', run: async () => {
     play(); await wait(600); }},
+  {id: 'a2-eat', title: 'Eating a meal', save: 'a2asking', why: 'A meal, such as the granny’s bowl of rice, is eaten there and then, not carried: your monkey munches it, steam rising, hearts as you finish, and your health is full. Snacks (零食) are what goes in your bag.', run: async () => {
+    play(); await wait(100); pl.eating = {w: '饭', t0: performance.now() - 1050}; await wait(80); }},
   {id: 'a2-stall', title: 'Area 2: a stall, in coins', save: 'a2town', why: 'The fruit stall: 你要买什么？ (买). What you have, in coins (🪙), and each thing’s price.', run: async () => {
     play(); await wait(100); shop(speaker('fruitSeller'), SHOPS.fruit); await wait(100); next(); await wait(500); }},
   {id: 'a2-years', title: 'Area 2: years go by', save: 'a2harbour', why: 'You live among people for years, learning to talk like them, through the seasons. But nobody knows where the immortals are.', run: async () => {
@@ -1463,7 +1465,7 @@ const SCREENS = [
   {id: 'friends-clue', title: 'A friend to find', save: 'middle', why: 'Tap a shadow: where it lives, and what to do. Back returns to the page, on that shadow.', run: async () => { play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(200); click('[data-clue]'); await wait(300); }},
   {id: 'friend-page', title: 'A friend’s page', save: 'allFriends', why: 'Tap a friend: its page, as in the Word Scroll, with its English behind English (here, pressed), which then becomes How it’s made.', run: async () => {
     play(); await wait(100); openMenu(); await wait(100); click('[data-m=friends]'); await wait(200); click('.friends [data-w="山羊"]'); await wait(300); click('[data-a=en]'); await wait(300); }},
-  {id: 'bag', title: 'The bag', save: 'packed', why: 'In tabs: it opens on Food (how many of each, and what it does), with For someone and To fight with beside it. Your health and shells at the top.', run: async () => {
+  {id: 'bag', title: 'The bag', save: 'packed', why: 'In tabs: it opens on 零食 Snacks (how many of each, and what it does), with For someone and To fight with beside it. Your health and shells at the top.', run: async () => {
     play(); await wait(100); openMenu('bag'); await wait(100); click('[data-m=bag]'); await wait(300); }},
   {id: 'map', title: 'The map', save: 'feastTable', why: 'MAP: every place you’ve been, roughly where it lies, joined by paths; a ? where an open way leads somewhere new. It opens on where you are, with your pin.', run: async () => {
     play(); await wait(100); S.w['地图'] = {lv: 1, ok: 0}; here().visited = ['meadow', 'path', 'valley', 'falls', 'cave', 'homeGround', 'school', 'sportsGround', 'hillside', 'riverside', 'southSlope', 'shore']; pressMap(); await wait(300); }},
@@ -1485,7 +1487,7 @@ const SCREENS = [
     play(); await wait(100); bagPage(() => closeCard()); await wait(100); click('.bagtabs [data-tab=someone]'); await wait(300); }},
   {id: 'bag-fight', title: 'The bag: To fight with', save: 'packed', why: 'Your stick, and how hard it hits.', run: async () => {
     play(); await wait(100); bagPage(() => closeCard()); await wait(100); click('.bagtabs [data-tab=fight]'); await wait(300); }},
-  {id: 'bag-full', title: 'A fuller bag', save: 'packed', why: 'Three foods (Food, two rows) and wood and stones for the big monkey (For someone): each tab its own things, so it never gets long.', run: async () => {
+  {id: 'bag-full', title: 'A fuller bag', save: 'packed', why: 'Three snacks (零食 Snacks, two rows) and wood and stones for the big monkey (For someone): each tab its own things, so it never gets long.', run: async () => {
     play(); await wait(100); S.bag = {'桃子': 3, '苹果': 2, '蜂蜜': 2}; here().holding = {wood: '木头', stones: '石头'}; bagPage(() => closeCard()); await wait(300); }},
   {id: 'bag-eat', title: 'Eating a peach from the bag', save: 'packed', why: 'Hurt: tap a peach, and 10 health comes back (the bar slides up).', run: async () => {
     play(); await wait(100); bagPage(() => closeCard()); await wait(100); click('.bagitem[data-w="桃子"]'); await wait(300); }},

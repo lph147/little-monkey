@@ -65,15 +65,16 @@ function friendClue(a, back){
 }
 // 衣服 Wardrobe: the clothes you own. Tap one to put it on (your monkey says so, such as 我戴头带, which
 // teaches 戴 the first time and counts as using the words) or to take it off.
-// 包 Bag: what you carry, in tabs (decided 27 October 2026, so it stays tidy as it fills up): Food, how many of each
+// 包 Bag: what you carry, in tabs (decided 27 October 2026, so it stays tidy as it fills up): 零食 Snacks (the food you can
+// carry, decided 5 November 2026; a meal, such as a bowl of rice, you eat there and then: the eat step), how many of each
 // and what it does (tap food that brings health back to eat it, if you're hurt, or food that gives you energy, such as
 // honey, to walk faster for a while, unless you're full of energy already); For someone, what you're carrying for
 // someone, and who for; and To fight with, your weapon and how hard it hits. Only tabs with something in them show
-// (none at all for just one), each its things as tiles; it opens on Food (tab: another), what you open it for, and left
+// (none at all for just one), each its things as tiles; it opens on Snacks (tab: another), what you open it for, and left
 // and right on the D-pad switch tabs, as in the Word Scroll. Tapping anything but food says its word. note: what just
 // happened. Later areas can add a tab here, for other kinds of thing.
 const BAG_TABS = [
-  {id:'food', name:'Food', things:() => Object.keys(FOOD).filter(w => S.bag[w] > 0)
+  {id:'food', name:'Snacks', zh:'零食', py:'língshí', things:() => Object.keys(FOOD).filter(w => S.bag[w] > 0)
     .map(w => ({w, does:FOOD[w].does, label:FOOD[w].heal || FOOD[w].fast ? 'Eat' : 'Hear', count:S.bag[w]}))},
   {id:'someone', name:'For someone', things:() => Object.entries(here().holding).filter(([, w]) => w && WORDS[w])
     .map(([id, w]) => ({w, does:`The ${((NAMES[(AREA.requests[id] || {}).from] || {}).en || 'troop').toLowerCase()}`, label:'Hear'}))},
@@ -87,7 +88,7 @@ function bagPage(back, focus, note, tab){
   const tabs = BAG_TABS.map(t => ({...t, list:t.things()})).filter(t => t.list.length), now = tabs.find(t => t.id === tab) || tabs[0];
   openCard(`<div class="bag"><div class="baghead"><p class="label">包 bāo · Bag</p>
     <div class="stats">${healthHTML(health(), maxHealth(), true)}${moneyHTML()}</div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>
-    ${tabs.length > 1 ? `<div class="scrolltabs bagtabs" role="tablist">${tabs.map(t => `<button class="tab" role="tab" data-tab="${t.id}" aria-selected="${t === now}">${t.name}</button>`).join('')}</div>` : ''}
+    ${tabs.length > 1 ? `<div class="scrolltabs bagtabs" role="tablist">${tabs.map(t => `<button class="tab" role="tab" data-tab="${t.id}" aria-selected="${t === now}">${t.zh ? `${t.zh} <span class="tpy">${t.py}</span> ` : ''}${t.name}</button>`).join('')}</div>` : ''}
     ${now ? `<div class="menu grid" data-nav>${now.list.map(card).join('')}</div>` : '<p class="hint">Nothing in your bag yet. Fruit trees, friends and the shop have things to put in it.</p>'}</div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);   // (outside the bag, so Back stays at the card's bottom however full it is)
   const f = sheet.querySelector(`.bagitem[data-w="${focus}"]`) || sheet.querySelector('.bagitem'); if (f) f.focus();

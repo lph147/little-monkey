@@ -264,6 +264,16 @@ function drawTowerBuilder(n, X, Y, now){
 // What your monkey has turned into (the turnInto step, js/world.js), over where you'd be: an animal as it looks on the map,
 // anything else its picture, small; and the puff of smoke as you change (PUFF_MS).
 const PUFF_MS = 450, FORMS = {};
+// Eating a meal (the eat step, js/world.js): what you're eating, its picture small in your hands, bobbing as you munch,
+// a little steam rising off it, and hearts as you finish.
+function drawEating(e, X, Y, now){
+  const t = (now - e.t0) / EAT_MS, pic = PICTURES[e.w], munch = Math.floor(now / 160) % 2;
+  const c = pic && (FORMS['eat ' + e.w] || (FORMS['eat ' + e.w] = sprite(pic.rows, pic.palette)));
+  if (c) b.drawImage(c, X + 3, Y + 9 - munch, 10, 10);   // (in your hands)
+  for (let i = 0; i < 2; i++){ const k = (now / 700 + i / 2) % 1; b.globalAlpha = .6 * (1 - k); R(b, X + 6 + i * 4 + Math.round(Math.sin(now / 200 + i) * 1), Y + 5 - Math.round(k * 8), 1, 2, '#FFFFFF'); }
+  b.globalAlpha = 1;
+  if (t > .6) for (let i = 0; i < 2; i++){ const y = Y - 4 - Math.round((t - .6) * 20) - i * 4, x = X + 3 + i * 8; R(b, x, y, 2, 1, '#E0443C'); R(b, x + 3, y, 2, 1, '#E0443C'); R(b, x, y + 1, 5, 1, '#E0443C'); R(b, x + 1, y + 2, 3, 1, '#E0443C'); R(b, x + 2, y + 3, 1, 1, '#E0443C'); }
+}
 function drawForm(w, X, Y, now){
   const ms = MAP_SPRITES[w], pic = PICTURES[w];
   const c = FORMS[w] || (FORMS[w] = ms ? sprite(ms.rows, ms.palette) : pic ? sprite(pic.rows, pic.palette) : null);
@@ -719,6 +729,7 @@ function drawWorld(now){
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
       if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
       else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
+      if (pl.eating) drawEating(pl.eating, PX, PY, now);   // eating a meal (the eat step)
       if (pl.form) drawForm(pl.form, PX, PY, now);   // turned into something (the turnInto step: drawn over you, in your place)
       if (now - puffAt < PUFF_MS) drawPuff(PX, PY, (now - puffAt) / PUFF_MS);
       if (fishing){   // your line in the water (js/fishing.js), and a ! when a fish bites
