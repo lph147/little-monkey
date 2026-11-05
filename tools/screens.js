@@ -1385,6 +1385,8 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'c1-fetch', title: 'Fetching by word', save: 'c1foot', why: 'The woodcutter asks only in Chinese, its English hidden (我要三块木头。): you go and pick up what he says, as many as he says, and bring it back.', run: async () => {
     play(); await wait(100); talk(npc('woodcutter')); await wait(600); }},
+  {id: 'c1-howmany', title: 'How many to pick up?', save: 'c1foot', why: 'At the woodpile (or the pebbles), choose how many to pick up: 一 to 五, each with its pinyin. Then take them to the woodcutter.', run: async () => {
+    play(); await wait(100); howManyCard('木头'); await wait(400); }},
   {id: 'c1-cliff', title: 'Chapter 1: the cliff road', save: 'c1cliff', why: 'Planks bolted up the cliff over a sea of clouds (云): gusts of wind blow across the walkway (wait for them to drop), and loose planks hang by chains to hop.', run: async () => {
     play(); await wait(1200); }},
   {id: 'c1-chain', title: 'The chain and the crane', save: 'c1chain', why: 'A chain hangs down the sheer face: A to climb it, a question a pull. A crane (鹤) stands by the pool where the stream runs over the ledge.', run: async () => {

@@ -50,19 +50,23 @@ test('the woodcutter’s hut: he asks for things only in Chinese, and you bring 
   await press(g, 11, 4, 'left');
   assert.deepEqual(said(g), ['woodcutter: 不对。', 'woodcutter: 我要三块木头。 (no English)']);
   assert.ok(notes(g).some(n => /not what he asked for/.test(n)));
-  // two pieces of wood is too few; three, counted aloud, is right
-  for (let i = 0; i < 2; i++) await press(g, 8, 4, 'up');
+  // at the woodpile, a card: how many? 一 to 五, each with its pinyin. Two pieces of wood is too few; three is right
+  g.run('globalThis.__howMany = []; howManyCard = async w => { __howMany.push(w); return __pick; }; globalThis.__pick = 2');
+  await press(g, 8, 4, 'up');
   await press(g, 11, 4, 'left');
   assert.equal(said(g)[0], 'woodcutter: 不对。', 'two isn’t three');
   notes(g);
-  for (let i = 0; i < 3; i++) await press(g, 8, 4, 'up');
-  assert.ok(notes(g).some(n => /三.*You’re carrying 3 木头/.test(n)), 'counted aloud as you pick them up');
+  g.run('__pick = 3');
+  await press(g, 8, 4, 'up');
+  assert.deepEqual(get(g, '__howMany'), ['木头', '木头'], 'asked how many, each time');
+  assert.ok(notes(g).some(n => /三.*You’re carrying 3 木头/.test(n)), 'said aloud as you pick them up');
   await press(g, 11, 4, 'left');
   assert.deepEqual(said(g), ['woodcutter: 对！谢谢！', 'woodcutter: 我要水。 (no English)']);
   await press(g, 9, 11, 'down');
   await press(g, 11, 4, 'left');
   assert.deepEqual(said(g), ['woodcutter: 对！谢谢！', 'woodcutter: 我要四块石头。 (no English)']);
-  for (const [x, y, d] of [[4, 10, 'down'], [4, 10, 'down'], [22, 10, 'down'], [22, 10, 'down']]) await press(g, x, y, d);
+  g.run('__pick = 4');
+  await press(g, 4, 10, 'down');
   const coins = get(g, 'S.coins');
   await press(g, 11, 4, 'left');
   assert.deepEqual(said(g), ['woodcutter: 对！谢谢！', 'woodcutter: 你去山上吧！']);
@@ -72,6 +76,22 @@ test('the woodcutter’s hut: he asks for things only in Chinese, and you bring 
   assert.equal(g.run('promptFor(8, 3)'), '', 'nothing to do there now');
 });
 
+test('the How many? card: the numbers 一 to 五, each with its pinyin, in a row; choosing one picks up that many, and Not now none', async () => {
+  const g = game({place: 'mountainFoot', x: 8, y: 4, dir: 'up'}, {woodFetch: 1}, {w: Object.fromEntries(['一', '二', '五'].map(x => [x, {lv: 2, ok: 2}]))});
+  g.run('closeCard = () => { modal.hidden = true; }');
+  let p = g.run('globalThis.__n = howManyCard("木头").then(n => { globalThis.__got = n; })');
+  const sheet = g.el('#sheet');
+  assert.match(sheet.textContent, /How many 木头 \(wood\) do you want to pick up\?/);
+  const opts = sheet.querySelectorAll('.opts.five .opt');
+  assert.deepEqual(opts.map(b => b.textContent), ['一yī', '二èr', '三sān', '四sì', '五wǔ']);
+  opts[2].click(); await p; assert.equal(get(g, '__got'), 3);
+  p = g.run('howManyCard("石头").then(n => { globalThis.__got = n; })');
+  g.el('#sheet').querySelector('[data-a=no]').click(); await p; assert.equal(get(g, '__got'), 0, 'Not now');
+  g.run('howManyCard = async () => 0');
+  await press(g, 8, 4, 'up');
+  assert.equal(get(g, 'here().carrying || null'), null, 'nothing picked up');
+});
+
 test('the cliff road: gusts of wind blow across the walkway, one row after another, so you go up between them', () => {
   const g = game({place: 'cliffRoad', x: 10, y: 26, dir: 'up'});
   const rows = get(g, '[25, 24, 23, 22].map(y => tileAt(10, y).vent)');
@@ -79,6 +99,10 @@ test('the cliff road: gusts of wind blow across the walkway, one row after anoth
   assert.deepEqual(rows.map(v => v.at), [0, 800, 1600, 2400], 'each a little after the one below');
   assert.deepEqual(get(g, '[0, 2000].map(t => puffing(10, 25, t))'), [true, false], 'blowing, then calm');
   assert.match(get(g, 'tileAt(10, 25).vent.hot'), /wind/);
+  // (decided 5 November 2026, after playing it: the gusts came down the walkway, and you couldn't get up it): step up
+  // behind each gust as it drops, a row every 800 ms, and no row is blowing as you step onto it, or while you're on it
+  const calm = (y, from, to) => { for (let t = from; t <= to; t += 20) if (g.run(`puffing(10, ${y}, ${t})`)) return false; return true; };
+  assert.ok(calm(25, 1400, 2200 + 270) && calm(24, 2200, 3000 + 270) && calm(23, 3000, 3800 + 270) && calm(22, 3800, 4600 + 270), 'you can go up behind them');
 });
 
 test('loose planks: hop onto the one with the word’s picture; a wrong one swings away, and you grab the chain (no splash)', async () => {

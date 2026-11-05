@@ -1104,6 +1104,11 @@ rt.hid{visibility:hidden}
 @media (prefers-reduced-motion: reduce){.placename{animation:none}}
 
 /* the card when a new chapter of the story begins */
+/* How many to pick up (the carry step's howMany, js/world.js): the thing's picture beside the question, then the numbers */
+.howmany{display:flex;align-items:center;justify-content:center;gap:10px;padding:4px 0 8px}
+.howmany .hmpic .pix{width:48px;height:48px;display:block}
+.howmany .label{margin:0}
+.opts.five{grid-template-columns:repeat(5,1fr)}
 .chaptercard{text-align:center;padding:14px 0 6px}
 .chaptercard h2{font-family:var(--pixel);font-size:1.7rem;margin:6px 0 0;line-height:1.2}
 .partcard .parttext{margin:10px auto 0;max-width:34em;line-height:1.45;text-align:center}   /* a part of the story beginning: what it's about */

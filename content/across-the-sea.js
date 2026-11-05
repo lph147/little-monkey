@@ -24,7 +24,7 @@ const LANDING = [
 // of wind across it (vents with wind, each row a little after the one below it, so you go up between them); loose planks
 // hung by chains, to hop (swing: a wrong one swings away, and you grab the chain); a chain up a sheer face, to climb, a
 // question a pull (the climb step); peaches; the mountain's tablet and the cave's stone door, open once the boy has opened it.
-const GUST = {wind:true, every:3200, puff:1400, hot:'The wind is too strong! Wait for it to drop.', pushed:'Whoosh! The wind blows you back.'};
+const GUST = {wind:true, every:3200, puff:1400, hot:'The wind is too strong! Wait for it to drop, then step up straight away: the gusts go up the walkway a row at a time, so follow just behind them.', pushed:'Whoosh! The wind blows you back.'};
 const CLIMB_LEGEND = {
   'c': {look:'cloudSea', word:'云', note:'A sea of clouds, far below.', onLook:[{if:{new:'云'}, waits:true, label:'Look', do:[{newWord:'云', note:'云 means cloud. You’re up above the clouds!'}]}]},
   'R': {look:'karstTop', word:'山'},
@@ -414,9 +414,9 @@ const ACROSS_THE_SEA = {
     {id:'a2woodcutter', main:true, if:{boat:2, song:0}, text:'Someone is singing among the {树|trees}. Go and find them', arrow:'woodcutter'},
     // chapter 1: up the mountain
     {id:'c1hut', if:{chapter:1, woodFetch:0}, text:'The woodcutter has gone back to his {家|home}, up the steps. Find out if he needs help', arrow:'woodcutter'},
-    {id:'c1fetch', if:{woodFetch:{atLeast:1, below:4}}, text:'Bring the woodcutter {什么|what} he asks for. Talk to him again to {听|listen} again', arrow:'woodcutter'},
+    {id:'c1fetch', if:{woodFetch:{atLeast:1, below:4}}, text:'Bring the woodcutter {什么|what} he asks for, as many as he asks for: it’s by his hut. Talk to him again to {听|listen} again', arrow:'woodcutter'},
     {id:'c1up', main:true, if:{chapter:1, door:0, any:[{place:'farShore'}, {place:'mountainFoot'}]}, text:'Climb the {山|mountain}, to find where the immortal lives', arrow:{place:'cliffRoad'}},
-    {id:'c1cliff', main:true, if:{chapter:1, door:0, place:'cliffRoad'}, text:'Climb the walkway up the cliff', arrow:{place:'pillars'}},
+    {id:'c1cliff', main:true, if:{chapter:1, door:0, place:'cliffRoad'}, text:'Climb the walkway up the cliff. The gusts of {风|wind} go up it a row at a time: wait for the one in front of you to drop, then follow it up', arrow:{place:'pillars'}},
     {id:'c1crane', if:{chapter:1, place:'cliffRoad', friends:{crane:false}}, text:'Make {朋友|friends} with the {鹤} by the pool', arrow:[14, 12, 'cliffRoad']},
     {id:'c1door', main:true, if:{chapter:1, door:0, place:'pillars'}, text:'Find the immortal’s {洞|cave}, up at the top', arrow:[15, 6, 'pillars']},
     // in the cave
@@ -1117,8 +1117,8 @@ const ACROSS_THE_SEA = {
       legend: {
         'P': {look:'pine', word:'树'},
         'w': {look:'water', word:'河', note:'A stream, rushing down from the mountain.', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Scoop', do:[{carry:'水'}]}]},
-        'p': {look:'woodpile', word:'木头', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Pick up', do:[{carry:'木头'}]}]},
-        'o': {look:'pebble', word:'石头', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Pick up', do:[{carry:'石头'}]}]},
+        'p': {look:'woodpile', word:'木头', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Pick up', do:[{carry:'木头', howMany:true}]}]},
+        'o': {look:'pebble', word:'石头', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Pick up', do:[{carry:'石头', howMany:true}]}]},
         'r': {look:'rocks', word:'石头', landmark:true},
         'u': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}
       },
@@ -2048,7 +2048,7 @@ const ACROSS_THE_SEA = {
       {if:{woodFetch:{below:4}}, do:[{say:'tired', if:{woodFetch:0}},
         {fetch:'woodFetch', asks:[{word:'木头', count:3, ask:'wantWood'}, {word:'水', ask:'wantWater'}, {word:'石头', count:4, ask:'wantStones'}],
           right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
-          listen:'He only says it in Chinese. Listen, then find it nearby, pick it up and bring it to him.',
+          listen:'He only says it in Chinese: what he wants, and how many. Listen, then find it by his hut (the woodpile, the stream, the pebbles), pick up as many as he asked for, and bring them to him.',
           done:[{coins:3, note:'The woodcutter gives you 3 🪙 for your help.'}, {say:'goUp'}]}]},
       {do:[{say:'goUp'}]}
     ],

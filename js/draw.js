@@ -835,7 +835,7 @@ function drawSteam(cx, cy, now){
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++){
     const t = tileAt(x, y), X = x*T - cx, Y = y*T - cy;
     if (t.vent){
-      const v = t.vent, k = (now + (v.at || 0)) % v.every, cyc = Math.floor((now + (v.at || 0)) / v.every);
+      const v = t.vent, vt = ventTime(v, now), k = ((vt % v.every) + v.every) % v.every, cyc = Math.floor(vt / v.every);
       if (k < v.puff && v.wind){   // a gust of wind (a vent with wind, such as on the cliff road's walkway): streaks blowing across
         if (ventCycle[x + ',' + y] !== cyc){ ventCycle[x + ',' + y] = cyc; if (Math.abs(x - pl.x) + Math.abs(y - pl.y) <= 5) SFX.swish(); }
         const p = k / v.puff, fade = p < .8 ? 1 : (1 - p) / .2;

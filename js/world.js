@@ -57,10 +57,13 @@ const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && 
 const isOpen = e => (!e.when || matches(e.when)) && (!e.if || matches(e.if));   // (a way that isn't there yet isn't open either)
 const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y);   // (an animal standing on open ground, such as a deer, is in the way)
 // Steam vents (a legend's vent: {every, puff, at}, in ms, such as the hot spring valley's): every so often, steam puffs out
-// of one for a moment (puff ms of every, at: where in the cycle it starts), and while it does, you can't step onto it (its
-// hot), and standing on it, it pushes you back off it (its pushed): the hot spring valley's twist, timing your way between
-// its pools (decided 27 October 2026).
-const puffing = (x, y, now = performance.now()) => { const v = tileAt(x, y).vent; return !!v && (now + (v.at || 0)) % v.every < v.puff; };
+// of one for a moment (puff ms of every, at: how long after the cycle starts it starts), and while it does, you can't step
+// onto it (its hot), and standing on it, it pushes you back off it (its pushed): the hot spring valley's twist, timing your
+// way between its pools (decided 27 October 2026). A bigger at is later (decided 5 November 2026, after playing it: it was
+// earlier, so the cliff road's gusts, meant to go up the walkway a row after another, came down it, and going up you'd
+// have needed two steps in a fifth of a second).
+const ventTime = (v, now) => now - (v.at || 0);   // (where in its cycles a vent is: % every, and how many, / every)
+const puffing = (x, y, now = performance.now()) => { const v = tileAt(x, y).vent; return !!v && ((ventTime(v, now) % v.every) + v.every) % v.every < v.puff; };
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
 const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
 // Somewhere you collect something else (water, from the river or the pond) whose own word you don't know yet: A looks
@@ -70,6 +73,20 @@ const looksFirst = t => !!t.word && lvl(t.word) === 0 && t.word !== (t.gather ||
 const DV = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
 const OPP = {up:'down', down:'up', left:'right', right:'left'};
 const dirOf = (dx, dy) => Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');   // the way towards dx, dy
+
+// How many to pick up (the carry step's howMany): a picture of the thing, and the numbers 一 to 五, each with its pinyin (no
+// English: what he said is the question). Gives how many you chose, or 0 for Not now.
+const HOW_MANY = 5;
+function howManyCard(w){
+  return new Promise(res => {
+    const nums = COUNTING.slice(0, HOW_MANY);
+    openCard(`<div class="howmany"><div class="hmpic" aria-hidden="true">${picHTML(w)}</div><p class="label">How many ${esc(wz(w))} do you want to pick up?</p></div>
+      <div class="opts five" data-nav>${nums.map((x, i) => `<button class="opt hz" data-i="${i}" aria-label="${i + 1}">${x}${S.pinyin ? `<span class="cap">${WORDS[x].py}</span>` : ''}</button>`).join('')}</div>
+      <div class="actions"><button class="btn" data-a="no" data-b>Not now</button></div>`);
+    sheet.querySelectorAll('.opt').forEach(b => b.onclick = () => { closeCard(); res(+b.dataset.i + 1); });
+    on('[data-a=no]', () => { closeCard(); res(0); });
+  });
+}
 
 const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
 // The animals in a chapter of the story (each animal's chapter, 0 if not given), or just those of one place in it (place,
@@ -291,7 +308,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {carry:['howMany'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -755,13 +772,16 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     S.pos = {place:PLACE, x:tx, y:ty, dir:pl.dir}; save();
   },
   // Picking up something someone has asked you for by its word (the fetch step), one at a time, counted aloud: what you're
-  // carrying (the area's carrying: {word, n}). Picking up something else, you put down what you had.
-  carry(s){
-    const c = here().carrying, w = s.carry, n = c && c.word === w ? c.n + 1 : 1;
+  // carrying (the area's carrying: {word, n}). Picking up something else, you put down what you had. Or, howMany, as many
+  // as you choose, on a card with the numbers 一 to 五 (decided 5 November 2026, after playing it: picking up the
+  // woodcutter's wood one at a time, it wasn't clear how many you had, or what to do), such as his wood and stones.
+  async carry(s){
+    const c = here().carrying, w = s.carry, n = s.howMany ? await howManyCard(w) : c && c.word === w ? c.n + 1 : 1;
+    if (!n) return;   // (Not now)
     here().carrying = {word:w, n}; save(); SFX.right();
-    const num = COUNTING[n - 1], counted = n > 1 && !!num && lvl(num) >= 1;
+    const num = COUNTING[n - 1], counted = (n > 1 || s.howMany) && !!num && lvl(num) >= 1;
     if (counted) say(num);
-    toast(`${counted ? wz(num) + '! ' : ''}You’re carrying ${n > 1 ? n + ' ' : ''}${wz(w)}.`);
+    toast(`${counted ? wz(num) + '! ' : ''}You’re carrying ${n > 1 ? n + ' ' : ''}${wz(w)}.${s.howMany ? ' Take it to whoever asked for it.' : ''}`);
   },
   // Fetching things by their word (decided 4 November 2026: quieter practice, where what you do is the answer): the one
   // you're talking to asks for something only in Chinese, said aloud, its English hidden (each of its asks: the word, how
