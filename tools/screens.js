@@ -418,6 +418,14 @@ SAVES.c1cliff = {...SAVES.c1foot, areas: {...SAVES.c1foot.areas, 2: {...SAVES.c1
 SAVES.c1chain = {...SAVES.c1cliff, w: {...SAVES.c1cliff.w, ...knows(1, ['云'])}, pos: {place: 'cliffRoad', x: 12, y: 11, dir: 'up'}};
 SAVES.c1pillars = {...SAVES.c1chain, areas: {...SAVES.c1chain.areas, 2: {...SAVES.c1chain.areas[2], sky: 1}}, w: {...SAVES.c1chain.w, ...knows(1, ['鹤', '天'])}, friends: [...SAVES.c1chain.friends, 'crane'], met: [...(SAVES.c1chain.met || []), 'crane'], pos: {place: 'pillars', x: 14, y: 10, dir: 'up'}};
 SAVES.c1door = {...SAVES.c1pillars, areas: {...SAVES.c1pillars.areas, 2: {...SAVES.c1pillars.areas[2], door: 1}}, pos: {place: 'pillars', x: 15, y: 7, dir: 'up'}};
+SAVES.c1cave = {...SAVES.c1door, areas: {...SAVES.c1door.areas, 2: {...SAVES.c1door.areas[2], door: 2, caveSeen: 1}}, pos: {place: 'cave', x: 14, y: 8, dir: 'up'}};
+SAVES.c1named = {...SAVES.c1cave, areas: {...SAVES.c1cave.areas, 2: {...SAVES.c1cave.areas[2], teacher: 1, named: 1}}, w: {...SAVES.c1cave.w, ...knows(1, ['师父', '名字'])}, turn: 700, pos: {place: 'cave', x: 10, y: 9, dir: 'left'}};
+const C1_CAVE = ['师父', '名字', '叶子', '扫', '桶', '斧头'];
+SAVES.c1grown = {...SAVES.c1named, areas: {...SAVES.c1named.areas, 2: {...SAVES.c1named.areas[2], spyGame: 1, chores: 6, grown: 1}}, w: {...SAVES.c1named.w, ...knows(1, C1_CAVE)}, turn: 800, pos: {place: 'cave', x: 8, y: 10, dir: 'up'}};
+SAVES.c1night = {...SAVES.c1grown, areas: {...SAVES.c1grown.areas, 2: {...SAVES.c1grown.areas[2], riddle: 2}}, w: {...SAVES.c1grown.w, ...knows(1, ['头', '晚上'])}, pos: {place: 'caveNight', x: 20, y: 6, dir: 'up'}};
+SAVES.c1room = {...SAVES.c1night, w: {...SAVES.c1night.w, ...knows(1, ['月亮', '星星'])}, pos: {place: 'masterRoom', x: 4, y: 4, dir: 'up'}};
+SAVES.c1fly = {...SAVES.c1room, areas: {...SAVES.c1room.areas, 2: {...SAVES.c1room.areas[2], riddle: 3, tests: 1, fly: 1}}, w: {...SAVES.c1room.w, ...knows(1, ['变', '飞'])}, pos: {place: 'cave', x: 12, y: 12, dir: 'down'}};
+SAVES.c1home = {...SAVES.c1fly, areas: {...SAVES.c1fly.areas, 2: {...SAVES.c1fly.areas[2], pine: 1, sentHome: 1}}, w: {...SAVES.c1fly.w, ...knows(1, ['松树', '回家'])}, pos: {place: 'cave', x: 14, y: 6, dir: 'up'}};
 // (4 November 2026: the human world bigger, with paths between its places, and more to do in each)
 SAVES.a2pier = {...SAVES.a2dressed, areas: {...SAVES.a2dressed.areas, 2: {...SAVES.a2dressed.areas[2], oldFisher: 1, pierFish: 'asked'}}, pos: {place: 'shore', x: 18, y: 20, dir: 'down'}};
 SAVES.a2shorePath = {...SAVES.a2dressed, pos: {place: 'shorePath', x: 12, y: 16, dir: 'up'}};
@@ -1355,7 +1363,27 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'c1-pillars', title: 'Chapter 1: the stone pillars', save: 'c1pillars', why: 'Chain bridges between the pillars, mist rolling in now and then; peach trees; the mountain’s tablet (灵台方寸山) and the cave’s stone door (斜月三星洞).', run: async () => {
     play(); await wait(600); }},
-  {id: 'a2-end', title: 'Area 2: to be continued', save: 'c1door', why: 'The boy at the door asks who you are (你是谁？ 我是猴子。): the master is waiting. As far as chapter 1 goes for now.', run: async () => {
+  {id: 'c1-cave', title: 'Chapter 1: the cave', save: 'c1cave', why: 'Through the stone doors: a great hollow in the mountain, open to the sky. The hall, the pupils’ rooms in the rock, the master’s back door, a spring and its pool, peaches, leaves to sweep. The master: 我是你的师父。 (师父) 你叫什么名字？ (名字)', run: async () => {
+    play(); await wait(600); }},
+  {id: 'c1-spy', title: 'I spy', save: 'c1named', why: 'A pupil says what she sees, only in Chinese (我看见水！), and you walk to it and press A. Each one found counts as a question answered.', run: async () => {
+    play(); await wait(100); talk(npc('spyPupil')); await wait(300); next(); await wait(500); }},
+  {id: 'c1-years', title: 'Seven years in the cave', save: 'c1named', why: 'After the chores and the master’s lecture: the seasons going round, a peach tree growing up, you sweeping, and 七年以后…', run: async () => {
+    play(); await wait(100); storyScene('caveYears'); introClock = 6.5; advancedTo = 1; await wait(400); }},
+  {id: 'c1-grown', title: 'The cave, seven years later', save: 'c1grown', why: 'The saplings grown into peach trees, new little pupils who call you 师兄. The master’s riddle next: three taps on your head (头).', run: async () => {
+    play(); await wait(600); }},
+  {id: 'c1-night', title: 'The cave at night', save: 'c1night', why: 'The third watch of the night (晚上): a slanting moon shining in the pool (月亮), three stars over the master’s back door (星星), and in.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'c1-room', title: 'The master’s room', save: 'c1room', why: 'Behind his back door, at night: 我教你变。 (变) Changing into things, the chapter’s big idea.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'c1-change', title: 'Changing into something (变)', save: 'c1fly', why: 'You hear what to change into, choose its picture, and turn into it on the map, in a puff of smoke: here, a pine tree (松树).', run: async () => {
+    play(); await wait(100); pl.form = '松树'; await wait(500); }},
+  {id: 'c1-somersault', title: 'The cloud somersault (飞)', save: 'c1fly', why: 'The master teaches you to fly: one leap onto a cloud, a somersault, and you’re away. From then on you can fly by cloud from the map.', run: async () => {
+    play(); await wait(100); storyScene('somersault'); introClock = 2; advancedTo = 0; await wait(400); }},
+  {id: 'c1-fly-map', title: 'Flying by cloud, from the map', save: 'c1fly', why: 'A place you’ve been, on your map: Fly here takes you there by cloud.', run: async () => {
+    play(); await wait(100); here().visited = [...new Set([...(here().visited || []), 'shore', 'cave'])]; closeUp('shore'); await wait(500); }},
+  {id: 'c1-fly-home', title: 'Flying home', save: 'c1home', why: 'Sent home (回家): over the sea on your cloud, Flower Fruit Mountain coming up ahead.', run: async () => {
+    play(); await wait(100); storyScene('flyHome'); introClock = 9; advancedTo = 2; await wait(400); }},
+  {id: 'a2-end', title: 'Area 2: the end of chapter 1', save: 'c1home', why: 'Home to Flower Fruit Mountain, after twenty years away. What has happened there is still to come.', run: async () => {
     play(); await wait(100); STEPS.areaEnd(); await wait(500); }},
   {id: 'scroll-describing', title: 'Word Scroll: describing words', save: 'fishBoth', why: '小 (little) and 大 (big), from fishing, on a tab of their own.', run: async () => {
     play(); await wait(100); openScroll(() => closeCard(), 0, 'describing'); await wait(400); }},

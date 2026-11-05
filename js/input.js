@@ -161,7 +161,8 @@ function pressMap(){   // the map (js/map.js), once you have it; and again close
   tipPressed('#mapBtn');
   if (!modal.hidden){ if (sheet.querySelector('.mapview')) closeCard(); return; }
   if (mode !== 'play' || !canAct()) return;
-  if (hasMap()) lookAtMap();
+  if (hasMap() && !PLACES[PLACE].onMap) toast(fill(PLACES[PLACE].noMap || 'Your map doesn’t show this place.'));   // (somewhere off the map, such as the cave at night)
+  else if (hasMap()) lookAtMap();
   else toast(AREA.areaMap ? AREA.areaMap.notYet : 'There’s no map here.');
 }
 $('#startBtn').addEventListener('click', () => { getAC(); pressMenu(); });

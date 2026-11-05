@@ -34,7 +34,7 @@ const notes = g => { const s = get(g, '__notes'); g.run('__notes.length = 0'); r
 test('the way up: the stone steps on the far shore lead to the foot of the mountain, then the cliff road, then the stone pillars', () => {
   const g = game({place: 'farShore', x: 15, y: 1, dir: 'up'});
   const ways = get(g, 'Object.fromEntries(["farShore", "mountainFoot", "cliffRoad", "pillars"].map(id => [id, [...new Set(PLACES[id].exits.map(e => e.to))]]))');
-  assert.deepEqual(ways, {farShore: ['harbour', 'mountainFoot'], mountainFoot: ['farShore', 'cliffRoad'], cliffRoad: ['mountainFoot', 'pillars'], pillars: ['cliffRoad']});
+  assert.deepEqual(ways, {farShore: ['harbour', 'mountainFoot'], mountainFoot: ['farShore', 'cliffRoad'], cliffRoad: ['mountainFoot', 'pillars'], pillars: ['cliffRoad', 'cave']});
   assert.deepEqual(get(g, '["cliffRoad", "pillars"].map(id => [!!PLACES[id].clouds, !!PLACES[id].mist])'), [[true, false], [true, true]], 'clouds drift past up there, and mist rolls in over the pillars');
 });
 
@@ -114,7 +114,7 @@ test('云: the sea of clouds under the walkway, a word that waits for a little p
   assert.deepEqual([crane.word, crane.at, crane.chapter, crane.waits], ['鹤', [14, 12, 'cliffRoad'], 1, true]);
 });
 
-test('the stone pillars: the sky (天) once you’re ready for a new word; the boy at the door asks who you are, and the story goes on to come', async () => {
+test('the stone pillars: the sky (天) once you’re ready for a new word; the boy at the door asks who you are, and lets you in', async () => {
   const g = game({place: 'pillars', x: 14, y: 22, dir: 'up'}, {}, {w: {'云': {lv: 1, ok: 0}, '鹤': {lv: 1, ok: 0}}});
   assert.deepEqual(get(g, '(n => [n.place])(ALL_NPCS.find(n => n.id === "doorBoy"))'), ['hut'], 'behind the shut door');
   g.run('S.turn = (S.turn || 0) + 10');
@@ -130,8 +130,10 @@ test('the stone pillars: the sky (天) once you’re ready for a new word; the b
   assert.equal(get(g, 'here().door'), 2);
   assert.equal(get(g, 'tileAt(14, 5).open'), true, 'the stone doors stand open');
   assert.equal(get(g, 'tileAt(14, 4).sign.says.zh'), '斜月三星洞');
-  assert.ok(notes(g).some(n => /box: To be continued/.test(n) && /waiting for you/.test(n)), 'the end card');
-  assert.deepEqual(get(g, 'areaChecklist().map(([t, done]) => done)'), [false, false, true]);
+  assert.ok(notes(g).some(n => /Follow him/.test(n)));
+  assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t, done]) => done)'), [false, false, true, false], 'and your new name to find out');
+  assert.equal(g.run('promptFor(14, 5)'), 'Go in', 'in through the open doors');
+  assert.deepEqual(get(g, '(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === "doorBoy"))'), ['cave', 13, 16], 'he’s gone in');
 });
 
 test('a game saved at the end of the prologue, before chapter 1 was built, goes on into chapter 1', async () => {

@@ -223,8 +223,9 @@ function closeUp(id){
       <p class="maptitle closename"><span class="mapzh">${n.zh}</span> <span class="mappy">${n.py}</span> <span class="mapen">${esc(n.en)}</span>${id === PLACE ? `<span class="maphere">${PIN_SVG}You are here</span>` : ''}</p>
       <div class="mapwords"><div class="gloss">${words.length ? 'Found here: tap a word to hear it.' : 'No words found here yet.'}</div>
         <div class="stickers" data-nav>${words.map(w => `<button class="sticker" data-w="${w}" data-label="Hear">${WORDS[w].pic ? `<span class="c" aria-hidden="true">${picHTML(w)}</span>` : ''}<span class="hz">${w}</span>${S.pinyin ? `<span class="p">${WORDS[w].py}</span>` : ''}</button>`).join('')}</div></div>
-      <div class="mapback actions"><button class="btn" data-a="back" data-b>Back</button></div>
+      <div class="mapback actions">${canFly() && id !== PLACE && landingIn(id) ? '<button class="btn primary" data-a="fly">Fly here</button>' : ''}<button class="btn" data-a="back" data-b>Back</button></div>
     </div></div>`);
+  on('[data-a=fly]', () => { closeCard(); flyTo(id); });   // (by cloud, once you can: flyTo, js/world.js)
   const paper = sheet.querySelector('.mapart'), g = paper.getContext && paper.getContext('2d');
   if (g) drawPaper(g);
   const frame = sheet.querySelector('.closepic'), put = (pic, blocky) => {   // the picture, into its frame

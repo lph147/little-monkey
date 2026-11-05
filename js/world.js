@@ -250,7 +250,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -736,6 +736,42 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     await showDialog(face, L[asks[p[s.fetch] - 1].ask], {noEn:true});
     if (s.listen) toast(fill(s.listen));
   },
+  // I spy (decided 4 November 2026: quieter practice, where what you do is the answer): the one you're playing with says
+  // what they can see, only in Chinese (things: each a word and the line that says it, say), and you walk to it and press
+  // A at it, anything here whose word it is (spyFind). So many rounds (rounds), each something you know that's here; each
+  // found counts as a question answered right. The game in play is kept in the area's progress (spying); spy: the key
+  // that counts the games you've finished; listen: what you're told as they say it; found ({word}: what it was) and wrong:
+  // what you're told when you find it, or press A at something else; done: the steps once you've found them all, the
+  // first time.
+  async spy(s, who){
+    const p = here();
+    if (!p.spying || p.spying.place !== PLACE){
+      const pick = shuffle(s.things.filter(t => lvl(t.word) >= 1 && wordHere(t.word))).slice(0, s.rounds || 3);
+      if (!pick.length) return;
+      p.spying = {key:s.spy, by:typeof who === 'string' ? who : who.id, place:PLACE, words:s.things.map(t => t.word), list:pick.map(t => t.word), lines:Object.fromEntries(pick.map(t => [t.word, t.say])), i:0,
+        found:s.found, wrong:s.wrong, listen:s.listen, done:p[s.spy] ? [] : (s.done || [])};
+      save();
+    }
+    await spyAsk();
+  },
+  // Changing into something (变, decided 4 November 2026: the chapter's big new idea): you hear what (a listening
+  // question, the word one of the area's changes you know, the answers pictures of words you know), and your monkey turns
+  // into what you chose, there on the map, in a puff of smoke, and back again (ms: how long), right or wrong.
+  // turnInto: how many times; or a word, to turn into just that, with no question (such as a pine tree, showing off to the
+  // pupils). label: the question card's.
+  async turnInto(s){
+    if (typeof s.turnInto === 'string'){ await becomeForm(s.turnInto, s.ms); return; }
+    const pool = (AREA.changes || []).filter(w => WORDS[w] && WORDS[w].pic && lvl(w) >= 1);
+    for (let i = 1; i <= s.turnInto; i++){
+      const w = nextWords(pool, 1)[0]; if (!w) return;
+      const q = wordQuestion(w, null, 'listen', 3); let chosen = w;
+      const ok = await pictureQ({head:`<p class="label">${esc(fill(s.label || 'Change!'))}${s.turnInto > 1 ? ` (${i} of ${s.turnInto})` : ''}</p>`, body:q.body,
+        options:q.options, answerIdx:q.answerIdx, word:w, type:'listen', onShow:() => setTimeout(() => say(w), 300), onAnswer:(right, k) => { chosen = q.opts[k]; }});
+      closeCard();
+      await becomeForm(chosen, s.ms);
+      toast(ok ? `变！ You turned into ${wz(chosen)}!` : `You turned into ${wz(chosen)}… but that’s not what you heard! It was ${wz(w)}.`);
+    }
+  },
   // A question or two on words you know as you do something (practise: how many; label: what you're doing; pic: its
   // picture), such as lifting each sack onto the boat at the harbour: right or wrong, you carry on, as practice.
   async practise(s){
@@ -1200,6 +1236,7 @@ async function interact(x, y){
   if (h) return findHidden(h);
   const hs = hideSpotAt(x, y);
   if (hs) return lookForHider(hs);
+  if (here().spying && here().spying.place === PLACE && await spyFind(x, y)) return;   // (I spy: what they see?)
   const spot = spotLook(x, y);
   if (spot) return runSteps(spot.do);
   const t = tileAt(x, y);
@@ -1212,6 +1249,45 @@ async function interact(x, y){
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
+}
+// I spy (the spy step): is anything here this word? And what they can see, said again (only in Chinese); and A at
+// something, while you're playing: what they see, found, or something else (a square with no word: nothing, as ever).
+const wordHere = w => { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).word === w) return true; return false; };
+async function spyAsk(){
+  const sp = here().spying;
+  await showDialog(speaker(sp.by), L[sp.lines[sp.list[sp.i]]], {noEn:true});
+  if (sp.listen) toast(fill(sp.listen));
+}
+async function spyFind(x, y){
+  const sp = here().spying, w = tileAt(x, y).word, want = sp.list[sp.i];
+  if (!w || !(sp.words || sp.list).includes(w)) return false;   // (anything else: as ever, such as sweeping up leaves)
+  if (w !== want){ SFX.wrong(); toast(fill(sp.wrong || 'Not that one. Listen again!')); await sleep(600); await spyAsk(); return true; }
+  reviewed(want, true); SFX.right(); sp.i++; save();
+  toast(fill((sp.found || 'That’s it: {word}!').replace('{word}', `{${want}}`)));
+  if (sp.i < sp.list.length){ await sleep(700); await spyAsk(); return true; }
+  delete here().spying; here()[sp.key] = (here()[sp.key] || 0) + 1; save();
+  await runSteps(sp.done, sp.by);
+  return true;
+}
+// Your monkey turned into something (the turnInto step), for a moment, in a puff of smoke (pl.form: its word; puffAt: when
+// the last puff was, js/draw.js).
+let puffAt = -1e9;
+async function becomeForm(w, hold = 1600){
+  puffAt = performance.now(); SFX.shimmer(); pl.form = w; await sleep(hold);
+  puffAt = performance.now(); SFX.swish(); pl.form = null; await sleep(350);
+}
+// Flying by cloud (the cloud somersault, once you've learned it: the area's cloudTravel.has): from your map, to any place
+// you've been, landing where a way into it leaves you (or its own land).
+const canFly = () => !!AREA.cloudTravel && matches(AREA.cloudTravel.has) && !!PLACES[PLACE].onMap;
+function landingIn(id){
+  if (PLACES[id].land) return PLACES[id].land;
+  for (const p of Object.values(PLACES)) for (const e of p.exits || []) if (e.to === id && e.arrive) return e.arrive;
+  return null;
+}
+async function flyTo(id){
+  const at = landingIn(id); if (!at) return;
+  SFX.swish(); if (AREA.cloudTravel.note) toast(fill(AREA.cloudTravel.note));
+  await goThrough({to:id, arrive:at, facing:'down'});
 }
 // Asking a person what something is (Area 2, decided 4 November 2026: the human world's way of finding words; the area's
 // asking): once you know its word (什么), A at something new with a person within ASK_NEAR squares of you has your monkey ask

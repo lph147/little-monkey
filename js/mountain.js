@@ -148,3 +148,83 @@ function drawMist(cx, cy, sh, now){
 LOOKS.mountainTablet = mossStone;
 OBJECT_ART.mountainTablet = (g, o) => stoneTablet(g, o.x * T, (o.y + o.h - 1) * T, tileAt(o.x, o.y).sign.says.zh);
 BLOCK_OBJECTS.push('mountainTablet');
+
+/* ---- the cave behind the stone door (chapter 1) ---- */
+// A doorway into the rock, with a wooden frame and a dark room behind it (the pupils' rooms, yours, and the master's
+// back door), in the cliff's face.
+function rockDoor(g, X, Y, x, y){
+  karstFace(g, X, Y, x, y);
+  R(g, X + 3, Y + 3, 10, 13, '#3A2A1E'); R(g, X + 4, Y + 4, 8, 12, '#1E1A18'); R(g, X + 5, Y + 2, 6, 2, '#3A2A1E');
+  R(g, X + 3, Y + 3, 1, 13, '#7A5634'); R(g, X + 12, Y + 3, 1, 13, '#7A5634'); R(g, X + 3, Y + 3, 10, 1, '#8E6A42');
+}
+// A heap of fallen leaves on the flagstones, red, orange and gold, to sweep up.
+function leafPile(g, X, Y, x, y){
+  LOOKS.paving(g, X, Y, x, y);
+  oval(g, X + 8, Y + 11, 7, 3, '#6E4A22');
+  for (let i = 0; i < 18; i++){ const lx = X + 2 + Math.floor(rnd(x, y, 900 + i) * 12), ly = Y + 6 + Math.floor(rnd(x, y, 920 + i) * 7); R(g, lx, ly, 2, 1, ['#C2552E', '#D8923A', '#E6B04A', '#9A6A2A'][i % 4]); }
+}
+// A young peach tree, newly planted: a thin stem and a few leaves (in seven years, a tree: becomes).
+function sapling(g, X, Y, x, y){
+  mossStone(g, X, Y, x, y);
+  oval(g, X + 8, Y + 14, 4, 1, '#6E7A62'); R(g, X + 7, Y + 6, 2, 8, '#6B4A2A');
+  for (const [dx, dy] of [[-3, 0], [3, -1], [-2, -3], [2, -4], [0, -5]]) oval(g, X + 8 + dx, Y + 7 + dy, 2, 1, '#5E9E44');
+}
+// The pool, at night: the slanting moon shining in it.
+function moonWater(g, X, Y, x, y){
+  LOOKS.water(g, X, Y, x, y);
+  disc(g, X + 8, Y + 8, 4, '#F2EBC2'); disc(g, X + 10, Y + 7, 4, '#2E5A86');
+}
+Object.assign(LOOKS, {rockDoor, leafPile, sapling, moonWater, rockPeach: mossStone});
+OBJECT_ART.rockPeach = (g, o) => OBJECT_ART.peachTree(g, o);   // (a peach tree, on the mountain's mossy stone, not grass)
+
+/* ---- night ---- */
+// A place at night (its night: the cave, the night you go to the master's back door): dark blue over everything, a
+// slanting moon and three bright stars in the sky above, and a few fainter ones.
+function drawNight(cx, cy, sh, now){
+  if (!PLACES[PLACE].night) return;
+  const W = VW*T;
+  b.globalAlpha = .55; R(b, 0, 0, W, sh, '#0A1030'); b.globalAlpha = 1;
+  disc(b, W - 34, 18, 7, '#F2EBC2'); disc(b, W - 30, 15, 7, '#1A2448');   // the slanting moon
+  for (const [x, y] of [[W - 56, 12], [W - 48, 26], [W - 62, 30]]){ const tw = (now / 400 + x) % 6 < 1 ? 1 : 0; R(b, x - 1, y, 3, 1, '#FFF6C8'); R(b, x, y - 1, 1, 3, '#FFF6C8'); if (tw) R(b, x - 2, y, 5, 1, '#FFFFFF'); }
+  for (let i = 0; i < 16; i++) R(b, Math.floor(rnd(i, 7, 930) * W), Math.floor(rnd(i, 8, 931) * sh * .4), 1, 1, '#C8D0F0');
+}
+
+/* ---- scenes ---- */
+// Seven years in the cave (the caveYears scene, after the chores): the courtyard, the hall, a peach tree growing up
+// through the seasons, blossom, green, autumn leaves falling, snow, over and over, and you sweeping.
+function drawCaveYears(t, now){
+  const W = VW*T, H = VH*T, season = Math.floor(t / 1.6) % 4, grow = Math.min(1, t / 10);
+  R(b, 0, 0, W, 40, ['#9CC8E8', '#7FB8E6', '#C8B898', '#D8DEE4'][season]);
+  for (let x = 0; x < W; x += T){ karstFace(b, x, 40, 3, 1); karstFace(b, x, 56, 3, 2); }
+  R(b, 0, 72, W, H - 72, season === 3 ? '#E8ECEE' : '#B3ADA2');
+  for (let y = 72; y < H; y += 8) for (let x = (y / 8) % 2 * 8; x < W; x += 16) R(b, x, y, 15, 7, season === 3 ? '#F4F6F8' : '#C0BAAF');
+  jHouse(b, {x:5, y:2, w:5, h:3});
+  const tx = 52, ty = 110, h = Math.round(10 + grow * 26);   // the peach tree
+  R(b, tx - 1, ty - h, 3, h, '#6B4A2A');
+  const crown = ['#F4B6C8', '#5E9E44', '#D8923A', '#F4F6F8'][season];
+  for (const [dx, dy, r] of [[0, -h, 6 + grow * 8], [-7 * grow, -h + 6, 4 + grow * 6], [7 * grow, -h + 6, 4 + grow * 6]]) disc(b, Math.round(tx + dx), Math.round(ty + dy), Math.round(r), crown);
+  if (season === 2 || season === 3) for (let i = 0; i < 14; i++){ const fx = (rnd(i, 3) * W + now / 50 * (1 + i % 3)) % W, fy = (rnd(i, 4) * H + now / 18) % H; R(b, Math.round(fx), Math.round(fy), 2, season === 3 ? 2 : 1, season === 3 ? '#FFFFFF' : '#C25A2A'); }
+  const mx = 150 + Math.round(Math.sin(now / 300) * 6);   // you, sweeping
+  b.drawImage(monkeySprite('player', 'left', false), mx, 118, 16, 16);
+  R(b, mx - 6, 128 + Math.round(Math.sin(now / 150)), 9, 2, '#C9A060'); R(b, mx - 2, 120, 1, 9, '#7A5634');
+}
+// Flying on a cloud (the somersault and flyHome scenes: def.home, flying home over the sea, Flower Fruit Mountain coming
+// up ahead): the sky, clouds racing by, and you on yours, somersaulting now and then.
+function drawCloudFlight(t, now, def){
+  const W = VW*T, H = VH*T, home = def && def.home;
+  for (let y = 0; y < H; y += 2) R(b, 0, y, W, 2, mix('#5FA2E0', '#CFE6F6', y / H));
+  if (home){ R(b, 0, H - 30, W, 30, '#3A78B8'); for (let x = 0; x < W; x += 12) R(b, (x + now / 20) % W, H - 26 + (x % 3) * 6, 6, 1, '#8FC0E8'); }
+  if (home && t > 6){   // Flower Fruit Mountain, coming up ahead
+    const mx = W - Math.min(140, (t - 6) * 60);
+    for (let i = 0; i < 50; i++){ const w = (50 - i) * 2.4; R(b, Math.round(mx + 60 - w / 2), H - 30 - i, Math.round(w), 1, i > 42 ? '#8A8A7A' : i % 9 === 0 ? '#3F8A3A' : '#4F9A44'); }   // (wide at the foot, a peak at the top)
+    R(b, Math.round(mx + 58), H - 62, 3, 30, '#CFE6F6'); R(b, Math.round(mx + 55), H - 33, 9, 3, '#FFFFFF');   // its waterfall
+  }
+  for (let i = 0; i < 9; i++){ const x = W - ((now / (8 + i % 3 * 4) + rnd(i, 1) * W * 2) % (W + 80)) , y = rnd(i, 2) * (H - 40); for (let k = 0; k < 4; k++) oval(b, Math.round(x + k * 10), Math.round(y + (k % 2) * 3), 9 - k, 5, '#FFFFFF'); }
+  const bob = Math.round(Math.sin(now / 200) * 3), cx = 80, cy = 80 + bob;
+  for (let k = 0; k < 5; k++) oval(b, cx - 12 + k * 6, cy + 12 + (k % 2), 7, 4, '#F4F7FA');   // your cloud
+  for (let k = 0; k < 6; k++) R(b, cx - 30 - k * 8, cy + 10 + (k % 3) * 3, 6, 1, '#FFFFFF');   // speed lines
+  const flip = (now / 1200) % 3 < .35;   // a somersault now and then
+  b.save(); b.translate(cx + 8, cy + 6); if (flip) b.rotate(((now / 1200) % 3) / .35 * Math.PI * 2);
+  b.drawImage(monkeySprite('player', 'right', false), -8, -10, 16, 16); b.restore();
+}
+Object.assign(SCENE_ART, {caveYears: drawCaveYears, cloudFlight: drawCloudFlight});

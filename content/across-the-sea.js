@@ -42,12 +42,85 @@ const CLIMB_LEGEND = {
   'h': {look:'loosePlank', hop:{label:'Loose planks', ask:'Listen, and hop onto the plank with its picture.', swing:true,
     splash:'The plank swings away under you! You grab the chain, and pull yourself back.'}},
   'C': {look:'chainFace', landmark:true, onLook:[{label:'Climb', do:[{climb:[[12, 8], [12, 11]], pulls:3, label:'Climbing the chain', pic:'猴子'}]}]},
-  'Q': {look:'peachTree', word:'桃子', landmark:true, note:'A peach tree, in blossom and ripe fruit at once.', pick:{item:'桃子'}},
+  'Q': {look:'rockPeach', word:'桃子', landmark:true, note:'A peach tree, in blossom and ripe fruit at once.', pick:{item:'桃子'}},
   'X': {look:'mountainTablet', landmark:true, action:'sign', sign:{name:{zh:'石碑', py:'shíbēi', en:'Stone tablet'}, says:{zh:'灵台方寸山', en:'Mountain of Mind and Heart'}, hint:'The name of the immortal’s mountain.'}},
   'D': {look:'stoneDoor', landmark:true, action:'sign', sign:{name:{zh:'石门', py:'shímén', en:'Stone door'}, says:{zh:'斜月三星洞', en:'Cave of the Slanting Moon and Three Stars'}, hint:'The name of the immortal’s cave.'},
     becomes:[{if:{door:{atLeast:1}}, to:'Ď'}]},
   'Ď': {look:'stoneDoor', open:true, landmark:true, action:'sign', sign:{name:{zh:'石门', py:'shímén', en:'Stone door'}, says:{zh:'斜月三星洞', en:'Cave of the Slanting Moon and Three Stars'}, hint:'The name of the immortal’s cave.'}}
 };
+// The cave behind the stone door (斜月三星洞, chapter 1): a great hollow in the mountain, open to the sky, ringed by
+// rock; the lecture hall against its back wall, the pupils' rooms cut into the rock (yours on the left), the master's
+// back door beside the hall, a spring falling into a pool, a peach garden, pines, a woodpile and logs to chop, and
+// leaves to sweep. The same map by day (cave) and by night (caveNight, the night of the master's riddle: CAVE_NIGHT).
+const CAVE_MAP = [
+  "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+  "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+  "RRKKKKKKKKKHHHHHHHKKKKKWWKKKRR",
+  "RRKKYKyKyKKHHHHHHHKMKKKWWKKKRR",
+  "RRkkkkkkkkjHHHHHHHkkksssssskRR",
+  "RRkkkkk##############sssssskRR",
+  "RRkkkkk##############sssssskRR",
+  "RRkQkkk##l#######l###ssmssskRR",
+  "RRkkkkk##############kkkkkkkRR",
+  "RRkkkqk##############kkkkkkkRR",
+  "RRkQkkk#####l########pkkkkTkRR",
+  "RRkkkkk##############kkkkkkkRR",
+  "RRkkkkk############l#kkLkLkkRR",
+  "RRqkkqk#l############kkkkkkoRR",
+  "RRkkkkk##############kkkkkkkRR",
+  "RRkkkkk##############kkkTkkkRR",
+  "RRTkkkkkkTkkkkkkkkkkkkkkkkkkRR",
+  "RRRRRRRRRRRRRRkkRRRRRRRRRRRRRR",
+  "RRRRRRRRRRRRRRkkRRRRRRRRRRRRRR",
+  "RRRRRRRRRRRRRRkkRRRRRRRRRRRRRR",
+  "RRRRRRRRRRRRRRkkRRRRRRRRRRRRRR",
+  "RRRRRRRRRRRRRRkkRRRRRRRRRRRRRR"
+];
+const CAVE_LEGEND = {
+  'R': {look:'karstTop', word:'山'},
+  'K': {look:'karstFace', word:'山'},
+  'k': {look:'mossStone', walk:true},
+  '#': {look:'paving', walk:true},
+  'H': {look:'jHouse', word:'房子', note:'The lecture hall, where the master teaches.'},
+  'T': {look:'twistedPine', word:'树', note:'A pine, growing out of the rock.'},
+  'W': {look:'waterfall', word:'瀑布'},
+  's': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{carry:'水'}]}]},
+  'm': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{carry:'水'}]}]},
+  'Q': {look:'rockPeach', word:'桃子', landmark:true, note:'A peach tree, in the master’s garden.', pick:{item:'桃子'}},
+  'q': {look:'sapling', word:'桃子', note:'A young peach tree, just planted. You water it every day.', becomes:[{if:{grown:1}, to:'Q'}]},
+  'o': {look:'boulder', word:'石头'},
+  'j': {look:'jars', landmark:true, onLook:[{do:[{message:'Big jars of water, for the kitchen.'}]}]},
+  'p': {look:'woodpile', word:'木头', note:'The cave’s firewood.'},
+  'L': {look:'stump', landmark:true, onLook:[{if:{axeFetch:1}, label:'Chop', do:[{practise:1, label:'Chopping the wood', pic:'斧头'}, {carry:'木头'}]},
+    {do:[{message:'A chopping block, with logs beside it to chop.'}]}]},
+  'l': {look:'leafPile', word:'叶子', onLook:[{if:{chores:0}, do:[{message:'A heap of fallen leaves.'}]},
+    {if:{chores:2}, label:'Sweep', sparkle:true, do:[{practise:1, label:'Sweeping the leaves', pic:'扫'}, {change:'#'},
+      {collect:'叶子', for:'sweep', count:5, each:'You sweep up the leaves ({leavesSwept}/5).', full:'All five heaps swept! Tell the senior pupil.'}]}]},
+  'y': {look:'rockDoor', word:'门', note:'A pupil’s room, cut into the rock.'},
+  'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[
+    {if:{riddle:1}, label:'Wait for night', waits:true, do:[{set:{riddle:2}}, {message:'You lie down in your room, but you don’t sleep. You wait, and wait…'},
+      {goTo:'caveNight', at:[4, 4], facing:'down'}, {sound:'chime'}, {newWord:'晚上', note:'晚上 means night, or evening. Everyone is asleep: it’s the third watch of the night.'}]},
+    {do:[{message:'Your room, cut into the rock: a stone bed, and a little window.'}]}]},
+  'M': {look:'rockDoor', word:'门', landmark:true, onLook:[{do:[{message:'The master’s back door. It’s shut.'}]}]}
+};
+// By night: no-one about; the slanting moon shining in the pool (月亮), and three stars over the master's back door (星星),
+// which is open for you.
+const CAVE_NIGHT = {
+  'm': {look:'moonWater', word:'月亮', onLook:[{if:{new:'月亮'}, waits:true, label:'Look', do:[{newWord:'月亮', note:'月亮 means the moon. A thin, slanting moon, shining in the pool.'}]}]},
+  's': {look:'water', word:'水'},
+  'l': {look:'leafPile', word:'叶子'},
+  'L': {look:'stump', landmark:true, onLook:[{do:[{message:'The chopping block, in the moonlight.'}]}]},
+  'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[{do:[{message:'Not now! The master is waiting, at his back door beside the hall.'}]}]},
+  'M': {look:'rockDoor', word:'门', landmark:true, onLook:[{if:{new:'星星'}, waits:true, label:'Look up', do:[{newWord:'星星',
+    note:'星星 means stars. Over the master’s back door: a slanting moon, and three stars. Like the cave’s name: 斜月三星洞!'}]}]}
+};
+// The senior pupil's chores, fetched by their word (as the woodcutter's): three buckets of water from the pool, then four
+// logs chopped with the axe.
+const FETCH_WATER = {fetch:'waterFetch', asks:[{word:'水', count:3, ask:'wantWater3'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
+  listen:'He says it only in Chinese. Listen, then fetch it from the pool, and bring it to him.', done:[{set:{chores:4}}]};
+const FETCH_WOOD = {fetch:'axeFetch', asks:[{word:'木头', count:4, ask:'wantWood4'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
+  listen:'He says it only in Chinese. Listen, then chop it at the chopping blocks, and bring it to him.',
+  done:[{set:{chores:6}}, {say:'veryGood'}, {coins:3, note:'The senior pupil gives you 3 🪙 for your help.'}, {message:'The chores are done. The master is giving a lecture, in front of the hall!'}]};
 const ACROSS_THE_SEA = {
   number: 2,
   name: {zh:'海的那边', py:'hǎi de nàbiān', en:'Across the sea'},
@@ -80,8 +153,16 @@ const ACROSS_THE_SEA = {
   //   song     1 once you've heard the woodcutter's song (歌): the end of the prologue, and chapter 1 begins
   //   woodFetch chapter 1: the woodcutter's fetching game at his hut: 0 not yet, 1 to 3 what he's asking for, 4 all brought
   //   sky      1 once you've seen the sky (天) over the stone pillars
-  //   door     1 once the boy has opened the cave's stone door, 2 once he's asked who you are (to be continued)
-  progress: {chapter:0, woodFetch:0, sky:0, door:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
+  //   door     1 once the boy has opened the cave's stone door, 2 once he's asked who you are
+  //   caveSeen 1 once you've been into the cave; teacher 1 once the master has said he's your master (师父); named 1 once
+  //            he's named you 孙悟空 (名字); spyGame the games of I spy you've finished with the pupil
+  //   chores   the senior pupil's: 1 leaves (叶子), 2 sweep them (扫), 3 the bucket (桶) and its water, 4 the axe next, 5 the
+  //            axe (斧头) and its wood, 6 all done; waterFetch, axeFetch: those fetching games (as the woodcutter's)
+  //   grown    1 once seven years have gone by (the saplings grown, new little pupils)
+  //   riddle   1 the master's taps on your head (头), 2 the night (晚上), at his back door, 3 he's taught you to change (变)
+  //   tests    1 once he's tested your changes; fly 1 once he's taught you the cloud somersault (飞), and you can fly by
+  //            cloud from the map; pine 1 once you've shown off as a pine tree (松树); sentHome 1 once he's sent you home
+  progress: {chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, chores:0, waterFetch:0, axeFetch:0, grown:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
 
   // Numbers that text can show as {name}, and that an if can check (as Flower Fruit Mountain's).
   counters: {
@@ -95,7 +176,8 @@ const ACROSS_THE_SEA = {
     cargoCarried: {count:'picked', request:'cargo'},   // the sacks you've carried onto the boat at the harbour (four)
     // the town's words, which the years passing wait for
     townWords: {count:'known', words:['买', '包子', '鞋', '茶', '说', '哪里', '听', '孩子', '学', '书', '猫']},
-    coins: {count:'coins'}
+    coins: {count:'coins'},
+    leavesSwept: {count:'picked', request:'sweep'}   // the heaps of leaves you've swept up in the cave (five)
   },
 
   // After any new word, the next waits till you've answered this many more questions, anywhere: a talk part, a square's
@@ -116,6 +198,10 @@ const ACROSS_THE_SEA = {
   // Money (decided 4 November 2026): coins, once you know their word, 钱 (when). The money changer in town changes your
   // shells for them, one for one.
   money: {when:{knows:'钱'}},
+  // Changing into things (变, the turnInto step, chapter 1): what the master can ask you to change into, those you know.
+  changes: ['鸟', '鱼', '树', '石头', '猫', '狗', '鸡', '鹅', '鹤', '兔子', '羊', '牛', '花', '桃子', '苹果', '船', '房子', '松树'],
+  // Flying by cloud (the cloud somersault, chapter 1): from your map, to any place you've been, once you can (has).
+  cloudTravel: {has:{fly:1}, note:'You leap onto a cloud, and somersault away!'},
   // The child's game, 是不是？ (Is it?): a picture of something you know and 这是…吗？ about it, the word one of these
   // (only those you know, with pictures), and you answer 是 or 不是.
   isIt: ['猴子', '鱼', '鸟', '树', '花', '山', '石头', '桃子', '苹果', '水', '河', '草', '人', '鹅', '鸡', '狗', '猫', '牛', '羊', '兔子',
@@ -158,10 +244,29 @@ const ACROSS_THE_SEA = {
     {id:'c1up', if:{chapter:1, door:0, place:'mountainFoot', woodFetch:{atLeast:1}}, text:'Climb on up the {山|mountain}, to find where the immortal lives', arrow:{place:'cliffRoad'}},
     {id:'c1cliff', if:{chapter:1, door:0, place:'cliffRoad'}, text:'Climb the walkway up the cliff', arrow:{place:'pillars'}},
     {id:'c1crane', if:{chapter:1, place:'cliffRoad', friends:{crane:false}}, text:'Make {朋友|friends} with the {鹤} by the pool', arrow:[14, 12, 'cliffRoad']},
-    {id:'c1door', if:{chapter:1, door:0, place:'pillars'}, text:'Find the immortal’s {洞|cave}, up at the top', arrow:[15, 6, 'pillars']}
+    {id:'c1door', if:{chapter:1, door:0, place:'pillars'}, text:'Find the immortal’s {洞|cave}, up at the top', arrow:[15, 6, 'pillars']},
+    // in the cave
+    {id:'c1in', if:{door:2, teacher:0}, text:'Go in through the stone {门|door}, and find the old man in front of the hall', arrow:'master'},
+    {id:'c1name', if:{teacher:1, named:0}, text:'Your {师父|master} has something to ask you', arrow:'master'},
+    {id:'c1spy', if:{named:1, spyGame:0}, text:'A pupil wants to play I spy: {听|listen}, then find what she sees, and press A at it', arrow:'spyPupil'},
+    {id:'c1chores', if:{named:1, chores:{below:2}}, text:'The senior pupil has jobs for you. Go and {看|see}', arrow:'senior'},
+    {id:'c1sweep', if:{chores:2, leavesSwept:{below:5}}, text:'{扫|Sweep} up the five heaps of fallen {叶子|leaves}: face one, and press A ({leavesSwept}/5)', arrow:{sparkle:true}},
+    {id:'c1swept', if:{chores:2, leavesSwept:5}, text:'Tell the senior pupil the {叶子|leaves} are swept up', arrow:'senior'},
+    {id:'c1chore', if:{any:[{waterFetch:1}, {axeFetch:1}]}, text:'Bring the senior pupil {什么|what} he asks for. Talk to him again to {听|listen} again', arrow:'senior'},
+    {id:'c1axe', if:{chores:4}, text:'The senior pupil has one more job for you. Go and {看|see}', arrow:'senior'},
+    {id:'c1lecture', if:{chores:6, grown:0}, text:'Go to the {师父|master}’s lecture, in front of the hall', arrow:'master'},
+    {id:'c1riddle', if:{grown:1, riddle:0}, text:'The {师父|master} wants to see you', arrow:'master'},
+    {id:'c1night', if:{riddle:1}, text:'Three taps on the {头|head}, then the back {门|door}… Wait for night: press A at your room in the rock', arrow:[4, 3, 'cave']},
+    {id:'c1backDoor', if:{riddle:2, place:'caveNight'}, text:'Go quietly to the {师父|master}’s back door, beside the hall', arrow:[19, 3, 'caveNight']},
+    {id:'c1room', if:{riddle:2, place:'masterRoom'}, text:'Talk to your {师父|master}', arrow:'master'},
+    {id:'c1tests', if:{riddle:3, tests:0}, text:'The {师父|master} wants to test you', arrow:'master'},
+    {id:'c1fly', if:{tests:1, fly:0}, text:'The {师父|master} has one more thing to teach you', arrow:'master'},
+    {id:'c1pine', if:{fly:1, pine:0}, text:'The pupils want to {看|see} you change into something', arrow:'darePupil'},
+    {id:'c1home', if:{pine:1, sentHome:0}, text:'The {师父|master} is angry with you. Go and {说|talk} to him', arrow:'master'}
   ],
   hints: [
-    {if:{door:2}, text:'That’s as far as chapter 1 goes for now: the immortal’s lessons are still to come. Until then, practise your words, and visit your {朋友|friends}.'},
+    {if:{sentHome:1}, text:'That’s the end of chapter 1! What has happened at {家|home} while you were away is still to come. Until then, practise your words, fly about by cloud, and visit your {朋友|friends}.'},
+    {if:{door:2}, text:'Find someone in the {洞|cave} with a ! over them.'},
     {if:{chapter:1}, text:'Climb the {山|mountain}, to find where the immortal lives.'},
     {if:{landed:0}, text:'Walk about on the shore.'},
     {if:{dressed:2, child:3}, text:'Find someone with a ! over them, and ask {人|people} about things.'},
@@ -192,7 +297,13 @@ const ACROSS_THE_SEA = {
     {text:'Find out {哪里|where} the immortal lives', show:{boat:2}, done:{song:1}},
     {chapter:1, text:'Help the woodcutter at his hut', done:{woodFetch:4}},
     {chapter:1, text:'Make {朋友|friends} with the {鹤} on the cliff road', done:{friends:{crane:true}}},
-    {chapter:1, text:'Find the immortal’s {洞|cave}', done:{door:2}}
+    {chapter:1, text:'Find the immortal’s {洞|cave}', done:{door:2}},
+    {chapter:1, text:'Find out your new {名字|name}', show:{door:2}, done:{named:1}},
+    {chapter:1, text:'Play I spy with a pupil', show:{named:1}, done:{spyGame:{atLeast:1}}},
+    {chapter:1, text:'Do the senior pupil’s chores', show:{named:1}, done:{chores:6}},
+    {chapter:1, text:'Solve the {师父|master}’s riddle', show:{grown:1}, done:{riddle:3}},
+    {chapter:1, text:'Learn to {变|change} into things, and to {飞|fly}', show:{riddle:3}, done:{fly:1}},
+    {chapter:1, text:'Go {回家|home}', show:{pine:1}, done:{sentHome:1}}
   ],
   bubbles: {
     child: [{if:{dressed:2, child:0}, show:'!'}, {if:{child:{atLeast:1, below:3}}, show:'!'}],
@@ -215,6 +326,11 @@ const ACROSS_THE_SEA = {
     teller: [{if:{knows:'茶', new:'说'}, show:'!'}, {if:{knows:'说', new:'哪里'}, show:'!'}],
     teacher: [{if:{knows:'哪里', new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
     boatman: [{if:{years:1, boat:0}, show:'!'}, {if:{boat:1}, show:'!'}],
+    master: [{if:{door:2, teacher:0}, show:'!'}, {if:{teacher:1, named:0}, show:'!'}, {if:{chores:6, grown:0}, show:'!'}, {if:{grown:1, riddle:0}, show:'!'},
+      {if:{riddle:2}, show:'!'}, {if:{riddle:3, tests:0}, show:'!'}, {if:{tests:1, fly:0}, show:'!'}, {if:{pine:1, sentHome:0}, show:'!'}],
+    spyPupil: [{if:{named:1, spyGame:0}, show:'!'}],
+    senior: [{if:{named:1, chores:{below:2}}, show:'!'}, {if:{chores:2, leavesSwept:5}, show:'?'}, {if:{any:[{waterFetch:1}, {axeFetch:1}]}, show:'?'}, {if:{chores:4}, show:'!'}],
+    darePupil: [{if:{fly:1, pine:0}, show:'!'}],
     woodcutter: [{if:{song:0}, show:'!'}, {if:{chapter:1, woodFetch:0}, show:'!'}, {if:{woodFetch:{atLeast:1, below:4}}, show:'?'}]
   },
 
@@ -276,8 +392,8 @@ const ACROSS_THE_SEA = {
       ]}
   },
 
-  areaEnd: {title:'To be continued…', text:['The boy opens the stone doors wide: the immortal is waiting for you, inside the cave!',
-    'That’s as far as chapter 1 goes for now. The immortal’s lessons are still to come. Until then, practise your words, and visit your friends.']},
+  areaEnd: {title:'The end of chapter 1', text:['One somersault, and you’re over the sea, home to Flower Fruit Mountain, after twenty years away…',
+    'What has happened at home while you were away? That’s still to come. Until then, practise your words, fly about by cloud from your map, and visit your friends.']},
 
   // Fishing (js/fishing.js), with the rod you brought from Flower Fruit Mountain: in the sea, and the village's stream.
   fishing: {
@@ -319,6 +435,9 @@ const ACROSS_THE_SEA = {
     // over the stone pillars, nothing but the open sky (天), once you've had a little practice since your last new word
     {if:{place:'pillars', sky:0, wordReady:true}, do:[{set:{sky:1}}, {sound:'chime'},
       {message:'Up here, above the clouds, there’s nothing over you but the wide, blue sky.'}, {newWord:'天', note:'天 means sky. Up here, it feels close enough to touch!'}]},
+    // into the cave for the first time
+    {if:{place:'cave', caveSeen:0}, do:[{set:{caveSeen:1}},
+      {message:'Through the stone doors: a great hollow in the mountain, open to the sky. Pupils in robes are sweeping and reading, and an old man in white stands in front of the hall…'}]},
     // at the cave's door: the stone doors rumble open, and a boy comes out (the immortal's pupil)
     {if:{place:'pillars', door:0, around:[15, 6, 'pillars', 2]}, do:[{set:{door:1}}, {sound:'rumble'},
       {message:'With a deep rumble, the stone doors swing open. A boy comes out!'}, {talkTo:'doorBoy'}]},
@@ -846,7 +965,9 @@ const ACROSS_THE_SEA = {
       sounds: ['wind', 'birds'],
       exits: [
         {at:[14, 23], to:'cliffRoad', arrive:[11, 1], facing:'down'},
-        {at:[15, 23], to:'cliffRoad', arrive:[12, 1], facing:'down'}
+        {at:[15, 23], to:'cliffRoad', arrive:[12, 1], facing:'down'},
+        {at:[14, 5], to:'cave', arrive:[14, 20], facing:'up', by:'A', label:'Go in', if:{door:{atLeast:2}}},   // (in through the open doors)
+        {at:[15, 5], to:'cave', arrive:[15, 20], facing:'up', by:'A', label:'Go in', if:{door:{atLeast:2}}}
       ],
       legend: CLIMB_LEGEND,
       map: [
@@ -874,6 +995,48 @@ const ACROSS_THE_SEA = {
         "cKKKKccccccckTkkkkccccckkkTkcc",
         "cKKKKccccccckkkkkkccccckkkkkcc",
         "cccccccccccckkkkkkcccccKKKKKcc"
+      ]
+    },
+    // the cave behind the stone door, by day, and by night; and the master's room, behind his back door
+    cave: {
+      name: {zh:'斜月三星洞', py:'Xiéyuè Sānxīng Dòng', en:'Cave of the Slanting Moon and Three Stars'},
+      music: 'cave',
+      onMap: [116, 18],
+      sounds: ['wind', 'birds'],
+      exits: [
+        {at:[14, 21], to:'pillars', arrive:[14, 6], facing:'down'},
+        {at:[15, 21], to:'pillars', arrive:[15, 6], facing:'down'}
+      ],
+      legend: CAVE_LEGEND,
+      map: CAVE_MAP.slice()
+    },
+    caveNight: {
+      name: {zh:'斜月三星洞', py:'Xiéyuè Sānxīng Dòng', en:'Cave of the Slanting Moon and Three Stars'},
+      music: 'cave',
+      night: true,
+      noMap: 'It’s too dark to read your map!',
+      exits: [
+        {at:[19, 3], to:'masterRoom', arrive:[4, 5], facing:'up', by:'A', label:'Go in', if:{knows:'星星'}}
+      ],
+      legend: {...CAVE_LEGEND, ...CAVE_NIGHT},
+      map: CAVE_MAP.slice()
+    },
+    masterRoom: {
+      name: {zh:'师父的房间', py:'shīfu de fángjiān', en:'The master’s room'},
+      music: 'cave',
+      noMap: 'Not now: the master is waiting!',
+      exits: [
+        {at:[4, 6], to:'caveNight', arrive:[19, 4], facing:'down'}
+      ],
+      legend: {'Z':{look:'caveWall'}, 'z':{look:'caveFloor', walk:true}, 'D':{look:'stoneBed', word:'床', landmark:true}, 'A':{look:'stoneTable', word:'桌子', landmark:true}},
+      map: [
+        "ZZZZZZZZZ",
+        "ZzDDzzAzZ",
+        "ZzzzzzzzZ",
+        "ZzzzzzzzZ",
+        "ZzzzzzzzZ",
+        "ZzzzzzzzZ",
+        "ZZZZzZZZZ"
       ]
     }
   },
@@ -1050,17 +1213,34 @@ const ACROSS_THE_SEA = {
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#E0B088', e:'#1E140C', m:'#C4826A', c:'#6E5B3A', b:'#3A2A1E', p:'#3A3226', a:'#D9B866', d:'#A88A3E'}},
     // the cave's door, among the stone pillars: a boy, the immortal's pupil, behind the stone doors till they open (in the hut)
     {id:'doorBoy', place:'pillars', person:true, small:true, hair:'topknot', wear:'robe', x:15, y:6, facing:'down', name:{zh:'仙童', py:'xiāntóng', en:'The immortal’s boy'},
-      moves:[{if:{door:0}, place:'hut', x:1, y:0}],
-      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#E8E4D8', b:'#4F78A8', p:'#E8E4D8'}}
+      moves:[{if:{door:0}, place:'hut', x:1, y:0}, {if:{door:{atLeast:2}}, place:'cave', x:13, y:16, facing:'down'}],   // (then inside, by the way in)
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#E8E4D8', b:'#4F78A8', p:'#E8E4D8'}},
+    // the cave: the master (in his room behind the back door, from his riddle till he's taught you to change), his pupils
+    {id:'master', place:'cave', person:true, beard:true, hair:'topknot', wear:'robe', x:14, y:5, facing:'down', name:{zh:'师父', py:'shīfu', en:'The master'},
+      moves:[{if:{riddle:{atLeast:1, below:3}}, place:'masterRoom', x:4, y:2, facing:'down'}],
+      palette:{o:'#3A2A1E', h:'#F2F2EE', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#E8E4D8', b:'#6A5A8A', p:'#C8C2B0'}},
+    {id:'spyPupil', place:'cave', person:true, hair:'bun', wear:'robe', x:9, y:9, facing:'right', name:{zh:'师姐', py:'shījiě', en:'A pupil'},
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#8FA86E', b:'#3A2A1E', p:'#5A6A44'}},
+    {id:'senior', place:'cave', person:true, hair:'topknot', wear:'robe', x:18, y:9, facing:'left', name:{zh:'大师兄', py:'dà shīxiōng', en:'The senior pupil'},
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#E0B088', e:'#1E140C', m:'#C4826A', c:'#6E8FA8', b:'#3A2A1E', p:'#44586A'}},
+    {id:'darePupil', place:'cave', person:true, hair:'topknot', wear:'robe', x:12, y:13, facing:'up', name:{zh:'师兄', py:'shīxiōng', en:'A pupil'},
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#A88F6E', b:'#3A2A1E', p:'#6A5A44'}},
+    {id:'pupil4', place:'cave', person:true, hair:'scarf', wear:'robe', x:20, y:14, facing:'left', name:{zh:'师弟', py:'shīdì', en:'A pupil'},
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#8F6EA8', b:'#3A2A1E', p:'#5A446A', k:'#6E8FA8'}},
+    // after seven years: new little pupils, who call you 师兄 (senior brother)
+    {id:'little1', place:'cave', person:true, small:true, hair:'topknot', x:7, y:11, facing:'right', name:{zh:'小师弟', py:'xiǎo shīdì', en:'A little pupil'},
+      moves:[{if:{grown:0}, place:'hut', x:3, y:0}], palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#E8A33C', b:'#3A2A1E', p:'#5A4632'}},
+    {id:'little2', place:'cave', person:true, small:true, hair:'pigtails', x:16, y:14, facing:'up', name:{zh:'小师妹', py:'xiǎo shīmèi', en:'A little pupil'},
+      moves:[{if:{grown:0}, place:'hut', x:4, y:0}], palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#D86A8A', b:'#3A2A1E', p:'#5A4632'}}
   ],
-  yourNames: [{if:{}, zh:'美猴王', py:'Měi Hóuwáng', en:'Handsome Monkey King (you)'}],
+  yourNames: [{if:{named:1}, zh:'孙悟空', py:'Sūn Wùkōng', en:'Sun Wukong (you)'}, {if:{}, zh:'美猴王', py:'Měi Hóuwáng', en:'Handsome Monkey King (you)'}],
 
   // (no sign of its own: the human world's signs are the stalls' and the teahouse's)
   sign: {name:{zh:'牌子', py:'páizi', en:'Sign'}, says:{zh:'海', en:'The sea'}, hint:''},
   spots: [],
   bigSparkles: {dressed:0},
   sparkles: [
-    {word:'云', at:[16, 31, 'cliffRoad']},
+    {word:'云', at:[16, 31, 'cliffRoad']}, {word:'月亮', at:[23, 7, 'caveNight']}, {word:'星星', at:[19, 3, 'caveNight']},
     {word:'衣服', at:[23, 10]}, {word:'帽子', at:[30, 13]},
     {word:'井', at:[22, 11, 'village'], if:{knows:'什么'}}, {word:'房子', at:[9, 2, 'village'], if:{knows:'什么'}},
     {word:'门', at:[31, 4, 'village'], if:{knows:'什么'}},
@@ -1102,7 +1282,21 @@ const ACROSS_THE_SEA = {
     '歌': 'The woodcutter’s song, on the far shore.',
     '云': 'The sea of clouds under the cliff road, on the teacher’s mountain.',
     '鹤': 'By the pool on the cliff road, on the teacher’s mountain.',
-    '天': 'The open sky over the stone pillars, at the top of the teacher’s mountain.'
+    '天': 'The open sky over the stone pillars, at the top of the teacher’s mountain.',
+    '师父': 'The master, in the Cave of the Slanting Moon and Three Stars.',
+    '名字': 'The master asked your name: 你叫什么名字？, and named you 孙悟空.',
+    '叶子': 'The fallen leaves in the cave, from the senior pupil.',
+    '扫': 'Sweeping the cave’s leaves, for the senior pupil.',
+    '桶': 'The senior pupil’s bucket: 我要三桶水。',
+    '斧头': 'The senior pupil’s axe, to chop wood.',
+    '头': 'The master’s riddle: three taps on your head.',
+    '晚上': 'The night of the master’s riddle, waiting to go to his back door.',
+    '月亮': 'The slanting moon, shining in the cave’s pool at night.',
+    '星星': 'The three stars over the master’s back door, at night.',
+    '变': 'The master’s secret, at night in his room: changing into things.',
+    '飞': 'The master’s cloud somersault.',
+    '松树': 'Showing off to the pupils: you changed into a pine tree.',
+    '回家': 'The master sent you home: 你回家吧。'
   },
   // Sentences for practising words without pictures (as Flower Fruit Mountain's). Like those, each needs every word in it caught.
   practiceSentences: [
@@ -1114,7 +1308,9 @@ const ACROSS_THE_SEA = {
     {sentence:'我 要 买 包子', sentenceEn:'I want to buy a steamed bun.'},
     {sentence:'我 说 你 听', sentenceEn:'I talk, you listen.'},
     {sentence:'神仙 在 哪里', sentenceEn:'Where are the immortals?'},
-    {sentence:'我们 在 学', sentenceEn:'We’re learning.'}
+    {sentence:'我们 在 学', sentenceEn:'We’re learning.'},
+    {sentence:'你 叫 什么 名字', sentenceEn:'What’s your name?'},
+    {sentence:'我 要 回家', sentenceEn:'I want to go home.'}
   ],
   // Example sentences for words, on their Word Scroll pages.
   examples: {
@@ -1124,7 +1320,11 @@ const ACROSS_THE_SEA = {
     '猫': {zh:'猫 很 小 。', en:'The cat is very small.'},
     '鹤': {zh:'鹤 在 水 里 。', en:'The crane is in the water.'},
     '云': {zh:'山 上 有 云 。', en:'There are clouds on the mountain.'},
-    '天': {zh:'天 上 有 鸟 。', en:'There are birds in the sky.'}
+    '天': {zh:'天 上 有 鸟 。', en:'There are birds in the sky.'},
+    '头': {zh:'这 是 猴子 的 头 。', en:'This is the monkey’s head.'},
+    '晚上': {zh:'晚上 有 月亮 。', en:'At night, there’s the moon.'},
+    '月亮': {zh:'天 上 有 月亮 。', en:'There’s a moon in the sky.'},
+    '星星': {zh:'天 上 有 很多 星星 。', en:'There are lots of stars in the sky.'},
   },
   enemies: {},
   battles: {},
@@ -1261,7 +1461,39 @@ const ACROSS_THE_SEA = {
     notRight: {zh:'不 对 。', en:'That’s not right.'},
     goUp: {zh:'你 去 山 上 吧 ！', en:'Go on up the mountain!'},
     // the boy at the cave's door
-    masterWaits: {zh:'师父 在 等 你 。', en:'The master is waiting for you.'}
+    masterWaits: {zh:'师父 在 等 你 。', en:'The master is waiting for you.'},
+    // the master
+    youCame: {zh:'你 来 了 。', en:'You’ve come.'},
+    iAmMaster: {zh:'我 是 你 的 师父 。', en:'I’m your master.'},
+    whatName: {zh:'你 叫 什么 名字 ？', en:'What’s your name?'},
+    noName: {zh:'我 没有 名字 。', en:'I don’t have a name.'},
+    yourName: {zh:'你 叫 孙悟空 。', en:'Your name is Sun Wukong.'},
+    oneTwoThree: {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'},
+    teachChange: {zh:'我 教 你 变 。', en:'I’ll teach you to change into things.'},
+    change: {zh:'变 ！', en:'Change!'},
+    teachFly: {zh:'我 教 你 飞 。', en:'I’ll teach you to fly.'},
+    goAway: {zh:'你 走 吧 ！', en:'You must leave!'},
+    goHome: {zh:'你 回家 吧 。', en:'Go home.'},
+    // I spy, with a pupil: what she can see (each said only in Chinese)
+    spyTree: {zh:'我 看见 树 ！', en:'I can see a tree!'},
+    spyWater: {zh:'我 看见 水 ！', en:'I can see water!'},
+    spyPeach: {zh:'我 看见 桃子 ！', en:'I can see peaches!'},
+    spyStone: {zh:'我 看见 石头 ！', en:'I can see a stone!'},
+    spyWood: {zh:'我 看见 木头 ！', en:'I can see wood!'},
+    spyDoor: {zh:'我 看见 门 ！', en:'I can see a door!'},
+    spyHouse: {zh:'我 看见 房子 ！', en:'I can see a house!'},
+    // the senior pupil's chores
+    manyLeaves: {zh:'很多 叶子 ！', en:'So many leaves!'},
+    sweepLeaves: {zh:'你 扫 叶子 吧 。', en:'You sweep up the leaves.'},
+    thisBucket: {zh:'这 是 桶 。', en:'This is a bucket.'},
+    wantWater3: {zh:'我 要 三 桶 水 。', en:'I need three buckets of water.'},
+    thisAxe: {zh:'这 是 斧头 。', en:'This is an axe.'},
+    wantWood4: {zh:'我 要 四 块 木头 。', en:'I need four pieces of wood.'},
+    veryGood: {zh:'很 好 ！', en:'Very good!'},
+    // the pupils
+    changePine: {zh:'你 变 松树 吧 ！', en:'Change into a pine tree!'},
+    cheer: {zh:'好 ！ 好 ！', en:'Bravo! Bravo!'},
+    littleHi: {zh:'师兄 好 ！', en:'Hello, senior brother!'}
   },
 
   talk: {
@@ -1416,9 +1648,63 @@ const ACROSS_THE_SEA = {
     // the boy at the cave's door: who are you? (you're dressed as a person, but…) The master is waiting for you
     doorBoy: [
       {if:{door:1}, do:[{say:'whoAreYou'}, {gap:{sentence:'我 是 猴子', en:'I’m a monkey.', word:'猴子', others:['人', '鸟'], pic:'猴子'}},
-        {say:'masterWaits'}, {set:{door:2}}, {areaEnd:true}]},
+        {say:'masterWaits'}, {set:{door:2}}, {message:'The boy goes back in through the open doors. Follow him: face the doors, and press A.'}]},
       {do:[{say:'masterWaits'}]}
-    ]
+    ],
+    // the master: who he is (师父), your name (名字); the chores first; his lecture, and seven years; his riddle (头); at
+    // night, in his room, his secret (变); his tests; the cloud somersault (飞); and, once you've shown off, home (回家)
+    master: [
+      {if:{teacher:0}, waits:true, do:[{say:'youCame'}, {say:'iAmMaster', teach:'师父'}, {newWord:'师父', note:'师父 means master, or teacher: the one who teaches you, and looks after you.'}, {set:{teacher:1}}]},
+      {if:{named:0}, waits:true, do:[{say:'whatName', teach:'名字'}, {newWord:'名字', note:'名字 means name. 你叫什么名字？ What are you called?'},
+        {say:'noName', by:'player'}, {say:'yourName'}, {set:{named:1}}, {sound:'chime'},
+        {message:'From now on you’re 孙悟空, Sun Wukong: Monkey Awakened to Emptiness. You’re one of the master’s pupils now.'}]},
+      {if:{chores:{below:6}}, do:[{message:'The master wants you to help the senior pupil with the chores first.'}]},
+      {if:{grown:0}, do:[{say:'listen'}, {practise:4, label:'The master’s lecture', pic:'师父'}, {scene:'caveYears'}, {set:{grown:1}}, {sound:'chime'},
+        {message:'Seven years have gone by. The peach trees you watered are tall now, with fruit on them, and there are new little pupils.'}]},
+      {if:{riddle:0}, waits:true, do:[{say:'oneTwoThree'}, {sound:'tock'}, {sound:'tock'}, {sound:'tock'}, {newWord:'头', note:'头 means head. The master tapped you on the head, three times!'},
+        {set:{riddle:1}},
+        {message:'The master puts his hands behind his back, goes into the hall and shuts the doors. The pupils are cross with you. But you understand: three taps… the third watch of the night… the back door!'}]},
+      {if:{riddle:2}, waits:true, do:[{say:'youCame'}, {say:'teachChange', teach:'变'}, {newWord:'变', note:'变 means to change: into something else. The master’s secret, for you alone.'},
+        {say:'change'}, {turnInto:1, label:'变！ Listen: what does the master say?'}, {set:{riddle:3}},
+        {message:'Before dawn, you creep back to your room. Nobody saw you!'}, {goTo:'cave', at:[4, 4], facing:'down'}]},
+      {if:{tests:0}, do:[{say:'change'}, {turnInto:3, label:'变！ Listen: what does the master say?'}, {set:{tests:1}}, {say:'veryGood'}]},
+      {if:{fly:0}, waits:true, do:[{say:'teachFly', teach:'飞'}, {newWord:'飞', note:'飞 means to fly. The master teaches you the cloud somersault: one leap, and you fly a long, long way.'},
+        {scene:'somersault'}, {set:{fly:1}}, {message:'From now on you can fly by cloud: open your map (MAP), choose a place you’ve been, and press Fly here.'}]},
+      {if:{pine:1, sentHome:0}, waits:true, do:[{say:'goAway'}, {say:'goHome', teach:'回家'}, {newWord:'回家', note:'回家 means to go home. The master is sending you home, to Flower Fruit Mountain.'},
+        {reply:'再见'}, {scene:'flyHome'}, {set:{sentHome:1}}, {areaEnd:true}]},
+      {do:[{say:'change'}, {turnInto:2, label:'变！ Listen: what does the master say?'}]}
+    ],
+    // a pupil plays I spy with you (the spy step), again whenever you like; the first time, a present
+    spyPupil: [
+      {if:{named:0}, do:[{say:'hi'}, {reply:'你好'}]},
+      {do:[{say:'play'}, {spy:'spyGame', rounds:3, things:[{word:'树', say:'spyTree'}, {word:'水', say:'spyWater'}, {word:'桃子', say:'spyPeach'}, {word:'石头', say:'spyStone'},
+        {word:'木头', say:'spyWood'}, {word:'门', say:'spyDoor'}, {word:'房子', say:'spyHouse'}],
+        listen:'She says it only in Chinese. Find it, and press A at it.', found:'That’s it: {word}!', wrong:'Not that one. Listen again!',
+        done:[{say:'veryGood'}, {coins:2, note:'The pupil laughs, and gives you 2 🪙.'}]}]}
+    ],
+    // the senior pupil's chores: the leaves (叶子), sweeping them (扫), the bucket (桶) and three buckets of water, the axe
+    // (斧头) and four pieces of wood
+    senior: [
+      {if:{named:0}, do:[{say:'hi'}, {reply:'你好'}]},
+      {if:{chores:0}, waits:true, do:[{say:'manyLeaves', teach:'叶子'}, {newWord:'叶子', note:'叶子 means leaves. They fall in the cave all year round.'}, {set:{chores:1}}]},
+      {if:{chores:1}, waits:true, do:[{say:'sweepLeaves', teach:'扫'}, {newWord:'扫', note:'扫 means to sweep. Face a heap of leaves, and press A to sweep it up.'}, {set:{chores:2}}]},
+      {if:{chores:2, leavesSwept:{below:5}}, do:[{say:'sweepLeaves'}, {message:'Sweep up the heaps of leaves in the courtyard ({leavesSwept}/5): face one, and press A.'}]},
+      {if:{chores:2}, waits:true, do:[{say:'veryGood'}, {say:'thisBucket', teach:'桶'}, {newWord:'桶', note:'桶 means bucket. It counts buckets of something too: 三桶水, three buckets of water.'}, {set:{chores:3}}, FETCH_WATER]},
+      {if:{chores:3}, do:[FETCH_WATER]},
+      {if:{chores:4}, waits:true, do:[{say:'thisAxe', teach:'斧头'}, {newWord:'斧头', note:'斧头 means axe. Chop logs at the chopping blocks: face one, and press A.'}, {set:{chores:5}}, FETCH_WOOD]},
+      {if:{chores:5}, do:[FETCH_WOOD]},
+      {do:[{say:'veryGood'}]}
+    ],
+    // a pupil who dares you to show off, once you can fly: change into a pine tree (松树)! The noise brings the master out
+    darePupil: [
+      {if:{fly:1, pine:0}, waits:true, do:[{say:'changePine', teach:'松树'}, {newWord:'松树', note:'松树 means pine tree: 松 pine + 树 tree.'},
+        {say:'change', by:'player'}, {turnInto:'松树', ms:2800}, {say:'cheer'}, {set:{pine:1}},
+        {message:'The pupils clap and cheer. But the noise brings the master out of the hall, and he’s angry…'}]},
+      {do:[{say:'hi'}, {reply:'你好'}]}
+    ],
+    pupil4: [{do:[{say:'hi'}, {reply:'你好'}]}],
+    little1: [{do:[{say:'littleHi'}, {message:'A new little pupil. They call you 师兄, senior brother: you’ve been here longer than them!'}]}],
+    little2: [{do:[{say:'littleHi'}, {reply:'你好'}]}]
   },
 
   story: [],
@@ -1444,6 +1730,22 @@ const ACROSS_THE_SEA = {
     // a card for a jump in time, after the years in the town: 很多年以后…… (decided 5 November 2026, with what's changed
     // when you look round: the children grown up, new little pupils, the teacher's hair grey, a new stall)
     manyYearsLater: {watch:'Watch “many years later”', when:{years:1}, captions: [{at:0, zh:'很 多 年 以后 ……', en:'Many years later…'}]},
+    // seven years in the cave, chapter 1: the seasons going round, a peach tree growing up, and you sweeping the leaves
+    caveYears: {watch:'Watch seven years go by in the cave', when:{grown:1}, captions: [
+      {at:0, zh:'孙悟空 扫 叶子 。', en:'Sun Wukong sweeps up the leaves.'},
+      {at:4, zh:'孙悟空 听 师父 说 。', en:'Sun Wukong listens to the master.'},
+      {at:8, zh:'七 年 以后 ……', en:'Seven years later…'}
+    ]},
+    // the cloud somersault (飞), and the flight home at the end of the chapter (home: over the sea, Flower Fruit Mountain ahead)
+    somersault: {art:'cloudFlight', watch:'Watch the cloud somersault', when:{fly:1}, captions: [
+      {at:0, zh:'我 会 飞 了 ！', en:'I can fly!'},
+      {at:4, zh:'孙悟空 在 天 上 飞 。', en:'Sun Wukong flies across the sky.'}
+    ]},
+    flyHome: {art:'cloudFlight', home:true, watch:'Watch the flight home', when:{sentHome:1}, captions: [
+      {at:0, zh:'再见 ！', en:'Goodbye!'},
+      {at:4, zh:'孙悟空 飞 回家 。', en:'Sun Wukong flies home.'},
+      {at:8, zh:'花果山 ！', en:'Flower Fruit Mountain!'}
+    ]},
     // across the western sea, in the boatman's big boat
     crossSea: {watch:'Watch the crossing', when:{boat:2}, captions: [
       {at:0, zh:'有 风 了 ！', en:'The wind’s come!'},

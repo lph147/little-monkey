@@ -634,12 +634,12 @@ check that each is true and simply put.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman) |  |
+| 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman), 师姐 (A pupil), 大师兄 (The senior pupil), 师兄 (A pupil), 师弟 (A pupil) |  |
 | 我长大了！ | wǒ zhǎngdà le! | I’ve grown up! | 老板 (Stallholder), 路人 (Passer-by) |  |
 | 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder) |  |
 | 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child), 师姐 (A pupil) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 货郎 (Peddler) |  |
 | 包子！包子！ | bāozi! bāozi! | Steamed buns! Steamed buns! |  |  |
 | 苹果！桃子！ | píngguǒ! táozi! | Apples! Peaches! | 老板 (Stallholder) |  |
@@ -686,7 +686,7 @@ check that each is true and simply put.
 | 我说，你听。 | wǒ shuō, nǐ tīng. | I talk, you listen. | 说书人 (Storyteller) |  |
 | 神仙在哪里？ | shénxiān zài nǎlǐ? | Where are the immortals? | 小猴子 (You) |  |
 | 我不知道。 | wǒ bù zhīdào. | I don’t know. | 说书人 (Storyteller) |  |
-| 你听！ | nǐ tīng! | Listen! | 老师 (Teacher) |  |
+| 你听！ | nǐ tīng! | Listen! | 老师 (Teacher), 师父 (The master) |  |
 | 他们是孩子。 | tāmen shì háizi. | They’re children. | 老师 (Teacher) |  |
 | 孩子们在学。 | háizi men zài xué. | The children are learning. | 老师 (Teacher) |  |
 | 今天没有风。 | jīntiān méiyǒu fēng. | There’s no wind today. | 船夫 (Boatman) |  |
@@ -702,6 +702,34 @@ check that each is true and simply put.
 | 不对。 | bù duì. | That’s not right. |  |  |
 | 你去山上吧！ | nǐ qù shān shàng ba! | Go on up the mountain! | 樵夫 (Woodcutter) |  |
 | 师父在等你。 | shīfu zài děng nǐ. | The master is waiting for you. | 仙童 (The immortal’s boy) |  |
+| 你来了。 | nǐ lái le. | You’ve come. | 师父 (The master) |  |
+| 我是你的师父。 | wǒ shì nǐ de shīfu. | I’m your master. | 师父 (The master) |  |
+| 你叫什么名字？ | nǐ jiào shénme míngzi? | What’s your name? | 师父 (The master) |  |
+| 我没有名字。 | wǒ méiyǒu míngzi. | I don’t have a name. | 小猴子 (You) |  |
+| 你叫孙悟空。 | nǐ jiào Sūn Wùkōng. | Your name is Sun Wukong. | 师父 (The master) |  |
+| 一，二，三！ | yī, èr, sān! | One, two, three! | 师父 (The master) |  |
+| 我教你变。 | wǒ jiāo nǐ biàn. | I’ll teach you to change into things. | 师父 (The master) |  |
+| 变！ | biàn! | Change! | 师父 (The master), 小猴子 (You) |  |
+| 我教你飞。 | wǒ jiāo nǐ fēi. | I’ll teach you to fly. | 师父 (The master) |  |
+| 你走吧！ | nǐ zǒu ba! | You must leave! | 师父 (The master) |  |
+| 你回家吧。 | nǐ huíjiā ba. | Go home. | 师父 (The master) |  |
+| 我看见树！ | wǒ kànjiàn shù! | I can see a tree! |  |  |
+| 我看见水！ | wǒ kànjiàn shuǐ! | I can see water! |  |  |
+| 我看见桃子！ | wǒ kànjiàn táozi! | I can see peaches! |  |  |
+| 我看见石头！ | wǒ kànjiàn shítou! | I can see a stone! |  |  |
+| 我看见木头！ | wǒ kànjiàn mùtou! | I can see wood! |  |  |
+| 我看见门！ | wǒ kànjiàn mén! | I can see a door! |  |  |
+| 我看见房子！ | wǒ kànjiàn fángzi! | I can see a house! |  |  |
+| 很多叶子！ | hěn duō yèzi! | So many leaves! | 大师兄 (The senior pupil) |  |
+| 你扫叶子吧。 | nǐ sǎo yèzi ba. | You sweep up the leaves. | 大师兄 (The senior pupil) |  |
+| 这是桶。 | zhè shì tǒng. | This is a bucket. | 大师兄 (The senior pupil) |  |
+| 我要三桶水。 | wǒ yào sān tǒng shuǐ. | I need three buckets of water. |  |  |
+| 这是斧头。 | zhè shì fǔtou. | This is an axe. | 大师兄 (The senior pupil) |  |
+| 我要四块木头。 | wǒ yào sì kuài mùtou. | I need four pieces of wood. |  |  |
+| 很好！ | hěn hǎo! | Very good! | 师父 (The master), 大师兄 (The senior pupil) |  |
+| 你变松树吧！ | nǐ biàn sōngshù ba! | Change into a pine tree! | 师兄 (A pupil) |  |
+| 好！好！ | hǎo! hǎo! | Bravo! Bravo! | 师兄 (A pupil) |  |
+| 师兄好！ | shīxiōng hǎo! | Hello, senior brother! | 小师弟 (A little pupil), 小师妹 (A little pupil) |  |
 
 ### Sentences the player completes (one word missing)
 
@@ -733,6 +761,8 @@ check that each is true and simply put.
 | 我说你听 | wǒ shuō nǐ tīng | I talk, you listen. | You, in a lesson at school |  |
 | 神仙在哪里 | shénxiān zài nǎlǐ | Where are the immortals? | You, in a lesson at school |  |
 | 我们在学 | wǒmen zài xué | We’re learning. | You, in a lesson at school |  |
+| 你叫什么名字 | nǐ jiào shénme míngzi | What’s your name? | You, in a lesson at school |  |
+| 我要回家 | wǒ yào huíjiā | I want to go home. | You, in a lesson at school |  |
 | 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
@@ -778,6 +808,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鹤在水里。 | hè zài shuǐ lǐ. | The crane is in the water. | 鹤 |  |
 | 山上有云。 | shān shàng yǒu yún. | There are clouds on the mountain. | 云 |  |
 | 天上有鸟。 | tiān shàng yǒu niǎo. | There are birds in the sky. | 天 |  |
+| 这是猴子的头。 | zhè shì hóuzi de tóu. | This is the monkey’s head. | 头 |  |
+| 晚上有月亮。 | wǎnshang yǒu yuèliang. | At night, there’s the moon. | 晚上 |  |
+| 天上有月亮。 | tiān shàng yǒu yuèliang. | There’s a moon in the sky. | 月亮 |  |
+| 天上有很多星星。 | tiān shàng yǒu hěn duō xīngxing. | There are lots of stars in the sky. | 星星 |  |
 
 ### Scene: the raft drifting
 
@@ -800,6 +834,29 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 很多年以后…… | hěn duō nián yǐhòu… | Many years later… |  |
+
+### Scene: seven years go by in the cave
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 孙悟空扫叶子。 | Sūn Wùkōng sǎo yèzi. | Sun Wukong sweeps up the leaves. |  |
+| 孙悟空听师父说。 | Sūn Wùkōng tīng shīfu shuō. | Sun Wukong listens to the master. |  |
+| 七年以后…… | qī nián yǐhòu… | Seven years later… |  |
+
+### Scene: the cloud somersault
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 我会飞了！ | wǒ huì fēi le! | I can fly! |  |
+| 孙悟空在天上飞。 | Sūn Wùkōng zài tiān shàng fēi. | Sun Wukong flies across the sky. |  |
+
+### Scene: the flight home
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 再见！ | zàijiàn! | Goodbye! |  |
+| 孙悟空飞回家。 | Sūn Wùkōng fēi huíjiā. | Sun Wukong flies home. |  |
+| 花果山！ | Huāguǒ Shān! | Flower Fruit Mountain! |  |
 
 ### Scene: the crossing
 
@@ -853,6 +910,13 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 船夫 | chuánfū | Boatman |  |
 | 樵夫 | qiáofū | Woodcutter |  |
 | 仙童 | xiāntóng | The immortal’s boy |  |
+| 师父 | shīfu | The master |  |
+| 师姐 | shījiě | A pupil |  |
+| 大师兄 | dà shīxiōng | The senior pupil |  |
+| 师兄 | shīxiōng | A pupil |  |
+| 师弟 | shīdì | A pupil |  |
+| 小师弟 | xiǎo shīdì | A little pupil |  |
+| 小师妹 | xiǎo shīmèi | A little pupil |  |
 | 牌子 | páizi | Sign |  |
 | 海的那边 | hǎi de nàbiān | Across the sea |  |
 | 海边 | hǎibiān | The shore |  |
@@ -868,6 +932,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山脚 | shānjiǎo | The foot of the mountain |  |
 | 栈道 | zhàndào | The cliff road |  |
 | 石林 | shílín | The stone pillars |  |
+| 斜月三星洞 | Xiéyuè Sānxīng Dòng | Cave of the Slanting Moon and Three Stars |  |
+| 斜月三星洞 | Xiéyuè Sānxīng Dòng | Cave of the Slanting Moon and Three Stars |  |
+| 师父的房间 | shīfu de fángjiān | The master’s room |  |
 
 ### Words to collect
 
@@ -907,6 +974,20 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 云 | yún | cloud |  |
 | 鹤 | hè | crane |  |
 | 天 | tiān | sky |  |
+| 师父 | shīfu | master, teacher |  |
+| 名字 | míngzi | name |  |
+| 叶子 | yèzi | leaf, leaves |  |
+| 扫 | sǎo | to sweep |  |
+| 桶 | tǒng | bucket |  |
+| 斧头 | fǔtou | axe |  |
+| 头 | tóu | head |  |
+| 晚上 | wǎnshang | night, evening |  |
+| 月亮 | yuèliang | moon |  |
+| 星星 | xīngxing | star |  |
+| 变 | biàn | to change (into something) |  |
+| 飞 | fēi | to fly |  |
+| 松树 | sōngshù | pine tree |  |
+| 回家 | huíjiā | to go home |  |
 
 ### How words are made
 
@@ -917,6 +998,9 @@ simply put. A part's pinyin is as it's said in the word.
 | Word | Pinyin | How it’s made | Notes |
 | --- | --- | --- | --- |
 | 鹤 | hè | 鸟 niǎo (bird): is on the right of 鹤: a crane is a bird |  |
+| 月亮 | yuèliang | 月 yuè (moon) + 亮 liang (bright) = 月亮 (moon) |  |
+| 松树 | sōngshù | 松 sōng (pine) + 树 shù (tree) = 松树 (pine tree) |  |
+| 回家 | huíjiā | 回 huí (to go back) + 家 jiā (home) = 回家 (to go home) |  |
 | 天 | tiān | 大 dà (big): is drawn like someone standing with their arms out wide; the line over their head is the sky |  |
 
 ### The child's game: is it?
@@ -1028,8 +1112,11 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 找 | zhǎo | to look for |  |
 | 考试 | kǎoshì | exam, test |  |
 | 等 | děng | to wait |  |
-| 师父 | shīfu | teacher, master |  |
 | 对 | duì | right, correct |  |
+| 看见 | kànjiàn | to see |  |
+| 教 | jiāo | to teach |  |
+| 师兄 | shīxiōng | senior brother (an older pupil) |  |
+| 孙悟空 | Sūn Wùkōng | Sun Wukong (your name: Monkey Awakened to Emptiness) |  |
 | 块 | kuài | (for pieces: 三块木头, three pieces of wood) |  |
 | 那边 | nàbiān | over there, the other side |  |
 | 神仙 | shénxiān | immortal |  |

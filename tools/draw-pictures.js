@@ -1155,6 +1155,89 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(and(Rc(1, 2, 30, 28, 4), or(O(8, 31, 12, 6), O(24, 32, 11, 6.6))), '#5FA85A');   // hills along the bottom
     p.flat(and(Rc(1, 2, 30, 28, 4), or(O(8, 31, 12, 6), O(24, 32, 11, 6.6)), not(or(O(8, 31.6, 11.4, 5.6), O(24, 32.6, 10.4, 6.2)))), '#7CC46B');
   },
+  '师父': p => {   // master: an old man in a pale robe, white topknot and a long white beard (unlike a person: old, robed, bearded)
+    p.fill(Pg([[9, 18], [23, 18], [28, 31], [4, 31]]), '#E4E0D2', {light: '#F4F2EA', dark: '#C4BEAC'});      // his robe
+    p.flat(Rc(6, 26, 20, 2), '#6A5A8A');                                                      // its sash
+    p.fill(O(16, 11, 6, 6.4), '#F2C9A0', {edge: true});                                       // his face
+    p.fill(or(O(16, 5.6, 6.4, 3), O(16, 2.4, 2.4, 2)), '#F4F4F0', {dark: '#C8C8C0'});            // white hair, a topknot
+    p.fill(Pg([[10.6, 13], [21.4, 13], [20, 22], [16, 27], [12, 22]]), '#F7F7F2', {dark: '#D0D0C8'});   // the long beard
+    p.flat(or(Rc(12, 8.4, 3, 1), Rc(17, 8.4, 3, 1)), '#E8E8E0');                                 // white eyebrows
+    p.flat(or(Rc(12.6, 10.2, 2, 1), Rc(17.4, 10.2, 2, 1)), '#2A1E16');                           // eyes, smiling
+    p.fill(O(16, 23, 5.4, 2.4), '#C4BEAC');                                                    // hands in his sleeves
+  },
+  '叶子': p => {   // leaves: two fallen leaves, red-orange and gold, with their veins (unlike a tree: just leaves)
+    p.fill(Pg([[3, 27], [8, 14], [17, 6], [27, 3], [25, 13], [18, 22], [8, 27]]), '#D8642E', {edge: true});
+    p.flat(path([[4, 27], [14, 15], [25, 5]], .5), '#9A3A1A');
+    p.flat(or(path([[10, 20], [8, 15]], .4), path([[15, 14], [13, 9]], .4), path([[12, 18], [18, 19]], .4), path([[17, 12], [23, 12]], .4)), '#A84A22');
+    p.fill(Pg([[13, 30], [17, 21], [25, 16], [31, 16], [28, 24], [21, 29]]), '#E2B03A', {edge: true});
+    p.flat(path([[13, 30], [22, 22], [30, 17]], .5), '#A8781A');
+  },
+  '扫': p => {   // to sweep: a broom sweeping up a little heap of leaves, swishing (unlike the leaves: a broom)
+    p.fill(path([[27, 2], [14, 20]], 1), '#B98A55');                                          // its handle
+    p.fill(Pg([[10, 17], [19, 23], [15, 31], [3, 28]]), '#D9B866', {edge: true});               // its straw
+    p.flat(or(path([[9, 21], [6, 28]], .4), path([[12, 22], [10, 29]], .4), path([[15, 24], [13, 30]], .4)), '#B8963E');
+    p.flat(Rc(10, 18, 9, 2), '#8A5E36');                                                       // tied on
+    p.fill(O(25, 28, 6, 2.4), '#B8662E', {edge: true});                                       // the heap of leaves
+    for (const [x, y, c] of [[22, 26, '#D8923A'], [26, 25, '#E6B04A'], [28, 27, '#C2552E']]) p.flat(Rc(x, y, 2, 1), c);
+    p.flat(or(path([[3, 10], [8, 14]], .4), path([[1, 15], [5, 18]], .4)), '#9AB8D0');           // swish
+  },
+  '桶': p => {   // bucket: a wooden bucket of water, bound with bands, a rope handle (unlike the well: just a bucket)
+    p.fill(Pg([[6, 11], [26, 11], [24, 30], [8, 30]]), '#B98A55', {edge: true});
+    for (const x of [11, 16, 21]) p.flat(Rc(x, 13, 1, 16), '#9A6E40');                           // its staves
+    p.flat(or(Rc(6.4, 14, 19.4, 2), Rc(7.6, 25, 17, 2)), '#5E4A3A');                              // iron bands
+    p.fill(O(16, 11, 10, 2.6), '#5AA0E6', {light: '#9CCCF2', dark: '#3F77C4', edge: true});    // water in it
+    p.flat(path([[6, 11], [8, 4], [16, 2], [24, 4], [26, 11]], .6), '#6E5A3A');                   // the handle
+  },
+  '斧头': p => {   // axe: a steel head on a wooden handle (unlike wood: a tool)
+    p.fill(path([[7, 30], [21, 6]], 1.5), '#A8743E', {dark: '#7A5230'});
+    p.fill(Pg([[16, 4], [21, 5], [25, 2], [30, 1], [31, 9], [30, 17], [26, 15], [22, 11], [17, 9]]), '#A9B0B8', {light: '#D8DEE4', dark: '#7A828C', edge: true});   // a broad blade
+    p.flat(path([[30.4, 2], [31, 9], [30.4, 16]], .6), '#EEF2F6');                            // its sharp, curved edge
+    p.fill(O(18, 7, 2.6, 2.6), '#7A828C');                                                     // where it fits the handle
+  },
+  '头': p => {   // head: a face and its hair, ears either side, no body (unlike a person or a child: just the head)
+    p.fill(or(O(5.6, 18, 2.2, 3.2), O(26.4, 18, 2.2, 3.2)), '#F2C9A0', {edge: true});           // ears
+    p.fill(O(16, 17, 10, 11.4), '#F2C9A0', {edge: true});
+    p.fill(and(O(16, 15, 11, 11), not(O(16, 21, 10, 10.6))), '#2A1E16');                       // hair
+    p.eye(11, 16); p.eye(19, 16);
+    p.flat(path([[12, 23], [16, 25], [20, 23]], .5), '#B0604A');                                 // a smile
+    p.flat(O(16, 20, 1.2, 1), '#E0A882');                                                      // nose
+  },
+  '晚上': p => {   // night: a dark sky, a little moon and stars, over a house with its window lit (unlike the sky: night)
+    p.flat(Rc(1, 2, 30, 28, 4), '#1C2448');
+    p.flat(and(Rc(1, 2, 30, 28, 4), Rc(1, 18, 30, 12)), '#2A3460');
+    p.flat(and(O(24, 8, 3.4), not(O(25.6, 6.8, 3))), '#F2EBC2');                               // the moon
+    for (const [x, y] of [[6, 6], [12, 10], [17, 5], [8, 14]]) p.flat(or(Rc(x - 1, y, 3, 1), Rc(x, y - 1, 1, 3)), '#F6E8A0');
+    p.flat(and(Rc(1, 2, 30, 28, 4), Pg([[8, 30], [8, 20], [15, 15], [22, 20], [22, 30]])), '#141A30');   // the house
+    p.flat(Rc(13, 22, 4, 4), '#F2C24E');                                                       // its window, lit
+  },
+  '月亮': p => {   // moon: a big pale crescent moon (unlike night: just the moon)
+    p.fill(and(O(15, 16, 12, 12), not(O(21, 12, 10.4, 10.4))), '#F2E07A', {light: '#FFF6C0', dark: '#D8B848', edge: true});
+    p.flat(or(O(8, 18, 1.4), O(10, 24, 1)), '#E0C860');                                         // craters
+  },
+  '星星': p => {   // stars: three bright five-pointed stars, big, middling and little
+    const star = (cx, cy, R, r) => Pg(Array.from({length: 10}, (_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, k = i % 2 ? r : R; return [cx + Math.cos(a) * k, cy + Math.sin(a) * k]; }));
+    p.fill(star(12, 17, 11, 4.6), GOLD, {light: '#FFF2A8', dark: '#D89A2A', edge: true});
+    p.fill(star(25, 8, 6, 2.6), GOLD, {light: '#FFF2A8', dark: '#D89A2A', edge: true});
+    p.fill(star(26, 25, 4.4, 2), GOLD, {light: '#FFF2A8', dark: '#D89A2A', edge: true});
+  },
+  '变': p => {   // to change: a puff of magic smoke, swirling, with sparkles (unlike a cloud: smoke, swirling, sparkling)
+    p.fill(or(O(10, 20, 7, 6), O(17, 13, 8, 7.4), O(23, 20, 6.4, 5.6), O(16, 23, 7, 5)), '#D8D2E8', {light: '#F0ECF8', dark: '#A8A0C4'});
+    p.flat(path([[17, 13], [20, 15], [19, 19], [15, 19], [13, 15], [16, 11], [22, 12]], .6), '#8A80A8');   // the swirl
+    for (const [x, y, r] of [[4, 6, 2], [27, 6, 2.4], [29, 27, 1.6], [3, 29, 1.6]]) p.flat(or(Rc(x - r, y, r * 2 + 1, 1), Rc(x, y - r, 1, r * 2 + 1)), GOLD);
+  },
+  '飞': p => {   // to fly: you on a little cloud, flying fast, speed lines behind (unlike a cloud or a bird: someone flying)
+    p.fill(or(O(19, 25, 7, 4), O(25, 23, 5, 4), O(13, 26, 5, 3)), '#F7FAFC', {dark: '#C8D6E4', edge: true});   // the cloud
+    p.fill(O(20, 18, 4.4, 4), FUR, {edge: true});                                            // body
+    p.fill(O(21, 10, 5, 4.8), FUR, {edge: true});                                            // head
+    p.fill(O(22, 11, 3.4, 3), SKIN);
+    p.eye(21, 10); p.eye(24, 10);
+    p.fill(path([[16, 19], [12, 15]], .9), FUR);                                              // an arm flung back
+    p.flat(or(path([[1, 20], [9, 20]], .5), path([[3, 25], [8, 25]], .5), path([[2, 14], [8, 15]], .5)), '#8FB8DC');   // speed lines
+  },
+  '松树': p => {   // pine tree: tall and pointed, layers of dark needles (unlike a tree: pointed, dark)
+    p.fill(Rc(14.6, 24, 3, 7), '#7A5230');
+    for (const [y, w] of [[24, 13], [17, 10.4], [10, 7.6]]) p.fill(Pg([[16, y - 9], [16 + w, y + 1], [16 - w, y + 1]]), '#2E6B3A', {light: '#4E8C52', dark: '#1E4A28', edge: true});
+  },
   '歌': p => {   // song: musical notes floating up, as when someone sings
     p.fill(O(8, 25, 3.8, 3), '#3A3A44', {light: '#5A5A66'}); p.fill(Rc(10.4, 8, 1.8, 17), '#3A3A44');   // a note
     p.fill(O(20, 22, 3.8, 3), '#3A3A44', {light: '#5A5A66'}); p.fill(Rc(22.4, 5, 1.8, 17), '#3A3A44');   // joined to another

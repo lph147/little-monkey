@@ -261,6 +261,22 @@ function drawTowerBuilder(n, X, Y, now){
   const [hx, hy] = SWING_HAND[dir], s = towerStoneAt(X + (dir === 'right' ? T : -T), Y, t.carried), k = t.lift;
   towerStone(Math.round(X + hx + (s.x - X - hx) * k), Math.round(Y - bob + hy + (s.y - Y - hy) * k - Math.sin(k * Math.PI) * 6), s.w);
 }
+// What your monkey has turned into (the turnInto step, js/world.js), over where you'd be: an animal as it looks on the map,
+// anything else its picture, small; and the puff of smoke as you change (PUFF_MS).
+const PUFF_MS = 450, FORMS = {};
+function drawForm(w, X, Y, now){
+  const ms = MAP_SPRITES[w], pic = PICTURES[w];
+  const c = FORMS[w] || (FORMS[w] = ms ? sprite(ms.rows, ms.palette) : pic ? sprite(pic.rows, pic.palette) : null);
+  if (!c) return;
+  R(b, X + 2, Y + 14, 12, 2, 'rgba(0,0,0,.25)');
+  if (ms) b.drawImage(c, X - (c.width - 16) / 2, Y - (c.height - 16), c.width, c.height);
+  else b.drawImage(c, X - 3, Y - 6, 22, 22);
+}
+function drawPuff(X, Y, p){
+  b.globalAlpha = 1 - p;
+  for (let i = 0; i < 7; i++){ const a = i / 7 * Math.PI * 2, r = 4 + p * 9; oval(b, Math.round(X + 8 + Math.cos(a) * r), Math.round(Y + 8 + Math.sin(a) * r * .8), 4, 3, i % 2 ? '#F2F2EE' : '#D6D8DC'); }
+  b.globalAlpha = 1;
+}
 function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
   R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
   const blink = (now + seed*977) % 3600 < 130;
@@ -703,6 +719,8 @@ function drawWorld(now){
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
       if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
       else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
+      if (pl.form) drawForm(pl.form, PX, PY, now);   // turned into something (the turnInto step: drawn over you, in your place)
+      if (now - puffAt < PUFF_MS) drawPuff(PX, PY, (now - puffAt) / PUFF_MS);
       if (fishing){   // your line in the water (js/fishing.js), and a ! when a fish bites
         drawRod(PX, PY, pl.dir, now, !!fishing.bite && !fishing.hooked);
         if (fishing.bite && !fishing.hooked) bubbles.push([PX + 5, PY - 10, '!']);
@@ -761,6 +779,7 @@ function drawWorld(now){
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
   drawMist(cx, cy, sh, now);   // wisps of cloud drifting past, and mist rolling in (a place's clouds and mist: js/mountain.js)
+  drawNight(cx, cy, sh, now);   // a place at night (its night: js/mountain.js)
   for (const a of spotAnimals.filter(a => a.glints && GLOOM)) glinting(a, a.at[0]*T - cx, a.at[1]*T - cy - a.perch, now);   // (an owl's eyes, in the gloom)
   for (const [x, y, k] of glintsNow(now)) glint(x*T - cx + 8, y*T - cy + 11, k);   // things hidden off the path
   for (const [x, y, show] of bubbles) bubble(x, y, show);

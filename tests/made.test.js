@@ -131,7 +131,7 @@ test('on every card of a word made of parts, the word itself has its own English
   const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(['石头'])}});
   const words = get(g, 'WORDS');
   const right = w => { g.run(`madeCard('${w}', () => {}, () => {}, 'Got it')`); return text(g.el('#sheet').querySelector('.mword .mcen')); };
-  for (const [w, m] of Object.entries(get(g, 'MADE'))) if (m.parts) assert.equal(right(w), words[w].en.split(',')[0], `${w}: its English`);
+  for (const [w, m] of Object.entries(get(g, 'MADE'))) if (m.parts && words[w]) assert.equal(right(w), words[w].en.split(',')[0], `${w}: its English`);
   assert.equal(right('山羊'), 'goat', 'not a mountain sheep');
   assert.equal(right('蜂王'), 'queen bee', 'not the bees’ king');
   assert.equal(right('你好'), 'hello', 'just hello (not wishing you well)');

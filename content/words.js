@@ -193,6 +193,20 @@ const WORD_BANK = {
   '云': {py:'yún', en:'cloud', pic:'☁️', area:2, category:'nature'},   // (chapter 1: the sea of clouds under the cliff road)
   '鹤': {py:'hè', en:'crane', pic:'🦩', area:2, category:'animals', alike:['鸟', '鹅']},   // (chapter 1: by the pool on the cliff road)
   '天': {py:'tiān', en:'sky', pic:'🌤️', area:2, category:'nature', alike:['云']},   // (chapter 1: the open sky over the stone pillars)
+  '师父': {py:'shīfu', en:'master, teacher', pic:'🧙', area:2, category:'people', alike:['人']},   // (chapter 1, from here on: the immortal who teaches you, in the cave)
+  '名字': {py:'míngzi', en:'name', area:2, category:'items'},   // (你叫什么名字？ the master gives you yours: 孙悟空)
+  '叶子': {py:'yèzi', en:'leaf, leaves', pic:'🍂', area:2, category:'nature', alike:['树', '草']},   // (the chores: the cave's fallen leaves)
+  '扫': {py:'sǎo', en:'to sweep', pic:'🧹', area:2, category:'actions', alike:['叶子']},
+  '桶': {py:'tǒng', en:'bucket', pic:'🪣', area:2, category:'items', alike:['水', '井']},   // (and to count buckets of something: 三桶水)
+  '斧头': {py:'fǔtou', en:'axe', pic:'🪓', area:2, category:'items', alike:['木头']},
+  '头': {py:'tóu', en:'head', pic:'🗣️', area:2, category:'people', alike:['人', '孩子']},   // (the master's riddle: three taps on your head)
+  '晚上': {py:'wǎnshang', en:'night, evening', pic:'🌃', area:2, category:'nature', alike:['天']},
+  '月亮': {py:'yuèliang', en:'moon', pic:'🌙', area:2, category:'nature', alike:['晚上']},
+  '星星': {py:'xīngxing', en:'star', pic:'🌟', area:2, category:'nature', alike:['晚上', '月亮']},
+  '变': {py:'biàn', en:'to change (into something)', pic:'💨', area:2, category:'actions', alike:['云']},   // (the 72 transformations: the chapter's big idea)
+  '飞': {py:'fēi', en:'to fly', pic:'💫', area:2, category:'actions', alike:['云', '变', '鸟']},   // (the cloud somersault)
+  '松树': {py:'sōngshù', en:'pine tree', pic:'🎄', area:2, category:'nature', alike:['树', '木头']},   // (showing off: you change into one)
+  '回家': {py:'huíjiā', en:'to go home', area:2, category:'actions'},   // (the master sends you home to Flower Fruit Mountain)
 
   // Heard in sentences
   '知道': {py:'zhīdào', en:'to know'},
@@ -261,8 +275,11 @@ const WORD_BANK = {
   '找': {py:'zhǎo', en:'to look for'},
   '考试': {py:'kǎoshì', en:'exam, test'},   // (the teacher's exam, at the end of chapter 1)
   '等': {py:'děng', en:'to wait'},
-  '师父': {py:'shīfu', en:'teacher, master'},
   '对': {py:'duì', en:'right, correct'},
+  '看见': {py:'kànjiàn', en:'to see'},
+  '教': {py:'jiāo', en:'to teach'},
+  '师兄': {py:'shīxiōng', en:'senior brother (an older pupil)'},
+  '孙悟空': {py:'Sūn Wùkōng', en:'Sun Wukong (your name: Monkey Awakened to Emptiness)'},
   '块': {py:'kuài', en:'(for pieces: 三块木头, three pieces of wood)'},
   '那边': {py:'nàbiān', en:'over there, the other side'},
   '神仙': {py:'shénxiān', en:'immortal'},   // (who never grow old: in the book, they live far across the sea; chapter 1's feast)
@@ -325,6 +342,9 @@ const MADE = {
   '鸭子': {clue:['鸟', 'niǎo', 'bird'], why:'is on the right of 鸭: a duck is a bird'},
   '喝': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you drink with your mouth'},
   '鹤': {clue:['鸟', 'niǎo', 'bird'], why:'is on the right of 鹤: a crane is a bird'},
+  '月亮': {parts:[['月', 'yuè', 'moon'], ['亮', 'liang', 'bright']]},   // (月, as in the cave's name, 斜月三星洞)
+  '松树': {parts:[['松', 'sōng', 'pine'], ['树', 'shù', 'tree']]},   // (松, as in 松鼠)
+  '回家': {parts:[['回', 'huí', 'to go back'], ['家', 'jiā', 'home']]},
   '天': {clue:['大', 'dà', 'big'], why:'is drawn like someone standing with their arms out wide; the line over their head is the sky'},
   // made of words or characters
   '山羊': {parts:[['山', 'shān', 'mountain'], ['羊', 'yáng', 'sheep']]},
