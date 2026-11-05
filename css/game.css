@@ -1106,6 +1106,13 @@ rt.hid{visibility:hidden}
 /* the card when a new chapter of the story begins */
 .chaptercard{text-align:center;padding:14px 0 6px}
 .chaptercard h2{font-family:var(--pixel);font-size:1.7rem;margin:6px 0 0;line-height:1.2}
+.partcard .parttext{margin:10px auto 0;max-width:34em;line-height:1.45;text-align:center}   /* a part of the story beginning: what it's about */
+.journey{margin:0 0 .5rem;padding:.4rem .6rem;border-radius:8px;background:var(--card-soft, rgba(0,0,0,.05));line-height:1.4}   /* the Tasks page's journey: the goal, and the part you're in */
+.journey p{margin:0}
+.journey .jlabel{font-weight:700}
+.journey .jpart{margin-top:.2rem}
+.tasks li.main .star{flex:none;width:12px;height:12px;align-self:flex-start;margin-top:.3em;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath d='M3 0h1v2h3v1h-1v1h-1v1h1v2h-2v-1h-1v1h-2v-2h1v-1h-1v-1h-1v-1h3z' fill='%23B07A10'/%3E%3Cpath d='M3 1h1v2h2v1h-1v1h1v1h-1v-1h-2v1h-1v-1h1v-1h-1v-1h2z' fill='%23F2C14E'/%3E%3C/svg%3E") center/contain no-repeat;image-rendering:pixelated}   /* the story's main task: a gold pixel star */
+.tasks li.alsolabel{list-style:none;font-size:.85em;opacity:.7;margin-top:.3rem}
 
 /* Select (your tasks) and Start (the menu): two small pills under the D-pad, like a Game Boy's.
    A red dot on Select while there's a task you haven't looked at. */
@@ -1279,3 +1286,4 @@ rt.hid{visibility:hidden}
 .mapwords .gloss{flex:none;margin:0 0 .2rem;font-size:.75rem;min-height:0;line-height:1.2;color:#6B5434}
 .mapwords .gloss b{color:#2A1E10}
 .mapback{position:absolute;right:.4rem;bottom:.4rem;margin:0}
+.tasks li.alsolabel::before, .tasks li.main:not(.aim)::before{display:none}   /* (no box: the main task has its ★, or the arrow)*/

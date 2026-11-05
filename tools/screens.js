@@ -1335,6 +1335,10 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'a2-town', title: 'Area 2: the market town', save: 'a2town', why: 'White walls and dark tiles along a flagstone street: the teahouse with its 茶 flag, the school with its 学校 board, the market’s stalls.', run: async () => {
     play(); await wait(600); }},
+  {id: 'a2-part', title: 'A part of the story begins', save: 'a2child', why: 'Each part of the story has a card as it begins, saying what it’s about: here, Part 2, learning to talk. The first, as you land, says why you’re here: to find an immortal.', run: async () => {
+    play(); await wait(100); here().part = 0; partsCheck(); await wait(400); }},
+  {id: 'a2-tasks', title: 'Tasks: your journey', save: 'a2asking', why: 'At the top, your journey’s goal and the part you’re in, with what you’re doing in it; then the story’s main task, ★, and the rest under Also.', run: async () => {
+    play(); await wait(100); here().part = 1; tasksPage(() => closeCard()); await wait(400); }},
   {id: 'a2-eat', title: 'Eating a meal', save: 'a2asking', why: 'A meal, such as the granny’s bowl of rice, is eaten there and then, not carried: your monkey munches it, steam rising, hearts as you finish, and your health is full. Snacks (零食) are what goes in your bag.', run: async () => {
     play(); await wait(100); pl.eating = {w: '饭', t0: performance.now() - 1050}; await wait(80); }},
   {id: 'a2-stall', title: 'Area 2: a stall, in coins', save: 'a2town', why: 'The fruit stall: 你要买什么？ (买). What you have, in coins (🪙), and each thing’s price.', run: async () => {

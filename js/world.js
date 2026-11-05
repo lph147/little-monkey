@@ -80,18 +80,35 @@ const metCount = (ch = 0, place) => chapterAnimals(ch, place).filter(a => S.met.
 // The story's chapters in this area (AREA.chapters), and the one you're in (counting from 0). Each item on the
 // area's checklist belongs to a chapter (chapter, 0 if not given); the checklist shows the chapter you're in.
 const chapterNow = () => here().chapter || 0;
-const chapterItems = () => AREA.checklist.filter(c => (c.chapter || 0) === chapterNow());
+const chapterItems = () => AREA.checklist.filter(c => (c.chapter || 0) === chapterNow() && (!c.part || !partNow() || c.part === partNow().id));   // (in a chapter with parts, just the part you're in)
+// The story's parts within a chapter (the area's parts; decided 5 November 2026, after playing it: the human world felt
+// aimless): the furthest one you've reached (here().part, its index), each with its title card as it begins (once its
+// when matches; card:false for one that begins with its chapter's own card), and what you're doing in it (now: a text,
+// or a list of {if, text}, the first that matches), at the top of the Tasks page under the journey's goal (the area's
+// goal, the same). Checklist items with a part show only while you're in it.
+const PARTS = AREA.parts || [];
+const partNow = () => { const p = PARTS[here().part]; return p && p.chapter === chapterNow() ? p : null; };
+const textNow = v => !v ? '' : typeof v === 'string' ? fill(v, false, true) : fill((v.find(x => !x.if || matches(x.if)) || {}).text || '', false, true);
+async function partsCheck(){
+  for (let i = PARTS.length - 1; i > (here().part ?? -1); i--){
+    const p = PARTS[i];
+    if (p.chapter !== chapterNow() || !matches(p.when)) continue;
+    here().part = i; save();
+    if (p.card !== false){ SFX.chime(); await infoBox('', `<div class="chaptercard partcard"><p class="label">${esc(p.name)}</p><h2>${esc(p.title)}</h2>${p.text ? `<p class="parttext">${esc(fill(p.text, false, true))}</p>` : ''}</div>`, 'OK'); }
+    return;
+  }
+}
 // [text, done, is it the exit test, found yet]: an item with show is found once show matches, or it's done
 const areaChecklist = () => chapterItems().map(c => { const done = matches(c.done); return [fill(c.text, false, true), done, !!c.exitTest, !c.show || done || matches(c.show)]; });
 const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {
-    if (t.arrow && t.arrow.sparkle) return {id:fill(t.id, true), text:fill(t.text, false, true), target:sparkleToFind(), arrow:true};   // or {sparkle}: the nearest thing that sparkles
+    if (t.arrow && t.arrow.sparkle) return {id:fill(t.id, true), text:fill(t.text, false, true), target:sparkleToFind(), arrow:true, main:!!t.main};   // or {sparkle}: the nearest thing that sparkles
     const c = typeof t.arrow === 'string' && ALL_NPCS.find(n => n.id === t.arrow);   // an arrow to a character
     const toPlace = t.arrow && t.arrow.place;   // or {place}: the way to a place, and none once you're there
     const at = c ? [c.x, c.y, c.place] : toPlace ? null : t.arrow || null, there = toPlace || (at && placeOf(at));
     const target = toPlace ? (there === PLACE ? null : wayTo(there)) : !at ? null : there === PLACE ? [at[0], at[1]] : wayTo(there);   // in another place, the arrow points the way there
-    return {id:fill(t.id, true), text:fill(t.text, false, true), target, arrow:!!t.arrow, ...(c && there === PLACE ? {npc:true} : {}),
+    return {id:fill(t.id, true), text:fill(t.text, false, true), target, arrow:!!t.arrow, main:!!t.main, ...(c && there === PLACE ? {npc:true} : {}),
       ...(t.clue && hiding() ? {clue:hideSpot(hideState().spot)} : {})};   // clue: hide and seek's, to hear again (js/hide.js)
   });
 }
@@ -957,7 +974,7 @@ function showsMore(steps, i){
   return false;
 }
 // The area's events: each happens by itself when its if matches (checked after anything you do).
-async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); placeCharacters(); refreshMap(); }
+async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); await partsCheck(); placeCharacters(); refreshMap(); }
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
 // where the content first puts them. Someone following you is wherever you've been instead (FOLLOWERS, below).
 const inClass = new Set();   // characters out of their places for a lesson, such as PE's (js/pe.js): left where it puts them

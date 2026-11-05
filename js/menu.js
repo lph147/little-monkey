@@ -139,11 +139,11 @@ const statsHTML = () => `<div class="stats"><span>${wordsCaught()} ${wordsCaught
 // with an arrow here: the newest, or the one you tap (one with somewhere to show you), which it follows instead (aimedTask(),
 // js/world.js).
 function tasksPage(back, page = 'now', focus = null){
-  const tasks = getTasks();
+  const tasks = [...getTasks()].sort((a, c) => c.main - a.main);   // (the story's main task first, with a gold star: then the rest, Also)
   tasks.forEach(t => { S.tasksRead[t.id] = 1; }); save();
   const ch = AREA.chapters[chapterNow()], found = areaChecklist().filter(([, , , f]) => f);
   const aimed = aimedTask(tasks), choose = tasks.filter(t => t.arrow).length > 1;   // (a choice only with two or more to show the way for)
-  const taskHTML = t => `<li${t === aimed ? ' class="aim"' : ''}>${choose && t.arrow ? `<button class="taskbtn" data-t="${esc(t.id)}">${esc(t.text)}</button>` : `<span>${esc(t.text)}</span>`}${t.clue ? clueTaskHTML(t.clue) : ''}</li>`;
+  const taskHTML = t => `<li class="${[t === aimed ? 'aim' : '', t.main ? 'main' : ''].join(' ').trim()}">${t.main ? '<span class="star" aria-hidden="true"></span>' : ''}${choose && t.arrow ? `<button class="taskbtn" data-t="${esc(t.id)}">${esc(t.text)}</button>` : `<span>${esc(t.text)}</span>`}${t.clue ? clueTaskHTML(t.clue) : ''}</li>`;
   const chapter = `${esc(ch.name)}: ${esc(ch.title)}`, progress = `${found.filter(([, done]) => done).length} of ${found.length} done so far`;
   if (page === 'list'){
     openCard(`<div class="cardtop"><p class="label taskslabel">${chapter}</p><span class="taskprog">${progress}</span></div>
@@ -153,8 +153,12 @@ function tasksPage(back, page = 'now', focus = null){
     on('[data-a=ok]', back);
     return;
   }
+  // the journey: the area's goal, and the part of the story you're in, with what you're doing in it (partNow, js/world.js),
+  // unless the main task below says so
+  const part = partNow(), goal = textNow(AREA.goal), journey = goal ? `<div class="journey"><p><span class="jlabel">Your journey</span> ${esc(goal)}</p>${part ? `<p class="jpart"><b>${esc(part.name)}: ${esc(part.title)}.</b>${tasks.some(t => t.main) ? '' : ' ' + esc(textNow(part.now))}</p>` : ''}</div>` : '';
+  const also = tasks.some(t => t.main) && tasks.some(t => !t.main);
   openCard(`<div class="cardtop"><p class="label taskslabel">Tasks</p>${statsHTML()}</div>
-    <div class="nowpage"><p class="label">Now${choose ? ' <span class="aimhint">Tap a task for the yellow arrow to show its way</span>' : ''}</p>${tasks.length ? `<ul class="tasks"${choose ? ' data-nav' : ''}>${tasks.map(taskHTML).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
+    <div class="nowpage">${journey}<p class="label">Now${choose ? ' <span class="aimhint">Tap a task for the yellow arrow to show its way</span>' : ''}</p>${tasks.length ? `<ul class="tasks${also ? ' withalso' : ''}"${choose ? ' data-nav' : ''}>${tasks.map((t, i) => (also && !t.main && tasks[i - 1] && tasks[i - 1].main ? '<li class="alsolabel" aria-hidden="true">Also</li>' : '') + taskHTML(t)).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
     <p class="taskprog">${chapter} · ${progress}</p></div>
     <div class="actions"><button class="btn grow" data-a="list">Checklist ▸</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=list]', () => tasksPage(back, 'list'));

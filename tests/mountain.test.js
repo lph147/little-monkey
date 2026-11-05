@@ -130,8 +130,11 @@ test('the stone pillars: the sky (天) once you’re ready for a new word; the b
   assert.equal(get(g, 'here().door'), 2);
   assert.equal(get(g, 'tileAt(14, 5).open'), true, 'the stone doors stand open');
   assert.equal(get(g, 'tileAt(14, 4).sign.says.zh'), '斜月三星洞');
-  assert.ok(notes(g).some(n => /Follow him/.test(n)));
-  assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t, done]) => done)'), [false, false, true, false], 'and your new name to find out');
+  const after = notes(g);
+  assert.ok(after.some(n => /Follow him/.test(n)));
+  assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t, done]) => [t, done])'), [['Find out your new name', false]], 'the next part of the story: the cave');
+  assert.equal(get(g, 'partNow().title'), 'The immortal’s cave');
+  assert.ok(after.some(n => /box: Part 2 The immortal’s cave/.test(n)), 'its card');
   assert.equal(g.run('promptFor(14, 5)'), 'Go in', 'in through the open doors');
   assert.deepEqual(get(g, '(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === "doorBoy"))'), ['cave', 13, 16], 'he’s gone in');
 });

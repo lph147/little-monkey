@@ -10,7 +10,7 @@ const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const tick = () => new Promise(r => setImmediate(r));
 async function play(g, code){ let done = false; const p = Promise.resolve(g.run(code)).then(() => { done = true; }); for (let i = 0; i < 400 && !done; i++){ await tick(); g.flush(); } await p; }
 function game(area = {}, more = {}){
-  const g = loadGame({dom: true, save: {version: 34, started: true, area: 2, w: {'饭': {lv: 1, ok: 1}, '桃子': {lv: 1, ok: 1}}, areas: {1: {raft: 3}, 2: {landed: 1, dressed: 2, back: 1, child: 3, ...area}},
+  const g = loadGame({dom: true, save: {version: 34, started: true, area: 2, w: {'饭': {lv: 1, ok: 1}, '桃子': {lv: 1, ok: 1}}, areas: {1: {raft: 3}, 2: {landed: 1, dressed: 2, back: 1, child: 3, part: 1, ...area}},
     pos: {place: 'village', x: 21, y: 12, dir: 'right'}, ...more}});
   g.run("mode = 'play'; save = () => {}; globalThis.__notes = []; toast = t => { __notes.push(t); }; placePlayer()");
   return g;
