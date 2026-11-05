@@ -19,9 +19,10 @@ function card(words, w, save = {}){
 }
 
 test('every entry is a word here: its parts make the word, and their pinyin is the word’s own (catching a typing mistake)', () => {
-  const g = loadGame();
-  const made = get(g, 'MADE'), words = get(g, 'WORDS'), plain = py => py.replace(/\s+/g, '').toLowerCase();
+  for (const g of [loadGame(), loadGame({save: {version: 34, started: true, area: 2, w: {}}})]){   // (each area: a word from a later one is checked there)
+  const made = get(g, 'MADE'), words = get(g, 'WORDS'), bank = get(g, 'WORD_BANK'), area = g.run('AREA.number'), plain = py => py.replace(/\s+/g, '').toLowerCase();
   for (const [w, m] of Object.entries(made)){
+    if (bank[w] && bank[w].area > area) continue;
     assert.ok(words[w], `${w} is one of this area's words`);
     if (m.parts) assert.ok(!('why' in m), `${w}: its card shows the word’s own English, what it means, not what its parts add up to`);
     else assert.ok(typeof m.why === 'string' && m.why.length > 3, `${w} says why: its clue, the picture it was drawn from, or the character it shares`);
@@ -42,6 +43,8 @@ test('every entry is a word here: its parts make the word, and their pinyin is t
       assert.ok(plain(words[w].py).includes(plain(m.same[1])) && plain(words[m.as].py).includes(plain(m.same[1])), `${w}: ${m.same[0]} is said ${m.same[1]} in both`);
     } else assert.equal([...w].length, 1, `${w}: a picture is what one character was drawn from`);
   }
+  }
+  const g = loadGame(), made = get(g, 'MADE');
   // decided 23 October 2026: only where it genuinely helps, never characters that just say the meaning again
   for (const w of ['朋友', '睡觉', '谢谢', '学校', '老师']) assert.ok(!made[w], `${w} has nothing that helps`);
   // decided 24 October 2026, after playing it: only what's simple, useful and memorable, that you can picture (the 艹 of

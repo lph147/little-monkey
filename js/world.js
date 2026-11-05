@@ -250,7 +250,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {sail:['ask','go'], practise:['label','pic'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -691,6 +691,50 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     if (await catchQ(w, 1, 1, s.grab, fill(s.label))) return;
     SFX.wrong(); toast(fill(s.missed)); STEPS.scuttle({}, who);
     return STOP;
+  },
+  // Climbing a chain up a sheer face (or down it), such as on the cliff road (decided 4 November 2026): a question a pull
+  // (pulls: how many; label: what you're doing), right or wrong, as practice, then you climb, your hands on the chain, to
+  // the square beyond the face (climb: the two ends, [x, y] each: you go to the one further from you).
+  async climb(s){
+    const ends = s.climb, [tx, ty] = ends.reduce((far, e) => Math.abs(e[1] - pl.y) + Math.abs(e[0] - pl.x) > Math.abs(far[1] - pl.y) + Math.abs(far[0] - pl.x) ? e : far);
+    for (let i = 1; i <= (s.pulls || 0); i++){ const w = nextWords(trainable(), 1)[0]; if (!w) break; await catchQ(w, i, s.pulls, s.pic, fill(s.label || 'Climbing')); }
+    held = null; queued = null;
+    const fx = pl.px, fy = pl.py, n = Math.max(1, Math.round((Math.abs(ty - pl.y) + Math.abs(tx - pl.x)) * 260 / 17));
+    for (let i = 1; i <= n; i++){ const p = i / n; pl.px = fx + (tx * T - fx) * p + Math.round(Math.sin(p * Math.PI * 8)); pl.py = fy + (ty * T - fy) * p; if (i % 15 === 0) SFX.clack(); await sleep(17); }
+    pl.x = tx; pl.y = ty; pl.px = tx * T; pl.py = ty * T; pl.mv = null; pl.turnT = performance.now();
+    S.pos = {place:PLACE, x:tx, y:ty, dir:pl.dir}; save();
+  },
+  // Picking up something someone has asked you for by its word (the fetch step), one at a time, counted aloud: what you're
+  // carrying (the area's carrying: {word, n}). Picking up something else, you put down what you had.
+  carry(s){
+    const c = here().carrying, w = s.carry, n = c && c.word === w ? c.n + 1 : 1;
+    here().carrying = {word:w, n}; save(); SFX.right();
+    const num = COUNTING[n - 1], counted = n > 1 && !!num && lvl(num) >= 1;
+    if (counted) say(num);
+    toast(`${counted ? wz(num) + '! ' : ''}You’re carrying ${n > 1 ? n + ' ' : ''}${wz(w)}.`);
+  },
+  // Fetching things by their word (decided 4 November 2026: quieter practice, where what you do is the answer): the one
+  // you're talking to asks for something only in Chinese, said aloud, its English hidden (each of its asks: the word, how
+  // many, count, and the line that asks for it, ask). You go and pick it up (the carry step, where it is), as many as they
+  // asked for, and bring it back. The right thing and they thank you (right) and ask for the next; the wrong thing, or the
+  // wrong number, and they say no (wrong) and ask again (wrongNote: what you're told). Where you are is kept in the area's
+  // progress (fetch: its key, 0 before they've asked, then which ask, from 1, then one more once it's all brought); done:
+  // the steps once you've brought everything; listen: what you're told as they ask.
+  async fetch(s, who){
+    const p = here(), face = speaker(who), asks = s.asks;
+    if ((p[s.fetch] || 0) > asks.length) return;
+    if (!p[s.fetch]){ p[s.fetch] = 1; save(); }
+    const c = p.carrying;
+    if (c){
+      const a = asks[p[s.fetch] - 1]; delete p.carrying; save();
+      if (c.word === a.word && c.n === (a.count || 1)){
+        SFX.right(); p[s.fetch]++; save();
+        await showDialog(face, L[s.right]);
+        if (p[s.fetch] > asks.length){ await runSteps(s.done || [], who); return; }
+      } else { SFX.wrong(); await showDialog(face, L[s.wrong]); toast(fill(s.wrongNote || 'That’s not what they asked for. Listen again!')); }
+    }
+    await showDialog(face, L[asks[p[s.fetch] - 1].ask], {noEn:true});
+    if (s.listen) toast(fill(s.listen));
   },
   // A question or two on words you know as you do something (practise: how many; label: what you're doing; pic: its
   // picture), such as lifting each sack onto the boat at the harbour: right or wrong, you carry on, as practice.
@@ -1316,12 +1360,12 @@ async function hopAcross(row){
   await hop(tx * T, ty * T, HOP_MS);
   pl.px = tx * T; pl.py = ty * T;
   if (ok){ pl.x = tx; pl.y = ty; S.pos = {...S.pos, x:tx, y:ty}; save(); SFX.clack(); return; }
-  splashes.push({x:tx * T + 8, y:ty * T + 10, t0:performance.now()}); SFX.splash(); dunkT = performance.now();   // it tips: in you go
-  await sleep(DUNK_MS);
+  if (hp.swing){ SFX.swish(); await hop(tx * T, ty * T - 4, 260); }   // a loose plank, hung by chains (swing): it swings away, and you grab the chain
+  else { splashes.push({x:tx * T + 8, y:ty * T + 10, t0:performance.now()}); SFX.splash(); dunkT = performance.now(); await sleep(DUNK_MS); }   // it tips: in you go
   const bank = hopBank && hopBank.place === PLACE ? hopBank : from;
   await hop(bank.x * T, bank.y * T, HOP_MS);   // and you climb out, back where you started
   pl.px = bank.x * T; pl.py = bank.y * T; pl.x = bank.x; pl.y = bank.y; S.pos = {...S.pos, x:bank.x, y:bank.y}; save();
-  dripUntil = performance.now() + 1500;
+  if (!hp.swing) dripUntil = performance.now() + 1500;
   if (FOLLOWERS.some(n => tileAt(n.x, n.y).hop)) lineUp();   // (anyone following you, if on a stone, back with you)
   toast(fill(hp.splash || 'Splash! Try again.'));
 }

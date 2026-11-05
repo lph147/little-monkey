@@ -238,7 +238,7 @@ const heartHTML = on => heartImg[on] || (heartImg[on] = `<img class="heart${on ?
 const picCache = {};
 function picHTML(w){
   const s = PICTURES[w];
-  if (!s) return WORDS[w].pic || '';
+  if (!s) return (WORDS[w] || {}).pic || '';   // (none: nothing)
   return picCache[w] || (picCache[w] = `<img class="pix" alt="" src="${sprite(s.rows, s.palette).toDataURL()}">`);
 }
 const portraitCache = {};

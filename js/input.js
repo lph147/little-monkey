@@ -56,7 +56,7 @@ function tryStep(d, now){
     else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
     return;
   }
-  if (puffing(nx, ny, now)){ if (now - lastBump > 600){ lastBump = now; SFX.hiss(); toast(fill(tileAt(nx, ny).vent.hot)); } return; }   // steam puffing out of a vent: too hot!
+  if (puffing(nx, ny, now)){ if (now - lastBump > 600){ lastBump = now; (tileAt(nx, ny).vent.wind ? SFX.swish : SFX.hiss)(); toast(fill(tileAt(nx, ny).vent.hot)); } return; }   // steam puffing out of a vent: too hot! (or a gust of wind: too strong)
   if (walkable(nx, ny) || (way && !way.by && isOpen(way) && !npcAt(nx, ny))){ followersStep(now); pl.mv = {fx:pl.x, fy:pl.y, tx:nx, ty:ny, t0:now, dur:walkMs(), run:running()}; pl.parity ^= 1; }   // (an open way you can always walk into, such as a building's door)
   else if (now - lastBump > 300){ lastBump = now; SFX.bump(); }
 }
@@ -67,7 +67,7 @@ function steamedOff(now){
   lastBump = now;
   const off = [pl.from, ...Object.values(DV).map(([dx, dy]) => ({x:pl.x + dx, y:pl.y + dy}))]
     .find(p => p && Math.abs(p.x - pl.x) + Math.abs(p.y - pl.y) === 1 && walkable(p.x, p.y) && !puffing(p.x, p.y, now));
-  SFX.hiss(); toast(fill(tileAt(pl.x, pl.y).vent.pushed));
+  (tileAt(pl.x, pl.y).vent.wind ? SFX.swish : SFX.hiss)(); toast(fill(tileAt(pl.x, pl.y).vent.pushed));
   if (off) pl.mv = {fx:pl.x, fy:pl.y, tx:off.x, ty:off.y, t0:now, dur:walkMs()};
 }
 // Turning to face the grass rustling beside you: the animal hiding there jumps out (rustleAhead(), js/world.js).

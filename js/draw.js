@@ -760,6 +760,7 @@ function drawWorld(now){
     b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5 - bob - meetHop(a, X, Y - 8, now), 10, 10);
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
+  drawMist(cx, cy, sh, now);   // wisps of cloud drifting past, and mist rolling in (a place's clouds and mist: js/mountain.js)
   for (const a of spotAnimals.filter(a => a.glints && GLOOM)) glinting(a, a.at[0]*T - cx, a.at[1]*T - cy - a.perch, now);   // (an owl's eyes, in the gloom)
   for (const [x, y, k] of glintsNow(now)) glint(x*T - cx + 8, y*T - cy + 11, k);   // things hidden off the path
   for (const [x, y, show] of bubbles) bubble(x, y, show);
@@ -797,14 +798,20 @@ function drawSteam(cx, cy, now){
     const t = tileAt(x, y), X = x*T - cx, Y = y*T - cy;
     if (t.vent){
       const v = t.vent, k = (now + (v.at || 0)) % v.every, cyc = Math.floor((now + (v.at || 0)) / v.every);
-      if (k < v.puff){
+      if (k < v.puff && v.wind){   // a gust of wind (a vent with wind, such as on the cliff road's walkway): streaks blowing across
+        if (ventCycle[x + ',' + y] !== cyc){ ventCycle[x + ',' + y] = cyc; if (Math.abs(x - pl.x) + Math.abs(y - pl.y) <= 5) SFX.swish(); }
+        const p = k / v.puff, fade = p < .8 ? 1 : (1 - p) / .2;
+        b.globalAlpha = .85 * fade;
+        for (let i = 0; i < 4; i++){ const wx = X - 8 + ((p * 40 + i * 9) % 32), wy = Y + 2 + i * 4; R(b, Math.round(wx), wy, 7, 1, '#FFFFFF'); R(b, Math.round(wx) + 7, wy - 1, 2, 1, '#FFFFFF'); }
+        b.globalAlpha = 1;
+      } else if (k < v.puff){
         if (ventCycle[x + ',' + y] !== cyc){ ventCycle[x + ',' + y] = cyc; if (Math.abs(x - pl.x) + Math.abs(y - pl.y) <= 5) SFX.hiss(.05); }
         const p = k / v.puff, fade = p < .8 ? 1 : (1 - p) / .2;
         for (let i = 0; i < 6; i++){
           const rise = ((p * 1.6 + i / 6) % 1), r = 3 + Math.round(rise * 5);
           steamCloud(X + 8 + Math.sin(i * 2.1 + now / 300) * 3, Y + 10 - rise * 20, r, (.85 - rise * .5) * fade);
         }
-      } else if (v.every - k < 450){ const p = 1 - (v.every - k) / 450; steamCloud(X + 8, Y + 9 - p * 4, 2, .5 * p); }
+      } else if (v.every - k < 450 && !v.wind){ const p = 1 - (v.every - k) / 450; steamCloud(X + 8, Y + 9 - p * 4, 2, .5 * p); }
     } else if (t.look === 'hotPool' && rnd(x, y, 640) < .3){
       const ph = (now / 2800 + rnd(x, y, 641)) % 1;
       steamCloud(X + 4 + rnd(x, y, 642) * 8 + Math.sin(now / 700 + x) * 2, Y + 8 - ph * 16, 2 + Math.round(ph * 2), .45 * (1 - ph));

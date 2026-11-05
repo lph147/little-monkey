@@ -465,6 +465,7 @@ test('no two entries in the same list in the content have the same name', () => 
 test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
+    ...allSteps().filter(([, s]) => s.fetch).flatMap(([, s]) => [s.right, s.wrong, ...s.asks.map(a => a.ask)]),   // (fetching things by their word: the fetch step)
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
     ...Object.values(SHOPS).flatMap(sh => [sh.ask, sh.welcome, sh.noProblem]),
     ...(AREA.asking ? [AREA.asking.line] : []), ...allLegend.filter(([, t]) => t.ask).map(([, t]) => t.ask),   // (asking what something is: js/world.js)

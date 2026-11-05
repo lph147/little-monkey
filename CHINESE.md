@@ -660,7 +660,7 @@ check that each is true and simply put.
 | 我在衣服后面！ | wǒ zài yīfu hòumiàn! | I’m behind the washing! | 小孩 (Child) |  |
 | 猴子！猴子！ | hóuzi! hóuzi! | A monkey! A monkey! | 渔夫 (Fisherman) |  |
 | 这是我的衣服！ | zhè shì wǒ de yīfu! | Those are my clothes! | 老渔夫 (Old fisherman) |  |
-| 你是谁？ | nǐ shì shéi? | Who are you? | 小孩 (Child) |  |
+| 你是谁？ | nǐ shì shéi? | Who are you? | 小孩 (Child), 仙童 (The immortal’s boy) |  |
 | 你不是人！你是猴子！ | nǐ bù shì rén! nǐ shì hóuzi! | You’re not a person! You’re a monkey! | 小孩 (Child) |  |
 | 这是什么？ | zhè shì shénme? | What’s this? | 小孩 (Child), 小猴子 (You) |  |
 | 这是井。 | zhè shì jǐng. | It’s a well. | A person near, when you ask what it is |  |
@@ -694,6 +694,14 @@ check that each is true and simply put.
 | 我们走吧！ | wǒmen zǒu ba! | Let’s go! | 船夫 (Boatman) |  |
 | 这是神仙的歌。 | zhè shì shénxiān de gē. | It’s the immortal’s song. | 樵夫 (Woodcutter) |  |
 | 神仙在山上！ | shénxiān zài shān shàng! | The immortal lives up on the mountain! | 樵夫 (Woodcutter) |  |
+| 我累了。 | wǒ lèi le. | I’m tired. | 樵夫 (Woodcutter) |  |
+| 我要三块木头。 | wǒ yào sān kuài mùtou. | I need three pieces of wood. |  |  |
+| 我要水。 | wǒ yào shuǐ. | I need some water. |  |  |
+| 我要四块石头。 | wǒ yào sì kuài shítou. | I need four stones. |  |  |
+| 对！谢谢！ | duì! xièxie! | That’s right! Thank you! |  |  |
+| 不对。 | bù duì. | That’s not right. |  |  |
+| 你去山上吧！ | nǐ qù shān shàng ba! | Go on up the mountain! | 樵夫 (Woodcutter) |  |
+| 师父在等你。 | shīfu zài děng nǐ. | The master is waiting for you. | 仙童 (The immortal’s boy) |  |
 
 ### Sentences the player completes (one word missing)
 
@@ -767,6 +775,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鸡吃草。 | jī chī cǎo. | Chickens eat grass. | 鸡 |  |
 | 狗是我的朋友。 | gǒu shì wǒ de péngyou. | The dog is my friend. | 狗 |  |
 | 猫很小。 | māo hěn xiǎo. | The cat is very small. | 猫 |  |
+| 鹤在水里。 | hè zài shuǐ lǐ. | The crane is in the water. | 鹤 |  |
+| 山上有云。 | shān shàng yǒu yún. | There are clouds on the mountain. | 云 |  |
+| 天上有鸟。 | tiān shàng yǒu niǎo. | There are birds in the sky. | 天 |  |
 
 ### Scene: the raft drifting
 
@@ -841,6 +852,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 工人 | gōngrén | Docker |  |
 | 船夫 | chuánfū | Boatman |  |
 | 樵夫 | qiáofū | Woodcutter |  |
+| 仙童 | xiāntóng | The immortal’s boy |  |
 | 牌子 | páizi | Sign |  |
 | 海的那边 | hǎi de nàbiān | Across the sea |  |
 | 海边 | hǎibiān | The shore |  |
@@ -853,6 +865,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 河边小路 | hébiān xiǎolù | The canal path |  |
 | 码头 | mǎtou | The harbour |  |
 | 西边的海边 | xībiān de hǎibiān | The far shore |  |
+| 山脚 | shānjiǎo | The foot of the mountain |  |
+| 栈道 | zhàndào | The cliff road |  |
+| 石林 | shílín | The stone pillars |  |
 
 ### Words to collect
 
@@ -889,6 +904,20 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 猫 | māo | cat |  |
 | 风 | fēng | wind |  |
 | 歌 | gē | song |  |
+| 云 | yún | cloud |  |
+| 鹤 | hè | crane |  |
+| 天 | tiān | sky |  |
+
+### How words are made
+
+Shown on a word's new-word card and its page in the Word Scroll (new on 23 October 2026, not checked yet): its parts and
+what they add up to, the clue inside it, or the picture it was drawn from. Please check that each is true, well known and
+simply put. A part's pinyin is as it's said in the word.
+
+| Word | Pinyin | How it’s made | Notes |
+| --- | --- | --- | --- |
+| 鹤 | hè | 鸟 niǎo (bird): is on the right of 鹤: a crane is a bird |  |
+| 天 | tiān | 大 dà (big): is drawn like someone standing with their arms out wide; the line over their head is the sky |  |
 
 ### The child's game: is it?
 
@@ -956,6 +985,8 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 的 | de | (joins words: 我们的, our; 红色的花, a red flower) |  |
 | 只 | zhī | (counts animals: 三只猴子, three monkeys) |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
+| 灵台方寸山 | Língtái Fāngcùn Shān | Mountain of Mind and Heart (a name) |  |
+| 斜月三星洞 | Xiéyuè Sānxīng Dòng | Cave of the Slanting Moon and Three Stars (a name) |  |
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
 | 很 | hěn | very |  |
 | 多 | duō | many, much |  |
@@ -997,6 +1028,9 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 找 | zhǎo | to look for |  |
 | 考试 | kǎoshì | exam, test |  |
 | 等 | děng | to wait |  |
+| 师父 | shīfu | teacher, master |  |
+| 对 | duì | right, correct |  |
+| 块 | kuài | (for pieces: 三块木头, three pieces of wood) |  |
 | 那边 | nàbiān | over there, the other side |  |
 | 神仙 | shénxiān | immortal |  |
 | 会 | huì | will |  |

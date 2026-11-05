@@ -1128,6 +1128,33 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     for (const [y, r] of [[8, 9], [16, 11], [24, 8]]) p.fill(path([[2, y], [8, y - 1.6], [16, y], [16 + r * .6, y - 2], [16 + r * .8, y - 5], [16 + r * .4, y - 6.4], [16 + r * .1, y - 4.6]], 1), '#CFE9F7', {light: '#FFFFFF', dark: '#8FC0DE'});
     for (const [x, y, c] of [[26, 22, '#E07B39'], [22, 28, '#D9B03A'], [29, 9, LEAF]]) p.fill(O(x, y, 2.6, 1.6), c, {edge: true});   // leaves
   },
+  '云': p => {   // cloud: one big puffy white cloud, shaded blue-grey underneath (unlike the sky: no blue around it)
+    const W = '#FAFCFF', LT = {light: '#FFFFFF', dark: '#C6D4E4'};
+    p.fill(or(O(10, 19, 7, 5.6), O(16, 13, 7.4, 7), O(23.4, 16, 6, 5.4), O(27, 21, 4.4, 3.6), O(5, 22, 4, 3.4), Rc(5, 19, 23, 6.6, 3)), W, LT);
+    p.flat(or(Rc(6, 24, 21, 1.2), O(12, 24.4, 5, 1), O(21, 24.4, 5, 1)), '#B4C4D8');   // its shady underside
+    p.flat(or(O(14, 9.4, 3, 1.2), O(21.6, 12.6, 2.4, 1)), '#FFFFFF');                       // the sun on its top
+  },
+  '鹤': p => {   // crane: tall and white, side on, its neck black, a red cap, long thin legs (unlike the goose: long legs, a straight beak)
+    const W = '#F7F6F0', LT = {light: '#FFFFFF', dark: '#D4D0C4'};
+    p.flat(or(Cp(16, 21, 15, 31, .55), Cp(19, 21, 20.4, 31, .55)), '#3A3A36');            // long thin legs
+    p.flat(or(Rc(12.6, 30.4, 4, 1), Rc(19.4, 30.4, 4, 1)), '#3A3A36');                       // feet
+    p.fill(Pg([[21, 13], [29.6, 17.4], [27, 22], [21, 20]]), '#26262A', {light: '#46464C'});  // black tail feathers, hanging down
+    p.fill(O(18, 16.6, 7.4, 4.8), W, LT);                                                   // body
+    p.fill(O(19.6, 15.4, 5, 2.6), '#E6E2D6', {light: '#F4F0E6', dark: '#C8C2B2', edge: true});   // wing
+    p.fill(path([[12.4, 14], [10, 9], [9.4, 4.4]], 1.5), '#2A2A2E', {light: '#4A4A50'});   // long black neck
+    p.fill(O(9.2, 3.8, 2.8, 2.4), '#F7F6F0', LT);                                          // white head
+    p.fill(O(9.4, 2, 1.8, 1.2), '#D8343A');                                                 // the red cap on top
+    p.flat(Pg([[0.4, 5.4], [7.2, 2.8], [7.2, 5.2]]), '#C9A060');                           // long straight beak
+    p.eye(8, 3, '#1E1A16', 1);
+  },
+  '天': p => {   // sky: a wide blue sky, paler down to the hills, the sun shining, two birds far off (unlike the cloud: all blue)
+    p.flat(Rc(1, 2, 30, 28, 4), '#4F9EE0');
+    p.flat(Rc(1, 13, 30, 9), '#78B6EA'); p.flat(Rc(1, 20, 30, 6), '#A6D0F2');               // paler towards the ground
+    p.fill(O(23, 8.6, 4, 4), '#FFD54A', {light: '#FFF2A8', dark: '#F2B42A'});              // the sun
+    p.flat(or(path([[6, 8], [7.6, 9.4], [9.2, 8]], .45), path([[11, 12], [12.6, 13.6], [14.2, 12]], .45)), '#24466A');   // birds, far off
+    p.flat(and(Rc(1, 2, 30, 28, 4), or(O(8, 31, 12, 6), O(24, 32, 11, 6.6))), '#5FA85A');   // hills along the bottom
+    p.flat(and(Rc(1, 2, 30, 28, 4), or(O(8, 31, 12, 6), O(24, 32, 11, 6.6)), not(or(O(8, 31.6, 11.4, 5.6), O(24, 32.6, 10.4, 6.2)))), '#7CC46B');
+  },
   '歌': p => {   // song: musical notes floating up, as when someone sings
     p.fill(O(8, 25, 3.8, 3), '#3A3A44', {light: '#5A5A66'}); p.fill(Rc(10.4, 8, 1.8, 17), '#3A3A44');   // a note
     p.fill(O(20, 22, 3.8, 3), '#3A3A44', {light: '#5A5A66'}); p.fill(Rc(22.4, 5, 1.8, 17), '#3A3A44');   // joined to another

@@ -190,6 +190,9 @@ const WORD_BANK = {
   '猫': {py:'māo', en:'cat', pic:'🐈', area:2, category:'animals'},
   '风': {py:'fēng', en:'wind', pic:'🌬️', area:2, category:'nature'},
   '歌': {py:'gē', en:'song', pic:'🎵', area:2, category:'items'},
+  '云': {py:'yún', en:'cloud', pic:'☁️', area:2, category:'nature'},   // (chapter 1: the sea of clouds under the cliff road)
+  '鹤': {py:'hè', en:'crane', pic:'🦩', area:2, category:'animals', alike:['鸟', '鹅']},   // (chapter 1: by the pool on the cliff road)
+  '天': {py:'tiān', en:'sky', pic:'🌤️', area:2, category:'nature', alike:['云']},   // (chapter 1: the open sky over the stone pillars)
 
   // Heard in sentences
   '知道': {py:'zhīdào', en:'to know'},
@@ -214,6 +217,8 @@ const WORD_BANK = {
   '的': {py:'de', en:'(joins words: 我们的, our; 红色的花, a red flower)'},
   '只': {py:'zhī', en:'(counts animals: 三只猴子, three monkeys)'},
   '水帘洞': {py:'Shuǐlián Dòng', en:'Water Curtain Cave (a name)'},
+  '灵台方寸山': {py:'Língtái Fāngcùn Shān', en:'Mountain of Mind and Heart (a name)'},   // (the immortal's mountain, on its tablet: Area 2, chapter 1)
+  '斜月三星洞': {py:'Xiéyuè Sānxīng Dòng', en:'Cave of the Slanting Moon and Three Stars (a name)'},   // (the immortal's cave, over its door)
   '美猴王': {py:'Měi Hóuwáng', en:'Handsome Monkey King (a name)'},
   '很': {py:'hěn', en:'very'},
   '多': {py:'duō', en:'many, much'},
@@ -256,6 +261,9 @@ const WORD_BANK = {
   '找': {py:'zhǎo', en:'to look for'},
   '考试': {py:'kǎoshì', en:'exam, test'},   // (the teacher's exam, at the end of chapter 1)
   '等': {py:'děng', en:'to wait'},
+  '师父': {py:'shīfu', en:'teacher, master'},
+  '对': {py:'duì', en:'right, correct'},
+  '块': {py:'kuài', en:'(for pieces: 三块木头, three pieces of wood)'},
   '那边': {py:'nàbiān', en:'over there, the other side'},
   '神仙': {py:'shénxiān', en:'immortal'},   // (who never grow old: in the book, they live far across the sea; chapter 1's feast)
   '会': {py:'huì', en:'will'},
@@ -316,6 +324,8 @@ const MADE = {
   '吃': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you eat with your mouth'},
   '鸭子': {clue:['鸟', 'niǎo', 'bird'], why:'is on the right of 鸭: a duck is a bird'},
   '喝': {clue:['口', 'kǒu', 'mouth'], why:'on its left: you drink with your mouth'},
+  '鹤': {clue:['鸟', 'niǎo', 'bird'], why:'is on the right of 鹤: a crane is a bird'},
+  '天': {clue:['大', 'dà', 'big'], why:'is drawn like someone standing with their arms out wide; the line over their head is the sky'},
   // made of words or characters
   '山羊': {parts:[['山', 'shān', 'mountain'], ['羊', 'yáng', 'sheep']]},
   '动物': {parts:[['动', 'dòng', 'to move'], ['物', 'wù', 'thing']]},

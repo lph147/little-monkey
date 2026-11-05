@@ -19,6 +19,35 @@ const LANDING = [
   {set:{landed:1}},
   {message:'The people ran off into their hut! The old one dropped something on the sand as he ran.'}
 ];
+// The teacher's mountain's own letters (chapter 1: the cliff road's and the stone pillars' legend, on top of the area's):
+// its rock, mossy stone, pines growing out of the rock and a sea of clouds below (js/mountain.js); a walkway of planks; gusts
+// of wind across it (vents with wind, each row a little after the one below it, so you go up between them); loose planks
+// hung by chains, to hop (swing: a wrong one swings away, and you grab the chain); a chain up a sheer face, to climb, a
+// question a pull (the climb step); peaches; the mountain's tablet and the cave's stone door, open once the boy has opened it.
+const GUST = {wind:true, every:3200, puff:1400, hot:'The wind is too strong! Wait for it to drop.', pushed:'Whoosh! The wind blows you back.'};
+const CLIMB_LEGEND = {
+  'c': {look:'cloudSea', word:'云', note:'A sea of clouds, far below.', onLook:[{if:{new:'云'}, waits:true, label:'Look', do:[{newWord:'云', note:'云 means cloud. You’re up above the clouds!'}]}]},
+  'R': {look:'karstTop', word:'山'},
+  'K': {look:'karstFace', word:'山'},
+  'k': {look:'mossStone', walk:true},
+  'T': {look:'twistedPine', word:'树', note:'A pine, growing out of the bare rock.'},
+  's': {look:'water', word:'水', note:'Clear, cold water, running down from the top of the mountain.'},
+  'W': {look:'waterfall', word:'瀑布'},
+  'H': {look:'plankH', walk:true},
+  'V': {look:'plankV', walk:true},
+  'w': {look:'windPlank', walk:true, vent:{...GUST, at:0}},
+  'v': {look:'windPlank', walk:true, vent:{...GUST, at:800}},
+  'q': {look:'windPlank', walk:true, vent:{...GUST, at:1600}},
+  'j': {look:'windPlank', walk:true, vent:{...GUST, at:2400}},
+  'h': {look:'loosePlank', hop:{label:'Loose planks', ask:'Listen, and hop onto the plank with its picture.', swing:true,
+    splash:'The plank swings away under you! You grab the chain, and pull yourself back.'}},
+  'C': {look:'chainFace', landmark:true, onLook:[{label:'Climb', do:[{climb:[[12, 8], [12, 11]], pulls:3, label:'Climbing the chain', pic:'猴子'}]}]},
+  'Q': {look:'peachTree', word:'桃子', landmark:true, note:'A peach tree, in blossom and ripe fruit at once.', pick:{item:'桃子'}},
+  'X': {look:'mountainTablet', landmark:true, action:'sign', sign:{name:{zh:'石碑', py:'shíbēi', en:'Stone tablet'}, says:{zh:'灵台方寸山', en:'Mountain of Mind and Heart'}, hint:'The name of the immortal’s mountain.'}},
+  'D': {look:'stoneDoor', landmark:true, action:'sign', sign:{name:{zh:'石门', py:'shímén', en:'Stone door'}, says:{zh:'斜月三星洞', en:'Cave of the Slanting Moon and Three Stars'}, hint:'The name of the immortal’s cave.'},
+    becomes:[{if:{door:{atLeast:1}}, to:'Ď'}]},
+  'Ď': {look:'stoneDoor', open:true, landmark:true, action:'sign', sign:{name:{zh:'石门', py:'shímén', en:'Stone door'}, says:{zh:'斜月三星洞', en:'Cave of the Slanting Moon and Three Stars'}, hint:'The name of the immortal’s cave.'}}
+};
 const ACROSS_THE_SEA = {
   number: 2,
   name: {zh:'海的那边', py:'hǎi de nàbiān', en:'Across the sea'},
@@ -32,7 +61,8 @@ const ACROSS_THE_SEA = {
   begin: LANDING,
 
   chapters: [
-    {name:'Prologue', title:'The human world'}
+    {name:'Prologue', title:'The human world'},
+    {name:'Chapter 1', title:'The teacher’s mountain'}
   ],
 
   // What this area remembers in your save, and the values it starts with.
@@ -47,8 +77,11 @@ const ACROSS_THE_SEA = {
   //   changed  1 once the money changer has changed your shells for coins
   //   years    1 once the years have passed, in the town
   //   boat     1 the boatman has no wind (风), 2 you've crossed the western sea
-  //   song     1 once you've heard the woodcutter's song (歌): the end of the prologue
-  progress: {chapter:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
+  //   song     1 once you've heard the woodcutter's song (歌): the end of the prologue, and chapter 1 begins
+  //   woodFetch chapter 1: the woodcutter's fetching game at his hut: 0 not yet, 1 to 3 what he's asking for, 4 all brought
+  //   sky      1 once you've seen the sky (天) over the stone pillars
+  //   door     1 once the boy has opened the cave's stone door, 2 once he's asked who you are (to be continued)
+  progress: {chapter:0, woodFetch:0, sky:0, door:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
 
   // Numbers that text can show as {name}, and that an if can check (as Flower Fruit Mountain's).
   counters: {
@@ -118,10 +151,18 @@ const ACROSS_THE_SEA = {
     {id:'a2cargoBack', if:{cargo:1, cargoCarried:4}, text:'Tell the docker the sacks are on the {船|boat}', arrow:'docker'},
     {id:'a2harbour', if:{years:1, boat:0}, text:'Cross the {桥|bridge} to the harbour, and find the boatman', arrow:'boatman'},
     {id:'a2wind', if:{boat:1}, text:'Wait for the {风|wind}: practise a little, then go back to the boatman', arrow:'boatman'},
-    {id:'a2woodcutter', if:{boat:2, song:0}, text:'Someone is singing among the {树|trees}. Go and find them', arrow:'woodcutter'}
+    {id:'a2woodcutter', if:{boat:2, song:0}, text:'Someone is singing among the {树|trees}. Go and find them', arrow:'woodcutter'},
+    // chapter 1: up the mountain
+    {id:'c1hut', if:{chapter:1, woodFetch:0}, text:'The woodcutter has gone back to his {家|home}, up the steps. Find out if he needs help', arrow:'woodcutter'},
+    {id:'c1fetch', if:{woodFetch:{atLeast:1, below:4}}, text:'Bring the woodcutter {什么|what} he asks for. Talk to him again to {听|listen} again', arrow:'woodcutter'},
+    {id:'c1up', if:{chapter:1, door:0, place:'mountainFoot', woodFetch:{atLeast:1}}, text:'Climb on up the {山|mountain}, to find where the immortal lives', arrow:{place:'cliffRoad'}},
+    {id:'c1cliff', if:{chapter:1, door:0, place:'cliffRoad'}, text:'Climb the walkway up the cliff', arrow:{place:'pillars'}},
+    {id:'c1crane', if:{chapter:1, place:'cliffRoad', friends:{crane:false}}, text:'Make {朋友|friends} with the {鹤} by the pool', arrow:[14, 12, 'cliffRoad']},
+    {id:'c1door', if:{chapter:1, door:0, place:'pillars'}, text:'Find the immortal’s {洞|cave}, up at the top', arrow:[15, 6, 'pillars']}
   ],
   hints: [
-    {if:{song:1}, text:'The prologue is complete! Chapter 1 is still to come: until then, practise your words, and visit your {朋友|friends}.'},
+    {if:{door:2}, text:'That’s as far as chapter 1 goes for now: the immortal’s lessons are still to come. Until then, practise your words, and visit your {朋友|friends}.'},
+    {if:{chapter:1}, text:'Climb the {山|mountain}, to find where the immortal lives.'},
     {if:{landed:0}, text:'Walk about on the shore.'},
     {if:{dressed:2, child:3}, text:'Find someone with a ! over them, and ask {人|people} about things.'},
     {if:{}, text:'Find someone with a ! over them.'}
@@ -148,7 +189,10 @@ const ACROSS_THE_SEA = {
     {text:'Go shopping for the granny in the town', show:{knows:'包子'}, done:{grannyPeach:'done'}},
     {text:'Help the docker load the {船|boat}', show:{years:1}, done:{cargo:2}},
     {text:'Sail across the western {海|sea}', show:{years:1}, done:{boat:2}},
-    {text:'Find out {哪里|where} the immortal lives', show:{boat:2}, done:{song:1}}
+    {text:'Find out {哪里|where} the immortal lives', show:{boat:2}, done:{song:1}},
+    {chapter:1, text:'Help the woodcutter at his hut', done:{woodFetch:4}},
+    {chapter:1, text:'Make {朋友|friends} with the {鹤} on the cliff road', done:{friends:{crane:true}}},
+    {chapter:1, text:'Find the immortal’s {洞|cave}', done:{door:2}}
   ],
   bubbles: {
     child: [{if:{dressed:2, child:0}, show:'!'}, {if:{child:{atLeast:1, below:3}}, show:'!'}],
@@ -171,7 +215,7 @@ const ACROSS_THE_SEA = {
     teller: [{if:{knows:'茶', new:'说'}, show:'!'}, {if:{knows:'说', new:'哪里'}, show:'!'}],
     teacher: [{if:{knows:'哪里', new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
     boatman: [{if:{years:1, boat:0}, show:'!'}, {if:{boat:1}, show:'!'}],
-    woodcutter: [{if:{song:0}, show:'!'}]
+    woodcutter: [{if:{song:0}, show:'!'}, {if:{chapter:1, woodFetch:0}, show:'!'}, {if:{woodFetch:{atLeast:1, below:4}}, show:'?'}]
   },
 
   // Characters who ask you to bring something (as Flower Fruit Mountain's). fromBag: what they want comes from your bag
@@ -232,8 +276,8 @@ const ACROSS_THE_SEA = {
       ]}
   },
 
-  areaEnd: {title:'To be continued…', text:['The woodcutter points up the stone steps: the immortal lives up on the mountain!',
-    'That’s the end of the prologue. Chapter 1, the immortal’s mountain, is still to come. Until then, practise your words, and visit your friends.']},
+  areaEnd: {title:'To be continued…', text:['The boy opens the stone doors wide: the immortal is waiting for you, inside the cave!',
+    'That’s as far as chapter 1 goes for now. The immortal’s lessons are still to come. Until then, practise your words, and visit your friends.']},
 
   // Fishing (js/fishing.js), with the rod you brought from Flower Fruit Mountain: in the sea, and the village's stream.
   fishing: {
@@ -270,9 +314,14 @@ const ACROSS_THE_SEA = {
       {message:'The fishermen come out of their hut. They don’t run away now: in a coat and hat, you look just like a person!'}]},
     // on the road through the fields, the dog stops you, guarding it
     {if:{place:'fields', dogStop:0, friends:{dog:false}, wordReady:true, around:[36, 8, 'fields', 1]}, do:[{set:{dogStop:1}}, {stopsYou:'dog'}]},
-    // at the top of the stone steps on the far shore: the way on up the mountain, to the immortal (chapter 1, still to come)
-    {if:{place:'farShore', stepsTop:0, around:[15, 1, 'farShore', 1]}, do:[{set:{stepsTop:1}},
-      {message:'The path goes on up the mountain, to where the immortal lives. That’s chapter 1, still to come!'}]},
+    // a game saved at the end of the prologue, before chapter 1 was built (the woodcutter's song ended it then): it begins now
+    {if:{song:1, chapter:0}, do:[{chapter:1}, {message:'The woodcutter has gone home, up the stone steps. Follow him up the mountain!'}]},
+    // over the stone pillars, nothing but the open sky (天), once you've had a little practice since your last new word
+    {if:{place:'pillars', sky:0, wordReady:true}, do:[{set:{sky:1}}, {sound:'chime'},
+      {message:'Up here, above the clouds, there’s nothing over you but the wide, blue sky.'}, {newWord:'天', note:'天 means sky. Up here, it feels close enough to touch!'}]},
+    // at the cave's door: the stone doors rumble open, and a boy comes out (the immortal's pupil)
+    {if:{place:'pillars', door:0, around:[15, 6, 'pillars', 2]}, do:[{set:{door:1}}, {sound:'rumble'},
+      {message:'With a deep rumble, the stone doors swing open. A boy comes out!'}, {talkTo:'doorBoy'}]},
     // years go by in the town, once you know its words: you live among people, learning to talk like them, but nobody is
     // looking for the immortals (a match game of the town's and the village's words)
     {if:{townWords:11, years:0, wordReady:true, friends:{cat:true}}, do:[{set:{years:1}}, {scene:'yearsPass'}, {scene:'manyYearsLater'},
@@ -650,7 +699,9 @@ const ACROSS_THE_SEA = {
       sounds: [{rows:[4, 16], cols:[0, 13], if:{song:0}, sounds:['song', 'birds']}, {rows:[0, 23], if:{song:0}, sounds:['songFar', 'wind']}, {rows:[0, 23], sounds:['wind', 'birds']}],
       exits: [
         {at:[17, 21], to:'harbour', arrive:[17, 15], facing:'right', by:'A', label:'Sail'},
-        {at:[18, 21], to:'harbour', arrive:[17, 15], facing:'right', by:'A', label:'Sail'}
+        {at:[18, 21], to:'harbour', arrive:[17, 15], facing:'right', by:'A', label:'Sail'},
+        {at:[15, 0], to:'mountainFoot', arrive:[16, 22], facing:'up', if:{song:1}, closed:'The path goes on up the mountain. Who lives up there? Find out first.'},   // (up the stone steps, once the woodcutter has told you)
+        {at:[16, 0], to:'mountainFoot', arrive:[17, 22], facing:'up', if:{song:1}, closed:'The path goes on up the mountain. Who lives up there? Find out first.'}
       ],
       map: [
         "^^^^^^^^^^^^^^^..^^^^^^^^^^^^^^^",
@@ -677,6 +728,152 @@ const ACROSS_THE_SEA = {
         "mmmmmmmmmmmmmmmPPVVVmmmmmmmmmmmm",
         "mmmmmmmmmmmmmmmPPmmmmmmmmmmmmmmm",
         "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+      ]
+    },
+    // Chapter 1, the teacher's mountain (decided 4 November 2026, after three drafts of the plan): up the stone steps from
+    // the far shore, the foot of the mountain, a pine forest round the woodcutter's hut, a rushing stream to cross by
+    // stepping stones; above it, a walkway of planks bolted up the cliff over a sea of clouds (gusts of wind across it,
+    // loose planks to hop, a chain to climb); and at the top, the stone pillars, joined by chain bridges, mist rolling in,
+    // the mountain's tablet and the cave's stone door. The mountain has its own look (js/mountain.js).
+    mountainFoot: {
+      name: {zh:'山脚', py:'shānjiǎo', en:'The foot of the mountain'},
+      music: 'village',
+      onMap: [206, 18],
+      sounds: ['wind', 'birds'],
+      exits: [
+        {at:[16, 23], to:'farShore', arrive:[15, 1], facing:'down'},
+        {at:[17, 23], to:'farShore', arrive:[16, 1], facing:'down'},
+        {at:[20, 0], to:'cliffRoad', arrive:[10, 32], facing:'up'},
+        {at:[21, 0], to:'cliffRoad', arrive:[11, 32], facing:'up'}
+      ],
+      legend: {
+        'P': {look:'pine', word:'树'},
+        'w': {look:'water', word:'河', note:'A stream, rushing down from the mountain.', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Scoop', do:[{carry:'水'}]}]},
+        'p': {look:'woodpile', word:'木头', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Pick up', do:[{carry:'木头'}]}]},
+        'o': {look:'pebble', word:'石头', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Pick up', do:[{carry:'石头'}]}]},
+        'r': {look:'rocks', word:'石头', landmark:true},
+        'u': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}
+      },
+      map: [
+        "PPPPPPPPPPPPPPPPPPPP..PPPPwwPPPPPP",
+        "PggggggggggggggggPgg..ggPgwwgggggP",
+        "PggUUUUUgggggPgggggg..ggggwwgggggP",
+        "PggUUUUUpgggggggggggGGGGGgwwggPggP",
+        "Pggg...ggJggggggggggGGGGGgwwgggggP",
+        "Pggg........ggggggggGGGGGgwwgggggP",
+        "Pggg........gggggPggGGGGGgwwgrgggP",
+        "Pggggggggg..ggggggggGGGGGgwwgggggP",
+        "PggPgggggg............ggggwwgPgggP",
+        "Pggggggugg............ggggwwgggggP",
+        "PgggggPggg..gggggggggggPggwwgggggP",
+        "Pgggoggggg..ggPgggggggogggwwgggggP",
+        "wwwwwwwwwwhhwwwwwwwwwwwwwwwwgggggP",
+        "wwwwwwwwwwhhwwwwwwwwwwwwwwwwgggggP",
+        "PgPggggggg..gggggggggggogggggggggP",
+        "Pggggggggg..ggPggggggggggPgggggPgP",
+        "PgGGGGGGGG..gPgggggggggggggggggggP",
+        "PgGGGGGGGG..ggggggggggGGGGGGGGGggP",
+        "PgGGGGGGGG........ggggGGGGGGrGGggP",
+        "PgGGGGGGGG........ggggGGGGGGGGGggP",
+        "PgGGGGGGGGgggggg..ggggGGGGGGGGGggP",
+        "PgggggggPggggggg..gPggGGGGGGGGGggP",
+        "PggggPgggggggggg..gggggggggggggggP",
+        "PPPPPPPPPPPPPPPP..PPPPPPPPPPPPPPPP"
+      ]
+    },
+    // the cliff road: a walkway of planks up the cliff, over a sea of clouds. Gusts of wind blow across it (wind vents: wait
+    // till it drops), loose planks hang by chains (hop onto the one with the word's picture), and a chain hangs down a sheer
+    // face to climb (a question a pull). A crane stands by a pool where the stream runs over a ledge.
+    cliffRoad: {
+      name: {zh:'栈道', py:'zhàndào', en:'The cliff road'},
+      music: 'cave',
+      clouds: true,
+      onMap: [176, 18],
+      sounds: ['wind'],
+      exits: [
+        {at:[10, 33], to:'mountainFoot', arrive:[20, 1], facing:'down'},
+        {at:[11, 33], to:'mountainFoot', arrive:[21, 1], facing:'down'},
+        {at:[11, 0], to:'pillars', arrive:[14, 22], facing:'up'},
+        {at:[12, 0], to:'pillars', arrive:[15, 22], facing:'up'}
+      ],
+      legend: CLIMB_LEGEND,
+      map: [
+        "RRRRRRRRRRRkkRRssRRRRRRR",
+        "RRRRRRRRRRRkkRRssRRRRRRR",
+        "RRRRRRRRRRRkkRRssRRRRRRR",
+        "RRRRRRRRRRkkkkksskkkkkRR",
+        "RRRTRRRRRRkkkkksskkkkkRR",
+        "RRRRRRRRRRkkkkkHHkkTkkRR",
+        "RRRRRRRRRRkkkTksskkkkkRR",
+        "RRRRRRRRRRkkkkksskkkkkRR",
+        "RRRRRRRRRRkkkkksskkkkkRR",
+        "RRRRRRRRRRKKCKKWWKKKKKKK",
+        "RRRRRRRRRRKKCKKWWKKKKKKK",
+        "RRRRRRTRRRkkkkksskcccccc",
+        "RRRRRRRRRRkkTkksskcckTkc",
+        "RRRRRRRRRRkkkkksskHHkkkc",
+        "RRRRRRRRRRkkkkkHHkcckkkc",
+        "RRRRRRRRRRkkkkksskccKKKc",
+        "RRRRRRRRRRhhKKKWWKccKKKc",
+        "RRTRRRRRRRhhKKKWWKcccccc",
+        "RRRRRRRRRRVVcccccccccccc",
+        "RRRRRRRRRRVVcccccccccccc",
+        "RRRRRRRRRRVVcccccccccccc",
+        "RRRRRRRRRRVVcccccccccccc",
+        "RRRRRRRTRRjjccccccRTRRcc",
+        "RRRRRRRRRRqqccccccRRRRcc",
+        "RRRRRRRRRRvvccccccRRRRcc",
+        "RRRRTRRRRRwwccccccKKKKcc",
+        "RRRRRRRRRRVVccccccKKKKcc",
+        "RRRRRRRRRRVVcccccccccccc",
+        "KKKKKKKKKKVVcccccccccccc",
+        "KKKKKKKKKKVVcccccccccccc",
+        "kkkkkkkkkkkkkkkkcccccccc",
+        "kkkkkTkkkkkkkkkkcccccccc",
+        "kkkkkkkkkkkkkTkkcccccccc",
+        "kkkkkkkkkkkkkkkkcccccccc"
+      ]
+    },
+    // the stone pillars, at the top: chain bridges between them, the mist rolling in now and then; peaches in blossom and
+    // fruit at once; the mountain's tablet (灵台方寸山); the cave's stone door in the great cliff (斜月三星洞), where a boy
+    // opens it and asks who you are
+    pillars: {
+      name: {zh:'石林', py:'shílín', en:'The stone pillars'},
+      music: 'cave',
+      clouds: true,
+      mist: true,
+      onMap: [146, 18],
+      sounds: ['wind', 'birds'],
+      exits: [
+        {at:[14, 23], to:'cliffRoad', arrive:[11, 1], facing:'down'},
+        {at:[15, 23], to:'cliffRoad', arrive:[12, 1], facing:'down'}
+      ],
+      legend: CLIMB_LEGEND,
+      map: [
+        "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+        "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+        "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+        "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR",
+        "KKKKKKKKKKKKKDDDDKKKKKKKKKKKKK",
+        "KKKKKKKKKKKKKDDDDKKKKKKKKKKKKK",
+        "ccccccccccckkkkkkkkccccccccccc",
+        "ccccccccccckkkkkkkkccccccccccc",
+        "ccccccccccckkTkkkkkccccccccccc",
+        "cckkkkkkccckkkkkkkkccckkkkkkcc",
+        "cckQkkkkHHHkkkkkkkkccckkkTkkcc",
+        "cckkkkkkHHHkkkkkkTkHHHkkkkkkcc",
+        "cckkkkQkccckXkkkkkkHHHkkkkkkcc",
+        "cckkQkkkccckkkkkkkkccckTkkkkcc",
+        "cckkkkkkcccKKKVVKKKccckkkkkkcc",
+        "ccKKKKKKcccKKKVVKKKcccKKVVVKcc",
+        "ccKKKKKKccccccVVccccccKKVVVKcc",
+        "ccccccccccccccVVccccccccVVVccc",
+        "cRTRRccccccckkkkkkccccccVVVccc",
+        "cRRRRccccccckkkkkkccccccVVVccc",
+        "cRRRRccccccckkkkkkccccckkkkkcc",
+        "cKKKKccccccckTkkkkccccckkkTkcc",
+        "cKKKKccccccckkkkkkccccckkkkkcc",
+        "cccccccccccckkkkkkcccccKKKKKcc"
       ]
     }
   },
@@ -849,7 +1046,12 @@ const ACROSS_THE_SEA = {
     {id:'harbourGoose', place:'harbour', look:'鹅', x:28, y:9, facing:'left'},
     // the far shore: the woodcutter, singing as he chops wood
     {id:'woodcutter', place:'farShore', person:true, beard:true, wear:'vest', x:9, y:10, facing:'left', name:{zh:'樵夫', py:'qiáofū', en:'Woodcutter'},
-      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#E0B088', e:'#1E140C', m:'#C4826A', c:'#6E5B3A', b:'#3A2A1E', p:'#3A3226', a:'#D9B866', d:'#A88A3E'}}
+      moves:[{if:{song:1}, place:'mountainFoot', x:10, y:4, facing:'left'}],   // (home to his hut at the foot of the mountain, once he's sung you his song)
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#E0B088', e:'#1E140C', m:'#C4826A', c:'#6E5B3A', b:'#3A2A1E', p:'#3A3226', a:'#D9B866', d:'#A88A3E'}},
+    // the cave's door, among the stone pillars: a boy, the immortal's pupil, behind the stone doors till they open (in the hut)
+    {id:'doorBoy', place:'pillars', person:true, small:true, hair:'topknot', wear:'robe', x:15, y:6, facing:'down', name:{zh:'仙童', py:'xiāntóng', en:'The immortal’s boy'},
+      moves:[{if:{door:0}, place:'hut', x:1, y:0}],
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#E8E4D8', b:'#4F78A8', p:'#E8E4D8'}}
   ],
   yourNames: [{if:{}, zh:'美猴王', py:'Měi Hóuwáng', en:'Handsome Monkey King (you)'}],
 
@@ -858,6 +1060,7 @@ const ACROSS_THE_SEA = {
   spots: [],
   bigSparkles: {dressed:0},
   sparkles: [
+    {word:'云', at:[16, 31, 'cliffRoad']},
     {word:'衣服', at:[23, 10]}, {word:'帽子', at:[30, 13]},
     {word:'井', at:[22, 11, 'village'], if:{knows:'什么'}}, {word:'房子', at:[9, 2, 'village'], if:{knows:'什么'}},
     {word:'门', at:[31, 4, 'village'], if:{knows:'什么'}},
@@ -896,7 +1099,10 @@ const ACROSS_THE_SEA = {
     '书': 'The books on the table by the town’s school.',
     '猫': 'On the sacks at the market.',
     '风': 'The boatman at the harbour, waiting for the wind.',
-    '歌': 'The woodcutter’s song, on the far shore.'
+    '歌': 'The woodcutter’s song, on the far shore.',
+    '云': 'The sea of clouds under the cliff road, on the teacher’s mountain.',
+    '鹤': 'By the pool on the cliff road, on the teacher’s mountain.',
+    '天': 'The open sky over the stone pillars, at the top of the teacher’s mountain.'
   },
   // Sentences for practising words without pictures (as Flower Fruit Mountain's). Like those, each needs every word in it caught.
   practiceSentences: [
@@ -915,7 +1121,10 @@ const ACROSS_THE_SEA = {
     '鹅': {zh:'鹅 在 水 里 。', en:'The goose is in the water.'},
     '鸡': {zh:'鸡 吃 草 。', en:'Chickens eat grass.'},
     '狗': {zh:'狗 是 我 的 朋友 。', en:'The dog is my friend.'},
-    '猫': {zh:'猫 很 小 。', en:'The cat is very small.'}
+    '猫': {zh:'猫 很 小 。', en:'The cat is very small.'},
+    '鹤': {zh:'鹤 在 水 里 。', en:'The crane is in the water.'},
+    '云': {zh:'山 上 有 云 。', en:'There are clouds on the mountain.'},
+    '天': {zh:'天 上 有 鸟 。', en:'There are birds in the sky.'}
   },
   enemies: {},
   battles: {},
@@ -928,6 +1137,7 @@ const ACROSS_THE_SEA = {
     {id:'goose', word:'鹅', waits:true, at:[8, 12], roams:['shorePath', 'villageLane'], home:'海', clue:'The shore, on the sand', meetNote:'A goose waddles up to you on the sand, honking. Answer its questions to make friends.'},
     {id:'chicken', word:'鸡', waits:true, at:[6, 16, 'village'], roams:['shorePath', 'villageLane'], home:'草', clue:'The village, in the yard', meetNote:'A chicken pecks about in the yard. Answer its questions to make friends.'},
     {id:'dog', word:'狗', waits:true, at:[36, 9, 'fields'], roams:['villageLane', 'highRoad'], home:'草', clue:'The fields, by the road', meetNote:'A dog guards the road, barking at you! Answer its questions to make friends.'},
+    {id:'crane', word:'鹤', waits:true, at:[14, 12, 'cliffRoad'], chapter:1, home:'山', clue:'The teacher’s mountain, by the pool on the cliff road', meetNote:'A crane stands by the pool on one leg. It looks at you, its head on one side. Answer its questions to make friends.'},
     {id:'cat', word:'猫', waits:true, at:[33, 8, 'town'], roams:['highRoad', 'canalPath'], perch:3, home:'房子', clue:'The town, at the market', meetNote:'A cat is curled up on the sacks at the market. Answer its questions to make friends.'}
   ],
   birds: {word:'鸟', note:'A little bird hops about, looking for something to eat.', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},
@@ -957,7 +1167,10 @@ const ACROSS_THE_SEA = {
     {id:'shoreRock2', at:[14, 11], shells:2, note:'Washed up behind a rock on the sand: 2 🐚!'},
     {id:'villageJars', at:[18, 18, 'village'], fruit:'苹果', note:'Tucked behind the jars: a {苹果} for your bag!'},
     {id:'fieldsScarecrow', at:[29, 17, 'fields'], shells:2, note:'Tucked in the straw of the scarecrow’s coat: 2 🐚!'},
-    {id:'townSacks', at:[4, 16, 'town'], fruit:'桃子', note:'In a basket that nobody wants: a {桃子} for your bag!'}
+    {id:'townSacks', at:[4, 16, 'town'], fruit:'桃子', note:'In a basket that nobody wants: a {桃子} for your bag!'},
+    {id:'footRock', at:[29, 6, 'mountainFoot'], shells:2, note:'Tucked under a rock among the pines: 2 🐚!'},
+    {id:'cliffPine', at:[21, 12, 'cliffRoad'], shells:3, note:'In a crack under the pine on the pillar: 3 🐚!'},
+    {id:'pillarsPine', at:[26, 21, 'pillars'], fruit:'桃子', note:'Under the pine at the end of the bridge, someone has left a {桃子}!'}
   ],
   animalsAppear: {knows:'动物'},
   animalsPlay: {say:'play', hint:'It wants to play! Answer its questions to make friends.', friendHint:'Your {朋友} wants to play again! Answer its questions.'},
@@ -1038,7 +1251,17 @@ const ACROSS_THE_SEA = {
     windCame: {zh:'有 风 了 ！', en:'The wind’s come!'},
     letsGo: {zh:'我们 走 吧 ！', en:'Let’s go!'},
     immortalSong: {zh:'这 是 神仙 的 歌 。', en:'It’s the immortal’s song.'},
-    immortalOnMountain: {zh:'神仙 在 山 上 ！', en:'The immortal lives up on the mountain!'}
+    immortalOnMountain: {zh:'神仙 在 山 上 ！', en:'The immortal lives up on the mountain!'},
+    // chapter 1: the woodcutter at his hut, who asks for things only in Chinese (fetch-by-word: you bring what he says)
+    tired: {zh:'我 累 了 。', en:'I’m tired.'},
+    wantWood: {zh:'我 要 三 块 木头 。', en:'I need three pieces of wood.'},
+    wantWater: {zh:'我 要 水 。', en:'I need some water.'},
+    wantStones: {zh:'我 要 四 块 石头 。', en:'I need four stones.'},
+    rightThanks: {zh:'对 ！ 谢谢 ！', en:'That’s right! Thank you!'},
+    notRight: {zh:'不 对 。', en:'That’s not right.'},
+    goUp: {zh:'你 去 山 上 吧 ！', en:'Go on up the mountain!'},
+    // the boy at the cave's door
+    masterWaits: {zh:'师父 在 等 你 。', en:'The master is waiting for you.'}
   },
 
   talk: {
@@ -1179,8 +1402,22 @@ const ACROSS_THE_SEA = {
     // the far shore: the woodcutter's song (歌), the immortal's; and where the immortal lives
     woodcutter: [
       {if:{song:0}, waits:true, do:[{sound:'chime'}, {say:'immortalSong', teach:'歌'}, {newWord:'歌', note:'歌 means song. The woodcutter learned it from the immortal!'},
-        {say:'immortalOnMountain'}, {set:{song:1, done:true}}, {areaEnd:true}]},
-      {do:[{say:'immortalOnMountain'}]}
+        {say:'immortalOnMountain'}, {set:{song:1}}, {chapter:1},
+        {message:'The woodcutter picks up his axe and goes home, up the stone steps. Follow him: the way up the mountain starts there!'}]},
+      // at his hut, at the foot of the mountain: he's tired, and asks for things one at a time, only in Chinese (fetch-by-word,
+      // decided 4 November 2026: quiet practice, where what you bring is the answer)
+      {if:{woodFetch:{below:4}}, do:[{say:'tired', if:{woodFetch:0}},
+        {fetch:'woodFetch', asks:[{word:'木头', count:3, ask:'wantWood'}, {word:'水', ask:'wantWater'}, {word:'石头', count:4, ask:'wantStones'}],
+          right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
+          listen:'He only says it in Chinese. Listen, then find it nearby, pick it up and bring it to him.',
+          done:[{coins:3, note:'The woodcutter gives you 3 🪙 for your help.'}, {say:'goUp'}]}]},
+      {do:[{say:'goUp'}]}
+    ],
+    // the boy at the cave's door: who are you? (you're dressed as a person, but…) The master is waiting for you
+    doorBoy: [
+      {if:{door:1}, do:[{say:'whoAreYou'}, {gap:{sentence:'我 是 猴子', en:'I’m a monkey.', word:'猴子', others:['人', '鸟'], pic:'猴子'}},
+        {say:'masterWaits'}, {set:{door:2}}, {areaEnd:true}]},
+      {do:[{say:'masterWaits'}]}
     ]
   },
 

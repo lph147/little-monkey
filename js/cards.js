@@ -205,7 +205,7 @@ function sayLine(who, line, opts){
     const key = line.t.join(''), firstTime = !S.lines[key];
     S.lines[key] = 1; hear(line.t); save();
     const again = !talkBox.hidden;   // again: the box is still up from the last line
-    const enShows = firstTime || !!opts.clue;   // (a clue: its English every time, the place's word in Chinese, js/hide.js)
+    const enShows = (firstTime && !opts.noEn) || !!opts.clue;   // (a clue: its English every time, the place's word in Chinese, js/hide.js; noEn: never at first, such as something to fetch by its word)
     talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${enShows ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en${opts.clue ? ' clue' : ''}" ${enShows ? '' : 'hidden'}>${opts.clue ? cluedEn(line.en, opts.clue) : esc(line.en)}</div>
       <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);

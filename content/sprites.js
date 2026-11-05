@@ -13,6 +13,10 @@ const MAP_SPRITES = {
     faces:'left', palette:{o:'#3A3530', w:'#F7F5EE', g:'#D8D2C4', y:'#E8902A', e:'#1E1A16'},
     rows:["................","................","....oo..........","...owwo.........","..yyowe.........","....owo.........","....owo.........","....owo.........","....owwo....oo..","....owwwooooowo.","....owwwwwwwwgo.",".....owwwwwwggo.","......owwwwwgo..",".......ooooo....","........y.y.....",".......yy.yy...."]
   },
+  '鹤': {   // crane, side on, head to the left: white, its neck black, a red cap, long thin legs (chapter 1: by the pool on the cliff road)
+    faces:'left', palette:{o:'#2E2C2A', w:'#F7F6F0', g:'#D4D0C4', k:'#26262A', r:'#D8343A', y:'#C9A060', e:'#1E1A16'},
+    rows:["................","...rr...........","..owwo..........","yyywew..........","...okko.........","....oko.........","....oko.........","....okko........","....owwwooo.....","....owwwwgwoo...",".....owwwggkko..","......owwwwkko..",".......oooookk..","........o.o.....","........o.o.....",".......oo.oo...."]
+  },
   '鸡': {   // chicken, side on, head to the left (in the village)
     faces:'left', palette:{o:'#3A2E24', w:'#F7F5EE', g:'#D8D2C4', r:'#D8342C', y:'#E8A030', e:'#1E1A16'},
     rows:["................","................","................","................","................","....rr..........","...owwo.........","..yowewo....oo..","...owwwo...owwo.","....owwwwoowwwo.","....owwwwwwwggo.",".....owwwwwwgo..","......owwwwwo...",".......oooo.....",".......y..y.....","......yy.yy....."]

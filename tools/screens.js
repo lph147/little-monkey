@@ -412,6 +412,12 @@ SAVES.a2town = A2({landed: 1, dressed: 2, back: 1, child: 3, knock: 1, fish: 'do
 SAVES.a2harbour = A2({landed: 1, dressed: 2, back: 1, child: 3, knock: 1, fish: 'done', farmer: 2, lunch: 'done', exchanged: 1, years: 1}, {w: knows(1, [...A2_VILLAGE, '看', '狗', '买', '包子', '鞋', '茶', '说', '哪里', '听', '孩子', '学', '书', '猫']),
   coins: 10, shells: 0, friends: ['goose', 'chicken', 'dog', 'cat'], turn: 500, wardrobe: {owned: ['头带', '衣服', '帽子', '鞋'], wearing: ['衣服', '帽子', '鞋']}, pos: {place: 'harbour', x: 16, y: 16, dir: 'right'}});
 SAVES.a2far = {...SAVES.a2harbour, areas: {...SAVES.a2harbour.areas, 2: {...SAVES.a2harbour.areas[2], boat: 2}}, w: {...SAVES.a2harbour.w, ...knows(1, ['风'])}, pos: {place: 'farShore', x: 10, y: 10, dir: 'left'}};
+// (5 November 2026: chapter 1, up the teacher's mountain)
+SAVES.c1foot = {...SAVES.a2far, areas: {...SAVES.a2far.areas, 2: {...SAVES.a2far.areas[2], song: 1, chapter: 1, woodFetch: 1, hen1: 1, hen2: 1, hen3: 1, hen4: 1, hensDone: 1}}, w: {...SAVES.a2far.w, ...knows(1, ['歌'])}, pos: {place: 'mountainFoot', x: 9, y: 5, dir: 'right'}};
+SAVES.c1cliff = {...SAVES.c1foot, areas: {...SAVES.c1foot.areas, 2: {...SAVES.c1foot.areas[2], woodFetch: 4}}, turn: 600, pos: {place: 'cliffRoad', x: 11, y: 26, dir: 'up'}};
+SAVES.c1chain = {...SAVES.c1cliff, w: {...SAVES.c1cliff.w, ...knows(1, ['云'])}, pos: {place: 'cliffRoad', x: 12, y: 11, dir: 'up'}};
+SAVES.c1pillars = {...SAVES.c1chain, areas: {...SAVES.c1chain.areas, 2: {...SAVES.c1chain.areas[2], sky: 1}}, w: {...SAVES.c1chain.w, ...knows(1, ['鹤', '天'])}, friends: [...SAVES.c1chain.friends, 'crane'], met: [...(SAVES.c1chain.met || []), 'crane'], pos: {place: 'pillars', x: 14, y: 10, dir: 'up'}};
+SAVES.c1door = {...SAVES.c1pillars, areas: {...SAVES.c1pillars.areas, 2: {...SAVES.c1pillars.areas[2], door: 1}}, pos: {place: 'pillars', x: 15, y: 7, dir: 'up'}};
 // (4 November 2026: the human world bigger, with paths between its places, and more to do in each)
 SAVES.a2pier = {...SAVES.a2dressed, areas: {...SAVES.a2dressed.areas, 2: {...SAVES.a2dressed.areas[2], oldFisher: 1, pierFish: 'asked'}}, pos: {place: 'shore', x: 18, y: 20, dir: 'down'}};
 SAVES.a2shorePath = {...SAVES.a2dressed, pos: {place: 'shorePath', x: 12, y: 16, dir: 'up'}};
@@ -1337,7 +1343,19 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'a2-crossing', title: 'Area 2: crossing the western sea', save: 'a2harbour', why: 'The wind in the sail, the town falling behind, then mountains ahead.', run: async () => {
     play(); await wait(100); storyScene('crossSea'); introClock = 8.05; advancedTo = 2; await wait(400); }},
-  {id: 'a2-end', title: 'Area 2: to be continued', save: 'a2far', why: 'The woodcutter’s song (歌): the immortal lives up on the mountain. The end of the prologue, with your words, friends and coins.', run: async () => {
+  {id: 'c1-chapter', title: 'Area 2, chapter 1: the teacher’s mountain', save: 'a2far', why: 'The woodcutter’s song (歌) tells you the immortal lives up on the mountain: the prologue ends, and chapter 1 begins.', run: async () => {
+    play(); await wait(100); STEPS.chapter({chapter: 1}); await wait(500); }},
+  {id: 'c1-foot', title: 'Chapter 1: the foot of the mountain', save: 'c1foot', why: 'Pines, a rushing stream to cross by stepping stones, and the woodcutter’s hut, where he asks for things only in Chinese: wood, water, stones.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'c1-fetch', title: 'Fetching by word', save: 'c1foot', why: 'The woodcutter asks only in Chinese, its English hidden (我要三块木头。): you go and pick up what he says, as many as he says, and bring it back.', run: async () => {
+    play(); await wait(100); talk(npc('woodcutter')); await wait(600); }},
+  {id: 'c1-cliff', title: 'Chapter 1: the cliff road', save: 'c1cliff', why: 'Planks bolted up the cliff over a sea of clouds (云): gusts of wind blow across the walkway (wait for them to drop), and loose planks hang by chains to hop.', run: async () => {
+    play(); await wait(1200); }},
+  {id: 'c1-chain', title: 'The chain and the crane', save: 'c1chain', why: 'A chain hangs down the sheer face: A to climb it, a question a pull. A crane (鹤) stands by the pool where the stream runs over the ledge.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'c1-pillars', title: 'Chapter 1: the stone pillars', save: 'c1pillars', why: 'Chain bridges between the pillars, mist rolling in now and then; peach trees; the mountain’s tablet (灵台方寸山) and the cave’s stone door (斜月三星洞).', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a2-end', title: 'Area 2: to be continued', save: 'c1door', why: 'The boy at the door asks who you are (你是谁？ 我是猴子。): the master is waiting. As far as chapter 1 goes for now.', run: async () => {
     play(); await wait(100); STEPS.areaEnd(); await wait(500); }},
   {id: 'scroll-describing', title: 'Word Scroll: describing words', save: 'fishBoth', why: '小 (little) and 大 (big), from fishing, on a tab of their own.', run: async () => {
     play(); await wait(100); openScroll(() => closeCard(), 0, 'describing'); await wait(400); }},
