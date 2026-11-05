@@ -219,7 +219,7 @@ test('with the school’s flowers planted, the 老板 comes up to the home groun
   assert.deepEqual(get(g, "mapObjects().filter(o => o.look === 'shop').map(o => [o.x, o.y, o.w, o.h])"), [[4, 7, 3, 2]], 'one big object, three squares by two');
   assert.equal(g.run('OBJECT_STAGES.shop'), 4, 'set up in four pieces: posts and a woven back, a counter, a striped roof, and what he sells');
   assert.ok(get(g, '__sounds').filter(s => s === 'tock').length >= 8, 'stakes round its plot, then each piece, with a knock');
-  assert.ok(get(g, "areaChecklist().find(([t]) => /new shop/.test(t))")[1], 'on the checklist, ticked off');
+  assert.ok(get(g, "matches(AREA.checklist.find(c => /new shop/.test(c.text)).done)"), 'on the checklist, ticked off');
   g.run("S.pos = {place: 'meadow', x: 9, y: 17, dir: 'up'}; setPlace('meadow')");
   assert.equal(g.run('tileAt(9, 16).look'), 'grass', 'no stall in the meadow: he was never there (decided 31 October 2026)');
 });

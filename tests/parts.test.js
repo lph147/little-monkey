@@ -18,7 +18,7 @@ function game(area = {}, pos = {place: 'village', x: 16, y: 14, dir: 'up'}){
 }
 
 test('as you land, the first part’s card says why you’re here: to find an immortal', async () => {
-  const g = game({}, {place: 'shore', x: 11, y: 16, dir: 'up'});
+  const g = game({part: -1}, {place: 'shore', x: 11, y: 16, dir: 'up'});   // (a game just arrived: not into a part yet)
   await play(g, 'runEvents()');
   const [card] = get(g, '__boxes');
   assert.match(card, /^Part 1 Dressing like a person You’ve crossed the sea to find an immortal/);
@@ -45,9 +45,27 @@ test('a part, once reached, stays: going back to an earlier place doesn’t take
   assert.equal(get(g, '__boxes.length'), 0, 'no card: already there');
 });
 
-test('the checklist is just the part you’re in', () => {
+test('the checklist is just the part you’re in, and anything from before that’s still to do: never what’s to come', () => {
   const g = game({dressed: 2, back: 1, child: 3, part: 1});
-  const items = get(g, 'areaChecklist().map(c => c[0])');
-  assert.ok(items.includes('Go up to the village'));
-  assert.ok(!items.some(t => /goose|鹅|farmer|town/.test(t)), 'nothing from the other parts');
+  const items = () => get(g, 'areaChecklist().map(c => c[0])');
+  assert.ok(items().includes('Go up to the village'));
+  assert.ok(!items().some(t => /farmer|town/.test(t)), 'nothing from the parts to come');
+  assert.ok(items().includes('Make friends with the goose on the sand'), 'the goose, from the part before, till you’ve made friends with it');
+  assert.ok(!items().includes('Dress like a person'), 'but not what’s done there');
+  g.run("S.friends.push('goose')");
+  assert.ok(!items().some(t => /goose|鹅/.test(t)), 'and once it’s done, it’s gone');
+});
+
+test('a game from before the story had parts starts at the part it’s reached, without its card; after that, each part’s card shows as it begins', async () => {
+  const g = loadGame({dom: true, save: {version: 34, started: true, area: 2, areas: {1: {raft: 3}, 2: {landed: 1, dressed: 2, back: 1, child: 3}}, pos: {place: 'village', x: 16, y: 14, dir: 'up'}}});
+  g.run("mode = 'play'; save = () => {}; globalThis.__boxes = []; infoBox = async (who, html) => { __boxes.push(html.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); }; placePlayer()");
+  assert.equal(get(g, 'here().part'), null, 'from before parts');
+  await play(g, 'runEvents()');
+  assert.equal(get(g, 'partNow().id'), 'talk');
+  assert.equal(get(g, '__boxes.length'), 0, 'no card: it began before');
+  g.run('here().exchanged = 1');
+  await play(g, 'runEvents()');
+  assert.equal(get(g, 'partNow().id'), 'town');
+  assert.match(get(g, '__boxes')[0], /^Part 4 The market town/, 'the next one’s card, as it begins');
+  assert.equal(get(loadGame({dom: true}), 'here().part'), -1, 'a new game: not into a part yet, so each card shows');
 });

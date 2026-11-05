@@ -98,7 +98,7 @@ test('A at the hive takes honey, teaching 蜂蜜 (said straight away); the hungr
   assert.match(g.run('goalText()'), /The hungry monkey has something to ask you: look for his ! by the feast’s 桌子 \(tables\)/, 'then three shrimp for the feast (tests/fishing.test.js)');
   g.run("here().shrimp = 'done'; here().shrimpTable = 1");
   assert.match(g.run('goalText()'), /The hungry monkey has something to ask you: look for his ! by the feast’s 桌子 \(tables\)/, 'then a crab, from the shore (tests/shore.test.js)');
-  g.run("here().crab = 'done'; here().crabTable = 1; here().exam = 1; here().feastHeld = 1; here().raft = 3");   // (then the exam, the feast and the raft: tests/shore.test.js)
+  g.run("here().crab = 'done'; here().crabTable = 1; here().exam = 1; here().feastHeld = 1; here().raft = 3; here().part = PARTS.findIndex(p => p.id === 'sail')");   // (then the exam, the feast and the raft: tests/shore.test.js; that part of the story begun: tests/parts-area1.test.js)
   assert.match(g.run('goalText()'), /Chapter 1 is complete! Your (木筏 \(raft\)|raft) is waiting/, 'and once you’ve sailed away, chapter 1 is complete');
   g.run('__said.length = 0');
   await press(g, 20, 7, 'left');

@@ -80,7 +80,12 @@ const metCount = (ch = 0, place) => chapterAnimals(ch, place).filter(a => S.met.
 // The story's chapters in this area (AREA.chapters), and the one you're in (counting from 0). Each item on the
 // area's checklist belongs to a chapter (chapter, 0 if not given); the checklist shows the chapter you're in.
 const chapterNow = () => here().chapter || 0;
-const chapterItems = () => AREA.checklist.filter(c => (c.chapter || 0) === chapterNow() && (!c.part || !partNow() || c.part === partNow().id));   // (in a chapter with parts, just the part you're in)
+const chapterItems = () => AREA.checklist.filter(c => (c.chapter || 0) === chapterNow());
+// What the checklist shows of it: in a chapter with parts, the part you're in, and anything from an earlier part that's still
+// to do (decided 5 November 2026: in Flower Fruit Mountain, the hillside's animal or the colours can still be waiting as the
+// feast begins), never what's to come.
+const shownItems = () => chapterItems().filter(c => !c.part || !partNow() || c.part === partNow().id ||
+  (PARTS.findIndex(p => p.id === c.part) < here().part && !matches(c.done)));
 // The story's parts within a chapter (the area's parts; decided 5 November 2026, after playing it: the human world felt
 // aimless): the furthest one you've reached (here().part, its index), each with its title card as it begins (once its
 // when matches; card:false for one that begins with its chapter's own card), and what you're doing in it (now: a text,
@@ -90,16 +95,18 @@ const PARTS = AREA.parts || [];
 const partNow = () => { const p = PARTS[here().part]; return p && p.chapter === chapterNow() ? p : null; };
 const textNow = v => !v ? '' : typeof v === 'string' ? fill(v, false, true) : fill((v.find(x => !x.if || matches(x.if)) || {}).text || '', false, true);
 async function partsCheck(){
+  const quiet = here().part == null;   // (a game from before the story had parts starts at the part it's reached, with no card)
   for (let i = PARTS.length - 1; i > (here().part ?? -1); i--){
     const p = PARTS[i];
     if (p.chapter !== chapterNow() || !matches(p.when)) continue;
     here().part = i; save();
-    if (p.card !== false){ SFX.chime(); await infoBox('', `<div class="chaptercard partcard"><p class="label">${esc(p.name)}</p><h2>${esc(p.title)}</h2>${p.text ? `<p class="parttext">${esc(fill(p.text, false, true))}</p>` : ''}</div>`, 'OK'); }
+    if (p.card !== false && !quiet){ SFX.chime(); await infoBox('', `<div class="chaptercard partcard"><p class="label">${esc(p.name)}</p><h2>${esc(p.title)}</h2>${p.text ? `<p class="parttext">${esc(fill(p.text, false, true))}</p>` : ''}</div>`, 'OK'); }
     return;
   }
+  if (quiet && PARTS.length) here().part = -1;   // (not into a part yet: each one's card shows as it begins)
 }
 // [text, done, is it the exit test, found yet]: an item with show is found once show matches, or it's done
-const areaChecklist = () => chapterItems().map(c => { const done = matches(c.done); return [fill(c.text, false, true), done, !!c.exitTest, !c.show || done || matches(c.show)]; });
+const areaChecklist = () => shownItems().map(c => { const done = matches(c.done); return [fill(c.text, false, true), done, !!c.exitTest, !c.show || done || matches(c.show)]; });
 const chapterDone = () => chapterItems().filter(c => !c.exitTest).every(c => matches(c.done));       // everything in this chapter done (apart from a test)
 function getTasks(){   // the tasks to show now: the area's tasks whose if matches
   return AREA.tasks.filter(t => matches(t.if)).map(t => {

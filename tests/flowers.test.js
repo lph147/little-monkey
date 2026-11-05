@@ -145,7 +145,8 @@ test('bring them to the big monkey: 我要红色的花, and he plants them in fr
   assert.ok(BEDS.every(([x, y]) => !g.run(`tileAt(${x}, ${y}).walk`)), 'you can’t walk on them');
   assert.ok(g.run('tileAt(11, 5).walk'), 'but the path between them, up to the door, is still open');
   assert.match(get(g, '__notes').join(' '), /The big monkey plants your flowers in front of the 学校 \(school\): red, yellow and white/);
-  assert.equal(item(g)[1], true, 'the checklist is ticked');
+  assert.equal(get(g, "matches(AREA.checklist.find(c => /^Plant /.test(c.text)).done)"), true, 'the checklist is ticked');
+  assert.equal(get(g, "areaChecklist().some(([t]) => /^Plant /.test(t))"), false, '(and, from the school’s part of the story, off it now that it’s done: you’re finding food for the feast)');
   assert.equal(bubble(g), null);
   await play(g, 'runEvents()');   // (your next step: the shop owner comes up the mountain, now the flowers are planted)
   assert.match(get(g, '__notes').join(' '), /A shop owner has come up the mountain/);

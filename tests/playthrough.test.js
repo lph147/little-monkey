@@ -57,6 +57,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // time you talk to them another, with no questions answered in between (decided 31 October 2026, after the little monkey
   // taught 猴子 and then, with a ! straight away, 朋友)
   run("globalThis.__talkedTo = []; (() => { const t = talk; talk = n => { __talkedTo.push(n.id); return t(n); }; })()");
+  run("globalThis.__parts = []; (() => { const p = partsCheck; partsCheck = async () => { const was = here().part; await p(); if (here().part !== was && partNow()) __parts.push(partNow().name + ': ' + partNow().title); }; })()");   // (each part of the story as it begins)
   run("globalThis.__caughtAt = {}; (() => { const s = setSeen; setSeen = w => { if (lvl(w) < 1) __caughtAt[w] = S.turn || 0; return s(w); }; })()");   // (the questions you'd answered when you caught each word)
   let lastTeacher = null;
   const backToBack = [];
@@ -293,7 +294,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [5, 1]);
   await pressAt(8, 1, 'right', 'telling the old monkey about the cave');
   assert.equal(area().cave, 3, 'the old monkey should hear about the cave');
-  assert.ok(get('areaChecklist()').slice(0, 3).every(([, done]) => done), 'the start of the prologue’s checklist should be ticked off');
+  assert.ok(get('chapterItems().slice(0, 3).every(c => matches(c.done))'), 'the start of the prologue’s checklist should be ticked off');
+  assert.equal(get('partNow().id'), 'king', 'the prologue’s last part: a home for the troop');
 
   // Then leading the troop in, home, counting them in, and becoming king
   await pressAt(5, 1, 'left', 'leading the troop into the cave');
@@ -904,6 +906,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(11, 12, 'down', 'sailing away on your raft');
   assert.deepEqual([area().raft, area().done], [3, true], 'chapter 1 is complete');
   assert.ok(get('areaChecklist()').every(([, done]) => done), 'chapter 1 so far is ticked off');
+  assert.deepEqual(get('__parts'), ['Part 1: The meadow', 'Part 2: Up the river', 'Part 3: The waterfall', 'Part 4: A home for the troop',
+    'Part 1: A new home ground', 'Part 2: The school', 'Part 3: Food for the feast', 'Part 4: The feast', 'Part 5: Setting sail'], 'the story, part by part');
   // Till everything built is done, there's always a task to say what's next (28 October 2026: once the cow was home, the
   // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
   assert.deepEqual(deadEnds, [], 'your tasks were never empty while there was more to do');

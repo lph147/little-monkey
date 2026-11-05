@@ -32,7 +32,7 @@ test('the squirrel and goat only appear once you know about animals; then A meet
 test('the goat grazes beside the path, a few steps into the river valley, and calls you over the first time; once it’s your friend it stays there, and wants to play once you’ve been up to the waterfall (3 November 2026)', async () => {
   const game = loadGame({dom: true, save: {version: 10, started: true, areas: {1: {elder: 2}},
     w: Object.fromEntries(['动物', '石头', '山', '树', '花', '草'].map(w => [w, {lv: 1, due: 0, ok: 0}]))}});
-  game.run("here().climb = 1; S.pos = {place: 'valley', x: 19, y: 11, dir: 'up'}; placePlayer(); mode = 'play'");   // (arriving from the mountain path)
+  game.run("here().gate = true; here().climb = 1; S.pos = {place: 'valley', x: 19, y: 11, dir: 'up'}; placePlayer(); mode = 'play'");   // (arriving from the mountain path)
   assert.equal(get(game, 'animalAt(20, 9).hz'), '山羊', 'grazing beside the path as you come in');
   assert.ok(get(game, 'pl.y') - 9 >= 2, 'above where you arrive, never on the bottom row a message covers');
   assert.equal(get(game, "ALL_NPCS.find(n => n.id === 'goat').place"), 'gone', 'and no goat character yet: never two goats at once');

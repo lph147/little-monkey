@@ -20,6 +20,7 @@ function game(area, pos, more = {}){
   g.run("confirmBox = async (who, html) => { __notes.push('ask: ' + html.replace(/<[^>]*>/g, '')); return __play; }");
   g.run("encounter = async foe => { __games.push([foe.id, foe.questions || 3, !!foe.practice]); for (let i = 0; i < (foe.questions || 3); i++) reviewed('山', true); return true; }");
   g.run("storyScene = async () => {}; SFX.encounter = SFX.fanfare = SFX.right = SFX.rumble = () => {}");
+  g.run("globalThis.__boxes = []; infoBox = async (who, html) => { __boxes.push(html.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); }");   // (a part of the story's card: tests/parts-area1.test.js)
   g.run('placePlayer()');
   return g;
 }
@@ -86,6 +87,7 @@ test('the old monkey checks the meadow’s five words once you know them, and th
   assert.equal(get(g, 'here().meadowCheck'), 1);
   await play(g, 'runEvents()');
   assert.equal(get(g, 'here().gate'), true, 'and then the rocks roll away');
+  assert.match(get(g, '__boxes').join(' '), /^Part 2 Up the river/, 'the story’s next part begins');
   assert.deepEqual(get(g, 'getTasks().map(t => t.id)').filter(t => t === 'meadowCheck'), [], 'a game already past the rocks is never asked');
 });
 

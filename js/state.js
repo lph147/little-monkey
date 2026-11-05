@@ -8,7 +8,7 @@ function areaStart(){   // a new game's progress in the area: the area's own lis
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
   for (const r of REQUESTS) p[r.id] = 'not asked';   // nothing hidden found yet (finds: the ids of AREA.hidden you've found),
   return Object.assign(p, {holding:{}, wanted:{}, picked:{}, bought:[], changed:{}, finds:{}, kept:{}, done:false,   // and no one keeping food for you (kept: who has what, the bag step),
-    hide:{spot:null, wrong:0, won:0, last:null}, out:{}, shooed:[], visited:[]});   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js),
+    hide:{spot:null, wrong:0, won:0, last:null}, out:{}, shooed:[], visited:[], part:-1});   // and the story not into its first part yet (part, js/world.js)   // and no one hiding (hide and seek, js/hide.js), nor out (out: animals that stay out once met, js/art.js),
                                                                            // nor shooed (shooed: birds you've shooed off for good, shooAway in js/world.js),
                                                                            // and no place been to yet (visited: the places you've been, for the map, js/map.js)
 }
@@ -223,7 +223,9 @@ function upgradeSave(s){
   const f = fresh(), start = f.areas[AREA.number];
   s = Object.assign(f, s);
   s.areas = Object.assign({}, s.areas);
-  s.areas[AREA.number] = Object.assign({}, start, s.areas[AREA.number]);
+  // (a game from before the story had parts, 5 November 2026, starts at the part it's reached, without its card: part null)
+  const before = s.areas[AREA.number] && !('part' in s.areas[AREA.number]) ? {part:null} : {};
+  s.areas[AREA.number] = Object.assign({}, start, before, s.areas[AREA.number]);
   s.areas[AREA.number].holding = Object.assign({}, s.areas[AREA.number].holding);
   s.areas[AREA.number].wanted = Object.assign({}, s.areas[AREA.number].wanted);
   if (!Array.isArray(s.areas[AREA.number].bought)) s.areas[AREA.number].bought = [];

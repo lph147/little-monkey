@@ -69,7 +69,8 @@ test('after them, the old monkey has news before any lesson: 我们有家，也�
   assert.match(notes.join(' '), /Time for a great feast, for the whole troop! It will be at a big 桌子 \(table\) under the big 树 \(tree\), in the middle of the home ground/);
   assert.equal(g.run('here().feast'), 1);
   assert.ok(g.run("lvl('有') >= 1"), '有 is a word you know now');
-  assert.deepEqual(item(g, /news/)[1], true, 'ticked off');
+  assert.equal(get(g, "matches(AREA.checklist.find(c => /news/.test(c.text)).done)"), true, 'ticked off');
+  assert.equal(item(g, /news/), null, 'and, the feast’s part of the story begun, off the checklist: it shows the part you’re in');
   assert.deepEqual(hungry(g), ['homeGround', 19, 7, 'left'], 'the hungry monkey has gone up to the home ground, to look after the table');
   const next = get(g, 'getTasks()').find(t => /big/.test(t.text));
   assert.equal(next.text, 'Go to the big 树 (tree) in the middle of the home ground');

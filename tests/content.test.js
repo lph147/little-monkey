@@ -50,7 +50,9 @@ const allIfs = () => [
   ...(AREA.lessons || []).filter(l => l.if).map(l => [`the lessons ${l.id}`, l.if]),
   ...allLegend.filter(([, t]) => t.pick && t.pick.if).map(([, t, from]) => [`picking at ${from}`, t.pick.if]),
   ...allSteps().filter(([, s]) => s.if).map(([where, s]) => [`a step in ${where}`, s.if]),
-  ['animalsAppear', AREA.animalsAppear]
+  ['animalsAppear', AREA.animalsAppear],
+  ...(AREA.parts || []).flatMap(p => [[`the part ${p.id}`, p.when], ...(Array.isArray(p.now) ? p.now.filter(n => n.if).map(n => [`the part ${p.id}'s now`, n.if]) : [])]),
+  ...(Array.isArray(AREA.goal) ? AREA.goal.filter(g => g.if).map((g, i) => [`the goal, part ${i + 1}`, g.if]) : [])
 ];
 const okPlaceholder = w => BANK[w] || AREA.counters[w] || (w.startsWith('holding:') && AREA.requests[w.slice(8)]) || (w.startsWith('wanted:') && (AREA.requests[w.slice(7)] || {}).choices)
   || (w.startsWith('left:') && (AREA.counters[w.slice(5)] || {}).count === 'known')   // (what a counter of words you know still waits for)
@@ -551,6 +553,26 @@ test('chapters have names and titles, the checklist is in chapter order, any exi
   assert.ok(AREA.checklist.filter(c => c.exitTest).length <= 1, 'one exit test at most');
   assert.ok(!AREA.checklist.some((c, i) => c.exitTest && i < AREA.checklist.length - 1), 'the exit test should be the last item on the checklist');
   for (const h of AREA.hints) assert.ok(h.text && h.if, 'each hint needs if and text');
+});
+
+test('the story’s parts: each in a chapter, in order, with its name, title and what you’re doing; checklist items name a part of their own chapter; the main tasks are marked', () => {
+  const parts = AREA.parts || [];
+  if (!parts.length) return;
+  const ids = parts.map(p => p.id);
+  assert.equal(new Set(ids).size, ids.length, 'two parts with the same id');
+  assert.deepEqual(parts.map(p => p.chapter), [...parts.map(p => p.chapter)].sort((a, b) => a - b), 'the parts go chapter by chapter');
+  for (const p of parts){
+    assert.ok(AREA.chapters[p.chapter], `the part ${p.id} is in chapter ${p.chapter}, which isn't in chapters`);
+    assert.ok(p.name && p.title && p.now && p.when, `the part ${p.id} needs a name, a title, what you're doing in it (now) and when it begins`);
+    assert.ok(p.card === false || p.text, `the part ${p.id} needs text for its card (or card:false)`);
+  }
+  for (const c of AREA.checklist.filter(c => c.part)){
+    const p = parts.find(p => p.id === c.part);
+    assert.ok(p, `the checklist item "${c.text}" is in the part ${c.part}, which isn't one`);
+    assert.equal(p.chapter, c.chapter || 0, `the checklist item "${c.text}" is in a part of another chapter`);
+  }
+  assert.ok(AREA.goal, 'a story in parts says where it’s going: the goal');
+  assert.ok(AREA.tasks.some(t => t.main), 'the story’s own tasks are marked main');
 });
 
 test('bubbles are for characters, and show ! or ?', () => {

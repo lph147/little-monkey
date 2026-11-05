@@ -155,7 +155,7 @@ test('the hungry monkey takes the crab (这是螃蟹), on a stone table of its o
   assert.ok(get(g, "mapObjects().some(o => o.look === 'crabTable' && o.x === 15 && o.y === 7)"), 'one big object');
   assert.equal(g.run('OBJECT_STAGES.crabTable'), 2, 'set up in two pieces: its stone, then the crab on a plate');
   assert.match(get(g, '__notes').join(' '), /A big red 螃蟹 \(crab\) on a plate, for the feast!/);
-  assert.deepEqual(item(g, /crab/), ['Catch a 螃蟹 (crab) for the feast', true]);
+  assert.ok(get(g, "matches(AREA.checklist.find(c => /crab/.test(c.text)).done)"), 'on the checklist, ticked off (and, every food on the tables, off it now: tests/parts-area1.test.js)');
   assert.deepEqual(get(g, "AREA.feastList.foods.filter(f => f.word === '螃蟹').map(f => [matches(f.show), matches(f.have), f.yes.zh])"), [[true, true, '我们 有 螃蟹 。']], 'ticked on the feast’s list');
   g.run('__said.length = 0; __notes.length = 0');
   goTo(g, 'shore', 7, 9, 'down');
@@ -243,7 +243,7 @@ test('the feast: the troop sits down round the tables, it’s told like the open
   assert.deepEqual(get(g, '__said'), ['big: 我们来做木筏吧！'], 'let’s make a raft!');
   assert.deepEqual(get(g, 'S.following'), ['elder', 'big', 'playful'], 'the old, big and little monkeys come with you');
   assert.deepEqual(get(g, 'getTasks().map(t => t.text)'), ['Lead the troop down to the shore, below the meadow, to the edge of the 海 (sea)']);
-  assert.deepEqual(item(g, /feast with the troop/), ['Sit down to the great feast with the troop', true]);
+  assert.ok(get(g, "matches(AREA.checklist.find(c => /feast with the troop/.test(c.text)).done)"), 'ticked off (and off the checklist now: the story’s next part, tests/parts-area1.test.js)');
   assert.deepEqual(get(g, "AREA.scenes.feast.captions.map(c => c.zh.replace(/ /g, ''))").slice(-6),
     ['小猴子很快乐！', '可是美猴王不快乐。', '我们会老……', '海那边有神仙。', '神仙不会老！', '我要去找神仙！'], 'happy, then sad: you’ll grow old; but immortals never do');
   assert.equal(get(g, "AREA.scenes.feast.watch"), 'Watch the feast', 'to watch again from Settings');

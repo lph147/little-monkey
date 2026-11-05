@@ -156,6 +156,7 @@ SAVES.feastList = {...SAVES.feastTable, w: {...SAVES.feastTable.w, ...knows(1, [
   pos: {place: 'homeGround', x: 17, y: 8, dir: 'up'}};
 // the feast's tables set out bare (27 October 2026): the hungry monkey wants bowls, from the cave; taking them there; and
 // bringing them back, and the big monkey's chopsticks
+SAVES.journey = {...SAVES.feastList, areas: {1: {...SAVES.feastList.areas[1], bees: 1, flowers: 'done', schoolFlowers: true, hide: {spot: 'table', wrong: 0, won: 0, last: 'table'}}}, pos: {place: 'homeGround', x: 13, y: 12, dir: 'up'}};   // (the bees to find, and a little monkey hiding)
 SAVES.tablesBare = {...SAVES.feastTable, areas: {1: {...SAVES.feastTable.areas[1], tableware: 0, bowls: 'not asked'}}, pos: {place: 'homeGround', x: 19, y: 8, dir: 'up'}};
 SAVES.bowlsCave = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'asked'}}, tasksSeen: {bowls: 1}, pos: {place: 'cave', x: 9, y: 4, dir: 'up'}};
 SAVES.bowlsBack = {...SAVES.tablesBare, areas: {1: {...SAVES.tablesBare.areas[1], bowls: 'asked', holding: {bowls: '碗'}}}, tasksSeen: {bowls: 1, bowlsBack: 1}};
@@ -1335,6 +1336,10 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'a2-town', title: 'Area 2: the market town', save: 'a2town', why: 'White walls and dark tiles along a flagstone street: the teahouse with its 茶 flag, the school with its 学校 board, the market’s stalls.', run: async () => {
     play(); await wait(600); }},
+  {id: 'part', title: 'A part of the story begins', save: 'rocksGone', why: 'Flower Fruit Mountain’s story in parts, too: as each begins, its card says what it’s about. Here, the rocks have rolled away: Part 2, up the river.', run: async () => {
+    play(); await wait(100); here().part = 0; partsCheck(); await wait(400); }},
+  {id: 'tasks-journey', title: 'Tasks: your journey', save: 'journey', why: 'At the top, where the story is going and the part you’re in; then the story’s tasks first, ★, and the rest under Also. Chapter 1, getting ready for the feast.', run: async () => {
+    play(); await wait(100); here().part = PARTS.findIndex(p => p.id === 'feast'); tasksPage(() => closeCard()); await wait(400); }},
   {id: 'a2-part', title: 'A part of the story begins', save: 'a2child', why: 'Each part of the story has a card as it begins, saying what it’s about: here, Part 2, learning to talk. The first, as you land, says why you’re here: to find an immortal.', run: async () => {
     play(); await wait(100); here().part = 0; partsCheck(); await wait(400); }},
   {id: 'a2-tasks', title: 'Tasks: your journey', save: 'a2asking', why: 'At the top, your journey’s goal and the part you’re in, with what you’re doing in it; then the story’s main task, ★, and the rest under Also.', run: async () => {
