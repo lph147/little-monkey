@@ -635,6 +635,7 @@ check that each is true and simply put.
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
 | 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman) |  |
+| 我长大了！ | wǒ zhǎngdà le! | I’ve grown up! | 老板 (Stallholder), 路人 (Passer-by) |  |
 | 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder) |  |
 | 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder) |  |
@@ -783,6 +784,12 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 小猴子学说话。 | xiǎo hóuzi xué shuō huà. | The little monkey learns to talk like people. |  |
 | 神仙在哪里？我不知道。 | shénxiān zài nǎlǐ? wǒ bù zhīdào. | Where are the immortals? Nobody knows. |  |
 
+### Scene: “many years later”
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 很多年以后…… | hěn duō nián yǐhòu… | Many years later… |  |
+
 ### Scene: the crossing
 
 | Chinese | Pinyin | English | Notes |
@@ -816,6 +823,11 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 老师 | lǎoshī | Teacher |  |
 | 学生 | xuésheng | Pupil |  |
 | 学生 | xuésheng | Pupil |  |
+| 老板 | lǎobǎn | Stallholder |  |
+| 路人 | lùrén | Passer-by |  |
+| 学生 | xuésheng | Pupil |  |
+| 学生 | xuésheng | Pupil |  |
+| 老师 | lǎoshī | Teacher |  |
 | 路人 | lùrén | Passer-by |  |
 | 路人 | lùrén | Passer-by |  |
 | 路人 | lùrén | Passer-by |  |
@@ -946,6 +958,10 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave (a name) |  |
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
 | 很 | hěn | very |  |
+| 多 | duō | many, much |  |
+| 年 | nián | year |  |
+| 以后 | yǐhòu | after, later |  |
+| 长大 | zhǎngdà | to grow up |  |
 | 盖 | gài | to build (a house) |  |
 | 刷 | shuā | to paint (with a brush) |  |
 | 灯笼 | dēnglong | lantern |  |

@@ -419,6 +419,7 @@ SAVES.a2hens = {...SAVES.a2knock, w: {...SAVES.a2knock.w, ...knows(1, ['谁', '�
 SAVES.a2lane = {...SAVES.a2fields, pos: {place: 'villageLane', x: 8, y: 8, dir: 'down'}};
 SAVES.a2highRoad = {...SAVES.a2town, pos: {place: 'highRoad', x: 16, y: 9, dir: 'up'}};
 SAVES.a2canal = {...SAVES.a2harbour, pos: {place: 'canalPath', x: 9, y: 12, dir: 'left'}};
+SAVES.a2townLater = {...SAVES.a2harbour, pos: {place: 'town', x: 13, y: 8, dir: 'up'}};   // (after the years: the children grown up, a new stall)
 SAVES.a2docker = {...SAVES.a2harbour, areas: {...SAVES.a2harbour.areas, 2: {...SAVES.a2harbour.areas[2], boat: 1, cargo: 1}}, pos: {place: 'harbour', x: 9, y: 5, dir: 'up'}};
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
@@ -1326,6 +1327,10 @@ const SCREENS = [
     play(); await wait(100); storyScene('yearsPass'); introClock = 4.05; advancedTo = 1; await wait(400); }},
   {id: 'a2-canal', title: 'Area 2: the canal path', save: 'a2canal', why: 'From the town down to the harbour, along the canal under willows: an angler, a little bridge, long grass.', run: async () => {
     play(); await wait(600); }},
+  {id: 'a2-town-later', title: 'Area 2: the town, years later', save: 'a2townLater', why: 'After the years go by: the school’s children grown up (one sells kites at a new stall), two new little pupils, the teacher’s hair gone grey.', run: async () => {
+    play(); await wait(600); }},
+  {id: 'a2-later-card', title: 'Area 2: “many years later”', save: 'a2townLater', why: 'A card for a jump in time, after the years in the town: 很多年以后…… over the sun and moon going round and round.', run: async () => {
+    play(); await wait(100); storyScene('manyYearsLater'); introClock = 2.5; advancedTo = 0; await wait(400); }},
   {id: 'a2-docker', title: 'Area 2: loading the boat', save: 'a2docker', why: 'Waiting for the wind, you help the docker: face a sack and press A to lift it (a question), and carry it down to the boat. Four of them.', run: async () => {
     play(); await wait(600); }},
   {id: 'a2-harbour', title: 'Area 2: the harbour', save: 'a2harbour', why: 'The boatman, by his big boat: 今天没有风。 (风). Once you’ve practised, the wind comes, and he takes you across for your fare.', run: async () => {

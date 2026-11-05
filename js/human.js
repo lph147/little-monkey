@@ -81,7 +81,7 @@ Object.assign(LOOKS, {
   scarecrow: rice, coatOnSand: sand, hatOnSand: sand, boat: seaBase, bigBoat: seaBase, netRack: sand,
   jHouse: earth, mudHouse: earth, whiteWall: earth, wallGate: earth, bambooFence: lawn, bamboo: lawn, willow: lawn, oldTree: paving, jars: earth, baskets: earth,
   sacks: paving, cart: paving, woodpile: earth, fishRack: earth, archBridge: canal, teahouse: paving, townSchool: paving, stallBuns: paving, stallShoes: paving,
-  stallFruit: paving, stallChanger: paving, well: earth, washLine: earth, bookTable: paving
+  stallFruit: paving, stallChanger: paving, stallKites: paving, well: earth, washLine: earth, bookTable: paving
 });
 // (what's under them, where the map is of other ground: the village's houses and things on earth, the town's on flagstones)
 const HUMAN_GROUND = {earth, paving, lawn, sand};
@@ -89,7 +89,7 @@ const HUMAN_GROUND = {earth, paving, lawn, sand};
 // squares by two, had a square of the town's flagstones under it, 4 November 2026)
 const groundNear = (x, y, dx, dy) => { const look = tileAt(x, y).look; let k = 1; while (k < 6 && tileAt(x + dx * k, y + dy * k).look === look) k++; return HUMAN_GROUND[tileAt(x + dx * k, y + dy * k).look]; };
 const groundUnder = (look, near) => (g, X, Y, x, y) => (groundNear(x, y, 0, 1) || groundNear(x, y, -1, 0) || groundNear(x, y, 1, 0) || near)(g, X, Y, x, y);
-for (const k of ['jHouse', 'mudHouse', 'whiteWall', 'wallGate', 'jars', 'baskets', 'sacks', 'cart', 'woodpile', 'fishRack', 'teahouse', 'townSchool', 'stallBuns', 'stallShoes', 'stallFruit', 'stallChanger', 'well', 'washLine', 'bookTable', 'oldTree'])
+for (const k of ['jHouse', 'mudHouse', 'whiteWall', 'wallGate', 'jars', 'baskets', 'sacks', 'cart', 'woodpile', 'fishRack', 'teahouse', 'townSchool', 'stallBuns', 'stallShoes', 'stallFruit', 'stallChanger', 'stallKites', 'well', 'washLine', 'bookTable', 'oldTree'])
   LOOKS[k] = groundUnder(k, LOOKS[k]);
 
 /* ---- buildings and things ---- */
@@ -375,10 +375,11 @@ Object.assign(OBJECT_ART, {
   stallBuns: (g, o) => marketStall(g, o, HW.indigo, (g, x, y, w) => { for (let i = 0; i + 14 <= w; i += 15){ R(g, x + i, y + 2, 13, 5, '#C9A060'); R(g, x + i, y + 2, 13, 1, '#E0BC78'); for (let k = 0; k < 3; k++){ oval(g, x + i + 2 + k * 4, y + 1, 2, 2, '#F6EFE2'); R(g, x + i + 2 + k * 4, y, 1, 1, '#D9CDB8'); } } }, vSign('包子')),
   stallShoes: (g, o) => marketStall(g, o, HW.red, (g, x, y, w) => { for (let i = 0; i + 7 <= w; i += 8){ const c = ['#2A2A2A', '#3E5A86', '#7A3A2A'][i / 8 % 3]; for (const dx of [0, 4]){ R(g, x + i + dx, y + 3, 3, 3, c); R(g, x + i + dx, y + 5, 3, 1, '#E8E0D0'); } } }),
   stallFruit: (g, o) => marketStall(g, o, HW.ochre, (g, x, y, w) => { const c = [['#D8342C', '#FF8A80'], ['#F2A0A0', '#FFE0CF'], ['#5E9A3C', '#9ACD52'], ['#E8D27A', '#FFF2B0'], ['#D8642C', '#F2A060']]; for (let i = 0, k = 0; i + 7 <= w; i += 8, k++){ const [f, s] = c[k % 5]; R(g, x + i, y + 4, 7, 3, '#B8904A'); R(g, x + i, y + 4, 7, 1, '#E0BE78'); for (const [dx, dy] of [[1, 2], [4, 2], [2, 0]]){ R(g, x + i + dx, y + dy, 2, 2, f); R(g, x + i + dx, y + dy, 1, 1, s); } } }),
+  stallKites: (g, o) => marketStall(g, o, '#3E7A5E', (g, x, y, w) => { const c = ['#D8342C', '#F2C04A', '#3E5A86', '#5E9A3C']; for (let i = 0, k = 0; i + 6 <= w; i += 8, k++){ const cx = x + i + 3, cy = y - 6 - (k % 2) * 3; for (let r = 0; r < 4; r++){ R(g, cx - r, cy + r, r * 2 + 1, 1, c[k % 4]); R(g, cx - r, cy + 7 - r, r * 2 + 1, 1, c[(k + 1) % 4]); } R(g, cx, cy, 1, 8, '#F6EFE2'); R(g, cx, cy + 8, 1, 4, '#C8B890'); } }),   // (a stall that's new after the years: kites, hung over its counter)
   stallChanger: (g, o) => marketStall(g, o, '#5E3B22', (g, x, y, w) => { R(g, x + 2, y + 1, 12, 6, HW.wood); for (let r = 0; r < 2; r++) for (let c = 0; c < 5; c++) R(g, x + 3 + c * 2, y + 2 + r * 3, 1, 1, '#E0C080'); for (let i = 0; i < 3; i++){ oval(g, x + 20 + i * 5, y + 5, 2, 2, '#C89A3E'); R(g, x + 20 + i * 5, y + 5, 1, 1, '#3A2A1E'); } })
 });
 BLOCK_OBJECTS.push('jHouse', 'mudHouse', 'townSchool', 'teahouse', 'oldTree', 'archBridge', 'boat', 'bigBoat');
-ROW_OBJECTS.push('whiteWall', 'bambooFence', 'stallBuns', 'stallShoes', 'stallFruit', 'stallChanger', 'washLine', 'fishRack');
+ROW_OBJECTS.push('whiteWall', 'bambooFence', 'stallBuns', 'stallShoes', 'stallFruit', 'stallChanger', 'stallKites', 'washLine', 'fishRack');
 GRASSY.push('lawn', 'bamboo', 'willow', 'bambooFence');
 
 /* ---- scenes ---- */
@@ -438,4 +439,16 @@ function drawCrossSea(t, now){
   b.drawImage(monkeySprite('player', 'right', false), bx + 34, by - 10, 16, 16);
   b.drawImage(monkeySprite('boatman', 'right', false), bx + 4, by - 10, 16, 16);
 }
-Object.assign(SCENE_ART, {drift: drawDrift, yearsPass: drawYearsPass, crossSea: drawCrossSea});   // (their sounds: SCENE_SOUNDS, js/main.js)
+// A card for a jump in time (the manyYearsLater scene: 很多年以后……, its caption): the sun and the moon going over and
+// over, faster and faster, above a quiet street, the sky turning from day to night and back, leaves falling.
+function drawLaterCard(t, now){
+  const W = VW*T, H = VH*T, turn = t * (0.6 + t * 0.35), k = (Math.sin(turn) + 1) / 2;   // (1 day, 0 night)
+  for (let y = 0; y < H; y += 2) R(b, 0, y, W, 2, mix(mix('#1C2440', '#8FC4E8', k), '#E8EEF2', y / H * .35));
+  const a = turn % (Math.PI * 2), sx = W / 2 - Math.cos(a) * W * .45, sy = H * .62 - Math.sin(a) * H * .5;
+  if (k > .5) disc(b, Math.round(sx), Math.round(sy), 9, '#F6D86A'); else { disc(b, Math.round(W - sx), Math.round(sy), 7, '#F2F2E6'); disc(b, Math.round(W - sx) + 3, Math.round(sy) - 2, 6, mix('#1C2440', '#8FC4E8', k)); }
+  if (k < .5) for (let i = 0; i < 24; i++) R(b, Math.floor(rnd(i, 3) * W), Math.floor(rnd(i, 4) * H * .5), 1, 1, '#F2F2E6');
+  for (let x = 0; x < W; x += 60) jHouse(b, {x:x / T, y:7, w:3, h:2});   // the street
+  R(b, 0, H - 16, W, 16, mix('#3E4A44', '#9E988C', k));
+  for (let i = 0; i < 8; i++){ const fx = (rnd(i, 9) * W + now / 40 * (1 + i % 3)) % W, fy = (rnd(i, 10) * H + now / 25) % (H - 30); R(b, Math.round(fx), Math.round(fy), 2, 1, ['#D8923A', '#C25A2A', '#E6B04A'][i % 3]); }   // leaves falling
+}
+Object.assign(SCENE_ART, {drift: drawDrift, yearsPass: drawYearsPass, crossSea: drawCrossSea, manyYearsLater: drawLaterCard});   // (their sounds: SCENE_SOUNDS, js/main.js)

@@ -275,9 +275,9 @@ const ACROSS_THE_SEA = {
       {message:'The path goes on up the mountain, to where the immortal lives. That’s chapter 1, still to come!'}]},
     // years go by in the town, once you know its words: you live among people, learning to talk like them, but nobody is
     // looking for the immortals (a match game of the town's and the village's words)
-    {if:{townWords:11, years:0, wordReady:true, friends:{cat:true}}, do:[{set:{years:1}}, {scene:'yearsPass'},
+    {if:{townWords:11, years:0, wordReady:true, friends:{cat:true}}, do:[{set:{years:1}}, {scene:'yearsPass'}, {scene:'manyYearsLater'},
       {match:'Years among people', stop:'Not now', words:['人', '衣服', '帽子', '井', '房子', '门', '鸡', '饭', '钱', '网', '船', '狗', '包子', '鞋', '茶', '孩子', '书', '猫']},
-      {message:'Years go by. You can talk like people now, but nobody here knows where the immortals are. Across the bridge, at the harbour, a boatman sails west…'}]}
+      {message:'Years go by. You can talk like people now, but nobody here knows where the immortals are. The town has changed too: the children from the school are grown up. Across the bridge, at the harbour, a boatman sails west…'}]}
   ],
 
   // The places: the shore where you land, the fishing village above it, the fields east of that, the market town, its
@@ -538,7 +538,7 @@ const ACROSS_THE_SEA = {
         "b######################################b",
         "b##################ÖÖ##################b",
         "###################ÖÖ##########O#######b",
-        "###CCC###EEE#######################c###b",
+        "###CCC###EEEǩǩǩ####################c###b",
         "#######################################b",
         "b##############HHHH########HHHHH#HHHHH#b",
         "b##xqj#########HHHHc###j###HHHHH#HHHHH#b",
@@ -698,6 +698,9 @@ const ACROSS_THE_SEA = {
     'm': {look:'sea', word:'海', fishing:true, note:'The sea, as far as you can see.'},
     '~': {look:'canal', word:'河', fishing:true},
     'I': {look:'slab', walk:true},
+    // a new stall in the town after the years (where there were just flagstones before)
+    'ǩ': {look:'paving', walk:true, becomes:[{if:{years:1}, to:'ǰ'}]},
+    'ǰ': {look:'stallKites', landmark:true, onLook:[{do:[{message:'A new stall, selling kites. It wasn’t here before!'}]}]},
     'n': {look:'archBridge', walk:true},
     'P': {look:'pier', walk:true},
     'b': {look:'bamboo', landmark:true, onLook:[{do:[{message:'A thick grove of bamboo.'}]}]},
@@ -805,12 +808,24 @@ const ACROSS_THE_SEA = {
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#2F4E78', b:'#3A2A1E', p:'#2A303A'}},
     {id:'teller', place:'town', person:true, hair:'topknot', beard:true, wear:'robe', x:7, y:5, facing:'down', name:{zh:'说书人', py:'shuōshūrén', en:'Storyteller'},
       palette:{o:'#3A2A1E', h:'#E0E0E0', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#5A6A4A', b:'#3A2A1E', p:'#2E3428'}},
-    {id:'teacher', place:'town', person:true, hair:'cap', wear:'robe', x:13, y:4, facing:'down', name:{zh:'老师', py:'lǎoshī', en:'Teacher'},
+    {id:'teacher', place:'town', person:true, hair:'cap', wear:'robe', x:13, y:4, facing:'down', moves:[{if:{years:1}, place:'hut', x:0, y:0}], name:{zh:'老师', py:'lǎoshī', en:'Teacher'},
       palette:{o:'#3A2A1E', h:'#3A3A3A', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#5E3B22', b:'#3A2A1E', p:'#2E2A26'}},
-    {id:'pupil1', place:'town', person:true, hair:'topknot', small:true, x:12, y:5, facing:'up', name:{zh:'学生', py:'xuésheng', en:'Pupil'},
+    {id:'pupil1', place:'town', person:true, hair:'topknot', small:true, x:12, y:5, facing:'up', moves:[{if:{years:1}, place:'hut', x:0, y:0}], name:{zh:'学生', py:'xuésheng', en:'Pupil'},
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#4F78A8', b:'#3A2A1E', p:'#34404E'}},
-    {id:'pupil2', place:'town', person:true, hair:'pigtails', small:true, x:14, y:5, facing:'up', name:{zh:'学生', py:'xuésheng', en:'Pupil'},
+    {id:'pupil2', place:'town', person:true, hair:'pigtails', small:true, x:14, y:5, facing:'up', moves:[{if:{years:1}, place:'hut', x:0, y:0}], name:{zh:'学生', py:'xuésheng', en:'Pupil'},
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#5FA36B', b:'#3A2A1E', p:'#3A4A5A'}},
+    // after the years (years 1): the school's children grown up (one now sells kites at a new stall), two new little
+    // pupils, and the teacher's hair gone grey
+    {id:'grown1', place:'town', person:true, hair:'topknot', x:15, y:14, facing:'down', moves:[{if:{years:0}, place:'hut', x:0, y:0}], name:{zh:'老板', py:'lǎobǎn', en:'Stallholder'},
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#4F78A8', b:'#3A2A1E', p:'#34404E'}},
+    {id:'grown2', place:'town', person:true, hair:'bun', x:17, y:6, facing:'down', moves:[{if:{years:0}, place:'hut', x:0, y:0}], name:{zh:'路人', py:'lùrén', en:'Passer-by'},
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#5FA36B', b:'#3A2A1E', p:'#3A4A5A'}},
+    {id:'newPupil1', place:'town', person:true, hair:'pigtails', small:true, x:12, y:6, facing:'up', moves:[{if:{years:0}, place:'hut', x:0, y:0}], name:{zh:'学生', py:'xuésheng', en:'Pupil'},
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#C7902F', b:'#3A2A1E', p:'#3A3446'}},
+    {id:'newPupil2', place:'town', person:true, hair:'topknot', small:true, x:14, y:6, facing:'up', moves:[{if:{years:0}, place:'hut', x:0, y:0}], name:{zh:'学生', py:'xuésheng', en:'Pupil'},
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#A8584E', b:'#3A2A1E', p:'#34404E'}},
+    {id:'teacherOld', place:'town', person:true, hair:'cap', beard:true, wear:'robe', x:13, y:5, facing:'down', moves:[{if:{years:0}, place:'hut', x:0, y:0}, {if:{years:1}, place:'town', x:13, y:4, facing:'down'}], name:{zh:'老师', py:'lǎoshī', en:'Teacher'},
+      palette:{o:'#3A2A1E', h:'#B8B8B8', s:'#EBC29A', e:'#1E140C', m:'#C4826A', c:'#5E3B22', b:'#3A2A1E', p:'#2E2A26'}},
     {id:'walker1', place:'town', person:true, hair:'bun', x:22, y:7, facing:'right', name:{zh:'路人', py:'lùrén', en:'Passer-by'},
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#A8584E', b:'#3A2A1E', p:'#3E3430'}},
     {id:'walker2', place:'town', person:true, hair:'topknot', x:25, y:14, facing:'left', name:{zh:'路人', py:'lùrén', en:'Passer-by'},
@@ -960,6 +975,7 @@ const ACROSS_THE_SEA = {
 
   lines: {
     hi: {zh:'你好 ！', en:'Hello!'},
+    grownUp: {zh:'我 长大 了 ！', en:'I’ve grown up!'},
     thanks: {zh:'谢谢 ！', en:'Thank you!'},
     welcome: {zh:'不客气 ！', en:'You’re welcome!'},
     noProblem: {zh:'没关系 ！', en:'It doesn’t matter!'},
@@ -1141,6 +1157,11 @@ const ACROSS_THE_SEA = {
       {do:[{say:'hi'}, {reply:'你好'}]}
     ],
     pupil1: [{do:[{say:'hi'}, {reply:'你好'}]}],
+    grown1: [{do:[{say:'grownUp'}, {message:'It’s one of the children from the school, all grown up, selling kites at a stall of their own!'}]}],
+    grown2: [{do:[{say:'grownUp'}, {message:'It’s one of the children from the school, all grown up!'}]}],
+    newPupil1: [{do:[{say:'hi'}, {reply:'你好'}]}],
+    newPupil2: [{do:[{say:'hi'}, {reply:'你好'}]}],
+    teacherOld: [{do:[{say:'listen'}, {message:'The teacher’s hair has gone grey. New children are learning at the school now.'}]}],
     pupil2: [{do:[{say:'hi'}, {reply:'你好'}]}],
     walker1: [{do:[{say:'hi'}, {reply:'你好'}]}],
     walker2: [{do:[{say:'hi'}, {reply:'你好'}]}],
@@ -1183,6 +1204,9 @@ const ACROSS_THE_SEA = {
       {at:4, zh:'小 猴子 学 说 话 。', en:'The little monkey learns to talk like people.'},
       {at:8, zh:'神仙 在 哪里 ？ 我 不 知道 。', en:'Where are the immortals? Nobody knows.'}
     ]},
+    // a card for a jump in time, after the years in the town: 很多年以后…… (decided 5 November 2026, with what's changed
+    // when you look round: the children grown up, new little pupils, the teacher's hair grey, a new stall)
+    manyYearsLater: {watch:'Watch “many years later”', when:{years:1}, captions: [{at:0, zh:'很 多 年 以后 ……', en:'Many years later…'}]},
     // across the western sea, in the boatman's big boat
     crossSea: {watch:'Watch the crossing', when:{boat:2}, captions: [
       {at:0, zh:'有 风 了 ！', en:'The wind’s come!'},
