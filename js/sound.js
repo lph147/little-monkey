@@ -610,21 +610,68 @@ function loadClip(a, url){
     .catch(e => { clipBuffers.delete(url); throw e; }));
   return clipBuffers.get(url);
 }
-// Say some Chinese aloud: its clip if there is one (in who's voice), else the device's Chinese voice.
-// onend runs when it's finished (or couldn't be said).
+// How fast the Chinese is said (decided 5 November 2026, after a beginner playtested it: slower, then faster again as
+// you get used to it): Settings' voice speed, 100% to 70% (slower than that, a stretched voice smears), each game its
+// own (S.voiceSpeed). And the 🐢 beside each 🔊 says it once more slowly: two steps slower than your speed, never below
+// 70%, and not there at all once you're at 70% (turtleSpeed); what it says, and anything said straight after it, such as
+// Hear both's second word, is slow (slowUntil).
+const VOICE_SPEEDS = [1, 0.9, 0.8, 0.7];
+const voiceSpeed = () => VOICE_SPEEDS.includes(S.voiceSpeed) ? S.voiceSpeed : 1;
+const turtleSpeed = () => { const i = VOICE_SPEEDS.indexOf(voiceSpeed()); return i >= VOICE_SPEEDS.length - 1 ? null : VOICE_SPEEDS[Math.min(i + 2, VOICE_SPEEDS.length - 1)]; };
+let slowUntil = 0;   // till when what's said is the 🐢's speed
+const SLOW_GAP = 400;   // (ms: the 🐢 says it straight away; and something said this soon after it ends is slow too)
+const sayRate = () => performance.now() < slowUntil && turtleSpeed() ? turtleSpeed() : voiceSpeed();
+// Slowing a clip down without making the voice deeper (as playing it slower would): its speech cut into short pieces
+// that overlap, each laid down a little further apart than it was, each piece where it best matches the one before
+// (WSOLA), so the voice stays smooth. x: the samples; sr: how many a second; rate: 0.7 for 70% speed. Gives the new samples.
+function stretchSamples(x, sr, rate){
+  const n = x.length, W = Math.max(8, Math.round(sr * 0.04)), H = W >> 1, Ha = H * rate, tol = Math.round(sr * 0.01), STEP_C = 8;
+  const outLen = Math.ceil(n / rate), out = new Float32Array(outLen + W), norm = new Float32Array(outLen + W);
+  const win = Float32Array.from({length:W}, (_, i) => 0.5 - 0.5 * Math.cos(2 * Math.PI * i / W));
+  let prev = 0;
+  for (let k = 0; k * H < outLen; k++){
+    const target = Math.min(Math.round(k * Ha), Math.max(0, n - W));
+    let best = target;
+    if (k > 0){
+      const nat = prev + H; let bestC = -Infinity;
+      for (let d = -tol; d <= tol; d++){
+        const p = target + d; if (p < 0 || p + W > n) continue;
+        let c = 0; for (let i = 0; i < W && nat + i < n; i += STEP_C) c += x[p + i] * x[nat + i];
+        if (c > bestC){ bestC = c; best = p; }
+      }
+    }
+    for (let i = 0, o = k * H; i < W; i++, o++){ out[o] += (best + i < n ? x[best + i] : 0) * win[i]; norm[o] += win[i]; }
+    prev = best;
+  }
+  for (let o = 0; o < outLen; o++) if (norm[o] > 1e-3) out[o] /= norm[o];
+  return out.subarray(0, outLen);
+}
+// A clip's speech at a slower speed: stretched the first time, then kept.
+function slowedClip(a, buf, rate){
+  buf.slowed = buf.slowed || {};
+  if (!buf.slowed[rate]){
+    const sr = buf.sampleRate, [from, dur] = buf.span || [0, buf.duration], s0 = Math.floor(from * sr), len = Math.floor(dur * sr);
+    const y = stretchSamples(buf.getChannelData(0).subarray(s0, s0 + len), sr, rate), out = a.createBuffer(1, y.length, sr);
+    out.getChannelData(0).set(y); buf.slowed[rate] = out;
+  }
+  return buf.slowed[rate];
+}
+// Say some Chinese aloud: its clip if there is one (in who's voice), else the device's Chinese voice; at your voice
+// speed (or the 🐢's). onend runs when it's finished (or couldn't be said).
 function say(text, onend, who){
-  const url = clipFor(text, who), a = url && getAC();
-  if (!a) return sayDevice(text, onend);
+  const url = clipFor(text, who), a = url && getAC(), rate = sayRate(), slow = rate !== voiceSpeed();
+  const ended = () => { if (slow) slowUntil = performance.now() + SLOW_GAP; if (onend) onend(); };   // (what's said straight after the 🐢's is slow too)
+  if (!a) return sayDevice(text, ended, rate);
   stopSpeech();
   const me = {}; uttRef = me;
-  speaking = true; speakSafety = performance.now() + text.length * 500 + 4000; duck();
+  speaking = true; speakSafety = performance.now() + text.length * 500 / rate + 4000; duck();
   loadClip(a, url).then(buf => {
     if (uttRef !== me) return;   // something else was said in the meantime
-    const s = a.createBufferSource();
-    s.buffer = buf; s.connect(a.destination);
-    s.onended = () => { if (uttRef !== me) return; clipSrc = null; speaking = false; duck(); if (onend) onend(); };
-    clipSrc = s; s.start(0, ...(buf.span || []));   // just the speech, without the silence around it
-  }).catch(() => { if (uttRef === me) sayDevice(text, onend); });   // the clip didn't load (offline before it was kept): the device's voice
+    const s = a.createBufferSource(), sl = rate < 1 && buf.getChannelData ? slowedClip(a, buf, rate) : null;
+    s.buffer = sl || buf; s.connect(a.destination);
+    s.onended = () => { if (uttRef !== me) return; clipSrc = null; speaking = false; duck(); ended(); };
+    clipSrc = s; s.start(0, ...(sl ? [] : buf.span || []));   // just the speech, without the silence around it
+  }).catch(() => { if (uttRef === me) sayDevice(text, ended, rate); });   // the clip didn't load (offline before it was kept): the device's voice
 }
 // Say a word, such as an animal's name as it jumps out, and wait till it's said: at least least ms, and if it's still
 // being said then (a long one, such as 猫头鹰, or a clip still loading), till it ends and a moment more, so what comes
@@ -637,16 +684,16 @@ async function sayFully(text, least){
   await new Promise(r => { wake = r; setTimeout(r, 4000); });
   await sleep(200);
 }
-function sayDevice(text, onend){
+function sayDevice(text, onend, rate = voiceSpeed()){
   try {
     if (!('speechSynthesis' in window)) { onend && onend(); return; }
     const ss = speechSynthesis;
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'zh-CN'; if (zhVoice) u.voice = zhVoice; u.rate = 0.8;
+    u.lang = 'zh-CN'; if (zhVoice) u.voice = zhVoice; u.rate = 0.8 * rate;
     const done = () => { if (uttRef !== u) return; speaking = false; duck(); if (onend) onend(); };
     u.onend = done; u.onerror = done;
     uttRef = u; window.__lastUtterance = u;   // keep a reference so the browser does not cut it off
-    speaking = true; speakSafety = performance.now() + text.length * 500 + 2000; duck();
+    speaking = true; speakSafety = performance.now() + text.length * 500 / rate + 2000; duck();
     if (ss.speaking || ss.pending){ ss.cancel(); setTimeout(() => { if (uttRef === u) ss.speak(u); }, 90); }
     else ss.speak(u);
   } catch(e) { speaking = false; onend && onend(); }

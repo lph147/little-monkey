@@ -606,6 +606,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] Settings: Music, Sound effects and Pinyin switch on and off. With pinyin off, it's hidden over words in sentences. Back returns to the menu.
 - [ ] Settings, Frames a second On: within a second, a number appears under the POWER light, such as 60 FPS, and stays while you walk about, talk and answer questions. On a phone whose screen refreshes faster (120 times a second), it says 60 FPS · SCREEN 120, and walking is just as fast and smooth as on any other phone. Switch it Off: the number goes. It's kept with your game.
 - [ ] The menu's Save button closes the menu and says "Saved: Game 1, just now".
+- [ ] Settings, Voice speed: − and + change it a step at a time, 100%, 90%, 80%, 70%, saying 你好 at the new speed each time (− greyed at 70%, + at 100%). At 80%, every word and line is slower but in the same voice, not deeper. Beside every 🔊 is a 🐢, which says it again more slowly: at 100% at 80%, at 90% or 80% at 70%; at 70% there's no 🐢. It's kept with your game, and for a new game.
 - [ ] Settings, Watch the opening plays the opening, then carries on where you were. Once you're king, Settings also has Watch becoming king, which plays that scene and then carries on where you were. Settings, Title screen: your games, then your game and Continue, puts you back where you were.
 
 ## Area 2: the human world (about 45 minutes)

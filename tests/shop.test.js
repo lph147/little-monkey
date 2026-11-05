@@ -158,7 +158,7 @@ test('the money symbol is a pixel shell, in cards and messages', () => {
 test('the speaker on buttons is a pixel loudspeaker, not an emoji', () => {
   const game = loadGame({dom: true});
   game.run("openCard('<button>🔊 Hear it</button>')");
-  assert.match(game.el('#sheet').innerHTML, /<button><img class="speakericon"[^>]*> Hear it<\/button>/);
+  assert.match(game.el('#sheet').innerHTML, /<button[^>]*><img class="speakericon"[^>]*> Hear it<\/button>/);
 });
 
 test('the game’s icons are pixel art: every emoji the game shows has a pixel icon', () => {

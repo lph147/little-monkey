@@ -116,7 +116,7 @@ function showCaption(c, last){
   box.innerHTML = pixelIcons(`<div class="cap">${lineHTML(c.words, c.teach)}<div class="gloss"></div><div class="cen">${esc(c.en)}</div></div>
     <div class="caprow"><button class="btn" id="againBtn" aria-label="Hear it again">🔊</button>${last ? `<button class="btn primary" id="beginBtn">${esc(scene.last)}</button>` : '<button class="btn primary" id="nextBtn">Next</button>'}</div>`);
   box.hidden = false; $('#skipBtn').hidden = false;
-  bindTokens(box);
+  bindTokens(box); bindTurtles(box);
   say(capSaid(c)); $('#againBtn').onclick = () => say(capSaid(c));
   $('#skipBtn').onclick = scene.end;
   const nx = $('#nextBtn'); if (nx) nx.onclick = () => { advancedTo = capIdx + 1; SFX.blip(); };

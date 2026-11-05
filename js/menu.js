@@ -191,6 +191,7 @@ function whoKnowsHTML(){
 // Sound, pinyin, English on reply choices (for players who know some Chinese already), How to play, the opening (and the area's
 // other scenes, such as becoming king, once you've seen them) and the title screen
 // (where your games are: to switch, start a new one, copy one to a file or delete one). The game saves by itself.
+const SPEED_SAMPLE = '你好';   // (what's said as you change the voice speed)
 function openSettings(focusId){
   openCard(`<p class="label">Settings</p>
     <div class="menu twocol">
@@ -204,9 +205,13 @@ function openSettings(focusId){
       ${Object.entries(AREA.scenes || {}).filter(([, sc]) => sc.watch && matches(sc.when)).map(([id, sc]) => `<button class="btn" data-m="scene" data-scene="${id}">${esc(sc.watch)}</button>`).join('')}
       <button class="btn" data-m="title" data-label="Your games">Title screen: your games</button>
     </div>
-    <div class="actions"><button class="btn" data-a="back" data-b>Back</button></div>`);
+    <div class="actions"><span class="speedrow"><span class="slabel">Voice speed</span><span class="qpcount"><button class="btn" data-a="slower" aria-label="Slower"${voiceSpeed() <= VOICE_SPEEDS.at(-1) ? ' disabled' : ''}>−</button><b class="qpn">${Math.round(voiceSpeed() * 100)}%</b><button class="btn" data-a="faster" aria-label="Faster"${voiceSpeed() >= 1 ? ' disabled' : ''}>+</button></span></span><button class="btn" data-a="back" data-b>Back</button></div>`);
   const f = sheet.querySelector(`[data-m="${focusId || 'music'}"]`); if (f) f.focus();
   on('[data-a=back]', () => openMenu('settings'));
+  // Voice speed (sound.js): a step slower or faster, saying something so you hear it
+  const speed = (d, focus) => { const i = VOICE_SPEEDS.indexOf(voiceSpeed()) + d; if (i < 0 || i >= VOICE_SPEEDS.length) return; S.voiceSpeed = VOICE_SPEEDS[i]; save(); SFX.blip(); say(SPEED_SAMPLE); openSettings(); const b = sheet.querySelector(`[data-a=${focus}]`); if (b && !b.disabled) b.focus(); };
+  on('[data-a=slower]', () => speed(1, 'slower'));
+  on('[data-a=faster]', () => speed(-1, 'faster'));
   const act = {
     music: () => { S.music = !S.music; save(); if (S.music) musicStart(); else musicStop(); openSettings('music'); },
     sound: () => { S.sound = !S.sound; save(); if (S.sound) SFX.blip(); openSettings('sound'); },

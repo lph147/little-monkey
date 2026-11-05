@@ -1303,3 +1303,20 @@ rt.hid{visibility:hidden}
 .mapwords .gloss b{color:#2A1E10}
 .mapback{position:absolute;right:.4rem;bottom:.4rem;margin:0}
 .tasks li.alsolabel::before, .tasks li.main:not(.aim)::before{display:none}   /* (no box: the main task has its ★, or the arrow)*/
+/* The 🐢 beside each 🔊: says it again more slowly (turtleSpeed, js/sound.js); smaller than the button it's beside */
+.turtle{flex:none}
+.sayBig.turtle,.askrow .sayBig.turtle,.hearit .sayBig.turtle{width:2.3rem;height:2.3rem;font-size:1rem;margin-left:.3rem;vertical-align:middle}
+.btn.turtle{padding-left:.5rem;padding-right:.5rem;min-width:0}
+.hearit{display:flex;align-items:center;justify-content:center}
+/* Voice speed, in Settings: − 80% + */
+.speedrow{display:flex;align-items:center;gap:.5rem;margin-right:auto}
+.speedrow .slabel{font-family:var(--pixel);font-size:.85rem}
+.speedrow .qpcount{margin:0}
+.speedrow .qpn{min-width:3em}
+.qpcount [data-a=slower],.qpcount [data-a=faster]{width:2rem;height:2rem;min-height:0;padding:0;border-radius:50%;font-size:1rem;line-height:1;box-shadow:0 2px 0 var(--ink);display:grid;place-items:center}
+.qpcount [data-a=slower]:disabled,.qpcount [data-a=faster]:disabled{opacity:.35}
+.actions .grow:has(+ .turtle){margin-right:0}
+.actions .grow + .turtle{margin-right:auto}
+.turtleicon{width:1.5em;height:1.5em}
+[data-screen=small] .speedrow .qpcount button,[data-screen=tiny] .speedrow .qpcount button{width:1.5rem;height:1.5rem;font-size:.85rem}
+[data-screen=small] .speedrow .qpn,[data-screen=tiny] .speedrow .qpn{font-size:1rem}

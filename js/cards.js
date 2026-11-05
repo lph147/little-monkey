@@ -52,7 +52,7 @@ function tooSoon(at, since = shownAt, ms = READ_MS){   // at: when the press was
 }
 function openCard(html){
   if (lessonBar) html = `<p class="lessonbar">${lessonBar}</p>` + html;   // (in a lesson: its name, js/timetable.js)
-  sheet.innerHTML = pixelIcons(html); modal.hidden = false; sheet.scrollTop = 0; shown(); cardsOpened++;
+  sheet.innerHTML = pixelIcons(html); bindTurtles(sheet); modal.hidden = false; sheet.scrollTop = 0; shown(); cardsOpened++;
   if (markGloss.length){ markGloss.forEach(t => S.gloss[t] = 1); markGloss = []; save(); }
   held = null; queued = null; document.querySelectorAll('.held').forEach(b => b.classList.remove('held'));
   // A always starts on the card's main button. If a card has none (a quiz waiting for an answer), A does nothing until you tap.
@@ -208,6 +208,7 @@ function sayLine(who, line, opts){
     talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${enShows ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en${opts.clue ? ' clue' : ''}" ${enShows ? '' : 'hidden'}>${opts.clue ? cluedEn(line.en, opts.clue) : esc(line.en)}</div>
       <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
+    bindTurtles(talkBox);
     talkBox.classList.toggle('again', again);
     const id = (who.match(/data-id="([^"]*)"/) || [])[1];   // who's speaking (from speaker()), for their own voice, and so the box doesn't cover them
     talkWho = id;

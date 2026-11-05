@@ -218,11 +218,31 @@ let shellImg = null;
 const SPEAKER = ["................","................","......oo........",".....owo........","....owwo.....b..","oooowwwo..b...b.","owwwwwwo...b..b.","owlwwwwo...b..b.",
   "owlwwwwo...b..b.","owwwwwwo...b..b.","oooowwwo..b...b.","....owwo.....b..",".....owo........","......oo........","................","................"];
 let speakerImg = null;
+// A turtle, on the button beside each 🔊 that says it again more slowly (turtleSpeed, js/sound.js).
+const TURTLE = ["................","................","................","................",".....oooooo.....","...oogdggdgoo...","..ogdgggdgggdooo",".ogggdgggdgggose",
+  ".ogdgggdgggdgoso",".oooooooooooooo.","..oso.....oso...","..ooo.....ooo...","................","................","................","................"];
+let turtleImg = null;
+const turtleIcon = () => turtleImg || (turtleImg = `<img class="speakericon turtleicon" alt="" src="${sprite(TURTLE, {o:'#2A2622', g:'#79B35E', d:'#3F7A3A', s:'#D8C48A', e:'#2A2622'}).toDataURL()}">`);
+// Every button that says something again (its text has 🔊, and nothing else in it, so not the syllable drum) gets a 🐢
+// beside it, while your voice speed has a slower one (turtleSpeed, js/sound.js): the same kind of button, smaller,
+// pressing the one beside it, slowly (bindTurtles). Each pair shares a number: data-hear on the 🔊, data-turtle on the 🐢.
+let hearN = 0;
+const HEAR_BTN = /<button\b([^>]*)>([^<]*🔊[^<]*)<\/button>/g;
+const withTurtles = html => typeof turtleSpeed !== 'function' || !turtleSpeed() ? html : html.replace(HEAR_BTN, (m, attrs, inner) => {
+  const n = ++hearN, cls = ((/class="([^"]*)"/.exec(attrs) || [])[1] || '').split(/\s+/).filter(c => c && c !== 'primary' && c !== 'grow').concat('turtle').join(' ');
+  return `<button${attrs} data-hear="${n}">${inner}</button><button class="${cls}" data-turtle="${n}" aria-label="Hear it slowly">${turtleIcon()}</button>`;
+});
+function bindTurtles(root){
+  root.querySelectorAll('[data-turtle]').forEach(t => t.onclick = () => {
+    const b = root.querySelector(`[data-hear="${t.dataset.turtle}"]`);
+    if (b){ slowUntil = performance.now() + SLOW_GAP; b.click(); }
+  });
+}
 // A coin (Area 2, the human world's money, 钱), round with a square hole, wherever the text says 🪙.
 const COIN = ["................","................",".....oooooo.....","....oyyyyyyo....","...oyllyyyyyo...","..oyly....yyyo..","..oyyy.oo.yyyo..","..oyyy.oo.yyyo..",
   "..oyyy....yyyo..","..oyyyyyyyyyyo..","...oyyyyyyyyo...","....oyyyyyyo....",".....oooooo.....","................","................","................"];
 let coinImg = null;
-const pixelIcons = html => String(html)
+const pixelIcons = html => withTurtles(String(html))
   .replace(/🐚/g, () => shellImg || (shellImg = `<img class="money" alt="shells" src="${sprite(SHELL, {o:'#8A5A3A', w:'#F7E7CF', r:'#D9A77C'}).toDataURL()}">`))
   .replace(/🪙/g, () => coinImg || (coinImg = `<img class="money" alt="coins" src="${sprite(COIN, {o:'#7A5A1A', y:'#E0B040', l:'#FFF0A0'}).toDataURL()}">`))
   .replace(/🔊/g, () => speakerImg || (speakerImg = `<img class="speakericon" alt="" src="${sprite(SPEAKER, {o:'#2A2622', w:'#E2DDD2', l:'#FFFFFF', b:'#4F9FDB'}).toDataURL()}">`))
