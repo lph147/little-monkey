@@ -97,6 +97,11 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   await press(g, 17, 12, 'left');
   assert.deepEqual(said(g).slice(-1), ['child: 这是什么？']);
   assert.ok(knows(g, '什么'));
+  // where are the immortals? (哪里) The child doesn't know, but is your friend now: the first on your list
+  await press(g, 17, 12, 'left');
+  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'child: 我不知道。']);
+  assert.ok(knows(g, '哪里'));
+  assert.deepEqual([get(g, 'here().askChild'), get(g, "S.friends.includes('child')")], [1, true], 'asked, and your friend');
   // asking people what things are: the well, a house, the gate in the white wall
   notes(g);
   await press(g, 22, 12, 'up');
@@ -118,6 +123,10 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.equal(g.run('counter("hensBack")'), 4, 'all four caught');
   assert.deepEqual(npc(g, 'hen1'), ['village', 4, 15], 'back in their yard');
   assert.equal(get(g, 'here().hensDone'), 1, 'and the villager thanks you');
+  said(g);
+  await press(g, 29, 7, 'up');
+  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'villager: 我不知道。'], 'helped, so you ask them too');
+  assert.ok(knows(g, '知道'), '知道, the second time');
   // the granny's lunch: a bowl of rice (饭), eaten there and then (a meal, not a snack for your bag), your health full
   g.run('S.health = 20');
   await press(g, 22, 12, 'right');
@@ -134,6 +143,10 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.ok(knows(g, '钱'));
   assert.equal(get(g, 'S.coins'), 3, 'three coins');
   assert.equal(g.run('MONEY()'), '🪙', 'coins are your money now');
+  said(g); notes(g);
+  await press(g, 12, 4, 'left');
+  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'fisherman: 我不知道。']);
+  assert.ok(notes(g).some(n => /Nobody in the village knows/.test(n)), 'the village’s three asked: nobody knows');
   // the fishermen's net and boat, on the shore
   goTo(g, 'shore', 17, 1, 'down');
   await press(g, 10, 9, 'up');
@@ -166,6 +179,10 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   await press(g, 11, 7, 'up');
   assert.equal(get(g, 'here().lunch'), 'done', 'he eats your rice');
   assert.equal(get(g, 'S.coins'), before + 3, 'and pays you 3 coins');
+  assert.equal(g.run("isOpen(PLACES.fields.exits[2])"), false, 'the high road waits till you’ve asked him');
+  said(g);
+  await press(g, 11, 7, 'up');
+  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'farmer: 我不知道。']);
   said(g);
   await press(g, 22, 5, 'up');
   assert.deepEqual(said(g), ['player: 这是牛吗？', 'farmer: 是！'], 'a water buffalo');
@@ -190,14 +207,22 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.equal(get(g, 'here().grannyBuns'), 'asked');
   await press(g, 20, 14, 'right');
   assert.equal(get(g, 'here().grannyBuns'), 'done', 'the bun from your bag');
+  g.run("S.bag['苹果'] = 1; S.bag['桃子'] = 1");   // (bought at the fruit stall)
+  for (let i = 0; i < 4; i++) await press(g, 20, 14, 'right');
+  assert.equal(get(g, 'here().grannyPeach'), 'done', 'an apple, then a peach');
+  said(g);
+  await press(g, 20, 14, 'right');
+  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'granny2: 我不知道。']);
   await press(g, 11, 10, 'left', '.shopitem');
   assert.ok(knows(g, '鞋') && get(g, 'S.wardrobe.wearing').includes('鞋'), 'shoes, on');
-  // the teahouse: tea (茶), the storyteller (说), where are the immortals? (哪里)
+  // the teahouse: tea (茶), and the storyteller (说); neither knows where the immortals are
   said(g);
+  await press(g, 3, 5, 'up');
   await press(g, 3, 5, 'up');
   await press(g, 7, 6, 'up');
   await press(g, 7, 6, 'up');
-  assert.deepEqual(said(g), ['teaKeeper: 喝茶吧！', 'player: 谢谢', 'teller: 我说，你听。', 'player: 神仙在哪里？', 'teller: 我不知道。']);
+  assert.deepEqual(said(g), ['teaKeeper: 喝茶吧！', 'player: 谢谢', 'player: 神仙在哪里？', 'teaKeeper: 我不知道。', 'teller: 我说，你听。', 'player: 神仙在哪里？', 'teller: 我不知道。']);
+  assert.equal(g.run('counter("askedTown")'), 3, 'the town’s three asked');
   // the school: listen! (听), children (孩子), learning (学), and their books (书)
   for (let i = 0; i < 3; i++) await press(g, 13, 5, 'up');
   assert.ok(['茶', '说', '哪里', '听', '孩子', '学'].every(w => knows(g, w)));
@@ -210,10 +235,9 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.ok(get(g, '__scenes').includes('yearsPass'));
   assert.equal(get(g, 'here().years'), 1);
   assert.deepEqual(get(g, '[...new Set(PLACES.canalPath.exits.map(e => e.to))]'), ['town', 'harbour'], 'the canal path, down to the harbour');
-  // the harbour: no wind today (风); load the boat for the docker; then the wind, the fare and the crossing
+  // the harbour: load the boat for the docker, and ask; then the boatman knows: across the sea. No wind today (风); then
+  // the wind, the fare and the crossing
   goTo(g, 'harbour', 16, 1, 'down');
-  await press(g, 16, 16, 'right');
-  assert.ok(knows(g, '风'));
   await press(g, 11, 7, 'up');
   assert.equal(get(g, 'here().cargo'), 1);
   for (const [x, y] of [[8, 5], [9, 5], [12, 6], [13, 6]]) await press(g, x, y, 'up');
@@ -221,6 +245,15 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   const paid = get(g, 'S.coins');
   await press(g, 11, 7, 'up');
   assert.deepEqual([get(g, 'here().cargo'), get(g, 'S.coins')], [2, paid + 3], 'the docker pays you');
+  said(g);
+  await press(g, 11, 7, 'up');
+  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'docker: 我不知道。']);
+  assert.equal(g.run('counter("asked")'), 8, 'everyone on your list');
+  await press(g, 16, 16, 'right');
+  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'boatman: 神仙在海的那边。'], 'at last: across the sea');
+  assert.equal(get(g, 'here().toldSea'), 1);
+  await press(g, 16, 16, 'right');
+  assert.ok(knows(g, '风'));
   const fareFrom = get(g, 'S.coins');
   await press(g, 16, 16, 'right');
   assert.equal(get(g, 'S.coins'), fareFrom - 5, 'the fare');
@@ -236,7 +269,7 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.deepEqual(npc(g, 'woodcutter'), ['mountainFoot', 10, 4], 'he’s gone home to his hut');
   const words = get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2)");
   assert.deepEqual(words.filter(w => !knows(g, w)), ['云', '鹤', '天', '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家',
-    '回来', '好久不见', '哭', '老', '妖怪', '火', '救命', '笼子', '钥匙', '毛', '刀'], 'all 31 of the prologue’s words (chapter 1’s and 2’s to come)');
+    '回来', '好久不见', '哭', '老', '妖怪', '火', '救命', '笼子', '钥匙', '毛', '刀'], 'all 32 of the prologue’s words (chapter 1’s and 2’s to come)');
   // the checklist is chapter 1's now
   assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t]) => t)'), ['Help the woodcutter at his hut', 'Make 朋友 (friends) with the crane on the cliff road', 'Find the immortal’s cave']);
   // and you can sail back and forth
@@ -352,8 +385,8 @@ test('pacing: in Area 2, everything that teaches a new word waits for five quest
   for (const sh of Object.values(A.shops)) assert.ok(A.talk[sh.who].filter(p => teaches(p.do) && p.if && p.if.new).every(p => p.waits), `${sh.who}'s stall waits before a new word`);
   for (const p of Object.values(A.places)) for (const [ch, t] of Object.entries(p.legend || {})) for (const pt of t.onLook || []) if (pt.do.some(s => s.newWord)) assert.ok(pt.waits, `a place's "${ch}" teaches a word: it waits`);
   assert.ok(A.events.filter(e => e.do.some(s => s.newWord) && e.if.landed !== 0).every(e => e.if.wordReady), 'and an event that teaches a word waits till you’re ready (but for the landing, your first)');
-  // the words: 31 in the prologue, one after another, and the first (人) as you land; then chapter 1's 17, and chapter 2's 11
-  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 59);
+  // the words: 32 in the prologue, one after another, and the first (人) as you land; then chapter 1's 17, and chapter 2's 11
+  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 60);
 });
 
 test('the human world has a song of its own, a village tune, in every place (not Flower Fruit Mountain’s)', () => {

@@ -47,10 +47,11 @@ function friendsPage(back, focus){
   const card = a => isFriend(a) ? named(a)
     : S.met.includes(a.id) ? named(a, a.many ? `<b>${here()[a.counts] || 0}/${a.many}</b>` : 'Not a friend yet')
     : `<button class="fshadow" data-clue="${a.id}" data-label="Where?"><span class="sil">${portrait(a.id)}</span><span class="fz">？</span><span class="fnote">${esc(a.clue)}</span></button>`;
-  const others = S.friends.filter(id => !ANIMALS.some(a => a.id === id));
+  const isPerson = id => AREA.characters.some(c => c.id === id && c.person), others = S.friends.filter(id => !ANIMALS.some(a => a.id === id) && !isPerson(id)), people = S.friends.filter(isPerson);   // (people you've helped: their own section)
   openCard(`<p class="label">Friends <span class="fcount">${animals.filter(isFriend).length} of ${animals.length} animals</span></p>
     <div class="friends" data-nav>${animals.map(card).join('')}</div>
     ${others.length ? `<p class="label fsub">The troop and others</p><div class="friends" data-nav>${others.map(id => { const hz = FRIEND_NAMES[id] || id; return `<button data-w="${hz}" data-label="${page(hz) ? 'Open' : 'Hear it'}">${portrait(id)}<span class="fz">${hz}</span><span class="small">${WORDS[hz] ? WORDS[hz].py : (NAMES[id] || {}).py || ''}</span></button>`; }).join('')}</div>` : ''}
+    ${people.length ? `<p class="label fsub">People</p><div class="friends" data-nav>${people.map(id => `<button data-w="${(NAMES[id] || {}).zh || id}" data-label="Hear it">${portrait(id)}<span class="fz">${(NAMES[id] || {}).zh || id}</span><span class="small">${esc((NAMES[id] || {}).en || '')}</span></button>`).join('')}</div>` : ''}
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   sheet.querySelectorAll('.friends button[data-w]').forEach(bt => bt.onclick = () => { const w = bt.dataset.w; if (page(w)){ SFX.blip(); wordPage(w, () => friendsPage(back, w), 'Friends'); } else say(w); });
   sheet.querySelectorAll('.friends button[data-clue]').forEach(bt => bt.onclick = () => { SFX.blip(); friendClue(ANIMALS.find(a => a.id === bt.dataset.clue), () => friendsPage(back, bt.dataset.clue)); });
@@ -156,7 +157,7 @@ function tasksPage(back, page = 'now', focus = null){
   }
   // the journey: the area's goal, and the part of the story you're in, with what you're doing in it (partNow, js/world.js),
   // unless the main task below says so
-  const part = partNow(), goal = textNow(AREA.goal), journey = goal ? `<div class="journey"><p><span class="jlabel">Your journey</span> ${esc(goal)}</p>${part ? `<p class="jpart"><b>${esc(part.name)}: ${esc(part.title)}.</b>${tasks.some(t => t.main) ? '' : ' ' + esc(textNow(part.now))}</p>` : ''}</div>` : '';
+  const part = partNow(), goal = textNow(AREA.goal), journey = goal ? `<div class="journey"><p><span class="jlabel">Your journey</span> ${esc(goal)}</p>${part ? `<p class="jpart"><b>${esc(part.name)}: ${esc(part.title)}.</b>${tasks.some(t => t.main) ? '' : ' ' + esc(textNow(part.now))}</p>` : ''}${whoKnowsHTML()}</div>` : '';
   const also = tasks.some(t => t.main) && tasks.some(t => !t.main);
   openCard(`<div class="cardtop"><p class="label taskslabel">Tasks</p>${statsHTML()}</div>
     <div class="nowpage">${journey}<p class="label">Now${choose ? ' <span class="aimhint">Tap a task for the yellow arrow to show its way</span>' : ''}</p>${tasks.length ? `<ul class="tasks${also ? ' withalso' : ''}"${choose ? ' data-nav' : ''}>${tasks.map((t, i) => (also && !t.main && tasks[i - 1] && tasks[i - 1].main ? '<li class="alsolabel" aria-hidden="true">Also</li>' : '') + taskHTML(t)).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
@@ -168,6 +169,22 @@ function tasksPage(back, page = 'now', focus = null){
   if (focus){ const f = [...sheet.querySelectorAll('.taskbtn')].find(b => b.dataset.t === focus); if (f) f.focus(); }
   const clue = tasks.find(t => t.clue);
   if (clue){ bindTokens(sheet.querySelector('.taskclue')); on('[data-a=clue]', () => say(L[clue.clue.say].t.join(''), null, HIDE.by)); }
+  sheet.querySelectorAll('.whoknows .face').forEach(b => b.onclick = () => { SFX.blip(); sheet.querySelector('.whoinfo').textContent = b.dataset.info; });
+}
+// Who knows? (the area's askList, decided 5 November 2026: the human world's purpose, asking everyone where the immortals
+// are): under your journey, while its show matches, the faces of the people to ask, each ticked once you've asked them
+// (asked: the key that says so), a shadow till then, and the one who knows, a ? till they've told you (done). Tap a face
+// to see who it is, where, and whether you've asked them.
+function whoKnowsHTML(){
+  const k = AREA.askList;
+  if (!k || !matches(k.show)) return '';
+  const where = id => { const n = ALL_NPCS.find(c => c.id === id), p = n && PLACES[n.home.place]; return p ? p.name.en : ''; };
+  const who = id => { const n = NAMES[id] || {}; return `${n.zh || ''} ${n.py || ''} · ${n.en || ''}`; };
+  const asked = k.people.filter(p => here()[p.asked]).length, done = matches(k.done);
+  const face = p => { const yes = !!here()[p.asked]; return `<button class="face${yes ? ' asked' : ''}" data-info="${esc(`${who(p.who)} · ${where(p.who)} · ${yes ? 'Asked: they don’t know' : 'Not asked yet: help them first'}`)}">${portrait(p.who)}</button>`; };
+  const last = done ? `<button class="face knows" data-info="${esc(`${who(k.knows)} · ${where(k.knows)} · They knew!`)}">${portrait(k.knows)}</button>`
+    : `<button class="face who" data-info="${esc('Someone who knows. Who can it be?')}"><span>?</span></button>`;
+  return `<div class="whoknows"><p><span class="jlabel">${esc(k.title)}</span> <b>${asked} of ${k.people.length}</b> asked</p><div class="faces">${k.people.map(face).join('')}${last}</div><p class="whoinfo small">Tap a face to see who it is.</p></div>`;
 }
 
 /* ================= SETTINGS ================= */

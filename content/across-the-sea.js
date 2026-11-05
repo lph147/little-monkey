@@ -190,6 +190,21 @@ const LAIR_LEGEND = {
 const HIDING = (key, who, x, y, wait) => ({look:'bush', onLook:[{if:{...wait, [key]:0}, label:'Look', waits:true, do:[{sound:'scuffle'}, {set:{[key]:1}}, {leap:who, from:[x, y]}, {talkTo:who}]},
   {do:[{message:'A bush.'}]}]});
 const ROBBED = (look, to) => ({look, word:'桌子', landmark:true, note:'The feast’s table. Everything on it has gone!', becomes:[{if:{homeAgain:1}, to}]});
+// Asking someone you've helped where the immortals are (神仙在哪里？, decided 5 November 2026, after playing it: the human
+// world's purpose, said from the start): the first you ask teaches 哪里, the next 知道 (each waiting for a little practice,
+// as a new word does). None of them knows (我不知道。), but they're your friend now (the befriend step: your Friends page,
+// under People), and you're told who to try next (then). The last, the boatman, knows: across the sea.
+const ASK = (key, helped, then) => [
+  {if:{...helped, [key]:0, new:'哪里'}, waits:true, do:[{say:'whereImmortals', by:'player', teach:'哪里'}, {newWord:'哪里', note:'哪里 means where. 神仙在哪里？ Where are the immortals?'},
+    {say:'dontKnow'}, {set:{[key]:1}}, {befriend:true}, ...then]},
+  {if:{...helped, [key]:0, new:'知道'}, waits:true, do:[{say:'whereImmortals', by:'player'}, {say:'dontKnow', teach:'知道'}, {newWord:'知道', note:'知道 means to know. 我不知道。 I don’t know.'},
+    {set:{[key]:1}}, {befriend:true}, ...then]},
+  {if:{...helped, [key]:0}, do:[{say:'whereImmortals', by:'player'}, {say:'dontKnow'}, {set:{[key]:1}}, {befriend:true}, ...then]}
+];
+const VILLAGE_NEXT = [
+  {if:{askedVillage:{below:3}}, message:'They don’t know, but they’re your friend now. Help the others in the village, and ask them too.'},
+  {if:{askedVillage:3}, message:'Nobody in the village knows where the immortals are. Maybe someone further east does: the road east is open now, through the fields.'}];
+const TOWN_NEXT = [{if:{askedTown:{below:3}}, message:'They don’t know, but they’re your friend now. Help the others in the town, and ask them too.'}];   // (the last: the years go by)
 const ACROSS_THE_SEA = {
   number: 2,
   name: {zh:'海的那边', py:'hǎi de nàbiān', en:'Across the sea'},
@@ -212,7 +227,8 @@ const ACROSS_THE_SEA = {
   // world felt aimless, and never said why you were there), at the top of the Tasks page: a part's title card as it
   // begins (when: the furthest you've reached; card:false, one that begins with its chapter's card), what it's about
   // (text), and what you're doing in it (now). Checklist items with a part show only while you're in it.
-  goal: [{if:{door:{below:2}}, text:'Find an immortal who can teach you never to grow old.'}, {if:{sentHome:0}, text:'Learn all you can from the immortal.'},
+  goal: [{if:{chapter:0, toldSea:0}, text:'Find someone who knows where the immortals live: an immortal can teach you never to grow old.'},
+    {if:{door:{below:2}}, text:'Find an immortal who can teach you never to grow old.'}, {if:{sentHome:0}, text:'Learn all you can from the immortal.'},
     {if:{king:{below:2}}, text:'Save the troop’s little monkeys from the Demon of Havoc.'},
     {text:'A real weapon for a king: the Dragon King’s palace, under the sea (still to come).'}],
   parts: [
@@ -220,17 +236,17 @@ const ACROSS_THE_SEA = {
       text:'You’ve crossed the sea to find an immortal, who can teach you never to grow old. But the people here run from a monkey! First, find something to wear.',
       now:'People run from a monkey: find something to wear.'},
     {id:'talk', chapter:0, name:'Part 2', title:'Learning to talk', when:{dressed:2},
-      text:'Dressed like a person, you can go among people. But you can’t talk like them yet, and nobody here has heard of the immortals. Up the path is a village…',
-      now:[{if:{child:{below:3}}, text:'Go up to the village, and meet the people there.'}, {text:'Learn to talk like the villagers: learn the village’s words ({villageWords} of 12).'}]},
-    {id:'road', chapter:0, name:'Part 3', title:'The road east', when:{villageWords:12},
-      text:'You can talk with the villagers now, but nobody knows where the immortals are. Maybe someone in the town does: the road goes east, through the fields.',
-      now:'Follow the road east, through the fields, to the town.'},
+      text:'Dressed like a person, you can go among people. Up the path is a village: learn to talk like the villagers, help them, and ask them where the immortals are.',
+      now:[{if:{child:{below:3}}, text:'Go up to the village, and meet the people there.'}, {text:'Help the villagers, and ask them where the immortals are ({askedVillage} of 3).'}]},
+    {id:'road', chapter:0, name:'Part 3', title:'The road east', when:{askedVillage:3},
+      text:'Nobody in the village knows where the immortals are. Maybe someone further east does: the road goes east, through the fields, to a town.',
+      now:'Follow the road east, through the fields, to the town. Help the farmer on the way, and ask him too.'},
     {id:'town', chapter:0, name:'Part 4', title:'The market town', when:{exchanged:1},
-      text:'A busy market town, full of people. Get to know it, and ask about the immortals: someone here must know something!',
-      now:'Get to know the town ({townWords} of its 11 words), and make friends with its cat.'},
+      text:'A busy market town, full of people. Help them, and ask them where the immortals are: someone here must know!',
+      now:'Help the people of the town, and ask them where the immortals are ({askedTown} of 3).'},
     {id:'west', chapter:0, name:'Part 5', title:'Across the western sea', when:{years:1},
-      text:'Years go by. You talk like people now, but nobody knows where the immortals are. At the harbour, a boatman sails west, across the sea…',
-      now:[{if:{boat:{below:2}}, text:'Sail west across the sea, with the boatman.'}, {text:'Find out where the immortal lives.'}]},
+      text:'Years go by, and nobody in the town knows. But at the harbour, boats sail all over the sea: maybe someone there knows…',
+      now:[{if:{toldSea:0}, text:'Ask at the harbour: someone there must know.'}, {if:{boat:{below:2}}, text:'Sail west across the sea, with the boatman.'}, {text:'Find out where the immortal lives.'}]},
     {id:'climb', chapter:1, name:'Part 1', title:'The climb', when:{chapter:1}, card:false,
       now:'Climb the mountain, to the immortal’s cave.'},
     {id:'cave', chapter:1, name:'Part 2', title:'The immortal’s cave', when:{door:2},
@@ -295,7 +311,9 @@ const ACROSS_THE_SEA = {
   //   homeAgain 1 once you've flown home with the little monkeys; party 1 once the troop has celebrated; stickGiven 1 once
   //            you've given your stick to a little monkey in training; ch2 1 once the old monkey has told you of the
   //            Dragon King (the end of Area 2)
-  progress: {home2:0, foundBig:0, foundHungry:0, news:0, d1:0, d2:0, d3:0, north:0, lairSeen:0, key:0, freed1:0, freed2:0, freed3:0, freed4:0, freed5:0, loot:0, king:0, homeAgain:0, party:0, stickGiven:0, ch2:0,
+  // the prologue's asking: askChild askFisher askVillager askFarmer askGranny askTea askTeller askDocker 1 once you've asked each
+  // where the immortals are (none knows); toldSea 1 once the boatman has told you: across the sea
+  progress: {askChild:0, askFisher:0, askVillager:0, askFarmer:0, askGranny:0, askTea:0, askTeller:0, askDocker:0, toldSea:0, home2:0, foundBig:0, foundHungry:0, news:0, d1:0, d2:0, d3:0, north:0, lairSeen:0, key:0, freed1:0, freed2:0, freed3:0, freed4:0, freed5:0, loot:0, king:0, homeAgain:0, party:0, stickGiven:0, ch2:0,
     chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, chores:0, waterFetch:0, axeFetch:0, grown:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
 
   // Numbers that text can show as {name}, and that an if can check (as Flower Fruit Mountain's).
@@ -309,7 +327,11 @@ const ACROSS_THE_SEA = {
     hensBack: {count:'flags', keys:['hen1', 'hen2', 'hen3', 'hen4']},   // the hens you've carried back to their yard
     cargoCarried: {count:'picked', request:'cargo'},   // the sacks you've carried onto the boat at the harbour (four)
     // the town's words, which the years passing wait for
-    townWords: {count:'known', words:['买', '包子', '鞋', '茶', '说', '哪里', '听', '孩子', '学', '书', '猫']},
+    townWords: {count:'known', words:['买', '包子', '鞋', '茶', '说', '听', '孩子', '学', '书', '猫']},
+    // who you've asked where the immortals are: everyone (8), the village's three and the town's three
+    asked: {count:'flags', keys:['askChild', 'askFisher', 'askVillager', 'askFarmer', 'askGranny', 'askTea', 'askTeller', 'askDocker']},
+    askedVillage: {count:'flags', keys:['askChild', 'askFisher', 'askVillager']},
+    askedTown: {count:'flags', keys:['askGranny', 'askTea', 'askTeller']},
     coins: {count:'coins'},
     leavesSwept: {count:'picked', request:'sweep'},   // the heaps of leaves you've swept up in the cave (five)
     demonsChased: {count:'flags', keys:['d1', 'd2', 'd3']},   // chapter 2: the little demons chased off the home ground
@@ -359,23 +381,35 @@ const ACROSS_THE_SEA = {
     {id:'a2hens', if:{knows:'鸡', hensBack:{below:4}}, text:'The hens are out of their yard! Catch them, and carry them back ({hensBack}/4)',
       arrow:{nearest:[{who:'hen1', if:{hen1:0}}, {who:'hen2', if:{hen2:0}}, {who:'hen3', if:{hen3:0}}, {who:'hen4', if:{hen4:0}}]}},   // (the nearest one still loose),
     {id:'a2hide', if:{hiding:true}, text:'Find the {孩子|child}: they’re hiding somewhere in the village', clue:true, where:'village'},   // (its clue under it, to hear again; no arrow: that's the game)
-    {id:'a2villageWords', main:true, if:{child:3, villageWords:{below:12}}, text:'Learn to {说|talk} like the villagers: learn the village’s words ({villageWords}/12). Still to find: {left:villageWords}', where:'The village and the shore'},
-    {id:'a2east', main:true, if:{villageWords:12, farmer:0}, text:'Follow the {路|road} east, to the fields', arrow:'farmer'},
+    {id:'a2askVillage', main:true, if:{child:3, askedVillage:{below:3}}, text:'Help the people of the village, and ask them {哪里|where} the immortals are ({askedVillage}/3)', where:'village'},
+    {id:'a2askChild', main:true, if:{child:3, askChild:0}, text:'Ask the {孩子|child} where the immortals are', arrow:'child'},
+    {id:'a2askFisher', main:true, if:{fish:'done', askFisher:0}, text:'Ask the fisherman {哪里|where} the immortals are', arrow:'fisherman'},
+    {id:'a2askVillager', main:true, if:{hensDone:1, askVillager:0}, text:'Ask the villager by the hens’ yard {哪里|where} the immortals are', arrow:'villager'},
+    {id:'a2villageWords', if:{child:3, villageWords:{below:12}}, text:'Learn to {说|talk} like the villagers: learn the village’s words ({villageWords}/12). Still to find: {left:villageWords}', where:'The village and the shore'},
+    {id:'a2east', main:true, if:{askedVillage:3, farmer:0}, text:'Follow the {路|road} east, to the fields', arrow:'farmer'},
     {id:'a2birds', main:true, if:{farmer:1, birdsShooed:{below:5}}, text:'Shoo the {鸟|birds} off the farmer’s rice ({birdsShooed}/5)', where:'fields'},
     {id:'a2lunch', main:true, if:{lunch:'asked', holding:{lunch:false}}, text:'The farmer is hungry: ask the granny by the well for some {饭|rice} for him', arrow:'granny'},
     {id:'a2lunchBack', main:true, if:{lunch:'asked', holding:{lunch:true}}, text:'Take the {饭|rice} to the farmer in the fields', arrow:'farmer'},
     {id:'a2dog', main:true, if:{farmer:{atLeast:1}, friends:{dog:false}}, text:'Make {朋友|friends} with the dog by the road', arrow:[36, 9, 'fields']},
-    {id:'a2town', main:true, if:{lunch:'done', friends:{dog:true}, exchanged:0}, text:'Follow the {路|road} east, to the town', arrow:'changer'},
+    {id:'a2askFarmer', main:true, if:{lunch:'done', askFarmer:0}, text:'Ask the farmer {哪里|where} the immortals are', arrow:'farmer'},
+    {id:'a2town', main:true, if:{lunch:'done', friends:{dog:true}, askFarmer:1, exchanged:0}, text:'Follow the {路|road} east, to the town', arrow:'changer'},
     {id:'a2change', main:true, if:{exchanged:0, place:'town'}, text:'Change your {钱|money}: talk to the money changer at the market', arrow:'changer'},
-    {id:'a2townWords', main:true, if:{exchanged:1, years:0}, text:'Get to know the town: find someone with a ! over them ({townWords}/11)', where:'town'},
+    {id:'a2askTown', main:true, if:{exchanged:1, askedTown:{below:3}}, text:'Help the people of the town, and ask them {哪里|where} the immortals are ({askedTown}/3)', where:'town'},
+    {id:'a2askGranny', main:true, if:{grannyPeach:'done', askGranny:0}, text:'Ask the granny in the town {哪里|where} the immortals are', arrow:'granny2'},
+    {id:'a2askTea', main:true, if:{knows:'茶', askTea:0}, text:'Ask the teahouse keeper {哪里|where} the immortals are', arrow:'teaKeeper'},
+    {id:'a2askTeller', main:true, if:{knows:'说', askTeller:0}, text:'Ask the storyteller {哪里|where} the immortals are', arrow:'teller'},
+    {id:'a2townWords', if:{exchanged:1, years:0}, text:'Learn to {说|talk} like the townspeople: find someone with a ! over them ({townWords}/10)', where:'town'},
     {id:'a2granny', if:{grannyBuns:'asked', inBag:{'包子':false}}, text:'Buy a {包子} at the market for the granny', where:'town'},
     {id:'a2grannyApple', if:{grannyApple:'asked', inBag:{'苹果':false}}, text:'Buy an {苹果} at the market for the granny', where:'town'},
     {id:'a2grannyPeach', if:{grannyPeach:'asked', inBag:{'桃子':false}}, text:'Buy a {桃子} at the market for the granny', where:'town'},
     {id:'a2grannyBack', if:{any:[{grannyBuns:'asked', inBag:{'包子':true}}, {grannyApple:'asked', inBag:{'苹果':true}}, {grannyPeach:'asked', inBag:{'桃子':true}}]}, text:'Take it to the granny in the town', arrow:'granny2'},
-    {id:'a2cargo', if:{cargo:1, cargoCarried:{below:4}}, text:'Carry four sacks onto the {船|boat} for the docker ({cargoCarried}/4)', where:'harbour'},
-    {id:'a2cargoBack', if:{cargo:1, cargoCarried:4}, text:'Tell the docker the sacks are on the {船|boat}', arrow:'docker'},
-    {id:'a2cat', main:true, if:{exchanged:1, townWords:11, friends:{cat:false}}, text:'Make {朋友|friends} with the cat in the market', arrow:[33, 8, 'town']},
-    {id:'a2harbour', main:true, if:{years:1, boat:0}, text:'Cross the {桥|bridge} to the harbour, and find the boatman', arrow:'boatman'},
+    {id:'a2cargo', main:true, if:{cargo:1, cargoCarried:{below:4}}, text:'Carry four sacks onto the {船|boat} for the docker ({cargoCarried}/4)', where:'harbour'},
+    {id:'a2cargoBack', main:true, if:{cargo:1, cargoCarried:4}, text:'Tell the docker the sacks are on the {船|boat}', arrow:'docker'},
+    {id:'a2cat', if:{exchanged:1, friends:{cat:false}}, text:'Make {朋友|friends} with the cat in the market', arrow:[33, 8, 'town']},
+    {id:'a2harbour', main:true, if:{years:1, cargo:0}, text:'Cross the {桥|bridge} to the harbour: maybe someone there knows', arrow:'docker'},
+    {id:'a2askDocker', main:true, if:{cargo:2, askDocker:0}, text:'Ask the docker {哪里|where} the immortals are', arrow:'docker'},
+    {id:'a2askAll', main:true, if:{askDocker:1, asked:{below:8}}, text:'Ask everyone on your list {哪里|where} the immortals are ({asked}/8): tap the faces on your Tasks page to see who’s left'},
+    {id:'a2askBoatman', main:true, if:{asked:8, toldSea:0}, text:'Ask the boatman {哪里|where} the immortals are: the boatman has sailed all over the sea', arrow:'boatman'},
     {id:'a2wind', main:true, if:{boat:1}, text:'Wait for the {风|wind}: practise a little, then go back to the boatman', arrow:'boatman'},
     {id:'a2woodcutter', main:true, if:{boat:2, song:0}, text:'Someone is singing among the {树|trees}. Go and find them', arrow:'woodcutter'},
     // chapter 1: up the mountain
@@ -440,6 +474,7 @@ const ACROSS_THE_SEA = {
     {part:'talk', text:'Go up to the village', show:{dressed:2}, done:{child:{atLeast:1}}},
     {part:'talk', text:'Play the {孩子|child}’s game', show:{child:{atLeast:1}}, done:{child:{atLeast:2}}},
     {part:'talk', text:'Find out how to ask about things', show:{child:{atLeast:2}}, done:{child:3}},
+    {part:'talk', text:'Ask the villagers {哪里|where} the immortals are ({askedVillage}/3)', show:{child:3}, done:{askedVillage:3}},
     {part:'talk', text:'Ask about things in the village and on the shore ({askedWords}/5)', show:{child:3}, done:{askedWords:5}},
     {part:'talk', text:'Knock on the {门} in the white wall', show:{knows:'门'}, done:{knock:{atLeast:1}}},
     {part:'talk', text:'Catch {鱼|fish} for the fishermen’s basket', show:{pierFish:'asked'}, done:{pierFish:'done'}},
@@ -449,12 +484,15 @@ const ACROSS_THE_SEA = {
     {part:'talk', text:'Have lunch with the granny', show:{child:3}, done:{knows:'饭'}},
     {part:'talk', text:'Catch a {鱼} for the fisherman', show:{fish:'asked'}, done:{fish:'done'}},
     {part:'road', text:'Help the farmer in the fields', show:{farmer:{atLeast:1}}, done:{lunch:'done'}},
+    {part:'road', text:'Ask the farmer {哪里|where} the immortals are', show:{lunch:'done'}, done:{askFarmer:1}},
     {part:'road', text:'Make {朋友|friends} with the dog by the road', show:{farmer:{atLeast:1}}, done:{friends:{dog:true}}},
     {part:'town', text:'Change your {钱|money} in the town', show:{lunch:'done'}, done:{exchanged:1}},
-    {part:'town', text:'Get to know the town ({townWords}/11)', show:{exchanged:1}, done:{townWords:11}},
+    {part:'town', text:'Ask the people of the town {哪里|where} the immortals are ({askedTown}/3)', show:{exchanged:1}, done:{askedTown:3}},
+    {part:'town', text:'Learn to {说|talk} like the townspeople ({townWords}/10)', show:{exchanged:1}, done:{townWords:10}},
     {part:'town', text:'Make {朋友|friends} with the cat in the market', show:{exchanged:1}, done:{friends:{cat:true}}},
     {part:'town', text:'Go shopping for the granny in the town', show:{knows:'包子'}, done:{grannyPeach:'done'}},
     {part:'west', text:'Help the docker load the {船|boat}', show:{years:1}, done:{cargo:2}},
+    {part:'west', text:'Find someone who knows {哪里|where} the immortals are', show:{years:1}, done:{toldSea:1}},
     {part:'west', text:'Sail across the western {海|sea}', show:{years:1}, done:{boat:2}},
     {part:'west', text:'Find out {哪里|where} the immortal lives', show:{boat:2}, done:{song:1}},
     {chapter:1, part:'climb', text:'Help the woodcutter at his hut', done:{woodFetch:4}},
@@ -474,26 +512,27 @@ const ACROSS_THE_SEA = {
     {chapter:2, part:'home2', text:'Take the little monkeys {回家|home}', show:{king:2}, done:{ch2:1}}
   ],
   bubbles: {
-    child: [{if:{dressed:2, child:0}, show:'!'}, {if:{child:{atLeast:1, below:3}}, show:'!'}],
+    child: [{if:{dressed:2, child:0}, show:'!'}, {if:{child:{atLeast:1, below:3}}, show:'!'}, {if:{child:3, askChild:0}, show:'!'}],
+    villager: [{if:{hensDone:1, askVillager:0}, show:'!'}],
     granny: [{if:{child:3, new:'饭'}, show:'!'}, {if:{lunch:'asked', holding:{lunch:false}}, show:'!'}],
-    fisherman: [{if:{child:3, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'}],
+    fisherman: [{if:{child:3, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'}, {if:{fish:'done', askFisher:0}, show:'!'}],
     oldFisher: [{if:{back:1, oldFisher:0}, show:'!'}],
     fisher1: [{if:{back:1, oldFisher:1, pierFish:'not asked'}, show:'!'}, {if:{pierFish:'asked', holding:{pierFish:true}}, show:'?'}],
     kid2: [{if:{child:3, hidesFound:0}, show:'!'}],
     planter: [{if:{planter:0}, show:'!'}],
-    farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}],
+    farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}, {if:{lunch:'done', askFarmer:0}, show:'!'}],
     changer: [{if:{exchanged:0}, show:'!'}],
     fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}],
     bunSeller: [{if:{knows:'买', new:'包子'}, show:'!'}],
     shoeSeller: [{if:{knows:'包子', grannyBuns:'done', new:'鞋'}, show:'!'}],
-    teaKeeper: [{if:{knows:'鞋', new:'茶'}, show:'!'}],
+    teaKeeper: [{if:{knows:'鞋', new:'茶'}, show:'!'}, {if:{knows:'茶', askTea:0}, show:'!'}],
     granny2: [{if:{knows:'包子', grannyBuns:'not asked'}, show:'!'}, {if:{grannyBuns:'asked', inBag:{'包子':true}}, show:'?'},
       {if:{grannyBuns:'done', grannyApple:'not asked'}, show:'!'}, {if:{grannyApple:'asked', inBag:{'苹果':true}}, show:'?'},
-      {if:{grannyApple:'done', grannyPeach:'not asked'}, show:'!'}, {if:{grannyPeach:'asked', inBag:{'桃子':true}}, show:'?'}],
-    docker: [{if:{years:1, cargo:0}, show:'!'}, {if:{cargo:1, cargoCarried:4}, show:'?'}],
-    teller: [{if:{knows:'茶', new:'说'}, show:'!'}, {if:{knows:'说', new:'哪里'}, show:'!'}],
-    teacher: [{if:{knows:'哪里', new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
-    boatman: [{if:{years:1, boat:0}, show:'!'}, {if:{boat:1}, show:'!'}],
+      {if:{grannyApple:'done', grannyPeach:'not asked'}, show:'!'}, {if:{grannyPeach:'asked', inBag:{'桃子':true}}, show:'?'}, {if:{grannyPeach:'done', askGranny:0}, show:'!'}],
+    docker: [{if:{years:1, cargo:0}, show:'!'}, {if:{cargo:1, cargoCarried:4}, show:'?'}, {if:{cargo:2, askDocker:0}, show:'!'}],
+    teller: [{if:{knows:'茶', new:'说'}, show:'!'}, {if:{knows:'说', askTeller:0}, show:'!'}],
+    teacher: [{if:{knows:'说', new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
+    boatman: [{if:{asked:8, toldSea:0}, show:'!'}, {if:{toldSea:1, boat:0}, show:'!'}, {if:{boat:1}, show:'!'}],
     master: [{if:{door:2, teacher:0}, show:'!'}, {if:{teacher:1, named:0}, show:'!'}, {if:{chores:6, grown:0}, show:'!'}, {if:{grown:1, riddle:0}, show:'!'},
       {if:{riddle:2}, show:'!'}, {if:{riddle:3, tests:0}, show:'!'}, {if:{tests:1, fly:0}, show:'!'}, {if:{pine:1, sentHome:0}, show:'!'}],
     spyPupil: [{if:{named:1, spyGame:0}, show:'!'}],
@@ -509,6 +548,13 @@ const ACROSS_THE_SEA = {
     trainee: [{if:{homeAgain:1, stickGiven:0}, show:'!'}],
     king: [{if:{king:1}, show:'!'}]
   },
+
+  // Who knows where the immortals are? (decided 5 November 2026): the people you help, and ask, on your Tasks page under
+  // your journey while show matches (whoKnowsHTML in js/menu.js), each ticked once you've asked them (asked: the key that
+  // says so); and the one who knows (knows), a ? till they've told you (done).
+  askList: {title:'Who knows?', show:{landed:1, chapter:0}, done:{toldSea:1}, knows:'boatman',
+    people:[{who:'child', asked:'askChild'}, {who:'fisherman', asked:'askFisher'}, {who:'villager', asked:'askVillager'}, {who:'farmer', asked:'askFarmer'},
+      {who:'granny2', asked:'askGranny'}, {who:'teaKeeper', asked:'askTea'}, {who:'teller', asked:'askTeller'}, {who:'docker', asked:'askDocker'}]},
 
   // Characters who ask you to bring something (as Flower Fruit Mountain's). fromBag: what they want comes from your bag
   // (such as the granny's rice), not held for them. after: steps once they've thanked you (such as being paid).
@@ -641,9 +687,12 @@ const ACROSS_THE_SEA = {
     // home with the little monkeys: the troop puts everything back on the feast's tables, and celebrates
     {if:{place:'ffmHomeGround', homeAgain:1, party:0}, do:[{set:{party:1}}, {sound:'fanfare'},
       {message:'The little monkeys run to their mothers! The troop puts everything back on the feast’s tables, and everyone celebrates.'}, {say:'veryHappy', by:'elder'}]},
-    {if:{townWords:11, years:0, wordReady:true, friends:{cat:true}}, do:[{set:{years:1}}, {scene:'yearsPass'}, {scene:'manyYearsLater'},
+    // (a game that heard the boatman's news before the asking was the story's purpose: he's told you)
+    {if:{boat:{atLeast:1}, toldSea:0}, do:[{set:{toldSea:1}}]},
+    {if:{askedTown:3, years:0, wordReady:true}, do:[{set:{years:1}}, {message:'Nobody in the town knows where the immortals are either. You stay, and keep asking, year after year…'},
+      {scene:'yearsPass'}, {scene:'manyYearsLater'},
       {match:'Years among people', stop:'Not now', words:['人', '衣服', '帽子', '井', '房子', '门', '鸡', '饭', '钱', '网', '船', '狗', '包子', '鞋', '茶', '孩子', '书', '猫']},
-      {message:'Years go by. You can talk like people now, but nobody here knows where the immortals are. The town has changed too: the children from the school are grown up. Across the bridge, at the harbour, a boatman sails west…'}]}
+      {message:'Years go by. You can talk like people now, but nobody here knows where the immortals are. The town has changed too: the children from the school are grown up. Across the bridge, at the harbour, boats sail all over the sea: maybe someone there knows.'}]}
   ],
 
   // The places: the shore where you land, the fishing village above it, the fields east of that, the market town, its
@@ -742,8 +791,8 @@ const ACROSS_THE_SEA = {
       exits: [
         {at:[19, 27], to:'shorePath', arrive:[11, 1], facing:'down'},
         {at:[20, 27], to:'shorePath', arrive:[12, 1], facing:'down'},
-        {at:[39, 12], to:'villageLane', arrive:[1, 6], facing:'right', if:{villageWords:12}, closed:'Not yet: there’s more to find in the village, and on the shore. Check your tasks.'},
-        {at:[39, 13], to:'villageLane', arrive:[1, 7], facing:'right', if:{villageWords:12}, closed:'Not yet: there’s more to find in the village, and on the shore. Check your tasks.'}
+        {at:[39, 12], to:'villageLane', arrive:[1, 6], facing:'right', if:{any:[{askedVillage:3}, {farmer:{atLeast:1}}]}, closed:'Not yet: help the villagers, and ask them where the immortals are. Check your tasks.'},
+        {at:[39, 13], to:'villageLane', arrive:[1, 7], facing:'right', if:{any:[{askedVillage:3}, {farmer:{atLeast:1}}]}, closed:'Not yet: help the villagers, and ask them where the immortals are. Check your tasks.'}
       ],
       map: [
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -818,8 +867,8 @@ const ACROSS_THE_SEA = {
       exits: [
         {at:[0, 8], to:'villageLane', arrive:[38, 6], facing:'left'},
         {at:[0, 9], to:'villageLane', arrive:[38, 7], facing:'left'},
-        {at:[43, 8], to:'highRoad', arrive:[1, 7], facing:'right', if:{lunch:'done', friends:{dog:true}}, closed:'Not yet: help the farmer, and make friends with the dog, first.'},
-        {at:[43, 9], to:'highRoad', arrive:[1, 8], facing:'right', if:{lunch:'done', friends:{dog:true}}, closed:'Not yet: help the farmer, and make friends with the dog, first.'}
+        {at:[43, 8], to:'highRoad', arrive:[1, 7], facing:'right', if:{any:[{lunch:'done', friends:{dog:true}, askFarmer:1}, {exchanged:1}]}, closed:'Not yet: help the farmer and ask him where the immortals are, and make friends with the dog, first.'},
+        {at:[43, 9], to:'highRoad', arrive:[1, 8], facing:'right', if:{any:[{lunch:'done', friends:{dog:true}, askFarmer:1}, {exchanged:1}]}, closed:'Not yet: help the farmer and ask him where the immortals are, and make friends with the dog, first.'}
       ],
       map: [
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -887,8 +936,8 @@ const ACROSS_THE_SEA = {
         {at:[0, 12], to:'highRoad', arrive:[42, 7], facing:'left'},
         {at:[0, 13], to:'highRoad', arrive:[42, 7], facing:'left'},
         {at:[0, 14], to:'highRoad', arrive:[42, 8], facing:'left'},
-        {at:[24, 27], to:'canalPath', arrive:[9, 1], facing:'down', if:{years:1}, closed:'Not yet: get to know the town first. Check your tasks.'},
-        {at:[25, 27], to:'canalPath', arrive:[10, 1], facing:'down', if:{years:1}, closed:'Not yet: get to know the town first. Check your tasks.'}
+        {at:[24, 27], to:'canalPath', arrive:[9, 1], facing:'down', if:{years:1}, closed:'Not yet: help the people of the town, and ask them where the immortals are. Check your tasks.'},
+        {at:[25, 27], to:'canalPath', arrive:[10, 1], facing:'down', if:{years:1}, closed:'Not yet: help the people of the town, and ask them where the immortals are. Check your tasks.'}
       ],
       map: [
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -1543,7 +1592,8 @@ const ACROSS_THE_SEA = {
     '鞋': 'The shoe stall at the market.',
     '茶': 'The teahouse in the town: 喝茶吧！',
     '说': 'The storyteller in front of the teahouse: 我说，你听。',
-    '哪里': 'Asking the storyteller where the immortals are.',
+    '哪里': 'Asking people where the immortals are: 神仙在哪里？',
+    '知道': 'Everyone you asked where the immortals are: 我不知道。 (I don’t know.)',
     '听': 'The teacher at the town’s school: 你听！',
     '孩子': 'The children at the town’s school.',
     '学': 'The children learning at the town’s school.',
@@ -1590,6 +1640,7 @@ const ACROSS_THE_SEA = {
     {sentence:'我 要 买 包子', sentenceEn:'I want to buy a steamed bun.'},
     {sentence:'我 说 你 听', sentenceEn:'I talk, you listen.'},
     {sentence:'神仙 在 哪里', sentenceEn:'Where are the immortals?'},
+    {sentence:'我 不 知道', sentenceEn:'I don’t know.'},
     {sentence:'我们 在 学', sentenceEn:'We’re learning.'},
     {sentence:'你 叫 什么 名字', sentenceEn:'What’s your name?'},
     {sentence:'我 要 回家', sentenceEn:'I want to go home.'},
@@ -1757,6 +1808,7 @@ const ACROSS_THE_SEA = {
     iTalk: {zh:'我 说 ， 你 听 。', en:'I talk, you listen.'},
     whereImmortals: {zh:'神仙 在 哪里 ？', en:'Where are the immortals?'},
     dontKnow: {zh:'我 不 知道 。', en:'I don’t know.'},
+    acrossSea: {zh:'神仙 在 海 的 那边 。', en:'The immortals are across the sea.'},   // (the boatman: at last, someone who knows)
     listen: {zh:'你 听 ！', en:'Listen!'},
     theyAreChildren: {zh:'他们 是 孩子 。', en:'They’re children.'},
     childrenLearn: {zh:'孩子 们 在 学 。', en:'The children are learning.'},
@@ -1849,6 +1901,7 @@ const ACROSS_THE_SEA = {
         {isIt:4}, {set:{child:2}}, {message:'The child claps. You’re good at this game!'}]},
       {if:{child:2}, waits:true, do:[{say:'whatsThis', teach:'什么'}, {newWord:'什么', note:'什么 means what. 这是什么？ means What’s this?'}, {set:{child:3}},
         {message:'Now you can ask what things are! Face something that sparkles ✨ with a person near, and press A.'}]},
+      ...ASK('askChild', {child:3}, VILLAGE_NEXT),
       {do:[{say:'play'}, {isIt:4}]}
     ],
     granny: [
@@ -1864,10 +1917,12 @@ const ACROSS_THE_SEA = {
       {if:{fish:'asked', holding:{fish:true}}, waits:true, do:[{request:'fish'}]},   // (钱 comes as he pays you: practise first)
       {if:{fish:'not asked'}, do:[{request:'fish'}]},
       {if:{fish:'asked'}, do:[{request:'fish'}]},
+      ...ASK('askFisher', {fish:'done'}, VILLAGE_NEXT),
       {do:[{say:'hi'}, {reply:'你好'}]}
     ],
     auntie: [{do:[{say:'littleMonkey'}]}],
-    villager: [{do:[{say:'hi'}, {reply:'你好'}]}],
+    // the villager whose hens got out (all four back in their yard: the hens' event)
+    villager: [...ASK('askVillager', {hensDone:1}, VILLAGE_NEXT), {do:[{say:'hi'}, {reply:'你好'}]}],
     // the hens out of their yard: till you know 鸡, the one in the yard has to teach you; then catch each (a question, as
     // with the crabs: get it wrong, and it runs off somewhere else) and carry it back
     hen1: [{if:{new:'鸡'}, do:[{message:'A chicken runs about, clucking. There’s another one in the yard behind the fence: make friends with it first!'}]},
@@ -1895,6 +1950,7 @@ const ACROSS_THE_SEA = {
       {if:{farmer:1, birdsShooed:{below:5}}, do:[{say:'look'}, {message:'Shoo the birds off the rice ({birdsShooed}/5).'}]},
       {if:{lunch:'not asked'}, do:[{request:'lunch'}]},
       {if:{lunch:'asked'}, do:[{request:'lunch'}]},
+      ...ASK('askFarmer', {lunch:'done'}, [{message:'The farmer doesn’t know, but is your friend now. Ask in the town, east along the high road: lots of people live there.'}]),
       {do:[{say:'hi'}, {reply:'你好'}]}
     ],
     planter: [
@@ -1914,12 +1970,12 @@ const ACROSS_THE_SEA = {
       {if:{new:'鞋'}, waits:true, do:[{shop:'shoes'}]}, {do:[{shop:'shoes'}]}],
     teaKeeper: [
       {if:{new:'茶'}, waits:true, do:[{say:'drinkTea', teach:'茶'}, {newWord:'茶', note:'A cup of hot green tea, in the teahouse.'}, {rest:true}, {reply:'谢谢'}]},
+      ...ASK('askTea', {knows:'茶'}, TOWN_NEXT),
       {do:[{say:'drinkTea'}, {rest:true}, {message:'You sit down and drink a cup of tea.'}]}
     ],
     teller: [
       {if:{new:'说'}, waits:true, do:[{say:'iTalk', teach:'说'}, {newWord:'说', note:'说 means to say, or to talk.'}, {message:'The storyteller tells stories in front of the teahouse. People stop to listen.'}]},
-      {if:{new:'哪里'}, waits:true, do:[{say:'whereImmortals', by:'player', teach:'哪里'}, {newWord:'哪里', note:'哪里 means where.'}, {say:'dontKnow'},
-        {message:'The storyteller knows lots of stories, but not where the immortals live.'}]},
+      ...ASK('askTeller', {knows:'说'}, [{message:'The storyteller knows lots of stories, but not where the immortals live.'}, ...TOWN_NEXT]),
       {do:[{say:'iTalk'}]}
     ],
     teacher: [
@@ -1933,6 +1989,7 @@ const ACROSS_THE_SEA = {
       {if:{knows:'包子', grannyBuns:'not asked'}, do:[{request:'grannyBuns'}]}, {if:{grannyBuns:'asked'}, do:[{request:'grannyBuns'}]},
       {if:{grannyBuns:'done', grannyApple:'not asked'}, do:[{request:'grannyApple'}]}, {if:{grannyApple:'asked'}, do:[{request:'grannyApple'}]},
       {if:{grannyApple:'done', grannyPeach:'not asked'}, do:[{request:'grannyPeach'}]}, {if:{grannyPeach:'asked'}, do:[{request:'grannyPeach'}]},
+      ...ASK('askGranny', {grannyPeach:'done'}, TOWN_NEXT),
       {do:[{say:'hi'}, {reply:'你好'}]}
     ],
     caller: [{do:[{say:'callFruit'}]}],
@@ -1947,6 +2004,7 @@ const ACROSS_THE_SEA = {
       {if:{cargo:0}, do:[{say:'hi'}, {set:{cargo:1}}, {message:'The docker is loading the big boat. Help him: carry four sacks from the quay. Face a sack, and press A!'}]},
       {if:{cargo:1, cargoCarried:4}, do:[{set:{cargo:2}}, {say:'thanks'}, {reply:'不客气'}, {coins:3, note:'The docker gives you 3 🪙 for your help.'}]},
       {if:{cargo:1}, do:[{message:'Four sacks, please! ({cargoCarried}/4)'}]},
+      ...ASK('askDocker', {cargo:2}, [{message:'The docker doesn’t know, but is your friend now. The boatman on the pier has sailed all over the sea, though: ask the boatman!'}]),
       {do:[{say:'hi'}, {reply:'你好'}]}
     ],
     pupil1: [{do:[{say:'hi'}, {reply:'你好'}]}],
@@ -1960,8 +2018,12 @@ const ACROSS_THE_SEA = {
     walker2: [{do:[{say:'hi'}, {reply:'你好'}]}],
     porter: [{do:[{say:'hi'}, {reply:'你好'}]}],
     // the harbour: no wind today (风); once you've practised a little, the wind comes, and he takes you across for your fare
+    // he knows where the immortals are, once you've asked everyone else (the last on your list): across the sea
     boatman: [
       {if:{years:0}, do:[{say:'hi'}, {reply:'你好'}]},
+      {if:{toldSea:0, asked:{below:8}}, do:[{say:'hi'}, {reply:'你好'}, {message:'The boatman has sailed all over the sea… But first, ask everyone else on your list ({asked} of 8 so far): tap the faces on your Tasks page to see who’s left.'}]},
+      {if:{toldSea:0}, do:[{say:'whereImmortals', by:'player'}, {say:'acrossSea'}, {set:{toldSea:1}}, {befriend:true}, {sound:'chime'},
+        {message:'At last, someone who knows! Far across the western sea, on a mountain, there lives an immortal. The boatman can take you there, once the wind comes.'}]},
       {if:{boat:0}, waits:true, do:[{say:'noWind', teach:'风'}, {newWord:'风', note:'风 means wind. Without it, the boat can’t sail.'}, {set:{boat:1}},
         {message:'No wind today: the boat can’t sail. Practise a little, then come back.'}]},
       {if:{boat:1}, waits:true, do:[{sound:'wind'}, {say:'windCame'}, {pay:5, note:'You give the boatman 5 🪙 for your fare.'}, {say:'letsGo'},

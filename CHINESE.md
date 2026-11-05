@@ -685,7 +685,8 @@ check that each is true and simply put.
 | 喝茶吧！ | hē chá ba! | Have some tea! | 茶馆老板 (Teahouse keeper) |  |
 | 我说，你听。 | wǒ shuō, nǐ tīng. | I talk, you listen. | 说书人 (Storyteller) |  |
 | 神仙在哪里？ | shénxiān zài nǎlǐ? | Where are the immortals? | 小猴子 (You) |  |
-| 我不知道。 | wǒ bù zhīdào. | I don’t know. | 说书人 (Storyteller) |  |
+| 我不知道。 | wǒ bù zhīdào. | I don’t know. | 小孩 (Child), 渔夫 (Fisherman), 村民 (Villager), 农民 (Farmer), 茶馆老板 (Teahouse keeper), 说书人 (Storyteller), 老奶奶 (Granny), 工人 (Docker) |  |
+| 神仙在海的那边。 | shénxiān zài hǎi de nàbiān. | The immortals are across the sea. | 船夫 (Boatman) |  |
 | 你听！ | nǐ tīng! | Listen! | 老师 (Teacher), 师父 (The master) |  |
 | 他们是孩子。 | tāmen shì háizi. | They’re children. | 老师 (Teacher) |  |
 | 孩子们在学。 | háizi men zài xué. | The children are learning. | 老师 (Teacher) |  |
@@ -781,6 +782,7 @@ check that each is true and simply put.
 | 我要买包子 | wǒ yào mǎi bāozi | I want to buy a steamed bun. | You, in a lesson at school |  |
 | 我说你听 | wǒ shuō nǐ tīng | I talk, you listen. | You, in a lesson at school |  |
 | 神仙在哪里 | shénxiān zài nǎlǐ | Where are the immortals? | You, in a lesson at school |  |
+| 我不知道 | wǒ bù zhīdào | I don’t know. | You, in a lesson at school |  |
 | 我们在学 | wǒmen zài xué | We’re learning. | You, in a lesson at school |  |
 | 你叫什么名字 | nǐ jiào shénme míngzi | What’s your name? | You, in a lesson at school |  |
 | 我要回家 | wǒ yào huíjiā | I want to go home. | You, in a lesson at school |  |
@@ -1058,6 +1060,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 茶 | chá | tea |  |
 | 说 | shuō | to say, to talk |  |
 | 哪里 | nǎlǐ | where |  |
+| 知道 | zhīdào | to know |  |
 | 听 | tīng | to listen |  |
 | 孩子 | háizi | child, children |  |
 | 学 | xué | to learn |  |
@@ -1152,7 +1155,6 @@ Asked about a picture of something you know (the word asked about is one of thes
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 知道 | zhīdào | to know |  |
 | 换 | huàn | to change, to swap |  |
 | 今天 | jīntiān | today |  |
 | 啊 | a | (softens a question: 谁啊？ who is it?) |  |

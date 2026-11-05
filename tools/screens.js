@@ -432,6 +432,8 @@ SAVES.a2pier = {...SAVES.a2dressed, areas: {...SAVES.a2dressed.areas, 2: {...SAV
 SAVES.a2shorePath = {...SAVES.a2dressed, pos: {place: 'shorePath', x: 12, y: 16, dir: 'up'}};
 SAVES.a2hens = {...SAVES.a2knock, w: {...SAVES.a2knock.w, ...knows(1, ['谁', '鸡'])}, friends: ['goose', 'chicken'], pos: {place: 'village', x: 13, y: 8, dir: 'left'}};
 SAVES.a2hensShore = {...SAVES.a2hens, areas: {...SAVES.a2hens.areas, 2: {...SAVES.a2hens.areas[2], fish: 'asked'}}, pos: {place: 'shore', x: 13, y: 11, dir: 'up'}};
+SAVES.a2whoKnows = {...SAVES.a2town, areas: {...SAVES.a2town.areas, 2: {...SAVES.a2town.areas[2], hensDone: 1, askChild: 1, askFisher: 1, askVillager: 1, askFarmer: 1}},
+  friends: [...(SAVES.a2town.friends || []), 'child', 'fisherman', 'villager', 'farmer'], w: {...SAVES.a2town.w, ...knows(1, ['哪里', '知道'])}};
 SAVES.a2lane = {...SAVES.a2fields, pos: {place: 'villageLane', x: 8, y: 8, dir: 'down'}};
 SAVES.a2highRoad = {...SAVES.a2town, pos: {place: 'highRoad', x: 16, y: 9, dir: 'up'}};
 SAVES.a2canal = {...SAVES.a2harbour, pos: {place: 'canalPath', x: 9, y: 12, dir: 'left'}};
@@ -1351,6 +1353,10 @@ const SCREENS = [
     play(); await wait(100); here().part = PARTS.findIndex(p => p.id === 'feast'); tasksPage(() => closeCard()); await wait(400); }},
   {id: 'tasks-where', title: 'Tasks: where each one is', save: 'a2hensShore', why: 'Down on the shore, with the hens still loose in the village: under each task done somewhere else, a red pin and the place.', run: async () => {
     play(); await wait(100); tasksPage(() => closeCard()); await wait(400); }},
+  {id: 'a2-who-knows', title: 'Tasks: who knows?', save: 'a2whoKnows', why: 'The human world’s purpose: help people, and ask them where the immortals are. A face each, ticked once asked (4 of 8 here, in the town), and a ? for the one who knows. Tap a face to see who it is.', run: async () => {
+    play(); await wait(100); tasksPage(() => closeCard()); await wait(200); sheet.querySelectorAll('.whoknows .face')[4].click(); await wait(300); }},
+  {id: 'a2-friends-people', title: 'Friends: people', save: 'a2whoKnows', why: 'The people you’ve helped and asked are your friends too, under People.', run: async () => {
+    play(); await wait(100); friendsPage(() => closeCard()); await wait(400); }},
   {id: 'a2-part', title: 'A part of the story begins', save: 'a2child', why: 'Each part of the story has a card as it begins, saying what it’s about: here, Part 2, learning to talk. The first, as you land, says why you’re here: to find an immortal.', run: async () => {
     play(); await wait(100); here().part = 0; partsCheck(); await wait(400); }},
   {id: 'a2-tasks', title: 'Tasks: your journey', save: 'a2asking', why: 'At the top, your journey’s goal and the part you’re in, with what you’re doing in it; then the story’s main task, ★, and the rest under Also.', run: async () => {

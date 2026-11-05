@@ -512,7 +512,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // Match the words you've learned (with pictures) to their pictures, as at the practice post (title: its heading;
   // stop: the button to stop). Stopping ends the conversation there, with notYet as a message.
   async match(s){
-    const words = shuffle(s.words || ORDER.filter(w => WORDS[w].pic && lvl(w) >= 1));   // (words: just these, such as the meadow's)
+    const words = shuffle((s.words || ORDER).filter(w => WORDS[w] && WORDS[w].pic && lvl(w) >= 1));   // (words: just these, such as the meadow's; only those you know)
     const missed = await matchWords(words, s.match, s.stop || 'Not now');
     if (!missed){ if (s.notYet) toast(fill(s.notYet)); return STOP; }
     for (const w of words){ reviewed(w, !missed.has(w)); addToday(w); } save();   // (each word counts as practice, as in the exam)
@@ -832,6 +832,12 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // A weapon of your own from now on (weapon: its word), such as the Demon of Havoc's broadsword: in your hand on the map,
   // and in battles, hitting as hard as the area's battles say (weapons).
   weapon(s){ here().weapon = s.weapon; save(); redress(); },
+  // Someone becomes your friend (befriend: their id, or true, the one you're talking to), such as a person you've helped
+  // and asked where the immortals are: on your Friends page from then on, under People.
+  befriend(s, who){
+    const id = s.befriend === true ? (typeof who === 'string' ? who : who && who.id) : s.befriend;
+    if (id && !S.friends.includes(id)){ S.friends.push(id); save(); }
+  },
   // A question or two on words you know as you do something (practise: how many; label: what you're doing; pic: its
   // picture), such as lifting each sack onto the boat at the harbour: right or wrong, you carry on, as practice.
   async practise(s){

@@ -183,6 +183,7 @@ const WORD_BANK = {
   '茶': {py:'chá', en:'tea', pic:'🍵', area:2, category:'food', alike:['水', '喝']},
   '说': {py:'shuō', en:'to say, to talk', area:2, category:'actions'},
   '哪里': {py:'nǎlǐ', en:'where', area:2, category:'questions'},
+  '知道': {py:'zhīdào', en:'to know', area:2, category:'actions'},   // (我不知道。 everyone you ask where the immortals are)
   '听': {py:'tīng', en:'to listen', area:2, category:'actions'},
   '孩子': {py:'háizi', en:'child, children', pic:'🧒', area:2, category:'people'},
   '学': {py:'xué', en:'to learn', area:2, category:'actions'},
@@ -221,7 +222,6 @@ const WORD_BANK = {
   '刀': {py:'dāo', en:'broadsword, knife', pic:'🗡️', area:2, category:'items', alike:['棍子', '斧头']},   // (the Demon of Havoc's, yours once you've beaten him)
 
   // Heard in sentences
-  '知道': {py:'zhīdào', en:'to know'},
   '换': {py:'huàn', en:'to change, to swap'},
   '今天': {py:'jīntiān', en:'today'},
   '啊': {py:'a', en:'(softens a question: 谁啊？ who is it?)'},

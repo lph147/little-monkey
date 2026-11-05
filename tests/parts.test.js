@@ -31,10 +31,10 @@ test('the Tasks page: your journey and the part you’re in, then the story’s 
   const g = game({dressed: 2, back: 1, child: 3, part: 1});
   g.run('tasksPage(() => {})');
   const sheet = g.el('#sheet');
-  assert.match(sheet.querySelector('.journey').textContent.replace(/\s+/g, ' '), /Your journey Find an immortal who can teach you never to grow old\. ?Part 2: Learning to talk\.$/, 'the goal and the part (what to do: the main task, below)');
+  assert.match(sheet.querySelector('.journey').textContent.replace(/\s+/g, ' '), /Your journey Find someone who knows where the immortals live: an immortal can teach you never to grow old\. ?Part 2: Learning to talk\./, 'the goal and the part (what to do: the main task, below)');
   const items = sheet.querySelectorAll('.tasks li').map(li => (li.classList.contains('main') ? '* ' : '') + li.textContent.replace(/\s+/g, ' ').trim());
-  assert.match(items[0], /^\* Learn to talk like the villagers/, 'the main task first');
-  assert.equal(items[1], 'Also', 'then the rest');
+  assert.match(items[0], /^\* (Help the people of the village|Ask the)/, 'the main task first: asking where the immortals are');
+  assert.ok(items.includes('Also'), 'then the rest');
   assert.ok(items.slice(2).every(t => !t.startsWith('*')));
 });
 
