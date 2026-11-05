@@ -121,6 +121,75 @@ const FETCH_WATER = {fetch:'waterFetch', asks:[{word:'水', count:3, ask:'wantWa
 const FETCH_WOOD = {fetch:'axeFetch', asks:[{word:'木头', count:4, ask:'wantWood4'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
   listen:'He says it only in Chinese. Listen, then chop it at the chopping blocks, and bring it to him.',
   done:[{set:{chores:6}}, {say:'veryGood'}, {coins:3, note:'The senior pupil gives you 3 🪙 for your help.'}, {message:'The chores are done. The master is giving a lecture, in front of the hall!'}]};
+// Chapter 2, home to Flower Fruit Mountain (decided 5 November 2026, from the plan and its mock-ups): twenty years on, the
+// troop is hiding; a demon from the north, the Demon of Havoc (混世魔王, a name, never a word to catch), has carried off
+// their little ones, and his little demons (妖怪) are in the long grass. Home's places are Flower Fruit Mountain's,
+// borrowed as you left them (borrow, js/data.js): the school, garden, pen and hive all built, the feast held, each with
+// ffm in front of its id there; with little demons in their long grass, and a few squares of their own (put).
+const HOME_MAP = 'This is home: you know your way about here. Your map is of the lands across the sea.';
+const AT_HOME = (id, own = {}) => ({borrow:id, from:1, wild:['demon'], noMap:HOME_MAP, ...own});
+// The demon's mountain, far to the north (坎源山, a name): ashy ground, dry grass full of little demons, dead pines and a
+// black pool; at the top, the cages, the heap of the troop's things, two torches and his cave's mouth (水脏洞), his
+// guards in front of it; your cloud at the foot of the path.
+const LAIR_MAP = [
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+  "^^MMMMMMMMMMMMOOMMMMMMMMMMMM^^",
+  "^^MMMMMMMMMMMMOOMMMMMMMMMMMM^^",
+  "^^g.........T....T.........g^^",
+  "^^g.か.き.く.............さしす..g^^",
+  "^^g...................せそ...g^^",
+  "^^g..け.こ...................g^^",
+  "^^g........................g^^",
+  "^^gDgggggggDgg..ggbggggggDgg^^",
+  "^^gLLLLLLLgggg..gggggggggggg^^",
+  "^^gLLLLLLLggbg..gggLLLLLLLgg^^",
+  "^^gLLLLLLLgggg...ggLLLLLLLgg^^",
+  "^^ggggggggggggg..DgLLLLLLLgg^^",
+  "^^gggggggggggg...ggggggggggg^^",
+  "^^DgggLLLLLLLg..ggggLLLLLggg^^",
+  "^^ggggLLLLLLLg..ggggLLLLLggg^^",
+  "^^ggggLLLLLLLg..gggggbgwwwDg^^",
+  "^^ggbgggggggゆg..gggggggwwwgg^^",
+  "^^gggggggggggg..gggggggggggg^^"
+];
+// A cage, a little monkey locked in it (n: which, at x, y): 救命！ (an event as you come near), 笼子 as you look at it, and
+// once you have the key (钥匙), opened with a question, the little monkey jumping out and hiding behind you.
+const CAGE = (n, x, y) => ({look:'cage', word:'笼子', landmark:true, becomes:[{if:{['freed' + n]:1}, to:'がぎぐげご'[n - 1]}], onLook:[
+  {if:{new:'救命'}, do:[{message:'A little monkey, locked in a wooden cage! It looks frightened.'}]},
+  {if:{new:'笼子'}, label:'Look', waits:true, do:[{newWord:'笼子', note:'笼子 means cage. A little monkey from the troop is locked inside!'}]},
+  {if:{key:0}, do:[{message:'The cage is locked. Who has the key?'}]},
+  {label:'Open', do:[{practise:1, label:'Opening the cage', pic:'钥匙'}, {set:{['freed' + n]:1}}, {sound:'chime'}, {leap:'baby' + n, from:[x, y]},
+    {say:'thanks', by:'baby' + n}, {message:'The little monkey jumps out, free! ({freed}/5)'}]}]});
+const OPEN_CAGE = {look:'cageOpen', word:'笼子', landmark:true, onLook:[{do:[{message:'An empty cage, its door open.'}]}]};
+const LAIR_LEGEND = {
+  'g': {look:'ash', walk:true},
+  '.': {look:'trampled', walk:true},
+  'L': {look:'deadGrass', walk:true, word:'草', wild:['demon']},
+  'D': {look:'ashPine', word:'树', note:'A dead pine, black and bare.'},
+  'w': {look:'murk', word:'水', note:'A black pool. Nothing lives in it.'},
+  // a boulder, out of the guard's sight: hide behind it, and change into a little demon (变, as the master taught you)
+  'b': {look:'ashBoulder', word:'石头', onLook:[{if:{knows:'钥匙', key:0, form:null}, label:'Hide', do:[{message:'Out of the guard’s sight behind the boulder, you remember what the master taught you…'},
+    {turnInto:1, word:'妖怪', keep:true, label:'变！ What will you change into, to fool the guard? Listen!'}, {message:'You look just like a little demon! Go and ask the guard for the key.'}]}]},
+  'T': {look:'torch', word:'火', landmark:true, onLook:[{if:{new:'火'}, label:'Look', waits:true, do:[{newWord:'火', note:'火 means fire. Torches, burning in front of the demon’s cave.'}]},
+    {do:[{message:'A torch, burning.'}]}]},
+  'O': {look:'demonDoor', landmark:true, action:'sign', sign:{name:{zh:'洞', py:'dòng', en:'Cave'}, says:{zh:'水脏洞', en:'Water-Belly Cave'}, hint:'The name of the Demon of Havoc’s cave.'}},
+  'か': CAGE(1, 4, 5), 'き': CAGE(2, 6, 5), 'く': CAGE(3, 8, 5), 'け': CAGE(4, 5, 7), 'こ': CAGE(5, 7, 7),
+  'が': OPEN_CAGE, 'ぎ': OPEN_CAGE, 'ぐ': OPEN_CAGE, 'げ': OPEN_CAGE, 'ご': OPEN_CAGE,
+  // the troop's things, taken from the feast's tables: I spy, with a little monkey you've set free
+  'さ': {look:'lootBowls', word:'碗', landmark:true, note:'The troop’s bowls, from the feast’s tables!'},
+  'し': {look:'lootPeaches', word:'桃子', landmark:true, note:'The troop’s peaches!'},
+  'す': {look:'lootApples', word:'苹果', landmark:true, note:'The troop’s apples!'},
+  'せ': {look:'lootHoney', word:'蜂蜜', landmark:true, note:'The troop’s honey, from the hive!'},
+  'そ': {look:'lootMilk', word:'牛奶', landmark:true, note:'The cow’s milk, in its jug!'},
+  'ゆ': {look:'cloudAsh', landmark:true, onLook:[{if:{king:{below:2}}, label:'Fly home', do:[{message:'You leap onto your cloud, and somersault home.'}, {goTo:'ffmHomeGround', at:[13, 11], facing:'down'}]}]}
+};
+// At home: a bush the troop hides behind (the big monkey in the meadow, the hungry monkey at the home ground), sparkling
+// till you look (its sparkle); the feast's tables, bare till the troop puts everything back; and your cloud, there once the
+// old monkey sends you north.
+const HIDING = (key, who, x, y, wait) => ({look:'bush', onLook:[{if:{...wait, [key]:0}, label:'Look', waits:true, do:[{sound:'scuffle'}, {set:{[key]:1}}, {leap:who, from:[x, y]}, {talkTo:who}]},
+  {do:[{message:'A bush.'}]}]});
+const ROBBED = (look, to) => ({look, word:'桌子', landmark:true, note:'The feast’s table. Everything on it has gone!', becomes:[{if:{homeAgain:1}, to}]});
 const ACROSS_THE_SEA = {
   number: 2,
   name: {zh:'海的那边', py:'hǎi de nàbiān', en:'Across the sea'},
@@ -135,7 +204,8 @@ const ACROSS_THE_SEA = {
 
   chapters: [
     {name:'Prologue', title:'The human world'},
-    {name:'Chapter 1', title:'The teacher’s mountain'}
+    {name:'Chapter 1', title:'The teacher’s mountain'},
+    {name:'Chapter 2', title:'The Demon of Havoc'}
   ],
 
   // The journey's goal, and the story's parts within each chapter (decided 5 November 2026, after playing it: the human
@@ -143,7 +213,8 @@ const ACROSS_THE_SEA = {
   // begins (when: the furthest you've reached; card:false, one that begins with its chapter's card), what it's about
   // (text), and what you're doing in it (now). Checklist items with a part show only while you're in it.
   goal: [{if:{door:{below:2}}, text:'Find an immortal who can teach you never to grow old.'}, {if:{sentHome:0}, text:'Learn all you can from the immortal.'},
-    {text:'Home to Flower Fruit Mountain (still to come).'}],
+    {if:{king:{below:2}}, text:'Save the troop’s little monkeys from the Demon of Havoc.'},
+    {text:'A real weapon for a king: the Dragon King’s palace, under the sea (still to come).'}],
   parts: [
     {id:'dress', chapter:0, name:'Part 1', title:'Dressing like a person', when:{landed:1},
       text:'You’ve crossed the sea to find an immortal, who can teach you never to grow old. But the people here run from a monkey! First, find something to wear.',
@@ -173,7 +244,21 @@ const ACROSS_THE_SEA = {
       now:'Learn to change into things, and to fly.'},
     {id:'home', chapter:1, name:'Part 5', title:'Showing off', when:{pine:1},
       text:'Showing off to the pupils has made the master angry…',
-      now:[{if:{sentHome:0}, text:'The master wants to see you.'}, {text:'That’s the end of chapter 1.'}]}
+      now:[{if:{sentHome:0}, text:'The master wants to see you.'}, {text:'That’s the end of chapter 1.'}]},
+    {id:'homeAgain', chapter:2, name:'Part 1', title:'Home again', when:{chapter:2}, card:false,
+      now:'Home, after twenty years. Find the troop: they’re hiding.'},
+    {id:'demons', chapter:2, name:'Part 2', title:'The little demons', when:{news:1},
+      text:'A demon from the north, the Demon of Havoc, has carried off the troop’s little ones. Some of his little demons are still here…',
+      now:'Chase the little demons off the home ground ({demonsChased} of 3).'},
+    {id:'lair', chapter:2, name:'Part 3', title:'The demon’s mountain', when:{north:1},
+      text:'Far to the north: the Demon of Havoc’s mountain. The troop’s little ones are here somewhere!',
+      now:'Find the little monkeys, and set them free ({freed} of 5).'},
+    {id:'king', chapter:2, name:'Part 4', title:'The Demon of Havoc', when:{loot:{atLeast:1}},
+      text:'The little demons have run into the cave, shouting. Out comes their master…',
+      now:'Beat the Demon of Havoc.'},
+    {id:'home2', chapter:2, name:'Part 5', title:'Home', when:{king:2},
+      text:'The Demon of Havoc has run off for good. Take the little monkeys home!',
+      now:[{if:{ch2:0}, text:'Home with the little monkeys: celebrate with the troop.'}, {text:'That’s the end of Area 2.'}]}
   ],
 
   // What this area remembers in your save, and the values it starts with.
@@ -200,7 +285,18 @@ const ACROSS_THE_SEA = {
   //   riddle   1 the master's taps on your head (头), 2 the night (晚上), at his back door, 3 he's taught you to change (变)
   //   tests    1 once he's tested your changes; fly 1 once he's taught you the cloud somersault (飞), and you can fly by
   //            cloud from the map; pine 1 once you've shown off as a pine tree (松树); sentHome 1 once he's sent you home
-  progress: {chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, chores:0, waterFetch:0, axeFetch:0, grown:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
+  // chapter 2, home:
+  //   home2    1 once you've landed by your stone; foundBig, foundHungry 1 once you've found them hiding behind their bush
+  //   news     1 once the old monkey has told you about the Demon of Havoc; d1 d2 d3 1 once you've chased off each
+  //            little demon on the home ground; north 1 once the old monkey has sent you north, on your cloud
+  //   lairSeen 1 once you've been to the demon's mountain; key 1 once the guard has given you the cages' key (you, as a
+  //            little demon); freed1 to freed5 1 once you've let each little monkey out of its cage; loot the games of
+  //            I spy you've finished with them; king 1 once he's come out, 2 once you've beaten him
+  //   homeAgain 1 once you've flown home with the little monkeys; party 1 once the troop has celebrated; stickGiven 1 once
+  //            you've given your stick to a little monkey in training; ch2 1 once the old monkey has told you of the
+  //            Dragon King (the end of Area 2)
+  progress: {home2:0, foundBig:0, foundHungry:0, news:0, d1:0, d2:0, d3:0, north:0, lairSeen:0, key:0, freed1:0, freed2:0, freed3:0, freed4:0, freed5:0, loot:0, king:0, homeAgain:0, party:0, stickGiven:0, ch2:0,
+    chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, chores:0, waterFetch:0, axeFetch:0, grown:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
 
   // Numbers that text can show as {name}, and that an if can check (as Flower Fruit Mountain's).
   counters: {
@@ -215,7 +311,9 @@ const ACROSS_THE_SEA = {
     // the town's words, which the years passing wait for
     townWords: {count:'known', words:['买', '包子', '鞋', '茶', '说', '哪里', '听', '孩子', '学', '书', '猫']},
     coins: {count:'coins'},
-    leavesSwept: {count:'picked', request:'sweep'}   // the heaps of leaves you've swept up in the cave (five)
+    leavesSwept: {count:'picked', request:'sweep'},   // the heaps of leaves you've swept up in the cave (five)
+    demonsChased: {count:'flags', keys:['d1', 'd2', 'd3']},   // chapter 2: the little demons chased off the home ground
+    freed: {count:'flags', keys:['freed1', 'freed2', 'freed3', 'freed4', 'freed5']}   // the little monkeys let out of their cages
   },
 
   // After any new word, the next waits till you've answered this many more questions, anywhere: a talk part, a square's
@@ -237,7 +335,7 @@ const ACROSS_THE_SEA = {
   // shells for them, one for one.
   money: {when:{knows:'钱'}},
   // Changing into things (变, the turnInto step, chapter 1): what the master can ask you to change into, those you know.
-  changes: ['鸟', '鱼', '树', '石头', '猫', '狗', '鸡', '鹅', '鹤', '兔子', '羊', '牛', '花', '桃子', '苹果', '船', '房子', '松树'],
+  changes: ['鸟', '鱼', '树', '石头', '猫', '狗', '鸡', '鹅', '鹤', '兔子', '羊', '牛', '花', '桃子', '苹果', '船', '房子', '松树', '妖怪'],
   // Flying by cloud (the cloud somersault, chapter 1): from your map, to any place you've been, once you can (has).
   cloudTravel: {has:{fly:1}, note:'You leap onto a cloud, and somersault away!'},
   // The child's game, 是不是？ (Is it?): a picture of something you know and 这是…吗？ about it, the word one of these
@@ -246,7 +344,7 @@ const ACROSS_THE_SEA = {
     '房子', '井', '门', '船', '网', '衣服', '帽子', '书', '茶', '包子', '鞋', '海', '饭'],
 
   tasks: [
-    {id:'a2coat', main:true, if:{landed:1, dressed:0}, text:'The old man dropped something on the sand as he ran: go and find it', arrow:[23, 10]},
+    {id:'a2coat', main:true, if:{landed:1, dressed:0}, text:'The {老|old} man dropped something on the sand as he ran: go and find it', arrow:[23, 10]},
     {id:'a2goose', if:{landed:1, friends:{goose:false}}, text:'Make {朋友|friends} with the goose on the sand', arrow:[8, 12]},
     {id:'a2hat', main:true, if:{dressed:1}, text:'Something else is blowing along the sand: pick it up too', arrow:[30, 13]},
     {id:'a2pier', if:{pierFish:'asked', holding:{pierFish:false}}, text:'Catch three {鱼|fish} for the fishermen: fish off the pier with your {鱼竿} ({pierCaught}/3)', arrow:[18, 20]},
@@ -303,10 +401,32 @@ const ACROSS_THE_SEA = {
     {id:'c1tests', main:true, if:{riddle:3, tests:0}, text:'The {师父|master} wants to test you', arrow:'master'},
     {id:'c1fly', main:true, if:{tests:1, fly:0}, text:'The {师父|master} has one more thing to teach you', arrow:'master'},
     {id:'c1pine', main:true, if:{fly:1, pine:0}, text:'The pupils want to {看|see} you change into something', arrow:'darePupil'},
-    {id:'c1home', main:true, if:{pine:1, sentHome:0}, text:'The {师父|master} is angry with you. Go and {说|talk} to him', arrow:'master'}
+    {id:'c1home', main:true, if:{pine:1, sentHome:0}, text:'The {师父|master} is angry with you. Go and {说|talk} to him', arrow:'master'},
+    // chapter 2: home, twenty years on
+    {id:'c2crying', main:true, if:{chapter:2, new:'哭'}, text:'Someone near your stone is {哭|crying}', arrow:'mother'},
+    {id:'c2big', main:true, if:{knows:'哭', foundBig:0}, text:'The troop is hiding! A bush sparkles ✨ over there: someone’s behind it', arrow:{sparkle:true}},
+    {id:'c2hungry', main:true, if:{foundBig:1, foundHungry:0}, text:'The others are hiding up at the home ground, by the {瀑布|waterfall}', arrow:{place:'ffmHomeGround'}},
+    {id:'c2elder', main:true, if:{foundHungry:1, news:0}, text:'The {老|old} monkey is hiding in the Water Curtain Cave: jump through the waterfall', arrow:{place:'ffmCave'}},
+    {id:'c2d1', main:true, if:{news:1, d1:0}, text:'Little {妖怪|demons} are on the home ground! Chase them off', arrow:'d1'},
+    {id:'c2d2', main:true, if:{d1:1, d2:0}, text:'Chase the next little {妖怪|demon} off the home ground', arrow:'d2'},
+    {id:'c2d3', main:true, if:{d2:1, d3:0}, text:'One more little {妖怪|demon} to chase off', arrow:'d3'},
+    {id:'c2north', main:true, if:{d3:1, north:0}, text:'The little {妖怪|demons} have gone. Tell the {老|old} monkey', arrow:'elder'},
+    {id:'c2fly', main:true, if:{north:1, king:{below:2}, place:'ffmHomeGround'}, text:'Fly north on your {云|cloud}, to the demon’s mountain', arrow:[13, 12, 'ffmHomeGround']},
+    {id:'c2torch', main:true, if:{place:'lair', new:'火'}, text:'Climb up to the {洞|cave} at the top. Something’s burning in front of it', arrow:[12, 4, 'lair']},
+    {id:'c2cries', main:true, if:{knows:'火', new:'救命'}, text:'Someone is calling out, near the {火|fire}', arrow:[6, 6, 'lair']},
+    {id:'c2cage', main:true, if:{knows:'救命', new:'笼子'}, text:'Little {猴子|monkeys} are locked in {笼子|cages}!', arrow:[6, 5, 'lair']},
+    {id:'c2key', main:true, if:{knows:'笼子', new:'钥匙'}, text:'Who has the {钥匙|key}? Ask the guard at the cave’s {门|door}', arrow:'guard'},
+    {id:'c2change', main:true, if:{knows:'钥匙', key:0}, text:'The guard won’t give a monkey the {钥匙|key}. Hide behind a boulder, {变|change} into a little {妖怪|demon}, and ask him again', arrow:[12, 11, 'lair']},
+    {id:'c2free', main:true, if:{key:1, freed:{below:5}}, text:'Open the {笼子|cages} with the {钥匙|key} ({freed}/5)', arrow:{sparkle:true}},
+    {id:'c2spy', main:true, if:{freed:5, loot:0}, text:'A little {猴子|monkey} wants to play I spy, by the troop’s things', arrow:'baby1'},
+    {id:'c2king', main:true, if:{king:1}, text:'Beat {混世魔王}', arrow:'king'},
+    {id:'c2stick', main:true, if:{homeAgain:1, stickGiven:0}, text:'Give your {棍子|stick} to the little monkey in training', arrow:'trainee'},
+    {id:'c2end', main:true, if:{stickGiven:1, ch2:0}, text:'The {老|old} monkey wants to talk to you', arrow:'elder'}
   ],
   hints: [
-    {if:{sentHome:1}, text:'That’s the end of chapter 1! What has happened at {家|home} while you were away is still to come. Until then, practise your words, fly about by cloud, and visit your {朋友|friends}.'},
+    {if:{ch2:1}, text:'That’s the end of Area 2! The Dragon King’s palace, under the {海|sea}, is still to come. Until then, practise your words, and visit your {朋友|friends}.'},
+    {if:{north:1, king:{below:2}}, text:'Far to the north lives {混世魔王}. Fly there on your {云|cloud}, from the home ground.'},
+    {if:{chapter:2}, text:'Find someone with a ! over them.'},
     {if:{door:2}, text:'Find someone in the {洞|cave} with a ! over them.'},
     {if:{chapter:1}, text:'Climb the {山|mountain}, to find where the immortal lives.'},
     {if:{landed:0}, text:'Walk about on the shore.'},
@@ -344,7 +464,13 @@ const ACROSS_THE_SEA = {
     {chapter:1, part:'cave', text:'Do the senior pupil’s chores', show:{named:1}, done:{chores:6}},
     {chapter:1, part:'secret', text:'Solve the {师父|master}’s riddle', show:{grown:1}, done:{riddle:3}},
     {chapter:1, part:'change', text:'Learn to {变|change} into things, and to {飞|fly}', show:{riddle:3}, done:{fly:1}},
-    {chapter:1, part:'home', text:'Go {回家|home}', show:{pine:1}, done:{sentHome:1}}
+    {chapter:1, part:'home', text:'Go {回家|home}', show:{pine:1}, done:{sentHome:1}},
+    {chapter:2, part:'homeAgain', text:'Find the troop: they’re hiding', done:{news:1}},
+    {chapter:2, part:'demons', text:'Chase the little {妖怪|demons} off the home ground', show:{news:1}, done:{d3:1}},
+    {chapter:2, part:'lair', text:'Set the little monkeys free', show:{north:1}, done:{freed:5}},
+    {chapter:2, part:'lair', text:'Find the troop’s things', show:{freed:5}, done:{loot:{atLeast:1}}},
+    {chapter:2, part:'king', text:'Beat {混世魔王}', show:{loot:{atLeast:1}}, done:{king:2}},
+    {chapter:2, part:'home2', text:'Take the little monkeys {回家|home}', show:{king:2}, done:{ch2:1}}
   ],
   bubbles: {
     child: [{if:{dressed:2, child:0}, show:'!'}, {if:{child:{atLeast:1, below:3}}, show:'!'}],
@@ -372,7 +498,15 @@ const ACROSS_THE_SEA = {
     spyPupil: [{if:{named:1, spyGame:0}, show:'!'}],
     senior: [{if:{named:1, chores:{below:2}}, show:'!'}, {if:{chores:2, leavesSwept:5}, show:'?'}, {if:{any:[{waterFetch:1}, {axeFetch:1}]}, show:'?'}, {if:{chores:4}, show:'!'}],
     darePupil: [{if:{fly:1, pine:0}, show:'!'}],
-    woodcutter: [{if:{song:0}, show:'!'}, {if:{chapter:1, woodFetch:0}, show:'!'}, {if:{woodFetch:{atLeast:1, below:4}}, show:'?'}]
+    woodcutter: [{if:{song:0}, show:'!'}, {if:{chapter:1, woodFetch:0}, show:'!'}, {if:{woodFetch:{atLeast:1, below:4}}, show:'?'}],
+    // chapter 2
+    mother: [{if:{chapter:2, new:'哭'}, show:'!'}],
+    elder: [{if:{knows:'好久不见', new:'老'}, show:'!'}, {if:{d3:1, north:0}, show:'!'}, {if:{stickGiven:1, ch2:0}, show:'!'}],
+    d1: [{if:{d1:0}, show:'!'}], d2: [{if:{d1:1, d2:0}, show:'!'}], d3: [{if:{d2:1, d3:0}, show:'!'}],
+    guard: [{if:{knows:'笼子', new:'钥匙'}, show:'!'}, {if:{key:0, form:'妖怪'}, show:'!'}],
+    baby1: [{if:{freed:5, loot:0}, show:'!'}],
+    trainee: [{if:{homeAgain:1, stickGiven:0}, show:'!'}],
+    king: [{if:{king:1}, show:'!'}]
   },
 
   // Characters who ask you to bring something (as Flower Fruit Mountain's). fromBag: what they want comes from your bag
@@ -434,8 +568,9 @@ const ACROSS_THE_SEA = {
       ]}
   },
 
-  areaEnd: {title:'The end of chapter 1', text:['One somersault, and you’re over the sea, home to Flower Fruit Mountain, after twenty years away…',
-    'What has happened at home while you were away? That’s still to come. Until then, practise your words, fly about by cloud from your map, and visit your friends.']},
+  // The end of Area 2 (the end of chapter 2, as the book's second chapter ends), then what's to come.
+  areaEnd: {title:'The end of Area 2', text:['The troop’s little ones are home, and the Demon of Havoc has gone for good.',
+    'To be continued: under the sea, to the Dragon King’s palace (Area 3). Until then, practise your words, and visit your friends.']},
 
   // Fishing (js/fishing.js), with the rod you brought from Flower Fruit Mountain: in the sea, and the village's stream.
   fishing: {
@@ -487,6 +622,24 @@ const ACROSS_THE_SEA = {
       {message:'With a deep rumble, the stone doors swing open. A boy comes out!'}, {talkTo:'doorBoy'}]},
     // years go by in the town, once you know its words: you live among people, learning to talk like them, but nobody is
     // looking for the immortals (a match game of the town's and the village's words)
+    // chapter 2: a game saved at the end of chapter 1, before chapter 2 was built (the master had sent you home): it begins now
+    {if:{sentHome:1, chapter:1}, do:[{chapter:2}, {goTo:'ffmMeadow', at:[9, 2], facing:'down'}]},
+    // home, by your stone, after twenty years
+    {if:{place:'ffmMeadow', home2:0}, do:[{set:{home2:1}},
+      {message:'Flower Fruit Mountain, after twenty years! Your stone, the meadow, the river… But it’s very quiet. Then you hear someone crying.'}]},
+    // back from the cave with the news: a little demon on the home ground stops you
+    {if:{place:'ffmHomeGround', news:1, d1:0, wordReady:true, around:[4, 9, 'ffmHomeGround', 2]}, do:[{stopsYou:'d1'}]},
+    // the demon's mountain, the first time
+    {if:{place:'lair', lairSeen:0}, do:[{set:{lairSeen:1}},
+      {message:'The Demon of Havoc’s mountain: black rock, ash and dead pines. Up at the top, torches burn in front of a dark cave…'}]},
+    // near the cages: the troop's little ones, calling for help
+    {if:{place:'lair', knows:'火', new:'救命', wordReady:true, around:[6, 6, 'lair', 3]}, do:[{say:'help', by:'baby1'}, {newWord:'救命', note:'救命 means Help! The troop’s little ones, locked in cages!'}]},
+    // all five free, and the troop's things found: the little demons run in, shouting, and out comes their master
+    {if:{place:'lair', loot:{atLeast:1}, king:0}, do:[{set:{king:1}}, {message:'The little demons run into the cave, shouting. Something big is coming out…'}, {sound:'rumble'},
+      {leap:'king', from:[14, 3]}, {talkTo:'king'}]},
+    // home with the little monkeys: the troop puts everything back on the feast's tables, and celebrates
+    {if:{place:'ffmHomeGround', homeAgain:1, party:0}, do:[{set:{party:1}}, {sound:'fanfare'},
+      {message:'The little monkeys run to their mothers! The troop puts everything back on the feast’s tables, and everyone celebrates.'}, {say:'veryHappy', by:'elder'}]},
     {if:{townWords:11, years:0, wordReady:true, friends:{cat:true}}, do:[{set:{years:1}}, {scene:'yearsPass'}, {scene:'manyYearsLater'},
       {match:'Years among people', stop:'Not now', words:['人', '衣服', '帽子', '井', '房子', '门', '鸡', '饭', '钱', '网', '船', '狗', '包子', '鞋', '茶', '孩子', '书', '猫']},
       {message:'Years go by. You can talk like people now, but nobody here knows where the immortals are. The town has changed too: the children from the school are grown up. Across the bridge, at the harbour, a boatman sails west…'}]}
@@ -1082,6 +1235,30 @@ const ACROSS_THE_SEA = {
         "ZzzzzzzzZ",
         "ZZZZzZZZZ"
       ]
+    },
+    // chapter 2: home, as you left it (Flower Fruit Mountain's places, borrowed: AT_HOME), with squares of its own: the
+    // bushes the troop hides behind, the feast's tables, bare, and your cloud
+    ffmMeadow: AT_HOME('meadow', {put:[[2, 10, 'あ']], legend:{'あ':HIDING('foundBig', 'big', 2, 10, {knows:'哭'})}}),
+    ffmPath: AT_HOME('path'), ffmValley: AT_HOME('valley'), ffmFalls: AT_HOME('falls'), ffmCave: AT_HOME('cave'),
+    ffmHomeGround: AT_HOME('homeGround', {
+      put:[[3, 12, 'い'], [13, 12, 'え'], [12, 7, 'エ'], [13, 7, 'オ'], [14, 7, 'カ'], [15, 7, 'キ'], [16, 7, 'ア'], [17, 7, 'ア'], [18, 7, 'ア'], [21, 7, 'イ'], [22, 7, 'イ'], [23, 7, 'イ'], [24, 7, 'ク']],
+      legend:{'い':HIDING('foundHungry', 'hungry', 3, 12, {foundBig:1}),
+        'え': {look:'grass', walk:true, becomes:[{if:{north:1, homeAgain:0}, to:'ぇ'}]},
+        'ぇ': {look:'cloudGrass', landmark:true, onLook:[{label:'Fly north', do:[{scene:'flyNorth'}, {goTo:'lair', at:[14, 18], facing:'up'}]}]},
+        'ア':ROBBED('feastTableRobbed', '*'), 'イ':ROBBED('milkTableBare', ']'), 'エ':ROBBED('fruitTableL', 'λ'), 'オ':ROBBED('fruitTableM', 'π'), 'カ':ROBBED('fruitTableR', 'Φ'),
+        'キ':ROBBED('tableBlock', 'Щ'), 'ク':ROBBED('tableBlock', 'Ш')}}),
+    ffmShore: AT_HOME('shore'), ffmHillside: AT_HOME('hillside'), ffmRiverside: AT_HOME('riverside'), ffmFlowerValley: AT_HOME('flowerValley'),
+    ffmSouthSlope: AT_HOME('southSlope'), ffmCliffs: AT_HOME('cliffs'), ffmHotSprings: AT_HOME('hotSprings'), ffmMelonField: AT_HOME('melonField'),
+    ffmDarkPines: AT_HOME('darkPines'), ffmPasture: AT_HOME('pasture'), ffmPineWood: AT_HOME('pineWood'), ffmSchool: AT_HOME('school'), ffmSportsGround: AT_HOME('sportsGround'),
+    // the demon's mountain, far to the north (坎源山)
+    lair: {
+      name: {zh:'坎源山', py:'Kǎnyuán Shān', en:'The demon’s mountain'},
+      music: 'pineWood', battleMusic: 'pineBattle',
+      gloom: {deep:.42, open:.14, mist:false, eyes:false, beams:false},   // (gloomy, with no sunbeams)
+      noMap: 'You’re far from home, and your map is of the lands across the sea.',
+      sounds: ['wind', 'crow'],
+      legend: LAIR_LEGEND,
+      map: LAIR_MAP
     }
   },
 
@@ -1275,7 +1452,49 @@ const ACROSS_THE_SEA = {
     {id:'little1', place:'cave', person:true, small:true, hair:'topknot', x:7, y:11, facing:'right', name:{zh:'小师弟', py:'xiǎo shīdì', en:'A little pupil'},
       moves:[{if:{grown:0}, place:'hut', x:3, y:0}], palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#E8A33C', b:'#3A2A1E', p:'#5A4632'}},
     {id:'little2', place:'cave', person:true, small:true, hair:'pigtails', x:16, y:14, facing:'up', name:{zh:'小师妹', py:'xiǎo shīmèi', en:'A little pupil'},
-      moves:[{if:{grown:0}, place:'hut', x:4, y:0}], palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#D86A8A', b:'#3A2A1E', p:'#5A4632'}}
+      moves:[{if:{grown:0}, place:'hut', x:4, y:0}], palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#D86A8A', b:'#3A2A1E', p:'#5A4632'}},
+    // chapter 2: home, twenty years on. The troop, older and greyer (the old monkey white, with a walking stick), hiding
+    // from the little demons (in the hut till you find them; the old monkey and two others in the Water Curtain Cave); the
+    // little ones the little demons took, locked in cages on the demon's mountain till you set them free, then at home by
+    // their mothers (small: drawn smaller); your old friend the little monkey, grown up, crying for hers in the meadow
+    {id:'mother', place:'ffmMeadow', x:12, y:5, facing:'down', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+      moves:[{if:{homeAgain:1}, place:'ffmHomeGround', x:10, y:11, facing:'right'}], palette:{o:'#4D3422', f:'#C1945E', s:'#F4D4AF', m:'#C69372', e:'#24160C'}},
+    {id:'big', place:'ffmHomeGround', x:5, y:11, facing:'right', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'},
+      moves:[{if:{foundBig:0}, place:'hut', x:5, y:0}, {if:{news:0}, place:'ffmMeadow', x:2, y:11, facing:'right'}], palette:{o:'#4F3929', f:'#B19473', s:'#F3DCC2', m:'#CA9E83', e:'#24160C'}},
+    {id:'hungry', place:'ffmHomeGround', x:4, y:12, facing:'right', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
+      moves:[{if:{foundHungry:0}, place:'hut', x:6, y:0}], palette:{o:'#4F3929', f:'#B08C6B', s:'#F0CFAE', m:'#C29374', e:'#24160C'}},
+    {id:'elder', place:'ffmCave', x:7, y:9, facing:'down', beard:true, holds:'棍子', name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
+      moves:[{if:{news:1, place:'ffmHomeGround'}, place:'ffmHomeGround', x:16, y:8, facing:'down'}],   // (out of the cave once he's told you the news, when you're at the home ground)
+      palette:{o:'#6E6A62', f:'#E4E2DC', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
+    {id:'troopA', place:'ffmCave', x:4, y:9, facing:'right', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      moves:[{if:{homeAgain:1}, place:'ffmHomeGround', x:12, y:12, facing:'right'}], palette:{o:'#4F3929', f:'#B59069', s:'#F1D2B2', m:'#C49678', e:'#24160C'}},
+    {id:'troopB', place:'ffmCave', x:10, y:8, facing:'left', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      moves:[{if:{homeAgain:1}, place:'ffmHomeGround', x:9, y:11, facing:'left'}], palette:{o:'#483524', f:'#A88569', s:'#EDCEAB', m:'#BE8C71', e:'#24160C'}},
+    {id:'trainee', place:'ffmHomeGround', x:2, y:11, facing:'right', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
+      moves:[{if:{stickGiven:1}, place:'hut', x:8, y:0}, {if:{homeAgain:0}, place:'ffmCave', x:12, y:10, facing:'left'}], palette:{o:'#4A2C17', f:'#C98A42', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
+    {id:'traineeStick', place:'ffmHomeGround', x:2, y:12, facing:'right', holds:'棍子', practises:true, name:{zh:'猴子', py:'hóuzi', en:'Monkey'},   // (once you've given it your stick)
+      moves:[{if:{stickGiven:0}, place:'hut', x:9, y:0}], palette:{o:'#4A2C17', f:'#C98A42', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
+    {id:'baby1', place:'ffmHomeGround', x:11, y:11, facing:'left', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+      moves:[{if:{freed1:0}, place:'hut', x:10, y:0}, {if:{homeAgain:0}, place:'lair', x:4, y:4, facing:'down'}], palette:{o:'#4A2C17', f:'#D9A050', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
+    {id:'baby2', place:'ffmHomeGround', x:6, y:11, facing:'left', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+      moves:[{if:{freed2:0}, place:'hut', x:11, y:0}, {if:{homeAgain:0}, place:'lair', x:6, y:4, facing:'down'}], palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
+    {id:'baby3', place:'ffmHomeGround', x:5, y:12, facing:'left', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+      moves:[{if:{freed3:0}, place:'hut', x:12, y:0}, {if:{homeAgain:0}, place:'lair', x:8, y:4, facing:'down'}], palette:{o:'#40250F', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
+    {id:'baby4', place:'ffmHomeGround', x:13, y:12, facing:'left', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+      moves:[{if:{freed4:0}, place:'hut', x:13, y:0}, {if:{homeAgain:0}, place:'lair', x:4, y:7, facing:'right'}], palette:{o:'#4A2C17', f:'#E0A858', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
+    {id:'baby5', place:'ffmHomeGround', x:8, y:11, facing:'right', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
+      moves:[{if:{freed5:0}, place:'hut', x:14, y:0}, {if:{homeAgain:0}, place:'lair', x:8, y:7, facing:'left'}], palette:{o:'#40250F', f:'#A8673A', s:'#EFC79C', m:'#C08060', e:'#24160C'}},
+    {id:'cow', place:'ffmHomeGround', look:'牛', x:25, y:12, facing:'left'},
+    {id:'calf', place:'ffmHomeGround', look:'牛', small:true, x:26, y:13, facing:'left'},   // (born while you were away)
+    // the little demons left on the home ground (till you've chased each off), and on the demon's mountain, the guards at his
+    // cave's door and the Demon of Havoc himself (in the hut till he comes out, and once he's run off for good)
+    {id:'d1', place:'ffmHomeGround', look:'妖怪', x:4, y:9, facing:'left', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{news:0}, place:'hut', x:15, y:0}, {if:{d1:1}, place:'hut', x:15, y:0}]},
+    {id:'d2', place:'ffmHomeGround', look:'妖怪', x:14, y:10, facing:'left', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{news:0}, place:'hut', x:16, y:0}, {if:{d2:1}, place:'hut', x:16, y:0}]},
+    {id:'d3', place:'ffmHomeGround', look:'妖怪', x:24, y:9, facing:'left', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{news:0}, place:'hut', x:17, y:0}, {if:{d3:1}, place:'hut', x:17, y:0}]},
+    {id:'guard', place:'lair', look:'妖怪', x:13, y:4, facing:'down', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{king:2}, place:'hut', x:18, y:0}]},
+    {id:'guard2', place:'lair', look:'妖怪', x:16, y:4, facing:'down', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{king:2}, place:'hut', x:19, y:0}]},
+    {id:'king', place:'lair', look:'混世魔王', x:14, y:5, facing:'down', name:{zh:'混世魔王', py:'Hùnshì Mówáng', en:'The Demon of Havoc'},
+      moves:[{if:{king:0}, place:'hut', x:20, y:0}, {if:{king:2}, place:'hut', x:20, y:0}]}
   ],
   yourNames: [{if:{named:1}, zh:'孙悟空', py:'Sūn Wùkōng', en:'Sun Wukong (you)'}, {if:{}, zh:'美猴王', py:'Měi Hóuwáng', en:'Handsome Monkey King (you)'}],
 
@@ -1289,7 +1508,14 @@ const ACROSS_THE_SEA = {
     {word:'井', at:[22, 11, 'village'], if:{knows:'什么'}}, {word:'房子', at:[9, 2, 'village'], if:{knows:'什么'}},
     {word:'门', at:[31, 4, 'village'], if:{knows:'什么'}},
     {word:'网', at:[10, 8], if:{knows:'什么'}}, {word:'船', at:[26, 17], if:{knows:'什么'}},
-    {word:'书', at:[16, 3, 'town'], if:{knows:'什么'}}
+    {word:'书', at:[16, 3, 'town'], if:{knows:'什么'}},
+    // chapter 2: the troop's hiding places; the torches; the cages, and once you have the key, those still locked; the
+    // boulder to hide behind
+    {at:[2, 10, 'ffmMeadow'], if:{knows:'哭', foundBig:0}}, {at:[3, 12, 'ffmHomeGround'], if:{foundBig:1, foundHungry:0}},
+    {word:'火', at:[12, 4, 'lair']}, {word:'笼子', at:[6, 5, 'lair'], if:{knows:'救命'}},
+    {at:[4, 5, 'lair'], if:{key:1, freed1:0}}, {at:[6, 5, 'lair'], if:{key:1, freed2:0}}, {at:[8, 5, 'lair'], if:{key:1, freed3:0}},
+    {at:[5, 7, 'lair'], if:{key:1, freed4:0}}, {at:[7, 7, 'lair'], if:{key:1, freed5:0}},
+    {at:[12, 11, 'lair'], if:{knows:'钥匙', key:0, form:null}}
   ],
   // Where you found each word, on its page in the Word Scroll.
   found: {
@@ -1340,7 +1566,18 @@ const ACROSS_THE_SEA = {
     '变': 'The master’s secret, at night in his room: changing into things.',
     '飞': 'The master’s cloud somersault.',
     '松树': 'Showing off to the pupils: you changed into a pine tree.',
-    '回家': 'The master sent you home: 你回家吧。'
+    '回家': 'The master sent you home: 你回家吧。',
+    '哭': 'Your old friend the little monkey, crying in the meadow as you came home.',
+    '回来': 'The big monkey, hiding in the meadow: 你回来了！',
+    '好久不见': 'The hungry monkey, hiding at the home ground: 好久不见！',
+    '老': 'The old monkey, twenty years on: 我老了。',
+    '妖怪': 'The Demon of Havoc’s little demons, on the home ground.',
+    '火': 'The torches in front of the Demon of Havoc’s cave.',
+    '救命': 'The troop’s little ones, locked in cages on the demon’s mountain: 救命！',
+    '笼子': 'The cages on the demon’s mountain.',
+    '钥匙': 'The key to the cages, on the belt of the guard at the demon’s cave.',
+    '毛': 'The hair trick, fighting the Demon of Havoc: your hairs turned into little monkeys.',
+    '刀': 'The Demon of Havoc’s broadsword, yours once you’d beaten him.'
   },
   // Sentences for practising words without pictures (as Flower Fruit Mountain's). Like those, each needs every word in it caught.
   practiceSentences: [
@@ -1354,7 +1591,8 @@ const ACROSS_THE_SEA = {
     {sentence:'神仙 在 哪里', sentenceEn:'Where are the immortals?'},
     {sentence:'我们 在 学', sentenceEn:'We’re learning.'},
     {sentence:'你 叫 什么 名字', sentenceEn:'What’s your name?'},
-    {sentence:'我 要 回家', sentenceEn:'I want to go home.'}
+    {sentence:'我 要 回家', sentenceEn:'I want to go home.'},
+    {sentence:'我 要 回来', sentenceEn:'I want to come back.'}
   ],
   // Example sentences for words, on their Word Scroll pages.
   examples: {
@@ -1369,9 +1607,39 @@ const ACROSS_THE_SEA = {
     '晚上': {zh:'晚上 有 月亮 。', en:'At night, there’s the moon.'},
     '月亮': {zh:'天 上 有 月亮 。', en:'There’s a moon in the sky.'},
     '星星': {zh:'天 上 有 很多 星星 。', en:'There are lots of stars in the sky.'},
+    '妖怪': {zh:'妖怪 来 了 ！', en:'The demons are coming!'},
+    '火': {zh:'火 很 大 。', en:'The fire is very big.'},
+    '笼子': {zh:'小 猴子 在 笼子 里 。', en:'The little monkey is in the cage.'},
+    '毛': {zh:'猴子 有 很多 毛 。', en:'Monkeys have lots of fur.'},
+    '刀': {zh:'这 是 我 的 刀 。', en:'This is my broadsword.'}
   },
-  enemies: {},
-  battles: {},
+  // Chapter 2's battles (as Flower Fruit Mountain's: js/battle.js): the Demon of Havoc's little demons, in home's long grass
+  // and the demon's mountain's dry grass; and the Demon of Havoc himself, at his cave's door (a name, not a word to catch:
+  // name and pic), a boss fight as the bear's: angry at half his health, then the hair trick (毛) and his broadsword (刀),
+  // yours from then on, as the book has it (his stages, each once, at so much of his health left).
+  enemies: {
+    demon: {word:'妖怪', health:30, hits:8, attacks:['火', '松树', '叶子', '云', '天'], meetNote:'A little demon jumps out at you, waving its spear!', meet:'A little {妖怪} jumps out at you!',
+      hide:'The little {妖怪} ducks out of sight…', attack:'The little {妖怪} jabs at you with its spear!', away:'The little {妖怪} runs off, squealing.', reward:2},
+    king: {name:{zh:'混世魔王', py:'Hùnshì Mówáng', en:'Demon of Havoc'}, pic:'混世魔王', health:80, hits:10, boss:true, bossFight:true, big:true, nameCard:true, song:'boss', cry:'HA HA HA!',
+      says:{meet:'notScared', angry:'goAway', beaten:'imGoing'},
+      angry:{at:.5, twice:true, note:'The Demon of Havoc swings his great broadsword, angry!', then:'From now on he attacks twice in a row. Listen hard!'},
+      stages:[
+        {at:.45, do:[{scene:'hairTrick'}, {newWord:'毛', note:'毛 means hair, or fur. You pulled out a handful of your hairs, blew on them and said 变！: they turned into little monkeys!'}],
+          note:'Little monkeys swarm all over the Demon of Havoc! He drops his broadsword…'},
+        {at:.2, do:[{newWord:'刀', note:'刀 means a broadsword, or a knife. The Demon of Havoc’s own broadsword: you pick it up!'}, {weapon:'刀'}],
+          note:'You swing the broadsword! It hits harder than your stick.'}
+      ],
+      attacks:['火', '松树', '叶子', '云', '天'], meet:'The Demon of Havoc laughs: HA HA HA!', hide:'The Demon of Havoc leaps out of sight…', attack:'The Demon of Havoc swings his broadsword!',
+      away:'The Demon of Havoc runs off over the mountains, and never comes back!', lost:'The Demon of Havoc is too strong for you this time.', reward:10}
+  },
+  battles: {
+    when: {knows:'妖怪'},   // (once you've met a little demon: your stick in your hand)
+    weapon: '棍子', hits: 10, weapons: {'刀': 15},   // your stick, then the Demon of Havoc's broadsword
+    restAt: [
+      {if:{place:'lair'}, at:[14, 17, 'lair'], facing:'up', lost:'You’re worn out. You rest at the foot of the path until your health is full again.'},
+      {at:[13, 9, 'ffmHomeGround'], facing:'down', lost:'You’re worn out. You crawl back to the home ground and rest under the big tree until your health is full again.'}
+    ]
+  },
   fish: [[6, 19], [24, 20], [31, 18], [5, 21, 'farShore'], [26, 22, 'farShore'], [30, 9, 'villageLane'], [12, 13, 'fields'], [4, 8, 'canalPath']],
   dragonflies: [{at:[5, 23, 'village'], to:[11, 24]}, {at:[26, 23, 'village'], to:[33, 24]}, {at:[24, 9, 'villageLane'], to:[32, 10]}, {at:[30, 13, 'fields'], to:[37, 14]}],
 
@@ -1537,7 +1805,31 @@ const ACROSS_THE_SEA = {
     // the pupils
     changePine: {zh:'你 变 松树 吧 ！', en:'Change into a pine tree!'},
     cheer: {zh:'好 ！ 好 ！', en:'Bravo! Bravo!'},
-    littleHi: {zh:'师兄 好 ！', en:'Hello, senior brother!'}
+    littleHi: {zh:'师兄 好 ！', en:'Hello, senior brother!'},
+    // chapter 2: home, twenty years on
+    littleCrying: {zh:'小 猴子 在 哭 。', en:'The little monkey is crying.'},
+    myChild: {zh:'我 的 孩子 ……', en:'My little one…'},
+    youreBack: {zh:'你 回来 了 ！', en:'You’re back!'},
+    longTime: {zh:'好久不见 ！', en:'Long time no see!'},
+    iAmOld: {zh:'我 老 了 。', en:'I’ve grown old.'},
+    demonNorth: {zh:'混世魔王 在 北边 。', en:'The Demon of Havoc lives in the north.'},
+    veryHappy: {zh:'我们 很 快乐 ！', en:'We’re so happy!'},
+    forYou: {zh:'给 你 ！', en:'Here you are!'},
+    dragonKing: {zh:'海 下面 有 龙王 。', en:'Under the sea, there’s the Dragon King.'},
+    // the little demons, and the Demon of Havoc
+    ourHome: {zh:'这里 是 我们 的 家 ！', en:'This is our home!'},
+    help: {zh:'救命 ！ 救命 ！', en:'Help! Help!'},
+    keyHere: {zh:'钥匙 在 这里 。', en:'The key’s here.'},
+    notForMonkey: {zh:'你 是 猴子 ！ 走 吧 ！', en:'You’re a monkey! Go away!'},
+    notScared: {zh:'我 不 怕 你 ！', en:'I’m not scared of you!'},
+    imGoing: {zh:'我 走 了 ！', en:'I’m going!'},
+    letsGoHome: {zh:'我们 回家 吧 ！', en:'Let’s go home!'},
+    // I spy, with a little monkey you've set free: the troop's things
+    spyBowls: {zh:'我 看见 我们 的 碗 ！', en:'I can see our bowls!'},
+    spyPeaches: {zh:'我 看见 我们 的 桃子 ！', en:'I can see our peaches!'},
+    spyApples: {zh:'我 看见 我们 的 苹果 ！', en:'I can see our apples!'},
+    spyHoney: {zh:'我 看见 我们 的 蜂蜜 ！', en:'I can see our honey!'},
+    spyMilk: {zh:'我 看见 我们 的 牛奶 ！', en:'I can see our milk!'}
   },
 
   talk: {
@@ -1716,7 +2008,7 @@ const ACROSS_THE_SEA = {
       {if:{fly:0}, waits:true, do:[{say:'teachFly', teach:'飞'}, {newWord:'飞', note:'飞 means to fly. The master teaches you the cloud somersault: one leap, and you fly a long, long way.'},
         {scene:'somersault'}, {set:{fly:1}}, {message:'From now on you can fly by cloud: open your map (MAP), choose a place you’ve been, and press Fly here.'}]},
       {if:{pine:1, sentHome:0}, waits:true, do:[{say:'goAway'}, {say:'goHome', teach:'回家'}, {newWord:'回家', note:'回家 means to go home. The master is sending you home, to Flower Fruit Mountain.'},
-        {reply:'再见'}, {scene:'flyHome'}, {set:{sentHome:1}}, {areaEnd:true}]},
+        {reply:'再见'}, {scene:'flyHome'}, {set:{sentHome:1}}, {chapter:2}, {goTo:'ffmMeadow', at:[9, 2], facing:'down'}]},
       {do:[{say:'change'}, {turnInto:2, label:'变！ Listen: what does the master say?'}]}
     ],
     // a pupil plays I spy with you (the spy step), again whenever you like; the first time, a present
@@ -1749,7 +2041,88 @@ const ACROSS_THE_SEA = {
     ],
     pupil4: [{do:[{say:'hi'}, {reply:'你好'}]}],
     little1: [{do:[{say:'littleHi'}, {message:'A new little pupil. They call you 师兄, senior brother: you’ve been here longer than them!'}]}],
-    little2: [{do:[{say:'littleHi'}, {reply:'你好'}]}]
+    little2: [{do:[{say:'littleHi'}, {reply:'你好'}]}],
+    // chapter 2: home, twenty years on. Your old friend the little monkey, grown up, crying for her little one (哭); the big
+    // monkey, hiding behind a bush in the meadow (回来); the hungry monkey, behind one at the home ground (好久不见); and
+    // the old monkey, in the Water Curtain Cave (老), with the news
+    mother: [
+      {if:{new:'哭'}, waits:true, do:[{say:'littleCrying', by:'player', teach:'哭'}, {newWord:'哭', note:'哭 means to cry. It’s your old friend the little monkey, all grown up. Why is she crying?'},
+        {say:'myChild'}, {message:'Her little one has gone! And everyone else is hiding. Look for them: a bush that sparkles ✨.'}]},
+      {if:{homeAgain:0}, do:[{say:'myChild'}]},
+      {do:[{say:'veryHappy'}]}
+    ],
+    big: [
+      {if:{new:'回来'}, waits:true, do:[{say:'youreBack', teach:'回来'}, {newWord:'回来', note:'回来 means to come back. 你回来了！ You’re back!'},
+        {message:'It’s the big monkey, grey now, hiding behind a bush. The others are hiding up at the home ground. Go and find them!'}]},
+      {if:{homeAgain:0}, do:[{say:'youreBack'}]},
+      {do:[{say:'veryHappy'}]}
+    ],
+    hungry: [
+      {if:{new:'好久不见'}, waits:true, do:[{say:'longTime', teach:'好久不见'}, {newWord:'好久不见', note:'好久不见 means long time no see: what you say to a friend you haven’t seen for a long time.'},
+        {reply:'好久不见'}, {message:'The hungry monkey hugs you. The old monkey is hiding in the Water Curtain Cave, with some of the others. Go and find him!'}]},
+      {if:{homeAgain:0}, do:[{say:'longTime'}, {reply:'好久不见'}]},
+      {do:[{say:'veryHappy'}]}
+    ],
+    elder: [
+      {if:{new:'好久不见'}, do:[{message:'The old monkey hides his face. Find the others first: up at the home ground.'}]},
+      {if:{new:'老'}, waits:true, do:[{say:'longTime'}, {reply:'好久不见'}, {say:'iAmOld', teach:'老'}, {newWord:'老', note:'老 means old. Twenty years have gone by: the old monkey’s fur is white now, and he leans on a stick.'},
+        {message:'A demon came from far away: the Demon of Havoc (混世魔王 Hùnshì Mówáng). His little demons carried off the troop’s little ones, and everything on the feast’s tables!'},
+        {set:{news:1}}, {message:'Some of his little demons are still on the home ground. Chase them off!'}]},
+      {if:{d3:0}, do:[{say:'iAmOld'}, {message:'Chase the little demons off the home ground!'}]},
+      // the little demons chased off: the Demon of Havoc lives in the north; fly there, on your cloud
+      {if:{north:0}, do:[{say:'demonNorth'}, {message:'Far to the north, over the mountains, is the Demon of Havoc’s home. Call your cloud, and fly north to find the little ones!'},
+        {set:{north:1}}, {scene:'flyNorth'}, {goTo:'lair', at:[14, 18], facing:'up'}]},
+      {if:{king:{below:2}}, do:[{say:'demonNorth'}, {message:'Fly north on your cloud: it’s waiting on the grass, south of the path.'}]},
+      // home with the little ones: a king needs a real weapon, and the Dragon King has the finest; the end of Area 2
+      {if:{stickGiven:1, ch2:0}, do:[{message:'The old monkey looks at your broadsword. It will do for now… but a king needs a real weapon.'}, {say:'dragonKing'},
+        {message:'The water under the iron bridge in the Water Curtain Cave goes all the way down to the sea, to the Dragon King’s palace. He has the finest weapons in the world…'},
+        {set:{ch2:1}}, {areaEnd:true}]},
+      {do:[{say:'veryHappy'}]}
+    ],
+    troopA: [{if:{homeAgain:0}, do:[{say:'myChild'}]}, {do:[{say:'veryHappy'}]}],
+    troopB: [{if:{homeAgain:0}, do:[{say:'myChild'}]}, {do:[{say:'veryHappy'}]}],
+    // your stick, for a little monkey in training, now you have the Demon of Havoc's broadsword
+    trainee: [{if:{homeAgain:1, stickGiven:0}, do:[{say:'forYou', by:'player'}, {set:{stickGiven:1}}, {sound:'chime'}, {say:'thanks', by:'traineeStick'}, {reply:'不客气'},
+        {message:'You give your stick to the little monkey in training. You carry the Demon of Havoc’s broadsword now.'}]},
+      {do:[{say:'hi'}, {reply:'你好'}]}],
+    traineeStick: [{do:[{say:'veryHappy'}]}],
+    // the little ones, set free: one plays I spy with you, among the troop's things (the troop's own: 我看见我们的碗！)
+    baby1: [{if:{freed:5, loot:0}, do:[{say:'play'}, {spy:'loot', rounds:3, things:[{word:'碗', say:'spyBowls'}, {word:'桃子', say:'spyPeaches'}, {word:'苹果', say:'spyApples'}, {word:'蜂蜜', say:'spyHoney'}, {word:'牛奶', say:'spyMilk'}],
+        listen:'The little monkey says it only in Chinese. Find it in the heap, and press A at it.', found:'That’s it: {word}, the troop’s own!', wrong:'Not that one. Listen again!', done:[{say:'veryGood'}]}]},
+      {if:{homeAgain:0}, do:[{say:'thanks'}]}, {do:[{say:'veryHappy'}]}],
+    baby2: [{if:{homeAgain:0}, do:[{say:'thanks'}]}, {do:[{say:'veryHappy'}]}],
+    baby3: [{if:{homeAgain:0}, do:[{say:'thanks'}]}, {do:[{say:'veryHappy'}]}],
+    baby4: [{if:{homeAgain:0}, do:[{say:'thanks'}]}, {do:[{say:'veryHappy'}]}],
+    baby5: [{if:{homeAgain:0}, do:[{say:'thanks'}]}, {do:[{say:'veryHappy'}]}],
+    cow: [{do:[{message:'The cow, with a calf of her own now!'}]}],
+    calf: [{do:[{message:'The cow’s calf, born while you were away.'}]}],
+    // the little demons on the home ground (妖怪, the first time one fights you): each a battle, till you've chased it off
+    d1: [{if:{new:'妖怪'}, waits:true, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
+      {battle:'demon', win:[{set:{d1:1}}]}]},
+      {if:{d1:0}, do:[{say:'ourHome'}, {battle:'demon', win:[{set:{d1:1}}]}]}, {do:[{say:'ourHome'}]}],
+    d2: [{if:{new:'妖怪'}, waits:true, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
+      {battle:'demon', win:[{set:{d2:1}}]}]},
+      {if:{d2:0}, do:[{say:'ourHome'}, {battle:'demon', win:[{set:{d2:1}}]}]}, {do:[{say:'ourHome'}]}],
+    d3: [{if:{new:'妖怪'}, waits:true, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
+      {battle:'demon', win:[{set:{d3:1}}, {message:'The last little demon runs off north, squealing! Tell the old monkey.'}]}]},
+      {if:{d3:0}, do:[{say:'ourHome'}, {battle:'demon', win:[{set:{d3:1}}, {message:'The last little demon runs off north, squealing! Tell the old monkey.'}]}]}, {do:[{say:'ourHome'}]}],
+    // the guard at the demon's cave, with the cages' key (钥匙) on his belt: he won't give it to a monkey, but he will to a
+    // little demon (you, changed: 变)
+    guard: [
+      {if:{key:1}, do:[{say:'ourHome'}]},
+      {if:{form:'妖怪'}, do:[{say:'keyHere'}, {set:{key:1}}, {sound:'blip'}, {message:'The guard thinks you’re one of his little demons, and gives you the key!'}, {form:null},
+        {message:'Puff! You’re yourself again. Quick, open the cages!'}]},
+      {if:{knows:'笼子', new:'钥匙'}, waits:true, do:[{say:'keyHere', teach:'钥匙'}, {newWord:'钥匙', note:'钥匙 means key. The key to the cages, on the guard’s belt!'}, {say:'notForMonkey'},
+        {message:'The guard won’t give the key to a monkey. If only you looked like a little demon… Hide behind a boulder, and change (变)!'}]},
+      {if:{knows:'钥匙'}, do:[{say:'notForMonkey'}, {message:'He won’t give the key to a monkey. Hide behind a boulder, and change into a little demon (变)!'}]},
+      {do:[{say:'notForMonkey'}]}
+    ],
+    guard2: [{do:[{say:'ourHome'}]}],
+    // the Demon of Havoc: who are you? I'm the king of Flower Fruit Mountain! Then the fight; beaten, he runs off for good,
+    // and you fly the little ones home
+    king: [{if:{king:1}, do:[{say:'whoAreYou'}, {gap:{sentence:'我 是 花果山 的 王', en:'I’m the king of Flower Fruit Mountain!', word:'王', others:['人', '鸟', '鱼'], pic:'猴子'}},
+      {battle:'king', back:{at:[14, 9, 'lair'], facing:'up'}, lost:'The Demon of Havoc is too strong for you this time.',
+        win:[{set:{king:2}}, {say:'letsGoHome', by:'player'}, {scene:'flyHomeAll'}, {set:{homeAgain:1}}, {goTo:'ffmHomeGround', at:[13, 9], facing:'down'}]}]}]
   },
 
   story: [],
@@ -1789,6 +2162,20 @@ const ACROSS_THE_SEA = {
     flyHome: {art:'cloudFlight', home:true, watch:'Watch the flight home', when:{sentHome:1}, captions: [
       {at:0, zh:'再见 ！', en:'Goodbye!'},
       {at:4, zh:'孙悟空 飞 回家 。', en:'Sun Wukong flies home.'},
+      {at:8, zh:'花果山 ！', en:'Flower Fruit Mountain!'}
+    ]},
+    // chapter 2: flying north to the demon's mountain; the hair trick (毛), in the fight; flying home with the little ones
+    flyNorth: {captions: [
+      {at:0, zh:'孙悟空 在 天 上 飞 。', en:'Sun Wukong flies across the sky.'},
+      {at:5, zh:'有 山 ！', en:'Mountains!'}
+    ]},
+    hairTrick: {watch:'Watch the hair trick', when:{king:2}, captions: [
+      {at:0, zh:'变 ！', en:'Change!'},
+      {at:3.6, zh:'很多 小 猴子 ！', en:'Lots of little monkeys!'}
+    ]},
+    flyHomeAll: {watch:'Watch the flight home with the little monkeys', when:{homeAgain:1}, captions: [
+      {at:0, zh:'我们 回家 吧 ！', en:'Let’s go home!'},
+      {at:4, zh:'小 猴子 们 很 快乐 。', en:'The little monkeys are so happy.'},
       {at:8, zh:'花果山 ！', en:'Flower Fruit Mountain!'}
     ]},
     // across the western sea, in the boatman's big boat

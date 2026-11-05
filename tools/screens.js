@@ -436,6 +436,14 @@ SAVES.a2highRoad = {...SAVES.a2town, pos: {place: 'highRoad', x: 16, y: 9, dir: 
 SAVES.a2canal = {...SAVES.a2harbour, pos: {place: 'canalPath', x: 9, y: 12, dir: 'left'}};
 SAVES.a2townLater = {...SAVES.a2harbour, pos: {place: 'town', x: 13, y: 8, dir: 'up'}};   // (after the years: the children grown up, a new stall)
 SAVES.a2docker = {...SAVES.a2harbour, areas: {...SAVES.a2harbour.areas, 2: {...SAVES.a2harbour.areas[2], boat: 1, cargo: 1}}, pos: {place: 'harbour', x: 9, y: 5, dir: 'up'}};
+// (5 November 2026: chapter 2, home to the Demon of Havoc)
+const c2 = (from, progress, words, pos, more = {}) => ({...from, areas: {...from.areas, 2: {...from.areas[2], ...progress}}, w: {...from.w, ...knows(1, words)}, pos, ...more});
+SAVES.c2home = c2(SAVES.c1home, {chapter: 2, home2: 1, part: 10}, [], {place: 'ffmMeadow', x: 11, y: 5, dir: 'right'});
+SAVES.c2news = c2(SAVES.c2home, {foundBig: 1, foundHungry: 1, news: 1, part: 11}, ['哭', '回来', '好久不见', '老'], {place: 'ffmHomeGround', x: 7, y: 9, dir: 'left'});
+SAVES.c2lair = c2(SAVES.c2news, {d1: 1, d2: 1, d3: 1, north: 1, lairSeen: 1, part: 12}, ['妖怪'], {place: 'lair', x: 14, y: 12, dir: 'up'});
+SAVES.c2cages = c2(SAVES.c2lair, {key: 1, freed1: 1, freed2: 1}, ['火', '救命', '笼子', '钥匙'], {place: 'lair', x: 8, y: 6, dir: 'up'});
+SAVES.c2king = c2(SAVES.c2cages, {freed3: 1, freed4: 1, freed5: 1, loot: 1, king: 1, part: 13}, [], {place: 'lair', x: 14, y: 8, dir: 'up'});
+SAVES.c2end = c2(SAVES.c2king, {king: 2, homeAgain: 1, party: 1, part: 14, weapon: '刀'}, ['毛', '刀'], {place: 'ffmHomeGround', x: 13, y: 9, dir: 'down'});
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
@@ -1394,7 +1402,27 @@ const SCREENS = [
     play(); await wait(100); here().visited = [...new Set([...(here().visited || []), 'shore', 'cave'])]; closeUp('shore'); await wait(500); }},
   {id: 'c1-fly-home', title: 'Flying home', save: 'c1home', why: 'Sent home (回家): over the sea on your cloud, Flower Fruit Mountain coming up ahead.', run: async () => {
     play(); await wait(100); storyScene('flyHome'); introClock = 9; advancedTo = 2; await wait(400); }},
-  {id: 'a2-end', title: 'Area 2: the end of chapter 1', save: 'c1home', why: 'Home to Flower Fruit Mountain, after twenty years away. What has happened there is still to come.', run: async () => {
+  {id: 'c2-home', title: 'Home, twenty years on', save: 'c2home', why: 'Chapter 2: by your stone in the meadow. Your old friend the little monkey, grown up, is crying; the troop is hiding (a bush sparkles).', run: async () => {
+    play(); await wait(500); }},
+  {id: 'c2-home-ground', title: 'The home ground, robbed', save: 'c2news', why: 'As you left it, twenty years on: the school, garden and pen, the troop greyer; the feast’s tables bare; three little demons (妖怪) on the path.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'c2-demon', title: 'A little demon (妖怪)', save: 'c2news', why: 'Battles come back in the human world’s chapter 2: your stick, and a little demon from the long grass.', run: async () => {
+    play(); await wait(100); battle('demon'); await wait(700); }},
+  {id: 'c2-lair', title: 'The demon’s mountain', save: 'c2lair', why: 'Far to the north: ash, dry grass full of little demons, dead pines; at the top, the cages, the troop’s things, torches (火) and the cave, 水脏洞.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'c2-cages', title: 'The cages (笼子)', save: 'c2cages', why: 'Two little monkeys set free with the guard’s key (钥匙), three still locked in, sparkling.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'c2-king', title: 'The Demon of Havoc', save: 'c2king', why: 'His name across the screen as the fight begins: a name, 混世魔王 Hùnshì Mówáng, not a word to catch.', run: async () => {
+    play(); await wait(100); battle('king'); await wait(1100); }},
+  {id: 'c2-king-fight', title: 'The Demon of Havoc: the fight', save: 'c2king', why: 'A boss fight as the bear’s: his health across the top, and what he says, aloud.', run: async () => {
+    play(); await wait(100); battle('king'); await wait(3600); }},
+  {id: 'c2-hair-trick', title: 'The hair trick (毛)', save: 'c2king', why: 'Halfway through the fight: your hairs, blown and 变！, turn into little monkeys, who swarm him till he drops his broadsword.', run: async () => {
+    play(); await wait(100); storyScene('hairTrick'); introClock = 5; advancedTo = 1; await wait(400); }},
+  {id: 'c2-fly-home', title: 'Flying the little ones home', save: 'c2end', why: 'On your cloud with the little monkeys, Flower Fruit Mountain coming up ahead.', run: async () => {
+    play(); await wait(100); storyScene('flyHomeAll'); introClock = 9; advancedTo = 2; await wait(400); }},
+  {id: 'c2-home-again', title: 'Home with the little ones', save: 'c2end', why: 'Each little one with its mother, everything back on the feast’s tables, the broadsword (刀) in your hand.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'a2-end', title: 'Area 2: the end', save: 'c2end', why: 'The end of Area 2: the little ones home, the Demon of Havoc gone for good. To be continued: the Dragon King’s palace.', run: async () => {
     play(); await wait(100); STEPS.areaEnd(); await wait(500); }},
   {id: 'scroll-describing', title: 'Word Scroll: describing words', save: 'fishBoth', why: '小 (little) and 大 (big), from fishing, on a tab of their own.', run: async () => {
     play(); await wait(100); openScroll(() => closeCard(), 0, 'describing'); await wait(400); }},

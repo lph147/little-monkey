@@ -235,7 +235,8 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.equal(g.run('isOpen(PLACES.farShore.exits[2])'), true, 'up the stone steps');
   assert.deepEqual(npc(g, 'woodcutter'), ['mountainFoot', 10, 4], 'he’s gone home to his hut');
   const words = get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2)");
-  assert.deepEqual(words.filter(w => !knows(g, w)), ['云', '鹤', '天', '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家'], 'all 31 of the prologue’s words (chapter 1’s to come)');
+  assert.deepEqual(words.filter(w => !knows(g, w)), ['云', '鹤', '天', '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家',
+    '回来', '好久不见', '哭', '老', '妖怪', '火', '救命', '笼子', '钥匙', '毛', '刀'], 'all 31 of the prologue’s words (chapter 1’s and 2’s to come)');
   // the checklist is chapter 1's now
   assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t]) => t)'), ['Help the woodcutter at his hut', 'Make 朋友 (friends) with the crane on the cliff road', 'Find the immortal’s cave']);
   // and you can sail back and forth
@@ -351,14 +352,17 @@ test('pacing: in Area 2, everything that teaches a new word waits for five quest
   for (const sh of Object.values(A.shops)) assert.ok(A.talk[sh.who].filter(p => teaches(p.do) && p.if && p.if.new).every(p => p.waits), `${sh.who}'s stall waits before a new word`);
   for (const p of Object.values(A.places)) for (const [ch, t] of Object.entries(p.legend || {})) for (const pt of t.onLook || []) if (pt.do.some(s => s.newWord)) assert.ok(pt.waits, `a place's "${ch}" teaches a word: it waits`);
   assert.ok(A.events.filter(e => e.do.some(s => s.newWord) && e.if.landed !== 0).every(e => e.if.wordReady), 'and an event that teaches a word waits till you’re ready (but for the landing, your first)');
-  // the words: 31 in the prologue, one after another, and the first (人) as you land; then chapter 1's 17
-  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 48);
+  // the words: 31 in the prologue, one after another, and the first (人) as you land; then chapter 1's 17, and chapter 2's 11
+  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 59);
 });
 
 test('the human world has a song of its own, a village tune, in every place (not Flower Fruit Mountain’s)', () => {
   const g = game({place: 'village', x: 11, y: 8, dir: 'down'});
   const MOUNTAIN = ['cliffRoad', 'pillars', 'cave', 'caveNight', 'masterRoom'];   // (chapter 1: up on the teacher's mountain, above the forest at its foot, the cave's song)
-  assert.equal(g.run(`[...new Set(Object.entries(PLACES).filter(([id]) => !${JSON.stringify(MOUNTAIN)}.includes(id)).map(([, p]) => p.music))].join()`), 'village', 'every place');
+  // (chapter 2: home to Flower Fruit Mountain, with its own songs, and the demon's gloomy mountain)
+  assert.equal(g.run(`[...new Set(Object.entries(PLACES).filter(([id]) => !${JSON.stringify(MOUNTAIN)}.includes(id) && !PLACES[id].borrowed && id !== 'lair').map(([, p]) => p.music))].join()`), 'village', 'every place');
+  assert.equal(g.run(`[PLACES.ffmMeadow.music, PLACES.ffmCave.music, PLACES.lair.music].join()`), ',cave,pineWood', 'home with its own songs (the meadow’s, home’s), and the demon’s mountain gloomy as the pines');
+  assert.equal(g.run("Object.keys(PLACES).filter(id => PLACES[id].borrowed || id === 'lair').length"), 20, 'all 19 of home’s places, and the demon’s mountain');
   assert.equal(g.run(`${JSON.stringify(MOUNTAIN)}.map(id => PLACES[id].music).join()`), 'cave,cave,cave,cave,cave', 'and up on the mountain, among the clouds, the cave’s');
   assert.equal(g.run('placeSong()'), 'village');
   assert.equal(g.run('SONGS.village.events.filter(e => e.k === "mel").reduce((s, e) => s + e.d, 0)'), g.run('SONGS.village.beats'), 'its tune fills its loop exactly');

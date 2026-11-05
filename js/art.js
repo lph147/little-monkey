@@ -42,8 +42,10 @@ function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (con
 // small stick (棍子), short, so that the staff (金箍棒, Area 3) can be longer without the stick ever having looked too big.
 // Each: how many pixels long it is, and its colours (l the wood, k its dark edge and ends), reddish so it stands out
 // against your fur.
-const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}};
-const inHand = () => BATTLES.weapon && HELD[BATTLES.weapon] && canBattle() ? BATTLES.weapon : null;
+// The Demon of Havoc's broadsword (刀, Area 2's chapter 2), once it's yours: longer, a steel blade, with a gold guard (u)
+// across it.
+const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}, '刀': {len:9, guard:true, pal:{l:'#DCE0E6', k:'#4A4E58', u:'#D8A838'}}};
+const inHand = () => weaponNow() && HELD[weaponNow()] && canBattle() ? weaponNow() : null;
 // What a monkey holds (kind: 'player', or a character's id): your stick once you can fight, or a character's own (holds, in the
 // area's characters), such as the sticks of the little monkeys in training. empty: nothing, whatever it has.
 const HOLDS = Object.fromEntries(AREA.characters.filter(c => c.holds).map(c => [c.id, c.holds]));
@@ -139,6 +141,7 @@ function monkeyRows(kind, dir, blink, step = 0, empty = false){
   if (stick){   // the stick in its hand
     const h = HAND[side ? 'side' : dir], top = h.y - HELD[stick].len + 1;
     for (let y = top; y <= h.y; y++){ rows[y][h.x] = y === top || y === h.y ? 'k' : 'l'; rows[y][h.edge] = 'k'; }
+    if (HELD[stick].guard) for (const x of [h.x - 1, h.x + 1]) if (rows[h.y - 3] && x >= 0 && x < 16) rows[h.y - 3][x] = 'u';   // (a sword's guard, above your hand)
     for (const [x, y] of h.grip) rows[y][x] = 'f';
   }
   let out = rows.map(r => r.join(''));
@@ -2040,8 +2043,8 @@ function buildGloom(){
   } }
   beamCanvas.width = COLS*T; beamCanvas.height = ROWS*T;
   const bg = beamCanvas.getContext('2d');
-  for (let y = 1; y < ROWS - 1; y += 3) for (let x = 1 + y % 2; x < COLS - 1; x += 3){   // a sunbeam slanting down into each open place
-    if (open[y][x] < .62 || !clear(x, y)) continue;
+  for (let y = 1; y < ROWS - 1; y += 3) for (let x = 1 + y % 2; x < COLS - 1; x += 3){   // a sunbeam slanting down into each open place (but for a place with none, beams: false, such as the demon's mountain)
+    if (gl.beams === false || open[y][x] < .62 || !clear(x, y)) continue;
     beams.push([x, y]);
     const bx = x*T + 8, by = y*T + 14, sh = bg.createLinearGradient(bx - 30, by - 60, bx, by);
     sh.addColorStop(0, 'rgba(255,246,200,0)'); sh.addColorStop(1, 'rgba(255,246,200,.3)');

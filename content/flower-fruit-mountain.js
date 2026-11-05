@@ -188,6 +188,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
   progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, goatHop:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, thirstyGame:0, meadowCheck:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0, bumped:0, knocked:0},
+  // Its progress once you've finished it (sailed away on your raft): how Area 2's chapter 2 finds Flower Fruit Mountain
+  // twenty years later, everything built (its places, borrowed: js/data.js).
+  left: {chapter:1, elder:2, hungry:'done', thirsty:'done', flowers:'done', wood:'done', stones:'done', honey:'done', melonSeeds:'done', grapeSeeds:'done', bananaSeeds:'done', cowFood:'done', boar:1, gate:true, climb:4, story:true, cave:6, count:3, home:2, build:2, school:2, schoolFlowers:true, shop:3, feast:3,
+    bowls:'done', tableware:2, bees:11, cow:9, milk:'done', milkTable:3, dairy:5, garden:4, melonPlanted:4, grapePlanted:4, bananaPlanted:4, fruitTable:3,
+    fish:'done', fishTable:1, shrimp:'done', shrimpTable:1, crab:'done', crabTable:1, firstLessons:6, pastureLog:1, cowSeen:1, streamSeen:1, exam:1, feastHeld:1, raft:3, seaSeen:1},
 
   // Numbers that text can show as {name}, and that an if can check. count is one of:
   // wordsLearned, animalsFound, animals (how many there are to find), animalsLeft, shells, or picked

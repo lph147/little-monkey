@@ -634,12 +634,12 @@ check that each is true and simply put.
 
 | Chinese | Pinyin | English | Said by | Notes |
 | --- | --- | --- | --- | --- |
-| 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman), 师姐 (A pupil), 大师兄 (The senior pupil), 师兄 (A pupil), 师弟 (A pupil) |  |
+| 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman), 师姐 (A pupil), 大师兄 (The senior pupil), 师兄 (A pupil), 师弟 (A pupil), 猴子 (Monkey) |  |
 | 我长大了！ | wǒ zhǎngdà le! | I’ve grown up! | 老板 (Stallholder), 路人 (Passer-by) |  |
-| 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
+| 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 猴子 (Monkey), 小猴子 (Little monkey), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder) |  |
 | 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child), 师姐 (A pupil) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child), 师姐 (A pupil), 小猴子 (Little monkey) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 货郎 (Peddler) |  |
 | 包子！包子！ | bāozi! bāozi! | Steamed buns! Steamed buns! |  |  |
 | 苹果！桃子！ | píngguǒ! táozi! | Apples! Peaches! | 老板 (Stallholder) |  |
@@ -660,7 +660,7 @@ check that each is true and simply put.
 | 我在衣服后面！ | wǒ zài yīfu hòumiàn! | I’m behind the washing! | 小孩 (Child) |  |
 | 猴子！猴子！ | hóuzi! hóuzi! | A monkey! A monkey! | 渔夫 (Fisherman) |  |
 | 这是我的衣服！ | zhè shì wǒ de yīfu! | Those are my clothes! | 老渔夫 (Old fisherman) |  |
-| 你是谁？ | nǐ shì shéi? | Who are you? | 小孩 (Child), 仙童 (The immortal’s boy) |  |
+| 你是谁？ | nǐ shì shéi? | Who are you? | 小孩 (Child), 仙童 (The immortal’s boy), 混世魔王 (The Demon of Havoc) |  |
 | 你不是人！你是猴子！ | nǐ bù shì rén! nǐ shì hóuzi! | You’re not a person! You’re a monkey! | 小孩 (Child) |  |
 | 这是什么？ | zhè shì shénme? | What’s this? | 小孩 (Child), 小猴子 (You) |  |
 | 这是井。 | zhè shì jǐng. | It’s a well. | A person near, when you ask what it is |  |
@@ -730,6 +730,27 @@ check that each is true and simply put.
 | 你变松树吧！ | nǐ biàn sōngshù ba! | Change into a pine tree! | 师兄 (A pupil) |  |
 | 好！好！ | hǎo! hǎo! | Bravo! Bravo! | 师兄 (A pupil) |  |
 | 师兄好！ | shīxiōng hǎo! | Hello, senior brother! | 小师弟 (A little pupil), 小师妹 (A little pupil) |  |
+| 小猴子在哭。 | xiǎo hóuzi zài kū. | The little monkey is crying. | 小猴子 (You) |  |
+| 我的孩子…… | wǒ de háizi… | My little one… | 小猴子 (Little monkey), 猴子 (Monkey) |  |
+| 你回来了！ | nǐ huílai le! | You’re back! | 大猴子 (Big monkey) |  |
+| 好久不见！ | hǎojiǔ bú jiàn! | Long time no see! | 饿猴子 (Hungry monkey), 老猴子 (Old monkey) |  |
+| 我老了。 | wǒ lǎo le. | I’ve grown old. | 老猴子 (Old monkey) |  |
+| 混世魔王在北边。 | Hùnshì Mówáng zài běibian. | The Demon of Havoc lives in the north. | 老猴子 (Old monkey) |  |
+| 我们很快乐！ | wǒmen hěn kuàilè! | We’re so happy! | 小猴子 (Little monkey), 大猴子 (Big monkey), 饿猴子 (Hungry monkey), 老猴子 (Old monkey), 猴子 (Monkey) |  |
+| 给你！ | gěi nǐ! | Here you are! | 小猴子 (You) |  |
+| 海下面有龙王。 | hǎi xiàmiàn yǒu Lóngwáng. | Under the sea, there’s the Dragon King. | 老猴子 (Old monkey) |  |
+| 这里是我们的家！ | zhèlǐ shì wǒmen de jiā! | This is our home! | 小妖 (Little demon) |  |
+| 救命！救命！ | jiùmìng! jiùmìng! | Help! Help! |  |  |
+| 钥匙在这里。 | yàoshi zài zhèlǐ. | The key’s here. | 小妖 (Little demon) |  |
+| 你是猴子！走吧！ | nǐ shì hóuzi! zǒu ba! | You’re a monkey! Go away! | 小妖 (Little demon) |  |
+| 我不怕你！ | wǒ bù pà nǐ! | I’m not scared of you! |  |  |
+| 我走了！ | wǒ zǒu le! | I’m going! |  |  |
+| 我们回家吧！ | wǒmen huíjiā ba! | Let’s go home! |  |  |
+| 我看见我们的碗！ | wǒ kànjiàn wǒmen de wǎn! | I can see our bowls! |  |  |
+| 我看见我们的桃子！ | wǒ kànjiàn wǒmen de táozi! | I can see our peaches! |  |  |
+| 我看见我们的苹果！ | wǒ kànjiàn wǒmen de píngguǒ! | I can see our apples! |  |  |
+| 我看见我们的蜂蜜！ | wǒ kànjiàn wǒmen de fēngmì! | I can see our honey! |  |  |
+| 我看见我们的牛奶！ | wǒ kànjiàn wǒmen de niúnǎi! | I can see our milk! |  |  |
 
 ### Sentences the player completes (one word missing)
 
@@ -763,6 +784,7 @@ check that each is true and simply put.
 | 我们在学 | wǒmen zài xué | We’re learning. | You, in a lesson at school |  |
 | 你叫什么名字 | nǐ jiào shénme míngzi | What’s your name? | You, in a lesson at school |  |
 | 我要回家 | wǒ yào huíjiā | I want to go home. | You, in a lesson at school |  |
+| 我要回来 | wǒ yào huílai | I want to come back. | You, in a lesson at school |  |
 | 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
@@ -779,6 +801,12 @@ What a card shows when you pick a flower for the big monkey (a red flower, and s
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
+| 白色的花 | báisè de huā | A white flower |  |
+| 红色的花 | hóngsè de huā | A red flower |  |
+| 黄色的花 | huángsè de huā | A yellow flower |  |
+| 橙色的花 | chéngsè de huā | An orange flower |  |
+| 蓝色的花 | lánsè de huā | A blue flower |  |
+| 粉色的花 | fěnsè de huā | A pink flower |  |
 | 红色的鸟 | hóngsè de niǎo | A red bird |  |
 | 黄色的鸟 | huángsè de niǎo | A yellow bird |  |
 | 白色的鸟 | báisè de niǎo | A white bird |  |
@@ -812,6 +840,11 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 晚上有月亮。 | wǎnshang yǒu yuèliang. | At night, there’s the moon. | 晚上 |  |
 | 天上有月亮。 | tiān shàng yǒu yuèliang. | There’s a moon in the sky. | 月亮 |  |
 | 天上有很多星星。 | tiān shàng yǒu hěn duō xīngxing. | There are lots of stars in the sky. | 星星 |  |
+| 妖怪来了！ | yāoguài lái le! | The demons are coming! | 妖怪 |  |
+| 火很大。 | huǒ hěn dà. | The fire is very big. | 火 |  |
+| 小猴子在笼子里。 | xiǎo hóuzi zài lóngzi lǐ. | The little monkey is in the cage. | 笼子 |  |
+| 猴子有很多毛。 | hóuzi yǒu hěn duō máo. | Monkeys have lots of fur. | 毛 |  |
+| 这是我的刀。 | zhè shì wǒ de dāo. | This is my broadsword. | 刀 |  |
 
 ### Scene: the raft drifting
 
@@ -858,12 +891,34 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 孙悟空飞回家。 | Sūn Wùkōng fēi huíjiā. | Sun Wukong flies home. |  |
 | 花果山！ | Huāguǒ Shān! | Flower Fruit Mountain! |  |
 
+### Scene: the hair trick
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 变！ | biàn! | Change! |  |
+| 很多小猴子！ | hěn duō xiǎo hóuzi! | Lots of little monkeys! |  |
+
+### Scene: the flight home with the little monkeys
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 我们回家吧！ | wǒmen huíjiā ba! | Let’s go home! |  |
+| 小猴子们很快乐。 | xiǎo hóuzi men hěn kuàilè. | The little monkeys are so happy. |  |
+| 花果山！ | Huāguǒ Shān! | Flower Fruit Mountain! |  |
+
 ### Scene: the crossing
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 有风了！ | yǒu fēng le! | The wind’s come! |  |
 | 船在海上走。 | chuán zài hǎi shàng zǒu. | The boat sails over the sea. |  |
+| 有山！ | yǒu shān! | Mountains! |  |
+
+### Scenes after lessons (the class painting the school)
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 孙悟空在天上飞。 | Sūn Wùkōng zài tiān shàng fēi. | Sun Wukong flies across the sky. |  |
 | 有山！ | yǒu shān! | Mountains! |  |
 
 ### Names
@@ -917,6 +972,25 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 师弟 | shīdì | A pupil |  |
 | 小师弟 | xiǎo shīdì | A little pupil |  |
 | 小师妹 | xiǎo shīmèi | A little pupil |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 大猴子 | dà hóuzi | Big monkey |  |
+| 饿猴子 | è hóuzi | Hungry monkey |  |
+| 老猴子 | lǎo hóuzi | Old monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 猴子 | hóuzi | Monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小猴子 | xiǎo hóuzi | Little monkey |  |
+| 小妖 | xiǎoyāo | Little demon |  |
+| 小妖 | xiǎoyāo | Little demon |  |
+| 小妖 | xiǎoyāo | Little demon |  |
+| 小妖 | xiǎoyāo | Little demon |  |
+| 小妖 | xiǎoyāo | Little demon |  |
+| 混世魔王 | Hùnshì Mówáng | The Demon of Havoc |  |
 | 牌子 | páizi | Sign |  |
 | 海的那边 | hǎi de nàbiān | Across the sea |  |
 | 海边 | hǎibiān | The shore |  |
@@ -935,6 +1009,26 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 斜月三星洞 | Xiéyuè Sānxīng Dòng | Cave of the Slanting Moon and Three Stars |  |
 | 斜月三星洞 | Xiéyuè Sānxīng Dòng | Cave of the Slanting Moon and Three Stars |  |
 | 师父的房间 | shīfu de fángjiān | The master’s room |  |
+| 草地 | cǎodì | The meadow |  |
+| 山路 | shānlù | The mountain path |  |
+| 河谷 | hégǔ | The river valley |  |
+| 深山 | shēnshān | Deep in the mountains |  |
+| 水帘洞 | Shuǐlián Dòng | Water Curtain Cave |  |
+| 家园 | jiāyuán | Home ground |  |
+| 海边 | hǎibiān | The shore |  |
+| 山坡 | shānpō | The hillside |  |
+| 河边 | hébiān | The riverside |  |
+| 百花谷 | Bǎihuā Gǔ | Valley of a Hundred Flowers |  |
+| 南坡 | nánpō | The south slope |  |
+| 山崖 | shānyá | The cliffs |  |
+| 温泉谷 | wēnquán gǔ | The hot spring valley |  |
+| 瓜田 | guātián | The melon field |  |
+| 黑松林 | hēi sōnglín | The dark pines |  |
+| 牧场 | mùchǎng | The pasture |  |
+| 松林 | sōnglín | Pine wood |  |
+| 学校 | xuéxiào | School |  |
+| 操场 | cāochǎng | Sports ground |  |
+| 坎源山 | Kǎnyuán Shān | The demon’s mountain |  |
 
 ### Words to collect
 
@@ -988,6 +1082,17 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 飞 | fēi | to fly |  |
 | 松树 | sōngshù | pine tree |  |
 | 回家 | huíjiā | to go home |  |
+| 回来 | huílai | to come back |  |
+| 好久不见 | hǎojiǔ bú jiàn | long time no see |  |
+| 哭 | kū | to cry |  |
+| 老 | lǎo | old |  |
+| 妖怪 | yāoguài | demon, monster |  |
+| 火 | huǒ | fire |  |
+| 救命 | jiùmìng | help! |  |
+| 笼子 | lóngzi | cage |  |
+| 钥匙 | yàoshi | key |  |
+| 毛 | máo | hair, fur |  |
+| 刀 | dāo | broadsword, knife |  |
 
 ### How words are made
 
@@ -1108,7 +1213,11 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 吗 | ma | (yes/no question) |  |
 | 花果山 | Huāguǒ Shān | Flower Fruit Mountain |  |
 | 吧 | ba | (let’s…) |  |
-| 老 | lǎo | old |  |
+| 给 | gěi | to give |  |
+| 混世魔王 | Hùnshì Mówáng | the Demon of Havoc |  |
+| 北边 | běibian | the north |  |
+| 水脏洞 | Shuǐzàng Dòng | Water-Belly Cave (a name) |  |
+| 龙王 | Lóngwáng | the Dragon King |  |
 | 找 | zhǎo | to look for |  |
 | 考试 | kǎoshì | exam, test |  |
 | 等 | děng | to wait |  |

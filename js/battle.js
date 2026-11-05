@@ -12,6 +12,14 @@
 const ENEMIES = AREA.enemies || {};
 const BATTLES = AREA.battles || {};
 const canBattle = () => !!BATTLES.when && matches(BATTLES.when);   // you can fight (you have the stick)
+// Your weapon: the area's (battles.weapon), or one the story has given you since (the weapon step, kept in the area's
+// progress), such as the Demon of Havoc's broadsword; and how hard it hits (its own, battles.weapons, or battles.hits).
+const weaponNow = () => (S && S.areas && here() && here().weapon) || BATTLES.weapon;
+const weaponHits = () => (BATTLES.weapons || {})[weaponNow()] || BATTLES.hits;
+// An enemy with a name rather than a word (name: {zh, py, en}; pic: its picture), such as the Demon of Havoc (names aren't
+// vocabulary: never a card to catch, decided 5 November 2026), or one with a word, taught as you meet it.
+const foeZh = f => f.name ? f.name.zh : f.word, foePy = f => f.name ? f.name.py : WORDS[f.word].py;
+const foePic = f => PICTURES[f.pic || f.word], foeThe = f => f.name ? `the ${f.name.en}` : `the ${wz(f.word)}`;
 const WILD_AFTER = 5, WILD_CHANCE = .2;   // at least this many steps on wild ground between battles, then this chance a step
 let wildSteps = 0;
 // Your health (decided 27 October 2026: hearts, 5 at most, were too few to tell weapons, food and enemies apart), and the
@@ -59,9 +67,9 @@ function pickFoe(wild){
 // rears up out of it twice your size (its picture, not its little map sprite), roaring, the screen shaking as it stands
 // up, and whoever is following you takes fright (a ! over them, trembling: js/draw.js); beaten, it lumbers off, slowly.
 async function wildBattle(id, spot = findSpot(), opts = {}){
-  const f = ENEMIES[id], big = !!f.big && !!PICTURES[f.word];
+  const f = ENEMIES[id], w = f.pic || f.word, big = !!f.big && !!PICTURES[w];   // (w: its look, a name's picture or its word's)
   pl.dir = spot.d;
-  foe = {a:{spr:big ? sprite(PICTURES[f.word].rows, PICTURES[f.word].palette) : mapSprite(f.word), faces:MAP_SPRITES[f.word].faces, hz:f.word}, x:spot.x, y:spot.y, t0:performance.now(), state:'in', big};
+  foe = {a:{spr:big ? sprite(PICTURES[w].rows, PICTURES[w].palette) : mapSprite(w), faces:MAP_SPRITES[w].faces, hz:w}, x:spot.x, y:spot.y, t0:performance.now(), state:'in', big};
   alertUntil = performance.now() + 1000;
   if (big){ SFX.roar(); setTimeout(() => { shakeT = performance.now(); SFX.rumble(); }, RISE_MS); } else SFX.encounter();
   await sleep(big ? 1700 : 1100);
@@ -101,8 +109,9 @@ async function battle(id, opts = {}){
   return r;
 }
 async function fight(id, opts = {}){
-  const f = opts.boss ? {...ENEMIES[id], boss:true} : ENEMIES[id], img = `<img class="portrait" alt="" src="${sprite(PICTURES[f.word].rows, PICTURES[f.word].palette).toDataURL()}">`;
-  if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
+  const f = opts.boss ? {...ENEMIES[id], boss:true} : ENEMIES[id], img = `<img class="portrait" alt="" src="${sprite(foePic(f).rows, foePic(f).palette).toDataURL()}">`;
+  if (f.name){}   // (a name: shown on its plate, never caught)
+  else if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
   else await sayFully(f.word, 700);   // (its name, said in full before the fight goes on)
   const big = !!f.bossFight;   // (a boss fight: its health across the top)
   if (f.nameCard && !opts.again) await bossNameCard(f, img);   // (a big boss: its name across the screen, the first time each fight)
@@ -114,17 +123,25 @@ async function fight(id, opts = {}){
   // The scene: the enemy on its mound, you from behind with your stick, and what the animations use (js below, css
   // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
   // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).
-  const stick = BATTLES.weapon && PICTURES[BATTLES.weapon] ? `<img class="stick" alt="" src="${sprite(PICTURES[BATTLES.weapon].rows, PICTURES[BATTLES.weapon].palette).toDataURL()}">` : '';
+  const stickImg = () => weaponNow() && PICTURES[weaponNow()] ? `<img class="stick" alt="" src="${sprite(PICTURES[weaponNow()].rows, PICTURES[weaponNow()].palette).toDataURL()}">` : '';
+  let stick = stickImg();
+  const stagesDone = new Set();   // (a boss's stages: what happens at so much of its health left, each once)
+  const stagesLeft = () => (f.stages || []).some((s, i) => !stagesDone.has(i));
   const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${big ? ' boss' : ''}${angry ? ' rage' : ''}${charged() ? ' charged' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}">${stick}`
     + `<div class="from" aria-hidden="true"></div><div class="striker" aria-hidden="true">${img}</div><div class="pow" aria-hidden="true"></div><div class="fx" aria-hidden="true"></div>`
-    + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh">${f.word} <span class="spk-py">${WORDS[f.word].py}</span></div>${angry ? '<span class="tag">Angry!</span>' : ''}</div>`
+    + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh">${foeZh(f)} <span class="spk-py">${foePy(f)}</span></div>${angry ? '<span class="tag">Angry!</span>' : ''}</div>`
     + `${big && f.angry ? healthHTML(left, f.health).replace('<span class="hpbar">', `<span class="hpbar"><b class="notch" style="left:${f.angry.at * 100}%"></b>`) : healthHTML(left, f.health)}</div>`
     + `<div class="plate mine"><div class="name"><span>You</span><span class="hpnum">${health()}/${maxHealth()}</span></div>${healthHTML(health(), maxHealth())}${streakHTML(streak)}</div></div>`;   // (your number beside You)
   let first = big && !opts.again;   // (a boss fight begins with it rearing up, a cry and a rumble, and the card shakes as it lands)
   while (left > 0 && health() > 0){
+    // A boss's stage (stages: at, a share of its health left; do, steps; note, what you're told on your next turn), such as
+    // the Demon of Havoc's: your hairs turn into little monkeys, then you take his sword. One a turn, each once.
+    const st = (f.stages || []).find((s, i) => !stagesDone.has(i) && left <= f.health * s.at);
+    if (st){ stagesDone.add(f.stages.indexOf(st)); closeCard(); await runSteps(st.do); stick = stickImg(); note = fill(st.note || '');
+      playSong(f.song && SONGS[f.song] ? f.song : battleSong()); }   // (its song again, after a scene's)
     const said = first && !opts.again && bossLine(f, 'meet');   // (what a boss says as it begins, instead of the note)
-    const turn = battleTurn(f, scene('', first ? 'rear' : ''), said ? '' : note || (charged() ? `Your ${wz(BATTLES.weapon || '棍子')} glows: your next hit counts ×${POWER}!` : ''), said ? bossLineHTML(said, img) : '');
+    const turn = battleTurn(f, scene('', first ? 'rear' : ''), said ? '' : note || (charged() ? `Your ${wz(weaponNow() || '棍子')} glows: your next hit counts ×${POWER}!` : ''), said ? bossLineHTML(said, img) : '');
     if (first){ first = false; rears(f); }
     if (said) speakLine(said);
     const act = await turn;
@@ -135,7 +152,7 @@ async function fight(id, opts = {}){
       S.bag[w]--; S.health = Math.min(maxHealth(), health() + FOOD[w].heal); useWord(w); save(); SFX.right();
       note = `You eat a ${wz(w)}: +${FOOD[w].heal} health.`;
     } else {
-      const w = big ? weakest(f.word) : toAsk(f.word, 1)[0], q = wordQuestion(w, f.word), stick = wz(BATTLES.weapon || '棍子');
+      const w = big ? weakest(f.word) : toAsk(f.word, 1)[0], q = wordQuestion(w, f.word), stick = wz(weaponNow() || '棍子');
       const ok = await pictureQ({head:scene(), body:`<p class="label">${charged() ? `Your ${stick} glows! Swing it: ×${POWER}!` : `You swing your ${stick}!`}</p>` + q.body, word:w, type:q.type,
         options:q.options, text:q.text, answerIdx:q.answerIdx, helper:helperHTML(),
         onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); wireHelper(q.options.length, q.answerIdx); },
@@ -144,12 +161,12 @@ async function fight(id, opts = {}){
           const power = ok && charged();
           sc.classList.add('swing'); sc.classList.add(ok ? 'hit' : 'miss'); if (power) sc.classList.add('powerhit');
           sc.querySelector('.fx').textContent = power ? `Power hit! ×${POWER}` : ok ? 'Hit!' : 'Miss!';
-          if (ok){ left = Math.max(0, left - BATTLES.hits * (power ? POWER : 1)); setHealth(sc.querySelector('.plate'), left, f.health); SFX.thwack(power ? .5 : .2); } else SFX.swish(.1);
+          if (ok){ left = Math.max(stagesLeft() ? 1 : 0, left - weaponHits() * (power ? POWER : 1)); setHealth(sc.querySelector('.plate'), left, f.health); SFX.thwack(power ? .5 : .2); } else SFX.swish(.1);   // (never beaten before its stages have all happened)
           if (power) shake();
           fb.innerHTML += power ? ' <b>A power hit!</b>' : ok ? ' <b>A hit!</b>' : ' You miss.';
           streak = ok && !power ? streak + 1 : 0; showStreak(sc, streak);
         }});
-      if (!ok) note = `The ${wz(f.word)} dodges.`;
+      if (!ok) note = `${cap(foeThe(f))} dodges.`;
     }
     if (left <= 0) break;
     if (f.angry && !angry && left <= f.health * f.angry.at){   // half its health gone: it gets angry
@@ -294,7 +311,7 @@ function speakLine(line){
 async function bossNameCard(f, img){
   const wrap = document.querySelector('#screenWrap'); if (!wrap || typeof document.createElement !== 'function') return;
   const d = document.createElement('div'); d.className = 'bosstitle';
-  d.innerHTML = `<div class="band">${img}<div class="bt"><div class="bk">Boss fight!</div><div class="bz">${f.word} <span>${WORDS[f.word].py}</span></div></div></div>`;
+  d.innerHTML = `<div class="band">${img}<div class="bt"><div class="bk">Boss fight!</div><div class="bz">${foeZh(f)} <span>${foePy(f)}</span></div></div></div>`;
   wrap.appendChild(d); SFX.drum(); setTimeout(() => SFX.drum(), 180);
   await sleep(1700);
   d.classList.add('out'); await sleep(260); d.remove();

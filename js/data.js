@@ -42,6 +42,44 @@ const STORY = AREA.story.map(s => ({t:toks(s.zh), en:s.en, pic:s.pic}));
 const sceneCaps = list => list.map(c => ({t:c.at, words:toks(c.zh), en:c.en, teach:c.teach}));
 const CAPS = sceneCaps(AREA.intro);   // the opening's captions (the other scenes': AREA.scenes, played by playScene in js/main.js)
 
+// A place borrowed from an area before this one, as you left it (decided 5 November 2026: Area 2's chapter 2, home to Flower
+// Fruit Mountain after twenty years): in the content, {borrow: its id there, from: that area's number, and anything of its
+// own}. Its map, with every square its story changed there changed for good (each letter's becomes, worked out from that
+// area's progress once you've finished it, its left); its legend's looks, words and ways of walking (BORROW_KEEPS), not
+// what A did there then (its story's steps, gathering; but its signs and tablets still say what they said), with the borrowing place's own wild creatures (wild) in its
+// long grass (where wild creatures or animals lived there); its ways to the other places borrowed from there (those that were open at the end); its music, sounds that
+// always play, gloom and battle backdrop. Anything of its own (legend, name, music, noMap...) goes over that, and squares
+// of its own on the map (put: [x, y, letter], such as the feast's tables, bare once the little demons have taken
+// everything off them). Never on a map of this area's own: it gives noMap instead.
+const BORROW_KEEPS = ['look', 'walk', 'word', 'landmark', 'note', 'colour', 'ledge', 'hop', 'vent', 'fishing', 'partOf', 'learnOnStep', 'stepNote', 'pick', 'wild'];
+function wasLeft(cond, left){   // does an area's progress at its end (left) match an if from that area's content?
+  return Object.entries(cond || {}).every(([k, want]) => {
+    if (k === 'any') return want.some(c => wasLeft(c, left));
+    const have = left[k];
+    if (want && typeof want === 'object') return (want.atLeast === undefined || (have || 0) >= want.atLeast) && (want.below === undefined || (have || 0) < want.below);
+    return typeof want === 'number' ? (have || 0) === want : (have ?? false) === want;
+  });
+}
+function borrowPlace(own, places){
+  const from = AREAS.find(a => a.number === own.from), src = from.places[own.borrow], left = from.left || {};
+  const legend = {...from.legend, ...(src.legend || {})}, idHere = id => Object.keys(places).find(k => { const q = places[k], b = q.borrowed || {id:q.borrow, from:q.from}; return b.id === id && b.from === own.from; });
+  const settled = ch => { for (let i = 0; i < 9 && legend[ch] && legend[ch].becomes; i++){ const b = legend[ch].becomes.find(e => wasLeft(e.if, left)); if (!b) break; ch = b.to; } return ch; };
+  const map = src.map.map(row => [...row].map(settled).join(''));
+  const used = new Set(map.join('')), keep = {};
+  for (const ch of used){
+    const t = legend[ch]; if (!t) continue;
+    keep[ch] = Object.fromEntries(Object.entries(t).filter(([k]) => BORROW_KEEPS.includes(k)));
+    if (t.wild || (t.animals && own.wild)) keep[ch].wild = own.wild || [];   // (and in the long grass where animals hid there)
+    if (t.pick){ const {if:c, ...pick} = t.pick; if (wasLeft(c, left)) keep[ch].pick = pick; else delete keep[ch].pick; }   // (fruit to pick, if there was at the end)
+    if (t.action === 'sign') Object.assign(keep[ch], {action:'sign', sign:t.sign || from.sign});   // (writing, such as the cave's tablet: its own, or that area's sign)
+  }
+  for (const [x, y, ch] of own.put || []) map[y] = [...map[y]].map((c, i) => i === x ? ch : c).join('');   // (squares of its own: put, [x, y, letter]; what was there kept in its legend, to become again)
+  const exits = (src.exits || []).filter(e => idHere(e.to) && wasLeft(e.if, left) && wasLeft(e.when, left)).map(({if:_, when:__, ...e}) => ({...e, to:idHere(e.to)}));
+  const {borrow, from:_f, wild, put:_p, ...rest} = own;
+  return {name:src.name, music:src.music, gloom:src.gloom, battleMusic:src.battleMusic, backdrop:src.backdrop, sounds:(src.sounds || []).filter(s => typeof s === 'string' || !s.if),
+    ...rest, legend:{...keep, ...(own.legend || {})}, exits:[...exits, ...(own.exits || [])], map, borrowed:{from:own.from, id:own.borrow}};
+}
+for (const [id, p] of Object.entries(AREA.places)) if (p.borrow) AREA.places[id] = borrowPlace(p, AREA.places);
 // The area's places, small maps you move between, and the one you're in. A position in the content is
 // in the first place unless it says another: [x, y, 'place'], or place:'id' (placeOf gives which).
 const PLACES = AREA.places, FIRST_PLACE = Object.keys(PLACES)[0];
@@ -59,7 +97,7 @@ function inColours(i){
   return i.colours.map(c => ({...i, word:i.item, colour:c, item:c === i.colour ? i.item : `${c} 的 ${i.item}`}));
 }
 const CLOTHES = (AREA.wardrobe || []).flatMap(inColours);   // everything you could wear (the wardrobe's), in each of its colours
-const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word, flies:!!c.flies,
+const ALL_NPCS = AREA.characters.map(c => ({id:c.id, place:placeOf(c), x:c.x, y:c.y, dir:c.facing, kind:c.id, label:c.label, look:c.look, word:c.word, flies:!!c.flies, small:!!c.small && !c.person,   // (small: a little one, such as a baby monkey or a calf, drawn smaller: js/draw.js)
   colour:c.colour, pecks:!!c.pecks, shoo:c.shoo, scuttles:!!c.scuttles,   // (scuttles: sideways, as a crab does: scuttle, js/world.js)
      // (a bird: its colour; pecking at its square; what you're told as you shoo it off: shooAway, js/world.js)
   home:{place:placeOf(c), x:c.x, y:c.y, facing:c.facing}, moves:c.moves}));   // home: where the content puts them; moves: where they go as the story goes on (placeCharacters)

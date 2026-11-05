@@ -207,6 +207,18 @@ const WORD_BANK = {
   '飞': {py:'fēi', en:'to fly', pic:'💫', area:2, category:'actions', alike:['云', '变', '鸟']},   // (the cloud somersault)
   '松树': {py:'sōngshù', en:'pine tree', pic:'🎄', area:2, category:'nature', alike:['树', '木头']},   // (showing off: you change into one)
   '回家': {py:'huíjiā', en:'to go home', area:2, category:'actions'},   // (the master sends you home to Flower Fruit Mountain)
+  // chapter 2: home to Flower Fruit Mountain after twenty years, and the Demon of Havoc (decided 5 November 2026)
+  '回来': {py:'huílai', en:'to come back', area:2, category:'actions', alike:['回家']},   // (你回来了！ the troop, as you come home)
+  '好久不见': {py:'hǎojiǔ bú jiàn', en:'long time no see', area:2, category:'phrases', phrase:true, use:'when you meet someone you haven’t seen for a long time', cue:'is so happy to see you again', situation:'You meet a friend you haven’t seen for years.'},
+  '哭': {py:'kū', en:'to cry', pic:'😢', area:2, category:'actions', alike:['快乐']},   // (the troop, crying for their little ones)
+  '老': {py:'lǎo', en:'old', pic:'👴', area:2, category:'describing', alike:['人', '猴子']},   // (heard since the feast, 我们会老……; the old monkey, twenty years on: 我老了。)
+  '妖怪': {py:'yāoguài', en:'demon, monster', pic:'👹', area:2, category:'animals', alike:['猴子', '人']},   // (the little demons: the word for every demon on the journey west)
+  '火': {py:'huǒ', en:'fire', pic:'🔥', area:2, category:'nature'},   // (the demon's torches)
+  '救命': {py:'jiùmìng', en:'help!', area:2, category:'phrases', phrase:true, use:'when you’re in danger and need someone to help you', cue:'is in danger', situation:'You’re locked in a cage, and you need someone to help you!'},
+  '笼子': {py:'lóngzi', en:'cage', pic:'🪤', area:2, category:'items', alike:['房子', '门']},   // (the little monkeys, locked in the demon's cages)
+  '钥匙': {py:'yàoshi', en:'key', pic:'🗝️', area:2, category:'items', alike:['门', '笼子']},
+  '毛': {py:'máo', en:'hair, fur', pic:'🪶', area:2, category:'people', alike:['猴子', '头']},   // (your hairs, turned into little monkeys: 变！)
+  '刀': {py:'dāo', en:'broadsword, knife', pic:'🗡️', area:2, category:'items', alike:['棍子', '斧头']},   // (the Demon of Havoc's, yours once you've beaten him)
 
   // Heard in sentences
   '知道': {py:'zhīdào', en:'to know'},
@@ -271,7 +283,11 @@ const WORD_BANK = {
   '吗': {py:'ma', en:'(yes/no question)'},
   '花果山': {py:'Huāguǒ Shān', en:'Flower Fruit Mountain'},
   '吧': {py:'ba', en:'(let’s…)'},
-  '老': {py:'lǎo', en:'old'},
+  '给': {py:'gěi', en:'to give'},
+  '混世魔王': {py:'Hùnshì Mówáng', en:'the Demon of Havoc'},   // (a name: Area 2's boss, never a word to catch)
+  '北边': {py:'běibian', en:'the north'},
+  '水脏洞': {py:'Shuǐzàng Dòng', en:'Water-Belly Cave (a name)'},   // (the Demon of Havoc's cave, over its mouth)
+  '龙王': {py:'Lóngwáng', en:'the Dragon King'},   // (a name: Area 3's, under the sea)
   '找': {py:'zhǎo', en:'to look for'},
   '考试': {py:'kǎoshì', en:'exam, test'},   // (the teacher's exam, at the end of chapter 1)
   '等': {py:'děng', en:'to wait'},

@@ -21,6 +21,7 @@ function game(pos, area = {}){
   g.run("infoBox = async (who, html) => { __notes.push('box: ' + html.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); }; pictureQ = async o => { __asked++; if (o.onAnswer) o.onAnswer(true, o.answerIdx); return true; }; closeCard = () => {}");
   g.run("globalThis.__said = []; showDialog = async (who, line, o = {}) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('') + (o.noEn ? ' (no English)' : '')); }");
   g.run("replyWith = async best => { __said.push('player: ' + best); return true; }; storyScene = async id => { __scenes.push(id); }; practiseFirst = async () => true");
+  g.run("STEPS.chapter = async s => { here().chapter = s.chapter; __notes.push('chapter: ' + s.chapter); }");   // (its card: tests/parts.test.js)
   g.run('placePlayer()');
   return g;
 }
@@ -130,9 +131,10 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   const end = notes(g);
   assert.ok(end.includes('card: 回家'));
   assert.ok(get(g, '__scenes').includes('flyHome'));
-  assert.ok(end.some(n => /box: The end of chapter 1/.test(n)), 'the end card');
+  assert.ok(end.includes('chapter: 2'), 'chapter 2 begins: home to Flower Fruit Mountain');
+  assert.deepEqual([g.run('PLACE'), g.run('pl.x'), g.run('pl.y')], ['ffmMeadow', 9, 2], 'landing by your stone');
   assert.deepEqual(CHAPTER.filter(w => !knows(g, w)), [], 'all 17 of chapter 1’s words');
-  assert.ok(get(g, 'areaChecklist().filter(c => c[3]).every(c => c[1] || /crane|woodcutter/.test(c[0]))'), 'the chapter’s checklist done (but for what’s on the climb)');
+  assert.deepEqual(get(g, 'AREA.checklist.filter(c => c.chapter === 1 && !matches(c.done)).map(c => c.text)').filter(t => !/crane|鹤|woodcutter/.test(t)), [], 'the chapter’s checklist done (but for what’s on the climb)');
 });
 
 test('flying by cloud: Fly here on a place you’ve been, on the map, once you can; it takes you there', async () => {

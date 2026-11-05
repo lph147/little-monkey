@@ -265,6 +265,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'around'){ const d = v[3] ?? AROUND; return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= d && Math.abs(pl.y - v[1]) <= d; }   // you're near here, as you come up to it (within so many squares: [x, y, 'place', squares])
     if (k === 'friends') return Object.entries(v).every(([id, want]) => S.friends.includes(id) === want);   // who's your friend, such as {goat:true}
     if (k === 'following') return Object.entries(v).every(([id, want]) => S.following.includes(id) === want);   // who's following you (the follow step), such as {cow:true}
+    if (k === 'form') return (pl.form || null) === v;   // what you've changed into just now (turnInto with keep), such as a little demon
     if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
@@ -274,7 +275,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -792,19 +793,29 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // into what you chose, there on the map, in a puff of smoke, and back again (ms: how long), right or wrong.
   // turnInto: how many times; or a word, to turn into just that, with no question (such as a pine tree, showing off to the
   // pupils). label: the question card's.
+  // word: what to turn into (one question, that word), such as a little demon, to fool the demon's guard; keep: and stay
+  // like that, till the form step changes you back (and if you turn into something else, that's the end of it).
   async turnInto(s){
     if (typeof s.turnInto === 'string'){ await becomeForm(s.turnInto, s.ms); return; }
     const pool = (AREA.changes || []).filter(w => WORDS[w] && WORDS[w].pic && lvl(w) >= 1);
     for (let i = 1; i <= s.turnInto; i++){
-      const w = nextWords(pool, 1)[0]; if (!w) return;
+      const w = s.word || nextWords(pool, 1)[0]; if (!w) return;
       const q = wordQuestion(w, null, 'listen', 3); let chosen = w;
       const ok = await pictureQ({head:`<p class="label">${esc(fill(s.label || 'Change!'))}${s.turnInto > 1 ? ` (${i} of ${s.turnInto})` : ''}</p>`, body:q.body,
         options:q.options, answerIdx:q.answerIdx, word:w, type:'listen', onShow:() => setTimeout(() => say(w), 300), onAnswer:(right, k) => { chosen = q.opts[k]; }});
       closeCard();
-      await becomeForm(chosen, s.ms);
+      if (s.keep){ puffAt = performance.now(); SFX.shimmer(); pl.form = chosen; await sleep(500); }
+      else await becomeForm(chosen, s.ms);
       toast(ok ? `变！ You turned into ${wz(chosen)}!` : `You turned into ${wz(chosen)}… but that’s not what you heard! It was ${wz(w)}.`);
+      if (s.keep && !ok){ await sleep(900); await STEPS.form({form:null}); return STOP; }
     }
   },
+  // Back to yourself (form: null), in a puff of smoke, after a turnInto that kept you changed; or into something (form: a
+  // word) with no question.
+  async form(s){ puffAt = performance.now(); SFX[s.form ? 'shimmer' : 'swish'](); pl.form = s.form || null; await sleep(350); },
+  // A weapon of your own from now on (weapon: its word), such as the Demon of Havoc's broadsword: in your hand on the map,
+  // and in battles, hitting as hard as the area's battles say (weapons).
+  weapon(s){ here().weapon = s.weapon; save(); redress(); },
   // A question or two on words you know as you do something (practise: how many; label: what you're doing; pic: its
   // picture), such as lifting each sack onto the boat at the harbour: right or wrong, you carry on, as practice.
   async practise(s){

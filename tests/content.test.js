@@ -164,7 +164,7 @@ test('every row of stepping stones has two stones or more, so hopping across is 
 test('cliffs and banks are two squares high, so every level looks as high as the next (at the top of the map, the rest is out of sight); steps climb all of one, between walls of rock', () => {
   const EDGES = ['cliffFace', 'bank', 'steps'], ROCK = ['heights', 'cliffFace', 'bank'];
   for (const [id, map] of allMaps){
-    const look = (x, y) => (legendOf(id)[(map[y] || '')[x]] || {}).look;
+    const look = (x, y) => { const l = (legendOf(id)[(map[y] || '')[x]] || {}).look; return l === 'demonDoor' ? 'cliffFace' : l; };   // (a cave's mouth in a cliff is part of the cliff, such as the Demon of Havoc's)
     map.forEach((row, y) => [...row].forEach((ch, x) => {
       const l = look(x, y);
       if (EDGES.includes(l) && !EDGES.includes(look(x, y - 1))){   // the top of a drop
@@ -260,7 +260,7 @@ test('places have names, and every way between them lands on a walkable tile and
     assert.ok(p.name && p.name.zh && p.name.py && p.name.en, `the place ${id} needs a name with zh, py and en`);
     for (const e of p.exits || []){
       const what = `the way from ${id} at ${e.at}`;
-      if (e.by === 'A') assert.ok(onMap([...e.at, id]), `${what} isn't on the map`);   // a way you go through by pressing A, facing it
+      if (e.by === 'A' || p.borrowed) assert.ok(onMap([...e.at, id]), `${what} isn't on the map`);   // a way you go through by pressing A, facing it (or a borrowed place's, its own area's, such as the school's door: a building now)
       else assert.ok(onMap([...e.at, id]) && canWalk([...e.at, id]), `${what} isn't on a walkable tile`);
       assert.ok(AREA.places[e.to], `${what} goes to ${e.to}, which isn't a place`);
       assert.ok(onMap([...e.arrive, e.to]) && canWalk([...e.arrive, e.to]), `${what} arrives at ${e.arrive} in ${e.to}, which isn't a walkable tile`);
@@ -386,7 +386,7 @@ test('every character has a talk script (or, a bird, is shooed away: shoo), and 
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag', 'form'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -641,10 +641,16 @@ test('no word tiles anywhere: sentences are completed by filling a gap, never pu
   for (const b of things) for (const old of ['build', 'buildEn', 'extraTile', 'buildPrompt']) assert.ok(!(old in b), `"${old}" is from word tiles: use sentence, sentenceEn and gap`);
 });
 
-test('every enemy is a collectible word with a picture and a map sprite, attacking from words with pictures', () => {
+test('every enemy is a collectible word with a picture and a map sprite (or a name, with its own), attacking from words with pictures', () => {
   for (const [id, e] of Object.entries(AREA.enemies)){
-    assert.ok(collectible.includes(e.word) && BANK[e.word].pic, `${id}'s word ${e.word} should be a word you can collect, with a picture`);
-    assert.ok(PICTURES[e.word] && MAP_SPRITES[e.word], `${e.word} needs a picture and a map sprite`);
+    if (e.name){   // (a name, such as the Demon of Havoc's: never a word to catch, its picture and map sprite its own)
+      assert.ok(e.name.zh && e.name.py && e.name.en && !collectible.includes(e.name.zh), `${id}'s name needs Chinese, pinyin and English, and isn't a word to catch`);
+      assert.ok(PICTURES[e.pic] && MAP_SPRITES[e.pic], `${id} needs its own picture and map sprite (pic)`);
+      for (const k of ['meet', 'hide', 'attack', 'away', 'lost']) assert.ok(e[k], `${id} has a name, not a word: it needs its own ${k}`);
+    } else {
+      assert.ok(collectible.includes(e.word) && BANK[e.word].pic, `${id}'s word ${e.word} should be a word you can collect, with a picture`);
+      assert.ok(PICTURES[e.word] && MAP_SPRITES[e.word], `${e.word} needs a picture and a map sprite`);
+    }
     assert.ok(e.health >= 1 && e.hits >= 1 && e.attacks.length >= 3, `${id} needs health, how much it hits for, and at least 3 places to attack from`);
     assert.ok(e.health / AREA.battles.hits >= 2 && e.health / AREA.battles.hits <= (e.boss ? 8 : 5), `${id}: a fight is set by how many hits it takes (2 to 5 for a wild creature, more for a boss)`);
     for (const w of e.attacks) assert.ok(collectible.includes(w) && BANK[w].pic, `${id} attacks from ${w}, which should be a word with a picture`);
@@ -714,7 +720,7 @@ test('a place’s own songs, backdrop, gloom and sounds, and every sound a step 
     }
     if (p.gloom){
       assert.ok(p.gloom.deep > p.gloom.open && p.gloom.open >= 0 && p.gloom.deep < 1, `${id}'s gloom: deep (${p.gloom.deep}) should be darker than open (${p.gloom.open}), and never black`);
-      for (const k of Object.keys(p.gloom)) assert.ok(['deep', 'open', 'mist', 'eyes'].includes(k), `${id}'s gloom: "${k}" isn't one of its settings`);
+      for (const k of Object.keys(p.gloom)) assert.ok(['deep', 'open', 'mist', 'eyes', 'beams'].includes(k), `${id}'s gloom: "${k}" isn't one of its settings`);
     }
   }
   for (const [where, s] of allSteps().filter(([, s]) => s.sound)) assert.ok(SFX.includes(s.sound), `${where}: there's no sound ${s.sound} (js/sound.js)`);

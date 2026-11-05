@@ -1188,6 +1188,101 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(16, 11, 10, 2.6), '#5AA0E6', {light: '#9CCCF2', dark: '#3F77C4', edge: true});    // water in it
     p.flat(path([[6, 11], [8, 4], [16, 2], [24, 4], [26, 11]], .6), '#6E5A3A');                   // the handle
   },
+  // chapter 2 (Area 2): home to Flower Fruit Mountain, and the Demon of Havoc
+  '哭': p => {   // to cry: a yellow face, eyes squeezed shut, mouth wide open wailing, tears streaming down (unlike 快乐: smiling, sparkles)
+    p.fill(O(16, 16.5, 12, 12), '#FFD34E', {edge: true});
+    for (const sx of [-1, 1]) p.flat(path([[16 + sx * 7.5, 12], [16 + sx * 4.5, 13.5], [16 + sx * 2, 12]], .8), '#3A2A10');   // eyes, squeezed shut
+    for (const sx of [-1, 1]) p.flat(path([[16 + sx * 7.5, 8.5], [16 + sx * 3, 9.5]], .6), '#B8861C');               // eyebrows, sad
+    p.fill(O(16, 21.5, 4, 3.6), '#7A2E1C'); p.flat(O(16, 23.2, 2.4, 1.4), '#E8706A');                                  // wailing
+    for (const sx of [-1, 1]){
+      p.fill(path([[16 + sx * 5, 15], [16 + sx * 6.5, 21], [16 + sx * 7.5, 27]], 1.3), '#5FB4F0', {light: '#A8DCFA', dark: '#3A8ED0'});   // tears streaming
+      p.fill(O(16 + sx * 8.5, 29, 2, 1.6), '#5FB4F0', {light: '#A8DCFA'});
+    }
+  },
+  '老': p => {   // old: an old grey monkey with a long white beard, bent over, leaning on a walking stick (unlike 猴子: young and brown, standing up)
+    const G = '#A9A49A', GL = {light: '#C9C4BA', dark: '#7E7A72'};
+    p.fill(path([[25, 6], [27, 30]], 1.1), '#8A5A32', {light: '#B07C4E', dark: '#5E3A1E'});        // the walking stick
+    p.fill(O(15, 23, 7, 6), G, GL); p.flat(O(15, 24, 4, 4), '#E6D8C4');                             // a bent body
+    p.fill(or(O(11, 30.5, 2.8, 1.4), O(18.5, 30.5, 2.8, 1.4)), '#6E6A62', {edge: true});
+    p.fill(path([[19, 20], [24.5, 15]], 1.6), G, {...GL, edge: true}); p.fill(O(25, 14.5, 1.8), '#E6D8C4');   // its hand on the stick
+    p.fill(O(6.5, 11, 3, 3.2), G); p.flat(O(6.6, 11.2, 1.6, 1.9), '#E6D8C4');                       // an ear
+    p.fill(O(14, 11, 7.6, 7), G, {...GL, edge: true});                                               // its head, bowed
+    p.flat(or(O(11.4, 11, 3, 3.2), O(17, 11, 3, 3.2), O(14.2, 14.6, 4.2, 2.8)), '#E6D8C4');
+    p.flat(path([[9.6, 10.6], [12.6, 10.6]], .5), '#3A3530'); p.flat(path([[15.6, 10.6], [18.6, 10.6]], .5), '#3A3530');   // eyes, half shut
+    p.fill(Pg([[10.5, 15], [17.5, 15], [16, 22], [14, 25], [12, 22]]), '#F8F6F0', {dark: '#D6D2C8', edge: true});   // a long white beard
+    p.flat(path([[8, 7.6], [11.8, 8.2]], .5), '#F8F6F0'); p.flat(path([[16.2, 8.2], [20, 7.6]], .5), '#F8F6F0');      // white eyebrows
+  },
+  '妖怪': p => {   // demon: a cheeky little blue demon, two little horns, a tuft of red hair, a tiger-skin cloth, a spear (unlike 猴子: brown fur)
+    const SK = '#5E8FD0', SKL = {light: '#86AEE2', dark: '#3F6AA8'};
+    p.fill(Rc(25, 6, 2, 25), '#8A5A30', {edge: true});                                                 // the spear's shaft
+    p.fill(Pg([[26, .5], [29.5, 7], [22.5, 7]]), '#CDD3DA', {dark: '#8E959E', edge: true});           // its tip
+    p.fill(or(Rc(10.5, 25, 4, 6, 1.5), Rc(17, 25, 4, 6, 1.5)), SK, {...SKL, edge: true});            // legs
+    p.fill(O(15.5, 21, 7, 6), SK, SKL);                                                                // body
+    p.fill(Rc(9, 22, 13, 5, 1), '#E8A23A', {edge: true});                                             // the tiger-skin cloth
+    for (const x of [11, 14.5, 18]) p.flat(Rc(x, 22.5, 1, 3.5), '#3A2414');
+    p.fill(path([[9, 18], [5, 22]], 1.9), SK, {...SKL, edge: true});                                  // an arm, waving
+    p.fill(path([[21, 18], [25, 16]], 1.9), SK, {...SKL, edge: true}); p.fill(O(25.5, 16, 2), SK, SKL);   // the other, on the spear
+    p.fill(Pg([[9, 6.5], [6.5, .5], [12.5, 4.5]]), '#EDE3C8', {edge: true});                         // horns
+    p.fill(Pg([[18.5, 4.5], [24.5, .5], [22, 6.5]]), '#EDE3C8', {edge: true});
+    p.fill(O(15.5, 11, 8, 7.2), SK, {...SKL, edge: true});                                            // head
+    p.fill(Pg([[12, 5], [15.5, .8], [19, 5], [15.5, 6.5]]), '#D8402E', {edge: true});               // a tuft of red hair
+    p.fill(O(12, 10.5, 2.6, 2.8), '#FAFAF5'); p.fill(O(19, 10.5, 2.6, 2.8), '#FAFAF5');               // big round eyes
+    p.flat(O(12.6, 11, 1.2, 1.4), '#1A1A1A'); p.flat(O(19.6, 11, 1.2, 1.4), '#1A1A1A');
+    p.flat(path([[9.5, 7.2], [13.8, 8.4]], .6), '#22324A'); p.flat(path([[21.5, 7.2], [17.2, 8.4]], .6), '#22324A');   // cross eyebrows
+    p.flat(Rc(12.5, 14.5, 6, 1.4), '#2A1A2A'); p.dot(14, 14, '#FAFAF5'); p.dot(17, 14, '#FAFAF5');   // a grin with two teeth
+  },
+  '混世魔王': p => {   // the Demon of Havoc (a name, for his battles): black armour trimmed with gold, a horned black helmet, a purple face with glowing eyes, his great broadsword raised
+    const ARM = '#2C2C34', AL = {light: '#55556A', dark: '#16161C'}, GOLD = '#D8A838', FACE = '#7A5A9A';
+    p.fill(or(Rc(10, 25, 5, 6, 1), Rc(17.5, 25, 5, 6, 1)), ARM, {...AL, edge: true});                 // boots
+    p.fill(Rc(8, 15, 16, 12, 3), ARM, AL);                                                             // armour
+    p.fill(Rc(8, 22, 16, 2), GOLD); p.flat(Rc(15.5, 16, 1, 6), GOLD);                                 // a gold belt, gold down its front
+    p.fill(O(8.5, 16, 3.6, 2.6), ARM, {...AL, edge: true}); p.fill(O(23.5, 16, 3.6, 2.6), ARM, {...AL, edge: true});   // shoulders
+    p.fill(path([[7, 18], [5.5, 25]], 2), ARM, {...AL, edge: true}); p.fill(O(5.5, 26, 2), FACE);      // an arm down, a fist
+    p.fill(Pg([[25, 9], [29, 9], [26.5, 1], [20, .5], [22.5, 3.5]]), '#D8DCE2', {dark: '#8C929C', edge: true});   // the broadsword's blade
+    p.fill(Rc(24.5, 8.4, 5.5, 1.4), GOLD);                                                            // its guard
+    p.fill(path([[25, 17], [27, 11]], 2), ARM, {...AL, edge: true}); p.fill(O(27, 10.5, 2), FACE);    // the arm raising it
+    p.fill(Pg([[10, 6], [4.5, .5], [8, 7]]), '#EDE3C8', {edge: true}); p.fill(Pg([[22, 6], [27.5, .5], [24, 7]]), '#EDE3C8', {edge: true});   // horns
+    p.fill(O(16, 10.5, 6.5, 6), FACE, {light: '#9A7ABA', dark: '#54386E', edge: true});              // face
+    p.fill(and(O(16, 8.5, 7.5, 6.5), (x, y) => y < 8), ARM, {...AL, edge: true});                    // helmet
+    p.fill(Rc(9, 7, 14, 1.4), GOLD);
+    p.flat(Rc(12, 10, 3, 1.4), '#F4D440'); p.flat(Rc(17, 10, 3, 1.4), '#F4D440');                     // glowing eyes
+    p.flat(Rc(13.5, 13.5, 5, 1.2), '#2A1020'); p.dot(14, 14, '#FAFAF5'); p.dot(17, 14, '#FAFAF5');   // fangs
+  },
+  '火': p => {   // fire: flames leaping up from crossed logs, sparks above (unlike the sun: a round disc in the sky)
+    p.fill(path([[6, 28], [26, 24]], 1.8), '#8A5A32', {light: '#B07C4E', dark: '#5E3A1E', edge: true});   // the logs
+    p.fill(path([[6, 24], [26, 28]], 1.8), '#7A4E2A', {light: '#A06E44', dark: '#4E2E16', edge: true});
+    p.fill(Pg([[7, 25], [8, 16], [11, 19], [12, 9], [16, 15], [17, 3], [21, 13], [23, 8], [25, 25]]), '#E8562A', {light: '#F28A4A', dark: '#B83A1A', edge: true});   // the flames
+    p.fill(Pg([[10, 25], [11, 19], [14, 21], [16, 11], [18, 19], [20, 15], [22, 25]]), '#F6A23A', {light: '#FCC66A'});
+    p.flat(Pg([[13, 25], [15, 19], [16, 21], [18, 18], [19, 25]]), '#FCE07A');
+    for (const [x, y] of [[9, 6], [24, 4], [27, 13]]) p.flat(O(x, y, 1, 1), '#F6A23A');               // sparks
+  },
+  '笼子': p => {   // cage: a wooden cage, a roof and a floor, bars all round, its door shut with a lock, empty (unlike 房子: a house)
+    p.fill(Rc(4, 6, 24, 3, 1), '#8A5A32', {light: '#B07C4E', dark: '#5E3A1E', edge: true});           // the roof
+    p.fill(Rc(4, 26, 24, 3, 1), '#8A5A32', {light: '#B07C4E', dark: '#5E3A1E', edge: true});          // the floor
+    p.flat(Rc(6, 9, 20, 17), '#5A3E2A');                                                              // dark inside
+    for (const x of [5, 10, 15, 20, 25]) p.fill(Rc(x, 9, 2, 17), '#B98A55', {light: '#D8B07A', dark: '#8A6038'});   // bars
+    p.fill(Rc(14, 15, 4, 4, 1), '#C9A23A', {light: '#E8C860', dark: '#8E6E1E', edge: true});          // a lock
+    p.flat(Rc(15.5, 16.5, 1, 1.5), '#3A2A10');
+  },
+  '钥匙': p => {   // key: an old iron key, a ring at one end, teeth at the other (unlike 门: a door; 笼子: a cage)
+    p.fill(O(9, 9, 6, 6), '#9AA0A8', {light: '#C8CED6', dark: '#6A707A', edge: true}); p.fill(O(9, 9, 3, 3), '#FFFFFF');   // the ring
+    p.fill(path([[13, 13], [26, 26]], 1.7), '#9AA0A8', {light: '#C8CED6', dark: '#6A707A', edge: true});   // the shaft
+    p.fill(Pg([[22, 22], [25.5, 18.5], [27.5, 20.5], [24, 24]]), '#9AA0A8', {dark: '#6A707A', edge: true});   // teeth
+    p.fill(Pg([[25, 25], [28.5, 21.5], [30, 23], [26.5, 26.5]]), '#9AA0A8', {dark: '#6A707A', edge: true});
+    p.fill(Rc(5, 8, 1, 2), '#FFFFFF');
+  },
+  '毛': p => {   // hair, fur: a little tuft of a monkey's golden hairs, plucked, fanning out (unlike 草: green grass growing)
+    for (const [x0, x1, y1, c] of [[16, 5, 4, '#C8873E'], [16, 10, 2, '#D9A050'], [16, 16, 1, '#E8B868'], [16, 22, 2, '#D9A050'], [16, 27, 4, '#C8873E'], [16, 7.5, 9, '#B8743E'], [16, 24.5, 9, '#B8743E']])
+      p.fill(path([[x0, 27], [(x0 + x1) / 2 + (x1 < 16 ? 1 : x1 > 16 ? -1 : 0), 15], [x1, y1]], 1.05), c, {light: '#F2D290', dark: '#8A5226'});
+    p.fill(O(16, 27.5, 3, 2), '#B8743E', {dark: '#8A5226', edge: true});                              // where they're held together
+  },
+  '刀': p => {   // broadsword: a broad curved blade, a gold guard and a red-wrapped handle with a red tassel (unlike 斧头: an axe; 棍子: a stick)
+    p.fill(Pg([[4, 28], [7, 30], [27, 6], [29, 1], [24, 3], [20, 5]]), '#D8DCE2', {light: '#F2F4F6', dark: '#8C929C', edge: true});   // the blade, widening to its tip
+    p.flat(path([[8, 27], [24, 6]], .5), '#9AA0AA');                                                  // its back edge
+    p.fill(Pg([[1, 25], [5, 21], [11, 27], [7, 31]]), '#D8A838', {light: '#F0C860', dark: '#9A7420', edge: true});   // the guard
+    p.fill(path([[1, 31], [4, 28]], 1.4), '#B8322A', {light: '#D85A4A', dark: '#7A1A14'});            // the handle
+    p.fill(O(2, 30, 1.6), '#E8463A'); p.flat(path([[1.5, 31], [.5, 31.5]], .5), '#E8463A');
+  },
   '斧头': p => {   // axe: a steel head on a wooden handle (unlike wood: a tool)
     p.fill(path([[7, 30], [21, 6]], 1.5), '#A8743E', {dark: '#7A5230'});
     p.fill(Pg([[16, 4], [21, 5], [25, 2], [30, 1], [31, 9], [30, 17], [26, 15], [22, 11], [17, 9]]), '#A9B0B8', {light: '#D8DEE4', dark: '#7A828C', edge: true});   // a broad blade

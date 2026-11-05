@@ -287,9 +287,16 @@ function drawPuff(X, Y, p){
   for (let i = 0; i < 7; i++){ const a = i / 7 * Math.PI * 2, r = 4 + p * 9; oval(b, Math.round(X + 8 + Math.cos(a) * r), Math.round(Y + 8 + Math.sin(a) * r * .8), 4, 3, i % 2 ? '#F2F2EE' : '#D6D8DC'); }
   b.globalAlpha = 1;
 }
+// A little one (small, in the area's characters: a baby monkey, born while you were away) is drawn smaller, at the bottom
+// of its square (SMALL_PX of a square's 16).
+const SMALL_PX = 11, SMALL = new Set(ALL_NPCS.filter(n => n.small).map(n => n.id));
 function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
-  R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
   const blink = (now + seed*977) % 3600 < 130;
+  if (SMALL.has(kind)){
+    R(b, X+5, Y+15, 6, 1, 'rgba(0,0,0,.22)');
+    b.drawImage(monkeySprite(kind, dir, blink, step), X + (T - SMALL_PX) / 2, Y + T - SMALL_PX - bob, SMALL_PX, SMALL_PX); return;
+  }
+  R(b, X+4, Y+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, X+3, Y+14, 10, 1, 'rgba(0,0,0,.12)');
   b.drawImage(monkeySprite(kind, dir, blink, step), X, Y - bob);
 }
 // A big object's picture (js/art.js), where it stands, with a little shake that settles while it's rustling.
@@ -448,6 +455,7 @@ function drawAnimal(n, X, Y, now, c){
   const def = MAP_SPRITES[n.look], spr = mapSprite(n.look);
   if (n.dir === 'left' || n.dir === 'right') n.side = n.dir;
   const side = n.side || def.faces, img = def.faces && side !== def.faces ? mirrored(spr) : spr;
+  if (n.small){ const k = SMALL_PX / T, w = Math.round(img.width * k), h = Math.round(img.height * k); b.drawImage(img, X + (T - w) / 2, Y + T - h - 1, w, h); return; }   // (a little one, such as a calf)
   figureShadow(n.look, X, Y, .18);
   X -= (img.width - T) / 2; Y -= img.height - T;   // (one bigger than a square standing up out of it: drawFigure)
   if (!c.mid){ b.drawImage(img, X, Y - Math.floor(Math.abs(Math.sin(now/400)) * 1)); return; }
