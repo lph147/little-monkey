@@ -534,8 +534,16 @@ function drawFoe(cx, cy, now){
 // every frame, in case the box grows, such as when its English is shown.
 let talkTop = false, talkCover = 0, talkWho = null;   // whether the box is at the top; how much of the view it covers, in map pixels (the most this conversation); who's speaking (sayLine() in js/cards.js)
 let talkTopEnd = -1e9;   // when a conversation last ended with the box at the top: a message straight after it shows there too (messageTop())
-const camX = () => Math.round(clamp(pl.px + 8 - VW*T/2, 0, COLS*T - VW*T));   // the left of the view: you in the middle, as far as the map goes
-const camY = () => Math.round(clamp((pl.mv && pl.mv.slip ? pl.mv.fy*T : pl.py) + 8 - VH*T/2, 0, ROWS*T - VH*T));   // the top of the view: you in the middle, as far as the map goes (still while you slip down a bank, so you can see yourself slip)
+// Where the view is on the map, along one side: you in its middle, as far as the map goes; a place smaller than the view,
+// such as the master's room, in the middle of it, with dark round it (the art review, decided 6 November 2026: it was in
+// the top left corner of the screen).
+const camAlong = (at, size, view) => size < view ? -Math.round((view - size) / 2) : Math.round(clamp(at, 0, size - view));
+const camX = () => camAlong(pl.px + 8 - VW*T/2, COLS*T, VW*T);   // the left of the view
+const camY = () => camAlong((pl.mv && pl.mv.slip ? pl.mv.fy*T : pl.py) + 8 - VH*T/2, ROWS*T, VH*T);   // the top of the view (still while you slip down a bank, so you can see yourself slip)
+function drawLayer(c, cx, cy){   // one of the map's layers (mapCanvas, baseCanvas, topCanvas), as much of it as the view shows, where it shows
+  const x = Math.max(0, cx), y = Math.max(0, cy), w = Math.min(c.width, cx + VW*T) - x, h = Math.min(c.height, cy + VH*T) - y;
+  if (w > 0 && h > 0) b.drawImage(c, x, y, w, h, x - cx, y - cy, w, h);   // (never asking for anything off its edges, which some browsers won't draw)
+}
 function placeTalk(cy = camY()){
   if (talkBox.hidden){
     if (!busy && (talkTop || talkCover)){ if (talkTop) talkTopEnd = performance.now(); talkTop = false; talkCover = 0; talkBox.classList.remove('top'); }   // the conversation is over
@@ -688,10 +696,10 @@ function drawWorld(now){
   let cy = camY(); placeTalk(cy);
   bigSparkles = !!AREA.bigSparkles && matches(AREA.bigSparkles);
   if (now - shakeT < 600){ cx += Math.round((Math.random()-.5)*3); cy += Math.round((Math.random()-.5)*3); }
-  const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to
-  if (sh < VH*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');
-  b.drawImage(mapCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
-  b.drawImage(baseCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);   // big objects, under the characters: those that never move, all at once
+  const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to (for the gloom, mist and night)
+  if (cx < 0 || cy < 0 || cx + VW*T > COLS*T || cy + VH*T > ROWS*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');   // dark where the map doesn't reach
+  drawLayer(mapCanvas, cx, cy);
+  drawLayer(baseCanvas, cx, cy);   // big objects, under the characters: those that never move, all at once
   touchLeaves(now); crawlThrough(now);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.base, cx, cy, now);   // and the fruit trees, which rustle
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
@@ -803,7 +811,7 @@ function drawWorld(now){
   drawDragonflies(cx, cy, now);
   drawSwarms(cx, cy, now);
   // the tops of big objects (a tree's leaves, the stall's awning), over anyone walking behind them
-  b.drawImage(topCanvas, cx, cy, VW*T, sh, 0, 0, VW*T, sh);
+  drawLayer(topCanvas, cx, cy);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.top, cx, cy, now);
   drawFallingLeaves(cx, cy, now);
   drawSteam(cx, cy, now);

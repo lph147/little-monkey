@@ -93,7 +93,23 @@ Object.assign(LOOKS, {
 });
 
 /* ---- big objects ---- */
-OBJECT_ART.ashPine = (g, o) => OBJECT_ART.deadPine(g, o);
+// A dead tree on the demon's mountain, gnarled and burnt black (the art review, decided 6 November 2026: the pine wood's
+// dead pine, a thin grey pole, didn't look evil): roots clawing the ash, a trunk twisting up, lit down one side, and bare
+// branches forking up like claws.
+const BURNT = ['#141110', '#2E2622', '#4A3E36', '#6A5A4C'];   // darkest to lightest
+OBJECT_ART.ashPine = (g, o) => {
+  const X = o.x * T, Y = o.y * T;
+  if (shadows) blob(g, X + 9, Y + 15, 7, 2, ROCK_SHADOW);
+  const twig = (pts, w) => { for (let i = 1; i < pts.length; i++){ const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) || 1;
+    for (let k = 0; k <= n; k++) R(g, X + Math.round(x0 + (x1 - x0) * k / n), Y + Math.round(y0 + (y1 - y0) * k / n), w, w, BURNT[1]); } };
+  R(g, X + 3, Y + 13, 11, 2, BURNT[0]); R(g, X + 5, Y + 12, 7, 2, BURNT[1]);                                         // its roots, clawing the ash
+  twig([[8, 13], [7, 6], [9, 0], [8, -6]], 3); twig([[9, 13], [8, 6], [10, 0]], 1);                                 // the trunk, twisting up
+  R(g, X + 8, Y + 4, 1, 6, BURNT[3]); R(g, X + 9, Y - 2, 1, 4, BURNT[2]);                                             // lit down one side
+  twig([[8, 2], [4, -2], [2, -7], [0, -9]], 2); twig([[4, -2], [5, -7]], 1); twig([[2, -7], [3, -11]], 1);          // branches up to the left, forking
+  twig([[9, -1], [13, -5], [15, -10]], 2); twig([[13, -5], [16, -5]], 1); twig([[15, -10], [13, -13]], 1);          // and to the right
+  twig([[8, -6], [7, -12], [8, -15]], 1); twig([[7, 8], [3, 6]], 1);                                                // the top, and a broken stub
+  dot(g, X + 9, Y + 9, BURNT[0]); dot(g, X + 8, Y + 3, BURNT[0]);                                                   // knots
+};
 OBJECT_ART.feastTableRobbed = (g, o) => feastTable(g, o.x * T, o.y * T, o.w * T, 2);   // (just the stone table: nothing on it)
 OBJECT_ART.tableBlock = (g, o) => fishTable(g, o.x * T, o.y * T, 1);                  // (a little stone table, its plate gone)
 ROW_OBJECTS.push('feastTableRobbed');

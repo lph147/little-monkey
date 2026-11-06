@@ -1213,7 +1213,7 @@ const SCREENS = [
     play(); await wait(100); feastCard(); await wait(500); }},
   {id: 'shop-comes', title: 'The 老板 comes up to the home ground', save: 'shopComes', why: 'With the flowers planted, he comes up from the meadow: a message, and a task with an arrow to him, by the way in.', run: async () => {
     play(); await wait(900); }},
-  {id: 'shop-plot', title: 'His shop, going up', save: 'shopMoved', why: 'Talk to him (我来了！ 这里很好！): the troop marks out a plot by the way in, with its sign, then builds his shop a piece at a time: posts and a woven back, a counter, a striped roof as his old stall had, then what he sells.', run: async () => {
+  {id: 'shop-plot', title: 'His shop, going up', save: 'shopMoved', why: 'Talk to him (我来了！ 这里很好！): the troop marks out a plot by the way in, with its sign, then builds his shop a piece at a time: posts and a woven back, a counter, a cloth roof as his old stall had, then what he sells.', run: async () => {
     play(); await wait(100); here().shop = 2; refreshMap(); here().shop = 3; settingUp = {objects: mapObjects().filter(o => o.look === 'shop').map(o => ({...o, stage: 2})), stage: 2}; await wait(300); }},   // (held as its counter goes up, on its plot)
   {id: 'shop-home', title: 'The 老板’s new shop', save: 'shopOpen', why: 'By the way in from the waterfall, with his sign; A at the shop or at him opens it. You’re wearing the blue headband you bought there.', run: async () => {
     play(); await wait(500); }},
@@ -1419,7 +1419,7 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'c2-demon', title: 'A little demon (妖怪)', save: 'c2news', why: 'Battles come back in the human world’s chapter 2: your stick, and a little demon from the long grass.', run: async () => {
     play(); await wait(100); battle('demon'); await wait(700); }},
-  {id: 'c2-lair', title: 'The demon’s mountain', save: 'c2lair', why: 'Far to the north: ash, dry grass full of little demons, dead pines; at the top, the cages, the troop’s things, torches (火) and the cave, 水脏洞.', run: async () => {
+  {id: 'c2-lair', title: 'The demon’s mountain', save: 'c2lair', why: 'Far to the north: ash, dry grass full of little demons, dead trees burnt black and gnarled; at the top, the cages, the troop’s things, torches (火) and the cave, 水脏洞.', run: async () => {
     play(); await wait(500); }},
   {id: 'c2-cages', title: 'The cages (笼子)', save: 'c2cages', why: 'Two little monkeys set free with the guard’s key (钥匙), three still locked in, sparkling.', run: async () => {
     play(); await wait(500); }},

@@ -1796,11 +1796,21 @@ function dairy(g, X, Y, stage, has){
     post(X + 1, Y + 7, 22); post(X + 28, Y + 7, 22);
   }
 }
-function stall(g, L, Y, w, empty = false){   // the shop owner's stall, w wide from L, standing on its squares: posts, a striped awning, and a counter with fruit (empty: none, once he's moved)
+// A plain cloth awning, as the stalls in the human world's town have (the art review, decided 6 November 2026: red and
+// white stripes looked like a seaside kiosk, not ancient China): a reddish brown, lit along its top, sagging a little
+// between its ends, darker along its hem.
+const AWNING = ['#86301F', '#B8452E', '#D2674E'];   // its hem, the cloth, its top
+function awning(g, L, Y, w, h){   // w wide from L, its top at Y, h deep at its ends (two more in its middle)
+  for (let i = 0; i < w; i++){
+    const sag = Math.round(Math.sin(Math.PI * i / w) * 2);
+    R(g, L + i, Y, 1, h + sag, AWNING[1]); R(g, L + i, Y, 1, 1, AWNING[2]); R(g, L + i, Y + h - 1 + sag, 1, 1, AWNING[0]);
+  }
+}
+function stall(g, L, Y, w, empty = false){   // the shop owner's stall, w wide from L, standing on its squares: posts, a cloth awning, and a counter with fruit (empty: none, once he's moved)
   const top = Y + 16 - Math.round(w * .66), cy = Y + 16 - Math.round(w * .26);
   groundShadow(g, L + w/2, Y+15, w/2, 2);
   R(g, L+1, top+5, 2, Y+10-top, WOOD[1]); R(g, L+w-3, top+5, 2, Y+10-top, WOOD[1]);   // posts
-  for (let i = 0; i < w; i += 4){ const c = (i/4) % 2 ? '#F4F1EA' : '#C0392B'; R(g, L+i, top, Math.min(4, w-i), 5, c); R(g, L+i+1, top+5, 2, 1, c); }   // the awning's stripes and scalloped edge
+  awning(g, L, top, w, 5);
   R(g, L, top, w, 1, '#8E241D');
   R(g, L+1, cy, w-2, Y+14-cy, WOOD[0]); R(g, L+2, cy+1, w-4, Y+12-cy, WOOD[3]); R(g, L+2, cy+1, w-4, 1, WOOD[4]);   // the counter
   if (empty) return;
@@ -1808,9 +1818,9 @@ function stall(g, L, Y, w, empty = false){   // the shop owner's stall, w wide f
   fruit(g, [[a,-3],[a+3,-3]], L, cy, PEACHES); fruit(g, [[b2,-3],[b2+3,-3]], L, cy, APPLES);
 }
 // The 老板's new shop at the home ground (chapter 1), three squares by two (W by H pixels), as much of it as is up (stage, as
-// the troop sets it up: 1 its posts and its back of woven bamboo, 2 its counter, 3 its roof, an awning striped red and white
-// as his old stall's was, 4 what he sells: headbands of every colour hanging from a pole, a basket of peaches and one of
-// apples, and a pot of honey).
+// the troop sets it up: 1 its posts and its back of woven bamboo, 2 its counter, 3 its roof, a cloth awning as his old
+// stall's, 4 what he sells: headbands of every colour hanging from a pole, a basket of peaches and one of apples, and a pot
+// of honey).
 // The feast's fish (chapter 1): a small square stone table at the end of the second one, as much of it as is up (stage, as
 // the troop sets it up: 1 its stone, a slab on a block; 2 a white plate on it, and the big fish you caught lying across
 // it, a grey-green carp, its tail over the edge).
@@ -1884,10 +1894,9 @@ function shopHut(g, X, Y, W, H, stage){
     basket(X + 6, PEACHES); basket(X + 19, APPLES);
     R(g, X + 33, Y + 13, 9, 8, OUT); R(g, X + 34, Y + 14, 7, 6, '#C8784A'); R(g, X + 34, Y + 14, 2, 6, '#E09A66'); R(g, X + 34, Y + 13, 7, 2, '#F2B632'); R(g, X + 35, Y + 13, 3, 1, '#FFE07A');   // a clay pot of honey
   }
-  if (stage >= 3){   // its roof: a striped awning, wider than it, with a scalloped edge, and its front posts under it
-    for (let k = 0; k < 6; k++){ const inset = Math.max(0, 3 - k); for (let i = 0; i < W + 4 - 2*inset; i += 4){ const c = Math.floor(i / 4) % 2 ? '#F4F1EA' : '#C0392B'; R(g, X - 2 + inset + i, Y - 2 + k, Math.min(4, W + 4 - 2*inset - i), 1, c); } }
-    R(g, X - 2, Y - 3, W + 4, 1, '#8E241D');
-    for (let i = 0; i < W + 4; i += 4){ const c = Math.floor(i / 4) % 2 ? '#F4F1EA' : '#C0392B'; R(g, X - 1 + i, Y + 4, 2, 1, c); }
+  if (stage >= 3){   // its roof: a cloth awning, wider than it, tied down here and there, and its front posts under it
+    awning(g, X - 2, Y - 3, W + 4, 7);
+    for (let i = 6; i < W; i += 10) R(g, X - 2 + i, Y + 3 + Math.round(Math.sin(Math.PI * i / (W + 4)) * 2), 1, 2, AWNING[0]);   // its ties
     post(X, Y + 4, H - 4); post(X + W - 3, Y + 4, H - 4);
   }
 }
