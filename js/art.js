@@ -512,23 +512,39 @@ function rockAt(px, py, cw, ch, k){
   }
   return {edge:d2 - d1, sx:sx / cw, sy:sy / ch};
 }
+// A square drawn a pixel at a time, but a row at a time: colours(row) gives that row's colour for each pixel along it
+// (null: leave it as it is), and a run of the same colour along a row is drawn as one, the same pixels as one at a time
+// but much quicker (the cliffs and banks, a pixel at a time, were the slowest thing to draw as you walked into a place
+// on a phone: decided 6 November 2026, after the game stuttered cast to a TV).
+function rowsOf(g, X, Y, colours){
+  for (let row = 0; row < T; row++){
+    const at = colours(row);
+    let start = 0, last = null;   // (the run along this row so far: where it starts, and its colour)
+    for (let c = 0; c <= T; c++){
+      const col = c < T ? at(c) : null;
+      if (col !== last){ if (last) R(g, X + start, Y + row, c - start, 1, last); start = c; last = col; }
+    }
+  }
+}
 function cliffFace(g, X, Y, x, y){
   const drop = dropOf(x, y), {up, dn, top, H, endL, endR} = drop, from = up ? null : dropLip(g, X, Y, x, y, drop);
+  rowsOf(g, X, Y, row => {
+    const fy = top + row, k = fy / (H - 1), col = mix(FACE.top, FACE.foot, k);   // lighter at the top, darker down to its foot
+    const litEdge = mix(FACE.lit, col, k * .6), shaded = mix(col, FACE.crack, .35), lit = mix(col, FACE.lit, .3);
+    return c => {
+      if (!up && row < from[c]) return null;   // (the lip, above it)
+      const fx = x*T + c, rock = rockAt(fx, y*T + row, 9, 7, 600), light = -(rock.sx * .6 + rock.sy);   // lit on its top and left, in shade on its bottom and right
+      let here = rock.edge < 1.1 ? FACE.crack            // a crack between two chunks
+        : rock.edge < 2.2 && light > 0 ? litEdge         // the lit edge of a chunk
+        : light < -.35 ? shaded : light > .3 ? lit : col;
+      if (rnd(fx, fy, 504) < .04) here = mix(here, FACE.crack, .45);   // pits in the rock
+      if (endR && c >= 13) here = mix(here, FACE.side, [.25, .45, .7][c - 13]);   // turning the corner
+      if (endL && c === 0) here = mix(here, FACE.side, .55);
+      return here;
+    };
+  });
   for (let c = 0; c < T; c++){
     const fx = x*T + c;
-    for (let row = up ? 0 : from[c]; row < T; row++){
-      const fy = top + row, k = fy / (H - 1), rock = rockAt(fx, y*T + row, 9, 7, 600);
-      let col = mix(FACE.top, FACE.foot, k);
-      const light = -(rock.sx * .6 + rock.sy);   // lit on its top and left, in shade on its bottom and right
-      if (rock.edge < 1.1) col = FACE.crack;                                   // a crack between two chunks
-      else if (rock.edge < 2.2 && light > 0) col = mix(FACE.lit, col, k * .6);  // the lit edge of a chunk
-      else if (light < -.35) col = mix(col, FACE.crack, .35);
-      else if (light > .3) col = mix(col, FACE.lit, .3);
-      if (rnd(fx, fy, 504) < .04) col = mix(col, FACE.crack, .45);   // pits in the rock
-      if (endR && c >= 13) col = mix(col, FACE.side, [.25, .45, .7][c - 13]);   // turning the corner
-      if (endL && c === 0) col = mix(col, FACE.side, .55);
-      R(g, X+c, Y+row, 1, 1, col);
-    }
     if (!up) R(g, X+c, Y+from[c], 1, 1, FACE.side);   // the shadow under the lip
     if (!dn){   // its foot, with grass growing at it
       R(g, X+c, Y+14, 1, 1, FACE.crack); R(g, X+c, Y+15, 1, 1, FACE.base);
@@ -540,17 +556,16 @@ function cliffFace(g, X, Y, x, y){
 // squares high): blades of grass down it, darker towards its foot.
 function bank(g, X, Y, x, y){
   const drop = dropOf(x, y), {up, dn, top, H} = drop, from = up ? null : dropLip(g, X, Y, x, y, drop);
-  for (let c = 0; c < T; c++){
-    const fx = x*T + c;
-    for (let row = up ? 0 : from[c]; row < T; row++){
-      const fy = top + row, k = fy / (H - 1);
-      let col = mix(BANKS.top, BANKS.foot, k);
-      if ((fy + Math.floor(rnd(fx, 9, 510) * 6)) % 6 === 0) col = mix(col, BANKS.blade, .45 + k * .4);   // blades of grass, down the bank
-      else if (rnd(fx, fy, 511) < .05) col = BANKS.tip;
-      R(g, X+c, Y+row, 1, 1, col);
-    }
-    if (!dn){ R(g, X+c, Y+14, 1, 1, BANKS.blade); R(g, X+c, Y+15, 1, 1, BANKS.base); }
-  }
+  rowsOf(g, X, Y, row => {
+    const fy = top + row, k = fy / (H - 1), col = mix(BANKS.top, BANKS.foot, k), blade = mix(col, BANKS.blade, .45 + k * .4);
+    return c => {
+      if (!up && row < from[c]) return null;   // (the lip, above it)
+      const fx = x*T + c;
+      return (fy + Math.floor(rnd(fx, 9, 510) * 6)) % 6 === 0 ? blade   // blades of grass, down the bank
+        : rnd(fx, fy, 511) < .05 ? BANKS.tip : col;
+    };
+  });
+  if (!dn){ R(g, X, Y+14, T, 1, BANKS.blade); R(g, X, Y+15, T, 1, BANKS.base); }   // its foot
 }
 // The shadow a drop casts on the ground at its foot, and rock on the ground to its right (drawn over that ground,
 // whatever it is: drawTiles).
@@ -858,13 +873,23 @@ function fern(g, X, Y, x, y){
 }
 // A long leaf, such as a banana plant's: a polygon filled pixel by pixel (polyFill), along a spine from (sx, sy) to (ex, ey),
 // w wide at its widest, drooping at its tip; outlined, lit along one side, with its midrib.
+// Each pixel whose middle is inside the polygon (an odd number of its edges crossing the row to the right of the middle)
+// is filled; a row at a time, each run of them in one go: between the 1st and 2nd crossings, the 3rd and 4th… (the same
+// pixels as testing every pixel on its own, which made a banana plant take a quarter of a second to draw on a phone).
 function polyFill(g, pts, col){
-  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), x0 = Math.floor(Math.min(...xs)), x1 = Math.ceil(Math.max(...xs));
   g.fillStyle = col;
-  for (let y = Math.floor(Math.min(...ys)); y <= Math.ceil(Math.max(...ys)); y++) for (let x = Math.floor(Math.min(...xs)); x <= Math.ceil(Math.max(...xs)); x++){
-    const px = x + .5, py = y + .5; let inside = false;
-    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++){ const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > py) !== (yj > py) && px < (xj - xi) * (py - yi) / (yj - yi) + xi) inside = !inside; }
-    if (inside) g.fillRect(x, y, 1, 1);
+  for (let y = Math.floor(Math.min(...ys)); y <= Math.ceil(Math.max(...ys)); y++){
+    const py = y + .5, cross = [];
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++){ const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > py) !== (yj > py)) cross.push((xj - xi) * (py - yi) / (yj - yi) + xi); }
+    cross.sort((a, b) => a - b);
+    for (let k = 0; k + 1 < cross.length; k += 2){   // the pixels x whose middle is at or past one crossing and before the next
+      let a = Math.ceil(cross[k] - .5), b = Math.ceil(cross[k + 1] - .5) - 1;
+      while (a + .5 < cross[k]) a++; while (a - .5 >= cross[k]) a--;            // (exactly as a pixel's own test would have it)
+      while (b + 1.5 < cross[k + 1]) b++; while (b + .5 >= cross[k + 1]) b--;
+      a = Math.max(a, x0); b = Math.min(b, x1);
+      if (b >= a) g.fillRect(a, y, b - a + 1, 1);
+    }
   }
 }
 function leafPts(sx, sy, ex, ey, w, droop = 0){
@@ -1370,7 +1395,7 @@ const OBJECT_ART = {
   fruitTableGrapes: (g, o) => fruitTableSquare(g, o.x*T, o.y*T, 1, 1, (o.stage ?? 1) >= 1 ? 'grapes' : null),
   fruitTableBananas: (g, o) => fruitTableSquare(g, o.x*T, o.y*T, 2, 1, (o.stage ?? 1) >= 1 ? 'bananas' : null),
   stoneStool: (g, o) => { if ((o.stage ?? 1) >= 1) stoneStool(g, o.x*T, o.y*T); },
-  pine: (g, o) => pine(g, o.x*T, o.y*T, o.x*31 + o.y),
+  pine: (g, o) => pineOnMap(g, o.x*T, o.y*T, o.x*31 + o.y),
   deadPine: (g, o) => deadPine(g, o.x*T, o.y*T),
   tablet: (g, o) => stoneTablet(g, o.x*T, (o.y + o.h - 1)*T, tileAt(o.x, o.y).sign.says.zh),   // (standing on its bottom square, with what it says carved down it)
   crackedRock: (g, o) => {   // a rock with a deep crack down it, and moss on top: one hit with your stick will break it
@@ -1445,6 +1470,22 @@ function pine(g, X, Y, seed){
     dot(g, X+6, Y+top+3, PINE[4]); if (rnd(seed, top, 3) < .6) dot(g, X+5, Y+bottom-2, PINE[4]);
   };
   tier(-1, 12, 7); tier(-9, 5, 6); tier(-17, -2, 4);
+}
+// A pine on the map: there are only eight ways a pine can look (which tiers have a second light dot), and the pine wood
+// has hundreds, so each is drawn once and then copied, the same pixels much quicker (decided 6 November 2026, as the pine
+// woods were slow to draw as you walked in, on a phone). Its shadow, which you see the ground through, is drawn on the
+// ground first, as it always was.
+const PINE_PICTURES = new Map();
+function pineOnMap(g, X, Y, seed){
+  const kind = [-1, -9, -17].map(top => rnd(seed, top, 3) < .6 ? 1 : 0).join('');
+  let pic = PINE_PICTURES.get(kind);
+  if (!pic){
+    pic = document.createElement('canvas'); pic.width = 24; pic.height = 40;
+    const was = shadows; shadows = false; pine(pic.getContext('2d'), 4, 22, seed); shadows = was;   // (just the tree)
+    PINE_PICTURES.set(kind, pic);
+  }
+  groundShadow(g, X+8, Y+14, 6, 2);
+  g.drawImage(pic, X - 4, Y - 22);
 }
 // A dead pine, long dry: a bare grey trunk with a broken top, and a few bare branches, one with its last brown needles.
 // One hit with your stick knocks it down (it becomes a stump).

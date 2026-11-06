@@ -26,7 +26,18 @@ const fill = (text, raw, plain) => String(text).replace(/\{([^}|]+)(?:\|([^}]+))
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function rnd(x, y, k = 0){ let h = Math.imul(x|0, 374761393) ^ Math.imul(y|0, 668265263) ^ Math.imul(k|0, 1442695041); h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; }
 function hex(c){ const n = parseInt(c.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
-function mix(a, b, k){ const A = hex(a), B = hex(b); return '#' + A.map((v,i) => Math.round(v + (B[i] - v) * k).toString(16).padStart(2,'0')).join(''); }
+// Two colours mixed, k of the way from a to b. Each mix is remembered, as the same few are made again and again (a cliff's,
+// a pixel at a time: decided 6 November 2026, to draw a place quicker as you walk into it), up to a few thousand at once.
+const MIX_MEMO = new Map();
+function mix(a, b, k){
+  const key = a + '|' + b + '|' + k; let c = MIX_MEMO.get(key);
+  if (c === undefined){
+    const A = hex(a), B = hex(b); c = '#' + A.map((v,i) => Math.round(v + (B[i] - v) * k).toString(16).padStart(2,'0')).join('');
+    if (MIX_MEMO.size >= 4096) MIX_MEMO.clear();
+    MIX_MEMO.set(key, c);
+  }
+  return c;
+}
 // A message, in a box at the bottom of the game screen, for a few seconds (msgAt: when the one showing came up).
 let msgT, msgAt = -1e9;
 function toast(msg){

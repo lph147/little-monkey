@@ -520,9 +520,14 @@ const placeSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].music]) ? PLACES[P
 const battleSong = () => (PLACES[PLACE] && SONGS[PLACES[PLACE].battleMusic]) ? PLACES[PLACE].battleMusic : 'battle';   // and its own battle song
 const isBattleSong = name => name === 'battle' || Object.values(PLACES).some(p => p.battleMusic === name) || Object.values(AREA.enemies || {}).some(e => e.song === name);   // (or a boss's own)
 let song = 'home';   // the song playing (or that will, once the music is on)
+// The notes are planned this far ahead (in seconds), each to start on the sound's own clock, so the music plays on
+// smoothly while the phone is busy for a moment, such as drawing a big place as you walk into it, or casting the screen
+// to a TV (decided 6 November 2026, after playing it cast to a TV: planned a third of a second ahead, the music broke up).
+// Changing the song, or stopping and starting it again, gives it a fresh channel (songBus), so nothing planned plays on.
+const MUSIC_AHEAD = 1.5;
 function musicTick(){
   const a = AC; if (!a || !mBus) return;
-  const sg = SONGS[song], beat = 60 / sg.bpm, ahead = a.currentTime + .35;
+  const sg = SONGS[song], beat = 60 / sg.bpm, ahead = a.currentTime + MUSIC_AHEAD;
   for (let guard = 0; guard < 80; guard++){
     const ev = sg.events[mIdx], t = mStart + (mLoop * sg.beats + ev.b) * beat;
     if (t > ahead) break;

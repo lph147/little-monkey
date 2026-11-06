@@ -723,6 +723,7 @@ When the save format changes, the game keeps a copy of your old save in the brow
 - [ ] Your tasks and the checklist write the words you know as 汉字 (English): Find where the 河 (river) comes from; 跳 (jump) through the 瀑布 (waterfall); Look around the 洞 (cave). A word you haven't caught yet is just English. No sentence has more than two, or two side by side: Pick a red, a yellow and a white 花 (flower), never a 红色 (red) 花 (flower).
 - [ ] Held sideways, the whole console fits on screen; held upright, you see only the card asking you to turn the phone.
 - [ ] No emoji anywhere: the menu's tiles, Settings, the star on new words, the save file, the story, the test and area complete all have pixel icons.
+- [ ] With the music on, walk from the home ground into the hot spring valley, up the hillside and into the pine wood: each place comes up quickly, and the music plays on through it without a break or a stutter. Cast to a TV too, if you can.
 - [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, the shop, the Word Scroll (and its shadows), the Story Scroll, animal encounters and the Friends list. They look sharp, not blurry, with every pixel the same size.
 
 ## Controller checks
