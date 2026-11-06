@@ -92,6 +92,8 @@ Object.assign(LOOKS, {
   feastTableRobbed: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y), tableBlock: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y)
 });
 
+Object.assign(GROUNDS, {ash, trampled, deadGrass});   // (so anything from Flower Fruit Mountain here stands on the ash: onGround, js/art.js)
+
 /* ---- big objects ---- */
 // A dead tree on the demon's mountain, gnarled and burnt black (the art review, decided 6 November 2026: the pine wood's
 // dead pine, a thin grey pole, didn't look evil): roots clawing the ash, a trunk twisting up, lit down one side, and bare

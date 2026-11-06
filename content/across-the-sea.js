@@ -100,6 +100,7 @@ const CAVE_LEGEND = {
   'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[
     {if:{riddle:1}, label:'Wait for night', waits:true, do:[{set:{riddle:2}}, {message:'You lie down in your room, but you don’t sleep. You wait, and wait…'},
       {goTo:'caveNight', at:[4, 4], facing:'down'}, {sound:'chime'}, {newWord:'晚上', note:'晚上 means night, or evening. Everyone is asleep: it’s the third watch of the night.'}]},
+    {if:{teacher:0}, do:[{message:'A pupil’s room, cut into the rock: a stone bed, and a little window.'}]},   // (not yours till the master takes you as his pupil)
     {do:[{message:'Your room, cut into the rock: a stone bed, and a little window.'}]}]},
   'M': {look:'rockDoor', word:'门', landmark:true, onLook:[{do:[{message:'The master’s back door. It’s shut.'}]}]}
 };

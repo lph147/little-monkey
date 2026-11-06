@@ -99,3 +99,24 @@ test('the sea of clouds below the mountain: long thin wisps running on from squa
   assert.ok(a.length && [...a, ...b].every(([c, x, y, w, h]) => c === '#EAF0F5' && h === 1 && w >= 12), 'each a long thin wisp');
   assert.ok(a.some(([c, x, y, w]) => x < 64 && x + w > 64 && b.some(([c2, x2, y2, w2]) => x2 === x && y2 === y && w2 === w)), 'one running on from one square into the next');
 });
+
+test('things stand on the ground round them, and shadows are see-through (6 November 2026, after playing it: chopping blocks and a boulder on squares of grass in the immortal’s cave, green shadows under its peach trees)', () => {
+  const g = game({place: 'highRoad', x: 16, y: 9, dir: 'up'});
+  const base = (x, y) => drawn(g, `LOOKS[tileAt(${x}, ${y}).look](ctx, ${x * 16}, ${y * 16}, ${x}, ${y})`).map(([c]) => c);
+  g.run("enterPlace('cave')");
+  for (const [x, y, what] of [[23, 12, 'a chopping block'], [25, 12, 'a chopping block'], [27, 13, 'the boulder']]){
+    const fills = base(x, y);
+    assert.equal(fills[0], '#A3AC9C', what + ' in the cave: on its mossy stone');
+    assert.ok(!fills.includes('#7CC46B') && !fills.includes('#72B262'), what + ': no grass under it');
+  }
+  const tree = drawn(g, 'OBJECT_ART.rockPeach(ctx, {x: 3, y: 7, w: 1, h: 1})').map(([c]) => c);
+  assert.ok(!tree.includes('#5DA651') && tree.includes(get(g, 'ROCK_SHADOW')), 'a peach tree in the cave: its shadow see-through, not green');
+  g.run("enterPlace('villageLane')");
+  assert.deepEqual([g.run('tileAt(4, 12).look'), base(4, 12)[0]], ['shoreRock', '#7CC46B'], 'the village lane’s rock, in the long grass: on grass, not a square of sand');
+  const home = mountainGame({place: 'meadow', x: 5, y: 5, dir: 'up'});
+  home.run("enterPlace('pineWood')");
+  assert.equal(drawn(home, 'LOOKS.boulder(ctx, 400, 288, 25, 18)')[0][0], '#72B262', 'a boulder among the pines: on their floor');
+  home.run("enterPlace('meadow')");
+  const boulders = get(home, '(() => { const out = []; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).look === "boulder") out.push([x, y]); return out; })()');
+  assert.ok(boulders.length && boulders.every(([x, y]) => drawn(home, `LOOKS.boulder(ctx, ${x * 16}, ${y * 16}, ${x}, ${y})`)[0][0] === '#7CC46B'), 'and the meadow’s boulders on its grass, as they were');
+});

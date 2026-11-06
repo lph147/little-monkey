@@ -157,3 +157,12 @@ test('changing into something: you hear what, and turn into what you chose, ther
   assert.ok(notes(g).some(n => /not what you heard/.test(n)), 'the wrong one, and you’re told');
   assert.equal(get(g, 'pl.form'), null, 'and back again');
 });
+
+test('the room in the rock is only yours once the master has taken you as his pupil (6 November 2026, after playing it: it said your room as you arrived)', async () => {
+  const g = game({place: 'cave', x: 4, y: 4, dir: 'up'}, {caveSeen: 1});
+  await press(g, 4, 4, 'up');
+  assert.ok(notes(g).some(n => /^A pupil’s room/.test(n)), 'just arrived: a pupil’s room');
+  g.run('here().teacher = 1');
+  await press(g, 4, 4, 'down'); await press(g, 4, 4, 'up');
+  assert.ok(notes(g).some(n => /^Your room/.test(n)), 'his pupil: your room');
+});

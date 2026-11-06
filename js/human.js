@@ -106,6 +106,7 @@ function groundUnder(x, y){
   return GROUND_UNDER[Object.keys(votes).sort((a, c) => votes[c] - votes[a])[0] || 'earth'];
 }
 const onTheGround = (g, X, Y, x, y) => groundUnder(x, y)(g, X, Y, x, y);
+Object.assign(GROUNDS, {earth, paving, lawn});   // (grounds things from Flower Fruit Mountain can stand on here too, such as a boulder: onGround, js/art.js)
 for (const k of ['jHouse', 'mudHouse', 'whiteWall', 'wallGate', 'jars', 'baskets', 'sacks', 'cart', 'woodpile', 'fishRack', 'teahouse', 'townSchool', 'stallBuns', 'stallShoes', 'stallFruit', 'stallChanger', 'stallKites', 'well', 'washLine', 'bookTable', 'oldTree', 'willow', 'bambooFence'])
   LOOKS[k] = onTheGround;
 

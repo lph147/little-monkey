@@ -919,6 +919,25 @@ function trellis(g, X, Y, w, h, stage, ripe){
 // The pine wood's floor under something small, or where something was (a stone picked up, a stump): grass where it's
 // grassy round about (in the sunny glade), pine needles otherwise.
 const GRASS_FLOOR = ['grass','tallGrass','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers'];
+// The ground under a thing on the map (a boulder, a chopping block, a pebble, a rock): the ground it usually stands on,
+// its kind (grass, the pine wood's floor, sand or a path), unless none of the squares beside it are that; then whatever
+// ground most of them are, such as the mossy stone round the chopping blocks and the boulder in the immortal's cave, or
+// the pine wood's floor round a boulder (decided 6 November 2026, after playing it: they stood on squares of grass).
+// Looking past others of the same thing, as the human world's groundUnder (js/human.js) does; each area's looks add the
+// grounds they have to GROUNDS.
+const GROUNDS = {grass, path, sand, needles: woodFloor};
+const PINE_FLOOR = ['needles', 'pine', 'deadPine', 'crackedRock', 'stump', 'pebble', 'rubble', 'mushrooms', 'archPost'];   // (things on the pine wood's floor)
+const groundKind = l => GROUNDS[l] ? l : PINE_FLOOR.includes(l) ? 'needles' : GRASSY.includes(l) || GRASS_FLOOR.includes(l) || l === 'longGrass' ? 'grass' : null;
+function onGround(g, X, Y, x, y, usual){
+  const own = tileAt(x, y).look, votes = {};
+  for (const [dx, dy, w] of [[0, 1, 3], [-1, 0, 2], [1, 0, 2], [0, -1, 1]]){   // (the square below it counting most)
+    let k = 1; while (k < 8 && tileAt(x + dx * k, y + dy * k).look === own) k++;
+    const kind = groundKind(tileAt(x + dx * k, y + dy * k).look);
+    if (kind === usual || (usual === 'needles' && kind === 'grass')) return GROUNDS[usual](g, X, Y, x, y);   // its usual ground is beside it
+    if (kind) votes[kind] = (votes[kind] || 0) + w;
+  }
+  (GROUNDS[Object.keys(votes).sort((a, c) => votes[c] - votes[a])[0]] || GROUNDS[usual])(g, X, Y, x, y);
+}
 function woodFloor(g, X, Y, x, y){
   const grassy = Object.values(DV).filter(([dx, dy]) => GRASS_FLOOR.includes(tileAt(x + dx, y + dy).look)).length;
   (grassy >= 2 ? grass : needles)(g, X, Y, x, y);
@@ -933,8 +952,8 @@ function needles(g, X, Y, x, y){
   }
 }
 function stump(g, X, Y, x, y){
-  woodFloor(g, X, Y, x, y);
-  oval(g, X+8, Y+13, 7, 1, '#5E9A4E');                                                               // its shadow
+  onGround(g, X, Y, x, y, 'needles');
+  oval(g, X+8, Y+13, 7, 1, ROCK_SHADOW);                                                              // its shadow
   R(g, X+2, Y+11, 13, 3, WOOD[0]); R(g, X+3, Y+11, 11, 2, WOOD[1]);                                   // roots, spreading out
   R(g, X+4, Y+7, 9, 6, WOOD[0]); R(g, X+5, Y+7, 7, 5, WOOD[1]); R(g, X+5, Y+7, 2, 5, WOOD[2]);       // the bark, lit on the left
   R(g, X+8, Y+9, 1, 3, WOOD[0]); R(g, X+10, Y+8, 1, 3, WOOD[0]);                                      // its furrows
@@ -944,15 +963,15 @@ function stump(g, X, Y, x, y){
   R(g, X+1, Y+9, 2, 1, WOOD[4]); R(g, X+13, Y+14, 2, 1, WOOD[3]); dot(g, X+14, Y+3, WOOD[4]);         // chips
 }
 function pebble(g, X, Y, x, y){
-  woodFloor(g, X, Y, x, y);
-  oval(g, X+8, Y+12, 5, 1, '#5E9A4E');
+  onGround(g, X, Y, x, y, 'needles');
+  oval(g, X+8, Y+12, 5, 1, ROCK_SHADOW);
   oval(g, X+8, Y+9, 5, 3, GREY[0]); oval(g, X+8, Y+9, 4, 2, GREY[2]); R(g, X+5, Y+8, 4, 1, GREY[3]); dot(g, X+6, Y+7, GREY[4]); R(g, X+7, Y+11, 4, 1, GREY[1]);
   R(g, X+1, Y+13, 2, 2, GREY[1]); dot(g, X+1, Y+13, GREY[3]); R(g, X+13, Y+4, 2, 1, GREY[2]);
 }
 function rubble(g, X, Y, x, y){
-  woodFloor(g, X, Y, x, y);
+  onGround(g, X, Y, x, y, 'needles');
   [[3, 9, 3, 2], [9, 11, 3, 2], [10, 5, 3, 2], [5, 4, 2, 1], [13, 9, 2, 1], [2, 13, 2, 1]].forEach(([px, py, w, h], i) => {
-    R(g, X+px, Y+py+h, w, 1, '#5E9A4E'); R(g, X+px, Y+py, w, h, i % 2 ? GREY[1] : GREY[2]); dot(g, X+px, Y+py, GREY[3]);
+    R(g, X+px, Y+py+h, w, 1, ROCK_SHADOW); R(g, X+px, Y+py, w, h, i % 2 ? GREY[1] : GREY[2]); dot(g, X+px, Y+py, GREY[3]);
   });
 }
 // Inside the school (the classroom): wooden floorboards; its walls (dark wood round the edge, and the back wall's face:
@@ -1145,7 +1164,7 @@ const LOOKS = {
   teacherTable:(g,X,Y,x,y) => teacherTable(g,X,Y,x,y),
   desk:      (g,X,Y,x,y) => desk(g,X,Y,x,y),
   doorMat:   (g,X,Y,x,y) => doorMat(g,X,Y,x,y),
-  boulder:   (g,X,Y,x,y) => { grass(g,X,Y,x,y); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a boulder by the path
+  boulder:   (g,X,Y,x,y) => { onGround(g,X,Y,x,y,'grass'); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a boulder by the path
   log:       (g,X,Y,x,y) => fallenTree(g,X,Y,x,y),
   caveFloor: (g,X,Y,x,y) => caveFloor(g,X,Y,x,y),
   caveWall:  (g,X,Y,x,y) => caveWall(g,X,Y,x,y),
@@ -1196,7 +1215,7 @@ const LOOKS = {
     for (const [px, py, r] of [[3, 4, 3], [12, 3, 3], [2, 11, 3], [13, 12, 3], [8, 2, 2], [8, 14, 2]]) disc(g, X+px, Y+py, r, (px + py) % 2 ? '#8E8778' : '#A7A08F');
     disc(g, X+8, Y+8, 5, '#3F8FCB'); disc(g, X+7, Y+7, 3, '#5FB3D6'); R(g, X+6, Y+6, 2, 1, '#CFEFFA');
     R(g, X+9, Y+9, 1, 3, '#E0603C'); R(g, X+8, Y+10, 3, 1, '#E0603C'); },
-  shoreRock: (g,X,Y,x,y) => { sand(g,X,Y,x,y); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a rock on the sand
+  shoreRock: (g,X,Y,x,y) => { onGround(g,X,Y,x,y,'sand'); boulder(g, X+8, Y+15, 6, 6, (x + y) % 2 === 0); },   // a rock on the sand
   raft:      (g,X,Y,x,y) => seaBase(g,X,Y,x,y),    // the raft's square of sea, till it's built on it (OBJECT_ART)
   shallows:  (g,X,Y,x,y) => { waterBase(g,X,Y,x,y); R(g, X, Y, T, T, 'rgba(150,225,235,.42)');
     for (let i = 0; i < 4; i++){ const px = 1 + Math.floor(rnd(x,y,i+140)*12), py = 1 + Math.floor(rnd(x,y,i+150)*13), c = ['#A89F8C','#C2B9A6','#8E8574'][i%3];
@@ -1243,7 +1262,7 @@ const dot = (g, x, y, c) => R(g, x, y, 1, 1, c);
 function disc(g, cx, cy, r, col){ for (let dy = -r; dy <= r; dy++){ const w = Math.floor(Math.sqrt(r*r - dy*dy)); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
 function oval(g, cx, cy, rx, ry, col){ for (let dy = -ry; dy <= ry; dy++){ const w = Math.round(rx * Math.sqrt(1 - dy*dy / (ry*ry))); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
 let shadows = true;   // (off while drawing what goes over the characters: shadows stay on the ground)
-const groundShadow = (g, cx, cy, rx, ry) => { if (shadows) oval(g, cx, cy, rx, ry, '#5DA651'); };
+const groundShadow = (g, cx, cy, rx, ry) => { if (shadows) oval(g, cx, cy, rx, ry, ROCK_SHADOW); };   // (see-through, as a rock's: a darker grass green was a green patch on stone, such as under the peach trees in the immortal's cave, 6 November 2026)
 function leaves(g, blobs, X, Y, seed){   // a tree's leaves, as round clumps [x, y, radius]: an outline, then dark, mid and light, lit from the top left
   blobs.forEach(([cx, cy, r]) => disc(g, X+cx, Y+cy, r+1, LEAF[0]));
   blobs.forEach(([cx, cy, r]) => disc(g, X+cx, Y+cy, r, LEAF[1]));

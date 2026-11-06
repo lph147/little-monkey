@@ -105,6 +105,7 @@ Object.assign(LOOKS, {
   windPlank: (g, X, Y, x, y) => planks(g, X, Y, x, y, true),   // (its gusts are drawn as they blow: drawSteam, js/draw.js)
   loosePlank, twistedPine: pineGround, stoneDoor: karstFace
 });
+Object.assign(GROUNDS, {mossStone, karstTop});   // (so a boulder or a chopping block here stands on the stone: onGround, js/art.js)
 
 /* ---- big objects ---- */
 // A pine growing out of the rock, its trunk bent, its crown in flat layers, as on the mountains in old paintings.
