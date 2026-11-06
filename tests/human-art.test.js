@@ -54,3 +54,10 @@ test('people: from the side a profile, one eye and a nose; facing you two eyes; 
   assert.ok(hat[3].startsWith('.dd') && hat[3].endsWith('dd.'), 'and is wide at its brim');
   assert.equal(get(g, 'HAT')[0].replace(/\./g, ''), 'dd', 'your monkey wears the same hat');
 });
+
+test('houses: the door taller than a person, the roof (the same as before) no more than a square above the house', () => {
+  const g = game({place: 'highRoad', x: 16, y: 9, dir: 'up'});
+  const door = get(g, 'doorOf(0, 96, 32)');
+  assert.ok(32 - 3 - door.y > 16, 'a door from the top of its frame to the step, taller than a person (16 pixels)');
+  assert.ok(6 + g.run('ROOF_LIFT') + 5 <= 16, 'the roof, with the curl at each end of its ridge, within a square above the house');
+});

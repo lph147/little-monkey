@@ -24,13 +24,20 @@ function earth(g, X, Y, x, y){   // packed earth, as in the village's lanes
   if (rnd(x, y, 333) < .3){ const px = 2 + Math.floor(rnd(x, y, 334) * 11), py = 2 + Math.floor(rnd(x, y, 335) * 11); R(g, X + px, Y + py, 2, 1, HW.earth[3]); R(g, X + px, Y + py - 1, 2, 1, HW.earth[2]); }
 }
 function lawn(g, X, Y, x, y){ R(g, X, Y, T, T, HW.lawn[0]); speck(g, X, Y, x, y, HW.lawn, 8, 400); }   // a patch of grass, paler than the mountain's
-function paving(g, X, Y, x, y){   // grey flagstones, laid in rows, a few darker, with mortar between
-  R(g, X, Y, T, T, HW.paving[3]);
-  const off = (y % 2) * 4;
-  for (let r = 0; r < 2; r++) for (let c = -1; c < 2; c++){
-    const sx = X + c * 8 + off + (r ? 4 : 0), sy = Y + r * 8, k = rnd(x * 3 + c, y * 2 + r, 410);
-    const x0 = Math.max(X, sx + 1), x1 = Math.min(X + T, sx + 8);
-    if (x1 > x0){ R(g, x0, sy + 1, x1 - x0, 7, k < .2 ? HW.paving[1] : k > .85 ? HW.paving[2] : HW.paving[0]); R(g, x0, sy + 1, x1 - x0, 1, HW.paving[2]); }
+// The town's flagstones: long slabs of blue-grey stone (青石板), the paving of old Chinese towns, in rows, some worn, a little
+// moss in the joints (decided 6 November 2026, from the art proposal: a grid of square grey tiles looked like a modern square).
+const FLAGSTONE = ['#7D8584', '#A3A9A6', '#98A09D', '#B0B5B0'];
+function paving(g, X, Y, x, y){
+  R(g, X, Y, T, T, FLAGSTONE[0]);   // (the joints)
+  for (let r = 0; r < 3; r++){
+    const sy = Y + [0, 5, 11][r], sh = [5, 6, 5][r], off = Math.floor(rnd(x, y * 3 + r, 700) * 3) * 4 + (y * 3 + r) * 5;
+    for (let c = -2; c < 3; c++){
+      const sx = X + c * 11 + (off % 11), k = rnd(x * 5 + c, y * 3 + r, 710), a = Math.max(X, sx + 1), b = Math.min(X + T, sx + 11);
+      if (b <= a) continue;
+      const col = k < .25 ? FLAGSTONE[2] : k > .8 ? FLAGSTONE[3] : FLAGSTONE[1];
+      R(g, a, sy + 1, b - a, sh - 1, col); R(g, a, sy + 1, b - a, 1, shade(col, .12));
+      if (k > .9) R(g, a + 1, sy + sh - 1, Math.min(3, b - a - 1), 1, '#6E8A62');   // moss
+    }
   }
 }
 const CANAL_LIKE = ['canal', 'slab', 'archBridge', 'hopStone'];
@@ -129,18 +136,26 @@ const roofTiles = (g, x, y, w, h) => {   // dark grey tiles: rows of half-round 
 const woodDoor = (g, x, y, w = 8, h = 12) => { R(g, x - 1, y - 1, w + 2, h + 1, HW.woodLt); R(g, x, y, w, h, HW.wood); R(g, x + w / 2, y, 1, h, '#3E2614'); R(g, x + 1, y + 2, w / 2 - 2, 3, '#4E3018'); R(g, x + w / 2 + 2, y + 2, w / 2 - 3, 3, '#4E3018'); R(g, x + 2, y + 7, 1, 1, '#E0B050'); R(g, x + w - 3, y + 7, 1, 1, '#E0B050'); };
 const lattice = (g, x, y, w = 8, h = 6) => { R(g, x - 1, y - 1, w + 2, h + 2, HW.woodLt); R(g, x, y, w, h, '#6E4A2A'); for (let i = 1; i < w; i += 2) R(g, x + i, y + 1, 1, h - 2, '#D9C49A'); R(g, x + 1, y + h / 2, w - 2, 1, '#6E4A2A'); };
 const lantern = (g, x, y) => { R(g, x + 1, y - 3, 1, 3, '#3A2A1E'); oval(g, x + 1, y + 3, 3, 4, '#D8342C'); R(g, x, y + 1, 1, 4, '#F06A50'); R(g, x - 1, y, 5, 1, '#F2C04A'); R(g, x - 1, y + 6, 5, 1, '#F2C04A'); };
+// A white-walled house. Taller than it was, its roof the same but a few pixels higher (never more than a square above its
+// own squares, so a house along the top of a map keeps it), its door taller than a person, red couplets (对联) either side
+// of it and over it, the tall windows of its lattice either side (decided 6 November 2026, from the art proposal: the walls
+// were barely taller than a person and the door shorter than one; its new roof, sweeping up at its corners, with white
+// gables stepping up at each end, was turned down: the old one looked better).
+const ROOF_LIFT = 5;   // how much higher the roof is than it was
+const doorOf = (X, W, bottom) => ({x:X + W / 2 - 5, y:bottom - 20});   // a house's door, 10 by 17, at the foot of its wall
 function jHouse(g, o, sign){   // a white-walled house with a dark tiled roof, wooden posts at its corners, a wooden door and lattice windows
-  const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T, roofH = Math.round(H * .45);
-  R(g, X + 1, Y + roofH, W - 2, H - roofH, HW.white); R(g, X + 1, Y + roofH, W - 2, 3, HW.whiteSh);   // (the eave's shadow)
-  for (const px of [X + 1, X + W - 4]){ R(g, px, Y + roofH, 3, H - roofH - 3, HW.woodLt); R(g, px + 2, Y + roofH, 1, H - roofH - 3, HW.wood); }
+  const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T, roofH = Math.round(H * .45), wall = Y + roofH - ROOF_LIFT, door = doorOf(X, W, Y + H);
+  R(g, X + 1, wall, W - 2, Y + H - wall, HW.white); R(g, X + 1, wall, W - 2, 3, HW.whiteSh);   // (the eave's shadow)
+  for (const px of [X + 1, X + W - 4]){ R(g, px, wall, 3, Y + H - wall - 3, HW.woodLt); R(g, px + 2, wall, 1, Y + H - wall - 3, HW.wood); }
   R(g, X + 1, Y + H - 3, W - 2, 3, HW.plinth); R(g, X + 1, Y + H - 3, W - 2, 1, '#A8A398'); for (let c = X + 4; c < X + W - 2; c += 7) R(g, c, Y + H - 2, 1, 2, '#6E6A62');
-  roofTiles(g, X + 1, Y - 6, W - 2, roofH + 4);
-  woodDoor(g, X + W / 2 - 4, Y + H - 15, 8, 12);
-  if (W >= 48) for (const wx of [X + 7, X + W - 15, ...(W >= 112 ? [X + Math.round(W / 4) - 4, X + Math.round(W * 3 / 4) - 4] : [])]) lattice(g, wx, Y + roofH + 6);
-  if (sign) sign(g, X, Y, W, H);
+  roofTiles(g, X + 1, Y - 6 - ROOF_LIFT, W - 2, roofH + 4);
+  R(g, door.x - 3, door.y - 3, 16, 2, '#C8302A'); R(g, door.x - 4, door.y, 2, 14, '#C8302A'); R(g, door.x + 12, door.y, 2, 14, '#C8302A');   // the couplets
+  woodDoor(g, door.x, door.y, 10, 17);
+  if (W >= 48) for (const wx of [X + 8, X + W - 16, ...(W >= 112 ? [X + Math.round(W / 4) - 4, X + Math.round(W * 3 / 4) - 4] : [])]) lattice(g, wx, door.y + 1, 8, 8);
+  if (sign) sign(g, X, Y, W, H, wall);
 }
-function mudHouse(g, o){   // a fisherman's house: mud-brick walls on a stone footing, under a thick thatched roof tied along its ridge
-  const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T, roofH = Math.round(H * .5), L = X - 3, RW = W + 6;
+function mudHouse(g, o){   // a fisherman's house: mud-brick walls on a stone footing, under a thick thatched roof tied along its ridge (6 pixels taller than its squares, as a white-walled house is: decided 6 November 2026)
+  const X = o.x * T, Y = o.y * T - 6, W = o.w * T, H = o.h * T + 6, roofH = Math.round(H * .5), L = X - 3, RW = W + 6;
   inked(g, o, t => {
     R(t, X + 2, Y + roofH, W - 4, H - roofH, HW.mud); R(t, X + 2, Y + roofH, W - 4, 4, HW.mudDk);   // (the thatch's shadow)
     for (let r = Y + roofH + 6, k = 0; r < Y + H - 3; r += 4, k++) for (let c = X + 2 - (k % 2) * 4; c < X + W - 2; c += 8){   // the bricks' joints, inside the wall
@@ -160,13 +175,13 @@ function mudHouse(g, o){   // a fisherman's house: mud-brick walls on a stone fo
   });
   for (let k = 0; k < 4; k++) R(g, X + W / 2 + 6, Y + roofH + 4 + k * 2, 2, 2, k % 2 ? '#C23A2E' : '#E0503A');   // a string of red chillies drying by the door
 }
-function marketStall(g, o, awn, goods, sign){   // a stall: a cloth awning on poles over a counter of goods, a sign hanging at its side
-  const X = o.x * T, Y = o.y * T, W = o.w * T;
+function marketStall(g, o, awn, goods, sign){   // a stall: a plain cloth awning on bamboo poles, sagging a little between them, tied to them, over a counter of goods, a sign hanging at its side (decided 6 November 2026, from the art proposal: striped, scalloped awnings looked like a European market)
+  const X = o.x * T, Y = o.y * T, W = o.w * T, dk = shade(awn, -.3), lt = shade(awn, .2), sag = i => Math.round(Math.sin(Math.PI * i / W) * 2);
   shadowUnder(g, X + W / 2, Y + 14, W / 2);
   inked(g, o, t => {
-    R(t, X + 1, Y - 12, 2, 26, HW.wood); R(t, X + W - 3, Y - 12, 2, 26, HW.wood);
-    for (let i = 0; i < W; i++) R(t, X + i, Y - 14 + (i % 8 < 4 ? 0 : 1), 1, 5, i % 8 < 4 ? awn : '#F2EEE4');
-    for (let i = 0; i < W; i += 4) R(t, X + i, Y - 9, 2, 1, i % 8 < 4 ? awn : '#F2EEE4');   // (its scalloped edge)
+    for (const px of [X + 1, X + W - 3]){ R(t, px, Y - 12, 2, 26, '#9A8A4A'); R(t, px, Y - 6, 2, 1, '#6E6230'); R(t, px, Y + 2, 2, 1, '#6E6230'); }   // the poles, with their joints
+    for (let i = 0; i < W; i++){ R(t, X + i, Y - 15, 1, 6 + sag(i), awn); R(t, X + i, Y - 15, 1, 1, lt); R(t, X + i, Y - 10 + sag(i), 1, 1, dk); }
+    for (let i = 6; i < W - 4; i += 10) R(t, X + i, Y - 9 + sag(i), 1, 2, dk);   // its ties
     R(t, X + 2, Y + 3, W - 4, 10, HW.woodLt); R(t, X + 2, Y + 3, W - 4, 1, '#B07A48'); R(t, X + 2, Y + 12, W - 4, 1, HW.wood);
     for (let c = X + 8; c < X + W - 4; c += 8) R(t, c, Y + 4, 1, 8, HW.wood);   // (its boards)
     goods(t, X + 4, Y - 1, W - 8);
@@ -195,13 +210,13 @@ function basket(g, x, y, w, h, inside){   // a round bamboo basket, from the fro
 Object.assign(OBJECT_ART, {
   jHouse: ink((g, o) => jHouse(g, o)),
   mudHouse,
-  townSchool: ink((g, o) => jHouse(g, o, (g, X, Y, W) => { const sx = X + W / 2 - 13; R(g, sx - 1, Y + 9, 28, 15, HW.wood); R(g, sx, Y + 10, 26, 13, '#1E2A3A'); write(g, '学校', sx + 2, Y + 11, '#F2D27A'); })),
+  townSchool: ink((g, o) => jHouse(g, o, (g, X, Y, W, H, wall) => { const sx = X + W / 2 - 13, sy = wall - 5; R(g, sx - 1, sy, 28, 15, HW.wood); R(g, sx, sy + 1, 26, 13, '#1E2A3A'); write(g, '学校', sx + 2, sy + 2, '#F2D27A'); })),   // (its board over the door, hung from the eave)
   teahouse: ink((g, o) => {   // the teahouse: a red flag with 茶 on a pole, two red lanterns and a little balcony
     jHouse(g, o);
     const X = o.x * T, Y = o.y * T, W = o.w * T, H = o.h * T;
-    R(g, X + 3, Y + H - 18, W - 6, 2, HW.woodLt); for (let i = X + 4; i < X + W - 4; i += 4) R(g, i, Y + H - 16, 1, 3, HW.woodLt);
-    lantern(g, X + 10, Y + H - 26); lantern(g, X + W - 12, Y + H - 26);
-    const fx = X + W - 4, fy = Y - 6; R(g, fx, fy, 2, 42, HW.wood); R(g, fx - 16, fy + 2, 16, 20, '#C23A2E'); R(g, fx - 16, fy + 2, 16, 2, '#E8605A'); R(g, fx - 16, fy + 20, 16, 2, '#8E241C');
+    R(g, X + 3, Y + H - 25, W - 6, 2, HW.woodLt); for (let i = X + 4; i < X + W - 4; i += 4) R(g, i, Y + H - 23, 1, 3, HW.woodLt);   // (over the door)
+    lantern(g, X + 10, Y + H - 33); lantern(g, X + W - 12, Y + H - 33);
+    const fx = X + W - 4, fy = Y - 6 - ROOF_LIFT; R(g, fx, fy, 2, 42 + ROOF_LIFT, HW.wood); R(g, fx - 16, fy + 2, 16, 20, '#C23A2E'); R(g, fx - 16, fy + 2, 16, 2, '#E8605A'); R(g, fx - 16, fy + 20, 16, 2, '#8E241C');
     write(g, '茶', fx - 14, fy + 6, '#F6E7C4');
   }),
   whiteWall: (g, o) => { const X = o.x * T, Y = o.y * T, W = o.w * T; R(g, X, Y + 2, W, 14, HW.white); R(g, X, Y + 2, W, 2, HW.whiteSh); R(g, X, Y + 13, W, 3, HW.plinth); R(g, X, Y + 13, W, 1, '#A8A398'); roofTiles(g, X + 2, Y - 2, W - 4, 3); },   // (no outline: a wall runs on into the next, and lines between its squares showed)
@@ -233,14 +248,17 @@ Object.assign(OBJECT_ART, {
     }
     if (!inGrove(0, 1)) R(g, X, Y + T - 1, T, 1, '#24451E');   // (its foot, in shadow)
   },
-  willow: (g, o) => {   // a weeping willow by the water: a dark trunk, a crown of pale green, long strands hanging down
-    const X = o.x * T, Y = o.y * T;
-    R(g, X + 7, Y - 2, 3, 17, '#5A4630'); R(g, X + 6, Y - 6, 2, 5, '#5A4630'); R(g, X + 9, Y - 7, 2, 6, '#5A4630');
-    oval(g, X + 8, Y - 13, 11, 5, '#6E9A46'); oval(g, X + 7, Y - 14, 8, 3, '#8DB85A');
-    for (let i = -10; i <= 11; i += 3){
-      const len = 9 + Math.floor(rnd(o.x + i, o.y, 440) * 12), sx = X + 8 + i;
-      for (let k = 0; k < len; k++) R(g, sx + (k > len * .6 ? (i < 0 ? -1 : 1) : 0), Y - 11 + k, 1, 1, k % 3 ? '#9FC765' : '#7FAE4E');
-    }
+  willow: (g, o) => {   // a weeping willow: a dark trunk, arching branches, and long strands falling from them, the tree of every old canal town (decided 6 November 2026, from the art proposal: its crown was a flat green disc on a stick)
+    const X = o.x * T, Y = o.y * T, cx = X + 8, dome = i => Y - 17 + Math.round(i * i / 18);
+    if (shadows) blob(g, cx + 1, Y + 15, 7, 2, ROCK_SHADOW);
+    R(g, cx - 1, Y - 5, 3, 20, '#5A4630'); R(g, cx - 1, Y - 5, 1, 20, '#76603F'); R(g, cx - 2, Y + 13, 5, 2, '#5A4630');   // the trunk
+    for (const [x1, y1, k] of [[cx - 6, Y - 13, 0], [cx + 7, Y - 14, 1], [cx, Y - 16, 0]]){ const x0 = cx + k, y0 = Y - 4 - k; for (let i = 0, n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); i <= n; i++) R(g, Math.round(x0 + (x1 - x0) * i / n), Math.round(y0 + (y1 - y0) * i / n), 1, 1, '#5A4630'); }   // its branches
+    for (const [col, shift, seed] of [['#5E8A3E', 1, 0], ['#8DBA5A', 0, 9], ['#B5D97A', 0, 17]])   // its strands, three shades, the darkest behind
+      for (let i = -10; i <= 10; i += seed ? 2 : 1.5){
+        const sx = Math.round(cx + i + shift), top = dome(i), len = 12 + Math.floor(rnd(o.x * 31 + Math.round(i * 2), o.y, 800 + seed) * 9) - Math.abs(i) * .4;
+        for (let k = 0; k < len; k++) if (!(seed === 17 && k % 3)) R(g, sx + (k > len * .55 ? Math.sign(i) : 0), top + k, 1, 1, col);
+      }
+    for (let i = -8; i <= 8; i += 4) R(g, cx + i - 1, dome(i) - 1, 3, 2, '#9CC768');   // leaves along its top
   },
   oldTree: (g, o) => {   // a big old tree, gnarled, with a low ring of stones round its foot to sit on and a red ribbon tied round its trunk, as old village trees in China often have, for luck; its leaves in broad layers, flat underneath, like clouds (decided 6 November 2026, from the art proposal)
     const X = o.x * T, Y = o.y * T, cx = X + o.w * T / 2;
