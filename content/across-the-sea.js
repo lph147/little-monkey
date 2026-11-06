@@ -84,14 +84,14 @@ const CAVE_LEGEND = {
   'H': {look:'jHouse', word:'房子', note:'The lecture hall, where the master teaches.'},
   'T': {look:'twistedPine', word:'树', note:'A pine, growing out of the rock.'},
   'W': {look:'waterfall', word:'瀑布'},
-  's': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{carry:'水'}]}]},
-  'm': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{carry:'水'}]}]},
+  's': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{dip:'水'}, {carry:'水', inHand:true}]}]},
+  'm': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{dip:'水'}, {carry:'水', inHand:true}]}]},
   'Q': {look:'rockPeach', word:'桃子', landmark:true, note:'A peach tree, in the master’s garden.', pick:{item:'桃子'}},
   'q': {look:'sapling', word:'桃子', note:'A young peach tree, just planted. You water it every day.', becomes:[{if:{grown:1}, to:'Q'}]},
   'o': {look:'boulder', word:'石头'},
   'j': {look:'jars', landmark:true, onLook:[{do:[{message:'Big jars of water, for the kitchen.'}]}]},
   'p': {look:'woodpile', word:'木头', note:'The cave’s firewood.'},
-  'L': {look:'stump', landmark:true, onLook:[{if:{axeFetch:1}, label:'Chop', do:[{practise:1, label:'Chopping the wood', pic:'斧头'}, {carry:'木头'}]},
+  'L': {look:'stump', landmark:true, onLook:[{if:{axeFetch:1}, label:'Chop', do:[{practise:1, label:'Chopping the wood', pic:'斧头'}, {hit:'wood', with:'斧头', times:2}, {carry:'木头'}]},
     {do:[{message:'A chopping block, with logs beside it to chop.'}]}]},
   'l': {look:'leafPile', word:'叶子', onLook:[{if:{chores:0}, do:[{message:'A heap of fallen leaves.'}]},
     {if:{chores:2}, label:'Sweep', sparkle:true, do:[{practise:1, label:'Sweeping the leaves', pic:'扫'}, {sweep:'leaves'}, {change:'#'},
@@ -160,7 +160,7 @@ const CAGE = (n, x, y) => ({look:'cage', word:'笼子', landmark:true, becomes:[
   {if:{new:'救命'}, do:[{message:'A little monkey, locked in a wooden cage! It looks frightened.'}]},
   {if:{new:'笼子'}, label:'Look', waits:true, do:[{newWord:'笼子', note:'笼子 means cage. A little monkey from the troop is locked inside!'}]},
   {if:{key:0}, do:[{message:'The cage is locked. Who has the key?'}]},
-  {label:'Open', do:[{practise:1, label:'Opening the cage', pic:'钥匙'}, {set:{['freed' + n]:1}}, {sound:'chime'}, {leap:'baby' + n, from:[x, y]},
+  {label:'Open', do:[{practise:1, label:'Opening the cage', pic:'钥匙'}, {unlock:'钥匙'}, {set:{['freed' + n]:1}}, {sound:'chime'}, {leap:'baby' + n, from:[x, y]},
     {say:'thanks', by:'baby' + n}, {message:'The little monkey jumps out, free! ({freed}/5)'}]}]});
 const OPEN_CAGE = {look:'cageOpen', word:'笼子', landmark:true, onLook:[{do:[{message:'An empty cage, its door open.'}]}]};
 const LAIR_LEGEND = {
@@ -1032,8 +1032,8 @@ const ACROSS_THE_SEA = {
       // its sacks of rice, waiting to go on the boat: carry four for the docker (a question as you lift each)
       legend: {
         'x': {look:'sacks', landmark:true, onLook:[
-          {if:{cargo:1, cargoCarried:{below:4}}, label:'Carry', sparkle:true, do:[{practise:1, label:'Lift the sack!', pic:'饭'}, {change:'#'},
-            {collect:'饭', for:'cargo', count:4, each:'You carry the sack down to the boat ({cargoCarried}/4).', full:'Four sacks on the boat! Tell the docker.'}]},
+          {if:{cargo:1, cargoCarried:{below:4}}, label:'Carry', sparkle:true, do:[{practise:1, label:'Lift the sack!', pic:'饭'}, {change:'#'}, {lift:'sack', toss:[19, 15]},
+            {collect:'饭', for:'cargo', count:4, each:'You heave the sack up, and toss it down onto the boat ({cargoCarried}/4)!', full:'Four sacks on the boat! Tell the docker.'}]},
           {do:[{message:'Sacks of rice, waiting to go on the boat.'}]}]}
       },
       exits: [

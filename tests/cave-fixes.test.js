@@ -31,14 +31,14 @@ test('sweeping a heap of leaves: three strokes of a broom, leaves flying off it,
   const g = game({place: 'cave', x: 12, y: 9, dir: 'down'});
   assert.equal(get(g, 'tileAt(12, 10).look'), 'leafPile', 'a heap of leaves in front of you');
   g.run(`globalThis.__strokes = []; globalThis.__brushes = 0; SFX.sweep = () => { __brushes++; };
-    { const real = scatter; scatter = (x, y, kind, dir, n) => { __strokes.push({at: [x, y], kind, dir, n, sweeping: !!sweeping}); return real(x, y, kind, dir, n); }; }`);
+    { const real = scatter; scatter = (x, y, kind, dir, n) => { __strokes.push({at: [x, y], kind, dir, n, sweeping: !!acting && acting.kind === 'sweep'}); return real(x, y, kind, dir, n); }; }`);
   await press(g, 12, 9, 'down');
   const strokes = get(g, '__strokes');
   assert.equal(strokes.length, 3, 'three strokes');
   assert.equal(g.run('__brushes'), 3, 'each with the brush of the broom');
   assert.ok(strokes.every(s => String(s.at) === '12,10' && s.kind === 'leaves' && s.dir === 'down' && s.sweeping), 'leaves flying off the heap, away from you, as you sweep it');
   assert.deepEqual(strokes.map(s => s.n), [4, 4, 10], 'the most on the last');
-  assert.equal(g.run('sweeping'), null, 'and done');
+  assert.equal(g.run('acting'), null, 'and done');
   assert.equal(get(g, 'tileAt(12, 10).look'), 'paving', 'the heap’s gone');
   assert.equal(g.run("counter('leavesSwept')"), 1, 'one heap swept up');
   assert.ok(get(g, '__notes').some(n => /sweep up the leaves \(1\/5\)/.test(n)), 'and you’re told');

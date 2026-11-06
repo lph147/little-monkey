@@ -423,6 +423,11 @@ SAVES.c1cave = {...SAVES.c1door, areas: {...SAVES.c1door.areas, 2: {...SAVES.c1d
 SAVES.c1named = {...SAVES.c1cave, areas: {...SAVES.c1cave.areas, 2: {...SAVES.c1cave.areas[2], teacher: 1, named: 1}}, w: {...SAVES.c1cave.w, ...knows(1, ['师父', '名字'])}, turn: 700, pos: {place: 'cave', x: 10, y: 9, dir: 'left'}};
 const C1_CAVE = ['师父', '名字', '叶子', '扫', '桶', '斧头'];
 SAVES.c1sweep = {...SAVES.c1named, areas: {...SAVES.c1named.areas, 2: {...SAVES.c1named.areas[2], spyGame: 1, chores: 2}}, w: {...SAVES.c1named.w, ...knows(1, ['叶子', '扫'])}, pos: {place: 'cave', x: 12, y: 9, dir: 'down'}};   // the leaves to sweep, facing a heap
+// the senior pupil's other chores (6 November 2026): water from the pool, in a bucket, facing it; and wood to chop, facing
+// the chopping block; and the master's peach tree, facing it
+SAVES.c1fill = {...SAVES.c1sweep, areas: {...SAVES.c1sweep.areas, 2: {...SAVES.c1sweep.areas[2], chores: 3, waterFetch: 1}}, w: {...SAVES.c1sweep.w, ...knows(1, ['桶'])}, pos: {place: 'cave', x: 23, y: 8, dir: 'up'}};
+SAVES.c1chop = {...SAVES.c1fill, areas: {...SAVES.c1fill.areas, 2: {...SAVES.c1fill.areas[2], chores: 5, waterFetch: 2, axeFetch: 1}}, w: {...SAVES.c1fill.w, ...knows(1, ['斧头'])}, pos: {place: 'cave', x: 24, y: 12, dir: 'left'}};
+SAVES.c1peach = {...SAVES.c1named, pos: {place: 'cave', x: 3, y: 8, dir: 'up'}};
 SAVES.c1grown = {...SAVES.c1named, areas: {...SAVES.c1named.areas, 2: {...SAVES.c1named.areas[2], spyGame: 1, chores: 6, grown: 1}}, w: {...SAVES.c1named.w, ...knows(1, C1_CAVE)}, turn: 800, pos: {place: 'cave', x: 8, y: 10, dir: 'up'}};
 SAVES.c1night = {...SAVES.c1grown, areas: {...SAVES.c1grown.areas, 2: {...SAVES.c1grown.areas[2], riddle: 2}}, w: {...SAVES.c1grown.w, ...knows(1, ['头', '晚上'])}, pos: {place: 'caveNight', x: 20, y: 6, dir: 'up'}};
 SAVES.c1room = {...SAVES.c1night, w: {...SAVES.c1night.w, ...knows(1, ['月亮', '星星'])}, pos: {place: 'masterRoom', x: 4, y: 4, dir: 'up'}};
@@ -1376,6 +1381,8 @@ const SCREENS = [
     play(); await wait(100); storyScene('manyYearsLater'); introClock = 2.5; advancedTo = 0; await wait(400); }},
   {id: 'a2-docker', title: 'Area 2: loading the boat', save: 'a2docker', why: 'Waiting for the wind, you help the docker: face a sack and press A to lift it (a question), and carry it down to the boat. Four of them.', run: async () => {
     play(); await wait(600); }},
+  {id: 'a2-sack', title: 'Area 2: a sack onto the boat', save: 'a2docker', why: 'Each sack: your monkey heaves it up off the pile, over its head, turns to the boat and throws it, in a high arc, all the way down onto it. Here, throwing again and again, a sack in the air.', run: async () => {
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await STEPS.lift({lift: 'sack', toss: [19, 15]}); })(); await wait(760); }},
   {id: 'a2-harbour', title: 'Area 2: the harbour', save: 'a2harbour', why: 'The boatman, by his big boat: 今天没有风。 (风). Once you’ve practised, the wind comes, and he takes you across for your fare.', run: async () => {
     play(); await wait(600); }},
   {id: 'a2-crossing', title: 'Area 2: crossing the western sea', save: 'a2harbour', why: 'The wind in the sail, the town falling behind, then mountains ahead.', run: async () => {
@@ -1399,7 +1406,13 @@ const SCREENS = [
   {id: 'c1-spy', title: 'I spy', save: 'c1named', why: 'A pupil says what she sees, only in Chinese (我看见水！), and you walk to it and press A. Each one found counts as a question answered.', run: async () => {
     play(); await wait(100); talk(npc('spyPupil')); await wait(300); next(); await wait(500); }},
   {id: 'c1-sweep', title: 'Sweeping the leaves', save: 'c1sweep', why: 'The senior pupil’s first chore (扫): you sweep each heap of fallen leaves with a broom, three strokes from side to side, the leaves flying off it, away from you, and the heap’s gone. Here, sweeping on and on.', run: async () => {
-    play(); await wait(300); busy = true; (async () => { for (;;) await STEPS.sweep({sweep: 'leaves'}); })(); await wait(560); }},
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await STEPS.sweep({sweep: 'leaves'}); })(); await wait(560); }},
+  {id: 'c1-fill', title: 'Filling the bucket', save: 'c1fill', why: 'Water from the pool (水, in a bucket, 桶): your monkey dips the bucket in, a little splash and ripples round it, and lifts it out, full and dripping. Here, filling it again and again, the bucket in the water.', run: async () => {
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await STEPS.dip({dip: '水'}); })(); await wait(460); }},
+  {id: 'c1-chop', title: 'Chopping the wood', save: 'c1chop', why: 'Wood for the kitchen (木头): two blows of the axe (斧头) on the chopping block, chips flying, then your monkey picks the wood up and holds it up. Here, chopping again and again, the axe up.', run: async () => {
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;){ await STEPS.hit({hit: 'wood', with: '斧头', times: 2}); await pickUpAct('木头'); } })(); await wait(130); }},
+  {id: 'c1-peach', title: 'Picking a peach', save: 'c1peach', why: 'A at a fruit tree: your monkey reaches up, hopping, the tree shakes, and a peach drops from its leaves into its hands; then it holds it up, and it’s in your bag. Here, picking again and again, the peach dropping.', run: async () => {
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;){ pickedHere.clear(); await pickUpAct('桃子'); } })(); await wait(380); }},
   {id: 'c1-years', title: 'Seven years in the cave', save: 'c1named', why: 'After the chores and the master’s lecture: the seasons going round, a peach tree growing up, you sweeping, and 七年以后…', run: async () => {
     play(); await wait(100); storyScene('caveYears'); introClock = 6.5; advancedTo = 1; await wait(400); }},
   {id: 'c1-grown', title: 'The cave, seven years later', save: 'c1grown', why: 'The saplings grown into peach trees, new little pupils who call you 师兄. The master’s riddle next: three taps on your head (头).', run: async () => {
@@ -1426,6 +1439,8 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'c2-cages', title: 'The cages (笼子)', save: 'c2cages', why: 'Two little monkeys set free with the guard’s key (钥匙), three still locked in, sparkling.', run: async () => {
     play(); await wait(500); }},
+  {id: 'c2-unlock', title: 'Unlocking a cage', save: 'c2cages', why: 'The guard’s key (钥匙) into the lock, turned, click, the lock off, and the door creaks open, the little monkey inside looking out; then it jumps out. Here, opening it again and again, its door swinging.', run: async () => {
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await STEPS.unlock({unlock: '钥匙'}); })(); await wait(660); }},
   {id: 'c2-king', title: 'The Demon of Havoc', save: 'c2king', why: 'His name across the screen as the fight begins: a name, 混世魔王 Hùnshì Mówáng, not a word to catch.', run: async () => {
     play(); await wait(100); battle('king'); await wait(1100); }},
   {id: 'c2-king-fight', title: 'The Demon of Havoc: the fight', save: 'c2king', why: 'A boss fight as the bear’s: his health across the top, and what he says, aloud.', run: async () => {

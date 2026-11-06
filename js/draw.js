@@ -599,8 +599,9 @@ function drawSplashes(cx, cy, now){
   for (let i = splashes.length - 1; i >= 0; i--){
     const s = splashes[i], t = (now - s.t0) / 1000;
     if (t > .7){ splashes.splice(i, 1); continue; }
-    for (let k = 0; k < 12; k++){
-      const a = Math.PI * (.1 + .8 * k / 11), v = 40 + (k % 4) * 14;
+    const n = s.small ? 6 : 12, sc = s.small ? .55 : 1;   // (small: a bucket dipped in, not you falling in)
+    for (let k = 0; k < n; k++){
+      const a = Math.PI * (.1 + .8 * k / (n - 1)), v = (40 + (k % 4) * 14) * sc;
       const x = s.x + Math.cos(a) * v * t * (k % 2 ? 1 : -1), y = s.y - Math.sin(a) * v * t + 90 * t * t;
       R(b, Math.round(x - cx), Math.round(y - cy), 2, 2, k % 3 ? '#FFFFFF' : '#BFE8FA');
     }
@@ -618,15 +619,20 @@ function drawSplashes(cx, cy, now){
 // monkey, so it's drawn first.
 const SWING_ARC = {right:[-115, 5], left:[295, 175], down:[-70, 95], up:[150, 268]};
 const SWING_HAND = {right:[12, 9], left:[3, 9], down:[13, 10], up:[2, 9]};
-function drawSwing(kind, dir, PX, PY, t0, now){
+function drawSwing(kind, dir, PX, PY, t0, now, item){
   const t = Math.max(0, (now - t0) / SWING_MS), k = Math.min(1, t / SWING_CONTACT), eased = 1 - (1 - k) * (1 - k);
-  const held = HELD[heldBy(kind) || '棍子'], [a0, a1] = SWING_ARC[dir], [hx, hy] = SWING_HAND[dir], len = held.len + 2, pal = held.pal;   // (a little longer as it swings)
+  const held = HELD[item || heldBy(kind) || '棍子'], [a0, a1] = SWING_ARC[dir], [hx, hy] = SWING_HAND[dir], len = held.len + 2, pal = held.pal;   // (a little longer as it swings; item: something else in your hands, such as an axe)
   const angle = a0 + (a1 - a0) * eased - (t > SWING_CONTACT ? (a1 - a0) * .08 * Math.sin((t - SWING_CONTACT) / (1 - SWING_CONTACT) * Math.PI) : 0);   // (a little bounce back)
   const along = (deg, r) => [PX + hx + Math.cos(deg * Math.PI / 180) * r, PY + hy + Math.sin(deg * Math.PI / 180) * r];
   const stick = () => {
     if (k < 1){ b.globalAlpha = .45; for (let i = 0; i <= 8; i++){ const [x, y] = along(a0 + (angle - a0) * i / 8, len - 1); R(b, Math.round(x), Math.round(y), 1, 1, '#FFFFFF'); } b.globalAlpha = 1; }   // the swoosh
     for (let r = -1; r <= len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x) - 1, Math.round(y) - 1, 2, 2, pal.k); }   // its dark edge
     for (let r = 0; r < len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x), Math.round(y), 1, 1, pal.l); }           // the wood
+    if (held.axe){   // an axe's head, at its end, its edge forward
+      const side = (r, s) => { const [x, y] = along(angle, r), a = (angle - 90) * Math.PI / 180; return [Math.round(x + Math.cos(a) * s), Math.round(y + Math.sin(a) * s)]; };
+      for (let r = len - 4; r <= len; r++) for (let s = -1; s <= 4; s++){ const [x, y] = side(r, s); R(b, x, y, 1, 1, pal.k); }
+      for (let r = len - 3; r < len; r++) for (let s = 0; s <= 3; s++){ const [x, y] = side(r, s); R(b, x, y, 1, 1, s === 3 ? pal.e : pal.u); }
+    }
   };
   if (dir === 'up') stick();
   R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
@@ -654,6 +660,107 @@ function drawSweep(kind, dir, PX, PY, t0, now){
   R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
   b.drawImage(monkeySprite(kind, dir, false, 0, true), PX, PY);
   if (dir !== 'up') broom();
+}
+// Doing something (acting, js/world.js), drawn in your place as you do it: each is given where you are on the screen
+// (PX, PY), the time, and what you're doing (a: its kind, when it began, t0, the square it's done to, x and y, and the
+// rest); it draws you, empty-handed but for what you're using. What flies off somewhere else, over everything, such as a
+// sack you toss or a fruit falling from a tree: drawActFx.
+const ACT_HAND = {down:[5, 9], up:[5, -2], left:[-3, 6], right:[11, 6]};   // where you hold something in front of you
+const actMonkey = (PX, PY, dir, lift = 0) => { R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)'); b.drawImage(monkeySprite('player', dir, false, 0, true), PX, PY - lift); };
+const lerp = (a, z, k) => a + (z - a) * k, ease = k => 1 - (1 - k) * (1 - k);
+const itemPic = w => { const pic = PICTURES[w]; return pic && (FORMS['eat ' + w] || (FORMS['eat ' + w] = sprite(pic.rows, pic.palette))); };
+function bucketPic(X, Y, full, depth = 8){   // a wooden bucket (桶): its staves and two iron bands, and a rope handle; full of water, or only so much of it showing (depth: the rest under the water)
+  X = Math.round(X); Y = Math.round(Y);
+  R(b, X + 2, Y, 4, 1, '#C9A85E'); R(b, X + 1, Y + 1, 1, 1, '#C9A85E'); R(b, X + 6, Y + 1, 1, 1, '#C9A85E');   // its handle
+  const rows = Math.max(0, Math.min(6, depth));
+  if (!rows) return;
+  R(b, X, Y + 2, 8, rows, '#4A2C17'); if (rows > 1) R(b, X + 1, Y + 2, 6, rows - 1, '#8A5A32');
+  for (const r of [1, 4]) if (r < rows - 1) R(b, X + 1, Y + 2 + r, 6, 1, '#3E3E44');   // its iron bands
+  if (full) R(b, X + 1, Y + 2, 6, 1, '#7FC4EE');
+}
+let SACK_HELD = null;   // (drawn once, the first time you lift one)
+function sackPic(X, Y){   // a sack of rice, tied at its neck, its two corners sticking up: as on the pile (sack, js/human.js), with its dark outline
+  if (!SACK_HELD){
+    const c = document.createElement('canvas'); c.width = 13; c.height = 17; sack(c.getContext('2d'), 2, 6, 9, 9);
+    const ink = document.createElement('canvas'); ink.width = 13; ink.height = 17; const ig = ink.getContext('2d');
+    ig.drawImage(c, 0, 0); ig.globalCompositeOperation = 'source-in'; ig.fillStyle = INK; ig.fillRect(0, 0, 13, 17);
+    const s = document.createElement('canvas'); s.width = 13; s.height = 17; const sg = s.getContext('2d');
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) sg.drawImage(ink, dx, dy);
+    sg.drawImage(c, 0, 0); SACK_HELD = s;
+  }
+  b.drawImage(SACK_HELD, Math.round(X) - 2, Math.round(Y) - 4);
+}
+function keyPic(X, Y, turned){   // a key, in the lock (turned: upright, as it turns)
+  X = Math.round(X); Y = Math.round(Y);
+  if (turned){ R(b, X, Y - 4, 3, 3, '#5A4010'); R(b, X + 1, Y - 3, 1, 1, '#3A2A20'); R(b, X + 1, Y - 1, 1, 4, '#E8C040'); R(b, X, Y - 4, 1, 1, '#F6DC7A'); return; }
+  R(b, X - 5, Y - 1, 3, 3, '#5A4010'); R(b, X - 4, Y, 1, 1, '#3A2A20'); R(b, X - 2, Y, 4, 1, '#E8C040'); R(b, X - 5, Y - 1, 1, 1, '#F6DC7A');
+}
+const ACTS = {
+  sweep: (PX, PY, now, a) => drawSweep('player', a.dir, PX, PY, a.t0, now),
+  // filling a bucket: down into the water in front of you, in it a moment, bobbing, and up again, full, dripping
+  dip(PX, PY, now, a){
+    const t = now - a.t0, cx = pl.px - PX, cy = pl.py - PY, [hx, hy] = ACT_HAND[a.dir], wx = a.x*T - cx + 4, wy = a.y*T - cy + 5;
+    const down = t < DIP.down ? ease(t / DIP.down) : t < DIP.up ? 1 : 1 - ease((t - DIP.up) / (DIP.ms - DIP.up));
+    const X = lerp(PX + hx, wx, down), Y = lerp(PY + hy, wy, down), inWater = t >= DIP.down && t < DIP.up;
+    const draw = () => {
+      if (inWater){ b.globalAlpha = .7; oval(b, Math.round(wx + 4), Math.round(wy + 6), 6 + Math.floor((t - DIP.down) / 90) % 3, 2, '#BFE8FA'); b.globalAlpha = 1; }   // (ripples round it)
+      bucketPic(X, Y + (inWater ? Math.round(Math.sin(t / 60)) : 0), t >= DIP.up, inWater ? 3 : 8);
+      if (t >= DIP.up) for (let i = 0; i < 2; i++){ const k = ((t - DIP.up) / 260 + i / 2) % 1; R(b, Math.round(X + 2 + i * 3), Math.round(Y + 8 + k * 6), 1, 1, '#7FC4EE'); }   // drips
+    };
+    if (a.dir === 'up') draw();
+    actMonkey(PX, PY, a.dir);
+    if (a.dir !== 'up') draw();
+  },
+  // lifting a sack: you crouch, heave it up off the pile and over your head, then turn and toss it (drawActFx)
+  lift(PX, PY, now, a){
+    const t = now - a.t0, cx = pl.px - PX, cy = pl.py - PY;
+    actMonkey(PX, PY, pl.dir, t < 160 ? -1 : 0);
+    if (t < LIFT.up){ const k = ease(t / LIFT.up); sackPic(lerp(a.x*T - cx + 3, PX + 3, k), lerp(a.y*T - cy + 3, PY - 10, k)); }
+    else if (t < LIFT.toss) sackPic(PX + 3, PY - 10 + (t < LIFT.up + 90 ? 1 : 0));   // (held up over your head)
+  },
+  // turning a key in a lock: the key goes in and turns, click, the lock comes off, and the door swings open, creaking
+  unlock(PX, PY, now, a){
+    const t = now - a.t0, cx = pl.px - PX, cy = pl.py - PY, X = a.x*T - cx, Y = a.y*T - cy;
+    const door = t < UNLOCK.open ? 0 : Math.min(1, ease((t - UNLOCK.open) / (UNLOCK.opened - UNLOCK.open)));
+    if (typeof cage === 'function') cage(b, X, Y, a.x, a.y, false, door, t < UNLOCK.open);   // (the cage, its door swinging open: js/havoc.js)
+    actMonkey(PX, PY, a.dir);
+    const [hx, hy] = ACT_HAND[a.dir], k = Math.min(1, t / 250);
+    if (t < UNLOCK.open + 120) keyPic(lerp(PX + hx + 4, X + 8, ease(k)), lerp(PY + hy + 1, Y + 8, ease(k)), t >= UNLOCK.turn);
+  },
+  // picking something up: you reach up into a tree, hopping, or crouch for what's on the ground, and it comes into your
+  // hands (drawActFx), and you hold it up over your head
+  pick(PX, PY, now, a){
+    const t = now - a.t0;
+    if (a.reach === 'down' && t < PICK.caught){   // (crouching: a little shorter, your feet where they were)
+      const c = Math.round(Math.sin(Math.PI * Math.min(1, t / PICK.caught)) * 2);
+      R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
+      b.drawImage(monkeySprite('player', a.dir, false, 0, true), PX, PY + c, 16, 16 - c);
+    }
+    else actMonkey(PX, PY, a.dir, a.reach === 'up' && t < 320 ? Math.round(Math.sin(Math.PI * t / 320) * 3) : 0);
+    if (t < PICK.caught) return;
+    const c = itemPic(a.pic || a.w), bob = Math.round(Math.sin((t - PICK.caught) / 120));
+    if (c) b.drawImage(c, PX + 3, PY - 11 - bob, 10, 10);
+    if ((t - PICK.caught) % 300 < 160){ R(b, PX + 14, PY - 12, 1, 3, '#FFE27A'); R(b, PX + 13, PY - 11, 3, 1, '#FFE27A'); }   // (a twinkle)
+  }
+};
+// What flies off somewhere as you do something, over everything: a sack tossed down onto the boat, in a high arc; what
+// you pick, dropping from a tree's leaves (or out of what it's in) into your hands.
+function drawActFx(cx, cy, now){
+  const a = acting; if (!a) return;
+  const t = now - a.t0;
+  if (a.kind === 'lift' && a.to && t >= LIFT.toss) sackPic(...tossedTo(a, t).map((v, i) => v - (i ? cy : cx)));
+  if (a.kind === 'pick' && t >= PICK.fall && t < PICK.caught){   // (dropping from a tree, faster and faster; lifted out of anything else)
+    const k = (t - PICK.fall) / (PICK.caught - PICK.fall), c = itemPic(a.pic || a.w), [fx, fy] = a.from;
+    if (c) b.drawImage(c, Math.round(lerp(fx - 5, pl.px + 3, k) - cx), Math.round(lerp(fy - 5, pl.py - 4, a.reach === 'up' ? k * k : ease(k)) - cy), 10, 10);
+  }
+}
+// Where a sack you've tossed is (on the map, in pixels), t after you began lifting it: from over your head, up and away
+// in an arc, its top LIFT.rise higher than it began however far down it lands (d, the parabola's depth, solved for that),
+// and down onto where it's going (a.to).
+function tossedTo(a, t){
+  const k = Math.min(1, (t - LIFT.toss) / (LIFT.ms - LIFT.toss)), fx = pl.px + 3, fy = pl.py - 10, tx = a.to[0]*T + 3, ty = a.to[1]*T + 2;
+  const D = Math.max(0, ty - fy), d = D + 2 * LIFT.rise + 2 * Math.sqrt(LIFT.rise * (D + LIFT.rise));
+  return [lerp(fx, tx, k), lerp(fy, ty, k) - d * k * (1 - k)];
 }
 // Ground being marked out (the markOut step): a stake hammered in at each corner of the plot, one by one, as plot() in
 // js/art.js has them; the string pulled tight round them, from the top-left, round to the right, along the bottom and back
@@ -795,8 +902,8 @@ function drawWorld(now){
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
-      if (sweeping) drawSweep('player', pl.dir, PX, PY, sweeping.t0, now);   // sweeping with a broom (the sweep step)
-      else if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
+      if (acting && ACTS[acting.kind]) ACTS[acting.kind](PX, PY, now, acting);   // doing something: sweeping, filling a bucket, lifting a sack, turning a key, picking fruit
+      else if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now, swing.with);   // swinging your stick (the hit step), or an axe
       else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
       if (pl.eating) drawEating(pl.eating, PX, PY, now);   // eating a meal (the eat step)
       if (pl.form) drawForm(pl.form, PX, PY, now);   // turned into something (the turnInto step: drawn over you, in your place)
@@ -868,6 +975,7 @@ function drawWorld(now){
   if (trainingCalls()) for (const [x, y] of TRAINING_TILES) if (tileAt(x, y).action === 'training') bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice (while the post stands)
   drawSplashes(cx, cy, now);
   drawChips(cx, cy, now);
+  drawActFx(cx, cy, now);
   drawMarkers(cx, cy, now);
   const wk = (now - waterT) / 600;   // going through falling water: a rush of water covers the screen, then clears
   if (wk >= 0 && wk < 2){

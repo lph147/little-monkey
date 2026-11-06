@@ -41,8 +41,9 @@ function torch(g, X, Y, x, y){
   R(g, X + 5, Y + 2, 6, 4, '#E8662A'); R(g, X + 6, Y, 4, 4, '#F6A23A'); R(g, X + 7, Y + 1, 2, 3, '#FCE07A');
 }
 // A wooden cage on the trodden earth: a little monkey sitting inside, looking out through the bars (locked), or its door
-// hanging open and nobody in it (open).
-function cage(g, X, Y, x, y, open){
+// hanging open and nobody in it (open). As you unlock it (the unlock step: ACTS, js/draw.js), its door swings open from 0
+// to 1 (door), the little monkey still inside, and its lock is off once the key has turned (locked).
+function cage(g, X, Y, x, y, open, door = open ? 1 : 0, locked = !open){
   trampled(g, X, Y, x, y);
   R(g, X + 1, Y + 14, 14, 2, 'rgba(0,0,0,.35)');
   R(g, X + 2, Y + 3, 12, 11, '#3A2A20');   // dark inside
@@ -53,9 +54,10 @@ function cage(g, X, Y, x, y, open){
     R(g, X + 4, Y + 11, 8, 3, F); R(g, X + 5, Y + 12, 6, 1, S);
   }
   R(g, X + 1, Y + 1, 14, 2, '#5A3A1E'); R(g, X + 1, Y + 1, 14, 1, '#8A5A30'); R(g, X + 1, Y + 13, 14, 2, '#5A3A1E');   // its roof and floor
-  for (const bx of open ? [1, 14] : [1, 4, 7, 10, 14]) R(g, X + bx, Y + 2, 1, 12, '#9A6A3A');   // its bars
-  if (open) for (const bx of [-2, 1, 4]) R(g, X + bx, Y + 3, 1, 10, '#9A6A3A');   // (its door, swung open to the left)
-  else { R(g, X + 7, Y + 7, 3, 3, '#3A3A40'); R(g, X + 8, Y + 8, 1, 1, '#8A8A90'); }   // the lock
+  for (const bx of [1, 14]) R(g, X + bx, Y + 2, 1, 12, '#9A6A3A');   // its bars: at its sides,
+  const sw = Math.round(door * 6);
+  for (const bx of [4, 7, 10]) R(g, X + bx - sw, Y + (door ? 3 : 2), 1, door ? 10 : 12, '#9A6A3A');   // and its door's, swinging open to the left
+  if (locked){ R(g, X + 7, Y + 7, 3, 3, '#3A3A40'); R(g, X + 8, Y + 8, 1, 1, '#8A8A90'); }   // the lock
 }
 // The things the little demons took from the feast's tables, in a heap on the earth (each square one of them: what), for
 // I spy with a little monkey: bowls, peaches, apples, honey, milk.

@@ -195,6 +195,7 @@ function moonWater(g, X, Y, x, y){
 }
 Object.assign(LOOKS, {rockDoor, rockDoorOpen, leafPile, sapling, moonWater, rockPeach: mossStone});
 OBJECT_ART.rockPeach = (g, o) => OBJECT_ART.peachTree(g, o);   // (a peach tree, on the mountain's mossy stone, not grass)
+LEAFY.push('rockPeach');   // (its leaves rustle, as a peach tree's do at home: as you pick a peach, or brush past)
 
 /* ---- night ---- */
 // A place at night (its night: the cave, the night you go to the master's back door): dark blue over everything, a

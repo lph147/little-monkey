@@ -44,7 +44,8 @@ function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (con
 // against your fur.
 // The Demon of Havoc's broadsword (刀, Area 2's chapter 2), once it's yours: longer, a steel blade, with a gold guard (u)
 // across it.
-const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}, '刀': {len:9, guard:true, pal:{l:'#DCE0E6', k:'#4A4E58', u:'#D8A838'}}};
+const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}, '刀': {len:9, guard:true, pal:{l:'#DCE0E6', k:'#4A4E58', u:'#D8A838'}},
+  '斧头': {len:8, axe:true, pal:{l:'#9A6A3A', k:'#3E2010', u:'#A9B0B8', e:'#E6EAEE'}}};   // (an axe, to chop the cave's logs with: its handle, and its head, its edge bright)
 const inHand = () => weaponNow() && HELD[weaponNow()] && canBattle() ? weaponNow() : null;
 // What a monkey holds (kind: 'player', or a character's id): your stick once you can fight, or a character's own (holds, in the
 // area's characters), such as the sticks of the little monkeys in training. empty: nothing, whatever it has.

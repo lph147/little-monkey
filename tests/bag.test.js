@@ -10,7 +10,13 @@ const WORDS = knows(['石头', '山', '花', '草', '树', '水果', '桃子', '
 function game(save = {}){
   const g = loadGame({dom: true, save: {version: 25, started: true, w: WORDS, areas: {1: {elder: 2, hungry: 'done', thirsty: 'asked', gate: true, climb: 1}}, ...save}});
   g.run("mode = 'play'; placePlayer(); say = () => {}; toast = m => { globalThis.__said = m; }");
-  return {g, run: code => g.run(code), sheet: g.el('#sheet'), get: expr => JSON.parse(g.run(`JSON.stringify(${expr})`))};
+  return {g, run: code => g.run(code), act: code => play(g, code), sheet: g.el('#sheet'), get: expr => JSON.parse(g.run(`JSON.stringify(${expr})`))};
+}
+// Runs code in the game and waits for it, letting its timers run (such as your monkey picking a fruit)
+async function play(g, code){
+  let done = false; const p = Promise.resolve(g.run(code)).then(() => { done = true; });
+  for (let i = 0; i < 400 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); }
+  await p;
 }
 
 test('the bag is in tabs: it opens on 零食 Snacks (how many, and what it does), with For someone and To fight with beside it', () => {
@@ -100,19 +106,19 @@ test('once the hungry monkey has eaten, a fruit tree gives you one for your bag 
 });
 
 test('a game that never learned 水果 (fruit), such as one past the meadow on 23 October 2026: A at a fruit tree just picks (its word is its fruit, since 24 October 2026; the hungry monkey teaches 水果)', async () => {
-  const {run, get} = game({w: knows(['石头', '山', '花', '草', '树', '桃子', '苹果', '河', '水']), pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}});
+  const {run, act, get} = game({w: knows(['石头', '山', '花', '草', '树', '桃子', '苹果', '河', '水']), pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}});
   run("globalThis.__cards = []; showNotice = async w => { __cards.push(w); setSeen(w); }");
   assert.equal(get('promptFor(1, 6)'), 'Pick');
-  await run('interact(1, 6)');
+  await act('interact(1, 6)');
   assert.deepEqual(get('__cards'), [], 'no card: you know 桃子');
   assert.equal(get("S.bag['桃子']"), 1, 'it fills your bag');
 });
 
 test('before the hungry monkey has eaten, the fruit trees are for him, not your bag', async () => {
-  const {run, get} = game({pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}, areas: {1: {elder: 2, hungry: 'not asked'}}});
+  const {run, act, get} = game({pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}, areas: {1: {elder: 2, hungry: 'not asked'}}});
   run('showNotice = async () => {}');
   assert.notEqual(get('promptFor(1, 6)'), 'Pick');
-  await run('interact(1, 6)');
+  await act('interact(1, 6)');
   assert.equal(get("S.bag['桃子'] || 0"), 0);
 });
 

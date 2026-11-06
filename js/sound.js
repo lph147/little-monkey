@@ -74,6 +74,7 @@ const SFX = {
   thwack: (when = 0) => { tone(150, .09, 'square', .05, when, -60); tone(90, .14, 'triangle', .06, when); },   // a hit
   drum: (when = 0) => { tone(72, .38, 'triangle', .13, when, -22); tone(140, .07, 'square', .035, when, -60); },   // the big war drum, starting a race
   tock: (when = 0) => { tone(620, .045, 'square', .025, when, -220); tone(240, .09, 'triangle', .05, when, -40); },   // a stake hammered into the ground
+  creak: () => { tone(190, .32, 'sawtooth', .012, 0, 70); tone(260, .22, 'sawtooth', .009, .2, -50); },   // a wooden door creaking open, such as a cage's
   clack: (when = 0) => { tone(1500, .03, 'square', .012, when, -600); tone(520, .06, 'triangle', .03, when, -120); },   // a stone put down on another
   clatter: () => [0, .07, .15, .19, .3, .42].forEach(w => SFX.clack(w + Math.random() * .03)),   // stones tumbling down
   sprout: (when = 0) => { tone(440, .08, 'triangle', .045, when, 380); tone(1175, .1, 'triangle', .02, when + .07); },   // something planted, coming up out of the ground

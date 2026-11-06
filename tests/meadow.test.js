@@ -45,16 +45,21 @@ test('the task waits for the old monkey to ask, and stays for the rest of the pr
 });
 
 test('at the river and the pond, A looks first while you don’t know their word; then it collects the water: one new word each time', async () => {
-  const g = loadGame({save: {version: 24, started: true, areas: {1: {elder: 2, thirsty: 'asked'}}}});
-  g.run('globalThis.__shown = []; showNotice = async w => { __shown.push(w); setSeen(w); }; toast = () => {}');
+  const g = loadGame({dom: true, save: {version: 24, started: true, areas: {1: {elder: 2, thirsty: 'asked'}}}});
+  g.run("mode = 'play'; placePlayer(); globalThis.__shown = []; showNotice = async w => { __shown.push(w); setSeen(w); }; toast = () => {}");
+  const act = async code => {   // (letting its timers run: your monkey scooping up the water)
+    let done = false; const p = Promise.resolve(g.run(code)).then(() => { done = true; });
+    for (let i = 0; i < 400 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); }
+    await p;
+  };
   for (const [x, y, word] of [[18, 10, '河'], [11, 9, '鱼']]){
     assert.equal(g.run(`promptFor(${x}, ${y})`), 'Look', `A says Look at the ${word}`);
-    await g.run(`interact(${x}, ${y})`);
+    await act(`interact(${x}, ${y})`);
     assert.equal(g.run(`lvl('${word}')`), 1, `and teaches ${word}`);
     assert.equal(g.run('here().holding.thirsty'), undefined, 'without collecting the water yet');
     assert.equal(g.run(`promptFor(${x}, ${y})`), 'Collect', 'then A collects');
   }
-  await g.run('interact(18, 10)');
+  await act('interact(18, 10)');
   assert.equal(g.run('here().holding.thirsty'), '水');
   assert.deepEqual(JSON.parse(g.run('JSON.stringify(__shown)')), ['河', '鱼', '水']);
   assert.equal(g.run("promptFor(15, 9)"), '', 'flowers and fruit trees are what you pick from them: no looking first (by the river, a flower you know)');

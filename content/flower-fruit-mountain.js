@@ -1589,7 +1589,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'q': {look:'bush', landmark:true, becomes:[{if:{garden:{atLeast:1}}, to:'.'}], onLook:[{do:[{message:'Thick bushes. The troop will clear a way through here when it’s needed.'}]}]},
         // fresh, juicy grass by the brook: leading the cow home, it's hungry, and you pick it three handfuls here
         'c': {look:'tallGrass', walk:true, word:'草', note:'Fresh, juicy grass by the brook.', onLook:[{if:{cowFood:'asked', holding:{cowFood:false}}, label:'Pick', sparkle:true,
-          do:[{collect:'草', for:'cowFood', count:3, each:'You pick a handful of fresh {草}.', full:'You have three handfuls of fresh {草}. Take them to the {牛}!'}]}]},
+          do:[{pickUp:'草'}, {collect:'草', for:'cowFood', count:3, each:'You pick a handful of fresh {草}.', full:'You have three handfuls of fresh {草}. Take them to the {牛}!'}]}]},
         // its railing, at the top of the cliff: A shows you the view, and the first time, the lost cow, far below
         'R': {look:'railing', landmark:true, onLook:[
           {if:{cow:{atLeast:1, below:3}, cowSeen:0}, label:'Look', sparkle:true, do:[{scene:'cowView'}, {set:{cowSeen:1}}, {sound:'mooFar'},
@@ -2145,7 +2145,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the troop's bowls in the cave, stacked up; in chapter 1, the hungry monkey wants six for the feast's tables (bowls): A
     // takes them one at a time, counting
     'V': {look:'bowlStack', word:'碗', landmark:true, note:'Stacks of bowls, ready for the troop.',
-      onLook:[{if:{bowls:'asked', holding:{bowls:false}}, label:'Take', sparkle:true, do:[{collect:'碗', for:'bowls', count:6,
+      onLook:[{if:{bowls:'asked', holding:{bowls:false}}, label:'Take', sparkle:true, do:[{pickUp:'碗'}, {collect:'碗', for:'bowls', count:6,
         each:'You take a {碗} from the stack.', full:'You have six {碗|bowls}. Take them to the hungry monkey, at the feast’s tables!'}]}]},
     // chapter 1: the way from the waterfall to the home ground, and the home ground's plots, their signs, and the ways out
     // chapter 1: the bushes at the bottom of the meadow, beside the river, till the troop clears the way down to the shore (for
@@ -2192,14 +2192,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'i': {look:'needles', walk:true},
     'p': {look:'pine', word:'树'},
     'q': {look:'deadPine', landmark:true, onLook:[
-      {if:{wood:'asked', holding:{wood:false}}, label:'Hit', sparkle:true, do:[{hit:'wood'}, {change:'j'}, {collect:'木头', for:'wood', count:3,
+      {if:{wood:'asked', holding:{wood:false}}, label:'Hit', sparkle:true, do:[{hit:'wood'}, {change:'j'}, {pickUp:'木头'}, {collect:'木头', for:'wood', count:3,
         note:'Dry wood from a dead pine, for building.', each:'Down comes the dry pine! You take a piece of {木头}.', full:[{if:{stones:'done'}, text:'You have three pieces of {木头}. Take them to the big monkey.'},
           {if:{holding:{stones:true}}, text:'You have three pieces of {木头}, and the small {石头|stones} too. Take them all to the big monkey.'},
           {text:'You have three pieces of {木头}. Now find three small {石头|stones}.'}]}]},   // (decided 26 October 2026: it said to take them back, so you made two trips)
       {do:[{message:'An old pine, long dead and dry.'}]}]},
     'j': {look:'stump'},   // what's left of a dead pine you've knocked down
     'm': {look:'pebble', word:'石头', onLook:[
-      {if:{stones:'asked', holding:{stones:false}}, label:'Pick up', sparkle:true, do:[{change:'i'}, {collect:'石头', for:'stones', count:3,
+      {if:{stones:'asked', holding:{stones:false}}, label:'Pick up', sparkle:true, do:[{change:'i'}, {pickUp:'石头'}, {collect:'石头', for:'stones', count:3,
         each:'You pick up a small {石头}.', full:[{if:{wood:'done'}, text:'You have three small {石头|stones}. Take them to the big monkey.'},
           {if:{holding:{wood:true}}, text:'You have three small {石头|stones}, and the {木头} too. Take them all to the big monkey.'},
           {text:'You have three small {石头|stones}. Now find three pieces of {木头}.'}]}]}]},

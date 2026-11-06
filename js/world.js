@@ -324,7 +324,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {carry:['howMany'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {carry:['howMany','inHand'], hit:['with','times'], lift:['toss'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -345,9 +345,20 @@ const paintsPart = w => (AREA.lessons || []).map(series => (series.paint || {})[
 // began, and the square it strikes), drawn by js/draw.js.
 const SWING_MS = 420, SWING_CONTACT = .45;
 let swing = null;
-// Sweeping with a broom (the sweep step): so many strokes from side to side, each so long (ms); and the square being swept.
+// What your monkey is doing right now, drawn as it does it (its picture: ACTS, js/draw.js): sweeping, filling a bucket,
+// lifting a sack, turning a key, picking fruit. Doing something always shows: nothing just vanishes, or turns up in your
+// bag (decided 6 November 2026, after playing it: the heaps of leaves just vanished). Its kind, when it began (t0), the
+// square it's done to (x, y), and whatever else its picture needs.
+let acting = null;
+function startAct(kind, o = {}){ const [x, y] = facing(); return acting = {kind, t0:performance.now(), x, y, dir:pl.dir, ...o}; }
+// How long each takes (ms), and when its moments come: the strokes of a broom; a bucket going down into the water,
+// and coming up again; a sack going up over your head, and off; a key turning, and the door opening; a fruit falling
+// into your hands.
 const SWEEP = {strokes:3, stroke:340};
-let sweeping = null;
+const DIP = {ms:950, down:320, up:640};
+const LIFT = {ms:1300, up:380, toss:620, rise:24};
+const UNLOCK = {ms:1050, turn:430, open:520, opened:880};
+const PICK = {ms:1150, fall:140, caught:560};
 // A little monkey in training (practises, in the area's characters) swings its stick now and then, facing its own way,
 // while you're not beside it; beside it, it turns to you, as anyone does to talk. Each begins a swing every PRACTICE_MS,
 // at its own time (practiceT), with a soft swish when you're near (practiceSounds).
@@ -624,25 +635,58 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async feastList(){ await feastCard(); },   // the feast's list, such as at its big table: what the troop has, and what it still needs (js/cards.js)
   // You swing your stick at the square you're facing, like Cut and Rock Smash in Pokémon: a whack, and chips fly off it
   // (hit: what it's made of, 'wood' or 'stone').
+  // With something else in your hands (with: its word, such as 斧头, an axe, chopping the cave's logs), so many times (times).
   async hit(s){
     const [x, y] = facing();
-    swing = {t0:performance.now(), x, y}; SFX.swish();
-    await sleep(SWING_MS * SWING_CONTACT); SFX.thwack(); burst(x, y, s.hit); shakeT = performance.now() - 400;   // (a little shake)
-    await sleep(SWING_MS * (1 - SWING_CONTACT));
+    for (let i = 0; i < (s.times || 1); i++){
+      swing = {t0:performance.now(), x, y, with:s.with}; SFX.swish();
+      await sleep(SWING_MS * SWING_CONTACT); SFX.thwack(); burst(x, y, s.hit); shakeT = performance.now() - 400;   // (a little shake)
+      await sleep(SWING_MS * (1 - SWING_CONTACT));
+    }
   },
   // You sweep the square you're facing with a broom, such as a heap of fallen leaves in the immortal's cave (sweep: what
   // flies off it, 'leaves'): three strokes from side to side, each with a brush of the broom and leaves flying off it,
   // away from you, the most on the last (decided 6 November 2026, after playing it: the heaps just vanished). Then, as a
   // rule, it changes (the change step): the heap's gone.
   async sweep(s){
-    const [x, y] = facing();
-    sweeping = {t0:performance.now(), x, y};
+    const a = startAct('sweep', {what:s.sweep});
     for (let i = 0; i < SWEEP.strokes; i++){
-      await sleep(SWEEP.stroke / 2); SFX.sweep(); scatter(x, y, s.sweep, pl.dir, i === SWEEP.strokes - 1 ? 10 : 4);
+      await sleep(SWEEP.stroke / 2); SFX.sweep(); scatter(a.x, a.y, s.sweep, pl.dir, i === SWEEP.strokes - 1 ? 10 : 4);
       await sleep(SWEEP.stroke / 2);
     }
-    sweeping = null;
+    acting = null;
   },
+  // You dip a bucket into the water you're facing and lift it out again, full, with a splash (dip: what fills it, such as
+  // 水), as you fill one at the cave's pool for the senior pupil.
+  async dip(s){
+    const a = startAct('dip', {what:s.dip});
+    await sleep(DIP.down); splashes.push({x:a.x*T + 8, y:a.y*T + 9, t0:performance.now(), small:true}); SFX.splash(.12);
+    await sleep(DIP.ms - DIP.down);
+    acting = null;
+  },
+  // You heave up what you're facing (lift: what it is, 'sack') over your head, turn, and toss it to where it goes (toss:
+  // the square it lands on, [x, y]), such as a sack of rice down onto the docker's boat; then you turn back.
+  async lift(s){
+    const was = pl.dir, a = startAct('lift', {what:s.lift, to:s.toss});
+    await sleep(LIFT.up); SFX.bump();
+    await sleep(LIFT.toss - LIFT.up);
+    if (s.toss){ const dx = s.toss[0] - pl.x, dy = s.toss[1] - pl.y; pl.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'); }
+    SFX.swish();
+    await sleep(LIFT.ms - LIFT.toss); SFX.bump();
+    acting = null; pl.dir = was;
+  },
+  // You unlock what you're facing with a key (unlock: the key's word, 钥匙), such as a cage in the demon's lair: the key
+  // goes into the lock and turns, click, and the door creaks open.
+  async unlock(s){
+    startAct('unlock', {what:s.unlock});
+    await sleep(UNLOCK.turn); SFX.clack();
+    await sleep(UNLOCK.open - UNLOCK.turn); SFX.creak();
+    await sleep(UNLOCK.ms - UNLOCK.open);
+    acting = null;
+  },
+  // You pick up what you're facing (pickUp: its word, such as 石头) and hold it up, such as a small stone by the stream
+  // (pickUpAct), before you collect it: as carry does by itself.
+  pickUp(s){ return pickUpAct(s.pickUp); },
   // The square you're facing (or at: [x, y], or [x, y, 'place']) becomes another letter of the legend, for good, such as
   // a dry tree you've knocked down (a stump), or a stone you've picked up (the ground it lay on).
   change(s){
@@ -810,7 +854,8 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async carry(s){
     const c = here().carrying, w = s.carry, n = s.howMany ? await howManyCard(w) : c && c.word === w ? c.n + 1 : 1;
     if (!n) return;   // (Not now)
-    here().carrying = {word:w, n}; save(); SFX.right();
+    here().carrying = {word:w, n}; save();
+    if (s.inHand) SFX.right(); else await pickUpAct(w);   // (you pick it up, unless it's in your hands already, such as a bucket you've just filled)
     const num = COUNTING[n - 1], counted = (n > 1 || s.howMany) && !!num && lvl(num) >= 1;
     if (counted) say(num);
     toast(`${counted ? wz(num) + '! ' : ''}You’re carrying ${n > 1 ? n + ' ' : ''}${wz(w)}.${s.howMany ? ' Take it to whoever asked for it.' : ''}`);
@@ -1050,15 +1095,17 @@ const stepKind = s => Object.keys(s).find(k => STEPS[k]);
 async function runSteps(steps, who, ends){
   for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i), !!ends) === STOP) return STOP;
 }
-// Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map.
-const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly'];
+// Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map, you doing
+// something (the last of them, ACT_STEPS, changing nothing in the story, as a sound doesn't).
+const ACT_STEPS = ['sweep', 'dip', 'lift', 'unlock', 'pickUp'];
+const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly', ...ACT_STEPS];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){
   let changed = false;
   for (const s of steps.slice(i + 1)){
     const k = stepKind(s);
-    if (QUIET_STEPS.includes(k)){ changed = changed || k !== 'sound'; continue; }
+    if (QUIET_STEPS.includes(k)){ changed = changed || !(k === 'sound' || ACT_STEPS.includes(k)); continue; }
     if (s.if && !changed && !matches(s.if)) continue;
     if (k === 'newWord' && lvl(s.newWord) >= 1) continue;   // (a word you know isn't taught again)
     return true;
@@ -1298,22 +1345,21 @@ const COLOURED = () => [...new Map([...[AREA.legend, ...Object.values(AREA.place
 const colourPic = t => PICTURES[coloured(t).zh] ? coloured(t).zh : t.word;
 const stepCard = t => ({...(t.stepNote ? {note:t.stepNote} : {}), ...(t.colour ? {pic:colourPic(t)} : {})});   // (stepping on it first, such as onto a red flower)
 async function gather(t, x, y){   // pick up something for a request, such as fruit or water
-  const g = t.gather;
+  const g = t.gather, p = g.count ? here().picked[g.for] = here().picked[g.for] || [] : null, key = g.kind || `${x},${y}`;
+  if (p && p.includes(key)){ SFX.bump(); toast(fill(g.again)); return; }   // (one of this kind already)
+  await pickUpAct(g.item, {at:[x, y], pic:g.picked && g.picked.zh});
   // the request comes first: collecting water is where 水 is introduced
   if (lvl(g.item) === 0) await showNotice(g.item, {note:g.note, ...(t.colour && g.item === t.word ? {pic:colourPic(t)} : {})});
-  if (g.count){   // one at each patch (or one of each kind, such as a colour), until you have enough
-    const p = here().picked[g.for] = here().picked[g.for] || [];
-    const key = g.kind || `${x},${y}`;
-    if (p.includes(key)){ SFX.bump(); toast(fill(g.again)); return; }
+  if (p){   // one at each patch (or one of each kind, such as a colour), until you have enough
     if (g.kind && WORDS[g.kind] && lvl(g.kind) === 0) await showNotice(g.kind, g.kindNote ? {note:fill(g.kindNote)} : {});   // the first of its kind teaches its word, such as 红
-    p.push(key); SFX.right();
+    p.push(key);
     if (p.length >= g.count) here().holding[g.for] = g.item;
     save();
     const text = fill(p.length >= g.count ? g.full : g.message);
     if (g.picked) await showPicked(g.picked, text); else toast(text);   // what you've picked, such as 红色的花 (a red flower), with the message on its card
     return;
   }
-  here().holding[g.for] = g.item; save(); SFX.right(); toast(fill(g.message));
+  here().holding[g.for] = g.item; save(); toast(fill(g.message));
 }
 // A fruit tree, once the content says (the legend's pick), gives you a fruit for your bag: one each time you come to
 // the place (it has no more ripe ones until then), up to as many as you can carry. So does anything else whose pick says,
@@ -1321,11 +1367,30 @@ async function gather(t, x, y){   // pick up something for a request, such as fr
 // one for the whole of it, however many squares it covers.
 const canPick = t => !!t.pick && matches(t.pick.if || {});
 const pickedHere = new Set();   // the trees you've picked from since you came into the place you're in
-function pick(t, x, y){
+// You reach for what you're picking up (w: its word; pic: the name of its picture, if not w's, such as 红色 的 花; at: its
+// square, [x, y], if not the one you're facing) and it comes into your hands, and you hold it up (decided 6 November 2026,
+// after playing it: things just turned up in your bag): from a tree's leaves, dropping as the tree shakes, you hopping up
+// for it; out of what it's in, such as the hive's honey or a stack of bowls; or up off the ground, or out of the water
+// with a splash, you crouching for it, such as a flower or a stone (the pick act: its picture in ACTS and drawActFx,
+// js/draw.js). Picking fruit, gathering for a request, carrying and the pickUp step all do it.
+async function pickUpAct(w, {pic, at} = {}){
+  const [x, y] = at || facing(), o = mapObjects().find(o => x >= o.x && x < o.x + o.w && y >= o.y && y < o.y + o.h);
+  const tree = !!o && LEAFY.includes(o.look), piece = o && OBJECT_PIECES.find(p => p.key === objectKey(o));
+  if (piece) piece.rustle = performance.now();   // (a tree shakes, as you reach into it)
+  startAct('pick', {x, y, w, pic, reach:tree ? 'up' : o ? 'in' : 'down',
+    from:o ? [o.x*T + o.w*T/2 + (tree ? Math.round((Math.random() - .5) * 8) : 0), tree ? o.y*T - 12 : o.y*T + o.h*T/2 - 6] : [x*T + 8, y*T + 8]});
+  if (!o && WATERY.includes(tileAt(x, y).look)){ splashes.push({x:x*T + 8, y:y*T + 9, t0:performance.now(), small:true}); SFX.splash(.12); }
+  else (tree ? SFX.scuffle : SFX.swish)();
+  await sleep(PICK.caught); SFX.right();
+  await sleep(PICK.ms - PICK.caught);
+  acting = null;
+}
+async function pick(t, x, y){
   const w = t.pick.item, o = mapObjects().find(o => x >= o.x && x < o.x + o.w && y >= o.y && y < o.y + o.h), key = o ? o.x + ',' + o.y : x + ',' + y;
   if (pickedHere.has(key)){ SFX.bump(); toast(fill(t.pick.none || 'No more ripe ones. Come back another time.')); return; }
   if (!intoBag(w)){ SFX.bump(); toast(`Your bag has ${FOOD[w].carry} ${wz(w)} already.`); return; }
-  pickedHere.add(key); SFX.right();
+  pickedHere.add(key);
+  await pickUpAct(w, {at:[x, y]});
   toast(`${t.pick.took ? fill(t.pick.took) : `You pick a ${wz(w)}`} for your bag (${S.bag[w]} of ${FOOD[w].carry}). ${FOOD[w].does}.`);
 }
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
