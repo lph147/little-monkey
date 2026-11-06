@@ -46,20 +46,22 @@ test('sweeping a heap of leaves: three strokes of a broom, leaves flying off it,
   assert.ok(leaf.length >= 18 && leaf.every(([vy, c]) => vy > -40 && ['#C2552E', '#D8923A', '#E6B04A', '#9A6A2A'].includes(c)), 'leaves in the heap’s colours, tossed down, away from you');
 });
 
-test('the broom: in your hands, its head on the ground in front of you, swept from side to side', () => {
+test('the broom: in your paws, its twigs on the ground in front of you, swept from side to side (a pose: no broom out of your stomach)', () => {
   const g = game({place: 'cave', x: 12, y: 9, dir: 'down'});
-  const PX = 64, PY = 64, twigs = get(g, '[BROOM.twig, BROOM.tip]');
-  for (const [dir, dx, dy] of [['down', 0, 1], ['up', 0, -1], ['left', -1, 0], ['right', 1, 0]]){
-    const sides = [];
-    for (const t of [0, 170, 340]){   // (the ends of a stroke, and its middle)
-      const fills = get(g, `(() => { const out = []; b.fillRect = function(x, y, w, h){ out.push([this.fillStyle, x, y]); }; drawSweep('player', '${dir}', ${PX}, ${PY}, 0, ${t}); return out; })()`);
-      const head = fills.filter(([c]) => twigs.includes(c));
-      assert.ok(head.length >= 10, `${dir}: the broom’s head, a fan of twigs`);
-      const x = head.reduce((a, [, x]) => a + x, 0) / head.length, y = head.reduce((a, [, , y]) => a + y, 0) / head.length;
-      assert.ok(x >= PX + dx*16 - 1 && x <= PX + dx*16 + 16 && y >= PY + dy*16 - 1 && y <= PY + dy*16 + 16, `${dir}: on the square in front of you (${x.toFixed(1)}, ${y.toFixed(1)})`);
-      sides.push(dy ? x : y);
+  const inFront = {down: ([x, y]) => y >= 32, up: ([x, y]) => y < 16, right: ([x, y]) => x >= 32, left: ([x, y]) => x < 16};
+  for (const dir of ['down', 'up', 'right', 'left']){
+    const mids = [];
+    for (const m of [-1, 0, 1]){
+      const rows = get(g, `POSES.grid('sweep', '${dir}', ${m}).rows`), at = (x, y) => (rows[y] || '')[x] || '.';
+      const twigs = rows.flatMap((r, y) => [...r].map((c, x) => 'vVN'.includes(c) ? [x, y] : null)).filter(Boolean);
+      assert.ok(twigs.length >= 10, `${dir}: the broom’s twigs`);
+      const mid = twigs.reduce(([a, b], [x, y]) => [a + x / twigs.length, b + y / twigs.length], [0, 0]);
+      assert.ok(inFront[dir](mid), `${dir}: on the ground in front of you (${mid.map(v => v.toFixed(1))})`);
+      const paws = rows.flatMap((r, y) => [...r].map((c, x) => c === 'h' ? [x, y] : null)).filter(Boolean);
+      assert.ok(paws.some(([x, y]) => [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]].some(([dx, dy]) => 'jJ'.includes(at(x + dx, y + dy)))), `${dir}: a paw on its handle`);
+      mids.push(mid[0]);
     }
-    assert.ok(Math.abs(sides[0] - sides[2]) >= 4, `${dir}: swept from one side to the other`);
+    assert.ok(Math.abs(mids[0] - mids[2]) >= 3, `${dir}: swept from one side to the other (${mids.map(v => v.toFixed(1))})`);
   }
 });
 

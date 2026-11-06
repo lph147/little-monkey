@@ -232,7 +232,7 @@ function drawCaveYears(t, now){
   for (const [dx, dy, r] of [[0, -h, 6 + grow * 8], [-7 * grow, -h + 6, 4 + grow * 6], [7 * grow, -h + 6, 4 + grow * 6]]) disc(b, Math.round(tx + dx), Math.round(ty + dy), Math.round(r), crown);
   if (season === 2 || season === 3) for (let i = 0; i < 14; i++){ const fx = (rnd(i, 3) * W + now / 50 * (1 + i % 3)) % W, fy = (rnd(i, 4) * H + now / 18) % H; R(b, Math.round(fx), Math.round(fy), 2, season === 3 ? 2 : 1, season === 3 ? '#FFFFFF' : '#C25A2A'); }
   const mx = 150 + Math.round(Math.sin(now / 300) * 6);   // you, sweeping
-  drawSweep('player', 'left', mx, 118, 0, now);   // (with your broom, as you sweep the leaves: drawSweep, js/draw.js)
+  drawSweep('left', mx, 118, 0, now);   // (with your broom, as you sweep the leaves: drawSweep, js/draw.js)
 }
 // Flying on a cloud (the somersault and flyHome scenes: def.home, flying home over the sea, Flower Fruit Mountain coming
 // up ahead): the sky, clouds racing by, and you on yours, somersaulting now and then.

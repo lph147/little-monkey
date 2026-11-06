@@ -355,7 +355,7 @@ function startAct(kind, o = {}){ const [x, y] = facing(); return acting = {kind,
 // and coming up again; a sack going up over your head, and off; a key turning, and the door opening; a fruit falling
 // into your hands.
 const SWEEP = {strokes:3, stroke:340};
-const DIP = {ms:950, down:320, up:640};
+const DIP = {ms:1300, down:300, up:650, back:1000};
 const LIFT = {ms:1300, up:380, toss:620, rise:24};
 const UNLOCK = {ms:1050, turn:430, open:520, opened:880};
 const PICK = {ms:1150, fall:140, caught:560};
@@ -656,11 +656,11 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     }
     acting = null;
   },
-  // You dip a bucket into the water you're facing and lift it out again, full, with a splash (dip: what fills it, such as
-  // 水), as you fill one at the cave's pool for the senior pupil.
+  // You step up to the water you're facing, dip a bucket in, with a splash, lift it out full and step back with it at your
+  // side (dip: what fills it, such as 水), as you fill one at the cave's pool for the senior pupil (the dip pose, js/poses.js).
   async dip(s){
     const a = startAct('dip', {what:s.dip});
-    await sleep(DIP.down); splashes.push({x:a.x*T + 8, y:a.y*T + 9, t0:performance.now(), small:true}); SFX.splash(.12);
+    await sleep(DIP.down); const bk = poseSprite('dip', a.dir, 'in').bucket; splashes.push({x:pl.px + bk[0], y:pl.py + bk[1] + 1, t0:performance.now(), small:true}); SFX.splash(.12);   // (where the bucket goes in)
     await sleep(DIP.ms - DIP.down);
     acting = null;
   },

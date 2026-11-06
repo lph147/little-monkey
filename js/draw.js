@@ -619,48 +619,37 @@ function drawSplashes(cx, cy, now){
 // monkey, so it's drawn first.
 const SWING_ARC = {right:[-115, 5], left:[295, 175], down:[-70, 95], up:[150, 268]};
 const SWING_HAND = {right:[12, 9], left:[3, 9], down:[13, 10], up:[2, 9]};
-function drawSwing(kind, dir, PX, PY, t0, now, item){
+function drawSwing(kind, dir, PX, PY, t0, now){
   const t = Math.max(0, (now - t0) / SWING_MS), k = Math.min(1, t / SWING_CONTACT), eased = 1 - (1 - k) * (1 - k);
-  const held = HELD[item || heldBy(kind) || '棍子'], [a0, a1] = SWING_ARC[dir], [hx, hy] = SWING_HAND[dir], len = held.len + 2, pal = held.pal;   // (a little longer as it swings; item: something else in your hands, such as an axe)
+  const held = HELD[heldBy(kind) || '棍子'], [a0, a1] = SWING_ARC[dir], [hx, hy] = SWING_HAND[dir], len = held.len + 2, pal = held.pal;   // (a little longer as it swings)
   const angle = a0 + (a1 - a0) * eased - (t > SWING_CONTACT ? (a1 - a0) * .08 * Math.sin((t - SWING_CONTACT) / (1 - SWING_CONTACT) * Math.PI) : 0);   // (a little bounce back)
   const along = (deg, r) => [PX + hx + Math.cos(deg * Math.PI / 180) * r, PY + hy + Math.sin(deg * Math.PI / 180) * r];
   const stick = () => {
     if (k < 1){ b.globalAlpha = .45; for (let i = 0; i <= 8; i++){ const [x, y] = along(a0 + (angle - a0) * i / 8, len - 1); R(b, Math.round(x), Math.round(y), 1, 1, '#FFFFFF'); } b.globalAlpha = 1; }   // the swoosh
     for (let r = -1; r <= len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x) - 1, Math.round(y) - 1, 2, 2, pal.k); }   // its dark edge
     for (let r = 0; r < len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x), Math.round(y), 1, 1, pal.l); }           // the wood
-    if (held.axe){   // an axe's head, at its end, its edge forward
-      const side = (r, s) => { const [x, y] = along(angle, r), a = (angle - 90) * Math.PI / 180; return [Math.round(x + Math.cos(a) * s), Math.round(y + Math.sin(a) * s)]; };
-      for (let r = len - 4; r <= len; r++) for (let s = -1; s <= 4; s++){ const [x, y] = side(r, s); R(b, x, y, 1, 1, pal.k); }
-      for (let r = len - 3; r < len; r++) for (let s = 0; s <= 3; s++){ const [x, y] = side(r, s); R(b, x, y, 1, 1, s === 3 ? pal.e : pal.u); }
-    }
   };
   if (dir === 'up') stick();
   R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
   b.drawImage(monkeySprite(kind, dir, false, 0, true), PX, PY);
   if (dir !== 'up') stick();
 }
-// Sweeping with a broom (the sweep step, js/world.js; and in the scene of the years in the cave): a bamboo broom in your
-// hands, its head of twigs on the ground in front of you, swept from side to side, a stroke at a time.
-const BROOM = {stick:'#C9A85E', edge:'#4A3618', twig:'#B08A40', tip:'#DCC07A', band:'#6B4A2A'};
-const SWEEP_AIM = {right:5, left:175, down:90, up:270}, SWEEP_ARC = {right:20, left:20, down:30, up:30};   // which way the broom points (degrees: 0 right, 90 down), at the ground in front of you, and how far it swings either side (less from the side: it stays on what you sweep)
-const SWEEP_HAND = {right:[12, 9], left:[3, 9], down:[8, 10], up:[7, 9]};   // where you hold it: in front of you, so it sweeps across the middle of the square
-function drawSweep(kind, dir, PX, PY, t0, now){
-  const t = (now - t0) / SWEEP.stroke, [hx, hy] = SWEEP_HAND[dir], len = 9;
-  const a = (SWEEP_AIM[dir] + SWEEP_ARC[dir] * Math.cos(Math.PI * t)) * Math.PI / 180, across = a + Math.PI / 2;
-  const at = (r, s = 0) => [Math.round(PX + hx + Math.cos(a) * r + Math.cos(across) * s), Math.round(PY + hy + Math.sin(a) * r + Math.sin(across) * s)];
-  const broom = () => {
-    for (let r = 0; r <= len; r++){ const [x, y] = at(r); R(b, x - 1, y - 1, 2, 2, BROOM.edge); }   // its handle's dark edge
-    for (let r = 0; r <= len; r++){ const [x, y] = at(r); R(b, x, y, 1, 1, BROOM.stick); }          // the bamboo
-    for (let r = 0; r < 5; r++) for (let s = -3; s <= 3; s++){                                     // its head: a fan of twigs, wider at their tips
-      const [x, y] = at(len + 1 + r, s * (.6 + r * .25));
-      R(b, x, y, 1, 1, r === 0 ? BROOM.band : (s + r) % 2 ? BROOM.twig : BROOM.tip);
-    }
-  };
-  if (dir === 'up') broom();
-  R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
-  b.drawImage(monkeySprite(kind, dir, false, 0, true), PX, PY);
-  if (dir !== 'up') broom();
+// You, doing something in a pose (js/poses.js: name, which way you face, its moment m), your shadow where you've stepped
+// to; it gives back the pose (where your paw is, and the bucket, in your square's pixels).
+function drawPose(name, dir, m, PX, PY){
+  const p = poseSprite(name, dir, m), [sx, sy] = p.step;
+  R(b, PX+4+sx, PY+15+sy, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3+sx, PY+14+sy, 10, 1, 'rgba(0,0,0,.12)');
+  b.drawImage(p.canvas, PX - POSES.O, PY - POSES.O);
+  return p;
 }
+// Sweeping with a broom (the sweep step, js/world.js; and in the scene of the years in the cave): you holding it in both
+// paws, leaning into it, its twigs on the ground in front of you, pushed out and drawn back (from the side), or from side
+// to side (from the front or behind), a stroke at a time (decided 6 November 2026, after playing it: the broom seemed to
+// come out of your stomach, with no arms).
+const sweepMoment = (t0, now) => { const t = Math.max(0, now - t0) / SWEEP.stroke, i = Math.floor(t), f = t - i, m = f < 1/3 ? -1 : f < 2/3 ? 0 : 1; return i % 2 ? -m : m; };
+const drawSweep = (dir, PX, PY, t0, now) => drawPose('sweep', dir, sweepMoment(t0, now), PX, PY);
+// Chopping with an axe (the hit step with 斧头, at the cave's chopping blocks): raised over your head, then down onto the block.
+const drawChop = (dir, PX, PY, t0, now) => drawPose('chop', dir, (now - t0) / SWING_MS < SWING_CONTACT ? 'up' : 'down', PX, PY);
 // Doing something (acting, js/world.js), drawn in your place as you do it: each is given where you are on the screen
 // (PX, PY), the time, and what you're doing (a: its kind, when it began, t0, the square it's done to, x and y, and the
 // rest); it draws you, empty-handed but for what you're using. What flies off somewhere else, over everything, such as a
@@ -669,15 +658,6 @@ const ACT_HAND = {down:[5, 9], up:[5, -2], left:[-3, 6], right:[11, 6]};   // wh
 const actMonkey = (PX, PY, dir, lift = 0) => { R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)'); b.drawImage(monkeySprite('player', dir, false, 0, true), PX, PY - lift); };
 const lerp = (a, z, k) => a + (z - a) * k, ease = k => 1 - (1 - k) * (1 - k);
 const itemPic = w => { const pic = PICTURES[w]; return pic && (FORMS['eat ' + w] || (FORMS['eat ' + w] = sprite(pic.rows, pic.palette))); };
-function bucketPic(X, Y, full, depth = 8){   // a wooden bucket (桶): its staves and two iron bands, and a rope handle; full of water, or only so much of it showing (depth: the rest under the water)
-  X = Math.round(X); Y = Math.round(Y);
-  R(b, X + 2, Y, 4, 1, '#C9A85E'); R(b, X + 1, Y + 1, 1, 1, '#C9A85E'); R(b, X + 6, Y + 1, 1, 1, '#C9A85E');   // its handle
-  const rows = Math.max(0, Math.min(6, depth));
-  if (!rows) return;
-  R(b, X, Y + 2, 8, rows, '#4A2C17'); if (rows > 1) R(b, X + 1, Y + 2, 6, rows - 1, '#8A5A32');
-  for (const r of [1, 4]) if (r < rows - 1) R(b, X + 1, Y + 2 + r, 6, 1, '#3E3E44');   // its iron bands
-  if (full) R(b, X + 1, Y + 2, 6, 1, '#7FC4EE');
-}
 let SACK_HELD = null;   // (drawn once, the first time you lift one)
 function sackPic(X, Y){   // a sack of rice, tied at its neck, its two corners sticking up: as on the pile (sack, js/human.js), with its dark outline
   if (!SACK_HELD){
@@ -696,20 +676,14 @@ function keyPic(X, Y, turned){   // a key, in the lock (turned: upright, as it t
   R(b, X - 5, Y - 1, 3, 3, '#5A4010'); R(b, X - 4, Y, 1, 1, '#3A2A20'); R(b, X - 2, Y, 4, 1, '#E8C040'); R(b, X - 5, Y - 1, 1, 1, '#F6DC7A');
 }
 const ACTS = {
-  sweep: (PX, PY, now, a) => drawSweep('player', a.dir, PX, PY, a.t0, now),
-  // filling a bucket: down into the water in front of you, in it a moment, bobbing, and up again, full, dripping
+  sweep: (PX, PY, now, a) => drawSweep(a.dir, PX, PY, a.t0, now),
+  // filling a bucket: you step up to the water's edge holding it out, dip it in (ripples round it), lift it out full and
+  // dripping, and step back with it at your side (the dip pose, js/poses.js)
   dip(PX, PY, now, a){
-    const t = now - a.t0, cx = pl.px - PX, cy = pl.py - PY, [hx, hy] = ACT_HAND[a.dir], wx = a.x*T - cx + 4, wy = a.y*T - cy + 5;
-    const down = t < DIP.down ? ease(t / DIP.down) : t < DIP.up ? 1 : 1 - ease((t - DIP.up) / (DIP.ms - DIP.up));
-    const X = lerp(PX + hx, wx, down), Y = lerp(PY + hy, wy, down), inWater = t >= DIP.down && t < DIP.up;
-    const draw = () => {
-      if (inWater){ b.globalAlpha = .7; oval(b, Math.round(wx + 4), Math.round(wy + 6), 6 + Math.floor((t - DIP.down) / 90) % 3, 2, '#BFE8FA'); b.globalAlpha = 1; }   // (ripples round it)
-      bucketPic(X, Y + (inWater ? Math.round(Math.sin(t / 60)) : 0), t >= DIP.up, inWater ? 3 : 8);
-      if (t >= DIP.up) for (let i = 0; i < 2; i++){ const k = ((t - DIP.up) / 260 + i / 2) % 1; R(b, Math.round(X + 2 + i * 3), Math.round(Y + 8 + k * 6), 1, 1, '#7FC4EE'); }   // drips
-    };
-    if (a.dir === 'up') draw();
-    actMonkey(PX, PY, a.dir);
-    if (a.dir !== 'up') draw();
+    const t = now - a.t0, m = t < DIP.down ? 'out' : t < DIP.up ? 'in' : t < DIP.back ? 'full' : 'back', bk = poseSprite('dip', a.dir, m).bucket;
+    if (m === 'in' && bk){ b.globalAlpha = .7; oval(b, PX + bk[0], PY + bk[1] + 1, 5 + Math.floor((t - DIP.down) / 90) % 3, 2, '#BFE8FA'); b.globalAlpha = 1; }   // (ripples round it)
+    drawPose('dip', a.dir, m, PX, PY);
+    if (m === 'full' && bk) for (let i = 0; i < 2; i++){ const k = ((t - DIP.up) / 260 + i / 2) % 1; R(b, PX + bk[0] - 1 + i * 3, Math.round(PY + bk[1] + 5 + k * 6), 1, 1, '#7FC4EE'); }   // drips
   },
   // lifting a sack: you crouch, heave it up off the pile and over your head, then turn and toss it (drawActFx)
   lift(PX, PY, now, a){
@@ -727,18 +701,25 @@ const ACTS = {
     const [hx, hy] = ACT_HAND[a.dir], k = Math.min(1, t / 250);
     if (t < UNLOCK.open + 120) keyPic(lerp(PX + hx + 4, X + 8, ease(k)), lerp(PY + hy + 1, Y + 8, ease(k)), t >= UNLOCK.turn);
   },
-  // picking something up: you reach up into a tree, hopping, or crouch for what's on the ground, and it comes into your
-  // hands (drawActFx), and you hold it up over your head
+  // picking something up: up on tiptoe into a tree, an arm up into its leaves (the reach pose, js/poses.js), or crouching
+  // for what's on the ground; it comes into your paw (drawActFx), and you hold it up
   pick(PX, PY, now, a){
-    const t = now - a.t0;
-    if (a.reach === 'down' && t < PICK.caught){   // (crouching: a little shorter, your feet where they were)
-      const c = Math.round(Math.sin(Math.PI * Math.min(1, t / PICK.caught)) * 2);
-      R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
-      b.drawImage(monkeySprite('player', a.dir, false, 0, true), PX, PY + c, 16, 16 - c);
+    const t = now - a.t0, c = itemPic(a.pic || a.w), bob = Math.round(Math.sin((t - PICK.caught) / 120));
+    if (a.reach === 'up'){
+      const p = drawPose('reach', a.dir, t < PICK.caught ? 'reach' : 'hold', PX, PY);
+      if (t < PICK.caught) return;
+      const [x, y] = p.paw;
+      if (c) b.drawImage(c, PX + x - 5, PY + y - 10 - bob, 10, 10);
+      if ((t - PICK.caught) % 300 < 160){ R(b, PX + x + 5, PY + y - 11, 1, 3, '#FFE27A'); R(b, PX + x + 4, PY + y - 10, 3, 1, '#FFE27A'); }   // (a twinkle)
+      return;
     }
-    else actMonkey(PX, PY, a.dir, a.reach === 'up' && t < 320 ? Math.round(Math.sin(Math.PI * t / 320) * 3) : 0);
+    if (a.reach === 'down' && t < PICK.caught){   // (crouching: a little shorter, your feet where they were)
+      const k = Math.round(Math.sin(Math.PI * Math.min(1, t / PICK.caught)) * 2);
+      R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
+      b.drawImage(monkeySprite('player', a.dir, false, 0, true), PX, PY + k, 16, 16 - k);
+    }
+    else actMonkey(PX, PY, a.dir);
     if (t < PICK.caught) return;
-    const c = itemPic(a.pic || a.w), bob = Math.round(Math.sin((t - PICK.caught) / 120));
     if (c) b.drawImage(c, PX + 3, PY - 11 - bob, 10, 10);
     if ((t - PICK.caught) % 300 < 160){ R(b, PX + 14, PY - 12, 1, 3, '#FFE27A'); R(b, PX + 13, PY - 11, 3, 1, '#FFE27A'); }   // (a twinkle)
   }
@@ -751,7 +732,8 @@ function drawActFx(cx, cy, now){
   if (a.kind === 'lift' && a.to && t >= LIFT.toss) sackPic(...tossedTo(a, t).map((v, i) => v - (i ? cy : cx)));
   if (a.kind === 'pick' && t >= PICK.fall && t < PICK.caught){   // (dropping from a tree, faster and faster; lifted out of anything else)
     const k = (t - PICK.fall) / (PICK.caught - PICK.fall), c = itemPic(a.pic || a.w), [fx, fy] = a.from;
-    if (c) b.drawImage(c, Math.round(lerp(fx - 5, pl.px + 3, k) - cx), Math.round(lerp(fy - 5, pl.py - 4, a.reach === 'up' ? k * k : ease(k)) - cy), 10, 10);
+    const [tx, ty] = a.reach === 'up' ? (([x, y]) => [pl.px + x - 5, pl.py + y - 8])(poseSprite('reach', a.dir, 'reach').paw) : [pl.px + 3, pl.py - 4];   // (into your paw, up in the tree)
+    if (c) b.drawImage(c, Math.round(lerp(fx - 5, tx, k) - cx), Math.round(lerp(fy - 5, ty, a.reach === 'up' ? k * k : ease(k)) - cy), 10, 10);
   }
 }
 // Where a sack you've tossed is (on the map, in pixels), t after you began lifting it: from over your head, up and away
@@ -903,7 +885,7 @@ function drawWorld(now){
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
       if (acting && ACTS[acting.kind]) ACTS[acting.kind](PX, PY, now, acting);   // doing something: sweeping, filling a bucket, lifting a sack, turning a key, picking fruit
-      else if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now, swing.with);   // swinging your stick (the hit step), or an axe
+      else if (swing && now - swing.t0 < SWING_MS){ if (swing.with === '斧头') drawChop(pl.dir, PX, PY, swing.t0, now); else drawSwing('player', pl.dir, PX, PY, swing.t0, now); }   // chopping with the axe, or swinging your stick (the hit step)
       else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
       if (pl.eating) drawEating(pl.eating, PX, PY, now);   // eating a meal (the eat step)
       if (pl.form) drawForm(pl.form, PX, PY, now);   // turned into something (the turnInto step: drawn over you, in your place)

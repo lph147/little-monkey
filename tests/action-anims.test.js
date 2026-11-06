@@ -62,7 +62,7 @@ test('filling the bucket at the pool: into the water with a splash, and up again
   assert.equal(get(g, 'tileAt(23, 7).look'), 'water', 'the pool in front of you');
   await press(g, 23, 8, 'up');
   assert.deepEqual(get(g, '__acts').map(a => [a.kind, a.w]), [['dip', '水']], 'the bucket, in and out');
-  assert.ok(get(g, 'splashes.some(s => s.small && s.x === 23 * 16 + 8 && s.y === 7 * 16 + 9)'), 'a little splash in the pool');
+  assert.ok(get(g, "splashes.some(s => s.small && tileAt(Math.floor(s.x / 16), Math.floor(s.y / 16)).look === 'water' && s.y < 8 * 16)"), 'a little splash, in the pool, where the bucket goes in');
   assert.deepEqual(get(g, '__heard'), ['splash', 'right'], 'and the sound of having it, once');
   assert.deepEqual(get(g, 'here().carrying'), {word: '水', n: 1});
   assert.equal(g.run('acting'), null);
@@ -175,10 +175,17 @@ test('what each looks like as you do it: the bucket, full; the sack over your he
     .map(([, , x]) => x - (12 * 16 - (get(g, 'pl.px') - PX))).sort((p, q) => p - q);
   assert.deepEqual(bars(0), [1, 4, 7, 10, 14], 'shut: its door’s three bars between its sides');
   assert.deepEqual(bars(get(g, 'UNLOCK.opened')), [-2, 1, 1, 4, 14], 'open: swung away to the left');
-  // the axe: its head, steel with a bright edge (the stick has none)
-  const swing = item => colours(drawn(`drawSwing('player', 'down', ${PX}, ${PY}, 0, SWING_MS * .5${item ? `, '${item}'` : ''})`));
-  assert.ok(swing('斧头').includes('#A9B0B8') && swing('斧头').includes('#E6EAEE'), 'the axe’s head');
-  assert.ok(!swing().includes('#A9B0B8'), 'not on the stick');
+  // the axe: raised over your head, then down, its steel head with its bright edge on the block in front of you, whichever
+  // way you face (the chop pose: js/poses.js)
+  const inFront = {down: ([x, y]) => y >= 32, up: ([x, y]) => y < 16, right: ([x, y]) => x >= 32, left: ([x, y]) => x < 16};
+  for (const dir of ['down', 'up', 'right', 'left']){
+    const where = (m, letters) => get(g, `POSES.grid('chop', '${dir}', '${m}').rows`).flatMap((r, y) => [...r].map((c, x) => letters.includes(c) ? [x, y] : null)).filter(Boolean);
+    const head = where('down', 'uU');
+    assert.ok(head.length >= 8 && where('down', 'U').length >= 2, `${dir}: the axe's head, its edge bright`);
+    const mid = head.reduce(([a, b], [x, y]) => [a + x / head.length, b + y / head.length], [0, 0]);
+    assert.ok(inFront[dir](mid), `${dir}: down on the block in front of you (${mid.map(v => v.toFixed(1))})`);
+    assert.ok(where('up', 'h').length >= 1 && where('down', 'h').length >= 1, `${dir}: in your paws`);   // (from the side, your near paw over the other)
+  }
   // crouching for something: shorter, your feet where they were; then holding it up
   const crouch = drawn(`ACTS.pick(${PX}, ${PY}, PICK.caught / 2, ${act('pick', ", w: '石头', reach: 'down', from: [200, 170]")})`).filter(([k]) => k === 'image');
   assert.deepEqual(crouch.map(([, , x, y, w, h]) => [x, y + h, w, h]), [[PX, PY + 16, 16, 14]], 'two pixels shorter, standing where you were');
