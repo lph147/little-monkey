@@ -444,11 +444,14 @@ rt.hid{visibility:hidden}
 .talkhead{display:flex;align-items:center;gap:6px}
 /* the name plate (decided 6 November 2026, after mock-ups: who was speaking wasn't clear enough): their face, head and
    shoulders, in a circle, and their name, in one thin pale-gold outline */
-.talkhead .speaker{gap:.4rem;font-size:.9rem;border:2px solid var(--plate);border-radius:999px;padding:0 .7rem 0 0;margin:0 0 .3rem;min-width:0}
-.talkhead .face{width:2.15rem;height:2.15rem;border-radius:50%;border:2px solid var(--plate);margin:-2px 0 -2px -2px;display:grid;place-items:center;overflow:hidden;flex:none}
+/* A name too long for one line, its English under it, stays as tall as the face, the two lines close together, so the
+   face's ring and the plate's round end are one (decided 6 November 2026, after playing it: the plate grew taller than the
+   face, a ring round a ring); if it needs more lines still, the plate's corners stay as round as the face, beside it. */
+.talkhead .speaker{gap:.4rem;font-size:.9rem;border:2px solid var(--plate);border-radius:1.075rem;padding:0 .7rem 0 0;margin:0 0 .3rem;min-width:0}
+.talkhead .face{width:2.15rem;height:2.15rem;border-radius:50%;border:2px solid var(--plate);margin:-2px 0 -2px -2px;display:grid;place-items:center;overflow:hidden;flex:none;align-self:flex-start}
 .talkhead .face .bust{width:1.75rem;height:auto;margin-top:.3rem;image-rendering:pixelated;image-rendering:crisp-edges}
 .talkhead .portrait{width:var(--pic-face);height:var(--pic-face)}
-.talkhead .spk{display:flex;flex-wrap:wrap;column-gap:.5rem;align-items:baseline}   /* a long name's English goes under it, whole */
+.talkhead .spk{display:flex;flex-wrap:wrap;column-gap:.5rem;align-items:baseline;line-height:1.02}   /* a long name's English goes under it, whole */
 .talkhead .spk-zh{font-size:1rem;white-space:nowrap}
 .talkhead .spk-py{font-size:.8rem}
 .talkhead .spk-en{font-size:.8rem}

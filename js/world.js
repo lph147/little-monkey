@@ -345,6 +345,9 @@ const paintsPart = w => (AREA.lessons || []).map(series => (series.paint || {})[
 // began, and the square it strikes), drawn by js/draw.js.
 const SWING_MS = 420, SWING_CONTACT = .45;
 let swing = null;
+// Sweeping with a broom (the sweep step): so many strokes from side to side, each so long (ms); and the square being swept.
+const SWEEP = {strokes:3, stroke:340};
+let sweeping = null;
 // A little monkey in training (practises, in the area's characters) swings its stick now and then, facing its own way,
 // while you're not beside it; beside it, it turns to you, as anyone does to talk. Each begins a swing every PRACTICE_MS,
 // at its own time (practiceT), with a soft swish when you're near (practiceSounds).
@@ -626,6 +629,19 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     swing = {t0:performance.now(), x, y}; SFX.swish();
     await sleep(SWING_MS * SWING_CONTACT); SFX.thwack(); burst(x, y, s.hit); shakeT = performance.now() - 400;   // (a little shake)
     await sleep(SWING_MS * (1 - SWING_CONTACT));
+  },
+  // You sweep the square you're facing with a broom, such as a heap of fallen leaves in the immortal's cave (sweep: what
+  // flies off it, 'leaves'): three strokes from side to side, each with a brush of the broom and leaves flying off it,
+  // away from you, the most on the last (decided 6 November 2026, after playing it: the heaps just vanished). Then, as a
+  // rule, it changes (the change step): the heap's gone.
+  async sweep(s){
+    const [x, y] = facing();
+    sweeping = {t0:performance.now(), x, y};
+    for (let i = 0; i < SWEEP.strokes; i++){
+      await sleep(SWEEP.stroke / 2); SFX.sweep(); scatter(x, y, s.sweep, pl.dir, i === SWEEP.strokes - 1 ? 10 : 4);
+      await sleep(SWEEP.stroke / 2);
+    }
+    sweeping = null;
   },
   // The square you're facing (or at: [x, y], or [x, y, 'place']) becomes another letter of the legend, for good, such as
   // a dry tree you've knocked down (a stump), or a stone you've picked up (the ground it lay on).

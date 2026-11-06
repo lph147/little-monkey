@@ -246,6 +246,9 @@ const WORD_BANK = {
   '灵台方寸山': {py:'Língtái Fāngcùn Shān', en:'Mountain of Mind and Heart (a name)'},   // (the immortal's mountain, on its tablet: Area 2, chapter 1)
   '斜月三星洞': {py:'Xiéyuè Sānxīng Dòng', en:'Cave of the Slanting Moon and Three Stars (a name)'},   // (the immortal's cave, over its door)
   '美猴王': {py:'Měi Hóuwáng', en:'Handsome Monkey King (a name)'},
+  '真正': {py:'zhēnzhèng', en:'real, true'},
+  '大家': {py:'dàjiā', en:'everyone'},
+  '都': {py:'dōu', en:'all, both'},
   '很': {py:'hěn', en:'very'},
   '多': {py:'duō', en:'many, much'},
   '年': {py:'nián', en:'year'},

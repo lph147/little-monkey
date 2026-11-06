@@ -19,7 +19,7 @@ Object.assign(HANZI, {   // the tablets' characters: 灵台方寸山 and 斜月�
 /* ---- the ground ---- */
 const KARST = {top:'#B9C2C6', topDk:'#A3ADB2', topLt:'#D3DADC', face:'#9AA5AB', faceDk:'#7C878E', faceLt:'#C2CBCF', moss:'#6F8F5E', shade:'#5E676D'};
 const ROCKY = ['karstTop', 'karstFace', 'chainFace', 'stoneDoor', 'twistedPine'];
-const FACES = ['karstFace', 'chainFace', 'stoneDoor'];
+const FACES = ['karstFace', 'chainFace', 'stoneDoor', 'rockDoor', 'rockDoorOpen'];   // (a door in the rock is in its face: the face runs on round it)
 // A sea of clouds, seen from above, where the mountain falls away: long soft wisps drifting across, as below a mountain in a
 // Chinese painting, running on from square to square (the art review, decided 6 November 2026: round puffs looked like
 // bubble wrap). Each wisp belongs to a band of the sea, not a square, so it carries on into the next; each square draws
@@ -158,12 +158,23 @@ OBJECT_ART.mountainTablet = (g, o) => stoneTablet(g, o.x * T, (o.y + o.h - 1) * 
 BLOCK_OBJECTS.push('mountainTablet');
 
 /* ---- the cave behind the stone door (chapter 1) ---- */
-// A doorway into the rock, with a wooden frame and a dark room behind it (the pupils' rooms, yours, and the master's
-// back door), in the cliff's face.
-function rockDoor(g, X, Y, x, y){
+// A door into the rock (the pupils' rooms, yours, and the master's back door): a wooden double door, its panels and
+// rings, as the hall's is, in a doorway cut into the cliff's face, a stone lintel over it and a step in front of it
+// (decided 6 November 2026, after playing it: a dark doorway in a thin frame looked like a hole in the rock). By night,
+// the master's back door stands wide open, lamplight inside, the way into his room (rockDoorOpen; its light glows
+// through the dark: drawNight).
+const DOOR_LIGHT = ['#F4CF7A', '#E0A955'];   // lamplight, and its shade under the lintel
+function rockDoorway(g, X, Y, x, y){
   karstFace(g, X, Y, x, y);
-  R(g, X + 3, Y + 3, 10, 13, '#3A2A1E'); R(g, X + 4, Y + 4, 8, 12, '#1E1A18'); R(g, X + 5, Y + 2, 6, 2, '#3A2A1E');
-  R(g, X + 3, Y + 3, 1, 13, '#7A5634'); R(g, X + 12, Y + 3, 1, 13, '#7A5634'); R(g, X + 3, Y + 3, 10, 1, '#8E6A42');
+  R(g, X + 2, Y + 2, 12, 14, KARST.shade);                                          // the doorway, cut into the rock
+  R(g, X + 1, Y + 1, 14, 1, KARST.faceLt); R(g, X + 1, Y + 2, 14, 1, KARST.faceDk);   // its stone lintel
+  R(g, X + 2, Y + 15, 12, 1, '#B3ADA2');                                             // the step
+}
+function rockDoor(g, X, Y, x, y){ rockDoorway(g, X, Y, x, y); woodDoor(g, X + 4, Y + 4, 8, 11); }
+function rockDoorOpen(g, X, Y, x, y){
+  rockDoorway(g, X, Y, x, y);
+  R(g, X + 3, Y + 3, 10, 12, HW.woodLt); R(g, X + 4, Y + 4, 8, 11, DOOR_LIGHT[0]); R(g, X + 4, Y + 4, 8, 2, DOOR_LIGHT[1]);   // the lamplit room inside
+  R(g, X + 4, Y + 4, 1, 11, HW.wood); R(g, X + 11, Y + 4, 1, 11, HW.wood);                                                    // the two leaves, swung right open
 }
 // A heap of fallen leaves on the flagstones, red, orange and gold, to sweep up.
 function leafPile(g, X, Y, x, y){
@@ -182,7 +193,7 @@ function moonWater(g, X, Y, x, y){
   LOOKS.water(g, X, Y, x, y);
   disc(g, X + 8, Y + 8, 4, '#F2EBC2'); disc(g, X + 10, Y + 7, 4, '#2E5A86');
 }
-Object.assign(LOOKS, {rockDoor, leafPile, sapling, moonWater, rockPeach: mossStone});
+Object.assign(LOOKS, {rockDoor, rockDoorOpen, leafPile, sapling, moonWater, rockPeach: mossStone});
 OBJECT_ART.rockPeach = (g, o) => OBJECT_ART.peachTree(g, o);   // (a peach tree, on the mountain's mossy stone, not grass)
 
 /* ---- night ---- */
@@ -192,6 +203,13 @@ function drawNight(cx, cy, sh, now){
   if (!PLACES[PLACE].night) return;
   const W = VW*T;
   b.globalAlpha = .55; R(b, 0, 0, W, sh, '#0A1030'); b.globalAlpha = 1;
+  for (let y = Math.max(0, Math.floor(cy / T)); y <= Math.min(ROWS - 1, Math.floor((cy + sh) / T)); y++) for (let x = Math.max(0, Math.floor(cx / T)); x <= Math.min(COLS - 1, Math.floor((cx + W) / T)); x++){
+    if (tileAt(x, y).look !== 'rockDoorOpen') continue;   // lamplight in an open doorway, bright through the dark, spilling out onto the ground
+    const X = x*T - cx, Y = y*T - cy;
+    b.globalAlpha = .9; R(b, X + 5, Y + 4, 6, 11, DOOR_LIGHT[0]); R(b, X + 5, Y + 4, 6, 2, DOOR_LIGHT[1]);
+    b.globalAlpha = .22; R(b, X + 3, Y + 16, 10, 3, DOOR_LIGHT[0]); R(b, X + 5, Y + 19, 6, 2, DOOR_LIGHT[0]);
+    b.globalAlpha = 1;
+  }
   disc(b, W - 34, 18, 7, '#F2EBC2'); disc(b, W - 30, 15, 7, '#1A2448');   // the slanting moon
   for (const [x, y] of [[W - 56, 12], [W - 48, 26], [W - 62, 30]]){ const tw = (now / 400 + x) % 6 < 1 ? 1 : 0; R(b, x - 1, y, 3, 1, '#FFF6C8'); R(b, x, y - 1, 1, 3, '#FFF6C8'); if (tw) R(b, x - 2, y, 5, 1, '#FFFFFF'); }
   for (let i = 0; i < 16; i++) R(b, Math.floor(rnd(i, 7, 930) * W), Math.floor(rnd(i, 8, 931) * sh * .4), 1, 1, '#C8D0F0');
@@ -213,8 +231,7 @@ function drawCaveYears(t, now){
   for (const [dx, dy, r] of [[0, -h, 6 + grow * 8], [-7 * grow, -h + 6, 4 + grow * 6], [7 * grow, -h + 6, 4 + grow * 6]]) disc(b, Math.round(tx + dx), Math.round(ty + dy), Math.round(r), crown);
   if (season === 2 || season === 3) for (let i = 0; i < 14; i++){ const fx = (rnd(i, 3) * W + now / 50 * (1 + i % 3)) % W, fy = (rnd(i, 4) * H + now / 18) % H; R(b, Math.round(fx), Math.round(fy), 2, season === 3 ? 2 : 1, season === 3 ? '#FFFFFF' : '#C25A2A'); }
   const mx = 150 + Math.round(Math.sin(now / 300) * 6);   // you, sweeping
-  b.drawImage(monkeySprite('player', 'left', false), mx, 118, 16, 16);
-  R(b, mx - 6, 128 + Math.round(Math.sin(now / 150)), 9, 2, '#C9A060'); R(b, mx - 2, 120, 1, 9, '#7A5634');
+  drawSweep('player', 'left', mx, 118, 0, now);   // (with your broom, as you sweep the leaves: drawSweep, js/draw.js)
 }
 // Flying on a cloud (the somersault and flyHome scenes: def.home, flying home over the sea, Flower Fruit Mountain coming
 // up ahead): the sky, clouds racing by, and you on yours, somersaulting now and then.

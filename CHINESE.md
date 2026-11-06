@@ -706,7 +706,7 @@ check that each is true and simply put.
 | 你来了。 | nǐ lái le. | You’ve come. | 师父 (The master) |  |
 | 我是你的师父。 | wǒ shì nǐ de shīfu. | I’m your master. | 师父 (The master) |  |
 | 你叫什么名字？ | nǐ jiào shénme míngzi? | What’s your name? | 师父 (The master) |  |
-| 我没有名字。 | wǒ méiyǒu míngzi. | I don’t have a name. | 小猴子 (You) |  |
+| 我没有真正的名字。大家都叫我美猴王。 | wǒ méiyǒu zhēnzhèng de míngzi. dàjiā dōu jiào wǒ Měi Hóuwáng. | I don’t have a real name. Everyone calls me Handsome Monkey King. | 小猴子 (You) |  |
 | 你叫孙悟空。 | nǐ jiào Sūn Wùkōng. | Your name is Sun Wukong. | 师父 (The master) |  |
 | 一，二，三！ | yī, èr, sān! | One, two, three! | 师父 (The master) |  |
 | 我教你变。 | wǒ jiāo nǐ biàn. | I’ll teach you to change into things. | 师父 (The master) |  |
@@ -1179,6 +1179,9 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 灵台方寸山 | Língtái Fāngcùn Shān | Mountain of Mind and Heart (a name) |  |
 | 斜月三星洞 | Xiéyuè Sānxīng Dòng | Cave of the Slanting Moon and Three Stars (a name) |  |
 | 美猴王 | Měi Hóuwáng | Handsome Monkey King (a name) |  |
+| 真正 | zhēnzhèng | real, true |  |
+| 大家 | dàjiā | everyone |  |
+| 都 | dōu | all, both |  |
 | 很 | hěn | very |  |
 | 多 | duō | many, much |  |
 | 年 | nián | year |  |
@@ -1268,6 +1271,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 我没有真正的名字。大家都叫我美猴王。 | wǒ méiyǒu zhēnzhèng de míngzi. dàjiā dōu jiào wǒ Měi Hóuwáng. | I don’t have a real name. Everyone calls me Handsome Monkey King. | New on 6 November 2026: your answer when the master asks your name (你叫什么名字？), before he names you 孙悟空; it was 我没有名字。 (I don’t have a name.), which sounded wrong, as everyone calls you 美猴王. Is 真正的名字 natural here, or would 我没有名字，大家都叫我美猴王。 be better? |  |
 | 我饿了！我要牛！ | wǒ è le! wǒ yào niú! | I’m hungry! I want the cow! | New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten |  |
 | 我不怕你！ | wǒ bù pà nǐ! | I’m not scared of you! | New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten |  |
 | 我怕你！ | wǒ pà nǐ! | I’m scared of you! | New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten |  |

@@ -422,6 +422,7 @@ SAVES.c1door = {...SAVES.c1pillars, areas: {...SAVES.c1pillars.areas, 2: {...SAV
 SAVES.c1cave = {...SAVES.c1door, areas: {...SAVES.c1door.areas, 2: {...SAVES.c1door.areas[2], door: 2, caveSeen: 1}}, pos: {place: 'cave', x: 14, y: 8, dir: 'up'}};
 SAVES.c1named = {...SAVES.c1cave, areas: {...SAVES.c1cave.areas, 2: {...SAVES.c1cave.areas[2], teacher: 1, named: 1}}, w: {...SAVES.c1cave.w, ...knows(1, ['师父', '名字'])}, turn: 700, pos: {place: 'cave', x: 10, y: 9, dir: 'left'}};
 const C1_CAVE = ['师父', '名字', '叶子', '扫', '桶', '斧头'];
+SAVES.c1sweep = {...SAVES.c1named, areas: {...SAVES.c1named.areas, 2: {...SAVES.c1named.areas[2], spyGame: 1, chores: 2}}, w: {...SAVES.c1named.w, ...knows(1, ['叶子', '扫'])}, pos: {place: 'cave', x: 12, y: 9, dir: 'down'}};   // the leaves to sweep, facing a heap
 SAVES.c1grown = {...SAVES.c1named, areas: {...SAVES.c1named.areas, 2: {...SAVES.c1named.areas[2], spyGame: 1, chores: 6, grown: 1}}, w: {...SAVES.c1named.w, ...knows(1, C1_CAVE)}, turn: 800, pos: {place: 'cave', x: 8, y: 10, dir: 'up'}};
 SAVES.c1night = {...SAVES.c1grown, areas: {...SAVES.c1grown.areas, 2: {...SAVES.c1grown.areas[2], riddle: 2}}, w: {...SAVES.c1grown.w, ...knows(1, ['头', '晚上'])}, pos: {place: 'caveNight', x: 20, y: 6, dir: 'up'}};
 SAVES.c1room = {...SAVES.c1night, w: {...SAVES.c1night.w, ...knows(1, ['月亮', '星星'])}, pos: {place: 'masterRoom', x: 4, y: 4, dir: 'up'}};
@@ -1397,11 +1398,13 @@ const SCREENS = [
     play(); await wait(600); }},
   {id: 'c1-spy', title: 'I spy', save: 'c1named', why: 'A pupil says what she sees, only in Chinese (我看见水！), and you walk to it and press A. Each one found counts as a question answered.', run: async () => {
     play(); await wait(100); talk(npc('spyPupil')); await wait(300); next(); await wait(500); }},
+  {id: 'c1-sweep', title: 'Sweeping the leaves', save: 'c1sweep', why: 'The senior pupil’s first chore (扫): you sweep each heap of fallen leaves with a broom, three strokes from side to side, the leaves flying off it, away from you, and the heap’s gone. Here, sweeping on and on.', run: async () => {
+    play(); await wait(300); busy = true; (async () => { for (;;) await STEPS.sweep({sweep: 'leaves'}); })(); await wait(560); }},
   {id: 'c1-years', title: 'Seven years in the cave', save: 'c1named', why: 'After the chores and the master’s lecture: the seasons going round, a peach tree growing up, you sweeping, and 七年以后…', run: async () => {
     play(); await wait(100); storyScene('caveYears'); introClock = 6.5; advancedTo = 1; await wait(400); }},
   {id: 'c1-grown', title: 'The cave, seven years later', save: 'c1grown', why: 'The saplings grown into peach trees, new little pupils who call you 师兄. The master’s riddle next: three taps on your head (头).', run: async () => {
     play(); await wait(600); }},
-  {id: 'c1-night', title: 'The cave at night', save: 'c1night', why: 'The third watch of the night (晚上): a slanting moon shining in the pool (月亮), three stars over the master’s back door (星星), and in.', run: async () => {
+  {id: 'c1-night', title: 'The cave at night', save: 'c1night', why: 'The third watch of the night (晚上): a slanting moon shining in the pool (月亮), three stars over the master’s back door (星星), which stands open, lamplight inside, and in.', run: async () => {
     play(); await wait(600); }},
   {id: 'c1-room', title: 'The master’s room', save: 'c1room', why: 'Behind his back door, at night: 我教你变。 (变) Changing into things, the chapter’s big idea.', run: async () => {
     play(); await wait(600); }},

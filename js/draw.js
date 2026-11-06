@@ -633,6 +633,28 @@ function drawSwing(kind, dir, PX, PY, t0, now){
   b.drawImage(monkeySprite(kind, dir, false, 0, true), PX, PY);
   if (dir !== 'up') stick();
 }
+// Sweeping with a broom (the sweep step, js/world.js; and in the scene of the years in the cave): a bamboo broom in your
+// hands, its head of twigs on the ground in front of you, swept from side to side, a stroke at a time.
+const BROOM = {stick:'#C9A85E', edge:'#4A3618', twig:'#B08A40', tip:'#DCC07A', band:'#6B4A2A'};
+const SWEEP_AIM = {right:5, left:175, down:90, up:270}, SWEEP_ARC = {right:20, left:20, down:30, up:30};   // which way the broom points (degrees: 0 right, 90 down), at the ground in front of you, and how far it swings either side (less from the side: it stays on what you sweep)
+const SWEEP_HAND = {right:[12, 9], left:[3, 9], down:[8, 10], up:[7, 9]};   // where you hold it: in front of you, so it sweeps across the middle of the square
+function drawSweep(kind, dir, PX, PY, t0, now){
+  const t = (now - t0) / SWEEP.stroke, [hx, hy] = SWEEP_HAND[dir], len = 9;
+  const a = (SWEEP_AIM[dir] + SWEEP_ARC[dir] * Math.cos(Math.PI * t)) * Math.PI / 180, across = a + Math.PI / 2;
+  const at = (r, s = 0) => [Math.round(PX + hx + Math.cos(a) * r + Math.cos(across) * s), Math.round(PY + hy + Math.sin(a) * r + Math.sin(across) * s)];
+  const broom = () => {
+    for (let r = 0; r <= len; r++){ const [x, y] = at(r); R(b, x - 1, y - 1, 2, 2, BROOM.edge); }   // its handle's dark edge
+    for (let r = 0; r <= len; r++){ const [x, y] = at(r); R(b, x, y, 1, 1, BROOM.stick); }          // the bamboo
+    for (let r = 0; r < 5; r++) for (let s = -3; s <= 3; s++){                                     // its head: a fan of twigs, wider at their tips
+      const [x, y] = at(len + 1 + r, s * (.6 + r * .25));
+      R(b, x, y, 1, 1, r === 0 ? BROOM.band : (s + r) % 2 ? BROOM.twig : BROOM.tip);
+    }
+  };
+  if (dir === 'up') broom();
+  R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
+  b.drawImage(monkeySprite(kind, dir, false, 0, true), PX, PY);
+  if (dir !== 'up') broom();
+}
 // Ground being marked out (the markOut step): a stake hammered in at each corner of the plot, one by one, as plot() in
 // js/art.js has them; the string pulled tight round them, from the top-left, round to the right, along the bottom and back
 // up; then the new ground fading in, with its sign and its path (and anything else that's changed). Or something being
@@ -670,15 +692,29 @@ function drawSettingUp(cx, cy){
 }
 // Chips flying off what you hit (burst, at the moment your stick strikes): wood or stone, falling as they fly.
 const chips = [];
-const CHIP_COLOURS = {wood:['#D2A46A', '#8A5A32', '#B98A55', '#6B4A2A'], stone:['#E6E2D6', '#A9A598', '#7C786D', '#D6D2C5']};
+const CHIP_COLOURS = {wood:['#D2A46A', '#8A5A32', '#B98A55', '#6B4A2A'], stone:['#E6E2D6', '#A9A598', '#7C786D', '#D6D2C5'], leaves:['#C2552E', '#D8923A', '#E6B04A', '#9A6A2A']};
 function burst(x, y, kind){
   const now = performance.now(), cols = CHIP_COLOURS[kind] || CHIP_COLOURS.wood;
   for (let i = 0; i < 10; i++){ const a = Math.PI * (1.1 + .8 * Math.random()), v = 30 + Math.random() * 45; chips.push({x:x*T + 8, y:y*T + 7, vx:Math.cos(a) * v * (Math.random() < .5 ? -1 : 1), vy:Math.sin(a) * v, c:cols[i % cols.length], t0:now}); }
 }
+// Leaves (or whatever's swept) flying off what you sweep (scatter, as each stroke of the broom goes through it): tossed
+// away from you, light, fluttering and tumbling as they drift down, and fading.
+function scatter(x, y, kind, dir, n = 4){
+  const now = performance.now(), cols = CHIP_COLOURS[kind] || CHIP_COLOURS.leaves, [dx, dy] = DV[dir];
+  for (let i = 0; i < n; i++){
+    const along = 10 + Math.random() * 14, across = (Math.random() - .5) * 40;
+    chips.push({x:x*T + 8 + (Math.random() - .5) * 8, y:y*T + 9 + (Math.random() - .5) * 4, vx:dx * along + dy * across, vy:dy * along + dx * across - 12, c:cols[i % cols.length], t0:now, float:true, ph:Math.random() * 6});
+  }
+}
 function drawChips(cx, cy, now){
   for (let i = chips.length - 1; i >= 0; i--){
-    const p = chips[i], t = (now - p.t0) / 1000;
-    if (t > .6){ chips.splice(i, 1); continue; }
+    const p = chips[i], t = (now - p.t0) / 1000, life = p.float ? .9 : .6;
+    if (t > life){ chips.splice(i, 1); continue; }
+    if (p.float){   // a leaf
+      b.globalAlpha = Math.min(1, (life - t) / .3);
+      R(b, Math.round(p.x + p.vx * t + Math.sin(t * 14 + p.ph) * 1.5 - cx), Math.round(p.y + p.vy * t + 20 * t * t - cy), (t * 10 + p.ph) % 2 < 1 ? 2 : 1, 1, p.c);
+      b.globalAlpha = 1; continue;
+    }
     R(b, Math.round(p.x + p.vx * t - cx), Math.round(p.y + p.vy * t + 160 * t * t - cy), 2, 1, p.c);
   }
 }
@@ -759,7 +795,8 @@ function drawWorld(now){
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
-      if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
+      if (sweeping) drawSweep('player', pl.dir, PX, PY, sweeping.t0, now);   // sweeping with a broom (the sweep step)
+      else if (swing && now - swing.t0 < SWING_MS) drawSwing('player', pl.dir, PX, PY, swing.t0, now);   // swinging your stick (the hit step)
       else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
       if (pl.eating) drawEating(pl.eating, PX, PY, now);   // eating a meal (the eat step)
       if (pl.form) drawForm(pl.form, PX, PY, now);   // turned into something (the turnInto step: drawn over you, in your place)

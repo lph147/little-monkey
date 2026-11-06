@@ -25,6 +25,7 @@ const INDEX = path.join(ROOT, 'content', 'voices.js');
 const SAY_AS = {
   '只': {ph:'zhi 1', google:'知'},   // the counting word, zhī, not zhǐ (only): 知 (to know) sounds just the same
   '吧': {ph:'ba 5', by:{name:'zh-CN-XiaoxiaoNeural'}},   // light, not bā (as in 酒吧, a bar): Azure's Xiaoxiao, a woman's voice
+  '都': {ph:'dou 1', google:'兜'},   // all, dōu, not dū (as in 首都, a capital): 兜 (a pocket) sounds just the same
 };
 
 const CJK = /[一-鿿]/;

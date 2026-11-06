@@ -63,6 +63,14 @@ const SFX = {
     s.connect(f); f.connect(g); g.connect(a.destination); s.start();
   },
   swish: (when = 0) => tone(900, .18, 'triangle', .025, when, -650),   // something cutting through the air: a stick, a leap
+  sweep: () => {   // a broom brushing across the ground: a short, soft hiss of noise, rising and falling
+    const a = ac(); if (!a) return;
+    const buf = a.createBuffer(1, Math.round(a.sampleRate * .22), a.sampleRate), ch = buf.getChannelData(0);
+    for (let i = 0; i < ch.length; i++) ch[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * i / ch.length);
+    const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+    f.type = 'bandpass'; f.frequency.value = 2600; f.Q.value = .7; g.gain.value = .06; s.buffer = buf;
+    s.connect(f); f.connect(g); g.connect(a.destination); s.start();
+  },
   thwack: (when = 0) => { tone(150, .09, 'square', .05, when, -60); tone(90, .14, 'triangle', .06, when); },   // a hit
   drum: (when = 0) => { tone(72, .38, 'triangle', .13, when, -22); tone(140, .07, 'square', .035, when, -60); },   // the big war drum, starting a race
   tock: (when = 0) => { tone(620, .045, 'square', .025, when, -220); tone(240, .09, 'triangle', .05, when, -40); },   // a stake hammered into the ground

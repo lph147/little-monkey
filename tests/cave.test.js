@@ -43,7 +43,7 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   assert.deepEqual(said(g), ['master: 你来了。', 'master: 我是你的师父。']);
   assert.ok(notes(g).includes('card: 师父'));
   await press(g, 14, 6, 'up');
-  assert.deepEqual(said(g), ['master: 你叫什么名字？', 'player: 我没有名字。', 'master: 你叫孙悟空。']);
+  assert.deepEqual(said(g), ['master: 你叫什么名字？', 'player: 我没有真正的名字。大家都叫我美猴王。', 'master: 你叫孙悟空。']);
   assert.equal(get(g, 'yourName().zh'), '孙悟空', 'your name, from now on');
   await press(g, 14, 6, 'up');
   assert.ok(notes(g).some(n => /chores first/.test(n)), 'the chores first');

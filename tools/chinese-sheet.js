@@ -10,6 +10,7 @@ const {loadGame, ROOT} = require('../tests/fake-browser');
 // in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
 // into the content and delete them from here.
 const DRAFTS = [
+  {zh:'我 没有 真正 的 名字 。 大家 都 叫 我 美猴王 。', en:'I don’t have a real name. Everyone calls me Handsome Monkey King.', where:'New on 6 November 2026: your answer when the master asks your name (你叫什么名字？), before he names you 孙悟空; it was 我没有名字。 (I don’t have a name.), which sounded wrong, as everyone calls you 美猴王. Is 真正的名字 natural here, or would 我没有名字，大家都叫我美猴王。 be better?'},
   ...[['我 饿 了 ！ 我 要 牛 ！', 'I’m hungry! I want the cow!'], ['我 不 怕 你 ！', 'I’m not scared of you!'], ['我 怕 你 ！', 'I’m scared of you!']]
     .map(([zh, en]) => ({zh, en, where:'New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten'})),
   {zh:'草 上 有 鸟 。', en:'There are birds on the grass.', where:'New on 1 November 2026: a monkey in the meadow, telling you where to find birds (they land on the grass near you; it said 树上有鸟, in the trees, where you never find them). Is 草上有鸟 natural, or should it be 草地上有鸟 (草地 would be a new word, just for listening)?'},

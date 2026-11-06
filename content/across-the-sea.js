@@ -94,7 +94,7 @@ const CAVE_LEGEND = {
   'L': {look:'stump', landmark:true, onLook:[{if:{axeFetch:1}, label:'Chop', do:[{practise:1, label:'Chopping the wood', pic:'斧头'}, {carry:'木头'}]},
     {do:[{message:'A chopping block, with logs beside it to chop.'}]}]},
   'l': {look:'leafPile', word:'叶子', onLook:[{if:{chores:0}, do:[{message:'A heap of fallen leaves.'}]},
-    {if:{chores:2}, label:'Sweep', sparkle:true, do:[{practise:1, label:'Sweeping the leaves', pic:'扫'}, {change:'#'},
+    {if:{chores:2}, label:'Sweep', sparkle:true, do:[{practise:1, label:'Sweeping the leaves', pic:'扫'}, {sweep:'leaves'}, {change:'#'},
       {collect:'叶子', for:'sweep', count:5, each:'You sweep up the leaves ({leavesSwept}/5).', full:'All five heaps swept! Tell the senior pupil.'}]}]},
   'y': {look:'rockDoor', word:'门', note:'A pupil’s room, cut into the rock.'},
   'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[
@@ -105,14 +105,14 @@ const CAVE_LEGEND = {
   'M': {look:'rockDoor', word:'门', landmark:true, onLook:[{do:[{message:'The master’s back door. It’s shut.'}]}]}
 };
 // By night: no-one about; the slanting moon shining in the pool (月亮), and three stars over the master's back door (星星),
-// which is open for you.
+// which is open for you, lamplight inside.
 const CAVE_NIGHT = {
   'm': {look:'moonWater', word:'月亮', onLook:[{if:{new:'月亮'}, waits:true, label:'Look', do:[{newWord:'月亮', note:'月亮 means the moon. A thin, slanting moon, shining in the pool.'}]}]},
   's': {look:'water', word:'水'},
   'l': {look:'leafPile', word:'叶子'},
   'L': {look:'stump', landmark:true, onLook:[{do:[{message:'The chopping block, in the moonlight.'}]}]},
   'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[{do:[{message:'Not now! The master is waiting, at his back door beside the hall.'}]}]},
-  'M': {look:'rockDoor', word:'门', landmark:true, onLook:[{if:{new:'星星'}, waits:true, label:'Look up', do:[{newWord:'星星',
+  'M': {look:'rockDoorOpen', word:'门', landmark:true, onLook:[{if:{new:'星星'}, waits:true, label:'Look up', do:[{newWord:'星星',
     note:'星星 means stars. Over the master’s back door: a slanting moon, and three stars. Like the cave’s name: 斜月三星洞!'}]}]}
 };
 // The senior pupil's chores, fetched by their word (as the woodcutter's): three buckets of water from the pool, then four
@@ -1840,7 +1840,7 @@ const ACROSS_THE_SEA = {
     youCame: {zh:'你 来 了 。', en:'You’ve come.'},
     iAmMaster: {zh:'我 是 你 的 师父 。', en:'I’m your master.'},
     whatName: {zh:'你 叫 什么 名字 ？', en:'What’s your name?'},
-    noName: {zh:'我 没有 名字 。', en:'I don’t have a name.'},
+    noName: {zh:'我 没有 真正 的 名字 。 大家 都 叫 我 美猴王 。', en:'I don’t have a real name. Everyone calls me Handsome Monkey King.'},   // (you're called 美猴王, after all: decided 6 November 2026, after playing it)
     yourName: {zh:'你 叫 孙悟空 。', en:'Your name is Sun Wukong.'},
     oneTwoThree: {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'},
     teachChange: {zh:'我 教 你 变 。', en:'I’ll teach you to change into things.'},
