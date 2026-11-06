@@ -154,6 +154,11 @@ const LAIR_MAP = [
   "^^ggbgggggggゆg..gggggggwwwgg^^",
   "^^gggggggggggg..gggggggggggg^^"
 ];
+// The docker's boat at the harbour, with so many sacks on its deck (n): A, carrying a sack, puts it down there.
+const ON_BOAT = n => ({look:'bigBoat', deck:n, word:'船', note:'A big boat with a sail, to cross the sea.',
+  ...(n ? {} : {becomes:[4, 3, 2, 1].map(k => ({if:{cargoCarried:{atLeast:k}}, to:'①②③④'[k - 1]}))}),
+  onLook:[{if:{cargo:1, lifted:'sack'}, label:'Put down', do:[{putDown:'sack'},
+    {collect:'饭', for:'cargo', count:4, each:'You put the sack down on the {船|boat} ({cargoCarried}/4).', full:'Four sacks on the {船|boat}! Tell the docker.'}]}]});
 // A cage, a little monkey locked in it (n: which, at x, y): 救命！ (an event as you come near), 笼子 as you look at it, and
 // once you have the key (钥匙), opened with a question, the little monkey jumping out and hiding behind you.
 const CAGE = (n, x, y) => ({look:'cage', word:'笼子', landmark:true, becomes:[{if:{['freed' + n]:1}, to:'がぎぐげご'[n - 1]}], onLook:[
@@ -409,7 +414,8 @@ const ACROSS_THE_SEA = {
     {id:'a2grannyApple', if:{grannyApple:'asked', inBag:{'苹果':false}}, text:'Buy an {苹果} at the market for the granny', where:'town'},
     {id:'a2grannyPeach', if:{grannyPeach:'asked', inBag:{'桃子':false}}, text:'Buy a {桃子} at the market for the granny', where:'town'},
     {id:'a2grannyBack', if:{any:[{grannyBuns:'asked', inBag:{'包子':true}}, {grannyApple:'asked', inBag:{'苹果':true}}, {grannyPeach:'asked', inBag:{'桃子':true}}]}, text:'Take it to the granny in the town', arrow:'granny2'},
-    {id:'a2cargo', main:true, if:{cargo:1, cargoCarried:{below:4}}, text:'Carry four sacks onto the {船|boat} for the docker ({cargoCarried}/4)', where:'harbour'},
+    {id:'a2cargo', main:true, if:{cargo:1, cargoCarried:{below:4}, lifted:false}, text:'Carry four sacks onto the {船|boat} for the docker ({cargoCarried}/4)', where:'harbour', arrow:{sparkle:true}},
+    {id:'a2cargoBoat', main:true, if:{cargo:1, lifted:'sack'}, text:'Carry the sack down the pier, and put it on the {船|boat} ({cargoCarried}/4)', arrow:[18, 15, 'harbour']},
     {id:'a2cargoBack', main:true, if:{cargo:1, cargoCarried:4}, text:'Tell the docker the sacks are on the {船|boat}', arrow:'docker'},
     {id:'a2cat', if:{exchanged:1, friends:{cat:false}}, text:'Make {朋友|friends} with the cat in the market', arrow:[33, 8, 'town']},
     {id:'a2harbour', main:true, if:{years:1, cargo:0}, text:'Cross the {桥|bridge} to the harbour: maybe someone there knows', arrow:'docker'},
@@ -1029,12 +1035,17 @@ const ACROSS_THE_SEA = {
       music: 'village',
       onMap: [166, 150],
       sounds: ['wind', 'birds'],
-      // its sacks of rice, waiting to go on the boat: carry four for the docker (a question as you lift each)
+      // its sacks of rice, waiting to go on the boat: carry four for the docker, one at a time (a question as you lift each),
+      // over your head down the pier, and put each down on the boat's deck, where they pile up (decided 6 November 2026,
+      // after playing it: they were thrown onto it)
       legend: {
         'x': {look:'sacks', landmark:true, onLook:[
-          {if:{cargo:1, cargoCarried:{below:4}}, label:'Carry', sparkle:true, do:[{practise:1, label:'Lift the sack!', pic:'饭'}, {change:'#'}, {lift:'sack', toss:[19, 15]},
-            {collect:'饭', for:'cargo', count:4, each:'You heave the sack up, and toss it down onto the boat ({cargoCarried}/4)!', full:'Four sacks on the boat! Tell the docker.'}]},
-          {do:[{message:'Sacks of rice, waiting to go on the boat.'}]}]}
+          {if:{cargo:1, cargoCarried:{below:4}, lifted:false}, label:'Lift', sparkle:true, do:[{practise:1, label:'Lift the sack!', pic:'饭'}, {change:'#'}, {lift:'sack'},
+            {message:'Up it goes, over your head! Carry it down the pier, onto the {船|boat}.'}]},
+          {if:{lifted:'sack'}, do:[{message:'Your arms are full! Take this sack to the {船|boat} first.'}]},
+          {do:[{message:'Sacks of rice, waiting to go on the boat.'}]}]},
+        // the boat, and the sacks on its deck, as many as you've put there
+        'V': ON_BOAT(0), '①': ON_BOAT(1), '②': ON_BOAT(2), '③': ON_BOAT(3), '④': ON_BOAT(4)
       },
       exits: [
         {at:[16, 0], to:'canalPath', arrive:[9, 28], facing:'up'},
@@ -2010,7 +2021,7 @@ const ACROSS_THE_SEA = {
     // the docker loading the big boat, once the years have passed: carry four sacks for him
     docker: [
       {if:{years:0}, do:[{say:'hi'}, {reply:'你好'}]},
-      {if:{cargo:0}, do:[{say:'hi'}, {set:{cargo:1}}, {message:'The docker is loading the big boat. Help him: carry four sacks from the quay. Face a sack, and press A!'}]},
+      {if:{cargo:0}, do:[{say:'hi'}, {set:{cargo:1}}, {message:'The docker is loading the big boat. Help him: carry four sacks from the quay down the pier to it, one at a time. Face a sack, and press A!'}]},
       {if:{cargo:1, cargoCarried:4}, do:[{set:{cargo:2}}, {say:'thanks'}, {reply:'不客气'}, {coins:3, note:'The docker gives you 3 🪙 for your help.'}]},
       {if:{cargo:1}, do:[{message:'Four sacks, please! ({cargoCarried}/4)'}]},
       ...ASK('askDocker', {cargo:2}, [{message:'The docker doesn’t know, but is your friend now. The boatman on the pier has sailed all over the sea, though: ask the boatman!'}]),

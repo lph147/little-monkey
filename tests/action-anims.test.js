@@ -130,24 +130,29 @@ test('a small stone in the pine wood: it’s gone from the ground as you crouch 
   assert.equal(get(g, 'here().picked.stones.length'), 1, 'one stone');
 });
 
-test('a sack of rice: heaved up off the pile, over your head, and thrown in a high arc all the way down onto the boat', async () => {
+test('a sack of rice: heaved up off the pile over your head, carried down the pier, and put down on the boat, where they pile up on its deck', async () => {
   const g = game(2, {child: 3, dressed: 2, landed: 1, back: 1, years: 1, cargo: 1}, {place: 'harbour', x: 8, y: 5, dir: 'up'}, AREA2_WORDS);
   assert.equal(get(g, 'tileAt(8, 4).look'), 'sacks', 'the sacks in front of you');
-  g.run("globalThis.__turned = []; SFX.swish = () => { __turned.push(pl.dir); }");
   await press(g, 8, 5, 'up');
   const [a] = get(g, '__acts');
-  assert.deepEqual([a.kind, a.w, a.to], ['lift', 'sack', [19, 15]], 'heaving one up, to throw onto the boat');
+  assert.deepEqual([a.kind, a.w], ['lift', 'sack'], 'heaving one up');
   assert.notEqual(a.ground, 'sacks', 'one fewer on the pile as you lift it');
-  assert.deepEqual(get(g, '__turned'), ['right'], 'turning to the boat to throw it');
-  assert.equal(get(g, 'pl.dir'), 'up', 'and back again');
-  assert.equal(heard(g, 'bump'), 2, 'up it goes, and down it lands');
+  assert.equal(get(g, 'here().lifted'), 'sack', 'and carrying it, over your head');
+  assert.equal(heard(g, 'bump'), 1, 'up it goes');
+  assert.equal(g.run('counter("cargoCarried")'), 0, 'not on the boat yet');
+  await press(g, 9, 5, 'up');
+  assert.match(get(g, '__notes').slice(-1)[0], /Your arms are full/, 'not another one');
+  assert.equal(get(g, 'canFish()'), false, 'and no fishing, with your arms full');
+  await press(g, 17, 15, 'right');
+  const [, b] = get(g, '__acts');
+  assert.deepEqual([b.kind, b.w, String(b.at)], ['putDown', 'sack', '18,15'], 'put down on the boat');
+  assert.equal(get(g, 'here().lifted || null'), null, 'your arms empty again');
+  assert.equal(heard(g, 'bump'), 2, 'and down it goes');
   assert.equal(g.run('counter("cargoCarried")'), 1, 'one on the boat');
-  const path = get(g, '[...Array(51).keys()].map(i => tossedTo({to: [19, 15]}, LIFT.toss + i * (LIFT.ms - LIFT.toss) / 50))');
-  assert.deepEqual(path[0], [8 * 16 + 3, 5 * 16 - 10], 'from over your head');
-  assert.deepEqual(path[50], [19 * 16 + 3, 15 * 16 + 2], 'onto the boat');
-  const top = Math.min(...path.map(([, y]) => y));
-  assert.ok(Math.abs(top - (5 * 16 - 10 - get(g, 'LIFT.rise'))) <= 1, `up first, its top LIFT.rise above where it began (${top.toFixed(1)})`);
-  assert.ok(path.every(([x], i) => i === 0 || x > path[i - 1][0]), 'and on, all the way, towards the boat');
+  assert.equal(get(g, 'tileAt(18, 15).deck'), 1, 'on its deck, where the boat shows it');
+  // each one goes in its own place on the deck: the next lands where the boat will show it
+  assert.deepEqual(get(g, "putDownAt({x: 18, y: 15, dir: 'right'})"), [18 * 16 + get(g, 'DECKS.bigBoat[1][0]'), 15 * 16 + get(g, 'DECKS.bigBoat[1][1]')]);
+  assert.ok(get(g, 'tileAt(19, 15).deck === 1 && tileAt(20, 15).deck === 1'), 'the whole boat');
 });
 
 test('opening a cage: the key in the lock and turned, click, and the door creaks open, then the little monkey jumps out', async () => {
@@ -175,14 +180,24 @@ test('what each looks like as you do it: the bucket, full; the sack over your he
   const act = (kind, more = '') => `({kind: '${kind}', t0: 0, x: 12, y: 10, dir: 'down'${more}})`;
   assert.ok(colours(drawn(`ACTS.dip(${PX}, ${PY}, DIP.down + 60, ${act('dip')})`)).includes('#BFE8FA'), 'in the water, ripples round it');
   assert.ok(colours(drawn(`ACTS.dip(${PX}, ${PY}, DIP.up + 60, ${act('dip')})`)).includes('#7FC4EE'), 'out again, full of water');
-  // the sack, over your head
-  const sack = drawn(`ACTS.lift(${PX}, ${PY}, LIFT.up + 120, ${act('lift', ", to: [19, 15]")})`).filter(([k, what]) => k === 'image' && what === 'sack');
-  assert.equal(sack.length, 1, 'the sack, as on the pile');
-  assert.ok(sack[0][3] < PY - 8, 'held up over your head');
-  // the key: going in, flat; then turned, upright; the lock off and the door swinging open, to the left
-  const key = t => drawn(`ACTS.unlock(${PX}, ${PY}, ${t}, ${act('unlock')})`).filter(([k, c]) => k === 'rect' && c === '#E8C040').map(([, , , , w, h]) => [w, h]);
-  assert.deepEqual(key(300), [[4, 1]], 'the key, going in');
-  assert.deepEqual(key(500), [[1, 4]], 'turned');
+  // the sack: in your paws on the pile, then over your head (the lift pose); and carried about, over your head as you walk
+  // (the carry pose), and drawn first, your paws and head over its edges
+  const lifted = t => drawn(`ACTS.lift(${PX}, ${PY}, ${t}, ${act('lift', ", what: 'sack'")})`).filter(([k]) => k === 'image').map(([, what, x, y]) => [what, x, y]);
+  assert.ok(lifted(60)[0][0] === 'sack' && lifted(60)[0][2] > PY + 8, 'on the pile in front of you, as you crouch for it');
+  assert.ok(lifted('LIFT.up + 120')[0][0] === 'sack' && lifted('LIFT.up + 120')[0][2] < PY - 8, 'held up over your head');
+  const walking = drawn(`drawCarrying('sack', ${PX}, ${PY}, 'down', 1, 1)`).filter(([k]) => k === 'image').map(([, what, x, y]) => [what, x, y]);
+  assert.deepEqual(walking.map(([w]) => w), ['sack', ''], 'the sack, then you holding it');
+  assert.ok(walking[0][2] < PY - 8, 'over your head as you walk');
+  assert.deepEqual(walking[1].slice(1), [PX - 16, PY - 17], 'stepping, bobbing up');
+  // the key, in your paw (the key pose, js/poses.js), its shaft into the lock: its bow a ring, then edge on as it turns;
+  // the lock off and the door swinging open, to the left
+  const bow = t => drawn(`ACTS.unlock(${PX}, ${PY}, ${t}, ${act('unlock')})`).filter(([k, c]) => k === 'rect' && c === '#5A4010').map(([, , , , w, h]) => [w, h]);
+  assert.deepEqual(bow(300), [[3, 3]], 'the key, going in: its bow a ring');
+  assert.deepEqual(bow(500), [[3, 1]], 'turned: its bow edge on');
+  const shaft = drawn(`ACTS.unlock(${PX}, ${PY}, 300, ${act('unlock')})`).filter(([k, c]) => k === 'rect' && c === '#E8C040').map(([, , x, y]) => [x, y]);
+  const paw = get(g, "poseSprite('key', 'down', 'reach').paw"), lock = [12 * 16 - (get(g, 'pl.px') - PX) + 8, 10 * 16 - (get(g, 'pl.py') - PY) + 8];
+  assert.deepEqual(shaft.at(-1), lock, 'into the lock');
+  assert.ok(Math.hypot(shaft[0][0] - PX - paw[0], shaft[0][1] - PY - paw[1]) <= 1.5, 'from your paw');
   const bars = t => drawn(`ACTS.unlock(${PX}, ${PY}, ${t}, ${act('unlock')})`).filter(([k, c, , , w, h]) => k === 'rect' && c === '#9A6A3A' && w === 1 && h >= 10)
     .map(([, , x]) => x - (12 * 16 - (get(g, 'pl.px') - PX))).sort((p, q) => p - q);
   assert.deepEqual(bars(0), [1, 4, 7, 10, 14], 'shut: its door’s three bars between its sides');

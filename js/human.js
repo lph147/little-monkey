@@ -193,6 +193,10 @@ function marketStall(g, o, awn, goods, sign){   // a stall: a plain cloth awning
 const vSign = text => (g, x, y) => { const n = [...text].length; R(g, x - 1, y - 1, 14, n * 12 + 3, HW.wood); R(g, x, y, 12, n * 12 + 1, '#F2E6C4'); write(g, text, x + 1, y + 1, '#2A1A10', {down: true}); };
 // A sack of rice: closed, tied at its neck with its two corners sticking up; or open, its top rolled down, full of rice.
 const SACK = ['#E6D6AE', '#CDB98A', '#A8925F', '#BFA977'];
+// Where things are put down on a big object's deck (the putDown step: js/world.js and js/draw.js), in turn, each the
+// middle of its bottom, from the object's top left: the docker's boat's sacks, two by its bow, one on top of them, and
+// one behind its mast.
+const DECKS = {bigBoat:[[5, 6], [14, 6], [9, -2], [28, 6]]};
 function sack(g, x, y, w, h, open){
   const m = x + (w >> 1);
   R(g, x + 1, y, w - 2, h, SACK[1]); R(g, x, y + 1, w, h - 2, SACK[1]);
@@ -390,13 +394,15 @@ Object.assign(OBJECT_ART, {
       for (let i = 0; i < 5; i++){ const inset = [0, 1, 2, 3, 5][i]; R(t, X + 1 + inset, Y + 8 + i, W - 2 - inset * 2, 1, i === 0 ? WOODS[4] : i % 2 ? WOODS[1] : WOODS[2]); }
     });
   },
-  bigBoat: ink((g, o) => {   // a boat to cross the sea: a mast and a battened sail, a cabin at its stern, and an eye on its bow
+  bigBoat: ink((g, o) => {   // a boat to cross the sea: a mast and a battened sail, a cabin at its stern, and an eye on its bow;
+    // and on its deck, the sacks you've put there (deck: how many, its squares' own)
     const X = o.x * T, Y = o.y * T, W = o.w * T;
     R(g, X + W - 14, Y - 2, 10, 8, WOODS[2]); R(g, X + W - 15, Y - 3, 12, 2, WOODS[1]); R(g, X + W - 11, Y + 1, 3, 3, '#3A2A1E');
     for (let i = 0; i < 7; i++) R(g, X + i, Y + 7 + i, W - 2 * i, 1, i % 2 ? WOODS[1] : WOODS[2]);
     R(g, X, Y + 6, W, 2, WOODS[3]); R(g, X + 3, Y + 8, 3, 3, '#F2EEE4'); R(g, X + 4, Y + 9, 1, 1, '#1E1A16');
     R(g, X + 21, Y - 30, 2, 37, WOODS[0]);
     for (let r = 0; r < 26; r++) R(g, X + 8 + Math.round(r / 6), Y - 28 + r, 12 - Math.round(r / 8), 1, r % 5 === 0 ? '#6A2A1A' : '#B5462E');
+    DECKS.bigBoat.slice(0, o.deck || 0).forEach(([x, y]) => sack(g, X + x - 4, Y + y - 9, 9, 9));
   }),
   scarecrow: ink((g, o) => {   // a scarecrow in the rice, in a patched coat and a straw hat
     const X = o.x * T, Y = o.y * T;

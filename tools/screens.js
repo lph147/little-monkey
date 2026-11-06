@@ -1381,8 +1381,11 @@ const SCREENS = [
     play(); await wait(100); storyScene('manyYearsLater'); introClock = 2.5; advancedTo = 0; await wait(400); }},
   {id: 'a2-docker', title: 'Area 2: loading the boat', save: 'a2docker', why: 'Waiting for the wind, you help the docker: face a sack and press A to lift it (a question), and carry it down to the boat. Four of them.', run: async () => {
     play(); await wait(600); }},
-  {id: 'a2-sack', title: 'Area 2: a sack onto the boat', save: 'a2docker', why: 'Each sack: your monkey heaves it up off the pile, over its head, turns to the boat and throws it, in a high arc, all the way down onto it. Here, throwing again and again, a sack in the air.', run: async () => {
-    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await STEPS.lift({lift: 'sack', toss: [19, 15]}); })(); await wait(760); }},
+  {id: 'a2-sack', title: 'Area 2: a sack over your head', save: 'a2docker', why: 'Each sack: your monkey heaves it up off the pile and over its head, in both paws, and carries it down the pier to the boat, the sack over its head as it walks. Here, carrying one.', run: async () => {
+    play(); await wait(300); closeMessage(); here().lifted = 'sack'; pl.dir = 'right'; await wait(150); }},
+  {id: 'a2-onboat', title: 'Area 2: sacks on the boat', save: 'a2docker', why: 'At the boat (from the end of the pier, facing it), A puts the sack down on its deck, where it stays: the sacks pile up there, two by its bow, one on top, and one behind the mast. Here, three on it, and putting down the fourth.', run: async () => {
+    play(); await wait(300); closeMessage(); here().cargo = 1; here().picked.cargo = Array(3).fill('harbour:18,15'); refreshMap(); here().lifted = 'sack';
+    S.pos = {place: PLACE, x: 17, y: 15, dir: 'right'}; placePlayer(); busy = true; (async () => { for (;;){ here().lifted = 'sack'; await STEPS.putDown({putDown: 'sack'}); } })(); await wait(300); }},
   {id: 'a2-harbour', title: 'Area 2: the harbour', save: 'a2harbour', why: 'The boatman, by his big boat: 今天没有风。 (风). Once you’ve practised, the wind comes, and he takes you across for your fare.', run: async () => {
     play(); await wait(600); }},
   {id: 'a2-crossing', title: 'Area 2: crossing the western sea', save: 'a2harbour', why: 'The wind in the sail, the town falling behind, then mountains ahead.', run: async () => {
@@ -1445,8 +1448,8 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'c2-cages', title: 'The cages (笼子)', save: 'c2cages', why: 'Two little monkeys set free with the guard’s key (钥匙), three still locked in, sparkling.', run: async () => {
     play(); await wait(500); }},
-  {id: 'c2-unlock', title: 'Unlocking a cage', save: 'c2cages', why: 'The guard’s key (钥匙) into the lock, turned, click, the lock off, and the door creaks open, the little monkey inside looking out; then it jumps out. Here, opening it again and again, its door swinging.', run: async () => {
-    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await STEPS.unlock({unlock: '钥匙'}); })(); await wait(660); }},
+  {id: 'c2-unlock', title: 'Unlocking a cage', save: 'c2cages', why: 'Your monkey steps up to the cage and reaches out, the guard’s key (钥匙) from its paw into the lock, turned (its bow edge on), click, the lock off, and it steps back as the door creaks open, the little monkey inside looking out; then it jumps out. Here, opening it again and again, the key in the lock.', run: async () => {
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await STEPS.unlock({unlock: '钥匙'}); })(); await wait(300); }},
   {id: 'c2-king', title: 'The Demon of Havoc', save: 'c2king', why: 'His name across the screen as the fight begins: a name, 混世魔王 Hùnshì Mówáng, not a word to catch.', run: async () => {
     play(); await wait(100); battle('king'); await wait(1100); }},
   {id: 'c2-king-fight', title: 'The Demon of Havoc: the fight', save: 'c2king', why: 'A boss fight as the bear’s: his health across the top, and what he says, aloud.', run: async () => {

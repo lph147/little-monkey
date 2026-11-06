@@ -18,7 +18,7 @@ const BITE_WAIT = [1600, 4200];   // how long till a fish bites (ms): somewhere 
 const BITE_MS = 2500;   // how long you have to press A once it has
 const NIBBLE_MS = 900;   // how long a nibble twitches the float
 const FISH = AREA.fishing || null;
-const canFish = () => !!FISH && matches(FISH.has);
+const canFish = () => !!FISH && matches(FISH.has) && !here().lifted;   // (not with your arms full, carrying something over your head)
 // Till A or B is pressed (keys: which of 'a' and 'b' count now), or ms has gone by: gives 'a', 'b' or 'time'.
 function fishWait(ms, keys){
   return new Promise(res => {

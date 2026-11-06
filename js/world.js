@@ -314,6 +314,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'around'){ const d = v[3] ?? AROUND; return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= d && Math.abs(pl.y - v[1]) <= d; }   // you're near here, as you come up to it (within so many squares: [x, y, 'place', squares])
     if (k === 'friends') return Object.entries(v).every(([id, want]) => S.friends.includes(id) === want);   // who's your friend, such as {goat:true}
     if (k === 'following') return Object.entries(v).every(([id, want]) => S.following.includes(id) === want);   // who's following you (the follow step), such as {cow:true}
+    if (k === 'lifted') return (here().lifted || false) === v;   // what you're carrying over your head (the lift step), such as 'sack', or false
     if (k === 'form') return (pl.form || null) === v;   // what you've changed into just now (turnInto with keep), such as a little demon
     if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
     if (AREA.counters[k]) return compare(counter(k), v);
@@ -324,7 +325,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {carry:['howMany','inHand'], hit:['with','times'], lift:['toss'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {carry:['howMany','inHand'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -356,7 +357,8 @@ function startAct(kind, o = {}){ const [x, y] = facing(); return acting = {kind,
 // into your hands.
 const SWEEP = {strokes:3, stroke:340};
 const DIP = {ms:1300, down:300, up:650, back:1000};
-const LIFT = {ms:1300, up:380, toss:620, rise:24};
+const LIFT = {ms:650, up:380};      // heaving something up over your head: how long, and when it's up
+const PUT = {ms:700, down:420};     // putting it down: how long, and when it's down
 const UNLOCK = {ms:1050, turn:430, open:520, opened:880};
 const PICK = {ms:1150, fall:140, caught:560};
 // A little monkey in training (practises, in the area's characters) swings its stick now and then, facing its own way,
@@ -664,16 +666,22 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     await sleep(DIP.ms - DIP.down);
     acting = null;
   },
-  // You heave up what you're facing (lift: what it is, 'sack') over your head, turn, and toss it to where it goes (toss:
-  // the square it lands on, [x, y]), such as a sack of rice down onto the docker's boat; then you turn back.
+  // You heave up what you're facing (lift: what it is, such as a sack of rice off the pile) over your head, crouching for
+  // it and up, and carry it about, held up over your head as you walk (here().lifted, drawCarrying in js/draw.js; decided
+  // 6 November 2026, after playing it: the sacks were thrown onto the boat), till you put it down (putDown).
   async lift(s){
-    const was = pl.dir, a = startAct('lift', {what:s.lift, to:s.toss});
+    startAct('lift', {what:s.lift});
     await sleep(LIFT.up); SFX.bump();
-    await sleep(LIFT.toss - LIFT.up);
-    if (s.toss){ const dx = s.toss[0] - pl.x, dy = s.toss[1] - pl.y; pl.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'); }
-    SFX.swish();
-    await sleep(LIFT.ms - LIFT.toss); SFX.bump();
-    acting = null; pl.dir = was;
+    await sleep(LIFT.ms - LIFT.up);
+    acting = null; here().lifted = s.lift; save();
+  },
+  // You put down what you're carrying over your head (putDown: what it is) onto what you face, such as the docker's
+  // boat: lowered in front of you and set down, with a thump.
+  async putDown(s){
+    const a = startAct('putDown', {what:s.putDown}); a.to = putDownAt(a);   // (where it goes, worked out once)
+    await sleep(PUT.down); SFX.bump();
+    await sleep(PUT.ms - PUT.down);
+    acting = null; delete here().lifted; save();
   },
   // You unlock what you're facing with a key (unlock: the key's word, 钥匙), such as a cage in the demon's lair: the key
   // goes into the lock and turns, click, and the door creaks open.
@@ -1096,9 +1104,10 @@ async function runSteps(steps, who, ends){
   for (const [i, s] of steps.entries()) if ((!s.if || matches(s.if)) && await STEPS[stepKind(s)](s, who, !!ends && !showsMore(steps, i), !!ends) === STOP) return STOP;
 }
 // Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map, you doing
-// something (the last of them, ACT_STEPS, changing nothing in the story, as a sound doesn't).
-const ACT_STEPS = ['sweep', 'dip', 'lift', 'unlock', 'pickUp'];
-const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly', ...ACT_STEPS];
+// something (the last of them, ACT_STEPS, changing nothing in the story, as a sound doesn't; lifting something and
+// putting it down do: what you carry).
+const ACT_STEPS = ['sweep', 'dip', 'unlock', 'pickUp'];
+const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly', 'lift', 'putDown', ...ACT_STEPS];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){

@@ -2122,7 +2122,7 @@ function mapObjects(){
     else if (ROW_OBJECTS.includes(t.look)) while (same(x+w, y)) w++;
     else if (BLOCK_OBJECTS.includes(t.look)){ while (part(x+w, y)) w++; while ([...Array(w).keys()].every(a => part(x+a, y+h))) h++; }
     for (let a = 0; a < w; a++) for (let c = 0; c < h; c++) taken.add(key(x+a, y+c));
-    out.push({look:t.look, x, y, w, h});
+    out.push({look:t.look, x, y, w, h, ...(t.deck ? {deck:t.deck} : {})});   // (deck: how many things are on it, such as sacks on the docker's boat)
   }
   return out.sort((p, q) => (p.y + p.h) - (q.y + q.h));
 }
@@ -2137,7 +2137,7 @@ let OBJECT_PIECES = [];
 const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its picture above and beside an object's squares, for what reaches out of them
 const LEAFY = ['tree', 'peachTree', 'appleTree'];   // what has leaves: they go over the characters beside it too, and rustle
 const COLLECTABLE = [];   // the squares in the place you're in with something to collect (a part of their onLook has sparkle)
-const objectKey = o => `${o.look}@${o.x},${o.y},${o.w},${o.h}`;
+const objectKey = o => `${o.look}@${o.x},${o.y},${o.w},${o.h}${o.deck ? '+' + o.deck : ''}`;   // (with what's on its deck: drawn again as that changes)
 function pieceOf(o){
   const x0 = o.x*T - PIECE_SIDE, y0 = o.y*T - PIECE_UP, pw = o.w*T + 2*PIECE_SIDE, ph = PIECE_UP + o.h*T + 4, right = PIECE_SIDE + o.w*T;
   const wide = LEAFY.includes(o.look), beside = wide ? [[0, PIECE_UP, PIECE_SIDE, ph - PIECE_UP], [right, PIECE_UP, pw - right, ph - PIECE_UP]] : [];

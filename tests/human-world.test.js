@@ -240,8 +240,14 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   goTo(g, 'harbour', 16, 1, 'down');
   await press(g, 11, 7, 'up');
   assert.equal(get(g, 'here().cargo'), 1);
-  for (const [x, y] of [[8, 5], [9, 5], [12, 6], [13, 6]]) await press(g, x, y, 'up');
+  for (const [x, y] of [[8, 5], [9, 5], [12, 6], [13, 6]]){   // (lifting each over your head, and down the pier to the boat with it)
+    await press(g, x, y, 'up');
+    assert.equal(get(g, 'here().lifted'), 'sack', 'a sack over your head');
+    await press(g, 17, 15, 'right');
+    assert.equal(get(g, 'here().lifted || null'), null, 'put down on the boat');
+  }
   assert.equal(g.run('counter("cargoCarried")'), 4, 'four sacks on the boat');
+  assert.equal(get(g, 'tileAt(18, 15).deck'), 4, 'all four on its deck');
   const paid = get(g, 'S.coins');
   await press(g, 11, 7, 'up');
   assert.deepEqual([get(g, 'here().cargo'), get(g, 'S.coins')], [2, paid + 3], 'the docker pays you');

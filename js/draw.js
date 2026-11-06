@@ -648,7 +648,6 @@ const drawChop = (dir, PX, PY, t0, now) => drawPose('chop', dir, (now - t0) / SW
 // (PX, PY), the time, and what you're doing (a: its kind, when it began, t0, the square it's done to, x and y, and the
 // rest); it draws you, empty-handed but for what you're using. What flies off somewhere else, over everything, such as a
 // sack you toss or a fruit falling from a tree: drawActFx.
-const ACT_HAND = {down:[5, 9], up:[5, -2], left:[-3, 6], right:[11, 6]};   // where you hold something in front of you
 const actMonkey = (PX, PY, dir, lift = 0) => { R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)'); b.drawImage(monkeySprite('player', dir, false, 0, true), PX, PY - lift); };
 const lerp = (a, z, k) => a + (z - a) * k, ease = k => 1 - (1 - k) * (1 - k);
 const itemPic = w => { const pic = PICTURES[w]; return pic && (FORMS['eat ' + w] || (FORMS['eat ' + w] = sprite(pic.rows, pic.palette))); };
@@ -664,10 +663,11 @@ function sackPic(X, Y){   // a sack of rice, tied at its neck, its two corners s
   }
   b.drawImage(SACK_HELD, Math.round(X) - 2, Math.round(Y) - 4);
 }
-function keyPic(X, Y, turned){   // a key, in the lock (turned: upright, as it turns)
-  X = Math.round(X); Y = Math.round(Y);
-  if (turned){ R(b, X, Y - 4, 3, 3, '#5A4010'); R(b, X + 1, Y - 3, 1, 1, '#3A2A20'); R(b, X + 1, Y - 1, 1, 4, '#E8C040'); R(b, X, Y - 4, 1, 1, '#F6DC7A'); return; }
-  R(b, X - 5, Y - 1, 3, 3, '#5A4010'); R(b, X - 4, Y, 1, 1, '#3A2A20'); R(b, X - 2, Y, 4, 1, '#E8C040'); R(b, X - 5, Y - 1, 1, 1, '#F6DC7A');
+function keyPic(fx, fy, tx, ty, turned){   // a key, its bow in your paw (f), its shaft into the lock (t); turned: a quarter turn, its bow edge on
+  const n = Math.max(Math.abs(tx - fx), Math.abs(ty - fy)) || 1, along = Math.abs(tx - fx) >= Math.abs(ty - fy);
+  for (let i = 1; i <= n; i++) R(b, Math.round(fx + (tx - fx) * i / n), Math.round(fy + (ty - fy) * i / n), 1, 1, '#E8C040');   // its shaft
+  if (turned){ if (along) R(b, fx, fy - 1, 1, 3, '#5A4010'); else R(b, fx - 1, fy, 3, 1, '#5A4010'); return; }   // its bow, edge on
+  R(b, fx - 1, fy - 1, 3, 3, '#5A4010'); R(b, fx, fy, 1, 1, '#3A2A20'); R(b, fx - 1, fy - 1, 1, 1, '#F6DC7A');   // its bow, a ring
 }
 const ACTS = {
   sweep: (PX, PY, now, a) => drawSweep(a.dir, PX, PY, a.t0, now),
@@ -679,21 +679,29 @@ const ACTS = {
     drawPose('dip', a.dir, m, PX, PY);
     if (m === 'full' && bk) for (let i = 0; i < 2; i++){ const k = ((t - DIP.up) / 260 + i / 2) % 1; R(b, PX + bk[0] - 1 + i * 3, Math.round(PY + bk[1] + 5 + k * 6), 1, 1, '#7FC4EE'); }   // drips
   },
-  // lifting a sack: you crouch, heave it up off the pile and over your head, then turn and toss it (drawActFx)
+  // lifting something heavy, such as a sack of rice: you crouch, your paws on it in front of you, and heave it up over your
+  // head (the lift pose, js/poses.js); then you carry it about (drawCarrying)
   lift(PX, PY, now, a){
-    const t = now - a.t0, cx = pl.px - PX, cy = pl.py - PY;
-    actMonkey(PX, PY, pl.dir, t < 160 ? -1 : 0);
-    if (t < LIFT.up){ const k = ease(t / LIFT.up); sackPic(lerp(a.x*T - cx + 3, PX + 3, k), lerp(a.y*T - cy + 3, PY - 10, k)); }
-    else if (t < LIFT.toss) sackPic(PX + 3, PY - 10 + (t < LIFT.up + 90 ? 1 : 0));   // (held up over your head)
+    const m = now - a.t0 < LIFT.up * .45 ? 'low' : 'high', [x, y] = poseSprite('lift', a.dir, m).load;
+    (LIFTED[a.what] || LIFTED.sack)(PX + x, PY + y);   // (it first: your paws and your head over its edges)
+    drawPose('lift', a.dir, m, PX, PY);
   },
-  // turning a key in a lock: the key goes in and turns, click, the lock comes off, and the door swings open, creaking
+  // putting it down: lowered from over your head as you lean to set it down in front of you, such as on the boat's deck,
+  // where it'll stay (putDownAt)
+  putDown(PX, PY, now, a){
+    const k = Math.min(1, (now - a.t0) / PUT.down), [hx, hy] = poseSprite('lift', a.dir, 'high').load, [x, y] = a.to || putDownAt(a), tx = x - pl.px + PX, ty = y - pl.py + PY;
+    (LIFTED[a.what] || LIFTED.sack)(Math.round(lerp(PX + hx, tx, ease(k))), Math.round(lerp(PY + hy, ty, ease(k))));
+    drawPose('lift', a.dir, k < .5 ? 'high' : 'set', PX, PY);
+  },
+  // turning a key in a lock: you step up to it and reach out, the key in your paw, into the lock (the key pose, js/poses.js);
+  // it turns, click, the lock comes off, and you step back as the door swings open, creaking. (Facing down, the cage is
+  // in front of you: your arm goes behind it.)
   unlock(PX, PY, now, a){
-    const t = now - a.t0, cx = pl.px - PX, cy = pl.py - PY, X = a.x*T - cx, Y = a.y*T - cy;
+    const t = now - a.t0, cx = pl.px - PX, cy = pl.py - PY, X = a.x*T - cx, Y = a.y*T - cy, holding = t < UNLOCK.open + 120;
     const door = t < UNLOCK.open ? 0 : Math.min(1, ease((t - UNLOCK.open) / (UNLOCK.opened - UNLOCK.open)));
-    if (typeof cage === 'function') cage(b, X, Y, a.x, a.y, false, door, t < UNLOCK.open);   // (the cage, its door swinging open: js/havoc.js)
-    actMonkey(PX, PY, a.dir);
-    const [hx, hy] = ACT_HAND[a.dir], k = Math.min(1, t / 250);
-    if (t < UNLOCK.open + 120) keyPic(lerp(PX + hx + 4, X + 8, ease(k)), lerp(PY + hy + 1, Y + 8, ease(k)), t >= UNLOCK.turn);
+    const me = () => holding ? drawPose('key', a.dir, 'reach', PX, PY) : actMonkey(PX, PY, a.dir), lock = () => { if (typeof cage === 'function') cage(b, X, Y, a.x, a.y, false, door, t < UNLOCK.open); };   // (the cage, its door swinging open: js/havoc.js)
+    if (a.dir === 'down'){ me(); lock(); } else { lock(); me(); }
+    if (holding){ const [px, py] = poseSprite('key', a.dir, 'reach').paw; keyPic(PX + px, PY + py, X + 8, Y + 8, t >= UNLOCK.turn); }
   },
   // picking something up: up on tiptoe into a tree, an arm up into its leaves; crouching for what's on the ground, or in
   // the water; or leaning into what it's in, such as the hive (the pick pose, js/poses.js): it's under your paws as you
@@ -713,24 +721,34 @@ const ACTS = {
     drawPose('pick', a.dir, a.reach, PX, PY);
   }
 };
-// What flies off somewhere as you do something, over everything: a sack tossed down onto the boat, in a high arc; what
-// you pick from a tree, dropping from its leaves into your paw.
+// What flies off somewhere as you do something, over everything: what you pick from a tree, dropping from its leaves
+// into your paw.
 function drawActFx(cx, cy, now){
   const a = acting; if (!a) return;
   const t = now - a.t0;
-  if (a.kind === 'lift' && a.to && t >= LIFT.toss) sackPic(...tossedTo(a, t).map((v, i) => v - (i ? cy : cx)));
   if (a.kind === 'pick' && a.reach === 'up' && t >= PICK.fall && t < PICK.caught){   // (dropping, faster and faster, into your paw up in the tree)
     const k = (t - PICK.fall) / (PICK.caught - PICK.fall), c = itemPic(a.pic || a.w), [fx, fy] = a.from, [x, y] = poseSprite('pick', a.dir, 'up').item;
     if (c) b.drawImage(c, Math.round(lerp(fx - 5, pl.px + x - 5, k) - cx), Math.round(lerp(fy - 5, pl.py + y - 5, k * k) - cy), 10, 10);
   }
 }
-// Where a sack you've tossed is (on the map, in pixels), t after you began lifting it: from over your head, up and away
-// in an arc, its top LIFT.rise higher than it began however far down it lands (d, the parabola's depth, solved for that),
-// and down onto where it's going (a.to).
-function tossedTo(a, t){
-  const k = Math.min(1, (t - LIFT.toss) / (LIFT.ms - LIFT.toss)), fx = pl.px + 3, fy = pl.py - 10, tx = a.to[0]*T + 3, ty = a.to[1]*T + 2;
-  const D = Math.max(0, ty - fy), d = D + 2 * LIFT.rise + 2 * Math.sqrt(LIFT.rise * (D + LIFT.rise));
-  return [lerp(fx, tx, k), lerp(fy, ty, k) - d * k * (1 - k)];
+// What you can carry over your head (the lift step), each drawn by the middle of its bottom (x, y), on the screen.
+const LIFTED = {sack:(x, y) => sackPic(x - 4, y - 11)};
+// Where you put down what you carry (the putDown step: a, its act, the square you face), the middle of its bottom, on the
+// map: on a big object with a deck, such as the docker's boat, its next place there (DECKS, js/human.js), where it'll
+// stay; anywhere else, in front of you, as you set it down.
+function putDownAt(a){
+  const o = mapObjects().find(o => a.x >= o.x && a.x < o.x + o.w && a.y >= o.y && a.y < o.y + o.h);
+  const slot = o && typeof DECKS !== 'undefined' && DECKS[o.look] && DECKS[o.look][o.deck || 0];
+  if (slot) return [o.x*T + slot[0], o.y*T + slot[1]];
+  const [x, y] = poseSprite('lift', a.dir, 'set').load; return [pl.px + x, pl.py + y];
+}
+// Carrying something over your head (here().lifted, the lift step) as you walk about, your arms up holding it, your legs
+// stepping (the carry pose, js/poses.js: step, 1 or 2 mid-step, when you're bobbing up, bob).
+function drawCarrying(what, PX, PY, dir, step, bob){
+  const p = poseSprite('carry', dir, step), [x, y] = p.load;
+  R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
+  LIFTED[what](PX + x, PY + y - bob);
+  b.drawImage(p.canvas, PX - POSES.O, PY - POSES.O - bob);
 }
 // Ground being marked out (the markOut step): a stake hammered in at each corner of the plot, one by one, as plot() in
 // js/art.js has them; the string pulled tight round them, from the top-left, round to the right, along the bottom and back
@@ -874,7 +892,11 @@ function drawWorld(now){
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
       if (acting && ACTS[acting.kind]) ACTS[acting.kind](PX, PY, now, acting);   // doing something: sweeping, filling a bucket, lifting a sack, turning a key, picking fruit
       else if (swing && now - swing.t0 < SWING_MS){ if (swing.with === '斧头') drawChop(pl.dir, PX, PY, swing.t0, now); else drawSwing('player', pl.dir, PX, PY, swing.t0, now, HELD[swing.with] ? swing.with : undefined); }   // chopping with the axe, or swinging your stick (the hit step)
-      else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
+      else {
+        if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir);
+        if (LIFTED[here().lifted]) drawCarrying(here().lifted, PX, PY, pl.dir, mid ? 1 + pl.parity : 0, mid ? 1 : 0);   // (carrying something over your head)
+        else drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
+      }
       if (pl.eating) drawEating(pl.eating, PX, PY, now);   // eating a meal (the eat step)
       if (pl.form) drawForm(pl.form, PX, PY, now);   // turned into something (the turnInto step: drawn over you, in your place)
       if (now - puffAt < PUFF_MS) drawPuff(PX, PY, (now - puffAt) / PUFF_MS);

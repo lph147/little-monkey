@@ -33,6 +33,13 @@ const POSES = (() => {
     frontCrouch:{rows:[...Array(4).fill('................'), ...FRONT.slice(1, 9), '..offffssffffo..', '..offffffffffo..', '..offo....offo..', '..ooo......ooo..'], y0:0, top:4, coat:[11, 13], belt:12, band:6},
     sideCrouch:{rows:[...Array(3).fill('................'), ...SIDE.slice(1, 8).map(r => shift(r, 1)), SIDE[9], SIDE[10], SIDE[11], SIDE[12], '.oo.offo.offo...', '....ooo..ooo....'], y0:0, top:3, coat:[10, 13], belt:12, band:5}
   };
+  // walking (1 and 2: each foot forward, LEGS in js/art.js), as you carry something over your head
+  for (const k of [1, 2]){
+    const legs = (rows, l) => [...rows.slice(0, 14), ...l];
+    BODIES['front' + k] = {...BODIES.front, rows:legs(FRONT, LEGS.front[k])};
+    BODIES['back' + k] = {...BODIES.back, rows:legs(BEHIND, LEGS.front[k])};
+    BODIES['side' + k] = {...BODIES.side, rows:legs(SIDE, LEGS.side[k])};
+  }
   const blank = () => Array.from({length:W}, () => Array(W).fill('.'));
   const put = (g, x, y, c) => { if (g[y] && x >= 0 && x < W) g[y][x] = c; };
   const get = (g, x, y) => (g[y] && g[y][x]) || '.';
@@ -185,6 +192,38 @@ const POSES = (() => {
         const a = at(8, -6), z = toward(a, -90, n); weapon(g, a, z, held); you(g, 'backLean', w, 0, -3); arm(g, [[3, 8], [2, 5], [4, 0], [7, -3]], w, 0, -3); arm(g, [[12, 8], [13, 5], [11, 0], [9, -3]], w, 0, -3); return {grip:a, tip:z};
       }
     },
+    // lifting something heavy, such as a sack of rice, and setting it down (m: 'low', crouching, your paws on it on the
+    // ground in front of you; 'high', held up over your head in both paws; 'set', leaning to set it down in front of you,
+    // such as on a boat's deck): gives back where it is (load: the middle of its bottom)
+    lift: {
+      back(g, m, w){
+        if (m === 'high'){ you(g, 'back', w); arm(g, [[3, 9], [2, 6], [2, 3], [3, 1]], w); arm(g, [[12, 9], [13, 6], [13, 3], [12, 1]], w); return {load:at(8, 1)}; }
+        you(g, 'backLean', w, 0, -3); arm(g, [[3, 8], [3, 5], [4, 1]], w, 0, -3); arm(g, [[12, 8], [12, 5], [11, 1]], w, 0, -3); return {load:at(8, m === 'set' ? -3 : -2)};
+      },
+      side(g, m, w){
+        if (m === 'high'){ you(g, 'side', w); arm(g, [[6, 9], [4, 6], [4, 1]], w); arm(g, [[9, 9], [11, 6], [11, 1]], w); return {load:at(8, 1)}; }
+        if (m === 'set'){ you(g, 'sideLean', w, 2); arm(g, [[8, 10], [11, 10], [14, 10]], w, 2); arm(g, [[8, 9], [11, 9], [14, 9]], w, 2); return {load:at(21, 8)}; }
+        you(g, 'sideCrouch', w, 1); arm(g, [[8, 11], [11, 13], [14, 14]], w, 1); arm(g, [[8, 10], [11, 11], [15, 12]], w, 1); return {load:at(21, 15)};
+      },
+      front(g, m, w){
+        if (m === 'high'){ you(g, 'front', w); arm(g, [[3, 9], [2, 6], [2, 3], [3, 1]], w); arm(g, [[12, 9], [13, 6], [13, 3], [12, 1]], w); return {load:at(8, 1)}; }
+        if (m === 'set'){ you(g, 'frontLean', w, 0, 3); arm(g, [[3, 10], [4, 13], [5, 15]], w, 0, 3); arm(g, [[12, 10], [11, 13], [10, 15]], w, 0, 3); return {load:at(8, 24)}; }
+        you(g, 'frontCrouch', w, 0, 1); arm(g, [[2, 11], [3, 14], [4, 17]], w, 0, 1); arm(g, [[13, 11], [12, 14], [11, 17]], w, 0, 1); return {load:at(8, 28)};
+      }
+    },
+    // walking with it over your head (m: 0 standing, 1 and 2 a foot forward): gives back where it is, as lift's
+    carry: {
+      back(g, m, w){ you(g, m ? 'back' + m : 'back', w); arm(g, [[3, 9], [2, 6], [2, 3], [3, 1]], w); arm(g, [[12, 9], [13, 6], [13, 3], [12, 1]], w); return {load:at(8, 1)}; },
+      side(g, m, w){ you(g, m ? 'side' + m : 'side', w); arm(g, [[6, 9], [4, 6], [4, 1]], w); arm(g, [[9, 9], [11, 6], [11, 1]], w); return {load:at(8, 1)}; },
+      front(g, m, w){ you(g, m ? 'front' + m : 'front', w); arm(g, [[3, 9], [2, 6], [2, 3], [3, 1]], w); arm(g, [[12, 9], [13, 6], [13, 3], [12, 1]], w); return {load:at(8, 1)}; }
+    },
+    // turning a key in a lock in front of you, such as a cage's (m: 'reach'): stepped up to it, an arm out to it, your paw
+    // on the key's bow; gives back where your paw is
+    key: {
+      back(g, m, w){ you(g, 'backLean', w, 0, -4); arm(g, [[3, 8], [2, 9], [2, 10]], w, 0, -4); return {paw:arm(g, [[12, 8], [12, 4], [10, 0]], w, 0, -4)}; },
+      side(g, m, w){ you(g, 'sideLean', w, 3); arm(g, [[8, 10], [9, 11], [10, 11]], w, 3); return {paw:arm(g, [[8, 9], [11, 9], [14, 8]], w, 3)}; },
+      front(g, m, w){ you(g, 'frontLean', w, 0, 3); arm(g, [[3, 10], [2, 11], [2, 12]], w, 0, 3); return {paw:arm(g, [[12, 10], [12, 13], [10, 16]], w, 0, 3)}; }
+    },
     // filling the bucket (m: 'out', stepped up to the water's edge holding it out; 'in', down in the water; 'full', lifted
     // out again; 'back', stepped back, carrying it at your side)
     dip: {
@@ -235,7 +274,7 @@ const POSES = (() => {
   };
   // a pose's letters (name: what you're doing; dir: which way you face; m: its moment; w: what you're wearing; held: what
   // you swing, HELD's), and anything else it gives back (such as your paw)
-  const POINTS = ['paw', 'bucket', 'item', 'grip', 'tip'];
+  const POINTS = ['paw', 'bucket', 'item', 'grip', 'tip', 'load'];
   function grid(name, dir, m, w = wear(), held = HELD['棍子']){
     const g = blank(), view = dir === 'up' ? 'back' : dir === 'down' ? 'front' : 'side';
     const info = {...DRAW[name][view](g, m, w, held), step:g.step || [0, 0], ...(g.bucket ? {bucket:g.bucket} : {})};
@@ -266,5 +305,6 @@ const POSES = (() => {
 // The picture of you doing something (name, facing dir, at its moment m; or another monkey, o.kind, and what's swung,
 // o.held): a canvas 48 pixels square, your own square in its middle, so drawn 16 pixels up and to the left of where you
 // stand; how far you've stepped from your square (step), and where your paw is (paw), the bucket (bucket), what you're
-// picking up (item), and what you swing, where it's held (grip) and its tip (tip), in your square's pixels
+// picking up (item), what you swing, where it's held (grip) and its tip (tip), and what you lift (load, the middle of its
+// bottom), in your square's pixels
 const poseSprite = (name, dir, m, o) => POSES.picture(name, dir, m, o);
