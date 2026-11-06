@@ -72,3 +72,15 @@ test('long grass: clumps of blades with light tips, its edge in the grass’s ow
   assert.ok([...edge, ...inside].every(([c, x, y, w]) => x >= 0 && x + w <= 16 && y < 16), 'and nothing beside it or below it, where the next squares are drawn');
   assert.ok(inside.filter(([c]) => c === '#94D883').length >= 8, 'blades with light tips');
 });
+
+test('softer colours in the human world, but not in the places borrowed from Flower Fruit Mountain', () => {
+  const g = game({place: 'highRoad', x: 16, y: 9, dir: 'up'});
+  assert.equal(g.run('softColours()'), true, 'the high road: soft');
+  const home = g.run("Object.keys(PLACES).find(id => PLACES[id].borrowed)");
+  assert.ok(home, 'a place borrowed from Flower Fruit Mountain');
+  g.run(`enterPlace('${home}')`);
+  assert.equal(g.run('softColours()'), false, home + ': as bright as it was');
+  g.run("enterPlace('town')");
+  assert.equal(g.run('softColours()'), true, 'and soft again back in the town');
+  assert.match(require('fs').readFileSync(require('path').join(__dirname, '..', 'css', 'game.css'), 'utf8'), /#screen\.soft\{filter:[^}]*saturate/, 'the screen’s filter');
+});

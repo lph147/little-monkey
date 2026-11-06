@@ -57,6 +57,7 @@ h1{font-weight:700;font-size:1.35rem;margin:0;letter-spacing:.05em}
 .display{grid-area:screen}
 .screen{position:relative;margin:0 auto;background:var(--bezel);padding:8px;border-radius:8px 8px 18px 8px;width:max-content;max-width:100%}
 canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:2px;touch-action:none}
+#screen.soft{filter:saturate(.84) sepia(.08)}   /* softer, older colours, in the human world (softColours, js/art.js) */
 /* The title screen: its words on the left, over the night sky, with the mountain and the stone on the right. */
 .titlecard{position:absolute;inset:8px auto 8px 8px;width:57%;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:.4rem;padding:4% 0 5% 5%;text-align:left;color:#FFF6E0;pointer-events:none}
 .titlecard[hidden]{display:none}

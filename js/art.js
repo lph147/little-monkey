@@ -2058,7 +2058,12 @@ function afterDrawing(){
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if ((tileAt(x, y).onLook || []).some(p => p.sparkle)) COLLECTABLE.push([x, y]);
   buildGloom();
 }
+// An area's colours 'soft' (the human world's, decided 6 November 2026, from the art proposal): a little less bright and a
+// little warmer, a filter over the whole screen (css: #screen.soft), so everything in it changes together, characters and
+// scenes too; in each of its places but those borrowed from an area before it (Flower Fruit Mountain, bright as it was).
+const softColours = () => AREA.colours === 'soft' && !(PLACES[PLACE] || {}).borrowed;
 function buildMap(){   // the place you're in: the ground, then the big objects' pictures
+  cv.classList.toggle('soft', softColours());
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
   drawTiles();
   OBJECT_PIECES = mapObjects().map(pieceOf);

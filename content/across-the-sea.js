@@ -208,6 +208,10 @@ const TOWN_NEXT = [{if:{askedTown:{below:3}}, message:'They don’t know, but th
 const ACROSS_THE_SEA = {
   number: 2,
   name: {zh:'海的那边', py:'hǎi de nàbiān', en:'Across the sea'},
+  // Softer, older colours in the human world (decided 6 November 2026, from the art proposal): greens toward olive and
+  // jade, whites a little warmer, like paper; not in the places borrowed from Flower Fruit Mountain, a fairy mountain,
+  // bright as it always was.
+  colours: 'soft',
 
   // Where your raft washes up, on the shore, and which way you face.
   start: {x:11, y:16, facing:'up'},
