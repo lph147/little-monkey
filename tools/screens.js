@@ -1413,6 +1413,10 @@ const SCREENS = [
     play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;){ await STEPS.hit({hit: 'wood', with: '斧头', times: 2}); await pickUpAct('木头'); } })(); await wait(130); }},
   {id: 'c1-peach', title: 'Picking a peach', save: 'c1peach', why: 'A at a fruit tree: your monkey goes up on tiptoe, an arm up into its branches, the tree shakes, and a peach drops into its paw; then it holds it up, and it’s in your bag. Here, picking again and again, the peach dropping.', run: async () => {
     play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;){ pickedHere.clear(); await pickUpAct('桃子'); } })(); await wait(380); }},
+  {id: 'pick-grass', title: 'Crouching for grass', save: 'cowGrass', why: 'Picking something up off the ground (or out of the water): your monkey crouches low, both arms reaching forward to it on the ground in front, then stands and holds it up over its head. Here, picking the fresh grass again and again, crouching.', run: async () => {
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await pickUpAct('草'); })(); await wait(250); }},
+  {id: 'pick-honey', title: 'Leaning into the hive', save: 'hive', why: 'Taking something out of what it’s in, such as honey from the hive or wood from the woodpile: your monkey leans into it, both paws in, and it comes out in them; then it holds it up over its head. Here, taking honey again and again, leaning in.', run: async () => {
+    play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await pickUpAct('蜂蜜'); })(); await wait(320); }},
   {id: 'c1-years', title: 'Seven years in the cave', save: 'c1named', why: 'After the chores and the master’s lecture: the seasons going round, a peach tree growing up, you sweeping, and 七年以后…', run: async () => {
     play(); await wait(100); storyScene('caveYears'); introClock = 6.5; advancedTo = 1; await wait(400); }},
   {id: 'c1-grown', title: 'The cave, seven years later', save: 'c1grown', why: 'The saplings grown into peach trees, new little pupils who call you 师兄. The master’s riddle next: three taps on your head (头).', run: async () => {

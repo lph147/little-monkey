@@ -1,8 +1,9 @@
 // Doing something, you see your monkey do it (decided 6 November 2026, after playing it: the heaps of leaves just vanished,
 // and things turned up in your bag): it chops the wood, two blows of the axe; dips the bucket in the pool and lifts it
-// out, full; reaches up into a tree as it shakes, the fruit dropping into its hands, or into the hive for its honey, and
-// holds it up; crouches for a flower or a stone; heaves a sack of rice up over its head and throws it all the way onto the
-// boat; and turns the key in a cage's lock, its door swinging open. (The broom: tests/cave-fixes.test.js.)
+// out, full; reaches up into a tree as it shakes, the fruit dropping into its paw, or leans into the hive for its honey,
+// and holds it up; crouches for a flower, a stone or water; heaves a sack of rice up over its head and throws it all the
+// way onto the boat; and turns the key in a cage's lock, its door swinging open. (The broom: tests/cave-fixes.test.js;
+// your poses: tests/poses.test.js.)
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -81,13 +82,14 @@ test('picking a peach: the tree shakes, the peach drops from its leaves into you
   assert.ok(get(g, '__notes').some(n => /You pick a 桃子 \(peach\) for your bag \(1 of 3\)/.test(n)), 'and you’re told');
 });
 
-test('honey from the hive: out of it into your hands, with nothing to shake and no hop', async () => {
+test('honey from the hive: you lean into it, your paws in it, with nothing to shake and no hop', async () => {
   const g = game(1, {...BEES_HOME, bees: 11, honey: 'done'}, {place: 'homeGround', x: 28, y: 5, dir: 'up'}, [...AREA1_WORDS, '蜂蜜']);
   assert.equal(get(g, 'tileAt(28, 4).look'), 'hive');
   await press(g, 28, 5, 'up');
   const [a] = get(g, '__acts'), o = objectAt(g, 28, 4);
   assert.deepEqual([a.kind, a.w, a.reach], ['pick', '蜂蜜', 'in']);
-  assert.deepEqual(a.from, [o.x * 16 + o.w * 8, o.y * 16 + o.h * 8 - 6], 'out of the middle of it');
+  const [x, y] = get(g, "poseSprite('pick', 'up', 'in').item").map((v, i) => v + [28, 5][i] * 16);
+  assert.ok(x >= o.x * 16 && x < (o.x + o.w) * 16 && y >= o.y * 16 && y < (o.y + o.h) * 16, `the honey comes out of it, in your paws (${x}, ${y})`);
   assert.equal(heard(g, 'scuffle'), 0, 'a hive doesn’t shake');
   assert.equal(get(g, "S.bag['蜂蜜']"), 1);
 });
@@ -104,6 +106,16 @@ test('a flower for the big monkey: you crouch for it, and its picture is the flo
     gather(tileAt(26, 2), 26, 2); return pic ?? null; })()`), null, 'another red one: not picked');
   g.run('acting = null');
   assert.match(get(g, '__notes').slice(-1)[0], /You have a red 花 \(flower\) already/);
+});
+
+test('water for the thirsty monkey: you crouch at the river’s edge and scoop it up, with a splash where your paws go in', async () => {
+  const g = game(1, {chapter: 0, elder: 2, thirsty: 'asked'}, {place: 'meadow', x: 17, y: 1, dir: 'right'}, AREA1_WORDS);
+  assert.equal(get(g, 'tileAt(18, 1).look'), 'water', 'the river in front of you');
+  await press(g, 17, 1, 'right');
+  assert.deepEqual(get(g, '__acts').map(a => [a.kind, a.w, a.reach]), [['pick', '水', 'down']], 'crouching for it');
+  assert.ok(get(g, "splashes.some(s => s.small && tileAt(Math.floor(s.x / 16), Math.floor(s.y / 16)).look === 'water')"), 'a little splash, in the river');
+  assert.equal(heard(g, 'splash'), 1);
+  assert.equal(get(g, 'here().holding.thirsty'), '水', 'and you have it');
 });
 
 test('a small stone in the pine wood: it’s gone from the ground as you crouch and pick it up', async () => {
@@ -186,9 +198,11 @@ test('what each looks like as you do it: the bucket, full; the sack over your he
     assert.ok(inFront[dir](mid), `${dir}: down on the block in front of you (${mid.map(v => v.toFixed(1))})`);
     assert.ok(where('up', 'h').length >= 1 && where('down', 'h').length >= 1, `${dir}: in your paws`);   // (from the side, your near paw over the other)
   }
-  // crouching for something: shorter, your feet where they were; then holding it up
-  const crouch = drawn(`ACTS.pick(${PX}, ${PY}, PICK.caught / 2, ${act('pick', ", w: '石头', reach: 'down', from: [200, 170]")})`).filter(([k]) => k === 'image');
-  assert.deepEqual(crouch.map(([, , x, y, w, h]) => [x, y + h, w, h]), [[PX, PY + 16, 16, 14]], 'two pixels shorter, standing where you were');
-  const held = drawn(`ACTS.pick(${PX}, ${PY}, PICK.caught + 50, ${act('pick', ", w: '石头', reach: 'down', from: [200, 170]")})`).filter(([k]) => k === 'image');
-  assert.ok(held.some(([, , x, y, w, h]) => x === PX + 3 && y <= PY - 10 && w === 10 && h === 10), 'the stone, held up over your head');
+  // crouching for something: the stone on the ground in front of you, then you over it, your paws on it (the pick pose:
+  // js/poses.js); then holding it up over your head
+  const pick = t => drawn(`ACTS.pick(${PX}, ${PY}, ${t}, ${act('pick', ", w: '石头', reach: 'down'")})`).filter(([k]) => k === 'image').map(([, , x, y, w]) => [x, y, w]);
+  const [ix, iy] = get(g, "poseSprite('pick', 'down', 'down').item"), [hx, hy] = get(g, "poseSprite('pick', 'down', 'hold').item");
+  assert.deepEqual(pick(60), [[PX + ix - 5, PY + iy - 5, 10], [PX - 16, PY - 16, null]], 'the stone in front of you, and you crouching over it');
+  assert.deepEqual(pick('PICK.caught + 30'), [[PX - 16, PY - 16, null], [PX + hx - 5, PY + hy - 5, 10]], 'then you, holding it up');
+  assert.ok(hy - 5 < 0, 'over your head');
 });

@@ -701,39 +701,33 @@ const ACTS = {
     const [hx, hy] = ACT_HAND[a.dir], k = Math.min(1, t / 250);
     if (t < UNLOCK.open + 120) keyPic(lerp(PX + hx + 4, X + 8, ease(k)), lerp(PY + hy + 1, Y + 8, ease(k)), t >= UNLOCK.turn);
   },
-  // picking something up: up on tiptoe into a tree, an arm up into its leaves (the reach pose, js/poses.js), or crouching
-  // for what's on the ground; it comes into your paw (drawActFx), and you hold it up
+  // picking something up: up on tiptoe into a tree, an arm up into its leaves; crouching for what's on the ground, or in
+  // the water; or leaning into what it's in, such as the hive (the pick pose, js/poses.js): it's under your paws as you
+  // take it (from a tree, it drops into your paw: drawActFx), and you hold it up over your head
   pick(PX, PY, now, a){
-    const t = now - a.t0, c = itemPic(a.pic || a.w), bob = Math.round(Math.sin((t - PICK.caught) / 120));
-    if (a.reach === 'up'){
-      const p = drawPose('reach', a.dir, t < PICK.caught ? 'reach' : 'hold', PX, PY);
-      if (t < PICK.caught) return;
-      const [x, y] = p.paw;
-      if (c) b.drawImage(c, PX + x - 5, PY + y - 10 - bob, 10, 10);
-      if ((t - PICK.caught) % 300 < 160){ R(b, PX + x + 5, PY + y - 11, 1, 3, '#FFE27A'); R(b, PX + x + 4, PY + y - 10, 3, 1, '#FFE27A'); }   // (a twinkle)
+    const t = now - a.t0, c = itemPic(a.pic || a.w);
+    if (t >= PICK.caught){
+      const [x, y] = drawPose('pick', a.dir, 'hold', PX, PY).item, bob = Math.round(Math.sin((t - PICK.caught) / 120));
+      if (c) b.drawImage(c, PX + x - 5, PY + y - 5 - bob, 10, 10);
+      if ((t - PICK.caught) % 300 < 160){ R(b, PX + x + 5, PY + y - 6, 1, 3, '#FFE27A'); R(b, PX + x + 4, PY + y - 5, 3, 1, '#FFE27A'); }   // (a twinkle)
       return;
     }
-    if (a.reach === 'down' && t < PICK.caught){   // (crouching: a little shorter, your feet where they were)
-      const k = Math.round(Math.sin(Math.PI * Math.min(1, t / PICK.caught)) * 2);
-      R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
-      b.drawImage(monkeySprite('player', a.dir, false, 0, true), PX, PY + k, 16, 16 - k);
+    if (c && (a.reach === 'down' || (a.reach === 'in' && t >= PICK.fall))){   // (lying there, or coming out of what it's in, lifted a little as you take it)
+      const [x, y] = poseSprite('pick', a.dir, a.reach).item, lift = t < PICK.fall ? 0 : Math.round(2 * (t - PICK.fall) / (PICK.caught - PICK.fall));
+      b.drawImage(c, PX + x - 5, PY + y - 5 - lift, 10, 10);
     }
-    else actMonkey(PX, PY, a.dir);
-    if (t < PICK.caught) return;
-    if (c) b.drawImage(c, PX + 3, PY - 11 - bob, 10, 10);
-    if ((t - PICK.caught) % 300 < 160){ R(b, PX + 14, PY - 12, 1, 3, '#FFE27A'); R(b, PX + 13, PY - 11, 3, 1, '#FFE27A'); }   // (a twinkle)
+    drawPose('pick', a.dir, a.reach, PX, PY);
   }
 };
 // What flies off somewhere as you do something, over everything: a sack tossed down onto the boat, in a high arc; what
-// you pick, dropping from a tree's leaves (or out of what it's in) into your hands.
+// you pick from a tree, dropping from its leaves into your paw.
 function drawActFx(cx, cy, now){
   const a = acting; if (!a) return;
   const t = now - a.t0;
   if (a.kind === 'lift' && a.to && t >= LIFT.toss) sackPic(...tossedTo(a, t).map((v, i) => v - (i ? cy : cx)));
-  if (a.kind === 'pick' && t >= PICK.fall && t < PICK.caught){   // (dropping from a tree, faster and faster; lifted out of anything else)
-    const k = (t - PICK.fall) / (PICK.caught - PICK.fall), c = itemPic(a.pic || a.w), [fx, fy] = a.from;
-    const [tx, ty] = a.reach === 'up' ? (([x, y]) => [pl.px + x - 5, pl.py + y - 8])(poseSprite('reach', a.dir, 'reach').paw) : [pl.px + 3, pl.py - 4];   // (into your paw, up in the tree)
-    if (c) b.drawImage(c, Math.round(lerp(fx - 5, tx, k) - cx), Math.round(lerp(fy - 5, ty, a.reach === 'up' ? k * k : ease(k)) - cy), 10, 10);
+  if (a.kind === 'pick' && a.reach === 'up' && t >= PICK.fall && t < PICK.caught){   // (dropping, faster and faster, into your paw up in the tree)
+    const k = (t - PICK.fall) / (PICK.caught - PICK.fall), c = itemPic(a.pic || a.w), [fx, fy] = a.from, [x, y] = poseSprite('pick', a.dir, 'up').item;
+    if (c) b.drawImage(c, Math.round(lerp(fx - 5, pl.px + x - 5, k) - cx), Math.round(lerp(fy - 5, pl.py + y - 5, k * k) - cy), 10, 10);
   }
 }
 // Where a sack you've tossed is (on the map, in pixels), t after you began lifting it: from over your head, up and away

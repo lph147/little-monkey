@@ -27,7 +27,10 @@ const POSES = (() => {
     backTiptoe:{rows:[...BEHIND.slice(1, 13), '....offffffo....', '....offffffo....', '....ofo..ofo....', '....oo....oo....'], y0:0, top:0, coat:[7, 13], belt:10, band:2, tail:true},
     side:{rows:SIDE, y0:0, top:1, coat:[8, 13], belt:11, band:3},
     sideLean:{rows:SIDE.map((r, y) => y >= 1 && y <= 7 ? shift(r, 1) : r), y0:0, top:1, coat:[8, 13], belt:11, band:3},
-    sideTiptoe:{rows:[...SIDE.slice(1, 14), '....offffo......', '.....ofofo......', '.....oo.oo......'], y0:0, top:0, coat:[7, 13], belt:10, band:2}
+    sideTiptoe:{rows:[...SIDE.slice(1, 14), '....offffo......', '.....ofofo......', '.....oo.oo......'], y0:0, top:0, coat:[7, 13], belt:10, band:2},
+    // crouching: your head lower and your knees bent (from the front, out to the sides), for picking up what's on the ground
+    frontCrouch:{rows:[...Array(4).fill('................'), ...FRONT.slice(1, 9), '..offffssffffo..', '..offffffffffo..', '..offo....offo..', '..ooo......ooo..'], y0:0, top:4, coat:[11, 13], belt:12, band:6},
+    sideCrouch:{rows:[...Array(3).fill('................'), ...SIDE.slice(1, 8).map(r => shift(r, 1)), SIDE[9], SIDE[10], SIDE[11], SIDE[12], '.oo.offo.offo...', '....ooo..ooo....'], y0:0, top:3, coat:[10, 13], belt:12, band:5}
   };
   const blank = () => Array.from({length:W}, () => Array(W).fill('.'));
   const put = (g, x, y, c) => { if (g[y] && x >= 0 && x < W) g[y][x] = c; };
@@ -176,20 +179,28 @@ const POSES = (() => {
         arm(g, [[3, 10], [4, 13], [5, m === 'full' ? 15 : 16]], w, 0, 4); arm(g, [[12, 10], [11, 13], [10, m === 'full' ? 15 : 16]], w, 0, 4);
       }
     },
-    // reaching up into a tree for its fruit (m: 'reach', up on tiptoe, an arm up into its leaves; 'hold', holding up what
-    // you've picked): gives back where your paw is
-    reach: {
+    // picking something up (m: 'up', on tiptoe, an arm up into a tree's leaves; 'down', crouching for what's on the ground
+    // in front of you, or in the water; 'in', leaning into what it's in, such as the hive; 'hold', holding up what you've
+    // picked, over your head): gives back where your paw is, and where what you're picking is (item: its middle)
+    pick: {
       back(g, m, w){
-        if (m === 'hold'){ you(g, 'back', w); const p = arm(g, [[12, 9], [13, 6], [13, 2]], w); arm(g, [[3, 9], [2, 10], [2, 11]], w); return {paw:p}; }
-        you(g, 'backTiptoe', w, 0, -5); const p = arm(g, [[12, 8], [14, 5], [15, 2]], w, 0, -5); arm(g, [[3, 8], [2, 9], [2, 10]], w, 0, -5); return {paw:p};
+        if (m === 'hold'){ you(g, 'back', w); const p = arm(g, [[12, 9], [13, 6], [13, 2]], w); arm(g, [[3, 9], [2, 10], [2, 11]], w); return {paw:p, item:[p[0], p[1] - 5]}; }
+        if (m === 'up'){ you(g, 'backTiptoe', w, 0, -5); const p = arm(g, [[12, 8], [14, 5], [15, 2]], w, 0, -5); arm(g, [[3, 8], [2, 9], [2, 10]], w, 0, -5); return {paw:p, item:[p[0], p[1] - 3]}; }
+        you(g, 'backLean', w, 0, -3);   // (leaning forward to it, your arm out in front of you, past your head)
+        if (m === 'in'){ arm(g, [[3, 8], [3, 5], [4, 1]], w, 0, -3); const p = arm(g, [[12, 8], [12, 5], [11, 1]], w, 0, -3); return {paw:p, item:[p[0] - 3, p[1] - 3]}; }
+        const p = arm(g, [[12, 8], [12, 5], [11, 1]], w, 0, -3); arm(g, [[3, 8], [2, 9], [2, 10]], w, 0, -3); return {paw:p, item:[p[0], p[1] - 4]};
       },
       side(g, m, w){
-        if (m === 'hold'){ you(g, 'side', w); arm(g, [[8, 10], [10, 11], [11, 11]], w); const p = arm(g, [[8, 9], [10, 6], [11, 2]], w); return {paw:p}; }
-        you(g, 'sideTiptoe', w, 3); arm(g, [[8, 9], [10, 10], [11, 10]], w, 3); const p = arm(g, [[8, 8], [11, 5], [13, 1]], w, 3); return {paw:p};
+        if (m === 'hold'){ you(g, 'side', w); arm(g, [[8, 10], [10, 11], [11, 11]], w); const p = arm(g, [[8, 9], [10, 6], [11, 2]], w); return {paw:p, item:[p[0], p[1] - 5]}; }
+        if (m === 'up'){ you(g, 'sideTiptoe', w, 3); arm(g, [[8, 9], [10, 10], [11, 10]], w, 3); const p = arm(g, [[8, 8], [11, 5], [13, 1]], w, 3); return {paw:p, item:[p[0], p[1] - 3]}; }
+        if (m === 'in'){ you(g, 'sideLean', w, 2); arm(g, [[8, 10], [11, 10], [14, 10]], w, 2); const p = arm(g, [[8, 9], [11, 9], [15, 9]], w, 2); return {paw:p, item:[p[0] + 3, p[1] - 1]}; }
+        you(g, 'sideCrouch', w, 1); arm(g, [[8, 11], [11, 13], [13, 14]], w, 1); const p = arm(g, [[8, 10], [11, 11], [14, 13], [15, 14]], w, 1); return {paw:p, item:[p[0] + 3, p[1] - 2]};
       },
       front(g, m, w){
-        if (m === 'hold'){ you(g, 'front', w); arm(g, [[3, 9], [2, 10], [2, 11]], w); const p = arm(g, [[12, 9], [13, 6], [12, 2]], w); return {paw:p}; }
-        you(g, 'frontLean', w, 0, 3); arm(g, [[3, 10], [3, 13], [4, 15]], w, 0, 3); const p = arm(g, [[12, 10], [12, 13], [11, 15]], w, 0, 3); return {paw:p};
+        if (m === 'hold'){ you(g, 'front', w); arm(g, [[3, 9], [2, 10], [2, 11]], w); const p = arm(g, [[12, 9], [13, 6], [12, 2]], w); return {paw:p, item:[p[0], p[1] - 5]}; }
+        if (m === 'up'){ you(g, 'frontLean', w, 0, 3); arm(g, [[3, 10], [3, 13], [4, 15]], w, 0, 3); const p = arm(g, [[12, 10], [12, 13], [11, 15]], w, 0, 3); return {paw:p, item:[p[0], p[1] - 3]}; }
+        if (m === 'in'){ you(g, 'frontLean', w, 0, 3); arm(g, [[3, 10], [4, 12], [6, 14]], w, 0, 3); const p = arm(g, [[12, 10], [11, 12], [9, 14]], w, 0, 3); return {paw:p, item:[p[0] - 1, p[1] + 2]}; }
+        you(g, 'frontCrouch', w, 0, 1); arm(g, [[2, 11], [3, 14], [5, 16]], w, 0, 1); const p = arm(g, [[13, 11], [12, 14], [10, 16]], w, 0, 1); return {paw:p, item:[p[0] - 2, p[1] + 2]};
       }
     }
   };
@@ -201,7 +212,7 @@ const POSES = (() => {
     let rows = g.map(r => r.join(''));
     if (dir === 'left'){
       rows = rows.map(r => [...r].reverse().join(''));
-      for (const k of ['paw', 'bucket']) if (info[k]) info[k] = [W - 1 - info[k][0], info[k][1]];
+      for (const k of ['paw', 'bucket', 'item']) if (info[k]) info[k] = [W - 1 - info[k][0], info[k][1]];
       info.step = [-info.step[0], info.step[1]];
     }
     return {rows, ...info};
@@ -212,7 +223,7 @@ const POSES = (() => {
     const w = wear(), key = [name, dir, m, w.coat, w.hat, w.shoes, headband()].join('|');
     if (!cache.has(key)){
       const g = grid(name, dir, m, w), mine = p => p && [p[0] - O, p[1] - O];
-      cache.set(key, {canvas:sprite(g.rows, {...PALS.player, ...CLOTHES_PAL, ...(headband() ? {b:headband()} : {}), ...PAL}), paw:mine(g.paw), bucket:mine(g.bucket), step:g.step});
+      cache.set(key, {canvas:sprite(g.rows, {...PALS.player, ...CLOTHES_PAL, ...(headband() ? {b:headband()} : {}), ...PAL}), paw:mine(g.paw), bucket:mine(g.bucket), item:mine(g.item), step:g.step});
     }
     return cache.get(key);
   }
@@ -220,5 +231,5 @@ const POSES = (() => {
 })();
 // The picture of you doing something (name, facing dir, at its moment m): a canvas 48 pixels square, your own square in
 // its middle, so drawn 16 pixels up and to the left of where you stand; how far you've stepped from your square (step),
-// and where your paw is (paw) and the bucket (bucket), in your square's pixels
+// and where your paw is (paw), the bucket (bucket) and what you're picking up (item), in your square's pixels
 const poseSprite = (name, dir, m) => POSES.picture(name, dir, m);

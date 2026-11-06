@@ -1369,17 +1369,19 @@ const canPick = t => !!t.pick && matches(t.pick.if || {});
 const pickedHere = new Set();   // the trees you've picked from since you came into the place you're in
 // You reach for what you're picking up (w: its word; pic: the name of its picture, if not w's, such as 红色 的 花; at: its
 // square, [x, y], if not the one you're facing) and it comes into your hands, and you hold it up (decided 6 November 2026,
-// after playing it: things just turned up in your bag): from a tree's leaves, dropping as the tree shakes, you hopping up
-// for it; out of what it's in, such as the hive's honey or a stack of bowls; or up off the ground, or out of the water
-// with a splash, you crouching for it, such as a flower or a stone (the pick act: its picture in ACTS and drawActFx,
-// js/draw.js). Picking fruit, gathering for a request, carrying and the pickUp step all do it.
+// after playing it: things just turned up in your bag): from a tree's leaves, dropping as the tree shakes, you up on
+// tiptoe for it; out of what it's in, such as the hive's honey or the woodpile, you leaning into it; or up off the ground,
+// or out of the water with a splash, you crouching for it, such as a flower or a stone (the pick act: its picture in ACTS
+// and drawActFx, js/draw.js, and your pose, the pick pose in js/poses.js). Picking fruit, gathering for a request,
+// carrying and the pickUp step all do it.
 async function pickUpAct(w, {pic, at} = {}){
   const [x, y] = at || facing(), o = mapObjects().find(o => x >= o.x && x < o.x + o.w && y >= o.y && y < o.y + o.h);
-  const tree = !!o && LEAFY.includes(o.look), piece = o && OBJECT_PIECES.find(p => p.key === objectKey(o));
+  const tree = !!o && LEAFY.includes(o.look), piece = o && OBJECT_PIECES.find(p => p.key === objectKey(o)), reach = tree ? 'up' : o ? 'in' : 'down';
   if (piece) piece.rustle = performance.now();   // (a tree shakes, as you reach into it)
-  startAct('pick', {x, y, w, pic, reach:tree ? 'up' : o ? 'in' : 'down',
-    from:o ? [o.x*T + o.w*T/2 + (tree ? Math.round((Math.random() - .5) * 8) : 0), tree ? o.y*T - 12 : o.y*T + o.h*T/2 - 6] : [x*T + 8, y*T + 8]});
-  if (!o && WATERY.includes(tileAt(x, y).look)){ splashes.push({x:x*T + 8, y:y*T + 9, t0:performance.now(), small:true}); SFX.splash(.12); }
+  startAct('pick', {x, y, w, pic, reach, ...(tree ? {from:[o.x*T + o.w*T/2 + Math.round((Math.random() - .5) * 8), o.y*T - 12]} : {})});   // (from: where in its leaves it drops from)
+  if (!o && WATERY.includes(tileAt(x, y).look)){   // (a splash where your paws go in)
+    const [px, py] = poseSprite('pick', pl.dir, reach).item; splashes.push({x:pl.px + px, y:pl.py + py + 1, t0:performance.now(), small:true}); SFX.splash(.12);
+  }
   else (tree ? SFX.scuffle : SFX.swish)();
   await sleep(PICK.caught); SFX.right();
   await sleep(PICK.ms - PICK.caught);

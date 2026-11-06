@@ -1,14 +1,15 @@
 // Your monkey doing things with its own body (js/poses.js; decided 6 November 2026, after playing it: the broom seemed to
 // come out of its stomach, with no arms): each pose, from every side, has your paws in it; facing left is facing right
 // the other way round; your coat's sleeves are on your arms when you wear it, and your hat on your head; the bucket goes
-// into the water you face, and you step up to it; what you've picked is held up over your head.
+// into the water you face, and you step up to it; you crouch for what's on the ground and lean into what it's in, your
+// paws at it; what you've picked is held up over your head.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
-const POSES = {sweep: [-1, 0, 1], chop: ['up', 'down'], dip: ['out', 'in', 'full', 'back'], reach: ['reach', 'hold']};
+const POSES = {sweep: [-1, 0, 1], chop: ['up', 'down'], dip: ['out', 'in', 'full', 'back'], pick: ['up', 'down', 'in', 'hold']};
 const DIRS = ['down', 'up', 'left', 'right'];
 const DRESSED = '{coat:true, hat:true, shoes:false, band:false}', BARE = '{coat:false, hat:false, shoes:false, band:false}';
 const game = () => loadGame({dom: true, save: {version: 34, started: true, areas: {1: {}}}});
@@ -34,7 +35,7 @@ test('facing left is facing right the other way round, your paw and the bucket t
     const r = pose(g, name, 'right', m, DRESSED), l = pose(g, name, 'left', m, DRESSED);
     assert.deepEqual(l.rows, r.rows.map(row => [...row].reverse().join('')), `${name} ${m}`);
     if (r.paw) assert.deepEqual(l.paw, [47 - r.paw[0], r.paw[1]]);
-    if (r.bucket) assert.deepEqual(l.bucket, [47 - r.bucket[0], r.bucket[1]]);
+    for (const k of ['bucket', 'item']) if (r[k]) assert.deepEqual(l[k], [47 - r[k][0], r[k][1]], `${name} ${m}: its ${k}`);
     assert.equal(l.step[0] + 0, -r.step[0] + 0, `${name} ${m}: stepped the other way`);   // (+ 0: not stepped is 0, never -0)
   }
 });
@@ -74,17 +75,33 @@ test('the bucket goes into the water you face, as you step up to it, and comes b
 test('picking from a tree: up on tiptoe for it, then what you’ve picked held up, your paw over your head', () => {
   const g = game();
   for (const dir of DIRS){
-    const hold = pose(g, 'reach', dir, 'hold', BARE);
+    const hold = pose(g, 'pick', dir, 'hold', BARE);
     assert.ok(hold.paw[1] - 16 <= 3, `${dir}: your paw up by your head (${hold.paw})`);
+    assert.ok(hold.item[1] < hold.paw[1], `${dir}: what you’ve picked, over it`);
   }
   // up into the tree in front of you: above your square when it's behind it, or beyond your square and up by your head's
   // top beside it
   const intoIt = {up: ([x, y]) => y < 16, right: ([x, y]) => x >= 32 && y <= 17, left: ([x, y]) => x <= 15 && y <= 17};
   for (const dir of ['up', 'left', 'right']){
-    const reach = pose(g, 'reach', dir, 'reach', BARE), stand = pose(g, 'reach', dir, 'hold', BARE);
+    const reach = pose(g, 'pick', dir, 'up', BARE), stand = pose(g, 'pick', dir, 'hold', BARE);
     const top = rows => cells(rows, 'fo').reduce((a, [, y]) => Math.min(a, y), 48);
     assert.ok(intoIt[dir](reach.paw), `${dir}: reaching up into its leaves (${reach.paw})`);
     assert.ok(reach.paw[1] < stand.paw[1], `${dir}: higher than when you hold it`);
     assert.ok(top(reach.rows) <= top(stand.rows), `${dir}: on tiptoe`);
   }
+});
+
+test('picking something up off the ground, you crouch for it; out of something, you lean into it: your paws at it, in front of you', () => {
+  const g = game();
+  const inFront = {down: ([x, y]) => y >= 32, up: ([x, y]) => y < 16, right: ([x, y]) => x >= 32, left: ([x, y]) => x < 16};
+  const top = rows => cells(rows, 'fo').reduce((a, [, y]) => Math.min(a, y), 48);
+  for (const dir of DIRS) for (const m of ['down', 'in']) for (const wear of [DRESSED, BARE]){
+    const p = pose(g, 'pick', dir, m, wear), near = Math.hypot(p.paw[0] - p.item[0], p.paw[1] - p.item[1]);
+    assert.ok(inFront[dir](p.item), `${dir} ${m}: what you’re picking up is in front of you (${p.item})`);
+    assert.ok(near <= 5, `${dir} ${m}: your paw at it (${p.paw}, ${p.item})`);
+    assert.ok(cells(p.rows, 'h').length >= 2, `${dir} ${m}: both paws`);
+  }
+  for (const dir of ['down', 'left', 'right'])   // (crouching: your head lower than when you stand; from behind, you lean forward to it)
+    assert.ok(top(pose(g, 'pick', dir, 'down', BARE).rows) >= top(pose(g, 'pick', dir, 'hold', BARE).rows) + 2, `${dir}: crouching`);
+  assert.ok(pose(g, 'pick', 'up', 'down', BARE).step[1] < 0, 'up: leaning forward to it');
 });
