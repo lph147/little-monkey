@@ -117,10 +117,10 @@ test('the 老板: once you know 对不起, asking for the wrong thing, you say i
   assert.deepEqual(get(before, '__said'), ['你要什么？', '不客气！']);
 });
 
-test('the teacher says 再见 after class, and you reply 再见', () => {
+test('the teacher says 再见 after class, and you reply 再见 (his news first, if he has some now: decided 6 November 2026)', () => {
   const g = game();
   const part = get(g, "AREA.talk.elder.find(p => p.do.some(s => s.lesson))");
-  assert.deepEqual(part.do.slice(-3), [{say: 'classEnd'}, {say: 'bye'}, {reply: '再见'}]);
+  assert.deepEqual(part.do.slice(-4), [{say: 'classEnd'}, {goOn: true}, {say: 'bye'}, {reply: '再见'}]);
 });
 
 test('What do you say?: a moment in plain English, three phrases you know in Chinese and pinyin, their English once you’ve answered; it counts', async () => {

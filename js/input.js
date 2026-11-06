@@ -37,12 +37,15 @@ function finished(){ const [x, y] = facing(); finishedAt = {place:PLACE, x, y, t
 const justFinished = (x, y) => !!finishedAt && finishedAt.place === PLACE && finishedAt.x === x && finishedAt.y === y
   && performance.now() - finishedAt.t < REST_MS && lastMoveEnd < finishedAt.t && pl.turnT < finishedAt.t
   && !(n => n && hasNews(n))(npcAt(x, y) || followerAt(x, y)) && !tileAt(x, y).hop   // (nor stepping stones: each row a new question, hop after hop;
-  && !(tileAt(x, y).fishing && canFish());   // nor water you fish in: cast after cast, decided 29 October 2026)
+  && !(tileAt(x, y).fishing && canFish())   // nor water you fish in: cast after cast, decided 29 October 2026;
+  && !collectsMore(x, y);   // nor where you're collecting more of the same, one at a time, such as bowls from a stack: js/world.js)
 // A message that has come up (toast, js/helpers.js) since you last moved or turned: A closes it, as B does, never
 // reaching past it to whoever you're facing (decided 22 October 2026: it's where the speech box was, and looks like it,
 // and A, pressed to clear it, started the conversation you'd just had all over again). Once you've moved on, A is as ever.
 const newMessage = () => !$('#saybox').hidden && msgAt > Math.max(lastMoveEnd, pl.turnT);
-const aActs = () => canAct() && !newMessage() && !justFinished(...facing());   // A, pressed now, would do something with what you're facing (the tips to talk and look wait for it)
+let actMsgAt = null;   // when the message that what A did last left came up, such as You take a bowl (not one that came up after it, such as a new task's)
+const messageFirst = () => newMessage() && !(msgAt === actMsgAt && collectsMore(...facing()));   // (but where you're collecting more of the same, one at a time, A takes the next, past what you were told as you took the last, never past anything else: js/world.js)
+const aActs = () => canAct() && !messageFirst() && !justFinished(...facing());   // A, pressed now, would do something with what you're facing (the tips to talk and look wait for it)
 function tryStep(d, now){
   if (d !== pl.dir){ pl.dir = d; pl.turnT = now; SFX.turn(); turnedTo(); return; }   // first turn to face the new way
   if (now - pl.turnT < TURN_DELAY) return;                                 // short pause so the turn is visible
@@ -125,12 +128,12 @@ async function pressA(at){   // at: when it was pressed, if known (tooSoon, js/c
   if (talkNext){ if (!tooSoon(at)) talkNext(); return; }   // the speech box: on to what comes next
   if (fishPress('a')) return;   // fishing: hooking a fish that's biting (js/fishing.js)
   if (!canAct()) return;
-  if (newMessage()){ if (!tooSoon(at, msgAt)){ closeMessage(); finished(); } return; }   // (not if pressed just as it came up; and then what you're facing rests, as after anything A does)
+  if (messageFirst()){ if (!tooSoon(at, msgAt)){ closeMessage(); finished(); } return; }   // (not if pressed just as it came up; and then what you're facing rests, as after anything A does)
   if (race) return;   // (in a race, js/pe.js: just run)
   const [fx, fy] = facing();
   if (justFinished(fx, fy)) return;
   busy = true;
-  try { await interact(fx, fy); await runEvents(); } finally { busy = false; finished(); updateHUD(); }
+  try { await interact(fx, fy); actMsgAt = msgAt; await runEvents(); } finally { busy = false; finished(); updateHUD(); }
 }
 function pressB(at){
   tipPressed('#btnB');

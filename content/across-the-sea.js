@@ -120,7 +120,7 @@ const CAVE_NIGHT = {
 // after another, counted (decided 6 November 2026, after playing it: one at a time, it wasn't clear what to do). His thanks
 // for the water and he goes on to the next job, there and then: you're talking to him already.
 const FETCH_WATER = {fetch:'waterFetch', asks:[{word:'水', count:3, ask:'wantWater3'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
-  listen:'He says it only in Chinese. Listen for how many he wants: fill them at the pool, all at once, and bring them to him.', done:[{set:{chores:4}}, {talkTo:'senior'}]};
+  listen:'He says it only in Chinese. Listen for how many he wants: fill them at the pool, all at once, and bring them to him.', done:[{set:{chores:4}}, {goOn:true}]};
 const FETCH_WOOD = {fetch:'axeFetch', asks:[{word:'木头', count:4, ask:'wantWood4'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
   listen:'He says it only in Chinese. Listen for how many he wants: chop them at a chopping block, all at once, and bring them to him.',
   done:[{set:{chores:6}}, {say:'veryGood'}, {coins:3, note:'The senior pupil gives you 3 🪙 for your help.'}, {message:'The chores are done. The master is giving a lecture, in front of the hall!'}]};
@@ -582,7 +582,7 @@ const ACROSS_THE_SEA = {
     grannyApple: {from:'granny2', wants:'苹果', fromBag:true, ask:'wantApple', asked:'The granny wants {苹果|an apple}. Buy an apple at the market, and bring it to her!',
       offer:'haveApple', sentence:'我 有 苹果', sentenceEn:'I have an apple.', reward:2, thanks:'thanks', thanksReply:'不客气'},
     grannyPeach: {from:'granny2', wants:'桃子', fromBag:true, ask:'wantPeach', asked:'The granny wants {桃子|a peach}. Buy a peach at the market, and bring it to her!',
-      offer:'havePeach', sentence:'我 有 桃子', sentenceEn:'I have a peach.', reward:2, thanks:'thanks', thanksReply:'不客气'},
+      offer:'havePeach', sentence:'我 有 桃子', sentenceEn:'I have a peach.', reward:2, thanks:'thanks', thanksReply:'不客气', after:[{goOn:true}]},
     // the fisherman on the pier wants fish for their basket: three, caught with your rod beside him (each counted as you
     // catch it: the fishing's steps)
     pierFish: {from:'fisher1', wants:'鱼', ask:'haveFish', asked:'The fishermen want fish for their basket. Fish off the pier beside them: face the sea, and press A. Three, please!',
@@ -591,11 +591,11 @@ const ACROSS_THE_SEA = {
     // (钱, the human world's money)
     fish: {from:'fisherman', wants:'鱼', ask:'haveFish', asked:'The fisherman wants a fish. Catch one with your {鱼竿}: face the sea or the stream, and press A.',
       offer:'haveFish', sentence:'我 有 鱼', sentenceEn:'I have a fish.', reward:0, thanks:'thanks', thanksReply:'不客气',
-      after:[{say:'thisIsMoney', teach:'钱'}, {newWord:'钱', note:'Coins: the money people use. The fisherman pays you for the fish!'}, {coins:3, note:'The fisherman gives you 3 🪙. Now you have coins!'}]},
+      after:[{say:'thisIsMoney', teach:'钱'}, {newWord:'钱', note:'Coins: the money people use. The fisherman pays you for the fish!'}, {coins:3, note:'The fisherman gives you 3 🪙. Now you have coins!'}, {goOn:true}]},
     // the farmer is hungry once you've shooed the birds off his rice: the granny gives you a bowl of rice for him (a meal,
     // carried for him: not a snack in your bag, decided 5 November 2026)
     lunch: {from:'farmer', wants:'饭', ask:'hungryFarmer', asked:'The farmer is hungry, but his lunch is back in the village. Ask the granny by the well for some {饭|rice} for him!',
-      offer:'hungryFarmer', sentence:'我 有 饭', sentenceEn:'I have some rice.', reward:3, thanks:'thanks', thanksReply:'不客气'}
+      offer:'hungryFarmer', sentence:'我 有 饭', sentenceEn:'I have some rice.', reward:3, thanks:'thanks', thanksReply:'不客气', after:[{goOn:true}]}
   },
 
   // The market's stalls (the shop step, by their id): as the 老板's shop on Flower Fruit Mountain, in coins. teach: a word
@@ -1918,11 +1918,11 @@ const ACROSS_THE_SEA = {
     // the child: who are you? (你是谁？ 我是＿) You're not a person! (不); then the 是不是 game (是); then what's this? (什么)
     child: [
       {if:{child:0}, waits:true, do:[{say:'whoAreYou'}, {gap:{sentence:'我 是 人', en:'I’m a person.', word:'人', others:['鱼', '鸟', '鹅']}},
-        {say:'notPerson', teach:'不'}, {newWord:'不', note:'不 means not.'}, {set:{child:1}}, {message:'The child laughs. They don’t mind that you’re a monkey!'}]},
+        {say:'notPerson', teach:'不'}, {newWord:'不', note:'不 means not.'}, {set:{child:1}}, {message:'The child laughs. They don’t mind that you’re a monkey!'}, {goOn:true}]},
       {if:{child:1}, waits:true, do:[{say:'play'}, {newWord:'是', note:'是 means is, or yes. 不是 means isn’t, or no.'},
-        {isIt:4}, {set:{child:2}}, {message:'The child claps. You’re good at this game!'}]},
+        {isIt:4}, {set:{child:2}}, {message:'The child claps. You’re good at this game!'}, {goOn:true}]},
       {if:{child:2}, waits:true, do:[{say:'whatsThis', teach:'什么'}, {newWord:'什么', note:'什么 means what. 这是什么？ means What’s this?'}, {set:{child:3}},
-        {message:'Now you can ask what things are! Face something that sparkles ✨ with a person near, and press A.'}]},
+        {message:'Now you can ask what things are! Face something that sparkles ✨ with a person near, and press A.'}, {goOn:true}]},
       ...ASK('askChild', {child:3}, VILLAGE_NEXT),
       {do:[{say:'play'}, {isIt:4}]}
     ],
@@ -1991,12 +1991,12 @@ const ACROSS_THE_SEA = {
     shoeSeller: [{if:{new:'买'}, do:[{say:'hi'}, {message:'The shoe seller is busy. Try the fruit stall first!'}]},
       {if:{new:'鞋'}, waits:true, do:[{shop:'shoes'}]}, {do:[{shop:'shoes'}]}],
     teaKeeper: [
-      {if:{new:'茶'}, waits:true, do:[{say:'drinkTea', teach:'茶'}, {newWord:'茶', note:'A cup of hot green tea, in the teahouse.'}, {rest:true}, {reply:'谢谢'}]},
+      {if:{new:'茶'}, waits:true, do:[{say:'drinkTea', teach:'茶'}, {newWord:'茶', note:'A cup of hot green tea, in the teahouse.'}, {rest:true}, {reply:'谢谢'}, {goOn:true}]},
       ...ASK('askTea', {knows:'茶'}, TOWN_NEXT),
       {do:[{say:'drinkTea'}, {rest:true}, {message:'You sit down and drink a cup of tea.'}]}
     ],
     teller: [
-      {if:{new:'说'}, waits:true, do:[{say:'iTalk', teach:'说'}, {newWord:'说', note:'说 means to say, or to talk.'}, {message:'The storyteller tells stories in front of the teahouse. People stop to listen.'}]},
+      {if:{new:'说'}, waits:true, do:[{say:'iTalk', teach:'说'}, {newWord:'说', note:'说 means to say, or to talk.'}, {message:'The storyteller tells stories in front of the teahouse. People stop to listen.'}, {goOn:true}]},
       ...ASK('askTeller', {knows:'说'}, [{message:'The storyteller knows lots of stories, but not where the immortals live.'}, ...TOWN_NEXT]),
       {do:[{say:'iTalk'}]}
     ],
@@ -2024,7 +2024,7 @@ const ACROSS_THE_SEA = {
     docker: [
       {if:{years:0}, do:[{say:'hi'}, {reply:'你好'}]},
       {if:{cargo:0}, do:[{say:'hi'}, {set:{cargo:1}}, {message:'The docker is loading the big boat. Help him: carry four sacks from the quay down the pier to it, one at a time. Face a sack, and press A!'}]},
-      {if:{cargo:1, cargoCarried:4}, do:[{set:{cargo:2}}, {say:'thanks'}, {reply:'不客气'}, {coins:3, note:'The docker gives you 3 🪙 for your help.'}]},
+      {if:{cargo:1, cargoCarried:4}, do:[{set:{cargo:2}}, {say:'thanks'}, {reply:'不客气'}, {coins:3, note:'The docker gives you 3 🪙 for your help.'}, {goOn:true}]},
       {if:{cargo:1}, do:[{message:'Four sacks, please! ({cargoCarried}/4)'}]},
       ...ASK('askDocker', {cargo:2}, [{message:'The docker doesn’t know, but is your friend now. The boatman on the pier has sailed all over the sea, though: ask the boatman!'}]),
       {do:[{say:'hi'}, {reply:'你好'}]}
@@ -2050,7 +2050,7 @@ const ACROSS_THE_SEA = {
       {if:{years:0}, do:[{say:'hi'}, {reply:'你好'}]},
       {if:{toldSea:0, asked:{below:8}}, do:[{say:'hi'}, {reply:'你好'}, {message:'The boatman has sailed all over the sea… But first, ask everyone else on your list ({asked} of 8 so far): tap the faces on your Tasks page to see who’s left.'}]},
       {if:{toldSea:0}, do:[{say:'whereImmortals', by:'player'}, {say:'acrossSea'}, {set:{toldSea:1}}, {befriend:true}, {sound:'chime'},
-        {message:'At last, someone who knows! Far across the western sea, on a mountain, there lives an immortal. The boatman can take you there, once the wind comes.'}]},
+        {message:'At last, someone who knows! Far across the western sea, on a mountain, there lives an immortal. The boatman can take you there, once the wind comes.'}, {goOn:true}]},
       {if:{boat:0}, waits:true, do:[{say:'noWind', teach:'风'}, {newWord:'风', note:'风 means wind. Without it, the boat can’t sail.'}, {set:{boat:1}},
         {message:'No wind today: the boat can’t sail. Practise a little, then come back.'}]},
       {if:{boat:1}, waits:true, do:[{sound:'wind'}, {say:'windCame'}, {pay:5, note:'You give the boatman 5 🪙 for your fare.'}, {say:'letsGo'},
@@ -2081,20 +2081,20 @@ const ACROSS_THE_SEA = {
     // the master: who he is (师父), your name (名字); the chores first; his lecture, and seven years; his riddle (头); at
     // night, in his room, his secret (变); his tests; the cloud somersault (飞); and, once you've shown off, home (回家)
     master: [
-      {if:{teacher:0}, waits:true, do:[{say:'youCame'}, {say:'iAmMaster', teach:'师父'}, {newWord:'师父', note:'师父 means master, or teacher: the one who teaches you, and looks after you.'}, {set:{teacher:1}}]},
+      {if:{teacher:0}, waits:true, do:[{say:'youCame'}, {say:'iAmMaster', teach:'师父'}, {newWord:'师父', note:'师父 means master, or teacher: the one who teaches you, and looks after you.'}, {set:{teacher:1}}, {goOn:true}]},
       {if:{named:0}, waits:true, do:[{say:'whatName', teach:'名字'}, {newWord:'名字', note:'名字 means name. 你叫什么名字？ What are you called?'},
         {say:'noName', by:'player'}, {say:'yourName'}, {set:{named:1}}, {sound:'chime'},
         {message:'From now on you’re 孙悟空, Sun Wukong: Monkey Awakened to Emptiness. You’re one of the master’s pupils now.'}]},
       {if:{chores:{below:6}}, do:[{message:'The master wants you to help the senior pupil with the chores first.'}]},
       {if:{grown:0}, do:[{say:'listen'}, {practise:4, label:'The master’s lecture', pic:'师父'}, {scene:'caveYears'}, {set:{grown:1}}, {sound:'chime'},
-        {message:'Seven years have gone by. The peach trees you watered are tall now, with fruit on them, and there are new little pupils.'}]},
+        {message:'Seven years have gone by. The peach trees you watered are tall now, with fruit on them, and there are new little pupils.'}, {goOn:true}]},
       {if:{riddle:0}, waits:true, do:[{say:'oneTwoThree'}, {sound:'tock'}, {sound:'tock'}, {sound:'tock'}, {newWord:'头', note:'头 means head. The master tapped you on the head, three times!'},
         {set:{riddle:1}},
         {message:'The master puts his hands behind his back, goes into the hall and shuts the doors. The pupils are cross with you. But you understand: three taps… the third watch of the night… the back door!'}]},
       {if:{riddle:2}, waits:true, do:[{say:'youCame'}, {say:'teachChange', teach:'变'}, {newWord:'变', note:'变 means to change: into something else. The master’s secret, for you alone.'},
         {say:'change'}, {turnInto:1, label:'变！ Listen: what does the master say?'}, {set:{riddle:3}},
         {message:'Before dawn, you creep back to your room. Nobody saw you!'}, {goTo:'cave', at:[4, 4], facing:'down'}]},
-      {if:{tests:0}, do:[{say:'change'}, {turnInto:3, label:'变！ Listen: what does the master say?'}, {set:{tests:1}}, {say:'veryGood'}]},
+      {if:{tests:0}, do:[{say:'change'}, {turnInto:3, label:'变！ Listen: what does the master say?'}, {set:{tests:1}}, {say:'veryGood'}, {goOn:true}]},
       {if:{fly:0}, waits:true, do:[{say:'teachFly', teach:'飞'}, {newWord:'飞', note:'飞 means to fly. The master teaches you the cloud somersault: one leap, and you fly a long, long way.'},
         {scene:'somersault'}, {set:{fly:1}}, {message:'From now on you can fly by cloud: open your map (MAP), choose a place you’ve been, and press Fly here.'}]},
       {if:{pine:1, sentHome:0}, waits:true, do:[{say:'goAway'}, {say:'goHome', teach:'回家'}, {newWord:'回家', note:'回家 means to go home. The master is sending you home, to Flower Fruit Mountain.'},

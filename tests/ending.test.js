@@ -146,15 +146,28 @@ test('closing a message with A, what you face rests too, so a second A doesn’t
   assert.equal(await second(HUNGRY_MONKEY), 1, 'the hungry monkey has a !, something to ask you: A talks to him');
 });
 
-test('someone with something new for you, a ! or ? over them, and not what they’ve just said, talks at once (decided 23 October 2026: the old monkey taught 家 and went straight on to counting the troop in, but A did nothing)', async () => {
+test('someone with something new for you goes straight on, in the same conversation (decided 6 November 2026, after playing it: a new task said to go and see the one you were talking to): the old monkey teaches 家 and goes on to counting the troop in', async () => {
   const g = game({elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 4}, {place: 'cave', x: 6, y: 10, dir: 'up'},
     ['石头', '你好', '山', '瀑布', '洞', '床', '碗', '桌子', '跳']);
-  g.run('matchWords = async () => new Set()');   // (matching the numbers, after counting the troop in: all matched)
+  g.run('matchWords = async () => new Set(); practiseFirst = async () => true; STEPS.scene = async () => {}; STEPS.chapter = async s => { here().chapter = s.chapter; }');   // (matching the numbers, after counting the troop in: all matched; no quick game first; and the scenes after, skipped)
+  g.run('pressA()'); await through(g);
+  assert.equal(g.run("lvl('家') >= 1"), true, 'he teaches 家');
+  assert.equal(g.run('here().count'), 3, 'and goes straight on: the monkeys come in, and you count them, with no A to press in between');
+});
+
+test('and if you say Not now to his quick game first, he rests a moment, as anyone does after Not now; then A goes straight on (decided 23 October 2026: the old monkey taught 家, but A did nothing)', async () => {
+  const g = game({elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 4}, {place: 'cave', x: 6, y: 10, dir: 'up'},
+    ['石头', '你好', '山', '瀑布', '洞', '床', '碗', '桌子', '跳']);
+  g.run('matchWords = async () => new Set(); practiseFirst = async () => false; STEPS.scene = async () => {}; STEPS.chapter = async s => { here().chapter = s.chapter; }');   // (Not now, to a quick game before counting; the scenes after, skipped)
   g.run('pressA()'); await through(g);
   assert.equal(g.run('here().cave'), 5, 'he teaches 家');
+  assert.equal(g.run('here().count'), 0, 'and you’d rather practise first');
   for (let i = 0; i < 5 && g.run('newMessage()'); i++){ g.run('__now += 600'); g.run('pressA()'); await tick(); }   // (closing what comes up)
-  assert.ok(!g.run('justFinished(6, 9)'), 'with a ! and more to say, he doesn’t rest');
+  assert.equal(g.run("(AREA.bubbles.elder.find(b => matches(b.if)) || {}).show"), '!', 'a ! over him: more to say');
+  g.run('__now += 2500');   // (a moment later)
+  assert.ok(!g.run('justFinished(6, 9)'), 'and then he doesn’t rest');
   assert.equal(label(g)[0], 'Talk');
+  g.run('practiseFirst = async () => true');
   g.run('pressA()'); await through(g);
   assert.ok(g.run('here().count') >= 1, 'A goes straight on: a monkey comes in, and you count it');
 });

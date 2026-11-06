@@ -7,9 +7,11 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
+const {watchBeside, besideTasks} = require('./beside');
 
 test('Flower Fruit Mountain can be played from start to finish', async () => {
   const game = loadGame({dom: true});
+  watchBeside(game);   // (no task about someone as you finish with them, still beside them: they go straight on)
   const run = code => game.run(code);
   const get = expr => JSON.parse(run(`JSON.stringify(${expr})`));
   const sheet = game.el('#sheet'), talkBox = game.el('#talk');
@@ -302,27 +304,24 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('PLACE'), 'cave');
   assert.equal(area().cave, 4, 'the troop should follow you in');
   assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => n.place)"), ['cave', 'cave', 'cave']);
-  await pressAt(6, 10, 'up', 'hearing what the old monkey calls the cave');
-  assert.ok(knows('家'), 'the old monkey should teach 家');
   run("globalThis.__scenes = []; storyScene = async id => { __scenes.push(id); }");   // (the scene plays by itself, with its pictures; its own test plays it)
-  await pressAt(6, 10, 'up', 'counting the troop into the cave, a monkey at a time (一, 二, 三), then matching the numbers', 3);   // (in one go, like the school's first lessons: 3 November 2026)
+  // he goes straight on from one to the next (decided 6 November 2026, after playing it: a task said to go and see whoever
+  // you were talking to): 家; a quick word game; counting the troop in, a monkey at a time (一, 二, 三, in one go, like the
+  // school's first lessons: 3 November 2026), then matching the numbers; and with the whole troop home, becoming king (王)
+  await pressAt(6, 10, 'up', 'hearing what the old monkey calls the cave, counting the troop in, and becoming king', 5);
+  assert.ok(knows('家'), 'the old monkey should teach 家');
   assert.equal(area().count, 3);
   for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
-  assert.deepEqual(get('__scenes'), [], 'becoming king waits till you talk to him again');
-  await pressAt(6, 10, 'up', 'talking to the old monkey, with the whole troop home');
   assert.deepEqual(get('__scenes'), ['becomingKing'], 'with the whole troop home, they make you king: the scene, told like the opening');
   assert.ok(knows('王'), 'becoming king teaches 王');
   assert.equal(get('yourName().zh'), '美猴王', 'you should be called 美猴王 now');
-  await pressAt(9, 9, 'up', 'talking to the big monkey, now you’re king');
-  assert.ok(get('__said').includes('你是我们的王！'), 'he hails you as king');
+  assert.equal(area().home, 1, 'and on into chapter 1: he tells you about the troop’s new home ground');
+  assert.deepEqual(get('S.following'), ['elder'], 'and follows you there');
   assert.ok(get("['troop1', 'troop2', 'troop3'].every(id => ALL_NPCS.find(n => n.id === id).place === 'cave')"), 'the whole troop should be in the cave');
   assert.ok(get('AREA.checklist.filter(c => !c.chapter).every(c => matches(c.done))'), 'all of the prologue should be ticked off');
   assert.equal(area().chapter, 1, 'the prologue is over, and chapter 1 begins, with its card');
 
   // Chapter 1: the old monkey shows you the troop's new home ground, beside the waterfall
-  await pressAt(6, 10, 'up', 'talking to the old monkey at the start of chapter 1');
-  assert.equal(area().home, 1, 'he tells you about the troop’s new home ground');
-  assert.deepEqual(get('S.following'), ['elder'], 'and follows you there');
   await stepOn(7, 13, 'walking out through the water curtain');
   assert.equal(run('PLACE'), 'falls');
   stand(19, 2, 'right');
@@ -428,13 +427,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(7, 3, 'up', 'a lesson while the next new word waits: practice', 0);
   assert.ok(!knows('红色'), 'practice: nothing new');
   assert.ok(!get('getTasks().some(t => t.id === "practise")') && run('!!lessonNow()'), 'practised: the colours are ready');
-  await pressAt(7, 3, 'up', 'the first colour lesson', 3);
+  // the first colour lesson; then, straight after it, before goodbye (decided 6 November 2026: he goes straight on to it), the
+  // old monkey's news: 我们有家，也有学校！ teaches 有 (after the lesson's own practice), and the troop will have a great
+  // feast, at a big table under the big tree at the home ground
+  await pressAt(7, 3, 'up', 'the first colour lesson, and the old monkey’s news', 4);
   assert.ok(['红色', '黄色', '白色'].every(knows) && !knows('黑色'), 'the first colour lesson teaches three: 红色, 黄色 and 白色');
   assert.deepEqual(get('__scenes').filter(id => id.startsWith('paint')), ['paintLanterns'], 'the class paints the lanterns red');
   assert.equal(run("((AREA.bubbles.big || []).find(b => matches(b.if)) || {}).show"), '!', 'and the big monkey has something to ask: the flowers, a side quest');
-  // Then the old monkey's news, before any more lessons: 我们有家，也有学校！ teaches 有, and the troop will have a great
-  // feast, at a big table under the big tree at the home ground
-  await pressAt(7, 3, 'up', 'hearing the old monkey’s news');
   assert.ok(get('__said').includes('我们有家，也有学校！') && knows('有'), 'the old monkey’s news teaches 有');
   assert.equal(area().feast, 1);
   // The feast's big table: as you come up to the big tree at the home ground, the troop sets it up under it, as you
@@ -597,7 +596,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(7, 9, 'up', 'meeting the shop owner, by the way in');
   assert.ok(knows('老板') && area().shop === 1, 'he teaches 老板, the first time');
   await pressAt(7, 9, 'up', 'talking to the 老板 again: the troop builds his new shop');
-  assert.deepEqual([area().shop, run('tileAt(4, 7).look'), run('tileAt(7, 7).look')], [3, 'shop', 'sign'], 'his shop, built, with its sign');
+  assert.deepEqual([area().shop, run('tileAt(4, 7).look'), run('tileAt(7, 7).look')], [4, 'shop', 'sign'], 'his shop, built, with its sign; and he goes straight on to show you what he sells (4)');
   assert.ok(['我来了！', '这里很好！'].every(t => get('__said').includes(t)), 'here I am! it’s nice here!');
   assert.ok(get('S.shells') >= 10, 'shells enough for a headband');
   plan.buy = '蓝色的头带';
@@ -912,6 +911,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
   assert.deepEqual(deadEnds, [], 'your tasks were never empty while there was more to do');
   assert.deepEqual(backToBack, [], 'no one teaches you a new word, then another the next time you talk to them, with no questions in between');
+  assert.deepEqual(besideTasks(game), [], 'no task ever sends you to someone you’re standing with, just as you finish talking to them: they go straight on');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
   // player, jumps out on the hillside.)

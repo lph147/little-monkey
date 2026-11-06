@@ -124,7 +124,7 @@ function showCaption(c, last){
 }
 let lastCtx = null;
 function currentPrompt(now){   // (nothing while a new message is up, or what you're facing has just finished: js/input.js)
-  if (mode !== 'play' || !modal.hidden || busy || pl.mv || held || now - lastMoveEnd < 250 || newMessage()) return '';
+  if (mode !== 'play' || !modal.hidden || busy || pl.mv || held || now - lastMoveEnd < 250 || messageFirst()) return '';
   const [fx, fy] = facing(); return justFinished(fx, fy) ? '' : promptFor(fx, fy);
 }
 function buttonLabels(now){
@@ -138,7 +138,7 @@ function buttonLabels(now){
   if (mode === 'title'){ const s = $('#titleButtons').querySelector('.sel'); return [s ? btnLabel(s) : 'Choose', '']; }
   if (mode === 'intro') return [$('#beginBtn') ? scene.last : 'Next', 'Skip'];
   if (fishing) return [fishing.bite && !fishing.hooked ? 'Hook it' : '', fishing.hooked ? '' : 'Stop'];   // fishing (js/fishing.js): A hooks a fish that's biting, B stops
-  if (canAct() && newMessage()) return ['OK', 'Close'];   // A closes a message that's just come up
+  if (canAct() && messageFirst()) return ['OK', 'Close'];   // A closes a message that's just come up (but takes the next, where you're collecting more of the same)
   return [currentPrompt(now), !$('#saybox').hidden ? 'Close' : canRun() ? 'Run' : ''];   // (held as you walk, once you can run)
 }
 let lastLabels = '';

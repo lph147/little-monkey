@@ -94,15 +94,14 @@ test('the old monkey checks the meadow’s five words once you know them, and th
 test('counting the troop in: one monkey after another (一, 二, 三), then one matching game on the three; then becoming king needs no word game first (3 November 2026)', async () => {
   const g = game({elder: 2, gate: true, climb: 4, story: true, cave: 5, count: 0}, {place: 'cave', x: 6, y: 10, dir: 'up'});
   g.run("globalThis.__matched = null; matchWords = async words => { __matched = words; for (const w of words) reviewed(w, true); return new Set(); }");
+  g.run('STEPS.chapter = async s => { here().chapter = s.chapter; };');   // (its card: tests/story.test.js)
   await talk(g, 'elder');
   assert.equal(get(g, 'here().count'), 3, 'all three in one go');
   assert.deepEqual(['一', '二', '三'].map(w => get(g, `__notes.includes('card: ${w}')`)), [true, true, true], 'each with its own card');
   assert.deepEqual(get(g, '__matched.slice().sort()'), ['一', '三', '二'].sort(), 'then matching just the three numbers');
-  assert.deepEqual(get(g, '__games'), [], 'no word games between the monkeys');
-  g.run('STEPS.chapter = async s => { here().chapter = s.chapter; };');   // (its card: tests/story.test.js)
-  await talk(g, 'elder');
-  assert.deepEqual(get(g, '__games'), [], 'and none before becoming king');
-  assert.ok(get(g, '__notes').includes('card: 王'), 'they make you king');
+  assert.deepEqual(get(g, '__games'), [], 'no word games between the monkeys, and none before becoming king');
+  assert.ok(get(g, '__notes').includes('card: 王'), 'and he goes straight on: they make you king (decided 6 November 2026: you were talking to him already)');
+  assert.deepEqual([get(g, 'here().chapter'), get(g, 'here().home')], [1, 1], 'and on into chapter 1: he wants to see the new home ground with you');
 });
 
 test('too early to play a word game (fewer than 4 words with pictures), and nothing waits', async () => {

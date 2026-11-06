@@ -336,7 +336,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'climb2', main:true, if:{climb:2}, text:'Go back down and tell the old monkey what you found', arrow:'elder'},
     {id:'climb3', main:true, if:{climb:3}, text:'Lead the troop up the path beside the river, to the {瀑布}', arrow:[7, 2, 'falls']},
     {id:'fall', main:true, if:{climb:4, story:false}, text:'Read the story at the {瀑布}', arrow:[5, 1, 'falls']},
-    {id:'shop1', if:{knows:'老板', new:'头带', shop:{atLeast:3}}, text:'See what the {老板} sells', arrow:'boss'},
+    {id:'shop1', if:{knows:'老板', new:'头带', shop:3}, text:'See what the {老板} sells', arrow:'boss'},   // (till you've seen it: shop 4)
     {id:'fishRod', main:true, if:{fish:'asked', fishing:0}, text:'Ask the fishing monkey by the stream how to catch a big {鱼}', arrow:'fisher'},
     {id:'fishCatch', main:true, if:{fish:'asked', fishing:{atLeast:1}, holding:{fish:false}}, text:'Catch a big {鱼} for the feast: face the stream and press A', arrow:[22, 18, 'homeGround']},   // (its arrow on the stream, by the fishing monkey: not over you as you fish)
     {id:'fishBack', main:true, if:{fish:'asked', holding:{fish:true}}, text:'Take the big {鱼} to the hungry monkey', arrow:'hungry'},
@@ -863,7 +863,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // it goes on: the setUp step), and the hungry monkey, who looks after the feast, is thrilled
     {if:{cow:{atLeast:9}, milkTable:0, around:[22, 7, 'homeGround']}, do:[
       {setUp:{milkTable:1}}, {say:'haveMilkNow', by:'hungry'},
-      {message:'The {牛}’s milk goes on the feast’s second {桌子}: a bowl full, and a jug of it!'}]},
+      {message:'The {牛}’s milk goes on the feast’s second {桌子}: a bowl full, and a jug of it!'}, {talkTo:'thirsty', if:{near:'thirsty'}}]},
     // and what the thirsty monkey makes from the milk at his little dairy goes in its bowls too, as you come up to it:
     // yoghurt, a wooden spoon in it, then cheese
     {if:{dairy:{atLeast:3}, milkTable:1, around:[22, 7, 'homeGround']}, do:[{setUp:{milkTable:2}},
@@ -3134,7 +3134,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cave:2}, do:[{say:'go', hint:'Look around the cave first.'}]},
       {if:{cave:3}, do:[{say:'letsGo', hint:'Lead the way: jump through the waterfall.'}]},
       // the troop moves in. One new word each time you talk to him.
-      {if:{cave:4}, do:[{say:'home', teach:'家'}, {newWord:'家'}, {set:{cave:5}}]},
+      {if:{cave:4}, do:[{say:'home', teach:'家'}, {newWord:'家'}, {set:{cave:5}}, {goOn:true}]},
       // counting the troop in: in one go, a monkey at a time, a number each (一, 二, 三, each its own card), then one matching
       // game on the three (decided 3 November 2026, after playing it: a quick word game before each monkey came in, from 1
       // November, felt like an interruption every time; like the school's first lessons, the numbers come one after another
@@ -3145,13 +3145,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {if:{count:1}, message:'Another monkey comes in.'}, {if:{count:1}, say:'count2', teach:'二'}, {if:{count:1}, newWord:'二'}, {if:{count:1}, set:{count:2}},
         {if:{count:2}, message:'And another!'}, {if:{count:2}, say:'count3', teach:'三'}, {if:{count:2}, newWord:'三'}, {if:{count:2}, set:{count:3}},
         {message:'The whole troop is home.'},
-        {match:'Show the old monkey the troop’s numbers', words:['一', '二', '三'], stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him the numbers.'}]},
+        {match:'Show the old monkey the troop’s numbers', words:['一', '二', '三'], stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him the numbers.'}, {goOn:true}]},
       // the whole troop is home: the next time you talk to him, the prologue ends with the troop making you king (a scene,
       // told like the opening; as in the book, they move in, then make him king), and chapter 1 begins (its title card).
       // (It came straight after the third monkey until 22 October 2026: 三 and 王 in one go.)
       // (no word game first: matching the numbers, straight after counting the troop in, was the practice; with waits, from
       // 30 October to 3 November 2026, a quick word game came first)
-      {if:{chapter:0, count:3}, do:[{scene:'becomingKing'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}]},
+      {if:{chapter:0, count:3}, do:[{scene:'becomingKing'}, {newWord:'王', note:'The troop names you 美猴王 (Měi Hóuwáng · Handsome Monkey King)!'}, {set:{cave:6}}, {chapter:1}, {goOn:true}]},
       // chapter 1: at school, he's the teacher. The first time you talk to him there, the class greets him the way children
       // in China do; after that, he gives you a lesson whenever you like (he has a ! when words need practice).
       {if:{school:1}, waits:true, do:[
@@ -3178,7 +3178,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // chapter 1: once every food is on the feast's tables, the exam (the area's word test), before the feast
       {if:{...FEAST_READY, exam:0}, do:[{say:'examTime'}, {exam:true}, {set:{exam:1}}, {say:'veryGood'}, {shells:10, note:'Your certificate goes up on the classroom wall! +10 🐚'},
         {message:'The troop is getting ready for the feast! Go to the big {树} in the middle of the home ground.'}]},
-      {if:{school:{atLeast:2}}, do:[{say:'classStart'}, {lesson:true}, {say:'classEnd'}, {say:'bye'}, {reply:'再见'}]},   // (and goodbye, as a class does: decided 4 November 2026)
+      {if:{school:{atLeast:2}}, do:[{say:'classStart'}, {lesson:true}, {say:'classEnd'}, {goOn:true}, {say:'bye'}, {reply:'再见'}]},   // (and goodbye, as a class does: decided 4 November 2026; his news first, if he has some now)
       // chapter 1: the troop's new home ground, beside the waterfall. He tells you about it, then follows you there.
       {if:{chapter:1, home:0}, do:[
         {say:'haveHome'},
@@ -3220,9 +3220,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{shop:1}, do:[{say:'bossCame'}, {say:'bossLikesHere'},
         {message:'The {老板} wants his new shop here, by the way in, where every monkey goes past. The troop comes to build it!'},
         {markOut:{shop:2}}, {setUp:{shop:3}}, {say:'great'},
-        {message:'The {老板}’s new shop! He sells {头带|headbands} in every colour you know, and food for your bag. Talk to him to buy something.'}]},
+        {message:'The {老板}’s new shop! He sells {头带|headbands} in every colour you know, and food for your bag.'}, {goOn:true}]},
       // your first headband, his ! over him: a few questions first if he's only just taught you 老板 (decided 1 November 2026)
-      {if:{shop:{atLeast:3}, new:'头带'}, waits:true, do:[{shop:true}]},
+      {if:{shop:{atLeast:3}, new:'头带'}, waits:true, do:[{set:{shop:4}}, {shop:true}]},   // (4: you've seen what he sells)
       {do:[{shop:true}]}
     ],
     hungry: [

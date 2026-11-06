@@ -81,8 +81,8 @@ test('the boatman knows, once you’ve asked everyone else: across the sea', asy
   assert.ok(notes(g).some(n => /ask everyone else on your list \(7 of 8/.test(n)));
   g.run('Object.assign(here(), {cargo: 2, askDocker: 1})');
   await press(g, 16, 16, 'right');
-  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'boatman: 神仙在海的那边。']);
-  assert.equal(get(g, 'here().toldSea'), 1);
+  assert.deepEqual(said(g), ['player: 神仙在哪里？', 'boatman: 神仙在海的那边。', 'boatman: 今天没有风。'], 'and he goes straight on: no wind today (decided 6 November 2026: no task to go and ask him, as you stand there)');
+  assert.deepEqual([get(g, 'here().toldSea'), get(g, 'here().boat')], [1, 1]);
 });
 
 test('a game from before this: past the boatman’s news, he’s told you; and once you’ve been to the fields, the road east stays open', async () => {

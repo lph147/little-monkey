@@ -7,6 +7,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
+const {watchBeside, besideTasks} = require('./beside');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const FROM_BEFORE = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水', '吃', '喝', '要', '我', '猴子', '河', '鱼', '羊', '朋友', '家', '有', '鸟', '小', '大',
@@ -38,12 +39,11 @@ const besideWord = (g, w) => get(g, `(() => { for (let y = 0; y < ROWS; y++) for
 
 test('inside the cave, from the master to the end of the chapter', async () => {
   const g = game({place: 'cave', x: 14, y: 6, dir: 'up'});
-  // the master: who he is (师父), and your name (名字): 孙悟空
+  watchBeside(g);   // (no task about someone as you finish with them, still beside them: they go straight on)
+  // the master: who he is (师父), and, going straight on, your name (名字): 孙悟空
   await press(g, 14, 6, 'up');
-  assert.deepEqual(said(g), ['master: 你来了。', 'master: 我是你的师父。']);
+  assert.deepEqual(said(g), ['master: 你来了。', 'master: 我是你的师父。', 'master: 你叫什么名字？', 'player: 我没有真正的名字。大家都叫我美猴王。', 'master: 你叫孙悟空。']);
   assert.ok(notes(g).includes('card: 师父'));
-  await press(g, 14, 6, 'up');
-  assert.deepEqual(said(g), ['master: 你叫什么名字？', 'player: 我没有真正的名字。大家都叫我美猴王。', 'master: 你叫孙悟空。']);
   assert.equal(get(g, 'yourName().zh'), '孙悟空', 'your name, from now on');
   await press(g, 14, 6, 'up');
   assert.ok(notes(g).some(n => /chores first/.test(n)), 'the chores first');
@@ -82,15 +82,14 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   assert.equal(get(g, '__asked'), asked + 4, 'a question a log');
   await press(g, 17, 9, 'right');
   assert.equal(p(g, 'chores'), 6);
-  // the lecture, and seven years: the saplings grown, new little pupils
+  // the lecture, and seven years: the saplings grown, new little pupils; and, going straight on, the riddle: three taps on
+  // your head (头); the master goes in
+  said(g); notes(g);
   await press(g, 14, 6, 'up');
   assert.deepEqual(get(g, '__scenes'), ['caveYears']);
   assert.equal(g.run('tileAt(5, 9).look'), 'rockPeach', 'the sapling grown into a peach tree');
   assert.equal(get(g, 'ALL_NPCS.find(n => n.id === "little1").place'), 'cave');
-  // the riddle: three taps on your head (头); the master goes in
-  said(g); notes(g);
-  await press(g, 14, 6, 'up');
-  assert.deepEqual(said(g), ['master: 一，二，三！']);
+  assert.equal(said(g).at(-1), 'master: 一，二，三！');
   assert.ok(notes(g).includes('card: 头'));
   assert.equal(get(g, 'ALL_NPCS.find(n => n.id === "master").place'), 'masterRoom');
   // the night (晚上): the moon in the pool (月亮), three stars over his back door (星星), and in
@@ -115,9 +114,7 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   const before = get(g, '__asked');
   await press(g, 14, 6, 'up');
   assert.deepEqual([get(g, '__asked') - before, p(g, 'tests')], [3, 1]);
-  assert.equal(g.run('canFly()'), false);
-  await press(g, 14, 6, 'up');
-  assert.ok(notes(g).includes('card: 飞'));
+  assert.ok(notes(g).includes('card: 飞'), 'and going straight on, 飞');
   assert.ok(get(g, '__scenes').includes('somersault'));
   assert.equal(g.run('canFly()'), true, 'now you can fly by cloud');
   assert.deepEqual(get(g, 'landingIn("shore")'), [17, 1], 'landing where the way into it leaves you');
@@ -136,6 +133,7 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   assert.deepEqual([g.run('PLACE'), g.run('pl.x'), g.run('pl.y')], ['ffmMeadow', 9, 2], 'landing by your stone');
   assert.deepEqual(CHAPTER.filter(w => !knows(g, w)), [], 'all 17 of chapter 1’s words');
   assert.deepEqual(get(g, 'AREA.checklist.filter(c => c.chapter === 1 && !matches(c.done)).map(c => c.text)').filter(t => !/crane|鹤|woodcutter/.test(t)), [], 'the chapter’s checklist done (but for what’s on the climb)');
+  assert.deepEqual(besideTasks(g), [], 'no task ever sends you to someone you’re standing with, just as you finish talking to them: they go straight on');
 });
 
 test('flying by cloud: Fly here on a place you’ve been, on the map, once you can; it takes you there', async () => {

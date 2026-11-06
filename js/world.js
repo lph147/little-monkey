@@ -558,6 +558,11 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   },
   async hideSeek(s, who, last){ return hideSeek(who, last); },   // hide and seek with the one you're talking to (js/hide.js)
   async talkTo(s){ const n = NPCS.find(c => c.id === s.talkTo); if (n) await talk(n); },   // talking to someone, such as A at the little monkeys' tower talking to them
+  // Going straight on (goOn): the one you're talking to goes on to what they have for you next, if they have something (a
+  // ! or ? over them, and a part you haven't just had: hasNews), as you're talking to them already, so no task ever tells
+  // you to go and see someone you're standing with (decided 6 November 2026, after playing it: bringing the senior pupil
+  // his water, a new task said to go and see him). A part that teaches a new word offers a quick word game first, as ever.
+  async goOn(s, who){ const n = typeof who === 'string' ? NPCS.find(c => c.id === who) : who; if (n && hasNews(n)) await talk(n); },
   // Match the words you've learned (with pictures) to their pictures, as at the practice post (title: its heading;
   // stop: the button to stop). Stopping ends the conversation there, with notYet as a message.
   async match(s){
@@ -1243,9 +1248,11 @@ async function request(r, face, last = false){
     if (!talkingTo) await runEvents();   // (in a conversation, what happens next waits till it's over: decided 1 November 2026, when the rocks rolled away unseen while the thirsty monkey thanked you and played his word game)
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
     const nw = [r.teach, r.verb].find(w => w && lvl(w) === 0);   // a new word to teach, if there is one: what they want, or the verb
-    await showDialog(face, L[r.ask], {teach:nw, last:last && !nw});
+    const ready = r.fromBag && !!has && !r.choices;   // (it's in your bag already: you give it them there and then, decided 6 November 2026)
+    await showDialog(face, L[r.ask], {teach:nw, last:last && !nw && !ready});
     if (nw) await showNotice(nw, {quiet:true});
-    if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); toast(fill(r.asked)); }
+    if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); if (!ready) toast(fill(r.asked)); }
+    if (ready) return request(r, face, last);
   } else await showDialog(face, L[r.thanks], {last});
 }
 // What the shop sells now: each thing whose if matches (such as bait, once you have a fishing rod), and something that
@@ -1450,6 +1457,16 @@ async function interact(x, y){
   if (t.action) return ACTIONS[t.action](t);
   if (t.word) return lookAt(t);
   SFX.bump();
+}
+// Whether A at (x, y) would take one more of what you're collecting there, one at a time (a collect step, or a carry step
+// that isn't howMany, in what A does there now), such as the bowls from the cave's stack or fresh grass for the cow: then
+// A takes the next at once, never resting, and never stopping first to close the message the last one left (justFinished
+// and messageFirst, js/input.js; decided 6 November 2026, after playing it: filling the senior pupil's buckets one at a
+// time, the pool seemed not to give the next).
+function collectsMore(x, y){
+  if (npcAt(x, y) || followerAt(x, y) || animalAt(x, y) || hiddenAt(x, y) || spotLook(x, y)) return false;   // (A does something else there first: interact)
+  const t = tileAt(x, y), p = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
+  return !!p && !p.waits && p.do.some(s => (!s.if || matches(s.if)) && (s.collect || (s.carry && !s.howMany)));
 }
 // I spy (the spy step): is anything here this word? And what they can see, said again (only in Chinese); and A at
 // something, while you're playing: what they see, found, or something else (a square with no word: nothing, as ever).
