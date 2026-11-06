@@ -61,3 +61,14 @@ test('houses: the door taller than a person, the roof (the same as before) no mo
   assert.ok(32 - 3 - door.y > 16, 'a door from the top of its frame to the step, taller than a person (16 pixels)');
   assert.ok(6 + g.run('ROOF_LIFT') + 5 <= 16, 'the roof, with the curl at each end of its ridge, within a square above the house');
 });
+
+test('long grass: clumps of blades with light tips, its edge in the grass’s own green, all inside its own square', () => {
+  const g = game({place: 'highRoad', x: 16, y: 9, dir: 'up'});
+  const draw = (x, y) => get(g, `(() => { const out = [], ctx = {fillStyle: '', fillRect(x, y, w, h){ out.push([this.fillStyle, x, y, w, h]); }}; tall(ctx, 0, 0, ${x}, ${y}); return out; })()`);
+  assert.equal(g.run('tileAt(2, 1).look + tileAt(1, 1).look + tileAt(2, 0).look + tileAt(3, 2).look'), 'tallGrassgrassbambootallGrass');
+  const edge = draw(2, 1), inside = draw(3, 2);
+  assert.ok(edge.some(([c, x]) => c === '#7CC46B' && x === 0), 'next to the grass, its edge in the grass’s green');
+  assert.ok(!inside.some(([c, x, y]) => y < 0) && !inside.some(([c]) => c === '#7CC46B'), 'inside a patch, no edge, and nothing over the square above');
+  assert.ok([...edge, ...inside].every(([c, x, y, w]) => x >= 0 && x + w <= 16 && y < 16), 'and nothing beside it or below it, where the next squares are drawn');
+  assert.ok(inside.filter(([c]) => c === '#94D883').length >= 8, 'blades with light tips');
+});

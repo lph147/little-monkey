@@ -368,14 +368,36 @@ function path(g, X, Y, x, y){
   });
 }
 const TALL = ['#5BA552', '#2F6E38', '#94D883'], LONG = ['#479147', '#1D4F27', '#7CC46B'], WOOD_TALL = ['#68A759', '#2F6E38', '#94D883'];   // the ground, the blades and their tips (WOOD_TALL: tall grass on the pine wood's floor)
-function tall(g, X, Y, x, y, [ground, blade, tip] = TALL){   // tufts of tall grass (the meadow's), or long grass (LONG: where wild animals live)
+// Tall grass: clumps of long blades leaning in the wind, now and then a foxtail (狗尾巴草) nodding over them, blades poking up
+// over the square above where it's the edge of a patch, and where it meets the grass a ragged edge in the grass's own green
+// (decided 6 November 2026, from the art proposal: rows of the same tufts on a darker square looked like another game's).
+// It's still clearly not plain grass, so you can tell where animals hide.
+const EDGE_GREEN = {grass:'#7CC46B', lawn:'#97B26E'};   // (the grass and the human world's lawn, for its edges)
+function tall(g, X, Y, x, y, [ground, blade, tip] = TALL){   // tall grass (the meadow's), or long grass (LONG: where wild animals live)
+  const look = tileAt(x, y).look, same = (dx, dy) => tileAt(x + dx, y + dy).look === look, dark = shade(blade, -.2), mid = shade(ground, -.1);
   R(g, X, Y, T, T, ground);
-  const tuft = (ox, oy) => {
-    [[0,3],[1,2],[2,3],[3,1],[4,3],[5,2],[6,3]].forEach(([a,c]) => R(g, X+ox+a, Y+oy+c, 1, 1, blade));
-    [[1,1],[3,0],[5,1]].forEach(([a,c]) => R(g, X+ox+a, Y+oy+c, 1, 1, tip));
-    R(g, X+ox, Y+oy+4, 7, 1, blade);
-  };
-  tuft(0,1); tuft(8,0); tuft(4,6); tuft(9,9); tuft(0,10);
+  for (let i = 0; i < 8; i++) R(g, X + Math.floor(rnd(x, y, 730 + i) * 15), Y + Math.floor(rnd(x, y, 740 + i) * 15), 2, 1, mid);
+  const edge = (dx, dy) => same(dx, dy) ? null : EDGE_GREEN[tileAt(x + dx, y + dy).look] || null, left = edge(-1, 0), right = edge(1, 0), below = edge(0, 1);
+  for (let i = 0; i < T; i++){
+    const d = 1 + Math.floor(rnd(x * 3 + i, y, 735) * 3);
+    if (left) R(g, X, Y + i, d, 1, left); if (right) R(g, X + T - d, Y + i, d, 1, right); if (below) R(g, X + i, Y + T - d, 1, d, below);
+  }
+  const off = (y % 2) * 4, open = !same(0, -1);   // (the clumps of every other row a little to the side, so they never line up; open: blades can poke up over the square above)
+  const at = (px, py, w, c) => { const a = Math.max(X, px), b = Math.min(X + T, px + w); if (b > a && py < Y + T && (py >= Y || open)) R(g, a, py, b - a, 1, c); };   // (never beside it or below it, where the next square is drawn)
+  [[2, 3], [10, 2], [6, 10], [14, 9]].forEach(([sx, sy], k) => {
+    sx += off; if (sx >= T + 2) sx -= T;
+    const cx = X + sx + Math.floor(rnd(x, y, 750 + k) * 3) - 1, cy = Y + sy + 5 + Math.floor(rnd(x, y, 760 + k) * 2);
+    at(cx - 3, cy + 1, 7, dark); at(cx - 2, cy + 2, 5, mid);   // (its shade at its foot)
+    for (let n = 0; n < 6; n++){   // its blades, leaning with the wind
+      const h = 5 + Math.floor(rnd(x * 7 + n, y, 780 + k) * 5), lean = (n - 2.5) * .45 + .6;
+      for (let i = 0; i < h; i++) at(Math.round(cx + (n - 2.5) * .8 + lean * i * i / (h * 1.4)), cy - i, 1, i >= h - 2 ? tip : i < 2 ? dark : blade);
+    }
+    if (rnd(x, y, 790 + k) < .14){   // a foxtail, nodding: its stem, and its fuzzy head
+      const fx = cx + 2, fy = cy - 9;
+      for (let i = 0; i <= 9; i++) at(cx + Math.round(2 * i / 9), cy - i, 1, blade);
+      for (let r = 0; r < 3; r++) at(fx, fy - 2 + r, 2, '#D3CC86'); at(fx + 2, fy, 1, '#D3CC86'); at(fx, fy - 2, 1, '#EDE7B4');
+    }
+  });
 }
 // The shore (chapter 1): sand, pale and speckled, a little pink shell here and there; and the sea, deep blue, its waves
 // rolling in (animTile, js/draw.js), foam along the sand.
