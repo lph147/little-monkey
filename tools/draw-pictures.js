@@ -986,14 +986,17 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(and(O(16, 21, 15, 5), not(O(16, 21, 13.4, 3.6))), '#A88440');
     p.flat(Rc(8.6, 19, 14.8, 1.6), '#6A4A2A');                                               // its band
   },
-  '井': p => {   // well: a round stone well with a little tiled roof and a bucket (unlike the house: walls and a door)
-    p.fill(Rc(5, 6, 3, 18), '#8A5A32'); p.fill(Rc(24, 6, 3, 18), '#8A5A32');                 // posts
-    p.fill(Pg([[1, 8], [16, 2], [31, 8], [28, 10], [4, 10]]), '#56616C', {edge: true});       // roof
-    p.fill(Rc(15, 9, 2, 6), '#5A4630'); p.fill(Rc(12, 14, 8, 6, 1), '#A8743E', {edge: true});   // rope and bucket
-    p.fill(and(O(16, 25, 13, 6), Rc(0, 21, 32, 11)), '#9A9488');
-    p.fill(Rc(3, 22, 26, 6), '#B7B1A4', {edge: true});                                       // stone sides
-    for (const x of [7, 13, 19, 25]) p.flat(Rc(x, 22, 1, 6), '#8A847A');
-    p.fill(O(16, 22, 13, 3), '#C9C3B4'); p.flat(O(16, 22, 10, 2), '#2A3A4A');                 // its dark water
+  '井': p => {   // well: a square stone well, its dark water far down, a frame of wooden beams across its top, two each way, as in 井 (the character began as a picture of one), a windlass behind it with its rope (decided 6 November 2026, to match the well on the map; unlike the house: walls and a door; unlike the bucket: just a bucket)
+    p.fill(or(Rc(3, 3, 3, 16), Rc(26, 3, 3, 16)), '#8A5A32', {edge: true});                     // the windlass's posts
+    p.fill(Rc(6, 5, 20, 5), '#A8743E', {light: '#C89A5A', dark: '#6A4220', edge: true});        // its drum
+    p.flat(Rc(12, 5, 8, 5), '#D8CBA0'); p.flat(or(Rc(12, 7, 8, 1), Rc(12, 9, 8, 1)), '#B8A878');   // the rope wound round it
+    p.fill(or(Rc(29, 6, 3, 2), Rc(30, 6, 2, 6)), '#4E3018');                                    // its crank
+    p.fill(Rc(2, 13, 28, 10), '#C2BBAD', {light: '#D6D0C2', edge: true});                       // the curb's top
+    p.flat(Rc(9, 16, 14, 4), '#16232A'); p.flat(Rc(10, 16, 6, 1), '#35545A');                   // the water
+    p.flat(Rc(16, 10, 1, 8), '#D8CBA0');                                                        // the rope, down into it
+    p.fill(Rc(2, 23, 28, 7), '#8A857A', {dark: '#6E6A62', edge: true});                         // its front, of fitted stones
+    p.flat(or(Rc(2, 26, 28, 1), Rc(8, 23, 1, 3), Rc(17, 23, 1, 3), Rc(25, 23, 1, 3), Rc(5, 27, 1, 3), Rc(12, 27, 1, 3), Rc(21, 27, 1, 3)), '#6E6A62');
+    p.fill(or(Rc(0, 14, 32, 2), Rc(0, 20, 32, 2), Rc(6, 11, 2, 13), Rc(24, 11, 2, 13)), '#A8743E', {light: '#C89A5A', dark: '#6A4220', edge: true});   // the frame of beams
   },
   '房子': p => {   // house: white walls and a dark tiled roof, curling up at its ends (unlike 家: a little house with a red roof)
     p.fill(Rc(4, 15, 24, 14), '#F0ECE2', {dark: '#D0C9BA'});                                   // walls

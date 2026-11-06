@@ -923,7 +923,7 @@ const ACROSS_THE_SEA = {
         "bgggggTgggggTgggggTgggggTgggggTgggggTgggggTb",
         "bgggggggggggggvvvvvvvgggggGGGGGGGGGggHHHHHHb",
         "bgggggggggggggvvvvvvvgggggGGGGGGGGGggHHHHHHb",
-        "bgggggggggggggvvvvvvvgggggGGGGGGGGGggggjgggb",
+        "bgggggggggggggvvvvvvvgggggGGGGGGGGGggjgggggb",
         "bgggggggggggggggggggggggggGGGGGGGGGggggggggb",
         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       ]
@@ -1040,7 +1040,7 @@ const ACROSS_THE_SEA = {
         "bbbbbbbbbbbbbbbb##bbbbbbbbbbbbbbbb",
         "b#HHHHH##HHHHH######UUUU#HHHHHH##b",
         "b#HHHHH##HHHHH######UUUU#HHHHHH##b",
-        "b####################jq##########b",
+        "b###################j##q#########b",
         "b#######xxq####################p#b",
         "b#rr########xx##############rr###b",
         "b##################q##xx#########b",

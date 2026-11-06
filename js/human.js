@@ -83,14 +83,24 @@ Object.assign(LOOKS, {
   sacks: paving, cart: paving, woodpile: earth, fishRack: earth, archBridge: canal, teahouse: paving, townSchool: paving, stallBuns: paving, stallShoes: paving,
   stallFruit: paving, stallChanger: paving, stallKites: paving, well: earth, washLine: earth, bookTable: paving
 });
-// (what's under them, where the map is of other ground: the village's houses and things on earth, the town's on flagstones)
-const HUMAN_GROUND = {earth, paving, lawn, sand};
-// (looking past the object's own squares, so every square under a big one has the same ground: the village's old tree, two
-// squares by two, had a square of the town's flagstones under it, 4 November 2026)
-const groundNear = (x, y, dx, dy) => { const look = tileAt(x, y).look; let k = 1; while (k < 6 && tileAt(x + dx * k, y + dy * k).look === look) k++; return HUMAN_GROUND[tileAt(x + dx * k, y + dy * k).look]; };
-const groundUnder = (look, near) => (g, X, Y, x, y) => (groundNear(x, y, 0, 1) || groundNear(x, y, -1, 0) || groundNear(x, y, 1, 0) || near)(g, X, Y, x, y);
-for (const k of ['jHouse', 'mudHouse', 'whiteWall', 'wallGate', 'jars', 'baskets', 'sacks', 'cart', 'woodpile', 'fishRack', 'teahouse', 'townSchool', 'stallBuns', 'stallShoes', 'stallFruit', 'stallChanger', 'stallKites', 'well', 'washLine', 'bookTable', 'oldTree'])
-  LOOKS[k] = groundUnder(k, LOOKS[k]);
+// The ground under things (houses, jars, the well, the old tree, willows…): whatever ground is round them, grass, a verge,
+// a lane, sand or flagstones: the one most of the squares beside it have, the square in front of it counting most (decided
+// 6 November 2026, from the art proposal: each took the ground in front of it, and knew only four kinds, so the high road's
+// rice sacks sat on a square of the lane in the middle of the grass verge, and its old tree, standing on grass, on a square
+// of flagstones). Looking past the thing's own squares, so every square under a big one has the same ground (the village's
+// old tree, two squares by two, had a square of the town's flagstones under it, 4 November 2026).
+const GROUND_UNDER = {earth, paving, lawn, sand, grass: LOOKS.grass, path: LOOKS.path};
+function groundUnder(x, y){
+  const own = tileAt(x, y).look, votes = {};
+  for (const [dx, dy, w] of [[0, 1, 3], [-1, 0, 2], [1, 0, 2], [0, -1, 1]]){
+    let k = 1; while (k < 8 && tileAt(x + dx * k, y + dy * k).look === own) k++;
+    const l = tileAt(x + dx * k, y + dy * k).look; if (GROUND_UNDER[l]) votes[l] = (votes[l] || 0) + w;
+  }
+  return GROUND_UNDER[Object.keys(votes).sort((a, c) => votes[c] - votes[a])[0] || 'earth'];
+}
+const onTheGround = (g, X, Y, x, y) => groundUnder(x, y)(g, X, Y, x, y);
+for (const k of ['jHouse', 'mudHouse', 'whiteWall', 'wallGate', 'jars', 'baskets', 'sacks', 'cart', 'woodpile', 'fishRack', 'teahouse', 'townSchool', 'stallBuns', 'stallShoes', 'stallFruit', 'stallChanger', 'stallKites', 'well', 'washLine', 'bookTable', 'oldTree', 'willow', 'bambooFence'])
+  LOOKS[k] = onTheGround;
 
 /* ---- buildings and things ---- */
 // Each thing is drawn with a dark outline round it (inked), as Area 1's are (decided 4 November 2026, after playing it: the
@@ -232,14 +242,25 @@ Object.assign(OBJECT_ART, {
       for (let k = 0; k < len; k++) R(g, sx + (k > len * .6 ? (i < 0 ? -1 : 1) : 0), Y - 11 + k, 1, 1, k % 3 ? '#9FC765' : '#7FAE4E');
     }
   },
-  oldTree: (g, o) => {   // a big old tree, broad and dark, with a ring of stone round it to sit on
-    const X = o.x * T, Y = o.y * T, W = o.w * T;
-    oval(g, X + W / 2, Y + 25, 15, 6, '#8C877D'); oval(g, X + W / 2, Y + 24, 13, 5, '#B3ADA2'); oval(g, X + W / 2, Y + 24, 9, 3, '#6B4A2E');
-    // its trunk, reaching right up into its leaves, with two branches spreading under them (so no gap shows between them)
-    R(g, X + W / 2 - 3, Y - 6, 6, 30, '#4E3624'); R(g, X + W / 2 - 1, Y - 6, 2, 30, '#6B4A30'); R(g, X + W / 2 - 4, Y + 20, 8, 4, '#4E3624');   // (wider at its foot)
-    for (const s of [-1, 1]) for (let i = 0; i < 7; i++) R(g, X + W / 2 + s * (2 + i), Y + 1 - i, 2, 2, '#4E3624');
-    for (const [dx, dy, r, c] of [[-10, -6, 12, '#2F5A2E'], [10, -8, 13, '#2F5A2E'], [0, -16, 15, '#3A6E36'], [-6, -10, 10, '#4A8040'], [8, -14, 9, '#4A8040']]) oval(g, X + W / 2 + dx, Y + dy, r, Math.round(r * .8), c);
-    for (const dx of [-7, 0, 7]) R(g, X + W / 2 + dx - 1, Y - 1, 3, 1, '#24452A');   // shade under its leaves, where the branches go in
+  oldTree: (g, o) => {   // a big old tree, gnarled, with a low ring of stones round its foot to sit on and a red ribbon tied round its trunk, as old village trees in China often have, for luck; its leaves in broad layers, flat underneath, like clouds (decided 6 November 2026, from the art proposal)
+    const X = o.x * T, Y = o.y * T, cx = X + o.w * T / 2;
+    if (shadows) blob(g, cx + 3, Y + 27, 16, 4, ROCK_SHADOW);
+    inked(g, o, t => {
+      const limb = (x0, y0, x1, y1, w) => { for (let i = 0, n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); i <= n; i++) R(t, Math.round(x0 + (x1 - x0) * i / n), Math.round(y0 + (y1 - y0) * i / n), w, w, '#4E3624'); };
+      oval(t, cx, Y + 25, 13, 4, '#8A857A'); oval(t, cx, Y + 23, 13, 4, '#BDB6A8');   // the ring of stones: its front, its top
+      for (const dx of [-10, -5, 0, 5, 10]) R(t, cx + dx, Y + 26, 1, 2, '#6E6A62');
+      oval(t, cx, Y + 23, 10, 2, '#6A5038');   // the earth inside it
+      R(t, cx - 4, Y - 2, 8, 25, '#4E3624'); R(t, cx - 2, Y - 2, 2, 25, '#6E4C32'); R(t, cx + 2, Y + 4, 1, 16, '#3E2A1C');   // the trunk
+      R(t, cx - 8, Y + 21, 5, 2, '#4E3624'); R(t, cx + 3, Y + 21, 6, 2, '#4E3624'); R(t, cx - 6, Y + 20, 2, 1, '#6E4C32');   // its roots
+      limb(cx - 2, Y + 2, cx - 11, Y - 9, 3); limb(cx + 2, Y + 1, cx + 12, Y - 10, 3); limb(cx, Y - 2, cx + 1, Y - 16, 2);   // its limbs, up into its leaves
+      R(t, cx - 5, Y + 8, 3, 3, '#3E2A1C');   // a knot
+      R(t, cx - 4, Y + 12, 8, 2, '#C8302A'); R(t, cx - 4, Y + 12, 8, 1, '#E0574A'); R(t, cx + 1, Y + 14, 1, 4, '#C8302A'); R(t, cx + 3, Y + 14, 1, 3, '#A82420');   // the red ribbon, its ends hanging
+      const CL = [[-12, -10, 9, 5], [11, -12, 10, 5], [0, -18, 12, 6], [-7, -20, 8, 4], [8, -22, 8, 4], [0, -9, 7, 3], [-17, -15, 5, 3], [17, -17, 5, 3]];
+      for (const [dx, dy, rx, ry] of CL) oval(t, cx + dx, Y + dy + 1, rx, ry, '#24452A');
+      for (const [dx, dy, rx, ry] of CL) oval(t, cx + dx, Y + dy, rx, ry - 1, '#3A6A3A');
+      for (const [dx, dy, rx, ry] of CL) oval(t, cx + dx - 2, Y + dy - 2, Math.max(1, rx - 4), Math.max(1, ry - 2), '#5A8C4A');
+      for (const [dx, dy, rx] of CL) for (let i = 0; i < 3; i++) dot(t, cx + dx - rx + 3 + Math.floor(rnd(dx, dy, 720 + i) * (rx * 2 - 6)), Y + dy - 3 + i, '#86B062');
+    });
   },
   jars: (g, o) => {   // two big glazed water jars, one with a wooden lid, the other full of water
     const X = o.x * T, Y = o.y * T; shadowUnder(g, X + 8, Y + 15, 8);
@@ -298,17 +319,21 @@ Object.assign(OBJECT_ART, {
     R(g, X, Y, W, H, '#ADA79C'); for (let r = Y + 2; r < Y + H; r += 4) R(g, X, r, W, 1, '#968F84');
     for (const sx of [X, X + W - 3]){ R(g, sx, Y - 4, 3, H + 4, '#8C877D'); R(g, sx, Y - 4, 3, 1, '#C6C0B5'); for (let r = Y; r < Y + H; r += 8) R(g, sx - 1, r - 6, 5, 3, '#C6C0B5'); }
   },
-  well: (g, o) => {   // a village well: a round wall of stones, a little tiled roof on two posts over it, a winch with its rope, and the bucket on its rim
-    const X = o.x * T, Y = o.y * T; shadowUnder(g, X + 8, Y + 15, 8);
+  well: (g, o) => {   // a village well: a square curb of stone with the dark water in it, a frame of wooden beams across its top, two each way, as in 井 (the character began as a picture of one), a windlass behind it with its rope, and a bucket beside it (decided 6 November 2026, from the art proposal: round, under a little roof, it looked like a bowl)
+    const X = o.x * T, Y = o.y * T; if (shadows) blob(g, X + 9, Y + 15, 9, 2, ROCK_SHADOW);
     inked(g, o, t => {
-      R(t, X + 1, Y - 9, 2, 20, WOODS[1]); R(t, X + 13, Y - 9, 2, 20, WOODS[1]); R(t, X + 1, Y - 9, 1, 20, WOODS[2]); R(t, X + 13, Y - 9, 1, 20, WOODS[2]);
-      for (let i = 0; i < 4; i++) R(t, X + 4 - i, Y - 14 + i, 8 + i * 2, 1, i === 3 ? HW.tileDk : i ? HW.tile : HW.tileLt);   // its little roof
-      R(t, X + 1, Y - 6, 14, 2, WOODS[2]); R(t, X + 6, Y - 7, 4, 4, WOODS[3]); R(t, X + 6, Y - 6, 4, 1, '#C8B890'); R(t, X + 6, Y - 4, 4, 1, '#C8B890');   // the winch, the rope wound round it
-      blob(t, X + 8, Y + 11, 7, 4, '#8C877D'); blob(t, X + 8, Y + 10, 7, 3, '#B3ADA2'); blob(t, X + 8, Y + 9, 4, 1, '#24363A');
-      for (const [dx, dy] of [[-5, 1], [-2, 2], [1, 2], [4, 2], [6, 0], [-6, -1]]) R(t, X + 8 + dx, Y + 11 + dy, 1, 2, '#8C877D');   // (the stones' joints)
-      R(t, X + 11, Y + 3, 4, 4, WOODS[3]); R(t, X + 11, Y + 4, 4, 1, WOODS[1]); R(t, X + 11, Y + 3, 4, 1, WOODS[4]);   // the bucket
+      R(t, X + 1, Y - 6, 2, 12, WOODS[1]); R(t, X + 13, Y - 6, 2, 12, WOODS[1]); R(t, X + 1, Y - 6, 1, 12, WOODS[2]); R(t, X + 13, Y - 6, 1, 12, WOODS[2]);   // the windlass's posts
+      R(t, X + 3, Y - 5, 10, 3, WOODS[2]); R(t, X + 3, Y - 5, 10, 1, WOODS[3]); R(t, X + 6, Y - 5, 4, 3, '#D8CBA0'); R(t, X + 6, Y - 4, 4, 1, '#B8A878');   // its drum, the rope wound round it
+      R(t, X + 15, Y - 4, 2, 1, WOODS[0]); R(t, X + 16, Y - 4, 1, 3, WOODS[0]);   // its crank
+      R(t, X, Y + 1, 16, 9, '#C2BBAD'); R(t, X, Y + 1, 16, 1, '#D6D0C2');   // the curb's top
+      R(t, X + 3, Y + 3, 10, 5, '#16232A'); R(t, X + 4, Y + 4, 4, 1, '#2E4C55'); R(t, X + 3, Y + 7, 10, 1, '#0E171C');   // the water, far down
+      R(t, X, Y + 10, 16, 5, '#8A857A'); R(t, X, Y + 12, 16, 1, '#6E6A62');   // its front, of fitted stones
+      for (const [dx, dy] of [[5, 10], [11, 10], [2, 13], [8, 13], [14, 13]]) R(t, X + dx, Y + dy, 1, 2, '#6E6A62');
+      for (const by of [Y + 2, Y + 8]){ R(t, X - 2, by, 20, 1, WOODS[3]); R(t, X - 2, by + 1, 20, 1, WOODS[1]); }   // the frame of beams, their ends sticking out
+      for (const bx of [X + 3, X + 12]){ R(t, bx, Y - 1, 1, 12, WOODS[3]); R(t, bx + 1, Y - 1, 1, 12, WOODS[1]); }
     });
-    R(g, X + 8, Y - 3, 1, 12, '#C8B890');   // (the rope, down into the water)
+    R(g, X + 8, Y - 2, 1, 8, '#D8CBA0');   // (the rope, down into the water)
+    inked(g, o, t => { R(t, X + 15, Y + 9, 5, 5, WOODS[3]); R(t, X + 15, Y + 9, 5, 1, WOODS[4]); R(t, X + 15, Y + 11, 5, 1, WOODS[1]); R(t, X + 16, Y + 7, 3, 1, WOODS[0]); });   // the bucket, beside it
   },
   washLine: (g, o) => {   // washing on a line between two bamboo poles: shirts and trousers, pegged up
     const X = o.x * T, Y = o.y * T, W = o.w * T, cols = [['#3E5A86', '#2F4570'], ['#F2EEE4', '#CFC8B8'], ['#C7902F', '#9E7024'], ['#5E8F3A', '#47702C'], ['#F2EEE4', '#CFC8B8']], at = [];
