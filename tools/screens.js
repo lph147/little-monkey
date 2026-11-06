@@ -646,6 +646,10 @@ const SCREENS = [
   {id: 'deep-mountains', title: 'Deep in the mountains', save: 'deepIn', why: 'The wild boar blocks the narrow way to the waterfall.', run: async () => { play(); await wait(500); }},
   {id: 'long-grass', title: 'In the long grass', save: 'climbing', why: 'Standing in the long grass hides your feet; a ledge above, to hop down.', run: async () => {
     play(); await wait(200); S.pos = {place: 'path', x: 8, y: 11, dir: 'up'}; placePlayer(); await wait(400); }},
+  {id: 'grass-walk', title: 'Walking through the grass', save: 'chapter1', why: 'The old little tufts, back (6 November 2026), and walking through them: the square you step into parts round you, its tufts bending away from your middle with a little shake, a few bits flying up; the squares either side lean away from you; the tufts you push aside catch the light, so your path shows; and once you’ve gone, each stays flattened a moment, then springs back. Here, walking up and down through the meadow’s tall grass.', run: async () => {
+    play(); await wait(200); S.pos = {place: 'meadow', x: 4, y: 6, dir: 'down'}; placePlayer(); await wait(200);
+    (async () => { for (let i = 0; ; i++){ const d = i % 6 < 3 ? 1 : -1; pl.dir = d > 0 ? 'down' : 'up'; pl.mv = {fx: pl.x, fy: pl.y, tx: pl.x, ty: pl.y + d, t0: performance.now(), dur: STEP, led: true}; await wait(STEP + 60); } })();
+    await wait(900); }},
   {id: 'big-stops', title: 'The big monkey stops you', save: 'settingOff', why: 'Setting off, past the big monkey in the way up: a ! pops up, you turn to face him, and he says 这是棍子。', run: async () => {
     play(); await wait(100); S.pos = {place: 'meadow', x: 15, y: 1, dir: 'up'}; placePlayer(); runEvents(); await wait(400); }},
   {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'settingOff', why: 'Its own new-word card (the old monkey’s goodbye, 再见, came before, in another conversation), then the lesson on how to fight.', run: async () => {

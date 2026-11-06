@@ -583,6 +583,93 @@ function feetInGrass(px = pl.px, py = pl.py){   // (anyone following you too: wh
     }
   return out;
 }
+// Walking through tall or long grass, it parts round you (decided 6 November 2026: players missed the old grass, and liked
+// it moving as you walk through, a little gentler than in the mock-up): the square you step into, its tufts bending away
+// from its middle (or on ahead, as you walk sideways), with a little shake as you push in and a few bits of grass flung up,
+// their tips catching the light, so your path shows; the squares either side leaning away a little as you pass; and once
+// you've gone, each stays flattened a moment, then springs back, wobbling, and settles. Only the squares near you, so it
+// costs a phone nothing. Each is drawn onto its own little canvas (pic) as the map has it but bent, with what the map's
+// squares after it reach into it, such as the top edge of a cliff below it (overGrass: drawTiles in js/art.js draws them
+// after it), and only when it moves; then put over the map in its place, under the big objects as the map is
+// (drawStirredGrass), and over your feet (coverFeet).
+const STIR_LOOKS = {tallGrass:TALL, longGrass:LONG, woodGrass:WOOD_TALL};
+const STIR = {in:150, shake:240, wobble:.25, hold:260, back:1100, settle:240, swing:80, side:.45, bits:450};   // (ms, and how far: wobble, a square beside you)
+const stirred = new Map();   // 'x,y' -> {t0, dir, out: when you left it (null while you're in it), side: a square beside you, away: which way it leans, pal, pic, k}
+const overGrassAt = new Map(), spareStirPics = [];   // (what reaches into each square, kept while the map's the same; little canvases to use again)
+let stirAt = null, stirPlace = null, stirMap = null;
+const grassy = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS && !!STIR_LOOKS[tileAt(x, y).look];
+function parted(s, now){   // how far it's parted: 0 standing up, 1 wide apart (below 0, swinging back past upright); null once it's still
+  if (s.out === null){ const t = Math.max(0, now - s.t0); return Math.min(1, t / STIR.in) + (t < STIR.shake ? Math.sin(t / 30) * STIR.wobble * (1 - t / STIR.shake) : 0); }
+  const full = s.side ? STIR.side : 1, t = Math.max(0, now - s.out);
+  if (t < STIR.hold) return s.side ? full * Math.min(1, t / STIR.in) : full;   // (your track stays flattened a moment)
+  const u = t - STIR.hold;
+  return u > STIR.back ? null : full * Math.exp(-u / STIR.settle) * Math.cos(u / STIR.swing);
+}
+function stirBend(s, k){   // how far a tuft leans at its tip, by where it is across its square (px)
+  const along = s.dir === 'left' ? -1 : s.dir === 'right' ? 1 : 0;
+  if (s.side) return () => k * (s.away || along) * 3.5;   // (beside you: leaning away from you, or on with you as you walk sideways)
+  return px => { const side = (px - 7.5) / 7.5; return k * (along ? along * 3 + side * 2 : side * 5); };
+}
+function overGrass(x, y){   // what the squares drawn after it on the map reach into it, on a canvas of its own
+  const key = x + ',' + y; if (overGrassAt.has(key)) return overGrassAt.get(key);
+  const c = document.createElement('canvas'); c.width = c.height = T; overGrassAt.set(key, c);
+  const g = c.getContext('2d');
+  for (const [dx, dy] of [[1, 0], [-1, 1], [0, 1], [1, 1], [-1, 2], [0, 2], [1, 2]]){
+    const nx = x + dx, ny = y + dy;
+    if (nx >= 0 && ny >= 0 && nx < COLS && ny < ROWS){ LOOKS[tileAt(nx, ny).look](g, dx*T, dy*T, nx, ny); castShadow(g, dx*T, dy*T, nx, ny); }
+  }
+  return c;
+}
+function drawStirred(s, x, y, k){   // the square, parted k, on its little canvas: as the map draws it, but bent
+  const lit = Math.abs(k) > .3;   // (pushed aside, its tips catch the light)
+  if (s.pic && s.k === k && s.lit === lit) return;   // (as it was: standing in it, or flattened a moment)
+  if (!s.pic){ s.pic = spareStirPics.pop() || document.createElement('canvas'); s.pic.width = s.pic.height = T; }
+  const g = s.pic.getContext('2d');
+  tall(g, 0, 0, x, y, s.pal, k ? stirBend(s, k) : null, lit); castShadow(g, 0, 0, x, y); g.drawImage(overGrass(x, y), 0, 0);
+  s.k = k; s.lit = lit;
+}
+function unstir(key){ const s = stirred.get(key); if (s.pic && spareStirPics.length < 24) spareStirPics.push(s.pic); stirred.delete(key); }
+function stirGrass(now){   // the grass you're walking through, and what it's doing (each frame, before the map's squares are drawn)
+  if (stirPlace !== PLACE){ for (const key of [...stirred.keys()]) unstir(key); stirAt = null; stirPlace = PLACE; stirMap = null; }
+  if (stirMap !== drawnFor){ overGrassAt.clear(); stirMap = drawnFor; for (const s of stirred.values()) s.k = null; }   // (somewhere else, or the map drawn again: what reaches into each square may have changed)
+  const x = Math.floor((pl.px + 8) / T), y = Math.floor((pl.py + 12) / T), key = x + ',' + y;   // (the square your feet are in)
+  if (key !== stirAt){
+    const left = stirred.get(stirAt); if (left && left.out === null) left.out = now;
+    if (grassy(x, y)){
+      const s = stirred.get(key), k = s ? Math.min(1, Math.abs(parted(s, now) || 0)) : 0;   // (back into a square still springing back: on from there)
+      stirred.set(key, {pic:s && s.pic, t0:now - k * STIR.in, dir:pl.dir, out:null, side:false, away:0, pal:STIR_LOOKS[tileAt(x, y).look], k:null});
+      for (const [dx, dy] of pl.dir === 'up' || pl.dir === 'down' ? [[-1, 0], [1, 0]] : [[0, -1], [0, 1]]){
+        const k2 = (x + dx) + ',' + (y + dy);
+        if (grassy(x + dx, y + dy) && !stirred.has(k2)) stirred.set(k2, {t0:now, dir:pl.dir, out:now, side:true, away:dx, pal:STIR_LOOKS[tileAt(x + dx, y + dy).look]});
+      }
+    }
+    stirAt = key;
+  }
+  for (const [k2, s] of stirred){
+    const k = parted(s, now), [sx, sy] = k2.split(',').map(Number);
+    if (k === null || !grassy(sx, sy)) unstir(k2);   // (still again: the map's own square)
+    else drawStirred(s, sx, sy, Math.round(k * 20) / 20);   // (in twentieths: drawn again only when that changes)
+  }
+}
+function drawStirredGrass(cx, cy){   // the grass you're walking through, parted round you, over the map's own
+  for (const [k2, s] of stirred) if (s.pic){ const [sx, sy] = k2.split(',').map(Number); b.drawImage(s.pic, sx*T - cx, sy*T - cy); }
+}
+function drawGrassBits(cx, cy, now){   // bits of grass flung up as you push into it, falling back
+  for (const [k2, s] of stirred){
+    const t = now - s.t0;
+    if (s.side || s.out !== null || t >= STIR.bits) continue;
+    const [sx, sy] = k2.split(',').map(Number), X = sx*T - cx + 8, Y = sy*T - cy + 8, q = t / 1000;
+    for (let i = 0; i < 4; i++){
+      const a = (i / 3 - .5) * 2.2, v = 24 + (i % 3) * 7;
+      R(b, Math.round(X + Math.sin(a) * v * q), Math.round(Y - Math.cos(a) * v * q * 1.9 + 90 * q * q), 2, 1, i % 2 ? s.pal[2] : mix(s.pal[2], '#FFFFFF', .3));
+    }
+  }
+}
+function coverFeet(x, y, w, h, cx, cy){   // the grass over someone's feet, [x, y, w, h] in map pixels (feetInGrass): parted, if it is
+  const tx = Math.floor(x / T), ty = Math.floor(y / T), s = stirred.get(tx + ',' + ty);
+  if (s && s.pic) b.drawImage(s.pic, x - tx*T, y - ty*T, w, h, x - cx, y - cy, w, h);
+  else b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);
+}
 // The cave just visible behind a waterfall (the place's glimpse): its dark mouth, a glint inside, and the water falling
 // in front of it.
 function drawGlimpse(cx, cy, now){
@@ -827,14 +914,17 @@ function drawWorld(now){
   let cy = camY(); placeTalk(cy);
   bigSparkles = !!AREA.bigSparkles && matches(AREA.bigSparkles);
   if (now - shakeT < 600){ cx += Math.round((Math.random()-.5)*3); cy += Math.round((Math.random()-.5)*3); }
+  stirGrass(now);   // (the grass you're walking through, parting round you)
   const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to (for the gloom, mist and night)
   if (cx < 0 || cy < 0 || cx + VW*T > COLS*T || cy + VH*T > ROWS*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');   // dark where the map doesn't reach
   drawLayer(mapCanvas, cx, cy);
+  drawStirredGrass(cx, cy);   // (the grass you're walking through, parted round you)
   drawLayer(baseCanvas, cx, cy);   // big objects, under the characters: those that never move, all at once
   touchLeaves(now); crawlThrough(now);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.base, cx, cy, now);   // and the fruit trees, which rustle
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
+  drawGrassBits(cx, cy, now);
   drawGlimpse(cx, cy, now);
   if (marking) drawMarking(cx, cy, now);   // ground being marked out (the markOut step)
   if (settingUp) drawSettingUp(cx, cy);    // something being set up, a piece at a time (the setUp step)
@@ -904,7 +994,7 @@ function drawWorld(now){
         drawRod(PX, PY, pl.dir, now, !!fishing.bite && !fishing.hooked);
         if (fishing.bite && !fishing.hooked) bubbles.push([PX + 5, PY - 10, '!']);
       }
-      for (const [x, y, w, h] of feetInGrass()) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over your feet
+      for (const [x, y, w, h] of feetInGrass()) coverFeet(x, y, w, h, cx, cy);   // the grass over your feet (parted round you, as the square you're in is)
       if (isFast(now)) drawEnergy(PX, PY, now, moving, pl.dir);
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
       if (now - wakeT < 1000) [[-3, 2], [17, 4], [-1, -4], [15, -3], [7, -7]].forEach(([dx, dy], i) => {   // waking up with all your hearts: sparkles
@@ -938,7 +1028,7 @@ function drawWorld(now){
       const idle = Math.floor(now/700 + n.x) % 2;
       drawEntityMonkey(n.kind, X, Y, n.dir, now, e.c.mid ? 1 : idle, e.c.mid ? 1 + (n.parity || 0) : 0, n.x + n.y);
     }
-    if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
+    if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) coverFeet(x, y, w, h, cx, cy);   // the grass over their feet
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
     const bub = inClass.has(n.id) ? null : talking ? {show:'speaker'} : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : now < (n.callingT || 0) ? {show:'note'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (a note: calling out what they sell, callOut in js/world.js)   // (and something they kept for you; none in a lesson, such as PE's)

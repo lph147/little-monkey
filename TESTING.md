@@ -68,6 +68,7 @@ The save on your phone belongs to this address, so it is separate from saves any
 - [ ] On a computer: on a word's card, click 🔊 Hear it with the mouse, then press Enter (or Space): it presses OK, the green button, as A does (not Hear it again). A button you move to with Tab or the arrow keys is the one Enter presses.
 - [ ] There are no levels or XP anywhere (they were taken out on 18 October 2026). A saved game from before still has all its words, friends and shells.
 - [ ] Holding a direction walks; a quick tap turns on the spot without moving.
+- [ ] Walk through some tall grass: it's little tufts, and it parts round you as you go, springing back after you.
 - [ ] BAG: your bag opens (包 Bag); BAG again closes it. MAP: all through the prologue, "You don’t have a map yet."; once the big monkey has sent you for wood and stones in chapter 1, your map (see The map, below), and MAP again closes it. Neither does anything while someone's talking to you. With a keyboard, I and P do the same; with a controller, its X and Y.
 - [ ] The map (in chapter 1, once the big monkey has marked out the school's plot and sent you for wood and stones: he gives you a map of the mountain, the prologue's places already on it): the first time you press MAP, you catch 地图 (map), then the map opens. MAP shows every place you've been, roughly where it lies, joined by dotted paths, with a ? where an open way leads somewhere you haven't been (none on a way that's still shut). It opens on where you are, with your red pin and a gold frame; the D-pad (or a tap) chooses another place, and the box in the corner names it ("You are here" only where you are). Back, B or MAP closes it. Walk into a new place, and it's on the map next time. A (or a tap) on a place shows its close-up: the place in the game's own pictures (one dot a square if you haven't been back since this was added) and the words you know from there; tap one, or choose it with the D-pad and press A, to hear it and see what it means. B goes back to the map; MAP closes it.
 - [ ] Held upright, the phone shows only a card: 小猴子, a phone turning, and "Turn your phone sideways to play". (If nothing happens when you turn it, the phone's rotation lock is on.)
@@ -641,6 +642,16 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 15j. **The Demon of Havoc.** The little demons run in, and out he comes: 你是谁？, finish 我是花果山的王, his name across the screen, 我不怕你！ Fight: at half his health he's angry (two attacks a turn); a little after, the hair trick (a scene: your hairs turn into little monkeys and swarm him, 毛), and he drops his broadsword (刀): from then on your hits take 15, not 10, and you hold the broadsword on the map. Beaten: 我走了！ If he beats you: Try again, or Not now (you step back down the path; talk to him again).
 15k. **Home.** 我们回家吧！, the flight home with the little ones (a scene). At the home ground each runs to its mother, the tables are full again, 我们很快乐！ The little monkey in training on the left (a !): 给你！, your stick, and it practises with it. The old monkey: 海下面有龙王。, and the end card: The end of Area 2, to be continued.
 16. **Saves.** Close the page halfway through and open it again: Continue goes straight back to Area 2. Your Word Scroll has both areas' words; the Friends page shows your friends from both; the wardrobe has your headbands, the coat, the hat and the shoes (the hat or a headband, one at a time).
+
+## Walking through the grass
+
+- [ ] The meadow's tall grass, the long grass on the way up and in the human world, and the pine wood's are little tufts again: five to a square, each with three pale tips, on a darker green (as before 6 November 2026), with no clumps or foxtails.
+- [ ] Walk down into a patch of tall grass: the square you step into parts round you, its tufts bending away from your middle with a quick little shake, and a few bits of grass fly up and fall back. The squares either side of you lean away from you a little.
+- [ ] The tufts you push aside are paler, catching the light, so your path shows behind you. The square you've left stays flattened a moment, then springs back upright with a little wobble, and is plain again about a second later.
+- [ ] Walk sideways through it: its tufts bend on ahead of you, and the squares above and below you lean the same way.
+- [ ] Stand still in it: your feet are hidden in the grass as always, and the square you're in stays parted round you.
+- [ ] Along the top of a cliff (the mountain path's long grass on the terrace above its cliff, or the south slope's): walking through the grass at the edge, the cliff's top edge stays as it is; nothing flickers or goes missing.
+- [ ] On a phone, walking through a big patch of long grass (the south slope, the high road) is as smooth as walking along a path.
 
 ## Friends in the grass
 
