@@ -612,32 +612,26 @@ function drawSplashes(cx, cy, now){
     for (let k = 0; k < 6; k++){ const ph = ((now / 600) + k / 6) % 1; R(b, PX + 2 + (k * 5) % 13, PY + 4 + Math.round(ph * 12), 1, 2, '#BFE8FA'); }   // drops falling from your fur
   }
 }
-// Swinging a stick (yours, in the hit step, js/world.js; or a little monkey's in training, as it practises): the monkey
-// (kind) with nothing in its hands, and the stick sweeping from up high down onto the square it faces (dir), with a faint
-// swoosh behind it, from t0; it stays there a moment after it strikes. Each way it faces: where the stick turns from and
-// to (degrees: 0 is to the right, 90 down), and the hand holding it (in the sprite). Facing away, the stick is beyond the
-// monkey, so it's drawn first.
-const SWING_ARC = {right:[-115, 5], left:[295, 175], down:[-70, 95], up:[150, 268]};
-const SWING_HAND = {right:[12, 9], left:[3, 9], down:[13, 10], up:[2, 9]};
-function drawSwing(kind, dir, PX, PY, t0, now){
-  const t = Math.max(0, (now - t0) / SWING_MS), k = Math.min(1, t / SWING_CONTACT), eased = 1 - (1 - k) * (1 - k);
-  const held = HELD[heldBy(kind) || '棍子'], [a0, a1] = SWING_ARC[dir], [hx, hy] = SWING_HAND[dir], len = held.len + 2, pal = held.pal;   // (a little longer as it swings)
-  const angle = a0 + (a1 - a0) * eased - (t > SWING_CONTACT ? (a1 - a0) * .08 * Math.sin((t - SWING_CONTACT) / (1 - SWING_CONTACT) * Math.PI) : 0);   // (a little bounce back)
-  const along = (deg, r) => [PX + hx + Math.cos(deg * Math.PI / 180) * r, PY + hy + Math.sin(deg * Math.PI / 180) * r];
-  const stick = () => {
-    if (k < 1){ b.globalAlpha = .45; for (let i = 0; i <= 8; i++){ const [x, y] = along(a0 + (angle - a0) * i / 8, len - 1); R(b, Math.round(x), Math.round(y), 1, 1, '#FFFFFF'); } b.globalAlpha = 1; }   // the swoosh
-    for (let r = -1; r <= len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x) - 1, Math.round(y) - 1, 2, 2, pal.k); }   // its dark edge
-    for (let r = 0; r < len; r++){ const [x, y] = along(angle, r); R(b, Math.round(x), Math.round(y), 1, 1, pal.l); }           // the wood
-  };
-  if (dir === 'up') stick();
-  R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
-  b.drawImage(monkeySprite(kind, dir, false, 0, true), PX, PY);
-  if (dir !== 'up') stick();
+// Swinging a stick (yours, in the hit step, js/world.js; or a little monkey's in training, as it practises; or your sword
+// once you have one): raised over your head in both paws, then struck down onto the square in front (dir), from t0 (the
+// swing pose, js/poses.js; decided 6 November 2026, after playing it: things done with no arms), with a faint swoosh from
+// the side as it comes down; it stays there a moment after it strikes.
+const SWING_HAND = {right:[12, 9], left:[3, 9], down:[13, 10], up:[2, 9]};   // (where a monkey's paw is, in its sprite, each way it faces: as the little monkeys splash and carry stones)
+function drawSwing(kind, dir, PX, PY, t0, now, held = heldBy(kind) || '棍子'){   // (held: what's swung, HELD's, js/art.js)
+  const t = Math.max(0, (now - t0) / SWING_MS), o = {kind, held};
+  const p = drawPose('swing', dir, t < SWING_CONTACT ? 'up' : 'down', PX, PY, o);
+  if (t >= SWING_CONTACT && t < SWING_CONTACT + .25 && (dir === 'left' || dir === 'right')){   // (the swoosh, round where it's held, down to where it struck)
+    const [gx, gy] = p.grip, [tx, ty] = p.tip, r = Math.hypot(tx - gx, ty - gy), a1 = Math.atan2(ty - gy, tx - gx), back = dir === 'right' ? -1 : 1;
+    b.globalAlpha = .5;
+    for (let i = 1; i <= 8; i++){ const a = a1 + back * 1.3 * i / 8; R(b, Math.round(PX + gx + Math.cos(a) * r), Math.round(PY + gy + Math.sin(a) * r), 1, 1, '#FFFFFF'); }
+    b.globalAlpha = 1;
+  }
 }
-// You, doing something in a pose (js/poses.js: name, which way you face, its moment m), your shadow where you've stepped
-// to; it gives back the pose (where your paw is, and the bucket, in your square's pixels).
-function drawPose(name, dir, m, PX, PY){
-  const p = poseSprite(name, dir, m), [sx, sy] = p.step;
+// You, doing something in a pose (js/poses.js: name, which way you face, its moment m; o: another monkey, and what it
+// swings), your shadow where you've stepped to; it gives back the pose (where your paw is, and the bucket, in your
+// square's pixels).
+function drawPose(name, dir, m, PX, PY, o){
+  const p = poseSprite(name, dir, m, o), [sx, sy] = p.step;
   R(b, PX+4+sx, PY+15+sy, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3+sx, PY+14+sy, 10, 1, 'rgba(0,0,0,.12)');
   b.drawImage(p.canvas, PX - POSES.O, PY - POSES.O);
   return p;
@@ -879,7 +873,7 @@ function drawWorld(now){
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
       if (acting && ACTS[acting.kind]) ACTS[acting.kind](PX, PY, now, acting);   // doing something: sweeping, filling a bucket, lifting a sack, turning a key, picking fruit
-      else if (swing && now - swing.t0 < SWING_MS){ if (swing.with === '斧头') drawChop(pl.dir, PX, PY, swing.t0, now); else drawSwing('player', pl.dir, PX, PY, swing.t0, now); }   // chopping with the axe, or swinging your stick (the hit step)
+      else if (swing && now - swing.t0 < SWING_MS){ if (swing.with === '斧头') drawChop(pl.dir, PX, PY, swing.t0, now); else drawSwing('player', pl.dir, PX, PY, swing.t0, now, HELD[swing.with] ? swing.with : undefined); }   // chopping with the axe, or swinging your stick (the hit step)
       else { if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir); drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1); }
       if (pl.eating) drawEating(pl.eating, PX, PY, now);   // eating a meal (the eat step)
       if (pl.form) drawForm(pl.form, PX, PY, now);   // turned into something (the turnInto step: drawn over you, in your place)

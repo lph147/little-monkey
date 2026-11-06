@@ -198,6 +198,11 @@ test('what each looks like as you do it: the bucket, full; the sack over your he
     assert.ok(inFront[dir](mid), `${dir}: down on the block in front of you (${mid.map(v => v.toFixed(1))})`);
     assert.ok(where('up', 'h').length >= 1 && where('down', 'h').length >= 1, `${dir}: in your paws`);   // (from the side, your near paw over the other)
   }
+  // your stick: raised over your head, then down (the swing pose), a swoosh from the side as it strikes
+  const swung = t => drawn(`drawSwing('player', 'right', ${PX}, ${PY}, 0, ${t})`);
+  assert.deepEqual(swung('SWING_MS * .2').filter(([k]) => k === 'image').map(([, , x, y, w]) => [x, y, w]), [[PX - 16, PY - 16, null]], 'you, swinging it');
+  assert.equal(colours(swung('SWING_MS * .2')).filter(c => c === '#FFFFFF').length, 0, 'no swoosh while it’s raised');
+  assert.equal(colours(swung('SWING_MS * (SWING_CONTACT + .1)')).filter(c => c === '#FFFFFF').length, 8, 'a swoosh as it comes down');
   // crouching for something: the stone on the ground in front of you, then you over it, your paws on it (the pick pose:
   // js/poses.js); then holding it up over your head
   const pick = t => drawn(`ACTS.pick(${PX}, ${PY}, ${t}, ${act('pick', ", w: '石头', reach: 'down'")})`).filter(([k]) => k === 'image').map(([, , x, y, w]) => [x, y, w]);

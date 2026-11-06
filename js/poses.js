@@ -12,6 +12,7 @@ const POSES = (() => {
     j:'#C9A85E', J:'#4A3618', n:'#6B4A2A', v:'#B08A40', V:'#DCC07A', N:'#8A6A30',   // the broom: its handle, the handle's edge, its band, its twigs (and their tips, and the darker ones)
     l:'#9A6A3A', k:'#3E2010', u:'#7E8690', U:'#DCE2E8',                              // the axe: its handle, its dark edge, its steel head, its bright edge
     p:'#8A5A32', P:'#4A2C17', i:'#3E3E44', z:'#7FC4EE', r:'#C9A85E'};                // the bucket: its staves, its inside, its iron bands, water, its rope handle
+  // (what you swing, your stick or a sword, is in its own colours, HELD in js/art.js: g its wood or steel, G its dark edge, y a sword's guard)
   const ARMLESS = r => '...o' + r.slice(4, 12) + 'o...';   // (from the front or behind: your arms at your sides taken off; they're drawn as each pose has them)
   const FRONT = MONKEY.map((r, y) => y === 5 ? r.slice(0, 6) + 'e' + r.slice(7, 9) + 'e' + r.slice(10) : y >= 10 && y <= 12 ? ARMLESS(r) : r);
   const BEHIND = BACK.map((r, y) => y >= 10 && y <= 12 ? ARMLESS(r) : r);
@@ -102,6 +103,15 @@ const POSES = (() => {
     for (let k = -1; k <= 2; k++) for (let j = 0; j <= 2; j++){ const cx = x + px * k + ex * j, cy = y + py * k + ey * j; cells.push([cx, cy]); col[cx + ',' + cy] = j === 2 ? 'U' : 'u'; }
     shape(g, cells, (cx, cy) => col[cx + ',' + cy], 'k', 'lj');
   }
+  // what you swing (held: your stick, or a sword, HELD in js/art.js): from your paws (a) to its tip (z), its wood or steel
+  // with its dark edge; a sword's guard across it, just past your paws
+  function weapon(g, a, z, held){
+    shape(g, line(...a, ...z), 'g', 'G');
+    if (!held.guard) return;
+    const d = Math.hypot(z[0] - a[0], z[1] - a[1]), ux = (z[0] - a[0]) / d, uy = (z[1] - a[1]) / d, gx = Math.round(a[0] + ux * 2), gy = Math.round(a[1] + uy * 2);
+    for (const k of [-1, 1]) put(g, gx + Math.round(-uy * k), gy + Math.round(ux * k), 'y');
+  }
+  const toward = ([x, y], deg, n) => [Math.round(x + Math.cos(deg * Math.PI / 180) * n), Math.round(y + Math.sin(deg * Math.PI / 180) * n)];   // (n pixels that way: 0 degrees is to the right, 90 down)
   // a bucket, seen from above: its rim (x, y: its top left, frame pixels), full of water or not, and as many of its six rows
   // as show (the rest under the water)
   function bucket(g, x, y, {rows = 6, full = false} = {}){
@@ -156,6 +166,25 @@ const POSES = (() => {
         axe(g, at(8, -4), at(8, -10), [0, -1]); you(g, 'backLean', w, 0, -3); arm(g, [[3, 8], [2, 5], [4, 0], [7, -3]], w, 0, -3); arm(g, [[12, 8], [13, 5], [11, 0], [9, -3]], w, 0, -3);
       }
     },
+    // swinging your stick, or a sword (m: 'up', raised over your head in both paws; or 'down', struck down onto what's in
+    // front of you, as the axe is, held: what it is): gives back where it's held (grip) and its tip
+    swing: {
+      side(g, m, w, held){
+        const n = held.len + 2;
+        if (m === 'up'){ you(g, 'side', w, -1); const a = at(7, 1), z = toward(a, -125, n); weapon(g, a, z, held); arm(g, [[8, 9], [9, 6], [9, 2]], w, -1); return {grip:a, tip:z}; }
+        you(g, 'side', w, 1); arm(g, [[8, 10], [11, 10], [13, 9]], w, 1); const a = at(15, 9), z = toward(a, 8, n); weapon(g, a, z, held); arm(g, [[8, 9], [11, 9], [14, 9]], w, 1); return {grip:a, tip:z};
+      },
+      front(g, m, w, held){
+        const n = held.len + 2;
+        if (m === 'up'){ const a = at(7, -1), z = toward(a, -90, n - 2); weapon(g, a, z, held); you(g, 'front', w); arm(g, [[3, 9], [2, 6], [3, 2], [6, -1]], w); arm(g, [[12, 9], [13, 6], [12, 2], [9, -1]], w); return {grip:a, tip:z}; }
+        you(g, 'frontLean', w); const a = at(7, 13), z = toward(a, 90, n); weapon(g, a, z, held); arm(g, [[3, 10], [5, 12], [6, 13]], w); arm(g, [[12, 10], [10, 12], [8, 13]], w); return {grip:a, tip:z};
+      },
+      back(g, m, w, held){
+        const n = held.len + 2;
+        if (m === 'up'){ you(g, 'back', w, 0, -3); const a = at(9, -5), z = toward(a, -60, n - 1); weapon(g, a, z, held); arm(g, [[3, 9], [2, 6], [4, 1], [7, -2]], w, 0, -3); arm(g, [[12, 9], [13, 6], [11, 1], [9, -2]], w, 0, -3); return {grip:a, tip:z}; }   // (up over your shoulder)
+        const a = at(8, -6), z = toward(a, -90, n); weapon(g, a, z, held); you(g, 'backLean', w, 0, -3); arm(g, [[3, 8], [2, 5], [4, 0], [7, -3]], w, 0, -3); arm(g, [[12, 8], [13, 5], [11, 0], [9, -3]], w, 0, -3); return {grip:a, tip:z};
+      }
+    },
     // filling the bucket (m: 'out', stepped up to the water's edge holding it out; 'in', down in the water; 'full', lifted
     // out again; 'back', stepped back, carrying it at your side)
     dip: {
@@ -204,32 +233,38 @@ const POSES = (() => {
       }
     }
   };
-  // a pose's letters (name: what you're doing; dir: which way you face; m: its moment; w: what you're wearing), and
-  // anything else it gives back (such as your paw)
-  function grid(name, dir, m, w = wear()){
+  // a pose's letters (name: what you're doing; dir: which way you face; m: its moment; w: what you're wearing; held: what
+  // you swing, HELD's), and anything else it gives back (such as your paw)
+  const POINTS = ['paw', 'bucket', 'item', 'grip', 'tip'];
+  function grid(name, dir, m, w = wear(), held = HELD['棍子']){
     const g = blank(), view = dir === 'up' ? 'back' : dir === 'down' ? 'front' : 'side';
-    const info = {...DRAW[name][view](g, m, w), step:g.step || [0, 0], ...(g.bucket ? {bucket:g.bucket} : {})};
+    const info = {...DRAW[name][view](g, m, w, held), step:g.step || [0, 0], ...(g.bucket ? {bucket:g.bucket} : {})};
     let rows = g.map(r => r.join(''));
     if (dir === 'left'){
       rows = rows.map(r => [...r].reverse().join(''));
-      for (const k of ['paw', 'bucket', 'item']) if (info[k]) info[k] = [W - 1 - info[k][0], info[k][1]];
+      for (const k of POINTS) if (info[k]) info[k] = [W - 1 - info[k][0], info[k][1]];
       info.step = [-info.step[0], info.step[1]];
     }
     return {rows, ...info};
   }
+  const BARE = {coat:false, hat:false, shoes:false, band:false};
   const cache = new Map();
-  // its picture, drawn once for each moment and what you're wearing (and its paw, in your own square's pixels)
-  function picture(name, dir, m){
-    const w = wear(), key = [name, dir, m, w.coat, w.hat, w.shoes, headband()].join('|');
+  // its picture, drawn once for each moment and what you're wearing (and its paw, in your own square's pixels); or another
+  // monkey's (kind: a character's id), in its own colours, such as a little monkey in training swinging its stick
+  function picture(name, dir, m, {kind = 'player', held = '棍子'} = {}){
+    const me = kind === 'player', w = me ? wear() : BARE, h = HELD[held] || HELD['棍子'];
+    const key = [name, dir, m, kind, held, w.coat, w.hat, w.shoes, me && headband()].join('|');
     if (!cache.has(key)){
-      const g = grid(name, dir, m, w), mine = p => p && [p[0] - O, p[1] - O];
-      cache.set(key, {canvas:sprite(g.rows, {...PALS.player, ...CLOTHES_PAL, ...(headband() ? {b:headband()} : {}), ...PAL}), paw:mine(g.paw), bucket:mine(g.bucket), item:mine(g.item), step:g.step});
+      const g = grid(name, dir, m, w, h), mine = p => p && [p[0] - O, p[1] - O], pal = PALS[kind] || PALS.player;
+      const colours = me ? {...PALS.player, ...CLOTHES_PAL, ...(headband() ? {b:headband()} : {}), ...PAL} : {...PAL, ...pal, F:shade(pal.f, -.2), h:mix(pal.s, pal.f, .35)};
+      cache.set(key, {canvas:sprite(g.rows, {...colours, g:h.pal.l, G:h.pal.k, y:h.pal.u || h.pal.k}), ...Object.fromEntries(POINTS.map(k => [k, mine(g[k])])), step:g.step});
     }
     return cache.get(key);
   }
   return {grid, picture, O, W, PAL, BODIES, clear:() => cache.clear()};
 })();
-// The picture of you doing something (name, facing dir, at its moment m): a canvas 48 pixels square, your own square in
-// its middle, so drawn 16 pixels up and to the left of where you stand; how far you've stepped from your square (step),
-// and where your paw is (paw), the bucket (bucket) and what you're picking up (item), in your square's pixels
-const poseSprite = (name, dir, m) => POSES.picture(name, dir, m);
+// The picture of you doing something (name, facing dir, at its moment m; or another monkey, o.kind, and what's swung,
+// o.held): a canvas 48 pixels square, your own square in its middle, so drawn 16 pixels up and to the left of where you
+// stand; how far you've stepped from your square (step), and where your paw is (paw), the bucket (bucket), what you're
+// picking up (item), and what you swing, where it's held (grip) and its tip (tip), in your square's pixels
+const poseSprite = (name, dir, m, o) => POSES.picture(name, dir, m, o);
