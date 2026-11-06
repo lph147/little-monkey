@@ -151,7 +151,8 @@ function jHouse(g, o, sign){   // a white-walled house with a dark tiled roof, w
   roofTiles(g, X + 1, Y - 6 - ROOF_LIFT, W - 2, roofH + 4);
   R(g, door.x - 3, door.y - 3, 16, 2, '#C8302A'); R(g, door.x - 4, door.y, 2, 14, '#C8302A'); R(g, door.x + 12, door.y, 2, 14, '#C8302A');   // the couplets
   woodDoor(g, door.x, door.y, 10, 17);
-  if (W >= 48) for (const wx of [X + 8, X + W - 16, ...(W >= 112 ? [X + Math.round(W / 4) - 4, X + Math.round(W * 3 / 4) - 4] : [])]) lattice(g, wx, door.y + 1, 8, 8);
+  if (W >= 64) for (const wx of [X + 8, X + W - 16, ...(W >= 112 ? [X + Math.round(W / 4) - 4, X + Math.round(W * 3 / 4) - 4] : [])]) lattice(g, wx, door.y + 1, 8, 8);
+  else if (W >= 48) for (const wx of [X + 6, X + W - 12]) lattice(g, wx, door.y + 1, 6, 8);   // (a little house, as in the scenes of the years going by: narrower windows, clear of the couplets)
   if (sign) sign(g, X, Y, W, H, wall);
 }
 function mudHouse(g, o){   // a fisherman's house: mud-brick walls on a stone footing, under a thick thatched roof tied along its ridge (6 pixels taller than its squares, as a white-walled house is: decided 6 November 2026)
