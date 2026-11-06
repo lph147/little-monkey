@@ -61,6 +61,27 @@ test('at a chopping block, you choose how many logs first, and chop them one aft
   assert.equal(get(g, '__notes').at(-1), '四 (four)! You’re carrying 4 pieces of 木头 (wood). Take them to the senior pupil.');
 });
 
+test('chopping: each log’s count is said in full and seen, then cleared, before the next log’s question, never over it (7 November 2026, after playing it)', async () => {
+  const g = game({chores: 5, axeFetch: 1}, {place: 'cave', x: 23, y: 13, dir: 'up'}, [...KNOWN, '斧头']);
+  g.run(`howManyCard = async () => 3; globalThis.__line = [];
+    { const q = pictureQ; pictureQ = o => { __line.push('question ' + o.head.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); return q(o); }; }
+    { const s = say; say = (w, ...r) => { __line.push('said ' + w); return s(w, ...r); }; }
+    { const t = toast; toast = m => { __line.push('told ' + m); return t(m); }; }
+    { const c = clearMessage; clearMessage = () => { __line.push('cleared'); return c(); }; }
+    { const st = setTimeout; setTimeout = (f, ms) => { if (ms >= 500) __line.push('wait ' + ms); return st(f, ms); }; }`);
+  await press(g, ...BLOCK);
+  const line = get(g, '__line'), at = x => line.findIndex(l => l.startsWith(x));
+  for (const [n, zh] of [[2, '一'], [3, '二']]){
+    const told = line.indexOf(`told ${zh} (${['one', 'two'][n - 2]})!`), next = at(`question Chopping the wood (${n} of 3)`);
+    assert.ok(told > 0 && next > told, `${zh}, then the next log's question (${line.join(' / ')})`);
+    const between = line.slice(told, next);
+    assert.equal(between[1], 'said ' + zh, `${zh} said as it’s shown`);
+    assert.ok(between.includes('wait 900'), 'and given its moment');
+    assert.equal(between.at(-1), 'cleared', 'then cleared, before the question comes up');
+    assert.ok(!between.some(l => l.startsWith('said ') && l !== 'said ' + zh), 'nothing else said in between');
+  }
+});
+
 test('bringing him the water, he thanks you and goes straight on to his next job: you’re talking to him already, so never “go and see him”', async () => {
   const g = game({chores: 3, waterFetch: 1, carrying: {word: '水', n: 3}}, {place: 'cave', x: 17, y: 9, dir: 'right'}, [...KNOWN]);
   g.run('S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1]))');

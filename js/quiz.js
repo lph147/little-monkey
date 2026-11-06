@@ -5,6 +5,10 @@
 // right, its space kept while it's hidden, so nothing moves when it appears. Answers can have a part shown only
 // once you've answered (class later).
 function pictureQ({head, body, options, answerIdx, word, type, text, helper = '', onShow, onAnswer, stop}){   // (stop: a Stop button, and B, end it)
+  // A question never opens over a message: one still up on the map (such as a count, as you chop the next log) goes, so
+  // nothing on the screen beside a question is about something else, nor shows again once it's answered (decided 7
+  // November 2026, after playing it).
+  clearMessage();
   return new Promise(res => {
     openCard(`${head}${body}<div class="opts" data-nav>${options.map((o,i) => `<button class="opt${text ? ' hz' : ''}" data-i="${i}" aria-label="Option ${i+1}">${o}</button>`).join('')}</div>
       <div class="actions qfoot"><div class="feedback" aria-live="polite">${helper}</div>${stop ? '<button class="btn" data-a="stop" data-b>Stop</button>' : ''}<button class="btn primary" data-a="next" hidden>Next</button></div>`);

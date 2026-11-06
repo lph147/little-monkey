@@ -329,6 +329,7 @@ const STEP_OPTIONS = {carry:['howMany','inHand','each','ask','took'], hit:['with
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
+const COUNT_MS = 900;   // a count said as each one's done, one after another (the carry step's each): how long it has, at least, before the next begins
 // How many things you could count with the numbers you know: never two (NOT_HOW_MANY, js/quiz.js).
 const countable = () => COUNTING.map((w, i) => i + 1).filter(n => !NOT_HOW_MANY.includes(COUNTING[n - 1]) && WORDS[COUNTING[n - 1]] && lvl(COUNTING[n - 1]) >= 1);
 // The area's lesson series (AREA.lessons) are the school's subjects, chosen on its timetable (js/timetable.js), where
@@ -872,8 +873,12 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const c = here().carrying, w = s.carry, n = s.howMany ? await howManyCard(w, s.ask) : c && c.word === w ? c.n + 1 : 1;
     if (!n) return;   // (Not now)
     here().carrying = {word:w, n}; save();
-    const say1 = i => { const x = COUNTING[i - 1]; if (x && lvl(x) >= 1){ say(x); toast(`${wz(x)}!`); } };   // (counted aloud, a number you know)
-    for (let i = 1; s.each && i <= n; i++){ await runSteps(s.each.map(x => x.practise && n > 1 ? {...x, label:`${x.label} (${i} of ${n})`} : x), who); if (i < n) say1(i); }
+    // Each one counted aloud as it's done (a number you know), said in full and seen, then cleared, before the next one
+    // begins, so a count is never said over the next one's question, nor shown beside it (decided 7 November 2026, after
+    // playing it: chopping the senior pupil's logs, 一 was said just as the next log's question came up, two Chinese words
+    // at once, with a number among its answers, and the question said 2 of 3 as you heard 一).
+    const say1 = async i => { const x = COUNTING[i - 1]; if (!x || lvl(x) < 1) return; toast(`${wz(x)}!`); await sayFully(x, COUNT_MS); clearMessage(); };
+    for (let i = 1; s.each && i <= n; i++){ await runSteps(s.each.map(x => x.practise && n > 1 ? {...x, label:`${x.label} (${i} of ${n})`} : x), who); if (i < n) await say1(i); }
     if (s.inHand) SFX.right(); else await pickUpAct(w);   // (you pick it up, unless it's in your hands already, such as a bucket you've just filled)
     const num = COUNTING[n - 1], counted = (n > 1 || s.howMany) && !!num && lvl(num) >= 1;
     if (counted) say(num);
@@ -937,10 +942,12 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
       const ok = await pictureQ({head:`<p class="label">${esc(fill(s.label || 'Change!'))}${s.turnInto > 1 ? ` (${i} of ${s.turnInto})` : ''}</p>`, body:q.body,
         options:q.options, answerIdx:q.answerIdx, word:w, type:'listen', onShow:() => setTimeout(() => say(w), 300), onAnswer:(right, k) => { chosen = q.opts[k]; }});
       closeCard();
-      if (s.keep){ puffAt = performance.now(); SFX.shimmer(); pl.form = chosen; await sleep(500); }
-      else await becomeForm(chosen, s.ms);
-      toast(ok ? `变！ You turned into ${wz(chosen)}!` : `You turned into ${wz(chosen)}… but that’s not what you heard! It was ${wz(w)}.`);
-      if (s.keep && !ok){ await sleep(900); await STEPS.form({form:null}); return STOP; }
+      // what you turned into, told as you change, while you're it, with time to read it before you change back and the next
+      // question comes (decided 7 November 2026: told once you'd changed back, the next question covered it at once)
+      const said = ok ? `变！ You turned into ${wz(chosen)}!` : `You turned into ${wz(chosen)}… but that’s not what you heard! It was ${wz(w)}.`;
+      if (s.keep){ puffAt = performance.now(); SFX.shimmer(); pl.form = chosen; toast(said); await sleep(ok ? 500 : TOLD_MS.wrong); }
+      else await becomeForm(chosen, s.ms || TOLD_MS[ok ? 'right' : 'wrong'], said);
+      if (s.keep && !ok){ await STEPS.form({form:null}); return STOP; }
     }
   },
   // Back to yourself (form: null), in a puff of smoke, after a turnInto that kept you changed; or into something (form: a
@@ -1491,8 +1498,9 @@ async function spyFind(x, y){
 // the last puff was, js/draw.js).
 let puffAt = -1e9;
 const EAT_MS = 1600;   // how long eating a meal takes (the eat step)
-async function becomeForm(w, hold = 1600){
-  puffAt = performance.now(); SFX.shimmer(); pl.form = w; await sleep(hold);
+const TOLD_MS = {right:1800, wrong:3000};   // how long you stay changed after a question, as what you turned into is told, right or wrong (the turnInto step)
+async function becomeForm(w, hold = 1600, said){   // (said: what you're told as you change, such as what you turned into)
+  puffAt = performance.now(); SFX.shimmer(); pl.form = w; if (said) toast(said); await sleep(hold);
   puffAt = performance.now(); SFX.swish(); pl.form = null; await sleep(350);
 }
 // Flying by cloud (the cloud somersault, once you've learned it: the area's cloudTravel.has): from your map, to any place
@@ -1816,7 +1824,6 @@ async function wildAppears(a, spot = findSpot()){
   const hint = justTaught ? '' : was && more ? a.stays.again : another && a.stays ? a.stays.another : S.friends.includes(a.id) ? play && play.friendHint : play && play.hint;
   if (play) await showDialog(speaker(a.id), L[play.say], {ok:'Play', hint:hint ? fill(hint) : ''});   // it says it wants to play, so its questions never just start
   const all = chapterAnimals(a.chapter, a.place).length;   // (counted with its chapter's animals in the same place: one on its own, such as the deer, needs no count)
-  if (firstMeet && all > 1) toast(`Animals found: ${metCount(a.chapter, a.place)}/${all}`);
   const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home, another, ...(stay ? {lose:a.stays.lost} : {})});
   if (stay){ stayOut(a, spot.x, spot.y, won); foe.spot = true; }   // (drawn where it stays, from now on)
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
@@ -1824,6 +1831,9 @@ async function wildAppears(a, spot = findSpot()){
   foe = null;
   if (won) placeCharacters();   // (one who takes its place once it's your friend, such as the goat beside the river valley's path)
   if (won && more){ const n = here()[a.counts] = (here()[a.counts] || 0) + 1; save(); await runSteps(a.counted[n - 1] || []); }   // counted aloud, one more friend
+  // how many of the animals here you've found, once you've met it (decided 7 November 2026: told as its questions began,
+  // they covered it at once), unless you're being told something else just then, such as the bees counted
+  if (firstMeet && all > 1 && $('#saybox').hidden) toast(`Animals found: ${metCount(a.chapter, a.place)}/${all}`);
 }
 // One of several of a kind stays out at (x, y) (stays), a friend now if you won it over (won).
 function stayOut(a, x, y, won){

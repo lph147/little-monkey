@@ -33,6 +33,14 @@ test('the prologue’s four animals: the rabbit in the tall grass, a sheep at th
   assert.deepEqual(get(g, 'S.met'), ['sheep']);
 });
 
+test('how many of the meadow’s animals you’ve found is told once you’ve met one, never under its questions, which covered it (7 November 2026)', async () => {
+  const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing([...FIRST, '羊']), areas: {1: {elder: 2}}, pos: {place: 'meadow', x: 3, y: 5, dir: 'up'}}});
+  g.run("mode = 'play'; save = () => {}; globalThis.__line = []; showNotice = async () => {}; showDialog = async () => {}; clearMessage()");
+  g.run("encounter = async () => { __line.push('questions'); return true; }; { const t = toast; toast = m => { __line.push(m); t(m); }; }");
+  await play(g, 'interact(5, 18)');
+  assert.deepEqual(get(g, '__line').filter(l => !/^New task/.test(l)), ['questions', 'Animals found: 1/3']);
+});
+
 test('the fox hides only in the hillside’s tall grass, as chapter 1’s animal there; the rabbit hides anywhere', () => {
   const g = loadGame({save: {version: 29, started: true, w: knowing(FIRST), met: ['rabbit'], areas: {1: CHAPTER_ONE}}});
   const hiding = place => [...new Set(get(g, `(enterPlace('${place}'), Array.from({length: 300}, () => { rustle = null; stepsSince = HIDE_AFTER; hideAnimal(); return rustle && rustle.a.id; }))`))].sort();

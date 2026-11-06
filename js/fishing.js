@@ -17,6 +17,7 @@ let fishing = null;   // your line in the water now: {x, y (the square it's in),
 const BITE_WAIT = [1600, 4200];   // how long till a fish bites (ms): somewhere between these
 const BITE_MS = 2500;   // how long you have to press A once it has
 const NIBBLE_MS = 900;   // how long a nibble twitches the float
+const BAITED_MS = 1800;   // with bait on your hook, how long you're told a big one bites before you reel it in
 const FISH = AREA.fishing || null;
 const canFish = () => !!FISH && matches(FISH.has) && !here().lifted;   // (not with your arms full, carrying something over your head)
 // Till A or B is pressed (keys: which of 'a' and 'b' count now), or ms has gone by: gives 'a', 'b' or 'time'.
@@ -79,7 +80,7 @@ async function goFishing(x, y){
     closeMessage();
     const {size, bait} = whatBites(kind), f = FISH[size];
     fishing.hooked = true; SFX.blip();
-    if (bait) toast(fill(FISH.baited));
+    if (bait){ toast(fill(FISH.baited)); await sleep(BAITED_MS); }   // (time to read it, before the questions to reel it in cover it: decided 7 November 2026)
     const words = nextWords(trainable(), f.questions);
     let shells = 0;
     for (let i = 0; i < words.length; i++){

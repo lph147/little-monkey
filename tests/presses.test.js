@@ -84,3 +84,14 @@ test('B, the run button, waits a whole second before it skips a line, closes a c
   k.key('x', {at: 5500});
   assert.equal(k.run('modal.hidden'), false, 'the keyboard’s B (X) too');
 });
+
+test('a question never opens over a message: one still up (such as a count, as you chop the next log) goes first, so nothing beside a question is about something else (7 November 2026, after playing it)', () => {
+  const g = game();
+  g.run("toast('一 (one)!')");
+  assert.equal(g.run("$('#saybox').hidden"), false, 'the message');
+  g.run("S.w['石头'] = {lv: 1, ok: 1}; catchQ('石头', 2, 3, '斧头', 'Chopping the wood')");
+  assert.equal(g.run('modal.hidden'), false, 'the question');
+  assert.equal(g.run("$('#saybox').hidden"), true, 'and the message gone');
+  g.run("sheet.querySelector('.opts .opt').click(); sheet.querySelector('[data-a=next]').click()");
+  assert.equal(g.run("$('#saybox').hidden"), true, 'nor back once it’s answered');
+});

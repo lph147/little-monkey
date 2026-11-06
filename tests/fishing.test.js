@@ -174,9 +174,14 @@ test('bait from the 老板, once you have a rod: with some in your bag, a big fi
   assert.ok(get(g, '__said').includes('gap: 我要鱼饵 (鱼饵)'), '我要鱼饵');
   assert.deepEqual(get(g, "BAG_TABS.find(t => t.id === 'fishing').things().map(t => [t.w, t.count || 1])"), [['鱼竿', 1], ['鱼饵', 1]]);
   g.run('Math.random = () => .99; __said.length = 0; __notes.length = 0');
+  g.run(`globalThis.__line = []; { const q = pictureQ; pictureQ = o => { __line.push('question'); return q(o); }; }
+    { const t = toast; toast = m => { __line.push('told ' + m); return t(m); }; }
+    { const st = setTimeout; setTimeout = (f, ms) => { if (ms === BAITED_MS) __line.push('wait'); return st(f, ms); }; }`);
   await fish(g);
   assert.deepEqual([get(g, "S.bag['鱼饵']"), get(g, '__said')], [0, ['gap: 这是大鱼 (大 or 小)']], 'the bait brings a big one, however unlikely');
   assert.match(get(g, '__notes').join(' '), /You put some 鱼饵 \(bait\) on your hook: a big one bites!/);
+  const line = get(g, '__line'), told = line.findIndex(l => /a big one bites/.test(l));
+  assert.deepEqual(line.slice(told + 1, told + 3), ['wait', 'question'], `with time to read it before the questions to reel it in cover it (7 November 2026: ${line.join(' / ')})`);
 });
 
 // Three shrimp for the feast (29 October 2026): with the fish on its table, the hungry monkey wants shrimp: 我要吃虾！ (虾

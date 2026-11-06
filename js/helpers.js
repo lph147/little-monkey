@@ -49,3 +49,4 @@ function toast(msg){
   clearTimeout(msgT); msgT = setTimeout(closeMessage, Math.max(3200, msg.length * 70));
 }
 function closeMessage(){ $('#saybox').hidden = true; updateHUD(); }   // (tapped, B, A just after it came up, or in time: a new task waiting can be announced then)
+function clearMessage(){ const el = $('#saybox'); if (el) el.hidden = true; }   // a message cleared to make way for what comes next, such as a question (a new task waiting is announced once it's all over, never in the middle)

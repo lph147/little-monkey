@@ -149,11 +149,13 @@ test('flying by cloud: Fly here on a place you’ve been, on the map, once you c
 
 test('changing into something: you hear what, and turn into what you chose, there on the map, then back', async () => {
   const g = game({place: 'cave', x: 14, y: 10, dir: 'down'}, {named: 1});
-  g.run("pictureQ = async o => { __asked++; o.onAnswer(false, (o.answerIdx + 1) % 3); return false; }; globalThis.__forms = []; { const was = becomeForm; becomeForm = async (w, ms) => { __forms.push(w); return was(w, 10); }; }");
+  g.run("pictureQ = async o => { __asked++; o.onAnswer(false, (o.answerIdx + 1) % 3); return false; }; globalThis.__forms = []; { const was = becomeForm; becomeForm = async (w, ms, said) => { __forms.push(w); return was(w, 10, said); }; }");
+  g.run("globalThis.__toldAs = []; { const t = toast; toast = m => { __toldAs.push(pl.form); t(m); }; }");
   await play(g, 'STEPS.turnInto({turnInto: 1})');
   const [form] = get(g, '__forms');
   assert.ok(form && get(g, `AREA.changes.includes('${form}') || !!WORDS['${form}'].pic`), 'into the one you chose');
   assert.ok(notes(g).some(n => /not what you heard/.test(n)), 'the wrong one, and you’re told');
+  assert.deepEqual(get(g, '__toldAs'), [form], 'as you change, while you’re it, not once you’re back (7 November 2026: the next question covered it at once)');
   assert.equal(get(g, 'pl.form'), null, 'and back again');
 });
 
