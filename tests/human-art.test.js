@@ -39,3 +39,18 @@ test('no house has anything standing in front of its door', () => {
   })`);
   assert.deepEqual(blocked, []);
 });
+
+test('people: from the side a profile, one eye and a nose; facing you two eyes; a crossed collar and a sash; a conical straw hat', () => {
+  const g = game({place: 'highRoad', x: 16, y: 9, dir: 'up'});
+  const rows = (kind, dir) => get(g, `personRows('${kind}', '${dir}', false, 0)`), count = (r, ch) => r.join('').split(ch).length - 1;
+  assert.equal(count(rows('granny', 'down'), 'e'), 2, 'facing you: two eyes');
+  assert.equal(count(rows('granny', 'right'), 'e'), 1, 'from the side: one eye');
+  const side = rows('granny', 'right');
+  assert.ok(side[6].lastIndexOf('o') > side[5].lastIndexOf('o'), 'and a nose, past the face');
+  assert.deepEqual(rows('granny', 'left'), side.map(r => [...r].reverse().join('')), 'the left is the right, the other way round');
+  assert.ok(count(rows('granny', 'down').slice(8, 11), 'l') >= 3 && rows('granny', 'down')[11].includes('bbbbbb'), 'a crossed collar and a sash');
+  const hat = rows('fisher1', 'down');
+  assert.equal(hat[0].replace(/\./g, ''), 'dd', 'a straw hat comes to a point');
+  assert.ok(hat[3].startsWith('.dd') && hat[3].endsWith('dd.'), 'and is wide at its brim');
+  assert.equal(get(g, 'HAT')[0].replace(/\./g, ''), 'dd', 'your monkey wears the same hat');
+});

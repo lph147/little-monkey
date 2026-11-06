@@ -67,52 +67,65 @@ function monkeySprite(kind, dir, blink, step = 0, empty = false){
   return spriteCache[k] = sprite(monkeyRows(kind, dir, blink, step, empty), stick ? {...pal, ...HELD[stick].pal} : pal);
 }
 // People (Area 2, the human world: decided 4 November 2026), drawn like the monkeys, a character with person in the area's
-// characters, in its palette's colours: o outline, h hair, s skin, e eyes, m mouth, c clothes, b belt, p trousers, and a, d a
-// straw hat, if it has those. small: a child, a little shorter. Their legs step as they walk, as a monkey's do. And each its
-// own look (decided 4 November 2026, after playing it: everyone was the same shape in another colour): hair, a bun (bun),
-// a knot on top (topknot), a scarf over it (scarf, in its palette's k), bunches at the sides (pigtails) or a scholar's black
-// cap (cap, k too); a beard (beard, in its hair's colour); and clothes, a long robe (robe), an apron (apron, w) or a
-// sleeveless jacket, its arms bare (vest).
+// characters, in its palette's colours: o outline, h hair, s skin, e eyes, m mouth, c clothes, b sash, p trousers, and a, d a
+// straw hat, if it has those; n, a shade of its clothes, and l, its collar, are worked out (personSprite). small: a child, a
+// little shorter. Their legs step as they walk, as a monkey's do. And each its own look (decided 4 November 2026, after
+// playing it: everyone was the same shape in another colour): hair, a bun (bun), a knot on top (topknot), a scarf over it
+// (scarf, in its palette's k), two little buns, as children wore them (pigtails) or a scholar's black cap (cap, k too); a
+// beard (beard, in its hair's colour); and clothes, a long robe (robe), an apron (apron, w) or a sleeveless jacket, its
+// arms bare (vest).
+// Redrawn from the art proposal (decided 6 November 2026, after playing it: from the side, people showed their front face
+// with one eye left in it, so they seemed to have an eye missing; the hair sat on the head like a helmet, and the body was
+// a box with arms sticking out): a face that looks at you, and from the side a real profile, one eye and a nose; hair
+// framing the face; a robe with a crossed collar (交领) and a sash, its sleeves wide; and a conical straw hat (斗笠).
 const PEOPLE = new Set(AREA.characters.filter(c => c.person).map(c => c.id));
 const SMALL_PEOPLE = new Set(AREA.characters.filter(c => c.person && c.small).map(c => c.id));
 const PERSON_LOOK = Object.fromEntries(AREA.characters.filter(c => c.person).map(c => [c.id, {hair:c.hair, beard:!!c.beard, wear:c.wear}]));
-const PERSON_PAL = {k:'#33406A', w:'#EDE6D6'};
-const HUMAN = ["................",".....oooooo.....","....ohhhhhho....","...ohhhhhhhho...","...ohssssssho...","...osesssseso...","...osssmmssso...","......osso......",
-  "..occccccccccco.","..occccccccccco.","..oscccccccccso.","...ocbbbbbbbco..","...occccccccco..","....oppppppo....","....oppo.oppo...","....ooo...ooo..."];
-const HUMAN_LEGS = [["....oppo.oppo...","....ooo...ooo..."], ["....oppo..ooo...","....ooo........."], ["....ooo..oppo...","..........ooo..."]];
-const HAT = ["......dddd......","....daaaaaad....","..daaaaaaaaaad..","...dddddddddd..."];   // a straw hat, over the top of the head
+const PERSON_PAL = {k:'#33406A', w:'#EDE6D6', l:'#F2ECDD'};
+const HUMAN = {   // facing you, away and to the side (the right: the left is the same, the other way round)
+  down: ["................",".....oooooo.....","....ohhhhhho....","...ohhhhhhhho...","...ohhsssshho...","...ohsessesho...","...osssssssso...","....ossmmsso....",
+    "...occlsslcco...","..ocnccllccnco..","..ocnclccccnco..","..osobbbbbboso..","...occcccccco...","...onccccccno...","...oppo..oppo...","...oooo..oooo..."],
+  up: ["................",".....oooooo.....","....ohhhhhho....","...ohhhhhhhho...","...ohhhhhhhho...","...ohhhhhhhho...","...ohhhhhhhho...","....ohhhhhho....",
+    "...occllllcco...","..ocnccccccnco..","..ocnccccccnco..","..osobbbbbboso..","...occcccccco...","...onccccccno...","...oppo..oppo...","...oooo..oooo..."],
+  side: ["................",".....oooooo.....","....ohhhhhho....","...ohhhhhhhho...","...ohhhhhssso...","...ohhhhsseso...","...ohhhsssssso..","....ohhsssmo....",
+    "....occccllo....","....ocnnccco....","....ocnsccco....","....oobbbbbo....","....occcccco....","....onccccno....","....oppoppo.....","....oooooooo...."]
+};
+const HUMAN_LEGS = {   // standing, then a step with each foot
+  front: [["...oppo..oppo...","...oooo..oooo..."], ["...oppo..oooo...","...oooo........."], ["...oooo..oppo...",".........oooo..."]],
+  side: [["....oppoppo.....","....oooooooo...."], ["...oppo..oppo...","..oooo....oooo.."], ["...oppo..oppo...","..oooo....oooo.."]]
+};
+const HAT = [".......dd.......",".....daaaad.....","...daaaaaaaad...",".ddaaaaaaaaaadd."];   // a conical straw hat (斗笠), over the top of the head (your monkey's too)
 function personRows(kind, dir, blink, step = 0){
-  let rows = HUMAN.map((r, y) => [...(dir === 'up' && y >= 4 && y <= 6 ? r.replace(/[sem]/g, 'h') : r)]);   // (the back of the head)
-  [rows[14], rows[15]] = HUMAN_LEGS[step].map(r => [...r]);
   const side = dir === 'left' || dir === 'right', look = PERSON_LOOK[kind] || {};
-  if (side){ rows[5] = [...'...osssssesso...']; rows[6] = [...'...osssssmsso...']; }
-  else if (dir === 'down' && blink){ rows[5][5] = 's'; rows[5][10] = 's'; }
+  let rows = HUMAN[dir === 'up' ? 'up' : side ? 'side' : 'down'].map(r => [...r]);
+  [rows[14], rows[15]] = HUMAN_LEGS[side ? 'side' : 'front'][step].map(r => [...r]);
   const put = (y, x, c) => { rows[y][x] = c; };
-  if (look.wear === 'vest') for (const y of [8, 9]){ put(y, 3, 's'); put(y, 12, 's'); }   // bare arms
-  if (look.wear === 'robe'){ rows[13] = [...'...occccccccco..']; for (const y of [14, 15]) rows[y] = rows[y].map(c => c === 'p' ? 'c' : c); }   // down to its feet
-  if (look.wear === 'apron' && dir === 'down'){ rows[12] = [...'...ocwwwwwwwco..']; rows[13] = [...'....owwwwwwo....']; }   // (from the front)
+  if (dir === 'down' && blink){ put(5, 6, 's'); put(5, 9, 's'); }
+  if (look.wear === 'vest') for (const y of [9, 10]) for (const x of [3, 12]) if (rows[y][x] !== 'o' && rows[y][x] !== '.') put(y, x, 's');   // bare arms
+  if (look.wear === 'robe') for (const y of [14, 15]) rows[y] = rows[y].map(c => c === 'p' ? 'c' : c);   // down to its feet
+  if (look.wear === 'apron' && dir === 'down'){ rows[12] = [...'...owwwwwwwwo...']; rows[13] = [...'...onwwwwwwno...']; }   // (from the front)
   if (look.beard){
-    if (dir === 'down'){ for (const x of [5, 6, 9, 10]) put(6, x, 'h'); rows[7] = [...'......ohho......']; put(8, 7, 'h'); put(8, 8, 'h'); }
-    else if (side){ put(6, 8, 'h'); put(6, 10, 'h'); rows[7] = [...'......ohhho.....']; }
+    if (dir === 'down'){ rows[7] = [...'....ohhhhhho....']; for (const [y, x] of [[8, 7], [8, 8], [9, 7], [9, 8]]) put(y, x, 'h'); }
+    else if (side){ rows[7] = [...'....ohhhhhho....']; for (const [y, x] of [[8, 9], [8, 10], [9, 10]]) put(y, x, 'h'); }
   }
   if (look.hair === 'bun'){ rows[0] = [...'......oooo......']; rows[1] = [...'.....ohhhho.....']; }
   if (look.hair === 'topknot'){ rows[0] = [...'.......oo.......']; rows[1] = [...'.....oohhoo.....']; }
-  if (look.hair === 'pigtails') for (const [x, o] of [[2, 1], [13, 14]]){ put(3, x, 'o'); put(4, x, 'h'); put(5, x, 'h'); put(4, o, 'o'); put(5, o, 'o'); put(6, x, 'o'); }
-  if (look.hair === 'cap'){ rows[0] = [...'....oooooooo....']; rows[1] = [...'....okkkkkko....']; rows[2] = [...'....okkkkkko....']; rows[3] = rows[3].map(c => c === 'h' ? 'k' : c); }
+  if (look.hair === 'pigtails'){ rows[0] = [...'..oo........oo..']; rows[1] = [...'.ohho.oooo.ohho.']; rows[2] = [...'.ohhohhhhhhohho.']; rows[3] = [...'..oohhhhhhhhoo..']; }
+  if (look.hair === 'cap'){ rows[0] = [...'.....oooooo.....']; rows[1] = [...'....okkkkkko....']; rows[2] = [...'...okkkkkkkko...']; rows[3] = [...'..okkkkkkkkkko..']; }
   if (look.hair === 'scarf'){
-    for (let y = 1; y <= 6; y++) rows[y] = rows[y].map(c => c === 'h' ? 'k' : c);
-    for (let y = 4; y <= 6; y++) for (const x of [4, 11]) if (rows[y][x] !== 'o') put(y, x, 'k');
-    if (dir !== 'up') rows[7] = [...'......okko......'];   // (tied under the chin)
+    for (let y = 1; y <= 7; y++) rows[y] = rows[y].map(c => c === 'h' ? 'k' : c);
+    if (dir === 'down'){ put(4, 4, 'k'); put(4, 11, 'k'); }
   }
   if ((PALS[kind] || {}).a) HAT.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') rows[y][x] = c; }));
-  if (SMALL_PEOPLE.has(kind)){ rows = [[...'................'], rows[0], ...rows.slice(1, 7), ...rows.slice(8, 11), ...rows.slice(12)]; rows = rows.slice(0, 16); while (rows.length < 16) rows.unshift([...'................']); }
+  if (SMALL_PEOPLE.has(kind)){ rows = [[...'................'], rows[0], ...rows.slice(1, 8), ...rows.slice(8, 11), ...rows.slice(12)]; rows = rows.slice(0, 16); while (rows.length < 16) rows.unshift([...'................']); }
   let out = rows.map(r => r.join(''));
   if (dir === 'left') out = out.map(r => [...r].reverse().join(''));
   return out;
 }
 function personSprite(kind, dir, blink, step = 0){
   const k = 'P' + kind + dir + (blink ? 'b' : '') + step; if (spriteCache[k]) return spriteCache[k];
-  return spriteCache[k] = sprite(personRows(kind, dir, blink, step), {...PERSON_PAL, ...PALS[kind]});
+  const pal = {...PERSON_PAL, ...PALS[kind]};
+  return spriteCache[k] = sprite(personRows(kind, dir, blink, step), {...pal, n: shade(pal.c, -.25)});
 }
 // Clothes on your monkey (the wardrobe's on: body, head, feet): a coat over its body and arms, belted (C, D), a straw hat
 // (a, d, as people's), shoes on its feet (S). One thing at a time in each place (putOn, js/world.js).
