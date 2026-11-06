@@ -84,14 +84,14 @@ const CAVE_LEGEND = {
   'H': {look:'jHouse', word:'房子', note:'The lecture hall, where the master teaches.'},
   'T': {look:'twistedPine', word:'树', note:'A pine, growing out of the rock.'},
   'W': {look:'waterfall', word:'瀑布'},
-  's': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{dip:'水'}, {carry:'水', inHand:true}]}]},
-  'm': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{dip:'水'}, {carry:'水', inHand:true}]}]},
+  's': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{carry:'水', howMany:true, inHand:true, each:[{dip:'水'}], ask:'How many {桶|buckets} of {水|water} do you want to fill?', took:'You’re carrying {n} bucket{s} of {水|water}. Take {them} to the senior pupil.'}]}]},
+  'm': {look:'water', word:'水', note:'A clear pool, fed by the spring.', onLook:[{if:{waterFetch:1}, label:'Fill', do:[{carry:'水', howMany:true, inHand:true, each:[{dip:'水'}], ask:'How many {桶|buckets} of {水|water} do you want to fill?', took:'You’re carrying {n} bucket{s} of {水|water}. Take {them} to the senior pupil.'}]}]},
   'Q': {look:'rockPeach', word:'桃子', landmark:true, note:'A peach tree, in the master’s garden.', pick:{item:'桃子'}},
   'q': {look:'sapling', word:'桃子', note:'A young peach tree, just planted. You water it every day.', becomes:[{if:{grown:1}, to:'Q'}]},
   'o': {look:'boulder', word:'石头'},
   'j': {look:'jars', landmark:true, onLook:[{do:[{message:'Big jars of water, for the kitchen.'}]}]},
   'p': {look:'woodpile', word:'木头', note:'The cave’s firewood.'},
-  'L': {look:'stump', landmark:true, onLook:[{if:{axeFetch:1}, label:'Chop', do:[{practise:1, label:'Chopping the wood', pic:'斧头'}, {hit:'wood', with:'斧头', times:2}, {carry:'木头'}]},
+  'L': {look:'stump', landmark:true, onLook:[{if:{axeFetch:1}, label:'Chop', do:[{carry:'木头', howMany:true, each:[{practise:1, label:'Chopping the wood', pic:'斧头'}, {hit:'wood', with:'斧头', times:2}], ask:'How many pieces of {木头|wood} do you want to chop?', took:'You’re carrying {n} piece{s} of {木头|wood}. Take {them} to the senior pupil.'}]},
     {do:[{message:'A chopping block, with logs beside it to chop.'}]}]},
   'l': {look:'leafPile', word:'叶子', onLook:[{if:{chores:0}, do:[{message:'A heap of fallen leaves.'}]},
     {if:{chores:2}, label:'Sweep', sparkle:true, do:[{practise:1, label:'Sweeping the leaves', pic:'扫'}, {sweep:'leaves'}, {change:'#'},
@@ -116,11 +116,13 @@ const CAVE_NIGHT = {
     note:'星星 means stars. Over the master’s back door: a slanting moon, and three stars. Like the cave’s name: 斜月三星洞!'}]}]}
 };
 // The senior pupil's chores, fetched by their word (as the woodcutter's): three buckets of water from the pool, then four
-// logs chopped with the axe.
+// logs chopped with the axe; at the pool, or a chopping block, you choose how many first, and they're filled or chopped one
+// after another, counted (decided 6 November 2026, after playing it: one at a time, it wasn't clear what to do). His thanks
+// for the water and he goes on to the next job, there and then: you're talking to him already.
 const FETCH_WATER = {fetch:'waterFetch', asks:[{word:'水', count:3, ask:'wantWater3'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
-  listen:'He says it only in Chinese. Listen, then fetch it from the pool, and bring it to him.', done:[{set:{chores:4}}]};
+  listen:'He says it only in Chinese. Listen for how many he wants: fill them at the pool, all at once, and bring them to him.', done:[{set:{chores:4}}, {talkTo:'senior'}]};
 const FETCH_WOOD = {fetch:'axeFetch', asks:[{word:'木头', count:4, ask:'wantWood4'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
-  listen:'He says it only in Chinese. Listen, then chop it at the chopping blocks, and bring it to him.',
+  listen:'He says it only in Chinese. Listen for how many he wants: chop them at a chopping block, all at once, and bring them to him.',
   done:[{set:{chores:6}}, {say:'veryGood'}, {coins:3, note:'The senior pupil gives you 3 🪙 for your help.'}, {message:'The chores are done. The master is giving a lecture, in front of the hall!'}]};
 // Chapter 2, home to Flower Fruit Mountain (decided 5 November 2026, from the plan and its mock-ups): twenty years on, the
 // troop is hiding; a demon from the north, the Demon of Havoc (混世魔王, a name, never a word to catch), has carried off
@@ -440,7 +442,7 @@ const ACROSS_THE_SEA = {
     {id:'c1sweep', main:true, if:{chores:2, leavesSwept:{below:5}}, text:'{扫|Sweep} up the five heaps of fallen {叶子|leaves}: face one, and press A ({leavesSwept}/5)', arrow:{sparkle:true}},
     {id:'c1swept', main:true, if:{chores:2, leavesSwept:5}, text:'Tell the senior pupil the {叶子|leaves} are swept up', arrow:'senior'},
     {id:'c1chore', main:true, if:{any:[{waterFetch:1}, {axeFetch:1}]}, text:'Bring the senior pupil {什么|what} he asks for. Talk to him again to {听|listen} again', arrow:'senior'},
-    {id:'c1axe', main:true, if:{chores:4}, text:'The senior pupil has one more job for you. Go and {看|see}', arrow:'senior'},
+    {id:'c1axe', main:true, if:{chores:4}, text:'The senior pupil has one more job for you: {说|talk} to him again', arrow:'senior'},
     {id:'c1lecture', main:true, if:{chores:6, grown:0}, text:'Go to the {师父|master}’s lecture, in front of the hall', arrow:'master'},
     {id:'c1riddle', main:true, if:{grown:1, riddle:0}, text:'The {师父|master} wants to see you', arrow:'master'},
     {id:'c1night', main:true, if:{riddle:1}, text:'Three taps on the {头|head}, then the back {门|door}… Wait for night: press A at your room in the rock', arrow:[4, 3, 'cave']},

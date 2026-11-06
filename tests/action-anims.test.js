@@ -46,20 +46,22 @@ function game(area, progress, pos, words){
 const heard = (g, k) => get(g, '__heard').filter(h => h === k).length;
 const objectAt = (g, x, y) => get(g, `mapObjects().find(o => ${x} >= o.x && ${x} < o.x + o.w && ${y} >= o.y && ${y} < o.y + o.h) || null`);
 
-test('chopping the wood: two blows of the axe on the block, chips flying; then you pick the wood up off it', async () => {
+test('chopping the wood: two blows of the axe on the block for each log, chips flying; then you pick the wood up off it', async () => {
   const g = game(2, {...IN_THE_CAVE, chores: 5, axeFetch: 1}, {place: 'cave', x: 24, y: 12, dir: 'left'}, AREA2_WORDS);
+  g.run('howManyCard = async () => 2');   // (two logs: tests/chores.test.js)
   assert.equal(get(g, 'tileAt(23, 12).look'), 'stump', 'the chopping block in front of you');
   await press(g, 24, 12, 'left');
-  assert.equal(heard(g, 'thwack'), 2, 'two blows');
+  assert.equal(heard(g, 'thwack'), 4, 'two blows a log');
   assert.equal(get(g, 'swing.with'), '斧头', 'of the axe');
   assert.ok(get(g, 'chips.length') > 0, 'chips flying');
   assert.deepEqual(get(g, '__acts').map(a => [a.kind, a.w, String(a.at)]), [['pick', '木头', '23,12']], 'then you pick up the wood');
-  assert.deepEqual(get(g, 'here().carrying'), {word: '木头', n: 1});
+  assert.deepEqual(get(g, 'here().carrying'), {word: '木头', n: 2});
   assert.equal(g.run('acting'), null, 'and done');
 });
 
 test('filling the bucket at the pool: into the water with a splash, and up again full, in your hands (nothing more to pick up)', async () => {
   const g = game(2, {...IN_THE_CAVE, chores: 3, waterFetch: 1}, {place: 'cave', x: 23, y: 8, dir: 'up'}, AREA2_WORDS);
+  g.run('howManyCard = async () => 1');   // (one bucket; three: tests/chores.test.js)
   assert.equal(get(g, 'tileAt(23, 7).look'), 'water', 'the pool in front of you');
   await press(g, 23, 8, 'up');
   assert.deepEqual(get(g, '__acts').map(a => [a.kind, a.w]), [['dip', '水']], 'the bucket, in and out');

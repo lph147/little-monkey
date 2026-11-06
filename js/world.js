@@ -77,10 +77,10 @@ const dirOf = (dx, dy) => Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'lef
 // How many to pick up (the carry step's howMany): a picture of the thing, and the numbers 一 to 五, each with its pinyin (no
 // English: what he said is the question). Gives how many you chose, or 0 for Not now.
 const HOW_MANY = 5;
-function howManyCard(w){
+function howManyCard(w, ask){   // (ask: its question, if not how many of it you want to pick up)
   return new Promise(res => {
     const nums = COUNTING.slice(0, HOW_MANY);
-    openCard(`<div class="howmany"><div class="hmpic" aria-hidden="true">${picHTML(w)}</div><p class="label">How many ${esc(wz(w))} do you want to pick up?</p></div>
+    openCard(`<div class="howmany"><div class="hmpic" aria-hidden="true">${picHTML(w)}</div><p class="label">${esc(ask ? fill(ask) : `How many ${wz(w)} do you want to pick up?`)}</p></div>
       <div class="opts five" data-nav>${nums.map((x, i) => `<button class="opt hz" data-i="${i}" aria-label="${i + 1}">${x}${S.pinyin ? `<span class="cap">${WORDS[x].py}</span>` : ''}</button>`).join('')}</div>
       <div class="actions"><button class="btn" data-a="no" data-b>Not now</button></div>`);
     sheet.querySelectorAll('.opt').forEach(b => b.onclick = () => { closeCard(); res(+b.dataset.i + 1); });
@@ -325,7 +325,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {carry:['howMany','inHand'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -858,15 +858,22 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // Picking up something someone has asked you for by its word (the fetch step), one at a time, counted aloud: what you're
   // carrying (the area's carrying: {word, n}). Picking up something else, you put down what you had. Or, howMany, as many
   // as you choose, on a card with the numbers 一 to 五 (decided 5 November 2026, after playing it: picking up the
-  // woodcutter's wood one at a time, it wasn't clear how many you had, or what to do), such as his wood and stones.
-  async carry(s){
-    const c = here().carrying, w = s.carry, n = s.howMany ? await howManyCard(w) : c && c.word === w ? c.n + 1 : 1;
+  // woodcutter's wood one at a time, it wasn't clear how many you had, or what to do), such as his wood and stones; with
+  // each, what you do for each one, one after another, each counted aloud, such as filling the bucket at the cave's pool
+  // or chopping a log at its blocks (decided 6 November 2026, after playing it: filling the senior pupil's three buckets
+  // one at a time, it wasn't clear what to do, and the pool rested after each, so the next seemed not to come); ask, the
+  // card's question, and took, what you're told after ({n}: how many, {s}: an s if more than one, {them}: them or it).
+  async carry(s, who){
+    const c = here().carrying, w = s.carry, n = s.howMany ? await howManyCard(w, s.ask) : c && c.word === w ? c.n + 1 : 1;
     if (!n) return;   // (Not now)
     here().carrying = {word:w, n}; save();
+    const say1 = i => { const x = COUNTING[i - 1]; if (x && lvl(x) >= 1){ say(x); toast(`${wz(x)}!`); } };   // (counted aloud, a number you know)
+    for (let i = 1; s.each && i <= n; i++){ await runSteps(s.each.map(x => x.practise && n > 1 ? {...x, label:`${x.label} (${i} of ${n})`} : x), who); if (i < n) say1(i); }
     if (s.inHand) SFX.right(); else await pickUpAct(w);   // (you pick it up, unless it's in your hands already, such as a bucket you've just filled)
     const num = COUNTING[n - 1], counted = (n > 1 || s.howMany) && !!num && lvl(num) >= 1;
     if (counted) say(num);
-    toast(`${counted ? wz(num) + '! ' : ''}You’re carrying ${n > 1 ? n + ' ' : ''}${wz(w)}.${s.howMany ? ' Take it to whoever asked for it.' : ''}`);
+    const took = s.took ? fill(s.took.replace('{n}', n).replace('{s}', n > 1 ? 's' : '').replace('{them}', n > 1 ? 'them' : 'it')) : null;
+    toast(`${counted ? wz(num) + '! ' : ''}${took || `You’re carrying ${n > 1 ? n + ' ' : ''}${wz(w)}.${s.howMany ? ' Take it to whoever asked for it.' : ''}`}`);
   },
   // Fetching things by their word (decided 4 November 2026: quieter practice, where what you do is the answer): the one
   // you're talking to asks for something only in Chinese, said aloud, its English hidden (each of its asks: the word, how

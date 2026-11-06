@@ -70,14 +70,15 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   said(g);
   await press(g, 17, 9, 'right');
   assert.deepEqual(said(g), ['senior: 很好！', 'senior: 这是桶。', 'senior: 我要三桶水。 (no English)']);
-  for (let i = 0; i < 3; i++) await press(g, 21, 8, 'up');
+  g.run('howManyCard = async () => 3');
+  await press(g, 21, 8, 'up');   // (at the pool: how many? three, filled one after another)
+  assert.deepEqual(p(g, 'carrying'), {word: '水', n: 3});
   await press(g, 17, 9, 'right');
-  assert.equal(p(g, 'chores'), 4);
-  said(g);
-  await press(g, 17, 9, 'right');
-  assert.deepEqual(said(g), ['senior: 这是斧头。', 'senior: 我要四块木头。 (no English)']);
+  assert.deepEqual(said(g), ['senior: 对！谢谢！', 'senior: 这是斧头。', 'senior: 我要四块木头。 (no English)'], 'his thanks, and straight on to the next job');
+  assert.equal(p(g, 'chores'), 5);
+  g.run('howManyCard = async () => 4');
   const asked = get(g, '__asked');
-  for (let i = 0; i < 4; i++) await press(g, 23, 13, 'up');
+  await press(g, 23, 13, 'up');   // (at a chopping block: how many? four, chopped one after another)
   assert.equal(get(g, '__asked'), asked + 4, 'a question a log');
   await press(g, 17, 9, 'right');
   assert.equal(p(g, 'chores'), 6);

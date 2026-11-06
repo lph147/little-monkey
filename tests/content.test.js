@@ -17,12 +17,13 @@ const STEP_OPTIONS = get('STEP_OPTIONS'), COUNTS = get('Object.keys(COUNTS)');
 const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests), 'done'];   // what the area keeps in the save
 const placeholders = text => [...String(text).matchAll(/\{([^}|]+)(?:\|[^}]*)?\}/g)].map(m => m[1]);   // (a word's, without the English that fits the sentence: {石头|stones})
 // A step, and the steps inside it for if you win (a battle's, or a word game's)
-const withWins = (where, s, who) => [[where, s, who], ...[...(s.win || []), ...((s.wordGame || {}).win || [])].flatMap(w => withWins(`${where}, if you win`, w, who))];
+const withWins = (where, s, who) => [[where, s, who], ...[...(s.win || []), ...((s.wordGame || {}).win || [])].flatMap(w => withWins(`${where}, if you win`, w, who)),
+  ...(s.carry && Array.isArray(s.each) ? s.each : []).flatMap(w => withWins(`${where}, for each`, w, who)), ...(s.fetch ? s.done || [] : []).flatMap(w => withWins(`${where}, once it's all brought`, w, who))];   // (and what you do for each one you pick up, carry's each; and a fetch's done)
 const allSteps = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.flatMap(s => withWins(`${who}'s talk, part ${i + 1}`, s, who)))),
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
   ...AREA.begin.map(s => ['begin', s, null]),
-  ...allLegend.flatMap(([ch, t, from]) => (t.onLook || []).flatMap((p, i) => p.do.map(s => [`looking at ${from}, part ${i + 1}`, s, null]))),
+  ...allLegend.flatMap(([ch, t, from]) => (t.onLook || []).flatMap((p, i) => p.do.flatMap(s => withWins(`looking at ${from}, part ${i + 1}`, s, null)))),
   ...(AREA.spots || []).flatMap((sp, n) => sp.onLook.flatMap((p, i) => p.do.map(s => [`looking at spot ${n + 1}, part ${i + 1}`, s, null]))),
   ...Object.entries(AREA.countGames || {}).flatMap(([id, g]) => (g.win || []).map(s => [`the counting game ${id}, if you win`, s, null])),
   ...AREA.animals.flatMap(a => (a.counted || []).flatMap((c, i) => c.map(s => [`the ${a.id}, as friend ${i + 1} of ${a.many}`, s, null]))),
