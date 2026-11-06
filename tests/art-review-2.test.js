@@ -45,3 +45,16 @@ test('a place smaller than the screen, such as the master’s room, sits in its 
   assert.deepEqual(blits('drawLayer(mapCanvas, 0, 0)'), [[0, 0, 240, 160, 0, 0, 240, 160]], 'the screen’s worth of it');
   assert.deepEqual(blits('drawLayer(mapCanvas, -1, 0)'), [[0, 0, 239, 160, 1, 0, 239, 160]], 'and shaking past its edge, only what’s there');
 });
+
+test('trees as in a Chinese painting: broad flat layers of leaves on branches, in three lopsided shapes; the fruit trees to match', () => {
+  const g = game({place: 'highRoad', x: 16, y: 9, dir: 'up'});
+  const [wood, leaf, peach] = [get(g, 'WOOD'), get(g, 'LEAF'), get(g, 'PEACHES')], X = 32, Y = 32;
+  assert.ok(get(g, '[...TREE_LAYERS, ...TALL_LAYERS].flat()').every(([x, y, rx, ry]) => rx >= 1.5 * ry), 'every layer of leaves broad and flat, not a ball');
+  const big = drawn(g, 'OBJECT_ART.tree(ctx, {x: 2, y: 2, w: 2, h: 2})');
+  assert.ok(big.some(([c, x, y]) => c === wood[1] && y < Y + 18 && (x < X + 13 || x > X + 19)), 'branches up from its trunk into the leaves');
+  const shape = (x, w) => JSON.stringify(drawn(g, `OBJECT_ART.tree(ctx, {x: ${x}, y: 2, w: ${w}, h: ${w}})`).filter(([c]) => c === leaf[0]).map(([c, rx, ry, rw, rh]) => [rx - x * 16, ry, rw, rh]));
+  for (const w of [1, 2]) assert.equal(new Set([0, 1, 2, 3, 4, 5].map(x => shape(x, w))).size, 3, (w === 2 ? 'big trees' : 'tall trees') + ': three shapes, so a row of them isn’t all the same');
+  const fruitTree = drawn(g, 'OBJECT_ART.peachTree(ctx, {x: 2, y: 2, w: 1, h: 1})');
+  assert.equal(fruitTree.filter(([c, x, y, w, h]) => c === peach[0] && w === 2 && h === 2).length, 7, 'a peach tree, full of peaches');
+  assert.ok(fruitTree.some(([c, x, y]) => c === wood[1] && y < Y + 6 && (x < X + 6 || x > X + 9)), 'its branches');
+});

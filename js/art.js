@@ -727,10 +727,10 @@ function stoneTablet(g, X, Y, says){   // a stone tablet on a plinth, with what 
 }
 // The mountain path's ground: long grass (the meadow's tall grass, a shade darker: wild animals live in it), banks
 // (you hop down them), bushes and boulders along its edges, and a fallen tree.
-function bush(g, X, Y, x, y){   // a round bush, its leaves like the trees'
+function bush(g, X, Y, x, y){   // a low bush, its leaves in layers like the trees'
   grass(g, X, Y, x, y);
   groundShadow(g, X+8, Y+14, 7, 2);
-  leaves(g, [[5,9,4],[11,9,4],[8,6,5]], X, Y, x*7 + y*13);
+  cloudLeaves(g, [[8, 11, 7, 3], [8, 7, 5, 3]], X, Y, x*7 + y*13);
 }
 function fallenTree(g, X, Y, x, y){
   grass(g, X, Y, x, y);
@@ -1228,6 +1228,34 @@ function leaves(g, blobs, X, Y, seed){   // a tree's leaves, as round clumps [x,
   });
 }
 function trunk(g, X, Y, w, h){ R(g, X, Y, w, h, WOOD[1]); R(g, X, Y, 1, h, WOOD[3]); R(g, X+w-1, Y, 1, h, WOOD[0]); R(g, X-1, Y+h-1, w+2, 1, WOOD[0]); }
+// A tree's leaves as in a Chinese painting (the art review, decided 6 November 2026: round balls of leaves looked like
+// another game's): broad flat layers, one over another like clouds, each [x, y, half its width, half its height], dark
+// underneath and lit along its top, with little bunches of leaves along each top edge, so it's never a smooth ball.
+function cloudLeaves(g, clumps, X, Y, seed){
+  for (const [cx, cy, rx, ry] of clumps) oval(g, X + cx, Y + cy + 1, rx + 1, ry + 1, LEAF[0]);   // their outline
+  for (const [cx, cy, rx, ry] of clumps) oval(g, X + cx, Y + cy, rx, ry, LEAF[1]);               // dark underneath
+  for (const [cx, cy, rx, ry] of clumps) oval(g, X + cx - 1, Y + cy - 1, rx - 1, Math.max(1, ry - 1), LEAF[2]);
+  for (const [cx, cy, rx, ry] of clumps) oval(g, X + cx - 2, Y + cy - Math.ceil(ry / 2), Math.max(1, rx - 4), Math.max(1, Math.floor(ry / 2)), LEAF[3]);   // lit on top
+  clumps.forEach(([cx, cy, rx, ry], i) => {
+    for (let k = -rx + 3; k <= rx - 3; k += 4){   // the bunches along its top edge
+      const ty = Y + cy - Math.round(ry * Math.sqrt(Math.max(0, 1 - (k * k) / (rx * rx))));
+      R(g, X + cx + k - 1, ty - 1, 3, 1, LEAF[0]); R(g, X + cx + k - 1, ty, 3, 1, LEAF[3]); dot(g, X + cx + k - 1, ty, LEAF[4]);
+    }
+    for (let k = 0; k < rx; k++) dot(g, X + cx - rx + 2 + Math.floor(rnd(seed, i, k) * (2 * rx - 3)), Y + cy - ry + 2 + Math.floor(rnd(seed, i, k + 50) * Math.max(1, 2 * ry - 2)), k % 3 ? LEAF[1] : LEAF[4]);   // leaves, dark and light
+  });
+}
+function limbs(g, list){   // branches, each [x0, y0, x1, y1, how thick], from a trunk up into its leaves
+  for (const [x0, y0, x1, y1, w] of list){
+    const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) || 1;
+    for (let i = 0; i <= n; i++){ const x = Math.round(x0 + (x1 - x0) * i / n), y = Math.round(y0 + (y1 - y0) * i / n); R(g, x, y, w, w, WOOD[1]); dot(g, x, y, WOOD[2]); }
+  }
+}
+// A tree's layers of leaves, in three shapes, each lopsided its own way, so a row of trees isn't all the same: a big tree's
+// (two squares by two), and a tall one's (one square).
+const TREE_LAYERS = [[[10, 15, 10, 4], [23, 9, 9, 4], [11, 3, 9, 4], [21, -3, 6, 3]],
+                     [[22, 15, 10, 4], [9, 9, 9, 4], [20, 2, 10, 4], [10, -4, 6, 3]],
+                     [[16, 16, 13, 4], [7, 7, 7, 4], [25, 6, 7, 4], [15, -1, 9, 4]]];
+const TALL_LAYERS = [[[7, 6, 7, 3], [10, 1, 5, 3], [7, -4, 4, 2]], [[9, 6, 7, 3], [6, 1, 5, 3], [9, -4, 4, 2]], [[8, 6, 7, 3], [8, 1, 6, 3], [8, -4, 4, 2]]];
 const fruit = (g, spots, X, Y, [col, shine]) => spots.forEach(([cx, cy]) => { R(g, X+cx, Y+cy, 2, 2, col); dot(g, X+cx, Y+cy, shine); });
 // An oval with its rows measured at their middles, so its top and bottom are short rows, not a lone pixel sticking out.
 function blob(g, cx, cy, rx, ry, col){ for (let dy = -ry; dy <= ry; dy++){ const w = Math.round(rx * Math.sqrt(1 - dy*dy / ((ry + .5) * (ry + .5)))); R(g, cx - w, cy + dy, w*2 + 1, 1, col); } }
@@ -1244,9 +1272,14 @@ function boulder(g, cx, by, rx, ry, cracked, noShadow){
 // How each big object is drawn, given where it stands {x, y, w, h} (in squares).
 const OBJECT_ART = {
   tree: (g, o) => {
-    const X = o.x*T, Y = o.y*T, seed = o.x*31 + o.y;
-    if (o.w === 2){ groundShadow(g, X+16, Y+29, 13, 3); trunk(g, X+13, Y+21, 6, 9); leaves(g, [[16,6,10],[8,13,8],[24,13,8],[16,15,9]], X, Y, seed); }   // two squares by two
-    else { groundShadow(g, X+8, Y+14, 7, 2); trunk(g, X+7, Y+8, 3, 7); leaves(g, [[8,-1,6],[8,5,7]], X, Y, seed); }                                       // tall
+    const X = o.x*T, Y = o.y*T, seed = o.x*31 + o.y, v = (o.x*7 + o.y*3) % 3;
+    if (o.w === 2){   // two squares by two: its trunk and roots, a branch up into each layer of leaves
+      const layers = TREE_LAYERS[v];
+      groundShadow(g, X+16, Y+29, 13, 3);
+      trunk(g, X+14, Y+18, 5, 12); R(g, X+11, Y+28, 3, 2, WOOD[1]); R(g, X+19, Y+28, 3, 2, WOOD[1]);
+      limbs(g, layers.slice(1).map(([cx, cy]) => [X+16, Y+19, X+cx, Y+cy+2, 2]));
+      cloudLeaves(g, layers, X, Y, seed);
+    } else { groundShadow(g, X+8, Y+14, 7, 2); trunk(g, X+7, Y+7, 3, 8); cloudLeaves(g, TALL_LAYERS[v], X, Y, seed); }   // tall
   },
   sandTrack: (g, o) => sandTrack(g, o.x*T, o.y*T, o.w*T, o.h*T), bigDrum: (g, o) => bigDrum(g, o.x*T, o.y*T), banner: (g, o) => banner(g, o.x*T, o.y*T),   // the sports ground's things
   plumPoles: (g, o) => plumPoles(g, o.x*T, o.y*T), stoneLock: (g, o) => stoneLock(g, o.x*T, o.y*T), weaponRack: (g, o) => weaponRack(g, o.x*T, o.y*T, o.w),
@@ -1900,11 +1933,12 @@ function shopHut(g, X, Y, W, H, stage){
     post(X, Y + 4, H - 4); post(X + W - 3, Y + 4, H - 4);
   }
 }
-function fruitTree(g, o, colours){   // a square and a half wide, reaching up, full of fruit
+function fruitTree(g, o, colours){   // a square and a half wide, reaching up, full of fruit, its leaves in layers as the trees'
   const X = o.x*T, Y = o.y*T;
   groundShadow(g, X+8, Y+14, 10, 2); trunk(g, X+6, Y+6, 4, 9);
-  leaves(g, [[8,-4,8],[1,1,6],[15,1,6],[8,3,7]], X, Y, o.x*31 + o.y);
-  fruit(g, [[2,-2],[9,-8],[13,-1],[6,3],[14,4],[-1,2]], X, Y, colours);
+  limbs(g, [[X+7, Y+6, X+2, Y+1, 1], [X+9, Y+6, X+14, Y+1, 1]]);
+  cloudLeaves(g, [[8, 4, 11, 4], [3, -2, 6, 3], [13, -2, 6, 3], [8, -7, 7, 3]], X, Y, o.x*31 + o.y);
+  fruit(g, [[1, 1], [9, -10], [13, 0], [5, 4], [14, 5], [-2, 3], [6, -4]], X, Y, colours);
 }
 /* ---------- the sports ground (操场), for PE at school: a sandy track and things for an ancient school's PE ---------- */
 const LACQ = '#B0352A', LACQ_D = '#7A1F18', BRASS = '#E3A51C', CHALK = '#F4EEDC', POLE = '#8A5A32', POLE_D = '#5A3A22', POLE_L = '#B98A4E';
