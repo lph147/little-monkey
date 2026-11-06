@@ -284,14 +284,30 @@ function speaker(id){
   const n = id === 'player' ? yourName() : NAMES[id] || animalName(id);
   return `<div class="speaker" data-id="${esc(id)}">${portrait(id)}${n ? `<div class="spk"><div class="spk-zh">${n.zh} <span class="spk-py">${n.py}</span></div>${n.en ? `<div class="spk-en">${n.en}</div>` : ''}</div>` : ''}</div>`;
 }
+function portraitCanvas(id){
+  if (PALS[id]) return monkeySprite(id, 'down', false, 0);
+  if (id === 'sign') return SPR.sign;
+  const a = animalOf(id), w = creatureWord(id);
+  return a ? a.pic : w ? sprite(PICTURES[w].rows, PICTURES[w].palette) : SPR.rock;
+}
+// The face on the speech box's name plate (decided 6 November 2026, after mock-ups: who was speaking wasn't clear
+// enough): their picture's head and shoulders, its top two thirds, three quarters of its width, in a circle (css: .face).
+const bustCache = {};
+function bustHTML(id){
+  const key = id + (id === 'player' ? inHand() || '' : '');
+  if (bustCache[key]) return bustCache[key];
+  const c = portraitCanvas(id), W = c.width, H = c.height, d = c.getContext('2d').getImageData(0, 0, W, H).data;
+  let x0 = W, y0 = H, x1 = 0, y1 = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (d[(y * W + x) * 4 + 3] > 10){ x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+  if (x1 < x0){ x0 = 0; y0 = 0; x1 = W - 1; y1 = H - 1; }   // (nothing drawn: the whole of it)
+  const h = Math.max(1, Math.round((y1 - y0 + 1) * .66)), w = Math.min(x1 - x0 + 1, Math.round(W * .75)), sx = Math.round((x0 + x1 + 1) / 2 - w / 2);
+  const o = document.createElement('canvas'); o.width = w; o.height = h; o.getContext('2d').drawImage(c, sx, y0, w, h, 0, 0, w, h);
+  return bustCache[key] = `<img class="bust" alt="" src="${o.toDataURL()}">`;
+}
 function portrait(id){
   const key = id + (id === 'player' ? inHand() || '' : '');   // (your monkey holds the stick once it has one)
   if (portraitCache[key]) return portraitCache[key];
-  let c;
-  if (PALS[id]) c = monkeySprite(id, 'down', false, 0);
-  else if (id === 'sign') c = SPR.sign;
-  else { const a = animalOf(id), w = creatureWord(id); c = a ? a.pic : w ? sprite(PICTURES[w].rows, PICTURES[w].palette) : SPR.rock; }
-  return portraitCache[key] = `<img class="portrait" alt="" src="${c.toDataURL()}">`;
+  return portraitCache[key] = `<img class="portrait" alt="" src="${portraitCanvas(id).toDataURL()}">`;
 }
 const SPR = {
   rock: sprite(ROCK, ROCK_PAL),

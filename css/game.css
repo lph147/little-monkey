@@ -5,6 +5,7 @@
   --pic-face:28px; --pic-small:32px; --pic-mid:48px; --pic-scene:64px; --pic-big:96px; --pic-icon:16px;   /* picture sizes: fit() sets them from the screen's height */
   --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA; --led:#45D16A;
   --btnA:#B8323A; --btnB:#3D6A93;
+  --plate:#E3C77E;   /* the speech box's name plate (its outline), and the ring at the speaker's feet on the map */
   --tip:#FFF3B8; --tip-ink:#2A2215;   /* a tip bubble: the same in light and dark, like a sticky note */
   --sil:brightness(0);   /* the shadow of a word you have heard but not caught */
   --pixel:"Pixelify Sans", "Source Sans 3", "Noto Sans SC", system-ui, sans-serif;
@@ -25,7 +26,7 @@
     --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
     --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
     --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --led:#5BE07E;
-    --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); color-scheme:dark;
+    --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); --plate:#9C8443; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
@@ -440,7 +441,11 @@ rt.hid{visibility:hidden}
 .talk.again{animation:none}
 @media (prefers-reduced-motion: reduce){.talk,.talk.top{animation:none}}
 .talkhead{display:flex;align-items:center;gap:6px}
-.talkhead .speaker{gap:.4rem;font-size:.9rem}
+/* the name plate (decided 6 November 2026, after mock-ups: who was speaking wasn't clear enough): their face, head and
+   shoulders, in a circle, and their name, in one thin pale-gold outline */
+.talkhead .speaker{gap:.4rem;font-size:.9rem;border:2px solid var(--plate);border-radius:999px;padding:0 .7rem 0 0;margin:0 0 .3rem;min-width:0}
+.talkhead .face{width:2.15rem;height:2.15rem;border-radius:50%;border:2px solid var(--plate);margin:-2px 0 -2px -2px;display:grid;place-items:center;overflow:hidden;flex:none}
+.talkhead .face .bust{width:1.75rem;height:auto;margin-top:.3rem;image-rendering:pixelated;image-rendering:crisp-edges}
 .talkhead .portrait{width:var(--pic-face);height:var(--pic-face)}
 .talkhead .spk{display:flex;flex-wrap:wrap;column-gap:.5rem;align-items:baseline}   /* a long name's English goes under it, whole */
 .talkhead .spk-zh{font-size:1rem;white-space:nowrap}

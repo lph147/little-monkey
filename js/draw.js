@@ -23,7 +23,23 @@ function sparkle(X, Y, now, ph){
   R(b, X-1, Y, 1, 1, '#FFE27A'); R(b, X+1, Y, 1, 1, '#FFE27A'); R(b, X, Y-1, 1, 1, '#FFE27A'); R(b, X, Y+1, 1, 1, '#FFE27A');
   if (k > .8){ R(b, X-2, Y, 1, 1, '#FFE27A'); R(b, X+2, Y, 1, 1, '#FFE27A'); R(b, X, Y-2, 1, 1, '#FFE27A'); R(b, X, Y+2, 1, 1, '#FFE27A'); }
 }
+// Who's speaking to you (decided 6 November 2026, after mock-ups: it wasn't always clear who was talking, in a crowd): the
+// one whose line is in the speech box (talkWho, js/draw.js; none once it closes), with a small gold arrow over their
+// head, bobbing, in place of their ! or ?, and a faint gold ring at their feet.
+const SPEAKER_GOLD = '#E3B54E', SPEAKER_INK = '#2A2622', SPEAKER_RING = 'rgba(227,199,126,.85)';   // (the ring: css --plate, the name plate's outline)
+const speakingNow = n => !!talkWho && talkWho === n.id && !talkBox.hidden;
+function speakerArrow(X, Y){   // pointing down, 9 pixels wide: X, Y its top left
+  R(b, X, Y, 9, 1, SPEAKER_INK);
+  [[1, 7], [2, 5], [3, 3], [4, 1]].forEach(([dy, w], i) => { const x0 = X + i + 1; R(b, x0 - 1, Y + dy, 1, 1, SPEAKER_INK); R(b, x0, Y + dy, w, 1, i ? SPEAKER_GOLD : '#F2D27A'); R(b, x0 + w, Y + dy, 1, 1, SPEAKER_INK); });
+  R(b, X + 4, Y + 5, 1, 1, SPEAKER_INK);
+}
+function speakerRing(X, Y){   // a flat ring round their feet
+  R(b, X + 4, Y + 13, 8, 1, SPEAKER_RING); R(b, X + 4, Y + 17, 8, 1, SPEAKER_RING);
+  R(b, X + 2, Y + 14, 2, 1, SPEAKER_RING); R(b, X + 12, Y + 14, 2, 1, SPEAKER_RING); R(b, X + 2, Y + 16, 2, 1, SPEAKER_RING); R(b, X + 12, Y + 16, 2, 1, SPEAKER_RING);
+  R(b, X + 1, Y + 15, 1, 1, SPEAKER_RING); R(b, X + 14, Y + 15, 1, 1, SPEAKER_RING);
+}
 function bubble(X, Y, ch){
+  if (ch === 'speaker') return speakerArrow(X, Y);
   R(b, X, Y, 7, 9, '#1E2B26'); R(b, X+1, Y+1, 5, 7, '#FFFFFF'); R(b, X+3, Y+9, 1, 1, '#1E2B26');
   if (ch === '!'){ R(b, X+3, Y+2, 1, 3, '#C0392B'); R(b, X+3, Y+6, 1, 1, '#C0392B'); }
   else if (ch === 'note'){ R(b, X+4, Y+2, 1, 4, '#2E5E9A'); R(b, X+5, Y+2, 1, 1, '#2E5E9A'); R(b, X+2, Y+5, 2, 2, '#2E5E9A'); R(b, X+3, Y+5, 1, 1, '#2E5E9A'); }   // a note: someone calling out, or singing
@@ -754,6 +770,8 @@ function drawWorld(now){
     const n = e.n, scared = !!(foe && foe.big) && FOLLOWERS.includes(n);   // (whoever's following you, trembling, as a big one rears up: wildBattle, js/battle.js)
     const X = Math.round(e.c.x) - cx + (scared && Math.floor(now / 70) % 2 ? 1 : 0), Y = Math.round(e.c.y) - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    const talking = speakingNow(n);   // (who's speaking to you now: a ring at their feet, and the gold arrow over them, not their !)
+    if (talking) speakerRing(X, Y);
     if (n.mv && n.mv.run && now - n.mv.t0 < n.mv.dur) drawRunDust(X, Y, now, n.dir);   // (racing you)
     if (n.flies){   // one that flies, such as the queen bee
       drawFlying(n, X, Y, now, n.id.charCodeAt(0));
@@ -779,8 +797,8 @@ function drawWorld(now){
     if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) b.drawImage(mapCanvas, x, y, w, h, x - cx, y - cy, w, h);   // the grass over their feet
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
-    const bub = inClass.has(n.id) ? null : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : now < (n.callingT || 0) ? {show:'note'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (a note: calling out what they sell, callOut in js/world.js)   // (and something they kept for you; none in a lesson, such as PE's)
-    if (bub) bubbles.push([X+10, Y - 8 - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0), bub.show]);   // (over a big one's head, such as the cow's)
+    const bub = inClass.has(n.id) ? null : talking ? {show:'speaker'} : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : now < (n.callingT || 0) ? {show:'note'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (a note: calling out what they sell, callOut in js/world.js)   // (and something they kept for you; none in a lesson, such as PE's)
+    if (bub) bubbles.push([bub.show === 'speaker' ? X+4 : X+10, Y - (bub.show === 'speaker' ? 6 + Math.round(Math.sin(now / 220)) : 8) - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0), bub.show]);   // (over a big one's head, such as the cow's)
   }
   drawDragonflies(cx, cy, now);
   drawSwarms(cx, cy, now);

@@ -205,12 +205,13 @@ function sayLine(who, line, opts){
     const enNow = heardLine(line.t);   // (its English the first three times, and after a day away: heardLine, js/state.js)
     const again = !talkBox.hidden;   // again: the box is still up from the last line
     const enShows = (enNow && !opts.noEn) || !!opts.clue;   // (a clue: its English every time, the place's word in Chinese, js/hide.js; noEn: never shown at first, such as something to fetch by its word)
-    talkBox.innerHTML = pixelIcons(`<div class="talkhead">${who}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${enShows ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
+    const id = (who.match(/data-id="([^"]*)"/) || [])[1];   // who's speaking (from speaker()), for their own voice, and so the box doesn't cover them
+    const plate = id ? who.replace(/<img class="portrait"[^>]*>/, `<span class="face">${bustHTML(id)}</span>`) : who;   // (their name plate: their face in a circle, css .talkhead .face)
+    talkBox.innerHTML = pixelIcons(`<div class="talkhead">${plate}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${enShows ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en${opts.clue ? ' clue' : ''}" ${enShows ? '' : 'hidden'}>${opts.clue ? cluedEn(line.en, opts.clue) : esc(line.en)}</div>
       <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
     bindTurtles(talkBox);
     talkBox.classList.toggle('again', again);
-    const id = (who.match(/data-id="([^"]*)"/) || [])[1];   // who's speaking (from speaker()), for their own voice, and so the box doesn't cover them
     talkWho = id;
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();   // at the top of the screen, if at the bottom it would cover you
     $('#saybox').hidden = true;   // the box covers the message spot
@@ -291,7 +292,7 @@ function chooseReply(choices, {id, line, pic, ask, best} = {}){
   });
 }
 // The box stays up for a moment, so lines one after another change in place instead of closing and opening again.
-function closeTalk(){ setTimeout(() => { if (!talkNext){ talkBox.hidden = true; talkBox.innerHTML = ''; } }, 0); }
+function closeTalk(){ setTimeout(() => { if (!talkNext){ talkBox.hidden = true; talkBox.innerHTML = ''; talkWho = null; } }, 0); }   // (and nobody's speaking: no gold arrow on the map)
 talkBox.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('button')) e.preventDefault(); });   // tapping its buttons doesn't take the keyboard's focus
 // How a word is made (MADE, in content/words.js): its parts, each with its pinyin over it and its English (green if it's a
 // word you know), and what they add up to; or the clue inside a character; or the picture it was drawn from. Then where
