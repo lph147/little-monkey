@@ -193,6 +193,21 @@ function wayTo(place){
 // water and rock, down a bank but never up one, and through no other way out of the place; or null if there's none. Worked
 // out again only when you've moved, or the target or the map has changed.
 let routeMemo = {key:null, path:null};
+// Every square you could walk to from where you stand (as routeTo walks: down banks, over stepping stones, round
+// everyone standing about), as 'x,y'.
+function walkableFromYou(){
+  const seen = new Set([pl.x + ',' + pl.y]), queue = [[pl.x, pl.y]];
+  for (let i = 0; i < queue.length; i++){
+    const [x, y] = queue[i];
+    for (const [d, [dx, dy]] of Object.entries(DV)){
+      let nx = x + dx, ny = y + dy;
+      if (tileAt(nx, ny).ledge){ if (d !== 'down') continue; while (tileAt(nx, ny).ledge) ny++; }
+      if (!(tileAt(nx, ny).walk || tileAt(nx, ny).hop) || exitAt(nx, ny) || npcAt(nx, ny) || seen.has(nx + ',' + ny)) continue;
+      seen.add(nx + ',' + ny); queue.push([nx, ny]);
+    }
+  }
+  return seen;
+}
 function routeTo([tx, ty]){
   const key = `${PLACE}|${pl.x},${pl.y}|${tx},${ty}|${mapStory}`;
   if (routeMemo.key === key) return routeMemo.path;
@@ -286,6 +301,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'inBag') return Object.entries(v).every(([w, want]) => ((S.bag[w] || 0) > 0) === want);   // what's in your bag, such as {'饭':true}   // there's something in the shop you could buy now, that you don't have (the 老板's ?)
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
+    if (k === 'away') return ![].concat(v).includes(PLACE);   // anywhere but this place (or these), such as a task that leads you back there (decided 6 November 2026)
     if (k === 'hurt') return hurt() === v;   // you've lost health in a battle
     if (k === 'practice') return trainingCalls() === v;   // some of your words need practice (the practice post's !)
     if (k === 'lesson') return !!lessonNow() === v;       // a lesson series at school has a new word ready for you
@@ -946,9 +962,9 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   scuttle(s, who){
     const n = NPCS.find(c => c.id === who);
     if (!n) return;
-    const look = tileAt(n.x, n.y).look, spots = [];
-    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++)
-      if (tileAt(x, y).look === look && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 5 && !npcAt(x, y) && !exitAt(x, y)) spots.push([x, y]);
+    const look = tileAt(n.x, n.y).look, spots = [], near = walkableFromYou();
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++)   // (somewhere you can walk up to: decided 6 November 2026, as a hen could run off into a corner you couldn't reach)
+      if (tileAt(x, y).look === look && Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 5 && !npcAt(x, y) && !exitAt(x, y) && [[0, 0], ...Object.values(DV)].some(([dx, dy]) => near.has((x + dx) + ',' + (y + dy)))) spots.push([x, y]);
     if (!spots.length) return;
     [n.x, n.y] = spots[Math.floor(Math.random() * spots.length)]; n.mv = null;
   }

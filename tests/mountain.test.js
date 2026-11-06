@@ -92,17 +92,21 @@ test('the How many? card: the numbers 一 to 五, each with its pinyin, in a row
   assert.equal(get(g, 'here().carrying || null'), null, 'nothing picked up');
 });
 
-test('the cliff road: gusts of wind blow across the walkway, one row after another, so you go up between them', () => {
+test('the cliff road: gusts of wind blow across the walkway, every row at once, so you can cross it, up or down', () => {
   const g = game({place: 'cliffRoad', x: 10, y: 26, dir: 'up'});
   const rows = get(g, '[25, 24, 23, 22].map(y => tileAt(10, y).vent)');
-  assert.ok(rows.every(v => v.wind && v.every === 3200 && v.puff === 1400), 'each row a gust');
-  assert.deepEqual(rows.map(v => v.at), [0, 800, 1600, 2400], 'each a little after the one below');
+  assert.ok(rows.every(v => v.wind && v.every === 3200 && v.puff === 1000 && !v.at), 'each row a gust, all together');
   assert.deepEqual(get(g, '[0, 2000].map(t => puffing(10, 25, t))'), [true, false], 'blowing, then calm');
   assert.match(get(g, 'tileAt(10, 25).vent.hot'), /wind/);
-  // (decided 5 November 2026, after playing it: the gusts came down the walkway, and you couldn't get up it): step up
-  // behind each gust as it drops, a row every 800 ms, and no row is blowing as you step onto it, or while you're on it
+  // (decided 6 November 2026, after playing it: the gusts went up the walkway a row after another, and you couldn't
+  // come back down it): step onto the walkway as a gust drops, a step every 270 ms, even a second late, and no row is
+  // blowing as you step onto it, or while you're on it, going up or down
   const calm = (y, from, to) => { for (let t = from; t <= to; t += 20) if (g.run(`puffing(10, ${y}, ${t})`)) return false; return true; };
-  assert.ok(calm(25, 1400, 2200 + 270) && calm(24, 2200, 3000 + 270) && calm(23, 3000, 3800 + 270) && calm(22, 3800, 4600 + 270), 'you can go up behind them');
+  for (const late of [0, 1000]){
+    const t0 = 1000 + late, up = [25, 24, 23, 22], down = [22, 23, 24, 25];
+    assert.ok(up.every((y, i) => calm(y, t0 + i * 270, t0 + (i + 1) * 270)), `up, ${late} ms late`);
+    assert.ok(down.every((y, i) => calm(y, t0 + i * 270, t0 + (i + 1) * 270)), `down, ${late} ms late`);
+  }
 });
 
 test('loose planks: hop onto the one with the word’s picture; a wrong one swings away, and you grab the chain (no splash)', async () => {

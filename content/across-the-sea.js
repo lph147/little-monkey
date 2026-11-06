@@ -21,10 +21,10 @@ const LANDING = [
 ];
 // The teacher's mountain's own letters (chapter 1: the cliff road's and the stone pillars' legend, on top of the area's):
 // its rock, mossy stone, pines growing out of the rock and a sea of clouds below (js/mountain.js); a walkway of planks; gusts
-// of wind across it (vents with wind, each row a little after the one below it, so you go up between them); loose planks
+// of wind across it (vents with wind, all four rows at once: wait for a gust to drop, then cross); loose planks
 // hung by chains, to hop (swing: a wrong one swings away, and you grab the chain); a chain up a sheer face, to climb, a
 // question a pull (the climb step); peaches; the mountain's tablet and the cave's stone door, open once the boy has opened it.
-const GUST = {wind:true, every:3200, puff:1400, hot:'The wind is too strong! Wait for it to drop, then step up straight away: the gusts go up the walkway a row at a time, so follow just behind them.', pushed:'Whoosh! The wind blows you back.'};
+const GUST = {wind:true, every:3200, puff:1000, at:0, hot:'The wind is too strong! Wait for the gust to drop, then cross the windy planks quickly.', pushed:'Whoosh! The wind blows you back.'};   // (every row at once, so you can cross up or down: decided 6 November 2026, after playing it; a row after another, you couldn't come back down)
 const CLIMB_LEGEND = {
   'c': {look:'cloudSea', word:'云', note:'A sea of clouds, far below.', onLook:[{if:{new:'云'}, waits:true, label:'Look', do:[{newWord:'云', note:'云 means cloud. You’re up above the clouds!'}]}]},
   'R': {look:'karstTop', word:'山'},
@@ -35,10 +35,10 @@ const CLIMB_LEGEND = {
   'W': {look:'waterfall', word:'瀑布'},
   'H': {look:'plankH', walk:true},
   'V': {look:'plankV', walk:true},
-  'w': {look:'windPlank', walk:true, vent:{...GUST, at:0}},
-  'v': {look:'windPlank', walk:true, vent:{...GUST, at:800}},
-  'q': {look:'windPlank', walk:true, vent:{...GUST, at:1600}},
-  'j': {look:'windPlank', walk:true, vent:{...GUST, at:2400}},
+  'w': {look:'windPlank', walk:true, vent:GUST},
+  'v': {look:'windPlank', walk:true, vent:GUST},
+  'q': {look:'windPlank', walk:true, vent:GUST},
+  'j': {look:'windPlank', walk:true, vent:GUST},
   'h': {look:'loosePlank', hop:{label:'Loose planks', ask:'Listen, and hop onto the plank with its picture.', swing:true,
     splash:'The plank swings away under you! You grab the chain, and pull yourself back.'}},
   'C': {look:'chainFace', landmark:true, onLook:[{label:'Climb', do:[{climb:[[12, 8], [12, 11]], pulls:3, label:'Climbing the chain', pic:'猴子'}]}]},
@@ -388,6 +388,7 @@ const ACROSS_THE_SEA = {
     {id:'a2villageWords', if:{child:3, villageWords:{below:12}}, text:'Learn to {说|talk} like the villagers: learn the village’s words ({villageWords}/12). Still to find: {left:villageWords}', where:'The village and the shore'},
     {id:'a2east', main:true, if:{askedVillage:3, farmer:0}, text:'Follow the {路|road} east, to the fields', arrow:'farmer'},
     {id:'a2birds', main:true, if:{farmer:1, birdsShooed:{below:5}}, text:'Shoo the {鸟|birds} off the farmer’s rice ({birdsShooed}/5)', where:'fields'},
+    {id:'a2birdsDone', main:true, if:{farmer:{atLeast:1}, birdsShooed:{atLeast:5}, lunch:'not asked'}, text:'The {鸟|birds} have gone: go back to the farmer', arrow:'farmer'},   // (decided 6 November 2026: with the birds gone, nothing said what next)
     {id:'a2lunch', main:true, if:{lunch:'asked', holding:{lunch:false}}, text:'The farmer is hungry: ask the granny by the well for some {饭|rice} for him', arrow:'granny'},
     {id:'a2lunchBack', main:true, if:{lunch:'asked', holding:{lunch:true}}, text:'Take the {饭|rice} to the farmer in the fields', arrow:'farmer'},
     {id:'a2dog', main:true, if:{farmer:{atLeast:1}, friends:{dog:false}}, text:'Make {朋友|friends} with the dog by the road', arrow:[36, 9, 'fields']},
@@ -410,13 +411,14 @@ const ACROSS_THE_SEA = {
     {id:'a2askDocker', main:true, if:{cargo:2, askDocker:0}, text:'Ask the docker {哪里|where} the immortals are', arrow:'docker'},
     {id:'a2askAll', main:true, if:{askDocker:1, asked:{below:8}}, text:'Ask everyone on your list {哪里|where} the immortals are ({asked}/8): tap the faces on your Tasks page to see who’s left'},
     {id:'a2askBoatman', main:true, if:{asked:8, toldSea:0}, text:'Ask the boatman {哪里|where} the immortals are: the boatman has sailed all over the sea', arrow:'boatman'},
+    {id:'a2sail', main:true, if:{toldSea:1, boat:0}, text:'Ask the boatman to take you across the {海|sea}', arrow:'boatman'},   // (decided 6 November 2026: after his news, nothing said what next)
     {id:'a2wind', main:true, if:{boat:1}, text:'Wait for the {风|wind}: practise a little, then go back to the boatman', arrow:'boatman'},
     {id:'a2woodcutter', main:true, if:{boat:2, song:0}, text:'Someone is singing among the {树|trees}. Go and find them', arrow:'woodcutter'},
     // chapter 1: up the mountain
     {id:'c1hut', if:{chapter:1, woodFetch:0}, text:'The woodcutter has gone back to his {家|home}, up the steps. Find out if he needs help', arrow:'woodcutter'},
     {id:'c1fetch', if:{woodFetch:{atLeast:1, below:4}}, text:'Bring the woodcutter {什么|what} he asks for, as many as he asks for: it’s by his hut. Talk to him again to {听|listen} again', arrow:'woodcutter'},
-    {id:'c1up', main:true, if:{chapter:1, door:0, any:[{place:'farShore'}, {place:'mountainFoot'}]}, text:'Climb the {山|mountain}, to find where the immortal lives', arrow:{place:'cliffRoad'}},
-    {id:'c1cliff', main:true, if:{chapter:1, door:0, place:'cliffRoad'}, text:'Climb the walkway up the cliff. The gusts of {风|wind} go up it a row at a time: wait for the one in front of you to drop, then follow it up', arrow:{place:'pillars'}},
+    {id:'c1up', main:true, if:{chapter:1, door:0, away:['cliffRoad', 'pillars']}, text:'Climb the {山|mountain}, to find where the immortal lives', arrow:{place:'cliffRoad'}},
+    {id:'c1cliff', main:true, if:{chapter:1, door:0, place:'cliffRoad'}, text:'Climb the walkway up the cliff. Gusts of {风|wind} blow across it: wait for one to drop, then cross the windy planks quickly', arrow:{place:'pillars'}},
     {id:'c1crane', if:{chapter:1, place:'cliffRoad', friends:{crane:false}}, text:'Make {朋友|friends} with the {鹤} by the pool', arrow:[14, 12, 'cliffRoad']},
     {id:'c1door', main:true, if:{chapter:1, door:0, place:'pillars'}, text:'Find the immortal’s {洞|cave}, up at the top', arrow:[15, 6, 'pillars']},
     // in the cave
@@ -446,15 +448,15 @@ const ACROSS_THE_SEA = {
     {id:'c2d2', main:true, if:{d1:1, d2:0}, text:'Chase the next little {妖怪|demon} off the home ground', arrow:'d2'},
     {id:'c2d3', main:true, if:{d2:1, d3:0}, text:'One more little {妖怪|demon} to chase off', arrow:'d3'},
     {id:'c2north', main:true, if:{d3:1, north:0}, text:'The little {妖怪|demons} have gone. Tell the {老|old} monkey', arrow:'elder'},
-    {id:'c2fly', main:true, if:{north:1, king:{below:2}, place:'ffmHomeGround'}, text:'Fly north on your {云|cloud}, to the demon’s mountain', arrow:[13, 12, 'ffmHomeGround']},
+    {id:'c2fly', main:true, if:{north:1, king:{below:2}, away:'lair'}, text:'Fly north on your {云|cloud}, to the demon’s mountain', arrow:[13, 12, 'ffmHomeGround']},
     {id:'c2torch', main:true, if:{place:'lair', new:'火'}, text:'Climb up to the {洞|cave} at the top. Something’s burning in front of it', arrow:[12, 4, 'lair']},
-    {id:'c2cries', main:true, if:{knows:'火', new:'救命'}, text:'Someone is calling out, near the {火|fire}', arrow:[6, 6, 'lair']},
-    {id:'c2cage', main:true, if:{knows:'救命', new:'笼子'}, text:'Little {猴子|monkeys} are locked in {笼子|cages}!', arrow:[6, 5, 'lair']},
-    {id:'c2key', main:true, if:{knows:'笼子', new:'钥匙'}, text:'Who has the {钥匙|key}? Ask the guard at the cave’s {门|door}', arrow:'guard'},
-    {id:'c2change', main:true, if:{knows:'钥匙', key:0}, text:'The guard won’t give a monkey the {钥匙|key}. Hide behind a boulder, {变|change} into a little {妖怪|demon}, and ask him again', arrow:[12, 11, 'lair']},
-    {id:'c2free', main:true, if:{key:1, freed:{below:5}}, text:'Open the {笼子|cages} with the {钥匙|key} ({freed}/5)', arrow:{sparkle:true}},
-    {id:'c2spy', main:true, if:{freed:5, loot:0}, text:'A little {猴子|monkey} wants to play I spy, by the troop’s things', arrow:'baby1'},
-    {id:'c2king', main:true, if:{king:1}, text:'Beat {混世魔王}', arrow:'king'},
+    {id:'c2cries', main:true, if:{place:'lair', knows:'火', new:'救命'}, text:'Someone is calling out, near the {火|fire}', arrow:[6, 6, 'lair']},
+    {id:'c2cage', main:true, if:{place:'lair', knows:'救命', new:'笼子'}, text:'Little {猴子|monkeys} are locked in {笼子|cages}!', arrow:[6, 5, 'lair']},
+    {id:'c2key', main:true, if:{place:'lair', knows:'笼子', new:'钥匙'}, text:'Who has the {钥匙|key}? Ask the guard at the cave’s {门|door}', arrow:'guard'},
+    {id:'c2change', main:true, if:{place:'lair', knows:'钥匙', key:0}, text:'The guard won’t give a monkey the {钥匙|key}. Hide behind a boulder, {变|change} into a little {妖怪|demon}, and ask him again', arrow:[12, 11, 'lair']},
+    {id:'c2free', main:true, if:{place:'lair', key:1, freed:{below:5}}, text:'Open the {笼子|cages} with the {钥匙|key} ({freed}/5)', arrow:{sparkle:true}},
+    {id:'c2spy', main:true, if:{place:'lair', freed:5, loot:0}, text:'A little {猴子|monkey} wants to play I spy, by the troop’s things', arrow:'baby1'},
+    {id:'c2king', main:true, if:{place:'lair', king:1}, text:'Beat {混世魔王}', arrow:'king'},
     {id:'c2stick', main:true, if:{homeAgain:1, stickGiven:0}, text:'Give your {棍子|stick} to the little monkey in training', arrow:'trainee'},
     {id:'c2end', main:true, if:{stickGiven:1, ch2:0}, text:'The {老|old} monkey wants to talk to you', arrow:'elder'}
   ],
@@ -690,7 +692,7 @@ const ACROSS_THE_SEA = {
       {message:'The little monkeys run to their mothers! The troop puts everything back on the feast’s tables, and everyone celebrates.'}, {say:'veryHappy', by:'elder'}]},
     // (a game that heard the boatman's news before the asking was the story's purpose: he's told you)
     {if:{boat:{atLeast:1}, toldSea:0}, do:[{set:{toldSea:1}}]},
-    {if:{askedTown:3, years:0, wordReady:true}, do:[{set:{years:1}}, {message:'Nobody in the town knows where the immortals are either. You stay, and keep asking, year after year…'},
+    {if:{askedTown:3, years:0}, do:[{set:{years:1}}, {message:'Nobody in the town knows where the immortals are either. You stay, and keep asking, year after year…'},
       {scene:'yearsPass'}, {scene:'manyYearsLater'},
       {match:'Years among people', stop:'Not now', words:['人', '衣服', '帽子', '井', '房子', '门', '鸡', '饭', '钱', '网', '船', '狗', '包子', '鞋', '茶', '孩子', '书', '猫']},
       {message:'Years go by. You can talk like people now, but nobody here knows where the immortals are. The town has changed too: the children from the school are grown up. Across the bridge, at the harbour, boats sail all over the sea: maybe someone there knows.'}]}
@@ -1536,8 +1538,8 @@ const ACROSS_THE_SEA = {
       moves:[{if:{freed4:0}, place:'hut', x:13, y:0}, {if:{homeAgain:0}, place:'lair', x:4, y:7, facing:'right'}], palette:{o:'#4A2C17', f:'#E0A858', s:'#F8DAB4', m:'#C98E6A', e:'#24160C'}},
     {id:'baby5', place:'ffmHomeGround', x:8, y:11, facing:'right', small:true, name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'},
       moves:[{if:{freed5:0}, place:'hut', x:14, y:0}, {if:{homeAgain:0}, place:'lair', x:8, y:7, facing:'left'}], palette:{o:'#40250F', f:'#A8673A', s:'#EFC79C', m:'#C08060', e:'#24160C'}},
-    {id:'cow', place:'ffmHomeGround', look:'牛', x:25, y:12, facing:'left'},
-    {id:'calf', place:'ffmHomeGround', look:'牛', small:true, x:26, y:13, facing:'left'},   // (born while you were away)
+    {id:'cow', place:'ffmHomeGround', look:'牛', x:26, y:12, facing:'left'},   // (inside the pen, leaving its gateway clear: decided 6 November 2026)
+    {id:'calf', place:'ffmHomeGround', look:'牛', small:true, x:25, y:13, facing:'up'},   // (born while you were away)
     // the little demons left on the home ground (till you've chased each off), and on the demon's mountain, the guards at his
     // cave's door and the Demon of Havoc himself (in the hut till he comes out, and once he's run off for good)
     {id:'d1', place:'ffmHomeGround', look:'妖怪', x:4, y:9, facing:'left', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{news:0}, place:'hut', x:15, y:0}, {if:{d1:1}, place:'hut', x:15, y:0}]},
