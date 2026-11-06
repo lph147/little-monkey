@@ -411,11 +411,35 @@ function seaBase(g, X, Y, x, y){
   for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x,y,i+190)*13), py = Math.floor(rnd(x,y,i+200)*15); R(g, X+px, Y+py, 3, 1, '#3A80BE'); }
   if (y > 0 && tileAt(x, y-1).look === 'sand'){ R(g, X, Y, T, 2, '#5E9FD2'); R(g, X, Y, T, 1, '#CFE9F7'); }   // where it laps the sand
 }
+// A pond's or a stream's banks curving round where they turn, not a square corner (the art review, decided 6 November 2026):
+// at each corner of a square of water with dry ground on both sides of it, the ground comes into the corner, round a
+// quarter circle, with the bank along the curve. The ground there is the square beside it's (grass under a bush, flowers
+// or long grass, so a corner never shows a scrap of them).
+const BANK_ROUND = 5, WET_TOO = ['moonWater'], OVER_WATER = ['plankH', 'plankV'];   // (the radius of the curve; water that isn't WATERY, such as the moon in the cave's pool; and walkways across a stream, as on the cliff road, which it runs on under)
+function roundBanks(g, X, Y, x, y){
+  const dry = (a, b) => { const l = tileAt(a, b).look; return !(a < 0 || b < 0 || a >= COLS || b >= ROWS) && !WATERY.includes(l) && !WET_TOO.includes(l) && !OVER_WATER.includes(l); };
+  for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]){
+    if (!dry(x + sx, y) || !dry(x, y + sy)) continue;
+    const land = tileAt(x + sx, y).look, ground = GRASSY.includes(land) && !['needles', 'pine', 'deadPine'].includes(land) ? LOOKS.grass : LOOKS[land] || LOOKS.grass;
+    const cx = sx < 0 ? X + BANK_ROUND : X + T - BANK_ROUND, cy = sy < 0 ? Y + BANK_ROUND : Y + T - BANK_ROUND;
+    g.save(); g.beginPath();
+    for (let py = 0; py < BANK_ROUND; py++) for (let px = 0; px < BANK_ROUND; px++){
+      const gx = sx < 0 ? X + px : X + T - 1 - px, gy = sy < 0 ? Y + py : Y + T - 1 - py;
+      if (Math.hypot(gx + .5 - cx, gy + .5 - cy) > BANK_ROUND - .5) g.rect(gx, gy, 1, 1);
+    }
+    g.clip(); ground(g, X, Y, x, y); g.restore();
+    for (let a = 0; a <= 90; a += 6){   // the bank, following the curve: dark, and lit where the light catches it
+      const t = a * Math.PI / 180, px = Math.round(cx + sx * Math.cos(t) * (BANK_ROUND - 1) - (sx > 0 ? 1 : 0)), py = Math.round(cy + sy * Math.sin(t) * (BANK_ROUND - 1) - (sy > 0 ? 1 : 0));
+      R(g, px, py, 1, 1, '#2C6B9E');
+      if (sy < 0 || sx < 0) R(g, px - sx, py - sy, 1, 1, '#8ACFF0');
+    }
+  }
+}
 function waterBase(g, X, Y, x, y){
   R(g, X, Y, T, T, '#3F8FCB');
   for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x,y,i+120)*14), py = Math.floor(rnd(x,y,i+130)*16); R(g, X+px, Y+py, 2, 1, '#367FB8'); }
   [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy]) => {
-    if (WATERY.includes(tileAt(x+dx, y+dy).look) || (x+dx < 0 || x+dx >= COLS || y+dy < 0 || y+dy >= ROWS)) return;
+    if (WATERY.includes(tileAt(x+dx, y+dy).look) || WET_TOO.includes(tileAt(x+dx, y+dy).look) || (x+dx < 0 || x+dx >= COLS || y+dy < 0 || y+dy >= ROWS)) return;   // (no bank against the moon in the cave's pool, which is water too)
     if (dy === -1){ R(g, X, Y, T, 2, '#2C6B9E'); R(g, X, Y+2, T, 1, '#8ACFF0'); }
     if (dy === 1){ R(g, X, Y+14, T, 2, '#2C6B9E'); }
     if (dx === -1){ R(g, X, Y, 2, T, '#2C6B9E'); R(g, X+2, Y, 1, T, '#8ACFF0'); }
@@ -798,25 +822,28 @@ function grapeCliff(g, X, Y, x, y){
   for (let i = 0; i < 16; i += 3) R(g, X + 8 + Math.round(Math.sin(i / 3 + x) * 2), Y + i, 1, 2, '#4E6E25');   // the vine
   grapes(g, X + 2, Y + 6 + (x % 2) * 3); if ((x + y) % 2) grapes(g, X + 10, Y + 9);
 }
-// The hot spring valley: hot pools, blue-green, with a pale crust of minerals round their edges and their outer corners
-// rounded off, grass showing in them (the steam over them, and puffing out of the vents, is drawn as you play: drawSteam,
-// js/draw.js); steam vents, crusted holes in the path; ferns.
+// The hot spring valley: hot pools in the rock, blue-green, edged with rounded stones where they meet the grass, with wisps
+// of steam over the water (the art review, decided 6 November 2026: a cream border all round made them swimming pools; the
+// steam over them, and puffing out of the vents, is drawn as you play: drawSteam, js/draw.js); steam vents, crusted holes
+// in the path; ferns.
 function hotPool(g, X, Y, x, y){
-  R(g, X, Y, T, T, '#56BDB2');
-  for (let i = 0; i < 4; i++){ const px = Math.floor(rnd(x, y, i + 620) * 14), py = Math.floor(rnd(x, y, i + 630) * 16); R(g, X + px, Y + py, 2, 1, '#7FD6CB'); }
-  const pool = (a, b) => tileAt(a, b).look === 'hotPool';
-  if (!pool(x, y - 1)){ R(g, X, Y, T, 3, '#E9DDB8'); R(g, X, Y + 3, T, 1, '#C79A5A'); }
-  if (!pool(x, y + 1)){ R(g, X, Y + 13, T, 3, '#E9DDB8'); R(g, X, Y + 12, T, 1, '#3E9E94'); }
-  if (!pool(x - 1, y)){ R(g, X, Y, 3, T, '#E9DDB8'); R(g, X + 3, Y, 1, T, '#C79A5A'); }
-  if (!pool(x + 1, y)){ R(g, X + 13, Y, 3, T, '#E9DDB8'); R(g, X + 12, Y, 1, T, '#3E9E94'); }
-  const corner = (cx, cy, sx, sy) => {
-    for (const [a, b] of [[0,0],[1,0],[2,0],[3,0],[0,1],[1,1],[0,2],[0,3]]) R(g, cx + a*sx, cy + b*sy, 1, 1, '#7CC46B');
-    for (const [a, b] of [[4,0],[2,1],[3,1],[1,2],[1,3],[0,4]]) R(g, cx + a*sx, cy + b*sy, 1, 1, '#E9DDB8');
-  };
-  if (!pool(x, y - 1) && !pool(x - 1, y)) corner(X, Y, 1, 1);
-  if (!pool(x, y - 1) && !pool(x + 1, y)) corner(X + 15, Y, -1, 1);
-  if (!pool(x, y + 1) && !pool(x - 1, y)) corner(X, Y + 15, 1, -1);
-  if (!pool(x, y + 1) && !pool(x + 1, y)) corner(X + 15, Y + 15, -1, -1);
+  const pool = (a, b) => tileAt(a, b).look === 'hotPool', [up, down, left, right] = [[0, -1], [0, 1], [-1, 0], [1, 0]].map(([a, b]) => !pool(x + a, y + b));
+  R(g, X, Y, T, T, '#4FB3A9');
+  for (let i = 0; i < 4; i++) R(g, X + Math.floor(rnd(x, y, i + 620) * 13), Y + Math.floor(rnd(x, y, i + 630) * 15), 3, 1, '#86D9CE');   // light on the water
+  const stone = (cx, cy, rx, ry) => { blob(g, cx, cy + 1, rx, ry, '#4E4A42'); blob(g, cx, cy, rx, ry, '#8C867A'); blob(g, cx - 1, cy - 1, Math.max(1, rx - 2), Math.max(1, ry - 1), '#B3AC9E'); };
+  if (up){ R(g, X, Y, T, 3, '#7CC46B'); R(g, X, Y + 3, T, 1, '#3E9E94'); }   // grass where it meets the ground, and the water's shaded edge
+  if (down) R(g, X, Y + 13, T, 3, '#7CC46B');
+  if (left){ R(g, X, Y, 3, T, '#7CC46B'); R(g, X + 3, Y, 1, T, '#3E9E94'); }
+  if (right) R(g, X + 13, Y, 3, T, '#7CC46B');
+  const n = (a, b, k) => Math.floor(rnd(x * 5 + a, y * 7 + b, 640 + k) * 3);   // (each stone a little out of line)
+  if (up) for (let i = 0; i < 3; i++) stone(X + 3 + i * 5 + n(1, 0, i), Y + 3, 3, 2);   // and rounded stones along it
+  if (down) for (let i = 0; i < 3; i++) stone(X + 3 + i * 5 + n(2, 0, i), Y + 13, 3, 2);
+  if (left) for (let i = 0; i < 3; i++) stone(X + 3, Y + 3 + i * 5 + n(3, 0, i), 2, 3);
+  if (right) for (let i = 0; i < 3; i++) stone(X + 13, Y + 3 + i * 5 + n(4, 0, i), 2, 3);
+  if (rnd(x, y, 649) < .35) for (let k = 0; k < 2; k++){   // wisps of steam
+    const sx = X + 4 + Math.floor(rnd(x, y, 650 + k) * 8), sy = Y + 5 + Math.floor(rnd(x, y, 660 + k) * 6);
+    R(g, sx, sy, 1, 2, 'rgba(255,255,255,.55)'); R(g, sx + 1, sy - 2, 1, 2, 'rgba(255,255,255,.4)'); R(g, sx, sy - 4, 1, 2, 'rgba(255,255,255,.25)');
+  }
 }
 function vent(g, X, Y, x, y){
   path(g, X, Y, x, y);
@@ -1161,7 +1188,7 @@ const LOOKS = {
   dairyCheese:(g,X,Y,x,y) => grass(g,X,Y,x,y),       // and cheese
   swarm:     (g,X,Y,x,y) => path(g,X,Y,x,y),         // a swarm of bees in the way, on sandy ground (the bees: js/draw.js)
 
-  water:     (g,X,Y,x,y) => waterBase(g,X,Y,x,y),
+  water:     (g,X,Y,x,y) => { waterBase(g,X,Y,x,y); roundBanks(g,X,Y,x,y); },
   // clear, shallow water, pebbles showing on its bottom, where shrimp live (drawn in it: animTile, js/draw.js)
   sand:      (g,X,Y,x,y) => sand(g,X,Y,x,y),
   sea:       (g,X,Y,x,y) => seaBase(g,X,Y,x,y),   // its waves are animated in js/draw.js
@@ -1174,7 +1201,7 @@ const LOOKS = {
   shallows:  (g,X,Y,x,y) => { waterBase(g,X,Y,x,y); R(g, X, Y, T, T, 'rgba(150,225,235,.42)');
     for (let i = 0; i < 4; i++){ const px = 1 + Math.floor(rnd(x,y,i+140)*12), py = 1 + Math.floor(rnd(x,y,i+150)*13), c = ['#A89F8C','#C2B9A6','#8E8574'][i%3];
       R(g, X+px, Y+py, 3, 2, c); R(g, X+px, Y+py, 2, 1, 'rgba(255,255,255,.35)'); }
-    R(g, X, Y, T, T, 'rgba(90,175,215,.28)'); },   // ripples are animated in js/draw.js
+    R(g, X, Y, T, T, 'rgba(90,175,215,.28)'); roundBanks(g,X,Y,x,y); },   // ripples are animated in js/draw.js
   waterfall: (g,X,Y,x,y) => waterBase(g,X,Y,x,y),   // the falling water is animated in js/draw.js
   ironBridge:(g,X,Y,x,y) => {   // an iron bridge across a stream
     waterBase(g,X,Y,x,y);

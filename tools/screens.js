@@ -1185,7 +1185,7 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'riverside-north', title: 'The way up the brook', save: 'riversideNorth', why: 'Once the garden begins, the troop clears the bushes beside the riverside’s brook, at the top: the way up it to the hot spring valley.', run: async () => {
     play(); await wait(500); }},
-  {id: 'springs', title: 'The hot spring valley (温泉谷)', save: 'springs', why: 'A warm, sheltered valley: steaming blue-green pools with a pale crust round them, ferns, the warm brook, and two monkeys of the troop bathing.', run: async () => {
+  {id: 'springs', title: 'The hot spring valley (温泉谷)', save: 'springs', why: 'A warm, sheltered valley: steaming blue-green pools in the rock, edged with rounded stones, ferns, the warm brook, and two monkeys of the troop bathing.', run: async () => {
     play(); await wait(900); }},
   {id: 'springs-steam', title: 'Steam!', save: 'springsVent', why: 'On the narrow way between the big pools, steam puffs out of the ground, one row and then the other: step onto it and it’s too hot; wait, and go.', run: async () => {
     play(); while (!puffing(13, 9)) await wait(40); await wait(250); tryStep('up', performance.now()); await wait(150); }},

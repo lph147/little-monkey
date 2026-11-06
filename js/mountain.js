@@ -20,13 +20,20 @@ Object.assign(HANZI, {   // the tablets' characters: 灵台方寸山 and 斜月�
 const KARST = {top:'#B9C2C6', topDk:'#A3ADB2', topLt:'#D3DADC', face:'#9AA5AB', faceDk:'#7C878E', faceLt:'#C2CBCF', moss:'#6F8F5E', shade:'#5E676D'};
 const ROCKY = ['karstTop', 'karstFace', 'chainFace', 'stoneDoor', 'twistedPine'];
 const FACES = ['karstFace', 'chainFace', 'stoneDoor'];
-// A sea of clouds, seen from above, where the mountain falls away: pale, its puffs each kept inside its own square.
+// A sea of clouds, seen from above, where the mountain falls away: long soft wisps drifting across, as below a mountain in a
+// Chinese painting, running on from square to square (the art review, decided 6 November 2026: round puffs looked like
+// bubble wrap). Each wisp belongs to a band of the sea, not a square, so it carries on into the next; each square draws
+// its own part of them.
 function cloudSea(g, X, Y, x, y){
   g.save(); g.beginPath(); g.rect(X, Y, T, T); g.clip();
-  R(g, X, Y, T, T, '#DCE6EE');
-  for (let i = 0; i < 4; i++){
-    const cx = X + Math.floor(rnd(x, y, 700 + i) * 16), cy = Y + Math.floor(rnd(x, y, 710 + i) * 16), r = 3 + Math.floor(rnd(x, y, 720 + i) * 4);
-    oval(g, cx, cy + 1, r + 1, Math.max(2, r - 1), '#C3D0DC'); oval(g, cx, cy, r, Math.max(2, r - 1), '#F4F7FA');
+  R(g, X, Y, T, T, '#D8E2EB');
+  for (let r = Math.floor(Y / 5) - 1; r <= Math.floor((Y + T) / 5); r++){   // a band every five pixels down
+    const ry = r * 5 + (r % 2);
+    for (let s = Math.floor((X - 40) / 26); s <= Math.floor((X + T) / 26); s++){   // and in it, a wisp every 26 pixels or so, some missing
+      if (rnd(s, r, 901) < .35) continue;
+      const sx = s * 26 + Math.floor(rnd(s, r, 902) * 10), len = 12 + Math.floor(rnd(s, r, 903) * 22);
+      R(g, sx + 1, ry + 2, len - 2, 1, '#C3CFDB'); R(g, sx, ry + 1, len, 1, '#EAF0F5'); R(g, sx + 2, ry, len - 4, 1, '#F7F9FB');
+    }
   }
   g.restore();
 }
