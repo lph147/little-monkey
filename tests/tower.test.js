@@ -126,3 +126,17 @@ test('the one you talk to stops to look at you; the other carries on, putting on
   assert.equal(g.run(`${tower('towerL')}.dir`), 'down', 'it turns to you');
   assert.ok(g.run(`playing(${tower('towerL')})`), 'and goes back to the tower after');
 });
+
+test('with nobody there to build it, such as the troop hiding in the human world’s chapter 2, its stones just lie still on the ground (7 November 2026, after playing it: they stacked themselves up)', () => {
+  const drawn = (g, X, Y, at) => get(g, `(() => { const out = [], was = towerStone; towerStone = (x, y, w) => out.push([x, y, w]); drawTower(${X}, ${Y}, ${at}); towerStone = was; return out; })()`);
+  const g = game();
+  assert.notDeepEqual(drawn(g, 0, 0, 1000), drawn(g, 0, 0, 2700), 'with its two little monkeys there, the tower goes up');
+  g.run("NPCS = NPCS.filter(n => PLAYS[n.id] !== 'tower')");
+  const still = drawn(g, 0, 0, 1000);
+  assert.equal(still.length, 6, 'all its stones, on the ground');
+  for (const at of [2700, 5300, 9100, 20000]) assert.deepEqual(drawn(g, 0, 0, at), still, 'and they never move');
+  const h = loadGame({dom: true, save: {version: 34, started: true, area: 2, areas: {1: {chapter: 1, raft: 3, done: true}, 2: {chapter: 2, sentHome: 1}}, pos: {place: 'ffmHomeGround', x: 13, y: 11, dir: 'down'}}});
+  h.run("mode = 'play'; save = () => {}; placePlayer()");
+  const [x, y] = get(h, "(() => { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).look === 'stoneTower') return [x, y]; return null; })()");
+  assert.deepEqual(drawn(h, x * 16, y * 16, 1000), drawn(h, x * 16, y * 16, 2700), 'at home in chapter 2, with everyone hiding, it lies still');
+});

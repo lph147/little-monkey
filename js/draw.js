@@ -88,6 +88,9 @@ function towerStone(x, y, w){   // a stone w wide, its middle at x, its top at y
   R(b, l + 1, y + 1, 1, 1, GREY[4]);   // (a glint)
 }
 function drawTower(X, Y, now){
+  // with nobody here to build it, such as when the troop is hiding in the human world's chapter 2, its stones just lie
+  // where they fell (decided 7 November 2026, after playing it: they stacked themselves up with nobody there)
+  if (!NPCS.some(c => PLAYS[c.id] === 'tower')){ TOWER_LANDS.forEach(([dx, dy], i) => towerStone(X + 8 + dx, Y + 12 + dy, TOWER_WIDE[i])); return; }
   const t = towerAt(now);
   if (t.phase === 'build' || t.phase === 'wobble'){
     if (t.stones) R(b, X + 3, Y + 15, 10, 1, 'rgba(0,0,0,.2)');   // its shadow
