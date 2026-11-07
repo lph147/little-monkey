@@ -294,14 +294,26 @@ function drawEating(e, X, Y, now){
   b.globalAlpha = 1;
   if (t > .6) for (let i = 0; i < 2; i++){ const y = Y - 4 - Math.round((t - .6) * 20) - i * 4, x = X + 3 + i * 8; R(b, x, y, 2, 1, '#E0443C'); R(b, x + 3, y, 2, 1, '#E0443C'); R(b, x, y + 1, 5, 1, '#E0443C'); R(b, x + 1, y + 2, 3, 1, '#E0443C'); R(b, x + 2, y + 3, 1, 1, '#E0443C'); }
 }
-function drawForm(w, X, Y, now){
-  const ms = MAP_SPRITES[w], pic = PICTURES[w];
-  const c = FORMS[w] || (FORMS[w] = ms ? sprite(ms.rows, ms.palette) : pic ? sprite(pic.rows, pic.palette) : null);
+function drawForm(w, X, Y, now, step = 0, dir = 'down'){
+  const def = MAP_SPRITES[w];
+  if (def){   // something with a map picture of its own, such as a little demon or a cat: as the map's own are drawn, turned the way you face, its legs stepping as you walk (decided 7 November 2026, after playing it: it slid along, your monkey poking out under it)
+    if (dir === 'left' || dir === 'right') formSide = dir;
+    const spr = mapSprite(w), img = def.faces && (formSide || def.faces) !== def.faces ? mirrored(spr) : spr;
+    figureShadow(w, X, Y, .2);
+    const x0 = X - (img.width - T) / 2, y0 = Y - (img.height - T);
+    if (!step){ b.drawImage(img, x0, y0); return; }
+    const iw = img.width, ih = img.height, legs = legsFrom(w), half = iw / 2, k = step === 1 ? 1 : -1;
+    b.drawImage(img, 0, 0, iw, legs, x0, y0 - 1, iw, legs);   // its body, a pixel up as it steps
+    b.drawImage(img, 0, legs, half, ih - legs, x0 - k, y0 - 1 + legs, half, ih - legs);   // its legs, swinging in turn
+    b.drawImage(img, half, legs, half, ih - legs, x0 + half + k, y0 - 1 + legs, half, ih - legs);
+    return;
+  }
+  const pic = PICTURES[w], c = pic && (FORMS[w] || (FORMS[w] = sprite(pic.rows, pic.palette)));
   if (!c) return;
   R(b, X + 2, Y + 14, 12, 2, 'rgba(0,0,0,.25)');
-  if (ms) b.drawImage(c, X - (c.width - 16) / 2, Y - (c.height - 16), c.width, c.height);
-  else b.drawImage(c, X - 3, Y - 6, 22, 22);
+  b.drawImage(c, X - 3, Y - 6 - (step ? 1 : 0), 22, 22);   // (something with no legs, such as a pine: a little hop as it goes)
 }
+let formSide = null;   // (the way a form that faces one way, such as a cat, was last turned: left or right)
 function drawPuff(X, Y, p){
   b.globalAlpha = 1 - p;
   for (let i = 0; i < 7; i++){ const a = i / 7 * Math.PI * 2, r = 4 + p * 9; oval(b, Math.round(X + 8 + Math.cos(a) * r), Math.round(Y + 8 + Math.sin(a) * r * .8), 4, 3, i % 2 ? '#F2F2EE' : '#D6D8DC'); }
@@ -1001,7 +1013,8 @@ function drawWorld(now){
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
-      if (acting && ACTS[acting.kind]) ACTS[acting.kind](PX, PY, now, acting);   // doing something: sweeping, filling a bucket, lifting a sack, turning a key, picking fruit
+      if (pl.form) drawForm(pl.form, PX, PY, now, mid ? 1 + pl.parity : 0, pl.dir);   // turned into something (the turnInto step): only it, in your place, walking as you go, never your monkey under it
+      else if (acting && ACTS[acting.kind]) ACTS[acting.kind](PX, PY, now, acting);   // doing something: sweeping, filling a bucket, lifting a sack, turning a key, picking fruit
       else if (swing && now - swing.t0 < SWING_MS){ if (swing.with === '斧头') drawChop(pl.dir, PX, PY, swing.t0, now); else drawSwing('player', pl.dir, PX, PY, swing.t0, now, HELD[swing.with] ? swing.with : undefined); }   // chopping with the axe, or swinging your stick (the hit step)
       else {
         if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir);
@@ -1009,7 +1022,6 @@ function drawWorld(now){
         else drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
       }
       if (pl.eating) drawEating(pl.eating, PX, PY, now);   // eating a meal (the eat step)
-      if (pl.form) drawForm(pl.form, PX, PY, now);   // turned into something (the turnInto step: drawn over you, in your place)
       if (now - puffAt < PUFF_MS) drawPuff(PX, PY, (now - puffAt) / PUFF_MS);
       if (fishing){   // your line in the water (js/fishing.js), and a ! when a fish bites
         drawRod(PX, PY, pl.dir, now, !!fishing.bite && !fishing.hooked);

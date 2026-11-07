@@ -854,6 +854,9 @@ const ACROSS_THE_SEA = {
       {message:'Flower Fruit Mountain, after twenty years! Your stone, the meadow, the river… But it’s very quiet. Then you hear someone crying.'}]},
     // back from the cave with the news: a little demon on the home ground stops you
     {if:{place:'ffmHomeGround', news:1, d1:0, around:[4, 9, 'ffmHomeGround', 2]}, do:[{stopsYou:'d1'}]},
+    // the old monkey, following you out of the cave after his news (decided 7 November 2026, after playing it: he just
+    // appeared at the home ground), sits down on his stool by the big table as you come past it
+    {if:{place:'ffmHomeGround', following:{elder:true}, around:[16, 8, 'ffmHomeGround', 2]}, do:[{follow:[]}, {message:'The old monkey sits down on his stool by the big table, to watch.'}]},
     // the demon's mountain, the first time
     {if:{place:'lair', lairSeen:0}, do:[{set:{lairSeen:1}},
       {message:'The Demon of Havoc’s mountain: black rock, ash and dead pines. Up at the top, torches burn in front of a dark cave…'}]},
@@ -1922,7 +1925,8 @@ const ACROSS_THE_SEA = {
       away:'The senior pupil bows to you. You’ve won the big match!', lost:'The senior pupil helps you up out of the snow. Try again!'},
     spar: {name:{zh:'师兄', py:'shīxiōng', en:'A pupil'}, person:'darePupil', health:30, hits:5, attacks:['房子', '门', '松树', '天', '桶'], meet:'The pupil bows, and raises his staff.',
       hide:'The pupil leaps out of sight…', attack:'The pupil swings his staff at you!', away:'The pupil bows to you, laughing: you win!', lost:'The pupil bows: he wins this time.', reward:0},
-    demon: {word:'妖怪', health:30, hits:8, attacks:['火', '松树', '叶子', '云', '天'], meetNote:'A little demon jumps out at you, waving its spear!', meet:'A little {妖怪} jumps out at you!',
+    // a little demon: never one you can run from (boss; decided 7 November 2026, after playing it)
+    demon: {word:'妖怪', health:30, hits:8, boss:true, attacks:['火', '松树', '叶子', '云', '天'], meetNote:'A little demon jumps out at you, waving its spear!', meet:'A little {妖怪} jumps out at you!',
       hide:'The little {妖怪} ducks out of sight…', attack:'The little {妖怪} jabs at you with its spear!', away:'The little {妖怪} runs off, squealing.', reward:2},
     king: {name:{zh:'混世魔王', py:'Hùnshì Mówáng', en:'Demon of Havoc'}, pic:'混世魔王', health:80, hits:10, boss:true, bossFight:true, big:true, nameCard:true, song:'boss', cry:'HA HA HA!',
       says:{meet:'notScared', angry:'goAway', beaten:'imGoing'},
@@ -2513,10 +2517,10 @@ const ACROSS_THE_SEA = {
       {if:{new:'好久不见'}, do:[{message:'The old monkey hides his face. Find the others first: up at the home ground.'}]},
       {if:{new:'老'}, do:[{say:'longTime'}, {reply:'好久不见'}, {say:'iAmOld', teach:'老'}, {newWord:'老', note:'老 means old. Twenty years have gone by: the old monkey’s fur is white now, and he leans on a stick.'},
         {message:'A demon came from far away: the Demon of Havoc (混世魔王 Hùnshì Mówáng). His little demons carried off the troop’s little ones, and everything on the feast’s tables!'},
-        {set:{news:1}}, {message:'Some of his little demons are still on the home ground. Chase them off!'}]},
+        {set:{news:1}}, {message:'Some of his little demons are still on the home ground. Chase them off! The old monkey comes with you, leaning on his stick.'}, {follow:['elder']}]},
       {if:{d3:0}, do:[{say:'iAmOld'}, {message:'Chase the little demons off the home ground!'}]},
       // the little demons chased off: the Demon of Havoc lives in the north; fly there, on your cloud
-      {if:{north:0}, do:[{say:'demonNorth'}, {message:'Far to the north, over the mountains, is the Demon of Havoc’s home. Call your cloud, and fly north to find the little ones!'},
+      {if:{north:0}, do:[{follow:[]}, {say:'demonNorth'}, {message:'Far to the north, over the mountains, is the Demon of Havoc’s home. Call your cloud, and fly north to find the little ones!'},
         {set:{north:1}}, {scene:'flyNorth'}, {goTo:'lair', at:[14, 18], facing:'up'}]},
       {if:{king:{below:2}}, do:[{say:'demonNorth'}, {message:'Fly north on your cloud: it’s waiting on the grass, south of the path.'}]},
       // home with the little ones: a king needs a real weapon, and the Dragon King has the finest; the end of Area 2

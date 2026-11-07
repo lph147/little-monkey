@@ -868,6 +868,7 @@ rt.hid{visibility:hidden}
 .act .e{font:.75rem var(--pixel);color:var(--jade);text-align:center}
 .hud{position:absolute;left:14px;top:14px;display:flex;gap:3px;padding:4px 6px;background:rgba(14,26,51,.75);border-radius:6px;z-index:4;pointer-events:none}
 .hud[hidden]{display:none}
+.saybox.top:not([hidden]) ~ .hud{display:none}   /* a message at the top of the screen goes over where your health is: it comes back as the message goes (decided 7 November 2026, after playing it: they overlapped) */
 .screen:has(> .talk.top:not([hidden])) > .hud{top:auto;bottom:14px}   /* (with the speech box at the top, your health goes to the bottom corner, not under it) */
 .hud .hp{margin:0;gap:6px}
 .hud .hpbar{min-width:90px;border-color:#0B1410}

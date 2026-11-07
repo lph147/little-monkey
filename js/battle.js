@@ -163,7 +163,7 @@ async function fight(id, opts = {}){
           sc.querySelector('.fx').textContent = power ? `Power hit! ×${POWER}` : ok ? 'Hit!' : 'Miss!';
           if (ok){ left = Math.max(stagesLeft() ? 1 : 0, left - weaponHits() * (power ? POWER : 1)); setHealth(sc.querySelector('.plate'), left, f.health); SFX.thwack(power ? .5 : .2); } else SFX.swish(.1);   // (never beaten before its stages have all happened)
           if (power) shake();
-          fb.innerHTML += power ? ' <b>A power hit!</b>' : ok ? ' <b>A hit!</b>' : ' You miss.';
+          fb.innerHTML += power ? '<br><b>A power hit!</b>' : ok ? '<br><b>A hit!</b>' : '<br>You miss.';   // (on a line of its own, never read on from the word's English: “fur A hit!”, decided 7 November 2026)
           streak = ok && !power ? streak + 1 : 0; showStreak(sc, streak);
         }});
       if (!ok) note = `${cap(foeThe(f))} dodges.`;
@@ -238,11 +238,11 @@ async function dodge(f, head, note, after = () => {}, nth = null){   // (nth: [t
       SFX.swish(.25);
       const lb = sheet.querySelector('.label'); lb.style.minHeight = lb.offsetHeight + 'px'; lb.textContent = strikes;   // it strikes! (the line kept as tall, so nothing under it moves)
       after(ok, sc);
-      if (ok) fb.innerHTML += ' <b>You jump aside!</b>';
+      if (ok) fb.innerHTML += '<br><b>You jump aside!</b>';
       else {
         S.health = Math.max(0, health() - f.hits); save(); SFX.thwack(.5);
         setHealth(sc.querySelector('.plate.mine'), health(), maxHealth());
-        fb.innerHTML += ' <b>Ouch!</b>';
+        fb.innerHTML += '<br><b>Ouch!</b>';
       }
     }});
 }

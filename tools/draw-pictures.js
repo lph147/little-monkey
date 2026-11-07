@@ -1141,9 +1141,26 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(16, 14.4, 1.2, .8), '#F2A0A8');                                                  // nose
     p.flat(or(path([[4, 13], [10, 14]], .3), path([[4, 16], [10, 15]], .3), path([[22, 14], [28, 13]], .3), path([[22, 15], [28, 16]], .3)), '#F4F1EA');   // whiskers
   },
-  '风': p => {   // wind: swirling gusts, and leaves blown along on them
-    for (const [y, r] of [[8, 9], [16, 11], [24, 8]]) p.fill(path([[2, y], [8, y - 1.6], [16, y], [16 + r * .6, y - 2], [16 + r * .8, y - 5], [16 + r * .4, y - 6.4], [16 + r * .1, y - 4.6]], 1), '#CFE9F7', {light: '#FFFFFF', dark: '#8FC0DE'});
-    for (const [x, y, c] of [[26, 22, '#E07B39'], [22, 28, '#D9B03A'], [29, 9, LEAF]]) p.fill(O(x, y, 2.6, 1.6), c, {edge: true});   // leaves
+  '风': p => {   // wind: three bold gusts sweeping across, each curling up and over at its end, and leaves blown along on them
+    // (decided 7 November 2026, after playing it: thin pale lines with round dots didn't read as wind)
+    const gust = (x0, x1, y, r) => {   // a gust: a long wavy stroke, then an open hook curling up and back over it (closed, it looked like an eye)
+      const pts = [];
+      for (let x = x0; x <= x1; x += 2) pts.push([x, y + Math.sin((x - x0) / 4) * .6]);
+      for (let t = 0; t <= Math.PI * 1.2; t += .25){ const a = Math.PI / 2 - t; pts.push([x1 + Math.cos(a) * r, y - r + Math.sin(a) * r]); }
+      return path(pts, 1.1);
+    };
+    const leaf = (cx, cy, len, wid, ang, c) => {   // a leaf, pointed at both ends, turned (ang), with its middle vein
+      const ux = Math.cos(ang), uy = Math.sin(ang), at = (u, v) => [cx + ux * u - uy * v, cy + uy * u + ux * v];
+      p.fill(Pg([at(len / 2, 0), at(len / 5, wid / 2), at(-len / 5, wid / 2), at(-len / 2, 0), at(-len / 5, -wid / 2), at(len / 5, -wid / 2)]), c, {edge: true});
+      p.flat(Cp(...at(-len / 2 + .5, 0), ...at(len / 2 - 1, 0), .35), mix(c, '#000000', .3));
+    };
+    const W = '#F4FAFF', WL = {light: '#FFFFFF', dark: '#86BCE2'};
+    p.fill(gust(1, 15, 7.5, 3), W, WL);
+    p.fill(gust(0, 24, 15.5, 3.6), W, WL);
+    p.fill(gust(4, 17, 24.5, 3), W, WL);
+    leaf(26, 5, 9, 4.6, .55, '#E07B39');   // leaves, tumbling along
+    leaf(27, 24, 9.5, 4.8, -.45, '#5BB451');
+    leaf(9, 29.5, 7.5, 3.8, -.1, '#D9B03A');
   },
   '云': p => {   // cloud: one big puffy white cloud, shaded blue-grey underneath (unlike the sky: no blue around it)
     const W = '#FAFCFF', LT = {light: '#FFFFFF', dark: '#C6D4E4'};

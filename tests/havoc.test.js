@@ -97,8 +97,10 @@ test('chapter 2, from landing by your stone to the end of Area 2', async () => {
   assert.deepEqual(said(g), ['elder: 好久不见！', 'player: 好久不见', 'elder: 我老了。']);
   assert.ok(notes(g).includes('card: 老'));
   assert.equal(p(g, 'news'), 1);
+  assert.deepEqual(get(g, 'S.following'), ['elder'], 'the old monkey comes with you, out of the cave (decided 7 November 2026: he just appeared at the home ground)');
   // Part 2, the little demons: one stops you on the home ground (妖怪); chase off all three
   await goTo(g, 'ffmHomeGround', 1, 9, 'right');
+  assert.deepEqual(get(g, 'FOLLOWERS.map(n => [n.id, n.place])'), [['elder', 'ffmHomeGround']], 'still with you, at the home ground');
   assert.equal(get(g, 'partNow().id'), 'demons');
   ready(g); notes(g);
   await stand(g, 2, 9, 'right');
@@ -106,6 +108,11 @@ test('chapter 2, from landing by your stone to the end of Area 2', async () => {
   assert.deepEqual(get(g, '__battles'), ['demon']);
   assert.equal(p(g, 'd1'), 1);
   await press(g, 13, 10, 'right');
+  notes(g);
+  await stand(g, 16, 9, 'right');
+  assert.deepEqual(get(g, 'S.following'), [], 'coming past the big table, he stops following you…');
+  assert.deepEqual(get(g, '(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === "elder"))'), ['ffmHomeGround', 16, 8], '…and sits on his stool by it');
+  assert.ok(notes(g).some(n => /sits down on his stool/.test(n)));
   await press(g, 23, 9, 'right');
   assert.deepEqual([p(g, 'd2'), p(g, 'd3'), g.run('counter("demonsChased")')], [1, 1, 3]);
   assert.equal(g.run('canBattle()'), true, 'little demons in the long grass now, and your stick in your hand');
