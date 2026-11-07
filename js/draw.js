@@ -801,14 +801,14 @@ const ACTS = {
   // head (the lift pose, js/poses.js); then you carry it about (drawCarrying)
   lift(PX, PY, now, a){
     const m = now - a.t0 < LIFT.up * .45 ? 'low' : 'high', [x, y] = poseSprite('lift', a.dir, m).load;
-    (LIFTED[a.what] || LIFTED.sack)(PX + x, PY + y);   // (it first: your paws and your head over its edges)
+    (liftedPic(a.what) || LIFTED.sack)(PX + x, PY + y);   // (it first: your paws and your head over its edges)
     drawPose('lift', a.dir, m, PX, PY);
   },
   // putting it down: lowered from over your head as you lean to set it down in front of you, such as on the boat's deck,
   // where it'll stay (putDownAt)
   putDown(PX, PY, now, a){
     const k = Math.min(1, (now - a.t0) / PUT.down), [hx, hy] = poseSprite('lift', a.dir, 'high').load, [x, y] = a.to || putDownAt(a), tx = x - pl.px + PX, ty = y - pl.py + PY;
-    (LIFTED[a.what] || LIFTED.sack)(Math.round(lerp(PX + hx, tx, ease(k))), Math.round(lerp(PY + hy, ty, ease(k))));
+    (liftedPic(a.what) || LIFTED.sack)(Math.round(lerp(PX + hx, tx, ease(k))), Math.round(lerp(PY + hy, ty, ease(k))));
     drawPose('lift', a.dir, k < .5 ? 'high' : 'set', PX, PY);
   },
   // turning a key in a lock: you step up to it and reach out, the key in your paw, into the lock (the key pose, js/poses.js);
@@ -849,8 +849,10 @@ function drawActFx(cx, cy, now){
     if (c) b.drawImage(c, Math.round(lerp(fx - 5, pl.px + x - 5, k) - cx), Math.round(lerp(fy - 5, pl.py + y - 5, k * k) - cy), 10, 10);
   }
 }
-// What you can carry over your head (the lift step), each drawn by the middle of its bottom (x, y), on the screen.
+// What you can carry over your head (the lift step), each drawn by the middle of its bottom (x, y), on the screen: a sack,
+// or anything with a word's picture, such as the troop's bowls, taken off the cart at home (the unload step).
 const LIFTED = {sack:(x, y) => sackPic(x - 4, y - 11)};
+const liftedPic = what => LIFTED[what] || (what && PICTURES[what] ? (x, y) => b.drawImage(itemPic(what), x - 6, y - 12, 12, 12) : null);
 // Where you put down what you carry (the putDown step: a, its act, the square you face), the middle of its bottom, on the
 // map: on a big object with a deck, such as the docker's boat, its next place there (DECKS, js/human.js), where it'll
 // stay; anywhere else, in front of you, as you set it down.
@@ -865,7 +867,7 @@ function putDownAt(a){
 function drawCarrying(what, PX, PY, dir, step, bob){
   const p = poseSprite('carry', dir, step), [x, y] = p.load;
   R(b, PX+4, PY+15, 8, 1, 'rgba(0,0,0,.22)'); R(b, PX+3, PY+14, 10, 1, 'rgba(0,0,0,.12)');
-  LIFTED[what](PX + x, PY + y - bob);
+  liftedPic(what)(PX + x, PY + y - bob);
   b.drawImage(p.canvas, PX - POSES.O, PY - POSES.O - bob);
 }
 // Ground being marked out (the markOut step): a stake hammered in at each corner of the plot, one by one, as plot() in
@@ -1018,7 +1020,7 @@ function drawWorld(now){
       else if (swing && now - swing.t0 < SWING_MS){ if (swing.with === '斧头') drawChop(pl.dir, PX, PY, swing.t0, now); else drawSwing('player', pl.dir, PX, PY, swing.t0, now, HELD[swing.with] ? swing.with : undefined); }   // chopping with the axe, or swinging your stick (the hit step)
       else {
         if (moving && pl.mv.run) drawRunDust(PX, PY, now, pl.dir);
-        if (LIFTED[here().lifted]) drawCarrying(here().lifted, PX, PY, pl.dir, mid ? 1 + pl.parity : 0, mid ? 1 : 0);   // (carrying something over your head)
+        if (liftedPic(here().lifted)) drawCarrying(here().lifted, PX, PY, pl.dir, mid ? 1 + pl.parity : 0, mid ? 1 : 0);   // (carrying something over your head)
         else drawEntityMonkey('player', PX, PY, pl.dir, now, mid ? 1 : 0, mid ? 1 + pl.parity : 0, 1);
       }
       if (pl.eating) drawEating(pl.eating, PX, PY, now);   // eating a meal (the eat step)
@@ -1042,6 +1044,8 @@ function drawWorld(now){
     if (n.mv && n.mv.run && now - n.mv.t0 < n.mv.dur) drawRunDust(X, Y, now, n.dir);   // (racing you)
     if (n.flies){   // one that flies, such as the queen bee
       drawFlying(n, X, Y, now, n.id.charCodeAt(0));
+    } else if (n.cart){   // a cart, such as the one with the troop's things on it, its wheels turning as you pull it (js/havoc.js)
+      drawCart(n, X, Y, e.c);
     } else if (n.look && MAP_SPRITES[n.look]){   // a character that looks like an animal, such as the wild boar on the path
       drawAnimal(n, X, Y, now, e.c);
     } else if (n.look === 'bird' && n.pecks){   // a bird pecking at what's on its square, such as a wild melon: its head down now and then

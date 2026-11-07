@@ -287,10 +287,10 @@ test('fish jump out of water', () => {
   }
 });
 
-test('characters are drawn as monkeys (with colours), birds or an animal with a map sprite, and sparkle on real words', () => {
+test('characters are drawn as monkeys (with colours), birds, an animal with a map sprite or a cart, and sparkle on real words', () => {
   for (const c of AREA.characters){
     assert.ok(c.look === undefined || ['monkey', 'bird'].includes(c.look) || (c.look === 'swarm' && c.flies) || MAP_SPRITES[c.look], `${c.id} has look "${c.look}"; it can be monkey, bird, a swarm of bees (that flies) or a word with a map sprite`);
-    if (!c.look || c.look === 'monkey') assert.ok(c.palette, `${c.id} is a monkey, so it needs a palette`);
+    if ((!c.look || c.look === 'monkey') && !c.cart) assert.ok(c.palette, `${c.id} is a monkey, so it needs a palette`);   // (a cart, such as the little demons' with the troop's things on it: cartPic, js/havoc.js)
     if (c.word) assert.ok(knownHere(c.word), `${c.id}'s word ${c.word} isn't a word you can collect in ${where}`);
   }
 });
@@ -471,6 +471,7 @@ test('every line is said somewhere', () => {
   const said = new Set([
     ...allSteps().filter(([, s]) => s.say).map(([, s]) => s.say),
     ...allSteps().filter(([, s]) => s.fetch).flatMap(([, s]) => [s.right, s.wrong, ...s.asks.map(a => a.ask)]),   // (fetching things by their word: the fetch step)
+    ...(AREA.unloading ? [AREA.unloading.right, AREA.unloading.wrong, ...AREA.unloading.asks.map(a => a.ask)] : []),   // (unloading a cart, by word: the unload step)
     ...allSteps().filter(([, s]) => s.spy).flatMap(([, s]) => s.things.map(t => t.say)),   // (I spy: the spy step)
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
     ...Object.values(SHOPS).flatMap(sh => [sh.ask, sh.welcome, sh.noProblem]),

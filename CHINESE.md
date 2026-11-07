@@ -639,7 +639,7 @@ check that each is true and simply put.
 | 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 猴子 (Monkey), 小猴子 (Little monkey), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
 | 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman) |  |
 | 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman) |  |
-| 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child), 师姐 (A pupil), 小猴子 (Little monkey) |  |
+| 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child), 师姐 (A pupil) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 货郎 (Peddler) |  |
 | 包子！包子！ | bāozi! bāozi! | Steamed buns! Steamed buns! |  |  |
 | 苹果！桃子！ | píngguǒ! táozi! | Apples! Peaches! | 老板 (Stallholder) |  |
@@ -782,11 +782,10 @@ check that each is true and simply put.
 | 我不怕你！ | wǒ bù pà nǐ! | I’m not scared of you! |  |  |
 | 我走了！ | wǒ zǒu le! | I’m going! |  |  |
 | 我们回家吧！ | wǒmen huíjiā ba! | Let’s go home! |  |  |
-| 我看见我们的碗！ | wǒ kànjiàn wǒmen de wǎn! | I can see our bowls! |  |  |
-| 我看见我们的桃子！ | wǒ kànjiàn wǒmen de táozi! | I can see our peaches! |  |  |
-| 我看见我们的苹果！ | wǒ kànjiàn wǒmen de píngguǒ! | I can see our apples! |  |  |
-| 我看见我们的蜂蜜！ | wǒ kànjiàn wǒmen de fēngmì! | I can see our honey! |  |  |
-| 我看见我们的牛奶！ | wǒ kànjiàn wǒmen de niúnǎi! | I can see our milk! |  |  |
+| 这是我们的！ | zhè shì wǒmen de! | This is ours! | 小妖 (Little demon) |  |
+| 我要碗。 | wǒ yào wǎn. | I want the bowls. |  |  |
+| 我要蜂蜜。 | wǒ yào fēngmì. | I want the honey. |  |  |
+| 我要牛奶。 | wǒ yào niúnǎi. | I want the milk. |  |  |
 
 ### Sentences the player completes (one word missing)
 
@@ -894,6 +893,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 小猴子在笼子里。 | xiǎo hóuzi zài lóngzi lǐ. | The little monkey is in the cage. | 笼子 |  |
 | 猴子有很多毛。 | hóuzi yǒu hěn duō máo. | Monkeys have lots of fur. | 毛 |  |
 | 这是我的刀。 | zhè shì wǒ de dāo. | This is my broadsword. | 刀 |  |
+| 车上有桃子。 | chē shàng yǒu táozi. | There are peaches on the cart. | 车 |  |
 
 ### Scene: the raft drifting
 
@@ -939,11 +939,11 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 变！ | biàn! | Change! |  |
 | 很多小猴子！ | hěn duō xiǎo hóuzi! | Lots of little monkeys! |  |
 
-### Scene: the flight home with the little monkeys
+### Scene: the wind carry everyone home
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
-| 我们回家吧！ | wǒmen huíjiā ba! | Let’s go home! |  |
+| 有风了！ | yǒu fēng le! | The wind’s come! |  |
 | 小猴子们很快乐。 | xiǎo hóuzi men hěn kuàilè. | The little monkeys are so happy. |  |
 | 花果山！ | Huāguǒ Shān! | Flower Fruit Mountain! |  |
 
@@ -1047,6 +1047,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 小妖 | xiǎoyāo | Little demon |  |
 | 小妖 | xiǎoyāo | Little demon |  |
 | 混世魔王 | Hùnshì Mówáng | The Demon of Havoc |  |
+| 小妖 | xiǎoyāo | Little demon |  |
+| 车 | chē | Cart |  |
 | 牌子 | páizi | Sign |  |
 | 海的那边 | hǎi de nàbiān | Across the sea |  |
 | 海边 | hǎibiān | The shore |  |
@@ -1178,6 +1180,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 钥匙 | yàoshi | key |  |
 | 毛 | máo | hair, fur |  |
 | 刀 | dāo | broadsword, knife |  |
+| 车 | chē | cart |  |
 
 ### How words are made
 
@@ -1377,6 +1380,11 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 这是我们的！ | zhè shì wǒmen de! | This is ours! | New on 7 November 2026: the little demon guarding the cart of the troop’s things, as it stops you. Is it natural? |  |
+| 我要碗。 | wǒ yào wǎn. | I want the bowls. | New on 7 November 2026: the hungry monkey, wanting the troop’s bowls taken off the cart, to go back on the feast’s table (and 我要桃子。 我要苹果。, already in the game). Is it natural? |  |
+| 我要蜂蜜。 | wǒ yào fēngmì. | I want the honey. | New on 7 November 2026: the hungry monkey, the same, the honey. Is it natural? |  |
+| 我要牛奶。 | wǒ yào niúnǎi. | I want the milk. | New on 7 November 2026: the hungry monkey, the same, the jug of milk. Is it natural? |  |
+| 车上有桃子。 | chē shàng yǒu táozi. | There are peaches on the cart. | New on 7 November 2026: the example sentence for the new word 车 (cart). Is it natural? |  |
 | 我没有真正的名字。大家都叫我美猴王。 | wǒ méiyǒu zhēnzhèng de míngzi. dàjiā dōu jiào wǒ Měi Hóuwáng. | I don’t have a real name. Everyone calls me Handsome Monkey King. | New on 6 November 2026: your answer when the master asks your name (你叫什么名字？), before he names you 孙悟空; it was 我没有名字。 (I don’t have a name.), which sounded wrong, as everyone calls you 美猴王. Is 真正的名字 natural here, or would 我没有名字，大家都叫我美猴王。 be better? |  |
 | 我饿了！我要牛！ | wǒ è le! wǒ yào niú! | I’m hungry! I want the cow! | New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten |  |
 | 我不怕你！ | wǒ bù pà nǐ! | I’m not scared of you! | New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten |  |

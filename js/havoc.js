@@ -1,9 +1,10 @@
 // The Demon of Havoc's look (Area 2, chapter 2, decided 5 November 2026 from the plan's mock-ups): his mountain far to the
 // north, gloomy as the dark pines, nothing like home's: ashy ground, dry grass where little demons hide, dead pines, a black
-// pool, torches, the cages the troop's little ones are locked in, the heap of things his little demons took, and his cave's
-// mouth in the cliff, its name over it (水脏洞); and at home, the feast's tables, bare once they took everything off them,
-// and your cloud, waiting to fly you north. And the chapter's scenes: the hair trick (毛, 变！), and flying north and home
-// on your cloud. (Loaded after js/mountain.js: it adds to LOOKS, OBJECT_ART, HANZI and SCENE_ART.)
+// pool, torches, the cages the troop's little ones are locked in, the cart his little demons piled the troop's things on,
+// and his cave's mouth in the cliff, its name over it (水脏洞); and at home, the feast's tables, bare once they took
+// everything off them, filling again as you unload the cart, and your cloud, waiting to fly you north. And the chapter's
+// scenes: the hair trick (毛, 变！), flying north on your cloud, and the wind that carries everyone home, the cart too.
+// (Loaded after js/mountain.js: it adds to LOOKS, OBJECT_ART, HANZI and SCENE_ART.)
 
 Object.assign(HANZI, {   // the cave's name: 水脏洞 (水 and 洞 are drawn already)
   '脏': ["###....#..", "#.#.######", "###.#.....", "#.#.#..#..", "###.#.###.", "#.#.#..#..", "#.#.#..#..", "#.#.#..#..", "#.#.#.####"]
@@ -59,17 +60,6 @@ function cage(g, X, Y, x, y, open, door = open ? 1 : 0, locked = !open){
   for (const bx of [4, 7, 10]) R(g, X + bx - sw, Y + (door ? 3 : 2), 1, door ? 10 : 12, '#9A6A3A');   // and its door's, swinging open to the left
   if (locked){ R(g, X + 7, Y + 7, 3, 3, '#3A3A40'); R(g, X + 8, Y + 8, 1, 1, '#8A8A90'); }   // the lock
 }
-// The things the little demons took from the feast's tables, in a heap on the earth (each square one of them: what), for
-// I spy with a little monkey: bowls, peaches, apples, honey, milk.
-function loot(g, X, Y, x, y, what){
-  trampled(g, X, Y, x, y);
-  oval(g, X + 8, Y + 12, 7, 3, '#5E4A3A');
-  if (what === 'bowls'){ tableBowl(g, X + 5, Y + 13); tableBowl(g, X + 11, Y + 13); tableBowl(g, X + 8, Y + 9); }
-  if (what === 'peaches') [[-3, 0], [3, 0], [0, -4]].forEach(([dx, dy]) => bigFruit(g, X + 8 + dx, Y + 10 + dy, PEACHES));
-  if (what === 'apples') [[-3, 0], [3, 0], [0, -4]].forEach(([dx, dy]) => bigFruit(g, X + 8 + dx, Y + 10 + dy, APPLES));
-  if (what === 'honey'){ tableBowl(g, X + 8, Y + 13); bowlFull(g, X + 8, Y + 13, '#E8A93A', '#F7C95A', '#FFE9A8'); }
-  if (what === 'milk') milkJug(g, X + 8, Y + 14);
-}
 // Your cloud, waiting just over the ground (on grass at home, on ash on the demon's mountain): A at it flies you off.
 function cloudOver(ground){
   return (g, X, Y, x, y) => {
@@ -82,16 +72,17 @@ function cloudOver(ground){
 Object.assign(LOOKS, {
   ash, trampled, deadGrass, murk, torch,
   cage: (g, X, Y, x, y) => cage(g, X, Y, x, y, false), cageOpen: (g, X, Y, x, y) => cage(g, X, Y, x, y, true),
-  lootBowls: (g, X, Y, x, y) => loot(g, X, Y, x, y, 'bowls'), lootPeaches: (g, X, Y, x, y) => loot(g, X, Y, x, y, 'peaches'),
-  lootApples: (g, X, Y, x, y) => loot(g, X, Y, x, y, 'apples'), lootHoney: (g, X, Y, x, y) => loot(g, X, Y, x, y, 'honey'),
-  lootMilk: (g, X, Y, x, y) => loot(g, X, Y, x, y, 'milk'),
   cloudGrass: cloudOver(LOOKS.grass), cloudAsh: cloudOver(ash),
   // on the demon's mountain, a dead pine (a big object, as in the pine wood) and a boulder stand on its ash
   ashPine: ash,
   ashBoulder: (g, X, Y, x, y) => { ash(g, X, Y, x, y); boulder(g, X + 8, Y + 15, 6, 6, (x + y) % 2 === 0); },
   demonDoor: (g, X, Y, x, y) => cliffFace(g, X, Y, x, y),
-  // at home, the feast's tables bare: the little demons took everything off them (big objects, on the grass)
-  feastTableRobbed: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y), tableBlock: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y)
+  // at home, the feast's tables bare: the little demons took everything off them (big objects, on the grass); and as you
+  // unload the cart, the troop's things going back on them
+  feastTableRobbed: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y), tableBlock: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y),
+  tableBack1: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y), tableBack2: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y),
+  tableBack3: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y), tableBack4: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y),
+  milkTableJug: (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y)
 });
 
 Object.assign(GROUNDS, {ash, trampled, deadGrass});   // (so anything from Flower Fruit Mountain here stands on the ash: onGround, js/art.js)
@@ -116,7 +107,21 @@ OBJECT_ART.ashPine = (g, o) => {
 };
 OBJECT_ART.feastTableRobbed = (g, o) => feastTable(g, o.x * T, o.y * T, o.w * T, 2);   // (just the stone table: nothing on it)
 OBJECT_ART.tableBlock = (g, o) => fishTable(g, o.x * T, o.y * T, 1);                  // (a little stone table, its plate gone)
-ROW_OBJECTS.push('feastTableRobbed');
+// The big table as the troop's things go back on it, off the cart (the unload step): its bowls (has 1, going on one at a
+// time: stage), the peaches in the first (2), the apples in the second (3), the honey in the third (4), each going on as
+// you watch (stage 0, then 1); and the second table, the jug of milk at its end.
+function feastTableBack(g, X, Y, w, has, stage){
+  slabTable(g, X, Y, w, 2);
+  const on = k => has > k || (has === k && stage >= 1), pile = [[-3, -6], [1, -6], [-1, -9]];
+  TABLE_BOWLS.forEach((b, i) => { if (has > 1 || stage > i) tableBowl(g, X + b, Y + 5); });
+  if (on(2)) pile.forEach(([dx, dy]) => bigFruit(g, X + TABLE_BOWLS[0] + dx, Y + 5 + dy, PEACHES));
+  if (on(3)) pile.forEach(([dx, dy]) => bigFruit(g, X + TABLE_BOWLS[1] + dx, Y + 5 + dy, APPLES));
+  if (on(4)) bowlFull(g, X + TABLE_BOWLS[2], Y + 5, '#E8A93A', '#F7C95A', '#FFE9A8');
+}
+[1, 2, 3, 4].forEach(k => { OBJECT_ART['tableBack' + k] = (g, o) => feastTableBack(g, o.x * T, o.y * T, o.w * T, k, o.stage ?? (k === 1 ? 3 : 1)); });
+OBJECT_ART.milkTableJug = (g, o) => { slabTable(g, o.x * T, o.y * T, o.w * T, 2); if ((o.stage ?? 1) >= 1) milkJug(g, o.x * T + 6, o.y * T + 5); };
+Object.assign(OBJECT_STAGES, {tableBack1:3, tableBack2:1, tableBack3:1, tableBack4:1, milkTableJug:1});
+ROW_OBJECTS.push('feastTableRobbed', 'tableBack1', 'tableBack2', 'tableBack3', 'tableBack4', 'milkTableJug');
 // The demon's cave: a dark mouth in the cliff, jagged rock round it like teeth, a red glow deep inside, and its name over
 // it on a black board (水脏洞, its sign).
 OBJECT_ART.demonDoor = (g, o) => {
@@ -129,6 +134,74 @@ OBJECT_ART.demonDoor = (g, o) => {
   if (sign){ const n = [...sign].length * 11 + 4; R(g, m - n / 2 - 1, Y - 15, n + 2, 15, '#2A1A14'); R(g, m - n / 2, Y - 14, n, 13, '#4A2A1E'); write(g, sign, m - n / 2 + 2, Y - 12, '#E8C060'); }
 };
 BLOCK_OBJECTS.push('demonDoor');
+
+/* ---- the cart ---- */
+// The little demons' handcart, the troop's things piled on it (decided 7 November 2026, after playing it: you fight the
+// little demon guarding it, then pull it back to the little monkeys, and home): wooden, with two shafts out in front to pull
+// it by, towards you as you do. Side on, one big spoked wheel, which turns as it rolls, and a leg under its front that it
+// stands on, tucked up as you pull it; from the front or the back, its two wheels edge on at its sides, their treads
+// moving. What's on it (load: their words, cartLoad) is each in its own place on it, so it empties as you unload it.
+const CART_CANVAS = {};
+const CART_ITEMS = {   // each of the troop's things, small, on the cart: (g, x, y), its bottom's middle
+  '碗': (g, x, y) => { R(g, x - 4, y - 6, 9, 7, INK); for (let k = 0; k < 3; k++){ R(g, x - 3, y - 2 * k - 1, 7, 1, '#F4F1EA'); R(g, x - 2, y - 2 * k, 5, 1, '#4F82B0'); } },   // three bowls, stacked
+  '桃子': (g, x, y) => { for (const [dx, dy] of [[-2, 0], [2, 0], [0, -3]]){ R(g, x + dx - 2, y + dy - 4, 5, 5, INK); R(g, x + dx - 1, y + dy - 3, 3, 3, PEACHES[0]); R(g, x + dx - 1, y + dy - 3, 1, 1, PEACHES[1]); } R(g, x, y - 8, 2, 1, '#5E9A3C'); },
+  '苹果': (g, x, y) => { for (const [dx, dy] of [[-2, 0], [2, 0], [0, -3]]){ R(g, x + dx - 2, y + dy - 4, 5, 5, INK); R(g, x + dx - 1, y + dy - 3, 3, 3, APPLES[0]); R(g, x + dx - 1, y + dy - 3, 1, 1, APPLES[1]); } R(g, x, y - 8, 1, 2, '#5E3A1E'); },
+  '蜂蜜': (g, x, y) => { R(g, x - 3, y - 6, 7, 7, INK); R(g, x - 2, y - 4, 5, 4, '#B9762A'); R(g, x - 2, y - 5, 5, 1, '#F7C95A'); R(g, x - 1, y - 3, 1, 2, '#E8A93A'); },   // a pot of honey
+  '牛奶': (g, x, y) => { R(g, x - 3, y - 8, 7, 9, INK); R(g, x - 2, y - 7, 5, 7, '#F4F1EA'); R(g, x - 2, y - 7, 5, 1, MILK); R(g, x - 2, y - 4, 5, 1, '#4F7FBF'); R(g, x - 4, y - 8, 1, 1, INK); R(g, x + 4, y - 6, 1, 3, INK); }   // the jug of milk
+};
+// Where each goes, from the side (its front to the right) and from the front: the jug and the bowls at the back, the fruit
+// on top, the honey in front.
+const CART_SLOTS = {side:{'牛奶':[2, 5], '碗':[6, 5], '蜂蜜':[11, 5], '桃子':[5, 1], '苹果':[9, 1]}, end:{'碗':[4, 5], '牛奶':[8, 5], '蜂蜜':[12, 5], '桃子':[6, 1], '苹果':[10, 1]}};
+function cartLoadPic(g, X, Y, load, slots){ for (const w of Object.keys(slots)) if (load.includes(w) && CART_ITEMS[w]) CART_ITEMS[w](g, X + slots[w][0], Y + slots[w][1]); }
+// The cart into g, its square's top left at X, Y, going dir (its shafts that way), with what's on it (load), having rolled
+// so far (roll, in pixels: its wheels turn with it), and pulled (its leg tucked up) or standing.
+function cartPic(g, X, Y, dir, load, roll = 0, pulled = false){
+  if (shadows) blob(g, X + 8, Y + 15, 9, 1, 'rgba(0,0,0,.22)');
+  const [W1, W2, W3, W4, W5] = WOODS;
+  if (dir === 'left' || dir === 'right'){   // side on: drawn facing right, into a canvas of its own, and turned round to face left
+    const c = CART_CANVAS.side || (CART_CANVAS.side = document.createElement('canvas'));
+    c.width = 32; c.height = 28;
+    const t = c.getContext('2d'), ox = 6, oy = 9, r = (x, y, w, h, col) => R(t, ox + x, oy + y, w, h, col);
+    r(13, pulled ? 9 : 10, 3, pulled ? 4 : 6, INK); r(14, pulled ? 9 : 10, 1, pulled ? 3 : 5, W2);   // its leg, under its front
+    r(-2, 4, 18, 7, INK); r(-1, 5, 16, 5, W3); r(-1, 5, 16, 1, W5); r(-1, 9, 16, 1, W2);             // its bed, of planks
+    for (const x of [3, 7, 11]) r(x, 6, 1, 3, W2);
+    r(15, 5, 8, 3, INK); r(15, 6, 7, 1, W4); r(22, 5, 1, 3, W1);                                       // its shafts, out in front
+    cartLoadPic(t, ox, oy, load, CART_SLOTS.side);
+    const cx = ox + 5, cy = oy + 11, a = roll / 4;                                                     // the wheel, turning as it rolls
+    blob(t, cx, cy, 5, 5, INK); blob(t, cx, cy, 4, 4, W2); blob(t, cx, cy, 3, 3, '#4A3424');
+    for (let k = 0; k < 3; k++){ const ang = a + k * Math.PI / 3; for (let d = -3; d <= 3; d++) R(t, Math.round(cx + Math.cos(ang) * d), Math.round(cy + Math.sin(ang) * d), 1, 1, W4); }
+    R(t, cx, cy, 1, 1, W5);
+    if (dir === 'right') g.drawImage(c, X - ox, Y - oy);
+    else { g.save(); g.translate(X + T, 0); g.scale(-1, 1); g.drawImage(c, -ox, Y - oy); g.restore(); }
+    return;
+  }
+  // from the front (going down, its shafts towards you) or the back (going up, its shafts away, behind what's on it)
+  const tread = Math.floor(Math.abs(roll) / 2) % 3, wheel = x => { R(g, X + x - 1, Y + 6, 4, 10, INK); R(g, X + x, Y + 7, 2, 8, W2); for (let k = tread; k < 8; k += 3) R(g, X + x, Y + 7 + k, 2, 1, W4); };
+  const shafts = (y0, y1) => { for (const x of [3, 12]){ R(g, X + x - 1, Y + Math.min(y0, y1), 3, Math.abs(y1 - y0) + 1, INK); R(g, X + x, Y + Math.min(y0, y1), 1, Math.abs(y1 - y0) + 1, W4); } };
+  const bed = () => { R(g, X, Y + 3, 16, 8, INK); R(g, X + 1, Y + 4, 14, 6, W3); R(g, X + 1, Y + 4, 14, 1, W5); R(g, X + 1, Y + 9, 14, 1, W2); for (const x of [5, 10]) R(g, X + x, Y + 5, 1, 4, W2); };   // its bed, an end on
+  if (dir === 'up'){   // from behind, as you pull it up: its back board over the bottom of what's on it, so it doesn't hide you
+    shafts(-2, 6); wheel(-1); wheel(15);
+    cartLoadPic(g, X, Y + 2, load, CART_SLOTS.end); bed();
+    return;
+  }
+  wheel(-1); wheel(15); bed();
+  cartLoadPic(g, X, Y, load, CART_SLOTS.end);
+  shafts(10, 19); R(g, X + 2, Y + 18, 12, 3, INK); R(g, X + 3, Y + 19, 10, 1, W4);   // its shafts towards you, a bar across their ends
+}
+// What's on the cart now: the troop's things, but those you've taken off it at home (the area's unloading), and the one
+// you're carrying; nothing once it's all back.
+function cartLoad(n){
+  const u = AREA.unloading;
+  if (!u || n.id !== u.cart || (u.over && matches(u.over))) return [];
+  const k = here()[u.key] || 0;
+  return u.asks.filter((a, i) => (!k || i >= k - 1) && a.word !== here().lifted).map(a => a.word);
+}
+// A cart on the map (a character that's a cart), facing the way it last went, its wheels turning as it goes (c: where
+// it's drawn, charPos in js/draw.js), its leg tucked up while you pull it.
+function drawCart(n, X, Y, c){
+  const dir = n.dir || 'down', side = dir === 'left' || dir === 'right';
+  cartPic(b, X, Y, dir, cartLoad(n), side ? c.x : c.y, FOLLOWERS.includes(n));
+}
 
 /* ---- scenes ---- */
 const babyPal = () => PALS.player;
@@ -166,15 +239,27 @@ function drawFlyNorth(t, now, def){
     R(b, Math.round(mx + 55), H - 26, 10, 7, '#120C10');   // its cave
   }
 }
-// Flying home on your cloud with the little monkeys you set free (the flyHome scene's picture, Flower Fruit Mountain
-// coming up ahead), crowded round you on it.
-function drawFlyHomeAll(t, now, def){
-  drawCloudFlight(t, now, {home:true});
-  const bob = Math.round(Math.sin(now / 200) * 3);
-  for (let k = 0; k < 6; k++) oval(b, 54 + k * 10, 93 + bob + (k % 2), 8, 4, '#F4F7FA');   // a bigger cloud, for everyone
-  ['baby1', 'baby2', 'baby3', 'baby4', 'baby5'].forEach((id, i) => {
-    const x = 50 + i * 11 + (i > 1 ? 18 : 0), y = 82 + bob - (Math.floor(now / 260 + i) % 2);
-    b.drawImage(monkeySprite(PALS[id] ? id : 'player', 'right', false), x, y, 11, 11);
+// The wind that carries everyone home, as in the book (驾阵狂风, decided 7 November 2026, so the troop's things come home
+// too): gusts swirling round you all, open hooks like the wind's picture, the cart rocking in the middle of them with the
+// troop's things on it, and you and the little monkeys tumbling round it, over the sea to Flower Fruit Mountain.
+function drawWindHome(t, now){
+  drawCloudFlight(t, now, {home:true, alone:true});
+  const cx = 96, cy = 66 + Math.round(Math.sin(now / 260) * 4), sh = shadows;
+  const gust = (i, front) => {   // a gust, swirling round, thick, its front curling in at its end: front ones over everyone, back ones behind
+    const a = now / 380 + i * 1.1, rx = 46 + (i % 3) * 7, ry = 20 + (i % 2) * 6, at = (q, r) => [Math.round(cx + Math.cos(q) * rx * r), Math.round(cy + Math.sin(q) * ry * r)];
+    for (let k = 0; k < 14; k++){ const q = a + k * .07; if ((Math.sin(q) > 0) !== front) continue; const [x, y] = at(q, 1); R(b, x, y, 2, 2, k < 4 ? 'rgba(255,255,255,.4)' : '#FFFFFF'); }
+    const q = a + 13 * .07; if ((Math.sin(q) > 0) === front) for (let k = 1; k <= 4; k++){ const [x, y] = at(q + k * .05, 1 - k * .07); R(b, x, y, 2, 2, '#FFFFFF'); }   // (the curl)
+  };
+  for (let i = 0; i < 6; i++) gust(i, false);
+  shadows = false;   // (no ground under the cart, up here)
+  b.save(); b.translate(cx, cy); b.rotate(Math.sin(now / 340) * .22); cartPic(b, -8, -9, 'right', ['碗', '桃子', '苹果', '蜂蜜', '牛奶'], now / 25, true); b.restore();
+  shadows = sh;
+  ['player', 'baby1', 'baby2', 'baby3', 'baby4', 'baby5'].forEach((id, i) => {   // round it, tumbling: you the biggest
+    const a = now / 700 + i * Math.PI / 3, x = cx + Math.cos(a) * 40, y = cy + 2 + Math.sin(a) * 16, s = id === 'player' ? 16 : 11;
+    b.save(); b.translate(Math.round(x), Math.round(y)); b.rotate(Math.sin(now / 250 + i) * .5);
+    b.drawImage(monkeySprite(PALS[id] ? id : 'player', ['right', 'down', 'left', 'up'][Math.floor(now / 400 + i) % 4], false), -s / 2, -s / 2, s, s); b.restore();
   });
+  for (let i = 0; i < 6; i++) gust(i, true);
+  for (let k = 0; k < 6; k++) R(b, cx - 70 - k * 9, cy - 12 + (k % 3) * 11, 7, 1, '#FFFFFF');   // speed lines
 }
-Object.assign(SCENE_ART, {hairTrick: drawHairTrick, flyNorth: drawFlyNorth, flyHomeAll: drawFlyHomeAll});
+Object.assign(SCENE_ART, {hairTrick: drawHairTrick, flyNorth: drawFlyNorth, windHome: drawWindHome});

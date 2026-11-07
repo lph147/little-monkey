@@ -10,6 +10,11 @@ const {loadGame, ROOT} = require('../tests/fake-browser');
 // in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
 // into the content and delete them from here.
 const DRAFTS = [
+  ...[['这 是 我们 的 ！', 'This is ours!', 'the little demon guarding the cart of the troop’s things, as it stops you'],
+    ['我 要 碗 。', 'I want the bowls.', 'the hungry monkey, wanting the troop’s bowls taken off the cart, to go back on the feast’s table (and 我要桃子。 我要苹果。, already in the game)'],
+    ['我 要 蜂蜜 。', 'I want the honey.', 'the hungry monkey, the same, the honey'], ['我 要 牛奶 。', 'I want the milk.', 'the hungry monkey, the same, the jug of milk'],
+    ['车 上 有 桃子 。', 'There are peaches on the cart.', 'the example sentence for the new word 车 (cart)']]
+    .map(([zh, en, where]) => ({zh, en, where:`New on 7 November 2026: ${where}. Is it natural?`})),
   {zh:'我 没有 真正 的 名字 。 大家 都 叫 我 美猴王 。', en:'I don’t have a real name. Everyone calls me Handsome Monkey King.', where:'New on 6 November 2026: your answer when the master asks your name (你叫什么名字？), before he names you 孙悟空; it was 我没有名字。 (I don’t have a name.), which sounded wrong, as everyone calls you 美猴王. Is 真正的名字 natural here, or would 我没有名字，大家都叫我美猴王。 be better?'},
   ...[['我 饿 了 ！ 我 要 牛 ！', 'I’m hungry! I want the cow!'], ['我 不 怕 你 ！', 'I’m not scared of you!'], ['我 怕 你 ！', 'I’m scared of you!']]
     .map(([zh, en]) => ({zh, en, where:'New on 3 November 2026: the bear at the pasture’s rocks, as it rears up, as it gets angry at half its health, and as it lumbers off beaten'})),

@@ -466,8 +466,12 @@ SAVES.c2home = c2(SAVES.c1home, {chapter: 2, home2: 1, part: 10}, [], {place: 'f
 SAVES.c2news = c2(SAVES.c2home, {foundBig: 1, foundHungry: 1, news: 1, part: 11}, ['哭', '回来', '好久不见', '老'], {place: 'ffmHomeGround', x: 7, y: 9, dir: 'left'});
 SAVES.c2lair = c2(SAVES.c2news, {d1: 1, d2: 1, d3: 1, north: 1, lairSeen: 1, part: 12}, ['妖怪'], {place: 'lair', x: 14, y: 12, dir: 'up'});
 SAVES.c2cages = c2(SAVES.c2lair, {key: 1, freed1: 1, freed2: 1}, ['火', '救命', '笼子', '钥匙'], {place: 'lair', x: 8, y: 6, dir: 'up'});
-SAVES.c2king = c2(SAVES.c2cages, {freed3: 1, freed4: 1, freed5: 1, loot: 1, king: 1, part: 13}, [], {place: 'lair', x: 14, y: 8, dir: 'up'});
-SAVES.c2end = c2(SAVES.c2king, {king: 2, homeAgain: 1, party: 1, part: 14, weapon: '刀'}, ['毛', '刀'], {place: 'ffmHomeGround', x: 13, y: 9, dir: 'down'});
+SAVES.c2cart = c2(SAVES.c2cages, {freed3: 1, freed4: 1, freed5: 1}, [], {place: 'lair', x: 21, y: 7, dir: 'right'});   // (7 November 2026: the troop's things on a cart, guarded)
+SAVES.c2pull = c2(SAVES.c2cart, {cartWon: 1}, ['车'], {place: 'lair', x: 18, y: 6, dir: 'left'}, {following: ['cart']});
+SAVES.c2kingOut = c2(SAVES.c2pull, {loot: 1, king: 1, part: 13, parked: {cart: {place: 'lair', x: 11, y: 6, facing: 'left'}}}, [], {place: 'lair', x: 10, y: 6, dir: 'left'}, {following: []});
+SAVES.c2king = c2(SAVES.c2cart, {cartWon: 1, loot: 1, king: 1, part: 13}, ['车'], {place: 'lair', x: 14, y: 8, dir: 'up'});
+SAVES.c2unload = c2(SAVES.c2king, {king: 2, homeAgain: 1, unload: 3, part: 14, weapon: '刀'}, ['毛', '刀'], {place: 'ffmHomeGround', x: 19, y: 9, dir: 'up'});
+SAVES.c2end = c2(SAVES.c2king, {king: 2, homeAgain: 1, unload: 6, party: 1, part: 14, weapon: '刀'}, ['毛', '刀'], {place: 'ffmHomeGround', x: 13, y: 9, dir: 'down'});
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
@@ -1499,20 +1503,30 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'c2-demon', title: 'A little demon (妖怪)', save: 'c2news', why: 'Battles come back in the human world’s chapter 2: your stick, and a little demon from the long grass.', run: async () => {
     play(); await wait(100); battle('demon'); await wait(700); }},
-  {id: 'c2-lair', title: 'The demon’s mountain', save: 'c2lair', why: 'Far to the north: ash, dry grass full of little demons, dead trees burnt black and gnarled; at the top, the cages, the troop’s things, torches (火) and the cave, 水脏洞.', run: async () => {
+  {id: 'c2-lair', title: 'The demon’s mountain', save: 'c2lair', why: 'Far to the north: ash, dry grass full of little demons, dead trees burnt black and gnarled; at the top, the cages, torches (火), the cave, 水脏洞, and the little demons’ cart.', run: async () => {
     play(); await wait(500); }},
   {id: 'c2-cages', title: 'The cages (笼子)', save: 'c2cages', why: 'Two little monkeys set free with the guard’s key (钥匙), three still locked in, sparkling.', run: async () => {
     play(); await wait(500); }},
   {id: 'c2-unlock', title: 'Unlocking a cage', save: 'c2cages', why: 'Your monkey steps up to the cage and reaches out, the guard’s key (钥匙) from its paw into the lock, turned (its bow edge on), click, the lock off, and it steps back as the door creaks open, the little monkey inside looking out; then it jumps out. Here, opening it again and again, the key in the lock.', run: async () => {
     play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;) await STEPS.unlock({unlock: '钥匙'}); })(); await wait(300); }},
+  {id: 'c2-cart', title: 'The troop’s things, on a cart', save: 'c2cart', why: 'Once the little monkeys are free: the little demons’ cart, piled with the troop’s things (车, sparkling till you know it), and the little demon guarding it, a ! over it, to fight you for it, with no running away.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'c2-pull', title: 'Pulling the cart (车)', save: 'c2pull', why: 'Its guard beaten, you pull the cart back to the little monkeys: it rolls along behind you, its wheel turning, its shafts out to your paws, its leg tucked up.', run: async () => {
+    play(); await wait(400); closeMessage(); held = 'left'; await wait(650); }},
+  {id: 'c2-king-out', title: 'Out comes the Demon of Havoc', save: 'c2kingOut', why: 'The cart back by the little monkeys: the ground shakes, his little demons run in, and he comes down out of his cave towards you, a heavy step at a time, on the screen (it was off it).', run: async () => {
+    play(); await wait(300); closeMessage(); STEPS.walk({walk: 'king', from: [14, 3], to: 'you', ms: 420, stomp: true}); await wait(1500); }},
   {id: 'c2-king', title: 'The Demon of Havoc', save: 'c2king', why: 'His name across the screen as the fight begins: a name, 混世魔王 Hùnshì Mówáng, not a word to catch.', run: async () => {
     play(); await wait(100); battle('king'); await wait(1100); }},
   {id: 'c2-king-fight', title: 'The Demon of Havoc: the fight', save: 'c2king', why: 'A boss fight as the bear’s: his health across the top, and what he says, aloud.', run: async () => {
     play(); await wait(100); battle('king'); await wait(3600); }},
   {id: 'c2-hair-trick', title: 'The hair trick (毛)', save: 'c2king', why: 'Halfway through the fight: your hairs, blown and 变！, turn into little monkeys, who swarm him till he drops his broadsword.', run: async () => {
     play(); await wait(100); storyScene('hairTrick'); introClock = 5; advancedTo = 1; await wait(400); }},
-  {id: 'c2-fly-home', title: 'Flying the little ones home', save: 'c2end', why: 'On your cloud with the little monkeys, Flower Fruit Mountain coming up ahead.', run: async () => {
-    play(); await wait(100); storyScene('flyHomeAll'); introClock = 9; advancedTo = 2; await wait(400); }},
+  {id: 'c2-wind-home', title: 'A wind carries everyone home', save: 'c2end', why: 'As in the book: a wind, swirling, carries you, the little monkeys and the cart of the troop’s things home over the sea, Flower Fruit Mountain coming up ahead.', run: async () => {
+    play(); await wait(100); storyScene('windHome'); introClock = 9; advancedTo = 2; await wait(400); }},
+  {id: 'c2-unload', title: 'Unloading the cart', save: 'c2unload', why: 'Home, the cart by the feast’s tables: the bowls and peaches back on the big table already. The hungry monkey wants each thing off the cart, only in Chinese: you take it off, carry it over your head and put it down on its table.', run: async () => {
+    play(); await wait(500); closeMessage(); }},
+  {id: 'c2-take', title: 'What does she want?', save: 'c2unload', why: 'A at the cart: what’s still on it, their pictures and characters, as in a listening question (she said it only in Chinese). The wrong one, and she says 不对。 and asks again.', run: async () => {
+    play(); await wait(300); closeMessage(); takeCard(['苹果', '蜂蜜', '牛奶'], AREA.unloading.take); await wait(300); }},
   {id: 'c2-home-again', title: 'Home with the little ones', save: 'c2end', why: 'Each little one with its mother, everything back on the feast’s tables, the broadsword (刀) in your hand.', run: async () => {
     play(); await wait(500); }},
   {id: 'a2-end', title: 'Area 2: the end', save: 'c2end', why: 'The end of Area 2: the little ones home, the Demon of Havoc gone for good. To be continued: the Dragon King’s palace.', run: async () => {

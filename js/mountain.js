@@ -258,6 +258,7 @@ function drawCloudFlight(t, now, def){
     R(b, Math.round(mx + 58), H - 62, 3, 30, '#CFE6F6'); R(b, Math.round(mx + 55), H - 33, 9, 3, '#FFFFFF');   // its waterfall
   }
   for (let i = 0; i < 9; i++){ const x = W - ((now / (8 + i % 3 * 4) + rnd(i, 1) * W * 2) % (W + 80)) , y = rnd(i, 2) * (H - 40); for (let k = 0; k < 4; k++) oval(b, Math.round(x + k * 10), Math.round(y + (k % 2) * 3), 9 - k, 5, '#FFFFFF'); }
+  if (def && def.alone) return;   // (just the sky, for a scene that draws its own riders: the wind home, js/havoc.js)
   const bob = Math.round(Math.sin(now / 200) * 3), cx = 80, cy = 80 + bob;
   for (let k = 0; k < 5; k++) oval(b, cx - 12 + k * 6, cy + 12 + (k % 2), 7, 4, '#F4F7FA');   // your cloud
   for (let k = 0; k < 6; k++) R(b, cx - 30 - k * 8, cy + 10 + (k % 3) * 3, 6, 1, '#FFFFFF');   // speed lines

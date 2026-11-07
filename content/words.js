@@ -253,6 +253,7 @@ const WORD_BANK = {
   '钥匙': {py:'yàoshi', en:'key', pic:'🗝️', area:2, category:'items', alike:['门', '笼子']},
   '毛': {py:'máo', en:'hair, fur', pic:'🪶', area:2, category:'people', alike:['猴子', '头']},   // (your hairs, turned into little monkeys: 变！)
   '刀': {py:'dāo', en:'broadsword, knife', pic:'🗡️', area:2, category:'items', alike:['棍子', '斧头']},   // (the Demon of Havoc's, yours once you've beaten him)
+  '车': {py:'chē', en:'cart', pic:'🛒', area:2, category:'items'},   // (the little demons' cart, piled with the troop's things)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},

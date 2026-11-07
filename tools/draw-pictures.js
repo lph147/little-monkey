@@ -1298,6 +1298,18 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(Rc(14, 15, 4, 4, 1), '#C9A23A', {light: '#E8C860', dark: '#8E6E1E', edge: true});          // a lock
     p.flat(Rc(15.5, 16.5, 1, 1.5), '#3A2A10');
   },
+  '车': p => {   // cart: a wooden handcart, side on: its bed of planks, one big spoked wheel, a leg, and its shafts out in front to pull it by (unlike 木筏: logs tied together, on the water)
+    p.flat(O(16, 28.5, 13, 1.6), '#D9D2C2');                                                                        // its shadow on the ground
+    p.fill(path([[24, 13.5], [30.5, 16.5]], 1.1), '#B07C4E', {light: '#D8B07A', dark: '#7A5230'});                 // its shafts
+    p.fill(Rc(22, 17, 2.4, 10), '#8A5A32', {dark: '#5E3A1E'});                                                       // its leg
+    p.fill(Rc(2.5, 10, 22, 8, 1), '#9C6A3C', {light: '#C99A62', dark: '#5E3B1F', edge: true});                     // its bed, of planks
+    for (const x of [8, 13.5, 19]) p.flat(Rc(x, 11.5, 1, 5), '#6E4626');
+    p.flat(Rc(3.5, 10.6, 20, 1), '#D8B07A');
+    p.fill(O(11, 21, 7.2), '#7A5230', {light: '#A87A4A', dark: '#4E321C'});                                          // the wheel: its rim,
+    p.flat(O(11, 21, 5.4), '#4A3424');                                                                               // the gaps between its spokes,
+    for (const a of [0, Math.PI / 3, 2 * Math.PI / 3]) p.flat(path([[11 - Math.cos(a) * 5.2, 21 - Math.sin(a) * 5.2], [11 + Math.cos(a) * 5.2, 21 + Math.sin(a) * 5.2]], .6), '#C99A62');   // its spokes
+    p.fill(O(11, 21, 1.6), '#5E3A1E', {light: '#8A5A32'});                                                           // and its hub
+  },
   '钥匙': p => {   // key: an old iron key, a ring at one end, teeth at the other (unlike 门: a door; 笼子: a cage)
     p.fill(O(9, 9, 6, 6), '#9AA0A8', {light: '#C8CED6', dark: '#6A707A', edge: true}); p.fill(O(9, 9, 3, 3), '#FFFFFF');   // the ring
     p.fill(path([[13, 13], [26, 26]], 1.7), '#9AA0A8', {light: '#C8CED6', dark: '#6A707A', edge: true});   // the shaft

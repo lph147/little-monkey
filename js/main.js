@@ -60,7 +60,8 @@ const SCENE_SOUNDS = {manyYearsLater:[[.3, 'chime']], caveYears:[[.3, 'chime'], 
   buildingSchool:[[1, 'tock'], [1.3, 'tock'], [1.6, 'tock'], [1.9, 'tock'], [2.3, 'tock'], [2.7, 'tock'], [3.6, 'thwack'], [4.2, 'thwack'], [4.8, 'thwack'], [5.4, 'thwack'], [6.6, 'thwack'], [7.3, 'thwack'], [8, 'thwack'], [9.05, 'fanfare'], [9.6, 'chime']],
   paintingSchool:[[.9, 'swish'], [1.5, 'swish'], [2.1, 'swish'], [2.7, 'swish'], [3.3, 'swish'], [4.4, 'fanfare'], [4.9, 'chime']], lookout:[[.3, 'wind']],
   drift:[[.3, 'splash'], [7.5, 'chime']], yearsPass:[[.3, 'chime'], [8, 'shimmer']], crossSea:[[.3, 'wind'], [8, 'fanfare']],   // (Area 2's: js/human.js)
-  basketUp:[[.3, 'swish'], [7.5, 'chime']]};   // (the master's year: js/year.js)
+  basketUp:[[.3, 'swish'], [7.5, 'chime']],   // (the master's year: js/year.js)
+  windHome:[[.3, 'wind'], [4, 'swish'], [8, 'fanfare']]};   // (home with the little monkeys and the cart: js/havoc.js)
 let scene = {id:'opening', caps:CAPS, last:'Begin', end:() => startGame()};
 let introClock = 0, introLast = 0, capIdx = -1, capShownAt = 0, introEvents = {}, advancedTo = 0;
 // At most about 60 frames a second (decided 26 October 2026): the browser calls frame() each time the screen refreshes,

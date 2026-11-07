@@ -263,7 +263,7 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   const words = get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2)");
   assert.deepEqual(words.filter(w => !knows(g, w)), ['云', '鹤', '天', '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家', '春天', '夏天', '秋天', '冬天',
     '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '功夫', '热', '北边', '南边', '药', '写', '东边', '西边', '雪', '冷', '火', '年', '雪人',
-    '回来', '好久不见', '哭', '老', '妖怪', '新年快乐', '救命', '笼子', '钥匙', '毛', '刀'], 'all the prologue’s words (chapter 1’s and 2’s to come)');
+    '回来', '好久不见', '哭', '老', '妖怪', '新年快乐', '救命', '笼子', '钥匙', '毛', '刀', '车'], 'all the prologue’s words (chapter 1’s and 2’s to come)');
   // the checklist is chapter 1's now
   assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t]) => t)'), ['Help the woodcutter at his hut', 'Make 朋友 (friends) with the crane on the cliff road', 'Find the immortal’s cave']);
   // and you can sail back and forth
@@ -376,7 +376,7 @@ test('pacing: in Area 2, only the town’s teacher waits for five questions’ p
   assert.ok(A.events.every(e => !('wordReady' in e.if)), 'nor any event');
   // the words: those of the prologue, one after another, and the first (人) as you land; then chapter 1's (the climb, and
   // the master's year: its four seasons, the numbers to 二十, and each season's own), and chapter 2's
-  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 88);
+  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 89);
 });
 
 test('the human world has a song of its own, a village tune, in every place (not Flower Fruit Mountain’s)', () => {

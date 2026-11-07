@@ -181,16 +181,17 @@ const FETCH_WOOD = {fetch:'axeFetch', asks:[{word:'木头', count:4, ask:'wantWo
 const HOME_MAP = 'This is home: you know your way about here. Your map is of the lands across the sea.';
 const AT_HOME = (id, own = {}) => ({borrow:id, from:1, wild:['demon'], noMap:HOME_MAP, ...own});
 // The demon's mountain, far to the north (坎源山, a name): ashy ground, dry grass full of little demons, dead pines and a
-// black pool; at the top, the cages, the heap of the troop's things, two torches and his cave's mouth (水脏洞), his
-// guards in front of it; your cloud at the foot of the path.
+// black pool; at the top, the cages, two torches and his cave's mouth (水脏洞), his guards in front of it, and over to the
+// right, the little demons' cart, the troop's things piled on it, and the little demon guarding it (characters); your
+// cloud at the foot of the path.
 const LAIR_MAP = [
   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
   "^^MMMMMMMMMMMMOOMMMMMMMMMMMM^^",
   "^^MMMMMMMMMMMMOOMMMMMMMMMMMM^^",
   "^^g.........T....T.........g^^",
-  "^^g.か.き.く.............さしす..g^^",
-  "^^g...................せそ...g^^",
+  "^^g.か.き.く..................g^^",
+  "^^g........................g^^",
   "^^g..け.こ...................g^^",
   "^^g........................g^^",
   "^^gDgggggggDgg..ggbggggggDgg^^",
@@ -233,20 +234,23 @@ const LAIR_LEGEND = {
   'O': {look:'demonDoor', landmark:true, action:'sign', sign:{name:{zh:'洞', py:'dòng', en:'Cave'}, says:{zh:'水脏洞', en:'Water-Belly Cave'}, hint:'The name of the Demon of Havoc’s cave.'}},
   'か': CAGE(1, 4, 5), 'き': CAGE(2, 6, 5), 'く': CAGE(3, 8, 5), 'け': CAGE(4, 5, 7), 'こ': CAGE(5, 7, 7),
   'が': OPEN_CAGE, 'ぎ': OPEN_CAGE, 'ぐ': OPEN_CAGE, 'げ': OPEN_CAGE, 'ご': OPEN_CAGE,
-  // the troop's things, taken from the feast's tables: I spy, with a little monkey you've set free
-  'さ': {look:'lootBowls', word:'碗', landmark:true, note:'The troop’s bowls, from the feast’s tables!'},
-  'し': {look:'lootPeaches', word:'桃子', landmark:true, note:'The troop’s peaches!'},
-  'す': {look:'lootApples', word:'苹果', landmark:true, note:'The troop’s apples!'},
-  'せ': {look:'lootHoney', word:'蜂蜜', landmark:true, note:'The troop’s honey, from the hive!'},
-  'そ': {look:'lootMilk', word:'牛奶', landmark:true, note:'The cow’s milk, in its jug!'},
-  'ゆ': {look:'cloudAsh', landmark:true, onLook:[{if:{king:{below:2}}, label:'Fly home', do:[{message:'You leap onto your cloud, and somersault home.'}, {goTo:'ffmHomeGround', at:[13, 11], facing:'down'}]}]}
+  // your cloud, to fly home on (but not with the cart: you pull that back to the little monkeys first)
+  'ゆ': {look:'cloudAsh', landmark:true, onLook:[{if:{following:{cart:true}}, label:'Fly home', do:[{message:'The cart’s too heavy for your cloud! Pull it back to the little monkeys first.'}]},
+    {if:{king:{below:2}}, label:'Fly home', do:[{message:'You leap onto your cloud, and somersault home.'}, {goTo:'ffmHomeGround', at:[13, 11], facing:'down'}]}]}
 };
 // At home: a bush the troop hides behind (the big monkey in the meadow, the hungry monkey at the home ground), sparkling
 // till you look (its sparkle); the feast's tables, bare till the troop puts everything back; and your cloud, there once the
 // old monkey sends you north.
 const HIDING = (key, who, x, y, wait) => ({look:'bush', onLook:[{if:{...wait, [key]:0}, label:'Look', do:[{sound:'scuffle'}, {set:{[key]:1}}, {leap:who, from:[x, y]}, {talkTo:who}]},
   {do:[{message:'A bush.'}]}]});
-const ROBBED = (look, to) => ({look, word:'桌子', landmark:true, note:'The feast’s table. Everything on it has gone!', becomes:[{if:{homeAgain:1}, to}]});
+// The feast's tables, everything on them gone (ROBBED), till the troop celebrates (party) and puts it all back (to: the
+// letter of the table as it was); the big one and the second one fill again first, as you unload the cart onto them (the
+// unload step: back, what each becomes as the troop's things go on it, one at a time; table, which it is).
+const CART_THINGS = ['碗', '桃子', '苹果', '蜂蜜', '牛奶'];
+const PUT_BACK = table => ({if:{homeAgain:1, party:0, any:CART_THINGS.map(w => ({lifted:w}))}, label:'Put down', do:[{unload:table}]});
+const ROBBED = (look, to, back = [], table) => ({look, word:'桌子', landmark:true, note:'The feast’s table. Everything on it has gone!', becomes:[{if:{party:1}, to}, ...back],
+  ...(table ? {onLook:[PUT_BACK(table)]} : {})});
+const BACK_ON = (look, table) => ({look, word:'桌子', landmark:true, note:'The feast’s table, the troop’s things going back on it.', onLook:[PUT_BACK(table)]});
 // Asking someone you've helped where the immortals are (神仙在哪里？, decided 5 November 2026, after playing it: the human
 // world's purpose, said from the start): the first you ask teaches 哪里, the next 知道 (each waiting for a little practice,
 // as a new word does). None of them knows (我不知道。), but they're your friend now (the befriend step: your Friends page,
@@ -338,13 +342,15 @@ const ACROSS_THE_SEA = {
       now:'Chase the little demons off the home ground ({demonsChased} of 3).'},
     {id:'lair', chapter:2, name:'Part 3', title:'The demon’s mountain', when:{north:1},
       text:'Far to the north: the Demon of Havoc’s mountain. The troop’s little ones are here somewhere!',
-      now:'Find the little monkeys, and set them free ({freed} of 5).'},
+      now:[{if:{freed:{below:5}}, text:'Find the little monkeys, and set them free ({freed} of 5).'}, {if:{cartWon:0}, text:'The troop’s things are on a {车|cart}: beat the little {妖怪|demon} guarding it.'},
+        {text:'Pull the {车|cart} back to the little monkeys.'}]},
     {id:'king', chapter:2, name:'Part 4', title:'The Demon of Havoc', when:{loot:{atLeast:1}},
       text:'The little demons have run into the cave, shouting. Out comes their master…',
       now:'Beat the Demon of Havoc.'},
     {id:'home2', chapter:2, name:'Part 5', title:'Home', when:{king:2},
       text:'The Demon of Havoc has run off for good. Take the little monkeys home!',
-      now:[{if:{ch2:0}, text:'Home with the little monkeys: celebrate with the troop.'}, {text:'That’s the end of Area 2.'}]}
+      now:[{if:{party:0}, text:'Home with the little monkeys and the {车|cart}: put the troop’s things back on the feast’s {桌子|tables}.'}, {if:{ch2:0}, text:'Home with the little monkeys: celebrate with the troop.'},
+        {text:'That’s the end of Area 2.'}]}
   ],
 
   // What this area remembers in your save, and the values it starts with.
@@ -378,9 +384,12 @@ const ACROSS_THE_SEA = {
   //   news     1 once the old monkey has told you about the Demon of Havoc; d1 d2 d3 1 once you've chased off each
   //            little demon on the home ground; north 1 once the old monkey has sent you north, on your cloud
   //   lairSeen 1 once you've been to the demon's mountain; key 1 once the guard has given you the cages' key (you, as a
-  //            little demon); freed1 to freed5 1 once you've let each little monkey out of its cage; loot the games of
-  //            I spy you've finished with them; king 1 once he's come out, 2 once you've beaten him
-  //   homeAgain 1 once you've flown home with the little monkeys; party 1 once the troop has celebrated; stickGiven 1 once
+  //            little demon); freed1 to freed5 1 once you've let each little monkey out of its cage; cartWon 1 once you've
+  //            beaten the little demon guarding the cart of the troop's things; loot 1 once you've pulled the cart back
+  //            to the little monkeys; king 1 once he's come out, 2 once you've beaten him
+  //   homeAgain 1 once a wind has carried you home with the little monkeys and the cart; unload which of the troop's things
+  //            the hungry monkey wants off the cart (the unloading: 1 to 5, then 6 once they're all on the feast's
+  //            tables); party 1 once the troop has celebrated; stickGiven 1 once
   //            you've given your stick to a little monkey in training; ch2 1 once the old monkey has told you of the
   //            Dragon King (the end of Area 2)
   // the prologue's asking: askChild askFisher askVillager askFarmer askGranny askTea askTeller askDocker 1 once you've asked each
@@ -389,6 +398,15 @@ const ACROSS_THE_SEA = {
   // kept in season (0 spring, 1 summer, 2 autumn, 3 winter); evening: 1 once a season's last task is done, till you go to
   // bed and wake in the next.
   seasons: {key:'season', if:{chapter:1, grown:0}, evening:{evening:1}},
+  // Unloading the cart at home, back from the demon's mountain (the unload step, js/world.js; decided 7 November 2026): the
+  // hungry monkey wants each of the troop's things off it, one at a time, only in Chinese, to go back on its table, the big
+  // one, or the second for the milk; once they're all back, the troop puts everything else back too, and celebrates.
+  unloading: {key:'unload', by:'hungry', cart:'cart', over:{party:1},
+    asks:[{word:'碗', ask:'wantBowls', on:'big'}, {word:'桃子', ask:'wantPeach', on:'big'}, {word:'苹果', ask:'wantApple', on:'big'}, {word:'蜂蜜', ask:'wantHoney', on:'big'}, {word:'牛奶', ask:'wantMilk', on:'milk'}],
+    right:'rightThanks', wrong:'notRight', take:'What does she want? Take it off the cart.',
+    listen:'She says it only in Chinese. Take it off the cart: press A at the cart.',
+    carry:'You’re carrying the {item}. Put it down on its table.', otherTable:'Not on this table: it goes on the other one.',
+    done:[{setUp:{party:1}}, {sound:'fanfare'}, {message:'Everything’s back on the feast’s tables! The troop brings out the rest, and everyone celebrates.'}, {say:'veryHappy', by:'elder'}]},
   // What people with nothing much to say talk about (their last few words, js/world.js): the weather, as the seasons go
   // round in the master's year (decided 7 November 2026, the owner's idea).
   smallTalk: [
@@ -397,7 +415,7 @@ const ACROSS_THE_SEA = {
     {if:{chapter:1, grown:0, season:2}, say:'manyLeaves'},
     {if:{chapter:1, grown:0, season:3}, say:'coldToday'}
   ],
-  progress: {season:0, evening:0, askChild:0, askFisher:0, askVillager:0, askFarmer:0, askGranny:0, askTea:0, askTeller:0, askDocker:0, toldSea:0, home2:0, foundBig:0, foundHungry:0, news:0, d1:0, d2:0, d3:0, north:0, lairSeen:0, key:0, freed1:0, freed2:0, freed3:0, freed4:0, freed5:0, loot:0, king:0, homeAgain:0, party:0, stickGiven:0, ch2:0,
+  progress: {season:0, evening:0, askChild:0, askFisher:0, askVillager:0, askFarmer:0, askGranny:0, askTea:0, askTeller:0, askDocker:0, toldSea:0, home2:0, foundBig:0, foundHungry:0, news:0, d1:0, d2:0, d3:0, north:0, lairSeen:0, key:0, freed1:0, freed2:0, freed3:0, freed4:0, freed5:0, cartWon:0, loot:0, king:0, homeAgain:0, unload:0, party:0, stickGiven:0, ch2:0,
     chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, class1:0, drill:0, myTree:0, trainGame:0, class2:0, spar1:0, herbs:0, wrote:0, class3:0, fire:0, wrapped:0, class4:0, snowman:0, nyTable:0, trip:0, bigMatch:0, snowCave:0, snowTown:0, snowFields:0, snowVillage:0, sweep:0, waterFetch:0, axeFetch:0, newYear:0, grown:0, lecture:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
 
   // Numbers that text can show as {name}, and that an if can check (as Flower Fruit Mountain's).
@@ -580,8 +598,13 @@ const ACROSS_THE_SEA = {
     {id:'c2key', main:true, if:{place:'lair', knows:'笼子', new:'钥匙'}, text:'Who has the {钥匙|key}? Ask the guard at the cave’s {门|door}', arrow:'guard'},
     {id:'c2change', main:true, if:{place:'lair', knows:'钥匙', key:0}, text:'The guard won’t give a monkey the {钥匙|key}. Hide behind a boulder, {变|change} into a little {妖怪|demon}, and ask him again', arrow:[12, 11, 'lair']},
     {id:'c2free', main:true, if:{place:'lair', key:1, freed:{below:5}}, text:'Open the {笼子|cages} with the {钥匙|key} ({freed}/5)', arrow:{sparkle:true}},
-    {id:'c2spy', main:true, if:{place:'lair', freed:5, loot:0}, text:'A little {猴子|monkey} wants to play I spy, by the troop’s things', arrow:'baby1'},
+    {id:'c2cart', main:true, if:{place:'lair', freed:5, cartWon:0}, text:'The troop’s things are on a {车|cart}, over on the right. Beat the little {妖怪|demon} guarding it', arrow:'cartGuard'},
+    {id:'c2pull', main:true, if:{place:'lair', cartWon:1, loot:0, following:{cart:false}}, text:'Pull the {车|cart} back to the little monkeys', arrow:[24, 5, 'lair']},   // (it's where it was till you pull it)
+    {id:'c2pulling', main:true, if:{place:'lair', following:{cart:true}}, text:'Pull the {车|cart} back to the little monkeys, by the {笼子|cages}', arrow:[8, 6, 'lair']},
     {id:'c2king', main:true, if:{place:'lair', king:1}, text:'Beat {混世魔王}', arrow:'king'},
+    {id:'c2unload', main:true, if:{homeAgain:1, party:0, lifted:false}, text:'The hungry monkey wants the troop’s things off the {车|cart}, one at a time: {听|listen}, then take each off it', arrow:[19, 8, 'ffmHomeGround']},
+    {id:'c2putBack', main:true, if:{homeAgain:1, party:0, any:CART_THINGS.slice(0, 4).map(w => ({lifted:w}))}, text:'Put it down on the big {桌子|table}', arrow:[17, 7, 'ffmHomeGround']},
+    {id:'c2putMilk', main:true, if:{homeAgain:1, party:0, lifted:'牛奶'}, text:'Put the {牛奶|milk} down on the table beside the big one', arrow:[22, 7, 'ffmHomeGround']},
     {id:'c2stick', main:true, if:{homeAgain:1, stickGiven:0}, text:'Give your {棍子|stick} to the little monkey in training', arrow:'trainee'},
     {id:'c2end', main:true, if:{stickGiven:1, ch2:0}, text:'The {老|old} monkey wants to talk to you', arrow:'elder'}
   ],
@@ -653,8 +676,9 @@ const ACROSS_THE_SEA = {
     {chapter:2, part:'homeAgain', text:'Find the troop: they’re hiding', done:{news:1}},
     {chapter:2, part:'demons', text:'Chase the little {妖怪|demons} off the home ground', show:{news:1}, done:{d3:1}},
     {chapter:2, part:'lair', text:'Set the little monkeys free', show:{north:1}, done:{freed:5}},
-    {chapter:2, part:'lair', text:'Find the troop’s things', show:{freed:5}, done:{loot:{atLeast:1}}},
+    {chapter:2, part:'lair', text:'Bring back the troop’s things', show:{freed:5}, done:{loot:{atLeast:1}}},
     {chapter:2, part:'king', text:'Beat {混世魔王}', show:{loot:{atLeast:1}}, done:{king:2}},
+    {chapter:2, part:'home2', text:'Put the troop’s things back on the feast’s {桌子|tables}', show:{homeAgain:1}, done:{party:1}},
     {chapter:2, part:'home2', text:'Take the little monkeys {回家|home}', show:{king:2}, done:{ch2:1}}
   ],
   bubbles: {
@@ -696,7 +720,8 @@ const ACROSS_THE_SEA = {
     elder: [{if:{knows:'好久不见', new:'老'}, show:'!'}, {if:{d3:1, north:0}, show:'!'}, {if:{stickGiven:1, ch2:0}, show:'!'}],
     d1: [{if:{d1:0}, show:'!'}], d2: [{if:{d1:1, d2:0}, show:'!'}], d3: [{if:{d2:1, d3:0}, show:'!'}],
     guard: [{if:{knows:'笼子', new:'钥匙'}, show:'!'}, {if:{key:0, form:'妖怪'}, show:'!'}],
-    baby1: [{if:{freed:5, loot:0}, show:'!'}],
+    cartGuard: [{if:{freed:5, cartWon:0}, show:'!'}],
+    hungry: [{if:{homeAgain:1, party:0, lifted:false}, show:'!'}],
     trainee: [{if:{homeAgain:1, stickGiven:0}, show:'!'}],
     king: [{if:{king:1}, show:'!'}]
   },
@@ -862,12 +887,18 @@ const ACROSS_THE_SEA = {
       {message:'The Demon of Havoc’s mountain: black rock, ash and dead pines. Up at the top, torches burn in front of a dark cave…'}]},
     // near the cages: the troop's little ones, calling for help
     {if:{place:'lair', knows:'火', new:'救命', around:[6, 6, 'lair', 3]}, do:[{say:'help', by:'baby1'}, {newWord:'救命', note:'救命 means Help! The troop’s little ones, locked in cages!'}]},
-    // all five free, and the troop's things found: the little demons run in, shouting, and out comes their master
-    {if:{place:'lair', loot:{atLeast:1}, king:0}, do:[{set:{king:1}}, {message:'The little demons run into the cave, shouting. Something big is coming out…'}, {sound:'rumble'},
-      {leap:'king', from:[14, 3]}, {talkTo:'king'}]},
-    // home with the little monkeys: the troop puts everything back on the feast's tables, and celebrates
-    {if:{place:'ffmHomeGround', homeAgain:1, party:0}, do:[{set:{party:1}}, {sound:'fanfare'},
-      {message:'The little monkeys run to their mothers! The troop puts everything back on the feast’s tables, and everyone celebrates.'}, {say:'veryHappy', by:'elder'}]},
+    // all five free: the little demon guarding the cart of the troop's things stops you as you come up to it
+    {if:{place:'lair', freed:5, cartWon:0, around:[24, 6, 'lair', 2]}, do:[{stopsYou:'cartGuard'}]},
+    // the cart pulled back to the little monkeys (decided 7 November 2026, after playing it: the Demon of Havoc appeared
+    // off the screen): they jump for joy, the ground shakes, his little demons run into the cave, and out he comes, down
+    // towards you, a heavy step at a time
+    {if:{place:'lair', following:{cart:true}, around:[7, 6, 'lair', 3]}, do:[{follow:[], park:true}, {sound:'chime'},
+      {leap:'baby1'}, {leap:'baby3'}, {leap:'baby5'}, {say:'veryHappy', by:'baby2'},
+      {sound:'rumble'}, {message:'The ground shakes! The little demons run into the cave, shouting. Something big is coming out…'},
+      {leap:'guard', to:[14, 3]}, {leap:'guard2', to:[15, 3]}, {set:{loot:1, king:1}},
+      {walk:'king', from:[14, 3], to:'you', ms:420, stomp:true}, {talkTo:'king'}]},
+    // home with the little monkeys and the cart: the hungry monkey wants the troop's things off it, for the feast's tables
+    {if:{place:'ffmHomeGround', homeAgain:1, unload:0, party:0}, do:[{talkTo:'hungry'}]},
     // (a game that heard the boatman's news before the asking was the story's purpose: he's told you)
     {if:{boat:{atLeast:1}, toldSea:0}, do:[{set:{toldSea:1}}]},
     {if:{askedTown:3, years:0}, do:[{set:{years:1}}, {message:'Nobody in the town knows where the immortals are either. You stay, and keep asking, year after year…'},
@@ -1494,7 +1525,10 @@ const ACROSS_THE_SEA = {
       legend:{'い':HIDING('foundHungry', 'hungry', 3, 12, {foundBig:1}),
         'え': {look:'grass', walk:true, becomes:[{if:{north:1, homeAgain:0}, to:'ぇ'}]},
         'ぇ': {look:'cloudGrass', landmark:true, onLook:[{label:'Fly north', do:[{scene:'flyNorth'}, {goTo:'lair', at:[14, 18], facing:'up'}]}]},
-        'ア':ROBBED('feastTableRobbed', '*'), 'イ':ROBBED('milkTableBare', ']'), 'エ':ROBBED('fruitTableL', 'λ'), 'オ':ROBBED('fruitTableM', 'π'), 'カ':ROBBED('fruitTableR', 'Φ'),
+        'ア':ROBBED('feastTableRobbed', '*', [5, 4, 3, 2].map(k => ({if:{unload:{atLeast:k}}, to:'サシスセ'[k - 2]})), 'big'),
+        'イ':ROBBED('milkTableBare', ']', [{if:{unload:{atLeast:6}}, to:'ソ'}], 'milk'),
+        'サ':BACK_ON('tableBack1', 'big'), 'シ':BACK_ON('tableBack2', 'big'), 'ス':BACK_ON('tableBack3', 'big'), 'セ':BACK_ON('tableBack4', 'big'), 'ソ':BACK_ON('milkTableJug', 'milk'),
+        'エ':ROBBED('fruitTableL', 'λ'), 'オ':ROBBED('fruitTableM', 'π'), 'カ':ROBBED('fruitTableR', 'Φ'),
         'キ':ROBBED('tableBlock', 'Щ'), 'ク':ROBBED('tableBlock', 'Ш')}}),
     ffmShore: AT_HOME('shore'), ffmHillside: AT_HOME('hillside'), ffmRiverside: AT_HOME('riverside'), ffmFlowerValley: AT_HOME('flowerValley'),
     ffmSouthSlope: AT_HOME('southSlope'), ffmCliffs: AT_HOME('cliffs'), ffmHotSprings: AT_HOME('hotSprings'), ffmMelonField: AT_HOME('melonField'),
@@ -1727,7 +1761,7 @@ const ACROSS_THE_SEA = {
     {id:'big', place:'ffmHomeGround', x:5, y:11, facing:'right', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'},
       moves:[{if:{foundBig:0}, place:'hut', x:5, y:0}, {if:{news:0}, place:'ffmMeadow', x:2, y:11, facing:'right'}], palette:{o:'#4F3929', f:'#B19473', s:'#F3DCC2', m:'#CA9E83', e:'#24160C'}},
     {id:'hungry', place:'ffmHomeGround', x:4, y:12, facing:'right', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
-      moves:[{if:{foundHungry:0}, place:'hut', x:6, y:0}], palette:{o:'#4F3929', f:'#B08C6B', s:'#F0CFAE', m:'#C29374', e:'#24160C'}},
+      moves:[{if:{foundHungry:0}, place:'hut', x:6, y:0}, {if:{homeAgain:1}, place:'ffmHomeGround', x:20, y:8, facing:'down'}], palette:{o:'#4F3929', f:'#B08C6B', s:'#F0CFAE', m:'#C29374', e:'#24160C'}},   // (by the cart and the feast's tables, once you're home with it)
     {id:'elder', place:'ffmCave', x:7, y:9, facing:'down', beard:true, holds:'棍子', name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
       moves:[{if:{news:1, place:'ffmHomeGround'}, place:'ffmHomeGround', x:16, y:8, facing:'down'}],   // (out of the cave once he's told you the news, when you're at the home ground)
       palette:{o:'#6E6A62', f:'#E4E2DC', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
@@ -1756,10 +1790,16 @@ const ACROSS_THE_SEA = {
     {id:'d1', place:'ffmHomeGround', look:'妖怪', x:4, y:9, facing:'left', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{news:0}, place:'hut', x:15, y:0}, {if:{d1:1}, place:'hut', x:15, y:0}]},
     {id:'d2', place:'ffmHomeGround', look:'妖怪', x:14, y:10, facing:'left', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{news:0}, place:'hut', x:16, y:0}, {if:{d2:1}, place:'hut', x:16, y:0}]},
     {id:'d3', place:'ffmHomeGround', look:'妖怪', x:24, y:9, facing:'left', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{news:0}, place:'hut', x:17, y:0}, {if:{d3:1}, place:'hut', x:17, y:0}]},
-    {id:'guard', place:'lair', look:'妖怪', x:13, y:4, facing:'down', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{king:2}, place:'hut', x:18, y:0}]},
-    {id:'guard2', place:'lair', look:'妖怪', x:16, y:4, facing:'down', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{king:2}, place:'hut', x:19, y:0}]},
+    {id:'guard', place:'lair', look:'妖怪', x:13, y:4, facing:'down', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{loot:{atLeast:1}}, place:'hut', x:18, y:0}]},
+    {id:'guard2', place:'lair', look:'妖怪', x:16, y:4, facing:'down', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'}, moves:[{if:{loot:{atLeast:1}}, place:'hut', x:19, y:0}]},
     {id:'king', place:'lair', look:'混世魔王', x:14, y:5, facing:'down', name:{zh:'混世魔王', py:'Hùnshì Mówáng', en:'The Demon of Havoc'},
-      moves:[{if:{king:0}, place:'hut', x:20, y:0}, {if:{king:2}, place:'hut', x:20, y:0}]}
+      moves:[{if:{king:0}, place:'hut', x:20, y:0}, {if:{king:2}, place:'hut', x:20, y:0}, {parked:true}]},   // (where he walked down to, out of his cave)
+    // the cart of the troop's things, over on the right of the demon's mountain, and the little demon guarding it (in the hut
+    // once it's run off); the cart wherever you pulled it to, by the little monkeys, then at home by the feast's tables
+    {id:'cartGuard', place:'lair', look:'妖怪', x:24, y:6, facing:'down', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'},
+      moves:[{if:{cartWon:1}, place:'hut', x:21, y:0}, {if:{loot:{atLeast:1}}, place:'hut', x:21, y:0}]},
+    {id:'cart', place:'lair', cart:true, x:24, y:5, facing:'left', name:{zh:'车', py:'chē', en:'Cart'},
+      moves:[{if:{homeAgain:1}, place:'ffmHomeGround', x:19, y:8, facing:'down'}, {parked:true, if:{cartWon:1}}, {if:{loot:{atLeast:1}}, place:'lair', x:10, y:6, facing:'left'}]}
   ],
   yourNames: [{if:{named:1}, zh:'孙悟空', py:'Sūn Wùkōng', en:'Sun Wukong (you)'}, {if:{}, zh:'美猴王', py:'Měi Hóuwáng', en:'Handsome Monkey King (you)'}],
 
@@ -1780,7 +1820,8 @@ const ACROSS_THE_SEA = {
     {word:'火', at:[12, 4, 'lair']}, {word:'笼子', at:[6, 5, 'lair'], if:{knows:'救命'}},
     {at:[4, 5, 'lair'], if:{key:1, freed1:0}}, {at:[6, 5, 'lair'], if:{key:1, freed2:0}}, {at:[8, 5, 'lair'], if:{key:1, freed3:0}},
     {at:[5, 7, 'lair'], if:{key:1, freed4:0}}, {at:[7, 7, 'lair'], if:{key:1, freed5:0}},
-    {at:[12, 11, 'lair'], if:{knows:'钥匙', key:0, form:null}}
+    {at:[12, 11, 'lair'], if:{knows:'钥匙', key:0, form:null}},
+    {word:'车', at:[24, 5, 'lair'], if:{freed:5}}
   ],
   // Where you found each word, on its page in the Word Scroll.
   found: {
@@ -1867,7 +1908,8 @@ const ACROSS_THE_SEA = {
     '笼子': 'The cages on the demon’s mountain.',
     '钥匙': 'The key to the cages, on the belt of the guard at the demon’s cave.',
     '毛': 'The hair trick, fighting the Demon of Havoc: your hairs turned into little monkeys.',
-    '刀': 'The Demon of Havoc’s broadsword, yours once you’d beaten him.'
+    '刀': 'The Demon of Havoc’s broadsword, yours once you’d beaten him.',
+    '车': 'The little demons’ cart, piled with the troop’s things, on the demon’s mountain.'
   },
   // Sentences for practising words without pictures (as Flower Fruit Mountain's). Like those, each needs every word in it caught.
   practiceSentences: [
@@ -1912,7 +1954,8 @@ const ACROSS_THE_SEA = {
     '火': {zh:'火 很 大 。', en:'The fire is very big.'},
     '笼子': {zh:'小 猴子 在 笼子 里 。', en:'The little monkey is in the cage.'},
     '毛': {zh:'猴子 有 很多 毛 。', en:'Monkeys have lots of fur.'},
-    '刀': {zh:'这 是 我 的 刀 。', en:'This is my broadsword.'}
+    '刀': {zh:'这 是 我 的 刀 。', en:'This is my broadsword.'},
+    '车': {zh:'车 上 有 桃子 。', en:'There are peaches on the cart.'}
   },
   // Chapter 2's battles (as Flower Fruit Mountain's: js/battle.js): the Demon of Havoc's little demons, in home's long grass
   // and the demon's mountain's dry grass; and the Demon of Havoc himself, at his cave's door (a name, not a word to catch:
@@ -1928,6 +1971,9 @@ const ACROSS_THE_SEA = {
     // a little demon: never one you can run from (boss; decided 7 November 2026, after playing it)
     demon: {word:'妖怪', health:30, hits:8, boss:true, attacks:['火', '松树', '叶子', '云', '天'], meetNote:'A little demon jumps out at you, waving its spear!', meet:'A little {妖怪} jumps out at you!',
       hide:'The little {妖怪} ducks out of sight…', attack:'The little {妖怪} jabs at you with its spear!', away:'The little {妖怪} runs off, squealing.', reward:2},
+    // the little demon guarding the cart of the troop's things: a little tougher than the others
+    cartGuard: {word:'妖怪', health:40, hits:8, boss:true, attacks:['火', '松树', '叶子', '云', '天'], meet:'The little {妖怪} guarding the cart jumps at you!',
+      hide:'The little {妖怪} ducks behind the cart…', attack:'The little {妖怪} jabs at you with its spear!', away:'The little {妖怪} lets go of the cart.', reward:3},
     king: {name:{zh:'混世魔王', py:'Hùnshì Mówáng', en:'Demon of Havoc'}, pic:'混世魔王', health:80, hits:10, boss:true, bossFight:true, big:true, nameCard:true, song:'boss', cry:'HA HA HA!',
       says:{meet:'notScared', angry:'goAway', beaten:'imGoing'},
       angry:{at:.5, twice:true, note:'The Demon of Havoc swings his great broadsword, angry!', then:'From now on he attacks twice in a row. Listen hard!'},
@@ -2168,12 +2214,11 @@ const ACROSS_THE_SEA = {
     notScared: {zh:'我 不 怕 你 ！', en:'I’m not scared of you!'},
     imGoing: {zh:'我 走 了 ！', en:'I’m going!'},
     letsGoHome: {zh:'我们 回家 吧 ！', en:'Let’s go home!'},
-    // I spy, with a little monkey you've set free: the troop's things
-    spyBowls: {zh:'我 看见 我们 的 碗 ！', en:'I can see our bowls!'},
-    spyPeaches: {zh:'我 看见 我们 的 桃子 ！', en:'I can see our peaches!'},
-    spyApples: {zh:'我 看见 我们 的 苹果 ！', en:'I can see our apples!'},
-    spyHoney: {zh:'我 看见 我们 的 蜂蜜 ！', en:'I can see our honey!'},
-    spyMilk: {zh:'我 看见 我们 的 牛奶 ！', en:'I can see our milk!'}
+    ours: {zh:'这 是 我们 的 ！', en:'This is ours!'},   // the little demon guarding the cart of the troop's things
+    // the hungry monkey, wanting each of the troop's things off the cart (with wantPeach and wantApple)
+    wantBowls: {zh:'我 要 碗 。', en:'I want the bowls.'},
+    wantHoney: {zh:'我 要 蜂蜜 。', en:'I want the honey.'},
+    wantMilk: {zh:'我 要 牛奶 。', en:'I want the milk.'}
   },
 
   talk: {
@@ -2511,6 +2556,11 @@ const ACROSS_THE_SEA = {
       {if:{new:'好久不见'}, do:[{say:'longTime', teach:'好久不见'}, {newWord:'好久不见', note:'好久不见 means long time no see: what you say to a friend you haven’t seen for a long time.'},
         {reply:'好久不见'}, {message:'The hungry monkey hugs you. The old monkey is hiding in the Water Curtain Cave, with some of the others. Go and find him!'}]},
       {if:{homeAgain:0}, do:[{say:'longTime'}, {reply:'好久不见'}]},
+      // home with the little monkeys and the cart: she wants each of the troop's things off it, only in Chinese (the unload
+      // step, the area's unloading), to go back on the feast's tables
+      {if:{homeAgain:1, unload:0}, do:[{message:'The little monkeys run to their mothers! The troop crowds round the cart: all their things, home again. Help the hungry monkey put them back on the feast’s tables.'},
+        {unload:'ask'}]},
+      {if:{homeAgain:1, party:0}, do:[{unload:'ask'}]},
       {do:[{say:'veryHappy'}]}
     ],
     elder: [
@@ -2536,9 +2586,8 @@ const ACROSS_THE_SEA = {
         {message:'You give your stick to the little monkey in training. You carry the Demon of Havoc’s broadsword now.'}]},
       {do:[{say:'hi'}, {reply:'你好'}]}],
     traineeStick: [{do:[{say:'veryHappy'}]}],
-    // the little ones, set free: one plays I spy with you, among the troop's things (the troop's own: 我看见我们的碗！)
-    baby1: [{if:{freed:5, loot:0}, do:[{say:'play'}, {spy:'loot', rounds:3, things:[{word:'碗', say:'spyBowls'}, {word:'桃子', say:'spyPeaches'}, {word:'苹果', say:'spyApples'}, {word:'蜂蜜', say:'spyHoney'}, {word:'牛奶', say:'spyMilk'}],
-        listen:'The little monkey says it only in Chinese. Find it in the heap, and press A at it.', found:'That’s it: {word}, the troop’s own!', wrong:'Not that one. Listen again!', done:[{say:'veryGood'}]}]},
+    // the little ones, set free
+    baby1: [{if:{freed:5, loot:0}, do:[{say:'thanks'}, {message:'The little monkey points: the troop’s things are on a cart, over on the right. A little demon is guarding it!'}]},
       {if:{homeAgain:0}, do:[{say:'thanks'}]}, {do:[{say:'veryHappy'}]}],
     baby2: [{if:{homeAgain:0}, do:[{say:'thanks'}]}, {do:[{say:'veryHappy'}]}],
     baby3: [{if:{homeAgain:0}, do:[{say:'thanks'}]}, {do:[{say:'veryHappy'}]}],
@@ -2568,11 +2617,31 @@ const ACROSS_THE_SEA = {
       {do:[{say:'notForMonkey'}]}
     ],
     guard2: [{do:[{say:'ourHome'}]}],
+    // the little demon guarding the cart of the troop's things (decided 7 November 2026, after playing it: the heap of
+    // things was just there for the taking): once the little monkeys are free, it fights you for it, a little tougher than
+    // the others, and you can try again on the spot; beaten, it runs off into the cave
+    cartGuard: [
+      {if:{freed:5, cartWon:0}, do:[{say:'ours'}, {battle:'cartGuard', retry:true, back:{at:[24, 9, 'lair'], facing:'up'}, lost:'The little demon won’t let you near the cart. Try again when you’re ready!',
+        win:[{walk:'cartGuard', to:[15, 4], ms:130}, {set:{cartWon:1}}, {message:'The little demon runs off into the cave, squealing! The cart is yours.'}]}]},
+      {do:[{say:'ours'}, {message:'The little demon guards the cart. First, set the little monkeys free!'}]}
+    ],
+    // the cart of the troop's things (车, the first time you look at it): pulled back to the little monkeys once its guard
+    // is beaten, rolling along behind you; at home, where the hungry monkey wants each thing off it (the unload step)
+    cart: [
+      {if:{following:{cart:true}}, do:[{message:'Pull the cart back to the little monkeys, by the cages.'}]},
+      {if:{cartWon:0, loot:0}, label:'Look', do:[{newWord:'车', note:'车 means a cart, or anything on wheels. The little demons’ cart, piled with the troop’s things!'},
+        {message:'The troop’s things, all piled on a cart! But a little demon is guarding it.'}]},
+      {if:{loot:0}, label:'Pull', do:[{newWord:'车', note:'车 means a cart, or anything on wheels. The little demons’ cart, piled with the troop’s things!'},
+        {message:'You take hold of the cart’s shafts, and pull. It rolls along behind you. Take it back to the little monkeys!'}, {follow:['cart']}]},
+      {if:{homeAgain:1, party:0}, label:'Take', do:[{unload:'take'}]},
+      {if:{homeAgain:0}, do:[{message:'The cart, with the troop’s things on it.'}]},
+      {do:[{message:'The troop’s cart, empty now. Everything’s back on the feast’s tables.'}]}
+    ],
     // the Demon of Havoc: who are you? I'm the king of Flower Fruit Mountain! Then the fight; beaten, he runs off for good,
     // and you fly the little ones home
     king: [{if:{king:1}, do:[{say:'whoAreYou'}, {gap:{sentence:'我 是 花果山 的 王', en:'I’m the king of Flower Fruit Mountain!', word:'王', others:['人', '鸟', '鱼'], pic:'猴子'}},
       {battle:'king', back:{at:[14, 9, 'lair'], facing:'up'}, lost:'The Demon of Havoc is too strong for you this time.',
-        win:[{set:{king:2}}, {say:'letsGoHome', by:'player'}, {scene:'flyHomeAll'}, {set:{homeAgain:1}}, {goTo:'ffmHomeGround', at:[13, 9], facing:'down'}]}]}]
+        win:[{set:{king:2}}, {say:'letsGoHome', by:'player'}, {scene:'windHome'}, {set:{homeAgain:1}}, {goTo:'ffmHomeGround', at:[19, 9], facing:'up'}]}]}]
   },
 
   story: [],
@@ -2621,7 +2690,7 @@ const ACROSS_THE_SEA = {
       {at:4, zh:'孙悟空 飞 回家 。', en:'Sun Wukong flies home.'},
       {at:8, zh:'花果山 ！', en:'Flower Fruit Mountain!'}
     ]},
-    // chapter 2: flying north to the demon's mountain; the hair trick (毛), in the fight; flying home with the little ones
+    // chapter 2: flying north to the demon's mountain; the hair trick (毛), in the fight; the wind home with the little ones
     flyNorth: {captions: [
       {at:0, zh:'孙悟空 在 天 上 飞 。', en:'Sun Wukong flies across the sky.'},
       {at:5, zh:'有 山 ！', en:'Mountains!'}
@@ -2630,8 +2699,9 @@ const ACROSS_THE_SEA = {
       {at:0, zh:'变 ！', en:'Change!'},
       {at:3.6, zh:'很多 小 猴子 ！', en:'Lots of little monkeys!'}
     ]},
-    flyHomeAll: {watch:'Watch the flight home with the little monkeys', when:{homeAgain:1}, captions: [
-      {at:0, zh:'我们 回家 吧 ！', en:'Let’s go home!'},
+    // a wind that carries you home with the little monkeys and the cart, as in the book (驾阵狂风)
+    windHome: {watch:'Watch the wind carry everyone home', when:{homeAgain:1}, captions: [
+      {at:0, zh:'有 风 了 ！', en:'The wind’s come!'},
       {at:4, zh:'小 猴子 们 很 快乐 。', en:'The little monkeys are so happy.'},
       {at:8, zh:'花果山 ！', en:'Flower Fruit Mountain!'}
     ]},

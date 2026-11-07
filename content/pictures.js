@@ -5812,6 +5812,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '车': {   // cart
+    palette: {a:'#4D3B26', b:'#2A1C11', c:'#C99A62', d:'#5E3B1F', e:'#D8B07A', f:'#9C6A3C', g:'#6E4626', h:'#332416', i:'#5A3D23', j:'#7A5230', k:'#A87A4A', l:'#4E321C', m:'#B07C4E', n:'#4A3424', o:'#291D12', p:'#5E3A1E', q:'#2A1C10', r:'#42311E', s:'#251A10', t:'#44362B', u:'#AD8C70', v:'#8A5A32', w:'#492D17', x:'#524D45', y:'#D9D2C2'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "...aaaaaaaaaaaaaaaaaaaab........",
+      "..accccccccccccccccccccdb.......",
+      "..aceeeeeeeeeeeeeeeeeeeedb......",
+      "..acffffgfffffgffffgffffdbh.....",
+      "..acffffgfffffgffffgffffiejhh...",
+      "..acffffkkkkklgffffgffffijmejhh.",
+      "..acffkkjjjjjjklfffgffffdhjjmejh",
+      "..acfkjjcnnnncjjlffgffffiohhjjmj",
+      "..bddkjnccnnccnjldddddiipq..hhjh",
+      "...rkjnnncnncnnnjlsbbtuvpq....h.",
+      "...rkjnnncvwcnnnjls..tuvpq......",
+      "...rkccccvppwccccls..tuvpq......",
+      "...rkccccwppwccccls..tuvpq......",
+      "...rkjnnncwwcnnnjls..tuvpq......",
+      "...sljnnncnncnnnjls..tuvpq......",
+      "....rkjnccnnccnjls...tuvpq......",
+      "....sljjcnnnncjjls...tuvpq......",
+      ".....slljjjjjjllsxxxxqpppq......",
+      "...xxxyyllllllyyyyyyyyyyyyxxx...",
+      "..xyyyyyyyyyyyyyyyyyyyyyyyyyyx..",
+      "...xxxyyyyyyyyyyyyyyyyyyyyxxx...",
+      "......xxxxxxxxxxxxxxxxxxxx......",
+      "................................"
+    ]
+  },
   '钥匙': {   // key
     palette: {a:'#4C4B4B', b:'#2E2D2E', c:'#C8CED6', d:'#6A707A', e:'#9AA0A8', f:'#FFFFFF', g:'#C7C7C7', h:'#595D61', i:'#292726', j:'#474645', k:'#B8BDC2'},
     rows: [

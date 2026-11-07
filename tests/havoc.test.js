@@ -1,8 +1,9 @@
 // Area 2, chapter 2, home to the Demon of Havoc (built 5 November 2026, from the plan): home to Flower Fruit Mountain,
 // twenty years on, as you left it (its places borrowed from Area 1); the troop hiding (哭 回来 好久不见 老); the little demons
 // on the home ground (妖怪); the demon's mountain far to the north, its torches (火), the little ones locked in cages (救命
-// 笼子), the key (钥匙) from the guard, as a little demon; I spy among the troop's things; the Demon of Havoc, his hair trick
-// (毛) and his broadsword (刀); and home, with the little ones, to the end of Area 2.
+// 笼子), the key (钥匙) from the guard, as a little demon; the cart (车) of the troop's things, fought for and pulled back to
+// the little ones; the Demon of Havoc, walking out of his cave, his hair trick (毛) and his broadsword (刀); and a wind home,
+// with the little ones and the cart, to unload it, to the end of Area 2.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -12,7 +13,7 @@ const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const FROM_BEFORE = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水', '吃', '喝', '要', '我', '猴子', '河', '鱼', '羊', '朋友', '家', '有', '鸟', '小', '大',
   '谢谢', '再见', '不客气', '木头', '三', '四', '人', '是', '不', '什么', '钱', '风', '歌', '洞', '门', '房子', '狗', '猫', '鸡', '牛', '船', '云', '鹤', '天', '王', '棍子',
   '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家', '碗', '蜂蜜', '牛奶'];
-const CHAPTER = ['哭', '回来', '好久不见', '老', '妖怪', '火', '救命', '笼子', '钥匙', '毛', '刀'];
+const CHAPTER = ['哭', '回来', '好久不见', '老', '妖怪', '火', '救命', '笼子', '钥匙', '车', '毛', '刀'];
 const CHAPTER_ONE = {landed: 1, dressed: 2, back: 1, child: 3, years: 1, boat: 2, song: 1, chapter: 2, woodFetch: 4, sky: 1, door: 2, teacher: 1, named: 1, spyGame: 1,
   grown: 1, riddle: 3, tests: 1, fly: 1, pine: 1, sentHome: 1};
 function game(pos, area = {}){
@@ -32,6 +33,10 @@ const tick = () => new Promise(r => setImmediate(r));
 async function play(g, code){ let done = false; const p = Promise.resolve(g.run(code)).then(() => { done = true; }); for (let i = 0; i < 2000 && !done; i++){ await tick(); g.flush(); } await p; }
 const press = (g, x, y, dir) => { g.run(`S.pos = {place: PLACE, x: ${x}, y: ${y}, dir: '${dir}'}; placePlayer(); lastTalk = null`); return play(g, 'interact(...facing()).then(runEvents)'); };
 const stand = (g, x, y, dir) => { g.run(`S.pos = {place: PLACE, x: ${x}, y: ${y}, dir: '${dir}'}; placePlayer()`); return play(g, 'runEvents()'); };
+const walkTo = (g, x, y, dir) => {   // a step onto the square next to you, anyone following you stepping after you (as tests/cow.test.js)
+  g.run(`followersStep(performance.now()); Object.assign(pl, {x: ${x}, y: ${y}, px: ${x} * T, py: ${y} * T, dir: '${dir}', mv: null})`);
+  return play(g, `arrive(${x}, ${y}).then(runEvents)`);
+};
 const goTo = (g, place, x, y, dir) => play(g, `goThrough({to: '${place}', arrive: [${x}, ${y}], facing: '${dir}'}).then(runEvents)`);
 const ready = g => g.run('S.turn = (S.turn || 0) + 10');   // (a little practice since the last new word)
 const said = g => { const s = get(g, '__said'); g.run('__said.length = 0'); return s; };
@@ -53,7 +58,13 @@ test('home, as you left it: Flower Fruit Mountain’s places, the school and gar
   assert.deepEqual(get(g, 'PLACES.ffmMeadow.legend.P.pick'), {item: '桃子'}, 'fruit to pick, as at the end');
   assert.match(g.run('PLACES.ffmMeadow.noMap'), /across the sea/, 'your map is of the lands across the sea');
   g.run('Object.assign(here(), {homeAgain: 1}); refreshMap()');
-  assert.equal(g.run('tileAt(16, 7).look'), 'feastTableHoney', 'and once you’re home with the little ones, everything goes back on it');
+  assert.equal(g.run('tileAt(16, 7).look'), 'feastTableRobbed', 'home with the little ones, the tables still bare…');
+  g.run('Object.assign(here(), {unload: 3}); refreshMap()');
+  assert.deepEqual([g.run('tileAt(16, 7).look'), g.run('tileAt(21, 7).look')], ['tableBack2', 'milkTableBare'], '…till the troop’s things go back on them, off the cart: the bowls and peaches so far');
+  g.run('Object.assign(here(), {unload: 6}); refreshMap()');
+  assert.deepEqual([g.run('tileAt(16, 7).look'), g.run('tileAt(21, 7).look')], ['tableBack4', 'milkTableJug'], 'all five');
+  g.run('Object.assign(here(), {party: 1}); refreshMap()');
+  assert.equal(g.run('tileAt(16, 7).look'), 'feastTableHoney', 'and once the troop celebrates, everything’s back on them');
   assert.equal(g.run('tileAt(12, 7).look'), 'fruitTableMelon');
 });
 
@@ -152,22 +163,70 @@ test('chapter 2, from landing by your stone to the end of Area 2', async () => {
   assert.equal(get(g, '__asked'), asked + 5, 'a question a cage');
   assert.equal(g.run('tileAt(4, 5).look'), 'cageOpen');
   assert.equal(get(g, 'ALL_NPCS.find(n => n.id === "baby1").place'), 'lair', 'out of its cage');
-  // I spy among the troop's things; then out comes the Demon of Havoc
+  // the little ones point the way: the troop's things are on a cart, over on the right, and a little demon guards it
   said(g); notes(g);
   await press(g, 3, 4, 'right');
-  const spying = get(g, 'here().spying');
-  assert.equal(spying.list.length, 3);
-  assert.match(said(g).at(-1), /^baby1: 我看见我们的.*！ \(no English\)$/);
-  for (const w of spying.list) await press(g, ...besideWord(g, w));
+  assert.deepEqual(said(g), ['baby1: 谢谢！']);
+  assert.ok(notes(g).some(n => /on a cart, over on the right/.test(n)));
+  assert.ok(get(g, 'getTasks().map(t => t.id)').includes('c2cart'));
+  // it stops you as you come up to the cart, and fights you for it (none to run from); beaten, it runs off into the cave
+  await stand(g, 22, 8, 'right');
+  assert.deepEqual(said(g), ['cartGuard: 这是我们的！']);
+  assert.deepEqual(get(g, '__battles').slice(-1), ['cartGuard']);
+  assert.equal(get(g, 'AREA.enemies.cartGuard.boss'), true, 'no running from it');
+  assert.deepEqual([p(g, 'cartWon'), get(g, 'ALL_NPCS.find(n => n.id === "cartGuard").place')], [1, 'hut'], 'it runs off into the cave');
+  // the cart: 车, the first time you look at it; then you pull it, and it rolls along behind you (your cloud won't carry it)
+  assert.equal(g.run('promptFor(24, 5)'), 'Pull', 'A at it says Pull');
+  await press(g, 24, 6, 'up');
+  assert.ok(notes(g).includes('card: 车'));
+  assert.deepEqual(get(g, 'S.following'), ['cart']);
+  for (let x = 23; x >= 11; x--) await walkTo(g, x, 6, 'left');
+  assert.deepEqual(get(g, 'FOLLOWERS.map(n => [n.id, n.x, n.y])'), [['cart', 12, 6]], 'behind you as you go');
+  assert.equal(p(g, 'loot'), 0);
+  // back to the little monkeys with it: they jump for joy, the ground shakes, the little demons run into the cave, and out
+  // comes the Demon of Havoc, down towards you a step at a time (decided 7 November 2026: he appeared off the screen)
+  await walkTo(g, 10, 6, 'left');   // (and all that follows, to home again, the hungry monkey asking for the first of the troop's things)
+  const heard = said(g), told = notes(g);
   assert.equal(p(g, 'loot'), 1);
+  assert.deepEqual(get(g, 'here().parked.cart'), {place: 'lair', x: 11, y: 6, facing: 'left'}, 'the cart, left just behind you');
+  assert.ok(heard.includes('baby2: 我们很快乐！'));
+  assert.ok(told.some(n => /ground shakes/.test(n)));
+  const king = get(g, 'here().parked.king');
+  assert.equal(Math.abs(king.x - 10) + Math.abs(king.y - 6), 1, 'he walked right up to you');
+  assert.deepEqual(get(g, '["guard", "guard2"].map(id => ALL_NPCS.find(n => n.id === id).place)'), ['hut', 'hut'], 'his little demons ran inside');
   // Part 4, the Demon of Havoc: who are you? I'm the king of Flower Fruit Mountain! (the fight itself: below)
   assert.ok(get(g, '__battles').includes('king'));
   assert.equal(p(g, 'king'), 2);
-  // Part 5, home with the little ones: the troop celebrates; your stick for a little one in training; the Dragon King
-  assert.ok(get(g, '__scenes').includes('flyHomeAll'));
-  assert.equal(g.run('PLACE'), 'ffmHomeGround');
-  assert.ok(notes(g).some(n => /run to their mothers/.test(n)));
+  // Part 5, home: a wind carries everyone home, the cart too, as in the book; the hungry monkey wants the troop's things
+  // off it, each only in Chinese, to go back on the feast's tables (the unload step)
+  assert.ok(get(g, '__scenes').includes('windHome'));
+  assert.deepEqual([g.run('PLACE'), g.run('pl.x'), g.run('pl.y')], ['ffmHomeGround', 19, 9]);
+  assert.deepEqual(get(g, '(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === "cart"))'), ['ffmHomeGround', 19, 8], 'the cart, by the feast’s tables');
+  assert.ok(told.some(n => /run to their mothers/.test(n)));
   assert.equal(get(g, 'partNow().id'), 'home2');
+  assert.deepEqual(heard.slice(heard.indexOf('king: 你是谁？')), ['king: 你是谁？', 'player: 我们回家吧！', 'hungry: 我要碗。 (no English)'], 'who are you? the fight, home, and the first thing she wants');
+  g.run("globalThis.__pick = null; takeCard = async words => { __choices = words; return __pick; }");
+  g.run("__pick = '苹果'");   // (the wrong one: she says so, and asks again)
+  await press(g, 19, 9, 'up');
+  assert.deepEqual(said(g), ['hungry: 不对。', 'hungry: 我要碗。 (no English)']);
+  assert.equal(get(g, 'here().lifted || null'), null, 'you didn’t take it');
+  assert.deepEqual(get(g, '__choices').sort(), ['桃子', '牛奶', '碗', '苹果', '蜂蜜'].sort(), 'everything on the cart, to choose from');
+  for (const [w, x] of [['碗', 17], ['桃子', 17], ['苹果', 17], ['蜂蜜', 17], ['牛奶', 22]]){
+    g.run(`__pick = '${w}'`);
+    await press(g, 19, 9, 'up');
+    assert.equal(p(g, 'lifted'), w, `you lift the ${w} off the cart`);
+    if (w === '牛奶') assert.equal(get(g, '__choices'), null, 'the last thing on the cart: no card');
+    if (w === '桃子'){ await press(g, 22, 8, 'up'); assert.equal(p(g, 'lifted'), '桃子', 'not on the milk’s table'); }
+    await press(g, x, 8, 'up');
+    assert.equal(get(g, 'here().lifted || null'), null, `and put it down on its table`);
+    g.run('__choices = null');
+  }
+  assert.deepEqual(said(g).filter(l => /要/.test(l)), ['hungry: 我要桃子。 (no English)', 'hungry: 我要苹果。 (no English)', 'hungry: 我要蜂蜜。 (no English)', 'hungry: 我要牛奶。 (no English)'],
+    'she asks for each in turn, only in Chinese');
+  assert.deepEqual([p(g, 'unload'), p(g, 'party')], [6, 1]);
+  assert.ok(notes(g).some(n => /everyone celebrates/.test(n)));
+  assert.equal(g.run('tileAt(16, 7).look'), 'feastTableHoney', 'everything back on the tables');
+  assert.deepEqual(get(g, 'NPCS.find(n => n.id === "cart") && cartLoad(NPCS.find(n => n.id === "cart"))'), [], 'and the cart empty');
   assert.equal(get(g, 'ALL_NPCS.find(n => n.id === "baby1").place'), 'ffmHomeGround');
   said(g);
   await press(g, 3, 11, 'left');

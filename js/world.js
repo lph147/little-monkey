@@ -88,6 +88,19 @@ function howManyCard(w, ask){   // (ask: its question, if not how many of it you
   });
 }
 
+// What to take off a cart (the unload step): a picture of each thing still on it, with its characters under it, as in a
+// listening question (what they asked for, said only in Chinese, is the question). Gives what you chose, or null for
+// Not now.
+function takeCard(words, ask){
+  return new Promise(res => {
+    openCard(`<p class="label">${esc(fill(ask))}</p>
+      <div class="opts" data-nav>${words.map((w, i) => `<button class="opt" data-i="${i}" aria-label="${esc(WORDS[w].en)}"><span class="ico">${picHTML(w)}</span><span class="cap">${w}</span></button>`).join('')}</div>
+      <div class="actions"><button class="btn" data-a="no" data-b>Not now</button></div>`);
+    sheet.querySelectorAll('.opt').forEach(b => b.onclick = () => { closeCard(); res(words[+b.dataset.i]); });
+    on('[data-a=no]', () => { closeCard(); res(null); });
+  });
+}
+
 const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
 // The animals in a chapter of the story (each animal's chapter, 0 if not given), or just those of one place in it (place,
 // such as the fox on the hillside), and how many of them you've met: the prologue's animals are counted on their own, so a
@@ -244,7 +257,7 @@ function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).
 function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
   const n = npcAt(x, y) || followerAt(x, y);
-  if (n) return n.label || 'Talk';
+  if (n){ const p = talkPart(n); return (p && p.label) || n.label || 'Talk'; }   // (what their talk says A does, such as Pull at a cart)
   if (animalAt(x, y)) return 'Meet';
   if (BIRD_WORD && birdAt(x, y)) return 'Look';
   const way = exitAt(x, y);
@@ -327,7 +340,7 @@ const LEAP_MS = 450;   // how long a leap takes, when someone stops following yo
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
 const STEP_OPTIONS = {carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
-  change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
+  change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed'], follow:['park'], walk:['from','to','ms','stomp']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 const COUNT_MS = 900;   // a count said as each one's done, one after another (the carry step's each): how long it has, at least, before the next begins
@@ -770,15 +783,40 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   },
   // Characters follow you (follow: their ids, in line, the first right behind you), like Pikachu in Pokémon Yellow; with
   // none, they stop, and each goes to its own place (where its moves say), with a leap if that's here, one after another.
+  // park: those who stop stay just where they are, such as the cart you've pulled back to the little monkeys (for a move
+  // that says parked: parkAt).
   async follow(s){
     const was = FOLLOWERS, from = was.map(n => [n.x, n.y]);
+    if (s.park) for (const n of was) if (!s.follow.includes(n.id)) parkAt(n);
     S.following = [...s.follow]; save();
     placeCharacters();
     trail.length = 0;   // those standing here fall in behind you as you walk; anyone elsewhere comes to you
     for (const n of FOLLOWERS) if (n.place !== PLACE) Object.assign(n, {place:PLACE, x:pl.x, y:pl.y, mv:null});
-    const now = performance.now(), going = was.filter(n => !FOLLOWERS.includes(n) && n.place === PLACE);
+    const now = performance.now(), going = was.filter((n, i) => !FOLLOWERS.includes(n) && n.place === PLACE && (n.x !== from[i][0] || n.y !== from[i][1]));   // (one parked where it is doesn't leap)
     going.forEach((n, i) => { const [fx, fy] = from[was.indexOf(n)]; n.mv = {fx, fy, t0:now + i * 150, dur:LEAP_MS, far:true}; });
     if (going.length){ SFX.turn(); await sleep(LEAP_MS + 150 * (going.length - 1)); }
+  },
+  // A character walks somewhere, a step at a time (walk: their id), such as the Demon of Havoc coming down out of his cave
+  // towards you (decided 7 November 2026, after playing it: he just appeared, off the screen): from a square (from: where
+  // they come out, if not where they are, such as his cave's mouth), to another (to: [x, y], or 'you': the nearest square
+  // beside you, then they turn to face you, and you them), each step so long (ms), each a heavy footstep that shakes the
+  // ground (stomp). They stay there (parkAt), for a move that says parked, such as while you fight him.
+  async walk(s){
+    placeCharacters();
+    const n = NPCS.find(c => c.id === s.walk);
+    if (!n) return;
+    if (s.from){ n.x = s.from[0]; n.y = s.from[1]; n.mv = null; }
+    held = null; queued = null;   // (you stop where you are, to watch)
+    const path = s.to === 'you' ? pathTo([n.x, n.y], [pl.x, pl.y], {free:n}).slice(0, -1) : s.to ? pathTo([n.x, n.y], s.to, {free:n, blocked:[pl.x, pl.y]}) : [];
+    const ms = s.ms || STEP;
+    for (const [x, y] of path){
+      n.mv = {fx:n.x, fy:n.y, t0:performance.now(), dur:ms}; n.dir = dirOf(x - n.x, y - n.y); n.parity = (n.parity || 0) ^ 1; n.x = x; n.y = y;
+      if (s.stomp){ await sleep(ms * .55); SFX.bump(); shakeT = performance.now() - 420; await sleep(ms * .45); }   // (as its foot comes down)
+      else await sleep(ms);
+    }
+    n.mv = null;
+    if (s.to === 'you'){ n.dir = dirOf(pl.x - n.x, pl.y - n.y); pl.dir = OPP[n.dir]; pl.turnT = performance.now(); S.pos = {...S.pos, dir:pl.dir}; save(); }
+    parkAt(n);
   },
   // A character leaps (or flies, for one that flies) out of a square to where the story has just put them (from), such as
   // the queen bee out of her old tree; or from where they are into a square (to), such as back into it, before the story
@@ -929,6 +967,41 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
       save();
     }
     await spyAsk();
+  },
+  // Unloading the troop's things off the cart, at home (the area's unloading; decided 7 November 2026, after playing it:
+  // they had to come home somehow, so you pull the little demons' cart back, and a wind carries it home with you): the
+  // one asking (by) wants each thing only in Chinese, said aloud, its English hidden (asks: each its word, the line that
+  // asks for it, ask, and the table it goes on, on); you take it off the cart (A at it: a card of what's still on it, their
+  // pictures; the wrong one and they say no, wrong, and ask again), lift it over your head, carry it to its table and put it
+  // down there (A at it), and see it go on; then they thank you (right) and ask for the next. Where you are is the area's
+  // progress (key: 0 before they've asked, then which ask, from 1, then one more once it's all back); done: the steps once
+  // it's all on its tables. unload: who or what this is: 'ask' (the one asking), 'take' (the cart), or a table (an on).
+  async unload(s){
+    const u = AREA.unloading, p = here();
+    if ((p[u.key] || 0) > u.asks.length) return;
+    if (!p[u.key]){ p[u.key] = 1; save(); }
+    const a = u.asks[p[u.key] - 1], face = speaker(u.by), ask = async () => { await showDialog(face, L[a.ask], {noEn:true}); toast(fill(u.listen)); };
+    const carrying = () => toast(fill(u.carry.replace('{item}', `{${a.word}}`)));
+    if (s.unload === 'ask'){ if (p.lifted === a.word) carrying(); else await ask(); return; }
+    if (s.unload === 'take'){
+      if (p.lifted){ carrying(); return; }
+      const left = u.asks.slice(p[u.key] - 1).map(x => x.word);   // (what's still on the cart)
+      const chosen = left.length > 1 ? await takeCard(shuffle(left), u.take) : left[0];
+      if (!chosen) return;   // (Not now)
+      reviewed(a.word, chosen === a.word); save();   // (counts as practice, as I spy does)
+      if (chosen !== a.word){ SFX.wrong(); await showDialog(face, L[u.wrong]); await ask(); return; }
+      await pickUpAct(chosen, {reach:'in'});
+      p.lifted = chosen; save(); carrying();
+      return;
+    }
+    if (!p.lifted) return;
+    if (a.on !== s.unload){ SFX.bump(); toast(fill(u.otherTable)); return; }
+    await STEPS.putDown({putDown:a.word});
+    await STEPS.setUp({setUp:{[u.key]:p[u.key] + 1}});   // (and you watch it go on)
+    SFX.right();
+    await showDialog(face, L[u.right]);
+    if (p[u.key] > u.asks.length){ await runSteps(u.done || []); return; }
+    await showDialog(face, L[u.asks[p[u.key] - 1].ask], {noEn:true}); toast(fill(u.listen));
   },
   // Changing into something (变, decided 4 November 2026: the chapter's big new idea): you hear what (a listening
   // question, the word one of the area's changes you know, the answers pictures of words you know), and your monkey turns
@@ -1149,11 +1222,16 @@ async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) awai
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
 // where the content first puts them. Someone following you is wherever you've been instead (FOLLOWERS, below).
 const inClass = new Set();   // characters out of their places for a lesson, such as PE's (js/pe.js): left where it puts them
+// A move that says parked puts them wherever they were last left (parkAt: here().parked), such as the cart you've pulled
+// back to the little monkeys, if anywhere (if not, the next move that matches).
+const parkedAt = n => (here().parked || {})[n.id];
+function parkAt(n){ (here().parked = here().parked || {})[n.id] = {place:n.place, x:n.x, y:n.y, facing:n.dir}; save(); }
 function placeCharacters(){
   for (const n of ALL_NPCS){
     if (S.following.includes(n.id) || inClass.has(n.id)) continue;
     if (here().shooed.includes(n.id)){ n.place = 'gone'; continue; }   // (a bird you've shooed off: shooAway)
-    const m = (HIDE && n.id === HIDE.by && hiderAt()) || (n.moves || []).find(m => matches(m.if)) || n.home;   // (off hiding, or where you found it: hide and seek, js/hide.js)
+    const mv = (n.moves || []).find(m => (!m.if || matches(m.if)) && (!m.parked || parkedAt(n)));
+    const m = (HIDE && n.id === HIDE.by && hiderAt()) || (mv && mv.parked ? parkedAt(n) : mv) || n.home;   // (off hiding, or where you found it: hide and seek, js/hide.js)
     const place = placeOf(m);
     if (n.place !== place || n.move !== m || (!n.scuttles && (n.x !== m.x || n.y !== m.y))){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; n.move = m; }   // (a move to the same square can turn them, such as the thirsty monkey watching for you to bring the cow home; a crab stays wherever it has scuttled to)
   }
@@ -1417,9 +1495,9 @@ const pickedHere = new Set();   // the trees you've picked from since you came i
 // or out of the water with a splash, you crouching for it, such as a flower or a stone (the pick act: its picture in ACTS
 // and drawActFx, js/draw.js, and your pose, the pick pose in js/poses.js). Picking fruit, gathering for a request,
 // carrying and the pickUp step all do it.
-async function pickUpAct(w, {pic, at} = {}){
+async function pickUpAct(w, {pic, at, reach:r} = {}){   // (reach: 'in', leaning into something that isn't one of the map's big objects, such as a cart)
   const [x, y] = at || facing(), o = mapObjects().find(o => x >= o.x && x < o.x + o.w && y >= o.y && y < o.y + o.h);
-  const tree = !!o && LEAFY.includes(o.look), piece = o && OBJECT_PIECES.find(p => p.key === objectKey(o)), reach = tree ? 'up' : o ? 'in' : 'down';
+  const tree = !!o && LEAFY.includes(o.look), piece = o && OBJECT_PIECES.find(p => p.key === objectKey(o)), reach = r || (tree ? 'up' : o ? 'in' : 'down');
   if (piece) piece.rustle = performance.now();   // (a tree shakes, as you reach into it)
   startAct('pick', {x, y, w, pic, reach, ...(tree ? {from:[o.x*T + o.w*T/2 + Math.round((Math.random() - .5) * 8), o.y*T - 12]} : {})});   // (from: where in its leaves it drops from)
   if (!o && WATERY.includes(tileAt(x, y).look)){   // (a splash where your paws go in)
