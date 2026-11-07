@@ -1332,6 +1332,42 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(path([[16, 19], [12, 15]], .9), FUR);                                              // an arm flung back
     p.flat(or(path([[1, 20], [9, 20]], .5), path([[3, 25], [8, 25]], .5), path([[2, 14], [8, 15]], .5)), '#8FB8DC');   // speed lines
   },
+  // the seasons, each a little scene in a frame
+  '春天': p => {   // spring: a branch of peach blossom against a pale sky, pink flowers and new green leaves (unlike 花: a whole branch in blossom)
+    p.flat(Rc(1, 2, 30, 28, 4), '#CFEAF6');                                                  // a pale spring sky
+    p.flat(and(Rc(1, 2, 30, 28, 4), O(16, 36, 22, 10)), '#9BD07A');                          // fresh green hills
+    p.fill(path([[1, 23], [9, 18], [18, 14], [27, 6]], 1.3), '#7A4E2E', {light: '#9C6A42'});   // the branch
+    p.fill(path([[12, 16.6], [14, 22]], .8), '#7A4E2E');
+    for (const [x, y] of [[23, 11], [11, 22]]) p.fill(O(x, y, 2.2, 1.3), '#6CC04A', {edge: true});   // new leaves
+    for (const [x, y] of [[7, 16], [15, 11], [21, 8], [27, 4], [14, 23], [19, 16]]){ p.fill(O(x, y, 2.8, 2.8), '#F48FB1', {light: '#FFC7DA', dark: '#D8628A', edge: true}); p.dot(x, y, '#FFE07A'); }   // blossoms
+  },
+  '夏天': p => {   // summer: a lotus pond, big round leaves, a pink lotus in flower and a bud (unlike 花: a lotus on the water)
+    p.flat(Rc(1, 2, 30, 28, 4), '#8FD0EE');                                                  // a bright blue sky
+    p.flat(and(Rc(1, 2, 30, 28, 4), Rc(1, 17, 30, 13)), '#3F9A8C');                          // the pond
+    p.fill(O(8, 22, 6.6, 3), '#4FA046', {edge: true}); p.flat(Rc(7, 21, 3, 1), '#2F7A36');   // lotus leaves on the water
+    p.fill(O(24, 25, 6, 2.8), '#5BAA4B', {edge: true}); p.flat(Rc(23, 24, 3, 1), '#3A8A3A');
+    p.fill(path([[17, 27], [16, 16]], .6), '#4F8A2E');                                         // the flower's stem
+    p.fill(or(O(16, 12.6, 3, 4.4), O(12.4, 14.4, 3, 2.4), O(19.6, 14.4, 3, 2.4)), '#F28CB4', {light: '#FFC2DA', dark: '#D45C8A', edge: true});   // the lotus
+    p.flat(O(16, 10.6, 1.2, 1.2), '#FFE07A');
+    p.fill(path([[25, 22], [26, 15]], .5), '#4F8A2E'); p.fill(O(26, 13.6, 1.6, 2.4), '#F28CB4', {light: '#FFC2DA', dark: '#D45C8A', edge: true});   // a bud, not yet open
+  },
+  '秋天': p => {   // autumn: a tree in red and gold, its leaves falling onto golden ground (unlike 树: its leaves turned; unlike 叶子: a whole tree)
+    p.flat(Rc(1, 2, 30, 28, 4), '#F4E3C2');                                                  // a hazy autumn sky
+    p.flat(and(Rc(1, 2, 30, 28, 4), Rc(1, 25, 30, 5)), '#D9A441');                           // golden ground
+    p.fill(Rc(14.5, 17, 3.5, 9), '#6B4A2A'); p.fill(or(path([[16, 19], [11, 14]], .6), path([[16, 18], [21, 13]], .6)), '#6B4A2A');   // the trunk, its branches
+    p.fill(or(O(16, 10, 8.6, 6.6), O(9.6, 14.6, 5.4, 4.4), O(22.6, 14.6, 5.4, 4.4), O(16.5, 16, 7, 3.6)), '#D8642E', {light: '#F0A04A', dark: '#A8401A', edge: true});   // its leaves, turned
+    p.flat(or(O(12.6, 7.6, 3, 2), O(7.6, 13, 2, 1.4), O(20.6, 11, 2.2, 1.4)), '#F2B84A');      // gold where the light catches them
+    [[19, 9], [12, 13], [22, 15], [16, 15], [10, 16]].forEach(([x, y]) => p.flat(Rc(x, y, 2, 1), '#A8401A'));
+    for (const [x, y, c] of [[5, 21, '#E2B03A'], [27, 20, '#D8642E'], [23, 27, '#C8502A'], [8, 27, '#E2B03A']]) p.fill(O(x, y, 1.6, 1), c);   // leaves falling
+  },
+  '冬天': p => {   // winter: snow on the ground and on a bare tree, snowflakes falling from a grey sky (unlike 树: bare, white with snow)
+    p.flat(Rc(1, 2, 30, 28, 4), '#C9D6E2');                                                  // a grey winter sky
+    p.flat(and(Rc(1, 2, 30, 28, 4), O(16, 37, 22, 12)), '#F7FAFC');                          // deep snow
+    p.fill(path([[16, 28], [16, 14]], 1.2), '#5E4026');                                       // the trunk
+    p.fill(or(path([[16, 19], [10, 12], [8, 8]], .7), path([[16, 17], [22, 10], [24, 7]], .7), path([[16, 15], [17, 7]], .6), path([[12, 14], [8, 14]], .5), path([[20, 13], [25, 13]], .5)), '#5E4026');   // its bare branches
+    p.flat(or(Rc(7, 7, 3, 1), Rc(23, 6, 3, 1), Rc(16, 6, 2, 1), Rc(8, 13, 2, 1), Rc(24, 12, 2, 1), Rc(14, 13, 4, 1)), '#FFFFFF');   // snow on them
+    for (const [x, y] of [[5, 6], [27, 16], [5, 18], [26, 23], [12, 4], [21, 21], [29, 6]]) p.flat(or(Rc(x - 1, y, 3, 1), Rc(x, y - 1, 1, 3)), '#FFFFFF');   // snowflakes
+  },
   '松树': p => {   // pine tree: tall and pointed, layers of dark needles (unlike a tree: pointed, dark)
     p.fill(Rc(14.6, 24, 3, 7), '#7A5230');
     for (const [y, w] of [[24, 13], [17, 10.4], [10, 7.6]]) p.fill(Pg([[16, y - 9], [16 + w, y + 1], [16 - w, y + 1]]), '#2E6B3A', {light: '#4E8C52', dark: '#1E4A28', edge: true});

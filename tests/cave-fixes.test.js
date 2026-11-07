@@ -11,10 +11,10 @@ const {loadGame} = require('./fake-browser');
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const KNOWN = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水', '吃', '喝', '要', '我', '猴子', '河', '鱼', '羊', '朋友', '家', '有', '鸟', '小', '大',
   '谢谢', '再见', '木头', '三', '四', '人', '是', '不', '什么', '钱', '风', '歌', '洞', '门', '房子', '狗', '猫', '鸡', '牛', '船', '云', '鹤', '天', '师父', '名字', '叶子', '扫'];
-function game(pos, area = {}){   // in the cave, with the senior pupil's chores begun: the leaves to sweep
+function game(pos, area = {}){   // in the cave in autumn, with the senior pupil's chores begun: the leaves to sweep
   const w = Object.fromEntries(KNOWN.map(x => [x, {lv: 2, ok: 2}]));
   const g = loadGame({dom: true, save: {version: 34, started: true, area: 2, shells: 0, coins: 5, met: [], friends: [],
-    areas: {1: {chapter: 1, raft: 3, done: true}, 2: {landed: 1, dressed: 2, back: 1, child: 3, years: 1, boat: 2, song: 1, chapter: 1, woodFetch: 4, sky: 1, door: 2, teacher: 1, named: 1, spyGame: 1, chores: 2, ...area}}, pos, w}});
+    areas: {1: {chapter: 1, raft: 3, done: true}, 2: {landed: 1, dressed: 2, back: 1, child: 3, years: 1, boat: 2, song: 1, chapter: 1, woodFetch: 4, sky: 1, door: 2, teacher: 1, named: 1, spyGame: 1, season: 2, sweep: 1, ...area}}, pos, w}});
   g.run("mode = 'play'; save = () => {}; globalThis.__notes = []; toast = t => { __notes.push(t); }; showNarration = async t => { __notes.push(t); }");
   g.run('pictureQ = async o => { if (o.onAnswer) o.onAnswer(true, o.answerIdx); return true; }; closeCard = () => {}');
   g.run('placePlayer()');

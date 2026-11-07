@@ -839,6 +839,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 山上有云。 | shān shàng yǒu yún. | There are clouds on the mountain. | 云 |  |
 | 天上有鸟。 | tiān shàng yǒu niǎo. | There are birds in the sky. | 天 |  |
 | 这是猴子的头。 | zhè shì hóuzi de tóu. | This is the monkey’s head. | 头 |  |
+| 春天有很多花。 | chūntiān yǒu hěn duō huā. | In spring there are lots of flowers. | 春天 |  |
+| 夏天有很多桃子。 | xiàtiān yǒu hěn duō táozi. | In summer there are lots of peaches. | 夏天 |  |
+| 秋天的叶子是红色的。 | qiūtiān de yèzi shì hóngsè de. | In autumn the leaves are red. | 秋天 |  |
+| 冬天没有桃子。 | dōngtiān méiyǒu táozi. | In winter there are no peaches. | 冬天 |  |
 | 晚上有月亮。 | wǎnshang yǒu yuèliang. | At night, there’s the moon. | 晚上 |  |
 | 天上有月亮。 | tiān shàng yǒu yuèliang. | There’s a moon in the sky. | 月亮 |  |
 | 天上有很多星星。 | tiān shàng yǒu hěn duō xīngxing. | There are lots of stars in the sky. | 星星 |  |
@@ -869,14 +873,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
 | 很多年以后…… | hěn duō nián yǐhòu… | Many years later… |  |
-
-### Scene: seven years go by in the cave
-
-| Chinese | Pinyin | English | Notes |
-| --- | --- | --- | --- |
-| 孙悟空扫叶子。 | Sūn Wùkōng sǎo yèzi. | Sun Wukong sweeps up the leaves. |  |
-| 孙悟空听师父说。 | Sūn Wùkōng tīng shīfu shuō. | Sun Wukong listens to the master. |  |
-| 七年以后…… | qī nián yǐhòu… | Seven years later… |  |
 
 ### Scene: the cloud somersault
 
@@ -920,6 +916,15 @@ For words that no line or story sentence uses, shown on the word's page in the W
 
 | Chinese | Pinyin | English | Notes |
 | --- | --- | --- | --- |
+| 孙悟空睡觉了。 | Sūn Wùkōng shuìjiào le. | Sun Wukong goes to sleep. |  |
+| 夏天来了！ | xiàtiān lái le! | Summer is here! |  |
+| 孙悟空睡觉了。 | Sūn Wùkōng shuìjiào le. | Sun Wukong goes to sleep. |  |
+| 秋天来了！ | qiūtiān lái le! | Autumn is here! |  |
+| 孙悟空睡觉了。 | Sūn Wùkōng shuìjiào le. | Sun Wukong goes to sleep. |  |
+| 冬天来了！ | dōngtiān lái le! | Winter is here! |  |
+| 孙悟空扫叶子。 | Sūn Wùkōng sǎo yèzi. | Sun Wukong sweeps up the leaves. |  |
+| 孙悟空听师父说。 | Sūn Wùkōng tīng shīfu shuō. | Sun Wukong listens to the master. |  |
+| 七年以后…… | qī nián yǐhòu… | Seven years later… |  |
 | 孙悟空在天上飞。 | Sūn Wùkōng zài tiān shàng fēi. | Sun Wukong flies across the sky. |  |
 | 有山！ | yǒu shān! | Mountains! |  |
 
@@ -1085,6 +1090,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 飞 | fēi | to fly |  |
 | 松树 | sōngshù | pine tree |  |
 | 回家 | huíjiā | to go home |  |
+| 春天 | chūntiān | spring |  |
+| 夏天 | xiàtiān | summer |  |
+| 秋天 | qiūtiān | autumn |  |
+| 冬天 | dōngtiān | winter |  |
 | 回来 | huílai | to come back |  |
 | 好久不见 | hǎojiǔ bú jiàn | long time no see |  |
 | 哭 | kū | to cry |  |

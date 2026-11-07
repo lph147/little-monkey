@@ -12,7 +12,7 @@ const {watchBeside, besideTasks} = require('./beside');
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const FROM_BEFORE = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水', '吃', '喝', '要', '我', '猴子', '河', '鱼', '羊', '朋友', '家', '有', '鸟', '小', '大',
   '谢谢', '再见', '木头', '三', '四', '人', '是', '不', '什么', '钱', '风', '歌', '洞', '门', '房子', '狗', '猫', '鸡', '牛', '船', '云', '鹤', '天'];
-const CHAPTER = ['云', '鹤', '天', '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家'];
+const CHAPTER = ['云', '鹤', '天', '师父', '名字', '春天', '夏天', '秋天', '冬天', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家'];
 function game(pos, area = {}){
   const w = Object.fromEntries(FROM_BEFORE.map(x => [x, {lv: 2, ok: 2}]));
   const g = loadGame({dom: true, save: {version: 34, started: true, area: 2, shells: 0, coins: 5, met: [], friends: [],
@@ -43,10 +43,10 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   // the master: who he is (师父), and, going straight on, your name (名字): 孙悟空
   await press(g, 14, 6, 'up');
   assert.deepEqual(said(g), ['master: 你来了。', 'master: 我是你的师父。', 'master: 你叫什么名字？', 'player: 我没有真正的名字。大家都叫我美猴王。', 'master: 你叫孙悟空。']);
-  assert.ok(notes(g).includes('card: 师父'));
+  const first = notes(g);
+  assert.ok(first.includes('card: 师父'));
+  assert.ok(first.includes('card: 春天'), 'it’s spring as you arrive');
   assert.equal(get(g, 'yourName().zh'), '孙悟空', 'your name, from now on');
-  await press(g, 14, 6, 'up');
-  assert.ok(notes(g).some(n => /chores first/.test(n)), 'the chores first');
   // I spy with a pupil: she says what she sees, only in Chinese, and you press A at it
   await press(g, 10, 9, 'left');
   const spying = get(g, 'here().spying');
@@ -58,35 +58,66 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   const coins = get(g, 'S.coins');
   for (const w of spying.list) await press(g, ...besideWord(g, w));
   assert.deepEqual([p(g, 'spyGame'), get(g, 'S.coins'), get(g, '!!here().spying')], [1, coins + 2, false], 'all three found');
-  // the senior pupil's chores: the leaves (叶子), sweeping them (扫), a bucket (桶) and its water, an axe (斧头) and wood
-  said(g); notes(g);
+  // the master's year: spring's done, and evening comes; to bed, and you wake in the summer
+  assert.equal(p(g, 'evening'), 1, 'evening, once spring’s done');
+  assert.deepEqual(get(g, 'getTasks().filter(t => t.main && t.id.startsWith("c1")).map(t => t.id)'), ['c1bed'], 'time for bed');
+  notes(g);
+  await press(g, 4, 4, 'up');
+  assert.deepEqual(get(g, '__scenes'), ['toSummer'], 'the night, and the cave turning');
+  assert.deepEqual([p(g, 'season'), p(g, 'evening'), g.run('pl.x'), g.run('pl.y')], [1, 0, 4, 4], 'summer, out of your room in the morning');
+  let n = notes(g);
+  assert.ok(n.some(x => /box: Part 3 Summer/.test(x)) && n.includes('card: 夏天'), 'summer’s part, and its word');
+  assert.ok(n.findIndex(x => /Part 3/.test(x)) < n.indexOf('card: 夏天'), 'its part first, then its word');
+  // summer: water for the senior pupil, three buckets (桶)
+  said(g);
   await press(g, 17, 9, 'right');
-  assert.ok(notes(g).includes('card: 叶子'));
+  assert.deepEqual(said(g), ['senior: 这是桶。', 'senior: 我要三桶水。 (no English)']);
+  g.run('howManyCard = async () => 3');
+  await press(g, 21, 8, 'up');   // (at the pool: how many? three, filled one after another)
+  assert.deepEqual(p(g, 'carrying'), {word: '水', n: 3});
   await press(g, 17, 9, 'right');
-  assert.ok(notes(g).includes('card: 扫'));
+  assert.deepEqual(said(g), ['senior: 对！谢谢！'], 'his thanks');
+  assert.equal(p(g, 'evening'), 1, 'summer’s done');
+  await press(g, 4, 4, 'up');
+  assert.equal(p(g, 'season'), 2, 'autumn');
+  assert.ok(notes(g).includes('card: 秋天'));
+  assert.equal(get(g, 'tileAt(9, 7).look'), 'leafPile', 'leaves have fallen in the courtyard');
+  // autumn: the leaves (叶子), sweeping them (扫), then the axe (斧头) and firewood
+  await press(g, 17, 9, 'right');
+  assert.deepEqual(said(g), ['senior: 很多叶子！', 'senior: 你扫叶子吧。'], 'the leaves, and going straight on, sweeping them');
+  n = notes(g);
+  assert.ok(n.includes('card: 叶子') && n.includes('card: 扫'));
   for (const [x, y] of [[9, 7], [17, 7], [12, 10], [19, 12], [8, 13]]) await press(g, x, y + 1, 'up');
   assert.equal(g.run('counter("leavesSwept")'), 5);
   assert.equal(g.run('tileAt(9, 7).look'), 'paving', 'swept up');
   said(g);
   await press(g, 17, 9, 'right');
-  assert.deepEqual(said(g), ['senior: 很好！', 'senior: 这是桶。', 'senior: 我要三桶水。 (no English)']);
-  g.run('howManyCard = async () => 3');
-  await press(g, 21, 8, 'up');   // (at the pool: how many? three, filled one after another)
-  assert.deepEqual(p(g, 'carrying'), {word: '水', n: 3});
-  await press(g, 17, 9, 'right');
-  assert.deepEqual(said(g), ['senior: 对！谢谢！', 'senior: 这是斧头。', 'senior: 我要四块木头。 (no English)'], 'his thanks, and straight on to the next job');
-  assert.equal(p(g, 'chores'), 5);
+  assert.deepEqual(said(g), ['senior: 很好！', 'senior: 这是斧头。', 'senior: 我要四块木头。 (no English)']);
   g.run('howManyCard = async () => 4');
   const asked = get(g, '__asked');
   await press(g, 23, 13, 'up');   // (at a chopping block: how many? four, chopped one after another)
   assert.equal(get(g, '__asked'), asked + 4, 'a question a log');
   await press(g, 17, 9, 'right');
-  assert.equal(p(g, 'chores'), 6);
-  // the lecture, and seven years: the saplings grown, new little pupils; and, going straight on, the riddle: three taps on
-  // your head (头); the master goes in
-  said(g); notes(g);
+  assert.deepEqual([p(g, 'sweep'), p(g, 'axeFetch'), p(g, 'evening')], [2, 2, 1], 'autumn’s done');
+  await press(g, 4, 4, 'up');
+  assert.equal(p(g, 'season'), 3, 'winter');
+  assert.ok(notes(g).includes('card: 冬天'));
+  assert.equal(get(g, 'tileAt(9, 7).look'), 'paving', 'no leaves in winter');
+  // winter: the year's last day; then to bed, and seven years go by
+  said(g);
   await press(g, 14, 6, 'up');
+  assert.equal(p(g, 'newYear'), 1);
+  assert.equal(p(g, 'evening'), 1);
+  g.run('__scenes.length = 0');
+  await press(g, 4, 4, 'up');
   assert.deepEqual(get(g, '__scenes'), ['caveYears']);
+  assert.deepEqual([p(g, 'grown'), get(g, 'seasonNow()')], [1, null], 'seven years on: the year’s seasons are over');
+  // the lecture, now after the years (as in the book), and, going straight on, the riddle: three taps on your head (头);
+  // the master goes in
+  said(g); notes(g);
+  const lecture = get(g, '__asked');
+  await press(g, 14, 6, 'up');
+  assert.equal(get(g, '__asked'), lecture + 4, 'his lecture');
   assert.equal(g.run('tileAt(5, 9).look'), 'rockPeach', 'the sapling grown into a peach tree');
   assert.equal(get(g, 'ALL_NPCS.find(n => n.id === "little1").place'), 'cave');
   assert.equal(said(g).at(-1), 'master: 一，二，三！');
@@ -131,13 +162,13 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   assert.ok(get(g, '__scenes').includes('flyHome'));
   assert.ok(end.includes('chapter: 2'), 'chapter 2 begins: home to Flower Fruit Mountain');
   assert.deepEqual([g.run('PLACE'), g.run('pl.x'), g.run('pl.y')], ['ffmMeadow', 9, 2], 'landing by your stone');
-  assert.deepEqual(CHAPTER.filter(w => !knows(g, w)), [], 'all 17 of chapter 1’s words');
+  assert.deepEqual(CHAPTER.filter(w => !knows(g, w)), [], 'all of chapter 1’s words');
   assert.deepEqual(get(g, 'AREA.checklist.filter(c => c.chapter === 1 && !matches(c.done)).map(c => c.text)').filter(t => !/crane|鹤|woodcutter/.test(t)), [], 'the chapter’s checklist done (but for what’s on the climb)');
   assert.deepEqual(besideTasks(g), [], 'no task ever sends you to someone you’re standing with, just as you finish talking to them: they go straight on');
 });
 
 test('flying by cloud: Fly here on a place you’ve been, on the map, once you can; it takes you there', async () => {
-  const g = game({place: 'cave', x: 14, y: 10, dir: 'down'}, {named: 1, teacher: 1, chores: 6, grown: 1, riddle: 3, tests: 1, fly: 1, visited: ['shore', 'cave']});
+  const g = game({place: 'cave', x: 14, y: 10, dir: 'down'}, {named: 1, teacher: 1, grown: 1, lecture: 1, riddle: 3, tests: 1, fly: 1, visited: ['shore', 'cave']});
   g.run("S.w['地图'] = {lv: 2, ok: 2}");
   g.run("closeUp('shore')");
   assert.ok(g.run("!!sheet.querySelector('[data-a=fly]')"), 'Fly here');

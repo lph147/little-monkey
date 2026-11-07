@@ -76,6 +76,11 @@ const CAVE_MAP = [
   "RRRRRRRRRRRRRRkkRRRRRRRRRRRRRR",
   "RRRRRRRRRRRRRRkkRRRRRRRRRRRRRR"
 ];
+// The night between two seasons of the master's year (decided 7 November 2026, from the plan): once a season's jobs are
+// done, evening falls, with the first sign of the season to come; you go to bed in your room, the night passes in a scene
+// as the cave turns, and in the morning you come out into the new season: its part of the story, and its word.
+const NEXT_SEASON = (to, word, note) => [{scene:['', 'toSummer', 'toAutumn', 'toWinter'][to]}, {set:{season:to, evening:0}}, {goTo:'cave', at:[4, 4], facing:'down'},
+  {nextPart:true}, {newWord:word, note}];
 const CAVE_LEGEND = {
   'R': {look:'karstTop', word:'山'},
   'K': {look:'karstFace', word:'山'},
@@ -93,11 +98,18 @@ const CAVE_LEGEND = {
   'p': {look:'woodpile', word:'木头', note:'The cave’s firewood.'},
   'L': {look:'stump', landmark:true, onLook:[{if:{axeFetch:1}, label:'Chop', do:[{carry:'木头', howMany:true, each:[{practise:1, label:'Chopping the wood', pic:'斧头'}, {hit:'wood', with:'斧头', times:2}], ask:'How many pieces of {木头|wood} do you want to chop?', took:'You’re carrying {n} piece{s} of {木头|wood}. Take {them} to the senior pupil.'}]},
     {do:[{message:'A chopping block, with logs beside it to chop.'}]}]},
-  'l': {look:'leafPile', word:'叶子', onLook:[{if:{chores:0}, do:[{message:'A heap of fallen leaves.'}]},
-    {if:{chores:2}, label:'Sweep', sparkle:true, do:[{practise:1, label:'Sweeping the leaves', pic:'扫'}, {sweep:'leaves'}, {change:'#'},
+  'l': {look:'leafPile', word:'叶子', becomes:[{if:{any:[{season:{below:2}}, {season:3}, {grown:1}]}, to:'#'}],   // (heaps of fallen leaves in autumn, the master's year)
+    onLook:[{if:{sweep:0}, do:[{message:'A heap of fallen leaves.'}]},
+    {if:{sweep:1}, label:'Sweep', sparkle:true, do:[{practise:1, label:'Sweeping the leaves', pic:'扫'}, {sweep:'leaves'}, {change:'#'},
       {collect:'叶子', for:'sweep', count:5, each:'You sweep up the leaves ({leavesSwept}/5).', full:'All five heaps swept! Tell the senior pupil.'}]}]},
   'y': {look:'rockDoor', word:'门', note:'A pupil’s room, cut into the rock.'},
   'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[
+    // the master's year: once a season's jobs are done, evening comes; you go to bed here, and wake in the next season
+    {if:{evening:1, season:0}, label:'Sleep', do:NEXT_SEASON(1, '夏天', '夏天 means summer. Hot, sunny days, and everything green.')},
+    {if:{evening:1, season:1}, label:'Sleep', do:NEXT_SEASON(2, '秋天', '秋天 means autumn. The leaves are turning red and gold, and falling.')},
+    {if:{evening:1, season:2}, label:'Sleep', do:NEXT_SEASON(3, '冬天', '冬天 means winter. Snow on the mountain, and cold!')},
+    {if:{evening:1, season:3}, label:'Sleep', do:[{scene:'caveYears'}, {set:{grown:1, evening:0}}, {goTo:'cave', at:[4, 4], facing:'down'}, {sound:'chime'},
+      {message:'Seven years have gone by. The peach trees you watered are tall now, with fruit on them, and there are new little pupils.'}]},
     {if:{riddle:1}, label:'Wait for night', do:[{set:{riddle:2}}, {message:'You lie down in your room, but you don’t sleep. You wait, and wait…'},
       {goTo:'caveNight', at:[4, 4], facing:'down'}, {sound:'chime'}, {newWord:'晚上', note:'晚上 means night, or evening. Everyone is asleep: it’s the third watch of the night.'}]},
     {if:{teacher:0}, do:[{message:'A pupil’s room, cut into the rock: a stone bed, and a little window.'}]},   // (not yours till the master takes you as his pupil)
@@ -115,15 +127,15 @@ const CAVE_NIGHT = {
   'M': {look:'rockDoorOpen', word:'门', landmark:true, onLook:[{if:{new:'星星'}, label:'Look up', do:[{newWord:'星星',
     note:'星星 means stars. Over the master’s back door: a slanting moon, and three stars. Like the cave’s name: 斜月三星洞!'}]}]}
 };
-// The senior pupil's chores, fetched by their word (as the woodcutter's): three buckets of water from the pool, then four
-// logs chopped with the axe; at the pool, or a chopping block, you choose how many first, and they're filled or chopped one
-// after another, counted (decided 6 November 2026, after playing it: one at a time, it wasn't clear what to do). His thanks
-// for the water and he goes on to the next job, there and then: you're talking to him already.
+// The senior pupil's chores, fetched by their word (as the woodcutter's): in summer, three buckets of water from the pool;
+// in autumn, four logs chopped with the axe; at the pool, or a chopping block, you choose how many first, and they're filled
+// or chopped one after another, counted (decided 6 November 2026, after playing it: one at a time, it wasn't clear what to
+// do). His thanks, and his next job, if he has one, there and then: you're talking to him already.
 const FETCH_WATER = {fetch:'waterFetch', asks:[{word:'水', count:3, ask:'wantWater3'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
-  listen:'He says it only in Chinese. Listen for how many he wants: fill them at the pool, all at once, and bring them to him.', done:[{set:{chores:4}}, {goOn:true}]};
+  listen:'He says it only in Chinese. Listen for how many he wants: fill them at the pool, all at once, and bring them to him.', done:[{coins:2, note:'The senior pupil gives you 2 🪙 for your help.'}, {goOn:true}]};
 const FETCH_WOOD = {fetch:'axeFetch', asks:[{word:'木头', count:4, ask:'wantWood4'}], right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
   listen:'He says it only in Chinese. Listen for how many he wants: chop them at a chopping block, all at once, and bring them to him.',
-  done:[{set:{chores:6}}, {say:'veryGood'}, {coins:3, note:'The senior pupil gives you 3 🪙 for your help.'}, {message:'The chores are done. The master is giving a lecture, in front of the hall!'}]};
+  done:[{say:'veryGood'}, {coins:3, note:'The senior pupil gives you 3 🪙 for your help.'}, {goOn:true}]};
 // Chapter 2, home to Flower Fruit Mountain (decided 5 November 2026, from the plan and its mock-ups): twenty years on, the
 // troop is hiding; a demon from the north, the Demon of Havoc (混世魔王, a name, never a word to catch), has carried off
 // their little ones, and his little demons (妖怪) are in the long grass. Home's places are Flower Fruit Mountain's,
@@ -261,16 +273,25 @@ const ACROSS_THE_SEA = {
       now:[{if:{toldSea:0}, text:'Ask at the harbour: someone there must know.'}, {if:{boat:{below:2}}, text:'Sail west across the sea, with the boatman.'}, {text:'Find out where the immortal lives.'}]},
     {id:'climb', chapter:1, name:'Part 1', title:'The climb', when:{chapter:1}, card:false,
       now:'Climb the mountain, to the immortal’s cave.'},
-    {id:'cave', chapter:1, name:'Part 2', title:'The immortal’s cave', when:{door:2},
-      text:'The immortal is waiting for you, in his cave. He’s a great teacher: learn all you can!',
-      now:'Learn from the master, and help with the chores.'},
-    {id:'secret', chapter:1, name:'Part 3', title:'The master’s secret', when:{grown:1},
+    {id:'spring', chapter:1, name:'Part 2', title:'Spring', when:{door:2},
+      text:'The immortal is waiting for you, in his cave. You’ll live here a whole year, and he’s a great teacher: learn all you can!',
+      now:'Learn from the master, and help in the cave.'},
+    {id:'summer', chapter:1, name:'Part 3', title:'Summer', when:{season:1},
+      text:'Summer in the cave: long, hot days, and everything green.',
+      now:'Help in the cave through the summer.'},
+    {id:'autumn', chapter:1, name:'Part 4', title:'Autumn', when:{season:2},
+      text:'Autumn: the leaves are turning red and gold, and falling.',
+      now:'Get the cave ready for the winter.'},
+    {id:'winter', chapter:1, name:'Part 5', title:'Winter', when:{season:3},
+      text:'Winter: snow on the mountain, and cold in the cave.',
+      now:'The last days of the year.'},
+    {id:'secret', chapter:1, name:'Part 6', title:'The master’s secret', when:{grown:1},
       text:'Seven years have gone by. You’ve learned a lot, but not yet what you came for: how never to grow old…',
       now:'Find out what the master’s riddle means.'},
-    {id:'change', chapter:1, name:'Part 4', title:'Changing into things', when:{riddle:3},
+    {id:'change', chapter:1, name:'Part 7', title:'Changing into things', when:{riddle:3},
       text:'The master has told you his secret, at night. Now learn to change into things, and to fly!',
       now:'Learn to change into things, and to fly.'},
-    {id:'home', chapter:1, name:'Part 5', title:'Showing off', when:{pine:1},
+    {id:'home', chapter:1, name:'Part 8', title:'Showing off', when:{pine:1},
       text:'Showing off to the pupils has made the master angry…',
       now:[{if:{sentHome:0}, text:'The master wants to see you.'}, {text:'That’s the end of chapter 1.'}]},
     {id:'homeAgain', chapter:2, name:'Part 1', title:'Home again', when:{chapter:2}, card:false,
@@ -307,9 +328,11 @@ const ACROSS_THE_SEA = {
   //   door     1 once the boy has opened the cave's stone door, 2 once he's asked who you are
   //   caveSeen 1 once you've been into the cave; teacher 1 once the master has said he's your master (师父); named 1 once
   //            he's named you 孙悟空 (名字); spyGame the games of I spy you've finished with the pupil
-  //   chores   the senior pupil's: 1 leaves (叶子), 2 sweep them (扫), 3 the bucket (桶) and its water, 4 the axe next, 5 the
-  //            axe (斧头) and its wood, 6 all done; waterFetch, axeFetch: those fetching games (as the woodcutter's)
-  //   grown    1 once seven years have gone by (the saplings grown, new little pupils)
+  //   the master's year (season, evening: above): waterFetch, the senior pupil's buckets of water in summer (as the
+  //            woodcutter's fetching game: 1 asked, 2 brought); sweep, the leaves in autumn (1 sweeping, 2 swept); axeFetch,
+  //            his wood in autumn; newYear 1 once the year's last day is done
+  //   grown    1 once seven years have gone by (the saplings grown, new little pupils); lecture 1 once you've heard the
+  //            master's lecture, after them
   //   riddle   1 the master's taps on your head (头), 2 the night (晚上), at his back door, 3 he's taught you to change (变)
   //   tests    1 once he's tested your changes; fly 1 once he's taught you the cloud somersault (飞), and you can fly by
   //            cloud from the map; pine 1 once you've shown off as a pine tree (松树); sentHome 1 once he's sent you home
@@ -325,8 +348,12 @@ const ACROSS_THE_SEA = {
   //            Dragon King (the end of Area 2)
   // the prologue's asking: askChild askFisher askVillager askFarmer askGranny askTea askTeller askDocker 1 once you've asked each
   // where the immortals are (none knows); toldSea 1 once the boatman has told you: across the sea
-  progress: {askChild:0, askFisher:0, askVillager:0, askFarmer:0, askGranny:0, askTea:0, askTeller:0, askDocker:0, toldSea:0, home2:0, foundBig:0, foundHungry:0, news:0, d1:0, d2:0, d3:0, north:0, lairSeen:0, key:0, freed1:0, freed2:0, freed3:0, freed4:0, freed5:0, loot:0, king:0, homeAgain:0, party:0, stickGiven:0, ch2:0,
-    chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, chores:0, waterFetch:0, axeFetch:0, grown:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
+  // The master's year (chapter 1, decided 7 November 2026): while it runs, the places are in its season (js/seasons.js),
+  // kept in season (0 spring, 1 summer, 2 autumn, 3 winter); evening: 1 once a season's last task is done, till you go to
+  // bed and wake in the next.
+  seasons: {key:'season', if:{chapter:1, grown:0}, evening:{evening:1}},
+  progress: {season:0, evening:0, askChild:0, askFisher:0, askVillager:0, askFarmer:0, askGranny:0, askTea:0, askTeller:0, askDocker:0, toldSea:0, home2:0, foundBig:0, foundHungry:0, news:0, d1:0, d2:0, d3:0, north:0, lairSeen:0, key:0, freed1:0, freed2:0, freed3:0, freed4:0, freed5:0, loot:0, king:0, homeAgain:0, party:0, stickGiven:0, ch2:0,
+    chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, sweep:0, waterFetch:0, axeFetch:0, newYear:0, grown:0, lecture:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
 
   // Numbers that text can show as {name}, and that an if can check (as Flower Fruit Mountain's).
   counters: {
@@ -438,13 +465,17 @@ const ACROSS_THE_SEA = {
     {id:'c1in', main:true, if:{door:2, teacher:0}, text:'Go in through the stone {门|door}, and find the old man in front of the hall', arrow:'master'},
     {id:'c1name', main:true, if:{teacher:1, named:0}, text:'Your {师父|master} has something to ask you', arrow:'master'},
     {id:'c1spy', if:{named:1, spyGame:0}, text:'A pupil wants to play I spy: {听|listen}, then find what she sees, and press A at it', arrow:'spyPupil'},
-    {id:'c1chores', main:true, if:{named:1, chores:{below:2}}, text:'The senior pupil has jobs for you. Go and {看|see}', arrow:'senior'},
-    {id:'c1sweep', main:true, if:{chores:2, leavesSwept:{below:5}}, text:'{扫|Sweep} up the five heaps of fallen {叶子|leaves}: face one, and press A ({leavesSwept}/5)', arrow:{sparkle:true}},
-    {id:'c1swept', main:true, if:{chores:2, leavesSwept:5}, text:'Tell the senior pupil the {叶子|leaves} are swept up', arrow:'senior'},
+    // the master's year: each season's jobs, then bed
+    {id:'c1water', main:true, if:{season:1, waterFetch:0, evening:0}, text:'It’s {夏天|summer}. The senior pupil has a job for you', arrow:'senior'},
+    {id:'c1leaves', main:true, if:{season:2, sweep:0, evening:0}, text:'It’s {秋天|autumn}. The senior pupil has jobs for you', arrow:'senior'},
+    {id:'c1sweep', main:true, if:{sweep:1, leavesSwept:{below:5}}, text:'{扫|Sweep} up the five heaps of fallen {叶子|leaves}: face one, and press A ({leavesSwept}/5)', arrow:{sparkle:true}},
+    {id:'c1swept', main:true, if:{sweep:1, leavesSwept:5}, text:'Tell the senior pupil the {叶子|leaves} are swept up', arrow:'senior'},
     {id:'c1chore', main:true, if:{any:[{waterFetch:1}, {axeFetch:1}]}, text:'Bring the senior pupil {什么|what} he asks for. Talk to him again to {听|listen} again', arrow:'senior'},
-    {id:'c1axe', main:true, if:{chores:4}, text:'The senior pupil has one more job for you: {说|talk} to him again', arrow:'senior'},
-    {id:'c1lecture', main:true, if:{chores:6, grown:0}, text:'Go to the {师父|master}’s lecture, in front of the hall', arrow:'master'},
-    {id:'c1riddle', main:true, if:{grown:1, riddle:0}, text:'The {师父|master} wants to see you', arrow:'master'},
+    {id:'c1axe', main:true, if:{sweep:2, axeFetch:0}, text:'The senior pupil has one more job for you before {冬天|winter}', arrow:'senior'},
+    {id:'c1winter', main:true, if:{season:3, newYear:0, evening:0}, text:'It’s {冬天|winter}, and the master wants to see you', arrow:'master'},
+    {id:'c1bed', main:true, if:{evening:1}, text:'Time to {睡觉|sleep}: go to your room in the rock, face its door, and press A', arrow:[4, 3, 'cave']},
+    {id:'c1lecture', main:true, if:{grown:1, lecture:0}, text:'Go to the {师父|master}’s lecture, in front of the hall', arrow:'master'},
+    {id:'c1riddle', main:true, if:{lecture:1, riddle:0}, text:'The {师父|master} wants to see you', arrow:'master'},
     {id:'c1night', main:true, if:{riddle:1}, text:'Three taps on the {头|head}, then the back {门|door}… Wait for night: press A at your room in the rock', arrow:[4, 3, 'cave']},
     {id:'c1backDoor', main:true, if:{riddle:2, place:'caveNight'}, text:'Go quietly to the {师父|master}’s back door, beside the hall', arrow:[19, 3, 'caveNight']},
     {id:'c1room', main:true, if:{riddle:2, place:'masterRoom'}, text:'Talk to your {师父|master}', arrow:'master'},
@@ -513,9 +544,12 @@ const ACROSS_THE_SEA = {
     {chapter:1, part:'climb', text:'Help the woodcutter at his hut', done:{woodFetch:4}},
     {chapter:1, part:'climb', text:'Make {朋友|friends} with the {鹤} on the cliff road', done:{friends:{crane:true}}},
     {chapter:1, part:'climb', text:'Find the immortal’s {洞|cave}', done:{door:2}},
-    {chapter:1, part:'cave', text:'Find out your new {名字|name}', show:{door:2}, done:{named:1}},
-    {chapter:1, part:'cave', text:'Play I spy with a pupil', show:{named:1}, done:{spyGame:{atLeast:1}}},
-    {chapter:1, part:'cave', text:'Do the senior pupil’s chores', show:{named:1}, done:{chores:6}},
+    {chapter:1, part:'spring', text:'Find out your new {名字|name}', show:{door:2}, done:{named:1}},
+    {chapter:1, part:'spring', text:'Play I spy with a pupil', show:{named:1}, done:{spyGame:{atLeast:1}}},
+    {chapter:1, part:'summer', text:'Fetch {水|water} for the senior pupil', done:{waterFetch:2}},
+    {chapter:1, part:'autumn', text:'Sweep up the fallen {叶子|leaves}', done:{sweep:2}},
+    {chapter:1, part:'autumn', text:'Chop firewood for the {冬天|winter}', done:{axeFetch:2}},
+    {chapter:1, part:'winter', text:'The last day of the year', done:{newYear:1}},
     {chapter:1, part:'secret', text:'Solve the {师父|master}’s riddle', show:{grown:1}, done:{riddle:3}},
     {chapter:1, part:'change', text:'Learn to {变|change} into things, and to {飞|fly}', show:{riddle:3}, done:{fly:1}},
     {chapter:1, part:'home', text:'Go {回家|home}', show:{pine:1}, done:{sentHome:1}},
@@ -549,10 +583,10 @@ const ACROSS_THE_SEA = {
     teacher: [{if:{knows:'说', new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
     teacherOld: [{if:{new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
     boatman: [{if:{asked:8, toldSea:0}, show:'!'}, {if:{toldSea:1, boat:0}, show:'!'}, {if:{boat:1}, show:'!'}],
-    master: [{if:{door:2, teacher:0}, show:'!'}, {if:{teacher:1, named:0}, show:'!'}, {if:{chores:6, grown:0}, show:'!'}, {if:{grown:1, riddle:0}, show:'!'},
+    master: [{if:{door:2, teacher:0}, show:'!'}, {if:{teacher:1, named:0}, show:'!'}, {if:{season:3, newYear:0, evening:0}, show:'!'}, {if:{grown:1, lecture:0}, show:'!'}, {if:{lecture:1, riddle:0}, show:'!'},
       {if:{riddle:2}, show:'!'}, {if:{riddle:3, tests:0}, show:'!'}, {if:{tests:1, fly:0}, show:'!'}, {if:{pine:1, sentHome:0}, show:'!'}],
     spyPupil: [{if:{named:1, spyGame:0}, show:'!'}],
-    senior: [{if:{named:1, chores:{below:2}}, show:'!'}, {if:{chores:2, leavesSwept:5}, show:'?'}, {if:{any:[{waterFetch:1}, {axeFetch:1}]}, show:'?'}, {if:{chores:4}, show:'!'}],
+    senior: [{if:{season:1, waterFetch:0, evening:0}, show:'!'}, {if:{season:2, sweep:0, evening:0}, show:'!'}, {if:{sweep:1, leavesSwept:5}, show:'?'}, {if:{any:[{waterFetch:1}, {axeFetch:1}]}, show:'?'}, {if:{sweep:2, axeFetch:0}, show:'!'}],
     darePupil: [{if:{fly:1, pine:0}, show:'!'}],
     woodcutter: [{if:{song:0}, show:'!'}, {if:{chapter:1, woodFetch:0}, show:'!'}, {if:{woodFetch:{atLeast:1, below:4}}, show:'?'}],
     // chapter 2
@@ -680,6 +714,17 @@ const ACROSS_THE_SEA = {
     // into the cave for the first time
     {if:{place:'cave', caveSeen:0}, do:[{set:{caveSeen:1}},
       {message:'Through the stone doors: a great hollow in the mountain, open to the sky. Pupils in robes are sweeping and reading, and an old man in white stands in front of the hall…'}]},
+    // the master's year (decided 7 November 2026): it's spring as you arrive, the peach trees in blossom
+    {if:{place:'cave', caveSeen:1, season:0, grown:0, new:'春天'}, do:[{newWord:'春天', note:'春天 means spring. The peach trees are in blossom, and everything is growing again.'}]},
+    // a season's jobs done: evening falls, and the first sign of the season to come
+    {if:{season:0, named:1, evening:0, grown:0}, do:[{set:{evening:1}}, {sound:'chime'},
+      {message:'The sun goes down behind the rocks. The last of the blossom blows away, and the cicadas start to sing: summer is coming. Time for bed!'}]},
+    {if:{season:1, waterFetch:2, evening:0}, do:[{set:{evening:1}}, {sound:'chime'},
+      {message:'Evening comes, cooler at last. A yellow leaf drifts down: autumn is coming. Time for bed!'}]},
+    {if:{season:2, sweep:2, axeFetch:2, evening:0}, do:[{set:{evening:1}}, {sound:'chime'},
+      {message:'Evening comes, and it’s cold. The first snowflakes are falling: winter is coming. Time for bed!'}]},
+    {if:{season:3, newYear:1, evening:0, grown:0}, do:[{set:{evening:1}}, {sound:'chime'},
+      {message:'The last night of the year. Time for bed!'}]},
     // at the cave's door: the stone doors rumble open, and a boy comes out (the immortal's pupil)
     {if:{place:'pillars', door:0, around:[15, 6, 'pillars', 2]}, do:[{set:{door:1}}, {sound:'rumble'},
       {message:'With a deep rumble, the stone doors swing open. A boy comes out!'}, {talkTo:'doorBoy'}]},
@@ -1640,6 +1685,10 @@ const ACROSS_THE_SEA = {
     '飞': 'The master’s cloud somersault.',
     '松树': 'Showing off to the pupils: you changed into a pine tree.',
     '回家': 'The master sent you home: 你回家吧。',
+    '春天': 'Spring in the immortal’s cave, as you arrived: the peach trees in blossom.',
+    '夏天': 'Waking up in your room in the cave: summer had come.',
+    '秋天': 'Waking up in the cave: autumn, the leaves turning red and gold.',
+    '冬天': 'Waking up in the cave: winter, and snow on the mountain.',
     '哭': 'Your old friend the little monkey, crying in the meadow as you came home.',
     '回来': 'The big monkey, hiding in the meadow: 你回来了！',
     '好久不见': 'The hungry monkey, hiding at the home ground: 好久不见！',
@@ -1678,6 +1727,10 @@ const ACROSS_THE_SEA = {
     '云': {zh:'山 上 有 云 。', en:'There are clouds on the mountain.'},
     '天': {zh:'天 上 有 鸟 。', en:'There are birds in the sky.'},
     '头': {zh:'这 是 猴子 的 头 。', en:'This is the monkey’s head.'},
+    '春天': {zh:'春天 有 很多 花 。', en:'In spring there are lots of flowers.'},
+    '夏天': {zh:'夏天 有 很多 桃子 。', en:'In summer there are lots of peaches.'},
+    '秋天': {zh:'秋天 的 叶子 是 红色 的 。', en:'In autumn the leaves are red.'},
+    '冬天': {zh:'冬天 没有 桃子 。', en:'In winter there are no peaches.'},
     '晚上': {zh:'晚上 有 月亮 。', en:'At night, there’s the moon.'},
     '月亮': {zh:'天 上 有 月亮 。', en:'There’s a moon in the sky.'},
     '星星': {zh:'天 上 有 很多 星星 。', en:'There are lots of stars in the sky.'},
@@ -2084,9 +2137,10 @@ const ACROSS_THE_SEA = {
       {if:{named:0}, do:[{say:'whatName', teach:'名字'}, {newWord:'名字', note:'名字 means name. 你叫什么名字？ What are you called?'},
         {say:'noName', by:'player'}, {say:'yourName'}, {set:{named:1}}, {sound:'chime'},
         {message:'From now on you’re 孙悟空, Sun Wukong: Monkey Awakened to Emptiness. You’re one of the master’s pupils now.'}]},
-      {if:{chores:{below:6}}, do:[{message:'The master wants you to help the senior pupil with the chores first.'}]},
-      {if:{grown:0}, do:[{say:'listen'}, {practise:4, label:'The master’s lecture', pic:'师父'}, {scene:'caveYears'}, {set:{grown:1}}, {sound:'chime'},
-        {message:'Seven years have gone by. The peach trees you watered are tall now, with fruit on them, and there are new little pupils.'}, {goOn:true}]},
+      {if:{season:3, newYear:0, grown:0}, do:[{say:'veryGood'}, {set:{newYear:1}}]},
+      {if:{grown:0}, do:[{say:'veryGood'}]},
+      // after the seven years: his lecture (as in the book: the years first, then the lecture, then the riddle)
+      {if:{lecture:0}, do:[{say:'listen'}, {practise:4, label:'The master’s lecture', pic:'师父'}, {set:{lecture:1}}, {sound:'chime'}, {goOn:true}]},
       {if:{riddle:0}, do:[{say:'oneTwoThree'}, {sound:'tock'}, {sound:'tock'}, {sound:'tock'}, {newWord:'头', note:'头 means head. The master tapped you on the head, three times!'},
         {set:{riddle:1}},
         {message:'The master puts his hands behind his back, goes into the hall and shuts the doors. The pupils are cross with you. But you understand: three taps… the third watch of the night… the back door!'}]},
@@ -2112,13 +2166,16 @@ const ACROSS_THE_SEA = {
     // (斧头) and four pieces of wood
     senior: [
       {if:{named:0}, do:[{say:'hi'}, {reply:'你好'}]},
-      {if:{chores:0}, do:[{say:'manyLeaves', teach:'叶子'}, {newWord:'叶子', note:'叶子 means leaves. They fall in the cave all year round.'}, {set:{chores:1}}]},
-      {if:{chores:1}, do:[{say:'sweepLeaves', teach:'扫'}, {newWord:'扫', note:'扫 means to sweep. Face a heap of leaves, and press A to sweep it up.'}, {set:{chores:2}}]},
-      {if:{chores:2, leavesSwept:{below:5}}, do:[{say:'sweepLeaves'}, {message:'Sweep up the heaps of leaves in the courtyard ({leavesSwept}/5): face one, and press A.'}]},
-      {if:{chores:2}, do:[{say:'veryGood'}, {say:'thisBucket', teach:'桶'}, {newWord:'桶', note:'桶 means bucket. It counts buckets of something too: 三桶水, three buckets of water.'}, {set:{chores:3}}, FETCH_WATER]},
-      {if:{chores:3}, do:[FETCH_WATER]},
-      {if:{chores:4}, do:[{say:'thisAxe', teach:'斧头'}, {newWord:'斧头', note:'斧头 means axe. Chop logs at the chopping blocks: face one, and press A.'}, {set:{chores:5}}, FETCH_WOOD]},
-      {if:{chores:5}, do:[FETCH_WOOD]},
+      // summer: water
+      {if:{season:1, waterFetch:0, evening:0}, do:[{say:'thisBucket', teach:'桶'}, {newWord:'桶', note:'桶 means bucket. It counts buckets of something too: 三桶水, three buckets of water.'}, FETCH_WATER]},
+      {if:{waterFetch:1}, do:[FETCH_WATER]},
+      // autumn: the leaves, then firewood for the winter
+      {if:{season:2, sweep:0, evening:0, new:'叶子'}, do:[{say:'manyLeaves', teach:'叶子'}, {newWord:'叶子', note:'叶子 means leaves. In autumn they fall all over the cave.'}, {goOn:true}]},
+      {if:{season:2, sweep:0, evening:0}, do:[{say:'sweepLeaves', teach:'扫'}, {newWord:'扫', note:'扫 means to sweep. Face a heap of leaves, and press A to sweep it up.'}, {set:{sweep:1}}]},
+      {if:{sweep:1, leavesSwept:{below:5}}, do:[{say:'sweepLeaves'}, {message:'Sweep up the heaps of leaves in the courtyard ({leavesSwept}/5): face one, and press A.'}]},
+      {if:{sweep:1}, do:[{say:'veryGood'}, {set:{sweep:2}}, {say:'thisAxe', teach:'斧头'}, {newWord:'斧头', note:'斧头 means axe. Chop logs at the chopping blocks: face one, and press A.'}, FETCH_WOOD]},
+      {if:{sweep:2, axeFetch:0}, do:[{say:'thisAxe', teach:'斧头'}, FETCH_WOOD]},
+      {if:{axeFetch:1}, do:[FETCH_WOOD]},
       {do:[{say:'veryGood'}]}
     ],
     // a pupil who dares you to show off, once you can fly: change into a pine tree (松树)! The noise brings the master out
@@ -2237,8 +2294,12 @@ const ACROSS_THE_SEA = {
     // a card for a jump in time, after the years in the town: 很多年以后…… (decided 5 November 2026, with what's changed
     // when you look round: the children grown up, new little pupils, the teacher's hair grey, a new stall)
     manyYearsLater: {watch:'Watch “many years later”', when:{years:1}, captions: [{at:0, zh:'很 多 年 以后 ……', en:'Many years later…'}]},
+    // the nights between the seasons of the master's year: the cave turning, as you sleep (js/seasons.js)
+    toSummer: {art:'seasonTurn', from:'spring', to:'summer', captions:[{at:0, zh:'孙悟空 睡觉 了 。', en:'Sun Wukong goes to sleep.'}, {at:4.6, zh:'夏天 来 了 ！', en:'Summer is here!'}]},
+    toAutumn: {art:'seasonTurn', from:'summer', to:'autumn', captions:[{at:0, zh:'孙悟空 睡觉 了 。', en:'Sun Wukong goes to sleep.'}, {at:4.6, zh:'秋天 来 了 ！', en:'Autumn is here!'}]},
+    toWinter: {art:'seasonTurn', from:'autumn', to:'winter', captions:[{at:0, zh:'孙悟空 睡觉 了 。', en:'Sun Wukong goes to sleep.'}, {at:4.6, zh:'冬天 来 了 ！', en:'Winter is here!'}]},
     // seven years in the cave, chapter 1: the seasons going round, a peach tree growing up, and you sweeping the leaves
-    caveYears: {watch:'Watch seven years go by in the cave', when:{grown:1}, captions: [
+    caveYears: {captions: [
       {at:0, zh:'孙悟空 扫 叶子 。', en:'Sun Wukong sweeps up the leaves.'},
       {at:4, zh:'孙悟空 听 师父 说 。', en:'Sun Wukong listens to the master.'},
       {at:8, zh:'七 年 以后 ……', en:'Seven years later…'}

@@ -2,7 +2,8 @@
 // one at a time, it wasn't clear what to do, and the pool rested after each (as anything does once you've done it), so
 // the next seemed not to come; and once you'd brought them, a new task said to go and see him, as you stood talking to
 // him. Now at the pool, or a chopping block, you choose how many first, and they're filled, or chopped, one after another,
-// counted aloud; and bringing him the water, he goes straight on to his next job.
+// counted aloud; and bringing him what he wants, he goes straight on to what he has for you next. (Since the master's
+// year, 7 November 2026, the water is summer's job, the leaves and the wood autumn's.)
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -33,7 +34,7 @@ const press = (g, x, y, dir) => { g.run(`S.pos = {place: PLACE, x: ${x}, y: ${y}
 const POOL = [21, 8, 'up'], BLOCK = [23, 13, 'up'], SENIOR = [17, 9, 'right'];
 
 test('at the pool, you choose how many buckets of water first, and your monkey fills them one after another, counted aloud', async () => {
-  const g = game({chores: 3, waterFetch: 1}, {place: 'cave', x: 21, y: 8, dir: 'up'});
+  const g = game({season: 1, waterFetch: 1}, {place: 'cave', x: 21, y: 8, dir: 'up'});   // (summer, the master's year)
   g.run("globalThis.__card = []; howManyCard = async (w, ask) => { __card.push(w, fill(ask)); return 3; }");
   assert.equal(get(g, 'tileAt(21, 7).look'), 'water', 'the pool in front of you');
   await press(g, ...POOL);
@@ -46,7 +47,7 @@ test('at the pool, you choose how many buckets of water first, and your monkey f
 });
 
 test('at a chopping block, you choose how many logs first, and chop them one after another: a question and two blows each, counted', async () => {
-  const g = game({chores: 5, axeFetch: 1}, {place: 'cave', x: 23, y: 13, dir: 'up'}, [...KNOWN, '斧头']);
+  const g = game({season: 2, sweep: 2, axeFetch: 1}, {place: 'cave', x: 23, y: 13, dir: 'up'}, [...KNOWN, '斧头']);   // (autumn)
   g.run("globalThis.__card = []; howManyCard = async (w, ask) => { __card.push(w, fill(ask)); return 4; }");
   assert.equal(get(g, 'tileAt(23, 12).look'), 'stump', 'the chopping block in front of you');
   await press(g, ...BLOCK);
@@ -62,7 +63,7 @@ test('at a chopping block, you choose how many logs first, and chop them one aft
 });
 
 test('chopping: each log’s count is said in full and seen, then cleared, before the next log’s question, never over it (7 November 2026, after playing it)', async () => {
-  const g = game({chores: 5, axeFetch: 1}, {place: 'cave', x: 23, y: 13, dir: 'up'}, [...KNOWN, '斧头']);
+  const g = game({season: 2, sweep: 2, axeFetch: 1}, {place: 'cave', x: 23, y: 13, dir: 'up'}, [...KNOWN, '斧头']);   // (autumn)
   g.run(`howManyCard = async () => 3; globalThis.__line = [];
     { const q = pictureQ; pictureQ = o => { __line.push('question ' + o.head.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); return q(o); }; }
     { const s = say; say = (w, ...r) => { __line.push('said ' + w); return s(w, ...r); }; }
@@ -82,34 +83,33 @@ test('chopping: each log’s count is said in full and seen, then cleared, befor
   }
 });
 
-test('bringing him the water, he thanks you and goes straight on to his next job: you’re talking to him already, so never “go and see him”', async () => {
-  const g = game({chores: 3, waterFetch: 1, carrying: {word: '水', n: 3}}, {place: 'cave', x: 17, y: 9, dir: 'right'}, [...KNOWN]);
+test('bringing him the water in summer, he thanks you and pays you; summer’s jobs are done, and evening comes: never “go and see him”', async () => {
+  const g = game({season: 1, waterFetch: 1, carrying: {word: '水', n: 3}}, {place: 'cave', x: 17, y: 9, dir: 'right'}, [...KNOWN]);
   g.run('S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1]))');
+  const coins = get(g, 'S.coins');
   await press(g, ...SENIOR);
-  assert.deepEqual(get(g, '__said'), ['senior: 对！谢谢！', 'senior: 这是斧头。', 'senior: 我要四块木头。 (no English)'], 'his thanks, then the axe, and what he wants');
-  assert.deepEqual([get(g, 'here().chores'), get(g, 'here().waterFetch'), get(g, 'here().axeFetch')], [5, 2, 1]);
-  assert.ok(get(g, '__notes').includes('card: 斧头'), 'the axe’s card');
+  assert.deepEqual(get(g, '__said'), ['senior: 对！谢谢！'], 'his thanks');
+  assert.deepEqual([get(g, 'here().waterFetch'), get(g, 'S.coins'), get(g, 'here().evening')], [2, coins + 2, 1], 'paid, and evening comes');
   const tasks = get(g, 'getTasks().map(t => t.id)');
-  assert.ok(!tasks.includes('c1axe') && tasks.includes('c1chore'), `no task to go and see him; the one to bring him what he asks for (${tasks})`);
+  assert.ok(!tasks.includes('c1water') && !tasks.includes('c1chore') && tasks.includes('c1bed'), `no task to go and see him: to bed (${tasks})`);
 });
 
 test('the wrong number of buckets: he says no, takes them, and asks again; you choose again at the pool', async () => {
-  const g = game({chores: 3, waterFetch: 1, carrying: {word: '水', n: 2}}, {place: 'cave', x: 17, y: 9, dir: 'right'});
+  const g = game({season: 1, waterFetch: 1, carrying: {word: '水', n: 2}}, {place: 'cave', x: 17, y: 9, dir: 'right'});
   await press(g, ...SENIOR);
   assert.deepEqual(get(g, '__said'), ['senior: 不对。', 'senior: 我要三桶水。 (no English)']);
   assert.ok(get(g, '__notes').some(n => /Listen again/.test(n)));
-  assert.deepEqual([get(g, 'here().carrying || null'), get(g, 'here().chores'), get(g, 'here().waterFetch')], [null, 3, 1], 'still to do');
+  assert.deepEqual([get(g, 'here().carrying || null'), get(g, 'here().waterFetch')], [null, 1], 'still to do');
   g.run('__acts.length = 0; howManyCard = async () => 3');
   await press(g, ...POOL);
   assert.deepEqual(get(g, 'here().carrying'), {word: '水', n: 3}, 'three, this time');
 });
 
-test('a game saved between his jobs (from before he went straight on): his task says to talk to him again, never to go and see him', async () => {
-  const g = game({chores: 4, waterFetch: 2}, {place: 'cave', x: 17, y: 9, dir: 'right'});
+test('autumn, the leaves swept and the wood still to chop (a game saved in between): his task says he has one more job, and he gives it', async () => {
+  const g = game({season: 2, sweep: 2}, {place: 'cave', x: 17, y: 9, dir: 'right'}, [...KNOWN, '叶子', '扫']);
   const t = get(g, "(() => { const t = getTasks().find(t => t.id === 'c1axe'); return t && fill(t.text, false, true); })()");
-  assert.equal(t, 'The senior pupil has one more job for you: talk to him again');
-  g.run('practiseFirst = async () => false');   // (nothing waits for practice now, but at school: he goes straight on)
+  assert.equal(t, 'The senior pupil has one more job for you before winter');
   await press(g, ...SENIOR);
   assert.deepEqual(get(g, '__said'), ['senior: 这是斧头。', 'senior: 我要四块木头。 (no English)'], 'the axe, and what he wants');
-  assert.equal(get(g, 'here().chores'), 5);
+  assert.equal(get(g, 'here().axeFetch'), 1);
 });

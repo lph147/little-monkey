@@ -261,7 +261,7 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.equal(g.run('isOpen(PLACES.farShore.exits[2])'), true, 'up the stone steps');
   assert.deepEqual(npc(g, 'woodcutter'), ['mountainFoot', 10, 4], 'he’s gone home to his hut');
   const words = get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2)");
-  assert.deepEqual(words.filter(w => !knows(g, w)), ['云', '鹤', '天', '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家',
+  assert.deepEqual(words.filter(w => !knows(g, w)), ['云', '鹤', '天', '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家', '春天', '夏天', '秋天', '冬天',
     '回来', '好久不见', '哭', '老', '妖怪', '火', '救命', '笼子', '钥匙', '毛', '刀'], 'all 32 of the prologue’s words (chapter 1’s and 2’s to come)');
   // the checklist is chapter 1's now
   assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t]) => t)'), ['Help the woodcutter at his hut', 'Make 朋友 (friends) with the crane on the cliff road', 'Find the immortal’s cave']);
@@ -373,8 +373,9 @@ test('pacing: in Area 2, only the town’s teacher waits for five questions’ p
   for (const pl of Object.values(A.places)) for (const [ch, t] of Object.entries(pl.legend || {})) for (const pt of t.onLook || []) assert.ok(!pt.waits, `a place's "${ch}" doesn’t wait`);
   assert.ok(A.animals.every(a => !a.waits), 'nor do animals you meet the first time');
   assert.ok(A.events.every(e => !('wordReady' in e.if)), 'nor any event');
-  // the words: 32 in the prologue, one after another, and the first (人) as you land; then chapter 1's 17, and chapter 2's 11
-  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 60);
+  // the words: 32 in the prologue, one after another, and the first (人) as you land; then chapter 1's 21 (its four seasons
+  // among them: the master's year), and chapter 2's 11
+  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 64);
 });
 
 test('the human world has a song of its own, a village tune, in every place (not Flower Fruit Mountain’s)', () => {

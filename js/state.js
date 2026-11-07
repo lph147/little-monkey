@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 34;
+const SAVE_VERSION = 35;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -214,6 +214,20 @@ function upgradeSave(s){
   }
   if (s.version === 33){   // version 33 had one area, and shells were the only money. Now a save says which area it's in (area, as
     s.version = 34;        // it always did), and coins (from Area 2, the human world) start at 0 (filled in below).
+  }
+  if (s.version === 34){   // version 34: the immortal's cave was a few chores, the master's lecture, then seven years. Now it's a
+    const a = (s.areas || {})[2];   // whole year, a season at a time (the master's year, decided 7 November 2026): a game in the cave
+    if (a && 'chores' in a){         // before the years starts the year in spring (after its naming, if it's been named), keeping its
+      if (!a.grown && a.chapter === 1){   // words; the chores come round in their seasons, and the story's parts there are four, not one
+        for (const k of ['waterFetch', 'axeFetch', 'carrying']) delete a[k];   // (a game from before the year remembers the senior
+        if (a.picked) delete a.picked.sweep;                                    // pupil's chores, as it always did, from the prologue on)
+        a.season = 0; a.evening = 0;
+      }
+      if (a.grown) a.lecture = 1;   // (the lecture came before the years then)
+      delete a.chores;
+      if (typeof a.part === 'number' && a.part >= 7) a.part += 3;   // (the cave's one part is four: spring, summer, autumn, winter)
+    }
+    s.version = 35;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   // A save from another area than the one this page plays (such as a game in Area 2, shown on the title screen while the page

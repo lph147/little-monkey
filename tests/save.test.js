@@ -350,3 +350,22 @@ test('a game in Area 2 loads in Area 2, keeping what it had from Area 1; seen fr
   assert.equal(seen.areas[2].dressed, 1);
   assert.equal(JSON.parse(one.run('JSON.stringify(slotSummary(2))')).area.en, 'Across the sea', 'its card says where it is');
 });
+
+test('a version 34 save in the immortal’s cave starts the master’s year in spring, keeping its words; one past the years keeps everything, the lecture heard (version 35)', () => {
+  const words = {'师父': {lv: 1, ok: 0}, '名字': {lv: 1, ok: 0}, '叶子': {lv: 2, ok: 1}, '桶': {lv: 1, ok: 0}};
+  const mid = {version: 34, started: true, area: 2, w: words, pos: {place: 'cave', x: 17, y: 10, dir: 'right'},
+    areas: {1: {chapter: 1, raft: 3, done: true}, 2: {chapter: 1, door: 2, teacher: 1, named: 1, chores: 3, waterFetch: 1, carrying: {word: '水', n: 2}, part: 6, picked: {sweep: ['cave:9,7']}}}};
+  const s = saveOf(loadGame({save: mid}));
+  assert.equal(s.version, VERSION);
+  const a = s.areas[2];
+  assert.deepEqual([a.season, a.evening, a.waterFetch, a.carrying, 'chores' in a, a.picked.sweep], [0, 0, 0, undefined, false, undefined], 'spring, the chores to come round in their seasons');
+  assert.deepEqual([a.named, a.teacher, a.part], [1, 1, 6], 'named, and in spring’s part');
+  assert.deepEqual(Object.keys(s.w).sort(), Object.keys(words).sort(), 'its words kept');
+  const grown = saveOf(loadGame({save: {version: 34, started: true, area: 2, w: words, pos: {place: 'cave', x: 14, y: 10, dir: 'down'},
+    areas: {1: {chapter: 1, raft: 3, done: true}, 2: {chapter: 1, door: 2, named: 1, chores: 6, waterFetch: 2, axeFetch: 2, grown: 1, riddle: 1, part: 7}}}}));
+  const b = grown.areas[2];
+  assert.deepEqual([b.grown, b.lecture, b.riddle, b.waterFetch, b.part], [1, 1, 1, 2, 10], 'past the years: as it was, its lecture heard, in the same part (the master’s secret)');
+  const fromNow = saveOf(loadGame({save: {version: 35, started: true, area: 2, w: words, pos: {place: 'cave', x: 17, y: 10, dir: 'right'},
+    areas: {1: {chapter: 1, raft: 3, done: true}, 2: {chapter: 1, door: 2, named: 1, season: 1, waterFetch: 1}}}}));
+  assert.deepEqual([fromNow.areas[2].season, fromNow.areas[2].waterFetch], [1, 1], 'a save from now on is left as it is');
+});

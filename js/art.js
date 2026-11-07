@@ -2146,7 +2146,12 @@ function drawObject(g, p, parts, over, clip, ox = 0, oy = 0){
   g.save(); g.translate(-ox, -oy);
   g.beginPath(); for (const [x, y, w, h] of parts) g.rect(p.x0 + x, p.y0 + y, w, h); g.clip();
   if (clip){ g.beginPath(); g.rect(...clip); g.clip(); }
-  shadows = !over; OBJECT_ART[p.look](g, p); shadows = true; g.restore();
+  if (drawSeason){   // in a season (js/seasons.js): its picture for the season, drawn once
+    if (!p.seasonPics || p.seasonPics.season !== drawSeason) p.seasonPics = {season:drawSeason};
+    const k = over ? 'over' : 'under', pic = p.seasonPics[k] || (p.seasonPics[k] = seasonObject(p, !over));
+    g.drawImage(pic, p.x0, p.y0);
+  } else { shadows = !over; OBJECT_ART[p.look](g, p); shadows = true; }
+  g.restore();
 }
 // The objects that never move, into the two layers (only inside clip, [x, y, w, h] on the map, if given).
 function bakeObjects(clip){
@@ -2172,7 +2177,7 @@ const tilesNow = () => MAP.map((r, y) => [...r].map((c, x) => tileAt(x, y)));
 const paintNow = () => Object.entries(paintedParts()).join();
 function afterDrawing(){
   mapStory = mapStoryNow();   // (what the map letters that change with the story are, as it's drawn)
-  drawnFor = {place:PLACE, paint:paintNow(), tiles:tilesNow()};
+  drawnFor = {place:PLACE, paint:paintNow(), tiles:tilesNow(), season:drawSeason};
   COLLECTABLE.length = 0;
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if ((tileAt(x, y).onLook || []).some(p => p.sparkle)) COLLECTABLE.push([x, y]);
   buildGloom();
@@ -2182,6 +2187,7 @@ function afterDrawing(){
 // scenes too; in each of its places but those borrowed from an area before it (Flower Fruit Mountain, bright as it was).
 const softColours = () => AREA.colours === 'soft' && !(PLACES[PLACE] || {}).borrowed;
 function buildMap(){   // the place you're in: the ground, then the big objects' pictures
+  drawSeason = seasonLook();   // (in its season, if it has one: js/seasons.js)
   cv.classList.toggle('soft', softColours());
   if (mapCanvas.width !== COLS*T || mapCanvas.height !== ROWS*T){ mapCanvas.width = COLS*T; mapCanvas.height = ROWS*T; }   // a place of another size
   drawTiles();
@@ -2196,7 +2202,7 @@ function buildMap(){   // the place you're in: the ground, then the big objects'
 // pines, took two seconds on a phone (decided 22 October 2026). Gives false if it must all be drawn again instead
 // (another place, the school's paint, or most of the map changing).
 function patchMap(){
-  if (!drawnFor || drawnFor.place !== PLACE || drawnFor.paint !== paintNow()) return false;
+  if (!drawnFor || drawnFor.place !== PLACE || drawnFor.paint !== paintNow() || drawnFor.season !== seasonLook()) return false;   // (or the season's changed)
   const tiles = tilesNow();
   let x0 = COLS, y0 = ROWS, x1 = -1, y1 = -1;
   tiles.forEach((row, y) => row.forEach((t, x) => { if (t !== drawnFor.tiles[y][x]){ x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); } }));

@@ -19,8 +19,8 @@ const AREA2_WORDS = ['石头', '你好', '山', '花', '草', '树', '桃子', '
 const AREA1_WORDS = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水果', '动物', '水', '河', '鱼', '猴子', '朋友', '桥', '蝴蝶', '同学', '棍子', '蜜蜂', '蜂王',
   '有', '没有', '我', '要', '吃', '桌子', '家', '木头', '碗', '学校', '老师', '一', '二', '三', '四', '五', '六', '谢谢', '不客气', '没关系',
   '红色', '黄色', '白色', '黑色', '蓝色', '绿色'];
-const IN_THE_CAVE = {landed: 1, dressed: 2, back: 1, child: 3, years: 1, boat: 2, song: 1, chapter: 1, woodFetch: 4, sky: 1, door: 2, teacher: 1, named: 1, spyGame: 1, chores: 2};
-const HOME_TO_HAVOC = {...IN_THE_CAVE, chapter: 2, chores: 6, grown: 1, riddle: 3, tests: 1, fly: 1, pine: 1, sentHome: 1};
+const IN_THE_CAVE = {landed: 1, dressed: 2, back: 1, child: 3, years: 1, boat: 2, song: 1, chapter: 1, woodFetch: 4, sky: 1, door: 2, teacher: 1, named: 1, spyGame: 1, season: 2, sweep: 1};   // (autumn, the master's year: the leaves to sweep)
+const HOME_TO_HAVOC = {...IN_THE_CAVE, chapter: 2, grown: 1, riddle: 3, tests: 1, fly: 1, pine: 1, sentHome: 1};
 const BEES_HOME = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', flowers: 'done', schoolFlowers: true, shop: 3, gate: true, climb: 4, boar: 1, story: true, cave: 6,
   count: 3, home: 2, build: 2, wood: 'done', stones: 'done', school: 2, feast: 3, bees: 7, beeFriends: 6, queenOut: true};
 const SCHOOL_BUILT = {chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2,
@@ -47,7 +47,7 @@ const heard = (g, k) => get(g, '__heard').filter(h => h === k).length;
 const objectAt = (g, x, y) => get(g, `mapObjects().find(o => ${x} >= o.x && ${x} < o.x + o.w && ${y} >= o.y && ${y} < o.y + o.h) || null`);
 
 test('chopping the wood: two blows of the axe on the block for each log, chips flying; then you pick the wood up off it', async () => {
-  const g = game(2, {...IN_THE_CAVE, chores: 5, axeFetch: 1}, {place: 'cave', x: 24, y: 12, dir: 'left'}, AREA2_WORDS);
+  const g = game(2, {...IN_THE_CAVE, sweep: 2, axeFetch: 1}, {place: 'cave', x: 24, y: 12, dir: 'left'}, AREA2_WORDS);
   g.run('howManyCard = async () => 2');   // (two logs: tests/chores.test.js)
   assert.equal(get(g, 'tileAt(23, 12).look'), 'stump', 'the chopping block in front of you');
   await press(g, 24, 12, 'left');
@@ -60,7 +60,7 @@ test('chopping the wood: two blows of the axe on the block for each log, chips f
 });
 
 test('filling the bucket at the pool: into the water with a splash, and up again full, in your hands (nothing more to pick up)', async () => {
-  const g = game(2, {...IN_THE_CAVE, chores: 3, waterFetch: 1}, {place: 'cave', x: 23, y: 8, dir: 'up'}, AREA2_WORDS);
+  const g = game(2, {...IN_THE_CAVE, season: 1, sweep: 0, waterFetch: 1}, {place: 'cave', x: 23, y: 8, dir: 'up'}, AREA2_WORDS);
   g.run('howManyCard = async () => 1');   // (one bucket; three: tests/chores.test.js)
   assert.equal(get(g, 'tileAt(23, 7).look'), 'water', 'the pool in front of you');
   await press(g, 23, 8, 'up');

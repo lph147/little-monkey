@@ -13,7 +13,7 @@ const FROM_BEFORE = ['石头', '你好', '山', '花', '草', '树', '桃子', '
   '谢谢', '再见', '不客气', '木头', '三', '四', '人', '是', '不', '什么', '钱', '风', '歌', '洞', '门', '房子', '狗', '猫', '鸡', '牛', '船', '云', '鹤', '天', '王', '棍子',
   '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家', '碗', '蜂蜜', '牛奶'];
 const CHAPTER = ['哭', '回来', '好久不见', '老', '妖怪', '火', '救命', '笼子', '钥匙', '毛', '刀'];
-const CHAPTER_ONE = {landed: 1, dressed: 2, back: 1, child: 3, years: 1, boat: 2, song: 1, chapter: 2, woodFetch: 4, sky: 1, door: 2, teacher: 1, named: 1, spyGame: 1, chores: 6,
+const CHAPTER_ONE = {landed: 1, dressed: 2, back: 1, child: 3, years: 1, boat: 2, song: 1, chapter: 2, woodFetch: 4, sky: 1, door: 2, teacher: 1, named: 1, spyGame: 1,
   grown: 1, riddle: 3, tests: 1, fly: 1, pine: 1, sentHome: 1};
 function game(pos, area = {}){
   const w = Object.fromEntries(FROM_BEFORE.map(x => [x, {lv: 2, ok: 2}]));

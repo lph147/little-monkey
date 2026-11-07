@@ -41,7 +41,7 @@ test('an old save (version 32) starts its map with the places on the way to wher
   const game = loadGame({save: {version: 32, started: true, pos: {place: 'valley', x: 19, y: 10, dir: 'up'},
     areas: {1: {climb: 1, changed: {'hillside:3,4': 'g'}}}}});
   const s = saveOf(game);
-  assert.equal(s.version, 34);
+  assert.equal(s.version, game.run('SAVE_VERSION'));
   assert.deepEqual(s.areas[1].visited, ['meadow', 'path', 'valley', 'falls', 'homeGround', 'hillside'],
     'the way to the valley, and to the hillside, where a square was changed');
   const fresh = loadGame({save: {version: 32, started: true, pos: {place: 'meadow', x: 9, y: 3, dir: 'down'}, areas: {1: {}}}});

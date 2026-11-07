@@ -922,6 +922,7 @@ function drawWorld(now){
   if (cx < 0 || cy < 0 || cx + VW*T > COLS*T || cy + VH*T > ROWS*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');   // dark where the map doesn't reach
   drawLayer(mapCanvas, cx, cy);
   drawStirredGrass(cx, cy);   // (the grass you're walking through, parted round you)
+  drawFootprints(cx, cy, now);   // (your footprints in the snow, in winter: js/seasons.js)
   drawLayer(baseCanvas, cx, cy);   // big objects, under the characters: those that never move, all at once
   touchLeaves(now); crawlThrough(now);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.base, cx, cy, now);   // and the fruit trees, which rustle
@@ -1053,6 +1054,7 @@ function drawWorld(now){
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
   drawMist(cx, cy, sh, now);   // wisps of cloud drifting past, and mist rolling in (a place's clouds and mist: js/mountain.js)
+  drawWeather(cx, cy, sh, now);   // the season's weather, petals, leaves or snow falling, and the evening (js/seasons.js)
   drawNight(cx, cy, sh, now);   // a place at night (its night: js/mountain.js)
   for (const a of spotAnimals.filter(a => a.glints && GLOOM)) glinting(a, a.at[0]*T - cx, a.at[1]*T - cy - a.perch, now);   // (an owl's eyes, in the gloom)
   for (const [x, y, k] of glintsNow(now)) glint(x*T - cx + 8, y*T - cy + 11, k);   // things hidden off the path

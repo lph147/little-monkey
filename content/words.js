@@ -208,6 +208,11 @@ const WORD_BANK = {
   '飞': {py:'fēi', en:'to fly', pic:'💫', area:2, category:'actions', alike:['云', '变', '鸟']},   // (the cloud somersault)
   '松树': {py:'sōngshù', en:'pine tree', pic:'🎄', area:2, category:'nature', alike:['树', '木头']},   // (showing off: you change into one)
   '回家': {py:'huíjiā', en:'to go home', area:2, category:'actions'},   // (the master sends you home to Flower Fruit Mountain)
+  // the master's year (chapter 1, decided 7 November 2026): the seasons, each taught as you wake to it
+  '春天': {py:'chūntiān', en:'spring', pic:'🍃', area:2, category:'nature', alike:['花']},
+  '夏天': {py:'xiàtiān', en:'summer', pic:'☀️', area:2, category:'nature', alike:['花', '水']},
+  '秋天': {py:'qiūtiān', en:'autumn', pic:'🍁', area:2, category:'nature', alike:['叶子', '树']},
+  '冬天': {py:'dōngtiān', en:'winter', pic:'❄️', area:2, category:'nature', alike:['树']},
   // chapter 2: home to Flower Fruit Mountain after twenty years, and the Demon of Havoc (decided 5 November 2026)
   '回来': {py:'huílai', en:'to come back', area:2, category:'actions', alike:['回家']},   // (你回来了！ the troop, as you come home)
   '好久不见': {py:'hǎojiǔ bú jiàn', en:'long time no see', area:2, category:'phrases', phrase:true, use:'when you meet someone you haven’t seen for a long time', cue:'is so happy to see you again', situation:'You meet a friend you haven’t seen for years.'},

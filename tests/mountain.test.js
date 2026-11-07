@@ -162,8 +162,8 @@ test('the stone pillars: the sky (天) once you’re ready for a new word; the b
   assert.ok(after.some(n => /Follow him/.test(n)));
   assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t, done]) => [t, done])'), [['Help the woodcutter at his hut', false], ['Make 朋友 (friends) with the 鹤 (crane) on the cliff road', false], ['Find out your new name', false]],
     'the next part of the story: the cave (and what’s still to do from the climb)');
-  assert.equal(get(g, 'partNow().title'), 'The immortal’s cave');
-  assert.ok(after.some(n => /box: Part 2 The immortal’s cave/.test(n)), 'its card');
+  assert.equal(get(g, 'partNow().title'), 'Spring', 'the master’s year begins: spring');
+  assert.ok(after.some(n => /box: Part 2 Spring/.test(n)), 'its card');
   assert.equal(g.run('promptFor(14, 5)'), 'Go in', 'in through the open doors');
   assert.deepEqual(get(g, '(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === "doorBoy"))'), ['cave', 13, 16], 'he’s gone in');
 });

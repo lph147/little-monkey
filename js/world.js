@@ -32,7 +32,7 @@ const changedTo = (x, y) => {
   return to && (CHANGES.has(`${PLACE}:${MAP[y][x]}>${to}`) || CHANGES.has(`${k}>${to}`)) ? to : null;
 };
 const mapStoryNow = () => Object.values(LEGEND).filter(t => t.becomes).map(becomesNow).join() + '|'
-  + Object.entries(here().changed).filter(([k]) => k.startsWith(PLACE + ':')).join() + '|' + Object.entries(paintedParts()).join();
+  + Object.entries(here().changed).filter(([k]) => k.startsWith(PLACE + ':')).join() + '|' + Object.entries(paintedParts()).join() + '|' + seasonLook();   // (and the season: js/seasons.js)
 let mapStory = null;   // what they were when the map was last drawn (buildMap)
 function refreshMap(){ if (mapStoryNow() !== mapStory){ if (!patchMap()) buildMap(); findGrass(); stepClear(); } }   // (just the squares that change, if it can: patchMap, js/art.js)
 // If the map changes under you (such as the school's frame going up on the plot you're standing on), or you arrive where
@@ -502,6 +502,9 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   },
   // A scene told like the opening (one of the area's scenes): pictures and captions, read aloud; then the game carries on.
   async scene(s){ await storyScene(s.scene); },
+  // The story's next part begins now, with its card, if one has (as after anything you do), such as a season of the master's
+  // year as you wake to it, before its word.
+  async nextPart(){ await partsCheck(); },
   // A new chapter of the story begins: its title card, and its checklist from then on.
   async chapter(s){
     here().chapter = s.chapter; save(); SFX.fanfare();
