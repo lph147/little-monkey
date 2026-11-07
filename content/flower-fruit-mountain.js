@@ -263,7 +263,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     sleep:[{who:'monkeys', place:'cave', at:[[3, 1, 'bed'], [5, 1, 'bed'], [10, 1, 'bed'], [12, 1, 'bed'],
       [1, 4, 'right'], [14, 4, 'left'], [2, 8, 'right'], [13, 8, 'left'], [1, 11, 'right'], [14, 11, 'left'], [3, 10, 'right'], [12, 10, 'left'], [10, 12, 'left'], [4, 12, 'right']]}]},
   // What a monkey with nothing new to say says instead, while it's raining (as people's small talk in the human world).
-  smallTalk: [{if:{raining:true}, monkeys:true, say:'raining'}],
+  smallTalk: [{if:{raining:'heavy'}, monkeys:true, say:'rainTooHeavy'}, {if:{raining:true}, monkeys:true, say:'raining'}],
   // The map (地图, js/map.js; decided 31 October 2026, from mockups): MAP opens it once you have it (has): in chapter 1, when
   // the big monkey sends you up to the pine wood for wood and stones, he gives it to you (moved out of the prologue, decided
   // 31 October 2026, so there's less to take in at the start; a save that has opened it already keeps it); till then it says notYet. It shows the places you've been, each
@@ -772,12 +772,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // character) and at:[x, y, 'place'] (you're standing there). A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
     // The first night (the day goes round from chapter 1: js/daynight.js): 晚上, and the troop going back into the Water
-    // Curtain Cave to sleep; and the first rain, 雨 (下雨了！ it's raining)
+    // Curtain Cave to sleep; the first rain, 雨 (下雨了！ it's raining); and the first heavy rain, another day, 大雨
+    // (下大雨了！ it's raining hard)
     {if:{night:true, new:'晚上'}, do:[{sound:'chime'}, {message:'The sun has gone down, and the moon is coming up over Flower Fruit Mountain.'},
       {say:'nightNow', by:'player', teach:'晚上'}, {newWord:'晚上', note:'晚上 means night, or evening. At night the troop sleeps in the Water Curtain Cave.'},
       {message:'Sleep in one of the stone beds in the Water Curtain Cave, and you’ll wake up in the morning. Or stay up: the night soon passes.'}]},
     {if:{raining:true, new:'雨'}, do:[{message:'Drip, drip… it’s starting to rain!'}, {say:'raining', by:'player', teach:'雨'},
       {newWord:'雨', note:'雨 means rain. It never lasts long here: the sun will soon be out again.'}]},
+    {if:{raining:'heavy', knows:'雨', new:'大雨'}, do:[{message:'Splash, splash… it’s pouring!'}, {say:'pouring', by:'player', teach:'大雨'},
+      {newWord:'大雨', note:'大雨 means heavy rain: big rain. It never lasts long here either.'}]},
     {if:{place:'pineWood', woodIn:0}, do:[{sound:'howl'}, {message:'It’s gloomy under the thick pines, and very still. Somewhere far off, a wolf howls…'}, {set:{woodIn:1}}]},   // into the pine wood for the first time
     // chapter 1: into the bees' valley for the first time, at the end of the riverside: the butterfly from the riverside's
     // wildflowers flutters in after you (teaching 蝴蝶, if you passed it by), and tells you who lives in the tall flowers;
@@ -2515,6 +2518,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '睡觉': 'The stone beds in the Water Curtain Cave: sleep there to get your health back.',
     '晚上': 'Your first night on Flower Fruit Mountain, as the troop went into the Water Curtain Cave to sleep.',
     '雨': 'The first rain on Flower Fruit Mountain: 下雨了！ It’s raining!',
+    '大雨': 'The first heavy rain on Flower Fruit Mountain: 下大雨了！ It’s raining hard!',
     '碗': 'The troop’s bowls, stacked up in the Water Curtain Cave.',
     '桌子': 'The stone table in the Water Curtain Cave.',
     '家': 'The old monkey, when the troop moved into the Water Curtain Cave.',
@@ -2846,6 +2850,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     hi: {zh:'你好 ！', en:'Hello!'},
     nightNow: {zh:'晚上 了 ， 睡觉 吧 ！', en:'It’s night: time to sleep!'},   // the first night (js/daynight.js)
     raining: {zh:'下 雨 了 ！', en:'It’s raining!'},   // the first rain, and the troop while it rains
+    pouring: {zh:'下 大雨 了 ！', en:'It’s raining hard!'},   // the first heavy rain
+    rainTooHeavy: {zh:'雨 太 大 了 ！', en:'The rain’s too heavy!'},   // the troop while it pours
     iam: {zh:'我 是 猴子 。 你 也 是 猴子 ！', en:'I am a monkey. You are a monkey too!'},
     go: {zh:'去 看看 ！', en:'Go and take a look!'},
     comeLook: {zh:'来 看看 ！', en:'Come and take a look!'},   // the lookout's goat, walking you to its railing

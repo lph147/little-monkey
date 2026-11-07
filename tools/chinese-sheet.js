@@ -10,6 +10,9 @@ const {loadGame, ROOT} = require('../tests/fake-browser');
 // in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
 // into the content and delete them from here.
 const DRAFTS = [
+  ...[['下 大雨 了 ！', 'It’s raining hard!', 'your monkey, as it first rains heavily (some days’ rain is light, some heavy), teaching 大雨 (heavy rain, How it’s made: 大 big + 雨 rain)'],
+    ['雨 太 大 了 ！', 'The rain’s too heavy!', 'anyone with nothing new to say while it rains heavily (in light rain they say 下雨了！)']]
+    .map(([zh, en, where]) => ({zh, en, where:`New on 7 November 2026: ${where}. Is it natural?`})),
   ...[['晚上 了 ， 睡觉 吧 ！', 'It’s night: time to sleep!', 'your monkey, as night falls for the first time (the day now goes round: about 15 minutes of day, then 5 of night), teaching 晚上. Is 晚上了 natural for “it’s night now”, or would 天黑了 be better (天黑 would be new, just for listening)?'],
     ['下 雨 了 ！', 'It’s raining!', 'your monkey, as it first rains (now and then, in the daytime), teaching 雨 (rain); and anyone with nothing new to say while it rains'],
     ['晚上 好 ！', 'Good evening!', 'people in the human world still up at night (the night market’s stallholders, the teahouse, the boatman), with nothing new to say']]

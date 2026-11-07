@@ -136,6 +136,61 @@ test('rain: one spell a day, never at night, nor indoors, nor in winter; while i
   assert.equal(w.run('rainNow()'), 0, 'never in winter: it snows');
 });
 
+// Rain light or heavy (decided 7 November 2026, the owner's idea: sometimes just light, sometimes heavy, with a word for
+// heavy rain): the day decides, about one in three heavy; never heavy till you know 雨, nor on the day you learnt it.
+const HEAVY_DAY = g => g.run('(() => { for (let n = 1; ; n++) if (heavyDay(n)) return n; })()');
+const LIGHT_DAY = g => g.run('(() => { for (let n = 1; ; n++) if (!heavyDay(n)) return n; })()');
+const rainOn = (g, n) => g.run(`S.clock.n = ${n}; S.clock.t = RAIN_AT(${n}) * DAY_MS + RAIN_MS / 2`);
+test('rain is light or heavy, by the day: about a third heavy, heavy as it always was, light fewer and shorter drops; never heavy till you know 雨, nor on the day you learnt it', () => {
+  const g = game(1, CH1, {place: 'homeGround', x: 11, y: 8, dir: 'down'}, {w: knows(['雨'])});
+  const days = get(g, '[...Array(45).keys()].map(n => heavyDay(n))'), heavy = days.filter(Boolean).length;
+  assert.ok(heavy >= 9 && heavy <= 21, `about a third of the days heavy (${heavy} of 45)`);
+  assert.ok(days.slice(0, 10).includes(true) && days.slice(0, 10).includes(false), 'both, in the first ten days');
+  rainOn(g, HEAVY_DAY(g));
+  assert.equal(g.run('rainHere()'), 'heavy');
+  assert.deepEqual(get(g, "[matches({raining:'heavy'}), matches({raining:'light'}), matches({raining:true})]"), [true, false, true]);
+  const drawn = level => { rainOn(g, level === 'heavy' ? HEAVY_DAY(g) : LIGHT_DAY(g)); return g.run('(() => { let n = 0; const f = b.fillRect; b.fillRect = function(...a){ n++; return f.apply(this, a); }; try { drawRain(0, 0, 160, 1000); } finally { b.fillRect = f; } return n; })()'); };
+  const [h, l] = [drawn('heavy'), drawn('light')];
+  assert.ok(h > 500 && l > 100 && h > 2.5 * l, `heavy rain many more drops than light (${h} against ${l})`);
+  assert.equal(g.run('rainHere()'), 'light');
+  assert.deepEqual(get(g, "[matches({raining:'heavy'}), matches({raining:'light'})]"), [false, true]);
+  const fresh = game(1, CH1, {place: 'homeGround', x: 11, y: 8, dir: 'down'});
+  rainOn(fresh, HEAVY_DAY(fresh));
+  assert.equal(fresh.run('rainHere()'), 'light', 'not till you know 雨');
+  fresh.run("setSeen('雨')");
+  assert.equal(fresh.run('rainHere()'), 'light', 'nor on the day you learnt it');
+  fresh.run('newDay()');
+  assert.equal(fresh.run('rainHere()'), 'heavy', 'but heavy on a heavy day after');
+});
+
+test('the first heavy rain teaches 大雨 (下大雨了！), on both areas’ maps, never on the day you learn 雨; while it pours, the troop says 雨太大了！ (in light rain, 下雨了！)', async () => {
+  const g = game(1, CH1, {place: 'homeGround', x: 11, y: 8, dir: 'down'}, {w: knows(['雨'])});
+  g.run("globalThis.__cards = []; showNotice = async w => { __cards.push(w); setSeen(w); }; showDialog = async () => {}");
+  rainOn(g, LIGHT_DAY(g));
+  await play(g, 'runEvents()');
+  assert.deepEqual(get(g, '__cards'), [], 'light rain teaches nothing new');
+  assert.equal(get(g, "(t => t && t.say)(smallTalkFor(ALL_NPCS.find(n => n.id === 'troop1')))"), 'raining', 'light rain: 下雨了！');
+  rainOn(g, HEAVY_DAY(g));
+  assert.equal(get(g, "(t => t && t.say)(smallTalkFor(ALL_NPCS.find(n => n.id === 'troop1')))"), 'rainTooHeavy', 'heavy rain: 雨太大了！');
+  await play(g, 'runEvents()');
+  assert.deepEqual(get(g, '__cards'), ['大雨']);
+  await play(g, 'runEvents()');
+  assert.deepEqual(get(g, '__cards'), ['大雨'], 'once');
+  // a new game's first rain: 雨, and that day nothing more, even on a heavy day
+  const f = game(1, CH1, {place: 'homeGround', x: 11, y: 8, dir: 'down'});
+  f.run("globalThis.__cards = []; showNotice = async w => { __cards.push(w); setSeen(w); }; showDialog = async () => {}");
+  rainOn(f, HEAVY_DAY(f));
+  await play(f, 'runEvents()'); await play(f, 'runEvents()');
+  assert.deepEqual(get(f, '__cards'), ['雨'], 'the first rain is light: 雨 only');
+  // the human world: home in autumn, for a game that hasn't had a heavy rain; the troop talks about it too
+  const h = game(2, {chapter: 2, home2: 1, news: 1, party: 1, homeAgain: 1, landed: 1}, {place: 'ffmHomeGround', x: 13, y: 9, dir: 'down'}, {w: knows(['雨', '晚上'])});
+  h.run("globalThis.__cards = []; showNotice = async w => { __cards.push(w); setSeen(w); }; showDialog = async () => {}");
+  rainOn(h, HEAVY_DAY(h));
+  assert.equal(get(h, "(t => t && t.say)(smallTalkFor(ALL_NPCS.find(n => n.id === 'big')))"), 'rainTooHeavy', 'the troop at home: 雨太大了！');
+  await play(h, 'runEvents()');
+  assert.deepEqual(get(h, '__cards'), ['大雨']);
+});
+
 test('bedtime: the day’s recap first (its words, questions and friends), then the night goes by and it’s morning, your health full', async () => {
   const g = game(1, CH1, {place: 'cave', x: 1, y: 2, dir: 'up'}, {w: knows(['床', '睡觉', '山']), health: 20, turn: 30, friends: ['rabbit'],
     clock: {t: 1200000 * .8, n: 3, turn0: 18, friends0: [], caught: ['山']}});

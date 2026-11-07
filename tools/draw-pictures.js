@@ -1175,6 +1175,14 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(16, 30.8, 11, 1.6), '#5A9ED8', {light: '#9ACCF0'});   // a puddle
     p.flat(or(Rc(8.6, 29.6, 3, .8), Rc(20.4, 30, 3, .8)), '#D8ECFA');   // splashes in it
   },
+  '大雨': p => {   // heavy rain: a big dark storm cloud, rain pouring down from it in long streaks, and a wide puddle splashing (unlike 雨: a pale grey cloud and a few drops; unlike 云: a white cloud, no rain)
+    p.fill(or(O(8, 8.4, 6.6, 5.2), O(16, 5.4, 7.4, 5.8), O(24, 7.6, 6.4, 5), O(28.4, 10.6, 3.2, 3), O(3.6, 11, 3.2, 3), Rc(3, 8, 26, 6, 3)), '#5A647C', {light: '#7A869E', dark: '#3A4256'});   // a big dark cloud
+    p.flat(or(Rc(4, 13.4, 24, 1.4), O(10, 13.8, 4.4, .9), O(21, 13.8, 4.4, .9)), '#2E3546');   // its dark underside
+    for (const [x, y] of [[5.4, 16.2], [9.8, 16.6], [14.2, 16.2], [18.6, 16.6], [23, 16.2], [27.2, 16.6], [7.4, 22.4], [11.8, 22.8], [16.2, 22.4], [20.6, 22.8], [25, 22.4]])
+      p.fill(path([[x + 1.8, y], [x, y + 4.8]], .6), '#2F6FC0', {light: '#7CB4EC'});   // the rain, pouring down in long streaks
+    p.fill(O(16, 30.4, 14, 1.7), '#4A8ACC', {light: '#8EC0EC'});   // a wide puddle
+    p.flat(or(Rc(5.6, 28.2, 1, 1.6), Rc(4.6, 29.2, 3, .8), Rc(15.6, 28.4, 1, 1.4), Rc(14.6, 29.4, 3, .8), Rc(25.2, 28.2, 1, 1.6), Rc(24.2, 29.2, 3, .8)), '#D8ECFA');   // big splashes in it
+  },
   '鹤': p => {   // crane: tall and white, side on, its neck black, a red cap, long thin legs (unlike the goose: long legs, a straight beak)
     const W = '#F7F6F0', LT = {light: '#FFFFFF', dark: '#D4D0C4'};
     p.flat(or(Cp(16, 21, 15, 31, .55), Cp(19, 21, 20.4, 31, .55)), '#3A3A36');            // long thin legs

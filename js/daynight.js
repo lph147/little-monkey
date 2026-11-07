@@ -11,7 +11,8 @@
 // someone you're beside never vanishes in front of you (they go to bed once you've gone). Sleeping (the sleep step) skips
 // to the next morning, after a recap of the day: the words you caught, the questions you answered and the friends you
 // made, with a quick review of the day's words if you like (bedtimeCard). Every so often in the daytime it rains outdoors
-// for a minute or two (rainNow: one spell a day, at its own time), never in winter; the first rain teaches 下雨.
+// for a minute or two (rainNow: one spell a day, at its own time), never in winter, light or heavy (rainHeavy); the first
+// rain teaches 下雨, and the first heavy rain 大雨 (下大雨了！).
 // (Loaded after js/snowball.js: it draws over everything js/draw.js and js/seasons.js draw.)
 
 /* ---- the clock ---- */
@@ -213,9 +214,13 @@ function fireflies(cx, cy, sh, now, a){
 /* ---- rain ---- */
 // One spell of rain a day, RAIN_MS long, at its own time in the day (RAIN_AT: the first day's, after a while; later days'
 // anywhere in the morning and afternoon), never at night, nor in winter (it snows: js/seasons.js); fading in and out over
-// RAIN_FADE. Outdoors only.
-const RAIN_MS = 100000, RAIN_FADE = 6000;
+// RAIN_FADE. Outdoors only. Each day's rain is light or heavy (heavy on about RAIN_HEAVY of the days, by the day, so it
+// stays as it began), and looks it; never heavy till you know 雨, nor on the day you learnt it, so the first rain you see
+// is a light one, teaching 雨, and heavy rain teaches 大雨 another day (decided 7 November 2026, the owner's idea).
+const RAIN_MS = 100000, RAIN_FADE = 6000, RAIN_HEAVY = 1 / 3;
 const RAIN_AT = n => n === 0 ? .3 : .06 + rnd(n, 3, 960) * .5;
+const heavyDay = n => rnd(n, 7, 962) < RAIN_HEAVY;   // is day n's rain heavy?
+const rainHeavy = () => heavyDay(S.clock.n || 0) && lvl('雨') >= 1 && !(S.clock.caught || []).includes('雨');
 function rainNow(){   // how hard it's raining now, 0 to 1 (0 when it isn't)
   if (!clockOn() || isNight() || seasonNow() === 'winter') return 0;
   const start = RAIN_AT(S.clock.n || 0) * DAY_MS, t = (S.clock.t || 0) - start;
@@ -223,19 +228,22 @@ function rainNow(){   // how hard it's raining now, 0 to 1 (0 when it isn't)
   return Math.min(1, t / RAIN_FADE, (RAIN_MS - t) / RAIN_FADE);
 }
 const rainingHere = () => rainNow() > 0 && !indoors() && !(PLACES[PLACE] || {}).night;
-// The rain, over the world: the sky a little darker, streaks slanting down, and little splashes on the ground. No sound
-// (decided 7 November 2026, after playing it: its rush, every few seconds, wasn't wanted).
+const rainHere = () => rainingHere() && (rainHeavy() ? 'heavy' : 'light');   // how it's raining where you are: 'heavy', 'light', or false
+// The rain, over the world: the sky a little darker, streaks slanting down, and little splashes on the ground. Heavy rain
+// as it always was; light rain fewer, shorter and fainter drops, falling a little slower, the sky barely darker, and few
+// splashes. No sound (decided 7 November 2026, after playing it: its rush, every few seconds, wasn't wanted).
+const RAIN_LOOKS = {heavy:{dark:.16, drops:110, len:5, fall:4, splashes:14}, light:{dark:.07, drops:50, len:3, fall:5, splashes:5}};
 function drawRain(cx, cy, sh, now){
   const k = rainNow(); if (!k || indoors() || (PLACES[PLACE] || {}).night) return;
-  const W = VW*T;
-  b.globalAlpha = .16 * k; R(b, 0, 0, W, sh, '#1A2436');
+  const W = VW*T, L = RAIN_LOOKS[rainHeavy() ? 'heavy' : 'light'];
+  b.globalAlpha = L.dark * k; R(b, 0, 0, W, sh, '#1A2436');
   b.globalAlpha = .55;
-  for (let i = 0; i < Math.round(110 * k); i++){
-    const x = Math.floor(rnd(i, 4, 973) * (W + 40)) - Math.floor(now / 12 + cx) % 40, y = ((rnd(i, 5, 974) * sh + now / 4 - cy) % sh + sh) % sh;
-    for (let j = 0; j < 5; j++) R(b, x - Math.floor(j / 2), Math.round(y) + j, 1, 1, '#D8E4F4');
+  for (let i = 0; i < Math.round(L.drops * k); i++){
+    const x = Math.floor(rnd(i, 4, 973) * (W + 40)) - Math.floor(now / 12 + cx) % 40, y = ((rnd(i, 5, 974) * sh + now / L.fall - cy) % sh + sh) % sh;
+    for (let j = 0; j < L.len; j++) R(b, x - Math.floor(j / 2), Math.round(y) + j, 1, 1, '#D8E4F4');
   }
   b.globalAlpha = .7;
-  for (let i = 0; i < Math.round(14 * k); i++){   // splashes on the ground, a ring for a moment
+  for (let i = 0; i < Math.round(L.splashes * k); i++){   // splashes on the ground, a ring for a moment
     const ph = (now / 420 + rnd(i, 6, 975)) % 1, sx = Math.floor(rnd(i, Math.floor(now / 420 + rnd(i, 6, 975)), 976) * W), sy = Math.floor(rnd(i, Math.floor(now / 420 + rnd(i, 6, 975)), 977) * sh);
     if (ph < .5){ const r = Math.round(ph * 4); R(b, sx - r, sy, 1 + 2 * r, 1, '#E8F0FA'); }
   }

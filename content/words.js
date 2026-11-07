@@ -150,6 +150,7 @@ const WORD_BANK = {
   '大': {py:'dà', en:'big', area:1, category:'describing'},   // (and then a big one, for the feast; heard till then, as in 大猴子)
   '晚上': {py:'wǎnshang', en:'night, evening', pic:'🌃', area:1, category:'nature', alike:['天']},   // (the first night, in chapter 1, once the troop has its home: the day goes round, js/daynight.js; it was the master's night, in Area 2, till 7 November 2026)
   '雨': {py:'yǔ', en:'rain', pic:'🌧️', area:1, category:'nature', alike:['云', '雪', '水']},   // (the first rain, in chapter 1: 下雨了！, it's raining, as 下雪了！ is it's snowing)
+  '大雨': {py:'dàyǔ', en:'heavy rain', pic:'⛈️', area:1, category:'nature', alike:['雨', '云', '雪', '水']},   // (the first heavy rain, another day: 下大雨了！, it's raining hard)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello', situation:'You meet a friend.'},
@@ -446,6 +447,7 @@ const MADE = {
   '热': {clue:['灬', 'huǒ', 'fire'], why:'is at its bottom: four little flames. It’s hot!'},
   '冷': {clue:['冫', 'bīng', 'ice'], why:'is on its left: two drops of ice. It’s cold!'},
   '雨': {why:'Drawn like rain: the sky along its top, and drops of rain falling under it.'},
+  '大雨': {parts:[['大', 'dà', 'big'], ['雨', 'yǔ', 'rain']]},
   '雪': {clue:['雨', 'yǔ', 'rain'], why:'is on its top: snow falls from the sky, as rain does'},
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},

@@ -424,7 +424,8 @@ const ACROSS_THE_SEA = {
   // What people with nothing much to say talk about (their last few words, js/world.js): the weather, as the seasons go
   // round in the master's year (decided 7 November 2026, the owner's idea).
   smallTalk: [
-    {if:{raining:true}, say:'raining'},   // (rain, now and then, and night, as the day goes round: js/daynight.js)
+    {if:{raining:'heavy'}, monkeys:true, say:'rainTooHeavy'},   // (rain, now and then, light or heavy, and night, as the day goes round:
+    {if:{raining:true}, monkeys:true, say:'raining'},           // js/daynight.js; the troop too, at home)
     {if:{night:true}, say:'goodEvening'},
     {if:{chapter:1, grown:0, season:0, place:'cave'}, say:'springHere'},
     {if:{chapter:1, grown:0, season:1}, say:'hotToday'},
@@ -856,6 +857,8 @@ const ACROSS_THE_SEA = {
       {say:'nightNow', by:'player', teach:'晚上'}, {if:{new:'晚上'}, newWord:'晚上', note:'晚上 means night, or evening. Everyone goes home to sleep, and the streets are quiet.'}]},
     {if:{raining:true, new:'雨'}, do:[{message:'Drip, drip… it’s starting to rain!'}, {say:'raining', by:'player', teach:'雨'},
       {if:{new:'雨'}, newWord:'雨', note:'雨 means rain. It never lasts long: the sun will soon be out again.'}]},
+    {if:{raining:'heavy', knows:'雨', new:'大雨'}, do:[{message:'Splash, splash… it’s pouring!'}, {say:'pouring', by:'player', teach:'大雨'},
+      {if:{new:'大雨'}, newWord:'大雨', note:'大雨 means heavy rain: big rain. It never lasts long either.'}]},
     // a game from before rice was a meal (5 November 2026), with rice in its bag for the farmer: it's his lunch now
     {if:{lunch:'asked', holding:{lunch:false}, inBag:{'米饭':true}}, do:[{hold:'米饭', for:'lunch'}]},
     // all four hens back in their yard: the villager thanks you
@@ -2075,6 +2078,8 @@ const ACROSS_THE_SEA = {
     hi: {zh:'你好 ！', en:'Hello!'},
     nightNow: {zh:'晚上 了 ， 睡觉 吧 ！', en:'It’s night: time to sleep!'},   // the first night, in a game that hasn't had one (js/daynight.js)
     raining: {zh:'下 雨 了 ！', en:'It’s raining!'},   // the first rain, and anyone with nothing new to say while it rains
+    pouring: {zh:'下 大雨 了 ！', en:'It’s raining hard!'},   // the first heavy rain, for a game that hasn't had one on Flower Fruit Mountain
+    rainTooHeavy: {zh:'雨 太 大 了 ！', en:'The rain’s too heavy!'},   // anyone with nothing new to say while it pours
     goodEvening: {zh:'晚上 好 ！', en:'Good evening!'},   // and at night
     grownUp: {zh:'我 长大 了 ！', en:'I’ve grown up!'},
     thanks: {zh:'谢谢 ！', en:'Thank you!'},

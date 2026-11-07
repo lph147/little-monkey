@@ -344,6 +344,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   run(`clockSeen = "d"; S.clock.t = RAIN_AT(S.clock.n) * DAY_MS + RAIN_FADE`);
   await act('clockNews() && runEvents()', 'a shower: 雨');
   assert.ok(knows('雨') && get('__said').includes('下雨了！'), 'the first rain teaches 雨 (下雨了！)');
+  // another day, and heavy rain (some days it is, never the day you learnt 雨: decided 7 November 2026), the first teaching
+  // 大雨 (下大雨了！)
+  run('morning()');
+  run(`S.clock.n = (n => { while (!heavyDay(n)) n++; return n; })(S.clock.n); clockSeen = "d"; S.clock.t = RAIN_AT(S.clock.n) * DAY_MS + RAIN_FADE`);
+  assert.equal(run('rainHere()'), 'heavy', 'pouring');
+  await act('clockNews() && runEvents()', 'a downpour: 大雨');
+  assert.ok(knows('大雨') && get('__said').includes('下大雨了！'), 'the first heavy rain teaches 大雨 (下大雨了！)');
   run("S.clock.t = 0; clockSeen = null");   // (the rest of the day, in the morning)
 
   // Chapter 1: the big monkey marks out the school's plot, and wants wood and small stones to build it, from the pine wood

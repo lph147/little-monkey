@@ -333,7 +333,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'form') return (pl.form || null) === v;   // what you've changed into just now (turnInto with keep), such as a little demon
     if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
     if (k === 'night') return isNight() === v;   // it's night (js/daynight.js), such as the first night, teaching 晚上
-    if (k === 'raining') return rainingHere() === v;   // it's raining where you are, outdoors, such as the first rain, teaching 下雨
+    if (k === 'raining') return typeof v === 'string' ? rainHere() === v : rainingHere() === v;   // it's raining where you are, outdoors, such as the first rain, teaching 下雨; or raining 'heavy' (teaching 大雨) or 'light'
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });

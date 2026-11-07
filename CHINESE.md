@@ -17,6 +17,8 @@ shown where the word list has them.
 | 你好！ | nǐ hǎo! | Hello! | 老猴子 (Old monkey), 小猴子 (Little monkey), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 兔子 (rabbit), 松鼠 (squirrel), 山羊 (goat), 猴子 (Monkey), 大猴子 (Big monkey) |  |
 | 晚上了，睡觉吧！ | wǎnshang le, shuìjiào ba! | It’s night: time to sleep! |  |  |
 | 下雨了！ | xià yǔ le! | It’s raining! |  |  |
+| 下大雨了！ | xià dàyǔ le! | It’s raining hard! |  |  |
+| 雨太大了！ | yǔ tài dà le! | The rain’s too heavy! |  |  |
 | 我是猴子。你也是猴子！ | wǒ shì hóuzi. nǐ yě shì hóuzi! | I am a monkey. You are a monkey too! | 小猴子 (Little monkey) |  |
 | 去看看！ | qù kànkan! | Go and take a look! | 老猴子 (Old monkey), 山羊 (goat) |  |
 | 来看看！ | lái kànkan! | Come and take a look! | 山羊 (goat) |  |
@@ -568,6 +570,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 大 | dà | big |  |
 | 晚上 | wǎnshang | night, evening |  |
 | 雨 | yǔ | rain |  |
+| 大雨 | dàyǔ | heavy rain |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -618,6 +621,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 酸奶 | suānnǎi | 酸 suān (sour) + 奶 nǎi (milk) = 酸奶 (yoghurt) |  |
 | 猫头鹰 | māotóuyīng | 猫 māo (cat) + 头 tóu (head) + 鹰 yīng (eagle) = 猫头鹰 (owl) |  |
 | 雨 | yǔ | Drawn like rain: the sky along its top, and drops of rain falling under it. |  |
+| 大雨 | dàyǔ | 大 dà (big) + 雨 yǔ (rain) = 大雨 (heavy rain) |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = 你好 (hello) |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = 我不要 (no thanks) |  |
 | 苹果 | píngguǒ | 果 guǒ (fruit), as in 水果: an apple is a fruit |  |
@@ -642,6 +646,8 @@ check that each is true and simply put.
 | 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman), 师姐 (A pupil), 大师兄 (The senior pupil), 师兄 (A pupil), 师弟 (A pupil), 猴子 (Monkey) |  |
 | 晚上了，睡觉吧！ | wǎnshang le, shuìjiào ba! | It’s night: time to sleep! |  |  |
 | 下雨了！ | xià yǔ le! | It’s raining! |  |  |
+| 下大雨了！ | xià dàyǔ le! | It’s raining hard! |  |  |
+| 雨太大了！ | yǔ tài dà le! | The rain’s too heavy! |  |  |
 | 晚上好！ | wǎnshang hǎo! | Good evening! |  |  |
 | 我长大了！ | wǒ zhǎngdà le! | I’ve grown up! | 老板 (Stallholder), 路人 (Passer-by) |  |
 | 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 猴子 (Monkey), 小猴子 (Little monkey), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
@@ -1389,6 +1395,8 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 下大雨了！ | xià dàyǔ le! | It’s raining hard! | New on 7 November 2026: your monkey, as it first rains heavily (some days’ rain is light, some heavy), teaching 大雨 (heavy rain, How it’s made: 大 big + 雨 rain). Is it natural? |  |
+| 雨太大了！ | yǔ tài dà le! | The rain’s too heavy! | New on 7 November 2026: anyone with nothing new to say while it rains heavily (in light rain they say 下雨了！). Is it natural? |  |
 | 晚上了，睡觉吧！ | wǎnshang le, shuìjiào ba! | It’s night: time to sleep! | New on 7 November 2026: your monkey, as night falls for the first time (the day now goes round: about 15 minutes of day, then 5 of night), teaching 晚上. Is 晚上了 natural for “it’s night now”, or would 天黑了 be better (天黑 would be new, just for listening)?. Is it natural? |  |
 | 下雨了！ | xià yǔ le! | It’s raining! | New on 7 November 2026: your monkey, as it first rains (now and then, in the daytime), teaching 雨 (rain); and anyone with nothing new to say while it rains. Is it natural? |  |
 | 晚上好！ | wǎnshang hǎo! | Good evening! | New on 7 November 2026: people in the human world still up at night (the night market’s stallholders, the teahouse, the boatman), with nothing new to say. Is it natural? |  |
