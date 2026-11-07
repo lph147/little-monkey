@@ -283,20 +283,17 @@ test('asking what something is: only once you know 什么, and with someone near
   assert.ok(!knows(g, '井'));
 });
 
-test('a new word waits for a little practice: asking offers a quick word game first, and an animal you haven’t met too, with no friend made', async () => {
+test('a new word never waits for practice now (7 November 2026, after playing it: it made the story too slow): asking tells you straight away, and an animal you haven’t met plays at once', async () => {
   const g = game({place: 'village', x: 22, y: 12, dir: 'up'}, {landed: 1, dressed: 2, child: 3}, {w: {'什么': {lv: 1, ok: 0}}, turn: 50}, {waits: true});
   g.run("here().wordTurn = S.turn");   // (you've just caught a word)
   g.run("globalThis.__offered = []; STEPS.wordGame = async (s, who) => { __offered.push([who, s.wordGame.questions]); }");
   await press(g, 22, 12, 'up');
-  assert.deepEqual(get(g, '__offered'), [['granny', 5]], 'the granny offers five questions first');
-  assert.ok(!knows(g, '井'), 'and the word waits');
+  assert.deepEqual(get(g, '__offered'), [], 'no quick word game first');
+  assert.ok(knows(g, '井'), 'the granny tells you: 这是井。');
   goTo(g, 'shore', 8, 11, 'down');
-  g.run("__offered.length = 0; S.friends = S.friends.filter(f => f !== 'player')");
   await press(g, 8, 11, 'down');
-  assert.deepEqual(get(g, '__offered'), [['player', 5]], 'the goose: a quick game with nobody, first');
-  assert.ok(!get(g, "S.friends.includes('player') || S.met.includes('goose')"), 'no friend made, and the goose not met yet');
-  g.run('S.turn += 5');
-  assert.equal(g.run('wordLeft()'), 0, 'after five more questions, the new word can come');
+  assert.deepEqual(get(g, '__offered'), [], 'nor before the goose');
+  assert.ok(get(g, "S.met.includes('goose')"), 'you meet the goose straight away');
 });
 
 test('the child’s game: a picture and 这是…吗？, answered 是 or 不是, its English once you’ve answered', async () => {
@@ -363,21 +360,19 @@ test('the title screen continues a game in another area by loading the page agai
   assert.equal(JSON.parse(g.storage.get('xiaohouzi-v2-slots')).active, 2, 'game 2 is the one you’re playing now');
 });
 
-test('pacing: in Area 2, everything that teaches a new word waits for five questions’ practice first, so no two come back to back', () => {
+test('pacing: in Area 2, only the town’s teacher waits for five questions’ practice before a new word (the school); nothing else does, and nothing teaches two at once', () => {
   const g = game({place: 'shore', x: 13, y: 11, dir: 'up'});
   const A = get(g, 'AREA');
   assert.equal(A.wordGap.questions, 5);
-  const teaches = steps => steps.some(s => s.newWord || (s.say && s.teach) || s.shop || s.request || s.isIt);
   for (const [who, parts] of Object.entries(A.talk)) parts.forEach((p, i) => {
     const news = p.do.filter(s => s.newWord).map(s => s.newWord);
-    if (news.length) assert.ok(p.waits, `${who}'s talk, part ${i + 1}, teaches ${news.join(' ')}: it waits`);
+    assert.equal(!!p.waits, ['teacher', 'teacherOld'].includes(who) && news.length > 0, `${who}'s talk, part ${i + 1}: ${p.waits ? 'waits' : 'doesn’t wait'}`);
     assert.ok(news.length <= 1, `${who}'s talk, part ${i + 1}: one new word at a time`);
   });
-  for (const [ch, t] of Object.entries(A.legend)) for (const p of t.onLook || []) if (p.do.some(s => s.newWord)) assert.ok(p.waits, `legend "${ch}" teaches a word: it waits`);
-  assert.ok(A.animals.every(a => a.waits), 'animals you meet the first time wait too');
-  for (const sh of Object.values(A.shops)) assert.ok(A.talk[sh.who].filter(p => teaches(p.do) && p.if && p.if.new).every(p => p.waits), `${sh.who}'s stall waits before a new word`);
-  for (const p of Object.values(A.places)) for (const [ch, t] of Object.entries(p.legend || {})) for (const pt of t.onLook || []) if (pt.do.some(s => s.newWord)) assert.ok(pt.waits, `a place's "${ch}" teaches a word: it waits`);
-  assert.ok(A.events.filter(e => e.do.some(s => s.newWord) && e.if.landed !== 0).every(e => e.if.wordReady), 'and an event that teaches a word waits till you’re ready (but for the landing, your first)');
+  for (const [ch, t] of Object.entries(A.legend)) for (const p of t.onLook || []) assert.ok(!p.waits, `legend "${ch}" doesn’t wait`);
+  for (const pl of Object.values(A.places)) for (const [ch, t] of Object.entries(pl.legend || {})) for (const pt of t.onLook || []) assert.ok(!pt.waits, `a place's "${ch}" doesn’t wait`);
+  assert.ok(A.animals.every(a => !a.waits), 'nor do animals you meet the first time');
+  assert.ok(A.events.every(e => !('wordReady' in e.if)), 'nor any event');
   // the words: 32 in the prologue, one after another, and the first (人) as you land; then chapter 1's 17, and chapter 2's 11
   assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 60);
 });

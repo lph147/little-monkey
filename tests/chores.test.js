@@ -104,12 +104,12 @@ test('the wrong number of buckets: he says no, takes them, and asks again; you c
   assert.deepEqual(get(g, 'here().carrying'), {word: '水', n: 3}, 'three, this time');
 });
 
-test('if you practise first another time (Not now, before his next job), his task says to talk to him again, not to go and see him', async () => {
-  const g = game({chores: 3, waterFetch: 1, carrying: {word: '水', n: 3}}, {place: 'cave', x: 17, y: 9, dir: 'right'});
-  g.run('practiseFirst = async () => false');
-  await press(g, ...SENIOR);
-  assert.deepEqual(get(g, '__said'), ['senior: 对！谢谢！']);
-  assert.equal(get(g, 'here().chores'), 4);
+test('a game saved between his jobs (from before he went straight on): his task says to talk to him again, never to go and see him', async () => {
+  const g = game({chores: 4, waterFetch: 2}, {place: 'cave', x: 17, y: 9, dir: 'right'});
   const t = get(g, "(() => { const t = getTasks().find(t => t.id === 'c1axe'); return t && fill(t.text, false, true); })()");
   assert.equal(t, 'The senior pupil has one more job for you: talk to him again');
+  g.run('practiseFirst = async () => false');   // (nothing waits for practice now, but at school: he goes straight on)
+  await press(g, ...SENIOR);
+  assert.deepEqual(get(g, '__said'), ['senior: 这是斧头。', 'senior: 我要四块木头。 (no English)'], 'the axe, and what he wants');
+  assert.equal(get(g, 'here().chores'), 5);
 });

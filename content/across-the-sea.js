@@ -26,7 +26,7 @@ const LANDING = [
 // question a pull (the climb step); peaches; the mountain's tablet and the cave's stone door, open once the boy has opened it.
 const GUST = {wind:true, every:3200, puff:1000, at:0, hot:'The wind is too strong! Wait for the gust to drop, then cross the windy planks quickly.', pushed:'Whoosh! The wind blows you back.'};   // (every row at once, so you can cross up or down: decided 6 November 2026, after playing it; a row after another, you couldn't come back down)
 const CLIMB_LEGEND = {
-  'c': {look:'cloudSea', word:'云', note:'A sea of clouds, far below.', onLook:[{if:{new:'云'}, waits:true, label:'Look', do:[{newWord:'云', note:'云 means cloud. You’re up above the clouds!'}]}]},
+  'c': {look:'cloudSea', word:'云', note:'A sea of clouds, far below.', onLook:[{if:{new:'云'}, label:'Look', do:[{newWord:'云', note:'云 means cloud. You’re up above the clouds!'}]}]},
   'R': {look:'karstTop', word:'山'},
   'K': {look:'karstFace', word:'山'},
   'k': {look:'mossStone', walk:true},
@@ -98,7 +98,7 @@ const CAVE_LEGEND = {
       {collect:'叶子', for:'sweep', count:5, each:'You sweep up the leaves ({leavesSwept}/5).', full:'All five heaps swept! Tell the senior pupil.'}]}]},
   'y': {look:'rockDoor', word:'门', note:'A pupil’s room, cut into the rock.'},
   'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[
-    {if:{riddle:1}, label:'Wait for night', waits:true, do:[{set:{riddle:2}}, {message:'You lie down in your room, but you don’t sleep. You wait, and wait…'},
+    {if:{riddle:1}, label:'Wait for night', do:[{set:{riddle:2}}, {message:'You lie down in your room, but you don’t sleep. You wait, and wait…'},
       {goTo:'caveNight', at:[4, 4], facing:'down'}, {sound:'chime'}, {newWord:'晚上', note:'晚上 means night, or evening. Everyone is asleep: it’s the third watch of the night.'}]},
     {if:{teacher:0}, do:[{message:'A pupil’s room, cut into the rock: a stone bed, and a little window.'}]},   // (not yours till the master takes you as his pupil)
     {do:[{message:'Your room, cut into the rock: a stone bed, and a little window.'}]}]},
@@ -107,12 +107,12 @@ const CAVE_LEGEND = {
 // By night: no-one about; the slanting moon shining in the pool (月亮), and three stars over the master's back door (星星),
 // which is open for you, lamplight inside.
 const CAVE_NIGHT = {
-  'm': {look:'moonWater', word:'月亮', onLook:[{if:{new:'月亮'}, waits:true, label:'Look', do:[{newWord:'月亮', note:'月亮 means the moon. A thin, slanting moon, shining in the pool.'}]}]},
+  'm': {look:'moonWater', word:'月亮', onLook:[{if:{new:'月亮'}, label:'Look', do:[{newWord:'月亮', note:'月亮 means the moon. A thin, slanting moon, shining in the pool.'}]}]},
   's': {look:'water', word:'水'},
   'l': {look:'leafPile', word:'叶子'},
   'L': {look:'stump', landmark:true, onLook:[{do:[{message:'The chopping block, in the moonlight.'}]}]},
   'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[{do:[{message:'Not now! The master is waiting, at his back door beside the hall.'}]}]},
-  'M': {look:'rockDoorOpen', word:'门', landmark:true, onLook:[{if:{new:'星星'}, waits:true, label:'Look up', do:[{newWord:'星星',
+  'M': {look:'rockDoorOpen', word:'门', landmark:true, onLook:[{if:{new:'星星'}, label:'Look up', do:[{newWord:'星星',
     note:'星星 means stars. Over the master’s back door: a slanting moon, and three stars. Like the cave’s name: 斜月三星洞!'}]}]}
 };
 // The senior pupil's chores, fetched by their word (as the woodcutter's): three buckets of water from the pool, then four
@@ -165,7 +165,7 @@ const ON_BOAT = n => ({look:'bigBoat', deck:n, word:'船', note:'A big boat with
 // once you have the key (钥匙), opened with a question, the little monkey jumping out and hiding behind you.
 const CAGE = (n, x, y) => ({look:'cage', word:'笼子', landmark:true, becomes:[{if:{['freed' + n]:1}, to:'がぎぐげご'[n - 1]}], onLook:[
   {if:{new:'救命'}, do:[{message:'A little monkey, locked in a wooden cage! It looks frightened.'}]},
-  {if:{new:'笼子'}, label:'Look', waits:true, do:[{newWord:'笼子', note:'笼子 means cage. A little monkey from the troop is locked inside!'}]},
+  {if:{new:'笼子'}, label:'Look', do:[{newWord:'笼子', note:'笼子 means cage. A little monkey from the troop is locked inside!'}]},
   {if:{key:0}, do:[{message:'The cage is locked. Who has the key?'}]},
   {label:'Open', do:[{practise:1, label:'Opening the cage', pic:'钥匙'}, {unlock:'钥匙'}, {set:{['freed' + n]:1}}, {sound:'chime'}, {leap:'baby' + n, from:[x, y]},
     {say:'thanks', by:'baby' + n}, {message:'The little monkey jumps out, free! ({freed}/5)'}]}]});
@@ -179,7 +179,7 @@ const LAIR_LEGEND = {
   // a boulder, out of the guard's sight: hide behind it, and change into a little demon (变, as the master taught you)
   'b': {look:'ashBoulder', word:'石头', onLook:[{if:{knows:'钥匙', key:0, form:null}, label:'Hide', do:[{message:'Out of the guard’s sight behind the boulder, you remember what the master taught you…'},
     {turnInto:1, word:'妖怪', keep:true, label:'变！ What will you change into, to fool the guard? Listen!'}, {message:'You look just like a little demon! Go and ask the guard for the key.'}]}]},
-  'T': {look:'torch', word:'火', landmark:true, onLook:[{if:{new:'火'}, label:'Look', waits:true, do:[{newWord:'火', note:'火 means fire. Torches, burning in front of the demon’s cave.'}]},
+  'T': {look:'torch', word:'火', landmark:true, onLook:[{if:{new:'火'}, label:'Look', do:[{newWord:'火', note:'火 means fire. Torches, burning in front of the demon’s cave.'}]},
     {do:[{message:'A torch, burning.'}]}]},
   'O': {look:'demonDoor', landmark:true, action:'sign', sign:{name:{zh:'洞', py:'dòng', en:'Cave'}, says:{zh:'水脏洞', en:'Water-Belly Cave'}, hint:'The name of the Demon of Havoc’s cave.'}},
   'か': CAGE(1, 4, 5), 'き': CAGE(2, 6, 5), 'く': CAGE(3, 8, 5), 'け': CAGE(4, 5, 7), 'こ': CAGE(5, 7, 7),
@@ -195,7 +195,7 @@ const LAIR_LEGEND = {
 // At home: a bush the troop hides behind (the big monkey in the meadow, the hungry monkey at the home ground), sparkling
 // till you look (its sparkle); the feast's tables, bare till the troop puts everything back; and your cloud, there once the
 // old monkey sends you north.
-const HIDING = (key, who, x, y, wait) => ({look:'bush', onLook:[{if:{...wait, [key]:0}, label:'Look', waits:true, do:[{sound:'scuffle'}, {set:{[key]:1}}, {leap:who, from:[x, y]}, {talkTo:who}]},
+const HIDING = (key, who, x, y, wait) => ({look:'bush', onLook:[{if:{...wait, [key]:0}, label:'Look', do:[{sound:'scuffle'}, {set:{[key]:1}}, {leap:who, from:[x, y]}, {talkTo:who}]},
   {do:[{message:'A bush.'}]}]});
 const ROBBED = (look, to) => ({look, word:'桌子', landmark:true, note:'The feast’s table. Everything on it has gone!', becomes:[{if:{homeAgain:1}, to}]});
 // Asking someone you've helped where the immortals are (神仙在哪里？, decided 5 November 2026, after playing it: the human
@@ -203,9 +203,9 @@ const ROBBED = (look, to) => ({look, word:'桌子', landmark:true, note:'The fea
 // as a new word does). None of them knows (我不知道。), but they're your friend now (the befriend step: your Friends page,
 // under People), and you're told who to try next (then). The last, the boatman, knows: across the sea.
 const ASK = (key, helped, then) => [
-  {if:{...helped, [key]:0, new:'哪里'}, waits:true, do:[{say:'whereImmortals', by:'player', teach:'哪里'}, {newWord:'哪里', note:'哪里 means where. 神仙在哪里？ Where are the immortals?'},
+  {if:{...helped, [key]:0, new:'哪里'}, do:[{say:'whereImmortals', by:'player', teach:'哪里'}, {newWord:'哪里', note:'哪里 means where. 神仙在哪里？ Where are the immortals?'},
     {say:'dontKnow'}, {set:{[key]:1}}, {befriend:true}, ...then]},
-  {if:{...helped, [key]:0, new:'知道'}, waits:true, do:[{say:'whereImmortals', by:'player'}, {say:'dontKnow', teach:'知道'}, {newWord:'知道', note:'知道 means to know. 我不知道。 I don’t know.'},
+  {if:{...helped, [key]:0, new:'知道'}, do:[{say:'whereImmortals', by:'player'}, {say:'dontKnow', teach:'知道'}, {newWord:'知道', note:'知道 means to know. 我不知道。 I don’t know.'},
     {set:{[key]:1}}, {befriend:true}, ...then]},
   {if:{...helped, [key]:0}, do:[{say:'whereImmortals', by:'player'}, {say:'dontKnow'}, {set:{[key]:1}}, {befriend:true}, ...then]}
 ];
@@ -350,10 +350,10 @@ const ACROSS_THE_SEA = {
     freed: {count:'flags', keys:['freed1', 'freed2', 'freed3', 'freed4', 'freed5']}   // the little monkeys let out of their cages
   },
 
-  // After any new word, the next waits till you've answered this many more questions, anywhere: a talk part, a square's
-  // steps, asking about something or an animal you haven't met (waits) offers a quick word game first (as on Flower Fruit
-  // Mountain, where it's 4). 6 here (decided 4 November 2026, for the plan's pacing: about 7 questions for each new word,
-  // with the animals' games, the child's and the gaps you fill).
+  // The town's teacher, after any new word, waits till you've answered this many more questions, anywhere, before he
+  // teaches the next (waits), offering a quick word game first (as the school's teacher on Flower Fruit Mountain does, where
+  // it's 4). Only the teacher waits now (decided 7 November 2026, after playing it: everywhere else it made the story too
+  // slow, and was out of place, such as when the master was angry with you).
   wordGap: {questions:5, word:'人', yes:'Quick game', ask:'Something new is coming, after a little more practice: {left} more questions. Fishing, the stepping stones and your friends in the long grass all count. Or play a quick word game now?', notYet:'Learn a few more words first, then come back.'},
   running: {knows:'跑'},
   areaMap: {has:{knows:'地图'}, notYet:'You don’t have a map yet.', word:'地图', note:'Every place you go is drawn on your map.'},
@@ -671,11 +671,11 @@ const ACROSS_THE_SEA = {
     {if:{dressed:2, back:0}, do:[{set:{back:1}}, {sound:'chime'},
       {message:'The fishermen come out of their hut. They don’t run away now: in a coat and hat, you look just like a person!'}]},
     // on the road through the fields, the dog stops you, guarding it
-    {if:{place:'fields', dogStop:0, friends:{dog:false}, wordReady:true, around:[36, 8, 'fields', 1]}, do:[{set:{dogStop:1}}, {stopsYou:'dog'}]},
+    {if:{place:'fields', dogStop:0, friends:{dog:false}, around:[36, 8, 'fields', 1]}, do:[{set:{dogStop:1}}, {stopsYou:'dog'}]},
     // a game saved at the end of the prologue, before chapter 1 was built (the woodcutter's song ended it then): it begins now
     {if:{song:1, chapter:0}, do:[{chapter:1}, {message:'The woodcutter has gone home, up the stone steps. Follow him up the mountain!'}]},
     // over the stone pillars, nothing but the open sky (天), once you've had a little practice since your last new word
-    {if:{place:'pillars', sky:0, wordReady:true}, do:[{set:{sky:1}}, {sound:'chime'},
+    {if:{place:'pillars', sky:0}, do:[{set:{sky:1}}, {sound:'chime'},
       {message:'Up here, above the clouds, there’s nothing over you but the wide, blue sky.'}, {newWord:'天', note:'天 means sky. Up here, it feels close enough to touch!'}]},
     // into the cave for the first time
     {if:{place:'cave', caveSeen:0}, do:[{set:{caveSeen:1}},
@@ -691,12 +691,12 @@ const ACROSS_THE_SEA = {
     {if:{place:'ffmMeadow', home2:0}, do:[{set:{home2:1}},
       {message:'Flower Fruit Mountain, after twenty years! Your stone, the meadow, the river… But it’s very quiet. Then you hear someone crying.'}]},
     // back from the cave with the news: a little demon on the home ground stops you
-    {if:{place:'ffmHomeGround', news:1, d1:0, wordReady:true, around:[4, 9, 'ffmHomeGround', 2]}, do:[{stopsYou:'d1'}]},
+    {if:{place:'ffmHomeGround', news:1, d1:0, around:[4, 9, 'ffmHomeGround', 2]}, do:[{stopsYou:'d1'}]},
     // the demon's mountain, the first time
     {if:{place:'lair', lairSeen:0}, do:[{set:{lairSeen:1}},
       {message:'The Demon of Havoc’s mountain: black rock, ash and dead pines. Up at the top, torches burn in front of a dark cave…'}]},
     // near the cages: the troop's little ones, calling for help
-    {if:{place:'lair', knows:'火', new:'救命', wordReady:true, around:[6, 6, 'lair', 3]}, do:[{say:'help', by:'baby1'}, {newWord:'救命', note:'救命 means Help! The troop’s little ones, locked in cages!'}]},
+    {if:{place:'lair', knows:'火', new:'救命', around:[6, 6, 'lair', 3]}, do:[{say:'help', by:'baby1'}, {newWord:'救命', note:'救命 means Help! The troop’s little ones, locked in cages!'}]},
     // all five free, and the troop's things found: the little demons run in, shouting, and out comes their master
     {if:{place:'lair', loot:{atLeast:1}, king:0}, do:[{set:{king:1}}, {message:'The little demons run into the cave, shouting. Something big is coming out…'}, {sound:'rumble'},
       {leap:'king', from:[14, 3]}, {talkTo:'king'}]},
@@ -1367,7 +1367,7 @@ const ACROSS_THE_SEA = {
     'K': {look:'townSchool', word:'学校', note:'The town’s school: the board over its door says {学校}.'},
     'w': {look:'whiteWall'},
     'z': {look:'wallGate', word:'门', ask:'isDoor', note:'A wooden gate in the white wall.', onLook:[
-      {if:{knows:'门', knock:0}, label:'Knock', waits:true, do:[{sound:'tock'}, {sound:'tock'}, {say:'whoIsIt', by:'auntie', teach:'谁'}, {newWord:'谁', note:'Someone behind the gate wants to know who’s there.'},
+      {if:{knows:'门', knock:0}, label:'Knock', do:[{sound:'tock'}, {sound:'tock'}, {say:'whoIsIt', by:'auntie', teach:'谁'}, {newWord:'谁', note:'Someone behind the gate wants to know who’s there.'},
         {say:'itsMe', by:'player'}, {set:{knock:1}}, {sound:'blip'}, {say:'littleMonkey', by:'auntie'}, {reply:'你好'}]}]},
     'L': {look:'washLine', word:'衣服'},
     'r': {look:'fishRack', word:'鱼', note:'Fish hung up to dry in the sun.'},
@@ -1389,9 +1389,9 @@ const ACROSS_THE_SEA = {
     'C': {look:'stallFruit', landmark:true, onLook:[{do:[{message:'A stall of fruit and vegetables.'}]}]},
     'E': {look:'stallChanger', landmark:true, onLook:[{do:[{message:'The money changer’s table, with strings of coins.'}]}]},
     'u': {look:'bookTable', word:'书', ask:'isBook', note:'Books, on a table by the school.'},
-    'Ж': {look:'coatOnSand', landmark:true, onLook:[{if:{dressed:0}, label:'Pick up', waits:true, do:[{newWord:'衣服', note:'The old man’s coat: you put it on!'},
+    'Ж': {look:'coatOnSand', landmark:true, onLook:[{if:{dressed:0}, label:'Pick up', do:[{newWord:'衣服', note:'The old man’s coat: you put it on!'},
       {wear:'衣服'}, {change:'s'}, {set:{dressed:1}}, {message:'You put on the coat. But people would still know you’re a monkey…'}]}]},
-    'З': {look:'hatOnSand', landmark:true, onLook:[{if:{dressed:1}, label:'Pick up', waits:true, do:[{newWord:'帽子', note:'A straw hat: you put it on, and it hides your ears!'},
+    'З': {look:'hatOnSand', landmark:true, onLook:[{if:{dressed:1}, label:'Pick up', do:[{newWord:'帽子', note:'A straw hat: you put it on, and it hides your ears!'},
       {wear:'帽子'}, {change:'s'}, {set:{dressed:2}}]},
       {do:[{message:'A straw hat, blowing along the sand.'}]}]},
     'Ф': {look:'raft', word:'木筏', landmark:true, onLook:[{do:[{card:'木筏', note:'Your raft, washed up on the sand. It won’t sail again: the sea has broken it up.'}]}]},
@@ -1717,14 +1717,13 @@ const ACROSS_THE_SEA = {
   fish: [[6, 19], [24, 20], [31, 18], [5, 21, 'farShore'], [26, 22, 'farShore'], [30, 9, 'villageLane'], [12, 13, 'fields'], [4, 8, 'canalPath']],
   dragonflies: [{at:[5, 23, 'village'], to:[11, 24]}, {at:[26, 23, 'village'], to:[33, 24]}, {at:[24, 9, 'villageLane'], to:[32, 10]}, {at:[30, 13, 'fields'], to:[37, 14]}],
 
-  // The area's animals, friends to make with their word games, as on Flower Fruit Mountain. waits: the first time, its
-  // word (new) waits for a little practice, as a character's does (practiseFirst, js/world.js).
+  // The area's animals, friends to make with their word games, as on Flower Fruit Mountain.
   animals: [
-    {id:'goose', word:'鹅', waits:true, at:[8, 12], roams:['shorePath', 'villageLane'], home:'海', clue:'The shore, on the sand', meetNote:'A goose waddles up to you on the sand, honking. Answer its questions to make friends.'},
-    {id:'chicken', word:'鸡', waits:true, at:[6, 16, 'village'], roams:['shorePath', 'villageLane'], home:'草', clue:'The village, in the yard', meetNote:'A chicken pecks about in the yard. Answer its questions to make friends.'},
-    {id:'dog', word:'狗', waits:true, at:[36, 9, 'fields'], roams:['villageLane', 'highRoad'], home:'草', clue:'The fields, by the road', meetNote:'A dog guards the road, barking at you! Answer its questions to make friends.'},
-    {id:'crane', word:'鹤', waits:true, at:[14, 12, 'cliffRoad'], chapter:1, home:'山', clue:'The teacher’s mountain, by the pool on the cliff road', meetNote:'A crane stands by the pool on one leg. It looks at you, its head on one side. Answer its questions to make friends.'},
-    {id:'cat', word:'猫', waits:true, at:[33, 8, 'town'], roams:['highRoad', 'canalPath'], perch:3, home:'房子', clue:'The town, at the market', meetNote:'A cat is curled up on the sacks at the market. Answer its questions to make friends.'}
+    {id:'goose', word:'鹅', at:[8, 12], roams:['shorePath', 'villageLane'], home:'海', clue:'The shore, on the sand', meetNote:'A goose waddles up to you on the sand, honking. Answer its questions to make friends.'},
+    {id:'chicken', word:'鸡', at:[6, 16, 'village'], roams:['shorePath', 'villageLane'], home:'草', clue:'The village, in the yard', meetNote:'A chicken pecks about in the yard. Answer its questions to make friends.'},
+    {id:'dog', word:'狗', at:[36, 9, 'fields'], roams:['villageLane', 'highRoad'], home:'草', clue:'The fields, by the road', meetNote:'A dog guards the road, barking at you! Answer its questions to make friends.'},
+    {id:'crane', word:'鹤', at:[14, 12, 'cliffRoad'], chapter:1, home:'山', clue:'The teacher’s mountain, by the pool on the cliff road', meetNote:'A crane stands by the pool on one leg. It looks at you, its head on one side. Answer its questions to make friends.'},
+    {id:'cat', word:'猫', at:[33, 8, 'town'], roams:['highRoad', 'canalPath'], perch:3, home:'房子', clue:'The town, at the market', meetNote:'A cat is curled up on the sacks at the market. Answer its questions to make friends.'}
   ],
   birds: {word:'鸟', note:'A little bird hops about, looking for something to eat.', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},
   // Hide and seek with a child in the village (the hideSeek step, js/hide.js, as with the little monkey at home): the
@@ -1917,18 +1916,18 @@ const ACROSS_THE_SEA = {
       {do:[{say:'hi'}, {reply:'你好'}]}],
     // the child: who are you? (你是谁？ 我是＿) You're not a person! (不); then the 是不是 game (是); then what's this? (什么)
     child: [
-      {if:{child:0}, waits:true, do:[{say:'whoAreYou'}, {gap:{sentence:'我 是 人', en:'I’m a person.', word:'人', others:['鱼', '鸟', '鹅']}},
+      {if:{child:0}, do:[{say:'whoAreYou'}, {gap:{sentence:'我 是 人', en:'I’m a person.', word:'人', others:['鱼', '鸟', '鹅']}},
         {say:'notPerson', teach:'不'}, {newWord:'不', note:'不 means not.'}, {set:{child:1}}, {message:'The child laughs. They don’t mind that you’re a monkey!'}, {goOn:true}]},
-      {if:{child:1}, waits:true, do:[{say:'play'}, {newWord:'是', note:'是 means is, or yes. 不是 means isn’t, or no.'},
+      {if:{child:1}, do:[{say:'play'}, {newWord:'是', note:'是 means is, or yes. 不是 means isn’t, or no.'},
         {isIt:4}, {set:{child:2}}, {message:'The child claps. You’re good at this game!'}, {goOn:true}]},
-      {if:{child:2}, waits:true, do:[{say:'whatsThis', teach:'什么'}, {newWord:'什么', note:'什么 means what. 这是什么？ means What’s this?'}, {set:{child:3}},
+      {if:{child:2}, do:[{say:'whatsThis', teach:'什么'}, {newWord:'什么', note:'什么 means what. 这是什么？ means What’s this?'}, {set:{child:3}},
         {message:'Now you can ask what things are! Face something that sparkles ✨ with a person near, and press A.'}, {goOn:true}]},
       ...ASK('askChild', {child:3}, VILLAGE_NEXT),
       {do:[{say:'play'}, {isIt:4}]}
     ],
     granny: [
       {if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]},
-      {if:{new:'饭'}, waits:true, do:[{say:'areYouHungry', teach:'饭'}, {newWord:'饭', note:'饭 is rice, or a meal.'},
+      {if:{new:'饭'}, do:[{say:'areYouHungry', teach:'饭'}, {newWord:'饭', note:'饭 is rice, or a meal.'},
         {reply:'谢谢'}, {eat:'饭', note:'You sit down by the well and eat the whole bowl of {饭|rice}. Your health is full!'}]},
       // the farmer's lunch: she gives you a bowl for him (a meal: not a snack for your bag)
       {if:{lunch:'asked', holding:{lunch:false}}, do:[{say:'hi'}, {hold:'饭', for:'lunch'}, {message:'The granny gives you a bowl of {饭|rice} for the farmer. Take it to him, in the fields!'}]},
@@ -1936,7 +1935,7 @@ const ACROSS_THE_SEA = {
     ],
     fisherman: [
       {if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]},
-      {if:{fish:'asked', holding:{fish:true}}, waits:true, do:[{request:'fish'}]},   // (钱 comes as he pays you: practise first)
+      {if:{fish:'asked', holding:{fish:true}}, do:[{request:'fish'}]},   // (钱 comes as he pays you: practise first)
       {if:{fish:'not asked'}, do:[{request:'fish'}]},
       {if:{fish:'asked'}, do:[{request:'fish'}]},
       ...ASK('askFisher', {fish:'done'}, VILLAGE_NEXT),
@@ -1967,7 +1966,7 @@ const ACROSS_THE_SEA = {
     kid3: [{do:[{say:'hi'}, {reply:'你好'}]}],
     // the farmer: look, birds! (看); shoo them off his rice; then he's hungry (his lunch, from the granny)
     farmer: [
-      {if:{farmer:0}, waits:true, do:[{say:'look', teach:'看'}, {newWord:'看', note:'看 means to look.'}, {set:{farmer:1}},
+      {if:{farmer:0}, do:[{say:'look', teach:'看'}, {newWord:'看', note:'看 means to look.'}, {set:{farmer:1}},
         {message:'Birds are eating the farmer’s rice! Shoo them off: walk up to each one, and press A.'}]},
       {if:{farmer:1, birdsShooed:{below:5}}, do:[{say:'look'}, {message:'Shoo the birds off the rice ({birdsShooed}/5).'}]},
       {if:{lunch:'not asked'}, do:[{request:'lunch'}]},
@@ -1985,18 +1984,18 @@ const ACROSS_THE_SEA = {
       {if:{exchanged:0}, do:[{say:'changeMoney'}, {exchange:true}, {say:'hereMoney'}, {set:{exchanged:1}}, {reply:'谢谢'}]},
       {do:[{say:'changeMoney'}, {exchange:true}]}
     ],
-    fruitSeller: [{if:{new:'买'}, waits:true, do:[{shop:'fruit'}]}, {do:[{shop:'fruit'}]}],
+    fruitSeller: [{if:{new:'买'}, do:[{shop:'fruit'}]}, {do:[{shop:'fruit'}]}],
     bunSeller: [{if:{new:'买'}, do:[{say:'hi'}, {message:'The bun seller is busy. Try the fruit stall first!'}]},
-      {if:{new:'包子'}, waits:true, do:[{shop:'buns'}]}, {do:[{shop:'buns'}]}],
+      {if:{new:'包子'}, do:[{shop:'buns'}]}, {do:[{shop:'buns'}]}],
     shoeSeller: [{if:{new:'买'}, do:[{say:'hi'}, {message:'The shoe seller is busy. Try the fruit stall first!'}]},
-      {if:{new:'鞋'}, waits:true, do:[{shop:'shoes'}]}, {do:[{shop:'shoes'}]}],
+      {if:{new:'鞋'}, do:[{shop:'shoes'}]}, {do:[{shop:'shoes'}]}],
     teaKeeper: [
-      {if:{new:'茶'}, waits:true, do:[{say:'drinkTea', teach:'茶'}, {newWord:'茶', note:'A cup of hot green tea, in the teahouse.'}, {rest:true}, {reply:'谢谢'}, {goOn:true}]},
+      {if:{new:'茶'}, do:[{say:'drinkTea', teach:'茶'}, {newWord:'茶', note:'A cup of hot green tea, in the teahouse.'}, {rest:true}, {reply:'谢谢'}, {goOn:true}]},
       ...ASK('askTea', {knows:'茶'}, TOWN_NEXT),
       {do:[{say:'drinkTea'}, {rest:true}, {message:'You sit down and drink a cup of tea.'}]}
     ],
     teller: [
-      {if:{new:'说'}, waits:true, do:[{say:'iTalk', teach:'说'}, {newWord:'说', note:'说 means to say, or to talk.'}, {message:'The storyteller tells stories in front of the teahouse. People stop to listen.'}, {goOn:true}]},
+      {if:{new:'说'}, do:[{say:'iTalk', teach:'说'}, {newWord:'说', note:'说 means to say, or to talk.'}, {message:'The storyteller tells stories in front of the teahouse. People stop to listen.'}, {goOn:true}]},
       ...ASK('askTeller', {knows:'说'}, [{message:'The storyteller knows lots of stories, but not where the immortals live.'}, ...TOWN_NEXT]),
       {do:[{say:'iTalk'}]}
     ],
@@ -2051,16 +2050,16 @@ const ACROSS_THE_SEA = {
       {if:{toldSea:0, asked:{below:8}}, do:[{say:'hi'}, {reply:'你好'}, {message:'The boatman has sailed all over the sea… But first, ask everyone else on your list ({asked} of 8 so far): tap the faces on your Tasks page to see who’s left.'}]},
       {if:{toldSea:0}, do:[{say:'whereImmortals', by:'player'}, {say:'acrossSea'}, {set:{toldSea:1}}, {befriend:true}, {sound:'chime'},
         {message:'At last, someone who knows! Far across the western sea, on a mountain, there lives an immortal. The boatman can take you there, once the wind comes.'}, {goOn:true}]},
-      {if:{boat:0}, waits:true, do:[{say:'noWind', teach:'风'}, {newWord:'风', note:'风 means wind. Without it, the boat can’t sail.'}, {set:{boat:1}},
+      {if:{boat:0}, do:[{say:'noWind', teach:'风'}, {newWord:'风', note:'风 means wind. Without it, the boat can’t sail.'}, {set:{boat:1}},
         {message:'No wind today: the boat can’t sail. Practise a little, then come back.'}]},
-      {if:{boat:1}, waits:true, do:[{sound:'wind'}, {say:'windCame'}, {pay:5, note:'You give the boatman 5 🪙 for your fare.'}, {say:'letsGo'},
+      {if:{boat:1}, do:[{sound:'wind'}, {say:'windCame'}, {pay:5, note:'You give the boatman 5 🪙 for your fare.'}, {say:'letsGo'},
         {scene:'crossSea'}, {set:{boat:2}}, {goTo:'farShore', at:[16, 19], facing:'up'}]},
       {do:[{say:'hi'}, {reply:'你好'}]}
     ],
     harbourGoose: [{do:[{gap:{sentence:'这 是 鹅', en:'This is a goose.', word:'鹅', others:['鸡', '鱼', '狗'], pic:'鹅'}}]}],
     // the far shore: the woodcutter's song (歌), the immortal's; and where the immortal lives
     woodcutter: [
-      {if:{song:0}, waits:true, do:[{sound:'chime'}, {say:'immortalSong', teach:'歌'}, {newWord:'歌', note:'歌 means song. The woodcutter learned it from the immortal!'},
+      {if:{song:0}, do:[{sound:'chime'}, {say:'immortalSong', teach:'歌'}, {newWord:'歌', note:'歌 means song. The woodcutter learned it from the immortal!'},
         {say:'immortalOnMountain'}, {set:{song:1}}, {chapter:1},
         {message:'The woodcutter picks up his axe and goes home, up the stone steps. Follow him: the way up the mountain starts there!'}]},
       // at his hut, at the foot of the mountain: he's tired, and asks for things one at a time, only in Chinese (fetch-by-word,
@@ -2081,23 +2080,23 @@ const ACROSS_THE_SEA = {
     // the master: who he is (师父), your name (名字); the chores first; his lecture, and seven years; his riddle (头); at
     // night, in his room, his secret (变); his tests; the cloud somersault (飞); and, once you've shown off, home (回家)
     master: [
-      {if:{teacher:0}, waits:true, do:[{say:'youCame'}, {say:'iAmMaster', teach:'师父'}, {newWord:'师父', note:'师父 means master, or teacher: the one who teaches you, and looks after you.'}, {set:{teacher:1}}, {goOn:true}]},
-      {if:{named:0}, waits:true, do:[{say:'whatName', teach:'名字'}, {newWord:'名字', note:'名字 means name. 你叫什么名字？ What are you called?'},
+      {if:{teacher:0}, do:[{say:'youCame'}, {say:'iAmMaster', teach:'师父'}, {newWord:'师父', note:'师父 means master, or teacher: the one who teaches you, and looks after you.'}, {set:{teacher:1}}, {goOn:true}]},
+      {if:{named:0}, do:[{say:'whatName', teach:'名字'}, {newWord:'名字', note:'名字 means name. 你叫什么名字？ What are you called?'},
         {say:'noName', by:'player'}, {say:'yourName'}, {set:{named:1}}, {sound:'chime'},
         {message:'From now on you’re 孙悟空, Sun Wukong: Monkey Awakened to Emptiness. You’re one of the master’s pupils now.'}]},
       {if:{chores:{below:6}}, do:[{message:'The master wants you to help the senior pupil with the chores first.'}]},
       {if:{grown:0}, do:[{say:'listen'}, {practise:4, label:'The master’s lecture', pic:'师父'}, {scene:'caveYears'}, {set:{grown:1}}, {sound:'chime'},
         {message:'Seven years have gone by. The peach trees you watered are tall now, with fruit on them, and there are new little pupils.'}, {goOn:true}]},
-      {if:{riddle:0}, waits:true, do:[{say:'oneTwoThree'}, {sound:'tock'}, {sound:'tock'}, {sound:'tock'}, {newWord:'头', note:'头 means head. The master tapped you on the head, three times!'},
+      {if:{riddle:0}, do:[{say:'oneTwoThree'}, {sound:'tock'}, {sound:'tock'}, {sound:'tock'}, {newWord:'头', note:'头 means head. The master tapped you on the head, three times!'},
         {set:{riddle:1}},
         {message:'The master puts his hands behind his back, goes into the hall and shuts the doors. The pupils are cross with you. But you understand: three taps… the third watch of the night… the back door!'}]},
-      {if:{riddle:2}, waits:true, do:[{say:'youCame'}, {say:'teachChange', teach:'变'}, {newWord:'变', note:'变 means to change: into something else. The master’s secret, for you alone.'},
+      {if:{riddle:2}, do:[{say:'youCame'}, {say:'teachChange', teach:'变'}, {newWord:'变', note:'变 means to change: into something else. The master’s secret, for you alone.'},
         {say:'change'}, {turnInto:1, label:'变！ Listen: what does the master say?'}, {set:{riddle:3}},
         {message:'Before dawn, you creep back to your room. Nobody saw you!'}, {goTo:'cave', at:[4, 4], facing:'down'}]},
       {if:{tests:0}, do:[{say:'change'}, {turnInto:3, label:'变！ Listen: what does the master say?'}, {set:{tests:1}}, {say:'veryGood'}, {goOn:true}]},
-      {if:{fly:0}, waits:true, do:[{say:'teachFly', teach:'飞'}, {newWord:'飞', note:'飞 means to fly. The master teaches you the cloud somersault: one leap, and you fly a long, long way.'},
+      {if:{fly:0}, do:[{say:'teachFly', teach:'飞'}, {newWord:'飞', note:'飞 means to fly. The master teaches you the cloud somersault: one leap, and you fly a long, long way.'},
         {scene:'somersault'}, {set:{fly:1}}, {message:'From now on you can fly by cloud: open your map (MAP), choose a place you’ve been, and press Fly here.'}]},
-      {if:{pine:1, sentHome:0}, waits:true, do:[{say:'goAway'}, {say:'goHome', teach:'回家'}, {newWord:'回家', note:'回家 means to go home. The master is sending you home, to Flower Fruit Mountain.'},
+      {if:{pine:1, sentHome:0}, do:[{say:'goAway'}, {say:'goHome', teach:'回家'}, {newWord:'回家', note:'回家 means to go home. The master is sending you home, to Flower Fruit Mountain.'},
         {reply:'再见'}, {scene:'flyHome'}, {set:{sentHome:1}}, {chapter:2}, {goTo:'ffmMeadow', at:[9, 2], facing:'down'}]},
       {do:[{say:'change'}, {turnInto:2, label:'变！ Listen: what does the master say?'}]}
     ],
@@ -2113,18 +2112,18 @@ const ACROSS_THE_SEA = {
     // (斧头) and four pieces of wood
     senior: [
       {if:{named:0}, do:[{say:'hi'}, {reply:'你好'}]},
-      {if:{chores:0}, waits:true, do:[{say:'manyLeaves', teach:'叶子'}, {newWord:'叶子', note:'叶子 means leaves. They fall in the cave all year round.'}, {set:{chores:1}}]},
-      {if:{chores:1}, waits:true, do:[{say:'sweepLeaves', teach:'扫'}, {newWord:'扫', note:'扫 means to sweep. Face a heap of leaves, and press A to sweep it up.'}, {set:{chores:2}}]},
+      {if:{chores:0}, do:[{say:'manyLeaves', teach:'叶子'}, {newWord:'叶子', note:'叶子 means leaves. They fall in the cave all year round.'}, {set:{chores:1}}]},
+      {if:{chores:1}, do:[{say:'sweepLeaves', teach:'扫'}, {newWord:'扫', note:'扫 means to sweep. Face a heap of leaves, and press A to sweep it up.'}, {set:{chores:2}}]},
       {if:{chores:2, leavesSwept:{below:5}}, do:[{say:'sweepLeaves'}, {message:'Sweep up the heaps of leaves in the courtyard ({leavesSwept}/5): face one, and press A.'}]},
-      {if:{chores:2}, waits:true, do:[{say:'veryGood'}, {say:'thisBucket', teach:'桶'}, {newWord:'桶', note:'桶 means bucket. It counts buckets of something too: 三桶水, three buckets of water.'}, {set:{chores:3}}, FETCH_WATER]},
+      {if:{chores:2}, do:[{say:'veryGood'}, {say:'thisBucket', teach:'桶'}, {newWord:'桶', note:'桶 means bucket. It counts buckets of something too: 三桶水, three buckets of water.'}, {set:{chores:3}}, FETCH_WATER]},
       {if:{chores:3}, do:[FETCH_WATER]},
-      {if:{chores:4}, waits:true, do:[{say:'thisAxe', teach:'斧头'}, {newWord:'斧头', note:'斧头 means axe. Chop logs at the chopping blocks: face one, and press A.'}, {set:{chores:5}}, FETCH_WOOD]},
+      {if:{chores:4}, do:[{say:'thisAxe', teach:'斧头'}, {newWord:'斧头', note:'斧头 means axe. Chop logs at the chopping blocks: face one, and press A.'}, {set:{chores:5}}, FETCH_WOOD]},
       {if:{chores:5}, do:[FETCH_WOOD]},
       {do:[{say:'veryGood'}]}
     ],
     // a pupil who dares you to show off, once you can fly: change into a pine tree (松树)! The noise brings the master out
     darePupil: [
-      {if:{fly:1, pine:0}, waits:true, do:[{say:'changePine', teach:'松树'}, {newWord:'松树', note:'松树 means pine tree: 松 pine + 树 tree.'},
+      {if:{fly:1, pine:0}, do:[{say:'changePine', teach:'松树'}, {newWord:'松树', note:'松树 means pine tree: 松 pine + 树 tree.'},
         {say:'change', by:'player'}, {turnInto:'松树', ms:2800}, {say:'cheer'}, {set:{pine:1}},
         {message:'The pupils clap and cheer. But the noise brings the master out of the hall, and he’s angry…'}]},
       {do:[{say:'hi'}, {reply:'你好'}]}
@@ -2136,26 +2135,26 @@ const ACROSS_THE_SEA = {
     // monkey, hiding behind a bush in the meadow (回来); the hungry monkey, behind one at the home ground (好久不见); and
     // the old monkey, in the Water Curtain Cave (老), with the news
     mother: [
-      {if:{new:'哭'}, waits:true, do:[{say:'littleCrying', by:'player', teach:'哭'}, {newWord:'哭', note:'哭 means to cry. It’s your old friend the little monkey, all grown up. Why is she crying?'},
+      {if:{new:'哭'}, do:[{say:'littleCrying', by:'player', teach:'哭'}, {newWord:'哭', note:'哭 means to cry. It’s your old friend the little monkey, all grown up. Why is she crying?'},
         {say:'myChild'}, {message:'Her little one has gone! And everyone else is hiding. Look for them: a bush that sparkles ✨.'}]},
       {if:{homeAgain:0}, do:[{say:'myChild'}]},
       {do:[{say:'veryHappy'}]}
     ],
     big: [
-      {if:{new:'回来'}, waits:true, do:[{say:'youreBack', teach:'回来'}, {newWord:'回来', note:'回来 means to come back. 你回来了！ You’re back!'},
+      {if:{new:'回来'}, do:[{say:'youreBack', teach:'回来'}, {newWord:'回来', note:'回来 means to come back. 你回来了！ You’re back!'},
         {message:'It’s the big monkey, grey now, hiding behind a bush. The others are hiding up at the home ground. Go and find them!'}]},
       {if:{homeAgain:0}, do:[{say:'youreBack'}]},
       {do:[{say:'veryHappy'}]}
     ],
     hungry: [
-      {if:{new:'好久不见'}, waits:true, do:[{say:'longTime', teach:'好久不见'}, {newWord:'好久不见', note:'好久不见 means long time no see: what you say to a friend you haven’t seen for a long time.'},
+      {if:{new:'好久不见'}, do:[{say:'longTime', teach:'好久不见'}, {newWord:'好久不见', note:'好久不见 means long time no see: what you say to a friend you haven’t seen for a long time.'},
         {reply:'好久不见'}, {message:'The hungry monkey hugs you. The old monkey is hiding in the Water Curtain Cave, with some of the others. Go and find him!'}]},
       {if:{homeAgain:0}, do:[{say:'longTime'}, {reply:'好久不见'}]},
       {do:[{say:'veryHappy'}]}
     ],
     elder: [
       {if:{new:'好久不见'}, do:[{message:'The old monkey hides his face. Find the others first: up at the home ground.'}]},
-      {if:{new:'老'}, waits:true, do:[{say:'longTime'}, {reply:'好久不见'}, {say:'iAmOld', teach:'老'}, {newWord:'老', note:'老 means old. Twenty years have gone by: the old monkey’s fur is white now, and he leans on a stick.'},
+      {if:{new:'老'}, do:[{say:'longTime'}, {reply:'好久不见'}, {say:'iAmOld', teach:'老'}, {newWord:'老', note:'老 means old. Twenty years have gone by: the old monkey’s fur is white now, and he leans on a stick.'},
         {message:'A demon came from far away: the Demon of Havoc (混世魔王 Hùnshì Mówáng). His little demons carried off the troop’s little ones, and everything on the feast’s tables!'},
         {set:{news:1}}, {message:'Some of his little demons are still on the home ground. Chase them off!'}]},
       {if:{d3:0}, do:[{say:'iAmOld'}, {message:'Chase the little demons off the home ground!'}]},
@@ -2187,13 +2186,13 @@ const ACROSS_THE_SEA = {
     cow: [{do:[{message:'The cow, with a calf of her own now!'}]}],
     calf: [{do:[{message:'The cow’s calf, born while you were away.'}]}],
     // the little demons on the home ground (妖怪, the first time one fights you): each a battle, till you've chased it off
-    d1: [{if:{new:'妖怪'}, waits:true, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
+    d1: [{if:{new:'妖怪'}, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
       {battle:'demon', win:[{set:{d1:1}}]}]},
       {if:{d1:0}, do:[{say:'ourHome'}, {battle:'demon', win:[{set:{d1:1}}]}]}, {do:[{say:'ourHome'}]}],
-    d2: [{if:{new:'妖怪'}, waits:true, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
+    d2: [{if:{new:'妖怪'}, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
       {battle:'demon', win:[{set:{d2:1}}]}]},
       {if:{d2:0}, do:[{say:'ourHome'}, {battle:'demon', win:[{set:{d2:1}}]}]}, {do:[{say:'ourHome'}]}],
-    d3: [{if:{new:'妖怪'}, waits:true, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
+    d3: [{if:{new:'妖怪'}, do:[{say:'ourHome'}, {newWord:'妖怪', met:true, note:'妖怪 means demon, or monster: the word for every demon on the journey west. This one is little, but it wants to fight!'},
       {battle:'demon', win:[{set:{d3:1}}, {message:'The last little demon runs off north, squealing! Tell the old monkey.'}]}]},
       {if:{d3:0}, do:[{say:'ourHome'}, {battle:'demon', win:[{set:{d3:1}}, {message:'The last little demon runs off north, squealing! Tell the old monkey.'}]}]}, {do:[{say:'ourHome'}]}],
     // the guard at the demon's cave, with the cages' key (钥匙) on his belt: he won't give it to a monkey, but he will to a
@@ -2202,7 +2201,7 @@ const ACROSS_THE_SEA = {
       {if:{key:1}, do:[{say:'ourHome'}]},
       {if:{form:'妖怪'}, do:[{say:'keyHere'}, {set:{key:1}}, {sound:'blip'}, {message:'The guard thinks you’re one of his little demons, and gives you the key!'}, {form:null},
         {message:'Puff! You’re yourself again. Quick, open the cages!'}]},
-      {if:{knows:'笼子', new:'钥匙'}, waits:true, do:[{say:'keyHere', teach:'钥匙'}, {newWord:'钥匙', note:'钥匙 means key. The key to the cages, on the guard’s belt!'}, {say:'notForMonkey'},
+      {if:{knows:'笼子', new:'钥匙'}, do:[{say:'keyHere', teach:'钥匙'}, {newWord:'钥匙', note:'钥匙 means key. The key to the cages, on the guard’s belt!'}, {say:'notForMonkey'},
         {message:'The guard won’t give the key to a monkey. If only you looked like a little demon… Hide behind a boulder, and change (变)!'}]},
       {if:{knows:'钥匙'}, do:[{say:'notForMonkey'}, {message:'He won’t give the key to a monkey. Hide behind a boulder, and change into a little demon (变)!'}]},
       {do:[{say:'notForMonkey'}]}

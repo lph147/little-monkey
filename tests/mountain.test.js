@@ -132,14 +132,14 @@ test('the chain up the sheer face: A to climb it, a question a pull, up to the t
   assert.equal(get(g, 'walkable(12, 9) || walkable(12, 10)'), false, 'no walking up the face');
 });
 
-test('云: the sea of clouds under the walkway, a word that waits for a little practice; the crane (鹤) by its pool', async () => {
+test('云: the sea of clouds under the walkway, said straight away (no waiting for practice since 7 November 2026); the crane (鹤) by its pool', async () => {
   const g = game({place: 'cliffRoad', x: 15, y: 31, dir: 'right'});
   const legend = get(g, 'PLACES.cliffRoad.legend.c');
-  assert.equal(legend.onLook[0].waits, true);
+  assert.ok(!legend.onLook[0].waits);
   await press(g, 15, 31, 'right');
   assert.ok(notes(g).includes('card: 云'));
   const crane = get(g, 'AREA.animals.find(a => a.id === "crane")');
-  assert.deepEqual([crane.word, crane.at, crane.chapter, crane.waits], ['鹤', [14, 12, 'cliffRoad'], 1, true]);
+  assert.deepEqual([crane.word, crane.at, crane.chapter, !!crane.waits], ['鹤', [14, 12, 'cliffRoad'], 1, false]);
 });
 
 test('the stone pillars: the sky (天) once you’re ready for a new word; the boy at the door asks who you are, and lets you in', async () => {

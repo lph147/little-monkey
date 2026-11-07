@@ -1519,8 +1519,8 @@ async function flyTo(id){
 // Asking a person what something is (Area 2, decided 4 November 2026: the human world's way of finding words; the area's
 // asking): once you know its word (什么), A at something new with a person within ASK_NEAR squares of you has your monkey ask
 // 这是什么？, and they turn to you and tell you (its ask: their line), teaching its word, its card quiet, as in a
-// conversation. A new word waits for a little practice first (practiseFirst), as a character's does. Till you know how to
-// ask, or with nobody near, a message says so.
+// conversation, straight away (it waited for a little practice first till 7 November 2026: only the school's new words
+// wait now). Till you know how to ask, or with nobody near, a message says so.
 const ASK_NEAR = 3;
 const nearestPerson = () => NPCS.filter(n => PEOPLE.has(n.id) && Math.max(Math.abs(n.x - pl.x), Math.abs(n.y - pl.y)) <= ASK_NEAR)
   .sort((a, c) => (Math.abs(a.x - pl.x) + Math.abs(a.y - pl.y)) - (Math.abs(c.x - pl.x) + Math.abs(c.y - pl.y)))[0] || null;
@@ -1528,7 +1528,6 @@ async function askAbout(t){
   const A = AREA.asking, who = nearestPerson();
   if (!A || !matches({knows:A.word})){ SFX.bump(); toast(fill((A || {}).cantYet || 'You don’t know what this is yet.')); return; }
   if (!who){ SFX.bump(); toast(fill(A.nobody)); return; }
-  if (!await practiseFirst(who.id)) return;
   const outer = caughtBefore; caughtBefore = caughtCount();
   try {
     await showDialog(speaker('player'), L[A.line]);

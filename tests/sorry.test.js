@@ -29,11 +29,11 @@ function game(area = {}, pos = {place: 'hillside', x: 10, y: 34, dir: 'right'}, 
 async function settle(g, code){ let done = false; const p = Promise.resolve(g.run(code)).then(() => { done = true; }); for (let i = 0; i < 400 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); } await p; }
 const npc = id => `NPCS.find(n => n.id === '${id}')`;
 
-test('the hungry monkey: no sorry; bring the fruit he doesn’t want just after a new word, and he plays a quick word game first', async () => {
+test('the hungry monkey: no sorry; bring the fruit he doesn’t want, even just after a new word, and he says which he wants (no quick word game first since 7 November 2026)', async () => {
   const g = game({chapter: 0, gate: false, hungry: 'asked', holding: {hungry: '桃子'}, wanted: {}, wordTurn: 50}, {place: 'meadow', x: 13, y: 7, dir: 'up'});
   assert.ok(!get(g, '!!(AREA.requests.hungry.wrongReply || AREA.requests.hungry.wrongAnswer)'), 'no 对不起, and no 没关系');
   await settle(g, `talk(${npc('hungry')})`);
-  assert.deepEqual(get(g, '__games'), ['practice'], 'a quick word game first: you’ve just learned 桃子');
+  assert.deepEqual(get(g, '__games'), [], 'no quick word game first, though you’ve just learned 桃子');
   assert.deepEqual(get(g, 'here().wanted'), {hungry: '苹果'}, 'then he says he wants the apple');
   assert.deepEqual(get(g, '__said'), ['这是桃子。我要吃苹果！']);
   assert.deepEqual(get(g, '__replies'), [], 'and you don’t say sorry');
@@ -42,10 +42,10 @@ test('the hungry monkey: no sorry; bring the fruit he doesn’t want just after 
   assert.deepEqual(get(later, '__games'), [], 'practised since your last new word: straight on');
 });
 
-test('the big monkey’s spoons and seeds wait, as his chopsticks do, so 勺子 and 种子 never come back to back', () => {
+test('the big monkey’s chopsticks, spoons and seeds never wait for practice (since 7 November 2026: only the school’s new words do)', () => {
   const g = game();
   const waits = get(g, "AREA.talk.big.filter(p => p.waits).map(p => p.do.map(s => s.newWord).filter(Boolean)[0])");
-  assert.deepEqual(waits.sort(), ['勺子', '种子', '筷子']);
+  assert.deepEqual(waits, []);
 });
 
 test('on the hillside, the little monkey chasing a dragonfly bumps into you: it says 对不起, and you reply 没关系, the once', async () => {
@@ -62,9 +62,8 @@ test('on the hillside, the little monkey chasing a dragonfly bumps into you: it 
   await settle(g, `talk(${npc('chaser')})`);
   assert.deepEqual(get(g, '__said'), ['你好！'], 'after that, it says hello as before');
   const soon = game({wordTurn: 49});
-  assert.equal(get(soon, 'matches({wordReady: true})'), false);
   await settle(soon, 'runEvents()');
-  assert.deepEqual([get(soon, '__said'), get(soon, 'here().bumped')], [[], 0], 'not just after a new word: it waits');
+  assert.deepEqual([get(soon, '__said'), get(soon, 'here().bumped')], [['对不起！'], 1], 'even just after a new word: it never waits for practice (since 7 November 2026)');
   const away = game({}, {place: 'hillside', x: 10, y: 30, dir: 'down'});
   await settle(away, 'runEvents()');
   assert.equal(get(away, 'here().bumped'), 0, 'only right beside it');

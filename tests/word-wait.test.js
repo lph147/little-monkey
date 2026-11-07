@@ -1,6 +1,7 @@
-// New words, spaced out (decided 30 October 2026, after measuring the game's pacing). After any new word, the next one a
-// character gives you waits till you've answered 4 more questions, anywhere (the area's wordGap): talk to them sooner,
-// and they first offer a quick word game, just for practice, then carry on. In the prologue, the story has practice of
+// New words, spaced out at school (decided 30 October 2026, after measuring the game's pacing; only at school since 7
+// November 2026, after playing it: everywhere else it made the story too slow). After any new word, the next one the
+// teacher gives you waits till you've answered 4 more questions, anywhere (the area's wordGap): talk to him sooner, and
+// he first offers a quick word game, just for practice, then carries on. In the prologue, the story has practice of
 // its own: the thirsty monkey's word game once you've brought him water, the old monkey checking the meadow's five
 // words before the rocks roll away, and a word game with him before the troop makes you king.
 'use strict';
@@ -31,37 +32,46 @@ async function play(g, code){   // runs code in the game and waits for it, letti
 }
 const talk = (g, id) => play(g, `talk(ALL_NPCS.find(n => n.id === '${id}'))`);
 
-test('a new word from a character waits for 4 questions after the last one: till then, they offer a quick word game first, then carry on', async () => {
-  const g = game({chapter: 1, elder: 2, gate: true, home: 2, build: 2, school: 2, feast: 2, tableware: 1, wordTurn: 99}, {place: 'homeGround', x: 5, y: 9, dir: 'up'});
+test('at school, a new word waits for 4 questions after the last one: till then, the teacher offers a quick word game first, then carries on', async () => {
+  const g = game({chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2, build: 2, school: 1, wordTurn: 99}, {place: 'school', x: 7, y: 3, dir: 'up'}, {w: {'老师': {lv: 0}}});
   assert.equal(get(g, 'wordLeft()'), 3, 'one question answered since your last new word: 3 to go');
   g.run('__play = false');
-  await talk(g, 'big');
+  await talk(g, 'elder');
   assert.match(get(g, '__notes').join(' '), /ask: Something new is coming! But first, a few words to practise\. Play a quick word game\?/);
-  assert.deepEqual(get(g, '[__games, lvl("筷子"), here().tableware]'), [[], 0, 1], 'Not now: nothing new, and the chopsticks wait');
+  assert.deepEqual(get(g, '[__games, lvl("老师"), here().school]'), [[], 0, 1], 'Not now: nothing new, and the class waits');
   g.run('__play = true; __notes.length = 0');
+  await talk(g, 'elder');
+  assert.deepEqual(get(g, '__games'), [['elder', 3, true]], 'a word game, just for practice, as long as what’s left');
+  assert.ok(get(g, '__notes').includes('card: 老师'), 'then on to the new word: teacher (老师)');
+  assert.equal(get(g, 'wordLeft()'), 4, 'and the next new word at school waits 4 questions after this one');
+});
+
+test('anywhere but school, a new word never waits: no quick word game first (decided 7 November 2026, after playing it: it made the story too slow)', async () => {
+  const g = game({chapter: 1, elder: 2, gate: true, home: 2, build: 2, school: 2, feast: 2, tableware: 1, wordTurn: 99}, {place: 'homeGround', x: 5, y: 9, dir: 'up'});
+  assert.equal(get(g, 'wordLeft()'), 3, 'one question answered since your last new word');
+  g.run('__play = false');
   await talk(g, 'big');
-  assert.deepEqual(get(g, '__games'), [['big', 3, true]], 'a word game, just for practice, as long as what’s left');
-  assert.ok(get(g, '__notes').includes('card: 筷子'), 'then on to the new word: chopsticks (筷子)');
+  assert.ok(!get(g, '__notes').some(n => /^ask: Something new/.test(n)), 'no quick word game offered');
+  assert.deepEqual(get(g, '__games'), []);
+  assert.ok(get(g, '__notes').includes('card: 筷子'), 'the big monkey goes straight on to his chopsticks (筷子)');
   assert.equal(get(g, 'here().tableware'), 2);
-  assert.equal(get(g, 'wordLeft()'), 4, 'and the next new word waits 4 questions after this one');
 });
 
 test('with 4 questions answered since your last new word, there’s no word game: the character carries straight on', async () => {
-  const g = game({chapter: 1, elder: 2, gate: true, home: 2, build: 2, school: 2, feast: 2, tableware: 1, wordTurn: 96}, {place: 'homeGround', x: 5, y: 9, dir: 'up'});
+  const g = game({chapter: 1, elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, boar: 1, story: true, cave: 6, count: 3, home: 2, build: 2, school: 1, wordTurn: 96}, {place: 'school', x: 7, y: 3, dir: 'up'}, {w: {'老师': {lv: 0}}});
   assert.equal(get(g, 'wordLeft()'), 0);
-  await talk(g, 'big');
+  await talk(g, 'elder');
   assert.deepEqual(get(g, '__games'), []);
-  assert.ok(get(g, '__notes').includes('card: 筷子'));
+  assert.ok(get(g, '__notes').includes('card: 老师'));
 });
 
-test('a game from before this (no wordTurn yet) never waits, and a part that teaches nothing new never does', async () => {
-  const g = game({chapter: 1, elder: 2, gate: true, home: 2, build: 2, school: 2, feast: 2, tableware: 1}, {place: 'homeGround', x: 5, y: 9, dir: 'up'});
+test('a game from before this (no wordTurn yet) never waits; and only the school’s parts wait now, each teaching a new word', async () => {
+  const g = game({chapter: 1, elder: 2, gate: true, home: 2, build: 2, school: 1}, {place: 'school', x: 7, y: 3, dir: 'up'});
   assert.equal(get(g, 'wordLeft()'), 0);
   const parts = get(g, "Object.entries(AREA.talk).flatMap(([id, ps]) => ps.filter(p => p.waits).map(p => id))");
-  assert.deepEqual(parts.sort(), ['big', 'big', 'big', 'boss', 'elder', 'elder', 'elder', 'hungry', 'hungry', 'playful'],
-    'the parts that wait: counting the troop in (一 二 三, in one go), the teacher (老师), his news (有), the chopsticks (筷子), the spoons (勺子), the seeds (种子), 没有, the hungry monkey’s fruit, 同学, and your first headband from the shop (头带)');
-  assert.ok(get(g, "Object.values(AREA.talk).flat().filter(p => p.waits).every(p => JSON.stringify(p.do).includes('newWord') || (p.do.some(s => s.shop) && p.if.new) || p.do.some(s => s.request === 'hungry'))"),
-    'each teaches a new word (the shop: something new to buy; the hungry monkey, given the fruit he doesn’t want, sends you for the other, and 吃 when you bring it: decided 4 November 2026)');
+  assert.deepEqual(parts.sort(), ['elder', 'elder', 'playful'], 'the parts that wait: the teacher (老师), his news in class (有), and 同学');
+  assert.ok(get(g, "Object.values(AREA.talk).flat().filter(p => p.waits).every(p => JSON.stringify(p.if).includes('school') && JSON.stringify(p.do).includes('newWord'))"), 'each at school, teaching a new word');
+  assert.ok(!get(g, "AREA.events.some(e => e.if && 'wordReady' in e.if) || Object.values(AREA.talk).flat().some(p => p.if && 'wordReady' in p.if)"), 'and nothing waits for practice before it happens');
 });
 
 test('the thirsty monkey: bring him water, and he wants to play a word game, with 2 shells the first time you win', async () => {

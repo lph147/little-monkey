@@ -86,9 +86,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     const talkedTo = get('__talkedTo');
     if (learned.length && talkedTo.length){
       const who = talkedTo[0], at = get('__caughtAt');
-      if (lastTeacher && lastTeacher.who === who && lastTeacher.bang && at[learned[0]] === lastTeacher.turn) backToBack.push(`${who}: ${lastTeacher.words.join(' ')}, then ${learned.join(' ')}`);
+      if (lastTeacher && lastTeacher.who === who && lastTeacher.bang && lastTeacher.school && at[learned[0]] === lastTeacher.turn) backToBack.push(`${who}: ${lastTeacher.words.join(' ')}, then ${learned.join(' ')}`);   // (at school: nothing else waits for practice since 7 November 2026)
       const bang = get(`(n => !!n && ((AREA.bubbles[n.id] || []).find(b => matches(b.if)) || {}).show === '!')(ALL_NPCS.find(n => n.id === '${who}'))`);   // (a ! over them straight after)
-      lastTeacher = {who, words: learned, turn: at[learned[learned.length - 1]], bang};
+      lastTeacher = {who, words: learned, turn: at[learned[learned.length - 1]], bang, school: get('PLACE') === 'school'};
     }
   }
   const deadEnds = [];   // the moments your tasks were empty and the hint said the rest is coming soon
@@ -175,9 +175,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(2, 6, 'left', 'picking a peach');
   assert.ok(knows('桃子'), 'picking it teaches 桃子: the tree teaches its own fruit');
   assert.equal(area().holding.hungry, '桃子', 'you should be holding the peach');
-  const turnAtPeach = get('S.turn');
-  await pressAt(13, 6, 'up', 'giving the hungry monkey the peach');
-  assert.ok(get('S.turn') - turnAtPeach >= 2, 'just after a new word (桃子), he plays a quick word game first (decided 4 November 2026: 水果, 桃子, 苹果 and 吃 came one after another)');
+  await pressAt(13, 6, 'up', 'giving the hungry monkey the peach');   // (straight away, though you've just learned 桃子: nothing waits for practice now, but at school)
   assert.equal(area().holding.hungry, undefined, 'the peach is given back');
   assert.deepEqual(area().wanted, {hungry: '苹果'}, 'he wants the apple instead');
   assert.ok(get('getTasks()').some(t => t.text === 'Find the apple the hungry monkey wants'), 'a task names a word you haven’t caught in plain English');
@@ -306,7 +304,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => n.place)"), ['cave', 'cave', 'cave']);
   run("globalThis.__scenes = []; storyScene = async id => { __scenes.push(id); }");   // (the scene plays by itself, with its pictures; its own test plays it)
   // he goes straight on from one to the next (decided 6 November 2026, after playing it: a task said to go and see whoever
-  // you were talking to): 家; a quick word game; counting the troop in, a monkey at a time (一, 二, 三, in one go, like the
+  // you were talking to): 家; counting the troop in, a monkey at a time (一, 二, 三, in one go, like the
   // school's first lessons: 3 November 2026), then matching the numbers; and with the whole troop home, becoming king (王)
   await pressAt(6, 10, 'up', 'hearing what the old monkey calls the cave, counting the troop in, and becoming king', 5);
   assert.ok(knows('家'), 'the old monkey should teach 家');
@@ -910,7 +908,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // Till everything built is done, there's always a task to say what's next (28 October 2026: once the cow was home, the
   // garden waited with only a ! over the big monkey, and your tasks said the rest was coming soon)
   assert.deepEqual(deadEnds, [], 'your tasks were never empty while there was more to do');
-  assert.deepEqual(backToBack, [], 'no one teaches you a new word, then another the next time you talk to them, with no questions in between');
+  assert.deepEqual(backToBack, [], 'at school, the teacher never teaches you a new word, then another the next time you talk to him, with no questions in between');
   assert.deepEqual(besideTasks(game), [], 'no task ever sends you to someone you’re standing with, just as you finish talking to them: they go straight on');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
