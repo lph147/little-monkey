@@ -223,9 +223,8 @@ function rainNow(){   // how hard it's raining now, 0 to 1 (0 when it isn't)
   return Math.min(1, t / RAIN_FADE, (RAIN_MS - t) / RAIN_FADE);
 }
 const rainingHere = () => rainNow() > 0 && !indoors() && !(PLACES[PLACE] || {}).night;
-// The rain, over the world: the sky a little darker, streaks slanting down, and little splashes on the ground; its sound,
-// a soft rush now and then (SFX.rain), while it's falling where you are.
-let rainHeard = 0;
+// The rain, over the world: the sky a little darker, streaks slanting down, and little splashes on the ground. No sound
+// (decided 7 November 2026, after playing it: its rush, every few seconds, wasn't wanted).
 function drawRain(cx, cy, sh, now){
   const k = rainNow(); if (!k || indoors() || (PLACES[PLACE] || {}).night) return;
   const W = VW*T;
@@ -241,7 +240,6 @@ function drawRain(cx, cy, sh, now){
     if (ph < .5){ const r = Math.round(ph * 4); R(b, sx - r, sy, 1 + 2 * r, 1, '#E8F0FA'); }
   }
   b.globalAlpha = 1;
-  if (mode === 'play' && now - rainHeard > 2600){ rainHeard = now; SFX.rain(.03 + .04 * k); }
 }
 
 /* ---- bedtime ---- */
