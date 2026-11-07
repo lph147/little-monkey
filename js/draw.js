@@ -612,6 +612,12 @@ const STIR_LOOKS = {tallGrass:TALL, longGrass:LONG, woodGrass:WOOD_TALL};
 const STIR = {in:150, shake:240, wobble:.25, hold:260, back:1100, settle:240, swing:80, side:.45, bits:450};   // (ms, and how far: wobble, a square beside you)
 const stirred = new Map();   // 'x,y' -> {t0, dir, out: when you left it (null while you're in it), side: a square beside you, away: which way it leans, pal, pic, k}
 const overGrassAt = new Map(), spareStirPics = [];   // (what reaches into each square, kept while the map's the same; little canvases to use again)
+// (those little canvases are used again too, the oldest once there are OVER_GRASS_KEPT, so walking about never makes more
+// and more of them: a phone stops making canvases for a page that's made too many, decided 7 November 2026)
+const OVER_GRASS_KEPT = 48, spareOverGrass = [];
+function dropOverGrass(all){
+  for (const [key, c] of overGrassAt){ if (!all && overGrassAt.size <= OVER_GRASS_KEPT) break; overGrassAt.delete(key); spareOverGrass.push(c); }
+}
 let stirAt = null, stirPlace = null, stirMap = null;
 const grassy = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS && !!STIR_LOOKS[tileAt(x, y).look];
 function parted(s, now){   // how far it's parted: 0 standing up, 1 wide apart (below 0, swinging back past upright); null once it's still
@@ -628,7 +634,8 @@ function stirBend(s, k){   // how far a tuft leans at its tip, by where it is ac
 }
 function overGrass(x, y){   // what the squares drawn after it on the map reach into it, on a canvas of its own
   const key = x + ',' + y; if (overGrassAt.has(key)) return overGrassAt.get(key);
-  const c = document.createElement('canvas'); c.width = c.height = T; overGrassAt.set(key, c);
+  dropOverGrass(false);
+  const c = spareOverGrass.pop() || document.createElement('canvas'); c.width = c.height = T; overGrassAt.set(key, c);   // (setting its size clears one used before)
   const g = c.getContext('2d');
   for (const [dx, dy] of [[1, 0], [-1, 1], [0, 1], [1, 1], [-1, 2], [0, 2], [1, 2]]){
     const nx = x + dx, ny = y + dy;
@@ -647,7 +654,7 @@ function drawStirred(s, x, y, k){   // the square, parted k, on its little canva
 function unstir(key){ const s = stirred.get(key); if (s.pic && spareStirPics.length < 24) spareStirPics.push(s.pic); stirred.delete(key); }
 function stirGrass(now){   // the grass you're walking through, and what it's doing (each frame, before the map's squares are drawn)
   if (stirPlace !== PLACE){ for (const key of [...stirred.keys()]) unstir(key); stirAt = null; stirPlace = PLACE; stirMap = null; }
-  if (stirMap !== drawnFor){ overGrassAt.clear(); stirMap = drawnFor; for (const s of stirred.values()) s.k = null; }   // (somewhere else, or the map drawn again: what reaches into each square may have changed)
+  if (stirMap !== drawnFor){ dropOverGrass(true); stirMap = drawnFor; for (const s of stirred.values()) s.k = null; }   // (somewhere else, or the map drawn again: what reaches into each square may have changed)
   const x = Math.floor((pl.px + 8) / T), y = Math.floor((pl.py + 12) / T), key = x + ',' + y;   // (the square your feet are in)
   if (key !== stirAt){
     const left = stirred.get(stirAt); if (left && left.out === null) left.out = now;
@@ -949,7 +956,7 @@ function drawWorld(now){
   if (now - shakeT < 600){ cx += Math.round((Math.random()-.5)*3); cy += Math.round((Math.random()-.5)*3); }
   stirGrass(now);   // (the grass you're walking through, parting round you)
   const sh = Math.min(VH*T, ROWS*T - cy);   // the part of the view the map reaches down to (for the gloom, mist and night)
-  if (cx < 0 || cy < 0 || cx + VW*T > COLS*T || cy + VH*T > ROWS*T) R(b, 0, 0, VW*T, VH*T, '#1E2B26');   // dark where the map doesn't reach
+  R(b, 0, 0, VW*T, VH*T, '#1E2B26');   // dark where the map doesn't reach (and the frame cleared, so nothing ever smears)
   drawLayer(mapCanvas, cx, cy);
   drawStirredGrass(cx, cy);   // (the grass you're walking through, parted round you)
   drawFootprints(cx, cy, now);   // (your footprints in the snow, in winter: js/seasons.js)

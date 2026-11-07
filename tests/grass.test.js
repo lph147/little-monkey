@@ -37,7 +37,8 @@ function game(save = AREA1){
     globalThis.__pixels = draw => { const px = new Map(); draw(__ctx(px)); return px; };
     globalThis.__same = (p, q) => p.size === q.size && [...p].every(([k, v]) => q.get(k) === v);
     globalThis.__square = px => new Map([...px].filter(([k]) => { const [a, b] = k.split(',').map(Number); return a >= 0 && a < T && b >= 0 && b < T; }));
-    { const make = document.createElement; document.createElement = tag => tag === 'canvas' ? (c => (c.getContext = () => __ctx(c.px), c))({width: 0, height: 0, px: new Map()}) : make(tag); }`);
+    { const make = document.createElement; document.createElement = tag => { if (tag !== 'canvas') return make(tag); const px = new Map(); let w = 0, h = 0;   // (setting its size clears it, as a real canvas's does)
+      return {px, getContext: () => __ctx(px), get width(){ return w; }, set width(v){ w = v; px.clear(); }, get height(){ return h; }, set height(v){ h = v; px.clear(); }}; }; }`);
   return g;
 }
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));

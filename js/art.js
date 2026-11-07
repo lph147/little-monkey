@@ -2149,13 +2149,17 @@ function drawObject(g, p, parts, over, clip, ox = 0, oy = 0){
   g.save(); g.translate(-ox, -oy);
   g.beginPath(); for (const [x, y, w, h] of parts) g.rect(p.x0 + x, p.y0 + y, w, h); g.clip();
   if (clip){ g.beginPath(); g.rect(...clip); g.clip(); }
-  if (drawSeason){   // in a season (js/seasons.js): its picture for the season, drawn once
-    if (!p.seasonPics || p.seasonPics.season !== drawSeason) p.seasonPics = {season:drawSeason};
-    const k = over ? 'over' : 'under', pic = p.seasonPics[k] || (p.seasonPics[k] = seasonObject(p, !over));
-    g.drawImage(pic, p.x0, p.y0);
-  } else { shadows = !over; OBJECT_ART[p.look](g, p); shadows = true; }
+  let drawn = false;
+  if (drawSeason) try {   // in a season (js/seasons.js): its picture for the season, on the canvas the pieces share, then here
+    g.drawImage(seasonObject(p, !over), 0, 0, p.pw, p.ph, p.x0, p.y0, p.pw, p.ph); drawn = true;
+  } catch (e){ seasonTrouble(e); }
+  if (!drawn){ shadows = !over; OBJECT_ART[p.look](g, p); shadows = true; }
   g.restore();
 }
+// If a season's colours can't be drawn (a phone that won't make a canvas, say), what was being drawn is drawn as it is
+// in summer, never left out, so the map is never blank (decided 7 November 2026, after playing it); said once.
+let seasonTroubled = false;
+function seasonTrouble(e){ if (!seasonTroubled){ seasonTroubled = true; console.warn('Drawn as in summer: the season’s colours failed', e); } }
 // The objects that never move, into the two layers (only inside clip, [x, y, w, h] on the map, if given).
 function bakeObjects(clip){
   const bg = baseCanvas.getContext('2d'), tg = topCanvas.getContext('2d');
@@ -2185,6 +2189,17 @@ function afterDrawing(){
   for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if ((tileAt(x, y).onLook || []).some(p => p.sparkle)) COLLECTABLE.push([x, y]);
   buildGloom();
 }
+// A phone can wipe the canvases a page keeps, to save memory, such as while the game's in the background (a browser
+// may say so, contextrestored, or not): the map's layers are drawn once for each place, so when they've been wiped,
+// they're drawn again, as the browser says so or as you come back to the game (the square you're on is always drawn,
+// so it's see-through only once wiped; decided 7 November 2026, after playing it: the map came up blank).
+function mapWiped(){
+  try { return !!drawnFor && drawnFor.place === PLACE && mg.getImageData(pl.x*T + 8, pl.y*T + 8, 1, 1).data[3] === 0; } catch (e){ return false; }
+}
+const redrawIfWiped = () => { if (mapWiped()) buildMap(); };
+for (const c of [mapCanvas, baseCanvas, topCanvas]) c.addEventListener('contextrestored', () => { if (drawnFor) buildMap(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) redrawIfWiped(); });
+addEventListener('pageshow', redrawIfWiped);
 // An area's colours 'soft' (the human world's, decided 6 November 2026, from the art proposal): a little less bright and a
 // little warmer, a filter over the whole screen (css: #screen.soft), so everything in it changes together, characters and
 // scenes too; in each of its places but those borrowed from an area before it (Flower Fruit Mountain, bright as it was).

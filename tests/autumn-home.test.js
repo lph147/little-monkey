@@ -109,7 +109,7 @@ test('home in autumn: a tree’s leaves are as solid as in summer, never a gap y
       for (const p of OBJECT_PIECES){
         if (OBJECT_KIND[p.look] !== 'deciduous') continue;
         res.trees++;
-        const autumn = seasonObject(p, true).pixels;   // (its picture in autumn, with its shadow)
+        const autumn = seasonObject(p, true).getContext('2d').getImageData(0, 0, p.pw, p.ph).data;   // (its picture in autumn, with its shadow, at the top left of the canvas the pieces share)
         const c = document.createElement('canvas'); c.width = p.pw; c.height = p.ph;
         const cg = c.getContext('2d'); cg.translate(-p.x0, -p.y0);
         const was = drawSeason; drawSeason = null; shadows = true; OBJECT_ART[p.look](cg, p); drawSeason = was;   // (and as drawn, in summer)

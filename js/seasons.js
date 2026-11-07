@@ -157,7 +157,8 @@ function seasonal(fn, kind){
       const [x, y] = rest, mx = typeof x === 'number' ? x*T : X, my = typeof y === 'number' ? y*T : Y;   // (its square, on the map)
       recolourBox(scg, [0, 0, scratch.width, scratch.height], rule, rule, mx - SCRATCH, my - SCRATCH);
       g.drawImage(scratch, X - SCRATCH, Y - SCRATCH);
-    } finally { groundDepth--; }
+    } catch (e){ seasonTrouble(e); fn(g, X, Y, ...rest); }   // (as in summer, never left out: js/art.js)
+    finally { groundDepth--; }
   };
   wrapped.unwrapped = fn;
   return wrapped;
@@ -183,23 +184,28 @@ const NO_SNOW = new Set(['paving', 'slab', 'pier', 'plankH', 'plankV', 'windPlan
 const snowyAt = (x, y) => { const t = tileAt(x, y); return drawSeason === 'winter' && !!t.walk && !NO_SNOW.has(t.look) && !WATERY.includes(t.look); };
 
 /* ---- big objects ---- */
-// A big object's picture for the season (under: with its shadow, for what goes under the characters), drawn once, on a
-// canvas as big as its piece (pieceOf, js/art.js), its colours changed by its kind; in winter, snow on everything's top
-// edges (snowCaps), on each layer of an evergreen's needles, and on roofs.
+// A big object's picture for the season (under: with its shadow, for what goes under the characters), as big as its
+// piece (pieceOf, js/art.js), its colours changed by its kind; in winter, snow on everything's top edges (snowCaps), on
+// each layer of an evergreen's needles, and on roofs. It's drawn at the top left of one canvas all the pieces share (as big as the biggest so far), and whoever asks for it
+// draws it from there straight away, before the next piece is drawn over it: a canvas of its own for each piece was
+// thousands of canvases in a pine wood, more than a phone will make for a page, and the map came up blank (decided
+// 7 November 2026, after playing it).
+const pieceCanvas = document.createElement('canvas'), pieceG = pieceCanvas.getContext('2d');
 function seasonObject(p, under){
-  const kind = OBJECT_KIND[p.look] || 'thing', rule = (OBJECT_RULES[drawSeason] || {})[kind];
-  const c = document.createElement('canvas'); c.width = p.pw; c.height = p.ph;
-  const g = c.getContext('2d'); g.translate(-p.x0, -p.y0);
-  shadows = under; OBJECT_ART[p.look](g, p); shadows = true;
-  g.setTransform(1, 0, 0, 1, 0, 0);
-  if (kind === 'own') return c;
+  const kind = OBJECT_KIND[p.look] || 'thing', rule = (OBJECT_RULES[drawSeason] || {})[kind], g = pieceG;
+  if (pieceCanvas.width < p.pw || pieceCanvas.height < p.ph){ pieceCanvas.width = Math.max(pieceCanvas.width, p.pw); pieceCanvas.height = Math.max(pieceCanvas.height, p.ph); }
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, p.pw, p.ph);
+  g.save(); g.beginPath(); g.rect(0, 0, p.pw, p.ph); g.clip(); g.translate(-p.x0, -p.y0);   // (just its piece, as on a canvas of its own)
+  shadows = under;
+  try { OBJECT_ART[p.look](g, p); } finally { shadows = true; g.restore(); }
+  if (kind === 'own') return pieceCanvas;
   if (rule) recolourBox(g, [0, 0, p.pw, p.ph], rule, `${drawSeason}:${kind}`, p.x0, p.y0);
   if (drawSeason === 'winter'){
     if (rule && rule.layers) snowOnLayers(g, p.pw, p.ph);
     if (rule && rule.roof) snowOnRoof(g, p);
     snowCaps(g, p.pw, p.ph);
   }
-  return c;
+  return pieceCanvas;
 }
 const solid = a => a > 200;
 // Snow along the top of everything: a pixel with nothing over it turns white, the one under it pale.
