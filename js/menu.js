@@ -77,7 +77,7 @@ function friendClue(a, back){
 const BAG_TABS = [
   {id:'food', name:'Snacks', zh:'零食', py:'língshí', things:() => Object.keys(FOOD).filter(w => S.bag[w] > 0)
     .map(w => ({w, does:FOOD[w].does, label:FOOD[w].heal || FOOD[w].fast ? 'Eat' : 'Hear', count:S.bag[w]}))},
-  {id:'someone', name:'For someone', things:() => Object.entries(here().holding).filter(([, w]) => w && (WORDS[w] || GLOSS[w]))   // (who for: the request's, or the area's holdingFor, such as the lingzhi for the master, a word you only hear)
+  {id:'someone', name:'For someone', things:() => Object.entries(here().holding).filter(([id, w]) => w && (WORDS[w] || GLOSS[w]) && (AREA.requests[id] || (AREA.holdingFor || {})[id]))   // (who for: the request's, or the area's holdingFor, such as the lingzhi for the master, a word you only hear; not what you collected where it stays, such as sacks put on a boat)
     .map(([id, w]) => ({w, does:`The ${((NAMES[(AREA.requests[id] || {}).from || (AREA.holdingFor || {})[id]] || {}).en || 'troop').replace(/^(the|an?) /i, '').toLowerCase()}`, label:'Hear'}))},   // (The master, not The the master)
   {id:'fight', name:'To fight with', things:() => canBattle() && weaponNow() ? [{w:weaponNow(), does:`Hits for ${weaponHits()}`, label:'Hear'}] : []},   // (your weapon now, such as the Demon of Havoc's broadsword)
   {id:'fishing', name:'For fishing', things:() => !canFish() ? [] : [{w:FISH.rod, does:'A at water with fish in it', label:'Hear'},   // (js/fishing.js)

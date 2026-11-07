@@ -247,6 +247,7 @@ const WORD_BANK = {
   '哭': {py:'kū', en:'to cry', pic:'😢', area:2, category:'actions', alike:['快乐']},   // (the troop, crying for their little ones)
   '老': {py:'lǎo', en:'old', pic:'👴', area:2, category:'describing', alike:['人', '猴子']},   // (heard since the feast, 我们会老……; the old monkey, twenty years on: 我老了。)
   '妖怪': {py:'yāoguài', en:'demon, monster', pic:'👹', area:2, category:'animals', alike:['猴子', '人']},   // (the little demons: the word for every demon on the journey west)
+  '新年快乐': {py:'xīnnián kuàilè', en:'Happy New Year!', area:2, category:'phrases', phrase:true, use:'at New Year', cue:'wishes you a happy New Year', situation:'It’s New Year’s Eve, and everyone is celebrating.'},   // (New Year's Eve in the cave, the master's year)
   '救命': {py:'jiùmìng', en:'help!', area:2, category:'phrases', phrase:true, use:'when you’re in danger and need someone to help you', cue:'is in danger', situation:'You’re locked in a cage, and you need someone to help you!'},
   '笼子': {py:'lóngzi', en:'cage', pic:'🪤', area:2, category:'items', alike:['房子', '门']},   // (the little monkeys, locked in the demon's cages)
   '钥匙': {py:'yàoshi', en:'key', pic:'🗝️', area:2, category:'items', alike:['门', '笼子']},
@@ -260,6 +261,8 @@ const WORD_BANK = {
   '比武': {py:'bǐwǔ', en:'a kung fu match'},
   '灵芝': {py:'língzhī', en:'lingzhi, a mushroom of long life'},
   '下': {py:'xià', en:'to fall (of rain or snow: 下雪, it snows)'},
+  '打雪仗': {py:'dǎ xuězhàng', en:'to have a snowball fight'},
+  '赢': {py:'yíng', en:'to win'},
   '啊': {py:'a', en:'(softens a question: 谁啊？ who is it?)'},
   '他们': {py:'tāmen', en:'they, them'},
   '话': {py:'huà', en:'speech, words (说话, to talk)'},
@@ -436,6 +439,7 @@ const MADE = {
   '东边': {parts:[['东', 'dōng', 'east'], ['边', 'bian', 'side']]},
   '西边': {parts:[['西', 'xī', 'west'], ['边', 'bian', 'side']]},
   '雪人': {parts:[['雪', 'xuě', 'snow'], ['人', 'rén', 'person']]},
+  '新年快乐': {parts:[['新', 'xīn', 'new'], ['年', 'nián', 'year'], ['快乐', 'kuàilè', 'happy']]},
   '米饭': {parts:[['米', 'mǐ', 'rice'], ['饭', 'fàn', 'meal']]},   // (rice, made into a meal: cooked)
   '热': {clue:['灬', 'huǒ', 'fire'], why:'is at its bottom: four little flames. It’s hot!'},
   '冷': {clue:['冫', 'bīng', 'ice'], why:'is on its left: two drops of ice. It’s cold!'},

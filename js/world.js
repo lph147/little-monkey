@@ -1282,7 +1282,7 @@ async function request(r, face, last = false){
 const SHOPS = AREA.shops || (AREA.shop ? {shop:AREA.shop} : {});
 const SHOP_ITEMS = () => Object.values(SHOPS).flatMap(sh => sh.items);
 const forSale = (sh = Object.values(SHOPS)[0]) => sh.items.filter(i => !i.if || matches(i.if)).flatMap(inColours)
-  .filter(i => (i.item === i.word || lvl(i.colour) >= 1) && (i.eat || i.bag || !here().bought.includes(i.item)));
+  .filter(i => (i.item === i.word || lvl(i.colour) >= 1) && (i.eat || i.bag || (i.for ? !here().holding[i.for] : !here().bought.includes(i.item))));   // (for: bought for someone, carried till you give it them, such as the cave's rice and fish)
 const toBag = i => !!(i.eat || i.bag);   // food, or something else for your bag, such as bait
 // Something that comes in colours, as it's called and said once you know its colour's word: 蓝色的头带 (a blue headband),
 // its picture (its own, or its word's in its own colour), and its sentence with the colour in it, the colour the missing
@@ -1358,6 +1358,7 @@ async function buy(i, face, sh = Object.values(SHOPS)[0]){   // buying something
   sentence.filter(w => lvl(w) >= 1).forEach(useWord);
   spend(i.price);
   if (toBag(i)) intoBag(i.item);   // food (or bait) goes in your bag: you can buy it again and again
+  else if (i.for) here().holding[i.for] = i.item;   // something for someone (for), carried till you give it them, such as the rice and fish for the cave
   else here().bought.push(i.item);
   if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); putOn(i.item); }   // you put it on
   save(); SFX.fanfare();

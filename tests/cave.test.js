@@ -12,7 +12,8 @@ const {watchBeside, besideTasks} = require('./beside');
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const FROM_BEFORE = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水', '吃', '喝', '要', '我', '猴子', '河', '鱼', '羊', '朋友', '家', '有', '鸟', '小', '大',
   '谢谢', '再见', '木头', '三', '四', '人', '是', '不', '什么', '钱', '风', '歌', '洞', '门', '房子', '狗', '猫', '鸡', '牛', '船', '云', '鹤', '天'];
-const CHAPTER = ['云', '鹤', '天', '师父', '名字', '春天', '夏天', '秋天', '冬天', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家'];
+const CHAPTER = ['云', '鹤', '天', '师父', '名字', '春天', '夏天', '秋天', '冬天', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家',
+  '十一', '二十', '功夫', '热', '北边', '南边', '药', '写', '东边', '西边', '雪', '冷', '火', '年', '雪人', '新年快乐'];
 function game(pos, area = {}){
   const w = Object.fromEntries(FROM_BEFORE.map(x => [x, {lv: 2, ok: 2}]));
   const g = loadGame({dom: true, save: {version: 34, started: true, area: 2, shells: 0, coins: 5, met: [], friends: [],
@@ -207,11 +208,88 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   assert.equal(p(g, 'season'), 3, 'winter');
   assert.ok(notes(g).includes('card: 冬天'));
   assert.equal(get(g, 'tileAt(9, 7).look'), 'paving', 'no leaves in winter');
-  // winter: the year's last day; then to bed, and seven years go by
-  said(g);
+  // winter: it's cold (冷): wood from the pile you filled in autumn, and a fire (火); the pupils gather round it
+  said(g); notes(g);
+  assert.deepEqual(mainTasks(g), ['c1fire']);
+  await press(g, 17, 9, 'right');
+  assert.deepEqual(said(g), ['senior: 今天很冷！']);
+  assert.ok(notes(g).includes('card: 冷'));
+  assert.deepEqual(mainTasks(g), ['c1wood']);
+  await press(g, 20, 10, 'right');   // (the woodpile)
+  assert.deepEqual(p(g, 'carrying'), {word: '木头', n: 1}, 'an armful of wood');
+  assert.deepEqual(mainTasks(g), ['c1light']);
+  await press(g, 14, 10, 'down');   // (the brazier, in the middle of the courtyard)
+  assert.deepEqual([p(g, 'fire'), get(g, 'here().carrying || null'), get(g, 'tileAt(14, 11).look')], [2, null, 'brazierLit'], 'the wood in, and lit');
+  assert.ok(notes(g).includes('card: 火'));
+  assert.deepEqual(said(g), ['senior: 你的树很冷。']);
+  assert.deepEqual(get(g, '["spyPupil", "darePupil", "pupil4"].map(id => (n => [n.x, n.y])(ALL_NPCS.find(n => n.id === id)))'), [[13, 11], [15, 11], [14, 12]], 'the pupils gather round the fire');
+  // your little tree, wrapped in straw against the frost
+  assert.deepEqual(mainTasks(g), ['c1wrap']);
+  await press(g, 6, 11, 'left');
+  assert.deepEqual([p(g, 'wrapped'), get(g, 'tileAt(5, 11).look')], [1, 'myTreeWrapped']);
+  // a snowball fight with a pupil, as winter's practice (the fight itself: tests/snowball.test.js)
+  g.run("snowballFight = async () => { __notes.push('snowball fight'); return true; }");
+  const c2 = get(g, 'S.coins');
+  await press(g, 14, 13, 'up');
+  assert.deepEqual(said(g), ['pupil4: 我们打雪仗吧！', 'pupil4: 你赢了！']);
+  assert.deepEqual([p(g, 'snowCave'), get(g, 'S.coins')], [1, c2 + 2], 'won, and a present the first time');
+  // the master's winter class: all four sides again, then the four seasons, and a year (年)
+  assert.deepEqual(mainTasks(g), ['c1class4']);
+  const asked1 = get(g, '__asked');
   await press(g, 14, 6, 'up');
-  assert.equal(p(g, 'newYear'), 1);
+  const winterClass = said(g);
+  assert.equal(winterClass[0], 'master: 上课了！');
+  assert.deepEqual(winterClass.slice(1, 5).sort(), ['master: 看东边！ (no English)', 'master: 看北边！ (no English)', 'master: 看南边！ (no English)', 'master: 看西边！ (no English)'], 'did you listen? all four sides, only in Chinese');
+  assert.deepEqual(winterClass.slice(5), ['master: 春天，夏天，秋天，冬天。', 'master: 这是一年。']);
+  n = notes(g);
+  assert.ok(n.includes('card: 年') && n.includes('class over: The master’s class · The year'));
+  assert.equal(get(g, '__asked') - asked1, 2, 'then two seasons to choose');
+  // a snowman, built with a pupil (雪人)
+  assert.deepEqual(mainTasks(g), ['c1snowman']);
+  await press(g, 12, 11, 'right');
+  assert.deepEqual(said(g), ['spyPupil: 我们做雪人吧！']);
+  assert.ok(notes(g).includes('card: 雪人'));
+  assert.equal(get(g, 'tileAt(22, 14).look'), 'snowman');
+  // the stores are low: rice and fish from the fishing village, across the sea
+  assert.deepEqual(mainTasks(g), ['c1trip']);
+  await press(g, 17, 9, 'right');
+  assert.deepEqual(said(g), ['senior: 冬天没有桃子。', 'senior: 我们要米和鱼。']);
+  assert.deepEqual([p(g, 'trip'), mainTasks(g)], [1, ['c1tripGo']]);
+  await play(g, "STEPS.goTo({goTo: 'village', at: [22, 13], facing: 'up'})");
+  assert.deepEqual(mainTasks(g), ['c1tripBuy']);
+  g.run("gapQ = async () => true; shop = async (face, sh) => { await buy(forSale(sh)[0], face, sh); }");   // (choosing and asking: tests/shop.test.js)
+  const c3 = get(g, 'S.coins');
+  await press(g, 22, 12, 'right');   // (the granny)
+  await press(g, 11, 5, 'up');   // (the fisherman)
+  assert.deepEqual([get(g, 'here().holding.tripRice'), get(g, 'here().holding.tripFish'), get(g, 'S.coins')], ['米', '鱼', c3 - 6], 'rice and fish, paid for');
+  assert.deepEqual(get(g, 'BAG_TABS.find(t => t.id === "someone").things().map(t => t.does)'), ['The senior pupil', 'The senior pupil'], 'in your bag, for the senior pupil');
+  assert.deepEqual([p(g, 'trip'), mainTasks(g)], [2, ['c1tripBoat']], 'back to the boat');
+  await play(g, "STEPS.goTo({goTo: 'shore', at: [18, 13], facing: 'down'})");
+  assert.deepEqual(get(g, '(n => [n.place, n.x, n.y])(ALL_NPCS.find(n => n.id === "boatman"))'), ['shore', 18, 14], 'the boatman, waiting on the beach');
+  g.run('__scenes.length = 0');
+  await press(g, 18, 13, 'down');
+  assert.deepEqual([get(g, '__scenes'), g.run('PLACE'), p(g, 'trip')], [['crossSea'], 'farShore', 3], 'sailed straight back');
+  await play(g, "STEPS.goTo({goTo: 'mountainFoot', at: [18, 3], facing: 'up'})");
+  assert.equal(get(g, 'tileAt(18, 2).look'), 'supplyBasket', 'the pupils’ basket, let down for you');
+  await press(g, 18, 3, 'up');
+  assert.deepEqual([get(g, '__scenes'), g.run('PLACE'), p(g, 'trip')], [['crossSea', 'basketUp'], 'cave', 4], 'hauled up the mountain');
+  said(g);
+  await press(g, 17, 9, 'right');
+  assert.deepEqual(said(g).slice(0, 1), ['senior: 对！谢谢！']);
+  assert.deepEqual([p(g, 'trip'), get(g, 'here().holding.tripRice || null')], [5, null], 'delivered');
+  // the year's big match, with the senior pupil himself (going straight on)
+  assert.deepEqual(get(g, '__battles').at(-1), 'bigMatch');
+  assert.equal(p(g, 'bigMatch'), 1);
+  // New Year's Eve: lanterns, the dinner set out, 新年快乐, red envelopes; then to bed, and seven years go by
+  assert.deepEqual(mainTasks(g), ['c1newYear']);
+  assert.equal(get(g, 'PLACES.cave.lanterns.filter(l => matches(l.if)).length'), 2, 'red lanterns on the hall');
+  const c4 = get(g, 'S.coins');
+  await press(g, 14, 6, 'up');
+  assert.deepEqual(said(g), ['master: 新年快乐！', 'player: 新年快乐']);
+  assert.ok(notes(g).includes('card: 新年快乐'));
+  assert.deepEqual([p(g, 'newYear'), get(g, 'S.coins'), get(g, 'tileAt(16, 7).look')], [1, c4 + 5, 'nyTable']);
   assert.equal(p(g, 'evening'), 1);
+  assert.deepEqual(mainTasks(g), ['c1bed']);
   g.run('__scenes.length = 0');
   await press(g, 4, 4, 'up');
   assert.deepEqual(get(g, '__scenes'), ['caveYears']);

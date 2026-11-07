@@ -19,7 +19,8 @@ const placeholders = text => [...String(text).matchAll(/\{([^}|]+)(?:\|[^}]*)?\}
 // A step, and the steps inside it for if you win (a battle's, or a word game's)
 const withWins = (where, s, who) => [[where, s, who], ...[...(s.win || []), ...((s.wordGame || {}).win || [])].flatMap(w => withWins(`${where}, if you win`, w, who)),
   ...(s.carry && Array.isArray(s.each) ? s.each : []).flatMap(w => withWins(`${where}, for each`, w, who)), ...(s.fetch ? s.done || [] : []).flatMap(w => withWins(`${where}, once it's all brought`, w, who)),
-  ...(s.class ? s.do || [] : []).flatMap(w => withWins(`${where}, in the class`, w, who))];   // (and a class's steps: js/year.js)   // (and what you do for each one you pick up, carry's each; and a fetch's done)
+  ...(s.class ? s.do || [] : []).flatMap(w => withWins(`${where}, in the class`, w, who)),   // (and a class's steps: js/year.js)
+  ...(s.snowball ? s.lose || [] : []).flatMap(w => withWins(`${where}, if you lose`, w, who))];   // (and a snowball fight's, if you lose: js/snowball.js)   // (and what you do for each one you pick up, carry's each; and a fetch's done)
 const allSteps = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.flatMap(s => withWins(`${who}'s talk, part ${i + 1}`, s, who)))),
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
@@ -393,7 +394,7 @@ test('every if only checks things the game knows about', () => {
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
       if (k === 'new' || k === 'knows') assert.ok(knownHere(v), `${where}: ${v} isn't a word you can collect in ${where}`);
-      if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id], `${where} checks holding for "${id}", which isn't a request`);
+      if (k === 'holding') for (const id of Object.keys(v)) assert.ok(AREA.requests[id] || (AREA.holdingFor || {})[id], `${where} checks holding for "${id}", which isn't a request (nor something carried for someone: holdingFor)`);
       if (k === 'place') assert.ok(AREA.places[v], `${where} checks place ${v}, which isn't a place`);
       if (k === 'near') assert.ok(AREA.characters.some(c => c.id === v), `${where} checks near "${v}", who isn't a character`);
       if (k === 'friends') for (const id of Object.keys(v)) assert.ok(AREA.animals.some(a => a.id === id) || AREA.characters.some(c => c.id === id), `${where} checks friends for "${id}", who isn't an animal or a character`);
@@ -609,6 +610,12 @@ test('every scene has pictures, captions in time order (each with Chinese and En
       if (c.teach) assert.ok(c.zh.split(' ').includes(c.teach) && collectible.includes(c.teach), `the ${id} scene's caption ${i + 1} teaches ${c.teach}, which it should say, and you should be able to collect`);
     });
   }
+});
+
+// (7 November 2026: the basket that hauls you up the mountain played a scene the area didn't have, and would have stopped
+// the game there; the story tests stand in for scenes, so they never saw it)
+test('every scene the story plays is one of the area’s scenes', () => {
+  for (const [where, s] of allSteps()) if (s.scene) assert.ok((AREA.scenes || {})[s.scene], `${where}: there’s no scene called ${s.scene} in the area’s scenes`);
 });
 
 test('every word you can collect has an example sentence for its page', () => {

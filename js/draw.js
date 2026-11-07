@@ -939,7 +939,7 @@ function drawWorld(now){
   drawLayer(mapCanvas, cx, cy);
   drawStirredGrass(cx, cy);   // (the grass you're walking through, parted round you)
   drawFootprints(cx, cy, now);   // (your footprints in the snow, in winter: js/seasons.js)
-  drawPlaques(cx, cy);   // (a plaque over a door, such as your name over your room: js/year.js)
+  drawPlaques(cx, cy); drawLanterns(cx, cy, now);   // (a plaque over a door, such as your name over your room; red lanterns for New Year: js/year.js)
   drawLayer(baseCanvas, cx, cy);   // big objects, under the characters: those that never move, all at once
   touchLeaves(now); crawlThrough(now);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.base, cx, cy, now);   // and the fruit trees, which rustle
@@ -1059,6 +1059,7 @@ function drawWorld(now){
   }
   drawDragonflies(cx, cy, now);
   drawSwarms(cx, cy, now);
+  drawFires(cx, cy, now);   // (a fire's flames, such as in the brazier in the courtyard, winter: js/year.js)
   // the tops of big objects (a tree's leaves, the stall's awning), over anyone walking behind them
   drawLayer(topCanvas, cx, cy);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.top, cx, cy, now);

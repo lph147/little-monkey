@@ -33,6 +33,8 @@ const KEEP = -1, GONE = -2;   // (a colour that stays as it is; one that goes, s
 const noiseAt = (x, y, g, k) => { const gx = Math.floor(x / g), gy = Math.floor(y / g), fx = x / g - gx, fy = y / g - gy;
   const top = rnd(gx, gy, k) * (1 - fx) + rnd(gx + 1, gy, k) * fx, bot = rnd(gx, gy + 1, k) * (1 - fx) + rnd(gx + 1, gy + 1, k) * fx; return top * (1 - fy) + bot * fy; };
 const SNOW = (l, top = .8) => fromHsl(206, .2, clamp(top + l * .18, 0, .97));
+// (a patch, its edge broken up a little, so it melts into the snow round it rather than ending in a hard line)
+const patchy = (x, y, g, k, t) => { const n = noiseAt(x, y, g, k); return n > t || (n > t - .06 && rnd(x, y, k + 1) < (n - t + .06) / .06); };
 const LEAF_FALL = [0xE08A3A, 0xC8502A, 0xF0C050];
 const PETALS = [0xF7B9CB, 0xFFE3EC, 0xFFFFFF];
 // Each kind of ground, each season: base(h, s, l) gives its new colour (KEEP or GONE), the same for every pixel of that
@@ -53,8 +55,8 @@ const GROUND_RULES = {
   winter: {
     green: {base:(h, s, l) => SNOW(l)},   // snow, its shading kept
     field: {base:(h, s, l) => l < .38 ? fromHsl(30, .14, clamp(.56 + l * .4, 0, .78)) : SNOW(l, .84)},   // stubble and furrows, faint under the snow
-    earth: {base:(h, s, l) => SNOW(l, .82), at:(c, x, y, l) => noiseAt(x, y, 6, 13) > .74 ? fromHsl(32, .13, clamp(.6 + l * .16, 0, .8)) : c},   // trodden, the earth showing in patches
-    sand: {base:(h, s, l) => SNOW(l, .84), at:(c, x, y, l) => noiseAt(x, y, 7, 17) > .68 ? fromHsl(40, .2, clamp(.62 + l * .2, 0, .85)) : c},
+    earth: {base:(h, s, l) => SNOW(l, .8), at:(c, x, y, l) => patchy(x, y, 6, 13, .76) ? fromHsl(32, .12, clamp(.66 + l * .14, 0, .82)) : c},   // trodden, the earth showing in patches
+    sand: {base:(h, s, l) => SNOW(l, .84), at:(c, x, y, l) => patchy(x, y, 7, 17, .8) ? fromHsl(40, .18, clamp(.74 + l * .14, 0, .88)) : c},   // a little sand showing through
     swept: {base:(h, s, l) => fromHsl(212, s * .35 + .04, clamp(l + (.92 - l) * .28, 0, .95))},   // swept clear, cold and pale
     water: {base:(h, s, l) => isWet(h, s) ? fromHsl(h + (205 - h) * .3, s * .8, l * .96) : KEEP},
     rockTop: {base:(h, s, l) => l > .56 ? fromHsl(210, .12, clamp(.88 + l * .1, 0, .98)) : fromHsl(210, s * .5, clamp(l * 1.06, 0, .9))},

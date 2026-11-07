@@ -219,20 +219,32 @@ function drawNight(cx, cy, sh, now){
 /* ---- scenes ---- */
 // Seven years in the cave (the caveYears scene, after the chores): the courtyard, the hall, a peach tree growing up
 // through the seasons, blossom, green, autumn leaves falling, snow, over and over, and you sweeping.
+// Seven years in the cave (the caveYears scene: decided 7 November 2026, from the plan): the courtyard going round its
+// seasons again and again, faster and faster, your peach tree taller each time round; each summer a peach drops into a row
+// along the top, till there are seven (the book counts the years in peaches: he'd eaten his fill of them seven times);
+// and you, sweeping the leaves.
+const CAVE_YEARS = [2.4, 2, 1.7, 1.4, 1.2, 1, .9];   // how long each year takes, in seconds
+function caveYear(t){ let y = 0, at = 0; while (y < 7 && t >= at + CAVE_YEARS[y]){ at += CAVE_YEARS[y]; y++; } return {yr:y, k:y < 7 ? (t - at) / CAVE_YEARS[y] : 1}; }
 function drawCaveYears(t, now){
-  const W = VW*T, H = VH*T, season = Math.floor(t / 1.6) % 4, grow = Math.min(1, t / 10);
+  const W = VW*T, H = VH*T, {yr, k} = caveYear(t), season = yr >= 7 ? 3 : Math.min(3, Math.floor(k * 4)), grow = Math.min(1, (yr + k) / 7);
   R(b, 0, 0, W, 40, ['#9CC8E8', '#7FB8E6', '#C8B898', '#D8DEE4'][season]);
   for (let x = 0; x < W; x += T){ karstFace(b, x, 40, 3, 1); karstFace(b, x, 56, 3, 2); }
   R(b, 0, 72, W, H - 72, season === 3 ? '#E8ECEE' : '#B3ADA2');
   for (let y = 72; y < H; y += 8) for (let x = (y / 8) % 2 * 8; x < W; x += 16) R(b, x, y, 15, 7, season === 3 ? '#F4F6F8' : '#C0BAAF');
   jHouse(b, {x:5, y:2, w:5, h:3});
-  const tx = 52, ty = 110, h = Math.round(10 + grow * 26);   // the peach tree
+  const tx = 52, ty = 110, h = Math.round(10 + grow * 26);   // your peach tree, growing
   R(b, tx - 1, ty - h, 3, h, '#6B4A2A');
   const crown = ['#F4B6C8', '#5E9E44', '#D8923A', '#F4F6F8'][season];
   for (const [dx, dy, r] of [[0, -h, 6 + grow * 8], [-7 * grow, -h + 6, 4 + grow * 6], [7 * grow, -h + 6, 4 + grow * 6]]) disc(b, Math.round(tx + dx), Math.round(ty + dy), Math.round(r), crown);
   if (season === 2 || season === 3) for (let i = 0; i < 14; i++){ const fx = (rnd(i, 3) * W + now / 50 * (1 + i % 3)) % W, fy = (rnd(i, 4) * H + now / 18) % H; R(b, Math.round(fx), Math.round(fy), 2, season === 3 ? 2 : 1, season === 3 ? '#FFFFFF' : '#C25A2A'); }
   const mx = 150 + Math.round(Math.sin(now / 300) * 6);   // you, sweeping
   drawSweep('left', mx, 118, 0, now);   // (with your broom, as you sweep the leaves: drawSweep, js/draw.js)
+  const ripe = Math.min(7, yr + (k >= .3 ? 1 : 0));   // a peach each summer, dropping into the row at the top
+  for (let i = 0; i < ripe; i++){
+    const drop = i === ripe - 1 && yr < 7 ? clamp((k - .3) / .15, 0, 1) : 1, px = Math.round(W / 2 - 54 + i * 18), py = Math.round(-6 + drop * 16);
+    disc(b, px, py, 5, '#E8707A'); disc(b, px - 1, py - 1, 3, '#F8A8A8'); R(b, px - 2, py - 2, 1, 1, '#FFFFFF');
+    R(b, px, py - 6, 1, 2, '#6B4A2A'); R(b, px + 1, py - 6, 3, 2, '#4F9A44');
+  }
 }
 // Flying on a cloud (the somersault and flyHome scenes: def.home, flying home over the sea, Flower Fruit Mountain coming
 // up ahead): the sky, clouds racing by, and you on yours, somersaulting now and then.

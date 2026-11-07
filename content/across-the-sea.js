@@ -65,14 +65,14 @@ const CAVE_MAP = [
   "RRkkkFkkkkjHHHHHHHkkksssssskRR",
   "RRkkkkk##############sssssskRR",
   "RRkkkkk##############sssssskRR",
-  "RRkQkkk##l#######l###ssmssskRR",
+  "RRkQkkk##l######El###ssmssskRR",
   "RRkkkkk##############kkkkkkkRR",
   "RRkkkqk##############kkkkkkkRR",
   "RRkQkkk#####l########pkkkkTkRR",
-  "RRkkkUk##############kkkkkkkRR",
+  "RRkkkUk#######B######kkkkkkkRR",
   "RRkkkkk############l#kkLkLkkRR",
   "RRqkkqk#l############kkkkkkoRR",
-  "RRkkkkk##############kkkkkkkRR",
+  "RRkkkkk##############kNkkkkkRR",
   "RRkkkkk##############kkkTkkkRR",
   "RRTkkkkkkTkkkkkkkkkkkkkkkkkkRR",
   "RRRRRRRRRRRRRRkkRRRRRRRRRRRRRR",
@@ -104,7 +104,7 @@ const CAVE_LEGEND = {
   'q': {look:'sapling', word:'桃子', note:'A young peach tree, just planted. You water it every day.', becomes:[{if:{grown:1}, to:'Q'}]},
   'o': {look:'boulder', word:'石头'},
   'j': {look:'jars', landmark:true, onLook:[{do:[{message:'Big jars of water, for the kitchen.'}]}]},
-  'p': {look:'woodpile', word:'木头', note:'The cave’s firewood.'},
+  'p': {look:'woodpile', word:'木头', note:'The cave’s firewood.', onLook:[{if:{fire:1, carrying:false}, label:'Take', do:[{carry:'木头', took:'You take an armful of {木头|wood} from the pile. Now light the fire: face the brazier, and press A.'}]}]},
   'L': {look:'stump', landmark:true, onLook:[{if:{axeFetch:1}, label:'Chop', do:[{carry:'木头', howMany:true, each:[{practise:1, label:'Chopping the wood', pic:'斧头'}, {hit:'wood', with:'斧头', times:2}], ask:'How many pieces of {木头|wood} do you want to chop?', took:'You’re carrying {n} piece{s} of {木头|wood}. Take {them} to the senior pupil.'}]},
     {do:[{message:'A chopping block, with logs beside it to chop.'}]}]},
   'l': {look:'leafPile', word:'叶子', becomes:[{if:{any:[{season:{below:2}}, {season:3}, {grown:1}]}, to:'#'}],   // (heaps of fallen leaves in autumn, the master's year)
@@ -119,12 +119,27 @@ const CAVE_LEGEND = {
   'g': {look:'firstSnow', walk:true, word:'雪', onLook:[{if:{new:'雪'}, label:'Look', sparkle:true, do:[{say:'snowing', by:'player', teach:'雪'}, {newWord:'雪', note:'雪 means snow. 下雪了！ It’s snowing! Winter is coming.'}]}]},
   // your own little peach tree (the master's year): given you by the senior pupil in spring, planted where the garden
   // sparkles, watered from a bucket, and growing as the seasons go round (its look: myTree, js/seasons.js)
-  'U': {look:'mossStone', walk:true, becomes:[{if:{myTree:{atLeast:2}}, to:'u'}],
+  'U': {look:'mossStone', walk:true, becomes:[{if:{wrapped:1, season:3, grown:0}, to:'û'}, {if:{myTree:{atLeast:2}}, to:'u'}],
     onLook:[{if:{myTree:1}, label:'Plant', sparkle:true, do:[{kneel:'树'}, {plant:{myTree:2}}, {message:'Your own little peach tree! Now fill the bucket at the pool, and water it.'}]}]},
   'u': {look:'myTree', word:'树', landmark:true, note:'Your own peach tree.',
     onLook:[{if:{myTree:2, carrying:'水'}, label:'Water', do:[{pour:'水'}, {set:{myTree:3}}, {message:'You water your little tree, and it drinks it all up. It’ll grow big and strong!'}]},
+      {if:{season:3, fire:2, wrapped:0, grown:0}, label:'Wrap', do:[{kneel:'树'}, {set:{wrapped:1}}, {sound:'chime'}, {message:'You wrap straw round your little tree’s trunk, and tie it tight. Now the frost can’t hurt it!'}]},
       {if:{myTree:2}, do:[{message:'Your little peach tree is thirsty. Fill the bucket at the pool, and water it.'}]},
       {do:[{message:'Your own peach tree, which you planted in the spring.'}]}]},
+  'û': {look:'myTreeWrapped', word:'树', landmark:true, note:'Your own peach tree, wrapped in straw for the winter.'},
+  // winter: the brazier in the middle of the courtyard (bring wood from the pile you filled in autumn, and light a fire: 火);
+  // a snowman, built with the pupils (雪人); and the New Year's Eve dinner, set out in front of the hall
+  'B': {look:'brazier', landmark:true, becomes:[{if:{fire:2, season:3, grown:0}, to:'Ɓ'}],
+    onLook:[{if:{fire:1, carrying:'木头'}, label:'Light it', do:[{light:{fire:2}}, {newWord:'火', note:'火 means fire. The flames leap up, and the pupils come running to warm their hands.'},
+        {leap:'spyPupil', from:[9, 9]}, {leap:'darePupil', from:[12, 13]}, {leap:'pupil4', from:[20, 14]},
+        {say:'treeCold', by:'senior'}, {message:'Your little peach tree is cold too. Wrap its trunk in straw against the frost: face it, and press A.'}]},
+      {if:{fire:1}, do:[{message:'The brazier is empty. Bring wood from the woodpile, to light a fire.'}]},
+      {do:[{message:'A bronze brazier, for a fire in winter.'}]}]},
+  'Ɓ': {look:'brazierLit', word:'火', landmark:true, note:'The fire in the courtyard, keeping everyone warm.'},
+  'N': {look:'mossStone', walk:true, becomes:[{if:{snowman:1, season:3, grown:0}, to:'Ň'}]},
+  'Ň': {look:'snowman', word:'雪人', landmark:true, note:'The snowman you built with the pupils, in a red scarf.'},
+  'E': {look:'paving', walk:true, becomes:[{if:{nyTable:1, season:3, grown:0}, to:'Ě'}]},
+  'Ě': {look:'nyTable', landmark:true, onLook:[{do:[{message:'The New Year’s dinner: bowls of {米饭|rice}, and the fish you brought, for plenty in the year to come.'}]}]},
   'Y': {look:'rockDoor', word:'门', landmark:true, onLook:[
     // the master's year: once a season's jobs are done, evening comes; you go to bed here, and wake in the next season
     {if:{evening:1, season:0}, label:'Sleep', do:NEXT_SEASON(1, '夏天', '夏天 means summer. Hot, sunny days, and everything green.')},
@@ -305,8 +320,8 @@ const ACROSS_THE_SEA = {
       text:'Autumn: the leaves are turning red and gold, and falling.',
       now:'Get the cave ready for the winter.'},
     {id:'winter', chapter:1, name:'Part 5', title:'Winter', when:{season:3},
-      text:'Winter: snow on the mountain, and cold in the cave.',
-      now:'The last days of the year.'},
+      text:'Winter: snow on the mountain, and cold in the cave. Nothing grows now, and the stores are getting low.',
+      now:[{if:{trip:{atLeast:1, below:4}}, text:'Fetch rice and fish from the fishing village, across the sea.'}, {if:{trip:{below:1}}, text:'Keep warm, and help in the cave.'}, {text:'The last days of the year.'}]},
     {id:'secret', chapter:1, name:'Part 6', title:'The master’s secret', when:{grown:1},
       text:'Seven years have gone by. You’ve learned a lot, but not yet what you came for: how never to grow old…',
       now:'Find out what the master’s riddle means.'},
@@ -383,7 +398,7 @@ const ACROSS_THE_SEA = {
     {if:{chapter:1, grown:0, season:3}, say:'coldToday'}
   ],
   progress: {season:0, evening:0, askChild:0, askFisher:0, askVillager:0, askFarmer:0, askGranny:0, askTea:0, askTeller:0, askDocker:0, toldSea:0, home2:0, foundBig:0, foundHungry:0, news:0, d1:0, d2:0, d3:0, north:0, lairSeen:0, key:0, freed1:0, freed2:0, freed3:0, freed4:0, freed5:0, loot:0, king:0, homeAgain:0, party:0, stickGiven:0, ch2:0,
-    chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, class1:0, drill:0, myTree:0, trainGame:0, class2:0, spar1:0, herbs:0, wrote:0, class3:0, sweep:0, waterFetch:0, axeFetch:0, newYear:0, grown:0, lecture:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
+    chapter:0, woodFetch:0, sky:0, door:0, caveSeen:0, teacher:0, named:0, spyGame:0, class1:0, drill:0, myTree:0, trainGame:0, class2:0, spar1:0, herbs:0, wrote:0, class3:0, fire:0, wrapped:0, class4:0, snowman:0, nyTable:0, trip:0, bigMatch:0, snowCave:0, snowTown:0, snowFields:0, snowVillage:0, sweep:0, waterFetch:0, axeFetch:0, newYear:0, grown:0, lecture:0, riddle:0, tests:0, fly:0, pine:0, sentHome:0, landed:0, dressed:0, back:0, oldFisher:0, child:0, knock:0, farmer:0, dogStop:0, exchanged:0, years:0, boat:0, song:0, stepsTop:0, cargo:0, hen1:0, hen2:0, hen3:0, hen4:0, hensDone:0, planter:0},
 
   // Numbers that text can show as {name}, and that an if can check (as Flower Fruit Mountain's).
   counters: {
@@ -519,7 +534,26 @@ const ACROSS_THE_SEA = {
     {id:'c1swept', main:true, if:{sweep:1, leavesSwept:5}, text:'Tell the senior pupil the {叶子|leaves} are swept up', arrow:'senior'},
     {id:'c1chore', main:true, if:{any:[{waterFetch:1}, {axeFetch:1}]}, text:'Bring the senior pupil {什么|what} he asks for. Talk to him again to {听|listen} again', arrow:'senior'},
     {id:'c1axe', main:true, if:{sweep:2, axeFetch:0}, text:'The senior pupil has one more job for you before {冬天|winter}', arrow:'senior'},
-    {id:'c1winter', main:true, if:{season:3, newYear:0, evening:0}, text:'It’s {冬天|winter}, and the master wants to see you', arrow:'master'},
+    {id:'c1fire', main:true, if:{season:3, fire:0, evening:0, grown:0}, text:'It’s {冬天|winter}, and cold! The senior pupil has a job for you', arrow:'senior'},
+    {id:'c1wood', main:true, if:{fire:1, carrying:false}, text:'Take {木头|wood} from the woodpile, for the fire', arrow:[21, 10, 'cave']},
+    {id:'c1light', main:true, if:{fire:1, carrying:'木头'}, text:'Light a {火|fire} in the brazier, in the middle of the courtyard: face it, and press A', arrow:[14, 11, 'cave']},
+    {id:'c1wrap', main:true, if:{season:3, fire:2, wrapped:0, grown:0}, text:'Your little {树|tree} is cold: wrap its trunk in straw. Face it, and press A', arrow:[5, 11, 'cave']},
+    {id:'c1class4', main:true, if:{season:3, wrapped:1, class4:0, grown:0}, text:'The {师父|master}’s winter class is about to begin', arrow:'master'},
+    {id:'c1snowman', main:true, if:{season:3, class4:1, snowman:0, grown:0}, text:'A pupil wants to build something with you, out of {雪|snow}', arrow:'spyPupil'},
+    {id:'c1trip', main:true, if:{season:3, snowman:1, trip:0, grown:0}, text:'The senior pupil needs your help', arrow:'senior'},
+    {id:'c1tripGo', main:true, if:{trip:1, away:'village'}, text:'Go down the {山|mountain} and across the sea, to the fishing village. Buy rice and {鱼|fish} there, for the senior pupil', arrow:{place:'village'}},
+    {id:'c1tripBuy', main:true, if:{trip:1, place:'village'}, text:'Buy rice from the granny, and {鱼|fish} from the fisherman', arrow:{nearest:[{who:'granny', if:{holding:{tripRice:false}}}, {who:'fisherman', if:{holding:{tripFish:false}}}]}},
+    {id:'c1tripBoat', main:true, if:{trip:2, away:'shore'}, text:'The boatman is waiting on the beach below the village, to take you back across the {海|sea}', arrow:{place:'shore'}},
+    {id:'c1tripBoatHere', main:true, if:{trip:2, place:'shore'}, text:'The boatman will take you back across the {海|sea}', arrow:'boatman'},
+    {id:'c1tripBasket', main:true, if:{trip:3, away:'mountainFoot'}, text:'Go to the foot of the {山|mountain}: the pupils’ basket will haul you up', arrow:{place:'mountainFoot'}},
+    {id:'c1tripBasketHere', main:true, if:{trip:3, place:'mountainFoot'}, text:'Climb into the pupils’ basket: face it, and press A', arrow:[18, 2, 'mountainFoot']},
+    {id:'c1tripBack', main:true, if:{trip:4}, text:'Take the rice and {鱼|fish} to the senior pupil', arrow:'senior'},
+    {id:'c1bigMatch', main:true, if:{season:3, trip:5, bigMatch:0, grown:0}, text:'The senior pupil wants a match with you: the {年|year}’s big match', arrow:'senior'},
+    {id:'c1newYear', main:true, if:{season:3, bigMatch:1, newYear:0, grown:0}, text:'It’s the last night of the {年|year}: the {师父|master} is waiting for you', arrow:'master'},
+    {id:'c1snowCave', if:{season:3, fire:2, snowCave:0, grown:0, place:'cave'}, text:'A pupil wants a snowball fight with you', arrow:'pupil4'},
+    {id:'c1snowTown', if:{trip:{atLeast:1, below:3}, snowTown:0, place:'town'}, text:'A {孩子|child} in the town wants a snowball fight with you', arrow:'snowKid1'},
+    {id:'c1snowFields', if:{trip:{atLeast:1, below:3}, snowFields:0, place:'fields'}, text:'A {孩子|child} in the fields wants a snowball fight with you', arrow:'snowKid2'},
+    {id:'c1snowVillage', if:{trip:{atLeast:1, below:3}, snowVillage:0, place:'village'}, text:'A {孩子|child} in the village wants a snowball fight with you', arrow:'kid2'},
     {id:'c1bed', main:true, if:{evening:1, any:[{season:0}, {season:1, knows:'叶子'}, {season:2, knows:'雪'}, {season:3}]}, text:'Time to {睡觉|sleep}: go to your room in the rock, face its door, and press A', arrow:[4, 3, 'cave']},
     {id:'c1lecture', main:true, if:{grown:1, lecture:0}, text:'Go to the {师父|master}’s lecture, in front of the hall', arrow:'master'},
     {id:'c1riddle', main:true, if:{lecture:1, riddle:0}, text:'The {师父|master} wants to see you', arrow:'master'},
@@ -605,7 +639,14 @@ const ACROSS_THE_SEA = {
     {chapter:1, part:'autumn', text:'Chop firewood for the {冬天|winter}', done:{axeFetch:2}},
     {chapter:1, part:'autumn', text:'Write your {名字|name} with a brush', show:{axeFetch:2}, done:{wrote:1}},
     {chapter:1, part:'autumn', text:'Go to the {师父|master}’s autumn class', show:{wrote:1}, done:{class3:1}},
-    {chapter:1, part:'winter', text:'The last day of the {年|year}', done:{newYear:1}},
+    {chapter:1, part:'winter', text:'Light a {火|fire} for the pupils', done:{fire:2}},
+    {chapter:1, part:'winter', text:'Wrap your peach {树|tree} in straw', show:{fire:2}, done:{wrapped:1}},
+    {chapter:1, part:'winter', text:'Go to the {师父|master}’s winter class', show:{wrapped:1}, done:{class4:1}},
+    {chapter:1, part:'winter', text:'Build a {雪人|snowman}', show:{class4:1}, done:{snowman:1}},
+    {chapter:1, part:'winter', text:'Fetch rice and {鱼|fish} from the fishing village', show:{snowman:1}, done:{trip:5}},
+    {chapter:1, part:'winter', text:'Win a snowball fight', show:{fire:2}, done:{any:[{snowCave:{atLeast:1}}, {snowTown:{atLeast:1}}, {snowFields:{atLeast:1}}, {snowVillage:{atLeast:1}}]}},
+    {chapter:1, part:'winter', text:'Win the {年|year}’s big match', show:{trip:5}, done:{bigMatch:1}},
+    {chapter:1, part:'winter', text:'New Year’s Eve, the last night of the {年|year}', show:{bigMatch:1}, done:{newYear:1}},
     {chapter:1, part:'secret', text:'Solve the {师父|master}’s riddle', show:{grown:1}, done:{riddle:3}},
     {chapter:1, part:'change', text:'Learn to {变|change} into things, and to {飞|fly}', show:{riddle:3}, done:{fly:1}},
     {chapter:1, part:'home', text:'Go {回家|home}', show:{pine:1}, done:{sentHome:1}},
@@ -619,11 +660,10 @@ const ACROSS_THE_SEA = {
   bubbles: {
     child: [{if:{dressed:2, child:0}, show:'!'}, {if:{child:{atLeast:1, below:3}}, show:'!'}, {if:{child:3, askChild:0}, show:'!'}],
     villager: [{if:{hensDone:1, askVillager:0}, show:'!'}],
-    granny: [{if:{child:3, new:'米饭'}, show:'!'}, {if:{lunch:'asked', holding:{lunch:false}}, show:'!'}],
-    fisherman: [{if:{child:3, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'}, {if:{fish:'done', askFisher:0}, show:'!'}],
+
     oldFisher: [{if:{back:1, oldFisher:0}, show:'!'}],
     fisher1: [{if:{back:1, oldFisher:1, pierFish:'not asked'}, show:'!'}, {if:{pierFish:'asked', holding:{pierFish:true}}, show:'?'}],
-    kid2: [{if:{child:3, hidesFound:0}, show:'!'}],
+    kid2: [{if:{child:3, hidesFound:0}, show:'!'}, {if:{season:3, trip:{atLeast:1, below:5}, snowVillage:0}, show:'!'}],
     planter: [{if:{planter:0}, show:'!'}],
     farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}, {if:{lunch:'done', askFarmer:0}, show:'!'}],
     changer: [{if:{exchanged:0}, show:'!'}],
@@ -638,13 +678,17 @@ const ACROSS_THE_SEA = {
     teller: [{if:{knows:'茶', new:'说'}, show:'!'}, {if:{knows:'说', askTeller:0}, show:'!'}],
     teacher: [{if:{knows:'说', new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
     teacherOld: [{if:{new:'听'}, show:'!'}, {if:{knows:'听', new:'孩子'}, show:'!'}, {if:{knows:'孩子', new:'学'}, show:'!'}],
-    boatman: [{if:{asked:8, toldSea:0}, show:'!'}, {if:{toldSea:1, boat:0}, show:'!'}, {if:{boat:1}, show:'!'}],
+    boatman: [{if:{asked:8, toldSea:0}, show:'!'}, {if:{toldSea:1, boat:0}, show:'!'}, {if:{boat:1}, show:'!'}, {if:{trip:2}, show:'!'}],
     master: [{if:{door:2, teacher:0}, show:'!'}, {if:{teacher:1, named:0}, show:'!'}, {if:{named:1, class1:0}, show:'!'}, {if:{season:1, waterFetch:2, class2:0}, show:'!'},
-      {if:{season:1, spar1:1, herbs:0}, show:'!'}, {if:{season:2, wrote:1, class3:0}, show:'!'}, {if:{herbs:1, herbsFound:{atLeast:3}}, show:'?'}, {if:{season:3, newYear:0, evening:0}, show:'!'}, {if:{grown:1, lecture:0}, show:'!'}, {if:{lecture:1, riddle:0}, show:'!'},
+      {if:{season:1, spar1:1, herbs:0}, show:'!'}, {if:{season:2, wrote:1, class3:0}, show:'!'}, {if:{herbs:1, herbsFound:{atLeast:3}}, show:'?'}, {if:{season:3, wrapped:1, class4:0, grown:0}, show:'!'}, {if:{season:3, bigMatch:1, newYear:0, grown:0}, show:'!'}, {if:{grown:1, lecture:0}, show:'!'}, {if:{lecture:1, riddle:0}, show:'!'},
       {if:{riddle:2}, show:'!'}, {if:{riddle:3, tests:0}, show:'!'}, {if:{tests:1, fly:0}, show:'!'}, {if:{pine:1, sentHome:0}, show:'!'}],
-    spyPupil: [{if:{named:1, spyGame:0}, show:'!'}],
-    pupil4: [{if:{named:1, grown:0, trainGame:{below:2}, season:{below:3}}, show:'!'}],
-    senior: [{if:{class1:1, drill:0}, show:'!'}, {if:{drill:1, myTree:0}, show:'!'}, {if:{season:1, waterFetch:0, evening:0}, show:'!'}, {if:{season:2, sweep:0, evening:0}, show:'!'}, {if:{sweep:1, leavesSwept:5}, show:'?'}, {if:{any:[{waterFetch:1}, {axeFetch:1}]}, show:'?'}, {if:{sweep:2, axeFetch:0}, show:'!'}, {if:{season:2, axeFetch:2, wrote:0}, show:'!'}],
+    spyPupil: [{if:{named:1, spyGame:0}, show:'!'}, {if:{season:3, class4:1, snowman:0, grown:0}, show:'!'}],
+    pupil4: [{if:{named:1, grown:0, trainGame:{below:2}, season:{below:3}}, show:'!'}, {if:{season:3, fire:2, snowCave:0, grown:0}, show:'!'}],
+    snowKid1: [{if:{snowTown:0}, show:'!'}], snowKid2: [{if:{snowFields:0}, show:'!'}],
+    granny: [{if:{child:3, new:'米饭'}, show:'!'}, {if:{lunch:'asked', holding:{lunch:false}}, show:'!'}, {if:{season:3, trip:1, holding:{tripRice:false}}, show:'!'}],
+    fisherman: [{if:{child:3, fish:'not asked'}, show:'!'}, {if:{fish:'asked', holding:{fish:true}}, show:'?'}, {if:{fish:'done', askFisher:0}, show:'!'}, {if:{season:3, trip:1, holding:{tripFish:false}}, show:'!'}],
+    senior: [{if:{class1:1, drill:0}, show:'!'}, {if:{drill:1, myTree:0}, show:'!'}, {if:{season:1, waterFetch:0, evening:0}, show:'!'}, {if:{season:2, sweep:0, evening:0}, show:'!'}, {if:{sweep:1, leavesSwept:5}, show:'?'}, {if:{any:[{waterFetch:1}, {axeFetch:1}]}, show:'?'}, {if:{sweep:2, axeFetch:0}, show:'!'}, {if:{season:2, axeFetch:2, wrote:0}, show:'!'},
+      {if:{season:3, fire:0, grown:0}, show:'!'}, {if:{season:3, snowman:1, trip:0, grown:0}, show:'!'}, {if:{trip:4}, show:'?'}, {if:{season:3, trip:5, bigMatch:0, grown:0}, show:'!'}],
     darePupil: [{if:{season:1, class2:1, spar1:0}, show:'!'}, {if:{fly:1, pine:0}, show:'!'}],
     woodcutter: [{if:{song:0}, show:'!'}, {if:{chapter:1, woodFetch:0}, show:'!'}, {if:{woodFetch:{atLeast:1, below:4}}, show:'?'}],
     // chapter 2
@@ -666,7 +710,7 @@ const ACROSS_THE_SEA = {
 
   // Who you're carrying something for, when it isn't one of their requests (the bag's For someone tab): the lingzhi you
   // pick for the master's medicine.
-  holdingFor: {herbs:'master'},
+  holdingFor: {herbs:'master', tripRice:'senior', tripFish:'senior'},
 
   // Characters who ask you to bring something (as Flower Fruit Mountain's). fromBag: what they want comes from your bag
   // (such as the granny's rice), not held for them. after: steps once they've thanked you (such as being paid).
@@ -719,6 +763,15 @@ const ACROSS_THE_SEA = {
       items:[
         {item:'包子', price:2, sentence:'我 要 买 包子', sentenceEn:'I want to buy a steamed bun.', note:'A steamed bun, soft and hot, with something tasty inside.', bought:'You put the {包子} in your bag. In a word game, eat it to take away a wrong answer.', eat:true}
       ]},
+    // the fishing village in winter: rice and fish for the cave's stores (for: carried for the senior pupil, holdingFor)
+    rice: {who:'granny', ask:'whatBuy', given:'The granny gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
+      earnMore:'The senior pupil gave you enough for the rice and the fish. Spent some? Catch big {鱼|fish} with your rod and sell them, 1 🪙 each.', puzzled:'The granny looks puzzled: you pointed at the {item}, but asked for something else!',
+      sorry:'对不起', sorryAbout:'You asked the granny for the wrong thing.', noProblem:'noProblem', soldOut:'Come back another time.',
+      items:[{item:'米', price:3, for:'tripRice', if:{trip:1}, sentence:'我 要 买 米', sentenceEn:'I want to buy rice.', note:'A sack of rice, for the cave.', bought:'You carry the sack of {米|rice} for the senior pupil.'}]},
+    fish: {who:'fisherman', ask:'whatBuy', given:'The fisherman gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
+      earnMore:'The senior pupil gave you enough for the rice and the fish. Spent some? Catch big {鱼|fish} with your rod and sell them, 1 🪙 each.', puzzled:'The fisherman looks puzzled: you pointed at the {item}, but asked for something else!',
+      sorry:'对不起', sorryAbout:'You asked the fisherman for the wrong thing.', noProblem:'noProblem', soldOut:'Come back another time.',
+      items:[{item:'鱼', price:3, for:'tripFish', if:{trip:1}, sentence:'我 要 买 鱼', sentenceEn:'I want to buy fish.', note:'A big fish, for the cave.', bought:'You carry the {鱼|fish} for the senior pupil.'}]},
     shoes: {who:'shoeSeller', ask:'whatBuy', given:'The stallholder gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
       earnMore:'Earn more by helping people and making friends with animals.', puzzled:'The stallholder looks puzzled: you pointed at the {item}, but asked for something else!',
       sorry:'对不起', sorryAbout:'You asked the stallholder for the wrong thing.', noProblem:'noProblem', soldOut:'You have shoes now! Come back another time.',
@@ -785,6 +838,8 @@ const ACROSS_THE_SEA = {
       {message:'Evening comes, cooler at last. A yellow leaf drifts down, by your room: autumn is coming!'}]},
     {if:{season:2, sweep:2, axeFetch:2, wrote:1, class3:1, evening:0}, do:[{set:{evening:1}}, {sound:'chime'},
       {message:'Evening comes, and it’s cold. The first snowflakes are falling, and settling by your room: winter is coming!'}]},
+    {if:{season:3, trip:1, holding:{tripRice:true, tripFish:true}}, do:[{set:{trip:2}}, {sound:'chime'},
+      {message:'Rice and fish! The boatman is waiting on the beach below the village, to sail you straight back across the sea.'}]},
     {if:{season:3, newYear:1, evening:0, grown:0}, do:[{set:{evening:1}}, {sound:'chime'},
       {message:'The last night of the year. Time for bed!'}]},
     // at the cave's door: the stone doors rumble open, and a boy comes out (the immortal's pupil)
@@ -1247,12 +1302,19 @@ const ACROSS_THE_SEA = {
         'p': {look:'woodpile', word:'木头', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Pick up', do:[{carry:'木头', howMany:true}]}]},
         'o': {look:'pebble', word:'石头', onLook:[{if:{woodFetch:{atLeast:1, below:4}}, label:'Pick up', do:[{carry:'石头', howMany:true}]}]},
         'r': {look:'rocks', word:'石头', landmark:true},
-        'u': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'}
+        'u': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},
+        // the pupils' supply basket, let down on a long rope while you're away for the rice and fish (winter): it hauls
+        // you back up the mountain
+        'б': {look:'grass', walk:true, becomes:[{if:{season:3, trip:{atLeast:1}, grown:0}, to:'Б'}]},
+        'Б': {look:'supplyBasket', landmark:true, onLook:[{if:{trip:3}, label:'Climb in', do:[{scene:'basketUp'}, {set:{trip:4}}, {goTo:'cave', at:[14, 19], facing:'up'},
+            {message:'The pupils haul you all the way up, with the rice and the fish. Take them to the senior pupil!'}]},
+          {if:{trip:{below:3}}, do:[{message:'The pupils’ supply basket, on its long rope. Come back with the rice and the fish, and they’ll haul you up in it.'}]},
+          {do:[{message:'The pupils’ supply basket, on its long rope.'}]}]}
       },
       map: [
         "PPPPPPPPPPPPPPPPPPPP..PPPPwwPPPPPP",
         "PggggggggggggggggPgg..ggPgwwgggggP",
-        "PggUUUUUgggggPgggggg..ggggwwgggggP",
+        "PggUUUUUgggggPggggбg..ggggwwgggggP",
         "PggUUUUUpgggggggggggGGGGGgwwggPggP",
         "Pggg...ggJggggggggggGGGGGgwwgggggP",
         "Pggg........ggggggggGGGGGgwwgggggP",
@@ -1386,6 +1448,8 @@ const ACROSS_THE_SEA = {
       ],
       legend: CAVE_LEGEND,
       plaques: [{at:[4, 3], text:'孙悟空', if:{wrote:1}}],   // (your name over your room's door, once you've written it, autumn)
+      fires: [{at:[14, 11], if:{fire:2, season:3, grown:0}}],   // (the fire in the brazier, winter)
+      lanterns: [{at:[11, 5], if:{season:3, bigMatch:1, grown:0}}, {at:[17, 5], if:{season:3, bigMatch:1, grown:0}}],   // (red lanterns for New Year's Eve)
       map: CAVE_MAP.slice()
     },
     caveNight: {
@@ -1602,12 +1666,20 @@ const ACROSS_THE_SEA = {
     {id:'peddler', place:'highRoad', person:true, x:16, y:8, facing:'up', name:{zh:'货郎', py:'huòláng', en:'Peddler'}, palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#C7902F', b:'#3A2A1E', p:'#3A3446', a:'#D9B866', d:'#A88A3E'}},
     {id:'angler', place:'canalPath', person:true, beard:true, x:6, y:12, facing:'left', plays:'fish', name:{zh:'渔夫', py:'yúfū', en:'Fisherman'}, palette:{o:'#3A2A1E', h:'#DADADA', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#6E8F5E', b:'#3A2A1E', p:'#3A3446', a:'#D9B866', d:'#A88A3E'}},
     // the town: a granny who sends you shopping, and a stallholder calling out what she sells
+    // winter in the master's year, on your way to the fishing village: children out in the snow, who want a snowball fight
+    {id:'snowKid1', place:'town', person:true, small:true, hair:'pigtails', x:30, y:6, facing:'left', name:{zh:'小孩', py:'xiǎohái', en:'Child'},
+      moves:[{if:{any:[{season:{below:3}}, {trip:0}, {trip:{atLeast:5}}, {grown:1}]}, place:'hut', x:0, y:0}],
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#C0504D', b:'#3A2A1E', p:'#3A4A5A'}},
+    {id:'snowKid2', place:'fields', person:true, small:true, hair:'topknot', x:30, y:7, facing:'down', name:{zh:'小孩', py:'xiǎohái', en:'Child'},
+      moves:[{if:{any:[{season:{below:3}}, {trip:0}, {trip:{atLeast:5}}, {grown:1}]}, place:'hut', x:0, y:0}],
+      palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#3E5A86', b:'#3A2A1E', p:'#5A4632'}},
     {id:'granny2', place:'town', person:true, hair:'bun', x:21, y:14, facing:'left', name:{zh:'老奶奶', py:'lǎo nǎinai', en:'Granny'}, palette:{o:'#3A2A1E', h:'#E8E8E8', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#4A6E8A', b:'#3A2A1E', p:'#3A3446'}},
     {id:'caller', place:'town', person:true, wear:'apron', x:27, y:10, facing:'down', calls:'callFruit', name:{zh:'老板', py:'lǎobǎn', en:'Stallholder'}, palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#B5462E', b:'#3A2A1E', p:'#3A3446'}},
     // the harbour: a docker loading the big boat
     {id:'docker', place:'harbour', person:true, wear:'vest', x:11, y:6, facing:'down', name:{zh:'工人', py:'gōngrén', en:'Docker'}, palette:{o:'#3A2A1E', h:'#2A1E16', s:'#E0B088', e:'#1E140C', m:'#C4826A', c:'#8A7A5A', b:'#3A2A1E', p:'#3A3446', a:'#D9B866', d:'#A88A3E'}},
     // the harbour: the boatman, by his big boat, and a goose on the sand
     {id:'boatman', place:'harbour', person:true, wear:'vest', x:17, y:16, facing:'right', name:{zh:'船夫', py:'chuánfū', en:'Boatman'},
+      moves:[{if:{trip:2}, place:'shore', x:18, y:14, facing:'up'}],   // (the winter trip: waiting on the beach below the village, to sail you back)
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#E0B088', e:'#1E140C', m:'#C4826A', c:'#4A5A7A', b:'#3A2A1E', p:'#2A303A', a:'#D9B866', d:'#A88A3E'}},
     {id:'harbourGoose', place:'harbour', look:'鹅', x:28, y:9, facing:'left'},
     // the far shore: the woodcutter, singing as he chops wood
@@ -1623,12 +1695,15 @@ const ACROSS_THE_SEA = {
       moves:[{if:{riddle:{atLeast:1, below:3}}, place:'masterRoom', x:4, y:2, facing:'down'}],
       palette:{o:'#3A2A1E', h:'#F2F2EE', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#E8E4D8', b:'#6A5A8A', p:'#C8C2B0'}},
     {id:'spyPupil', place:'cave', person:true, hair:'bun', wear:'robe', x:9, y:9, facing:'right', name:{zh:'师姐', py:'shījiě', en:'A pupil'},
+      moves:[{if:{season:3, fire:2, grown:0}, place:'cave', x:13, y:11, facing:'right'}],   // (winter: warming her hands at the fire)
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#8FA86E', b:'#3A2A1E', p:'#5A6A44'}},
     {id:'senior', place:'cave', person:true, hair:'topknot', wear:'robe', x:18, y:9, facing:'left', name:{zh:'大师兄', py:'dà shīxiōng', en:'The senior pupil'},
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#E0B088', e:'#1E140C', m:'#C4826A', c:'#6E8FA8', b:'#3A2A1E', p:'#44586A'}},
     {id:'darePupil', place:'cave', person:true, hair:'topknot', wear:'robe', x:12, y:13, facing:'up', name:{zh:'师兄', py:'shīxiōng', en:'A pupil'},
+      moves:[{if:{season:3, fire:2, grown:0}, place:'cave', x:15, y:11, facing:'left'}],
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#A88F6E', b:'#3A2A1E', p:'#6A5A44'}},
     {id:'pupil4', place:'cave', person:true, hair:'scarf', wear:'robe', x:20, y:14, facing:'left', name:{zh:'师弟', py:'shīdì', en:'A pupil'},
+      moves:[{if:{season:3, fire:2, grown:0}, place:'cave', x:14, y:12, facing:'up'}],
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#8F6EA8', b:'#3A2A1E', p:'#5A446A', k:'#6E8FA8'}},
     // summer in the master's year: two pupils cooling off in the pool, in up to their shoulders, as monkeys in a hot spring
     {id:'bather1', place:'cave', person:true, hair:'topknot', wear:'robe', x:22, y:5, facing:'down', plays:'bathe', name:{zh:'师弟', py:'shīdì', en:'A pupil'},
@@ -1784,6 +1859,7 @@ const ACROSS_THE_SEA = {
     '老': 'The old monkey, twenty years on: 我老了。',
     '妖怪': 'The Demon of Havoc’s little demons, on the home ground.',
     '火': 'The fire in the cave’s courtyard, to keep everyone warm in the winter.',
+    '新年快乐': 'New Year’s Eve in the cave, with the master and the pupils.',
     '救命': 'The troop’s little ones, locked in cages on the demon’s mountain: 救命！',
     '笼子': 'The cages on the demon’s mountain.',
     '钥匙': 'The key to the cages, on the belt of the guard at the demon’s cave.',
@@ -1810,16 +1886,12 @@ const ACROSS_THE_SEA = {
   examples: {
     '鹅': {zh:'鹅 在 水 里 。', en:'The goose is in the water.'},
     '鸡': {zh:'鸡 吃 草 。', en:'Chickens eat grass.'},
-    '米': {zh:'鸡 吃 米 。', en:'Chickens eat rice.'},
     '狗': {zh:'狗 是 我 的 朋友 。', en:'The dog is my friend.'},
     '猫': {zh:'猫 很 小 。', en:'The cat is very small.'},
     '鹤': {zh:'鹤 在 水 里 。', en:'The crane is in the water.'},
     '云': {zh:'山 上 有 云 。', en:'There are clouds on the mountain.'},
     '天': {zh:'天 上 有 鸟 。', en:'There are birds in the sky.'},
     '头': {zh:'这 是 猴子 的 头 。', en:'This is the monkey’s head.'},
-    '夏天': {zh:'夏天 有 很多 桃子 。', en:'In summer there are lots of peaches.'},
-    '秋天': {zh:'秋天 的 叶子 是 红色 的 。', en:'In autumn the leaves are red.'},
-    '冬天': {zh:'冬天 没有 桃子 。', en:'In winter there are no peaches.'},
     '十一': {zh:'我 有 十一 块 石头 。', en:'I have eleven stones.'},
     '十二': {zh:'树 上 有 十二 个 桃子 。', en:'There are twelve peaches on the tree.'},
     '十三': {zh:'这里 有 十三 个 孩子 。', en:'There are thirteen children here.'},
@@ -1830,8 +1902,6 @@ const ACROSS_THE_SEA = {
     '十八': {zh:'我 要 十八 桶 水 。', en:'I need eighteen buckets of water.'},
     '十九': {zh:'这里 有 十九 只 猴子 。', en:'There are nineteen monkeys here.'},
     '二十': {zh:'我们 有 二十 个 桃子 。', en:'We have twenty peaches.'},
-    '年': {zh:'我 在 这里 一 年 了 。', en:'I’ve been here a year.'},
-    '雪人': {zh:'我们 有 一 个 雪人 。', en:'We have a snowman.'},
     '晚上': {zh:'晚上 有 月亮 。', en:'At night, there’s the moon.'},
     '月亮': {zh:'天 上 有 月亮 。', en:'There’s a moon in the sky.'},
     '星星': {zh:'天 上 有 很多 星星 。', en:'There are lots of stars in the sky.'},
@@ -1847,6 +1917,9 @@ const ACROSS_THE_SEA = {
   // yours from then on, as the book has it (his stages, each once, at so much of his health left).
   enemies: {
     // the master's year: a friendly match with a pupil, your stick against his staff, in the courtyard (summer)
+    bigMatch: {name:{zh:'大师兄', py:'dà shīxiōng', en:'The senior pupil'}, person:'senior', health:60, hits:6, boss:true, bossFight:true, nameCard:true, attacks:['房子', '门', '松树', '天', '桶', '雪人'],
+      meet:'The senior pupil bows, and raises his staff. The master is watching.', hide:'The senior pupil leaps out of sight…', attack:'The senior pupil’s staff comes swinging!',
+      away:'The senior pupil bows to you. You’ve won the big match!', lost:'The senior pupil helps you up out of the snow. Try again!'},
     spar: {name:{zh:'师兄', py:'shīxiōng', en:'A pupil'}, person:'darePupil', health:30, hits:5, attacks:['房子', '门', '松树', '天', '桶'], meet:'The pupil bows, and raises his staff.',
       hide:'The pupil leaps out of sight…', attack:'The pupil swings his staff at you!', away:'The pupil bows to you, laughing: you win!', lost:'The pupil bows: he wins this time.', reward:0},
     demon: {word:'妖怪', health:30, hits:8, attacks:['火', '松树', '叶子', '云', '天'], meetNote:'A little demon jumps out at you, waving its spear!', meet:'A little {妖怪} jumps out at you!',
@@ -2058,6 +2131,16 @@ const ACROSS_THE_SEA = {
     lookWest: {zh:'看 西边 ！', en:'Look west!'},
     homeEast: {zh:'你 的 家 在 东边 。', en:'Your home is in the east.'},
     snowing: {zh:'下 雪 了 ！', en:'It’s snowing!'},
+    treeCold: {zh:'你 的 树 很 冷 。', en:'Your tree is cold.'},
+    fourSeasons: {zh:'春天 ， 夏天 ， 秋天 ， 冬天 。', en:'Spring, summer, autumn, winter.'},
+    thisYear: {zh:'这 是 一 年 。', en:'This is one year.'},
+    makeSnowman: {zh:'我们 做 雪人 吧 ！', en:'Let’s make a snowman!'},
+    noPeaches: {zh:'冬天 没有 桃子 。', en:'In winter there are no peaches.'},
+    wantRiceFish: {zh:'我们 要 米 和 鱼 。', en:'We need rice and fish.'},
+    snowballFight: {zh:'我们 打雪仗 吧 ！', en:'Let’s have a snowball fight!'},
+    youWon: {zh:'你 赢 了 ！', en:'You won!'},
+    iWon: {zh:'我 赢 了 ！', en:'I won!'},
+    happyNewYear: {zh:'新年快乐 ！', en:'Happy New Year!'},
     thisMedicine: {zh:'这 是 药 。', en:'This is medicine.'},
     // the pupils
     changePine: {zh:'你 变 松树 吧 ！', en:'Change into a pine tree!'},
@@ -2109,6 +2192,7 @@ const ACROSS_THE_SEA = {
       {do:[{say:'play'}, {isIt:4}]}
     ],
     granny: [
+      {if:{season:3, trip:1, holding:{tripRice:false}}, do:[{shop:'rice'}]},
       {if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]},
       {if:{new:'米饭'}, do:[{say:'areYouHungry', teach:'米饭'}, {newWord:'米饭', note:'米饭 is rice, cooked: a bowl of it makes a meal.'},
         {reply:'谢谢'}, {eat:'米饭', note:'You sit down by the well and eat the whole bowl of {米饭|rice}. Your health is full!'}]},
@@ -2117,6 +2201,7 @@ const ACROSS_THE_SEA = {
       {do:[{say:'areYouHungry'}, {reply:'谢谢'}, {eat:'米饭', note:'Another bowl of {米饭|rice}! You eat it all up. Your health is full!'}]},
     ],
     fisherman: [
+      {if:{season:3, trip:1, holding:{tripFish:false}}, do:[{shop:'fish'}]},
       {if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]},
       {if:{fish:'asked', holding:{fish:true}}, do:[{request:'fish'}]},   // (钱 comes as he pays you: practise first)
       {if:{fish:'not asked'}, do:[{request:'fish'}]},
@@ -2145,7 +2230,10 @@ const ACROSS_THE_SEA = {
       {if:{hen4:0}, do:[{grab:'鸡', label:'Catch it!', missed:'The hen flaps out of your hands, and runs off! Try again.'}, {set:{hen4:1}}, {sound:'blip'},
         {message:'You carry the hen back to its yard ({hensBack}/4).'}]},
       {do:[{gap:{sentence:'这 是 鸡', en:'This is a chicken.', word:'鸡', others:['鹅', '鱼', '猫'], pic:'鸡'}}]}],
-    kid2: [{if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]}, {do:[{say:'hideAsk'}, {hideSeek:true}]}],
+    kid2: [{if:{season:3, trip:{atLeast:1, below:5}}, do:[{say:'snowballFight'}, {snowball:'snowVillage', prize:2, win:[{say:'youWon'}], lose:[{say:'iWon'}]}]},
+      {if:{child:{below:3}}, do:[{say:'hi'}, {reply:'你好'}]}, {do:[{say:'hideAsk'}, {hideSeek:true}]}],
+    snowKid1: [{do:[{say:'snowballFight'}, {snowball:'snowTown', prize:2, win:[{say:'youWon'}], lose:[{say:'iWon'}]}]}],
+    snowKid2: [{do:[{say:'snowballFight'}, {snowball:'snowFields', prize:2, win:[{say:'youWon'}], lose:[{say:'iWon'}]}]}],
     kid3: [{do:[{say:'hi'}, {reply:'你好'}]}],
     // the farmer: look, birds! (看); shoo them off his rice; then he's hungry (his lunch, from the granny)
     farmer: [
@@ -2229,6 +2317,8 @@ const ACROSS_THE_SEA = {
     // the harbour: no wind today (风); once you've practised a little, the wind comes, and he takes you across for your fare
     // he knows where the immortals are, once you've asked everyone else (the last on your list): across the sea
     boatman: [
+      {if:{trip:2}, do:[{say:'hi'}, {say:'letsGo'}, {scene:'crossSea'}, {set:{trip:3}}, {goTo:'farShore', at:[16, 19], facing:'up'},
+        {message:'Back across the sea! Take the rice and fish to the foot of the mountain: the pupils’ basket is waiting there, to haul you up.'}]},
       {if:{years:0}, do:[{say:'hi'}, {reply:'你好'}]},
       {if:{toldSea:0, asked:{below:8}}, do:[{say:'hi'}, {reply:'你好'}, {message:'The boatman has sailed all over the sea… But first, ask everyone else on your list ({asked} of 8 so far): tap the faces on your Tasks page to see who’s left.'}]},
       {if:{toldSea:0}, do:[{say:'whereImmortals', by:'player'}, {say:'acrossSea'}, {set:{toldSea:1}}, {befriend:true}, {sound:'chime'},
@@ -2293,10 +2383,21 @@ const ACROSS_THE_SEA = {
       {if:{season:1, spar1:1, herbs:0}, do:[{say:'wantLingzhi'}, {set:{herbs:1}},
         {message:'The master makes medicines. He needs lingzhi, a mushroom of long life: it grows on the rocks among the stone pillars, outside the cave. Find three!'}]},
       {if:{herbs:1, herbsFound:{atLeast:3}}, do:[{say:'rightThanks'}, {message:'The master grinds the lingzhi in a stone bowl, and mixes it with honey and water from the spring…'},
-        {say:'thisMedicine', teach:'药'}, {newWord:'药', note:'药 means medicine. The master’s medicine, made from the lingzhi you found.'}, {set:{herbs:2}},
+        {say:'thisMedicine', teach:'药'}, {newWord:'药', note:'药 means medicine. The master’s medicine, made from the lingzhi you found.'}, {hold:null, for:'herbs'}, {set:{herbs:2}},
         {coins:3, note:'The master gives you 3 🪙 for your help.'}]},
       {if:{herbs:1, season:1}, do:[{say:'wantLingzhi'}]},
-      {if:{season:3, newYear:0, grown:0}, do:[{say:'veryGood'}, {set:{newYear:1}}]},
+      // winter: the four sides again, then the four seasons, and together they make a year (年)
+      {if:{season:3, wrapped:1, class4:0, grown:0}, do:[{message:'The pupils sit down round the fire, for the master’s winter class.'}, {say:'classStart'},
+        {class:'The master’s class · The year', taught:['年'], end:'Next: a pupil wants to build something with you.', do:[
+          {message:'Did you listen? Turn to face the way the master says.'}, {recap:4, from:['北边', '南边', '东边', '西边'], lines:{'北边':'lookNorth', '南边':'lookSouth', '东边':'lookEast', '西边':'lookWest'}},
+          {say:'fourSeasons'}, {say:'thisYear', teach:'年'}, {newWord:'年', note:'年 means year: spring, summer, autumn and winter make one year. You’ve been here a whole year!'},
+          {recap:2, from:['春天', '夏天', '秋天', '冬天'], label:'Listen. Which season is it?'}]},
+        {set:{class4:1}}]},
+      // the last night of the year: lanterns, the New Year's dinner, red envelopes
+      {if:{season:3, bigMatch:1, newYear:0, grown:0}, do:[{message:'It’s the last night of the year. Red lanterns glow along the hall, and the pupils set out the New Year’s dinner…'},
+        {setUp:{nyTable:1}}, {say:'happyNewYear', teach:'新年快乐'}, {newWord:'新年快乐', note:'新年快乐 means Happy New Year! 新 new + 年 year + 快乐 happy.'}, {reply:'新年快乐'},
+        {coins:5, note:'The master gives each pupil a red envelope, with coins inside: 5 🪙 for you!'},
+        {eat:'米饭', note:'You eat {米饭|rice} and fish with everyone, round the fire. Your health is full!'}, {set:{newYear:1}}]},
       {if:{grown:0}, do:[{say:'veryGood'}]},
       // after the seven years: his lecture (as in the book: the years first, then the lecture, then the riddle)
       {if:{lecture:0}, do:[{say:'listen'}, {practise:4, label:'The master’s lecture', pic:'师父'}, {set:{lecture:1}}, {sound:'chime'}, {goOn:true}]},
@@ -2316,6 +2417,8 @@ const ACROSS_THE_SEA = {
     // a pupil plays I spy with you (the spy step), again whenever you like; the first time, a present
     spyPupil: [
       {if:{named:0}, do:[{say:'hi'}, {reply:'你好'}]},
+      {if:{season:3, class4:1, snowman:0, grown:0}, do:[{say:'makeSnowman', teach:'雪人'}, {setUp:{snowman:1}}, {newWord:'雪人', note:'雪人 means snowman: 雪 snow + 人 person.'},
+        {message:'You roll the snow into balls, and the pupils help you stack them up. A snowman, in a red scarf!'}]},
       {do:[{say:'play'}, {spy:'spyGame', rounds:3, things:[{word:'树', say:'spyTree'}, {word:'水', say:'spyWater'}, {word:'桃子', say:'spyPeach'}, {word:'石头', say:'spyStone'},
         {word:'木头', say:'spyWood'}, {word:'门', say:'spyDoor'}, {word:'房子', say:'spyHouse'}],
         listen:'She says it only in Chinese. Find it, and press A at it.', found:'That’s it: {word}!', wrong:'Not that one. Listen again!',
@@ -2343,6 +2446,20 @@ const ACROSS_THE_SEA = {
       {if:{sweep:1}, do:[{say:'veryGood'}, {set:{sweep:2}}, {say:'thisAxe', teach:'斧头'}, {newWord:'斧头', note:'斧头 means axe. Chop logs at the chopping blocks: face one, and press A.'}, FETCH_WOOD]},
       {if:{sweep:2, axeFetch:0}, do:[{say:'thisAxe', teach:'斧头'}, FETCH_WOOD]},
       {if:{axeFetch:1}, do:[FETCH_WOOD]},
+      // winter: it's cold (冷): a fire, with the wood you chopped in autumn
+      {if:{season:3, fire:0, grown:0}, do:[{say:'coldToday', teach:'冷'}, {newWord:'冷', note:'冷 means cold. It’s summer’s sentence, 今天很热！, with the opposite word.'}, {set:{fire:1}},
+        {message:'The pupils are shivering. Take wood from the woodpile, and light a fire in the brazier, in the middle of the courtyard.'}]},
+      {if:{season:3, fire:1}, do:[{say:'coldToday'}]},
+      {if:{season:3, fire:2, wrapped:0, grown:0}, do:[{say:'treeCold'}]},
+      // the stores are low: down the mountain and across the sea, to the fishing village, for rice (米) and fish
+      {if:{season:3, snowman:1, trip:0, grown:0}, do:[{say:'noPeaches'}, {say:'wantRiceFish'}, {coins:6, note:'The senior pupil gives you 6 🪙, to buy them.'}, {set:{trip:1}},
+        {message:'The stores are nearly empty. Go down the mountain and across the sea, to the fishing village where you first landed, and buy rice and fish there.'}]},
+      {if:{trip:{atLeast:1, below:4}}, do:[{say:'wantRiceFish'}]},
+      {if:{trip:4}, do:[{say:'rightThanks'}, {hold:null, for:'tripRice'}, {hold:null, for:'tripFish'}, {set:{trip:5}}, {sound:'chime'},
+        {message:'The senior pupil puts the rice and fish away in the store. There’s enough for the whole winter, and for New Year!'}, {goOn:true}]},
+      // the year's last test: a match with the senior pupil himself, in the snow, the master watching
+      {if:{season:3, trip:5, bigMatch:0, grown:0}, do:[{say:'spar'}, {battle:'bigMatch', retry:true, win:[{set:{bigMatch:1}}, {rest:true},
+        {coins:5, note:'The senior pupil bows to you, and the master nods: you’ve learned well this year. +5 🪙'}]}]},
       // writing practice, as in the book: your name with a brush (写), and then over your door
       {if:{season:2, axeFetch:2, wrote:0}, do:[{say:'writeName', teach:'写'}, {newWord:'写', note:'写 means to write. The pupils practise writing with a brush, on paper with red lines.'},
         {writeName:'孙悟空', py:'sūn wù kōng'}, {set:{wrote:1}}, {sound:'chime'},
@@ -2364,6 +2481,7 @@ const ACROSS_THE_SEA = {
     // a pupil to train with, any time this year: a word game, with a present the first time you win (as the little monkeys
     // in training at home)
     pupil4: [
+      {if:{season:3, fire:2, grown:0}, do:[{say:'snowballFight'}, {snowball:'snowCave', prize:2, win:[{say:'youWon'}], lose:[{say:'iWon'}]}]},
       {if:{named:1, grown:0, trainGame:{below:2}}, do:[{say:'letsTrain'}, {wordGame:{ask:'Train with this pupil? A quick word game: win, and he gives you 2 🪙.', yes:'Train', word:'人', notYet:'Learn a few more words first, then come back to train.',
         win:[{say:'veryGood'}, {set:{trainGame:2}}, {coins:2, note:'The pupil bows, and gives you 2 🪙.'}], lost:[{set:{trainGame:1}}]}}]},
       {if:{named:1, grown:0}, do:[{say:'letsTrain'}, {wordGame:{ask:'Train with this pupil? A quick word game.', yes:'Train', word:'人', notYet:'Learn a few more words first, then come back to train.'}}]},
@@ -2480,11 +2598,14 @@ const ACROSS_THE_SEA = {
     toSummer: {art:'seasonTurn', from:'spring', to:'summer', captions:[{at:0, zh:'孙悟空 睡觉 了 。', en:'Sun Wukong goes to sleep.'}, {at:4.6, zh:'夏天 来 了 ！', en:'Summer is here!'}]},
     toAutumn: {art:'seasonTurn', from:'summer', to:'autumn', captions:[{at:0, zh:'孙悟空 睡觉 了 。', en:'Sun Wukong goes to sleep.'}, {at:4.6, zh:'秋天 来 了 ！', en:'Autumn is here!'}]},
     toWinter: {art:'seasonTurn', from:'autumn', to:'winter', captions:[{at:0, zh:'孙悟空 睡觉 了 。', en:'Sun Wukong goes to sleep.'}, {at:4.6, zh:'冬天 来 了 ！', en:'Winter is here!'}]},
-    // seven years in the cave, chapter 1: the seasons going round, a peach tree growing up, and you sweeping the leaves
+    // winter's trip: hauled back up the mountain in the pupils' supply basket, with the rice and the fish (js/year.js)
+    basketUp: {captions:[{at:0, zh:'我 有 米 ， 也 有 鱼 ！', en:'I’ve got rice, and fish too!'}, {at:4, zh:'上 山 了 ！', en:'Up the mountain we go!'}]},
+    // seven years in the cave, chapter 1: the seasons going round, faster and faster, your peach tree growing up, a peach
+    // each summer (seven of them), and you sweeping the leaves
     caveYears: {captions: [
       {at:0, zh:'孙悟空 扫 叶子 。', en:'Sun Wukong sweeps up the leaves.'},
       {at:4, zh:'孙悟空 听 师父 说 。', en:'Sun Wukong listens to the master.'},
-      {at:8, zh:'七 年 以后 ……', en:'Seven years later…'}
+      {at:10.6, zh:'七 年 以后 ……', en:'Seven years later…'}
     ]},
     // the cloud somersault (飞), and the flight home at the end of the chapter (home: over the sea, Flower Fruit Mountain ahead)
     somersault: {art:'cloudFlight', watch:'Watch the cloud somersault', when:{fly:1}, captions: [

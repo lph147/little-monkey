@@ -269,6 +269,14 @@ Object.assign(STEPS, {
   // You crouch down at what you face, your paws on the ground, for a moment (kneel: what you're doing), such as planting
   // your little tree before it comes up out of the ground (the plant step).
   async kneel(s){ startAct('kneel', {what:s.kneel}); await sleep(KNEEL_MS); acting = null; },
+  // Lighting a fire (light: what the story becomes, such as {fire:2}): you kneel at what you face, such as the brazier,
+  // the wood you're carrying goes in, and the flames rise (drawFires; the brazier's look changes with the story).
+  async light(s){
+    startAct('kneel', {what:'火'}); SFX.scuffle();
+    await sleep(KNEEL_MS); acting = null;
+    delete here().carrying; Object.assign(here(), s.light); save(); placeCharacters(); refreshMap();
+    fireLit = performance.now(); SFX.swish(.2); await sleep(900);
+  },
   // Writing practice (writeName: what you write, such as 孙悟空; py: its pinyin, a syllable a character; label): a
   // character at a time, with a brush, on practice paper (writeCard).
   async writeName(s){ await writeCard(s.writeName, {py:s.py || '', label:s.label}); },
@@ -391,6 +399,111 @@ function courtyardBackdrop(snow){
 }
 Object.assign(BACKDROPS, {courtyard:() => courtyardBackdrop(false), courtyardSnow:() => courtyardBackdrop(true)});
 if (document.documentElement) for (const name of ['courtyard', 'courtyardSnow']) document.documentElement.style.setProperty(`--backdrop-${name}`, `url(${BACKDROPS[name]().toDataURL()})`);
+
+/* ================= WINTER ================= */
+// The fire (winter): a bronze brazier on three legs in the middle of the courtyard; you bring wood from the pile you filled
+// in autumn and light it (the light step: kneeling at it, then the flames rising), and the pupils gather round it. Its
+// flames, a place's fires (each {at:[x, y], if}), are drawn each frame over it, flickering, with sparks and a warm glow.
+function brazierArt(t, X, Y, logs){
+  const bronze = ['#3E2A1A', '#6A4A2A', '#9A6A38', '#C8924A'];
+  for (const [lx, ly] of [[3, 11], [12, 11], [7, 12]]){ R(t, X + lx, Y + ly, 2, 4, bronze[1]); R(t, X + lx, Y + ly, 1, 4, bronze[2]); }   // its three legs
+  oval(t, X + 8, Y + 9, 7, 3, bronze[1]); oval(t, X + 8, Y + 8, 7, 2, bronze[2]);   // the bowl
+  R(t, X + 2, Y + 7, 12, 1, bronze[3]); R(t, X + 3, Y + 6, 10, 1, bronze[0]);       // its rim, and the dark inside
+  if (logs){ R(t, X + 4, Y + 4, 8, 2, WOODS[2]); R(t, X + 6, Y + 3, 5, 2, WOODS[3]); R(t, X + 4, Y + 4, 1, 2, WOODS[4]); R(t, X + 11, Y + 4, 1, 2, '#E8C890'); }   // logs in it
+}
+OBJECT_ART.brazier = (g, o) => inked(g, o, t => brazierArt(t, o.x*T, o.y*T, false));
+OBJECT_ART.brazierLit = (g, o) => inked(g, o, t => brazierArt(t, o.x*T, o.y*T, true));
+Object.assign(LOOKS, {brazier:LOOKS.paving, brazierLit:LOOKS.paving});
+OBJECT_KIND.brazierLit = 'own';   // (no snow on a brazier that's burning)
+let fireLit = -1e9;   // when the fire was lit (its flames rising, the first moment)
+function drawFires(cx, cy, now){
+  for (const f of (PLACES[PLACE] || {}).fires || []){
+    if (f.if && !matches(f.if)) continue;
+    const X = f.at[0] * T + 8 - cx, Y = f.at[1] * T + 6 - cy, rise = clamp((now - fireLit) / 900, .15, 1);
+    if (X < -24 || Y < -40 || X > VW*T + 24 || Y > VH*T + 24) continue;
+    b.globalAlpha = .16 + .05 * Math.sin(now / 130); disc(b, X, Y - 2, 15, '#FFB050'); b.globalAlpha = 1;   // its warm glow
+    for (const [k, col, w] of [[1, '#C8381E', 6], [.78, '#F07A22', 5], [.55, '#FFC64A', 3], [.32, '#FFF2B8', 2]]){   // the flames, from the outside in
+      const h = Math.round((9 + 3 * Math.sin(now / 90 + k * 7)) * k * rise);
+      for (let i = 0; i < h; i++){ const ww = Math.max(1, Math.round(w * (1 - i / (h + 1)) * (1 + .15 * Math.sin(now / 70 + i)))); R(b, X - Math.floor(ww / 2) + Math.round(Math.sin(now / 110 + i * .7) * (i / 6)), Y - i, ww, 1, col); }
+    }
+    for (let i = 0; i < 3; i++){ const p = ((now / 900 + i / 3) % 1), sx = X + Math.round(Math.sin(now / 300 + i * 2) * 4), sy = Y - 6 - Math.round(p * 18); if (p < .85) R(b, sx, sy, 1, 1, p < .5 ? '#FFE27A' : '#F07A22'); }   // sparks
+  }
+}
+// Red lanterns hung for New Year (a place's lanterns: each {at:[x, y], if}), under the eaves, swaying a little, glowing.
+function drawLanterns(cx, cy, now){
+  for (const l of (PLACES[PLACE] || {}).lanterns || []){
+    if (l.if && !matches(l.if)) continue;
+    const sway = Math.round(Math.sin(now / 700 + l.at[0]) * 1), X = l.at[0] * T + 8 - cx + sway, Y = l.at[1] * T + 1 - cy;
+    if (X < -16 || Y < -16 || X > VW*T + 16 || Y > VH*T + 16) continue;
+    R(b, X, Y - 3, 1, 3, '#3A2A1E');                                                           // its cord
+    b.globalAlpha = .18; disc(b, X, Y + 5, 9, '#FF7A4A'); b.globalAlpha = 1;                  // its glow
+    R(b, X - 3, Y, 7, 1, '#C9A04A'); oval(b, X, Y + 5, 5, 4, '#C8241E'); oval(b, X - 1, Y + 4, 2, 2, '#E85A3A');   // the lantern, its gold caps
+    R(b, X - 3, Y + 9, 7, 1, '#C9A04A'); R(b, X, Y + 10, 1, 3, '#E8C25A');                     // and its tassel
+  }
+}
+// A snowman, built in the courtyard as you watch (setUp): its big ball, then the next, its head, then its face, stick
+// arms and a red scarf (stage).
+function snowmanArt(t, X, Y, stage){
+  if (stage >= 1){ oval(t, X + 8, Y + 12, 6, 4, '#E4ECF2'); oval(t, X + 7, Y + 11, 4, 2, '#FFFFFF'); }
+  if (stage >= 2){ oval(t, X + 8, Y + 6, 4, 3, '#E4ECF2'); oval(t, X + 7, Y + 5, 3, 2, '#FFFFFF'); }
+  if (stage >= 3){ oval(t, X + 8, Y + 1, 3, 3, '#EEF3F7'); oval(t, X + 7, Y, 2, 2, '#FFFFFF'); }
+  if (stage >= 4){
+    R(t, X + 6, Y, 1, 1, '#1E1A16'); R(t, X + 9, Y, 1, 1, '#1E1A16'); R(t, X + 8, Y + 1, 2, 1, '#E8862A');   // coal eyes, a carrot nose
+    R(t, X + 5, Y + 3, 7, 1, '#C8241E'); R(t, X + 10, Y + 4, 1, 2, '#C8241E');                           // a red scarf
+    for (const [x0, y0, x1, y1] of [[4, 6, 0, 3], [12, 6, 15, 3]]) for (let i = 0; i <= 4; i++) R(t, X + Math.round(x0 + (x1 - x0) * i / 4), Y + Math.round(y0 + (y1 - y0) * i / 4), 1, 1, '#6A4220');   // stick arms
+    for (const dy of [6, 8, 11]) R(t, X + 8, Y + dy, 1, 1, '#2A2420');   // buttons
+  }
+}
+OBJECT_ART.snowman = (g, o) => inked(g, o, t => snowmanArt(t, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.snowman));
+OBJECT_STAGES.snowman = 4;
+OBJECT_KIND.snowman = 'own';
+LOOKS.snowman = LOOKS.mossStone;
+// The New Year's Eve dinner (setUp): a low red table, then bowls of rice (米饭), then the fish you brought, a fish on the
+// New Year table for plenty (鱼 yú sounds like 余, more than enough).
+function nyTableArt(t, X, Y, stage){
+  if (stage >= 1){ R(t, X + 1, Y + 6, 14, 5, '#9A2A22'); R(t, X + 1, Y + 6, 14, 1, '#C8483A'); R(t, X + 2, Y + 11, 2, 4, '#6A1A16'); R(t, X + 12, Y + 11, 2, 4, '#6A1A16'); }
+  if (stage >= 2) for (const bx of [3, 11]){ oval(t, X + bx, Y + 5, 2, 1, '#F4F4EE'); R(t, X + bx - 2, Y + 6, 5, 2, '#E8EEF2'); R(t, X + bx - 1, Y + 8, 3, 1, '#9AB8D0'); }   // two bowls of rice
+  if (stage >= 3){ oval(t, X + 8, Y + 7, 4, 2, '#F2F2EA'); oval(t, X + 8, Y + 6, 3, 1, '#C8924A'); R(t, X + 4, Y + 6, 2, 1, '#A86A2A'); R(t, X + 11, Y + 5, 1, 3, '#A86A2A'); }   // the fish, on its plate
+}
+OBJECT_ART.nyTable = (g, o) => inked(g, o, t => nyTableArt(t, o.x*T, o.y*T, o.stage ?? OBJECT_STAGES.nyTable));
+OBJECT_STAGES.nyTable = 3;
+OBJECT_KIND.nyTable = 'own';
+LOOKS.nyTable = LOOKS.paving;
+// The supply basket at the foot of the mountain (the trip, winter): a big woven basket, its rope going up out of sight to
+// the pupils at the top, who haul you up in it (the basketUp scene).
+function supplyBasketArt(t, X, Y){
+  R(t, X + 8, Y - 40, 1, 44, '#C8A86A');   // the rope, up out of sight
+  for (let y = 0; y < 9; y++) R(t, X + 2 + (y > 6 ? 1 : 0), Y + 5 + y, 12 - (y > 6 ? 2 : 0), 1, y % 2 ? '#A8743E' : '#C89A5A');   // woven
+  for (let x = 3; x < 14; x += 3) R(t, X + x, Y + 5, 1, 9, '#8A5A30');
+  R(t, X + 1, Y + 4, 14, 2, '#6A4220'); R(t, X + 4, Y + 1, 1, 4, '#6A4220'); R(t, X + 11, Y + 1, 1, 4, '#6A4220'); R(t, X + 4, Y + 1, 8, 1, '#6A4220');   // its rim and handles
+}
+OBJECT_ART.supplyBasket = (g, o) => inked(g, o, t => supplyBasketArt(t, o.x*T, o.y*T));
+LOOKS.supplyBasket = (g, X, Y, x, y) => LOOKS.grass(g, X, Y, x, y);
+
+// Hauled up the mountain in the supply basket (the basketUp scene, winter's trip): the cliff sliding down past you, clouds
+// drifting by, the rope going up, you in the basket with the rice and the fish; at the top, the pupils hauling.
+function drawBasketUp(t, now){
+  const W = VW*T, H = VH*T, rise = t * 34;
+  for (let y = 0; y < H; y += 2) R(b, 0, y, W, 2, mix('#B9C7D6', '#E2E8EE', y / H));
+  for (const side of [0, 1]) for (let y = -T; y < H + T; y += T){   // the cliff on either side, sliding down
+    const yy = Math.round(((y + rise) % (H + 2 * T)) - T);
+    for (let x = 0; x < 3; x++) karstFace(b, side ? W - (x + 1) * T : x * T, yy, x, Math.floor((y + rise) / T));
+    R(b, side ? W - 3 * T : 3 * T - 2, yy, 2, T, '#7C878E');
+  }
+  for (let i = 0; i < 5; i++){ const cy = ((rnd(i, 7) * H + rise * (1.4 + i * .1)) % (H + 60)) - 30, cx = 40 + rnd(i, 8) * (W - 80); for (let k = 0; k < 4; k++) oval(b, Math.round(cx + k * 9), Math.round(cy + (k % 2) * 3), 9 - k, 4, '#F4F7FA'); }   // clouds drifting past
+  const sway = Math.round(Math.sin(now / 500) * 2), bx = W / 2 - 12 + sway, by = H / 2 - 4;
+  R(b, bx + 12, 0, 1, by, '#C8A86A');   // the rope
+  b.drawImage(monkeySprite('player', 'down', false), bx + 4, by - 10, 16, 16);
+  sackPic(bx + 16, by + 2);   // the rice
+  for (let y = 0; y < 12; y++) R(b, bx + (y > 9 ? 1 : 0), by + 2 + y, 24 - (y > 9 ? 2 : 0), 1, y % 2 ? '#A8743E' : '#C89A5A');   // the basket
+  R(b, bx - 1, by + 1, 26, 2, '#6A4220');
+  if (t > 6){   // the top: the pupils, hauling
+    const top = Math.round(Math.min(0, (t - 8) * 30)) - 4;
+    R(b, 0, top - 10, W, 24, '#A3ADB2'); R(b, 0, top + 13, W, 2, '#7C878E');
+    for (const [i, id] of [[0, 'senior'], [1, 'darePupil'], [2, 'pupil4']]) b.drawImage(monkeySprite(id, 'down', false, Math.floor(now / 250 + i) % 2), W / 2 - 34 + i * 22, top - 8, 16, 16);
+  }
+}
+Object.assign(SCENE_ART, {basketUp: drawBasketUp});   // (its sounds: SCENE_SOUNDS, js/main.js)
 
 /* ================= LOOKS ================= */
 // Lingzhi (灵芝), the mushroom of long life, growing out of the rock among the stone pillars: glossy red-brown caps shaped

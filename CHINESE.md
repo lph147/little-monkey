@@ -637,8 +637,8 @@ check that each is true and simply put.
 | 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman), 师姐 (A pupil), 大师兄 (The senior pupil), 师兄 (A pupil), 师弟 (A pupil), 猴子 (Monkey) |  |
 | 我长大了！ | wǒ zhǎngdà le! | I’ve grown up! | 老板 (Stallholder), 路人 (Passer-by) |  |
 | 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 猴子 (Monkey), 小猴子 (Little monkey), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
-| 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder) |  |
-| 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder) |  |
+| 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman) |  |
+| 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child), 师姐 (A pupil), 小猴子 (Little monkey) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 货郎 (Peddler) |  |
 | 包子！包子！ | bāozi! bāozi! | Steamed buns! Steamed buns! |  |  |
@@ -681,7 +681,7 @@ check that each is true and simply put.
 | 是！ | shì! | Yes! | 农民 (Farmer) |  |
 | 你要换钱吗？ | nǐ yào huàn qián ma? | Do you want to change money? | 换钱的 (Money changer) |  |
 | 这是你的钱。 | zhè shì nǐ de qián. | Here’s your money. | 换钱的 (Money changer) |  |
-| 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Stallholder) |  |
+| 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman) |  |
 | 喝茶吧！ | hē chá ba! | Have some tea! | 茶馆老板 (Teahouse keeper) |  |
 | 我说，你听。 | wǒ shuō, nǐ tīng. | I talk, you listen. | 说书人 (Storyteller) |  |
 | 神仙在哪里？ | shénxiān zài nǎlǐ? | Where are the immortals? | 小猴子 (You) |  |
@@ -699,7 +699,7 @@ check that each is true and simply put.
 | 我要三块木头。 | wǒ yào sān kuài mùtou. | I need three pieces of wood. |  |  |
 | 我要水。 | wǒ yào shuǐ. | I need some water. |  |  |
 | 我要四块石头。 | wǒ yào sì kuài shítou. | I need four stones. |  |  |
-| 对！谢谢！ | duì! xièxie! | That’s right! Thank you! | 师父 (The master) |  |
+| 对！谢谢！ | duì! xièxie! | That’s right! Thank you! | 师父 (The master), 大师兄 (The senior pupil) |  |
 | 不对。 | bù duì. | That’s not right. |  |  |
 | 你去山上吧！ | nǐ qù shān shàng ba! | Go on up the mountain! | 樵夫 (Woodcutter) |  |
 | 师父在等你。 | shīfu zài děng nǐ. | The master is waiting for you. | 仙童 (The immortal’s boy) |  |
@@ -737,13 +737,13 @@ check that each is true and simply put.
 | 我们练功夫吧！ | wǒmen liàn gōngfu ba! | Let’s practise kung fu! | 师弟 (A pupil) |  |
 | 春天来了！ | chūntiān lái le! | Spring is here! |  |  |
 | 今天很热！ | jīntiān hěn rè! | It’s very hot today! | 大师兄 (The senior pupil), 师弟 (A pupil), 师妹 (A pupil) |  |
-| 今天很冷！ | jīntiān hěn lěng! | It’s very cold today! |  |  |
+| 今天很冷！ | jīntiān hěn lěng! | It’s very cold today! | 大师兄 (The senior pupil) |  |
 | 房子在北边。 | fángzi zài běibian. | The hall is to the north. |  |  |
 | 门在南边。 | mén zài nánbian. | The way out is to the south. |  |  |
 | 看北边！ | kàn běibian! | Look north! |  |  |
 | 看南边！ | kàn nánbian! | Look south! |  |  |
 | 北边很冷，南边很热。 | běibian hěn lěng, nánbian hěn rè. | It’s cold in the north, and hot in the south. |  |  |
-| 我们比武吧！ | wǒmen bǐwǔ ba! | Let’s have a match! | 师兄 (A pupil) |  |
+| 我们比武吧！ | wǒmen bǐwǔ ba! | Let’s have a match! | 大师兄 (The senior pupil), 师兄 (A pupil) |  |
 | 我要灵芝。 | wǒ yào língzhī. | I need lingzhi. | 师父 (The master) |  |
 | 写你的名字。 | xiě nǐ de míngzi. | Write your name. | 大师兄 (The senior pupil) |  |
 | 瀑布在东边。 | pùbù zài dōngbian. | The waterfall is to the east. |  |  |
@@ -752,6 +752,16 @@ check that each is true and simply put.
 | 看西边！ | kàn xībian! | Look west! |  |  |
 | 你的家在东边。 | nǐ de jiā zài dōngbian. | Your home is in the east. |  |  |
 | 下雪了！ | xià xuě le! | It’s snowing! |  |  |
+| 你的树很冷。 | nǐ de shù hěn lěng. | Your tree is cold. | 大师兄 (The senior pupil) |  |
+| 春天，夏天，秋天，冬天。 | chūntiān, xiàtiān, qiūtiān, dōngtiān. | Spring, summer, autumn, winter. |  |  |
+| 这是一年。 | zhè shì yī nián. | This is one year. |  |  |
+| 我们做雪人吧！ | wǒmen zuò xuěrén ba! | Let’s make a snowman! | 师姐 (A pupil) |  |
+| 冬天没有桃子。 | dōngtiān méiyǒu táozi. | In winter there are no peaches. | 大师兄 (The senior pupil) |  |
+| 我们要米和鱼。 | wǒmen yào mǐ hé yú. | We need rice and fish. | 大师兄 (The senior pupil) |  |
+| 我们打雪仗吧！ | wǒmen dǎ xuězhàng ba! | Let’s have a snowball fight! | 小孩 (Child), 师弟 (A pupil) |  |
+| 你赢了！ | nǐ yíng le! | You won! |  |  |
+| 我赢了！ | wǒ yíng le! | I won! |  |  |
+| 新年快乐！ | xīnnián kuàilè! | Happy New Year! | 师父 (The master) |  |
 | 这是药。 | zhè shì yào. | This is medicine. | 师父 (The master) |  |
 | 你变松树吧！ | nǐ biàn sōngshù ba! | Change into a pine tree! | 师兄 (A pupil) |  |
 | 好！好！ | hǎo! hǎo! | Bravo! Bravo! | 师兄 (A pupil) |  |
@@ -794,6 +804,8 @@ check that each is true and simply put.
 | 我要买苹果 | wǒ yào mǎi píngguǒ | I want to buy an apple. | 老板 (Stallholder) |  |
 | 我要买桃子 | wǒ yào mǎi táozi | I want to buy a peach. | 老板 (Stallholder) |  |
 | 我要买包子 | wǒ yào mǎi bāozi | I want to buy a steamed bun. | 老板 (Stallholder) |  |
+| 我要买米 | wǒ yào mǎi mǐ | I want to buy rice. | 老奶奶 (Granny) |  |
+| 我要买鱼 | wǒ yào mǎi yú | I want to buy fish. | 渔夫 (Fisherman) |  |
 | 我要买鞋 | wǒ yào mǎi xié | I want to buy shoes. | 老板 (Stallholder) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
 | 这是我的衣服 | zhè shì wǒ de yīfu | These are my clothes. | You, in the wardrobe |  |
@@ -858,16 +870,12 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- | --- |
 | 鹅在水里。 | é zài shuǐ lǐ. | The goose is in the water. | 鹅 |  |
 | 鸡吃草。 | jī chī cǎo. | Chickens eat grass. | 鸡 |  |
-| 鸡吃米。 | jī chī mǐ. | Chickens eat rice. | 米 |  |
 | 狗是我的朋友。 | gǒu shì wǒ de péngyou. | The dog is my friend. | 狗 |  |
 | 猫很小。 | māo hěn xiǎo. | The cat is very small. | 猫 |  |
 | 鹤在水里。 | hè zài shuǐ lǐ. | The crane is in the water. | 鹤 |  |
 | 山上有云。 | shān shàng yǒu yún. | There are clouds on the mountain. | 云 |  |
 | 天上有鸟。 | tiān shàng yǒu niǎo. | There are birds in the sky. | 天 |  |
 | 这是猴子的头。 | zhè shì hóuzi de tóu. | This is the monkey’s head. | 头 |  |
-| 夏天有很多桃子。 | xiàtiān yǒu hěn duō táozi. | In summer there are lots of peaches. | 夏天 |  |
-| 秋天的叶子是红色的。 | qiūtiān de yèzi shì hóngsè de. | In autumn the leaves are red. | 秋天 |  |
-| 冬天没有桃子。 | dōngtiān méiyǒu táozi. | In winter there are no peaches. | 冬天 |  |
 | 我有十一块石头。 | wǒ yǒu shíyī kuài shítou. | I have eleven stones. | 十一 |  |
 | 树上有十二个桃子。 | shù shàng yǒu shí'èr gè táozi. | There are twelve peaches on the tree. | 十二 |  |
 | 这里有十三个孩子。 | zhèlǐ yǒu shísān gè háizi. | There are thirteen children here. | 十三 |  |
@@ -878,8 +886,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 我要十八桶水。 | wǒ yào shíbā tǒng shuǐ. | I need eighteen buckets of water. | 十八 |  |
 | 这里有十九只猴子。 | zhèlǐ yǒu shíjiǔ zhī hóuzi. | There are nineteen monkeys here. | 十九 |  |
 | 我们有二十个桃子。 | wǒmen yǒu èrshí gè táozi. | We have twenty peaches. | 二十 |  |
-| 我在这里一年了。 | wǒ zài zhèlǐ yī nián le. | I’ve been here a year. | 年 |  |
-| 我们有一个雪人。 | wǒmen yǒu yī gè xuěrén. | We have a snowman. | 雪人 |  |
 | 晚上有月亮。 | wǎnshang yǒu yuèliang. | At night, there’s the moon. | 晚上 |  |
 | 天上有月亮。 | tiān shàng yǒu yuèliang. | There’s a moon in the sky. | 月亮 |  |
 | 天上有很多星星。 | tiān shàng yǒu hěn duō xīngxing. | There are lots of stars in the sky. | 星星 |  |
@@ -959,6 +965,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 秋天来了！ | qiūtiān lái le! | Autumn is here! |  |
 | 孙悟空睡觉了。 | Sūn Wùkōng shuìjiào le. | Sun Wukong goes to sleep. |  |
 | 冬天来了！ | dōngtiān lái le! | Winter is here! |  |
+| 我有米，也有鱼！ | wǒ yǒu mǐ, yě yǒu yú! | I’ve got rice, and fish too! |  |
+| 上山了！ | shàng shān le! | Up the mountain we go! |  |
 | 孙悟空扫叶子。 | Sūn Wùkōng sǎo yèzi. | Sun Wukong sweeps up the leaves. |  |
 | 孙悟空听师父说。 | Sūn Wùkōng tīng shīfu shuō. | Sun Wukong listens to the master. |  |
 | 七年以后…… | qī nián yǐhòu… | Seven years later… |  |
@@ -1003,6 +1011,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 路人 | lùrén | Traveller |  |
 | 货郎 | huòláng | Peddler |  |
 | 渔夫 | yúfū | Fisherman |  |
+| 小孩 | xiǎohái | Child |  |
+| 小孩 | xiǎohái | Child |  |
 | 老奶奶 | lǎo nǎinai | Granny |  |
 | 老板 | lǎobǎn | Stallholder |  |
 | 工人 | gōngrén | Docker |  |
@@ -1162,6 +1172,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 哭 | kū | to cry |  |
 | 老 | lǎo | old |  |
 | 妖怪 | yāoguài | demon, monster |  |
+| 新年快乐 | xīnnián kuàilè | Happy New Year! |  |
 | 救命 | jiùmìng | help! |  |
 | 笼子 | lóngzi | cage |  |
 | 钥匙 | yàoshi | key |  |
@@ -1196,6 +1207,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 东边 | dōngbian | 东 dōng (east) + 边 bian (side) = 东边 (the east) |  |
 | 西边 | xībian | 西 xī (west) + 边 bian (side) = 西边 (the west) |  |
 | 雪人 | xuěrén | 雪 xuě (snow) + 人 rén (person) = 雪人 (snowman) |  |
+| 新年快乐 | xīnnián kuàilè | 新 xīn (new) + 年 nián (year) + 快乐 kuàilè (happy) = 新年快乐 (Happy New Year!) |  |
 | 米饭 | mǐfàn | 米 mǐ (rice) + 饭 fàn (meal) = 米饭 (rice (cooked)) |  |
 | 热 | rè | 灬 huǒ (fire): is at its bottom: four little flames. It’s hot! |  |
 | 冷 | lěng | 冫 bīng (ice): is on its left: two drops of ice. It’s cold! |  |
@@ -1251,6 +1263,8 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 比武 | bǐwǔ | a kung fu match |  |
 | 灵芝 | língzhī | lingzhi, a mushroom of long life |  |
 | 下 | xià | to fall (of rain or snow: 下雪, it snows) |  |
+| 打雪仗 | dǎ xuězhàng | to have a snowball fight |  |
+| 赢 | yíng | to win |  |
 | 啊 | a | (softens a question: 谁啊？ who is it?) |  |
 | 他们 | tāmen | they, them |  |
 | 话 | huà | speech, words (说话, to talk) |  |

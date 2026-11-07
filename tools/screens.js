@@ -433,6 +433,21 @@ SAVES.c1night = {...SAVES.c1grown, areas: {...SAVES.c1grown.areas, 2: {...SAVES.
 SAVES.c1room = {...SAVES.c1night, w: {...SAVES.c1night.w, ...knows(1, ['月亮', '星星'])}, pos: {place: 'masterRoom', x: 4, y: 4, dir: 'up'}};
 SAVES.c1fly = {...SAVES.c1room, areas: {...SAVES.c1room.areas, 2: {...SAVES.c1room.areas[2], riddle: 3, tests: 1, fly: 1}}, w: {...SAVES.c1room.w, ...knows(1, ['变', '飞'])}, pos: {place: 'cave', x: 12, y: 12, dir: 'down'}};
 SAVES.c1home = {...SAVES.c1fly, areas: {...SAVES.c1fly.areas, 2: {...SAVES.c1fly.areas[2], pine: 1, sentHome: 1}}, w: {...SAVES.c1fly.w, ...knows(1, ['松树', '回家'])}, pos: {place: 'cave', x: 14, y: 6, dir: 'up'}};
+// (7 November 2026: the master's year, a season at a time, each with its jobs and the master's class; then winter's trip
+// down to the fishing village for rice and fish, with snowball fights on the way)
+const C1_YEAR_WORDS = ['十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '春天', '功夫', '夏天', '热', '北边', '南边', '叶子', '药', '秋天', '写', '东边', '西边', '扫', '斧头', '雪', '冬天', '桶'];
+const yearSave = (from, prog, words, pos) => ({...from, areas: {...from.areas, 2: {...from.areas[2], ...prog}}, w: {...from.w, ...knows(1, words)}, turn: 760, pos});
+SAVES.c1spring = yearSave(SAVES.c1named, {season: 0, spyGame: 1, class1: 1}, C1_YEAR_WORDS.slice(0, 12), {place: 'cave', x: 6, y: 11, dir: 'left'});   // facing your little peach tree
+SAVES.c1summer = yearSave(SAVES.c1spring, {season: 1, drill: 1, myTree: 2, trainGame: 2, waterFetch: 2}, C1_YEAR_WORDS.slice(12, 15), {place: 'cave', x: 14, y: 13, dir: 'up'});
+SAVES.c1spar = yearSave(SAVES.c1summer, {class2: 1}, ['北边', '南边'], {place: 'cave', x: 11, y: 13, dir: 'right'});   // facing the pupil who wants a match
+SAVES.c1autumn = yearSave(SAVES.c1spar, {season: 2, spar1: 1, herbs: 2}, ['叶子', '药', '秋天'], {place: 'cave', x: 4, y: 10, dir: 'up'});   // among the peach trees, their leaves falling
+SAVES.c1winter = yearSave(SAVES.c1autumn, {season: 3, sweep: 2, axeFetch: 2, wrote: 1, class3: 1}, C1_YEAR_WORDS, {place: 'cave', x: 22, y: 10, dir: 'down'});   // on the snow east of the courtyard
+SAVES.c1fire = yearSave(SAVES.c1winter, {fire: 2, wrapped: 1}, ['冷', '火'], {place: 'cave', x: 14, y: 13, dir: 'up'});   // round the fire, facing it
+SAVES.c1snowman = yearSave(SAVES.c1fire, {class4: 1, snowman: 1}, ['年', '雪人'], {place: 'cave', x: 21, y: 14, dir: 'right'});   // beside the snowman
+SAVES.c1trip = yearSave(SAVES.c1snowman, {trip: 1, holding: {}}, ['米', '米饭', '鱼', '钱'], {place: 'town', x: 28, y: 6, dir: 'right'});   // down in the snowy town, facing a child
+SAVES.c1tripShore = yearSave(SAVES.c1trip, {trip: 2}, [], {place: 'shore', x: 18, y: 12, dir: 'down'});   // the boatman, waiting by the pier
+SAVES.c1basket = yearSave(SAVES.c1trip, {trip: 3}, [], {place: 'mountainFoot', x: 18, y: 3, dir: 'up'});   // under the basket, at the foot of the mountain
+SAVES.c1newYear = yearSave(SAVES.c1snowman, {trip: 5, bigMatch: 1, nyTable: 1}, [], {place: 'cave', x: 14, y: 8, dir: 'up'});   // New Year's Eve, the master waiting
 // (4 November 2026: the human world bigger, with paths between its places, and more to do in each)
 SAVES.a2pier = {...SAVES.a2dressed, areas: {...SAVES.a2dressed.areas, 2: {...SAVES.a2dressed.areas[2], oldFisher: 1, pierFish: 'asked'}}, pos: {place: 'shore', x: 18, y: 20, dir: 'down'}};
 SAVES.a2shorePath = {...SAVES.a2dressed, pos: {place: 'shorePath', x: 12, y: 16, dir: 'up'}};
@@ -1422,6 +1437,40 @@ const SCREENS = [
     play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;){ await STEPS.hit({hit: 'wood', with: '斧头', times: 2}); await pickUpAct('木头'); } })(); await wait(130); }},
   {id: 'c1-peach', title: 'Picking a peach', save: 'c1peach', why: 'A at a fruit tree: your monkey goes up on tiptoe, an arm up into its branches, the tree shakes, and a peach drops into its paw; then it holds it up, and it’s in your bag. Here, picking again and again, the peach dropping.', run: async () => {
     play(); await wait(300); closeMessage(); busy = true; (async () => { for (;;){ pickedHere.clear(); await pickUpAct('桃子'); } })(); await wait(380); }},
+  {id: 'c1-spring', title: 'The master’s year: spring', save: 'c1spring', why: 'A whole year in the cave, a season at a time, each with its own jobs and the master’s class (7 November 2026). Spring: blossom on the trees, petals drifting down, and your own little peach tree to look after.', run: async () => {
+    play(); await wait(400); closeMessage(); await wait(400); }},
+  {id: 'c1-summer', title: 'Summer in the cave', save: 'c1summer', why: 'Summer: everything green and lush, a shower now and then; the pupils bathing in the pool, herbs (药) to gather on the pillars, and sparring.', run: async () => {
+    play(); await wait(400); closeMessage(); await wait(400); }},
+  {id: 'c1-autumn', title: 'Autumn in the cave', save: 'c1autumn', why: 'Autumn: gold and red leaves falling, heaps of them to sweep (扫), firewood to chop, and writing practice: your name on your door.', run: async () => {
+    play(); await wait(400); closeMessage(); await wait(400); }},
+  {id: 'c1-winter', title: 'Winter in the cave', save: 'c1winter', why: 'Winter: snow on everything but the swept paving, snow falling, footprints behind you that fill in again as the seconds pass. It’s cold (冷): wood for the fire.', run: async () => {
+    play(); await wait(400); closeMessage(); held = 'down'; await wait(1000); held = null; await wait(250); }},
+  {id: 'c1-count-on', title: 'The master’s class: counting on', save: 'c1named', why: 'Spring’s class: ten sticks tied into a bundle, 十, then a stick more at a time, A for each, as the master counts on: 十一, 十二… to 二十, two bundles.', run: async () => {
+    play(); await wait(100); countOn(); await wait(1200); }},
+  {id: 'c1-face', title: 'The master’s class: which way?', save: 'c1spar', why: 'Summer’s and autumn’s classes: the master says which way (看北边！), and you turn with the D-pad to face it, your monkey turning in the speech box too, and press A.', run: async () => {
+    play(); await wait(100); faceQ('master', 'lookNorth', '北边', {check: true}); await wait(500); }},
+  {id: 'c1-spar', title: 'Sparring with a pupil', save: 'c1spar', why: 'A friendly match in the courtyard (比武): a battle with no running away, its backdrop the cave’s courtyard, and in winter the big match, under snow.', run: async () => {
+    play(); await wait(100); battle('spar', {retry: true}); await wait(600); }},
+  {id: 'c1-write', title: 'Writing practice', save: 'c1autumn', why: 'Autumn: the master has you write your name, 孙悟空, one character at a time, each stroke drawn in order with a brush; then it’s on the plaque over your door.', run: async () => {
+    play(); await wait(100); writeCard('孙悟空', {py: 'sūn wù kōng', label: 'Writing practice'}); await wait(2600); }},
+  {id: 'c1-fire', title: 'The fire, in winter', save: 'c1fire', why: 'You lay the wood and light the brazier (火): flames flickering, sparks, a warm glow, and the pupils come and stand round it to warm up.', run: async () => {
+    play(); await wait(400); closeMessage(); await wait(400); }},
+  {id: 'c1-snowball', title: 'A snowball fight', save: 'c1fire', why: 'A pupil wants a snowball fight (打雪仗), first to three hits. Your throw: a word question, and right, your snowball hits; their throw: hear a word and pick it to duck.', run: async () => {
+    play(); await wait(100); snowballFight('pupil4'); await wait(500); }},
+  {id: 'c1-snowball-hit', title: 'A snowball fight: a hit!', save: 'c1fire', why: 'Right: your snowball flies across and bursts on them, Splat!, and a snowball fills a circle on their plate.', run: async () => {
+    play(); await wait(100); const pq = pictureQ; pictureQ = o => { pictureQ = pq; setTimeout(() => click(`.opt[data-i="${o.answerIdx}"]`), 300); return pq(o); }; snowballFight('pupil4'); await wait(1500); }},
+  {id: 'c1-snowman', title: 'A snowman', save: 'c1snowman', why: 'A pupil builds a snowman (雪人) with you, a ball at a time as you watch, then its face, stick arms and a red scarf.', run: async () => {
+    play(); await wait(400); closeMessage(); await wait(400); }},
+  {id: 'c1-trip-town', title: 'Down to the town in the snow', save: 'c1trip', why: 'No fruit grows up the mountain in winter: the senior pupil sends you down for rice (米) and fish. The human world under snow, and children who want snowball fights on the way.', run: async () => {
+    play(); await wait(400); closeMessage(); await wait(400); }},
+  {id: 'c1-snowball-town', title: 'A snowball fight in the town', save: 'c1trip', why: 'Out in the human world: snowy fields and houses behind it.', run: async () => {
+    play(); await wait(100); snowballFight('snowKid1'); await wait(500); }},
+  {id: 'c1-trip-shore', title: 'The boatman, in the snow', save: 'c1tripShore', why: 'Rice and fish bought for the cave: the boatman waits by the snowy pier to take you back across the sea.', run: async () => {
+    play(); await wait(400); closeMessage(); await wait(400); }},
+  {id: 'c1-basket', title: 'Hauled up in the basket', save: 'c1basket', why: 'At the foot of the mountain, the pupils let a basket down on a rope for you and the sacks: up the cliffs you go, past the clouds.', run: async () => {
+    play(); await wait(100); storyScene('basketUp'); introClock = 3.5; advancedTo = 0; await wait(400); }},
+  {id: 'c1-new-year', title: 'New Year’s Eve', save: 'c1newYear', why: 'The last night of the year: red lanterns by the hall, the New Year’s Eve dinner set out, and the master waiting: 新年快乐！', run: async () => {
+    play(); await wait(400); closeMessage(); await wait(400); }},
   {id: 'hit-pine', title: 'Swinging your stick', save: 'pineWood', why: 'A at a dead pine, or the cracked rock: your monkey raises its stick over its head in both paws and brings it down, a swoosh from the side, chips flying (the broadsword the same, once it’s yours; and the little monkeys in training, in their own colours). Here, swinging again and again, the stick raised.', run: async () => {
     play(); await wait(300); closeMessage(); busy = true; pl.dir = 'right'; (async () => { for (;;) await STEPS.hit({hit: 'wood'}); })(); await wait(120); }},
   {id: 'pick-grass', title: 'Crouching for grass', save: 'cowGrass', why: 'Picking something up off the ground (or out of the water): your monkey crouches low, both arms reaching forward to it on the ground in front, then stands and holds it up over its head. Here, picking the fresh grass again and again, crouching.', run: async () => {

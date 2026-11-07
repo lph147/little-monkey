@@ -1352,5 +1352,39 @@ rt.hid{visibility:hidden}
 .writepad canvas{width:5.2rem;height:5.2rem;image-rendering:pixelated;border-radius:.2rem;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .writepad .py{min-height:1.2em;font-family:var(--zh);font-size:1rem;color:var(--ink)}
 .scene.courtyard::before,.scene.courtyardSnow::before{display:none}   /* (no grass on the paving) */
+/* a snowball fight (js/snowball.js): them across the snow, you from behind; a snowball flies one way or the other, and
+   splats on whoever it hits (or flies past); each player's hits so far as snowballs under their name */
+.scene.snowVillage,.sheet:has(> .scene) > .scene.snowVillage{background:var(--backdrop-snowVillage) center / cover;image-rendering:pixelated;image-rendering:crisp-edges}   /* snowy fields, for a snowball fight (js/snowball.js) */
+.scene.snowfight::before{display:none}
+.snowfight .sfthem{position:absolute;right:16%;bottom:40%;width:64px;height:64px;image-rendering:pixelated}   /* standing in the snow, across from you */
+.snowfight .sfyou{position:absolute;left:12%;bottom:-8px;width:96px;height:96px;image-rendering:pixelated}
+.snowfight .sfplate{position:absolute;z-index:2;background:#F7FBF7;color:#1E2B26;border:2px solid #1E2B26;border-radius:6px;padding:2px 7px;font-size:.8rem;line-height:1.2}
+.snowfight .sfplate.them{left:8px;top:8px}
+.snowfight .sfplate.you{right:8px;bottom:8px;font:700 .8rem var(--pixel)}
+.snowfight .sfplate .zh{font-family:var(--zh);font-weight:700}
+.snowfight .sbs{display:flex;gap:3px;margin-top:2px}
+.snowfight .sb{width:10px;height:10px;border-radius:50%;border:1.5px solid #8A9AA8;background:transparent}
+.snowfight .sb.on{background:#FFFFFF;border-color:#5A7A98;box-shadow:inset -2px -2px 0 #C8D4DE}
+.snowfight .sfball{position:absolute;width:14px;height:14px;border-radius:50%;background:#FFFFFF;box-shadow:inset -3px -3px 0 #C8D4DE,0 0 0 2px #3E5A74,0 3px 0 2px rgba(30,43,38,.18);opacity:0;z-index:3}
+.snowfight .sfsplat{position:absolute;width:30px;height:22px;opacity:0;z-index:3;filter:drop-shadow(0 0 1px #3E5A74);background:radial-gradient(circle,#FFFFFF 0 45%,transparent 46%),radial-gradient(circle at 20% 30%,#FFFFFF 0 18%,transparent 19%),radial-gradient(circle at 80% 70%,#FFFFFF 0 18%,transparent 19%)}
+.snowfight .fx{left:6%;top:44%}   /* clear of you both */
+.snowfight.throwYou .sfball{animation:sbYou .62s ease-in forwards}
+.snowfight.throwYou.missed .sfball{animation:sbYouMiss .7s ease-in forwards}
+.snowfight.throwThem .sfball{animation:sbThem .62s ease-in forwards}
+.snowfight.throwThem.missed .sfball{animation:sbThemMiss .7s ease-in forwards}
+.snowfight.hitThem .sfsplat{right:calc(16% + 18px);bottom:calc(40% + 22px);animation:splat .9s .6s forwards}
+.snowfight.hitYou .sfsplat{left:calc(12% + 30px);bottom:30px;animation:splat .9s .6s forwards}
+.snowfight.hitThem .sfthem{animation:hurt .55s .6s}
+.snowfight.hitYou .sfyou{animation:hurt .55s .6s}
+.snowfight.throwThem.missed .sfyou{animation:sidejump .6s .15s}
+.snowfight.throwYou.missed .sfthem{animation:sidestep .7s .1s}
+.snowfight.throwYou .fx,.snowfight.throwThem .fx{animation:fxpop 1.1s .55s forwards}
+.snowfight.won .sfthem,.snowfight.lost .sfyou{filter:brightness(1.15) saturate(.5)}
+@keyframes sbYou{0%{left:30%;bottom:42%;opacity:1;scale:1.3}50%{bottom:78%}94%{opacity:1}100%{left:68%;bottom:56%;opacity:0;scale:.8}}   /* gone as it bursts */
+@keyframes sbYouMiss{0%{left:30%;bottom:42%;opacity:1;scale:1.3}50%{bottom:82%}100%{left:94%;bottom:92%;opacity:0;scale:.6}}
+@keyframes sbThem{0%{left:70%;bottom:62%;opacity:1;scale:.8}50%{bottom:80%}94%{opacity:1}100%{left:26%;bottom:26%;opacity:0;scale:1.4}}
+@keyframes sbThemMiss{0%{left:70%;bottom:62%;opacity:1;scale:.8}50%{bottom:84%}100%{left:2%;bottom:6%;opacity:0;scale:1.6}}
+@keyframes splat{0%{opacity:0;scale:.3}25%{opacity:1;scale:1.1}100%{opacity:.9;scale:1}}
+@media (prefers-reduced-motion: reduce){.snowfight .sfball,.snowfight .sfthem,.snowfight .sfyou{animation:none!important}.snowfight .sfsplat{animation:none!important;opacity:1}}
 .scene.courtyard .mound{background:#9EA5A7;box-shadow:inset 0 -6px 0 #7F8789}   /* you and your partner on the paving stones */
 .scene.courtyardSnow .mound{background:#F1F5F8;box-shadow:inset 0 -6px 0 #C8D3DB}   /* and on the snow */
