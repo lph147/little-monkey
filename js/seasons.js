@@ -40,6 +40,11 @@ const SNOW = (l, top = .8) => fromHsl(206, .2, clamp(top + l * .18, 0, .97));
 const patchy = (x, y, g, k, t) => { const n = noiseAt(x, y, g, k); return n > t || (n > t - .06 && rnd(x, y, k + 1) < (n - t + .06) / .06); };
 const LEAF_FALL = [0xE08A3A, 0xC8502A, 0xF0C050];
 const PETALS = [0xF7B9CB, 0xFFE3EC, 0xFFFFFF];
+// Autumn's gold, for anything green and growing: one gold for the grass, a path's grassy edges, and at home the long
+// grass, the grass at a cliff's lip and foot and the tufts on the rock, so where one square's grass runs on into the
+// next, such as over the top of a cliff, there's no seam; and the leaves fallen on it.
+const AUTUMN_GOLD = (h, s, l) => greenish(h, s) ? fromHsl(50 - (1 - l) * 14, .42, l * .96) : KEEP;
+const FALLEN = (c, x, y) => rnd(x >> 1, y >> 1, 3) > .986 ? LEAF_FALL[Math.floor(rnd(x, y, 4) * 3)] : c;
 // Each kind of ground, each season: base(h, s, l) gives its new colour (KEEP or GONE), the same for every pixel of that
 // colour; at(colour, x, y) can change one pixel by where it is (map pixels), such as a flower dotted on the grass.
 const GROUND_RULES = {
@@ -49,12 +54,10 @@ const GROUND_RULES = {
     field: {base:(h, s, l) => greenish(h, s) ? fromHsl(h - 8, s * 1.15, l * 1.06) : KEEP}
   },
   autumn: {
-    green: {base:(h, s, l) => greenish(h, s) ? fromHsl(50 - (1 - l) * 14, .42, l * .96) : KEEP,
-      at:(c, x, y) => rnd(x >> 1, y >> 1, 3) > .986 ? LEAF_FALL[Math.floor(rnd(x, y, 4) * 3)] : c},   // (fallen leaves)
+    green: {base:AUTUMN_GOLD, at:FALLEN},   // (fallen leaves)
     field: {base:(h, s, l) => greenish(h, s) ? fromHsl(44, .6, clamp(l * 1.05, 0, .75)) : KEEP},   // (ripe rice, gold)
-    plant: {base:(h, s, l) => greenish(h, s) ? fromHsl(48 - (1 - l) * 16, .46, l * .97) : KEEP},   // (Flower Fruit Mountain's long grass, bushes and flowers, at home: autumn only)
     swept: {base:() => KEEP, at:(c, x, y) => rnd(x, y, 5) > .993 ? LEAF_FALL[Math.floor(rnd(x, y, 6) * 3)] : c},
-    earth: {base:(h, s, l) => greenish(h, s) ? fromHsl(50 - (1 - l) * 14, .42, l * .96) : KEEP, at:(c, x, y) => rnd(x, y, 5) > .991 ? LEAF_FALL[Math.floor(rnd(x, y, 6) * 3)] : c}   // (a path's grassy edges, gold as the grass)
+    earth: {base:AUTUMN_GOLD, at:(c, x, y) => rnd(x, y, 5) > .991 ? LEAF_FALL[Math.floor(rnd(x, y, 6) * 3)] : c}   // (a path's grassy edges, gold as the grass)
   },
   winter: {
     green: {base:(h, s, l) => SNOW(l)},   // snow, its shading kept
@@ -68,6 +71,21 @@ const GROUND_RULES = {
     wood: {base:(h, s, l) => fromHsl(h, s * .8, clamp(l + (.9 - l) * .1, 0, .95))}
   }
 };
+// At home in its own season (a place borrowed from an area before: the seasons' home), everything green and growing
+// turns, not only the ground between: the long grass, bushes and flowers, the grass at a cliff's lip and foot and hanging
+// over it, the tufts on the rock (and the lichen on the lookout's stone), and the grass round the top of the steps
+// (decided 7 November 2026, after playing it: green edges on the golden grass). Only at home, so the master's year
+// looks as it was.
+const HOME_RULES = {
+  autumn: {
+    plant: {base:AUTUMN_GOLD, at:FALLEN},
+    face: {base:AUTUMN_GOLD, at:(c, x, y) => c === KEEP ? c : FALLEN(c, x, y)},   // (leaves on its grass, never on the rock)
+    rockTop: {base:AUTUMN_GOLD},
+    swept: {base:AUTUMN_GOLD, at:GROUND_RULES.autumn.swept.at}
+  }
+};
+// The rule for a kind of ground, in the season the map's being drawn in (none: as drawn).
+const groundRule = kind => drawSeason && (((PLACES[PLACE] || {}).borrowed && (HOME_RULES[drawSeason] || {})[kind]) || (GROUND_RULES[drawSeason] || {})[kind]);
 // Each kind of big object, each season.
 const OBJECT_RULES = {
   spring: {
@@ -118,20 +136,22 @@ function recolourBox(g, [bx, by, w, h], rule, key, ox = bx, oy = by){
 // Each ground the looks draw, wrapped: drawn first on a scratch canvas, its colours changed for the season, then onto
 // the map. Only the outermost ground changes (a ground drawing another inside it, such as the pier over the sea, is
 // changed once, as the pier). What stands on a ground (a stump on the moss, a stone in the stream) is drawn after it,
-// in its own colours.
+// in its own colours. What's dotted about (fallen leaves, flowers, trodden patches) goes by where its square is on the
+// map, so it's the same wherever the square's drawn, such as the grass you walk through, on a little canvas of its own.
 const SCRATCH = 8;   // (room round the square, for anything that reaches out of it)
 const scratch = document.createElement('canvas'); scratch.width = scratch.height = T + 2 * SCRATCH;
 const scg = scratch.getContext('2d');
 let groundDepth = 0;
 function seasonal(fn, kind){
   const wrapped = function(g, X, Y, ...rest){
-    const rule = drawSeason && !groundDepth && (GROUND_RULES[drawSeason] || {})[kind];
+    const rule = !groundDepth && groundRule(kind);
     if (!rule) return fn(g, X, Y, ...rest);
     groundDepth++;
     try {
       scg.clearRect(0, 0, scratch.width, scratch.height);
       scg.save(); scg.translate(SCRATCH - X, SCRATCH - Y); fn(scg, X, Y, ...rest); scg.restore();
-      recolourBox(scg, [0, 0, scratch.width, scratch.height], rule, drawSeason + kind, X - SCRATCH, Y - SCRATCH);
+      const [x, y] = rest, mx = typeof x === 'number' ? x*T : X, my = typeof y === 'number' ? y*T : Y;   // (its square, on the map)
+      recolourBox(scg, [0, 0, scratch.width, scratch.height], rule, rule, mx - SCRATCH, my - SCRATCH);
       g.drawImage(scratch, X - SCRATCH, Y - SCRATCH);
     } finally { groundDepth--; }
   };
@@ -140,9 +160,10 @@ function seasonal(fn, kind){
 }
 const GROUND_KIND = {grass:'green', tall:'green', lawn:'green', mossStone:'green', path:'earth', earth:'earth', sand:'sand', paving:'swept', slab:'swept',
   pier:'swept', stoneSteps:'swept', veg:'field', rice:'field', canal:'water', waterBase:'water', seaBase:'water', heights:'rockTop', karstTop:'rockTop',
-  cliffFace:'face', karstFace:'face', chainFace:'face', planks:'wood', loosePlank:'wood',
+  slabs:'rockTop', cliffFace:'face', karstFace:'face', chainFace:'face', planks:'wood', loosePlank:'wood',
   longGrass:'plant', tallGrass:'plant', woodGrass:'plant', bush:'plant', bank:'plant', fern:'plant', mushrooms:'plant', hoofprints:'plant', grassPlot:'plant', melonVines:'plant',
-  tallFlowers:'plant', whiteFlowers:'plant', yellowFlowers:'plant', redFlowers:'plant', pinkFlowers:'plant', blueFlowers:'plant', orangeFlowers:'plant'};   // ('plant': changes only in autumn, at home)
+  tallFlowers:'plant', whiteFlowers:'plant', yellowFlowers:'plant', redFlowers:'plant', pinkFlowers:'plant', blueFlowers:'plant', orangeFlowers:'plant',
+  flowerBed:'plant', colourBed:'plant'};   // ('plant': changes only at home, HOME_RULES)
 (function wrapGrounds(){
   const tables = [LOOKS, GROUNDS, GROUND_UNDER];
   for (const [name, kind] of Object.entries(GROUND_KIND)){

@@ -558,16 +558,19 @@ function bank(g, X, Y, x, y){
 }
 // The shadow a drop casts on the ground at its foot, and rock on the ground to its right (drawn over that ground,
 // whatever it is: drawTiles).
-const SHADOW = ['#1C3A1C55', '#1C3A1C38', '#1C3A1C1C'];
+// In a season (js/seasons.js), a shadow the colour of the season's ground in shade, never a green one on golden grass or
+// on the snow (decided 7 November 2026, after playing it).
+const SHADOW = ['#1C3A1C55', '#1C3A1C38', '#1C3A1C1C'], SEASON_SHADOW = {autumn:['#3A2A1455', '#3A2A1438', '#3A2A141C'], winter:['#2A3A5A44', '#2A3A5A2C', '#2A3A5A16']};
 function castShadow(g, X, Y, x, y){
+  const shade = SEASON_SHADOW[drawSeason] || SHADOW;
   if (x > 0 && isMass(x-1, y) && !isMass(x, y) && tileAt(x, y).look !== 'steps') for (let r = 0; r < T; r++){
     const deep = 2 + (rnd(x, y*T + r, 508) < .5 ? 1 : 0);
-    for (let c = 0; c <= deep; c++) R(g, X+c, Y+r, 1, 1, SHADOW[Math.max(0, c - deep + 2)]);
+    for (let c = 0; c <= deep; c++) R(g, X+c, Y+r, 1, 1, shade[Math.max(0, c - deep + 2)]);
   }
   if (!isDrop(x, y-1) || isDrop(x, y) || tileAt(x, y).look === 'steps') return;
   for (let c = 0; c < T; c++){
     const deep = 2 + (rnd(x*T + c, y, 507) < .5 ? 1 : 0);
-    for (let r = 0; r <= deep; r++) R(g, X+c, Y+r, 1, 1, SHADOW[Math.max(0, r - deep + 2)]);
+    for (let r = 0; r <= deep; r++) R(g, X+c, Y+r, 1, 1, shade[Math.max(0, r - deep + 2)]);
   }
 }
 // Stone steps cut up a cliff or a bank, so you can see them climb from one level to the other: a few steps to a

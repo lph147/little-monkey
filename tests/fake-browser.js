@@ -64,7 +64,9 @@ function scriptsIn(page, root = ROOT){
 // and timers wait until the test calls flush().
 // {html: true} gives the page its <html> element (game.el('html')), starting as index.html's does, with the start-up
 // screen showing (class loading).
-function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, page = ENTRY, dom = false, html = false} = {}){
+// {canvas: pixelCanvas} makes each canvas the game makes one that keeps its pixels (pixel-canvas.js), for tests that
+// check the colours it draws.
+function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, page = ENTRY, dom = false, html = false, canvas = null} = {}){
   const elements = {}, storage = new Map(Object.entries(stored)), session = new Map(Object.entries(tab)), frames = [], listeners = {}, reloads = {count: 0};
   const timers = new Map(); let nextTimer = 1, clock = 1000 - 1000 / 60;
   if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
@@ -73,7 +75,7 @@ function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, p
     activeElement: null,
     querySelector: sel => elements[sel] || (elements[sel] = stub(sel)),
     querySelectorAll: () => [],
-    createElement: tag => stub(`<${tag}>`),
+    createElement: tag => tag === 'canvas' && canvas ? canvas() : stub(`<${tag}>`),
     addEventListener(type, fn){ (listeners[type] = listeners[type] || []).push(fn); }
   };
   if (html) elements.html = document.documentElement = makeElement('html', {lang: 'en', class: 'loading'}, document);

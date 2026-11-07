@@ -707,7 +707,7 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 
 ## Day and night, rain, and home in autumn
 
-The clock only runs while you're out on the map, so night comes after about 15 minutes of walking about in chapter 1 (or the human world). To see it sooner, open the gallery's Evening, Night, The troop asleep, Time for bed, Rain, The village at night and Home in autumn screens.
+The clock only runs while you're out on the map, so night comes after about 15 minutes of walking about in chapter 1 (or the human world). To see it sooner, open the gallery's Evening, Night, The troop asleep, Time for bed, Rain, The village at night, Home in autumn, Home in autumn: the cliffs’ edges, and the two lookout views in autumn.
 
 - [ ] In the prologue it's always day. In chapter 1, after about 13 minutes on the map the light warms to evening, then it gets dark: dark blue but still easy to see on a phone, the moon and stars at the top right, fireflies, crickets now and then. The first night: a message, your monkey says 晚上了，睡觉吧！, and 晚上's new word card, then a message about sleeping in the cave.
 - [ ] At night most of the troop is gone from the home ground; anyone with a ! or ? is still there. Someone you're standing beside doesn't vanish in front of you after you talk to them; they're gone when you come back. In the Water Curtain Cave at night: monkeys asleep in four of the stone beds and curled up on the floor, little Zs floating up; A at one: it's fast asleep. The beds at each end are free.
@@ -715,6 +715,8 @@ The clock only runs while you're out on the map, so night comes after about 15 m
 - [ ] Once a day it rains outdoors for a minute or two: darker sky, slanting streaks, splashes, the sound of rain. Never in the cave or the classroom. The first time: Drip, drip…, your monkey says 下雨了！ and 雨's card. While it rains, a monkey with nothing new to say says 下雨了！
 - [ ] In the human world at night: fewer people about, house windows lit; the fruit and bun stalls, the teahouse, the boatman are still there. People still up say 晚上好！ At the teacher's cave, the pupils go to their rooms at night; once you're his pupil, A at your room's door says Sleep, and you wake in the morning. When a season's jobs are done, the same door still moves on to the next season.
 - [ ] In Area 2's chapter 2, Flower Fruit Mountain is in autumn: orange and red trees, golden grass and paths' edges, leaves falling. Once everything's back on the feast's tables, the troop sleeps in the Water Curtain Cave at night, and its beds work for you too.
+- [ ] No green at the edges at home in autumn: walk along the meadow's and the hillside's cliffs. The grass at the top of each cliff and at its foot, the tufts on the grey rock tops, the corners at the top of the stone steps and the little dots on the lookout's stone are all gold, and the cliffs' shadows on the grass are brown, not green. Walk through long grass: it looks the same as you push through it as when you're not in it. The pine woods stay green (pines are evergreen).
+- [ ] At home in autumn, A at the hillside lookout's railing: the view is autumn's, golden slopes with red, orange and gold trees, the far land dun, a hazy sky, leaves falling and lying on the rock. The same on the south slope's lookout: a golden pasture beyond the dark pines. In Area 1, both views are the summer's green, as before.
 - [ ] Close the game and come back: the time of day is as you left it (saved every 30 seconds or so, and whenever the game saves).
 
 ## Quick practice

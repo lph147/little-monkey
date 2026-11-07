@@ -1548,10 +1548,10 @@ function drawPaintingSchool(t, now, def){
 // picture, never part of the map, where the sea looked out of place): the sky, with clouds drifting by and two birds
 // flying past; the sea out to the horizon, with islands far off; the hillside going down to it either side, its trees,
 // and the river winding out to the sea; and you, at the lookout's railing, looking out. The captions cover the bottom,
-// so it's all above them.
+// so it's all above them. In the season the place is in (VIEW_SEASONS).
 function drawLookout(t, now){
-  const W = VW*T, hz = 46;
-  for (let y = 0; y < hz; y += 2) R(b, 0, y, W, 2, mix('#6AB4E2', '#D6EEF7', y / hz));   // the sky
+  const W = VW*T, hz = 46, v = viewSeason();
+  for (let y = 0; y < hz; y += 2) R(b, 0, y, W, 2, mix(v.sky[0], v.sky[1], y / hz));   // the sky
   const cloud = cloudPuff, drift = t * 1.2;   // (the clouds drift slowly to the right)
   cloud(18 + drift, 12, 1); cloud(140 + drift * .7, 8, 1.3); cloud(204 + drift * .5, 26, .7);
   for (const [k, by] of [[0, 20], [.12, 25]]){   // two birds flying past
@@ -1561,12 +1561,12 @@ function drawLookout(t, now){
   for (let x = 0; x < W; x++){   // islands, far off on the horizon
     const isle = (c, w, h) => Math.max(0, Math.round(h * (1 - ((x - c) / w) ** 2)));
     const hh = Math.max(isle(178, 20, 6), isle(198, 9, 3), isle(62, 11, 3));
-    if (hh) R(b, x, hz - hh, 1, hh, '#93B6C8');
+    if (hh) R(b, x, hz - hh, 1, hh, v.isles);
   }
-  for (let y = hz; y < 80; y += 2) R(b, 0, y, W, 2, mix('#68B0DE', '#2F78B4', (y - hz) / 34));   // the sea
+  for (let y = hz; y < 80; y += 2) R(b, 0, y, W, 2, mix(v.sea[0], v.sea[1], (y - hz) / 34));   // the sea
   R(b, 0, hz, W, 1, '#A9D7F0');
   for (let i = 0; i < 22; i++){ const sx = Math.floor(rnd(i, 31) * W), sy = hz + 3 + Math.floor(rnd(i, 32) * 14); if (Math.sin(now / 420 + i) > .2) R(b, sx, sy, 3, 1, '#D6F2FF'); }   // sun on the sea
-  for (let x = 0; x < W; x += 2){ const h = Math.round(60 + Math.sin(x / 19) * 2 + Math.sin(x / 7)); R(b, x, h, 2, 100 - h, '#6FA889'); }   // the land along the shore
+  for (let x = 0; x < W; x += 2){ const h = Math.round(60 + Math.sin(x / 19) * 2 + Math.sin(x / 7)); R(b, x, h, 2, 100 - h, v.shore); }   // the land along the shore
   for (let y = 62; y < 100; y++){   // the river, winding out to the sea
     const rx = Math.round(118 + Math.sin(y / 7) * 8 + (y - 62) * .4), w = 2 + Math.floor((y - 62) / 13);
     R(b, rx, y, w, 1, '#5FA6D6'); if (y === 62) R(b, rx - 1, y - 1, w + 2, 1, '#5FA6D6');
@@ -1574,20 +1574,53 @@ function drawLookout(t, now){
   const slope = (from, to, top, bot, col, seed) => {   // the hillside going down, one side of the view
     for (let x = from; x !== to; x += Math.sign(to - from) * 2){
       const k = Math.abs(x - from) / Math.abs(to - from), h = Math.round(top + (bot - top) * Math.pow(k, .8) + rnd(x >> 1, seed) * 2);
-      R(b, Math.min(x, x - 1), h, 2, 120 - h, col); R(b, Math.min(x, x - 1), h, 2, 1, mix(col, '#A9E08F', .5));
+      R(b, Math.min(x, x - 1), h, 2, 120 - h, col); R(b, Math.min(x, x - 1), h, 2, 1, mix(col, v.lip, .5));
     }
     for (let i = 0; i < 22; i++){   // its trees
-      const k = rnd(i, seed) * .9, x = Math.round(from + (to - from) * k), y = Math.round(top + (bot - top) * Math.pow(k, .8)) + 4 + Math.floor(rnd(i, seed + 1) * 24);
-      if (y < 110){ disc(b, x, y, 3, '#2F7A3E'); disc(b, x - 1, y - 1, 1, '#4E9A55'); }
+      const k = rnd(i, seed) * .9, x = Math.round(from + (to - from) * k), y = Math.round(top + (bot - top) * Math.pow(k, .8)) + 4 + Math.floor(rnd(i, seed + 1) * 24), [leaf, lit] = v.trees[i % v.trees.length];
+      if (y < 110){ disc(b, x, y, 3, leaf); disc(b, x - 1, y - 1, 1, lit); }
     }
   };
-  slope(0, 104, 54, 120, '#4F9A55', 51); slope(W, 150, 58, 120, '#468F4D', 61);
-  R(b, 0, 100, W, 60, '#B9B3A5'); R(b, 0, 100, W, 1, '#D6D1C4');   // the lookout's flat rock
-  for (let i = 0; i < 30; i++) R(b, Math.floor(rnd(i, 71) * W), 102 + Math.floor(rnd(i, 72) * 20), 2, 1, i % 3 ? '#A7A193' : '#CFCABD');
+  slope(0, 104, 54, 120, v.slopes[0], 51); slope(W, 150, 58, 120, v.slopes[1], 61);
+  lookoutRail(v, now);
+}
+// The lookout's flat rock and its railing, with you at it, looking out, in front of a view (v: its season's colours);
+// what's falling in the season (petals, leaves or snow) drifting down over it all.
+function lookoutRail(v, now){
+  const W = VW*T;
+  R(b, 0, 100, W, 60, v.rock[0]); R(b, 0, 100, W, 1, v.rock[1]);   // the lookout's flat rock
+  for (let i = 0; i < 30; i++) R(b, Math.floor(rnd(i, 71) * W), 102 + Math.floor(rnd(i, 72) * 20), 2, 1, i % 3 ? v.rock[2] : v.rock[3]);
+  if (v.fallen) for (let i = 0; i < 14; i++) R(b, Math.floor(rnd(i, 73) * W), 103 + Math.floor(rnd(i, 74) * 18), 2, 1, v.fallen[i % v.fallen.length]);   // (leaves, blown onto it)
   b.drawImage(monkeySprite('player', 'up', false), 104, 74, 32, 32);   // you, looking out
   for (const px of [4, 46, 88, 147, 189, 231]){ R(b, px, 88, 5, 40, WOOD[0]); R(b, px, 88, 4, 40, WOOD[2]); R(b, px, 88, 1, 40, WOOD[3]); R(b, px, 88, 5, 1, WOOD[4]); }   // the railing
   for (const ry of [92, 101]){ R(b, 0, ry, W, 4, WOOD[0]); R(b, 0, ry, W, 3, WOOD[2]); R(b, 0, ry, W, 1, WOOD[3]); }
+  if (v.snow){ for (const ry of [92, 101]) R(b, 0, ry - 1, W, 2, v.snow); for (const px of [4, 46, 88, 147, 189, 231]) R(b, px, 87, 5, 2, v.snow); }   // (snow along its rails)
+  const f = FALLING[v.season];
+  if (f) fallOver(f, f.n, 0, 0, VH*T, now);
 }
+// Each colour of the views from the lookouts, by season (decided 7 November 2026, after playing it: home in autumn, the
+// view was still summer's): summer's are the view as it was drawn; autumn's slopes and pasture golden, the trees red,
+// orange and gold, the far land and hills dun, a hazy sky, leaves on the rock; winter's under snow, bare trees and
+// snowy pines; spring's fresh, with blossom.
+const VIEW_SEASONS = {
+  summer: {sky:['#6AB4E2', '#D6EEF7'], isles:'#93B6C8', sea:['#68B0DE', '#2F78B4'], shore:'#6FA889', slopes:['#4F9A55', '#468F4D'], lip:'#A9E08F',
+    trees:[['#2F7A3E', '#4E9A55']], hills:'#8FB7A4', pasture:['#7FC46A', '#6CB85A'], pastureTrees:[['#3F8A44', '#5FAE58']],
+    flowers:['#F2F2EC', '#F2A6C8', '#F2F2EC', '#6FA3E8', '#F2F2EC'], pines:['#1F4A35', '#15382A'], rock:['#B9B3A5', '#D6D1C4', '#A7A193', '#CFCABD']},
+  autumn: {sky:['#74A9D6', '#EEDCC0'], isles:'#A8B4B8', sea:['#64A4D0', '#2E6EA6'], shore:'#B3A372', slopes:['#C0913E', '#AE8236'], lip:'#F0D58A',
+    trees:[['#C8502A', '#E8804A'], ['#D98A2A', '#F2B054'], ['#B8862E', '#E8C462'], ['#A4461E', '#D06A2A']], hills:'#B9AC8C', pasture:['#D6B666', '#C8A658'],
+    pastureTrees:[['#C8502A', '#E8804A'], ['#D98A2A', '#F2B054'], ['#C09038', '#EAC662']],
+    flowers:['#F2F2EC', '#F2C14E', '#F2F2EC', '#E8883A', '#F2F2EC'], pines:['#21432F', '#163325'], rock:['#B9B3A5', '#D6D1C4', '#A7A193', '#CFCABD'],
+    fallen:['#E08A3A', '#C8502A', '#F0C050']},
+  winter: {sky:['#A3B9CB', '#E6ECF0'], isles:'#B9C6CF', sea:['#7FA0B8', '#41698C'], shore:'#E4EAEE', slopes:['#E6ECF0', '#D9E1E8'], lip:'#FFFFFF',
+    trees:[['#6A5A4A', '#8B7966'], ['#2E5444', '#F2F6FA']], hills:'#CBD5DC', pasture:['#EEF2F5', '#E3E9EE'], pastureTrees:[['#6A5A4A', '#8B7966'], ['#2E5444', '#F2F6FA']],
+    flowers:[], pines:['#2B4A3E', '#1F3A31'], rock:['#D9DEE3', '#F4F7FA', '#C6CDD4', '#E9EDF1'], snow:'#F4F8FC'},
+  spring: {sky:['#7CC0EA', '#E4F3F8'], isles:'#A0C0D0', sea:['#6CB4E0', '#3480BC'], shore:'#7DB894', slopes:['#5DAA58', '#539F50'], lip:'#C2EEA4',
+    trees:[['#E58FB0', '#F9CFDD'], ['#3F8E48', '#6CC066'], ['#F2A9C2', '#FFE3EC']], hills:'#9CC4AE', pasture:['#8CD274', '#79C664'],
+    pastureTrees:[['#E58FB0', '#F9CFDD'], ['#4A9A4E', '#76C66C']], flowers:['#FFFFFF', '#F2A6C8', '#F7D23E', '#6FA3E8', '#F48FB1'], pines:['#21503A', '#16402E'],
+    rock:['#B9B3A5', '#D6D1C4', '#A7A193', '#CFCABD']}
+};
+for (const [season, v] of Object.entries(VIEW_SEASONS)) v.season = season;
+const viewSeason = () => VIEW_SEASONS[seasonNow() || 'summer'] || VIEW_SEASONS.summer;   // (the season the place you're looking out from is in)
 /* ---- the view from the south slope's lookout ---- */
 // What you see from the lookout on the south slope (chapter 1, decided 27 October 2026: you see where you're going): hills far
 // off; below, a sunny pasture with trees and flowers, and a spring with a little stream out of it; between, the dark pines,
@@ -1595,34 +1628,30 @@ function drawLookout(t, now){
 // lost (till it's home: the scene's def.home says it's just the view), it's there, by its spring, small and far off, with an
 // arrow over it, so you see it.
 function drawCowView(t, now, def = {}){
-  const W = VW*T;
-  for (let y = 0; y < 40; y += 2) R(b, 0, y, W, 2, mix('#6AB4E2', '#D6EEF7', y / 40));   // the sky
+  const W = VW*T, v = viewSeason();
+  for (let y = 0; y < 40; y += 2) R(b, 0, y, W, 2, mix(v.sky[0], v.sky[1], y / 40));   // the sky
   cloudPuff(20 + t * 1.2, 10, 1); cloudPuff(150 + t * .8, 6, 1.2);
-  for (let x = 0; x < W; x += 2){ const h = Math.round(30 + Math.sin(x / 23) * 4 + Math.sin(x / 9) * 2); R(b, x, h, 2, 60 - h, '#8FB7A4'); }   // hills far off
-  for (let y = 36; y < 70; y += 2) R(b, 0, y, W, 2, mix('#7FC46A', '#6CB85A', (y - 36) / 34));   // the pasture
-  for (const [tx, ty] of [[24, 46], [60, 40], [196, 44], [222, 52], [104, 42], [168, 38]]){ disc(b, tx, ty, 3, '#3F8A44'); disc(b, tx - 1, ty - 1, 1, '#5FAE58'); }   // its trees
-  for (const [fx, fy, c] of [[40, 54, '#F2F2EC'], [44, 56, '#F2A6C8'], [140, 60, '#F2F2EC'], [146, 58, '#6FA3E8'], [80, 62, '#F2F2EC']]) R(b, fx, fy, 2, 1, c);   // flowers
+  for (let x = 0; x < W; x += 2){ const h = Math.round(30 + Math.sin(x / 23) * 4 + Math.sin(x / 9) * 2); R(b, x, h, 2, 60 - h, v.hills); }   // hills far off
+  for (let y = 36; y < 70; y += 2) R(b, 0, y, W, 2, mix(v.pasture[0], v.pasture[1], (y - 36) / 34));   // the pasture
+  [[24, 46], [60, 40], [196, 44], [222, 52], [104, 42], [168, 38]].forEach(([tx, ty], i) => { const [leaf, lit] = v.pastureTrees[i % v.pastureTrees.length]; disc(b, tx, ty, 3, leaf); disc(b, tx - 1, ty - 1, 1, lit); });   // its trees
+  [[40, 54], [44, 56], [140, 60], [146, 58], [80, 62]].forEach(([fx, fy], i) => { if (v.flowers[i]) R(b, fx, fy, 2, 1, v.flowers[i]); });   // flowers
   disc(b, 128, 52, 5, '#4F9BD8'); R(b, 123, 50, 10, 4, '#4F9BD8'); R(b, 125, 50, 4, 1, '#A9D7F0');   // the spring
   for (let x = 132; x < 200; x++) R(b, x, 53 + Math.round(Math.sin(x / 8) * 2), 1, 1, '#4F9BD8');   // and its little stream
   if (!def.home && here().cow < 4){   // the cow, by its spring, and an arrow over it
     ["......bb", ".wwwwbwo", "wbbwwwww", "wwwwbbw.", ".w.w.w.w"].forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') R(b, 110 + x, 47 + y, 1, 1, {w:'#FFFFFF', b:'#5A3A22', o:'#E8A0A0'}[c]); }));
     pix(ARROW, 111, 37 + Math.round(Math.sin(now / 180) * 1.5), {o:'#1E2B26', y:'#F2C14E'});
   }
-  for (let x = 0; x < W; x += 2){ const top = Math.round(66 + Math.sin(x / 13) * 2 + rnd(x >> 1, 41) * 3); R(b, x, top, 2, 40, '#1F4A35'); }   // the dark pines
-  for (let i = 0; i < 70; i++){ const px = Math.floor(rnd(i, 43) * W), py = 66 + Math.floor(rnd(i, 44) * 28); R(b, px, py, 1, 3, '#15382A'); R(b, px - 1, py + 2, 3, 2, '#15382A'); }
+  for (let x = 0; x < W; x += 2){ const top = Math.round(66 + Math.sin(x / 13) * 2 + rnd(x >> 1, 41) * 3); R(b, x, top, 2, 40, v.pines[0]); }   // the dark pines
+  for (let i = 0; i < 70; i++){ const px = Math.floor(rnd(i, 43) * W), py = 66 + Math.floor(rnd(i, 44) * 28); R(b, px, py, 1, 3, v.pines[1]); R(b, px - 1, py + 2, 3, 2, v.pines[1]); if (v.snow) R(b, px, py, 1, 1, v.snow); }
   for (let x = 0; x < W; x++) if (Math.sin(x / 5) > -.2) R(b, x, 80 + Math.round(Math.sin(x / 20) * 1.5), 1, 1, '#4F86A8');   // a stream glinting through them
   const side = (from, to, top, bot, col, seed) => {   // the slope going down, either side of the view
     for (let x = from; x !== to; x += Math.sign(to - from) * 2){
       const k = Math.abs(x - from) / Math.abs(to - from), h = Math.round(top + (bot - top) * Math.pow(k, .8) + rnd(x >> 1, seed) * 2);
-      R(b, Math.min(x, x - 1), h, 2, 120 - h, col); R(b, Math.min(x, x - 1), h, 2, 1, mix(col, '#A9E08F', .5));
+      R(b, Math.min(x, x - 1), h, 2, 120 - h, col); R(b, Math.min(x, x - 1), h, 2, 1, mix(col, v.lip, .5));
     }
   };
-  side(0, 70, 70, 112, '#4F9A55', 51); side(W, 170, 74, 112, '#468F4D', 61);
-  R(b, 0, 100, W, 60, '#B9B3A5'); R(b, 0, 100, W, 1, '#D6D1C4');   // the lookout's flat rock
-  for (let i = 0; i < 30; i++) R(b, Math.floor(rnd(i, 71) * W), 102 + Math.floor(rnd(i, 72) * 20), 2, 1, i % 3 ? '#A7A193' : '#CFCABD');
-  b.drawImage(monkeySprite('player', 'up', false), 104, 74, 32, 32);   // you, looking out
-  for (const px of [4, 46, 88, 147, 189, 231]){ R(b, px, 88, 5, 40, WOOD[0]); R(b, px, 88, 4, 40, WOOD[2]); R(b, px, 88, 1, 40, WOOD[3]); R(b, px, 88, 5, 1, WOOD[4]); }   // the railing
-  for (const ry of [92, 101]){ R(b, 0, ry, W, 4, WOOD[0]); R(b, 0, ry, W, 3, WOOD[2]); R(b, 0, ry, W, 1, WOOD[3]); }
+  side(0, 70, 70, 112, v.slopes[0], 51); side(W, 170, 74, 112, v.slopes[1], 61);
+  lookoutRail(v, now);
 }
 // A puffy white cloud in a scene's sky: its left end at cx, cy; s, its size.
 function cloudPuff(cx, cy, s){

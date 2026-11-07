@@ -472,6 +472,8 @@ SAVES.c2kingOut = c2(SAVES.c2pull, {loot: 1, king: 1, part: 13, parked: {cart: {
 SAVES.c2king = c2(SAVES.c2cart, {cartWon: 1, loot: 1, king: 1, part: 13}, ['车'], {place: 'lair', x: 14, y: 8, dir: 'up'});
 SAVES.c2unload = c2(SAVES.c2king, {king: 2, homeAgain: 1, unload: 3, part: 14, weapon: '刀'}, ['毛', '刀'], {place: 'ffmHomeGround', x: 19, y: 9, dir: 'up'});
 SAVES.c2end = c2(SAVES.c2king, {king: 2, homeAgain: 1, unload: 6, party: 1, part: 14, weapon: '刀'}, ['毛', '刀'], {place: 'ffmHomeGround', x: 13, y: 9, dir: 'down'});
+SAVES.c2hill = {...SAVES.c2end, pos: {place: 'ffmHillside', x: 22, y: 21, dir: 'up'}};   // (home in autumn: on the hillside's lookout)
+SAVES.c2south = {...SAVES.c2end, pos: {place: 'ffmSouthSlope', x: 9, y: 15, dir: 'up'}};   // (and the south slope's)
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
@@ -1547,6 +1549,12 @@ const SCREENS = [
     play(); await wait(200); S.pos = {place: 'village', x: 22, y: 6, dir: 'down'}; placePlayer(); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
   {id: 'c2-autumn', title: 'Home in autumn', save: 'c2end', why: 'Back on Flower Fruit Mountain in chapter 2, it’s autumn: red and gold leaves, golden grass, leaves drifting down, so it feels different from Area 1.', run: async () => {
     play(); await wait(500); }},
+  {id: 'c2-autumn-edges', title: 'Home in autumn: the cliffs’ edges', save: 'c2hill', why: 'Everything green and growing turns, not only the ground between: the grass at the cliffs’ lips and feet, the tufts on the rock, the corners of the steps and the lichen on the lookout’s stone, gold; the cliffs’ shadows brown, never green on the golden grass.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'c2-autumn-lookout', title: 'The view from the lookout, in autumn', save: 'c2hill', why: 'The view in the season the place is in: the hillside golden, its trees red, orange and gold, the far land dun, a hazy sky, leaves falling and blown onto the rock.', run: async () => {
+    play(); await wait(100); storyScene('lookout'); introClock = .8; advancedTo = 0; await wait(500); }},
+  {id: 'c2-autumn-south', title: 'The south slope’s view, in autumn', save: 'c2south', why: 'A golden pasture beyond the dark pines (evergreen, so still green), red and gold trees, dun hills far off, and leaves falling.', run: async () => {
+    play(); await wait(100); storyScene('southView'); introClock = .8; advancedTo = 0; await wait(500); }},
   {id: 'a2-end', title: 'Area 2: the end', save: 'c2end', why: 'The end of Area 2: the little ones home, the Demon of Havoc gone for good. To be continued: the Dragon King’s palace.', run: async () => {
     play(); await wait(100); STEPS.areaEnd(); await wait(500); }},
   {id: 'scroll-describing', title: 'Word Scroll: describing words', save: 'fishBoth', why: '小 (little) and 大 (big), from fishing, on a tab of their own.', run: async () => {
