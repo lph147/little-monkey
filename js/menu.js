@@ -77,15 +77,15 @@ function friendClue(a, back){
 const BAG_TABS = [
   {id:'food', name:'Snacks', zh:'零食', py:'língshí', things:() => Object.keys(FOOD).filter(w => S.bag[w] > 0)
     .map(w => ({w, does:FOOD[w].does, label:FOOD[w].heal || FOOD[w].fast ? 'Eat' : 'Hear', count:S.bag[w]}))},
-  {id:'someone', name:'For someone', things:() => Object.entries(here().holding).filter(([, w]) => w && WORDS[w])
-    .map(([id, w]) => ({w, does:`The ${((NAMES[(AREA.requests[id] || {}).from] || {}).en || 'troop').toLowerCase()}`, label:'Hear'}))},
+  {id:'someone', name:'For someone', things:() => Object.entries(here().holding).filter(([, w]) => w && (WORDS[w] || GLOSS[w]))   // (who for: the request's, or the area's holdingFor, such as the lingzhi for the master, a word you only hear)
+    .map(([id, w]) => ({w, does:`The ${((NAMES[(AREA.requests[id] || {}).from || (AREA.holdingFor || {})[id]] || {}).en || 'troop').replace(/^(the|an?) /i, '').toLowerCase()}`, label:'Hear'}))},   // (The master, not The the master)
   {id:'fight', name:'To fight with', things:() => canBattle() && weaponNow() ? [{w:weaponNow(), does:`Hits for ${weaponHits()}`, label:'Hear'}] : []},   // (your weapon now, such as the Demon of Havoc's broadsword)
   {id:'fishing', name:'For fishing', things:() => !canFish() ? [] : [{w:FISH.rod, does:'A at water with fish in it', label:'Hear'},   // (js/fishing.js)
     ...(FISH.bait && S.bag[FISH.bait] > 0 ? [{w:FISH.bait, does:'A big fish bites next', label:'Hear', count:S.bag[FISH.bait]}] : [])]}
 ];
 function bagPage(back, focus, note, tab){
   const card = ({w, does, label, count}) => `<button class="card bagitem" data-w="${w}" data-label="${label}"><div class="c" aria-hidden="true">${picHTML(w)}</div>`
-    + `${count ? `<span class="count">×${count}</span>` : ''}<div class="hz">${w}</div><div class="p">${WORDS[w].py}</div><div class="small">${esc(does)}</div></button>`;
+    + `${count ? `<span class="count">×${count}</span>` : ''}<div class="hz">${w}</div><div class="p">${WORDS[w] ? WORDS[w].py : GLOSS[w][0]}</div><div class="small">${esc(does)}</div></button>`;
   const tabs = BAG_TABS.map(t => ({...t, list:t.things()})).filter(t => t.list.length), now = tabs.find(t => t.id === tab) || tabs[0];
   openCard(`<div class="bag"><div class="baghead"><p class="label">包 bāo · Bag</p>
     <div class="stats">${healthHTML(health(), maxHealth(), true)}${moneyHTML()}</div>${note ? `<p class="note">${esc(note)}</p>` : ''}</div>

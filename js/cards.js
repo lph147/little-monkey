@@ -209,7 +209,7 @@ function sayLine(who, line, opts){
     const plate = id ? who.replace(/<img class="portrait"[^>]*>/, `<span class="face">${bustHTML(id)}</span>`) : who;   // (their name plate: their face in a circle, css .talkhead .face)
     talkBox.innerHTML = pixelIcons(`<div class="talkhead">${plate}<span class="spacer"></span><button class="tbtn" data-a="say" aria-label="Hear it again">🔊</button>${enShows ? '' : '<button class="tbtn" data-a="en">English</button>'}</div>
       <div class="talkline">${lineHTML(line.t, opts.teach)}<div class="gloss"></div></div><div class="sentence-en${opts.clue ? ' clue' : ''}" ${enShows ? '' : 'hidden'}>${opts.clue ? cluedEn(line.en, opts.clue) : esc(line.en)}</div>
-      <button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
+      ${opts.turn ? `<p class="turnhint"><img class="turnme" alt="" src="${youFacing()}">${esc(opts.turn)}</p>` : ''}<button class="btn primary next" data-a="ok" data-label="${esc(opts.ok || (opts.last ? 'Done' : 'Next'))}">${opts.ok ? esc(opts.ok) + ' ▼' : opts.last ? 'Done' : '▼'}</button>`);
     bindTurtles(talkBox);
     talkBox.classList.toggle('again', again);
     talkWho = id;
@@ -226,8 +226,14 @@ function sayLine(who, line, opts){
     const next = () => { if (tipStep()) return; talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };   // (A, B or ▼ with a tip showing that has a next tip: that tip first)
     q('[data-a=ok]').onclick = next;
     talkNext = next;
+    // turn: what to do, as you turn to face the way they say with the D-pad (its arrows: you turn on the spot, as with
+    // a tap), and press A once you're facing it, such as the master's classes on 北边 and 南边 (the face step, js/year.js)
+    // a little picture of you in the box turns with you, as the box may be over you on the map
+    if (opts.turn) talkMove = d => { if (!DV[d] || pl.dir === d) return; pl.dir = d; S.pos.dir = d; pl.turnT = performance.now(); SFX.turn(); const me = q('.turnme'); if (me) me.src = youFacing(); };
   });
 }
+// You, facing the way you face now, as a picture for the speech box (the face step's question: js/year.js).
+const youFacing = () => monkeySprite('player', pl.dir, false).toDataURL();
 // A line of the story in the speech box during a conversation, in English, said by no one: such as what
 // the old monkey does for baby monkeys. A moves on, so the next line can't cover it. The conversation's last (last): Done;
 // ok, what A does, such as Play. Beside it, so the box stays short. Or (note) what to do, after someone's line: its first

@@ -15,7 +15,7 @@ async function play(g, code){ let done = false; const p = Promise.resolve(g.run(
 const press = (g, x, y, dir) => { g.run(`S.pos = {place: PLACE, x: ${x}, y: ${y}, dir: '${dir}'}; placePlayer(); lastTalk = null`); return play(g, 'interact(...facing()).then(runEvents)'); };
 const AREA2_WORDS = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水', '吃', '喝', '要', '我', '猴子', '河', '鱼', '羊', '朋友', '家', '有', '鸟', '小', '大',
   '谢谢', '再见', '不客气', '木头', '三', '四', '人', '是', '不', '什么', '钱', '风', '歌', '洞', '门', '房子', '狗', '猫', '鸡', '牛', '船', '云', '鹤', '天', '王', '棍子',
-  '师父', '名字', '叶子', '扫', '桶', '斧头', '饭'];
+  '师父', '名字', '叶子', '扫', '桶', '斧头', '米饭'];
 const AREA1_WORDS = ['石头', '你好', '山', '花', '草', '树', '桃子', '苹果', '水果', '动物', '水', '河', '鱼', '猴子', '朋友', '桥', '蝴蝶', '同学', '棍子', '蜜蜂', '蜂王',
   '有', '没有', '我', '要', '吃', '桌子', '家', '木头', '碗', '学校', '老师', '一', '二', '三', '四', '五', '六', '谢谢', '不客气', '没关系',
   '红色', '黄色', '白色', '黑色', '蓝色', '绿色'];
@@ -72,7 +72,7 @@ test('filling the bucket at the pool: into the water with a splash, and up again
 });
 
 test('picking a peach: the tree shakes, the peach drops from its leaves into your hands, and you hold it up', async () => {
-  const g = game(2, IN_THE_CAVE, {place: 'cave', x: 3, y: 8, dir: 'up'}, AREA2_WORDS);
+  const g = game(2, {...IN_THE_CAVE, season: 1}, {place: 'cave', x: 3, y: 8, dir: 'up'}, AREA2_WORDS);   // (summer: they're ripe)
   assert.equal(get(g, 'tileAt(3, 7).look'), 'rockPeach', 'the master’s peach tree');
   await press(g, 3, 8, 'up');
   const acts = get(g, '__acts'), o = objectAt(g, 3, 7);

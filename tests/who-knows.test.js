@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
 const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
-const WORDS = ['猴子', '人', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门', '谁', '鸡', '鱼', '鱼竿', '饭', '钱', '看', '买', '包子', '鞋', '茶', '说', '谢谢', '你好', '不客气'];
+const WORDS = ['猴子', '人', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门', '谁', '鸡', '鱼', '鱼竿', '米饭', '钱', '看', '买', '包子', '鞋', '茶', '说', '谢谢', '你好', '不客气'];
 const DRESSED = {landed: 1, dressed: 2, back: 1, oldFisher: 1};
 function game(area, pos = {place: 'village', x: 16, y: 13, dir: 'up'}, more = {}){
   const w = Object.fromEntries([...WORDS, ...(more.words || [])].map(x => [x, {lv: 2, ok: 2}]));

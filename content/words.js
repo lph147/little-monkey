@@ -171,7 +171,7 @@ const WORD_BANK = {
   '门': {py:'mén', en:'door, gate', pic:'🚪', area:2, category:'places', alike:['房子']},
   '谁': {py:'shéi', en:'who', area:2, category:'questions'},
   '鸡': {py:'jī', en:'chicken', pic:'🐔', area:2, category:'animals', alike:['鸟']},
-  '饭': {py:'fàn', en:'rice, a meal', pic:'🍚', area:2, category:'food', alike:['碗']},
+  '米饭': {py:'mǐfàn', en:'rice (cooked)', pic:'🍚', area:2, category:'food', alike:['碗', '米']},   // (the granny's lunch; 饭 till 7 November 2026: the owner's idea, 米 for raw rice, 米饭 cooked)
   '钱': {py:'qián', en:'money', pic:'🪙', area:2, category:'items'},
   '网': {py:'wǎng', en:'net', pic:'🥅', area:2, category:'items'},
   '船': {py:'chuán', en:'boat', pic:'⛵', area:2, category:'items', alike:['木筏']},
@@ -189,6 +189,7 @@ const WORD_BANK = {
   '学': {py:'xué', en:'to learn', area:2, category:'actions'},
   '书': {py:'shū', en:'book', pic:'📚', area:2, category:'items'},
   '猫': {py:'māo', en:'cat', pic:'🐈', area:2, category:'animals'},
+  '米': {py:'mǐ', en:'rice (uncooked)', pic:'🌾', area:2, category:'food'},   // (the docker's sacks of rice, at the harbour)
   '风': {py:'fēng', en:'wind', pic:'🌬️', area:2, category:'nature'},
   '歌': {py:'gē', en:'song', pic:'🎵', area:2, category:'items'},
   '云': {py:'yún', en:'cloud', pic:'☁️', area:2, category:'nature'},   // (chapter 1: the sea of clouds under the cliff road)
@@ -213,13 +214,39 @@ const WORD_BANK = {
   '夏天': {py:'xiàtiān', en:'summer', pic:'☀️', area:2, category:'nature', alike:['花', '水']},
   '秋天': {py:'qiūtiān', en:'autumn', pic:'🍁', area:2, category:'nature', alike:['叶子', '树']},
   '冬天': {py:'dōngtiān', en:'winter', pic:'❄️', area:2, category:'nature', alike:['树']},
+  // spring: the master's first class, counting on from 十 (a bundle of ten sticks, and so many more: no new characters)
+  '十一': {py:'shíyī', en:'eleven', pic:'⑪', area:2, category:'numbers'},
+  '十二': {py:'shí\'èr', en:'twelve', pic:'⑫', area:2, category:'numbers'},
+  '十三': {py:'shísān', en:'thirteen', pic:'⑬', area:2, category:'numbers'},
+  '十四': {py:'shísì', en:'fourteen', pic:'⑭', area:2, category:'numbers'},
+  '十五': {py:'shíwǔ', en:'fifteen', pic:'⑮', area:2, category:'numbers'},
+  '十六': {py:'shíliù', en:'sixteen', pic:'⑯', area:2, category:'numbers'},
+  '十七': {py:'shíqī', en:'seventeen', pic:'⑰', area:2, category:'numbers'},
+  '十八': {py:'shíbā', en:'eighteen', pic:'⑱', area:2, category:'numbers'},
+  '十九': {py:'shíjiǔ', en:'nineteen', pic:'⑲', area:2, category:'numbers'},
+  '二十': {py:'èrshí', en:'twenty', pic:'⑳', area:2, category:'numbers'},
+  '功夫': {py:'gōngfu', en:'kung fu', pic:'🥋', area:2, category:'actions', alike:['人']},   // (the pupils' morning training, in the courtyard)
+  // summer
+  '热': {py:'rè', en:'hot', pic:'🥵', area:2, category:'describing', alike:['夏天']},   // (the pupils training in the sun: 今天很热！)
+  '北边': {py:'běibian', en:'the north', pic:'⬆️', area:2, category:'places'},   // (the master's summer class: the hall is to the north)
+  '南边': {py:'nánbian', en:'the south', pic:'⬇️', area:2, category:'places'},
+  '药': {py:'yào', en:'medicine', pic:'💊', area:2, category:'items'},   // (the master's medicine, from the lingzhi on the stone pillars)
+  // autumn
+  '写': {py:'xiě', en:'to write', pic:'✍️', area:2, category:'actions', alike:['书']},   // (writing your name with a brush)
+  '东边': {py:'dōngbian', en:'the east', pic:'➡️', area:2, category:'places'},   // (the master's autumn class: the waterfall is to the east)
+  '西边': {py:'xībian', en:'the west', pic:'⬅️', area:2, category:'places'},
+  '雪': {py:'xuě', en:'snow', pic:'🌨️', area:2, category:'nature', alike:['冬天', '云']},   // (the first snow, as autumn ends: 下雪了！)
+  // winter
+  '冷': {py:'lěng', en:'cold', pic:'🥶', area:2, category:'describing', alike:['冬天', '雪']},   // (the pupils shivering: 今天很冷！)
+  '火': {py:'huǒ', en:'fire', pic:'🔥', area:2, category:'nature'},   // (the fire in the courtyard, to keep everyone warm; till 7 November 2026, the demon's torches)
+  '年': {py:'nián', en:'year', pic:'📅', area:2, category:'nature', alike:['春天', '夏天', '秋天', '冬天']},   // (the master's winter class: the four seasons make a year; heard since the years in the town)
+  '雪人': {py:'xuěrén', en:'snowman', pic:'⛄', area:2, category:'items', alike:['雪', '人', '冬天']},   // (built with the pupils in the courtyard)
   // chapter 2: home to Flower Fruit Mountain after twenty years, and the Demon of Havoc (decided 5 November 2026)
   '回来': {py:'huílai', en:'to come back', area:2, category:'actions', alike:['回家']},   // (你回来了！ the troop, as you come home)
   '好久不见': {py:'hǎojiǔ bú jiàn', en:'long time no see', area:2, category:'phrases', phrase:true, use:'when you meet someone you haven’t seen for a long time', cue:'is so happy to see you again', situation:'You meet a friend you haven’t seen for years.'},
   '哭': {py:'kū', en:'to cry', pic:'😢', area:2, category:'actions', alike:['快乐']},   // (the troop, crying for their little ones)
   '老': {py:'lǎo', en:'old', pic:'👴', area:2, category:'describing', alike:['人', '猴子']},   // (heard since the feast, 我们会老……; the old monkey, twenty years on: 我老了。)
   '妖怪': {py:'yāoguài', en:'demon, monster', pic:'👹', area:2, category:'animals', alike:['猴子', '人']},   // (the little demons: the word for every demon on the journey west)
-  '火': {py:'huǒ', en:'fire', pic:'🔥', area:2, category:'nature'},   // (the demon's torches)
   '救命': {py:'jiùmìng', en:'help!', area:2, category:'phrases', phrase:true, use:'when you’re in danger and need someone to help you', cue:'is in danger', situation:'You’re locked in a cage, and you need someone to help you!'},
   '笼子': {py:'lóngzi', en:'cage', pic:'🪤', area:2, category:'items', alike:['房子', '门']},   // (the little monkeys, locked in the demon's cages)
   '钥匙': {py:'yàoshi', en:'key', pic:'🗝️', area:2, category:'items', alike:['门', '笼子']},
@@ -229,6 +256,10 @@ const WORD_BANK = {
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
   '今天': {py:'jīntiān', en:'today'},
+  '练': {py:'liàn', en:'to practise, to train'},
+  '比武': {py:'bǐwǔ', en:'a kung fu match'},
+  '灵芝': {py:'língzhī', en:'lingzhi, a mushroom of long life'},
+  '下': {py:'xià', en:'to fall (of rain or snow: 下雪, it snows)'},
   '啊': {py:'a', en:'(softens a question: 谁啊？ who is it?)'},
   '他们': {py:'tāmen', en:'they, them'},
   '话': {py:'huà', en:'speech, words (说话, to talk)'},
@@ -256,7 +287,6 @@ const WORD_BANK = {
   '都': {py:'dōu', en:'all, both'},
   '很': {py:'hěn', en:'very'},
   '多': {py:'duō', en:'many, much'},
-  '年': {py:'nián', en:'year'},
   '以后': {py:'yǐhòu', en:'after, later'},
   '长大': {py:'zhǎngdà', en:'to grow up'},
   '盖': {py:'gài', en:'to build (a house)'},
@@ -293,7 +323,6 @@ const WORD_BANK = {
   '吧': {py:'ba', en:'(let’s…)'},
   '给': {py:'gěi', en:'to give'},
   '混世魔王': {py:'Hùnshì Mówáng', en:'the Demon of Havoc'},   // (a name: Area 2's boss, never a word to catch)
-  '北边': {py:'běibian', en:'the north'},
   '水脏洞': {py:'Shuǐzàng Dòng', en:'Water-Belly Cave (a name)'},   // (the Demon of Havoc's cave, over its mouth)
   '龙王': {py:'Lóngwáng', en:'the Dragon King'},   // (a name: Area 3's, under the sea)
   '找': {py:'zhǎo', en:'to look for'},
@@ -390,6 +419,27 @@ const MADE = {
   '跑步': {parts:[['跑', 'pǎo', 'run'], ['步', 'bù', 'step']]},   // (running, step after step: for exercise)
   '酸奶': {parts:[['酸', 'suān', 'sour'], ['奶', 'nǎi', 'milk']]},
   '猫头鹰': {parts:[['猫', 'māo', 'cat'], ['头', 'tóu', 'head'], ['鹰', 'yīng', 'eagle']]},   // (a bird of prey with a face like a cat's)
+  // the master's year: counting on from ten (ten and one, and so on; two tens)
+  '十一': {parts:[['十', 'shí', 'ten'], ['一', 'yī', 'one']]},
+  '十二': {parts:[['十', 'shí', 'ten'], ['二', 'èr', 'two']]},
+  '十三': {parts:[['十', 'shí', 'ten'], ['三', 'sān', 'three']]},
+  '十四': {parts:[['十', 'shí', 'ten'], ['四', 'sì', 'four']]},
+  '十五': {parts:[['十', 'shí', 'ten'], ['五', 'wǔ', 'five']]},
+  '十六': {parts:[['十', 'shí', 'ten'], ['六', 'liù', 'six']]},
+  '十七': {parts:[['十', 'shí', 'ten'], ['七', 'qī', 'seven']]},
+  '十八': {parts:[['十', 'shí', 'ten'], ['八', 'bā', 'eight']]},
+  '十九': {parts:[['十', 'shí', 'ten'], ['九', 'jiǔ', 'nine']]},
+  '二十': {parts:[['二', 'èr', 'two'], ['十', 'shí', 'ten']]},   // (two tens)
+  // the four sides: north, south, east and west, and 边, side
+  '北边': {parts:[['北', 'běi', 'north'], ['边', 'bian', 'side']]},
+  '南边': {parts:[['南', 'nán', 'south'], ['边', 'bian', 'side']]},
+  '东边': {parts:[['东', 'dōng', 'east'], ['边', 'bian', 'side']]},
+  '西边': {parts:[['西', 'xī', 'west'], ['边', 'bian', 'side']]},
+  '雪人': {parts:[['雪', 'xuě', 'snow'], ['人', 'rén', 'person']]},
+  '米饭': {parts:[['米', 'mǐ', 'rice'], ['饭', 'fàn', 'meal']]},   // (rice, made into a meal: cooked)
+  '热': {clue:['灬', 'huǒ', 'fire'], why:'is at its bottom: four little flames. It’s hot!'},
+  '冷': {clue:['冫', 'bīng', 'ice'], why:'is on its left: two drops of ice. It’s cold!'},
+  '雪': {clue:['雨', 'yǔ', 'rain'], why:'is on its top: snow falls from the sky, as rain does'},
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},

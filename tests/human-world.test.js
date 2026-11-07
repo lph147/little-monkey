@@ -1,7 +1,7 @@
 // Area 2, across the sea: the human world's prologue (decided 4 November 2026), played from landing on the shore to the
 // woodcutter's song, through every new word: the fishermen running off (人), the coat and hat (衣服, 帽子), the child (不,
 // 是 in the 是不是 game, 什么), asking people what things are (井, 房子, 门, 网, 船), knocking at the gate (谁), the granny's
-// rice (饭), the fisherman's fish and his coins (钱), the farmer (看) and his lunch, the town's stalls (买, 包子, 鞋), the
+// rice (米饭), the fisherman's fish and his coins (钱), the farmer (看) and his lunch, the town's stalls (买, 包子, 鞋), the
 // teahouse (茶, 说, 哪里), the school (听, 孩子, 学, 书), the years passing, the boatman (风) and the woodcutter (歌).
 // (Animals' friendships are given, as their word games are tested with Flower Fruit Mountain's.)
 'use strict';
@@ -123,11 +123,11 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   await press(g, 29, 7, 'up');
   assert.deepEqual(said(g), ['player: 神仙在哪里？', 'villager: 我不知道。'], 'helped, so you ask them too');
   assert.ok(knows(g, '知道'), '知道, the second time');
-  // the granny's lunch: a bowl of rice (饭), eaten there and then (a meal, not a snack for your bag), your health full
+  // the granny's lunch: a bowl of rice (米饭), eaten there and then (a meal, not a snack for your bag), your health full
   g.run('S.health = 20');
   await press(g, 22, 12, 'right');
-  assert.deepEqual(said(g).slice(-2), ['granny: 你饿吗？吃饭吧！', 'player: 谢谢']);
-  assert.deepEqual([get(g, "S.bag['饭'] || 0"), get(g, 'S.health'), get(g, 'S.health === maxHealth()'), get(g, 'pl.eating')], [0, get(g, 'maxHealth()'), true, null], 'eaten, and your health full');
+  assert.deepEqual(said(g).slice(-2), ['granny: 你饿吗？吃米饭吧！', 'player: 谢谢']);
+  assert.deepEqual([get(g, "S.bag['米饭'] || 0"), get(g, 'S.health'), get(g, 'S.health === maxHealth()'), get(g, 'pl.eating')], [0, get(g, 'maxHealth()'), true, null], 'eaten, and your health full');
   assert.ok(notes(g).some(n => /eat the whole bowl/.test(n)));
   // the fisherman wants a fish: caught with your rod, he pays you in coins (钱)
   await press(g, 12, 4, 'left');
@@ -167,8 +167,8 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.equal(get(g, 'here().lunch'), 'asked');
   goTo(g, 'village', 21, 12, 'right');
   await press(g, 22, 12, 'right');
-  assert.equal(get(g, 'here().holding.lunch'), '饭', 'the granny gives you a bowl for him');
-  assert.equal(get(g, "S.bag['饭'] || 0"), 0, 'carried for him, not in your snacks');
+  assert.equal(get(g, 'here().holding.lunch'), '米饭', 'the granny gives you a bowl for him');
+  assert.equal(get(g, "S.bag['米饭'] || 0"), 0, 'carried for him, not in your snacks');
   goTo(g, 'fields', 11, 8, 'up');
   const before = get(g, 'S.coins');
   said(g);
@@ -262,7 +262,8 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.deepEqual(npc(g, 'woodcutter'), ['mountainFoot', 10, 4], 'he’s gone home to his hut');
   const words = get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2)");
   assert.deepEqual(words.filter(w => !knows(g, w)), ['云', '鹤', '天', '师父', '名字', '叶子', '扫', '桶', '斧头', '头', '晚上', '月亮', '星星', '变', '飞', '松树', '回家', '春天', '夏天', '秋天', '冬天',
-    '回来', '好久不见', '哭', '老', '妖怪', '火', '救命', '笼子', '钥匙', '毛', '刀'], 'all 32 of the prologue’s words (chapter 1’s and 2’s to come)');
+    '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '功夫', '热', '北边', '南边', '药', '写', '东边', '西边', '雪', '冷', '火', '年', '雪人',
+    '回来', '好久不见', '哭', '老', '妖怪', '救命', '笼子', '钥匙', '毛', '刀'], 'all the prologue’s words (chapter 1’s and 2’s to come)');
   // the checklist is chapter 1's now
   assert.deepEqual(get(g, 'areaChecklist().filter(c => c[3]).map(([t]) => t)'), ['Help the woodcutter at his hut', 'Make 朋友 (friends) with the crane on the cliff road', 'Find the immortal’s cave']);
   // and you can sail back and forth
@@ -373,9 +374,9 @@ test('pacing: in Area 2, only the town’s teacher waits for five questions’ p
   for (const pl of Object.values(A.places)) for (const [ch, t] of Object.entries(pl.legend || {})) for (const pt of t.onLook || []) assert.ok(!pt.waits, `a place's "${ch}" doesn’t wait`);
   assert.ok(A.animals.every(a => !a.waits), 'nor do animals you meet the first time');
   assert.ok(A.events.every(e => !('wordReady' in e.if)), 'nor any event');
-  // the words: 32 in the prologue, one after another, and the first (人) as you land; then chapter 1's 21 (its four seasons
-  // among them: the master's year), and chapter 2's 11
-  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 64);
+  // the words: those of the prologue, one after another, and the first (人) as you land; then chapter 1's (the climb, and
+  // the master's year: its four seasons, the numbers to 二十, and each season's own), and chapter 2's
+  assert.equal(get(g, "Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === 2).length"), 87);
 });
 
 test('the human world has a song of its own, a village tune, in every place (not Flower Fruit Mountain’s)', () => {

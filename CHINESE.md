@@ -672,11 +672,11 @@ check that each is true and simply put.
 | 谁啊？ | shéi a? | Who is it? |  |  |
 | 我！ | wǒ! | Me! |  |  |
 | 你是小猴子！你好！ | nǐ shì xiǎo hóuzi! nǐ hǎo! | You’re a little monkey! Hello! | 阿姨 (Auntie) |  |
-| 你饿吗？吃饭吧！ | nǐ è ma? chī fàn ba! | Are you hungry? Have something to eat! | 老奶奶 (Granny) |  |
+| 你饿吗？吃米饭吧！ | nǐ è ma? chī mǐfàn ba! | Are you hungry? Have some rice! | 老奶奶 (Granny) |  |
 | 你有鱼吗？ | nǐ yǒu yú ma? | Do you have a fish? | 渔夫 (Fisherman) |  |
 | 这是钱。 | zhè shì qián. | Here’s some money. | 渔夫 (Fisherman) |  |
 | 你看！鸟！ | nǐ kàn! niǎo! | Look! Birds! | 农民 (Farmer) |  |
-| 我饿了。你有饭吗？ | wǒ è le. nǐ yǒu fàn ma? | I’m hungry. Do you have any rice? | 农民 (Farmer) |  |
+| 我饿了。你有米饭吗？ | wǒ è le. nǐ yǒu mǐfàn ma? | I’m hungry. Do you have any rice? | 农民 (Farmer) |  |
 | 这是牛吗？ | zhè shì niú ma? | Is this a cow? | 小猴子 (You) |  |
 | 是！ | shì! | Yes! | 农民 (Farmer) |  |
 | 你要换钱吗？ | nǐ yào huàn qián ma? | Do you want to change money? | 换钱的 (Money changer) |  |
@@ -699,7 +699,7 @@ check that each is true and simply put.
 | 我要三块木头。 | wǒ yào sān kuài mùtou. | I need three pieces of wood. |  |  |
 | 我要水。 | wǒ yào shuǐ. | I need some water. |  |  |
 | 我要四块石头。 | wǒ yào sì kuài shítou. | I need four stones. |  |  |
-| 对！谢谢！ | duì! xièxie! | That’s right! Thank you! |  |  |
+| 对！谢谢！ | duì! xièxie! | That’s right! Thank you! | 师父 (The master) |  |
 | 不对。 | bù duì. | That’s not right. |  |  |
 | 你去山上吧！ | nǐ qù shān shàng ba! | Go on up the mountain! | 樵夫 (Woodcutter) |  |
 | 师父在等你。 | shīfu zài děng nǐ. | The master is waiting for you. | 仙童 (The immortal’s boy) |  |
@@ -728,6 +728,31 @@ check that each is true and simply put.
 | 这是斧头。 | zhè shì fǔtou. | This is an axe. | 大师兄 (The senior pupil) |  |
 | 我要四块木头。 | wǒ yào sì kuài mùtou. | I need four pieces of wood. |  |  |
 | 很好！ | hěn hǎo! | Very good! | 师父 (The master), 大师兄 (The senior pupil) |  |
+| 上课了！ | shàngkè le! | Class is starting! | 师父 (The master) |  |
+| 这是几？ | zhè shì jǐ? | What number is this? |  |  |
+| 这是十。 | zhè shì shí. | This is ten. |  |  |
+| 我们学功夫。 | wǒmen xué gōngfu. | We’re learning kung fu. | 大师兄 (The senior pupil) |  |
+| 这是你的树。 | zhè shì nǐ de shù. | This is your tree. | 大师兄 (The senior pupil) |  |
+| 树要喝水。 | shù yào hē shuǐ. | The tree needs a drink of water. | 大师兄 (The senior pupil) |  |
+| 我们练功夫吧！ | wǒmen liàn gōngfu ba! | Let’s practise kung fu! | 师弟 (A pupil) |  |
+| 春天来了！ | chūntiān lái le! | Spring is here! |  |  |
+| 今天很热！ | jīntiān hěn rè! | It’s very hot today! | 大师兄 (The senior pupil), 师弟 (A pupil), 师妹 (A pupil) |  |
+| 今天很冷！ | jīntiān hěn lěng! | It’s very cold today! |  |  |
+| 房子在北边。 | fángzi zài běibian. | The hall is to the north. |  |  |
+| 门在南边。 | mén zài nánbian. | The way out is to the south. |  |  |
+| 看北边！ | kàn běibian! | Look north! |  |  |
+| 看南边！ | kàn nánbian! | Look south! |  |  |
+| 北边很冷，南边很热。 | běibian hěn lěng, nánbian hěn rè. | It’s cold in the north, and hot in the south. |  |  |
+| 我们比武吧！ | wǒmen bǐwǔ ba! | Let’s have a match! | 师兄 (A pupil) |  |
+| 我要灵芝。 | wǒ yào língzhī. | I need lingzhi. | 师父 (The master) |  |
+| 写你的名字。 | xiě nǐ de míngzi. | Write your name. | 大师兄 (The senior pupil) |  |
+| 瀑布在东边。 | pùbù zài dōngbian. | The waterfall is to the east. |  |  |
+| 你的树在西边。 | nǐ de shù zài xībian. | Your tree is to the west. |  |  |
+| 看东边！ | kàn dōngbian! | Look east! |  |  |
+| 看西边！ | kàn xībian! | Look west! |  |  |
+| 你的家在东边。 | nǐ de jiā zài dōngbian. | Your home is in the east. |  |  |
+| 下雪了！ | xià xuě le! | It’s snowing! |  |  |
+| 这是药。 | zhè shì yào. | This is medicine. | 师父 (The master) |  |
 | 你变松树吧！ | nǐ biàn sōngshù ba! | Change into a pine tree! | 师兄 (A pupil) |  |
 | 好！好！ | hǎo! hǎo! | Bravo! Bravo! | 师兄 (A pupil) |  |
 | 师兄好！ | shīxiōng hǎo! | Hello, senior brother! | 小师弟 (A little pupil), 小师妹 (A little pupil) |  |
@@ -762,7 +787,7 @@ check that each is true and simply put.
 | 我有桃子 | wǒ yǒu táozi | I have a peach. | 老奶奶 (Granny) |  |
 | 我有鱼 | wǒ yǒu yú | I have some fish. | 渔夫 (Fisherman) |  |
 | 我有鱼 | wǒ yǒu yú | I have a fish. | 渔夫 (Fisherman) |  |
-| 我有饭 | wǒ yǒu fàn | I have some rice. | 农民 (Farmer) |  |
+| 我有米饭 | wǒ yǒu mǐfàn | I have some rice. | 农民 (Farmer) |  |
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 货郎 (Peddler) |  |
 | 我要桃子 | wǒ yào táozi | I want a peach. | 货郎 (Peddler) |  |
 | 我要包子 | wǒ yào bāozi | I want a steamed bun. | 货郎 (Peddler) |  |
@@ -833,16 +858,28 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- | --- |
 | 鹅在水里。 | é zài shuǐ lǐ. | The goose is in the water. | 鹅 |  |
 | 鸡吃草。 | jī chī cǎo. | Chickens eat grass. | 鸡 |  |
+| 鸡吃米。 | jī chī mǐ. | Chickens eat rice. | 米 |  |
 | 狗是我的朋友。 | gǒu shì wǒ de péngyou. | The dog is my friend. | 狗 |  |
 | 猫很小。 | māo hěn xiǎo. | The cat is very small. | 猫 |  |
 | 鹤在水里。 | hè zài shuǐ lǐ. | The crane is in the water. | 鹤 |  |
 | 山上有云。 | shān shàng yǒu yún. | There are clouds on the mountain. | 云 |  |
 | 天上有鸟。 | tiān shàng yǒu niǎo. | There are birds in the sky. | 天 |  |
 | 这是猴子的头。 | zhè shì hóuzi de tóu. | This is the monkey’s head. | 头 |  |
-| 春天有很多花。 | chūntiān yǒu hěn duō huā. | In spring there are lots of flowers. | 春天 |  |
 | 夏天有很多桃子。 | xiàtiān yǒu hěn duō táozi. | In summer there are lots of peaches. | 夏天 |  |
 | 秋天的叶子是红色的。 | qiūtiān de yèzi shì hóngsè de. | In autumn the leaves are red. | 秋天 |  |
 | 冬天没有桃子。 | dōngtiān méiyǒu táozi. | In winter there are no peaches. | 冬天 |  |
+| 我有十一块石头。 | wǒ yǒu shíyī kuài shítou. | I have eleven stones. | 十一 |  |
+| 树上有十二个桃子。 | shù shàng yǒu shí'èr gè táozi. | There are twelve peaches on the tree. | 十二 |  |
+| 这里有十三个孩子。 | zhèlǐ yǒu shísān gè háizi. | There are thirteen children here. | 十三 |  |
+| 我要十四块木头。 | wǒ yào shísì kuài mùtou. | I need fourteen pieces of wood. | 十四 |  |
+| 我们有十五个碗。 | wǒmen yǒu shíwǔ gè wǎn. | We have fifteen bowls. | 十五 |  |
+| 天上有十六只鸟。 | tiān shàng yǒu shíliù zhī niǎo. | There are sixteen birds in the sky. | 十六 |  |
+| 山上有十七只羊。 | shān shàng yǒu shíqī zhī yáng. | There are seventeen sheep on the mountain. | 十七 |  |
+| 我要十八桶水。 | wǒ yào shíbā tǒng shuǐ. | I need eighteen buckets of water. | 十八 |  |
+| 这里有十九只猴子。 | zhèlǐ yǒu shíjiǔ zhī hóuzi. | There are nineteen monkeys here. | 十九 |  |
+| 我们有二十个桃子。 | wǒmen yǒu èrshí gè táozi. | We have twenty peaches. | 二十 |  |
+| 我在这里一年了。 | wǒ zài zhèlǐ yī nián le. | I’ve been here a year. | 年 |  |
+| 我们有一个雪人。 | wǒmen yǒu yī gè xuěrén. | We have a snowman. | 雪人 |  |
 | 晚上有月亮。 | wǎnshang yǒu yuèliang. | At night, there’s the moon. | 晚上 |  |
 | 天上有月亮。 | tiān shàng yǒu yuèliang. | There’s a moon in the sky. | 月亮 |  |
 | 天上有很多星星。 | tiān shàng yǒu hěn duō xīngxing. | There are lots of stars in the sky. | 星星 |  |
@@ -977,6 +1014,8 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 大师兄 | dà shīxiōng | The senior pupil |  |
 | 师兄 | shīxiōng | A pupil |  |
 | 师弟 | shīdì | A pupil |  |
+| 师弟 | shīdì | A pupil |  |
+| 师妹 | shīmèi | A pupil |  |
 | 小师弟 | xiǎo shīdì | A little pupil |  |
 | 小师妹 | xiǎo shīmèi | A little pupil |  |
 | 小猴子 | xiǎo hóuzi | Little monkey |  |
@@ -1053,7 +1092,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 门 | mén | door, gate |  |
 | 谁 | shéi | who |  |
 | 鸡 | jī | chicken |  |
-| 饭 | fàn | rice, a meal |  |
+| 米饭 | mǐfàn | rice (cooked) |  |
 | 钱 | qián | money |  |
 | 网 | wǎng | net |  |
 | 船 | chuán | boat |  |
@@ -1071,6 +1110,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 学 | xué | to learn |  |
 | 书 | shū | book |  |
 | 猫 | māo | cat |  |
+| 米 | mǐ | rice (uncooked) |  |
 | 风 | fēng | wind |  |
 | 歌 | gē | song |  |
 | 云 | yún | cloud |  |
@@ -1094,12 +1134,34 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 夏天 | xiàtiān | summer |  |
 | 秋天 | qiūtiān | autumn |  |
 | 冬天 | dōngtiān | winter |  |
+| 十一 | shíyī | eleven |  |
+| 十二 | shí'èr | twelve |  |
+| 十三 | shísān | thirteen |  |
+| 十四 | shísì | fourteen |  |
+| 十五 | shíwǔ | fifteen |  |
+| 十六 | shíliù | sixteen |  |
+| 十七 | shíqī | seventeen |  |
+| 十八 | shíbā | eighteen |  |
+| 十九 | shíjiǔ | nineteen |  |
+| 二十 | èrshí | twenty |  |
+| 功夫 | gōngfu | kung fu |  |
+| 热 | rè | hot |  |
+| 北边 | běibian | the north |  |
+| 南边 | nánbian | the south |  |
+| 药 | yào | medicine |  |
+| 写 | xiě | to write |  |
+| 东边 | dōngbian | the east |  |
+| 西边 | xībian | the west |  |
+| 雪 | xuě | snow |  |
+| 冷 | lěng | cold |  |
+| 火 | huǒ | fire |  |
+| 年 | nián | year |  |
+| 雪人 | xuěrén | snowman |  |
 | 回来 | huílai | to come back |  |
 | 好久不见 | hǎojiǔ bú jiàn | long time no see |  |
 | 哭 | kū | to cry |  |
 | 老 | lǎo | old |  |
 | 妖怪 | yāoguài | demon, monster |  |
-| 火 | huǒ | fire |  |
 | 救命 | jiùmìng | help! |  |
 | 笼子 | lóngzi | cage |  |
 | 钥匙 | yàoshi | key |  |
@@ -1119,6 +1181,25 @@ simply put. A part's pinyin is as it's said in the word.
 | 松树 | sōngshù | 松 sōng (pine) + 树 shù (tree) = 松树 (pine tree) |  |
 | 回家 | huíjiā | 回 huí (to go back) + 家 jiā (home) = 回家 (to go home) |  |
 | 天 | tiān | 大 dà (big): is drawn like someone standing with their arms out wide; the line over their head is the sky |  |
+| 十一 | shíyī | 十 shí (ten) + 一 yī (one) = 十一 (eleven) |  |
+| 十二 | shí'èr | 十 shí (ten) + 二 èr (two) = 十二 (twelve) |  |
+| 十三 | shísān | 十 shí (ten) + 三 sān (three) = 十三 (thirteen) |  |
+| 十四 | shísì | 十 shí (ten) + 四 sì (four) = 十四 (fourteen) |  |
+| 十五 | shíwǔ | 十 shí (ten) + 五 wǔ (five) = 十五 (fifteen) |  |
+| 十六 | shíliù | 十 shí (ten) + 六 liù (six) = 十六 (sixteen) |  |
+| 十七 | shíqī | 十 shí (ten) + 七 qī (seven) = 十七 (seventeen) |  |
+| 十八 | shíbā | 十 shí (ten) + 八 bā (eight) = 十八 (eighteen) |  |
+| 十九 | shíjiǔ | 十 shí (ten) + 九 jiǔ (nine) = 十九 (nineteen) |  |
+| 二十 | èrshí | 二 èr (two) + 十 shí (ten) = 二十 (twenty) |  |
+| 北边 | běibian | 北 běi (north) + 边 bian (side) = 北边 (the north) |  |
+| 南边 | nánbian | 南 nán (south) + 边 bian (side) = 南边 (the south) |  |
+| 东边 | dōngbian | 东 dōng (east) + 边 bian (side) = 东边 (the east) |  |
+| 西边 | xībian | 西 xī (west) + 边 bian (side) = 西边 (the west) |  |
+| 雪人 | xuěrén | 雪 xuě (snow) + 人 rén (person) = 雪人 (snowman) |  |
+| 米饭 | mǐfàn | 米 mǐ (rice) + 饭 fàn (meal) = 米饭 (rice (cooked)) |  |
+| 热 | rè | 灬 huǒ (fire): is at its bottom: four little flames. It’s hot! |  |
+| 冷 | lěng | 冫 bīng (ice): is on its left: two drops of ice. It’s cold! |  |
+| 雪 | xuě | 雨 yǔ (rain): is on its top: snow falls from the sky, as rain does |  |
 
 ### The child's game: is it?
 
@@ -1158,7 +1239,7 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 这是包子吗？ | zhè shì bāozi ma? | Is this a steamed bun? |  |
 | 这是鞋吗？ | zhè shì xié ma? | Is this shoes? |  |
 | 这是海吗？ | zhè shì hǎi ma? | Is this the sea? |  |
-| 这是饭吗？ | zhè shì fàn ma? | Is this rice? |  |
+| 这是米饭吗？ | zhè shì mǐfàn ma? | Is this rice (cooked)? |  |
 
 ### Words only heard in sentences
 
@@ -1166,6 +1247,10 @@ Asked about a picture of something you know (the word asked about is one of thes
 | --- | --- | --- | --- |
 | 换 | huàn | to change, to swap |  |
 | 今天 | jīntiān | today |  |
+| 练 | liàn | to practise, to train |  |
+| 比武 | bǐwǔ | a kung fu match |  |
+| 灵芝 | língzhī | lingzhi, a mushroom of long life |  |
+| 下 | xià | to fall (of rain or snow: 下雪, it snows) |  |
 | 啊 | a | (softens a question: 谁啊？ who is it?) |  |
 | 他们 | tāmen | they, them |  |
 | 话 | huà | speech, words (说话, to talk) |  |
@@ -1193,7 +1278,6 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 都 | dōu | all, both |  |
 | 很 | hěn | very |  |
 | 多 | duō | many, much |  |
-| 年 | nián | year |  |
 | 以后 | yǐhòu | after, later |  |
 | 长大 | zhǎngdà | to grow up |  |
 | 盖 | gài | to build (a house) |  |
@@ -1229,7 +1313,6 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 吧 | ba | (let’s…) |  |
 | 给 | gěi | to give |  |
 | 混世魔王 | Hùnshì Mówáng | the Demon of Havoc |  |
-| 北边 | běibian | the north |  |
 | 水脏洞 | Shuǐzàng Dòng | Water-Belly Cave (a name) |  |
 | 龙王 | Lóngwáng | the Dragon King |  |
 | 找 | zhǎo | to look for |  |

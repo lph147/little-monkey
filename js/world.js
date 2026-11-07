@@ -298,7 +298,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'wanted') return Object.entries(v).every(([id, want]) => { const h = (here().wanted || {})[id]; return want === true ? !!h : want === false ? !h : h === want; });
     if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
     if (k === 'canBuy') return canBuy() === v;
-    if (k === 'inBag') return Object.entries(v).every(([w, want]) => ((S.bag[w] || 0) > 0) === want);   // what's in your bag, such as {'饭':true}   // there's something in the shop you could buy now, that you don't have (the 老板's ?)
+    if (k === 'inBag') return Object.entries(v).every(([w, want]) => ((S.bag[w] || 0) > 0) === want);   // what's in your bag, such as {'米饭':true}   // there's something in the shop you could buy now, that you don't have (the 老板's ?)
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
     if (k === 'away') return ![].concat(v).includes(PLACE);   // anywhere but this place (or these), such as a task that leads you back there (decided 6 November 2026)
@@ -314,6 +314,7 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'around'){ const d = v[3] ?? AROUND; return placeOf(v) === PLACE && Math.abs(pl.x - v[0]) <= d && Math.abs(pl.y - v[1]) <= d; }   // you're near here, as you come up to it (within so many squares: [x, y, 'place', squares])
     if (k === 'friends') return Object.entries(v).every(([id, want]) => S.friends.includes(id) === want);   // who's your friend, such as {goat:true}
     if (k === 'following') return Object.entries(v).every(([id, want]) => S.following.includes(id) === want);   // who's following you (the follow step), such as {cow:true}
+    if (k === 'carrying') return (here().carrying ? here().carrying.word : false) === v;   // what you're carrying for someone (the carry step), such as 水, or false
     if (k === 'lifted') return (here().lifted || false) === v;   // what you're carrying over your head (the lift step), such as 'sack', or false
     if (k === 'form') return (pl.form || null) === v;   // what you've changed into just now (turnInto with keep), such as a little demon
     if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
@@ -326,7 +327,7 @@ const LEAP_MS = 450;   // how long a leap takes, when someone stops following yo
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
 const STEP_OPTIONS = {carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
-  change:['at'], collect:['for','count','note','each','full'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
+  change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 const COUNT_MS = 900;   // a count said as each one's done, one after another (the carry step's each): how long it has, at least, before the next begins
@@ -722,7 +723,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     const n = p.length, all = n >= (s.count || 1), num = COUNTING[n - 1];
     if (all) here().holding[s.for] = item;
     save();
-    if (lvl(item) === 0) await showNotice(item, s.note ? {note:fill(s.note)} : {});
+    if (lvl(item) === 0 && !s.quiet) await showNotice(item, s.note ? {note:fill(s.note)} : {});   // (quiet: something that isn't a word to catch, such as lingzhi)
     SFX.right();
     const counted = !!num && lvl(num) >= 1;
     if (counted) say(num);
@@ -1128,8 +1129,8 @@ async function runSteps(steps, who, ends){
 // Steps that show nothing you'd press A for: the story changing, a sound, things moving about on the map, you doing
 // something (the last of them, ACT_STEPS, changing nothing in the story, as a sound doesn't; lifting something and
 // putting it down do: what you carry).
-const ACT_STEPS = ['sweep', 'dip', 'unlock', 'pickUp'];
-const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly', 'lift', 'putDown', ...ACT_STEPS];
+const ACT_STEPS = ['sweep', 'dip', 'unlock', 'pickUp', 'kneel'];
+const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly', 'lift', 'putDown', 'pour', ...ACT_STEPS];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){
@@ -1185,7 +1186,15 @@ let caughtBefore = null;
 const caughtCount = () => Object.keys(WORDS).filter(w => lvl(w) >= 1).length;
 // The part of a character's talk you'd hear now (the first whose if matches), and the one you heard last (lastTalk), so
 // A can tell when talking again would say something new (js/input.js).
-const talkPart = n => (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if));
+// What someone says to you: the first part of their talk whose if matches; but someone with nothing for you, only a few
+// words to say (their last part, just lines and replies), talks about the weather instead, when the area's smallTalk has
+// something for now, such as the cold in winter (decided 7 November 2026, the owner's idea: 今天很冷！).
+const CHAT_STEPS = ['say', 'reply', 'message'];
+const smallTalkFor = n => PEOPLE.has(n.id) && (AREA.smallTalk || []).find(t => matches(t.if) && (!t.who || t.who.includes(n.id)) && !(t.not || []).includes(n.id));
+const talkPart = n => {
+  const p = (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if)), st = p && !p.if && p.do.every(s => CHAT_STEPS.includes(stepKind(s))) && smallTalkFor(n);
+  return st ? {do:[{say:st.say}, ...(st.reply ? [{reply:st.reply}] : [])]} : p;
+};
 // How many more questions you need to answer before a character gives you another new word (the area's wordGap: so many
 // after the last new word you caught, anywhere; here().wordTurn, when you caught it). A talk part that teaches one says
 // so (waits): till then, the character first offers you a quick word game, just for practice, sized to what's left.

@@ -396,7 +396,7 @@ async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, option
 // it, 这是…吗？ (Is this a…?), read aloud, the word asked about (said) the picture's own or another's. You answer 是 (yes) or
 // 不是 (no): it's understanding the word, never grammar. Its English shows once you've answered. Counts as practice of the
 // word asked about. Gives whether you were right.
-const IS_IT_NO_A = ['衣服', '鞋', '茶', '饭', '水', '草'], IS_IT_THE = ['海', '河'];   // (clothes, tea; the sea)
+const IS_IT_NO_A = ['衣服', '鞋', '茶', '米饭', '米', '水', '草'], IS_IT_THE = ['海', '河'];   // (clothes, tea; the sea)
 const aWord = w => { const e = enOf(w).split(',')[0].trim(); return IS_IT_THE.includes(w) ? 'the ' + e : IS_IT_NO_A.includes(w) ? e : (/^[aeiou]/.test(e) ? 'an ' : 'a ') + e; };
 async function isItQ({who = '', pic, said}){
   const t = toks(`这 是 ${said} 吗 ？`), yes = pic === said, en = `Is this ${aWord(said)}?`;

@@ -223,6 +223,20 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(Rc(6, 17, 19, 1), '#B82A2C');
     [[9.5, 12, 1.8], [15.5, 9, 2.2], [21.5, 12.5, 1.8], [12.8, 15, 1.2], [19, 15.3, 1.2], [6.5, 15.5, 1], [25, 15.5, 1]].forEach(([x, y, r]) => p.flat(O(x, y, r, r * .85), '#FFFFFF'));   // its white spots
   },
+  '灵芝': p => {   // lingzhi, the mushroom of long life: two glossy fans, red-brown, ringed, an ochre rim, growing out of a mossy rock (unlike 蘑菇: no spots, no stem)
+    p.fill(and(O(16, 31, 15, 7), Rc(0, 24, 32, 8)), '#8C949A', {edge: true});   // the rock
+    p.flat(and(O(12, 25, 9, 2.2), Rc(0, 23, 32, 3)), '#5DA651');                 // moss on it
+    p.fill(path([[17, 26], [15, 19]], 1.3), '#7A3A1E');                           // the stalks, out of the rock
+    p.fill(path([[19, 25], [21, 14]], 1.1), '#7A3A1E');
+    p.fill(and(O(13, 19, 11.5, 6.5), Rc(0, 12, 32, 8)), '#8E2E1E', {edge: true});  // the big fan (its flat underside a line)
+    p.flat(and(O(13, 19, 8.5, 4.2), Rc(0, 12, 32, 7)), '#A23A22');                // its rings
+    p.flat(and(O(13, 19, 5.5, 2.4), Rc(0, 12, 32, 7)), '#B44A28');
+    p.flat(and(O(13, 19, 11.5, 6.5), not(O(13, 19, 10.4, 5.5)), Rc(0, 12, 32, 7)), '#E0A43C');   // the ochre rim
+    p.fill(and(O(22, 13, 7.5, 4.6), Rc(12, 8, 18, 5.5)), '#8E2E1E', {edge: true});  // the little fan, higher up
+    p.flat(and(O(22, 13, 4.6, 2.4), Rc(12, 8, 18, 5)), '#B44A28');
+    p.flat(and(O(22, 13, 7.5, 4.6), not(O(22, 13, 6.4, 3.6)), Rc(12, 8, 18, 5)), '#E0A43C');
+    p.flat(or(Rc(8, 14, 3, 1), Rc(19, 9, 2, 1)), '#F2D8B0');                       // a glossy glint on each
+  },
   '树': p => {   // tree
     p.fill(Rc(14, 19, 5, 11), BARK); p.fill(O(16.5, 30, 6, 1.5), '#5DA651');
     p.fill(or(O(16, 11, 9.5, 8), O(9, 15.5, 6.2, 5.5), O(24, 15.5, 6.2, 5.5), O(16.5, 17.5, 8, 4.6)), LEAF);
@@ -1028,7 +1042,7 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(Pg([[1.6, 10.6], [5.6, 9], [5.6, 12.2]]), '#E8A030');                              // beak
     p.eye(7, 8);
   },
-  '饭': p => {   // rice: a bowl heaped with white rice, and chopsticks (unlike the bowl: empty, blue-striped)
+  '米饭': p => {   // rice: a bowl heaped with white rice, and chopsticks (unlike the bowl: empty, blue-striped)
     p.fill(or(path([[18, 2], [27, 15]], .9), path([[22, 2], [29, 14]], .9)), '#C08A50', {dark: '#8A5A30'});   // chopsticks
     p.fill(O(16, 15, 11.5, 6.4), '#FAF8F2', {light: '#FFFFFF', dark: '#E2DCCE'});               // the heap of rice
     for (const [x, y] of [[10, 13], [14, 11], [19, 12], [22, 15], [13, 16], [17, 15]]) p.flat(Rc(x, y, 2, 1), '#E8E2D4');   // its grains
@@ -1379,6 +1393,129 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(28, 13, 2.4, 1.8), '#C23A2E'); p.fill(Rc(29.4, 4, 1.2, 9), '#C23A2E');           // and a little red one
     p.flat(path([[30.6, 4], [32, 7]], .5), '#C23A2E');
   },
+  // the master's mountain (Area 2, chapter 1): the numbers to twenty, the pupils' training, the weather, the four
+  // directions, the master's medicine, writing, the snow and the year
+  '十一': p => teen(p, 1), '十二': p => teen(p, 2), '十三': p => teen(p, 3), '十四': p => teen(p, 4), '十五': p => teen(p, 5),   // a bundle of ten sticks, and a row of loose ones
+  '十六': p => teen(p, 6), '十七': p => teen(p, 7), '十八': p => teen(p, 8), '十九': p => teen(p, 9),   // a bundle, a row of five and the rest under it
+  '二十': p => { bundle(p, 3); bundle(p, 19, 1); },   // twenty: two bundles of ten
+  '功夫': p => {   // kung fu: a pupil in a white jacket and a black sash, in a bow stance, punching, his other fist at his waist (unlike 人: standing still)
+    const SK = '#F2C9A0', JK = '#F2EEE4', JL = {light: '#FFFFFF', dark: '#CFC8B8'}, TR = '#3E3A48', TL = {light: '#5A566A', dark: '#2A2632'}, SHOE = '#1E1A16';
+    p.fill(path([[11, 20], [4, 28.5]], 1.8), TR, TL);                                        // his back leg, straight
+    p.fill(Pg([[1, 27.5], [6, 27.5], [6.5, 30.5], [1, 30.5]]), SHOE);
+    p.fill(path([[13, 20], [19, 23], [19.5, 28.5]], 1.8), TR, {...TL, edge: true});          // his front leg, bent
+    p.fill(Rc(18, 28.5, 6, 2.2, 1), SHOE);
+    p.fill(Pg([[9, 10.5], [15, 10.5], [16, 20], [14.5, 23.5], [9.5, 23.5], [8.5, 20]]), JK, JL);   // his jacket
+    p.flat(path([[11, 10.6], [12.8, 13.4], [14.6, 10.6]], .45), '#B8B0A0');                   // its collar
+    p.fill(Rc(8.5, 17.5, 7.5, 2), '#2A2A30');                                                 // a black sash,
+    p.fill(path([[9, 18.5], [6, 20], [5, 22.5]], .7), '#2A2A30');                             // its ends flying
+    p.fill(path([[13.5, 12.5], [25, 12.5]], 1.5), JK, {...JL, edge: true});                   // an arm, punching,
+    p.fill(O(26.2, 12.5, 2, 1.9), SK, {edge: true});                                          // its fist
+    p.fill(path([[10, 12.5], [8, 16], [10.5, 18]], 1.4), JK, {...JL, edge: true}); p.fill(O(11, 18, 1.6), SK, {edge: true});   // the other fist, at his waist
+    p.fill(O(12.5, 6.5, 3.8, 4), SK, {edge: true});                                           // his head, side on
+    p.flat(and(O(12.5, 6.5, 3.8, 4), or(Rc(0, 0, 32, 4.4), Rc(0, 0, 10.6, 32))), '#2A1E16');  // his hair,
+    p.fill(O(10.6, 2.6, 1.6, 1.3), '#2A1E16');                                                // in a topknot
+    p.flat(Rc(14, 5, 2, 1), '#2A1E16'); p.flat(Rc(14, 6, 2, 1), '#1E1A16'); p.dot(15, 9, '#C4826A');   // a frown, an eye, his mouth
+    p.flat(or(path([[28.5, 8.5], [30.5, 6.5]], .4), path([[29.5, 12.5], [31, 12.5]], .4), path([[28.5, 16.5], [30.5, 18.5]], .4)), '#E8902A');   // the punch's force
+  },
+  '热': p => {   // hot: a red face, sweating, its tongue out, under a blazing sun, heat rising off it (unlike 夏天: a lotus pond; unlike 快乐 and 哭: yellow)
+    for (let i = 0; i < 8; i++){ const a = i * Math.PI / 4 - Math.PI / 8; p.flat(Cp(24.4 + Math.cos(a) * 5.6, 8 + Math.sin(a) * 5.6, 24.4 + Math.cos(a) * 7, 8 + Math.sin(a) * 7, .55), '#F2B42A'); }   // the sun's rays,
+    p.fill(O(24.4, 8, 4.2), '#FFD54A', {light: '#FFF2A8', dark: '#F2A82A'});                  // the sun
+    for (const x of [4.5, 9.5, 14.5]) p.flat(path([[x, 7.5], [x - 1.2, 6], [x, 4.5], [x + 1.2, 3], [x, 1.5]], .5), '#F0603A');   // heat rising
+    p.fill(O(14.5, 19.5, 11.4, 10.8), '#F26A3A', {light: '#F8955E', dark: '#C8462A', edge: true});   // the face, red-hot
+    p.flat(or(O(7.6, 22.5, 2.2, 1.4), O(21.4, 22.5, 2.2, 1.4)), '#E04432');                   // flushed cheeks
+    p.flat(or(path([[7, 14.5], [10.5, 13.5]], .55), path([[18.5, 13.5], [22, 14.5]], .55)), '#8A2A16');   // eyebrows, tired
+    p.eye(8, 16); p.eye(19, 16);
+    p.fill(O(14.5, 24, 3.4, 2.6), '#7A2E1C');                                                 // a mouth open, panting,
+    p.fill(O(15, 26.4, 2, 2.2), '#F28A9A', {edge: true});                                     // its tongue out
+    const drop = (x, y, s = 1) => or(O(x, y + s, 1.6 * s), Pg([[x, y - 2 * s], [x - 1.4 * s, y + .6 * s], [x + 1.4 * s, y + .6 * s]]));
+    p.fill(or(drop(4.5, 14), drop(25.2, 16), drop(27.8, 22, .9)), '#5FB4F0', {light: '#A8DCFA', dark: '#3A8ED0'});   // drops of sweat
+  },
+  '冷': p => {   // cold: a pale blue face, shivering, its teeth chattering, a woolly scarf round its neck, a snowflake by it (unlike 冬天: a snowy tree; unlike 雪: snow)
+    const arc = (r, a0, a1) => path(Array.from({length: 5}, (_, i) => { const a = (a0 + (a1 - a0) * i / 4) * Math.PI / 180; return [16 + Math.cos(a) * r, 12 + Math.sin(a) * r]; }), .45);
+    p.flat(or(arc(14.2, 166, 194), arc(14.2, -14, 14)), '#7FB6E8');                           // shivering
+    p.fill(O(16, 12, 10, 9.6), '#A8D4F2', {light: '#D0EAFA', dark: '#7AAED8', edge: true});   // the face
+    p.flat(or(path([[8.5, 8], [12.5, 6.5]], .5), path([[19.5, 6.5], [23.5, 8]], .5)), '#3A5A7A');   // eyebrows, worried
+    p.eye(10, 8); p.eye(20, 8);
+    p.flat(O(16, 12, 1.4, 1.1), '#E87A8A');                                                   // a pink nose
+    p.flat(Rc(10.5, 14, 11, 5), '#3A4A5A');                                                   // teeth chattering
+    p.flat(or(Rc(11.5, 15, 9, 1), Rc(11.5, 17, 9, 1)), '#FFFFFF');
+    p.flat(or(Rc(14, 15, 1, 1), Rc(17, 15, 1, 1), Rc(13, 17, 1, 1), Rc(16, 17, 1, 1), Rc(19, 17, 1, 1)), '#B8C8D8');
+    const SC = '#3FA34F', SCL = {light: '#6CC47A', dark: '#2A7A38'}, ST = '#F4F0E8', end = Pg([[18, 22], [23, 22], [24, 28.5], [19.5, 29]]);
+    p.fill(end, SC, SCL);                                                                     // the scarf's end, hanging down,
+    p.flat(and(end, or(Rc(0, 23.6, 32, 1.4), Rc(0, 26.4, 32, 1.4))), ST);                     // striped
+    p.flat(or(Rc(19.5, 29, 1, 1.5), Rc(21.5, 29, 1, 1.5), Rc(23.4, 28.6, 1, 1.5)), SCL.dark); // its fringe
+    p.fill(and(O(16, 21.5, 11, 4.4), not(O(16, 16.5, 9, 4))), SC, {...SCL, edge: true});      // wrapped round its neck
+    p.flat(and(O(16, 21.5, 11, 4.4), not(O(16, 16.5, 9, 4)), or(Rc(9, 0, 1.4, 32), Rc(15, 0, 1.4, 32), Rc(21, 0, 1.4, 32))), ST);
+    snowflake(p, 27, 4, 3);
+  },
+  '北边': p => compass(p, 0), '东边': p => compass(p, 1), '南边': p => compass(p, 2), '西边': p => compass(p, 3),   // the north, east, south and west
+  '药': p => {   // medicine: a gourd bottle (葫芦) with a red cord tied round its waist and a stopper, and two pills on a little dish
+    const G = '#D9A441', GL = {light: '#F2CA6E', dark: '#A8741E'};
+    p.fill(O(12.5, 21.5, 8.6, 7.8), G, GL);                                                   // the gourd: its big round bottom,
+    p.fill(O(12.5, 10.2, 5.2, 4.8), G, {...GL, edge: true});                                  // its little top,
+    p.fill(Rc(11, 2.6, 3, 3.4, 1), '#8A5A32', {light: '#B07C4E', edge: true});                // a stopper
+    p.flat(or(O(9.2, 19, 1.4, 3), O(10.3, 9, 1, 1.8)), '#F8DC94');                            // shining
+    p.fill(Rc(7.5, 14.2, 10, 2), '#C8322A', {light: '#E85A4A', dark: '#9A2018'});            // the red cord,
+    p.fill(path([[17, 15.2], [19.5, 18.5], [19.6, 21]], .6), '#C8322A');                      // its end hanging,
+    p.fill(O(19.7, 22.6, 1.2, 1.8), '#C8322A', {edge: true});                                 // a tassel
+    p.fill(O(26, 29.4, 5.4, 1.7), '#F4F1EA', {dark: '#C9C3B4'});                              // a little dish
+    for (const x of [24, 28.2]){ p.fill(O(x, 27.2, 2.1), '#7A3A22', {light: '#A85A3A', dark: '#4E2414', edge: true}); p.dot(Math.floor(x) - 1, 26, '#F0C8B0'); }   // round brown pills
+  },
+  '写': p => {   // to write: a brush with a bamboo handle making a bold black stroke on white paper, a swoosh, not a character (unlike 书: books)
+    p.fill(Rc(2, 12, 24, 17), '#FAF8F0', {light: '#FFFFFF', dark: '#D8D2C2'});                // a sheet of paper
+    p.flat(or(path([[5.5, 22.5], [8.5, 20], [12, 21.4]], 1.25), path([[12, 21.4], [15.5, 22.6], [18.4, 20.8], [20.4, 18.4]], .9), O(5.4, 22.4, 2, 1.8)), '#1E1A16');   // the stroke, thinning
+    p.fill(path([[29.4, 2.2], [24.6, 10.6]], 1.25), '#D9B866', {light: '#EED68A', dark: '#B08E44'});   // the brush's bamboo handle,
+    p.flat(or(Rc(27.6, 4.6, 2, 1), Rc(25.8, 7.8, 2, 1)), '#9A7A34');                          // its joints
+    p.fill(Pg([[22.6, 10.4], [26.6, 12.4], [20.6, 18.6]]), '#2A2A2E', {light: '#4A4A50', edge: true});   // its hair, black with ink,
+    p.flat(Pg([[22.8, 10.4], [26.4, 12.2], [25, 13.8], [22.6, 12.6]]), '#F4F0E4');            // white where the ink stops
+  },
+  '雪': p => {   // snow: big six-armed snowflakes falling, and a heap of snow (unlike 冬天: a tree in the snow; unlike 云: a cloud)
+    p.fill(and(or(O(10.5, 31, 9.4, 5), O(21.5, 31.5, 9, 4.2)), Rc(0, 0, 32, 31)), '#F7FAFD', {light: '#FFFFFF', dark: '#B8CCE0'});   // the heap
+    p.flat(or(Rc(7, 28, 3, 1), Rc(20, 29, 4, 1)), '#DCE8F4');
+    snowflake(p, 9, 10, 6, true); snowflake(p, 24, 7, 4); snowflake(p, 24, 19, 3); snowflake(p, 5, 22, 3);
+  },
+  '雪人': p => {   // snowman: two snowballs, coal eyes, a carrot nose, stick arms and a red scarf (unlike 雪: snowflakes; unlike 人: a person)
+    const SN = '#FAFCFF', SL = {light: '#FFFFFF', dark: '#BCD0E4'};
+    p.flat(O(16, 29.6, 12, 1.5), '#D8E6F2');                                                  // the snow it stands on
+    p.fill(or(path([[9, 18], [4, 14], [2, 10.5]], .6), path([[4.5, 14.4], [1.5, 15]], .5)), '#6A4A2A');      // stick arms
+    p.fill(or(path([[23, 18], [28, 14], [30, 10.5]], .6), path([[27.5, 14.4], [30.5, 15.5]], .5)), '#6A4A2A');
+    p.fill(O(16, 23, 9.4, 7.6), SN, SL);                                                      // the big snowball
+    p.fill(O(16, 11, 6.6, 6.2), SN, {...SL, edge: true});                                     // its head
+    p.flat(or(Rc(13, 9, 2, 2), Rc(18, 9, 2, 2)), '#2A2A2E');                                  // coal eyes
+    p.fill(Pg([[16, 11.5], [22.5, 12.8], [16, 14]]), '#F28A2A', {dark: '#C8641A'});            // a carrot nose
+    for (const [x, y] of [[13, 14], [15, 15], [17, 15], [19, 14]]) p.dot(x, y, '#2A2A2E');    // a smile of coal
+    p.fill(Rc(9.5, 16, 13, 3, 1.5), RED, {light: '#F06A5A', dark: '#A82828', edge: true});    // a red scarf,
+    p.fill(Rc(18, 18, 3.4, 7, 1), RED, {light: '#F06A5A', dark: '#A82828', edge: true});      // its end hanging
+    p.flat(or(Rc(16, 21, 1, 2), Rc(16, 25, 1, 2)), '#2A2A2E');                                // coal buttons
+  },
+  '年': p => {   // year: a wheel of the four seasons, going round: spring's peach blossom, summer's green leaf, autumn's red leaf and winter's snowflake (unlike 春天, 夏天, 秋天 and 冬天: one season)
+    p.fill(O(16, 16, 15), '#A8784A', {light: '#C89A6A', dark: '#7A5230'});                    // the wheel's rim
+    for (const [sx, sy, c] of [[-1, -1, '#E2F2D0'], [1, -1, '#FFF0BC'], [1, 1, '#FBDDBE'], [-1, 1, '#C4DCF2']])
+      p.flat(and(O(16, 16, 12.2), (x, y) => (x + .5 - 16) * sx > 0 && (y + .5 - 16) * sy > 0), c);   // a quarter each
+    p.flat(or(Rc(15.5, 3, 1, 26), Rc(3, 15.5, 26, 1)), '#FFFFFF');
+    for (let i = 0; i < 5; i++){ const a = -Math.PI / 2 + i * 2 * Math.PI / 5; p.fill(O(10.4 + Math.cos(a) * 2.4, 10.4 + Math.sin(a) * 2.4, 1.8), '#F48FB1', {light: '#FFC7DA', dark: '#D8628A'}); }   // spring: a blossom
+    p.flat(O(10.4, 10.4, 1.1), '#FFD54A');
+    const leaf = (cx, cy, c, l, d) => { p.fill(and(O(cx - 2, cy + 2, 4.6), O(cx + 2, cy - 2, 4.6)), c, {light: l, dark: d}); p.flat(path([[cx - 3, cy + 3], [cx + 2.4, cy - 2.4]], .4), d); };
+    leaf(21.6, 10.4, '#4FA34A', '#7CC46B', '#2F7A3E');                                        // summer: a green leaf
+    leaf(21.6, 21.6, '#E0642E', '#F2A04A', '#A8401A');                                        // autumn: a red one
+    for (const [x, y] of flakePx(3, false)) p.dot(10 + x, 22 + y, '#FFFFFF');                 // winter: a snowflake
+    for (const [x, y, dx, dy] of [[16, 2.4, 1, 0], [29.6, 16, 0, 1], [16, 29.6, -1, 0], [2.4, 16, 0, -1]])   // arrows on the rim, going round
+      p.flat(Pg([[x + dx * 2, y + dy * 2], [x - dx * 1.4 - dy * 1.9, y - dy * 1.4 + dx * 1.9], [x - dx * 1.4 + dy * 1.9, y - dy * 1.4 - dx * 1.9]]), '#FFF4D8');
+  },
+  '米': p => {   // rice, raw: a square wooden measure (a 斗) heaped with grains of rice, a few spilt on its front (unlike 饭: cooked, in a red bowl, with chopsticks)
+    p.fill(Pg([[22, 16], [29, 12], [28.4, 23], [21, 27]]), '#9A6E40', {light: '#B07E48', dark: '#6E4A26'});   // the measure: its side,
+    p.fill(Pg([[3, 16], [22, 16], [21, 27], [4, 27]]), '#B98A55', {light: '#D8AA70', dark: '#8A5E30', edge: true});   // its front
+    p.flat(Rc(4, 21, 17, 1), '#8A5E30');
+    const heap = or(Pg([[3, 16.5], [10, 12.5], [29, 12.5], [22, 16.5]]), Pg([[3, 16.5], [8, 11], [13, 6.4], [16, 4.8], [19, 5.8], [24, 9], [29, 12.6], [22, 16.5]]));
+    p.fill(heap, '#F2ECDC', {light: '#FFFFFF', dark: '#D4CAB2'});                              // the heap of rice,
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < 70; i++){   // its grains, here and there
+      const x = Math.floor(3 + rnd() * 26), y = Math.floor(5 + rnd() * 12), v = rnd() < .35;
+      if (heap(x, y) && heap(x + 1, y + 1) && heap(x - 1, y)){ p.flat(v ? Rc(x, y, 1, 2) : Rc(x, y, 2, 1), '#FFFFFF'); p.dot(v ? x + 1 : x, y + 1, '#DCD2BA'); }
+    }
+    p.fill(Rc(3, 16, 19, 1.4), '#D8AA70');                                                    // the measure's rim
+    for (const [x, y, v] of [[6, 17, 0], [9, 18, 1], [14, 17, 0], [18, 18, 0], [12, 19, 0]]) p.flat(v ? Rc(x, y, 1, 2) : Rc(x, y, 2, 1), '#F8F4E8');   // grains spilt over it
+  },
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops
   p.fill(or(O(15.5, 17, 10.5, 9), O(23, 21.5, 4.6, 4)), c);
@@ -1406,6 +1543,60 @@ function flower(p, petal, middle){   // a flower, its five petals one colour (pe
   p.fill(O(11, 25, 4, 1.8), LEAF); p.fill(O(21, 22.5, 4, 1.8), LEAF);
   for (let i = 0; i < 5; i++){ const a = -Math.PI / 2 + i * 2 * Math.PI / 5; p.fill(O(16 + Math.cos(a) * 5.4, 12 + Math.sin(a) * 5.4, 3.8), petal, {edge: true}); }
   p.fill(O(16, 12, 2.8), middle, {edge: true});
+}
+// Numbers from 十一 to 二十: a bundle of ten sticks tied round the middle with red string, and the rest as loose sticks
+// beside it, the same sticks, in rows of up to five with a gap between each so they can be counted (十七: five, and two
+// under them); 二十, two bundles (一 to 十 are dice).
+const STICK = '#C8955A', STICK_SHADE = '#A87440', STICK_LIT = '#DDB07A', STICK_END = '#8A5A32';
+const BUNDLES = [   // each stick's top and bottom, a little uneven, for a bundle and (二十's) another
+  [[4, 1, 3, 5, 2, 3, 1, 4, 2, 3], [28, 29, 28, 28, 29, 28, 29, 28, 28, 29]],
+  [[3, 4, 2, 4, 1, 3, 4, 2, 3, 4], [29, 28, 28, 29, 28, 29, 28, 28, 29, 28]]];
+function bundle(p, x0, k = 0){   // ten sticks side by side from x0, lit on the left, their ends darker, and the string wrapped round them
+  const [tops, bottoms] = BUNDLES[k];
+  tops.forEach((t, i) => {
+    p.flat(Rc(x0 + i, t, 1, bottoms[i] - t + 1), i === 0 ? STICK_LIT : i === 9 ? '#94643A' : i % 2 ? STICK_SHADE : STICK);
+    p.dot(x0 + i, t, STICK_END); p.dot(x0 + i, bottoms[i], STICK_END);
+  });
+  p.fill(Rc(x0 - 1, 14, 12, 3), RED, {light: '#F06A5A', dark: '#A82828'});
+}
+function teen(p, n){   // 十 and n: a bundle, and n loose sticks, each two pixels wide (the outline between them)
+  bundle(p, 2);
+  const stick = (x, y) => { p.flat(Rc(x, y, 1, 11), STICK_LIT); p.flat(Rc(x + 1, y, 1, 11), STICK); p.flat(or(Rc(x, y, 2, 1), Rc(x, y + 10, 2, 1)), STICK_END); };
+  for (let i = 0; i < n; i++) stick(16 + i % 5 * 3, n <= 5 ? 10 : i < 5 ? 3 : 18);
+}
+// The four directions: a compass, its long red arm pointing the way (k: 0 up for 北边, then round to 东边, 南边 and
+// 西边), the other three short and grey; no letters on it.
+function compass(p, k){
+  p.fill(O(16, 16, 14.5), '#C9A23A', {light: '#E8C860', dark: '#8E6E1E'});                    // a brass rim
+  p.fill(O(16, 16, 12.4), '#F6EED6', {light: '#DCD0AE', dark: '#FFFCF0'});                    // the face, set into it
+  for (let i = 0; i < 4; i++){ const a = Math.PI / 4 + i * Math.PI / 2; p.flat(Rc(Math.round(16 + Math.cos(a) * 9.4) - 1, Math.round(16 + Math.sin(a) * 9.4) - 1, 2, 2), '#C8B888'); }   // marks between the arms
+  const arm = (i, len, w, lit, shade) => {   // a pointed arm, half of it lit and half shaded
+    const [dx, dy] = [[0, -1], [1, 0], [0, 1], [-1, 0]][i], tip = [16 + dx * len, 16 + dy * len];
+    p.flat(Pg([[16, 16], [16 - dy * w, 16 + dx * w], tip]), lit); p.flat(Pg([[16, 16], tip, [16 + dy * w, 16 - dx * w]]), shade);
+  };
+  for (let i = 0; i < 4; i++) if (i !== k) arm(i, 6.5, 2.6, '#BCC2CA', '#868D96');
+  arm(k, 11.2, 3.4, '#F0544A', '#B82A24');
+  p.fill(O(16, 16, 1.8), '#C9A23A', {light: '#E8C860', dark: '#8E6E1E'});                     // the pin it turns on
+}
+// A snowflake, placed pixel by pixel (drawn from shapes, its arms ran together at this size): six arms, up and down and
+// four at a slope of 2:1, near enough 30°, n pixels long, forked at their tips if fork. White, shaded light blue on the
+// right so it shows on a light card (but never on the picture's last column, where it would lose its outline).
+function flakePx(n, fork){
+  const s = new Set(), add = (x, y) => s.add(x + ',' + y);
+  add(0, 0); add(1, 0); add(-1, 0);
+  for (let i = 1; i <= n; i++){ add(0, -i); add(0, i); }
+  for (let x = 1; x <= n; x++){ const y = Math.ceil(x / 2); for (const sx of [-1, 1]) for (const sy of [-1, 1]) add(sx * x, sy * y); }
+  if (fork){
+    const ty = Math.ceil(n / 2);
+    for (const sy of [-1, 1]){ add(-1, sy * (n + 1)); add(1, sy * (n + 1)); }
+    for (const sx of [-1, 1]) for (const sy of [-1, 1]){ add(sx * (n + 1), sy * (ty + 1)); add(sx * (n + 1), sy * (ty - 1)); }
+  }
+  return [...s].map(k => k.split(',').map(Number));
+}
+function snowflake(p, cx, cy, n, fork = false){
+  const px = flakePx(n, fork), has = new Set(px.map(([x, y]) => x + ',' + y));
+  for (const [x, y] of px) if (!has.has((x + 1) + ',' + y) && cx + x + 1 < N - 1) p.dot(cx + x + 1, cy + y, '#B4D2EE');
+  for (const [x, y] of px) p.dot(cx + x, cy + y, '#FFFFFF');
 }
 
 // The game's icons, 16 x 16, for the menu, card headings and labels (instead of emoji, which look different on

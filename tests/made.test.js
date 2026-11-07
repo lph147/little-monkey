@@ -20,7 +20,7 @@ function card(words, w, save = {}){
 
 test('every entry is a word here: its parts make the word, and their pinyin is the word’s own (catching a typing mistake)', () => {
   for (const g of [loadGame(), loadGame({save: {version: 34, started: true, area: 2, w: {}}})]){   // (each area: a word from a later one is checked there)
-  const made = get(g, 'MADE'), words = get(g, 'WORDS'), bank = get(g, 'WORD_BANK'), area = g.run('AREA.number'), plain = py => py.replace(/\s+/g, '').toLowerCase();
+  const made = get(g, 'MADE'), words = get(g, 'WORDS'), bank = get(g, 'WORD_BANK'), area = g.run('AREA.number'), plain = py => py.replace(/[\s']+/g, '').toLowerCase();   // (an apostrophe between syllables, as in shí'èr, is just a break)
   for (const [w, m] of Object.entries(made)){
     if (bank[w] && bank[w].area > area) continue;
     assert.ok(words[w], `${w} is one of this area's words`);

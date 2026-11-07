@@ -2290,4 +2290,7 @@ const BACKDROPS = {
 };
 if (document.documentElement) for (const [name, draw] of Object.entries(BACKDROPS)) document.documentElement.style.setProperty(`--backdrop-${name}`, `url(${draw().toDataURL()})`);
 // A battle's or an animal's scene: the place's backdrop if it has one; otherwise a cliff where the animal lives on one.
-const sceneLook = home => { const bd = (PLACES[PLACE] || {}).backdrop; return BACKDROPS[bd] ? ' ' + bd : home === '山' ? ' cliff' : ''; };
+// A place's backdrop can change with the story: a list of {if, is}, the first that matches, such as the immortal's courtyard
+// under snow in winter.
+const backdropNow = () => { const bd = (PLACES[PLACE] || {}).backdrop; return Array.isArray(bd) ? (bd.find(b => !b.if || matches(b.if)) || {}).is : bd; };
+const sceneLook = home => { const bd = backdropNow(); return BACKDROPS[bd] ? ' ' + bd : home === '山' ? ' cliff' : ''; };

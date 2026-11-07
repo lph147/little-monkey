@@ -18,7 +18,8 @@ const remembered = [...Object.keys(AREA.progress), ...Object.keys(AREA.requests)
 const placeholders = text => [...String(text).matchAll(/\{([^}|]+)(?:\|[^}]*)?\}/g)].map(m => m[1]);   // (a word's, without the English that fits the sentence: {石头|stones})
 // A step, and the steps inside it for if you win (a battle's, or a word game's)
 const withWins = (where, s, who) => [[where, s, who], ...[...(s.win || []), ...((s.wordGame || {}).win || [])].flatMap(w => withWins(`${where}, if you win`, w, who)),
-  ...(s.carry && Array.isArray(s.each) ? s.each : []).flatMap(w => withWins(`${where}, for each`, w, who)), ...(s.fetch ? s.done || [] : []).flatMap(w => withWins(`${where}, once it's all brought`, w, who))];   // (and what you do for each one you pick up, carry's each; and a fetch's done)
+  ...(s.carry && Array.isArray(s.each) ? s.each : []).flatMap(w => withWins(`${where}, for each`, w, who)), ...(s.fetch ? s.done || [] : []).flatMap(w => withWins(`${where}, once it's all brought`, w, who)),
+  ...(s.class ? s.do || [] : []).flatMap(w => withWins(`${where}, in the class`, w, who))];   // (and a class's steps: js/year.js)   // (and what you do for each one you pick up, carry's each; and a fetch's done)
 const allSteps = () => [
   ...Object.entries(AREA.talk).flatMap(([who, parts]) => parts.flatMap((p, i) => p.do.flatMap(s => withWins(`${who}'s talk, part ${i + 1}`, s, who)))),
   ...AREA.events.flatMap((e, i) => e.do.map(s => [`event ${i + 1}`, s, null])),
@@ -212,13 +213,13 @@ test('you start on a tile you can walk on', () => {
   assert.ok(onMap(at) && canWalk(at), `the start ${at} isn't a walkable tile`);
 });
 
-test('characters stand on the map, on walkable tiles (or in the water, splashing about, or bathing in a warm pool, or on what they peck at), one per tile', () => {
+test('characters stand on the map, on walkable tiles (or in the water, splashing about, or bathing in a pool, or on what they peck at), one per tile', () => {
   const taken = new Set([String([AREA.start.x, AREA.start.y, AREA.start.place || FIRST])]);
   for (const c of AREA.characters){
     const at = [c.x, c.y, c.place || FIRST];
     assert.ok(onMap(at), `${c.id} at ${at} is off the map`);
     if (c.plays === 'splash') assert.equal((legendOf(at[2])[tile(at)] || {}).look, 'water', `${c.id} splashes about in the water, not on "${tile(at)}" at ${at}`);
-    else if (c.plays === 'bathe') assert.equal((legendOf(at[2])[tile(at)] || {}).look, 'hotPool', `${c.id} bathes in a warm pool, not on "${tile(at)}" at ${at}`);
+    else if (c.plays === 'bathe') assert.ok(['hotPool', 'water'].includes((legendOf(at[2])[tile(at)] || {}).look), `${c.id} bathes in a pool (a warm one, or the cave's on a hot day), not on "${tile(at)}" at ${at}`);
     else if (c.pecks) assert.ok((legendOf(at[2])[tile(at)] || {}).word || (legendOf(at[2])[tile(at)] || {}).look === 'rice', `${c.id} pecks at "${tile(at)}" at ${at}, which has no word: what is it?`);   // (a bird on a wild melon)
     else assert.ok(canWalk(at), `${c.id} stands on "${tile(at)}" at ${at}, which isn't walkable`);
     assert.ok(!taken.has(String(at)), `${c.id} at ${at} shares a tile with someone else or the start`);
@@ -387,7 +388,7 @@ test('every character has a talk script (or, a bird, is shooed away: shoo), and 
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag', 'form', 'away', 'lifted'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag', 'form', 'away', 'lifted', 'carrying'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -477,7 +478,9 @@ test('every line is said somewhere', () => {
     ...Object.values(AREA.countGames || {}).map(g => g.thing.ask),
     ...Object.values(AREA.enemies || {}).flatMap(e => Object.values(e.says || {})),
     ...(AREA.hideSeek ? [AREA.hideSeek.count, AREA.hideSeek.coming, AREA.hideSeek.found, ...AREA.hideSeek.spots.map(p => p.say)] : []),
-    ...AREA.characters.filter(c => c.calls).map(c => c.calls)   // (calling out what they sell as you walk past: callOut, js/world.js)
+    ...AREA.characters.filter(c => c.calls).map(c => c.calls),   // (calling out what they sell as you walk past: callOut, js/world.js)
+    ...allSteps().filter(([, s]) => s.recap || s.face).flatMap(([, s]) => [s.count, s.line, ...Object.values(s.lines || {})].filter(Boolean)),   // (the master's classes: js/year.js)
+    ...(AREA.smallTalk || []).map(t => t.say)   // (what people say about the weather, js/world.js)
   ]);
   for (const key of Object.keys(AREA.lines)) assert.ok(said.has(key), `line "${key}" is never said; use it or remove it`);
 });
@@ -647,7 +650,7 @@ test('every enemy is a collectible word with a picture and a map sprite (or a na
   for (const [id, e] of Object.entries(AREA.enemies)){
     if (e.name){   // (a name, such as the Demon of Havoc's: never a word to catch, its picture and map sprite its own)
       assert.ok(e.name.zh && e.name.py && e.name.en && !collectible.includes(e.name.zh), `${id}'s name needs Chinese, pinyin and English, and isn't a word to catch`);
-      assert.ok(PICTURES[e.pic] && MAP_SPRITES[e.pic], `${id} needs its own picture and map sprite (pic)`);
+      assert.ok(e.person ? AREA.characters.some(c => c.id === e.person && c.person) : PICTURES[e.pic] && MAP_SPRITES[e.pic], `${id} needs its own picture and map sprite (pic), or to be someone you can see (person)`);   // (a person, such as a pupil you spar with, as they look: js/year.js)
       for (const k of ['meet', 'hide', 'attack', 'away', 'lost']) assert.ok(e[k], `${id} has a name, not a word: it needs its own ${k}`);
     } else {
       assert.ok(collectible.includes(e.word) && BANK[e.word].pic, `${id}'s word ${e.word} should be a word you can collect, with a picture`);
@@ -710,7 +713,7 @@ test('a place’s own songs, backdrop, gloom and sounds, and every sound a step 
   for (const [id, p] of Object.entries(AREA.places)){
     if (p.music) assert.ok(SONGS.includes(p.music), `${id}'s music, ${p.music}, isn't one of the songs (js/sound.js)`);
     if (p.battleMusic) assert.ok(SONGS.includes(p.battleMusic), `${id}'s battle music, ${p.battleMusic}, isn't one of the songs (js/sound.js)`);
-    if (p.backdrop) assert.ok(get('Object.keys(BACKDROPS)').includes(p.backdrop), `${id}'s backdrop, ${p.backdrop}, isn't one of the backdrops (js/art.js)`);
+    for (const bd of [].concat(p.backdrop || []).map(b => typeof b === 'string' ? b : b.is)) assert.ok(get('Object.keys(BACKDROPS)').includes(bd), `${id}'s backdrop, ${bd}, isn't one of the backdrops (js/art.js)`);   // (or a list of {if, is})
     const parts = (p.sounds || []).filter(s => typeof s !== 'string');   // (sounds that change from one part of the place to another)
     for (const s of (p.sounds || []).flatMap(s => typeof s === 'string' ? [s] : s.sounds)) assert.ok(SFX.includes(s), `${id}'s sound ${s} isn't one of the sound effects (js/sound.js)`);
     if (parts.length){

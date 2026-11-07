@@ -83,15 +83,15 @@ test('chopping: each log’s count is said in full and seen, then cleared, befor
   }
 });
 
-test('bringing him the water in summer, he thanks you and pays you; summer’s jobs are done, and evening comes: never “go and see him”', async () => {
+test('bringing him the water in summer, he thanks you and pays you; then on to the master’s class: never “go and see him”', async () => {
   const g = game({season: 1, waterFetch: 1, carrying: {word: '水', n: 3}}, {place: 'cave', x: 17, y: 9, dir: 'right'}, [...KNOWN]);
   g.run('S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1]))');
   const coins = get(g, 'S.coins');
   await press(g, ...SENIOR);
   assert.deepEqual(get(g, '__said'), ['senior: 对！谢谢！'], 'his thanks');
-  assert.deepEqual([get(g, 'here().waterFetch'), get(g, 'S.coins'), get(g, 'here().evening')], [2, coins + 2, 1], 'paid, and evening comes');
+  assert.deepEqual([get(g, 'here().waterFetch'), get(g, 'S.coins'), get(g, 'here().evening')], [2, coins + 2, 0], 'paid; summer’s not over yet');
   const tasks = get(g, 'getTasks().map(t => t.id)');
-  assert.ok(!tasks.includes('c1water') && !tasks.includes('c1chore') && tasks.includes('c1bed'), `no task to go and see him: to bed (${tasks})`);
+  assert.ok(!tasks.includes('c1water') && !tasks.includes('c1chore') && tasks.includes('c1class2'), `no task to go and see him: on to the master’s class (${tasks})`);
 });
 
 test('the wrong number of buckets: he says no, takes them, and asks again; you choose again at the pool', async () => {

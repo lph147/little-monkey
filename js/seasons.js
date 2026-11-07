@@ -87,7 +87,7 @@ const OBJECT_KIND = {pine:'evergreen', twistedPine:'evergreen', oldTree:'evergre
   willow:'willow', tree:'deciduous', peachTree:'deciduous', appleTree:'deciduous', bush:'deciduous',
   jHouse:'building', mudHouse:'building', teahouse:'building', townSchool:'building', whiteWall:'building', wallGate:'building', stallBuns:'building',
   stallShoes:'building', stallFruit:'building', stallChanger:'building', stallKites:'building', shopHut:'building',
-  rockPeach:'own', myTree:'own', snowman:'own', brazier:'own'};   // ('own': drawn for the season by its own picture)
+  rockPeach:'own', myTree:'own', myTreeWrapped:'own', snowman:'own', brazier:'own'};   // ('own': drawn for the season by its own picture)
 
 // The colours of the pixels in g's box [x, y, w, h] (ox, oy: where its top left is on the map), changed by rule.
 const caches = new Map();
@@ -245,6 +245,39 @@ LOOKS.sapling = (g, X, Y, x, y) => {
   const col = drawSeason === 'spring' ? ['#F2A0BA', '#FFD0DE'] : ['#D06A2A', '#EDA04A'];
   for (const [dx, dy] of [[-3, 0], [3, -1], [-2, -3], [2, -4], [0, -5]]){ oval(g, X + 8 + dx, Y + 7 + dy, 2, 1, col[0]); R(g, X + 7 + dx, Y + 6 + dy, 2, 1, col[1]); }
 };
+
+// Your own little peach tree (the master's year: planted and watered in spring), as it grows: just planted in spring, a
+// few blossoms and leaves on a thin stem, fresh earth round it; taller in summer, a small crown of leaves; gold in autumn,
+// its first leaves falling; bare in winter, snow on its twigs, and once you've wrapped it (myTreeWrapped), straw bound round
+// its trunk against the frost; and seven years on, a big tree, full of peaches.
+function myTree(g, o){
+  const X = o.x*T, Y = o.y*T, p = here(), wrapped = o.look === 'myTreeWrapped';
+  if (p.grown) return OBJECT_ART.peachTree(g, o);
+  const season = p.season || 0, earth = () => { oval(g, X+8, Y+14, 5, 1, '#5A4030'); oval(g, X+8, Y+14, 3, 1, '#6E5038'); };
+  if (season === 0){
+    earth(); R(g, X+7, Y+5, 2, 9, WOOD[1]); R(g, X+7, Y+5, 1, 9, WOOD[2]);
+    limbs(g, [[X+8, Y+8, X+4, Y+5, 1], [X+8, Y+7, X+12, Y+4, 1]]);
+    for (const [dx, dy, c] of [[-4, -4, 'p'], [4, -5, 'p'], [0, -6, 'p'], [-2, -1, 'g'], [3, -2, 'g'], [1, -4, 'p']]){
+      if (c === 'p'){ R(g, X+8+dx-1, Y+9+dy, 3, 1, '#F2A0BA'); R(g, X+8+dx, Y+8+dy, 1, 3, '#F2A0BA'); dot(g, X+8+dx, Y+9+dy, '#FFE3EC'); }
+      else { R(g, X+8+dx, Y+9+dy, 2, 1, '#5E9E44'); dot(g, X+8+dx, Y+9+dy, '#8BC46A'); }
+    }
+    return;
+  }
+  groundShadow(g, X+8, Y+14, 6, 2);
+  trunk(g, X+7, Y+3, 2, 12);
+  if (season === 3){
+    bareBranches(g, X+8, Y+4, .55);
+    if (wrapped) for (let y = Y+7; y <= Y+13; y++){ R(g, X+6, y, 4, 1, (y - Y) % 2 ? '#D9B866' : '#B8963E'); dot(g, X+5 + ((y - Y) % 3 ? 0 : 5), y, '#A88A3E'); }   // straw, bound round its trunk
+    return;
+  }
+  withLeaves(season === 2 ? AUTUMN_LEAF : LEAF, () => {
+    limbs(g, [[X+8, Y+5, X+4, Y+1, 1], [X+8, Y+4, X+12, Y+1, 1]]);
+    cloudLeaves(g, [[8, 2, 6, 3], [5, -2, 4, 2], [11, -2, 4, 2]], X, Y, o.x*31 + o.y);
+  });
+  if (season === 2) for (const [dx, dy, c] of [[-5, 13, '#D06A2A'], [4, 14, '#EDA04A'], [6, 12, '#A4461E']]) R(g, X+8+dx, Y+dy, 2, 1, c);   // its first leaves, fallen
+}
+OBJECT_ART.myTree = myTree; OBJECT_ART.myTreeWrapped = myTree;
+Object.assign(LOOKS, {myTree:LOOKS.mossStone, myTreeWrapped:LOOKS.mossStone});
 
 /* ---- the weather ---- */
 // Over everything, each frame (drawWorld, js/draw.js): what falls in the season (petals, leaves, snow), drifting with

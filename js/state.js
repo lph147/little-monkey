@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 35;
+const SAVE_VERSION = 36;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -228,6 +228,13 @@ function upgradeSave(s){
       if (typeof a.part === 'number' && a.part >= 7) a.part += 3;   // (the cave's one part is four: spring, summer, autumn, winter)
     }
     s.version = 35;
+  }
+  if (s.version === 35){   // version 35: cooked rice was 饭. Now it's 米饭, and raw rice 米 (decided 7 November 2026, the owner's
+    const was = '饭', now = '米饭', move = o => { if (o && was in o){ o[now] = o[now] || o[was]; delete o[was]; } };   // idea): what you know of
+    move(s.w); move(s.heard); move(s.gloss); move(s.bag);                                                             // it, what you've heard, and the
+    if (s.today && Array.isArray(s.today.ids)) s.today.ids = s.today.ids.map(w => w === was ? now : w);              // bowl the granny gave you for
+    for (const a of Object.values(s.areas || {})) for (const k of ['holding', 'kept']) for (const [id, w] of Object.entries((a && a[k]) || {})) if (w === was) a[k][id] = now;   // the farmer, are 米饭's
+    s.version = 36;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   // A save from another area than the one this page plays (such as a game in Area 2, shown on the title screen while the page

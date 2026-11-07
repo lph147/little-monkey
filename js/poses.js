@@ -130,6 +130,17 @@ const POSES = (() => {
     for (const [dx, dy] of [[1, -1], [2, -2], [3, -2], [4, -1]]) if (get(g, x + dx, y + dy) === '.') put(g, x + dx, y + dy, 'r');
     g.bucket = [x + 3, y + 1];   // (its middle, for the splash and the drips)
   }
+  // the bucket tipped up to pour, its mouth (the open top, dark inside, water at its lip) turned the way it pours (dir:
+  // [1, 0] forward from the side, [0, 1] down the screen, [0, -1] up it); x, y: the top left of its six by six
+  function tipped(g, x, y, dir){
+    const cells = [], col = {};
+    const add = (cx, cy, c) => { cells.push([cx, cy]); col[cx + ',' + cy] = c; };
+    for (let i = 0; i < 6; i++) for (let j = 0; j < 5; j++){
+      const [cx, cy] = dir[0] ? [x + j, y + i] : [x + i, dir[1] > 0 ? y + j : y + 4 - j];   // (j: from its bottom to its mouth)
+      add(cx, cy, j === 4 ? (i === 0 || i === 5 ? 'p' : i === 1 || i === 4 ? 'P' : 'z') : j === 1 || j === 3 ? 'i' : 'p');
+    }
+    shape(g, cells, (cx, cy) => col[cx + ',' + cy]);
+  }
   // ---- the poses: each draws you doing it, in a view, at one of its moments (m), and gives back anything the drawing
   // needs to know, such as where your paw is with what you've picked ----
   const DRAW = {
@@ -247,6 +258,29 @@ const POSES = (() => {
         arm(g, [[3, 10], [4, 13], [5, m === 'full' ? 15 : 16]], w, 0, 4); arm(g, [[12, 10], [11, 13], [10, m === 'full' ? 15 : 16]], w, 0, 4);
       }
     },
+    // pouring the bucket over what's in front of you, such as your own little peach tree in the immortal's cave (m: 'out',
+    // held out over it, full; 'tip', tipped up, the water pouring out of its mouth: the stream and the splash are drawn by
+    // ACTS.pour, js/draw.js, from where it's tipped, mouth)
+    pour: {
+      back(g, m, w){
+        you(g, 'backLean', w, 0, -5);
+        if (m === 'tip'){ tipped(g, ...at(6, -12, 0, -5), [0, -1]); arm(g, [[12, 8], [13, 4], [11, -2]], w, 0, -5); arm(g, [[3, 8], [3, 4], [5, -2]], w, 0, -5); return {mouth:at(8, -13, 0, -5)}; }
+        bucket(g, ...at(5, -12, 0, -5), {full:true}); arm(g, [[12, 8], [13, 4], [11, -1]], w, 0, -5); arm(g, [[3, 8], [3, 4], [5, -1]], w, 0, -5);
+      },
+      side(g, m, w){
+        you(g, 'sideLean', w, 3);
+        arm(g, [[8, 10], [11, 11], [13, 10]], w, 3);
+        if (m === 'tip'){ tipped(g, ...at(16, 5, 3), [1, 0]); arm(g, [[8, 9], [11, 8], [14, 6]], w, 3); return {mouth:at(22, 8, 3)}; }
+        bucket(g, ...at(15, 6, 3), {full:true});
+        arm(g, [[8, 9], [11, 8], [14, 7]], w, 3);
+      },
+      front(g, m, w){
+        you(g, 'frontLean', w, 0, 3);
+        if (m === 'tip'){ tipped(g, ...at(5, 15, 0, 3), [0, 1]); arm(g, [[3, 10], [3, 13], [5, 15]], w, 0, 3); arm(g, [[12, 10], [12, 13], [10, 15]], w, 0, 3); return {mouth:at(8, 20, 0, 3)}; }
+        bucket(g, ...at(5, 14, 0, 3), {full:true});
+        arm(g, [[3, 10], [3, 13], [5, 14]], w, 0, 3); arm(g, [[12, 10], [12, 13], [10, 14]], w, 0, 3);
+      }
+    },
     // picking something up (m: 'up', on tiptoe, an arm up into a tree's leaves; 'down', crouching for what's on the ground
     // in front of you, or in the water; 'in', leaning into what it's in, such as the hive; 'hold', holding up what you've
     // picked, over your head): gives back where your paw is, and where what you're picking is (item: its middle)
@@ -274,7 +308,7 @@ const POSES = (() => {
   };
   // a pose's letters (name: what you're doing; dir: which way you face; m: its moment; w: what you're wearing; held: what
   // you swing, HELD's), and anything else it gives back (such as your paw)
-  const POINTS = ['paw', 'bucket', 'item', 'grip', 'tip', 'load'];
+  const POINTS = ['paw', 'bucket', 'item', 'grip', 'tip', 'load', 'mouth'];
   function grid(name, dir, m, w = wear(), held = HELD['棍子']){
     const g = blank(), view = dir === 'up' ? 'back' : dir === 'down' ? 'front' : 'side';
     const info = {...DRAW[name][view](g, m, w, held), step:g.step || [0, 0], ...(g.bucket ? {bucket:g.bucket} : {})};

@@ -1329,3 +1329,28 @@ rt.hid{visibility:hidden}
 .turtleicon{width:1.5em;height:1.5em}
 [data-screen=small] .speedrow .qpcount button,[data-screen=tiny] .speedrow .qpcount button{width:1.5rem;height:1.5rem;font-size:.85rem}
 [data-screen=small] .speedrow .qpn,[data-screen=tiny] .speedrow .qpn{font-size:1rem}
+/* The master's year (js/year.js): sticks to count with, a bundle of ten tied with red string and the rest loose, in a
+   number question's answers and on the counting-on card (ten, gold, and so many more); and what to do as you turn to
+   face the way the master says, under his line */
+.sticks{image-rendering:pixelated;image-rendering:crisp-edges;height:calc(var(--pic-small) * 1.1);width:auto;max-width:100%;display:block;margin:0 auto}
+.opt .count.sticksopt{flex:1;display:flex;align-items:center;justify-content:center;max-width:none;margin:0 .35rem .15rem;padding:.3rem .2rem;background:#E8D3A8;box-shadow:inset 0 -4px 0 #C9AE7C}
+.counton{display:flex;flex-direction:column;align-items:center;gap:.25rem;margin:.2rem 0 .1rem}
+.counton .cstk{display:flex;justify-content:center;padding:.5rem .8rem;border-radius:6px;background:#E8D3A8;box-shadow:inset 0 -5px 0 #C9AE7C}
+.counton .cstk .sticks{height:5.2rem}
+.count.sticksopt.big{padding:.45rem .7rem}.count.sticksopt.big .sticks{height:4.2rem}
+.counton .cnum{font-size:2.6rem;line-height:1.05}
+.counton .cnum .ten{color:#B8861F}
+.counton .py{font-size:1.1rem}
+.counton .note{margin:.1rem 0 0;text-align:center}
+.talk .turnhint{grid-column:1 / -1;margin:.1rem 0 0;font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:.5rem}
+.talk .turnhint .turnme{width:2.4rem;height:2.4rem;flex:none;image-rendering:pixelated;background:var(--bg);border:1px solid var(--line);border-radius:.4rem;padding:.15rem}   /* you, turning as you do */
+.scene.courtyard,.sheet:has(> .scene) > .scene.courtyard{background:var(--backdrop-courtyard) center / cover;image-rendering:pixelated;image-rendering:crisp-edges}   /* the immortal's courtyard, for sparring (js/year.js) */
+.scene.courtyardSnow,.sheet:has(> .scene) > .scene.courtyardSnow{background:var(--backdrop-courtyardSnow) center / cover;image-rendering:pixelated;image-rendering:crisp-edges}   /* and under snow */
+/* writing practice (js/year.js): a box of practice paper for each character, the brush writing in it */
+.writepad{display:flex;gap:.6rem;justify-content:center;margin:.4rem 0}
+.writepad .wbox{display:flex;flex-direction:column;align-items:center;gap:.2rem}
+.writepad canvas{width:5.2rem;height:5.2rem;image-rendering:pixelated;border-radius:.2rem;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.writepad .py{min-height:1.2em;font-family:var(--zh);font-size:1rem;color:var(--ink)}
+.scene.courtyard::before,.scene.courtyardSnow::before{display:none}   /* (no grass on the paving) */
+.scene.courtyard .mound{background:#9EA5A7;box-shadow:inset 0 -6px 0 #7F8789}   /* you and your partner on the paving stones */
+.scene.courtyardSnow .mound{background:#F1F5F8;box-shadow:inset 0 -6px 0 #C8D3DB}   /* and on the snow */

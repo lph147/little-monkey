@@ -369,3 +369,12 @@ test('a version 34 save in the immortal’s cave starts the master’s year in s
     areas: {1: {chapter: 1, raft: 3, done: true}, 2: {chapter: 1, door: 2, named: 1, season: 1, waterFetch: 1}}}}));
   assert.deepEqual([fromNow.areas[2].season, fromNow.areas[2].waterFetch], [1, 1], 'a save from now on is left as it is');
 });
+
+test('a version 35 save’s 饭 (rice) is 米饭 now, cooked rice, kept as it was: what you know of it, and the bowl for the farmer (version 36)', () => {
+  const old = {version: 35, started: true, area: 2, w: {'饭': {lv: 2, ok: 1, next: 12}, '人': {lv: 1, ok: 0}}, heard: {'饭': 3, '人': 2}, today: {d: 'x', ids: ['饭', '人']},
+    pos: {place: 'village', x: 10, y: 10, dir: 'down'}, areas: {2: {landed: 1, dressed: 2, child: 3, farmer: 2, lunch: 'asked', holding: {lunch: '饭'}}}};
+  const s = saveOf(loadGame({save: old}));
+  assert.equal(s.version, VERSION);
+  assert.deepEqual([s.w['米饭'], '饭' in s.w, s.heard['米饭'], s.today.ids], [{lv: 2, ok: 1, next: 12}, false, 3, ['米饭', '人']], 'what you know of it, as 米饭');
+  assert.equal(s.areas[2].holding.lunch, '米饭', 'the granny’s bowl, still for the farmer');
+});

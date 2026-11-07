@@ -406,7 +406,7 @@ SAVES.a2dressed = A2({landed: 1, dressed: 2, back: 1}, {w: knows(1, ['人', '鹅
 SAVES.a2child = A2({landed: 1, dressed: 2, back: 1}, {w: knows(1, ['人', '鹅', '衣服', '帽子']), friends: ['goose'], pos: {place: 'village', x: 17, y: 12, dir: 'left'}});
 SAVES.a2asking = A2({landed: 1, dressed: 2, back: 1, child: 3}, {w: knows(1, ['人', '鹅', '衣服', '帽子', '不', '是', '什么']), friends: ['goose'], turn: 40, pos: {place: 'village', x: 22, y: 12, dir: 'up'}});
 SAVES.a2knock = A2({landed: 1, dressed: 2, back: 1, child: 3}, {w: knows(1, ['人', '鹅', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门']), friends: ['goose'], turn: 80, pos: {place: 'village', x: 31, y: 5, dir: 'up'}});
-const A2_VILLAGE = ['人', '鹅', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门', '谁', '鸡', '饭', '钱', '网', '船'];
+const A2_VILLAGE = ['人', '鹅', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门', '谁', '鸡', '米饭', '钱', '网', '船'];
 SAVES.a2fields = A2({landed: 1, dressed: 2, back: 1, child: 3, knock: 1, fish: 'done', farmer: 1}, {w: knows(1, [...A2_VILLAGE, '看']), coins: 3, friends: ['goose', 'chicken'], turn: 200, pos: {place: 'fields', x: 11, y: 7, dir: 'up'}});
 SAVES.a2town = A2({landed: 1, dressed: 2, back: 1, child: 3, knock: 1, fish: 'done', farmer: 2, lunch: 'done', exchanged: 1}, {w: knows(1, [...A2_VILLAGE, '看', '狗']), coins: 18, shells: 0,
   friends: ['goose', 'chicken', 'dog'], turn: 300, pos: {place: 'town', x: 5, y: 14, dir: 'left'}});
@@ -1372,7 +1372,7 @@ const SCREENS = [
   {id: 'a2-tasks', title: 'Tasks: your journey', save: 'a2asking', why: 'At the top, your journey’s goal and the part you’re in, with what you’re doing in it; then the story’s main task, ★, and the rest under Also.', run: async () => {
     play(); await wait(100); here().part = 1; tasksPage(() => closeCard()); await wait(400); }},
   {id: 'a2-eat', title: 'Eating a meal', save: 'a2asking', why: 'A meal, such as the granny’s bowl of rice, is eaten there and then, not carried: your monkey munches it, steam rising, hearts as you finish, and your health is full. Snacks (零食) are what goes in your bag.', run: async () => {
-    play(); await wait(100); pl.eating = {w: '饭', t0: performance.now() - 1050}; await wait(80); }},
+    play(); await wait(100); pl.eating = {w: '米饭', t0: performance.now() - 1050}; await wait(80); }},
   {id: 'a2-stall', title: 'Area 2: a stall, in coins', save: 'a2town', why: 'The fruit stall: 你要买什么？ (买). What you have, in coins (🪙), and each thing’s price.', run: async () => {
     play(); await wait(100); shop(speaker('fruitSeller'), SHOPS.fruit); await wait(100); next(); await wait(500); }},
   {id: 'a2-years', title: 'Area 2: years go by', save: 'a2harbour', why: 'You live among people for years, learning to talk like them, through the seasons. But nobody knows where the immortals are.', run: async () => {

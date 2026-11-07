@@ -220,8 +220,9 @@ function drawSplasher(n, X, Y, now){
     R(b, Math.round(x0 + (x1 - x0) * k + (j - 4.5) * 2 * k), Math.round(y0 + (y1 - y0) * k - Math.sin(k * Math.PI) * (6 + (j % 4) * 3)), sz, sz, j % 3 ? '#FFFFFF' : '#BFE8FA');
   }
 }
-// A monkey of the troop bathing in a warm pool (plays: 'bathe'), as monkeys do in hot springs: in up to its shoulders, its
-// eyes shut, bobbing a little, a ripple spreading round it; talking to you, it opens them and looks your way.
+// A monkey of the troop bathing in a warm pool (plays: 'bathe'), as monkeys do in hot springs (or a pupil in the cave's
+// cool pool on a hot summer's day): in up to its shoulders, its eyes shut, bobbing a little, a ripple spreading round it;
+// talking to you, it opens them and looks your way.
 function drawBather(n, X, Y, now){
   const at = playing(n), line = 11, sink = 2 + Math.floor(now / 1300 + n.x) % 2;
   const ph = (now / 1700 + n.x * .37) % 1, rx = 6 + Math.round(ph * 4);
@@ -769,6 +770,21 @@ const ACTS = {
     drawPose('dip', a.dir, m, PX, PY);
     if (m === 'full' && bk) for (let i = 0; i < 2; i++){ const k = ((t - DIP.up) / 260 + i / 2) % 1; R(b, PX + bk[0] - 1 + i * 3, Math.round(PY + bk[1] + 5 + k * 6), 1, 1, '#7FC4EE'); }   // drips
   },
+  // pouring a bucket of water over what's in front of you, such as your own little peach tree: held out over it, full, then
+  // tipped up, the water pouring out of its mouth onto the ground at its foot, splashing, a dark wet patch spreading there
+  // (the pour pose, js/poses.js; the pour step, js/year.js)
+  pour(PX, PY, now, a){
+    const t = now - a.t0, tip = t >= POUR.tip, p = drawPose('pour', a.dir, tip ? 'tip' : 'out', PX, PY);
+    if (!tip || !p.mouth) return;
+    const [mx, my] = p.mouth, bx = (a.x - pl.x) * T + 8, by = (a.y - pl.y) * T + 13, k = Math.min(1, (t - POUR.tip) / 160), left = t < POUR.ms - 200;
+    const X0 = PX + mx, Y0 = PY + my, X1 = PX + bx, Y1 = PY + by, n = Math.max(1, Math.round(Math.hypot(X1 - X0, Y1 - Y0) * k));
+    b.globalAlpha = .45; oval(b, X1, Y1 + 1, 3 + Math.min(3, Math.floor((t - POUR.tip) / 220)), 1, '#3F2A18'); b.globalAlpha = 1;   // (the wet ground, spreading)
+    if (!left) return;
+    for (let i = 0; i <= n; i++){ const f = i / n, x = Math.round(X0 + (X1 - X0) * f + Math.sin(now / 60 + i) * .6), y = Math.round(Y0 + (Y1 - Y0) * f); R(b, x, y, 2, 1, i % 3 ? '#7FC4EE' : '#BFE8FA'); }   // the stream
+    if (k >= 1) for (let i = 0; i < 4; i++){ const ph = ((now / 260) + i / 4) % 1, dx = (i % 2 ? 1 : -1) * Math.round(2 + ph * 3); R(b, X1 + dx, Math.round(Y1 - 3 * Math.sin(ph * Math.PI)), 1, 1, '#BFE8FA'); }   // splashing
+  },
+  // crouching down at what you face, your paws on the ground, such as planting your little tree (the kneel step, js/year.js)
+  kneel: (PX, PY, now, a) => drawPose('pick', a.dir, 'down', PX, PY),
   // lifting something heavy, such as a sack of rice: you crouch, your paws on it in front of you, and heave it up over your
   // head (the lift pose, js/poses.js); then you carry it about (drawCarrying)
   lift(PX, PY, now, a){
@@ -923,6 +939,7 @@ function drawWorld(now){
   drawLayer(mapCanvas, cx, cy);
   drawStirredGrass(cx, cy);   // (the grass you're walking through, parted round you)
   drawFootprints(cx, cy, now);   // (your footprints in the snow, in winter: js/seasons.js)
+  drawPlaques(cx, cy);   // (a plaque over a door, such as your name over your room: js/year.js)
   drawLayer(baseCanvas, cx, cy);   // big objects, under the characters: those that never move, all at once
   touchLeaves(now); crawlThrough(now);
   for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.base, cx, cy, now);   // and the fruit trees, which rustle
@@ -1024,6 +1041,8 @@ function drawWorld(now){
       if (n.word && lvl(n.word) === 0) sparkle(X+13, Y+3, now, 3);
     } else if (PLAYS[n.id]){   // a monkey of the troop at play, such as building a tower of stones (or stopped to talk to you)
       drawPlaying(n, X, Y, now);
+    } else if (inDrill(n)){   // training with you, in the master's cave: striking with a staff, in time with you (js/year.js)
+      drawDrill(n, X, Y, now);
     } else if (practising(n)){   // a little monkey in training, facing its own way, swinging its stick now and then
       const t0 = swingStart(n, now);
       if (t0 !== null) drawSwing(n.kind, n.home.facing, X, Y, t0, now);
