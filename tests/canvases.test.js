@@ -87,3 +87,16 @@ test('if a phone wipes the map, it’s drawn again as you come back to the game;
   const first = get(g, `(() => { const seen = []; const fr = b.fillRect; b.fillRect = function(...a){ seen.push([String(b.fillStyle), ...a]); return fr.apply(this, a); }; drawWorld(performance.now()); b.fillRect = fr; return seen[0]; })()`);
   assert.deepEqual(first, ['#1E2B26', 0, 0, 240, 160], 'the first thing each frame draws');
 });
+
+test('the pine wood’s hundreds of pines are coloured for the season once for each of their eight looks, then copied, so it opens as quickly as in summer', () => {
+  const g = game(HOME);
+  const out = get(g, `(() => {
+    let coloured = 0; const was = recolourBox;
+    recolourBox = function(...a){ if (a[3] === drawSeason + ':evergreen') coloured++; return was.apply(this, a); };
+    try { enterPlace('ffmPineWood'); buildMap(); } finally { recolourBox = was; }
+    return {coloured, pines: OBJECT_PIECES.filter(p => p.look === 'pine').length, season: drawSeason};
+  })()`);
+  assert.equal(out.season, 'autumn');
+  assert.ok(out.pines > 600, `plenty of pines (${out.pines})`);
+  assert.ok(out.coloured <= 16, `coloured just ${out.coloured} times (eight looks, with and without their shadows), not once for each`);
+});

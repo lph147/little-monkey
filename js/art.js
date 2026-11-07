@@ -1468,8 +1468,9 @@ function pine(g, X, Y, seed){
 // woods were slow to draw as you walked in, on a phone). Its shadow, which you see the ground through, is drawn on the
 // ground first, as it always was.
 const PINE_PICTURES = new Map();
+const pineKind = seed => [-1, -9, -17].map(top => rnd(seed, top, 3) < .6 ? 1 : 0).join('');   // (which of the eight)
 function pineOnMap(g, X, Y, seed){
-  const kind = [-1, -9, -17].map(top => rnd(seed, top, 3) < .6 ? 1 : 0).join('');
+  const kind = pineKind(seed);
   let pic = PINE_PICTURES.get(kind);
   if (!pic){
     pic = document.createElement('canvas'); pic.width = 24; pic.height = 40;

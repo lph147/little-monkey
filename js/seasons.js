@@ -144,7 +144,7 @@ function recolourBox(g, [bx, by, w, h], rule, key, ox = bx, oy = by){
 // map, so it's the same wherever the square's drawn, such as the grass you walk through, on a little canvas of its own.
 const SCRATCH = 8;   // (room round the square, for anything that reaches out of it)
 const scratch = document.createElement('canvas'); scratch.width = scratch.height = T + 2 * SCRATCH;
-const scg = scratch.getContext('2d');
+const scg = scratch.getContext('2d', {willReadFrequently: true});   // (read back for every square: kept where that's quick, not on the graphics chip)
 let groundDepth = 0;
 function seasonal(fn, kind){
   const wrapped = function(g, X, Y, ...rest){
@@ -190,9 +190,26 @@ const snowyAt = (x, y) => { const t = tileAt(x, y); return drawSeason === 'winte
 // draws it from there straight away, before the next piece is drawn over it: a canvas of its own for each piece was
 // thousands of canvases in a pine wood, more than a phone will make for a page, and the map came up blank (decided
 // 7 November 2026, after playing it).
-const pieceCanvas = document.createElement('canvas'), pieceG = pieceCanvas.getContext('2d');
+const pieceCanvas = document.createElement('canvas'), pieceG = pieceCanvas.getContext('2d', {willReadFrequently: true});
+// A big object drawn just the same wherever it stands, but for which of a few ways it looks (a pine: which of its tiers
+// have a second light dot), whose season changes nothing by where it is (no rule.at), has its picture for the season
+// drawn once for each way, and copied for every other: a pine wood has hundreds of pines, and colouring each one took
+// seconds on a phone as you walked in, the screen black (decided 7 November 2026, after playing it).
+const OBJECT_VARIANT = {pine: p => pineKind(p.x*31 + p.y)};
+const seasonCopies = new Map();
 function seasonObject(p, under){
   const kind = OBJECT_KIND[p.look] || 'thing', rule = (OBJECT_RULES[drawSeason] || {})[kind], g = pieceG;
+  const variant = OBJECT_VARIANT[p.look] && !(rule && rule.at) ? OBJECT_VARIANT[p.look](p) : null;
+  const copyKey = variant === null ? null : [drawSeason, p.look, variant, under ? 'under' : 'over', p.pw, p.ph].join('|');
+  if (copyKey && seasonCopies.has(copyKey)) return seasonCopies.get(copyKey);
+  const pic = seasonPicture(p, under, kind, rule, g);
+  if (!copyKey) return pic;
+  const copy = document.createElement('canvas'); copy.width = p.pw; copy.height = p.ph;
+  copy.getContext('2d').drawImage(pic, 0, 0, p.pw, p.ph, 0, 0, p.pw, p.ph);
+  seasonCopies.set(copyKey, copy);
+  return copy;
+}
+function seasonPicture(p, under, kind, rule, g){
   if (pieceCanvas.width < p.pw || pieceCanvas.height < p.ph){ pieceCanvas.width = Math.max(pieceCanvas.width, p.pw); pieceCanvas.height = Math.max(pieceCanvas.height, p.ph); }
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, p.pw, p.ph);
   g.save(); g.beginPath(); g.rect(0, 0, p.pw, p.ph); g.clip(); g.translate(-p.x0, -p.y0);   // (just its piece, as on a canvas of its own)
