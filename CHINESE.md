@@ -972,6 +972,9 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 七年以后…… | qī nián yǐhòu… | Seven years later… |  |
 | 孙悟空在天上飞。 | Sūn Wùkōng zài tiān shàng fēi. | Sun Wukong flies across the sky. |  |
 | 有山！ | yǒu shān! | Mountains! |  |
+| 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
+| 海很大！ | hǎi hěn dà! | The sea is so big! |  |
+| 这里很好看！ | zhèlǐ hěn hǎokàn! | It’s lovely up here! |  |
 
 ### Names
 

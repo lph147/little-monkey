@@ -46,7 +46,8 @@ const CAPS = sceneCaps(AREA.intro);   // the opening's captions (the other scene
 // Fruit Mountain after twenty years): in the content, {borrow: its id there, from: that area's number, and anything of its
 // own}. Its map, with every square its story changed there changed for good (each letter's becomes, worked out from that
 // area's progress once you've finished it, its left); its legend's looks, words and ways of walking (BORROW_KEEPS), not
-// what A did there then (its story's steps, gathering; but its signs and tablets still say what they said), with the borrowing place's own wild creatures (wild) in its
+// what A did there then (its story's steps, gathering; but its signs and tablets still say what they said, and anything
+// that only looked, looksKept), with the borrowing place's own wild creatures (wild) in its
 // long grass (where wild creatures or animals lived there); its ways to the other places borrowed from there (those that were open at the end); its music, sounds that
 // always play, gloom and battle backdrop. Anything of its own (legend, name, music, noMap...) goes over that, and squares
 // of its own on the map (put: [x, y, letter], such as the feast's tables, bare once the little demons have taken
@@ -60,6 +61,18 @@ function wasLeft(cond, left){   // does an area's progress at its end (left) mat
     return typeof want === 'number' ? (have || 0) === want : (have ?? false) === want;
   });
 }
+// What A did at a square there that only looked at it (decided 7 November 2026, after playing it: the hillside's lookout
+// said Look, and nothing happened): the part of its onLook that matched at the end, if all it does is say what it is
+// (messages) or show the view from it (scenes, borrowed too if this area hasn't one of that name, such as the lookout's),
+// with its label (Read, for a sign).
+const LOOK_STEPS = ['message', 'scene'];
+function looksKept(t, left, from){
+  const part = (t.onLook || []).find(p => wasLeft(p.if, left));
+  if (!part || !part.do.length || !part.do.every(s => !s.if && Object.keys(s).length === 1 && LOOK_STEPS.includes(Object.keys(s)[0]))) return null;
+  for (const s of part.do) if (s.scene && !AREA.scenes[s.scene] && (from.scenes || {})[s.scene]) AREA.scenes[s.scene] = from.scenes[s.scene];
+  const label = part.label || t.label;
+  return [{...(label ? {label} : {}), do:part.do}];
+}
 function borrowPlace(own, places){
   const from = AREAS.find(a => a.number === own.from), src = from.places[own.borrow], left = from.left || {};
   const legend = {...from.legend, ...(src.legend || {})}, idHere = id => Object.keys(places).find(k => { const q = places[k], b = q.borrowed || {id:q.borrow, from:q.from}; return b.id === id && b.from === own.from; });
@@ -72,6 +85,7 @@ function borrowPlace(own, places){
     if (t.wild || (t.animals && own.wild)) keep[ch].wild = own.wild || [];   // (and in the long grass where animals hid there)
     if (t.pick){ const {if:c, ...pick} = t.pick; if (wasLeft(c, left)) keep[ch].pick = pick; else delete keep[ch].pick; }   // (fruit to pick, if there was at the end)
     if (t.action === 'sign') Object.assign(keep[ch], {action:'sign', sign:t.sign || from.sign});   // (writing, such as the cave's tablet: its own, or that area's sign)
+    const looks = looksKept(t, left, from); if (looks) keep[ch].onLook = looks;   // (what it is, or the view from it)
   }
   for (const [x, y, ch] of own.put || []) map[y] = [...map[y]].map((c, i) => i === x ? ch : c).join('');   // (squares of its own: put, [x, y, letter]; what was there kept in its legend, to become again)
   const exits = (src.exits || []).filter(e => idHere(e.to) && wasLeft(e.if, left) && wasLeft(e.when, left)).map(({if:_, when:__, ...e}) => ({...e, to:idHere(e.to)}));

@@ -57,6 +57,21 @@ test('home, as you left it: Flower Fruit Mountain’s places, the school and gar
   assert.deepEqual(get(g, 'PLACES.ffmMeadow.legend.G.wild'), ['demon'], 'little demons, where animals hid in the long grass');
   assert.deepEqual(get(g, 'PLACES.ffmMeadow.legend.P.pick'), {item: '桃子'}, 'fruit to pick, as at the end');
   assert.match(g.run('PLACES.ffmMeadow.noMap'), /across the sea/, 'your map is of the lands across the sea');
+  // what A did there that only looked at something is kept (decided 7 November 2026, after playing it: the hillside's
+  // lookout said Look, and nothing happened): the views from the lookouts, the signs; and nowhere says Look, then nothing
+  assert.deepEqual(get(g, 'PLACES.ffmHillside.legend.R.onLook'), [{do: [{scene: 'lookout'}]}], 'the hillside’s lookout: its view');
+  assert.deepEqual(get(g, 'PLACES.ffmSouthSlope.legend.R.onLook'), [{label: 'Look', do: [{scene: 'southView'}]}], 'the south slope’s: just the view, the cow long home');
+  assert.ok(get(g, 'AREA.scenes.lookout && AREA.scenes.southView && true'), 'their scenes, borrowed with them');
+  assert.equal(get(g, 'PLACES.ffmHomeGround.legend["ω"].onLook[0].label'), 'Read', 'a sign still reads');
+  const dead = get(g, `Object.entries(PLACES).filter(([, p]) => p.borrowed).flatMap(([id, p]) => [...new Set(p.map.join(''))].filter(ch => {
+    const t = p.legend[ch] || AREA.legend[ch]; return t && t.landmark && !(t.word || t.onLook || t.action || t.pick || t.fishing || t.hop); }).map(ch => id + ' ' + ch))`);
+  assert.deepEqual(dead, ['ffmHomeGround Δ', 'ffmHomeGround @', 'ffmPineWood x', 'ffmSchool k'], 'only these do nothing there now (the shop, the tower, the rock, the timetable: story, not looking)');
+  for (const d of dead){ const [id, ch] = d.split(' '); g.run(`enterPlace('${id}')`); assert.equal(get(g, `(() => { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (MAP[y][x] === '${ch}') return promptFor(x, y); })()`), '', `${d}: no Look, where A does nothing`); }
+  g.run("enterPlace('ffmHillside')");
+  const [rx, ry] = get(g, '(() => { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (MAP[y][x] === "R") return [x, y]; })()');
+  g.run(`S.pos = {place: 'ffmHillside', x: ${rx}, y: ${ry - 1}, dir: 'down'}; placePlayer()`);
+  assert.equal(g.run(`promptFor(${rx}, ${ry})`), 'Look');
+  g.run("enterPlace('ffmHomeGround')");
   g.run('Object.assign(here(), {homeAgain: 1}); refreshMap()');
   assert.equal(g.run('tileAt(16, 7).look'), 'feastTableRobbed', 'home with the little ones, the tables still bare…');
   g.run('Object.assign(here(), {unload: 3}); refreshMap()');

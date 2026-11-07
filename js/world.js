@@ -273,7 +273,7 @@ function promptFor(x, y){
   if (t.gather && canGather(t.gather) && !looksFirst(t)) return t.gather.label;
   if (canPick(t) && !looksFirst(t)) return t.pick.label || 'Pick';
   if (t.fishing && canFish() && !looksFirst(t)) return 'Fish';
-  if (t.landmark) return t.label || 'Look';
+  if (t.landmark && (look || t.word || t.action)) return t.label || 'Look';   // (only where A does something: never Look, then nothing)
   const w = lookWord(t);
   return w && (lvl(w) === 0 || (w === t.word && t.colour && lvl(t.colour) >= 1)) ? 'Look' : '';   // (something new, or something of a colour you know: lookAt)
 }
