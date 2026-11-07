@@ -1798,7 +1798,7 @@ const ACROSS_THE_SEA = {
     // once it's run off); the cart wherever you pulled it to, by the little monkeys, then at home by the feast's tables
     {id:'cartGuard', place:'lair', look:'妖怪', x:24, y:6, facing:'down', name:{zh:'小妖', py:'xiǎoyāo', en:'Little demon'},
       moves:[{if:{cartWon:1}, place:'hut', x:21, y:0}, {if:{loot:{atLeast:1}}, place:'hut', x:21, y:0}]},
-    {id:'cart', place:'lair', cart:true, x:24, y:5, facing:'left', name:{zh:'车', py:'chē', en:'Cart'},
+    {id:'cart', place:'lair', cart:true, label:'Look', x:24, y:5, facing:'left', name:{zh:'车', py:'chē', en:'Cart'},   // (A at it: Look, but where its talk says Pull or Take)
       moves:[{if:{homeAgain:1}, place:'ffmHomeGround', x:19, y:8, facing:'down'}, {parked:true, if:{cartWon:1}}, {if:{loot:{atLeast:1}}, place:'lair', x:10, y:6, facing:'left'}]}
   ],
   yourNames: [{if:{named:1}, zh:'孙悟空', py:'Sūn Wùkōng', en:'Sun Wukong (you)'}, {if:{}, zh:'美猴王', py:'Měi Hóuwáng', en:'Handsome Monkey King (you)'}],
