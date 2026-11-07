@@ -1168,6 +1168,13 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.flat(or(Rc(6, 24, 21, 1.2), O(12, 24.4, 5, 1), O(21, 24.4, 5, 1)), '#B4C4D8');   // its shady underside
     p.flat(or(O(14, 9.4, 3, 1.2), O(21.6, 12.6, 2.4, 1)), '#FFFFFF');                       // the sun on its top
   },
+  '雨': p => {   // rain: a grey rain cloud, blue drops slanting down from it, and splashes in a puddle (unlike 云: a white cloud, no rain; unlike 雪: snowflakes, white)
+    p.fill(or(O(9, 10, 6, 4.8), O(15.4, 6.6, 6.6, 5.6), O(22.4, 8.8, 5.6, 4.6), O(26.6, 12, 4, 3.2), O(4.6, 12.4, 3.6, 3), Rc(4, 9, 24, 6, 3)), '#8E9AAE', {light: '#B6C2D4', dark: '#626E84'});
+    p.flat(or(Rc(5, 14.6, 22, 1.2), O(11, 15, 4, .8), O(21, 15, 4, .8)), '#56627A');   // its dark underside
+    for (const [x, y] of [[8, 18.6], [15.4, 18.6], [23, 18.6], [11.6, 23.4], [19.4, 23.4], [26.4, 23], [7, 25.6]]) p.fill(path([[x + .9, y], [x, y + 2.6]], .55), '#3F86D2', {light: '#8CC4F2'});   // the drops, slanting down
+    p.fill(O(16, 30.8, 11, 1.6), '#5A9ED8', {light: '#9ACCF0'});   // a puddle
+    p.flat(or(Rc(8.6, 29.6, 3, .8), Rc(20.4, 30, 3, .8)), '#D8ECFA');   // splashes in it
+  },
   '鹤': p => {   // crane: tall and white, side on, its neck black, a red cap, long thin legs (unlike the goose: long legs, a straight beak)
     const W = '#F7F6F0', LT = {light: '#FFFFFF', dark: '#D4D0C4'};
     p.flat(or(Cp(16, 21, 15, 31, .55), Cp(19, 21, 20.4, 31, .55)), '#3A3A36');            // long thin legs
@@ -1631,6 +1638,10 @@ function snowflake(p, cx, cy, n, fork = false){
 // The game's icons, 16 x 16, for the menu, card headings and labels (instead of emoji, which look different on
 // every phone). The text in the game says them as emoji (⭐, 📜 ...), and js/art.js swaps in these pictures.
 const ICON_DRAWINGS = {
+  '🌙': p => {   // a crescent moon: bedtime, and the day's recap (js/daynight.js)
+    p.fill(and(O(8, 8.4, 6.6), not(O(11.2, 6, 5.4))), '#F6E7A8', {light: '#FFF8D6', dark: '#D8B864'});
+    p.flat(or(O(2.6, 2.6, .8), O(13.6, 12.4, .7)), '#FFF1A8');   // two little stars
+  },
   '⭐': p => {   // a star: a new word, a new friend
     const pts = [...Array(10)].map((_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 3.3 : 7.6; return [8 + r * Math.cos(a), 8.7 + r * Math.sin(a)]; });
     p.fill(Pg(pts), GOLD, {light: '#FFF1A8', dark: '#D89A22'});

@@ -84,7 +84,7 @@ const CAVE_MAP = [
 // The night between two seasons of the master's year (decided 7 November 2026, from the plan): once a season's jobs are
 // done, evening falls, with the first sign of the season to come; you go to bed in your room, the night passes in a scene
 // as the cave turns, and in the morning you come out into the new season: its part of the story, and its word.
-const NEXT_SEASON = (to, word, note) => [{scene:['', 'toSummer', 'toAutumn', 'toWinter'][to]}, {set:{season:to, evening:0}}, {goTo:'cave', at:[4, 4], facing:'down'},
+const NEXT_SEASON = (to, word, note) => [{scene:['', 'toSummer', 'toAutumn', 'toWinter'][to]}, {set:{season:to, evening:0}}, {morning:true}, {goTo:'cave', at:[4, 4], facing:'down'},
   {nextPart:true}, {newWord:word, note}];
 // Sweeping up the autumn leaves (扫), for the senior pupil.
 const SWEEP_LEAVES = [{say:'sweepLeaves', teach:'扫'}, {newWord:'扫', note:'扫 means to sweep. Face a heap of leaves, and press A to sweep it up.'}, {set:{sweep:1}}];
@@ -145,12 +145,13 @@ const CAVE_LEGEND = {
     {if:{evening:1, season:0}, label:'Sleep', do:NEXT_SEASON(1, '夏天', '夏天 means summer. Hot, sunny days, and everything green.')},
     {if:{evening:1, season:1}, label:'Sleep', do:NEXT_SEASON(2, '秋天', '秋天 means autumn. The leaves are turning red and gold, and falling.')},
     {if:{evening:1, season:2}, label:'Sleep', do:NEXT_SEASON(3, '冬天', '冬天 means winter. Snow on the mountain, and cold!')},
-    {if:{evening:1, season:3}, label:'Sleep', do:[{scene:'caveYears'}, {set:{grown:1, evening:0}}, {goTo:'cave', at:[4, 4], facing:'down'}, {sound:'chime'},
+    {if:{evening:1, season:3}, label:'Sleep', do:[{scene:'caveYears'}, {set:{grown:1, evening:0}}, {morning:true}, {goTo:'cave', at:[4, 4], facing:'down'}, {sound:'chime'},
       {message:'Seven years have gone by. The peach trees you watered are tall now, with fruit on them, and there are new little pupils.'}]},
     {if:{riddle:1}, label:'Wait for night', do:[{set:{riddle:2}}, {message:'You lie down in your room, but you don’t sleep. You wait, and wait…'},
-      {goTo:'caveNight', at:[4, 4], facing:'down'}, {sound:'chime'}, {newWord:'晚上', note:'晚上 means night, or evening. Everyone is asleep: it’s the third watch of the night.'}]},
+      {goTo:'caveNight', at:[4, 4], facing:'down'}, {sound:'chime'}, {if:{knows:'晚上'}, message:'It’s the middle of the night: everyone is asleep. It’s the third watch.'},
+      {if:{new:'晚上'}, newWord:'晚上', note:'晚上 means night, or evening. Everyone is asleep: it’s the third watch of the night.'}]},   // (晚上 you know from your first night, unless this game hasn't had one)
     {if:{teacher:0}, do:[{message:'A pupil’s room, cut into the rock: a stone bed, and a little window.'}]},   // (not yours till the master takes you as his pupil)
-    {do:[{message:'Your room, cut into the rock: a stone bed, and a little window.'}]}]},
+    {label:'Sleep', do:[{sleep:'You wake up in your room, with your health full.', room:true}]}]},   // your room: sleep there till morning, any time (js/daynight.js)
   'M': {look:'rockDoor', word:'门', landmark:true, onLook:[{do:[{message:'The master’s back door. It’s shut.'}]}]}
 };
 // By night: no-one about; the slanting moon shining in the pool (月亮), and three stars over the master's back door (星星),
@@ -180,6 +181,9 @@ const FETCH_WOOD = {fetch:'axeFetch', asks:[{word:'木头', count:4, ask:'wantWo
 // ffm in front of its id there; with little demons in their long grass, and a few squares of their own (put).
 const HOME_MAP = 'This is home: you know your way about here. Your map is of the lands across the sea.';
 const AT_HOME = (id, own = {}) => ({borrow:id, from:1, wild:['demon'], noMap:HOME_MAP, ...own});
+// The stone beds in the Water Curtain Cave, at home: sleep in one till morning (js/daynight.js), as you did there.
+const HOME_BED = {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.',
+  onLook:[{if:{knows:'床'}, label:'Sleep', do:[{sleep:'You wake up with your health full.'}]}]};
 // The demon's mountain, far to the north (坎源山, a name): ashy ground, dry grass full of little demons, dead pines and a
 // black pool; at the top, the cages, two torches and his cave's mouth (水脏洞), his guards in front of it, and over to the
 // right, the little demons' cart, the troop's things piled on it, and the little demon guarding it (characters); your
@@ -397,7 +401,17 @@ const ACROSS_THE_SEA = {
   // The master's year (chapter 1, decided 7 November 2026): while it runs, the places are in its season (js/seasons.js),
   // kept in season (0 spring, 1 summer, 2 autumn, 3 winter); evening: 1 once a season's last task is done, till you go to
   // bed and wake in the next.
-  seasons: {key:'season', if:{chapter:1, grown:0}, evening:{evening:1}},
+  seasons: {key:'season', if:{chapter:1, grown:0}, evening:{evening:1}, home:{if:{chapter:2}, season:'autumn'}},   // (home: Flower Fruit Mountain in chapter 2, in autumn, decided 7 November 2026, so it feels different from Area 1)
+  // The day going round (js/daynight.js, decided 7 November 2026, the owner's idea): a day of about 20 minutes on the map,
+  // then night. At night the human world's streets are quieter: people go home (stay: those who stay up all the same, such
+  // as the night market's stallholders, the teahouse, the fishermen and the boatman), and so do the master and his pupils;
+  // back home on Flower Fruit Mountain, once everything's back on the feast's tables, the troop sleeps in the Water Curtain
+  // Cave again (till then they're hiding, and stay up). Anyone you have something to do with stays up. morning: what
+  // you're told as you wake, after sleeping (in your room at the master's cave, or a stone bed at home).
+  dayNight: {if:{}, morning:'Good morning! You wake up with your health full.',
+    sleep:[{who:'monkeys', if:{party:1}, place:'ffmCave', at:[[3, 1, 'bed'], [5, 1, 'bed'], [10, 1, 'bed'], [12, 1, 'bed'],
+      [1, 4, 'right'], [14, 4, 'left'], [2, 8, 'right'], [13, 8, 'left'], [1, 11, 'right'], [14, 11, 'left'], [3, 10, 'right'], [12, 10, 'left'], [10, 12, 'left'], [4, 12, 'right']]},
+      {who:'people', stay:['fisher1', 'fisherman', 'villager', 'fruitSeller', 'bunSeller', 'teaKeeper', 'walker1', 'porter', 'changer', 'peddler', 'traveller2', 'angler', 'boatman', 'docker']}]},
   // Unloading the cart at home, back from the demon's mountain (the unload step, js/world.js; decided 7 November 2026): the
   // hungry monkey wants each of the troop's things off it, one at a time, only in Chinese, to go back on its table, the big
   // one, or the second for the milk; once they're all back, the troop puts everything else back too, and celebrates.
@@ -410,6 +424,8 @@ const ACROSS_THE_SEA = {
   // What people with nothing much to say talk about (their last few words, js/world.js): the weather, as the seasons go
   // round in the master's year (decided 7 November 2026, the owner's idea).
   smallTalk: [
+    {if:{raining:true}, say:'raining'},   // (rain, now and then, and night, as the day goes round: js/daynight.js)
+    {if:{night:true}, say:'goodEvening'},
     {if:{chapter:1, grown:0, season:0, place:'cave'}, say:'springHere'},
     {if:{chapter:1, grown:0, season:1}, say:'hotToday'},
     {if:{chapter:1, grown:0, season:2}, say:'manyLeaves'},
@@ -835,6 +851,11 @@ const ACROSS_THE_SEA = {
   },
 
   events: [
+    // the first night and the first rain, for a game that hasn't had them on Flower Fruit Mountain (js/daynight.js)
+    {if:{night:true, new:'晚上'}, do:[{sound:'chime'}, {message:'The sun has gone down, and the moon is coming up.'},
+      {say:'nightNow', by:'player', teach:'晚上'}, {if:{new:'晚上'}, newWord:'晚上', note:'晚上 means night, or evening. Everyone goes home to sleep, and the streets are quiet.'}]},
+    {if:{raining:true, new:'雨'}, do:[{message:'Drip, drip… it’s starting to rain!'}, {say:'raining', by:'player', teach:'雨'},
+      {if:{new:'雨'}, newWord:'雨', note:'雨 means rain. It never lasts long: the sun will soon be out again.'}]},
     // a game from before rice was a meal (5 November 2026), with rice in its bag for the farmer: it's his lunch now
     {if:{lunch:'asked', holding:{lunch:false}, inBag:{'米饭':true}}, do:[{hold:'米饭', for:'lunch'}]},
     // all four hens back in their yard: the villager thanks you
@@ -1500,6 +1521,7 @@ const ACROSS_THE_SEA = {
     },
     masterRoom: {
       name: {zh:'师父的房间', py:'shīfu de fángjiān', en:'The master’s room'},
+      indoors: true,   // (no rain in here: js/daynight.js)
       music: 'cave',
       noMap: 'Not now: the master is waiting!',
       exits: [
@@ -1519,7 +1541,7 @@ const ACROSS_THE_SEA = {
     // chapter 2: home, as you left it (Flower Fruit Mountain's places, borrowed: AT_HOME), with squares of its own: the
     // bushes the troop hides behind, the feast's tables, bare, and your cloud
     ffmMeadow: AT_HOME('meadow', {put:[[2, 10, 'あ']], legend:{'あ':HIDING('foundBig', 'big', 2, 10, {knows:'哭'})}}),
-    ffmPath: AT_HOME('path'), ffmValley: AT_HOME('valley'), ffmFalls: AT_HOME('falls'), ffmCave: AT_HOME('cave'),
+    ffmPath: AT_HOME('path'), ffmValley: AT_HOME('valley'), ffmFalls: AT_HOME('falls'), ffmCave: AT_HOME('cave', {indoors:true, legend:{'D':HOME_BED}}),
     ffmHomeGround: AT_HOME('homeGround', {
       put:[[3, 12, 'い'], [13, 12, 'え'], [12, 7, 'エ'], [13, 7, 'オ'], [14, 7, 'カ'], [15, 7, 'キ'], [16, 7, 'ア'], [17, 7, 'ア'], [18, 7, 'ア'], [21, 7, 'イ'], [22, 7, 'イ'], [23, 7, 'イ'], [24, 7, 'ク']],
       legend:{'い':HIDING('foundHungry', 'hungry', 3, 12, {foundBig:1}),
@@ -1532,7 +1554,7 @@ const ACROSS_THE_SEA = {
         'キ':ROBBED('tableBlock', 'Щ'), 'ク':ROBBED('tableBlock', 'Ш')}}),
     ffmShore: AT_HOME('shore'), ffmHillside: AT_HOME('hillside'), ffmRiverside: AT_HOME('riverside'), ffmFlowerValley: AT_HOME('flowerValley'),
     ffmSouthSlope: AT_HOME('southSlope'), ffmCliffs: AT_HOME('cliffs'), ffmHotSprings: AT_HOME('hotSprings'), ffmMelonField: AT_HOME('melonField'),
-    ffmDarkPines: AT_HOME('darkPines'), ffmPasture: AT_HOME('pasture'), ffmPineWood: AT_HOME('pineWood'), ffmSchool: AT_HOME('school'), ffmSportsGround: AT_HOME('sportsGround'),
+    ffmDarkPines: AT_HOME('darkPines'), ffmPasture: AT_HOME('pasture'), ffmPineWood: AT_HOME('pineWood'), ffmSchool: AT_HOME('school', {indoors:true}), ffmSportsGround: AT_HOME('sportsGround'),
     // the demon's mountain, far to the north (坎源山)
     lair: {
       name: {zh:'坎源山', py:'Kǎnyuán Shān', en:'The demon’s mountain'},
@@ -1868,7 +1890,6 @@ const ACROSS_THE_SEA = {
     '桶': 'The senior pupil’s bucket, to water your little tree in the spring.',
     '斧头': 'The senior pupil’s axe, to chop wood.',
     '头': 'The master’s riddle: three taps on your head.',
-    '晚上': 'The night of the master’s riddle, waiting to go to his back door.',
     '月亮': 'The slanting moon, shining in the cave’s pool at night.',
     '星星': 'The three stars over the master’s back door, at night.',
     '变': 'The master’s secret, at night in his room: changing into things.',
@@ -1947,7 +1968,6 @@ const ACROSS_THE_SEA = {
     '十八': {zh:'我 要 十八 桶 水 。', en:'I need eighteen buckets of water.'},
     '十九': {zh:'这里 有 十九 只 猴子 。', en:'There are nineteen monkeys here.'},
     '二十': {zh:'我们 有 二十 个 桃子 。', en:'We have twenty peaches.'},
-    '晚上': {zh:'晚上 有 月亮 。', en:'At night, there’s the moon.'},
     '月亮': {zh:'天 上 有 月亮 。', en:'There’s a moon in the sky.'},
     '星星': {zh:'天 上 有 很多 星星 。', en:'There are lots of stars in the sky.'},
     '妖怪': {zh:'妖怪 来 了 ！', en:'The demons are coming!'},
@@ -2053,6 +2073,9 @@ const ACROSS_THE_SEA = {
 
   lines: {
     hi: {zh:'你好 ！', en:'Hello!'},
+    nightNow: {zh:'晚上 了 ， 睡觉 吧 ！', en:'It’s night: time to sleep!'},   // the first night, in a game that hasn't had one (js/daynight.js)
+    raining: {zh:'下 雨 了 ！', en:'It’s raining!'},   // the first rain, and anyone with nothing new to say while it rains
+    goodEvening: {zh:'晚上 好 ！', en:'Good evening!'},   // and at night
     grownUp: {zh:'我 长大 了 ！', en:'I’ve grown up!'},
     thanks: {zh:'谢谢 ！', en:'Thank you!'},
     welcome: {zh:'不客气 ！', en:'You’re welcome!'},

@@ -5368,6 +5368,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '雨': {   // rain
+    palette: {a:'#46484B', b:'#2C2D31', c:'#B6C2D4', d:'#626E84', e:'#8E9AAE', f:'#56627A', g:'#28292E', h:'#1C2B3B', i:'#3169A4', j:'#394854', k:'#8CC4F2', l:'#3E4B54', m:'#23313D', n:'#9ACCF0', o:'#467BA8', p:'#515557', q:'#D8ECFA', r:'#5A9ED8'},
+    rows: [
+      ".............aaaab..............",
+      "...........aaccccdbb............",
+      "..........acceeeeecdb...........",
+      ".........aceeeeeeeeedbab........",
+      ".......aaceeeeeeeeeeeccdbb......",
+      ".....aacceeeeeeeeeeeeeeecdb.....",
+      "....acceeeeeeeeeeeeeeeeeeedb....",
+      "...aceeeeeeeeeeeeeeeeeeeeeedb...",
+      "..aceeeeeeeeeeeeeeeeeeeeeeedb...",
+      "..aceeeeeeeeeeeeeeeeeeeeeeeedb..",
+      ".aceeeeeeeeeeeeeeeeeeeeeeeeeedb.",
+      "aceeeeeeeeeeeeeeeeeeeeeeeeeeeedb",
+      "aceeeeeeeeeeeeeeeeeeeeeeeeeeeedb",
+      "bdeeeeeeeeeeeeeeeeeeeeeeeeeeedb.",
+      ".bddddddffffffddddffffffdddddb..",
+      "..bbgffffffffffffffffffffffgb...",
+      ".....gggggggggggggggggggggg.....",
+      "........h.......h......h........",
+      ".......hih.....hih....hih.......",
+      ".......hih....jkih....hih.......",
+      ".......hih....hih.....hih.......",
+      "........h.....hih......h...h....",
+      "............h..h....h.....hih...",
+      "...........hih.....hih....hih...",
+      ".......h...hih....jkih...hih....",
+      "......hih.hih.....hih....hih....",
+      "......hih.hih.....hih.....h.....",
+      "......hih..h.......h............",
+      ".......h..lllllllllllm..........",
+      ".....mllllnnnnnnnnnnnompllm.....",
+      "....monnnqqqrrrrrrrrrqqqnnom....",
+      ".....moooooooooooooooooooom....."
+    ]
+  },
   '鹤': {   // crane
     palette: {a:'#552E2C', b:'#421715', c:'#E47175', d:'#A8292D', e:'#4D3D26', f:'#5E5B58', g:'#FFFFFF', h:'#D4D0C4', i:'#504C46', j:'#C9A060', k:'#F7F6F0', l:'#1E1A16', m:'#242120', n:'#4A4A50', o:'#2A2A2E', p:'#212124', q:'#171412', r:'#85837C', s:'#E6E2D6', t:'#1E1E21', u:'#161311', v:'#26262A', w:'#46464C', x:'#1F1C18', y:'#3A3A36'},
     rows: [
@@ -7297,6 +7334,27 @@ const PICTURES = {
 // The game's icons, 16 x 16, by the emoji the text uses for them: wherever the game's text has one of these, it
 // shows the pixel icon instead (pixelIcons() in js/art.js).
 const ICONS = {
+  '🌙': {
+    palette: {a:'#5E573D', b:'#5E594B', c:'#514427', d:'#FFF1A8', e:'#FFF8D6', f:'#D8B864', g:'#F6E7A8'},
+    rows: [
+      "................",
+      "..a..bc.........",
+      ".adabefc........",
+      "..abefc.........",
+      "..begfc.........",
+      ".beggfc.........",
+      ".beggfc.........",
+      "begggfc.........",
+      "begggfc.........",
+      "cfggggfc........",
+      ".beggggfcbbbbc..",
+      ".cfgggggeeeeefc.",
+      "..cfggggggggfda.",
+      "...cfggggggfca..",
+      "....cffffffc....",
+      ".....cccccc....."
+    ]
+  },
   '⭐': {
     palette: {a:'#5E573D', b:'#513B12', c:'#FFF1A8', d:'#D89A22', e:'#F2C14E'},
     rows: [

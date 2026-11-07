@@ -82,6 +82,7 @@ function turnedTo(){
 }
 function update(now){
   if (mode !== 'play') return;
+  tickClock(now);   // (the time of day: js/daynight.js)
   scuttle(now);   // (crabs, on the shore: js/world.js)
   if (fastFood && !isFast(now) && !pl.mv && modal.hidden && !talkNext){ toast(`The energy from the ${wz(fastFood)} wears off.`); fastFood = null; }   // (once you've stopped)
   if (pl.mv && pl.mv.slip){   // trying to climb a ledge: up a little, and sliding back down where you were (not a step: nothing happens there)
@@ -103,6 +104,7 @@ function update(now){
     return;
   }
   if (!canAct()) return;
+  if (clockNews()){ busy = true; Promise.resolve(runEvents()).finally(() => { busy = false; updateHUD(); }); return; }   // night falling, the day coming, rain: everyone placed again, and the area's events (js/daynight.js)
   if (puffing(pl.x, pl.y, now)){ steamedOff(now); return; }
   const tapped = queued; queued = null;
   if (tapped && tapped !== pl.dir){ tryStep(tapped, now); return; }

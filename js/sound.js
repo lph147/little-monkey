@@ -152,6 +152,16 @@ const SFX = {
     [[2600, 900], [2850, 650], [2500, 1000]].forEach(([f, up], i) => tone(f, .07, 'sine', .02, i * .13, up));
     for (let i = 0; i < 5; i++) tone(3300 - i * 70, .04, 'sine', .015, .52 + i * .065, -450);
   },
+  rain: (v = .05) => {   // rain falling: a soft, even rush of noise, high and pattering, rising and falling away (a new one before it's gone, while it rains: js/daynight.js)
+    const a = ac(); if (!a) return;
+    const d = 3.4, t = a.currentTime, buf = a.createBuffer(1, a.sampleRate * d, a.sampleRate), ch = buf.getChannelData(0);
+    for (let i = 0; i < ch.length; i++) ch[i] = (Math.random() * 2 - 1) * (Math.random() < .02 ? 2.2 : 1);   // (now and then a drop, louder)
+    const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+    f.type = 'bandpass'; f.frequency.value = 2400; f.Q.value = .5;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .9); g.gain.setValueAtTime(v, t + d - 1); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    src.buffer = buf; src.connect(f); f.connect(g); g.connect(a.destination); src.start(t);
+  },
+  cricket: () => { for (let k = 0; k < 3; k++) tone(4300, .025, 'sine', .012, k * .07); },   // a cricket chirping, at night
   wind: () => {   // the wind in the pines: a soft rush that swells and dies away
     const a = ac(); if (!a) return;
     const d = 3.2, t = a.currentTime, buf = a.createBuffer(1, a.sampleRate * d, a.sampleRate), ch = buf.getChannelData(0);

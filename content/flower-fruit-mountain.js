@@ -254,6 +254,16 @@ const FLOWER_FRUIT_MOUNTAIN = {
   wordGap: {questions:4, word:'猴子', ask:'Something new is coming! But first, a few words to practise. Play a quick word game?', notYet:'Learn a few more words first, then come back.'},
   // When you can run, holding B as you walk (decided 28 October 2026): once PE has taught you 跑.
   running: {knows:'跑'},
+  // The day going round (js/daynight.js, decided 7 November 2026, the owner's idea): from chapter 1, once the troop has its
+  // home, a day of about 20 minutes on the map, then night. At night the troop sleeps in the Water Curtain Cave, as in the
+  // book (they roamed the mountain by day and slept in the cave by night): in its stone beds and curled up on its floor, a
+  // spot each, in the content's order (the rest further in, out of sight), the beds at each end left for you; anyone you
+  // have something to do with stays up. morning: what you're told as you wake, after sleeping in a bed.
+  dayNight: {if:{chapter:1}, morning:'Good morning! The sun is up over Flower Fruit Mountain, and your health is full.',
+    sleep:[{who:'monkeys', place:'cave', at:[[3, 1, 'bed'], [5, 1, 'bed'], [10, 1, 'bed'], [12, 1, 'bed'],
+      [1, 4, 'right'], [14, 4, 'left'], [2, 8, 'right'], [13, 8, 'left'], [1, 11, 'right'], [14, 11, 'left'], [3, 10, 'right'], [12, 10, 'left'], [10, 12, 'left'], [4, 12, 'right']]}]},
+  // What a monkey with nothing new to say says instead, while it's raining (as people's small talk in the human world).
+  smallTalk: [{if:{raining:true}, monkeys:true, say:'raining'}],
   // The map (地图, js/map.js; decided 31 October 2026, from mockups): MAP opens it once you have it (has): in chapter 1, when
   // the big monkey sends you up to the pine wood for wood and stones, he gives it to you (moved out of the prologue, decided
   // 31 October 2026, so there's less to take in at the start; a save that has opened it already keeps it); till then it says notYet. It shows the places you've been, each
@@ -761,6 +771,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // request done). Besides what a task's if can check, an event's if can check near:'id' (you're right beside that
   // character) and at:[x, y, 'place'] (you're standing there). A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
+    // The first night (the day goes round from chapter 1: js/daynight.js): 晚上, and the troop going back into the Water
+    // Curtain Cave to sleep; and the first rain, 雨 (下雨了！ it's raining)
+    {if:{night:true, new:'晚上'}, do:[{sound:'chime'}, {message:'The sun has gone down, and the moon is coming up over Flower Fruit Mountain.'},
+      {say:'nightNow', by:'player', teach:'晚上'}, {newWord:'晚上', note:'晚上 means night, or evening. At night the troop sleeps in the Water Curtain Cave.'},
+      {message:'Sleep in one of the stone beds in the Water Curtain Cave, and you’ll wake up in the morning. Or stay up: the night soon passes.'}]},
+    {if:{raining:true, new:'雨'}, do:[{message:'Drip, drip… it’s starting to rain!'}, {say:'raining', by:'player', teach:'雨'},
+      {newWord:'雨', note:'雨 means rain. It never lasts long here: the sun will soon be out again.'}]},
     {if:{place:'pineWood', woodIn:0}, do:[{sound:'howl'}, {message:'It’s gloomy under the thick pines, and very still. Somewhere far off, a wolf howls…'}, {set:{woodIn:1}}]},   // into the pine wood for the first time
     // chapter 1: into the bees' valley for the first time, at the end of the riverside: the butterfly from the riverside's
     // wildflowers flutters in after you (teaching 蝴蝶, if you passed it by), and tells you who lives in the tall flowers;
@@ -1142,6 +1159,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // through it again.
     cave: {
       name: {zh:'水帘洞', py:'Shuǐlián Dòng', en:'Water Curtain Cave'},
+      indoors: true,   // (no rain in here, and at night only a little darker: js/daynight.js)
       onMap: [14, 50],
       music: 'cave',   // slower, echoing, with drips of water
       exits: [
@@ -1986,6 +2004,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // mean this here.
     school: {
       name: {zh:'学校', py:'xuéxiào', en:'School'},
+      indoors: true,   // (no rain in here, and at night only a little darker: js/daynight.js)
       onMap: [88, 80],
       exits: [
         {at:[7, 9], to:'homeGround', arrive:[11, 5], facing:'down'}   // back out through the door
@@ -2494,6 +2513,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '桥': 'A bridge over the stream, at the home ground or in the pine wood.',   // (the iron bridge in the Water Curtain Cave until 21 October 2026)
     '床': 'The stone beds in the Water Curtain Cave.',
     '睡觉': 'The stone beds in the Water Curtain Cave: sleep there to get your health back.',
+    '晚上': 'Your first night on Flower Fruit Mountain, as the troop went into the Water Curtain Cave to sleep.',
+    '雨': 'The first rain on Flower Fruit Mountain: 下雨了！ It’s raining!',
     '碗': 'The troop’s bowls, stacked up in the Water Curtain Cave.',
     '桌子': 'The stone table in the Water Curtain Cave.',
     '家': 'The old monkey, when the troop moved into the Water Curtain Cave.',
@@ -2823,6 +2844,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // What the characters say. The English shows under a sentence the first time you see it.
   lines: {
     hi: {zh:'你好 ！', en:'Hello!'},
+    nightNow: {zh:'晚上 了 ， 睡觉 吧 ！', en:'It’s night: time to sleep!'},   // the first night (js/daynight.js)
+    raining: {zh:'下 雨 了 ！', en:'It’s raining!'},   // the first rain, and the troop while it rains
     iam: {zh:'我 是 猴子 。 你 也 是 猴子 ！', en:'I am a monkey. You are a monkey too!'},
     go: {zh:'去 看看 ！', en:'Go and take a look!'},
     comeLook: {zh:'来 看看 ！', en:'Come and take a look!'},   // the lookout's goat, walking you to its railing

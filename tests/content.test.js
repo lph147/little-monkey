@@ -389,7 +389,7 @@ test('every character has a talk script (or, a bird, is shooed away: shoo), and 
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag', 'form', 'away', 'lifted', 'carrying'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag', 'form', 'away', 'lifted', 'carrying', 'night', 'raining'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -415,7 +415,7 @@ test('every step does one thing, with settings that exist, using real lines and 
       assert.ok(AREA.lines[s.say], `${where}: "${s.say}" isn't one of the lines`);
       if (s.teach) assert.ok(AREA.lines[s.say].zh.split(' ').includes(s.teach), `${where}: line "${s.say}" doesn't contain ${s.teach}, so it can't be taught there`);
     }
-    if (a === 'newWord') assert.ok(collectible.includes(s[a]), `${where}: ${s[a]} isn't a word you can collect in ${where}`);
+    if (a === 'newWord') assert.ok(collectible.includes(s[a]) || (knownHere(s[a]) && (s.if || {}).new === s[a]), `${where}: ${s[a]} isn't a word you can collect in ${where}`);   // (or an earlier area's, taught as a catch-up only if you don't know it: if new, such as 晚上 for a game that's never had a night)
     if (a === 'card') assert.ok(knownHere(s[a]), `${where}: ${s[a]} isn't a word you can know in ${where}`);
     if (a === 'set' || a === 'markOut') for (const k of Object.keys(s[a])) assert.ok(remembered.includes(k), `${where} sets "${k}", which the area doesn't remember`);
     if (a === 'shop') assert.ok(Object.values(SHOPS).some(sh => sh.who === who && (typeof s.shop !== 'string' || SHOPS[s.shop] === sh)), `${where}: ${who} doesn't run the shop`);

@@ -377,6 +377,7 @@ test('the room in the rock is only yours once the master has taken you as his pu
   await press(g, 4, 4, 'up');
   assert.ok(notes(g).some(n => /^A pupil’s room/.test(n)), 'just arrived: a pupil’s room');
   g.run('here().teacher = 1');
-  await press(g, 4, 4, 'down'); await press(g, 4, 4, 'up');
-  assert.ok(notes(g).some(n => /^Your room/.test(n)), 'his pupil: your room');
+  assert.equal(g.run('promptFor(4, 3)'), 'Sleep', 'his pupil: your room, to sleep in (7 November 2026: the day goes round, js/daynight.js)');
+  await press(g, 4, 4, 'down'); g.run('newDay()'); await press(g, 4, 4, 'up');   // (nothing done today: no recap first, tests/daynight.test.js)
+  assert.ok(notes(g).some(n => /^Good morning/.test(n)), 'and you sleep there till morning');
 });

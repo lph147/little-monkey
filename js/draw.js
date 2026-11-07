@@ -1010,7 +1010,7 @@ function drawWorld(now){
   for (const e of ents){
     if (e.f){ drawFoe(cx, cy, now); continue; }
     if (e.p){
-      if (sleepAt){ drawAsleep(sleepAt.x*T - cx, sleepAt.y*T - cy); continue; }   // asleep in a bed
+      if (sleepAt){ if (!sleepAt.room) drawAsleep(sleepAt.x*T - cx, sleepAt.y*T - cy); continue; }   // asleep in a bed (or in your room, out of sight)
       const moving = !!pl.mv, p = moving ? (now - pl.mv.t0) / (pl.mv.dur || STEP) : 0;
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
@@ -1039,6 +1039,8 @@ function drawWorld(now){
     const n = e.n, scared = !!(foe && foe.big) && FOLLOWERS.includes(n);   // (whoever's following you, trembling, as a big one rears up: wildBattle, js/battle.js)
     const X = Math.round(e.c.x) - cx + (scared && Math.floor(now / 70) % 2 ? 1 : 0), Y = Math.round(e.c.y) - cy;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    if (n.asleep){ b.globalAlpha = fadeOf(n, now); drawSleeper(n, X, Y, now, n.bed); b.globalAlpha = 1; continue; }   // asleep for the night (js/daynight.js)
+    const fade = fadeOf(n, now); if (fade < 1) b.globalAlpha = fade;   // (fading in, up for the day)
     const talking = speakingNow(n);   // (who's speaking to you now: a ring at their feet, and the gold arrow over them, not their !)
     if (talking) speakerRing(X, Y);
     if (n.mv && n.mv.run && now - n.mv.t0 < n.mv.dur) drawRunDust(X, Y, now, n.dir);   // (racing you)
@@ -1068,11 +1070,13 @@ function drawWorld(now){
       drawEntityMonkey(n.kind, X, Y, n.dir, now, e.c.mid ? 1 : idle, e.c.mid ? 1 + (n.parity || 0) : 0, n.x + n.y);
     }
     if (FOLLOWERS.includes(n) && !n.flies) for (const [x, y, w, h] of feetInGrass(e.c.x, e.c.y)) coverFeet(x, y, w, h, cx, cy);   // the grass over their feet
+    b.globalAlpha = 1;
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
     const bub = inClass.has(n.id) ? null : talking ? {show:'speaker'} : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : now < (n.callingT || 0) ? {show:'note'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (a note: calling out what they sell, callOut in js/world.js)   // (and something they kept for you; none in a lesson, such as PE's)
     if (bub) bubbles.push([bub.show === 'speaker' ? X+4 : X+10, Y - (bub.show === 'speaker' ? 6 + Math.round(Math.sin(now / 220)) : 8) - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0), bub.show]);   // (over a big one's head, such as the cow's)
   }
+  drawGhosts(cx, cy, now);   // (anyone fading out, going to bed or getting up: js/daynight.js)
   drawDragonflies(cx, cy, now);
   drawSwarms(cx, cy, now);
   drawFires(cx, cy, now);   // (a fire's flames, such as in the brazier in the courtyard, winter: js/year.js)
@@ -1091,6 +1095,8 @@ function drawWorld(now){
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
   drawMist(cx, cy, sh, now);   // wisps of cloud drifting past, and mist rolling in (a place's clouds and mist: js/mountain.js)
   drawWeather(cx, cy, sh, now);   // the season's weather, petals, leaves or snow falling, and the evening (js/seasons.js)
+  drawRain(cx, cy, sh, now);   // rain, every so often (js/daynight.js)
+  drawDaylight(cx, cy, sh, now);   // the evening, the night and dawn, as the day goes round (js/daynight.js)
   drawNight(cx, cy, sh, now);   // a place at night (its night: js/mountain.js)
   for (const a of spotAnimals.filter(a => a.glints && GLOOM)) glinting(a, a.at[0]*T - cx, a.at[1]*T - cy - a.perch, now);   // (an owl's eyes, in the gloom)
   for (const [x, y, k] of glintsNow(now)) glint(x*T - cx + 8, y*T - cy + 11, k);   // things hidden off the path
@@ -1107,7 +1113,7 @@ function drawWorld(now){
     b.globalAlpha = 1;
   }
   drawDim(now);   // counting with your eyes covered (js/hide.js)
-  const sk = (now - sleepT) / SLEEP_MS;   // sleeping in a bed: the cave goes dim and Zs float up from you, then it's light again
+  const sk = (now - sleepT) / sleepLen;   // sleeping in a bed: the cave goes dim and Zs float up from you, then it's light again
   if (sk >= 0 && sk < 1){
     const a = Math.min(1, sk / .2, (1 - sk) / .2), PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
     b.globalAlpha = a * .55; R(b, 0, 0, VW*T, VH*T, '#0B1024');   // (not too dark: you can still see yourself asleep)

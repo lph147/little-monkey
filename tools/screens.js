@@ -475,6 +475,10 @@ SAVES.c2end = c2(SAVES.c2king, {king: 2, homeAgain: 1, unload: 6, party: 1, part
 
 // The screens, in the order you meet them. save: one of SAVES (none: a brand-new game). voices: 'zh'
 // (a Chinese voice, the usual), or 'missing' (only English voices). why: what to look out for.
+// The day going round (js/daynight.js, 7 November 2026): chapter 1 with the garden marked out, knowing the first night's
+// and the first rain's words, and the beds' (each screen sets the time of day as it opens: atTime, below)
+SAVES.dayNight = {...SAVES.springs, w: {...SAVES.springs.w, ...knows(1, ['晚上', '雨', '床', '睡觉'])}, pos: {place: 'homeGround', x: 11, y: 9, dir: 'down'}};
+SAVES.nightCave = {...SAVES.dayNight, pos: {place: 'cave', x: 1, y: 2, dir: 'up'}};
 const SCREENS = [
   {id: 'turn', title: 'Held upright', size: '375x812', why: 'The game is played sideways, so it asks you to turn the phone.'},
   {id: 'startup', title: 'Starting up', why: 'Until the game has set itself up: the app’s monkey and three dots (on a slow connection, the console showed half-built for a few seconds).', run: async () => {
@@ -1528,6 +1532,20 @@ const SCREENS = [
   {id: 'c2-take', title: 'What does she want?', save: 'c2unload', why: 'A at the cart: what’s still on it, their pictures and characters, as in a listening question (she said it only in Chinese). The wrong one, and she says 不对。 and asks again.', run: async () => {
     play(); await wait(300); closeMessage(); takeCard(['苹果', '蜂蜜', '牛奶'], AREA.unloading.take); await wait(300); }},
   {id: 'c2-home-again', title: 'Home with the little ones', save: 'c2end', why: 'Each little one with its mother, everything back on the feast’s tables, the broadsword (刀) in your hand.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'evening', title: 'Evening', save: 'dayNight', why: 'The day goes round (decided 7 November 2026): about 15 minutes of day on the map, the light warming to evening as the sun goes down.', run: async () => {
+    play(); await wait(200); S.clock.t = DAY_MS * .71; await wait(400); }},
+  {id: 'night', title: 'Night at the home ground', save: 'dayNight', why: 'About 5 minutes of night: dark blue you can still see through, the moon and stars, fireflies. The troop has gone to bed in the Water Curtain Cave; anyone with a ! or ? stays up.', run: async () => {
+    play(); await wait(200); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
+  {id: 'night-cave', title: 'The troop asleep', save: 'nightCave', why: 'At night the troop sleeps in the Water Curtain Cave, as in the book: in its stone beds, and curled up on its floor, little Zs floating up. The beds at each end are left for you.', run: async () => {
+    play(); await wait(200); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
+  {id: 'bedtime', title: 'Time for bed', save: 'nightCave', why: 'A at a free bed: first the day’s recap, the words you caught today to tap and hear, the questions you answered and your new friends; a quick review of today’s words if you like; then you sleep till morning.', run: async () => {
+    play(); await wait(200); Object.assign(S.clock, {t: DAY_MS * .8, turn0: (S.turn || 0) - 14, caught: ['晚上', '雨']}); placedIn = null; placeCharacters(); interact(1, 1); await wait(500); }},
+  {id: 'rain', title: 'Rain', save: 'dayNight', why: 'Once a day, for a minute or two, it rains outdoors: the sky darker, streaks and splashes, the sound of rain. The first time teaches 雨 (下雨了！ It’s raining!).', run: async () => {
+    play(); await wait(200); S.clock.t = RAIN_AT(S.clock.n) * DAY_MS + RAIN_MS / 2; await wait(500); }},
+  {id: 'night-village', title: 'The village at night', save: 'a2knock', why: 'The human world’s streets are quieter at night: people go home, their windows lit; the night market, the teahouse and the boatman stay up, and anyone with a ! or ?.', run: async () => {
+    play(); await wait(200); S.pos = {place: 'village', x: 22, y: 6, dir: 'down'}; placePlayer(); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
+  {id: 'c2-autumn', title: 'Home in autumn', save: 'c2end', why: 'Back on Flower Fruit Mountain in chapter 2, it’s autumn: red and gold leaves, golden grass, leaves drifting down, so it feels different from Area 1.', run: async () => {
     play(); await wait(500); }},
   {id: 'a2-end', title: 'Area 2: the end', save: 'c2end', why: 'The end of Area 2: the little ones home, the Demon of Havoc gone for good. To be continued: the Dragon King’s palace.', run: async () => {
     play(); await wait(100); STEPS.areaEnd(); await wait(500); }},

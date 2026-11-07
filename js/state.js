@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 36;
+const SAVE_VERSION = 37;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -24,7 +24,7 @@ function placesOnWayTo(place){
   for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
   return way;
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0}; }
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}}; }   // (clock: the time of day, and what you've done today: js/daynight.js)
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -236,6 +236,10 @@ function upgradeSave(s){
     for (const a of Object.values(s.areas || {})) for (const k of ['holding', 'kept']) for (const [id, w] of Object.entries((a && a[k]) || {})) if (w === was) a[k][id] = now;   // the farmer, are 米饭's
     s.version = 36;
   }
+  if (s.version === 36){   // version 36: there was no time of day. The clock starts in the morning, and today's recap (js/daynight.js)
+    s.clock = {t:0, n:0, turn0:s.turn || 0, friends0:[...(s.friends || [])], caught:[]};   // from now, not from the start of the game
+    s.version = 37;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   // A save from another area than the one this page plays (such as a game in Area 2, shown on the title screen while the page
   // plays Area 1) is only filled in with what every save has: what's kept for its own area waits till it's played there
@@ -380,7 +384,7 @@ function todayKey(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMont
 function addToday(w){ const k = todayKey(); if (S.today.d !== k) S.today = {d:k, ids:[]}; if (!S.today.ids.includes(w)) S.today.ids.push(w); }
 // A sentence was shown: each word in it (not punctuation) counts as heard once more.
 function hear(words, heard = S.heard){ for (const t of words) if (WORDS[t] || GLOSS[t]) heard[t] = (heard[t] || 0) + 1; }
-function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.ok = 0; slotIn(w, NEW_PLACE); if (S.areas[AREA.number]) here().wordTurn = S.turn || 0; } addToday(w); save(); }   // a new word goes near the front of the review list (wordTurn: when you caught it, for the area's wordGap)
+function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.ok = 0; slotIn(w, NEW_PLACE); if (S.areas[AREA.number]) here().wordTurn = S.turn || 0; noteCaught(w); } addToday(w); save(); }   // a new word goes near the front of the review list (wordTurn: when you caught it, for the area's wordGap)
 // You used w in a sentence (a request or a shop order). It's Used once you can read it as well.
 function useWord(w){ const r = rec(w); r.used = 1; if (r.lv === 3) r.lv = 4; addToday(w); save(); }
 // Questions get harder slowly. A word moves up from Caught to Recognised after STEP_UP right answers in a

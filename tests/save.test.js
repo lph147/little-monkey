@@ -378,3 +378,14 @@ test('a version 35 save’s 饭 (rice) is 米饭 now, cooked rice, kept as it wa
   assert.deepEqual([s.w['米饭'], '饭' in s.w, s.heard['米饭'], s.today.ids], [{lv: 2, ok: 1, next: 12}, false, 3, ['米饭', '人']], 'what you know of it, as 米饭');
   assert.equal(s.areas[2].holding.lunch, '米饭', 'the granny’s bowl, still for the farmer');
 });
+
+test('a version 36 save starts the day in the morning, its recap of today counted from now, not from the start of the game (version 37: the day goes round)', () => {
+  const old = {version: 36, started: true, area: 1, turn: 240, friends: ['rabbit', 'goat'], w: {'山': {lv: 2, ok: 1, next: 12}},
+    pos: {place: 'homeGround', x: 11, y: 8, dir: 'down'}, areas: {1: {chapter: 1, home: 2}}};
+  const s = saveOf(loadGame({save: old}));
+  assert.equal(s.version, VERSION);
+  assert.deepEqual(s.clock, {t: 0, n: 0, turn0: 240, friends0: ['rabbit', 'goat'], caught: []}, 'morning; nothing done today yet');
+  assert.deepEqual([s.turn, s.friends, s.w['山']], [240, ['rabbit', 'goat'], {lv: 2, ok: 1, next: 12}], 'everything else as it was');
+  const fresh = saveOf(loadGame());
+  assert.deepEqual(fresh.clock, {t: 0, n: 0, turn0: 0, friends0: [], caught: []}, 'a new game starts in the morning too');
+});

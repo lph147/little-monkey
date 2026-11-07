@@ -705,6 +705,18 @@ Do this in a **private or incognito window**, so your real save isn't touched. T
 - [ ] In chapter 1, meet the deer (鹿 lù), having walked the mountain path (路 lù): Sounds like ▸ straight after its card: "Sounds the same", both 4th tone, falling.
 - [ ] In the Word Scroll, open 河 and press English: the button becomes Sounds like, and Back from the card returns to 河's page. On 喝's page: English, How it's made, then Sounds like ▸.
 
+## Day and night, rain, and home in autumn
+
+The clock only runs while you're out on the map, so night comes after about 15 minutes of walking about in chapter 1 (or the human world). To see it sooner, open the gallery's Evening, Night, The troop asleep, Time for bed, Rain, The village at night and Home in autumn screens.
+
+- [ ] In the prologue it's always day. In chapter 1, after about 13 minutes on the map the light warms to evening, then it gets dark: dark blue but still easy to see on a phone, the moon and stars at the top right, fireflies, crickets now and then. The first night: a message, your monkey says 晚上了，睡觉吧！, and 晚上's new word card, then a message about sleeping in the cave.
+- [ ] At night most of the troop is gone from the home ground; anyone with a ! or ? is still there. Someone you're standing beside doesn't vanish in front of you after you talk to them; they're gone when you come back. In the Water Curtain Cave at night: monkeys asleep in four of the stone beds and curled up on the floor, little Zs floating up; A at one: it's fast asleep. The beds at each end are free.
+- [ ] A at a free bed: Time for bed, with today's new words (tap to hear), questions answered and new friends; Not now (B) and you stay up; Quick review asks 5 questions, then says how you did; Sleep: the cave goes dark as the night goes by, then "Good morning!", your health full, and the troop has gone out for the day. With nothing done since you woke, no card: you just sleep. Before chapter 1 the bed is a nap, as before.
+- [ ] Once a day it rains outdoors for a minute or two: darker sky, slanting streaks, splashes, the sound of rain. Never in the cave or the classroom. The first time: Drip, drip…, your monkey says 下雨了！ and 雨's card. While it rains, a monkey with nothing new to say says 下雨了！
+- [ ] In the human world at night: fewer people about, house windows lit; the fruit and bun stalls, the teahouse, the boatman are still there. People still up say 晚上好！ At the teacher's cave, the pupils go to their rooms at night; once you're his pupil, A at your room's door says Sleep, and you wake in the morning. When a season's jobs are done, the same door still moves on to the next season.
+- [ ] In Area 2's chapter 2, Flower Fruit Mountain is in autumn: orange and red trees, golden grass and paths' edges, leaves falling. Once everything's back on the feast's tables, the troop sleeps in the Water Curtain Cave at night, and its beds work for you too.
+- [ ] Close the game and come back: the time of day is as you left it (saved every 30 seconds or so, and whenever the game saves).
+
 ## Quick practice
 
 - [ ] On the title screen, for a game that knows at least 4 words with pictures: Practise beside Continue, saying how many words need it (none for a new game, or one that knows fewer). Tap it: no music, and the 练习 Practice card: your words caught, how many need practice, and how many at each level, with − 10 questions + and Back and Start.

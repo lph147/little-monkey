@@ -5,13 +5,16 @@
 // changed for the season, as the mock-ups were made: the ground (seasonal: each kind of ground has its own way of
 // changing, so a thing standing on it, such as a chopping block, keeps its own colours), and each big object on its own
 // picture (seasonObject: a pine keeps its needles under the snow, a willow loses its leaves, a roof takes the snow).
-// Summer is the look as drawn. Never in a place borrowed from an area before (Flower Fruit Mountain's, in chapter 2).
+// Summer is the look as drawn. A place borrowed from an area before (Flower Fruit Mountain's, in chapter 2) is in its own
+// season, the seasons' home ({if, season}: home in autumn, decided 7 November 2026, so it feels different from Area 1).
 // (Loaded after js/havoc.js: it wraps the grounds the other looks draw, and adds to OBJECT_ART and LOOKS.)
 
 const SEASON_NAMES = ['spring', 'summer', 'autumn', 'winter'];
 function seasonNow(){   // the season the place you're in is in, or null for none
   const s = AREA.seasons, p = PLACES[PLACE] || {};
-  if (!s || p.borrowed || p.noSeason || !S || !here() || !matches(s.if)) return null;
+  if (!s || p.noSeason || !S || !here()) return null;
+  if (p.borrowed) return s.home && matches(s.home.if) ? s.home.season : null;   // (home, in its own season)
+  if (!matches(s.if)) return null;
   return SEASON_NAMES[here()[s.key] || 0] || null;
 }
 const seasonLook = () => { const s = seasonNow(); return s === 'summer' ? null : s; };   // the colours to change to (none in summer)
@@ -49,8 +52,9 @@ const GROUND_RULES = {
     green: {base:(h, s, l) => greenish(h, s) ? fromHsl(50 - (1 - l) * 14, .42, l * .96) : KEEP,
       at:(c, x, y) => rnd(x >> 1, y >> 1, 3) > .986 ? LEAF_FALL[Math.floor(rnd(x, y, 4) * 3)] : c},   // (fallen leaves)
     field: {base:(h, s, l) => greenish(h, s) ? fromHsl(44, .6, clamp(l * 1.05, 0, .75)) : KEEP},   // (ripe rice, gold)
+    plant: {base:(h, s, l) => greenish(h, s) ? fromHsl(48 - (1 - l) * 16, .46, l * .97) : KEEP},   // (Flower Fruit Mountain's long grass, bushes and flowers, at home: autumn only)
     swept: {base:() => KEEP, at:(c, x, y) => rnd(x, y, 5) > .993 ? LEAF_FALL[Math.floor(rnd(x, y, 6) * 3)] : c},
-    earth: {base:() => KEEP, at:(c, x, y) => rnd(x, y, 5) > .991 ? LEAF_FALL[Math.floor(rnd(x, y, 6) * 3)] : c}
+    earth: {base:(h, s, l) => greenish(h, s) ? fromHsl(50 - (1 - l) * 14, .42, l * .96) : KEEP, at:(c, x, y) => rnd(x, y, 5) > .991 ? LEAF_FALL[Math.floor(rnd(x, y, 6) * 3)] : c}   // (a path's grassy edges, gold as the grass)
   },
   winter: {
     green: {base:(h, s, l) => SNOW(l)},   // snow, its shading kept
@@ -86,7 +90,7 @@ const OBJECT_RULES = {
   }
 };
 const OBJECT_KIND = {pine:'evergreen', twistedPine:'evergreen', oldTree:'evergreen', bamboo:'evergreen', bambooFence:'evergreen', ashPine:'evergreen',
-  willow:'willow', tree:'deciduous', peachTree:'deciduous', appleTree:'deciduous', bush:'deciduous',
+  willow:'willow', tree:'deciduous', peachTree:'deciduous', appleTree:'deciduous', bush:'deciduous', hollowTree:'deciduous',
   jHouse:'building', mudHouse:'building', teahouse:'building', townSchool:'building', whiteWall:'building', wallGate:'building', stallBuns:'building',
   stallShoes:'building', stallFruit:'building', stallChanger:'building', stallKites:'building', shopHut:'building',
   rockPeach:'own', myTree:'own', myTreeWrapped:'own', snowman:'own', brazier:'own'};   // ('own': drawn for the season by its own picture)
@@ -136,14 +140,16 @@ function seasonal(fn, kind){
 }
 const GROUND_KIND = {grass:'green', tall:'green', lawn:'green', mossStone:'green', path:'earth', earth:'earth', sand:'sand', paving:'swept', slab:'swept',
   pier:'swept', stoneSteps:'swept', veg:'field', rice:'field', canal:'water', waterBase:'water', seaBase:'water', heights:'rockTop', karstTop:'rockTop',
-  cliffFace:'face', karstFace:'face', chainFace:'face', planks:'wood', loosePlank:'wood'};
+  cliffFace:'face', karstFace:'face', chainFace:'face', planks:'wood', loosePlank:'wood',
+  longGrass:'plant', tallGrass:'plant', woodGrass:'plant', bush:'plant', bank:'plant', fern:'plant', mushrooms:'plant', hoofprints:'plant', grassPlot:'plant', melonVines:'plant',
+  tallFlowers:'plant', whiteFlowers:'plant', yellowFlowers:'plant', redFlowers:'plant', pinkFlowers:'plant', blueFlowers:'plant', orangeFlowers:'plant'};   // ('plant': changes only in autumn, at home)
 (function wrapGrounds(){
   const tables = [LOOKS, GROUNDS, GROUND_UNDER];
   for (const [name, kind] of Object.entries(GROUND_KIND)){
-    const fn = globalThis[name];
+    const fn = typeof globalThis[name] === 'function' ? globalThis[name] : LOOKS[name];   // (a look by its name, or only in LOOKS)
     if (typeof fn !== 'function') continue;
     const w = seasonal(fn, kind);
-    globalThis[name] = w;   // (so a look that draws it by its name, such as a stump on its ground, gets it for the season)
+    if (globalThis[name] === fn) globalThis[name] = w;   // (so a look that draws it by its name, such as a stump on its ground, gets it for the season)
     for (const t of tables) for (const k of Object.keys(t)) if (t[k] === fn) t[k] = w;
   }
 })();
@@ -283,16 +289,15 @@ Object.assign(LOOKS, {myTree:LOOKS.mossStone, myTreeWrapped:LOOKS.mossStone});
 
 /* ---- the weather ---- */
 // Over everything, each frame (drawWorld, js/draw.js): what falls in the season (petals, leaves, snow), drifting with
-// the world as you walk; now and then in summer, a shower; and in the evening (seasons.evening), the light turning to
-// evening, and the first sign of the season to come falling here and there, such as the first snowflakes in autumn.
+// the world as you walk (rain, now and then, is the day's: js/daynight.js); and in the evening (seasons.evening), the
+// light turning to evening, and the first sign of the season to come falling here and there, such as the first
+// snowflakes in autumn. In autumn at home (the seasons' home, chapter 2), and indoors, nothing falls indoors.
 const FALLING = {
   spring: {n:26, speed:10, sway:9, draw:(x, y, i) => R(b, x, y, 2, 1, i % 3 ? '#F7B9CB' : '#FFE3EC')},
   autumn: {n:24, speed:12, sway:8, draw:(x, y, i) => { const c = ['#E08A3A', '#C8502A', '#F0C050'][i % 3]; R(b, x, y, 2, 1, c); R(b, x + (i % 2), y + 1, 1, 1, c); }},
   winter: {n:70, speed:14, sway:4, draw:(x, y, i) => { b.globalAlpha = .9; R(b, x, y, i % 4 ? 1 : 2, i % 4 ? 1 : 2, '#FFFFFF'); b.globalAlpha = 1; }}
 };
-const SHOWER = {every:240000, lasts:26000};   // a summer shower: how often, and how long it lasts (ms)
 const NEXT = {spring:'summer', summer:'autumn', autumn:'winter'};
-const showering = now => (now % SHOWER.every) < SHOWER.lasts;
 function fallOver(f, n, cx, cy, sh, now){
   const W = VW*T, H = sh;
   for (let i = 0; i < n; i++){
@@ -303,14 +308,9 @@ function fallOver(f, n, cx, cy, sh, now){
   }
 }
 function drawWeather(cx, cy, sh, now){
-  const s = seasonNow(); if (!s) return;
+  const s = seasonNow(); if (!s || (PLACES[PLACE] || {}).indoors) return;
   const W = VW*T, evening = !!(AREA.seasons.evening && matches(AREA.seasons.evening));
   if (FALLING[s]) fallOver(FALLING[s], evening && s === 'spring' ? 10 : FALLING[s].n, cx, cy, sh, now);
-  if (s === 'summer' && showering(now) && !evening){
-    b.globalAlpha = .14; R(b, 0, 0, W, sh, '#1A2436'); b.globalAlpha = .5;
-    for (let i = 0; i < 90; i++){ const x = Math.floor(rnd(i, 4, 973) * (W + 40)) - Math.floor(now / 12) % 40, y = (rnd(i, 5, 974) * sh + now / 4) % sh; for (let k = 0; k < 5; k++) R(b, x - Math.floor(k / 2), Math.round(y) + k, 1, 1, '#D8E4F4'); }
-    b.globalAlpha = 1;
-  }
   if (evening){
     b.globalAlpha = .2; R(b, 0, 0, W, sh, '#FF8A3C'); b.globalAlpha = .12; R(b, 0, 0, W, sh, '#4A2A6A'); b.globalAlpha = 1;
     const next = FALLING[NEXT[s]];

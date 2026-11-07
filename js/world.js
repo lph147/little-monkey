@@ -257,6 +257,7 @@ function goalText(){ const t = getTasks(); return t.length ? t.map(x => x.text).
 function facing(){ const [dx,dy] = DV[pl.dir]; return [pl.x + dx, pl.y + dy]; }
 function promptFor(x, y){
   const n = npcAt(x, y) || followerAt(x, y);
+  if (n && n.asleep) return 'Look';   // (asleep for the night: js/daynight.js)
   if (n){ const p = talkPart(n); return (p && p.label) || n.label || 'Talk'; }   // (what their talk says A does, such as Pull at a cart)
   if (animalAt(x, y)) return 'Meet';
   if (BIRD_WORD && birdAt(x, y)) return 'Look';
@@ -331,6 +332,8 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'lifted') return (here().lifted || false) === v;   // what you're carrying over your head (the lift step), such as 'sack', or false
     if (k === 'form') return (pl.form || null) === v;   // what you've changed into just now (turnInto with keep), such as a little demon
     if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
+    if (k === 'night') return isNight() === v;   // it's night (js/daynight.js), such as the first night, teaching 晚上
+    if (k === 'raining') return rainingHere() === v;   // it's raining where you are, outdoors, such as the first rain, teaching 下雨
     if (AREA.counters[k]) return compare(counter(k), v);
     return compare(here()[k], v);
   });
@@ -340,7 +343,7 @@ const LEAP_MS = 450;   // how long a leap takes, when someone stops following yo
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
 const STEP_OPTIONS = {carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
-  change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed'], follow:['park'], walk:['from','to','ms','stomp']};   // extra settings a step can have
+  change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed'], follow:['park'], walk:['from','to','ms','stomp'], sleep:['room']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 const COUNT_MS = 900;   // a count said as each one's done, one after another (the carry step's each): how long it has, at least, before the next begins
@@ -761,17 +764,27 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   async lesson(s, who){ if (!await timetable(s.by || who)) return STOP; },
   // Sleep in the bed you're facing: you hop up onto it and lie down under the blanket, the cave goes dim and Zs float
   // up, then you hop down again, sparkling, with your health full (its text: the message then).
+  // Where the day goes round (js/daynight.js), it's bedtime: first a recap of your day, with a quick review if you like
+  // (or Not now, and you don't sleep), then the night goes by as you sleep, and you wake the next morning, everyone up for
+  // the day. room: in your room, behind its door, the door you're facing (the teacher's cave), not up on a bed.
   async sleep(s){
+    const bedtime = clockOn();
+    if (bedtime && !await bedtimeCard()) return STOP;
     const [bx, by] = facing(), from = [pl.px, pl.py];
-    await hop(bx * T, by * T - 3);   // up onto the bed
-    sleepAt = {x:bx, y:by}; pl.py = by * T; sleepT = performance.now();
-    await sleep(SLEEP_MS / 2); S.health = maxHealth(); save();
-    await sleep(SLEEP_MS / 2);
-    sleepAt = null; pl.py = by * T - 3; pl.dir = 'down';
-    await hop(...from);   // and down again, facing the room
-    S.pos.dir = 'down'; save(); wakeT = performance.now(); SFX.chime();
-    if (typeof s.sleep === 'string') toast(fill(s.sleep));
+    if (!s.room) await hop(bx * T, by * T - 3);   // up onto the bed
+    sleepLen = bedtime ? BEDTIME_MS : SLEEP_MS;
+    sleepAt = {x:bx, y:by, room:!!s.room, ...(bedtime ? {from:S.clock.t} : {})}; if (!s.room) pl.py = by * T; sleepT = performance.now();
+    await sleep(sleepLen / 2); S.health = maxHealth(); save();
+    await sleep(sleepLen / 2);
+    sleepAt = null;
+    if (bedtime) morning();
+    if (!s.room){ pl.py = by * T - 3; pl.dir = 'down'; await hop(...from); }   // and down again, facing the room
+    S.pos.dir = pl.dir; save(); wakeT = performance.now(); SFX.chime();
+    if (bedtime) toast(goodMorning());
+    else if (typeof s.sleep === 'string') toast(fill(s.sleep));
   },
+  // The next morning, straight away, such as after the master's year's season turns overnight (NEXT_SEASON): a new day.
+  morning(){ if (clockOn()) morning(); },
   // A battle with an enemy (battle: its id), and steps if you win (win). out: it jumps out at you first, as a wild one does
   // from long grass, such as the wolf at the rocks as you lead the cow home; meet: what's said as it begins, instead of
   // its own. (What happens if you lose: the area's battles' afterLoss.) In a boss fight (its enemy's bossFight), or one
@@ -1203,7 +1216,7 @@ async function runSteps(steps, who, ends){
 // something (the last of them, ACT_STEPS, changing nothing in the story, as a sound doesn't; lifting something and
 // putting it down do: what you carry).
 const ACT_STEPS = ['sweep', 'dip', 'unlock', 'pickUp', 'kneel'];
-const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'leap', 'fly', 'lift', 'putDown', 'pour', ...ACT_STEPS];
+const QUIET_STEPS = ['wear', 'set', 'sound', 'topple', 'change', 'give', 'rumble', 'rest', 'follow', 'hit', 'markOut', 'plant', 'sleep', 'morning', 'leap', 'fly', 'lift', 'putDown', 'pour', ...ACT_STEPS];
 // Whether anything after step i in a list shows something you'd press A for. If it can't be sure, it says yes, so a line
 // says Done only when it's the last (a step whose if doesn't match yet might, once a step before it changes the story).
 function showsMore(steps, i){
@@ -1218,7 +1231,10 @@ function showsMore(steps, i){
   return false;
 }
 // The area's events: each happens by itself when its if matches (checked after anything you do).
-async function runEvents(){ for (const e of AREA.events) if (matches(e.if)) await runSteps(e.do); await partsCheck(); placeCharacters(); refreshMap(); }
+async function runEvents(){ for (const e of AREA.events) if (matches(e.if) && !speakerAsleep(e.do)) await runSteps(e.do); await partsCheck(); placeCharacters(); refreshMap(); }
+// An event where someone asleep for the night would speak waits till they're up (js/daynight.js), such as the hungry
+// monkey saying the fish is on the feast's table.
+const speakerAsleep = steps => steps.some(s => typeof s.by === 'string' && (ALL_NPCS.find(n => n.id === s.by) || {}).asleep);
 // Where each character stands: their first move whose if matches (such as gathering at the waterfall), or
 // where the content first puts them. Someone following you is wherever you've been instead (FOLLOWERS, below).
 const inClass = new Set();   // characters out of their places for a lesson, such as PE's (js/pe.js): left where it puts them
@@ -1227,14 +1243,18 @@ const inClass = new Set();   // characters out of their places for a lesson, suc
 const parkedAt = n => (here().parked || {})[n.id];
 function parkAt(n){ (here().parked = here().parked || {})[n.id] = {place:n.place, x:n.x, y:n.y, facing:n.dir}; save(); }
 function placeCharacters(){
+  const plan = nightPlan();   // (who's asleep where, at night: js/daynight.js)
   for (const n of ALL_NPCS){
-    if (S.following.includes(n.id) || inClass.has(n.id)) continue;
+    if (S.following.includes(n.id) || inClass.has(n.id)){ n.asleep = false; continue; }
     if (here().shooed.includes(n.id)){ n.place = 'gone'; continue; }   // (a bird you've shooed off: shooAway)
     const mv = (n.moves || []).find(m => (!m.if || matches(m.if)) && (!m.parked || parkedAt(n)));
-    const m = (HIDE && n.id === HIDE.by && hiderAt()) || (mv && mv.parked ? parkedAt(n) : mv) || n.home;   // (off hiding, or where you found it: hide and seek, js/hide.js)
+    const spot = nightSpot(n, plan), was = {here:n.place === PLACE && placedIn === PLACE, x:n.x, y:n.y, dir:n.dir, asleep:!!n.asleep, bed:!!n.bed};
+    const m = spot || (HIDE && n.id === HIDE.by && hiderAt()) || (mv && mv.parked ? parkedAt(n) : mv) || n.home;   // (asleep for the night; off hiding, or where you found it: hide and seek, js/hide.js)
     const place = placeOf(m);
     if (n.place !== place || n.move !== m || (!n.scuttles && (n.x !== m.x || n.y !== m.y))){ n.place = place; n.x = m.x; n.y = m.y; n.dir = m.facing || n.dir; n.move = m; }   // (a move to the same square can turn them, such as the thirsty monkey watching for you to bring the cow home; a crab stays wherever it has scuttled to)
+    if (!!spot !== was.asleep){ n.asleep = !!spot; n.bed = !!(spot && spot.bed); if (placedIn === PLACE) sleptOrWoke(n, was); }   // (going to bed or getting up while you're there: fading)
   }
+  placedIn = PLACE;
   NPCS = ALL_NPCS.filter(n => n.place === PLACE && !S.following.includes(n.id));
   FOLLOWERS = S.following.map(id => ALL_NPCS.find(n => n.id === id)).filter(Boolean);
 }
@@ -1268,7 +1288,7 @@ const caughtCount = () => Object.keys(WORDS).filter(w => lvl(w) >= 1).length;
 // words to say (their last part, just lines and replies), talks about the weather instead, when the area's smallTalk has
 // something for now, such as the cold in winter (decided 7 November 2026, the owner's idea: 今天很冷！).
 const CHAT_STEPS = ['say', 'reply', 'message'];
-const smallTalkFor = n => PEOPLE.has(n.id) && (AREA.smallTalk || []).find(t => matches(t.if) && (!t.who || t.who.includes(n.id)) && !(t.not || []).includes(n.id));
+const smallTalkFor = n => (AREA.smallTalk || []).find(t => (PEOPLE.has(n.id) || (t.monkeys && isMonkey(CHARACTER.get(n.id) || {}))) && matches(t.if) && (!t.who || t.who.includes(n.id)) && !(t.not || []).includes(n.id));   // (people's, or the troop's too: monkeys)
 const talkPart = n => {
   const p = (AREA.talk[n.id] || []).find(p => !p.if || matches(p.if)), st = p && !p.if && p.do.every(s => CHAT_STEPS.includes(stepKind(s))) && smallTalkFor(n);
   return st ? {do:[{say:st.say}, ...(st.reply ? [{reply:st.reply}] : [])]} : p;
@@ -1530,6 +1550,7 @@ const ACTIONS = {   // special things that happen when you press A at some tiles
 };
 async function interact(x, y){
   const n = npcAt(x, y) || followerAt(x, y);
+  if (n && n.asleep) return toast(asleepNote(n));   // (for the night: js/daynight.js)
   if (n) return n.shoo ? shooAway(n) : talk(n);
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return goThrough(way);

@@ -10,6 +10,10 @@ const {loadGame, ROOT} = require('../tests/fake-browser');
 // in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
 // into the content and delete them from here.
 const DRAFTS = [
+  ...[['晚上 了 ， 睡觉 吧 ！', 'It’s night: time to sleep!', 'your monkey, as night falls for the first time (the day now goes round: about 15 minutes of day, then 5 of night), teaching 晚上. Is 晚上了 natural for “it’s night now”, or would 天黑了 be better (天黑 would be new, just for listening)?'],
+    ['下 雨 了 ！', 'It’s raining!', 'your monkey, as it first rains (now and then, in the daytime), teaching 雨 (rain); and anyone with nothing new to say while it rains'],
+    ['晚上 好 ！', 'Good evening!', 'people in the human world still up at night (the night market’s stallholders, the teahouse, the boatman), with nothing new to say']]
+    .map(([zh, en, where]) => ({zh, en, where:`New on 7 November 2026: ${where}. Is it natural?`})),
   ...[['这 是 我们 的 ！', 'This is ours!', 'the little demon guarding the cart of the troop’s things, as it stops you'],
     ['我 要 碗 。', 'I want the bowls.', 'the hungry monkey, wanting the troop’s bowls taken off the cart, to go back on the feast’s table (and 我要桃子。 我要苹果。, already in the game)'],
     ['我 要 蜂蜜 。', 'I want the honey.', 'the hungry monkey, the same, the honey'], ['我 要 牛奶 。', 'I want the milk.', 'the hungry monkey, the same, the jug of milk'],

@@ -148,6 +148,8 @@ const WORD_BANK = {
   '虾': {py:'xiā', en:'shrimp', pic:'🦐', area:1, category:'animals'},   // (caught in the riverside brook's clear shallows, for the feast)
   '小': {py:'xiǎo', en:'little, small', area:1, category:'describing'},   // (the first fish you catch: too small, you let it go; heard till then, as in 小石头)
   '大': {py:'dà', en:'big', area:1, category:'describing'},   // (and then a big one, for the feast; heard till then, as in 大猴子)
+  '晚上': {py:'wǎnshang', en:'night, evening', pic:'🌃', area:1, category:'nature', alike:['天']},   // (the first night, in chapter 1, once the troop has its home: the day goes round, js/daynight.js; it was the master's night, in Area 2, till 7 November 2026)
+  '雨': {py:'yǔ', en:'rain', pic:'🌧️', area:1, category:'nature', alike:['云', '雪', '水']},   // (the first rain, in chapter 1: 下雨了！, it's raining, as 下雪了！ is it's snowing)
 
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello', situation:'You meet a friend.'},
@@ -202,7 +204,6 @@ const WORD_BANK = {
   '桶': {py:'tǒng', en:'bucket', pic:'🪣', area:2, category:'items', alike:['水', '井']},   // (and to count buckets of something: 三桶水)
   '斧头': {py:'fǔtou', en:'axe', pic:'🪓', area:2, category:'items', alike:['木头']},
   '头': {py:'tóu', en:'head', pic:'🗣️', area:2, category:'people', alike:['人', '孩子']},   // (the master's riddle: three taps on your head)
-  '晚上': {py:'wǎnshang', en:'night, evening', pic:'🌃', area:2, category:'nature', alike:['天']},
   '月亮': {py:'yuèliang', en:'moon', pic:'🌙', area:2, category:'nature', alike:['晚上']},
   '星星': {py:'xīngxing', en:'star', pic:'🌟', area:2, category:'nature', alike:['晚上', '月亮']},
   '变': {py:'biàn', en:'to change (into something)', pic:'💨', area:2, category:'actions', alike:['云']},   // (the 72 transformations: the chapter's big idea)
@@ -444,6 +445,7 @@ const MADE = {
   '米饭': {parts:[['米', 'mǐ', 'rice'], ['饭', 'fàn', 'meal']]},   // (rice, made into a meal: cooked)
   '热': {clue:['灬', 'huǒ', 'fire'], why:'is at its bottom: four little flames. It’s hot!'},
   '冷': {clue:['冫', 'bīng', 'ice'], why:'is on its left: two drops of ice. It’s cold!'},
+  '雨': {why:'Drawn like rain: the sky along its top, and drops of rain falling under it.'},
   '雪': {clue:['雨', 'yǔ', 'rain'], why:'is on its top: snow falls from the sky, as rain does'},
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},

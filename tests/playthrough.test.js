@@ -330,6 +330,22 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('__said').includes('这里很大！'), 'he says how big it is');
   assert.deepEqual(get('areaChecklist()').filter(([, done, , found]) => found && !done), [], 'chapter 1 so far is ticked off');
 
+  // The day goes round from chapter 1 (decided 7 November 2026): night falls, and the first night teaches 晚上, the troop
+  // going to bed in the Water Curtain Cave (but not the old monkey, with something to tell you: a !); then it's morning,
+  // everyone up again; and later a shower, the first rain, teaching 雨 (下雨了！)
+  assert.equal(run('dayPart()'), 'day', 'chapter 1 begins in the day');
+  run("clockSeen = 'd'; S.clock.t = DAY_MS * NIGHT + 1");
+  await act('clockNews() && runEvents()', 'night falling: 晚上');
+  assert.ok(knows('晚上') && get('__said').includes('晚上了，睡觉吧！'), 'the first night teaches 晚上 (晚上了，睡觉吧！)');
+  assert.ok(get("ALL_NPCS.filter(n => n.asleep).every(n => ['cave', 'gone'].includes(n.place)) && ALL_NPCS.filter(n => n.asleep && n.place === 'cave').length >= 6"), 'the troop goes to bed in the Water Curtain Cave (the rest further in, out of sight)');
+  assert.equal(get("ALL_NPCS.find(n => n.id === 'elder').asleep"), false, 'the old monkey stays up: he has something to tell you');
+  run('morning()');
+  assert.ok(!get('ALL_NPCS.some(n => n.asleep)') && run('dayPart()') === 'day', 'morning: everyone up again');
+  run(`clockSeen = "d"; S.clock.t = RAIN_AT(S.clock.n) * DAY_MS + RAIN_FADE`);
+  await act('clockNews() && runEvents()', 'a shower: 雨');
+  assert.ok(knows('雨') && get('__said').includes('下雨了！'), 'the first rain teaches 雨 (下雨了！)');
+  run("S.clock.t = 0; clockSeen = null");   // (the rest of the day, in the morning)
+
   // Chapter 1: the big monkey marks out the school's plot, and wants wood and small stones to build it, from the pine wood
   // up the hill
   assert.equal(run('tileAt(8, 2).look'), 'grass', 'the home ground is open ground when you come: no plots yet');
