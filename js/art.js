@@ -5,6 +5,14 @@ const cv = $('#screen'), sc = cv.getContext('2d');
 const buf = document.createElement('canvas'); buf.width = VW*T; buf.height = VH*T;
 const b = buf.getContext('2d'); b.imageSmoothingEnabled = false;
 const R = (g, x, y, w, h, c) => { g.fillStyle = c; g.fillRect(x, y, w, h); };
+// Canvases kept in the phone's memory rather than on its graphics chip (willReadFrequently): those whose pixels are read
+// back, such as the season pictures' (js/seasons.js), and whatever's drawn onto one of them, which would otherwise have to
+// be fetched back from the graphics chip, a wait each time (decided 7 November 2026, after playing it: walking into a place
+// at home in autumn, the game froze). memCanvas makes one; inMemory(g): is g's canvas one?
+const IN_MEMORY = new WeakSet();
+function memCanvas(w, h){ const c = document.createElement('canvas'); c.width = w; c.height = h; IN_MEMORY.add(c); return c; }
+const memContext = c => c.getContext('2d', {willReadFrequently: true});
+const inMemory = g => !!g && !!g.canvas && IN_MEMORY.has(g.canvas);
 function sprite(rows, pal){
   const c = document.createElement('canvas'); c.width = rows[0].length; c.height = rows.length;
   const g = c.getContext('2d');
@@ -1466,15 +1474,15 @@ function pine(g, X, Y, seed){
 // A pine on the map: there are only eight ways a pine can look (which tiers have a second light dot), and the pine wood
 // has hundreds, so each is drawn once and then copied, the same pixels much quicker (decided 6 November 2026, as the pine
 // woods were slow to draw as you walked in, on a phone). Its shadow, which you see the ground through, is drawn on the
-// ground first, as it always was.
+// ground first, as it always was. Each picture is kept in memory, as it's drawn onto a season's pictures (js/seasons.js).
 const PINE_PICTURES = new Map();
 const pineKind = seed => [-1, -9, -17].map(top => rnd(seed, top, 3) < .6 ? 1 : 0).join('');   // (which of the eight)
 function pineOnMap(g, X, Y, seed){
   const kind = pineKind(seed);
   let pic = PINE_PICTURES.get(kind);
   if (!pic){
-    pic = document.createElement('canvas'); pic.width = 24; pic.height = 40;
-    const was = shadows; shadows = false; pine(pic.getContext('2d'), 4, 22, seed); shadows = was;   // (just the tree)
+    pic = memCanvas(24, 40);
+    const was = shadows; shadows = false; pine(memContext(pic), 4, 22, seed); shadows = was;   // (just the tree)
     PINE_PICTURES.set(kind, pic);
   }
   groundShadow(g, X+8, Y+14, 6, 2);
@@ -2161,23 +2169,42 @@ function drawObject(g, p, parts, over, clip, ox = 0, oy = 0){
 // in summer, never left out, so the map is never blank (decided 7 November 2026, after playing it); said once.
 let seasonTroubled = false;
 function seasonTrouble(e){ if (!seasonTroubled){ seasonTroubled = true; console.warn('Drawn as in summer: the season’s colours failed', e); } }
+// In a season (js/seasons.js), the map's layers are drawn in memory first, then handed to the graphics chip whole: the
+// squares' and objects' pictures for the season are made in memory, and handed over one by one they were hundreds of
+// little pictures for a phone's graphics chip to take in as you walked into a place (decided 7 November 2026, after
+// playing it: the pine wood still froze as you walked in). Two canvases in memory, as two layers are drawn at once (the
+// objects' bottoms and tops), each emptied once it's handed over. In summer, straight onto the layers, as ever.
+const STAGES = [memCanvas(0, 0), memCanvas(0, 0)];
+function staged(n, [x, y, w, h]){   // in a season, stage n as big as the box [x, y, w, h] on the map, to draw on at map pixels
+  if (!drawSeason) return null;
+  const c = STAGES[n]; c.width = w; c.height = h;   // (which empties it)
+  const g = memContext(c); g.translate(-x, -y);
+  return g;
+}
+function handOver(n, layer, [x, y, w, h]){   // stage n onto the layer's box, in place of what was there; then emptied
+  const lg = layer.getContext('2d'), c = STAGES[n];
+  lg.clearRect(x, y, w, h); lg.drawImage(c, x, y); c.width = c.height = 0;
+}
 // The objects that never move, into the two layers (only inside clip, [x, y, w, h] on the map, if given).
 function bakeObjects(clip){
-  const bg = baseCanvas.getContext('2d'), tg = topCanvas.getContext('2d');
-  if (clip){ bg.clearRect(...clip); tg.clearRect(...clip); }
+  const box = clip || [0, 0, COLS*T, ROWS*T], sb = staged(0, box), st = staged(1, box);
+  const bg = sb || baseCanvas.getContext('2d'), tg = st || topCanvas.getContext('2d');
+  if (clip && !sb){ bg.clearRect(...clip); tg.clearRect(...clip); }
   for (const p of OBJECT_PIECES){
     if (p.leafy || p.crawl || (clip && !overlaps([p.x0, p.y0, p.pw, p.ph], clip))) continue;
     drawObject(bg, p, p.under, false, clip); drawObject(tg, p, p.over, true, clip); p.baked = true;
   }
+  if (sb){ handOver(0, baseCanvas, box); handOver(1, topCanvas, box); }
 }
 const overlaps = ([ax, ay, aw, ah], [bx, by, bw, bh]) => ax < bx + bw && bx < ax + aw && ay < by + bh && by < ay + ah;
 // The ground of the squares from x0, y0 to x1, y1 (all of them if none are given), and only inside clip if given.
 function drawTiles(clip, x0 = 0, y0 = 0, x1 = COLS - 1, y1 = ROWS - 1){
-  if (clip){ mg.save(); mg.beginPath(); mg.rect(...clip); mg.clip(); mg.clearRect(...clip); }
+  const box = clip || [0, 0, COLS*T, ROWS*T], g = staged(0, box) || mg;   // (in a season, in memory first: just the box)
+  if (clip && g === mg){ mg.save(); mg.beginPath(); mg.rect(...clip); mg.clip(); mg.clearRect(...clip); }
   for (let y = Math.max(0, y0); y <= Math.min(ROWS - 1, y1); y++) for (let x = Math.max(0, x0); x <= Math.min(COLS - 1, x1); x++){
-    LOOKS[tileAt(x, y).look](mg, x*T, y*T, x, y); castShadow(mg, x*T, y*T, x, y);
+    LOOKS[tileAt(x, y).look](g, x*T, y*T, x, y); castShadow(g, x*T, y*T, x, y);
   }
-  if (clip) mg.restore();
+  if (g !== mg) handOver(0, mapCanvas, box); else if (clip) mg.restore();
 }
 // What the map was drawn for: the place, the school's paint, and each square's tile (patchMap compares them).
 let drawnFor = null;

@@ -1,7 +1,9 @@
 // The map never comes up blank on a phone (decided 7 November 2026, after playing it: back home in autumn, the map was
 // black after reloading, the falling leaves smearing over it). Each big object's picture for the season was drawn on a
 // canvas of its own, thousands of canvases in a pine wood, more than a phone will make for a page; now they share one,
-// every picture exactly as it was. And if a phone wipes the map's layers anyway, they're drawn again.
+// every picture exactly as it was. And if a phone wipes the map's layers anyway, they're drawn again. And no freezing as
+// you walk in (decided the same day, after playing it: the pine wood still froze): in a season, nothing is fetched back
+// from the graphics chip, the canvas the pictures share is made each one's size, and each layer is handed over whole.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -99,4 +101,84 @@ test('the pine wood’s hundreds of pines are coloured for the season once for e
   assert.equal(out.season, 'autumn');
   assert.ok(out.pines > 600, `plenty of pines (${out.pines})`);
   assert.ok(out.coloured <= 16, `coloured just ${out.coloured} times (eight looks, with and without their shadows), not once for each`);
+});
+
+// A canvas that keeps its pixels and notes what's done to it (LOG: the canvas, what, what was drawn and with what, and the
+// canvas's size then), and whether it was made to be kept in memory (kept: willReadFrequently).
+const LOG = [];
+function noting(){
+  const c = pixelCanvas(), inner = c.getContext('2d');
+  const ctx = new Proxy(inner, {
+    get: (t, k) => ['getImageData', 'drawImage', 'fillRect'].includes(k) ? (...a) => { LOG.push({c, op: k, src: a[0], a, w: c.width, h: c.height}); return t[k](...a); } : t[k],
+    set: (t, k, v) => { t[k] = v; return true; }
+  });
+  c.getContext = (type, opts) => { if (opts && opts.willReadFrequently) c.kept = true; return ctx; };
+  return c;
+}
+const WINTER = {...HOME, areas: {2: {chapter: 1, season: 3, teacher: 1}}, pos: {place: 'cave', x: 4, y: 4, dir: 'down'}};
+
+test('in a season, nothing is fetched back from the graphics chip as a place is drawn: every canvas read, and every one drawn onto one, is kept in memory; the canvas the pictures share is just each one’s size; and each layer is handed over whole', () => {
+  for (const [save, places, season] of [[HOME, ['ffmHillside', 'ffmPineWood'], 'autumn'], [WINTER, ['village', 'town'], 'winter']]){
+    const g = loadGame({dom: true, save, canvas: noting});
+    g.run("mode = 'play'; save = () => {}; placePlayer()");
+    const layers = g.run('[mapCanvas, baseCanvas, topCanvas]'), piece = g.run('pieceCanvas');
+    for (const id of places){
+      g.run('seasonCopies.clear()');   // (so the pines are coloured here, from their pictures)
+      LOG.length = 0;
+      g.run(`enterPlace(${JSON.stringify(id)})`);
+      assert.equal(g.run('drawSeason'), season, `${id} in ${season}`);
+      const reads = LOG.filter(e => e.op === 'getImageData');
+      assert.ok(reads.length > 50, `${id}: plenty read back (${reads.length})`);
+      assert.deepEqual(reads.filter(e => !e.c.kept).map(e => e.w + 'x' + e.h), [], `${id}: every canvas read back is kept in memory`);
+      const onto = LOG.filter(e => e.op === 'drawImage' && e.c.kept && e.src && e.src.pixels);
+      assert.deepEqual(onto.filter(e => !e.src.kept).map(e => e.src.width + 'x' + e.src.height), [], `${id}: nothing drawn onto a canvas in memory from one on the graphics chip`);
+      const pieceReads = reads.filter(e => e.c === piece);
+      assert.ok(pieceReads.length > 10 && pieceReads.every(e => e.a[0] === 0 && e.a[2] === e.w), `${id}: the pictures’ canvas just as wide as each picture`);
+      ['map', 'base', 'top'].forEach((name, k) => {
+        const ops = LOG.filter(e => e.c === layers[k]);
+        assert.equal(ops.filter(e => e.op === 'fillRect').length, 0, `${id}: nothing drawn straight onto the ${name} layer`);
+        assert.equal(ops.filter(e => e.op === 'drawImage').length, 1, `${id}: the ${name} layer handed over whole, once`);
+      });
+    }
+  }
+  // and in summer, as ever: straight onto the layers, nothing read back
+  const one = loadGame({dom: true, save: AREA1, canvas: noting});
+  one.run("mode = 'play'; save = () => {}; placePlayer()");
+  LOG.length = 0;
+  one.run("enterPlace('hillside')");
+  const map = one.run('mapCanvas');
+  assert.equal(LOG.filter(e => e.op === 'getImageData').length, 0, 'summer: nothing read back');
+  assert.ok(LOG.filter(e => e.c === map && e.op === 'fillRect').length > 1000, 'summer: the squares drawn straight onto the map');
+});
+
+test('in a season, the map’s layers drawn in memory first and handed over are exactly as drawn straight onto them: home in autumn and the master’s winter', () => {
+  for (const [save, id] of [[HOME, 'ffmHillside'], [HOME, 'ffmPineWood'], [WINTER, 'village']]){
+    const g = loadGame({dom: true, save, canvas: pixelCanvas});
+    g.run("mode = 'play'; save = () => {}; placePlayer()");
+    const out = get(g, `(() => {
+      enterPlace(${JSON.stringify(id)});
+      const inMemory = [mapCanvas, baseCanvas, topCanvas].map(c => c.pixels.slice()), season = drawSeason;
+      const was = staged; staged = () => null;   // (straight onto the layers, as in summer)
+      try { buildMap(); } finally { staged = was; }
+      return {season, same: [mapCanvas, baseCanvas, topCanvas].map((c, k) => c.pixels.length === inMemory[k].length && c.pixels.every((v, i) => v === inMemory[k][i]))};
+    })()`);
+    assert.ok(out.season, `${id} in a season`);
+    assert.deepEqual(out.same, [true, true, true], `${id}: the ground, the objects’ bottoms and their tops, every pixel the same`);
+  }
+});
+
+test('in a season, a square the story changes (a heap of leaves swept up in the cave in autumn) is drawn again on its own just as the whole map drawn again', () => {
+  const g = loadGame({dom: true, save: {...HOME, areas: {2: {chapter: 1, season: 2, teacher: 1}}, pos: {place: 'cave', x: 4, y: 4, dir: 'down'}}, canvas: pixelCanvas});
+  g.run("mode = 'play'; save = () => {}; placePlayer()");
+  const out = get(g, `(() => {
+    buildMap();
+    let at = null; for (let y = 0; y < ROWS && !at; y++) for (let x = 0; x < COLS && !at; x++) if (MAP[y][x] === 'l') at = [x, y];
+    here().changed[squareKey(...at)] = '#';
+    const patched = patchMap(), after = [mapCanvas, baseCanvas, topCanvas].map(c => c.pixels.slice());
+    buildMap();
+    return {season: drawSeason, patched, same: [mapCanvas, baseCanvas, topCanvas].map((c, k) => c.pixels.every((v, i) => v === after[k][i]))};
+  })()`);
+  assert.equal(out.season, 'autumn');
+  assert.ok(out.patched, 'just the squares round it drawn again');
+  assert.deepEqual(out.same, [true, true, true], 'every pixel as the whole map drawn again');
 });

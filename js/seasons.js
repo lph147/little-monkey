@@ -143,8 +143,7 @@ function recolourBox(g, [bx, by, w, h], rule, key, ox = bx, oy = by){
 // in its own colours. What's dotted about (fallen leaves, flowers, trodden patches) goes by where its square is on the
 // map, so it's the same wherever the square's drawn, such as the grass you walk through, on a little canvas of its own.
 const SCRATCH = 8;   // (room round the square, for anything that reaches out of it)
-const scratch = document.createElement('canvas'); scratch.width = scratch.height = T + 2 * SCRATCH;
-const scg = scratch.getContext('2d', {willReadFrequently: true});   // (read back for every square: kept where that's quick, not on the graphics chip)
+const scratch = memCanvas(T + 2 * SCRATCH, T + 2 * SCRATCH), scg = memContext(scratch);   // (read back for every square: kept in memory, js/art.js)
 let groundDepth = 0;
 function seasonal(fn, kind){
   const wrapped = function(g, X, Y, ...rest){
@@ -186,11 +185,12 @@ const snowyAt = (x, y) => { const t = tileAt(x, y); return drawSeason === 'winte
 /* ---- big objects ---- */
 // A big object's picture for the season (under: with its shadow, for what goes under the characters), as big as its
 // piece (pieceOf, js/art.js), its colours changed by its kind; in winter, snow on everything's top edges (snowCaps), on
-// each layer of an evergreen's needles, and on roofs. It's drawn at the top left of one canvas all the pieces share (as big as the biggest so far), and whoever asks for it
-// draws it from there straight away, before the next piece is drawn over it: a canvas of its own for each piece was
-// thousands of canvases in a pine wood, more than a phone will make for a page, and the map came up blank (decided
-// 7 November 2026, after playing it).
-const pieceCanvas = document.createElement('canvas'), pieceG = pieceCanvas.getContext('2d', {willReadFrequently: true});
+// each layer of an evergreen's needles, and on roofs. It's drawn on one canvas all the pieces share, kept in memory and made
+// just its size each time (decided 7 November 2026, after playing it: as big as the biggest so far, reading each tree back
+// at home in autumn was ten times slower on a phone, and the game froze as you walked in), and whoever asks for it draws it
+// from there straight away, before the next piece is drawn on it: a canvas of its own for each piece was thousands of
+// canvases in a pine wood, more than a phone will make for a page, and the map came up blank (decided the same day).
+const pieceCanvas = memCanvas(1, 1), pieceG = memContext(pieceCanvas);
 // A big object drawn just the same wherever it stands, but for which of a few ways it looks (a pine: which of its tiers
 // have a second light dot), whose season changes nothing by where it is (no rule.at), has its picture for the season
 // drawn once for each way, and copied for every other: a pine wood has hundreds of pines, and colouring each one took
@@ -204,13 +204,13 @@ function seasonObject(p, under){
   if (copyKey && seasonCopies.has(copyKey)) return seasonCopies.get(copyKey);
   const pic = seasonPicture(p, under, kind, rule, g);
   if (!copyKey) return pic;
-  const copy = document.createElement('canvas'); copy.width = p.pw; copy.height = p.ph;
-  copy.getContext('2d').drawImage(pic, 0, 0, p.pw, p.ph, 0, 0, p.pw, p.ph);
+  const copy = memCanvas(p.pw, p.ph);   // (in memory, as the layers are drawn in a season: js/art.js)
+  memContext(copy).drawImage(pic, 0, 0, p.pw, p.ph, 0, 0, p.pw, p.ph);
   seasonCopies.set(copyKey, copy);
   return copy;
 }
 function seasonPicture(p, under, kind, rule, g){
-  if (pieceCanvas.width < p.pw || pieceCanvas.height < p.ph){ pieceCanvas.width = Math.max(pieceCanvas.width, p.pw); pieceCanvas.height = Math.max(pieceCanvas.height, p.ph); }
+  if (pieceCanvas.width !== p.pw || pieceCanvas.height !== p.ph){ pieceCanvas.width = p.pw; pieceCanvas.height = p.ph; }   // (just its size, which empties it)
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, p.pw, p.ph);
   g.save(); g.beginPath(); g.rect(0, 0, p.pw, p.ph); g.clip(); g.translate(-p.x0, -p.y0);   // (just its piece, as on a canvas of its own)
   shadows = under;

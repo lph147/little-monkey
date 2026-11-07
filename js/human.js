@@ -114,12 +114,14 @@ for (const k of ['jHouse', 'mudHouse', 'whiteWall', 'wallGate', 'jars', 'baskets
 // Each thing is drawn with a dark outline round it (inked), as Area 1's are (decided 4 November 2026, after playing it: the
 // rice sacks, the firewood and the mud house couldn't be told from the ground they stood on): drawn on a canvas of its own,
 // then its shape a pixel out each way in ink, under it. Thin things (a rope, a washing line, a net) are drawn after, without
-// one, and a shadow on the ground before.
+// one, and a shadow on the ground before. Drawn for a canvas kept in memory, such as a season's picture (js/seasons.js),
+// its canvases are kept in memory too (memCanvas, js/art.js), so nothing has to be fetched back from the graphics chip.
 const INK = '#2E2218';
 function inked(g, o, draw, col = INK){
-  const bx = o.x * T - 24, by = o.y * T - 48, w = o.w * T + 48, h = o.h * T + 60;
-  const c = document.createElement('canvas'); c.width = w; c.height = h; const t = c.getContext('2d'); t.translate(-bx, -by); draw(t);
-  const s = document.createElement('canvas'); s.width = w; s.height = h; const sg = s.getContext('2d');
+  const bx = o.x * T - 24, by = o.y * T - 48, w = o.w * T + 48, h = o.h * T + 60, mem = inMemory(g);
+  const make = () => { if (mem) return memCanvas(w, h); const n = document.createElement('canvas'); n.width = w; n.height = h; return n; };
+  const c = make(), t = mem ? memContext(c) : c.getContext('2d'); t.translate(-bx, -by); draw(t);
+  const s = make(), sg = mem ? memContext(s) : s.getContext('2d');
   sg.drawImage(c, 0, 0); sg.globalCompositeOperation = 'source-in'; sg.fillStyle = col; sg.fillRect(0, 0, w, h);
   for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) g.drawImage(s, bx + dx, by + dy);
   g.drawImage(c, bx, by);
