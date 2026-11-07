@@ -40,6 +40,8 @@ const SNOW = (l, top = .8) => fromHsl(206, .2, clamp(top + l * .18, 0, .97));
 const patchy = (x, y, g, k, t) => { const n = noiseAt(x, y, g, k); return n > t || (n > t - .06 && rnd(x, y, k + 1) < (n - t + .06) / .06); };
 const LEAF_FALL = [0xE08A3A, 0xC8502A, 0xF0C050];
 const PETALS = [0xF7B9CB, 0xFFE3EC, 0xFFFFFF];
+const RUSSET = 0x8E3A1C;   // (autumn leaves at their reddest)
+const blend = (c, d, k) => [16, 8, 0].reduce((v, s) => v | Math.round((c >> s & 255) * (1 - k) + (d >> s & 255) * k) << s, 0);   // (colour c, k of the way to d)
 // Autumn's gold, for anything green and growing: one gold for the grass, a path's grassy edges, and at home the long
 // grass, the grass at a cliff's lip and foot and the tufts on the rock, so where one square's grass runs on into the
 // next, such as over the top of a cliff, there's no seam; and the leaves fallen on it.
@@ -95,8 +97,10 @@ const OBJECT_RULES = {
   },
   autumn: {
     evergreen: {base:(h, s, l) => greenish(h, s) ? fromHsl(h - 6, s * .85, l * .95) : KEEP},
-    deciduous: {base:(h, s, l) => greenish(h, s) ? fromHsl(8 + l * 40, .78, clamp(l * 1.02, .22, .7)) : isRipe(h, s, l) ? GONE : KEEP,
-      at:(c, x, y) => c !== KEEP && c !== GONE && rnd(x >> 1, y >> 1, 9) < .14 ? GONE : c, leafy:true},
+    // (some of its leaves redder than the rest, and its fruit kept: never a gap you see through, decided 7 November 2026,
+    // after playing it: they looked like holes, grey where a cliff was behind the tree)
+    deciduous: {base:(h, s, l) => greenish(h, s) ? fromHsl(8 + l * 40, .78, clamp(l * 1.02, .22, .7)) : KEEP,
+      at:(c, x, y) => c !== KEEP && rnd(x >> 1, y >> 1, 9) < .14 ? blend(c, RUSSET, .45) : c},
     willow: {base:(h, s, l) => greenish(h, s) ? fromHsl(46, .55, clamp(l * 1.05, .25, .72)) : KEEP}
   },
   winter: {

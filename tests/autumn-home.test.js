@@ -100,6 +100,34 @@ test('home in autumn: a square of long grass you walk through is exactly as the 
   assert.ok(out.n > 100, `plenty of long grass (${out.n} squares)`);
 });
 
+test('home in autumn: a tree’s leaves are as solid as in summer, never a gap you see through, and the fruit trees keep their fruit', () => {
+  const g = game(HOME, true);
+  const out = get(g, `(() => {
+    const res = {trees: 0, bad: [], fruit: 0, fruitTrees: 0};
+    for (const id of ['ffmMeadow', 'ffmFlowerValley', 'ffmCliffs', 'ffmSouthSlope']){
+      enterPlace(id); buildMap();
+      for (const p of OBJECT_PIECES){
+        if (OBJECT_KIND[p.look] !== 'deciduous') continue;
+        res.trees++;
+        const autumn = seasonObject(p, true).pixels;   // (its picture in autumn, with its shadow)
+        const c = document.createElement('canvas'); c.width = p.pw; c.height = p.ph;
+        const cg = c.getContext('2d'); cg.translate(-p.x0, -p.y0);
+        const was = drawSeason; drawSeason = null; shadows = true; OBJECT_ART[p.look](cg, p); drawSeason = was;   // (and as drawn, in summer)
+        let gaps = 0; for (let i = 3; i < autumn.length; i += 4) if (autumn[i] !== c.pixels[i]) gaps++;
+        if (gaps) res.bad.push(id + ' ' + p.look + ' at ' + p.x0 / T + ',' + p.y0 / T + ': ' + gaps + ' pixels');
+        if (p.look === 'peachTree' || p.look === 'appleTree'){
+          res.fruitTrees++;
+          for (let i = 0; i < autumn.length; i += 4) if (autumn[i + 3] > 200 && isRipe(...toHsl(autumn[i], autumn[i + 1], autumn[i + 2]))){ res.fruit++; break; }
+        }
+      }
+    }
+    return res;
+  })()`);
+  assert.deepEqual(out.bad, [], 'every tree as solid as in summer');
+  assert.ok(out.trees > 100, `plenty of trees (${out.trees})`);
+  assert.ok(out.fruitTrees >= 4 && out.fruit === out.fruitTrees, `each fruit tree with its fruit (${out.fruit} of ${out.fruitTrees})`);
+});
+
 test('the views from the lookouts in the season: summer’s as drawn in Area 1; at home in autumn, golden slopes and pasture, red and gold trees, leaves falling, and nothing green but the dark pines', () => {
   // the colours each view fills with, the first time and a moment later (as the leaves fall)
   const colours = (g, draw) => get(g, `(() => { const seen = new Set(), fr = b.fillRect; b.fillRect = function(){ seen.add(String(b.fillStyle).toUpperCase()); };
