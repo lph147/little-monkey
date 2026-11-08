@@ -1132,6 +1132,52 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.eye(4.6, 13.2);
     p.flat(O(1.9, 15, 1, .9), '#3A2416');                                                             // nose
   },
+  '蝙蝠': p => {   // bat: its wings spread wide, dark and see-through at the edges, scalloped below, a little furry body, pointed ears (unlike 鸟: feathers and a beak; unlike 蝴蝶: bright wings)
+    const W = '#4E4258', LT = {light: '#6E6078', dark: '#2E2636', edge: true}, side = pts => [pts, pts.map(([x, y]) => [32 - x, y])];
+    for (const pts of side([[16, 13], [11, 9], [6, 7.5], [1.5, 9.5], [1, 15], [4, 13.5], [6, 18], [9, 15.5], [11, 20], [13.5, 16.5], [16, 19]])) p.fill(Pg(pts), W, LT);   // the wings
+    p.flat(or(path([[14, 13], [6, 8], [2, 10]], .45), path([[14, 14], [6.5, 12], [4.5, 14]], .4), path([[14, 15], [9.5, 15.5]], .4),
+      path([[18, 13], [26, 8], [30, 10]], .45), path([[18, 14], [25.5, 12], [27.5, 14]], .4), path([[18, 15], [22.5, 15.5]], .4)), '#2A2230');   // the bones in them
+    p.fill(O(16, 16.5, 3.4, 5.2), '#6E5A4E', {light: '#8E7868', dark: '#4E3E34', edge: true});   // its furry body
+    p.fill(or(Pg([[12.8, 10], [13.2, 4.8], [15.6, 8.4]]), Pg([[19.2, 10], [18.8, 4.8], [16.4, 8.4]])), '#6E5A4E', {dark: '#4E3E34', edge: true});   // ears
+    p.fill(O(16, 10.6, 3.6, 3.1), '#6E5A4E', {light: '#8E7868', dark: '#4E3E34', edge: true});   // head
+    p.eye(14.4, 10); p.eye(17.6, 10);
+    p.dot(16, 12, '#E8909A'); p.dot(15, 13, '#FFFFFF'); p.dot(17, 13, '#FFFFFF');   // its nose, and two little teeth
+  },
+  '萤火虫': p => {   // firefly: a little dark beetle with an orange collar, its tail glowing yellow-green, a soft glow round it (unlike 蜜蜂: striped, see-through wings)
+    p.flat(O(20.5, 21, 10, 9), '#F2FAC8'); p.flat(O(20.5, 21, 7, 6.2), '#E6F6A0');      // its glow
+    for (const pts of [[[13, 17], [10, 23]], [[16, 18], [15, 24.5]], [[19, 18.5], [20, 24.5]]]) p.fill(path(pts, .55), '#2A2418');   // legs
+    p.fill(O(21.5, 20.5, 6, 4.6), '#E2F062', {light: '#FBFFC4', dark: '#B8C838', edge: true});   // the glowing tail
+    p.fill(Pg([[9, 12.5], [14, 10.5], [24, 14.5], [24.5, 18.5], [17, 19.5], [10, 17]]), '#3E3426', {light: '#5E5242', dark: '#241E16', edge: true});   // its wing cases
+    p.flat(path([[11, 14], [23, 16.5]], .4), '#241E16');                                                  // where they meet
+    p.fill(O(9.5, 13.5, 3.3, 2.8), '#D8643A', {light: '#F08A5A', dark: '#A8482A', edge: true});        // its orange collar
+    p.fill(O(6.5, 15, 2.4, 2.2), '#2A2418', {edge: true});                                             // head
+    p.dot(5, 14, '#FFFFFF');
+    p.flat(or(path([[6, 13], [4, 8], [2, 6]], .4), path([[7, 13], [7.5, 7.5], [6.5, 4.5]], .4)), '#2A2418');   // feelers
+  },
+  '刺猬': p => {   // hedgehog: side on, head to the left, a round back covered in brown spines, a pale pointed face, a black nose (unlike 老鼠: smooth grey fur, a long tail)
+    p.flat(O(17, 27.6, 12, 1.3), '#5DA651');                                                         // its shadow
+    for (let i = 0; i < 15; i++){   // spines, all over its back
+      const a = Math.PI * (1.02 + i * .068), cx = 18 + Math.cos(a) * 10, cy = 21 + Math.sin(a) * 8.5, tx = 18 + Math.cos(a) * 14, ty = 21 + Math.sin(a) * 12;
+      p.fill(Pg([[cx + Math.sin(a) * 1.6, cy - Math.cos(a) * 1.6], [cx - Math.sin(a) * 1.6, cy + Math.cos(a) * 1.6], [tx, ty]]), '#6E4C2E', {dark: '#3E2A18'});
+    }
+    p.fill(and(O(18, 21, 11, 9), Rc(0, 0, 32, 26.5)), '#8A6440', {light: '#A88058', dark: '#5E4228', edge: true});   // its back
+    for (const [x, y] of [[13, 15], [18, 13], [23, 15], [16, 18], [21, 18], [26, 19], [11, 20]]) p.flat(path([[x, y], [x + 1.5, y - 2]], .45), '#4E3420');   // spines lying down
+    p.fill(or(O(11, 26.2, 1.8, 1.2), O(24, 26.2, 1.8, 1.2)), '#4E3420');                                // feet
+    p.fill(Pg([[2.5, 22], [8, 16.5], [12.5, 18], [13, 25.5], [6, 25.5]]), '#E8D0A4', {light: '#F6E4C0', dark: '#C4A878', edge: true});   // its pale face
+    p.fill(O(2.6, 22, 1.3, 1.1), '#1E1A16'); p.eye(7.6, 19.6);                                          // nose and eye
+    p.fill(O(9.5, 16.8, 1.4, 1.3), '#C4A878');                                                          // ear
+  },
+  '蟋蟀': p => {   // cricket: side on, head to the left, dark brown, long feelers sweeping back, a big bent back leg for jumping (unlike 蜘蛛: eight legs; unlike 黄蜂: yellow stripes)
+    p.flat(or(path([[6.5, 15], [10, 8], [19, 3.5], [30, 4]], .45), path([[7.5, 15], [13, 9], [22, 7], [30.5, 9]], .45)), '#3A2418');   // feelers
+    p.fill(path([[18, 20], [24.5, 12.5], [29, 21.5]], 1.9), '#6A4428', {light: '#8A5E3C', dark: '#3E2614', edge: true});   // the big back leg, bent
+    p.fill(path([[29, 21.5], [23, 25.5]], .7), '#3E2614');
+    for (const pts of [[[10, 20], [8, 25]], [[13, 20.5], [13, 25.5]]]) p.fill(path(pts, .6), '#3E2614');   // front legs
+    p.fill(O(16.5, 18.5, 9, 3.8), '#5A3A24', {light: '#7A5236', dark: '#341E10', edge: true});          // body
+    p.fill(Pg([[11, 15.5], [26, 15.5], [24.5, 18.5], [12, 18.5]]), '#4A2E1A', {light: '#6A4428', dark: '#2A1A0E', edge: true});   // folded wings
+    p.flat(path([[13, 17], [24, 17]], .35), '#2A1A0E');
+    p.fill(O(7.5, 17, 3.4, 3.2), '#3E2614', {light: '#5E3E26', edge: true});                           // head
+    p.eye(6.4, 16);
+  },
   '臭豆腐': p => {   // stinky tofu: deep-fried golden cubes of tofu in a little paper tray, pickled cabbage and a dab of red chilli on top, a toothpick in one (unlike 包子: round, white, in a steamer; unlike 臭: a face pinching its nose)
     const cube = (x, y, s) => {   // a fried cube: its front, and its top a shade lighter, with the little holes frying leaves
       p.fill(Pg([[x, y], [x + 2, y - 2.4], [x + s + 2, y - 2.4], [x + s, y]]), '#E3A94C', {light: '#F2C870', dark: '#B07A2A', edge: true});
@@ -1145,6 +1191,19 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     for (const pts of [[[6, 13.5], [9, 12], [11.5, 13]], [[15, 13.8], [18, 12.4], [21, 13.6]], [[13.5, 9], [16, 7.6], [18.5, 8.6]]]) p.fill(path(pts, .8), '#7DB348', {dark: '#4E7E26'});   // pickled cabbage
     p.fill(O(25.5, 12.9, 2, 1.1), '#D2391F', {dark: '#9A2210'}); p.fill(O(8, 12.6, 1.3, .8), '#D2391F');   // chilli
     p.fill(path([[22, 2], [18.5, 12]], .6), '#D9BC80', {dark: '#A88A50'});                     // a toothpick
+  },
+  '飞蛾': p => {   // moth: its wings spread, pale brown with dark eye spots, a fat furry body, feathery feelers (unlike 蝴蝶: bright orange wings, thin feelers)
+    const side = pts => [pts, pts.map(([x, y]) => [32 - x, y])];
+    for (const pts of side([[16, 12], [8, 6.5], [2.5, 9], [3, 15.5], [15, 17.5]])) p.fill(Pg(pts), '#C4B088', {light: '#E0D0A8', dark: '#968258', edge: true});   // upper wings
+    for (const pts of side([[15.5, 17], [7, 18.5], [6.5, 24.5], [12, 26.5], [16, 21.5]])) p.fill(Pg(pts), '#B09A70', {light: '#CCB890', dark: '#86704A', edge: true});   // lower wings
+    for (const x of [8, 24]){ p.fill(O(x, 11.5, 2, 1.8), '#5A4630'); p.dot(x, 11, '#E8DCC0'); }            // eye spots
+    p.flat(or(path([[9, 21], [13, 20]], .4), path([[23, 21], [19, 20]], .4)), '#86704A');                  // markings
+    p.fill(O(16, 17.5, 2.6, 7), '#9A8460', {light: '#BCA67E', dark: '#6E5A3C', edge: true});                // its furry body
+    p.fill(O(16, 10, 2.3, 2), '#86704A', {edge: true});                                                     // head
+    for (const d of [-1, 1]){   // feathery feelers
+      p.flat(path([[16 + d, 9], [16 + d * 5, 3.5]], .45), '#5A4630');
+      for (let i = 1; i < 4; i++){ const x = 16 + d * (1 + i * 1.3), y = 9 - i * 1.4; p.dot(Math.round(x + d), Math.round(y), '#5A4630'); }
+    }
   },
   '鞋': p => {   // shoes: a pair of black cloth shoes with white soles
     for (const [x, y] of [[2, 13], [13, 20]]){

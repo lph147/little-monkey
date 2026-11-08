@@ -144,7 +144,12 @@ const WORD_BANK = {
   '鱼竿': {py:'yúgān', en:'fishing rod', pic:'🎣', area:1, category:'items', alike:['棍子']},   // (the fishing monkey's, by the stream at the home ground, for the feast's fish; both pictures are a long, thin stick)
   '快乐': {py:'kuàilè', en:'happy', pic:'😊', area:1, category:'describing'},   // (the feast, at the end of chapter 1: 小猴子很快乐！ heard since becoming king)
   '臭': {py:'chòu', en:'smelly', pic:'🤢', area:1, category:'describing'},
-  '黄鼠狼': {py:'huángshǔláng', en:'weasel', pic:'🦦', area:1, category:'animals', alike:['狐狸', '老鼠', '狼']},   // (a night creature to fight, sneaking through the long grass after dark: chapter 1)   // (as you eat your first durian: 太臭了！, it's so smelly!)
+  '黄鼠狼': {py:'huángshǔláng', en:'weasel', pic:'🦦', area:1, category:'animals', alike:['狐狸', '老鼠', '狼']},
+  // new night animals, only out after dark (decided 8 November 2026, the polish plan)
+  '蝙蝠': {py:'biānfú', en:'bat', pic:'🦇', area:1, category:'animals', alike:['鸟', '蝴蝶']},   // (flitting over the home ground's stream at night; by day asleep in the Water Curtain Cave)
+  '萤火虫': {py:'yínghuǒchóng', en:'firefly', pic:'🪲', area:1, category:'animals', alike:['蜜蜂', '火']},   // (five to find in the riverside's long grass, after dark)
+  '刺猬': {py:'cìwei', en:'hedgehog', pic:'🦔', area:1, category:'animals', alike:['老鼠']},   // (snuffling in the meadow's long grass, after dark)
+  '蟋蟀': {py:'xīshuài', en:'cricket', pic:'🦗', area:1, category:'animals', alike:['蜘蛛']},   // (in the hillside's long grass, chirping, after dark)   // (a night creature to fight, sneaking through the long grass after dark: chapter 1)   // (as you eat your first durian: 太臭了！, it's so smelly!)
   '木筏': {py:'mùfá', en:'raft', pic:'🛶', area:1, category:'items', alike:['木头']},   // (the troop builds it on the shore, at the end of chapter 1: you leave on it, as in the book)
   '海': {py:'hǎi', en:'sea', pic:'🌊', area:1, category:'nature', alike:['河', '水']},   // (the shore, below the meadow, where the river meets the sea; heard in the opening, 海里有一座山)
   '螃蟹': {py:'pángxiè', en:'crab', pic:'🦀', area:1, category:'animals'},   // (on the shore's sand, for the feast)
@@ -259,7 +264,8 @@ const WORD_BANK = {
   '毛': {py:'máo', en:'hair, fur', pic:'🪶', area:2, category:'people', alike:['猴子', '头']},   // (your hairs, turned into little monkeys: 变！)
   '刀': {py:'dāo', en:'broadsword, knife', pic:'🗡️', area:2, category:'items', alike:['棍子', '斧头']},   // (the Demon of Havoc's, yours once you've beaten him)
   '车': {py:'chē', en:'cart', pic:'🛒', area:2, category:'items'},   // (the little demons' cart, piled with the troop's things)
-  '臭豆腐': {py:'chòudòufu', en:'stinky tofu', pic:'🧆', area:2, category:'food', alike:['包子']},   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
+  '臭豆腐': {py:'chòudòufu', en:'stinky tofu', pic:'🧆', area:2, category:'food', alike:['包子']},
+  '飞蛾': {py:"fēi'é", en:'moth', pic:'🪰', area:2, category:'animals', alike:['蝴蝶']},   // (at the night market's lamps, after dark)   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
@@ -453,6 +459,9 @@ const MADE = {
   '雨': {why:'Drawn like rain: the sky along its top, and drops of rain falling under it.'},
   '大雨': {parts:[['大', 'dà', 'big'], ['雨', 'yǔ', 'rain']]},
   '黄鼠狼': {parts:[['黄', 'huáng', 'yellow'], ['鼠', 'shǔ', 'mouse'], ['狼', 'láng', 'wolf']]},
+  '萤火虫': {parts:[['萤', 'yíng', 'glow-worm'], ['火', 'huǒ', 'fire'], ['虫', 'chóng', 'insect']]},
+  '刺猬': {parts:[['刺', 'cì', 'spike'], ['猬', 'wei', 'hedgehog']]},
+  '飞蛾': {parts:[['飞', 'fēi', 'to fly'], ['蛾', 'é', 'moth']]},
   '臭豆腐': {parts:[['臭', 'chòu', 'smelly'], ['豆腐', 'dòufu', 'tofu']]},
   '雪': {clue:['雨', 'yǔ', 'rain'], why:'is on its top: snow falls from the sky, as rain does'},
   // phrases

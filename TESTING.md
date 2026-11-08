@@ -755,6 +755,15 @@ In chapter 1 (once the day goes round), and in the human world:
 5. Open MENU, Friends: an animal you haven't found that's only out by day or at night has a sun or a moon by its clue; tap it: "…, after dark."
 6. In the human world: the goose, the chicken and the crane sleep at night; the cat sleeps by day and is awake at night. The dog by the road stays up till it's your friend.
 
+## New night animals
+
+In chapter 1, at night (and in the human world):
+1. The home ground at night: a bat flits over the stream, east of the bridge. Face it from the bank and press A: 蝙蝠 (biānfú, bat). By day, go into the Water Curtain Cave: it hangs upside down from the roof, asleep (A: it comes out after dark).
+2. The riverside's long grass at night: fireflies, 萤火虫 (yínghuǒchóng). Five to find, counted 一 to 五 as you make friends; each one you've met glows over the grass at night, and is gone by day.
+3. The meadow's long grass at night: a hedgehog, 刺猬 (cìwei). The hillside's long grass at night: a cricket, 蟋蟀 (xīshuài).
+4. The Friends page: each has a moon by its clue till you've found it.
+5. In the human world at night: the town's bun stall has a lantern lit, a moth, 飞蛾 (fēi'é), fluttering round it; bats flit round the stalls; and over the rice fields, fireflies drift.
+
 ## Quick practice
 
 - [ ] On the title screen, for a game that knows at least 4 words with pictures: Practise beside Continue, saying how many words need it (none for a new game, or one that knows fewer). Tap it: no music, and the 练习 Practice card: your words caught, how many need practice, and how many at each level, with − 10 questions + and Back and Start.

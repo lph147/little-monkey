@@ -1107,6 +1107,7 @@ const ACROSS_THE_SEA = {
     fields: {
       name: {zh:'田边', py:'tiánbiān', en:'The fields'},
       music: 'village',
+      fireflies: true,   // (fireflies over the rice fields at night, as on Flower Fruit Mountain: js/daynight.js)
       onMap: [106, 102],
       sounds: ['birds', 'wind'],
       exits: [
@@ -1175,6 +1176,7 @@ const ACROSS_THE_SEA = {
     town: {
       name: {zh:'小镇', py:'xiǎozhèn', en:'The market town'},
       music: 'village',
+      nightBats: [[4, 8], [10, 8], [27, 8]],   // (bats flitting round the stalls' lanterns at night: js/daynight.js)
       onMap: [166, 102],
       sounds: ['birds'],
       exits: [
@@ -1891,6 +1893,7 @@ const ACROSS_THE_SEA = {
     '学': 'The children learning at the town’s school.',
     '书': 'The books on the table by the town’s school.',
     '猫': 'On the sacks at the market.',
+    '飞蛾': 'Round a lamp at the night market, after dark.',
     '风': 'The boatman at the harbour, waiting for the wind.',
     '歌': 'The woodcutter’s song, on the far shore.',
     '云': 'The sea of clouds under the cliff road, on the teacher’s mountain.',
@@ -1964,6 +1967,7 @@ const ACROSS_THE_SEA = {
   // Example sentences for words, on their Word Scroll pages.
   examples: {
     '鹅': {zh:'鹅 在 水 里 。', en:'The goose is in the water.'},
+    '飞蛾': {zh:'晚上 有 飞蛾 。', en:'There are moths at night.'},   // (a draft, not checked yet)
     '鸡': {zh:'鸡 吃 草 。', en:'Chickens eat grass.'},
     '狗': {zh:'狗 是 我 的 朋友 。', en:'The dog is my friend.'},
     '猫': {zh:'猫 很 小 。', en:'The cat is very small.'},
@@ -2039,7 +2043,10 @@ const ACROSS_THE_SEA = {
     {id:'chicken', time:'day', word:'鸡', at:[6, 16, 'village'], roams:['shorePath', 'villageLane'], home:'草', clue:'The village, in the yard', meetNote:'A chicken pecks about in the yard. Answer its questions to make friends.'},
     {id:'dog', time:'day', awake:{friends:{dog:false}}, word:'狗', at:[36, 9, 'fields'], roams:['villageLane', 'highRoad'], home:'草', clue:'The fields, by the road', meetNote:'A dog guards the road, barking at you! Answer its questions to make friends.'},
     {id:'crane', time:'day', word:'鹤', at:[14, 12, 'cliffRoad'], chapter:1, home:'山', clue:'The teacher’s mountain, by the pool on the cliff road', meetNote:'A crane stands by the pool on one leg. It looks at you, its head on one side. Answer its questions to make friends.'},
-    {id:'cat', time:'night', word:'猫', at:[33, 8, 'town'], roams:['highRoad', 'canalPath'], perch:3, home:'房子', clue:'The town, at the market', meetNote:'A cat is curled up on the sacks at the market. Answer its questions to make friends.'}
+    {id:'cat', time:'night', word:'猫', at:[33, 8, 'town'], roams:['highRoad', 'canalPath'], perch:3, home:'房子', clue:'The town, at the market', meetNote:'A cat is curled up on the sacks at the market. Answer its questions to make friends.'},
+    // a moth at the night market's lamp, after dark (decided 8 November 2026, the polish plan): it flutters round the bun
+    // stall's lantern, lit at night (glows: 'lamp')
+    {id:'moth', time:'night', word:'飞蛾', at:[5, 9, 'town'], home:'房子', flutters:true, glows:'lamp', clue:'The town’s market, round a lamp', meetNote:'A moth flutters round the stall’s lamp. Answer its questions to make friends.'}
   ],
   birds: {word:'鸟', note:'A little bird hops about, looking for something to eat.', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},
   // Hide and seek with a child in the village (the hideSeek step, js/hide.js, as with the little monkey at home): the

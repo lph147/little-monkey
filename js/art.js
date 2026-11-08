@@ -198,7 +198,7 @@ function asleepSprite(){
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
-  waits:!!a.waits, perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, leaves:!!a.leaves, time:a.time || null, awake:a.awake || null}));   // (time: when it's about, by day or after dark, unless the story needs it, awake: awakeNow)   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
+  waits:!!a.waits, perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, leaves:!!a.leaves, time:a.time || null, awake:a.awake || null, sleepsAt:a.sleepsAt || null, hangs:!!a.hangs, glows:a.glows || null, group:a.group || null}));   // (time: when it's about, by day or after dark, unless the story needs it, awake: awakeNow)   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
 // Whether an animal is out yet: once the story has reached its chapter (decided 30 October 2026, so a chapter's new
 // friends, such as the duck on the home ground's stream, aren't there in the prologue).
 const inChapter = a => a.chapter <= ((here() || {}).chapter || 0);
@@ -216,7 +216,7 @@ const GRASS_ANIMALS = ANIMALS.filter(a => !a.at);
 // it came out: the area's progress keeps where (out: by the animal's id, each [x, y, 1 once it's your friend, else 0]).
 // Those out in the place you're in, once animals appear: {a, x, y, friend}.
 const outOf = a => (here().out || {})[a.id] || [];
-const outHere = () => canWild() ? ANIMALS.filter(a => a.stays && a.place === PLACE).flatMap(a => outOf(a).map(([x, y, f]) => ({a, x, y, friend:!!f}))) : [];
+const outHere = () => canWild() ? ANIMALS.filter(a => a.stays && a.place === PLACE && awakeNow(a)).flatMap(a => outOf(a).map(([x, y, f]) => ({a, x, y, friend:!!f}))) : [];
 const outAt = (x, y) => outHere().find(o => o.x === x && o.y === y);
 // An animal living at this spot, or out there, once animals appear (you can't walk through it).
 // An animal at its own spot (at) in the place you're in, out now: one that leaves its spot once it's your friend (leaves)
@@ -230,6 +230,13 @@ const animalAt = (x, y) => canWild() ? ANIMALS.find(a => atSpot(a) && a.at[0] ==
 // friends), so the story never waits for night. Before the day goes round (the prologue), it's always day.
 const awakeNow = a => !a.time || !!(a.awake && matches(a.awake)) || (a.time === 'night') === (typeof isNight === 'function' && isNight());
 const asleepNow = a => !awakeNow(a);
+// One with somewhere else to sleep (sleepsAt: [x, y, place]), such as the bat, out over the home ground's stream at night and
+// hanging asleep in the Water Curtain Cave by day (hangs): its at and its place are wherever it is now.
+for (const a of ANIMALS.filter(a => a.sleepsAt)){
+  const out = {at:a.at, place:a.place}, rest = {at:a.sleepsAt, place:placeOf(a.sleepsAt)};
+  Object.defineProperty(a, 'at', {get:() => (asleepNow(a) ? rest : out).at});
+  Object.defineProperty(a, 'place', {get:() => (asleepNow(a) ? rest : out).place});
+}
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; else if (WORD_BANK[c.look]) FRIEND_NAMES[c.id] = c.look; });   // (one that looks like a creature with a word: by its word, such as 蜂王)

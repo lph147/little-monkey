@@ -1026,6 +1026,7 @@ function drawWorld(now){
   for (const a of spotAnimals.filter(a => !inTree(a))){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    if (asleepNow(a) && a.hangs){ b.drawImage(upsideDown(a.spr), X, Y - 3); sleepZs(X + 11, Y + 1, now, a.at[0] * 731); continue; }   // hanging upside down, asleep, such as the bat in the Water Curtain Cave by day
     if (asleepNow(a)){ figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - (ground || a.swims || a.flutters ? 0 : 3)); sleepZs(X + 10, Y - (a.spr.height - T) - 2, now, a.at[0] * 731); continue; }   // asleep: still, little Zs (a day animal at night, a night one by day: js/art.js)
     if (a.flutters){ drawFlutter(a, X, Y, now); continue; }
     if (a.swims){ drawSwimmer(a, X, Y, now); continue; }
@@ -1292,6 +1293,12 @@ function drawAsleep(X, Y){
   R(b, X + 4, Y + 5, 8, 2, '#5E9A3E'); R(b, X + 4, Y + 5, 8, 1, '#8CC45A');   // the shape of you under it
   R(b, X + 2, Y + 11, 12, 1, '#3F6E2A'); [4, 8, 11].forEach(i => R(b, X + i, Y + 8, 1, 1, '#A8D877'));
   R(b, X + 11, Y + 6, 3, 2, PALS.player.f);
+}
+// A picture turned upside down (kept for each), such as a bat hanging asleep from the cave's roof.
+const upsideDowns = new Map();
+function upsideDown(spr){
+  if (!upsideDowns.has(spr)){ const c = document.createElement('canvas'); c.width = spr.width; c.height = spr.height; const g = c.getContext('2d'); g.translate(0, spr.height); g.scale(1, -1); g.drawImage(spr, 0, 0); upsideDowns.set(spr, c); }
+  return upsideDowns.get(spr);
 }
 // Little Zs drifting up from something asleep (an animal asleep at its spot: js/art.js's asleepNow), now and then.
 function sleepZs(X, Y, now, seed = 0){ const ph = ((now + seed) % 2600) / 2600; b.globalAlpha *= 1 - ph; zee(X + Math.round(ph * 6), Y - Math.round(ph * 12), 3 + Math.round(ph * 2), '#CFE8F7'); b.globalAlpha = 1; }

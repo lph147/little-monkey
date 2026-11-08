@@ -158,7 +158,9 @@ function drawDaylight(cx, cy, sh, now){
   b.globalAlpha = 1;
   if (L.dark > .25) lamplight(cx, cy, Math.min(1, (L.dark - .25) / .5), now);
   if (!inside && L.dark > .4 && !GLOOM) nightSky(W, sh, now, Math.min(1, (L.dark - .4) / .4));
-  if (!inside && L.dark > .6 && (AREA.number === 1 || P.borrowed) && fireflyPlace()) fireflies(cx, cy, sh, now, (L.dark - .6) / .4);   // (on Flower Fruit Mountain)
+  if (!inside && L.dark > .6 && (AREA.number === 1 || P.borrowed || P.fireflies) && fireflyPlace()) fireflies(cx, cy, sh, now, (L.dark - .6) / .4);   // (on Flower Fruit Mountain, and over the human world's rice fields: a place's fireflies)
+  if (!inside && L.dark > .5 && P.nightBats) nightBats(cx, cy, now, P.nightBats, Math.min(1, (L.dark - .5) / .3));   // (bats round the town's lanterns)
+  if (L.dark > .25) glowingAnimals(cx, cy, now, Math.min(1, (L.dark - .25) / .5));   // (fireflies you've met glowing, a moth at its lamp)
   if (!inside && L.dark > .6 && mode === 'play' && now > cricketAt){ cricketAt = now + 2500 + Math.random() * 4500; SFX.cricket(); }   // crickets, now and then
 }
 // Lamplight at night: the windows and doors of the houses, warm yellow, a soft glow round them; the teahouse's lanterns;
@@ -208,6 +210,31 @@ function fireflies(cx, cy, sh, now, a){
     b.globalAlpha = a * blink * .35; R(b, Math.round(x) - 1, Math.round(y) - 1, 3, 3, '#D8F27A');
     b.globalAlpha = a * blink; R(b, Math.round(x), Math.round(y), 1, 1, '#F6FFB0');
   }
+  b.globalAlpha = 1;
+}
+
+// Bats flitting round the town's lanterns at night (a place's nightBats: where they circle), dark little shapes, their wings
+// flapping, two at each (decided 8 November 2026, the polish plan).
+function nightBats(cx, cy, now, spots, a){
+  b.globalAlpha = a;
+  spots.forEach(([x, y], i) => { for (let j = 0; j < 2; j++){
+    const t = now / (700 + j * 230) + i * 2 + j * 3, X = Math.round(x * T - cx + 8 + Math.cos(t) * (10 + j * 4)), Y = Math.round(y * T - cy + 2 + Math.sin(t * 1.3) * 5), up = Math.floor(now / 90 + j + i) % 2;
+    R(b, X - 1, Y, 3, 2, '#100C16'); R(b, X - 1, Y - 1, 1, 1, '#100C16'); R(b, X + 1, Y - 1, 1, 1, '#100C16');   // its body and ears
+    R(b, X - 5, Y + (up ? -1 : 1), 4, 1, '#100C16'); R(b, X + 2, Y + (up ? -1 : 1), 4, 1, '#100C16'); R(b, X - 2, Y, 1, 1, '#100C16'); R(b, X + 2, Y, 1, 1, '#100C16');   // wings, flapping
+  }});
+  b.globalAlpha = 1;
+}
+// Animals that glow at night, drawn again over the dark: the fireflies you've met, out over the grass (an animal's glows),
+// and a moth circling its lamp (glows: 'lamp'), its lantern lit.
+function glowingAnimals(cx, cy, now, k){
+  if (!canWild()) return;
+  const glowAt = (a, x, y) => {
+    const X = x * T - cx + 8, Y = y * T - cy + 4, fl = .75 + .25 * Math.sin(now / 300 + x * 2 + y);
+    if (a.glows === 'lamp'){ b.globalAlpha = .26 * k * fl; disc(b, X, Y + 4, 10, '#FFB860'); b.globalAlpha = .95 * k; oval(b, X, Y + 9, 2, 3, '#FFD27A'); R(b, X - 1, Y + 5, 2, 1, '#5A3A1E'); }
+    else { b.globalAlpha = .32 * k * fl; disc(b, X, Y + 2, 6, '#E6F6A0'); b.globalAlpha = .85 * k * fl; disc(b, X, Y + 3, 2, '#F6FFB0'); }
+  };
+  for (const o of outHere()) if (o.a.glows) glowAt(o.a, o.x, o.y);
+  for (const a of ANIMALS) if (a.glows && atSpot(a) && awakeNow(a)) glowAt(a, a.at[0], a.at[1]);
   b.globalAlpha = 1;
 }
 

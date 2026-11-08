@@ -187,7 +187,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   knocked chapter 1: 1 once your tail has knocked over the little monkeys' tower of stones (you say 对不起, they say 没关系)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, goatHop:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, thirstyGame:0, meadowCheck:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0, bumped:0, knocked:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, goatHop:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, thirstyGame:0, meadowCheck:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, fireflyFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0, bumped:0, knocked:0},
   // Its progress once you've finished it (sailed away on your raft): how Area 2's chapter 2 finds Flower Fruit Mountain
   // twenty years later, everything built (its places, borrowed: js/data.js).
   left: {chapter:1, elder:2, hungry:'done', thirsty:'done', flowers:'done', wood:'done', stones:'done', honey:'done', melonSeeds:'done', grapeSeeds:'done', bananaSeeds:'done', cowFood:'done', boar:1, gate:true, climb:4, story:true, cave:6, count:3, home:2, build:2, school:2, schoolFlowers:true, shop:3, feast:3,
@@ -208,7 +208,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
     woodAnimalsLeft: {count:'animalsLeft', chapter:1, place:'pineWood'},   // and the deer in the pine wood
     riverAnimalsLeft: {count:'animalsLeft', chapter:1, place:'riverside'},   // and the butterfly on the riverside, the way east to the bees
     pinesAnimalsLeft: {count:'animalsLeft', chapter:1, place:'darkPines'},   // and the owl in the dark pines, the way south to the cow
+    nightAnimals: {count:'animals', chapter:1, group:'night'},   // chapter 1's night animals (group night: the bat, the fireflies, the hedgehog and the cricket),
+    nightAnimalsFound: {count:'animalsFound', chapter:1, group:'night'},   // how many you've met, on their own line of the checklist once you've seen a night
+    nightAnimalsLeft: {count:'animalsLeft', chapter:1, group:'night'},
     beeCount: {count:'progress', key:'beeFriends'},   // the bees in their valley you've made friends with (of six)
+    fireflyCount: {count:'progress', key:'fireflyFriends'},   // the fireflies in the riverside's long grass you've made friends with (of five, at night)
     flowersPicked: {count:'picked', request:'flowers'},
     shrimpCaught: {count:'picked', request:'shrimp'},   // shrimp caught for the hungry monkey (three)   // flowers picked for the big monkey (one of each colour)
     shells: {count:'shells', max:10},   // your shells, up to the headband's price (the 老板 shows ? once you can afford it)
@@ -500,6 +504,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {chapter:1, part:'homeGround', text:'Bring {木头} and small {石头|stones} for the school', show:{build:{atLeast:1}}, done:{build:{atLeast:2}}},
     {chapter:1, part:'homeGround', text:'Find the {动物} hiding on the hillside', show:{build:{atLeast:1}}, done:{hillAnimalsLeft:0}},
     {chapter:1, part:'homeGround', text:'Find the {动物} that lives in the pine wood', show:{build:{atLeast:1}}, done:{woodAnimalsLeft:0}},
+    {chapter:1, part:'homeGround', text:'Find the {动物|animals} that come out at night, near home ({nightAnimalsFound}/{nightAnimals})', show:{knows:'晚上'}, done:{nightAnimalsLeft:0}},
     {chapter:1, part:'homeGround', text:'Build the {学校} with the troop', show:{build:{atLeast:1}}, done:{school:{atLeast:1}}},
     {chapter:1, part:'school', text:'Go to {学校}, and meet your {老师}', show:{school:{atLeast:1}}, done:{school:{atLeast:2}}},
     {chapter:1, part:'school', text:'Meet your {同学}', show:{school:{atLeast:2}}, done:{knows:'同学'}},
@@ -2499,6 +2504,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '海龟': 'On the shore’s sand, at the water’s edge by the cliff.',
     '狼': 'In the long grass in the pine wood.',
     '黄鼠狼': 'In the long grass, after dark.',
+    '蝙蝠': 'Over the home ground’s stream, after dark.',
+    '萤火虫': 'In the riverside’s long grass, after dark.',
+    '刺猬': 'In the meadow’s long grass, after dark.',
+    '蟋蟀': 'In the hillside’s long grass, after dark.',
     '熊': 'Rearing up out of the long grass between the big rocks in the pasture, as you led the cow home.',
     '狐狸': 'Hiding in the tall grass on the hillside.',
     '蝴蝶': 'Fluttering over the wildflowers on the riverside, the way east to the bees.',
@@ -2641,6 +2650,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '快乐': {zh:'小 猴子 很 快乐 。', en:'The little monkey is very happy.'},   // (a draft, not checked yet)
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
     '黄鼠狼': {zh:'晚上 草 里 有 黄鼠狼 。', en:'At night there are weasels in the grass.'},   // (a draft, not checked yet)
+    '蝙蝠': {zh:'晚上 有 蝙蝠 。', en:'There are bats at night.'},   // (a draft, not checked yet)
+    '萤火虫': {zh:'草 里 有 萤火虫 。', en:'There are fireflies in the grass.'},   // (a draft, not checked yet)
+    '刺猬': {zh:'刺猬 在 草 里 。', en:'The hedgehog is in the grass.'},   // (a draft, not checked yet)
+    '蟋蟀': {zh:'蟋蟀 在 草 里 。', en:'The cricket is in the grass.'},   // (a draft, not checked yet)
     '羊': {zh:'羊 吃 草 。', en:'Sheep eat grass.'},   // (a draft, not checked yet)
     '地图': {zh:'这 是 我 的 地图 。', en:'This is my map.'},   // (a draft, not checked yet)
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
@@ -2795,6 +2808,28 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1: a turtle warming itself up on the boulder by the hot spring pools (perch: how high it sits, in pixels)
     {id:'turtle', time:'day', word:'乌龟', at:[6, 13, 'hotSprings'], home:'石头', chapter:1, perch:5, clue:'The hot springs, on a warm rock',
       meetNote:'A turtle is warming itself on a rock by the pools. Answer its questions to make friends.'},
+    // chapter 1, after dark (decided 8 November 2026, the polish plan): new night animals. A bat flitting over the home
+    // ground's stream at night (flutters), by day hanging asleep from the Water Curtain Cave's roof (sleepsAt, hangs)
+    {id:'bat', time:'night', group:'night', word:'蝙蝠', at:[19, 18, 'homeGround'], sleepsAt:[7, 1, 'cave'], hangs:true, home:'洞', chapter:1, flutters:true,
+      clue:'Over the home ground’s stream; by day it sleeps somewhere dark and dry', meetNote:'A bat flits over the stream in the dark, catching insects. Answer its questions to make friends.'},
+    // five fireflies to find in the riverside's long grass, counted as you find them, as the bees are, each glowing over the
+    // grass once it's your friend (stays, glows), only at night
+    {id:'firefly', time:'night', group:'night', word:'萤火虫', hides:'riverside', home:'草', chapter:1, glows:true, many:5, counts:'fireflyFriends', counted:[
+        [{say:'count1', by:'player'}, {message:'Your first {萤火虫|firefly} friend! It glows over the grass now. Four more to find.'}],
+        [{say:'count2', by:'player'}, {message:'Two {萤火虫|firefly} friends! Three more to find.'}],
+        [{say:'count3', by:'player'}, {message:'Three {萤火虫|firefly} friends! Two more to find.'}],
+        [{say:'count4', by:'player'}, {message:'Four {萤火虫|firefly} friends! Just one more to find.'}],
+        [{say:'count5', by:'player'}, {message:'All five {萤火虫|firefly} friends, glowing over the grass!'}]
+      ],
+      stays:{another:'Another {萤火虫|firefly}, a new one! Answer its questions to make friends with it too ({fireflyCount} of 5 so far).',
+        again:'This {萤火虫|firefly} still wants to play! Answer its questions to make friends ({fireflyCount} of 5 so far).',
+        lost:'The {萤火虫|firefly} glows over the grass: it still wants to play. Press A at it to try again.'},
+      clue:'The riverside’s long grass: five of them', meetNote:'A firefly rises out of the long grass, glowing! Answer its questions to make friends.'},
+    // a hedgehog snuffling in the meadow's long grass, and a cricket in the hillside's, the chirping you hear at night
+    {id:'hedgehog', time:'night', group:'night', word:'刺猬', hides:'meadow', home:'草', chapter:1, clue:'The meadow’s long grass',
+      meetNote:'A hedgehog snuffles out of the {草}, its spines bristling! Answer its questions to make friends.'},
+    {id:'cricket', time:'night', group:'night', word:'蟋蟀', hides:'hillside', home:'草', chapter:1, clue:'The hillside’s long grass, where something chirps',
+      meetNote:'A cricket hops out of the {草}, chirping! Answer its questions to make friends.'},
     // chapter 1: a sea turtle on the shore's sand, at the water's edge on its west side, away from the crabs and the raft
     {id:'seaTurtle', word:'海龟', at:[4, 12, 'shore'], home:'海', chapter:1, clue:'The shore, on the sand by the sea',
       meetNote:'A sea turtle crawls slowly up the sand from the sea. Answer its questions to make friends.'}
@@ -2834,6 +2869,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   ],
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
+  animalGroups: {night:'Night animals'},   // what a group of animals is called, as you meet one: Night animals found: 1/4
   // What an animal says as it comes out to play, before its questions (one of the lines), with what's happening in plain
   // English under it (the first time you meet one, its card says that instead): for an animal you're making friends
   // with, and for a friend (decided 23 October 2026, after playing it: the questions just started, with nothing to say why).

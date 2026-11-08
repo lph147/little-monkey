@@ -315,6 +315,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 小猴子很快乐。 | xiǎo hóuzi hěn kuàilè. | The little monkey is very happy. | 快乐 |  |
 | 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
 | 晚上草里有黄鼠狼。 | wǎnshang cǎo lǐ yǒu huángshǔláng. | At night there are weasels in the grass. | 黄鼠狼 |  |
+| 晚上有蝙蝠。 | wǎnshang yǒu biānfú. | There are bats at night. | 蝙蝠 |  |
+| 草里有萤火虫。 | cǎo lǐ yǒu yínghuǒchóng. | There are fireflies in the grass. | 萤火虫 |  |
+| 刺猬在草里。 | cìwei zài cǎo lǐ. | The hedgehog is in the grass. | 刺猬 |  |
+| 蟋蟀在草里。 | xīshuài zài cǎo lǐ. | The cricket is in the grass. | 蟋蟀 |  |
 | 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | 羊 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | 地图 |  |
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
@@ -568,6 +572,10 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 快乐 | kuàilè | happy |  |
 | 臭 | chòu | smelly |  |
 | 黄鼠狼 | huángshǔláng | weasel |  |
+| 蝙蝠 | biānfú | bat |  |
+| 萤火虫 | yínghuǒchóng | firefly |  |
+| 刺猬 | cìwei | hedgehog |  |
+| 蟋蟀 | xīshuài | cricket |  |
 | 木筏 | mùfá | raft |  |
 | 海 | hǎi | sea |  |
 | 螃蟹 | pángxiè | crab |  |
@@ -629,6 +637,8 @@ simply put. A part's pinyin is as it's said in the word.
 | 雨 | yǔ | Drawn like rain: the sky along its top, and drops of rain falling under it. |  |
 | 大雨 | dàyǔ | 大 dà (big) + 雨 yǔ (rain) = 大雨 (heavy rain) |  |
 | 黄鼠狼 | huángshǔláng | 黄 huáng (yellow) + 鼠 shǔ (mouse) + 狼 láng (wolf) = 黄鼠狼 (weasel) |  |
+| 萤火虫 | yínghuǒchóng | 萤 yíng (glow-worm) + 火 huǒ (fire) + 虫 chóng (insect) = 萤火虫 (firefly) |  |
+| 刺猬 | cìwei | 刺 cì (spike) + 猬 wei (hedgehog) = 刺猬 (hedgehog) |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = 你好 (hello) |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = 我不要 (no thanks) |  |
 | 苹果 | píngguǒ | 果 guǒ (fruit), as in 水果: an apple is a fruit |  |
@@ -909,6 +919,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | Chinese | Pinyin | English | For the word | Notes |
 | --- | --- | --- | --- | --- |
 | 鹅在水里。 | é zài shuǐ lǐ. | The goose is in the water. | 鹅 |  |
+| 晚上有飞蛾。 | wǎnshang yǒu fēi'é. | There are moths at night. | 飞蛾 |  |
 | 鸡吃草。 | jī chī cǎo. | Chickens eat grass. | 鸡 |  |
 | 狗是我的朋友。 | gǒu shì wǒ de péngyou. | The dog is my friend. | 狗 |  |
 | 猫很小。 | māo hěn xiǎo. | The cat is very small. | 猫 |  |
@@ -1224,6 +1235,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 刀 | dāo | broadsword, knife |  |
 | 车 | chē | cart |  |
 | 臭豆腐 | chòudòufu | stinky tofu |  |
+| 飞蛾 | fēi'é | moth |  |
 
 ### How words are made
 
@@ -1257,6 +1269,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 米饭 | mǐfàn | 米 mǐ (rice) + 饭 fàn (meal) = 米饭 (rice (cooked)) |  |
 | 热 | rè | 灬 huǒ (fire): is at its bottom: four little flames. It’s hot! |  |
 | 冷 | lěng | 冫 bīng (ice): is on its left: two drops of ice. It’s cold! |  |
+| 飞蛾 | fēi'é | 飞 fēi (to fly) + 蛾 é (moth) = 飞蛾 (moth) |  |
 | 臭豆腐 | chòudòufu | 臭 chòu (smelly) + 豆腐 dòufu (tofu) = 臭豆腐 (stinky tofu) |  |
 | 雪 | xuě | 雨 yǔ (rain): is on its top: snow falls from the sky, as rain does |  |
 

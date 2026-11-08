@@ -95,6 +95,16 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   const stand = (x, y, dir) => run(`S.pos = {place:PLACE, x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // in the place you're in
   const pressAt = (x, y, dir, what, most) => { stand(x, y, dir); return act('finishedAt = null; pressA()', what, most); };   // face something and press A (after a moment, as a player does: what you've just finished with rests)
   const stepOn = (x, y, what) => { stand(x, y, 'down'); return act(`arrive(${x}, ${y})`, what); };
+  const goTo = (place, x, y, dir) => run(`S.pos = {place:'${place}', x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // (the long walk, past the waterfall, or a trip somewhere at night)
+  // walking about by some long grass until it rustles, then stepping in, till you've met this animal (id) (from x, y)
+  async function findHiding(id, x, y, what){
+    run('rustle = null');
+    for (let i = 0; i < 40 && !get('S.met').includes(id); i++){
+      const r = get('rustle');
+      if (r) await stepOn(r.x, r.y, `stepping into the rustling grass, ${what}`); else await stepOn(x, y, `walking about, ${what}`);
+    }
+    run('rustle = null');
+  }
   // A walk, one square after another (from to to, along a row or a column, then the next leg), as a player walks it,
   // with whatever happens as you arrive on each (someone stopping you, say)
   async function walk(legs, what){
@@ -339,6 +349,16 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('晚上') && get('__said').includes('晚上了，睡觉吧！'), 'the first night teaches 晚上 (晚上了，睡觉吧！)');
   assert.ok(get("ALL_NPCS.filter(n => n.asleep).every(n => ['cave', 'gone'].includes(n.place)) && ALL_NPCS.filter(n => n.asleep && n.place === 'cave').length >= 6"), 'the troop goes to bed in the Water Curtain Cave (the rest further in, out of sight)');
   assert.equal(get("ALL_NPCS.find(n => n.id === 'elder').asleep"), false, 'the old monkey stays up: he has something to tell you');
+  // The night animals (8 November 2026): once you've seen a night, chapter 1's checklist wants the four that come out after
+  // dark near home. A bat flits over the home ground's stream (by day it hangs asleep in the Water Curtain Cave), and a
+  // hedgehog snuffles in the meadow's long grass; the cricket and the fireflies come later, at night on the way
+  assert.match(get('areaChecklist().map(([t]) => t).join(" ")'), /Find the 动物 \(animals\) that come out at night, near home \(0\/4\)/, 'a line of its own on the checklist');
+  await pressAt(19, 17, 'down', 'meeting the bat over the stream, at night');
+  assert.ok(knows('蝙蝠') && get('S.friends').includes('bat'), 'the bat (蝙蝠) is your friend');
+  goTo('meadow', 5, 10, 'down');
+  await findHiding('hedgehog', 5, 10, 'in the meadow at night');
+  assert.ok(knows('刺猬') && get('S.friends').includes('hedgehog'), 'a hedgehog snuffles out of the meadow’s long grass at night, teaching 刺猬');
+  goTo('homeGround', 15, 6, 'up');
   run('morning()');
   assert.ok(!get('ALL_NPCS.some(n => n.asleep)') && run('dayPart()') === 'day', 'morning: everyone up again');
   run(`clockSeen = "d"; S.clock.t = RAIN_AT(S.clock.n) * DAY_MS + RAIN_FADE`);
@@ -373,6 +393,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   }
   assert.ok(knows('狐狸') && get('S.friends').includes('fox'), 'a fox jumps out of the hillside’s tall grass, teaching 狐狸, and becomes your friend');
   assert.equal(run('counter("hillAnimalsLeft")'), 0, 'the animal on the hillside is found');
+  const hillT = get('S.clock.t');   // (and at night, the cricket chirping in its long grass)
+  run('S.clock.t = DAY_MS * NIGHT + 1');
+  await findHiding('cricket', 12, 42, 'at the foot of the hillside at night');
+  assert.ok(knows('蟋蟀') && get('S.friends').includes('cricket'), 'a cricket hops out of the hillside’s long grass at night, teaching 蟋蟀');
+  run(`S.clock.t = ${hillT}`);
   run('globalThis.__fights = 0;(() => { const b = wildBattle; wildBattle = (...a) => { __fights++; return b(...a); }; })()');
   await walk([[12, 43], [15, 43], [15, 38], [19, 38], [19, 34], [5, 34], [5, 26], [18, 26], [18, 19], [7, 19], [7, 13], [10, 13], [10, 6], [12, 6], [12, 1]],
     'walking up the hillside: through the gap in the hedge, over the brook, up the stone steps and through its long grass');
@@ -521,6 +546,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(get('S.shells') > shellsRiver, 'a battle in the long grass, won: shells');
   await pressAt(18, 5, 'up', 'meeting the butterfly over the wildflowers', 1);
   assert.ok(knows('蝴蝶') && get('S.friends').includes('butterfly'), 'the butterfly: 蝴蝶, and a new friend');
+  const riverT = get('S.clock.t');   // (and at night, the fireflies rising out of its long grass, one of the five to make friends with)
+  run('S.clock.t = DAY_MS * NIGHT + 1');
+  await findHiding('firefly', 10, 7, 'in the riverside’s little wood at night');
+  assert.ok(knows('萤火虫') && get('S.friends').includes('firefly') && area().fireflyFriends === 1, 'a firefly rises out of the long grass, teaching 萤火虫: one of the five');
+  assert.equal(run('counter("nightAnimalsLeft")'), 0, 'all four night animals found');
+  run(`S.clock.t = ${riverT}`);
+  stand(18, 5, 'right');
   // On, over the bridge and under the valley's rocks, through the long grass again, into the bees' valley (百花谷): tall
   // flowers grown across the way in, where a wasp jumps out, teaching 黄蜂; a swarm of bees in front of the queen's old tree
   await walk([[18, 5], [22, 5], [22, 7], [46, 7]], 'walking on along the riverside, over the bridge and under the rocks');
@@ -541,7 +573,7 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     await act(`arrive(${rx}, ${ry}).then(runEvents)`, 'meeting a bee in the tall flowers', 1);
   }
   assert.ok(knows('蜜蜂') && area().beeFriends === 6, 'six bee friends');
-  assert.deepEqual(area().out, {}, 'each stayed out where you met it, till all six flew off to join the swarm');
+  assert.deepEqual(Object.keys(area().out), ['firefly'], 'each stayed out where you met it, till all six flew off to join the swarm (the firefly you met still glowing over the riverside’s grass)');
   assert.ok(['一！', '一，二！', '一，二，三，四，五，六！', '去找蜂王吧！'].every(t => get('__said').includes(t)), 'counted aloud, and the sixth: go and find the queen!');
   assert.ok(area().bees === 3 && run('walkable(25, 7)'), 'the swarm has flown aside: the way to the old tree is open');
   // The queen bee (蜂王) comes out of her old tree as you press A at it: her card, 你要什么？, and you say 我们要蜂蜜！; her
@@ -911,7 +943,6 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // The end of chapter 1 (29 October 2026). A crab for the feast: the hungry monkey wants one (我要吃螃蟹！), and the troop
   // clears the way down from the meadow to the shore (海边), where the river meets the sea: 海, as you first see it. Crabs
   // scuttle sideways on the sand; from in front, you catch one (螃蟹), and he takes it (这是螃蟹), on a table of its own.
-  const goTo = (place, x, y, dir) => run(`S.pos = {place:'${place}', x:${x}, y:${y}, dir:'${dir}'}; placePlayer();`);   // (the long walk, past the waterfall)
   await pressAt(20, 7, 'left', 'talking to the hungry monkey: he wants a crab for the feast');
   assert.ok(get('__said').includes('我要吃螃蟹！') && area().crab === 'asked' && !knows('螃蟹'), 'I want to eat crab! (螃蟹 just for listening)');
   goTo('meadow', 17, 20, 'down');

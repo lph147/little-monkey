@@ -105,8 +105,11 @@ const learnedCount = () => ORDER.filter(w => lvl(w) >= 1).length;
 // The animals in a chapter of the story (each animal's chapter, 0 if not given), or just those of one place in it (place,
 // such as the fox on the hillside), and how many of them you've met: the prologue's animals are counted on their own, so a
 // new chapter's animals never stand in the way of the prologue's story.
-const chapterAnimals = (ch = 0, place) => ANIMALS.filter(a => a.chapter === ch && (!place || a.place === place));
-const metCount = (ch = 0, place) => chapterAnimals(ch, place).filter(a => S.met.includes(a.id)).length;
+// A chapter's animals (or one place's in it), and how many you've met: those in a group of their own, such as the night
+// animals, counted only with their group (group), never with the place's (decided 8 November 2026: the hillside's animal
+// was the fox, and stayed so once the cricket came).
+const chapterAnimals = (ch = 0, place, group = null) => ANIMALS.filter(a => a.chapter === ch && (!place || a.place === place) && a.group === group);
+const metCount = (ch = 0, place, group) => chapterAnimals(ch, place, group).filter(a => S.met.includes(a.id)).length;
 // The story's chapters in this area (AREA.chapters), and the one you're in (counting from 0). Each item on the
 // area's checklist belongs to a chapter (chapter, 0 if not given); the checklist shows the chapter you're in.
 const chapterNow = () => here().chapter || 0;
@@ -282,9 +285,9 @@ const COUNTS = {   // what a counter in the content can count
   progress: c => here()[c.key] || 0,   // a number the area remembers (key), such as how many bee friends you've made
   shooed: () => here().shooed.length,   // how many birds you've shooed off (shooAway), such as from the wild melons
   wordsLearned: () => learnedCount(),
-  animalsFound: c => metCount(c.chapter || 0, c.place),   // (a chapter's animals: chapter, 0 if not given; or one place's in it)
-  animals: c => chapterAnimals(c.chapter || 0, c.place).length,
-  animalsLeft: c => chapterAnimals(c.chapter || 0, c.place).length - metCount(c.chapter || 0, c.place),
+  animalsFound: c => metCount(c.chapter || 0, c.place, c.group),   // (a chapter's animals: chapter, 0 if not given; or one place's in it; or a group's, such as the night animals)
+  animals: c => chapterAnimals(c.chapter || 0, c.place, c.group).length,
+  animalsLeft: c => chapterAnimals(c.chapter || 0, c.place, c.group).length - metCount(c.chapter || 0, c.place, c.group),
   shells: () => S.shells,
   coins: () => S.coins || 0,
   picked: c => (here().picked[c.request] || []).length,
@@ -1955,7 +1958,7 @@ async function wildAppears(a, spot = findSpot()){
   const stay = !!a.stays && more && (!!was || keepsClear(spot.x, spot.y));
   const hint = justTaught ? '' : was && more ? a.stays.again : another && a.stays ? a.stays.another : S.friends.includes(a.id) ? play && play.friendHint : play && play.hint;
   if (play) await showDialog(speaker(a.id), L[play.say], {ok:'Play', hint:hint ? fill(hint) : ''});   // it says it wants to play, so its questions never just start
-  const all = chapterAnimals(a.chapter, a.place).length;   // (counted with its chapter's animals in the same place: one on its own, such as the deer, needs no count)
+  const among = a.group ? [a.chapter, undefined, a.group] : [a.chapter, a.place], all = chapterAnimals(...among).length;   // (counted with its chapter's animals in the same place, or its group's anywhere: one on its own, such as the deer, needs no count)
   const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home, another, ...(stay ? {lose:a.stays.lost} : {})});
   if (stay){ stayOut(a, spot.x, spot.y, won); foe.spot = true; }   // (drawn where it stays, from now on)
   foe.state = won ? 'happy' : 'flee'; foe.t1 = performance.now();
@@ -1965,7 +1968,7 @@ async function wildAppears(a, spot = findSpot()){
   if (won && more){ const n = here()[a.counts] = (here()[a.counts] || 0) + 1; save(); await runSteps(a.counted[n - 1] || []); }   // counted aloud, one more friend
   // how many of the animals here you've found, once you've met it (decided 7 November 2026: told as its questions began,
   // they covered it at once), unless you're being told something else just then, such as the bees counted
-  if (firstMeet && all > 1 && $('#saybox').hidden) toast(`Animals found: ${metCount(a.chapter, a.place)}/${all}`);
+  if (firstMeet && all > 1 && $('#saybox').hidden) toast(`${a.group && (AREA.animalGroups || {})[a.group] || 'Animals'} found: ${metCount(...among)}/${all}`);   // (a group's own name, such as Night animals)
 }
 // One of several of a kind stays out at (x, y) (stays), a friend now if you won it over (won).
 function stayOut(a, x, y, won){

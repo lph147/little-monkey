@@ -256,6 +256,112 @@ const MAP_SPRITES = {
       "................"
     ]
   },
+  // new night animals (decided 8 November 2026, the polish plan), each only out after dark
+  '蝙蝠': {   // bat, wings spread, flitting (chapter 1: over the home ground's stream at night; by day hanging asleep in the Water Curtain Cave)
+    palette:{o:'#1E1A22', w:'#4E4258', b:'#6E5A4E', e:'#F4E6C0'},
+    rows:[
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "......o..o......",
+      "...o..obbo..o...",
+      "...owobeebowo...",
+      "..owwwobbowwwo..",
+      "..ow.wobbow.wo..",
+      "..o...obbo...o..",
+      ".......oo.......",
+      "................",
+      "................"
+    ]
+  },
+  '萤火虫': {   // firefly, from above: tiny, an orange collar, its tail glowing (chapter 1: in the riverside's long grass at night)
+    palette:{o:'#2A2418', r:'#D8643A', k:'#3E3426', g:'#E2F062'},
+    rows:[
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "......oo........",
+      ".....orro.......",
+      ".....okko.......",
+      ".....oggo.......",
+      "......gg........",
+      "................",
+      "................"
+    ]
+  },
+  '刺猬': {   // hedgehog, side on, head to the left, its back all spines (chapter 1: in the meadow's long grass at night)
+    faces:'left', palette:{o:'#2E2014', k:'#7A5634', f:'#E8D0A4', e:'#1E1A16', n:'#1E1A16'},
+    rows:[
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "......o.o.o.....",
+      ".....okokoko....",
+      "....okkkkkkko...",
+      "...ofokkkkkkko..",
+      "..nefokkkkkkko..",
+      "...ooookkkkkoo..",
+      "....oo....oo....",
+      "................",
+      "................"
+    ]
+  },
+  '蟋蟀': {   // cricket, side on, head to the left, its big back leg bent (chapter 1: in the hillside's long grass at night)
+    faces:'left', palette:{o:'#2A1A0E', b:'#6A4428', k:'#5A3A24', e:'#F4E6C0'},
+    rows:[
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "....o.....oo....",
+      ".....o...okko...",
+      "...obbobbbbkko..",
+      "...oebbbbbbboo..",
+      "....o.o..o..o...",
+      "................",
+      "................"
+    ]
+  },
+  '飞蛾': {   // moth, wings spread, pale brown with dark spots (Area 2: at the night market's lamps)
+    palette:{o:'#5A4630', w:'#C4B088', b:'#9A8460', k:'#4A3824'},
+    rows:[
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "......o..o......",
+      "...oo..oo..oo...",
+      "..owkwobbowkwo..",
+      "..owwwobbowwwo..",
+      "...owwobbowwo...",
+      "....oo.bb.oo....",
+      ".......oo.......",
+      "................",
+      "................"
+    ]
+  },
   '狼': {   // wolf (chapter 1, in the pine wood's long grass)
     faces: 'left',
     palette: {a:'#2A2A29', b:'#5E656C', c:'#454444', d:'#B0B7BE', e:'#505459', f:'#262423', g:'#2B2A2A', h:'#1A1716', i:'#2F2E2D', j:'#6C7177', k:'#8A9199', l:'#F2C14E', m:'#5F666E', n:'#2A2A2E', o:'#ADB2B8', p:'#4E5359', q:'#93979C', r:'#252423'},
