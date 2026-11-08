@@ -736,6 +736,15 @@ In chapter 1, once the garden has begun (the hot spring valley is open):
 8. At the 老板's stall at the home ground: 榴莲 is for sale, 3 shells, once you know its word.
 9. In the human world, in the town at night (the night market): the bun stall's stallholder calls out 臭豆腐！ (chòudòufu, stinky tofu), with a ! over them. Buy one (2 coins): its card first, then it goes in your bag. Eat it out on the map: it works just like a durian. By day, the stall sells only buns.
 
+## Big and small creatures
+
+In chapter 1, once you know 大 and 小 (your first fish teaches 小, the first big one 大):
+1. Walk through long grass where wild creatures live (the mountain path's, or the riverside's). About one in four that jump out is little, and one in four big.
+2. A little one rises out of the grass smaller than usual; its battle card says 小 in front of its name (小蛇 xiǎo shé), said aloud, and its health bar is half as long. One right answer chases a little snake away.
+3. A big one is bigger than you'd expect, on the map and on its mound: 大蛇 dà shé, a longer health bar, and twice the shells when you win. What you're told says it too: "A big 蛇 (snake) hisses at you!"
+4. At night, big ones come more often.
+5. The wild boar and the bear are always the same size.
+
 ## Quick practice
 
 - [ ] On the title screen, for a game that knows at least 4 words with pictures: Practise beside Continue, saying how many words need it (none for a new game, or one that knows fewer). Tap it: no music, and the 练习 Practice card: your words caught, how many need practice, and how many at each level, with − 10 questions + and Back and Start.

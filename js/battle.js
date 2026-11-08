@@ -18,8 +18,8 @@ const weaponNow = () => (S && S.areas && here() && here().weapon) || BATTLES.wea
 const weaponHits = () => (BATTLES.weapons || {})[weaponNow()] || BATTLES.hits;
 // An enemy with a name rather than a word (name: {zh, py, en}; pic: its picture), such as the Demon of Havoc (names aren't
 // vocabulary: never a card to catch, decided 5 November 2026), or one with a word, taught as you meet it.
-const foeZh = f => f.name ? f.name.zh : f.word, foePy = f => f.name ? f.name.py : WORDS[f.word].py;
-const foePic = f => f.person ? personPic(f.person) : PICTURES[f.pic || f.word], foeThe = f => f.name ? `the ${f.name.en}` : `the ${wz(f.word)}`;   // (a person, such as a pupil you spar with: as they look on the map, with a staff: js/year.js)
+const foeZh = f => f.name ? f.name.zh : sizedZh(f), foePy = f => f.name ? f.name.py : (f.size ? SIZES[f.size].py + ' ' : '') + WORDS[f.word].py;   // (a big or small one: 大蛇 dà shé)
+const foePic = f => f.person ? personPic(f.person) : PICTURES[f.pic || f.word], foeThe = f => f.name ? `the ${f.name.en}` : `the ${f.size ? SIZES[f.size].en + ' ' : ''}${wz(f.word)}`;   // (a person, such as a pupil you spar with: as they look on the map, with a staff: js/year.js)
 const WILD_AFTER = 5, WILD_CHANCE = .2;   // at least this many steps on wild ground between battles, then this chance a step
 let wildSteps = 0;
 // Your health (decided 27 October 2026: hearts, 5 at most, were too few to tell weapons, food and enemies apart), and the
@@ -54,8 +54,47 @@ async function wildStep(t){
     return false;
   }
   held = null; queued = null;
-  await wildBattle(pickFoe(t.wild));
+  const id = pickFoe(t.wild);
+  await wildBattle(id, findSpot(), {size:pickSize(id)});
   return true;
+}
+// Big and small creatures (decided 8 November 2026, the polish plan): once you know 大 and 小, one wild creature in four is
+// small (half its health and hits, the usual shells) and one in four big (one and a half times its health and hits, and
+// twice the shells), big ones twice as likely at night. You see which at once, smaller or bigger on the map (mapK: as the
+// little ones are drawn, SMALL_PX, or a big animal's 22 pixels) and in the fight (the scene's size-small or size-big), its
+// health bar to scale; and its name says it, on its plate and aloud (大蛇！ 小蜘蛛！). Never a boss (a boss fight, one that
+// rears up big, one with a name, a person), nor a story battle: only those that jump out of the long grass (wildStep).
+const SIZES = {small:{zh:'小', py:'xiǎo', en:'little', k:.5, mapK:11 / 16}, big:{zh:'大', py:'dà', en:'big', k:1.5, mapK:22 / 16, reward:2}};
+const canSize = f => !!f && !!f.word && !f.bossFight && !f.big && !f.name && !f.person;
+const sizesKnown = () => lvl('大') >= 1 && lvl('小') >= 1;
+function pickSize(id){   // (by day: usual half the time, small a quarter, big a quarter; at night, big half the time)
+  if (!canSize(ENEMIES[id]) || !sizesKnown()) return null;
+  const r = Math.random(), night = typeof isNight === 'function' && isNight();
+  return r < (night ? .25 : .5) ? null : r < (night ? .5 : .75) ? 'small' : 'big';
+}
+// An enemy at its size: its health, hits and shells, and what it says, a big or little one (A big {蛇} hisses at you!).
+const sizedText = (size, text) => text.replace(/\b(A|a|The|the) (little )?\{/g, (m, art) => `${art} ${SIZES[size].en} {`);   // (a little demon already says so: A big {妖怪}…)
+function sized(f, size){
+  const s = SIZES[size]; if (!s || !canSize(f)) return f;
+  const said = {meet:f.meet || `A {${f.word}} blocks your way!`, ran:f.ran || `You run away from the {${f.word}}.`, hide:f.hide || `The {${f.word}} hides!`,
+    attack:f.attack || `The {${f.word}} attacks!`, away:f.away || `The {${f.word}} runs away.`};
+  for (const k in said) said[k] = sizedText(size, said[k]);
+  return {...f, ...said, size, health:Math.round(f.health * s.k), hits:Math.round(f.hits * s.k), reward:(f.reward || 0) * (s.reward || 1)};
+}
+const sizedZh = f => f.size ? SIZES[f.size].zh + f.word : f.word;
+// Every sized name the game can say, for the voices and CHINESE.md: each enemy that comes in sizes, little and big.
+const SIZED = () => [...new Map(Object.values(ENEMIES).filter(canSize).flatMap(f => Object.values(SIZES).map(s => [s.zh + f.word, {zh:`${s.zh} ${f.word}`, en:`A ${s.en} ${WORDS[f.word].en.split(',')[0]}!`}]))).values()];
+// Its picture on the map at its size (drawn once for each, and kept: few canvases).
+const sizedSprites = {};
+function sizedSprite(w, size){
+  const spr = mapSprite(w); if (!SIZES[size]) return spr;
+  const key = w + '|' + size;
+  if (!sizedSprites[key]){
+    const k = SIZES[size].mapK, c = document.createElement('canvas'); c.width = Math.round(spr.width * k); c.height = Math.round(spr.height * k);
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(spr, 0, 0, c.width, c.height);
+    sizedSprites[key] = c;
+  }
+  return sizedSprites[key];
 }
 // One that would have jumped out while you smell of durian: it pops up out of the grass beside you, sniffs the air (a ?
 // over it: drawFoe, js/draw.js) and runs off, with a message (its enemy's sniff), the first time after each one you eat.
@@ -87,7 +126,7 @@ function pickFoe(wild){
 async function wildBattle(id, spot = findSpot(), opts = {}){
   const f = ENEMIES[id], w = f.pic || f.word, big = !!f.big && !!PICTURES[w];   // (w: its look, a name's picture or its word's)
   pl.dir = spot.d;
-  foe = {a:{spr:big ? sprite(PICTURES[w].rows, PICTURES[w].palette) : mapSprite(w), faces:MAP_SPRITES[w].faces, hz:w}, x:spot.x, y:spot.y, t0:performance.now(), state:'in', big};
+  foe = {a:{spr:big ? sprite(PICTURES[w].rows, PICTURES[w].palette) : sizedSprite(w, opts.size), faces:MAP_SPRITES[w].faces, hz:w}, x:spot.x, y:spot.y, t0:performance.now(), state:'in', big, size:opts.size || null};
   alertUntil = performance.now() + 1000;
   if (big){ SFX.roar(); setTimeout(() => { shakeT = performance.now(); SFX.rumble(); }, RISE_MS); } else SFX.encounter();
   await sleep(big ? 1700 : 1100);
@@ -127,10 +166,10 @@ async function battle(id, opts = {}){
   return r;
 }
 async function fight(id, opts = {}){
-  const f = opts.boss ? {...ENEMIES[id], boss:true} : ENEMIES[id], img = `<img class="portrait" alt="" src="${sprite(foePic(f).rows, foePic(f).palette).toDataURL()}">`;
+  const f = sized(opts.boss ? {...ENEMIES[id], boss:true} : ENEMIES[id], opts.size), img = `<img class="portrait" alt="" src="${sprite(foePic(f).rows, foePic(f).palette).toDataURL()}">`;   // (sized: a big or small one)
   if (f.name){}   // (a name: shown on its plate, never caught)
-  else if (lvl(f.word) === 0) await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {});   // the first meeting teaches its name
-  else await sayFully(f.word, 700);   // (its name, said in full before the fight goes on)
+  else if (lvl(f.word) === 0){ await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {}); if (f.size) await sayFully(sizedZh(f), 700); }   // the first meeting teaches its name (and a big or small one's said: 大狼)
+  else await sayFully(sizedZh(f), 700);   // (its name, said in full before the fight goes on: 蛇, or 大蛇)
   const big = !!f.bossFight;   // (a boss fight: its health across the top)
   if (f.nameCard && !opts.again) await bossNameCard(f, img);   // (a big boss: its name across the screen, the first time each fight)
   let angry = false;   // (a boss that gets angry at so much health left, angry.at: from then on, it attacks twice)
@@ -145,7 +184,7 @@ async function fight(id, opts = {}){
   let stick = stickImg();
   const stagesDone = new Set();   // (a boss's stages: what happens at so much of its health left, each once)
   const stagesLeft = () => (f.stages || []).some((s, i) => !stagesDone.has(i));
-  const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${big ? ' boss' : ''}${angry ? ' rage' : ''}${charged() ? ' charged' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
+  const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${f.size ? ' size-' + f.size : ''}${big ? ' boss' : ''}${angry ? ' rage' : ''}${charged() ? ' charged' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}">${stick}`
     + `<div class="from" aria-hidden="true"></div><div class="striker" aria-hidden="true">${img}</div><div class="pow" aria-hidden="true"></div><div class="fx" aria-hidden="true"></div>`
     + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh">${foeZh(f)} <span class="spk-py">${foePy(f)}</span></div>${angry ? '<span class="tag">Angry!</span>' : ''}</div>`

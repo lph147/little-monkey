@@ -641,6 +641,21 @@ check that each is true and simply put.
 | --- | --- | --- | --- |
 | Tip: one character, one syllable | 山 shān + 羊 yáng | 2 beats you hear = 2 characters you see. When you hear a new word, count its beats: that’s how many characters to look for. |  |
 
+### Big and little wild creatures
+
+Once you know 大 and 小, a wild creature can be a big one or a little one: its name says which, on its battle card and aloud (new on 8 November 2026, not checked yet).
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 小蛇 | xiǎo shé | A little snake! |  |
+| 大蛇 | dà shé | A big snake! |  |
+| 小蜘蛛 | xiǎo zhīzhū | A little spider! |  |
+| 大蜘蛛 | dà zhīzhū | A big spider! |  |
+| 小狼 | xiǎo láng | A little wolf! |  |
+| 大狼 | dà láng | A big wolf! |  |
+| 小黄蜂 | xiǎo huángfēng | A little wasp! |  |
+| 大黄蜂 | dà huángfēng | A big wasp! |  |
+
 ## 海的那边 Across the sea
 
 ### Lines characters say
@@ -1279,6 +1294,15 @@ Asked about a picture of something you know (the word asked about is one of thes
 | 这是鞋吗？ | zhè shì xié ma? | Is this shoes? |  |
 | 这是海吗？ | zhè shì hǎi ma? | Is this the sea? |  |
 | 这是米饭吗？ | zhè shì mǐfàn ma? | Is this rice (cooked)? |  |
+
+### Big and little wild creatures
+
+Once you know 大 and 小, a wild creature can be a big one or a little one: its name says which, on its battle card and aloud (new on 8 November 2026, not checked yet).
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 小妖怪 | xiǎo yāoguài | A little demon! |  |
+| 大妖怪 | dà yāoguài | A big demon! |  |
 
 ### Words only heard in sentences
 

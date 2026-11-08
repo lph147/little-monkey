@@ -827,6 +827,11 @@ rt.hid{visibility:hidden}
 @keyframes rear{0%{translate:0 0;scale:1}35%{translate:0 -20px;scale:1.18}55%{translate:0 0;scale:1}68%{translate:0 -4px}100%{translate:0 0}}
 .scene.rage{box-shadow:inset 0 0 26px rgba(214,40,20,.6)}
 .scene.rage .foe .portrait{transform:scale(1.14);filter:drop-shadow(0 0 3px #FF3B1F)}
+/* a little or a big wild creature (sized in js/battle.js): smaller or bigger on its mound, standing on it */
+.scene.size-small .foe .portrait{width:calc(var(--pic-scene) * .62);height:calc(var(--pic-scene) * .62);margin:calc(var(--pic-scene) * .38) calc(var(--pic-scene) * .19) 0}
+.scene.size-big .foe .portrait{width:calc(var(--pic-scene) * 1.3);height:calc(var(--pic-scene) * 1.3);margin:calc(var(--pic-scene) * -.3) calc(var(--pic-scene) * -.15) 0}
+.scene.size-small .striker .portrait{width:calc(var(--pic-scene) * .5);height:calc(var(--pic-scene) * .5)}
+.scene.size-big .striker .portrait{width:calc(var(--pic-scene) * 1.04);height:calc(var(--pic-scene) * 1.04)}
 .scene .plate.bossplate .name{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
 .scene .plate.bossplate .tag{font:700 .72rem var(--pixel);color:#FF7A5C}
 .scene .plate.bossplate .hpbar{position:relative}

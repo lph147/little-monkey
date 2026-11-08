@@ -405,6 +405,12 @@ Asked about a picture of something you know (the word asked about is one of thes
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], get('IS_IT_SENTENCES()').map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
 
+` : ''}${get('SIZED()').length ? `### Big and little wild creatures
+
+Once you know 大 and 小, a wild creature can be a big one or a little one: its name says which, on its battle card and aloud (new on 8 November 2026, not checked yet).
+
+${table(['Chinese', 'Pinyin', 'English', 'Notes'], get('SIZED()').map(c => [chars(c.zh), py(c.zh), c.en, notes]))}
+
 ` : ''}### Words only heard in sentences
 
 ${table(['Chinese', 'Pinyin', 'English', 'Notes'], heard.map(w => [w, BANK[w].py, BANK[w].en, notes]))}

@@ -685,6 +685,10 @@ const SCREENS = [
   {id: 'spider-meet', title: 'A spider jumps out', save: 'fighting', why: 'In the long grass on the way up, in the bee’s place (the bee moves to chapter 1): its first meeting teaches 蜘蛛.', run: async () => { play(); await wait(100); battle('spider'); await wait(600); }},
   {id: 'battle-snake', title: 'A battle: your turn', save: 'fighting', why: 'Hit, eat (a peach brings back 10 health) or run. A health bar on both sides: the snake’s full, yours 40 of 50, its number beside You.', run: async () => {
     play(); await wait(100); battle('snake'); await wait(1200); }},
+  {id: 'battle-big', title: 'A big snake', save: 'fighting', why: 'Once you know 大 and 小, a wild creature can be big (one and a half times its health and hits, twice the shells; twice as likely at night): bigger on its mound, a longer health bar, and its name says it, 大蛇, aloud too.', run: async () => {
+    play(); await wait(100); S.w['大'] = S.w['小'] = {lv: 1, due: 0, ok: 0}; battle('snake', {size: 'big'}); await wait(1200); }},
+  {id: 'battle-little', title: 'A little spider', save: 'fighting', why: 'Or a little one: half its health and hits, the usual shells. Smaller on its mound, a shorter health bar, and its name says it, 小蜘蛛.', run: async () => {
+    play(); await wait(100); S.w['大'] = S.w['小'] = {lv: 1, due: 0, ok: 0}; S.w['蜘蛛'] = {lv: 1, due: 0, ok: 0}; battle('spider', {size: 'small'}); await wait(1200); }},
   {id: 'snake-strikes', title: 'A battle: dodging', save: 'fighting', why: 'The snake strikes: hear where from, and pick it to jump aside.', run: async () => {
     play(); await wait(100); const q = pictureQ; pictureQ = o => { window.__q = o; return q(o); };
     battle('snake'); await wait(1200); click('.act[data-act=hit]'); await wait(300);
