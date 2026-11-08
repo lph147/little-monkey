@@ -19,7 +19,7 @@ const weaponHits = () => (BATTLES.weapons || {})[weaponNow()] || BATTLES.hits;
 // An enemy with a name rather than a word (name: {zh, py, en}; pic: its picture), such as the Demon of Havoc (names aren't
 // vocabulary: never a card to catch, decided 5 November 2026), or one with a word, taught as you meet it.
 const foeZh = f => f.name ? f.name.zh : sizedZh(f), foePy = f => f.name ? f.name.py : (f.size ? SIZES[f.size].py + ' ' : '') + WORDS[f.word].py;   // (a big or small one: 大蛇 dà shé)
-const foePic = f => f.person ? personPic(f.person) : PICTURES[f.pic || f.word], foeThe = f => f.name ? `the ${f.name.en}` : `the ${f.size ? SIZES[f.size].en + ' ' : ''}${wz(f.word)}`;   // (a person, such as a pupil you spar with: as they look on the map, with a staff: js/year.js)
+const foePic = f => f.monkey ? monkeyPic(f.monkey) : f.person ? personPic(f.person) : PICTURES[f.pic || f.word], foeThe = f => f.name ? `the ${f.name.en}` : `the ${f.size ? SIZES[f.size].en + ' ' : ''}${wz(f.word)}`;   // (a person, such as a pupil you spar with: as they look on the map, with a staff: js/year.js)
 const WILD_AFTER = 5, WILD_CHANCE = .2;   // at least this many steps on wild ground between battles, then this chance a step
 let wildSteps = 0;
 // Your health (decided 27 October 2026: hearts, 5 at most, were too few to tell weapons, food and enemies apart), and the

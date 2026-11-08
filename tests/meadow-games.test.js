@@ -1,8 +1,9 @@
-// The prologue: word games with the little monkey and the hungry monkey in the meadow (decided 26 October 2026, after
+// The prologue: games with the little monkey and the hungry monkey in the meadow (decided 26 October 2026, after
 // measuring the game's pacing: the meadow taught 22 words with just two questions between them). Once the little monkey
-// has taught you 朋友, and once you've told the hungry monkey 没关系, each wants to play a word game straight away, with a
-// present the first time you win: 2 shells, or a peach for your bag. Say Not now, and it has a ! till you've played, in
-// the meadow; lose, and you can talk to it to play again for its present.
+// has taught you 朋友, it wants to play I spy straight away, out in the meadow (since 8 November 2026, the gentler
+// prologue: it was a word game on cards), and once the hungry monkey has eaten, he wants to play a word game, each with a
+// present the first time: 2 shells, or a peach for your bag. Say Not now, and he has a ! till you've played, in the
+// meadow; lose, and you can talk to him to play again for its present.
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -30,42 +31,52 @@ async function play(g, code){   // runs code in the game and waits for it, letti
 }
 const talk = (g, id) => play(g, `talk(ALL_NPCS.find(n => n.id === '${id}'))`);
 const bubble = (g, id) => get(g, `((AREA.bubbles.${id} || []).find(b => matches(b.if)) || {}).show || ''`);
-const PRESENT = 'Play a word game with this little monkey? If you win, it gives you 2 🐚.';
 
-test('once the little monkey has taught you 朋友, it wants to play a word game straight away; win, and it gives you 2 shells, the once', async () => {
+const spot = (g, w) => get(g, `(() => { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (tileAt(x, y).word === '${w}' && !npcAt(x, y) && !animalAt(x, y)) return [x, y]; })()`);
+const wanted = g => get(g, 'here().spying.list[here().spying.i]');
+
+test('once the little monkey has taught you 朋友, it wants to play I spy straight away, out in the meadow (the gentler prologue, 8 November 2026); find them all, and it gives you 2 shells, the once', async () => {
   const g = game();
   assert.equal(bubble(g, 'playful'), '!');
   await talk(g, 'playful');
-  assert.ok(get(g, "lvl('朋友') >= 1"), 'it teaches 朋友');
-  assert.deepEqual(get(g, '__said'), ['我是猴子。你也是猴子！', '我们是朋友！', '我们玩吧！', '太好了！'], 'I’m a monkey, you’re a monkey too! we’re friends! let’s play! (and, as you win) great!');
-  assert.deepEqual(get(g, '__asks'), [PRESENT], 'Play, or Not now');
-  assert.deepEqual([get(g, 'here().littleGame'), get(g, 'S.shells')], [2, 2], 'its present: 2 shells');
+  assert.ok(get(g, "lvl('朋友') >= 1") && get(g, "S.friends.includes('playful')"), 'it teaches 朋友, and it’s your friend');
+  const said = get(g, '__said');
+  assert.deepEqual(said.slice(0, 3), ['我是猴子。你也是猴子！', '我们是朋友！', '我们玩吧！'], 'I’m a monkey, you’re a monkey too! we’re friends! let’s play!');
+  assert.match(said[3], /^我看见.+！$/, 'then what it can see, only in Chinese: 我看见…！');
+  const sp = get(g, 'here().spying');
+  assert.equal(sp.list.length, 4, 'four things');
+  assert.ok(sp.list.every(w => ['树', '花', '石头', '山', '草'].includes(w)), 'each something you know, here in the meadow (not 河: you don’t know it yet)');
+  const other = sp.words.find(w => w !== wanted(g) && sp.list.includes(w));
+  g.run('__said.length = 0');
+  await play(g, `spyFind(${spot(g, other)})`);
+  assert.ok(get(g, '__notes').includes('Not that one. Listen again!'), 'something else with a word: not that one');
+  assert.equal(get(g, '__said').length, 1, 'and it says again what it sees');
+  for (let i = 0; i < 4; i++) await play(g, `spyFind(${spot(g, wanted(g))})`);
+  assert.equal(get(g, 'here().spying || null'), null, 'all found');
+  assert.deepEqual([get(g, 'here().littleGame'), get(g, 'S.shells')], [1, 2], 'its present: 2 shells');
   assert.ok(get(g, '__notes').includes('The little monkey gives you 2 🐚.'));
   assert.equal(bubble(g, 'playful'), '', 'no ! now');
-  g.run('__said.length = 0; __asks.length = 0');
   await talk(g, 'playful');
-  assert.deepEqual(get(g, '__asks'), ['Play a word game with this little monkey?'], 'after that, its word games as before, with no present');
+  assert.ok(get(g, '!!here().spying'), 'talk to it again, and it plays again');
+  for (let i = 0; i < 4 && get(g, '!!here().spying'); i++) await play(g, `spyFind(${spot(g, wanted(g))})`);
   assert.deepEqual([get(g, 'here().littleGame'), get(g, 'S.shells')], [2, 2], 'the present is only the once');
 });
 
-test('say Not now, and the little monkey has a ! till you’ve played, in the meadow; lose, and you can play again for its present', async () => {
+test('walk off halfway, and the little monkey says what it sees again; its ! stays till you’ve found them all, in the meadow', async () => {
   const g = game();
-  g.run('__play = false');
   await talk(g, 'playful');
-  assert.equal(get(g, 'here().littleGame'), 0, 'not played');
-  assert.equal(bubble(g, 'playful'), '!', 'so it has a !');
-  g.run('__play = true; __win = false; __asks.length = 0');
+  await play(g, `spyFind(${spot(g, wanted(g))})`);
+  const next = wanted(g);
+  assert.equal(get(g, 'here().spying.i'), 1, 'one found');
+  assert.equal(bubble(g, 'playful'), '!', 'it still has a !');
+  g.run('__said.length = 0');
   await talk(g, 'playful');
-  assert.deepEqual(get(g, '__asks'), [PRESENT], 'it asks again');
-  assert.deepEqual([get(g, 'here().littleGame'), get(g, 'S.shells')], [1, 0], 'lost: played, but no present');
-  assert.equal(bubble(g, 'playful'), '', 'played once: its ! has gone');
-  g.run('__win = true');
-  await talk(g, 'playful');
-  assert.deepEqual([get(g, 'here().littleGame'), get(g, 'S.shells')], [2, 2], 'won at last: its present');
+  assert.equal(get(g, '__said').length, 2, 'let’s play!, and what it sees');
+  assert.deepEqual([get(g, 'here().spying.i'), wanted(g)], [1, next], 'the same game, where you were');
   const later = game({gate: true}, ['朋友']);   // (never played, and the rocks have rolled away)
   assert.equal(bubble(later, 'playful'), '', 'after the meadow, no !');
   await talk(later, 'playful');
-  assert.deepEqual(get(later, '__asks'), [PRESENT], 'but its present is still there to play for');
+  assert.ok(get(later, '!!here().spying'), 'but you can still play, for its present');
 });
 
 test('once the hungry monkey has eaten, he wants to play a word game (no sorry: 对不起 and 没关系 come in chapter 1); win, and you get a peach for your bag, the once', async () => {

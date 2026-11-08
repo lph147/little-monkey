@@ -21,7 +21,10 @@ async function finish(game, code){   // run code that waits on timers (sleeping 
 }
 
 test('a bed: A looks at it until you know 床, then sleeps in it, and you wake with your health full', async () => {
-  const before = byBed({health: 20});
+  const prologue = byBed({health: 20});   // (the gentler prologue, 8 November 2026: the beds wait till you show the old monkey round)
+  await finish(prologue, 'interact(1, 1)');
+  assert.deepEqual([get(prologue, '__cards'), get(prologue, '__toasts')], [[], ['Everything’s made of stone in here! Go back and tell the troop what you’ve found.']], 'in the prologue, before the troop comes in: go and tell them, and no new word');
+  const before = byBed({health: 20, areas: {1: {gate: true, climb: 4, story: true, cave: 6, count: 3, chapter: 1, home: 2}}});
   assert.equal(before.run('promptFor(1, 1)'), 'Look', 'before you know 床, A looks at the bed');
   await finish(before, 'interact(1, 1)');
   assert.deepEqual(get(before, '__cards'), ['床'], 'and teaches 床');

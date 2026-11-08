@@ -66,13 +66,14 @@ test('a game already in chapter 1 when the sheep came (it met the fox in the mea
   assert.equal(get(g, 'animalAt(5, 18).hz'), '羊', 'go back down to the meadow, and the sheep is there to meet');
 });
 
-test('the hungry monkey teaches 水果 (fruit) as he asks; each fruit tree teaches its own fruit, sparkling till you know it (24 October 2026)', async () => {
+test('the hungry monkey teaches 水果 (fruit) as he asks; each fruit tree teaches its own fruit, sparkling once he has asked till you know it (24 October 2026)', async () => {
   const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(FIRST), areas: {1: {elder: 2, meadowCheck: 1, hungry: 'not asked', thirsty: 'asked', holding: {}}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__cards = []; globalThis.__said = []; showNotice = async (w, o) => { __cards.push([w, o && o.note || null]); setSeen(w); }; toast = () => {}");
   g.run("showDialog = async (who, line, o = {}) => { __said.push([line.t.join(''), o.teach || null]); }");
   const sparkles = () => get(g, "AREA.sparkles.filter(s => ['水果', '桃子', '苹果'].includes(s.word) && lvl(s.word) === 0 && (!s.if || matches(s.if))).map(s => [s.word, s.at])");
-  assert.deepEqual(sparkles(), [['桃子', [1, 6]], ['苹果', [21, 17]]], 'the peach tree and the apple tree sparkle, for their fruit');
+  assert.deepEqual(sparkles(), [], 'before he asks, the fruit trees don’t sparkle (the gentler prologue, 8 November 2026: a few words at a time)');
   await play(g, "talk(NPCS.find(n => n.id === 'hungry'))");
+  assert.deepEqual(sparkles(), [['桃子', [1, 6]], ['苹果', [21, 17]]], 'once he has asked, the peach tree and the apple tree sparkle, for their fruit');
   assert.deepEqual(get(g, '__said'), [['我饿了。我要吃水果！', '水果'], ['水果在树上。', null]], 'he asks for some fruit, with 水果 in bold, then says it grows on the trees');
   assert.deepEqual(get(g, '__cards'), [['水果', null]], 'and teaches it: 吃 waits till you give him the fruit');
   assert.equal(g.run("lvl('吃')"), 0);

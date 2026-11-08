@@ -105,6 +105,19 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
     }
     run('rustle = null');
   }
+  // I spy with someone (the spy step): what they can see, found, one after another, standing beside it and pressing A
+  async function spyAll(what){
+    for (let i = 0; i < 12 && get('!!here().spying'); i++){
+      const w = get('here().spying.list[here().spying.i]');
+      const spot = get(`(() => { for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++){
+        if (tileAt(x, y).word !== ${JSON.stringify(w)} || npcAt(x, y) || animalAt(x, y) || hiddenAt(x, y) || spotLook(x, y)) continue;
+        for (const [dx, dy, dir] of [[0, 1, 'up'], [0, -1, 'down'], [1, 0, 'left'], [-1, 0, 'right']]) if (walkable(x + dx, y + dy)) return [x + dx, y + dy, dir];
+      } return null; })()`);
+      assert.ok(spot, `${what}: somewhere to find ${w}`);
+      await pressAt(spot[0], spot[1], spot[2], `${what}: finding ${w}`);
+    }
+    assert.ok(!get('!!here().spying'), `${what}: everything found`);
+  }
   // A walk, one square after another (from to to, along a row or a column, then the next leg), as a player walks it,
   // with whatever happens as you arrive on each (someone stopping you, say)
   async function walk(legs, what){
@@ -129,14 +142,17 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(!knows('路'), "the path doesn't teach 路 yet (it waits for the mountain path)");
   assert.equal(area().elder, 1, 'the old monkey should stop you on your first step, and say hello (31 October 2026)');
   assert.ok(knows('你好'), 'the old monkey should teach 你好');
+  // (the gentler prologue, decided 8 November 2026: just the mountain and a tree sparkle at first)
+  assert.deepEqual(get("AREA.sparkles.filter(s => s.word && !s.at[2] && lvl(s.word) === 0 && (!s.if || matches(s.if))).map(s => s.word)"), ['山', '树'], 'just two things sparkle as you set off');
   await pressAt(7, 4, 'left', 'looking at the cliff');
   await pressAt(12, 7, 'down', 'looking at the tree');
-  await stepOn(11, 7, 'walking into the flowers');
-  await stepOn(4, 7, 'walking into the tall grass');
-  for (const w of ['山', '树', '花', '草']) assert.ok(knows(w), `${w} should be learned`);
-  await pressAt(7, 2, 'up', 'talking to the old monkey again');
-  assert.equal(area().elder, 2, 'once you know 4 words, the old monkey should tell you about the animals');
+  for (const w of ['山', '树']) assert.ok(knows(w), `${w} should be learned`);
+  for (const w of ['花', '草']) assert.ok(!knows(w), `${w} waits for the animals`);
+  await pressAt(7, 2, 'up', 'talking to the old monkey again: he checks your first words, and gives you his scroll');
+  assert.ok(get('S.scroll.has'), 'he gives you his scroll as he checks your first words');
+  assert.equal(area().elder, 2, 'once you know your first words, the old monkey should tell you about the animals');
   assert.ok(knows('动物'), 'the old monkey should teach 动物');
+  assert.deepEqual(get("getTasks().filter(t => t.main).map(t => t.id)"), ['animals'], 'one task at a time: the animals');
 
   // Then the meadow in order (decided 31 October 2026): the animals and the meadow's words, then the troop. Till then the
   // troop's monkeys have no ! and send you back to the old monkey
@@ -148,7 +164,11 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(!get("NPCS.some(n => n.id === 'boss')"), 'no shop owner in the meadow');
   await pressAt(5, 19, 'up', 'meeting the sheep at the foot of the cliffs in the south of the meadow');
   assert.ok(knows('羊'), 'the sheep teaches 羊');
+  await stepOn(11, 17, 'walking into the flowers by the squirrel’s tree, sparkling once the sheep is your friend');
+  assert.ok(knows('花'));
   await pressAt(13, 19, 'up', 'meeting the squirrel in the big tree');
+  await stepOn(9, 18, 'walking into the tall grass by the squirrel’s tree, sparkling once it’s your friend');
+  assert.ok(knows('草'));
   assert.equal(get('animalAt(4, 16)'), null, 'no goat on the meadow’s cliff: it lives in the river valley now (31 October 2026)');
   for (let i = 0; i < 30 && get('S.met').length < 3; i++){   // walk about until the grass rustles, then step in
     const r = get('rustle');
@@ -172,12 +192,14 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(!knows('朋友'), 'one new word at a time');
   assert.ok(get('getTasks()').some(t => t.text.startsWith('Meet the troop')), 'your tasks say to meet the troop');
 
-  // The little monkey
+  // The little monkey: its game is I spy, out in the meadow (the gentler prologue, decided 8 November 2026)
   await pressAt(15, 19, 'down', 'meeting the little monkey');
   assert.ok(knows('朋友'), 'the little monkey teaches 朋友, its only word');
-  assert.ok(area().littleGame === 2 && get('S.friends').includes('playful'), 'then it wants to play a word game straight away (26 October 2026): won, its present');
+  assert.ok(get('!!here().spying') && get('S.friends').includes('playful'), 'then it wants to play I spy straight away');
+  await spyAll('playing I spy with the little monkey');
+  assert.ok(area().littleGame === 1 && get('S.shells') >= 2, 'found them all: its present');
 
-  // The hungry monkey wants fruit: whichever you bring first, he wants the other
+  // The hungry monkey wants fruit: any will do, and once you've helped the thirsty monkey, the other one
   await pressAt(13, 6, 'up', 'meeting the hungry monkey');
   assert.ok(knows('水果') && !knows('吃'), 'he asks for some fruit, teaching 水果 (fruit); 吃 (eat) waits');
   await pressAt(13, 6, 'up', 'talking to the hungry monkey again, before finding any fruit');   // (he used to say nothing)
@@ -186,32 +208,39 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.ok(knows('桃子'), 'picking it teaches 桃子: the tree teaches its own fruit');
   assert.equal(area().holding.hungry, '桃子', 'you should be holding the peach');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the peach');   // (straight away, though you've just learned 桃子: nothing waits for practice now, but at school)
-  assert.equal(area().holding.hungry, undefined, 'the peach is given back');
-  assert.deepEqual(area().wanted, {hungry: '苹果'}, 'he wants the apple instead');
-  assert.ok(get('getTasks()').some(t => t.text === 'Find the apple the hungry monkey wants'), 'a task names a word you haven’t caught in plain English');
-  await pressAt(20, 17, 'right', 'picking an apple from the tree across the river');
-  assert.ok(get('getTasks()').some(t => t.text === 'Give the 苹果 (apple) to the hungry monkey'), 'once caught, in Chinese and English');
-  await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
-  assert.equal(area().hungry, 'done', 'the hungry monkey should take the apple');
-  assert.ok(knows('吃') && !knows('要') && !knows('不客气'), 'giving him the apple teaches 吃, so your reply 不客气 waits: one new word at a time');
+  assert.equal(area().hungry, 'done', 'the hungry monkey should take the peach: any fruit will do');
+  assert.equal(area().holding.hungry, undefined, 'the peach is eaten');
+  assert.ok(knows('吃') && !knows('要') && !knows('不客气'), 'giving him the peach teaches 吃, so your reply 不客气 waits: one new word at a time');
   assert.ok(!knows('对不起') && !knows('没关系'), 'no sorry in the prologue: 对不起 and 没关系 come in chapter 1 (decided 4 November 2026)');
   await pressAt(13, 6, 'up', 'talking to the hungry monkey once he has eaten');
   assert.deepEqual([area().hungryGame, get("S.bag['桃子']")], [2, 1], 'then he wants to play a word game: won, a peach for your bag');
 
   // The thirsty monkey
+  assert.ok(!get("(AREA.bubbles.hungry.find(b => matches(b.if)) || {}).show || ''"), 'no ! over the hungry monkey till you’ve helped the thirsty monkey too');
   await pressAt(2, 11, 'down', 'meeting the thirsty monkey');
   await pressAt(11, 8, 'down', 'collecting water from the pond');
   await pressAt(2, 11, 'down', 'giving the thirsty monkey the water');
   assert.equal(area().thirsty, 'done', 'the thirsty monkey should take the water');
-  assert.ok(knows('要'), 'giving him the water teaches 要 (want)');
+  assert.ok(!knows('要'), '要 waits for the hungry monkey’s second wish');
+  assert.ok(knows('不客气'), 'with nothing else new as he thanks you, you reply 不客气');
   assert.deepEqual([area().thirstyGame, get('S.shells') > 0], [2, true], 'then he wants to play a word game too (30 October 2026): won, 2 shells');
+
+  // The hungry monkey's second wish: the other fruit (teaching 要)
+  await pressAt(13, 6, 'up', 'the hungry monkey wanting the other fruit now');
+  assert.ok(knows('要'), '我要吃苹果！ teaches 要');
+  assert.deepEqual([area().hungry2, area().wanted.hungry2], ['asked', '苹果'], 'he wants the apple');
+  assert.ok(get('getTasks()').some(t => t.text === 'Find the apple the hungry monkey wants now'), 'a task names a word you haven’t caught in plain English');
+  await pressAt(20, 17, 'right', 'picking an apple from the tree across the river');
+  assert.ok(knows('苹果'));
+  assert.ok(get('getTasks()').some(t => t.text === 'Give the 苹果 (apple) to the hungry monkey'), 'once caught, in Chinese and English');
+  await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
+  assert.equal(area().hungry2, 'done', 'the hungry monkey should take the apple');
 
   // The big monkey, in the middle meadow, has nothing to ask yet: his flowers wait for chapter 1 (decided 22 October 2026)
   await pressAt(4, 10, 'right', 'saying hello to the big monkey');
   assert.ok(knows('我'), 'he says who he is, teaching 我 (I)');
   assert.equal(area().flowers, 'not asked', 'he doesn’t ask for flowers');
   for (const w of ['红色', '黄色', '白色']) assert.ok(!knows(w), `${w} waits for school`);
-  assert.ok(!knows('不客气'), 'no one has thanked you with nothing else new yet, so 不客气 waits too');
   assert.ok(!get('getTasks()').some(t => t.text.startsWith('Meet the troop')), 'the troop met');
 
   // The practice post: matching pictures, then listening for words without pictures
@@ -232,16 +261,21 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().climb, 1, 'you should set off up the path');
   assert.ok(knows('再见') && !knows('棍子'), 'the old monkey says goodbye, and you say it back');
   stand(15, 1, 'up');
-  await act('arrive(15, 1).then(runEvents)', 'walking up past the big monkey');
+  run("globalThis.__storyFights = []; (() => { const b = STEPS.battle; STEPS.battle = (s, who) => { __storyFights.push(s.battle); return b(s, who); }; })()");
+  await act('arrive(15, 1).then(runEvents)', 'walking up past the big monkey: he gives you a stick, and you practise fighting with him');
   assert.ok(knows('棍子'), 'the big monkey should stop you, and give you a stick');
+  assert.deepEqual(get('__storyFights'), ['bigSpar'], 'a practice fight with him, which you can’t lose (the gentler prologue)');
+  assert.equal(get('S.health'), 50, 'he never hurts you');
   await stepOn(15, 0, 'going up the mountain path');
   assert.equal(run('PLACE'), 'path', 'you should be on the mountain path');
-  assert.ok(knows('路'), 'arriving on the mountain path should teach 路');
+  assert.ok(!knows('路'), '路 waits for the rabbit, after your first snake');
   assert.equal(run('hasMap()'), false, 'no map in the prologue: the big monkey gives it to you in chapter 1');
   for (const [x, y] of [[13, 14], [12, 14], [11, 14], [10, 14], [9, 14]]) await stepOn(x, y, 'walking through the long grass');
   assert.ok(knows('蛇'), 'a snake should jump out of the long grass, and be chased away');
   assert.equal(get('S.health'), 50, 'every dodge right: no health lost');
-  await pressAt(15, 15, 'left', 'meeting the rabbit by the long grass');
+  assert.equal(get("(AREA.bubbles.rabbit.find(b => matches(b.if)) || {}).show || ''"), '!', 'the rabbit by the long grass has something to tell you');
+  await pressAt(15, 15, 'left', 'meeting the rabbit by the long grass: 路上有蛇！');
+  assert.ok(knows('路'), 'the rabbit teaches 路');
   await stepOn(16, 0, 'going on up to the river valley');
   assert.equal(run('PLACE'), 'valley', 'you should be in the river valley');
   await walk([[19, 11], [19, 10]], 'walking up the path into the river valley');
@@ -297,12 +331,12 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await pressAt(3, 5, 'up', 'looking at the stone table');
   await pressAt(9, 4, 'up', 'looking at the stone bowls');
   await pressAt(5, 10, 'down', 'reading the stone tablet');
-  for (const w of ['床', '碗', '桌子']) assert.ok(knows(w), `${w} should be found in the cave`);
+  for (const w of ['床', '碗', '桌子']) assert.ok(!knows(w), `${w} waits for you to show the old monkey round (the gentler prologue)`);
   assert.ok(!knows('桥'), 'the bridge doesn’t teach 桥 (it waits for chapter 1)');
   await stepOn(7, 13, 'walking out through the water curtain');
   assert.equal(run('PLACE'), 'falls', 'you should be back by the waterfall');
   assert.deepEqual(get('[S.pos.x, S.pos.y]'), [5, 1]);
-  await pressAt(8, 1, 'right', 'telling the old monkey about the cave');
+  await pressAt(8, 1, 'right', 'telling the troop what’s behind the waterfall');
   assert.equal(area().cave, 3, 'the old monkey should hear about the cave');
   assert.ok(get('chapterItems().slice(0, 3).every(c => matches(c.done))'), 'the start of the prologue’s checklist should be ticked off');
   assert.equal(get('partNow().id'), 'king', 'the prologue’s last part: a home for the troop');
@@ -314,9 +348,13 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(get("ALL_NPCS.filter(n => ['elder', 'big', 'playful'].includes(n.id)).map(n => n.place)"), ['cave', 'cave', 'cave']);
   run("globalThis.__scenes = []; storyScene = async id => { __scenes.push(id); }");   // (the scene plays by itself, with its pictures; its own test plays it)
   // he goes straight on from one to the next (decided 6 November 2026, after playing it: a task said to go and see whoever
-  // you were talking to): 家; counting the troop in, a monkey at a time (一, 二, 三, in one go, like the
+  // you were talking to): you show him round, and he asks what each thing is, a question on each before the next (the
+  // gentler prologue, decided 8 November 2026); 家; counting the troop in, a monkey at a time (一, 二, 三, in one go, like the
   // school's first lessons: 3 November 2026), then matching the numbers; and with the whole troop home, becoming king (王)
-  await pressAt(6, 10, 'up', 'hearing what the old monkey calls the cave, counting the troop in, and becoming king', 5);
+  run("globalThis.__quizzed = []; (() => { const q = STEPS.quiz; STEPS.quiz = s => { __quizzed.push(s.quiz); return q(s); }; })()");
+  await pressAt(6, 10, 'up', 'showing the old monkey round, hearing what he calls the cave, counting the troop in, and becoming king', 8);
+  for (const w of ['床', '桌子', '碗']) assert.ok(knows(w), `${w} should be learned as you show the old monkey round`);
+  assert.deepEqual(get('__quizzed'), ['床', '桌子', '碗'], 'a question on each before the next');
   assert.ok(knows('家'), 'the old monkey should teach 家');
   assert.equal(area().count, 3);
   for (const w of ['一', '二', '三']) assert.ok(knows(w), `counting should teach ${w}`);
@@ -445,7 +483,6 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(run('PLACE'), 'homeGround');
   await pressAt(15, 5, 'up', 'giving the big monkey the wood and the stones');
   assert.deepEqual([area().wood, area().stones, area().build], ['done', 'done', 2], 'he takes them');
-  assert.ok(!knows('不客气'), 'no reply to his thanks: the school comes next, teaching 学校, so 不客气 waits');
 
   // Chapter 1: the troop builds the school at once, and you go in: the class greets its teacher, the little monkey is
   // your classmate, and the teacher gives you a lesson
@@ -636,7 +673,6 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(area().picked.flowers, ['红色', '黄色', '白色'], 'one of each colour');
   assert.ok(['红色的花', '黄色的花', '白色的花'].every(t => get('__said').includes(t)), 'each said as you pick it: 红色的花, a red flower');
   await pressAt(15, 5, 'up', 'giving the big monkey the flowers');
-  assert.ok(knows('不客气'), 'with nothing else new, you reply 不客气 to his thanks');
   assert.deepEqual([area().flowers, area().schoolFlowers, run('tileAt(10, 5).look')], ['done', true, 'flowerBed'], 'he plants them in front of the school');
   // The duck swimming on the home ground's stream (30 October 2026: a chapter 1 friend where there were none), met from the bank
   await pressAt(27, 17, 'down', 'meeting the duck on the stream');

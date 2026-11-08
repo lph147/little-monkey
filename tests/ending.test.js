@@ -41,7 +41,7 @@ test('pressing A to clear the message after a conversation closes it, and doesn�
 });
 
 test('the last line of a conversation says Done, not ▼ Next, so you can tell it’s ending', async () => {
-  const g = game({elder: 1}, OLD_MONKEY);   // two words of four: he says to go and learn some more
+  const g = game({elder: 2}, OLD_MONKEY, ['石头', '你好', '山', '树', '动物']);   // the animals still to find: he says to go and find them, and how many you have
   g.run("pressA()"); await tick();
   assert.equal(g.el('#talk').querySelector('[data-a=ok]').textContent, '▼', 'his line: what to do comes after it');
   g.run("pressA()"); await tick();

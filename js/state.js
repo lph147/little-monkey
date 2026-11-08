@@ -248,6 +248,9 @@ function upgradeSave(s){
       if (ws.length && ws.every(caught)) sealed.push(`${a.number}:${cat}`);
     }
     if (!s.scroll) s.scroll = {has:!!first, sealed};
+    // the gentler prologue (8 November 2026): the hungry monkey has a second wish, the other fruit, once he's eaten one;
+    // a game that fed him before then has done it
+    const a1 = (s.areas || {})[1]; if (a1 && a1.hungry === 'done' && !a1.hungry2) a1.hungry2 = 'done';
     s.version = 38;
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16

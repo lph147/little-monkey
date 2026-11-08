@@ -210,10 +210,11 @@ test('再见 is taught as you set off up the mountain path: the old monkey says 
   const setOff = part('p.if.gate === true && p.if.climb === 0');
   assert.ok(setOff.indexOf('bye') >= 0 && setOff.indexOf('再见') === setOff.indexOf('bye') + 1, 'he says goodbye, and you reply');
   assert.ok(!setOff.includes('棍子'), 'not in the same conversation as the stick: one new word at a time');
-  assert.ok(!part('p.if.elder === 1 && !p.if.newWords').includes('再见'), 'not when he tells you about the animals');
-  // the big monkey gives you the stick on your way: its own conversation, with nothing else new
+  assert.ok(!part('p.if.elder === 1 && !p.if.firstWords').includes('再见'), 'not when he tells you about the animals');
+  // the big monkey gives you the stick on your way: its own conversation, with nothing else new, and a practice fight with
+  // him (the gentler prologue, 8 November 2026: it was two notes on how to fight)
   const stick = JSON.parse(g.run(`JSON.stringify(AREA.talk.big.find(p => p.if && p.if.new === '棍子').do.map(s => s.reply || s.newWord || s.say || Object.keys(s)[0]))`));
-  assert.deepEqual(stick.filter(s => s !== 'message'), ['stickHere', '棍子']);
+  assert.deepEqual(stick.filter(s => s !== 'message'), ['stickHere', '棍子', 'comeOn', 'battle']);
 });
 
 test('back with your first words, the old monkey checks them: you match them to their pictures, then he tells you about the animals', async () => {

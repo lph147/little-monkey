@@ -45,7 +45,7 @@ SAVES.bigIam = {...SAVES.bigHello, w: knows(1, MIDDLE_WORDS.filter(w => w !== '�
 SAVES.hungryNew = {...SAVES.hungryAsks, w: knows(1, MIDDLE_WORDS.filter(w => !['水果', '吃', '桃子', '苹果'].includes(w)))};
 // the old monkey has told you about animals, and wants the meadow's words too: you know 山 and 树, not 河, 鱼 or 鸟; the
 // thirsty monkey has asked for water, and you're facing the river
-SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝']), met: [], friends: [],
+SAVES.meadowWords = {...SAVES.middle, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝', '羊', '松鼠', '兔子']), met: ['sheep', 'squirrel', 'rabbit'], friends: ['sheep', 'squirrel', 'rabbit'],
   areas: {1: {elder: 2, hungry: 'asked', thirsty: 'asked', flowers: 'not asked', holding: {}, gate: false}}, pos: {place: 'meadow', x: 17, y: 10, dir: 'right'}};
 // all five words for the meadow learned, facing the old monkey: he wants to hear them (30 October 2026)
 SAVES.meadowCheck = {...SAVES.meadowWords, w: knows(1, ['石头', '你好', '山', '花', '草', '树', '动物', '吃', '喝', '河', '鱼', '鸟', '水', '要']),
@@ -59,10 +59,12 @@ SAVES.chapter1 = {...SAVES.middle, w: knows(1, [...MIDDLE_WORDS, '瀑布', '羊'
   wardrobe: {owned: ['头带'], wearing: ['头带']}, areas: {1: PROLOGUE}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
 SAVES.dared = {...SAVES.chapter1, w: {...SAVES.chapter1.w, ...knows(1, ['跳'])}, areas: {1: {...PROLOGUE, cave: 1}}, pos: {place: 'falls', x: 5, y: 1, dir: 'left'}};
 SAVES.inCave = {...SAVES.dared, w: {...SAVES.dared.w, ...knows(1, ['洞'])}, areas: {1: {...PROLOGUE, cave: 2}}, pos: {place: 'cave', x: 7, y: 9, dir: 'up'}};
-SAVES.explored = {...SAVES.inCave, w: {...SAVES.inCave.w, ...knows(1, ['床', '碗', '桌子'])}, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};
+SAVES.explored = {...SAVES.inCave, pos: {place: 'falls', x: 8, y: 1, dir: 'right'}};   // back out, to tell the troop (the cave's things wait to show the old monkey round: the gentler prologue)
 // part B: the troop has followed you in (cave 4), you're king (cave 6), and the troop is counted in
 const CAVE_WORDS = knows(1, ['洞', '跳', '床', '碗', '桌子']);
 SAVES.ledIn = {...SAVES.explored, w: {...SAVES.chapter1.w, ...CAVE_WORDS}, areas: {1: {...PROLOGUE, cave: 4}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
+SAVES.tour = {...SAVES.ledIn, w: {...SAVES.chapter1.w, ...knows(1, ['洞', '跳'])}};   // the troop in, the old monkey to show round: the beds, the table and the bowls
+SAVES.caveWaits = {...SAVES.inCave, pos: {place: 'cave', x: 1, y: 2, dir: 'up'}};   // just in through the waterfall, facing the stone beds
 SAVES.toBeKing = {...SAVES.ledIn, w: {...SAVES.ledIn.w, ...knows(1, ['家'])}, areas: {1: {...PROLOGUE, cave: 5}}, pos: {place: 'cave', x: 9, y: 9, dir: 'up'}};
 SAVES.king = {...SAVES.toBeKing, w: {...SAVES.toBeKing.w, ...knows(1, ['王', '一'])}, areas: {1: {...PROLOGUE, cave: 6, count: 1}}, pos: {place: 'cave', x: 6, y: 10, dir: 'up'}};
 SAVES.home = {...SAVES.king, w: {...SAVES.king.w, ...knows(1, ['二', '三'])}, areas: {1: {...PROLOGUE, cave: 6, count: 3}}, pos: {place: 'cave', x: 7, y: 12, dir: 'up'}};
@@ -332,6 +334,7 @@ SAVES.settingOff = {...SAVES.rocksGone, version: 29, w: {...SAVES.rocksGone.w, .
   pos: {place: 'meadow', x: 15, y: 2, dir: 'up'}};   // said goodbye to the old monkey, about to walk up past the big monkey (no stick yet)
 SAVES.climbing = {...SAVES.rocksGone, version: 25, w: {...SAVES.rocksGone.w, ...knows(1, ['路'])}, areas: {1: {...SAVES.rocksGone.areas[1], climb: 1}}, pos: {place: 'path', x: 15, y: 14, dir: 'left'}};   // (version 25: older saves on the path are moved off it)
 SAVES.fighting = {...SAVES.climbing, w: {...SAVES.climbing.w, ...knows(1, ['棍子', '蛇'])}, health: 40, bag: {'桃子': 2, '苹果': 1}};   // on the path, with the stick, a snake met before, and fruit
+SAVES.pathRabbit = {...SAVES.fighting, w: knows(1, [...MIDDLE_WORDS, '棍子', '蛇', '再见'])};   // a snake met, 路 not yet: the rabbit warns you
 SAVES.bowlsWait = {...SAVES.bowlsOn, turn: 0, areas: {1: {...SAVES.bowlsOn.areas[1], wordTurn: 0}}};   // (a new word just caught: the chopsticks wait 4 questions)
 SAVES.packed = {...SAVES.fighting, health: 30, areas: {1: {...SAVES.fighting.areas[1], thirsty: 'asked', holding: {thirsty: '水'}}}};   // hurt, with fruit, and water for the thirsty monkey
 SAVES.byPeaches = {...SAVES.fighting, pos: {place: 'meadow', x: 2, y: 6, dir: 'left'}};   // by a peach tree, the hungry monkey fed
@@ -361,7 +364,9 @@ SAVES.homeSign = {...SAVES.homeParts, areas: {1: {...SAVES.middle.areas[1], home
 SAVES.goatTip = {...SAVES.middle, tips: {...ALL_TIPS, syllables: 0}};   // the goat's tip still to come
 SAVES.withApple = {...SAVES.middle, bag: {'苹果': 1}};   // an apple from the shop, to eat in an encounter
 SAVES.allFriends = {...SAVES.chapter1, friends: ['rabbit', 'sheep', 'squirrel', 'goat']};   // every animal in the prologue won over
-SAVES.wantsApple = {...SAVES.middle, areas: {1: {...SAVES.middle.areas[1], holding: {}, wanted: {hungry: '苹果'}}}, pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
+// the hungry monkey fed (a peach) and the thirsty monkey helped: he wants the other fruit now, teaching 要 (the gentler prologue)
+SAVES.wantsApple = {...SAVES.middle, w: knows(1, MIDDLE_WORDS.filter(w => w !== '要')), areas: {1: {...SAVES.middle.areas[1], gate: false, hungry: 'done', hungryGame: 2, thirsty: 'done', thirstyGame: 2, hungry2: 'not asked', holding: {}, wanted: {hungry: '桃子'}}},
+  pos: {place: 'meadow', x: 13, y: 6, dir: 'up'}};
 SAVES.facing = {...SAVES.born, tips: {walk: 1}, pos: {x: 7, y: 2, dir: 'up'}};   // facing the old monkey, having walked
 SAVES.noMenuTip = {...SAVES.middle, tips: {...ALL_TIPS, menu: 0}};
 SAVES.englishTip = {...SAVES.middle, tips: {...ALL_TIPS, english: 0}, lines: {'去看看！': 1}};   // a line heard before, the English tip still to come
@@ -532,8 +537,8 @@ const SCREENS = [
     play(); await wait(100); talk(npc('hungry')); for (let i = 0; i < 3; i++){ await wait(1200); pressA(); } await wait(600); }},
   {id: 'elder-checks-in', title: 'The old monkey checks in', save: 'middle', why: 'He reminds you what the troop asked for, in words you know.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
-  {id: 'meadow-ask', title: 'The words for the meadow', save: 'meadowWords', why: 'Telling you about animals, the old monkey wants the meadow’s words too: just those you don’t know yet.', run: async () => {
-    play(); await wait(100); runSteps(AREA.talk.elder.flatMap(p => p.do).filter(s => s.message && s.if), 'elder'); await wait(400); }},
+  {id: 'meadow-ask', title: 'Then the words for the meadow', save: 'meadowWords', why: 'One task at a time (the gentler prologue, 8 November 2026): once you’ve found the animals, the meadow’s words are your task, and the river and the fish in the pond sparkle.', run: async () => {
+    play(); await wait(800); }},
   {id: 'tasks-meadow', title: 'Tasks: the words for the meadow', save: 'meadowWords', why: 'Which are still to find. The rocks wait for them.', run: async () => {
     play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'river-look', title: 'At the river: looking first', save: 'meadowWords', why: 'Asked for water, but you don’t know 河 (river) yet: A says Look, and teaches it. Then A says Collect.', run: async () => {
@@ -542,9 +547,9 @@ const SCREENS = [
     play(); await wait(100); talk(npc('troop1')); await wait(300); next(); await wait(300); click('#talk .reply'); await wait(400); next(); await wait(600); }},
   {id: 'talk-top', title: 'Talking low on the screen', save: 'lowTalk', why: 'At the bottom of a map the speech box would cover you, so it’s at the top of the screen instead, for the whole conversation. The map never moves for it.', run: async () => {
     play(); await wait(100); talk(npc('playful')); await wait(600); }},
-  {id: 'first-words', title: 'Your first words: what to look for', save: 'firstWords', why: 'Sent off to learn 4 words: the arrow bobs over the nearest thing that sparkles (the cliff), and until you know 4, the sparkles twinkle a little bigger (each comes and goes, so some are out at any moment).', run: async () => {
+  {id: 'first-words', title: 'Your first words: what to look for', save: 'firstWords', why: 'Sent off to find your first two words: just the mountain and a tree sparkle (the gentler prologue, 8 November 2026). The arrow bobs over the nearest (the cliff), and till you know both, the sparkles twinkle a little bigger (each comes and goes, so some are out at any moment).', run: async () => {
     play(); await wait(800); }},
-  {id: 'tasks-first-words', title: 'Tasks: your first words', save: 'firstWords', why: 'Walk up to things that sparkle, with the sparkle as on the map, and press A.', run: async () => {
+  {id: 'tasks-first-words', title: 'Tasks: your first words', save: 'firstWords', why: 'Find the two things that sparkle, with the sparkle as on the map: walk up to them and press A (0/2).', run: async () => {
     play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'talk-done', title: 'The last message: Done', save: 'notYet', why: 'A conversation’s last line, or here what to do after it, says Done, not ▼ Next, so you can tell it’s ending.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(400); }},
@@ -552,6 +557,8 @@ const SCREENS = [
     S.tasksSeen = Object.fromEntries(getTasks().map(t => [t.id, 1])); play(); await wait(100); toast('New task: Find some fruit for the hungry monkey'); clearTimeout(msgT); await wait(400); }},
   {id: 'hello-card', title: 'A new word in a conversation', save: 'born', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
+  {id: 'scroll-glow', title: 'A word goes into your scroll', save: 'middle', why: 'After a new word’s card, no message saying it’s in your Word Scroll (41 of them in the prologue): the MENU button glows a moment, where your scroll is (the gentler prologue, 8 November 2026).', run: async () => {
+    play(); await wait(100); scrollGlow(); await wait(600); }},
   {id: 'first-reply', title: 'Your first reply', save: 'born', why: 'His line stays in sight: The old monkey says hello. Now you say it!', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(400); }},
   {id: 'reply-thanks', title: 'Replying to thanks', save: 'phrases', why: 'What you’re answering stays in sight (his line, 谢谢你！), with what’s happening in plain English: The hungry monkey thanks you. What do you say back?', run: async () => {
@@ -575,7 +582,7 @@ const SCREENS = [
   {id: 'go-look', title: 'Off you go', save: 'born', why: 'His line: go and take a look.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
     next(); await wait(200); next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
-  {id: 'go-look-note', title: 'Off you go: what to do', save: 'born', why: 'What to do is a message of its own, after his line (it crowded the line, under it): the sparkle big beside it, the first sentence in bold.', run: async () => {
+  {id: 'go-look-note', title: 'Off you go: what to do', save: 'born', why: 'After his line, no notes to read (the gentler prologue, 8 November 2026): your new task says what to do, the sparkle beside it.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); await gotIt(); await wait(200); next(); await wait(200);
     next(); await wait(200); next(); await wait(200); next(); await wait(200); next(); await wait(200); next(); await wait(500); }},
   {id: 'tip-english', title: 'Tip: the English button', save: 'englishTip', why: 'The first line you hear again, its English behind the English button: a tip points at it, once.', run: async () => {
@@ -613,7 +620,8 @@ const SCREENS = [
     play(); await wait(100); interact(11, 2); await wait(300); click('.ntile[data-i="1"]'); click('.ntile[data-i="0"]'); await wait(400); }},
   {id: 'home-name-all', title: 'Your home’s name: all found', save: 'homeSign', why: 'All three: = a mountain of flowers and fruit, and A is OK.', run: async () => {
     play(); await wait(100); interact(11, 2); await wait(300); click('[data-a=ok]'); click('[data-a=ok]'); click('[data-a=ok]'); await wait(400); }},
-  {id: 'wants-other', title: 'He wants the other fruit', save: 'wantsApple', why: 'After you bring the peach first.', run: async () => { play(); await wait(500); }},
+  {id: 'wants-other', title: 'He wants the other fruit now', save: 'wantsApple', why: 'He took the peach (any fruit will do, munching it: 桃子！太好了！); once you’ve helped the thirsty monkey too, he wants the other one: 我要吃苹果！, teaching 要 (want).', run: async () => {
+    play(); await wait(100); talk(npc('hungry')); await wait(600); }},
   {id: 'animal-card', title: 'Meeting an animal', save: 'middle', why: 'The first time: its name on a new-word card.', run: async () => {
     play(); await wait(100); showNotice('羊', {note: 'A sheep is eating grass at the foot of the 山 (mountain). Answer its questions to make friends.'}); await wait(400); }},
   {id: 'animal-wants-to-play', title: 'It wants to play!', save: 'middle', why: 'An animal you’ve met jumps out of the grass and says 我们玩吧！ (Let’s play!), over its name, then what’s happening, as a message of its own (next screen); Play starts its questions (the first time, its card says what’s happening). So its questions never just start.', run: async () => {
@@ -636,9 +644,11 @@ const SCREENS = [
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(400); click('.drum'); await wait(100); click('.drum'); await wait(500); }},
   {id: 'goat-read', title: 'The goat: read', save: 'knowsWell', why: 'Grazing beside the path. Characters with pinyin, and just pictures to choose from.', run: async () => {
     play(); await wait(100); encounter({id: 'goat', hz: '山羊', img: portrait('goat'), wild: true, home: '山'}); await wait(500); }},
-  {id: 'little-game', title: 'The little monkey wants to play', save: 'littleGame', why: 'Straight after it teaches 朋友 (we’re friends!), 我们玩吧！ and its word game, with 2 🐚 the first time you win (26 October 2026). Not now, and it keeps a ! till you’ve played.', run: async () => {
+  {id: 'little-game', title: 'I spy with the little monkey', save: 'littleGame', why: 'Straight after it teaches 朋友 (we’re friends!), 我们玩吧！ and its game, out in the meadow (the gentler prologue, 8 November 2026): it says what it can see, only in Chinese, such as 我看见花！, and you run to it and press A. Four things you know, with 2 🐚 the first time; a ! till you’ve played.', run: async () => {
     play(); await wait(100); talk(npc('playful')); await wait(300); next(); await wait(500); }},
-  {id: 'hungry-game', title: 'The hungry monkey wants to play', save: 'hungryGame', why: 'Straight after you tell him 没关系, 我们玩吧！ and his word game, with a 桃子 for your bag the first time you win (26 October 2026).', run: async () => {
+  {id: 'little-spy-listen', title: 'I spy: what to do', save: 'littleGame', why: 'Its line closed, a message says what to do: find it, and press A at it. Something else with a word, and it says again what it sees.', run: async () => {
+    play(); await wait(100); talk(npc('playful')); await wait(300); next(); await wait(300); next(); await wait(500); }},
+  {id: 'hungry-game', title: 'The hungry monkey wants to play', save: 'hungryGame', why: 'Once he’s eaten, 我们玩吧！ and his word game, with a 桃子 for your bag the first time you win (26 October 2026).', run: async () => {
     play(); await wait(100); talk(npc('hungry')); await wait(300); next(); await wait(500); }},
   {id: 'thirsty-game', title: 'The thirsty monkey’s word game', save: 'thirstyGame', why: 'Once you’ve brought him water, he wants to play a word game too, with 2 🐚 the first time you win (30 October 2026).', run: async () => {
     play(); await wait(100); runSteps([THIRSTY_GAME], 'thirsty'); await wait(500); }},
@@ -656,12 +666,13 @@ const SCREENS = [
   {id: 'jump', title: 'Ready to jump', save: 'dared', why: 'Facing the waterfall, A says Jump. The cave is just visible behind the falling water.', run: async () => { play(); await wait(500); }},
   {id: 'jump-water', title: 'Through the waterfall', save: 'dared', why: 'A rush of falling water instead of a black fade (held still here).', run: async () => { play(); await wait(200); setInterval(() => { waterT = performance.now() - 560; }, 30); await wait(300); }},
   {id: 'jump-landed', title: 'Landed in the cave', save: 'inCave', why: 'Dripping: drops fall from your fur and a little puddle fades (held still here).', run: async () => { play(); await wait(200); setInterval(() => { dripUntil = performance.now() + 900; }, 30); await wait(300); }},
-  {id: 'cave', title: 'The Water Curtain Cave', save: 'inCave', why: 'Three things sparkle: the beds, the table and the bowls (the bridge’s word waits for chapter 1).', run: async () => { play(); await wait(500); }},
+  {id: 'cave', title: 'The Water Curtain Cave', save: 'inCave', why: 'Nothing sparkles yet: the beds, the table and the bowls wait till you show the old monkey round (the gentler prologue, 8 November 2026). The bridge’s word waits for chapter 1.', run: async () => { play(); await wait(500); }},
+  {id: 'cave-waits', title: 'Everything’s made of stone!', save: 'caveWaits', why: 'A at the beds, the table or the bowls before the troop comes in: what to do, and no new word yet (four in a row in the cave were too many).', run: async () => { play(); await wait(100); interact(1, 1); await wait(600); }},
   {id: 'cave-things', title: 'The troop’s things', save: 'caveTop', why: 'Beds of straw against the wall, the table, the bowls.', run: async () => { S.tips.select = S.tips.start = 1; play(); await wait(500); }},
   {id: 'set-off', title: 'Where does the water come from?', save: 'rocksGone', why: 'The troop gathers where the rocks were; you set off up the path alone.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(600); }},
   {id: 'mountain-path', title: 'The mountain path', save: 'climbing', why: 'Bushes and ledges send you through the long grass, where wild animals live.', run: async () => { play(); await wait(500); }},
-  {id: 'rabbit-advice', title: 'The rabbit’s advice', save: 'climbing', why: 'Animal friends from the meadow, met on the way up: the rabbit, by the long grass.', run: async () => {
+  {id: 'rabbit-advice', title: 'The rabbit’s warning', save: 'pathRabbit', why: 'Animal friends from the meadow, met on the way up: the rabbit, by the long grass, with a ! once you’ve met a snake. 路上有蛇！ (there are snakes on the path!), teaching 路 (the gentler prologue: the path taught it as you arrived).', run: async () => {
     play(); await wait(200); S.pos = {place: 'path', x: 15, y: 15, dir: 'left'}; placePlayer(); await wait(200); talk(npc('rabbit')); await wait(500); }},
   {id: 'river-fork', title: 'The fork in the river valley', save: 'valley', why: 'Over the bridge, away from the river, or along it? The sheep gives a hint.', run: async () => {
     play(); await wait(200); talk(npc('sheep')); await wait(500); }},
@@ -678,8 +689,10 @@ const SCREENS = [
     await wait(900); }},
   {id: 'big-stops', title: 'The big monkey stops you', save: 'settingOff', why: 'Setting off, past the big monkey in the way up: a ! pops up, you turn to face him, and he says 这是棍子。', run: async () => {
     play(); await wait(100); S.pos = {place: 'meadow', x: 15, y: 1, dir: 'up'}; placePlayer(); runEvents(); await wait(400); }},
-  {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'settingOff', why: 'Its own new-word card (the old monkey’s goodbye, 再见, came before, in another conversation), then the lesson on how to fight.', run: async () => {
+  {id: 'stick-lesson', title: 'The big monkey gives you a stick', save: 'settingOff', why: 'Its own new-word card (the old monkey’s goodbye, 再见, came before, in another conversation), then 来！ and a practice fight with him.', run: async () => {
     play(); await wait(100); S.pos = {place: 'meadow', x: 15, y: 1, dir: 'up'}; placePlayer(); runEvents(); await wait(1500); next(); await wait(600); }},
+  {id: 'big-spar', title: 'A practice fight', save: 'settingOff', why: 'Instead of two notes on how to fight (the gentler prologue, 8 November 2026): the big monkey spars with you, a fight you can’t lose (he never hurts you), so your first snake is your first real fight and you already know how.', run: async () => {
+    play(); await wait(100); S.w['棍子'] = {lv: 1, due: 0, ok: 0}; battle('bigSpar', {boss: true}); await wait(700); }},
   {id: 'stick-held', title: 'Holding the stick', save: 'fighting', why: 'From then on your monkey holds the stick (棍子) on the map, and in its picture: small, so a longer staff can replace it later.', run: async () => {
     play(); await wait(200); S.pos = {place: 'path', x: 16, y: 16, dir: 'down'}; placePlayer(); await wait(400); }},
   {id: 'spider-meet', title: 'A spider jumps out', save: 'fighting', why: 'In the long grass on the way up, in the bee’s place (the bee moves to chapter 1): its first meeting teaches 蜘蛛.', run: async () => { play(); await wait(100); battle('spider'); await wait(600); }},
@@ -726,10 +739,14 @@ const SCREENS = [
   {id: 'troop-arrives', title: 'The troop is up at the waterfall', save: 'leading', why: 'Out of the narrow way: they leap past you to their places by the waterfall.', run: async () => {
     play(); await wait(200); S.pos = {place: 'falls', x: 7, y: 3, dir: 'up'}; placePlayer(); pl.dir = 'up'; tryStep('up', performance.now()); await wait(1500); }},
   {id: 'tablet', title: 'The stone tablet', save: 'inCave', run: async () => { play(); await wait(100); ACTIONS.sign(LEGEND.L); await wait(400); }},
-  {id: 'tell', title: 'Telling the old monkey', save: 'explored', why: 'Your answer: fill the gap.', run: async () => {
+  {id: 'tell', title: 'Telling the troop', save: 'explored', why: 'Back out by the waterfall: 里面有什么？, and your answer, a gap to fill: 瀑布后面有洞 (there’s a cave behind the waterfall), which you then say.', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(400); }},
-  {id: 'led-in', title: 'The troop follows you in', save: 'ledIn', why: 'In the cave, with a ! over the old monkey.', run: async () => { play(); await wait(500); }},
-  {id: 'home', title: 'Our home', save: 'ledIn', why: 'The old monkey teaches 家.', run: async () => { play(); await wait(100); talk(npc('elder')); await wait(400); }},
+  {id: 'led-in', title: 'The troop follows you in', save: 'tour', why: 'In the cave, with a ! over the old monkey: show him round.', run: async () => { play(); await wait(500); }},
+  {id: 'cave-tour', title: 'Showing the old monkey round', save: 'tour', why: 'At each thing he asks 这是什么？ (what’s this?), then its card, and a question on it before the next: the beds, the table, the bowls (the gentler prologue: the cave keeps them, truer to the story, one at a time).', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(600); }},
+  {id: 'cave-tour-question', title: 'What is it?', save: 'tour', why: 'After the bed’s card, a question on it, before he asks about the table.', run: async () => {
+    play(); await wait(100); talk(npc('elder')); await wait(300); next(); await wait(300); await gotIt(); await wait(800); }},
+  {id: 'home', title: 'Our home', save: 'ledIn', why: 'Once you’ve shown him round, the old monkey teaches 家.', run: async () => { play(); await wait(100); talk(npc('elder')); await wait(400); }},
   {id: 'sounds-drink', title: 'Same sound, different tone', save: 'middle', why: 'Catching 喝 hē after 河 hé: after How it’s made, Sounds like ▸ shows the two side by side, each with how its tone moves; Hear both says one, then the other.', run: async () => {
     play(); await wait(100); S.w['喝'] = {lv: 0, due: 0, ok: 0}; showNotice('喝', {quiet: true}); await wait(200); click('[data-a=made]'); await wait(200); click('#sheet .primary'); await wait(400); }},
   {id: 'sounds-deer', title: 'Sounds the same', save: 'middle', why: 'Catching 鹿 lù after 路 lù: straight to Sounds like ▸, and they sound exactly the same.', run: async () => {

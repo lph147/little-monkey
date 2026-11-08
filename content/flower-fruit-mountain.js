@@ -11,10 +11,22 @@ const THIRSTY_GAME = {wordGame:{ask:'Play a word game with the thirsty monkey? I
 // in order, first words, then the animals and the meadow's words, then the troop), so each part comes one at a time.
 // Each says what the old monkey asked for, as it is now, rather than just pointing at TASKS.
 const TROOP_WAITS = [{say:'hi'}, {reply:'你好'},
-  {message:'First, learn 4 words, as the old monkey asked: walk up to things that sparkle ✨ and press A. Then come back!', if:{elder:1, newWords:{below:4}}},
-  {message:'First, go back to the old monkey: he wants to see the words you’ve learned. Then come back!', if:{elder:1, newWords:{atLeast:4}}},
-  {message:'First, find the {动物|animals} and learn the words for the meadow, as the old monkey asked. Then come back!', if:{elder:2, any:[{animalsLeft:{atLeast:1}}, {meadowWords:{below:5}}]}},
+  {message:'First, find the two things that sparkle ✨, as the old monkey asked. Then come back!', if:{elder:1, firstWords:{below:2}}},
+  {message:'First, go back to the old monkey: he wants to see the words you’ve learned. Then come back!', if:{elder:1, firstWords:2}},
+  {message:'First, find the {动物|animals}, as the old monkey asked. Then come back!', if:{elder:2, animalsLeft:{atLeast:1}}},
+  {message:'First, learn the words for the meadow: things that sparkle ✨ have words. Then come back!', if:{elder:2, animalsLeft:0, meadowWords:{below:5}}},
   {message:'First, go back to the old monkey: he wants to hear the words for the meadow. Then come back!', if:{elder:2, animalsLeft:0, meadowWords:5}}];
+// In the Water Curtain Cave in the prologue, its beds, table and bowls wait for you to show the old monkey round (decided 8
+// November 2026, the gentler prologue: four new words in a row there): A at one whose word (w) you don't know yet says so,
+// and teaches nothing yet.
+const CAVE_WAITS = w => [{if:{chapter:0, cave:{below:4}, new:w}, do:[{message:'Everything’s made of stone in here! Go back and tell the troop what you’ve found.'}]},
+  {if:{chapter:0, cave:4, new:w}, do:[{message:'Show the old monkey round: talk to him, and he’ll ask what everything is.'}]}];
+// The little monkey's game in the meadow (decided 8 November 2026, the gentler prologue: your first game out in the meadow,
+// not on a card): it says what it can see, only in Chinese, and you run to it and press A, four of the words you've found.
+const LITTLE_SPY = {spy:'littleGame', rounds:4, things:[{word:'树', say:'spyTree'}, {word:'花', say:'spyFlower'}, {word:'河', say:'spyRiver'},
+    {word:'石头', say:'spyStone'}, {word:'山', say:'spyMountain'}, {word:'草', say:'spyGrass'}],
+  listen:'The little monkey says what it can see, only in Chinese. Find it, and press A at it!', found:'That’s it: {word}!', wrong:'Not that one. Listen again!',
+  done:[{say:'great'}, {shells:2, note:'The little monkey gives you 2 🐚.'}]};
 // What A at a crab on the shore does (chapter 1), each crab the same: pick it up, with a question on a word you know (the
 // grab step: get it wrong, and it pinches you and scuttles off). The first is the hungry monkey's, for the feast, teaching
 // 螃蟹; after that, you say which it is (这是螃蟹), and let it go.
@@ -190,7 +202,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, goatHop:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, thirstyGame:0, meadowCheck:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, fireflyFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0, bumped:0, knocked:0},
   // Its progress once you've finished it (sailed away on your raft): how Area 2's chapter 2 finds Flower Fruit Mountain
   // twenty years later, everything built (its places, borrowed: js/data.js).
-  left: {chapter:1, elder:2, hungry:'done', thirsty:'done', flowers:'done', wood:'done', stones:'done', honey:'done', melonSeeds:'done', grapeSeeds:'done', bananaSeeds:'done', cowFood:'done', boar:1, gate:true, climb:4, story:true, cave:6, count:3, home:2, build:2, school:2, schoolFlowers:true, shop:3, feast:3,
+  left: {chapter:1, elder:2, hungry:'done', hungry2:'done', thirsty:'done', flowers:'done', wood:'done', stones:'done', honey:'done', melonSeeds:'done', grapeSeeds:'done', bananaSeeds:'done', cowFood:'done', boar:1, gate:true, climb:4, story:true, cave:6, count:3, home:2, build:2, school:2, schoolFlowers:true, shop:3, feast:3,
     bowls:'done', tableware:2, bees:11, cow:9, milk:'done', milkTable:3, dairy:5, garden:4, melonPlanted:4, grapePlanted:4, bananaPlanted:4, fruitTable:3,
     fish:'done', fishTable:1, shrimp:'done', shrimpTable:1, crab:'done', crabTable:1, firstLessons:6, pastureLog:1, cowSeen:1, streamSeen:1, exam:1, feastHeld:1, raft:3, seaSeen:1},
 
@@ -200,7 +212,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // chapter's (chapter), or just those of one place in it (place).
   // minus takes some away; max is the most it can be.
   counters: {
-    newWords: {count:'wordsLearned', minus:1, max:4},   // words learned apart from one (you're born knowing 石头), up to 4
+    firstWords: {count:'known', words:['山', '树']},   // your first two words, the two things that sparkle as you set off (the gentler prologue: decided 8 November 2026)
     animals: {count:'animals', place:'meadow'},   // the prologue's animals in the meadow, which the rocks wait for (the goat is up
     found: {count:'animalsFound', place:'meadow'},   // in the river valley, on its own)
     animalsLeft: {count:'animalsLeft', place:'meadow'},
@@ -335,16 +347,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
   tasks: [
     {id:'elder', main:true, if:{elder:0}, text:'Say {你好} to the old monkey, by your {石头}', arrow:'elder'},
     {id:'seal', if:{sealsWaiting:true}, text:'A page of your scroll is full: show it to the old monkey', arrow:'elder'},   // (the old monkey's scroll: js/scrolls.js)
-    {id:'elder2', main:true, if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
-    {id:'learn4', main:true, if:{elder:1, newWords:{below:4}}, text:'Learn 4 words: walk up to things that sparkle ✨ and press A ({newWords}/4)', arrow:{sparkle:true}},   // (the arrow over the nearest thing that sparkles)
+    {id:'elder2', main:true, if:{elder:1, firstWords:2}, text:'Talk to the old monkey again', arrow:'elder'},
+    {id:'learn4', main:true, if:{elder:1, firstWords:{below:2}}, text:'Find the two things that sparkle ✨: walk up to them and press A ({firstWords}/2)', arrow:{sparkle:true}},   // (the arrow over the nearest thing that sparkles)
     // (the prologue's animals: a game already in chapter 1 when the sheep came, 23 October 2026, can still meet it in the meadow)
     {id:'animals', main:true, if:{chapter:0, elder:{atLeast:2}, animalsLeft:{atLeast:1}}, text:'Find the {动物|animals}: in rustling grass, out in the open, up a tree ({found}/{animals})'},
     {id:'meadowCheck', main:true, if:{elder:{atLeast:2}, chapter:0, gate:false, meadowWords:5, animalsLeft:0, meadowCheck:0}, text:'Show the old monkey the words for the meadow', arrow:'elder'},
-    {id:'troop', main:true, if:{chapter:0, gate:false, meadowCheck:1, any:[{hungry:'not asked'}, {thirsty:'not asked'}, {new:'朋友'}, {new:'我'}]}, text:'Meet the troop: a ! over a monkey means it wants something'},
-    {id:'meadow', main:true, if:{elder:{atLeast:2}, chapter:0, meadowWords:{below:5}}, text:'Learn the words for the meadow ({meadowWords}/5). Still to find: {left:meadowWords}. Things that sparkle ✨ have words.', where:'meadow'},
-    {id:'h1', main:true, if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, text:'Find some {水果|fruit} for the hungry monkey', where:'meadow'},
-    {id:'h1b', main:true, if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:true}}, text:'Find the {wanted:hungry} the hungry monkey wants', where:'meadow'},
+    {id:'troop', main:true, if:{chapter:0, gate:false, meadowCheck:1, any:[{hungry:'not asked'}, {thirsty:'not asked'}, {new:'朋友'}, {new:'我'}, {thirsty:'done', hungry2:'not asked'}]}, text:'Meet the troop: a ! over a monkey means it wants something'},
+    {id:'meadow', main:true, if:{elder:{atLeast:2}, chapter:0, meadowWords:{below:5}, animalsLeft:0}, text:'Learn the words for the meadow ({meadowWords}/5). Still to find: {left:meadowWords}. Things that sparkle ✨ have words.', where:'meadow'},
+    {id:'h1', main:true, if:{hungry:'asked', holding:{hungry:false}}, text:'Find some {水果|fruit} for the hungry monkey', where:'meadow'},
     {id:'h2{holding:hungry}', main:true, if:{hungry:'asked', holding:{hungry:true}}, text:'Give the {holding:hungry} to the hungry monkey', arrow:'hungry'},
+    {id:'h3', main:true, if:{hungry2:'asked', holding:{hungry2:false}}, text:'Find the {wanted:hungry2} the hungry monkey wants now', where:'meadow'},   // (his second wish: the other fruit)
+    {id:'h4{holding:hungry2}', main:true, if:{hungry2:'asked', holding:{hungry2:true}}, text:'Give the {holding:hungry2} to the hungry monkey', arrow:'hungry'},
     {id:'t1', main:true, if:{thirsty:'asked', holding:{thirsty:false}}, text:'Collect {水} from the {河} or the pond', arrow:[11, 9]},
     {id:'t2', main:true, if:{thirsty:'asked', holding:{thirsty:true}}, text:'Give the {水} to the thirsty monkey', arrow:'thirsty'},
     {id:'climb0', main:true, if:{gate:true, climb:0}, text:'Talk to the old monkey, where the {石头|rocks} were', arrow:'elder'},
@@ -367,10 +380,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'shopMoved', if:{shop:1}, text:'The {老板} has come up to the home ground: go and see him, by the way in from the {瀑布}', arrow:'boss'},
     {id:'dare', main:true, if:{story:true, cave:0}, text:'Talk to the old monkey: what could be behind the {瀑布}?', arrow:'elder'},
     {id:'jump', main:true, if:{cave:1}, text:'{跳} through the {瀑布}', arrow:[4, 1, 'falls']},
-    {id:'explore', main:true, if:{cave:2, caveThings:{below:3}}, text:'Look around the {洞} ({caveThings}/3)', where:'cave'},
-    {id:'tell', main:true, if:{cave:2, caveThings:3}, text:'Tell the old monkey about the {洞}', arrow:'elder'},
+    {id:'tell', main:true, if:{cave:2}, text:'Go back and tell the troop what’s behind the {瀑布}', arrow:'elder'},
     {id:'lead', main:true, if:{cave:3}, text:'Lead the troop into the {洞}: jump through the waterfall', arrow:[4, 1, 'falls']},
-    {id:'home', main:true, if:{cave:4}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
+    {id:'tour', main:true, if:{cave:4, caveThings:{below:3}}, text:'Show the old monkey round the {洞}', arrow:'elder'},
+    {id:'home', main:true, if:{cave:4, caveThings:3}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
     {id:'home0', main:true, if:{chapter:1, home:0}, text:'Talk to the old monkey in the {洞}', arrow:'elder'},
     {id:'home1', main:true, if:{home:1}, text:'Lead the old monkey to the troop’s new home ground, along beside the {瀑布}', arrow:[19, 2, 'falls']},
     {id:'wood', main:true, if:{wood:'asked', holding:{wood:false}}, text:'Find three pieces of {木头} in the pine wood ({woodGot}/3)', arrow:{place:'pineWood'}},
@@ -494,9 +507,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {part:'river', text:'Bring the troop up to the {瀑布}', show:{climb:{atLeast:2}}, done:{climb:{atLeast:4}}},
     {part:'river', text:'Read the story at the {瀑布}', show:{climb:{atLeast:4}}, done:{story:true}},
     {part:'falls', text:'{跳} through the {瀑布}', show:{cave:{atLeast:1}}, done:{cave:{atLeast:2}}},
-    {part:'falls', text:'Look around the {洞}', show:{cave:{atLeast:2}}, done:{caveThings:3}},
-    {part:'falls', text:'Tell the old monkey what’s inside', show:{caveThings:3}, done:{cave:{atLeast:3}}},
+    {part:'falls', text:'Tell the troop what’s behind the {瀑布}', show:{cave:{atLeast:2}}, done:{cave:{atLeast:3}}},
     {part:'king', text:'Lead the troop into the {洞}', show:{cave:{atLeast:3}}, done:{cave:{atLeast:4}}},
+    {part:'king', text:'Show the old monkey round the {洞} ({caveThings}/3)', show:{cave:{atLeast:4}}, done:{caveThings:3}},
     {part:'king', text:'Hear what the old monkey calls the {洞}', show:{cave:{atLeast:4}}, done:{cave:{atLeast:5}}},
     {part:'king', text:'Count the troop into the {洞} ({troopIn}/3)', show:{cave:{atLeast:5}}, done:{count:3}},
     {part:'king', text:'Become the troop’s {王}', show:{count:3}, done:{cave:{atLeast:6}}},
@@ -550,7 +563,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
     // (the old monkey's lessons and practice: only while he's at school, not at the feast's tables or seeing you off on the shore)
-    elder: [{if:{...FEAST_READY, exam:0}, show:'!'}, {if:{elder:2, chapter:0, gate:false, meadowWords:5, animalsLeft:0, meadowCheck:0}, show:'!'}, {if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{school:{atLeast:2}, practice:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, newWords:{atLeast:4}}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2, caveThings:3}, show:'!'},
+    elder: [{if:{...FEAST_READY, exam:0}, show:'!'}, {if:{elder:2, chapter:0, gate:false, meadowWords:5, animalsLeft:0, meadowCheck:0}, show:'!'}, {if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{school:{atLeast:2}, practice:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, firstWords:2}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}, {if:{chapter:0, count:3}, show:'!'}],
     boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{shop:1}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
       {if:{canBuy:true}, show:'?'}],   // up at the home ground, to have his shop built; ? once you can afford something new, such as a headband
@@ -559,6 +572,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{school:{atLeast:2}, new:'同学'}, show:'!'}],   // and at school, that you're classmates
     hungry: [{if:{meadowCheck:1, hungry:'not asked'}, show:'!'}, {if:{elder:{atLeast:1}, hungry:'asked', holding:{hungry:true}}, show:'?'},
       {if:{hungry:'done', hungryGame:0, gate:false}, show:'!'},   // once he's eaten, in the meadow, he wants to play his word game (once: win or lose)
+      {if:{hungry:'done', thirsty:'done', hungry2:'not asked', gate:false}, show:'!'}, {if:{hungry2:'asked', holding:{hungry2:true}}, show:'?'},   // then his second wish, the other fruit
       {if:{hungry:'done', new:'水果'}, show:'!'},   // and a game that helped him before he taught 水果 (24 October 2026) learns it now
       {if:{feast:2, bowls:'not asked'}, show:'!'}, {if:{bowls:'asked', holding:{bowls:true}}, show:'?'},   // chapter 1: by the feast's tables, for bowls,
       {if:{feast:2, tableware:{atLeast:2}}, show:'!'},   // then to tell you what the feast still needs,
@@ -575,6 +589,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{milkTable:{atLeast:1}, dairy:0}, show:'!'}, {if:{dairy:2}, show:'!'}, {if:{dairy:4}, show:'!'}],   // chapter 1: by the road at the home ground, with news of a cow on the mountain; then the troop's ready to build it a home; and he'd love some of its milk
     pastureRabbit: [{if:{cow:{below:3}, rabbitTold:0}, show:'!'}],   // until it has told you where the cow went
     cow: [{if:{cow:{below:4}}, show:'!'}, {if:{cowFood:'asked', holding:{cowFood:true}}, show:'?'}, {if:{cow:4, following:{cow:false}}, show:'!'}, {if:{cow:7, following:{cow:false}}, show:'!'}],   // the cow, lost and alone in the pasture, till you've won its trust; and if it ran back to its spring, or isn't following you to its new home
+    rabbit: [{if:{knows:'蛇', new:'路'}, show:'!'}],   // by the mountain path's long grass, once you've met a snake: it warns you, teaching 路
     squirrel: [{if:{squirrelPlayed:0}, show:'!'}], goat: [{if:{goatPlayed:0, climb:{atLeast:2}}, show:'!'}],   // they want to play (the once, till they have; the goat once you've been up to the waterfall, so not the moment it's your friend)
     ledgeGoat: [{if:{ledgeTip:0}, show:'!'}],   // until it has told you about the banks
     lookoutGoat: [{if:{lookTip:0}, show:'!'}],  // until it has told you about the view
@@ -616,17 +631,24 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // lines and sentence, for when you bring it). He teaches 水果 as he asks, and 吃 when you give him the one he wants,
     // just before you say 我要吃… (decided 24 October 2026: he taught 吃 as he asked, and the fruit trees taught 水果; now each
     // tree teaches its own fruit, as you pick it).
-    hungry: {from:'hungry', teach:'水果', ask:'hungry', asked:'The hungry monkey wants some fruit. Check your tasks.',
+    // (decided 8 November 2026, the gentler prologue: any fruit will do, and he munches it, teaching 吃; later, once you've
+    // helped the thirsty monkey, he wants the other one, hungry2, teaching 要 as he asks)
+    hungry: {from:'hungry', teach:'水果', ask:'hungry', any:true, asked:'The hungry monkey wants some fruit. Check your tasks.',
       choices: {
         '桃子': {wrong:'notPeach', offer:'havePeach', sentence:'我 要 吃 桃子', sentenceEn:'I want to eat a peach.'},
         '苹果': {wrong:'notApple', offer:'haveApple', sentence:'我 要 吃 苹果', sentenceEn:'I want to eat an apple.'}
       },
       wrongMessage:'The monkey gives the fruit back. It wants the {wanted:hungry}.',   // (no sorry: 对不起 and 没关系 come in chapter 1, decided 4 November 2026)
-      firstTeach:[{word:'吃', note:'吃 means to eat.'}, {word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
+      firstTeach:[{word:'吃', note:'吃 means to eat.'}],
       reward:3, thanks:'thanks', thanksReply:'不客气'},
+    hungry2: {from:'hungry', other:'hungry', teach:'要', ask:'wantApple', asked:'The hungry monkey wants the other fruit now. Check your tasks.',
+      choices: {
+        '桃子': {ask:'wantPeach', wrong:'notPeach', offer:'havePeach', sentence:'我 要 吃 桃子', sentenceEn:'I want to eat a peach.'},
+        '苹果': {ask:'wantApple', wrong:'notApple', offer:'haveApple', sentence:'我 要 吃 苹果', sentenceEn:'I want to eat an apple.'}
+      },
+      wrongMessage:'The monkey gives the fruit back. It wants the {wanted:hungry2}.', reward:2, thanks:'thanks', thanksReply:'不客气'},
     thirsty: {from:'thirsty', wants:'水', verb:'喝', ask:'thirsty', asked:'The thirsty monkey wants something to drink. Check your tasks.',
-      offer:'haveWater', firstTeach:[{word:'要', note:'Use 要 to say what you want.'}, {word:'我', note:'我 means I or me.'}],
-      sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
+      offer:'haveWater', sentence:'我 要 喝 水', sentenceEn:'I want to drink water.', reward:3, thanks:'thanks', thanksReply:'不客气'},
     // chapter 1, a side quest: once the school's first colour lesson has taught you red, yellow and white, the big monkey
     // wants flowers to plant in front of it, one of each of those colours, picked at the home ground (see gather in the legend). (They were the
     // prologue's until 22 October 2026, wanted for no reason: the colours are taught at school now.)
@@ -929,7 +951,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // the rocks roll away once everything else in the prologue is done: the hungry and thirsty monkeys helped, every animal
     // found, the words for the meadow learned, and the troop met: the little monkey (朋友) and the big monkey (我), since
     // 31 October 2026 (the big monkey's flowers wait for chapter 1, decided 22 October 2026)
-    {if:{hungry:'done', thirsty:'done', animalsLeft:0, meadowWords:5, meadowCheck:1, knows:'朋友', any:[{knows:'我'}], gate:false}, do:[
+    {if:{hungry:'done', thirsty:'done', hungry2:'done', animalsLeft:0, meadowWords:5, meadowCheck:1, knows:'朋友', any:[{knows:'我'}], gate:false}, do:[
       {set:{gate:true}},
       {rumble:true},   // the ground shakes and the map is redrawn
       {message:'A rumble from the {山}! The rocks north of the meadow have rolled away, and the troop gathers there.'}
@@ -2143,9 +2165,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'Y': {look:'tree', word:'树'},   // the forest round the edge of the map
     // each fruit tree teaches its own fruit (decided 24 October 2026: they taught 水果, fruit, first, which the hungry monkey
     // teaches now, as he asks for some): looking at it, or as you pick one for him
-    'P': {look:'peachTree', word:'桃子', note:'Ripe peaches hang from its branches.', landmark:true, gather:{item:'桃子', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'},
+    'P': {look:'peachTree', word:'桃子', note:'Ripe peaches hang from its branches.', landmark:true, gather:{item:'桃子', for:['hungry', 'hungry2'], label:'Pick', note:'You pick one from the tree.', message:'You picked a {桃子}. Take it to the hungry monkey.'},
       pick:{item:'桃子', if:{hungry:'done'}}},   // once the hungry monkey has eaten, its fruit is for your bag
-    'Q': {look:'appleTree', word:'苹果', note:'Ripe apples hang from its branches.', landmark:true, gather:{item:'苹果', for:'hungry', label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'},
+    'Q': {look:'appleTree', word:'苹果', note:'Ripe apples hang from its branches.', landmark:true, gather:{item:'苹果', for:['hungry', 'hungry2'], label:'Pick', note:'You pick one from the tree.', message:'You picked a {苹果}. Take it to the hungry monkey.'},
       pick:{item:'苹果', if:{hungry:'done'}}},
     'S': {look:'stone', word:'石头', note:'You were born from this stone.', landmark:true},
     'N': {look:'sign', landmark:true, action:'sign'},
@@ -2164,7 +2186,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{climb:{below:4}}, do:[{card:'瀑布'}]}   // the story is read here once the troop has come up
     ]},
     // the mountain path
-    'r': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'A path up the mountain, beside the river.'},
+    'r': {look:'path', walk:true, word:'路'},   // (路 comes from the rabbit by the long grass, after your first snake: decided 8 November 2026)
     'n': {look:'longGrass', walk:true, wild:['snake', 'spider', 'weasel']},   // long grass: snakes and spiders jump out to fight
     'w': {look:'bush'},   // bushes along the path
     'o': {look:'boulder', word:'石头'},   // a boulder by the path
@@ -2177,13 +2199,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     'U': {look:'water'},   // the stream through the cave
     'I': {look:'ironBridge', walk:true},   // (it taught 桥 until 21 October 2026: the word waits for chapter 1, so the cave has three new words)
     'D': {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.', onLook:[   // once you know 床, A sleeps in it
+      ...CAVE_WAITS('床'),   // (in the prologue: you show the old monkey round, and he asks what they are)
       {if:{knows:'床', new:'睡觉'}, label:'Sleep', do:[{card:'睡觉', note:'You lie down on the stone bed and go to sleep.'}, {sleep:'You wake up with your health full.'}]},
       {if:{knows:'床'}, label:'Sleep', do:[{sleep:'You wake up with your health full.'}]}]},
-    'A': {look:'stoneTable', word:'桌子', landmark:true, note:'A big table of stone.'},
+    'A': {look:'stoneTable', word:'桌子', landmark:true, note:'A big table of stone.', onLook:[...CAVE_WAITS('桌子')]},
     // the troop's bowls in the cave, stacked up; in chapter 1, the hungry monkey wants six for the feast's tables (bowls): A
     // takes them one at a time, counting
     'V': {look:'bowlStack', word:'碗', landmark:true, note:'Stacks of bowls, ready for the troop.',
-      onLook:[{if:{bowls:'asked', holding:{bowls:false}}, label:'Take', sparkle:true, do:[{pickUp:'碗'}, {collect:'碗', for:'bowls', count:6,
+      onLook:[...CAVE_WAITS('碗'), {if:{bowls:'asked', holding:{bowls:false}}, label:'Take', sparkle:true, do:[{pickUp:'碗'}, {collect:'碗', for:'bowls', count:6,
         each:'You take a {碗} from the stack.', full:'You have six {碗|bowls}. Take them to the hungry monkey, at the feast’s tables!'}]}]},
     // chapter 1: the way from the waterfall to the home ground, and the home ground's plots, their signs, and the ways out
     // chapter 1: the bushes at the bottom of the meadow, beside the river, till the troop clears the way down to the shore (for
@@ -2437,18 +2460,20 @@ const FLOWER_FRUIT_MOUNTAIN = {
   ],
 
   // While you learn your first words, the sparkles twinkle bigger, so you can see what to look for.
-  bigSparkles: {elder:1, newWords:{below:4}},
+  bigSparkles: {elder:1, firstWords:{below:2}},
   // Things that sparkle until you learn their word: the word, where it is on the map, and
   // (optionally) an if that must match before it starts sparkling.
   sparkles: [
-    {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 7]},
-    {word:'草', at:[5, 7]}, {word:'树', at:[12, 8]},
-    {word:'桃子', at:[1, 6]}, {word:'苹果', at:[21, 17]},   // the fruit trees: a peach tree and an apple tree
-    {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
+    // your first two words, then a flower by the squirrel's tree once the sheep's your friend, and the long grass by it once
+    // the squirrel is, where the rabbit hides (the gentler prologue: decided 8 November 2026, a few words at a time)
+    {word:'石头', at:[9, 1]}, {word:'山', at:[12, 3]}, {word:'花', at:[11, 17], if:{friends:{sheep:true}}},
+    {word:'草', at:[9, 18], if:{friends:{squirrel:true}}}, {word:'树', at:[12, 8]},
+    {word:'桃子', at:[1, 6], if:{any:[{hungry:'asked'}, {hungry2:'asked'}, {chapter:1}]}}, {word:'苹果', at:[21, 17], if:{any:[{hungry:'asked'}, {hungry2:'asked'}, {chapter:1}]}},   // the fruit trees, once the hungry monkey wants fruit
+    {word:'河', at:[18, 7], if:{animalsLeft:0}}, {word:'鱼', at:[11, 9], if:{animalsLeft:0}},   // (the meadow's words, once you've found its animals)
     {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
     {word:'榴莲', at:[13, 3, 'hotSprings']},   // the durian tree in the hot spring valley's warm corner
     {at:[11, 2], if:{homeName:1}},        // the sign by your stone, once you can read your home's name, till you have
-    {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']},
+    {word:'床', at:[1, 1, 'cave'], if:{cave:{atLeast:6}}}, {word:'桌子', at:[3, 3, 'cave'], if:{cave:{atLeast:6}}}, {word:'碗', at:[9, 3, 'cave'], if:{cave:{atLeast:6}}},   // (in the prologue the old monkey asks what they are, as you show him round)
     // a game whose feast tables were out before 27 October 2026 (the big monkey teaches these now): the chopsticks in their cup
     // at the end of the big table, and the spoon in the yoghurt on the second
     {word:'筷子', at:[19, 7, 'homeGround'], if:{tableware:2}},
@@ -2659,8 +2684,6 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '地图': {zh:'这 是 我 的 地图 。', en:'This is my map.'},   // (a draft, not checked yet)
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
     '山羊': {zh:'山羊 在 山 上 吃 草 。', en:'The goat is eating grass on the mountain.'},
-    '洞': {zh:'山 里 有 一个 洞 。', en:'There is a cave in the mountain.'},
-    '路': {zh:'山 上 有 路 。', en:'There is a path up the mountain.'},   // (drafts, not checked yet)
     '蜘蛛': {zh:'树 上 有 蜘蛛 。', en:'There is a spider in the tree.'},   // (a draft, not checked yet)
     '酸奶': {zh:'酸奶 是 白色 的 。', en:'Yoghurt is white.'},   // (drafts, not checked yet)
     '奶酪': {zh:'奶酪 是 黄色 的 。', en:'Cheese is yellow.'},
@@ -2693,6 +2716,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // area's lines), and get angry with so much of its health left (angry: at, a share of it; twice, attacking twice a turn
   // from then on; note and then, what you're told).
   enemies: {
+    // the big monkey, sparring with you as he gives you your stick: a fight you can't lose (hits 0), not in any long grass
+    bigSpar: {name:{zh:'大猴子', py:'dà hóuzi', en:'big monkey'}, monkey:'big', health:20, hits:0, attacks:['草', '石头', '树', '花'],
+      meet:'The big monkey raises his stick: let’s practise! On your turn, choose 打 (hit) and answer to hit him.', hide:'The big monkey jumps out of sight…', attack:'The big monkey swings his stick at you!',
+      away:'The big monkey laughs, and lowers his stick.', lost:'The big monkey helps you up.', reward:0},
     snake: {word:'蛇', health:20, hits:10, night:.5, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
       hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', sniff:'The {蛇} sniffs the air, and slithers off!', reward:1},
     spider: {word:'蜘蛛', health:20, hits:10, night:2, attacks:['树', '草', '石头', '山'], meetNote:'A spider scuttles out of the long grass!', meet:'A {蜘蛛} scuttles at you!',
@@ -2919,6 +2946,14 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // what a monkey says when you bring what it asked for, before you give it (not 你有…吗？, do you have…?: 有 yǒu, in the
     // same place just before 我要… yào, sounded too like it; decided 24 October 2026)
     havePeach: {zh:'桃子 ！ 太 好 了 ！', en:'A peach! Wonderful!'},
+    wantApple: {zh:'我 要 吃 苹果 ！', en:'I want to eat an apple!'},   // his second wish, once he's eaten a peach (teaching 要)
+    wantPeach: {zh:'我 要 吃 桃子 ！', en:'I want to eat a peach!'},   // or, once he's eaten an apple
+    spyTree: {zh:'我 看见 树 ！', en:'I can see a tree!'},   // the little monkey's I spy, in the meadow
+    spyFlower: {zh:'我 看见 花 ！', en:'I can see a flower!'},
+    spyRiver: {zh:'我 看见 河 ！', en:'I can see the river!'},
+    spyStone: {zh:'我 看见 石头 ！', en:'I can see a stone!'},
+    spyMountain: {zh:'我 看见 山 ！', en:'I can see a mountain!'},
+    spyGrass: {zh:'我 看见 草 ！', en:'I can see grass!'},
     haveWater: {zh:'水 ！ 太 好 了 ！', en:'Water! Wonderful!'},
     haveApple: {zh:'苹果 ！ 太 好 了 ！', en:'An apple! Wonderful!'},
     thanks: {zh:'谢谢 你 ！', en:'Thank you!'},
@@ -2971,15 +3006,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // Up the stream (drafts, not checked yet: see CHINESE.md)
     whereFrom: {zh:'水 从 哪里 来 ？', en:'Where does the water come from?'},
     snakes: {zh:'山 上 有 蛇 。', en:'There are snakes up the mountain.'},
-    snakesInGrass: {zh:'草 里 有 蛇 。', en:'There are snakes in the grass.'},
+    snakesOnPath: {zh:'路 上 有 蛇 ！', en:'There are snakes on the path!'},   // the rabbit by the long grass, after your first snake (a draft for the native speaker)
     waterFromMountain: {zh:'水 从 山 上 来 。', en:'The water comes from up the mountain.'},
     foundFall: {zh:'山 上 有 瀑布 ！', en:'There’s a waterfall up the mountain!'},
     stickHere: {zh:'这 是 棍子 。', en:'This is a stick.'},
+    comeOn: {zh:'来 ！', en:'Come on!'},   // the big monkey, raising his stick to spar with you (a draft for the native speaker)
     // Chapter 1 (drafts, not checked yet: see CHINESE.md)
     whatBehind: {zh:'瀑布 后面 有 什么 ？', en:'What’s behind the waterfall?'},
     dare: {zh:'谁 跳 进去 ， 谁 就 是 王 ！', en:'Whoever jumps in will be king!'},
     scared: {zh:'我 怕 ！', en:'I’m scared!'},
     inside: {zh:'里面 有 什么 ？', en:'What’s inside?'},
+    caveBehind: {zh:'瀑布 后面 有 洞 ！', en:'There’s a cave behind the waterfall!'},   // you, telling the troop (a draft for the native speaker)
+    whatsThis: {zh:'这 是 什么 ？', en:'What’s this?'},   // the old monkey, as you show him round the cave
     letsGo: {zh:'太 好 了 ！ 我们 去 看看 ！', en:'Wonderful! Let’s go and see!'},
     haveHome: {zh:'我们 有 家 了 ！', en:'We have a home now!'},   // chapter 1 (drafts, not checked yet: see CHINESE.md)
     bigHere: {zh:'这里 很 大 ！', en:'It’s so big here!'},
@@ -3123,7 +3161,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   message   a line of English, such as what's happening: in a conversation it waits in the speech
   //             box until you press A; anywhere else it's a message at the bottom of the screen
   // In an if: elder:0 checks what the area remembers; new:'猴子' is true while you don't know
-  // a word yet, knows:'朋友' once you do; a counter, such as newWords:{below:4} or {atLeast:4}.
+  // a word yet, knows:'朋友' once you do; a counter, such as firstWords:{below:2} or {atLeast:2}.
   talk: {
     crab1: CRAB_TALK, crab2: CRAB_TALK, crab3: CRAB_TALK,   // the crabs on the shore (CRAB_TALK, above)
     // the fishing monkey by the stream (chapter 1): once the hungry monkey wants a big fish, a rod for you
@@ -3139,24 +3177,19 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {newWord:'你好'},
         {reply:'你好'},
         {say:'iamOld'},
-        {message:'Every baby monkey explores the mountain to find out what things are called. Today it’s your turn!'},
-        {say:'go', hint:'✨ Things that sparkle have words. Walk up to one and press A. Learn 4, then come back to the old monkey.'},
+        {say:'go'},   // (less to read, decided 8 November 2026: what to do is in your task, the two things that sparkle)
         {set:{elder:1}}
       ]},
-      {if:{elder:1, newWords:{below:4}}, do:[
-        {say:'go', hint:'✨ Learn 4 words first, then come back ({newWords}/4). Things that sparkle have words: walk up to one and press A.'}
-      ]},
+      {if:{elder:1, firstWords:{below:2}}, do:[{say:'go'}]},
       {if:{elder:1}, do:[
-        {message:'You’re back! The old monkey wants to hear which words you’ve learned.'},   // (decided 25 October 2026: 我们看看！ on its own said nothing of why)
         {say:'letsLook'},   // he checks your first words: you match them to their pictures
         {match:'Show the old monkey your words', stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him your words.'},
         {say:'great'},
         {scroll:true},   // his old scroll, its first pictures coming back: the words you've just shown him (decided 8 November 2026)
-        {say:'animals', teach:'动物', hint:'Animals live in rustling grass, out in the open and up a tree.'},
+        {say:'animals', teach:'动物'},
         {newWord:'动物', note:'There are {animals} different animals here in the meadow. Can you find them all?'},
-        {message:'The old monkey wants you to learn the words for the meadow too: {left:meadowWords}. Things that sparkle ✨ have words.', if:{meadowWords:{below:5}}},
-        {message:'Find the animals and learn the words for the meadow, then come back to the old monkey. If you forget what to do, press TASKS. MENU shows the words you’ve learned.'},
-        {set:{elder:2}}
+        {set:{elder:2}},   // (one task at a time: the animals first, then the meadow's words, each its own task)
+        {message:'If you forget what to do, press TASKS.'}   // (and MENU: his scroll's card says where it is)
       ]},
       // the prologue: once you've learned the five words for the meadow he asked for, and found its animals, he checks the
       // words, as he did your first words (decided 30 October 2026, after measuring the game's pacing: the meadow's words came
@@ -3173,7 +3206,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'Some of the troop need help. A ! over a monkey means it wants something: go and see them all!'}
       ]},
       // till then, he reminds you what to do
-      {if:{elder:2, chapter:0, gate:false, meadowCheck:0}, do:[{say:'go', hint:'Find the animals ({found}/{animals}) and learn the words for the meadow ({meadowWords}/5), then come back.'}]},
+      {if:{elder:2, chapter:0, gate:false, meadowCheck:0, animalsLeft:{atLeast:1}}, do:[{say:'go', hint:'Find the animals ({found}/{animals}): in rustling grass, out in the open, up a tree.'}]},
+      {if:{elder:2, chapter:0, gate:false, meadowCheck:0}, do:[{say:'go', hint:'Learn the words for the meadow ({meadowWords}/5), then come back. Things that sparkle ✨ have words.'}]},
       // up the stream. Where does the water come from? You go alone, find the waterfall,
       // and come back to tell the troop, who follow you up.
       {if:{story:false, gate:true, climb:0}, do:[
@@ -3212,18 +3246,22 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{cave:1}, do:[{say:'dare', by:'big', hint:'Jump through the waterfall!'}]},
       // you tell him what's inside, a sentence for each of the three things you found there (decided 26 October 2026, after
       // measuring the game's pacing: from the dare to becoming king, 10 new words came with just 7 questions)
-      {if:{cave:2, caveThings:3}, do:[
+      // back out from the cave, you tell the troop what's behind the waterfall, in words you know (decided 8 November 2026, the
+      // gentler prologue: the cave's bed, table and bowls wait for you to show the old monkey round)
+      {if:{cave:2}, do:[
         {say:'inside'},
-        {gap:{sentence:'里面 有 床', en:'There are beds inside.', word:'床'}},
-        {gap:{sentence:'里面 有 桌子', en:'There is a table inside.', word:'桌子'}},
-        {gap:{sentence:'里面 有 碗', en:'There are bowls inside.', word:'碗'}},
+        {gap:{sentence:'瀑布 后面 有 洞', en:'There’s a cave behind the waterfall.', word:'洞'}},
+        {say:'caveBehind', by:'player'},
         {say:'letsGo'},
         {set:{cave:3}},
         {follow:['elder', 'big', 'playful', 'doorway']}   // the troop follows you, to jump in after you
       ]},
-      {if:{cave:2}, do:[{say:'go', hint:'Look around the cave first.'}]},
       {if:{cave:3}, do:[{say:'letsGo', hint:'Lead the way: jump through the waterfall.'}]},
       // the troop moves in. One new word each time you talk to him.
+      // you show him round: at each thing, he asks what it is (这是什么？), its card, then a question on it before the next
+      // (decided 8 November 2026: the beds, the table and the bowls stay, truer to the story, one at a time)
+      {if:{cave:4, caveThings:{below:3}}, do:[{tour:[{word:'床', note:'Beds of smooth stone, enough for the whole troop.'}, {word:'桌子', note:'A big table of stone.'},
+        {word:'碗', note:'Stacks of stone bowls, ready for the troop.'}], ask:'whatsThis', label:'What is it?'}, {goOn:true}]},
       {if:{cave:4}, do:[{say:'home', teach:'家'}, {newWord:'家'}, {set:{cave:5}}, {goOn:true}]},
       // counting the troop in: in one go, a monkey at a time, a number each (一, 二, 三, each its own card), then one matching
       // game on the three (decided 3 November 2026, after playing it: a quick word game before each monkey came in, from 1
@@ -3291,14 +3329,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // your friend now, it wants to play a word game straight away (decided 26 October 2026, after measuring the game's
       // pacing: the meadow taught 22 words with just two questions between them), with a present the first time you win; say
       // Not now, and it has a ! till you've played (bubbles)
-      {if:{new:'朋友'}, do:[{say:'iam', if:{knows:'猴子'}}, {say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'The little monkey is your friend now.'}, {say:'play'},
-        {wordGame:{ask:'Play a word game with this little monkey? If you win, it gives you 2 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
-          win:[{say:'great'}, {set:{littleGame:2}}, {shells:2, note:'The little monkey gives you 2 🐚.'}], lost:[{set:{littleGame:1}}]}}]},
+      {if:{new:'朋友'}, do:[{say:'iam', if:{knows:'猴子'}}, {say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'The little monkey is your friend now.'}, {befriend:true}, {say:'play'}, LITTLE_SPY]},
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'scared'}]},
-      {if:{littleGame:{below:2}}, do:[{say:'play'},   // its word game again, till you've won its present
-        {wordGame:{ask:'Play a word game with this little monkey? If you win, it gives you 2 🐚.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
-          win:[{say:'great'}, {set:{littleGame:2}}, {shells:2, note:'The little monkey gives you 2 🐚.'}], lost:[{set:{littleGame:1}}]}}]},
+      {if:{chapter:0}, do:[{say:'play'}, LITTLE_SPY]},   // its game again, in the meadow
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [
@@ -3320,15 +3354,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{chapter:0, gate:false, meadowCheck:0, hungry:'not asked'}, do:TROOP_WAITS},   // (till the old monkey sends you to the troop)
       {if:{hungry:'not asked'}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
-      {if:{hungry:'asked', holding:{hungry:false}, wanted:{hungry:false}}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
-      // you bring him the fruit he doesn't want: he says which he wants (the request)
-      {if:{hungry:'asked', holding:{hungry:true}, wanted:{hungry:false}}, do:[{request:'hungry'}]},
+      {if:{hungry:'asked', holding:{hungry:false}}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
+      {if:{hungry:'asked', holding:{hungry:true}}, do:[{request:'hungry'}]},   // (any fruit will do)
       // once he's eaten, he wants to play a word game (decided 26 October 2026, after measuring the game's pacing: the meadow
       // taught 22 words with just two questions between them), with a present the first time you win; say Not now, and he
       // has a ! till you've played (bubbles). (He said sorry for being so fussy first, teaching 没关系, till 4 November 2026.)
       {if:{hungry:'done', hungryGame:0, gate:false}, do:[{say:'play'},
         {wordGame:{ask:'Play a word game with the hungry monkey? If you win, you get a {桃子} for your bag.', word:'猴子', notYet:'Learn a few more words first, then come back to play.',
           win:[{say:'great'}, {set:{hungryGame:2}}, {bag:'桃子', note:'The hungry monkey gives you a {桃子} for your bag.'}], lost:[{set:{hungryGame:1}}]}}]},
+      // then, once you've helped the thirsty monkey too, he wants the other fruit (hungry2, teaching 要)
+      {if:{hungry:'done', thirsty:'done', hungry2:'not asked', gate:false}, do:[{request:'hungry2'}]},
+      {if:{hungry2:'asked'}, do:[{request:'hungry2'}]},
       // a game that helped him before he taught 水果 as he asked (24 October 2026), and never learned it at a fruit tree
       {if:{hungry:'done', new:'水果'}, do:[{say:'fruitOnTrees', teach:'水果'}, {newWord:'水果', note:'Peaches and apples are both fruit.'}]},
       // chapter 1: by the feast's tables, set out bare: they need bowls, and the troop's are in the cave (the bowls request);
@@ -3492,7 +3528,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{new:'睡觉'}, do:[{say:'tired', teach:'睡觉'}, {newWord:'睡觉', note:'Sleep in a {床} and your health is full again.'}]},
       {do:[{say:'tired', hint:'Face a {床} and press A to sleep. You wake up with your health full.'}]}
     ],
-    rabbit: [{do:[{say:'snakesInGrass'}, {message:'When something attacks, listen for where it comes from, and pick it to jump aside.'}]}],
+    rabbit: [{if:{knows:'蛇', new:'路'}, do:[{say:'snakesOnPath', teach:'路'}, {newWord:'路', note:'The path up the mountain, beside the river.'}]}, {do:[{say:'snakesOnPath'}]}],
     sheep: [{do:[{say:'waterFromMountain'}]}],   // at the fork: follow the river up
     // the squirrel and the goat on the way up the stream want to play: a word game, with a present if you win (fruit for your
     // bag), till you've won it; then their games are just for practice, earning nothing, as the little monkeys in training's
@@ -3631,8 +3667,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{climb:1, new:'棍子'}, do:[   // he stops you as you set off up the path
         {say:'stickHere', teach:'棍子'},
         {newWord:'棍子', note:'The big monkey gives you a stick, to chase wild animals off the path.'},
-        {message:'The big monkey shows you how to fight. When something jumps out of the long grass, choose 打 (dǎ, hit) and answer to hit it. When it attacks, listen for where it’s coming from, and pick that to jump aside.'},
-        {message:'A wrong answer when it attacks costs you 10 health, and you have 50. Eat something to get some back, or come back to the old monkey to rest.'}
+        // a practice fight with him, which you can't lose (decided 8 November 2026, the gentler prologue: two long notes about
+        // fighting before you'd seen a fight), so the first snake is your first real fight and you already know how
+        {say:'comeOn'},
+        {battle:'bigSpar', boss:true},
+        {message:'Well fought! Wild creatures in the long grass fight like that, but they hurt: eat something to get your health back, or come back to the old monkey to rest.'}
       ]},
       // chapter 1: he wants wood and small stones to build the school (both at once), and has cleared the way to the pine wood
       {if:{home:2, build:0}, do:[

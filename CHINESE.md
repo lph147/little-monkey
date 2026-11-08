@@ -25,6 +25,14 @@ shown where the word list has them.
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I'm hungry. I want to eat some fruit! | 饿猴子 (Hungry monkey) |  |
 | 我渴了。我要喝水！ | wǒ kě le. wǒ yào hē shuǐ! | I'm thirsty. I want to drink some water! | 渴猴子 (Thirsty monkey) |  |
 | 桃子！太好了！ | táozi! tài hǎo le! | A peach! Wonderful! |  |  |
+| 我要吃苹果！ | wǒ yào chī píngguǒ! | I want to eat an apple! | 饿猴子 (Hungry monkey) |  |
+| 我要吃桃子！ | wǒ yào chī táozi! | I want to eat a peach! |  |  |
+| 我看见树！ | wǒ kànjiàn shù! | I can see a tree! |  |  |
+| 我看见花！ | wǒ kànjiàn huā! | I can see a flower! |  |  |
+| 我看见河！ | wǒ kànjiàn hé! | I can see the river! |  |  |
+| 我看见石头！ | wǒ kànjiàn shítou! | I can see a stone! |  |  |
+| 我看见山！ | wǒ kànjiàn shān! | I can see a mountain! |  |  |
+| 我看见草！ | wǒ kànjiàn cǎo! | I can see grass! |  |  |
 | 水！太好了！ | shuǐ! tài hǎo le! | Water! Wonderful! | 渴猴子 (Thirsty monkey) |  |
 | 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! |  |  |
 | 谢谢你！ | xièxie nǐ! | Thank you! | 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey), 牛 (cow) |  |
@@ -78,14 +86,17 @@ shown where the word list has them.
 | 草上有鸟。 | cǎo shàng yǒu niǎo. | There are birds on the grass. | 猴子 (Monkey) |  |
 | 水从哪里来？ | shuǐ cóng nǎlǐ lái? | Where does the water come from? | 小猴子 (Little monkey) |  |
 | 山上有蛇。 | shān shàng yǒu shé. | There are snakes up the mountain. | 老猴子 (Old monkey) |  |
-| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | 兔子 (rabbit) |  |
+| 路上有蛇！ | lù shàng yǒu shé! | There are snakes on the path! | 兔子 (rabbit) |  |
 | 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | 羊 (sheep) |  |
 | 山上有瀑布！ | shān shàng yǒu pùbù! | There’s a waterfall up the mountain! | 小猴子 (You) |  |
 | 这是棍子。 | zhè shì gùnzi. | This is a stick. | 大猴子 (Big monkey) |  |
+| 来！ | lái! | Come on! | 大猴子 (Big monkey) |  |
 | 瀑布后面有什么？ | pùbù hòumiàn yǒu shénme? | What’s behind the waterfall? | 老猴子 (Old monkey) |  |
 | 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | 大猴子 (Big monkey) |  |
 | 我怕！ | wǒ pà! | I’m scared! | 小猴子 (Little monkey) |  |
 | 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | 老猴子 (Old monkey) |  |
+| 瀑布后面有洞！ | pùbù hòumiàn yǒu dòng! | There’s a cave behind the waterfall! | 小猴子 (You) |  |
+| 这是什么？ | zhè shì shénme? | What’s this? |  |  |
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | 老猴子 (Old monkey), 小猴子 (Little monkey), 大猴子 (Big monkey) |  |
 | 我们有家了！ | wǒmen yǒu jiā le! | We have a home now! | 老猴子 (Old monkey) |  |
 | 这里很大！ | zhèlǐ hěn dà! | It’s so big here! | 老猴子 (Old monkey) |  |
@@ -192,6 +203,8 @@ shown where the word list has them.
 
 | Chinese | Pinyin | English | Said to | Notes |
 | --- | --- | --- | --- | --- |
+| 我要吃桃子 | wǒ yào chī táozi | I want to eat a peach. | 饿猴子 (Hungry monkey) |  |
+| 我要吃苹果 | wǒ yào chī píngguǒ | I want to eat an apple. | 饿猴子 (Hungry monkey) |  |
 | 我要吃桃子 | wǒ yào chī táozi | I want to eat a peach. | 饿猴子 (Hungry monkey) |  |
 | 我要吃苹果 | wǒ yào chī píngguǒ | I want to eat an apple. | 饿猴子 (Hungry monkey) |  |
 | 我要喝水 | wǒ yào hē shuǐ | I want to drink water. | 渴猴子 (Thirsty monkey) |  |
@@ -323,8 +336,6 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | 地图 |  |
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
 | 山羊在山上吃草。 | shānyáng zài shān shàng chī cǎo. | The goat is eating grass on the mountain. | 山羊 |  |
-| 山里有一个洞。 | shān lǐ yǒu yí gè dòng. | There is a cave in the mountain. | 洞 |  |
-| 山上有路。 | shān shàng yǒu lù. | There is a path up the mountain. | 路 |  |
 | 树上有蜘蛛。 | shù shàng yǒu zhīzhū. | There is a spider in the tree. | 蜘蛛 |  |
 | 酸奶是白色的。 | suānnǎi shì báisè de. | Yoghurt is white. | 酸奶 |  |
 | 奶酪是黄色的。 | nǎilào shì huángsè de. | Cheese is yellow. | 奶酪 |  |
@@ -1454,6 +1465,12 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 来！ | lái! | Come on! | New on 8 November 2026 (the gentler prologue): the big monkey, raising his stick to spar with you as he gives it to you (a practice fight you can’t lose, instead of two notes on how to fight). Is it natural? |  |
+| 路上有蛇！ | lù shàng yǒu shé! | There are snakes on the path! | New on 8 November 2026 (the gentler prologue): the rabbit by the long grass on the mountain path, once you’ve met your first snake, teaching 路 (path); it was 草里有蛇。. Is it natural? |  |
+| 瀑布后面有洞！ | pùbù hòumiàn yǒu dòng! | There’s a cave behind the waterfall! | New on 8 November 2026 (the gentler prologue): you, back out of the cave, telling the troop what you found (after 里面有什么？, and filling the gap 瀑布后面有洞); you told them about its beds, table and bowls. Is it natural? |  |
+| 这是什么？ | zhè shì shénme? | What’s this? | New on 8 November 2026 (the gentler prologue): the old monkey, as you show him round the cave, at its beds, its table and its bowls, each word’s card after it. Is it natural? |  |
+| 我要吃苹果！ | wǒ yào chī píngguǒ! | I want to eat an apple! | New on 8 November 2026 (the gentler prologue): the hungry monkey’s second wish, once he’s eaten a peach (any fruit will do the first time) and you’ve helped the thirsty monkey, teaching 要 (want); or 我要吃桃子！ once he’s eaten an apple. Is it natural? |  |
+| 我看见树！ | wǒ kànjiàn shù! | I can see a tree! | New on 8 November 2026 (the gentler prologue): the little monkey’s game in the meadow, I spy (and 我看见花！ 我看见河！ 我看见石头！ 我看见山！ 我看见草！): you run to it and press A. Is it natural? |  |
 | 下大雨了！ | xià dàyǔ le! | It’s raining hard! | New on 7 November 2026: your monkey, as it first rains heavily (some days’ rain is light, some heavy), teaching 大雨 (heavy rain, How it’s made: 大 big + 雨 rain). Is it natural? |  |
 | 雨太大了！ | yǔ tài dà le! | The rain’s too heavy! | New on 7 November 2026: anyone with nothing new to say while it rains heavily (in light rain they say 下雨了！). Is it natural? |  |
 | 晚上了，睡觉吧！ | wǎnshang le, shuìjiào ba! | It’s night: time to sleep! | New on 7 November 2026: your monkey, as night falls for the first time (the day now goes round: about 15 minutes of day, then 5 of night), teaching 晚上. Is 晚上了 natural for “it’s night now”, or would 天黑了 be better (天黑 would be new, just for listening)?. Is it natural? |  |
@@ -1481,9 +1498,6 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 谁跳进去，谁就是王！ | shéi tiào jìnqù, shéi jiù shì wáng! | Whoever jumps in will be king! | Chapter 1, part A (in the game): The big monkey, daring the troop |  |
 | 我怕！ | wǒ pà! | I’m scared! | Chapter 1, part A (in the game): The little monkey |  |
 | 里面有什么？ | lǐmiàn yǒu shénme? | What’s inside? | Chapter 1, part A (in the game): The old monkey, when you come back out of the cave |  |
-| 里面有床。 | lǐmiàn yǒu chuáng. | There are beds inside. | Chapter 1, part A (in the game): Your answer (you choose 床 to fill the gap) |  |
-| 里面有桌子。 | lǐmiàn yǒu zhuōzi. | There is a table inside. | Chapter 1, part A (in the game): Then your second answer (桌子), since 26 October 2026: you tell him about each of the three things you found |  |
-| 里面有碗。 | lǐmiàn yǒu wǎn. | There are bowls inside. | Chapter 1, part A (in the game): And your third (碗) |  |
 | 太好了！我们去看看！ | tài hǎo le! wǒmen qù kànkan! | Wonderful! Let’s go and see! | Chapter 1, part A (in the game): The old monkey |  |
 | 河上有桥。 | hé shàng yǒu qiáo. | There is a bridge over the river. | Chapter 1, part A (in the game): The example on 桥 (bridge)’s page in the Word Scroll |  |
 | 水帘洞 | Shuǐlián Dòng | Water Curtain Cave | Chapter 1, part A (in the game): What the stone tablet (石碑 shíbēi: please check this name too) in the cave says |  |
@@ -1493,10 +1507,9 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 一，二！ | yī, èr! | One, two! | Chapter 1, part B (in the game): The old monkey, counting (teaching 二; it was 两只猴子。) |  |
 | 一，二，三！ | yī, èr, sān! | One, two, three! | Chapter 1, part B (in the game): The old monkey, counting (teaching 三; it was 三只猴子。) |  |
 | 我饿了。我要吃水果！ | wǒ è le. wǒ yào chī shuǐguǒ! | I’m hungry. I want to eat some fruit! | The prologue, changed on 17 October 2026: The hungry monkey now asks for fruit (水果), not a peach |  |
-| 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! | The prologue, changed on 17 October 2026: The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring) |  |
+| 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! | The prologue, changed on 17 October 2026: The hungry monkey, if you bring the peach again when his second wish is the apple (since 8 November 2026 any fruit will do the first time) |  |
 | 苹果！太好了！ | píngguǒ! tài hǎo le! | An apple! Wonderful! | The prologue, changed on 17 October 2026: The hungry monkey, when you bring the apple he wants (changed on 24 October 2026 from 你有苹果吗？: 有 yǒu sounded too like the 要 yào you say next; the same for the peach, 桃子！太好了！, and the water, 水！太好了！) |  |
 | 我要吃苹果。 | wǒ yào chī píngguǒ. | I want to eat an apple. | The prologue, changed on 17 October 2026: The sentence you finish when you give him the apple |  |
-| 草里有蛇。 | cǎo lǐ yǒu shé. | There are snakes in the grass. | New on 18 and 19 October 2026: The rabbit, by the long grass on the mountain path |  |
 | 水从山上来。 | shuǐ cóng shān shàng lái. | The water comes from up the mountain. | New on 18 and 19 October 2026: The sheep (the fox until 23 October 2026), at the fork in the river valley |  |
 | 去找动物吧！ | qù zhǎo dòngwù ba! | Go and find the animals! | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |
 | 老板有苹果。 | lǎobǎn yǒu píngguǒ. | The shop owner has apples. | New on 18 and 19 October 2026: A monkey across the river, giving advice |  |

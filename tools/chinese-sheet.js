@@ -10,6 +10,13 @@ const {loadGame, ROOT} = require('../tests/fake-browser');
 // in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
 // into the content and delete them from here.
 const DRAFTS = [
+  ...[['来 ！', 'Come on!', 'the big monkey, raising his stick to spar with you as he gives it to you (a practice fight you can’t lose, instead of two notes on how to fight)'],
+    ['路 上 有 蛇 ！', 'There are snakes on the path!', 'the rabbit by the long grass on the mountain path, once you’ve met your first snake, teaching 路 (path); it was 草里有蛇。'],
+    ['瀑布 后面 有 洞 ！', 'There’s a cave behind the waterfall!', 'you, back out of the cave, telling the troop what you found (after 里面有什么？, and filling the gap 瀑布后面有洞); you told them about its beds, table and bowls'],
+    ['这 是 什么 ？', 'What’s this?', 'the old monkey, as you show him round the cave, at its beds, its table and its bowls, each word’s card after it'],
+    ['我 要 吃 苹果 ！', 'I want to eat an apple!', 'the hungry monkey’s second wish, once he’s eaten a peach (any fruit will do the first time) and you’ve helped the thirsty monkey, teaching 要 (want); or 我要吃桃子！ once he’s eaten an apple'],
+    ['我 看见 树 ！', 'I can see a tree!', 'the little monkey’s game in the meadow, I spy (and 我看见花！ 我看见河！ 我看见石头！ 我看见山！ 我看见草！): you run to it and press A']]
+    .map(([zh, en, where]) => ({zh, en, where:`New on 8 November 2026 (the gentler prologue): ${where}. Is it natural?`})),
   ...[['下 大雨 了 ！', 'It’s raining hard!', 'your monkey, as it first rains heavily (some days’ rain is light, some heavy), teaching 大雨 (heavy rain, How it’s made: 大 big + 雨 rain)'],
     ['雨 太 大 了 ！', 'The rain’s too heavy!', 'anyone with nothing new to say while it rains heavily (in light rain they say 下雨了！)']]
     .map(([zh, en, where]) => ({zh, en, where:`New on 7 November 2026: ${where}. Is it natural?`})),
@@ -35,9 +42,6 @@ const DRAFTS = [
     ['谁 跳 进去 ， 谁 就 是 王 ！', 'Whoever jumps in will be king!', 'The big monkey, daring the troop'],
     ['我 怕 ！', 'I’m scared!', 'The little monkey'],
     ['里面 有 什么 ？', 'What’s inside?', 'The old monkey, when you come back out of the cave'],
-    ['里面 有 床 。', 'There are beds inside.', 'Your answer (you choose 床 to fill the gap)'],
-    ['里面 有 桌子 。', 'There is a table inside.', 'Then your second answer (桌子), since 26 October 2026: you tell him about each of the three things you found'],
-    ['里面 有 碗 。', 'There are bowls inside.', 'And your third (碗)'],
     ['太 好 了 ！ 我们 去 看看 ！', 'Wonderful! Let’s go and see!', 'The old monkey'],
     ['河 上 有 桥 。', 'There is a bridge over the river.', 'The example on 桥 (bridge)’s page in the Word Scroll'],
     ['水帘洞', 'Water Curtain Cave', 'What the stone tablet (石碑 shíbēi: please check this name too) in the cave says']]
@@ -49,12 +53,11 @@ const DRAFTS = [
     ['一 ， 二 ， 三 ！', 'One, two, three!', 'The old monkey, counting (teaching 三; it was 三只猴子。)']]
     .map(([zh, en, where]) => ({zh, en, where:'Chapter 1, part B (in the game): ' + where})),
   ...[['我 饿 了 。 我 要 吃 水果 ！', 'I’m hungry. I want to eat some fruit!', 'The hungry monkey now asks for fruit (水果), not a peach'],
-    ['这 是 桃子 。 我 要 吃 苹果 ！', 'This is a peach. I want to eat an apple!', 'The hungry monkey, if you bring the peach first (he wants whichever you didn’t bring)'],
+    ['这 是 桃子 。 我 要 吃 苹果 ！', 'This is a peach. I want to eat an apple!', 'The hungry monkey, if you bring the peach again when his second wish is the apple (since 8 November 2026 any fruit will do the first time)'],
     ['苹果 ！ 太 好 了 ！', 'An apple! Wonderful!', 'The hungry monkey, when you bring the apple he wants (changed on 24 October 2026 from 你有苹果吗？: 有 yǒu sounded too like the 要 yào you say next; the same for the peach, 桃子！太好了！, and the water, 水！太好了！)'],
     ['我 要 吃 苹果 。', 'I want to eat an apple.', 'The sentence you finish when you give him the apple']]
     .map(([zh, en, where]) => ({zh, en, where:'The prologue, changed on 17 October 2026: ' + where})),
-  ...[['草 里 有 蛇 。', 'There are snakes in the grass.', 'The rabbit, by the long grass on the mountain path'],
-    ['水 从 山 上 来 。', 'The water comes from up the mountain.', 'The sheep (the fox until 23 October 2026), at the fork in the river valley'],
+  ...[['水 从 山 上 来 。', 'The water comes from up the mountain.', 'The sheep (the fox until 23 October 2026), at the fork in the river valley'],
     ['去 找 动物 吧 ！', 'Go and find the animals!', 'A monkey across the river, giving advice'],
     ['老板 有 苹果 。', 'The shop owner has apples.', 'A monkey across the river, giving advice'],
     ['累 了 吗 ？ 去 床 上 睡觉 吧 ！', 'Tired? Go and sleep in a bed!', 'A monkey just inside the cave’s entrance (teaching 睡觉 shuìjiào, to sleep; 累 lèi, tired, is just for listening)']]

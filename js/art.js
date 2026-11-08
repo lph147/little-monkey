@@ -141,6 +141,9 @@ const CLOTHES_PAL = {C:'#7A6A55', D:'#3A2A1E', a:'#D9B866', d:'#A88A3E', S:'#2A2
 const CLOTHES_ON = CLOTHES.filter(c => c.on).map(c => c.item);
 const wornOn = where => CLOTHES.some(c => c.on === where && c.item === c.word && wearing(c.item) && c.word !== '头带');   // (a headband is drawn as one: headband())
 // A monkey's pixel rows, as letters (PALS says each letter's colour). The app's icons use them too (tools/make-icons.js).
+// A monkey you spar with (an enemy with monkey: their id), as they look on the map, from the front: the battle's picture
+// (foePic, js/battle.js), such as the big monkey's practice fight as he gives you your stick.
+const monkeyPic = kind => ({rows:monkeyRows(kind, 'down', false).map(r => r.join ? r.join('') : r), palette:PALS[kind]});
 function monkeyRows(kind, dir, blink, step = 0, empty = false){
   const side = dir === 'left' || dir === 'right';
   const rows = (dir === 'up' ? BACK : side ? SIDE : MONKEY).map(r => [...r]);

@@ -46,14 +46,17 @@ test('facing something to look at, the tip says to press A to look', () => {
   assert.equal(showing(game), 'look');
 });
 
-test('Tasks and Menu have no tips: the old monkey tells you about them instead', () => {
+test('Tasks and Menu have no tips: the old monkey tells you about them instead', async () => {
   const w = Object.fromEntries(['石头', '山', '花'].map(hz => [hz, {lv: 1, due: 0, ok: 0}]));
   const game = playing({version: 21, started: true, w, tips: {walk: 1, talk: 1, look: 1, grey: 1}, pos: {x: 9, y: 5, dir: 'down'}});
   game.run('updateTips(1000)');
   assert.equal(showing(game), null, 'no tip, though there is a task and you know 3 words');
   const said = JSON.stringify(get(game, 'AREA.talk.elder'));
   assert.match(said, /press TASKS/, 'the old monkey mentions TASKS');
-  assert.match(said, /MENU shows the words/, 'and MENU');
+  assert.match(said, /"scroll":true/, 'and gives you his scroll, whose card says where it is...');
+  game.run("globalThis.__box = ''; infoBox = async (h, b) => { __box = b; }");
+  await game.run("scrollGiven('elder')");
+  assert.match(get(game, '__box'), /Open it any time: MENU/, '...in MENU (since 8 November 2026, the gentler prologue)');
 });
 
 test('your very first line, 你好 with its English right under it: no tip to tap a word, nothing to find out', () => {

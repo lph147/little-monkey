@@ -65,7 +65,8 @@ const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y
 const ventTime = (v, now) => now - (v.at || 0);   // (where in its cycles a vent is: % every, and how many, / every)
 const puffing = (x, y, now = performance.now()) => { const v = tileAt(x, y).vent; return !!v && ((ventTime(v, now) % v.every) + v.every) % v.every < v.puff; };
 const lookWord = t => (t.learnFirst && lvl(t.learnFirst) === 0 ? t.learnFirst : t.word);   // the word a tile teaches right now
-const canGather = g => here()[g.for] === 'asked' && here().holding[g.for] !== g.item;   // asked for, and not already holding it
+const gatherFor = g => [].concat(g.for).find(id => here()[id] === 'asked') || [].concat(g.for)[0];   // (for can be a list of requests: the first asked, such as the hungry monkey's two wishes)
+const canGather = g => { const f = gatherFor(g); return here()[f] === 'asked' && here().holding[f] !== g.item; };   // asked for, and not already holding it
 // Somewhere you collect something else (water, from the river or the pond) whose own word you don't know yet: A looks
 // first, teaching its word, and collects after that (decided 22 October 2026: you got the water, and never the word). The
 // same when a tile fills your bag (pick). (A fruit tree's word was 水果 from 23 to 24 October 2026; now it's its fruit.)
@@ -347,7 +348,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {quiz:['label'], tour:['ask','label'], carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed'], follow:['park'], walk:['from','to','ms','stomp'], sleep:['room']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -626,6 +627,15 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // (decided 8 November 2026, the polish plan: scrollGiven, js/scrolls.js); and every full page sealed, each with a present.
   async scroll(s, who){ if (!S.scroll.has) await scrollGiven(who); },
   async seal(s, who){ await sealPages(who); },
+  // One question on a word (quiz: the word), as in reeling in a fish (catchQ, js/fishing.js), such as straight after the
+  // old monkey asks what the cave's beds are (label: what it says over it).
+  async quiz(s){ if (lvl(s.quiz) >= 1) await catchQ(s.quiz, 1, 1, null, fill(s.label || 'What is it?')); },
+  // Showing someone round (tour: the things, each {word, note}), such as the old monkey in the Water Curtain Cave: at each
+  // thing you don't know yet, they ask what it is (ask: the line), its card, then a question on it before the next (decided
+  // 8 November 2026, the gentler prologue: four new words in a row there).
+  async tour(s, who){
+    for (const t of s.tour) if (lvl(t.word) === 0) await runSteps([{say:s.ask}, {newWord:t.word, ...(t.note ? {note:t.note} : {})}, {quiz:t.word, label:s.label}], who);
+  },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
   // The troop marks out ground for something they'll build, as you watch (markOut: what the story becomes then): a stake
   // hammered in at each corner of the plot, the string pulled tight round them, then the ground cleared, with its sign and
@@ -1353,7 +1363,10 @@ async function talk(n){
 // Done, where nothing can come after it.)
 async function request(r, face, last = false){
   const p = here(), has = r.fromBag ? ((S.bag[r.wants] || 0) > 0 ? r.wants : null) : p.holding[r.id];   // (fromBag: what they want is from your bag, such as the granny's rice)
-  const want = r.choices ? (p.wanted || {})[r.id] : r.wants;
+  // with choices: whichever you bring, if any will do (any); the other one than you brought them before (other: that
+  // request's id), such as the hungry monkey's second wish (decided 8 November 2026, the gentler prologue); or else fussy,
+  // the other one than you brought first
+  const want = r.choices ? (r.any ? has : r.other ? Object.keys(r.choices).find(c => c !== (p.wanted || {})[r.other]) : (p.wanted || {})[r.id]) : r.wants;
   const c = has && r.choices ? r.choices[has] : r;   // the lines and sentence for what you've brought
   if (p[r.id] === 'asked' && has && has !== want){   // you brought the wrong thing
     if (r.choices && !want){ p.wanted = {...p.wanted, [r.id]: Object.keys(r.choices).find(x => x !== has)}; save(); }
@@ -1370,7 +1383,9 @@ async function request(r, face, last = false){
     const sentence = toks(c.sentence);
     await gapQ({who:face, t:sentence, en:c.sentenceEn, gap:c.gap || has, ...(c.others ? {wrong:c.others} : {})});   // (others: its wrong answers, such as 小 for 大)
     sentence.filter(x => lvl(x) >= 1).forEach(useWord);
-    p[r.id] = 'done'; if (r.fromBag) S.bag[r.wants]--; else delete p.holding[r.id]; earn(r.reward); save(); SFX.fanfare();
+    p[r.id] = 'done'; if (r.fromBag) S.bag[r.wants]--; else delete p.holding[r.id]; earn(r.reward);
+    if (r.any) p.wanted = {...p.wanted, [r.id]:has};   // (which you brought, for a request that wants the other one next: other)
+    save(); SFX.fanfare();
     await showDialog(face, L[r.thanks]);
     if (r.thanksReply) await replyWith(r.thanksReply);
     toast(r.reward ? `+${r.reward} ${MONEY()}. Task complete!` : 'Task complete!');
@@ -1379,7 +1394,8 @@ async function request(r, face, last = false){
   } else if (p[r.id] !== 'done'){                      // they ask (or ask again)
     const nw = [r.teach, r.verb].find(w => w && lvl(w) === 0);   // a new word to teach, if there is one: what they want, or the verb
     const ready = r.fromBag && !!has && !r.choices;   // (it's in your bag already: you give it them there and then, decided 6 November 2026)
-    await showDialog(face, L[r.ask], {teach:nw, last:last && !nw && !ready});
+    if (r.other && want){ p.wanted = {...p.wanted, [r.id]:want}; save(); }   // (what they want, for your tasks)
+    await showDialog(face, L[r.other && want ? r.choices[want].ask : r.ask], {teach:nw, last:last && !nw && !ready});
     if (nw) await showNotice(nw, {quiet:true});
     if (p[r.id] === 'not asked'){ p[r.id] = 'asked'; save(); if (!ready) toast(fill(r.asked)); }
     if (ready) return request(r, face, last);
@@ -1499,7 +1515,7 @@ const COLOURED = () => [...new Map([...[AREA.legend, ...Object.values(AREA.place
 const colourPic = t => PICTURES[coloured(t).zh] ? coloured(t).zh : t.word;
 const stepCard = t => ({...(t.stepNote ? {note:t.stepNote} : {}), ...(t.colour ? {pic:colourPic(t)} : {})});   // (stepping on it first, such as onto a red flower)
 async function gather(t, x, y){   // pick up something for a request, such as fruit or water
-  const g = t.gather, p = g.count ? here().picked[g.for] = here().picked[g.for] || [] : null, key = g.kind || `${x},${y}`;
+  const g = t.gather, f = gatherFor(g), p = g.count ? here().picked[f] = here().picked[f] || [] : null, key = g.kind || `${x},${y}`;
   if (p && p.includes(key)){ SFX.bump(); toast(fill(g.again)); return; }   // (one of this kind already)
   await pickUpAct(g.item, {at:[x, y], pic:g.picked && g.picked.zh});
   // the request comes first: collecting water is where 水 is introduced
@@ -1507,13 +1523,13 @@ async function gather(t, x, y){   // pick up something for a request, such as fr
   if (p){   // one at each patch (or one of each kind, such as a colour), until you have enough
     if (g.kind && WORDS[g.kind] && lvl(g.kind) === 0) await showNotice(g.kind, g.kindNote ? {note:fill(g.kindNote)} : {});   // the first of its kind teaches its word, such as 红
     p.push(key);
-    if (p.length >= g.count) here().holding[g.for] = g.item;
+    if (p.length >= g.count) here().holding[f] = g.item;
     save();
     const text = fill(p.length >= g.count ? g.full : g.message);
     if (g.picked) await showPicked(g.picked, text); else toast(text);   // what you've picked, such as 红色的花 (a red flower), with the message on its card
     return;
   }
-  here().holding[g.for] = g.item; save(); toast(fill(g.message));
+  here().holding[f] = g.item; save(); toast(fill(g.message));
 }
 // A fruit tree, once the content says (the legend's pick), gives you a fruit for your bag: one each time you come to
 // the place (it has no more ripe ones until then), up to as many as you can carry. So does anything else whose pick says,

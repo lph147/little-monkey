@@ -29,7 +29,7 @@ test('once you’ve said hello, he lets you go about', async () => {
   assert.deepEqual(get(g, '__talked'), []);
 });
 
-// Then the meadow in order: your first 4 words; then the animals and the meadow's words; then the troop.
+// Then the meadow in order: your first words; then the animals, then the meadow's words; then the troop.
 const meadow = (area, words = []) => loadGame({save: {version: 33, started: true, w: Object.fromEntries(['石头', '你好', ...words].map(w => [w, {lv: 1, ok: 0}])),
   areas: {1: area}, pos: {place: 'meadow', x: 9, y: 3, dir: 'down'}}});
 const bubbles = g => get(g, "['hungry', 'thirsty', 'playful', 'big'].map(id => ((AREA.bubbles[id] || []).find(b => matches(b.if)) || {}).show || '')");
@@ -39,9 +39,10 @@ test('the troop waits till the old monkey sends you to meet them: no ! over them
   // what they say names what the old monkey asked for, as it is now (the message whose if matches)
   const says = g => get(g, "AREA.talk.hungry.find(p => matches(p.if)).do.filter(s => !s.if || matches(s.if)).map(s => s.say || s.reply || fill(s.message))");
   const stages = [
-    [{elder: 1}, [], /^First, learn 4 words/],
-    [{elder: 1}, ['山', '花', '草', '树'], /^First, go back to the old monkey: he wants to see the words you’ve learned/],
-    [{elder: 2}, ['动物'], /^First, find the 动物 \(animals\) and learn the words for the meadow/],
+    [{elder: 1}, [], /^First, find the two things that sparkle/],
+    [{elder: 1}, ['山', '树'], /^First, go back to the old monkey: he wants to see the words you’ve learned/],
+    [{elder: 2}, ['动物'], /^First, find the 动物 \(animals\), as the old monkey asked/],
+    [{elder: 2}, ['动物'], /^First, learn the words for the meadow/, ['rabbit', 'sheep', 'squirrel']],   // (one task at a time: the gentler prologue)
     [{elder: 2}, ['动物', '山', '河', '树', '鱼', '鸟'], /^First, go back to the old monkey: he wants to hear the words for the meadow/, ['rabbit', 'sheep', 'squirrel']]];
   for (const [area, words, line, met] of stages){
     const g = meadow(area, words);

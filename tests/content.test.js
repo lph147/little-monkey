@@ -377,10 +377,12 @@ test('requests use real characters, lines and words', () => {
 test('everything you can gather is for a request, and the wrong thing has a line', () => {
   for (const [, t, from] of allLegend){
     if (!t.gather) continue;
-    const r = AREA.requests[t.gather.for];
-    assert.ok(r, `${from} gathers for "${t.gather.for}", which isn't a request`);
+    for (const id of [].concat(t.gather.for)){   // (for: a request, or a list of them, the first asked: such as the hungry monkey's two wishes)
+      const r = AREA.requests[id];
+      assert.ok(r, `${from} gathers for "${id}", which isn't a request`);
+      if (!r.choices && t.gather.item !== r.wants) assert.ok(r.wrong && r.wrongMessage, `request ${id} needs wrong and wrongMessage, because ${from} gives ${t.gather.item}`);
+    }
     assert.ok(t.gather.message, `${from}: gather needs a message`);
-    if (!r.choices && t.gather.item !== r.wants) assert.ok(r.wrong && r.wrongMessage, `request ${t.gather.for} needs wrong and wrongMessage, because ${from} gives ${t.gather.item}`);
   }
 });
 
@@ -474,6 +476,7 @@ test('every line is said somewhere', () => {
     ...allSteps().filter(([, s]) => s.fetch).flatMap(([, s]) => [s.right, s.wrong, ...s.asks.map(a => a.ask)]),   // (fetching things by their word: the fetch step)
     ...(AREA.unloading ? [AREA.unloading.right, AREA.unloading.wrong, ...AREA.unloading.asks.map(a => a.ask)] : []),   // (unloading a cart, by word: the unload step)
     ...allSteps().filter(([, s]) => s.spy).flatMap(([, s]) => s.things.map(t => t.say)),   // (I spy: the spy step)
+    ...allSteps().filter(([, s]) => s.tour).map(([, s]) => s.ask),   // (showing someone round: the tour step)
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
     ...Object.values(SHOPS).flatMap(sh => [sh.ask, sh.welcome, sh.noProblem]),
     ...(AREA.asking ? [AREA.asking.line] : []), ...allLegend.filter(([, t]) => t.ask).map(([, t]) => t.ask),   // (asking what something is: js/world.js)
@@ -659,13 +662,13 @@ test('every enemy is a collectible word with a picture and a map sprite (or a na
   for (const [id, e] of Object.entries(AREA.enemies)){
     if (e.name){   // (a name, such as the Demon of Havoc's: never a word to catch, its picture and map sprite its own)
       assert.ok(e.name.zh && e.name.py && e.name.en && !collectible.includes(e.name.zh), `${id}'s name needs Chinese, pinyin and English, and isn't a word to catch`);
-      assert.ok(e.person ? AREA.characters.some(c => c.id === e.person && c.person) : PICTURES[e.pic] && MAP_SPRITES[e.pic], `${id} needs its own picture and map sprite (pic), or to be someone you can see (person)`);   // (a person, such as a pupil you spar with, as they look: js/year.js)
+      assert.ok(e.person ? AREA.characters.some(c => c.id === e.person && c.person) : e.monkey ? AREA.characters.some(c => c.id === e.monkey && !c.person) : PICTURES[e.pic] && MAP_SPRITES[e.pic], `${id} needs its own picture and map sprite (pic), or to be someone you can see (person, or monkey)`);   // (a person, such as a pupil you spar with, as they look: js/year.js; or a monkey of the troop, such as the big monkey's practice fight)
       for (const k of ['meet', 'hide', 'attack', 'away', 'lost']) assert.ok(e[k], `${id} has a name, not a word: it needs its own ${k}`);
     } else {
       assert.ok(collectible.includes(e.word) && BANK[e.word].pic, `${id}'s word ${e.word} should be a word you can collect, with a picture`);
       assert.ok(PICTURES[e.word] && MAP_SPRITES[e.word], `${e.word} needs a picture and a map sprite`);
     }
-    assert.ok(e.health >= 1 && e.hits >= 1 && e.attacks.length >= 3, `${id} needs health, how much it hits for, and at least 3 places to attack from`);
+    assert.ok(e.health >= 1 && (e.hits >= 1 || (e.monkey && e.hits === 0)) && e.attacks.length >= 3, `${id} needs health, how much it hits for (a monkey you practise with can hit for 0), and at least 3 places to attack from`);
     assert.ok(e.health / AREA.battles.hits >= 2 && e.health / AREA.battles.hits <= (e.boss ? 8 : 5), `${id}: a fight is set by how many hits it takes (2 to 5 for a wild creature, more for a boss)`);
     for (const w of e.attacks) assert.ok(collectible.includes(w) && BANK[w].pic, `${id} attacks from ${w}, which should be a word with a picture`);
   }

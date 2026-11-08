@@ -29,15 +29,18 @@ function game(area = {}, pos = {place: 'hillside', x: 10, y: 34, dir: 'right'}, 
 async function settle(g, code){ let done = false; const p = Promise.resolve(g.run(code)).then(() => { done = true; }); for (let i = 0; i < 400 && !done; i++){ await new Promise(r => setImmediate(r)); g.flush(); } await p; }
 const npc = id => `NPCS.find(n => n.id === '${id}')`;
 
+// (since 8 November 2026, the gentler prologue, any fruit will do the first time: the wrong one is his second wish's)
+const SECOND_WISH = {chapter: 0, gate: false, hungry: 'done', thirsty: 'done', hungryGame: 2, hungry2: 'asked', holding: {hungry2: '桃子'}, wanted: {hungry: '桃子', hungry2: '苹果'}};
 test('the hungry monkey: no sorry; bring the fruit he doesn’t want, even just after a new word, and he says which he wants (no quick word game first since 7 November 2026)', async () => {
-  const g = game({chapter: 0, gate: false, hungry: 'asked', holding: {hungry: '桃子'}, wanted: {}, wordTurn: 50}, {place: 'meadow', x: 13, y: 7, dir: 'up'});
-  assert.ok(!get(g, '!!(AREA.requests.hungry.wrongReply || AREA.requests.hungry.wrongAnswer)'), 'no 对不起, and no 没关系');
+  const g = game({...SECOND_WISH, wordTurn: 50}, {place: 'meadow', x: 13, y: 7, dir: 'up'});
+  assert.ok(!get(g, '!!(AREA.requests.hungry2.wrongReply || AREA.requests.hungry2.wrongAnswer)'), 'no 对不起, and no 没关系');
   await settle(g, `talk(${npc('hungry')})`);
   assert.deepEqual(get(g, '__games'), [], 'no quick word game first, though you’ve just learned 桃子');
-  assert.deepEqual(get(g, 'here().wanted'), {hungry: '苹果'}, 'then he says he wants the apple');
+  assert.deepEqual(get(g, 'here().wanted'), {hungry: '桃子', hungry2: '苹果'}, 'he wants the apple still');
   assert.deepEqual(get(g, '__said'), ['这是桃子。我要吃苹果！']);
   assert.deepEqual(get(g, '__replies'), [], 'and you don’t say sorry');
-  const later = game({chapter: 0, gate: false, hungry: 'asked', holding: {hungry: '桃子'}, wanted: {}, wordTurn: 40}, {place: 'meadow', x: 13, y: 7, dir: 'up'});
+  assert.equal(get(g, 'here().holding.hungry2 || null'), null, 'he gives the peach back');
+  const later = game({...SECOND_WISH, wordTurn: 40}, {place: 'meadow', x: 13, y: 7, dir: 'up'});
   await settle(later, `talk(${npc('hungry')})`);
   assert.deepEqual(get(later, '__games'), [], 'practised since your last new word: straight on');
 });

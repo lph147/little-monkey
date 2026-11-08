@@ -74,7 +74,8 @@ test('a new word with a story: its card is just the word, then How it’s made �
   g.run('pressA()');
   assert.equal(g.run('modal.hidden'), true);
   assert.equal(g.run('lvl("山")'), 1, 'Got it: caught');
-  assert.match(get(g, '__toast')[0], /added to your Word Scroll/);
+  assert.deepEqual(get(g, '__toast'), [], 'no message that it’s in your Word Scroll (the gentler prologue, 8 November 2026)...');
+  assert.ok(g.el('#startBtn').classList.contains('glow'), '...the MENU button glows instead, where your scroll is');
   const none = card(['石头'], '猴子');
   assert.equal(none.sheet.querySelector('[data-a=made]'), null, 'a word with nothing that helps: no How it’s made');
   assert.equal(text(none.sheet.querySelector('.actions .primary')), 'Got it', 'just Got it, as before');

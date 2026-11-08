@@ -8,21 +8,21 @@ const {loadGame} = require('./fake-browser');
 
 const knowing = words => Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0, ok: 0}]));
 
-test('telling you about animals, the old monkey asks you to learn the meadow’s words too: the ones you don’t know yet', async () => {
+test('telling you about animals, the old monkey asks for nothing else yet: one task at a time, the animals, then the meadow’s words (the gentler prologue, 8 November 2026)', async () => {
   const told = async words => {
     const g = loadGame({dom: true, save: {version: 24, started: true, w: knowing(['石头', '你好', '花', '草', ...words]), areas: {1: {elder: 1}}}});
     g.run('globalThis.__told = []; showDialog = async () => {}; showNotice = async w => setSeen(w); showNarration = async t => { __told.push(t); }; matchWords = async () => new Set(); infoBox = async () => {}');   // (his old scroll's card: tests/scroll.test.js)
     await g.run("runSteps(AREA.talk.elder.find(p => matches(p.if)).do, 'elder')");
     assert.equal(g.run('here().elder'), 2, 'he has told you about animals');
-    return JSON.parse(g.run('JSON.stringify(__told)'));
+    return {told: JSON.parse(g.run('JSON.stringify(__told)')), tasks: JSON.parse(g.run('JSON.stringify(getTasks().filter(t => t.main).map(t => t.id))'))};
   };
-  assert.ok((await told(['山', '树'])).includes('The old monkey wants you to learn the words for the meadow too: the river, the fish in the pond and a bird. Things that sparkle ✨ have words.'),
-    'he names the three you haven’t found');
-  assert.ok(!(await told(['山', '树', '河', '鱼', '鸟'])).some(t => /wants you to learn the words for the meadow too/.test(t)), 'if you know them all already, he doesn’t ask');
+  const {told: t, tasks} = await told(['山', '树']);
+  assert.deepEqual(t, ['If you forget what to do, press TASKS.'], 'nothing more to read after his lines but where to look if you forget');
+  assert.deepEqual(tasks, ['animals'], 'your one task: the animals');
 });
 
 test('your tasks say which of the meadow’s words are still to find, until you know all five; then the checklist ticks it off', () => {
-  const g = loadGame({save: {version: 24, started: true, w: knowing(['山', '树']), areas: {1: {elder: 2}}}});
+  const g = loadGame({save: {version: 24, started: true, w: knowing(['山', '树']), met: ['sheep', 'squirrel', 'rabbit'], areas: {1: {elder: 2}}}});   // (the animals found: the meadow's words come after them)
   const task = () => JSON.parse(g.run('JSON.stringify((getTasks().find(t => t.id === "meadow") || {}).text || null)'));
   const item = () => JSON.parse(g.run('JSON.stringify(areaChecklist().find(([t]) => t.startsWith("Learn the words for the meadow")).slice(0, 2))'));
   assert.equal(task(), 'Learn the words for the meadow (2/5). Still to find: the river, the fish in the pond and a bird. Things that sparkle ✨ have words.');
@@ -37,8 +37,9 @@ test('your tasks say which of the meadow’s words are still to find, until you 
 });
 
 test('the task waits for the old monkey to ask, and stays for the rest of the prologue (a game from before that is past the rocks), but not in chapter 1', () => {
-  const tasks = area => JSON.parse(loadGame({save: {version: 29, started: true, areas: {1: area}}}).run('JSON.stringify(getTasks().map(t => t.id))'));
+  const tasks = (area, met = ['sheep', 'squirrel', 'rabbit']) => JSON.parse(loadGame({save: {version: 29, started: true, met, areas: {1: area}}}).run('JSON.stringify(getTasks().map(t => t.id))'));
   assert.ok(!tasks({elder: 1}).includes('meadow'), 'not before he asks');
+  assert.ok(!tasks({elder: 2}, ['sheep']).includes('meadow'), 'nor till you’ve found the animals: one task at a time');
   assert.ok(tasks({elder: 2}).includes('meadow'));
   assert.ok(tasks({elder: 2, gate: true, climb: 1}).includes('meadow'), 'past the rocks, in the prologue still');
   assert.ok(!tasks({elder: 2, gate: true, climb: 4, story: true, cave: 6, count: 3, chapter: 1}).includes('meadow'), 'chapter 1 has begun');

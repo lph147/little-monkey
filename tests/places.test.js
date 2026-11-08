@@ -221,8 +221,8 @@ test('you lead the troop into the cave: they follow you once you’ve told the o
   assert.equal(get(game, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show"), '!', 'back from the cave, the old monkey has a ! for you');
   await finish("talk(NPCS.find(n => n.id === 'elder'))");
   assert.equal(get(game, 'here().cave'), 3);
-  assert.deepEqual(get(game, '__gaps'), [['里面有床', '床', 'There are beds inside.'], ['里面有桌子', '桌子', 'There is a table inside.'], ['里面有碗', '碗', 'There are bowls inside.']],
-    'you tell him what’s inside, filling the gap in a sentence for each of the three things you found (since 26 October 2026: it was the beds alone)');
+  assert.deepEqual(get(game, '__gaps'), [['瀑布后面有洞', '洞', 'There’s a cave behind the waterfall.']],
+    'you tell the troop what’s behind the waterfall, filling the gap (the gentler prologue, 8 November 2026: the beds, table and bowls wait to show the old monkey round)');
   assert.deepEqual(get(game, 'S.following'), ['elder', 'big', 'playful', 'doorway'], 'the troop follows you');
   game.run("S.pos = {place: 'falls', x: 5, y: 1, dir: 'left'}; placePlayer()");
   await finish('interact(4, 1).then(runEvents)');   // you jump through the waterfall, and they come after you

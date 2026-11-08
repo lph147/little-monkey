@@ -458,6 +458,13 @@ async function sealCard(p, who){
   setTimeout(() => { SFX.tock(); SFX.right(); }, 450);   // (the stamp coming down: its look, css/game.css)
   await shown;
 }
+// A word just caught goes into your scroll: the MENU button glows a moment, where it is, instead of a message saying so
+// (decided 8 November 2026, the gentler prologue: 41 such messages in the prologue alone).
+function scrollGlow(){
+  const b = $('#startBtn'); if (!b || !b.classList) return;
+  b.classList.remove('glow'); void b.offsetWidth; b.classList.add('glow');
+  clearTimeout(scrollGlow.t); scrollGlow.t = setTimeout(() => b.classList.remove('glow'), 2200);
+}
 async function sealPages(who){   // every full page, sealed one after another, each with its present
   for (const p of sealsWaiting()){
     await sealCard(p, who);

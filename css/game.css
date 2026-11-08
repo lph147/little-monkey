@@ -1189,6 +1189,8 @@ rt.hid{visibility:hidden}
 .ss.bm .sswrap{transform:rotate(22deg)}
 .pill{position:relative;width:50px;height:16px;border-radius:9px;background:var(--pad);border:none;box-shadow:0 2px 0 rgba(0,0,0,.35);touch-action:none}
 .pill:active{transform:translateY(2px);box-shadow:0 0 0 rgba(0,0,0,.35)}
+.pill.glow{animation:scrollglow 2.1s ease-out}   /* a word just caught, gone into your scroll (scrollGlow, js/scrolls.js) */
+@keyframes scrollglow{0%,100%{box-shadow:0 2px 0 rgba(0,0,0,.35)}15%,55%{box-shadow:0 2px 0 rgba(0,0,0,.35),0 0 0 3px #F2C14E,0 0 12px 4px rgba(242,193,78,.85)}}
 .sslabel{font:600 .72rem var(--pixel);color:var(--muted);letter-spacing:.08em}
 .pill .dot{position:absolute;top:-7px;right:-7px;width:13px;height:13px;border-radius:50%;background:#E0443C;border:2px solid var(--shell)}   /* (not How to play's 字 dots) */
 .pill .dot[hidden]{display:none}

@@ -10,7 +10,7 @@ const get = (g, expr) => JSON.parse(g.run(`JSON.stringify(${expr})`));
 const WORDS = ['猴子', '人', '衣服', '帽子', '不', '是', '什么', '井', '房子', '门', '谁', '鸡', '鱼', '鱼竿'];
 function game(area, pos, area1 = false){
   const w = Object.fromEntries(WORDS.map(x => [x, {lv: 1, ok: 1}]));
-  const save = area1 ? {version: 34, started: true, w: {}, areas: {1: area}, pos}
+  const save = area1 ? {version: 34, started: true, w: {}, met: ['sheep', 'squirrel', 'rabbit'], areas: {1: area}, pos}   // (the meadow's animals found: its words come after them)
     : {version: 34, started: true, area: 2, w, friends: ['goose', 'chicken'], areas: {1: {raft: 3}, 2: {landed: 1, dressed: 2, back: 1, oldFisher: 1, child: 3, knock: 1, ...area}}, pos};
   const g = loadGame({dom: true, save});
   g.run("mode = 'play'; save = () => {}; placePlayer()");
