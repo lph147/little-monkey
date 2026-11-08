@@ -1118,6 +1118,20 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(16, 11, 2.4, 1.6), '#EDE3D0');
     for (const x of [9, 15, 21]) p.flat(path([[x, 7], [x + 1, 4], [x, 1]], .5), '#DCE4EA');    // steam
   },
+  '臭豆腐': p => {   // stinky tofu: deep-fried golden cubes of tofu in a little paper tray, pickled cabbage and a dab of red chilli on top, a toothpick in one (unlike 包子: round, white, in a steamer; unlike 臭: a face pinching its nose)
+    const cube = (x, y, s) => {   // a fried cube: its front, and its top a shade lighter, with the little holes frying leaves
+      p.fill(Pg([[x, y], [x + 2, y - 2.4], [x + s + 2, y - 2.4], [x + s, y]]), '#E3A94C', {light: '#F2C870', dark: '#B07A2A', edge: true});
+      p.fill(Rc(x, y, s, s - 1), '#C7842C', {light: '#DA9A3E', dark: '#8E5A1C', edge: true});
+      for (const [dx, dy] of [[2, 2], [5, 4], [3, 5.5], [s - 2, 2.5]]) p.dot(Math.round(x + dx), Math.round(y + dy), '#8A561A');
+    };
+    p.fill(Pg([[2, 19], [30, 19], [28.5, 22], [3.5, 22]]), '#E0D8C4', {dark: '#BDB39C'});        // the tray: its far side, inside,
+    cube(11, 11, 8);                                                                             // a cube at the back,
+    cube(3.5, 15, 8); cube(13, 15.5, 8); cube(22, 15, 7);                                        // three in front,
+    p.fill(Pg([[3.5, 22], [28.5, 22], [26.5, 29.5], [5.5, 29.5]]), '#F4F0E4', {light: '#FFFFFF', dark: '#CFC7B2', edge: true});   // and its near side
+    for (const pts of [[[6, 13.5], [9, 12], [11.5, 13]], [[15, 13.8], [18, 12.4], [21, 13.6]], [[13.5, 9], [16, 7.6], [18.5, 8.6]]]) p.fill(path(pts, .8), '#7DB348', {dark: '#4E7E26'});   // pickled cabbage
+    p.fill(O(25.5, 12.9, 2, 1.1), '#D2391F', {dark: '#9A2210'}); p.fill(O(8, 12.6, 1.3, .8), '#D2391F');   // chilli
+    p.fill(path([[22, 2], [18.5, 12]], .6), '#D9BC80', {dark: '#A88A50'});                     // a toothpick
+  },
   '鞋': p => {   // shoes: a pair of black cloth shoes with white soles
     for (const [x, y] of [[2, 13], [13, 20]]){
       p.fill(Pg([[x, y + 6], [x + 4, y], [x + 13, y], [x + 17, y + 4], [x + 17, y + 8], [x, y + 8]]), '#2A2A2A', {light: '#4A4A4A', dark: '#141414', edge: true});

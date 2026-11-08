@@ -709,7 +709,7 @@ const ACROSS_THE_SEA = {
     farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}, {if:{lunch:'done', askFarmer:0}, show:'!'}],
     changer: [{if:{exchanged:0}, show:'!'}],
     fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}],
-    bunSeller: [{if:{knows:'买', new:'包子'}, show:'!'}],
+    bunSeller: [{if:{knows:'买', new:'包子'}, show:'!'}, {if:{night:true, knows:'买', new:'臭豆腐'}, show:'!'}],
     shoeSeller: [{if:{knows:'包子', grannyBuns:'done', new:'鞋'}, show:'!'}],
     teaKeeper: [{if:{knows:'鞋', new:'茶'}, show:'!'}, {if:{knows:'茶', askTea:0}, show:'!'}],
     granny2: [{if:{knows:'包子', grannyBuns:'not asked'}, show:'!'}, {if:{grannyBuns:'asked', inBag:{'包子':true}}, show:'?'},
@@ -803,7 +803,10 @@ const ACROSS_THE_SEA = {
       earnMore:'Earn more by helping people and making friends with animals.', puzzled:'The stallholder looks puzzled: you pointed at the {item}, but asked for something else!',
       sorry:'对不起', sorryAbout:'You asked the stallholder for the wrong thing.', noProblem:'noProblem', soldOut:'Come back another time.',
       items:[
-        {item:'包子', price:2, sentence:'我 要 买 包子', sentenceEn:'I want to buy a steamed bun.', note:'A steamed bun, soft and hot, with something tasty inside.', bought:'You put the {包子} in your bag. In a word game, eat it to take away a wrong answer.', eat:true}
+        {item:'包子', price:2, sentence:'我 要 买 包子', sentenceEn:'I want to buy a steamed bun.', note:'A steamed bun, soft and hot, with something tasty inside.', bought:'You put the {包子} in your bag. In a word game, eat it to take away a wrong answer.', eat:true},
+        // the night market (decided 8 November 2026, the polish plan): at night the bun stall fries stinky tofu, which does what a
+        // durian does, useful against the little demons at home
+        {item:'臭豆腐', price:2, if:{night:true}, sentence:'我 要 买 臭豆腐', sentenceEn:'I want to buy some stinky tofu.', note:'Tofu, fried till it’s golden. It smells terrible, and tastes good!', bought:'You put the {臭豆腐} in your bag. Eat it out on the map, and wild creatures keep away from the smell for two minutes.', eat:true}
       ]},
     // the fishing village in winter: rice and fish for the cave's stores (for: carried for the senior pupil, holdingFor)
     rice: {who:'granny', ask:'whatBuy', given:'The granny gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
@@ -851,6 +854,9 @@ const ACROSS_THE_SEA = {
     '包子': {helps:true, carry:3, does:'Takes away a wrong answer'},
     // a durian you brought from Flower Fruit Mountain, as there (stink: js/input.js)
     '榴莲': {stink:120, carry:2, does:'Keeps wild creatures away for 2 minutes', note:'Phew! Wild creatures keep away from the smell for two minutes.',
+      eaten:[{if:{new:'臭'}, say:'tooSmelly', by:'player', teach:'臭'}, {if:{new:'臭'}, newWord:'臭', note:'臭 means smelly. Nothing wants to come near you now!'}]},
+    // stinky tofu from the night market (the bun stall, at night), which does the same
+    '臭豆腐': {stink:120, carry:2, does:'Keeps wild creatures away for 2 minutes', note:'Phew! Wild creatures keep away from the smell for two minutes.',
       eaten:[{if:{new:'臭'}, say:'tooSmelly', by:'player', teach:'臭'}, {if:{new:'臭'}, newWord:'臭', note:'臭 means smelly. Nothing wants to come near you now!'}]}
   },
 
@@ -1692,7 +1698,7 @@ const ACROSS_THE_SEA = {
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#8A6E2E', b:'#3A2A1E', p:'#3A3020'}},
     {id:'fruitSeller', place:'town', person:true, hair:'bun', wear:'apron', x:4, y:14, facing:'down', calls:'callFruit', name:{zh:'老板', py:'lǎobǎn', en:'Stallholder'},
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#C7902F', b:'#3A2A1E', p:'#3A2A22'}},
-    {id:'bunSeller', place:'town', person:true, hair:'topknot', wear:'apron', x:4, y:10, facing:'down', calls:'callBuns', name:{zh:'老板', py:'lǎobǎn', en:'Stallholder'},
+    {id:'bunSeller', place:'town', person:true, hair:'topknot', wear:'apron', x:4, y:10, facing:'down', calls:'callBuns', nightCalls:'callTofu', name:{zh:'老板', py:'lǎobǎn', en:'Stallholder'},
       palette:{o:'#3A2A1E', h:'#2A1E16', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#B5462E', b:'#3A2A1E', p:'#3A2A22'}},
     {id:'shoeSeller', place:'town', person:true, wear:'apron', x:10, y:10, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Stallholder'},
       palette:{o:'#3A2A1E', h:'#555555', s:'#F2C9A0', e:'#1E140C', m:'#C4826A', c:'#3E7A8A', b:'#3A2A1E', p:'#2A3A40'}},
@@ -1874,6 +1880,7 @@ const ACROSS_THE_SEA = {
     '狗': 'Guarding the road through the fields.',
     '买': 'The fruit stall at the market: 你要买什么？',
     '包子': 'The bun stall at the market.',
+    '臭豆腐': 'The bun stall at the night market, after dark.',
     '鞋': 'The shoe stall at the market.',
     '茶': 'The teahouse in the town: 喝茶吧！',
     '说': 'The storyteller in front of the teahouse: 我说，你听。',
@@ -2093,6 +2100,7 @@ const ACROSS_THE_SEA = {
     whatWant: {zh:'你 要 什么 ？', en:'What do you want?'},   // the peddler on the high road
     // stallholders calling out what they sell, as you walk past (calls): just for listening
     callBuns: {zh:'包子 ！ 包子 ！', en:'Steamed buns! Steamed buns!'},
+    callTofu: {zh:'臭豆腐 ！ 臭豆腐 ！', en:'Stinky tofu! Stinky tofu!'},   // (the bun stall at night: the night market)
     callFruit: {zh:'苹果 ！ 桃子 ！', en:'Apples! Peaches!'},
     // the granny's shopping, one thing at a time
     wantBuns: {zh:'我 要 包子 。', en:'I want some steamed buns.'},

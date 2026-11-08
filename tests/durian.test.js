@@ -139,3 +139,18 @@ test('one you brought to the human world works the same there', () => {
   assert.deepEqual(JSON.parse(g.run("JSON.stringify([FOOD['榴莲'].stink, FOOD['榴莲'].carry])")), [120, 2]);
   assert.equal(g.run("AREA.lines.tooSmelly.zh"), '太 臭 了 ！');
 });
+
+test('the night market: at night the bun stall sells stinky tofu, 臭豆腐, and calls it out; by day, just buns; it does what a durian does', () => {
+  const g = loadGame({save: {version: 37, started: true, area: 2, w: {...WORDS, ...knows(['买', '包子'])}}});
+  const sells = () => JSON.parse(g.run("JSON.stringify(forSale(SHOPS.buns).map(i => i.item + ' ' + i.price))"));
+  g.run('S.clock.t = DAY_MS * .3');
+  assert.deepEqual(sells(), ['包子 2'], 'by day, just buns');
+  assert.equal(g.run("callLine(AREA.characters.find(n => n.id === 'bunSeller'))"), 'callBuns');
+  g.run('S.clock.t = DAY_MS * NIGHT + 1');
+  assert.deepEqual(sells(), ['包子 2', '臭豆腐 2'], 'at night, stinky tofu too');
+  assert.equal(g.run("callLine(AREA.characters.find(n => n.id === 'bunSeller'))"), 'callTofu', 'and the stallholder calls it out');
+  assert.equal(g.run("AREA.lines.callTofu.zh"), '臭豆腐 ！ 臭豆腐 ！');
+  assert.equal(g.run("JSON.stringify(AREA.bubbles.bunSeller.find(b => matches(b.if)))"), JSON.stringify({if: {night: true, knows: '买', new: '臭豆腐'}, show: '!'}), 'a ! over the stall, while it’s new');
+  assert.deepEqual(JSON.parse(g.run("JSON.stringify([FOOD['臭豆腐'].stink, FOOD['臭豆腐'].carry, FOOD['臭豆腐'].eaten.length])")), [120, 2, 2], 'two minutes, two in your bag, and 太臭了！ the first time you eat something smelly');
+  assert.ok(g.run("!!PICTURES['臭豆腐'] && MADE['臭豆腐'].parts.length === 2"), 'its picture, and how it’s made: 臭 smelly + 豆腐 tofu');
+});

@@ -1903,13 +1903,15 @@ async function arrive(x, y){
 // (decided 4 November 2026, so the market feels busy, and you hear its words without being asked about them).
 const CALL_NEAR = 4, CALL_EVERY = 14000, CALL_SHOWS = 1800;
 let lastCallT = -1e9;
+// (At night, what they sell then, nightCalls, such as the night market's stinky tofu at the bun stall.)
+const callLine = c => (c.nightCalls && typeof isNight === 'function' && isNight() ? c.nightCalls : c.calls);
 function callOut(){
   const now = performance.now();
   if (now - lastCallT < CALL_EVERY || !S.sound) return;
-  const n = NPCS.find(c => c.calls && L[c.calls] && Math.abs(c.x - pl.x) + Math.abs(c.y - pl.y) <= CALL_NEAR);
+  const n = NPCS.find(c => typeof c.calls === 'string' && L[callLine(c)] && Math.abs(c.x - pl.x) + Math.abs(c.y - pl.y) <= CALL_NEAR);
   if (!n) return;
   lastCallT = now; n.callingT = now + CALL_SHOWS;
-  say(L[n.calls].t.join(''), null, n.id);
+  say(L[callLine(n)].t.join(''), null, n.id);
 }
 
 let foe = null, alertUntil = 0;

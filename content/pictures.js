@@ -5183,6 +5183,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '臭豆腐': {   // stinky tofu
+    palette: {a:'#423620', b:'#A88A50', c:'#554C3C', d:'#E4D0A6', e:'#414A2F', f:'#253213', g:'#A4CA7F', h:'#4E7E26', i:'#5A4A2B', j:'#F2C870', k:'#453114', l:'#B07A2A', m:'#31220F', n:'#734D1A', o:'#542F26', p:'#3E140C', q:'#A42C18', r:'#C7842C', s:'#E07462', t:'#9A2210', u:'#84622C', v:'#8A561A', w:'#8E5A1C', x:'#3A2610', y:'#523B1B', z:'#DA9A3E', A:'#494339', B:'#BDB39C', C:'#E9E4D6', D:'#57524B', E:'#E0D8C4', F:'#3A3631', G:'#8E8B84', H:'#5E5B58', I:'#FFFFFF', J:'#F4F0E4', K:'#CFC7B2', L:'#4E4940'},
+    rows: [
+      "................................",
+      ".....................a..........",
+      "....................aba.........",
+      "....................aba.........",
+      "...................cdba.........",
+      "...................aba..........",
+      "...............eef.aba..........",
+      ".............eegghcdba..........",
+      "............eghhhhhba...........",
+      "...........ijhjjjjjba...........",
+      "........efkllllllldba...........",
+      "......eeghmnnnnnnnba....oop.....",
+      ".....egqqhhhrrrrggbhffkosstpik..",
+      "....fhhhjjjhuvhhhhuhhhlutttjjlk.",
+      "...klllllllurruuuuulllullllllk..",
+      "...mnnnnnnnnrrrrvrwxxmnnnnnnnm..",
+      "...yzrrrrrrnrnnnnnnzwyzrrrrrwx..",
+      "...yzrvrrrrnwnrrrrrrwyzrvrrrwx..",
+      "..Ayzrrrrrvwyzrvrrrvwyzrrrrvwx..",
+      ".ABCnrrrrvrnCnrrrrrrnCnrrrrvnBA.",
+      "..DCnrrrrrrnEnrrrrvrnEnnnnnnnm..",
+      "..ABnwwvwwwnBnrrvrrrnBBBBvBBBA..",
+      "...FGGGGGGGGGGGGGGGGGGGGGGGGF...",
+      "...HIJJJJJJJJJJJJJJJJJJJJJJKL...",
+      "...HIJJJJJJJJJJJJJJJJJJJJJJKL...",
+      "...LKJJJJJJJJJJJJJJJJJJJJJJKL...",
+      "....HIJJJJJJJJJJJJJJJJJJJJKL....",
+      "....HIJJJJJJJJJJJJJJJJJJJJKL....",
+      "....LKKKKKKKKKKKKKKKKKKKKKKL....",
+      ".....LLLLLLLLLLLLLLLLLLLLLL.....",
+      "................................",
+      "................................"
+    ]
+  },
   '鞋': {   // shoes
     palette: {a:'#24211E', b:'#13100D', c:'#4A4A4A', d:'#141414', e:'#2A2A2A', f:'#5A5A5A', g:'#5B5752', h:'#F6F3EC', i:'#181818', j:'#F2EEE4', k:'#4D4840', l:'#C9C3B4'},
     rows: [

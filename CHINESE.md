@@ -661,6 +661,7 @@ check that each is true and simply put.
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child), 师姐 (A pupil) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 货郎 (Peddler) |  |
 | 包子！包子！ | bāozi! bāozi! | Steamed buns! Steamed buns! |  |  |
+| 臭豆腐！臭豆腐！ | chòudòufu! chòudòufu! | Stinky tofu! Stinky tofu! |  |  |
 | 苹果！桃子！ | píngguǒ! táozi! | Apples! Peaches! | 老板 (Stallholder) |  |
 | 我要包子。 | wǒ yào bāozi. | I want some steamed buns. | 老奶奶 (Granny) |  |
 | 你有包子吗？ | nǐ yǒu bāozi ma? | Do you have a steamed bun? | 老奶奶 (Granny) |  |
@@ -822,6 +823,7 @@ check that each is true and simply put.
 | 我要买苹果 | wǒ yào mǎi píngguǒ | I want to buy an apple. | 老板 (Stallholder) |  |
 | 我要买桃子 | wǒ yào mǎi táozi | I want to buy a peach. | 老板 (Stallholder) |  |
 | 我要买包子 | wǒ yào mǎi bāozi | I want to buy a steamed bun. | 老板 (Stallholder) |  |
+| 我要买臭豆腐 | wǒ yào mǎi chòudòufu | I want to buy some stinky tofu. | 老板 (Stallholder) |  |
 | 我要买米 | wǒ yào mǎi mǐ | I want to buy rice. | 老奶奶 (Granny) |  |
 | 我要买鱼 | wǒ yào mǎi yú | I want to buy fish. | 渔夫 (Fisherman) |  |
 | 我要买鞋 | wǒ yào mǎi xié | I want to buy shoes. | 老板 (Stallholder) |  |
@@ -1201,6 +1203,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 毛 | máo | hair, fur |  |
 | 刀 | dāo | broadsword, knife |  |
 | 车 | chē | cart |  |
+| 臭豆腐 | chòudòufu | stinky tofu |  |
 
 ### How words are made
 
@@ -1234,6 +1237,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 米饭 | mǐfàn | 米 mǐ (rice) + 饭 fàn (meal) = 米饭 (rice (cooked)) |  |
 | 热 | rè | 灬 huǒ (fire): is at its bottom: four little flames. It’s hot! |  |
 | 冷 | lěng | 冫 bīng (ice): is on its left: two drops of ice. It’s cold! |  |
+| 臭豆腐 | chòudòufu | 臭 chòu (smelly) + 豆腐 dòufu (tofu) = 臭豆腐 (stinky tofu) |  |
 | 雪 | xuě | 雨 yǔ (rain): is on its top: snow falls from the sky, as rain does |  |
 
 ### The child's game: is it?

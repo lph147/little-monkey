@@ -734,6 +734,7 @@ In chapter 1, once the garden has begun (the hot spring valley is open):
 6. Wait for it to wear off: "The smell of the 榴莲 (durian) wears off.", the durian goes from the top of the screen, and wild creatures jump out again.
 7. Tap a durian while you still smell: "You still smell of the 榴莲: keep it for later."
 8. At the 老板's stall at the home ground: 榴莲 is for sale, 3 shells, once you know its word.
+9. In the human world, in the town at night (the night market): the bun stall's stallholder calls out 臭豆腐！ (chòudòufu, stinky tofu), with a ! over them. Buy one (2 coins): its card first, then it goes in your bag. Eat it out on the map: it works just like a durian. By day, the stall sells only buns.
 
 ## Quick practice
 

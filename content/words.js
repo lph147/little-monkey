@@ -258,6 +258,7 @@ const WORD_BANK = {
   '毛': {py:'máo', en:'hair, fur', pic:'🪶', area:2, category:'people', alike:['猴子', '头']},   // (your hairs, turned into little monkeys: 变！)
   '刀': {py:'dāo', en:'broadsword, knife', pic:'🗡️', area:2, category:'items', alike:['棍子', '斧头']},   // (the Demon of Havoc's, yours once you've beaten him)
   '车': {py:'chē', en:'cart', pic:'🛒', area:2, category:'items'},   // (the little demons' cart, piled with the troop's things)
+  '臭豆腐': {py:'chòudòufu', en:'stinky tofu', pic:'🧆', area:2, category:'food', alike:['包子']},   // (fried at the town's night market, the bun stall's at night: eating it keeps wild creatures away for two minutes, as a durian does)
 
   // Heard in sentences
   '换': {py:'huàn', en:'to change, to swap'},
@@ -450,6 +451,7 @@ const MADE = {
   '冷': {clue:['冫', 'bīng', 'ice'], why:'is on its left: two drops of ice. It’s cold!'},
   '雨': {why:'Drawn like rain: the sky along its top, and drops of rain falling under it.'},
   '大雨': {parts:[['大', 'dà', 'big'], ['雨', 'yǔ', 'rain']]},
+  '臭豆腐': {parts:[['臭', 'chòu', 'smelly'], ['豆腐', 'dòufu', 'tofu']]},
   '雪': {clue:['雨', 'yǔ', 'rain'], why:'is on its top: snow falls from the sky, as rain does'},
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},

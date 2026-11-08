@@ -481,7 +481,7 @@ test('every line is said somewhere', () => {
     ...Object.values(AREA.countGames || {}).map(g => g.thing.ask),
     ...Object.values(AREA.enemies || {}).flatMap(e => Object.values(e.says || {})),
     ...(AREA.hideSeek ? [AREA.hideSeek.count, AREA.hideSeek.coming, AREA.hideSeek.found, ...AREA.hideSeek.spots.map(p => p.say)] : []),
-    ...AREA.characters.filter(c => c.calls).map(c => c.calls),   // (calling out what they sell as you walk past: callOut, js/world.js)
+    ...AREA.characters.filter(c => c.calls).map(c => c.calls), ...AREA.characters.filter(c => c.nightCalls).map(c => c.nightCalls),   // (calling out what they sell as you walk past, and at night: callOut, js/world.js)
     ...allSteps().filter(([, s]) => s.recap || s.face).flatMap(([, s]) => [s.count, s.line, ...Object.values(s.lines || {})].filter(Boolean)),   // (the master's classes: js/year.js)
     ...(AREA.smallTalk || []).map(t => t.say)   // (what people say about the weather, js/world.js)
   ]);
