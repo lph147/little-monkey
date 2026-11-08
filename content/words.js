@@ -288,6 +288,7 @@ const WORD_BANK = {
   '来': {py:'lái', en:'to come'},
   '进去': {py:'jìnqù', en:'to go in'},
   '就': {py:'jiù', en:'then'},
+  '能': {py:'néng', en:'can'},
   '怕': {py:'pà', en:'to be scared'},
   '里面': {py:'lǐmiàn', en:'inside'},
   '太': {py:'tài', en:'too, very'},

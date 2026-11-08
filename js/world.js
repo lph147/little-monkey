@@ -335,6 +335,8 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'lifted') return (here().lifted || false) === v;   // what you're carrying over your head (the lift step), such as 'sack', or false
     if (k === 'form') return (pl.form || null) === v;   // what you've changed into just now (turnInto with keep), such as a little demon
     if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
+    if (k === 'sealsWaiting') return (sealsWaiting().length > 0) === v;   // a page of your scroll is full, and not sealed yet (js/scrolls.js)
+    if (k === 'hasScroll') return !!S.scroll.has === v;   // the old monkey has given you his scroll
     if (k === 'night') return isNight() === v;   // it's night (js/daynight.js), such as the first night, teaching 晚上
     if (k === 'raining') return typeof v === 'string' ? rainHere() === v : rainingHere() === v;   // it's raining where you are, outdoors, such as the first rain, teaching 下雨; or raining 'heavy' (teaching 大雨) or 'light'
     if (AREA.counters[k]) return compare(counter(k), v);
@@ -620,6 +622,10 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   },
   async reply(s, who, last){ await replyWith(s.reply, {about:s.about, pic:s.pic, who, last}); },   // (about, pic: what you're answering, if it isn't a line just said)
   give(s){ if (!S.wardrobe.owned.includes(s.give)){ S.wardrobe.owned.push(s.give); save(); } if (s.note) toast(fill(s.note)); },
+  // The old monkey gives you his scroll, as he checks your first words, so they're the first pictures you see come back
+  // (decided 8 November 2026, the polish plan: scrollGiven, js/scrolls.js); and every full page sealed, each with a present.
+  async scroll(s, who){ if (!S.scroll.has) await scrollGiven(who); },
+  async seal(s, who){ await sealPages(who); },
   rumble(){ buildMap(); SFX.rumble(); shakeT = performance.now(); },
   // The troop marks out ground for something they'll build, as you watch (markOut: what the story becomes then): a stake
   // hammered in at each corner of the plot, the string pulled tight round them, then the ground cleared, with its sign and
@@ -1195,7 +1201,7 @@ async function replyWith(best, {about, pic, who, last} = {}){
 // Someone, in English text: the old monkey, the shop owner (a character, by their name in English), the 松鼠 (squirrel)
 // (an animal, by its word).
 function theName(id){
-  if (NAMES[id]) return 'the ' + NAMES[id].en.toLowerCase();
+  if (NAMES[id]) return 'the ' + NAMES[id].en.toLowerCase().replace(/^the /, '');   // (a name with its own The, such as The master's, once)
   const a = animalName(id);
   return a ? 'the ' + wz(a.zh) : 'someone';
 }
@@ -1314,7 +1320,10 @@ async function practiseFirst(who){
   return !wordLeft();
 }
 // A character with something new for you: a ! or ? over them, and not what they've just said.
-const hasNews = n => !!keptFor(n) || (!!(AREA.bubbles[n.id] || []).find(b => matches(b.if)) && !!talkPart(n) && !(lastTalk && lastTalk.id === n.id && lastTalk.part === talkPart(n)));
+// (A full page of your scroll to seal waits while they have something for the story, so it never cuts into a lesson or
+// the story: storyNews.)
+const storyNews = n => !!(AREA.bubbles[n.id] || []).find(b => matches(b.if)) && !!talkPart(n) && !(lastTalk && lastTalk.id === n.id && lastTalk.part === talkPart(n));
+const hasNews = n => !!keptFor(n) || storyNews(n) || sealFor(n);
 // Food someone kept for you, when your bag was full (the bag step), now there's room for it: they have a ! for you.
 const keptFor = n => { const w = here().kept[n.id]; return w && !bagFull(w) ? w : null; };
 // What they do when you come back for it: the steps from where they gave it you (such as winning their word game: the
@@ -1327,7 +1336,7 @@ function keptSteps(who, w){
 }
 async function talk(n){
   n.dir = OPP[pl.dir];
-  const w = here().kept[n.id], part = w ? {do:keptSteps(n.id, w)} : talkPart(n);   // (something they kept for you comes first)
+  const w = here().kept[n.id], part = w ? {do:keptSteps(n.id, w)} : sealFor(n) && !storyNews(n) ? sealPart() : talkPart(n);   // (something they kept for you comes first; a full page of your scroll to seal, once they've nothing for the story)
   if (!part) return;
   lastTalk = {id:n.id, part};
   const outer = caughtBefore, was = talkingTo;   // (a character can stop you during another conversation)
@@ -1335,6 +1344,7 @@ async function talk(n){
   try {
     if (part.waits && !await practiseFirst(n.id)) return;
     await runSteps(part.do, n.id, true);
+    if (!part.seal && sealFor(n)) await runSteps(sealPart().do, n.id, true);   // (a page of your scroll just filled: they seal it there and then, as you're beside them)
   } finally { caughtBefore = outer; talkingTo = was; }
 }
 // A character asking you to bring something (the area's requests). A request with choices (such as the

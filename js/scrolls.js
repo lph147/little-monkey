@@ -316,8 +316,9 @@ async function nextArea(){
 const todaysWords = () => S.today.d === todayKey() ? S.today.ids.filter(w => WORDS[w] && lvl(w) > 0) : [];   // not words since removed from the game
 function scrollCard(w){   // a word in the Word Scroll: caught, heard (a shadow of its picture, not giving it away) or not met yet
   if (lvl(w) > 0) return `<button class="card" data-w="${w}" data-label="Open">${WORDS[w].pic ? `<div class="c" aria-hidden="true">${picHTML(w)}</div><div class="hz">${w}</div>` : `<div class="c hz">${w}</div>`}<div class="p">${WORDS[w].py}</div>${pips(w)}</button>`;
-  if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c sil" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : '？'}</div><div class="p">heard ${S.heard[w]}×</div></div>`;
-  return `<div class="card unseen"><div class="c">？</div><div class="p"></div></div>`;
+  const faded = S.scroll.has && WORDS[w].pic;   // (in the old monkey's scroll, its picture faded, till you catch it: js/scrolls.js)
+  if (S.heard[w]) return `<div class="card heard" aria-label="Heard ${S.heard[w]} times, not caught yet"><div class="c ${faded ? 'faded' : 'sil'}" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : '？'}</div><div class="p">heard ${S.heard[w]}×</div></div>`;
+  return `<div class="card unseen"><div class="c${faded ? ' faded' : ''}" aria-hidden="true">${faded ? picHTML(w) : '？'}</div><div class="p"></div></div>`;
 }
 const MASTERY = ['Caught', 'Recognised', 'Read', 'Used'];   // what each gold square means
 // An example sentence with the word in it: the first line, then story sentence, that has it, preferring one you've seen.
@@ -377,9 +378,92 @@ function scrollPage(tab){   // what a tab of the Word Scroll shows
     return `<p class="label cathead">Heard</p><p class="small">Words you've heard in sentences. You'll catch them in later areas.</p>
       <div class="chips" data-nav>${heard.map(w => `<button class="chip" data-h="${w}" data-label="Hear it"><ruby>${w}<rt class="${S.pinyin ? '' : 'hid'}">${info(w)[0]}</rt></ruby> <span class="small">${S.heard[w]}×</span></button>`).join('')}</div>`;
   }
-  const ws = SCROLL_WORDS().filter(w => WORDS[w].category === tab);
+  const ws = SCROLL_WORDS().filter(w => WORDS[w].category === tab), pages = scrollPages().filter(p => p.cat === tab);
+  if (pages.length < 2) return `<p class="label cathead">${CATEGORIES[tab].name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}${pages[0] ? sealHTML(pages[0]) : ''}</span></p>
+    ${pages[0] ? sealNote(pages[0]) : ''}<div class="grid" data-nav>${ws.map(scrollCard).join('')}</div>`;
   return `<p class="label cathead">${CATEGORIES[tab].name} <span class="catn">${ws.filter(w => lvl(w) > 0).length}/${ws.length}</span></p>
-    <div class="grid" data-nav>${ws.map(scrollCard).join('')}</div>`;
+    ${pages.map(p => `<p class="pagehead"><span>${esc(areaOf(p.area).name.en)}</span> <span class="catn">${p.words.filter(w => lvl(w) > 0).length}/${p.words.length}${sealHTML(p)}</span></p>
+      ${sealNote(p)}<div class="grid" data-nav>${p.words.map(scrollCard).join('')}</div>`).join('')}`;
+}
+/* ---- the old monkey's scroll ---- */
+// The Word Scroll, given a story (decided 8 November 2026, the polish plan): long ago someone drew everything on the
+// mountain in an old scroll, with its name, but the pictures have faded, and every word you catch brings one back. The old
+// monkey gives it you as he checks your first words (the scroll step: scrollGiven), so they're the first pictures you see
+// come back; from then on a word you haven't caught shows its picture faded. Each page is one area's words of one kind,
+// such as Flower Fruit Mountain's animals (scrollPages); once you've caught every word on it, it's full, and whoever seals
+// pages now (the area's scroll.by: {who, if, say}, the old monkey; in the human world, the master) has a ! for you
+// (sealFor), stamps it with a red seal, 好, good, and gives you something for it (scrollGift): a page of twelve words or more
+// something to wear, a headband in a colour you know and haven't got; of seven or more, a snack (the area's scroll.snacks,
+// the first you know); and a smaller one, shells. Kept in the save's scroll: has, and sealed, each page as 'area:kind'.
+const areaOf = n => AREAS.find(a => a.number === n) || AREA;
+const pageKey = p => `${p.area}:${p.cat}`;
+function scrollPages(){   // every page so far, as {area, cat, words}, in the scroll's order: this area's and those before it
+  const pages = [];
+  for (const a of AREAS.filter(a => a.number <= AREA.number)) for (const cat of Object.keys(CATEGORIES)){
+    const words = Object.keys(WORDS).filter(w => WORD_BANK[w].area === a.number && WORDS[w].category === cat && (!WORDS[w].later || lvl(w) >= 1));
+    if (words.length) pages.push({area:a.number, cat, words});
+  }
+  return pages;
+}
+const pageFull = p => p.words.every(w => lvl(w) >= 1);
+const pageSealed = p => S.scroll.sealed.includes(pageKey(p));
+const sealsWaiting = () => S.scroll.has ? scrollPages().filter(p => pageFull(p) && !pageSealed(p)) : [];   // full pages not sealed yet
+const sealer = () => ((AREA.scroll || {}).by || []).find(b => !b.if || matches(b.if)) || null;   // who seals pages now ({who, say}), if anyone
+const sealFor = n => !!n && S.scroll.has && (sealer() || {}).who === n.id && sealsWaiting().length > 0;   // they have a ! for you: a page to seal
+const sealPart = () => ({seal:true, do:[{say:sealer().say}, {seal:true}]});   // what they do when you talk to them then, or straight after what they had for the story (talk, js/world.js)
+const SEAL_ZH = '好';   // what the seal says: good
+const sealHTML = p => pageSealed(p) ? ` <span class="seal" role="img" aria-label="Sealed: a full page">${SEAL_ZH}</span>` : '';
+function sealNote(p){   // under a full page's heading, till it's sealed: who to show it to
+  if (!S.scroll.has || pageSealed(p) || !pageFull(p)) return '';
+  const by = sealer();
+  return `<p class="sealwait">Full! ${by ? `Show it to ${esc(theName(by.who))}, for a red seal.` : 'It waits for a red seal.'}</p>`;
+}
+// What you're given for a full page (its steps), by its size.
+function scrollGift(p){
+  const n = p.words.length;
+  if (n >= 12){
+    const band = CLOTHES.find(c => c.colours && lvl(c.colour) >= 1 && !S.wardrobe.owned.includes(c.item));
+    if (band) return [{give:band.item}, {message:`And a ${WORDS[band.colour].en.split(',')[0]} {头带|headband} for you! Put it on from the menu: 衣服 (clothes).`}];
+  }
+  if (n >= 7){
+    const snack = ((AREA.scroll || {}).snacks || []).find(w => WORDS[w] && lvl(w) >= 1 && (AREA.food || {})[w] && !bagFull(w));   // (one with room in your bag: never kept for you, in the way of what they have for the story)
+    if (snack) return [{bag:snack, note:`And a {${snack}} for your bag!`}];
+  }
+  const k = Math.min(15, Math.max(3, n));   // (shells, one a word, from 3 to 15)
+  return [{shells:k, note:`And ${k} ${MONEY()} for you!`}];
+}
+// The old monkey gives you his scroll (the scroll step): what it is, and its first pictures coming back, the words you
+// know, one after another, among others still faded.
+async function scrollGiven(who){
+  const has = SCROLL_WORDS().filter(w => WORDS[w].pic), known = has.filter(w => lvl(w) >= 1).slice(0, 8);   // (one row of eight)
+  const more = has.filter(w => lvl(w) === 0 && WORD_BANK[w].area === AREA.number).slice(0, Math.max(0, 8 - known.length));
+  S.scroll.has = true; save();
+  const shown = infoBox(null, `<p class="label">The old scroll</p>
+    <div class="oldscroll"><div class="grid">${[...known, ...more].map(w => `<div class="card${lvl(w) ? ' back' : ''}"><div class="c faded" aria-hidden="true">${picHTML(w)}</div><div class="hz">${lvl(w) ? w : ''}</div></div>`).join('')}</div></div>
+    <p>${esc(cap(theName(who)))} gives you a very old scroll. Long ago, someone drew everything on the mountain in it, with its name, but the pictures have faded. Every word you catch brings one back!</p>
+    <p class="small">Open it any time: MENU, then 词 (words). A full page gets a red seal, and a present.</p>`);
+  sheet.querySelectorAll('.oldscroll .card.back').forEach((c, i) => setTimeout(() => {   // the words you know, coming back
+    if (!c.isConnected) return;
+    c.querySelector('.c').classList.remove('faded'); c.classList.add('shine'); SFX.word();
+  }, 700 + i * 500));
+  await shown;
+}
+// A full page sealed (the seal step): the page, every picture back, the red seal stamped on it, then a present.
+async function sealCard(p, who){
+  const name = CATEGORIES[p.cat].name, other = p.area !== AREA.number ? ` · ${esc(areaOf(p.area).name.en)}` : '';
+  const shown = infoBox(null, `<p class="label">Your scroll · ${esc(name)}${other}</p>
+    <div class="oldscroll sealpage"><div class="grid">${p.words.map(w => `<div class="card"><div class="c${WORDS[w].pic ? '' : ' hz'}" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : w}</div></div>`).join('')}</div>
+      <span class="seal stamp" role="img" aria-label="A red seal">${SEAL_ZH}</span></div>
+    <p>The ${esc(name.toLowerCase())} page is full! ${esc(cap(theName(who)))} stamps it with a red seal: ${SEAL_ZH} (hǎo), good.</p>`);
+  setTimeout(() => { SFX.tock(); SFX.right(); }, 450);   // (the stamp coming down: its look, css/game.css)
+  await shown;
+}
+async function sealPages(who){   // every full page, sealed one after another, each with its present
+  for (const p of sealsWaiting()){
+    await sealCard(p, who);
+    S.scroll.sealed.push(pageKey(p)); save();
+    await runSteps(scrollGift(p), who);
+  }
 }
 function openScroll(back, top, tab){   // top: where to scroll to, to come back to the same place. tab: the tab to open at
   const tabs = scrollTabs();

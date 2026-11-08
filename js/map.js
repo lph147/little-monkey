@@ -148,9 +148,9 @@ const CLOSE = [8, 22, 140, 130], CLOSE_SMALL = [6, 22, 112, 130];
 // The words you know that you found in a place: the words of what's there (its squares, as they are now, the wild
 // creatures in its long grass and the fish in its water), the animals that live there and the characters there who are
 // a word, such as the cow. In the order you'd come across them, each once.
-function placeWords(id){
+function placeWords(id, all = false){   // (all: the words you haven't caught too, those still to find there)
   const p = PLACES[id], legend = p.legend ? {...AREA.legend, ...p.legend} : AREA.legend, found = [];
-  const add = w => { if (w && WORDS[w] && lvl(w) > 0 && !found.includes(w)) found.push(w); };
+  const add = w => { if (w && WORDS[w] && (all ? !WORDS[w].later || lvl(w) > 0 : lvl(w) > 0) && !found.includes(w)) found.push(w); };
   for (const ch of new Set(p.map.join(''))){
     let t = legend[ch]; if (!t) continue;
     if (t.becomes){ const to = becomesNow(t); if (to && legend[to]) t = legend[to]; }
@@ -158,9 +158,24 @@ function placeWords(id){
     for (const e of t.wild || []) add((AREA.enemies[e] || {}).word);
     if (t.fishing && AREA.fishing) for (const k of t.fishing === true ? ['small', 'big'] : [t.fishing]) add((AREA.fishing[k] || {pic:''}).pic.split(' ').pop());
   }
-  for (const a of ANIMALS) if (a.place === id && inChapter(a)) add(a.hz);
+  for (const a of ANIMALS) if ((a.outPlace || a.place) === id && inChapter(a)) add(a.hz);   // (one that sleeps somewhere else, where it's out: the bat's the home ground's)
   for (const n of ALL_NPCS) if (n.place === id) add(n.look);
   return found;
+}
+// The words still to find in a place (the old monkey's scroll: decided 8 November 2026, the polish plan), each with when
+// it's about, if only by day or after dark: an animal's time, or a wild creature's weights by day and night (day 0: only
+// at night; night 0: only by day).
+function stillHere(id){
+  return placeWords(id, true).filter(w => lvl(w) === 0).map(w => {
+    const a = ANIMALS.find(x => x.hz === w && x.place === id), f = Object.values(AREA.enemies || {}).find(e => e.word === w);
+    return {w, time:a ? a.time : f ? (f.night === 0 ? 'day' : f.day === 0 ? 'night' : null) : null};
+  });
+}
+function toFindHTML(id){
+  const left = stillHere(id); if (!left.length) return '';
+  const day = left.filter(x => x.time === 'day').length, night = left.filter(x => x.time === 'night').length;
+  const when = [day ? `☀️ ${day} only by day` : '', night ? `🌙 ${night} only at night` : ''].filter(Boolean).join(', ');
+  return `<p class="tofind"><b>？</b> ${left.length} more to find here${when ? ` (${when})` : ''}</p>`;
 }
 // The place you're in, as it's drawn now: its ground and big objects, and its shade if it's gloomy, with no one on it.
 function drawPlaceNow(){
@@ -222,7 +237,7 @@ function closeUp(id){
       <div class="closepic" style="left:${pct(x, MAP_W)};top:${pct(y, MAP_H)};width:${pct(w, MAP_W)};height:${pct(h, MAP_H)}" aria-hidden="true"></div>
       <p class="maptitle closename"><span class="mapzh">${n.zh}</span> <span class="mappy">${n.py}</span> <span class="mapen">${esc(n.en)}</span>${id === PLACE ? `<span class="maphere">${PIN_SVG}You are here</span>` : ''}</p>
       <div class="mapwords"><div class="gloss">${words.length ? 'Found here: tap a word to hear it.' : 'No words found here yet.'}</div>
-        <div class="stickers" data-nav>${words.map(w => `<button class="sticker" data-w="${w}" data-label="Hear">${WORDS[w].pic ? `<span class="c" aria-hidden="true">${picHTML(w)}</span>` : ''}<span class="hz">${w}</span>${S.pinyin ? `<span class="p">${WORDS[w].py}</span>` : ''}</button>`).join('')}</div></div>
+        <div class="stickers" data-nav>${words.map(w => `<button class="sticker" data-w="${w}" data-label="Hear">${WORDS[w].pic ? `<span class="c" aria-hidden="true">${picHTML(w)}</span>` : ''}<span class="hz">${w}</span>${S.pinyin ? `<span class="p">${WORDS[w].py}</span>` : ''}</button>`).join('')}</div>${toFindHTML(id)}</div>
       <div class="mapback actions">${canFly() && id !== PLACE && landingIn(id) ? '<button class="btn primary" data-a="fly">Fly here</button>' : ''}<button class="btn" data-a="back" data-b>Back</button></div>
     </div></div>`);
   on('[data-a=fly]', () => { closeCard(); flyTo(id); });   // (by cloud, once you can: flyTo, js/world.js)

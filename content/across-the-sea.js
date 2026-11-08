@@ -420,7 +420,7 @@ const ACROSS_THE_SEA = {
     right:'rightThanks', wrong:'notRight', take:'What does she want? Take it off the cart.',
     listen:'She says it only in Chinese. Take it off the cart: press A at the cart.',
     carry:'You’re carrying the {item}. Put it down on its table.', otherTable:'Not on this table: it goes on the other one.',
-    done:[{setUp:{party:1}}, {sound:'fanfare'}, {message:'Everything’s back on the feast’s tables! The troop brings out the rest, and everyone celebrates.'}, {say:'veryHappy', by:'elder'}]},
+    done:[{setUp:{party:1}}, {sound:'fanfare'}, {message:'Everything’s back on the feast’s tables! The troop brings out the rest, and everyone celebrates: your friends come too.'}, {scene:'party'}, {say:'veryHappy', by:'elder'}]},
   // What people with nothing much to say talk about (their last few words, js/world.js): the weather, as the seasons go
   // round in the master's year (decided 7 November 2026, the owner's idea).
   smallTalk: [
@@ -486,6 +486,8 @@ const ACROSS_THE_SEA = {
     '房子', '井', '门', '船', '网', '衣服', '帽子', '书', '茶', '包子', '鞋', '海', '米饭'],
 
   tasks: [
+    {id:'seal', if:{sealsWaiting:true, chapter:1}, text:'A page of your scroll is full: show it to your {师父|master}', arrow:'master'},   // (the old monkey's scroll: js/scrolls.js)
+    {id:'sealHome', if:{sealsWaiting:true, chapter:2}, text:'A page of your scroll is full: show it to the {老|old} monkey', arrow:'elder'},
     {id:'a2coat', main:true, if:{landed:1, dressed:0}, text:'The {老|old} man dropped something on the sand as he ran: go and find it', arrow:[23, 10]},
     {id:'a2goose', if:{landed:1, friends:{goose:false}}, text:'Make {朋友|friends} with the goose on the sand', arrow:[8, 12]},
     {id:'a2hat', main:true, if:{dressed:1}, text:'Something else is blowing along the sand: pick it up too', arrow:[30, 13]},
@@ -2087,6 +2089,8 @@ const ACROSS_THE_SEA = {
 
   // Clothes: Flower Fruit Mountain's headbands, and the human world's coat, hat and shoes. on: where it goes, one thing
   // at a time there (the hat or a headband).
+  // The old monkey's scroll (js/scrolls.js): in the human world, the master seals a full page; at home, the old monkey again
+  scroll: {by:[{who:'master', if:{chapter:1}, say:'veryGood'}, {who:'elder', if:{chapter:2}, say:'veryGood'}], snacks:['包子', '蜂蜜', '桃子']},
   wardrobe: [
     ...FLOWER_FRUIT_MOUNTAIN.wardrobe,
     {item:'衣服', on:'body', sentence:'这 是 我 的 衣服', sentenceEn:'These are my clothes.'},
@@ -2187,6 +2191,7 @@ const ACROSS_THE_SEA = {
     oneTwoThree: {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'},
     teachChange: {zh:'我 教 你 变 。', en:'I’ll teach you to change into things.'},
     change: {zh:'变 ！', en:'Change!'},
+    knowName: {zh:'你 知道 名字 ， 就 能 变 ！', en:'Know its name, and you can change into it!'},   // the master's secret: what the game is about (a draft for the native speaker)
     teachFly: {zh:'我 教 你 飞 。', en:'I’ll teach you to fly.'},
     goAway: {zh:'你 走 吧 ！', en:'You must leave!'},
     goHome: {zh:'你 回家 吧 。', en:'Go home.'},
@@ -2504,6 +2509,7 @@ const ACROSS_THE_SEA = {
         {set:{riddle:1}},
         {message:'The master puts his hands behind his back, goes into the hall and shuts the doors. The pupils are cross with you. But you understand: three taps… the third watch of the night… the back door!'}]},
       {if:{riddle:2}, do:[{say:'youCame'}, {say:'teachChange', teach:'变'}, {newWord:'变', note:'变 means to change: into something else. The master’s secret, for you alone.'},
+        {say:'knowName'}, {message:'To change into something, you have to know its name. Every word you’ve caught is something you could change into: the more words you know, the more you can become!'},   // (what the whole game is about: decided 8 November 2026, the polish plan)
         {say:'change'}, {turnInto:1, label:'变！ Listen: what does the master say?'}, {set:{riddle:3}},
         {message:'Before dawn, you creep back to your room. Nobody saw you!'}, {goTo:'cave', at:[4, 4], facing:'down'}]},
       {if:{tests:0}, do:[{say:'change'}, {turnInto:3, label:'变！ Listen: what does the master say?'}, {set:{tests:1}}, {say:'veryGood'}, {goOn:true}]},
@@ -2750,6 +2756,10 @@ const ACROSS_THE_SEA = {
       {at:3.6, zh:'很多 小 猴子 ！', en:'Lots of little monkeys!'}
     ]},
     // a wind that carries you home with the little monkeys and the cart, as in the book (驾阵狂风)
+    // the party, once everything's back on the feast's tables: the troop, and all your friends (the old monkey's scroll)
+    party: {watch:'Watch the party', when:{party:1}, captions: [
+      {at:0, zh:'我们 有 很多 朋友 ！', en:'We have lots of friends!'}
+    ]},
     windHome: {watch:'Watch the wind carry everyone home', when:{homeAgain:1}, captions: [
       {at:0, zh:'有 风 了 ！', en:'The wind’s come!'},
       {at:4, zh:'小 猴子 们 很 快乐 。', en:'The little monkeys are so happy.'},

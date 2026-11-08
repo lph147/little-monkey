@@ -218,7 +218,7 @@ test('再见 is taught as you set off up the mountain path: the old monkey says 
 
 test('back with your first words, the old monkey checks them: you match them to their pictures, then he tells you about the animals', async () => {
   const g = loadGame({save: {version: 27, started: true, w: Object.fromEntries(['石头', '山', '花', '草', '树'].map(w => [w, {lv: 1, due: 0, ok: 0}])), areas: {1: {elder: 1}}}});
-  g.run("mode = 'play'; globalThis.__said = []; showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNotice = async () => {}; showNarration = async () => {}; toast = () => {}");
+  g.run("mode = 'play'; globalThis.__said = []; showDialog = async (who, line) => { __said.push(line.t.join('')); }; showNotice = async () => {}; showNarration = async () => {}; toast = () => {}; infoBox = async () => {}");   // (his old scroll's card: tests/scroll.test.js)
   g.run("globalThis.__matched = null; matchWords = async words => { __matched = words; return new Set(); }");
   await g.run("talk(ALL_NPCS.find(n => n.id === 'elder'))");
   assert.deepEqual(JSON.parse(g.run('JSON.stringify(__matched)')).sort(), ['山', '石头', '树', '花', '草'].sort(), 'the words you’ve learned');

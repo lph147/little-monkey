@@ -233,7 +233,7 @@ const asleepNow = a => !awakeNow(a);
 // One with somewhere else to sleep (sleepsAt: [x, y, place]), such as the bat, out over the home ground's stream at night and
 // hanging asleep in the Water Curtain Cave by day (hangs): its at and its place are wherever it is now.
 for (const a of ANIMALS.filter(a => a.sleepsAt)){
-  const out = {at:a.at, place:a.place}, rest = {at:a.sleepsAt, place:placeOf(a.sleepsAt)};
+  const out = {at:a.at, place:a.place}, rest = {at:a.sleepsAt, place:placeOf(a.sleepsAt)}; a.outPlace = out.place;   // (where it's out and about: outPlace)
   Object.defineProperty(a, 'at', {get:() => (asleepNow(a) ? rest : out).at});
   Object.defineProperty(a, 'place', {get:() => (asleepNow(a) ? rest : out).place});
 }

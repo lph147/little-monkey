@@ -62,7 +62,7 @@ const ruleFor = n => { const c = CHARACTER.get(n.id) || {};
   return (AREA.dayNight && AREA.dayNight.sleep || []).find(r => (r.who === 'people' ? !!c.person : isMonkey(c)) && (!r.if || matches(r.if)) && !(r.stay || []).includes(n.id)); };
 // Staying up: with a ! or ? over them, something kept for you, in a lesson, hiding, or out of their place for the story
 // just now (someone a step has walked somewhere and parked).
-const staysUp = n => S.following.includes(n.id) || inClass.has(n.id) || !!keptFor(n) || (AREA.bubbles[n.id] || []).some(b => matches(b.if)) || (HIDE && HIDE.by === n.id) || n.calls > performance.now();
+const staysUp = n => S.following.includes(n.id) || inClass.has(n.id) || !!keptFor(n) || sealFor(n) || (AREA.bubbles[n.id] || []).some(b => matches(b.if)) || (HIDE && HIDE.by === n.id) || n.calls > performance.now();
 let placedIn = null;   // the place characters were last placed for (placeCharacters): a fresh place puts everyone where they are tonight
 const ghosts = [];     // those fading out where they were, as they go to bed or get up while you're there: {n, x, y, dir, asleep, bed, t0}
 // Where everyone sleeps tonight (placeCharacters asks once each time it places them): a Map from each sleeper's id to

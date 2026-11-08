@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 37;
+const SAVE_VERSION = 38;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -24,7 +24,7 @@ function placesOnWayTo(place){
   for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
   return way;
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}}; }   // (clock: the time of day, and what you've done today: js/daynight.js)
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -240,6 +240,16 @@ function upgradeSave(s){
     s.clock = {t:0, n:0, turn0:s.turn || 0, friends0:[...(s.friends || [])], caught:[]};   // from now, not from the start of the game
     s.version = 37;
   }
+  if (s.version === 37){   // version 37: the Word Scroll had no story. The old monkey gives you his scroll as he checks your first
+    const first = ((s.areas || {})[1] || {}).elder >= 2 || (s.area || 1) > 1;   // words: a game past that has it (js/scrolls.js), with the
+    const caught = w => !!(s.w && s.w[w] && s.w[w].lv > 0), sealed = [];   // pages it had filled already sealed (not a pile of seals and presents at once)
+    if (first) for (const a of AREAS.filter(a => a.number <= (s.area || 1))) for (const cat of Object.keys(CATEGORIES)){
+      const ws = Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === a.number && WORD_BANK[w].category === cat && (!WORD_BANK[w].later || caught(w)));
+      if (ws.length && ws.every(caught)) sealed.push(`${a.number}:${cat}`);
+    }
+    if (!s.scroll) s.scroll = {has:!!first, sealed};
+    s.version = 38;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   // A save from another area than the one this page plays (such as a game in Area 2, shown on the title screen while the page
   // plays Area 1) is only filled in with what every save has: what's kept for its own area waits till it's played there
@@ -265,6 +275,7 @@ function upgradeSave(s){
   if (!Array.isArray(s.met)) s.met = [];
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};
   s.following = Array.isArray(s.following) ? s.following.filter(id => AREA.characters.some(c => c.id === id)) : [];   // who's following you (characters still here)
+  s.scroll = {has:!!(s.scroll || {}).has, sealed:Array.isArray((s.scroll || {}).sealed) ? s.scroll.sealed : []};
   const clothes = w => [...(w || [])].filter(i => CLOTHES.some(c => c.item === i));   // only what the wardrobe has now
   s.wardrobe = {owned:clothes((s.wardrobe || {}).owned), wearing:clothes((s.wardrobe || {}).wearing)};
   return s;
@@ -306,7 +317,10 @@ function slotSummary(n){
 function summaryOf(s, n){
   const A = AREAS.find(a => a.number === (s.area || 1)) || AREA;   // (the game's own area, which may not be the one this page plays)
   const area = (s.areas || {})[A.number] || {}, chapter = A.chapters[area.chapter || 0] || A.chapters[0];
-  return {n, shells:s.shells || 0, coins:s.coins || 0, friends:s.friends.length, area:A.name,
+  // how full your scroll is: each area's words and phrases you've found, of all of them, so far (a gold seal for one that's full)
+  const scroll = AREAS.filter(a => a.number <= A.number).map(a => { const ws = Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area === a.number && (!WORD_BANK[w].later || (s.w[w] && s.w[w].lv > 0)));
+    return {area:a.name, found:ws.filter(w => s.w[w] && s.w[w].lv > 0).length, of:ws.length}; });
+  return {n, shells:s.shells || 0, coins:s.coins || 0, friends:s.friends.length, area:A.name, scroll,
     words:Object.keys(WORD_BANK).filter(w => WORD_BANK[w].area && WORD_BANK[w].area <= A.number && !WORD_BANK[w].phrase && s.w[w] && s.w[w].lv > 0).length,   // (as the menu counts them: phrases aren't words caught)
     chapter, played:slotsInfo().played[n] || 0,
     ...(() => { const keep = S; S = s; try { return {practise:practiceWords().length, where:A === AREA ? practiseWhere() : '', canPractise:trainable().length >= TRAINING_MIN}; } finally { S = keep; } })()};   // (they read S)

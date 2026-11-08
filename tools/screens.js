@@ -1562,6 +1562,25 @@ const SCREENS = [
     play(); await wait(200); S.w['晚上'] = {lv: 1, due: 0, ok: 0}; S.pos = {place: 'town', x: 6, y: 11, dir: 'up'}; placePlayer(); S.clock.t = DAY_MS * .8; clockSeen = 'n'; placedIn = null; placeCharacters(); await wait(500); }},
   {id: 'battle-weasel', title: 'A weasel at night', save: 'fighting', why: 'A night creature to fight (decided 8 November 2026, the polish plan): 黄鼠狼, the weasel, only out after dark, in the long grass. Its first meeting teaches its name: 黄 yellow + 鼠 mouse + 狼 wolf.', run: async () => {
     play(); await wait(100); S.w['黄鼠狼'] = {lv: 1, due: 0, ok: 0}; battle('weasel'); await wait(1200); }},
+  // the old monkey's scroll (decided 8 November 2026, the polish plan): given as he checks your first words, faded pictures
+  // that come back as you catch words, a red seal and a present for a full page, what's still to find on the map, your
+  // friends at the feast and the party, and how full your scroll is on your game's card
+  {id: 'scroll-given', title: 'The old monkey’s scroll', save: 'middle', why: 'As he checks your first words, the old monkey gives you a very old scroll: everything on the mountain drawn in it long ago, its pictures faded. Your words are the first to come back, one after another.', run: async () => {
+    play(); await wait(100); S.scroll.has = false; scrollGiven('elder'); await wait(4200); }},
+  {id: 'scroll-faded', title: 'Word Scroll: faded pictures', save: 'middle', why: 'In the old monkey’s scroll, a word you haven’t caught shows its picture faded, till you catch it.', run: async () => {
+    play(); await wait(100); S.scroll.has = true; openScroll(() => closeCard(), 0, 'animals'); await wait(300); }},
+  {id: 'scroll-seal', title: 'A full page sealed', save: 'feastTable', why: 'A full page of your scroll: the old monkey stamps it with his red seal, 好 (good), and gives you something for it (something to wear for a big page, a snack, or shells).', run: async () => {
+    play(); await wait(100); S.scroll.has = true; sealCard(scrollPages().find(p => p.cat === 'numbers'), 'elder'); await wait(1300); }},
+  {id: 'scroll-sealed', title: 'Word Scroll: a sealed page', save: 'feastTable', why: 'A page with its red seal. A full page not sealed yet says who to show it to.', run: async () => {
+    play(); await wait(100); S.scroll.has = true; S.scroll.sealed = ['1:numbers']; openScroll(() => closeCard(), 0, 'numbers'); await wait(300); }},
+  {id: 'map-close-tofind', title: 'The map: still to find here', save: 'feastTable', why: 'A close-up says how many words are still to find there, with a sun or a moon for those out only by day or at night.', run: async () => {
+    play(); await wait(100); S.w['地图'] = {lv: 1, ok: 0}; here().visited = [...new Set([...(here().visited || []), 'meadow', 'homeGround'])]; closeUp('meadow'); await wait(500); }},
+  {id: 'feast-friends', title: 'Your friends at the feast', save: 'feastSeats', why: 'Every animal you’ve made friends with comes to the feast, round the tables: the more friends, the bigger the feast.', run: async () => {
+    play(); await wait(100); S.friends = [...new Set([...S.friends, 'rabbit', 'sheep', 'squirrel', 'goat', 'deer', 'fox', 'bee', 'butterfly', 'owl', 'mouse', 'turtle', 'duck', 'frog', 'cow'])]; storyScene('feast'); introClock = 3.05; advancedTo = 1; await wait(400); }},
+  {id: 'party-friends', title: 'The party at home', save: 'c2end', why: 'Once everything’s back on the feast’s tables: the troop, the little ones you set free, and all your friends, here and from home long ago.', run: async () => {
+    play(); await wait(100); S.friends = [...new Set([...S.friends, 'rabbit', 'sheep', 'squirrel', 'deer', 'dog', 'cat', 'goose', 'crane', 'moth'])]; storyScene('party'); introClock = .05; advancedTo = 0; await wait(500); }},
+  {id: 'slot-scroll', title: 'Your game’s card', save: 'feastTable', why: 'How full your scroll is, each area’s, with a gold seal for an area whose words you’ve all found.', run: async () => {
+    play(); await wait(100); slotCard(SLOT); await wait(300); }},
   {id: 'night-cave', title: 'The troop asleep', save: 'nightCave', why: 'At night the troop sleeps in the Water Curtain Cave, as in the book: in its stone beds, and curled up on its floor, little Zs floating up. The beds at each end are left for you.', run: async () => {
     play(); await wait(200); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
   {id: 'bedtime', title: 'Time for bed', save: 'nightCave', why: 'A at a free bed: first the day’s recap, the words you caught today to tap and hear, the questions you answered and your new friends; a quick review of today’s words if you like; then you sleep till morning.', run: async () => {

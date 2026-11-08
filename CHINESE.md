@@ -761,6 +761,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 一，二，三！ | yī, èr, sān! | One, two, three! | 师父 (The master) |  |
 | 我教你变。 | wǒ jiāo nǐ biàn. | I’ll teach you to change into things. | 师父 (The master) |  |
 | 变！ | biàn! | Change! | 师父 (The master), 小猴子 (You) |  |
+| 你知道名字，就能变！ | nǐ zhīdào míngzi, jiù néng biàn! | Know its name, and you can change into it! | 师父 (The master) |  |
 | 我教你飞。 | wǒ jiāo nǐ fēi. | I’ll teach you to fly. | 师父 (The master) |  |
 | 你走吧！ | nǐ zǒu ba! | You must leave! | 师父 (The master) |  |
 | 你回家吧。 | nǐ huíjiā ba. | Go home. | 师父 (The master) |  |
@@ -989,6 +990,12 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- |
 | 变！ | biàn! | Change! |  |
 | 很多小猴子！ | hěn duō xiǎo hóuzi! | Lots of little monkeys! |  |
+
+### Scene: the party
+
+| Chinese | Pinyin | English | Notes |
+| --- | --- | --- | --- |
+| 我们有很多朋友！ | wǒmen yǒu hěn duō péngyou! | We have lots of friends! |  |
 
 ### Scene: the wind carry everyone home
 
@@ -1346,6 +1353,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 来 | lái | to come |  |
 | 进去 | jìnqù | to go in |  |
 | 就 | jiù | then |  |
+| 能 | néng | can |  |
 | 怕 | pà | to be scared |  |
 | 里面 | lǐmiàn | inside |  |
 | 太 | tài | too, very |  |

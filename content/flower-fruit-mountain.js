@@ -334,6 +334,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // on the checklist is done apart from the exit test).
   tasks: [
     {id:'elder', main:true, if:{elder:0}, text:'Say {你好} to the old monkey, by your {石头}', arrow:'elder'},
+    {id:'seal', if:{sealsWaiting:true}, text:'A page of your scroll is full: show it to the old monkey', arrow:'elder'},   // (the old monkey's scroll: js/scrolls.js)
     {id:'elder2', main:true, if:{elder:1, newWords:{atLeast:4}}, text:'Talk to the old monkey again', arrow:'elder'},
     {id:'learn4', main:true, if:{elder:1, newWords:{below:4}}, text:'Learn 4 words: walk up to things that sparkle ✨ and press A ({newWords}/4)', arrow:{sparkle:true}},   // (the arrow over the nearest thing that sparkles)
     // (the prologue's animals: a game already in chapter 1 when the sheep came, 23 October 2026, can still meet it in the meadow)
@@ -2869,6 +2870,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   ],
   // Animals only start jumping out of the tall grass once this matches.
   animalsAppear: {knows:'动物'},
+  // The old monkey's scroll (decided 8 November 2026, the polish plan: js/scrolls.js): who seals a full page, and what they
+  // say (by: {who, if, say}); and the snacks a middling page can earn, the first you know
+  scroll: {by:[{who:'elder', say:'great'}], snacks:['蜂蜜', '桃子']},
   animalGroups: {night:'Night animals'},   // what a group of animals is called, as you meet one: Night animals found: 1/4
   // What an animal says as it comes out to play, before its questions (one of the lines), with what's happening in plain
   // English under it (the first time you meet one, its card says that instead): for an animal you're making friends
@@ -3147,6 +3151,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {say:'letsLook'},   // he checks your first words: you match them to their pictures
         {match:'Show the old monkey your words', stop:'Not now', notYet:'Come back to the old monkey when you’re ready to show him your words.'},
         {say:'great'},
+        {scroll:true},   // his old scroll, its first pictures coming back: the words you've just shown him (decided 8 November 2026)
         {say:'animals', teach:'动物', hint:'Animals live in rustling grass, out in the open and up a tree.'},
         {newWord:'动物', note:'There are {animals} different animals here in the meadow. Can you find them all?'},
         {message:'The old monkey wants you to learn the words for the meadow too: {left:meadowWords}. Things that sparkle ✨ have words.', if:{meadowWords:{below:5}}},

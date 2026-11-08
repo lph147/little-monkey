@@ -262,4 +262,27 @@ function drawWindHome(t, now){
   for (let i = 0; i < 6; i++) gust(i, true);
   for (let k = 0; k < 6; k++) R(b, cx - 70 - k * 9, cy - 12 + (k % 3) * 11, 7, 1, '#FFFFFF');   // speed lines
 }
-Object.assign(SCENE_ART, {hairTrick: drawHairTrick, flyNorth: drawFlyNorth, windHome: drawWindHome});
+// The party at home, once everything's back on the feast's tables (the old monkey's scroll: decided 8 November 2026, the
+// polish plan): the troop round the tables in the autumn sun, the little ones you set free in front, and every animal
+// you've made friends with, here and at home long ago (friendSprites, js/draw.js), jumping for joy.
+const partyCv = document.createElement('canvas');
+function drawParty(t, now){
+  partyCv.width = 120; partyCv.height = 80;
+  const g = partyCv.getContext('2d'), blink = now % 3200 < 130; g.imageSmoothingEnabled = false;
+  g.save(); g.translate(-4, 3);
+  for (let y = -1; y < 6; y++) for (let x = 0; x < 9; x++) LOOKS.grass(g, x*T, y*T, x, y + 40);
+  g.fillStyle = 'rgba(214,158,64,.38)'; g.fillRect(0, -T, 9*T, 7*T);   // (the grass gold, in autumn)
+  const hop = i => Math.round(Math.abs(Math.sin(now / 160 + i)) * 4), pals = friendSprites();
+  friendsRow(g, pals, now, true);   // (your friends, behind the troop)
+  [['troopA', 0], ['hungry', 1], ['big', 4], ['troopB', 5]].forEach(([id, x], i) => g.drawImage(monkeySprite(id, 'down', blink && i % 2 === 0), x*T, T - 6 - hop(i)));
+  OBJECT_ART.fruitTableMelon(g, {x:0, y:2, stage:1}); OBJECT_ART.fruitTableGrapes(g, {x:1, y:2, stage:1}); OBJECT_ART.fruitTableBananas(g, {x:2, y:2, stage:1});
+  OBJECT_ART.crabTable(g, {x:3, y:2, stage:2}); OBJECT_ART.feastTableHoney(g, {x:4, y:2, w:3});
+  [['baby1', 0], ['baby2', 2], ['player', 3], ['mother', 4], ['baby3', 6]].forEach(([id, x], i) => {   // in front, facing the table (the little ones smaller)
+    const k = id.startsWith('baby') ? SMALL_PX : T;
+    g.drawImage(monkeySprite(id, 'up', false), x*T + (T - k) / 2, 3*T - 3 + (T - k) - hop(i + 4), k, k);
+  });
+  g.drawImage(monkeySprite('elder', 'left', blink), 7*T - 10, 2*T + 2 - hop(9));
+  g.restore();
+  b.drawImage(partyCv, 0, 0, 120, 80, 0, 0, VW*T, VH*T);
+}
+Object.assign(SCENE_ART, {hairTrick: drawHairTrick, flyNorth: drawFlyNorth, windHome: drawWindHome, party: drawParty});

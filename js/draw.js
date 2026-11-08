@@ -1125,7 +1125,7 @@ function drawWorld(now){
     b.globalAlpha = 1;
     // a ! while they're stopping you (the stopsYou step), a ? while they're puzzled (the shop's, when you've asked for something
     // you didn't point at: buy, in js/world.js), or a ! or ? from the area's bubbles
-    const bub = inClass.has(n.id) ? null : talking ? {show:'speaker'} : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) ? {show:'!'} : now < (n.callingT || 0) ? {show:'note'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (a note: calling out what they sell, callOut in js/world.js)   // (and something they kept for you; none in a lesson, such as PE's)
+    const bub = inClass.has(n.id) ? null : talking ? {show:'speaker'} : scared ? {show:'!'} : n.puzzled ? {show:'?'} : now < (n.calls || 0) || keptFor(n) || sealFor(n) ? {show:'!'} : now < (n.callingT || 0) ? {show:'note'} : (AREA.bubbles[n.id] || []).find(x => matches(x.if));   // (a note: calling out what they sell, callOut in js/world.js)   // (and something they kept for you; none in a lesson, such as PE's)
     if (bub) bubbles.push([bub.show === 'speaker' ? X+4 : X+10, Y - (bub.show === 'speaker' ? 6 + Math.round(Math.sin(now / 220)) : 8) - (n.look && MAP_SPRITES[n.look] ? MAP_SPRITES[n.look].rows.length - T : 0), bub.show]);   // (over a big one's head, such as the cow's)
   }
   drawGhosts(cx, cy, now);   // (anyone fading out, going to bed or getting up: js/daynight.js)
@@ -1763,6 +1763,23 @@ function heavenGate(k, x0){
 // you the sea, and far across it a mountain in the clouds, glowing gold, where the immortals live. From 36 (我要去找神仙！),
 // sunrise, and you, standing on the rock, looking out to sea.
 const feastCv = document.createElement('canvas');
+// Your animal friends, as they look on the map (the old monkey's scroll: decided 8 November 2026, the polish plan): every
+// one comes to the feast at the end of chapter 1, and to the party at home at the end of the human world, round the
+// tables, the more friends, the bigger the party. Friends from an area before this one by their word (PAST_FRIENDS).
+const friendSpr = {};
+function friendSprites(){
+  return S.friends.map(id => {
+    const a = ANIMALS.find(x => x.id === id); if (a) return a.spr;
+    const w = PAST_FRIENDS[id] || lookOf(id);
+    return w && MAP_SPRITES[w] ? friendSpr[w] || (friendSpr[w] = sprite(MAP_SPRITES[w].rows, MAP_SPRITES[w].palette)) : null;
+  }).filter(Boolean);
+}
+// Them, a crowd behind the troop (g: the scene's canvas, drawn before the troop): the first eleven in a row along the top,
+// the next eleven a row lower, between and over the troop's heads (in front, the captions would hide them).
+function friendsRow(g, sprs, now, joy){
+  sprs.slice(0, 22).forEach((spr, i) => { const back = i < 11, k = back ? i : i - 11;
+    g.drawImage(spr, (back ? 1 : 6) + k * 11, (back ? -3 : 4) - (joy ? Math.round(Math.abs(Math.sin(now / 150 + i * 1.7)) * 3) : 0), 10, 10); });
+}
 function drawFeast(t, now){
   const W = VW*T, H = VH*T, blink = now % 3200 < 130;
   if (t < 24){
@@ -1770,7 +1787,8 @@ function drawFeast(t, now){
     const g = feastCv.getContext('2d'); g.imageSmoothingEnabled = false;
     g.save(); g.translate(-4, 3);
     for (let y = -1; y < 6; y++) for (let x = 0; x < 9; x++) LOOKS.grass(g, x*T, y*T, x, y + 40);
-    const joy = t >= 21, hop = (i) => joy ? Math.round(Math.abs(Math.sin(now / 160 + i)) * 4) : 0;
+    const joy = t >= 21, hop = (i) => joy ? Math.round(Math.abs(Math.sin(now / 160 + i)) * 4) : 0, pals = friendSprites();
+    friendsRow(g, pals, now, joy);   // (your friends, behind the troop)
     [['troop2', 0], ['hungry', 1], ['thirsty', 2], ['big', 4], ['boss', 5], ['fisher', 6]].forEach(([id, x], i) =>   // behind the tables, facing you
       g.drawImage(monkeySprite(id, 'down', blink && i % 2 === 0), x*T, T - 6 - hop(i)));   // (their faces over the food)
     OBJECT_ART.fruitTableMelon(g, {x:0, y:2, stage:1}); OBJECT_ART.fruitTableGrapes(g, {x:1, y:2, stage:1}); OBJECT_ART.fruitTableBananas(g, {x:2, y:2, stage:1});

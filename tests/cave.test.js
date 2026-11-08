@@ -49,8 +49,9 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   // counting on from ten (十一 to 二十)
   await press(g, 14, 6, 'up');
   assert.deepEqual(said(g), ['master: 你来了。', 'master: 我是你的师父。', 'master: 你叫什么名字？', 'player: 我没有真正的名字。大家都叫我美猴王。', 'master: 你叫孙悟空。',
-    'master: 上课了！', 'master: 这是十。']);
+    'master: 上课了！', 'master: 这是十。', 'master: 很好！']);   // (and with 十一 to 二十, your scroll's numbers page is full: he stamps it with his red seal, js/scrolls.js)
   const first = notes(g);
+  assert.ok(first.some(t => /The numbers page is full! The master stamps it with a red seal/.test(t)), 'the master seals your scroll’s full page');
   assert.ok(first.includes('card: 师父'));
   assert.ok(first.includes('card: 春天'), 'it’s spring as you arrive');
   assert.equal(get(g, 'yourName().zh'), '孙悟空', 'your name, from now on');
@@ -320,7 +321,7 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   // his secret (变), a first change, and back to bed
   said(g);
   await press(g, 4, 3, 'up');
-  assert.deepEqual(said(g), ['master: 你来了。', 'master: 我教你变。', 'master: 变！']);
+  assert.deepEqual(said(g), ['master: 你来了。', 'master: 我教你变。', 'master: 你知道名字，就能变！', 'master: 变！'], 'and what it’s all about: know its name, and you can change into it (the old monkey’s scroll, 8 November 2026)');
   assert.ok(notes(g).includes('card: 变'));
   assert.deepEqual([g.run('PLACE'), p(g, 'riddle'), get(g, 'pl.form')], ['cave', 3, null]);
   // his tests: three changes; then the cloud somersault (飞), and flying by cloud from the map

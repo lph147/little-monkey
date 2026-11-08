@@ -11,7 +11,7 @@ const knowing = words => Object.fromEntries(words.map(hz => [hz, {lv: 1, due: 0,
 test('telling you about animals, the old monkey asks you to learn the meadow’s words too: the ones you don’t know yet', async () => {
   const told = async words => {
     const g = loadGame({dom: true, save: {version: 24, started: true, w: knowing(['石头', '你好', '花', '草', ...words]), areas: {1: {elder: 1}}}});
-    g.run('globalThis.__told = []; showDialog = async () => {}; showNotice = async w => setSeen(w); showNarration = async t => { __told.push(t); }; matchWords = async () => new Set()');
+    g.run('globalThis.__told = []; showDialog = async () => {}; showNotice = async w => setSeen(w); showNarration = async t => { __told.push(t); }; matchWords = async () => new Set(); infoBox = async () => {}');   // (his old scroll's card: tests/scroll.test.js)
     await g.run("runSteps(AREA.talk.elder.find(p => matches(p.if)).do, 'elder')");
     assert.equal(g.run('here().elder'), 2, 'he has told you about animals');
     return JSON.parse(g.run('JSON.stringify(__told)'));

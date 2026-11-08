@@ -236,7 +236,7 @@ function continueGame(n){   // play game n from where you left off (in its own a
 // card. full: New game found no empty game, so it says how to make room. pick: the game to start on.
 function filesCard(full, pick){
   const row = n => { const g = slotSummary(n); return g
-    ? `<button class="btn slotrow" data-slot="${n}" data-label="Choose">${faceHTML()}<span class="gt"><b>Game ${n}</b><span>${g.words} ${g.words === 1 ? 'word' : 'words'} · ${g.friends} ${g.friends === 1 ? 'friend' : 'friends'} · ${esc(g.chapter.name)}${g.played ? ' · ' + ago(g.played) : ''}</span></span></button>`
+    ? `<button class="btn slotrow" data-slot="${n}" data-label="Choose">${faceHTML()}<span class="gt"><b>Game ${n}</b><span>${g.words} ${g.words === 1 ? 'word' : 'words'} · ${g.friends} ${g.friends === 1 ? 'friend' : 'friends'} · ${esc(g.chapter.name)}${g.played ? ' · ' + ago(g.played) : ''}${g.scroll.filter(a => a.found >= a.of).map(() => ' <span class="goldseal" role="img" aria-label="A full scroll">好</span>').join('')}</span></span></button>`
     : `<button class="btn slotrow empty" data-slot="${n}" data-label="Choose"><span class="face"></span><span class="gt"><b>Game ${n}</b><span>Empty<span class="spare">: start a new game here, or load one</span></span></span></button>`; };
   openCard(`<div class="files"><p class="label">Save files</p><p class="small${full === 'full' ? '' : ' spare'}">${full === 'full'
       ? 'All three games are in use. To start a new one, choose a game and delete it (copy it to a file first if you want to keep it).'
@@ -270,8 +270,10 @@ function slotCard(n){
   }
   const practise = g.practise ? `<p>${g.practise} ${g.practise === 1 ? 'word needs' : 'words need'} practice: practise ${esc(g.where)}, or meet animals in the tall grass.</p>` : '';
   const friends = `${g.friends} ${g.friends === 1 ? 'friend' : 'friends'}`;
+  // how full your scroll is, each area's (the old monkey's scroll: decided 8 November 2026), with a gold seal once it's full
+  const scroll = `<div class="scrollfill">${g.scroll.map(a => `<span class="sf"><span>${esc(a.area.en)}</span><span class="bar"><i style="width:${Math.round(a.found / Math.max(1, a.of) * 100)}%"></i></span><span>${a.found}/${a.of}</span>${a.found >= a.of ? ' <span class="goldseal" role="img" aria-label="Every word found">好</span>' : ''}</span>`).join('')}</div>`;
   openCard(`<p class="label">Game ${n}</p><div class="slotcard">${faceHTML()}<div><p><b>${g.words} ${g.words === 1 ? 'word' : 'words'}</b> · ${friends} · ${g.shells} 🐚${g.coins ? ` · ${g.coins} 🪙` : ''}</p>
-      <p>${esc(g.area.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${practise}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
+      <p>${esc(g.area.en)} · ${esc(g.chapter.name)}: ${esc(g.chapter.title)}</p>${scroll}${practise}${g.played ? `<p class="small played">Last played ${ago(g.played)}. It saves by itself as you play.</p>` : ''}</div></div>
     <div class="actions" data-nav><button class="btn danger" data-a="del">Delete</button><button class="btn" data-a="copy">Copy to a file</button><button class="btn" data-a="back" data-b>Back</button><button class="btn primary" id="contBtn">Continue</button></div>`);
   on('[data-a=back]', () => filesCard(null, n));
   sheet.querySelector('#contBtn').focus();   // the arrows move from here

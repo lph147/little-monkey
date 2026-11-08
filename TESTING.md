@@ -745,6 +745,15 @@ In chapter 1, once you know 大 and 小 (your first fish teaches 小, the first 
 4. At night, big ones come more often.
 5. The wild boar and the bear are always the same size.
 
+## The old monkey's scroll
+- New game: find your first words and go back to the old monkey. After the matching, he gives you his old scroll: your words' pictures come back one by one, among others still faded.
+- MENU, 词 (words): a word you haven't caught shows its picture faded.
+- Fill a page (for example learn all the numbers at school): a task says the page is full, and the old monkey has a !. Talk to him: a red seal, 好, stamps down on the page, and he gives you something (a headband, a snack or shells). The page shows its seal in the Word Scroll.
+- MAP, then a place's close-up: "？ 3 more to find here", with a sun or a moon for animals out only by day or at night.
+- The feast at the end of chapter 1: your animal friends are round the tables. At the end of the human world, the party at home has them too.
+- In the master's cave, as he teaches you 变: 你知道名字，就能变！
+- The title screen, your game's card: a bar for how full your scroll is, and a gold seal for an area whose words you've all found.
+
 ## Day and night animals
 
 In chapter 1 (once the day goes round), and in the human world:
