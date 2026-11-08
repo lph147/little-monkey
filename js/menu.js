@@ -46,7 +46,7 @@ function friendsPage(back, focus){
   const named = (a, note = '') => `<button data-w="${a.hz}" data-label="${page(a.hz) ? 'Open' : 'Hear it'}"${note ? ' class="fmet"' : ''}>${portrait(a.id)}<span class="fz">${a.hz}</span><span class="small">${WORDS[a.hz].py}</span>${note ? `<span class="fnote">${note}</span>` : ''}</button>`;
   const card = a => isFriend(a) ? named(a)
     : S.met.includes(a.id) ? named(a, a.many ? `<b>${here()[a.counts] || 0}/${a.many}</b>` : 'Not a friend yet')
-    : `<button class="fshadow" data-clue="${a.id}" data-label="Where?"><span class="sil">${portrait(a.id)}</span><span class="fz">？</span><span class="fnote">${esc(a.clue)}</span></button>`;
+    : `<button class="fshadow" data-clue="${a.id}" data-label="Where?"><span class="sil">${portrait(a.id)}</span><span class="fz">？</span><span class="fnote">${esc(a.clue)}${WHEN[a.time] ? ' ' + WHEN[a.time].icon : ''}</span></button>`;   // (a sun or a moon: only out by day, or after dark)
   const isPerson = id => AREA.characters.some(c => c.id === id && c.person), others = S.friends.filter(id => !ANIMALS.some(a => a.id === id) && !isPerson(id)), people = S.friends.filter(isPerson);   // (people you've helped: their own section)
   openCard(`<p class="label">Friends <span class="fcount">${animals.filter(isFriend).length} of ${animals.length} animals</span></p>
     <div class="friends" data-nav>${animals.map(card).join('')}</div>
@@ -58,9 +58,11 @@ function friendsPage(back, focus){
   on('[data-a=ok]', back);
   const f = focus && sheet.querySelector(`.friends [data-w="${focus}"], .friends [data-clue="${focus}"]`); if (f) f.focus();
 }
+// When an animal's about, if only by day or after dark (its time: js/art.js's awakeNow), with a sun or a moon.
+const WHEN = {day:{icon:'☀️', text:'by day'}, night:{icon:'🌙', text:'after dark'}};
 // A friend still to find: its shadow, bigger, and where it lives.
 function friendClue(a, back){
-  openCard(`<p class="label">A friend to find</p><div class="fclue"><span class="sil">${portrait(a.id)}</span><div><p class="fz">？</p><p>${esc(a.clue)}.</p><p class="small">Find it, and answer its questions to make friends.</p></div></div>
+  openCard(`<p class="label">A friend to find</p><div class="fclue"><span class="sil">${portrait(a.id)}</span><div><p class="fz">？</p><p>${esc(a.clue)}${WHEN[a.time] ? `, ${WHEN[a.time].text}` : ''}.${WHEN[a.time] ? ' ' + WHEN[a.time].icon : ''}</p><p class="small">Find it, and answer its questions to make friends.</p></div></div>
     <div class="actions"><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=ok]', back);
 }

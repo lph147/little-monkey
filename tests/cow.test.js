@@ -93,7 +93,7 @@ test('south, over the bridge, down the south slope and through the dark pines (�
   await play(g, 'arrive(16, 29).then(runEvents)');
   assert.deepEqual([g.run('PLACE'), get(g, '[S.pos.x, S.pos.y, S.pos.dir]')], ['pasture', [16, 1, 'down']], 'out to the pasture, at the edge of the pines');
   assert.deepEqual(get(g, 'PLACES.pasture.name'), {zh: '牧场', py: 'mùchǎng', en: 'The pasture'});
-  assert.deepEqual(get(g, "LEGEND.n.wild"), ['wolf', 'wolf', 'snake', 'spider'], 'its long grass: wolves come down from the pines');
+  assert.deepEqual(get(g, "LEGEND.n.wild"), ['wolf', 'wolf', 'snake', 'spider', 'weasel'], 'its long grass: wolves come down from the pines (and the weasel, after dark)');
   assert.deepEqual(get(g, '[PLACES.pasture.battleMusic, PLACES.pasture.backdrop]'), ['pineBattle', 'pines'], 'battles among the pines, as in the pine wood');
   for (const [x, y] of [[20, 7], [21, 8], [20, 12], [21, 13]]) assert.equal(g.run(`tileAt(${x}, ${y}).look`), 'longGrass', `long grass grown over the way at ${x},${y}`);
   for (const [x, y] of [[19, 13], [22, 13], [19, 14], [22, 14]]) assert.ok(!g.run(`walkable(${x}, ${y})`), `the big rocks either side of the gap, at ${x},${y}`);

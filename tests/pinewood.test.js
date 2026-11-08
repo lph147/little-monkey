@@ -256,7 +256,7 @@ test('you can’t get up or down the hillside without going through its long gra
   assert.equal(stepsTo(g, [5, 28], 22, true), null, 'and right across the lowest terrace, on the way up');
   assert.notEqual(stepsTo(g, [18, 25], 32, true), null, '(coming down, you can hop down the banks round it)');
   assert.equal(stepsTo(g, [12, 11], 6, true), null, 'and under the first pines');
-  assert.deepEqual(get(g, "tileAt(15, 40).wild"), ['snake', 'snake', 'spider', 'spider', 'wolf'], 'snakes and spiders, and now and then a wolf from the pines');
+  assert.deepEqual(get(g, "tileAt(15, 40).wild"), ['snake', 'snake', 'spider', 'spider', 'wolf', 'weasel'], 'snakes and spiders, and now and then a wolf from the pines (and the weasel, after dark)');
 });
 
 test('the hillside is a long, winding walk up, by stone steps up the cliffs and stepping stones over the brook; its banks make the way down quicker', () => {
@@ -390,7 +390,7 @@ test('a deer lives in the sunny glade: chapter 1’s animal, counted on its own,
 
 test('wolves live in the long grass of the pine wood (and only there); lose a fight in chapter 1, and you rest under the big tree at the home ground', async () => {
   const g = game(BUILDING, {place: 'pineWood', x: 15, y: 17, dir: 'up'}, KNOWS);
-  assert.deepEqual(get(g, '[...new Set(tileAt(15, 17).wild)].sort()'), ['snake', 'spider', 'wolf']);
+  assert.deepEqual(get(g, '[...new Set(tileAt(15, 17).wild)].sort()'), ['snake', 'spider', 'weasel', 'wolf']);   // (the weasel only after dark)
   assert.equal(get(g, 'ENEMIES.wolf.word'), '狼');
   g.run("Math.random = () => 0; wildSteps = 4; battle = async id => { globalThis.__fought = id; return 'won'; }");   // (the battle itself: tests/battle.test.js)
   await play(g, 'arrive(15, 17)');
@@ -402,7 +402,7 @@ test('wolves live in the long grass of the pine wood (and only there); lose a fi
   assert.ok(g.run('walkable(17, 8)'), 'beside the big tree, with the table set up');
   g.run("S.pos = {place: 'path', x: 14, y: 15, dir: 'down'}; placePlayer()");
   const wild = get(g, "(() => { const out = new Set(); MAP.forEach((r, y) => [...r].forEach((c, x) => (tileAt(x, y).wild || []).forEach(id => out.add(id)))); return [...out].sort(); })()");
-  assert.deepEqual(wild, ['snake', 'spider'], 'none on the mountain path');
+  assert.deepEqual(wild, ['snake', 'spider', 'weasel'], 'no wolves on the mountain path (the weasel only after dark, once the day goes round)');
 });
 
 test('if the map has changed under your saved spot in the pine wood, you start at its way in (not back at your stone)', () => {

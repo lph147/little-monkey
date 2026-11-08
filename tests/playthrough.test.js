@@ -662,10 +662,15 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[brookX, 24], [brookX, 27], [3, 27], [3, 33], [12, 33], [12, 38]], 'off the stones, and down more steps, to the pines');
   await act('arrive(12, 39).then(runEvents)', 'going on down, into the dark pines');
   assert.deepEqual([run('PLACE'), area().cow], ['darkPines', 2], 'the dark pines (黑松林): a cow moos, somewhere beyond them');
-  // An owl up on a dead pine just inside (28 October 2026): 猫头鹰, taught as you meet it, and its questions
+  // An owl up on a dead pine just inside (28 October 2026): 猫头鹰, taught as you meet it, and its questions. By day it's
+  // asleep there (8 November 2026: it only comes out after dark), so the playthrough comes back once night has fallen
   await walk([[16, 1], [16, 3], [11, 3]], 'going west, to the owl on its dead pine');
-  await pressAt(11, 3, 'up', 'meeting the owl, and answering its questions');
+  assert.equal(run('promptFor(11, 2)'), 'Look', 'by day the owl is asleep on its pine');
+  const dayT = get('S.clock.t');
+  run('S.clock.t = DAY_MS * NIGHT + 1');
+  await pressAt(11, 3, 'up', 'meeting the owl at night, and answering its questions');
   assert.ok(knows('猫头鹰') && get('S.friends').includes('owl'), 'the owl (猫头鹰) is your friend');
+  run(`S.clock.t = ${dayT}`);
   // The way through the dark pines (27 October 2026): it forks; the cow's hoofprints show which way it went, down a narrow
   // gully where a great hollow pine lies along it, to crawl through; to a stream too deep to wade, where a dead pine on the
   // bank, knocked down with your stick, falls across it; over it, a rabbit by the way saw the cow go by (its word game won,
@@ -774,12 +779,16 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.equal(area().shooed.length, 5, 'the birds, all shooed away');
   await pressAt(12, 11, 'right', 'taking a melon’s seeds');
   assert.ok(knows('西瓜') && area().holding.melonSeeds === '种子', 'a wild watermelon, and its seeds');
-  // A mouse hiding in the melon field's tall grass, only there (30 October 2026: a chapter 1 friend where there were none)
+  // A mouse hiding in the melon field's tall grass, only there (30 October 2026: a chapter 1 friend where there were none),
+  // and only after dark (8 November 2026), so the playthrough comes back at night
+  const melonDayT = get('S.clock.t');
+  run('S.clock.t = DAY_MS * NIGHT + 1; rustle = null');
   for (let i = 0; i < 40 && !get('S.met').includes('mouse'); i++){   // walk about until its tall grass rustles, then step in
     const r = get('rustle');
     if (r) await stepOn(r.x, r.y, 'stepping into the rustling grass in the melon field'); else await stepOn(6, 14 + i % 2, 'walking about by the melon field’s tall grass');
   }
-  assert.ok(knows('老鼠') && get('S.friends').includes('mouse'), 'a mouse jumps out of the melon field’s tall grass, teaching 老鼠, and becomes your friend');
+  assert.ok(knows('老鼠') && get('S.friends').includes('mouse'), 'a mouse jumps out of the melon field’s tall grass at night, teaching 老鼠, and becomes your friend');
+  run(`S.clock.t = ${melonDayT}; rustle = null`);
   stand(1, 9, 'left');
   await act('arrive(0, 9).then(runEvents)', 'back out of the melon field');
   await walk([[24, 13], [3, 13], [3, 6], [12, 6], [12, 1]], 'back up the south slope, by its steps');
@@ -943,9 +952,9 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual(backToBack, [], 'at school, the teacher never teaches you a new word, then another the next time you talk to him, with no questions in between');
   assert.deepEqual(besideTasks(game), [], 'no task ever sends you to someone you’re standing with, just as you finish talking to them: they go straight on');
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
-  // your wardrobe; and 睡觉, sleep, by the cave's beds). (The spider, which the prologue's long grass didn't send this
-  // player, jumps out on the hillside.)
-  assert.deepEqual(get('ORDER.filter(w => lvl(w) < 1)').sort(), ['戴', '睡觉'].sort(), 'the words this player hasn’t caught');
+  // your wardrobe; 睡觉, sleep, by the cave's beds; and 黄鼠狼, the weasel, which only jumps out of the long grass after
+  // dark). (The spider, which the prologue's long grass didn't send this player, jumps out on the hillside.)
+  assert.deepEqual(get('ORDER.filter(w => lvl(w) < 1)').sort(), ['戴', '睡觉', '黄鼠狼'].sort(), 'the words this player hasn’t caught');
 
   // Everything said on the way has a voice clip (npm run voices makes them)
   const clips = require('../tools/make-voices').plan().clips, said = get('__said');

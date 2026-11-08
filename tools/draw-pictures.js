@@ -1118,6 +1118,20 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(O(16, 11, 2.4, 1.6), '#EDE3D0');
     for (const x of [9, 15, 21]) p.flat(path([[x, 7], [x + 1, 4], [x, 1]], .5), '#DCE4EA');    // steam
   },
+  '黄鼠狼': p => {   // weasel: a long, low, golden-brown body side on, head to the left, a cream throat and belly, little round ears, short legs, and a long bushy tail with a dark tip curling up behind (unlike 狐狸: orange, a pointed face and big ears; unlike 老鼠: small and grey, a thin pink tail)
+    const FURW = '#C8892F', l = '#E6B460', d = '#8E5A1C';
+    p.flat(O(16, 27.6, 13, 1.3), '#5DA651');                                                          // its shadow
+    p.fill(path([[24, 19.5], [28.5, 14], [28.5, 8], [25.5, 4.5]], 2.7), FURW, {light: l, dark: d, edge: true});   // its tail, bushy, curling up behind
+    p.fill(path([[27.4, 6.4], [25.4, 4.4]], 2.5), '#5A3A1E');                                         // its dark tip
+    for (const x of [8.5, 11.5, 19, 22]) p.fill(path([[x, 21], [x - .6, 26.6]], 1.6), d);             // short legs
+    p.fill(path([[7.5, 16.5], [13, 19], [19.5, 19], [24.5, 17.5]], 4.3), FURW, {light: l, dark: d, edge: true});   // its long body
+    p.flat(path([[7.5, 19.6], [12.5, 22], [18.5, 22]], 1.4), '#F4E6C8');                               // cream belly
+    p.fill(O(6.6, 14.2, 4.7, 3.9), FURW, {light: l, dark: d, edge: true});                           // head
+    p.fill(O(5.4, 10.4, 1.8, 1.8), FURW, {dark: d, edge: true}); p.flat(O(5.4, 10.6, .9, .9), '#E8A8A0');   // ear
+    p.flat(O(4.4, 16.4, 2.8, 1.7), '#F4E6C8');                                                        // cream throat and chin
+    p.eye(4.6, 13.2);
+    p.flat(O(1.9, 15, 1, .9), '#3A2416');                                                             // nose
+  },
   '臭豆腐': p => {   // stinky tofu: deep-fried golden cubes of tofu in a little paper tray, pickled cabbage and a dab of red chilli on top, a toothpick in one (unlike 包子: round, white, in a steamer; unlike 臭: a face pinching its nose)
     const cube = (x, y, s) => {   // a fried cube: its front, and its top a shade lighter, with the little holes frying leaves
       p.fill(Pg([[x, y], [x + 2, y - 2.4], [x + s + 2, y - 2.4], [x + s, y]]), '#E3A94C', {light: '#F2C870', dark: '#B07A2A', edge: true});
@@ -1693,6 +1707,10 @@ const ICON_DRAWINGS = {
   '🌙': p => {   // a crescent moon: bedtime, and the day's recap (js/daynight.js)
     p.fill(and(O(8, 8.4, 6.6), not(O(11.2, 6, 5.4))), '#F6E7A8', {light: '#FFF8D6', dark: '#D8B864'});
     p.flat(or(O(2.6, 2.6, .8), O(13.6, 12.4, .7)), '#FFF1A8');   // two little stars
+  },
+  '☀️': p => {   // the sun: an animal only out by day (the Friends page, js/menu.js)
+    for (let i = 0; i < 8; i++){ const a = i * Math.PI / 4, c = Math.cos(a), s = Math.sin(a); p.flat(path([[8 + c * 5.6, 8 + s * 5.6], [8 + c * 7.4, 8 + s * 7.4]], .7), '#F2A82E'); }   // its rays
+    p.fill(O(8, 8, 4.2), '#F7C948', {light: '#FFF1A8', dark: '#E0A030'});
   },
   '⭐': p => {   // a star: a new word, a new friend
     const pts = [...Array(10)].map((_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 3.3 : 7.6; return [8 + r * Math.cos(a), 8.7 + r * Math.sin(a)]; });

@@ -50,11 +50,13 @@ async function wildStep(t){
   if (++wildSteps < WILD_AFTER || Math.random() >= WILD_CHANCE) return false;
   wildSteps = 0;
   if (isStinky()){   // (you smell of durian, js/input.js: it keeps away, and the first sniffs the air and runs off)
-    if (!stinkFled){ stinkFled = true; held = null; queued = null; await sniffAndFlee(pickFoe(t.wild)); }
+    const id = pickFoe(t.wild);
+    if (id && !stinkFled){ stinkFled = true; held = null; queued = null; await sniffAndFlee(id); }
     return false;
   }
-  held = null; queued = null;
   const id = pickFoe(t.wild);
+  if (!id) return false;   // (none of those that live here is about now, such as wasps at night)
+  held = null; queued = null;
   await wildBattle(id, findSpot(), {size:pickSize(id)});
   return true;
 }
@@ -111,12 +113,19 @@ async function sniffAndFlee(id, spot = findSpot()){
 }
 // Which creature jumps out: one of those that live there (wild; one listed twice comes twice as often), at random, but
 // never the same three times in a row, unless it's all that lives there (decided 22 October 2026: by chance, a spider
-// jumped out six times in a row). lastFoes: the last two that did.
+// jumped out six times in a row). lastFoes: the last two that did. And by the time of day (decided 8 November 2026, the
+// polish plan): an enemy's day and night say how likely it is then (1 if not said), so wasps are only about by day (night
+// 0), snakes mostly by day, wolves and spiders more at night (night 2), and the weasel only after dark (day 0); none
+// about now, and nothing jumps out (null).
 const lastFoes = [];
+const foeWeight = id => { const f = ENEMIES[id] || {}, w = typeof isNight === 'function' && isNight() ? f.night : f.day; return w === undefined ? 1 : w; };
 function pickFoe(wild){
+  const about = wild.filter(id => foeWeight(id) > 0);
+  if (!about.length) return null;
   const twice = lastFoes.length === 2 && lastFoes[0] === lastFoes[1] ? lastFoes[0] : null;
-  const pool = wild.some(id => id !== twice) ? wild.filter(id => id !== twice) : wild;
-  const id = pool[Math.floor(Math.random() * pool.length)];
+  const pool = about.some(id => id !== twice) ? about.filter(id => id !== twice) : about;
+  let r = Math.random() * pool.reduce((n, id) => n + foeWeight(id), 0), id = pool[pool.length - 1];
+  for (const x of pool){ r -= foeWeight(x); if (r < 0){ id = x; break; } }
   lastFoes.push(id); if (lastFoes.length > 2) lastFoes.shift();
   return id;
 }

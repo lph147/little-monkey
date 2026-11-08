@@ -19,7 +19,9 @@ const hiding = (g, place) => [...new Set(get(g, `(enterPlace('${place}'), Array.
 test('the mouse hides in the melon field’s tall grass from chapter 1, and nowhere else', () => {
   const g = game(CHAPTER_ONE);
   assert.deepEqual(get(g, "(a => [a.hz, a.hides, a.place, a.chapter, a.at])(ANIMALS.find(a => a.id === 'mouse'))"), ['老鼠', 'melonField', 'melonField', 1, null]);
-  assert.ok(hiding(g, 'melonField').includes('mouse'), 'it rustles in the melon field’s tall grass');
+  assert.ok(!hiding(g, 'melonField').includes('mouse'), 'by day it stays hidden: it only comes out after dark (decided 8 November 2026, the polish plan)');
+  g.run('S.clock.t = DAY_MS * NIGHT + 1');
+  assert.ok(hiding(g, 'melonField').includes('mouse'), 'at night it rustles in the melon field’s tall grass');
   for (const p of ['meadow', 'path', 'valley', 'southSlope', 'hillside']) assert.ok(!hiding(g, p).includes('mouse'), `never in the ${p}’s`);
   assert.ok(!hiding(game({elder: 2}), 'melonField').includes('mouse'), 'not in the prologue');
 });

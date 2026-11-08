@@ -143,7 +143,8 @@ const WORD_BANK = {
   '鱼饵': {py:"yú'ěr", en:'bait', pic:'🪱', area:1, category:'items', alike:['蜂蜜', '酸奶']},   // (the 老板 sells it, once you can fish: a big fish bites; all three pictures are a pot)
   '鱼竿': {py:'yúgān', en:'fishing rod', pic:'🎣', area:1, category:'items', alike:['棍子']},   // (the fishing monkey's, by the stream at the home ground, for the feast's fish; both pictures are a long, thin stick)
   '快乐': {py:'kuàilè', en:'happy', pic:'😊', area:1, category:'describing'},   // (the feast, at the end of chapter 1: 小猴子很快乐！ heard since becoming king)
-  '臭': {py:'chòu', en:'smelly', pic:'🤢', area:1, category:'describing'},   // (as you eat your first durian: 太臭了！, it's so smelly!)
+  '臭': {py:'chòu', en:'smelly', pic:'🤢', area:1, category:'describing'},
+  '黄鼠狼': {py:'huángshǔláng', en:'weasel', pic:'🦦', area:1, category:'animals', alike:['狐狸', '老鼠', '狼']},   // (a night creature to fight, sneaking through the long grass after dark: chapter 1)   // (as you eat your first durian: 太臭了！, it's so smelly!)
   '木筏': {py:'mùfá', en:'raft', pic:'🛶', area:1, category:'items', alike:['木头']},   // (the troop builds it on the shore, at the end of chapter 1: you leave on it, as in the book)
   '海': {py:'hǎi', en:'sea', pic:'🌊', area:1, category:'nature', alike:['河', '水']},   // (the shore, below the meadow, where the river meets the sea; heard in the opening, 海里有一座山)
   '螃蟹': {py:'pángxiè', en:'crab', pic:'🦀', area:1, category:'animals'},   // (on the shore's sand, for the feast)
@@ -451,6 +452,7 @@ const MADE = {
   '冷': {clue:['冫', 'bīng', 'ice'], why:'is on its left: two drops of ice. It’s cold!'},
   '雨': {why:'Drawn like rain: the sky along its top, and drops of rain falling under it.'},
   '大雨': {parts:[['大', 'dà', 'big'], ['雨', 'yǔ', 'rain']]},
+  '黄鼠狼': {parts:[['黄', 'huáng', 'yellow'], ['鼠', 'shǔ', 'mouse'], ['狼', 'láng', 'wolf']]},
   '臭豆腐': {parts:[['臭', 'chòu', 'smelly'], ['豆腐', 'dòufu', 'tofu']]},
   '雪': {clue:['雨', 'yǔ', 'rain'], why:'is on its top: snow falls from the sky, as rain does'},
   // phrases

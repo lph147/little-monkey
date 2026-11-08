@@ -1416,7 +1416,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[0, 27], to:'cliffs', arrive:[24, 6], facing:'left', if:{garden:{atLeast:1}}, closed:'Thick bushes block the way.'}
       ],
       legend: {
-        'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider', 'spider', 'wolf']},   // long grass: snakes and spiders, and now and then a wolf
+        'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider', 'spider', 'wolf', 'weasel']},   // long grass: snakes and spiders, and now and then a wolf
         // flowers on the slope, each square all one colour (F red, E yellow and J white, as in the meadow, and these): A shows its
         // colour, such as 粉色的花 (a pink flower), once you know it
         'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
@@ -1602,7 +1602,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[25, 14], to:'melonField', arrive:[1, 10], facing:'right', if:{garden:{atLeast:1}}, closed:'Thick bushes block the way.'}
       ],
       legend: {
-        'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider']},   // long grass: snakes and spiders
+        'n': {look:'longGrass', walk:true, wild:['snake', 'snake', 'spider', 'weasel']},   // long grass: snakes and spiders
         // flowers on the slope, each square all one colour, as on the hillside
         'k': {look:'pinkFlowers', walk:true, word:'花', learnOnStep:true, colour:'粉色'},
         'u': {look:'blueFlowers', walk:true, word:'花', learnOnStep:true, colour:'蓝色'},
@@ -1680,7 +1680,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[25, 5], to:'hillside', arrive:[1, 26], facing:'right'}, {at:[25, 6], to:'hillside', arrive:[1, 27], facing:'right'}   // back east to the hillside
       ],
       legend: {
-        'n': {look:'longGrass', walk:true, wild:['snake', 'spider']},   // long grass: snakes and spiders
+        'n': {look:'longGrass', walk:true, wild:['snake', 'spider', 'weasel']},   // long grass: snakes and spiders
         // the wild grapes, a vine hanging down the cliff: from the top, out of reach (V); from the ledge below, picked (U)
         'V': {look:'grapeCliff', word:'葡萄', onLook:[
           {if:{grapeSeeds:'asked', holding:{grapeSeeds:false}}, label:'Look', do:[{message:'Grapes! They hang down the cliff below you, out of reach. Find a way down to them.'}]},
@@ -1845,7 +1845,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[16, 29], to:'pasture', arrive:[16, 1], facing:'down'}, {at:[17, 29], to:'pasture', arrive:[17, 1], facing:'down'}   // out to the pasture
       ],
       legend: {
-        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass under the pines: wolves too, as in the pine wood
+        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider', 'weasel']},   // long grass under the pines: wolves too, as in the pine wood
         'm': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},
         // the cow's hoofprints in the needles, the right way (the way forks, and the other ways go nowhere)
         'h': {look:'hoofprints', walk:true, landmark:true, onLook:[{do:[{message:'Hoofprints in the soft earth, two marks to each: the cow came this way!'}]}]},
@@ -1917,7 +1917,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[16, 0], to:'darkPines', arrive:[16, 28], facing:'up'}, {at:[17, 0], to:'darkPines', arrive:[17, 28], facing:'up'}   // back into the dark pines
       ],
       legend: {
-        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass under the pines: wolves too, as in the pine wood
+        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider', 'weasel']},   // long grass under the pines: wolves too, as in the pine wood
         'm': {look:'mushrooms', walk:true, landmark:true, word:'蘑菇', note:'Red mushrooms with white spots, under the pines. Pretty, but not for eating!'},   // mushrooms under the pines: A teaches 蘑菇 (decided 28 October 2026: they were just to look at)
         // the cow's hoofprints in the needles
         'h': {look:'hoofprints', walk:true, landmark:true, onLook:[{do:[{message:'Hoofprints in the soft earth, two marks to each: the cow came this way!'}]}]},
@@ -1975,7 +1975,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {at:[17, 29], to:'hillside', arrive:[13, 1], facing:'down'}
       ],
       legend: {
-        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider']},   // long grass: here, wolves too
+        'n': {look:'longGrass', walk:true, wild:['wolf', 'wolf', 'snake', 'spider', 'weasel']},   // long grass: here, wolves too
         'k': {look:'bridgeAcross', walk:true, word:'桥', learnOnStep:true, stepNote:'A wooden bridge over the stream.'},   // the only way over the stream (chapter 1's bridges teach 桥)
         'ĝ': {look:'woodGrass', walk:true, word:'草', animals:true}   // tall grass on the wood's floor, in the clearings by the stumps (friends hide in it, 30 October 2026)
       },
@@ -2159,7 +2159,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     ]},
     // the mountain path
     'r': {look:'path', walk:true, word:'路', learnOnStep:true, stepNote:'A path up the mountain, beside the river.'},
-    'n': {look:'longGrass', walk:true, wild:['snake', 'spider']},   // long grass: snakes and spiders jump out to fight
+    'n': {look:'longGrass', walk:true, wild:['snake', 'spider', 'weasel']},   // long grass: snakes and spiders jump out to fight
     'w': {look:'bush'},   // bushes along the path
     'o': {look:'boulder', word:'石头'},   // a boulder by the path
     'k': {look:'bridgeAcross', walk:true},   // a bridge over the river in the valley, to walk across it up or down
@@ -2498,6 +2498,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '乌龟': 'Warming itself on the boulder by the hot spring pools.',
     '海龟': 'On the shore’s sand, at the water’s edge by the cliff.',
     '狼': 'In the long grass in the pine wood.',
+    '黄鼠狼': 'In the long grass, after dark.',
     '熊': 'Rearing up out of the long grass between the big rocks in the pasture, as you led the cow home.',
     '狐狸': 'Hiding in the tall grass on the hillside.',
     '蝴蝶': 'Fluttering over the wildflowers on the riverside, the way east to the bees.',
@@ -2639,6 +2640,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   examples: {
     '快乐': {zh:'小 猴子 很 快乐 。', en:'The little monkey is very happy.'},   // (a draft, not checked yet)
     '狐狸': {zh:'狐狸 在 草 里 玩 。', en:'The fox is playing in the grass.'},
+    '黄鼠狼': {zh:'晚上 草 里 有 黄鼠狼 。', en:'At night there are weasels in the grass.'},   // (a draft, not checked yet)
     '羊': {zh:'羊 吃 草 。', en:'Sheep eat grass.'},   // (a draft, not checked yet)
     '地图': {zh:'这 是 我 的 地图 。', en:'This is my map.'},   // (a draft, not checked yet)
     '松鼠': {zh:'松鼠 在 树 上 。', en:'The squirrel is in the tree.'},
@@ -2677,14 +2679,18 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // area's lines), and get angry with so much of its health left (angry: at, a share of it; twice, attacking twice a turn
   // from then on; note and then, what you're told).
   enemies: {
-    snake: {word:'蛇', health:20, hits:10, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
+    snake: {word:'蛇', health:20, hits:10, night:.5, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
       hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', sniff:'The {蛇} sniffs the air, and slithers off!', reward:1},
-    spider: {word:'蜘蛛', health:20, hits:10, attacks:['树', '草', '石头', '山'], meetNote:'A spider scuttles out of the long grass!', meet:'A {蜘蛛} scuttles at you!',
+    spider: {word:'蜘蛛', health:20, hits:10, night:2, attacks:['树', '草', '石头', '山'], meetNote:'A spider scuttles out of the long grass!', meet:'A {蜘蛛} scuttles at you!',
       hide:'The {蜘蛛} scurries out of sight…', attack:'The {蜘蛛} jumps at you!', away:'The {蜘蛛} scurries off into the grass.', sniff:'The {蜘蛛} sniffs the air, and scurries off!', reward:1},   // (in the bee's place since 21 October 2026)
-    wolf: {word:'狼', health:30, hits:10, attacks:['树', '草', '石头', '木头'], meetNote:'A wolf leaps out of the long grass, growling!', meet:'A {狼} growls at you!',
+    wolf: {word:'狼', health:30, hits:10, night:2, attacks:['树', '草', '石头', '木头'], meetNote:'A wolf leaps out of the long grass, growling!', meet:'A {狼} growls at you!',
       hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', sniff:'The {狼} sniffs the air, whines, and runs off!', reward:2},   // (chapter 1: in the pine wood)
-    wasp: {word:'黄蜂', health:20, hits:10, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
+    wasp: {word:'黄蜂', health:20, hits:10, night:0, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
       hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', sniff:'The {黄蜂} sniffs the air, and zooms off!', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
+    // chapter 1: a weasel, only out after dark (day: 0), sneaking through the long grass (decided 8 November 2026, the polish
+    // plan: 黄 yellow + 鼠 mouse + 狼 wolf)
+    weasel: {word:'黄鼠狼', health:30, hits:10, day:0, attacks:['草', '树', '石头', '花'], meetNote:'A weasel slinks out of the long grass, its eyes shining in the dark!', meet:'A {黄鼠狼} hisses at you!',
+      hide:'The {黄鼠狼} slinks out of sight…', attack:'The {黄鼠狼} pounces!', away:'The {黄鼠狼} slinks off into the dark.', sniff:'The {黄鼠狼} sniffs the air, and slinks off into the dark!', reward:2},
     bear: {word:'熊', health:80, hits:10, boss:true, bossFight:true, big:true, nameCard:true, song:'boss', cry:'ROAR!', says:{meet:'bearHungry', angry:'bearAngry', beaten:'bearBeaten'},
       angry:{at:.5, twice:true, note:'The {熊} stands up tall, angry!', then:'From now on it attacks twice in a row. Listen hard!'}, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
       meet:'The {熊} roars!', hide:'The {熊} drops down out of sight…', attack:'The {熊} swipes at you!', away:'The {熊} lumbers off into the pines, and doesn’t come back.', reward:10},   // (chapter 1: at the pasture's rocks, as you lead the cow home: in the wolf's place since 27 October 2026)
@@ -2729,28 +2735,28 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // roams: once it's your friend, where else it hides in the tall grass, never where it lives (decided 30 October 2026, after
     // playing it: outside the hillside and the bees' valley, every rustle in the grass was the rabbit). clue: where to look for
     // it, under its shadow on the Friends page until you've met it (decided 30 October 2026), plain English, never its name
-    {id:'rabbit', word:'兔子', clue:'In tall grass, almost anywhere'},
-    {id:'sheep', word:'羊', at:[5, 18], home:'草', roams:['valley', 'pasture'], clue:'The meadow, at the foot of the cliffs in the south', meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
-    {id:'squirrel', word:'松鼠', at:[13, 18], home:'树', roams:['path', 'hillside', 'pineWood'], clue:'The meadow, up a big tree', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
+    {id:'rabbit', time:'day', word:'兔子', clue:'In tall grass, almost anywhere'},
+    {id:'sheep', time:'day', word:'羊', at:[5, 18], home:'草', roams:['valley', 'pasture'], clue:'The meadow, at the foot of the cliffs in the south', meetNote:'A sheep is eating grass at the foot of the {山}. Answer its questions to make friends.'},
+    {id:'squirrel', time:'day', word:'松鼠', at:[13, 18], home:'树', roams:['path', 'hillside', 'pineWood'], clue:'The meadow, up a big tree', meetNote:'A squirrel peeks out of the big {树}! Answer its questions to make friends.'},
     // the goat: grazing beside the path, a few steps into the river valley from the mountain path (moved from the meadow's
     // cliff on 31 October 2026, so the meadow has three animals to find while you're learning to play, and you find one more
     // on the way up). It calls you over as you come up into the valley (see events). Once it's your friend, it leaves its
     // spot (leaves) for the goat character on the same square, who plays its word game, so you never see two goats at once.
-    {id:'goat', word:'山羊', at:[20, 9, 'valley'], leaves:true, home:'山', roams:['path', 'hillside', 'southSlope', 'cliffs'], clue:'The river valley, beside the path', meetNote:'A goat is grazing beside the path. Answer its questions to make friends.'},
+    {id:'goat', time:'day', word:'山羊', at:[20, 9, 'valley'], leaves:true, home:'山', roams:['path', 'hillside', 'southSlope', 'cliffs'], clue:'The river valley, beside the path', meetNote:'A goat is grazing beside the path. Answer its questions to make friends.'},
     // chapter 1: a deer in the sunny glade deep in the pine wood, behind the cracked rock (counted on its own: the prologue's
     // animals are those above)
     {id:'deer', word:'鹿', at:[30, 3, 'pineWood'], home:'草', chapter:1, roams:['southSlope', 'darkPines', 'pasture'], clue:'The pine wood, in a sunny glade deep inside', meetNote:'A deer looks up from the grass, its ears twitching. Answer its questions to make friends.'},
     // chapter 1: an owl in the dark pines, up on an old dead pine just west of the way in (perch: how high it sits, in
     // pixels), its eyes glinting in the gloom (glints: where they are in its map sprite); 28 October 2026, after playtesting,
     // for something to practise on the long way south
-    {id:'owl', word:'猫头鹰', at:[11, 2, 'darkPines'], home:'树', chapter:1, clue:'The dark pines, up an old dead pine', perch:9, glints:[[5, 8, 2], [8, 8, 2]],
+    {id:'owl', time:'night', word:'猫头鹰', at:[11, 2, 'darkPines'], home:'树', chapter:1, clue:'The dark pines, up an old dead pine', perch:9, glints:[[5, 8, 2], [8, 8, 2]],
       meetNote:'Two big round eyes blink at you from the dead pine: an owl! Answer its questions to make friends.'},
     // chapter 1: a fox hiding in the hillside's tall grass, only there (hides). It was the prologue's, in the meadow's tall grass, until
     // 23 October 2026, when the sheep took its place, for 羊 (sheep), then 山 + 羊 = 山羊 (goat).
     {id:'fox', word:'狐狸', hides:'hillside', chapter:1, roams:['pineWood', 'riverside', 'southSlope', 'darkPines'], clue:'The hillside’s tall grass', meetNote:'A fox darts out of the {草}, its tail swishing! Answer its questions to make friends.'},
     // chapter 1: a butterfly over the wildflowers on the riverside, beside the way east to the bees (it was to be the hillside's,
     // until the fox took its place, 23 October 2026). flutters: it hovers over its spot, its wings beating
-    {id:'butterfly', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, roams:['melonField'], clue:'By the riverside, over the wildflowers', meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'},
+    {id:'butterfly', time:'day', word:'蝴蝶', at:[18, 4, 'riverside'], home:'花', chapter:1, flutters:true, roams:['melonField'], clue:'By the riverside, over the wildflowers', meetNote:'A butterfly flutters over the flowers beside you. Answer its questions to make friends.'},
     // chapter 1: bees hiding in the tall flowers of their valley, only there (the flowers shake where one is hiding), six to make
     // friends with (many: decided 25 October 2026 by the game's owner, hidden like the wasps; they were each over their own
     // flower). counts: how many so far, in the area's progress; counted: what happens as each becomes your friend, you
@@ -2773,21 +2779,21 @@ const FLOWER_FRUIT_MOUNTAIN = {
         lost:'The {蜜蜂|bee} hovers over the flowers: it still wants to play. Press A at it to try again.'}},
     // chapter 1: a duck swimming on the home ground's stream, east of the fishing monkey (swims: it floats there, bobbing,
     // and you meet it from the bank); 30 October 2026, the first of more friends where there were none
-    {id:'duck', word:'鸭子', at:[27, 18, 'homeGround'], home:'水', chapter:1, swims:true, clue:'The home ground, on the stream',
+    {id:'duck', time:'day', word:'鸭子', at:[27, 18, 'homeGround'], home:'水', chapter:1, swims:true, clue:'The home ground, on the stream',
       meetNote:'A duck paddles along the stream, quacking. Answer its questions to make friends.'},
     // chapter 1: a horse grazing out on the pasture's grass, west of the way in from the dark pines (big: it stands up out
     // of its square, taller than you, as the cow does)
-    {id:'horse', word:'马', at:[9, 18, 'pasture'], home:'草', chapter:1, clue:'The pasture, out on the grass',
+    {id:'horse', time:'day', word:'马', at:[9, 18, 'pasture'], home:'草', chapter:1, clue:'The pasture, out on the grass',
       meetNote:'A horse looks up from the grass and swishes its tail. Answer its questions to make friends.'},
     // chapter 1: a frog on a lily pad on the south slope's brook, just west of the stepping stones (swims: it floats there,
     // bobbing, and you meet it from the bank beside it, or from the tall grass above it)
     {id:'frog', word:'青蛙', at:[10, 22, 'southSlope'], home:'水', chapter:1, swims:true, clue:'The south slope, by the stepping stones',
       meetNote:'A frog sits on a lily pad on the brook, croaking. Answer its questions to make friends.'},
     // chapter 1: a mouse hiding in the melon field's tall grass, only there (hides), as the fox does on the hillside
-    {id:'mouse', word:'老鼠', hides:'melonField', chapter:1, clue:'The melon field’s tall grass',
+    {id:'mouse', time:'night', word:'老鼠', hides:'melonField', chapter:1, clue:'The melon field’s tall grass',
       meetNote:'A mouse pops out of the {草}, its whiskers twitching! Answer its questions to make friends.'},
     // chapter 1: a turtle warming itself up on the boulder by the hot spring pools (perch: how high it sits, in pixels)
-    {id:'turtle', word:'乌龟', at:[6, 13, 'hotSprings'], home:'石头', chapter:1, perch:5, clue:'The hot springs, on a warm rock',
+    {id:'turtle', time:'day', word:'乌龟', at:[6, 13, 'hotSprings'], home:'石头', chapter:1, perch:5, clue:'The hot springs, on a warm rock',
       meetNote:'A turtle is warming itself on a rock by the pools. Answer its questions to make friends.'},
     // chapter 1: a sea turtle on the shore's sand, at the water's edge on its west side, away from the crabs and the raft
     {id:'seaTurtle', word:'海龟', at:[4, 12, 'shore'], home:'海', chapter:1, clue:'The shore, on the sand by the sea',

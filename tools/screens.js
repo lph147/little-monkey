@@ -1552,6 +1552,10 @@ const SCREENS = [
     play(); await wait(200); S.clock.t = DAY_MS * .71; await wait(400); }},
   {id: 'night', title: 'Night at the home ground', save: 'dayNight', why: 'About 5 minutes of night: dark blue you can still see through, the moon and stars, fireflies. The troop has gone to bed in the Water Curtain Cave; anyone with a ! or ? stays up.', run: async () => {
     play(); await wait(200); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
+  {id: 'night-sheep', title: 'The sheep asleep', save: 'dayNight', why: 'Day animals sleep at night where they live (decided 8 November 2026, the polish plan): the sheep curled up at the foot of the cliffs, little Zs drifting up; A says it’s fast asleep. Night animals come out instead.', run: async () => {
+    play(); await wait(200); S.w['动物'] = S.w['动物'] || {lv: 1, due: 0, ok: 0}; S.pos = {place: 'meadow', x: 5, y: 16, dir: 'down'}; placePlayer(); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
+  {id: 'battle-weasel', title: 'A weasel at night', save: 'fighting', why: 'A night creature to fight (decided 8 November 2026, the polish plan): 黄鼠狼, the weasel, only out after dark, in the long grass. Its first meeting teaches its name: 黄 yellow + 鼠 mouse + 狼 wolf.', run: async () => {
+    play(); await wait(100); S.w['黄鼠狼'] = {lv: 1, due: 0, ok: 0}; battle('weasel'); await wait(1200); }},
   {id: 'night-cave', title: 'The troop asleep', save: 'nightCave', why: 'At night the troop sleeps in the Water Curtain Cave, as in the book: in its stone beds, and curled up on its floor, little Zs floating up. The beds at each end are left for you.', run: async () => {
     play(); await wait(200); S.clock.t = DAY_MS * .8; placedIn = null; placeCharacters(); await wait(500); }},
   {id: 'bedtime', title: 'Time for bed', save: 'nightCave', why: 'A at a free bed: first the day’s recap, the words you caught today to tap and hear, the questions you answered and your new friends; a quick review of today’s words if you like; then you sleep till morning.', run: async () => {

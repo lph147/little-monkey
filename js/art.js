@@ -198,7 +198,7 @@ function asleepSprite(){
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
 const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
-  waits:!!a.waits, perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, leaves:!!a.leaves}));   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
+  waits:!!a.waits, perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, leaves:!!a.leaves, time:a.time || null, awake:a.awake || null}));   // (time: when it's about, by day or after dark, unless the story needs it, awake: awakeNow)   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
 // Whether an animal is out yet: once the story has reached its chapter (decided 30 October 2026, so a chapter's new
 // friends, such as the duck on the home ground's stream, aren't there in the prologue).
 const inChapter = a => a.chapter <= ((here() || {}).chapter || 0);
@@ -223,6 +223,13 @@ const outAt = (x, y) => outHere().find(o => o.x === x && o.y === y);
 // isn't there any more, such as the goat on the river valley's rocks, which hops down to the clearing to play.
 const atSpot = a => !!a.at && a.place === PLACE && inChapter(a) && !(a.leaves && S.friends.includes(a.id));
 const animalAt = (x, y) => canWild() ? ANIMALS.find(a => atSpot(a) && a.at[0] === x && a.at[1] === y) || (outAt(x, y) || {}).a || null : null;
+// Day and night animals (decided 8 November 2026, the polish plan): an animal's time says when it's about, 'day' or
+// 'night' (none: day and night). A day animal sleeps at night where it lives, curled up with little Zs (A says it's fast
+// asleep), and a night animal by day, such as the owl on its pine, or stays hidden, such as the mouse in the melon field's
+// long grass; unless the story needs it now (awake, a condition, such as the dog guarding the road, till you've made
+// friends), so the story never waits for night. Before the day goes round (the prologue), it's always day.
+const awakeNow = a => !a.time || !!(a.awake && matches(a.awake)) || (a.time === 'night') === (typeof isNight === 'function' && isNight());
+const asleepNow = a => !awakeNow(a);
 const FRIEND_NAMES = {};   // what each friend is called in the Friends list
 ANIMALS.forEach(a => { FRIEND_NAMES[a.id] = a.hz; });
 AREA.characters.forEach(c => { if (c.name) FRIEND_NAMES[c.id] = c.name.zh; else if (WORD_BANK[c.look]) FRIEND_NAMES[c.id] = c.look; });   // (one that looks like a creature with a word: by its word, such as 蜂王)

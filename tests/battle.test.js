@@ -246,7 +246,7 @@ test('the same creature never jumps out more than twice in a row, unless it’s 
 
 test('snakes and spiders jump out of the long grass; the bee moved to chapter 1, and a game that caught it keeps it', async () => {
   const {run, sheet, flush} = fighting({w: {...WORDS, '蜜蜂': {lv: 1, due: 0, ok: 0}}});
-  assert.deepEqual(JSON.parse(run('JSON.stringify(AREA.legend.n.wild)')), ['snake', 'spider']);
+  assert.deepEqual(JSON.parse(run('JSON.stringify(AREA.legend.n.wild)')), ['snake', 'spider', 'weasel']);   // (and the weasel, only after dark: tests/day-night-animals.test.js)
   assert.ok(!run("'bee' in AREA.enemies"), 'no bees to fight: in chapter 1 you make friends with them');
   assert.ok(run("lvl('蜜蜂')") >= 1 && run("ORDER.includes('蜜蜂')"), 'a bee caught before stays in your words');
   run("globalThis.__card = null; showNotice = async (w, o) => { __card = [w, o && o.note]; setSeen(w); }; battle('spider')");

@@ -259,7 +259,7 @@ function promptFor(x, y){
   const n = npcAt(x, y) || followerAt(x, y);
   if (n && n.asleep) return 'Look';   // (asleep for the night: js/daynight.js)
   if (n){ const p = talkPart(n); return (p && p.label) || n.label || 'Talk'; }   // (what their talk says A does, such as Pull at a cart)
-  if (animalAt(x, y)) return 'Meet';
+  if (animalAt(x, y)) return asleepNow(animalAt(x, y)) ? 'Look' : 'Meet';   // (one asleep, for the night or the day: animalAsleep)
   if (BIRD_WORD && birdAt(x, y)) return 'Look';
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return way.label || 'Go';   // a way you go through by pressing A, such as jumping through the waterfall
@@ -884,7 +884,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // the goat beside the river valley's path: you turn to face it, and meet it, as A at it does.
   async stopsYou(s){
     const n = NPCS.find(c => c.id === s.stopsYou);
-    const a = !n && ANIMALS.find(x => x.id === s.stopsYou && atSpot(x));
+    const a = !n && ANIMALS.find(x => x.id === s.stopsYou && atSpot(x) && awakeNow(x));
     if (a){ held = null; queued = null; return wildAppears(a, {x:a.at[0], y:a.at[1], d:dirOf(a.at[0] - pl.x, a.at[1] - pl.y)}); }
     if (!n) return;
     held = null; queued = null;
@@ -1555,6 +1555,7 @@ async function interact(x, y){
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return goThrough(way);
   const a = animalAt(x, y);
+  if (a && asleepNow(a)) return toast(animalAsleep(a));   // (a day animal at night, or a night one by day: js/art.js)
   if (a && a.waits && lvl(a.hz) === 0 && !await practiseFirst(a.id)) return;   // (an animal whose word is new waits for a little practice: waits)
   if (a) return wildAppears(a, {x, y, d:pl.dir});
   const bd = birdAt(x, y);
@@ -1864,10 +1865,12 @@ function showPlaceName(newOnMap = false){   // newOnMap: you've never been here,
 // the hillside and the bees' valley, every rustle was the rabbit), so you never see two of it at once. Not
 // one of several of a kind whose rest are all out already, waiting for you to play again (such as a bee you didn't win
 // over: no more hide till you have), nor where one is out.
+// An animal asleep at its spot: what A says (it's fast asleep), and when to come back.
+const animalAsleep = a => fill(`The {${a.hz}} is fast asleep. Shh! ${a.time === 'night' ? 'It comes out after dark.' : 'Come back in the daytime.'}`);
 const roamsHere = a => a.roams.includes(PLACE) && a.place !== PLACE && S.friends.includes(a.id);
 const allOut = a => { const n = here()[a.counts] || 0; return !!a.stays && n < a.many && n + outOf(a).filter(o => !o[2]).length >= a.many; };
 function hideAnimal(){
-  const hiding = ANIMALS.filter(a => (!a.at && (!a.hides || a.hides === PLACE) || roamsHere(a)) && inChapter(a) && !allOut(a));
+  const hiding = ANIMALS.filter(a => (!a.at && (!a.hides || a.hides === PLACE) || roamsHere(a)) && inChapter(a) && !allOut(a) && awakeNow(a));   // (only those about now: a rabbit by day, a mouse at night)
   if (rustle || !canWild() || !hiding.length || stepsSince < HIDE_AFTER) return;
   const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3 && !animalAt(x, y));
   if (!far.length) return;

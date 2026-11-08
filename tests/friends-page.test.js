@@ -41,7 +41,7 @@ test('tap a shadow: its clue, then Back to the page, on that shadow', () => {
   const g = friends({friends: [], met: [], areas: {1: {elder: 2}}});
   g.el('#sheet').querySelector('.friends [data-clue="goat"]').click();
   const text = g.run('sheet.textContent').replace(/\s+/g, ' ');
-  assert.match(text, /A friend to find.*？.*The river valley, beside the path\..*Find it, and answer its questions to make friends\./);
+  assert.match(text, /A friend to find.*？.*The river valley, beside the path, by day\..*Find it, and answer its questions to make friends\./);   // (by day: a sun, as the goat sleeps at night)
   assert.ok(!text.includes('山羊') && !text.includes('goat'), 'never its name');
   g.run('pressB()');
   assert.equal(g.run('document.activeElement && document.activeElement.dataset.clue'), 'goat');

@@ -1026,6 +1026,7 @@ function drawWorld(now){
   for (const a of spotAnimals.filter(a => !inTree(a))){
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, ground = !!tileAt(a.at[0], a.at[1]).walk;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
+    if (asleepNow(a)){ figureShadow(a.hz, X, Y); drawFigure(towardsYou(a, a.at[0]), X, Y - (ground || a.swims || a.flutters ? 0 : 3)); sleepZs(X + 10, Y - (a.spr.height - T) - 2, now, a.at[0] * 731); continue; }   // asleep: still, little Zs (a day animal at night, a night one by day: js/art.js)
     if (a.flutters){ drawFlutter(a, X, Y, now); continue; }
     if (a.swims){ drawSwimmer(a, X, Y, now); continue; }
     const up = (ground ? 0 : 3 + Math.floor(now/600 + a.at[0]) % 2) + meetHop(a, X, Y - (a.spr.height - T), now);   // (its heart over its head)
@@ -1139,7 +1140,8 @@ function drawWorld(now){
   for (const a of spotAnimals.filter(inTree)){   // the squirrel, small, up in its tree's leaves
     const X = a.at[0]*T - cx, Y = a.at[1]*T - cy, bob = Math.floor(now/600 + a.at[0]) % 2;
     if (X < -T || Y < -T || X > VW*T || Y > VH*T) continue;
-    if (a.perch){ b.drawImage(towardsYou(a, a.at[0]), X, Y - a.perch - meetHop(a, X, Y - a.perch, now)); continue; }   // perched up on something, still, such as the owl on its dead pine
+    if (a.perch){ b.drawImage(towardsYou(a, a.at[0]), X, Y - a.perch - meetHop(a, X, Y - a.perch, now)); if (asleepNow(a)) sleepZs(X + 10, Y - a.perch - 4, now, a.at[0] * 731); continue; }   // perched up on something, still, such as the owl on its dead pine (asleep by day: Zs)
+    if (asleepNow(a)){ b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5, 10, 10); sleepZs(X + 11, Y - 9, now, a.at[0] * 731); continue; }   // (asleep up its tree, at night)
     b.drawImage(towardsYou(a, a.at[0]), 0, 0, 16, 16, X + 4, Y - 5 - bob - meetHop(a, X, Y - 8, now), 10, 10);
   }
   if (GLOOM){ drawGloom(cx, cy, sh, now); drawSparkles(cx, cy, now); }   // a gloomy place, such as the pine wood
@@ -1148,7 +1150,7 @@ function drawWorld(now){
   drawRain(cx, cy, sh, now);   // rain, every so often (js/daynight.js)
   drawDaylight(cx, cy, sh, now);   // the evening, the night and dawn, as the day goes round (js/daynight.js)
   drawNight(cx, cy, sh, now);   // a place at night (its night: js/mountain.js)
-  for (const a of spotAnimals.filter(a => a.glints && GLOOM)) glinting(a, a.at[0]*T - cx, a.at[1]*T - cy - a.perch, now);   // (an owl's eyes, in the gloom)
+  for (const a of spotAnimals.filter(a => a.glints && GLOOM && awakeNow(a))) glinting(a, a.at[0]*T - cx, a.at[1]*T - cy - a.perch, now);   // (an owl's eyes, in the gloom, while it's awake)
   for (const [x, y, k] of glintsNow(now)) glint(x*T - cx + 8, y*T - cy + 11, k);   // things hidden off the path
   for (const [x, y, show] of bubbles) bubble(x, y, show);
   if (trainingCalls()) for (const [x, y] of TRAINING_TILES) if (tileAt(x, y).action === 'training') bubble(x*T - cx + 10, y*T - cy - 8, '!');   // words need practice (while the post stands)
@@ -1291,6 +1293,8 @@ function drawAsleep(X, Y){
   R(b, X + 2, Y + 11, 12, 1, '#3F6E2A'); [4, 8, 11].forEach(i => R(b, X + i, Y + 8, 1, 1, '#A8D877'));
   R(b, X + 11, Y + 6, 3, 2, PALS.player.f);
 }
+// Little Zs drifting up from something asleep (an animal asleep at its spot: js/art.js's asleepNow), now and then.
+function sleepZs(X, Y, now, seed = 0){ const ph = ((now + seed) % 2600) / 2600; b.globalAlpha *= 1 - ph; zee(X + Math.round(ph * 6), Y - Math.round(ph * 12), 3 + Math.round(ph * 2), '#CFE8F7'); b.globalAlpha = 1; }
 function zee(x, y, s, c){ R(b, x, y, s, 1, c); R(b, x, y + s - 1, s, 1, c); for (let i = 1; i < s - 1; i++) R(b, x + s - 1 - i, y + i, 1, 1, c); }   // a little Z, s pixels across
 // Little birds that land near you now and then and hop about for most of a minute. Walk up and face
 // one to look at it (A); it flies off then, or if you step right onto it. Each is one colour, one of the area's birds'

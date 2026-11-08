@@ -235,6 +235,27 @@ const MAP_SPRITES = {
     palette: {a:'#422F1E', b:'#2A1C11', c:'#A87448', d:'#5E3A20', e:'#50341E', f:'#5A564F', g:'#8A5A34', h:'#F4EEE2', i:'#261A10', j:'#FFFFFF', k:'#1E1A16', l:'#E6C29C', m:'#A8805A', n:'#D2A982', o:'#7A5034', p:'#9C6A40'},
     rows: [".....aab.....aab......","....accdbaaaaccdb.....","....acddecccecddb.....",".fffbddegggggeddb.fbf.","fhhhfiejkgggjkei.fhdhf","acgdbackkgggkkdbacgdb.","acggdacgglkmggdacggdb.","bdgggdeglnknmgecgggdb.",".bdggdegmnnnmgecggdb..","..acggeeemomeeeggdb...","..bdgggegeeegegggdb...","...bdgegggggggegdb....","....iegggpppgggei.....","...acgggpppppgggdb....","...acggpppppppggdb....","...bdggpppppppggdb....","....acgpppppppgdb.....","....bdggpppppggdb.....",".....bddgpppgddb......",".....acgdddddgdb......",".....bdddbbbdddb......","......bbb...bbb......."]
   },
+  '黄鼠狼': {   // weasel, side on, head to the left: small, long and low, golden brown, a cream belly, a bushy tail with a dark tip (chapter 1: in the long grass after dark)
+    faces:'left', palette:{o:'#3B2416', y:'#C8892F', l:'#E6B460', w:'#F4E6C8', e:'#1E1E1E', n:'#2B1A10', d:'#5A3A1E'},
+    rows:[
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "................",
+      "....oo.....oo...",
+      "...oyyo...oddo..",
+      "..oeyyooooooyo..",
+      "..nylyyyyllyyo..",
+      "...owwyyyyyyo...",
+      "....owwwwyyo....",
+      "....oyo..oyo....",
+      "....oo...oo.....",
+      "................",
+      "................"
+    ]
+  },
   '狼': {   // wolf (chapter 1, in the pine wood's long grass)
     faces: 'left',
     palette: {a:'#2A2A29', b:'#5E656C', c:'#454444', d:'#B0B7BE', e:'#505459', f:'#262423', g:'#2B2A2A', h:'#1A1716', i:'#2F2E2D', j:'#6C7177', k:'#8A9199', l:'#F2C14E', m:'#5F666E', n:'#2A2A2E', o:'#ADB2B8', p:'#4E5359', q:'#93979C', r:'#252423'},

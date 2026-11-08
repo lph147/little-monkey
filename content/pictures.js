@@ -5183,6 +5183,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '黄鼠狼': {   // weasel
+    palette: {a:'#392F26', b:'#23180E', c:'#8C7562', d:'#462D17', e:'#5A3A1E', f:'#8E5A1C', g:'#3A2610', h:'#52412A', i:'#C8892F', j:'#D9AC6D', k:'#564326', l:'#E6B460', m:'#E8A8A0', n:'#744F1B', o:'#16120E', p:'#FFFFFF', q:'#1E1A16', r:'#1F150E', s:'#3A2416', t:'#F4E6C8', u:'#5A5347', v:'#453626', w:'#B08C60', x:'#6F4616', y:'#31230F', z:'#30200E', A:'#2A3F21', B:'#5DA651'},
+    rows: [
+      "................................",
+      "........................aab.....",
+      ".......................accdb....",
+      "......................aceeedb...",
+      "......................aceeeedb..",
+      "......................bdeeeeedb.",
+      ".......................bdeeeedfg",
+      "........................bdeeedfg",
+      "....hhg.................gfdddifg",
+      "...hjjfg.................kliiifg",
+      "...hjmnfgg...............kliiifg",
+      "..klnnnilfg..............kliiifg",
+      ".kliiiiiiifgo..........kkkliiifg",
+      ".kliiiiiiifpqo......kkkllniiiifg",
+      "rssiiiiiiinqqokkkkkkllliiinniifg",
+      "rssttttiiiniillllllliiiiiiiniifg",
+      ".utttttiiniiiiiiiiiiiiiiiiiinfg.",
+      ".utttttnniiiiiiiiiiiiiiiiiiifg..",
+      "..ukliitiiiiiiiiiiiiiiiiiiiifg..",
+      "...gfftttttiiiiiiiiiiiiiiiifg...",
+      "....gutttttttiiiiiiiiiiiiiffg...",
+      "......vwttttttttttttiiifffgg....",
+      "......vwfxttttttttttnnnygg......",
+      "......vwfxwfxzuuvwfxwfxz........",
+      "......vwfxwfxz..vwfxwfxz........",
+      ".....vwffwffxzAAvwfxwfxz........",
+      "...AAzxffxffxBBBBwfxwfxzAAAAA...",
+      "..ABBBBxxBxxBBBBBxxxxxxBBBBBBA..",
+      "...AAAABBBBBBBBBBBBBBBBBBAAAA...",
+      ".......AAAAAAAAAAAAAAAAAA.......",
+      "................................",
+      "................................"
+    ]
+  },
   '臭豆腐': {   // stinky tofu
     palette: {a:'#423620', b:'#A88A50', c:'#554C3C', d:'#E4D0A6', e:'#414A2F', f:'#253213', g:'#A4CA7F', h:'#4E7E26', i:'#5A4A2B', j:'#F2C870', k:'#453114', l:'#B07A2A', m:'#31220F', n:'#734D1A', o:'#542F26', p:'#3E140C', q:'#A42C18', r:'#C7842C', s:'#E07462', t:'#9A2210', u:'#84622C', v:'#8A561A', w:'#8E5A1C', x:'#3A2610', y:'#523B1B', z:'#DA9A3E', A:'#494339', B:'#BDB39C', C:'#E9E4D6', D:'#57524B', E:'#E0D8C4', F:'#3A3631', G:'#8E8B84', H:'#5E5B58', I:'#FFFFFF', J:'#F4F0E4', K:'#CFC7B2', L:'#4E4940'},
     rows: [
@@ -7501,6 +7538,27 @@ const ICONS = {
       "...cfggggggfca..",
       "....cffffffc....",
       ".....cccccc....."
+    ]
+  },
+  '☀️': {
+    palette: {a:'#5A3F16', b:'#F2A82E', c:'#5E573D', d:'#543D16', e:'#FFF1A8', f:'#E0A030', g:'#F7C948'},
+    rows: [
+      "......abba......",
+      "..a...abba...a..",
+      ".aba..abba..aba.",
+      "..aba.cccd.aba..",
+      "...abceeefaba...",
+      "....ceggggfd....",
+      "aaaceggggggfdaaa",
+      "bbbceggggggfabbb",
+      "bbbceggggggfabbb",
+      "aaadfggggggfdaaa",
+      "....dfggggfd....",
+      "...abdffffaba...",
+      "..aba.daad.aba..",
+      ".aba..abba..aba.",
+      "..a...abba...a..",
+      "......abba......"
     ]
   },
   '⭐': {

@@ -314,6 +314,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | --- | --- | --- | --- | --- |
 | 小猴子很快乐。 | xiǎo hóuzi hěn kuàilè. | The little monkey is very happy. | 快乐 |  |
 | 狐狸在草里玩。 | húli zài cǎo lǐ wán. | The fox is playing in the grass. | 狐狸 |  |
+| 晚上草里有黄鼠狼。 | wǎnshang cǎo lǐ yǒu huángshǔláng. | At night there are weasels in the grass. | 黄鼠狼 |  |
 | 羊吃草。 | yáng chī cǎo. | Sheep eat grass. | 羊 |  |
 | 这是我的地图。 | zhè shì wǒ de dìtú. | This is my map. | 地图 |  |
 | 松鼠在树上。 | sōngshǔ zài shù shàng. | The squirrel is in the tree. | 松鼠 |  |
@@ -566,6 +567,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 鱼竿 | yúgān | fishing rod |  |
 | 快乐 | kuàilè | happy |  |
 | 臭 | chòu | smelly |  |
+| 黄鼠狼 | huángshǔláng | weasel |  |
 | 木筏 | mùfá | raft |  |
 | 海 | hǎi | sea |  |
 | 螃蟹 | pángxiè | crab |  |
@@ -626,6 +628,7 @@ simply put. A part's pinyin is as it's said in the word.
 | 猫头鹰 | māotóuyīng | 猫 māo (cat) + 头 tóu (head) + 鹰 yīng (eagle) = 猫头鹰 (owl) |  |
 | 雨 | yǔ | Drawn like rain: the sky along its top, and drops of rain falling under it. |  |
 | 大雨 | dàyǔ | 大 dà (big) + 雨 yǔ (rain) = 大雨 (heavy rain) |  |
+| 黄鼠狼 | huángshǔláng | 黄 huáng (yellow) + 鼠 shǔ (mouse) + 狼 láng (wolf) = 黄鼠狼 (weasel) |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = 你好 (hello) |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = 我不要 (no thanks) |  |
 | 苹果 | píngguǒ | 果 guǒ (fruit), as in 水果: an apple is a fruit |  |
@@ -655,6 +658,8 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 大狼 | dà láng | A big wolf! |  |
 | 小黄蜂 | xiǎo huángfēng | A little wasp! |  |
 | 大黄蜂 | dà huángfēng | A big wasp! |  |
+| 小黄鼠狼 | xiǎo huángshǔláng | A little weasel! |  |
+| 大黄鼠狼 | dà huángshǔláng | A big weasel! |  |
 
 ## 海的那边 Across the sea
 

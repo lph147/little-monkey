@@ -2032,11 +2032,14 @@ const ACROSS_THE_SEA = {
 
   // The area's animals, friends to make with their word games, as on Flower Fruit Mountain.
   animals: [
-    {id:'goose', word:'鹅', at:[8, 12], roams:['shorePath', 'villageLane'], home:'海', clue:'The shore, on the sand', meetNote:'A goose waddles up to you on the sand, honking. Answer its questions to make friends.'},
-    {id:'chicken', word:'鸡', at:[6, 16, 'village'], roams:['shorePath', 'villageLane'], home:'草', clue:'The village, in the yard', meetNote:'A chicken pecks about in the yard. Answer its questions to make friends.'},
-    {id:'dog', word:'狗', at:[36, 9, 'fields'], roams:['villageLane', 'highRoad'], home:'草', clue:'The fields, by the road', meetNote:'A dog guards the road, barking at you! Answer its questions to make friends.'},
-    {id:'crane', word:'鹤', at:[14, 12, 'cliffRoad'], chapter:1, home:'山', clue:'The teacher’s mountain, by the pool on the cliff road', meetNote:'A crane stands by the pool on one leg. It looks at you, its head on one side. Answer its questions to make friends.'},
-    {id:'cat', word:'猫', at:[33, 8, 'town'], roams:['highRoad', 'canalPath'], perch:3, home:'房子', clue:'The town, at the market', meetNote:'A cat is curled up on the sacks at the market. Answer its questions to make friends.'}
+    // when each is about (decided 8 November 2026, the polish plan): the chickens, geese, dog and crane sleep at night (the
+    // dog stays up guarding the road till you've made friends: awake), and the cat swaps round, asleep in the sun by day,
+    // prowling at night
+    {id:'goose', time:'day', word:'鹅', at:[8, 12], roams:['shorePath', 'villageLane'], home:'海', clue:'The shore, on the sand', meetNote:'A goose waddles up to you on the sand, honking. Answer its questions to make friends.'},
+    {id:'chicken', time:'day', word:'鸡', at:[6, 16, 'village'], roams:['shorePath', 'villageLane'], home:'草', clue:'The village, in the yard', meetNote:'A chicken pecks about in the yard. Answer its questions to make friends.'},
+    {id:'dog', time:'day', awake:{friends:{dog:false}}, word:'狗', at:[36, 9, 'fields'], roams:['villageLane', 'highRoad'], home:'草', clue:'The fields, by the road', meetNote:'A dog guards the road, barking at you! Answer its questions to make friends.'},
+    {id:'crane', time:'day', word:'鹤', at:[14, 12, 'cliffRoad'], chapter:1, home:'山', clue:'The teacher’s mountain, by the pool on the cliff road', meetNote:'A crane stands by the pool on one leg. It looks at you, its head on one side. Answer its questions to make friends.'},
+    {id:'cat', time:'night', word:'猫', at:[33, 8, 'town'], roams:['highRoad', 'canalPath'], perch:3, home:'房子', clue:'The town, at the market', meetNote:'A cat is curled up on the sacks at the market. Answer its questions to make friends.'}
   ],
   birds: {word:'鸟', note:'A little bird hops about, looking for something to eat.', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']},
   // Hide and seek with a child in the village (the hideSeek step, js/hide.js, as with the little monkey at home): the

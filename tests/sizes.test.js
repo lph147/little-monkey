@@ -90,7 +90,7 @@ test('a little one: smaller on the map and in the fight', async () => {
 test('every sized name has its line for the voices and the Chinese sheet, once each', () => {
   const g = fighting();
   const names = g.get('SIZED().map(c => c.zh)');
-  assert.deepEqual(names, ['小 蛇', '大 蛇', '小 蜘蛛', '大 蜘蛛', '小 狼', '大 狼', '小 黄蜂', '大 黄蜂']);
+  assert.deepEqual(names, ['小 蛇', '大 蛇', '小 蜘蛛', '大 蜘蛛', '小 狼', '大 狼', '小 黄蜂', '大 黄蜂', '小 黄鼠狼', '大 黄鼠狼']);   // (the weasel, at night)
   const a2 = loadGame({save: {version: 37, started: true, area: 2, w: {}}});
   assert.deepEqual(JSON.parse(a2.run('JSON.stringify(SIZED())')), [{zh: '小 妖怪', en: 'A little demon!'}, {zh: '大 妖怪', en: 'A big demon!'}], 'the little demons at home: once each, though two kinds have its word');
   assert.equal(a2.run("sized(ENEMIES.demon, 'big').meet"), 'A big {妖怪} jumps out at you!', 'a little demon already says “little”: a big one says big, never “a big little demon”');

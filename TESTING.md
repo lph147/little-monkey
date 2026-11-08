@@ -745,6 +745,16 @@ In chapter 1, once you know 大 and 小 (your first fish teaches 小, the first 
 4. At night, big ones come more often.
 5. The wild boar and the bear are always the same size.
 
+## Day and night animals
+
+In chapter 1 (once the day goes round), and in the human world:
+1. At night, go to the meadow: the sheep and the squirrel are asleep, still, with little Zs drifting up. Press A at one: "The 羊 (sheep) is fast asleep. Shh! Come back in the daytime." You still can't walk through it.
+2. By day, go to the dark pines: the owl is asleep on its dead pine (A: it comes out after dark). At night it's awake, its eyes glinting, and you can meet it.
+3. The mouse only rustles in the melon field's long grass at night; the rabbit only by day.
+4. At night, in the long grass (the hillside, the pine wood, the south slope): a weasel, 黄鼠狼, can jump out (its first meeting teaches its name). By day, never. In the bees' valley at night, no wasps.
+5. Open MENU, Friends: an animal you haven't found that's only out by day or at night has a sun or a moon by its clue; tap it: "…, after dark."
+6. In the human world: the goose, the chicken and the crane sleep at night; the cat sleeps by day and is awake at night. The dog by the road stays up till it's your friend.
+
 ## Quick practice
 
 - [ ] On the title screen, for a game that knows at least 4 words with pictures: Practise beside Continue, saying how many words need it (none for a new game, or one that knows fewer). Tap it: no music, and the 练习 Practice card: your words caught, how many need practice, and how many at each level, with − 10 questions + and Back and Start.
