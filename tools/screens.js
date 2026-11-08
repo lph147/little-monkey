@@ -1087,7 +1087,7 @@ const SCREENS = [
     play(); await wait(100); S.pos = {place: 'darkPines', x: 11, y: 3, dir: 'up'}; placePlayer(); pressA(); await wait(1500); }},
   {id: 'pines-log', title: 'A hollow pine', save: 'pinesLog', why: 'Following the hoofprints east, down a narrow gully: a great pine has fallen along it, hollow inside. The cow stepped over it, but a little monkey can crawl right through.', run: async () => {
     play(); await wait(100); pl.dir = 'down'; tryStep('down', performance.now()); await wait(700); }},
-  {id: 'pines-in-log', title: 'Inside the hollow pine', save: 'pinesInLog', why: 'Crawling through: the log is drawn over you, so you vanish inside it, and come out at its other end.', run: async () => {
+  {id: 'pines-in-log', title: 'Inside the hollow pine', save: 'pinesInLog', why: 'Crawling through: the log opens along its top while you’re in it, so you see yourself in there, in its shade, and you come out of the hole in its near end (8 November 2026: drawn over you, it looked as if you walked under it).', run: async () => {
     play(); await wait(500); }},
   {id: 'pasture-stream', title: 'Too deep to wade', save: 'pastureStream', why: 'The hoofprints go into a stream, too deep for a little monkey; a dead pine leans over it from the bank, sparkling, and your task’s arrow is on it. A: Hit.', run: async () => {
     play(); await wait(500); }},

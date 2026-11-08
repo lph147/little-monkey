@@ -1767,11 +1767,24 @@ function roundCheese(g, cx, by){   // a round cheese, a slice cut from it
   R(g, cx - 2, by - 3, 1, 1, '#C99328'); R(g, cx + 2, by - 2, 1, 1, '#C99328');                          // holes
 }
 // A great pine fallen along the dark pines' gully (the cow, chapter 1), hollow inside, its round end towards you: you crawl
-// in at its far end and out of this one, and it's drawn over you, so you vanish inside it (OVER_OBJECTS).
+// in at its far end and out of this one, and it's drawn over you (OVER_OBJECTS), open along its top while you're in it, so
+// you see yourself crawling through (logOpening).
+// Its shape, drawn at X, Y, w by h: the trunk from x0 to x1 (cx its middle) and from top to bot, lying along the gully; the
+// hollow at its far end round fy; its near end's round face round ny, rx by ry.
+function logShape(X, Y, w, h){
+  const x0 = X + 3, x1 = X + w - 3, top = Y + 5, bot = Y + h - 5;
+  return {x0, x1, cw: x1 - x0, cx: X + w / 2, top, bot, fy: top + 4, ny: bot - 9, rx: (x1 - x0) / 2, ry: 9};
+}
+// The rows of a round disc on its near end's face, rx_ by ry_, each [x, y, w], top to bottom.
+function logDisc(L, rx_, ry_){
+  const rows = [];
+  for (let y = -ry_; y <= ry_; y++){ const half = Math.round(Math.sqrt(Math.max(0, 1 - (y / (ry_ + .5)) ** 2)) * rx_); rows.push([L.cx - half, L.ny + y, half * 2]); }
+  return rows;
+}
 function hollowLog(g, X, Y, w, h){
   const BK = ['#2B1B0F', '#45301B', '#634428', '#835D38', '#A07448'];   // its bark, dark to light (lit from the upper left)
   const WD = ['#6E4B2C', '#9C7346', '#C29A66', '#DDBB86'];   // the wood inside it, dark to pale
-  const x0 = X + 3, x1 = X + w - 3, cw = x1 - x0, cx = X + w / 2, top = Y + 5, bot = Y + h - 5;   // the trunk, lying along the gully
+  const L = logShape(X, Y, w, h), {x0, x1, cw, cx, top, bot} = L;   // the trunk, lying along the gully
   if (shadows) groundShadow(g, cx, bot + 1, w / 2 + 2, 4);
   // the trunk, round: light along its top left, dark down its right
   for (let x = x0; x < x1; x++){
@@ -1791,16 +1804,46 @@ function hollowLog(g, X, Y, w, h){
   }
   R(g, x0 - 5, top + 36, 6, 3, BK[2]); R(g, x0 - 5, top + 36, 6, 1, BK[3]); R(g, x0 - 6, top + 36, 2, 3, WD[2]); R(g, x0 - 6, top + 37, 1, 1, WD[0]);   // a broken branch
   // its far end: the dark hollow inside, splinters of pale wood round it
-  const fy = top + 4;
+  const fy = L.fy;
   for (let y = -2; y <= 2; y++){ const half = Math.round(Math.sqrt(1 - (y / 2.6) ** 2) * (cw / 2 - 4)); R(g, cx - half, fy + y, half * 2, 1, '#140C06'); }
   for (let i = 0; i < 7; i++) R(g, cx - cw / 2 + 4 + Math.floor(rnd(i, 4, 904) * (cw - 8)), fy - 3 + (i % 2) * 6, 2, 1, WD[2 + (i % 2)]);
   // its near end, cut round, facing you: rings of pale wood round the hollow you crawl out of
-  const ny = bot - 9, rx = cw / 2, ry = 9;
-  const disc = (rx_, ry_, c) => { for (let y = -ry_; y <= ry_; y++){ const half = Math.round(Math.sqrt(Math.max(0, 1 - (y / (ry_ + .5)) ** 2)) * rx_); R(g, cx - half, ny + y, half * 2, 1, c); } };
+  const {ny, rx, ry} = L;
+  const disc = (rx_, ry_, c) => { for (const [dx, dy, dw] of logDisc(L, rx_, ry_)) R(g, dx, dy, dw, 1, c); };
   disc(rx, ry, BK[1]); disc(rx - 1, ry - 1, WD[3]); disc(rx - 3, ry - 2, WD[2]); disc(rx - 4, ry - 3, WD[3]); disc(rx - 5, ry - 4, WD[1]);
   disc(rx - 6, ry - 5, '#24160B'); disc(rx - 8, ry - 6, '#140C06');
   R(g, cx - rx + 3, ny - ry + 2, 4, 1, '#EED3A0'); R(g, cx - 3, ny + ry - 2, 6, 1, WD[0]);   // a glint on its rim; earth in its mouth
   R(g, cx - rx - 1, bot - 2, 3, 2, '#5E9E4E'); R(g, cx + rx - 1, bot - 3, 3, 3, '#4C8A42'); R(g, cx + rx, bot - 5, 1, 2, '#7CC46B');   // ferns at its foot
+}
+// While you crawl through it, its top opens above the hollow, so you see whoever's in it (decided 8 November 2026, after
+// playing it: drawn over you, it looked as if you walked under it, not through it): the opening along its middle, from the
+// hollow at its far end to the rim of its near end, each column [x, y0, y1]; and the hollow in its near end, where you
+// crawl out, each row [x, y, w]. LOG_HALF: half the opening's width (you're 16 pixels wide).
+const LOG_HALF = 11;
+function logOpening(L){
+  const rim = logDisc(L, L.rx, L.ry), cols = [];
+  for (let x = L.cx - LOG_HALF; x < L.cx + LOG_HALF; x++){
+    const r = rim.find(([rx0, , rw]) => x >= rx0 && x < rx0 + rw);   // (its near end's rim, the first row of it at this column)
+    cols.push([x, L.fy - 1, r ? r[1] : L.ny]);
+  }
+  return {cols, hole: logDisc(L, L.rx - 6, L.ry - 5)};
+}
+// Inside it, under whoever's crawling through: the wall on the left in shadow, the floor, the wall on the right lit (from
+// the upper left), long fibres of old wood along the floor, and darker at its far end.
+function logInside(g, L){
+  const {cols} = logOpening(L), n = cols.length;
+  cols.forEach(([x, y0, y1], i) => {
+    const k = (i + .5) / n;
+    R(g, x, y0, 1, y1 - y0, k < .12 ? '#140C06' : k < .26 ? '#21140A' : k < .45 ? '#2C1B0D' : k < .62 ? '#362211' : k < .76 ? '#4A3019' : k < .9 ? '#6A472A' : '#86603A');
+    if (k > .26 && k < .62 && i % 3 === 1) for (let y = y0 + 4 + (i * 5) % 7; y < y1 - 3; y += 10) R(g, x, y, 1, 4, '#3F2A15');
+    R(g, x, y0, 1, 3, '#140C06');
+  });
+}
+// The opening's edges, over whoever's in it: the bark, cut, down each side, pale wood lit on the left.
+function logEdges(g, L){
+  const {cols} = logOpening(L), [lx, ly0, ly1] = cols[0], [rx, ry0, ry1] = cols[cols.length - 1];
+  R(g, lx - 2, ly0, 1, ly1 - ly0, '#2B1B0F'); R(g, lx - 1, ly0, 1, ly1 - ly0, '#DDBB86');
+  R(g, rx + 1, ry0, 1, ry1 - ry0, '#9C7346'); R(g, rx + 2, ry0, 1, ry1 - ry0, '#2B1B0F');
 }
 // The cow's pen at the home ground, seven squares by four, south of the road (the cow, chapter 1), as much of it as is up
 // (stage, as the troop builds it: 1 the fence along its back, with its gate facing the road, standing open; 2 the fences
@@ -2105,7 +2148,7 @@ const ROW_OBJECTS = ['rocks', 'stall', 'stallEmpty', 'railing', 'weaponRack', 'f
 // yoghurt on it, goes up in just that: the rest is there already.)
 const OBJECT_STAGES = {shop:4, fishTable:2, fishTableShrimp:1, crabTable:2, raft:3, feastTableBare:3, feastTableBowls:3, feastTable:1, stoneStool:1, hive:4, pen:6, milkTableBare:2, milkTableEmpty:3, milkTable:1, milkTableYog:1, milkTableCheese:1, dairy:4, dairyYog:1, dairyCheese:1, trellis:3, bananaHome:3, fruitTableL:1, fruitTableM:1, fruitTableR:1, fruitTableMelon:1, fruitTableGrapes:1, fruitTableBananas:1};
 const BLOCK_OBJECTS = ['shop', 'frame', 'school', 'blackboard', 'timetable', 'classWindow', 'tablet', 'archway', 'hollowTree', 'hive', 'pen', 'dairy', 'dairyYog', 'dairyCheese', 'hollowLog', 'trellis', 'trellisRipe', 'bananaPlant', 'bananaHome', 'bananaHomeRipe', 'sandTrack', 'plumPoles'];
-const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you vanish inside (a hollow log you crawl through: it shakes as you do)   // and these one object as big as the block of them (such as the school's frame on its plot)
+const OVER_OBJECTS = ['hollowLog'];   // these go over the characters on their squares too, so you're inside (a hollow log you crawl through: it shakes as you do, and opens along its top, so you see yourself in it: logOpening)   // and these one object as big as the block of them (such as the school's frame on its plot)
 // The big objects in the place you're in, from its map: {look, x, y, w, h}, (x, y) being the top-left square they
 // stand on. A block of the same tree letter two squares by two is one big tree; a row of rocks is one pile, and a row of
 // stall letters one stall; a block of frame letters is one frame, with any squares in it that are part of it but can be

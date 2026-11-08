@@ -148,3 +148,47 @@ test('the views from the lookouts in the season: summer’s as drawn in Area 1; 
   }
   assert.ok(south.includes('#D6B666'), 'a golden pasture');
 });
+
+test('leaves and petals fall only from the leafy trees you can see: none in the pine woods, nor at the pine ends of the hillside and the pasture, all of autumn’s in the meadow, a few by just one tree, thinning out as you walk; in the master’s spring, petals by the peach trees and none away from them; snow everywhere', () => {
+  let now = 0;
+  // how much of the season's fall comes down where you stand (0 to 1), arriving there (straight away) or walking (eased)
+  const fall = (g, place, x, y, walking = false) => {
+    now += walking ? 16 : 1000;
+    return g.run(`(() => { if (PLACE !== ${JSON.stringify(place)}){ enterPlace(${JSON.stringify(place)}); buildMap(); }
+      pl.x = ${x}; pl.y = ${y}; pl.px = ${x}*T; pl.py = ${y}*T; return leafyInView(camX(), camY(), Math.min(VH*T, ROWS*T - camY()), ${now}); })()`);
+  };
+  // the leaves drawn over the screen in a frame (each leaf two little rectangles, in its colours)
+  const leavesDrawn = g => get(g, `(() => { let n = 0; const fr = b.fillRect, leaf = ['#E08A3A', '#C8502A', '#F0C050'];
+    b.fillRect = function(){ if (leaf.includes(String(b.fillStyle).toUpperCase())) n++; };
+    try { drawWeather(camX(), camY(), Math.min(VH*T, ROWS*T - camY()), ${now}); } finally { b.fillRect = fr; } return n; })()`);
+  const home = game(HOME);
+  for (const [place, x, y] of [['ffmPineWood', 16, 26], ['ffmDarkPines', 28, 10], ['ffmHillside', 12, 5], ['ffmPasture', 18, 4]]){
+    assert.equal(fall(home, place, x, y), 0, `${place} (${x}, ${y}): nothing falls, pines all round`);
+    assert.equal(leavesDrawn(home), 0, `${place}: no leaves drawn`);
+  }
+  for (const [place, x, y] of [['ffmMeadow', 8, 6], ['ffmHillside', 12, 38], ['ffmPasture', 18, 22], ['ffmHomeGround', 13, 9]]){
+    assert.equal(fall(home, place, x, y), 1, `${place} (${x}, ${y}): all of autumn’s leaves, under the trees`);
+  }
+  assert.equal(leavesDrawn(home), 2 * 24, 'the home ground: 24 leaves drawn');
+  const one = fall(home, 'ffmFlowerValley', 16, 10);
+  assert.ok(one > 0 && one <= .4, `the flower valley, with a tree or two in sight: a few leaves (${one})`);
+  // walking from the leafy end of the hillside up into its pines, the leaves thin out, never all at once
+  assert.equal(fall(home, 'ffmHillside', 12, 38), 1);
+  const steps = [];
+  for (let i = 0; i < 400; i++) steps.push(fall(home, 'ffmHillside', 12, 5, true));
+  assert.ok(steps[0] > .95, `a frame later, nearly all still falling (${steps[0]})`);
+  assert.ok(steps.every((v, i) => !i || v <= steps[i - 1]), 'thinning out, frame by frame');
+  assert.ok(steps[60] > .1 && steps[60] < .5, `a second later, fewer (${steps[60]})`);
+  assert.equal(steps.at(-1), 0, 'and then none');
+  const spring = game({version: 37, started: true, area: 2, areas: {2: {chapter: 1, season: 0, teacher: 1}}, pos: {place: 'cave', x: 4, y: 4, dir: 'down'}});
+  assert.equal(spring.run('seasonNow()'), 'spring');
+  const peaches = fall(spring, 'cave', 6, 7);
+  assert.ok(peaches >= .4, `the master’s courtyard, by the peach trees: petals falling (${peaches})`);
+  assert.equal(fall(spring, 'cave', 24, 9), 0, 'away from them, none');
+  assert.equal(fall(spring, 'cliffRoad', 10, 32), 0, 'nor on the cliff road, its pines evergreen');
+  const winter = game({version: 37, started: true, area: 2, areas: {2: {chapter: 1, season: 3, teacher: 1}}, pos: {place: 'cliffRoad', x: 10, y: 32, dir: 'down'}});
+  assert.equal(winter.run('seasonNow()'), 'winter');
+  const snow = get(winter, `(() => { let n = 0; const fr = b.fillRect; b.fillRect = function(){ if (String(b.fillStyle).toUpperCase() === '#FFFFFF') n++; };
+    try { drawWeather(camX(), camY(), Math.min(VH*T, ROWS*T - camY()), 5000); } finally { b.fillRect = fr; } return n; })()`);
+  assert.equal(snow, 70, 'snow falls from the sky, pines or not: all 70 flakes on the cliff road');
+});

@@ -346,23 +346,45 @@ const FALLING = {
   winter: {n:70, speed:14, sway:4, draw:(x, y, i) => { b.globalAlpha = .9; R(b, x, y, i % 4 ? 1 : 2, i % 4 ? 1 : 2, '#FFFFFF'); b.globalAlpha = 1; }}
 };
 const NEXT = {spring:'summer', summer:'autumn', autumn:'winter'};
-function fallOver(f, n, cx, cy, sh, now){
-  const W = VW*T, H = sh;
+// Leaves and petals fall only from trees: as many as the season's full fall where you can see LEAF_TREES leafy trees or
+// more, fewer where there are fewer, and none in the pine woods, evergreen (decided 8 November 2026, after playing it:
+// leaves fell in the pine wood at home in autumn, with no leafy tree there). Counted in view, as the hillside, the south
+// slope and the pasture each have a pine wood at one end, and eased, so they thin out or thicken as you walk, the last
+// one fading in or out. Snow falls from the sky, everywhere.
+const LEAF_TREES = 5, LEAF_NEAR = T, LEAF_EASE = 700, LEAFY_SEASONS = ['autumn', 'spring'];
+const LEAFY_KINDS = ['deciduous', 'willow'], OWN_TREES = ['rockPeach', 'myTree', 'myTreeWrapped'];
+const leafyTree = p => LEAFY_KINDS.includes(OBJECT_KIND[p.look]) || OWN_TREES.includes(p.look);
+let leafyFor = null, leafyAt = [], leafy = 0, leafyT = -1e9;
+function leafyInView(cx, cy, sh, now){   // how much of the season's fall comes down here, 0 to 1
+  const fresh = now - leafyT > 500 || !leafyFor || !drawnFor || leafyFor.place !== drawnFor.place;   // (somewhere new, or back from indoors: straight away)
+  if (leafyFor !== drawnFor) leafyAt = OBJECT_PIECES.filter(leafyTree).map(p => [p.x0 + p.pw/2, p.y0 + p.ph/2]);   // (each one's middle, as the map's drawn)
+  let n = 0;
+  for (const [x, y] of leafyAt) if (x > cx - LEAF_NEAR && x < cx + VW*T + LEAF_NEAR && y > cy - LEAF_NEAR && y < cy + sh + LEAF_NEAR) n++;
+  const want = Math.min(1, n / LEAF_TREES);
+  leafy = fresh || Math.abs(want - leafy) < .002 ? want : leafy + (want - leafy) * (1 - Math.exp(-Math.max(0, now - leafyT) / LEAF_EASE));
+  leafyFor = drawnFor; leafyT = now;
+  return leafy;
+}
+function fallOver(f, n, cx, cy, sh, now){   // (n can be a fraction: the last one fading in or out)
+  const W = VW*T, H = sh, whole = Math.floor(n);
   for (let i = 0; i < n; i++){
     const sp = f.speed * (.6 + rnd(i, 1, 970) * .8);
     const x = ((rnd(i, 2, 971) * (W + 40) + Math.sin(now / 700 + i) * f.sway - cx) % (W + 40) + W + 40) % (W + 40) - 20;
     const y = ((rnd(i, 3, 972) * (H + 40) + now / 1000 * sp - cy) % (H + 40) + H + 40) % (H + 40) - 20;
+    if (i === whole) b.globalAlpha = n - whole;
     f.draw(Math.round(x), Math.round(y), i);
+    b.globalAlpha = 1;
   }
 }
 function drawWeather(cx, cy, sh, now){
   const s = seasonNow(); if (!s || (PLACES[PLACE] || {}).indoors) return;
-  const W = VW*T, evening = !!(AREA.seasons.evening && matches(AREA.seasons.evening));
-  if (FALLING[s]) fallOver(FALLING[s], evening && s === 'spring' ? 10 : FALLING[s].n, cx, cy, sh, now);
+  const W = VW*T, evening = !!(AREA.seasons.evening && matches(AREA.seasons.evening)), trees = leafyInView(cx, cy, sh, now);
+  const fromTrees = season => LEAFY_SEASONS.includes(season) ? trees : 1;
+  if (FALLING[s]) fallOver(FALLING[s], (evening && s === 'spring' ? 10 : FALLING[s].n) * fromTrees(s), cx, cy, sh, now);
   if (evening){
     b.globalAlpha = .2; R(b, 0, 0, W, sh, '#FF8A3C'); b.globalAlpha = .12; R(b, 0, 0, W, sh, '#4A2A6A'); b.globalAlpha = 1;
     const next = FALLING[NEXT[s]];
-    if (next) fallOver(next, s === 'autumn' ? 22 : 8, cx + 37, cy + 11, sh, now);   // (the first of what's to come)
+    if (next) fallOver(next, (s === 'autumn' ? 22 : 8) * fromTrees(NEXT[s]), cx + 37, cy + 11, sh, now);   // (the first of what's to come)
   }
 }
 

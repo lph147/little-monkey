@@ -1,8 +1,8 @@
 // A pretend canvas that keeps its pixels, for tests that check the colours the game draws (loadGame({canvas:
 // pixelCanvas})): solid fills (a see-through one blended over what's there, as a browser does), clearing, one canvas
 // drawn onto another, and reading and writing pixels (getImageData, putImageData), with save, restore, translate and
-// rectangular clips. Anything else (paths, text, gradients) draws nothing. Only as exact as the tests need: a fill
-// covers the pixels whose middles are inside it.
+// rectangular clips (even-odd too). Anything else (paths, text, gradients) draws nothing. Only as exact as the tests
+// need: a fill covers the pixels whose middles are inside it.
 'use strict';
 
 const COLOURS = new Map();
@@ -56,7 +56,11 @@ function pixelCanvas(){
     resetTransform(){ tx = 0; ty = 0; },
     beginPath(){ path = []; },
     rect(x, y, w, h){ path.push([x + tx, y + ty, w, h]); },
-    clip(){ const rects = path, was = inside; inside = (x, y) => rects.some(([rx, ry, rw, rh]) => x + .5 >= rx && y + .5 >= ry && x + .5 < rx + rw && y + .5 < ry + rh) && (!was || was(x, y)); },
+    clip(rule){   // (the rectangles of the path; with 'evenodd', where an odd number of them overlap, such as all but a hole)
+      const rects = path, was = inside, odd = rule === 'evenodd';
+      const n = (x, y) => rects.reduce((k, [rx, ry, rw, rh]) => k + (x + .5 >= rx && y + .5 >= ry && x + .5 < rx + rw && y + .5 < ry + rh ? 1 : 0), 0);
+      inside = odd ? (x, y) => n(x, y) % 2 === 1 && (!was || was(x, y)) : (x, y) => rects.some(([rx, ry, rw, rh]) => x + .5 >= rx && y + .5 >= ry && x + .5 < rx + rw && y + .5 < ry + rh) && (!was || was(x, y));
+    },
     fillRect(x, y, w, h){
       const [r, g, b, a] = rgba(ctx.fillStyle), alpha = a * ctx.globalAlpha, out = ctx.globalCompositeOperation === 'destination-out';
       if (alpha <= 0) return;

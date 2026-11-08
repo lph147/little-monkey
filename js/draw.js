@@ -333,11 +333,11 @@ function drawEntityMonkey(kind, X, Y, dir, now, bob, step = 0, seed = 0){
 }
 // A big object's picture (js/art.js), where it stands, with a little shake that settles while it's rustling.
 const RUSTLE = 320;   // how long a rustle lasts (ms)
+const shakeOf = (p, now) => { const t = now - p.rustle; return t < RUSTLE ? Math.round(Math.sin(t / 45) * (1 - t / RUSTLE)) : 0; };   // (a pixel at most)
 function drawPiece(p, pic, cx, cy, now){
   const X = p.x0 - cx, Y = p.y0 - cy;
   if (X > VW*T || Y > VH*T || X + pic.width < 0 || Y + pic.height < 0) return;
-  const t = now - p.rustle, dx = t < RUSTLE ? Math.round(Math.sin(t / 45) * (1 - t / RUSTLE)) : 0;   // a pixel at most
-  b.drawImage(pic, X + dx, Y);
+  b.drawImage(pic, X + shakeOf(p, now), Y);
 }
 // Walking through a peach or apple tree's wide branches, into a square right beside it (its leafy squares, js/art.js),
 // makes it rustle once, gently, as you reach them, and a couple of leaves fall. Walking behind a tree, into a corner by
@@ -365,6 +365,32 @@ function crawlThrough(now){
   if (!p) return;
   m.crawled = true; p.rustle = now; SFX.scuffle();
   for (const side of [-1, 1]) fallingLeaves.push({x: p.x*T + (side < 0 ? 2 : p.w*T - 4), y: m.ty*T + 2 + Math.random()*8, t0: now + (side > 0 ? 70 : 0), s: side, bark: true});
+}
+// And while you're in it, it's open along its top, so you see yourself in there, crawling through, in its shade (decided 8
+// November 2026, after playing it: drawn over you, it looked as if you walked under it, not through it): its inside is
+// drawn under you, and the log over you all but its opening (logOpening, js/art.js). It opens as you crawl in and closes
+// once you're out, quickly (LOG_OPEN_MS), its bark fading.
+const LOG_OPEN_MS = 160, LOG_SHADE = .32;
+function logOpen(p, now){   // how open it is, 0 to 1 (once a frame, with its inside)
+  const m = pl.mv, inside = (m ? [[m.fx, m.fy], [m.tx, m.ty]] : [[pl.x, pl.y]]).some(([x, y]) => x >= p.x && x < p.x + p.w && y >= p.y && y < p.y + p.h);
+  const dt = Math.min(100, Math.max(0, now - (p.openT === undefined ? now : p.openT))); p.openT = now;
+  return p.open = Math.max(0, Math.min(1, (p.open || 0) + (inside ? dt : -dt) / LOG_OPEN_MS));
+}
+const logAt = (p, cx, cy, now) => logShape(p.x*T - cx + shakeOf(p, now), p.y*T - cy, p.w*T, p.h*T);   // (where it is on the screen, shaking as it does)
+function drawLogInside(p, cx, cy, now){   // under you
+  if (!logOpen(p, now)) return;
+  b.globalAlpha = p.open; logInside(b, logAt(p, cx, cy, now)); b.globalAlpha = 1;
+}
+function drawLogOver(p, cx, cy, now){   // over you
+  if (!p.open) return drawPiece(p, p.top, cx, cy, now);
+  const L = logAt(p, cx, cy, now), {cols, hole} = logOpening(L);
+  const opening = () => { b.beginPath(); for (const [x, y0, y1] of cols) b.rect(x, y0, 1, y1 - y0); for (const [x, y, w] of hole) b.rect(x, y, w, 1); };
+  b.save(); opening(); b.rect(0, 0, VW*T, VH*T); b.clip('evenodd'); drawPiece(p, p.top, cx, cy, now); b.restore();   // all but its opening
+  b.save(); opening(); b.clip();
+  b.globalAlpha = LOG_SHADE * p.open; R(b, 0, 0, VW*T, VH*T, '#100904');   // whoever's in it, in its shade
+  if (p.open < 1){ b.globalAlpha = 1 - p.open; drawPiece(p, p.top, cx, cy, now); }   // (its bark, going or coming back)
+  b.restore();
+  b.globalAlpha = p.open; logEdges(b, L); b.globalAlpha = 1;
 }
 function drawFallingLeaves(cx, cy, now){
   for (let i = fallingLeaves.length - 1; i >= 0; i--){
@@ -963,7 +989,7 @@ function drawWorld(now){
   drawPlaques(cx, cy); drawLanterns(cx, cy, now);   // (a plaque over a door, such as your name over your room; red lanterns for New Year: js/year.js)
   drawLayer(baseCanvas, cx, cy);   // big objects, under the characters: those that never move, all at once
   touchLeaves(now); crawlThrough(now);
-  for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.base, cx, cy, now);   // and the fruit trees, which rustle
+  for (const p of OBJECT_PIECES) if (!p.baked){ drawPiece(p, p.base, cx, cy, now); if (p.crawl) drawLogInside(p, cx, cy, now); }   // and the fruit trees, which rustle (and a hollow log, open while you're in it)
   const x0 = Math.floor(cx/T), y0 = Math.floor(cy/T);
   for (let y = y0; y <= y0 + VH; y++) for (let x = x0; x <= x0 + VW; x++) animTile(x, y, x*T - cx, y*T - cy, now);
   drawGrassBits(cx, cy, now);
@@ -1089,7 +1115,7 @@ function drawWorld(now){
   drawFires(cx, cy, now);   // (a fire's flames, such as in the brazier in the courtyard, winter: js/year.js)
   // the tops of big objects (a tree's leaves, the stall's awning), over anyone walking behind them
   drawLayer(topCanvas, cx, cy);
-  for (const p of OBJECT_PIECES) if (!p.baked) drawPiece(p, p.top, cx, cy, now);
+  for (const p of OBJECT_PIECES) if (!p.baked){ if (p.crawl) drawLogOver(p, cx, cy, now); else drawPiece(p, p.top, cx, cy, now); }
   drawFallingLeaves(cx, cy, now);
   drawSteam(cx, cy, now);
   drawHideTail(cx, cy, now);   // a little monkey's tail, poking out of where it's hiding (js/hide.js)
