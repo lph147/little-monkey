@@ -52,7 +52,7 @@ const WORD_BANK = {
   '苹果': {py:'píngguǒ', en:'apple', pic:'🍎', area:1, category:'food'},
   '河': {py:'hé', en:'river', pic:'🏞️', area:1, category:'nature', alike:['瀑布']},
   '水': {py:'shuǐ', en:'water', pic:'💧', area:1, category:'food', alike:['喝']},
-  '水果': {py:'shuǐguǒ', en:'fruit', pic:'🧺', area:1, category:'food', alike:['桃子', '苹果', '西瓜', '葡萄', '香蕉']},   // (the hungry monkey teaches it as he asks, since 24 October 2026; the fruit trees did for a day, and it was heard only till then)
+  '水果': {py:'shuǐguǒ', en:'fruit', pic:'🧺', area:1, category:'food', alike:['桃子', '苹果', '西瓜', '葡萄', '香蕉', '榴莲']},   // (the hungry monkey teaches it as he asks, since 24 October 2026; the fruit trees did for a day, and it was heard only till then)
   '鱼': {py:'yú', en:'fish', pic:'🐟', area:1, category:'animals'},
   '鸟': {py:'niǎo', en:'bird', pic:'🐦', area:1, category:'animals'},
   '动物': {py:'dòngwù', en:'animal', pic:'🐾', area:1, category:'animals', alike:['*animals']},
@@ -137,11 +137,13 @@ const WORD_BANK = {
   '西瓜': {py:'xīguā', en:'watermelon', pic:'🍉', area:1, category:'food'},
   '葡萄': {py:'pútáo', en:'grapes', pic:'🍇', area:1, category:'food'},
   '香蕉': {py:'xiāngjiāo', en:'banana', pic:'🍌', area:1, category:'food'},   // (wild in the melon field, east off the south slope: you take its seeds for the garden)
+  '榴莲': {py:'liúlián', en:'durian', pic:'🌰', area:1, category:'food'},   // (a spiky fruit, famous for its smell: one to pick from the tree in the hot spring valley's warm corner, and the 老板 sells them; eating one keeps wild creatures away for two minutes)
   '跑': {py:'pǎo', en:'to run', pic:'🏃', area:1, category:'actions', alike:['猴子', '跳']},   // (PE at school: the old monkey starts a race on the sports ground with it, and from then on you can run; the pictures of all three are a monkey)
   '跑步': {py:'pǎobù', en:'to go running, to jog', pic:'👟', area:1, category:'actions', alike:['跑', '猴子', '跳']},   // (PE's second lesson: the class goes jogging round the sports ground)
   '鱼饵': {py:"yú'ěr", en:'bait', pic:'🪱', area:1, category:'items', alike:['蜂蜜', '酸奶']},   // (the 老板 sells it, once you can fish: a big fish bites; all three pictures are a pot)
   '鱼竿': {py:'yúgān', en:'fishing rod', pic:'🎣', area:1, category:'items', alike:['棍子']},   // (the fishing monkey's, by the stream at the home ground, for the feast's fish; both pictures are a long, thin stick)
   '快乐': {py:'kuàilè', en:'happy', pic:'😊', area:1, category:'describing'},   // (the feast, at the end of chapter 1: 小猴子很快乐！ heard since becoming king)
+  '臭': {py:'chòu', en:'smelly', pic:'🤢', area:1, category:'describing'},   // (as you eat your first durian: 太臭了！, it's so smelly!)
   '木筏': {py:'mùfá', en:'raft', pic:'🛶', area:1, category:'items', alike:['木头']},   // (the troop builds it on the shore, at the end of chapter 1: you leave on it, as in the book)
   '海': {py:'hǎi', en:'sea', pic:'🌊', area:1, category:'nature', alike:['河', '水']},   // (the shore, below the meadow, where the river meets the sea; heard in the opening, 海里有一座山)
   '螃蟹': {py:'pángxiè', en:'crab', pic:'🦀', area:1, category:'animals'},   // (on the shore's sand, for the feast)

@@ -310,6 +310,7 @@ SAVES.springsVent = {...SAVES.springs, pos: {place: 'hotSprings', x: 13, y: 10, 
 SAVES.springsBath = {...SAVES.springs, pos: {place: 'hotSprings', x: 5, y: 18, dir: 'up'}};   // facing a monkey in the warm pool
 SAVES.springsBananas = {...SAVES.springs, pos: {place: 'hotSprings', x: 9, y: 5, dir: 'up'}};   // facing a banana plant
 SAVES.springsTurtle = {...SAVES.springs, pos: {place: 'hotSprings', x: 6, y: 12, dir: 'down'}};   // facing the turtle on its warm boulder (30 October 2026)
+SAVES.springsDurian = {...SAVES.springs, pos: {place: 'hotSprings', x: 13, y: 4, dir: 'up'}};   // facing the durian tree in the warm corner (the polish plan, 8 November 2026)
 SAVES.bananasBack = {...SAVES.springs, w: {...SAVES.springs.w, ...knows(1, ['香蕉'])}, areas: {1: {...SAVES.springs.areas[1], holding: {bananaSeeds: '种子'}}},
   tasksSeen: {...SAVES.springs.tasksSeen, bananaSeedsBack: 1}, pos: {place: 'homeGround', x: 10, y: 13, dir: 'left'}};
 SAVES.gardenPlanted = {...SAVES.bananasBack, w: {...SAVES.bananasBack.w, ...knows(1, ['西瓜', '葡萄'])}, areas: {1: {...SAVES.bananasBack.areas[1], holding: {},
@@ -1230,6 +1231,14 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'banana-card', title: 'Bananas (香蕉)', save: 'springsBananas', why: 'A at a banana plant: 香蕉 (xiāngjiāo, banana), said straight away. Wild ones are full of hard black seeds: you keep them.', run: async () => {
     play(); await wait(100); interact(...facing()); await wait(600); }},
+  {id: 'durian-tree', title: 'The durian tree', save: 'springsDurian', why: 'In the warm corner, between the banana plants, a tall durian tree, its spiky fruit hanging under its leaves, sparkling till you know its word.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'durian-card', title: 'Durian (榴莲)', save: 'springsDurian', why: 'A at the tree: 榴莲 (liúlián, durian), said straight away. After that, A picks one for your bag, one each time you come.', run: async () => {
+    play(); await wait(100); interact(...facing()); await wait(600); }},
+  {id: 'durian-smell', title: 'Smelling of durian', save: 'climbing', why: 'Eaten from your bag: a green cloud of smell round you, and the durian with the time left by your health. For two minutes out on the map, no wild creature jumps out.', run: async () => {
+    play(); await wait(100); stinkUp('榴莲', 120); stinkLeft = 104000; drawHUD(); await wait(600); }},
+  {id: 'durian-sniff', title: 'It sniffs, and runs off', save: 'climbing', why: 'The first wild creature that would have jumped out pops up, sniffs the air (?) and runs off: The 蛇 (snake) sniffs the air, and slithers off!', run: async () => {
+    play(); await wait(100); stinkUp('榴莲', 120); sniffAndFlee('snake'); await wait(800); }},
   {id: 'bananas-give', title: 'Banana seeds', save: 'bananasBack', why: 'Give the big monkey the seeds: 种子！太好了！, then finish 这是香蕉的种子 (These are banana seeds).', run: async () => {
     play(); await wait(100); talk(npc('big')); await wait(500); }},
   {id: 'garden-planted', title: 'The garden, planted', save: 'gardenPlanted', why: 'Two banana plants, the grapes’ trellis and the melons, all growing in the troop’s garden by the stream.', run: async () => {

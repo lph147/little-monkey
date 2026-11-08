@@ -1002,6 +1002,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '臭': {   // smelly
+    palette: {a:'#334419', b:'#7AB83A', c:'#53563B', d:'#3A411D', e:'#DCEEA2', f:'#8EAE46', g:'#BCD872', h:'#6D7D42', i:'#3A3A1A', j:'#2F321C', k:'#876850', l:'#E8B48A', m:'#875050', n:'#E88A8A', o:'#4A3A1A', p:'#372B20', q:'#C08A62', r:'#4A3626', s:'#5B4C3D', t:'#F6CFA8'},
+    rows: [
+      "................................",
+      "................................",
+      ".aa.aaa.........................",
+      "abbabbba........................",
+      "baabbaba.....cccccccccd.........",
+      "a..aa.a.....ceeeeeeeeefd........",
+      "..........cceggggggggggfdd......",
+      "..aaa.aa.ceeggggggggggggefd.....",
+      ".abbbabbceggggggggggggggggfd....",
+      "abbabbaabhiiggggggggggggiifd....",
+      ".aa.aa.jhggiiiggggggggiiiggfd...",
+      ".......ceggiiiggggggggiiiggfd...",
+      ".aa.aaceggiiggggggggggggiiggfd..",
+      "abbabbbhggggggggggggggggggggfd..",
+      "baabbabhgggggggkgggkkkggggggfd..",
+      "a..aa.ceggggggklkmmklkkkggggfd..",
+      "......ceggggggklknnklklkggggfd..",
+      "......dfggggggklkmmklkllkgggfd..",
+      ".......ceggggggkggggkklllkgfd...",
+      ".......dfgggggggggggkllllkgfd...",
+      "........cegggogggogggkllllkp....",
+      "........dfgoogooogoooklllllqr...",
+      ".........dfogggogggoggkllllqr...",
+      "..........ddfggggggggggklllqr...",
+      "............dffffffffffkllllqr..",
+      ".............ddddddddddstlllqr..",
+      ".......................stlllqr..",
+      ".......................rqllllqr.",
+      "........................stlllqr.",
+      "........................stllllqr",
+      "........................rqllllqr",
+      ".........................rqqqqqr"
+    ]
+  },
   '木筏': {   // raft
     palette: {a:'#33424D', b:'#1C2D39', c:'#79B1DB', d:'#31709E', e:'#3F8FCB', f:'#8ACFF0', g:'#6E5220', h:'#5A3D23', i:'#E4D49C', j:'#9C6A3C', k:'#B0966F', l:'#EBD3B0'},
     rows: [
@@ -4478,6 +4515,43 @@ const PICTURES = {
       "..........xxyyyyzzzzzzyyxx......",
       "............xxxxyyyyyyxx........",
       "................xxxxxx.........."
+    ]
+  },
+  '榴莲': {   // durian
+    palette: {a:'#3D3228', b:'#978067', c:'#4A321A', d:'#241A0F', e:'#6A4A26', f:'#2A2B10', g:'#5E6A1C', h:'#4C4C26', i:'#C6D060', j:'#5C6520', k:'#2A2A11', l:'#2F3112', m:'#9EAE38', n:'#C2CC5A', o:'#6E7C22', p:'#44442A', q:'#ADB86D', r:'#42441E', s:'#A8B84A', t:'#50591B', u:'#8A9A2E', v:'#F4EFD8', w:'#8F7B2D', x:'#F6D44E'},
+    rows: [
+      ".............aabcd..............",
+      "............abbecd..............",
+      "...........fgbecdf..............",
+      "......ff.hfggbcfggf.............",
+      ".....fgghiijjciijjkl............",
+      "......kjimmnmmnmmniolpf.........",
+      ".....hinnmnnmnnmnnmmjqgf........",
+      "...phimmgmmgmmgmmgmmmjk.........",
+      "..pqjmnmmnmmnmmnmmmmmmol........",
+      "..fgjmnmmnmmnnmnnmnnmmolf.......",
+      "..kjmmmgmmgmmgmmgmmgmmmjgf......",
+      "..himmmmmmmmmmnmmnmmnmmjgf......",
+      ".fhinnmnnmnnmnnmmnmmnmmol.......",
+      "fggjmgmmgmmgmmgmmgmmmgmol.......",
+      ".fhimmnmmnmmnmmmmmmmmmmol.......",
+      "..himmnmmnmmnmmnnmnnmmmjgf......",
+      "..kjmmmgmmgmmgmmgmmgmmmjgf......",
+      "..fgjmmmmmmmmmmmmnmmmmolf.......",
+      "..fgjmmnnmnnmmnmmnmmmmol........",
+      "...flommgmmgmmgmmgmmmjk..rrrrrf.",
+      ".....lommmmmmmmmmmmmjggfrsssssgf",
+      "......kjommmmmmmmmottttssuvvvvgf",
+      ".....fggloojjttttttuvvvvwwwwvvgf",
+      "......ff.lfggjtvvvwwwwvwxxxxwvgf",
+      "...........fgrsuvwxxxxwxxxxxwvgf",
+      "............ffguvwxxxxxwxxxxwvgf",
+      "..............rsvwxxxxwvwwwwvugf",
+      "..............rsuvwwwwwvvvvvvugf",
+      "..............fguvvvvvvvvvvvvugf",
+      "...............rsuuuuuuuuuuuuugf",
+      "...............fggggggggggggggf.",
+      "................ffffffffffffff.."
     ]
   },
   '葡萄': {   // grapes

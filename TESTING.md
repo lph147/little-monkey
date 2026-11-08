@@ -723,6 +723,18 @@ The clock only runs while you're out on the map, so night comes after about 15 m
 - [ ] At home in autumn, A at the hillside lookout's railing: the view is autumn's, golden slopes with red, orange and gold trees, the far land dun, a hazy sky, leaves falling and lying on the rock. The same on the south slope's lookout: a golden pasture beyond the dark pines. In Area 1, both views are the summer's green, as before.
 - [ ] Close the game and come back: the time of day is as you left it (saved every 30 seconds or so, and whenever the game saves).
 
+## The durian
+
+In chapter 1, once the garden has begun (the hot spring valley is open):
+1. Go up the brook from the riverside to the hot spring valley, past the steam, to the warm corner at the top. Between the banana plants stands a tall durian tree, its spiky fruit hanging under its leaves, sparkling.
+2. Press A at it: a card for 榴莲 (liúlián, durian). Press A again: your monkey reaches up and picks one, and it says so (1 of 2). A again: no more till you come back.
+3. Open BAG: the durian says "Keeps wild creatures away for 2 minutes". Tap it: the bag closes, your monkey munches it, then says 太臭了！ (so smelly!) and you catch 臭 (chòu, smelly). A message says wild creatures keep away for two minutes.
+4. Check: wavy green stink lines rise off your monkey's head, and at the top left there's a durian and the time left (2:00, counting down). It pauses while a card or a conversation is open.
+5. Walk through long grass with wild creatures (such as the riverside's): the first that would have jumped out pops up beside you with a ?, and runs off ("The 蛇 (snake) sniffs the air, and slithers off!"). After that, no battles at all. Friends in the tall grass still come out to play.
+6. Wait for it to wear off: "The smell of the 榴莲 (durian) wears off.", the durian goes from the top of the screen, and wild creatures jump out again.
+7. Tap a durian while you still smell: "You still smell of the 榴莲: keep it for later."
+8. At the 老板's stall at the home ground: 榴莲 is for sale, 3 shells, once you know its word.
+
 ## Quick practice
 
 - [ ] On the title screen, for a game that knows at least 4 words with pictures: Practise beside Continue, saying how many words need it (none for a new game, or one that knows fewer). Tap it: no music, and the 练习 Practice card: your words caught, how many need practice, and how many at each level, with − 10 questions + and Back and Start.

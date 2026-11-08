@@ -111,7 +111,7 @@ const OBJECT_RULES = {
     thing: {base:() => KEEP}
   }
 };
-const OBJECT_KIND = {pine:'evergreen', twistedPine:'evergreen', oldTree:'evergreen', bamboo:'evergreen', bambooFence:'evergreen', ashPine:'evergreen',
+const OBJECT_KIND = {pine:'evergreen', twistedPine:'evergreen', durianTree:'evergreen', oldTree:'evergreen', bamboo:'evergreen', bambooFence:'evergreen', ashPine:'evergreen',
   willow:'willow', tree:'deciduous', peachTree:'deciduous', appleTree:'deciduous', bush:'deciduous', hollowTree:'deciduous',
   jHouse:'building', mudHouse:'building', teahouse:'building', townSchool:'building', whiteWall:'building', wallGate:'building', stallBuns:'building',
   stallShoes:'building', stallFruit:'building', stallChanger:'building', stallKites:'building', shopHut:'building',

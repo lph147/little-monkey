@@ -873,6 +873,9 @@ rt.hid{visibility:hidden}
 .hud .hp{margin:0;gap:6px}
 .hud .hpbar{min-width:90px;border-color:#0B1410}
 .hud .hpnum{color:#fff}
+.hud .smell{display:flex;align-items:center;gap:4px;color:#fff;font-family:var(--pixel);font-size:.85rem;line-height:1}   /* smelling of durian: it, and the time left (drawHUD, js/main.js) */
+.hud .smell .pix{width:16px;height:16px;image-rendering:pixelated}
+.hud .hp + .smell{margin-left:6px}
 /* A question (an animal's, or filling a gap): from the top down, with the bottom row (what happened, or a helper,
    and Next) at the bottom, its space kept, so nothing moves when you answer: the answers just under the question (not in
    the middle of the space left, which moved them when what happened took two lines), Next at the very bottom, what happened's

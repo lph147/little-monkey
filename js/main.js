@@ -154,9 +154,17 @@ function updateCtx(now){
 // After anything happens. Select has a red dot while there's a task you haven't looked at in your task
 // list, and a new task is announced with a message once you're free and the last message has gone (this
 // runs again when it goes: see toast in js/helpers.js).
+// What's at the top of the screen: your health while you're hurt, and while you smell of durian, the durian and the time
+// left (isStinky, js/input.js).
+function drawHUD(){
+  const hud = $('#hud'); if (!hud) return;
+  const smell = mode === 'play' && isStinky(), secs = Math.ceil(stinkLeft / 1000);
+  hud.hidden = mode !== 'play' || (!hurt() && !smell);
+  if (!hud.hidden) hud.innerHTML = (hurt() ? healthHTML(health(), maxHealth(), true) : '')
+    + (smell ? `<span class="smell" role="img" aria-label="You smell of ${esc(WORDS[stinkFood] ? WORDS[stinkFood].en : 'durian')}: ${secs} seconds left">${picHTML(stinkFood)}${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}</span>` : '');
+}
 function updateHUD(){
-  const hud = $('#hud');   // your health, at the top of the screen while you're hurt
-  if (hud){ hud.hidden = mode !== 'play' || !hurt(); if (!hud.hidden) hud.innerHTML = healthHTML(health(), maxHealth(), true); }
+  drawHUD();
   if (mode !== 'play') return;
   const tasks = getTasks();
   $('#selectDot').hidden = !tasks.some(t => !S.tasksRead[t.id]);

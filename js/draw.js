@@ -489,6 +489,20 @@ function drawSwarm(X, Y, now, k, n = 9){   // (the square's top left corner on s
     R(b, bx, by, 3, 2, '#F2C14E'); R(b, bx + 1, by, 1, 2, '#2A2018'); R(b, bx, by - 1, 2, 1, i % 2 ? '#FFFFFF' : '#DDEFF8');
   }
 }
+// Smelling of durian (isStinky, js/input.js): a faint green haze on the ground round you (stinkHaze, under your monkey),
+// and wavy stink lines rising off your head, swaying as they go and fading at the top, as in a cartoon: dark and two
+// pixels wide, so you see them on grass and on the path alike.
+const stinkHaze = (X, Y) => { b.globalAlpha = .22; oval(b, X + 8, Y + 13, 10, 4, '#7FAF34'); b.globalAlpha = 1; };
+function drawStink(X, Y, now){
+  for (let i = 0; i < 3; i++){
+    const k = (now / 1200 + i / 3) % 1, x = X + 2 + i * 5, y = Y + 1 - Math.round(k * 9);
+    for (let j = 0; j < 6; j++){
+      b.globalAlpha = (1 - k * .85) * (1 - j / 8);
+      R(b, x + Math.round(Math.sin(j * 1.1 + now / 140 + i * 2) * 1.5), y - j, 2, 1, j % 2 ? '#5E8C20' : '#46701A');
+    }
+  }
+  b.globalAlpha = 1;
+}
 // Full of energy, from honey (isFast, js/input.js): golden sparks fly off behind you as you walk, and one twinkles over
 // your head, most of the time.
 // Running (holding B, or racing): puffs of dust kicked up behind, and speed lines.
@@ -547,6 +561,7 @@ function drawFoe(cx, cy, now){
     const k = clamp(e / rise, 0, 1), h = Math.max(1, Math.round(spr.height * k)), jump = e > rise && e < rise + 240 ? Math.round(Math.sin((e - rise) / 240 * Math.PI) * (foe.big ? 2 : 4)) : 0;
     figureShadow(foe.a.hz, X, Y, .18);
     b.drawImage(spr, 0, 0, spr.width, h, X - (spr.width - T) / 2, Y + 16 - h - jump, spr.width, h);   // (rising out of the grass, at its size: drawFigure)
+    if (foe.sniff && e > 350) bubble(X + 10, Y + 8 - spr.height, '?');   // (sniffing the air: you smell of durian, sniffAndFlee in js/battle.js)
     if (e < 600 && TALL_LOOKS.includes(tileAt(foe.x, foe.y).look)){ for (let i = 0; i < 5; i++){ const gx = X + 1 + i*3 + Math.round(Math.sin(e/40 + i)*1); R(b, gx, Y + 11 - (i % 2), 1, 4, '#2F6E38'); R(b, gx, Y + 10 - (i % 2), 1, 1, '#94D883'); } }
   } else {
     const e1 = now - foe.t1;
@@ -1048,6 +1063,7 @@ function drawWorld(now){
       const mid = moving && p > .15 && p < .85;
       const PX = Math.round(pl.px - cx), PY = Math.round(pl.py - cy);
       if (now - dunkT < DUNK_MS){ drawDunked(PX, PY, now); continue; }   // in the brook, off a stepping stone
+      if (isStinky()) stinkHaze(PX, PY);   // (smelling of durian: a faint green haze under you, the lines rising off you after)
       if (pl.form) drawForm(pl.form, PX, PY, now, mid ? 1 + pl.parity : 0, pl.dir);   // turned into something (the turnInto step): only it, in your place, walking as you go, never your monkey under it
       else if (acting && ACTS[acting.kind]) ACTS[acting.kind](PX, PY, now, acting);   // doing something: sweeping, filling a bucket, lifting a sack, turning a key, picking fruit
       else if (swing && now - swing.t0 < SWING_MS){ if (swing.with === '斧头') drawChop(pl.dir, PX, PY, swing.t0, now); else drawSwing('player', pl.dir, PX, PY, swing.t0, now, HELD[swing.with] ? swing.with : undefined); }   // chopping with the axe, or swinging your stick (the hit step)
@@ -1064,6 +1080,7 @@ function drawWorld(now){
       }
       for (const [x, y, w, h] of feetInGrass()) coverFeet(x, y, w, h, cx, cy);   // the grass over your feet (parted round you, as the square you're in is)
       if (isFast(now)) drawEnergy(PX, PY, now, moving, pl.dir);
+      if (isStinky()) drawStink(PX, PY, now);   // (smelling of durian: a green cloud round you)
       if (now < alertUntil) bubbles.push([PX + 5, PY - 10, '!']);
       if (now - wakeT < 1000) [[-3, 2], [17, 4], [-1, -4], [15, -3], [7, -7]].forEach(([dx, dy], i) => {   // waking up with all your hearts: sparkles
         const tw = (now / 200 + i) % 2 < 1; R(b, PX + dx, PY + dy, 1, 3, '#FFE27A'); R(b, PX + dx - 1, PY + dy + 1, 3, 1, tw ? '#FFFFFF' : '#FFE27A'); });

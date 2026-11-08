@@ -301,6 +301,17 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     for (const sx of [-1, 1]) p.flat(O(16 + sx * 8.5, 19, 2.2, 1.5), '#F7A35C');                        // rosy cheeks
     for (const [x, y] of [[3, 5], [28, 4], [29, 26], [2, 25]]){ p.flat(Rc(x, y - 1.5, 1, 4), '#E3A51C'); p.flat(Rc(x - 1.5, y, 4, 1), '#E3A51C'); }   // sparkles
   },
+  '臭': p => {   // smelly: a face gone green, eyes screwed shut, pinching its nose, wavy green stink drifting past it (unlike 热: red; 冷: blue; 快乐 and 哭: yellow)
+    const wave = (x, y) => path([[x, y], [x + 1.6, y - 1.4], [x + 3.2, y], [x + 4.8, y - 1.4], [x + 6.4, y]], .55);
+    p.flat(or(wave(.5, 4.5), wave(2, 9.5), wave(.5, 14.5)), '#7AB83A');                     // the stink, drifting past
+    p.fill(O(18, 15, 11, 10.5), '#BCD872', {light: '#DCEEA2', dark: '#8EAE46', edge: true});  // the face, gone green
+    p.flat(or(path([[10.5, 9.5], [13.5, 11], [10.5, 12.5]], .6), path([[25.5, 9.5], [22.5, 11], [25.5, 12.5]], .6)), '#3A3A1A');   // eyes screwed shut
+    p.flat(path([[11.5, 22], [13.5, 20.8], [15.5, 22], [17.5, 20.8], [19.5, 22], [21.5, 20.8], [23.5, 22]], .55), '#4A3A1A');   // a wobbly grimace
+    const SK = '#E8B48A', SKL = {light: '#F6CFA8', dark: '#C08A62', edge: true};
+    p.fill(path([[28.5, 31.5], [25.5, 23], [22, 17.5]], 2.6), SK, SKL);                      // an arm, reaching up,
+    p.fill(O(18, 16.3, 1.6, 1.4), '#E88A8A', {edge: true});                                   // to its nose,
+    p.fill(or(O(15.6, 16.6, 1.6, 2.2), O(20.6, 16.4, 1.9, 2.4)), SK, SKL);                    // pinched between finger and thumb
+  },
   '木筏': p => {   // raft: five logs side by side, tied with rope, afloat on blue water, a long pole lying across it (unlike 木头: cut logs in a pile)
     p.fill(Rc(1, 1, 30, 30, 4), '#3F8FCB');                                                                       // the water
     [[4, 6], [20, 9], [9, 27], [24, 26]].forEach(([x, y]) => p.flat(Rc(x, y, 4, 1), '#8ACFF0'));
@@ -921,6 +932,25 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
       p.flat(O(29, 14.5 + k * 5.5, 1.3, 1.1), '#5A3A1E');                                            // its brown tip
     }
     p.flat(O(5, 15, 2.2, 3.2), '#8A6A2A');                                                            // where they join
+  },
+  '榴莲': p => {   // durian: a big spiky fruit, olive green, its stalk on top, and a piece broken open in front, two creamy yellow pods in its pale husk (unlike 西瓜: smooth and striped; unlike 水果: a basket of all sorts)
+    const spikes = (cx0, cy0, rx, ry, n, len, from = 0, to = Math.PI * 2) => {
+      for (let i = 0; i < n; i++){
+        const a = from + (to - from) * (i + .5) / n, cx = cx0 + Math.cos(a) * rx, cy = cy0 + Math.sin(a) * ry, tx = cx0 + Math.cos(a) * (rx + len), ty = cy0 + Math.sin(a) * (ry + len);
+        p.fill(Pg([[cx + Math.sin(a) * 1.5, cy - Math.cos(a) * 1.5], [cx - Math.sin(a) * 1.5, cy + Math.cos(a) * 1.5], [tx, ty]]), '#8A9A2E', {dark: '#5E6A1C'});
+      }
+    };
+    spikes(13.5, 13.5, 10, 9.5, 13, 2.4);                                                   // spikes all round its edge
+    p.fill(O(13.5, 13.5, 10.5, 10), '#9EAE38', {light: '#C6D060', dark: '#6E7C22', edge: true});   // the fruit
+    for (let row = 0, y = 6; y <= 21; row++, y += 3.1) for (let x = 5 + (row % 2) * 1.55; x <= 22; x += 3.1){
+      if (!O(13.5, 13.5, 9, 8.5)(x, y)) continue;
+      p.flat(Pg([[x, y - 1.3], [x - 1, y + .7], [x + 1, y + .7]]), '#C2CC5A'); p.dot(Math.round(x), Math.round(y + 1), '#5E6A1C');   // spiky all over
+    }
+    p.fill(path([[13.5, 4], [14.5, 1.8], [16.5, 1]], 1.1), '#6A4A26', {dark: '#4A321A'});    // its stalk
+    spikes(23, 31, 8.6, 4.2, 5, 1.8, Math.PI * .15, Math.PI * .85);                        // a piece broken open, in front: its spiky husk,
+    p.fill(Pg([[13.5, 22.5], [31.5, 19.5], [30.5, 30.5], [16, 31]]), '#8A9A2E', {light: '#A8B84A', dark: '#5E6A1C', edge: true});
+    p.flat(Pg([[15.4, 23.2], [30, 20.8], [29.2, 28.8], [17.4, 29.4]]), '#F4EFD8');          // pale inside,
+    p.fill(or(O(20.2, 25.6, 3.4, 2.8), O(26.2, 24.4, 3.2, 2.7)), '#F6D44E', {light: '#FFF0A0', dark: '#D8AE2E', edge: true});   // and two creamy yellow pods
   },
   '葡萄': p => {   // grapes: one big bunch of round purple grapes hanging from a stalk, a green vine leaf beside it (unlike 水果: a basket of all sorts)
     p.fill(Pg([[17, 7], [21, 2], [27, 1.5], [30.5, 5], [29, 10], [24, 12], [19, 10]]), '#5BAA4B', {light: '#86D06E', dark: '#3E8A34', edge: true});   // the leaf

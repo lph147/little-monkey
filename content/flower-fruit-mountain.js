@@ -702,6 +702,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
         note:'A ripe peach.', bought:'You put the {桃子} in your bag. Eat it to get 10 health back.', eat:true},
       {item:'蜂蜜', price:4, if:{shop:{atLeast:3}, bees:{atLeast:11}}, sentence:'我 要 蜂蜜', sentenceEn:'I want some honey.',   // (once the bees make honey at the home ground)
         note:'Golden honey from the bees’ hive.', bought:'You put the {蜂蜜} in your bag. Eat it to walk faster for a minute.', eat:true},
+      {item:'榴莲', price:3, if:{shop:{atLeast:3}, knows:'榴莲'}, sentence:'我 要 榴莲', sentenceEn:'I want a durian.',   // (once you've found the durian tree, in the hot spring valley)
+        note:'A spiky, smelly durian.', bought:'You put the {榴莲} in your bag. Eat it, and wild creatures keep away for two minutes.', eat:true},
       {item:'鱼饵', price:2, if:{shop:{atLeast:3}, fishing:{atLeast:1}}, sentence:'我 要 鱼饵', sentenceEn:'I want some bait.',   // (once you can fish)
         note:'Wriggly worms in a little clay pot. Big fish love them!', bought:'You put the {鱼饵} in your bag. The next time you fish, a big fish bites!', bag:true, carry:3},
       // headbands in every colour you know (decided 29 October 2026: things monkeys could make on the mountain, cloth dyed
@@ -764,7 +766,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   food: {
     '桃子': {heal:10, carry:3, does:'Brings back 10 health'},
     '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'},
-    '蜂蜜': {fast:60, carry:2, does:'Walk faster for a minute'}   // fast: you walk faster for so many seconds (tap it in your bag)
+    '蜂蜜': {fast:60, carry:2, does:'Walk faster for a minute'},   // fast: you walk faster for so many seconds (tap it in your bag)
+    // stink: so many seconds out on the map with no wild creature jumping out (tap it in your bag: eatSmelly in js/world.js,
+    // stinkUp in js/input.js); eaten: steps after you eat it (the first time: 太臭了！, teaching 臭); note: what you're told then
+    '榴莲': {stink:120, carry:2, does:'Keeps wild creatures away for 2 minutes', note:'Phew! Wild creatures keep away from the smell for two minutes.',
+      eaten:[{if:{new:'臭'}, say:'tooSmelly', by:'player', teach:'臭'}, {if:{new:'臭'}, newWord:'臭', note:'臭 means smelly. Nothing wants to come near you now!'}]}
   },
 
   // Things that happen by themselves when the time comes (checked after anything you do, such as a step or a
@@ -1739,13 +1745,17 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'B': {look:'bananaPlant', word:'香蕉', onLook:[
           {if:{bananaSeeds:'asked', holding:{bananaSeeds:false}}, label:'Pick', sparkle:true, do:[{newWord:'香蕉', note:'Wild bananas, growing in the warm valley.'}, {hold:'种子', for:'bananaSeeds'},
             {message:'You climb up and pick a {香蕉}. Wild ones are full of hard black {种子|seeds}: you eat round them, and keep them for the big monkey’s garden.'}]},
-          {label:'Look', do:[{message:'Wild {香蕉}, in a bunch under the big leaves.'}]}]}
+          {label:'Look', do:[{message:'Wild {香蕉}, in a bunch under the big leaves.'}]}]},
+        // a durian tree in the warm corner (the polish plan, agreed 8 November 2026): A looks first, teaching 榴莲, then picks one
+        // for your bag, one each time you come (eaten, wild creatures keep away for two minutes: the area's food)
+        'c': {look:'durianTree', word:'榴莲', note:'Durians: spiky, and famous for their smell!', landmark:true,
+          pick:{item:'榴莲', if:{knows:'榴莲'}, took:'You reach up and twist a {榴莲} off its branch, carefully', none:'You’ve picked its ripe one. Come back another time.'}}
       },
       map: [
         "^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
         "MMMMMMMMMMMMMMMMMMMMMMMMMMMM",
         "MMMMMMMMMMMMMMMMMMMMMMMMMMMM",
-        "^^gBBggggBBgggggfggggBBggg^^",   // wild banana plants (B, each two squares by two) in the warm corner at the top
+        "^^gBBggggBBggcggfggggBBggg^^",   // wild banana plants (B, each two squares by two) in the warm corner at the top, and a durian tree (c)
         "^^gBBgg..BB..........BBggg^^",
         "^^ggggg..............ggggf^^",
         "^^gggBBgggggg..gBBgggggBBg^^",
@@ -2430,6 +2440,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {word:'桃子', at:[1, 6]}, {word:'苹果', at:[21, 17]},   // the fruit trees: a peach tree and an apple tree
     {word:'河', at:[18, 7]}, {word:'鱼', at:[11, 9]},
     {word:'瀑布', at:[4, 1, 'falls']},   // where the river begins, deep in the mountains
+    {word:'榴莲', at:[13, 3, 'hotSprings']},   // the durian tree in the hot spring valley's warm corner
     {at:[11, 2], if:{homeName:1}},        // the sign by your stone, once you can read your home's name, till you have
     {word:'床', at:[1, 1, 'cave']}, {word:'桌子', at:[3, 3, 'cave']}, {word:'碗', at:[9, 3, 'cave']},
     // a game whose feast tables were out before 27 October 2026 (the big monkey teaches these now): the chopsticks in their cup
@@ -2556,6 +2567,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '螃蟹': 'You caught one on the shore’s sand, for the feast.',
     '快乐': 'You heard it at the great feast: the little monkey was very happy.',
     '木筏': 'The troop built it on the shore, for you to sail away on.',
+    '榴莲': 'A durian tree grows in the hot spring valley’s warm corner. The 老板 sells them too.',
+    '臭': 'You said it as you ate your first durian: it was so smelly!',
   },
 
   // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
@@ -2665,13 +2678,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // from then on; note and then, what you're told).
   enemies: {
     snake: {word:'蛇', health:20, hits:10, attacks:['草', '石头', '树', '花'], meetNote:'A snake hisses at you from the long grass!', meet:'A {蛇} hisses at you!',
-      hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', reward:1},
+      hide:'The {蛇} slides out of sight…', attack:'The {蛇} strikes!', away:'The {蛇} slithers away into the grass.', sniff:'The {蛇} sniffs the air, and slithers off!', reward:1},
     spider: {word:'蜘蛛', health:20, hits:10, attacks:['树', '草', '石头', '山'], meetNote:'A spider scuttles out of the long grass!', meet:'A {蜘蛛} scuttles at you!',
-      hide:'The {蜘蛛} scurries out of sight…', attack:'The {蜘蛛} jumps at you!', away:'The {蜘蛛} scurries off into the grass.', reward:1},   // (in the bee's place since 21 October 2026)
+      hide:'The {蜘蛛} scurries out of sight…', attack:'The {蜘蛛} jumps at you!', away:'The {蜘蛛} scurries off into the grass.', sniff:'The {蜘蛛} sniffs the air, and scurries off!', reward:1},   // (in the bee's place since 21 October 2026)
     wolf: {word:'狼', health:30, hits:10, attacks:['树', '草', '石头', '木头'], meetNote:'A wolf leaps out of the long grass, growling!', meet:'A {狼} growls at you!',
-      hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', reward:2},   // (chapter 1: in the pine wood)
+      hide:'The {狼} slinks out of sight…', attack:'The {狼} pounces!', away:'The {狼} runs off into the pines.', sniff:'The {狼} sniffs the air, whines, and runs off!', reward:2},   // (chapter 1: in the pine wood)
     wasp: {word:'黄蜂', health:20, hits:10, attacks:['花', '草', '树', '石头'], meetNote:'A wasp zooms out of the tall flowers!', meet:'A {黄蜂} buzzes at you!',
-      hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
+      hide:'The {黄蜂} zips out of sight…', attack:'The {黄蜂} stings!', away:'The {黄蜂} buzzes off over the flowers.', sniff:'The {黄蜂} sniffs the air, and zooms off!', reward:1},   // (chapter 1: in the tall flowers of the bees' valley)
     bear: {word:'熊', health:80, hits:10, boss:true, bossFight:true, big:true, nameCard:true, song:'boss', cry:'ROAR!', says:{meet:'bearHungry', angry:'bearAngry', beaten:'bearBeaten'},
       angry:{at:.5, twice:true, note:'The {熊} stands up tall, angry!', then:'From now on it attacks twice in a row. Listen hard!'}, attacks:['石头', '树', '草', '山', '河'], meetNote:'A bear rears up out of the long grass between the big rocks, roaring!',
       meet:'The {熊} roars!', hide:'The {熊} drops down out of sight…', attack:'The {熊} swipes at you!', away:'The {熊} lumbers off into the pines, and doesn’t come back.', reward:10},   // (chapter 1: at the pasture's rocks, as you lead the cow home: in the wolf's place since 27 October 2026)
@@ -2888,6 +2901,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     wantCrab: {zh:'我 要 吃 螃蟹 ！', en:'I want to eat crab!'},   // and last, a crab (螃蟹 just for listening, till you catch one)
     haveCrab: {zh:'螃蟹 ！ 太 好 了 ！', en:'A crab! Wonderful!'}, haveCrabNow: {zh:'我们 有 螃蟹 了 ！', en:'We have crab now!'},
     seaBig: {zh:'海 很 大 ！', en:'The sea is so big!'},   // you, seeing the sea from the shore
+    tooSmelly: {zh:'太 臭 了 ！', en:'It’s so smelly!'},   // you, eating your first durian (a draft for the native speaker)
     examTime: {zh:'我们 考试 吧 ！', en:'Let’s have an exam!'},   // the teacher, before the feast (考试 just for listening)
     makeRaft: {zh:'我们 来 做 木筏 吧 ！', en:'Let’s make a raft!'},   // the big monkey, after the feast (木筏 just for listening, till it's built)
     waitForYou: {zh:'我们 等 你 ！', en:'We’ll wait for you!'},   // the old monkey, seeing you off

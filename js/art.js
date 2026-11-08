@@ -353,7 +353,7 @@ const mg = mapCanvas.getContext('2d');
 // their bottoms, under the characters, and their tops, over them (buildMap). So a place full of trees, such as the pine
 // wood, is as quick to draw as any other (decided 21 October 2026: it was slow on a phone).
 const baseCanvas = document.createElement('canvas'), topCanvas = document.createElement('canvas');
-const GRASSY = ['grass','tallGrass','woodGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','stone','sign','post','stall','stallEmpty','shop','fishTable','fishTableShrimp','crabTable','bush','boulder','log',
+const GRASSY = ['grass','tallGrass','woodGrass','melonVines','melon','fern','bananaPlant','redFlowers','yellowFlowers','whiteFlowers','pinkFlowers','blueFlowers','orangeFlowers','flowerBed','tree','peachTree','appleTree','durianTree','stone','sign','post','stall','stallEmpty','shop','fishTable','fishTableShrimp','crabTable','bush','boulder','log',
   'needles','pine','deadPine','crackedRock','stump','pebble','rubble','mushrooms','archPost'];   // looks with grass underneath (or the pine wood's floor)
 const WATERY = ['water','shallows','sea','raft','waterfall','bridge','bridgeAcross','ironBridge','steppingStones','hopStone','logBridge'];
 function grass(g, X, Y, x, y){
@@ -1128,6 +1128,7 @@ const LOOKS = {
   tree:      (g,X,Y,x,y) => grass(g,X,Y,x,y),
   peachTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
   appleTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
+  durianTree: (g,X,Y,x,y) => grass(g,X,Y,x,y),
   rocks:     (g,X,Y,x,y) => path(g,X,Y,x,y),
   stone:     (g,X,Y,x,y) => grass(g,X,Y,x,y),
   sign:      (g,X,Y,x,y) => { grass(g,X,Y,x,y); g.drawImage(SPR.sign,X,Y); },
@@ -1356,6 +1357,7 @@ const OBJECT_ART = {
   plumPoles: (g, o) => plumPoles(g, o.x*T, o.y*T), stoneLock: (g, o) => stoneLock(g, o.x*T, o.y*T), weaponRack: (g, o) => weaponRack(g, o.x*T, o.y*T, o.w),
   peachTree: (g, o) => fruitTree(g, o, PEACHES),
   appleTree: (g, o) => fruitTree(g, o, APPLES),
+  durianTree: (g, o) => durianTree(g, o),
   stone: (g, o) => boulder(g, o.x*T + 8, o.y*T + 15, 11, 9, true),
   rocks: (g, o) => {
     if (shadows) blob(g, o.x*T + 1 + o.w*7, o.y*T + 15, o.w*7 + 3, 2, ROCK_SHADOW);
@@ -2071,6 +2073,23 @@ function fruitTree(g, o, colours){   // a square and a half wide, reaching up, f
   cloudLeaves(g, [[8, 4, 11, 4], [3, -2, 6, 3], [13, -2, 6, 3], [8, -7, 7, 3]], X, Y, o.x*31 + o.y);
   fruit(g, [[1, 1], [9, -10], [13, 0], [5, 4], [14, 5], [-2, 3], [6, -4]], X, Y, colours);
 }
+// A durian tree (the hot spring valley's warm corner, chapter 1): taller than a fruit tree, its leaves in layers as the trees',
+// and big spiky durians hanging under them on short stalks, olive green, as the 榴莲's picture.
+const DURIAN = ['#3E4812', '#7E8C2A', '#AAB646'];   // its outline, the fruit, and its spikes catching the light
+function durianFruit(g, x, y){   // one hanging durian, its stalk above it, outlined so it stands out against the leaves
+  R(g, x + 2, y - 2, 1, 2, WOOD[0]);
+  R(g, x, y + 1, 5, 4, DURIAN[0]); R(g, x + 1, y, 3, 6, DURIAN[0]);
+  R(g, x + 1, y + 1, 3, 4, DURIAN[1]);
+  dot(g, x + 1, y + 1, DURIAN[2]); dot(g, x + 3, y + 3, DURIAN[2]);
+  dot(g, x - 1, y + 2, DURIAN[0]); dot(g, x + 5, y + 3, DURIAN[0]); dot(g, x + 2, y + 6, DURIAN[0]);   // spikes poking out
+}
+function durianTree(g, o){   // a tall tree, two squares wide at the top though it stands on one, reaching well above it
+  const X = o.x*T, Y = o.y*T;
+  groundShadow(g, X+8, Y+14, 12, 2); trunk(g, X+6, Y-6, 5, 21);
+  limbs(g, [[X+7, Y-2, X-1, Y-8, 2], [X+9, Y-3, X+17, Y-9, 2], [X+8, Y-6, X+8, Y-16, 1]]);
+  cloudLeaves(g, [[8, -4, 15, 4], [0, -10, 8, 3], [16, -11, 8, 3], [8, -16, 11, 3], [8, -21, 6, 2]], X, Y, o.x*29 + o.y);
+  for (const [fx, fy] of [[-4, -1], [15, -2], [3, 1], [10, 0]]) durianFruit(g, X + fx, Y + fy);
+}
 /* ---------- the sports ground (操场), for PE at school: a sandy track and things for an ancient school's PE ---------- */
 const LACQ = '#B0352A', LACQ_D = '#7A1F18', BRASS = '#E3A51C', CHALK = '#F4EEDC', POLE = '#8A5A32', POLE_D = '#5A3A22', POLE_L = '#B98A4E';
 // The track: raked sand, three lanes a square wide (their numbers, 一 二 三, painted at the start: real characters you
@@ -2179,7 +2198,7 @@ function mapObjects(){
 // walking in makes it rustle) and rustle (when it last did).
 let OBJECT_PIECES = [];
 const PIECE_UP = 32, PIECE_SIDE = 16;   // room in its picture above and beside an object's squares, for what reaches out of them
-const LEAFY = ['tree', 'peachTree', 'appleTree'];   // what has leaves: they go over the characters beside it too, and rustle
+const LEAFY = ['tree', 'peachTree', 'appleTree', 'durianTree'];   // what has leaves: they go over the characters beside it too, and rustle
 const COLLECTABLE = [];   // the squares in the place you're in with something to collect (a part of their onLook has sparkle)
 const objectKey = o => `${o.look}@${o.x},${o.y},${o.w},${o.h}${o.deck ? '+' + o.deck : ''}`;   // (with what's on its deck: drawn again as that changes)
 function pieceOf(o){

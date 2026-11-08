@@ -48,9 +48,27 @@ const mapSprite = w => mapSpriteCache[w] || (mapSpriteCache[w] = sprite(MAP_SPRI
 async function wildStep(t){
   if (!t.wild || !canBattle()) return false;
   if (++wildSteps < WILD_AFTER || Math.random() >= WILD_CHANCE) return false;
-  wildSteps = 0; held = null; queued = null;
+  wildSteps = 0;
+  if (isStinky()){   // (you smell of durian, js/input.js: it keeps away, and the first sniffs the air and runs off)
+    if (!stinkFled){ stinkFled = true; held = null; queued = null; await sniffAndFlee(pickFoe(t.wild)); }
+    return false;
+  }
+  held = null; queued = null;
   await wildBattle(pickFoe(t.wild));
   return true;
+}
+// One that would have jumped out while you smell of durian: it pops up out of the grass beside you, sniffs the air (a ?
+// over it: drawFoe, js/draw.js) and runs off, with a message (its enemy's sniff), the first time after each one you eat.
+const SNIFF_MS = 1100;
+async function sniffAndFlee(id, spot = findSpot()){
+  const f = ENEMIES[id], w = f.pic || f.word;
+  pl.dir = spot.d; S.pos.dir = pl.dir;
+  foe = {a:{spr:mapSprite(w), faces:MAP_SPRITES[w].faces, hz:w}, x:spot.x, y:spot.y, t0:performance.now(), state:'in', sniff:true};
+  SFX.swish();
+  await sleep(SNIFF_MS);
+  foe.state = 'flee'; foe.t1 = performance.now(); SFX.turn();
+  toast(fill(f.sniff || `The {${f.word}} sniffs the air, and runs off!`));
+  await sleep(650); foe = null;
 }
 // Which creature jumps out: one of those that live there (wild; one listed twice comes twice as often), at random, but
 // never the same three times in a row, unless it's all that lives there (decided 22 October 2026: by chance, a spider

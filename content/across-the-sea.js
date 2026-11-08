@@ -848,7 +848,10 @@ const ACROSS_THE_SEA = {
     '桃子': {heal:10, carry:3, does:'Brings back 10 health'},
     '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'},
     '蜂蜜': {fast:60, carry:2, does:'Walk faster for a minute'},
-    '包子': {helps:true, carry:3, does:'Takes away a wrong answer'}
+    '包子': {helps:true, carry:3, does:'Takes away a wrong answer'},
+    // a durian you brought from Flower Fruit Mountain, as there (stink: js/input.js)
+    '榴莲': {stink:120, carry:2, does:'Keeps wild creatures away for 2 minutes', note:'Phew! Wild creatures keep away from the smell for two minutes.',
+      eaten:[{if:{new:'臭'}, say:'tooSmelly', by:'player', teach:'臭'}, {if:{new:'臭'}, newWord:'臭', note:'臭 means smelly. Nothing wants to come near you now!'}]}
   },
 
   events: [
@@ -1993,7 +1996,7 @@ const ACROSS_THE_SEA = {
       hide:'The pupil leaps out of sight…', attack:'The pupil swings his staff at you!', away:'The pupil bows to you, laughing: you win!', lost:'The pupil bows: he wins this time.', reward:0},
     // a little demon: never one you can run from (boss; decided 7 November 2026, after playing it)
     demon: {word:'妖怪', health:30, hits:8, boss:true, attacks:['火', '松树', '叶子', '云', '天'], meetNote:'A little demon jumps out at you, waving its spear!', meet:'A little {妖怪} jumps out at you!',
-      hide:'The little {妖怪} ducks out of sight…', attack:'The little {妖怪} jabs at you with its spear!', away:'The little {妖怪} runs off, squealing.', reward:2},
+      hide:'The little {妖怪} ducks out of sight…', attack:'The little {妖怪} jabs at you with its spear!', away:'The little {妖怪} runs off, squealing.', sniff:'The little {妖怪} sniffs the air, holds its nose, and runs off!', reward:2},
     // the little demon guarding the cart of the troop's things: a little tougher than the others
     cartGuard: {word:'妖怪', health:40, hits:8, boss:true, attacks:['火', '松树', '叶子', '云', '天'], meet:'The little {妖怪} guarding the cart jumps at you!',
       hide:'The little {妖怪} ducks behind the cart…', attack:'The little {妖怪} jabs at you with its spear!', away:'The little {妖怪} lets go of the cart.', reward:3},
@@ -2077,6 +2080,7 @@ const ACROSS_THE_SEA = {
   lines: {
     hi: {zh:'你好 ！', en:'Hello!'},
     nightNow: {zh:'晚上 了 ， 睡觉 吧 ！', en:'It’s night: time to sleep!'},   // the first night, in a game that hasn't had one (js/daynight.js)
+    tooSmelly: {zh:'太 臭 了 ！', en:'It’s so smelly!'},   // you, eating a durian you brought from home, in a game that never ate one there
     raining: {zh:'下 雨 了 ！', en:'It’s raining!'},   // the first rain, and anyone with nothing new to say while it rains
     pouring: {zh:'下 大雨 了 ！', en:'It’s raining hard!'},   // the first heavy rain, for a game that hasn't had one on Flower Fruit Mountain
     rainTooHeavy: {zh:'雨 太 大 了 ！', en:'The rain’s too heavy!'},   // anyone with nothing new to say while it pours

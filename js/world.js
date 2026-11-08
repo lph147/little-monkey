@@ -1610,6 +1610,22 @@ async function spyFind(x, y){
 // the last puff was, js/draw.js).
 let puffAt = -1e9;
 const EAT_MS = 1600;   // how long eating a meal takes (the eat step)
+// Eating smelly food from your bag (the area's food with stink, such as a durian): you munch it on the map, as a meal (pl.
+// eating: drawEating, js/draw.js), and the first time your monkey says how smelly it is (its eaten steps, teaching 臭);
+// then no wild creature comes near you for a while (stinkUp, js/input.js), its note says so.
+async function eatSmelly(w, food){
+  if (busy || !(S.bag[w] > 0)) return;
+  busy = true;
+  try {
+    S.bag[w]--; useWord(w); save();
+    pl.eating = {w, t0:performance.now()};
+    for (let i = 0; i < 4; i++){ SFX.scuffle(); await sleep(EAT_MS / 4); }
+    pl.eating = null;
+    stinkUp(w, food.stink);
+    if (food.eaten) await runSteps(food.eaten);
+    if (food.note) toast(fill(food.note));
+  } finally { busy = false; finished(); updateHUD(); }
+}
 const TOLD_MS = {right:1800, wrong:3000};   // how long you stay changed after a question, as what you turned into is told, right or wrong (the turnInto step)
 async function becomeForm(w, hold = 1600, said){   // (said: what you're told as you change, such as what you turned into)
   puffAt = performance.now(); SFX.shimmer(); pl.form = w; if (said) toast(said); await sleep(hold);

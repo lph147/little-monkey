@@ -76,7 +76,7 @@ function friendClue(a, back){
 // happened. Later areas can add a tab here, for other kinds of thing.
 const BAG_TABS = [
   {id:'food', name:'Snacks', zh:'零食', py:'língshí', things:() => Object.keys(FOOD).filter(w => S.bag[w] > 0)
-    .map(w => ({w, does:FOOD[w].does, label:FOOD[w].heal || FOOD[w].fast ? 'Eat' : 'Hear', count:S.bag[w]}))},
+    .map(w => ({w, does:FOOD[w].does, label:FOOD[w].heal || FOOD[w].fast || FOOD[w].stink ? 'Eat' : 'Hear', count:S.bag[w]}))},
   {id:'someone', name:'For someone', things:() => Object.entries(here().holding).filter(([id, w]) => w && (WORDS[w] || GLOSS[w]) && (AREA.requests[id] || (AREA.holdingFor || {})[id]))   // (who for: the request's, or the area's holdingFor, such as the lingzhi for the master, a word you only hear; not what you collected where it stays, such as sacks put on a boat)
     .map(([id, w]) => ({w, does:`The ${((NAMES[(AREA.requests[id] || {}).from || (AREA.holdingFor || {})[id]] || {}).en || 'troop').replace(/^(the|an?) /i, '').toLowerCase()}`, label:'Hear'}))},   // (The master, not The the master)
   {id:'fight', name:'To fight with', things:() => canBattle() && weaponNow() ? [{w:weaponNow(), does:`Hits for ${weaponHits()}`, label:'Hear'}] : []},   // (your weapon now, such as the Demon of Havoc's broadsword)
@@ -97,6 +97,11 @@ function bagPage(back, focus, note, tab){
   on('[data-a=ok]', back);
   sheet.querySelectorAll('.bagitem').forEach(b => b.onclick = () => {
     const w = b.dataset.w, food = FOOD[w];
+    if (food && food.stink){   // smelly food, such as a durian: you eat it out on the map (eatSmelly, js/world.js)
+      if (isStinky()){ SFX.bump(); bagPage(back, w, `You still smell of the ${wz(stinkFood || w)}: keep it for later.`); return; }
+      closeCard(); eatSmelly(w, food);
+      return;
+    }
     if (food && food.fast){
       if (isFast()){ SFX.bump(); bagPage(back, w, 'You’re full of energy already: keep it for later.'); return; }
       S.bag[w]--; energise(w, food.fast); useWord(w); save(); SFX.right();

@@ -818,6 +818,15 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   await walk([[13, 22], [13, 5], [9, 5]], 'up between the hot pools, past the steam, to the banana plants');
   await pressAt(9, 5, 'up', 'picking a banana');
   assert.ok(knows('香蕉') && area().holding.bananaSeeds === '种子', 'a banana (香蕉), and its seeds');
+  // The durian tree in the warm corner (the polish plan, 8 November 2026): A looks first (榴莲), then picks one; eaten from
+  // your bag, your monkey says 太臭了！ (臭), and no wild creature comes near you for two minutes (tests/durian.test.js)
+  await pressAt(13, 4, 'up', 'looking at the durian tree');
+  assert.ok(knows('榴莲'), 'the durian tree teaches 榴莲');
+  await pressAt(13, 4, 'up', 'picking a durian');
+  assert.equal(get("S.bag['榴莲']"), 1, 'a durian for your bag');
+  await act("eatSmelly('榴莲', FOOD['榴莲'])", 'eating the durian');
+  assert.ok(knows('臭') && get('__said').includes('太臭了！') && run('isStinky()'), 'so smelly (太臭了！): 臭, and wild creatures keep away');
+  run('stinkLeft = 0; stinkFood = null');   // (so the battles that follow happen as they always have)
   // A turtle warming itself on the boulder by the hot spring pools (30 October 2026: a chapter 1 friend where there were none)
   await pressAt(6, 12, 'down', 'meeting the turtle on its warm rock');
   assert.ok(knows('乌龟') && get('S.friends').includes('turtle'), 'the turtle teaches 乌龟, and becomes your friend');

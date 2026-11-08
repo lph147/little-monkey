@@ -23,6 +23,22 @@ const FAST_STEP = .6;
 let fastUntil = 0, fastFood = null;
 const isFast = (now = performance.now()) => now < fastUntil;
 function energise(w, seconds){ fastUntil = performance.now() + seconds * 1000; fastFood = w; }
+// The smell of food, such as a durian (the area's food with stink: how many seconds; decided 8 November 2026, the polish
+// plan): no wild creature jumps out while it lasts (wildStep, js/battle.js), counting only time you're out on the map, not
+// in a card, a battle or a conversation; the first that would have sniffs the air and runs off, so you can tell it's
+// working (stinkFled: it has); and a message says when it wears off (stinkFood: what gave it you). A green cloud of smell
+// round you as it lasts (drawStink, js/draw.js), and the food, with the time left, by your health at the top (drawHUD).
+let stinkLeft = 0, stinkFood = null, stinkFled = false, stinkLast = 0;
+const isStinky = () => stinkLeft > 0;
+function stinkUp(w, seconds){ stinkLeft = seconds * 1000; stinkFood = w; stinkFled = false; stinkLast = 0; drawHUD(); }
+function tickStink(now){
+  const dt = stinkLast ? clamp(now - stinkLast, 0, 250) : 0; stinkLast = now;
+  if (!stinkFood || !modal.hidden || talkNext) return;
+  const shown = Math.ceil(stinkLeft / 1000);
+  stinkLeft = Math.max(0, stinkLeft - dt);
+  if (Math.ceil(stinkLeft / 1000) !== shown) drawHUD();   // (the time left, by your health: each second)
+  if (!stinkLeft && !pl.mv && !busy){ toast(`The smell of the ${wz(stinkFood)} wears off.`); stinkFood = null; drawHUD(); }   // (once you've stopped)
+}
 // Running: holding B as you walk, once you can (the area's running: its if, such as once PE has taught you 跑; decided 28
 // October 2026), each step takes RUN_STEP of the time, a third faster; with energy from food too, both, about twice as fast
 // as walking. B is still back or dismiss: a tap of it closes a message, as ever. bHeld: B held down, on the screen, the
@@ -83,6 +99,7 @@ function turnedTo(){
 function update(now){
   if (mode !== 'play') return;
   tickClock(now);   // (the time of day: js/daynight.js)
+  tickStink(now);   // (smelling of durian: no wild creatures)
   scuttle(now);   // (crabs, on the shore: js/world.js)
   if (fastFood && !isFast(now) && !pl.mv && modal.hidden && !talkNext){ toast(`The energy from the ${wz(fastFood)} wears off.`); fastFood = null; }   // (once you've stopped)
   if (pl.mv && pl.mv.slip){   // trying to climb a ledge: up a little, and sliding back down where you were (not a step: nothing happens there)

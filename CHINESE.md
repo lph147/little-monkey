@@ -56,6 +56,7 @@ shown where the word list has them.
 | 螃蟹！太好了！ | pángxiè! tài hǎo le! | A crab! Wonderful! | 饿猴子 (Hungry monkey) |  |
 | 我们有螃蟹了！ | wǒmen yǒu pángxiè le! | We have crab now! |  |  |
 | 海很大！ | hǎi hěn dà! | The sea is so big! |  |  |
+| 太臭了！ | tài chòu le! | It’s so smelly! |  |  |
 | 我们考试吧！ | wǒmen kǎoshì ba! | Let’s have an exam! | 老猴子 (Old monkey) |  |
 | 我们来做木筏吧！ | wǒmen lái zuò mùfá ba! | Let’s make a raft! |  |  |
 | 我们等你！ | wǒmen děng nǐ! | We’ll wait for you! | 老猴子 (Old monkey) |  |
@@ -210,6 +211,7 @@ shown where the word list has them.
 | 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
 | 我要桃子 | wǒ yào táozi | I want a peach. | 老板 (Shop owner) |  |
 | 我要蜂蜜 | wǒ yào fēngmì | I want some honey. | 老板 (Shop owner) |  |
+| 我要榴莲 | wǒ yào liúlián | I want a durian. | 老板 (Shop owner) |  |
 | 我要鱼饵 | wǒ yào yú'ěr | I want some bait. | 老板 (Shop owner) |  |
 | 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
@@ -557,11 +559,13 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 西瓜 | xīguā | watermelon |  |
 | 葡萄 | pútáo | grapes |  |
 | 香蕉 | xiāngjiāo | banana |  |
+| 榴莲 | liúlián | durian |  |
 | 跑 | pǎo | to run |  |
 | 跑步 | pǎobù | to go running, to jog |  |
 | 鱼饵 | yú'ěr | bait |  |
 | 鱼竿 | yúgān | fishing rod |  |
 | 快乐 | kuàilè | happy |  |
+| 臭 | chòu | smelly |  |
 | 木筏 | mùfá | raft |  |
 | 海 | hǎi | sea |  |
 | 螃蟹 | pángxiè | crab |  |
@@ -645,6 +649,7 @@ check that each is true and simply put.
 | --- | --- | --- | --- | --- |
 | 你好！ | nǐ hǎo! | Hello! | 渔夫 (Fisherman), 老渔夫 (Old fisherman), 老奶奶 (Granny), 村民 (Villager), 小孩 (Child), 农民 (Farmer), 老板 (Stallholder), 路人 (Traveller), 工人 (Docker), 学生 (Pupil), 路人 (Passer-by), 船夫 (Boatman), 师姐 (A pupil), 大师兄 (The senior pupil), 师兄 (A pupil), 师弟 (A pupil), 猴子 (Monkey) |  |
 | 晚上了，睡觉吧！ | wǎnshang le, shuìjiào ba! | It’s night: time to sleep! |  |  |
+| 太臭了！ | tài chòu le! | It’s so smelly! |  |  |
 | 下雨了！ | xià yǔ le! | It’s raining! |  |  |
 | 下大雨了！ | xià dàyǔ le! | It’s raining hard! |  |  |
 | 雨太大了！ | yǔ tài dà le! | The rain’s too heavy! |  |  |

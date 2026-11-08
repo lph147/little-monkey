@@ -31,7 +31,8 @@ const allSteps = () => [
   ...AREA.animals.flatMap(a => (a.counted || []).flatMap((c, i) => c.map(s => [`the ${a.id}, as friend ${i + 1} of ${a.many}`, s, null]))),
   ...((AREA.battles || {}).afterLoss || []).flatMap((a, i) => a.do.map(s => [`after losing a battle, part ${i + 1}`, s, null])),
   ...['small', 'big'].flatMap(size => ((AREA.fishing || {})[size] || {}).steps || []).flatMap((p, i) => p.do.map(s => [`catching a fish, part ${i + 1}`, s, null])),   // (js/fishing.js)
-  ...Object.entries(AREA.requests).flatMap(([id, r]) => (r.after || []).map(s => [`the request ${id}, once it's done`, s, r.from]))
+  ...Object.entries(AREA.requests).flatMap(([id, r]) => (r.after || []).map(s => [`the request ${id}, once it's done`, s, r.from])),
+  ...Object.entries(AREA.food || {}).flatMap(([w, f]) => (f.eaten || []).map(s => [`eating ${w}`, s, null]))   // (such as the first durian: js/world.js)
 ];
 const SHOPS = AREA.shops || (AREA.shop ? {shop:AREA.shop} : {});   // (an area's one shop, or several: js/world.js)
 const ALL_AREAS_TEXT = game.run('JSON.stringify(AREAS)');   // every area's content, as text
@@ -671,10 +672,10 @@ test('every enemy is a collectible word with a picture and a map sprite (or a na
   for (const [, t] of allLegend.filter(([, t]) => t.wild)) for (const id of t.wild) assert.ok(AREA.enemies[id], `wild ground has ${id}, which isn't one of the enemies`);
 });
 
-test('food: each says what it does, how many you can carry, and heals, helps or gives you energy; fruit trees give food', () => {
+test('food: each says what it does, how many you can carry, and heals, helps, gives you energy or keeps wild creatures away; fruit trees give food', () => {
   for (const [w, f] of Object.entries(AREA.food || {})){
     assert.ok(knownHere(w), `${w} is a word you can collect here`);
-    assert.ok(f.does && f.carry > 0 && [f.heal > 0, f.helps === true, f.fast > 0].filter(Boolean).length === 1, `${w}: does, carry, and heal, helps or fast (one thing each)`);
+    assert.ok(f.does && f.carry > 0 && [f.heal > 0, f.helps === true, f.fast > 0, f.stink > 0].filter(Boolean).length === 1, `${w}: does, carry, and heal, helps, fast or stink (one thing each)`);
   }
   for (const [, t, from] of allLegend) if (t.pick) assert.ok((AREA.food || {})[t.pick.item], `picking at ${from} gives ${t.pick.item}, which isn't food`);
 });
