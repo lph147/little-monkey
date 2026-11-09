@@ -87,7 +87,7 @@ const EN_WORDS = {
   '我': {w:'I', ipa:'aɪ', also:['me', 'my', 'mine']},
   '要': {w:'want', ipa:'wɒnt'},
   '瀑布': {w:'waterfall', ipa:'ˈwɔːtəfɔːl'},
-  '老板': {w:'shopkeeper', ipa:'ˈʃɒpkiːpə'},
+  '老板': {w:'shopkeeper', ipa:'ˈʃɒpkiːpə', also:['shop owner']},
   '头带': {w:'headband', ipa:'ˈhedbænd'},
   '戴': {w:'wear', ipa:'weə', also:['wore', 'worn']},
   '木头': {w:'wood', ipa:'wʊd', mass:true},
@@ -126,7 +126,7 @@ const EN_WORDS = {
   '大': {w:'big', ipa:'bɪɡ'},
   '晚上': {w:'night', ipa:'naɪt', also:['evening']},
   '雨': {w:'rain', ipa:'reɪn', also:['rainy']},
-  '大雨': {w:'heavy rain', ipa:'ˌhevi ˈreɪn'},
+  '大雨': {w:'heavy rain', ipa:'ˌhevi ˈreɪn', also:['raining hard']},
   '买': {w:'buy', ipa:'baɪ', also:['bought']},
   '卖': {w:'sell', ipa:'sel', also:['sold']},
   '松子': {w:'pine nuts', ipa:'ˈpaɪn nʌts', many:true, also:['pine nut']},
@@ -155,7 +155,7 @@ const EN_WORDS = {
   '鹅': {w:'goose', ipa:'ɡuːs', pl:'geese'},
   '衣服': {w:'clothes', ipa:'kləʊðz', many:true},
   '帽子': {w:'hat', ipa:'hæt'},
-  '不': {w:'no', ipa:'nəʊ'},
+  '不': {w:'no', ipa:'nəʊ', also:['not']},
   '是': {w:'yes', ipa:'jes'},
   '什么': {w:'what', ipa:'wɒt'},
   '井': {w:'well', ipa:'wel'},
@@ -173,7 +173,7 @@ const EN_WORDS = {
   '包子': {w:'bun', ipa:'bʌn', also:['steamed bun', 'steamed buns']},
   '鞋': {w:'shoes', ipa:'ʃuːz', many:true, also:['shoe']},
   '茶': {w:'tea', ipa:'tiː', mass:true},
-  '说': {w:'say', ipa:'seɪ', also:['said']},
+  '说': {w:'say', ipa:'seɪ', also:['said', 'talk']},
   '哪里': {w:'where', ipa:'weə'},
   '知道': {w:'know', ipa:'nəʊ', also:['knew']},
   '听': {w:'listen', ipa:'ˈlɪsn'},
@@ -388,6 +388,11 @@ const EN_MADE = {
 // Learning English, words that sound the same, or that Chinese ears find hard to tell apart (as 河 hé and 喝 hē are,
 // learning Chinese): shown side by side the first time you catch the second, and never two answers when you only hear
 // the word (soundKey, js/quiz.js). note: what tells them apart, in Chinese.
+// A line's English as it's said learning English, where the content's doesn't have the word it teaches (the content's is its
+// meaning, learning Chinese, so it stays as it is): by the line's id.
+const EN_LINES = {
+  areYouHungry: 'Are you hungry? Have a bowl of rice!'   // (teaching 米饭, a bowl of rice: rice alone is 米)
+};
 const EN_SOUNDS = [
   {words:['三', '树'], note:'three 的 th：舌尖放在上下牙齿之间，轻轻吹气；tree 的 t 不用。'},
   {words:['知道', '不'], same:true},

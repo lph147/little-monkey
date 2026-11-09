@@ -24,7 +24,7 @@ function hideClue(p){ return showDialog(speaker(HIDE.by), L[p.say], {clue:p.word
 // A line's English with {word} (or {word|its English here}) as the word itself, in Chinese with its pinyin, to tap (the
 // clue's English).
 function cluedEn(en, word){
-  if (LEARN === 'en') return `<span>${esc(en)}</span>`;   // (learning English, the clue's Chinese, the place's word in English already: hideLine)
+  if (LEARN === 'en') return `<span>${enMark(esc(en))}</span>`;   // (learning English, the clue's Chinese, with the place's word in English already: zhWithEn, js/lang.js)
   const [a, b] = en.split(new RegExp(`\\{${word}(?:\\|[^}]*)?\\}`));
   return `<span>${esc(a.trim())}</span>${lineHTML([word], word)}<span>${esc((b || '').trim())}</span>`;
 }

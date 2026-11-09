@@ -48,6 +48,9 @@ for (const [w, d] of Object.entries(WORD_BANK)){
 // The area's words, in Word Scroll order. A word for later (later: in the word bank, such as 蜜蜂 till the troop's bees) only
 // counts, and is in the Word Scroll, once the game you're playing has caught it (decided 22 October 2026: a word nothing
 // teaches made the words impossible to finish): wordsForGame, as a game starts.
+// Learning English (Both ways), a word that's the same in English as another (两, two: EN_WORDS's same, in content/english.js)
+// isn't a word of its own: knowing one is knowing the other (lvl, js/state.js), and it's never taught or counted.
+if (LEARN === 'en') for (const [w, e] of Object.entries(typeof EN_WORDS === 'undefined' ? {} : EN_WORDS)) if (e.same) delete WORDS[w];
 const ORDER = Object.keys(WORDS).filter(w => !WORDS[w].phrase && !WORDS[w].later);
 function wordsForGame(){ ORDER.length = 0; ORDER.push(...Object.keys(WORDS).filter(w => !WORDS[w].phrase && (!WORDS[w].later || lvl(w) >= 1))); }
 const PHRASES = Object.keys(WORDS).filter(w => WORDS[w].phrase);  // its phrases (你好, 谢谢…), a collection of their own

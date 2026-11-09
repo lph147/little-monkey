@@ -129,6 +129,9 @@ function currentPrompt(now){   // (nothing while a new message is up, or what yo
   if (mode !== 'play' || !modal.hidden || busy || pl.mv || held || now - lastMoveEnd < 250 || messageFirst()) return '';
   const [fx, fy] = facing(); return justFinished(fx, fy) ? '' : promptFor(fx, fy);
 }
+// The words under A and B that the engine gives (as well as the content's labels, and a card's buttons): each is looked up
+// by ui() as it's shown (updateCtx), learning English, and listed here for tools/ui-strings.js.
+const AB_WORDS = ['Look', 'Talk', 'Meet', 'Go', 'Hop', 'Pick', 'Fish', 'Take', 'Say it', 'Choose', 'Next', 'Skip', 'Hook it', 'Stop', 'OK', 'Close', 'Run', 'Begin'];
 function buttonLabels(now){
   if (!modal.hidden){
     const f = chosenBtn(), primary = [...sheet.querySelectorAll('.primary')].find(x => !x.hidden && !x.disabled);
@@ -315,7 +318,7 @@ function howToPlay(){
   return new Promise(res => {
     // Three pages, each short enough to fit the screen of a phone held sideways (decided 22 October 2026: the second
     // was cut off at the bottom, with no sign of more): the controls, the three kinds of word, and the rest.
-    const pages = [
+    const pages = LEARN === 'en' ? howToPlayEn() : [
       `<p class="label">How to play · 1 of 3</p>
        <ul class="howto">
          <li><span class="kbd pad">✚</span><span><b>Walk</b> by holding a direction. Tap it to turn on the spot. You can slide your thumb between directions.</span></li>
@@ -344,13 +347,43 @@ function howToPlay(){
     ];
     let i = 0;
     const show = () => {
-      openCard(`${pages[i]}<div class="actions">${i > 0 ? '<button class="btn" data-a="back" data-b>Back</button>' : ''}<button class="btn primary" data-a="next">${i < pages.length - 1 ? 'Next' : 'Got it'}</button></div>`);
+      openCard(`${pages[i]}<div class="actions">${i > 0 ? `<button class="btn" data-a="back" data-b>${ui('Back')}</button>` : ''}<button class="btn primary" data-a="next">${ui(i < pages.length - 1 ? 'Next' : 'Got it')}</button></div>`);
       bindTokens(sheet);
       on('[data-a=back]', () => { i--; show(); });
       on('[data-a=next]', () => { if (i < pages.length - 1){ i++; show(); } else { S.howto = true; save(); closeCard(); res(); } });
     };
     show();
   });
+}
+// How to play, learning English: the same three pages, in Chinese, with an English sentence to tap (written for it, so not
+// through ui(): CHINESE.md has them for the native speaker).
+function howToPlayEn(){
+  const line = enToks('I’m thirsty. I want to drink some water!'), kind = t => ({'我':'learn', '要':'learn', '喝':'learn teach'})[idOf(t)] || 'listen';
+  return [
+    `<p class="label">怎么玩 · 1/3</p>
+     <ul class="howto">
+       <li><span class="kbd pad">✚</span><span><b>走路</b>：按住一个方向。点一下就原地转身。拇指可以在几个方向之间滑动。</span></li>
+       <li><span class="kbd a">A</span><span><b>说话、看看、选择。</b>有人说话时，按A继续。在卡片上，A按的是带红色A标志的按钮。</span></li>
+       <li><span class="kbd b">B</span><span><b>返回。</b>关上卡片或消息，按的是带蓝色B标志的按钮。</span></li>
+       <li><span class="kbd menu">☰</span><span><b>菜单</b>打开菜单：单词卷轴、朋友和设置。<b>任务</b>显示你的任务。</span></li>
+       <li><span class="kbd menu">☰</span><span><b>背包</b>打开你的背包。<b>地图</b>打开你的地图（老猴子给了你地图以后）。</span></li>
+     </ul>`,
+    `<p class="label">怎么玩 · 2/3</p>
+     <p>你会听到很多英语，就像一只小猴子在听森林里的声音。<b>你不用全都听懂，也不用全都记住。</b></p>
+     <div class="example"${LANG}>${lineOf(line, t => isPunct(t) ? `<span class="punct">${t}</span>` : `<button class="tok ${kind(t)}" data-t="${esc(t)}"><ruby>${esc(t)}<rt class="${showPy() ? '' : 'hid'}">${esc(wpy(idOf(t) || ''))}</rt></ruby></button>`)}<div class="gloss"></div></div>
+     <ul class="howto">
+       <li><span class="dot learn"></span><span><b>绿色的单词</b>是你已经学会的。</span></li>
+       <li><span class="dot teach"></span><span><b>加粗的绿色单词</b>是你现在正在学的新单词。</span></li>
+       <li><span class="dot listen"></span><span><b>灰色的单词</b>只是听一听。好奇的话就点一下，然后就放过它吧。</span></li>
+     </ul>`,
+    `<p class="label">怎么玩 · 3/3</p>
+     <ul class="howto">
+       <li><span class="dot star">⭐</span><span>只有<b>新单词</b>卡片上的单词，才会放进你的单词卷轴。</span></li>
+     </ul>
+     <p>第一次看到一个句子时，它的中文意思会显示在下面。以后需要的话，点“中文”。</p>
+     <p>有人和你说话时，你可以用英语回答。每个选项也会显示中文；如果你已经会一些英语，可以在设置里关掉“回复显示中文”。</p>
+     <p class="small">点一个答案，或者用方向键和A来选。也可以用键盘或者游戏手柄。</p>`
+  ];
 }
 async function startGame(){
   stopSpeech();

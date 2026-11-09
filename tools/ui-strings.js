@@ -7,7 +7,8 @@
 // - the engine's own text (js/): what's given to ui() as written ('Not now', or 'Lesson {n}' with its {n} filled in as
 //   it's shown), both sides of a ? :, and what's given as written to the things that say something in your own words
 //   (toast, showNarration, confirmBox's question and buttons, infoBox, fill), and the engine's tables of text (MASTERY,
-//   PRACTICE, FOE_SAYS);
+//   PRACTICE, FOE_SAYS, TIPS, BAG_TABS, TOOL_DOES, VOICE_SHORT, VOICE_HELP, AB_WORDS, and the page's own, PAGE_TEXT and
+//   PAGE_LABELS);
 // - the content's text: each area's (a task, a message, a note, a label…), every phrase's use, cue and situation in the
 //   word bank, and the word bank's categories. Not what's said in Chinese and its English (each line's zh and en, a
 //   sentence and sentenceEn), names ({zh, py, en}: shown in both), ids, maps, or the story's conditions.
@@ -110,7 +111,7 @@ const looksLikeText = s => /[A-Za-z]/.test(s) && (/\s/.test(s.trim()) || /^[A-Z]
 // maps, ids, the story's conditions (an object under if, when, done…: done can also be steps, a list), and what's only
 // shown learning Chinese (the area's tips about Chinese, and how its home's name is made).
 const NOT_TEXT = new Set(['zh', 'en', 'py', 'sentence', 'sentenceEn', 'colourSentence', 'colourSentenceEn', 'sell', 'sellEn', 'map', 'palette', 'id', 'look', 'art',
-  'any', 'around', 'put', 'moves', 'rows', 'keys', 'pic', 'icon', 'emoji', 'tips', 'made']);
+  'any', 'around', 'put', 'moves', 'rows', 'keys', 'pic', 'icon', 'emoji', 'tips', 'made', 'at']);
 const CONDITIONS = new Set(['if', 'when', 'show', 'done', 'have', 'set', 'following', 'away', 'left']);
 function contentStrings(obj, from, all = false){
   const found = [], seen = new Set();
@@ -130,7 +131,7 @@ function uiStrings(){
   const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
   const list = [];
   for (const f of fs.readdirSync(path.join(ROOT, 'js')).filter(f => f.endsWith('.js')).sort()) list.push(...engineStrings(path.join(ROOT, 'js', f)));
-  list.push(...contentStrings(get('{MASTERY, PRACTICE, FOE_SAYS}'), 'js', true));
+  list.push(...contentStrings(get('{MASTERY, PRACTICE, FOE_SAYS, TIPS, BAG_TABS, TOOL_DOES, VOICE_SHORT, VOICE_HELP, AB_WORDS, PAGE_TEXT, PAGE_LABELS}'), 'js'));
   get('AREAS.map(a => a.number)').forEach((n, i) => list.push(...contentStrings(get(`AREAS[${i}]`), `area${n}`)));
   const phrases = get("Object.fromEntries(Object.entries(WORD_BANK).filter(([w, d]) => d.use || d.cue || d.situation).map(([w, d]) => [w, {use:d.use, cue:d.cue, situation:d.situation}]))");
   list.push(...contentStrings(phrases, 'words'));

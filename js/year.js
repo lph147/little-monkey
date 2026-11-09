@@ -42,13 +42,13 @@ const sticksHTML = (n, o) => `<img class="sticks" alt="" src="${sticksCanvas(n, 
 // A number question: the master says a number, and you choose it, from it and the two nearest it that you know (pool),
 // each with its characters (and its pinyin once you've answered), drawn as sticks (sticks: n of them, for 一 to 十, as
 // he holds them up) or as its own picture (十一 to 二十). label: what it's about; who: whose face is beside it.
-async function numberQ(w, {pool = TEENS, label = 'Listen. Which is it?', who = 'master', sticks = false} = {}){
+async function numberQ(w, {pool = TEENS, label = ui('Listen. Which is it?'), who = 'master', sticks = false} = {}){
   const n = numberOf(w), near = shuffle(pool.filter(x => x !== w && lvl(x) >= 1 && !NOT_HOW_MANY.includes(x))).sort((a, b) => Math.abs(numberOf(a) - n) - Math.abs(numberOf(b) - n));
   const opts = shuffle([w, ...apart(w, near, 2, true)]);
   const art = o => sticks ? `<span class="count sticksopt">${sticksHTML(numberOf(o))}</span>` : `<span class="ico">${picHTML(o)}</span>`;
   const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${esc(fill(label))}</p></div>`,
-    body:'<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>',
-    options:opts.map(o => `${art(o)}<span class="under"><span class="cap">${o}</span>${laterPy(o)}</span>`),
+    body:`<div class="hearit"><button class="sayBig" data-a="say" aria-label="${ui('Hear it again')}">🔊</button></div>`,
+    options:opts.map(o => `${art(o)}<span class="under"><span class="cap"${LANG}>${wd(o)}</span>${laterPy(o)}</span>`),
     answerIdx:opts.indexOf(w), word:w, type:'listen', onShow:() => setTimeout(() => say(w), 300)});
   closeCard();
   scored(ok);
@@ -59,11 +59,11 @@ async function numberQ(w, {pool = TEENS, label = 'Listen. Which is it?', who = '
 // characters and pinyin (as in a number lesson, when reading), from it and the two nearest it you know (pool).
 async function countSticksQ(w, {pool, line = 'whatNumber', who = 'master'} = {}){
   const n = numberOf(w), near = shuffle(pool.filter(x => x !== w && lvl(x) >= 1 && !NOT_HOW_MANY.includes(x))).sort((a, b) => Math.abs(numberOf(a) - n) - Math.abs(numberOf(b) - n));
-  const opts = shuffle([w, ...near.slice(0, 2)]), l = L[line], text = l.t.join('');
+  const opts = shuffle([w, ...near.slice(0, 2)]), l = L[line], text = lineSay(l);
   hear(l.t);
-  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(l.t)}<button class="tbtn" data-a="ask" aria-label="Hear the question again">🔊</button></div>`,
+  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(l.t)}<button class="tbtn" data-a="ask" aria-label="${ui('Hear the question again')}">🔊</button></div>`,
     body:`<div class="countq"><div class="count sticksopt big">${sticksHTML(n)}</div><div class="sentence-en">${esc(l.en)}</div></div><div class="gloss"></div>`,
-    options:opts.map(o => `${o}<span class="cap">${WORDS[o].py}</span>`), text:true, answerIdx:opts.indexOf(w), word:w, type:'read',
+    options:opts.map(o => LEARN === 'en' ? `<span${LANG}>${wd(o)}</span><span class="cap">${wpy(o)}</span>` : `${o}<span class="cap">${WORDS[o].py}</span>`), text:true, answerIdx:opts.indexOf(w), word:w, type:'read',
     onShow:() => { say(text, null, who); on('[data-a=ask]', () => say(text, null, who)); }});
   closeCard();
   scored(ok);
@@ -80,11 +80,11 @@ function classEnd(s, sc){
   const words = (s.taught || []).filter(w => WORDS[w]);
   return new Promise(res => {
     openCard(`<p class="lessonbar">${esc(fill(s.class))}</p>
-      <div class="ldone"><span class="pics${words.length > 1 ? ' three' : ''}">${words.slice(0, 3).map(picHTML).join('')}</span><div><div class="big">✓ Class over!</div>
+      <div class="ldone"><span class="pics${words.length > 1 ? ' three' : ''}">${words.slice(0, 3).map(picHTML).join('')}</span><div><div class="big">${ui('✓ Class over!')}</div>
         ${words.length ? `<div class="w">${wordsPy(words.length > 4 ? [words[0], words[words.length - 1]] : words)}</div>` : ''}
-        ${sc && sc.asked ? `<div class="small">${sc.right} of ${sc.asked} right</div>` : ''}</div></div>
+        ${sc && sc.asked ? `<div class="small">${ui('{n} of {of} right', {n:sc.right, of:sc.asked})}</div>` : ''}</div></div>
       ${s.end ? `<p class="small">${esc(fill(s.end))}</p>` : ''}
-      <div class="actions"><button class="btn primary" data-a="ok" data-b>OK</button></div>`);
+      <div class="actions"><button class="btn primary" data-a="ok" data-b>${ui('OK')}</button></div>`);
     SFX.fanfare();
     on('[data-a=ok]', () => { closeCard(); res(); });
   });
@@ -98,12 +98,12 @@ const WAYS = {'北边':'up', '南边':'down', '东边':'right', '西边':'left'}
 // told so; wrong, and you turn to face the right way, so you see it. Gives whether you were right.
 async function faceQ(who, line, w, {check = false} = {}){
   if (pl.dir === WAYS[w]){ pl.dir = shuffle(Object.values(WAYS).filter(d => d !== WAYS[w]))[0]; S.pos.dir = pl.dir; pl.turnT = performance.now(); }   // (never facing it already: you'd have nothing to do)
-  await showDialog(speaker(who), L[line], {noEn:check, turn:'Turn to face that way with the arrows, then press A.', ok:'This way'});
+  await showDialog(speaker(who), L[line], {noEn:check, turn:ui('Turn to face that way with the arrows, then press A.'), ok:ui('This way')});
   const ok = pl.dir === WAYS[w];
   answer(w, ok, 'listen'); scored(ok);
-  if (ok){ SFX.right(); await showNarration(`Yes! That’s ${wz(w)}.`); return true; }
+  if (ok){ SFX.right(); await showNarration(ui('Yes! That’s {w}.', {w:wz(w)})); return true; }
   SFX.wrong(); pl.dir = WAYS[w]; S.pos.dir = pl.dir; pl.turnT = performance.now(); save();
-  await showNarration(`Not quite: ${wz(w)} is this way.`);
+  await showNarration(ui('Not quite: {w} is this way.', {w:wz(w)}));
   return false;
 }
 
@@ -116,14 +116,17 @@ function countOn(){
     let n = 10, tied = 0;
     const show = () => {
       const w = n === 10 ? '十' : TO_TWENTY[n - 1], tens = n === 20 ? '二十' : n > 10 ? `<span class="ten">十</span><span class="more">${w.slice(1)}</span>` : `<span class="ten">十</span>`;
-      const note = n === 10 ? (tied ? 'Ten sticks, tied together: a bundle of ten. That’s 十.' : 'Ten sticks: 十. Watch the master tie them together…')
+      // (learning English, the number in English, eleven, and its note in Chinese: the bundle of ten and so many more)
+      const note = LEARN === 'en' ? (n === 10 ? (tied ? ui('Ten sticks, tied together: a bundle of ten. That’s {w}.', {w:enW('十')}) : ui('Ten sticks: {w}. Watch the master tie them together…', {w:enW('十')}))
+          : n === 20 ? ui('Two bundles of ten: {w}, two tens.', {w:enW('二十')}) : ui('A bundle of ten and {more} more: {w}, ten and {more}.', {w:enW(w), more:ONES[n - 11]}))
+        : n === 10 ? (tied ? 'Ten sticks, tied together: a bundle of ten. That’s 十.' : 'Ten sticks: 十. Watch the master tie them together…')
         : n === 20 ? 'Two bundles of ten: 二十, two tens.'
         : `A bundle of ten and ${ONES[n - 11]} more: ${w}, ten and ${ONES[n - 11]}.`;
-      openCard(`<p class="label">Counting on, from ten</p>
+      openCard(`<p class="label">${ui('Counting on, from ten')}</p>
         <div class="counton"><div class="cstk">${sticksHTML(n === 10 ? 10 : n, {untied:n === 10 && tied < 1, k:tied})}</div>
-          <div class="cnum">${n === 20 ? '<span class="more">二</span><span class="ten">十</span>' : tens}</div><div class="py">${n === 10 ? WORDS['十'].py : WORDS[w].py}</div>
+          <div class="cnum"${LANG}>${LEARN === 'en' ? esc(enW(n === 10 ? '十' : w)) : n === 20 ? '<span class="more">二</span><span class="ten">十</span>' : tens}</div><div class="py">${LEARN === 'en' ? wpy(n === 10 ? '十' : w) : n === 10 ? WORDS['十'].py : WORDS[w].py}</div>
           <p class="note">${esc(note)}</p></div>
-        <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button><button class="btn primary" data-a="next">${n === 20 ? 'Got it' : n === 10 && tied < 1 ? 'Tie them' : 'One more ▸'}</button></div>`);
+        <div class="actions"><button class="btn grow" data-a="say">${ui('🔊 Hear it')}</button><button class="btn primary" data-a="next">${n === 20 ? ui('Got it') : n === 10 && tied < 1 ? ui('Tie them') : ui('One more ▸')}</button></div>`);
       on('[data-a=say]', () => say(w));
       on('[data-a=next]', next);
     };
@@ -132,7 +135,7 @@ function countOn(){
         for (const k of [.35, .7, 1]){ tied = k; show(); SFX.tock(); await sleep(260); }
         say('十'); return;
       }
-      if (n === 20){ closeCard(); for (const w of TEENS) if (lvl(w) === 0) setSeen(w); SFX.word(); toast('十一 to 二十 added to your Word Scroll'); res(); return; }
+      if (n === 20){ closeCard(); for (const w of TEENS) if (lvl(w) === 0) setSeen(w); SFX.word(); toast(ui('十一 to 二十 added to your Word Scroll')); res(); return; }
       n++; show(); SFX.blip(); say(TO_TWENTY[n - 1]);
     };
     show(); say('十');
@@ -237,7 +240,7 @@ Object.assign(STEPS, {
     for (const w of words){
       if (s.lines) await faceQ(who, s.lines[w], w, {check:true});
       else if (s.count) await countSticksQ(w, {pool, line:s.count, who});
-      else await numberQ(w, {pool, sticks:!!s.sticks, who, label:s.label || 'Listen. Which is it?'});
+      else await numberQ(w, {pool, sticks:!!s.sticks, who, label:s.label || ui('Listen. Which is it?')});
     }
   },
   // Turning to face the way the master says (face: the side's word; line: his line), as he teaches it.
@@ -247,7 +250,7 @@ Object.assign(STEPS, {
   // Numbers from 十一 to 二十 to choose, as you hear them (numbers: how many), the ones needing practice first.
   async numbers(s, who){
     const pool = TEENS.filter(w => lvl(w) >= 1);
-    for (const w of nextWords(pool, Math.min(s.numbers, pool.length))) await numberQ(w, {pool, who, label:s.label || 'Listen. Which is it?'});
+    for (const w of nextWords(pool, Math.min(s.numbers, pool.length))) await numberQ(w, {pool, who, label:s.label || ui('Listen. Which is it?')});
   },
   // Morning training (drill: how many rounds; at: where everyone lines up, the pupils training with you and the one
   // leading it, who, and you; facing: the way you all face): each round, the number of strikes he calls out (a number
@@ -260,7 +263,7 @@ Object.assign(STEPS, {
     try {
       for (let i = 1; i <= s.drill; i++){
         const w = nextWords(pool, 1)[0];
-        await numberQ(w, {pool, who, label:`${fill(s.label || 'How many strikes?')} (${i} of ${s.drill})`});
+        await numberQ(w, {pool, who, label:`${fill(s.label || ui('How many strikes?'))}${ui(' ({i} of {n})', {i, n:s.drill})}`});
         await drillStrikes(numberOf(w), all);
       }
     } finally { drillAt = null; drillBack(moved); }
@@ -318,15 +321,15 @@ const WRITE = {px:5, box:16, ms:1100};   // each pixel drawn 5 × 5, in a box 16
 // Writing practice (the writeName step: what, such as 孙悟空): a sheet of practice paper, a red-lined box for each
 // character; A writes the next, the brush going stroke by stroke, its pinyin under it once it's written. Nothing to get
 // wrong. Then your name is said, whole.
-function writeCard(text, {label = 'Writing practice', py = ''} = {}){
+function writeCard(text, {label = ui('Writing practice'), py = ''} = {}){
   const chars = [...text], pys = py.split(' ');
   return new Promise(res => {
     let done = 0, busyWriting = false;
     const size = WRITE.box * WRITE.px;
-    openCard(`<p class="label">${esc(label)}</p>
+    openCard(`<p class="label">${esc(ui(label))}</p>
       <div class="writepad">${chars.map((c, i) => `<div class="wbox"><canvas width="${size}" height="${size}" data-i="${i}"></canvas><div class="py" data-py="${i}"></div></div>`).join('')}</div>
-      <p class="note writenote">Press A to write each character with the brush.</p>
-      <div class="actions"><button class="btn primary" data-a="next">Write ▸</button></div>`);
+      <p class="note writenote">${ui('Press A to write each character with the brush.')}</p>
+      <div class="actions"><button class="btn primary" data-a="next">${ui('Write ▸')}</button></div>`);
     const boxes = [...sheet.querySelectorAll('.wbox canvas')];
     boxes.forEach(cv => paper(cv.getContext('2d'), size));
     on('[data-a=next]', async () => {
@@ -344,7 +347,7 @@ function writeCard(text, {label = 'Writing practice', py = ''} = {}){
       const p = sheet.querySelector(`[data-py="${i}"]`); if (p) p.textContent = pys[i] || '';
       done++; busyWriting = false;
       const btn = sheet.querySelector('[data-a=next]');
-      if (done === chars.length){ SFX.chime(); say(text); if (btn) btn.textContent = 'Done'; const n = sheet.querySelector('.writenote'); if (n) n.textContent = `${text} ${py}: your name, in your own hand!`; }
+      if (done === chars.length){ SFX.chime(); say(text); if (btn) btn.textContent = ui('Done'); const n = sheet.querySelector('.writenote'); if (n) n.textContent = ui('{text} {py}: your name, in your own hand!', {text, py}); }
     });
   });
 }

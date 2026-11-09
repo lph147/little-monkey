@@ -87,7 +87,7 @@ const LESSON_QUESTIONS = 5;   // (in a number or colour lesson)
 const EACH_NEW = 3, MIXED = 2;   // (in a first lesson teaching several: questions on each new word as it comes, then mixing them)
 // Numbers that never answer how many there are: two things are 两 (liǎng), not 二, so 二 is never an answer (decided 21
 // October 2026; since 9 November 2026 two things are counted with 两, HOW_MANY_WORDS in js/world.js, once you know it).
-const NOT_HOW_MANY = ['二'];
+const NOT_HOW_MANY = LEARN === 'en' ? [] : ['二'];   // (learning English, two is how many too)
 // What a lesson asks (the right answers, in order) for one new word (one), given the others it can mix in (others), or
 // for several, one after another: each new word's questions as it comes, one of them a word you know already (one you
 // knew before, or a new one before it), in any order, so you always have to count or look (decided 26 October 2026: it

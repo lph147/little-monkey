@@ -33,8 +33,8 @@ function fullscreenHTML(){
   if (!offer) return '';
   const hasApp = stored(APP_KEY) === '1';
   const safe = offer === 'steps' && isIPhone() && inSafari() && SLOTS.some(slotSummary);
-  return `<p class="fs">${hasApp ? 'You have the app: open 小猴子 from your home screen. ' : ''}<button class="linkbtn" id="fullBtn">⛶ ${safe ? 'Keep your games safe' : 'Play full screen'}</button>`
-    + `${offer === 'go' && installPrompt && !hasApp ? ' · <button class="linkbtn" id="installBtn">Install the app</button>' : ''}</p>`;
+  return `<p class="fs">${hasApp ? ui('You have the app: open 小猴子 from your home screen. ') : ''}<button class="linkbtn" id="fullBtn">⛶ ${ui(safe ? 'Keep your games safe' : 'Play full screen')}</button>`
+    + `${offer === 'go' && installPrompt && !hasApp ? ` · <button class="linkbtn" id="installBtn">${ui('Install the app')}</button>` : ''}</p>`;
 }
 function wireFullscreen(){
   const fb = $('#fullBtn'), ib = $('#installBtn');
@@ -54,15 +54,15 @@ function goFullscreen(){
 }
 function showAddSteps(){
   const safari = inSafari();
-  openCard(`<p class="label">⛶ Add to your home screen</p>
-    <p>On your home screen, 小猴子 plays full screen and offline, and your games are safe${safari ? ': Safari can delete them after a week away' : ''}.</p>
+  openCard(`<p class="label">${ui('⛶ Add to your home screen')}</p>
+    <p>${ui(safari ? 'On your home screen, 小猴子 plays full screen and offline, and your games are safe: Safari can delete them after a week away.' : 'On your home screen, 小猴子 plays full screen and offline, and your games are safe.')}</p>
     <ol class="steps">
-      <li>Tap Share 📤${safari ? ' (or ⋯ first)' : ', beside the address'}.</li>
-      <li>Tap ➕ Add to Home Screen (scroll down for it).</li>
-      <li>Open <img class="appicon" src="icons/icon-192.png" alt=""> 小猴子 from your home screen.</li>
+      <li>${ui(safari ? 'Tap Share 📤 (or ⋯ first).' : 'Tap Share 📤, beside the address.')}</li>
+      <li>${ui('Tap ➕ Add to Home Screen (scroll down for it).')}</li>
+      <li>${ui('Open {icon} 小猴子 from your home screen.', {icon:'<img class="appicon" src="icons/icon-192.png" alt="">'})}</li>
     </ol>
-    <p class="small">To bring this game across: Copy to a file here, Load from a file there.</p>
-    <div class="actions"><button class="btn" data-a="no" data-b>Not now</button><button class="btn primary" data-a="yes">I’ve added it</button></div>`);
+    <p class="small">${ui('To bring this game across: Copy to a file here, Load from a file there.')}</p>
+    <div class="actions"><button class="btn" data-a="no" data-b>${ui('Not now')}</button><button class="btn primary" data-a="yes">${ui('I’ve added it')}</button></div>`);
   on('[data-a=no]', () => { store(FS_KEY, String(Date.now())); closeCard(); titleText(); });
   on('[data-a=yes]', () => { store(FS_KEY, 'added'); closeCard(); titleText(); });
 }

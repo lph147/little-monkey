@@ -400,8 +400,8 @@ function earn(n){ if (coinsNow()) S.coins = (S.coins || 0) + n; else S.shells +=
 function spend(n){ if (coinsNow()) S.coins = (S.coins || 0) - n; else S.shells -= n; }
 // What you have, as the menu, your tasks and the end of an area show it: your money now, and the other if you have any.
 const moneyHTML = () => [coinsNow() || S.coins ? `<span>🪙 ${S.coins || 0}</span>` : '', !coinsNow() || S.shells ? `<span>🐚 ${S.shells}</span>` : ''].join('');
-const lvl = w => (S.w[w] && S.w[w].lv) || 0;
-function rec(w){ if (!S.w[w]) S.w[w] = {lv:0, ok:0}; return S.w[w]; }
+const lvl = w => { w = SAME[w] || w; return (S.w[w] && S.w[w].lv) || 0; };   // (SAME: learning English, 两 is 二, js/lang.js)
+function rec(w){ w = SAME[w] || w; if (!S.w[w]) S.w[w] = {lv:0, ok:0}; return S.w[w]; }
 // A line you hear (sayLine, js/cards.js; a boss's, js/battle.js): it's noted as heard (S.lines: how many times; S.lineDay:
 // the day you last heard it), and its English shows the first EN_TIMES times you hear it, and again whenever you last
 // heard it on an earlier day (decided 5 November 2026, after playing it: hide and seek's lines had no English, though

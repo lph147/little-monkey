@@ -362,7 +362,7 @@ const COUNT_MS = 900;   // a count said as each one's done, one after another (t
 // How many there are: as when counting, but two things are 两 (liǎng), two of something, never 二, which is for counting
 // (decided 21 October 2026; and 9 November 2026, when 两 became the second maths lesson's word, explained beside 二, so
 // two things can be counted at last): number questions, counting games and the how-many card.
-const HOW_MANY_WORDS = ['一', '两', '三', '四', '五', '六', '七', '八', '九', '十'];
+const HOW_MANY_WORDS = ['一', LEARN === 'en' ? '二' : '两', '三', '四', '五', '六', '七', '八', '九', '十'];   // (learning English, two is two)
 const howManyOf = w => HOW_MANY_WORDS.indexOf(w) + 1;   // (0: not a how-many word, such as 二)
 // How many things you could count with the numbers you know (two, once you know 两).
 const countable = () => HOW_MANY_WORDS.map((w, i) => i + 1).filter(n => WORDS[HOW_MANY_WORDS[n - 1]] && lvl(HOW_MANY_WORDS[n - 1]) >= 1);

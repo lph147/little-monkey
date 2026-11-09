@@ -7,7 +7,9 @@
 
 /* ================= TIMETABLE ================= */
 const subjects = () => (AREA.lessons || []).filter(s => !s.if || matches(s.if));   // the subjects you have now
-const lessonsOf = s => { const first = s.first || 1; return [s.words.slice(0, first), ...s.words.slice(first).map(w => [w])]; };   // each lesson's words
+// (learning English, without a word that isn't one of its own, such as 两, the same as 二 in English: js/data.js)
+const lessonWords = s => LEARN === 'en' ? s.words.filter(w => WORDS[w]) : s.words;
+const lessonsOf = s => { const first = s.first || 1, ws = lessonWords(s); return [ws.slice(0, first), ...ws.slice(first).map(w => [w])]; };   // each lesson's words
 const nextLessonOf = s => lessonsOf(s).findIndex(ws => ws.some(w => lvl(w) === 0)) + 1;   // the lesson after those done (0: all done)
 // How many more questions you need to answer before the next new lesson, in any subject (here().lessonTurn: your question
 // count when your last lesson that taught a new word ended; none before your first): one wait for all of them, so it's

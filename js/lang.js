@@ -113,6 +113,8 @@ const nameShown = n => LEARN !== 'en' || !n ? n : / \(you\)$/.test(n.en || '') ?
 // Learning English, the English words in Chinese text written for the game, such as a tip (rabbit 有两拍), marked as English
 // (text already made safe for a page: its &amp;s left alone).
 const enMark = s => LEARN === 'en' ? String(s).replace(/&[a-z]+;|[A-Za-z][A-Za-z’'-]*/g, m => m[0] === '&' ? m : `<span lang="en">${m}</span>`) : s;
+// (learning English, a word that's the same in English as another, such as 两, kept as that one: js/data.js)
+const SAME = LEARN === 'en' ? Object.fromEntries(Object.entries(EN).filter(([w, e]) => e.same).map(([w, e]) => [w, e.same])) : {};
 const tokId = t => LEARN === 'en' ? idOf(t) : t;   // the word a word in a sentence is
 const lineHas = (line, w) => line.t.some(x => tokId(x) === w);
 // A line the engine has made from the content's Chinese ({t: its words, en: its English}), as it's shown: learning English,
@@ -123,10 +125,36 @@ const asLine = line => LEARN === 'en' && line && !line.say ? sent(line.t.join(' 
 // Learning English, what the characters say is their English (each line's en), and what it means is its Chinese, so
 // every line the engine shows (L, the story's sentences and the opening's captions, js/data.js) is turned round:
 // t, its English words; en, its Chinese; say, the English to hear.
+// (a line's English can have the word it's about in braces, as hide and seek's do, I’m under the {桌子}!: said and shown
+// as English, under the table; and its Chinese, what it means, with that word left in English, 我在 table 下面！, so finding
+// it tests the English word, as learning Chinese its English leaves the word in Chinese)
+const BRACED = /\{([^}|]+)(?:\|([^}]+))?\}/g;
+const plainEn = s => String(s).replace(BRACED, (m, w, e) => e || enW(w));
+const zhWithEn = (zh, en) => { let t = zh.split(' '); for (const [, w, e] of String(en).matchAll(BRACED)) t = t.map(x => x === w ? ` ${e || enW(w)} ` : x); return t.join('').replace(/^ | $/g, '').replace(/ (?=[，。！？])/g, ''); };
 if (LEARN === 'en'){
-  for (const [k, line] of Object.entries(AREA.lines)) L[k] = {t:enToks(line.en), en:zhText(line.zh), say:line.en};
+  for (const [k, line] of Object.entries(AREA.lines)){
+    const en = (typeof EN_LINES !== 'undefined' && EN_LINES[k]) || line.en;   // (content/english.js: where the content's English doesn't have the word a line teaches)
+    L[k] = {t:enToks(plainEn(en)), en:/[{]/.test(en) ? zhWithEn(line.zh, en) : zhText(line.zh), say:plainEn(en)};
+  }
   STORY.forEach((s, i) => Object.assign(s, {t:enToks(AREA.story[i].en), en:zhText(AREA.story[i].zh), say:AREA.story[i].en}));
   CAPS.forEach((c, i) => Object.assign(c, {words:enToks(AREA.intro[i].en), en:zhText(AREA.intro[i].zh), say:AREA.intro[i].en}));
+}
+// The page's own words (index.html), learning English: in Chinese, as the page loads (the start-up screen's, the labels
+// under the small buttons, what the buttons are called, the keys on a computer and the card asking to turn the phone),
+// and the page itself in Chinese (its lang), the English you learn marked as English where it's shown (LANG).
+const PAGE_TEXT = {'.boot .slow':'Slow connection, still loading…', '#skipBtn':'Skip', '#selectBtn + .sslabel':'TASKS', '#startBtn + .sslabel':'MENU',
+  '#bagBtn + .sslabel':'BAG', '#mapBtn + .sslabel':'MAP', '.keys':'Arrow keys or WASD to move · Space or Enter for A · X for B (back) · M or Esc for the menu · T for your tasks · I for your bag · P for the map',
+  '#turn p':'Turn your phone sideways to play', '#turn p.small':'On a computer, make the window wider.'};
+const PAGE_LABELS = {'.boot':'Loading', '#screen':'Game screen', '#hud':'Your health', '.dpad':'Direction pad', '.dpad .u':'Walk up', '.dpad .l':'Walk left',
+  '.dpad .r':'Walk right', '.dpad .d':'Walk down', '#selectBtn':'Your tasks', '#startBtn':'The menu', '#btnB':'Back or menu', '#btnA':'Talk or look',
+  '#bagBtn':'Your bag', '#mapBtn':'The map'};
+if (LEARN === 'en'){
+  try {
+    if (document.documentElement && document.documentElement.setAttribute) document.documentElement.setAttribute('lang', 'zh-CN');
+    const one = sel => { const [a, b] = sel.split(' + '); if (!b) return document.querySelector(a); const el = document.querySelector(a); return el && el.parentElement ? el.parentElement.querySelector(b) : null; };
+    for (const [sel, text] of Object.entries(PAGE_TEXT)){ const el = one(sel); if (el) el.textContent = ui(text); }
+    for (const [sel, text] of Object.entries(PAGE_LABELS)){ const el = one(sel); if (el && el.setAttribute) el.setAttribute('aria-label', ui(text)); }
+  } catch(e) {}
 }
 // The words of a line, as said aloud: its English learning English, or its characters run together.
 const lineSay = line => line.say || line.t.join('');
