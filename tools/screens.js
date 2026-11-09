@@ -1774,15 +1774,13 @@ const SCREENS = [
 // What goes at the top of each frame, before the game's own scripts: pretend storage holding the
 // save, a pretend Chinese voice that says nothing, no sound effects or music, the helpers, and a
 // list of any errors.
-function prepare(save, voices, phone, learn){   // phone: as on a phone, with no keyboard help under the console; learn: 'en', every screen learning English (?learn=en)
+function prepare(save, voices, phone){   // phone: as on a phone, with no keyboard help under the console
   const mem = {};
-  if (save) mem['xiaohouzi-v2'] = JSON.stringify(learn === 'en' ? {...save, learn: 'en'} : save);
-  const tab = learn === 'en' ? {'xiaohouzi-v2-go': JSON.stringify({learn: 'en'})} : {};   // (this frame's own: a new game learning English, js/data.js)
-  Object.defineProperty(window, 'sessionStorage', {value: {getItem: k => (k in tab ? tab[k] : null), setItem: (k, v) => { tab[k] = String(v); }, removeItem: k => { delete tab[k]; }}, configurable: true});
+  if (save) mem['xiaohouzi-v2'] = JSON.stringify(save);
   const storage = {getItem: k => (k in mem ? mem[k] : null), setItem: (k, v) => { mem[k] = String(v); }, removeItem: k => { delete mem[k]; },
     clear: () => { for (const k in mem) delete mem[k]; }, key: i => Object.keys(mem)[i] || null, get length(){ return Object.keys(mem).length; }};
   Object.defineProperty(window, 'localStorage', {value: storage, configurable: true});
-  const list = voices === 'missing' ? [{lang: learn === 'en' ? 'zh-CN' : 'en-GB', name: 'Other'}] : [{lang: 'zh-CN', name: 'Chinese'}, {lang: 'en-GB', name: 'English'}];
+  const list = voices === 'missing' ? [{lang: 'en-GB', name: 'English'}] : [{lang: 'zh-CN', name: 'Chinese'}];
   const speech = {speaking: false, pending: false, speak: u => setTimeout(() => u.onend && u.onend(), 200), cancel(){}, pause(){}, resume(){},
     getVoices: () => list, addEventListener(){}, removeEventListener(){}};
   Object.defineProperty(window, 'speechSynthesis', {value: speech, configurable: true});
@@ -1819,7 +1817,7 @@ async function load(fig, s, [w, h], zoom){
   box.style.width = w * zoom + 'px'; box.style.height = h * zoom + 'px';
   const f = document.createElement('iframe');
   f.width = w; f.height = h; f.style.transform = `scale(${zoom})`; f.title = s.title;
-  const top = `<base href="${new URL('../', location.href)}"><script>(${prepare})(${JSON.stringify(s.save ? SAVES[s.save] : null)}, ${JSON.stringify(s.voices || 'zh')}, ${h < 600}, ${JSON.stringify(new URLSearchParams(location.search).get('learn') || 'zh')})<\/script>`;
+  const top = `<base href="${new URL('../', location.href)}"><script>(${prepare})(${JSON.stringify(s.save ? SAVES[s.save] : null)}, ${JSON.stringify(s.voices || 'zh')}, ${h < 600})<\/script>`;
   f.srcdoc = gamePage.replace(/<head>/i, '<head>' + top);
   box.replaceChildren(f);
   note.textContent = 'Loading…';

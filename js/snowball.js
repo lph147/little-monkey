@@ -46,12 +46,12 @@ if (document.documentElement) document.documentElement.style.setProperty('--back
 // snowball flying, and its splat (sc, its classes: throwYou or throwThem, then hitThem, hitYou or a miss, missed), in the
 // cave's snowy courtyard or out in the snow.
 function snowScene(who, hits, sc = ''){
-  const n = nameShown(NAMES[who] || {}), dots = k => Array.from({length:hits.to || SNOWBALL.to}, (_, i) => `<i class="sb${i < k ? ' on' : ''}"></i>`).join('');
+  const n = NAMES[who] || {}, dots = k => Array.from({length:hits.to || SNOWBALL.to}, (_, i) => `<i class="sb${i < k ? ' on' : ''}"></i>`).join('');
   const where = S.pos && S.pos.place === 'cave' ? 'courtyardSnow' : 'snowVillage';
   return `<div class="scene snowfight ${where} ${sc}">
-    <div class="sfplate them"><span class="zh"${n.lang ? LANG : ''}>${esc(n.zh || '')}</span> <span class="py">${esc(n.py || (n.lang ? n.en : '') || '')}</span><div class="sbs" aria-label="${ui('Snowballs that hit them: {n}', {n:hits.them})}">${dots(hits.them)}</div></div>
+    <div class="sfplate them"><span class="zh">${esc(n.zh || '')}</span> <span class="py">${esc(n.py || '')}</span><div class="sbs" aria-label="Snowballs that hit them: ${hits.them}">${dots(hits.them)}</div></div>
     <img class="sfthem" alt="" src="${plainPic(who)}"><img class="sfyou" alt="" src="${monkeySprite('player', 'up', false).toDataURL()}">
-    <div class="sfplate you">${ui('You')}<div class="sbs" aria-label="${ui('Snowballs that hit you: {n}', {n:hits.you})}">${dots(hits.you)}</div></div>
+    <div class="sfplate you">You<div class="sbs" aria-label="Snowballs that hit you: ${hits.you}">${dots(hits.you)}</div></div>
     <i class="sfball"></i><i class="sfsplat"></i><div class="fx"></div></div>`;
 }
 // One snowball fight with who (opts: to, hits to win). Gives true if you win.
@@ -61,38 +61,38 @@ async function snowballFight(who, {to = SNOWBALL.to} = {}){
   while (hits.you < to && hits.them < to){
     // your throw: a word, as a battle's hit
     const w = toAsk(null, 1)[0], q = wordQuestion(w, null);
-    await pictureQ({head:snowScene(who, hits), body:`<p class="label">${ui('Your throw! Get it right, and your snowball hits.')}</p>` + q.body, word:w, type:q.type,
+    await pictureQ({head:snowScene(who, hits), body:`<p class="label">Your throw! Get it right, and your snowball hits.</p>` + q.body, word:w, type:q.type,
       options:q.options, text:q.text, answerIdx:q.answerIdx, helper:helperHTML(),
       onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); wireHelper(q.options.length, q.answerIdx); },
       onAnswer:ok => {
         const sc = sheet.querySelector('.scene'), fb = sheet.querySelector('.feedback');
         if (ok) hits.them++;
-        fly(sc, ['throwYou', ok ? 'hitThem' : 'missed'], ui(ok ? 'Splat!' : 'Missed!'));
+        fly(sc, ['throwYou', ok ? 'hitThem' : 'missed'], ok ? 'Splat!' : 'Missed!');
         if (ok) setTimeout(() => SFX.thwack(.12), SNOWBALL.fly);
         const d = sc.querySelector('.sfplate.them .sbs'); if (d && ok) setTimeout(() => { d.children[hits.them - 1] && d.children[hits.them - 1].classList.add('on'); }, SNOWBALL.fly);
-        fb.innerHTML += ok ? `<br><b>${ui('Your snowball hits!')}</b>` : `<br>${ui('It flies past.')}`;
+        fb.innerHTML += ok ? '<br><b>Your snowball hits!</b>' : '<br>It flies past.';
       }});
     if (hits.them >= to) break;
     // their throw: hear a word and pick it to duck, as a battle's dodge (with words of yours to choose from)
     const pool = shuffle(picWords().filter(known));
     if (pool.length < 2) continue;
     const a = pool[0], others = soundApart(a, pool.slice(1), 2), opts = shuffle([a, ...others]);
-    await pictureQ({head:snowScene(who, hits), body:`<p class="label">${ui('They throw a snowball at you!')}</p>`
-        + `<div class="askrow"><p class="prompt">${ui('Listen. Which is it? Pick it to duck.')}</p><button class="sayBig" data-a="say" aria-label="${ui('Play the word again')}">🔊</button></div>`,
-      word:a, type:'listen', options:opts.map(o => `<span class="ico">${picHTML(o)}</span><span class="cap"${LANG}>${wd(o)}</span>${laterPy(o)}`), answerIdx:opts.indexOf(a),
+    await pictureQ({head:snowScene(who, hits), body:`<p class="label">They throw a snowball at you!</p>`
+        + `<div class="askrow"><p class="prompt">Listen. Which is it? Pick it to duck.</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`,
+      word:a, type:'listen', options:opts.map(o => `<span class="ico">${picHTML(o)}</span><span class="cap">${o}</span>${laterPy(o)}`), answerIdx:opts.indexOf(a),
       helper:helperHTML(), onShow:() => { setTimeout(() => say(a), 300); wireHelper(opts.length, opts.indexOf(a)); },
       onAnswer:ok => {
         const sc = sheet.querySelector('.scene'), fb = sheet.querySelector('.feedback');
         if (!ok) hits.you++;
-        fly(sc, ['throwThem', ok ? 'missed' : 'hitYou'], ui(ok ? 'Ducked!' : 'Splat!'));
+        fly(sc, ['throwThem', ok ? 'missed' : 'hitYou'], ok ? 'Ducked!' : 'Splat!');
         if (!ok) setTimeout(() => SFX.thwack(.12), SNOWBALL.fly);
         const d = sc.querySelector('.sfplate.you .sbs'); if (d && !ok) setTimeout(() => { d.children[hits.you - 1] && d.children[hits.you - 1].classList.add('on'); }, SNOWBALL.fly);
-        fb.innerHTML += `<br><b>${ui(ok ? 'You duck!' : 'It hits you!')}</b>`;
+        fb.innerHTML += ok ? '<br><b>You duck!</b>' : '<br><b>It hits you!</b>';
       }});
   }
   const won = hits.them >= to;
   (won ? SFX.fanfare : SFX.bump)();
-  await infoBox(snowScene(who, hits, won ? 'won' : 'lost'), `<p class="label center">${ui(won ? 'You win!' : 'They win!')}</p><p class="endmsg">${won ? ui('{hits}! They’re covered in snow.', {hits:[null, ui('One hit'), ui('Two hits'), ui('Three hits'), ui('Four hits'), ui('Five hits')][to] || to + ui(' hits')}) : ui('Covered in snow! You can play again whenever you like.')}</p>`);
+  await infoBox(snowScene(who, hits, won ? 'won' : 'lost'), `<p class="label center">${won ? 'You win!' : 'They win!'}</p><p class="endmsg">${won ? `${['', 'One hit', 'Two hits', 'Three hits', 'Four hits', 'Five hits'][to] || to + ' hits'}! They’re covered in snow.` : 'Covered in snow! You can play again whenever you like.'}</p>`);
   return won;
 }
 // The snowball step: a snowball fight with who you're talking to (snowball: the id it's kept under, how many times you've
@@ -105,6 +105,6 @@ Object.assign(STEPS, {
     if (won){ here()[s.snowball] = (here()[s.snowball] || 0) + 1; save(); }
     if (won && s.win) await runSteps(s.win, who);
     if (!won && s.lose) await runSteps(s.lose, who);
-    if (first && s.prize){ earn(s.prize); save(); SFX.coin && SFX.coin(); toast(ui('+{n} {money} for winning your first snowball fight with them!', {n:s.prize, money:MONEY()})); }
+    if (first && s.prize){ earn(s.prize); save(); SFX.coin && SFX.coin(); toast(`+${s.prize} ${MONEY()} for winning your first snowball fight with them!`); }
   }
 });

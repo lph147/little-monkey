@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 41;
+const SAVE_VERSION = 42;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -24,7 +24,7 @@ function placesOnWayTo(place){
   for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
   return way;
 }
-function fresh(){ return {version:SAVE_VERSION, learn:LEARN, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, ipa:false, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0, scrollNew:[]}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0, scrollNew:[]}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -262,9 +262,10 @@ function upgradeSave(s){
     if (!Array.isArray(s.scrollNew)) s.scrollNew = [];   // before has seen what it has: nothing new till its next word
     s.version = 40;
   }
-  if (s.version === 40){   // version 40: every game learned Chinese. Now a game learns Chinese or English (learn: Both ways,
-    s.learn = 'zh';        // decided 9 November 2026, in DESIGN.md), and every game before then learns Chinese
-    s.version = 41;
+  if (s.version === 40) s.version = 41;   // (version 41, live for a few hours on 9 November 2026, said which language a game learns)
+  if (s.version === 41){   // version 41: a game learned Chinese or English (learn), with settings for learning English (ipa,
+    delete s.learn; delete s.ipa; delete s.script;   // script). Learning English is on hold (DESIGN.md, the git branch
+    s.version = 42;                                  // dual-language), so every game learns Chinese again, keeping its words
   }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   // A save from another area than the one this page plays (such as a game in Area 2, shown on the title screen while the page
@@ -346,12 +347,10 @@ function summaryOf(s, n){
 // Plays game n from now on: it's remembered as the game you're playing.
 // The area game n is in (1 if it's empty or can't be read), without loading it.
 function slotArea(n){ try { const d = JSON.parse(localStorage.getItem(slotKey(n))); return (d && d.area) || 1; } catch(e) { return 1; } }
-// The language game n is learning ('zh' if it's empty or can't be read), without loading it (Both ways: js/data.js).
-function slotLearn(n){ try { const d = JSON.parse(localStorage.getItem(slotKey(n))); return d && d.started && d.learn === 'en' ? 'en' : 'zh'; } catch(e) { return 'zh'; } }
 function useSlot(n){ SLOT = n; S = loadSave(n); setSlotsInfo(d => ({...d, active:n})); }
 // A new game in slot n, keeping your sound and reading settings.
 function newGameIn(n){
-  const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, ipa:S.ipa, replyEn:S.replyEn, fps:S.fps, voiceSpeed:S.voiceSpeed};
+  const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps, voiceSpeed:S.voiceSpeed};
   SLOT = n; S = Object.assign(fresh(), keep); setSlotsInfo(d => ({...d, active:n}));
   forgetPictures(n);   // (the map's pictures of the game that was there: js/map.js)
 }
@@ -373,8 +372,8 @@ function saveFile(n = SLOT){
 function readSaveFile(text){
   let data = null;
   try { data = JSON.parse(text); } catch(e) {}
-  if (!data || typeof data !== 'object' || Array.isArray(data) || !data.w || typeof data.w !== 'object') return {error:ui("That file isn't a Little Monkey save.")};
-  if ((data.version || 2) > SAVE_VERSION) return {error:ui('That save is from a newer version of the game. Reload the page to get the newest version, then try again.')};
+  if (!data || typeof data !== 'object' || Array.isArray(data) || !data.w || typeof data.w !== 'object') return {error:"That file isn't a Little Monkey save."};
+  if ((data.version || 2) > SAVE_VERSION) return {error:'That save is from a newer version of the game. Reload the page to get the newest version, then try again.'};
   return {save:upgradeSave(data)};
 }
 // Plays on from a loaded save in game n (an empty slot), keeping a copy of anything that was there.
@@ -400,15 +399,15 @@ function earn(n){ if (coinsNow()) S.coins = (S.coins || 0) + n; else S.shells +=
 function spend(n){ if (coinsNow()) S.coins = (S.coins || 0) - n; else S.shells -= n; }
 // What you have, as the menu, your tasks and the end of an area show it: your money now, and the other if you have any.
 const moneyHTML = () => [coinsNow() || S.coins ? `<span>🪙 ${S.coins || 0}</span>` : '', !coinsNow() || S.shells ? `<span>🐚 ${S.shells}</span>` : ''].join('');
-const lvl = w => { w = SAME[w] || w; return (S.w[w] && S.w[w].lv) || 0; };   // (SAME: learning English, 两 is 二, js/lang.js)
-function rec(w){ w = SAME[w] || w; if (!S.w[w]) S.w[w] = {lv:0, ok:0}; return S.w[w]; }
+const lvl = w => (S.w[w] && S.w[w].lv) || 0;
+function rec(w){ if (!S.w[w]) S.w[w] = {lv:0, ok:0}; return S.w[w]; }
 // A line you hear (sayLine, js/cards.js; a boss's, js/battle.js): it's noted as heard (S.lines: how many times; S.lineDay:
 // the day you last heard it), and its English shows the first EN_TIMES times you hear it, and again whenever you last
 // heard it on an earlier day (decided 5 November 2026, after playing it: hide and seek's lines had no English, though
 // it had been ages; it showed only the very first time). Returns whether its English shows.
 const EN_TIMES = 3;
 function heardLine(t){
-  const key = lineKey(t), n = S.lines[key] || 0, day = todayKey();
+  const key = t.join(''), n = S.lines[key] || 0, day = todayKey();
   S.lineDay = S.lineDay || {};
   const last = S.lineDay[key], shows = n < EN_TIMES || last !== day;   // (a line heard before days were kept: an earlier day)
   S.lines[key] = n + 1; S.lineDay[key] = day; hear(t); save();
@@ -417,7 +416,7 @@ function heardLine(t){
 function todayKey(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
 function addToday(w){ const k = todayKey(); if (S.today.d !== k) S.today = {d:k, ids:[]}; if (!S.today.ids.includes(w)) S.today.ids.push(w); }
 // A sentence was shown: each word in it (not punctuation) counts as heard once more.
-function hear(words, heard = S.heard){ for (const x of words){ const t = tokId(x); if (t && (WORDS[t] || GLOSS[t])) heard[t] = (heard[t] || 0) + 1; } }   // (learning English, an English word counts for the word it is: tokId, js/lang.js)
+function hear(words, heard = S.heard){ for (const t of words) if (WORDS[t] || GLOSS[t]) heard[t] = (heard[t] || 0) + 1; }
 function setSeen(w){ const r = rec(w); if (r.lv < 1){ r.lv = 1; r.ok = 0; slotIn(w, NEW_PLACE); if (S.areas[AREA.number]) here().wordTurn = S.turn || 0; noteCaught(w); markNew(w); } addToday(w); save(); }   // a new word goes near the front of the review list (wordTurn: when you caught it, for the area's wordGap), and is new in your Word Scroll till you've seen it there
 function markNew(w){ if (!Array.isArray(S.scrollNew)) S.scrollNew = []; if (!S.scrollNew.includes(w)) S.scrollNew.push(w); }   // (the newest last: js/scrolls.js)
 // You used w in a sentence (a request or a shop order). It's Used once you can read it as well.

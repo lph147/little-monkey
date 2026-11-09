@@ -52,5 +52,5 @@ test('a name is said in full before the game goes on: a long one waits till it e
   await tick(); assert.equal(game.run('__done'), false, 'a short one: still the usual pause');
   game.flush(); await tick();
   assert.equal(game.run('__done'), true);
-  assert.match(game.run("wildAppears.toString() + fight.toString()"), /sayFully\(a\.hz, 900\)[\s\S]*sayFully\(sizedSay\(f\), 700\)/, 'used as an animal jumps out, and as a battle begins (its name at its size: 蛇, or 大蛇; learning English, big snake)');
+  assert.match(game.run("wildAppears.toString() + fight.toString()"), /sayFully\(a\.hz, 900\)[\s\S]*sayFully\(sizedZh\(f\), 700\)/, 'used as an animal jumps out, and as a battle begins (its name at its size: 蛇, or 大蛇)');
 });

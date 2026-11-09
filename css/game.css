@@ -165,7 +165,6 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;borde
 .tok:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}
 .tok.on{background:color-mix(in srgb,var(--gold) 28%,transparent)}
 .tok.learn{color:var(--jade);font-weight:500}
-.nb > .tok[lang="en"] + .punct{margin-left:-3px}   /* (learning English, a comma or full stop right after its word, as English writes it) */
 .tok.teach{font-weight:800;background:color-mix(in srgb,var(--jade) 12%,transparent)}
 .tok.listen{color:var(--muted)}
 .ispic{display:flex;justify-content:center;margin:2px 0 4px}.ispic .pix{width:var(--pic-mid);height:var(--pic-mid);image-rendering:pixelated}
@@ -1291,9 +1290,6 @@ rt.hid{visibility:hidden}
 .titlecard .btn.big{font-size:1rem;padding:.4rem .9rem;display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;line-height:1.15;white-space:normal;text-align:left}
 .titlecard .btn.big .sub{font:500 .72rem var(--text);opacity:.8}
 .titlecard .btn.sel{outline:3px solid var(--gold);outline-offset:2px}
-/* New game: which language it learns (chooseLearn, js/main.js): each choice with its other language under it */
-.learnpick [data-learn]{display:inline-flex;flex-direction:column;align-items:center;line-height:1.15}
-.learnpick [data-learn] .sub{font:500 .72rem var(--text);opacity:.85}
 @media (max-width:700px){.titlecard .btn.big{font-size:.85rem;padding:.3rem .7rem}.titlecard .btn.big .sub{font-size:max(.65rem,10px)}}
 :root:is([data-screen=small],[data-screen=tiny]) .talk rt{font-size:max(.6em,10.5px)}   /* pinyin in the speech box on a small phone's screen: big enough to read */
 /* Save files: your three games, one to a row */

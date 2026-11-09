@@ -18,15 +18,8 @@ const weaponNow = () => (S && S.areas && here() && here().weapon) || BATTLES.wea
 const weaponHits = () => (BATTLES.weapons || {})[weaponNow()] || BATTLES.hits;
 // An enemy with a name rather than a word (name: {zh, py, en}; pic: its picture), such as the Demon of Havoc (names aren't
 // vocabulary: never a card to catch, decided 5 November 2026), or one with a word, taught as you meet it.
-// Learning English, its English on its plate (a big one's: big snake), and a name's Chinese under it (js/lang.js).
-const foeZh = f => LEARN === 'en' ? (f.name ? f.name.en : sizedEn(f)) : f.name ? f.name.zh : sizedZh(f);
-const foePy = f => LEARN === 'en' ? (f.name ? f.name.zh : S.ipa ? enIpa(f.word) : '') : f.name ? f.name.py : (f.size ? SIZES[f.size].py + ' ' : '') + WORDS[f.word].py;   // (a big or small one: 大蛇 dà shé)
-const foePic = f => f.monkey ? monkeyPic(f.monkey) : f.person ? personPic(f.person) : PICTURES[f.pic || f.word], foeThe = f => LEARN === 'en' ? (f.name ? f.name.zh : wz(f.word, f.size ? sizedEn(f) : undefined)) : f.name ? `the ${f.name.en}` : `the ${f.size ? SIZES[f.size].en + ' ' : ''}${wz(f.word)}`;   // (a person, such as a pupil you spar with: as they look on the map, with a staff: js/year.js)
-// What an enemy does, unless it says otherwise (its meet, ran, hide, attack, away, sniff, and angry's note and lost), its
-// word left for fill: The {蛇} attacks!
-const FOE_SAYS = {meet:'A {w} blocks your way!', ran:'You run away from the {w}.', hide:'The {w} hides!', attack:'The {w} attacks!', away:'The {w} runs away.',
-  sniff:'The {w} sniffs the air, and runs off!', angry:'The {w} is angry!', lost:'The {w} is too strong for you this time.'};
-const foeSays = (f, k) => ui(FOE_SAYS[k], {w:`{${f.word}}`});
+const foeZh = f => f.name ? f.name.zh : sizedZh(f), foePy = f => f.name ? f.name.py : (f.size ? SIZES[f.size].py + ' ' : '') + WORDS[f.word].py;   // (a big or small one: 大蛇 dà shé)
+const foePic = f => f.monkey ? monkeyPic(f.monkey) : f.person ? personPic(f.person) : PICTURES[f.pic || f.word], foeThe = f => f.name ? `the ${f.name.en}` : `the ${f.size ? SIZES[f.size].en + ' ' : ''}${wz(f.word)}`;   // (a person, such as a pupil you spar with: as they look on the map, with a staff: js/year.js)
 const WILD_AFTER = 5, WILD_CHANCE = .2;   // at least this many steps on wild ground between battles, then this chance a step
 let wildSteps = 0;
 // Your health (decided 27 October 2026: hearts, 5 at most, were too few to tell weapons, food and enemies apart), and the
@@ -40,12 +33,12 @@ const hurt = () => health() < maxHealth();
 // 28 October 2026: the enemy's bar filled its wider name plate, so a snake looked twice as strong as you).
 // setHealth changes one already there, so the bar slides down (or up) rather than jumping.
 const healthCls = (n, max) => n > max / 2 ? 'g' : n > max / 5 ? 'y' : 'r';
-const healthHTML = (n, max, num) => `<div class="hp" role="img" aria-label="${ui('Health: {n} of {max}', {n, max})}" style="--hpk:${max / HEALTH}">${heartHTML(true)}`
+const healthHTML = (n, max, num) => `<div class="hp" role="img" aria-label="Health: ${n} of ${max}" style="--hpk:${max / HEALTH}">${heartHTML(true)}`
   + `<span class="hpbar"><i class="${healthCls(n, max)}" style="width:${Math.max(0, n / max * 100)}%"></i></span>${num ? `<span class="hpnum">${n}/${max}</span>` : ''}</div>`;
 function setHealth(el, n, max){
   const bar = el.querySelector('.hpbar i'), hp = el.querySelector('.hp'), num = el.querySelector('.hpnum');
   if (bar){ bar.style.width = Math.max(0, n / max * 100) + '%'; bar.className = healthCls(n, max); }
-  if (hp) hp.setAttribute('aria-label', ui('Health: {n} of {max}', {n, max}));
+  if (hp) hp.setAttribute('aria-label', `Health: ${n} of ${max}`);
   if (num) num.textContent = `${n}/${max}`;
 }
 const mapSpriteCache = {};
@@ -85,15 +78,12 @@ function pickSize(id){   // (by day: usual half the time, small a quarter, big a
 const sizedText = (size, text) => text.replace(/\b(A|a|The|the) (little )?\{/g, (m, art) => `${art} ${SIZES[size].en} {`);   // (a little demon already says so: A big {妖怪}…)
 function sized(f, size){
   const s = SIZES[size]; if (!s || !canSize(f)) return f;
-  const said = {meet:f.meet || foeSays(f, 'meet'), ran:f.ran || foeSays(f, 'ran'), hide:f.hide || foeSays(f, 'hide'),
-    attack:f.attack || foeSays(f, 'attack'), away:f.away || foeSays(f, 'away')};
-  // (learning English, in Chinese first, then its word as a big or little one: big snake（蛇）)
-  for (const k in said) said[k] = LEARN === 'en' ? ui(said[k]).split(`{${f.word}}`).join(`{${f.word}|${sizedEn({...f, size})}}`) : sizedText(size, said[k]);
+  const said = {meet:f.meet || `A {${f.word}} blocks your way!`, ran:f.ran || `You run away from the {${f.word}}.`, hide:f.hide || `The {${f.word}} hides!`,
+    attack:f.attack || `The {${f.word}} attacks!`, away:f.away || `The {${f.word}} runs away.`};
+  for (const k in said) said[k] = sizedText(size, said[k]);
   return {...f, ...said, size, health:Math.round(f.health * s.k), hits:Math.round(f.hits * s.k), reward:(f.reward || 0) * (s.reward || 1)};
 }
 const sizedZh = f => f.size ? SIZES[f.size].zh + f.word : f.word;
-const sizedEn = f => f.size ? `${enW(SIZES[f.size].zh)} ${enW(f.word)}` : enW(f.word);   // (learning English: big snake)
-const sizedSay = f => LEARN === 'en' ? sizedEn(f) : sizedZh(f);   // (its name, said aloud)
 // Every sized name the game can say, for the voices and CHINESE.md: each enemy that comes in sizes, little and big.
 const SIZED = () => [...new Map(Object.values(ENEMIES).filter(canSize).flatMap(f => Object.values(SIZES).map(s => [s.zh + f.word, {zh:`${s.zh} ${f.word}`, en:`A ${s.en} ${WORDS[f.word].en.split(',')[0]}!`}]))).values()];
 // Its picture on the map at its size (drawn once for each, and kept: few canvases).
@@ -118,7 +108,7 @@ async function sniffAndFlee(id, spot = findSpot()){
   SFX.swish();
   await sleep(SNIFF_MS);
   foe.state = 'flee'; foe.t1 = performance.now(); SFX.turn();
-  toast(fill(f.sniff || foeSays(f, 'sniff')));
+  toast(fill(f.sniff || `The {${f.word}} sniffs the air, and runs off!`));
   await sleep(650); foe = null;
 }
 // Which creature jumps out: one of those that live there (wild; one listed twice comes twice as often), at random, but
@@ -187,15 +177,15 @@ async function battle(id, opts = {}){
 async function fight(id, opts = {}){
   const f = sized(opts.boss ? {...ENEMIES[id], boss:true} : ENEMIES[id], opts.size), img = `<img class="portrait" alt="" src="${sprite(foePic(f).rows, foePic(f).palette).toDataURL()}">`;   // (sized: a big or small one)
   if (f.name){}   // (a name: shown on its plate, never caught)
-  else if (lvl(f.word) === 0){ await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {}); if (f.size) await sayFully(sizedSay(f), 700); }   // the first meeting teaches its name (and a big or small one's said: 大狼)
-  else await sayFully(sizedSay(f), 700);   // (its name, said in full before the fight goes on: 蛇, or 大蛇)
+  else if (lvl(f.word) === 0){ await showNotice(f.word, f.meetNote ? {note:fill(f.meetNote)} : {}); if (f.size) await sayFully(sizedZh(f), 700); }   // the first meeting teaches its name (and a big or small one's said: 大狼)
+  else await sayFully(sizedZh(f), 700);   // (its name, said in full before the fight goes on: 蛇, or 大蛇)
   const big = !!f.bossFight;   // (a boss fight: its health across the top)
   if (f.nameCard && !opts.again) await bossNameCard(f, img);   // (a big boss: its name across the screen, the first time each fight)
   let angry = false;   // (a boss that gets angry at so much health left, angry.at: from then on, it attacks twice)
   let streak = 0;   // right answers in a row: STREAK of them, and your next hit counts POWER times over
   const charged = () => streak >= STREAK;
   const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (the scene's own stick is the one you swing)
-  let left = f.health, note = fill((!opts.again && opts.meet) || f.meet || foeSays(f, 'meet'));
+  let left = f.health, note = fill((!opts.again && opts.meet) || f.meet || `A {${f.word}} blocks your way!`);
   // The scene: the enemy on its mound, you from behind with your stick, and what the animations use (js below, css
   // .scene.swing and .scene.strike): where it strikes from, the enemy leaping out, a burst, and a word (Hit! Miss!).
   // look: the enemy's (gone, when it runs off); act: what's happening (hiding, on its turn).
@@ -206,9 +196,9 @@ async function fight(id, opts = {}){
   const scene = (look = '', act = '') => `<div class="scene${sceneLook(f.home)}${f.size ? ' size-' + f.size : ''}${big ? ' boss' : ''}${angry ? ' rage' : ''}${charged() ? ' charged' : ''}${act ? ' ' + act : ''}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}">${stick}`
     + `<div class="from" aria-hidden="true"></div><div class="striker" aria-hidden="true">${img}</div><div class="pow" aria-hidden="true"></div><div class="fx" aria-hidden="true"></div>`
-    + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh"${LANG}>${foeZh(f)} <span class="spk-py">${foePy(f)}</span></div>${angry ? `<span class="tag">${ui('Angry!')}</span>` : ''}</div>`
+    + `<div class="plate${big ? ' bossplate' : ''}"><div class="name"><div class="spk-zh">${foeZh(f)} <span class="spk-py">${foePy(f)}</span></div>${angry ? '<span class="tag">Angry!</span>' : ''}</div>`
     + `${big && f.angry ? healthHTML(left, f.health).replace('<span class="hpbar">', `<span class="hpbar"><b class="notch" style="left:${f.angry.at * 100}%"></b>`) : healthHTML(left, f.health)}</div>`
-    + `<div class="plate mine"><div class="name"><span>${ui('You')}</span><span class="hpnum">${health()}/${maxHealth()}</span></div>${healthHTML(health(), maxHealth())}${streakHTML(streak)}</div></div>`;   // (your number beside You)
+    + `<div class="plate mine"><div class="name"><span>You</span><span class="hpnum">${health()}/${maxHealth()}</span></div>${healthHTML(health(), maxHealth())}${streakHTML(streak)}</div></div>`;   // (your number beside You)
   let first = big && !opts.again;   // (a boss fight begins with it rearing up, a cry and a rumble, and the card shakes as it lands)
   while (left > 0 && health() > 0){
     // A boss's stage (stages: at, a share of its health left; do, steps; note, what you're told on your next turn), such as
@@ -217,38 +207,38 @@ async function fight(id, opts = {}){
     if (st){ stagesDone.add(f.stages.indexOf(st)); closeCard(); await runSteps(st.do); stick = stickImg(); note = fill(st.note || '');
       playSong(f.song && SONGS[f.song] ? f.song : battleSong()); }   // (its song again, after a scene's)
     const said = first && !opts.again && bossLine(f, 'meet');   // (what a boss says as it begins, instead of the note)
-    const turn = battleTurn(f, scene('', first ? 'rear' : ''), said ? '' : note || (charged() ? ui('Your {weapon} glows: your next hit counts ×{n}!', {weapon:wz(weaponNow() || '棍子'), n:POWER}) : ''), said ? bossLineHTML(said, img) : '');
+    const turn = battleTurn(f, scene('', first ? 'rear' : ''), said ? '' : note || (charged() ? `Your ${wz(weaponNow() || '棍子')} glows: your next hit counts ×${POWER}!` : ''), said ? bossLineHTML(said, img) : '');
     if (first){ first = false; rears(f); }
     if (said) speakLine(said);
     const act = await turn;
     note = '';
-    if (act === 'run'){ closeCard(); toast(fill(f.ran || foeSays(f, 'ran'))); return 'ran'; }
+    if (act === 'run'){ closeCard(); toast(fill(f.ran || `You run away from the {${f.word}}.`)); return 'ran'; }
     if (act === 'eat'){
       const w = healFood();
       S.bag[w]--; S.health = Math.min(maxHealth(), health() + FOOD[w].heal); useWord(w); save(); SFX.right();
-      note = ui('You eat a {food}: {heal}.', {food:wz(w), heal:healText(w)});
+      note = `You eat a ${wz(w)}: ${healText(w)}.`;
     } else {
       const w = big ? weakest(f.word) : toAsk(f.word, 1)[0], q = wordQuestion(w, f.word), stick = wz(weaponNow() || '棍子');
-      const ok = await pictureQ({head:scene(), body:`<p class="label">${charged() ? ui('Your {weapon} glows! Swing it: ×{n}!', {weapon:stick, n:POWER}) : ui('You swing your {weapon}!', {weapon:stick})}</p>` + q.body, word:w, type:q.type,
+      const ok = await pictureQ({head:scene(), body:`<p class="label">${charged() ? `Your ${stick} glows! Swing it: ×${POWER}!` : `You swing your ${stick}!`}</p>` + q.body, word:w, type:q.type,
         options:q.options, text:q.text, answerIdx:q.answerIdx, helper:helperHTML(),
         onShow:() => { if (q.type !== 'read') setTimeout(() => say(w), 300); wireHelper(q.options.length, q.answerIdx); },
         onAnswer:ok => {   // you swing: a hit knocks it back, or it hops aside
           const fb = sheet.querySelector('.feedback'), sc = sheet.querySelector('.scene');
           const power = ok && charged();
           sc.classList.add('swing'); sc.classList.add(ok ? 'hit' : 'miss'); if (power) sc.classList.add('powerhit');
-          sc.querySelector('.fx').textContent = power ? ui('Power hit! ×{n}', {n:POWER}) : ui(ok ? 'Hit!' : 'Miss!');
+          sc.querySelector('.fx').textContent = power ? `Power hit! ×${POWER}` : ok ? 'Hit!' : 'Miss!';
           if (ok){ left = Math.max(stagesLeft() ? 1 : 0, left - weaponHits() * (power ? POWER : 1)); setHealth(sc.querySelector('.plate'), left, f.health); SFX.thwack(power ? .5 : .2); } else SFX.swish(.1);   // (never beaten before its stages have all happened)
           if (power) shake();
-          fb.innerHTML += power ? `<br><b>${ui('A power hit!')}</b>` : ok ? `<br><b>${ui('A hit!')}</b>` : `<br>${ui('You miss.')}`;   // (on a line of its own, never read on from the word's English: “fur A hit!”, decided 7 November 2026)
+          fb.innerHTML += power ? '<br><b>A power hit!</b>' : ok ? '<br><b>A hit!</b>' : '<br>You miss.';   // (on a line of its own, never read on from the word's English: “fur A hit!”, decided 7 November 2026)
           streak = ok && !power ? streak + 1 : 0; showStreak(sc, streak);
         }});
-      if (!ok) note = ui('{who} dodges.', {who:LEARN === 'en' ? foeThe(f) : cap(foeThe(f))});
+      if (!ok) note = `${cap(foeThe(f))} dodges.`;
     }
     if (left <= 0) break;
     if (f.angry && !angry && left <= f.health * f.angry.at){   // half its health gone: it gets angry
       angry = true;
       const line = bossLine(f, 'angry');
-      const open = infoBox(scene('', 'rear'), `${line ? bossLineHTML(line, img) : ''}<p class="label">${esc(fill(f.angry.note || foeSays(f, 'angry')))}</p>`
+      const open = infoBox(scene('', 'rear'), `${line ? bossLineHTML(line, img) : ''}<p class="label">${esc(fill(f.angry.note || `The {${f.word}} is angry!`))}</p>`
         + `<p class="prompt">${esc(fill(f.angry.then || ''))}</p>`);
       rears(f); if (line) speakLine(line);
       await open; note = '';
@@ -263,7 +253,7 @@ async function fight(id, opts = {}){
   if (left <= 0){
     earn(f.reward || 0); save(); SFX.fanfare();
     const beaten = bossLine(f, 'beaten');
-    const won = infoBox(scene('gone'), `${beaten ? bossLineHTML(beaten, img) : ''}<p class="label center">${ui('You win!')}</p><p class="endmsg">${esc(fill(f.away || foeSays(f, 'away')))}${f.reward ? ` +${f.reward} ${MONEY()}` : ''}</p>`);
+    const won = infoBox(scene('gone'), `${beaten ? bossLineHTML(beaten, img) : ''}<p class="label center">You win!</p><p class="endmsg">${esc(fill(f.away || `The {${f.word}} runs away.`))}${f.reward ? ` +${f.reward} ${MONEY()}` : ''}</p>`);
     if (beaten) speakLine(beaten);
     await won;
     return 'won';
@@ -275,7 +265,7 @@ async function fight(id, opts = {}){
   const at = [].concat(BATTLES.restAt || []).find(r => !r.if || matches(r.if)) || {};   // the first place to rest whose if matches
   if (at.at){ S.pos = {place:placeOf(at.at), x:at.at[0], y:at.at[1], dir:at.facing || 'down'}; }
   save();
-  await infoBox(scene(), `<p class="label center">${ui('Ouch!')}</p><p class="endmsg">${esc(fill(at.lost || BATTLES.lost || 'You’re worn out, and go back to rest.'))}</p>`);
+  await infoBox(scene(), `<p class="label center">Ouch!</p><p class="endmsg">${esc(fill(at.lost || BATTLES.lost || 'You’re worn out, and go back to rest.'))}</p>`);
   if (at.at){ foe = null; placePlayer(); showPlaceName(); }
   return 'lost';
 }
@@ -284,15 +274,12 @@ async function fight(id, opts = {}){
 function battleTurn(f, head, note, said = ''){
   return new Promise(res => {
     const food = hurt() && healFood();
-    // (learning English, each in English, then its Chinese: hit 打; Eat's says what you'd eat)
-    const acts = [['hit', '打', 'dǎ', 'Hit', 'hit', ui('Hit')],
-      food && ['eat', '吃', 'chī', `Eat: ${wz(food)} ×${S.bag[food]}`, 'eat', ui('Eat: {food} ×{n}', {food:wz(food), n:S.bag[food]})],
-      !f.boss && ['run', '跑', 'pǎo', 'Run away', 'run away', ui('Run away')]].filter(Boolean);
-    openCard(`${head}${said || `<p class="label">${note ? esc(note) : ui('Your turn')}</p><p class="prompt">${ui('What will you do?')}</p>`}
-      <div class="menu acts">${acts.map(([id, zh, py, en, enWord, label]) => LEARN === 'en'
-        ? `<button class="act" data-act="${id}" data-label="${ui(en.split(':')[0])}"><span class="z"${LANG}>${enWord}</span><span class="p"></span><span class="e">${esc(ui(label))}</span></button>`
-        : `<button class="act" data-act="${id}" data-label="${en.split(':')[0]}"><span class="z">${zh}</span><span class="p">${py}</span><span class="e">${esc(en)}</span></button>`).join('')}</div>
-      <div class="actions qfoot"><div class="feedback"></div><span class="btn qspace" aria-hidden="true">${ui('Next')}</span></div>`);   // (a question's bottom row, kept empty, so nothing jumps between them)
+    const acts = [['hit', '打', 'dǎ', 'Hit'],
+      food && ['eat', '吃', 'chī', `Eat: ${wz(food)} ×${S.bag[food]}`],
+      !f.boss && ['run', '跑', 'pǎo', 'Run away']].filter(Boolean);
+    openCard(`${head}${said || `<p class="label">${note ? esc(note) : 'Your turn'}</p><p class="prompt">What will you do?</p>`}
+      <div class="menu acts">${acts.map(([id, zh, py, en]) => `<button class="act" data-act="${id}" data-label="${en.split(':')[0]}"><span class="z">${zh}</span><span class="p">${py}</span><span class="e">${esc(en)}</span></button>`).join('')}</div>
+      <div class="actions qfoot"><div class="feedback"></div><span class="btn qspace" aria-hidden="true">Next</span></div>`);   // (a question's bottom row, kept empty, so nothing jumps between them)
     const first = sheet.querySelector('.act'); if (first) first.focus();
     sheet.querySelectorAll('.act').forEach(b => b.onclick = () => { SFX.blip(); res(b.dataset.act); });
   });
@@ -305,23 +292,23 @@ async function dodge(f, head, note, after = () => {}, nth = null){   // (nth: [t
   const a = mine[0] || any[0];
   const others = soundApart(a, [...mine.slice(1), ...any.filter(w => w !== a && !mine.includes(w))], 2);   // (you hear it: no look-alikes, and none that sound alike)
   const opts = shuffle([a, ...others]);
-  const strikes = fill(f.attack || foeSays(f, 'attack'));
-  return pictureQ({head, body:`<p class="label">${esc(note ? note + ' ' : '')}${esc(fill(f.hide || foeSays(f, 'hide')))}${nth ? ` <b class="twice">${ui('Attack {i} of {n}', {i:nth[0], n:nth[1]})}</b>` : ''}</p>`
-      + `<div class="askrow"><p class="prompt">${esc(ui(f.dodge || 'Listen. Where is it coming from? Pick it to jump aside.'))}</p><button class="sayBig" data-a="say" aria-label="${ui('Play the word again')}">🔊</button></div>`,
-    word:a, type:'listen', options:opts.map(o => `<span class="ico">${picHTML(o)}</span><span class="cap"${LANG}>${wd(o)}</span>${laterPy(o)}`), answerIdx:opts.indexOf(a),
+  const strikes = fill(f.attack || `The {${f.word}} attacks!`);
+  return pictureQ({head, body:`<p class="label">${esc(note ? note + ' ' : '')}${esc(fill(f.hide || `The {${f.word}} hides!`))}${nth ? ` <b class="twice">Attack ${nth[0]} of ${nth[1]}</b>` : ''}</p>`
+      + `<div class="askrow"><p class="prompt">${esc(f.dodge || 'Listen. Where is it coming from? Pick it to jump aside.')}</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`,
+    word:a, type:'listen', options:opts.map(o => `<span class="ico">${picHTML(o)}</span><span class="cap">${o}</span>${laterPy(o)}`), answerIdx:opts.indexOf(a),
     helper:helperHTML(), onShow:() => { setTimeout(() => say(a), 300); wireHelper(opts.length, opts.indexOf(a)); },
     onAnswer:ok => {   // it leaps out of where it was: you jump aside, or it hits you
       const fb = sheet.querySelector('.feedback'), sc = sheet.querySelector('.scene');
       sc.querySelector('.from').innerHTML = picHTML(a);
-      sc.classList.add('strike'); sc.classList.add(ok ? 'dodged' : 'struck'); sc.querySelector('.fx').textContent = ui(ok ? 'Missed you!' : 'Ouch!');
+      sc.classList.add('strike'); sc.classList.add(ok ? 'dodged' : 'struck'); sc.querySelector('.fx').textContent = ok ? 'Missed you!' : 'Ouch!';
       SFX.swish(.25);
       const lb = sheet.querySelector('.label'); lb.style.minHeight = lb.offsetHeight + 'px'; lb.textContent = strikes;   // it strikes! (the line kept as tall, so nothing under it moves)
       after(ok, sc);
-      if (ok) fb.innerHTML += `<br><b>${ui('You jump aside!')}</b>`;
+      if (ok) fb.innerHTML += '<br><b>You jump aside!</b>';
       else {
         S.health = Math.max(0, health() - f.hits); save(); SFX.thwack(.5);
         setHealth(sc.querySelector('.plate.mine'), health(), maxHealth());
-        fb.innerHTML += `<br><b>${ui('Ouch!')}</b>`;
+        fb.innerHTML += '<br><b>Ouch!</b>';
       }
     }});
 }
@@ -329,7 +316,7 @@ async function dodge(f, head, note, after = () => {}, nth = null){   // (nth: [t
 // Your streak: STREAK dots under your health, one lit for each right answer in a row; all lit, your stick glows (.charged)
 // and your next right hit counts POWER times over, then they go out again, as they do with a wrong answer.
 const STREAK = 3, POWER = 3;
-const streakHTML = n => `<div class="streak" role="img" aria-label="${ui('Right in a row: {n} of {of}', {n:Math.min(n, STREAK), of:STREAK})}">`
+const streakHTML = n => `<div class="streak" role="img" aria-label="Right in a row: ${Math.min(n, STREAK)} of ${STREAK}">`
   + Array.from({length:STREAK}, (_, i) => `<i class="pip${i < n ? ' on' : ''}"></i>`).join('') + '</div>';
 function showStreak(sc, n){
   const el = sc.querySelector('.streak'); if (el) el.outerHTML = streakHTML(n);
@@ -354,10 +341,10 @@ function weakest(avoid){
 // battle's lost (from the story), or the enemy's, and a tip on eating, once you know 吃.
 function tryAgain(head, f, opts){
   return new Promise(res => {
-    const said = opts.lost || f.lost || foeSays(f, 'lost');
+    const said = opts.lost || f.lost || `The {${f.word}} is too strong for you this time.`;
     const tip = lvl('吃') >= 1 ? `<p class="prompt">${esc(fill('When your health is low, {吃|eat} something from your bag on your turn.'))}</p>` : '';
-    openCard(`${head}<p class="label center">${ui('Ouch!')}</p><p class="endmsg">${esc(fill(said))}${ui(' Your health is full again.')}</p>${tip}
-      <div class="actions"><button class="btn" data-a="back" data-b>${ui('Not now')}</button><button class="btn primary" data-a="ok">${ui('Try again')}</button></div>`);
+    openCard(`${head}<p class="label center">Ouch!</p><p class="endmsg">${esc(fill(said))} Your health is full again.</p>${tip}
+      <div class="actions"><button class="btn" data-a="back" data-b>Not now</button><button class="btn primary" data-a="ok">Try again</button></div>`);
     on('[data-a=ok]', () => { closeCard(); res(true); });
     on('[data-a=back]', () => { closeCard(); res(false); });
   });
@@ -368,7 +355,7 @@ function tryAgain(head, f, opts){
 // on its own, as the battle began, looked odd).
 function rears(f){
   const sc = sheet.querySelector('.scene'); if (!sc) return;
-  sc.querySelector('.fx').textContent = ui(f.cry || '');
+  sc.querySelector('.fx').textContent = f.cry || '';
   SFX.rumble(); setTimeout(shake, 380);
 }
 // What a boss says (its says: meet, angry, beaten, each a line of the area's lines), shown at the top of its card, its
@@ -377,10 +364,10 @@ const bossLine = (f, when) => f.says && f.says[when] && L[f.says[when]] || null;
 function bossLineHTML(line, img){
   const first = heardLine(line.t);   // (its English the first three times, and after a day away)
   return `<div class="bossline">${lineHTML(line.t)}<div class="gloss"></div>`
-    + `<div class="blfoot"><div class="sentence-en"${first ? '' : ' hidden'}>${esc(line.en)}</div><button class="tbtn" data-a="sayline" aria-label="${ui('Hear it again')}">🔊</button>${first ? '' : `<button class="tbtn" data-a="blen">${ui('English')}</button>`}</div></div>`;
+    + `<div class="blfoot"><div class="sentence-en"${first ? '' : ' hidden'}>${esc(line.en)}</div><button class="tbtn" data-a="sayline" aria-label="Hear it again">🔊</button>${first ? '' : '<button class="tbtn" data-a="blen">English</button>'}</div></div>`;
 }
 function speakLine(line){
-  const text = lineSay(line);
+  const text = line.t.join('');
   say(text);
   const b = sheet.querySelector('[data-a=sayline]'); if (b) b.onclick = () => say(text);
   const en = sheet.querySelector('[data-a=blen]'); if (en) en.onclick = () => { sheet.querySelector('.bossline .sentence-en').hidden = false; en.remove(); };
@@ -390,7 +377,7 @@ function speakLine(line){
 async function bossNameCard(f, img){
   const wrap = document.querySelector('#screenWrap'); if (!wrap || typeof document.createElement !== 'function') return;
   const d = document.createElement('div'); d.className = 'bosstitle';
-  d.innerHTML = `<div class="band">${img}<div class="bt"><div class="bk">${ui('Boss fight!')}</div><div class="bz"${LANG}>${foeZh(f)} <span>${foePy(f)}</span></div></div></div>`;
+  d.innerHTML = `<div class="band">${img}<div class="bt"><div class="bk">Boss fight!</div><div class="bz">${foeZh(f)} <span>${foePy(f)}</span></div></div></div>`;
   wrap.appendChild(d); SFX.drum(); setTimeout(() => SFX.drum(), 180);
   await sleep(1700);
   d.classList.add('out'); await sleep(260); d.remove();

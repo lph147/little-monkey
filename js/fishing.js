@@ -46,9 +46,9 @@ const fishQ = (w, n, total) => catchQ(w, n, total, FISH.rod, fill(FISH.reel));
 // picked up (the grab step, js/world.js).
 async function catchQ(w, n, total, pic, label){
   const listen = lvl(w) <= 1, q = wordQuestion(w, null, listen ? 'listen' : 'read');
-  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${picHTML(pic)}</div><p class="label">${esc(ui(label))}${total > 1 ? ui(' ({i} of {n})', {i:n, n:total}) : ''} ${ui(listen ? 'Listen.' : 'Read it.')} ${ui('Which is it?')}</p></div>`,
-    body:listen ? `<div class="hearit"><button class="sayBig" data-a="say" aria-label="${ui('Hear it again')}">🔊</button></div>`
-      : `<div class="word"><div class="big"${LANG}>${wd(w)}</div>${showPy() ? `<div class="py">${wpy(w)}</div>` : ''}</div>`,
+  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${picHTML(pic)}</div><p class="label">${esc(label)}${total > 1 ? ` (${n} of ${total})` : ''} ${listen ? 'Listen.' : 'Read it.'} Which is it?</p></div>`,
+    body:listen ? '<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>'
+      : `<div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`,
     options:q.options, answerIdx:q.answerIdx, word:w, onShow:() => { if (listen) setTimeout(() => say(w), 300); }});
   closeCard();
   if (ok) answer(w, true, listen ? 'listen' : 'read'); else reviewed(w, false);

@@ -409,11 +409,15 @@ test('a version 39 save has no new words marked in its Word Scroll: nothing new 
   assert.deepEqual(saveOf(loadGame()).scrollNew, [], 'a new game starts with nothing new');
 });
 
-test('a version 40 save learns Chinese, as every game did (version 41: Both ways, a game can learn English instead)', () => {
-  const old = {version: 40, started: true, area: 1, w: {'山': {lv: 1, ok: 0}}, pos: {place: 'meadow', x: 13, y: 7, dir: 'up'}, areas: {1: {elder: 2}}};
+test('a version 41 save, from the few hours a game could learn English, loads as a game learning Chinese, keeping its words (version 42: learning English on hold)', () => {
+  const old = {version: 41, learn: 'en', ipa: true, script: 'tw', started: true, area: 1, shells: 9, w: {'桃子': {lv: 2, ok: 1}, '山': {lv: 1, ok: 0}},
+    pos: {place: 'meadow', x: 13, y: 7, dir: 'up'}, areas: {1: {elder: 2, meadowCheck: 1}}};
   const s = saveOf(loadGame({save: old}));
   assert.equal(s.version, VERSION);
-  assert.equal(s.learn, 'zh');
-  assert.deepEqual(s.w['山'], {lv: 1, ok: 0}, 'its words as they were');
-  assert.equal(saveOf(loadGame()).learn, 'zh', 'a new game learns Chinese');
+  assert.deepEqual(['learn', 'ipa', 'script'].filter(k => k in s), [], 'nothing left of learning English');
+  assert.deepEqual([s.w['桃子'], s.w['山'], s.shells, s.areas[1].elder], [{lv: 2, ok: 1}, {lv: 1, ok: 0}, 9, 2], 'its words and everything else as they were');
+  const zh = saveOf(loadGame({save: {...old, learn: 'zh', ipa: false, script: undefined}}));
+  assert.deepEqual([zh.version, 'learn' in zh, zh.w['桃子']], [VERSION, false, {lv: 2, ok: 1}], 'a game that learned Chinese then too');
+  const v40 = saveOf(loadGame({save: {...old, version: 40, learn: undefined, ipa: undefined, script: undefined}}));
+  assert.deepEqual([v40.version, v40.w['山']], [VERSION, {lv: 1, ok: 0}], 'and one from before it, as ever');
 });

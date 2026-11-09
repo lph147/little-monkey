@@ -18,31 +18,15 @@ test(`${ENTRY} loads every script in js/ and content/`, () => {
 // keeps the dot on ī ǐ), so Latin letters, in English and in pinyin, come from another font.
 test('English and pinyin get their Latin letters (and curly quotes) from a font that draws them properly', () => {
   const css = fs.readFileSync(path.join(ROOT, 'css/game.css'), 'utf8');
-  const fonts = fs.readFileSync(path.join(ROOT, 'fonts/fonts.css'), 'utf8');
+  const html = fs.readFileSync(path.join(ROOT, ENTRY), 'utf8');
   assert.match(css, /\bbody\{[^}]*font-family:var\(--en\)/, 'the page text should use --en');
   assert.match(css, /--en:\s*var\(--text\)/, 'English text uses the same fonts as Chinese and pinyin');
   const font = /--text:\s*"([^"]+)",\s*"Noto Sans SC"/.exec(css);
   assert.ok(font, '--text should start with a Latin font, before the Chinese one');
-  // loaded whole, for every letter with a tone mark (not just some): one of its pieces holds each of them
-  const ranges = [...fonts.matchAll(/@font-face\s*\{([^}]*)\}/g)].map(m => m[1]).filter(b => b.includes(`'${font[1]}'`))
-    .flatMap(b => /unicode-range:\s*([^;]+);/.exec(b)[1].split(',').map(r => r.trim().replace(/^U\+/i, '')));
-  assert.ok(ranges.length, `fonts/fonts.css should load ${font[1]}`);
-  const holds = c => ranges.some(r => { const [a, b = a] = r.split('-').map(h => parseInt(h, 16)); return c >= a && c <= b; });
-  for (const ch of 'āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü‘’“”') assert.ok(holds(ch.codePointAt(0)), `${font[1]} should have ${ch}`);
-});
-
-// The fonts are kept with the game (decided 9 November 2026: Google Fonts is blocked in mainland China, where the game
-// will be played learning English): the very files Google served, so the game looks just as it did.
-test('the fonts come from the game’s own files, not from another site, and every piece of them is there', () => {
-  const html = fs.readFileSync(path.join(ROOT, ENTRY), 'utf8');
-  assert.ok(!/fonts\.(googleapis|gstatic)\.com/.test(html), `${ENTRY} should load nothing from Google Fonts`);
-  assert.match(html, /<link rel="stylesheet" href="fonts\/fonts\.css">/, `${ENTRY} should load fonts/fonts.css`);
-  const fonts = fs.readFileSync(path.join(ROOT, 'fonts/fonts.css'), 'utf8');
-  assert.ok(!/https?:/.test(fonts.replace(/\/\*[\s\S]*?\*\//g, '')), 'every font file is the game’s own');
-  const files = new Set([...fonts.matchAll(/url\(([^)]+)\)/g)].map(m => m[1]));
-  assert.ok(files.size > 100, 'the Chinese font comes in pieces, so only those needed are downloaded');
-  for (const f of files) assert.ok(fs.existsSync(path.join(ROOT, 'fonts', f)), `fonts/${f} is missing`);
-  for (const family of ['Noto Sans SC', 'Pixelify Sans', 'Source Sans 3']) assert.ok(fonts.includes(`font-family: '${family}'`), `${family} should be in fonts/fonts.css`);
+  const link = [...html.matchAll(/href="([^"]*fonts\.googleapis\.com[^"]*)"/g)].map(m => decodeURIComponent(m[1]))
+    .find(u => u.includes(`family=${font[1].replace(/ /g, '+')}:`));
+  assert.ok(link, `${ENTRY} should load ${font[1]}`);
+  assert.ok(!/[?&]text=/.test(link), `${font[1]} should be loaded whole, for every letter with a tone mark (not just some, with text=)`);
 });
 
 // CHINESE.md lists all the game's Chinese for a native speaker to check (tools/chinese-sheet.js).
@@ -57,11 +41,4 @@ test('draft sentences waiting to be checked only use words in the word bank (a n
   const bank = JSON.parse(loadGame().run('JSON.stringify(WORD_BANK)'));
   for (const d of DRAFTS.filter(d => !d.py)) for (const w of d.zh.split(' ')) assert.ok(bank[w] || ['。', '！', '，', '？', '、', '……'].includes(w), `the draft "${d.zh}" uses ${w}, which isn't in the word bank`);
   for (const d of DRAFTS.filter(d => d.py)) assert.ok(!d.zh.includes(' ') && d.py.split(' ').length === [...d.zh].length, `the name "${d.zh}": its pinyin (${d.py}) says each character`);
-});
-
-// Learning English (Both ways): CHINESE-UI.md, all the game's Chinese for a native speaker to check, and ENGLISH.md, all
-// its English, for a native speaker of English (tools/both-ways-sheets.js).
-test('CHINESE-UI.md and ENGLISH.md are up to date with the content (if not, run: npm run chinese)', () => {
-  const {FILES} = require('../tools/both-ways-sheets');
-  for (const [file, make] of Object.entries(FILES)) assert.equal(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n'), make(), `${path.basename(file)} is out of date: run npm run chinese`);
 });

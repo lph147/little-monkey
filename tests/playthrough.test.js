@@ -9,22 +9,8 @@ const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 const {watchBeside, besideTasks} = require('./beside');
 
-// Learning English (Both ways, decided 9 November 2026), the same playthrough, in Chinese: what the game says in your own
-// language, through ui() (js/lang.js), is marked as it's made, if it's one of the pieces of text that have a Chinese (or
-// will have: tools/ui-strings.js finds them all, and tests/chinese-ui.test.js checks each has its Chinese), so anything on
-// the screen in English that isn't marked, nor the English you're learning (lang="en"), is English that never went
-// through it, or that has no Chinese (leaks, checked at the end).
-const OPEN = '\u2063', SHUT = '\u2064';
-const markUI = (file, run) => {
-  if (file !== 'js/lang.js') return;
-  const keys = [...require('../tools/ui-strings').uiStrings().keys()];
-  run(`(() => { for (const k of ${JSON.stringify(keys)}) if (!Object.hasOwn(ZH_UI, k)) ZH_UI[k] = k;
-    const u = ui; ui = (t, v) => { const r = u(t, v); return typeof r === 'string' && r && Object.hasOwn(ZH_UI, t) ? '${OPEN}' + r + '${SHUT}' : r; }; })()`);
-};
-
-async function playFlowerFruitMountain(learn){
-  const zh = learn === 'zh';
-  const game = loadGame({dom: true, ...(zh ? {} : {search: '?learn=en', extra: ['#saybox', '#placeName'], onScript: markUI})});
+test('Flower Fruit Mountain can be played from start to finish', async () => {
+  const game = loadGame({dom: true});
   watchBeside(game);   // (no task about someone as you finish with them, still beside them: they go straight on)
   const run = code => game.run(code);
   const get = expr => JSON.parse(run(`JSON.stringify(${expr})`));
@@ -39,30 +25,6 @@ async function playFlowerFruitMountain(learn){
   // Notice what the game asks, as a player hears and reads it: the word in a question or the gap.
   run(`(() => { const pq = pictureQ; pictureQ = q => { globalThis.__q = q; return pq(q); }; })()`);
   run(`globalThis.__said = []; (() => { const s = say; say = (text, end) => { __said.push(text); return s(text, end); }; })()`);   // everything said aloud, to check it has a voice clip
-  // (learning English, a line said in English is noted with its Chinese too, so the checks below can name it in Chinese)
-  // (every sentence the content writes in both, {zh, en}, {sentence, sentenceEn} or {sentence, en}, and every line as it's said)
-  if (!zh) run(`globalThis.__zhOf = new Map(); (() => { const seen = new Set(), walk = o => { if (!o || typeof o !== 'object' || seen.has(o)) return; seen.add(o);
-      if (typeof o.zh === 'string' && typeof o.en === 'string') __zhOf.set(o.en, o.zh.replace(/ /g, ''));
-      if (typeof o.sentence === 'string' && typeof (o.sentenceEn || o.en) === 'string') __zhOf.set(o.sentenceEn || o.en, o.sentence.replace(/ /g, ''));
-      Object.values(o).forEach(walk); }; walk(AREA); })();
-    for (const k of Object.keys(AREA.lines)) __zhOf.set(lineSay(L[k]), AREA.lines[k].zh.replace(/ /g, ''));
-    for (const p of [...COLOUR_SENTENCES(), ...IS_IT_SENTENCES()]) __zhOf.set(p.en, p.zh.replace(/ /g, '')); (() => { const s = say; say = (text, end) => { const r = s(text, end); if (__zhOf.has(text)) __said.push(__zhOf.get(text)); return r; }; })()`);
-  const leaks = new Map();   // (learning English: text in English on the screen, and what you were doing)
-  function scanLeaks(what){
-    for (const root of [sheet, talkBox, game.el('#textbox'), game.el('#aLabel'), game.el('#bLabel'), game.el('#more'), game.el('#saybox'), game.el('#placeName')]){
-      if (!root || root.hidden) continue;
-      let depth = 0, out = '';   // (what ui() made can run over several pieces of text, round a picture of an emoji)
-      const note = () => { if (/[A-Za-z]{2,}/.test(out) && !leaks.has(out.trim())) leaks.set(out.trim(), what); out = ''; };
-      (function walk(node, en){
-        for (const c of node.children){
-          if (c.children){ if (!c.hidden || c === root) walk(c, en || c.getAttribute('lang') === 'en'); continue; }
-          for (const ch of c.text){ if (ch === OPEN) depth++; else if (ch === SHUT) depth = Math.max(0, depth - 1); else if (!depth && !en) out += ch; }
-          if (!depth) note();
-        }
-      })(root, root.getAttribute('lang') === 'en');
-      note();
-    }
-  }
 
   const tick = () => new Promise(r => setImmediate(r));
   async function settle(){   // let the game finish what it's doing, including anything it waits for (timers)
@@ -89,7 +51,7 @@ async function playFlowerFruitMountain(learn){
     const word = sheet.querySelectorAll('.mw').find(b => !b.classList.contains('done'));
     if (word){ word.click(); sheet.querySelector(`.mp[data-w="${word.dataset.w}"]`).click(); return; }   // matching: a word, then its picture
     const items = sheet.querySelectorAll('[data-n]');
-    if (items.length){ (items.find(b => plan.buy && b.querySelector(zh ? '.szh' : '.sen').textContent === plan.buy) || sheet.querySelector('[data-a=no]')).click(); return; }   // (learning English, its Chinese is under its English)
+    if (items.length){ (items.find(b => plan.buy && b.querySelector('.szh').textContent === plan.buy) || sheet.querySelector('[data-a=no]')).click(); return; }
     run('pressA()');   // the main button: OK, Got it, Next, Start, Give it, Say it...
   }
   const caught = () => get('Object.keys(WORDS).filter(w => lvl(w) >= 1)');
@@ -112,17 +74,15 @@ async function playFlowerFruitMountain(learn){
       const now = cardText() + sheet.querySelectorAll('.done, [disabled], [hidden]').length;
       same = now === last ? same + 1 : 0; last = now;
       if (same > 20) break;   // pressing changes nothing: stuck
-      if (!zh) scanLeaks(what);
       answer();
     }
     if (failed) throw failed;
     assert.ok(done, `stuck while ${what}: ${open() ? cardText() : 'no card open'}`);
     await settle();
-    if (!zh) scanLeaks(what);
     assert.ok(!open(), `a card was left open after ${what}: ${cardText()}`);
     const learned = caught().filter(w => !before.includes(w));
     assert.ok(learned.length <= most, `one new word at a time, but ${what} taught ${learned.join(' and ')}`);
-    if (!get('getTasks().length') && /coming soon/.test(get(zh ? 'tasksHint()' : '((AREA.hints.find(h => matches(h.if)) || {}).text || "")'))) deadEnds.push(what);   // nothing to do, it seems (learning English, the hint as written, in English)
+    if (!get('getTasks().length') && /coming soon/.test(get('tasksHint()'))) deadEnds.push(what);   // nothing to do, it seems
     const talkedTo = get('__talkedTo');
     if (learned.length && talkedTo.length){
       const who = talkedTo[0], at = get('__caughtAt');
@@ -218,20 +178,19 @@ async function playFlowerFruitMountain(learn){
   assert.ok(['rabbit', 'sheep', 'squirrel'].every(a => get('S.friends').includes(a)), 'every animal answered right becomes a friend');
 
   // The rest of the words for the meadow, which the old monkey asked you to learn: the fish in the pond, the river, and a bird
-  // (learning English, your tasks are in Chinese: what they say is checked learning Chinese, and the leaks below)
-  if (zh) assert.ok(get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow (2/5). Still to find: the river, the fish in the pond and a bird.')), 'your tasks say which are left');
+  assert.ok(get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow (2/5). Still to find: the river, the fish in the pond and a bird.')), 'your tasks say which are left');
   await pressAt(11, 8, 'down', 'looking at the pond');
   await pressAt(17, 10, 'right', 'looking at the river');
   run('birds.push({tx:9, ty:7, x:9*T + 4, y:7*T + 6, t0:performance.now(), until:performance.now() + 60000, from:1})');   // a little bird lands on the grass
   await pressAt(9, 6, 'down', 'looking at the little bird');
   for (const w of ['鱼', '河', '鸟']) assert.ok(knows(w), `${w} should be learned`);
-  if (zh) assert.ok(!get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow')), 'with all five, that task is done');
-  if (zh) assert.ok(get('getTasks()').some(t => t.text === 'Show the old monkey the words for the meadow'), 'and he wants to hear them');
+  assert.ok(!get('getTasks()').some(t => t.text.startsWith('Learn the words for the meadow')), 'with all five, that task is done');
+  assert.ok(get('getTasks()').some(t => t.text === 'Show the old monkey the words for the meadow'), 'and he wants to hear them');
   await pressAt(7, 2, 'up', 'showing the old monkey the words for the meadow, and being sent to meet the troop');
   assert.equal(area().meadowCheck, 1, 'matched: the rocks no longer wait for them');
   assert.ok(knows('猴子'), 'he sends you to meet the troop, teaching 猴子 (31 October 2026: the little monkey taught it, then 朋友, back to back)');
   assert.ok(!knows('朋友'), 'one new word at a time');
-  if (zh) assert.ok(get('getTasks()').some(t => t.text.startsWith('Meet the troop')), 'your tasks say to meet the troop');
+  assert.ok(get('getTasks()').some(t => t.text.startsWith('Meet the troop')), 'your tasks say to meet the troop');
 
   // The little monkey: its game is I spy, out in the meadow (the gentler prologue, decided 8 November 2026)
   await pressAt(15, 19, 'down', 'meeting the little monkey');
@@ -270,10 +229,10 @@ async function playFlowerFruitMountain(learn){
   await pressAt(13, 6, 'up', 'the hungry monkey wanting the other fruit now');
   assert.ok(knows('要'), '我要吃苹果！ teaches 要');
   assert.deepEqual([area().hungry2, area().wanted.hungry2], ['asked', '苹果'], 'he wants the apple');
-  if (zh) assert.ok(get('getTasks()').some(t => t.text === 'Find the apple the hungry monkey wants now'), 'a task names a word you haven’t caught in plain English');
+  assert.ok(get('getTasks()').some(t => t.text === 'Find the apple the hungry monkey wants now'), 'a task names a word you haven’t caught in plain English');
   await pressAt(20, 17, 'right', 'picking an apple from the tree across the river');
   assert.ok(knows('苹果'));
-  if (zh) assert.ok(get('getTasks()').some(t => t.text === 'Give the 苹果 (apple) to the hungry monkey'), 'once caught, in Chinese and English');
+  assert.ok(get('getTasks()').some(t => t.text === 'Give the 苹果 (apple) to the hungry monkey'), 'once caught, in Chinese and English');
   await pressAt(13, 6, 'up', 'giving the hungry monkey the apple');
   assert.equal(area().hungry2, 'done', 'the hungry monkey should take the apple');
 
@@ -282,7 +241,7 @@ async function playFlowerFruitMountain(learn){
   assert.ok(knows('我'), 'he says who he is, teaching 我 (I)');
   assert.equal(area().flowers, 'not asked', 'he doesn’t ask for flowers');
   for (const w of ['红色', '黄色', '白色']) assert.ok(!knows(w), `${w} waits for school`);
-  if (zh) assert.ok(!get('getTasks()').some(t => t.text.startsWith('Meet the troop')), 'the troop met');
+  assert.ok(!get('getTasks()').some(t => t.text.startsWith('Meet the troop')), 'the troop met');
 
   // The practice post: matching pictures, then listening for words without pictures
   const unpicturedOk = () => get("unpictured().reduce((n, w) => n + S.w[w].ok, 0)"), okBefore = unpicturedOk();
@@ -431,7 +390,7 @@ async function playFlowerFruitMountain(learn){
   // The night animals (8 November 2026): once you've seen a night, chapter 1's checklist wants the four that come out after
   // dark near home. A bat flits over the home ground's stream (by day it hangs asleep in the Water Curtain Cave), and a
   // hedgehog snuffles in the meadow's long grass; the cricket and the fireflies come later, at night on the way
-  if (zh) assert.match(get('areaChecklist().map(([t]) => t).join(" ")'), /Find the 动物 \(animals\) that come out at night, near home \(0\/4\)/, 'a line of its own on the checklist');
+  assert.match(get('areaChecklist().map(([t]) => t).join(" ")'), /Find the 动物 \(animals\) that come out at night, near home \(0\/4\)/, 'a line of its own on the checklist');
   await pressAt(19, 17, 'down', 'meeting the bat over the stream, at night');
   assert.ok(knows('蝙蝠') && get('S.friends').includes('bat'), 'the bat (蝙蝠) is your friend');
   goTo('meadow', 5, 10, 'down');
@@ -547,7 +506,7 @@ async function playFlowerFruitMountain(learn){
   assert.ok(['四', '五', '六'].every(knows) && !knows('七'), 'the first lesson teaches three new numbers: 四, 五 and 六');
   // After a lesson that teaches new words, the next new word waits till you've answered 8 more questions, anywhere (decided
   // 26 October 2026): your tasks say so, and the teacher gives you a practice lesson, saying so first
-  if (zh) assert.match(get('getTasks().map(t => t.text).join(" / ")'), /Practise before your next lesson, Maths lesson 2 or Art lesson 1: answer questions anywhere \(0\/8\)/);
+  assert.match(get('getTasks().map(t => t.text).join(" / ")'), /Practise before your next lesson, Maths lesson 2 or Art lesson 1: answer questions anywhere \(0\/8\)/);
   await pressAt(7, 3, 'up', 'a lesson while the next new word waits: practice', 0);
   assert.ok(!knows('红色'), 'practice: nothing new');
   assert.ok(!get('getTasks().some(t => t.id === "practise")') && run('!!lessonNow()'), 'practised: the colours are ready');
@@ -592,13 +551,13 @@ async function playFlowerFruitMountain(learn){
   assert.ok(get('__said').includes('我们没有蜂蜜！') && knows('没有'), 'the hungry monkey teaches 没有');
   assert.equal(area().feast, 3);
   await pressAt(17, 8, 'up', 'looking at the feast’s list');
-  assert.ok(get(zh ? "!!S.lines['我们没有蜂蜜。'] && !!S.lines['我们有桃子。']" : "!!S.lines[lineKey(enToks('We don’t have any honey.'))] && !!S.lines[lineKey(enToks('We have peaches.'))]"), 'the list shows what the troop has, and what the feast still needs');
+  assert.ok(get("!!S.lines['我们没有蜂蜜。'] && !!S.lines['我们有桃子。']"), 'the list shows what the troop has, and what the feast still needs');
   // A little monkey asks you to play hide and seek (a side quest): you count to ten with your eyes covered, and it calls
   // out where it's hiding, its English with the place's word in Chinese; A at the wrong place, and it calls out again;
   // after two wrong guesses its tail pokes out; found, it jumps out, with shells the first time
   await pressAt(13, 9, 'up', 'playing hide and seek with a little monkey');
   assert.ok(['我们来捉迷藏吧！', '一，二，三，四，五，六，七，八，九，十！', '我来了！'].every(t => get('__said').includes(t)), 'it asks you to play, and you count to ten');
-  const hidden = area().hide.spot, clue = get(zh ? 'L[hideSpot(here().hide.spot).say].t.join("")' : 'lineSay(L[hideSpot(here().hide.spot).say])');
+  const hidden = area().hide.spot, clue = get('L[hideSpot(here().hide.spot).say].t.join("")');
   assert.ok(hidden && get('__said').includes(clue), 'it calls out where it’s hiding');
   assert.ok(!get("NPCS.some(n => n.id === 'hider')"), 'and it’s gone from where it stood');
   const LOOK = {tree: [19, 4, 'left'], table: [17, 8, 'up'], bridge: [16, 17, 'down'], water: [17, 15, 'right'], flowers: [25, 2, 'right']};   // where you stand to look at each place
@@ -1068,17 +1027,8 @@ async function playFlowerFruitMountain(learn){
   assert.deepEqual(get('ORDER.filter(w => lvl(w) < 1)').sort(), ['戴', '睡觉', '黄鼠狼', '卖', ...trade].sort(), 'the words this player hasn’t caught');
 
   // Everything said on the way has a voice clip (npm run voices makes them)
-  const said = get('__said');
+  const clips = require('../tools/make-voices').plan().clips, said = get('__said');
   assert.ok(said.length > 50, 'the game should say plenty aloud');
-  {
-    const p = require('../tools/make-voices').plan(), voices = Object.values(zh ? p.who : p.whoEn);   // (learning English, the English voices)
-    const heard = [...new Set(said)].filter(t => zh || !/[\u4e00-\u9fff]/.test(t));   // (learning English, what's said, not the Chinese noted with it for the checks above)
-    const missing = heard.filter(t => !voices.some(v => p.clips[v] && p.clips[v][t]));   // in one of the voices
-    assert.deepEqual(missing, [], 'these are said but have no voice clip: tools/make-voices.js should find them in the content');
-  }
-  // Learning English, nothing on the screen is in English but the English you're learning
-  if (!zh) assert.deepEqual([...leaks].map(([t, what]) => `${t}   (${what})`), [], 'learning English, this was on the screen in English');
-}
-
-test('Flower Fruit Mountain can be played from start to finish', () => playFlowerFruitMountain('zh'));
-test('Flower Fruit Mountain can be played from start to finish learning English, all in Chinese', () => playFlowerFruitMountain('en'));
+  const missing = [...new Set(said)].filter(t => !Object.values(clips).some(c => c[t]));   // in one of the voices
+  assert.deepEqual(missing, [], 'these are said but have no voice clip: tools/make-voices.js should find them in the content');
+});

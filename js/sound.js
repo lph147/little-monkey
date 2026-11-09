@@ -574,8 +574,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) music
 
 /* ================= SPEECH ================= */
 let zhVoice = null, speaking = false, speakSafety = 0, uttRef = null, clipSrc = null;
-function pickVoice(){ try { const vs = speechSynthesis.getVoices(); zhVoice = LEARN === 'en' ? vs.find(v => /en[-_]GB/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null   // (learning English, the device's English voice: British, if it has one)
-  : vs.find(v => /zh[-_]CN/i.test(v.lang)) || vs.find(v => /^zh/i.test(v.lang)) || null; } catch(e) {} }
+function pickVoice(){ try { const vs = speechSynthesis.getVoices(); zhVoice = vs.find(v => /zh[-_]CN/i.test(v.lang)) || vs.find(v => /^zh/i.test(v.lang)) || null; } catch(e) {} }
 if ('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
 // What's wrong with the Chinese voice, if anything: 'none' if this browser can't speak at all,
 // 'missing' if it has voices but no Chinese one, '' if all is well (or the voices haven't loaded yet).
@@ -584,7 +583,7 @@ function voiceProblem(){
   if (!('speechSynthesis' in window)) return 'none';
   let vs = []; try { vs = speechSynthesis.getVoices() || []; } catch(e) {}
   if (!vs.length) return '';
-  return vs.some(v => LEARN === 'en' ? /^en/i.test(v.lang) : /^(zh|cmn)/i.test(v.lang)) ? '' : 'missing';
+  return vs.some(v => /^(zh|cmn)/i.test(v.lang)) ? '' : 'missing';
 }
 const VOICE_SHORT = {   // on the title screen, with VOICE_HELP behind "How to fix it"
   none: 'This browser can’t speak, so you won’t hear any Chinese.',
@@ -601,8 +600,7 @@ const canPlayClips = () => typeof VOICE_CLIPS !== 'undefined' && !!(window.Audio
 // there isn't one.
 function clipFor(text, who){
   if (typeof VOICE_CLIPS === 'undefined') return null;
-  const of = LEARN === 'en' ? (typeof VOICE_OF_EN === 'undefined' ? {} : VOICE_OF_EN) : VOICE_OF;   // (learning English, the English voices)
-  for (const v of [of[who], of.words, of.everyone]){
+  for (const v of [VOICE_OF[who], VOICE_OF.words, VOICE_OF.everyone]){
     const code = v && VOICE_CLIPS[v] && VOICE_CLIPS[v][text];
     if (code) return `audio/${v}/${code}.mp3`;
   }
@@ -676,7 +674,6 @@ function slowedClip(a, buf, rate){
 // Say some Chinese aloud: its clip if there is one (in who's voice), else the device's Chinese voice; at your voice
 // speed (or the 🐢's). onend runs when it's finished (or couldn't be said).
 function say(text, onend, who){
-  if (LEARN === 'en' && EN[text]) text = enW(text);   // (learning English, a word is said in English)
   const url = clipFor(text, who), a = url && getAC(), rate = sayRate(), slow = rate !== voiceSpeed();
   const ended = () => { if (slow) slowUntil = performance.now() + SLOW_GAP; if (onend) onend(); };   // (what's said straight after the 🐢's is slow too)
   if (!a) return sayDevice(text, ended, rate);
@@ -707,7 +704,7 @@ function sayDevice(text, onend, rate = voiceSpeed()){
     if (!('speechSynthesis' in window)) { onend && onend(); return; }
     const ss = speechSynthesis;
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = LEARN === 'en' ? 'en-GB' : 'zh-CN'; if (zhVoice) u.voice = zhVoice; u.rate = 0.8 * rate;
+    u.lang = 'zh-CN'; if (zhVoice) u.voice = zhVoice; u.rate = 0.8 * rate;
     const done = () => { if (uttRef !== u) return; speaking = false; duck(); if (onend) onend(); };
     u.onend = done; u.onerror = done;
     uttRef = u; window.__lastUtterance = u;   // keep a reference so the browser does not cut it off

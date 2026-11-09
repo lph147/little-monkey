@@ -10,14 +10,14 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
   // November 2026, after playing it).
   clearMessage();
   return new Promise(res => {
-    openCard(`${head}${body}<div class="opts" data-nav>${options.map((o,i) => `<button class="opt${text ? ' hz' : ''}" data-i="${i}" aria-label="${ui('Option {n}', {n:i + 1})}">${o}</button>`).join('')}</div>
-      <div class="actions qfoot"><div class="feedback" aria-live="polite">${helper}</div>${stop ? `<button class="btn" data-a="stop" data-b>${ui('Stop')}</button>` : ''}<button class="btn primary" data-a="next" hidden>${ui('Next')}</button></div>`);
+    openCard(`${head}${body}<div class="opts" data-nav>${options.map((o,i) => `<button class="opt${text ? ' hz' : ''}" data-i="${i}" aria-label="Option ${i+1}">${o}</button>`).join('')}</div>
+      <div class="actions qfoot"><div class="feedback" aria-live="polite">${helper}</div>${stop ? '<button class="btn" data-a="stop" data-b>Stop</button>' : ''}<button class="btn primary" data-a="next" hidden>Next</button></div>`);
     if (stop) on('[data-a=stop]', () => { closeCard(); stop(); });
     bindTokens(sheet);
     if (onShow) onShow();
     const next = sheet.querySelector('[data-a=next]');
     on('[data-a=say]', () => { say(word || ''); if (!next.hidden) next.focus({preventScroll:true}); });   // (answered: Next keeps the gold outline)
-    on('[data-a=py]', e => { e.currentTarget.outerHTML = `<div class="py">${wpy(word)}</div>`; });
+    on('[data-a=py]', e => { e.currentTarget.outerHTML = `<div class="py">${WORDS[word].py}</div>`; });
     sheet.querySelectorAll('.opt').forEach(b => b.onclick = () => {
       const i = +b.dataset.i, ok = i === answerIdx;
       sheet.querySelectorAll('.opt').forEach(x => x.disabled = true);
@@ -31,17 +31,16 @@ function pictureQ({head, body, options, answerIdx, word, type, text, helper = ''
       ok ? SFX.right() : SFX.wrong();
       const fb = sheet.querySelector('.feedback');
       if (word){
-        fb.innerHTML = LEARN === 'en' ? `${ui(ok ? 'Yes!' : 'Not quite.')}<span class="hz"${LANG}>${esc(wd(word))}</span>${esc(wmean(word))}`   // (learning English, its Chinese either way)
-          : `${ok ? 'Yes!' : 'Not quite.'}<span class="hz">${word}</span>${WORDS[word].py} · ${esc(WORDS[word].en)}`;   // (the English either way, in case a picture wasn't clear)
+        fb.innerHTML = `${ok ? 'Yes!' : 'Not quite.'}<span class="hz">${word}</span>${WORDS[word].py} · ${esc(WORDS[word].en)}`;   // (the English either way, in case a picture wasn't clear)
         setTimeout(() => say(word), 250); if (type) answer(word, ok, type);
-      } else fb.textContent = ui(ok ? 'Yes!' : 'Not quite.');
+      } else fb.textContent = ok ? 'Yes!' : 'Not quite.';
       if (onAnswer) onAnswer(ok, i);   // (and which you chose)
       next.hidden = false; next.focus(); shown();   // (so A pressed again at once doesn't skip what it says)
       next.onclick = () => res(ok);
     });
   });
 }
-const laterPy = w => showPy() ? `<span class="cap py later">${wpy(w)}</span>` : '';   // an answer's pinyin, shown once you've answered
+const laterPy = w => S.pinyin ? `<span class="cap py later">${WORDS[w].py}</span>` : '';   // an answer's pinyin, shown once you've answered
 // A counting question (a number lesson), about n things (thing: its word, and where they are: on the teacher's table,
 // or together on the grass), with three numbers you know to choose from: the right one and the two nearest it.
 // While the right one is new, you hear it, and choose the one with that many things, each with its characters (and its
@@ -56,20 +55,20 @@ async function countQ({who, thing, n}){
   const opts = shuffle([num, ...apart(num, near, 2, listen)]);
   const things = k => Array.from({length:k}, () => `<span class="thing">${picHTML(thing.word)}</span>`).join('');
   let ok;
-  if (listen) ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${ui('Listen. Which has that many?')}</p></div>`,
-    body:`<div class="hearit"><button class="sayBig" data-a="say" aria-label="${ui('Hear it again')}">🔊</button></div>`,
+  if (listen) ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">Listen. Which has that many?</p></div>`,
+    body:'<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>',
     options:opts.map(w => { const k = howManyOf(w);   // (its characters, then its pinyin once you've answered, under it)
-      return `<span class="count few ${thing.on || 'table'}">${things(k)}</span><span class="under"><span class="cap"${LANG}>${wd(w)}</span>${laterPy(w)}</span>`; }),
+      return `<span class="count few ${thing.on || 'table'}">${things(k)}</span><span class="under"><span class="cap">${w}</span>${laterPy(w)}</span>`; }),
     answerIdx:opts.indexOf(num), word:num, onShow:() => setTimeout(() => say(num), 300)});
   else {
-    const line = L[thing.ask], text = lineSay(line);
+    const line = L[thing.ask], text = line.t.join('');
     hear(line.t);
     // (the question beside the teacher's face, then the things with its English beside them, so it all fits above the
     // answers on a small phone)
-    ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(line.t)}<button class="tbtn" data-a="ask" aria-label="${ui('Hear the question again')}">🔊</button></div>`,
+    ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div>${lineHTML(line.t)}<button class="tbtn" data-a="ask" aria-label="Hear the question again">🔊</button></div>`,
       body:`<div class="countq"><div class="count ${thing.on || 'table'}">${things(n)}</div>
         <div class="sentence-en">${esc(line.en)}</div></div><div class="gloss"></div>`,
-      options:opts.map(w => `${LEARN === 'en' ? `<span${LANG}>${wd(w)}</span>` : w}<span class="cap">${wpy(w)}</span>`),
+      options:opts.map(w => `${w}<span class="cap">${WORDS[w].py}</span>`),
       text:true, answerIdx:opts.indexOf(num), word:num,
       onShow:() => { say(text, null, who); on('[data-a=ask]', () => say(text, null, who)); }});
   }
@@ -87,7 +86,7 @@ const LESSON_QUESTIONS = 5;   // (in a number or colour lesson)
 const EACH_NEW = 3, MIXED = 2;   // (in a first lesson teaching several: questions on each new word as it comes, then mixing them)
 // Numbers that never answer how many there are: two things are 两 (liǎng), not 二, so 二 is never an answer (decided 21
 // October 2026; since 9 November 2026 two things are counted with 两, HOW_MANY_WORDS in js/world.js, once you know it).
-const NOT_HOW_MANY = LEARN === 'en' ? [] : ['二'];   // (learning English, two is how many too)
+const NOT_HOW_MANY = ['二'];
 // What a lesson asks (the right answers, in order) for one new word (one), given the others it can mix in (others), or
 // for several, one after another: each new word's questions as it comes, one of them a word you know already (one you
 // knew before, or a new one before it), in any order, so you always have to count or look (decided 26 October 2026: it
@@ -134,11 +133,11 @@ async function colourQ({who, w}){
   const colours = shuffle(ORDER.filter(x => known(x) && WORDS[x].category === WORDS[w].category));
   const pool = colours.length >= 2 ? colours : [...colours, ...shuffle(picWords().filter(x => known(x) && WORDS[x].category !== WORDS[w].category))];
   const opts = shuffle([w, ...apart(w, pool, 2, listen)]);
-  const which = opts.every(o => WORDS[o].category === WORDS[w].category) ? ui('Which paint is it?') : ui('Which is it?');
-  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${ui(listen ? 'Listen.' : 'Read it.')} ${ui(which)}</p></div>`,
-    body:listen ? `<div class="hearit"><button class="sayBig" data-a="say" aria-label="${ui('Hear it again')}">🔊</button></div>`
-      : `<div class="word"><div class="big"${LANG}>${wd(w)}</div>${showPy() ? `<div class="py">${wpy(w)}</div>` : ''}</div>`,
-    options:opts.map(o => `<span class="ico">${picHTML(o)}</span>${listen ? `<span class="cap"${LANG}>${wd(o)}</span>${laterPy(o)}` : ''}`),
+  const which = opts.every(o => WORDS[o].category === WORDS[w].category) ? 'Which paint is it?' : 'Which is it?';
+  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${listen ? 'Listen.' : 'Read it.'} ${which}</p></div>`,
+    body:listen ? '<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>'
+      : `<div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`,
+    options:opts.map(o => `<span class="ico">${picHTML(o)}</span>${listen ? `<span class="cap">${o}</span>${laterPy(o)}` : ''}`),
     answerIdx:opts.indexOf(w), word:w, onShow:() => { if (listen) setTimeout(() => say(w), 300); }});
   closeCard();
   if (ok) answer(w, true, listen ? 'listen' : 'read'); else reviewed(w, false);
@@ -173,7 +172,7 @@ async function paintLesson(series, words, who, {again = false} = {}){
 }
 const picWords = () => ORDER.filter(w => WORDS[w].pic);
 // A word's pinyin without its tones (ü as u, no spaces): the words that sound alike, to anyone just hearing them.
-const toneless = w => LEARN === 'en' ? enSoundKey(w) : WORDS[w].py.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s/g, '').toLowerCase();
+const toneless = w => WORDS[w].py.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s/g, '').toLowerCase();
 // Look-alikes (alike, in the word bank): words whose pictures share their main thing, or whose meanings overlap so a
 // picture of one could be taken for the other, such as 家 (home) and 学校 (school), 床 (bed) and 睡觉 (to sleep), or 动物
 // (animal) and any animal. They're never two answers in the same question (decided 23 October 2026, after playing it:
@@ -217,13 +216,13 @@ function wordQuestion(w, avoid, type = questionType(w), n = 3){
   const others = shuffle(picWords().filter(x => x !== w && x !== avoid && lvl(x) >= 1));
   const opts = shuffle([w].concat(apart(w, others, n - 1, type !== 'read')));   // (no look-alikes; listening, none that sound alike)
   let body;
-  if (type === 'listen') body = `<div class="askrow"><p class="prompt">${ui('Listen. Which picture is it?')}</p><button class="sayBig" data-a="say" aria-label="${ui('Play the word again')}">🔊</button></div>`;
-  else if (type === 'read') body = `<div class="askrow"><p class="prompt">${ui('Read it. Which picture is it?')}</p><div class="word"><div class="big"${LANG}>${wd(w)}</div>${showPy() ? `<div class="py">${wpy(w)}</div>` : ''}</div></div>`;   // (the word to read where a listening question has its 🔊: above the answers)
-  else body = `<div class="askrow"><p class="prompt">${ui('Listen. Which word is it?')}</p><button class="sayBig" data-a="say" aria-label="${ui('Play the word again')}">🔊</button></div>`;
+  if (type === 'listen') body = `<div class="askrow"><p class="prompt">Listen. Which picture is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
+  else if (type === 'read') body = `<div class="askrow"><p class="prompt">Read it. Which picture is it?</p><div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div></div>`;   // (the word to read where a listening question has its 🔊: above the answers)
+  else body = `<div class="askrow"><p class="prompt">Listen. Which word is it?</p><button class="sayBig" data-a="say" aria-label="Play the word again">🔊</button></div>`;
   // The answers: when listening, pictures with their characters; when reading, just pictures (the word has its
   // pinyin, so pinyin here would match itself); when hearing, the words with their pinyin. Never characters alone.
   // When listening, each one's pinyin shows once you've answered (before, you could match the sound to it).
-  const options = opts.map(o => type === 'hear' ? (LEARN === 'en' ? `<span${LANG}>${wd(o)}</span>` : o) + (showPy() ? `<span class="cap">${wpy(o)}</span>` : '') : `<span class="ico">${picHTML(o)}</span>${type === 'read' ? '' : `<span class="cap"${LANG}>${wd(o)}</span>${laterPy(o)}`}`);
+  const options = opts.map(o => type === 'hear' ? o + (S.pinyin ? `<span class="cap">${WORDS[o].py}</span>` : '') : `<span class="ico">${picHTML(o)}</span>${type === 'read' ? '' : `<span class="cap">${o}</span>${laterPy(o)}`}`);
   return {type, body, opts, options, text:type === 'hear', answerIdx:opts.indexOf(w)};
 }
 // The words to ask about (n of them, avoiding avoid): from the front of the review list, at random (nextWords, js/state.js).
@@ -245,7 +244,7 @@ function healFood(){
   const have = Object.keys(FOOD).filter(w => FOOD[w].heal && (S.bag[w] || 0) > 0), need = maxHealth() - health();
   return have.filter(w => FOOD[w].heal >= need).sort((a, b) => FOOD[a].heal - FOOD[b].heal)[0] || have.sort((a, b) => FOOD[b].heal - FOOD[a].heal)[0] || null;
 }
-const healText = w => FOOD[w].full ? ui('all your health back') : ui('+{n} health', {n:FOOD[w].heal});   // (a watermelon: all of it)
+const healText = w => FOOD[w].full ? 'all your health back' : `+${FOOD[w].heal} health`;   // (a watermelon: all of it)
 // How many of something you can carry: its food's carry (3 if it doesn't say), and with the basket from the shop, two more of
 // every snack (js/trade.js).
 const carryOf = w => ((FOOD[w] || {}).carry || 3) + (FOOD[w] && (S.tools || []).includes('篮子') ? 2 : 0);
@@ -259,14 +258,14 @@ const wrongToEat = (n, answerIdx) => shuffle([...Array(n).keys()].filter(i => i 
 const helpsFor = w => FOOD[w].helps === true ? 1 : FOOD[w].helps;
 function helperHTML(){
   const w = foodThat('helps'); if (!w) return '';
-  const n = helpsFor(w), why = n > 1 ? ui(': a wrong answer goes in each of your next {n} questions', {n}) : ui(': one wrong answer goes');
-  return `<button class="helper" data-a="eat" data-label="${ui('Eat')}">${picHTML(w)}<span>${ui(n > 1 ? 'Eat some {w}' : 'Eat a {w}', {w:esc(wz(w))})}<span class="why">${why}</span>${ui(' · {n} left', {n:S.bag[w]})}</span></button>`;
+  const n = helpsFor(w), why = n > 1 ? `: a wrong answer goes in each of your next ${n} questions` : ': one wrong answer goes';
+  return `<button class="helper" data-a="eat" data-label="Eat">${picHTML(w)}<span>Eat ${n > 1 ? 'some' : 'a'} ${esc(wz(w))}<span class="why">${why}</span> · ${S.bag[w]} left</span></button>`;
 }
 function wireHelper(n, right){
   const gone = () => { const o = sheet.querySelector(`.opt[data-i="${wrongToEat(n, right)}"]`); if (o) o.hidden = true; };
   if (S.helpLeft > 0 && n > 2 && !sheet.querySelector('.opt[disabled]')){   // (grapes eaten in an earlier question: one goes here too)
     S.helpLeft--; save(); gone();
-    const fb = sheet.querySelector('.feedback'); if (fb) fb.textContent = ui(S.helpLeft ? 'Grapes! One wrong answer is gone ({n} more to come).' : 'Grapes! One wrong answer is gone.', {n:S.helpLeft});
+    const fb = sheet.querySelector('.feedback'); if (fb) fb.textContent = `Grapes! One wrong answer is gone${S.helpLeft ? ` (${S.helpLeft} more to come)` : ''}.`;
     const h = sheet.querySelector('[data-a=eat]'); if (h) h.remove();
     return;
   }
@@ -276,13 +275,13 @@ function wireHelper(n, right){
     gone();
     S.bag[w]--; S.helpLeft = helpsFor(w) - 1; save(); SFX.blip();
     e.currentTarget.remove();
-    sheet.querySelector('.feedback').textContent = S.helpLeft ? ui('Yum! One wrong answer is gone, and one goes in each of your next {n} questions too.', {n:S.helpLeft}) : ui('Crunch! One wrong answer is gone.');
+    sheet.querySelector('.feedback').textContent = S.helpLeft ? `Yum! One wrong answer is gone, and one goes in each of your next ${S.helpLeft} questions too.` : 'Crunch! One wrong answer is gone.';
   });
 }
 // A tip about Chinese (the area's tips), the first time it helps: just before an animal's questions, the first time one of
 // that word plays with you, such as the goat's (one character, one syllable). Shown once: the save remembers it (S.tips).
 async function learnTip(foe){
-  const [id, t] = Object.entries((LEARN === 'en' ? EN_TIPS : AREA.tips) || {}).find(([k, t]) => t.word === foe.hz && !S.tips[k]) || [];   // (learning English, tips about English: content/english.js)
+  const [id, t] = Object.entries(AREA.tips || {}).find(([k, t]) => t.word === foe.hz && !S.tips[k]) || [];
   if (!t) return;
   S.tips[id] = 1; save();
   await tipCard(t, foe.img);
@@ -294,14 +293,14 @@ function tipCard(t, img){
   return new Promise(res => {
     const ex = t.example;
     openCard(`<div class="tiphead"><div class="who" aria-hidden="true">${img}</div><p class="label">${esc(t.title)}</p></div>
-      <div class="drumrow"><div class="beats">${ex.map(([c, py]) => `<div class="beat"><span class="bpy">${py}</span> <span class="bhz"${LANG}>${c}</span> <span class="bdot"></span></div>`).join('')}</div>
+      <div class="drumrow"><div class="beats">${ex.map(([c, py]) => `<div class="beat"><span class="bpy">${py}</span> <span class="bhz">${c}</span> <span class="bdot"></span></div>`).join('')}</div>
       <button class="drum primary" data-a="drum">🔊<span class="dlab"></span></button></div>
-      <div class="tipend"><p class="tipask">${enMark(esc(fill(t.ask)))}</p><div class="tipdone" hidden><p class="tipheard">${enMark(esc(t.heard))}</p><p class="tiptext">${enMark(esc(t.text))}</p></div></div>
-      <div class="actions"><button class="btn primary" data-a="ok" hidden>${ui('OK')}</button></div>`);
+      <div class="tipend"><p class="tipask">${esc(fill(t.ask))}</p><div class="tipdone" hidden><p class="tipheard">${esc(t.heard)}</p><p class="tiptext">${esc(t.text)}</p></div></div>
+      <div class="actions"><button class="btn primary" data-a="ok" hidden>OK</button></div>`);
     const drum = sheet.querySelector('.drum'), beats = [...sheet.querySelectorAll('.beat')], ok = sheet.querySelector('[data-a=ok]');
     let n = 0, again = [];
-    const label = () => { drum.querySelector('.dlab').textContent = n < ex.length ? ui('Hear {x}', {x:ex[n][2] || ex[n][1]}) : ui('Again'); };
-    const beat = i => { beats.forEach(b => b.classList.remove('now')); beats[i].classList.add('on', 'now'); const said = t.whole && i === ex.length - 1 ? t.whole : t.whole ? '' : ex[i][0]; if (said) say(said); };   // (learning English, a beat each, and the whole word on the last)
+    const label = () => { drum.querySelector('.dlab').textContent = n < ex.length ? `Hear ${ex[n][1]}` : 'Again'; };
+    const beat = i => { beats.forEach(b => b.classList.remove('now')); beats[i].classList.add('on', 'now'); say(ex[i][0]); };
     label();
     drum.onclick = () => {
       if (n < ex.length){ beat(n++); label(); }
@@ -325,19 +324,19 @@ async function encounter(foe){
   await learnTip(foe);
   const an = foe.hz, img = foe.img, n = foe.questions || 3, misses = foe.misses || 0;
   let showEn = false;
-  const nameHTML = () => { const fn = nameShown(foe.name); return fn
-    ? `<div class="spk-zh"${fn.lang ? LANG : ''}>${fn.zh} <span class="spk-py">${fn.py}</span></div><div class="spk-en">${fn.en}</div>`
-    : `<div class="spk-zh"${LANG}>${wd(an)} <span class="spk-py">${wpy(an)}</span>${foe.justTaught ? '' : (showEn ? ` <span class="small">${esc(wmean(an))}</span>` : ` <button class="engbtn" data-a="foeen">${ui('English')}</button>`)}</div>`; };
+  const nameHTML = () => foe.name
+    ? `<div class="spk-zh">${foe.name.zh} <span class="spk-py">${foe.name.py}</span></div><div class="spk-en">${foe.name.en}</div>`
+    : `<div class="spk-zh">${an} <span class="spk-py">${WORDS[an].py}</span>${foe.justTaught ? '' : (showEn ? ` <span class="small">${esc(WORDS[an].en)}</span>` : ' <button class="engbtn" data-a="foeen">English</button>')}</div>`;
   // The scene: your monkey, from behind, facing the animal on the grass (or a cliff, if that's its home), and its
   // name plate with hearts for the friendship won so far (filled: how many), which question this is (q of n), and in a
   // big game, the wrong answers so far (missed) of those it ends at.
   const me = monkeySprite('player', 'up', false, 0, true).toDataURL();   // (no stick: these are friends)
   const hearts = filled => [...Array(n).keys()].map(k => heartHTML(k < filled)).join('');
-  const lifeline = (filled, missed) => { const h = `<div class="hearts${n > 3 ? ' many' : ''}" aria-label="${ui('Friendship: {n} of {of}', {n:filled, of:n})}">${hearts(filled)}</div>`;   // (many: smaller, to fit)
-    return misses ? `<div class="lifeline">${h}<div class="misses" aria-label="${ui('Wrong: {n} of {of}', {n:missed, of:misses})}">${[...Array(misses).keys()].map(k => `<span class="miss${k < missed ? ' on' : ''}">✕</span>`).join('')}</div></div>` : h; };
+  const lifeline = (filled, missed) => { const h = `<div class="hearts${n > 3 ? ' many' : ''}" aria-label="Friendship: ${filled} of ${n}">${hearts(filled)}</div>`;   // (many: smaller, to fit)
+    return misses ? `<div class="lifeline">${h}<div class="misses" aria-label="Wrong: ${missed} of ${misses}">${[...Array(misses).keys()].map(k => `<span class="miss${k < missed ? ' on' : ''}">✕</span>`).join('')}</div></div>` : h; };
   const scene = (filled, q, look = '', missed = 0) => `<div class="scene${sceneLook(foe.home)}"><div class="mound foem"></div><div class="foe ${look}">${img}</div>`
     + `<div class="mound mem"></div><img class="me" alt="" src="${me}"><div class="plate"><div class="name">${nameHTML()}</div>`
-    + `${lifeline(filled, missed)}${q ? `<div class="qn">${ui('Question {q} of {n}', {q, n})}</div>` : ''}</div>`
+    + `${lifeline(filled, missed)}${q ? `<div class="qn">Question ${q} of ${n}</div>` : ''}</div>`
     + '<div class="plus" aria-hidden="true" hidden>+♥</div></div>';
   const targets = withOwn(toAsk(an, n), foe.asks, n), gapAt = foe.gaps ? [...Array(foe.gaps).keys()].map(k => Math.round((k + 1) * n / foe.gaps) - 1) : [];
   const sentences = [], phraseAt = n >= 3 ? n - 2 : -1;   // (asked already: a big game's sentences are all different)
@@ -364,7 +363,7 @@ async function encounter(foe){
         sc.querySelector('.plus').hidden = false;
       }, onShow: () => {
         if (type !== 'read') setTimeout(() => say(w), 300);
-        on('[data-a=foeen]', e => { showEn = true; e.currentTarget.outerHTML = ` <span class="small">${esc(wmean(an))}</span>`; });
+        on('[data-a=foeen]', e => { showEn = true; e.currentTarget.outerHTML = ` <span class="small">${esc(WORDS[an].en)}</span>`; });
         wireHelper(opts.length, opts.indexOf(w));
       }});
     if (ok) score++; else wrong++;
@@ -379,11 +378,11 @@ async function encounter(foe){
   if (won){
     if (!already) S.friends.push(foe.id);
     SFX.fanfare();
-    label = ui(already && !foe.another ? '♥ Friends' : '⭐ New friend');   // (another: one more of a kind you have friends among, such as another bee)
-    msg = ui(foe.another ? 'Another {w} is now your {f}!' : already ? 'You played with your {f}, the {w}!' : 'The {w} is now your {f}!', {w:wz(an), f:wz('朋友')}) + shells;
+    label = already && !foe.another ? '♥ Friends' : '⭐ New friend';   // (another: one more of a kind you have friends among, such as another bee)
+    msg = foe.another ? `Another ${wz(an)} is now your ${wz('朋友')}!${shells}` : already ? `You played with your ${wz('朋友')}, the ${wz(an)}!${shells}` : `The ${wz(an)} is now your ${wz('朋友')}!${shells}`;
   } else {
-    label = misses ? ui('{n} wrong', {n:wrong}) : ui('{n} of {of}', {n:score, of:n});
-    msg = `${foe.lose ? fill(foe.lose) : ui(foe.wild ? 'The {w} went back to the {home}.' : 'The {w} wants to play again later.', {w:wz(an), home:foe.wild ? wz(foe.home || HIDING_WORD) : ''})}${ui(' Those words will come back soon.')}${shells}`;
+    label = misses ? `${wrong} wrong` : `${score} of ${n}`;
+    msg = `${foe.lose ? fill(foe.lose) : `The ${wz(an)} ${foe.wild ? `went back to the ${wz(foe.home || HIDING_WORD)}` : 'wants to play again later'}.`} Those words will come back soon.${shells}`;
   }
   save(); showEn = true;   // the English is in the message, so the name plate shows it too
   await infoBox(scene(score, 0, won ? 'hop' : 'gone', wrong), `<p class="label center">${label}</p><p class="endmsg">${msg}</p>`);
@@ -399,21 +398,20 @@ async function encounter(foe){
 // aloud. A right choice counts for the word; a wrong one shows the right word and play carries on.
 // Asking again (again: just after a wrong one, such as in the shop) counts for nothing either way, as you've just seen
 // the answer; seen, if given, is told the choices shown (seen.options). Gives true if you chose right.
-async function gapQ({who = '', label = ui('Fill the gap'), t, en, gap, wrong, options, again = false, seen, stop}){
+async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, options, again = false, seen, stop}){
   const pics = !!WORDS[gap].pic && lvl(gap) <= 1;
   const fits = w => w !== gap && WORDS[w] && !WORDS[w].phrase && lvl(w) >= 1 && !t.includes(w) && (!pics || WORDS[w].pic);
   const opts = options || shuffle([gap, ...apart(gap, wrong ? wrong.filter(fits) : shuffle(ORDER.filter(fits)), 2, false)]);   // (no look-alikes)
   if (seen) seen.options = opts;
-  const shown = PUNCT.has(t.at(-1)) ? t : [...t, '。'], E = LEARN === 'en' ? enGap(t, en, gap) : null;   // (learning English: the English sentence, its gap in the form the sentence needs)
+  const shown = PUNCT.has(t.at(-1)) ? t : [...t, '。'];
   hear(t);
   // The speaker beside what to do, then the sentence and its English (and, for your first few lines, how to see a word's meaning).
   const tip = Object.keys(S.lines).length <= TAP_TIP_LINES;
-  const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">${ui(label)}</p><p class="prompt">${ui('Choose the missing word.')}</p></div></div>`,
-    body:lineHTML(E ? E.gapped : shown.map(w => w === gap ? GAP : w)) + `<div class="sentence-en">${esc(E ? E.zh : en)}</div><div class="gloss${tip ? ' tip' : ''}">${tip ? ui('Tap a word for its meaning.') : ''}</div>`,
-    options:opts.map(w => E ? (pics ? `<span class="ico">${picHTML(w)}</span><span class="cap"${LANG}>${esc(E.form(w))}</span>${laterPy(w)}` : `<span${LANG}>${esc(E.form(w))}</span>${showPy() ? `<span class="cap">${wpy(w)}</span>` : ''}`)
-      : pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>${laterPy(w)}` : `${w}<span class="cap">${WORDS[w].py}</span>`),
+  const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">${label}</p><p class="prompt">Choose the missing word.</p></div></div>`,
+    body:lineHTML(shown.map(w => w === gap ? GAP : w)) + `<div class="sentence-en">${esc(en)}</div><div class="gloss${tip ? ' tip' : ''}">${tip ? 'Tap a word for its meaning.' : ''}</div>`,
+    options:opts.map(w => pics ? `<span class="ico">${picHTML(w)}</span><span class="cap">${w}</span>${laterPy(w)}` : `${w}<span class="cap">${WORDS[w].py}</span>`),
     text:!pics, answerIdx:opts.indexOf(gap),
-    onAnswer:() => { sheet.querySelector('.line').outerHTML = lineHTML(E ? E.toks : shown, gap); bindTokens(sheet); say(E ? en : t.join('')); }, stop});
+    onAnswer:() => { sheet.querySelector('.line').outerHTML = lineHTML(shown, gap); bindTokens(sheet); say(t.join('')); }, stop});
   closeCard();
   if (again) return ok;
   if (ok) answer(gap, true, !WORDS[gap].pic ? 'fill' : pics ? 'gap' : 'read');
@@ -428,7 +426,6 @@ async function gapQ({who = '', label = ui('Fill the gap'), t, en, gap, wrong, op
 const IS_IT_NO_A = ['衣服', '鞋', '茶', '米饭', '米', '水', '草'], IS_IT_THE = ['海', '河'];   // (clothes, tea; the sea)
 const aWord = w => { const e = enOf(w).split(',')[0].trim(); return IS_IT_THE.includes(w) ? 'the ' + e : IS_IT_NO_A.includes(w) ? e : (/^[aeiou]/.test(e) ? 'an ' : 'a ') + e; };
 async function isItQ({who = '', pic, said}){
-  if (LEARN === 'en') return enIsItQ({who, pic, said});
   const t = toks(`这 是 ${said} 吗 ？`), yes = pic === said, en = `Is this ${aWord(said)}?`;
   hear(t);
   const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">Is it?</p><p class="prompt">Listen, and answer 是 (yes) or 不是 (no).</p></div></div>`,
@@ -437,21 +434,6 @@ async function isItQ({who = '', pic, said}){
     text:true, answerIdx:yes ? 0 : 1,
     onShow:() => say(t.join('')),
     onAnswer:() => { const e = sheet.querySelector('.sentence-en'); if (e) e.textContent = `${en} ${yes ? 'Yes!' : `No: it’s ${aWord(pic)}.`}`; }});
-  closeCard();
-  answer(said, ok, lvl(said) === 1 ? 'listen' : 'read');
-  return ok;
-}
-// Learning English, the child's game: the picture, Is this a peach? (heard and read), and Yes or No, with their Chinese
-// under them; once you've answered, what it means in Chinese, and what it is if not.
-async function enIsItQ({who = '', pic, said}){
-  const en = enIsIt(said), t = enToks(en), yes = pic === said;
-  hear(t);
-  const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">${ui('Is it?')}</p><p class="prompt">${ui('Listen, and answer Yes or No.')}</p></div></div>`,
-    body:`<div class="ispic" aria-hidden="true">${picHTML(pic)}</div>${lineHTML(t)}<div class="sentence-en"></div><div class="gloss"></div>`,
-    options:[`<span${LANG}>Yes</span><span class="cap">是</span>`, `<span${LANG}>No</span><span class="cap">不是</span>`],
-    text:true, answerIdx:yes ? 0 : 1,
-    onShow:() => say(en),
-    onAnswer:() => { const e = sheet.querySelector('.sentence-en'); if (e) e.textContent = `这是${said}吗？${yes ? '是的！' : `不是，这是${pic}。`}`; }});
   closeCard();
   answer(said, ok, lvl(said) === 1 ? 'listen' : 'read');
   return ok;
@@ -474,8 +456,8 @@ function phraseToAsk(not = [], needed = false){
 }
 async function phraseQ({phrase, who = '', stop}){
   const opts = shuffle([phrase, ...shuffle(askablePhrases().filter(p => p !== phrase)).slice(0, 2)]);
-  const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">${ui('What do you say?')}</p><p class="prompt">${esc(ui(WORDS[phrase].situation))}</p></div></div>`,
-    body:'', options:opts.map(w => `${LEARN === 'en' ? `<span${LANG}>${esc(wd(w))}</span>` : w}<span class="cap">${wpy(w)}</span><span class="cap later">${esc(wmean1(w))}</span>`),
+  const ok = await pictureQ({head:`<div class="qhead">${who ? `<div class="who" aria-hidden="true">${who}</div>` : ''}<div><p class="label">What do you say?</p><p class="prompt">${esc(WORDS[phrase].situation)}</p></div></div>`,
+    body:'', options:opts.map(w => `${w}<span class="cap">${WORDS[w].py}</span><span class="cap later">${esc(WORDS[w].en.split(',')[0])}</span>`),
     text:true, answerIdx:opts.indexOf(phrase), word:phrase, type:'read', stop});
   closeCard();
   return ok;

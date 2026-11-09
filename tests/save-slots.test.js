@@ -35,9 +35,6 @@ test('New game starts in an empty game, leaving Game 1 alone; Continue then goes
   const game = loadGame({dom: true, save: MINE});
   game.runFrame();
   game.el('#titleButtons').querySelector('#newBtn').click();
-  assert.match(game.el('#sheet').textContent, /What do you want to learn\?/, 'it asks which language the new game learns (Both ways, 9 November 2026)');
-  assert.equal(game.el('#sheet').querySelector('.primary').dataset.learn, 'zh', 'on a device in English, A learns Chinese');
-  game.el('#sheet').querySelector('.primary').click();
   assert.equal(game.run('SLOT'), 2, 'the first empty game');
   assert.equal(game.run('S.shells'), 0, 'a new game');
   game.run('startGame()');   // after the opening

@@ -175,8 +175,7 @@ const canSell = sh => !!sh && !!sh.sells && matches(sh.sells) && lvl('卖') >= 1
 const priceOf = w => (TREASURE_INFO[w] || {}).price || 1;
 function shopTabs(sh, now){
   if (!canSell(sh) || !(sh.items || []).length) return '';
-  const tab = (id, zh, py, en) => LEARN === 'en' ? `<button class="tab" role="tab" data-shoptab="${id}" aria-selected="${now === id}"><span${LANG}>${esc(enW(zh))}</span> ${zh}</button>`   // (learning English: buy 买)
-    : `<button class="tab" role="tab" data-shoptab="${id}" aria-selected="${now === id}">${zh} <span class="tpy">${py}</span> ${en}</button>`;
+  const tab = (id, zh, py, en) => `<button class="tab" role="tab" data-shoptab="${id}" aria-selected="${now === id}">${zh} <span class="tpy">${py}</span> ${en}</button>`;
   return `<div class="scrolltabs shoptabs" role="tablist">${tab('buy', '买', WORDS['买'].py, 'Buy')}${tab('sell', '卖', WORDS['卖'].py, 'Sell')}</div>`;
 }
 // The Sell tab: each treasure you're carrying, how many and what it fetches; those you haven't found yet as shadows, with a
@@ -185,15 +184,15 @@ async function sellCard(face, sh, asked = false){
   if (!asked && sh.sellAsk && AREA.lines[sh.sellAsk]) await showDialog(face, AREA.lines[sh.sellAsk]);
   const tile = w => {
     const n = S.bag[w] || 0, known = lvl(w) >= 1, price = `<span class="sprice">${MONEY()} ${priceOf(w)}</span>`;
-    if (n > 0) return `<button class="shopitem" data-w="${w}" data-label="${ui('Sell')}"><span class="spic" aria-hidden="true">${picHTML(w)}</span><span class="scount">×${n}</span>
-      <span class="szh"${LANG}>${esc(wd(w))}</span><span class="spy">${wpy(w)}</span><span class="sen">${esc(wmean(w))}</span>${price}</button>`;
-    return `<div class="shopitem shadow"><span class="spic" aria-hidden="true">${picHTML(w)}</span>${known ? `<span class="szh"${LANG}>${esc(wd(w))}</span><span class="spy">${wpy(w)}</span>` : '<span class="szh">？</span>'}
+    if (n > 0) return `<button class="shopitem" data-w="${w}" data-label="Sell"><span class="spic" aria-hidden="true">${picHTML(w)}</span><span class="scount">×${n}</span>
+      <span class="szh">${w}</span><span class="spy">${WORDS[w].py}</span><span class="sen">${esc(WORDS[w].en)}</span>${price}</button>`;
+    return `<div class="shopitem shadow"><span class="spic" aria-hidden="true">${picHTML(w)}</span>${known ? `<span class="szh">${w}</span><span class="spy">${WORDS[w].py}</span>` : '<span class="szh">？</span>'}
       <span class="sclue">${esc(fill((TREASURE_INFO[w] || {}).clue || ''))}</span>${price}</div>`;
   };
   const w = await new Promise(res => {
-    openCard(`<div class="qhead">${face}<p class="prompt">${ui('You have {money} {n}. What will you sell?', {money:MONEY(), n:money()})}</p></div>${shopTabs(sh, 'sell')}
+    openCard(`<div class="qhead">${face}<p class="prompt">You have ${MONEY()} ${money()}. What will you sell?</p></div>${shopTabs(sh, 'sell')}
       <div class="menu shopgrid sellgrid">${TREASURE_WORDS.map(tile).join('')}</div>
-      <div class="actions"><button class="btn" data-a="no" data-b>${ui('Not now')}</button></div>`);
+      <div class="actions"><button class="btn" data-a="no" data-b>Not now</button></div>`);
     const first = sheet.querySelector('button.shopitem'); if (first) first.focus();
     on('[data-a=no]', () => { closeCard(); res(null); });
     sheet.querySelectorAll('button.shopitem').forEach(b => b.onclick = () => { closeCard(); res(b.dataset.w); });
@@ -231,16 +230,14 @@ async function sellOne(w, face, sh, first = false){
 // The money, counted into your paw a piece at a time, aloud, each said in full before the next (decided 9 November 2026:
 // the money stays shells, never the word 贝壳, the Eastern Sea's surprise; so they're counted, 一，二，三……).
 // (who's buying: the shop owner, or the money changer, as a sentence starts)
-const theOne = sh => { if (LEARN === 'en') return (NAMES[sh.who] || {zh:'有人'}).zh;   // (learning English, their Chinese name)
-  const en = (NAMES[sh.who] || {en:'someone'}).en.replace(/^(the|an?) /i, ''); return `The ${en.charAt(0).toLowerCase() + en.slice(1)}`; };
+const theOne = sh => { const en = (NAMES[sh.who] || {en:'someone'}).en.replace(/^(the|an?) /i, ''); return `The ${en.charAt(0).toLowerCase() + en.slice(1)}`; };
 async function countMoney(face, n, sh){
-  openCard(`<div class="qhead">${face}<p class="prompt">${ui(n === 1 ? '{who} counts it into your paw.' : '{who} counts them into your paw.', {who:esc(theOne(sh))})}</p></div>
+  openCard(`<div class="qhead">${face}<p class="prompt">${esc(theOne(sh))} counts ${n === 1 ? 'it' : 'them'} into your paw.</p></div>
     <div class="coincount" aria-live="polite"></div>`);
   const row = sheet.querySelector('.coincount');
   for (let i = 1; i <= n; i++){
     const num = COUNTING[i - 1] || String(i), known = WORDS[num] && lvl(num) >= 1;
-    row.insertAdjacentHTML('beforeend', pixelIcons(LEARN === 'en' ? `<span class="cc"><span class="cci">${MONEY()}</span><span class="ccn${known ? ' known' : ''}"${LANG}>${WORDS[num] ? esc(wd(num)) : num}</span>${showPy() && WORDS[num] ? `<span class="ccp">${wpy(num)}</span>` : ''}</span>`   // (learning English, each number in English)
-      : `<span class="cc"><span class="cci">${MONEY()}</span><span class="ccn${known ? ' known' : ''}">${num}</span>${S.pinyin && WORDS[num] ? `<span class="ccp">${WORDS[num].py}</span>` : ''}</span>`));
+    row.insertAdjacentHTML('beforeend', pixelIcons(`<span class="cc"><span class="cci">${MONEY()}</span><span class="ccn${known ? ' known' : ''}">${num}</span>${S.pinyin && WORDS[num] ? `<span class="ccp">${WORDS[num].py}</span>` : ''}</span>`));
     SFX.blip();
     if (WORDS[num]) await sayFully(num, 520); else await sleep(400);
   }
@@ -283,19 +280,19 @@ function readyCard(){
   return new Promise(res => {
     const pages = scrollPages().filter(p => p.area === AREA.number);
     const pageRow = p => { const got = p.words.filter(w => lvl(w) >= 1).length, full = got === p.words.length;
-      return `<span class="rpage${full ? ' full' : ''}"><span class="rname">${esc(ui(CATEGORIES[p.cat].tab || CATEGORIES[p.cat].name))}</span><b>${full ? '<span class="rseal">好</span>' : `${got}/${p.words.length}`}</b></span>`; };
+      return `<span class="rpage${full ? ' full' : ''}"><span class="rname">${esc(CATEGORIES[p.cat].tab || CATEGORIES[p.cat].name)}</span><b>${full ? '<span class="rseal">好</span>' : `${got}/${p.words.length}`}</b></span>`; };
     const friends = ANIMALS.filter(a => inChapter(a)), met = friends.filter(a => S.friends.includes(a.id)).length;
     const found = TREASURE_WORDS.filter(w => (AREA.treasures || {})[w] && lvl(w) >= 1).length, kinds = TREASURE_WORDS.filter(w => (AREA.treasures || {})[w]).length;
     const still = here().visited.filter(id => PLACES[id] && PLACES[id].onMap).map(id => ({id, left:stillHere(id)})).filter(x => x.left.length)
       .sort((a, c) => c.left.length - a.left.length).slice(0, 4)
-      .map(({id, left}) => `<span class="rstill">${LEARN === 'en' ? PLACES[id].name.zh : esc(PLACES[id].name.en)} <b>${left.length}</b>${left.some(x => x.time === 'night') ? ' 🌙' : ''}</span>`).join('');
+      .map(({id, left}) => `<span class="rstill">${esc(PLACES[id].name.en)} <b>${left.length}</b>${left.some(x => x.time === 'night') ? ' 🌙' : ''}</span>`).join('');
     const need = practiceWords().length;
-    openCard(`<p class="label">${ui('Ready to sail?')}</p>
-      <p class="small">${ui('Your Word Scroll')}</p><div class="rpages">${pages.map(pageRow).join('')}</div>
-      <div class="stats"><span>${ui('{n}/{of} animal friends', {n:met, of:friends.length})}</span>${kinds ? `<span>${ui('{n}/{of} treasures', {n:found, of:kinds})}</span>` : ''}${need ? `<span>${ui(need === 1 ? '<b>{n}</b> word needs practice' : '<b>{n}</b> words need practice', {n:need})}</span>` : ''}</div>
-      ${still ? `<p class="small">${ui('Still to find:')}</p><div class="rstills">${still}</div>` : ''}
-      <p class="note">${ui('Anything you miss can still be found later in the story.')}</p>
-      <div class="actions"><button class="btn" data-a="later" data-b>${ui('Not yet')}</button>${need ? `<button class="btn" data-a="practise">${ui('Quick practice')}</button>` : ''}<button class="btn primary" data-a="go">${ui('Sail away')}</button></div>`);
+    openCard(`<p class="label">Ready to sail?</p>
+      <p class="small">Your Word Scroll</p><div class="rpages">${pages.map(pageRow).join('')}</div>
+      <div class="stats"><span>${met}/${friends.length} animal friends</span>${kinds ? `<span>${found}/${kinds} treasures</span>` : ''}${need ? `<span><b>${need}</b> word${need === 1 ? '' : 's'} need practice</span>` : ''}</div>
+      ${still ? `<p class="small">Still to find:</p><div class="rstills">${still}</div>` : ''}
+      <p class="note">Anything you miss can still be found later in the story.</p>
+      <div class="actions"><button class="btn" data-a="later" data-b>Not yet</button>${need ? '<button class="btn" data-a="practise">Quick practice</button>' : ''}<button class="btn primary" data-a="go">Sail away</button></div>`);
     on('[data-a=go]', () => { closeCard(); res(); });
     on('[data-a=later]', () => { closeCard(); res(STOP); });
     on('[data-a=practise]', () => { closeCard(); quickPractice(() => { closeCard(); readyCard().then(res); }); });

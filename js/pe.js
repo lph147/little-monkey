@@ -89,9 +89,9 @@ async function runJog(s, j, face, again, who){
 // whether you were right.
 async function peQ({who, w}){
   const listen = lvl(w) <= 1, q = wordQuestion(w, null, listen ? 'listen' : 'read');
-  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${ui(listen ? 'Listen.' : 'Read it.')} ${ui('Which is it?')}</p></div>`,
-    body:listen ? `<div class="hearit"><button class="sayBig" data-a="say" aria-label="${ui('Hear it again')}">🔊</button></div>`
-      : `<div class="word"><div class="big"${LANG}>${wd(w)}</div>${showPy() ? `<div class="py">${wpy(w)}</div>` : ''}</div>`,
+  const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${listen ? 'Listen.' : 'Read it.'} Which is it?</p></div>`,
+    body:listen ? '<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>'
+      : `<div class="word"><div class="big">${w}</div>${S.pinyin ? `<div class="py">${WORDS[w].py}</div>` : ''}</div>`,
     options:q.options, answerIdx:q.answerIdx, word:w, onShow:() => { if (listen) setTimeout(() => say(w), 300); }});
   closeCard();
   if (ok) answer(w, true, listen ? 'listen' : 'read'); else reviewed(w, false);

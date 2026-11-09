@@ -24,12 +24,11 @@ function hideClue(p){ return showDialog(speaker(HIDE.by), L[p.say], {clue:p.word
 // A line's English with {word} (or {word|its English here}) as the word itself, in Chinese with its pinyin, to tap (the
 // clue's English).
 function cluedEn(en, word){
-  if (LEARN === 'en') return `<span>${enMark(esc(en))}</span>`;   // (learning English, the clue's Chinese, with the place's word in English already: zhWithEn, js/lang.js)
   const [a, b] = en.split(new RegExp(`\\{${word}(?:\\|[^}]*)?\\}`));
   return `<span>${esc(a.trim())}</span>${lineHTML([word], word)}<span>${esc((b || '').trim())}</span>`;
 }
 // The clue on your Tasks page while it's hiding (a task with clue), to read and hear again.
-const clueTaskHTML = p => `<div class="taskclue">${lineHTML(L[p.say].t, p.word)}<div class="gloss"></div><div class="sentence-en clue">${cluedEn(L[p.say].en, p.word)}</div><button class="tbtn" data-a="clue">${ui('🔊 Hear it')}</button></div>`;
+const clueTaskHTML = p => `<div class="taskclue">${lineHTML(L[p.say].t, p.word)}<div class="gloss"></div><div class="sentence-en clue">${cluedEn(L[p.say].en, p.word)}</div><button class="tbtn" data-a="clue">🔊 Hear it</button></div>`;
 // Talking to the little monkey: it asks you to play (Play or Not now), hides while you count, and calls out where it is.
 async function hideSeek(who, last){
   const spots = hideSpots();
@@ -65,7 +64,7 @@ async function lookForHider(p){
   save();
   await showDialog(speaker('player'), L[HIDE.found]);
   SFX.fanfare();
-  await showNarration(fill(ui(HIDE.result, {where:ui(p.where)})) + (first ? ` +${HIDE.shells} ${MONEY()}` : '') + ' ' + fill(HIDE.again), true);
+  await showNarration(fill(HIDE.result.replace('{where}', p.where)) + (first ? ` +${HIDE.shells} ${MONEY()}` : '') + ' ' + fill(HIDE.again), true);
 }
 // Where the little monkey is while you play: off hiding; once you've found it, where it jumped out, until you leave the
 // place (decided 26 October 2026: it walked back to its spot, and jumped the rest of the way as you walked on), then back

@@ -30,7 +30,7 @@ const SAY_AS = {
 
 const CJK = /[一-鿿]/;
 const said = zh => zh.replace(/ /g, '');   // content writes sentences with spaces between words; the game says them without
-const short = name => name.replace(/^zh-CN-|Neural$/g, '').replace(/^cmn-CN-/, 'google-').toLowerCase();   // zh-CN-YunxiNeural → yunxi, cmn-CN-Wavenet-A → google-wavenet-a, en-GB-SoniaNeural → en-gb-sonia
+const short = name => name.replace(/^zh-CN-|Neural$/g, '').replace(/^cmn-CN-/, 'google-').toLowerCase();   // zh-CN-YunxiNeural → yunxi, cmn-CN-Wavenet-A → google-wavenet-a
 const code = (voice, text) => crypto.createHash('sha1').update(`${voice.name}|${voice.style || ''}|tidy|${text}|${SAY_AS[text] ? JSON.stringify(SAY_AS[text]) : ''}`).digest('hex').slice(0, 10);
 const settings = voice => ({...voice, rate: null, tidy: true});   // as tools/try-voices.js makes them
 
@@ -53,16 +53,8 @@ function wantedIn(n){
   for (const c of get('SIZED()')) all.add(said(c.zh));   // and big and little wild creatures' names, such as 大蛇 (js/battle.js)
   for (const p of get('SIDE_BY_SIDE.filter(p => p.words.every(w => WORDS[w]))')) for (const u of Object.values(p.use)) for (const e of u.ex) all.add(said(e.zh));   // and the examples on a card of two words side by side, such as 两个桃子 (js/cards.js)
 
-  const sayers = sayersOf(AREA);
-  const words = Object.keys(BANK);   // said on their own, in the words voice; everything else is a line
-  const out = {words: {voice: AREA.voices.words, texts: words}, everyone: {voice: AREA.voices.everyone, texts: [...all].filter(t => !BANK[t])}};
-  for (const [key, ids] of Object.entries(sayers)) for (const id of ids) if (AREA.voices[id] && !out[id] && AREA.lines[key]) out[id] = {voice: AREA.voices[id], texts: []};
-  for (const [key, ids] of Object.entries(sayers)) for (const id of ids) if (out[id] && id !== 'words' && id !== 'everyone' && AREA.lines[key]) out[id].texts.push(said(AREA.lines[key].zh));
-  return out;
-}
-// Who says each line (the game's speaker(s.by || who)): a say step in a character's talk is theirs unless
-// it's `by` someone else; elsewhere (events, things you look at) only `by` says who. Requests are their asker's.
-function sayersOf(AREA){
+  // Who says each line (the game's speaker(s.by || who)): a say step in a character's talk is theirs unless
+  // it's `by` someone else; elsewhere (events, things you look at) only `by` says who. Requests are their asker's.
   const sayers = {};   // line key → Set of character ids
   const add = (key, id) => { if (id) (sayers[key] = sayers[key] || new Set()).add(id); };
   (function steps(o, owner){
@@ -79,44 +71,18 @@ function sayersOf(AREA){
   })(parts);
   for (const r of Object.values(AREA.requests)) for (const k of [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer]) if (k) add(k, r.from);
   for (const l of AREA.lessons || []) for (const k of [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask), ...[l.race, l.jog].filter(Boolean).flatMap(x => [x.start, x.end])]) add(k, l.by);   // the teacher's, in a lesson
-  return sayers;
-}
-// Learning English (Both ways, decided 9 November 2026): every piece of English the game says, learning English, for the
-// area numbered n, in the English voices (EN_VOICES, content/english.js): each word on its own, its English; your replies
-// (Hello!); and every line, sentence, caption and name, its English as the game says it (turned round: js/lang.js), the old
-// monkey's lines in his own voice.
-function wantedEnIn(n){
-  const game = loadGame({save:{version:41, area:n, w:{}, started:true, learn:'en'}});
-  const get = expr => JSON.parse(game.run(`JSON.stringify(${expr})`));
-  const AREA = get('AREA'), V = get('EN_VOICES');
-  const {words, lines, say} = get(`(() => {
-    const texts = new Set(), seen = new Set(), add = s => { if (typeof s === 'string' && /[A-Za-z]/.test(s) && !/[一-鿿]/.test(plainEn(s))) texts.add(plainEn(s)); };
-    (function walk(o){
-      if (!o || typeof o !== 'object' || seen.has(o)) return; seen.add(o);
-      if (typeof o.zh === 'string' && typeof o.en === 'string' && /[一-鿿]/.test(o.zh)) add(o.en);   // (a line, a caption, a name, what you picked)
-      if (typeof o.sentence === 'string') add(o.sentenceEn || o.en);   // (a sentence with a word missing)
-      for (const [k, v] of Object.entries(o)) if (k !== 'made' && k !== 'example' && k !== 'tips') walk(v);
-    })(AREA);
-    for (const k of Object.keys(L)) add(lineSay(L[k]));
-    STORY.forEach(s => add(lineSay(s))); CAPS.forEach(c => add(c.say));
-    COLOUR_SENTENCES().forEach(c => add(c.en)); COLOURED().forEach(c => add(c.en)); (AREA.isIt || []).forEach(w => add(enIsIt(w)));   // (and what each thing of one colour is called, A red bird)
-    Object.values(ENEMIES).filter(canSize).forEach(f => Object.keys(SIZES).forEach(size => add(sizedEn({...f, size}))));
-    Object.keys(WORDS).filter(w => WORDS[w].phrase).forEach(w => { const e = enW(w); add(e[0].toUpperCase() + e.slice(1) + '!'); });   // (your replies: iSay, js/world.js)
-    Object.values(EN_TIPS).forEach(t => { add(t.whole); t.example.forEach(x => add(x[0])); });
-    return {words:[...new Set(Object.keys(WORDS).map(enW))], lines:[...texts], say:Object.fromEntries(Object.keys(L).map(k => [k, lineSay(L[k])]))};
-  })()`);
-  const out = {words:{voice:V.words, texts:words}, everyone:{voice:V.everyone, texts:lines.filter(t => !words.includes(t))}};
-  for (const [key, ids] of Object.entries(sayersOf(AREA))) for (const id of ids) if (V[id] && say[key]){ if (!out[id]) out[id] = {voice:V[id], texts:[]}; out[id].texts.push(say[key]); }
+  const words = Object.keys(BANK);   // said on their own, in the words voice; everything else is a line
+  const out = {words: {voice: AREA.voices.words, texts: words}, everyone: {voice: AREA.voices.everyone, texts: [...all].filter(t => !BANK[t])}};
+  for (const [key, ids] of Object.entries(sayers)) for (const id of ids) if (AREA.voices[id] && !out[id] && AREA.lines[key]) out[id] = {voice: AREA.voices[id], texts: []};
+  for (const [key, ids] of Object.entries(sayers)) for (const id of ids) if (out[id] && id !== 'words' && id !== 'everyone' && AREA.lines[key]) out[id].texts.push(said(AREA.lines[key].zh));
   return out;
 }
-// What every area's voices say, together: each role's texts from all the areas (a role keeps the first area's voice); and
-// learning English, the English voices' (each role's with en: in front, as en:words).
+// What every area's voices say, together: each role's texts from all the areas (a role keeps the first area's voice).
 function wanted(){
   const out = {};
-  const join = (role, voice, texts) => { if (!out[role]) out[role] = {voice, texts: []}; out[role].texts = [...new Set([...out[role].texts, ...texts])]; };
-  for (const n of JSON.parse(loadGame().run('JSON.stringify(AREAS.map(a => a.number))'))){
-    for (const [role, {voice, texts}] of Object.entries(wantedIn(n))) join(role, voice, texts);
-    for (const [role, {voice, texts}] of Object.entries(wantedEnIn(n))) join('en:' + role, voice, texts);
+  for (const n of JSON.parse(loadGame().run('JSON.stringify(AREAS.map(a => a.number))'))) for (const [role, {voice, texts}] of Object.entries(wantedIn(n))){
+    if (!out[role]) out[role] = {voice, texts: []};
+    out[role].texts = [...new Set([...out[role].texts, ...texts])];
   }
   return out;
 }
@@ -129,8 +95,7 @@ function plan(){
     const v = short(voice.name); voices[v] = voice;
     clips[v] = Object.fromEntries([...new Set([...Object.keys(clips[v] || {}), ...texts])].sort().map(t => [t, code(voice, t)]));
   }
-  const of = en => Object.fromEntries(Object.entries(roles).filter(([role]) => role.startsWith('en:') === en).map(([role, {voice}]) => [role.replace(/^en:/, ''), short(voice.name)]));
-  return {clips, who: of(false), whoEn: of(true), voices};
+  return {clips, who: Object.fromEntries(Object.entries(roles).map(([role, {voice}]) => [role, short(voice.name)])), voices};
 }
 
 const clipPath = (v, c) => path.join(AUDIO, v, c + '.mp3');
@@ -151,12 +116,11 @@ async function sayRight(make, keys, voice, text, log = console.log){
   throw new Error(`Google takes no notice of the pinyin for ${text}: give it a word that sounds the same (google) or another voice (by) in SAY_AS`);
 }
 
-function indexText({clips, who, whoEn}){
+function indexText({clips, who}){
   return `// The voice clips: for each voice, what it says and the clip that says it (audio/<voice>/<clip>.mp3).
 // Made by tools/make-voices.js: change the Chinese or the area's voices and run  npm run voices , not here.
 const VOICE_CLIPS = ${JSON.stringify(clips, null, 1)};
 const VOICE_OF = ${JSON.stringify(who)};   // which voice says what: words on their own, everyone's lines, and characters with their own
-const VOICE_OF_EN = ${JSON.stringify(whoEn)};   // and learning English, the English voices (EN_VOICES, content/english.js)
 `;
 }
 
