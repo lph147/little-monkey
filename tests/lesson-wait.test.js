@@ -73,9 +73,9 @@ test('after a lesson that teaches new words, the next waits till you’ve answer
 
 test('every question counts, wherever you answer it, and a practice lesson doesn’t start the wait again; the next new word waits for each lesson that teaches one', async () => {
   const g = game({'四': 2, '五': 2, '六': 2, '红色': 2, '黄色': 2, '白色': 2});
-  assert.deepEqual(get(g, 'lessonNow().words'), ['七'], 'a game from before lessons waited: its next new word is ready');
+  assert.deepEqual(get(g, 'lessonNow().words'), ['两'], 'a game from before lessons waited: its next new word is ready (两, the second maths lesson since 9 November 2026)');
   await lesson(g);
-  assert.ok(get(g, "lvl('七') >= 1"));
+  assert.ok(get(g, "lvl('两') >= 1"));
   const turn = get(g, 'here().lessonTurn');
   assert.equal(turn, get(g, 'S.turn'), 'the wait starts as the lesson ends');
   assert.equal(get(g, 'lessonNow()'), null);

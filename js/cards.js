@@ -450,6 +450,36 @@ function soundsCard(w, back, done, doneLabel){
   on('[data-a=back]', back);
   if (done) on('[data-a=ok]', done);
 }
+// Two words easily mixed up, side by side (SIDE_BY_SIDE, content/words.js; decided 9 November 2026: 二 is for counting, 两
+// for two of something): each with its picture, characters, pinyin and English (tap it to hear it), what it's for, and an
+// example or two (tap one to hear it), under a line to remember, at the top so it's seen even on the smallest phones;
+// Hear both says one, then the other, the one being said lit up. It comes after the newer word's card, the first time (its title ▸, after How it's made and Sounds like), and
+// from either word's page in the Word Scroll, from its English, once you know both. Back (B) goes back; done is A's, or
+// none, when Back is A's too.
+const sideBySide = w => SIDE_BY_SIDE.find(p => p.words.includes(w) && p.words.every(x => WORDS[x] && (x === w || lvl(x) > 0))) || null;
+function sideCard(w, back, done, doneLabel){
+  const p = sideBySide(w);
+  const ex = e => { const t = e.zh.split(' ');
+    return `<button class="sbs-ex" data-zh="${t.join('')}" aria-label="Hear ${t.join('')}"><span class="sbs-zh">${t.map(x => PUNCT.has(x) ? x : `<ruby>${x}<rt${S.pinyin ? '' : ' class="hid"'}>${info(x)[0]}</rt></ruby>`).join('')}</span><span class="sbs-en">${esc(e.en)}</span></button>`; };
+  const side = x => `<div class="sa-side sbs" data-w="${x}"><button class="sa-top sbs-word" data-w="${x}" aria-label="Hear ${x}"><div class="pic" aria-hidden="true">${picHTML(x)}</div><div><div class="big">${x}</div><div class="py">${WORDS[x].py}</div><div class="en">${esc(WORDS[x].en)}</div></div></button>
+    <p class="sbs-for">${esc(p.use[x].for)}</p>${p.use[x].ex.map(ex).join('')}</div>`;
+  openCard(`<p class="label">${esc(p.title)}</p><p class="sbs-remember">${esc(p.remember)}</p><div class="sa">${p.words.map(side).join('')}</div>
+    <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>◂ Back</button><button class="btn" data-a="both">🔊 Hear both</button>${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
+  const card = sheet.querySelector('.sa'), open = () => sheet.querySelector('.sa') === card;   // (still showing: not closed or moved on)
+  const lit = x => card.querySelectorAll('.sa-side').forEach(b => b.classList.toggle('playing', b.dataset.w === x));
+  const hear = (x, then) => { if (!open()) return; lit(x); say(x, () => { if (!open()) return; lit(null); if (then) setTimeout(then, 250); }); };
+  card.querySelectorAll('.sbs-word').forEach(b => b.onclick = () => hear(b.dataset.w));
+  card.querySelectorAll('.sbs-ex').forEach(b => b.onclick = () => say(b.dataset.zh));
+  on('[data-a=both]', () => hear(p.words[0], () => hear(p.words[1])));
+  on('[data-a=back]', back);
+  if (done) on('[data-a=ok]', done);
+}
+// What a word's card goes on to, in order, each {label, card(w, back, done, doneLabel)}: how it's made, the word that
+// sounds like it, and the word it's shown side by side with (the first time, one after another; from its English after).
+function moreCards(w){
+  const pair = sideBySide(w);
+  return [hasMade(w) && {label:'How it’s made', card:madeCard}, soundsLike(w) && {label:'Sounds like', card:soundsCard}, pair && {label:pair.title, card:sideCard}].filter(Boolean);
+}
 // A name you can read now, such as your home's on the sign (says: its Chinese and English; m: how it's made, with its
 // title, parts and what they add up to). A name isn't a word to learn, so nothing is caught. Its characters are tiles to
 // find out about (decided 24 October 2026: the box was crowded): each with a ? until you tap it, or press A (Next part,
@@ -500,10 +530,10 @@ function nameCard(says, m){
 // the English button shows the English, then becomes How it's made.
 function showNotice(w, opts = {}){
   return new Promise(res => {
-    const d = WORDS[w], isNew = lvl(w) === 0, made = hasMade(w);
+    const d = WORDS[w], isNew = lvl(w) === 0;
     if (isNew) SFX.word(); else SFX.blip();
     const done = () => { closeCard(); if (isNew) setSeen(w); res(); };   // (no message or glow: it's new in your Word Scroll, which the menu's 词 tile says, js/scrolls.js; decided 9 November 2026)
-    const alike = !!soundsLike(w), label = isNew ? 'Got it' : 'OK', more = made ? 'How it’s made' : alike ? 'Sounds like' : '';   // (what the English button becomes, and a new word's card goes on to)
+    const extras = moreCards(w), label = isNew ? 'Got it' : 'OK', more = extras.length ? extras[0].label : '';   // (what the English button becomes, and a new word's card goes on to: how it's made, sounds like, side by side)
     let en = isNew;   // the English shows (seen again: once you've pressed English)
     const front = () => {   // the word's card: a new word with how it's made goes on to it (How it's made ▸), not Got it
       const howFirst = isNew && more, howBtn = `<button class="btn" data-a="made">${more}</button>`;
@@ -522,9 +552,8 @@ function showNotice(w, opts = {}){
       on('[data-a=made]', next);
       on('[data-a=ok]', done);
     };
-    const sounds = () => soundsCard(w, made ? how : front, done, label);
-    const how = () => madeCard(w, front, alike ? sounds : done, alike ? 'Sounds like ▸' : label);
-    const next = () => made ? how() : sounds();
+    const open = i => extras[i].card(w, i ? () => open(i - 1) : front, i + 1 < extras.length ? () => open(i + 1) : done, i + 1 < extras.length ? `${extras[i + 1].label} ▸` : label);
+    const next = () => open(0);
     front();
     if (!opts.quiet) say(w);
   });

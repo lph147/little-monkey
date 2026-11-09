@@ -188,6 +188,11 @@ const PUPIL_SPY = {spy:'spyGame', rounds:3, things:[{word:'树', say:'spyTree'},
   listen:'She says it only in Chinese. Find it, and press A at it.', found:'That’s it: {word}!', wrong:'Not that one. Listen again!',
   done:[{say:'veryGood'}, {coins:2, note:'The pupil laughs, and gives you 2 🪙.'}],
   going:'You’re in the middle of a game of I spy with the pupil. Keep playing?', stopped:'You stop playing I spy. Talk to the pupil to play again.'};
+// The answer to 多少钱 at a stall: two coins, 两文钱. To a game that doesn't know 两 (two of something) yet, it teaches it, with
+// its card (the second maths lesson at school since 9 November 2026; a game from before that learns it here): at the
+// town's fruit stall, and the 老板's stall at home.
+const TWO_WEN = [{if:{new:'两'}, say:'twoWen', teach:'两'}, {if:{knows:'两'}, say:'twoWen'},
+  {if:{new:'两'}, newWord:'两', note:'Two of something is 两, two coins: 两文钱. Counting is still 二: 一，二，三！'}];
 const AT_HOME = (id, own = {}) => ({borrow:id, from:1, wild:['demon'], noMap:HOME_MAP, ...own});
 // The stone beds in the Water Curtain Cave, at home: sleep in one till morning (js/daynight.js), as you did there.
 const HOME_BED = {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.',
@@ -717,9 +722,9 @@ const ACROSS_THE_SEA = {
     kid2: [{if:{child:3, hidesFound:0}, show:'!'}, {if:{season:3, trip:{atLeast:1, below:5}, snowVillage:0}, show:'!'}],
     planter: [{if:{planter:0}, show:'!'}],
     farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}, {if:{lunch:'done', askFarmer:0}, show:'!'}],
-    fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}, {if:{exchanged:1, new:'多少钱'}, show:'!'}],
+    fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}, {if:{exchanged:1, new:'多少钱'}, show:'!'}, {if:{exchanged:1, new:'两'}, show:'!'}],   // (两: for a game that doesn't know it yet, TWO_WEN)
     changer: [{if:{exchanged:0}, show:'!'}, {if:{new:'卖', treasures:true}, show:'!'}],
-    boss: [{if:{new:'卖', treasures:true}, show:'!'}, {if:{canBuy:'home'}, show:'?'}],   // (? only for his own shop at home, not the town's stalls)
+    boss: [{if:{new:'卖', treasures:true}, show:'!'}, {if:{new:'两'}, show:'!'}, {if:{canBuy:'home'}, show:'?'}],   // (? only for his own shop at home, not the town's stalls; 两 for a game that doesn't know it yet, TWO_WEN)
     bunSeller: [{if:{knows:'多少钱', new:'包子'}, show:'!'}, {if:{night:true, knows:'多少钱', new:'臭豆腐'}, show:'!'}],   // (after the fruit stall's 多少钱: one ! at a time, as a game from Flower Fruit Mountain knows 买 already)
     shoeSeller: [{if:{knows:'包子', grannyBuns:'done', new:'鞋'}, show:'!'}],
     teaKeeper: [{if:{knows:'鞋', new:'茶'}, show:'!'}, {if:{knows:'茶', askTea:0}, show:'!'}],
@@ -2197,7 +2202,7 @@ const ACROSS_THE_SEA = {
     changeMoney: {zh:'你 要 换 钱 吗 ？', en:'Do you want to change money?'},
     hereMoney: {zh:'这 是 你 的 钱 。', en:'Here’s your money.'},
     whatBuy: {zh:'你 要 买 什么 ？', en:'What do you want to buy?'},
-    twoWen: {zh:'两 文 钱 。', en:'Two coins.'},   // the fruit seller, when you ask how much (两 and 文 just for listening: drafts for the native speaker)
+    twoWen: {zh:'两 文 钱 。', en:'Two coins.'},   // the fruit seller, when you ask how much (文 just for listening; 两, two of something, taught here if you don't know it: drafts for the native speaker)
     whatSell: {zh:'你 要 卖 什么 ？', en:'What do you want to sell?'},   // whoever buys your treasures (js/trade.js)
     treasureSell: {zh:'宝贝 ！ 你 要 卖 吗 ？', en:'A treasure! Do you want to sell it?'},   // and seeing one for the first time (teaching 卖, to a game that doesn't know it)
     lovely: {zh:'好看 ！', en:'Lovely!'},   // you, at something new set up in the cave at home
@@ -2218,7 +2223,7 @@ const ACROSS_THE_SEA = {
     tired: {zh:'我 累 了 。', en:'I’m tired.'},
     wantWood: {zh:'我 要 三 块 木头 。', en:'I need three pieces of wood.'},
     wantWater: {zh:'我 要 水 。', en:'I need some water.'},
-    wantStones: {zh:'我 要 四 块 石头 。', en:'I need four stones.'},
+    wantStones: {zh:'我 要 两 块 石头 。', en:'I need two stones.'},   // (两, two of something, 9 November 2026: taught here if you don't know it, the fetch's teach)
     rightThanks: {zh:'对 ！ 谢谢 ！', en:'That’s right! Thank you!'},
     notRight: {zh:'不 对 。', en:'That’s not right.'},
     goUp: {zh:'你 去 山 上 吧 ！', en:'Go on up the mountain!'},
@@ -2409,11 +2414,16 @@ const ACROSS_THE_SEA = {
     // coins, so the words you catch only by buying them can still be caught; and he buys treasures, as he always did
     boss: [
       {if:{new:'卖', treasures:true}, do:[{say:'treasureSell', teach:'卖'}, {newWord:'卖', if:{new:'卖'}, note:'To sell: the {老板} buys your treasures, for coins.'}, {sell:true, first:true}]},
+      // 两 for a game that doesn't know it yet, as at the town's fruit stall (his peaches are two coins too)
+      {if:{new:'两'}, do:[{reply:'多少钱', about:'You point at his peaches. You want to know how much they cost.', pic:'桃子'}, ...TWO_WEN, {shop:'home'}]},
       {do:[{shop:'home'}]}
     ],
     fruitSeller: [{if:{new:'买'}, do:[{shop:'fruit'}]},
       // how much? (decided 9 November 2026, the trade plan: 买 moved to Flower Fruit Mountain, and 多少钱 suits a market with coins)
-      {if:{new:'多少钱'}, do:[{reply:'多少钱', about:'You point at her apples. You want to know how much they cost.', pic:'苹果'}, {say:'twoWen'}, {shop:'fruit'}]},
+      // (and 两, two of something, in her answer, 两文钱: the second maths lesson at school since 9 November 2026, taught here to
+      // a game that doesn't know it yet, whenever you come to her stall)
+      {if:{any:[{new:'多少钱'}, {new:'两'}]}, do:[{reply:'多少钱', about:'You point at her apples. You want to know how much they cost.', pic:'苹果'},
+        ...TWO_WEN, {shop:'fruit'}]},
       {do:[{shop:'fruit'}]}],
     bunSeller: [{if:{new:'买'}, do:[{say:'hi'}, {message:'The bun seller is busy. Try the fruit stall first!'}]},
       {if:{new:'包子'}, do:[{shop:'buns'}]}, {do:[{shop:'buns'}]}],
@@ -2497,7 +2507,7 @@ const ACROSS_THE_SEA = {
       // at his hut, at the foot of the mountain: he's tired, and asks for things one at a time, only in Chinese (fetch-by-word,
       // decided 4 November 2026: quiet practice, where what you bring is the answer)
       {if:{woodFetch:{below:4}}, do:[{say:'tired', if:{woodFetch:0}},
-        {fetch:'woodFetch', asks:[{word:'木头', count:3, ask:'wantWood'}, {word:'水', ask:'wantWater'}, {word:'石头', count:4, ask:'wantStones'}],
+        {fetch:'woodFetch', asks:[{word:'木头', count:3, ask:'wantWood'}, {word:'水', ask:'wantWater'}, {word:'石头', count:2, ask:'wantStones', teach:'两', note:'Two of something is 两, two stones: 两块石头. Counting is still 二: 一，二，三！'}],
           right:'rightThanks', wrong:'notRight', wrongNote:'That’s not what he asked for. Listen again!',
           listen:'He only says it in Chinese: what he wants, and how many. Listen, then find it by his hut (the woodpile, the stream, the pebbles), pick up as many as he asked for, and bring them to him.',
           done:[{coins:3, note:'The woodcutter gives you 3 🪙 for your help.'}, {say:'goUp'}]}]},

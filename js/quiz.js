@@ -49,15 +49,15 @@ const laterPy = w => S.pinyin ? `<span class="cap py later">${WORDS[w].py}</span
 // such as dice: you could count their dots instead (decided 22 October 2026). A miss is practice, not a test: the
 // number comes back soon, and keeps its gold squares. Gives whether you were right.
 async function countQ({who, thing, n}){
-  const num = COUNTING[n - 1], listen = lvl(num) <= 1;
-  const gap = w => Math.abs(COUNTING.indexOf(w) - (n - 1));
-  const near = shuffle(COUNTING.filter(w => w !== num && !NOT_HOW_MANY.includes(w) && WORDS[w] && lvl(w) >= 1)).sort((a, b) => gap(a) - gap(b));
+  const num = HOW_MANY_WORDS[n - 1], listen = lvl(num) <= 1;   // (how many: two things are 两, js/world.js)
+  const gap = w => Math.abs(howManyOf(w) - n);
+  const near = shuffle(HOW_MANY_WORDS.filter(w => w !== num && WORDS[w] && lvl(w) >= 1)).sort((a, b) => gap(a) - gap(b));
   const opts = shuffle([num, ...apart(num, near, 2, listen)]);
   const things = k => Array.from({length:k}, () => `<span class="thing">${picHTML(thing.word)}</span>`).join('');
   let ok;
   if (listen) ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">Listen. Which has that many?</p></div>`,
     body:'<div class="hearit"><button class="sayBig" data-a="say" aria-label="Hear it again">🔊</button></div>',
-    options:opts.map(w => { const k = COUNTING.indexOf(w) + 1;   // (its characters, then its pinyin once you've answered, under it)
+    options:opts.map(w => { const k = howManyOf(w);   // (its characters, then its pinyin once you've answered, under it)
       return `<span class="count few ${thing.on || 'table'}">${things(k)}</span><span class="under"><span class="cap">${w}</span>${laterPy(w)}</span>`; }),
     answerIdx:opts.indexOf(num), word:num, onShow:() => setTimeout(() => say(num), 300)});
   else {
@@ -84,8 +84,8 @@ async function countQ({who, thing, n}){
 // Gives how you did: {right, asked, shells} (the timetable's end card says it).
 const LESSON_QUESTIONS = 5;   // (in a number or colour lesson)
 const EACH_NEW = 3, MIXED = 2;   // (in a first lesson teaching several: questions on each new word as it comes, then mixing them)
-// Numbers that never answer how many there are: two things are 两 (liǎng), not 二, so there are never two things to
-// count, and 二 is never an answer (decided 21 October 2026).
+// Numbers that never answer how many there are: two things are 两 (liǎng), not 二, so 二 is never an answer (decided 21
+// October 2026; since 9 November 2026 two things are counted with 两, HOW_MANY_WORDS in js/world.js, once you know it).
 const NOT_HOW_MANY = ['二'];
 // What a lesson asks (the right answers, in order) for one new word (one), given the others it can mix in (others), or
 // for several, one after another: each new word's questions as it comes, one of them a word you know already (one you
@@ -100,14 +100,17 @@ function lessonAsks(words, others){
 }
 async function countLesson(series, words, who, {again = false} = {}){
   const face = speaker(who);
-  const top = w => COUNTING.indexOf(w) + 1;
-  const others = shuffle([...Array(top(words[0]) - 1).keys()].map(i => COUNTING[i]).filter(w => !NOT_HOW_MANY.includes(w)));
+  const top = w => howManyOf(w), known = w => WORDS[w] && lvl(w) >= 1 && !words.includes(w);
+  // (the numbers you know below it, to mix in; for one with few below, such as 两, the nearest above it too)
+  const below = shuffle(HOW_MANY_WORDS.slice(0, top(words[0]) - 1).filter(known)), above = HOW_MANY_WORDS.slice(top(words[0])).filter(known);
+  const others = [...below, ...above].slice(0, Math.max(2, below.length));
   const asks = lessonAsks(words, others);
   let right = 0, shells = 0, asked = 0;
   for (const [k, part] of asks.entries()){
     if (k < words.length){   // (each number, as it comes: he counts up to it)
       await showDialog(face, L[series.teach[words[k]]], again ? {} : {teach:words[k]});
-      if (!again) await showNotice(words[k], {quiet:true, ...(series.note ? {note:fill(series.note)} : {})});
+      const note = (series.notes || {})[words[k]] || series.note;   // (its own note, such as 两's)
+      if (!again) await showNotice(words[k], {quiet:true, ...(note ? {note:fill(note)} : {})});
     }
     for (const w of part){
       const things = series.things.filter(t => lvl(t.word) >= 1), thing = things[Math.floor(Math.random() * things.length)] || series.things[0];

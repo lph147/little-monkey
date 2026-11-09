@@ -11,7 +11,7 @@ const assert = require('node:assert/strict');
 const {loadGame} = require('./fake-browser');
 
 const knows = words => Object.fromEntries(words.map(w => [w, {lv: 1, due: 0, ok: 0}]));
-const NUMBERS = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+const NUMBERS = ['一', '二', '两', '三', '四', '五', '六', '七', '八', '九', '十'];   // (the numbers page: 两, two of something, too, since 9 November 2026)
 const CH1 = {elder: 2, hungry: 'done', thirsty: 'done', gate: true, climb: 4, story: true, chapter: 1, cave: 6, count: 3, home: 2};
 function game(save = {}, area = 1){
   const g = loadGame({dom: true, save: {version: 38, started: true, area, w: knows(['石头', '山']), scroll: {has: true, sealed: []}, ...save}});
@@ -81,7 +81,7 @@ test('a full page: the old monkey has a ! and a task; he stamps it with a red se
   assert.match(get('__seal'), /The numbers page is full! The old monkey stamps it with a red seal: 好 \(hǎo\), good\./);
   assert.deepEqual(get('S.scroll.sealed'), ['1:numbers'], 'sealed, kept in the save');
   assert.ok(get('__lines').includes('太好了！'), 'Great!');
-  assert.ok(get('__said').some(m => /And 10 🐚 for you!/.test(m)) && get('S.shells') >= 10, 'a page of ten without a snack you know: shells');
+  assert.ok(get('__said').some(m => /And 11 🐚 for you!/.test(m)) && get('S.shells') >= 11, 'a page of eleven (两 too) without a snack you know: shells, one a word');
   assert.deepEqual(get('sealsWaiting()'), []);
   assert.equal(get('sealFor(NPCS.find(n => n.id === "elder"))'), false, 'no more !');
   run("openScroll(null, 0, 'numbers')");
@@ -91,7 +91,7 @@ test('a full page: the old monkey has a ! and a task; he stamps it with a red se
 test('what a full page earns: something to wear for a big page, a snack for a middling one, shells for a small one', () => {
   const {get} = game({w: knows(['石头', '山', '红色', '蓝色', '桃子']), areas: {1: CH1}});
   assert.deepEqual(get("scrollGift(scrollPages().find(p => p.cat === 'animals'))[0]"), {give: '红色 的 头带'.replace('红色 的 ', '')}, 'thirty animals: a headband, in a colour you know and haven’t got (the red one, 头带)');
-  assert.deepEqual(get("scrollGift(scrollPages().find(p => p.cat === 'numbers'))"), [{bag: '桃子', note: 'And a {桃子} for your bag!'}], 'ten numbers: a snack you know');
+  assert.deepEqual(get("scrollGift(scrollPages().find(p => p.cat === 'numbers'))"), [{bag: '桃子', note: 'And a {桃子} for your bag!'}], 'eleven numbers: a snack you know');
   assert.deepEqual(get("scrollGift(scrollPages().find(p => p.cat === 'places'))"), [{shells: 5, note: 'And 5 🐚 for you!'}], 'five places: shells');
   const owned = game({w: knows(['石头', '山', '红色', '蓝色']), areas: {1: CH1}, wardrobe: {owned: ['头带'], wearing: []}});
   assert.equal(owned.get("scrollGift(scrollPages().find(p => p.cat === 'animals'))[0].give"), '蓝色 的 头带', 'one you haven’t got');
@@ -148,7 +148,7 @@ test('your game’s card shows how full your scroll is, with a gold seal for an 
   const {g, get} = game({w: knows(['石头', '山', ...NUMBERS])});
   const sum = get('summaryOf(S, 1).scroll');
   assert.equal(sum.length, 1);
-  assert.equal(sum[0].found, 12);
+  assert.equal(sum[0].found, 13);
   assert.ok(sum[0].of > 100);
   g.run('slotCard(1)');
   assert.ok(g.el('#sheet').querySelector('.scrollfill .sf .bar'), 'a bar for the area');

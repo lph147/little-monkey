@@ -336,7 +336,7 @@ function exampleFor(w){
 // it's made, if it has a story (madeCard, js/cards.js), whose Back comes back here (en: with the English showing, and the
 // word not said again).
 function wordPage(w, back, from = 'Word Scroll', en = false){
-  const d = WORDS[w], ex = exampleFor(w), made = hasMade(w), alike = !!soundsLike(w), more = made ? 'How it’s made' : alike ? 'Sounds like' : '';   // (what English becomes: then how it's made, then the word that sounds like it)
+  const d = WORDS[w], ex = exampleFor(w), extras = moreCards(w), more = extras.length ? extras[0].label : '';   // (what English becomes: then how it's made, the word that sounds like it, and the one it's shown side by side with: js/cards.js)
   if (!en) say(w);
   const howBtn = `<button class="btn" data-a="made">${more}</button>`;
   openCard(`<p class="label">${from} · ${CATEGORIES[d.category].name}</p>
@@ -346,8 +346,8 @@ function wordPage(w, back, from = 'Word Scroll', en = false){
       ${ex ? `<p class="label examplehead">Example</p>${lineHTML(ex.t, w)}<div class="sentence-en"${en ? '' : ' hidden'}>${esc(ex.en)}</div>${Object.keys(S.lines).length <= TAP_TIP_LINES ? '<div class="gloss tip">Tap any word to see what it means.</div>' : ''}` : ''}</div></div>
     <div class="actions"><button class="btn grow" data-a="say">🔊 Hear it</button>${en ? (more ? howBtn : '') : '<button class="btn" data-a="en">English</button>'}<button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   bindTokens(sheet);
-  const page = () => wordPage(w, back, from, true), sounds = () => soundsCard(w, made ? how : page);
-  const how = () => madeCard(w, page, alike ? sounds : null, 'Sounds like ▸'), next = () => made ? how() : sounds();
+  const page = () => wordPage(w, back, from, true);
+  const open = i => extras[i].card(w, i ? () => open(i - 1) : page, i + 1 < extras.length ? () => open(i + 1) : null, i + 1 < extras.length ? `${extras[i + 1].label} ▸` : undefined), next = () => open(0);
   on('[data-a=say]', () => say(w));
   on('[data-a=en]', e => {
     sheet.querySelectorAll('.word .en, .sentence-en').forEach(x => x.hidden = false);

@@ -706,7 +706,11 @@ test('each lesson series is one the engine can give, teaching words you can coll
         assert.ok(x && AREA.lines[x.start] && AREA.lines[x.start].zh.split(' ').includes(w) && AREA.lines[x.end], `the lessons ${l.id}: ${w} needs a race or a jog, its start a line with ${w} in it, and its end a line`);
       }
     }
-    if (l.kind === 'count') assert.deepEqual(l.words, get('COUNTING').slice(get('COUNTING').indexOf(l.words[0]), get('COUNTING').indexOf(l.words[0]) + l.words.length), 'numbers are learned in order');
+    if (l.kind === 'count'){   // (numbers are learned in order; 两, two of something, among them once 二 is known from the prologue: 9 November 2026)
+      const C = get('COUNTING'), nums = l.words.filter(w => w !== '两');
+      assert.deepEqual(nums, C.slice(C.indexOf(nums[0]), C.indexOf(nums[0]) + nums.length), 'numbers are learned in order');
+      assert.ok(l.words.every(w => get('HOW_MANY_WORDS').includes(w)), 'each lesson word answers how many there are (two things are 两, never 二)');
+    }
     if (l.kind === 'paint'){
       const PARTS = get('SCHOOL_PARTS');
       for (const w of l.words) assert.ok(BANK[w].category === 'colours' && get(`!!PAINT[${JSON.stringify(w)}]`), `the lessons ${l.id}: ${w} should be a colour, with its paint in PAINT (js/art.js)`);

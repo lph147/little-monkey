@@ -665,6 +665,16 @@ rt.hid{visibility:hidden}
 .sa-side .tone span{font-weight:400}
 .sa-side .en{font-size:.76rem;color:var(--muted);text-align:left;background:none;padding:0;margin:0;line-height:1.2}
 .sa-note{margin:2px 0}
+/* two words side by side (sideCard, js/cards.js): a line to remember, then what each is for, and its examples to tap and
+   hear, each its Chinese with its English beside it (under it, if there's no room) */
+.sbs{align-content:start;justify-items:stretch}
+.sbs .sbs-word{background:none;border:0;padding:0;font:inherit;color:inherit;justify-self:center}
+.sbs-for{margin:2px 0 0;font-size:.8rem;font-weight:700;text-align:center}
+.sbs-ex{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;column-gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:1px 4px;font-family:var(--text);color:var(--ink)}
+.sbs-zh{font-size:1.05rem;line-height:1.1}
+.sbs-zh rt{font-size:max(.62em,10.5px);color:var(--muted)}
+.sbs-en{font-size:.74rem;color:var(--muted)}
+.sbs-remember{margin:0 0 4px;text-align:center;font-weight:700}
 .stats{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--pixel);font-size:.85rem;color:var(--muted);margin:.1rem 0 .2rem}
 .portrait{width:56px;height:56px;image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 .toggles{display:flex;gap:6px}
@@ -1009,6 +1019,7 @@ rt.hid{visibility:hidden}
 /* the smallest phones, where the game screen is only about 210px tall: smaller pictures, speaker and text */
 @container (max-height:260px){
   .sa-side{padding:3px;gap:0} .sa-side .pic,.sa-side .pic img,.sa-side .pic canvas{width:30px;height:30px} .sa-side .big{font-size:1.2rem} .sa-side .contour{height:22px} .sa .sa-tone{gap:4px}   /* (sounds alike: the two words smaller, so it all fits) */
+  .sbs .sbs-word .en{display:none} .sbs-for{margin:0;font-size:.74rem} .sbs-remember{margin:0 0 2px} .sbs .sbs-ex{padding:0 3px} .sa:has(.sbs){gap:4px}   /* (二 or 两?: what each is for says what it means, so not its English too) */
   .fpic .pix{width:24px;height:24px}   /* the feast's list: its rows smaller, each English beside its sentence, and no note */
   .flist{gap:1px;margin:2px 0 0}
   .frow{padding:0 6px}

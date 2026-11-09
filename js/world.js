@@ -80,7 +80,7 @@ const dirOf = (dx, dy) => Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'lef
 const HOW_MANY = 5;
 function howManyCard(w, ask){   // (ask: its question, if not how many of it you want to pick up)
   return new Promise(res => {
-    const nums = COUNTING.slice(0, HOW_MANY);
+    const nums = HOW_MANY_WORDS.slice(0, HOW_MANY);   // (how many: two is 两, never 二)
     openCard(`<div class="howmany"><div class="hmpic" aria-hidden="true">${picHTML(w)}</div><p class="label">${esc(ask ? fill(ask) : `How many ${wz(w)} do you want to pick up?`)}</p></div>
       <div class="opts five" data-nav>${nums.map((x, i) => `<button class="opt hz" data-i="${i}" aria-label="${i + 1}">${x}${S.pinyin ? `<span class="cap">${WORDS[x].py}</span>` : ''}</button>`).join('')}</div>
       <div class="actions"><button class="btn" data-a="no" data-b>Not now</button></div>`);
@@ -359,8 +359,17 @@ const STEP_OPTIONS = {quiz:['label'], tour:['ask','label'], carry:['howMany','in
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 const COUNT_MS = 900;   // a count said as each one's done, one after another (the carry step's each): how long it has, at least, before the next begins
-// How many things you could count with the numbers you know: never two (NOT_HOW_MANY, js/quiz.js).
-const countable = () => COUNTING.map((w, i) => i + 1).filter(n => !NOT_HOW_MANY.includes(COUNTING[n - 1]) && WORDS[COUNTING[n - 1]] && lvl(COUNTING[n - 1]) >= 1);
+// How many there are: as when counting, but two things are 两 (liǎng), two of something, never 二, which is for counting
+// (decided 21 October 2026; and 9 November 2026, when 两 became the second maths lesson's word, explained beside 二, so
+// two things can be counted at last): number questions, counting games and the how-many card.
+const HOW_MANY_WORDS = ['一', '两', '三', '四', '五', '六', '七', '八', '九', '十'];
+const howManyOf = w => HOW_MANY_WORDS.indexOf(w) + 1;   // (0: not a how-many word, such as 二)
+// How many things you could count with the numbers you know (two, once you know 两).
+const countable = () => HOW_MANY_WORDS.map((w, i) => i + 1).filter(n => WORDS[HOW_MANY_WORDS[n - 1]] && lvl(HOW_MANY_WORDS[n - 1]) >= 1);
+// 两, taught just before a card that shows it, to a game that doesn't know it yet (one from before it was a lesson at
+// school): the How many card (the carry step), its card and, as with any new word, 二 or 两? after it.
+const TWO_NOTE = 'Two of something is 两: you’ll see it on the next card, How many? Counting is still 二: 一，二，三！';
+async function knowTwo(){ const two = HOW_MANY_WORDS[1]; if (WORDS[two] && lvl(two) === 0) await showNotice(two, {note:TWO_NOTE}); }
 // The area's lesson series (AREA.lessons) are the school's subjects, chosen on its timetable (js/timetable.js), where
 // lessonNow and practiceLeft are.
 const LESSON_KINDS = {count:countLesson, paint:paintLesson};   // how each kind of lesson series goes (js/quiz.js)
@@ -572,15 +581,15 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // monkeys' tower on the hillside: COUNT_GAME counting questions, as in a number lesson (js/quiz.js), each about a
   // different number you know (those needing practice first), each right answer earning a 🐚 if that number needed
   // practice; and if you get them all right, its win. Till you know three numbers to count with (二 isn't one: two things
-  // are 两), its notYet message instead.
+  // are 两, once you know it), its notYet message instead.
   async countGame(s, who, last){
     const g = AREA.countGames[s.countGame], nums = countable();
     if (nums.length < 3){ if (who) await showNarration(fill(g.notYet), last); else toast(fill(g.notYet)); return; }
     if (!await confirmBox(speaker(who), fill(g.start), 'Count', 'Not now')) return STOP;
-    const asks = shuffle(nums).sort((a, c) => needsPractice(COUNTING[c - 1]) - needsPractice(COUNTING[a - 1])).slice(0, COUNT_GAME);
+    const asks = shuffle(nums).sort((a, c) => needsPractice(HOW_MANY_WORDS[c - 1]) - needsPractice(HOW_MANY_WORDS[a - 1])).slice(0, COUNT_GAME);
     let right = 0, shells = 0;
     for (const n of asks){
-      const need = needsPractice(COUNTING[n - 1]);
+      const need = needsPractice(HOW_MANY_WORDS[n - 1]);
       if (await countQ({who, thing:g.thing, n})){ right++; if (need) shells++; }
     }
     earn(shells); save();
@@ -950,6 +959,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // one at a time, it wasn't clear what to do, and the pool rested after each, so the next seemed not to come); ask, the
   // card's question, and took, what you're told after ({n}: how many, {s}: an s if more than one, {them}: them or it).
   async carry(s, who){
+    if (s.howMany) await knowTwo();   // (the card's two is 两: taught first, if you don't know it yet)
     const c = here().carrying, w = s.carry, n = s.howMany ? await howManyCard(w, s.ask) : c && c.word === w ? c.n + 1 : 1;
     if (!n) return;   // (Not now)
     here().carrying = {word:w, n}; save();
@@ -985,7 +995,9 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
         if (p[s.fetch] > asks.length){ await runSteps(s.done || [], who); return; }
       } else { SFX.wrong(); await showDialog(face, L[s.wrong]); toast(fill(s.wrongNote || 'That’s not what they asked for. Listen again!')); }
     }
-    await showDialog(face, L[asks[p[s.fetch] - 1].ask], {noEn:true});
+    const a = asks[p[s.fetch] - 1], nw = a.teach && WORDS[a.teach] && lvl(a.teach) === 0 ? a.teach : null;   // (teach: a word its line teaches, if you don't know it yet: a catch-up, such as 两 for a game past the school)
+    await showDialog(face, L[a.ask], nw ? {noEn:true, teach:nw} : {noEn:true});
+    if (nw) await showNotice(nw, {quiet:true, ...(a.note ? {note:fill(a.note)} : {})});
     if (s.listen) toast(fill(s.listen));
   },
   // I spy (decided 4 November 2026: quieter practice, where what you do is the answer): the one you're playing with says

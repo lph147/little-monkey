@@ -293,10 +293,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // The first lesson of each series teaches its first three words, one after another (first: decided 24 October 2026,
     // school lessons are the exception to one new word at a time): two lessons, and you can count six bees and know the
     // colours of the big monkey's flowers. After that, one a lesson.
-    {id:'numbers', kind:'count', by:'elder', if:{school:{atLeast:2}}, words:['四', '五', '六', '七', '八', '九', '十'], first:3,
-      subject:{zh:'数学', py:'shùxué', en:'Maths'}, icon:'dots', about:{first:'Three new numbers, then counting', one:'A new number, then counting'},
-      note:'The teacher counts peaches onto his table, one by one.',
-      teach:{'四':'count4', '五':'count5', '六':'count6', '七':'count7', '八':'count8', '九':'count9', '十':'count10'},
+    // Its second lesson is 两 (decided 9 November 2026): two of something, beside 二, which is for counting (its card goes on
+    // to 二 or 两?, SIDE_BY_SIDE in content/words.js), so from then on two things are counted with 两, never 二.
+    {id:'numbers', kind:'count', by:'elder', if:{school:{atLeast:2}}, words:['四', '五', '六', '两', '七', '八', '九', '十'], first:3,
+      subject:{zh:'数学', py:'shùxué', en:'Maths'}, icon:'dots', about:{first:'Three new numbers, then counting', one:'A new number, then counting', '两':'Two of something, then counting'},
+      note:'The teacher counts peaches onto his table, one by one.', notes:{'两':'For two of something, such as two peaches: 两个桃子. Counting is still 二: 一，二，三！'},
+      teach:{'四':'count4', '五':'count5', '六':'count6', '两':'countTwo', '七':'count7', '八':'count8', '九':'count9', '十':'count10'},
       things:[{word:'桃子', ask:'howManyPeaches', on:'table'}, {word:'苹果', ask:'howManyApples', on:'table'}, {word:'碗', ask:'howManyBowls', on:'table'},
         {word:'猴子', ask:'howManyMonkeys', on:'grass'}, {word:'兔子', ask:'howManyRabbits', on:'grass'}, {word:'鸟', ask:'howManyBirds', on:'grass'}]},
     // red, yellow and white come first (decided 22 October 2026: they were the prologue's, taught by the flowers the big
@@ -2684,6 +2686,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '王': 'The troop, when they made you their king.',
     '一': 'Counting the troop into the Water Curtain Cave.',
     '二': 'Counting the troop into the Water Curtain Cave.',
+    '两': 'A maths lesson at school: two peaches.',
     '三': 'Counting the troop into the Water Curtain Cave.',
     '木头': 'A dry, dead pine in the pine wood, knocked down with your stick.',
     '学校': 'The troop built it at the home ground, with the wood and stones you brought.',
@@ -3238,6 +3241,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     count8: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ！', en:'One, two, three, four, five, six, seven, eight!'},
     count9: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ！', en:'One, two, three, four, five, six, seven, eight, nine!'},
     count10: {zh:'一 ， 二 ， 三 ， 四 ， 五 ， 六 ， 七 ， 八 ， 九 ， 十 ！', en:'One, two, three, four, five, six, seven, eight, nine, ten!'},
+    countTwo: {zh:'一 ， 二 。 两 个 桃子 ！', en:'One, two. Two peaches!'},   // the teacher, teaching 两: counting with 二, then how many with 两 (9 November 2026)
     howManyPeaches: {zh:'桌子 上 有 几 个 桃子 ？', en:'How many peaches are on the table?'},   // and asking how many there are
     howManyApples: {zh:'桌子 上 有 几 个 苹果 ？', en:'How many apples are on the table?'},
     howManyBowls: {zh:'桌子 上 有 几 个 碗 ？', en:'How many bowls are on the table?'},
@@ -3260,7 +3264,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
     home: {zh:'这 是 我们 的 家 ！', en:'This is our home!'},
     king: {zh:'你 是 我们 的 王 ！', en:'You are our king!'},
     // counting the troop in, as each monkey comes in: counting, which is where 二 is said (decided 21 October 2026: it
-    // was 两只猴子, two monkeys, while the card taught 二; 两, for two of something, is a word of its own, for later)
+    // was 两只猴子, two monkeys, while the card taught 二; 两, for two of something, is a word of its own: the second maths
+    // lesson at school, since 9 November 2026, countTwo)
     count1: {zh:'一 ！', en:'One!'},
     count2: {zh:'一 ， 二 ！', en:'One, two!'},
     count3: {zh:'一 ， 二 ， 三 ！', en:'One, two, three!'},

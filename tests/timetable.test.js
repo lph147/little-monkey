@@ -55,7 +55,7 @@ test('the teacher opens the timetable: a tab for each subject and one for practi
   assert.match(tabs[2].textContent, /练习.*liànxí.*Practice/);
   assert.ok(tabs[0].querySelector('.st') && tabs[1].querySelector('.st') && !tabs[2].querySelector('.st'), 'a star on each subject with a lesson ready');
   assert.equal(tabs[0].getAttribute('aria-selected'), 'true', 'it opens on Maths');
-  assert.deepEqual(tiles(g), ['ready sel', 'locked', 'locked', 'locked', 'locked'], 'five Maths lessons: 四 五 六, then 七 八 九 十 one a lesson');
+  assert.deepEqual(tiles(g), ['ready sel', 'locked', 'locked', 'locked', 'locked', 'locked'], 'six Maths lessons: 四 五 六, then 两 (two of something, 9 November 2026), 七 八 九 十, one a lesson');
   assert.equal(text(g, '.detail'), 'Lesson 1 · Ready: Three new numbers, then counting.');
   assert.equal(text(g, '[data-a=ok]'), 'Start lesson 1');
   await press(g, '.tile[data-lesson="2"]');
@@ -85,7 +85,7 @@ test('a lesson: its name over every card in it, then a card saying what it taugh
   assert.equal(text(g, 'p.small'), 'Next in Maths: lesson 2, after 8 more questions, answered anywhere.');
   await press(g, '[data-a=tt]');
   assert.ok(!g.run('__done'), 'Timetable: back to it');
-  assert.deepEqual(tiles(g), ['done', 'wait sel', 'locked', 'locked', 'locked'], 'lesson 1 ticked, on lesson 2, waiting');
+  assert.deepEqual(tiles(g), ['done', 'wait sel', 'locked', 'locked', 'locked', 'locked'], 'lesson 1 ticked, on lesson 2, waiting');
   assert.match(text(g, '.detail'), /^Lesson 2 · Opens after 8 more questions, answered anywhere: ?0\/8$/);
   assert.equal(text(g, '[data-a=ok]'), 'Practise');
   assert.equal(sheet(g).querySelectorAll('.tab')[0].querySelector('.st'), null, 'no star on Maths now');
@@ -97,7 +97,7 @@ test('a lesson: its name over every card in it, then a card saying what it taugh
 test('a lesson done can be done again, any time: all its words, as before, and it doesn’t start the wait', async () => {
   const g = game({'四': 2, '五': 2, '六': 2});
   await lesson(g);
-  assert.deepEqual(tiles(g), ['done', 'ready sel', 'locked', 'locked', 'locked'], 'lesson 2 (七) ready');
+  assert.deepEqual(tiles(g), ['done', 'ready sel', 'locked', 'locked', 'locked', 'locked'], 'lesson 2 (两) ready');
   await press(g, '.tile[data-lesson="1"]');
   assert.equal(text(g, '.detail'), 'Lesson 1 · ✓ Done: 四 sì · 五 wǔ · 六 liù');
   assert.equal(text(g, '[data-a=ok]'), 'Lesson 1 again');
@@ -113,12 +113,12 @@ test('a lesson done can be done again, any time: all its words, as before, and i
 });
 
 test('a subject’s next lesson waits till you know the last one’s word well, and says which; another subject’s can go first', () => {
-  const g = game({'四': 2, '五': 2, '六': 2, '七': 0});
-  assert.deepEqual(get(g, "(s => lessonState(s, 3))(AREA.lessons[0])"), {state: 'practise', words: ['八'], fresh: ['八'], need: '七'});
-  assert.equal(get(g, "lessonDetail(AREA.lessons[0], 3)"), '<b>Lesson 3</b> · Opens once you know 七 (seven) well: get it right twice more, in practice.');
+  const g = game({'四': 2, '五': 2, '六': 2, '两': 2, '七': 0});   // (lesson 2 is 两, two of something: 9 November 2026)
+  assert.deepEqual(get(g, "(s => lessonState(s, 4))(AREA.lessons[0])"), {state: 'practise', words: ['八'], fresh: ['八'], need: '七'});
+  assert.equal(get(g, "lessonDetail(AREA.lessons[0], 4)"), '<b>Lesson 4</b> · Opens once you know 七 (seven) well: get it right twice more, in practice.');
   assert.deepEqual(get(g, 'ttDefault()'), {tab: 'colours', n: 1}, 'it opens on Art, ready');
   g.run("rec('七').ok = 2");
-  assert.deepEqual(get(g, "lessonState(AREA.lessons[0], 3).state"), 'ready');
+  assert.deepEqual(get(g, "lessonState(AREA.lessons[0], 4).state"), 'ready');
 });
 
 test('the practice tab: the words that need practice, and a practice lesson, any time', async () => {
@@ -138,7 +138,7 @@ test('the practice tab: the words that need practice, and a practice lesson, any
 
 test('the timetable on the classroom wall: a row for each subject, a star for each lesson done; A at it opens the timetable', async () => {
   const g = game({'四': 2, '五': 2, '六': 2});
-  assert.deepEqual(get(g, 'chartRows()'), [{icon: 'dots', n: 5, done: 1, ready: true}, {icon: 'paint', n: 7, done: 0, ready: true}]);
+  assert.deepEqual(get(g, 'chartRows()'), [{icon: 'dots', n: 6, done: 1, ready: true}, {icon: 'paint', n: 7, done: 0, ready: true}]);
   assert.equal(get(g, "PLACES.school.map[1][12]"), 'k', 'on the wall, where the right-hand window was');
   g.run("globalThis.__opened = 0; ttCard = async () => { __opened++; return null; }");
   g.run("S.pos = {place: 'school', x: 12, y: 2, dir: 'up'}; placePlayer()");

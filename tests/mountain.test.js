@@ -53,6 +53,7 @@ test('the woodcutter’s hut: he asks for things only in Chinese, and you bring 
   // at the woodpile, a card: how many? 一 to 五, each with its pinyin. Two pieces of wood is too few; three is right
   g.run('globalThis.__howMany = []; howManyCard = async w => { __howMany.push(w); return __pick; }; globalThis.__pick = 2');
   await press(g, 8, 4, 'up');
+  assert.deepEqual(notes(g).filter(n => /^card/.test(n)), ['card: 两'], 'a game that doesn’t know 两 yet learns it first: two on the card is 两 (the school teaches it as Maths lesson 2, 9 November 2026)');
   await press(g, 11, 4, 'left');
   assert.equal(said(g)[0], 'woodcutter: 不对。', 'two isn’t three');
   notes(g);
@@ -63,9 +64,11 @@ test('the woodcutter’s hut: he asks for things only in Chinese, and you bring 
   await press(g, 11, 4, 'left');
   assert.deepEqual(said(g), ['woodcutter: 对！谢谢！', 'woodcutter: 我要水。 (no English)']);
   await press(g, 9, 11, 'down');
+  notes(g);
   await press(g, 11, 4, 'left');
-  assert.deepEqual(said(g), ['woodcutter: 对！谢谢！', 'woodcutter: 我要四块石头。 (no English)']);
-  g.run('__pick = 4');
+  assert.deepEqual(said(g), ['woodcutter: 对！谢谢！', 'woodcutter: 我要两块石头。 (no English)'], 'two stones: 两, two of something (9 November 2026)');
+  assert.ok(!notes(g).includes('card: 两'), 'you know 两 by now');
+  g.run('__pick = 2');
   await press(g, 4, 10, 'down');
   const coins = get(g, 'S.coins');
   await press(g, 11, 4, 'left');
@@ -76,6 +79,17 @@ test('the woodcutter’s hut: he asks for things only in Chinese, and you bring 
   assert.equal(g.run('promptFor(8, 3)'), '', 'nothing to do there now');
 });
 
+test('a game standing at the woodcutter’s two stones without knowing 两 learns it from his line, its card after it', async () => {
+  const g = game({place: 'mountainFoot', x: 11, y: 4, dir: 'left'}, {woodFetch: 3});
+  g.run("showDialog = async (who, line, o = {}) => { __said.push(line.t.join('') + (o.teach ? ' [' + o.teach + ']' : '')); }");
+  await press(g, 11, 4, 'left');
+  assert.deepEqual(said(g), ['我要两块石头。 [两]'], '两 bold: the word being taught');
+  assert.deepEqual(notes(g).filter(n => /^card/.test(n)), ['card: 两']);
+  g.run("rec('两').lv = 1");
+  await press(g, 11, 4, 'left');
+  assert.deepEqual(said(g), ['我要两块石头。'], 'known: just green, and no card');
+});
+
 test('the How many? card: the numbers 一 to 五, each with its pinyin, in a row; choosing one picks up that many, and Not now none', async () => {
   const g = game({place: 'mountainFoot', x: 8, y: 4, dir: 'up'}, {woodFetch: 1}, {w: Object.fromEntries(['一', '二', '五'].map(x => [x, {lv: 2, ok: 2}]))});
   g.run('closeCard = () => { modal.hidden = true; }');
@@ -83,7 +97,7 @@ test('the How many? card: the numbers 一 to 五, each with its pinyin, in a row
   const sheet = g.el('#sheet');
   assert.match(sheet.textContent, /How many 木头 \(wood\) do you want to pick up\?/);
   const opts = sheet.querySelectorAll('.opts.five .opt');
-  assert.deepEqual(opts.map(b => b.textContent), ['一yī', '二èr', '三sān', '四sì', '五wǔ']);
+  assert.deepEqual(opts.map(b => b.textContent), ['一yī', '两liǎng', '三sān', '四sì', '五wǔ'], 'how many: two is 两, never 二 (9 November 2026)');
   opts[2].click(); await p; assert.equal(get(g, '__got'), 3);
   p = g.run('howManyCard("石头").then(n => { globalThis.__got = n; })');
   g.el('#sheet').querySelector('[data-a=no]').click(); await p; assert.equal(get(g, '__got'), 0, 'Not now');

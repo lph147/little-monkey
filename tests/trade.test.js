@@ -158,7 +158,7 @@ const AREA2 = {version: VERSION, area: 2, started: true};
 test('the human world: 多少钱 at the fruit stall; the money changer buys treasures; the 老板 at home', () => {
   const game = loadGame({save: {...AREA2, w: know(['买'])}});
   const A2 = get(game, 'AREA');
-  assert.ok(A2.talk.fruitSeller.some(p => p.if && p.if.new === '多少钱' && p.do.some(s => s.reply === '多少钱')), 'the fruit seller teaches 多少钱');
+  assert.ok(A2.talk.fruitSeller.some(p => p.if && (p.if.new === '多少钱' || (p.if.any || []).some(c => c.new === '多少钱')) && p.do.some(s => s.reply === '多少钱')), 'the fruit seller teaches 多少钱');
   assert.ok(A2.shops.changer.sells && A2.talk.changer.some(p => p.do.some(s => s.sell)), 'the money changer buys treasures');
   assert.ok(A2.shops.home.items.filter(i => i.tool || i.decor).length === 8, 'the 老板 at home sells every word you can only buy');
   assert.ok(A2.characters.some(c => c.id === 'boss' && c.moves.some(m => m.if.homeAgain === 0 && m.place === 'hut')), 'he’s only home once the demon is beaten');

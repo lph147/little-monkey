@@ -60,7 +60,7 @@ test('the first number lesson teaches three, one after another: 四, then 五, t
   assert.equal(get(g, 'areaChecklist().find(([t]) => /count to ten/.test(t))[0]'), 'Learn to count to ten at 学校 (school) (3/7)');
   assert.equal(get(g, 'lessonNow()'), null, 'the next waits till you’ve answered 8 more questions (tests/lesson-wait.test.js)');
   g.run('S.turn += 8');
-  assert.deepEqual(get(g, 'lessonNow().words'), ['七'], 'then one a lesson (with a colour to learn too, they take turns: tests/colours.test.js)');
+  assert.deepEqual(get(g, 'lessonNow().words'), ['两'], 'then one a lesson, 两 first: two of something (9 November 2026; with a colour to learn too, they take turns: tests/colours.test.js)');
 });
 
 test('after the first three, one a lesson: the next number waits until you’ve got the last one right twice; until then, lessons are practice', async () => {
@@ -69,16 +69,22 @@ test('after the first three, one a lesson: the next number waits until you’ve 
   await lesson(g);
   assert.equal(g.run('__lessons'), 1, 'so the lesson is practice');
   g.run('rec("六").ok = 2');
-  assert.deepEqual(get(g, 'lessonNow().words'), ['七'], 'then 七, on its own');
+  assert.deepEqual(get(g, 'lessonNow().words'), ['两'], 'then 两, on its own: two of something (9 November 2026)');
   answering(g);
   g.run('__said.length = 0');
+  await lesson(g);
+  assert.deepEqual(get(g, '__said'), ['上课！', '一，二。两个桃子！ [两]', '下课！', '再见！'], 'he counts two peaches onto his table with 二, then says how many there are with 两');
+  assert.equal(get(g, '__qs').filter(q => q.word === '两').length, 3, 'five questions: three of them the new word');
+  assert.equal(get(g, '__qs').length, 5);
+  g.run('rec("两").ok = 2; S.turn += 8; __said.length = 0; __qs.length = 0');
+  assert.deepEqual(get(g, 'lessonNow().words'), ['七'], 'then 七, on its own');
   await lesson(g);
   assert.deepEqual(get(g, '__said'), ['上课！', '一，二，三，四，五，六，七！ [七]', '下课！', '再见！']);
   assert.equal(get(g, '__qs').filter(q => q.word === '七').length, 3, 'five questions: three of them the new number');
   assert.equal(get(g, '__qs').length, 5);
   const one = game({'四': 1});   // (a game that learned 四 when the first lesson taught one)
   assert.deepEqual(get(one, '[lessonNow().n, lessonNow().words]'), [1, ['五', '六']], 'a game that knows 四 learns the rest of the first lesson’s three in it (28 October 2026: one a lesson till then)');
-  const all = game(Object.fromEntries(['四', '五', '六', '七', '八', '九', '十'].map(n => [n, 2])));
+  const all = game(Object.fromEntries(['四', '五', '六', '两', '七', '八', '九', '十'].map(n => [n, 2])));
   assert.equal(get(all, 'lessonNow()'), null, 'all ten learned: no more number lessons');
   assert.equal(get(all, "((AREA.bubbles.elder || []).find(b => matches(b.if)) || {}).show || null"), null, 'and no ! unless words need practice');
   assert.ok(get(all, 'areaChecklist().find(([t]) => /count to ten/.test(t))[1]'), 'the checklist is ticked: 7/7');
@@ -142,7 +148,7 @@ test('closing the timetable without choosing a lesson ends the class there: no �
   assert.equal(g.run('lvl("四")'), 0, 'nothing learned');
 });
 
-test('there are never two things to count, and 二 is never an answer: two things are 两 (liǎng), a word of its own', async () => {
+test('till you know 两 there are never two things to count, and 二 is never an answer: two things are 两 (liǎng), a word of its own (tests/two.test.js)', async () => {
   const g = game();
   answering(g);
   for (let i = 0; i < 6; i++){ g.run("rec('四').lv = 0; rec('四').ok = 0; delete here().lessonTurn"); await lesson(g); }   // (the first lesson, again and again)

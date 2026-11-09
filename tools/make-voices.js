@@ -51,6 +51,7 @@ function wantedIn(n){
   for (const c of get('COLOUR_SENTENCES()')) all.add(said(c.zh));   // and sentences with a colour in them, such as 我要蓝色的头带 at the shop (js/world.js)
   for (const c of get('IS_IT_SENTENCES()')) all.add(said(c.zh));   // and the child's game, 这是…吗？ about each word it asks about (Area 2: js/world.js)
   for (const c of get('SIZED()')) all.add(said(c.zh));   // and big and little wild creatures' names, such as 大蛇 (js/battle.js)
+  for (const p of get('SIDE_BY_SIDE.filter(p => p.words.every(w => WORDS[w]))')) for (const u of Object.values(p.use)) for (const e of u.ex) all.add(said(e.zh));   // and the examples on a card of two words side by side, such as 两个桃子 (js/cards.js)
 
   // Who says each line (the game's speaker(s.by || who)): a say step in a character's talk is theirs unless
   // it's `by` someone else; elsewhere (events, things you look at) only `by` says who. Requests are their asker's.

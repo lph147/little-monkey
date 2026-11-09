@@ -2667,6 +2667,43 @@ const PICTURES = {
       "................................"
     ]
   },
+  '两': {   // two (of something)
+    palette: {a:'#44362B', b:'#2F2013', c:'#394830', d:'#23341A', e:'#AD8C70', f:'#6C4627', g:'#8CC481', h:'#47853B', i:'#35632C', j:'#5BAA4B', k:'#5C463F', l:'#4A322B', m:'#F9BDB1', n:'#C17D70', o:'#F7A08F', p:'#D9665B', q:'#FFE0CF', r:'#EE7F72', s:'#522A24'},
+    rows: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      ".........ab.ccccd...............",
+      "........aefcgggghd....ab.ccccd..",
+      "........aefijjjhd....aefcgggghd.",
+      "........aeijjjhd.....aefijjjhd..",
+      "........bffihhd......aeijjjhd...",
+      ".......kkkkldd.......bffihhd....",
+      ".....kkmmmmnll......kkkkldd.....",
+      "....kmmopooomnl...kkmmmmnll.....",
+      "...kmooopooooonl.kmmopooomnl....",
+      "..kmqqqqpoooooonkmooopooooonl...",
+      "..kmqqqqpoooooonmqqqqpoooooonl..",
+      "..kmoooopoooooonmqqqqpoooooonl..",
+      "..kmoooopoooooonmoooopoooooonl..",
+      "..kmooooporrrronmoooopoooooonl..",
+      "..kmooooprrrrrrnmooooporrrronl..",
+      "..kmooooprrrrrrnmooooprrrrrrnl..",
+      "..lnooooprrrrrrnmooooprrrrrrnl..",
+      "...lnooooporronlnooooprrrrrrnl..",
+      "....lnnoopoonnl.lnooooporronl...",
+      ".....llnnpnnll...lnnoopoonnl....",
+      ".......llsll......llnnpnnll.....",
+      "....................llsll.......",
+      "................................",
+      "................................",
+      "................................",
+      "................................"
+    ]
+  },
   '三': {   // three
     palette: {a:'#5D5A56', b:'#4D4943', c:'#FCFCF8', d:'#C9C6BC', e:'#FAFAF5', f:'#E47575', g:'#A82D2D', h:'#D83A3A'},
     rows: [

@@ -647,8 +647,8 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   stand(11, 5, 'up');
   await act('arrive(11, 4).then(runEvents)', 'walking back into the school');
   assert.equal(run('PLACE'), 'school');
-  for (let i = 0; i < 50 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9); i++) await pressAt(7, 3, 'up', `lesson ${i + 3}`);   // (a new word, or practice while the next waits)
-  for (const n of ['五', '六', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);
+  for (let i = 0; i < 50 && (run('counter("numbersKnown")') < 7 || run('counter("coloursKnown")') < 9 || !knows('跑') || !knows('跑步')); i++) await pressAt(7, 3, 'up', `lesson ${i + 3}`);   // (a new word, or practice while the next waits; PE's too)
+  for (const n of ['五', '六', '两', '七', '八', '九', '十']) assert.ok(knows(n), `the number lessons teach ${n}`);   // (两, two of something, the second: 9 November 2026)
   for (const c of ['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色']) assert.ok(knows(c), `the colour lessons teach ${c}`);
   // PE (decided 28 October 2026), once the first two lessons are done: a race on the sports ground teaches 跑 (you run, and
   // win), and a jog round it 跑步; and you're back in the classroom after each

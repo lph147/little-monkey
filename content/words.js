@@ -105,6 +105,7 @@ const WORD_BANK = {
   '王': {py:'wáng', en:'king', pic:'👑', area:1, category:'people'},
   '一': {py:'yī', en:'one', pic:'1️⃣', area:1, category:'numbers'},
   '二': {py:'èr', en:'two', pic:'2️⃣', area:1, category:'numbers'},
+  '两': {py:'liǎng', en:'two (of something)', pic:'✌️', area:1, category:'numbers', alike:['二', '桃子', '水果']},   // (two of something, as two peaches: 两个桃子. Counting is 二. The second maths lesson at school, decided 9 November 2026; its picture is two peaches)
   '三': {py:'sān', en:'three', pic:'3️⃣', area:1, category:'numbers'},
   '四': {py:'sì', en:'four', pic:'4️⃣', area:1, category:'numbers'},   // (chapter 1: the school's number lessons)
   '五': {py:'wǔ', en:'five', pic:'5️⃣', area:1, category:'numbers'},
@@ -335,7 +336,6 @@ const WORD_BANK = {
   '刷': {py:'shuā', en:'to paint (with a brush)'},
   '好看': {py:'hǎokàn', en:'good-looking, lovely'},
   '宝贝': {py:'bǎobèi', en:'treasure'},   // (the old monkey's tip: 山上有很多宝贝！, the trade, 9 November 2026)
-  '两': {py:'liǎng', en:'two (of something: 两文钱, two coins)'},
   '文': {py:'wén', en:'(counts coins: 两文钱, two coins)'},
   '种花': {py:'zhòng huā', en:'to plant flowers'},
   '几': {py:'jǐ', en:'how many'},
@@ -508,3 +508,14 @@ const MADE = {
   '苹果': {same:['果', 'guǒ', 'fruit'], as:'水果', why:'an apple is a fruit'},
   '奶酪': {same:['奶', 'nǎi', 'milk'], as:'牛奶', why:'cheese is made from milk'}
 };
+
+// Two words easily mixed up, side by side on a card of their own (sideCard, js/cards.js): after the newer one's card the
+// first time you catch it (its title ▸, after How it's made and Sounds like), and from either word's page in the Word
+// Scroll, from its English: what each is for, an example or two (tap one to hear it), and a line to remember (decided 9
+// November 2026: 二 is for counting, 一，二，三; 两 for two of something, 两个桃子, taught as the second maths lesson, so
+// how many there are is never 二). The examples have voice clips (npm run voices) and go to the native speaker (CHINESE.md).
+const SIDE_BY_SIDE = [
+  {words:['二', '两'], title:'二 or 两?', remember:'Counting? 二. How many? 两.',
+    use:{'二':{for:'For counting', ex:[{zh:'一 ， 二 ， 三 ！', en:'One, two, three!'}]},
+      '两':{for:'For two of something', ex:[{zh:'两 个 桃子', en:'two peaches'}, {zh:'两 只 猴子', en:'two monkeys'}]}}}
+];

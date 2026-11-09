@@ -117,11 +117,11 @@ SAVES.classroom = {...SAVES.schoolBuilt, w: {...SAVES.schoolBuilt.w, ...knows(1,
 // number lessons: by the teacher, the first lesson (四 五 六, one after another); and later, knowing the numbers to six
 SAVES.numbersNew = {...SAVES.classroom, w: {...SAVES.classroom.w, ...knows(1, ['一', '二', '三', '同学', '碗', '兔子'])}, pos: {place: 'school', x: 7, y: 3, dir: 'up'}};
 SAVES.numbersLater = {...SAVES.numbersNew, w: {...SAVES.numbersNew.w, ...knows(2, ['四', '五', '六'])}};
-SAVES.numbersTen = {...SAVES.numbersLater, w: {...SAVES.numbersLater.w, ...knows(2, ['七', '八', '九', '鸟']), ...knows(1, ['十'])}};
+SAVES.numbersTen = {...SAVES.numbersLater, w: {...SAVES.numbersLater.w, ...knows(2, ['两', '七', '八', '九', '鸟']), ...knows(1, ['十'])}};
 // colour lessons: by the teacher, knowing the numbers to ten and no colours yet, so the first lesson is 红色 黄色 白色 (red
 // paints the lanterns); knowing red, then red, yellow and white, just learning 黑色; then knowing it; and the school on the
 // home ground with its lanterns red (and nothing else painted: decided 24 October 2026), then knowing every colour
-SAVES.coloursNew = {...SAVES.numbersNew, w: {...SAVES.numbersNew.w, ...knows(2, ['四', '五', '六', '七', '八', '九', '十'])}};
+SAVES.coloursNew = {...SAVES.numbersNew, w: {...SAVES.numbersNew.w, ...knows(2, ['四', '五', '六', '两', '七', '八', '九', '十'])}};
 SAVES.coloursRed = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['红色'])}};
 SAVES.coloursThree = {...SAVES.coloursNew, w: {...SAVES.coloursNew.w, ...knows(2, ['红色', '黄色', '白色'])}};
 SAVES.coloursLater = {...SAVES.coloursThree, w: {...SAVES.coloursThree.w, ...knows(2, ['黑色'])}};
@@ -902,6 +902,16 @@ const SCREENS = [
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[1], n: 6}); await wait(500); }},
   {id: 'count-monkeys', title: 'How many monkeys?', save: 'numbersLater', why: 'Things that are alive are counted on the grass, with 只: 这里有几只猴子？', run: async () => {
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[3], n: 5}); await wait(500); }},
+  // 两, two of something, the second maths lesson (9 November 2026): the teacher counts two peaches with 二 and says how
+  // many with 两, then its card, then 二 or 两?, the two side by side (sideCard, js/cards.js), then its questions
+  {id: 'two-lesson', title: 'One, two. Two peaches!', save: 'numbersLater', why: 'Maths lesson 2, 两 (liǎng), two of something: the teacher counts two peaches onto his table with 二, counting, then says how many there are with 两 (bold).', run: async () => {
+    play(); await wait(100); showDialog(speaker('elder'), L[AREA.lessons[0].teach['两']], {teach: '两'}); await wait(500); }},
+  {id: 'two-card', title: '两: two of something', save: 'numbersLater', why: '两’s card, its picture two peaches, with what it’s for; it goes on to 二 or 两? ▸, not Got it.', run: async () => {
+    play(); await wait(100); showNotice('两', {quiet: true, note: fill(AREA.lessons[0].notes['两'])}); await wait(500); }},
+  {id: 'two-side', title: '二 or 两?', save: 'numbersLater', why: 'The two side by side, after 两’s card the first time and from either word’s page in the Word Scroll: 二 for counting (一，二，三！), 两 for two of something (两个桃子, 两只猴子), each example to tap and hear, a line to remember, and Hear both.', run: async () => {
+    play(); await wait(100); showNotice('两', {quiet: true, note: fill(AREA.lessons[0].notes['两'])}); await wait(200); click('#sheet .primary'); await wait(500); }},
+  {id: 'count-liang', title: 'Which has 两?', save: 'numbersLater', why: 'Two things to count at last, once you know 两: two peaches beside one and three, while 两 is new. 二 is never an answer.', run: async () => {
+    play(); await wait(100); rec('两').lv = 1; countQ({who: 'elder', thing: AREA.lessons[0].things[0], n: 2}); await wait(500); }},
   {id: 'count-ten', title: 'Which has 十?', save: 'numbersTen', why: 'Ten, the most there are, while 十 is new: ten, nine and eight birds, two rows of five each, answered (the right one, and each answer’s pinyin), still fitting a small phone.', run: async () => {
     play(); await wait(100); countQ({who: 'elder', thing: AREA.lessons[0].things[5], n: 10}); await wait(400); [...document.querySelectorAll('.opt')].find(b => b.textContent.includes('十')).click(); await wait(500); }},
   {id: 'colour-lesson', title: 'The timetable: Art', save: 'coloursNew', why: 'With every Maths lesson done (✓ on its tab), the timetable opens on Art, its first lesson ready: three new colours, 红色 黄色 白色, one after another.', run: async () => {
@@ -1687,7 +1697,7 @@ const SCREENS = [
     play(); await wait(100); tasksPage(() => closeCard()); await wait(300); }},
   {id: 'king-reply', title: 'Your name, as king', save: 'king', why: 'What you say shows 美猴王 now, such as your reply to a monkey’s 你好.', run: async () => {
     play(); await wait(100); (async () => { await showDialog(speaker('troop1'), L.hi); await replyWith('你好'); })(); await wait(200); next(); await wait(200); click('#talk .reply'); await wait(400); }},
-  {id: 'count-two', title: 'Counting the troop in', save: 'king', why: 'The card for 二 explains 两.', run: async () => {
+  {id: 'count-two', title: 'Counting the troop in', save: 'king', why: 'The second monkey comes in: 一，二！, and 二’s card, counting (两, two of something, is a maths lesson at school: two-lesson).', run: async () => {
     play(); await wait(100); talk(npc('elder')); await wait(200); next(); await wait(200); next(); await wait(400); }},
   {id: 'troop-home', title: 'The whole troop is home', save: 'home', run: async () => { play(); await wait(500); }},
   {id: 'doorway', title: 'Tired? Sleep in a bed', save: 'atDoor', why: 'Just inside the entrance, a monkey teaches 睡觉 (sleep).', run: async () => { play(); await wait(100); talk(npc('doorway')); await wait(400); }},

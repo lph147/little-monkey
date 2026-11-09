@@ -178,6 +178,7 @@ shown where the word list has them.
 | 一，二，三，四，五，六，七，八！ | yī, èr, sān, sì, wǔ, liù, qī, bā! | One, two, three, four, five, six, seven, eight! |  |  |
 | 一，二，三，四，五，六，七，八，九！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ! | One, two, three, four, five, six, seven, eight, nine! |  |  |
 | 一，二，三，四，五，六，七，八，九，十！ | yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí! | One, two, three, four, five, six, seven, eight, nine, ten! |  |  |
+| 一，二。两个桃子！ | yī, èr. liǎng gè táozi! | One, two. Two peaches! |  |  |
 | 桌子上有几个桃子？ | zhuōzi shàng yǒu jǐ gè táozi? | How many peaches are on the table? |  |  |
 | 桌子上有几个苹果？ | zhuōzi shàng yǒu jǐ gè píngguǒ? | How many apples are on the table? |  |  |
 | 桌子上有几个碗？ | zhuōzi shàng yǒu jǐ gè wǎn? | How many bowls are on the table? |  |  |
@@ -568,6 +569,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 王 | wáng | king |  |
 | 一 | yī | one |  |
 | 二 | èr | two |  |
+| 两 | liǎng | two (of something) |  |
 | 三 | sān | three |  |
 | 四 | sì | four |  |
 | 五 | wǔ | five |  |
@@ -715,6 +717,14 @@ check that each is true and simply put.
 | --- | --- | --- | --- |
 | Tip: one character, one syllable | 山 shān + 羊 yáng | 2 beats you hear = 2 characters you see. When you hear a new word, count its beats: that’s how many characters to look for. |  |
 
+### Two words side by side
+
+Two words easily mixed up, side by side on a card of their own: what each is for, an example or two, and a line to remember (new on 9 November 2026, not checked yet).
+
+| Words | What each is for | Examples | To remember | Notes |
+| --- | --- | --- | --- | --- |
+| 二 / 两 | 二: For counting; 两: For two of something | 一，二，三！ yī, èr, sān! (One, two, three!); 两个桃子 liǎng gè táozi (two peaches); 两只猴子 liǎng zhī hóuzi (two monkeys) | Counting? 二. How many? 两. |  |
+
 ### Big and little wild creatures
 
 Once you know 大 and 小, a wild creature can be a big one or a little one: its name says which, on its battle card and aloud (new on 8 November 2026, not checked yet).
@@ -793,7 +803,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 你要换钱吗？ | nǐ yào huàn qián ma? | Do you want to change money? | 换钱的 (Money changer) |  |
 | 这是你的钱。 | zhè shì nǐ de qián. | Here’s your money. | 换钱的 (Money changer) |  |
 | 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman), 老板 (Shop owner) |  |
-| 两文钱。 | liǎng wén qián. | Two coins. | 老板 (Stallholder) |  |
+| 两文钱。 | liǎng wén qián. | Two coins. | 老板 (Shop owner), 老板 (Stallholder) |  |
 | 你要卖什么？ | nǐ yào mài shénme? | What do you want to sell? |  |  |
 | 宝贝！你要卖吗？ | bǎobèi! nǐ yào mài ma? | A treasure! Do you want to sell it? | 换钱的 (Money changer), 老板 (Shop owner) |  |
 | 好看！ | hǎokàn! | Lovely! |  |  |
@@ -813,7 +823,7 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我累了。 | wǒ lèi le. | I’m tired. | 樵夫 (Woodcutter) |  |
 | 我要三块木头。 | wǒ yào sān kuài mùtou. | I need three pieces of wood. |  |  |
 | 我要水。 | wǒ yào shuǐ. | I need some water. |  |  |
-| 我要四块石头。 | wǒ yào sì kuài shítou. | I need four stones. |  |  |
+| 我要两块石头。 | wǒ yào liǎng kuài shítou. | I need two stones. |  |  |
 | 对！谢谢！ | duì! xièxie! | That’s right! Thank you! | 师父 (The master), 大师兄 (The senior pupil) |  |
 | 不对。 | bù duì. | That’s not right. |  |  |
 | 你去山上吧！ | nǐ qù shān shàng ba! | Go on up the mountain! | 樵夫 (Woodcutter) |  |
@@ -1453,7 +1463,6 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 刷 | shuā | to paint (with a brush) |  |
 | 好看 | hǎokàn | good-looking, lovely |  |
 | 宝贝 | bǎobèi | treasure |  |
-| 两 | liǎng | two (of something: 两文钱, two coins) |  |
 | 文 | wén | (counts coins: 两文钱, two coins) |  |
 | 种花 | zhòng huā | to plant flowers |  |
 | 几 | jǐ | how many |  |
@@ -1534,6 +1543,10 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 一，二。两个桃子！ | yī, èr. liǎng gè táozi! | One, two. Two peaches! | New on 9 November 2026 (二 and 两): the teacher, teaching 两 (liǎng, two of something) as the second maths lesson at school: counting with 二, then how many there are with 两. Is it natural? |  |
+| 两个桃子 | liǎng gè táozi | two peaches | New on 9 November 2026 (二 and 两): an example on the card showing 二 and 两 side by side (二 for counting, 一，二，三！; 两 for two of something), whose line to remember is “Counting? 二. How many? 两”. Is it natural? |  |
+| 两只猴子 | liǎng zhī hóuzi | two monkeys | New on 9 November 2026 (二 and 两): the card’s other example for 两. Is it natural? |  |
+| 我要两块石头。 | wǒ yào liǎng kuài shítou. | I need two stones. | New on 9 November 2026 (二 and 两): the woodcutter, asking for two stones only in Chinese (it was 我要四块石头, four stones), teaching 两 to a game that doesn’t know it yet. Is it natural? |  |
 | 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | New on 9 November 2026 (treasures and trading): the 老板 on Flower Fruit Mountain, as you shop, teaching 买 (to buy; it was the town’s fruit seller’s word): every purchase is now 我要买… with the thing missing, such as 我要买桃子 and 我要买蓝色的头带. Is it natural? |  |
 | 你要卖什么？ | nǐ yào mài shénme? | What do you want to sell? | New on 9 November 2026 (treasures and trading): the 老板, once he buys your treasures (and the money changer, and the 老板 at home, in the human world). Is it natural? |  |
 | 山上有很多宝贝！ | shān shàng yǒu hěn duō bǎobèi! | There are lots of treasures on the mountain! | New on 9 November 2026 (treasures and trading): the old monkey, telling you about the treasures (宝贝 just for listening) before you find the first. Is 宝贝 right for treasures here, or would 宝物 be better?. Is it natural? |  |
@@ -1547,7 +1560,7 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 | 玉是绿色的。 | yù shì lǜsè de. | Jade is green. | New on 9 November 2026 (treasures and trading): the example sentence for 玉 (jade). Is it natural? |  |
 | 人参在松树下面。 | rénshēn zài sōngshù xiàmiàn. | The ginseng is under the pine trees. | New on 9 November 2026 (treasures and trading): the example sentence for 人参 (ginseng). Is it natural? |  |
 | 金子是黄色的。 | jīnzi shì huángsè de. | Gold is yellow. | New on 9 November 2026 (treasures and trading): the example sentence for 金子 (gold). Is it natural? |  |
-| 两文钱。 | liǎng wén qián. | Two coins. | New on 9 November 2026 (treasures and trading): the town’s fruit seller, when you ask how much her apples are with 多少钱？ (How much?), which she teaches now (两 and 文 just for listening). Is it natural? |  |
+| 两文钱。 | liǎng wén qián. | Two coins. | New on 9 November 2026 (treasures and trading): the town’s fruit seller, when you ask how much her apples are with 多少钱？ (How much?), which she teaches now (文 just for listening; 两, two of something, taught here to a game that doesn’t know it yet, as by the 老板 at home in chapter 2: his peaches are two coins too). Is it natural? |  |
 | 宝贝！你要卖吗？ | bǎobèi! nǐ yào mài ma? | A treasure! Do you want to sell it? | New on 9 November 2026 (treasures and trading): the money changer in the town, and the 老板 at home in the human world, seeing a treasure from the mountain, teaching 卖 to a game that doesn’t know it. Is it natural? |  |
 | 来！ | lái! | Come on! | New on 8 November 2026 (the gentler prologue): the big monkey, raising his stick to spar with you as he gives it to you (a practice fight you can’t lose, instead of two notes on how to fight). Is it natural? |  |
 | 路上有蛇！ | lù shàng yǒu shé! | There are snakes on the path! | New on 8 November 2026 (the gentler prologue): the rabbit by the long grass on the mountain path, once you’ve met your first snake, teaching 路 (path); it was 草里有蛇。. Is it natural? |  |

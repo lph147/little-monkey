@@ -542,6 +542,16 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
   },
   '一': p => { p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); p.fill(O(16, 16, 2.8), RED); },
   '二': p => { p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); p.fill(O(11, 11, 2.6), RED); p.fill(O(21, 21, 2.6), RED); },
+  '两': p => {   // two (of something): two peaches side by side, 两个桃子 (unlike 二, a die's two dots, and 桃子, one big peach)
+    for (const [x, y] of [[9.5, 19], [22.5, 20]]){
+      p.fill(Rc(x - 1, y - 12, 2, 4), BARK);
+      p.fill(Pg([[x, y - 9], [x + 4, y - 12.5], [x + 7.5, y - 11.5], [x + 3.5, y - 8]]), '#5BAA4B', {edge: true});
+      p.fill(O(x, y, 7, 6.8), '#F7A08F');
+      p.flat(O(x + 2.5, y + 2.2, 3, 2.4), '#EE7F72');
+      p.flat(path([[x - 0.5, y - 6.3], [x - 1.5, y - 2.5], [x - 1, y + 2], [x, y + 6]], .5), '#D9665B');
+      p.flat(O(x - 3.5, y - 3, 1.8, 1.4), '#FFE0CF');
+    }
+  },
   '三': p => { p.fill(Rc(5, 5, 22, 22, 4), '#FAFAF5', {dark: '#C9C6BC'}); p.fill(O(10.5, 10.5, 2.4), RED); p.fill(O(16, 16, 2.4), RED); p.fill(O(21.5, 21.5, 2.4), RED); },
   '四': p => dice(p, [[10.5, 10.5], [21.5, 10.5], [10.5, 21.5], [21.5, 21.5]]),
   '五': p => dice(p, [[10.5, 10.5], [21.5, 10.5], [16, 16], [10.5, 21.5], [21.5, 21.5]]),
