@@ -377,6 +377,25 @@ Logged 9 November 2026 at the owner's request, so it doesn't hold anything else 
 
 The owner's thoughts: less fetching fruit, more **jobs that need doing around the home**. Ideas discussed: setting the table (我要四个碗！), watering the garden (西瓜要喝水！), shooing birds off the crops, feeding the cow, sweeping, mending the pen's fence, clearing a fallen branch or patching the cave after heavy rain, finding a lost little one (我的小猴子不见了！), the bedtime count, helping a little monkey with its words, rebuilding the stone tower, minding the 老板's stall (你来卖吧！ / 我要买苹果！), selling today's treasure at double price, chasing off the wolf or the wasps, catching a fish for supper; the first job teaching 帮 (帮帮我！). Still to decide: whether there are daily tasks at all, what kind, how many and how they pay.
 
+## Both ways: learning English too
+
+**Agreed 9 November 2026** (the [proposal](https://claude.ai/artifact/5zpoxxuwFCBtduMzzcRwQZ), with mock-ups drawn from the game; all eight decisions as recommended). Nothing is built yet. The game will launch playable both ways: learning Chinese, played in English, as now, and learning English, played in Chinese, for Chinese speakers. The story, maps, pictures, characters, battles, music, the review list and the controls are shared; each direction has its own text, voices and a few features of its own. Counted from version 453: 331 words (229 to collect, 102 heard only), about 560 lines and sentences with English, about 2,000 English sentences of tasks, messages and story in the area files (22,300 words) and about 400 in the engine, and 1,085 Chinese voice clips.
+
+- **One game, a choice for each game.** New game asks which language you want to learn, the device's language picking the default; each of the three games keeps its own. App stores show the game under a name for each language, such as 小猴子学英语 (Little Monkey learns English) on Chinese storefronts.
+- **The same story and words.** The same moments teach the English for the same things (猴子 becomes monkey), and the word bank keeps each word's Chinese as its name, so saves, pictures and the story's steps don't change. A handful of words are decided one by one: 二 and 两 are both two (两's lesson is left out), 米 and 米饭 are both rice, and the child's 是-or-不是 game teaches yes and no.
+- **British English**, in spelling and voice (yoghurt, autumn, axe); an American voice can be added later, as the clips are made by a tool.
+- **No reading aid over English words at first:** every word can be tapped to hear it; 音标 (IPA) over each word is a setting, off to start with.
+- **Simplified Chinese first, then Traditional before launch:** a converted copy, checked by a Taiwanese or Hong Kong reader.
+- **A paid professional checks the Chinese** of the menus, tasks and messages; the story's own Chinese lines are checked already.
+- **Mainland China's app stores later,** through a Chinese publisher: a game there needs a licence from the National Press and Publication Administration, which a foreign company can't apply for, and every app an ICP filing. First Steam, the web, and app stores everywhere else, with a China market-entry specialist's advice before the mainland.
+- **The language switch comes before Area 3,** so Areas 3 to 5 are written both ways from the start; the English for Areas 1 and 2 can follow alongside Area 3's plan. The meadow is playtested in English with a Chinese-speaking player before the rest is done.
+
+**The learning rules, mirrored** (in full in the proposal). Learning English: a new word's card shows the picture, the English word and its sound, with its Chinese on the first card; a line's Chinese shows the first three times; tasks and messages are in Chinese, a caught word written as water（水）, two at most in a sentence; gap choices always share the gap's form (I have two ＿: peaches, apples, stones), so English's -s is never what's tested; words that sound the same (sea and see) or that Chinese ears find hard to tell apart (three and tree) get Sounds like cards, and are never two answers when you only hear them; How it's made shows words inside words, only where it's true (snowman, waterfall, firefly); writing in the world is real English in a pixel alphabet, but names carved in stone stay Chinese, as names; eleven and twelve are words of their own, and thirteen to nineteen are three + teen.
+
+**How it's built** (its steps are in Next steps). The save records which language a game is learning (every existing save learns Chinese); the player's own-language text goes through one door, `t()`, the Chinese looked up by today's English sentence, so the content files read as they do now; engine messages built from pieces become whole sentences with named gaps, so Chinese can order them its own way; English lines are tied to the word bank by a table of English forms (peaches is peach, I'm is I and am); npm run voices makes the English clips, and the offline copy keeps only the clips of the language being learned; the fonts move into the game's own files, as Google is blocked in mainland China; and the playthrough test plays Areas 1 and 2 learning English too. Every step leaves the learn-Chinese game exactly as it is.
+
+Still open: the age of the Chinese-speaking player the game is for, and its price.
+
 ## Risks and open questions
 
 | Risk | What could go wrong | Plan |
@@ -788,6 +807,14 @@ Build Area 1 a chapter at a time: play the prologue for a week, then build chapt
 - [x] Treasures and trading (9 November 2026, one batch): the old monkey's tip; 买 at the 老板's shop and 卖 at your first sale, with a Sell tab; six treasures (pine nuts and feathers daily, pearls, jade, ginseng and gold once each); snacks in tiers, the basket, the lantern and the spade; a vase, wind chime, drum, painting and fish jar for the Water Curtain Cave, words caught only by buying them; the Ready to sail? card; 多少钱 in the town, the money changer buying treasures, and at home in chapter 2 Flower Fruit Mountain's treasures, its animals you missed and the 老板 back at his stall
 - [x] 二 and 两 (9 November 2026): 两 is the second maths lesson, with a card showing 二 or 两? side by side; how many there are is 两 from then on (counting questions, two things to count at last, the How many card), counting stays 二; the woodcutter asks for two stones; a game from before learns 两 where it first meets it (the How many card, the woodcutter, a stall's 两文钱). New Chinese, drafts for the native speaker: 一，二。两个桃子！, 两个桃子, 两只猴子, 我要两块石头。
 - [ ] Daily tasks: discussed, not decided (see Treasures and trading)
+- [x] Both ways, the plan agreed (9 November 2026, the [proposal](https://claude.ai/artifact/5zpoxxuwFCBtduMzzcRwQZ), all eight decisions as recommended): the game played in Chinese to learn English, as well as in English to learn Chinese (see Both ways: learning English too)
+- [ ] Both ways 1: the fonts in the game's own files, not from Google, which is blocked in mainland China (nothing looks different)
+- [ ] Both ways 2: a learning language for each game, behind a hidden switch for testing; the player's own-language text through one door, `t()`
+- [ ] Both ways 3: every menu, button and card in Chinese, learning English
+- [ ] Both ways 4: English for every word (a word sheet to check first), and the English voices, chosen by a listening test: word cards, the Word Scroll and Quick practice in English
+- [ ] Both ways 5: the meadow in English, end to end, then a playtest with a Chinese-speaking player
+- [ ] Both ways 6: the rest of Areas 1 and 2 in English, a few steps per part
+- [ ] Both ways 7: the choice on New game, Traditional Chinese and store pages in Chinese, and the native speakers' checks, before launch
 - [ ] Area 3, The Eastern Sea (novel chapter 3): its own plan with mock-ups drawn by the game, then build it
 - [ ] Area 4, Heaven (chapters 4 and 5): its own plan with mock-ups, then build it
 - [ ] Area 5, Havoc in Heaven (chapters 6 and 7): its own plan with mock-ups, then build it, with the game's ending
