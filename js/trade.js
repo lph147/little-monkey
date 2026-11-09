@@ -280,19 +280,19 @@ function readyCard(){
   return new Promise(res => {
     const pages = scrollPages().filter(p => p.area === AREA.number);
     const pageRow = p => { const got = p.words.filter(w => lvl(w) >= 1).length, full = got === p.words.length;
-      return `<span class="rpage${full ? ' full' : ''}"><span class="rname">${esc(CATEGORIES[p.cat].tab || CATEGORIES[p.cat].name)}</span><b>${full ? '<span class="rseal">好</span>' : `${got}/${p.words.length}`}</b></span>`; };
+      return `<span class="rpage${full ? ' full' : ''}"><span class="rname">${esc(ui(CATEGORIES[p.cat].tab || CATEGORIES[p.cat].name))}</span><b>${full ? '<span class="rseal">好</span>' : `${got}/${p.words.length}`}</b></span>`; };
     const friends = ANIMALS.filter(a => inChapter(a)), met = friends.filter(a => S.friends.includes(a.id)).length;
     const found = TREASURE_WORDS.filter(w => (AREA.treasures || {})[w] && lvl(w) >= 1).length, kinds = TREASURE_WORDS.filter(w => (AREA.treasures || {})[w]).length;
     const still = here().visited.filter(id => PLACES[id] && PLACES[id].onMap).map(id => ({id, left:stillHere(id)})).filter(x => x.left.length)
       .sort((a, c) => c.left.length - a.left.length).slice(0, 4)
-      .map(({id, left}) => `<span class="rstill">${esc(PLACES[id].name.en)} <b>${left.length}</b>${left.some(x => x.time === 'night') ? ' 🌙' : ''}</span>`).join('');
+      .map(({id, left}) => `<span class="rstill">${LEARN === 'en' ? PLACES[id].name.zh : esc(PLACES[id].name.en)} <b>${left.length}</b>${left.some(x => x.time === 'night') ? ' 🌙' : ''}</span>`).join('');
     const need = practiceWords().length;
-    openCard(`<p class="label">Ready to sail?</p>
-      <p class="small">Your Word Scroll</p><div class="rpages">${pages.map(pageRow).join('')}</div>
-      <div class="stats"><span>${met}/${friends.length} animal friends</span>${kinds ? `<span>${found}/${kinds} treasures</span>` : ''}${need ? `<span><b>${need}</b> word${need === 1 ? '' : 's'} need practice</span>` : ''}</div>
-      ${still ? `<p class="small">Still to find:</p><div class="rstills">${still}</div>` : ''}
-      <p class="note">Anything you miss can still be found later in the story.</p>
-      <div class="actions"><button class="btn" data-a="later" data-b>Not yet</button>${need ? '<button class="btn" data-a="practise">Quick practice</button>' : ''}<button class="btn primary" data-a="go">Sail away</button></div>`);
+    openCard(`<p class="label">${ui('Ready to sail?')}</p>
+      <p class="small">${ui('Your Word Scroll')}</p><div class="rpages">${pages.map(pageRow).join('')}</div>
+      <div class="stats"><span>${ui('{n}/{of} animal friends', {n:met, of:friends.length})}</span>${kinds ? `<span>${ui('{n}/{of} treasures', {n:found, of:kinds})}</span>` : ''}${need ? `<span>${ui(need === 1 ? '<b>{n}</b> word needs practice' : '<b>{n}</b> words need practice', {n:need})}</span>` : ''}</div>
+      ${still ? `<p class="small">${ui('Still to find:')}</p><div class="rstills">${still}</div>` : ''}
+      <p class="note">${ui('Anything you miss can still be found later in the story.')}</p>
+      <div class="actions"><button class="btn" data-a="later" data-b>${ui('Not yet')}</button>${need ? `<button class="btn" data-a="practise">${ui('Quick practice')}</button>` : ''}<button class="btn primary" data-a="go">${ui('Sail away')}</button></div>`);
     on('[data-a=go]', () => { closeCard(); res(); });
     on('[data-a=later]', () => { closeCard(); res(STOP); });
     on('[data-a=practise]', () => { closeCard(); quickPractice(() => { closeCard(); readyCard().then(res); }); });

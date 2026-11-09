@@ -134,7 +134,7 @@ async function colourQ({who, w}){
   const colours = shuffle(ORDER.filter(x => known(x) && WORDS[x].category === WORDS[w].category));
   const pool = colours.length >= 2 ? colours : [...colours, ...shuffle(picWords().filter(x => known(x) && WORDS[x].category !== WORDS[w].category))];
   const opts = shuffle([w, ...apart(w, pool, 2, listen)]);
-  const which = opts.every(o => WORDS[o].category === WORDS[w].category) ? 'Which paint is it?' : 'Which is it?';
+  const which = opts.every(o => WORDS[o].category === WORDS[w].category) ? ui('Which paint is it?') : ui('Which is it?');
   const ok = await pictureQ({head:`<div class="qhead lessonhead"><div class="who" aria-hidden="true">${portrait(who)}</div><p class="label">${ui(listen ? 'Listen.' : 'Read it.')} ${ui(which)}</p></div>`,
     body:listen ? `<div class="hearit"><button class="sayBig" data-a="say" aria-label="${ui('Hear it again')}">🔊</button></div>`
       : `<div class="word"><div class="big"${LANG}>${wd(w)}</div>${showPy() ? `<div class="py">${wpy(w)}</div>` : ''}</div>`,
@@ -294,9 +294,9 @@ function tipCard(t, img){
   return new Promise(res => {
     const ex = t.example;
     openCard(`<div class="tiphead"><div class="who" aria-hidden="true">${img}</div><p class="label">${esc(t.title)}</p></div>
-      <div class="drumrow"><div class="beats">${ex.map(([c, py]) => `<div class="beat"><span class="bpy">${py}</span> <span class="bhz">${c}</span> <span class="bdot"></span></div>`).join('')}</div>
+      <div class="drumrow"><div class="beats">${ex.map(([c, py]) => `<div class="beat"><span class="bpy">${py}</span> <span class="bhz"${LANG}>${c}</span> <span class="bdot"></span></div>`).join('')}</div>
       <button class="drum primary" data-a="drum">🔊<span class="dlab"></span></button></div>
-      <div class="tipend"><p class="tipask">${esc(fill(t.ask))}</p><div class="tipdone" hidden><p class="tipheard">${esc(t.heard)}</p><p class="tiptext">${esc(t.text)}</p></div></div>
+      <div class="tipend"><p class="tipask">${enMark(esc(fill(t.ask)))}</p><div class="tipdone" hidden><p class="tipheard">${enMark(esc(t.heard))}</p><p class="tiptext">${enMark(esc(t.text))}</p></div></div>
       <div class="actions"><button class="btn primary" data-a="ok" hidden>${ui('OK')}</button></div>`);
     const drum = sheet.querySelector('.drum'), beats = [...sheet.querySelectorAll('.beat')], ok = sheet.querySelector('[data-a=ok]');
     let n = 0, again = [];
@@ -399,7 +399,7 @@ async function encounter(foe){
 // aloud. A right choice counts for the word; a wrong one shows the right word and play carries on.
 // Asking again (again: just after a wrong one, such as in the shop) counts for nothing either way, as you've just seen
 // the answer; seen, if given, is told the choices shown (seen.options). Gives true if you chose right.
-async function gapQ({who = '', label = 'Fill the gap', t, en, gap, wrong, options, again = false, seen, stop}){
+async function gapQ({who = '', label = ui('Fill the gap'), t, en, gap, wrong, options, again = false, seen, stop}){
   const pics = !!WORDS[gap].pic && lvl(gap) <= 1;
   const fits = w => w !== gap && WORDS[w] && !WORDS[w].phrase && lvl(w) >= 1 && !t.includes(w) && (!pics || WORDS[w].pic);
   const opts = options || shuffle([gap, ...apart(gap, wrong ? wrong.filter(fits) : shuffle(ORDER.filter(fits)), 2, false)]);   // (no look-alikes)

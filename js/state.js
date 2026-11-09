@@ -408,7 +408,7 @@ function rec(w){ if (!S.w[w]) S.w[w] = {lv:0, ok:0}; return S.w[w]; }
 // it had been ages; it showed only the very first time). Returns whether its English shows.
 const EN_TIMES = 3;
 function heardLine(t){
-  const key = t.join(''), n = S.lines[key] || 0, day = todayKey();
+  const key = lineKey(t), n = S.lines[key] || 0, day = todayKey();
   S.lineDay = S.lineDay || {};
   const last = S.lineDay[key], shows = n < EN_TIMES || last !== day;   // (a line heard before days were kept: an earlier day)
   S.lines[key] = n + 1; S.lineDay[key] = day; hear(t); save();

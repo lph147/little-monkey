@@ -110,6 +110,9 @@ const placeNameHTML = n => LEARN === 'en' ? `<span class="pzh"${LANG}>${esc(n.en
 // first (or the word's, for an animal), then its Chinese.
 const nameShown = n => LEARN !== 'en' || !n ? n : / \(you\)$/.test(n.en || '') ? {zh:n.en.replace(/ \(you\)$/, ''), py:'', en:`${n.zh}（你）`, lang:true}
   : {zh:n.en || enW(n.zh), py:'', en:n.en ? n.zh : '', lang:true};
+// Learning English, the English words in Chinese text written for the game, such as a tip (rabbit 有两拍), marked as English
+// (text already made safe for a page: its &amp;s left alone).
+const enMark = s => LEARN === 'en' ? String(s).replace(/&[a-z]+;|[A-Za-z][A-Za-z’'-]*/g, m => m[0] === '&' ? m : `<span lang="en">${m}</span>`) : s;
 const tokId = t => LEARN === 'en' ? idOf(t) : t;   // the word a word in a sentence is
 const lineHas = (line, w) => line.t.some(x => tokId(x) === w);
 // A line the engine has made from the content's Chinese ({t: its words, en: its English}), as it's shown: learning English,
@@ -127,3 +130,5 @@ if (LEARN === 'en'){
 }
 // The words of a line, as said aloud: its English learning English, or its characters run together.
 const lineSay = line => line.say || line.t.join('');
+// How a line you've heard is kept in the save (S.lines): its words run together, or learning English, with spaces between.
+const lineKey = t => LEARN === 'en' ? t.join(' ') : t.join('');

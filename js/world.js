@@ -134,7 +134,7 @@ async function partsCheck(){
     const p = PARTS[i];
     if (p.chapter !== chapterNow() || !matches(p.when)) continue;
     here().part = i; save();
-    if (p.card !== false && !quiet){ SFX.chime(); await infoBox('', `<div class="chaptercard partcard"><p class="label">${esc(p.name)}</p><h2>${esc(p.title)}</h2>${p.text ? `<p class="parttext">${esc(fill(p.text, false, true))}</p>` : ''}</div>`, 'OK'); }
+    if (p.card !== false && !quiet){ SFX.chime(); await infoBox('', `<div class="chaptercard partcard"><p class="label">${esc(ui(p.name))}</p><h2>${esc(ui(p.title))}</h2>${p.text ? `<p class="parttext">${esc(fill(p.text, false, true))}</p>` : ''}</div>`, 'OK'); }
     return;
   }
   if (quiet && PARTS.length) here().part = -1;   // (not into a part yet: each one's card shows as it begins)
@@ -548,7 +548,7 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     here().chapter = s.chapter; save(); SFX.fanfare();
     const c = AREA.chapters[s.chapter];
     await new Promise(res => {
-      openCard(`<div class="chaptercard"><p class="label">${esc(c.name)}</p><h2>${esc(c.title)}</h2></div><div class="actions"><button class="btn primary" data-a="ok">Begin</button></div>`);
+      openCard(`<div class="chaptercard"><p class="label">${esc(ui(c.name))}</p><h2>${esc(ui(c.title))}</h2></div><div class="actions"><button class="btn primary" data-a="ok">${ui('Begin')}</button></div>`);
       on('[data-a=ok]', () => { closeCard(); res(); });
     });
   },
@@ -1119,10 +1119,10 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
     for (const w of words){ reviewed(w, !missed.has(w)); addToday(w); } save();   // (every word counts as practice: matched first time, it moves back in the review list; missed, near the front)
     if (pass) SFX.fanfare(); else SFX.wrong();
     await new Promise(res => {
-      openCard(`<div class="who" aria-hidden="true">${face}</div><p class="label">${esc(pass ? e.passed : e.notYet)}</p>
-        <p>You matched <b>${right} of ${words.length}</b> words right first time. You needed ${need}.</p>
+      openCard(`<div class="who" aria-hidden="true">${face}</div><p class="label">${esc(ui(pass ? e.passed : e.notYet))}</p>
+        <p>${ui('You matched <b>{n} of {of}</b> words right first time. You needed {need}.', {n:right, of:words.length, need})}</p>
         ${missedHTML(missed)}${pass ? '' : `<p>${esc(fill(e.tryAgain))}</p>`}
-        <div class="actions"><button class="btn primary" data-a="ok">OK</button></div>`);
+        <div class="actions"><button class="btn primary" data-a="ok">${ui('OK')}</button></div>`);
       bindMissed(); on('[data-a=ok]', () => { closeCard(); res(); });
     });
     if (!pass) return STOP;
@@ -1131,8 +1131,8 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // and what comes next.
   async areaEnd(){
     SFX.fanfare();
-    await infoBox('⛰️', `<p class="label">${esc(AREA.areaEnd.title)}</p>
-      <div class="stats"><span>${wordsCaught()} of ${ORDER.length} words caught</span><span>${S.friends.length} friends</span>${moneyHTML()}</div>
+    await infoBox('⛰️', `<p class="label">${esc(ui(AREA.areaEnd.title))}</p>
+      <div class="stats"><span>${ui('{n} of {of} words caught', {n:wordsCaught(), of:ORDER.length})}</span><span>${ui(S.friends.length === 1 ? '{n} friend' : '{n} friends', {n:S.friends.length})}</span>${moneyHTML()}</div>
       ${AREA.areaEnd.text.map(t => `<p>${esc(fill(t))}</p>`).join('')}`);
   },
   // Something to wear, put on now (wear: its item in the wardrobe), such as the old fisherman's coat: it's yours, and on.
@@ -1403,7 +1403,7 @@ async function request(r, face, last = false){
     return;
   }
   if (p[r.id] === 'asked' && has && has === want){   // you brought what they wanted (not just nothing, before a fussy one has said which)
-    await showDialog(face, L[c.offer], {ok:'Give it'});
+    await showDialog(face, L[c.offer], {ok:ui('Give it')});
     const nw = (r.firstTeach || []).find(f => lvl(f.word) === 0);
     if (nw) await showNotice(nw.word, {note:nw.note, quiet:true});
     const sentence = toks(c.sentence);
@@ -1450,7 +1450,10 @@ function asSaid(i){
   return {...(LEARN === 'en' ? {zh:c ? `${enW(i.colour)} ${enW(i.word)}` : enW(i.word), py:'', en:t.join('')}   // (learning English, its English, then its Chinese)
     : {zh:t.join(''), py:t.map(w => info(w)[0]).join(' '), en:c ? `${en} ${WORDS[i.word].en}` : WORDS[i.word].en}), pic:PICTURES[i.item] ? i.item : i.word,
     sentence:c ? i.colourSentence.replace('{colour}', i.colour) : i.sentence, sentenceEn:c ? put(i.colourSentenceEn) : i.sentenceEn, gap:c ? i.colour : i.gap || i.word,
-    note:c && i.colourNote ? put(i.colourNote) : i.note, bought:c && i.colourBought ? put(i.colourBought) : i.bought, given:c ? `${en} {${i.word}}` : `{${i.word}}`};
+    // (learning English, its colour as an English word with its Chinese: blue（蓝色）; what's given, the two as one: blue headband（头带）)
+    note:c && i.colourNote ? (LEARN === 'en' ? ui(i.colourNote, {colour:wz(i.colour)}) : put(i.colourNote)) : i.note,
+    bought:c && i.colourBought ? (LEARN === 'en' ? ui(i.colourBought, {colour:wz(i.colour)}) : put(i.colourBought)) : i.bought,
+    given:c ? (LEARN === 'en' ? `{${i.word}|${enW(i.colour)} ${enW(i.word)}}` : `${en} {${i.word}}`) : `{${i.word}}`};
 }
 // Every sentence said with a colour in it (asSaid), whatever colours you know: for the voices and CHINESE.md.
 const COLOUR_SENTENCES = () => [...SHOP_ITEMS(), ...(AREA.wardrobe || [])].filter(i => i.colours && i.colourSentence)
@@ -1516,7 +1519,7 @@ async function buy(i, face, sh = Object.values(SHOPS)[0]){   // buying something
     if (who) who.puzzled = true;
     try {
       do {
-        await showNarration(fill(sh.puzzled.replace('{item}', a.given)));
+        await showNarration(fill(ui(sh.puzzled, {item:a.given})));
         // once you know it, you say sorry, and he says it doesn't matter (the shop's sorry and noProblem: decided 4 November
         // 2026, as 对不起 and 没关系 were met just once)
         if (sh.sorry && lvl(sh.sorry) >= 1 && await replyWith(sh.sorry, {about:sh.sorryAbout, who:sh.who}) && sh.noProblem) await showDialog(face, L[sh.noProblem]);
@@ -1536,14 +1539,14 @@ async function buy(i, face, sh = Object.values(SHOPS)[0]){   // buying something
   if (i.wear) redress();   // redraw your monkey wearing it
   // it's handed to you: you say thank you, and they say you're welcome (decided 22 October 2026: they thanked you, and
   // you thanked them, which made it a puzzle why a monkey's thanks wanted 不客气)
-  if (sh.reply && await replyWith(sh.reply, {about:sh.given.replace('{item}', a.given), pic:a.pic, who:sh.who}) && sh.welcome) await showDialog(face, L[sh.welcome]);
+  if (sh.reply && await replyWith(sh.reply, {about:ui(sh.given, {item:a.given}), pic:a.pic, who:sh.who}) && sh.welcome) await showDialog(face, L[sh.welcome]);
   toast(fill(a.bought));
   if (!talkingTo) await runEvents();   // (as for a request: after the conversation)
   return true;
 }
 async function lookAt(t){   // the card for the word you learn by looking at a tile
   const w = lookWord(t);
-  if (w === t.word && t.colour && lvl(w) >= 1 && lvl(t.colour) >= 1){ await showPicked(coloured(t), '', {label:'You see', pic:colourPic(t)}); return; }
+  if (w === t.word && t.colour && lvl(w) >= 1 && lvl(t.colour) >= 1){ await showPicked(coloured(t), '', {label:ui('You see'), pic:colourPic(t)}); return; }
   const note = w === t.word ? t.note || (lvl(w) === 0 ? t.newNote : '') : '';
   await showNotice(w, {...(note ? {note:fill(note)} : {}), ...(w === t.word && t.colour ? {pic:colourPic(t)} : {})});
   if (t.message) toast(t.message);
@@ -2028,7 +2031,7 @@ async function wildAppears(a, spot = findSpot()){
   const more = a.many && (here()[a.counts] || 0) < a.many && !(was && was.friend), another = more && S.friends.includes(a.id);
   const stay = !!a.stays && more && (!!was || keepsClear(spot.x, spot.y));
   const hint = justTaught ? '' : was && more ? a.stays.again : another && a.stays ? a.stays.another : S.friends.includes(a.id) ? play && play.friendHint : play && play.hint;
-  if (play) await showDialog(speaker(a.id), L[play.say], {ok:'Play', hint:hint ? fill(hint) : ''});   // it says it wants to play, so its questions never just start
+  if (play) await showDialog(speaker(a.id), L[play.say], {ok:ui('Play'), hint:hint ? fill(hint) : ''});   // it says it wants to play, so its questions never just start
   const among = a.group ? [a.chapter, undefined, a.group] : [a.chapter, a.place], all = chapterAnimals(...among).length;   // (counted with its chapter's animals in the same place, or its group's anywhere: one on its own, such as the deer, needs no count)
   const won = await encounter({id:a.id, hz:a.hz, img:portrait(a.id), wild:true, justTaught, home:a.home, another, ...(stay ? {lose:a.stays.lost} : {})});
   if (stay){ stayOut(a, spot.x, spot.y, won); foe.spot = true; }   // (drawn where it stays, from now on)

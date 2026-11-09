@@ -66,7 +66,10 @@ function scriptsIn(page, root = ROOT){
 // screen showing (class loading).
 // {canvas: pixelCanvas} makes each canvas the game makes one that keeps its pixels (pixel-canvas.js), for tests that
 // check the colours it draws.
-function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, page = ENTRY, dom = false, html = false, canvas = null} = {}){
+// {search: '?learn=en'} is the end of the page's address (a new game learning English, js/data.js), {extra: ['#saybox']}
+// makes more of the page's elements working copies (with dom: true), and {onScript(file, run)} is called as each of the
+// game's scripts has run (file, such as 'js/lang.js'; run, to run code in the game there and then).
+function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, page = ENTRY, dom = false, html = false, canvas = null, search = '', extra = [], onScript = null} = {}){
   const elements = {}, storage = new Map(Object.entries(stored)), session = new Map(Object.entries(tab)), frames = [], listeners = {}, reloads = {count: 0};
   const timers = new Map(); let nextTimer = 1, clock = 1000 - 1000 / 60;
   if (save !== undefined) storage.set(SAVE_KEY, typeof save === 'string' ? save : JSON.stringify(save));
@@ -87,6 +90,7 @@ function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, p
     elements['#more'] = makeElement('div', {id: 'more', class: 'morecue', hidden: ''}, document);   // ▼ More, by a card's buttons while it has more below
     elements['#aLabel'] = makeElement('span', {id: 'aLabel', class: 'ablabel'}, document);   // what A and B do, under them
     elements['#bLabel'] = makeElement('span', {id: 'bLabel', class: 'ablabel'}, document);
+    for (const sel of extra) elements[sel] = makeElement('div', {id: sel.replace(/^#/, '')}, document);
   }
   const win = vm.createContext({
     document,
@@ -103,17 +107,21 @@ function loadGame({save, storage: stored = {}, session: tab = {}, root = ROOT, p
       setItem: (k, v) => { session.set(k, String(v)); },
       removeItem: k => { session.delete(k); }
     },
-    location: {href: 'http://127.0.0.1:8000/', origin: 'http://127.0.0.1:8000', reload(){ reloads.count++; }},
+    location: {href: 'http://127.0.0.1:8000/' + search, origin: 'http://127.0.0.1:8000', search, reload(){ reloads.count++; }},
     performance: {now: () => 1000},
     requestAnimationFrame: fn => { frames.push(fn); return frames.length; },
     setTimeout: dom ? fn => { const id = nextTimer++; timers.set(id, fn); return id; } : () => 0,
     clearTimeout: id => { timers.delete(id); },
     setInterval: () => 0, clearInterval(){},
+    URLSearchParams,   // (reading the page's address: a new game learning English, js/data.js)
     addEventListener(){},
     console
   });
   vm.runInContext('globalThis.window = globalThis;', win);
-  for (const s of scriptsIn(page, root)) vm.runInContext(s.code, win, {filename: s.file, lineOffset: s.lineOffset});
+  for (const s of scriptsIn(page, root)){
+    vm.runInContext(s.code, win, {filename: s.file, lineOffset: s.lineOffset});
+    if (onScript) onScript(path.relative(root, s.file).replace(/\\/g, '/'), code => vm.runInContext(code, win));
+  }
   return {
     el: sel => elements[sel],                     // a page element, by the same selector the game uses
     storage,                                      // the browser's saved data

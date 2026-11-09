@@ -486,7 +486,7 @@ function soundsCard(w, back, done, doneLabel){
 function enSoundsCard(w, back, done, doneLabel){
   const other = soundsLike(w), p = enSoundsPair(w);
   const side = x => `<button class="sa-side" data-w="${x}" aria-label="${esc(wd(x))}"><div class="sa-top"><div class="pic" aria-hidden="true">${picHTML(x)}</div><div><div class="big"${LANG}>${esc(wd(x))}</div><div class="py">${S.ipa ? '/' + esc(enIpa(x)) + '/' : ''}</div><div class="en">${esc(enZh(x))}</div></div></div></button>`;
-  openCard(`<p class="label">${ui(p.same ? 'Sounds the same' : 'Sounds alike')}</p><div class="sa">${side(other)}${side(w)}</div><p class="small sa-note">${esc(ui(p.note || 'Exactly the same sound: how they’re spelt, and what’s being said, tell them apart.'))}</p>
+  openCard(`<p class="label">${ui(p.same ? 'Sounds the same' : 'Sounds alike')}</p><div class="sa">${side(other)}${side(w)}</div><p class="small sa-note">${enMark(esc(ui(p.note || 'Exactly the same sound: how they’re spelt, and what’s being said, tell them apart.')))}</p>
     <div class="actions"><button class="btn${done ? '' : ' primary'}" data-a="back" data-b>${ui('◂ Back')}</button><button class="btn" data-a="both">${ui('🔊 Hear both')}</button>${done ? `<button class="btn primary" data-a="ok">${doneLabel}</button>` : ''}</div>`);
   const card = sheet.querySelector('.sa'), lit = x => card.querySelectorAll('.sa-side').forEach(b => b.classList.toggle('playing', b.dataset.w === x));
   const open = () => sheet.querySelector('.sa') === card;
@@ -610,7 +610,7 @@ function showNotice(w, opts = {}){
 // on a card like a word's (decided 22 October 2026: picking a red flower showed 花, flower): said straight away, as you
 // found it yourself, with a note under it (such as how many you have). (Picking it has its own sound.) Or what you see
 // (label), such as a red flower you look at, with a picture of another name (pic), such as 花's own for a pink one.
-function showPicked(f, note, {label = 'You picked', pic = f.zh} = {}){
+function showPicked(f, note, {label = ui('You picked'), pic = f.zh} = {}){
   return new Promise(res => {
     const p = sent(f.zh, f.en), t = p.t, text = lineSay(p);
     openCard(`<p class="label">${esc(ui(label))}</p>
@@ -631,9 +631,9 @@ function feastCard(){
     const list = AREA.feastList;
     const rows = list.foods.filter(f => !f.show || matches(f.show)).map(f => {
       const have = !!f.have && matches(f.have), s = have ? f.yes : f.no, p = sent(s.zh, s.en), t = p.t;
-      return {w:f.word, have, t, en:p.en, say:lineSay(p), seen:!!S.lines[t.join('')]};
+      return {w:f.word, have, t, en:p.en, say:lineSay(p), seen:!!S.lines[lineKey(t)]};
     });
-    rows.forEach(r => { const k = r.t.join(''); S.lines[k] = S.lines[k] || 1; hear(r.t); }); save();
+    rows.forEach(r => { const k = lineKey(r.t); S.lines[k] = S.lines[k] || 1; hear(r.t); }); save();
     openCard(`<p class="label">${esc(fill(list.label))}</p><div class="flist">${rows.map((r, i) => `<div class="frow${r.have ? ' have' : ''}" data-i="${i}">
         <div class="fpic${r.have ? '' : ' sil'}" aria-hidden="true">${picHTML(r.w)}</div>
         <div class="fline">${lineHTML(r.t)}<div class="sentence-en"${r.seen ? ' hidden' : ''}>${esc(r.en)}</div></div>

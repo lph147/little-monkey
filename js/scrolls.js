@@ -38,7 +38,7 @@ function storyScroll(){
       stopSpeech();
       let right = 0;
       const qs = storyQuestions();
-      for (const q of qs) if (await gapQ({label:'Story question', t:q.t, en:q.en, gap:q.answer, options:q.options})) right++;
+      for (const q of qs) if (await gapQ({label:ui('Story question'), t:q.t, en:q.en, gap:q.answer, options:q.options})) right++;
       const firstTime = !here().story, end = AREA.storyEnd;
       here().story = true; if (firstTime) earn(end.reward); save(); buildMap();
       SFX.fanfare();
@@ -306,10 +306,10 @@ async function quickRun(n, back){
 async function nextArea(){
   here().done = true; save(); SFX.fanfare(); fadeT = performance.now();
   await sleep(700);
-  await infoBox('⛰️', `<p class="label">${AREA.name.en} complete!</p>
-    <div class="stats"><span>${wordsCaught()} of ${ORDER.length} words caught</span><span>${S.friends.length} friends</span>${moneyHTML()}</div>
-    <p>${AREA.exit.done}</p>
-    <p class="small">${AREA.exit.notBuilt}</p>`);
+  await infoBox('⛰️', `<p class="label">${ui('{area} complete!', {area:LEARN === 'en' ? AREA.name.zh : AREA.name.en})}</p>
+    <div class="stats"><span>${ui('{n} of {of} words caught', {n:wordsCaught(), of:ORDER.length})}</span><span>${ui(S.friends.length === 1 ? '{n} friend' : '{n} friends', {n:S.friends.length})}</span>${moneyHTML()}</div>
+    <p>${ui(AREA.exit.done)}</p>
+    <p class="small">${ui(AREA.exit.notBuilt)}</p>`);
   const back = AREA.exit.returnTo;   // until the next area is built, you're put back here
   S.pos = {place:placeOf(back), x:back.x, y:back.y, dir:back.facing}; placePlayer(); save();
 }
@@ -324,7 +324,7 @@ const MASTERY = ['Caught', 'Recognised', 'Read', 'Used'];   // what each gold sq
 // An example sentence with the word in it: the first line, then story sentence, that has it, preferring one you've seen.
 // If none has it: the example written for it in the area, then a sentence you complete (such as 我要头带).
 function exampleFor(w){
-  const all = [...Object.values(L).map(l => [l, !!S.lines[l.t.join('')]]), ...STORY.map(s => [s, !!here().story])].filter(([s]) => lineHas(s, w));
+  const all = [...Object.values(L).map(l => [l, !!S.lines[lineKey(l.t)]]), ...STORY.map(s => [s, !!here().story])].filter(([s]) => lineHas(s, w));
   const pick = all.find(([, seen]) => seen) || all[0];
   if (pick) return pick[0];
   const ex = AREA.examples[w];
@@ -423,14 +423,14 @@ function scrollGift(p){
   const n = p.words.length;
   if (n >= 12){
     const band = CLOTHES.find(c => c.colours && lvl(c.colour) >= 1 && !S.wardrobe.owned.includes(c.item));
-    if (band) return [{give:band.item}, {message:`And a ${WORDS[band.colour].en.split(',')[0]} {头带|headband} for you! Put it on from the menu: 衣服 (clothes).`}];
+    if (band) return [{give:band.item}, {message:ui('And a {colour} {头带|headband} for you! Put it on from the menu: 衣服 (clothes).', {colour:LEARN === 'en' ? wz(band.colour) : WORDS[band.colour].en.split(',')[0]})}];
   }
   if (n >= 7){
     const snack = ((AREA.scroll || {}).snacks || []).find(w => WORDS[w] && lvl(w) >= 1 && (AREA.food || {})[w] && !bagFull(w));   // (one with room in your bag: never kept for you, in the way of what they have for the story)
-    if (snack) return [{bag:snack, note:`And a {${snack}} for your bag!`}];
+    if (snack) return [{bag:snack, note:ui('And a {w} for your bag!', {w:`{${snack}}`})}];
   }
   const k = Math.min(15, Math.max(3, n));   // (shells, one a word, from 3 to 15)
-  return [{shells:k, note:`And ${k} ${MONEY()} for you!`}];
+  return [{shells:k, note:ui('And {n} {money} for you!', {n:k, money:MONEY()})}];
 }
 // The old monkey gives you his scroll (the scroll step): what it is, and its first pictures coming back, the words you
 // know, one after another, among others still faded.
@@ -438,10 +438,10 @@ async function scrollGiven(who){
   const has = SCROLL_WORDS().filter(w => WORDS[w].pic), known = has.filter(w => lvl(w) >= 1).slice(0, 8);   // (one row of eight)
   const more = has.filter(w => lvl(w) === 0 && WORD_BANK[w].area === AREA.number).slice(0, Math.max(0, 8 - known.length));
   S.scroll.has = true; S.scrollNew = (S.scrollNew || []).filter(w => !known.includes(w)); save();   // (the words it shows you, seen)
-  const shown = infoBox(null, `<p class="label">The old scroll</p>
-    <div class="oldscroll"><div class="grid">${[...known, ...more].map(w => `<div class="card${lvl(w) ? ' back' : ''}"><div class="c faded" aria-hidden="true">${picHTML(w)}</div><div class="hz">${lvl(w) ? w : ''}</div></div>`).join('')}</div></div>
-    <p>${esc(cap(theName(who)))} gives you a very old scroll. Long ago, someone drew everything on the mountain in it, with its name, but the pictures have faded. Every word you catch brings one back!</p>
-    <p class="small">Open it any time: MENU, then 词 (words). A full page gets a red seal, and a present.</p>`);
+  const shown = infoBox(null, `<p class="label">${ui('The old scroll')}</p>
+    <div class="oldscroll"><div class="grid">${[...known, ...more].map(w => `<div class="card${lvl(w) ? ' back' : ''}"><div class="c faded" aria-hidden="true">${picHTML(w)}</div><div class="hz"${LANG}>${lvl(w) ? wd(w) : ''}</div></div>`).join('')}</div></div>
+    <p>${ui('{who} gives you a very old scroll. Long ago, someone drew everything on the mountain in it, with its name, but the pictures have faded. Every word you catch brings one back!', {who:esc(cap(theName(who)))})}</p>
+    <p class="small">${ui('Open it any time: MENU, then 词 (words). A full page gets a red seal, and a present.')}</p>`);
   sheet.querySelectorAll('.oldscroll .card.back').forEach((c, i) => setTimeout(() => {   // the words you know, coming back
     if (!c.isConnected) return;
     c.querySelector('.c').classList.remove('faded'); c.classList.add('shine'); SFX.word();
@@ -450,11 +450,11 @@ async function scrollGiven(who){
 }
 // A full page sealed (the seal step): the page, every picture back, the red seal stamped on it, then a present.
 async function sealCard(p, who){
-  const name = CATEGORIES[p.cat].name, other = p.area !== AREA.number ? ` · ${esc(areaOf(p.area).name.en)}` : '';
-  const shown = infoBox(null, `<p class="label">Your scroll · ${esc(name)}${other}</p>
+  const name = CATEGORIES[p.cat].name, other = p.area !== AREA.number ? ` · ${LEARN === 'en' ? areaOf(p.area).name.zh : esc(areaOf(p.area).name.en)}` : '';
+  const shown = infoBox(null, `<p class="label">${ui('Your scroll · {page}', {page:esc(ui(name)) + other})}</p>
     <div class="oldscroll sealpage"><div class="grid">${p.words.map(w => `<div class="card"><div class="c${WORDS[w].pic ? '' : ' hz'}" aria-hidden="true">${WORDS[w].pic ? picHTML(w) : w}</div></div>`).join('')}</div>
-      <span class="seal stamp" role="img" aria-label="A red seal">${SEAL_ZH}</span></div>
-    <p>The ${esc(name.toLowerCase())} page is full! ${esc(cap(theName(who)))} stamps it with a red seal: ${SEAL_ZH} (hǎo), good.</p>`);
+      <span class="seal stamp" role="img" aria-label="${ui('A red seal')}">${SEAL_ZH}</span></div>
+    <p>${ui('The {page} page is full! {who} stamps it with a red seal: {seal} (hǎo), good.', {page:LEARN === 'en' ? ui(name) : esc(name.toLowerCase()), who:esc(cap(theName(who))), seal:SEAL_ZH})}</p>`);
   setTimeout(() => { SFX.tock(); SFX.right(); }, 450);   // (the stamp coming down: its look, css/game.css)
   await shown;
 }

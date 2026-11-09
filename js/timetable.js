@@ -34,14 +34,17 @@ function lessonNow(wait = true){
   }
   return ready.find(l => l.series.id !== here().lastLesson) || ready[0] || null;
 }
-const subjectName = (s, py = true) => `<span class="hz">${s.subject.zh}</span>${py && S.pinyin ? ` <span class="spy">${s.subject.py}</span>` : ''} ${esc(s.subject.en)}`;
-const lessonName = (s, n) => `${s.subject.en} lesson ${n}`;
+// (learning English, a subject's name in English, then its Chinese, as names are: js/lang.js)
+const subjectName = (s, py = true) => LEARN === 'en' ? `<span class="hz"${LANG}>${esc(s.subject.en)}</span> ${s.subject.zh}`
+  : `<span class="hz">${s.subject.zh}</span>${py && S.pinyin ? ` <span class="spy">${s.subject.py}</span>` : ''} ${esc(s.subject.en)}`;
+const subjectIn = s => LEARN === 'en' ? s.subject.zh : esc(s.subject.en);   // (its name in your own words)
+const lessonName = (s, n) => ui('{subject} lesson {n}', {subject:LEARN === 'en' ? s.subject.zh : s.subject.en, n});
 // The lessons ready now (which: 'ready'), or waiting for questions to be answered (which: 'waiting'), in words, for your
 // tasks and hints ({lessons:ready} in the area's text), such as "Maths lesson 3 or Art lesson 3".
 function lessonsText(which){
   const ls = subjects().map(s => [s, nextLessonOf(s)]).filter(([s, n]) => n && lessonState(s, n, which !== 'waiting').state === 'ready');
   const names = ls.map(([s, n]) => lessonName(s, n));
-  return names.length < 2 ? names.join('') : names.slice(0, -1).join(', ') + ' or ' + names[names.length - 1];
+  return names.length < 2 ? names.join('') : names.slice(0, -1).join(ui(', ')) + ui(' or ') + names[names.length - 1];
 }
 // The chart on the classroom wall (js/art.js): a row for each subject, its icon, how many lessons it has, how many are
 // done, and whether the next is ready.
@@ -49,26 +52,26 @@ const chartRows = () => subjects().map(s => { const n = nextLessonOf(s); return 
 
 // What a lesson is, in words: its first ("Three new numbers, then counting") or one of the rest, or its word's own (such
 // as PE's race, for 跑).
-const lessonAbout = (s, n) => s.about[lessonsOf(s)[n - 1][0]] || (n === 1 && lessonsOf(s)[0].length > 1 ? s.about.first : s.about.one);
+const lessonAbout = (s, n) => ui(s.about[lessonsOf(s)[n - 1][0]] || (n === 1 && lessonsOf(s)[0].length > 1 ? s.about.first : s.about.one));
 // Why lesson n isn't open, or what it is if it is (the card's detail under the lessons), short enough for a small phone.
-const wordsPy = ws => ws.map(w => `<span class="hz">${w}</span>${S.pinyin ? ` <span class="py">${WORDS[w].py}</span>` : ''}`).join(' · ');
+const wordsPy = ws => ws.map(w => `<span class="hz"${LANG}>${wd(w)}</span>${showPy() && wpy(w) ? ` <span class="py">${wpy(w)}</span>` : ''}`).join(' · ');
 function lessonDetail(s, n){
-  const st = lessonState(s, n), head = `<b>Lesson ${n}</b> · `;
-  if (st.state === 'done') return `${head}✓ Done: ${wordsPy(st.words)}`;
-  if (st.state === 'locked') return `${head}Opens once you’ve done lesson ${n - 1}.`;
+  const st = lessonState(s, n), head = `<b>${ui('Lesson {n}', {n})}</b> · `;
+  if (st.state === 'done') return `${head}${ui('✓ Done: {words}', {words:wordsPy(st.words)})}`;
+  if (st.state === 'locked') return `${head}${ui('Opens once you’ve done lesson {n}.', {n:n - 1})}`;
   if (st.state === 'wait'){ const n8 = (AREA.lessonGap || {}).questions || 0, did = n8 - st.left;
-    return `${head}Opens after ${st.left} more question${st.left === 1 ? '' : 's'}, answered anywhere:<span class="bar"><i style="width:${did / n8 * 100}%"></i></span><b>${did}/${n8}</b>`; }
-  if (st.state === 'practise') return `${head}Opens once you know ${wz(st.need)} well: get it right twice more, in practice.`;
-  return `${head}Ready: ${lessonAbout(s, n)}.`;
+    return `${head}${ui(st.left === 1 ? 'Opens after {n} more question, answered anywhere:' : 'Opens after {n} more questions, answered anywhere:', {n:st.left})}<span class="bar"><i style="width:${did / n8 * 100}%"></i></span><b>${did}/${n8}</b>`; }
+  if (st.state === 'practise') return `${head}${ui('Opens once you know {w} well: get it right twice more, in practice.', {w:wz(st.need)})}`;
+  return `${head}${ui('Ready: {about}.', {about:lessonAbout(s, n)})}`;
 }
 // What choosing lesson n of s (or the practice tab: s null) does: a new lesson (new), one done again (again), or practice
 // (while it isn't open yet): {kind, series, n}, with its button's words.
 function lessonAction(s, n){
-  if (!s) return {kind:'practice', label:'Practise'};
+  if (!s) return {kind:'practice', label:ui('Practise')};
   const st = lessonState(s, n).state;
-  if (st === 'done') return {kind:'again', series:s, n, label:`Lesson ${n} again`};
-  if (st === 'ready') return {kind:'new', series:s, n, label:`Start lesson ${n}`};
-  return {kind:'practice', label:'Practise'};
+  if (st === 'done') return {kind:'again', series:s, n, label:ui('Lesson {n} again', {n})};
+  if (st === 'ready') return {kind:'new', series:s, n, label:ui('Start lesson {n}', {n})};
+  return {kind:'practice', label:ui('Practise')};
 }
 // Where the timetable opens: on a subject with a new lesson ready (one you didn't do last, if there are two), else one
 // whose next lesson waits for practice, else the practice tab; on its next lesson (or its last, all done).
@@ -87,24 +90,26 @@ function ttCard(at = ttDefault()){
     const render = () => {
       const subs = subjects(), s = subs.find(x => x.id === tab) || null;
       const tabs = [...subs.map(x => { const nx = nextLessonOf(x), mark = !nx ? '<span class="dn">✓</span>' : lessonState(x, nx).state === 'ready' ? '<span class="st">⭐</span>' : '';
-        return `<button class="tab" role="tab" data-tab="${x.id}" aria-selected="${x.id === tab}"><ruby>${x.subject.zh}<rt>${S.pinyin ? x.subject.py : ''}</rt></ruby> ${esc(x.subject.en)}${mark}</button>`; }),
-        `<button class="tab" role="tab" data-tab="practice" aria-selected="${!s}"><ruby>练习<rt>${S.pinyin ? 'liànxí' : ''}</rt></ruby> Practice</button>`].join('');
+        return LEARN === 'en' ? `<button class="tab" role="tab" data-tab="${x.id}" aria-selected="${x.id === tab}"><span${LANG}>${esc(x.subject.en)}</span> ${x.subject.zh}${mark}</button>`
+          : `<button class="tab" role="tab" data-tab="${x.id}" aria-selected="${x.id === tab}"><ruby>${x.subject.zh}<rt>${S.pinyin ? x.subject.py : ''}</rt></ruby> ${esc(x.subject.en)}${mark}</button>`; }),
+        LEARN === 'en' ? `<button class="tab" role="tab" data-tab="practice" aria-selected="${!s}"><span${LANG}>Practice</span> 练习</button>`
+          : `<button class="tab" role="tab" data-tab="practice" aria-selected="${!s}"><ruby>练习<rt>${S.pinyin ? 'liànxí' : ''}</rt></ruby> Practice</button>`].join('');
       let body;
       if (!s){
         const need = practiceWords(), pics = need.filter(w => WORDS[w].pic).slice(0, 9);
         body = `<div class="ttpractice">${pics.length ? `<div class="row">${pics.map(picHTML).join('')}</div>` : ''}
-          <p>${need.length ? `<b>${need.length} word${need.length === 1 ? '' : 's'} need${need.length === 1 ? 's' : ''} practice.</b> ` : '<b>No words need practice right now.</b> '}A practice lesson asks about the words you know: never a new one, so you can do one any time, as often as you like.</p></div>`;
+          <p>${need.length ? `<b>${ui(need.length === 1 ? '{n} word needs practice.' : '{n} words need practice.', {n:need.length})}</b> ` : `<b>${ui('No words need practice right now.')}</b> `}${ui('A practice lesson asks about the words you know: never a new one, so you can do one any time, as often as you like.')}</p></div>`;
       } else {
         const tiles = lessonsOf(s).map((words, i) => {
           const k = i + 1, st = lessonState(s, k).state, cls = st === 'practise' ? 'wait' : st;
           const pics = `<span class="pics${words.length > 1 ? ' three' : ''}${st === 'done' ? '' : ' sil'}">${words.map(picHTML).join('')}</span>`;
-          return `<button class="tile ${cls}${k === n ? ' sel' : ''}" data-lesson="${k}" aria-label="Lesson ${k}" data-label="Choose"><span class="n">${k}</span>${pics}<span class="badge">${{done:'✓', ready:'⭐'}[st] || LOCK}</span></button>`;
+          return `<button class="tile ${cls}${k === n ? ' sel' : ''}" data-lesson="${k}" aria-label="${ui('Lesson {n}', {n:k})}" data-label="${ui('Choose')}"><span class="n">${k}</span>${pics}<span class="badge">${{done:'✓', ready:'⭐'}[st] || LOCK}</span></button>`;
         }).join('');
         body = `<div class="tiles" data-nav>${tiles}</div><p class="detail">${lessonDetail(s, n)}</p>`;
       }
       const act = lessonAction(s, n);
-      openCard(`<div class="tt"><p class="label"><span class="hz">课程表</span>${S.pinyin ? ' kèchéngbiǎo' : ''} · Timetable</p><div class="scrolltabs" role="tablist">${tabs}</div>${body}</div>
-        <div class="actions"><button class="btn" data-a="no" data-b>Close</button><button class="btn primary" data-a="ok">${esc(act.label)}</button></div>`);
+      openCard(`<div class="tt"><p class="label">${LEARN === 'en' ? `<span class="hz"${LANG}>Timetable</span> · 课程表` : `<span class="hz">课程表</span>${S.pinyin ? ' kèchéngbiǎo' : ''} · Timetable`}</p><div class="scrolltabs" role="tablist">${tabs}</div>${body}</div>
+        <div class="actions"><button class="btn" data-a="no" data-b>${ui('Close')}</button><button class="btn primary" data-a="ok">${esc(act.label)}</button></div>`);
       sheet.querySelectorAll('.tab').forEach(b => b.onclick = () => {
         if (b.dataset.tab === tab) return;
         tab = b.dataset.tab; const t = subjects().find(x => x.id === tab); n = t ? nextLessonOf(t) || lessonsOf(t).length : 0;
@@ -131,7 +136,7 @@ let lessonBar = null;
 // subject, waits (lessonGap). Gives whether to open the timetable again.
 async function runLesson(pick, who){
   const s = pick.series, again = pick.kind === 'again', st = lessonState(s, pick.n);
-  lessonBar = `${subjectName(s)} · Lesson ${pick.n}${again ? ', again' : ''}`;
+  lessonBar = `${subjectName(s)} · ${ui(again ? 'Lesson {n}, again' : 'Lesson {n}', {n:pick.n})}`;
   let r;
   try { r = await LESSON_KINDS[s.kind](s, again ? st.words : st.fresh, who, {again}); } finally { lessonBar = null; }
   if (!again){ here().lastLesson = s.id; here().lessonTurn = S.turn || 0; }
@@ -142,18 +147,19 @@ async function runLesson(pick, who){
 // what's next in the subject. Timetable goes back to choose another; OK (or B) ends the class.
 function lessonEnd(s, n, words, again, r){
   const nx = nextLessonOf(s), st = nx && lessonState(s, nx);   // (the subject's first not done)
-  const next = !nx ? `You’ve done every ${esc(s.subject.en)} lesson!`
-    : st.state === 'ready' ? `Next in ${esc(s.subject.en)}: lesson ${nx}, ready now!`
-    : st.state === 'wait' ? `Next in ${esc(s.subject.en)}: lesson ${nx}, after ${st.left} more questions, answered anywhere.`
-    : st.state === 'practise' ? `Next in ${esc(s.subject.en)}: lesson ${nx}, once you know ${wz(st.need)} well.`
-    : `Next in ${esc(s.subject.en)}: lesson ${nx}.`;
+  const sub = subjectIn(s);
+  const next = !nx ? ui('You’ve done every {subject} lesson!', {subject:sub})
+    : st.state === 'ready' ? ui('Next in {subject}: lesson {n}, ready now!', {subject:sub, n:nx})
+    : st.state === 'wait' ? ui('Next in {subject}: lesson {n}, after {left} more questions, answered anywhere.', {subject:sub, n:nx, left:st.left})
+    : st.state === 'practise' ? ui('Next in {subject}: lesson {n}, once you know {w} well.', {subject:sub, n:nx, w:wz(st.need)})
+    : ui('Next in {subject}: lesson {n}.', {subject:sub, n:nx});
   return new Promise(res => {
-    openCard(`<p class="lessonbar">${subjectName(s)} · Lesson ${n}${again ? ', again' : ''}</p>
-      <div class="ldone"><span class="pics${words.length > 1 ? ' three' : ''}">${words.map(picHTML).join('')}</span><div><div class="big">${again ? '✓ Done again!' : `✓ Lesson ${n} done!`}</div>
+    openCard(`<p class="lessonbar">${subjectName(s)} · ${ui(again ? 'Lesson {n}, again' : 'Lesson {n}', {n})}</p>
+      <div class="ldone"><span class="pics${words.length > 1 ? ' three' : ''}">${words.map(picHTML).join('')}</span><div><div class="big">${again ? ui('✓ Done again!') : ui('✓ Lesson {n} done!', {n})}</div>
         <div class="w">${wordsPy(words)}</div>
-        <div class="small">${r.right} of ${r.asked} right${r.shells ? ` · +${r.shells} ${MONEY()}` : ''}</div></div></div>
+        <div class="small">${ui('{n} of {of} right', {n:r.right, of:r.asked})}${r.shells ? ` · +${r.shells} ${MONEY()}` : ''}</div></div></div>
       <p class="small">${next}</p>
-      <div class="actions"><button class="btn" data-a="tt">Timetable</button><button class="btn primary" data-a="ok" data-b>OK</button></div>`);
+      <div class="actions"><button class="btn" data-a="tt">${ui('Timetable')}</button><button class="btn primary" data-a="ok" data-b>${ui('OK')}</button></div>`);
     SFX.fanfare();
     on('[data-a=tt]', () => { closeCard(); res(true); });
     on('[data-a=ok]', () => { closeCard(); res(false); });

@@ -65,7 +65,7 @@ async function lookForHider(p){
   save();
   await showDialog(speaker('player'), L[HIDE.found]);
   SFX.fanfare();
-  await showNarration(fill(HIDE.result.replace('{where}', p.where)) + (first ? ` +${HIDE.shells} ${MONEY()}` : '') + ' ' + fill(HIDE.again), true);
+  await showNarration(fill(ui(HIDE.result, {where:ui(p.where)})) + (first ? ` +${HIDE.shells} ${MONEY()}` : '') + ' ' + fill(HIDE.again), true);
 }
 // Where the little monkey is while you play: off hiding; once you've found it, where it jumped out, until you leave the
 // place (decided 26 October 2026: it walked back to its spot, and jumped the rest of the way as you walked on), then back
