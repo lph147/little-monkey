@@ -994,12 +994,13 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // found counts as a question answered right. The game in play is kept in the area's progress (spying); spy: the key
   // that counts the games you've finished; listen: what you're told as they say it; found ({word}: what it was) and wrong:
   // what you're told when you find it, or press A at something else; done: the steps once you've found them all, the
-  // first time. ask: a card asks first, Play or Not now; and then, in the middle of a game, it asks whether to go on
-  // (going), Keep playing or Stop, Stop ending it (stopped: what you're told), so a game started by accident never holds
-  // you (decided 9 November 2026, after playing it: talking to the little monkey again started its game every time).
+  // first time. ask: a card asks first, Play or Not now; and in the middle of a game (with ask, or going: what it asks
+  // then), whether to go on, Keep playing or Stop, Stop ending it (stopped: what you're told), so a game started by
+  // accident never holds you (decided 9 November 2026, after playing it: talking to the little monkey again started its
+  // game every time).
   async spy(s, who){
     const p = here(), going = !!p.spying && p.spying.place === PLACE;
-    if (going && s.ask && !await confirmBox(speaker(who), fill(s.going || 'Keep playing?'), 'Keep playing', 'Stop')){
+    if (going && (s.ask || s.going) && !await confirmBox(speaker(who), fill(s.going || 'Keep playing?'), 'Keep playing', 'Stop')){
       delete p.spying; save(); toast(fill(s.stopped || 'You stop playing.')); return STOP;
     }
     if (!going){

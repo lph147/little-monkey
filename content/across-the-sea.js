@@ -180,6 +180,14 @@ const FETCH_WOOD = {fetch:'axeFetch', asks:[{word:'木头', count:4, ask:'wantWo
 // borrowed as you left them (borrow, js/data.js): the school, garden, pen and hive all built, the feast held, each with
 // ffm in front of its id there; with little demons in their long grass, and a few squares of their own (put).
 const HOME_MAP = 'This is home: you know your way about here. Your map is of the lands across the sea.';
+// A pupil's I spy in the master's cave (the spy step): the first time straight away, as her ! and your task say, with a
+// present; after that she asks first (ask), and in the middle of a game, whether to keep playing (going), Stop ending it
+// (decided 9 November 2026, as for the little monkey on Flower Fruit Mountain: talking to her started a game every time).
+const PUPIL_SPY = {spy:'spyGame', rounds:3, things:[{word:'树', say:'spyTree'}, {word:'水', say:'spyWater'}, {word:'桃子', say:'spyPeach'}, {word:'石头', say:'spyStone'},
+    {word:'木头', say:'spyWood'}, {word:'门', say:'spyDoor'}, {word:'房子', say:'spyHouse'}],
+  listen:'She says it only in Chinese. Find it, and press A at it.', found:'That’s it: {word}!', wrong:'Not that one. Listen again!',
+  done:[{say:'veryGood'}, {coins:2, note:'The pupil laughs, and gives you 2 🪙.'}],
+  going:'You’re in the middle of a game of I spy with the pupil. Keep playing?', stopped:'You stop playing I spy. Talk to the pupil to play again.'};
 const AT_HOME = (id, own = {}) => ({borrow:id, from:1, wild:['demon'], noMap:HOME_MAP, ...own});
 // The stone beds in the Water Curtain Cave, at home: sleep in one till morning (js/daynight.js), as you did there.
 const HOME_BED = {look:'stoneBed', word:'床', landmark:true, note:'Beds of smooth stone, enough for the whole troop.',
@@ -2566,15 +2574,14 @@ const ACROSS_THE_SEA = {
         {reply:'再见'}, {scene:'flyHome'}, {set:{sentHome:1}}, {chapter:2}, {goTo:'ffmMeadow', at:[9, 2], facing:'down'}]},
       {do:[{say:'change'}, {turnInto:2, label:'变！ Listen: what does the master say?'}]}
     ],
-    // a pupil plays I spy with you (the spy step), again whenever you like; the first time, a present
+    // a pupil plays I spy with you (the spy step, PUPIL_SPY), again whenever you like; the first time straight away, with a
+    // present, and after that she asks first
     spyPupil: [
       {if:{named:0}, do:[{say:'hi'}, {reply:'你好'}]},
       {if:{season:3, class4:1, snowman:0, grown:0}, do:[{say:'makeSnowman', teach:'雪人'}, {setUp:{snowman:1}}, {newWord:'雪人', note:'雪人 means snowman: 雪 snow + 人 person.'},
         {message:'You roll the snow into balls, and the pupils help you stack them up. A snowman, in a red scarf!'}]},
-      {do:[{say:'play'}, {spy:'spyGame', rounds:3, things:[{word:'树', say:'spyTree'}, {word:'水', say:'spyWater'}, {word:'桃子', say:'spyPeach'}, {word:'石头', say:'spyStone'},
-        {word:'木头', say:'spyWood'}, {word:'门', say:'spyDoor'}, {word:'房子', say:'spyHouse'}],
-        listen:'She says it only in Chinese. Find it, and press A at it.', found:'That’s it: {word}!', wrong:'Not that one. Listen again!',
-        done:[{say:'veryGood'}, {coins:2, note:'The pupil laughs, and gives you 2 🪙.'}]}]}
+      {if:{spyGame:0}, do:[{say:'play'}, PUPIL_SPY]},
+      {do:[{say:'play'}, {...PUPIL_SPY, ask:'Play I spy with the pupil?'}]}
     ],
     // the senior pupil's chores: the leaves (叶子), sweeping them (扫), the bucket (桶) and three buckets of water, the axe
     // (斧头) and four pieces of wood

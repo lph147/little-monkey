@@ -69,6 +69,19 @@ test('inside the cave, from the master to the end of the chapter', async () => {
   const coins = get(g, 'S.coins');
   for (const w of spying.list) await press(g, ...besideWord(g, w));
   assert.deepEqual([p(g, 'spyGame'), get(g, 'S.coins'), get(g, '!!here().spying')], [1, coins + 2, false], 'all three found');
+  // after that, she asks first, and halfway through a game, whether to keep playing (9 November 2026, as the little monkey does)
+  g.run('globalThis.__asks = []; globalThis.__yes = false; confirmBox = async (who, text) => { __asks.push(text); return __yes; }');
+  await press(g, 10, 9, 'left');
+  assert.deepEqual([get(g, '__asks'), get(g, '!!here().spying')], [['Play I spy with the pupil?'], false], 'she asks first; Not now, and no game');
+  g.run('__yes = true');
+  await press(g, 10, 9, 'left');
+  assert.ok(get(g, '!!here().spying'), 'Play: another game');
+  g.run('__yes = false');
+  await press(g, 10, 9, 'left');
+  assert.deepEqual([get(g, '__asks').at(-1), get(g, '!!here().spying')], ['You’re in the middle of a game of I spy with the pupil. Keep playing?', false], 'halfway through, Stop ends it');
+  assert.ok(notes(g).includes('You stop playing I spy. Talk to the pupil to play again.'));
+  assert.deepEqual([p(g, 'spyGame'), get(g, 'S.coins')], [1, coins + 2], 'and no present for it');
+  said(g);
   // training with a pupil, any time this year: a quick word game, with a present the first time you win
   g.run('encounter = async () => true; confirmBox = async () => true');
   const c0 = get(g, 'S.coins');
