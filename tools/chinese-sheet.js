@@ -10,6 +10,20 @@ const {loadGame, ROOT} = require('../tests/fake-browser');
 // in it (py: its pinyin, for a name that isn't in the word bank). Once checked (and corrected), put any corrections
 // into the content and delete them from here.
 const DRAFTS = [
+  ...[['你 要 买 什么 ？', 'What do you want to buy?', 'the 老板 on Flower Fruit Mountain, as you shop, teaching 买 (to buy; it was the town’s fruit seller’s word): every purchase is now 我要买… with the thing missing, such as 我要买桃子 and 我要买蓝色的头带'],
+    ['你 要 卖 什么 ？', 'What do you want to sell?', 'the 老板, once he buys your treasures (and the money changer, and the 老板 at home, in the human world)'],
+    ['山 上 有 很多 宝贝 ！', 'There are lots of treasures on the mountain!', 'the old monkey, telling you about the treasures (宝贝 just for listening) before you find the first. Is 宝贝 right for treasures here, or would 宝物 be better?'],
+    ['我 要 买 松子 ！', 'I want to buy pine nuts!', 'the 老板, before you’ve found any'],
+    ['松子 ！ 你 要 卖 吗 ？', 'Pine nuts! Do you want to sell them?', 'the 老板, seeing your first pine nuts, teaching 卖 (to sell); then you sell him one with 我要卖松子, 卖 the missing word'],
+    ['我 要 卖 松子', 'I want to sell some pine nuts.', 'what you say to sell a treasure, the treasure missing (and 我要卖羽毛, 珍珠, 玉, 人参, 金子)'],
+    ['好看 ！', 'Lovely!', 'you, as something you bought for the Water Curtain Cave is set up there (a vase, a wind chime, a drum, a painting, a fish jar)'],
+    ['红色 的 羽毛', 'a red feather', 'a feather you find on the grass, once you know its colour (and 黄色的羽毛, 蓝色的羽毛)'],
+    ['鸟 有 羽毛 。', 'Birds have feathers.', 'the example sentence for 羽毛 (feather)'], ['海 里 有 珍珠 。', 'There are pearls in the sea.', 'the example sentence for 珍珠 (pearl)'],
+    ['玉 是 绿色 的 。', 'Jade is green.', 'the example sentence for 玉 (jade)'], ['人参 在 松树 下面 。', 'The ginseng is under the pine trees.', 'the example sentence for 人参 (ginseng)'],
+    ['金子 是 黄色 的 。', 'Gold is yellow.', 'the example sentence for 金子 (gold)'],
+    ['两 文 钱 。', 'Two coins.', 'the town’s fruit seller, when you ask how much her apples are with 多少钱？ (How much?), which she teaches now (两 and 文 just for listening)'],
+    ['宝贝 ！ 你 要 卖 吗 ？', 'A treasure! Do you want to sell it?', 'the money changer in the town, and the 老板 at home in the human world, seeing a treasure from the mountain, teaching 卖 to a game that doesn’t know it']]
+    .map(([zh, en, where]) => ({zh, en, where:`New on 9 November 2026 (treasures and trading): ${where}. Is it natural?`})),
   ...[['来 ！', 'Come on!', 'the big monkey, raising his stick to spar with you as he gives it to you (a practice fight you can’t lose, instead of two notes on how to fight)'],
     ['路 上 有 蛇 ！', 'There are snakes on the path!', 'the rabbit by the long grass on the mountain path, once you’ve met your first snake, teaching 路 (path); it was 草里有蛇。'],
     ['瀑布 后面 有 洞 ！', 'There’s a cave behind the waterfall!', 'you, back out of the cave, telling the troop what you found (after 里面有什么？, and filling the gap 瀑布后面有洞); you told them about its beds, table and bowls'],

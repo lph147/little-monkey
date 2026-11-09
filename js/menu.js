@@ -83,8 +83,13 @@ const BAG_TABS = [
     .map(([id, w]) => ({w, does:`The ${((NAMES[(AREA.requests[id] || {}).from || (AREA.holdingFor || {})[id]] || {}).en || 'troop').replace(/^(the|an?) /i, '').toLowerCase()}`, label:'Hear'}))},   // (The master, not The the master)
   {id:'fight', name:'To fight with', things:() => canBattle() && weaponNow() ? [{w:weaponNow(), does:`Hits for ${weaponHits()}`, label:'Hear'}] : []},   // (your weapon now, such as the Demon of Havoc's broadsword)
   {id:'fishing', name:'For fishing', things:() => !canFish() ? [] : [{w:FISH.rod, does:'A at water with fish in it', label:'Hear'},   // (js/fishing.js)
-    ...(FISH.bait && S.bag[FISH.bait] > 0 ? [{w:FISH.bait, does:'A big fish bites next', label:'Hear', count:S.bag[FISH.bait]}] : [])]}
+    ...(FISH.bait && S.bag[FISH.bait] > 0 ? [{w:FISH.bait, does:'A big fish bites next', label:'Hear', count:S.bag[FISH.bait]}] : [])]},
+  // the treasures you've found, for the 老板 to buy (js/trade.js: decided 9 November 2026, the trade plan), and the tools
+  // you've bought from him
+  {id:'treasures', name:'Treasures', zh:'宝贝', py:'bǎobèi', things:() => TREASURE_WORDS.filter(w => S.bag[w] > 0).map(w => ({w, does:`Sells for ${priceOf(w)} ${MONEY()}`, label:'Hear', count:S.bag[w]}))},
+  {id:'tools', name:'Tools', things:() => (S.tools || []).filter(w => WORDS[w]).map(w => ({w, does:TOOL_DOES[w] || '', label:'Hear'}))}
 ];
+const TOOL_DOES = {'篮子':'Carry two more of every snack', '灯笼':'A light round you at night', '铲子':'Dig up roots'};   // (what each tool does, in your bag)
 function bagPage(back, focus, note, tab){
   const card = ({w, does, label, count}) => `<button class="card bagitem" data-w="${w}" data-label="${label}"><div class="c" aria-hidden="true">${picHTML(w)}</div>`
     + `${count ? `<span class="count">×${count}</span>` : ''}<div class="hz">${w}</div><div class="p">${WORDS[w] ? WORDS[w].py : GLOSS[w][0]}</div><div class="small">${esc(does)}</div></button>`;
@@ -113,7 +118,7 @@ function bagPage(back, focus, note, tab){
     if (!food || !food.heal){ say(w); return; }
     if (!hurt()){ SFX.bump(); bagPage(back, w, 'Your health is full: keep it for when you’re hurt.'); return; }
     S.bag[w]--; S.health = Math.min(maxHealth(), health() + food.heal); useWord(w); save(); SFX.right();
-    bagPage(back, w, `You eat a ${wz(w)}: +${food.heal} health.`);
+    bagPage(back, w, `You eat a ${wz(w)}: ${healText(w)}.`);
   });
 }
 function wardrobePage(back, focus){

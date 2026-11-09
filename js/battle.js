@@ -214,9 +214,9 @@ async function fight(id, opts = {}){
     note = '';
     if (act === 'run'){ closeCard(); toast(fill(f.ran || `You run away from the {${f.word}}.`)); return 'ran'; }
     if (act === 'eat'){
-      const w = foodThat('heal');
+      const w = healFood();
       S.bag[w]--; S.health = Math.min(maxHealth(), health() + FOOD[w].heal); useWord(w); save(); SFX.right();
-      note = `You eat a ${wz(w)}: +${FOOD[w].heal} health.`;
+      note = `You eat a ${wz(w)}: ${healText(w)}.`;
     } else {
       const w = big ? weakest(f.word) : toAsk(f.word, 1)[0], q = wordQuestion(w, f.word), stick = wz(weaponNow() || '棍子');
       const ok = await pictureQ({head:scene(), body:`<p class="label">${charged() ? `Your ${stick} glows! Swing it: ×${POWER}!` : `You swing your ${stick}!`}</p>` + q.body, word:w, type:q.type,
@@ -273,7 +273,7 @@ async function fight(id, opts = {}){
 // Gives 'hit', 'eat' or 'run'.
 function battleTurn(f, head, note, said = ''){
   return new Promise(res => {
-    const food = hurt() && foodThat('heal');
+    const food = hurt() && healFood();
     const acts = [['hit', '打', 'dǎ', 'Hit'],
       food && ['eat', '吃', 'chī', `Eat: ${wz(food)} ×${S.bag[food]}`],
       !f.boss && ['run', '跑', 'pǎo', 'Run away']].filter(Boolean);

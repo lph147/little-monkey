@@ -171,7 +171,7 @@ test('bait from the 老板, once you have a rod: with some in your bag, a big fi
   assert.ok(!get(game({place: 'homeGround', x: 7, y: 13, dir: 'left'}, {fish: 'asked', fishing: 0}), "forSale().some(i => i.item === '鱼饵')"), 'not before you have a rod');
   await play(g, "buy(forSale().find(i => i.item === '鱼饵'), '')");
   assert.deepEqual([get(g, "S.bag['鱼饵']"), get(g, 'S.shells')], [1, 8], 'two shells, into your bag');
-  assert.ok(get(g, '__said').includes('gap: 我要鱼饵 (鱼饵)'), '我要鱼饵');
+  assert.ok(get(g, '__said').includes('gap: 我要买鱼饵 (鱼饵)'), '我要买鱼饵 (every purchase: 我要买…, since 9 November 2026)');
   assert.deepEqual(get(g, "BAG_TABS.find(t => t.id === 'fishing').things().map(t => [t.w, t.count || 1])"), [['鱼竿', 1], ['鱼饵', 1]]);
   g.run('Math.random = () => .99; __said.length = 0; __notes.length = 0');
   g.run(`globalThis.__line = []; { const q = pictureQ; pictureQ = o => { __line.push('question'); return q(o); }; }

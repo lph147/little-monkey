@@ -274,7 +274,9 @@ test('at the water’s edge, the troop builds your raft (木筏) and says goodby
   assert.deepEqual(get(g, '__said'), ['elder: 我们等你！'], 'the old monkey, by your raft');
   g.run('__notes.length = 0; finishedAt = null');
   assert.equal(g.run('promptFor(11, 13)'), 'Board');
+  g.run('globalThis.__ready = 0; readyCard = async () => { __ready++; }');   // (the Ready to sail? card first, since 9 November 2026: Sail away)
   await press(g, 11, 12, 'down');
+  assert.equal(g.run('__ready'), 1, 'the Ready to sail? card first');
   assert.deepEqual(get(g, '__scenes'), ['sailAway'], 'sailing away, the troop waving from the shore');
   assert.deepEqual(get(g, '[here().raft, here().done]'), [3, true], 'chapter 1 is complete');
   assert.match(get(g, '__notes').join(' '), /box: ⛰️ Chapter 1 complete! \d+ of \d+ words caught \d+ friends 🐚 \d+ You sail away from Flower Fruit Mountain on your 木筏 \(raft\)/);

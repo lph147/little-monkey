@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 38;
+const SAVE_VERSION = 39;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -24,7 +24,7 @@ function placesOnWayTo(place){
   for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
   return way;
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -253,6 +253,11 @@ function upgradeSave(s){
     const a1 = (s.areas || {})[1]; if (a1 && a1.hungry === 'done' && !a1.hungry2) a1.hungry2 = 'done';
     s.version = 38;
   }
+  if (s.version === 38){   // version 38: no treasures or trading (js/trade.js). Tools and things for the cave, bought from the
+    for (const k of ['tools', 'decor', 'decorNew']) if (!Array.isArray(s[k])) s[k] = [];   // shop, are kept for every area;
+    s.jarFish = !!s.jarFish; s.helpLeft = s.helpLeft || 0;                                // nothing was bought before, so all
+    s.version = 39;                                                                       // start empty
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   // A save from another area than the one this page plays (such as a game in Area 2, shown on the title screen while the page
   // plays Area 1) is only filled in with what every save has: what's kept for its own area waits till it's played there
@@ -279,6 +284,7 @@ function upgradeSave(s){
   if (!s.bag || typeof s.bag !== 'object' || Array.isArray(s.bag)) s.bag = {};
   s.following = Array.isArray(s.following) ? s.following.filter(id => AREA.characters.some(c => c.id === id)) : [];   // who's following you (characters still here)
   s.scroll = {has:!!(s.scroll || {}).has, sealed:Array.isArray((s.scroll || {}).sealed) ? s.scroll.sealed : []};
+  for (const k of ['tools', 'decor', 'decorNew']) if (!Array.isArray(s[k])) s[k] = [];   // (the shop's tools and things for the cave: js/trade.js)
   const clothes = w => [...(w || [])].filter(i => CLOTHES.some(c => c.item === i));   // only what the wardrobe has now
   s.wardrobe = {owned:clothes((s.wardrobe || {}).owned), wearing:clothes((s.wardrobe || {}).wearing)};
   return s;

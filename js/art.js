@@ -52,7 +52,8 @@ function redress(){ for (const k in spriteCache) delete spriteCache[k]; for (con
 // against your fur.
 // The Demon of Havoc's broadsword (刀, Area 2's chapter 2), once it's yours: longer, a steel blade, with a gold guard (u)
 // across it.
-const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}, '刀': {len:9, guard:true, pal:{l:'#DCE0E6', k:'#4A4E58', u:'#D8A838'}}};
+const HELD = {'棍子': {len:7, pal:{l:'#B5653A', k:'#3E2010'}}, '刀': {len:9, guard:true, pal:{l:'#DCE0E6', k:'#4A4E58', u:'#D8A838'}},
+  '铲子': {len:8, blade:true, pal:{l:'#B98A55', k:'#5A3A1E', u:'#C9CED6'}}};   // (the spade from the shop, for digging: a steel blade, u, at its end: js/trade.js)
 const inHand = () => weaponNow() && HELD[weaponNow()] && canBattle() ? weaponNow() : null;
 // What a monkey holds (kind: 'player', or a character's id): your stick once you can fight, or a character's own (holds, in the
 // area's characters), such as the sticks of the little monkeys in training. empty: nothing, whatever it has.
@@ -199,7 +200,7 @@ function asleepSprite(){
 // of other places too (roams, such as the deer on the south slope). place: where it's counted (its spot's, the one it
 // hides in, or else the first place's). spr: how they look on the map (content/sprites.js, each at its size); pic: their
 // picture everywhere else, in encounters and the Friends list (content/pictures.js).
-const ANIMALS = AREA.animals.map(a => ({id:a.id, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
+const ANIMALS = [...AREA.animals, ...PAST_ANIMALS].map(a => ({id:a.id, past:!!a.past, name:WORD_BANK[a.word].en, hz:a.word, at:a.at || null, place:a.hides || placeOf(a.at), hides:a.hides || null, home:a.home || HIDING_WORD, meetNote:a.meetNote, chapter:a.chapter || 0, flutters:!!a.flutters, many:a.many || 0, counts:a.counts, counted:a.counted || [], stays:a.stays || null,
   spr:sprite(MAP_SPRITES[a.word].rows, MAP_SPRITES[a.word].palette), faces:MAP_SPRITES[a.word].faces, pic:sprite(PICTURES[a.word].rows, PICTURES[a.word].palette),
   waits:!!a.waits, perch:a.perch || 0, glints:a.glints || null, roams:a.roams || [], clue:a.clue || '', swims:!!a.swims, leaves:!!a.leaves, time:a.time || null, awake:a.awake || null, sleepsAt:a.sleepsAt || null, hangs:!!a.hangs, glows:a.glows || null, group:a.group || null}));   // (time: when it's about, by day or after dark, unless the story needs it, awake: awakeNow)   // (perched up on something, so many pixels up, such as the owl on its dead pine; its eyes, glinting in the gloom)
 // Whether an animal is out yet: once the story has reached its chapter (decided 30 October 2026, so a chapter's new

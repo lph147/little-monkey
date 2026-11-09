@@ -684,16 +684,16 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   assert.deepEqual([area().shop, get("[ALL_NPCS.find(n => n.id === 'boss')].map(n => [n.place, n.x, n.y])[0]")], [1, ['homeGround', 7, 8]], 'the 老板 has come up to the home ground');
   await pressAt(7, 9, 'up', 'meeting the shop owner, by the way in');
   assert.ok(knows('老板') && area().shop === 1, 'he teaches 老板, the first time');
-  await pressAt(7, 9, 'up', 'talking to the 老板 again: the troop builds his new shop');
+  await pressAt(7, 9, 'up', 'talking to the 老板 again: the troop builds his new shop', 2);   // (his question teaches 买, then you turn everything down, 我不要: one after the other in the same conversation, as outside school, since 9 November 2026)
   assert.deepEqual([area().shop, run('tileAt(4, 7).look'), run('tileAt(7, 7).look')], [4, 'shop', 'sign'], 'his shop, built, with its sign; and he goes straight on to show you what he sells (4)');
   assert.ok(['我来了！', '这里很好！'].every(t => get('__said').includes(t)), 'here I am! it’s nice here!');
   assert.ok(get('S.shells') >= 10, 'shells enough for a headband');
   plan.buy = '蓝色的头带';
-  await pressAt(7, 9, 'up', 'buying a blue headband: 我要蓝色的头带');
+  await pressAt(7, 9, 'up', 'buying a blue headband: 我要买蓝色的头带');
   plan.buy = null;
   assert.deepEqual([get('S.wardrobe.owned'), get('S.wardrobe.wearing'), run('headband()')], [['蓝色 的 头带'], ['蓝色 的 头带'], '#3A6DD0'], 'you tie it on: your first headband');
   assert.ok(knows('头带'), 'teaching 头带');
-  assert.ok(get('__said').includes('我要蓝色的头带'), 'asked for with its colour');
+  assert.ok(get('__said').includes('我要买蓝色的头带'), 'asked for with its colour (我要买…: every purchase, since 9 November 2026)');
 
   // Chapter 1: the cow (26 October 2026). Since the feast's quests began, the thirsty monkey has been by the road at the
   // home ground, with news: 山上有牛！ (牛 just for listening); the troop clears the bushes past the bridge at the bottom of
@@ -1021,7 +1021,10 @@ test('Flower Fruit Mountain can be played from start to finish', async () => {
   // Every word the game counts can be caught: all but those you can do without (戴, wear, for putting the headband on in
   // your wardrobe; 睡觉, sleep, by the cave's beds; and 黄鼠狼, the weasel, which only jumps out of the long grass after
   // dark). (The spider, which the prologue's long grass didn't send this player, jumps out on the hillside.)
-  assert.deepEqual(get('ORDER.filter(w => lvl(w) < 1)').sort(), ['戴', '睡觉', '黄鼠狼'].sort(), 'the words this player hasn’t caught');
+  // And the treasures, 卖 and the things you can only buy (since 9 November 2026: nothing in the story needs them, and
+  // tests/trade.test.js finds and buys them)
+  const trade = get("Object.keys(WORD_BANK).filter(w => ['treasures', 'shop'].includes(WORD_BANK[w].category))");
+  assert.deepEqual(get('ORDER.filter(w => lvl(w) < 1)').sort(), ['戴', '睡觉', '黄鼠狼', '卖', ...trade].sort(), 'the words this player hasn’t caught');
 
   // Everything said on the way has a voice clip (npm run voices makes them)
   const clips = require('../tools/make-voices').plan().clips, said = get('__said');

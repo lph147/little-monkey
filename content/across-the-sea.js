@@ -446,7 +446,7 @@ const ACROSS_THE_SEA = {
     hensBack: {count:'flags', keys:['hen1', 'hen2', 'hen3', 'hen4']},   // the hens you've carried back to their yard
     cargoCarried: {count:'picked', request:'cargo'},   // the sacks you've carried onto the boat at the harbour (four)
     // the town's words, which the years passing wait for
-    townWords: {count:'known', words:['买', '包子', '鞋', '茶', '说', '听', '孩子', '学', '书', '猫']},
+    townWords: {count:'known', words:['多少钱', '包子', '鞋', '茶', '说', '听', '孩子', '学', '书', '猫']},   // (多少钱 since 9 November 2026: 买 is the 老板's, on Flower Fruit Mountain)
     // who you've asked where the immortals are: everyone (8), the village's three and the town's three
     asked: {count:'flags', keys:['askChild', 'askFisher', 'askVillager', 'askFarmer', 'askGranny', 'askTea', 'askTeller', 'askDocker']},
     askedVillage: {count:'flags', keys:['askChild', 'askFisher', 'askVillager']},
@@ -583,7 +583,7 @@ const ACROSS_THE_SEA = {
     {id:'c1tripBoat', main:true, if:{trip:2, away:'shore'}, text:'The boatman is waiting on the beach below the village, to take you back across the {海|sea}', arrow:{place:'shore'}},
     {id:'c1tripBoatHere', main:true, if:{trip:2, place:'shore'}, text:'The boatman will take you back across the {海|sea}', arrow:'boatman'},
     {id:'c1tripBasket', main:true, if:{trip:3, away:'mountainFoot'}, text:'Go to the foot of the {山|mountain}: the pupils’ basket will haul you up', arrow:{place:'mountainFoot'}},
-    {id:'c1tripBasketHere', main:true, if:{trip:3, place:'mountainFoot'}, text:'Climb into the pupils’ basket: face it, and press A', arrow:[18, 2, 'mountainFoot']},
+    {id:'c1tripBasketHere', main:true, if:{trip:3, place:'mountainFoot'}, text:'Climb into the pupils’ {篮子|basket}: face it, and press A', arrow:[18, 2, 'mountainFoot']},
     {id:'c1tripBack', main:true, if:{trip:4}, text:'Take the rice and {鱼|fish} to the senior pupil', arrow:'senior'},
     {id:'c1bigMatch', main:true, if:{season:3, trip:5, bigMatch:0, grown:0}, text:'The senior pupil wants a match with you: the {年|year}’s big match', arrow:'senior'},
     {id:'c1newYear', main:true, if:{season:3, bigMatch:1, newYear:0, grown:0}, text:'It’s the last night of the {年|year}: the {师父|master} is waiting for you', arrow:'master'},
@@ -709,9 +709,10 @@ const ACROSS_THE_SEA = {
     kid2: [{if:{child:3, hidesFound:0}, show:'!'}, {if:{season:3, trip:{atLeast:1, below:5}, snowVillage:0}, show:'!'}],
     planter: [{if:{planter:0}, show:'!'}],
     farmer: [{if:{farmer:0}, show:'!'}, {if:{farmer:1, birdsShooed:5}, show:'!'}, {if:{lunch:'asked', holding:{lunch:true}}, show:'?'}, {if:{lunch:'done', askFarmer:0}, show:'!'}],
-    changer: [{if:{exchanged:0}, show:'!'}],
-    fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}],
-    bunSeller: [{if:{knows:'买', new:'包子'}, show:'!'}, {if:{night:true, knows:'买', new:'臭豆腐'}, show:'!'}],
+    fruitSeller: [{if:{exchanged:1, new:'买'}, show:'!'}, {if:{exchanged:1, new:'多少钱'}, show:'!'}],
+    changer: [{if:{exchanged:0}, show:'!'}, {if:{new:'卖', treasures:true}, show:'!'}],
+    boss: [{if:{new:'卖', treasures:true}, show:'!'}, {if:{canBuy:'home'}, show:'?'}],   // (? only for his own shop at home, not the town's stalls)
+    bunSeller: [{if:{knows:'多少钱', new:'包子'}, show:'!'}, {if:{night:true, knows:'多少钱', new:'臭豆腐'}, show:'!'}],   // (after the fruit stall's 多少钱: one ! at a time, as a game from Flower Fruit Mountain knows 买 already)
     shoeSeller: [{if:{knows:'包子', grannyBuns:'done', new:'鞋'}, show:'!'}],
     teaKeeper: [{if:{knows:'鞋', new:'茶'}, show:'!'}, {if:{knows:'茶', askTea:0}, show:'!'}],
     granny2: [{if:{knows:'包子', grannyBuns:'not asked'}, show:'!'}, {if:{grannyBuns:'asked', inBag:{'包子':true}}, show:'?'},
@@ -824,6 +825,28 @@ const ACROSS_THE_SEA = {
       sorry:'对不起', sorryAbout:'You asked the stallholder for the wrong thing.', noProblem:'noProblem', soldOut:'You have shoes now! Come back another time.',
       items:[
         {item:'鞋', price:4, sentence:'我 要 买 鞋', sentenceEn:'I want to buy shoes.', note:'Cloth shoes, black, with thick soles.', bought:'You put on your new {鞋}. Now you look just like a person!', wear:true}
+      ]},
+    // the money changer buys Flower Fruit Mountain's treasures too, for coins (js/trade.js: decided 9 November 2026, the trade
+    // plan): his Sell tab alone, as he sells nothing
+    changer: {who:'changer', ask:'changeMoney', reply:'谢谢', welcome:'welcome', sells:{}, sellAsk:'whatSell',
+      sellPuzzled:'The money changer looks puzzled: you pointed at the {item}, but offered him something else!', items:[]},
+    // the 老板, at his stall at home once the Demon of Havoc is beaten: the tools and things for the Water Curtain Cave
+    // he sold on Flower Fruit Mountain, now in coins (the words you catch only by buying them), and he buys treasures
+    home: {who:'boss', ask:'whatBuy', teach:'买', given:'The {老板} gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
+      earnMore:'Earn more by helping the troop, making friends with animals, and selling the {老板} treasures.', puzzled:'The {老板} looks puzzled: you pointed at the {item}, but asked for something else!',
+      sorry:'对不起', sorryAbout:'You asked the {老板} for the wrong thing.', noProblem:'noProblem', soldOut:'You have everything the {老板} sells. Come back another time.',
+      sells:{}, sellAsk:'whatSell', sellPuzzled:'The {老板} looks puzzled: you pointed at the {item}, but offered him something else!',
+      groups:{snacks:'Snacks', tools:'Tools', cave:'For the Water Curtain Cave'},
+      items:[
+        {item:'桃子', price:2, group:'snacks', sentence:'我 要 买 桃子', sentenceEn:'I want to buy a peach.', note:'A ripe peach.', bought:'You put the {桃子} in your bag.', eat:true},
+        {item:'篮子', price:15, group:'tools', tool:true, sentence:'我 要 买 篮子', sentenceEn:'I want to buy the basket.', note:'A woven bamboo basket for your bag.', bought:'Your {篮子} goes in your bag: now you can carry two more of every snack.'},
+        {item:'灯笼', price:10, group:'tools', tool:true, sentence:'我 要 买 灯笼', sentenceEn:'I want to buy the lantern.', note:'A red paper lantern, with a candle inside.', bought:'Your {灯笼} lights up the dark round you at night, and treasures glint from further away.'},
+        {item:'铲子', price:12, group:'tools', tool:true, sentence:'我 要 买 铲子', sentenceEn:'I want to buy the spade.', note:'A spade with a wooden handle, for digging.', bought:'With your {铲子}, you can dig up roots that grow deep in the ground.'},
+        {item:'花瓶', price:6, group:'cave', decor:true, sentence:'我 要 买 花瓶', sentenceEn:'I want to buy the vase.', note:'A clay vase, for flowers.', bought:'The troop will set your {花瓶} up in the Water Curtain Cave. Go and see!'},
+        {item:'风铃', price:8, group:'cave', decor:true, sentence:'我 要 买 风铃', sentenceEn:'I want to buy the wind chime.', note:'Bamboo tubes that tinkle in the wind.', bought:'The troop will hang your {风铃} up in the Water Curtain Cave. Go and see!'},
+        {item:'鼓', price:10, group:'cave', decor:true, sentence:'我 要 买 鼓', sentenceEn:'I want to buy the drum.', note:'A drum of wood and skin. Boom!', bought:'The troop will set your {鼓} up in the Water Curtain Cave. Go and see!'},
+        {item:'画', price:12, group:'cave', decor:true, sentence:'我 要 买 画', sentenceEn:'I want to buy the painting.', note:'A painting of the mountain, on paper.', bought:'The troop will hang your {画} up in the Water Curtain Cave. Go and see!'},
+        {item:'鱼缸', price:15, group:'cave', decor:true, sentence:'我 要 买 鱼缸', sentenceEn:'I want to buy the fish jar.', note:'A big glazed jar, for a fish to live in.', bought:'The troop will set your {鱼缸} up in the Water Curtain Cave.'}
       ]}
   },
 
@@ -934,6 +957,7 @@ const ACROSS_THE_SEA = {
       {walk:'king', from:[14, 3], to:'you', ms:420, stomp:true}, {talkTo:'king'}]},
     // home with the little monkeys and the cart: the hungry monkey wants the troop's things off it, for the feast's tables
     {if:{place:'ffmHomeGround', homeAgain:1, unload:0, party:0}, do:[{talkTo:'hungry'}]},
+    {if:{place:'ffmCave', decorWaiting:true}, do:[{decorate:true, by:'player', line:'lovely'}]},   // (what you've bought for the cave from the 老板: js/trade.js)
     // (a game that heard the boatman's news before the asking was the story's purpose: he's told you)
     {if:{boat:{atLeast:1}, toldSea:0}, do:[{set:{toldSea:1}}]},
     {if:{askedTown:3, years:0}, do:[{set:{years:1}}, {message:'Nobody in the town knows where the immortals are either. You stay, and keep asking, year after year…'},
@@ -1800,6 +1824,9 @@ const ACROSS_THE_SEA = {
       moves:[{if:{foundBig:0}, place:'hut', x:5, y:0}, {if:{news:0}, place:'ffmMeadow', x:2, y:11, facing:'right'}], palette:{o:'#4F3929', f:'#B19473', s:'#F3DCC2', m:'#CA9E83', e:'#24160C'}},
     {id:'hungry', place:'ffmHomeGround', x:4, y:12, facing:'right', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
       moves:[{if:{foundHungry:0}, place:'hut', x:6, y:0}, {if:{homeAgain:1}, place:'ffmHomeGround', x:20, y:8, facing:'down'}], palette:{o:'#4F3929', f:'#B08C6B', s:'#F0CFAE', m:'#C29374', e:'#24160C'}},   // (by the cart and the feast's tables, once you're home with it)
+    // the 老板, home again at his stall once the Demon of Havoc is beaten (js/trade.js: decided 9 November 2026, the trade plan)
+    {id:'boss', place:'ffmHomeGround', x:7, y:8, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
+      moves:[{if:{homeAgain:0}, place:'hut', x:12, y:0}], palette:{o:'#4F3929', f:'#B59069', s:'#F1D2B2', m:'#C49678', e:'#24160C'}},
     {id:'elder', place:'ffmCave', x:7, y:9, facing:'down', beard:true, holds:'棍子', name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'},
       moves:[{if:{news:1, place:'ffmHomeGround'}, place:'ffmHomeGround', x:16, y:8, facing:'down'}],   // (out of the cave once he's told you the news, when you're at the home ground)
       palette:{o:'#6E6A62', f:'#E4E2DC', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
@@ -1863,6 +1890,7 @@ const ACROSS_THE_SEA = {
   ],
   // Where you found each word, on its page in the Word Scroll.
   found: {
+    '多少钱': 'You asked the fruit seller in the town how much her apples were.',
     '人': 'The fishermen on the shore, the first people you saw.',
     '鹅': 'Waddling about on the sand, where you landed.',
     '衣服': 'The old fisherman’s coat, dropped on the sand.',
@@ -1882,7 +1910,6 @@ const ACROSS_THE_SEA = {
     '船': 'The fishermen’s boats, on the shore.',
     '看': 'The farmer, showing you the birds in his rice: 你看！',
     '狗': 'Guarding the road through the fields.',
-    '买': 'The fruit stall at the market: 你要买什么？',
     '包子': 'The bun stall at the market.',
     '臭豆腐': 'The bun stall at the night market, after dark.',
     '鞋': 'The shoe stall at the market.',
@@ -2083,6 +2110,9 @@ const ACROSS_THE_SEA = {
     {id:'pillarsPine', at:[26, 21, 'pillars'], fruit:'桃子', note:'Under the pine at the end of the bridge, someone has left a {桃子}!'}
   ],
   animalsAppear: {knows:'动物'},
+  // Flower Fruit Mountain's animals at home in chapter 2, as they were there, those you missed to make friends with at last
+  // (js/data.js: decided 9 November 2026, the trade plan)
+  pastAnimals: {chapter:2},
   animalsPlay: {say:'play', hint:'It wants to play! Answer its questions to make friends.', friendHint:'Your {朋友} wants to play again! Answer its questions.'},
   tips: {},
   questions: ['listen', 'read', 'gap'],
@@ -2159,6 +2189,10 @@ const ACROSS_THE_SEA = {
     changeMoney: {zh:'你 要 换 钱 吗 ？', en:'Do you want to change money?'},
     hereMoney: {zh:'这 是 你 的 钱 。', en:'Here’s your money.'},
     whatBuy: {zh:'你 要 买 什么 ？', en:'What do you want to buy?'},
+    twoWen: {zh:'两 文 钱 。', en:'Two coins.'},   // the fruit seller, when you ask how much (两 and 文 just for listening: drafts for the native speaker)
+    whatSell: {zh:'你 要 卖 什么 ？', en:'What do you want to sell?'},   // whoever buys your treasures (js/trade.js)
+    treasureSell: {zh:'宝贝 ！ 你 要 卖 吗 ？', en:'A treasure! Do you want to sell it?'},   // and seeing one for the first time (teaching 卖, to a game that doesn't know it)
+    lovely: {zh:'好看 ！', en:'Lovely!'},   // you, at something new set up in the cave at home
     drinkTea: {zh:'喝 茶 吧 ！', en:'Have some tea!'},
     iTalk: {zh:'我 说 ， 你 听 。', en:'I talk, you listen.'},
     whereImmortals: {zh:'神仙 在 哪里 ？', en:'Where are the immortals?'},
@@ -2357,9 +2391,22 @@ const ACROSS_THE_SEA = {
     // the town
     changer: [
       {if:{exchanged:0}, do:[{say:'changeMoney'}, {exchange:true}, {say:'hereMoney'}, {set:{exchanged:1}}, {reply:'谢谢'}]},
+      // treasures from the mountain (js/trade.js: decided 9 November 2026, the trade plan): he buys them, for coins; the first
+      // time, if you've never sold anything, teaching 卖
+      {if:{new:'卖', treasures:true}, do:[{say:'treasureSell', teach:'卖'}, {newWord:'卖', if:{new:'卖'}, note:'To sell: the money changer buys your treasures from the mountain, for coins.'}, {sell:true, first:true}]},
+      {if:{treasures:true}, do:[{say:'changeMoney'}, {exchange:true}, {sell:true}]},
       {do:[{say:'changeMoney'}, {exchange:true}]}
     ],
-    fruitSeller: [{if:{new:'买'}, do:[{shop:'fruit'}]}, {do:[{shop:'fruit'}]}],
+    // the 老板, home again once the Demon of Havoc is beaten, at his stall (js/trade.js): tools and things for the cave, in
+    // coins, so the words you catch only by buying them can still be caught; and he buys treasures, as he always did
+    boss: [
+      {if:{new:'卖', treasures:true}, do:[{say:'treasureSell', teach:'卖'}, {newWord:'卖', if:{new:'卖'}, note:'To sell: the {老板} buys your treasures, for coins.'}, {sell:true, first:true}]},
+      {do:[{shop:'home'}]}
+    ],
+    fruitSeller: [{if:{new:'买'}, do:[{shop:'fruit'}]},
+      // how much? (decided 9 November 2026, the trade plan: 买 moved to Flower Fruit Mountain, and 多少钱 suits a market with coins)
+      {if:{new:'多少钱'}, do:[{reply:'多少钱', about:'You point at her apples. You want to know how much they cost.', pic:'苹果'}, {say:'twoWen'}, {shop:'fruit'}]},
+      {do:[{shop:'fruit'}]}],
     bunSeller: [{if:{new:'买'}, do:[{say:'hi'}, {message:'The bun seller is busy. Try the fruit stall first!'}]},
       {if:{new:'包子'}, do:[{shop:'buns'}]}, {do:[{shop:'buns'}]}],
     shoeSeller: [{if:{new:'买'}, do:[{say:'hi'}, {message:'The shoe seller is busy. Try the fruit stall first!'}]},

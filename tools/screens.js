@@ -377,6 +377,12 @@ SAVES.shopComes = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.
 SAVES.shopMoved = {...SAVES.flowersPlanted, areas: {1: {...SAVES.flowersPlanted.areas[1], shop: 1}}, tasksSeen: {...SAVES.flowersPlanted.tasksSeen, shopMoved: 1, news: 1}, pos: {place: 'homeGround', x: 7, y: 9, dir: 'up'}};   // facing him, on the road by the way in
 SAVES.shopOpen = {...SAVES.shopMoved, shells: 24, w: {...SAVES.shopMoved.w, ...knows(1, ['头带', '蓝色', '绿色'])}, areas: {1: {...SAVES.shopMoved.areas[1], shop: 3, bought: ['头带']}},
   wardrobe: {owned: ['头带', '蓝色 的 头带'], wearing: ['蓝色 的 头带']}};
+// Treasures and trading (9 November 2026, js/trade.js): the old monkey's tip, pine cones in the pine wood, the 老板 buying
+// them once you've sold him your first (卖), his shop in tiers and groups, and the Water Curtain Cave with all you can buy for it
+SAVES.treasureTip = {...SAVES.shopOpen, w: {...SAVES.shopOpen.w, ...knows(1, ['买'])}, areas: {1: {...SAVES.shopOpen.areas[1], trade: 1}}, pos: {place: 'pineWood', x: 17, y: 22, dir: 'right'},
+  clock: {t: 0, n: 2, turn0: 0, friends0: [], caught: []}};
+SAVES.trading = {...SAVES.shopOpen, shells: 40, w: {...SAVES.shopOpen.w, ...knows(1, ['买', '卖', '松子', '羽毛', '珍珠'])}, areas: {1: {...SAVES.shopOpen.areas[1], trade: 2}}, bag: {'松子': 3, '羽毛': 2, '珍珠': 1}};
+SAVES.caveDecor = {...SAVES.trading, decor: ['花瓶', '风铃', '画', '鼓', '鱼缸'], jarFish: true, w: {...SAVES.trading.w, ...knows(1, ['花瓶', '风铃', '画', '鼓', '鱼缸'])}, pos: {place: 'cave', x: 9, y: 4, dir: 'right'}};
 // A big fish for the feast (29 October 2026): with honey on the table, the hungry monkey wants one; the fishing monkey by
 // the stream gives you a rod; your first catch is tiny (小), then a big one (大), for the feast
 SAVES.fishAsk = {...SAVES.fruitTable, areas: {1: {...SAVES.fruitTable.areas[1], shop: 3, fish: 'not asked'}}, pos: {place: 'homeGround', x: 20, y: 7, dir: 'left'}};   // facing the hungry monkey
@@ -1284,6 +1290,20 @@ const SCREENS = [
     play(); await wait(500); }},
   {id: 'shop-colours', title: 'Headbands in every colour you know', save: 'shopOpen', why: 'One for each colour you know (you have the red and the blue), with its own picture, peaches as well as apples, and honey once the bees make it.', run: async () => {
     play(); await wait(100); shop(speaker('boss')); await wait(200); next(); await wait(400); }},
+  {id: 'treasure-tip', title: 'Pine cones under the pines', save: 'treasureTip', why: 'Once the old monkey has told you about the treasures (山上有很多宝贝！) and that the 老板 buys them, pine cones lie under the big pines in the pine wood, glinting now and then: A says Pick up. A spot gives one a day.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'shop-tabs', title: 'His shop, in tiers', save: 'trading', why: 'Once you’ve sold him your first pine nuts (卖), his shop has tabs, 买 Buy and 卖 Sell; you buy with 我要买…, snacks in tiers (health, then help with questions), then tools, then things for the Water Curtain Cave, words you catch only by buying them.', run: async () => {
+    play(); await wait(100); shop(speaker('boss')); await wait(200); next(); await wait(400); }},
+  {id: 'shop-sell', title: 'Selling him treasures', save: 'trading', why: 'His Sell tab: the treasures you carry, how many, and what he pays; those you haven’t found yet are shadows, with a clue and their price. Choose one and say 我要卖…, the treasure missing.', run: async () => {
+    play(); await wait(100); sellCard(speaker('boss'), SHOPS.shop, true); await wait(400); }},
+  {id: 'sell-count', title: 'Counted into your paw', save: 'trading', why: 'He counts the shells into your paw a piece at a time, aloud: 一，二，三…… (never the word for shells, the Eastern Sea’s surprise); each number in green once you know it.', run: async () => {
+    play(); await wait(100); countMoney(speaker('boss'), 6, SHOPS.shop); await wait(2600); }},
+  {id: 'bag-treasures', title: 'Your bag: treasures', save: 'trading', why: 'The bag’s 宝贝 (treasures) tab: each, how many, and what it sells for.', run: async () => {
+    play(); await wait(100); bagPage(() => closeCard()); await wait(100); click('.bagtabs [data-tab=treasures]'); await wait(300); }},
+  {id: 'cave-decor', title: 'A home in the Water Curtain Cave', save: 'caveDecor', why: 'Everything you can buy for it: the vase on the table, the wind chime and the painting on the wall, the drum (A beats it, and the little monkeys dance) and the fish jar, with your little fish in it.', run: async () => {
+    play(); await wait(500); }},
+  {id: 'ready-to-sail', title: 'Ready to sail?', save: 'raftReady', why: 'A at your raft: each page of your scroll, red till it’s full, then sealed; your friends and treasures; where things are still to find; Not yet keeps the raft waiting while the troop goes home.', run: async () => {
+    play(); await wait(100); readyCard(); await wait(400); }},
   {id: 'shop-gap-colour', title: 'Asking for a green one', save: 'shopOpen', why: 'You ask for it: 我要绿色的头带, the colour missing, the other colours you know the wrong answers.', run: async () => {
     play(); await wait(100); buy(forSale().find(i => i.colour === '绿色'), speaker('boss')); await wait(500); }},
   {id: 'shop-puzzled', title: 'Asking for something you didn’t point at', save: 'shopOpen', why: 'Choose the wrong word, and he’s puzzled, a ? over him: you pointed at the apples but asked for something else. He asks again (你要什么？), and the same choices come again, the right one somewhere else, till you ask for what you pointed at. Only then do you pay.', run: async () => {

@@ -113,10 +113,10 @@ test('the 老板: once you know 对不起, asking for the wrong thing, you say i
   };
   const g = await run(['对不起']);
   assert.deepEqual(get(g, '__replies'), ['对不起 (You asked the 老板 (shop owner) for the wrong thing.)', '谢谢 (The 老板 (shop owner) gives you the 苹果 (apple).)']);
-  assert.deepEqual(get(g, '__said'), ['没关系！', '你要什么？', '不客气！'], 'he says it doesn’t matter, then asks again (and, at the end, you’re welcome)');
+  assert.deepEqual(get(g, '__said'), ['没关系！', '你要买什么？', '不客气！'], 'he says it doesn’t matter, then asks again (and, at the end, you’re welcome)');
   const before = await run([]);
   assert.deepEqual(get(before, '__replies').filter(r => /对不起/.test(r)), [], 'not before you know it');
-  assert.deepEqual(get(before, '__said'), ['你要什么？', '不客气！']);
+  assert.deepEqual(get(before, '__said'), ['你要买什么？', '不客气！']);
 });
 
 test('the teacher says 再见 after class, and you reply 再见 (his news first, if he has some now: decided 6 November 2026)', () => {

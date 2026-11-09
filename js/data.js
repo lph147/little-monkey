@@ -83,6 +83,7 @@ function borrowPlace(own, places){
     const t = legend[ch]; if (!t) continue;
     keep[ch] = Object.fromEntries(Object.entries(t).filter(([k]) => BORROW_KEEPS.includes(k)));
     if (t.wild || (t.animals && own.wild)) keep[ch].wild = own.wild || [];   // (and in the long grass where animals hid there)
+    if (t.animals && AREA.pastAnimals) keep[ch].animals = 'past';   // (where that area's animals hid, they hide again: only those, PAST_ANIMALS)
     if (t.pick){ const {if:c, ...pick} = t.pick; if (wasLeft(c, left)) keep[ch].pick = pick; else delete keep[ch].pick; }   // (fruit to pick, if there was at the end)
     if (t.action === 'sign') Object.assign(keep[ch], {action:'sign', sign:t.sign || from.sign});   // (writing, such as the cave's tablet: its own, or that area's sign)
     const looks = looksKept(t, left, from); if (looks) keep[ch].onLook = looks;   // (what it is, or the view from it)
@@ -94,6 +95,24 @@ function borrowPlace(own, places){
     ...rest, legend:{...keep, ...(own.legend || {})}, exits:[...exits, ...(own.exits || [])], map, borrowed:{from:own.from, id:own.borrow}};
 }
 for (const [id, p] of Object.entries(AREA.places)) if (p.borrow) AREA.places[id] = borrowPlace(p, AREA.places);
+// An earlier area's animals at home here, in its borrowed places (AREA.pastAnimals: from its chapter; decided 9 November
+// 2026, the trade plan: anything you missed there can still be found later in the story, such as Flower Fruit Mountain's
+// in the human world's chapter 2): each one standing at its spot or hiding in its long grass as it did, its places those
+// here (hiding anywhere: in any borrowed place's), but never one of a kind that's many, one that leaves its spot, one that
+// sleeps somewhere else, one of a group, one the story wakes, nor one with this area's own id.
+const PAST_ANIMALS = (() => {
+  const P = AREA.pastAnimals; if (!P) return [];
+  const mine = new Set([...AREA.animals.map(a => a.id), ...AREA.characters.map(c => c.id)]), out = [];
+  for (const A of AREAS.filter(a => a.number < AREA.number)) for (const a of A.animals || []){
+    if (a.many || a.leaves || a.sleepsAt || a.stopsYou || a.group || a.awake || a.waits || mine.has(a.id)) continue;
+    const there = p => (Array.isArray(p) ? p[2] : p) || Object.keys(A.places)[0];
+    const here = id => Object.keys(AREA.places).find(k => (AREA.places[k].borrowed || {}).from === A.number && AREA.places[k].borrowed.id === id);
+    const at = a.at ? here(there(a.at)) : null, hides = a.hides ? here(a.hides) : null;
+    if ((a.at && !at) || (a.hides && !hides)) continue;
+    out.push({...a, chapter:P.chapter, past:true, at:a.at ? [a.at[0], a.at[1], at] : null, hides, roams:(a.roams || []).map(here).filter(Boolean)});
+  }
+  return out;
+})();
 // The area's places, small maps you move between, and the one you're in. A position in the content is
 // in the first place unless it says another: [x, y, 'place'], or place:'id' (placeOf gives which).
 const PLACES = AREA.places, FIRST_PLACE = Object.keys(PLACES)[0];

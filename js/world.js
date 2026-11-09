@@ -55,7 +55,7 @@ function stepClear(){
 const npcAt = (x, y) => NPCS.find(n => n.x === x && n.y === y);
 const exitAt = (x, y) => (PLACES[PLACE].exits || []).find(e => e.at[0] === x && e.at[1] === y && (!e.when || matches(e.when)));   // a way to another place (when: only there once the story says)
 const isOpen = e => (!e.when || matches(e.when)) && (!e.if || matches(e.if));   // (a way that isn't there yet isn't open either)
-const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y);   // (an animal standing on open ground, such as a deer, is in the way)
+const walkable = (x, y) => !!tileAt(x, y).walk && !npcAt(x, y) && !animalAt(x, y) && !(typeof thingBlocks === 'function' && thingBlocks(x, y));   // (an animal standing on open ground, such as a deer, is in the way; and a thing, such as a rock with jade in it or the cave's drum: js/trade.js)
 // Steam vents (a legend's vent: {every, puff, at}, in ms, such as the hot spring valley's): every so often, steam puffs out
 // of one for a moment (puff ms of every, at: how long after the cycle starts it starts), and while it does, you can't step
 // onto it (its hot), and standing on it, it pushes you back off it (its pushed): the hot spring valley's twist, timing your
@@ -268,6 +268,7 @@ function promptFor(x, y){
   const way = exitAt(x, y);
   if (way && way.by === 'A' && isOpen(way)) return way.label || 'Go';   // a way you go through by pressing A, such as jumping through the waterfall
   if (hideSpotAt(x, y)) return 'Look';   // where a little monkey playing hide and seek might be (js/hide.js)
+  const thing = thingLabel(x, y); if (thing) return thing;   // a treasure, or something for the cave (js/trade.js)
   const spot = spotLook(x, y);
   if (spot) return spot.label || 'Look';
   const t = tileAt(x, y);
@@ -315,8 +316,8 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'holding') return Object.entries(v).every(([id, want]) => { const h = here().holding[id]; return want === true ? !!h : want === false ? !h : h === want; });
     if (k === 'wanted') return Object.entries(v).every(([id, want]) => { const h = (here().wanted || {})[id]; return want === true ? !!h : want === false ? !h : h === want; });
     if (k === 'bought') return Object.entries(v).every(([item, want]) => here().bought.includes(item) === want);
-    if (k === 'canBuy') return canBuy() === v;
-    if (k === 'inBag') return Object.entries(v).every(([w, want]) => ((S.bag[w] || 0) > 0) === want);   // what's in your bag, such as {'米饭':true}   // there's something in the shop you could buy now, that you don't have (the 老板's ?)
+    if (k === 'canBuy') return typeof v === 'string' ? canBuy(SHOPS[v]) : canBuy() === v;   // there's something in the shop you could buy now, that you don't have (the 老板's ?), or in one shop, by its id, such as 'home'
+    if (k === 'inBag') return Object.entries(v).every(([w, want]) => ((S.bag[w] || 0) > 0) === want);   // what's in your bag, such as {'米饭':true}
     if (k === 'ready') return chapterDone() === v;
     if (k === 'place') return PLACE === v;   // the place you're in
     if (k === 'away') return ![].concat(v).includes(PLACE);   // anywhere but this place (or these), such as a task that leads you back there (decided 6 November 2026)
@@ -338,6 +339,11 @@ function matches(cond){   // does the game match everything in an if?
     if (k === 'any') return v.some(matches);   // any of these, such as the way south: for the cow, or the garden's melon field
     if (k === 'sealsWaiting') return (sealsWaiting().length > 0) === v;   // a page of your scroll is full, and not sealed yet (js/scrolls.js)
     if (k === 'hasScroll') return !!S.scroll.has === v;   // the old monkey has given you his scroll
+    if (k === 'tool') return (S.tools || []).includes(v);   // a tool you've bought, such as the spade (js/trade.js)
+    if (k === 'decor') return (S.decor || []).includes(v);   // something for the cave you've bought, set up there
+    if (k === 'decorWaiting') return ((S.decorNew || []).length > 0) === v;   // something for the cave you've bought, still to set up there
+    if (k === 'jarFish') return !!S.jarFish === v;   // a little fish lives in your fish jar
+    if (k === 'treasures') return TREASURE_WORDS.some(w => (S.bag[w] || 0) > 0) === v;   // you're carrying a treasure to sell
     if (k === 'night') return isNight() === v;   // it's night (js/daynight.js), such as the first night, teaching 晚上
     if (k === 'raining') return typeof v === 'string' ? rainHere() === v : rainingHere() === v;   // it's raining where you are, outdoors, such as the first rain, teaching 下雨; or raining 'heavy' (teaching 大雨) or 'light'
     if (AREA.counters[k]) return compare(counter(k), v);
@@ -349,7 +355,7 @@ const LEAP_MS = 450;   // how long a leap takes, when someone stops following yo
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
 const STEP_OPTIONS = {quiz:['label'], tour:['ask','label'], carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
-  change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed'], follow:['park'], walk:['from','to','ms','stomp'], sleep:['room']};   // extra settings a step can have
+  change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed'], follow:['park'], walk:['from','to','ms','stomp'], sleep:['room'], sell:['first'], decorate:['by', 'line']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
 const COUNT_MS = 900;   // a count said as each one's done, one after another (the carry step's each): how long it has, at least, before the next begins
@@ -1409,7 +1415,10 @@ async function request(r, face, last = false){
 const SHOPS = AREA.shops || (AREA.shop ? {shop:AREA.shop} : {});
 const SHOP_ITEMS = () => Object.values(SHOPS).flatMap(sh => sh.items);
 const forSale = (sh = Object.values(SHOPS)[0]) => sh.items.filter(i => !i.if || matches(i.if)).flatMap(inColours)
-  .filter(i => (i.item === i.word || lvl(i.colour) >= 1) && (i.eat || i.bag || (i.for ? !here().holding[i.for] : !here().bought.includes(i.item))));   // (for: bought for someone, carried till you give it them, such as the cave's rice and fish)
+  .filter(i => (i.item === i.word || lvl(i.colour) >= 1) && (i.eat || i.bag || (i.for ? !here().holding[i.for] : !owned(i))));   // (for: bought for someone, carried till you give it them, such as the cave's rice and fish)
+// Something bought once that you have: a tool or something for the cave (tool, decor: kept in the save for every area,
+// js/trade.js), or anything else this area's shop sells (bought).
+const owned = i => i.tool ? (S.tools || []).includes(i.item) : i.decor ? [...(S.decor || []), ...(S.decorNew || [])].includes(i.item) : here().bought.includes(i.item);
 const toBag = i => !!(i.eat || i.bag);   // food, or something else for your bag, such as bait
 // Something that comes in colours, as it's called and said once you know its colour's word: 蓝色的头带 (a blue headband),
 // its picture (its own, or its word's in its own colour), and its sentence with the colour in it, the colour the missing
@@ -1427,27 +1436,37 @@ const COLOUR_SENTENCES = () => [...SHOP_ITEMS(), ...(AREA.wardrobe || [])].filte
   .flatMap(i => i.colours.map(c => ({zh:i.colourSentence.replace('{colour}', c), en:i.colourSentenceEn.replace(/\{colour\}/g, WORDS[c].en)})));
 // Every sentence of the child's game, 是不是 (AREA.isIt: 这是…吗？ about each of its words), for the voices and CHINESE.md.
 const IS_IT_SENTENCES = () => (AREA.isIt || []).map(w => ({zh:`这 是 ${w} 吗 ？`, en:`Is this ${aWord(w)}?`}));
-// Is there something in the shop you could buy now, that you don't have (not food or for your bag)? (The 老板's ?.)
-const canBuy = () => Object.values(SHOPS).some(sh => forSale(sh).some(i => !toBag(i) && money() >= i.price));
-async function shop(face, sh = Object.values(SHOPS)[0]){   // a shop: what it sells, and buying it by asking for it with 我要…
+// Is there something in the shop you could buy now, that you don't have (not food or for your bag)? (The 老板's ?.) In any shop,
+// or in one (the human world's 老板 at home asks only about his own, not the town's stalls).
+const canBuy = one => (one ? [one] : Object.values(SHOPS)).some(sh => forSale(sh).some(i => !toBag(i) && money() >= i.price));
+async function shop(face, sh = Object.values(SHOPS)[0], asked = false){   // a shop: what it sells, and buying it by asking for it with 我要买… (asked: you've come back to its Buy tab from its Sell tab)
   const items = forSale(sh), nw = sh.teach && lvl(sh.teach) === 0 ? sh.teach : null;   // (its question can teach a word, such as 买)
-  await showDialog(face, L[sh.ask], nw ? {teach:nw} : {});
-  if (nw) await showNotice(nw, {quiet:true});
-  if (!items.length){ toast(fill(sh.soldOut)); return; }
+  if (!asked){
+    await showDialog(face, L[sh.ask], nw ? {teach:nw} : {});
+    if (nw) await showNotice(nw, {quiet:true});
+  }
+  if (!items.length && !canSell(sh)){ toast(fill(sh.soldOut)); return; }
   const food = sh.items.filter(i => toBag(i) && S.bag[i.item]).map(i => `${S.bag[i.item]} ${esc(wz(i.item))}`);
   // 我不要, as a reply choice shows it: Chinese, pinyin and English (unless it's switched off). (It had no pinyin till 22
   // October 2026.)
   const no = sh.no ? `<span class="nzh">${sh.no}</span><span class="npy">${WORDS[sh.no].py}</span>${S.replyEn ? `<span class="nen">· ${esc(WORDS[sh.no].en.split(',')[0])}</span>` : ''}` : 'Not now';
-  const i = await new Promise(res => {   // a card for each thing for sale: its picture, Chinese, pinyin, English and price
-    openCard(`<div class="qhead">${face}<p class="prompt">You have ${MONEY()} ${money()}${food.length ? ' and ' + food.join(', ') : ''}.</p></div>
-      <div class="menu shopgrid">${items.map((it, n) => { const a = asSaid(it); return `<button class="shopitem${money() < it.price ? ' dear' : ''}" data-n="${n}" data-label="Choose">
+  // a card for each thing for sale: its picture, Chinese, pinyin, English and price; under its group's heading, if the shop
+  // has groups (such as Snacks, then Tools), in their order (decided 9 November 2026, the trade plan)
+  const tile = it => { const a = asSaid(it); return `<button class="shopitem${money() < it.price ? ' dear' : ''}" data-n="${items.indexOf(it)}" data-label="Choose">
         <span class="spic" aria-hidden="true">${picHTML(a.pic)}</span><span class="szh">${a.zh}</span><span class="spy">${a.py}</span>
-        <span class="sen">${esc(a.en)}</span><span class="sprice">${MONEY()} ${it.price}</span></button>`; }).join('')}</div>
+        <span class="sen">${esc(a.en)}</span><span class="sprice">${MONEY()} ${it.price}</span></button>`; };
+  const groups = sh.groups ? Object.keys(sh.groups) : null, inGroup = g => items.filter(it => (it.group || groups[0]) === g);
+  const grid = groups ? groups.filter(g => inGroup(g).length).map(g => `<p class="shopgroup">${esc(sh.groups[g])}</p>${inGroup(g).map(tile).join('')}`).join('') : items.map(tile).join('');
+  const i = await new Promise(res => {
+    openCard(`<div class="qhead">${face}<p class="prompt">You have ${MONEY()} ${money()}${food.length ? ' and ' + food.join(', ') : ''}.</p></div>${shopTabs(sh, 'buy')}
+      ${items.length ? `<div class="menu shopgrid">${grid}</div>` : `<p class="hint">${esc(fill(sh.soldOut))}</p>`}
       <div class="actions"><button class="btn" data-a="no" data-b data-label="${sh.no || 'Not now'}">${no}</button></div>`);
     const first = sheet.querySelector('.shopitem'); if (first) first.focus();
     on('[data-a=no]', () => { closeCard(); res(null); });
     sheet.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { closeCard(); res(items[+b.dataset.n]); });
+    sheet.querySelectorAll('[data-shoptab=sell]').forEach(b => b.onclick = () => { SFX.turn(); closeCard(); res('sell'); });   // (his Sell tab: js/trade.js)
   });
+  if (i === 'sell') return sellCard(face, sh);
   if (i) await buy(i, face, sh);
   else if (sh.no){ if (lvl(sh.no) === 0) await showNotice(sh.no, {quiet:true}); await iSay(sh.no); }   // you say 我不要
 }
@@ -1460,10 +1479,12 @@ function putOn(item){
 }
 async function buy(i, face, sh = Object.values(SHOPS)[0]){   // buying something from a shop by asking for it (forSale's, or the content's own). Gives true if you bought it.
   if (!i.word) i = {...i, word:i.item};
-  const a = asSaid(i);
+  const a = asSaid(i), name = lvl(i.word) >= 1 ? (i.item === i.word ? wz(i.item) : `${a.zh} (${a.en})`) : a.en.toLowerCase();   // (a word you haven't caught: its English)
+  // (whether you can buy it first, then its card, so a word you catch only by buying it, such as the cave's vase, is caught
+  // only as you buy it: decided 9 November 2026, the owner's idea)
+  if (toBag(i) && bagFull(i.item)){ await infoBox(face, `<p>You can carry ${FOOD[i.item] ? carryOf(i.item) : i.carry || 3} ${esc(name)}, and your bag is full. ${i.eat ? 'Eat one first.' : 'Use one first.'}</p>`); return false; }
+  if (money() < i.price){ await infoBox(face, `<p>The ${esc(name)} costs ${i.price} ${MONEY()}, and you have ${money()}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   if (lvl(i.word) === 0) await showNotice(i.word, {note:fill(a.note), quiet:true, ...(a.pic !== i.word ? {pic:a.pic} : {})});
-  if (toBag(i) && bagFull(i.item)){ await infoBox(face, `<p>You can carry ${(FOOD[i.item] || i).carry || 3} ${esc(wz(i.item))}, and your bag is full. ${i.eat ? 'Eat one first.' : 'Use one first.'}</p>`); return false; }
-  if (money() < i.price){ await infoBox(face, `<p>The ${esc(i.item === i.word ? wz(i.item) : `${a.zh} (${a.en})`)} costs ${i.price} ${MONEY()}, and you have ${money()}. ${esc(fill(sh.earnMore))}</p>`); return false; }
   const sentence = toks(a.sentence), q = {who:face, t:sentence, en:a.sentenceEn, gap:a.gap, ...(i.colour && a.gap === i.colour ? {wrong:i.colours.filter(c => c !== i.colour)} : {})}, seen = {};   // (the other colours as the wrong answers)
   // Ask for something else, and you've pointed at one thing and asked for another (decided 29 October 2026: he handed it
   // over all the same): he's puzzled, a ? over him (puzzled, in js/draw.js), and asks again (the shop's puzzled, then its
@@ -1486,6 +1507,8 @@ async function buy(i, face, sh = Object.values(SHOPS)[0]){   // buying something
   spend(i.price);
   if (toBag(i)) intoBag(i.item);   // food (or bait) goes in your bag: you can buy it again and again
   else if (i.for) here().holding[i.for] = i.item;   // something for someone (for), carried till you give it them, such as the rice and fish for the cave
+  else if (i.tool) S.tools.push(i.item);   // a tool, yours from now on, in every area (js/trade.js)
+  else if (i.decor) S.decorNew.push(i.item);   // something for the cave, set up there the next time you go in
   else here().bought.push(i.item);
   if (i.wear && !S.wardrobe.owned.includes(i.item)){ S.wardrobe.owned.push(i.item); putOn(i.item); }   // you put it on
   save(); SFX.fanfare();
@@ -1511,7 +1534,7 @@ async function lookAt(t){   // the card for the word you learn by looking at a t
 // flowers, they all went back to being called 花).
 const coloured = t => { const c = WORDS[t.colour].en; return {zh:`${t.colour} 的 ${t.word}`, en:`${/^[aeiou]/.test(c) ? 'An' : 'A'} ${c} ${WORDS[t.word].en}`}; };
 const COLOURED = () => [...new Map([...[AREA.legend, ...Object.values(AREA.places).map(p => p.legend || {})].flatMap(l => Object.values(l)).filter(t => t.colour && t.word),
-  ...((AREA.birds || {}).colours || []).map(colour => ({word:AREA.birds.word, colour}))].map(t => [coloured(t).zh, coloured(t)])).values()];   // every one there is, such as 粉色的花 and 黄色的鸟 (for the voices and CHINESE.md)
+  ...((AREA.birds || {}).colours || []).map(colour => ({word:AREA.birds.word, colour})), ...colouredThings()].map(t => [coloured(t).zh, coloured(t)])).values()];   // every one there is, such as 粉色的花 and 黄色的鸟 (for the voices and CHINESE.md)
 const colourPic = t => PICTURES[coloured(t).zh] ? coloured(t).zh : t.word;
 const stepCard = t => ({...(t.stepNote ? {note:t.stepNote} : {}), ...(t.colour ? {pic:colourPic(t)} : {})});   // (stepping on it first, such as onto a red flower)
 async function gather(t, x, y){   // pick up something for a request, such as fruit or water
@@ -1560,10 +1583,10 @@ async function pickUpAct(w, {pic, at, reach:r} = {}){   // (reach: 'in', leaning
 async function pick(t, x, y){
   const w = t.pick.item, o = mapObjects().find(o => x >= o.x && x < o.x + o.w && y >= o.y && y < o.y + o.h), key = o ? o.x + ',' + o.y : x + ',' + y;
   if (pickedHere.has(key)){ SFX.bump(); toast(fill(t.pick.none || 'No more ripe ones. Come back another time.')); return; }
-  if (!intoBag(w)){ SFX.bump(); toast(`Your bag has ${FOOD[w].carry} ${wz(w)} already.`); return; }
+  if (!intoBag(w)){ SFX.bump(); toast(`Your bag has ${carryOf(w)} ${wz(w)} already.`); return; }
   pickedHere.add(key);
   await pickUpAct(w, {at:[x, y]});
-  toast(`${t.pick.took ? fill(t.pick.took) : `You pick a ${wz(w)}`} for your bag (${S.bag[w]} of ${FOOD[w].carry}). ${FOOD[w].does}.`);
+  toast(`${t.pick.took ? fill(t.pick.took) : `You pick a ${wz(w)}`} for your bag (${S.bag[w]} of ${carryOf(w)}). ${FOOD[w].does}.`);
 }
 const ACTIONS = {   // special things that happen when you press A at some tiles (the legend's action)
   async story(t){ await lookAt(t); await storyScroll(); },
@@ -1589,6 +1612,7 @@ async function interact(x, y){
   if (a) return wildAppears(a, {x, y, d:pl.dir});
   const bd = birdAt(x, y);
   if (bd && BIRD_WORD){ await lookAt({word:BIRD_WORD, colour:bd.colour, note:AREA.birds.note}); shooBird(bd); return; }   // (such as 黄色的鸟, once you know its colour)
+  if (thingLabel(x, y)) return thingAct(x, y);   // a treasure, or something for the cave (js/trade.js)
   const h = hiddenAt(x, y);
   if (h) return findHidden(h);
   const hs = hideSpotAt(x, y);
@@ -1613,7 +1637,7 @@ async function interact(x, y){
 // and messageFirst, js/input.js; decided 6 November 2026, after playing it: filling the senior pupil's buckets one at a
 // time, the pool seemed not to give the next).
 function collectsMore(x, y){
-  if (npcAt(x, y) || followerAt(x, y) || animalAt(x, y) || hiddenAt(x, y) || spotLook(x, y)) return false;   // (A does something else there first: interact)
+  if (npcAt(x, y) || followerAt(x, y) || animalAt(x, y) || hiddenAt(x, y) || spotLook(x, y) || thingLabel(x, y)) return false;   // (A does something else there first: interact)
   const t = tileAt(x, y), p = t.onLook && t.onLook.find(p => !p.if || matches(p.if));
   return !!p && !p.waits && p.do.some(s => (!s.if || matches(s.if)) && (s.collect || (s.carry && !s.howMany)));
 }
@@ -1899,12 +1923,12 @@ const animalAsleep = a => fill(`The {${a.hz}} is fast asleep. Shh! ${a.time === 
 const roamsHere = a => a.roams.includes(PLACE) && a.place !== PLACE && S.friends.includes(a.id);
 const allOut = a => { const n = here()[a.counts] || 0; return !!a.stays && n < a.many && n + outOf(a).filter(o => !o[2]).length >= a.many; };
 function hideAnimal(){
-  const hiding = ANIMALS.filter(a => (!a.at && (!a.hides || a.hides === PLACE) || roamsHere(a)) && inChapter(a) && !allOut(a) && awakeNow(a));   // (only those about now: a rabbit by day, a mouse at night)
+  const hiding = ANIMALS.filter(a => (!a.at && (!a.hides || a.hides === PLACE) || roamsHere(a)) && inChapter(a) && !allOut(a) && awakeNow(a) && (!a.past || !!PLACES[PLACE].borrowed));   // (only those about now: a rabbit by day, a mouse at night; an earlier area's, only at home, js/data.js)
   if (rustle || !canWild() || !hiding.length || stepsSince < HIDE_AFTER) return;
   const far = GRASS_TILES.filter(([x, y]) => Math.abs(x - pl.x) + Math.abs(y - pl.y) >= 3 && !animalAt(x, y));
   if (!far.length) return;
   const [x, y] = far[Math.floor(Math.random() * far.length)], only = tileAt(x, y).animals;
-  const pool = Array.isArray(only) ? hiding.filter(a => only.includes(a.id)) : hiding;
+  const pool = only === 'past' ? hiding.filter(a => a.past) : Array.isArray(only) ? hiding.filter(a => only.includes(a.id)) : hiding;   // ('past': an earlier area's long grass, borrowed: only its animals)
   if (pool.length) rustle = {x, y, a:pickAnimal(pool)};
 }
 // The grass rustling just ahead of you, as you step up to it or turn to face it: the animal hiding there jumps out of it,

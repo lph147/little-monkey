@@ -955,7 +955,8 @@ function drawSettingUp(cx, cy){
 }
 // Chips flying off what you hit (burst, at the moment your stick strikes): wood or stone, falling as they fly.
 const chips = [];
-const CHIP_COLOURS = {wood:['#D2A46A', '#8A5A32', '#B98A55', '#6B4A2A'], stone:['#E6E2D6', '#A9A598', '#7C786D', '#D6D2C5'], leaves:['#C2552E', '#D8923A', '#E6B04A', '#9A6A2A']};
+const CHIP_COLOURS = {wood:['#D2A46A', '#8A5A32', '#B98A55', '#6B4A2A'], stone:['#E6E2D6', '#A9A598', '#7C786D', '#D6D2C5'], leaves:['#C2552E', '#D8923A', '#E6B04A', '#9A6A2A'],
+  earth:['#8A6A44', '#5E4428', '#A8845A', '#3E2C1A'], jade:['#E6E2D6', '#7FC79A', '#A9A598', '#3E9A62']};   // (digging with the spade; a rock with jade in it: js/trade.js)
 function burst(x, y, kind){
   const now = performance.now(), cols = CHIP_COLOURS[kind] || CHIP_COLOURS.wood;
   for (let i = 0; i < 10; i++){ const a = Math.PI * (1.1 + .8 * Math.random()), v = 30 + Math.random() * 45; chips.push({x:x*T + 8, y:y*T + 7, vx:Math.cos(a) * v * (Math.random() < .5 ? -1 : 1), vy:Math.sin(a) * v, c:cols[i % cols.length], t0:now}); }
@@ -985,7 +986,7 @@ function drawChips(cx, cy, now){
 // stepping or leaping from square to square (mv: someone following you, or going to their place), or on its square.
 function charPos(n, now){
   const m = n.mv, p = m ? clamp((now - m.t0) / m.dur, 0, 1) : 1;
-  if (p >= 1) return {x:n.x*T, y:n.y*T, ground:n.y*T, mid:false};
+  if (p >= 1){ const d = danceHop(n, now); return {x:n.x*T, y:n.y*T - d, ground:n.y*T, mid:false}; }   // (dancing to your drum: js/trade.js)
   const far = Math.abs(n.x - m.fx) + Math.abs(n.y - m.fy), ground = (m.fy + (n.y - m.fy) * p) * T;
   const lift = m.far ? Math.sin(p * Math.PI) * (4 + 2 * far) : 0;
   return {x:(m.fx + (n.x - m.fx) * p) * T, y:ground - lift, ground, mid:p > .15 && p < .85};
@@ -1018,6 +1019,7 @@ function drawWorld(now){
     const way = i % 2 ? -1 : 1, fx = f[0]*T - cx + 8 + way * (fp*10 - 6), fy = f[1]*T - cy + 6 - Math.sin(fp*Math.PI)*8;
     R(b, Math.round(fx), Math.round(fy), 3, 2, '#F28C38'); R(b, Math.round(fx) + (way > 0 ? -1 : 3), Math.round(fy), 1, 2, '#D96A1E');
   });
+  drawThings(cx, cy, now);   // treasures, such as pine cones, and the things for the cave from the shop (js/trade.js)
   if (!GLOOM) drawSparkles(cx, cy, now);   // (in a gloomy place, over its shade instead, so they shine)
   // animals at their own spots, once animals appear: standing on open ground (the deer), or a little up a cliff, bobbing;
   // those up a tree come after the leaves. While you're meeting one, it stays where it is (meetHop).
@@ -1151,6 +1153,7 @@ function drawWorld(now){
   drawRain(cx, cy, sh, now);   // rain, every so often (js/daynight.js)
   drawDaylight(cx, cy, sh, now);   // the evening, the night and dawn, as the day goes round (js/daynight.js)
   drawNight(cx, cy, sh, now);   // a place at night (its night: js/mountain.js)
+  drawLanternLight(cx, cy, now);   // your lantern from the shop, lighting up the dark round you (js/trade.js)
   for (const a of spotAnimals.filter(a => a.glints && GLOOM && awakeNow(a))) glinting(a, a.at[0]*T - cx, a.at[1]*T - cy - a.perch, now);   // (an owl's eyes, in the gloom, while it's awake)
   for (const [x, y, k] of glintsNow(now)) glint(x*T - cx + 8, y*T - cy + 11, k);   // things hidden off the path
   for (const [x, y, show] of bubbles) bubble(x, y, show);
@@ -1220,7 +1223,7 @@ function glintsNow(now){
     const [x, y] = h.at, t = (now + x * 977 + y * 613) % GLINT_EVERY;
     if (t < GLINT_MS) out.push([x, y, Math.sin(t / GLINT_MS * Math.PI)]);
   }
-  return out;
+  return out.concat(treasureGlints(now));   // (and treasures: js/trade.js)
 }
 function glint(X, Y, k){
   const r = Math.round(1 + k * 2);

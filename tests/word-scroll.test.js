@@ -137,7 +137,7 @@ test('a word\'s example is the first line with it if you haven\'t seen one, or o
   game.run("wordPage('狐狸', () => {})");
   assert.ok(game.el('#sheet').innerHTML.includes('The fox is playing in the grass.'), 'no line has 狐狸, so its page shows the example written for it');
   game.run("S.w['头带'] = {lv: 1, due: 0, ok: 0}; wordPage('头带', () => {})");
-  assert.ok(game.el('#sheet').innerHTML.includes('I want the headband.'), '头带 is only in a sentence you complete, so that is its example');
+  assert.ok(game.el('#sheet').innerHTML.includes('I want to buy the headband.'), '头带 is only in a sentence you complete, so that is its example');
 });
 
 test('in the Word Scroll, up and down step through the words one by one, A opens the chosen one, and Back returns to it', () => {

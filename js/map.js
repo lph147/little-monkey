@@ -160,6 +160,7 @@ function placeWords(id, all = false){   // (all: the words you haven't caught to
   }
   for (const a of ANIMALS) if ((a.outPlace || a.place) === id && inChapter(a)) add(a.hz);   // (one that sleeps somewhere else, where it's out: the bat's the home ground's)
   for (const n of ALL_NPCS) if (n.place === id) add(n.look);
+  for (const w of treasuresIn(id)) add(w);   // (treasures to find there now: js/trade.js)
   return found;
 }
 // The words still to find in a place (the old monkey's scroll: decided 8 November 2026, the polish plan), each with when
@@ -167,8 +168,8 @@ function placeWords(id, all = false){   // (all: the words you haven't caught to
 // at night; night 0: only by day).
 function stillHere(id){
   return placeWords(id, true).filter(w => lvl(w) === 0).map(w => {
-    const a = ANIMALS.find(x => x.hz === w && x.place === id), f = Object.values(AREA.enemies || {}).find(e => e.word === w);
-    return {w, time:a ? a.time : f ? (f.night === 0 ? 'day' : f.day === 0 ? 'night' : null) : null};
+    const a = ANIMALS.find(x => x.hz === w && x.place === id), f = Object.values(AREA.enemies || {}).find(e => e.word === w), tr = treasureTime(w);
+    return {w, time:a ? a.time : f ? (f.night === 0 ? 'day' : f.day === 0 ? 'night' : null) : tr};   // (a treasure only out by day or at night, too)
   });
 }
 function toFindHTML(id){

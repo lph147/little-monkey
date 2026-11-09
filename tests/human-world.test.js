@@ -23,7 +23,7 @@ function game(pos, area = {}, more = {}, {waits = false} = {}){
   g.run("infoBox = async (who, html) => { __notes.push('box: ' + html.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim()); }; pictureQ = async () => { __asked++; return true; }; closeCard = () => {}");
   g.run("storyScene = async id => { __scenes.push(id); }; matchWords = async () => new Set(); confirmBox = async () => true; showPicked = async f => { __notes.push('picked: ' + f.zh); }");
   g.run("globalThis.__said = []; showDialog = async (who, line) => { __said.push((who.match(/data-id=\"([^\"]*)\"/) || [])[1] + ': ' + line.t.join('')); }");
-  g.run("replyWith = async best => { __said.push('player: ' + best); return true; }; gapQ = async o => { __said.push('gap: ' + o.t.join('') + ' (' + o.gap + ')'); return true; }");
+  g.run("replyWith = async best => { __said.push('player: ' + best); if (lvl(best) === 0) setSeen(best); return true; }; gapQ = async o => { __said.push('gap: ' + o.t.join('') + ' (' + o.gap + ')'); return true; }");   // (a new phrase, such as 多少钱, is taught as you say it)
   if (!waits) g.run("practiseFirst = async () => true");   // (a new word's wait for practice: tested on its own, below)
   g.run('placePlayer()');
   return g;
@@ -193,6 +193,11 @@ test('the whole prologue, from landing on the shore to the woodcutter’s song',
   assert.deepEqual(get(g, "['fruitSeller', 'bunSeller', 'shoeSeller', 'teaKeeper'].map(id => ((AREA.bubbles[id] || []).find(b => matches(b.if)) || {}).show || '')"), ['!', '', '', ''], 'one ! at a time');
   await press(g, 5, 14, 'left', '.shopitem');
   assert.ok(knows(g, '买'));
+  assert.deepEqual(get(g, "['fruitSeller', 'bunSeller'].map(id => ((AREA.bubbles[id] || []).find(b => matches(b.if)) || {}).show || '')"), ['!', ''], 'then how much? (多少钱), still one ! at a time');
+  said(g);
+  await press(g, 5, 14, 'left', '.shopitem');
+  assert.ok(knows(g, '多少钱'));
+  assert.deepEqual(said(g).slice(0, 2), ['player: 多少钱', 'fruitSeller: 两文钱。'], 'you ask how much, and she tells you');
   await press(g, 5, 10, 'left', '.shopitem');
   assert.ok(knows(g, '包子'));
   // the granny's shopping: a bun first (one in your bag already: she asks, and takes it there and then)

@@ -197,9 +197,13 @@ const FLOWER_FRUIT_MOUNTAIN = {
   //   lessonWait chapter 1: 1 while the teacher's next new word waits for you to practise (lessonGap), till you're told it's ready
   //   bumped  chapter 1: 1 once the little monkey chasing a dragonfly on the hillside has bumped into you (对不起, and you say 没关系)
   //   knocked chapter 1: 1 once your tail has knocked over the little monkeys' tower of stones (you say 对不起, they say 没关系)
+  //   trade   chapter 1: 1 once the old monkey has told you about the mountain's treasures (宝贝) and the 老板 buying them, 2 once
+  //           you've sold the 老板 your first pine nuts (卖), and his shop has a Sell tab (js/trade.js)
+  //   raftWait chapter 1's end: 1 while your raft waits at the shore because you chose Not yet on the Ready to sail? card
+  //           (the troop goes home till you're ready)
   // The game adds each request below ('not asked', 'asked' or 'done'), what you're holding
   // for each request, and done: true once you've passed the area's word test (the troop's send-off, to come).
-  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, goatHop:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, thirstyGame:0, meadowCheck:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, fireflyFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0, bumped:0, knocked:0},
+  progress: {chapter:0, elder:0, gate:false, climb:0, boar:0, story:false, cave:0, count:0, squirrelPlayed:0, goatPlayed:0, goatHop:0, ledgeTip:0, lookTip:0, home:0, build:0, school:0, woodIn:0, woodSquirrel:0, littleGame:0, hungryGame:0, thirstyGame:0, meadowCheck:0, lessonWait:0, schoolFlowers:false, homeName:0, trainee1:0, trainee2:0, tower:0, feast:0, bees:0, beeFriends:0, fireflyFriends:0, queenOut:false, cow:0, cowWolf:0, tableware:0, spoons:0, milkTable:0, dairy:0, dairyTurn:0, cowSeen:0, logSeen:0, pastureTracks:0, streamSeen:0, pastureLog:0, rabbitTold:0, cowWaits:0, pinesWolf:0, mushroomGame:0, garden:0, melonPlanted:0, grapePlanted:0, cliffsSeen:0, bananaPlanted:0, springsSeen:0, melonTurn:0, grapeTurn:0, bananaTurn:0, fruitTable:0, shop:0, fishing:0, fishTable:0, shrimpTable:0, crabTable:0, seaSeen:0, exam:0, feastHeld:0, raft:0, bumped:0, knocked:0, trade:0, raftWait:0},
   // Its progress once you've finished it (sailed away on your raft): how Area 2's chapter 2 finds Flower Fruit Mountain
   // twenty years later, everything built (its places, borrowed: js/data.js).
   left: {chapter:1, elder:2, hungry:'done', hungry2:'done', thirsty:'done', flowers:'done', wood:'done', stones:'done', honey:'done', melonSeeds:'done', grapeSeeds:'done', bananaSeeds:'done', cowFood:'done', boar:1, gate:true, climb:4, story:true, cave:6, count:3, home:2, build:2, school:2, schoolFlowers:true, shop:3, feast:3,
@@ -378,6 +382,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'raftWalk', main:true, if:{raft:1}, text:'Lead the troop down to the shore, below the meadow, to the edge of the {海}', arrow:[11, 12, 'shore']},
     {id:'raftBoard', main:true, if:{raft:2}, text:'Your {木筏} is ready at the edge of the {海|sea}: press A at it when you’re ready to go', arrow:[11, 13, 'shore']},
     {id:'shopMoved', if:{shop:1}, text:'The {老板} has come up to the home ground: go and see him, by the way in from the {瀑布}', arrow:'boss'},
+    // the treasures (js/trade.js): pine nuts for the 老板, then what you've bought for the Water Curtain Cave, set up there
+    {id:'tradePine', if:{trade:1, inBag:{'松子':false}}, text:'Find {松子|pine nuts} for the {老板}: look for pine cones under the big pines in the pine wood', arrow:{place:'pineWood'}},
+    {id:'tradeSell', if:{trade:1, inBag:{'松子':true}}, text:'Take your {松子|pine nuts} to the {老板}, by the way in to the home ground', arrow:'boss'},
+    {id:'decorWait', if:{decorWaiting:true}, text:'The troop is ready to set up what you bought for the {洞|cave}: go and see', arrow:{place:'cave'}},
     {id:'dare', main:true, if:{story:true, cave:0}, text:'Talk to the old monkey: what could be behind the {瀑布}?', arrow:'elder'},
     {id:'jump', main:true, if:{cave:1}, text:'{跳} through the {瀑布}', arrow:[4, 1, 'falls']},
     {id:'tell', main:true, if:{cave:2}, text:'Go back and tell the troop what’s behind the {瀑布}', arrow:'elder'},
@@ -563,9 +571,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // A ! or ? over a character's head: the first whose if matches.
   bubbles: {
     // (the old monkey's lessons and practice: only while he's at school, not at the feast's tables or seeing you off on the shore)
-    elder: [{if:{...FEAST_READY, exam:0}, show:'!'}, {if:{elder:2, chapter:0, gate:false, meadowWords:5, animalsLeft:0, meadowCheck:0}, show:'!'}, {if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{school:{atLeast:2}, practice:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, firstWords:2}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2}, show:'!'},
+    elder: [{if:{...FEAST_READY, exam:0}, show:'!'}, {if:{trade:0, shop:{atLeast:3}, knows:'买'}, show:'!'}, {if:{elder:2, chapter:0, gate:false, meadowWords:5, animalsLeft:0, meadowCheck:0}, show:'!'}, {if:{school:1}, show:'!'}, {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, show:'!'}, {if:{school:{atLeast:2}, lesson:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{school:{atLeast:2}, practice:true, any:[{exam:0}, {raft:{atLeast:3}}]}, show:'!'}, {if:{chapter:1, home:0}, show:'!'}, {if:{elder:0}, show:'!'}, {if:{elder:1, firstWords:2}, show:'!'}, {if:{gate:true, climb:0}, show:'!'}, {if:{climb:2}, show:'!'}, {if:{story:true, cave:0}, show:'!'}, {if:{cave:2}, show:'!'},
       {if:{cave:4}, show:'!'}, {if:{cave:{atLeast:5}, count:{below:3}}, show:'!'}, {if:{chapter:0, count:3}, show:'!'}],
-    boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{shop:1}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'},
+    boss: [{if:{elder:{atLeast:1}, new:'老板'}, show:'!'}, {if:{shop:1}, show:'!'}, {if:{elder:{atLeast:1}, new:'头带'}, show:'!'}, {if:{trade:1, inBag:{'松子':true}}, show:'!'},
       {if:{canBuy:true}, show:'?'}],   // up at the home ground, to have his shop built; ? once you can afford something new, such as a headband
     playful: [{if:{meadowCheck:1, new:'猴子'}, show:'!'}, {if:{meadowCheck:1, new:'朋友'}, show:'!'},   // until it has taught you both its words,
       {if:{littleGame:0, knows:'朋友', gate:false}, show:'!'},   // then, in the meadow, till you've played its word game (once: win or lose)
@@ -716,28 +724,63 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // colour you know, as a thing of its own (colourSentence, colourSentenceEn, colourNote and colourBought, {colour} where the
   // colour goes: in the sentence its word, the missing one; in English its English), and as it is till you know its own.
   shop: {
-    who:'boss', ask:'whatWant', given:'The {老板} gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
-    earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, and practising your words.',
+    // (his question, 你要买什么？, teaches 买 the first time you shop, decided 9 November 2026, the trade plan: it was the human
+    // world's town's word, where its fruit seller teaches 多少钱 now)
+    who:'boss', ask:'whatBuy', teach:'买', given:'The {老板} gives you the {item}.', reply:'谢谢', welcome:'welcome', no:'我不要',
+    earnMore:'Earn more by helping the monkeys, making friends with the animals in the tall grass, practising your words, and selling him treasures.',
     // asking for something you didn't point at (the wrong word in the gap): he's puzzled, and asks again (ask); once you
     // know 对不起, you say sorry first (sorryAbout: what's happening, for the reply), and he says it doesn't matter
     puzzled:'The {老板} looks puzzled: you pointed at the {item}, but asked for something else!',
     sorry:'对不起', sorryAbout:'You asked the {老板} for the wrong thing.', noProblem:'noProblem',
     soldOut:'You have everything the {老板} sells. Come back another time.',
+    // He buys treasures too (js/trade.js), once you've sold him your first pine nuts, teaching 卖 (sells: the Sell tab's if;
+    // sellAsk: his question; sellPuzzled: pointing at one treasure and offering him another)
+    sells:{trade:{atLeast:2}}, sellAsk:'whatSell', sellPuzzled:'The {老板} looks puzzled: you pointed at the {item}, but offered him something else!',
+    // groups: the headings in his Buy tab, in order, each item in one (group); the snacks in tiers, the bigger ones doing
+    // more for more shells (decided 9 November 2026, the trade plan), each line small to big: health, then help with
+    // questions; the tools, bought once, each opening up something new (tool: true, kept in the save's tools); and things
+    // for the Water Curtain Cave (decor: true, set up there as you watch, kept in the save's decor), words you catch only by
+    // buying them (the scroll's From the shop page: decided 9 November 2026, the owner's idea)
+    groups:{snacks:'Snacks', tools:'Tools', cave:'For the Water Curtain Cave', wear:'To wear'},
     items: [
-      {item:'苹果', price:2, sentence:'我 要 苹果', sentenceEn:'I want an apple.',
-        note:'A crunchy apple.', bought:'You put the {苹果} in your bag. In a battle or with an animal, eat it to take away a wrong answer.', eat:true},
-      {item:'桃子', price:2, if:{shop:{atLeast:3}}, sentence:'我 要 桃子', sentenceEn:'I want a peach.',
+      {item:'桃子', price:2, group:'snacks', if:{shop:{atLeast:3}}, sentence:'我 要 买 桃子', sentenceEn:'I want to buy a peach.',
         note:'A ripe peach.', bought:'You put the {桃子} in your bag. Eat it to get 10 health back.', eat:true},
-      {item:'蜂蜜', price:4, if:{shop:{atLeast:3}, bees:{atLeast:11}}, sentence:'我 要 蜂蜜', sentenceEn:'I want some honey.',   // (once the bees make honey at the home ground)
+      {item:'香蕉', price:5, group:'snacks', if:{shop:{atLeast:3}, bananaPlanted:{atLeast:3}}, sentence:'我 要 买 香蕉', sentenceEn:'I want to buy a banana.',   // (once the troop's bananas are ripe)
+        note:'A ripe banana from the troop’s garden.', bought:'You put the {香蕉} in your bag. Eat it to get 25 health back.', eat:true},
+      {item:'西瓜', price:9, group:'snacks', if:{shop:{atLeast:3}, melonPlanted:{atLeast:3}}, sentence:'我 要 买 西瓜', sentenceEn:'I want to buy a watermelon.',   // (once the troop's watermelons are ripe)
+        note:'A big watermelon from the troop’s garden.', bought:'You put the {西瓜} in your bag. Eat it to get all your health back.', eat:true},
+      {item:'苹果', price:2, group:'snacks', sentence:'我 要 买 苹果', sentenceEn:'I want to buy an apple.',
+        note:'A crunchy apple.', bought:'You put the {苹果} in your bag. In a battle or with an animal, eat it to take away a wrong answer.', eat:true},
+      {item:'葡萄', price:6, group:'snacks', if:{shop:{atLeast:3}, grapePlanted:{atLeast:3}}, sentence:'我 要 买 葡萄', sentenceEn:'I want to buy some grapes.',   // (once the troop's grapes are ripe)
+        note:'Sweet grapes from the troop’s trellis.', bought:'You put the {葡萄} in your bag. Eat them in a battle or with an animal, and a wrong answer goes in each of your next three questions.', eat:true},
+      {item:'蜂蜜', price:4, group:'snacks', if:{shop:{atLeast:3}, bees:{atLeast:11}}, sentence:'我 要 买 蜂蜜', sentenceEn:'I want to buy some honey.',   // (once the bees make honey at the home ground)
         note:'Golden honey from the bees’ hive.', bought:'You put the {蜂蜜} in your bag. Eat it to walk faster for a minute.', eat:true},
-      {item:'榴莲', price:3, if:{shop:{atLeast:3}, knows:'榴莲'}, sentence:'我 要 榴莲', sentenceEn:'I want a durian.',   // (once you've found the durian tree, in the hot spring valley)
+      {item:'榴莲', price:3, group:'snacks', if:{shop:{atLeast:3}, knows:'榴莲'}, sentence:'我 要 买 榴莲', sentenceEn:'I want to buy a durian.',   // (once you've found the durian tree, in the hot spring valley)
         note:'A spiky, smelly durian.', bought:'You put the {榴莲} in your bag. Eat it, and wild creatures keep away for two minutes.', eat:true},
-      {item:'鱼饵', price:2, if:{shop:{atLeast:3}, fishing:{atLeast:1}}, sentence:'我 要 鱼饵', sentenceEn:'I want some bait.',   // (once you can fish)
+      {item:'鱼饵', price:2, group:'snacks', if:{shop:{atLeast:3}, fishing:{atLeast:1}}, sentence:'我 要 买 鱼饵', sentenceEn:'I want to buy some bait.',   // (once you can fish)
         note:'Wriggly worms in a little clay pot. Big fish love them!', bought:'You put the {鱼饵} in your bag. The next time you fish, a big fish bites!', bag:true, carry:3},
+      // the tools, once you've sold him your first treasure (trade 2)
+      {item:'篮子', price:15, group:'tools', tool:true, if:{trade:{atLeast:2}}, sentence:'我 要 买 篮子', sentenceEn:'I want to buy the basket.',
+        note:'A woven bamboo basket for your bag.', bought:'Your {篮子} goes in your bag: now you can carry two more of every snack.'},
+      {item:'灯笼', price:10, group:'tools', tool:true, if:{trade:{atLeast:2}}, sentence:'我 要 买 灯笼', sentenceEn:'I want to buy the lantern.',
+        note:'A red paper lantern, with a candle inside.', bought:'Your {灯笼} lights up the dark round you at night, and treasures glint from further away.'},
+      {item:'铲子', price:12, group:'tools', tool:true, if:{trade:{atLeast:2}}, sentence:'我 要 买 铲子', sentenceEn:'I want to buy the spade.',
+        note:'A spade with a wooden handle, for digging.', bought:'With your {铲子}, you can dig up roots that grow deep in the ground.'},
+      // things for the Water Curtain Cave, once you've sold him your first treasure (trade 2): set up there as you watch
+      {item:'花瓶', price:6, group:'cave', decor:true, if:{trade:{atLeast:2}}, sentence:'我 要 买 花瓶', sentenceEn:'I want to buy the vase.',
+        note:'A clay vase, for flowers.', bought:'The troop will set your {花瓶} up in the Water Curtain Cave. Go and see!'},
+      {item:'风铃', price:8, group:'cave', decor:true, if:{trade:{atLeast:2}}, sentence:'我 要 买 风铃', sentenceEn:'I want to buy the wind chime.',
+        note:'Bamboo tubes that tinkle in the wind.', bought:'The troop will hang your {风铃} up in the Water Curtain Cave. Go and see!'},
+      {item:'鼓', price:10, group:'cave', decor:true, if:{trade:{atLeast:2}}, sentence:'我 要 买 鼓', sentenceEn:'I want to buy the drum.',
+        note:'A drum of wood and skin. Boom!', bought:'The troop will set your {鼓} up in the Water Curtain Cave. Go and see!'},
+      {item:'画', price:12, group:'cave', decor:true, if:{trade:{atLeast:2}}, sentence:'我 要 买 画', sentenceEn:'I want to buy the painting.',
+        note:'A painting of the mountain, on paper.', bought:'The troop will hang your {画} up in the Water Curtain Cave. Go and see!'},
+      {item:'鱼缸', price:15, group:'cave', decor:true, if:{trade:{atLeast:2}}, sentence:'我 要 买 鱼缸', sentenceEn:'I want to buy the fish jar.',
+        note:'A big glazed jar, for a fish to live in.', bought:'The troop will set your {鱼缸} up in the Water Curtain Cave. Your next little fish can live in it!'},
       // headbands in every colour you know (decided 29 October 2026: things monkeys could make on the mountain, cloth dyed
       // with what grows there; never people's clothes): which one you wear shows on your monkey (the wardrobe, below)
-      {item:'头带', price:10, colour:'红色', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'],
-        sentence:'我 要 头带', sentenceEn:'I want the headband.', colourSentence:'我 要 {colour} 的 头带', colourSentenceEn:'I want the {colour} headband.',
+      {item:'头带', price:10, group:'wear', colour:'红色', colours:['红色', '黄色', '白色', '黑色', '蓝色', '绿色', '棕色', '橙色', '粉色'],
+        sentence:'我 要 买 头带', sentenceEn:'I want to buy the headband.', colourSentence:'我 要 买 {colour} 的 头带', colourSentenceEn:'I want to buy the {colour} headband.',
         note:'A red cloth headband.', colourNote:'A headband of {colour} cloth.', bought:'You tie on the red {头带}. It suits you!', colourBought:'You tie on the {colour} {头带}. It suits you!', wear:true}
     ]
   },
@@ -766,6 +809,8 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // the first: too small to keep! You say so (teaching 小), and let it go
       {if:{new:'小'}, do:[{say:'tooSmall', by:'player', teach:'小'}, {newWord:'小', note:'A little fish: too small to keep. You let it go back into the water.'},
         {message:'You let the little fish go. Cast again, for a bigger one!'}]},
+      // once you have a fish jar in the cave (js/trade.js), the next little fish lives in it
+      {if:{decor:'鱼缸', jarFish:false}, do:[{jarFish:true}, {message:'You carry the little fish home to the Water Curtain Cave. It swims round and round in your {鱼缸|fish jar} now!'}]},
       // once you know 大 too: which is it? (and let it go)
       {if:{knows:'大'}, do:[{gap:{sentence:'这 是 小 鱼', en:'This is a little fish.', word:'小', others:['大'], pic:'小 鱼'}}, {message:'You let the little fish go.'}]},
       {do:[{say:'tooSmall', by:'player'}, {message:'You let the little fish go. Cast again, for a bigger one!'}]}]},
@@ -791,9 +836,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // Food you carry in your bag (up to carry of each), and what eating it does. heal: how much health comes back (in a battle,
   // 吃 eats it on your turn; outside one, tap it in your bag). helps: it takes away a wrong answer in a question, in a
   // battle or with an animal, without using your turn. does: what your bag says it does.
+  // In tiers (decided 9 November 2026, the trade plan): a peach, a banana, then a watermelon for health (full: all of it); an
+  // apple, then grapes for help with questions (helps: how many questions in a row lose a wrong answer, 1 if just true).
+  // The basket from the shop carries two more of each (js/trade.js).
   food: {
     '桃子': {heal:10, carry:3, does:'Brings back 10 health'},
+    '香蕉': {heal:25, carry:2, does:'Brings back 25 health'},
+    '西瓜': {heal:1000, full:true, carry:1, does:'Brings back all your health'},
     '苹果': {helps:true, carry:3, does:'Takes away a wrong answer'},
+    '葡萄': {helps:3, carry:2, does:'A wrong answer goes in each of your next 3 questions'},
     '蜂蜜': {fast:60, carry:2, does:'Walk faster for a minute'},   // fast: you walk faster for so many seconds (tap it in your bag)
     // stink: so many seconds out on the map with no wild creature jumping out (tap it in your bag: eatSmelly in js/world.js,
     // stinkUp in js/input.js); eaten: steps after you eat it (the first time: 太臭了！, teaching 臭); note: what you're told then
@@ -801,10 +852,67 @@ const FLOWER_FRUIT_MOUNTAIN = {
       eaten:[{if:{new:'臭'}, say:'tooSmelly', by:'player', teach:'臭'}, {if:{new:'臭'}, newWord:'臭', note:'臭 means smelly. Nothing wants to come near you now!'}]}
   },
 
+  // Treasures (js/trade.js; decided 9 November 2026, the trade plan and its proposal page): things monkeys love, to find all
+  // over the mountain once the old monkey has told you about them (if), for the 老板 to buy, and to fill a page of your scroll.
+  // Each: what he pays (price); its picture on the map (look: one of MAP_ICONS, content/pictures.js; shut: how it looks
+  // while you can't take it, such as a clam by day, with shutNote, what A says then); where (spots: [x, y, 'place'], and its
+  // own look and colour if it has one, such as each feather's: the colour's picture, 红色 的 羽毛, and once you know the
+  // colour, A says 红色的羽毛 as for a red flower); daily: each spot gives one a day, else one for good (decided 9 November
+  // 2026: most are found once); when: 'day' or 'night' (only then), or 'rain' (after heavy rain that day); needs: a tool,
+  // without: what A says without it; block: you can't walk through it, such as a rock; and what you do: how, 'pick' (pick
+  // it up), 'hit' (your stick: a blow each question), 'dig' (the spade: a dig each question) or 'scoop' (out of the water),
+  // with questions on words you know first, as in reeling in a fish (questions; ask: the label over them; slip: what you're
+  // told after a wrong answer, and nothing's lost); label: what A says; note: its first card's line; took: what you're
+  // told after; clue: the Sell tab's, for one you haven't found; sell, sellEn: what you say to sell it, the treasure missing.
+  treasuresIf: {trade:{atLeast:1}},
+  treasures: {
+    '松子': {price:2, daily:true, look:'cone', how:'pick', label:'Pick up', spots:[[19, 22, 'pineWood'], [18, 9, 'pineWood'], [1, 10, 'pineWood']],
+      note:'A pine cone, full of pine nuts. The {老板} wants to buy them!', took:'A pine cone, full of {松子|pine nuts}! The {老板} pays 2 🐚 each.',
+      clue:'Under the big pines in the pine wood. Every day there are more.', sell:'我 要 卖 松子', sellEn:'I want to sell some pine nuts.'},
+    '羽毛': {price:1, daily:true, when:'day', how:'pick', label:'Pick up', spots:[[5, 12, 'homeGround', {look:'featherRed', colour:'红色'}], [13, 13, 'meadow', {look:'featherYellow', colour:'黄色'}], [3, 39, 'hillside', {look:'featherBlue', colour:'蓝色'}]],
+      note:'A bird left it on the grass.', took:'A bird left a {羽毛|feather} on the grass. The {老板} pays 1 🐚 each.',
+      clue:'On the grass where birds land, by day. Every day there are more.', sell:'我 要 卖 羽毛', sellEn:'I want to sell a feather.'},
+    '珍珠': {price:6, when:'night', look:'clam', shut:'clamShut', how:'pick', label:'Open', questions:1, ask:'The clam is closing! Quick:',
+      spots:[[2, 12, 'shore'], [16, 12, 'shore'], [24, 12, 'shore']],
+      shutNote:'A clam, shut tight. Clams open in the moonlight…', slip:'Snap! The clam shut tight. It opens again in a moment: try again!',
+      note:'A pearl, from a clam that opened in the moonlight.', took:'A shining {珍珠|pearl}! The {老板} pays 6 🐚 for it.',
+      clue:'On the shore, at night.', sell:'我 要 卖 珍珠', sellEn:'I want to sell a pearl.'},
+    '玉': {price:8, look:'jadeRock', how:'hit', block:true, label:'Hit', questions:2, ask:'You hit the rock with your stick!',
+      spots:[[8, 14, 'hotSprings'], [15, 16, 'cliffs'], [21, 25, 'hillside']], slip:'The rock holds firm. Try again!',
+      note:'Jade, green and smooth, from inside a rock.', took:'The rock cracks open: {玉|jade}! The {老板} pays 8 🐚 for it.',
+      clue:'Inside rocks with green in them. Hit them with your stick.', sell:'我 要 卖 玉', sellEn:'I want to sell some jade.'},
+    '人参': {price:10, when:'day', look:'ginseng', how:'dig', needs:'铲子', label:'Dig', questions:3, ask:'You dig with your spade!',
+      spots:[[8, 9, 'darkPines'], [5, 22, 'pineWood'], [23, 7, 'southSlope']], slip:'The root is stuck fast. Try again!',
+      without:'A little plant with red berries. Its root goes deep: you’d need a spade to dig it up. The {老板} sells them.',
+      note:'A root shaped like a little person: ginseng!', took:'You dig up the root: {人参|ginseng}! The {老板} pays 10 🐚 for it.',
+      clue:'Under the pines, by day. Dig it up with a spade.', sell:'我 要 卖 人参', sellEn:'I want to sell some ginseng.'},
+    '金子': {price:10, when:'rain', look:'goldFleck', how:'scoop', label:'Scoop', questions:2, ask:'You scoop up the sand!',
+      spots:[[28, 4, 'riverside'], [7, 37, 'hillside'], [6, 23, 'southSlope']], slip:'The gold slipped through your paws. Try again!',
+      note:'Gold, washed down the stream by the heavy rain.', took:'Gold, washed down by the rain: {金子}! The {老板} pays 10 🐚 for it.',
+      clue:'In the water, after heavy rain.', sell:'我 要 卖 金子', sellEn:'I want to sell some gold.'}
+  },
+
+  // Things for the Water Curtain Cave from the shop (decor: true there; js/trade.js), each set up as you watch the next time
+  // you come into the cave, and the troop comes to look (decided 9 November 2026, the trade plan): at, where it goes; look,
+  // its picture on the map (MAP_ICONS); up, so many pixels higher, such as the vase on the table; block, you can't walk through
+  // it; label, what A says; note, what you're told; and what A does there besides: the drum's boom, the little monkeys
+  // dancing (dance), and the chime's tinkle (chime), which it also does now and then as you walk past.
+  decorIn: ['cave'],   // the place they go (the borrowed cave in a later area too)
+  decor: {
+    '花瓶': {at:[4, 3, 'cave'], look:'vase', up:6, label:'Look', note:'A clay {花瓶|vase} of flowers on the table. Lovely!'},
+    '风铃': {at:[9, 1, 'cave'], look:'chime', label:'Ring', chime:true, note:'Tinkle, tinkle! The {风铃|wind chime} rings.'},
+    '画': {at:[8, 1, 'cave'], look:'painting', label:'Look', note:'A {画|painting} of Flower Fruit Mountain, with its waterfall.'},
+    '鼓': {at:[12, 4, 'cave'], look:'drum', block:true, label:'Beat', dance:true, note:'Boom, boom! The little monkeys dance to your {鼓|drum}.'},
+    '鱼缸': {at:[13, 3, 'cave'], look:'fishJar', fishLook:'fishJarFish', block:true, label:'Look', note:'An empty {鱼缸|fish jar}. Your next little fish can live in it!',
+      fishNote:'Your little fish swims round and round in its {鱼缸|jar}.'}
+  },
+
   // Things that happen by themselves when the time comes (checked after anything you do, such as a step or a
   // request done). Besides what a task's if can check, an event's if can check near:'id' (you're right beside that
   // character) and at:[x, y, 'place'] (you're standing there). A word in {curly brackets} in a message is shown as 汉字 (English).
   events: [
+    // the cave: what you've bought for it from the 老板, set up as you watch, the next time you come in (js/trade.js)
+    {if:{place:'cave', decorWaiting:true}, do:[{decorate:true, by:'player', line:'lovely'}]},
     // The first night (the day goes round from chapter 1: js/daynight.js): 晚上, and the troop going back into the Water
     // Curtain Cave to sleep; the first rain, 雨 (下雨了！ it's raining); and the first heavy rain, another day, 大雨
     // (下大雨了！ it's raining hard)
@@ -1394,7 +1502,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
         'к': {look:'shoreRock', word:'石头'},
         // where the troop builds your raft, at the water's edge, at the end of chapter 1 (raft 2: the setUp step)
         'ф': {look:'sea', word:'海', becomes:[{if:{raft:{atLeast:2}}, to:'Ф'}]},
-        'Ф': {look:'raft', word:'木筏', landmark:true, label:'Board', onLook:[{if:{raft:2}, do:[{scene:'sailAway'}, {set:{raft:3, done:true}}, {areaEnd:true}, {sail:2}]}, {if:{raft:3}, do:[{sail:2, ask:'Sail away on your {木筏} across the sea, to find the immortals? Your words, friends and shells come with you.', go:'Sail away'}]}]}
+        'Ф': {look:'raft', word:'木筏', landmark:true, label:'Board', onLook:[{if:{raft:2}, do:[
+          // the Ready to sail? card first (decided 9 November 2026, the trade plan): Not yet, and the raft waits here while the
+          // troop goes home; come back whenever you're ready, and they come down to see you off
+          {readyToSail:true, wait:{raftWait:1}, later:'Your {木筏} waits at the edge of the sea. Come back whenever you’re ready: the troop will come down to see you off.'},
+          {set:{raftWait:0}}, {scene:'sailAway'}, {set:{raft:3, done:true}}, {areaEnd:true}, {sail:2}]}, {if:{raft:3}, do:[{sail:2, ask:'Sail away on your {木筏} across the sea, to find the immortals? Your words, friends and shells come with you.', go:'Sail away'}]}]}
       },
       exits: [
         {at:[18, 0], to:'meadow', arrive:[17, 20], facing:'up'}   // back up to the meadow
@@ -2288,26 +2400,26 @@ const FLOWER_FRUIT_MOUNTAIN = {
   characters: [
     // (at the feast's tables once you've passed the exam: seated as you come to the home ground, so the teacher you're
     // talking to doesn't vanish from the classroom as you pass, decided 30 October 2026)
-    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{exam:1, feastHeld:0, place:'homeGround'}, place:'homeGround', x:16, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}}, place:'shore', x:12, y:12, facing:'left'},   // (chapter 1's end: at the feast's table, then on the shore by your raft)
+    {id:'elder', x:7, y:1, facing:'down', beard:true, name:{zh:'老猴子', py:'lǎo hóuzi', en:'Old monkey'}, moves:[{if:{exam:1, feastHeld:0, place:'homeGround'}, place:'homeGround', x:16, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}, raftWait:0}, place:'shore', x:12, y:12, facing:'left'},   // (chapter 1's end: at the feast's table, then on the shore by your raft)
       {if:{school:{atLeast:1}}, place:'school', x:7, y:2, facing:'down'}, {if:{home:{atLeast:2}}, place:'homeGround', x:10, y:6, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:6, y:9, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:9, y:1, facing:'left'},
       {if:{gate:true}, x:14, y:2, facing:'right'}],   // by the waterfall once the troop is up there; where the rocks were till then
       palette:{o:'#3A3A36', f:'#A9A79F', s:'#EADCC8', m:'#B89E86', e:'#222222', w:'#FAFAF5'}},
-    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{exam:1, feastHeld:0, place:'homeGround'}, place:'homeGround', x:18, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}}, place:'shore', x:8, y:12, facing:'right'},
+    {id:'big', x:5, y:10, facing:'down', name:{zh:'大猴子', py:'dà hóuzi', en:'Big monkey'}, moves:[{if:{exam:1, feastHeld:0, place:'homeGround'}, place:'homeGround', x:18, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}, raftWait:0}, place:'shore', x:8, y:12, facing:'right'},
       {if:{garden:{atLeast:1}}, place:'homeGround', x:9, y:13, facing:'down'},   // (chapter 1: by his garden)
       {if:{home:{atLeast:1}}, place:'homeGround', x:15, y:4, facing:'down'}, {if:{cave:{atLeast:4}}, place:'cave', x:9, y:8, facing:'down'}, {if:{climb:{atLeast:4}}, place:'falls', x:10, y:2, facing:'left'},
       {if:{gate:true}, x:16, y:1, facing:'down'}],   // in the way up once the rocks have rolled away, where he stops you with a stick for you, and stays (he used to jump there and back)
       palette:{o:'#4A2C17', f:'#B9854E', s:'#F7DABA', m:'#D19A7A', e:'#24160C'}},
     {id:'hungry', x:13, y:5, facing:'down', name:{zh:'饿猴子', py:'è hóuzi', en:'Hungry monkey'},
-      moves:[{if:{raft:{atLeast:1, below:3}}, place:'shore', x:13, y:11, facing:'down'},   // (seeing you off, on the shore)
+      moves:[{if:{raft:{atLeast:1, below:3}, raftWait:0}, place:'shore', x:13, y:11, facing:'down'},   // (seeing you off, on the shore)
         {if:{feast:{atLeast:1}}, place:'homeGround', x:19, y:7, facing:'left'}],   // chapter 1: he comes up from the meadow to look after the feast's big table
       palette:{o:'#4A2C17', f:'#B8743E', s:'#F2C9A0', m:'#C68A64', e:'#24160C'}},
     {id:'thirsty', x:2, y:12, facing:'right', name:{zh:'渴猴子', py:'kě hóuzi', en:'Thirsty monkey'},
-      moves:[{if:{raft:{atLeast:1, below:3}}, place:'shore', x:7, y:11, facing:'down'},   // (seeing you off, on the shore)
+      moves:[{if:{raft:{atLeast:1, below:3}, raftWait:0}, place:'shore', x:7, y:11, facing:'down'},   // (seeing you off, on the shore)
         {if:{dairy:{atLeast:1}}, place:'homeGround', x:21, y:11, facing:'left'},   // (at his little dairy, beside him)
         {if:{cow:4, following:{cow:true}}, place:'homeGround', x:21, y:11, facing:'left'},   // watching for you to come up the path from the bridge with the cow
         {if:{feast:{atLeast:3}}, place:'homeGround', x:21, y:11, facing:'right'}],   // chapter 1: he comes up from the meadow with news of a cow, by the road near its pen's plot
       palette:{o:'#40250F', f:'#94592E', s:'#F0C59A', m:'#C08060', e:'#24160C'}},
-    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{exam:1, feastHeld:0, place:'homeGround'}, place:'homeGround', x:14, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}}, place:'shore', x:9, y:11, facing:'down'}, {if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:5, y:8, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
+    {id:'playful', x:15, y:20, facing:'up', name:{zh:'小猴子', py:'xiǎo hóuzi', en:'Little monkey'}, moves:[{if:{exam:1, feastHeld:0, place:'homeGround'}, place:'homeGround', x:14, y:8, facing:'up'}, {if:{raft:{atLeast:1, below:3}, raftWait:0}, place:'shore', x:9, y:11, facing:'down'}, {if:{school:{atLeast:1}}, place:'school', x:3, y:5, facing:'up'}, {if:{home:{atLeast:1}}, place:'homeGround', x:5, y:8, facing:'right'}, {if:{cave:{atLeast:4}}, place:'cave', x:4, y:8, facing:'right'}, {if:{climb:{atLeast:4}}, place:'falls', x:5, y:2, facing:'up'},
       {if:{gate:true}, x:14, y:3, facing:'right'}],
       palette:{o:'#4A2C17', f:'#CC8D45', s:'#F6D2A8', m:'#C98E6A', e:'#24160C'}},
     // the rest of the troop, in the meadow until they're counted into the cave
@@ -2392,7 +2504,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {id:'groomB', place:'homeGround', x:20, y:17, facing:'down', plays:'groom', name:{zh:'猴子', py:'hóuzi', en:'Monkey'},
       palette:{o:'#4A2B13', f:'#C99558', s:'#F6D6B0', m:'#D09A76', e:'#24160C'}},
     {id:'boss', x:11, y:16, facing:'down', name:{zh:'老板', py:'lǎobǎn', en:'Shop owner'},
-      moves:[{if:{raft:{atLeast:1, below:3}}, place:'shore', x:14, y:12, facing:'left'},   // (seeing you off, on the shore)
+      moves:[{if:{raft:{atLeast:1, below:3}, raftWait:0}, place:'shore', x:14, y:12, facing:'left'},   // (seeing you off, on the shore)
         {if:{shop:{atLeast:1}}, place:'homeGround', x:7, y:8, facing:'down'},   // (chapter 1: up at the home ground, by his new shop, once the school's flowers are planted)
         {if:{shop:0}, place:'gone', x:0, y:0}],   // (till then, he isn't on the mountain: decided 31 October 2026, the prologue had too much to take in, and his stall in the meadow went)
       palette:{o:'#3E2A14', f:'#9C6A3C', s:'#EFC9A0', m:'#B98260', e:'#24160C'}},
@@ -2605,6 +2717,23 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '木筏': 'The troop built it on the shore, for you to sail away on.',
     '榴莲': 'A durian tree grows in the hot spring valley’s warm corner. The 老板 sells them too.',
     '臭': 'You said it as you ate your first durian: it was so smelly!',
+    // the treasures and the shop (js/trade.js: decided 9 November 2026, the trade plan)
+    '买': 'The 老板 asks what you want to buy, every time you shop.',
+    '卖': 'The 老板 asked if you wanted to sell him your pine nuts.',
+    '松子': 'In the pine cones under the big pines of the pine wood.',
+    '羽毛': 'Left on the grass by the birds, by day.',
+    '珍珠': 'In a clam on the shore, open in the moonlight.',
+    '玉': 'Inside a rock with green in it: you cracked it open with your stick.',
+    '人参': 'You dug it up under the pines, with your spade.',
+    '金子': 'Washed down into the water by heavy rain.',
+    '篮子': 'You bought it from the 老板.',
+    '灯笼': 'You bought it from the 老板, to light up the night.',
+    '铲子': 'You bought it from the 老板, for digging.',
+    '花瓶': 'You bought it from the 老板, for the Water Curtain Cave.',
+    '风铃': 'You bought it from the 老板, for the Water Curtain Cave.',
+    '鼓': 'You bought it from the 老板, for the Water Curtain Cave.',
+    '画': 'You bought it from the 老板, for the Water Curtain Cave.',
+    '鱼缸': 'You bought it from the 老板, for the Water Curtain Cave.',
   },
 
   // Sentences for practising a word without a picture in a lesson, as a gap to fill, for one that no sentence you complete
@@ -2615,7 +2744,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
     {sentence:'我 有 朋友', sentenceEn:'I have friends.'},
     {sentence:'我 没有 苹果', sentenceEn:'I don’t have any apples.'},   // (没有)
     {sentence:'我 要 大 桃子', sentenceEn:'I want a big peach.'},   // (大 and 小: drafts, not checked yet)
-    {sentence:'我 有 小 鱼', sentenceEn:'I have a little fish.'}
+    {sentence:'我 有 小 鱼', sentenceEn:'I have a little fish.'},
+    {sentence:'我 要 买 苹果', sentenceEn:'I want to buy an apple.'},   // (买 and 卖: drafts, not checked yet)
+    {sentence:'我 要 卖 松子', sentenceEn:'I want to sell some pine nuts.'}
   ],
 
   // The feast's list, shown by A at its big table (the feastList step): what the troop has for the feast and what it still
@@ -2698,7 +2829,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     '乌龟': {zh:'乌龟 在 石头 上 。', en:'The turtle is on the stone.'},
     '海龟': {zh:'海龟 很 大 。', en:'The sea turtle is very big.'},
     '蝴蝶': {zh:'蝴蝶 在 花 上 。', en:'The butterfly is on the flower.'},
-    '熊': {zh:'山 上 有 熊 。', en:'There are bears on the mountain.'}
+    '熊': {zh:'山 上 有 熊 。', en:'There are bears on the mountain.'},
+    '羽毛': {zh:'鸟 有 羽毛 。', en:'Birds have feathers.'},   // (the treasures: drafts, not checked yet)
+    '珍珠': {zh:'海 里 有 珍珠 。', en:'There are pearls in the sea.'},
+    '玉': {zh:'玉 是 绿色 的 。', en:'Jade is green.'},
+    '人参': {zh:'人参 在 松树 下面 。', en:'The ginseng is under the pine trees.'},
+    '金子': {zh:'金子 是 黄色 的 。', en:'Gold is yellow.'}
     // (兔子, 碗, 桌子 and 二 had examples until 21 October 2026: the number lessons' lines use them now; 蜜蜂, 花上有蜜蜂。,
     // until 25 October 2026: the hungry monkey's 我们有蜜蜂了！ uses it now; 黄蜂, 花里有黄蜂！, until 26 October 2026: the
     // butterfly's 花里有蜜蜂，也有黄蜂！ uses it now; and 狼, 草里有狼。, until 26 October 2026: the cow's 我怕狼！ uses it now)
@@ -2968,7 +3104,12 @@ const FLOWER_FRUIT_MOUNTAIN = {
     notApple: {zh:'这 是 苹果 。 我 要 吃 桃子 ！', en:'This is an apple. I want to eat a peach!'},
     notPeach: {zh:'这 是 桃子 。 我 要 吃 苹果 ！', en:'This is a peach. I want to eat an apple!'},
     boss: {zh:'你好 ！ 我 是 老板 。', en:"Hello! I'm the shop owner."},
-    whatWant: {zh:'你 要 什么 ？', en:'What do you want?'},
+    whatBuy: {zh:'你 要 买 什么 ？', en:'What do you want to buy?'},   // the 老板, as you shop (teaching 买: the trade plan, 9 November 2026)
+    whatSell: {zh:'你 要 卖 什么 ？', en:'What do you want to sell?'},   // and once he buys your treasures (drafts for the native speaker)
+    treasureTip: {zh:'山 上 有 很多 宝贝 ！', en:'There are lots of treasures on the mountain!'},   // the old monkey, telling you about them (宝贝 just for listening)
+    bossBuyPineNuts: {zh:'我 要 买 松子 ！', en:'I want to buy pine nuts!'},   // the 老板, before you've found any (松子 just for listening, till you find one)
+    bossSellPineNuts: {zh:'松子 ！ 你 要 卖 吗 ？', en:'Pine nuts! Do you want to sell them?'},   // and seeing yours (teaching 卖)
+    lovely: {zh:'好看 ！', en:'Lovely!'},   // the troop, at something new set up in the cave (as 学校很好看)
     bye: {zh:'再见 ！', en:'Goodbye!'},
     wantFlowers: {zh:'我 要 红色 、 黄色 和 白色 的 花 ！', en:'I want red, yellow and white flowers!'},
     haveFlowers: {zh:'花 ！ 太 好 了 ！', en:'Flowers! Wonderful!'},
@@ -3295,7 +3436,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // home, and a school too (teaching 有), so it's time for a great feast (decided 24 October 2026: after the first two
       // lessons, so chapter 1 opens up; it waited till the flowers were planted, after every lesson)
       // chapter 1's end: seeing you off on the shore; at the feast's table, ready for it
-      {if:{raft:{atLeast:1, below:3}}, do:[{say:'waitForYou'}]},
+      {if:{raft:{atLeast:1, below:3}, raftWait:0}, do:[{say:'waitForYou'}]},
       {if:{exam:1, feastHeld:0}, do:[{say:'great'}]},
       {if:{school:{atLeast:2}, feast:0, numbersKnown:{atLeast:3}, coloursKnown:{atLeast:3}}, waits:true, do:[
         {say:'weHave', teach:'有'},
@@ -3306,6 +3447,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
       // chapter 1: once every food is on the feast's tables, the exam (the area's word test), before the feast
       {if:{...FEAST_READY, exam:0}, do:[{say:'examTime'}, {exam:true}, {set:{exam:1}}, {say:'veryGood'}, {shells:10, note:'Your certificate goes up on the classroom wall! +10 🐚'},
         {message:'The troop is getting ready for the feast! Go to the big {树} in the middle of the home ground.'}]},
+      // chapter 1, once the 老板's shop is open and you've shopped there (买): the mountain's treasures, and that the 老板 buys
+      // them, before you come across the first (decided 9 November 2026, the owner's idea: a tip first, from someone)
+      {if:{trade:0, shop:{atLeast:3}, knows:'买'}, do:[{say:'treasureTip'}, {set:{trade:1}},
+        {message:'Treasures! Pine nuts, feathers, pearls, jade… things monkeys love, hidden all over the mountain. The {老板} buys them for shells!'},
+        {message:'He wants pine nuts most of all. Look for pine cones under the big pines in the pine wood.'}, {goOn:true}]},
       {if:{school:{atLeast:2}}, do:[{say:'classStart'}, {lesson:true}, {say:'classEnd'}, {goOn:true}, {say:'bye'}, {reply:'再见'}]},   // (and goodbye, as a class does: decided 4 November 2026; his news first, if he has some now)
       // chapter 1: the troop's new home ground, beside the waterfall. He tells you about it, then follows you there.
       {if:{chapter:1, home:0}, do:[
@@ -3320,7 +3466,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi', showTasks:true, hint:'Keep exploring, little monkey.'}, {reply:'你好'}]}
     ],
     playful: [
-      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
+      {if:{raft:{atLeast:1, below:3}, raftWait:0}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{school:{atLeast:2}, new:'同学'}, waits:true, do:[{say:'classmates', teach:'同学'}, {newWord:'同学', note:'The little monkeys at school with you.'}]},
       {if:{school:{atLeast:2}}, do:[{say:'classmates'}]},
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
@@ -3336,7 +3482,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [
-      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
+      {if:{raft:{atLeast:1, below:3}, raftWait:0}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{new:'老板'}, do:[{say:'boss', teach:'老板'}, {newWord:'老板', note:'The {老板} owns the shop. Come back to see what they sell.'}, {reply:'你好'}]},
       // chapter 1: come up to the home ground, he likes it there, and the troop builds him a new shop, as you watch: its plot
@@ -3347,10 +3493,15 @@ const FLOWER_FRUIT_MOUNTAIN = {
         {message:'The {老板}’s new shop! He sells {头带|headbands} in every colour you know, and food for your bag.'}, {goOn:true}]},
       // your first headband, his ! over him: a few questions first if he's only just taught you 老板 (decided 1 November 2026)
       {if:{shop:{atLeast:3}, new:'头带'}, do:[{set:{shop:4}}, {shop:true}]},   // (4: you've seen what he sells)
+      // the treasures (js/trade.js): your first pine nuts, his ! over him, and you sell him one, 卖 the missing word (decided
+      // 9 November 2026, the trade plan); before you've found any, he says he wants to buy them, and opens his shop
+      {if:{trade:1, inBag:{'松子':true}}, do:[{say:'bossSellPineNuts', teach:'卖'}, {newWord:'卖', note:'To sell: the {老板} buys your treasures, for shells.'},
+        {sell:'松子', first:true}, {set:{trade:2}}, {message:'Now you can sell your treasures to the {老板}: his shop has a Sell tab. He sells tools, and things for the Water Curtain Cave, too!'}]},
+      {if:{trade:1}, do:[{say:'bossBuyPineNuts'}, {shop:true}]},
       {do:[{shop:true}]}
     ],
     hungry: [
-      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
+      {if:{raft:{atLeast:1, below:3}, raftWait:0}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{chapter:0, gate:false, meadowCheck:0, hungry:'not asked'}, do:TROOP_WAITS},   // (till the old monkey sends you to the troop)
       {if:{hungry:'not asked'}, do:[{request:'hungry'}, {say:'fruitOnTrees'}]},
@@ -3408,7 +3559,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{request:'hungry'}]}
     ],
     thirsty: [
-      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
+      {if:{raft:{atLeast:1, below:3}, raftWait:0}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       {if:{chapter:0, gate:false, meadowCheck:0, thirsty:'not asked'}, do:TROOP_WAITS},
       {if:{thirsty:'not asked'}, do:[{request:'thirsty'}, {say:'waterInRiver'}]},
@@ -3656,7 +3807,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {do:[{say:'hi'}, {reply:'你好'}, {message:'Earn shells by helping the troop, making friends and practising.'}]}],   // (the 老板 comes up the mountain in chapter 1)
     troop3: [{if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]}, {do:[{say:'hi'}, {reply:'你好'}, {say:'birdsOnGrass', hint:'Now and then a little bird lands on the grass near you: walk up to it and press A.'}]}],
     big: [
-      {if:{raft:{atLeast:1, below:3}}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
+      {if:{raft:{atLeast:1, below:3}, raftWait:0}, do:[{say:'bye'}]},   // (seeing you off, on the shore, at the end of chapter 1)
       {if:{elder:0}, do:[{say:'findElder', hint:'Talk to the old monkey by the stone first.'}]},
       // chapter 1: he makes things for the troop (decided 27 October 2026): chopsticks out of wood, once the bowls are on the
       // feast's tables (teaching 筷子), and a cup of them goes on the big one; and spoons, once the yoghurt's on the second

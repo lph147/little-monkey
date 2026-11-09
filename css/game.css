@@ -709,6 +709,31 @@ rt.hid{visibility:hidden}
 .sen{font-size:.9rem}
 .sprice{font-family:var(--pixel);font-size:.95rem;margin-top:4px}
 .shopitem.dear .sprice{color:var(--bad)}
+/* the shop's groups (Snacks, Tools, For the Water Curtain Cave, To wear), its tabs (买 Buy and 卖 Sell), and on the Sell tab,
+   how many of each treasure you have, and those you haven't found yet as shadows with a clue (js/trade.js) */
+.shopgroup{grid-column:1/-1;margin:2px 0 -2px;font:600 .8rem var(--pixel);color:var(--muted);letter-spacing:.04em}
+.shoptabs{margin:.2rem 0 .4rem}
+.shoptabs .tpy{font-size:10.5px;opacity:.8}
+.shopitem{position:relative}
+.shopitem .scount{position:absolute;top:4px;right:7px;font:600 .8rem var(--pixel)}
+.shopitem.shadow{border-style:dashed;box-shadow:none;color:var(--muted);background:transparent}
+.shopitem.shadow .pix{filter:brightness(0);opacity:.28}
+.sclue{font-size:.75rem;line-height:1.2;text-align:center;margin-top:2px}
+/* the money counted into your paw, a piece at a time, each number under it (countMoney, js/trade.js) */
+.coincount{display:flex;flex-wrap:wrap;justify-content:center;gap:.35rem .6rem;min-height:4.2rem;margin:.6rem 0}
+.coincount .cc{display:flex;flex-direction:column;align-items:center;animation:ccpop .25s ease-out}
+.coincount .cci .icon,.coincount .cci .money{width:24px;height:24px}
+.coincount .ccn{font-family:var(--text);font-size:1.25rem;color:var(--muted)}
+.coincount .ccn.known{color:var(--ok)}
+.coincount .ccp{font-size:10.5px;color:var(--muted)}
+@keyframes ccpop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
+/* the Ready to sail? card at your raft: each page of your scroll, red till it's full, then a gold 好 (readyCard, js/trade.js) */
+.rpages{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:4px;margin:2px 0 6px}
+.rpage{display:flex;justify-content:space-between;align-items:center;gap:4px;padding:2px 6px;border:2px solid var(--bad);border-radius:5px;font-size:.8rem}
+.rpage b{color:var(--bad);font-family:var(--pixel)}
+.rpage.full{border-color:var(--gold)}
+.rseal{display:inline-block;background:#C23B2E;color:#FFF;font-family:var(--text);font-size:.8rem;padding:0 3px;border-radius:3px}
+.rstills{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.8rem;margin-bottom:4px}
 
 /* tips: a bubble pointing at a control the first time you need it (js/tips.js); it doesn't catch taps */
 .tipb{position:fixed;z-index:60;pointer-events:none;background:var(--tip);color:var(--tip-ink);border:3px solid var(--tip-ink);border-radius:8px;padding:6px 10px;font:600 .95rem/1.3 var(--pixel);box-shadow:0 3px 0 var(--tip-ink);max-width:230px;text-align:center;animation:tipbob 1.2s ease-in-out infinite}

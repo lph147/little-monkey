@@ -30,6 +30,8 @@ const CATEGORIES = {
   nature: {tab:'Nature', name:'Nature'},
   places: {tab:'Places', name:'Places'},
   items: {tab:'Items', name:'Items'},
+  treasures: {tab:'Treasures', name:'Treasures'},   // (found on Flower Fruit Mountain, and sold to the 老板: the trade, 9 November 2026)
+  shop: {tab:'Shop', name:'From the shop'},   // (things you can only get by buying them, so saving up gets a word ticked off: decided 9 November 2026)
   actions: {tab:'Actions', name:'Actions'},
   describing: {tab:'Describing', name:'Describing words'},
   people: {tab:'People', name:'People'},
@@ -160,6 +162,29 @@ const WORD_BANK = {
   '雨': {py:'yǔ', en:'rain', pic:'🌧️', area:1, category:'nature', alike:['云', '雪', '水']},   // (the first rain, in chapter 1: 下雨了！, it's raining, as 下雪了！ is it's snowing)
   '大雨': {py:'dàyǔ', en:'heavy rain', pic:'⛈️', area:1, category:'nature', alike:['雨', '云', '雪', '水']},   // (the first heavy rain, another day: 下大雨了！, it's raining hard)
 
+  // buying and selling (decided 9 November 2026, the trade): 买 moved from the human world's town to the 老板's shop, so you
+  // meet it the first time you shop, and 卖 with your first sale, his pine nuts
+  '买': {py:'mǎi', en:'to buy', area:1, category:'actions'},
+  '卖': {py:'mài', en:'to sell', area:1, category:'actions'},
+  // treasures, found all over Flower Fruit Mountain, and sold to the 老板 (one at each spot, once, but pine nuts and feathers
+  // every day): each is caught the first time you find one
+  '松子': {py:'sōngzǐ', en:'pine nuts', pic:'🥜', area:1, category:'treasures', alike:['松鼠']},   // (in a pine cone, under the pines of the pine wood: the 老板 wants them first)
+  '羽毛': {py:'yǔmáo', en:'feather', pic:'🪶', area:1, category:'treasures', alike:['鸟']},   // (left by a bird, in its colour: 红色的羽毛)
+  '珍珠': {py:'zhēnzhū', en:'pearl', pic:'🦪', area:1, category:'treasures', alike:['螃蟹']},   // (in a clam on the shore, open only at night)
+  '玉': {py:'yù', en:'jade', pic:'💚', area:1, category:'treasures', alike:['石头']},   // (in a warm rock, broken open with your stick)
+  '人参': {py:'rénshēn', en:'ginseng', pic:'🫚', area:1, category:'treasures', alike:['草', '花']},   // (a root, dug up with a spade, under the trees)
+  '金子': {py:'jīnzi', en:'gold', pic:'🪙', area:1, category:'treasures', alike:['钱', '石头']},   // (washed down by heavy rain, glinting in the shallows)
+  // things you can only get by buying them from the 老板 (decided 9 November 2026): the tools, and things for the Water
+  // Curtain Cave; each is caught as you buy it
+  '篮子': {py:'lánzi', en:'basket', pic:'🥡', area:1, category:'shop', alike:['碗']},   // (you carry two more of every snack)
+  '灯笼': {py:'dēnglong', en:'lantern', pic:'🏮', area:1, category:'shop', alike:['红色']},   // (a light at night: heard already, painting the school's lanterns)
+  '铲子': {py:'chǎnzi', en:'spade', pic:'🪏', area:1, category:'shop', alike:['棍子', '木头']},   // (for digging up ginseng)
+  '花瓶': {py:'huāpíng', en:'vase', pic:'🏺', area:1, category:'shop', alike:['花']},   // (for the Water Curtain Cave: on the stone table)
+  '风铃': {py:'fēnglíng', en:'wind chime', pic:'🎐', area:1, category:'shop', alike:['风']},   // (hung on the cave's wall, tinkling as you pass)
+  '鼓': {py:'gǔ', en:'drum', pic:'🥁', area:1, category:'shop'},   // (in the cave: A beats it)
+  '画': {py:'huà', en:'painting', pic:'🖼️', area:1, category:'shop', alike:['山']},   // (of the mountain, on the cave's wall)
+  '鱼缸': {py:'yúgāng', en:'fish jar', pic:'🐠', area:1, category:'shop', alike:['鱼', '碗']},   // (in the cave: your next little fish goes into it)
+
   // Phrases you learn on Flower Fruit Mountain, and reply with
   '你好': {py:'nǐ hǎo', en:'hello', pic:'👋', area:1, category:'phrases', phrase:true, use:'when you meet someone', cue:'says hello', situation:'You meet a friend.'},
   '谢谢': {py:'xièxie', en:'thank you', area:1, category:'phrases', phrase:true, use:'when someone gives you something or helps you', cue:'helps you', situation:'A friend gives you a peach.'},
@@ -188,7 +213,7 @@ const WORD_BANK = {
   '船': {py:'chuán', en:'boat', pic:'⛵', area:2, category:'items', alike:['木筏']},
   '看': {py:'kàn', en:'to look, to see', area:2, category:'actions'},
   '狗': {py:'gǒu', en:'dog', pic:'🐕', area:2, category:'animals', alike:['狼', '狐狸']},
-  '买': {py:'mǎi', en:'to buy', area:2, category:'actions'},
+  '多少钱': {py:'duōshao qián', en:'how much is it?', area:2, category:'phrases', phrase:true, use:'when you want to know how much something costs', cue:'shows you something to buy', situation:'You want to know how much the apples cost.'},   // (the fruit stall, in the town: 买 is caught at home now, decided 9 November 2026)
   '包子': {py:'bāozi', en:'steamed bun', pic:'🥟', area:2, category:'food'},
   '鞋': {py:'xié', en:'shoes', pic:'👞', area:2, category:'items'},
   '茶': {py:'chá', en:'tea', pic:'🍵', area:2, category:'food', alike:['水', '喝']},
@@ -308,8 +333,10 @@ const WORD_BANK = {
   '长大': {py:'zhǎngdà', en:'to grow up'},
   '盖': {py:'gài', en:'to build (a house)'},
   '刷': {py:'shuā', en:'to paint (with a brush)'},
-  '灯笼': {py:'dēnglong', en:'lantern'},
   '好看': {py:'hǎokàn', en:'good-looking, lovely'},
+  '宝贝': {py:'bǎobèi', en:'treasure'},   // (the old monkey's tip: 山上有很多宝贝！, the trade, 9 November 2026)
+  '两': {py:'liǎng', en:'two (of something: 两文钱, two coins)'},
+  '文': {py:'wén', en:'(counts coins: 两文钱, two coins)'},
   '种花': {py:'zhòng huā', en:'to plant flowers'},
   '几': {py:'jǐ', en:'how many'},
   '个': {py:'gè', en:'(counts things: 几个, how many)'},
@@ -465,6 +492,15 @@ const MADE = {
   '飞蛾': {parts:[['飞', 'fēi', 'to fly'], ['蛾', 'é', 'moth']]},
   '臭豆腐': {parts:[['臭', 'chòu', 'smelly'], ['豆腐', 'dòufu', 'tofu']]},
   '雪': {clue:['雨', 'yǔ', 'rain'], why:'is on its top: snow falls from the sky, as rain does'},
+  // the trade (9 November 2026): treasures, and things from the shop
+  '玉': {why:'Drawn like three pieces of jade on a string; the dot is there so it isn’t 王 (king).'},
+  '人参': {clue:['人', 'rén', 'person'], why:'is its first character: the root looks like a little person, with arms and legs'},
+  '松子': {parts:[['松', 'sōng', 'pine'], ['子', 'zǐ', 'seed']]},   // (松, as in 松鼠)
+  '羽毛': {parts:[['羽', 'yǔ', 'feathers'], ['毛', 'máo', 'hair, fur']]},
+  '花瓶': {parts:[['花', 'huā', 'flower'], ['瓶', 'píng', 'bottle']]},
+  '鱼缸': {parts:[['鱼', 'yú', 'fish'], ['缸', 'gāng', 'jar']]},
+  '风铃': {parts:[['风', 'fēng', 'wind'], ['铃', 'líng', 'bell']]},
+  '灯笼': {parts:[['灯', 'dēng', 'lamp'], ['笼', 'long', 'cage']]},   // (a lamp in a cage of bamboo and paper)
   // phrases
   '你好': {parts:[['你', 'nǐ', 'you'], ['好', 'hǎo', 'good']]},
   '我不要': {parts:[['我', 'wǒ', 'I'], ['不', 'bú', 'not', '不客气'], ['要', 'yào', 'to want']]},

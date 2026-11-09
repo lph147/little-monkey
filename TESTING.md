@@ -810,6 +810,21 @@ When the save format changes, the game keeps a copy of your old save in the brow
 - [ ] With the music on, walk from the home ground into the hot spring valley, up the hillside and into the pine wood: each place comes up quickly, and the music plays on through it without a break or a stutter. Cast to a TV too, if you can.
 - [ ] Word pictures are pixel art, not emoji: on new-word cards, quiz answers, the word test and training, the shop, the Word Scroll (and its shadows), the Story Scroll, animal encounters and the Friends list. They look sharp, not blurry, with every pixel the same size.
 
+## Treasures and trading (9 November 2026)
+
+In chapter 1, once the 老板's shop is built at the home ground:
+1. Shop with him once: his question is 你要买什么？ (teaching 买), and you buy with 我要买…. The Buy tab has headings (Snacks, Tools…), health snacks first.
+2. Go to the old monkey (he has a !): 山上有很多宝贝！, then messages about treasures and the 老板 buying them. A task: find pine nuts in the pine wood.
+3. In the pine wood: pine cones under the big pines (by the bottom, middle and left), glinting now and then. A says Pick up: you crouch, pick it up, and 松子 is a new word. The spot is empty till tomorrow.
+4. Back to the 老板 (a !): 松子！你要卖吗？ teaches 卖; fill the gap (卖) in 我要卖松子; he counts 一，二 into your paw; you say 谢谢, he says 不客气. His shop now has 买 Buy and 卖 Sell tabs, and sells a basket, a lantern, a spade, and things for the cave.
+5. The Sell tab: what you carry, how many, the price; shadows with a clue for treasures you haven't found.
+6. Feathers by day on the grass (home ground, meadow, hillside); jade in rocks with green in them (hot spring valley, cliffs, hillside: A says Hit, two questions with a blow each); ginseng under pines by day (A says Look till you have the spade, then Dig, three questions); pearls on the shore at night (a shut clam by day says it opens in the moonlight; at night A says Open, one question); gold in the water after heavy rain (Scoop, two questions). A wrong answer: it slips away, try again.
+7. Buy a vase (or anything for the cave) with too few shells: you're told the price, and the word isn't caught. With enough, its card, then go into the Water Curtain Cave: it drops into place as you watch, and you say 好看！. The drum: A beats it and the little monkeys dance. The fish jar: catch a little fish and it lives in the jar.
+8. At night with the lantern: a warm glow round you, and treasures glint from further away.
+9. Snacks: bananas, watermelons and grapes join the shop once the garden's crops are ripe. In a battle, 吃 eats the one that best fits what you've lost; grapes take away a wrong answer in this question and the next two. With the basket, you carry two more of each.
+10. After the feast, A at your raft: the Ready to sail? card (your scroll's pages, friends, treasures, what's left). Not yet: the troop goes home and the raft waits; come back and A again to sail.
+11. In the human world's town: the fruit seller teaches 多少钱？ (两文钱。) on your second visit; the money changer buys your treasures (卖, if you'd never sold any). At home in chapter 2: treasure spots work again, animals you missed are there, and once the demon is beaten the 老板 is back at his stall, selling the tools and cave things in coins.
+
 ## Controller checks
 
 With a game controller (Xbox, PlayStation, Switch Pro or a Bluetooth one) connected to the computer or phone. The game notices it once you press one of its buttons.

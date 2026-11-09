@@ -47,7 +47,12 @@ shown where the word list has them.
 | 这是苹果。我要吃桃子！ | zhè shì píngguǒ. wǒ yào chī táozi! | This is an apple. I want to eat a peach! |  |  |
 | 这是桃子。我要吃苹果！ | zhè shì táozi. wǒ yào chī píngguǒ! | This is a peach. I want to eat an apple! |  |  |
 | 你好！我是老板。 | nǐ hǎo! wǒ shì lǎobǎn. | Hello! I'm the shop owner. | 老板 (Shop owner) |  |
-| 你要什么？ | nǐ yào shénme? | What do you want? | 老板 (Shop owner) |  |
+| 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Shop owner) |  |
+| 你要卖什么？ | nǐ yào mài shénme? | What do you want to sell? |  |  |
+| 山上有很多宝贝！ | shān shàng yǒu hěn duō bǎobèi! | There are lots of treasures on the mountain! | 老猴子 (Old monkey) |  |
+| 我要买松子！ | wǒ yào mǎi sōngzǐ! | I want to buy pine nuts! | 老板 (Shop owner) |  |
+| 松子！你要卖吗？ | sōngzǐ! nǐ yào mài ma? | Pine nuts! Do you want to sell them? | 老板 (Shop owner) |  |
+| 好看！ | hǎokàn! | Lovely! |  |  |
 | 再见！ | zàijiàn! | Goodbye! | 老猴子 (Old monkey), 小猴子 (Little monkey), 老板 (Shop owner), 饿猴子 (Hungry monkey), 渴猴子 (Thirsty monkey), 大猴子 (Big monkey) |  |
 | 我要红色、黄色和白色的花！ | wǒ yào hóngsè, huángsè hé báisè de huā! | I want red, yellow and white flowers! | 大猴子 (Big monkey) |  |
 | 花！太好了！ | huā! tài hǎo le! | Flowers! Wonderful! | 大猴子 (Big monkey) |  |
@@ -221,27 +226,40 @@ shown where the word list has them.
 | 这是虾 | zhè shì xiā | This is a shrimp. | 饿猴子 (Hungry monkey) |  |
 | 这是螃蟹 | zhè shì pángxiè | This is a crab. | 饿猴子 (Hungry monkey) |  |
 | 我要吃草 | wǒ yào chī cǎo | I want to eat grass. | 牛 (cow) |  |
-| 我要苹果 | wǒ yào píngguǒ | I want an apple. | 老板 (Shop owner) |  |
-| 我要桃子 | wǒ yào táozi | I want a peach. | 老板 (Shop owner) |  |
-| 我要蜂蜜 | wǒ yào fēngmì | I want some honey. | 老板 (Shop owner) |  |
-| 我要榴莲 | wǒ yào liúlián | I want a durian. | 老板 (Shop owner) |  |
-| 我要鱼饵 | wǒ yào yú'ěr | I want some bait. | 老板 (Shop owner) |  |
-| 我要头带 | wǒ yào tóudài | I want the headband. | 老板 (Shop owner) |  |
+| 我要买桃子 | wǒ yào mǎi táozi | I want to buy a peach. | 老板 (Shop owner) |  |
+| 我要买香蕉 | wǒ yào mǎi xiāngjiāo | I want to buy a banana. | 老板 (Shop owner) |  |
+| 我要买西瓜 | wǒ yào mǎi xīguā | I want to buy a watermelon. | 老板 (Shop owner) |  |
+| 我要买苹果 | wǒ yào mǎi píngguǒ | I want to buy an apple. | 老板 (Shop owner) |  |
+| 我要买葡萄 | wǒ yào mǎi pútáo | I want to buy some grapes. | 老板 (Shop owner) |  |
+| 我要买蜂蜜 | wǒ yào mǎi fēngmì | I want to buy some honey. | 老板 (Shop owner) |  |
+| 我要买榴莲 | wǒ yào mǎi liúlián | I want to buy a durian. | 老板 (Shop owner) |  |
+| 我要买鱼饵 | wǒ yào mǎi yú'ěr | I want to buy some bait. | 老板 (Shop owner) |  |
+| 我要买篮子 | wǒ yào mǎi lánzi | I want to buy the basket. | 老板 (Shop owner) |  |
+| 我要买灯笼 | wǒ yào mǎi dēnglong | I want to buy the lantern. | 老板 (Shop owner) |  |
+| 我要买铲子 | wǒ yào mǎi chǎnzi | I want to buy the spade. | 老板 (Shop owner) |  |
+| 我要买花瓶 | wǒ yào mǎi huāpíng | I want to buy the vase. | 老板 (Shop owner) |  |
+| 我要买风铃 | wǒ yào mǎi fēnglíng | I want to buy the wind chime. | 老板 (Shop owner) |  |
+| 我要买鼓 | wǒ yào mǎi gǔ | I want to buy the drum. | 老板 (Shop owner) |  |
+| 我要买画 | wǒ yào mǎi huà | I want to buy the painting. | 老板 (Shop owner) |  |
+| 我要买鱼缸 | wǒ yào mǎi yúgāng | I want to buy the fish jar. | 老板 (Shop owner) |  |
+| 我要买头带 | wǒ yào mǎi tóudài | I want to buy the headband. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
 | 我有桃子 | wǒ yǒu táozi | I have peaches. | You, in a lesson at school |  |
 | 我有朋友 | wǒ yǒu péngyou | I have friends. | You, in a lesson at school |  |
 | 我没有苹果 | wǒ méiyǒu píngguǒ | I don’t have any apples. | You, in a lesson at school |  |
 | 我要大桃子 | wǒ yào dà táozi | I want a big peach. | You, in a lesson at school |  |
 | 我有小鱼 | wǒ yǒu xiǎo yú | I have a little fish. | You, in a lesson at school |  |
-| 我要红色的头带 | wǒ yào hóngsè de tóudài | I want the red headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
-| 我要黄色的头带 | wǒ yào huángsè de tóudài | I want the yellow headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
-| 我要白色的头带 | wǒ yào báisè de tóudài | I want the white headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
-| 我要黑色的头带 | wǒ yào hēisè de tóudài | I want the black headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
-| 我要蓝色的头带 | wǒ yào lánsè de tóudài | I want the blue headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
-| 我要绿色的头带 | wǒ yào lǜsè de tóudài | I want the green headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
-| 我要棕色的头带 | wǒ yào zōngsè de tóudài | I want the brown headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
-| 我要橙色的头带 | wǒ yào chéngsè de tóudài | I want the orange headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
-| 我要粉色的头带 | wǒ yào fěnsè de tóudài | I want the pink headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买苹果 | wǒ yào mǎi píngguǒ | I want to buy an apple. | You, in a lesson at school |  |
+| 我要卖松子 | wǒ yào mài sōngzǐ | I want to sell some pine nuts. | You, in a lesson at school |  |
+| 我要买红色的头带 | wǒ yào mǎi hóngsè de tóudài | I want to buy the red headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买黄色的头带 | wǒ yào mǎi huángsè de tóudài | I want to buy the yellow headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买白色的头带 | wǒ yào mǎi báisè de tóudài | I want to buy the white headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买黑色的头带 | wǒ yào mǎi hēisè de tóudài | I want to buy the black headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买蓝色的头带 | wǒ yào mǎi lánsè de tóudài | I want to buy the blue headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买绿色的头带 | wǒ yào mǎi lǜsè de tóudài | I want to buy the green headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买棕色的头带 | wǒ yào mǎi zōngsè de tóudài | I want to buy the brown headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买橙色的头带 | wǒ yào mǎi chéngsè de tóudài | I want to buy the orange headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
+| 我要买粉色的头带 | wǒ yào mǎi fěnsè de tóudài | I want to buy the pink headband. | 老板 (Shop owner) (a headband in each colour you know) |  |
 | 我戴红色的头带 | wǒ dài hóngsè de tóudài | I wear my red headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴黄色的头带 | wǒ dài huángsè de tóudài | I wear my yellow headband. | You, in the wardrobe (a headband in each colour) |  |
 | 我戴白色的头带 | wǒ dài báisè de tóudài | I wear my white headband. | You, in the wardrobe (a headband in each colour) |  |
@@ -273,6 +291,9 @@ What a card shows when you pick a flower for the big monkey (a red flower, and s
 | 棕色的鸟 | zōngsè de niǎo | A brown bird |  |
 | 橙色的鸟 | chéngsè de niǎo | An orange bird |  |
 | 粉色的鸟 | fěnsè de niǎo | A pink bird |  |
+| 红色的羽毛 | hóngsè de yǔmáo | A red feather |  |
+| 黄色的羽毛 | huángsè de yǔmáo | A yellow feather |  |
+| 蓝色的羽毛 | lánsè de yǔmáo | A blue feather |  |
 
 ### The feast's list
 
@@ -350,6 +371,11 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 海龟很大。 | hǎiguī hěn dà. | The sea turtle is very big. | 海龟 |  |
 | 蝴蝶在花上。 | húdié zài huā shàng. | The butterfly is on the flower. | 蝴蝶 |  |
 | 山上有熊。 | shān shàng yǒu xióng. | There are bears on the mountain. | 熊 |  |
+| 鸟有羽毛。 | niǎo yǒu yǔmáo. | Birds have feathers. | 羽毛 |  |
+| 海里有珍珠。 | hǎi lǐ yǒu zhēnzhū. | There are pearls in the sea. | 珍珠 |  |
+| 玉是绿色的。 | yù shì lǜsè de. | Jade is green. | 玉 |  |
+| 人参在松树下面。 | rénshēn zài sōngshù xiàmiàn. | The ginseng is under the pine trees. | 人参 |  |
+| 金子是黄色的。 | jīnzi shì huángsè de. | Gold is yellow. | 金子 |  |
 
 ### Questions after the story
 
@@ -596,6 +622,22 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 晚上 | wǎnshang | night, evening |  |
 | 雨 | yǔ | rain |  |
 | 大雨 | dàyǔ | heavy rain |  |
+| 买 | mǎi | to buy |  |
+| 卖 | mài | to sell |  |
+| 松子 | sōngzǐ | pine nuts |  |
+| 羽毛 | yǔmáo | feather |  |
+| 珍珠 | zhēnzhū | pearl |  |
+| 玉 | yù | jade |  |
+| 人参 | rénshēn | ginseng |  |
+| 金子 | jīnzi | gold |  |
+| 篮子 | lánzi | basket |  |
+| 灯笼 | dēnglong | lantern |  |
+| 铲子 | chǎnzi | spade |  |
+| 花瓶 | huāpíng | vase |  |
+| 风铃 | fēnglíng | wind chime |  |
+| 鼓 | gǔ | drum |  |
+| 画 | huà | painting |  |
+| 鱼缸 | yúgāng | fish jar |  |
 | 你好 | nǐ hǎo | hello |  |
 | 谢谢 | xièxie | thank you |  |
 | 不客气 | bú kèqi | you’re welcome |  |
@@ -650,6 +692,14 @@ simply put. A part's pinyin is as it's said in the word.
 | 黄鼠狼 | huángshǔláng | 黄 huáng (yellow) + 鼠 shǔ (mouse) + 狼 láng (wolf) = 黄鼠狼 (weasel) |  |
 | 萤火虫 | yínghuǒchóng | 萤 yíng (glow-worm) + 火 huǒ (fire) + 虫 chóng (insect) = 萤火虫 (firefly) |  |
 | 刺猬 | cìwei | 刺 cì (spike) + 猬 wei (hedgehog) = 刺猬 (hedgehog) |  |
+| 玉 | yù | Drawn like three pieces of jade on a string; the dot is there so it isn’t 王 (king). |  |
+| 人参 | rénshēn | 人 rén (person): is its first character: the root looks like a little person, with arms and legs |  |
+| 松子 | sōngzǐ | 松 sōng (pine) + 子 zǐ (seed) = 松子 (pine nuts) |  |
+| 羽毛 | yǔmáo | 羽 yǔ (feathers) + 毛 máo (hair, fur) = 羽毛 (feather) |  |
+| 花瓶 | huāpíng | 花 huā (flower) + 瓶 píng (bottle) = 花瓶 (vase) |  |
+| 鱼缸 | yúgāng | 鱼 yú (fish) + 缸 gāng (jar) = 鱼缸 (fish jar) |  |
+| 风铃 | fēnglíng | 风 fēng (wind) + 铃 líng (bell) = 风铃 (wind chime) |  |
+| 灯笼 | dēnglong | 灯 dēng (lamp) + 笼 long (cage) = 灯笼 (lantern) |  |
 | 你好 | nǐ hǎo | 你 nǐ (you) + 好 hǎo (good) = 你好 (hello) |  |
 | 我不要 | wǒ bú yào | 我 wǒ (I) + 不 bú (not) + 要 yào (to want) = 我不要 (no thanks) |  |
 | 苹果 | píngguǒ | 果 guǒ (fruit), as in 水果: an apple is a fruit |  |
@@ -697,8 +747,8 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 晚上好！ | wǎnshang hǎo! | Good evening! |  |  |
 | 我长大了！ | wǒ zhǎngdà le! | I’ve grown up! | 老板 (Stallholder), 路人 (Passer-by) |  |
 | 谢谢！ | xièxie! | Thank you! | 工人 (Docker), 猴子 (Monkey), 小猴子 (Little monkey), 老奶奶 (Granny), 渔夫 (Fisherman), 农民 (Farmer) |  |
-| 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman) |  |
-| 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman) |  |
+| 不客气！ | bú kèqi! | You’re welcome! | 货郎 (Peddler), 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman), 换钱的 (Money changer), 老板 (Shop owner) |  |
+| 没关系！ | méi guānxi! | It doesn’t matter! | 货郎 (Peddler), 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman), 老板 (Shop owner) |  |
 | 我们玩吧！ | wǒmen wán ba! | Let’s play! | 小孩 (Child), 师姐 (A pupil) |  |
 | 你要什么？ | nǐ yào shénme? | What do you want? | 货郎 (Peddler) |  |
 | 包子！包子！ | bāozi! bāozi! | Steamed buns! Steamed buns! |  |  |
@@ -742,7 +792,11 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 是！ | shì! | Yes! | 农民 (Farmer) |  |
 | 你要换钱吗？ | nǐ yào huàn qián ma? | Do you want to change money? | 换钱的 (Money changer) |  |
 | 这是你的钱。 | zhè shì nǐ de qián. | Here’s your money. | 换钱的 (Money changer) |  |
-| 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman) |  |
+| 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | 老板 (Stallholder), 老奶奶 (Granny), 渔夫 (Fisherman), 老板 (Shop owner) |  |
+| 两文钱。 | liǎng wén qián. | Two coins. | 老板 (Stallholder) |  |
+| 你要卖什么？ | nǐ yào mài shénme? | What do you want to sell? |  |  |
+| 宝贝！你要卖吗？ | bǎobèi! nǐ yào mài ma? | A treasure! Do you want to sell it? | 换钱的 (Money changer), 老板 (Shop owner) |  |
+| 好看！ | hǎokàn! | Lovely! |  |  |
 | 喝茶吧！ | hē chá ba! | Have some tea! | 茶馆老板 (Teahouse keeper) |  |
 | 我说，你听。 | wǒ shuō, nǐ tīng. | I talk, you listen. | 说书人 (Storyteller) |  |
 | 神仙在哪里？ | shénxiān zài nǎlǐ? | Where are the immortals? | 小猴子 (You) |  |
@@ -869,6 +923,15 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 我要买米 | wǒ yào mǎi mǐ | I want to buy rice. | 老奶奶 (Granny) |  |
 | 我要买鱼 | wǒ yào mǎi yú | I want to buy fish. | 渔夫 (Fisherman) |  |
 | 我要买鞋 | wǒ yào mǎi xié | I want to buy shoes. | 老板 (Stallholder) |  |
+| 我要买桃子 | wǒ yào mǎi táozi | I want to buy a peach. | 老板 (Shop owner) |  |
+| 我要买篮子 | wǒ yào mǎi lánzi | I want to buy the basket. | 老板 (Shop owner) |  |
+| 我要买灯笼 | wǒ yào mǎi dēnglong | I want to buy the lantern. | 老板 (Shop owner) |  |
+| 我要买铲子 | wǒ yào mǎi chǎnzi | I want to buy the spade. | 老板 (Shop owner) |  |
+| 我要买花瓶 | wǒ yào mǎi huāpíng | I want to buy the vase. | 老板 (Shop owner) |  |
+| 我要买风铃 | wǒ yào mǎi fēnglíng | I want to buy the wind chime. | 老板 (Shop owner) |  |
+| 我要买鼓 | wǒ yào mǎi gǔ | I want to buy the drum. | 老板 (Shop owner) |  |
+| 我要买画 | wǒ yào mǎi huà | I want to buy the painting. | 老板 (Shop owner) |  |
+| 我要买鱼缸 | wǒ yào mǎi yúgāng | I want to buy the fish jar. | 老板 (Shop owner) |  |
 | 我戴头带 | wǒ dài tóudài | I wear my headband. | You, in the wardrobe |  |
 | 这是我的衣服 | zhè shì wǒ de yīfu | These are my clothes. | You, in the wardrobe |  |
 | 我戴帽子 | wǒ dài màozi | I wear my hat. | You, in the wardrobe |  |
@@ -917,6 +980,9 @@ What a card shows when you pick a flower for the big monkey (a red flower, and s
 | 棕色的鸟 | zōngsè de niǎo | A brown bird |  |
 | 橙色的鸟 | chéngsè de niǎo | An orange bird |  |
 | 粉色的鸟 | fěnsè de niǎo | A pink bird |  |
+| 红色的羽毛 | hóngsè de yǔmáo | A red feather |  |
+| 黄色的羽毛 | huángsè de yǔmáo | A yellow feather |  |
+| 蓝色的羽毛 | lánsè de yǔmáo | A blue feather |  |
 
 ### The sign
 
@@ -1103,6 +1169,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 小猴子 | xiǎo hóuzi | Little monkey |  |
 | 大猴子 | dà hóuzi | Big monkey |  |
 | 饿猴子 | è hóuzi | Hungry monkey |  |
+| 老板 | lǎobǎn | Shop owner |  |
 | 老猴子 | lǎo hóuzi | Old monkey |  |
 | 猴子 | hóuzi | Monkey |  |
 | 猴子 | hóuzi | Monkey |  |
@@ -1182,7 +1249,7 @@ For words that no line or story sentence uses, shown on the word's page in the W
 | 船 | chuán | boat |  |
 | 看 | kàn | to look, to see |  |
 | 狗 | gǒu | dog |  |
-| 买 | mǎi | to buy |  |
+| 多少钱 | duōshao qián | how much is it? |  |
 | 包子 | bāozi | steamed bun |  |
 | 鞋 | xié | shoes |  |
 | 茶 | chá | tea |  |
@@ -1384,8 +1451,10 @@ Once you know 大 and 小, a wild creature can be a big one or a little one: its
 | 长大 | zhǎngdà | to grow up |  |
 | 盖 | gài | to build (a house) |  |
 | 刷 | shuā | to paint (with a brush) |  |
-| 灯笼 | dēnglong | lantern |  |
 | 好看 | hǎokàn | good-looking, lovely |  |
+| 宝贝 | bǎobèi | treasure |  |
+| 两 | liǎng | two (of something: 两文钱, two coins) |  |
+| 文 | wén | (counts coins: 两文钱, two coins) |  |
 | 种花 | zhòng huā | to plant flowers |  |
 | 几 | jǐ | how many |  |
 | 个 | gè | (counts things: 几个, how many) |  |
@@ -1465,6 +1534,21 @@ Sentences that haven't been checked yet: new ones waiting to go into the game, a
 
 | Chinese | Pinyin | English | Where | Notes |
 | --- | --- | --- | --- | --- |
+| 你要买什么？ | nǐ yào mǎi shénme? | What do you want to buy? | New on 9 November 2026 (treasures and trading): the 老板 on Flower Fruit Mountain, as you shop, teaching 买 (to buy; it was the town’s fruit seller’s word): every purchase is now 我要买… with the thing missing, such as 我要买桃子 and 我要买蓝色的头带. Is it natural? |  |
+| 你要卖什么？ | nǐ yào mài shénme? | What do you want to sell? | New on 9 November 2026 (treasures and trading): the 老板, once he buys your treasures (and the money changer, and the 老板 at home, in the human world). Is it natural? |  |
+| 山上有很多宝贝！ | shān shàng yǒu hěn duō bǎobèi! | There are lots of treasures on the mountain! | New on 9 November 2026 (treasures and trading): the old monkey, telling you about the treasures (宝贝 just for listening) before you find the first. Is 宝贝 right for treasures here, or would 宝物 be better?. Is it natural? |  |
+| 我要买松子！ | wǒ yào mǎi sōngzǐ! | I want to buy pine nuts! | New on 9 November 2026 (treasures and trading): the 老板, before you’ve found any. Is it natural? |  |
+| 松子！你要卖吗？ | sōngzǐ! nǐ yào mài ma? | Pine nuts! Do you want to sell them? | New on 9 November 2026 (treasures and trading): the 老板, seeing your first pine nuts, teaching 卖 (to sell); then you sell him one with 我要卖松子, 卖 the missing word. Is it natural? |  |
+| 我要卖松子 | wǒ yào mài sōngzǐ | I want to sell some pine nuts. | New on 9 November 2026 (treasures and trading): what you say to sell a treasure, the treasure missing (and 我要卖羽毛, 珍珠, 玉, 人参, 金子). Is it natural? |  |
+| 好看！ | hǎokàn! | Lovely! | New on 9 November 2026 (treasures and trading): you, as something you bought for the Water Curtain Cave is set up there (a vase, a wind chime, a drum, a painting, a fish jar). Is it natural? |  |
+| 红色的羽毛 | hóngsè de yǔmáo | a red feather | New on 9 November 2026 (treasures and trading): a feather you find on the grass, once you know its colour (and 黄色的羽毛, 蓝色的羽毛). Is it natural? |  |
+| 鸟有羽毛。 | niǎo yǒu yǔmáo. | Birds have feathers. | New on 9 November 2026 (treasures and trading): the example sentence for 羽毛 (feather). Is it natural? |  |
+| 海里有珍珠。 | hǎi lǐ yǒu zhēnzhū. | There are pearls in the sea. | New on 9 November 2026 (treasures and trading): the example sentence for 珍珠 (pearl). Is it natural? |  |
+| 玉是绿色的。 | yù shì lǜsè de. | Jade is green. | New on 9 November 2026 (treasures and trading): the example sentence for 玉 (jade). Is it natural? |  |
+| 人参在松树下面。 | rénshēn zài sōngshù xiàmiàn. | The ginseng is under the pine trees. | New on 9 November 2026 (treasures and trading): the example sentence for 人参 (ginseng). Is it natural? |  |
+| 金子是黄色的。 | jīnzi shì huángsè de. | Gold is yellow. | New on 9 November 2026 (treasures and trading): the example sentence for 金子 (gold). Is it natural? |  |
+| 两文钱。 | liǎng wén qián. | Two coins. | New on 9 November 2026 (treasures and trading): the town’s fruit seller, when you ask how much her apples are with 多少钱？ (How much?), which she teaches now (两 and 文 just for listening). Is it natural? |  |
+| 宝贝！你要卖吗？ | bǎobèi! nǐ yào mài ma? | A treasure! Do you want to sell it? | New on 9 November 2026 (treasures and trading): the money changer in the town, and the 老板 at home in the human world, seeing a treasure from the mountain, teaching 卖 to a game that doesn’t know it. Is it natural? |  |
 | 来！ | lái! | Come on! | New on 8 November 2026 (the gentler prologue): the big monkey, raising his stick to spar with you as he gives it to you (a practice fight you can’t lose, instead of two notes on how to fight). Is it natural? |  |
 | 路上有蛇！ | lù shàng yǒu shé! | There are snakes on the path! | New on 8 November 2026 (the gentler prologue): the rabbit by the long grass on the mountain path, once you’ve met your first snake, teaching 路 (path); it was 草里有蛇。. Is it natural? |  |
 | 瀑布后面有洞！ | pùbù hòumiàn yǒu dòng! | There’s a cave behind the waterfall! | New on 8 November 2026 (the gentler prologue): you, back out of the cave, telling the troop what you found (after 里面有什么？, and filling the gap 瀑布后面有洞); you told them about its beds, table and bowls. Is it natural? |  |

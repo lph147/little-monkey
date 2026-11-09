@@ -109,7 +109,7 @@ test('the arrows move between choices and A chooses; B doesn\'t choose', async (
 });
 
 test('at the shop, 我不要 turns everything down: taught the first time, then your monkey says it', async () => {
-  const t = replyGame({'老板': {lv: 1, due: 0, ok: 0}}, {areas: {1: {elder: 2}}});
+  const t = replyGame({'老板': {lv: 1, due: 0, ok: 0}, '买': {lv: 1, due: 0, ok: 0}}, {areas: {1: {elder: 2}}});   // (买: the shop's question taught it already)
   t.run("showDialog = async () => {}; globalThis.__said = []; iSay = async p => { __said.push(p); }; shop(speaker('boss')).then(() => { __done = true; })");
   await tick();
   const no = t.sheet.querySelector('[data-a=no]');
@@ -126,7 +126,7 @@ test('at the shop, 我不要 turns everything down: taught the first time, then 
 });
 
 test('with English on replies switched off, the shop’s 我不要 still has its pinyin: never characters alone', async () => {
-  const t = replyGame({'老板': {lv: 1, due: 0, ok: 0}}, {areas: {1: {elder: 2}}, replyEn: false});
+  const t = replyGame({'老板': {lv: 1, due: 0, ok: 0}, '买': {lv: 1, due: 0, ok: 0}}, {areas: {1: {elder: 2}}, replyEn: false});
   t.run("showDialog = async () => {}; shop(speaker('boss'))");
   await tick();
   const no = t.sheet.querySelector('[data-a=no]');

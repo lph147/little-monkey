@@ -91,7 +91,7 @@ test('the 老板 sells 苹果 as food, and keeps selling it after the headband',
   const apple = get(base, APPLE());
   assert.ok(apple && apple.eat && apple.price === 2, '苹果 should be food that costs 2');
   assert.equal(get(base, 'FOOD["苹果"].carry'), 3, 'you can carry 3');
-  assert.equal(apple.sentence, '我 要 苹果');
+  assert.equal(apple.sentence, '我 要 买 苹果');   // (我要买…: every purchase, since 9 November 2026)
   const game = play({areas: {1: area({bought: ['头带']})}});
   assert.deepEqual(get(game, 'forSale().map(i => i.item)'), ['苹果']);
 });
@@ -136,7 +136,7 @@ test('a version 7 save is converted with an empty bag', () => {
 });
 
 test('the shop shows a card for each thing: its picture, Chinese, pinyin, English and price', async () => {
-  const game = loadGame({dom: true, save: {version: VERSION, started: true, shells: 5, areas: {1: area()}, w: {'老板': {lv: 1, due: 0, ok: 0}}}});
+  const game = loadGame({dom: true, save: {version: VERSION, started: true, shells: 5, areas: {1: area()}, w: {'老板': {lv: 1, due: 0, ok: 0}, '买': {lv: 1, due: 0, ok: 0}}}});   // (买: his question taught it)
   game.run("mode = 'play'; showDialog = async () => {}; shop(speaker('boss'))");
   await new Promise(r => setImmediate(r));
   const sheet = game.el('#sheet'), cards = sheet.querySelectorAll('.shopitem');
@@ -227,12 +227,12 @@ test('with the school’s flowers planted, the 老板 comes up to the home groun
 test('his shop sells a headband in each colour you know, asked for with its colour missing: 我要蓝色的头带', async () => {
   const g = homeGame({shop: 3}, {shells: 30, w: seen(['蓝色'])});
   const sale = get(g, 'forSale().map(i => [i.item, asSaid(i).zh, asSaid(i).en, asSaid(i).pic])');
-  assert.deepEqual(sale.map(([item]) => item), ['苹果', '桃子', '黄色 的 头带', '白色 的 头带', '蓝色 的 头带'],
+  assert.deepEqual(sale.map(([item]) => item), ['桃子', '苹果', '黄色 的 头带', '白色 的 头带', '蓝色 的 头带'],
     'food first; then a headband in each colour you know, but the red one you have (honey and bait come later)');
   assert.deepEqual(sale[4].slice(1), ['蓝色的头带', 'blue headband', '蓝色 的 头带'], 'called by its colour, with its own picture');
   assert.equal(g.run("(AREA.bubbles.boss.find(b => matches(b.if)) || {}).show"), '?', 'a ? over him: you can afford one');
   await settle(g, "buy(forSale().find(i => i.colour === '蓝色'), '')");
-  assert.ok(get(g, '__said').includes('gap: 我要蓝色的头带 (蓝色 or 红色 黄色 白色 黑色 绿色 棕色 橙色 粉色)'), 'the colour missing, the other colours the wrong answers (those you know: gapQ)');
+  assert.ok(get(g, '__said').includes('gap: 我要买蓝色的头带 (蓝色 or 红色 黄色 白色 黑色 绿色 棕色 橙色 粉色)'), 'the colour missing, the other colours the wrong answers (those you know: gapQ)');
   assert.deepEqual([get(g, 'S.shells'), get(g, 'here().bought'), get(g, 'S.wardrobe')], [20, ['头带', '蓝色 的 头带'], {owned: ['头带', '蓝色 的 头带'], wearing: ['蓝色 的 头带']}],
     'ten shells; you take the red one off and tie the blue one on');
   assert.equal(g.run('headband()'), g.run("BAND['蓝色']"), 'your monkey’s headband is blue');
@@ -241,7 +241,7 @@ test('his shop sells a headband in each colour you know, asked for with its colo
   g.run('putOn("头带")');
   assert.deepEqual(get(g, 'S.wardrobe.wearing'), ['头带'], 'putting the red one back on takes the blue one off: one at a time');
   assert.equal(g.run('headband()'), g.run("BAND['红色']"));
-  assert.deepEqual(get(g, "COLOUR_SENTENCES().filter(c => /蓝色/.test(c.zh))"), [{zh: '我 要 蓝色 的 头带', en: 'I want the blue headband.'}, {zh: '我 戴 蓝色 的 头带', en: 'I wear my blue headband.'}],
+  assert.deepEqual(get(g, "COLOUR_SENTENCES().filter(c => /蓝色/.test(c.zh))"), [{zh: '我 要 买 蓝色 的 头带', en: 'I want to buy the blue headband.'}, {zh: '我 戴 蓝色 的 头带', en: 'I wear my blue headband.'}],
     'every colour’s sentences, for the voices and CHINESE.md');
   const saved = loadGame({save: {version: VERSION, started: true, wardrobe: {owned: ['头带', '蓝色 的 头带', '紫色 的 头带'], wearing: ['蓝色 的 头带']}}});
   assert.deepEqual(get(saved, 'S.wardrobe'), {owned: ['头带', '蓝色 的 头带'], wearing: ['蓝色 的 头带']}, 'a save keeps its coloured headbands (and only what there is)');
@@ -249,7 +249,7 @@ test('his shop sells a headband in each colour you know, asked for with its colo
 
 test('at the home ground he sells peaches too, and honey once the bees make it', () => {
   const g = homeGame({shop: 3, bees: 11});
-  assert.deepEqual(get(g, "forSale().filter(i => i.eat).map(i => [i.item, i.price])"), [['苹果', 2], ['桃子', 2], ['蜂蜜', 4]]);
+  assert.deepEqual(get(g, "forSale().filter(i => i.eat).map(i => [i.item, i.price])"), [['桃子', 2], ['苹果', 2], ['蜂蜜', 4]]);   // (in tiers, health first: decided 9 November 2026)
   assert.deepEqual(get(homeGame({shop: 0}), "forSale().filter(i => i.eat).map(i => i.item)"), ['苹果'], 'just apples at his stall in the meadow');
 });
 
@@ -273,7 +273,7 @@ test('ask for something you didn’t point at, and the 老板 is puzzled: he ask
   }
   const notes = get(g, '__notes').filter(n => /puzzled/.test(n));
   assert.deepEqual(notes, Array(2).fill('The 老板 (shop owner) looks puzzled: you pointed at the 苹果 (apple), but asked for something else!'), 'each wrong answer');
-  assert.deepEqual(get(g, '__said').filter(l => /什么/.test(l)), Array(2).fill('boss: 你要什么？'), 'and he asks again what you want');
+  assert.deepEqual(get(g, '__said').filter(l => /什么/.test(l)), Array(2).fill('boss: 你要买什么？'), 'and he asks again what you want to buy');
   assert.deepEqual([get(g, 'S.shells'), get(g, "S.bag['苹果']")], [8, 1], 'then you pay, once, and it’s yours');
   assert.equal(g.run("!!NPCS.find(n => n.id === 'boss').puzzled"), false, 'his ? goes once you’ve asked for it');
   const blue = homeGame({shop: 3}, {shells: 10, w: seen(['蓝色'])});

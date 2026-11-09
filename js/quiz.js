@@ -235,20 +235,44 @@ function withOwn(words, own, n){
 // battle, or from your bag), and some takes away a wrong answer in a question (helps: no turn used).
 const FOOD = AREA.food || {};
 const foodThat = does => Object.keys(FOOD).find(w => FOOD[w][does] && (S.bag[w] || 0) > 0);   // food in your bag that heals, or helps
-const bagFull = w => (S.bag[w] || 0) >= ((FOOD[w] || {}).carry || 3);
+// The food in your bag that brings back what you've lost best (decided 9 November 2026, the trade plan's tiers): the smallest
+// that brings it all back, such as a banana when a peach isn't enough, or else the biggest, such as a watermelon.
+function healFood(){
+  const have = Object.keys(FOOD).filter(w => FOOD[w].heal && (S.bag[w] || 0) > 0), need = maxHealth() - health();
+  return have.filter(w => FOOD[w].heal >= need).sort((a, b) => FOOD[a].heal - FOOD[b].heal)[0] || have.sort((a, b) => FOOD[b].heal - FOOD[a].heal)[0] || null;
+}
+const healText = w => FOOD[w].full ? 'all your health back' : `+${FOOD[w].heal} health`;   // (a watermelon: all of it)
+// How many of something you can carry: its food's carry (3 if it doesn't say), and with the basket from the shop, two more of
+// every snack (js/trade.js).
+const carryOf = w => ((FOOD[w] || {}).carry || 3) + (FOOD[w] && (S.tools || []).includes('篮子') ? 2 : 0);
+const bagFull = w => (S.bag[w] || 0) >= carryOf(w);
 function intoBag(w){ if (bagFull(w)) return false; S.bag[w] = (S.bag[w] || 0) + 1; save(); return true; }   // false: no room
 const wrongToEat = (n, answerIdx) => shuffle([...Array(n).keys()].filter(i => i !== answerIdx))[0];   // which wrong answer eating takes away
 // Food that takes away a wrong answer, such as an apple, offered under a question until you answer: its button (helperHTML),
 // and eating it (wireHelper: one of the wrong answers goes; n is how many answers there are, right the right one).
-function helperHTML(){ const w = foodThat('helps'); return w ? `<button class="helper" data-a="eat" data-label="Eat">${picHTML(w)}<span>Eat a ${esc(wz(w))}<span class="why">: one wrong answer goes</span> · ${S.bag[w]} left</span></button>` : ''; }
+// Grapes (helps: 3) take away a wrong answer in each of the next three questions, from the one you eat them in (S.helpLeft:
+// how many more after it; decided 9 November 2026, the trade plan's tiers).
+const helpsFor = w => FOOD[w].helps === true ? 1 : FOOD[w].helps;
+function helperHTML(){
+  const w = foodThat('helps'); if (!w) return '';
+  const n = helpsFor(w), why = n > 1 ? `: a wrong answer goes in each of your next ${n} questions` : ': one wrong answer goes';
+  return `<button class="helper" data-a="eat" data-label="Eat">${picHTML(w)}<span>Eat ${n > 1 ? 'some' : 'a'} ${esc(wz(w))}<span class="why">${why}</span> · ${S.bag[w]} left</span></button>`;
+}
 function wireHelper(n, right){
+  const gone = () => { const o = sheet.querySelector(`.opt[data-i="${wrongToEat(n, right)}"]`); if (o) o.hidden = true; };
+  if (S.helpLeft > 0 && n > 2 && !sheet.querySelector('.opt[disabled]')){   // (grapes eaten in an earlier question: one goes here too)
+    S.helpLeft--; save(); gone();
+    const fb = sheet.querySelector('.feedback'); if (fb) fb.textContent = `Grapes! One wrong answer is gone${S.helpLeft ? ` (${S.helpLeft} more to come)` : ''}.`;
+    const h = sheet.querySelector('[data-a=eat]'); if (h) h.remove();
+    return;
+  }
   on('[data-a=eat]', e => {
     const w = foodThat('helps');
     if (!w || sheet.querySelector('.opt[disabled]')) return;   // already answered
-    sheet.querySelector(`.opt[data-i="${wrongToEat(n, right)}"]`).hidden = true;
-    S.bag[w]--; save(); SFX.blip();
+    gone();
+    S.bag[w]--; S.helpLeft = helpsFor(w) - 1; save(); SFX.blip();
     e.currentTarget.remove();
-    sheet.querySelector('.feedback').textContent = 'Crunch! One wrong answer is gone.';
+    sheet.querySelector('.feedback').textContent = S.helpLeft ? `Yum! One wrong answer is gone, and one goes in each of your next ${S.helpLeft} questions too.` : 'Crunch! One wrong answer is gone.';
   });
 }
 // A tip about Chinese (the area's tips), the first time it helps: just before an animal's questions, the first time one of

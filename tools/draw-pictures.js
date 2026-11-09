@@ -1677,6 +1677,130 @@ const DRAWINGS = {   // each word's picture, drawn on p (see draw() above)
     p.fill(Rc(3, 16, 19, 1.4), '#D8AA70');                                                    // the measure's rim
     for (const [x, y, v] of [[6, 17, 0], [9, 18, 1], [14, 17, 0], [18, 18, 0], [12, 19, 0]]) p.flat(v ? Rc(x, y, 1, 2) : Rc(x, y, 2, 1), '#F8F4E8');   // grains spilt over it
   },
+  // the trade (9 November 2026): treasures you find on Flower Fruit Mountain and sell to the 老板
+  '松子': p => {   // pine nuts: a brown pine cone, its scales open, and three pale nuts in front of it
+    p.fill(Rc(13, 1, 3, 4, 1), '#6E4A26');                                                  // its stalk
+    p.fill(O(14.5, 14.5, 8, 11), '#6E4024', {edge: true});                                   // the cone
+    for (let row = 0; row < 6; row++) for (let i = 0; i < 4; i++){                           // its scales, in rows
+      const x = 9 + i * 3.8 + (row % 2 ? 1.9 : 0), y = 6 + row * 3.6, w = row === 0 || row === 5 ? 2.4 : 2.9;
+      if (((x - 14.5) / 7.2) ** 2 + ((y - 14.5) / 10) ** 2 > 1) continue;
+      p.fill(O(x, y, w, 2.1), '#A86A3A', {light: '#C98E58', dark: '#5E3A1E'});
+    }
+    [[21, 27.5], [25.5, 25], [26, 29.5]].forEach(([x, y]) => p.fill(O(x, y, 2.6, 1.9), '#F2E2B8', {light: '#FFF6DE', dark: '#C9B07A', edge: true}));   // the nuts
+  },
+  '羽毛': p => feather(p, '#4F9BD9', '#9CCDF2', '#2E6FA8'),   // a feather, blue (its own colour)
+  '红色 的 羽毛': p => feather(p, '#E0383A', '#F87A70', '#A81E22'),   // a red feather
+  '黄色 的 羽毛': p => feather(p, '#F2C14E', '#FFE69A', '#B8861E'),   // a yellow feather
+  '珍珠': p => {   // a pearl: a big white pearl in an open shell, its lid tipped up behind it
+    const SHELL = {light: '#FBE7DA', dark: '#B98E78', edge: true};
+    p.fill(and(O(16, 15, 13.5, 11), Rc(0, 3, 32, 12)), '#EBC6B2', SHELL);                   // the lid, open
+    [-9, -4.5, 0, 4.5, 9].forEach(dx => p.flat(path([[16, 14.5], [16 + dx * 1.15, 5.2]], .45), '#C99A84'));   // its ridges
+    p.fill(and(O(16, 18, 14, 10.5), Rc(0, 18, 32, 12)), '#EBC6B2', SHELL);                  // the bottom half
+    [-9, -4.5, 0, 4.5, 9].forEach(dx => p.flat(path([[16, 20], [16 + dx * 1.15, 27.6]], .45), '#C99A84'));
+    p.flat(and(O(16, 18.2, 12.2, 3.2), Rc(0, 17, 32, 5)), '#D9A894');                        // inside, pink
+    p.fill(O(16, 17, 4.8, 4.5), '#F6F4FA', {light: '#FFFFFF', dark: '#BDB6D2', edge: true}); // the pearl
+    p.flat(O(14.4, 15.4, 1.3, 1.1), '#FFFFFF');
+  },
+  '玉': p => {   // jade: a round green disc of jade with a hole in the middle, carved with little dots, on a red cord
+    p.flat(path([[16, 1], [16, 9]], .7), RED);                                               // the cord
+    p.fill(O(16, 4.5, 2.4, 1.8), RED, {light: '#F06A60', dark: '#A01E1E', edge: true});      // its knot
+    p.fill(and(O(16, 19.5, 11, 11), not(O(16, 19.5, 3.6, 3.6))), '#3FAE7A', {light: '#86DCAE', dark: '#1E7A4E', edge: true});
+    for (let a = 0; a < 14; a++){ const t = a * Math.PI / 7; p.dot(Math.round(15.5 + 7.2 * Math.cos(t)), Math.round(19 + 7.2 * Math.sin(t)), '#26895A'); }   // carved dots
+    p.flat(O(11.2, 13.8, 2.2, 1.3), '#B6F0D0');                                              // a gleam
+  },
+  '人参': p => {   // ginseng: a pale root shaped like a little person, arms and legs, under its green leaves and red berries
+    const ROOT = '#E7C48C', R = {light: '#F8E2B8', dark: '#B8925A'};
+    p.flat(path([[16, 9], [16, 12]], .7), '#5D9A4E');                                         // the stalk
+    p.fill(O(9.5, 6.5, 3.6, 2), LEAF, {edge: true}); p.fill(O(22.5, 6.5, 3.6, 2), LEAF, {edge: true}); p.fill(O(16, 3.2, 2, 3), LEAF, {edge: true});   // its leaves
+    p.fill(or(O(14.8, 7.4, 1.3), O(17.2, 7.4, 1.3), O(16, 9, 1.3)), RED, {light: '#F27068', dark: '#A01E1E'});        // red berries
+    p.fill(path([[12.5, 18.5], [8.5, 21], [5.5, 25]], 1.3), ROOT, R); p.fill(path([[19.5, 18.5], [23.5, 21], [26.5, 25]], 1.3), ROOT, R);   // its arms
+    p.fill(path([[14.5, 24], [12.5, 28], [11, 31]], 1.5), ROOT, R); p.fill(path([[17.5, 24], [19.5, 28], [21, 31]], 1.5), ROOT, R);       // and legs
+    p.fill(O(16, 20.5, 4.6, 5.5), ROOT, {...R, edge: true});                                   // its body
+    p.fill(O(16, 13.8, 2.8, 2.4), ROOT, {...R, edge: true});                                   // and head
+    [17.5, 20, 22.5].forEach(y => p.flat(Rc(13, y, 6, 1), '#C9A26A'));                         // rings round it
+    p.flat(path([[5.5, 25], [4, 27.5]], .4), '#B8925A'); p.flat(path([[26.5, 25], [28, 27.5]], .4), '#B8925A');   // root hairs
+  },
+  '金子': p => {   // gold: a big lumpy nugget of gold and two little ones, sparkling
+    p.fill(Pg([[5, 22], [8, 15], [14, 11.5], [21, 13], [25, 19], [21, 25.5], [11, 26.5]]), GOLD, {light: '#FFE69A', dark: '#B8861E', edge: true});
+    p.fill(O(25.5, 26.5, 3.4, 2.6), GOLD, {light: '#FFE69A', dark: '#B8861E', edge: true}); p.fill(O(7.5, 28.5, 2.8, 2.1), GOLD, {light: '#FFE69A', dark: '#B8861E', edge: true});
+    p.flat(or(O(12, 16, 2.6, 1.6), O(19, 15.5, 1.8, 1.2), O(16, 21, 2.2, 1.4)), '#FFE07A');   // bumps catching the light
+    p.flat(or(Rc(24, 4, 1, 5), Rc(22, 6, 5, 1)), '#FFFFFF'); p.flat(or(Rc(5, 8, 1, 3), Rc(4, 9, 3, 1)), '#FFFFFF');   // sparkles
+  },
+  // things you can only get by buying them: tools
+  '篮子': p => {   // a basket: woven, with a handle over it (to carry more)
+    p.fill(and(O(16, 14, 10.5, 10.5), not(O(16, 14, 8.4, 8.4)), Rc(0, 0, 32, 14)), '#A9763E', {light: '#C99A5E', dark: '#6E4A26', edge: true});   // the handle
+    p.fill(Pg([[4, 15], [28, 15], [25, 29], [7, 29]]), '#C9985A', {light: '#E3B97E', dark: '#8E6234', edge: true});   // the basket
+    [18.5, 22.5, 26.5].forEach(y => p.flat(Rc(5, y, 22, 1), '#9A6E3A'));                     // its weave
+    [8, 12, 16, 20, 24].forEach((x, i) => p.flat(Rc(x, 16 + (i % 2) * 2, 1, 12), '#A87C44'));
+    p.fill(Rc(3, 13, 26, 3, 1.5), '#A9763E', {light: '#C99A5E', dark: '#6E4A26', edge: true}); // its rim
+  },
+  '铲子': p => {   // a spade: a little digging spade, its wooden handle up to the top right, its wooden blade in a heap of earth
+    p.fill(O(11, 29, 9, 2.2), '#8A6A44');                                                     // the heap of earth
+    p.fill(path([[25, 5], [15.5, 17]], 1.4), WOOD, {light: '#D8AE78', dark: '#8A5A32', edge: true});   // the handle
+    p.fill(Rc(22.5, 2, 6.5, 3, 1.5), BARK, {edge: true});                                     // its grip
+    p.fill(Pg([[13.5, 15], [19.5, 19.5], [14, 28.5], [8, 23.5]]), '#C9985A', {light: '#E3B97E', dark: '#8E6234', edge: true});   // the blade, of wood
+    p.flat(path([[13, 19], [11.5, 24.5]], .4), '#A87C44'); p.flat(path([[15.5, 20.5], [14, 26]], .4), '#A87C44');   // its grain
+  },
+  '灯笼': p => {   // a lantern: a round red paper lantern with gold at the top and bottom, and a red tassel
+    p.flat(path([[16, 0], [16, 5]], .6), '#5A4126');                                          // its string
+    p.fill(Rc(11, 4, 10, 3, 1), GOLD, {light: '#FFE69A', dark: '#B8861E', edge: true});                                // gold top
+    p.fill(O(16, 15.5, 11.5, 9), '#E0383A', {light: '#F87A70', dark: '#A81E22', edge: true}); // the lantern
+    [[10, 6.2], [16, 4], [22, 6.2]].forEach(([x, w]) => p.flat(and(O(16, 15.5, w + .6, 8.4), not(O(16, 15.5, w - .2, 8.6))), '#B82428'));   // its ribs
+    p.flat(O(11.5, 12.5, 2.4, 3), '#FF9C8C');                                                 // the glow through it
+    p.fill(Rc(11, 23.5, 10, 3, 1), GOLD, {light: '#FFE69A', dark: '#B8861E', edge: true});                             // gold bottom
+    p.flat(or(path([[16, 26], [15, 31]], .5), path([[16, 26], [17, 31]], .5), path([[16, 26], [16, 31]], .5)), '#E0383A');   // its tassel
+  },
+  // and things for the Water Curtain Cave (things monkeys could make on the mountain: clay, bamboo, wood and skin, paper)
+  '鼓': p => {   // a drum: a red drum with a pale skin and gold studs, two drumsticks crossed over it
+    p.fill(Rc(5, 12, 22, 15, 4), '#C8322E', {light: '#E8605A', dark: '#8E1E1A', edge: true}); // its body
+    p.fill(O(16, 12.5, 11, 3.8), '#F2E2B8', {light: '#FFF6DE', dark: '#C9B07A', edge: true}); // its skin
+    [7.5, 11, 14.5, 18, 21.5, 25].forEach(x => p.dot(Math.round(x), 16, GOLD));                // studs
+    [7.5, 11, 14.5, 18, 21.5, 25].forEach(x => p.dot(Math.round(x), 24, GOLD));
+    p.fill(path([[21, 2], [27, 8.5]], .9), WOOD, {edge: true}); p.fill(O(20.5, 2, 1.6), '#E0383A');   // the drumsticks
+    p.fill(path([[11, 2], [5, 8.5]], .9), WOOD, {edge: true}); p.fill(O(11.5, 2, 1.6), '#E0383A');
+  },
+  '花瓶': p => {   // a vase: of brown clay, with a pale band painted with flowers, and three flowers in it, red, yellow and pink
+    p.flat(or(path([[16, 13], [11, 5]], .6), path([[16, 13], [16, 3]], .6), path([[16, 13], [21.5, 6]], .6)), '#4E9A48');   // their stems
+    p.fill(O(10.5, 4.5, 2.6), '#E0383A', {edge: true}); p.fill(O(16, 2.8, 2.6), '#F2C14E', {edge: true}); p.fill(O(22, 5.5, 2.6), '#F49AC0', {edge: true});
+    p.fill(Rc(12.5, 11, 7, 5, 1), '#B8683E', {light: '#D88A5A', dark: '#7E4224', edge: true});   // its neck
+    p.fill(O(16, 22, 8.5, 8), '#B8683E', {light: '#D88A5A', dark: '#7E4224', edge: true});      // and body, of clay
+    p.flat(and(O(16, 22, 8.2, 7.7), Rc(0, 19.5, 32, 5)), '#EAD7B0');                          // a pale band
+    [[11.5, 22], [16, 22], [20.5, 22]].forEach(([x, y]) => p.flat(O(x, y, 1.3), '#C8463A'));  // with flowers painted on it
+  },
+  '风铃': p => {   // a wind chime: five bamboo tubes of different lengths hanging from a twig, a red paper strip under them, ringing
+    p.fill(Rc(5, 4, 22, 2.2, 1.1), '#8A5A32', {edge: true});                                  // the twig
+    p.flat(path([[16, 4], [16, 0]], .5), '#5A4126');                                          // its string
+    [[8, 14], [12, 18], [16, 21], [20, 18], [24, 14]].forEach(([x, b]) => {
+      p.flat(path([[x, 6], [x, 8.5]], .4), '#5A4126');                                        // each one's string
+      p.fill(Rc(x - 1.6, 8.5, 3.2, b - 8.5, 1), '#B9C66A', {light: '#DCE69A', dark: '#7C8A3A', edge: true});   // a bamboo tube
+      p.flat(Rc(x - 1.4, 8.5 + (b - 8.5) * .45, 2.8, .8), '#8E9C4A');                         // its joint
+    });
+    p.flat(path([[16, 21.5], [16, 24]], .4), '#5A4126');
+    p.fill(Rc(14.6, 24, 2.8, 6.5, .6), '#E0383A', {edge: true});                              // the paper strip
+    p.flat(path([[3, 15], [5, 13.5]], .45), '#9AA2AA'); p.flat(path([[27, 15], [29, 13.5]], .45), '#9AA2AA');   // its ringing
+    p.flat(path([[2, 19], [4.5, 17.5]], .45), '#9AA2AA'); p.flat(path([[28, 19], [30.5, 17.5]], .45), '#9AA2AA');
+  },
+  '画': p => {   // a painting: a hanging scroll of mountains in the mist, under a red sun (no writing)
+    p.flat(path([[10, 3], [16, 0.5], [22, 3]], .5), '#5A4126');                              // its string
+    p.fill(Rc(5, 2.5, 22, 2.5, 1.2), '#6E4A26', {edge: true});                               // the rod at the top
+    p.fill(Rc(7, 5, 18, 21), '#F4EBD6', {light: '#FFF8E8', dark: '#D6C8A8', edge: true});    // the paper
+    p.fill(Pg([[8, 23], [13, 11], [18, 23]]), '#6AA678'); p.fill(Pg([[13, 23], [19.5, 13], [24, 23]]), '#3F7F52');   // mountains
+    p.flat(Pg([[11.4, 15], [13, 11], [14.6, 15], [13, 14]]), '#FFFFFF');                     // snow on top
+    p.fill(O(19.5, 9, 2.2), '#E0443C');                                                       // the sun
+    p.flat(Rc(8, 19, 16, 1), '#ECE4D0'); p.flat(Rc(10, 21, 12, 1), '#ECE4D0');                // mist
+    p.fill(Rc(5, 26, 22, 3, 1.5), '#6E4A26', {edge: true});                                   // the rod at the bottom
+  },
+  '鱼缸': p => {   // a fish jar: a big round jar of glazed clay, seen from a little above, two orange fish in its water by a lily pad
+    p.fill(O(16, 19, 13.5, 11), '#5E7E6A', {light: '#86A68E', dark: '#3A5444', edge: true});  // the jar, glazed green
+    p.flat(and(O(16, 19, 13.2, 10.7), Rc(0, 22, 32, 1)), '#4A6656');                           // a band round it
+    p.fill(O(16, 11.5, 12.5, 4.6), '#3F5A4A', {edge: true});                                  // its rim
+    p.fill(O(16, 11.8, 10.8, 3.6), '#5FA8D6', {light: '#8ACBEE', dark: '#3E82B0'});           // the water
+    p.fill(O(21.5, 11.6, 2.6, 1.4), '#5DAA4E');                                               // a lily pad
+    p.fill(O(11.5, 11.4, 2.4, 1.1), '#F2862E'); p.fill(Pg([[9.2, 11.4], [7.6, 10.2], [7.6, 12.6]]), '#F2862E');   // a fish
+    p.fill(O(17, 12.6, 2, 1), '#F7A24A'); p.fill(Pg([[18.9, 12.6], [20.3, 11.6], [20.3, 13.6]]), '#F7A24A');   // and another
+    p.dot(12, 11, '#2B1A10'); p.dot(16, 12, '#2B1A10');
+    p.flat(path([[8, 17], [10.5, 15.5]], .5), '#A8C8B0');                                     // the glaze shining
+  }
 };
 function splat(p, c){   // a smooth, round dab of paint, for a colour, with two little drops
   p.fill(or(O(15.5, 17, 10.5, 9), O(23, 21.5, 4.6, 4)), c);
@@ -1698,6 +1822,11 @@ function bird(p, body, wing, breast, beak){   // a little bird, side on, facing 
   p.fill(O(10, 12, 5.2, 4.8), body, {edge: true});
   p.fill(Pg([[2.5, 12.5], [6, 10.5], [6, 14]]), beak);
   p.eye(8, 10);
+}
+function feather(p, vane, light, dark){   // a feather, curving from bottom left to top right, its white quill down the middle (vane: its colour)
+  p.fill(Pg([[5, 28], [7, 21], [11, 15], [16, 10], [21, 6], [27, 3], [25.5, 8.5], [22, 13.5], [17, 18.5], [12, 23], [8, 26.5]]), vane, {light, dark, edge: true});
+  [[[9, 21.5], [6.6, 21]], [[13, 17], [10.6, 16.2]], [[18, 12.5], [15.8, 11.4]], [[15, 20], [17.5, 21]], [[20, 15.5], [22.5, 16.2]]].forEach(([a, b]) => p.flat(path([a, b], .45), dark));   // splits in it
+  p.flat(path([[4, 30], [8, 25], [13, 19], [19, 12], [26.5, 3.5]], .55), '#F4F1EA');       // the quill
 }
 function flower(p, petal, middle){   // a flower, its five petals one colour (petal), on a stem with two leaves
   p.fill(Cp(16, 18, 16, 30, 1), '#3E8A3E');
@@ -1853,7 +1982,90 @@ const ICON_DRAWINGS = {
   '⛶': p => p.flat(or(path([[1.5, 5.5], [1.5, 1.5], [5.5, 1.5]], .9), path([[10.5, 1.5], [14.5, 1.5], [14.5, 5.5]], .9),   // full screen: four corners
     path([[14.5, 10.5], [14.5, 14.5], [10.5, 14.5]], .9), path([[5.5, 14.5], [1.5, 14.5], [1.5, 10.5]], .9)), '#F2C14E')
 };
+// Little things on the map, 16 x 16, drawn on the ground or hung on a wall where the story puts them (MAP_ICONS, by name):
+// the treasures you find (the trade, 9 November 2026) and the things you buy for the Water Curtain Cave.
+const MAP_DRAWINGS = {
+  'cone': p => {   // a pine cone, fallen on the needles under a pine
+    p.fill(O(8, 14, 4, 1), '#3E5A30');                                                       // its shadow
+    p.fill(O(8, 10.5, 3.2, 3.8), '#6E4024', {edge: true});                                    // the cone
+    [[6.6, 8.4], [9.4, 8.4], [8, 10.4], [6.4, 12.2], [9.6, 12.2]].forEach(([x, y]) => p.fill(O(x, y, 1.3, 1), '#A86A3A', {light: '#C98E58', dark: '#5E3A1E'}));   // its scales
+  },
+  'featherRed': p => smallFeather(p, '#E0383A', '#F87A70', '#A81E22'),   // a feather lying on the ground, left by a bird
+  'featherYellow': p => smallFeather(p, '#F2C14E', '#FFE69A', '#B8861E'),
+  'featherBlue': p => smallFeather(p, '#4F9BD9', '#9CCDF2', '#2E6FA8'),
+  'clam': p => {   // a clam on the wet sand, open in the moonlight, its pearl shining
+    p.fill(and(O(8, 9, 6.5, 5), Rc(0, 3, 16, 6)), '#EBC6B2', {light: '#FBE7DA', dark: '#B98E78', edge: true});
+    p.fill(and(O(8, 10, 7, 4.5), Rc(0, 10, 16, 6)), '#EBC6B2', {light: '#FBE7DA', dark: '#B98E78', edge: true});
+    p.fill(O(8, 9.5, 2.4, 2.2), '#F6F4FA', {light: '#FFFFFF', dark: '#BDB6D2', edge: true});
+  },
+  'clamShut': p => {   // the same clam by day, shut tight
+    p.fill(O(8, 11, 6.5, 3.6), '#EBC6B2', {light: '#FBE7DA', dark: '#B98E78', edge: true});
+    p.flat(Rc(2, 11, 12, 1), '#B98E78');                                                      // where it shuts
+    [-3, 0, 3].forEach(dx => p.flat(path([[8, 12], [8 + dx * 1.4, 8.2]], .35), '#C99A84'));   // its ridges
+  },
+  'jadeRock': p => {   // a warm rock with green jade showing in it
+    p.fill(O(8, 10, 6.5, 4.8), '#A9A598', {light: '#D6D2C5', dark: '#7A766A', edge: true});
+    p.fill(O(9.5, 9.5, 2.4, 1.6), '#3FAE7A', {light: '#86DCAE', dark: '#1E7A4E'});
+    p.flat(path([[4.5, 11], [6.5, 9.5]], .35), '#7A766A');                                     // a crack
+  },
+  'ginseng': p => {   // a little ginseng plant: five-fingered leaves and a bunch of red berries
+    p.flat(path([[8, 15], [8, 8]], .6), '#5D9A4E');
+    p.fill(O(4.5, 8, 3, 1.6), '#4FA34A', {edge: true}); p.fill(O(11.5, 8, 3, 1.6), '#4FA34A', {edge: true}); p.fill(O(8, 5, 1.6, 3), '#4FA34A', {edge: true});
+    p.fill(or(O(7, 9.5, 1.3), O(9.2, 9.5, 1.3), O(8.1, 11.2, 1.3)), '#D83A3A', {light: '#F27068', dark: '#A01E1E'});
+  },
+  'goldFleck': p => {   // gold glinting in the shallows' sand, after heavy rain
+    p.fill(O(8, 10, 2.4, 1.6), '#F2C14E', {light: '#FFE69A', dark: '#B8861E', edge: true});
+    p.fill(O(11.5, 12, 1.4, 1), '#F2C14E', {light: '#FFE69A', dark: '#B8861E'});
+    p.fill(O(5, 12.5, 1, .8), '#F2C14E');
+  },
+  'lantern': p => {   // a red paper lantern, carried at night
+    p.flat(path([[8, 0], [8, 3]], .5), '#5A4126');
+    p.fill(Rc(5.5, 2.5, 5, 1.5), '#F2C14E');
+    p.fill(O(8, 8, 5.5, 4.5), '#E0383A', {light: '#F87A70', dark: '#A81E22', edge: true});
+    p.flat(O(6, 6.8, 1.2, 1.6), '#FF9C8C');
+    p.fill(Rc(5.5, 12, 5, 1.5), '#F2C14E'); p.flat(path([[8, 13.5], [8, 15.5]], .5), '#E0383A');
+  },
+  'vase': p => {   // a clay vase of flowers, on the stone table
+    p.flat(or(path([[8, 7], [5.5, 3]], .45), path([[8, 7], [8, 2]], .45), path([[8, 7], [10.5, 3]], .45)), '#4E9A48');
+    p.fill(O(5.2, 2.6, 1.6), '#E0383A'); p.fill(O(8, 1.8, 1.6), '#F2C14E'); p.fill(O(10.8, 2.6, 1.6), '#F49AC0');
+    p.fill(O(8, 11.5, 4.2, 4), '#B8683E', {light: '#D88A5A', dark: '#7E4224', edge: true}); p.fill(Rc(6.5, 6, 3, 3), '#B8683E');
+    p.flat(and(O(8, 11.5, 4, 3.8), Rc(0, 10.5, 16, 2)), '#EAD7B0');
+  },
+  'chime': p => {   // a bamboo wind chime, hung on the wall
+    p.fill(Rc(2.5, 2, 11, 1.4, .7), '#8A5A32', {edge: true});                                  // the twig
+    [[4, 8], [6.5, 10], [9, 11.5], [11.5, 9]].forEach(([x, b]) => { p.flat(path([[x, 3], [x, 4.4]], .3), '#5A4126'); p.fill(Rc(x - 1, 4.4, 2, b - 4.4, .6), '#B9C66A', {light: '#DCE69A', dark: '#7C8A3A', edge: true}); });   // its tubes
+    p.flat(path([[8, 11.5], [8, 13]], .3), '#5A4126'); p.fill(Rc(7.2, 13, 1.6, 2.6, .4), '#E0383A');   // and its paper strip
+  },
+  'drum': p => {   // a red drum on the cave floor
+    p.fill(Rc(2.5, 7, 11, 8, 2), '#C8322E', {light: '#E8605A', dark: '#8E1E1A', edge: true});
+    p.fill(O(8, 7.2, 5.5, 2), '#F2E2B8', {light: '#FFF6DE', dark: '#C9B07A', edge: true});
+    [4, 6.5, 9, 11.5].forEach(x => p.dot(Math.round(x), 9, '#F2C14E'));
+    p.fill(path([[11, 1], [13, 4]], .6), '#B98A55'); p.fill(O(10.8, 1, 1), '#E0383A');        // a drumstick on it
+  },
+  'painting': p => {   // a painting of the mountain, hung on the wall
+    p.fill(Rc(2, 1, 12, 1.5), '#6E4A26');
+    p.fill(Rc(3, 2.5, 10, 11), '#F4EBD6', {light: '#FFF8E8', dark: '#D6C8A8'});
+    p.fill(Pg([[3.5, 12], [6.5, 6], [9.5, 12]]), '#6AA678'); p.fill(Pg([[6.5, 12], [10, 7], [12.5, 12]]), '#3F7F52');
+    p.fill(O(10, 4.8, 1.2), '#E0443C');
+    p.fill(Rc(2, 13.5, 12, 1.5), '#6E4A26');
+  },
+  'fishJar': p => fishJar(p, false),   // a glazed fish jar on the cave floor, its water empty
+  'fishJarFish': p => fishJar(p, true)    // and with your little fish in it
+};
+function smallFeather(p, vane, light, dark){
+  p.fill(Pg([[3, 12], [6, 8], [11, 4.5], [13, 4], [11, 7.5], [7, 11]]), vane, {light, dark, edge: true});
+  p.flat(path([[2, 13.5], [7, 9.5], [12.5, 4.5]], .4), '#F4F1EA');
+}
+function fishJar(p, fish){
+  p.fill(O(8, 10, 7, 5.6), '#5E7E6A', {light: '#86A68E', dark: '#3A5444', edge: true});
+  p.fill(O(8, 6.4, 6.4, 2.4), '#3F5A4A', {edge: true});
+  p.fill(O(8, 6.6, 5.4, 1.8), '#5FA8D6');
+  if (fish){ p.fill(O(7, 6.6, 1.6, .8), '#F2862E'); p.dot(9, 6, '#F2862E'); }
+  else p.flat(path([[5, 6.4], [6.5, 6]], .3), '#9AD2F0');
+}
+
 function icon(name){ const cells = draw(name, ICON_DRAWINGS[name], 16); N = 16; return rowsOf(cells, name); }
+function mapIcon(name){ const cells = draw(name, MAP_DRAWINGS[name], 16); N = 16; return rowsOf(cells, name); }
 
 // Each picture as rows of letters and a palette, as content/pictures.js has them.
 const LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -1892,8 +2104,14 @@ ${words.map(one).join(',\n')}
 const ICONS = {
 ${Object.keys(ICON_DRAWINGS).map(k => entry(k, icon(k))).join(',\n')}
 };
+
+// Little things on the map, 16 x 16, by name: the treasures you find and the things for the Water Curtain Cave (drawn by
+// drawThings, js/draw.js).
+const MAP_ICONS = {
+${Object.keys(MAP_DRAWINGS).map(k => entry(k, mapIcon(k))).join(',\n')}
+};
 `;
 }
 const FILE = path_.join(__dirname, '../content/pictures.js');
-if (require.main === module){ fs.writeFileSync(FILE, text()); console.log('Wrote content/pictures.js (' + Object.keys(DRAWINGS).length + ' pictures, ' + Object.keys(ICON_DRAWINGS).length + ' icons)'); }
-module.exports = {text, FILE, DRAWINGS, picture, ICON_DRAWINGS, icon};
+if (require.main === module){ fs.writeFileSync(FILE, text()); console.log('Wrote content/pictures.js (' + Object.keys(DRAWINGS).length + ' pictures, ' + Object.keys(ICON_DRAWINGS).length + ' icons, ' + Object.keys(MAP_DRAWINGS).length + ' things on the map)'); }
+module.exports = {text, FILE, DRAWINGS, picture, ICON_DRAWINGS, icon, MAP_DRAWINGS, mapIcon};

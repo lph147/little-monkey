@@ -392,7 +392,7 @@ test('every character has a talk script (or, a bird, is shooed away: shoo), and 
 });
 
 test('every if only checks things the game knows about', () => {
-  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag', 'form', 'away', 'lifted', 'carrying', 'night', 'raining', 'sealsWaiting', 'hasScroll'];
+  const keys = [...remembered, ...Object.keys(AREA.counters), 'new', 'knows', 'holding', 'wanted', 'bought', 'ready', 'place', 'hurt', 'near', 'at', 'around', 'following', 'friends', 'practice', 'lesson', 'lessonWaits', 'wordReady', 'hiding', 'hidesFound', 'any', 'canBuy', 'inBag', 'form', 'away', 'lifted', 'carrying', 'night', 'raining', 'sealsWaiting', 'hasScroll', 'tool', 'decor', 'decorWaiting', 'jarFish', 'treasures'];
   for (const [where, cond] of allIfs()){
     for (const [k, v] of Object.entries(cond)){
       assert.ok(keys.includes(k), `${where} checks "${k}"; it can check ${keys.join(', ')}`);
@@ -478,7 +478,8 @@ test('every line is said somewhere', () => {
     ...allSteps().filter(([, s]) => s.spy).flatMap(([, s]) => s.things.map(t => t.say)),   // (I spy: the spy step)
     ...allSteps().filter(([, s]) => s.tour).map(([, s]) => s.ask),   // (showing someone round: the tour step)
     ...Object.values(AREA.requests).flatMap(asked).flatMap(r => [r.ask, r.offer, r.thanks, r.wrong, r.wrongAnswer].filter(Boolean)),
-    ...Object.values(SHOPS).flatMap(sh => [sh.ask, sh.welcome, sh.noProblem]),
+    ...Object.values(SHOPS).flatMap(sh => [sh.ask, sh.welcome, sh.noProblem, sh.sellAsk]),   // (and what a shop that buys treasures asks: js/trade.js)
+    ...allSteps().filter(([, s]) => s.decorate && s.line).map(([, s]) => s.line),   // (setting up a thing for the cave: what you say)
     ...(AREA.asking ? [AREA.asking.line] : []), ...allLegend.filter(([, t]) => t.ask).map(([, t]) => t.ask),   // (asking what something is: js/world.js)
     ...(AREA.lessons || []).flatMap(l => [...Object.values(l.teach || {}), ...(l.things || []).map(t => t.ask), ...[l.race, l.jog].filter(Boolean).flatMap(x => [x.start, x.end])]),
     ...Object.values(AREA.countGames || {}).map(g => g.thing.ask),
@@ -678,7 +679,7 @@ test('every enemy is a collectible word with a picture and a map sprite (or a na
 test('food: each says what it does, how many you can carry, and heals, helps, gives you energy or keeps wild creatures away; fruit trees give food', () => {
   for (const [w, f] of Object.entries(AREA.food || {})){
     assert.ok(knownHere(w), `${w} is a word you can collect here`);
-    assert.ok(f.does && f.carry > 0 && [f.heal > 0, f.helps === true, f.fast > 0, f.stink > 0].filter(Boolean).length === 1, `${w}: does, carry, and heal, helps, fast or stink (one thing each)`);
+    assert.ok(f.does && f.carry > 0 && [f.heal > 0, f.helps === true || f.helps > 0, f.fast > 0, f.stink > 0].filter(Boolean).length === 1, `${w}: does, carry, and heal, helps, fast or stink (one thing each)`);
   }
   for (const [, t, from] of allLegend) if (t.pick) assert.ok((AREA.food || {})[t.pick.item], `picking at ${from} gives ${t.pick.item}, which isn't food`);
 });
