@@ -22,6 +22,22 @@ function areaToPlay(){
   } catch(e) { return 1; }
 }
 const AREA = AREAS.find(a => a.number === areaToPlay()) || AREAS[0];   // the area being played
+// The language the game you're playing is learning (Both ways, decided 9 November 2026, in DESIGN.md): 'zh', Chinese,
+// played in English, as every game before then, or 'en', English, played in Chinese. Like the area, it's chosen as the
+// page loads (where the tab is going, GO_KEY, or the game's own save's learn), so everything is built for it, and a game
+// learning the other loads the page again (toArea in js/main.js). js/lang.js does the rest.
+function learnToPlay(){
+  try { const go = JSON.parse(sessionStorage.getItem(GO_KEY) || 'null'); if (go && (go.learn === 'en' || go.learn === 'zh')) return go.learn; } catch(e) {}
+  try {
+    const slots = JSON.parse(localStorage.getItem('xiaohouzi-v2-slots') || '{}'), n = [1, 2, 3].includes(slots.active) ? slots.active : 1;
+    const s = JSON.parse(localStorage.getItem(n === 1 ? 'xiaohouzi-v2' : `xiaohouzi-v2-game${n}`) || 'null');
+    if (s && s.started) return s.learn === 'en' ? 'en' : 'zh';
+  } catch(e) {}
+  return wantLearn();
+}
+// What a new game learns: Chinese, or with ?learn=en on the page's address, English (for testing, until New game asks).
+function wantLearn(){ try { if (new URLSearchParams(String(location.search || '')).get('learn') === 'en') return 'en'; } catch(e) {} return 'zh'; }
+const LEARN = learnToPlay();
 const toks = zh => zh.split(' ');     // '我 饿 了 。' becomes ['我','饿','了','。']
 const WORDS = {};                     // the words and phrases you can collect here, and those of the areas before it (still yours)
 const GLOSS = {};                     // every other word, as [pinyin, English], for tapping on

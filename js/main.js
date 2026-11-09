@@ -216,7 +216,7 @@ function toTitle(){
     + `<button class="btn big" id="filesBtn" data-label="Save files">Save files<span class="sub">${g ? 'Your 3 games' : 'Load a game from a file'}</span></button>`;
   const tb = $('#titleButtons');
   if (g) tb.querySelector('#contBtn').onclick = go(() => continueGame(n));
-  if (qp) tb.querySelector('#pracBtn').onclick = () => { getAC(); unlockSpeech(); keepSaves(); SFX.blip(); if (slotArea(n) !== AREA.number) return toArea(slotArea(n), n, 'practise'); if (n !== SLOT){ useSlot(n); setUpGame(); } practiseFromTitle(); };   // (no music: it's not the game)
+  if (qp) tb.querySelector('#pracBtn').onclick = () => { getAC(); unlockSpeech(); keepSaves(); SFX.blip(); if (slotArea(n) !== AREA.number || slotLearn(n) !== LEARN) return toArea(slotArea(n), n, 'practise', slotLearn(n)); if (n !== SLOT){ useSlot(n); setUpGame(); } practiseFromTitle(); };   // (no music: it's not the game)
   tb.querySelector('#newBtn').onclick = () => { SFX.blip(); if (empty) go(() => newGame(empty))(); else filesCard('full'); };
   tb.querySelector('#filesBtn').onclick = () => { SFX.blip(); filesCard(); };
   titleSel = 0; markTitle();
@@ -227,8 +227,8 @@ function moveTitle(d){   // the D-pad on the title screen: between its buttons
   const n = $('#titleButtons').querySelectorAll('.btn').length, i = titleSel + (d === 'left' || d === 'up' ? -1 : 1);
   if (i >= 0 && i < n){ titleSel = i; markTitle(); SFX.blip(); }
 }
-function continueGame(n){   // play game n from where you left off (in its own area: if it's in another, the page loads again for it)
-  if (slotArea(n) !== AREA.number) return toArea(slotArea(n), n, 'continue');
+function continueGame(n){   // play game n from where you left off (in its own area, learning its own language: if not, the page loads again for it)
+  if (slotArea(n) !== AREA.number || slotLearn(n) !== LEARN) return toArea(slotArea(n), n, 'continue', slotLearn(n));
   if (n !== SLOT){ useSlot(n); setUpGame(); }
   closeCard(); $('#titlecard').hidden = true; placePlayer(); mode = 'play'; updateHUD();
 }
@@ -263,7 +263,7 @@ function slotCard(n){
       const r = readSaveFile(await file.text());
       if (r.error){ infoBox('💾', `<p>${esc(r.error)}</p>`).then(() => slotCard(n)); return; }
       useSave(r.save, n);
-      if ((S.area || 1) !== AREA.number) return toArea(S.area, n, 'title');   // (a game in another area: the page loads again for it)
+      if ((S.area || 1) !== AREA.number || (S.learn || 'zh') !== LEARN) return toArea(S.area || 1, n, 'title', S.learn || 'zh');   // (a game in another area, or learning the other language: the page loads again for it)
       setUpGame(); toTitle(); filesCard(null, n); toast(`Loaded into Game ${n}.`);
     };
     return;
@@ -366,21 +366,23 @@ async function startGame(){
   }
 }
 
-// A new game, in game n: the story starts in the first area (if this page plays another, it loads again for the first).
-function newGame(n){
-  if (AREA.number !== AREAS[0].number) return toArea(AREAS[0].number, n, 'new');
+// A new game, in game n, learning learn: the story starts in the first area (if this page plays another, or learns the other
+// language, it loads again for the new game).
+function newGame(n, learn = wantLearn()){
+  if (AREA.number !== AREAS[0].number || learn !== LEARN) return toArea(AREAS[0].number, n, 'new', learn);
   newGameIn(n); setUpGame(); playIntro();
 }
 const practiseFromTitle = () => quickPractice(() => { closeCard(); toTitle(); });
 // Going to another area (decided 4 November 2026: the page plays one area at a time, chosen as it loads, js/data.js): the
 // game is saved, the page notes where to go and what to do there (GO_KEY, for this tab only), and loads again, playing that
 // area (area) with game slot, then does action: continue, new (a new game), practise (quick practice from the title
-// screen), arrive (you've just come, such as sailing in on your raft: the area's begin) or title.
+// screen), arrive (you've just come, such as sailing in on your raft: the area's begin) or title, learning learn (Both ways:
+// a game learns the language it learns, js/data.js).
 let reloading = false;
-function toArea(area, slot, action){
+function toArea(area, slot, action, learn = LEARN){
   if (S.started && slot === SLOT) save();
   setSlotsInfo(d => ({...d, active:slot}));
-  try { sessionStorage.setItem(GO_KEY, JSON.stringify({area, slot, action})); } catch(e) {}
+  try { sessionStorage.setItem(GO_KEY, JSON.stringify({area, slot, action, ...(learn !== 'zh' || LEARN !== 'zh' ? {learn} : {})})); } catch(e) {}   // (learning Chinese on a page learning Chinese: the note as it always was)
   reloading = true; busy = true;
   try { location.reload(); } catch(e) {}
 }

@@ -2,7 +2,7 @@
 
 /* ================= STATE ================= */
 const KEY = 'xiaohouzi-v2';   // where the save is kept in the browser (an old name; the version is inside the save)
-const SAVE_VERSION = 40;
+const SAVE_VERSION = 41;
 const HEALTH = 50;   // your health in battles at the start, and the most you can have (the save's maxHealth: the story can raise it)
 function areaStart(){   // a new game's progress in the area: the area's own list, each request not asked yet, holding nothing,
   const p = {...AREA.progress};   // no square of the map changed yet (changed: 'place:x,y' to the letter it's become), and
@@ -24,7 +24,7 @@ function placesOnWayTo(place){
   for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
   return way;
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0, scrollNew:[]}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
+function fresh(){ return {version:SAVE_VERSION, learn:LEARN, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0, scrollNew:[]}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -262,6 +262,10 @@ function upgradeSave(s){
     if (!Array.isArray(s.scrollNew)) s.scrollNew = [];   // before has seen what it has: nothing new till its next word
     s.version = 40;
   }
+  if (s.version === 40){   // version 40: every game learned Chinese. Now a game learns Chinese or English (learn: Both ways,
+    s.learn = 'zh';        // decided 9 November 2026, in DESIGN.md), and every game before then learns Chinese
+    s.version = 41;
+  }
   if ('peaches' in s){ if (!('shells' in s)) s.shells = s.peaches; delete s.peaches; }   // money was called peaches before version 16
   // A save from another area than the one this page plays (such as a game in Area 2, shown on the title screen while the page
   // plays Area 1) is only filled in with what every save has: what's kept for its own area waits till it's played there
@@ -342,6 +346,8 @@ function summaryOf(s, n){
 // Plays game n from now on: it's remembered as the game you're playing.
 // The area game n is in (1 if it's empty or can't be read), without loading it.
 function slotArea(n){ try { const d = JSON.parse(localStorage.getItem(slotKey(n))); return (d && d.area) || 1; } catch(e) { return 1; } }
+// The language game n is learning ('zh' if it's empty or can't be read), without loading it (Both ways: js/data.js).
+function slotLearn(n){ try { const d = JSON.parse(localStorage.getItem(slotKey(n))); return d && d.started && d.learn === 'en' ? 'en' : 'zh'; } catch(e) { return 'zh'; } }
 function useSlot(n){ SLOT = n; S = loadSave(n); setSlotsInfo(d => ({...d, active:n})); }
 // A new game in slot n, keeping your sound and reading settings.
 function newGameIn(n){

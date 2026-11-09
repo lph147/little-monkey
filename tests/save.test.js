@@ -408,3 +408,12 @@ test('a version 39 save has no new words marked in its Word Scroll: nothing new 
   assert.deepEqual([s.w['山'], s.w['树']], [{lv: 1, ok: 0}, {lv: 2, ok: 1}], 'its words as they were');
   assert.deepEqual(saveOf(loadGame()).scrollNew, [], 'a new game starts with nothing new');
 });
+
+test('a version 40 save learns Chinese, as every game did (version 41: Both ways, a game can learn English instead)', () => {
+  const old = {version: 40, started: true, area: 1, w: {'山': {lv: 1, ok: 0}}, pos: {place: 'meadow', x: 13, y: 7, dir: 'up'}, areas: {1: {elder: 2}}};
+  const s = saveOf(loadGame({save: old}));
+  assert.equal(s.version, VERSION);
+  assert.equal(s.learn, 'zh');
+  assert.deepEqual(s.w['山'], {lv: 1, ok: 0}, 'its words as they were');
+  assert.equal(saveOf(loadGame()).learn, 'zh', 'a new game learns Chinese');
+});
