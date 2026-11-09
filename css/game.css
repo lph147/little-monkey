@@ -6,6 +6,7 @@
   --shell:#B7D1C1; --shell-edge:#97B7A3; --bezel:#2F3D38; --pad:#33433D; --pad-ink:#E6F0EA; --led:#45D16A;
   --btnA:#B8323A; --btnB:#3D6A93;
   --plate:#E3C77E;   /* the speech box's name plate (its outline), and the ring at the speaker's feet on the map */
+  --who:#8E5E00; --where:#2F6497;   /* people and places, bold, in English text (hlText, js/helpers.js) */
   --tip:#FFF3B8; --tip-ink:#2A2215;   /* a tip bubble: the same in light and dark, like a sticky note */
   --sil:brightness(0);   /* the shadow of a word you have heard but not caught */
   --pixel:"Pixelify Sans", "Source Sans 3", "Noto Sans SC", system-ui, sans-serif;
@@ -26,7 +27,7 @@
     --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
     --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
     --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --led:#5BE07E;
-    --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); --plate:#9C8443; color-scheme:dark;
+    --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); --plate:#9C8443; --who:#F0C452; --where:#8DB8E3; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
@@ -34,7 +35,7 @@
   --jade:#5DBB8C; --jade-ink:#0E1C16; --gold:#F0C452; --line:#33503F;
   --ok:#5DBB8C; --bad:#EE7B72; --scrim:rgba(0,0,0,.6);
   --shell:#1E392D; --shell-edge:#2B4D3E; --bezel:#0A120F; --pad:#4A5D54; --pad-ink:#F2F7F4; --led:#5BE07E;
-  --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); color-scheme:dark;
+  --btnA:#C9454C; --btnB:#4F82B0; --sil:brightness(0) invert(1); --who:#F0C452; --where:#8DB8E3; color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -1472,3 +1473,63 @@ rt.hid{visibility:hidden}
 @media (prefers-reduced-motion: reduce){.snowfight .sfball,.snowfight .sfthem,.snowfight .sfyou{animation:none!important}.snowfight .sfsplat{animation:none!important;opacity:1}}
 .scene.courtyard .mound{background:#9EA5A7;box-shadow:inset 0 -6px 0 #7F8789}   /* you and your partner on the paving stones */
 .scene.courtyardSnow .mound{background:#F1F5F8;box-shadow:inset 0 -6px 0 #C8D3DB}   /* and on the snow */
+
+/* ================= THE FOUR IDEAS (decided 9 November 2026) ================= */
+/* 💡 Tips (the menu): the Chinese tips, each a row that opens its card again, then the button tips, each with its button
+   drawn (js/menu.js tipsPage, TIP_PAGE in js/tips.js) */
+.tipsintro{margin:0 0 .2rem}
+.tipsec{font-family:var(--pixel);font-size:.85rem;color:var(--muted);margin:.5rem 0 .2rem}
+.tipslist{display:grid;gap:4px}
+.tipsrow{display:flex;align-items:center;gap:.6rem;text-align:left;background:var(--paper);border:2px solid var(--line);border-radius:7px;padding:.25rem .5rem;font:inherit;color:inherit;width:100%}
+button.tipsrow{cursor:pointer}
+.tipsrow.plain{border-style:dashed}
+.tipskey{flex:none;min-width:2.9rem;display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1.1}
+.tipskey.zh{font-family:var(--text);font-size:1.25rem}
+.tipskey small{display:block;font-size:max(.62rem,10.5px);color:var(--muted);text-align:center}
+.tipstxt{flex:1;min-width:0;line-height:1.25;display:flex;flex-direction:column}
+.tipstxt b{font-size:.95rem}
+.tipstxt span{font-size:.85rem;color:var(--muted)}
+.tipsrow.plain .tipstxt span{color:var(--ink)}
+.tipsgo{flex:none;color:var(--jade);font-weight:800}
+.tkey{display:inline-flex;align-items:center;justify-content:center;min-width:1.55rem;height:1.55rem;border-radius:50%;font-family:var(--pixel);font-size:.8rem;color:#FFF;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.tkey.a{background:var(--btnA)} .tkey.b{background:var(--btnB)}
+.tkey.pad{border-radius:5px;background:var(--pad);color:var(--pad-ink);font-size:.95rem}
+.tkey.pill{border-radius:9px;background:var(--pad);color:var(--pad-ink);font-size:.62rem;padding:0 .35rem;min-width:2.2rem;height:1.1rem}
+.tkey.grey{border-radius:4px;background:none;color:var(--muted);box-shadow:none;font-family:var(--text);font-size:1.1rem}
+.tkey.eng{border-radius:4px;background:var(--paper);color:var(--ink);border:1px solid var(--line);box-shadow:none;font-size:.62rem;padding:0 .3rem;height:1.2rem}
+/* Settings, Tips and Save on one row, even on the smallest phones */
+:root:is([data-screen=small],[data-screen=tiny]) .menurow{gap:.3rem}
+:root:is([data-screen=small],[data-screen=tiny]) .menurow .btn{padding-left:.45rem;padding-right:.45rem}
+
+/* 📖 Story so far (the Tasks page): each part you've reached, chapter by chapter, the one you're in now marked Now, and
+   the scenes to watch again under their parts; an area before this one folded into one line (js/menu.js storyPage) */
+.storybtn{float:right;margin:-.15rem -.2rem .2rem .5rem;font-family:var(--pixel);font-size:.78rem;padding:.15rem .45rem;border:2px solid var(--ink);border-radius:6px;background:var(--paper);color:var(--ink);cursor:pointer}
+.storypage{display:grid;gap:.35rem}
+.storych{font-family:var(--pixel);font-size:.85rem;color:var(--jade);margin:.35rem 0 0}
+.storypart{border-left:3px solid var(--line);padding:.05rem 0 .05rem .55rem}
+.storypart p{margin:0;font-size:.9rem;line-height:1.35}
+.storypart .sp-name{font-weight:700;font-size:.92rem}
+.storypart .sp-name small{font-weight:400;color:var(--muted)}
+.storypart.now{border-left-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent);border-radius:0 6px 6px 0}
+.storypart .sp-now{margin-top:.15rem;font-size:.85rem}
+.nowtag{display:inline-block;margin-left:.35rem;font-family:var(--pixel);font-size:.7rem;font-weight:400;background:var(--gold);color:#2A2215;border-radius:4px;padding:0 .3rem;vertical-align:1px}
+.watchrow{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.2rem}
+.watch{font-family:var(--pixel);font-size:.74rem;padding:.1rem .45rem;border:1.5px solid var(--ink);border-radius:5px;background:var(--paper);color:var(--ink);cursor:pointer}
+.storyfold{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:color-mix(in srgb,var(--jade) 8%,transparent);border:2px solid var(--line);border-radius:7px;padding:.3rem .55rem;cursor:pointer}
+.storyfold b{font-size:.92rem}
+.storyfold span{display:block;font-size:.82rem;color:var(--muted)}
+.storyfold[aria-expanded="true"] span{display:none}
+.storypage .hint{margin:.2rem 0}
+
+/* Names in English text (hlText, js/helpers.js): a Chinese word you know green, as in sentences (tap it to hear it, where
+   the page says so: data-say); people gold; places blue; all bold, so they stand out without colour too */
+.hl-zh{color:var(--jade);font-weight:700}
+.hl-who{color:var(--who);font-weight:700}
+.hl-where{color:var(--where);font-weight:700}
+.hl-zh[data-say]{cursor:pointer}
+.checklist li.done .hl-zh,.checklist li.done .hl-who,.checklist li.done .hl-where{color:inherit;font-weight:inherit}
+
+/* Typed lines (typeLine, js/cards.js): a word waits, keeping its room, till the voice says it; the English and ▼ wait
+   till the line's all there */
+.talk .unsaid{visibility:hidden}
+.talk.typing .sentence-en,.talk.typing .btn.next{visibility:hidden}

@@ -144,7 +144,7 @@ async function pressA(at){   // at: when it was pressed, if known (tooSoon, js/c
     }
     return;
   }
-  if (talkNext){ if (!tooSoon(at)) talkNext(); return; }   // the speech box: on to what comes next
+  if (talkNext){ if (!tooSoon(at) && !finishTyping()) talkNext(); return; }   // the speech box: the rest of a line typing on (js/cards.js), or on to what comes next
   if (fishPress('a')) return;   // fishing: hooking a fish that's biting (js/fishing.js)
   if (!canAct()) return;
   if (messageFirst()){ if (!tooSoon(at, msgAt)){ closeMessage(); finished(); } return; }   // (not if pressed just as it came up; and then what you're facing rests, as after anything A does)
@@ -157,7 +157,7 @@ async function pressA(at){   // at: when it was pressed, if known (tooSoon, js/c
 function pressB(at){
   tipPressed('#btnB');
   if (!modal.hidden){ const b = sheet.querySelector('[data-b]'); if (b && !b.disabled && b.offsetParent !== null && !tooSoon(at, shownAt, B_READ_MS)) b.click(); return; }
-  if (talkNext && !talkMove){ if (!tooSoon(at, shownAt, B_READ_MS)) talkNext(); return; }   // B moves talk on too (but doesn't choose a reply)
+  if (talkNext && !talkMove){ if (!tooSoon(at, shownAt, B_READ_MS) && !finishTyping()) talkNext(); return; }   // B moves talk on too, as A does (but doesn't choose a reply)
   if (mode === 'intro'){ const sk = $('#skipBtn'); if (sk) sk.click(); return; }
   if (fishPress('b')) return;   // fishing: reeling your line back in (js/fishing.js)
   if (!$('#saybox').hidden){ if (!tooSoon(at, msgAt, B_READ_MS)) closeMessage(); return; }   // (not one that's only just come up, as you run)

@@ -49,7 +49,8 @@ test('the Tasks page in the feast: your journey and the part, then the story’s
   const g = game({...FEAST, bees: 1, hide: {spot: 'table', wrong: 0, won: 0, last: 'table'}, part: 6}, {place: 'homeGround', x: 13, y: 12, dir: 'up'});
   g.run('tasksPage(() => {})');
   const sheet = g.el('#sheet');
-  assert.match(sheet.querySelector('.journey').textContent.replace(/\s+/g, ' ').trim(), /^Your journey Get everything ready for the troop’s great feast\. ?Part 3: Food for the feast\.$/, 'the goal and the part (what to do: the tasks, below)');
+  assert.ok(sheet.querySelector('.journey .storybtn'), 'with Story so far ▸, every part you’ve reached');
+  assert.match(sheet.querySelector('.journey').textContent.replace('Story so far ▸', '').replace(/\s+/g, ' ').trim(), /^Your journey Get everything ready for the troop’s great feast\. ?Part 3: Food for the feast\.$/, 'the goal and the part (what to do: the tasks, below)');
   const items = sheet.querySelectorAll('.tasks li').map(li => (li.classList.contains('main') ? '* ' : '') + li.textContent.replace(/\s+/g, ' ').trim());
   assert.match(items[0], /^\* Follow the stream east, along the riverside, to find where bees live/, 'the story’s task first');
   const also = items.indexOf('Also');

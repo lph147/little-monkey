@@ -11,10 +11,10 @@ function menuGame(){
   return {game, sheet, run: code => game.run(code), items: () => sheet.querySelectorAll('[data-m]').map(b => b.dataset.m)};
 }
 
-test('the menu has a tile each for the Word Scroll, practice, tasks, the bag, friends and wardrobe, then Settings and Save', () => {
+test('the menu has a tile each for the Word Scroll, practice, tasks, the bag, friends and wardrobe, then Settings, Tips and Save', () => {
   const {sheet, run, items} = menuGame();
   run('pressMenu()');
-  assert.deepEqual(items(), ['words', 'practice', 'tasks', 'bag', 'friends', 'wardrobe', 'settings', 'save']);
+  assert.deepEqual(items(), ['words', 'practice', 'tasks', 'bag', 'friends', 'wardrobe', 'settings', 'tips', 'save']);
   const tile = sheet.querySelector('.mtile[data-m="tasks"]');
   assert.equal(tile.querySelector('.mzh').textContent, '任务');
   assert.equal(tile.querySelector('.mpy').textContent, 'rènwu');
@@ -55,17 +55,17 @@ test('Save saves the game and says so; it saves by itself anyway', () => {
   assert.match(run("document.querySelector('#saybox').innerHTML"), /Saved: Game 1, just now/);
 });
 
-test('Settings has the sound, pinyin, English on replies, frames a second, How to play, the opening and the title screen', () => {
+test('Settings has the sound, pinyin, English on replies, typed lines, frames a second and the title screen (How to play is on the Tips page, the scenes in Story so far)', () => {
   const {sheet, run, items} = menuGame();
   run('openMenu()');
   sheet.querySelector('[data-m="settings"]').click();
-  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'fps', 'howto', 'opening', 'title'], 'saving, loading and starting again are on the title screen');
+  assert.deepEqual(items(), ['music', 'sound', 'pinyin', 'replyEn', 'typed', 'fps', 'title'], 'saving, loading and starting again are on the title screen');
   const pinyin = run('S.pinyin');
   sheet.querySelector('[data-m="pinyin"]').click();
   assert.equal(run('S.pinyin'), !pinyin, 'Pinyin switches');
   assert.equal(run('document.activeElement.dataset.m'), 'pinyin', 'and stays chosen');
   run('pressB()');
-  assert.deepEqual(items(), ['words', 'practice', 'tasks', 'bag', 'friends', 'wardrobe', 'settings', 'save'], 'B from Settings goes back to the menu');
+  assert.deepEqual(items(), ['words', 'practice', 'tasks', 'bag', 'friends', 'wardrobe', 'settings', 'tips', 'save'], 'B from Settings goes back to the menu');
   assert.equal(run('document.activeElement.dataset.m'), 'settings');
 });
 
@@ -83,9 +83,9 @@ test('B or the Menu button closes the menu, from the menu or Settings', () => {
 test('the D-pad moves around the menu on screen: up and down between rows, left and right along them', () => {
   const {sheet, run} = menuGame();
   run('openMenu()');
-  // the menu, laid out as a 3 × 2 grid of tiles, then Settings and Save side by side, then Close
+  // the menu, laid out as a 3 × 2 grid of tiles, then Settings, Tips and Save side by side, then Close
   const place = {words: [0, 0, 150, 100], practice: [160, 0, 150, 100], tasks: [320, 0, 150, 100], bag: [0, 110, 150, 100], friends: [160, 110, 150, 100], wardrobe: [320, 110, 150, 100],
-    settings: [0, 220, 150, 40], save: [160, 220, 150, 40]};
+    settings: [0, 220, 100, 40], tips: [110, 220, 90, 40], save: [210, 220, 90, 40]};
   for (const [m, [left, top, width, height]] of Object.entries(place)) sheet.querySelector(`[data-m="${m}"]`).rect = {left, top, width, height};
   sheet.querySelector('[data-a=close]').rect = {left: 320, top: 280, width: 80, height: 40};
   const on = () => run("document.activeElement.dataset.m || document.activeElement.dataset.a");
@@ -96,7 +96,8 @@ test('the D-pad moves around the menu on screen: up and down between rows, left 
   run("navFocus('up')"); assert.equal(on(), 'practice', 'at the top, up stays put');
   run("navFocus('left')"); assert.equal(on(), 'words');
   run("navFocus('down'); navFocus('down')"); assert.equal(on(), 'settings', 'down from the grid goes to Settings');
-  run("navFocus('right')"); assert.equal(on(), 'save', 'and Save beside it');
+  run("navFocus('right')"); assert.equal(on(), 'tips', 'and Tips beside it');
+  run("navFocus('right')"); assert.equal(on(), 'save', 'then Save');
   run("navFocus('down')"); assert.equal(on(), 'close', 'then to Close');
 });
 

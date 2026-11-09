@@ -9,7 +9,7 @@ const {loadGame} = require('./fake-browser');
 const tick = () => new Promise(r => setImmediate(r));
 function replyGame(w, extra = {}){
   const game = loadGame({dom: true, save: {version: 10, started: true, w, ...extra}});
-  game.run("mode = 'play'; globalThis.__done = false;");
+  game.run("mode = 'play'; S.typed = false; globalThis.__done = false;");   // (each line whole: lines that type on, tests/typed-lines.test.js)
   const box = game.el('#talk'), sheet = game.el('#sheet');
   const run = code => game.run(code);
   return {

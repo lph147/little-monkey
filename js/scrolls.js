@@ -57,7 +57,7 @@ function checklistHTML(onlyLeft){
   const all = areaChecklist(), items = all.filter(([t, done, exitTest, found]) => found && (!onlyLeft || (!done && !exitTest)));
   const more = all.some(([, , , found]) => !found);
   const ordered = [...items.filter(([, done]) => !done), ...items.filter(([, done]) => done)];
-  return `<ul class="checklist">${ordered.map(([t, done]) => `<li class="${done ? 'done' : ''}"><span>${esc(t)}</span></li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
+  return `<ul class="checklist">${ordered.map(([t, done]) => `<li class="${done ? 'done' : ''}"><span>${done ? esc(t) : hlText(t)}</span></li>`).join('')}${more ? '<li class="more">More to find as you play</li>' : ''}</ul>`;
 }
 function infoBox(who, html){   // who: a picture over it, or an animal's or a battle's scene, down its left as in the questions (or none)
   return new Promise(res => {

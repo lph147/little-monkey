@@ -136,7 +136,7 @@ function buttonLabels(now){
     const bb = sheet.querySelector('[data-b]');
     return [btnLabel(focused), bb && bb.offsetParent !== null ? btnLabel(bb) : ''];
   }
-  if (talkNext){ const ok = talkBox.querySelector('[data-a=ok]'); return [ok ? btnLabel(ok) : 'Say it', '']; }
+  if (talkNext){ if (typing) return ['Show all', '']; const ok = talkBox.querySelector('[data-a=ok]'); return [ok ? btnLabel(ok) : 'Say it', '']; }   // (a line still typing on: A shows it all, js/cards.js)
   if (mode === 'title'){ const s = $('#titleButtons').querySelector('.sel'); return [s ? btnLabel(s) : 'Choose', '']; }
   if (mode === 'intro') return [$('#beginBtn') ? scene.last : 'Next', 'Skip'];
   if (fishing) return [fishing.bite && !fishing.hooked ? 'Hook it' : '', fishing.hooked ? '' : 'Stop'];   // fishing (js/fishing.js): A hooks a fish that's biting, B stops
@@ -299,13 +299,24 @@ function playScene(s){
 }
 function playIntro(){ playScene({id:'opening', caps:CAPS, last:'Begin', end:() => startGame()}); }
 // One of the area's other scenes (AREA.scenes), in the story (the scene step), after a lesson, or watched again from
-// Settings: once it ends, you're back where you were. Its pictures are its art, if it has one (several scenes can share
-// one, such as painting each part of the school), drawn with the scene's own settings (def).
-function storyScene(id){
+// Story so far (js/menu.js; an area before this one's too, area): once it ends, you're back where you were. Its pictures
+// are its art, if it has one (several scenes can share one, such as painting each part of the school), drawn with the
+// scene's own settings (def).
+function storyScene(id, area = AREA){
   return new Promise(res => {
     let ended = false;
-    const def = AREA.scenes[id];
+    const def = area.scenes[id];
     playScene({id, art:def.art || id, def, caps:sceneCaps(def.captions), last:'OK', end:() => {
+      if (ended) return; ended = true;
+      stopSpeech(); $('#capbox').hidden = true; $('#skipBtn').hidden = true; mode = 'play'; res();
+    }});
+  });
+}
+// The opening watched again (an area's intro; Story so far's Watch the opening), and back where you were once it ends.
+function watchOpening(area = AREA){
+  return new Promise(res => {
+    let ended = false;
+    playScene({id:'opening', caps:sceneCaps(area.intro), last:'OK', end:() => {
       if (ended) return; ended = true;
       stopSpeech(); $('#capbox').hidden = true; $('#skipBtn').hidden = true; mode = 'play'; res();
     }});

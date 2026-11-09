@@ -134,7 +134,7 @@ async function partsCheck(){
     const p = PARTS[i];
     if (p.chapter !== chapterNow() || !matches(p.when)) continue;
     here().part = i; save();
-    if (p.card !== false && !quiet){ SFX.chime(); await infoBox('', `<div class="chaptercard partcard"><p class="label">${esc(p.name)}</p><h2>${esc(p.title)}</h2>${p.text ? `<p class="parttext">${esc(fill(p.text, false, true))}</p>` : ''}</div>`, 'OK'); }
+    if (p.card !== false && !quiet){ SFX.chime(); await infoBox('', `<div class="chaptercard partcard"><p class="label">${esc(p.name)}</p><h2>${esc(p.title)}</h2>${p.text ? `<p class="parttext">${hlText(fill(p.text, false, true))}</p>` : ''}</div>`, 'OK'); }
     return;
   }
   if (quiet && PARTS.length) here().part = -1;   // (not into a part yet: each one's card shows as it begins)

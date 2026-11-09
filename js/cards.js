@@ -98,9 +98,10 @@ function navFocus(d){
   if (!items.some(b => b.getBoundingClientRect().width)) return inOrder();   // no layout to go by: step through in order
   const next = nearestIn(d, items[cur], items);
   if (next) return go(items.indexOf(next));
-  // Nothing that way: left and right step through in reading order (to the next row, in a grid); up
-  // and down stay put at the top and bottom, and nothing wraps round from the last button to the first.
-  if (d === 'left' || d === 'right') inOrder();
+  // Nothing that way: left and right step through in reading order (to the next row, in a grid); up and down scroll the
+  // card if it has more that way (Story so far, its buttons among its words: decided 9 November 2026), else stay put at
+  // the top and bottom, and nothing wraps round from the last button to the first.
+  if (d === 'left' || d === 'right') inOrder(); else scrollSheet(d);
 }
 // The button you'd reach by moving from b in direction d (up, down, left or right) on screen: the nearest
 // one that way, preferring one in line with b (overlapping its column for up and down, its row for left
@@ -184,6 +185,58 @@ function scrollSheet(d){   // the card, by most of what it shows
 }
 more.onclick = () => scrollSheet('down');
 
+/* ================= TYPED LINES ================= */
+// A line in the speech box comes up a word at a time, each word with its pinyin as the voice says it, like karaoke, so you
+// link the sound to the characters (decided 9 November 2026, the four ideas plan; Settings' Typed lines, on unless you
+// switch it off: S.typed). Each line is one recording: the speech in it (its span, js/sound.js) is shared out between the
+// words by their syllables (a character each), with a pause at each comma or full stop (TYPE_PAUSE), so each word shows
+// as it starts to be said; the first shows at once. With no voice to keep time with (none started after TYPE_WAIT, or the
+// device's own voice, whose length isn't known), a steady pace (TYPE_SYLLABLE a syllable, slower at a slower voice speed).
+// Each word keeps its room while it waits (css .unsaid), so nothing moves; the English and ▼ wait (css .typing) till the
+// voice has said it all. A (or B) while it types shows it all at once, the voice carrying on, and A again moves on
+// (finishTyping, from pressA and pressB in js/input.js), so a quick A never skips a line unread; 🔊 and English show it
+// all too. Only the speech box's Chinese lines: messages, cards, questions and scenes come up whole, as ever.
+const TYPE_SYLLABLE = 250, TYPE_WAIT = 700;   // (ms)
+const TYPE_PAUSE = {'，':.6, '、':.6, '：':.6, '；':.6, '。':1, '！':1, '？':1, '…':1, '……':1};   // (in syllables)
+const typedLines = () => S.typed !== false;
+let typing = null;   // the line typing on now: {finish, stop, voiced}
+function finishTyping(){ if (!typing) return false; typing.finish(); shown(); return true; }   // (shown: an A pressed again straight away doesn't skip it unread)
+const stopTyping = () => { if (typing) typing.stop(); };
+// Types the line in the speech box (root) on; done runs once it's all there. Gives the typing, whose voiced(secs) times
+// the rest of it to the voice, just started, its speech secs long (or null, not known); or null for a line of one word.
+function typeLine(root, done = () => {}){
+  const bits = [...root.querySelectorAll('.talkline .line .tok, .talkline .line .punct')];
+  if (bits.filter(b => !b.classList.contains('punct')).length < 2) return null;
+  const isMark = b => b.classList.contains('punct'), pause = b => TYPE_PAUSE[b.textContent.trim()] ?? .5;
+  const syllables = b => Math.max(1, [...(b.dataset.t || '')].filter(c => /\p{Script=Han}/u.test(c)).length);
+  let acc = 0, last = 0;
+  const at = bits.map(b => { if (isMark(b)){ acc += pause(b); return last; } last = acc; acc += syllables(b); return last; });   // (a mark shows with the word before it)
+  let total = acc;
+  for (let i = bits.length - 1; i >= 0 && isMark(bits[i]); i--) total -= pause(bits[i]);   // (the voice stops at the last word: no pause after it)
+  let shownTo = 0, timers = [], over = false;
+  const show = n => { for (; shownTo < Math.min(n, bits.length); shownTo++) bits[shownTo].classList.remove('unsaid'); };
+  const clear = () => { timers.forEach(clearTimeout); timers = []; };
+  const end = () => { if (over) return; over = true; clear(); show(bits.length); if (typing === me){ typing = null; root.classList.remove('typing'); } done(); };   // (never the box's next line's: only while it's this one)
+  const plan = (from, unit) => {   // the words not shown yet, timed from from (performance.now()), unit ms a syllable
+    if (over) return;
+    clear();
+    const now = performance.now();
+    for (let i = shownTo; i < bits.length; i++){ const n = i + 1; timers.push(setTimeout(() => show(n), Math.max(0, from + at[i] * unit - now))); }
+    timers.push(setTimeout(end, Math.max(0, from + total * unit - now)));   // all said: the English and ▼
+  };
+  const steady = () => TYPE_SYLLABLE / voiceSpeed();
+  const me = {
+    finish: end,
+    stop: () => { over = true; clear(); if (typing === me) typing = null; },   // (the box moving on: nothing more to do)
+    voiced: secs => plan(performance.now(), secs ? secs * 1000 / Math.max(.5, total) : steady())
+  };
+  bits.forEach(b => b.classList.add('unsaid'));
+  root.classList.add('typing');
+  show(1); while (shownTo < bits.length && isMark(bits[shownTo])) show(shownTo + 1);   // (the first word at once, and a mark after it)
+  plan(performance.now() + TYPE_WAIT, steady());   // (till the voice starts: if it doesn't, a steady pace)
+  return typing = me;
+}
+
 /* ================= SPEECH BOX (what characters say, over the bottom of the map) ================= */
 const talkBox = $('#talk');
 let talkNext = null;          // moves on to what comes after the line, while the speech box is showing one
@@ -219,11 +272,13 @@ function sayLine(who, line, opts){
     bindTokens(talkBox);
     const text = line.t.join(''), q = sel => talkBox.querySelector(sel);
     lastLine = id && id !== 'player' ? {id, line} : null;
-    say(text, null, id);
-    q('[data-a=say]').onclick = () => say(text, null, id);
+    stopTyping();
+    const typed = typedLines() ? typeLine(talkBox) : null;   // (a word at a time, as the voice says it: above)
+    say(text, null, id, secs => { if (typed) typed.voiced(secs); });
+    q('[data-a=say]').onclick = () => { finishTyping(); say(text, null, id); };
     const en = q('[data-a=en]');
-    if (en) en.onclick = () => { q('.sentence-en').hidden = false; en.remove(); };
-    const next = () => { if (tipStep()) return; talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };   // (A, B or ▼ with a tip showing that has a next tip: that tip first)
+    if (en) en.onclick = () => { finishTyping(); q('.sentence-en').hidden = false; en.remove(); };
+    const next = () => { if (tipStep()) return; stopTyping(); talkNext = null; talkMove = null; SFX.blip(); closeTalk(); res(); };   // (A, B or ▼ with a tip showing that has a next tip: that tip first)
     q('[data-a=ok]').onclick = next;
     talkNext = next;
     // turn: what to do, as you turn to face the way they say with the D-pad (its arrows: you turn on the spot, as with
@@ -242,12 +297,12 @@ const youFacing = () => monkeySprite('player', pl.dir, false).toDataURL();
 function noteHTML(text){
   const icon = (text.match(new RegExp(`^(?:${ICON_RE.source})\\s*`, 'u')) || [''])[0], rest = text.slice(icon.length);   // (ICON_RE: js/art.js)
   const [, head, more] = rest.match(/^(.+?[\p{L}\p{N})][.!?])\s+(.+)$/su) || [, rest, ''];   // (a sentence ends after a word, not "a !")
-  return `<div class="talknote">${icon ? `<span class="noteicon">${pixelIcons(icon.trim())}</span>` : ''}<p><b>${pixelIcons(esc(head))}</b>${more ? ` <span>${pixelIcons(esc(more))}</span>` : ''}</p></div>`;
+  return `<div class="talknote">${icon ? `<span class="noteicon">${pixelIcons(icon.trim())}</span>` : ''}<p><b>${pixelIcons(hlText(head))}</b>${more ? ` <span>${pixelIcons(hlText(more))}</span>` : ''}</p></div>`;   // (its names standing out: hlText, js/helpers.js)
 }
 function showNarration(text, last, {ok, note} = {}){
   if (!note) lastLine = null;   // (the story has moved on)
   return new Promise(res => {
-    talkBox.innerHTML = `${note ? noteHTML(text) : `<p class="narration">${pixelIcons(esc(text))}</p>`}
+    talkBox.innerHTML = `${note ? noteHTML(text) : `<p class="narration">${pixelIcons(hlText(text))}</p>`}
       <button class="btn primary next" data-a="ok" data-label="${esc(ok || (last ? 'Done' : 'Next'))}">${ok ? esc(ok) + ' ▼' : last ? 'Done' : '▼'}</button>`;
     talkBox.classList.toggle('again', !talkBox.hidden);
     talkBox.hidden = false; talkBox.scrollTop = 0; placeTalk(); shown();

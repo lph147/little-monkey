@@ -1,7 +1,8 @@
 // Tips: instead of a page of instructions before you start, a bubble points at a control the first
 // time you need it ("Hold an arrow to walk", "Press A to talk"). Each tip shows once; the save remembers
-// which you've had (S.tips). How to play is still in Settings. This file loads before js/state.js, which
-// marks every tip as had in a game started before tips existed (those players had How to play).
+// which you've had (S.tips), and the menu's Tips page has each one you've had, to read again (TIP_PAGE, below), with
+// How to play. This file loads before js/state.js, which marks every tip as had in a game started before tips existed
+// (those players had How to play).
 
 /* ================= TIPS ================= */
 // Each tip, in the order they're checked: at, what it points at; text; when, is it time for it (checked
@@ -15,13 +16,14 @@ const TIPS = {
   look: {at:'#btnA', text:'Press <b>A</b> to look', when:() => aActs() && !npcAt(...facing()) && promptFor(...facing()) === 'Look'},
   // stepping stones (hopAcross, js/world.js), the first time you face some
   hop: {at:'#btnA', text:'Press <b>A</b> to hop onto a stepping stone', when:() => aActs() && promptFor(...facing()) === 'Hop'},
-  // every grey word in the line lit, not just the first (decided 24 October 2026); the bubble points at the first
-  grey: {at:'#talk .tok.listen', all:true, once:true, then:'tap', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove},
+  // every grey word in the line lit, not just the first (decided 24 October 2026); the bubble points at the first. (These
+  // three wait till the line is all there, once it types on: js/cards.js's typeLine.)
+  grey: {at:'#talk .tok.listen', all:true, once:true, then:'tap', text:'Grey words are just for listening. You don’t need to know them yet.', when:() => !!talkNext && !talkMove && !typing},
   // then A lights one of them, to tap (decided 24 October 2026: it was on your very first line, 你好, with its English
   // right under it, so there was nothing to find out)
-  tap: {at:'#talk .tok.listen', once:true, after:true, text:'Tap a word to see what it means', when:() => !!talkNext && !talkMove},
+  tap: {at:'#talk .tok.listen', once:true, after:true, text:'Tap a word to see what it means', when:() => !!talkNext && !talkMove && !typing},
   // the first line you hear again, its English behind the English button
-  english: {at:'#talk [data-a=en]', once:true, text:'A line’s English shows the first few times you hear it. Tap <b>English</b> to see it again.', when:() => !!talkNext && !talkMove},
+  english: {at:'#talk [data-a=en]', once:true, text:'A line’s English shows the first few times you hear it. Tap <b>English</b> to see it again.', when:() => !!talkNext && !talkMove && !typing},
   // food in your bag that does something as you walk about, such as honey, the first time you have some: how to eat it
   // (decided 26 October 2026: honey made you faster, but nothing said so where you'd see it)
   eat: {at:'#bagBtn', lasts:9000, text:() => { const w = walkFood(); return `Eat the ${esc(wz(w))} in your bag to ${esc(FOOD[w].does.toLowerCase())}: press <b>BAG</b>, and tap it.`; },
@@ -30,6 +32,17 @@ const TIPS = {
   run: {at:'#btnB', lasts:9000, text:'Hold <b>B</b> as you walk, to run.', when:() => canAct() && canRun()}
   // (Tasks and Menu had tips too; the old monkey tells you about them instead, decided 18 October 2026.)
 };
+// The tips about the buttons as the menu's Tips page lists them, once you've had one of each one's tips (ids; js/menu.js,
+// decided 9 November 2026, the four ideas plan): the button, drawn (css .tkey), and the tip in full.
+const TIP_PAGE = [
+  {ids:['walk'], key:'<span class="tkey pad">✚</span>', text:'Hold an arrow to walk. Tap it to turn on the spot.'},
+  {ids:['talk', 'look'], key:'<span class="tkey a">A</span>', text:'Press <b>A</b> to talk to someone, or to look at what you’re facing.'},
+  {ids:['grey', 'tap'], key:'<span class="tkey grey">字</span>', text:'Grey words are just for listening: you don’t need to know them yet. Tap any word to see what it means.'},
+  {ids:['english'], key:'<span class="tkey eng">English</span>', text:'A line’s English shows the first few times you hear it. Tap <b>English</b> to see it again.'},
+  {ids:['hop'], key:'<span class="tkey a">A</span>', text:'Press <b>A</b> at stepping stones to hop across, onto the picture of the word you hear.'},
+  {ids:['eat'], key:'<span class="tkey pill">BAG</span>', text:'Some snacks in your bag help you, such as honey, which makes you walk faster: press <b>BAG</b>, and tap one.'},
+  {ids:['run'], key:'<span class="tkey b">B</span>', text:'Hold <b>B</b> as you walk, to run.'}
+];
 let tip = null;   // the tip showing: {id, target, lit: what glows (target, or with all, every match), until}
 let tipThen = null;   // the tip to show next (a tip's then), once A has moved on from the one before
 const walkFood = () => Object.keys(FOOD).find(w => FOOD[w].fast && S.bag[w] > 0);   // food in your bag that makes you walk faster

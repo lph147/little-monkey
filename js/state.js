@@ -24,7 +24,7 @@ function placesOnWayTo(place){
   for (let p = (place in from) ? place : FIRST_PLACE; p; p = from[p]) way.unshift(p);
   return way;
 }
-function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0, scrollNew:[]}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
+function fresh(){ return {version:SAVE_VERSION, w:{}, gloss:{}, shells:0, friends:[], area:AREA.number, pos:{place:START.place,x:START.x,y:START.y,dir:'down'}, areas:{[AREA.number]:areaStart()}, started:false, sound:true, music:true, tasksSeen:{}, tasksRead:{}, tips:{}, pinyin:true, replyEn:true, fps:false, voiceSpeed:1, typed:true, lines:{}, lineDay:{}, heard:{}, health:HEALTH, maxHealth:HEALTH, coins:0, howto:false, met:[], encounters:0, today:{d:'',ids:[]}, bag:{}, wardrobe:{owned:[], wearing:[]}, following:[], turn:0, clock:{t:0, n:0, turn0:0, friends0:[], caught:[]}, scroll:{has:false, sealed:[]}, tools:[], decor:[], decorNew:[], jarFish:false, helpLeft:0, scrollNew:[]}; }   // (clock: the time of day, and what you've done today: js/daynight.js; scroll: the old monkey's, once he's given it you, and its pages sealed, js/scrolls.js)
 
 // Brings a save from an older version up to date, and fills in anything missing. Nothing is thrown away.
 function upgradeSave(s){
@@ -350,7 +350,7 @@ function slotArea(n){ try { const d = JSON.parse(localStorage.getItem(slotKey(n)
 function useSlot(n){ SLOT = n; S = loadSave(n); setSlotsInfo(d => ({...d, active:n})); }
 // A new game in slot n, keeping your sound and reading settings.
 function newGameIn(n){
-  const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps, voiceSpeed:S.voiceSpeed};
+  const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps, voiceSpeed:S.voiceSpeed, typed:S.typed};
   SLOT = n; S = Object.assign(fresh(), keep); setSlotsInfo(d => ({...d, active:n}));
   forgetPictures(n);   // (the map's pictures of the game that was there: js/map.js)
 }
@@ -359,7 +359,7 @@ function deleteSlot(n){
   try { const raw = localStorage.getItem(slotKey(n)); if (raw) keepBackup(`deleted-game${n}-${Date.now()}`, raw); localStorage.removeItem(slotKey(n)); } catch(e) {}
   setSlotsInfo(d => { const played = {...d.played}; delete played[n]; return {...d, played}; });
   forgetPictures(n);
-  if (n === SLOT){ const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps, voiceSpeed:S.voiceSpeed}; S = Object.assign(fresh(), keep); }
+  if (n === SLOT){ const keep = {sound:S.sound, music:S.music, pinyin:S.pinyin, replyEn:S.replyEn, fps:S.fps, voiceSpeed:S.voiceSpeed, typed:S.typed}; S = Object.assign(fresh(), keep); }
 }
 // Game n as a file to download (Copy to a file), to keep it safe or carry it to another device.
 function saveFile(n = SLOT){

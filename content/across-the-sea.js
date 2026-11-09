@@ -308,7 +308,8 @@ const ACROSS_THE_SEA = {
   // The journey's goal, and the story's parts within each chapter (decided 5 November 2026, after playing it: the human
   // world felt aimless, and never said why you were there), at the top of the Tasks page: a part's title card as it
   // begins (when: the furthest you've reached; card:false, one that begins with its chapter's card), what it's about
-  // (text), and what you're doing in it (now). Checklist items with a part show only while you're in it.
+  // (text; a part with no card has its story instead, for Story so far on the Tasks page), and what you're doing in it
+  // (now). Checklist items with a part show only while you're in it.
   goal: [{if:{chapter:0, toldSea:0}, text:'Find someone who knows where the immortals live: an immortal can teach you never to grow old.'},
     {if:{door:{below:2}}, text:'Find an immortal who can teach you never to grow old.'}, {if:{sentHome:0}, text:'Learn all you can from the immortal.'},
     {if:{king:{below:2}}, text:'Save the troop’s little monkeys from the Demon of Havoc.'},
@@ -330,6 +331,7 @@ const ACROSS_THE_SEA = {
       text:'Years go by, and nobody in the town knows. But at the harbour, boats sail all over the sea: maybe someone there knows…',
       now:[{if:{toldSea:0}, text:'Ask at the harbour: someone there must know.'}, {if:{boat:{below:2}}, text:'Sail west across the sea, with the boatman.'}, {text:'Find out where the immortal lives.'}]},
     {id:'climb', chapter:1, name:'Part 1', title:'The climb', when:{chapter:1}, card:false,
+      story:'You’ve crossed the western sea, and the immortal lives up this mountain! Climb it, past the woodcutter and up over the clouds, to his cave.',
       now:'Climb the mountain, to the immortal’s cave.'},
     {id:'spring', chapter:1, name:'Part 2', title:'Spring', when:{door:2},
       text:'The immortal is waiting for you, in his cave. You’ll live here a whole year, and he’s a great teacher: learn all you can!',
@@ -353,6 +355,7 @@ const ACROSS_THE_SEA = {
       text:'Showing off to the pupils has made the master angry…',
       now:[{if:{sentHome:0}, text:'The master wants to see you.'}, {text:'That’s the end of chapter 1.'}]},
     {id:'homeAgain', chapter:2, name:'Part 1', title:'Home again', when:{chapter:2}, card:false,
+      story:'The master has sent you home. After twenty years away, you’re back on Flower Fruit Mountain, by the stone you were born from. But where is the troop?',
       now:'Home, after twenty years. Find the troop: they’re hiding.'},
     {id:'demons', chapter:2, name:'Part 2', title:'The little demons', when:{news:1},
       text:'A demon from the north, the Demon of Havoc, has carried off the troop’s little ones. Some of his little demons are still here…',
@@ -2773,20 +2776,20 @@ const ACROSS_THE_SEA = {
   intro: [],
   scenes: {
     // your raft drifts across the sea for days, and washes up on a sandy shore
-    drift: {watch:'Watch the raft drifting', when:{landed:1}, captions: [
+    drift: {watch:'Watch the raft drifting', part:'dress', when:{landed:1}, captions: [
       {at:0, zh:'木筏 在 海 上 。', en:'The raft is out on the sea.'},
       {at:4, zh:'有 山 ！ 有 树 ！', en:'Mountains! Trees!'},
       {at:7.5, zh:'有 人 ！', en:'People!'}
     ]},
     // years go by in the town, among people
-    yearsPass: {watch:'Watch the years go by', when:{years:1}, captions: [
+    yearsPass: {watch:'Watch the years go by', part:'west', when:{years:1}, captions: [
       {at:0, zh:'小 猴子 看 ， 小 猴子 听 。', en:'The little monkey watches, and listens.'},
       {at:4, zh:'小 猴子 学 说 话 。', en:'The little monkey learns to talk like people.'},
       {at:8, zh:'神仙 在 哪里 ？ 我 不 知道 。', en:'Where are the immortals? Nobody knows.'}
     ]},
     // a card for a jump in time, after the years in the town: 很多年以后…… (decided 5 November 2026, with what's changed
     // when you look round: the children grown up, new little pupils, the teacher's hair grey, a new stall)
-    manyYearsLater: {watch:'Watch “many years later”', when:{years:1}, captions: [{at:0, zh:'很 多 年 以后 ……', en:'Many years later…'}]},
+    manyYearsLater: {watch:'Watch “many years later”', part:'west', when:{years:1}, captions: [{at:0, zh:'很 多 年 以后 ……', en:'Many years later…'}]},
     // the nights between the seasons of the master's year: the cave turning, as you sleep (js/seasons.js)
     toSummer: {art:'seasonTurn', from:'spring', to:'summer', captions:[{at:0, zh:'孙悟空 睡觉 了 。', en:'Sun Wukong goes to sleep.'}, {at:4.6, zh:'夏天 来 了 ！', en:'Summer is here!'}]},
     toAutumn: {art:'seasonTurn', from:'summer', to:'autumn', captions:[{at:0, zh:'孙悟空 睡觉 了 。', en:'Sun Wukong goes to sleep.'}, {at:4.6, zh:'秋天 来 了 ！', en:'Autumn is here!'}]},
@@ -2801,11 +2804,11 @@ const ACROSS_THE_SEA = {
       {at:10.6, zh:'七 年 以后 ……', en:'Seven years later…'}
     ]},
     // the cloud somersault (飞), and the flight home at the end of the chapter (home: over the sea, Flower Fruit Mountain ahead)
-    somersault: {art:'cloudFlight', watch:'Watch the cloud somersault', when:{fly:1}, captions: [
+    somersault: {art:'cloudFlight', watch:'Watch the cloud somersault', part:'change', when:{fly:1}, captions: [
       {at:0, zh:'我 会 飞 了 ！', en:'I can fly!'},
       {at:4, zh:'孙悟空 在 天 上 飞 。', en:'Sun Wukong flies across the sky.'}
     ]},
-    flyHome: {art:'cloudFlight', home:true, watch:'Watch the flight home', when:{sentHome:1}, captions: [
+    flyHome: {art:'cloudFlight', home:true, watch:'Watch the flight home', part:'home', when:{sentHome:1}, captions: [
       {at:0, zh:'再见 ！', en:'Goodbye!'},
       {at:4, zh:'孙悟空 飞 回家 。', en:'Sun Wukong flies home.'},
       {at:8, zh:'花果山 ！', en:'Flower Fruit Mountain!'}
@@ -2815,22 +2818,22 @@ const ACROSS_THE_SEA = {
       {at:0, zh:'孙悟空 在 天 上 飞 。', en:'Sun Wukong flies across the sky.'},
       {at:5, zh:'有 山 ！', en:'Mountains!'}
     ]},
-    hairTrick: {watch:'Watch the hair trick', when:{king:2}, captions: [
+    hairTrick: {watch:'Watch the hair trick', part:'king', when:{king:2}, captions: [
       {at:0, zh:'变 ！', en:'Change!'},
       {at:3.6, zh:'很多 小 猴子 ！', en:'Lots of little monkeys!'}
     ]},
     // a wind that carries you home with the little monkeys and the cart, as in the book (驾阵狂风)
     // the party, once everything's back on the feast's tables: the troop, and all your friends (the old monkey's scroll)
-    party: {watch:'Watch the party', when:{party:1}, captions: [
+    party: {watch:'Watch the party', part:'home2', when:{party:1}, captions: [
       {at:0, zh:'我们 有 很多 朋友 ！', en:'We have lots of friends!'}
     ]},
-    windHome: {watch:'Watch the wind carry everyone home', when:{homeAgain:1}, captions: [
+    windHome: {watch:'Watch the wind carry everyone home', part:'home2', when:{homeAgain:1}, captions: [
       {at:0, zh:'有 风 了 ！', en:'The wind’s come!'},
       {at:4, zh:'小 猴子 们 很 快乐 。', en:'The little monkeys are so happy.'},
       {at:8, zh:'花果山 ！', en:'Flower Fruit Mountain!'}
     ]},
     // across the western sea, in the boatman's big boat
-    crossSea: {watch:'Watch the crossing', when:{boat:2}, captions: [
+    crossSea: {watch:'Watch the crossing', part:'west', when:{boat:2}, captions: [
       {at:0, zh:'有 风 了 ！', en:'The wind’s come!'},
       {at:4, zh:'船 在 海 上 走 。', en:'The boat sails over the sea.'},
       {at:8, zh:'有 山 ！', en:'Mountains!'}

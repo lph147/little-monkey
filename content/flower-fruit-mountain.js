@@ -70,6 +70,9 @@ const FLOWER_FRUIT_MOUNTAIN = {
   // know why you're doing what you're doing): goal, at the top of the Tasks page, the first whose if matches; parts, each
   // with its card as it begins (when; card:false for one that begins with its chapter), and what you're doing in it (now),
   // shown under the goal when there's no main task. Checklist items with a part show while you're in it (or after, till done).
+  // A part with no card has its story instead, for Story so far (the Tasks page's: js/menu.js storyPage), where an area
+  // after this one folds this area's story into one line, its storyFold.
+  storyFold:'Born from a stone, king of the monkeys, the troop’s new home and the great feast, then a raft across the sea.',
   goal: [
     {if:{chapter:0, cave:0}, text:'Find your place in the troop, on the mountain where you were born.'},
     {if:{chapter:0}, text:'Be brave, and become the troop’s {王|king}.'},
@@ -79,6 +82,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
   ],
   parts: [
     {id:'meadow', chapter:0, name:'Part 1', title:'The meadow', when:{chapter:0}, card:false,
+      story:'You’ve just been born from a stone, high on Flower Fruit Mountain. A troop of monkeys lives here in the meadow: go and meet them.',
       now:'Learn your first words, and get to know the troop.'},
     {id:'river', chapter:0, name:'Part 2', title:'Up the river', when:{gate:true},
       text:'The way up the mountain is open! Where does the river come from? Nobody in the troop has ever been to the top.',
@@ -90,6 +94,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       text:'Behind the waterfall is a cave, big enough for everyone, with beds, a table and bowls: a home for the whole troop! Lead them in.',
       now:'Bring the troop into the cave.'},
     {id:'homeGround', chapter:1, name:'Part 1', title:'A new home ground', when:{chapter:1}, card:false,
+      story:'The troop has a new home ground, by the waterfall. The big monkey wants to build a school there, out of wood and stones.',
       now:'Help the troop build a school at their new home ground.'},
     {id:'school', chapter:1, name:'Part 2', title:'The school', when:{school:{atLeast:1}},
       text:'The troop has built a school, and the old monkey will be its teacher. Go in, and learn your numbers and colours!',
@@ -3958,11 +3963,11 @@ const FLOWER_FRUIT_MOUNTAIN = {
   ],
 
   // Other scenes told like the opening, played by the scene step: their captions, as the opening's (teach: the word
-  // being taught, in bold green), and watch: a button in Settings to watch it again, once its when matches. Their
-  // pictures are drawn by js/draw.js (SCENE_ART), to match the times.
+  // being taught, in bold green), and watch: a button to watch it again, once its when matches, in Story so far, under
+  // the story's part it happens in (part; js/menu.js). Their pictures are drawn by js/draw.js (SCENE_ART), to match the times.
   scenes: {
     // the end of the prologue: in the cave, the troop makes you king; then, outside, the sun sets on Flower Fruit Mountain
-    becomingKing: {watch:'Watch becoming king', when:{cave:{atLeast:6}}, captions: [
+    becomingKing: {watch:'Watch becoming king', part:'king', when:{cave:{atLeast:6}}, captions: [
       {at:0, zh:'水帘洞 是 我们 的 家 。', en:'The Water Curtain Cave is our home.'},
       {at:3, zh:'你 很 勇敢 ！', en:'You are very brave!'},
       {at:5.5, zh:'你 是 我们 的 王 ！', en:'You are our king!', teach:'王'},
@@ -3985,7 +3990,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {at:0, zh:'这里 很 好看 ！', en:'It’s lovely up here!'}
     ]},
     // chapter 1: the troop builds the school, at the home ground: the walls go up, then the roof, then its sign
-    buildingSchool: {watch:'Watch the school being built', when:{school:{atLeast:1}}, captions: [
+    buildingSchool: {watch:'Watch the school being built', part:'school', when:{school:{atLeast:1}}, captions: [
       {at:0, zh:'我们 有 木头 ， 也 有 石头 。', en:'We have wood, and stones too.'},
       {at:3.2, zh:'一 ， 二 ， 三 ！', en:'One, two, three!'},
       {at:6.2, zh:'太 好 了 ！', en:'Wonderful!'},
@@ -3997,7 +4002,7 @@ const FLOWER_FRUIT_MOUNTAIN = {
     // chapter 1's end: the great feast, round the tables at the home ground (art: the feast, js/draw.js); the old monkey tells
     // the story of your first days (from the book's opening, checked by the native speaker, saved for chapter 1), you're
     // happy (快乐), then sad: you'll grow old; across the sea are immortals, who never do, and you'll go and find them
-    feast: {watch:'Watch the feast', when:{feastHeld:1}, captions: [
+    feast: {watch:'Watch the feast', part:'exam', when:{feastHeld:1}, captions: [
       {at:0, zh:'我们 有 桃子 ， 有 蜂蜜 ， 有 鱼 ！', en:'We have peaches, honey and fish!'},
       {at:3, zh:'山 上 有 一个 大 石头 。', en:'On the mountain there was a big stone.'},
       {at:6, zh:'石头 里 有 一只 小 猴子 。', en:'In the stone there was a little monkey.'},

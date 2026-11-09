@@ -1948,6 +1948,12 @@ const ICON_DRAWINGS = {
     const teeth = [...Array(8)].map((_, i) => { const a = i * Math.PI / 4; return Cp(8, 8, 8 + 6.6 * Math.cos(a), 8 + 6.6 * Math.sin(a), 1.5); });
     p.fill(and(or(O(8, 8, 5), ...teeth), not(O(8, 8, 2))), '#A9B4BC', {light: '#DDE4E8'});
   },
+  '💡': p => {   // a light bulb: the menu's Tips page (js/menu.js)
+    p.fill(or(O(8, 6.2, 5.4, 5.3), Pg([[4.6, 8.6], [11.4, 8.6], [10.2, 11.6], [5.8, 11.6]])), '#FFE27A', {light: '#FFF8D6', dark: '#E6B83A'});
+    p.flat(path([[6.2, 8.6], [7.1, 6.2], [8, 8.2], [8.9, 6.2], [9.8, 8.6]], .45), '#D89A22');   // its filament
+    p.fill(Rc(5.6, 11.6, 4.8, 3.6, .6), '#A9B4BC', {light: '#DDE4E8'});
+    p.flat(or(Rc(5.6, 12.7, 4.8, .7), Rc(5.6, 14, 4.8, .6)), '#7E8890');
+  },
   '🎯': p => {   // a target: quick practice
     p.fill(O(8, 8, 7), '#D9483B', {light: '#F07A6A'});
     p.flat(O(8, 8, 5), '#FAF6EC');

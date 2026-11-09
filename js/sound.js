@@ -672,11 +672,12 @@ function slowedClip(a, buf, rate){
   return buf.slowed[rate];
 }
 // Say some Chinese aloud: its clip if there is one (in who's voice), else the device's Chinese voice; at your voice
-// speed (or the 🐢's). onend runs when it's finished (or couldn't be said).
-function say(text, onend, who){
+// speed (or the 🐢's). onend runs when it's finished (or couldn't be said); onstart as it starts, with how long the speech
+// lasts in seconds (null for the device's voice, whose length isn't known), so a typed line keeps time with it (js/cards.js).
+function say(text, onend, who, onstart){
   const url = clipFor(text, who), a = url && getAC(), rate = sayRate(), slow = rate !== voiceSpeed();
   const ended = () => { if (slow) slowUntil = performance.now() + SLOW_GAP; if (onend) onend(); };   // (what's said straight after the 🐢's is slow too)
-  if (!a) return sayDevice(text, ended, rate);
+  if (!a) return sayDevice(text, ended, rate, onstart);
   stopSpeech();
   const me = {}; uttRef = me;
   speaking = true; speakSafety = performance.now() + text.length * 500 / rate + 4000; duck();
@@ -686,7 +687,8 @@ function say(text, onend, who){
     s.buffer = sl || buf; s.connect(a.destination);
     s.onended = () => { if (uttRef !== me) return; clipSrc = null; speaking = false; duck(); ended(); };
     clipSrc = s; s.start(0, ...(sl ? [] : buf.span || []));   // just the speech, without the silence around it
-  }).catch(() => { if (uttRef === me) sayDevice(text, ended, rate); });   // the clip didn't load (offline before it was kept): the device's voice
+    if (onstart) onstart(sl ? sl.duration : buf.span ? buf.span[1] : buf.duration);
+  }).catch(() => { if (uttRef === me) sayDevice(text, ended, rate, onstart); });   // the clip didn't load (offline before it was kept): the device's voice
 }
 // Say a word, such as an animal's name as it jumps out, and wait till it's said: at least least ms, and if it's still
 // being said then (a long one, such as 猫头鹰, or a clip still loading), till it ends and a moment more, so what comes
@@ -699,7 +701,7 @@ async function sayFully(text, least){
   await new Promise(r => { wake = r; setTimeout(r, 4000); });
   await sleep(200);
 }
-function sayDevice(text, onend, rate = voiceSpeed()){
+function sayDevice(text, onend, rate = voiceSpeed(), onstart){
   try {
     if (!('speechSynthesis' in window)) { onend && onend(); return; }
     const ss = speechSynthesis;
@@ -707,6 +709,7 @@ function sayDevice(text, onend, rate = voiceSpeed()){
     u.lang = 'zh-CN'; if (zhVoice) u.voice = zhVoice; u.rate = 0.8 * rate;
     const done = () => { if (uttRef !== u) return; speaking = false; duck(); if (onend) onend(); };
     u.onend = done; u.onerror = done;
+    if (onstart) u.onstart = () => { if (uttRef === u) onstart(null); };
     uttRef = u; window.__lastUtterance = u;   // keep a reference so the browser does not cut it off
     speaking = true; speakSafety = performance.now() + text.length * 500 / rate + 2000; duck();
     if (ss.speaking || ss.pending){ ss.cancel(); setTimeout(() => { if (uttRef === u) ss.speak(u); }, 90); }

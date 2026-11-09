@@ -70,6 +70,9 @@ test('the grey-words tip shows during a line, once; A then lights one grey word 
   const game = playing({version: 17, started: true, tips: {walk: 1, talk: 1, look: 1}});
   game.run("showDialog(speaker('elder'), L.go)");
   game.run('updateTips(1000)');
+  assert.equal(showing(game), null, 'not while the line is still typing on');
+  game.flush();   // (the line all said)
+  game.run('updateTips(1000)');
   assert.equal(showing(game), 'grey');
   assert.equal(get(game, 'S.tips.grey'), 1, 'it counts as seen straight away');
   const grey = game.el('#talk').querySelectorAll('.tok.listen');
@@ -92,6 +95,7 @@ test('the grey-words tip shows during a line, once; A then lights one grey word 
 test('the tip to tap a word only comes after the grey-words tip', () => {
   const game = playing({version: 17, started: true, tips: {walk: 1, talk: 1, look: 1, grey: 1}});
   game.run("showDialog(speaker('elder'), L.go)");
+  game.flush();   // (the line all said)
   game.run('updateTips(1000)');
   assert.equal(showing(game), null);
   game.run('pressA()');
@@ -102,6 +106,7 @@ test('the first line you hear again, without its English: a tip points at the En
   const tips = {walk: 1, talk: 1, look: 1, grey: 1, tap: 1};
   const game = playing({version: 17, started: true, tips, lines: {'去看看！': 3}});
   game.run("S.lineDay = {'去看看！': todayKey()}; showDialog(speaker('elder'), L.go)");   // (heard three times already, today)
+  game.flush();   // (the line all said)
   game.run('updateTips(1000)');
   assert.equal(showing(game), 'english');
   assert.match(game.run("$('#tip').innerHTML"), /shows the first few times you hear it\. Tap <b>English<\/b> to see it again/);

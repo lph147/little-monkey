@@ -15,7 +15,7 @@ function openMenu(focusId){
   openCard(`<p class="label">Menu</p>${statsHTML()}
     <div class="menu">
       <div class="tiles">${MENU_TILES.map(t => `<button class="mtile" data-m="${t.m}" data-label="${t.en}">${t.m === 'words' && fresh ? `<span class="mnew" aria-label="${fresh} new words">${fresh}<span class="w"> new</span></span>` : ''}<span class="micon" aria-hidden="true">${t.icon}</span><span class="mzh">${t.zh}</span><span class="mpy">${t.py}</span><span class="men">${t.en}</span></button>`).join('')}</div>
-      <div class="menurow"><button class="btn" data-m="settings">⚙ Settings</button><button class="btn" data-m="save">💾 Save</button></div>
+      <div class="menurow"><button class="btn" data-m="settings">⚙ Settings</button><button class="btn" data-m="tips">💡 Tips</button><button class="btn" data-m="save">💾 Save</button></div>
     </div>
     <div class="actions"><button class="btn" data-a="close" data-b>Close</button></div>`);
   const f = sheet.querySelector(`[data-m="${focusId || MENU_TILES[0].m}"]`); if (f) f.focus();
@@ -28,9 +28,45 @@ function openMenu(focusId){
     words: () => openScroll(() => openMenu('words')),
     practice: () => quickPractice(() => openMenu('practice')),
     friends: () => friendsPage(() => openMenu('friends')),
-    settings: () => openSettings()
+    settings: () => openSettings(),
+    tips: () => tipsPage(() => openMenu('tips'))
   };
   sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](); });
+}
+
+/* ================= TIPS ================= */
+// 💡 Tips (the menu's button beside Settings; decided 9 November 2026, the four ideas plan): every tip you've had, to read
+// again. About Chinese first: the areas' tips you've had (the goat's drum card: tap it to play it again), each pair of
+// words shown side by side once you know both (二 or 两?, SIDE_BY_SIDE) and each pair you know that sounds alike (河 and
+// 喝, soundsLike), each opening its card again; then How to play: each button tip you've had (TIP_PAGE, js/tips.js), its
+// button drawn, and How to play ▸, the whole guide (it was in Settings). Only what you've had, so it gives nothing away:
+// More come as you play. back: what Back does; focus: the tip to come back to.
+function chineseTips(){
+  const rows = [];
+  for (const a of AREAS.filter(a => a.number <= AREA.number)) for (const [id, t] of Object.entries(a.tips || {})) if (S.tips[id] && WORDS[t.word])
+    rows.push({id:'tip-' + id, zh:t.word, py:WORDS[t.word].py, title:cap(t.title.replace(/^Tip:\s*/, '')), text:`${t.heard}. Tap to try the drum again.`, card:back => tipCard(t, picHTML(t.word)).then(back)});
+  for (const p of SIDE_BY_SIDE) if (p.words.every(w => WORDS[w] && lvl(w) > 0))
+    rows.push({id:'side-' + p.words.join(''), zh:p.words.join(' '), py:p.words.map(w => WORDS[w].py).join(' · '), title:p.title, text:p.remember, card:back => sideCard(p.words.at(-1), back)});
+  const seen = new Set(), known = Object.keys(WORDS).filter(w => lvl(w) > 0);
+  for (const w of known){
+    const o = soundsLike(w); if (!o) continue;
+    const [x, y] = [o, w].sort((m, n) => known.indexOf(m) - known.indexOf(n)), key = x + y;   // (each pair once, the word you'd have met first on the left)
+    if (seen.has(key)) continue; seen.add(key);
+    rows.push({id:'sounds-' + key, zh:`${x} ${y}`, py:`${WORDS[x].py} · ${WORDS[y].py}`, title:`Sounds like: ${x} and ${y}`, text:'The same sound in pinyin: hear both, and how their tones differ.', card:back => soundsCard(y, back)});
+  }
+  return rows;
+}
+function tipsPage(back, focus){
+  const chinese = chineseTips(), buttons = TIP_PAGE.filter(t => t.ids.some(id => S.tips[id]));
+  const row = r => `<button class="tipsrow" data-tip="${esc(r.id)}" data-label="Open"><span class="tipskey zh">${esc(r.zh)}<small>${esc(r.py)}</small></span><span class="tipstxt"><b>${esc(r.title)}</b><span>${esc(r.text)}</span></span><span class="tipsgo" aria-hidden="true">▸</span></button>`;
+  openCard(`<p class="label">💡 Tips</p><p class="small tipsintro">Every tip you’ve had, to read again. More come as you play.</p>
+    ${chinese.length ? `<p class="tipsec">About Chinese</p><div class="tipslist" data-nav>${chinese.map(row).join('')}</div>` : ''}
+    <p class="tipsec">How to play</p><div class="tipslist">${buttons.length ? buttons.map(t => `<div class="tipsrow plain"><span class="tipskey">${t.key}</span><span class="tipstxt"><span>${t.text}</span></span></div>`).join('') : '<p class="hint">None yet.</p>'}</div>
+    <div class="actions"><button class="btn" data-a="howto">How to play ▸</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  sheet.querySelectorAll('.tipsrow[data-tip]').forEach(b => b.onclick = () => { SFX.blip(); chinese.find(r => r.id === b.dataset.tip).card(() => tipsPage(back, b.dataset.tip)); });
+  on('[data-a=howto]', () => howToPlay().then(() => tipsPage(back, 'howto')));
+  on('[data-a=ok]', back);
+  const f = focus && (sheet.querySelector(`.tipsrow[data-tip="${focus}"]`) || sheet.querySelector(`[data-a="${focus}"]`)); if (f) f.focus();
 }
 
 // 朋友 Friends: every animal of the chapters you've reached (decided 30 October 2026, so there's something to look for as you
@@ -157,8 +193,9 @@ function tasksPage(back, page = 'now', focus = null){
   tasks.forEach(t => { S.tasksRead[t.id] = 1; }); save();
   const ch = AREA.chapters[chapterNow()], found = areaChecklist().filter(([, , , f]) => f);
   const aimed = aimedTask(tasks), choose = tasks.filter(t => t.arrow).length > 1;   // (a choice only with two or more to show the way for)
-  const whereHTML = t => t.where ? `<span class="where">${esc(t.where)}</span>` : '';   // (where it's done, when that's not where you are)
-  const taskHTML = t => `<li class="${[t === aimed ? 'aim' : '', t.main ? 'main' : ''].join(' ').trim()}">${t.main ? '<span class="star" aria-hidden="true"></span>' : ''}${choose && t.arrow ? `<button class="taskbtn" data-t="${esc(t.id)}">${esc(t.text)}${whereHTML(t)}</button>` : `<span>${esc(t.text)}${whereHTML(t)}</span>`}${t.clue ? clueTaskHTML(t.clue) : ''}</li>`;
+  const whereHTML = t => t.where ? `<span class="where">${hlText(t.where)}</span>` : '';   // (where it's done, when that's not where you are)
+  // (each task's names standing out, hlText in js/helpers.js: a word you know green, to tap and hear; people gold; places blue)
+  const taskHTML = t => `<li class="${[t === aimed ? 'aim' : '', t.main ? 'main' : ''].join(' ').trim()}">${t.main ? '<span class="star" aria-hidden="true"></span>' : ''}${choose && t.arrow ? `<button class="taskbtn" data-t="${esc(t.id)}">${hlText(t.text)}${whereHTML(t)}</button>` : `<span>${hlText(t.text)}${whereHTML(t)}</span>`}${t.clue ? clueTaskHTML(t.clue) : ''}</li>`;
   const chapter = `${esc(ch.name)}: ${esc(ch.title)}`, progress = `${found.filter(([, done]) => done).length} of ${found.length} done so far`;
   if (page === 'list'){
     openCard(`<div class="cardtop"><p class="label taskslabel">${chapter}</p><span class="taskprog">${progress}</span></div>
@@ -166,18 +203,22 @@ function tasksPage(back, page = 'now', focus = null){
       <div class="actions"><button class="btn grow" data-a="now">◂ Tasks</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
     on('[data-a=now]', () => tasksPage(back));
     on('[data-a=ok]', back);
+    bindSay(sheet);
     return;
   }
   // the journey: the area's goal, and the part of the story you're in, with what you're doing in it (partNow, js/world.js),
-  // unless the main task below says so
-  const part = partNow(), goal = textNow(AREA.goal), journey = goal ? `<div class="journey"><p><span class="jlabel">Your journey</span> ${esc(goal)}</p>${part ? `<p class="jpart"><b>${esc(part.name)}: ${esc(part.title)}.</b>${tasks.some(t => t.main) ? '' : ' ' + esc(textNow(part.now))}</p>` : ''}${whoKnowsHTML()}</div>` : '';
+  // unless the main task below says so; and Story so far ▸, every part you've reached (storyPage, below)
+  const part = partNow(), goal = textNow(AREA.goal), story = `<button class="storybtn" data-a="story" data-label="Story">📖 Story so far ▸</button>`;
+  const journey = goal ? `<div class="journey">${story}<p><span class="jlabel">Your journey</span> ${hlText(goal)}</p>${part ? `<p class="jpart"><b>${esc(part.name)}: ${esc(part.title)}.</b>${tasks.some(t => t.main) ? '' : ' ' + hlText(textNow(part.now))}</p>` : ''}${whoKnowsHTML()}</div>` : '';
   const also = tasks.some(t => t.main) && tasks.some(t => !t.main);
   openCard(`<div class="cardtop"><p class="label taskslabel">Tasks</p>${statsHTML()}</div>
-    <div class="nowpage">${journey}<p class="label">Now${choose ? ' <span class="aimhint">Tap a task for the yellow arrow to show its way</span>' : ''}</p>${tasks.length ? `<ul class="tasks${also ? ' withalso' : ''}"${choose ? ' data-nav' : ''}>${tasks.map((t, i) => (also && !t.main && tasks[i - 1] && tasks[i - 1].main ? '<li class="alsolabel" aria-hidden="true">Also</li>' : '') + taskHTML(t)).join('')}</ul>` : `<p class="hint">${esc(tasksHint() || 'Nothing to do right now.')}</p>`}
+    <div class="nowpage">${journey}<p class="label">Now${choose ? ' <span class="aimhint">Tap a task for the yellow arrow to show its way</span>' : ''}</p>${tasks.length ? `<ul class="tasks${also ? ' withalso' : ''}"${choose ? ' data-nav' : ''}>${tasks.map((t, i) => (also && !t.main && tasks[i - 1] && tasks[i - 1].main ? '<li class="alsolabel" aria-hidden="true">Also</li>' : '') + taskHTML(t)).join('')}</ul>` : `<p class="hint">${hlText(tasksHint() || 'Nothing to do right now.')}</p>`}
     <p class="taskprog">${chapter} · ${progress}</p></div>
-    <div class="actions"><button class="btn grow" data-a="list">Checklist ▸</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+    <div class="actions"><button class="btn grow" data-a="list">Checklist ▸</button>${goal ? '' : story}<button class="btn primary" data-a="ok" data-b>Back</button></div>`);
   on('[data-a=list]', () => tasksPage(back, 'list'));
+  on('[data-a=story]', () => { SFX.blip(); storyPage(back); });
   on('[data-a=ok]', back);
+  bindSay(sheet);
   sheet.querySelectorAll('.taskbtn').forEach(b => b.onclick = () => { followTask(b.dataset.t); SFX.blip(); tasksPage(back, 'now', b.dataset.t); });
   if (focus){ const f = [...sheet.querySelectorAll('.taskbtn')].find(b => b.dataset.t === focus); if (f) f.focus(); }
   const clue = tasks.find(t => t.clue);
@@ -200,10 +241,54 @@ function whoKnowsHTML(){
   return `<div class="whoknows"><p><span class="jlabel">${esc(k.title)}</span> <b>${asked} of ${k.people.length}</b> asked</p><div class="faces">${k.people.map(face).join('')}${last}</div><p class="whoinfo small">Tap a face to see who it is.</p></div>`;
 }
 
+/* ================= STORY SO FAR ================= */
+// 📖 Story so far (Story so far ▸ in the Tasks page's journey box; decided 9 November 2026, the four ideas plan): every
+// part of the story you've reached, chapter by chapter, each with the card you read as it began (or its story, for a part
+// that begins with its chapter's own card), its names standing out (hlText, js/helpers.js), and under it the scenes you
+// can watch again (each scene's part; the area's opening under its first part; they were in Settings); the part you're in
+// at the end, marked Now, with what you're doing in it. An area before this one is folded into one line at the top, its
+// storyFold: tap it to read it all (open: its number). Parts not reached yet aren't there, so nothing is given away.
+// back: what Back does; ◂ Tasks goes back to the Tasks page; focus: the button to come back to.
+function storyPartsHTML(area, upTo, current){
+  const parts = (area.parts || []).slice(0, upTo + 1), now = current ? partNow() : null;
+  const scenes = Object.entries(area.scenes || {}).filter(([, sc]) => sc.watch && sc.part && (!current || matches(sc.when)));   // (an area before this one: all its scenes, as its story's done)
+  let out = '', ch = -1;
+  parts.forEach((p, i) => {
+    if (p.chapter !== ch){ ch = p.chapter; const c = area.chapters[ch]; if (c) out += `<p class="storych">${esc(c.name)}: ${esc(c.title)}</p>`; }
+    const watch = [...(i === 0 && (area.intro || []).length ? [['opening', 'Watch the opening']] : []), ...scenes.filter(([, sc]) => sc.part === p.id).map(([id, sc]) => [id, sc.watch])];
+    out += `<div class="storypart${p === now ? ' now' : ''}"><p class="sp-name">${esc(p.title)} <small>· ${esc(p.name)}</small>${p === now ? '<span class="nowtag">Now</span>' : ''}</p>
+      <p>${hlText(fill(p.text || p.story || '', false, true))}</p>${p === now && p.now ? `<p class="sp-now"><b>Now:</b> ${hlText(textNow(p.now))}</p>` : ''}${watch.length ? `<div class="watchrow">${watch.map(([id, label]) => `<button class="watch" data-watch="${id}" data-area="${area.number}" data-label="Watch">▸ ${esc(label)}</button>`).join('')}</div>` : ''}</div>`;
+  });
+  return out;
+}
+function storyPage(back, focus, open){
+  const html = AREAS.filter(a => a.number < AREA.number).map(a => {
+    const shown = open === a.number;
+    return `<button class="storyfold" data-fold="${a.number}" aria-expanded="${shown}" data-label="${shown ? 'Fold' : 'Read'}"><b>${shown ? '▾' : '▸'} ${esc(a.name.en)}</b><span>${esc(a.storyFold || '')} Tap to read it.</span></button>${shown ? storyPartsHTML(a, (a.parts || []).length - 1, false) : ''}`;
+  });
+  const here_ = storyPartsHTML(AREA, here().part ?? -1, true);
+  openCard(`<div class="cardtop"><p class="label">📖 Story so far</p><span class="taskprog">${esc(AREA.name.en)}</span></div>
+    <div class="storypage" data-nav>${html.join('')}${here_ || '<p class="hint">Your story here is just beginning.</p>'}</div>
+    <div class="actions"><button class="btn grow" data-a="tasks">◂ Tasks</button><button class="btn primary" data-a="ok" data-b>Back</button></div>`);
+  bindSay(sheet);
+  on('[data-a=tasks]', () => tasksPage(back));
+  on('[data-a=ok]', back);
+  sheet.querySelectorAll('.storyfold').forEach(b => b.onclick = () => { SFX.blip(); const n = +b.dataset.fold; storyPage(back, 'fold' + n, open === n ? null : n); });
+  sheet.querySelectorAll('.watch').forEach(b => b.onclick = () => {   // the scene, and back here once it ends
+    const area = AREAS.find(a => a.number === +b.dataset.area), id = b.dataset.watch;
+    SFX.blip(); closeCard();
+    (id === 'opening' ? watchOpening(area) : storyScene(id, area)).then(() => storyPage(back, id, open));
+  });
+  const f = focus && (focus.startsWith('fold') ? sheet.querySelector(`.storyfold[data-fold="${focus.slice(4)}"]`) : sheet.querySelector(`.watch[data-watch="${focus}"]`));
+  if (f) f.focus();
+  else if (sheet.querySelector('.storypart.now')) sheet.scrollTop = sheet.scrollHeight;   // (opening at the part you're in, the last: never hidden under the buttons)
+}
+
 /* ================= SETTINGS ================= */
-// Sound, pinyin, English on reply choices (for players who know some Chinese already), How to play, the opening (and the area's
-// other scenes, such as becoming king, once you've seen them) and the title screen
-// (where your games are: to switch, start a new one, copy one to a file or delete one). The game saves by itself.
+// Sound, pinyin, English on reply choices (for players who know some Chinese already), typed lines (js/cards.js), and the
+// title screen (where your games are: to switch, start a new one, copy one to a file or delete one). The game saves by
+// itself. (How to play is on the Tips page, and the scenes to watch again are in Story so far, each under its part:
+// decided 9 November 2026, the four ideas plan.)
 const SPEED_SAMPLE = '你好';   // (what's said as you change the voice speed)
 function openSettings(focusId){
   openCard(`<p class="label">Settings</p>
@@ -212,10 +297,8 @@ function openSettings(focusId){
       <button class="btn" data-m="sound" data-label="Sound">Sound effects <span class="val">${S.sound ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="pinyin" data-label="Pinyin">Pinyin over words <span class="val">${S.pinyin ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="replyEn" data-label="English">English on replies <span class="val">${S.replyEn ? 'On' : 'Off'}</span></button>
+      <button class="btn" data-m="typed" data-label="Typed">Typed lines <span class="val">${typedLines() ? 'On' : 'Off'}</span></button>
       <button class="btn" data-m="fps" data-label="FPS">Frames a second <span class="val">${S.fps ? 'On' : 'Off'}</span></button>
-      <button class="btn" data-m="howto">How to play</button>
-      <button class="btn" data-m="opening">Watch the opening</button>
-      ${Object.entries(AREA.scenes || {}).filter(([, sc]) => sc.watch && matches(sc.when)).map(([id, sc]) => `<button class="btn" data-m="scene" data-scene="${id}">${esc(sc.watch)}</button>`).join('')}
       <button class="btn" data-m="title" data-label="Your games">Title screen: your games</button>
     </div>
     <div class="actions"><span class="speedrow"><span class="slabel">Voice speed</span><span class="qpcount"><button class="btn" data-a="slower" aria-label="Slower"${voiceSpeed() <= VOICE_SPEEDS.at(-1) ? ' disabled' : ''}>−</button><b class="qpn">${Math.round(voiceSpeed() * 100)}%</b><button class="btn" data-a="faster" aria-label="Faster"${voiceSpeed() >= 1 ? ' disabled' : ''}>+</button></span></span><button class="btn" data-a="back" data-b>Back</button></div>`);
@@ -230,10 +313,8 @@ function openSettings(focusId){
     sound: () => { S.sound = !S.sound; save(); if (S.sound) SFX.blip(); openSettings('sound'); },
     pinyin: () => { S.pinyin = !S.pinyin; save(); openSettings('pinyin'); },
     replyEn: () => { S.replyEn = !S.replyEn; save(); openSettings('replyEn'); },
+    typed: () => { S.typed = !typedLines(); save(); openSettings('typed'); },
     fps: () => { S.fps = !S.fps; save(); openSettings('fps'); },
-    howto: () => howToPlay().then(() => openSettings('howto')),
-    opening: () => { closeCard(); playIntro(); },
-    scene: bt => { closeCard(); storyScene(bt.dataset.scene); },
     title: () => { closeCard(); toTitle(); }
   };
   sheet.querySelectorAll('[data-m]').forEach(bt => bt.onclick = () => { SFX.blip(); act[bt.dataset.m](bt); });

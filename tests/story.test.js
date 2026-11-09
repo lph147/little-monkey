@@ -156,7 +156,7 @@ test('the prologue runs from being born to counting the troop in and becoming ki
   assert.match(g.run('chapterItems()[0].text'), /old monkey/, 'chapter 1’s checklist begins with going with the old monkey to the new home ground');
 });
 
-test('a scene plays like the opening: its pictures, its captions one at a time, and OK or Skip ends it; Settings can play it again', async () => {
+test('a scene plays like the opening: its pictures, its captions one at a time, and OK or Skip ends it; Story so far can play it again', async () => {
   const {loadGame} = require('./fake-browser');
   const g = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 6, count: 3, chapter: 1}}}});
   g.run("mode = 'play'; save = () => {}; globalThis.__done = false; storyScene('becomingKing').then(() => { __done = true; })");
@@ -171,12 +171,12 @@ test('a scene plays like the opening: its pictures, its captions one at a time, 
   await new Promise(r => setImmediate(r));
   assert.equal(g.run('__done'), true, 'Skip ends it');
   assert.equal(g.run('mode'), 'play', 'and you carry on where you were');
-  g.run('openSettings()');
-  const watch = g.el('#sheet').querySelector('[data-scene="becomingKing"]');
-  assert.ok(watch && /Watch becoming king/.test(watch.textContent), 'Settings can play it again');
+  g.run("here().part = PARTS.findIndex(p => p.id === 'king'); storyPage(() => {})");
+  const watch = g.el('#sheet').querySelector('.watch[data-watch="becomingKing"]');
+  assert.ok(watch && /Watch becoming king/.test(watch.textContent), 'Story so far can play it again, under its part');
   watch.click();
   assert.equal(g.run('mode'), 'intro');
-  const early = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 5, count: 2}}}});
-  early.run("mode = 'play'; openSettings()");
-  assert.ok(!early.el('#sheet').querySelector('[data-scene]'), 'not before you’ve become king');
+  const early = loadGame({dom: true, save: {version: 29, started: true, areas: {1: {cave: 5, count: 2, part: 3}}}});
+  early.run("mode = 'play'; storyPage(() => {})");
+  assert.ok(!early.el('#sheet').querySelector('.watch[data-watch="becomingKing"]'), 'not before you’ve become king');
 });

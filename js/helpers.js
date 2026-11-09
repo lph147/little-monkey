@@ -38,10 +38,53 @@ function mix(a, b, k){
   }
   return c;
 }
+// Names that stand out in English text (decided 9 November 2026, the four ideas plan, as in Dredge): a Chinese word
+// (as fill writes one you know, 水 (water), or on its own in a note, 两) green, as in sentences; people gold; places
+// blue; each bold too, so they stand out without the colour. Only names, found by the game's own lists of who's who
+// (NAMES: the hungry monkey, the farmer, the master) and where's where (PLACES: the pine wood, the riverside), longest
+// first, so no text needs rewriting: "the village" or "the troop" stay plain. In messages, notes, tasks, the checklist,
+// part cards and Story so far, never in a Chinese line's English, which is a translation. Gives HTML (the rest of the
+// text escaped): spans hl-zh (with data-say, a word to tap and hear where the page lets you: the Tasks page), hl-who
+// and hl-where.
+const HL_NOT_NAMES = new Set(['monkey', 'sign', 'cart', 'little monkey (you)']);   // (anyone, or no one in particular)
+const hlPlural = s => /man$/.test(s) ? s.slice(0, -3) + 'men' : /child$/.test(s) ? s + 'ren' : /[^aeiou]y$/.test(s) ? s.slice(0, -1) + 'ies' : /(s|x|ch|sh)$/.test(s) ? s + 'es' : s + 's';
+let hlNamesFor = null;
+function hlNames(){
+  if (hlNamesFor && hlNamesFor.area === AREA) return hlNamesFor;
+  const plain = s => s.toLowerCase().replace(/^(the|an?) /, ''), who = new Set(), where = new Set();
+  for (const n of Object.values(NAMES)) if (n && n.en && !HL_NOT_NAMES.has(n.en.toLowerCase())){ const s = plain(n.en); who.add(s); who.add(hlPlural(s)); }
+  for (const p of Object.values(PLACES)) if (p.name && p.name.en) where.add(plain(p.name.en));
+  for (const a of AREAS) if (a.number <= AREA.number && /^(\p{Lu}\S*\s?)+$/u.test(a.name.en)) where.add(plain(a.name.en));   // (an area whose English is a name, Flower Fruit Mountain: not Across the sea)
+  const re = set => new RegExp(`(?<![\\p{L}])(?:${[...set].sort((a, b) => b.length - a.length).map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})(?![\\p{L}])`, 'giu');
+  return hlNamesFor = {area:AREA, who:re(who), where:re(where)};
+}
+const HL_ZH = /(\p{Script=Han}+(?:[，、]?\p{Script=Han}+)*)( \([^()]*\))?/gu;   // (a Chinese word, and its English in brackets after it, which isn't looked at for names)
+function hlText(text){
+  text = String(text ?? '');
+  if (!text) return '';
+  const {who, where} = hlNames(), marks = [];   // each [start, end, class, word, end of what it takes up]
+  for (const m of text.matchAll(HL_ZH)) marks.push([m.index, m.index + m[1].length, 'hl-zh', m[1], m.index + m[0].length]);
+  const found = [...[...text.matchAll(who)].map(m => [m, 'hl-who']), ...[...text.matchAll(where)].map(m => [m, 'hl-where'])]
+    .sort((a, b) => b[0][0].length - a[0][0].length || a[0].index - b[0].index);   // (the longest first: the master’s room is a place, not the master)
+  for (const [m, cls] of found){
+    const s = m.index, e = s + m[0].length;
+    if (!marks.some(([a, , , , b]) => s < b && e > a)) marks.push([s, e, cls, null, e]);
+  }
+  let out = '', at = 0;
+  for (const [s, e, cls, w] of marks.sort((a, b) => a[0] - b[0])){
+    out += esc(text.slice(at, s)) + `<span class="${cls}"${w && WORDS[w] ? ` data-say="${esc(w)}"` : ''}>${esc(text.slice(s, e))}</span>`;
+    at = e;
+  }
+  return out + esc(text.slice(at));
+}
+// Tapping a Chinese word in English text, where a page lets you (the Tasks page, the checklist, Story so far), says it.
+function bindSay(root){
+  root.querySelectorAll('.hl-zh[data-say]').forEach(el => el.onclick = e => { if (e && e.stopPropagation) e.stopPropagation(); say(el.dataset.say); });
+}
 // A message, in a box at the bottom of the game screen, for a few seconds (msgAt: when the one showing came up).
 let msgT, msgAt = -1e9;
 function toast(msg){
-  const el = $('#saybox'); let top = messageTop(); el.innerHTML = pixelIcons(esc(msg)); el.hidden = false; el.onclick = closeMessage; msgAt = performance.now();
+  const el = $('#saybox'); let top = messageTop(); el.innerHTML = pixelIcons(hlText(msg)); el.hidden = false; el.onclick = closeMessage; msgAt = performance.now();
   el.classList.toggle('top', top);   // where the speech box was (messageTop(), js/draw.js)
   if (!top && underMessage(+el.offsetHeight || 0)){ top = true; el.classList.add('top'); }   // or at the top if at the bottom it would cover you, or the square you face (fishing off the pier, it hid you and your float)
   if (top) $('#placeName').hidden = true;

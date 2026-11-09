@@ -7,7 +7,7 @@ const {loadGame} = require('./fake-browser');
 const tick = () => new Promise(r => setImmediate(r));
 function talkGame(save){
   const game = loadGame({dom: true, save: save || {version: 8, started: true}});
-  game.run("mode = 'play'");   // walking about, past the title screen
+  game.run("mode = 'play'; S.typed = false");   // walking about, past the title screen, each line whole (lines that type on: tests/typed-lines.test.js)
   const box = game.el('#talk');
   return {
     game, box,

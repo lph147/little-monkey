@@ -13,6 +13,7 @@ const knowing = words => Object.fromEntries(words.map(w => [w, {lv: 1, due: 0, o
 function game(area, pos, words = ['石头', '你好', '山']){
   const g = loadGame({dom: true, save: {version: 29, started: true, w: knowing(words), areas: {1: area}, pos}});
   g.run("mode = 'play'; placePlayer(); globalThis.__now = 5000; performance.now = () => __now");   // (the pretend browser's clock, which the test moves on)
+  g.run('S.typed = false');   // (each line whole, so one A moves on from it: lines that type on have their tests, tests/typed-lines.test.js)
   g.run('for (const t of getTasks()) S.tasksSeen[t.id] = 1');   // (no new task waiting to be announced once a message closes)
   return g;
 }
