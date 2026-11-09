@@ -56,10 +56,34 @@ test('once the little monkey has taught you 朋友, it wants to play I spy strai
   assert.deepEqual([get(g, 'here().littleGame'), get(g, 'S.shells')], [1, 2], 'its present: 2 shells');
   assert.ok(get(g, '__notes').includes('The little monkey gives you 2 🐚.'));
   assert.equal(bubble(g, 'playful'), '', 'no ! now');
+  assert.deepEqual(get(g, '__asks'), [], 'the first game, straight away, as part of the story');
+  g.run('__play = false');
   await talk(g, 'playful');
-  assert.ok(get(g, '!!here().spying'), 'talk to it again, and it plays again');
+  assert.deepEqual(get(g, '__asks'), ['Play I spy with the little monkey?'], 'talk to it again, and it asks first (9 November 2026, after playing it: it started a game every time)');
+  assert.equal(get(g, 'here().spying || null'), null, 'Not now: no game');
+  g.run('__play = true');
+  await talk(g, 'playful');
+  assert.ok(get(g, '!!here().spying'), 'Play: it plays again');
   for (let i = 0; i < 4 && get(g, '!!here().spying'); i++) await play(g, `spyFind(${spot(g, wanted(g))})`);
   assert.deepEqual([get(g, 'here().littleGame'), get(g, 'S.shells')], [2, 2], 'the present is only the once');
+});
+
+test('in the middle of a game, talking to the little monkey asks whether to keep playing; Stop ends it, and A at things in the meadow is as ever', async () => {
+  const g = game();
+  await talk(g, 'playful');
+  await play(g, `spyFind(${spot(g, wanted(g))})`);
+  g.run('__play = false; __notes.length = 0');
+  await talk(g, 'playful');
+  assert.deepEqual(get(g, '__asks'), ['You’re in the middle of a game of I spy with the little monkey. Keep playing?']);
+  assert.equal(get(g, 'here().spying || null'), null, 'Stop: the game is over');
+  assert.ok(get(g, '__notes').includes('You stop playing I spy. Talk to the little monkey to play again.'));
+  await play(g, `interact(${spot(g, '花')})`);
+  assert.ok(!get(g, '__notes').includes('Not that one. Listen again!'), 'A at a flower is just a flower again');
+  assert.equal(bubble(g, 'playful'), '!', 'its ! stays till you’ve played its game, the once');
+  g.run('__play = true');
+  await talk(g, 'playful');
+  assert.equal(get(g, '__asks')[1], 'Play I spy with the little monkey?', 'and it asks to play again');
+  assert.equal(get(g, 'here().spying.i'), 0, 'a new game');
 });
 
 test('walk off halfway, and the little monkey says what it sees again; its ! stays till you’ve found them all, in the meadow', async () => {

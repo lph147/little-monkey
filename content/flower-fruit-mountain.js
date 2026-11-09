@@ -3478,7 +3478,10 @@ const FLOWER_FRUIT_MOUNTAIN = {
       {if:{new:'朋友'}, do:[{say:'iam', if:{knows:'猴子'}}, {say:'weFriends', teach:'朋友'}, {newWord:'朋友', note:'The little monkey is your friend now.'}, {befriend:true}, {say:'play'}, LITTLE_SPY]},
       {if:{climb:3}, do:[{say:'letsGo'}]},   // following you up to the waterfall
       {if:{story:true, cave:{below:3}}, do:[{say:'scared'}]},
-      {if:{chapter:0}, do:[{befriend:true}, {say:'play'}, LITTLE_SPY]},   // its game again, in the meadow (your friend, if an older game's word game never made it one)
+      // its game again, in the meadow (your friend, if an older game's word game never made it one): asking first, and in the
+      // middle of a game, whether to go on (decided 9 November 2026, after playing it: talking to it started a game every time)
+      {if:{chapter:0}, do:[{befriend:true}, {say:'play'}, {...LITTLE_SPY, ask:'Play I spy with the little monkey?',
+        going:'You’re in the middle of a game of I spy with the little monkey. Keep playing?', stopped:'You stop playing I spy. Talk to the little monkey to play again.'}]},
       {do:[{say:'play'}, {wordGame:{ask:'Play a word game with this little monkey?', word:'猴子', notYet:'Learn a few more words first, then come back to play.'}}]}
     ],
     boss: [

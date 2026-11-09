@@ -354,7 +354,7 @@ const CALL_MS = 900;   // how long a character's ! shows before they talk to you
 const LEAP_MS = 450;   // how long a leap takes, when someone stops following you and goes to their place (the follow step)
 const FLY_MS = 1500;   // how long those flying off together take, one a little after another (the fly step)
 let flyers = null;     // those flying off now: {a, from: their squares, to, t0} (drawFlyers, js/draw.js)
-const STEP_OPTIONS = {quiz:['label'], tour:['ask','label'], carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
+const STEP_OPTIONS = {quiz:['label'], tour:['ask','label'], carry:['howMany','inHand','each','ask','took'], hit:['with','times'], eat:['note'], sail:['ask','go'], practise:['label','pic'], climb:['pulls','label','pic'], fetch:['asks','right','wrong','wrongNote','listen','done'], spy:['things','rounds','listen','found','wrong','done','ask','going','stopped'], turnInto:['label','ms','word','keep'], coins:['note'], pay:['note'], goTo:['at','facing'], say:['teach','hint','showTasks','ok','by'], newWord:['note','met'], leap:['from','to'], fly:['to'], card:['note'], give:['note'], battle:['win','out','meet','boss','back','lost','retry'], bag:['note'], shells:['note'], match:['stop','notYet','words'], reply:['about','pic'],
   change:['at'], collect:['for','count','note','each','full','quiet'], leadTo:['you'], hold:['for'], lesson:['by'], grab:['label','missed'], follow:['park'], walk:['from','to','ms','stomp'], sleep:['room'], sell:['first'], decorate:['by', 'line']};   // extra settings a step can have
 const COUNTING = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];   // counting aloud as you collect things (the collect step), and in number lessons
 const COUNT_GAME = 3;   // counting questions in a counting game (the countGame step)
@@ -994,12 +994,18 @@ const STEPS = {   // what each step in the content's do-lists does; who is the c
   // found counts as a question answered right. The game in play is kept in the area's progress (spying); spy: the key
   // that counts the games you've finished; listen: what you're told as they say it; found ({word}: what it was) and wrong:
   // what you're told when you find it, or press A at something else; done: the steps once you've found them all, the
-  // first time.
+  // first time. ask: a card asks first, Play or Not now; and then, in the middle of a game, it asks whether to go on
+  // (going), Keep playing or Stop, Stop ending it (stopped: what you're told), so a game started by accident never holds
+  // you (decided 9 November 2026, after playing it: talking to the little monkey again started its game every time).
   async spy(s, who){
-    const p = here();
-    if (!p.spying || p.spying.place !== PLACE){
+    const p = here(), going = !!p.spying && p.spying.place === PLACE;
+    if (going && s.ask && !await confirmBox(speaker(who), fill(s.going || 'Keep playing?'), 'Keep playing', 'Stop')){
+      delete p.spying; save(); toast(fill(s.stopped || 'You stop playing.')); return STOP;
+    }
+    if (!going){
       const pick = shuffle(s.things.filter(t => lvl(t.word) >= 1 && wordHere(t.word))).slice(0, s.rounds || 3);
       if (!pick.length) return;
+      if (s.ask && !await confirmBox(speaker(who), fill(s.ask), 'Play', 'Not now')) return STOP;
       p.spying = {key:s.spy, by:typeof who === 'string' ? who : who.id, place:PLACE, words:s.things.map(t => t.word), list:pick.map(t => t.word), lines:Object.fromEntries(pick.map(t => [t.word, t.say])), i:0,
         found:s.found, wrong:s.wrong, listen:s.listen, done:p[s.spy] ? [] : (s.done || [])};
       save();
