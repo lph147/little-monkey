@@ -109,7 +109,7 @@ const looksLikeText = s => /[A-Za-z]/.test(s) && (/\s/.test(s.trim()) || /^[A-Z]
 // What's never your own words: what's said in the language you learn and its meaning, names (shown in both), pictures,
 // maps, ids, the story's conditions (an object under if, when, done…: done can also be steps, a list), and what's only
 // shown learning Chinese (the area's tips about Chinese, and how its home's name is made).
-const NOT_TEXT = new Set(['zh', 'en', 'py', 'sentence', 'sentenceEn', 'colourSentence', 'colourSentenceEn', 'map', 'palette', 'id', 'look', 'art',
+const NOT_TEXT = new Set(['zh', 'en', 'py', 'sentence', 'sentenceEn', 'colourSentence', 'colourSentenceEn', 'sell', 'sellEn', 'map', 'palette', 'id', 'look', 'art',
   'any', 'around', 'put', 'moves', 'rows', 'keys', 'pic', 'icon', 'emoji', 'tips', 'made']);
 const CONDITIONS = new Set(['if', 'when', 'show', 'done', 'have', 'set', 'following', 'away', 'left']);
 function contentStrings(obj, from, all = false){
